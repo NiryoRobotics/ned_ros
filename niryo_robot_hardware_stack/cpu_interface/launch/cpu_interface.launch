@@ -1,0 +1,7 @@
+<launch>
+
+  <node pkg="cpu_interface" type="cpu_interface_node" name="cpu_interface" output="screen">  
+    <rosparam file="$(find cpu_interface)/config/default.yaml" command="load"/>
+  </node>
+
+</launch>

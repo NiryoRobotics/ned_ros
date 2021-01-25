@@ -1,0 +1,27 @@
+<launch>
+  <param name="robot_description" command="$(find xacro)/xacro $(find niryo_robot_description)/urdf/ned/niryo_ned.urdf.xacro"/>
+  <arg name="hardware_version" value="ned"/>
+
+  <node pkg="joints_interface" type="joints_interface_node" name="joints_interface" output="screen"> 
+
+    <rosparam file="$(find dynamixel_driver)/config/$(arg hardware_version)/dxl_bus_config.yaml" command="load"/>
+    <rosparam file="$(find dynamixel_driver)/config/default.yaml" command="load"/>
+    <rosparam file="$(find stepper_driver)/config/can_bus.yaml" command="load"/>
+    <rosparam file="$(find stepper_driver)/config/default.yaml" command="load"/>
+    <rosparam file="$(find joints_interface)/config/motors_param.yaml" command="load"/>
+    <rosparam file="$(find joints_interface)/config/default.yaml" command="load"/>
+    <rosparam file="$(find joints_interface)/config/joints_params.yaml" command="load"/>
+    <rosparam file="$(find joints_interface)/config/$(arg hardware_version)/dynamixels_params.yaml" command="load"/>
+    <rosparam file="$(find joints_interface)/config/$(arg hardware_version)/steppers_params.yaml" command="load"/>
+  </node>
+
+  <!-- spawn controllers -->
+  <rosparam command="load" file="$(find joints_interface)/config/niryo_ned_controllers.yaml" />
+
+  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="log"
+      args="joint_state_controller niryo_robot_follow_joint_trajectory_controller --shutdown-timeout 1"/>
+
+  <!-- robot state publisher -->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" output="screen" />  
+  
+</launch>

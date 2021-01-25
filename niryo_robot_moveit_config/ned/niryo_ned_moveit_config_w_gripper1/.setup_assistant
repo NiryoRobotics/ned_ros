@@ -1,0 +1,11 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: niryo_robot_description
+    relative_path: urdf/ned/niryo_ned_gripper1_n_camera.urdf.xacro
+    xacro_args: ""
+  SRDF:
+    relative_path: config/niryo_ned.srdf
+  CONFIG:
+    author_name: Rémi lux
+    author_email: r.lux@niryo.com
+    generated_timestamp: 1586943668

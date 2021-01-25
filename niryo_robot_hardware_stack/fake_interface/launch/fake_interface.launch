@@ -1,0 +1,26 @@
+<launch>
+    <arg name="hardware_version" value="ned"/>
+
+    <group ns="niryo_robot/info">
+        <param name="ros_version"               type="string" command="rosversion niryo_robot_bringup" />
+        <param name="niryo_robot_type"  type="string" value="NIRYO_NED" />
+    </group>
+
+    <node pkg="fake_interface" type="fake_interface_node" name="fake_interface" output="screen">  
+        <rosparam file="$(find cpu_interface)/config/default.yaml" command="load"/>
+
+        <rosparam file="$(find dynamixel_driver)/config/$(arg hardware_version)/dxl_bus_config.yaml" command="load"/>
+        <rosparam file="$(find dynamixel_driver)/config/default.yaml" command="load"/>
+
+        <rosparam file="$(find stepper_driver)/config/can_bus.yaml" command="load"/>
+        <rosparam file="$(find stepper_driver)/config/default.yaml" command="load"/>
+
+        <rosparam file="$(find joints_interface)/config/default.yaml" command="load" />
+        <rosparam file="$(find joints_interface)/config/motors_param.yaml" command="load"/>
+        <rosparam file="$(find joints_interface)/config/joints_params.yaml" command="load" />
+        <rosparam file="$(find joints_interface)/config/$(arg hardware_version)/dynamixels_params.yaml" command="load" />
+        <rosparam file="$(find joints_interface)/config/$(arg hardware_version)/steppers_params.yaml" command="load" />
+        <rosparam file="$(find joints_interface)/config/$(arg hardware_version)/steppers_calibration_values.yaml" command="load" />
+    </node>
+
+</launch>

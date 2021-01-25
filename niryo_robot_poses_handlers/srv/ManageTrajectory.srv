@@ -1,0 +1,12 @@
+int32 cmd
+int32 SAVE = 1
+int32 DELETE = -1
+
+string name
+string description
+
+geometry_msgs/Pose[] poses
+---
+int32 status
+string message
+

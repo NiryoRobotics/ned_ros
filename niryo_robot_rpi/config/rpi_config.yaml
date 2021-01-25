@@ -1,0 +1,16 @@
+fans:
+  - gpio: 27
+    temperature_on_threshold: 45
+    temperature_off_threshold: 40
+  - gpio: 23
+    temperature_on_threshold: 50
+    temperature_off_threshold: 45
+
+led:
+  gpio_r: 18
+  gpio_g: 24
+  gpio_b: 22
+
+button:
+  gpio: 4
+

@@ -1,0 +1,54 @@
+<launch>
+    <!-- Arguments -->
+    <arg name="iot_enabled" default="false"/>
+    <arg name="debug" default="false"/>
+    <arg name="hardware_version" value="ned"/>
+    <arg name="rpi_model" value="4"/>
+    <arg name="conf_location" value="~/.config/niryo"/>
+
+    <!-- Load URDF -->
+    <param name="robot_description"
+           command="$(find xacro)/xacro $(find niryo_robot_description)/urdf/$(arg hardware_version)/without_mesh_niryo_$(arg hardware_version).urdf.xacro"/>
+    <param name="robot_description_tf2"
+           command="$(find xacro)/xacro $(find niryo_robot_description)/urdf/$(arg hardware_version)/niryo_$(arg hardware_version).urdf.xacro"/>
+
+    <!-- PARAMS -->
+    <group ns="niryo_robot/info">
+        <param name="image_version" type="string"
+               textfile="/home/niryo/.config/niryo/version/version.txt"/>
+    </group>
+
+    <group ns="niryo_robot/robot_state">
+        <param name="rate_publish_state" type="double" value="5.0"/>
+    </group>
+
+    <!-- Including shared params & nodes -->
+
+    <include file="$(find niryo_robot_bringup)/launch/niryo_robot_base_common.launch.xml">
+        <arg name="simulation_mode" value="false"/>
+        <arg name="debug" value="$(arg debug)"/>
+    </include>
+
+    <!--   Rpi node (IO / fan / ...)   -->
+    <!-- Ned RPI 4 -->
+    <include file="$(find niryo_robot_rpi)/launch/rpi_4.launch"/>
+
+    <!-- Launching vision node -->
+    <include file="$(find niryo_robot_vision)/launch/vision_node.launch">
+        <arg name="simulation_mode" value="false"/>
+    </include>
+
+    <include file="$(find niryo_robot_iot)/launch/serial_number.launch"/>
+
+    <group if="$(arg iot_enabled)">
+        <!-- Launching IOT nodes -->
+        <include file="$(find niryo_robot_iot)/launch/mqtt_client.launch">
+            <arg name="conf_location" value="$(arg conf_location)"/>
+        </include>
+    </group>
+
+    <include file="$(find niryo_robot_system_api_client)/launch/system_api_client.launch">
+        <arg name="simulation_mode" value="false"/>
+    </include>
+
+</launch>

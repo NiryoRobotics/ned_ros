@@ -1,0 +1,9 @@
+bool execute_from_string
+
+string name
+string code_string
+
+niryo_robot_programs_manager/ProgramLanguage language
+---
+int16 status
+string message

@@ -1,0 +1,13 @@
+<launch>
+    <arg name="conveyor" default="false"/>
+    <arg name="verbose" default="false"/>
+
+    <node name="niryo_robot_unit_tests" pkg="niryo_robot_unit_tests" type="script_test_from_launch.py"
+          output="screen" required="true">
+        <param name="conveyor" type="bool" value="false"/>
+        <param name="gripper_n_camera" type="bool" value="true"/>
+        <param name="headless" type="bool" value="false"/>
+        <param name="rpi" type="bool" value="false"/>
+        <param name="verbose" type="bool" value="$(arg verbose)"/>
+    </node>
+</launch>

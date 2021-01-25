@@ -1,0 +1,8 @@
+<launch>
+    <!-- Launching Node -->
+    <include file="$(find niryo_robot_poses_handlers)/launch/poses_handlers.launch">
+        <arg name="simulation_mode" value="true"/>
+    </include>
+    <!-- Launching Test -->
+    <test test-name="poses_handlers" pkg="niryo_robot_poses_handlers" type="test_poses_handlers.py"/>
+</launch>

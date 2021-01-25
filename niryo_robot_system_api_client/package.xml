@@ -1,0 +1,15 @@
+<package>
+  <name>niryo_robot_system_api_client</name>
+  <version>3.0.0</version>
+  <description>The niryo_robot_system_api_client package</description>
+  <author email="j.mottier@niryo.com">Justin Mottier</author>
+  <maintainer email="j.mottier@niryo.com">Justin Mottier</maintainer>
+  <maintainer email="c.ducatez@niryo.com">Corentin Ducatez</maintainer>
+  <license>GPLv3</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <run_depend>niryo_robot_msgs</run_depend>
+  <run_depend>rospy</run_depend>
+  <run_depend>std_msgs</run_depend>
+</package>

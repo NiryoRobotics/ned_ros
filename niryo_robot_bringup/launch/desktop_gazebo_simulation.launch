@@ -1,0 +1,41 @@
+<!-- This launch file allows to run simulation on Gazebo
+Warning : Some errors are present in Gazebo
+-> It will log some errors because it cannot unload joint_controller (It's because ROS does it before Gazebo)
+-> Gazebo GUI is kinda bad on closing. It will always run into SIGTERM. So, what you should do is
+to change _TIMEOUT_SIGINT value in the file /opt/ros/melodic/lib/python2.7/dist-packages/roslaunch/nodeprocess.py
+This will reduce the amount of time spent waiting during program shutdown
+-->
+<launch>
+    <!-- Arguments definition -->
+    <arg name="gripper_n_camera" default="true"/>
+    <arg name="gui" default="true"/>
+    <arg name="hardware_version" value="ned"/>
+
+    <!-- Load URDF -->
+    <arg name="urdf_path" value="urdf/$(arg hardware_version)/niryo_$(arg hardware_version)_gripper1_n_camera.urdf.xacro" if="$(arg gripper_n_camera)"/>
+    <arg name="urdf_path" value="urdf/$(arg hardware_version)/niryo_$(arg hardware_version)_gazebo.urdf.xacro" unless="$(arg gripper_n_camera)"/>
+
+    <param name="robot_description"
+        command="$(find xacro)/xacro $(find niryo_robot_description)/$(arg urdf_path)"/>
+
+    <param name="robot_description_tf2"
+        command="$(find xacro)/xacro $(find niryo_robot_description)/$(arg urdf_path)"/>
+
+    <!-- Define most of ROS parameters -->
+    <include file="$(find niryo_robot_bringup)/launch/niryo_robot_base_simulation.launch.xml">
+        <arg name="simu_gripper" value="$(arg gripper_n_camera)"/>
+        <arg name="gazebo" value="true"/>
+    </include>
+
+    <!-- Launching Gazebo World -->
+    <include file="$(find niryo_robot_gazebo)/launch/niryo_robot_gazebo_world.launch.xml">
+        <arg name="gui" value="$(arg gui)"/>
+    </include>
+
+    <!-- Launching vision if the user didn't swap camera arg to false -->
+    <include file="$(find niryo_robot_vision)/launch/vision_node.launch" if="$(arg gripper_n_camera)">
+        <arg name="simulation_mode" value="true"/>
+    </include>
+        <param name="/niryo_robot_vision/initialized" type="bool" value="true" unless="$(arg gripper_n_camera)"/>
+
+</launch>

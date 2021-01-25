@@ -1,0 +1,6 @@
+dxl_hardware_control_loop_frequency: 100.0
+dxl_hardware_write_frequency: 50.0
+dxl_hardware_read_data_frequency: 15.0
+dxl_hardware_read_status_frequency: 0.5
+dxl_hardware_check_connection_frequency: 2.0
+dxl_end_effector_frequency:  2.0

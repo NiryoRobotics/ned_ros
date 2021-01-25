@@ -1,0 +1,25 @@
+<package>
+    <name>niryo_robot_modbus</name>
+    <version>3.0.0</version>
+    <description>Ned Modbus Server</description>
+    <author>Edouard Renard</author>
+    <maintainer email="c.ducatez@niryo.com">Corentin Ducatez</maintainer>
+
+    <license>GPLv3</license>
+
+    <buildtool_depend>catkin</buildtool_depend>
+
+    <build_depend>niryo_robot_msgs</build_depend>
+    <build_depend>rospy</build_depend>
+    <build_depend>std_msgs</build_depend>
+
+    <run_depend>niryo_robot_msgs</run_depend>
+    <run_depend>rospy</run_depend>
+    <run_depend>std_msgs</run_depend>
+
+    <!-- Python Dependencies -->
+    <run_depend>python-pymodbus</run_depend>
+
+    <export>
+    </export>
+</package>

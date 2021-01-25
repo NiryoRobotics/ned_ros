@@ -1,0 +1,8 @@
+<launch>
+    <!-- Launching Node -->
+    <include file="$(find niryo_robot_programs_manager)/launch/programs_manager.launch">
+        <param name="simulation_mode" type="bool" value="false"/>
+    </include>
+    <!-- Launching Test -->
+    <test test-name="programs_manager" pkg="niryo_robot_programs_manager" type="test_programs_manager.py"/>
+</launch>

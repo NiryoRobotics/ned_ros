@@ -1,0 +1,10 @@
+<launch>
+  <arg name="hardware_version" value="ned"/>
+
+  <node pkg="dynamixel_driver" type="dynamixel_driver_node" name="dynamixel_driver" output="screen">  
+    <rosparam file="$(find dynamixel_driver)/config/$(arg hardware_version)/dxl_bus_config.yaml" command="load"/>
+    <rosparam file="$(find dynamixel_driver)/config/motors_config.yaml" command="load"/>
+    <rosparam file="$(find dynamixel_driver)/config/default.yaml" command="load"/>
+  </node>
+  
+</launch>

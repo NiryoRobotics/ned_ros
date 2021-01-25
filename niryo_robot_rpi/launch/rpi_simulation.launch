@@ -1,0 +1,5 @@
+<launch>
+    <include file="$(find niryo_robot_rpi)/launch/base_rpi.launch.xml">
+        <arg name="simulation_mode" default="true"/>
+    </include>
+</launch>

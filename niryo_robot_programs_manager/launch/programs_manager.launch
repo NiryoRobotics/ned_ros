@@ -1,0 +1,19 @@
+<launch>
+    <arg name="standalone" default="false"/>
+    <arg name="simulation_mode" default="true"/>
+
+    <arg name="dir_desktop" value="~/.niryo/simulation/"/>
+    <arg name="dir_rpi" value="~/niryo_robot_saved_files/"/>
+
+    <arg name="programs_dir" value="$(arg dir_desktop)niryo_robot_programs/" if="$(arg simulation_mode)"/>
+    <arg name="programs_dir" value="$(arg dir_rpi)niryo_robot_programs/" unless="$(arg simulation_mode)"/>
+
+    <node name="niryo_robot_programs_manager" pkg="niryo_robot_programs_manager" type="programs_manager_node.py"
+          output="screen">
+        <param name="standalone" type="bool" value="$(arg standalone)"/>
+        <param name="programs_dir" type="string" value="$(arg programs_dir)"/>
+
+        <rosparam file="$(find niryo_robot_programs_manager)/config/programs_manager_params.yaml" command="load"/>
+
+    </node>
+</launch>

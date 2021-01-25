@@ -1,0 +1,28 @@
+<launch>
+    <!-- Arguments definition -->
+    <arg name="gui" default="true"/>
+    <arg name="hardware_version" value="ned"/>
+
+    <!-- Load URDF -->
+    <arg name="urdf_path" value="urdf/$(arg hardware_version)/niryo_$(arg hardware_version).urdf.xacro"/>
+
+    <param name="robot_description"
+           command="$(find xacro)/xacro $(find niryo_robot_description)/$(arg urdf_path)"/>
+
+    <param name="robot_description_tf2"
+           command="$(find xacro)/xacro $(find niryo_robot_description)/$(arg urdf_path)"/>
+
+
+    <!-- Define most of ROS parameters -->
+    <include file="$(find niryo_robot_bringup)/launch/niryo_robot_base_simulation.launch.xml">
+    </include>
+
+    <group if="$(arg gui)">
+        <!-- Launching Rviz -->
+        <node name="rviz" pkg="rviz" type="rviz" args="-d $(find niryo_robot_description)/config/default_config.rviz"/>
+    </group>
+
+    <group ns="niryo_robot/info">
+        <param name="/niryo_robot_vision/initialized" type="bool" value="true"/>
+    </group>
+</launch>

@@ -1,0 +1,12 @@
+<launch>
+    <arg name="simulation_mode" default="false"/>
+
+    <node name="niryo_robot_vision" pkg="niryo_robot_vision" type="camera_publisher_and_services.py" output="screen">
+        <param name="simulation_mode" type="bool" value="$(arg simulation_mode)"/>
+
+        <!-- Settings will give more FPS if the user is using simulation-->
+        <rosparam file="$(find niryo_robot_vision)/config/video_server_setup_local.yaml" if="$(arg simulation_mode)"/>
+        <rosparam file="$(find niryo_robot_vision)/config/video_server_setup.yaml" unless="$(arg simulation_mode)"/>
+
+    </node>
+</launch>

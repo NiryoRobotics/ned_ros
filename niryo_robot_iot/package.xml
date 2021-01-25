@@ -1,0 +1,21 @@
+<package>
+    <name>niryo_robot_iot</name>
+    <version>3.0.0</version>
+    <description>The niryo_robot_iot package</description>
+
+    <author email="j.mottier@niryo.com">Justin Mottier</author>
+    <maintainer email="j.mottier@niryo.com">Justin Mottier</maintainer>
+    <maintainer email="c.ducatez@niryo.com">Corentin Ducatez</maintainer>
+    <license>GPLv3</license>
+
+    <buildtool_depend>catkin</buildtool_depend>
+
+    <run_depend>rospy</run_depend>
+
+    <!-- Python Dependencies -->
+
+    <run_depend>python-paho-mqtt-pip</run_depend>
+    <run_depend>python-pexpect</run_depend>
+    <run_depend>python-boto3</run_depend>
+
+</package>

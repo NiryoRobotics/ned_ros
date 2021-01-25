@@ -1,0 +1,2 @@
+motors_params:
+    stepper_motor_id_list: [1,2,3]

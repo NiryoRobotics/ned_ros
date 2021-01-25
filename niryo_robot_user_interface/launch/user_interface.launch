@@ -1,0 +1,6 @@
+<launch>
+    <!--  Launch Main node  -->
+    <node name="niryo_robot_user_interface" pkg="niryo_robot_user_interface" type="user_interface_node.py"
+          output="screen">
+    </node>
+</launch>

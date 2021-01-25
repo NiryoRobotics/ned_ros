@@ -1,0 +1,11 @@
+<package>
+  <name>niryo_robot_bringup</name>
+  <version>3.0.0</version>
+  <description>Provides roslaunch scripts to start Ned packages and initialize ROS params</description>
+  <author email="r.lux@niryo.com">Rémi Lux</author>
+  <maintainer email="r.lux@niryo.com">Rémi Lux</maintainer>
+  <maintainer email="c.ducatez@niryo.com">Corentin Ducatez</maintainer>
+  <license>GPLv3</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+</package>

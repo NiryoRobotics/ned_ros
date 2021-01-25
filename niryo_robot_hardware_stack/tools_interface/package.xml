@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>tools_interface</name>
+  <version>0.0.0</version>
+  <description>The tools_interface package</description>
+  <author>Etienne Rey-Coquais</author>
+  <author>Edouard Renard</author>
+  <maintainer email="e.rey-coquais@niryo.com">Etienne Rey-Coquais</maintainer>
+
+  <license>GPLv3</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>roscpp</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>dynamixel_driver</build_depend>
+  <build_depend>message_generation</build_depend>
+  
+  <exec_depend>roscpp</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>dynamixel_driver</exec_depend>
+  <exec_depend>message_runtime</exec_depend>
+
+</package>

@@ -1,0 +1,6 @@
+<launch>
+    <node name="niryo_robot_vision" pkg="niryo_robot_vision" type="camera_publisher_and_services.py" output="screen">
+        <param name="simulation_mode" type="bool" value="false"/>
+        <rosparam file="$(find niryo_robot_vision)/config/video_server_setup_local.yaml"/>
+    </node>
+</launch>

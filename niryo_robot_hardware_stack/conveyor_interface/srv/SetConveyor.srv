@@ -1,0 +1,10 @@
+uint8 cmd
+uint8 id
+
+uint8 ADD = 1
+uint8 REMOVE = 2
+
+--- 
+int16 id
+int16 status
+string message

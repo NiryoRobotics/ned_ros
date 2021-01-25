@@ -1,0 +1,28 @@
+<launch>
+    <arg name="rpi_model" default="4"/>
+    <arg name="simulation_mode" default="false"/>
+
+    <node if="$(arg simulation_mode)" name="niryo_robot_rpi" pkg="niryo_robot_rpi" type="fake_rpi_node.py" output="screen">
+        <param name="publish_io_state_frequency" type="double" value="10.0"/>
+
+        <param name="ros_log_size_threshold" type="int" value="1024"/> <!-- 1024 MB -->
+        <param name="should_purge_ros_log_on_startup_file" type="string"
+               value="/home/niryo/niryo_robot_saved_files/purge_ros_log_at_startup.txt"/>
+
+        <!-- don't change that unless you manually change ros log location -->
+        <param name="ros_log_location" type="string" value="/home/niryo/.ros/log"/>
+    </node>
+    <node unless="$(arg simulation_mode)" name="niryo_robot_rpi" pkg="niryo_robot_rpi" type="rpi_node.py" output="screen">
+        <rosparam file="$(find niryo_robot_rpi)/config/rpi_config.yaml"/>
+        <param name="rpi_model" type="string" value="$(arg rpi_model)"/>
+
+        <param name="publish_io_state_frequency" type="double" value="10.0"/>
+
+        <param name="ros_log_size_threshold" type="int" value="1024"/> <!-- 1024 MB -->
+        <param name="should_purge_ros_log_on_startup_file" type="string"
+               value="/home/niryo/niryo_robot_saved_files/purge_ros_log_at_startup.txt"/>
+
+        <!-- don't change that unless you manually change ros log location -->
+        <param name="ros_log_location" type="string" value="/home/niryo/.ros/log"/>
+    </node>
+</launch>

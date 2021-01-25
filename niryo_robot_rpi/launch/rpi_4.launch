@@ -1,0 +1,7 @@
+<launch>
+    <arg name="rpi_model" value="4"/>
+    <include file="$(find niryo_robot_rpi)/launch/base_rpi.launch.xml">
+        <arg name="simulation_mode" value="false"/>
+        <arg name="rpi_model" value="$(arg rpi_model)"/>
+    </include>
+</launch>

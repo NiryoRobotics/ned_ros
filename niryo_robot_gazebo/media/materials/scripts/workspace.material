@@ -1,0 +1,35 @@
+material Niryo/Workspace1
+{
+  receive_shadows on
+  technique
+  {
+    pass
+    {
+      ambient 0.5 0.5 0.5 1.000000
+      texture_unit
+      {
+        texture workspace_1.jpg
+        filtering anisotropic
+        max_anisotropy 16
+      }
+    }
+  }
+}
+
+material Niryo/WorkspaceGrille
+{
+  receive_shadows on
+  technique
+  {
+    pass
+    {
+      ambient 0.5 0.5 0.5 1.000000
+      texture_unit
+      {
+        texture workspace_grille.jpg
+        filtering anisotropic
+        max_anisotropy 16
+      }
+    }
+  }
+}

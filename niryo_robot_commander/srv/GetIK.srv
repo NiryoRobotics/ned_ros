@@ -1,0 +1,4 @@
+niryo_robot_msgs/RobotState pose
+---
+bool success
+float32[] joints

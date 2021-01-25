@@ -1,0 +1,9 @@
+<launch>
+    <arg name="simulation_mode" default="true" />
+    <arg name="server_domain" default="0.0.0.0"/>
+    <arg name="server_port" default="5000"/>
+    <node name="niryo_robot_system_api_client" pkg="niryo_robot_system_api_client" type="system_api_client_node.py" output="screen">
+        <param name="server_domain" type="string" value="$(arg server_domain)"/>
+        <param name="server_port" type="string" value="$(arg server_port)"/>
+    </node>
+</launch>

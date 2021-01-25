@@ -1,0 +1,11 @@
+int32 SAVE = 1
+int32 SAVE_WITH_POINTS = 2
+int32 DELETE = -1
+
+int32 cmd
+
+niryo_robot_poses_handlers/Workspace workspace
+
+---
+int32 status
+string message

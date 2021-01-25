@@ -1,0 +1,12 @@
+<launch>
+    <arg name="conf_location" default="~/.config/niryo"/>
+
+    <!-- Launching serial number node -->
+    <include file="$(find niryo_robot_iot)/launch/serial_number.launch">
+    </include>
+
+    <!-- Launching mqtt client node -->
+    <include file="$(find niryo_robot_iot)/launch/mqtt_client.launch">
+        <arg name="conf_location" value="$(arg conf_location)"/>
+    </include>
+</launch>

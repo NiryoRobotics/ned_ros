@@ -1,0 +1,3 @@
+publish_hw_status_frequency:             2.0
+publish_software_version_frequency:      2.0
+publish_learning_mode_frequency:         2.0

@@ -1,0 +1,13 @@
+string obj_type
+string obj_color
+float32 workspace_ratio
+bool ret_image
+---
+int32 status
+
+niryo_robot_msgs/ObjectPose obj_pose
+
+string obj_type
+string obj_color
+
+sensor_msgs/CompressedImage img

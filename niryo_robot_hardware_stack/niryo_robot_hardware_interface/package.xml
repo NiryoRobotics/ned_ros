@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>niryo_robot_hardware_interface</name>
+  <version>0.0.0</version>
+  <description>The hardware_interface package</description>
+  <author>Etienne Rey-Coquais</author>
+  <author>Edouard Renard</author>
+  <maintainer email="e.rey-coquais@niryo.com">Etienne Rey-Coquais</maintainer>
+
+  <license>GPLv3</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>roscpp</build_depend>
+  <build_depend>tools_interface</build_depend>
+  <build_depend>joints_interface</build_depend>
+  <build_depend>conveyor_interface</build_depend>
+  <build_depend>cpu_interface</build_depend>
+  <build_depend>fake_interface</build_depend>
+  <build_depend>message_generation</build_depend>
+  <build_depend>niryo_robot_msgs</build_depend>
+  
+  <exec_depend>roscpp</exec_depend>
+  <exec_depend>tools_interface</exec_depend>
+  <exec_depend>joints_interface</exec_depend>
+  <exec_depend>conveyor_interface</exec_depend>
+  <exec_depend>cpu_interface</exec_depend>
+  <exec_depend>fake_interface</exec_depend>
+  <exec_depend>message_runtime</exec_depend>
+  <exec_depend>niryo_robot_msgs</exec_depend>
+
+</package>

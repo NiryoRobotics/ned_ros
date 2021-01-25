@@ -1,0 +1,8 @@
+<launch>
+
+  <node pkg="stepper_driver" type="stepper_driver_test" name="stepper_driver" output="screen">  
+    <rosparam file="$(find stepper_driver)/config/can_bus.yaml" command="load"/>
+    <rosparam file="$(find stepper_driver)/config/motors_config.yaml" command="load"/>
+    <rosparam file="$(find stepper_driver)/config/default.yaml" command="load"/>
+  </node>
+</launch>

@@ -1,0 +1,61 @@
+<sdf version='1.6'>
+    <world name='default'>
+        <!-- A global light source -->
+        <include>
+            <uri>model://sun</uri>
+        </include>
+
+        <!-- A ground plane -->
+        <include>
+            <uri>model://ground_plane</uri>
+        </include>
+
+        <!-- Niryo Workspace -->
+        <model name='workspace_1'>
+            <include>
+                <uri>model://workspace_1</uri>
+            </include>
+            <pose frame=''>0.25 0.0 0.0005 0.0 0.0 0.0</pose>
+        </model>
+
+        <!-- Place Workspace -->
+        <model name='workspace_grille'>
+            <include>
+                <uri>model://workspace_grille</uri>
+            </include>
+            <pose frame=''>0.0 0.25 0.0005 0.0 0.0 1.57</pose>
+        </model>
+
+        <!--CUBES-->
+        <model name='cube_blue'>
+            <include>
+                <uri>model://cube_blue</uri>
+            </include>
+            <pose frame=''>0.25 0.0357 0.011 0.0 0.0 0.5</pose>
+        </model>
+
+        <model name='cube_red'>
+            <include>
+                <uri>model://cube_red</uri>
+            </include>
+            <pose frame=''>0.267 -0.062 0.011 0.0 0.0 0.1</pose>
+        </model>
+
+        <model name='cube_green'>
+            <include>
+                <uri>model://cube_green</uri>
+            </include>
+            <pose frame=''>0.212 -0.0369 0.011 0 0 -0.3</pose>
+        </model>
+
+        <!--GUI-->
+        <gui fullscreen='0'>
+            <camera name='user_camera'>
+                <pose frame=''>0.198 -0.823 0.916 0 0.763 1.592</pose>
+                <view_controller>orbit</view_controller>
+                <projection_type>perspective</projection_type>
+            </camera>
+        </gui>
+
+    </world>
+</sdf>

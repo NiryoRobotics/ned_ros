@@ -1,0 +1,12 @@
+uint8 cmd_type
+uint8 CMD_TYPE_SYNCHRONIZE=5
+uint8 CMD_TYPE_RELATIVE_MOVE=6
+uint8 CMD_TYPE_MAX_EFFORT=7
+uint8 CMD_TYPE_MICRO_STEPS=8
+uint8 CMD_TYPE_POSITION_OFFSET=9
+uint8 CMD_TYPE_CALIBRATION=10
+
+uint8[] motors_id
+int32[] params
+---
+bool result

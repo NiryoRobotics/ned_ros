@@ -1,0 +1,4 @@
+motors_params:
+    dxl_motor_id_list: [2,3,6]
+    dxl_motor_type_list: ["xl430","xl430","xl320"]
+    stepper_motor_id_list: [1,2,3]

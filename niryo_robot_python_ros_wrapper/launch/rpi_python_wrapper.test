@@ -1,0 +1,12 @@
+<launch>
+    <arg name="conveyor" default="false"/>
+    <arg name="gripper_n_camera" default="true"/>
+
+    <include file="$(find niryo_robot_bringup)/launch/niryo_ned_robot.launch"/>
+
+    <test test-name="python_ros_wrapper" pkg="niryo_robot_python_ros_wrapper" type="test_python_ros_wrapper.py" time-limit="360.0">
+        <param name="conveyor" value="$(arg conveyor)"/>
+        <param name="gripper_n_camera" value="$(arg gripper_n_camera)"/>
+        <param name="simulation_mode" type="bool" value="false"/>
+    </test>
+</launch>

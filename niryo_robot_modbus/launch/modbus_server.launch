@@ -1,0 +1,9 @@
+<launch>
+    <arg name="server_address" default="0.0.0.0"/>
+    <arg name="server_port" default="5020"/>
+
+    <node name="niryo_robot_modbus" pkg="niryo_robot_modbus" type="modbus_server_node.py" output="screen">
+        <param name="server_address" type="string" value="$(arg server_address)"/>
+        <param name="server_port" type="int" value="$(arg server_port)"/>
+    </node>
+</launch>

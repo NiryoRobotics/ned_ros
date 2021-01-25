@@ -1,0 +1,8 @@
+ros_control_loop_frequency:              100.0
+publish_hw_status_frequency:             2.0
+publish_software_version_frequency:      2.0
+publish_learning_mode_frequency:         2.0
+
+calibration_timeout: 30
+
+calibration_file:  "/home/niryo/niryo_robot_saved_files/stepper_motor_calibration_offsets.txt"

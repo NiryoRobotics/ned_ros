@@ -1,0 +1,16 @@
+uint8 LED_OFF = 0
+uint8 LED_BLUE = 1
+uint8 LED_GREEN = 2
+uint8 LED_BLUE_GREEN = 3
+uint8 LED_RED = 4
+uint8 LED_PURPLE = 5
+uint8 LED_RED_GREEN = 6
+uint8 LED_WHITE = 7
+
+bool activate
+uint8 frequency # between 1hz and 100Hz
+uint8 color
+float32 blinker_duration # 0 for infinite
+---
+int32 status
+string message

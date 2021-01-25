@@ -1,0 +1,20 @@
+joint_1_name: "joint_1"
+joint_2_name: "joint_2"
+joint_3_name: "joint_3"
+joint_4_name: "joint_4"
+joint_5_name: "joint_5"
+joint_6_name: "joint_6"
+
+joint_1_id: 1
+joint_2_id: 2
+joint_3_id: 3
+joint_4_id: 2
+joint_5_id: 3
+joint_6_id: 6
+
+joint_1_type: 1
+joint_2_type: 1
+joint_3_type: 1
+joint_4_type: 2
+joint_5_type: 2
+joint_6_type: 3

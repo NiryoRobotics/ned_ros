@@ -1,0 +1,2 @@
+std_msgs/Header header
+dynamixel_driver/DxlMotorHardwareStatus[] motors_hw_status

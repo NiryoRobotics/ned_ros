@@ -1,0 +1,3 @@
+read_rpi_diagnostics_frequency : 0.25
+temperature_warn_threshold: 75
+temperature_shutdown_threshold: 85

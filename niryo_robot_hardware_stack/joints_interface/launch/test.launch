@@ -1,0 +1,8 @@
+<launch>
+
+    <param name="robot_description" command="$(find xacro)/xacro $(find niryo_robot_description)/urdf/ned/niryo_ned.urdf.xacro"/>
+
+    <include file="$(find niryo_ned_moveit_config_standalone)/launch/move_group.launch" />
+    <!-- <node pkg="joints_interface" type="joints_interface_test" name="joints_interface_test" output="screen" /> -->
+
+</launch>

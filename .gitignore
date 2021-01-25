@@ -1,0 +1,17 @@
+*.pyc
+*.swp
+urdf.rviz
+node_modules/
+/CMakeLists.txt
+tmp_blockly/
+tmp_code_to_execute/
+.vscode
+*.egg-info
+*__pycache__
+.idea/*
+venv
+
+_build/
+.pytest_cache/
+
+/dev/

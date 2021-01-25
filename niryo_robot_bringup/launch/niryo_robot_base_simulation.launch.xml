@@ -1,0 +1,22 @@
+<launch>
+    <!-- Arguments -->
+    <arg name="gazebo" default="false"/>
+    <arg name="hardware_version" value="ned"/>
+    <arg name="simu_gripper" default="false"/>
+
+    <!-- PARAMS -->
+    <group ns="niryo_robot/robot_state">
+        <param name="rate_publish_state" type="double" value="20.0"/>
+    </group>
+
+    <!-- Including shared params & nodes -->
+    <include file="$(find niryo_robot_bringup)/launch/niryo_robot_base_common.launch.xml">
+        <arg name="gazebo" value="$(arg gazebo)"/>
+        <arg name="simulation_mode" value="true"/>
+        <arg name="simu_gripper" value="$(arg simu_gripper)"/>
+    </include>
+
+    <!-- Ghost node for enabling RPI simulation -->
+    <include file="$(find niryo_robot_rpi)/launch/rpi_simulation.launch"/>
+
+</launch>
