@@ -1,0 +1,43 @@
+variables:
+  ROS_DISTRO: melodic
+  ROS_LANG_DISABLE: genlisp:geneus:gennodejs
+  SKIPPED_KEYS: python-rpi.gpio python-flask
+
+stages:
+  - build_n_test
+#  - build
+#  - test_pure_python
+#  - test_ros
+
+catkin_make_n_rostest:
+  only:
+    refs:
+      - master
+      - develop
+      - tags
+      - schedules
+      - merge_requests
+
+  image: ros:${ROS_DISTRO}-ros-base-bionic
+  stage: build_n_test
+  script:
+    # updating apt cache
+    - apt-get update -y
+
+    # moving everything in src folder
+    - shopt -s extglob # Allow to use regex
+    - mkdir src # Create src folder
+    - mv !(src) src/
+
+    # Installing Python
+    - apt-get install -y python-dev python-pip
+
+    # Installing package dependencies
+    - rosdep update
+    - rosdep install --from-paths src --ignore-src --default-yes --rosdistro $ROS_DISTRO --skip-keys "$SKIPPED_KEYS"
+
+    - catkin_make
+    - source devel/setup.bash
+
+    # Tests
+    - python src/niryo_robot_unit_tests/scripts/script_test_headless.py
