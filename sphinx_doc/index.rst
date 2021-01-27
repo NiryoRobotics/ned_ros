@@ -101,6 +101,7 @@ Learn more on this :doc:`section <source/more>`
    :caption: Go Further
 
    source/tcp_server
+   source/matlab_manager
    source/more
 
 ****************************
