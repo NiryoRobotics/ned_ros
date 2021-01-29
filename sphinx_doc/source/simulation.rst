@@ -44,10 +44,8 @@ clone Ned repository in the folder **src**.
 For the future operation, be sure to stay in the **catkin_ws_niryo_ned** folder ::
 
     cd catkin_ws_niryo_ned
-    git clone <repo_link> src
+    git clone https://github.com/NiryoRobotics/ned_ros src
 
-.. todo::
-    Ajouter le lien du repo
 
 Install ROS Dependencies
 ------------------------------------
