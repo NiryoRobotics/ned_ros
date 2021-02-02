@@ -29,6 +29,7 @@ In this section, you will have access to all information about each Niryo Robot'
    ros/niryo_robot_description
    ros/niryo_robot_gazebo
    ros/niryo_robot_msgs
+   ros/niryo_robot_modbus
    ros/niryo_robot_poses_handlers
    ros/niryo_robot_programs_manager
    ros/niryo_robot_rpi

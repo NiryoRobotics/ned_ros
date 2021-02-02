@@ -14,4 +14,4 @@ You can [download Niryo Studio](https://niryo.com/download/?utm_source=github) (
 
 ## Documentation link
 
-You can find the whole generated documentation of this project at [Niryo Documentation](https://niryo.com/)
+You can find the whole generated documentation of this project at [Niryo Documentation](https://www.docs.niryo.com/dev/ros/)
