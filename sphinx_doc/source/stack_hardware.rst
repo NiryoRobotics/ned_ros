@@ -32,3 +32,4 @@ In this section, you will have access to all information about each Niryo Robot'
    stack_hardware/fake_interface
    stack_hardware/dynamixel_driver
    stack_hardware/stepper_driver
+   stack_hardware/niryo_robot_debug
