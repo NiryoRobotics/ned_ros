@@ -68,7 +68,7 @@ For each packages, we have referenced all the dependencies in their respective
 *package.xml* file, which allow to install each dependency via *rosdep* command ::
 
  rosdep update
- rosdep install --from-paths src --ignore-src --default-yes --rosdistro melodic
+ rosdep install --from-paths src --ignore-src --default-yes --rosdistro melodic --skip-keys "python-rpi.gpio"
 
 
 Method 2 : Full install
@@ -79,6 +79,7 @@ ROS packages needed are :
 * build-essential
 * catkin
 * python-catkin-pkg
+* python-pymodbus
 * python-rosdistro
 * python-rospkg
 * python-rosdep-modules
