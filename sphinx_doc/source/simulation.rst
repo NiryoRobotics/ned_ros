@@ -12,6 +12,10 @@ your computer.
 
 In this tutorial, you will learn how to setup simulation on a computer
 
+.. note::
+    You can use :niryo_studio_simulation:`Niryo Studio with the simulation<>`.
+    For that, you just have to connect Niryo Studio to "Localhost"
+
 Simulation Environment Installation
 =========================================
 
