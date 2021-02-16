@@ -97,6 +97,9 @@ html_theme = 'sphinx_rtd_theme'
 html_logo = "_static/logo.png"
 html_favicon = "_static/favicon32.ico"
 
+html_theme_options = {
+    'analytics_id': 'UA-85632199-1',  #  Provided by Google in your dashboard
+}
 
 html_context = {
     "css_files": ['_static/override.css'],
