@@ -19,9 +19,11 @@ sys.path.insert(0, os.path.abspath('../niryo_robot_python_ros_wrapper/src/'))
 
 # -- Project information -----------------------------------------------------
 
-project = u'Ned Doc'
-copyright = u'2020, Niryo'
-author = u'Niryo Software Team'
+project = 'PyNiryo User Manual'
+copyright = '''2021, Niryo All rights reserved.
+No part of this document may be reproduced or transmitted in any form or by any
+means without prior written consent of Niryo SAS'''
+author = 'Niryo'
 
 # The short X.Y version
 version = u'1.0'

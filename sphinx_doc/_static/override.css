@@ -10,7 +10,7 @@ td {
   text-align: center;
 }
 
-body {
+body, h4 {
   font-family: open-sans, helvetica, sans-serif;
 }
 /* SIDE-NAV */
@@ -74,6 +74,9 @@ p.caption span {
   border-bottom: 1px solid #203567;
   display: block;
 }
+.wy-menu > .caption > span.caption-text {
+    color: #ffffff;
+}
 .wy-menu-vertical li.current > a,
 .wy-menu-vertical li.on a {
   background: rgb(227, 227, 227);
@@ -100,6 +103,9 @@ p.caption span {
 .wy-menu-vertical a {
   font-size: 16px;
   color: rgba(255, 255, 255, 0.8);
+}
+.wy-menu-vertical {
+  padding-top:10px;
 }
 .toctree-expand {
   display: none !important;
@@ -154,7 +160,12 @@ div[role="navigation"] hr {
 .wy-nav-content {
   max-width: 100%;
   margin-right: 0;
-  background: #f8f8f8;
+  background: white;
+}
+.document span.caption-text {
+  font-family: semplicitapro, helvetica, sans-serif;
+  line-height: 1.4em;
+  color: #203567;
 }
 div.document a,
 div.document a:visited {
@@ -172,11 +183,17 @@ h1 {
   text-align: center;
   margin-top: 30px;
 }
+.rst-content h1 .headerlink {
+  display: none;
+}
 h1,
 h2,
 h3 {
   font-family: semplicitapro, helvetica, sans-serif;
   color: #203567;
+}
+h4 {
+  margin-block-end: 0.5rem;
 }
 .wy-nav-content-wrap h2 {
   border-bottom: 2px solid #203567;
@@ -193,18 +210,10 @@ div.section {
 .highlight-default {
   border-radius: 10px !important;
 }
-div.admonition.note,
-div.admonition.important,
-div.admonition.attention,
-div.admonition.hint,
-div.admonition.danger {
+div.admonition {
   border-radius: 10px;
   overflow: hidden;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-}
-div.figure a img {
-  border-radius: 20px;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 }
 div.figure p.caption span {
   color: black;
@@ -222,9 +231,10 @@ div.figure p.caption span {
   padding-top: 8px;
   box-shadow: unset;
 }
-code {
+.rst-content code {
   border-radius: 5px;
   border: none !important;
+  font-size: 1rem;
 }
 dl.class,
 dl.function {
@@ -325,7 +335,6 @@ img.logo {
 header {
   font-size: 20px;
 }
-
 #burgerbtn {
   display: block;
   font-size: 2.5rem;
@@ -394,4 +403,14 @@ header svg {
 
 #search-results h2:first-of-type {
     margin-top: 30px;
+}
+
+/* images fix */
+.rst-content img {
+  max-width:700px !important;
+}
+
+/* titles fix */
+.rst-content .toc-backref {
+  color: #203567;
 }
