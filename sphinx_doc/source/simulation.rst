@@ -133,7 +133,7 @@ you can add it to your **bashrc** file ::
 Installation is now finished !
 
 
-Simulation Utilisation
+Simulation Utilization
 =========================================
 
 .. important::
