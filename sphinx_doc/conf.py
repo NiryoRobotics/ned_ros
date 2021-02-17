@@ -19,7 +19,7 @@ sys.path.insert(0, os.path.abspath('../niryo_robot_python_ros_wrapper/src/'))
 
 # -- Project information -----------------------------------------------------
 
-project = 'PyNiryo User Manual'
+project = 'Ned ROS Documentation'
 copyright = '''2021, Niryo All rights reserved.
 No part of this document may be reproduced or transmitted in any form or by any
 means without prior written consent of Niryo SAS'''
@@ -98,7 +98,7 @@ html_logo = "_static/logo.png"
 html_favicon = "_static/favicon32.ico"
 
 html_theme_options = {
-    'analytics_id': 'UA-85632199-1',  #  Provided by Google in your dashboard
+    'analytics_id': 'UA-85632199-1',  # Provided by Google in your dashboard
 }
 
 html_context = {
@@ -117,8 +117,7 @@ html_static_path = ['_static']
 # -- Options for HTMLHelp output ---------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = 'NedDoc'
-
+htmlhelp_basename = 'Ned ROS Documentation'
 
 # -- Options for intersphinx extension ---------------------------------------
 
@@ -135,5 +134,7 @@ extlinks = {
     'sensor_msgs': ('http://docs.ros.org/' + ros_distro + '/api/sensor_msgs/html/msg/%s.html', 'sensor_msgs/'),
     'std_msgs': ('http://docs.ros.org/' + ros_distro + '/api/std_msgs/html/msg/%s.html', 'sensor_msgs/'),
     'wiki_ros': ('http://wiki.ros.org/%s', ''),
-    'niryo_studio_simulation': ('https://docs.niryo.com/product/ned/source/software/niryo_studio.html#connecting-simulation-to-niryo-studio/%s', None),
+    'niryo_studio_simulation': (
+        'https://docs.niryo.com/product/ned/source/software/niryo_studio.html#connecting-simulation-to-niryo-studio/%s',
+        None),
 }
