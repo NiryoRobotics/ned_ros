@@ -17,7 +17,7 @@
 #include "dynamixel_driver/xl430_driver.hpp"
 
 XL430Driver::XL430Driver(boost::shared_ptr<dynamixel::PortHandler> &portHandler, boost::shared_ptr<dynamixel::PacketHandler> &packetHandler)
-    : _dxlPortHandler(portHandler), _dxlPacketHandler(packetHandler)
+    : XDriver(portHandler, packetHandler)
 {
 }
 
@@ -37,271 +37,6 @@ int XL430Driver::checkModelNumber(uint8_t id)
     return ping_result;
 }
 
-int XL430Driver::ping(uint8_t id)
-{
-    uint8_t dxl_error = 0;
-
-    int result = _dxlPacketHandler->ping(_dxlPortHandler.get(), id, &dxl_error);
-
-    if (dxl_error != 0)
-    {
-        return dxl_error;
-    }
-
-    return result;
-}
-
-int XL430Driver::getModelNumber(uint8_t id, uint16_t *dxl_model_number)
-{
-    uint8_t dxl_error = 0;
-
-    int result = _dxlPacketHandler->ping(_dxlPortHandler.get(), id, dxl_model_number, &dxl_error);
-
-    if (dxl_error != 0)
-    {
-        return dxl_error;
-    }
-
-    return result;
-}
-
-int XL430Driver::scan(std::vector<uint8_t> &id_list)
-{
-    return _dxlPacketHandler->broadcastPing(_dxlPortHandler.get(), id_list);
-}
-
-int XL430Driver::reboot(uint8_t id)
-{
-    uint8_t dxl_error = 0;
-
-    int result = _dxlPacketHandler->reboot(_dxlPortHandler.get(), id, &dxl_error);
-
-    if (dxl_error != 0)
-    {
-        return dxl_error;
-    }
-
-    return result;
-}
-
-/*
- *  -----------------   SYNC WRITE   --------------------
- */
-
-int XL430Driver::syncWrite1Byte(uint8_t address, std::vector<uint8_t> &id_list, std::vector<uint32_t> &data_list)
-{
-    dynamixel::GroupSyncWrite groupSyncWrite(_dxlPortHandler.get(), _dxlPacketHandler.get(), address, DXL_LEN_ONE_BYTE);
-
-    if (id_list.size() != data_list.size())
-    {
-        return LEN_ID_DATA_NOT_SAME;
-    }
-
-    if (id_list.size() == 0)
-    {
-        return COMM_SUCCESS;
-    }
-
-    std::vector<uint8_t>::iterator it_id;
-    std::vector<uint32_t>::iterator it_data;
-
-    for (it_id = id_list.begin(), it_data = data_list.begin();
-         it_id < id_list.end() && it_data < data_list.end();
-         it_id++, it_data++)
-    {
-        uint8_t params[1] = {(uint8_t)(*it_data)};
-        if (!groupSyncWrite.addParam(*it_id, params))
-        {
-            groupSyncWrite.clearParam();
-            return GROUP_SYNC_REDONDANT_ID;
-        }
-    }
-
-    int dxl_comm_result = groupSyncWrite.txPacket();
-    groupSyncWrite.clearParam();
-    return dxl_comm_result;
-}
-
-int XL430Driver::syncWrite2Bytes(uint8_t address, std::vector<uint8_t> &id_list, std::vector<uint32_t> &data_list)
-{
-    dynamixel::GroupSyncWrite groupSyncWrite(_dxlPortHandler.get(), _dxlPacketHandler.get(), address, DXL_LEN_TWO_BYTES);
-
-    if (id_list.size() != data_list.size())
-    {
-        return LEN_ID_DATA_NOT_SAME;
-    }
-
-    if (id_list.size() == 0)
-    {
-        return COMM_SUCCESS;
-    }
-
-    std::vector<uint8_t>::iterator it_id;
-    std::vector<uint32_t>::iterator it_data;
-
-    for (it_id = id_list.begin(), it_data = data_list.begin();
-         it_id < id_list.end() && it_data < data_list.end();
-         it_id++, it_data++)
-    {
-        uint8_t params[2] = {DXL_LOBYTE((uint16_t)(*it_data)), DXL_HIBYTE((uint16_t)(*it_data))};
-        if (!groupSyncWrite.addParam(*it_id, params))
-        {
-            groupSyncWrite.clearParam();
-            return GROUP_SYNC_REDONDANT_ID;
-        }
-    }
-
-    int dxl_comm_result = groupSyncWrite.txPacket();
-    groupSyncWrite.clearParam();
-    return dxl_comm_result;
-}
-
-int XL430Driver::syncWrite4Bytes(uint8_t address, std::vector<uint8_t> &id_list, std::vector<uint32_t> &data_list)
-{
-    dynamixel::GroupSyncWrite groupSyncWrite(_dxlPortHandler.get(), _dxlPacketHandler.get(), address, DXL_LEN_FOUR_BYTES);
-
-    if (id_list.size() != data_list.size())
-    {
-        return LEN_ID_DATA_NOT_SAME;
-    }
-
-    if (id_list.size() == 0)
-    {
-        return COMM_SUCCESS;
-    }
-
-    std::vector<uint8_t>::iterator it_id;
-    std::vector<uint32_t>::iterator it_data;
-
-    for (it_id = id_list.begin(), it_data = data_list.begin();
-         it_id < id_list.end() && it_data < data_list.end();
-         it_id++, it_data++)
-    {
-        uint8_t params[4] = {DXL_LOBYTE(DXL_LOWORD(*it_data)), DXL_HIBYTE(DXL_LOWORD(*it_data)),
-                             DXL_LOBYTE(DXL_HIWORD(*it_data)), DXL_HIBYTE(DXL_HIWORD(*it_data))};
-        if (!groupSyncWrite.addParam(*it_id, params))
-        {
-            groupSyncWrite.clearParam();
-            return GROUP_SYNC_REDONDANT_ID;
-        }
-    }
-
-    int dxl_comm_result = groupSyncWrite.txPacket();
-    groupSyncWrite.clearParam();
-    return dxl_comm_result;
-}
-
-/*
- *  -----------------   READ   --------------------
- */
-
-int XL430Driver::read1Byte(uint8_t address, uint8_t id, uint32_t *data)
-{
-    uint8_t dxl_error = 0;
-    int dxl_comm_result = COMM_TX_FAIL;
-
-    uint8_t read_data;
-    dxl_comm_result = _dxlPacketHandler->read1ByteTxRx(_dxlPortHandler.get(), id, address, &read_data, &dxl_error);
-    (*data) = read_data;
-
-    if (dxl_error != 0)
-    {
-        return dxl_error;
-    }
-
-    return dxl_comm_result;
-}
-
-int XL430Driver::read2Bytes(uint8_t address, uint8_t id, uint32_t *data)
-{
-    uint8_t dxl_error = 0;
-    int dxl_comm_result = COMM_TX_FAIL;
-
-    uint16_t read_data;
-    dxl_comm_result = _dxlPacketHandler->read2ByteTxRx(_dxlPortHandler.get(), id, address, &read_data, &dxl_error);
-    (*data) = read_data;
-
-    if (dxl_error != 0)
-    {
-        return dxl_error;
-    }
-
-    return dxl_comm_result;
-}
-
-int XL430Driver::read4Bytes(uint8_t address, uint8_t id, uint32_t *data)
-{
-    uint8_t dxl_error = 0;
-    int dxl_comm_result = COMM_TX_FAIL;
-
-    uint32_t read_data;
-    dxl_comm_result = _dxlPacketHandler->read4ByteTxRx(_dxlPortHandler.get(), id, address, &read_data, &dxl_error);
-    (*data) = read_data;
-
-    if (dxl_error != 0)
-    {
-        return dxl_error;
-    }
-
-    return dxl_comm_result;
-}
-
-/*
- *  -----------------   SYNC READ   --------------------
- */
-
-int XL430Driver::syncRead(uint8_t address, uint8_t data_len, std::vector<uint8_t> &id_list, std::vector<uint32_t> &data_list)
-{
-    data_list.clear();
-
-    dynamixel::GroupSyncRead groupSyncRead(_dxlPortHandler.get(), _dxlPacketHandler.get(), address, data_len);
-    bool dxl_getdata_result = false;
-    int dxl_comm_result = COMM_TX_FAIL;
-
-    std::vector<uint8_t>::iterator it_id;
-
-    for (it_id = id_list.begin(); it_id < id_list.end(); it_id++)
-    {
-        if (!groupSyncRead.addParam(*it_id))
-        {
-            groupSyncRead.clearParam();
-            return GROUP_SYNC_REDONDANT_ID;
-        }
-    }
-
-    dxl_comm_result = groupSyncRead.txRxPacket();
-
-    if (dxl_comm_result != COMM_SUCCESS)
-    {
-        groupSyncRead.clearParam();
-        return dxl_comm_result;
-    }
-
-    for (it_id = id_list.begin(); it_id < id_list.end(); it_id++)
-    {
-        dxl_getdata_result = groupSyncRead.isAvailable(*it_id, address, data_len);
-        if (!dxl_getdata_result)
-        {
-            groupSyncRead.clearParam();
-            return GROUP_SYNC_READ_RX_FAIL;
-        }
-        if (data_len == DXL_LEN_ONE_BYTE)
-        {
-            data_list.push_back((uint8_t)groupSyncRead.getData(*it_id, address, data_len));
-        }
-        else if (data_len == DXL_LEN_TWO_BYTES)
-        {
-            data_list.push_back((uint16_t)groupSyncRead.getData(*it_id, address, data_len));
-        }
-        else if (data_len == DXL_LEN_FOUR_BYTES)
-        {
-            data_list.push_back((uint32_t)groupSyncRead.getData(*it_id, address, data_len));
-        }
-    }
-
-    groupSyncRead.clearParam();
-    return dxl_comm_result;
-}
 /*
  *  -----------------   WRITE   --------------------
  */
@@ -366,26 +101,6 @@ int XL430Driver::setReturnLevel(uint8_t id, uint32_t return_level)
 int XL430Driver::setAlarmShutdown(uint8_t id, uint32_t alarm_shutdown)
 {
     return _dxlPacketHandler->write1ByteTxOnly(_dxlPortHandler.get(), id, XL430_ADDR_ALARM_SHUTDOWN, (uint8_t)alarm_shutdown);
-}
-
-int XL430Driver::customWrite(uint8_t id, uint32_t value, uint8_t reg_address, uint8_t byte_number)
-{
-    if (byte_number == 1)
-    {
-        return _dxlPacketHandler->write1ByteTxOnly(_dxlPortHandler.get(), id, reg_address, (uint8_t)value);
-    }
-    else if (byte_number == 2)
-    {
-        return _dxlPacketHandler->write2ByteTxOnly(_dxlPortHandler.get(), id, reg_address, (uint16_t)value);
-    }
-    else if (byte_number == 4)
-    {
-        return _dxlPacketHandler->write4ByteTxOnly(_dxlPortHandler.get(), id, reg_address, value);
-    }
-    else
-    {
-        return -1;
-    }
 }
 
 /*
@@ -506,4 +221,16 @@ int XL430Driver::syncReadVoltage(std::vector<uint8_t> &id_list, std::vector<uint
 int XL430Driver::syncReadHwErrorStatus(std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list)
 {
     return syncRead(XL430_ADDR_HW_ERROR_STATUS, DXL_LEN_ONE_BYTE, id_list, hw_error_list);
+}
+
+int XL430Driver::customWrite(uint8_t id, uint32_t value, uint8_t reg_address, uint8_t byte_number)
+{
+    if (byte_number == 4)
+    {
+        return _dxlPacketHandler->write4ByteTxOnly(_dxlPortHandler.get(), id, reg_address, value);
+    }
+    else
+    {
+        return XDriver::customWrite(id, value, reg_address, byte_number);
+    }
 }

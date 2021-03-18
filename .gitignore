@@ -3,6 +3,7 @@
 urdf.rviz
 node_modules/
 /CMakeLists.txt
+CMakeLists.txt.user
 tmp_blockly/
 tmp_code_to_execute/
 .vscode

@@ -281,6 +281,8 @@ namespace NiryoRobotHardwareInterface
                 joint_name = joint_name == "" ? ("Stepper " + std::to_string(dxl_motor_state.motors_hw_status.at(i).motor_identity.motor_id)) : joint_name;
                 motor_names.push_back(joint_name);
             }
+
+            // for each motor gather info in the dedicated vectors
             for (int i = 0; i < dxl_motor_state.motors_hw_status.size(); i++)
             {
                 temperatures.push_back(dxl_motor_state.motors_hw_status.at(i).temperature);
@@ -288,25 +290,37 @@ namespace NiryoRobotHardwareInterface
                 hw_errors.push_back(dxl_motor_state.motors_hw_status.at(i).error);
                 hw_errors_msg.push_back(dxl_motor_state.motors_hw_status.at(i).error_msg);
 
-                if (dxl_motor_state.motors_hw_status.at(i).motor_identity.motor_type == (uint8_t)DynamixelDriver::DxlMotorType::MOTOR_TYPE_XL430)
+                switch(dxl_motor_state.motors_hw_status.at(i).motor_identity.motor_type)
                 {
-                    motor_types.push_back("DXL XL-430");
+                    case (uint8_t)DynamixelDriver::DxlMotorType::MOTOR_TYPE_XL320:
+                        motor_types.push_back("DXL XL-320");
+                    break;
+                        
+                    case (uint8_t)DynamixelDriver::DxlMotorType::MOTOR_TYPE_XL330:
+                        motor_types.push_back("DXL XL-330");
+                    break;
+                    
+                    case (uint8_t)DynamixelDriver::DxlMotorType::MOTOR_TYPE_XL430:
+                        motor_types.push_back("DXL XL-430");
+                    break;
+                    
+                    case (uint8_t)DynamixelDriver::DxlMotorType::MOTOR_TYPE_XC430:
+                        motor_types.push_back("DXL XC-430");
+                    break;
+                    default:
+                        motor_types.push_back("DXL UNKOWN");
+                    break;
                 }
-                else if (dxl_motor_state.motors_hw_status.at(i).motor_identity.motor_type == (uint8_t)DynamixelDriver::DxlMotorType::MOTOR_TYPE_XL320)
-                {
-                    motor_types.push_back("DXL XL-320");
-                }
-                else
-                {
-                    motor_types.push_back("DXL UNKOWN");
-                }
+                
                 std::string joint_name = "";
                 if (!_simulation_mode)
-                    joint_name = _joints_interface->jointIdToJointName(dxl_motor_state.motors_hw_status.at(i).motor_identity.motor_id, dxl_motor_state.motors_hw_status.at(i).motor_identity.motor_type);
+                    joint_name = _joints_interface->jointIdToJointName(dxl_motor_state.motors_hw_status.at(i).motor_identity.motor_id, 
+                                                                       dxl_motor_state.motors_hw_status.at(i).motor_identity.motor_type);
                 else
-                    joint_name = _fake_interface->jointIdToJointName(dxl_motor_state.motors_hw_status.at(i).motor_identity.motor_id, dxl_motor_state.motors_hw_status.at(i).motor_identity.motor_type);
+                    joint_name = _fake_interface->jointIdToJointName(dxl_motor_state.motors_hw_status.at(i).motor_identity.motor_id, 
+                                                                     dxl_motor_state.motors_hw_status.at(i).motor_identity.motor_type);
 
-                joint_name = joint_name == "" ? "Tool" : joint_name;
+                joint_name = (joint_name == "") ? "Tool" : joint_name;
                 motor_names.push_back(joint_name);
             }
 

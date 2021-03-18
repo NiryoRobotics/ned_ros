@@ -20,8 +20,11 @@
 #include <boost/shared_ptr.hpp>
 #include <vector>
 #include <string>
-#include "dynamixel_sdk/dynamixel_sdk.h"
 #include <iostream>
+
+#include "dynamixel_driver/xdriver.hpp"
+#include "dynamixel_sdk/dynamixel_sdk.h"
+
 #define DXL_LEN_ONE_BYTE 1
 #define DXL_LEN_TWO_BYTES 2
 #define DXL_LEN_FOUR_BYTES 4
@@ -73,33 +76,14 @@
 #define XL430_MIDDLE_POSITION 2047
 #define XL430_TOTAL_RANGE_POSITION 4095
 
-class XL430Driver
+class XL430Driver : public XDriver
 {
-private:
-    boost::shared_ptr<dynamixel::PortHandler>& _dxlPortHandler;
-    boost::shared_ptr<dynamixel::PacketHandler>& _dxlPacketHandler;
-
-    int syncWrite1Byte(uint8_t address, std::vector<uint8_t> &id_list, std::vector<uint32_t> &data_list);
-    int syncWrite2Bytes(uint8_t address, std::vector<uint8_t> &id_list, std::vector<uint32_t> &data_list);
-    int syncWrite4Bytes(uint8_t address, std::vector<uint8_t> &id_list, std::vector<uint32_t> &data_list);
-
-    int read1Byte(uint8_t address, uint8_t id, uint32_t *data);
-    int read2Bytes(uint8_t address, uint8_t id, uint32_t *data);
-    int read4Bytes(uint8_t address, uint8_t id, uint32_t *data);
-    int syncRead(uint8_t address, uint8_t data_len, std::vector<uint8_t> &id_list, std::vector<uint32_t> &data_list);
-
 public:
-    XL430Driver(boost::shared_ptr<dynamixel::PortHandler>& portHandler, boost::shared_ptr<dynamixel::PacketHandler>& packetHandler);
+    XL430Driver(boost::shared_ptr<dynamixel::PortHandler>& portHandler,
+                boost::shared_ptr<dynamixel::PacketHandler>& packetHandler);
 
+    // from XDriver interface
     int checkModelNumber(uint8_t id);
-
-    uint32_t rad_pos_to_xl430_pos(double position_rad);
-    double xl430_pos_to_rad_pos(int32_t position_dxl);
-
-    int scan(std::vector<uint8_t> &id_list);
-    int ping(uint8_t id);
-    int getModelNumber(uint8_t id, uint16_t *dxl_model_number);
-    int reboot(uint8_t id);
 
     // eeprom write
     int changeId(uint8_t id, uint8_t new_id);
@@ -145,7 +129,6 @@ public:
     int syncReadVoltage(std::vector<uint8_t> &id_list, std::vector<uint32_t> &voltage_list);
     int syncReadHwErrorStatus(std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list);
 
-    // custom write
     int customWrite(uint8_t id, uint32_t value, uint8_t reg_address, uint8_t byte_number);
 };
 

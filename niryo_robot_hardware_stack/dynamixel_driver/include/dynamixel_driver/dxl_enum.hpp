@@ -16,7 +16,9 @@ namespace DynamixelDriver
     enum class DxlMotorType
     {
         MOTOR_TYPE_XL430=2,
-        MOTOR_TYPE_XL320=3
+        MOTOR_TYPE_XL320=3,
+        MOTOR_TYPE_XL330=4,
+        MOTOR_TYPE_XC430=5
     };
 }
 

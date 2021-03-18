@@ -52,8 +52,11 @@ include_directories(
 )
 
 add_library(${PROJECT_NAME}
+    src/xdriver.cpp
     src/xl320_driver.cpp
+    src/xl330_driver.cpp
     src/xl430_driver.cpp
+    src/xc430_driver.cpp
     src/dxl_motor_state.cpp
     src/single_motor_cmd.cpp
     src/synchronize_motor_cmd.cpp

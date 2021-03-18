@@ -103,10 +103,13 @@ std::string FakeJointHardwareInterface::jointIdToJointName(int id, uint8_t motor
         if (it !=  _map_stepper_name.end())
             return it->second;
     }
-    else if (motor_type == (uint8_t)DynamixelDriver::DxlMotorType::MOTOR_TYPE_XL430 or motor_type ==(uint8_t)DynamixelDriver::DxlMotorType::MOTOR_TYPE_XL320)
+    else if (motor_type == (uint8_t)DynamixelDriver::DxlMotorType::MOTOR_TYPE_XL320 || 
+             motor_type == (uint8_t)DynamixelDriver::DxlMotorType::MOTOR_TYPE_XL330 ||
+             motor_type == (uint8_t)DynamixelDriver::DxlMotorType::MOTOR_TYPE_XL430 ||
+             motor_type == (uint8_t)DynamixelDriver::DxlMotorType::MOTOR_TYPE_XC430)
     {
-        std::map<uint8_t, std::string>::iterator  it= _map_dxl_name.find(id);
-        if (it !=  _map_dxl_name.end())
+        std::map<uint8_t, std::string>::iterator it = _map_dxl_name.find(id);
+        if (it != _map_dxl_name.end())
             return it->second;
     }
     return "";

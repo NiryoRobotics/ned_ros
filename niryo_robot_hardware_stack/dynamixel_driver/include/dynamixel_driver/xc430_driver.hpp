@@ -1,5 +1,5 @@
 /*
-    xl320_driver.hpp
+    xc430_driver.hpp
     Copyright (C) 2020 Niryo
     All rights reserved.
     This program is free software: you can redistribute it and/or modify
@@ -14,68 +14,68 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef XL320_DRIVER_HPP
-#define XL320_DRIVER_HPP
+#ifndef XC430_DRIVER_HPP
+#define XC430_DRIVER_HPP
 
 #include <boost/shared_ptr.hpp>
+
 #include <vector>
+#include <string>
+#include <iostream>
 
 #include "dynamixel_driver/xdriver.hpp"
 #include "dynamixel_sdk/dynamixel_sdk.h"
 
-#define XL320_PROTOCOL_VERSION 2.0
-#define XL320_MODEL_NUMBER 350
+#define XC430_PROTOCOL_VERSION 2.0
+#define XC430_MODEL_NUMBER 1060
 
-// Table here : http://support.robotis.com/en/product/actuator/dynamixel_x/xl_series/xl-320.htm
-#define XL320_ADDR_MODEL_NUMBER 0
-#define XL320_ADDR_FIRMWARE_VERSION 2
-#define XL320_ADDR_ID 3
-#define XL320_ADDR_BAUDRATE 4
-#define XL320_ADDR_RETURN_DELAY_TIME 5
-#define XL320_ADDR_CW_ANGLE_LIMIT 6
-#define XL320_ADDR_CCW_ANGLE_LIMIT 8 // EEPROM
-#define XL320_ADDR_CONTROL_MODE 11
-#define XL320_ADDR_LIMIT_TEMPERATURE 12
-#define XL320_ADDR_LOWER_LIMIT_VOLTAGE 13
-#define XL320_ADDR_UPPER_LIMIT_VOLTAGE 14
-#define XL320_ADDR_MAX_TORQUE 15
-#define XL320_ADDR_RETURN_LEVEL 17
-#define XL320_ADDR_ALARM_SHUTDOWN 18
+// Table here : http://support.robotis.com/en/product/actuator/dynamixel_x/xl_series/xc430-w250.htm
+#define XC430_ADDR_MODEL_NUMBER 0
+#define XC430_ADDR_FIRMWARE_VERSION 6
+#define XC430_ADDR_ID 7
+#define XC430_ADDR_BAUDRATE 8
+#define XC430_ADDR_RETURN_DELAY_TIME 9
+#define XC430_ADDR_DRIVE_MODE 10
+#define XC430_ADDR_OPERATING_MODE 11
+#define XC430_ADDR_HOMING_OFFSET 20 // EEPROM (not all addresses)
+#define XC430_ADDR_TEMPERATURE_LIMIT 31
+#define XC430_ADDR_MAX_VOLTAGE_LIMIT 32
+#define XC430_ADDR_MIN_VOLTAGE_LIMIT 34
+#define XC430_ADDR_MAX_POSITION_LIMIT 48
+#define XC430_ADDR_MIN_POSITION_LIMIT 52
+#define XC430_ADDR_ALARM_SHUTDOWN 63
 
-#define XL320_ADDR_TORQUE_ENABLE 24
-#define XL320_ADDR_LED 25
-#define XL320_ADDR_D_GAIN 27
-#define XL320_ADDR_I_GAIN 28
-#define XL320_ADDR_P_GAIN 29
-#define XL320_ADDR_GOAL_POSITION 30
-#define XL320_ADDR_GOAL_SPEED 32
-#define XL320_ADDR_GOAL_TORQUE 35
-#define XL320_ADDR_PRESENT_POSITION 37 // RAM
-#define XL320_ADDR_PRESENT_SPEED 39
-#define XL320_ADDR_PRESENT_LOAD 41
-#define XL320_ADDR_PRESENT_VOLTAGE 45
-#define XL320_ADDR_PRESENT_TEMPERATURE 46
-#define XL320_ADDR_REGISTERED 47
-#define XL320_ADDR_MOVING 49
-#define XL320_ADDR_HW_ERROR_STATUS 50
-#define XL320_ADDR_PUNCH 51
+#define XC430_ADDR_TORQUE_ENABLE 64
+#define XC430_ADDR_LED 65
+#define XC430_ADDR_STATUS_RETURN_LEVEL 68
+#define XC430_ADDR_HW_ERROR_STATUS 70
+#define XC430_ADDR_GOAL_PWM 100
+#define XC430_ADDR_GOAL_VELOCITY 104
+#define XC430_ADDR_GOAL_POSITION 116 // RAM (not all addresses)
+#define XC430_ADDR_MOVING 122
+#define XC430_ADDR_PRESENT_PWM 124
+#define XC430_ADDR_PRESENT_LOAD 126
+#define XC430_ADDR_PRESENT_VELOCITY 128
+#define XC430_ADDR_PRESENT_POSITION 132
+#define XC430_ADDR_PRESENT_VOLTAGE 144
+#define XC430_ADDR_PRESENT_TEMPERATURE 146
 
-// we stop at 1022 instead of 1023, to get an odd number of positions (1023)
-// --> so we can get a middle point (511)
-#define XL320_TOTAL_ANGLE 296.67
-#define XL320_MAX_POSITION 1022
-#define XL320_MIN_POSITION 0
-#define XL320_MIDDLE_POSITION 511
-#define XL320_TOTAL_RANGE_POSITION 1023
+// we stop at 4094 instead of 4095, to get an odd number of positions (4095)
+// --> so we can get a middle point (2047)
+#define XC430_TOTAL_ANGLE 360.36
+#define XC430_MAX_POSITION 4094
+#define XC430_MIN_POSITION 0
+#define XC430_MIDDLE_POSITION 2047
+#define XC430_TOTAL_RANGE_POSITION 4095
 
-// according to xl-320 datasheet : 1 speed ~ 0.111 rpm ~ 1.8944 dxl position per second
-#define XL320_STEPS_FOR_1_SPEED 1.8944 // 0.111 * 1024 / 60
-
-class XL320Driver : public XDriver
+class XC430Driver : public XDriver
 {
 public:
-    XL320Driver(boost::shared_ptr<dynamixel::PortHandler>& portHandler,
+    XC430Driver(boost::shared_ptr<dynamixel::PortHandler>& portHandler,
                 boost::shared_ptr<dynamixel::PacketHandler>& packetHandler);
+
+    uint32_t rad_pos_to_xc430_pos(double position_rad);
+    double xc430_pos_to_rad_pos(int32_t position_dxl);
 
     //from XDriver interface
     int checkModelNumber(uint8_t id);
@@ -124,6 +124,8 @@ public:
     int syncReadVoltage(std::vector<uint8_t> &id_list, std::vector<uint32_t> &voltage_list);
     int syncReadHwErrorStatus(std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list);
 
+    // custom write
+    int customWrite(uint8_t id, uint32_t value, uint8_t reg_address, uint8_t byte_number);
 };
 
 #endif
