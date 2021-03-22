@@ -20,6 +20,9 @@
 #ifndef TOOLS_INTERFACE_CORE_HPP
 #define TOOLS_INTERFACE_CORE_HPP
 
+// according to xl-320 datasheet : 1 speed ~ 0.111 rpm ~ 1.8944 dxl position per second
+#define XL320_STEPS_FOR_1_SPEED 1.8944 // 0.111 * 1024 / 60
+
 #include <boost/shared_ptr.hpp>
 
 #include <ros/ros.h>

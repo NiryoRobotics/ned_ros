@@ -111,7 +111,8 @@ bool ToolsInterfaceCore::_callbackPingAndSetDxlTool(tools_interface::PingDxlTool
     return true;
 }
 
-bool ToolsInterfaceCore::_callbackOpenGripper(tools_interface::OpenGripper::Request &req, tools_interface::OpenGripper::Response &res)
+bool ToolsInterfaceCore::_callbackOpenGripper(tools_interface::OpenGripper::Request &req,
+                                              tools_interface::OpenGripper::Response &res)
 {
     std::lock_guard<std::mutex> lck(_tool_mutex);
     if( req.id != _tool->getId() )

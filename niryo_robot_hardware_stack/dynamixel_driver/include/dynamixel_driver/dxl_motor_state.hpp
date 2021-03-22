@@ -40,11 +40,12 @@ namespace DynamixelDriver
     {
         public:
             DxlMotorState(uint8_t id, DxlMotorType type);
+
             uint8_t getId();
             void setId(uint8_t motor_id);
             DxlMotorType getType();
             void setType(DxlMotorType type);
-            
+
             // getters - state
             uint32_t getPositionState();
             void setPositionState(uint32_t pos);
@@ -73,6 +74,6 @@ namespace DynamixelDriver
             uint32_t _state_hw_error=0;
             std::string _state_hw_error_msg="";
     };
-}
+} //DynamixelDriver
 
 #endif

@@ -42,40 +42,39 @@
 namespace dynamixel
 {
 
-class WINDECLSPEC GroupBulkWrite
-{
- private:
-  PortHandler    *port_;
-  PacketHandler  *ph_;
+    class WINDECLSPEC GroupBulkWrite
+    {
+     private:
+      PortHandler    *port_;
+      PacketHandler  *ph_;
 
-  std::vector<uint8_t>            id_list_;
-  std::map<uint8_t, uint16_t>     address_list_;  // <id, start_address>
-  std::map<uint8_t, uint16_t>     length_list_;   // <id, data_length>
-  std::map<uint8_t, uint8_t *>    data_list_;     // <id, data>
+      std::vector<uint8_t>            id_list_;
+      std::map<uint8_t, uint16_t>     address_list_;  // <id, start_address>
+      std::map<uint8_t, uint16_t>     length_list_;   // <id, data_length>
+      std::map<uint8_t, uint8_t *>    data_list_;     // <id, data>
 
-  bool            is_param_changed_;
+      bool            is_param_changed_;
 
-  uint8_t        *param_;
-  uint16_t        param_length_;
+      uint8_t        *param_;
+      uint16_t        param_length_;
 
-  void    makeParam();
+      void    makeParam();
 
- public:
-  GroupBulkWrite(PortHandler *port, PacketHandler *ph);
-  ~GroupBulkWrite() { clearParam(); }
+     public:
+      GroupBulkWrite(PortHandler *port, PacketHandler *ph);
+      ~GroupBulkWrite() { clearParam(); }
 
-  PortHandler     *getPortHandler()   { return port_; }
-  PacketHandler   *getPacketHandler() { return ph_; }
+      PortHandler     *getPortHandler()   { return port_; }
+      PacketHandler   *getPacketHandler() { return ph_; }
 
-  bool    addParam    (uint8_t id, uint16_t start_address, uint16_t data_length, uint8_t *data);
-  void    removeParam (uint8_t id);
-  bool    changeParam (uint8_t id, uint16_t start_address, uint16_t data_length, uint8_t *data);
-  void    clearParam  ();
+      bool    addParam    (uint8_t id, uint16_t start_address, uint16_t data_length, uint8_t *data);
+      void    removeParam (uint8_t id);
+      bool    changeParam (uint8_t id, uint16_t start_address, uint16_t data_length, uint8_t *data);
+      void    clearParam  ();
 
-  int     txPacket();
-};
-
-}
+      int     txPacket();
+    };
+} // dynamixel
 
 
 #endif /* DYNAMIXEL_SDK_INCLUDE_DYNAMIXEL_SDK_GROUPBULKWRITE_H_ */

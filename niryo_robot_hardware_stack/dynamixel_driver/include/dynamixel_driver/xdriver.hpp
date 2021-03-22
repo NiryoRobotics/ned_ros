@@ -34,81 +34,89 @@
 
 #define PING_WRONG_MODEL_NUMBER 30
 
-class XDriver
+namespace DynamixelDriver
 {
+    /**
+     * @brief The XDriver class
+     */
+    class XDriver
+    {
 
-public:
-    XDriver(boost::shared_ptr<dynamixel::PortHandler>& portHandler,
-            boost::shared_ptr<dynamixel::PacketHandler>& packetHandler);
+    public:
+        XDriver(boost::shared_ptr<dynamixel::PortHandler>& portHandler,
+                boost::shared_ptr<dynamixel::PacketHandler>& packetHandler);
 
-    int ping(uint8_t id);
-    int getModelNumber(uint8_t id,
-                       uint16_t *dxl_model_number);
-    int scan(std::vector<uint8_t> &id_list);
-    int reboot(uint8_t id);
+        // CC add a factory here
 
-    //get model number - specific to a child
-    virtual int checkModelNumber(uint8_t id) = 0;
+        int ping(uint8_t id);
+        int getModelNumber(uint8_t id,
+                           uint16_t *dxl_model_number);
+        int scan(std::vector<uint8_t> &id_list);
+        int reboot(uint8_t id);
 
-    // eeprom write
-    virtual int changeId(uint8_t id, uint8_t new_id) = 0;
-    virtual int changeBaudRate(uint8_t id, uint32_t new_baudrate) = 0;
-    virtual int setReturnDelayTime(uint8_t id, uint32_t return_delay_time) = 0;
-    virtual int setLimitTemperature(uint8_t id, uint32_t temperature) = 0;
-    virtual int setMaxTorque(uint8_t id, uint32_t torque) = 0;
-    virtual int setReturnLevel(uint8_t id, uint32_t return_level) = 0;
-    virtual int setAlarmShutdown(uint8_t id, uint32_t alarm_shutdown) = 0;
+        //get model number - specific to a child
+        virtual int checkModelNumber(uint8_t id) = 0;
 
-    // eeprom read
-    virtual int readReturnDelayTime(uint8_t id, uint32_t *return_delay_time) = 0;
-    virtual int readLimitTemperature(uint8_t id, uint32_t *limit_temperature) = 0;
-    virtual int readMaxTorque(uint8_t id, uint32_t *max_torque) = 0;
-    virtual int readReturnLevel(uint8_t id, uint32_t *return_level) = 0;
-    virtual int readAlarmShutdown(uint8_t id, uint32_t *alarm_shutdown) = 0;
+        // eeprom write
+        virtual int changeId(uint8_t id, uint8_t new_id) = 0;
+        virtual int changeBaudRate(uint8_t id, uint32_t new_baudrate) = 0;
+        virtual int setReturnDelayTime(uint8_t id, uint32_t return_delay_time) = 0;
+        virtual int setLimitTemperature(uint8_t id, uint32_t temperature) = 0;
+        virtual int setMaxTorque(uint8_t id, uint32_t torque) = 0;
+        virtual int setReturnLevel(uint8_t id, uint32_t return_level) = 0;
+        virtual int setAlarmShutdown(uint8_t id, uint32_t alarm_shutdown) = 0;
 
-    // ram write
-    virtual int setTorqueEnable(uint8_t id, uint32_t torque_enable) = 0;
-    virtual int setLed(uint8_t id, uint32_t led_value) = 0;
-    virtual int setGoalPosition(uint8_t id, uint32_t position) = 0;
-    virtual int setGoalVelocity(uint8_t id, uint32_t velocity) = 0;
-    virtual int setGoalTorque(uint8_t id, uint32_t torque) = 0;
+        // eeprom read
+        virtual int readReturnDelayTime(uint8_t id, uint32_t *return_delay_time) = 0;
+        virtual int readLimitTemperature(uint8_t id, uint32_t *limit_temperature) = 0;
+        virtual int readMaxTorque(uint8_t id, uint32_t *max_torque) = 0;
+        virtual int readReturnLevel(uint8_t id, uint32_t *return_level) = 0;
+        virtual int readAlarmShutdown(uint8_t id, uint32_t *alarm_shutdown) = 0;
 
-    virtual int syncWriteLed(std::vector<uint8_t> &id_list, std::vector<uint32_t> &led_list) = 0;
-    virtual int syncWriteTorqueEnable(std::vector<uint8_t> &id_list, std::vector<uint32_t> &torque_enable_list) = 0;
-    virtual int syncWritePositionGoal(std::vector<uint8_t> &id_list, std::vector<uint32_t> &position_list) = 0;
-    virtual int syncWriteVelocityGoal(std::vector<uint8_t> &id_list, std::vector<uint32_t> &velocity_list) = 0;
-    virtual int syncWriteTorqueGoal(std::vector<uint8_t> &id_list, std::vector<uint32_t> &torque_list) = 0;
+        // ram write
+        virtual int setTorqueEnable(uint8_t id, uint32_t torque_enable) = 0;
+        virtual int setLed(uint8_t id, uint32_t led_value) = 0;
+        virtual int setGoalPosition(uint8_t id, uint32_t position) = 0;
+        virtual int setGoalVelocity(uint8_t id, uint32_t velocity) = 0;
+        virtual int setGoalTorque(uint8_t id, uint32_t torque) = 0;
 
-    // ram read
-    virtual int readPosition(uint8_t id, uint32_t *present_position) = 0;
-    virtual int readVelocity(uint8_t id, uint32_t *present_velocity) = 0;
-    virtual int readLoad(uint8_t id, uint32_t *present_load) = 0;
-    virtual int readTemperature(uint8_t id, uint32_t *temperature) = 0;
-    virtual int readVoltage(uint8_t id, uint32_t *voltage) = 0;
-    virtual int readHardwareStatus(uint8_t id, uint32_t *hardware_status) = 0;
+        virtual int syncWriteLed(std::vector<uint8_t> &id_list, std::vector<uint32_t> &led_list) = 0;
+        virtual int syncWriteTorqueEnable(std::vector<uint8_t> &id_list, std::vector<uint32_t> &torque_enable_list) = 0;
+        virtual int syncWritePositionGoal(std::vector<uint8_t> &id_list, std::vector<uint32_t> &position_list) = 0;
+        virtual int syncWriteVelocityGoal(std::vector<uint8_t> &id_list, std::vector<uint32_t> &velocity_list) = 0;
+        virtual int syncWriteTorqueGoal(std::vector<uint8_t> &id_list, std::vector<uint32_t> &torque_list) = 0;
 
-    virtual int syncReadPosition(std::vector<uint8_t> &id_list, std::vector<uint32_t> &position_list) = 0;
-    virtual int syncReadVelocity(std::vector<uint8_t> &id_list, std::vector<uint32_t> &velocity_list) = 0;
-    virtual int syncReadLoad(std::vector<uint8_t> &id_list, std::vector<uint32_t> &load_list) = 0;
-    virtual int syncReadTemperature(std::vector<uint8_t> &id_list, std::vector<uint32_t> &temperature_list) = 0;
-    virtual int syncReadVoltage(std::vector<uint8_t> &id_list, std::vector<uint32_t> &voltage_list) = 0;
-    virtual int syncReadHwErrorStatus(std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list) = 0;
+        // ram read
+        virtual int readPosition(uint8_t id, uint32_t *present_position) = 0;
+        virtual int readVelocity(uint8_t id, uint32_t *present_velocity) = 0;
+        virtual int readLoad(uint8_t id, uint32_t *present_load) = 0;
+        virtual int readTemperature(uint8_t id, uint32_t *temperature) = 0;
+        virtual int readVoltage(uint8_t id, uint32_t *voltage) = 0;
+        virtual int readHardwareStatus(uint8_t id, uint32_t *hardware_status) = 0;
 
-    // custom write
-    virtual int customWrite(uint8_t id, uint32_t value, uint8_t reg_address, uint8_t byte_number);
+        virtual int syncReadPosition(std::vector<uint8_t> &id_list, std::vector<uint32_t> &position_list) = 0;
+        virtual int syncReadVelocity(std::vector<uint8_t> &id_list, std::vector<uint32_t> &velocity_list) = 0;
+        virtual int syncReadLoad(std::vector<uint8_t> &id_list, std::vector<uint32_t> &load_list) = 0;
+        virtual int syncReadTemperature(std::vector<uint8_t> &id_list, std::vector<uint32_t> &temperature_list) = 0;
+        virtual int syncReadVoltage(std::vector<uint8_t> &id_list, std::vector<uint32_t> &voltage_list) = 0;
+        virtual int syncReadHwErrorStatus(std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list) = 0;
 
-protected:
-    boost::shared_ptr<dynamixel::PortHandler>& _dxlPortHandler;
-    boost::shared_ptr<dynamixel::PacketHandler>& _dxlPacketHandler;
+        // custom write
+        virtual int customWrite(uint8_t id, uint32_t value, uint8_t reg_address, uint8_t byte_number);
 
-    virtual int syncWrite1Byte(uint8_t address, std::vector<uint8_t> &id_list, std::vector<uint32_t> &data_list);
-    virtual int syncWrite2Bytes(uint8_t address, std::vector<uint8_t> &id_list, std::vector<uint32_t> &data_list);
-    virtual int syncWrite4Bytes(uint8_t address, std::vector<uint8_t> &id_list, std::vector<uint32_t> &data_list);
+    protected:
+        boost::shared_ptr<dynamixel::PortHandler>& _dxlPortHandler;
+        boost::shared_ptr<dynamixel::PacketHandler>& _dxlPacketHandler;
 
-    virtual int read1Byte(uint8_t address, uint8_t id, uint32_t *data);
-    virtual int read2Bytes(uint8_t address, uint8_t id, uint32_t *data);
-    virtual int read4Bytes(uint8_t address, uint8_t id, uint32_t *data);
-    virtual int syncRead(uint8_t address, uint8_t data_len, std::vector<uint8_t> &id_list, std::vector<uint32_t> &data_list);
-};
+        virtual int syncWrite1Byte(uint8_t address, std::vector<uint8_t> &id_list, std::vector<uint32_t> &data_list);
+        virtual int syncWrite2Bytes(uint8_t address, std::vector<uint8_t> &id_list, std::vector<uint32_t> &data_list);
+        virtual int syncWrite4Bytes(uint8_t address, std::vector<uint8_t> &id_list, std::vector<uint32_t> &data_list);
+
+        virtual int read1Byte(uint8_t address, uint8_t id, uint32_t *data);
+        virtual int read2Bytes(uint8_t address, uint8_t id, uint32_t *data);
+        virtual int read4Bytes(uint8_t address, uint8_t id, uint32_t *data);
+        virtual int syncRead(uint8_t address, uint8_t data_len, std::vector<uint8_t> &id_list, std::vector<uint32_t> &data_list);
+    };
+} //DynamixelDriver
 
 #endif

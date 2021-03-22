@@ -32,7 +32,6 @@ namespace DynamixelDriver
     void DynamixelDriverCore::initParameters()
     {
 
-
         _nh.getParam("/niryo_robot_hardware_interface/dynamixel_driver/dxl_hardware_control_loop_frequency", _control_loop_frequency);
         _nh.getParam("/niryo_robot_hardware_interface/dynamixel_driver/dxl_hardware_write_frequency", _write_frequency);
         _nh.getParam("/niryo_robot_hardware_interface/dynamixel_driver/dxl_hardware_read_data_frequency", _read_data_frequency);
@@ -492,7 +491,7 @@ namespace DynamixelDriver
     int DynamixelDriverCore::update_leds(void)
     {
         std::lock_guard<std::mutex> lck(_control_loop_mutex);
-        int result = _dynamixel->setLeds(_dynamixel->getledstate());
+        int result = _dynamixel->setLeds(_dynamixel->getLedState());
         return result;
     }
 } // namespace DynamixelDriver

@@ -42,44 +42,43 @@
 namespace dynamixel
 {
 
-class WINDECLSPEC GroupSyncRead
-{
- private:
-  PortHandler    *port_;
-  PacketHandler  *ph_;
+    class WINDECLSPEC GroupSyncRead
+    {
+     private:
+      PortHandler    *port_;
+      PacketHandler  *ph_;
 
-  std::vector<uint8_t>            id_list_;
-  std::map<uint8_t, uint8_t* >    data_list_; // <id, data>
+      std::vector<uint8_t>            id_list_;
+      std::map<uint8_t, uint8_t* >    data_list_; // <id, data>
 
-  bool            last_result_;
-  bool            is_param_changed_;
+      bool            last_result_;
+      bool            is_param_changed_;
 
-  uint8_t        *param_;
-  uint16_t        start_address_;
-  uint16_t        data_length_;
+      uint8_t        *param_;
+      uint16_t        start_address_;
+      uint16_t        data_length_;
 
-  void    makeParam();
+      void    makeParam();
 
- public:
-  GroupSyncRead(PortHandler *port, PacketHandler *ph, uint16_t start_address, uint16_t data_length);
-  ~GroupSyncRead() { clearParam(); }
+     public:
+      GroupSyncRead(PortHandler *port, PacketHandler *ph, uint16_t start_address, uint16_t data_length);
+      ~GroupSyncRead() { clearParam(); }
 
-  PortHandler     *getPortHandler()   { return port_; }
-  PacketHandler   *getPacketHandler() { return ph_; }
+      PortHandler     *getPortHandler()   { return port_; }
+      PacketHandler   *getPacketHandler() { return ph_; }
 
-  bool    addParam    (uint8_t id);
-  void    removeParam (uint8_t id);
-  void    clearParam  ();
+      bool    addParam    (uint8_t id);
+      void    removeParam (uint8_t id);
+      void    clearParam  ();
 
-  int     txPacket();
-  int     rxPacket();
-  int     txRxPacket();
+      int     txPacket();
+      int     rxPacket();
+      int     txRxPacket();
 
-  bool        isAvailable (uint8_t id, uint16_t address, uint16_t data_length);
-  uint32_t    getData     (uint8_t id, uint16_t address, uint16_t data_length);
-};
-
-}
+      bool        isAvailable (uint8_t id, uint16_t address, uint16_t data_length);
+      uint32_t    getData     (uint8_t id, uint16_t address, uint16_t data_length);
+    };
+} // dynamixel
 
 
 #endif /* DYNAMIXEL_SDK_INCLUDE_DYNAMIXEL_SDK_GROUPSYNCREAD_H_ */

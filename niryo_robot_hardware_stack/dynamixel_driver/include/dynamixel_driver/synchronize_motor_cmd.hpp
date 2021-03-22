@@ -48,6 +48,6 @@ namespace DynamixelDriver
             std::vector<uint8_t> _motor_id_list;
             std::vector<uint32_t> _param_list;
     };
-}
+} //DynamixelDriver
 
 #endif

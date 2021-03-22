@@ -55,6 +55,8 @@ private:
     boost::shared_ptr<DynamixelDriver::DynamixelDriverCore> &_dynamixel;
 
     int _xl430_middle_position, _xl320_middle_position;
+    int _xc430_middle_position, _xl330_middle_position;
+
     double _home_position_1, _home_position_2, _home_position_3;
     double _gear_ratio_1, _gear_ratio_2, _gear_ratio_3;
     double _direction_1, _direction_2, _direction_3;

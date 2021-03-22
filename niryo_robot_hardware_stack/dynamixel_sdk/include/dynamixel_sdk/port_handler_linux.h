@@ -48,53 +48,53 @@
 namespace dynamixel
 {
 
-class PortHandlerLinux : public PortHandler
-{
- private:
-  int     socket_fd_;
-  int     baudrate_;
-  char    port_name_[30];
+    class PortHandlerLinux : public PortHandler
+    {
+     private:
+      int     socket_fd_;
+      int     baudrate_;
+      char    port_name_[30];
 
-  double  packet_start_time_;
-  double  packet_timeout_;
-  double  tx_time_per_byte;
+      double  packet_start_time_;
+      double  packet_timeout_;
+      double  tx_time_per_byte;
 
-  bool    setupPort(const int cflag_baud);
-  bool    setCustomBaudrate(int speed);
-  int     getCFlagBaud(const int baudrate);
+      bool    setupPort(const int cflag_baud);
+      bool    setCustomBaudrate(int speed);
+      int     getCFlagBaud(const int baudrate);
 
-  double  getCurrentTime();
-  double  getTimeSinceStart();
+      double  getCurrentTime();
+      double  getTimeSinceStart();
 
- public:
-  PortHandlerLinux(const char *port_name);
-  virtual ~PortHandlerLinux() { closePort(); }
+     public:
+      PortHandlerLinux(const char *port_name);
+      virtual ~PortHandlerLinux() { closePort(); }
 
-  bool    setupGpio();
-  void    gpioHigh();
-  void    gpioLow();
+      bool    setupGpio();
+      void    gpioHigh();
+      void    gpioLow();
 
-  bool    openPort();
-  void    closePort();
-  void    clearPort();
+      bool    openPort();
+      void    closePort();
+      void    clearPort();
 
-  void    setPortName(const char *port_name);
-  char   *getPortName();
+      void    setPortName(const char *port_name);
+      char   *getPortName();
 
-  bool    setBaudRate(const int baudrate);
-  int     getBaudRate();
+      bool    setBaudRate(const int baudrate);
+      int     getBaudRate();
 
-  int     getBytesAvailable();
+      int     getBytesAvailable();
 
-  int     readPort(uint8_t *packet, int length);
-  int     writePort(uint8_t *packet, int length);
+      int     readPort(uint8_t *packet, int length);
+      int     writePort(uint8_t *packet, int length);
 
-  void    setPacketTimeout(uint16_t packet_length);
-  void    setPacketTimeout(double msec);
-  bool    isPacketTimeout();
-};
+      void    setPacketTimeout(uint16_t packet_length);
+      void    setPacketTimeout(double msec);
+      bool    isPacketTimeout();
+    };
 
-}
+} //dynamixel
 
 
 #endif /* DYNAMIXEL_SDK_INCLUDE_DYNAMIXEL_SDK_LINUX_PORTHANDLERLINUX_H_ */

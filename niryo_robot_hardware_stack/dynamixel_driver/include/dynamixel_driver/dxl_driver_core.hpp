@@ -50,7 +50,6 @@ namespace DynamixelDriver
         DynamixelDriverCore();
 
         void init();
-
         void initParameters();
 
         void startControlLoop();
@@ -117,5 +116,5 @@ namespace DynamixelDriver
         bool callbackActivateLeds(niryo_robot_msgs::SetInt::Request &req, niryo_robot_msgs::SetInt::Response &res);
         bool callbackSendCustomDxlValue(dynamixel_driver::SendCustomDxlValue::Request &req, dynamixel_driver::SendCustomDxlValue::Response &res);
     };
-}
+} //DynamixelDriver
 #endif

@@ -52,8 +52,12 @@ CalibrationInterface::CalibrationInterface(std::vector<JointState> &joint_list,
     ROS_DEBUG("Calibration Interface - Direction : (1 : %lf, 2 : %lf, 3 : %lf)", _direction_1, _direction_2, _direction_3);
 
     _nh.getParam("/niryo_robot_hardware_interface/dynamixels/xl430_middle_position", _xl430_middle_position);
+    _nh.getParam("/niryo_robot_hardware_interface/dynamixels/xc430_middle_position", _xc430_middle_position);
     _nh.getParam("/niryo_robot_hardware_interface/dynamixels/xl320_middle_position", _xl320_middle_position);
-    ROS_DEBUG("Calibration Interface - xl430 middle position %d, xl320 middle position %d)", _xl430_middle_position, _xl320_middle_position);
+    _nh.getParam("/niryo_robot_hardware_interface/dynamixels/xl330_middle_position", _xl330_middle_position);
+
+    ROS_DEBUG("Calibration Interface - (xl430 middle position %d, xc430 middle position %d, xl320 middle position %d, xl330 middle position %d)",
+                                    _xl430_middle_position, _xc430_middle_position, _xl320_middle_position, _xl330_middle_position);
 
     _motor_calibration_list.clear();
     _calibration_in_progress = false;
@@ -231,6 +235,7 @@ void CalibrationInterface::_auto_calibration()
     _dynamixel->setDxlCommands(dynamixel_cmd);
     sld.sleep();
 
+    // CC to be generalized
     dxl_param = {
         rad_pos_to_xl430_pos(-_offset_position_dxl_1),
         rad_pos_to_xl430_pos(-_offset_position_dxl_2),

@@ -50,6 +50,6 @@ namespace DynamixelDriver
             uint32_t _param;
 
     };
-}
+} //DynamixelDriver
 
 #endif
