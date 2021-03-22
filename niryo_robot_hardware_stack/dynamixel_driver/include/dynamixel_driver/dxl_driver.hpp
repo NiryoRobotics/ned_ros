@@ -34,13 +34,8 @@
 #include "niryo_robot_msgs/MotorHeader.h"
 #include "niryo_robot_msgs/SetInt.h"
 #include "niryo_robot_msgs/CommandStatus.h"
-
-//drivers
-#include "dynamixel_driver/xl320_driver.hpp"
 #include "dynamixel_driver/xl330_driver.hpp"
-#include "dynamixel_driver/xl430_driver.hpp"
 #include "dynamixel_driver/xc430_driver.hpp"
-
 #include "dynamixel_driver/dxl_motor_state.hpp"
 #include "dynamixel_driver/synchronize_motor_cmd.hpp"
 #include "dynamixel_driver/single_motor_cmd.hpp"
@@ -63,7 +58,7 @@
 namespace DynamixelDriver
 {
     struct DxlCustomCommand {
-    
+
         DxlCustomCommand(DxlMotorType m, uint8_t i, uint32_t v, uint32_t r, uint32_t b)
             : motor_type(m), id(i), value(v), reg_address(r), byte_number(b) {}
 
@@ -107,30 +102,20 @@ namespace DynamixelDriver
             void fillErrorStatus(void);
             void interpreteErrorState(void);
 
-            //(CC) specific to the different motors. To be generalized
-            void readAndFillStateXL320(
-                int (XL320Driver::*readFunction)(std::vector<uint8_t> &, std::vector<uint32_t> &),
-                void (DxlMotorState::*setFunction)(uint32_t));
-
             void readAndFillStateXL330(
                 int (XL330Driver::*readFunction)(std::vector<uint8_t> &, std::vector<uint32_t> &),
-                void (DxlMotorState::*setFunction)(uint32_t));
-
-            void readAndFillStateXL430(
-                int (XL430Driver::*readFunction)(std::vector<uint8_t> &, std::vector<uint32_t> &),
                 void (DxlMotorState::*setFunction)(uint32_t));
 
             void readAndFillStateXC430(
                 int (XC430Driver::*readFunction)(std::vector<uint8_t> &, std::vector<uint32_t> &),
                 void (DxlMotorState::*setFunction)(uint32_t));
 
-
             void FillMotorsState(void (DxlMotorState::*setFunction)(uint32_t), uint32_t (DxlMotorState::*getFunction)());
 
             int setTorqueEnable(DxlMotorState& targeted_dxl, uint32_t torque_enable);
             int setGoalPosition(DxlMotorState& targeted_dxl, uint32_t position);
             int setGoalTorque(DxlMotorState& targeted_dxl, uint32_t torque);
-            
+
             int setGoalVelocity(DxlMotorState& targeted_dxl, uint32_t velocity);
             void syncWriteTorqueEnable(std::vector<uint8_t>& motor_list, std::vector<uint32_t>& torque_enable);
             void syncWriteEffortCommand(std::vector<uint8_t>& motor_list, std::vector<uint32_t>& param_list);
@@ -161,24 +146,15 @@ namespace DynamixelDriver
         private:
             ros::NodeHandle _nh;
 
-            //(CC) to be put in a vector ?
-            uint8_t _xl320_arm_id;
-            uint8_t _xl330_arm_id;
-
-            std::vector<uint8_t> _xl430_arm_id_list;
             std::vector<uint8_t> _xc430_arm_id_list;
-
+            uint8_t _xl330_arm_id;
             std::vector<int> _motor_id_list;
             std::vector<std::string> _motor_type_list;
             std::vector<int> _removed_motor_id_list;
 
             std::vector<DxlMotorState> _motor_list;
-            
-            std::vector<DxlMotorState> _xl320_motor_list;
-            std::vector<DxlMotorState> _xl330_motor_list;
-
-            std::vector<DxlMotorState> _xl430_motor_list;
             std::vector<DxlMotorState> _xc430_motor_list;
+            std::vector<DxlMotorState> _xl330_motor_list;
 
             std::string _device_name;
             int _uart_baudrate;
@@ -188,27 +164,18 @@ namespace DynamixelDriver
 
             std::vector<uint8_t> _all_motor_connected;
 
-            std::vector<uint8_t> _xl320_id_list;
             std::vector<uint8_t> _xl330_id_list;
-            
-            std::vector<uint8_t> _xl430_id_list;
             std::vector<uint8_t> _xc430_id_list;
 
-            boost::shared_ptr<XL320Driver> _xl320;
             boost::shared_ptr<XL330Driver> _xl330;
-            
-            boost::shared_ptr<XL430Driver> _xl430;
-            boost::shared_ptr<XC430Driver> _xc330;
+            boost::shared_ptr<XC430Driver> _xc430;
 
             // for hardware control
 
             bool _is_dxl_connection_ok;
             std::string _debug_error_message;
 
-            int _xl320_hw_fail_counter_read;
             int _xl330_hw_fail_counter_read;
-            
-            int _xl430_hw_fail_counter_read;
             int _xc430_hw_fail_counter_read;
 
             int _led_state;

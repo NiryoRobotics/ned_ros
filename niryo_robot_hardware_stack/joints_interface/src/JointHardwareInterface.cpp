@@ -115,14 +115,14 @@ JointHardwareInterface::JointHardwareInterface(
     }
     for (int i = 3; i < 5; i++)
     {
-        joints_vect.push_back(JointState(_joints_name[i], (uint8_t)DynamixelDriver::DxlMotorType::MOTOR_TYPE_XL430, _joints_id[i]));
+        joints_vect.push_back(JointState(_joints_name[i], (uint8_t)DynamixelDriver::DxlMotorType::MOTOR_TYPE_XC430, _joints_id[i]));
         _list_dxl_id.push_back(_joints_id[i]);
         _map_dxl_name[_joints_id[i]] = _joints_name[i];
         _joint_list.push_back(joints_vect[i]);
     }
     for (int i = 5; i < 6; i++)
     {
-        joints_vect.push_back(JointState(_joints_name[i], (uint8_t)DynamixelDriver::DxlMotorType::MOTOR_TYPE_XL320, _joints_id[i]));
+        joints_vect.push_back(JointState(_joints_name[i], (uint8_t)DynamixelDriver::DxlMotorType::MOTOR_TYPE_XL330, _joints_id[i]));
         _list_dxl_id.push_back(_joints_id[i]);
         _map_dxl_name[_joints_id[i]] = _joints_name[i];
         _joint_list.push_back(joints_vect[i]);
@@ -244,9 +244,9 @@ void JointHardwareInterface::read()
     _pos[2] = steps_to_rad_pos(stepper_motor_state.at(2), _gear_ratio_3, _direction_3);
 
     // Quick fix
-    double dxl1_pose = _offset_position_dxl_1 + xl430_pos_to_rad_pos(dxl_motor_state.at(0).getPositionState());
-    double dxl2_pose = _offset_position_dxl_2 + xl430_pos_to_rad_pos(XL430_MIDDLE_POSITION * 2 - dxl_motor_state.at(1).getPositionState());
-    double dxl3_pose = _offset_position_dxl_3 + xl320_pos_to_rad_pos(dxl_motor_state.at(2).getPositionState());
+    double dxl1_pose = _offset_position_dxl_1 + xc430_pos_to_rad_pos(dxl_motor_state.at(0).getPositionState());
+    double dxl2_pose = _offset_position_dxl_2 + xc430_pos_to_rad_pos(XC430_MIDDLE_POSITION * 2 - dxl_motor_state.at(1).getPositionState());
+    double dxl3_pose = _offset_position_dxl_3 + xl330_pos_to_rad_pos(dxl_motor_state.at(2).getPositionState());
     _pos[3] = abs(dxl1_pose) < 2 * M_PI ? dxl1_pose : _pos[3];
     _pos[4] = abs(dxl2_pose) < 2 * M_PI ? dxl2_pose : _pos[4];
     _pos[5] = abs(dxl3_pose) < 2 * M_PI ? dxl3_pose : _pos[5];
@@ -264,9 +264,9 @@ void JointHardwareInterface::write()
         rad_pos_to_steps(_cmd[2], _gear_ratio_3, _direction_3)};
 
     std::vector<uint32_t> dxl_cmds{
-        rad_pos_to_xl430_pos(_cmd[3] - _offset_position_dxl_1),
-        (XL430_MIDDLE_POSITION * 2 - rad_pos_to_xl430_pos(_cmd[4] - _offset_position_dxl_2)),
-        rad_pos_to_xl320_pos(_cmd[5] - _offset_position_dxl_3)};
+        rad_pos_to_xc430_pos(_cmd[3] - _offset_position_dxl_1),
+        (XC430_MIDDLE_POSITION * 2 - rad_pos_to_xc430_pos(_cmd[4] - _offset_position_dxl_2)),
+        rad_pos_to_xl330_pos(_cmd[5] - _offset_position_dxl_3)};
 
     _stepper->setTrajectoryControllerCommands(stepper_cmds);
     _dynamixel->setTrajectoryControllerCommands(dxl_cmds);
@@ -395,7 +395,7 @@ std::string JointHardwareInterface::jointIdToJointName(int id, uint8_t motor_typ
         if (it !=  _map_stepper_name.end())
             return it->second;
     }
-    else if (motor_type == (uint8_t)DynamixelDriver::DxlMotorType::MOTOR_TYPE_XL430 or motor_type ==(uint8_t)DynamixelDriver::DxlMotorType::MOTOR_TYPE_XL320)
+    else if (motor_type == (uint8_t)DynamixelDriver::DxlMotorType::MOTOR_TYPE_XC430 or motor_type ==(uint8_t)DynamixelDriver::DxlMotorType::MOTOR_TYPE_XL330)
     {
         std::map<uint8_t, std::string>::iterator  it= _map_dxl_name.find(id);
         if (it !=  _map_dxl_name.end())

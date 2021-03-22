@@ -4,6 +4,8 @@ dynamixels:
     dxl_3_offset_position: 0
 
     xl430_middle_position: 2047
+    xc430_middle_position: 2047
+    xl330_middle_position: 2047
     xl320_middle_position: 511
 
     dxl_1_P_gain: 1000

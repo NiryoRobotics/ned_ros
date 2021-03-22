@@ -29,7 +29,7 @@
 #define XC430_PROTOCOL_VERSION 2.0
 #define XC430_MODEL_NUMBER 1060
 
-// Table here : http://support.robotis.com/en/product/actuator/dynamixel_x/xl_series/xc430-w250.htm
+// Table here : https://emanual.robotis.com/docs/en/dxl/x/xc430-w240/
 #define XC430_ADDR_MODEL_NUMBER 0
 #define XC430_ADDR_FIRMWARE_VERSION 6
 #define XC430_ADDR_ID 7

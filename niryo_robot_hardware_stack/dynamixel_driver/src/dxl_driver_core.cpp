@@ -491,7 +491,7 @@ namespace DynamixelDriver
     int DynamixelDriverCore::update_leds(void)
     {
         std::lock_guard<std::mutex> lck(_control_loop_mutex);
-        int result = _dynamixel->setLeds(_dynamixel->getLedState());
+        int result = _dynamixel->setLeds(_dynamixel->getledstate());
         return result;
     }
 } // namespace DynamixelDriver

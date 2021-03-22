@@ -24,19 +24,7 @@ namespace DynamixelDriver
         UNKNOWN_TYPE=100
     };
 
-    DxlMotorType DxlMotorTypeFromString(std::string type) const {
-        if("xl430" == type)
-            return DxlMotorType::MOTOR_TYPE_XL430;
-        else if("xc430" == type)
-            return DxlMotorType::MOTOR_TYPE_XC430;
-        else if("xl320" == type)
-            return DxlMotorType::MOTOR_TYPE_XL320;
-        else if("xl330" == type)
-            return DxlMotorType::MOTOR_TYPE_XL330;
-
-        return DxlMotorType::UNKNOWN_TYPE;
-    }
-} // DynammixelDriver
+} // DynamixelDriver
 
 #endif
 

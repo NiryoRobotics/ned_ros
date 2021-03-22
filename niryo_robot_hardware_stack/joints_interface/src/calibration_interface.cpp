@@ -237,9 +237,9 @@ void CalibrationInterface::_auto_calibration()
 
     // CC to be generalized
     dxl_param = {
-        rad_pos_to_xl430_pos(-_offset_position_dxl_1),
-        rad_pos_to_xl430_pos(-_offset_position_dxl_2),
-        rad_pos_to_xl320_pos(-_offset_position_dxl_3)};
+        rad_pos_to_xc430_pos(-_offset_position_dxl_1),
+        rad_pos_to_xc430_pos(-_offset_position_dxl_2),
+        rad_pos_to_xl330_pos(-_offset_position_dxl_3)};
     _dynamixel->setTrajectoryControllerCommands(dxl_param);
     sld.sleep();
 
