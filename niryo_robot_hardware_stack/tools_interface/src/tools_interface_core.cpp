@@ -5,7 +5,7 @@ ToolsInterfaceCore::ToolsInterfaceCore(boost::shared_ptr<DynamixelDriver::Dynami
 {
     initParams();
     initServices();
-    _tool.reset(new ToolState(0, "No tool", DynamixelDriver::DxlMotorType::MOTOR_TYPE_XL320));
+    _tool.reset(new ToolState(0, "No tool", DynamixelDriver::DxlMotorType::MOTOR_TYPE_XL330));
     _check_tool_connection_thread.reset(new std::thread(boost::bind(&ToolsInterfaceCore::_checkToolConnection, this)));
 
     pubToolId(0);
@@ -76,7 +76,7 @@ bool ToolsInterfaceCore::_callbackPingAndSetDxlTool(tools_interface::PingDxlTool
     }
     if(tool_found)
     {
-        _tool.reset(new ToolState(tool_id, "auto", DynamixelDriver::DxlMotorType::MOTOR_TYPE_XL320));
+        _tool.reset(new ToolState(tool_id, "auto", DynamixelDriver::DxlMotorType::MOTOR_TYPE_XL330));
 
         // Try 3 times
         int tries = 0;
@@ -100,7 +100,7 @@ bool ToolsInterfaceCore::_callbackPingAndSetDxlTool(tools_interface::PingDxlTool
     }
     else
     {
-        _tool.reset(new ToolState(0, "No tool", DynamixelDriver::DxlMotorType::MOTOR_TYPE_XL320));
+        _tool.reset(new ToolState(0, "No tool", DynamixelDriver::DxlMotorType::MOTOR_TYPE_XL330));
         pubToolId(0);
 
         ros::Duration(0.05).sleep();
@@ -138,7 +138,7 @@ bool ToolsInterfaceCore::_callbackOpenGripper(tools_interface::OpenGripper::Requ
     _dynamixel->setEndEffectorCommands(list_cmd);
     list_cmd.clear();
 
-    double dxl_speed = (double)req.open_speed * (double)XL320_STEPS_FOR_1_SPEED; // position . sec-1
+    double dxl_speed = (double)req.open_speed * (double)XL330_STEPS_FOR_1_SPEED; // position . sec-1
     double dxl_steps_to_do = abs((double)req.open_position - (double)_dynamixel->getEndEffectorState(_tool->getId(), _tool->getType())); // position
     double seconds_to_wait =  dxl_steps_to_do /  dxl_speed; // sec    
     ros::Duration(seconds_to_wait + 0.25).sleep();
@@ -185,7 +185,7 @@ bool ToolsInterfaceCore::_callbackCloseGripper(tools_interface::CloseGripper::Re
     list_cmd.clear();
 
     // calculate close duration
-    double dxl_speed = (double)req.close_speed *(double) XL320_STEPS_FOR_1_SPEED; // position . sec-1
+    double dxl_speed = (double)req.close_speed *(double) XL330_STEPS_FOR_1_SPEED; // position . sec-1
     double dxl_steps_to_do = abs((double)req.close_position - (double)_dynamixel->getEndEffectorState(_tool->getId(), _tool->getType())); // position
     double seconds_to_wait =  dxl_steps_to_do /  dxl_speed; // sec 
     ros::Duration(seconds_to_wait + 0.25).sleep();
@@ -233,7 +233,7 @@ bool ToolsInterfaceCore::_callbackPullAirVacuumPump(tools_interface::PullAirVacu
     list_cmd.clear();
 
     // calculate pull air duration
-    double dxl_speed = (double)pull_air_velocity * (double)XL320_STEPS_FOR_1_SPEED; // position . sec-1
+    double dxl_speed = (double)pull_air_velocity * (double)XL330_STEPS_FOR_1_SPEED; // position . sec-1
     double dxl_steps_to_do = abs((double)req.pull_air_position - (double)_dynamixel->getEndEffectorState(_tool->getId(), _tool->getType())); // position
     double seconds_to_wait = dxl_steps_to_do / dxl_speed; // sec
 
@@ -282,7 +282,7 @@ bool ToolsInterfaceCore:: _callbackPushAirVacuumPump(tools_interface::PushAirVac
     list_cmd.clear();
 
     // calculate push air duration
-    double dxl_speed = (double)push_air_velocity * (double)XL320_STEPS_FOR_1_SPEED; // position . sec-1
+    double dxl_speed = (double)push_air_velocity * (double)XL330_STEPS_FOR_1_SPEED; // position . sec-1
     double dxl_steps_to_do = abs((double)req.push_air_position - (double)_dynamixel->getEndEffectorState(_tool->getId(), _tool->getType())); // position
     double seconds_to_wait =  dxl_steps_to_do /  dxl_speed; // sec
     
@@ -315,7 +315,7 @@ void ToolsInterfaceCore::_checkToolConnection()
                 {
                     ROS_INFO("Tools Interface - Unset Current Tools");
                     _dynamixel->unsetEndEffector(_tool->getId(), _tool->getType());
-                    _tool.reset(new ToolState(0, "No tool", DynamixelDriver::DxlMotorType::MOTOR_TYPE_XL320));
+                    _tool.reset(new ToolState(0, "No tool", DynamixelDriver::DxlMotorType::MOTOR_TYPE_XL330));
                     msg.data = 0;
                     _current_tools_id_publisher.publish(msg);
                 }

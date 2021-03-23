@@ -46,8 +46,6 @@ namespace DynamixelDriver
         XDriver(boost::shared_ptr<dynamixel::PortHandler>& portHandler,
                 boost::shared_ptr<dynamixel::PacketHandler>& packetHandler);
 
-        // CC add a factory here
-
         int ping(uint8_t id);
         int getModelNumber(uint8_t id,
                            uint16_t *dxl_model_number);

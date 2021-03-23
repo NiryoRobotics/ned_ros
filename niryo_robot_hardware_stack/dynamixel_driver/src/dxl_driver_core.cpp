@@ -178,40 +178,40 @@ namespace DynamixelDriver
             ROS_INFO("Dynamixel Driver Core - Debug - Start Dynamixel Motor Report");
             ros::Duration(1.0).sleep();
             ROS_INFO("Dynamixel Driver Core - Debug - Motor 4 report start :");
-            if (motorScanReport(2, DxlMotorType::MOTOR_TYPE_XL430) != niryo_robot_msgs::CommandStatus::SUCCESS)
+            if (motorScanReport(2, DxlMotorType::MOTOR_TYPE_XC430) != niryo_robot_msgs::CommandStatus::SUCCESS)
                 response = niryo_robot_msgs::CommandStatus::FAILURE;
             if (!_debug_flag)
                 return niryo_robot_msgs::CommandStatus::ABORTED;
-            if (motorCmdReport(2, DxlMotorType::MOTOR_TYPE_XL430) != niryo_robot_msgs::CommandStatus::SUCCESS)
+            if (motorCmdReport(2, DxlMotorType::MOTOR_TYPE_XC430) != niryo_robot_msgs::CommandStatus::SUCCESS)
                 response = niryo_robot_msgs::CommandStatus::FAILURE;
             if (!_debug_flag)
                 return niryo_robot_msgs::CommandStatus::ABORTED;
             ROS_INFO("Dynamixel Driver Core - Debug - Motor 5 report start :");
-            if (motorScanReport(3, DxlMotorType::MOTOR_TYPE_XL430) != niryo_robot_msgs::CommandStatus::SUCCESS)
+            if (motorScanReport(3, DxlMotorType::MOTOR_TYPE_XC430) != niryo_robot_msgs::CommandStatus::SUCCESS)
                 response = niryo_robot_msgs::CommandStatus::FAILURE;
             if (!_debug_flag)
                 return niryo_robot_msgs::CommandStatus::ABORTED;
-            if (motorCmdReport(3, DxlMotorType::MOTOR_TYPE_XL430) != niryo_robot_msgs::CommandStatus::SUCCESS)
+            if (motorCmdReport(3, DxlMotorType::MOTOR_TYPE_XC430) != niryo_robot_msgs::CommandStatus::SUCCESS)
                 response = niryo_robot_msgs::CommandStatus::FAILURE;
             if (!_debug_flag)
                 return niryo_robot_msgs::CommandStatus::ABORTED;
             ROS_INFO("Dynamixel Driver Core - Debug - Motor 6 report start :");
-            if (motorScanReport(6, DxlMotorType::MOTOR_TYPE_XL320) != niryo_robot_msgs::CommandStatus::SUCCESS)
+            if (motorScanReport(6, DxlMotorType::MOTOR_TYPE_XL330) != niryo_robot_msgs::CommandStatus::SUCCESS)
                 response = niryo_robot_msgs::CommandStatus::FAILURE;
             if (!_debug_flag)
                 return niryo_robot_msgs::CommandStatus::ABORTED;
-            if (motorCmdReport(6, DxlMotorType::MOTOR_TYPE_XL320) != niryo_robot_msgs::CommandStatus::SUCCESS)
+            if (motorCmdReport(6, DxlMotorType::MOTOR_TYPE_XL330) != niryo_robot_msgs::CommandStatus::SUCCESS)
                 response = niryo_robot_msgs::CommandStatus::FAILURE;
 
             ros::Duration(1.0).sleep();
             ROS_INFO("Dynamixel Driver Core - Debug - Check for unflash dynamixel motors");
-            motor_found = _dynamixel->type_ping_id(1, DxlMotorType::MOTOR_TYPE_XL430);
+            motor_found = _dynamixel->type_ping_id(1, DxlMotorType::MOTOR_TYPE_XC430);
             if (motor_found == COMM_SUCCESS)
             {
                 ROS_ERROR("Dynamixel Driver Core - Debug - Find a dynamixel motor unflash");
                 response = niryo_robot_msgs::CommandStatus::FAILURE;
             }
-            motor_found = _dynamixel->type_ping_id(1, DxlMotorType::MOTOR_TYPE_XL320);
+            motor_found = _dynamixel->type_ping_id(1, DxlMotorType::MOTOR_TYPE_XL330);
             if (motor_found == COMM_SUCCESS)
             {
                 ROS_ERROR("Dynamixel Driver Core - Debug - Find a dynamixel motor unflash");
@@ -452,10 +452,18 @@ namespace DynamixelDriver
         {
             motor_type = DxlMotorType::MOTOR_TYPE_XL320;
         }
+        else if (req.motor_type == (uint8_t)DxlMotorType::MOTOR_TYPE_XL330)
+        {
+            motor_type = DxlMotorType::MOTOR_TYPE_XL330;
+        }
+        else if (req.motor_type == (uint8_t)DxlMotorType::MOTOR_TYPE_XC430)
+        {
+            motor_type = DxlMotorType::MOTOR_TYPE_XC430;
+        }
         else
         {
             res.status = niryo_robot_msgs::CommandStatus::WRONG_MOTOR_TYPE;
-            res.message = "Dynamixel Driver Core - Invalid motor type: should be 1 (XL-320) or 2 (XL-430)";
+            res.message = "Dynamixel Driver Core - Invalid motor type: should be 2 (XL-430) or 3 (XL-320) or 4 (XL-330) or 5 (XC-430)";
             return true;
         }
 

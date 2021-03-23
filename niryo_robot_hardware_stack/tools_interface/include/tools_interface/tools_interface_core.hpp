@@ -23,6 +23,9 @@
 // according to xl-320 datasheet : 1 speed ~ 0.111 rpm ~ 1.8944 dxl position per second
 #define XL320_STEPS_FOR_1_SPEED 1.8944 // 0.111 * 1024 / 60
 
+// according to xl-330 datasheet : 1 speed ~ 0.229 rpm ~ 3.9083 dxl position per second
+#define XL330_STEPS_FOR_1_SPEED 3.9083 // 0.229 * 1024 / 60
+
 #include <boost/shared_ptr.hpp>
 
 #include <ros/ros.h>

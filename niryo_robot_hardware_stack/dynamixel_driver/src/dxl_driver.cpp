@@ -1096,7 +1096,7 @@ namespace DynamixelDriver
         }
         else
         {
-            ROS_ERROR_THROTTLE(1, "Dxl Driver - Wrong motor type, should be 1 (XL-320) or 2 (XL-430).");
+            ROS_ERROR_THROTTLE(1, "Dxl Driver - Wrong motor type, should be 2 (XL-430) or 3 (XL-320) or 4 (XL-330) or 5 (XC-430). Detected: %d", cmd.motor_type);
             result = niryo_robot_msgs::CommandStatus::WRONG_MOTOR_TYPE;
         }
         ros::Duration(0.005).sleep();
