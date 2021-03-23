@@ -108,6 +108,49 @@ void DxlTools::setRegister(int id, int reg_address, int value, int size)
     }
 }
 
+void DxlTools::getRegister(int id, int reg_address, int size)
+{
+    int dxl_comm_result = COMM_TX_FAIL;
+    uint8_t dxl_error = 0;
+    uint32_t data = 0;
+
+    if (size == 1) {
+        uint8_t read_data;
+        dxl_comm_result = packetHandler->read1ByteTxRx(portHandler, (uint8_t) id,
+                (uint32_t)reg_address, &read_data, &dxl_error);
+        data = read_data;
+
+    }
+    else if (size == 2) {
+        uint16_t read_data;
+        dxl_comm_result = packetHandler->read2ByteTxRx(portHandler, (uint8_t) id,
+                (uint32_t)reg_address, &read_data, &dxl_error);
+        data = read_data;
+
+    }
+    else if (size == 4) {
+        uint32_t read_data;
+        dxl_comm_result = packetHandler->read4ByteTxRx(portHandler, (uint8_t) id,
+                (uint32_t)reg_address, &read_data, &dxl_error);
+        data = read_data;
+
+    }
+    else {
+        printf("ERROR: Size param must be 1, 2 or 4 bytes\n");
+        return;
+    }
+
+    if (0 != dxl_error)
+        dxl_comm_result = dxl_error;
+
+    if (dxl_comm_result != COMM_SUCCESS) {
+        printf("Failed to get register: %d\n", dxl_comm_result);
+    }
+    else {
+        printf("Retrieved value at address %d : %d\n", reg_address, data);
+    }
+}
+
 void DxlTools::closePort()
 {
     portHandler->closePort();
