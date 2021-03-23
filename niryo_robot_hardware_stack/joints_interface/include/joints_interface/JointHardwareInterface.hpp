@@ -31,6 +31,7 @@
 
 #include "stepper_driver/stepper_driver_core.hpp"
 #include "dynamixel_driver/dxl_driver_core.hpp"
+#include "dynamixel_driver/dxl_enum.hpp"
 
 #include <ros/ros.h>
 #include <std_msgs/Int64MultiArray.h>
@@ -73,6 +74,9 @@ public:
     std::string jointIdToJointName(int id, uint8_t motor_type);
 
 private:
+    bool setMotorPID(int motor_id, DynamixelDriver::DxlMotorType motor_type, int p_gain, int i_gain, int d_gain);
+
+private:
     ros::NodeHandle _nh;
 
     hardware_interface::JointStateInterface _joint_state_interface;
@@ -108,7 +112,7 @@ private:
 
     int _p_gain_1, _p_gain_2, _p_gain_3;
     int _i_gain_1, _i_gain_2, _i_gain_3;
-    int _d_gain_3;
+    int _d_gain_1, _d_gain_2, _d_gain_3;
     bool _learning_mode;
 };
 

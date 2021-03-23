@@ -84,20 +84,22 @@ JointHardwareInterface::JointHardwareInterface(
     _nh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_1_offset_position", _offset_position_dxl_1);
     _nh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_2_offset_position", _offset_position_dxl_2);
     _nh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_3_offset_position", _offset_position_dxl_3);
-    ROS_DEBUG("Joints Hardware Interface - Angle offsets dxk: (1 : %lf, 2 : %lf, 3 : %lf)", _offset_position_dxl_1, _offset_position_dxl_2, _offset_position_dxl_3);
+    ROS_DEBUG("Joints Hardware Interface - Angle offsets dxl: (1 : %lf, 2 : %lf, 3 : %lf)", _offset_position_dxl_1, _offset_position_dxl_2, _offset_position_dxl_3);
 
     _nh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_1_P_gain", _p_gain_1);
     _nh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_2_P_gain", _p_gain_2);
     _nh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_3_P_gain", _p_gain_3);
-    ROS_DEBUG("Joints Hardware Interface - Proportional Gain dxk: (1 : %d, 2 : %d, 3 : %d)", _p_gain_1, _p_gain_2, _p_gain_3);
+    ROS_DEBUG("Joints Hardware Interface - Proportional Gain dxl: (1 : %d, 2 : %d, 3 : %d)", _p_gain_1, _p_gain_2, _p_gain_3);
 
     _nh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_1_I_gain", _i_gain_1);
     _nh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_2_I_gain", _i_gain_2);
     _nh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_3_I_gain", _i_gain_3);
-    ROS_DEBUG("Joints Hardware Interface - Integral Gain dxk: (1 : %d, 2 : %d, 3 : %d)", _i_gain_1, _i_gain_2, _i_gain_3);
+    ROS_DEBUG("Joints Hardware Interface - Integral Gain dxl: (1 : %d, 2 : %d, 3 : %d)", _i_gain_1, _i_gain_2, _i_gain_3);
 
+    _nh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_3_D_gain", _d_gain_1);
+    _nh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_3_D_gain", _d_gain_2);
     _nh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_3_D_gain", _d_gain_3);
-    ROS_DEBUG("Joints Hardware Interface - Integral Gain dxk: (3 : %d)",  _d_gain_3);
+    ROS_DEBUG("Joints Hardware Interface - Integral Gain dxl: (1 : %d, 2 : %d, 3 : %d)", _d_gain_1, _d_gain_2, _d_gain_3);
 
     // Create motors with previous params
     _joint_list.clear();
@@ -171,56 +173,18 @@ void JointHardwareInterface::sendInitMotorsParams()
     _stepper->setStepperCommands(cmd);
     ros::Duration(0.05).sleep();
 
-    // ** DXL PID configuration ** //
-    ros::ServiceClient dxl_client = _nh.serviceClient<dynamixel_driver::SendCustomDxlValue>("/niryo_robot/dynamixel_driver/send_custom_dxl_value");
-    dynamixel_driver::SendCustomDxlValue dxl_cmd_srv;
-
     // * Joint 4
-    dxl_cmd_srv.request.motor_type = 2;
-    dxl_cmd_srv.request.id = 2;
-    dxl_cmd_srv.request.byte_number = 2;
-    dxl_cmd_srv.request.value = _p_gain_1;
-    dxl_cmd_srv.request.reg_address = 80;
-    if (dxl_client.call(dxl_cmd_srv))
-        ROS_DEBUG("Joints Hardware Interface - Set joint 4 P Gain OK");
-
-    dxl_cmd_srv.request.value = _i_gain_1;
-    dxl_cmd_srv.request.reg_address = 82;
-    if (dxl_client.call(dxl_cmd_srv))
-        ROS_DEBUG("Joints Hardware Interface - Set joint 4 I Gain OK");
+    if(!setMotorPID(2, DynamixelDriver::DxlMotorType::MOTOR_TYPE_XC430, _p_gain_1, _i_gain_1, _d_gain_1))
+        ROS_ERROR("Joints Hardware Interface - Error setting motor PID for joint 4");
 
     // * Joint 5
-    dxl_cmd_srv.request.motor_type = 2;
-    dxl_cmd_srv.request.id = 3;
-    dxl_cmd_srv.request.byte_number = 2;
-    dxl_cmd_srv.request.value = _p_gain_2;
-    dxl_cmd_srv.request.reg_address = 80;
-    if (dxl_client.call(dxl_cmd_srv))
-        ROS_DEBUG("Joints Hardware Interface - Set joint 5 P Gain OK");
-
-    dxl_cmd_srv.request.value = _i_gain_2;
-    dxl_cmd_srv.request.reg_address = 82;
-    if (dxl_client.call(dxl_cmd_srv))
-        ROS_DEBUG("Joints Hardware Interface - Set joint 5 I Gain OK");
+    if(!setMotorPID(3, DynamixelDriver::DxlMotorType::MOTOR_TYPE_XC430, _p_gain_1, _i_gain_1, _d_gain_1))
+        ROS_ERROR("Joints Hardware Interface - Error setting motor PID for joint 5");
 
     // * Joint 6
-    dxl_cmd_srv.request.motor_type = 3;
-    dxl_cmd_srv.request.id = 6;
-    dxl_cmd_srv.request.byte_number = 1;
-    dxl_cmd_srv.request.value = _p_gain_3;
-    dxl_cmd_srv.request.reg_address = 27;
-    if (dxl_client.call(dxl_cmd_srv))
-        ROS_DEBUG("Joints Hardware Interface - Set joint 6 P Gain OK");
+    if(!setMotorPID(6, DynamixelDriver::DxlMotorType::MOTOR_TYPE_XL330, _p_gain_1, _i_gain_1, _d_gain_1))
+        ROS_ERROR("Joints Hardware Interface - Error setting motor PID for joint 6");
 
-    dxl_cmd_srv.request.value = _i_gain_3;
-    dxl_cmd_srv.request.reg_address = 28;
-    if (dxl_client.call(dxl_cmd_srv))
-        ROS_DEBUG("Joints Hardware Interface - Set joint 6 I Gain OK");
-
-    dxl_cmd_srv.request.value = _d_gain_3;
-    dxl_cmd_srv.request.reg_address = 29;
-    if (dxl_client.call(dxl_cmd_srv))
-        ROS_DEBUG("Joints Hardware Interface - Set joint 6 D Gain OK");
 }
 
 void JointHardwareInterface::setCommandToCurrentPosition()
@@ -402,4 +366,85 @@ std::string JointHardwareInterface::jointIdToJointName(int id, uint8_t motor_typ
             return it->second;
     }
     return "";
+}
+
+/**
+ * @brief JointHardwareInterface::setMotorPID
+ * @param motor_id
+ * @param motor_type
+ * @param p_gain
+ * @param i_gain
+ * @param d_gain
+ * @return
+ */
+bool JointHardwareInterface::setMotorPID(int motor_id, DynamixelDriver::DxlMotorType motor_type,
+                                         int p_gain, int i_gain, int d_gain)
+{
+    bool res = false;
+
+    ROS_DEBUG("Joints Hardware Interface - Setting PID for motor id: %d (type: %d)", motor_id, (int)motor_type);
+
+    // ** DXL PID configuration ** //
+    ros::ServiceClient dxl_client = _nh.serviceClient<dynamixel_driver::SendCustomDxlValue>("/niryo_robot/dynamixel_driver/send_custom_dxl_value");
+    dynamixel_driver::SendCustomDxlValue dxl_cmd_srv;
+
+    dxl_cmd_srv.request.motor_type = (int)motor_type;
+    dxl_cmd_srv.request.id = motor_id;
+
+    if(DynamixelDriver::DxlMotorType::MOTOR_TYPE_XC430 == motor_type ||
+        DynamixelDriver::DxlMotorType::MOTOR_TYPE_XL430 == motor_type ||
+        DynamixelDriver::DxlMotorType::MOTOR_TYPE_XL330 == motor_type)
+    {
+        res = true;
+
+        dxl_cmd_srv.request.byte_number = 2;
+
+        dxl_cmd_srv.request.value = p_gain;
+        dxl_cmd_srv.request.reg_address = 84;
+        if (dxl_client.call(dxl_cmd_srv))
+            ROS_DEBUG("Joints Hardware Interface - Set joint %d P Gain OK", motor_id);
+        else
+            res = false;
+
+        dxl_cmd_srv.request.value = i_gain;
+        dxl_cmd_srv.request.reg_address = 82;
+        if (dxl_client.call(dxl_cmd_srv))
+            ROS_DEBUG("Joints Hardware Interface - Set joint %d I Gain OK", motor_id);
+        else
+            res = false;
+
+        dxl_cmd_srv.request.value = d_gain;
+        dxl_cmd_srv.request.reg_address = 80;
+        if (dxl_client.call(dxl_cmd_srv))
+            ROS_DEBUG("Joints Hardware Interface - Set joint %d D Gain OK", motor_id);
+        else
+            res = false;
+    }
+    else if (DynamixelDriver::DxlMotorType::MOTOR_TYPE_XL320 == motor_type) {
+        res = true;
+        dxl_cmd_srv.request.byte_number = 1;
+
+        dxl_cmd_srv.request.value = p_gain;
+        dxl_cmd_srv.request.reg_address = 29;
+        if (dxl_client.call(dxl_cmd_srv))
+            ROS_DEBUG("Joints Hardware Interface - Set joint %d P Gain OK", motor_id);
+        else
+            res = false;
+
+        dxl_cmd_srv.request.value = i_gain;
+        dxl_cmd_srv.request.reg_address = 28;
+        if (dxl_client.call(dxl_cmd_srv))
+            ROS_DEBUG("Joints Hardware Interface - Set joint %d I Gain OK", motor_id);
+        else
+            res = false;
+
+        dxl_cmd_srv.request.value = d_gain;
+        dxl_cmd_srv.request.reg_address = 27;
+        if (dxl_client.call(dxl_cmd_srv))
+            ROS_DEBUG("Joints Hardware Interface - Set joint %d D Gain OK", motor_id);
+        else
+            res = false;
+    }
+
+    return res;
 }
