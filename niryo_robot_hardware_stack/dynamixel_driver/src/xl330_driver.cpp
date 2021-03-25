@@ -76,12 +76,12 @@ namespace DynamixelDriver
 
     int XL330Driver::setGoalPosition(uint8_t id, uint32_t position)
     {
-        return _dxlPacketHandler->write2ByteTxOnly(_dxlPortHandler.get(), id, XL330_ADDR_GOAL_POSITION, (uint16_t)position);
+        return _dxlPacketHandler->write4ByteTxOnly(_dxlPortHandler.get(), id, XL330_ADDR_GOAL_POSITION, (uint16_t)position);
     }
 
     int XL330Driver::setGoalVelocity(uint8_t id, uint32_t velocity)
     {
-        return _dxlPacketHandler->write2ByteTxOnly(_dxlPortHandler.get(), id, XL330_ADDR_GOAL_VELOCITY, (uint16_t)velocity);
+        return _dxlPacketHandler->write4ByteTxOnly(_dxlPortHandler.get(), id, XL330_ADDR_GOAL_VELOCITY, (uint16_t)velocity);
     }
 
     int XL330Driver::setGoalTorque(uint8_t id, uint32_t torque)
@@ -122,11 +122,11 @@ namespace DynamixelDriver
 
     int XL330Driver::syncWritePositionGoal(std::vector<uint8_t> &id_list, std::vector<uint32_t> &position_list)
     {
-        return syncWrite2Bytes(XL330_ADDR_GOAL_POSITION, id_list, position_list);
+        return syncWrite4Bytes(XL330_ADDR_GOAL_POSITION, id_list, position_list);
     }
     int XL330Driver::syncWriteVelocityGoal(std::vector<uint8_t> &id_list, std::vector<uint32_t> &velocity_list)
     {
-        return syncWrite2Bytes(XL330_ADDR_GOAL_VELOCITY, id_list, velocity_list);
+        return syncWrite4Bytes(XL330_ADDR_GOAL_VELOCITY, id_list, velocity_list);
     }
     int XL330Driver::syncWriteTorqueGoal(std::vector<uint8_t> &id_list, std::vector<uint32_t> &torque_list)
     {
@@ -150,17 +150,17 @@ namespace DynamixelDriver
 
     int XL330Driver::readPosition(uint8_t id, uint32_t *present_position)
     {
-        return read2Bytes(XL330_ADDR_PRESENT_POSITION, id, present_position);
+        return read4Bytes(XL330_ADDR_PRESENT_POSITION, id, present_position);
     }
 
     int XL330Driver::readVelocity(uint8_t id, uint32_t *present_velocity)
     {
-        return read2Bytes(XL330_ADDR_PRESENT_VELOCITY, id, present_velocity);
+        return read4Bytes(XL330_ADDR_PRESENT_VELOCITY, id, present_velocity);
     }
 
     int XL330Driver::readLoad(uint8_t id, uint32_t *present_load)
     {
-        //return read2Bytes(XL330_ADDR_PRESENT_CURRENT, id, present_load);
+        //return read4Bytes(XL330_ADDR_PRESENT_CURRENT, id, present_load);
         return COMM_TX_ERROR; //current instead of load ?
     }
 
@@ -171,7 +171,7 @@ namespace DynamixelDriver
 
     int XL330Driver::readVoltage(uint8_t id, uint32_t *voltage)
     {
-        return read1Byte(XL330_ADDR_PRESENT_VOLTAGE, id, voltage);
+        return read2Bytes(XL330_ADDR_PRESENT_VOLTAGE, id, voltage);
     }
 
     int XL330Driver::readHardwareStatus(uint8_t id, uint32_t *hardware_status)
@@ -211,12 +211,12 @@ namespace DynamixelDriver
 
     int XL330Driver::syncReadPosition(std::vector<uint8_t> &id_list, std::vector<uint32_t> &position_list)
     {
-        return syncRead(XL330_ADDR_PRESENT_POSITION, DXL_LEN_TWO_BYTES, id_list, position_list);
+        return syncRead(XL330_ADDR_PRESENT_POSITION, DXL_LEN_FOUR_BYTES, id_list, position_list);
     }
 
     int XL330Driver::syncReadVelocity(std::vector<uint8_t> &id_list, std::vector<uint32_t> &velocity_list)
     {
-        return syncRead(XL330_ADDR_PRESENT_VELOCITY, DXL_LEN_TWO_BYTES, id_list, velocity_list);
+        return syncRead(XL330_ADDR_PRESENT_VELOCITY, DXL_LEN_FOUR_BYTES, id_list, velocity_list);
     }
     int XL330Driver::syncReadLoad(std::vector<uint8_t> &id_list, std::vector<uint32_t> &load_list)
     {
@@ -231,7 +231,7 @@ namespace DynamixelDriver
 
     int XL330Driver::syncReadVoltage(std::vector<uint8_t> &id_list, std::vector<uint32_t> &voltage_list)
     {
-        return syncRead(XL330_ADDR_PRESENT_VOLTAGE, DXL_LEN_ONE_BYTE, id_list, voltage_list);
+        return syncRead(XL330_ADDR_PRESENT_VOLTAGE, DXL_LEN_TWO_BYTES, id_list, voltage_list);
     }
 
     int XL330Driver::syncReadHwErrorStatus(std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list)

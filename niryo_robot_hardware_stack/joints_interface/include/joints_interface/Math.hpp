@@ -30,7 +30,7 @@
 
 #define XL330_TOTAL_RANGE_POSITION 4095
 #define XL330_MIDDLE_POSITION 2047
-#define XL330_TOTAL_ANGLE 360.36
+#define XL330_TOTAL_ANGLE 296.67
 
 // we stop at 4094 instead of 4095, to get an odd number of positions (4095)
 // --> so we can get a middle point (2047)
