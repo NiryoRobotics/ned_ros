@@ -34,8 +34,13 @@
 #include "niryo_robot_msgs/MotorHeader.h"
 #include "niryo_robot_msgs/SetInt.h"
 #include "niryo_robot_msgs/CommandStatus.h"
+
+//drivers
+#include "dynamixel_driver/xl320_driver.hpp"
 #include "dynamixel_driver/xl330_driver.hpp"
+#include "dynamixel_driver/xl430_driver.hpp"
 #include "dynamixel_driver/xc430_driver.hpp"
+
 #include "dynamixel_driver/dxl_motor_state.hpp"
 #include "dynamixel_driver/synchronize_motor_cmd.hpp"
 #include "dynamixel_driver/single_motor_cmd.hpp"
@@ -58,7 +63,7 @@
 namespace DynamixelDriver
 {
     struct DxlCustomCommand {
-
+    
         DxlCustomCommand(DxlMotorType m, uint8_t i, uint32_t v, uint32_t r, uint32_t b)
             : motor_type(m), id(i), value(v), reg_address(r), byte_number(b) {}
 
@@ -70,27 +75,27 @@ namespace DynamixelDriver
 
     };
 
+    /**
+     * @brief The DxlDriver class
+     */
     class DxlDriver
     {
         public:
-
             DxlDriver();
+            virtual ~DxlDriver();
 
             int init();
-            void initParameters();
-
-            int setupCommunication();
-            bool isConnectionOk();
-
-            std::vector<DxlMotorState>& getMotorsState();
-            void getBusState(bool& connection_state, std::vector<uint8_t>& motor_id, std::string& debug_msg);
-
-            void executeJointTrajectoryCmd(std::vector<uint32_t> &cmd);
 
             void addDynamixel(uint8_t id, DxlMotorType type);
-            void removeDynamixel(uint8_t id, DxlMotorType type);
+            void removeDynamixel(uint8_t id, DxlMotorType);
+
+            int setupCommunication();
+
+            //commands
+            void executeJointTrajectoryCmd(std::vector<uint32_t> &cmd);
 
             uint32_t getPosition(DxlMotorState& motor_state);
+
             void readPositionState();
             void readHwStatus();
             void readSynchronizeCommand(SynchronizeMotorCmd cmd);
@@ -102,12 +107,8 @@ namespace DynamixelDriver
             void fillErrorStatus(void);
             void interpreteErrorState(void);
 
-            void readAndFillStateXL330(
-                int (XL330Driver::*readFunction)(std::vector<uint8_t> &, std::vector<uint32_t> &),
-                void (DxlMotorState::*setFunction)(uint32_t));
-
-            void readAndFillStateXC430(
-                int (XC430Driver::*readFunction)(std::vector<uint8_t> &, std::vector<uint32_t> &),
+            void readAndFillState(
+                int (XDriver::*readFunction)(std::vector<uint8_t> &, std::vector<uint32_t> &),
                 void (DxlMotorState::*setFunction)(uint32_t));
 
             void FillMotorsState(void (DxlMotorState::*setFunction)(uint32_t), uint32_t (DxlMotorState::*getFunction)());
@@ -115,75 +116,127 @@ namespace DynamixelDriver
             int setTorqueEnable(DxlMotorState& targeted_dxl, uint32_t torque_enable);
             int setGoalPosition(DxlMotorState& targeted_dxl, uint32_t position);
             int setGoalTorque(DxlMotorState& targeted_dxl, uint32_t torque);
-
             int setGoalVelocity(DxlMotorState& targeted_dxl, uint32_t velocity);
+
             void syncWriteTorqueEnable(std::vector<uint8_t>& motor_list, std::vector<uint32_t>& torque_enable);
             void syncWriteEffortCommand(std::vector<uint8_t>& motor_list, std::vector<uint32_t>& param_list);
             void syncWriteVelocityCommand(std::vector<uint8_t>& motor_list, std::vector<uint32_t>& param_list);
             void syncWritePositionCommand(std::vector<uint8_t>& motor_list, std::vector<uint32_t>& param_list);
 
             int scanAndCheck();
-            int checkCommPortAvailable();
-            int getAllIdsOnDxlBus(std::vector<uint8_t> &id_list);
             void checkRemovedMotors();
             std::vector<int>& getRemovedMotorList();
 
             int ping(DxlMotorState& targeted_dxl);
-            int ping_id(int dxl_id);
             int type_ping_id(uint8_t id, DxlMotorType type);
 
+            int sendCustomDxlCommand(DxlMotorType motor_type, uint8_t id, uint32_t value, uint32_t reg_address, uint32_t byte_number);
             int rebootMotors();
-            void updateMotorTypeList(void);
+
             void addCustomDxlCommand(DxlMotorType motor_type, uint8_t id, uint32_t value,
                                     uint32_t reg_address, uint32_t byte_number);
-            std::string getErrorMessage();
 
-            int sendCustomDxlCommand(DxlMotorType motor_type, uint8_t id, uint32_t value, uint32_t reg_address, uint32_t byte_number);
 
-            int getledstate(void);
-            int setLeds(int led);
+            //tests
+            bool isConnectionOk() const;
+
+            //getters
+            std::vector<DxlMotorState> getMotorsState() const;
+            int getLedState() const;
+            std::string getErrorMessage() const;
+            void getBusState(bool& connection_state, std::vector<uint8_t>& motor_id, std::string& debug_msg) const;
+            int getAllIdsOnDxlBus(std::vector<uint8_t> &id_list) const;
+
+            //setters
+            int setLeds(int led, DxlMotorType type = DxlMotorType::MOTOR_TYPE_XL330);
+
+        private:
+            DxlMotorType dxlMotorTypeFromString(std::string type) const;
 
         private:
             ros::NodeHandle _nh;
 
-            std::vector<uint8_t> _xc430_arm_id_list;
-            uint8_t _xl330_arm_id;
-            std::vector<int> _motor_id_list;
-            std::vector<std::string> _motor_type_list;
-            std::vector<int> _removed_motor_id_list;
-
-            std::vector<DxlMotorState> _motor_list;
-            std::vector<DxlMotorState> _xc430_motor_list;
-            std::vector<DxlMotorState> _xl330_motor_list;
+            boost::shared_ptr<dynamixel::PortHandler> _dxlPortHandler;
+            boost::shared_ptr<dynamixel::PacketHandler> _dxlPacketHandler;
 
             std::string _device_name;
             int _uart_baudrate;
 
-            boost::shared_ptr<dynamixel::PortHandler> _dxlPortHandler;
-            boost::shared_ptr<dynamixel::PacketHandler> _dxlPacketHandler;
-
             std::vector<uint8_t> _all_motor_connected;
+            std::vector<int> _removed_motor_id_list;
 
-            std::vector<uint8_t> _xl330_id_list;
-            std::vector<uint8_t> _xc430_id_list;
-
-            boost::shared_ptr<XL330Driver> _xl330;
-            boost::shared_ptr<XC430Driver> _xc430;
+            std::map<int, DxlMotorState> _state_map;
+            std::map<DxlMotorType, std::vector<int> > _ids_map;
+            std::map<DxlMotorType, boost::shared_ptr<XDriver> > _xdriver_map;
 
             // for hardware control
-
             bool _is_dxl_connection_ok;
             std::string _debug_error_message;
 
-            int _xl330_hw_fail_counter_read;
-            int _xc430_hw_fail_counter_read;
+            int _hw_fail_counter_read;
 
             int _led_state;
 
-            int _hw_fail_counter_read;
-
             std::queue<DxlCustomCommand> _custom_command_queue;
     };
+
+    //inline getters
+
+    bool DxlDriver::isConnectionOk() const
+    {
+        return _is_dxl_connection_ok;
+    }
+
+    std::vector<int> &DxlDriver::getRemovedMotorList()
+    {
+        return _removed_motor_id_list;
+    }
+
+    inline
+    std::vector<DxlMotorState> DxlDriver::getMotorsState() const
+    {
+        std::vector<DxlMotorState> states;
+        for (auto it = _state_map.cbegin(); it != _state_map.cend(); ++it)
+            states.push_back(it->second);
+
+        return states;
+    }
+
+    inline
+    std::string DxlDriver::getErrorMessage() const
+    {
+        return _debug_error_message;
+    }
+
+    inline
+    int DxlDriver::getLedState() const
+    {
+        return _led_state;
+    }
+
+    inline
+    void DxlDriver::getBusState(bool &connection_state, std::vector<uint8_t> &motor_id,
+                                std::string &debug_msg) const
+    {
+        debug_msg = _debug_error_message;
+        motor_id = _all_motor_connected;
+        connection_state = isConnectionOk();
+    }
+
+    inline
+    DxlMotorType DxlDriver::dxlMotorTypeFromString(std::string type) const
+    {
+        if("xl430" == type)
+           return DxlMotorType::MOTOR_TYPE_XL430;
+        else if("xc430" == type)
+           return DxlMotorType::MOTOR_TYPE_XC430;
+        else if("xl320" == type)
+           return DxlMotorType::MOTOR_TYPE_XL320;
+        else if("xl330" == type)
+           return DxlMotorType::MOTOR_TYPE_XL330;
+
+        return DxlMotorType::UNKNOWN_TYPE;
+    }
 }
 
 #endif

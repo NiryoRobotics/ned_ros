@@ -301,7 +301,7 @@ namespace DynamixelDriver
         return result;
     }
 
-    std::vector<DxlMotorState> &DynamixelDriverCore::getDxlStates()
+    std::vector<DxlMotorState> DynamixelDriverCore::getDxlStates() const
     {
         return _dynamixel->getMotorsState();
     }
@@ -499,7 +499,7 @@ namespace DynamixelDriver
     int DynamixelDriverCore::update_leds(void)
     {
         std::lock_guard<std::mutex> lck(_control_loop_mutex);
-        int result = _dynamixel->setLeds(_dynamixel->getledstate());
+        int result = _dynamixel->setLeds(_dynamixel->getLedState());
         return result;
     }
 } // namespace DynamixelDriver

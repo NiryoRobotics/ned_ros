@@ -57,7 +57,7 @@
 #define XL330_ADDR_PRESENT_VOLTAGE 144
 #define XL330_ADDR_PRESENT_TEMPERATURE 146
 
-namespace DynamixelDriver
+namespace DynamixsetGoalVelocityelDriver
 {
     /**
      * @brief The XL330Driver class

@@ -61,7 +61,7 @@ namespace DynamixelDriver
 
         void setTrajectoryControllerCommands(std::vector<uint32_t>& cmd);
 
-        std::vector<DxlMotorState>& getDxlStates();
+        std::vector<DxlMotorState> getDxlStates() const;
 
         void setDxlCommands(SynchronizeMotorCmd &cmd);
 
