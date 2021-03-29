@@ -76,18 +76,17 @@ namespace DynamixelDriver
 
     int XL330Driver::setGoalPosition(uint8_t id, uint32_t position)
     {
-        return _dxlPacketHandler->write4ByteTxOnly(_dxlPortHandler.get(), id, XL330_ADDR_GOAL_POSITION, (uint16_t)position);
+        return _dxlPacketHandler->write4ByteTxOnly(_dxlPortHandler.get(), id, XL330_ADDR_GOAL_POSITION, position);
     }
 
     int XL330Driver::setGoalVelocity(uint8_t id, uint32_t velocity)
     {
-        return _dxlPacketHandler->write4ByteTxOnly(_dxlPortHandler.get(), id, XL330_ADDR_GOAL_VELOCITY, (uint16_t)velocity);
+        return _dxlPacketHandler->write4ByteTxOnly(_dxlPortHandler.get(), id, XL330_ADDR_GOAL_VELOCITY, velocity);
     }
 
     int XL330Driver::setGoalTorque(uint8_t id, uint32_t torque)
     {
-        // No goal torque for this motor ?
-        return COMM_TX_ERROR;
+        return _dxlPacketHandler->write2ByteTxOnly(_dxlPortHandler.get(), id, XL330_ADDR_GOAL_CURRENT, (uint16_t)torque);
     }
 
     int XL330Driver::setReturnDelayTime(uint8_t id, uint32_t return_delay_time)
@@ -102,8 +101,7 @@ namespace DynamixelDriver
 
     int XL330Driver::setMaxTorque(uint8_t id, uint32_t torque)
     {
-        // No max torque setting for this motor ?
-        return COMM_TX_ERROR;
+        return _dxlPacketHandler->write2ByteTxOnly(_dxlPortHandler.get(), id, XL330_ADDR_CURRENT_LIMIT, (uint16_t)torque);
     }
 
     int XL330Driver::setReturnLevel(uint8_t id, uint32_t return_level)
@@ -130,8 +128,7 @@ namespace DynamixelDriver
     }
     int XL330Driver::syncWriteTorqueGoal(std::vector<uint8_t> &id_list, std::vector<uint32_t> &torque_list)
     {
-        // No goal torque for this motor ?
-        return COMM_TX_ERROR;
+        return syncWrite2Bytes(XL330_ADDR_GOAL_CURRENT, id_list, torque_list);
     }
 
     int XL330Driver::syncWriteTorqueEnable(std::vector<uint8_t> &id_list, std::vector<uint32_t> &torque_enable_list)
@@ -160,8 +157,7 @@ namespace DynamixelDriver
 
     int XL330Driver::readLoad(uint8_t id, uint32_t *present_load)
     {
-        //return read4Bytes(XL330_ADDR_PRESENT_CURRENT, id, present_load);
-        return COMM_TX_ERROR; //current instead of load ?
+        return read2Bytes(XL330_ADDR_PRESENT_CURRENT, id, present_load);
     }
 
     int XL330Driver::readTemperature(uint8_t id, uint32_t *temperature)
@@ -191,8 +187,7 @@ namespace DynamixelDriver
 
     int XL330Driver::readMaxTorque(uint8_t id, uint32_t *max_torque)
     {
-        // No max torque setting for this motor ?
-        return COMM_TX_ERROR;
+        return read2Bytes(XL330_ADDR_CURRENT_LIMIT, id, max_torque);
     }
 
     int XL330Driver::readReturnLevel(uint8_t id, uint32_t *return_level)
@@ -220,8 +215,7 @@ namespace DynamixelDriver
     }
     int XL330Driver::syncReadLoad(std::vector<uint8_t> &id_list, std::vector<uint32_t> &load_list)
     {
-    //    return syncRead(XL330_ADDR_PRESENT_CURRENT, DXL_LEN_TWO_BYTES, id_list, load_list);
-        return COMM_TX_ERROR; //current instead of load ?
+        return syncRead(XL330_ADDR_PRESENT_CURRENT, DXL_LEN_TWO_BYTES, id_list, load_list);
     }
 
     int XL330Driver::syncReadTemperature(std::vector<uint8_t> &id_list, std::vector<uint32_t> &temperature_list)
@@ -239,15 +233,4 @@ namespace DynamixelDriver
         return syncRead(XL330_ADDR_HW_ERROR_STATUS, DXL_LEN_ONE_BYTE, id_list, hw_error_list);
     }
 
-    int XL330Driver::customWrite(uint8_t id, uint32_t value, uint8_t reg_address, uint8_t byte_number)
-    {
-        if (byte_number == 4)
-        {
-            return _dxlPacketHandler->write4ByteTxOnly(_dxlPortHandler.get(), id, reg_address, value);
-        }
-        else
-        {
-            return XDriver::customWrite(id, value, reg_address, byte_number);
-        }
-    }
 }

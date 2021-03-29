@@ -231,4 +231,38 @@ namespace DynamixelDriver
     {
         return syncRead(XL320_ADDR_HW_ERROR_STATUS, DXL_LEN_ONE_BYTE, id_list, hw_error_list);
     }
+
+    /**
+     * @brief XL320Driver::customWrite : restricted to 1 and 2 bytes setting
+     * @param id
+     * @param value
+     * @param reg_address
+     * @param byte_number
+     * @return
+     */
+    int XL320Driver::customWrite(uint8_t id, uint8_t reg_address, uint32_t value, uint8_t byte_number)
+    {
+        if (4 != byte_number)
+            return XDriver::customWrite(id, reg_address, value, byte_number);
+
+        printf("ERROR: Size param must be 1, 2 or 4 bytes\n");
+        return COMM_TX_FAIL;
+    }
+
+    /**
+     * @brief XL320Driver::customRead : restricted to 1 and 2 bytes reading
+     * @param id
+     * @param value
+     * @param reg_address
+     * @param byte_number
+     * @return
+     */
+    int XL320Driver::customRead(uint8_t id, uint8_t reg_address, uint32_t &value, uint8_t byte_number)
+    {
+        if (4 != byte_number)
+            return XDriver::customRead(id, reg_address, value, byte_number);
+
+        printf("ERROR: Size param must be 1, 2 or 4 bytes\n");
+        return COMM_TX_FAIL;
+    }
 }

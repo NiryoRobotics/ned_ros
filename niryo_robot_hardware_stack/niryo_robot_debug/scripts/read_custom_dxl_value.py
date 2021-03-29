@@ -20,24 +20,23 @@
 import rospy
 import argparse
 
-from dynamixel_driver.srv import SendCustomDxlValue
+from dynamixel_driver.srv import ReadCustomDxlValue
 
 if __name__ == '__main__':
-    rospy.init_node("send_custom_dxl_value")
+    rospy.init_node("read_custom_dxl_value")
 
     # 1. Parse args
-    parser = argparse.ArgumentParser(description='Send custom value to a Dynamixel motor during Ned runtime')
+    parser = argparse.ArgumentParser(description='Read custom value from a Dynamixel motor during Ned runtime')
 
     parser.add_argument('--type', type=int, required=True, help='Motor type (2 for XL-430, 3 for XL-320, 4 for XL-330, 5 for XC-430)')
     parser.add_argument('--id', type=int, required=True, help='Motor ID')
     parser.add_argument('--address', type=int, required=True, help='Register address')
-    parser.add_argument('--value', type=int, required=True, help='Value to send to the motor')
     parser.add_argument('--size', type=int, required=True, help='Size(bytes) of the value to send (1,2 or 4)')
 
     args = parser.parse_args()
 
     # 2. Call ROS Service
-    service_name = "/niryo_robot/dynamixel_driver/send_custom_dxl_value"
+    service_name = "/niryo_robot/dynamixel_driver/read_custom_dxl_value"
 
     try:
         rospy.wait_for_service(service_name, 1.0)
@@ -47,8 +46,8 @@ if __name__ == '__main__':
         exit()
 
     try:
-        send_cmd = rospy.ServiceProxy(service_name, SendCustomDxlValue)
-        response = send_cmd(args.type, args.id, args.value, args.address, args.size)
+        read_cmd = rospy.ServiceProxy(service_name, ReadCustomDxlValue)
+        response = read_cmd(args.type, args.id, args.address, args.size)
         rospy.loginfo(response.message)
     except rospy.ServiceException as e:
         rospy.logwarn(e)

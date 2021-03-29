@@ -236,15 +236,4 @@ namespace DynamixelDriver
         return syncRead(XL430_ADDR_HW_ERROR_STATUS, DXL_LEN_ONE_BYTE, id_list, hw_error_list);
     }
 
-    int XL430Driver::customWrite(uint8_t id, uint32_t value, uint8_t reg_address, uint8_t byte_number)
-    {
-        if (byte_number == 4)
-        {
-            return _dxlPacketHandler->write4ByteTxOnly(_dxlPortHandler.get(), id, reg_address, value);
-        }
-        else
-        {
-            return XDriver::customWrite(id, value, reg_address, byte_number);
-        }
-    }
 }

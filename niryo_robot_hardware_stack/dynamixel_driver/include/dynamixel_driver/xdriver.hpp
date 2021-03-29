@@ -99,8 +99,9 @@ namespace DynamixelDriver
         virtual int syncReadVoltage(std::vector<uint8_t> &id_list, std::vector<uint32_t> &voltage_list) = 0;
         virtual int syncReadHwErrorStatus(std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list) = 0;
 
-        // custom write
-        virtual int customWrite(uint8_t id, uint32_t value, uint8_t reg_address, uint8_t byte_number);
+        // custom write and read
+        virtual int customWrite(uint8_t id, uint8_t reg_address, uint32_t value, uint8_t byte_number);
+        virtual int customRead(uint8_t id, uint8_t reg_address, uint32_t& value, uint8_t byte_number);
 
     protected:
         boost::shared_ptr<dynamixel::PortHandler>& _dxlPortHandler;

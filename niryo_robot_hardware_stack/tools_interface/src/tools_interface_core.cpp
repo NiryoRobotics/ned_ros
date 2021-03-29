@@ -122,17 +122,19 @@ bool ToolsInterfaceCore::_callbackOpenGripper(tools_interface::OpenGripper::Requ
     DynamixelDriver::SingleMotorCmd cmd;
     std::vector<DynamixelDriver::SingleMotorCmd> list_cmd;
     cmd.setId(_tool->getId());
+/*
+// use profile velocity instead
 
     cmd.setType(DynamixelDriver::DxlCommandType::CMD_TYPE_VELOCITY);
     cmd.setParam(req.open_speed);
     list_cmd.push_back(cmd);
-
+*/
     cmd.setType(DynamixelDriver::DxlCommandType::CMD_TYPE_POSITION);
     cmd.setParam(req.open_position);
     list_cmd.push_back(cmd);
 
     cmd.setType(DynamixelDriver::DxlCommandType::CMD_TYPE_EFFORT);
-    cmd.setParam(1023);
+    cmd.setParam(req.open_hold_torque);
     list_cmd.push_back(cmd);
 
     _dynamixel->setEndEffectorCommands(list_cmd);
@@ -168,17 +170,18 @@ bool ToolsInterfaceCore::_callbackCloseGripper(tools_interface::CloseGripper::Re
     cmd.setId(_tool->getId());
     
     int position_command = ( req.close_position < 50) ? 0 : req.close_position - 50;
-
+/*
+// use profile velocity instead
     cmd.setType(DynamixelDriver::DxlCommandType::CMD_TYPE_VELOCITY);
     cmd.setParam(req.close_speed);
     list_cmd.push_back(cmd);
-
+*/
     cmd.setType(DynamixelDriver::DxlCommandType::CMD_TYPE_POSITION);
     cmd.setParam(position_command);
     list_cmd.push_back(cmd);
 
     cmd.setType(DynamixelDriver::DxlCommandType::CMD_TYPE_EFFORT);
-    cmd.setParam(req.close_max_torque);
+    cmd.setParam(req.close_max_torque); // two's complement of 1536
     list_cmd.push_back(cmd);
 
     _dynamixel->setEndEffectorCommands(list_cmd);
@@ -226,7 +229,7 @@ bool ToolsInterfaceCore::_callbackPullAirVacuumPump(tools_interface::PullAirVacu
     list_cmd.push_back(cmd);
 
     cmd.setType(DynamixelDriver::DxlCommandType::CMD_TYPE_EFFORT);
-    cmd.setParam(1023);
+    cmd.setParam(500);
     list_cmd.push_back(cmd);
 
     _dynamixel->setEndEffectorCommands(list_cmd);
@@ -275,7 +278,7 @@ bool ToolsInterfaceCore:: _callbackPushAirVacuumPump(tools_interface::PushAirVac
     list_cmd.push_back(cmd);
 
     cmd.setType(DynamixelDriver::DxlCommandType::CMD_TYPE_EFFORT);
-    cmd.setParam(1023);
+    cmd.setParam(64000); // two's complement of 1536
     list_cmd.push_back(cmd);
 
     _dynamixel->setEndEffectorCommands(list_cmd);

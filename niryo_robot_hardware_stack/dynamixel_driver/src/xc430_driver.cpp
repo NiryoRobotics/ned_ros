@@ -116,26 +116,6 @@ namespace DynamixelDriver
         return _dxlPacketHandler->write1ByteTxOnly(_dxlPortHandler.get(), id, XC430_ADDR_ALARM_SHUTDOWN, (uint8_t)alarm_shutdown);
     }
 
-    /**
-     * @brief XC430Driver::customWrite
-     * @param id
-     * @param value
-     * @param reg_address
-     * @param byte_number
-     * @return
-     */
-    int XC430Driver::customWrite(uint8_t id, uint32_t value, uint8_t reg_address, uint8_t byte_number)
-    {
-        if (4 == byte_number)
-        {
-            return _dxlPacketHandler->write4ByteTxOnly(_dxlPortHandler.get(), id, reg_address, value);
-        }
-        else
-        {
-            return XDriver::customWrite(id, value, reg_address, byte_number);
-        }
-    }
-
     /*
      *  -----------------   SYNC WRITE   --------------------
      */

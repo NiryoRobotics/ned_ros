@@ -37,11 +37,12 @@ class DxlTools {
         int setupDxlBus(int baudrate);
         void broadcastPing();
         void ping(int id);
-        void setRegister(int id, int reg_address, int value, int size);
-        void getRegister(int id, int reg_address, int size);
+        int setRegister(uint8_t id, uint8_t reg_address,
+                         uint32_t value, uint8_t byte_number);
+        int getRegister(uint8_t id, uint8_t reg_address,
+                        uint32_t &value, uint8_t byte_number);
 
         void closePort();
-
 };
 
 #endif

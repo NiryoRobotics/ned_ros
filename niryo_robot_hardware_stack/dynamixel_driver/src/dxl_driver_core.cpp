@@ -27,6 +27,7 @@ namespace DynamixelDriver
 
         _activate_leds_server = _nh.advertiseService("niryo_robot/dynamixel_driver/set_dxl_leds", &DynamixelDriverCore::callbackActivateLeds, this);
         _custom_cmd_server = _nh.advertiseService("niryo_robot/dynamixel_driver/send_custom_dxl_value", &DynamixelDriverCore::callbackSendCustomDxlValue, this);
+        _custom_cmd_getter = _nh.advertiseService("niryo_robot/dynamixel_driver/read_custom_dxl_value", &DynamixelDriverCore::callbackReadCustomDxlValue, this);
     }
 
     void DynamixelDriverCore::initParameters()
@@ -301,7 +302,7 @@ namespace DynamixelDriver
         return result;
     }
 
-    std::vector<DxlMotorState> DynamixelDriverCore::getDxlStates() const
+    std::vector<DxlMotorState> &DynamixelDriverCore::getDxlStates()
     {
         return _dynamixel->getMotorsState();
     }
@@ -468,7 +469,7 @@ namespace DynamixelDriver
         }
 
         std::lock_guard<std::mutex> lck(_control_loop_mutex);
-        result = _dynamixel->sendCustomDxlCommand(motor_type, req.id, req.value, req.reg_address, req.byte_number);
+        result = _dynamixel->sendCustomDxlCommand(motor_type, req.id, req.reg_address, req.value, req.byte_number);
 
         if (result != COMM_SUCCESS)
         {
@@ -477,6 +478,51 @@ namespace DynamixelDriver
         else
         {
             res.message = "Dynamixel Driver Core - Send custom command done";
+            result = niryo_robot_msgs::CommandStatus::SUCCESS;
+        }
+        res.status = result;
+        return true;
+    }
+
+    bool DynamixelDriverCore::callbackReadCustomDxlValue(dynamixel_driver::ReadCustomDxlValue::Request &req,
+                                                        dynamixel_driver::ReadCustomDxlValue::Response &res)
+    {
+        int result;
+        DxlMotorType motor_type;
+        if (req.motor_type == (uint8_t)DxlMotorType::MOTOR_TYPE_XL430)
+        {
+            motor_type = DxlMotorType::MOTOR_TYPE_XL430;
+        }
+        else if (req.motor_type == (uint8_t)DxlMotorType::MOTOR_TYPE_XL320)
+        {
+            motor_type = DxlMotorType::MOTOR_TYPE_XL320;
+        }
+        else if (req.motor_type == (uint8_t)DxlMotorType::MOTOR_TYPE_XL330)
+        {
+            motor_type = DxlMotorType::MOTOR_TYPE_XL330;
+        }
+        else if (req.motor_type == (uint8_t)DxlMotorType::MOTOR_TYPE_XC430)
+        {
+            motor_type = DxlMotorType::MOTOR_TYPE_XC430;
+        }
+        else
+        {
+            res.status = niryo_robot_msgs::CommandStatus::WRONG_MOTOR_TYPE;
+            res.message = "Dynamixel Driver Core - Invalid motor type: should be 2 (XL-430) or 3 (XL-320) or 4 (XL-330) or 5 (XC-430)";
+            return true;
+        }
+
+        std::lock_guard<std::mutex> lck(_control_loop_mutex);
+        uint32_t value = 0;
+        result = _dynamixel->readCustomDxlCommand(motor_type, req.id, req.reg_address, value, req.byte_number);
+
+        if (result != COMM_SUCCESS)
+        {
+            res.message = "Dynamixel Driver Core - Reading custom registry failed";
+        }
+        else
+        {
+            res.message = "Dynamixel Driver Core - Reading successful. Registry value : " + std::to_string(value);
             result = niryo_robot_msgs::CommandStatus::SUCCESS;
         }
         res.status = result;
@@ -499,7 +545,7 @@ namespace DynamixelDriver
     int DynamixelDriverCore::update_leds(void)
     {
         std::lock_guard<std::mutex> lck(_control_loop_mutex);
-        int result = _dynamixel->setLeds(_dynamixel->getLedState());
+        int result = _dynamixel->setLeds(_dynamixel->getledstate());
         return result;
     }
 } // namespace DynamixelDriver

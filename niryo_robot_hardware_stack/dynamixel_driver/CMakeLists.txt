@@ -26,6 +26,7 @@ add_service_files(
     srv
   FILES
     SendCustomDxlValue.srv
+    ReadCustomDxlValue.srv
 )
 
 generate_messages(

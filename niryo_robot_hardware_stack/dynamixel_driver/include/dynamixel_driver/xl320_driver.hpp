@@ -118,6 +118,9 @@ namespace DynamixelDriver
         int syncReadVoltage(std::vector<uint8_t> &id_list, std::vector<uint32_t> &voltage_list);
         int syncReadHwErrorStatus(std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list);
 
+        int customWrite(uint8_t id, uint8_t reg_address, uint32_t value, uint8_t byte_number);
+        int customRead(uint8_t id, uint8_t reg_address, uint32_t &value, uint8_t byte_number);
+
     };
 } //DynamixelDriver
 

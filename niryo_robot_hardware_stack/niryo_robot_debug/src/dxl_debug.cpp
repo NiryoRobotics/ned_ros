@@ -61,8 +61,10 @@ int main (int argc, char **argv)
             ("id,i", po::value<int>()->default_value(0), "Dxl motor ID")
             ("scan", "Scan all Dxl motors on the bus")
             ("ping", "ping specific ID")
-            ("set-register", po::value<std::vector<int>>(), "Set a value to a register (args: reg_addr, value, size)")
-            ("get-register", po::value<std::vector<int>>(), "Get a value from a register (args: reg_addr, size)");
+            ("get-register", po::value<int>()->default_value(-1), "Get a value from a register (arg: reg_addr)")
+            ("size", po::value<int>()->default_value(1), "Size (for get-register only)")
+            ("set-register", po::value<std::vector<int>>(), "Set a value to a register (args: reg_addr, value, size)");
+
 
         po::positional_options_description p;
         p.add("set-register", -1);
@@ -93,6 +95,8 @@ int main (int argc, char **argv)
             return -1;
         }
 
+        int dxl_comm_result = COMM_TX_FAIL;
+
         // Execute action from args
         if (vars.count("scan")) {
             printf("--> SCAN Dxl bus\n"); 
@@ -116,20 +120,26 @@ int main (int argc, char **argv)
                 printf("--> SET REGISTER for Motor (ID:%d)\n", id);
                 printf("Register address: %d, Value: %d, Size (bytes): %d\n",
                         params.at(0), params.at(1), params.at(2));
-                dxlTools.setRegister(id, params.at(0), params.at(1), params.at(2));
+                dxl_comm_result = dxlTools.setRegister(id, params.at(0), params.at(1), params.at(2));
+
+                if (dxl_comm_result != COMM_SUCCESS)
+                    printf("Failed to set register: %d\n", dxl_comm_result);
+                else
+                    printf("Successfully sent register command\n");
             }
         }
         else if (vars.count("get-register")) {
-            std::vector<int> params = vars["get-register"].as<std::vector<int>>();
-            if (params.size() != 2) {
-                printf("ERROR: get-register needs 2 arguments (reg_addr, size)\n");
-            }
-            else {
-                printf("--> GET REGISTER for Motor (ID:%d)\n", id);
-                printf("Register address: %d, Size (bytes): %d\n",
-                        params.at(0), params.at(1));
-                dxlTools.getRegister(id, params.at(0), params.at(1));
-            }
+            uint8_t addr = vars["get-register"].as<int>();
+            uint8_t size = vars["size"].as<int>();
+            uint32_t value = 0;
+            printf("--> GET REGISTER for Motor (ID:%d)\n", id);
+            printf("Register address: %d, Size (bytes): %d\n", addr, size);
+            dxl_comm_result = dxlTools.getRegister(id, addr, value, size);
+
+            if (dxl_comm_result != COMM_SUCCESS)
+                printf("Failed to get register: %d\n", dxl_comm_result);
+            else
+                printf("Retrieved value at address %d : %d\n", addr, value);
         }
         else {
             std::cout << description << "\n";

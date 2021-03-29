@@ -365,7 +365,7 @@ namespace DynamixelDriver
     }
 
     /*
-     *  -----------------   WRITE   --------------------
+     *  -----------------   CUSTOM   --------------------
      */
 
     /**
@@ -376,20 +376,84 @@ namespace DynamixelDriver
      * @param byte_number
      * @return
      */
-    int XDriver::customWrite(uint8_t id, uint32_t value, uint8_t reg_address, uint8_t byte_number)
+    int XDriver::customWrite(uint8_t id, uint8_t reg_address, uint32_t value, uint8_t byte_number)
     {
-        switch(byte_number)
-        {
+        int dxl_comm_result = COMM_TX_FAIL;
+
+        switch(byte_number) {
             case 1:
-                return _dxlPacketHandler->write1ByteTxOnly(_dxlPortHandler.get(), id, reg_address, (uint8_t)value);
+                dxl_comm_result = _dxlPacketHandler->write1ByteTxOnly(_dxlPortHandler.get(), id,
+                        reg_address, (uint8_t)value);
             break;
             case 2:
-                return _dxlPacketHandler->write2ByteTxOnly(_dxlPortHandler.get(), id, reg_address, (uint16_t)value);
+                dxl_comm_result = _dxlPacketHandler->write2ByteTxOnly(_dxlPortHandler.get(), id,
+                        reg_address, (uint16_t)value);
+            break;
+            case 4:
+                dxl_comm_result = _dxlPacketHandler->write4ByteTxOnly(_dxlPortHandler.get(), id,
+                        reg_address, (uint32_t)value);
             break;
             default:
+                printf("ERROR: Size param must be 1, 2 or 4 bytes\n");
             break;
         }
 
-        return -1;
+        return dxl_comm_result;
+    }
+
+    /**
+     * @brief XDriver::customRead
+     * @param id
+     * @param value
+     * @param reg_address
+     * @param byte_number
+     * @return
+     */
+    int XDriver::customRead(uint8_t id, uint8_t reg_address, uint32_t &value, uint8_t byte_number)
+    {
+        int dxl_comm_result = COMM_TX_FAIL;
+        uint8_t dxl_error = 0;
+
+        switch(byte_number) {
+            case 1:
+            {
+                uint8_t read_data;
+                dxl_comm_result = _dxlPacketHandler->read1ByteTxRx(_dxlPortHandler.get(), id,
+                                            reg_address, &read_data, &dxl_error);
+                value = read_data;
+            }
+            break;
+            case 2:
+            {
+                uint16_t read_data;
+                dxl_comm_result = _dxlPacketHandler->read2ByteTxRx(_dxlPortHandler.get(), id,
+                                            reg_address, &read_data, &dxl_error);
+                value = read_data;
+            }
+            break;
+            case 4:
+            {
+                uint32_t read_data;
+                dxl_comm_result = _dxlPacketHandler->read4ByteTxRx(_dxlPortHandler.get(), id,
+                                            reg_address, &read_data, &dxl_error);
+                value = read_data;
+            }
+            break;
+            default:
+                printf("ERROR: Size param must be 1, 2 or 4 bytes\n");
+            break;
+        }
+
+        if (0 != dxl_error)
+            dxl_comm_result = dxl_error;
+
+        if (dxl_comm_result != COMM_SUCCESS) {
+            printf("Failed to get register: %d\n", dxl_comm_result);
+        }
+        else {
+            printf("Retrieved value at address %d : %d\n", reg_address, value);
+        }
+
+        return dxl_comm_result;
     }
 }

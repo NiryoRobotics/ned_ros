@@ -38,6 +38,7 @@
 #define XL330_ADDR_TEMPERATURE_LIMIT 31
 #define XL330_ADDR_MAX_VOLTAGE_LIMIT 32
 #define XL330_ADDR_MIN_VOLTAGE_LIMIT 34
+#define XL330_ADDR_CURRENT_LIMIT 38
 #define XL330_ADDR_MAX_POSITION_LIMIT 48
 #define XL330_ADDR_MIN_POSITION_LIMIT 52
 #define XL330_ADDR_ALARM_SHUTDOWN 63
@@ -47,6 +48,7 @@
 #define XL330_ADDR_STATUS_RETURN_LEVEL 68
 #define XL330_ADDR_HW_ERROR_STATUS 70
 #define XL330_ADDR_GOAL_PWM 100
+#define XL330_ADDR_GOAL_CURRENT 102
 #define XL330_ADDR_GOAL_VELOCITY 104
 #define XL330_ADDR_GOAL_POSITION 116 // RAM (not all addresses)
 #define XL330_ADDR_MOVING 122
@@ -57,7 +59,8 @@
 #define XL330_ADDR_PRESENT_VOLTAGE 144
 #define XL330_ADDR_PRESENT_TEMPERATURE 146
 
-namespace DynamixsetGoalVelocityelDriver
+
+namespace DynamixelDriver
 {
     /**
      * @brief The XL330Driver class
@@ -115,7 +118,6 @@ namespace DynamixsetGoalVelocityelDriver
         int syncReadVoltage(std::vector<uint8_t> &id_list, std::vector<uint32_t> &voltage_list);
         int syncReadHwErrorStatus(std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list);
 
-        int customWrite(uint8_t id, uint32_t value, uint8_t reg_address, uint8_t byte_number);
     };
 } //DynamixelDriver
 

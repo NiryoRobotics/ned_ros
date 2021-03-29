@@ -32,6 +32,7 @@
 #include "dynamixel_driver/dxl_driver.hpp"
 #include "dynamixel_driver/DxlArrayMotorHardwareStatus.h"
 #include "dynamixel_driver/SendCustomDxlValue.h"
+#include "dynamixel_driver/ReadCustomDxlValue.h"
 
 #include "niryo_robot_msgs/BusState.h"
 #include "niryo_robot_msgs/SetInt.h"
@@ -61,7 +62,7 @@ namespace DynamixelDriver
 
         void setTrajectoryControllerCommands(std::vector<uint32_t>& cmd);
 
-        std::vector<DxlMotorState> getDxlStates() const;
+        std::vector<DxlMotorState>& getDxlStates();
 
         void setDxlCommands(SynchronizeMotorCmd &cmd);
 
@@ -113,8 +114,10 @@ namespace DynamixelDriver
 
         ros::ServiceServer _activate_leds_server;
         ros::ServiceServer _custom_cmd_server;
+        ros::ServiceServer _custom_cmd_getter;
         bool callbackActivateLeds(niryo_robot_msgs::SetInt::Request &req, niryo_robot_msgs::SetInt::Response &res);
         bool callbackSendCustomDxlValue(dynamixel_driver::SendCustomDxlValue::Request &req, dynamixel_driver::SendCustomDxlValue::Response &res);
+        bool callbackReadCustomDxlValue(dynamixel_driver::ReadCustomDxlValue::Request &req, dynamixel_driver::ReadCustomDxlValue::Response &res);
     };
 } //DynamixelDriver
 #endif
