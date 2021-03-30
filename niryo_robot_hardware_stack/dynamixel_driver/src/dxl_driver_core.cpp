@@ -2,6 +2,7 @@
 #include <cstdlib>
 #include <algorithm>
 #include <cmath>
+#include <functional>
 
 namespace DynamixelDriver
 {
@@ -55,7 +56,7 @@ namespace DynamixelDriver
         {
             ROS_INFO("Dynamixel Driver Core - Start control loop");
             _control_loop_flag = true;
-            _control_loop_thread.reset(new std::thread(boost::bind(&DynamixelDriverCore::controlLoop, this)));
+            _control_loop_thread.reset(new std::thread(std::bind(&DynamixelDriverCore::controlLoop, this)));
         }
     }
 
@@ -307,7 +308,7 @@ namespace DynamixelDriver
         return _dynamixel->getMotorsState();
     }
 
-    std::vector<int> DynamixelDriverCore::getRemovedMotorList() const
+    std::vector<uint8_t> DynamixelDriverCore::getRemovedMotorList() const
     {
         return _dynamixel->getRemovedMotorList();
     }
@@ -383,7 +384,7 @@ namespace DynamixelDriver
                     ROS_WARN("Dynamixel Driver Core - Dynamixel connection error");
                     ros::Duration(0.1).sleep();
 
-                    std::vector<int> missing_ids;
+                    std::vector<uint8_t> missing_ids;
                     ROS_DEBUG("Dynamixel Driver Core - Scan to find Dxl motors");
 
                     int bus_state;
@@ -394,7 +395,7 @@ namespace DynamixelDriver
                     while (bus_state != DXL_SCAN_OK)
                     { // wait for connection to be up
                         missing_ids = getRemovedMotorList();
-                        for(std::vector<int>::iterator it = missing_ids.begin(); it != missing_ids.end(); ++it) {
+                        for(std::vector<uint8_t>::const_iterator it = missing_ids.cbegin(); it != missing_ids.cend(); ++it) {
                             ROS_WARN_THROTTLE(2, "Dynamixel Driver Core - Dynamixel %d do not seem to be connected", *it);
                         }
                         ros::Duration(0.25).sleep();

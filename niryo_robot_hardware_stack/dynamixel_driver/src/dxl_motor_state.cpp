@@ -23,11 +23,11 @@ namespace DynamixelDriver
 {
     DxlMotorState::DxlMotorState(uint8_t id, DxlMotorType type)
         : _id(id), _type(type),
-          _state_pos(0),
-          _state_temperature(0),
-          _state_voltage(0),
-          _state_hw_error(0),
-          _state_hw_error_msg("")
+          _position_state(0),
+          _temperature_state(),
+          _voltage_state(),
+          _hw_error_state(),
+          _hw_error_message_state("")
     {
     }
 

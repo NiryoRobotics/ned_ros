@@ -113,7 +113,7 @@ namespace DynamixelDriver
             bool isConnectionOk() const;
 
             //getters
-            std::vector<int>& getRemovedMotorList();
+            std::vector<uint8_t> getRemovedMotorList() const;
             std::vector<DxlMotorState> getMotorsState() const;
             int getLedState() const;
             std::string getErrorMessage() const;
@@ -128,7 +128,7 @@ namespace DynamixelDriver
             DxlMotorType dxlMotorTypeFromString(std::string type) const;
 
             void readAndFillState(
-                int (XDriver::*readFunction)(std::vector<uint8_t> &, std::vector<uint32_t> &),
+                int (XDriver::*syncReadFunction)(std::vector<uint8_t> &, std::vector<uint32_t> &),
                 void (DxlMotorState::*setFunction)(uint32_t));
 
             void fillPositionStatus();
@@ -140,6 +140,7 @@ namespace DynamixelDriver
 
             void checkRemovedMotors();
 
+            bool hasMotors();
 
         private:
             ros::NodeHandle _nh;
@@ -151,7 +152,7 @@ namespace DynamixelDriver
             int _uart_baudrate;
 
             std::vector<uint8_t> _all_motor_connected;
-            std::vector<int> _removed_motor_id_list;
+            std::vector<uint8_t> _removed_motor_id_list;
 
             std::map<int, DxlMotorState> _state_map;
             std::map<DxlMotorType, std::vector<uint8_t> > _ids_map;
@@ -173,7 +174,7 @@ namespace DynamixelDriver
         return _is_dxl_connection_ok;
     }
 
-    std::vector<int> &DxlDriver::getRemovedMotorList()
+    std::vector<uint8_t> DxlDriver::getRemovedMotorList() const
     {
         return _removed_motor_id_list;
     }
@@ -222,6 +223,11 @@ namespace DynamixelDriver
            return DxlMotorType::MOTOR_TYPE_XL330;
 
         return DxlMotorType::UNKNOWN_TYPE;
+    }
+
+    bool DxlDriver::hasMotors()
+    {
+        return _state_map.size() > 0;
     }
 }
 

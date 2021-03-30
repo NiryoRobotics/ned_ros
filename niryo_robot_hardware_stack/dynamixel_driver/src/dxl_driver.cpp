@@ -100,7 +100,7 @@ namespace DynamixelDriver
             ROS_ERROR("Dxl Driver - wrong dynamixel configuration. Please check your configuration file dxl_motor_id_list and dxl_motor_type_list");
 
         //put everything in maps
-        for(auto id : idList) {
+        for(auto const &id : idList) {
 
             DxlMotorType type = dxlMotorTypeFromString(typeList.at(id));
 
@@ -128,7 +128,7 @@ namespace DynamixelDriver
         //add id to _ids_map
         _state_map[id] = DxlMotorState(id, type);
         if(_ids_map.count(type)) {
-            _ids_map[type] = std::vector<int>({id});
+            _ids_map[type] = std::vector<uint8_t>({id});
         }
         else
             _ids_map[type].push_back(id);
@@ -164,7 +164,7 @@ namespace DynamixelDriver
     void DxlDriver::removeDynamixel(uint8_t id, DxlMotorType )
     {
         if(_state_map.count(id)) {
-            DxlMotorType type = _state_map.at(id);
+            DxlMotorType type = _state_map.at(id).getType();
 
             if(_ids_map.count(type)) {
                 auto ids = _ids_map.at(type);
@@ -269,12 +269,12 @@ namespace DynamixelDriver
         int return_value = COMM_SUCCESS;
         int result = 0;
 
-        for(auto it : _state_map)
+        for(auto const &it : _state_map)
         {
-            DxlMotorType type = it->second.getType();
-            ROS_DEBUG("Dxl Driver - Reboot Dxl motor with ID: %d", it->first);
+            DxlMotorType type = it.second.getType();
+            ROS_DEBUG("Dxl Driver - Reboot Dxl motor with ID: %d", it.first);
             if(_xdriver_map.count(type)) {
-                result = _xdriver_map.at(type)->reboot(it->first);
+                result = _xdriver_map.at(type)->reboot(it.first);
                 if (result != COMM_SUCCESS)
                 {
                     ROS_WARN("Dxl Driver - Failed to reboot motor: %d", result);
@@ -481,27 +481,27 @@ namespace DynamixelDriver
      * @brief DxlDriver::readAndFillState
      */
     void DxlDriver::readAndFillState(
-            int (XDriver::*readFunction)(std::vector<uint8_t> &, std::vector<uint32_t> &),
+            int (XDriver::*syncReadFunction)(std::vector<uint8_t> &, std::vector<uint32_t> &),
             void (DxlMotorState::*setFunction)(uint32_t))
     {
         // syncread from all drivers for all motors
-        for(auto it = _xdriver_map.begin(); it != _xdriver_map.end(); ++it)
+        for(auto it : _xdriver_map)
         {
-            auto type = it->first;
-            auto driver = it->second;
+            DxlMotorType type = it.first;
+            std::shared_ptr<XDriver> driver = it.second;
 
             if(driver && _ids_map.count(type) != 0)
             {
                 std::vector<uint8_t> id_list = _ids_map.at(type);
                 std::vector<uint32_t> position_list;
 
-                if ((driver->*readFunction)(id_list, position_list) == COMM_SUCCESS)
+                if ((driver.get()->*syncReadFunction)(id_list, position_list) == COMM_SUCCESS)
                 {
                     _hw_fail_counter_read = 0;
 
                     // set motors states accordingly
-                    for(auto i : id_list)
-                        _state_map.at(i).*setFunction(position_list.at(i));
+                    for(auto const &i : id_list)
+                        (_state_map.at(i).*setFunction)(position_list.at(i));
                 }
             }
         }
@@ -547,7 +547,7 @@ namespace DynamixelDriver
      */
     void DxlDriver::readPositionStatus()
     {
-        if (_motors_state.size() <= 0)
+        if (!hasMotors())
         {
             ROS_ERROR_THROTTLE(1, "Dxl Driver - No motor");
             _debug_error_message = "Dxl Driver -  No motor";
@@ -569,7 +569,7 @@ namespace DynamixelDriver
      */
     void DxlDriver::readHwStatus()
     {
-        if (_motors_state.size() <= 0)
+        if (!hasMotors())
         {
             ROS_ERROR_THROTTLE(1, "Dxl Driver - No motor");
             _debug_error_message = "Dxl Driver - No motor";
@@ -596,14 +596,13 @@ namespace DynamixelDriver
      */
     void DxlDriver::interpreteErrorState()
     {
-        DxlMotorState motor;
-        for (std::map<int, DxlMotorState>::iterator it = _state_map.begin(); it != _state_map.end(); ++it)
+        for (auto const &it : _state_map)
         {
-            motor = it->second;
+            DxlMotorState motor = it.second;
 
-            uint32_t hw_state = motor->getHardwareErrorState();
+            uint32_t hw_state = motor.getHardwareErrorState();
             std::string hardware_message = "";
-            DxlMotorType motor_type = motor->getType();
+            DxlMotorType motor_type = motor.getType();
 
             switch(motor_type)
             {
@@ -663,7 +662,7 @@ namespace DynamixelDriver
                     break;
             }
 
-            motor->setHardwareError(hardware_message);
+            motor.setHardwareError(hardware_message);
         }
     }
 
@@ -725,13 +724,17 @@ namespace DynamixelDriver
             break;
             case DxlCommandType::CMD_TYPE_LEARNING_MODE:
             {
-                std::vector<uint32_t> cmd_param(_motor_id_list.size(), cmd.getParams()[0]);
-                std::vector<uint8_t> id_list(_motor_id_list.begin(), _motor_id_list.end());
+                std::vector<uint8_t> id_list;
+                for(auto const& element: _state_map) {
+                    id_list.push_back(element.first);
+                }
+                std::vector<uint32_t> cmd_param(id_list.size(), cmd.getParams()[0]);
+
                 syncWriteTorqueEnable(id_list, cmd_param);
             }
             break;
             default:
-                ROS_ERROR("Unknown command type: " + cmd.getType());
+                ROS_ERROR("Unknown command type: %d", cmd.getType());
             break;
         }
     }
@@ -1018,7 +1021,7 @@ namespace DynamixelDriver
         _is_dxl_connection_ok = false;
 
         _debug_error_message = "Dynamixel(s):";
-        for (auto it : _removed_motor_id_list)
+        for (auto const &it : _removed_motor_id_list)
         {
             _debug_error_message += " ";
             _debug_error_message += std::to_string(*it);
@@ -1034,7 +1037,7 @@ namespace DynamixelDriver
     void DxlDriver::checkRemovedMotors()
     {
         //get list of ids
-        std::vector<int> motor_list;
+        std::vector<uint8_t> motor_list;
 
         for(auto const& istate: _state_map) {
             auto it = std::find(_all_motor_connected.begin(), _all_motor_connected.end(), istate.first);

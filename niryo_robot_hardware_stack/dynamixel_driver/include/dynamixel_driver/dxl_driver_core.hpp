@@ -72,7 +72,7 @@ namespace DynamixelDriver
         void unsetEndEffector(uint8_t id, DxlMotorType type);
         void setEndEffectorCommands(std::vector<SingleMotorCmd> &cmd);
         uint32_t getEndEffectorState(uint8_t id, DxlMotorType type);
-        std::vector<int> getRemovedMotorList() const;
+        std::vector<uint8_t> getRemovedMotorList() const;
         
         int update_leds(void);
 
