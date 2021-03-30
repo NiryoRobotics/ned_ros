@@ -1,4 +1,4 @@
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <ros/ros.h>
 #include <string>
 #include <thread>
@@ -13,7 +13,7 @@ class DxlDriverTest {
     private:
         ros::NodeHandle nh;
 
-        boost::shared_ptr<DynamixelDriver::DynamixelDriverCore> _dynamixel;
+        std::shared_ptr<DynamixelDriver::DynamixelDriverCore> _dynamixel;
 
         std::vector<uint32_t> dxl_home_pose{2000, 2047 , 511};
         std::vector<uint32_t> dxl_pose_1{2047, 2047 , 511};

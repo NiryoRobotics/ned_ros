@@ -17,7 +17,7 @@
 #ifndef XC430_DRIVER_HPP
 #define XC430_DRIVER_HPP
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <vector>
 #include <string>
@@ -67,8 +67,8 @@ namespace DynamixelDriver {
     class XC430Driver : public XDriver
     {
     public:
-        XC430Driver(boost::shared_ptr<dynamixel::PortHandler>& portHandler,
-                    boost::shared_ptr<dynamixel::PacketHandler>& packetHandler);
+        XC430Driver(std::shared_ptr<dynamixel::PortHandler>& portHandler,
+                    std::shared_ptr<dynamixel::PacketHandler>& packetHandler);
 
         uint32_t rad_pos_to_xc430_pos(double position_rad);
         double xc430_pos_to_rad_pos(int32_t position_dxl);

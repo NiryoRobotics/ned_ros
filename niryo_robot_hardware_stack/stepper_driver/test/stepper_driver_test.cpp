@@ -1,4 +1,4 @@
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <ros/ros.h>
 #include <string>
 #include <thread>
@@ -13,7 +13,7 @@ class StepperDriverTest {
     private:
         ros::NodeHandle nh;
 
-        boost::shared_ptr<StepperDriver::StepperDriverCore> _stepper;
+        std::shared_ptr<StepperDriver::StepperDriverCore> _stepper;
 
         std::vector<int32_t> home_pose{32, 512 , 2322};
         std::vector<int32_t> pose_1{-833, 3046, 3476};

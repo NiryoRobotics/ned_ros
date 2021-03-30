@@ -20,7 +20,7 @@
 #ifndef CPU_INTERFACE_CORE_HPP
 #define CPU_INTERFACE_CORE_HPP
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <fstream>
 #include <ros/ros.h>
 #include <vector>
@@ -50,7 +50,7 @@ class CpuInterfaceCore
         void _readCpuTemperature();
         void _readHardwareDataLoop();
 
-        boost::shared_ptr<std::thread> _read_hardware_data_thread;
+        std::shared_ptr<std::thread> _read_hardware_data_thread;
         
 };
 #endif

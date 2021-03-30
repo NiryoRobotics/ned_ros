@@ -20,7 +20,7 @@
 #ifndef DXL_DRIVER_HPP
 #define DXL_DRIVER_HPP
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <ros/ros.h>
 #include <string>
 #include <thread>
@@ -62,18 +62,6 @@
 
 namespace DynamixelDriver
 {
-    struct DxlCustomCommand {
-    
-        DxlCustomCommand(DxlMotorType m, uint8_t i, uint32_t v, uint32_t r, uint32_t b)
-            : motor_type(m), id(i), value(v), reg_address(r), byte_number(b) {}
-
-        DxlMotorType motor_type;
-        uint8_t id;
-        uint32_t value;
-        uint32_t reg_address;
-        uint32_t byte_number;
-
-    };
 
     /**
      * @brief The DxlDriver class
@@ -84,39 +72,27 @@ namespace DynamixelDriver
             DxlDriver();
             virtual ~DxlDriver();
 
-            int init();
-
             void addDynamixel(uint8_t id, DxlMotorType type);
             void removeDynamixel(uint8_t id, DxlMotorType);
-
-            int setupCommunication();
 
             //commands
             void executeJointTrajectoryCmd(std::vector<uint32_t> &cmd);
 
             uint32_t getPosition(DxlMotorState& motor_state);
 
-            void readPositionState();
+            void readPositionStatus();
             void readHwStatus();
+
             void readSynchronizeCommand(SynchronizeMotorCmd cmd);
             void readSingleCommand(SingleMotorCmd cmd);
 
-            void fillPositionState(void);
-            void fillVoltageStatus(void);
-            void fillTemperatureStatus(void);
-            void fillErrorStatus(void);
-            void interpreteErrorState(void);
-
-            void readAndFillState(
-                int (XDriver::*readFunction)(std::vector<uint8_t> &, std::vector<uint32_t> &),
-                void (DxlMotorState::*setFunction)(uint32_t));
-
-            void FillMotorsState(void (DxlMotorState::*setFunction)(uint32_t), uint32_t (DxlMotorState::*getFunction)());
-
             int setTorqueEnable(DxlMotorState& targeted_dxl, uint32_t torque_enable);
             int setGoalPosition(DxlMotorState& targeted_dxl, uint32_t position);
+
             int setGoalTorque(DxlMotorState& targeted_dxl, uint32_t torque);
             int setGoalVelocity(DxlMotorState& targeted_dxl, uint32_t velocity);
+
+            int setLeds(int led, DxlMotorType type = DxlMotorType::MOTOR_TYPE_XL330);
 
             void syncWriteTorqueEnable(std::vector<uint8_t>& motor_list, std::vector<uint32_t>& torque_enable);
             void syncWriteEffortCommand(std::vector<uint8_t>& motor_list, std::vector<uint32_t>& param_list);
@@ -124,23 +100,20 @@ namespace DynamixelDriver
             void syncWritePositionCommand(std::vector<uint8_t>& motor_list, std::vector<uint32_t>& param_list);
 
             int scanAndCheck();
-            void checkRemovedMotors();
-            std::vector<int>& getRemovedMotorList();
 
             int ping(DxlMotorState& targeted_dxl);
             int type_ping_id(uint8_t id, DxlMotorType type);
 
-            int sendCustomDxlCommand(DxlMotorType motor_type, uint8_t id, uint32_t value, uint32_t reg_address, uint32_t byte_number);
+            int sendCustomDxlCommand(DxlMotorType motor_type, uint8_t id, uint32_t reg_address, uint32_t value, uint32_t byte_number);
+            int readCustomDxlCommand(DxlMotorType motor_type, uint8_t id, uint32_t reg_address, uint32_t &value, uint32_t byte_number);
+
             int rebootMotors();
-
-            void addCustomDxlCommand(DxlMotorType motor_type, uint8_t id, uint32_t value,
-                                    uint32_t reg_address, uint32_t byte_number);
-
 
             //tests
             bool isConnectionOk() const;
 
             //getters
+            std::vector<int>& getRemovedMotorList();
             std::vector<DxlMotorState> getMotorsState() const;
             int getLedState() const;
             std::string getErrorMessage() const;
@@ -148,16 +121,31 @@ namespace DynamixelDriver
             int getAllIdsOnDxlBus(std::vector<uint8_t> &id_list) const;
 
             //setters
-            int setLeds(int led, DxlMotorType type = DxlMotorType::MOTOR_TYPE_XL330);
-
         private:
+            int init();
+            int setupCommunication();
+
             DxlMotorType dxlMotorTypeFromString(std::string type) const;
+
+            void readAndFillState(
+                int (XDriver::*readFunction)(std::vector<uint8_t> &, std::vector<uint32_t> &),
+                void (DxlMotorState::*setFunction)(uint32_t));
+
+            void fillPositionStatus();
+            void fillVoltageStatus();
+            void fillTemperatureStatus();
+            void fillErrorStatus();
+
+            void interpreteErrorState();
+
+            void checkRemovedMotors();
+
 
         private:
             ros::NodeHandle _nh;
 
-            boost::shared_ptr<dynamixel::PortHandler> _dxlPortHandler;
-            boost::shared_ptr<dynamixel::PacketHandler> _dxlPacketHandler;
+            std::shared_ptr<dynamixel::PortHandler> _dxlPortHandler;
+            std::shared_ptr<dynamixel::PacketHandler> _dxlPacketHandler;
 
             std::string _device_name;
             int _uart_baudrate;
@@ -166,8 +154,8 @@ namespace DynamixelDriver
             std::vector<int> _removed_motor_id_list;
 
             std::map<int, DxlMotorState> _state_map;
-            std::map<DxlMotorType, std::vector<int> > _ids_map;
-            std::map<DxlMotorType, boost::shared_ptr<XDriver> > _xdriver_map;
+            std::map<DxlMotorType, std::vector<uint8_t> > _ids_map;
+            std::map<DxlMotorType, std::shared_ptr<XDriver> > _xdriver_map;
 
             // for hardware control
             bool _is_dxl_connection_ok;
@@ -176,8 +164,6 @@ namespace DynamixelDriver
             int _hw_fail_counter_read;
 
             int _led_state;
-
-            std::queue<DxlCustomCommand> _custom_command_queue;
     };
 
     //inline getters

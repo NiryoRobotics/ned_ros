@@ -17,7 +17,7 @@
 #ifndef XL430_DRIVER_HPP
 #define XL430_DRIVER_HPP
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <vector>
 #include <string>
 #include <iostream>
@@ -67,8 +67,8 @@ namespace DynamixelDriver
     class XL430Driver : public XDriver
     {
     public:
-        XL430Driver(boost::shared_ptr<dynamixel::PortHandler>& portHandler,
-                    boost::shared_ptr<dynamixel::PacketHandler>& packetHandler);
+        XL430Driver(std::shared_ptr<dynamixel::PortHandler>& portHandler,
+                    std::shared_ptr<dynamixel::PacketHandler>& packetHandler);
 
         // from XDriver interface
         int checkModelNumber(uint8_t id);

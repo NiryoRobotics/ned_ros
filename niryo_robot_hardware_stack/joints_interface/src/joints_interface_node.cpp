@@ -13,13 +13,13 @@ int main(int argc, char **argv)
     
     ros::NodeHandle nh;
    
-    boost::shared_ptr<DynamixelDriver::DynamixelDriverCore> dynamixel(new DynamixelDriver::DynamixelDriverCore());
+    std::shared_ptr<DynamixelDriver::DynamixelDriverCore> dynamixel(new DynamixelDriver::DynamixelDriverCore());
     ros::Duration(1).sleep();
 
-    boost::shared_ptr<StepperDriver::StepperDriverCore> stepper(new StepperDriver::StepperDriverCore());
+    std::shared_ptr<StepperDriver::StepperDriverCore> stepper(new StepperDriver::StepperDriverCore());
     ros::Duration(1).sleep();
 
-    boost::shared_ptr<JointsInterfaceCore> joints(new JointsInterfaceCore(dynamixel, stepper));
+    std::shared_ptr<JointsInterfaceCore> joints(new JointsInterfaceCore(dynamixel, stepper));
     ros::waitForShutdown();
     
     ROS_INFO("Joints Interface - Shutdown node");

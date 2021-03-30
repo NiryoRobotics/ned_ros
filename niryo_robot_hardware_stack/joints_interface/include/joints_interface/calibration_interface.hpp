@@ -42,7 +42,7 @@ class CalibrationInterface
 
 public:
     CalibrationInterface(std::vector<JointState> &joint_list,
-                         boost::shared_ptr<StepperDriver::StepperDriverCore> &stepper, boost::shared_ptr<DynamixelDriver::DynamixelDriverCore> &dynamixel);
+                         std::shared_ptr<StepperDriver::StepperDriverCore> &stepper, std::shared_ptr<DynamixelDriver::DynamixelDriverCore> &dynamixel);
 
     int startCalibration(int mode, std::string &result_message);
 
@@ -51,8 +51,8 @@ public:
 private:
     std::vector<JointState> &_joint_list;
     ros::NodeHandle _nh;
-    boost::shared_ptr<StepperDriver::StepperDriverCore> &_stepper;
-    boost::shared_ptr<DynamixelDriver::DynamixelDriverCore> &_dynamixel;
+    std::shared_ptr<StepperDriver::StepperDriverCore> &_stepper;
+    std::shared_ptr<DynamixelDriver::DynamixelDriverCore> &_dynamixel;
 
     int _xl430_middle_position, _xl320_middle_position;
     int _xc430_middle_position, _xl330_middle_position;
@@ -80,7 +80,7 @@ private:
     int _relativeMoveMotor(JointState &motor, int steps, int delay, bool wait);
     void _setCalibrationCommand(
         JointState &motor, int offset, int delay, int motor_direction, int calibration_direction, int timeout,
-        boost::shared_ptr<int32_t> &calibration_result);
+        std::shared_ptr<int32_t> &calibration_result);
 
     int _getCalibrationResult(JointState &motor);
 

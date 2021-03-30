@@ -203,8 +203,8 @@ namespace NiryoRobotHardwareInterface
             int cpu_temperature;
             std::string error_message;
 
-            boost::shared_ptr<bool> need_calibration(new bool());
-            boost::shared_ptr<bool> calibration_in_progress(new bool());
+            std::shared_ptr<bool> need_calibration(new bool());
+            std::shared_ptr<bool> calibration_in_progress(new bool());
 
             std::vector<std::string> motor_names;
             std::vector<std::string> motor_types;

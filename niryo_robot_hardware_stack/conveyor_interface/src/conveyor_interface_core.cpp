@@ -1,7 +1,7 @@
 #include "conveyor_interface/conveyor_interface_core.hpp"
 #include "stepper_driver/conveyor_state.hpp"
 
-ConveyorInterfaceCore::ConveyorInterfaceCore(boost::shared_ptr<StepperDriver::StepperDriverCore> &stepper):
+ConveyorInterfaceCore::ConveyorInterfaceCore(std::shared_ptr<StepperDriver::StepperDriverCore> &stepper):
    _stepper(stepper)
 {
     _list_conveyor_id.clear();

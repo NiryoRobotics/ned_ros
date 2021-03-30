@@ -20,8 +20,8 @@
 #include "joints_interface/joints_interface_core.hpp"
 
 JointsInterfaceCore::JointsInterfaceCore(
-    boost::shared_ptr<DynamixelDriver::DynamixelDriverCore> &dynamixel,
-    boost::shared_ptr<StepperDriver::StepperDriverCore> &stepper)
+    std::shared_ptr<DynamixelDriver::DynamixelDriverCore> &dynamixel,
+    std::shared_ptr<StepperDriver::StepperDriverCore> &stepper)
     : _stepper(stepper), _dynamixel(dynamixel)
 {
     init();
@@ -227,7 +227,7 @@ bool JointsInterfaceCore::getFreeDriveMode()
     return _previous_state_learning_mode;
 }
 
-void JointsInterfaceCore::getCalibrationState(boost::shared_ptr<bool> &need_calibration, boost::shared_ptr<bool> &calibration_in_progress)
+void JointsInterfaceCore::getCalibrationState(std::shared_ptr<bool> &need_calibration, std::shared_ptr<bool> &calibration_in_progress)
 {
     (*need_calibration) = _robot->needCalibration();
     (*calibration_in_progress) = _robot->isCalibrationInProgress();

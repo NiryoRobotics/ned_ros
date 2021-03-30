@@ -22,7 +22,7 @@
 #include <ros/console.h>
 
 CalibrationInterface::CalibrationInterface(std::vector<JointState> &joint_list,
-                                           boost::shared_ptr<StepperDriver::StepperDriverCore> &stepper, boost::shared_ptr<DynamixelDriver::DynamixelDriverCore> &dynamixel) : _joint_list(joint_list), _stepper(stepper), _dynamixel(dynamixel)
+                                           std::shared_ptr<StepperDriver::StepperDriverCore> &stepper, std::shared_ptr<DynamixelDriver::DynamixelDriverCore> &dynamixel) : _joint_list(joint_list), _stepper(stepper), _dynamixel(dynamixel)
 {
     // if( ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug) ) {
     // ros::console::notifyLoggerLevelsChanged();
@@ -166,7 +166,7 @@ int CalibrationInterface::_relativeMoveMotor(JointState &motor, int steps, int d
 
 void CalibrationInterface::_setCalibrationCommand(
     JointState &motor, int offset, int delay, int motor_direction, int calibration_direction, int timeout,
-    boost::shared_ptr<int32_t> &calibration_result)
+    std::shared_ptr<int32_t> &calibration_result)
 {
     StepperDriver::StepperMotorCmd stepper_cmd;
 
@@ -249,9 +249,9 @@ void CalibrationInterface::_auto_calibration()
 
     // 3. Send calibration cmd 1 + 2 + 3
 
-    boost::shared_ptr<int32_t> stepper_1_calibration_result(new int32_t());
-    boost::shared_ptr<int32_t> stepper_2_calibration_result(new int32_t());
-    boost::shared_ptr<int32_t> stepper_3_calibration_result(new int32_t());
+    std::shared_ptr<int32_t> stepper_1_calibration_result(new int32_t());
+    std::shared_ptr<int32_t> stepper_2_calibration_result(new int32_t());
+    std::shared_ptr<int32_t> stepper_3_calibration_result(new int32_t());
 
     //_stepper->setCalibrationResult(_joint_list.at(0).getId(), 0);
     std::thread stepper_1_calibration_thread = std::thread(boost::bind(&CalibrationInterface::_setCalibrationCommand, this,

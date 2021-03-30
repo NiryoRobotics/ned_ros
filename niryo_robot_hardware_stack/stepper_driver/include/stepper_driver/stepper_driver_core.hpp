@@ -20,7 +20,7 @@
 #ifndef STEPPER_DRIVER_CORE_HPP
 #define STEPPER_DRIVER_CORE_HPP
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <ros/ros.h>
 #include <string>
 #include <thread>
@@ -66,7 +66,7 @@ namespace StepperDriver
 
             void clearCalibrationTab();
             bool getCalibrationState();
-            e_CanStepperCalibrationStatus getCalibrationResult(uint8_t id, boost::shared_ptr<int32_t> &calibration_result);
+            e_CanStepperCalibrationStatus getCalibrationResult(uint8_t id, std::shared_ptr<int32_t> &calibration_result);
             void startCalibration(bool enable);
 
             void activeDebugMode(bool mode);
@@ -87,7 +87,7 @@ namespace StepperDriver
 
             std::mutex _control_loop_mutex;
 
-            boost::shared_ptr<std::thread> _control_loop_thread;
+            std::shared_ptr<std::thread> _control_loop_thread;
 
             std::vector<int32_t> _joint_trajectory_controller_cmd;
             std::shared_ptr<StepperMotorCmd> _stepper_cmd;
@@ -100,7 +100,7 @@ namespace StepperDriver
             double _time_hw_last_write;
             double _time_hw_last_check_connection;
 
-            boost::shared_ptr<StepperDriver> _stepper;
+            std::shared_ptr<StepperDriver> _stepper;
 
             std::vector<std::thread> _calibration_thread_list;
 

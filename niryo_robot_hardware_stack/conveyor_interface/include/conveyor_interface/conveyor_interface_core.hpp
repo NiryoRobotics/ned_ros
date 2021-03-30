@@ -20,7 +20,7 @@
 #ifndef CONVEYOR_INTERFACE_CORE_HPP
 #define CONVEYOR_INTERFACE_CORE_HPP
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <ros/ros.h>
 #include <vector>
@@ -37,21 +37,21 @@ class ConveyorInterfaceCore
 {
     public:
         
-        ConveyorInterfaceCore(boost::shared_ptr<StepperDriver::StepperDriverCore> &stepper);
+        ConveyorInterfaceCore(std::shared_ptr<StepperDriver::StepperDriverCore> &stepper);
         void initServices();
         void initParams();
 
     private:
 
         ros::NodeHandle _nh;
-        boost::shared_ptr<StepperDriver::StepperDriverCore> &_stepper;
+        std::shared_ptr<StepperDriver::StepperDriverCore> &_stepper;
 
         ros::ServiceServer _ping_and_set_stepper_server;
         ros::ServiceServer _control_conveyor_server;
         ros::Publisher _conveyors_feedback_publisher;
 
         ros::Publisher _conveyor_status_publisher;
-        boost::shared_ptr<std::thread> _publish_conveyor_status_thread;
+        std::shared_ptr<std::thread> _publish_conveyor_status_thread;
 
         std::vector<uint8_t> _list_conveyor_id;
         std::vector<uint8_t> _list_available_id; 
@@ -60,7 +60,7 @@ class ConveyorInterfaceCore
         int _conveyor_max_effort;
         double _publish_feedback_frequency;
 
-        boost::shared_ptr<std::thread> _publish_conveyors_feedback_thread;
+        std::shared_ptr<std::thread> _publish_conveyors_feedback_thread;
 
         bool _callbackPingAndSetConveyor(conveyor_interface::SetConveyor::Request &req, conveyor_interface::SetConveyor::Response &res);
         bool _callbackControlConveyor(conveyor_interface::ControlConveyor::Request &req, conveyor_interface::ControlConveyor::Response &res);

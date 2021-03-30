@@ -22,7 +22,7 @@
 
 #include <ros/ros.h>
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <thread>
 
 #include <controller_manager/controller_manager.h>
@@ -76,7 +76,7 @@ public:
     niryo_robot_msgs::BusState getDxlBusState();
     stepper_driver::StepperArrayMotorHardwareStatus getStepperHwStatus();
     niryo_robot_msgs::BusState getCanBusState();
-    void getCalibrationState(boost::shared_ptr<bool> &need_calibration, boost::shared_ptr<bool> &calibration_in_progress);
+    void getCalibrationState(std::shared_ptr<bool> &need_calibration, std::shared_ptr<bool> &calibration_in_progress);
 
     int getCpuTemperature();
 
@@ -103,13 +103,13 @@ private:
     bool _learning_mode;
     std::string _ros_niryo_robot_version;
 
-    boost::shared_ptr<FakeJointHardwareInterface> _robot;
-    boost::shared_ptr<controller_manager::ControllerManager> _cm;
+    std::shared_ptr<FakeJointHardwareInterface> _robot;
+    std::shared_ptr<controller_manager::ControllerManager> _cm;
 
-    boost::shared_ptr<std::thread> _ros_control_thread;
-    boost::shared_ptr<std::thread> _publish_hardware_status_thread;
-    boost::shared_ptr<std::thread> _publish_software_version_thread;
-    boost::shared_ptr<std::thread> _publish_learning_mode_thread;
+    std::shared_ptr<std::thread> _ros_control_thread;
+    std::shared_ptr<std::thread> _publish_hardware_status_thread;
+    std::shared_ptr<std::thread> _publish_software_version_thread;
+    std::shared_ptr<std::thread> _publish_learning_mode_thread;
 
     ros::ServiceServer _reset_controller_server; // workaround to compensate missed steps
     ros::Subscriber _trajectory_result_subscriber;

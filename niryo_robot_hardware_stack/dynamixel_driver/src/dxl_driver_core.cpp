@@ -302,12 +302,12 @@ namespace DynamixelDriver
         return result;
     }
 
-    std::vector<DxlMotorState> &DynamixelDriverCore::getDxlStates()
+    std::vector<DxlMotorState> DynamixelDriverCore::getDxlStates() const
     {
         return _dynamixel->getMotorsState();
     }
 
-    std::vector<int> &DynamixelDriverCore::getRemovedMotorList()
+    std::vector<int> DynamixelDriverCore::getRemovedMotorList() const
     {
         return _dynamixel->getRemovedMotorList();
     }
@@ -412,7 +412,7 @@ namespace DynamixelDriver
                         if (ros::Time::now().toSec() - _time_hw_data_last_read > 1.0 / _read_data_frequency)
                         {
                             _time_hw_data_last_read += 1.0 / _read_data_frequency;
-                            _dynamixel->readPositionState();
+                            _dynamixel->readPositionStatus();
                         }
                         if (ros::Time::now().toSec() - _time_hw_status_last_read > 1.0 / _read_status_frequency)
                         {
@@ -534,7 +534,7 @@ namespace DynamixelDriver
         int led = req.value;
         std::string message = "";
 
-        std::lock_guard<std::mutex> lck(_control_loop_mutex);
+        std::lock_guard<std::mutex> lck(_control_loop_mutex);       
         int result = _dynamixel->setLeds(led);
 
         res.status = result;
@@ -545,7 +545,7 @@ namespace DynamixelDriver
     int DynamixelDriverCore::update_leds(void)
     {
         std::lock_guard<std::mutex> lck(_control_loop_mutex);
-        int result = _dynamixel->setLeds(_dynamixel->getledstate());
+        int result = _dynamixel->setLeds(_dynamixel->getLedState());
         return result;
     }
 } // namespace DynamixelDriver

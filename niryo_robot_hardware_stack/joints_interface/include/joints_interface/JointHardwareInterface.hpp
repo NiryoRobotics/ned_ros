@@ -20,7 +20,7 @@
 #ifndef JOINT_HARDWARE_INTERFACE_HPP
 #define JOINT_HARDWARE_INTERFACE_HPP
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <algorithm>
 #include <hardware_interface/joint_state_interface.h>
 #include <hardware_interface/joint_command_interface.h>
@@ -41,8 +41,8 @@ class JointHardwareInterface : public hardware_interface::RobotHW
 
 public:
     JointHardwareInterface(
-        boost::shared_ptr<DynamixelDriver::DynamixelDriverCore> &dynamixel,
-        boost::shared_ptr<StepperDriver::StepperDriverCore> &stepper);
+        std::shared_ptr<DynamixelDriver::DynamixelDriverCore> &dynamixel,
+        std::shared_ptr<StepperDriver::StepperDriverCore> &stepper);
 
     void initPublisherSubscribers();
     void initServices();
@@ -82,8 +82,8 @@ private:
     hardware_interface::JointStateInterface _joint_state_interface;
     hardware_interface::PositionJointInterface _joint_position_interface;
 
-    boost::shared_ptr<DynamixelDriver::DynamixelDriverCore> &_dynamixel;
-    boost::shared_ptr<StepperDriver::StepperDriverCore> &_stepper;
+    std::shared_ptr<DynamixelDriver::DynamixelDriverCore> &_dynamixel;
+    std::shared_ptr<StepperDriver::StepperDriverCore> &_stepper;
 
     std::vector<uint8_t> _list_stepper_id;
     std::map<uint8_t, std::string> _map_stepper_name;
@@ -93,7 +93,7 @@ private:
 
     std::vector<JointState> _joint_list;
 
-    boost::shared_ptr<CalibrationInterface> _calibration_interface;
+    std::shared_ptr<CalibrationInterface> _calibration_interface;
 
     std::string _joints_name[6] = {""};
     int _joints_id[6] = {0};

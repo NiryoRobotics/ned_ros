@@ -26,7 +26,7 @@
 // according to xl-330 datasheet : 1 speed ~ 0.229 rpm ~ 3.9083 dxl position per second
 #define XL330_STEPS_FOR_1_SPEED  15.6331 // 0.229 * 4096 / 60
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include <ros/ros.h>
 #include <vector>
@@ -47,7 +47,7 @@ class ToolsInterfaceCore
 {
     public:
         
-        ToolsInterfaceCore(boost::shared_ptr<DynamixelDriver::DynamixelDriverCore> &dynamixel);
+        ToolsInterfaceCore(std::shared_ptr<DynamixelDriver::DynamixelDriverCore> &dynamixel);
 
         void initParams();
         void initServices();
@@ -56,12 +56,12 @@ class ToolsInterfaceCore
 
     private:
         ros::NodeHandle _nh;
-        boost::shared_ptr<DynamixelDriver::DynamixelDriverCore> &_dynamixel;
-        boost::shared_ptr<ToolState> _tool;
+        std::shared_ptr<DynamixelDriver::DynamixelDriverCore> &_dynamixel;
+        std::shared_ptr<ToolState> _tool;
         std::mutex _tool_mutex;
 
         void _checkToolConnection();
-        boost::shared_ptr<std::thread> _check_tool_connection_thread;
+        std::shared_ptr<std::thread> _check_tool_connection_thread;
         double _check_tool_connection_frequency;
 
         ros::ServiceServer _ping_and_set_dxl_tool_server;

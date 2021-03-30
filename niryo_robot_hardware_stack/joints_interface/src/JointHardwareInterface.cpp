@@ -22,8 +22,8 @@
 #include "dynamixel_driver/SendCustomDxlValue.h"
 
 JointHardwareInterface::JointHardwareInterface(
-    boost::shared_ptr<DynamixelDriver::DynamixelDriverCore> &dynamixel,
-    boost::shared_ptr<StepperDriver::StepperDriverCore> &stepper)
+    std::shared_ptr<DynamixelDriver::DynamixelDriverCore> &dynamixel,
+    std::shared_ptr<StepperDriver::StepperDriverCore> &stepper)
     : _dynamixel(dynamixel), _stepper(stepper)
 {
     _learning_mode = true;

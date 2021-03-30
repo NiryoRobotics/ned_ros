@@ -17,7 +17,7 @@
 #ifndef XL330_DRIVER_HPP
 #define XL330_DRIVER_HPP
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <vector>
 
 #include "dynamixel_driver/xdriver.hpp"
@@ -68,8 +68,8 @@ namespace DynamixelDriver
     class XL330Driver : public XDriver
     {
     public:
-        XL330Driver(boost::shared_ptr<dynamixel::PortHandler>& portHandler,
-                    boost::shared_ptr<dynamixel::PacketHandler>& packetHandler);
+        XL330Driver(std::shared_ptr<dynamixel::PortHandler>& portHandler,
+                    std::shared_ptr<dynamixel::PacketHandler>& packetHandler);
 
         //from XDriver interface
         int checkModelNumber(uint8_t id);

@@ -20,7 +20,7 @@
 #ifndef JOINTS_INTERFACE_CORE_HPP
 #define JOINTS_INTERFACE_CORE_HPP
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <controller_manager/controller_manager.h>
 #include <control_msgs/FollowJointTrajectoryActionResult.h>
 #include <control_msgs/FollowJointTrajectoryActionGoal.h>
@@ -47,8 +47,8 @@ class JointsInterfaceCore
     public:
 
         JointsInterfaceCore( 
-            boost::shared_ptr<DynamixelDriver::DynamixelDriverCore>& dynamixel,
-            boost::shared_ptr<StepperDriver::StepperDriverCore>& stepper);
+            std::shared_ptr<DynamixelDriver::DynamixelDriverCore>& dynamixel,
+            std::shared_ptr<StepperDriver::StepperDriverCore>& stepper);
 
         void init();
         void initParams();
@@ -64,7 +64,7 @@ class JointsInterfaceCore
 
         bool getFreeDriveMode();
 
-        void getCalibrationState(boost::shared_ptr<bool> &need_calibration, boost::shared_ptr<bool> &calibration_in_progress);
+        void getCalibrationState(std::shared_ptr<bool> &need_calibration, std::shared_ptr<bool> &calibration_in_progress);
 
         std::vector<JointState>& getJointsState();
 
@@ -90,17 +90,17 @@ class JointsInterfaceCore
 
         void _publishLearningMode();
 
-        boost::shared_ptr<JointHardwareInterface> _robot;
-        boost::shared_ptr<DynamixelDriver::DynamixelDriverCore>& _dynamixel;
-        boost::shared_ptr<StepperDriver::StepperDriverCore>& _stepper;
+        std::shared_ptr<JointHardwareInterface> _robot;
+        std::shared_ptr<DynamixelDriver::DynamixelDriverCore>& _dynamixel;
+        std::shared_ptr<StepperDriver::StepperDriverCore>& _stepper;
 
         double _publish_learning_mode_frequency;
 
         double _ros_control_frequency;
         
-        boost::shared_ptr<controller_manager::ControllerManager> _cm;
-        boost::shared_ptr<std::thread> _ros_control_thread;
-        boost::shared_ptr<std::thread> _publish_learning_mode_thread;
+        std::shared_ptr<controller_manager::ControllerManager> _cm;
+        std::shared_ptr<std::thread> _ros_control_thread;
+        std::shared_ptr<std::thread> _publish_learning_mode_thread;
 
         ros::Subscriber _trajectory_result_subscriber;
 

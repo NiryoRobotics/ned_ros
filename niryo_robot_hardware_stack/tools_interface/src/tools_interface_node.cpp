@@ -2,7 +2,7 @@
 #include "tools_interface/tools_interface_core.hpp"
 #include "dynamixel_driver/dxl_driver_core.hpp"
 
-boost::shared_ptr<ToolsInterfaceCore> tool;
+std::shared_ptr<ToolsInterfaceCore> tool;
 
 int main(int argc, char **argv)
 {
@@ -12,7 +12,7 @@ int main(int argc, char **argv)
     spinner.start();
     ros::NodeHandle nh;
 
-    boost::shared_ptr<DynamixelDriver::DynamixelDriverCore> dynamixel(new DynamixelDriver::DynamixelDriverCore());
+    std::shared_ptr<DynamixelDriver::DynamixelDriverCore> dynamixel(new DynamixelDriver::DynamixelDriverCore());
     ros::Duration(1).sleep();
     tool.reset(new ToolsInterfaceCore(dynamixel));
     ros::Duration(1).sleep();

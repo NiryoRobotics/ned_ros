@@ -1,6 +1,6 @@
 #include "tools_interface/tools_interface_core.hpp"
 
-ToolsInterfaceCore::ToolsInterfaceCore(boost::shared_ptr<DynamixelDriver::DynamixelDriverCore> &dynamixel):
+ToolsInterfaceCore::ToolsInterfaceCore(std::shared_ptr<DynamixelDriver::DynamixelDriverCore> &dynamixel):
     _dynamixel(dynamixel)
 {
     initParams();

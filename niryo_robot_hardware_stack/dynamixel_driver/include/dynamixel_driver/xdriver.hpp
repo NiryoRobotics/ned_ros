@@ -17,7 +17,7 @@
 #ifndef XDRIVER_HPP
 #define XDRIVER_HPP
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <vector>
 #include <string>
 #include <iostream>
@@ -43,8 +43,8 @@ namespace DynamixelDriver
     {
 
     public:
-        XDriver(boost::shared_ptr<dynamixel::PortHandler>& portHandler,
-                boost::shared_ptr<dynamixel::PacketHandler>& packetHandler);
+        XDriver(std::shared_ptr<dynamixel::PortHandler>& portHandler,
+                std::shared_ptr<dynamixel::PacketHandler>& packetHandler);
 
         int ping(uint8_t id);
         int getModelNumber(uint8_t id,
@@ -104,8 +104,8 @@ namespace DynamixelDriver
         virtual int customRead(uint8_t id, uint8_t reg_address, uint32_t& value, uint8_t byte_number);
 
     protected:
-        boost::shared_ptr<dynamixel::PortHandler>& _dxlPortHandler;
-        boost::shared_ptr<dynamixel::PacketHandler>& _dxlPacketHandler;
+        std::shared_ptr<dynamixel::PortHandler>& _dxlPortHandler;
+        std::shared_ptr<dynamixel::PacketHandler>& _dxlPacketHandler;
 
         virtual int syncWrite1Byte(uint8_t address, std::vector<uint8_t> &id_list, std::vector<uint32_t> &data_list);
         virtual int syncWrite2Bytes(uint8_t address, std::vector<uint8_t> &id_list, std::vector<uint32_t> &data_list);

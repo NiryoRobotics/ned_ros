@@ -731,7 +731,7 @@ namespace StepperDriver
         return sendCanMsgBuf(id, 0, 8, data);
     }
 
-    e_CanStepperCalibrationStatus StepperDriver::getCalibrationResult(uint8_t id, boost::shared_ptr<int32_t> &result)
+    e_CanStepperCalibrationStatus StepperDriver::getCalibrationResult(uint8_t id, std::shared_ptr<int32_t> &result)
     {
         (*result) = _motor_calibration_map[id];
         return _calibration_result;

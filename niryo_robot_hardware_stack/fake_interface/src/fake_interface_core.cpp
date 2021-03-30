@@ -308,7 +308,7 @@ niryo_robot_msgs::BusState FakeInterfaceCore::getCanBusState()
     return can_bus_state;
 }
 
-void FakeInterfaceCore::getCalibrationState(boost::shared_ptr<bool> &need_calibration, boost::shared_ptr<bool> &calibration_in_progress)
+void FakeInterfaceCore::getCalibrationState(std::shared_ptr<bool> &need_calibration, std::shared_ptr<bool> &calibration_in_progress)
 {
     (*need_calibration) = false;
     (*calibration_in_progress) = false;

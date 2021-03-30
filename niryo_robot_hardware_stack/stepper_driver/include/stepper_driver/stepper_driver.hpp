@@ -20,7 +20,7 @@
 #ifndef STEPPER_DRIVER_HPP
 #define STEPPER_DRIVER_HPP
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <functional>
 #include <string>
 #include <thread>
@@ -129,7 +129,7 @@ namespace StepperDriver
 
             void readMotorsState();
             void clearCalibrationTab();
-            e_CanStepperCalibrationStatus getCalibrationResult(uint8_t id, boost::shared_ptr<int32_t> &result);
+            e_CanStepperCalibrationStatus getCalibrationResult(uint8_t id, std::shared_ptr<int32_t> &result);
 
             void executeJointTrajectoryCmd(std::vector<int32_t> &cmd);
             std::vector<int32_t> &getJointTrajectoryState();
@@ -175,7 +175,7 @@ namespace StepperDriver
             std::map<uint8_t, int> _motor_calibration_map;
             std::map<uint8_t, CalibrationStepperCmdStatus> _motor_calibration_map_cmd;
 
-            boost::shared_ptr<MCP_CAN> mcp_can;
+            std::shared_ptr<MCP_CAN> mcp_can;
             std::thread _calibration_thread;
             std::thread _stepper_timeout_thread;
             std::vector<CalibrationStepperData> _calibration_readed_datas;

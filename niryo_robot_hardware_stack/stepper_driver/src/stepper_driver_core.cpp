@@ -267,7 +267,7 @@ namespace StepperDriver
         _stepper->clearCalibrationTab();
     }
 
-    e_CanStepperCalibrationStatus StepperDriverCore::getCalibrationResult(uint8_t id, boost::shared_ptr<int32_t> &calibration_result)
+    e_CanStepperCalibrationStatus StepperDriverCore::getCalibrationResult(uint8_t id, std::shared_ptr<int32_t> &calibration_result)
     {
         return _stepper->getCalibrationResult(id, calibration_result);
     }

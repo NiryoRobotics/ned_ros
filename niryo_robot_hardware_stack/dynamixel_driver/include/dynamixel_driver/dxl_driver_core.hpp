@@ -20,7 +20,7 @@
 #ifndef DXL_DRIVER_CORE_HPP
 #define DXL_DRIVER_CORE_HPP
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <ros/ros.h>
 #include <string>
 #include <thread>
@@ -62,7 +62,7 @@ namespace DynamixelDriver
 
         void setTrajectoryControllerCommands(std::vector<uint32_t>& cmd);
 
-        std::vector<DxlMotorState>& getDxlStates();
+        std::vector<DxlMotorState> getDxlStates() const;
 
         void setDxlCommands(SynchronizeMotorCmd &cmd);
 
@@ -72,7 +72,7 @@ namespace DynamixelDriver
         void unsetEndEffector(uint8_t id, DxlMotorType type);
         void setEndEffectorCommands(std::vector<SingleMotorCmd> &cmd);
         uint32_t getEndEffectorState(uint8_t id, DxlMotorType type);
-        std::vector<int>& getRemovedMotorList(); 
+        std::vector<int> getRemovedMotorList() const;
         
         int update_leds(void);
 
@@ -89,7 +89,7 @@ namespace DynamixelDriver
 
         std::mutex _control_loop_mutex;
 
-        boost::shared_ptr<std::thread> _control_loop_thread;
+        std::shared_ptr<std::thread> _control_loop_thread;
 
         double _control_loop_frequency;
         double _write_frequency;
@@ -104,12 +104,12 @@ namespace DynamixelDriver
         double _time_check_connection_last_read;
         double _time_check_end_effector_last_read;
 
-        boost::shared_ptr<DxlDriver> _dynamixel;
+        std::shared_ptr<DxlDriver> _dynamixel;
 
         void _executeCommand();
 
         std::vector<uint32_t> _joint_trajectory_controller_cmd;
-        boost::shared_ptr<SynchronizeMotorCmd> _dxl_cmd;
+        std::shared_ptr<SynchronizeMotorCmd> _dxl_cmd;
         std::vector<SingleMotorCmd> _end_effector_cmd;
 
         ros::ServiceServer _activate_leds_server;

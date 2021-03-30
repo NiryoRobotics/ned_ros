@@ -21,7 +21,7 @@
 #define HARDWARE_INTERFACE_HPP
 
 #include <ros/ros.h>
-#include <boost/shared_ptr.hpp>
+#include <memory>
 
 #include "joints_interface/joints_interface_core.hpp"
 #include "tools_interface/tools_interface_core.hpp"
@@ -79,16 +79,16 @@ namespace NiryoRobotHardwareInterface
         bool _callbackRebootMotors(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
         ros::ServiceServer _reboot_motors_service;
 
-        boost::shared_ptr<DynamixelDriver::DynamixelDriverCore> _dynamixel_driver;
-        boost::shared_ptr<StepperDriver::StepperDriverCore> _stepper_driver;
-        boost::shared_ptr<CpuInterfaceCore> _cpu_interface;
-        boost::shared_ptr<ConveyorInterfaceCore> _conveyor_interface;
-        boost::shared_ptr<ToolsInterfaceCore> _tools_interface;
-        boost::shared_ptr<JointsInterfaceCore> _joints_interface;
-        boost::shared_ptr<FakeInterfaceCore> _fake_interface;
+        std::shared_ptr<DynamixelDriver::DynamixelDriverCore> _dynamixel_driver;
+        std::shared_ptr<StepperDriver::StepperDriverCore> _stepper_driver;
+        std::shared_ptr<CpuInterfaceCore> _cpu_interface;
+        std::shared_ptr<ConveyorInterfaceCore> _conveyor_interface;
+        std::shared_ptr<ToolsInterfaceCore> _tools_interface;
+        std::shared_ptr<JointsInterfaceCore> _joints_interface;
+        std::shared_ptr<FakeInterfaceCore> _fake_interface;
 
-        boost::shared_ptr<std::thread> _publish_hardware_status_thread;
-        boost::shared_ptr<std::thread> _publish_software_version_thread;
+        std::shared_ptr<std::thread> _publish_hardware_status_thread;
+        std::shared_ptr<std::thread> _publish_software_version_thread;
     };
 } // namespace NiryoRobotHardwareInterface
 #endif

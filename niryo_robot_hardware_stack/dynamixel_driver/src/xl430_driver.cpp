@@ -24,7 +24,7 @@ namespace DynamixelDriver
      * @param portHandler
      * @param packetHandler
      */
-    XL430Driver::XL430Driver(boost::shared_ptr<dynamixel::PortHandler> &portHandler, boost::shared_ptr<dynamixel::PacketHandler> &packetHandler)
+    XL430Driver::XL430Driver(std::shared_ptr<dynamixel::PortHandler> &portHandler, std::shared_ptr<dynamixel::PacketHandler> &packetHandler)
         : XDriver(portHandler, packetHandler)
     {
     }

@@ -2,7 +2,7 @@
 #include <thread> 
 #include "cpu_interface/cpu_interface_core.hpp"
 
-boost::shared_ptr<CpuInterfaceCore> cpu;
+std::shared_ptr<CpuInterfaceCore> cpu;
 
 void readTemperature()
 {
