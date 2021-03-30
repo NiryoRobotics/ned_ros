@@ -23,6 +23,7 @@
 #include <string>
 #include "dynamixel_driver/dxl_enum.hpp"
 
+// CC nothing to do here
 #define TOOL_STATE_PING_OK       0x01
 #define TOOL_STATE_PING_ERROR    0x02
 #define TOOL_STATE_WRONG_ID      0x03
@@ -41,39 +42,86 @@ namespace DynamixelDriver
         public:
             DxlMotorState(uint8_t id, DxlMotorType type);
 
-            uint8_t getId();
+            //getters
+            uint8_t getId() const;
+            DxlMotorType getType() const;
+
+            uint32_t getPositionState() const;
+            uint32_t getTemperatureState() const;
+            uint32_t getVoltageState() const;
+            uint32_t getHardwareErrorState() const;
+            std::string getHardwareErrorMessageState() const;
+
+            //setters
             void setId(uint8_t motor_id);
-            DxlMotorType getType();
             void setType(DxlMotorType type);
 
-            // getters - state
-            uint32_t getPositionState();
             void setPositionState(uint32_t pos);
 
-            uint32_t getTemperatureState();
             void setTemperatureState(uint32_t temp);
-            uint32_t getVoltageState();
             void setVoltageState(uint32_t volt);
-            uint32_t getHardwareErrorState();
             void setHardwareError(uint32_t hw_error);
-            std::string getHardwareErrorMessageState();
             void setHardwareError(std::string hw_error_msg);
 
             bool operator==(const DxlMotorState& other);
-
 
         private:
             uint8_t _id;
             DxlMotorType _type;
 
             // read variables
-            
-            uint32_t _state_pos=0; 
-            uint32_t _state_temperature=0;
-            uint32_t _state_voltage=0;
-            uint32_t _state_hw_error=0;
-            std::string _state_hw_error_msg="";
+            uint32_t _position_state;
+            uint32_t _temperature_state;
+            uint32_t _voltage_state;
+            uint32_t _hw_error_state;
+            std::string _hw_error_message_state;
     };
+
+    inline
+    uint8_t DxlMotorState::getId() const
+    {
+        return _id;
+    }
+
+    inline
+    DxlMotorType DxlMotorState::getType() const
+    {
+        return _type;
+    }
+
+    inline
+    uint32_t DxlMotorState::getPositionState() const
+    {
+        return _position_state;
+    }
+
+    inline
+    uint32_t DxlMotorState::getTemperatureState() const
+    {
+        return _temperature_state;
+
+    }
+
+    inline
+    uint32_t DxlMotorState::getVoltageState() const
+    {
+        return _voltage_state;
+
+    }
+
+    inline
+    uint32_t DxlMotorState::getHardwareErrorState() const
+    {
+        return _hw_error_state;
+
+    }
+
+    inline
+    std::string DxlMotorState::getHardwareErrorMessageState() const
+    {
+        return _hw_error_message_state;
+    }
+
 } //DynamixelDriver
 
 #endif

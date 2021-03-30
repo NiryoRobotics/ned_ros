@@ -18,6 +18,7 @@
 */
 
 #include "fake_interface/fake_interface_core.hpp"
+#include <functional>
 
 FakeInterfaceCore::FakeInterfaceCore()
 {
@@ -65,7 +66,7 @@ void FakeInterfaceCore::initServices()
     
     _reset_controller_server = _nh.advertiseService("/niryo_robot/joints_interface/steppers_reset_controller",  &FakeInterfaceCore::_callbackResetController, this);
     
-    _publish_learning_mode_thread.reset(new std::thread(boost::bind(&FakeInterfaceCore::_publishLearningMode, this)));    
+    _publish_learning_mode_thread.reset(new std::thread(std::bind(&FakeInterfaceCore::_publishLearningMode, this)));    
 
 }
 

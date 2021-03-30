@@ -18,10 +18,11 @@
 */
 
 #include "stepper_driver/stepper_driver.hpp"
+#include <functional>
 
 namespace StepperDriver
 {
-    StepperDriver::StepperDriver() : _calibration_result(e_CanStepperCalibrationStatus::CAN_STEPPERS_CALIBRATION_UNINITIALIZED), _calibration_in_progress(false), _stepper_timeout_thread(boost::bind(&StepperDriver::_verifyMotorTimeoutLoop, this))
+    StepperDriver::StepperDriver() : _calibration_result(e_CanStepperCalibrationStatus::CAN_STEPPERS_CALIBRATION_UNINITIALIZED), _calibration_in_progress(false), _stepper_timeout_thread(std::bind(&StepperDriver::_verifyMotorTimeoutLoop, this))
     {
         _nh.getParam("/niryo_robot_hardware_interface/debug", _debug_mode);
         if (_debug_mode)
@@ -317,7 +318,7 @@ namespace StepperDriver
                     // Join the previous calibration thread (otherwise we cannot reassign the thread)
                     if (_calibration_thread.joinable())
                         _calibration_thread.join();
-                    _calibration_thread = std::thread(boost::bind(&StepperDriver::readCalibrationStates, this));
+                    _calibration_thread = std::thread(std::bind(&StepperDriver::readCalibrationStates, this));
                 }
             }
         }
@@ -755,7 +756,7 @@ namespace StepperDriver
 
         int calibration_timeout;
         _nh.getParam("/niryo_robot_hardware_interface/calibration_timeout", calibration_timeout);
-        std::thread reading_data_thread(boost::bind(&StepperDriver::interpreteCalibrationCommand, this));
+        std::thread reading_data_thread(std::bind(&StepperDriver::interpreteCalibrationCommand, this));
         while (_calibration_motor_list.size() != 0)
         {
             if (canReadData())

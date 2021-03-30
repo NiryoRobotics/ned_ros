@@ -1,5 +1,6 @@
 #include "niryo_robot_hardware_interface/hardware_interface.hpp"
 #include "dynamixel_driver/dxl_enum.hpp"
+#include <functional>
 
 namespace NiryoRobotHardwareInterface
 {
@@ -136,10 +137,10 @@ namespace NiryoRobotHardwareInterface
     {
         ROS_DEBUG("Hardware Interface - Init Publisher");
         _hardware_status_publisher = _nh.advertise<niryo_robot_msgs::HardwareStatus>("niryo_robot_hardware_interface/hardware_status", 10);
-        _publish_hardware_status_thread.reset(new std::thread(boost::bind(&HardwareInterface::_publishHardwareStatus, this)));
+        _publish_hardware_status_thread.reset(new std::thread(std::bind(&HardwareInterface::_publishHardwareStatus, this)));
 
         _software_version_publisher = _nh.advertise<niryo_robot_msgs::SoftwareVersion>("niryo_robot_hardware_interface/software_version", 10);
-        _publish_software_version_thread.reset(new std::thread(boost::bind(&HardwareInterface::_publishSoftwareVersion, this)));
+        _publish_software_version_thread.reset(new std::thread(std::bind(&HardwareInterface::_publishSoftwareVersion, this)));
 
         _motors_report_service = _nh.advertiseService("/niryo_robot_hardware_interface/launch_motors_report", &HardwareInterface::_callbackLaunchMotorsReport, this);
         _stop_motors_report_service = _nh.advertiseService("/niryo_robot_hardware_interface/stop_motors_report", &HardwareInterface::_callbackStopMotorsReport, this);

@@ -12,8 +12,6 @@ find_package(catkin REQUIRED
         message_generation
 )
 
-find_package(Boost REQUIRED COMPONENTS system)
-
 add_message_files(
   FILES
   ConveyorFeedback.msg

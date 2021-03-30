@@ -20,6 +20,7 @@
 #include "joints_interface/calibration_interface.hpp"
 #include "joints_interface/Math.hpp"
 #include <ros/console.h>
+#include <functional>
 
 CalibrationInterface::CalibrationInterface(std::vector<JointState> &joint_list,
                                            std::shared_ptr<StepperDriver::StepperDriverCore> &stepper, std::shared_ptr<DynamixelDriver::DynamixelDriverCore> &dynamixel) : _joint_list(joint_list), _stepper(stepper), _dynamixel(dynamixel)
@@ -254,15 +255,15 @@ void CalibrationInterface::_auto_calibration()
     std::shared_ptr<int32_t> stepper_3_calibration_result(new int32_t());
 
     //_stepper->setCalibrationResult(_joint_list.at(0).getId(), 0);
-    std::thread stepper_1_calibration_thread = std::thread(boost::bind(&CalibrationInterface::_setCalibrationCommand, this,
+    std::thread stepper_1_calibration_thread = std::thread(std::bind(&CalibrationInterface::_setCalibrationCommand, this,
                                                                        _joint_list.at(0), rad_pos_to_steps(_offset_position_stepper_1, _gear_ratio_1, _direction_1), 200, _direction_1, 1, _calibration_timeout,
                                                                        stepper_1_calibration_result));
     sld.sleep();
-    std::thread stepper_2_calibration_thread = std::thread(boost::bind(&CalibrationInterface::_setCalibrationCommand, this,
+    std::thread stepper_2_calibration_thread = std::thread(std::bind(&CalibrationInterface::_setCalibrationCommand, this,
                                                                        _joint_list.at(1), rad_pos_to_steps(_offset_position_stepper_2, _gear_ratio_2, _direction_2), 1000, _direction_2, 1, _calibration_timeout,
                                                                        stepper_2_calibration_result));
     sld.sleep();
-    std::thread stepper_3_calibration_thread = std::thread(boost::bind(&CalibrationInterface::_setCalibrationCommand, this,
+    std::thread stepper_3_calibration_thread = std::thread(std::bind(&CalibrationInterface::_setCalibrationCommand, this,
                                                                        _joint_list.at(2), rad_pos_to_steps(_offset_position_stepper_3, _gear_ratio_3, _direction_3), 1000, _direction_3, -1, _calibration_timeout,
                                                                        stepper_3_calibration_result));
     sld.sleep();

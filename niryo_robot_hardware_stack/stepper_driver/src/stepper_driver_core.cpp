@@ -1,4 +1,5 @@
 #include "stepper_driver/stepper_driver_core.hpp"
+#include <functional>
 
 namespace StepperDriver
 {
@@ -43,7 +44,7 @@ namespace StepperDriver
         {
             ROS_DEBUG("Stepper Driver Core - Start control loop thread");
             _control_loop_flag = true;
-            _control_loop_thread.reset(new std::thread(boost::bind(&StepperDriverCore::controlLoop, this)));
+            _control_loop_thread.reset(new std::thread(std::bind(&StepperDriverCore::controlLoop, this)));
         }
     }
 

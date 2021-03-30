@@ -1,5 +1,6 @@
 #include "conveyor_interface/conveyor_interface_core.hpp"
 #include "stepper_driver/conveyor_state.hpp"
+#include <functional>
 
 ConveyorInterfaceCore::ConveyorInterfaceCore(std::shared_ptr<StepperDriver::StepperDriverCore> &stepper):
    _stepper(stepper)
@@ -9,7 +10,7 @@ ConveyorInterfaceCore::ConveyorInterfaceCore(std::shared_ptr<StepperDriver::Step
     initServices();
 
     _conveyors_feedback_publisher = _nh.advertise<conveyor_interface::ConveyorFeedbackArray>("/niryo_robot/conveyor/feedback", 10);
-    _publish_conveyors_feedback_thread.reset(new std::thread(boost::bind(&ConveyorInterfaceCore::_publishConveyorsFeedback, this)));
+    _publish_conveyors_feedback_thread.reset(new std::thread(std::bind(&ConveyorInterfaceCore::_publishConveyorsFeedback, this)));
 }
 
 void ConveyorInterfaceCore::initParams()

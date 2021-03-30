@@ -1,4 +1,6 @@
+
 #include "tools_interface/tools_interface_core.hpp"
+#include <functional>
 
 ToolsInterfaceCore::ToolsInterfaceCore(std::shared_ptr<DynamixelDriver::DynamixelDriverCore> &dynamixel):
     _dynamixel(dynamixel)
@@ -6,7 +8,7 @@ ToolsInterfaceCore::ToolsInterfaceCore(std::shared_ptr<DynamixelDriver::Dynamixe
     initParams();
     initServices();
     _tool.reset(new ToolState(0, "No tool", DynamixelDriver::DxlMotorType::MOTOR_TYPE_XL330));
-    _check_tool_connection_thread.reset(new std::thread(boost::bind(&ToolsInterfaceCore::_checkToolConnection, this)));
+    _check_tool_connection_thread.reset(new std::thread(std::bind(&ToolsInterfaceCore::_checkToolConnection, this)));
 
     pubToolId(0);
 }

@@ -21,19 +21,19 @@
 
 namespace DynamixelDriver
 {
+    DxlMotorState::DxlMotorState(uint8_t id, DxlMotorType type)
+        : _id(id), _type(type),
+          _state_pos(0),
+          _state_temperature(0),
+          _state_voltage(0),
+          _state_hw_error(0),
+          _state_hw_error_msg("")
+    {
+    }
+
     bool DxlMotorState::operator==(const DxlMotorState &m)
     {
         return ((this->_type == m._type) && (this->_id == m._id));
-    }
-
-    DxlMotorState::DxlMotorState(uint8_t id, DxlMotorType type)
-        : _id(id), _type(type)
-    {
-    }
-
-    uint8_t DxlMotorState::getId()
-    {
-        return _id;
     }
 
     void DxlMotorState::setId(uint8_t motor_id)
@@ -41,66 +41,34 @@ namespace DynamixelDriver
         _id = motor_id;
     }
 
-    DxlMotorType DxlMotorState::getType()
-    {
-        return _type;
-    }
-
     void DxlMotorState::setType(DxlMotorType type)
     {
         _type = type;
     }
 
-
-    // DxlMotorState::getters - state
-    uint32_t DxlMotorState::getPositionState()
-    {
-        return _state_pos;
-    }
-
     void DxlMotorState::setPositionState(uint32_t pos)
     {
-        _state_pos = pos;
-    }
-
-    uint32_t DxlMotorState::getTemperatureState()
-    {
-        return _state_temperature;
+        _position_state = pos;
     }
 
     void DxlMotorState::setTemperatureState(uint32_t temp)
     {
-        _state_temperature = temp;
-    }
-
-    uint32_t DxlMotorState::getVoltageState()
-    {
-        return _state_voltage;
+        _temperature_state = temp;
     }
 
     void DxlMotorState::setVoltageState(uint32_t volt)
     {
-        _state_voltage = volt;
-    }
-
-    uint32_t DxlMotorState::getHardwareErrorState()
-    {
-        return _state_hw_error;
+        _voltage_state = volt;
     }
 
     void DxlMotorState::setHardwareError(uint32_t hw_error)
     {
-        _state_hw_error = hw_error;
-    }
-
-    std::string DxlMotorState::getHardwareErrorMessageState()
-    {
-        return _state_hw_error_msg;
+        _hw_error_state = hw_error;
     }
 
     void DxlMotorState::setHardwareError(std::string hw_error_msg)
     {
-        _state_hw_error_msg = hw_error_msg;
+        _hw_error_message_state = hw_error_msg;
     }
 
 } // namespace DynamixelDriver
