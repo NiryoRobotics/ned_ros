@@ -18,6 +18,7 @@
 */
 
 #include "dynamixel_driver/synchronize_motor_cmd.hpp"
+#include <sstream>
 
 namespace DynamixelDriver
 {
@@ -25,14 +26,11 @@ namespace DynamixelDriver
     {
     }
 
-    SynchronizeMotorCmd::SynchronizeMotorCmd(DxlCommandType type, std::vector<uint8_t> motor_id, std::vector<uint32_t> params)
+    SynchronizeMotorCmd::SynchronizeMotorCmd(DxlCommandType type,
+                                             std::vector<uint8_t> motor_id,
+                                             std::vector<uint32_t> params)
         : _type(type), _motor_id_list(motor_id), _param_list(params)
     {
-    }
-
-    DxlCommandType SynchronizeMotorCmd::getType()
-    {
-        return _type;
     }
 
     void SynchronizeMotorCmd::setType(DxlCommandType type)
@@ -40,23 +38,64 @@ namespace DynamixelDriver
         _type = type;
     }
 
-    std::vector<uint8_t> &SynchronizeMotorCmd::getMotorsId()
-    {
-        return _motor_id_list;
-    }
     void SynchronizeMotorCmd::setMotorsId(std::vector<uint8_t> motor_id)
     {
         _motor_id_list = motor_id;
     }
 
-    std::vector<uint32_t> &SynchronizeMotorCmd::getParams()
-    {
-        return _param_list;
-    }
-
     void SynchronizeMotorCmd::setParams(std::vector<uint32_t> params)
     {
         _param_list = params;
+    }
+
+    /**
+     * @brief SynchronizeMotorCmd::to_string
+     * @return
+     */
+    std::string SynchronizeMotorCmd::str() const
+    {
+        std::string string_info;
+
+        std::ostringstream ss;
+        ss << "Sync motor cmd - ";
+        switch(_type)
+        {
+            case DxlCommandType::CMD_TYPE_POSITION:
+                ss << "Position";
+                break;
+            case DxlCommandType::CMD_TYPE_VELOCITY:
+                ss << "Velocity";
+                break;
+            case DxlCommandType::CMD_TYPE_EFFORT:
+                ss << "Effort";
+                break;
+            case DxlCommandType::CMD_TYPE_TORQUE:
+                ss << "Torque";
+                break;
+            case DxlCommandType::CMD_TYPE_PING:
+                ss << "Ping";
+                break;
+            case DxlCommandType::CMD_TYPE_LEARNING_MODE:
+                ss << "Learning mode";
+                break;
+            default:
+                ss << "Unknown type " << _type;
+            break;
+        }
+
+        ss << ": ";
+
+        if(!isValid())
+            ss << "Corrupted command : motors id list and params list size mismatch";
+        else {
+            for(int i = 0; i < _motor_id_list.size(); ++i)
+                ss << " motor " << _motor_id_list.at(i) << ": " << _param_list.at(i) << ",";
+        }
+
+        string_info = ss.str();
+        string_info.pop_back();
+
+        return string_info;
     }
 
 } // namespace DynamixelDriver

@@ -242,11 +242,13 @@ namespace DynamixelDriver
         ROS_INFO("Dynamixel Driver Core - Scan tools...");
         int result = _dynamixel->getAllIdsOnDxlBus(motor_list);
         ROS_DEBUG("Dynamixel Driver Core - Result getAllIdsOnDxlBus: %d", result);
-        std::string motor_id_list_string;
-        std::for_each(std::begin(motor_list), std::end(motor_list),
-                      [&motor_id_list_string](int x) {
-                          motor_id_list_string += std::to_string(x) + " ";
-                      });
+
+        std::ostringstream ss;
+        for(auto const& m : motor_list)
+            ss << m << " ";
+        std::string motor_id_list_string = ss.str();
+        motor_id_list_string.pop_back(); //remove trailing " "
+
         ROS_DEBUG("Dynamixel Driver Core - All id on dxl bus: [%s]", motor_id_list_string.c_str());
         return motor_list;
     }
@@ -262,7 +264,8 @@ namespace DynamixelDriver
         }
         else
         {
-            _dynamixel->addDynamixel(id, type);
+            //add dynamixel as a new tool
+            _dynamixel->addDynamixel(id, type, true);
             result = niryo_robot_msgs::CommandStatus::SUCCESS;
         }
         return result;

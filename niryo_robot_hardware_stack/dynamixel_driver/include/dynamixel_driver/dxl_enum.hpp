@@ -13,6 +13,7 @@ namespace DynamixelDriver
         CMD_TYPE_TORQUE=4,
         CMD_TYPE_PING=5,
         CMD_TYPE_LEARNING_MODE=6,
+        CMD_TYPE_UNKNOWN=100
     };
 
     enum class DxlMotorType
@@ -21,7 +22,7 @@ namespace DynamixelDriver
         MOTOR_TYPE_XL320=3,
         MOTOR_TYPE_XL330=4,
         MOTOR_TYPE_XC430=5,
-        UNKNOWN_TYPE=100
+        MOTOR_TYPE_UNKNOWN=100
     };
 
 } // DynamixelDriver

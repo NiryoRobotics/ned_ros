@@ -86,7 +86,7 @@ namespace DynamixelDriver
         //debug - display info
         std::ostringstream ss;
         ss << "[";
-        for (auto i = 0; i < idList.size(); ++i)
+        for (auto i = 0; i < idList.size() && i < typeList.size() ; ++i)
             ss << " id " << idList.at(i) << ": " << typeList.at(i) << ",";
 
         std::string motor_string_list = ss.str();
@@ -123,10 +123,10 @@ namespace DynamixelDriver
      * @param id
      * @param type
      */
-    void DxlDriver::addDynamixel(uint8_t id, DxlMotorType type)
+    void DxlDriver::addDynamixel(uint8_t id, DxlMotorType type, bool isTool)
     {
         //add id to _ids_map
-        _state_map[id] = DxlMotorState(id, type);
+        _state_map[id] = DxlMotorState(id, type, isTool);
         if(_ids_map.count(type)) {
             _ids_map[type] = std::vector<uint8_t>({id});
         }
@@ -667,27 +667,20 @@ namespace DynamixelDriver
     }
 
 
+    /**
+     * @brief DxlDriver::executeJointTrajectoryCmd
+     * @param cmd : always of size 3 -> only applies to the arm without the tool
+     */
     void DxlDriver::executeJointTrajectoryCmd(std::vector<uint32_t> &cmd)
     {
-        std::string cmd_string;
-        std::for_each(std::begin(cmd), std::end(cmd),
-                      [&cmd_string](const uint32_t &x) {
-                          cmd_string += std::to_string(x) + " ";
-                      });
-        // ROS_DEBUG_THROTTLE(0.5, "Dxl Driver - execute JointTrajectoryCmd called with %s", cmd_string.c_str());
-        int counter = 0;
-        std::vector<uint32_t> xl430_cmd;
-        uint32_t xl320_cmd;
-        xl430_cmd.push_back(cmd.at(0));
-        xl430_cmd.push_back(cmd.at(1));
-        xl320_cmd = cmd.at(2);
-        int result_xl430 = _xl430->syncWritePositionGoal(_xl430_arm_id_list, xl430_cmd);
-        int result_xl320 = _xl320->setGoalPosition(_xl320_arm_id, xl320_cmd);
-        if (result_xl320 != COMM_SUCCESS || result_xl430 != COMM_SUCCESS)
-        {
-            ROS_WARN("Dxl Driver - Failed to write position");
-            _debug_error_message = "Dxl Driver - Failed to write position";
-        }
+        SynchronizeMotorCmd syncCmd;
+        syncCmd.setType(DxlCommandType::CMD_TYPE_POSITION);
+        syncCmd.setMotorsId(getArmMotors());
+        syncCmd.setParams(cmd);
+
+        ROS_DEBUG_THROTTLE(0.5, "Dxl Driver - execute JointTrajectoryCmd");
+
+        readSynchronizeCommand(syncCmd);
     }
 
     /**
@@ -696,17 +689,7 @@ namespace DynamixelDriver
      */
     void DxlDriver::readSynchronizeCommand(SynchronizeMotorCmd cmd)
     {
-        ROS_DEBUG("Dxl Driver - Received dxl syncronized cmd with type %d", int(cmd.getType()));
-
-        std::string ids_string = "";
-        for (int i = 0; i < cmd.getMotorsId().size(); i++)
-            ids_string += std::to_string(cmd.getMotorsId().at(i)) + " ";
-        ROS_DEBUG("Dxl Driver - Received syncronized dxl cmd with ids %s", ids_string.c_str());
-
-        std::string params_string = "";
-        for (int i = 0; i < cmd.getParams().size(); i++)
-            params_string += std::to_string(cmd.getParams().at(i)) + " ";
-        ROS_DEBUG("Dxl Driver - Received syncronized dxl cmd with params %s", params_string.c_str());
+        ROS_DEBUG_THROTTLE(0.5, "Dxl Driver - readSynchronizeCommand:  %s", cmd.str());
 
         switch(cmd.getType())
         {
@@ -724,10 +707,7 @@ namespace DynamixelDriver
             break;
             case DxlCommandType::CMD_TYPE_LEARNING_MODE:
             {
-                std::vector<uint8_t> id_list;
-                for(auto const& element: _state_map) {
-                    id_list.push_back(element.first);
-                }
+                std::vector<uint8_t> id_list = getArmMotors();
                 std::vector<uint32_t> cmd_param(id_list.size(), cmd.getParams()[0]);
 
                 syncWriteTorqueEnable(id_list, cmd_param);
@@ -749,9 +729,7 @@ namespace DynamixelDriver
         int counter = 0;
         int id = (int)cmd.getId();
 
-        ROS_DEBUG("Dxl Driver - Received dxl cmd with type %d", int(cmd.getType()));
-        ROS_DEBUG("Dxl Driver - Received dxl cmd with ids %s", std::to_string(id).c_str());
-        ROS_DEBUG("Dxl Driver - Received dxl cmd with params %s", std::to_string(cmd.getParam()).c_str());
+        ROS_DEBUG_THROTTLE(0.5, "Dxl Driver - readSingleCommand:  %s", cmd.str());
 
         if(_state_map.count(id) != 0)
         {
@@ -774,7 +752,7 @@ namespace DynamixelDriver
                     result = setTorqueEnable(state, cmd.getParam());
                     break;
                 case DxlCommandType::CMD_TYPE_PING:
-                    result = ping(id);
+                    result = ping(state);
                     break;
                 default:
                     break;
@@ -791,6 +769,46 @@ namespace DynamixelDriver
             ROS_WARN("Dxl Driver - Failed to write a single command on dxl motor id : %d", id);
             _debug_error_message = "Dxl Driver - Failed to write a single command";
         }
+    }
+
+    void DxlDriver::syncWritePositionCommand(std::vector<uint8_t> &motor_list, std::vector<uint32_t> &param_list)
+    {
+        int counter = 0;
+
+
+        std::unordered_map<std::shared_ptr<XDriver> >
+
+
+
+
+
+        for(auto const &it : _xdriver_map) {
+            if(it.second) {
+                it.second->syncWritePositionGoal(motor_list, param_list);
+            }
+        }
+
+        while ((result_xl320 != COMM_SUCCESS && result_xl430 != COMM_SUCCESS) && (counter < 50))
+        {
+            if (result_xl320 != COMM_SUCCESS)
+            {
+                result_xl320 = _xl320->syncWritePositionGoal(xl320_motor, xl320_cmd);
+                counter += 1;
+            }
+            if (result_xl430 != COMM_SUCCESS)
+            {
+                result_xl430 = _xl430->syncWritePositionGoal(xl430_motor, xl430_cmd);
+                counter += 1;
+            }
+            ros::Duration(TIME_TO_WAIT_IF_BUSY).sleep();
+        }
+
+        if (result_xl320 != COMM_SUCCESS || result_xl430 != COMM_SUCCESS)
+        {
+            ROS_WARN("Dxl Driver - Failed to write synchronize position");
+            _debug_error_message = "Dxl Driver - Failed to write synchronize position";
+        }
+
     }
 
     void DxlDriver::syncWritePositionCommand(std::vector<uint8_t> &motor_list, std::vector<uint32_t> &param_list)
@@ -816,8 +834,8 @@ namespace DynamixelDriver
         }
 
         int counter = 0;
-        int result_xl320 = _xl320->syncWritePositionGoal(xl320_motor, xl320_cmd);
-        int result_xl430 = _xl430->syncWritePositionGoal(xl430_motor, xl430_cmd);
+        int result_xl320 = COMM_PORT_BUSY;
+        int result_xl430 = COMM_PORT_BUSY;
 
         while ((result_xl320 != COMM_SUCCESS && result_xl430 != COMM_SUCCESS) && (counter < 50))
         {
@@ -1024,7 +1042,7 @@ namespace DynamixelDriver
         for (auto const &it : _removed_motor_id_list)
         {
             _debug_error_message += " ";
-            _debug_error_message += std::to_string(*it);
+            _debug_error_message += std::to_string(it);
         }
         _debug_error_message += " do not seem to be connected";
 
@@ -1045,6 +1063,22 @@ namespace DynamixelDriver
                 motor_list.push_back(istate.first);
         }
         _removed_motor_id_list = motor_list;
+    }
+
+    /**
+     * @brief DxlDriver::getArmMotors
+     * @return
+     */
+    std::vector<uint8_t> DxlDriver::getArmMotors()
+    {
+        std::vector<uint8_t> motors_list;
+
+        for(auto const& m: _state_map) {
+            if(!m.second.isTool())
+                motors_list.push_back(m.first);
+        }
+
+        return motors_list;
     }
 
     /**
@@ -1075,6 +1109,8 @@ namespace DynamixelDriver
                 ROS_WARN("Dxl Driver - Broadcast ping failed , result : %d (-3001: timeout, -3002: corrupted packet)", result);
             }
         }
+        
+        
 
         return result;
     }

@@ -30,17 +30,23 @@ namespace DynamixelDriver
 
         public:
 
-            SynchronizeMotorCmd( );
-            SynchronizeMotorCmd(DxlCommandType type, std::vector<uint8_t> motor_id, std::vector<uint32_t> params);
+            SynchronizeMotorCmd();
+            SynchronizeMotorCmd(DxlCommandType type,
+                                std::vector<uint8_t> motor_id,
+                                std::vector<uint32_t> params);
             
-            DxlCommandType getType();
+            //setters
             void setType(DxlCommandType type);
-            
-            std::vector<uint8_t>& getMotorsId();
             void setMotorsId(std::vector<uint8_t> motor_id);
-
-            std::vector<uint32_t>& getParams();
             void setParams(std::vector<uint32_t> params);
+
+            //getters
+            DxlCommandType getType() const;
+            std::vector<uint8_t>& getMotorsId() const;
+            std::vector<uint32_t>& getParams() const;
+
+            std::string str() const;
+            bool isValid() const;
 
         private:
 
@@ -48,6 +54,34 @@ namespace DynamixelDriver
             std::vector<uint8_t> _motor_id_list;
             std::vector<uint32_t> _param_list;
     };
+
+    inline
+    DxlCommandType
+    SynchronizeMotorCmd::getType() const
+    {
+        return _type;
+    }
+
+    inline
+    std::vector<uint8_t>&
+    SynchronizeMotorCmd::getMotorsId() const
+    {
+        return _motor_id_list;
+    }
+
+    inline
+    std::vector<uint32_t>&
+    SynchronizeMotorCmd::getParams() const
+    {
+        return _param_list;
+    }
+
+    inline
+    bool SynchronizeMotorCmd::isValid() const
+    {
+        return _motor_id_list.size() == _param_list.size();
+    }
+
 } //DynamixelDriver
 
 #endif

@@ -21,29 +21,20 @@
 
 namespace DynamixelDriver
 {
-    DxlMotorState::DxlMotorState(uint8_t id, DxlMotorType type)
+    DxlMotorState::DxlMotorState(uint8_t id, DxlMotorType type, bool isTool)
         : _id(id), _type(type),
           _position_state(0),
           _temperature_state(),
           _voltage_state(),
           _hw_error_state(),
-          _hw_error_message_state("")
+          _hw_error_message_state(""),
+          _isTool(isTool)
     {
     }
 
     bool DxlMotorState::operator==(const DxlMotorState &m)
     {
         return ((this->_type == m._type) && (this->_id == m._id));
-    }
-
-    void DxlMotorState::setId(uint8_t motor_id)
-    {
-        _id = motor_id;
-    }
-
-    void DxlMotorState::setType(DxlMotorType type)
-    {
-        _type = type;
     }
 
     void DxlMotorState::setPositionState(uint32_t pos)

@@ -40,11 +40,12 @@ namespace DynamixelDriver
     class DxlMotorState
     {
         public:
-            DxlMotorState(uint8_t id, DxlMotorType type);
+            DxlMotorState(uint8_t id, DxlMotorType type, bool isTool = false);
 
             //getters
             uint8_t getId() const;
             DxlMotorType getType() const;
+            bool isTool() const;
 
             uint32_t getPositionState() const;
             uint32_t getTemperatureState() const;
@@ -53,9 +54,6 @@ namespace DynamixelDriver
             std::string getHardwareErrorMessageState() const;
 
             //setters
-            void setId(uint8_t motor_id);
-            void setType(DxlMotorType type);
-
             void setPositionState(uint32_t pos);
 
             void setTemperatureState(uint32_t temp);
@@ -75,6 +73,8 @@ namespace DynamixelDriver
             uint32_t _voltage_state;
             uint32_t _hw_error_state;
             std::string _hw_error_message_state;
+
+            bool _isTool;
     };
 
     inline
@@ -87,6 +87,11 @@ namespace DynamixelDriver
     DxlMotorType DxlMotorState::getType() const
     {
         return _type;
+    }
+
+    bool DxlMotorState::isTool() const
+    {
+        return _isTool;
     }
 
     inline

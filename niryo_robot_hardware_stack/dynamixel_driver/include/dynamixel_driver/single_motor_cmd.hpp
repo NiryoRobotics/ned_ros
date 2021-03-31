@@ -30,26 +30,49 @@ namespace DynamixelDriver
     class SingleMotorCmd {
 
         public:
+            SingleMotorCmd(DxlCommandType type = DxlCommandType::CMD_TYPE_UNKNOWN,
+                           uint8_t motor_id = 0,
+                           uint32_t param = 0);
 
-            SingleMotorCmd( );
-            SingleMotorCmd(DxlCommandType type, uint8_t motor_id, uint32_t param);
-
-            DxlCommandType getType();
+            //setters
             void setType(DxlCommandType type);
-
             void setId(uint8_t id);
-            uint8_t getId();
+            void setParam(uint32_t param);
 
-            uint32_t getParam();
-            void setParam(uint32_t param);            
+            //getters
+            DxlCommandType getType() const;
+            uint8_t getId() const;
+            uint32_t getParam() const;
+
+            std::string str() const;
 
         private:
-
-            uint8_t _id;
             DxlCommandType _type;
+            uint8_t _id;
             uint32_t _param;
-
     };
+
+    inline
+    DxlCommandType
+    SingleMotorCmd::getType() const
+    {
+        return _type;
+    }
+
+    inline
+    uint8_t
+    SingleMotorCmd::getId() const
+    {
+        return _id;
+    }
+
+    inline
+    uint32_t
+    SingleMotorCmd::getParam() const
+    {
+        return _param;
+    }
+
 } //DynamixelDriver
 
 #endif

@@ -72,7 +72,7 @@ namespace DynamixelDriver
             DxlDriver();
             virtual ~DxlDriver();
 
-            void addDynamixel(uint8_t id, DxlMotorType type);
+            void addDynamixel(uint8_t id, DxlMotorType type, bool isTool = false);
             void removeDynamixel(uint8_t id, DxlMotorType);
 
             //commands
@@ -118,7 +118,7 @@ namespace DynamixelDriver
             int getLedState() const;
             std::string getErrorMessage() const;
             void getBusState(bool& connection_state, std::vector<uint8_t>& motor_id, std::string& debug_msg) const;
-            int getAllIdsOnDxlBus(std::vector<uint8_t> &id_list) const;
+            int getAllIdsOnDxlBus(std::vector<uint8_t> &id_list);
 
             //setters
         private:
@@ -142,6 +142,8 @@ namespace DynamixelDriver
 
             bool hasMotors();
 
+            std::vector<uint8_t> getArmMotors();
+
         private:
             ros::NodeHandle _nh;
 
@@ -151,7 +153,7 @@ namespace DynamixelDriver
             std::string _device_name;
             int _uart_baudrate;
 
-            std::vector<uint8_t> _all_motor_connected;
+            std::vector<uint8_t> _all_motor_connected; //with all dxl motors connected (including the tool)
             std::vector<uint8_t> _removed_motor_id_list;
 
             std::map<int, DxlMotorState> _state_map;
