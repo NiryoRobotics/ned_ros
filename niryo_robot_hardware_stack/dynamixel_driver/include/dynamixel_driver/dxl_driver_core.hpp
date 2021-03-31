@@ -115,6 +115,7 @@ namespace DynamixelDriver
         ros::ServiceServer _activate_leds_server;
         ros::ServiceServer _custom_cmd_server;
         ros::ServiceServer _custom_cmd_getter;
+
         bool callbackActivateLeds(niryo_robot_msgs::SetInt::Request &req, niryo_robot_msgs::SetInt::Response &res);
         bool callbackSendCustomDxlValue(dynamixel_driver::SendCustomDxlValue::Request &req, dynamixel_driver::SendCustomDxlValue::Response &res);
         bool callbackReadCustomDxlValue(dynamixel_driver::ReadCustomDxlValue::Request &req, dynamixel_driver::ReadCustomDxlValue::Response &res);

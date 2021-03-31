@@ -78,11 +78,11 @@ namespace DynamixelDriver
         virtual int setGoalVelocity(uint8_t id, uint32_t velocity) = 0;
         virtual int setGoalTorque(uint8_t id, uint32_t torque) = 0;
 
-        virtual int syncWriteLed(std::vector<uint8_t> &id_list, std::vector<uint32_t> &led_list) = 0;
-        virtual int syncWriteTorqueEnable(std::vector<uint8_t> &id_list, std::vector<uint32_t> &torque_enable_list) = 0;
-        virtual int syncWritePositionGoal(std::vector<uint8_t> &id_list, std::vector<uint32_t> &position_list) = 0;
-        virtual int syncWriteVelocityGoal(std::vector<uint8_t> &id_list, std::vector<uint32_t> &velocity_list) = 0;
-        virtual int syncWriteTorqueGoal(std::vector<uint8_t> &id_list, std::vector<uint32_t> &torque_list) = 0;
+        virtual int syncWriteLed(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &led_list) = 0;
+        virtual int syncWriteTorqueEnable(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &torque_enable_list) = 0;
+        virtual int syncWritePositionGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &position_list) = 0;
+        virtual int syncWriteVelocityGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &velocity_list) = 0;
+        virtual int syncWriteTorqueGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &torque_list) = 0;
 
         // ram read
         virtual int readPosition(uint8_t id, uint32_t *present_position) = 0;
@@ -92,12 +92,12 @@ namespace DynamixelDriver
         virtual int readVoltage(uint8_t id, uint32_t *voltage) = 0;
         virtual int readHardwareStatus(uint8_t id, uint32_t *hardware_status) = 0;
 
-        virtual int syncReadPosition(std::vector<uint8_t> &id_list, std::vector<uint32_t> &position_list) = 0;
-        virtual int syncReadVelocity(std::vector<uint8_t> &id_list, std::vector<uint32_t> &velocity_list) = 0;
-        virtual int syncReadLoad(std::vector<uint8_t> &id_list, std::vector<uint32_t> &load_list) = 0;
-        virtual int syncReadTemperature(std::vector<uint8_t> &id_list, std::vector<uint32_t> &temperature_list) = 0;
-        virtual int syncReadVoltage(std::vector<uint8_t> &id_list, std::vector<uint32_t> &voltage_list) = 0;
-        virtual int syncReadHwErrorStatus(std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list) = 0;
+        virtual int syncReadPosition(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &position_list) = 0;
+        virtual int syncReadVelocity(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &velocity_list) = 0;
+        virtual int syncReadLoad(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &load_list) = 0;
+        virtual int syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &temperature_list) = 0;
+        virtual int syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &voltage_list) = 0;
+        virtual int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list) = 0;
 
         // custom write and read
         virtual int customWrite(uint8_t id, uint8_t reg_address, uint32_t value, uint8_t byte_number);
@@ -107,14 +107,14 @@ namespace DynamixelDriver
         std::shared_ptr<dynamixel::PortHandler>& _dxlPortHandler;
         std::shared_ptr<dynamixel::PacketHandler>& _dxlPacketHandler;
 
-        virtual int syncWrite1Byte(uint8_t address, std::vector<uint8_t> &id_list, std::vector<uint32_t> &data_list);
-        virtual int syncWrite2Bytes(uint8_t address, std::vector<uint8_t> &id_list, std::vector<uint32_t> &data_list);
-        virtual int syncWrite4Bytes(uint8_t address, std::vector<uint8_t> &id_list, std::vector<uint32_t> &data_list);
+        virtual int syncWrite1Byte(uint8_t address, const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &data_list);
+        virtual int syncWrite2Bytes(uint8_t address, const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &data_list);
+        virtual int syncWrite4Bytes(uint8_t address, const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &data_list);
 
         virtual int read1Byte(uint8_t address, uint8_t id, uint32_t *data);
         virtual int read2Bytes(uint8_t address, uint8_t id, uint32_t *data);
         virtual int read4Bytes(uint8_t address, uint8_t id, uint32_t *data);
-        virtual int syncRead(uint8_t address, uint8_t data_len, std::vector<uint8_t> &id_list, std::vector<uint32_t> &data_list);
+        virtual int syncRead(uint8_t address, uint8_t data_len, const std::vector<uint8_t> &id_list, std::vector<uint32_t> &data_list);
     };
 } //DynamixelDriver
 

@@ -97,11 +97,11 @@ namespace DynamixelDriver
         int setGoalVelocity(uint8_t id, uint32_t velocity);
         int setGoalTorque(uint8_t id, uint32_t torque);
 
-        int syncWriteLed(std::vector<uint8_t> &id_list, std::vector<uint32_t> &led_list);
-        int syncWriteTorqueEnable(std::vector<uint8_t> &id_list, std::vector<uint32_t> &torque_enable_list);
-        int syncWritePositionGoal(std::vector<uint8_t> &id_list, std::vector<uint32_t> &position_list);
-        int syncWriteVelocityGoal(std::vector<uint8_t> &id_list, std::vector<uint32_t> &velocity_list);
-        int syncWriteTorqueGoal(std::vector<uint8_t> &id_list, std::vector<uint32_t> &torque_list);
+        int syncWriteLed(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &led_list);
+        int syncWriteTorqueEnable(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &torque_enable_list);
+        int syncWritePositionGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &position_list);
+        int syncWriteVelocityGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &velocity_list);
+        int syncWriteTorqueGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &torque_list);
 
         // ram read
         int readPosition(uint8_t id, uint32_t *present_position);
@@ -111,12 +111,12 @@ namespace DynamixelDriver
         int readVoltage(uint8_t id, uint32_t *voltage);
         int readHardwareStatus(uint8_t id, uint32_t *hardware_status);
 
-        int syncReadPosition(std::vector<uint8_t> &id_list, std::vector<uint32_t> &position_list);
-        int syncReadVelocity(std::vector<uint8_t> &id_list, std::vector<uint32_t> &velocity_list);
-        int syncReadLoad(std::vector<uint8_t> &id_list, std::vector<uint32_t> &load_list);
-        int syncReadTemperature(std::vector<uint8_t> &id_list, std::vector<uint32_t> &temperature_list);
-        int syncReadVoltage(std::vector<uint8_t> &id_list, std::vector<uint32_t> &voltage_list);
-        int syncReadHwErrorStatus(std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list);
+        int syncReadPosition(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &position_list);
+        int syncReadVelocity(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &velocity_list);
+        int syncReadLoad(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &load_list);
+        int syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &temperature_list);
+        int syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &voltage_list);
+        int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list);
 
     };
 } //DynamixelDriver

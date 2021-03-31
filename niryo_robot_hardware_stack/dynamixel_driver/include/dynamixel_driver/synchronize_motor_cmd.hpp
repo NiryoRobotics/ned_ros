@@ -42,8 +42,8 @@ namespace DynamixelDriver
 
             //getters
             DxlCommandType getType() const;
-            std::vector<uint8_t>& getMotorsId() const;
-            std::vector<uint32_t>& getParams() const;
+            std::vector<uint8_t> getMotorsId() const;
+            std::vector<uint32_t> getParams() const;
 
             std::string str() const;
             bool isValid() const;
@@ -63,14 +63,14 @@ namespace DynamixelDriver
     }
 
     inline
-    std::vector<uint8_t>&
+    std::vector<uint8_t>
     SynchronizeMotorCmd::getMotorsId() const
     {
         return _motor_id_list;
     }
 
     inline
-    std::vector<uint32_t>&
+    std::vector<uint32_t>
     SynchronizeMotorCmd::getParams() const
     {
         return _param_list;

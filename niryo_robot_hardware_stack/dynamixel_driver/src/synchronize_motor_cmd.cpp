@@ -79,7 +79,7 @@ namespace DynamixelDriver
                 ss << "Learning mode";
                 break;
             default:
-                ss << "Unknown type " << _type;
+                ss << "Unknown type " << static_cast<int>(_type);
             break;
         }
 

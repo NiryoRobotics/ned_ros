@@ -89,6 +89,7 @@ namespace DynamixelDriver
         return _type;
     }
 
+    inline
     bool DxlMotorState::isTool() const
     {
         return _isTool;

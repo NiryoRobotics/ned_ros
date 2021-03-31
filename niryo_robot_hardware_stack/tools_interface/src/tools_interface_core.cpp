@@ -312,7 +312,7 @@ void ToolsInterfaceCore::_checkToolConnection()
     {
         {
             std::lock_guard<std::mutex> lck(_tool_mutex);
-            std::vector<int> motor_list;
+            std::vector<uint8_t> motor_list;
             motor_list = _dynamixel->getRemovedMotorList();
             for(int i = 0 ; i < motor_list.size(); i++)
             {

@@ -78,13 +78,13 @@ namespace DynamixelDriver
             //commands
             void executeJointTrajectoryCmd(std::vector<uint32_t> &cmd);
 
+            void readSynchronizeCommand(SynchronizeMotorCmd cmd);
+            void readSingleCommand(SingleMotorCmd cmd);
+
             uint32_t getPosition(DxlMotorState& motor_state);
 
             void readPositionStatus();
             void readHwStatus();
-
-            void readSynchronizeCommand(SynchronizeMotorCmd cmd);
-            void readSingleCommand(SingleMotorCmd cmd);
 
             int setTorqueEnable(DxlMotorState& targeted_dxl, uint32_t torque_enable);
             int setGoalPosition(DxlMotorState& targeted_dxl, uint32_t position);
@@ -94,20 +94,15 @@ namespace DynamixelDriver
 
             int setLeds(int led, DxlMotorType type = DxlMotorType::MOTOR_TYPE_XL330);
 
-            void syncWriteTorqueEnable(std::vector<uint8_t>& motor_list, std::vector<uint32_t>& torque_enable);
-            void syncWriteEffortCommand(std::vector<uint8_t>& motor_list, std::vector<uint32_t>& param_list);
-            void syncWriteVelocityCommand(std::vector<uint8_t>& motor_list, std::vector<uint32_t>& param_list);
-            void syncWritePositionCommand(std::vector<uint8_t>& motor_list, std::vector<uint32_t>& param_list);
-
             int scanAndCheck();
 
             int ping(DxlMotorState& targeted_dxl);
             int type_ping_id(uint8_t id, DxlMotorType type);
 
+            int rebootMotors();
+
             int sendCustomDxlCommand(DxlMotorType motor_type, uint8_t id, uint32_t reg_address, uint32_t value, uint32_t byte_number);
             int readCustomDxlCommand(DxlMotorType motor_type, uint8_t id, uint32_t reg_address, uint32_t &value, uint32_t byte_number);
-
-            int rebootMotors();
 
             //tests
             bool isConnectionOk() const;
@@ -118,6 +113,7 @@ namespace DynamixelDriver
             int getLedState() const;
             std::string getErrorMessage() const;
             void getBusState(bool& connection_state, std::vector<uint8_t>& motor_id, std::string& debug_msg) const;
+
             int getAllIdsOnDxlBus(std::vector<uint8_t> &id_list);
 
             //setters
@@ -125,16 +121,8 @@ namespace DynamixelDriver
             int init();
             int setupCommunication();
 
+            // cc move to tool class
             DxlMotorType dxlMotorTypeFromString(std::string type) const;
-
-            void readAndFillState(
-                int (XDriver::*syncReadFunction)(std::vector<uint8_t> &, std::vector<uint32_t> &),
-                void (DxlMotorState::*setFunction)(uint32_t));
-
-            void fillPositionStatus();
-            void fillVoltageStatus();
-            void fillTemperatureStatus();
-            void fillErrorStatus();
 
             void interpreteErrorState();
 
@@ -143,6 +131,24 @@ namespace DynamixelDriver
             bool hasMotors();
 
             std::vector<uint8_t> getArmMotors();
+
+            void fillPositionStatus();
+            void fillVoltageStatus();
+            void fillTemperatureStatus();
+            void fillErrorStatus();
+
+            void readAndFillState(
+                int (XDriver::*syncReadFunction)(const std::vector<uint8_t> &, std::vector<uint32_t> &),
+                void (DxlMotorState::*setFunction)(uint32_t));
+
+            void syncWriteTorqueEnable(const std::vector<uint8_t>& motor_list, const std::vector<uint32_t>& torque_enable);
+            void syncWritePositionCommand(const std::vector<uint8_t>& motor_list, const std::vector<uint32_t>& position_list);
+            void syncWriteVelocityCommand(const std::vector<uint8_t>& motor_list, const std::vector<uint32_t>& velocity_list);
+            void syncWriteEffortCommand(const std::vector<uint8_t>& motor_list, const std::vector<uint32_t>& effort_list);
+
+            void syncWriteCommand(int (XDriver::*syncWriteFunction)(const std::vector<uint8_t> &, const std::vector<uint32_t> &),
+                                  const std::vector<uint8_t> &motor_list,
+                                  const std::vector<uint32_t> &param_list);
 
         private:
             ros::NodeHandle _nh;
@@ -171,11 +177,13 @@ namespace DynamixelDriver
 
     //inline getters
 
+    inline
     bool DxlDriver::isConnectionOk() const
     {
         return _is_dxl_connection_ok;
     }
 
+    inline
     std::vector<uint8_t> DxlDriver::getRemovedMotorList() const
     {
         return _removed_motor_id_list;
@@ -224,9 +232,10 @@ namespace DynamixelDriver
         else if("xl330" == type)
            return DxlMotorType::MOTOR_TYPE_XL330;
 
-        return DxlMotorType::UNKNOWN_TYPE;
+        return DxlMotorType::MOTOR_TYPE_UNKNOWN;
     }
 
+    inline
     bool DxlDriver::hasMotors()
     {
         return _state_map.size() > 0;
