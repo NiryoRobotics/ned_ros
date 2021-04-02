@@ -2,6 +2,8 @@
 #include <thread> 
 #include "cpu_interface/cpu_interface_core.hpp"
 
+using namespace CpuInterface;
+
 std::shared_ptr<CpuInterfaceCore> cpu;
 
 void readTemperature()

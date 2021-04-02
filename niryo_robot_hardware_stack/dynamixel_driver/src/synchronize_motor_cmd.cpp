@@ -20,6 +20,8 @@
 #include "dynamixel_driver/synchronize_motor_cmd.hpp"
 #include <sstream>
 
+using namespace std;
+
 namespace DynamixelDriver
 {
     SynchronizeMotorCmd::SynchronizeMotorCmd()
@@ -27,8 +29,8 @@ namespace DynamixelDriver
     }
 
     SynchronizeMotorCmd::SynchronizeMotorCmd(DxlCommandType type,
-                                             std::vector<uint8_t> motor_id,
-                                             std::vector<uint32_t> params)
+                                             vector<uint8_t> motor_id,
+                                             vector<uint32_t> params)
         : _type(type), _motor_id_list(motor_id), _param_list(params)
     {
     }
@@ -38,12 +40,12 @@ namespace DynamixelDriver
         _type = type;
     }
 
-    void SynchronizeMotorCmd::setMotorsId(std::vector<uint8_t> motor_id)
+    void SynchronizeMotorCmd::setMotorsId(vector<uint8_t> motor_id)
     {
         _motor_id_list = motor_id;
     }
 
-    void SynchronizeMotorCmd::setParams(std::vector<uint32_t> params)
+    void SynchronizeMotorCmd::setParams(vector<uint32_t> params)
     {
         _param_list = params;
     }
@@ -52,11 +54,11 @@ namespace DynamixelDriver
      * @brief SynchronizeMotorCmd::to_string
      * @return
      */
-    std::string SynchronizeMotorCmd::str() const
+    string SynchronizeMotorCmd::str() const
     {
-        std::string string_info;
+        string string_info;
 
-        std::ostringstream ss;
+        ostringstream ss;
         ss << "Sync motor cmd - ";
         switch(_type)
         {

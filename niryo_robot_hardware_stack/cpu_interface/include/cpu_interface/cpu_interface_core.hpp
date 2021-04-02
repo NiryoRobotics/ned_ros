@@ -27,30 +27,33 @@
 #include <thread>
 #include <string>
 
-class CpuInterfaceCore
-{
-    public:
-        
-        CpuInterfaceCore();
+namespace CpuInterface {
 
-        void initParams();
+    class CpuInterfaceCore
+    {
+        public:
 
-        void startReadingData();
-        int getCpuTemperature(); 
+            CpuInterfaceCore();
 
-    private:
-        ros::NodeHandle _nh;
-        
-        int _cpu_temperature;
+            void initParams();
 
-        double _read_cpu_frequency;
-        int _temperature_warn_threshold;
-        int _temperature_shutdown_threshold;
+            void startReadingData();
+            int getCpuTemperature();
 
-        void _readCpuTemperature();
-        void _readHardwareDataLoop();
+        private:
+            ros::NodeHandle _nh;
 
-        std::shared_ptr<std::thread> _read_hardware_data_thread;
-        
-};
+            int _cpu_temperature;
+
+            double _read_cpu_frequency;
+            int _temperature_warn_threshold;
+            int _temperature_shutdown_threshold;
+
+            void _readCpuTemperature();
+            void _readHardwareDataLoop();
+
+            std::shared_ptr<std::thread> _read_hardware_data_thread;
+    };
+} //CpuInterface
+
 #endif

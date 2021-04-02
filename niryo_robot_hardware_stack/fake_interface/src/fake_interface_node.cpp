@@ -1,6 +1,8 @@
 #include <ros/ros.h>
 #include "fake_interface/fake_interface_core.hpp"
 
+using namespace FakeInterface;
+
 int main(int argc, char **argv) 
 {
     ros::init(argc, argv, "fake_interface_node");

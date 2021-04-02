@@ -37,52 +37,57 @@
 #define STEPPERS_MICROSTEPS 8.0
 #define STEPPERS_MOTOR_STEPS_PER_REVOLUTION 200.0
 
-class CalibrationInterface
-{
 
-public:
-    CalibrationInterface(std::vector<JointState> &joint_list,
-                         std::shared_ptr<StepperDriver::StepperDriverCore> &stepper, std::shared_ptr<DynamixelDriver::DynamixelDriverCore> &dynamixel);
+namespace JointsInterface {
 
-    int startCalibration(int mode, std::string &result_message);
+    class CalibrationInterface
+    {
 
-    bool CalibrationInprogress();
+    public:
+        CalibrationInterface(std::vector<JointState> &joint_list,
+                             std::shared_ptr<StepperDriver::StepperDriverCore> &stepper, std::shared_ptr<DynamixelDriver::DynamixelDriverCore> &dynamixel);
 
-private:
-    std::vector<JointState> &_joint_list;
-    ros::NodeHandle _nh;
-    std::shared_ptr<StepperDriver::StepperDriverCore> &_stepper;
-    std::shared_ptr<DynamixelDriver::DynamixelDriverCore> &_dynamixel;
+        int startCalibration(int mode, std::string &result_message);
 
-    int _xl430_middle_position, _xl320_middle_position;
-    int _xc430_middle_position, _xl330_middle_position;
+        bool CalibrationInprogress();
 
-    double _home_position_1, _home_position_2, _home_position_3;
-    double _gear_ratio_1, _gear_ratio_2, _gear_ratio_3;
-    double _direction_1, _direction_2, _direction_3;
-    double _offset_position_stepper_1, _offset_position_stepper_2, _offset_position_stepper_3;
-    double _offset_position_dxl_1, _offset_position_dxl_2, _offset_position_dxl_3;
+    private:
+        std::vector<JointState> &_joint_list;
+        ros::NodeHandle _nh;
+        std::shared_ptr<StepperDriver::StepperDriverCore> &_stepper;
+        std::shared_ptr<DynamixelDriver::DynamixelDriverCore> &_dynamixel;
 
-    bool _calibration_in_progress;
-    int _calibration_timeout;
+        int _xl430_middle_position, _xl320_middle_position;
+        int _xc430_middle_position, _xl330_middle_position;
 
-    std::vector<int32_t> _motor_calibration_list;
+        double _home_position_1, _home_position_2, _home_position_3;
+        double _gear_ratio_1, _gear_ratio_2, _gear_ratio_3;
+        double _direction_1, _direction_2, _direction_3;
+        double _offset_position_stepper_1, _offset_position_stepper_2, _offset_position_stepper_3;
+        double _offset_position_dxl_1, _offset_position_dxl_2, _offset_position_dxl_3;
 
-    bool _check_steppers_connected();
+        bool _calibration_in_progress;
+        int _calibration_timeout;
 
-    void _auto_calibration();
-    void _send_calibration_offset(uint8_t id, int offset_to_send, int absolute_steps_at_offset_position);
-    bool _can_process_manual_calibration(std::string &result_message);
-    int _manual_calibration();
+        std::vector<int32_t> _motor_calibration_list;
 
-    void _motorTorque(JointState &motor, bool status);
-    void _moveMotor(JointState &motor, int steps, float delay);
-    int _relativeMoveMotor(JointState &motor, int steps, int delay, bool wait);
-    void _setCalibrationCommand(
-        JointState &motor, int offset, int delay, int motor_direction, int calibration_direction, int timeout,
-        std::shared_ptr<int32_t> &calibration_result);
+        bool _check_steppers_connected();
 
-    int _getCalibrationResult(JointState &motor);
+        void _auto_calibration();
+        void _send_calibration_offset(uint8_t id, int offset_to_send, int absolute_steps_at_offset_position);
+        bool _can_process_manual_calibration(std::string &result_message);
+        int _manual_calibration();
 
-};
+        void _motorTorque(JointState &motor, bool status);
+        void _moveMotor(JointState &motor, int steps, float delay);
+        int _relativeMoveMotor(JointState &motor, int steps, int delay, bool wait);
+        void _setCalibrationCommand(
+            JointState &motor, int offset, int delay, int motor_direction, int calibration_direction, int timeout,
+            std::shared_ptr<int32_t> &calibration_result);
+
+        int _getCalibrationResult(JointState &motor);
+
+    };
+
+} //JointsInterface
 #endif

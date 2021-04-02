@@ -2,6 +2,8 @@
 #include "tools_interface/tools_interface_core.hpp"
 #include "dynamixel_driver/dxl_driver_core.hpp"
 
+using namespace ToolsInterface;
+
 std::shared_ptr<ToolsInterfaceCore> tool;
 
 int main(int argc, char **argv)

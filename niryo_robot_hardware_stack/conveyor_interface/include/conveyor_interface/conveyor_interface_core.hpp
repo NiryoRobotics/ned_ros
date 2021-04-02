@@ -33,38 +33,40 @@
 #include "conveyor_interface/ConveyorFeedbackArray.h"
 #include "niryo_robot_msgs/CommandStatus.h"
 
-class ConveyorInterfaceCore
-{
-    public:
-        
-        ConveyorInterfaceCore(std::shared_ptr<StepperDriver::StepperDriverCore> &stepper);
-        void initServices();
-        void initParams();
+namespace ConveyorInterface {
+    class ConveyorInterfaceCore
+    {
+        public:
 
-    private:
+            ConveyorInterfaceCore(std::shared_ptr<StepperDriver::StepperDriverCore> &stepper);
+            void initServices();
+            void initParams();
 
-        ros::NodeHandle _nh;
-        std::shared_ptr<StepperDriver::StepperDriverCore> &_stepper;
+        private:
 
-        ros::ServiceServer _ping_and_set_stepper_server;
-        ros::ServiceServer _control_conveyor_server;
-        ros::Publisher _conveyors_feedback_publisher;
+            ros::NodeHandle _nh;
+            std::shared_ptr<StepperDriver::StepperDriverCore> &_stepper;
 
-        ros::Publisher _conveyor_status_publisher;
-        std::shared_ptr<std::thread> _publish_conveyor_status_thread;
+            ros::ServiceServer _ping_and_set_stepper_server;
+            ros::ServiceServer _control_conveyor_server;
+            ros::Publisher _conveyors_feedback_publisher;
 
-        std::vector<uint8_t> _list_conveyor_id;
-        std::vector<uint8_t> _list_available_id; 
-        std::vector<int> _list_possible_conveyor_id;
-        int _conveyor_id;
-        int _conveyor_max_effort;
-        double _publish_feedback_frequency;
+            ros::Publisher _conveyor_status_publisher;
+            std::shared_ptr<std::thread> _publish_conveyor_status_thread;
 
-        std::shared_ptr<std::thread> _publish_conveyors_feedback_thread;
+            std::vector<uint8_t> _list_conveyor_id;
+            std::vector<uint8_t> _list_available_id;
+            std::vector<int> _list_possible_conveyor_id;
+            int _conveyor_id;
+            int _conveyor_max_effort;
+            double _publish_feedback_frequency;
 
-        bool _callbackPingAndSetConveyor(conveyor_interface::SetConveyor::Request &req, conveyor_interface::SetConveyor::Response &res);
-        bool _callbackControlConveyor(conveyor_interface::ControlConveyor::Request &req, conveyor_interface::ControlConveyor::Response &res);
+            std::shared_ptr<std::thread> _publish_conveyors_feedback_thread;
 
-        void _publishConveyorsFeedback();
-};
+            bool _callbackPingAndSetConveyor(conveyor_interface::SetConveyor::Request &req, conveyor_interface::SetConveyor::Response &res);
+            bool _callbackControlConveyor(conveyor_interface::ControlConveyor::Request &req, conveyor_interface::ControlConveyor::Response &res);
+
+            void _publishConveyorsFeedback();
+    };
+} // ConveyorInterface
 #endif

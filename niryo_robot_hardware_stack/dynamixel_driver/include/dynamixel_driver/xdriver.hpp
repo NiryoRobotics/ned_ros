@@ -23,6 +23,7 @@
 #include <iostream>
 
 #include "dynamixel_sdk/dynamixel_sdk.h"
+#include "dxl_enum.hpp"
 
 #define DXL_LEN_ONE_BYTE 1
 #define DXL_LEN_TWO_BYTES 2
@@ -39,11 +40,12 @@ namespace DynamixelDriver
     /**
      * @brief The XDriver class
      */
+// CC add list of associated motors ? this would remove the need for a map and for some params
     class XDriver
     {
 
     public:
-        XDriver(std::shared_ptr<dynamixel::PortHandler>& portHandler,
+        XDriver(DxlMotorType_t type, std::shared_ptr<dynamixel::PortHandler>& portHandler,
                 std::shared_ptr<dynamixel::PacketHandler>& packetHandler);
 
         int ping(uint8_t id);
@@ -51,6 +53,10 @@ namespace DynamixelDriver
                            uint16_t *dxl_model_number);
         int scan(std::vector<uint8_t> &id_list);
         int reboot(uint8_t id);
+
+        std::string str() const;
+
+        virtual std::string interpreteErrorState(uint32_t hw_state) = 0;
 
         //get model number - specific to a child
         virtual int checkModelNumber(uint8_t id) = 0;
@@ -104,6 +110,8 @@ namespace DynamixelDriver
         virtual int customRead(uint8_t id, uint8_t reg_address, uint32_t& value, uint8_t byte_number);
 
     protected:
+        DxlMotorType_t _type;
+
         std::shared_ptr<dynamixel::PortHandler>& _dxlPortHandler;
         std::shared_ptr<dynamixel::PacketHandler>& _dxlPacketHandler;
 

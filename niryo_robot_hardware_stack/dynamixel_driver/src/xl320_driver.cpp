@@ -16,6 +16,8 @@
 
 #include "dynamixel_driver/xl320_driver.hpp"
 
+using namespace std;
+
 namespace DynamixelDriver
 {
     /**
@@ -23,10 +25,34 @@ namespace DynamixelDriver
      * @param portHandler
      * @param packetHandler
      */
-    XL320Driver::XL320Driver(std::shared_ptr<dynamixel::PortHandler> &portHandler,
-                             std::shared_ptr<dynamixel::PacketHandler> &packetHandler)
-        : XDriver(portHandler, packetHandler)
+    XL320Driver::XL320Driver(shared_ptr<dynamixel::PortHandler> &portHandler,
+                             shared_ptr<dynamixel::PacketHandler> &packetHandler)
+        : XDriver(DxlMotorType_t::MOTOR_TYPE_XL320, portHandler, packetHandler)
     {
+    }
+
+    string XL320Driver::interpreteErrorState(uint32_t hw_state)
+    {
+        string hardware_message;
+
+        if (hw_state & 0b00000001)
+        {
+            hardware_message += "Overload";
+        }
+        if (hw_state & 0b00000010)
+        {
+            if (hardware_message != "")
+                hardware_message += ", ";
+            hardware_message += "OverHeating";
+        }
+        if (hw_state & 0b00000100)
+        {
+            if (hardware_message != "")
+                hardware_message += ", ";
+            hardware_message += "Input voltage out of range";
+        }
+
+        return hardware_message;
     }
 
     /**
@@ -118,25 +144,25 @@ namespace DynamixelDriver
      *  -----------------   SYNC WRITE   --------------------
      */
 
-    int XL320Driver::syncWritePositionGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &position_list)
+    int XL320Driver::syncWritePositionGoal(const vector<uint8_t> &id_list, const vector<uint32_t> &position_list)
     {
         return syncWrite2Bytes(XL320_ADDR_GOAL_POSITION, id_list, position_list);
     }
-    int XL320Driver::syncWriteVelocityGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &velocity_list)
+    int XL320Driver::syncWriteVelocityGoal(const vector<uint8_t> &id_list, const vector<uint32_t> &velocity_list)
     {
         return syncWrite2Bytes(XL320_ADDR_GOAL_SPEED, id_list, velocity_list);
     }
-    int XL320Driver::syncWriteTorqueGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &torque_list)
+    int XL320Driver::syncWriteTorqueGoal(const vector<uint8_t> &id_list, const vector<uint32_t> &torque_list)
     {
         return syncWrite2Bytes(XL320_ADDR_GOAL_TORQUE, id_list, torque_list);
     }
 
-    int XL320Driver::syncWriteTorqueEnable(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &torque_enable_list)
+    int XL320Driver::syncWriteTorqueEnable(const vector<uint8_t> &id_list, const vector<uint32_t> &torque_enable_list)
     {
         return syncWrite1Byte(XL320_ADDR_TORQUE_ENABLE, id_list, torque_enable_list);
     }
 
-    int XL320Driver::syncWriteLed(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &led_list)
+    int XL320Driver::syncWriteLed(const vector<uint8_t> &id_list, const vector<uint32_t> &led_list)
     {
         return syncWrite1Byte(XL320_ADDR_LED, id_list, led_list);
     }
@@ -203,31 +229,31 @@ namespace DynamixelDriver
      *  -----------------   SYNC READ   --------------------
      */
 
-    int XL320Driver::syncReadPosition(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &position_list)
+    int XL320Driver::syncReadPosition(const vector<uint8_t> &id_list, vector<uint32_t> &position_list)
     {
         return syncRead(XL320_ADDR_PRESENT_POSITION, DXL_LEN_TWO_BYTES, id_list, position_list);
     }
 
-    int XL320Driver::syncReadVelocity(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &velocity_list)
+    int XL320Driver::syncReadVelocity(const vector<uint8_t> &id_list, vector<uint32_t> &velocity_list)
     {
         return syncRead(XL320_ADDR_PRESENT_SPEED, DXL_LEN_TWO_BYTES, id_list, velocity_list);
     }
-    int XL320Driver::syncReadLoad(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &load_list)
+    int XL320Driver::syncReadLoad(const vector<uint8_t> &id_list, vector<uint32_t> &load_list)
     {
         return syncRead(XL320_ADDR_PRESENT_LOAD, DXL_LEN_TWO_BYTES, id_list, load_list);
     }
 
-    int XL320Driver::syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &temperature_list)
+    int XL320Driver::syncReadTemperature(const vector<uint8_t> &id_list, vector<uint32_t> &temperature_list)
     {
         return syncRead(XL320_ADDR_PRESENT_TEMPERATURE, DXL_LEN_ONE_BYTE, id_list, temperature_list);
     }
 
-    int XL320Driver::syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &voltage_list)
+    int XL320Driver::syncReadVoltage(const vector<uint8_t> &id_list, vector<uint32_t> &voltage_list)
     {
         return syncRead(XL320_ADDR_PRESENT_VOLTAGE, DXL_LEN_ONE_BYTE, id_list, voltage_list);
     }
 
-    int XL320Driver::syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list)
+    int XL320Driver::syncReadHwErrorStatus(const vector<uint8_t> &id_list, vector<uint32_t> &hw_error_list)
     {
         return syncRead(XL320_ADDR_HW_ERROR_STATUS, DXL_LEN_ONE_BYTE, id_list, hw_error_list);
     }

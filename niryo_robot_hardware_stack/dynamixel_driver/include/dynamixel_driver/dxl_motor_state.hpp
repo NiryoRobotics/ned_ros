@@ -40,11 +40,15 @@ namespace DynamixelDriver
     class DxlMotorState
     {
         public:
-            DxlMotorState(uint8_t id, DxlMotorType type, bool isTool = false);
+            DxlMotorState();
+            DxlMotorState(uint8_t id, DxlMotorType_t type, bool isTool = false);
+
+            virtual void reset();
+            bool isValid() const;
 
             //getters
             uint8_t getId() const;
-            DxlMotorType getType() const;
+            DxlMotorType_t getType() const;
             bool isTool() const;
 
             uint32_t getPositionState() const;
@@ -63,9 +67,11 @@ namespace DynamixelDriver
 
             bool operator==(const DxlMotorState& other);
 
+            std::string str() const;
+
         private:
             uint8_t _id;
-            DxlMotorType _type;
+            DxlMotorType_t _type;
 
             // read variables
             uint32_t _position_state;
@@ -78,13 +84,19 @@ namespace DynamixelDriver
     };
 
     inline
+    bool DxlMotorState::isValid() const
+    {
+        return (0 != _id && DxlMotorType_t::MOTOR_TYPE_UNKNOWN != _type);
+    }
+
+    inline
     uint8_t DxlMotorState::getId() const
     {
         return _id;
     }
 
     inline
-    DxlMotorType DxlMotorState::getType() const
+    DxlMotorType_t DxlMotorState::getType() const
     {
         return _type;
     }

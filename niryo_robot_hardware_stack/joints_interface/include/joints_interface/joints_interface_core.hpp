@@ -42,80 +42,83 @@
 #include "niryo_robot_msgs/CommandStatus.h"
 #include "niryo_robot_msgs/Trigger.h"
 
-class JointsInterfaceCore
-{
-    public:
+namespace JointsInterface {
 
-        JointsInterfaceCore( 
-            std::shared_ptr<DynamixelDriver::DynamixelDriverCore>& dynamixel,
-            std::shared_ptr<StepperDriver::StepperDriverCore>& stepper);
+    class JointsInterfaceCore
+    {
+        public:
 
-        void init();
-        void initParams();
+            JointsInterfaceCore(
+                std::shared_ptr<DynamixelDriver::DynamixelDriverCore>& dynamixel,
+                std::shared_ptr<StepperDriver::StepperDriverCore>& stepper);
 
-        void startServices();
-        void startSubscribers();
+            void init();
+            void initParams();
 
-        void rosControlLoop();
+            void startServices();
+            void startSubscribers();
 
-        void activateLearningMode(bool learning_mode_on, int &resp_status, std::string &resp_message);
+            void rosControlLoop();
 
-        void calibrateJoints();
+            void activateLearningMode(bool learning_mode_on, int &resp_status, std::string &resp_message);
 
-        bool getFreeDriveMode();
+            void calibrateJoints();
 
-        void getCalibrationState(std::shared_ptr<bool> &need_calibration, std::shared_ptr<bool> &calibration_in_progress);
+            bool getFreeDriveMode();
 
-        std::vector<JointState>& getJointsState();
+            void getCalibrationState(std::shared_ptr<bool> &need_calibration, std::shared_ptr<bool> &calibration_in_progress);
 
-        std::string jointIdToJointName(int id, uint8_t motor_type);
+            std::vector<JointState>& getJointsState();
 
-        void sendMotorsParams();
+            std::string jointIdToJointName(int id, uint8_t motor_type);
 
-    private:
+            void sendMotorsParams();
 
-        ros::NodeHandle _nh;
+        private:
 
-        bool _callbackResetController(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
+            ros::NodeHandle _nh;
 
-        void _callbackTrajectoryResult(const control_msgs::FollowJointTrajectoryActionResult& msg);
+            bool _callbackResetController(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
 
-        bool _callbackCalibrateMotors(niryo_robot_msgs::SetInt::Request &req, niryo_robot_msgs::SetInt::Response &res);
+            void _callbackTrajectoryResult(const control_msgs::FollowJointTrajectoryActionResult& msg);
 
-        bool _callbackRequestNewCalibration(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
+            bool _callbackCalibrateMotors(niryo_robot_msgs::SetInt::Request &req, niryo_robot_msgs::SetInt::Response &res);
 
-        bool _callbackActivateLearningMode(niryo_robot_msgs::SetBool::Request &req, niryo_robot_msgs::SetBool::Response &res);
+            bool _callbackRequestNewCalibration(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
 
-        void _publishPackageStates(); 
+            bool _callbackActivateLearningMode(niryo_robot_msgs::SetBool::Request &req, niryo_robot_msgs::SetBool::Response &res);
 
-        void _publishLearningMode();
+            void _publishPackageStates();
 
-        std::shared_ptr<JointHardwareInterface> _robot;
-        std::shared_ptr<DynamixelDriver::DynamixelDriverCore>& _dynamixel;
-        std::shared_ptr<StepperDriver::StepperDriverCore>& _stepper;
+            void _publishLearningMode();
 
-        double _publish_learning_mode_frequency;
+            std::shared_ptr<JointHardwareInterface> _robot;
+            std::shared_ptr<DynamixelDriver::DynamixelDriverCore>& _dynamixel;
+            std::shared_ptr<StepperDriver::StepperDriverCore>& _stepper;
 
-        double _ros_control_frequency;
-        
-        std::shared_ptr<controller_manager::ControllerManager> _cm;
-        std::shared_ptr<std::thread> _ros_control_thread;
-        std::shared_ptr<std::thread> _publish_learning_mode_thread;
+            double _publish_learning_mode_frequency;
 
-        ros::Subscriber _trajectory_result_subscriber;
+            double _ros_control_frequency;
 
-        ros::Publisher _learning_mode_publisher;
+            std::shared_ptr<controller_manager::ControllerManager> _cm;
+            std::shared_ptr<std::thread> _ros_control_thread;
+            std::shared_ptr<std::thread> _publish_learning_mode_thread;
 
-        ros::ServiceServer _reset_controller_server; // workaround to compensate missed steps
-        ros::ServiceServer _calibrate_motors_server;
-        ros::ServiceServer _request_new_calibration_server;
+            ros::Subscriber _trajectory_result_subscriber;
 
-        ros::ServiceServer _activate_learning_mode_server;
+            ros::Publisher _learning_mode_publisher;
 
-        bool _enable_control_loop;
+            ros::ServiceServer _reset_controller_server; // workaround to compensate missed steps
+            ros::ServiceServer _calibrate_motors_server;
+            ros::ServiceServer _request_new_calibration_server;
 
-        bool _previous_state_learning_mode;
+            ros::ServiceServer _activate_learning_mode_server;
 
-        bool _reset_controller;
-};
+            bool _enable_control_loop;
+
+            bool _previous_state_learning_mode;
+
+            bool _reset_controller;
+    };
+} // JointsInterface
 #endif

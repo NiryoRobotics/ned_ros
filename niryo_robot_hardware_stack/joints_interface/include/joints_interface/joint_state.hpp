@@ -23,37 +23,41 @@
 #include <stdint.h>
 #include <string>
 
-class JointState {
 
-    public:
-        JointState(std::string name, uint8_t type, uint8_t id );
+namespace JointsInterface {
 
-        std::string& getName();
-        void setName(std::string &name);
+    class JointState {
 
-        uint8_t getId();
-        void setId(uint8_t id);
+        public:
+            JointState(std::string name, uint8_t type, uint8_t id );
 
-        uint8_t getType();
-        void setType(uint8_t id);
+            std::string& getName();
+            void setName(std::string &name);
 
-        bool needCalibration();
-        void setNeedCalibration(bool need_calibration);
+            uint8_t getId();
+            void setId(uint8_t id);
 
-        void setPosition(double position);
-        double getPosition();
+            uint8_t getType();
+            void setType(uint8_t id);
 
-        bool operator==(const JointState& other) const;
+            bool needCalibration();
+            void setNeedCalibration(bool need_calibration);
 
-    protected : 
+            void setPosition(double position);
+            double getPosition();
 
-        std::string _name;
-        uint8_t _id;
-        uint8_t _type;
+            bool operator==(const JointState& other) const;
 
-        double _position;
-        bool _need_calibration;
+        protected :
 
-};
+            std::string _name;
+            uint8_t _id;
+            uint8_t _type;
+
+            double _position;
+            bool _need_calibration;
+
+    };
+} //JointsInterface
 
 #endif

@@ -81,11 +81,11 @@ namespace NiryoRobotHardwareInterface
 
         std::shared_ptr<DynamixelDriver::DynamixelDriverCore> _dynamixel_driver;
         std::shared_ptr<StepperDriver::StepperDriverCore> _stepper_driver;
-        std::shared_ptr<CpuInterfaceCore> _cpu_interface;
-        std::shared_ptr<ConveyorInterfaceCore> _conveyor_interface;
-        std::shared_ptr<ToolsInterfaceCore> _tools_interface;
-        std::shared_ptr<JointsInterfaceCore> _joints_interface;
-        std::shared_ptr<FakeInterfaceCore> _fake_interface;
+        std::shared_ptr<CpuInterface::CpuInterfaceCore> _cpu_interface;
+        std::shared_ptr<ConveyorInterface::ConveyorInterfaceCore> _conveyor_interface;
+        std::shared_ptr<ToolsInterface::ToolsInterfaceCore> _tools_interface;
+        std::shared_ptr<JointsInterface::JointsInterfaceCore> _joints_interface;
+        std::shared_ptr<FakeInterface::FakeInterfaceCore> _fake_interface;
 
         std::shared_ptr<std::thread> _publish_hardware_status_thread;
         std::shared_ptr<std::thread> _publish_software_version_thread;

@@ -2,6 +2,8 @@
 #include "conveyor_interface/conveyor_interface_core.hpp"
 #include "stepper_driver/stepper_driver_core.hpp"
 
+using namespace ConveyorInterface;
+
 int main(int argc, char **argv) 
 {
     ros::init(argc, argv, "conveyor_interface_node");

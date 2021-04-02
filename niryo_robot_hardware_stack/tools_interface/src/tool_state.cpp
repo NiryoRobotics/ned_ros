@@ -1,48 +1,57 @@
+/*
+    tool_state.cpp
+    Copyright (C) 2020 Niryo
+    All rights reserved.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 #include "tools_interface/tool_state.hpp"
 
-ToolState::ToolState(uint8_t id, std::string name, DynamixelDriver::DxlMotorType type)
-    : _id(id), _name(name), _type(type)
-{
-    _connected = true;
-    _position = 0.0; 
-}
+using namespace std;
+using namespace DynamixelDriver;
 
-void ToolState::setId(uint8_t id)
-{
-    _id = id;
-}
+namespace ToolsInterface {
 
-uint8_t ToolState::getId()
-{
-    return _id;
-}
+    ToolState::ToolState()
+        : DxlMotorState()
+    {
+        reset();
+    }
 
-void ToolState::setType(DynamixelDriver::DxlMotorType type)
-{
-    _type = type;
-}
+    ToolState::ToolState(uint8_t id, std::string name, DxlMotorType_t type)
+        : DxlMotorState(id, type, true),
+          _name(name),
+          _connected(true),
+          _position(0.0)
+    {
+    }
 
-DynamixelDriver::DxlMotorType ToolState::getType()
-{
-    return _type;
-}
+    void ToolState::reset()
+    {
+        DxlMotorState::reset();
+        _name = "No Tool";
+        _position = 0.0;
+    }
 
-std::string& ToolState::getName()
-{
-    return _name;
-}
+    void ToolState::setName(std::string name)
+    {
+        _name = name;
+    }
 
-void ToolState::setName(std::string name)
-{
-    _name = name;
-}
+    void ToolState::setPosition(double position)
+    {
+        _position = position;
+    }
 
-void ToolState::setPosition(double position)
-{
-    _position = position;
-}
-
-double ToolState::getPosition()
-{
-    return _position;
-}
+} //ToolsInterface

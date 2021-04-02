@@ -106,15 +106,15 @@ namespace NiryoRobotHardwareInterface
             if (_can_enabled && _dxl_enabled)
             {
                 ROS_DEBUG("Hardware Interface - Start Joints Interface Node");
-                _joints_interface.reset(new JointsInterfaceCore(_dynamixel_driver, _stepper_driver));
+                _joints_interface.reset(new JointsInterface::JointsInterfaceCore(_dynamixel_driver, _stepper_driver));
                 ros::Duration(0.25).sleep();
 
                 ROS_DEBUG("Hardware Interface - Start End Effector Interface Node");
-                _tools_interface.reset(new ToolsInterfaceCore(_dynamixel_driver));
+                _tools_interface.reset(new ToolsInterface::ToolsInterfaceCore(_dynamixel_driver));
                 ros::Duration(0.25).sleep();
 
                 ROS_DEBUG("Hardware Interface - Start Tools Interface Node");
-                _conveyor_interface.reset(new ConveyorInterfaceCore(_stepper_driver));
+                _conveyor_interface.reset(new ConveyorInterface::ConveyorInterfaceCore(_stepper_driver));
                 ros::Duration(0.25).sleep();
             }
             else
@@ -123,13 +123,13 @@ namespace NiryoRobotHardwareInterface
             }
 
             ROS_DEBUG("Hardware Interface - Start CPU Interface Node");
-            _cpu_interface.reset(new CpuInterfaceCore());
+            _cpu_interface.reset(new CpuInterface::CpuInterfaceCore());
             ros::Duration(0.25).sleep();
         }
         else
         {
             ROS_DEBUG("Hardware Interface - Start Fake Interface Node");
-            _fake_interface.reset(new FakeInterfaceCore());
+            _fake_interface.reset(new FakeInterface::FakeInterfaceCore());
         }
     }
 
@@ -199,7 +199,7 @@ namespace NiryoRobotHardwareInterface
             niryo_robot_msgs::BusState dxl_bus_state;
             niryo_robot_msgs::BusState can_bus_state;
 
-            std::vector<JointState> joints_state;
+            std::vector<JointsInterface::JointState> joints_state;
 
             int cpu_temperature;
             std::string error_message;
@@ -293,19 +293,19 @@ namespace NiryoRobotHardwareInterface
 
                 switch(dxl_motor_state.motors_hw_status.at(i).motor_identity.motor_type)
                 {
-                    case (uint8_t)DynamixelDriver::DxlMotorType::MOTOR_TYPE_XL320:
+                    case (uint8_t)DynamixelDriver::DxlMotorType_t::MOTOR_TYPE_XL320:
                         motor_types.push_back("DXL XL-320");
                     break;
                         
-                    case (uint8_t)DynamixelDriver::DxlMotorType::MOTOR_TYPE_XL330:
+                    case (uint8_t)DynamixelDriver::DxlMotorType_t::MOTOR_TYPE_XL330:
                         motor_types.push_back("DXL XL-330");
                     break;
                     
-                    case (uint8_t)DynamixelDriver::DxlMotorType::MOTOR_TYPE_XL430:
+                    case (uint8_t)DynamixelDriver::DxlMotorType_t::MOTOR_TYPE_XL430:
                         motor_types.push_back("DXL XL-430");
                     break;
                     
-                    case (uint8_t)DynamixelDriver::DxlMotorType::MOTOR_TYPE_XC430:
+                    case (uint8_t)DynamixelDriver::DxlMotorType_t::MOTOR_TYPE_XC430:
                         motor_types.push_back("DXL XC-430");
                     break;
                     default:
@@ -348,7 +348,7 @@ namespace NiryoRobotHardwareInterface
             stepper_driver::StepperArrayMotorHardwareStatus stepper_motor_state;
             std::vector<std::string> motor_names;
             std::vector<std::string> firmware_versions;
-            std::vector<JointState> joints_state;
+            std::vector<JointsInterface::JointState> joints_state;
 
             if (!_simulation_mode)
             {

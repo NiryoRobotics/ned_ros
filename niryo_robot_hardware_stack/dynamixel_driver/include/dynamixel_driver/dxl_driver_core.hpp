@@ -66,20 +66,20 @@ namespace DynamixelDriver
 
         void setDxlCommands(SynchronizeMotorCmd &cmd);
 
-        int ping_id(uint8_t id, DxlMotorType type);
+        int ping_id(uint8_t id, DxlMotorType_t type);
         std::vector<uint8_t> scanTools();
-        int setEndEffector(uint8_t id, DxlMotorType type);
-        void unsetEndEffector(uint8_t id, DxlMotorType type);
+        int setEndEffector(uint8_t id, DxlMotorType_t type);
+        void unsetEndEffector(uint8_t id, DxlMotorType_t type);
         void setEndEffectorCommands(std::vector<SingleMotorCmd> &cmd);
-        uint32_t getEndEffectorState(uint8_t id, DxlMotorType type);
+        uint32_t getEndEffectorState(uint8_t id, DxlMotorType_t type);
         std::vector<uint8_t> getRemovedMotorList() const;
         
         int update_leds(void);
 
         void activeDebugMode(bool mode);
         int launchMotorsReport();
-        int motorScanReport(uint8_t motor_id, DxlMotorType motor_type);
-        int motorCmdReport(uint8_t motor_id, DxlMotorType motor_type);
+        int motorScanReport(uint8_t motor_id, DxlMotorType_t motor_type);
+        int motorCmdReport(uint8_t motor_id, DxlMotorType_t motor_type);
         int rebootMotors();
 
     private:

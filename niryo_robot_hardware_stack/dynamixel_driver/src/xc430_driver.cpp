@@ -16,6 +16,8 @@
 
 #include "dynamixel_driver/xc430_driver.hpp"
 
+using namespace std;
+
 namespace DynamixelDriver
 {
     /**
@@ -23,10 +25,48 @@ namespace DynamixelDriver
      * @param portHandler
      * @param packetHandler
      */
-    XC430Driver::XC430Driver(std::shared_ptr<dynamixel::PortHandler> &portHandler,
-                             std::shared_ptr<dynamixel::PacketHandler> &packetHandler)
-        : XDriver(portHandler, packetHandler)
+    XC430Driver::XC430Driver(shared_ptr<dynamixel::PortHandler> &portHandler,
+                             shared_ptr<dynamixel::PacketHandler> &packetHandler)
+        : XDriver(DxlMotorType_t::MOTOR_TYPE_XC430, portHandler, packetHandler)
     {
+    }
+
+    string XC430Driver::interpreteErrorState(uint32_t hw_state)
+    {
+        string hardware_message;
+
+        if (hw_state & 0b00000001)
+        {
+            hardware_message += "Input Voltage";
+        }
+        if (hw_state & 0b00000100)
+        {
+            if (hardware_message != "")
+                hardware_message += ", ";
+            hardware_message += "OverHeating";
+        }
+        if (hw_state & 0b00001000)
+        {
+            if (hardware_message != "")
+                hardware_message += ", ";
+            hardware_message += "Motor Encoder";
+        }
+        if (hw_state & 0b00010000)
+        {
+            if (hardware_message != "")
+                hardware_message += ", ";
+            hardware_message += "Electrical Shock";
+        }
+        if (hw_state & 0b00100000)
+        {
+            if (hardware_message != "")
+                hardware_message += ", ";
+            hardware_message += "Overload";
+        }
+        if (hardware_message != "")
+            hardware_message += " Error";
+
+        return hardware_message;
     }
 
     /**
@@ -120,26 +160,26 @@ namespace DynamixelDriver
      *  -----------------   SYNC WRITE   --------------------
      */
 
-    int XC430Driver::syncWritePositionGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &position_list)
+    int XC430Driver::syncWritePositionGoal(const vector<uint8_t> &id_list, const vector<uint32_t> &position_list)
     {
         return syncWrite4Bytes(XC430_ADDR_GOAL_POSITION, id_list, position_list);
     }
-    int XC430Driver::syncWriteVelocityGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &velocity_list)
+    int XC430Driver::syncWriteVelocityGoal(const vector<uint8_t> &id_list, const vector<uint32_t> &velocity_list)
     {
         return syncWrite4Bytes(XC430_ADDR_GOAL_VELOCITY, id_list, velocity_list);
     }
-    int XC430Driver::syncWriteTorqueGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &torque_list)
+    int XC430Driver::syncWriteTorqueGoal(const vector<uint8_t> &id_list, const vector<uint32_t> &torque_list)
     {
         // No goal torque for this motor ?
         return COMM_TX_ERROR;
     }
 
-    int XC430Driver::syncWriteTorqueEnable(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &torque_enable_list)
+    int XC430Driver::syncWriteTorqueEnable(const vector<uint8_t> &id_list, const vector<uint32_t> &torque_enable_list)
     {
         return syncWrite1Byte(XC430_ADDR_TORQUE_ENABLE, id_list, torque_enable_list);
     }
 
-    int XC430Driver::syncWriteLed(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &led_list)
+    int XC430Driver::syncWriteLed(const vector<uint8_t> &id_list, const vector<uint32_t> &led_list)
     {
         return syncWrite1Byte(XC430_ADDR_LED, id_list, led_list);
     }
@@ -207,31 +247,31 @@ namespace DynamixelDriver
      *  -----------------   SYNC READ   --------------------
      */
 
-    int XC430Driver::syncReadPosition(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &position_list)
+    int XC430Driver::syncReadPosition(const vector<uint8_t> &id_list, vector<uint32_t> &position_list)
     {
         return syncRead(XC430_ADDR_PRESENT_POSITION, DXL_LEN_FOUR_BYTES, id_list, position_list);
     }
 
-    int XC430Driver::syncReadVelocity(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &velocity_list)
+    int XC430Driver::syncReadVelocity(const vector<uint8_t> &id_list, vector<uint32_t> &velocity_list)
     {
         return syncRead(XC430_ADDR_PRESENT_VELOCITY, DXL_LEN_FOUR_BYTES, id_list, velocity_list);
     }
-    int XC430Driver::syncReadLoad(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &load_list)
+    int XC430Driver::syncReadLoad(const vector<uint8_t> &id_list, vector<uint32_t> &load_list)
     {
         return syncRead(XC430_ADDR_PRESENT_LOAD, DXL_LEN_TWO_BYTES, id_list, load_list);
     }
 
-    int XC430Driver::syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &temperature_list)
+    int XC430Driver::syncReadTemperature(const vector<uint8_t> &id_list, vector<uint32_t> &temperature_list)
     {
         return syncRead(XC430_ADDR_PRESENT_TEMPERATURE, DXL_LEN_ONE_BYTE, id_list, temperature_list);
     }
 
-    int XC430Driver::syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &voltage_list)
+    int XC430Driver::syncReadVoltage(const vector<uint8_t> &id_list, vector<uint32_t> &voltage_list)
     {
         return syncRead(XC430_ADDR_PRESENT_VOLTAGE, DXL_LEN_TWO_BYTES, id_list, voltage_list);
     }
 
-    int XC430Driver::syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list)
+    int XC430Driver::syncReadHwErrorStatus(const vector<uint8_t> &id_list, vector<uint32_t> &hw_error_list)
     {
         return syncRead(XC430_ADDR_HW_ERROR_STATUS, DXL_LEN_ONE_BYTE, id_list, hw_error_list);
     }

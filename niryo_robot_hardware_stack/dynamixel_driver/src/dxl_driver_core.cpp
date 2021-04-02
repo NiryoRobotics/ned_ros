@@ -1,16 +1,31 @@
+/*
+    dxl_driver_core.cpp
+    Copyright (C) 2020 Niryo
+    All rights reserved.
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include "dynamixel_driver/dxl_driver_core.hpp"
 #include <cstdlib>
 #include <algorithm>
 #include <cmath>
 #include <functional>
 
+using namespace std;
+
 namespace DynamixelDriver
 {
     DynamixelDriverCore::DynamixelDriverCore()
     {
-        // if( ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug) ) {
-        //     ros::console::notifyLoggerLevelsChanged();
-        // }
         init();
     }
 
@@ -41,6 +56,12 @@ namespace DynamixelDriver
         _nh.getParam("/niryo_robot_hardware_interface/dynamixel_driver/dxl_hardware_check_connection_frequency", _check_connection_frequency);
         _nh.getParam("/niryo_robot_hardware_interface/dynamixel_driver/dxl_end_effector_frequency", _check_end_effector_frequency);
 
+        bool debug_mode = false;
+        _nh.getParam("/niryo_robot_hardware_interface/debug", debug_mode);
+
+        if (debug_mode && ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug))
+            ros::console::notifyLoggerLevelsChanged();
+
         ROS_DEBUG("Dynamixel Driver Core - dxl_hardware_control_loop_frequency : %f", _control_loop_frequency);
         ROS_DEBUG("Dynamixel Driver Core - dxl_hardware_write_frequency : %f", _write_frequency);
         ROS_DEBUG("Dynamixel Driver Core - dxl_hardware_read_data_frequency : %f", _read_data_frequency);
@@ -56,7 +77,7 @@ namespace DynamixelDriver
         {
             ROS_INFO("Dynamixel Driver Core - Start control loop");
             _control_loop_flag = true;
-            _control_loop_thread.reset(new std::thread(std::bind(&DynamixelDriverCore::controlLoop, this)));
+            _control_loop_thread.reset(new thread(bind(&DynamixelDriverCore::controlLoop, this)));
         }
     }
 
@@ -90,13 +111,13 @@ namespace DynamixelDriver
     int DynamixelDriverCore::rebootMotors()
     {
         ROS_INFO("Dynamixel Driver Core - Reboot motors");
-        std::lock_guard<std::mutex> lck(_control_loop_mutex);
+        lock_guard<mutex> lck(_control_loop_mutex);
         int result = _dynamixel->rebootMotors();
         ros::Duration(1.5).sleep();
         return result;
     }
 
-    int DynamixelDriverCore::motorScanReport(uint8_t motor_id, DxlMotorType motor_type)
+    int DynamixelDriverCore::motorScanReport(uint8_t motor_id, DxlMotorType_t motor_type)
     {
         if (_debug_flag)
         {
@@ -120,7 +141,7 @@ namespace DynamixelDriver
         return niryo_robot_msgs::CommandStatus::ABORTED;
     }
 
-    int DynamixelDriverCore::motorCmdReport(uint8_t motor_id, DxlMotorType motor_type)
+    int DynamixelDriverCore::motorCmdReport(uint8_t motor_id, DxlMotorType_t motor_type)
     {
         if (_debug_flag)
         {
@@ -155,7 +176,7 @@ namespace DynamixelDriver
 
             _dynamixel->setTorqueEnable(dynamixel_motor, 0);
 
-            if (std::abs(rest) < 50 or std::abs(rest2) < 50)
+            if (abs(rest) < 50 or abs(rest2) < 50)
             {
                 ROS_WARN("Dynamixel Driver Core - Debug - Dynamixel Motor %d problem: %d", motor_id, result);
                 return niryo_robot_msgs::CommandStatus::FAILURE;
@@ -180,40 +201,40 @@ namespace DynamixelDriver
             ROS_INFO("Dynamixel Driver Core - Debug - Start Dynamixel Motor Report");
             ros::Duration(1.0).sleep();
             ROS_INFO("Dynamixel Driver Core - Debug - Motor 4 report start :");
-            if (motorScanReport(2, DxlMotorType::MOTOR_TYPE_XC430) != niryo_robot_msgs::CommandStatus::SUCCESS)
+            if (motorScanReport(2, DxlMotorType_t::MOTOR_TYPE_XC430) != niryo_robot_msgs::CommandStatus::SUCCESS)
                 response = niryo_robot_msgs::CommandStatus::FAILURE;
             if (!_debug_flag)
                 return niryo_robot_msgs::CommandStatus::ABORTED;
-            if (motorCmdReport(2, DxlMotorType::MOTOR_TYPE_XC430) != niryo_robot_msgs::CommandStatus::SUCCESS)
+            if (motorCmdReport(2, DxlMotorType_t::MOTOR_TYPE_XC430) != niryo_robot_msgs::CommandStatus::SUCCESS)
                 response = niryo_robot_msgs::CommandStatus::FAILURE;
             if (!_debug_flag)
                 return niryo_robot_msgs::CommandStatus::ABORTED;
             ROS_INFO("Dynamixel Driver Core - Debug - Motor 5 report start :");
-            if (motorScanReport(3, DxlMotorType::MOTOR_TYPE_XC430) != niryo_robot_msgs::CommandStatus::SUCCESS)
+            if (motorScanReport(3, DxlMotorType_t::MOTOR_TYPE_XC430) != niryo_robot_msgs::CommandStatus::SUCCESS)
                 response = niryo_robot_msgs::CommandStatus::FAILURE;
             if (!_debug_flag)
                 return niryo_robot_msgs::CommandStatus::ABORTED;
-            if (motorCmdReport(3, DxlMotorType::MOTOR_TYPE_XC430) != niryo_robot_msgs::CommandStatus::SUCCESS)
+            if (motorCmdReport(3, DxlMotorType_t::MOTOR_TYPE_XC430) != niryo_robot_msgs::CommandStatus::SUCCESS)
                 response = niryo_robot_msgs::CommandStatus::FAILURE;
             if (!_debug_flag)
                 return niryo_robot_msgs::CommandStatus::ABORTED;
             ROS_INFO("Dynamixel Driver Core - Debug - Motor 6 report start :");
-            if (motorScanReport(6, DxlMotorType::MOTOR_TYPE_XL330) != niryo_robot_msgs::CommandStatus::SUCCESS)
+            if (motorScanReport(6, DxlMotorType_t::MOTOR_TYPE_XL330) != niryo_robot_msgs::CommandStatus::SUCCESS)
                 response = niryo_robot_msgs::CommandStatus::FAILURE;
             if (!_debug_flag)
                 return niryo_robot_msgs::CommandStatus::ABORTED;
-            if (motorCmdReport(6, DxlMotorType::MOTOR_TYPE_XL330) != niryo_robot_msgs::CommandStatus::SUCCESS)
+            if (motorCmdReport(6, DxlMotorType_t::MOTOR_TYPE_XL330) != niryo_robot_msgs::CommandStatus::SUCCESS)
                 response = niryo_robot_msgs::CommandStatus::FAILURE;
 
             ros::Duration(1.0).sleep();
             ROS_INFO("Dynamixel Driver Core - Debug - Check for unflash dynamixel motors");
-            motor_found = _dynamixel->type_ping_id(1, DxlMotorType::MOTOR_TYPE_XC430);
+            motor_found = _dynamixel->type_ping_id(1, DxlMotorType_t::MOTOR_TYPE_XC430);
             if (motor_found == COMM_SUCCESS)
             {
                 ROS_ERROR("Dynamixel Driver Core - Debug - Find a dynamixel motor unflash");
                 response = niryo_robot_msgs::CommandStatus::FAILURE;
             }
-            motor_found = _dynamixel->type_ping_id(1, DxlMotorType::MOTOR_TYPE_XL330);
+            motor_found = _dynamixel->type_ping_id(1, DxlMotorType_t::MOTOR_TYPE_XL330);
             if (motor_found == COMM_SUCCESS)
             {
                 ROS_ERROR("Dynamixel Driver Core - Debug - Find a dynamixel motor unflash");
@@ -230,30 +251,30 @@ namespace DynamixelDriver
         _dxl_cmd.reset(new SynchronizeMotorCmd(cmd));
     }
 
-    void DynamixelDriverCore::setTrajectoryControllerCommands(std::vector<uint32_t> &cmd)
+    void DynamixelDriverCore::setTrajectoryControllerCommands(vector<uint32_t> &cmd)
     {
         _joint_trajectory_controller_cmd = cmd;
     }
 
-    std::vector<uint8_t> DynamixelDriverCore::scanTools()
+    vector<uint8_t> DynamixelDriverCore::scanTools()
     {
-        std::vector<uint8_t> motor_list;
-        std::lock_guard<std::mutex> lck(_control_loop_mutex);
+        vector<uint8_t> motor_list;
+        lock_guard<mutex> lck(_control_loop_mutex);
         ROS_INFO("Dynamixel Driver Core - Scan tools...");
         int result = _dynamixel->getAllIdsOnDxlBus(motor_list);
         ROS_DEBUG("Dynamixel Driver Core - Result getAllIdsOnDxlBus: %d", result);
 
-        std::ostringstream ss;
+        ostringstream ss;
         for(auto const& m : motor_list)
             ss << m << " ";
-        std::string motor_id_list_string = ss.str();
+        string motor_id_list_string = ss.str();
         motor_id_list_string.pop_back(); //remove trailing " "
 
         ROS_DEBUG("Dynamixel Driver Core - All id on dxl bus: [%s]", motor_id_list_string.c_str());
         return motor_list;
     }
 
-    int DynamixelDriverCore::setEndEffector(uint8_t id, DxlMotorType type)
+    int DynamixelDriverCore::setEndEffector(uint8_t id, DxlMotorType_t type)
     {
         int result = this->ping_id(id, type);
 
@@ -271,32 +292,32 @@ namespace DynamixelDriver
         return result;
     }
 
-    int DynamixelDriverCore::ping_id(uint8_t id, DxlMotorType type)
+    int DynamixelDriverCore::ping_id(uint8_t id, DxlMotorType_t type)
     {
-        std::lock_guard<std::mutex> lck(_control_loop_mutex);
+        lock_guard<mutex> lck(_control_loop_mutex);
         int result = _dynamixel->type_ping_id(id, type);
         ROS_DEBUG("Dynamixel Driver Core - Ping_id result: %d", result);
         return result;
     }
 
-    void DynamixelDriverCore::unsetEndEffector(uint8_t id, DxlMotorType type)
+    void DynamixelDriverCore::unsetEndEffector(uint8_t id, DxlMotorType_t type)
     {
         ROS_DEBUG("Dynamixel Driver Core - UnsetEndEffector: id %d with type %d", id, static_cast<int>(type));
-        std::lock_guard<std::mutex> lck(_control_loop_mutex);
+        lock_guard<mutex> lck(_control_loop_mutex);
         _dynamixel->removeDynamixel(id, type);
     }
 
-    void DynamixelDriverCore::setEndEffectorCommands(std::vector<SingleMotorCmd> &cmd)
+    void DynamixelDriverCore::setEndEffectorCommands(vector<SingleMotorCmd> &cmd)
     {
         _end_effector_cmd = cmd;
     }
 
-    uint32_t DynamixelDriverCore::getEndEffectorState(uint8_t id, DxlMotorType type)
+    uint32_t DynamixelDriverCore::getEndEffectorState(uint8_t id, DxlMotorType_t type)
     {
         DxlMotorState motor(id, type);
         uint32_t result = 0;
-        std::vector<DxlMotorState> list_motor_states = _dynamixel->getMotorsState();
-        auto it = std::find_if(list_motor_states.begin(), list_motor_states.end(), [&](DxlMotorState &dms) {
+        vector<DxlMotorState> list_motor_states = _dynamixel->getMotorsState();
+        auto it = find_if(list_motor_states.begin(), list_motor_states.end(), [&](DxlMotorState &dms) {
             return dms.getId() == motor.getId();
         });
         if (it != list_motor_states.end())
@@ -306,12 +327,12 @@ namespace DynamixelDriver
         return result;
     }
 
-    std::vector<DxlMotorState> DynamixelDriverCore::getDxlStates() const
+    vector<DxlMotorState> DynamixelDriverCore::getDxlStates() const
     {
         return _dynamixel->getMotorsState();
     }
 
-    std::vector<uint8_t> DynamixelDriverCore::getRemovedMotorList() const
+    vector<uint8_t> DynamixelDriverCore::getRemovedMotorList() const
     {
         return _dynamixel->getRemovedMotorList();
     }
@@ -320,7 +341,7 @@ namespace DynamixelDriver
     {
         dynamixel_driver::DxlMotorHardwareStatus data;
         dynamixel_driver::DxlArrayMotorHardwareStatus hw_state;
-        std::vector<DxlMotorState> motor_states = _dynamixel->getMotorsState();
+        vector<DxlMotorState> motor_states = _dynamixel->getMotorsState();
 
         for (int i = 0; i < motor_states.size(); i++)
         {
@@ -338,9 +359,9 @@ namespace DynamixelDriver
     niryo_robot_msgs::BusState DynamixelDriverCore::getDxlBusState()
     {
         niryo_robot_msgs::BusState dxl_bus_state;
-        std::string error;
+        string error;
         bool connection;
-        std::vector<uint8_t> motor_id;
+        vector<uint8_t> motor_id;
         _dynamixel->getBusState(connection, motor_id, error);
         dxl_bus_state.connection_status = connection;
         dxl_bus_state.motor_id_connected = motor_id;
@@ -387,23 +408,23 @@ namespace DynamixelDriver
                     ROS_WARN("Dynamixel Driver Core - Dynamixel connection error");
                     ros::Duration(0.1).sleep();
 
-                    std::vector<uint8_t> missing_ids;
+                    vector<uint8_t> missing_ids;
                     ROS_DEBUG("Dynamixel Driver Core - Scan to find Dxl motors");
 
                     int bus_state;
                     {
-                        std::lock_guard<std::mutex> lck(_control_loop_mutex);
+                        lock_guard<mutex> lck(_control_loop_mutex);
                         bus_state = _dynamixel->scanAndCheck();
                     }
                     while (bus_state != DXL_SCAN_OK)
                     { // wait for connection to be up
                         missing_ids = getRemovedMotorList();
-                        for(std::vector<uint8_t>::const_iterator it = missing_ids.cbegin(); it != missing_ids.cend(); ++it) {
+                        for(vector<uint8_t>::const_iterator it = missing_ids.cbegin(); it != missing_ids.cend(); ++it) {
                             ROS_WARN_THROTTLE(2, "Dynamixel Driver Core - Dynamixel %d do not seem to be connected", *it);
                         }
                         ros::Duration(0.25).sleep();
                         {
-                            std::lock_guard<std::mutex> lck(_control_loop_mutex);
+                            lock_guard<mutex> lck(_control_loop_mutex);
                             bus_state = _dynamixel->scanAndCheck();
                         }
                     }
@@ -412,7 +433,7 @@ namespace DynamixelDriver
                 if (_control_loop_flag)
                 {
                     {
-                        std::lock_guard<std::mutex> lck(_control_loop_mutex);
+                        lock_guard<mutex> lck(_control_loop_mutex);
                         if (ros::Time::now().toSec() - _time_hw_data_last_read > 1.0 / _read_data_frequency)
                         {
                             _time_hw_data_last_read += 1.0 / _read_data_frequency;
@@ -455,10 +476,10 @@ namespace DynamixelDriver
     {
         int result;
 
-        DxlMotorType motor_type;
+        DxlMotorType_t motor_type;
 
         if(2 <= req.motor_type  && 5 >= req.motor_type)
-            motor_type = static_cast<DxlMotorType>(req.motor_type);
+            motor_type = static_cast<DxlMotorType_t>(req.motor_type);
         else
         {
             res.status = niryo_robot_msgs::CommandStatus::WRONG_MOTOR_TYPE;
@@ -466,7 +487,7 @@ namespace DynamixelDriver
             return true;
         }
 
-        std::lock_guard<std::mutex> lck(_control_loop_mutex);
+        lock_guard<mutex> lck(_control_loop_mutex);
         result = _dynamixel->sendCustomDxlCommand(motor_type, req.id, req.reg_address, req.value, req.byte_number);
 
         if (result != COMM_SUCCESS) {
@@ -485,9 +506,9 @@ namespace DynamixelDriver
                                                         dynamixel_driver::ReadCustomDxlValue::Response &res)
     {
         int result;
-        DxlMotorType motor_type;
+        DxlMotorType_t motor_type;
         if(2 <= req.motor_type  && 5 >= req.motor_type)
-            motor_type = static_cast<DxlMotorType>(req.motor_type);
+            motor_type = static_cast<DxlMotorType_t>(req.motor_type);
         else
         {
             res.status = niryo_robot_msgs::CommandStatus::WRONG_MOTOR_TYPE;
@@ -495,7 +516,7 @@ namespace DynamixelDriver
             return true;
         }
 
-        std::lock_guard<std::mutex> lck(_control_loop_mutex);
+        lock_guard<mutex> lck(_control_loop_mutex);
         uint32_t value = 0;
         result = _dynamixel->readCustomDxlCommand(motor_type, req.id, req.reg_address, value, req.byte_number);
 
@@ -504,7 +525,7 @@ namespace DynamixelDriver
         }
         else
         {
-            res.message = "Dynamixel Driver Core - Reading successful. Registry value : " + std::to_string(value);
+            res.message = "Dynamixel Driver Core - Reading successful. Registry value : " + to_string(value);
             result = niryo_robot_msgs::CommandStatus::SUCCESS;
         }
         res.status = result;
@@ -514,9 +535,9 @@ namespace DynamixelDriver
     bool DynamixelDriverCore::callbackActivateLeds(niryo_robot_msgs::SetInt::Request &req, niryo_robot_msgs::SetInt::Response &res)
     {
         int led = req.value;
-        std::string message = "";
+        string message = "";
 
-        std::lock_guard<std::mutex> lck(_control_loop_mutex);       
+        lock_guard<mutex> lck(_control_loop_mutex);
         int result = _dynamixel->setLeds(led);
 
         res.status = result;
@@ -526,7 +547,7 @@ namespace DynamixelDriver
 
     int DynamixelDriverCore::update_leds(void)
     {
-        std::lock_guard<std::mutex> lck(_control_loop_mutex);
+        lock_guard<mutex> lck(_control_loop_mutex);
         int result = _dynamixel->setLeds(_dynamixel->getLedState());
         return result;
     }

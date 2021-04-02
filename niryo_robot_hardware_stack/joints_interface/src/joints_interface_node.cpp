@@ -19,7 +19,7 @@ int main(int argc, char **argv)
     std::shared_ptr<StepperDriver::StepperDriverCore> stepper(new StepperDriver::StepperDriverCore());
     ros::Duration(1).sleep();
 
-    std::shared_ptr<JointsInterfaceCore> joints(new JointsInterfaceCore(dynamixel, stepper));
+    std::shared_ptr<JointsInterface::JointsInterfaceCore> joints(new JointsInterface::JointsInterfaceCore(dynamixel, stepper));
     ros::waitForShutdown();
     
     ROS_INFO("Joints Interface - Shutdown node");

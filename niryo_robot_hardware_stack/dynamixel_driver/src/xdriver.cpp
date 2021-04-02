@@ -15,6 +15,9 @@
 */
 
 #include "dynamixel_driver/xdriver.hpp"
+#include <sstream>
+
+using namespace std;
 
 namespace DynamixelDriver
 {
@@ -23,8 +26,9 @@ namespace DynamixelDriver
      * @param portHandler
      * @param packetHandler
      */
-    XDriver::XDriver(std::shared_ptr<dynamixel::PortHandler> &portHandler,
-                     std::shared_ptr<dynamixel::PacketHandler> &packetHandler) :
+    XDriver::XDriver(DxlMotorType_t type, shared_ptr<dynamixel::PortHandler> &portHandler,
+                     shared_ptr<dynamixel::PacketHandler> &packetHandler) :
+        _type(type),
         _dxlPortHandler(portHandler),
         _dxlPacketHandler(packetHandler)
     {
@@ -75,7 +79,7 @@ namespace DynamixelDriver
      * @param id_list
      * @return
      */
-    int XDriver::scan(std::vector<uint8_t> &id_list)
+    int XDriver::scan(vector<uint8_t> &id_list)
     {
         return _dxlPacketHandler->broadcastPing(_dxlPortHandler.get(), id_list);
     }
@@ -98,6 +102,21 @@ namespace DynamixelDriver
         return result;
     }
 
+    /**
+     * @brief XDriver::str : build a string describing the object. For debug purpose only
+     * @return
+     */
+    string XDriver::str() const
+    {
+        ostringstream ss;
+
+        ss << "Driver - type " << (int)_type << "\n";
+        ss << "packet handler" << (_dxlPacketHandler ? "OK" : "Not Ok") << "\n";
+        ss << "port handler" << (_dxlPortHandler ? "OK" : "Not Ok") << "\n";
+
+        return ss.str();
+    }
+
     /*
      *  -----------------   SYNC WRITE   --------------------
      */
@@ -109,7 +128,7 @@ namespace DynamixelDriver
      * @param data_list
      * @return
      */
-    int XDriver::syncWrite1Byte(uint8_t address, const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &data_list)
+    int XDriver::syncWrite1Byte(uint8_t address, const vector<uint8_t> &id_list, const vector<uint32_t> &data_list)
     {
         int dxl_comm_result = -1;
         dynamixel::GroupSyncWrite groupSyncWrite(_dxlPortHandler.get(), _dxlPacketHandler.get(), address, DXL_LEN_ONE_BYTE);
@@ -124,8 +143,8 @@ namespace DynamixelDriver
             return COMM_SUCCESS;
         }
 
-        std::vector<uint8_t>::const_iterator it_id;
-        std::vector<uint32_t>::const_iterator it_data;
+        vector<uint8_t>::const_iterator it_id;
+        vector<uint32_t>::const_iterator it_data;
 
         for (it_id = id_list.cbegin(), it_data = data_list.cbegin();
              it_id < id_list.cend() && it_data < data_list.cend();
@@ -151,7 +170,7 @@ namespace DynamixelDriver
      * @param data_list
      * @return
      */
-    int XDriver::syncWrite2Bytes(uint8_t address, const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &data_list)
+    int XDriver::syncWrite2Bytes(uint8_t address, const vector<uint8_t> &id_list, const vector<uint32_t> &data_list)
     {
         int dxl_comm_result = -1;
 
@@ -167,8 +186,8 @@ namespace DynamixelDriver
             return COMM_SUCCESS;
         }
 
-        std::vector<uint8_t>::const_iterator it_id;
-        std::vector<uint32_t>::const_iterator it_data;
+        vector<uint8_t>::const_iterator it_id;
+        vector<uint32_t>::const_iterator it_data;
 
         for (it_id = id_list.cbegin(), it_data = data_list.cbegin();
              it_id < id_list.cend() && it_data < data_list.cend();
@@ -194,7 +213,7 @@ namespace DynamixelDriver
      * @param data_list
      * @return
      */
-    int XDriver::syncWrite4Bytes(uint8_t address, const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &data_list)
+    int XDriver::syncWrite4Bytes(uint8_t address, const vector<uint8_t> &id_list, const vector<uint32_t> &data_list)
     {
         dynamixel::GroupSyncWrite groupSyncWrite(_dxlPortHandler.get(), _dxlPacketHandler.get(), address, DXL_LEN_FOUR_BYTES);
 
@@ -208,8 +227,8 @@ namespace DynamixelDriver
             return COMM_SUCCESS;
         }
 
-        std::vector<uint8_t>::const_iterator it_id;
-        std::vector<uint32_t>::const_iterator it_data;
+        vector<uint8_t>::const_iterator it_id;
+        vector<uint32_t>::const_iterator it_data;
 
         for (it_id = id_list.cbegin(), it_data = data_list.cbegin();
              it_id < id_list.cend() && it_data < data_list.cend();
@@ -311,14 +330,14 @@ namespace DynamixelDriver
      * @param data_list
      * @return
      */
-    int XDriver::syncRead(uint8_t address, uint8_t data_len, const std::vector<uint8_t> &id_list, std::vector<uint32_t> &data_list)
+    int XDriver::syncRead(uint8_t address, uint8_t data_len, const vector<uint8_t> &id_list, vector<uint32_t> &data_list)
     {
         data_list.clear();
 
         dynamixel::GroupSyncRead groupSyncRead(_dxlPortHandler.get(), _dxlPacketHandler.get(), address, data_len);
         int dxl_comm_result = COMM_TX_FAIL;
 
-        std::vector<uint8_t>::const_iterator it_id;
+        vector<uint8_t>::const_iterator it_id;
 
         for (it_id = id_list.cbegin(); it_id < id_list.cend(); it_id++)
         {

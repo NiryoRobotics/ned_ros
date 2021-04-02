@@ -18,23 +18,63 @@
 */
 
 #include "dynamixel_driver/dxl_motor_state.hpp"
+#include <sstream>
+
+using namespace std;
 
 namespace DynamixelDriver
 {
-    DxlMotorState::DxlMotorState(uint8_t id, DxlMotorType type, bool isTool)
+    DxlMotorState::DxlMotorState()
+    {
+        reset();
+    }
+
+    DxlMotorState::DxlMotorState(uint8_t id, DxlMotorType_t type, bool isTool)
         : _id(id), _type(type),
           _position_state(0),
-          _temperature_state(),
-          _voltage_state(),
-          _hw_error_state(),
+          _temperature_state(0),
+          _voltage_state(0),
+          _hw_error_state(0),
           _hw_error_message_state(""),
           _isTool(isTool)
     {
     }
 
+    void DxlMotorState::reset()
+    {
+        _id = 0;
+        _type = DxlMotorType_t::MOTOR_TYPE_UNKNOWN;
+        _position_state = 0;
+        _temperature_state = 0;
+        _voltage_state = 0;
+        _hw_error_state = 0;
+        _hw_error_message_state.clear();
+        _isTool = false;
+    }
+
+
+
     bool DxlMotorState::operator==(const DxlMotorState &m)
     {
         return ((this->_type == m._type) && (this->_id == m._id));
+    }
+
+    string DxlMotorState::str() const
+    {
+        ostringstream ss;
+
+        ss << "DxlMotorState (" << (int)_id << ", " << static_cast<int>(_type) << ", " << _isTool << ")";
+        ss << "\n---\n";
+
+        ss << "position " << _position_state << "\n"
+           << "temperature " << _temperature_state << "\n"
+           << "voltage " << _voltage_state << "\n"
+           << "hw_error " << _hw_error_state << "\n"
+           << "hw_error_message \"" << _hw_error_message_state << "\"\n";
+
+        ss << "\n";
+
+        return ss.str();
     }
 
     void DxlMotorState::setPositionState(uint32_t pos)
@@ -57,7 +97,7 @@ namespace DynamixelDriver
         _hw_error_state = hw_error;
     }
 
-    void DxlMotorState::setHardwareError(std::string hw_error_msg)
+    void DxlMotorState::setHardwareError(string hw_error_msg)
     {
         _hw_error_message_state = hw_error_msg;
     }

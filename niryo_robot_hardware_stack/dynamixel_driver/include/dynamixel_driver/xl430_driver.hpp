@@ -70,6 +70,8 @@ namespace DynamixelDriver
         XL430Driver(std::shared_ptr<dynamixel::PortHandler>& portHandler,
                     std::shared_ptr<dynamixel::PacketHandler>& packetHandler);
 
+        std::string interpreteErrorState(uint32_t hw_state);
+
         // from XDriver interface
         int checkModelNumber(uint8_t id);
 

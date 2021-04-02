@@ -1,6 +1,8 @@
 #include "dynamixel_driver/single_motor_cmd.hpp"
 #include <sstream>
 
+using namespace std;
+
 namespace DynamixelDriver
 {
     SingleMotorCmd::SingleMotorCmd(DxlCommandType type,
@@ -26,9 +28,9 @@ namespace DynamixelDriver
         _param = param;
     }
 
-    std::string SingleMotorCmd::str() const
+    string SingleMotorCmd::str() const
     {
-        std::ostringstream ss;
+        ostringstream ss;
         ss << "Single motor cmd - ";
 
         switch(_type)

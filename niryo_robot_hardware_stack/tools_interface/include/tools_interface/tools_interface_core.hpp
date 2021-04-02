@@ -43,43 +43,47 @@
 
 #include "std_msgs/Int32.h"
 
-class ToolsInterfaceCore
-{
-    public:
-        
-        ToolsInterfaceCore(std::shared_ptr<DynamixelDriver::DynamixelDriverCore> &dynamixel);
+namespace ToolsInterface {
 
-        void initParams();
-        void initServices();
+    class ToolsInterfaceCore
+    {
+        public:
 
-        void pubToolId(int id);
+            ToolsInterfaceCore(std::shared_ptr<DynamixelDriver::DynamixelDriverCore> &dynamixel);
 
-    private:
-        ros::NodeHandle _nh;
-        std::shared_ptr<DynamixelDriver::DynamixelDriverCore> &_dynamixel;
-        std::shared_ptr<ToolState> _tool;
-        std::mutex _tool_mutex;
+            void initParams();
+            void initServices();
 
-        void _checkToolConnection();
-        std::shared_ptr<std::thread> _check_tool_connection_thread;
-        double _check_tool_connection_frequency;
+            void pubToolId(int id);
 
-        ros::ServiceServer _ping_and_set_dxl_tool_server;
-        ros::ServiceServer _open_gripper_server;
-        ros::ServiceServer _close_gripper_server;
-        ros::ServiceServer _pull_air_vacuum_pump_server;
-        ros::ServiceServer _push_air_vacuum_pump_server;
-        
-        ros::Publisher _current_tools_id_publisher;
+        private:
+            ros::NodeHandle _nh;
+            std::shared_ptr<DynamixelDriver::DynamixelDriverCore> &_dynamixel;
+            ToolState _toolState;
+            std::mutex _tool_mutex;
 
-        std::vector<uint8_t> _tool_id_list;
+            void _checkToolConnection();
+            std::shared_ptr<std::thread> _check_tool_connection_thread;
+            double _check_tool_connection_frequency;
 
-        bool _callbackPingAndSetDxlTool(tools_interface::PingDxlTool::Request &req, tools_interface::PingDxlTool::Response &res);
+            ros::ServiceServer _ping_and_set_dxl_tool_server;
+            ros::ServiceServer _open_gripper_server;
+            ros::ServiceServer _close_gripper_server;
+            ros::ServiceServer _pull_air_vacuum_pump_server;
+            ros::ServiceServer _push_air_vacuum_pump_server;
 
-        bool _callbackOpenGripper(tools_interface::OpenGripper::Request &req, tools_interface::OpenGripper::Response &res);
-        bool _callbackCloseGripper(tools_interface::CloseGripper::Request &req, tools_interface::CloseGripper::Response &res);
+            ros::Publisher _current_tools_id_publisher;
 
-        bool _callbackPullAirVacuumPump(tools_interface::PullAirVacuumPump::Request &req, tools_interface::PullAirVacuumPump::Response &res);
-        bool _callbackPushAirVacuumPump(tools_interface::PushAirVacuumPump::Request &req, tools_interface::PushAirVacuumPump::Response &res);
-};
+            std::map<uint8_t, DynamixelDriver::DxlMotorType_t> _available_tools_map;
+
+            bool _callbackPingAndSetDxlTool(tools_interface::PingDxlTool::Request &req, tools_interface::PingDxlTool::Response &res);
+
+            bool _callbackOpenGripper(tools_interface::OpenGripper::Request &req, tools_interface::OpenGripper::Response &res);
+            bool _callbackCloseGripper(tools_interface::CloseGripper::Request &req, tools_interface::CloseGripper::Response &res);
+
+            bool _callbackPullAirVacuumPump(tools_interface::PullAirVacuumPump::Request &req, tools_interface::PullAirVacuumPump::Response &res);
+            bool _callbackPushAirVacuumPump(tools_interface::PushAirVacuumPump::Request &req, tools_interface::PushAirVacuumPump::Response &res);
+    };
+} // ToolsInterface
+
 #endif

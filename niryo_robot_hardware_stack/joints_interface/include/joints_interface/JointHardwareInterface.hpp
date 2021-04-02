@@ -36,84 +36,88 @@
 #include <ros/ros.h>
 #include <std_msgs/Int64MultiArray.h>
 
-class JointHardwareInterface : public hardware_interface::RobotHW
-{
 
-public:
-    JointHardwareInterface(
-        std::shared_ptr<DynamixelDriver::DynamixelDriverCore> &dynamixel,
-        std::shared_ptr<StepperDriver::StepperDriverCore> &stepper);
+namespace JointsInterface {
 
-    void initPublisherSubscribers();
-    void initServices();
-    void initMotors();
+    class JointHardwareInterface : public hardware_interface::RobotHW
+    {
 
-    void sendInitMotorsParams();
+    public:
+        JointHardwareInterface(
+            std::shared_ptr<DynamixelDriver::DynamixelDriverCore> &dynamixel,
+            std::shared_ptr<StepperDriver::StepperDriverCore> &stepper);
 
-    void read();
-    void write();
+        void initPublisherSubscribers();
+        void initServices();
+        void initMotors();
 
-    bool needCalibration();
+        void sendInitMotorsParams();
 
-    int calibrateJoints(int mode, std::string &result_message);
+        void read();
+        void write();
 
-    void newCalibration();
+        bool needCalibration();
 
-    bool isCalibrationInProgress();
+        int calibrateJoints(int mode, std::string &result_message);
 
-    void activateLearningMode();
+        void newCalibration();
 
-    void deactivateLearningMode();
+        bool isCalibrationInProgress();
 
-    void setCommandToCurrentPosition();
+        void activateLearningMode();
 
-    void synchronizeMotors(bool synchronise);
+        void deactivateLearningMode();
 
-    std::vector<JointState> &getJointsState();
+        void setCommandToCurrentPosition();
 
-    std::string jointIdToJointName(int id, uint8_t motor_type);
+        void synchronizeMotors(bool synchronise);
 
-private:
-    bool setMotorPID(int motor_id, DynamixelDriver::DxlMotorType motor_type, int p_gain, int i_gain, int d_gain);
+        std::vector<JointState> &getJointsState();
 
-private:
-    ros::NodeHandle _nh;
+        std::string jointIdToJointName(int id, uint8_t motor_type);
 
-    hardware_interface::JointStateInterface _joint_state_interface;
-    hardware_interface::PositionJointInterface _joint_position_interface;
+    private:
+        bool setMotorPID(int motor_id, DynamixelDriver::DxlMotorType_t motor_type, int p_gain, int i_gain, int d_gain);
 
-    std::shared_ptr<DynamixelDriver::DynamixelDriverCore> &_dynamixel;
-    std::shared_ptr<StepperDriver::StepperDriverCore> &_stepper;
+    private:
+        ros::NodeHandle _nh;
 
-    std::vector<uint8_t> _list_stepper_id;
-    std::map<uint8_t, std::string> _map_stepper_name;
+        hardware_interface::JointStateInterface _joint_state_interface;
+        hardware_interface::PositionJointInterface _joint_position_interface;
 
-    std::vector<uint8_t> _list_dxl_id;
-    std::map<uint8_t, std::string> _map_dxl_name;
+        std::shared_ptr<DynamixelDriver::DynamixelDriverCore> &_dynamixel;
+        std::shared_ptr<StepperDriver::StepperDriverCore> &_stepper;
 
-    std::vector<JointState> _joint_list;
+        std::vector<uint8_t> _list_stepper_id;
+        std::map<uint8_t, std::string> _map_stepper_name;
 
-    std::shared_ptr<CalibrationInterface> _calibration_interface;
+        std::vector<uint8_t> _list_dxl_id;
+        std::map<uint8_t, std::string> _map_dxl_name;
 
-    std::string _joints_name[6] = {""};
-    int _joints_id[6] = {0};
+        std::vector<JointState> _joint_list;
 
-    double _cmd[6] = {0, 0.64, -1.39, 0, 0, 0};
-    double _pos[6] = {0, 0.64, -1.39, 0, 0, 0};
-    double _vel[6] = {0};
-    double _eff[6] = {0};
+        std::shared_ptr<CalibrationInterface> _calibration_interface;
 
-    double _gear_ratio_1, _gear_ratio_2, _gear_ratio_3;
-    double _home_position_1, _home_position_2, _home_position_3;
-    double _offset_position_stepper_1, _offset_position_stepper_2, _offset_position_stepper_3;
-    double _offset_position_dxl_1, _offset_position_dxl_2, _offset_position_dxl_3;
-    double _direction_1, _direction_2, _direction_3;
-    int _max_effort_1, _max_effort_2, _max_effort_3;
+        std::string _joints_name[6] = {""};
+        int _joints_id[6] = {0};
 
-    int _p_gain_1, _p_gain_2, _p_gain_3;
-    int _i_gain_1, _i_gain_2, _i_gain_3;
-    int _d_gain_1, _d_gain_2, _d_gain_3;
-    bool _learning_mode;
-};
+        double _cmd[6] = {0, 0.64, -1.39, 0, 0, 0};
+        double _pos[6] = {0, 0.64, -1.39, 0, 0, 0};
+        double _vel[6] = {0};
+        double _eff[6] = {0};
+
+        double _gear_ratio_1, _gear_ratio_2, _gear_ratio_3;
+        double _home_position_1, _home_position_2, _home_position_3;
+        double _offset_position_stepper_1, _offset_position_stepper_2, _offset_position_stepper_3;
+        double _offset_position_dxl_1, _offset_position_dxl_2, _offset_position_dxl_3;
+        double _direction_1, _direction_2, _direction_3;
+        int _max_effort_1, _max_effort_2, _max_effort_3;
+
+        int _p_gain_1, _p_gain_2, _p_gain_3;
+        int _i_gain_1, _i_gain_2, _i_gain_3;
+        int _d_gain_1, _d_gain_2, _d_gain_3;
+        bool _learning_mode;
+    };
+} // JointsInterface
 
 #endif

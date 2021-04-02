@@ -73,6 +73,8 @@ namespace DynamixelDriver {
         uint32_t rad_pos_to_xc430_pos(double position_rad);
         double xc430_pos_to_rad_pos(int32_t position_dxl);
 
+        std::string interpreteErrorState(uint32_t hw_state);
+
         //from XDriver interface
         int checkModelNumber(uint8_t id);
 

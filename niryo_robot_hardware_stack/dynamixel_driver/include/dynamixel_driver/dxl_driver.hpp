@@ -72,8 +72,8 @@ namespace DynamixelDriver
             DxlDriver();
             virtual ~DxlDriver();
 
-            void addDynamixel(uint8_t id, DxlMotorType type, bool isTool = false);
-            void removeDynamixel(uint8_t id, DxlMotorType);
+            void addDynamixel(uint8_t id, DxlMotorType_t type, bool isTool = false);
+            void removeDynamixel(uint8_t id, DxlMotorType_t);
 
             //commands
             void executeJointTrajectoryCmd(std::vector<uint32_t> &cmd);
@@ -92,17 +92,17 @@ namespace DynamixelDriver
             int setGoalTorque(DxlMotorState& targeted_dxl, uint32_t torque);
             int setGoalVelocity(DxlMotorState& targeted_dxl, uint32_t velocity);
 
-            int setLeds(int led, DxlMotorType type = DxlMotorType::MOTOR_TYPE_XL330);
+            int setLeds(int led, DxlMotorType_t type = DxlMotorType_t::MOTOR_TYPE_XL330);
 
             int scanAndCheck();
 
             int ping(DxlMotorState& targeted_dxl);
-            int type_ping_id(uint8_t id, DxlMotorType type);
+            int type_ping_id(uint8_t id, DxlMotorType_t type);
 
             int rebootMotors();
 
-            int sendCustomDxlCommand(DxlMotorType motor_type, uint8_t id, uint32_t reg_address, uint32_t value, uint32_t byte_number);
-            int readCustomDxlCommand(DxlMotorType motor_type, uint8_t id, uint32_t reg_address, uint32_t &value, uint32_t byte_number);
+            int sendCustomDxlCommand(DxlMotorType_t motor_type, uint8_t id, uint32_t reg_address, uint32_t value, uint32_t byte_number);
+            int readCustomDxlCommand(DxlMotorType_t motor_type, uint8_t id, uint32_t reg_address, uint32_t &value, uint32_t byte_number);
 
             //tests
             bool isConnectionOk() const;
@@ -116,13 +116,10 @@ namespace DynamixelDriver
 
             int getAllIdsOnDxlBus(std::vector<uint8_t> &id_list);
 
-            //setters
         private:
             int init();
             int setupCommunication();
 
-            // cc move to tool class
-            DxlMotorType dxlMotorTypeFromString(std::string type) const;
 
             void interpreteErrorState();
 
@@ -163,8 +160,8 @@ namespace DynamixelDriver
             std::vector<uint8_t> _removed_motor_id_list;
 
             std::map<int, DxlMotorState> _state_map;
-            std::map<DxlMotorType, std::vector<uint8_t> > _ids_map;
-            std::map<DxlMotorType, std::shared_ptr<XDriver> > _xdriver_map;
+            std::map<DxlMotorType_t, std::vector<uint8_t> > _ids_map;
+            std::map<DxlMotorType_t, std::shared_ptr<XDriver> > _xdriver_map;
 
             // for hardware control
             bool _is_dxl_connection_ok;
@@ -218,21 +215,6 @@ namespace DynamixelDriver
         debug_msg = _debug_error_message;
         motor_id = _all_motor_connected;
         connection_state = isConnectionOk();
-    }
-
-    inline
-    DxlMotorType DxlDriver::dxlMotorTypeFromString(std::string type) const
-    {
-        if("xl430" == type)
-           return DxlMotorType::MOTOR_TYPE_XL430;
-        else if("xc430" == type)
-           return DxlMotorType::MOTOR_TYPE_XC430;
-        else if("xl320" == type)
-           return DxlMotorType::MOTOR_TYPE_XL320;
-        else if("xl330" == type)
-           return DxlMotorType::MOTOR_TYPE_XL330;
-
-        return DxlMotorType::MOTOR_TYPE_UNKNOWN;
     }
 
     inline

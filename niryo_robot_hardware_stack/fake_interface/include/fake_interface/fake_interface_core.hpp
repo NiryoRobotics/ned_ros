@@ -61,95 +61,97 @@
 
 #include "fake_interface/FakeJointHardwareInterface.hpp"
 
-class FakeInterfaceCore
-{
-public:
-    FakeInterfaceCore();
+namespace FakeInterface {
+    class FakeInterfaceCore
+    {
+    public:
+        FakeInterfaceCore();
 
-    void initServices();
-    void startPublishersSubscribers();
-    void initParams();
+        void initServices();
+        void startPublishersSubscribers();
+        void initParams();
 
-    void rosControlLoop();
+        void rosControlLoop();
 
-    dynamixel_driver::DxlArrayMotorHardwareStatus getDxlHwStatus();
-    niryo_robot_msgs::BusState getDxlBusState();
-    stepper_driver::StepperArrayMotorHardwareStatus getStepperHwStatus();
-    niryo_robot_msgs::BusState getCanBusState();
-    void getCalibrationState(std::shared_ptr<bool> &need_calibration, std::shared_ptr<bool> &calibration_in_progress);
+        dynamixel_driver::DxlArrayMotorHardwareStatus getDxlHwStatus();
+        niryo_robot_msgs::BusState getDxlBusState();
+        stepper_driver::StepperArrayMotorHardwareStatus getStepperHwStatus();
+        niryo_robot_msgs::BusState getCanBusState();
+        void getCalibrationState(std::shared_ptr<bool> &need_calibration, std::shared_ptr<bool> &calibration_in_progress);
 
-    int getCpuTemperature();
+        int getCpuTemperature();
 
-    void pubToolId(int id);
+        void pubToolId(int id);
 
-    std::string jointIdToJointName(int id, uint8_t motor_type);
+        std::string jointIdToJointName(int id, uint8_t motor_type);
 
-    std::vector<uint8_t> _dxl_motors_id{2, 3, 6};
-    std::vector<uint8_t> _dxl_motors_type{niryo_robot_msgs::MotorHeader::MOTOR_TYPE_XL430, niryo_robot_msgs::MotorHeader::MOTOR_TYPE_XL430, niryo_robot_msgs::MotorHeader::MOTOR_TYPE_XL320};
+        std::vector<uint8_t> _dxl_motors_id{2, 3, 6};
+        std::vector<uint8_t> _dxl_motors_type{niryo_robot_msgs::MotorHeader::MOTOR_TYPE_XL430, niryo_robot_msgs::MotorHeader::MOTOR_TYPE_XL430, niryo_robot_msgs::MotorHeader::MOTOR_TYPE_XL320};
 
-    std::vector<uint8_t> _stepper_motors_id{1, 2, 3};
+        std::vector<uint8_t> _stepper_motors_id{1, 2, 3};
 
-private:
-    ros::NodeHandle _nh;
+    private:
+        ros::NodeHandle _nh;
 
-    double _publish_hw_status_frequency;
-    double _publish_software_version_frequency;
-    double _publish_learning_mode_frequency;
-    double _ros_control_frequency;
+        double _publish_hw_status_frequency;
+        double _publish_software_version_frequency;
+        double _publish_learning_mode_frequency;
+        double _ros_control_frequency;
 
-    bool _gazebo;
-    bool _simu_gripper;
+        bool _gazebo;
+        bool _simu_gripper;
 
-    bool _learning_mode;
-    std::string _ros_niryo_robot_version;
+        bool _learning_mode;
+        std::string _ros_niryo_robot_version;
 
-    std::shared_ptr<FakeJointHardwareInterface> _robot;
-    std::shared_ptr<controller_manager::ControllerManager> _cm;
+        std::shared_ptr<FakeJointHardwareInterface> _robot;
+        std::shared_ptr<controller_manager::ControllerManager> _cm;
 
-    std::shared_ptr<std::thread> _ros_control_thread;
-    std::shared_ptr<std::thread> _publish_hardware_status_thread;
-    std::shared_ptr<std::thread> _publish_software_version_thread;
-    std::shared_ptr<std::thread> _publish_learning_mode_thread;
+        std::shared_ptr<std::thread> _ros_control_thread;
+        std::shared_ptr<std::thread> _publish_hardware_status_thread;
+        std::shared_ptr<std::thread> _publish_software_version_thread;
+        std::shared_ptr<std::thread> _publish_learning_mode_thread;
 
-    ros::ServiceServer _reset_controller_server; // workaround to compensate missed steps
-    ros::Subscriber _trajectory_result_subscriber;
+        ros::ServiceServer _reset_controller_server; // workaround to compensate missed steps
+        ros::Subscriber _trajectory_result_subscriber;
 
-    ros::ServiceServer _calibrate_motors_server;
-    ros::ServiceServer _request_new_calibration_server;
+        ros::ServiceServer _calibrate_motors_server;
+        ros::ServiceServer _request_new_calibration_server;
 
-    ros::ServiceServer _activate_learning_mode_server;
+        ros::ServiceServer _activate_learning_mode_server;
 
-    ros::ServiceServer _ping_and_set_dxl_tool_server;
-    ros::ServiceServer _open_gripper_server;
-    ros::ServiceServer _close_gripper_server;
-    ros::ServiceServer _pull_air_vacuum_pump_server;
-    ros::ServiceServer _push_air_vacuum_pump_server;
+        ros::ServiceServer _ping_and_set_dxl_tool_server;
+        ros::ServiceServer _open_gripper_server;
+        ros::ServiceServer _close_gripper_server;
+        ros::ServiceServer _pull_air_vacuum_pump_server;
+        ros::ServiceServer _push_air_vacuum_pump_server;
 
-    ros::ServiceServer _ping_and_set_stepper_server;
-    ros::ServiceServer _control_conveyor_server;
+        ros::ServiceServer _ping_and_set_stepper_server;
+        ros::ServiceServer _control_conveyor_server;
 
-    ros::Publisher _hardware_status_publisher;
-    ros::Publisher _software_version_publisher;
-    ros::Publisher _learning_mode_publisher;
-    ros::Publisher _current_tools_id_publisher;
+        ros::Publisher _hardware_status_publisher;
+        ros::Publisher _software_version_publisher;
+        ros::Publisher _learning_mode_publisher;
+        ros::Publisher _current_tools_id_publisher;
 
-    bool _callbackResetController(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
-    void _callbackTrajectoryResult(const control_msgs::FollowJointTrajectoryActionResult &msg);
+        bool _callbackResetController(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
+        void _callbackTrajectoryResult(const control_msgs::FollowJointTrajectoryActionResult &msg);
 
-    bool _callbackCalibrateMotors(niryo_robot_msgs::SetInt::Request &req, niryo_robot_msgs::SetInt::Response &res);
-    bool _callbackRequestNewCalibration(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
-    bool _callbackActivateLearningMode(niryo_robot_msgs::SetBool::Request &req, niryo_robot_msgs::SetBool::Response &res);
+        bool _callbackCalibrateMotors(niryo_robot_msgs::SetInt::Request &req, niryo_robot_msgs::SetInt::Response &res);
+        bool _callbackRequestNewCalibration(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
+        bool _callbackActivateLearningMode(niryo_robot_msgs::SetBool::Request &req, niryo_robot_msgs::SetBool::Response &res);
 
-    bool _callbackPingAndSetDxlTool(tools_interface::PingDxlTool::Request &req, tools_interface::PingDxlTool::Response &res);
-    bool _callbackOpenGripper(tools_interface::OpenGripper::Request &req, tools_interface::OpenGripper::Response &res);
-    bool _callbackCloseGripper(tools_interface::CloseGripper::Request &req, tools_interface::CloseGripper::Response &res);
-    bool _callbackPullAirVacuumPump(tools_interface::PullAirVacuumPump::Request &req, tools_interface::PullAirVacuumPump::Response &res);
-    bool _callbackPushAirVacuumPump(tools_interface::PushAirVacuumPump::Request &req, tools_interface::PushAirVacuumPump::Response &res);
+        bool _callbackPingAndSetDxlTool(tools_interface::PingDxlTool::Request &req, tools_interface::PingDxlTool::Response &res);
+        bool _callbackOpenGripper(tools_interface::OpenGripper::Request &req, tools_interface::OpenGripper::Response &res);
+        bool _callbackCloseGripper(tools_interface::CloseGripper::Request &req, tools_interface::CloseGripper::Response &res);
+        bool _callbackPullAirVacuumPump(tools_interface::PullAirVacuumPump::Request &req, tools_interface::PullAirVacuumPump::Response &res);
+        bool _callbackPushAirVacuumPump(tools_interface::PushAirVacuumPump::Request &req, tools_interface::PushAirVacuumPump::Response &res);
 
-    bool _callbackPingAndSetConveyor(conveyor_interface::SetConveyor::Request &req, conveyor_interface::SetConveyor::Response &res);
-    bool _callbackControlConveyor(conveyor_interface::ControlConveyor::Request &req, conveyor_interface::ControlConveyor::Response &res);
+        bool _callbackPingAndSetConveyor(conveyor_interface::SetConveyor::Request &req, conveyor_interface::SetConveyor::Response &res);
+        bool _callbackControlConveyor(conveyor_interface::ControlConveyor::Request &req, conveyor_interface::ControlConveyor::Response &res);
 
-    void _publishLearningMode();
-};
+        void _publishLearningMode();
+    };
+} //FakeInterface
 
 #endif
