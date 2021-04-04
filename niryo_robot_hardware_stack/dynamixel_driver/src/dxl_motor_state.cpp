@@ -25,34 +25,24 @@ using namespace std;
 namespace DynamixelDriver
 {
     DxlMotorState::DxlMotorState()
+        : utils::MotorState()
     {
         reset();
     }
 
     DxlMotorState::DxlMotorState(uint8_t id, DxlMotorType_t type, bool isTool)
-        : _id(id), _type(type),
-          _position_state(0),
-          _temperature_state(0),
-          _voltage_state(0),
-          _hw_error_state(0),
-          _hw_error_message_state(""),
+        : MotorState(id),
+          _type(type),
           _isTool(isTool)
     {
     }
 
     void DxlMotorState::reset()
     {
-        _id = 0;
+        utils::MotorState::reset();
         _type = DxlMotorType_t::MOTOR_TYPE_UNKNOWN;
-        _position_state = 0;
-        _temperature_state = 0;
-        _voltage_state = 0;
-        _hw_error_state = 0;
-        _hw_error_message_state.clear();
         _isTool = false;
     }
-
-
 
     bool DxlMotorState::operator==(const DxlMotorState &m)
     {
@@ -66,40 +56,9 @@ namespace DynamixelDriver
         ss << "DxlMotorState (" << (int)_id << ", " << static_cast<int>(_type) << ", " << _isTool << ")";
         ss << "\n---\n";
 
-        ss << "position " << _position_state << "\n"
-           << "temperature " << _temperature_state << "\n"
-           << "voltage " << _voltage_state << "\n"
-           << "hw_error " << _hw_error_state << "\n"
-           << "hw_error_message \"" << _hw_error_message_state << "\"\n";
-
-        ss << "\n";
+        ss << MotorState::str();
 
         return ss.str();
-    }
-
-    void DxlMotorState::setPositionState(uint32_t pos)
-    {
-        _position_state = pos;
-    }
-
-    void DxlMotorState::setTemperatureState(uint32_t temp)
-    {
-        _temperature_state = temp;
-    }
-
-    void DxlMotorState::setVoltageState(uint32_t volt)
-    {
-        _voltage_state = volt;
-    }
-
-    void DxlMotorState::setHardwareError(uint32_t hw_error)
-    {
-        _hw_error_state = hw_error;
-    }
-
-    void DxlMotorState::setHardwareError(string hw_error_msg)
-    {
-        _hw_error_message_state = hw_error_msg;
     }
 
 } // namespace DynamixelDriver

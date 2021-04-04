@@ -15,8 +15,10 @@
   <build_depend>roscpp</build_depend>
   <build_depend>dynamixel_sdk</build_depend>
   <build_depend>niryo_robot_msgs</build_depend>
+  <build_depend>utils</build_depend>
 
   <exec_depend>roscpp</exec_depend>
   <exec_depend>dynamixel_sdk</exec_depend>
   <exec_depend>niryo_robot_msgs</exec_depend>
+  <exec_depend>utils</exec_depend>
 </package>

@@ -21,30 +21,27 @@
 
 namespace StepperDriver
 {
-    bool ConveyorState::operator==(const ConveyorState& m)
+
+    ConveyorState::ConveyorState(uint8_t id)
+        : StepperMotorState(id),
+          _direction(-1),
+          _speed(0),
+          _state(false)
     {
-        return(this->_id == m._id);
+
     }
 
-    ConveyorState::ConveyorState(uint8_t id) 
-        : _id(id)
+    void ConveyorState::reset()
     {
-
+        utils::MotorState::reset();
+        _direction = -1;
+        _speed = 0;
+        _state = false;
     }
 
-    uint8_t ConveyorState::getId()
+    bool ConveyorState::isValid() const
     {
-        return _id;
-    }
-
-    void ConveyorState::setId(uint8_t motor_id)
-    {
-        _id = motor_id;
-    }
-
-    bool ConveyorState::getState()
-    {
-        return _state;
+        return (_id != 0);
     }
 
     void ConveyorState::setState(bool state)
@@ -52,24 +49,25 @@ namespace StepperDriver
         _state = state;
     }
 
-    int16_t ConveyorState::getSpeed()
-    {
-        return _speed;
-    }
-
     void ConveyorState::setSpeed(int16_t speed)
     {
         _speed = speed;
-    }
-
-    int8_t ConveyorState::getDirection()
-    {
-        return _direction;
     }
 
     void ConveyorState::setDirection(int8_t direction)
     {
         _direction = direction;
     }
+
+    bool ConveyorState::operator==(const ConveyorState& m)
+    {
+        return (this->_id == m._id);
+    }
+
+    std::string ConveyorState::str() const
+    {
+        return "conveyor state";
+    }
+
 
 }

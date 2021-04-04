@@ -113,7 +113,7 @@ namespace JointsInterface {
         std::vector<JointState> joints_vect;
         for (int i = 0; i < 3; i++)
         {
-            joints_vect.push_back(JointState(_joints_name[i], (uint8_t)StepperDriver::StepperMotorType::MOTOR_TYPE_STEPPER, _joints_id[i]));
+            joints_vect.push_back(JointState(_joints_name[i], (uint8_t)StepperDriver::StepperMotorType_t::MOTOR_TYPE_STEPPER, _joints_id[i]));
             _list_stepper_id.push_back(_joints_id[i]);
             _map_stepper_name[_joints_id[i]] = _joints_name[i];
             _joint_list.push_back(joints_vect[i]);
@@ -356,7 +356,7 @@ namespace JointsInterface {
 
     std::string JointHardwareInterface::jointIdToJointName(int id, uint8_t motor_type)
     {
-        if (motor_type == (uint8_t)StepperDriver::StepperMotorType::MOTOR_TYPE_STEPPER)
+        if (motor_type == (uint8_t)StepperDriver::StepperMotorType_t::MOTOR_TYPE_STEPPER)
         {
             std::map<uint8_t, std::string>::iterator  it= _map_stepper_name.find(id);
             if (it !=  _map_stepper_name.end())

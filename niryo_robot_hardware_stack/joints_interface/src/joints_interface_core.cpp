@@ -74,7 +74,7 @@ namespace JointsInterface {
         _trajectory_result_subscriber = _nh.subscribe("/niryo_robot_follow_joint_trajectory_controller/follow_joint_trajectory/result",
                                                       10, &JointsInterfaceCore::_callbackTrajectoryResult, this);
         _learning_mode_publisher = _nh.advertise<std_msgs::Bool>("niryo_robot/learning_mode/state", 10);
-        _publish_learning_mode_thread.reset(new std::thread(std::bind(&JointsInterfaceCore::_publishLearningMode, this)));
+        _publish_learning_mode_thread.reset(new std::thread(&JointsInterfaceCore::_publishLearningMode, this));
     }
 
     void JointsInterfaceCore::rosControlLoop()

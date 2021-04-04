@@ -1,6 +1,8 @@
 #ifndef STEPPER_ENUM_HPP
 #define STEPPER_ENUM_HPP
 
+#include <string>
+
 namespace StepperDriver
 {
     enum class StepperCommandType
@@ -21,10 +23,35 @@ namespace StepperDriver
         CMD_TYPE_LEARNING_MODE=13,
     };
 
-    enum class StepperMotorType
-    {
-        MOTOR_TYPE_STEPPER=1
+    struct StepperMotorType {
+        enum class type
+        {
+            MOTOR_TYPE_STEPPER=1,
+            MOTOR_TYPE_UNKNOWN=100
+        };
+
+        static type fromString(std::string str_type)
+        {
+            if("stepper" == str_type)
+               return type::MOTOR_TYPE_STEPPER;
+
+            return type::MOTOR_TYPE_UNKNOWN;
+        }
+
+        static std::string toString(type t)
+        {
+            switch(t) {
+                case type::MOTOR_TYPE_STEPPER:
+                    return "stepper";
+                default:
+                    return "unknown type (" + std::to_string((int)t) + ")";
+                break;
+            }
+            return "";
+        }
     };
+
+    using StepperMotorType_t = StepperMotorType::type;
 
 }
 

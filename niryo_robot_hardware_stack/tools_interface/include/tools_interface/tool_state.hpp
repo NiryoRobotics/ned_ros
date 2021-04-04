@@ -64,7 +64,7 @@ namespace ToolsInterface {
 
             bool isConnected() const;
 
-        private:
+        protected:
             std::string _name;
 
             bool _connected;

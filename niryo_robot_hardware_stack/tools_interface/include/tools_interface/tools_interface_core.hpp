@@ -49,7 +49,7 @@ namespace ToolsInterface {
     {
         public:
 
-            ToolsInterfaceCore(std::shared_ptr<DynamixelDriver::DynamixelDriverCore> &dynamixel);
+            ToolsInterfaceCore(std::shared_ptr<DynamixelDriver::DynamixelDriverCore> dynamixel);
 
             void initParams();
             void initServices();
@@ -58,7 +58,7 @@ namespace ToolsInterface {
 
         private:
             ros::NodeHandle _nh;
-            std::shared_ptr<DynamixelDriver::DynamixelDriverCore> &_dynamixel;
+            std::shared_ptr<DynamixelDriver::DynamixelDriverCore> _dynamixel;
             ToolState _toolState;
             std::mutex _tool_mutex;
 

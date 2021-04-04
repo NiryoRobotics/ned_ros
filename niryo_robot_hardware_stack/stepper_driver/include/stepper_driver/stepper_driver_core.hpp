@@ -66,7 +66,7 @@ namespace StepperDriver
 
             void clearCalibrationTab();
             bool getCalibrationState();
-            e_CanStepperCalibrationStatus getCalibrationResult(uint8_t id, std::shared_ptr<int32_t> &calibration_result);
+            e_CanStepperCalibrationStatus getCalibrationResult(uint8_t id, int32_t& calibration_result);
             void startCalibration(bool enable);
 
             void activeDebugMode(bool mode);

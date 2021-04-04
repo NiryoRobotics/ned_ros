@@ -9,9 +9,8 @@ find_package(catkin REQUIRED
         mcp_can_rpi
         niryo_robot_msgs
         message_generation
+        utils
 )
-
-find_package(Boost REQUIRED COMPONENTS system)
 
 add_message_files(
   FILES
@@ -43,6 +42,7 @@ catkin_package(
         roscpp
         mcp_can_rpi
         niryo_robot_msgs
+        utils
 )
 
 include_directories(
@@ -52,8 +52,8 @@ include_directories(
 
 add_library(${PROJECT_NAME}
     src/stepper_motor_state.cpp
-    src/stepper_motor_cmd.cpp
     src/conveyor_state.cpp
+    src/stepper_motor_cmd.cpp
 )
 
 add_library(${PROJECT_NAME}_core

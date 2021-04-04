@@ -18,11 +18,15 @@
 */
 
 #include "stepper_driver/stepper_driver.hpp"
+#include "stepper_driver/conveyor_state.hpp"
 #include <functional>
 
 namespace StepperDriver
 {
-    StepperDriver::StepperDriver() : _calibration_result(e_CanStepperCalibrationStatus::CAN_STEPPERS_CALIBRATION_UNINITIALIZED), _calibration_in_progress(false), _stepper_timeout_thread(std::bind(&StepperDriver::_verifyMotorTimeoutLoop, this))
+    StepperDriver::StepperDriver() :
+        _calibration_result(e_CanStepperCalibrationStatus::CAN_STEPPERS_CALIBRATION_UNINITIALIZED),
+        _calibration_in_progress(false),
+        _stepper_timeout_thread(&StepperDriver::_verifyMotorTimeoutLoop, this)
     {
         _nh.getParam("/niryo_robot_hardware_interface/debug", _debug_mode);
         if (_debug_mode)
@@ -173,11 +177,9 @@ namespace StepperDriver
     void StepperDriver::addConveyor(uint8_t conveyor_id)
     {
         ConveyorState c(conveyor_id);
-        c.setDirection(-1);
-        c.setSpeed(0);
-        c.setState(false);
         _conveyor_list.push_back(c);
     }
+
     void StepperDriver::removeConveyor(uint8_t conveyor_id)
     {
         for (int i = 0; i < _conveyor_list.size(); i++)
@@ -318,7 +320,7 @@ namespace StepperDriver
                     // Join the previous calibration thread (otherwise we cannot reassign the thread)
                     if (_calibration_thread.joinable())
                         _calibration_thread.join();
-                    _calibration_thread = std::thread(std::bind(&StepperDriver::readCalibrationStates, this));
+                    _calibration_thread = std::thread(&StepperDriver::readCalibrationStates, this);
                 }
             }
         }
@@ -732,9 +734,9 @@ namespace StepperDriver
         return sendCanMsgBuf(id, 0, 8, data);
     }
 
-    e_CanStepperCalibrationStatus StepperDriver::getCalibrationResult(uint8_t id, std::shared_ptr<int32_t> &result)
+    e_CanStepperCalibrationStatus StepperDriver::getCalibrationResult(uint8_t id, int32_t &result)
     {
-        (*result) = _motor_calibration_map[id];
+        result = _motor_calibration_map[id];
         return _calibration_result;
     }
 
@@ -756,7 +758,7 @@ namespace StepperDriver
 
         int calibration_timeout;
         _nh.getParam("/niryo_robot_hardware_interface/calibration_timeout", calibration_timeout);
-        std::thread reading_data_thread(std::bind(&StepperDriver::interpreteCalibrationCommand, this));
+        std::thread reading_data_thread(&StepperDriver::interpreteCalibrationCommand, this);
         while (_calibration_motor_list.size() != 0)
         {
             if (canReadData())

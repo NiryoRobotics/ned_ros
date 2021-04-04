@@ -16,8 +16,6 @@ find_package(catkin REQUIRED
         niryo_robot_msgs
 )
 
-find_package(Boost REQUIRED COMPONENTS system)
-
 catkin_package(
     INCLUDE_DIRS
         include

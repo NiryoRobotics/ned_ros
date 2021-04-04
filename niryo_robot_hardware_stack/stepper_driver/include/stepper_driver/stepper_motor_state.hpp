@@ -22,48 +22,62 @@
 
 #include <string>
 #include "stepper_driver/stepper_enum.hpp"
+#include "utils/motor_state.hpp"
 
 namespace StepperDriver
 {
-    class StepperMotorState {
+    class StepperMotorState : public utils::MotorState
+    {
 
         public:
-        
+            StepperMotorState();
             StepperMotorState(uint8_t id);
 
-            uint8_t getId() const;
-            void setId(uint8_t motor_id);
+            virtual void reset() override;
+            virtual bool isValid() const override;
 
-            int32_t getPositionState() const;
-            void setPositionState(int32_t pos);
-
-            int32_t getTemperatureState() const;
-            void setTemperatureState(int32_t temp);
-
-            int32_t getHardwareErrorState() const;
-            void setHardwareError(int32_t hw_error);
-
-            double getLastTimeRead() const;
             void setLastTimeRead(double last_time);
-
-            int getHwFailCounter() const;
             void setHwFailCounter(double fail_counter);
-
-            std::string getFirmwareVersion() const;
             void setFirmwareVersion(std::string& firmware_version);
 
-            bool operator==(const StepperMotorState& other);
+            double getLastTimeRead() const;
+            int getHwFailCounter() const;
+            std::string getFirmwareVersion() const;
 
-        private:
+            virtual std::string str() const override;
 
-            uint8_t _id;
-            int32_t _state_pos=0;
-            int32_t _state_temperature=0;
-            int32_t _hw_error=0;
-            double _last_time_read = 0;
+            virtual bool operator==(const StepperMotorState& other);
+
+        protected:
+            double _last_time_read;
             double _hw_fail_counter;
             std::string _firmware_version;
     };
+
+    inline
+    bool StepperMotorState::isValid() const
+    {
+        return (0 != _id);
+    }
+
+    inline
+    double StepperMotorState::getLastTimeRead() const
+    {
+        return _last_time_read;
+    }
+
+    inline
+    int StepperMotorState::getHwFailCounter() const
+    {
+        return _hw_fail_counter;
+    }
+
+    inline
+    std::string StepperMotorState::getFirmwareVersion() const
+    {
+        return _firmware_version;
+    }
+
 }
 
 #endif

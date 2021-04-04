@@ -1,4 +1,5 @@
 #include "stepper_driver/stepper_driver_core.hpp"
+#include "stepper_driver/conveyor_state.hpp"
 #include <functional>
 
 namespace StepperDriver
@@ -44,7 +45,7 @@ namespace StepperDriver
         {
             ROS_DEBUG("Stepper Driver Core - Start control loop thread");
             _control_loop_flag = true;
-            _control_loop_thread.reset(new std::thread(std::bind(&StepperDriverCore::controlLoop, this)));
+            _control_loop_thread.reset(new std::thread(&StepperDriverCore::controlLoop, this));
         }
     }
 
@@ -268,7 +269,7 @@ namespace StepperDriver
         _stepper->clearCalibrationTab();
     }
 
-    e_CanStepperCalibrationStatus StepperDriverCore::getCalibrationResult(uint8_t id, std::shared_ptr<int32_t> &calibration_result)
+    e_CanStepperCalibrationStatus StepperDriverCore::getCalibrationResult(uint8_t id, int32_t& calibration_result)
     {
         return _stepper->getCalibrationResult(id, calibration_result);
     }
@@ -283,7 +284,7 @@ namespace StepperDriver
         for (int i = 0; i < motor_states.size(); i++)
         {
             data.motor_identity.motor_id = motor_states.at(i).getId();
-            data.motor_identity.motor_type = (uint8_t)StepperMotorType::MOTOR_TYPE_STEPPER;
+            data.motor_identity.motor_type = (uint8_t)StepperMotorType_t::MOTOR_TYPE_STEPPER;
             data.temperature = motor_states.at(i).getTemperatureState();
             data.error = motor_states.at(i).getHardwareErrorState();
             data.firmware_version = motor_states.at(i).getFirmwareVersion();

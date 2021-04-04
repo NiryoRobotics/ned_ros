@@ -27,7 +27,6 @@
 #include <thread>
 
 #include "joints_interface/joint_state.hpp"
-#include "joints_interface/motor_offset_file_handler.hpp"
 
 #include "stepper_driver/stepper_driver_core.hpp"
 #include "dynamixel_driver/dxl_driver_core.hpp"
@@ -45,11 +44,33 @@ namespace JointsInterface {
 
     public:
         CalibrationInterface(std::vector<JointState> &joint_list,
-                             std::shared_ptr<StepperDriver::StepperDriverCore> &stepper, std::shared_ptr<DynamixelDriver::DynamixelDriverCore> &dynamixel);
+                             std::shared_ptr<StepperDriver::StepperDriverCore> &stepper,
+                             std::shared_ptr<DynamixelDriver::DynamixelDriverCore> &dynamixel);
 
         int startCalibration(int mode, std::string &result_message);
 
         bool CalibrationInprogress();
+
+    private:
+        void _setCalibrationCommand(JointState motor, int offset, int delay,
+                                    int motor_direction, int calibration_direction, int timeout,
+                                    int32_t &calibration_result);
+
+        int _getCalibrationResult(JointState &motor);
+
+        bool _check_steppers_connected();
+
+        void _auto_calibration();
+        void _send_calibration_offset(uint8_t id, int offset_to_send, int absolute_steps_at_offset_position);
+        bool _can_process_manual_calibration(std::string &result_message);
+        int _manual_calibration();
+
+        void _motorTorque(JointState &motor, bool status);
+        void _moveMotor(JointState &motor, int steps, float delay);
+        int _relativeMoveMotor(JointState &motor, int steps, int delay, bool wait);
+
+        bool set_motors_calibration_offsets(std::vector<int> &motor_id_list, std::vector<int> &steps_list);
+        bool get_motors_calibration_offsets(std::vector<int> &motor_id_list, std::vector<int> &steps_list);
 
     private:
         std::vector<JointState> &_joint_list;
@@ -70,23 +91,6 @@ namespace JointsInterface {
         int _calibration_timeout;
 
         std::vector<int32_t> _motor_calibration_list;
-
-        bool _check_steppers_connected();
-
-        void _auto_calibration();
-        void _send_calibration_offset(uint8_t id, int offset_to_send, int absolute_steps_at_offset_position);
-        bool _can_process_manual_calibration(std::string &result_message);
-        int _manual_calibration();
-
-        void _motorTorque(JointState &motor, bool status);
-        void _moveMotor(JointState &motor, int steps, float delay);
-        int _relativeMoveMotor(JointState &motor, int steps, int delay, bool wait);
-        void _setCalibrationCommand(
-            JointState &motor, int offset, int delay, int motor_direction, int calibration_direction, int timeout,
-            std::shared_ptr<int32_t> &calibration_result);
-
-        int _getCalibrationResult(JointState &motor);
-
     };
 
 } //JointsInterface

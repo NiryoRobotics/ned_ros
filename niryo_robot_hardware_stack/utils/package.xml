@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>utils</name>
+  <version>0.0.0</version>
+  <description>The utils package gather all utilities and absctract classes of the different models</description>
+  <author>Clement Cocquempot</author>
+  <maintainer email="c.cocquempot@niryo.com">Clement Cocquempot</maintainer>
+
+  <license>GPLv3</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>roscpp</build_depend>
+  
+  <exec_depend>roscpp</exec_depend>
+
+</package>

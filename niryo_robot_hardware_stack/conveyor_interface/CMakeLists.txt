@@ -8,8 +8,8 @@ find_package(catkin REQUIRED
     COMPONENTS
         roscpp
         std_msgs
-        stepper_driver
         message_generation
+        stepper_driver
 )
 
 add_message_files(
@@ -38,8 +38,8 @@ catkin_package(
   CATKIN_DEPENDS
       roscpp
       std_msgs
-      stepper_driver
       message_runtime
+      stepper_driver
 )
 
 include_directories(

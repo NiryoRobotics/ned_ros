@@ -47,7 +47,7 @@ namespace CpuInterface {
 
     void CpuInterfaceCore::startReadingData()
     {
-       _read_hardware_data_thread.reset(new std::thread(std::bind(&CpuInterfaceCore::_readHardwareDataLoop, this)));
+       _read_hardware_data_thread.reset(new std::thread(&CpuInterfaceCore::_readHardwareDataLoop, this));
     }
 
     void CpuInterfaceCore::_readHardwareDataLoop()

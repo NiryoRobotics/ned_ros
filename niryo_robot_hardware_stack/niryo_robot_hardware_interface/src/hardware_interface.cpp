@@ -137,10 +137,10 @@ namespace NiryoRobotHardwareInterface
     {
         ROS_DEBUG("Hardware Interface - Init Publisher");
         _hardware_status_publisher = _nh.advertise<niryo_robot_msgs::HardwareStatus>("niryo_robot_hardware_interface/hardware_status", 10);
-        _publish_hardware_status_thread.reset(new std::thread(std::bind(&HardwareInterface::_publishHardwareStatus, this)));
+        _publish_hardware_status_thread.reset(new std::thread(&HardwareInterface::_publishHardwareStatus, this));
 
         _software_version_publisher = _nh.advertise<niryo_robot_msgs::SoftwareVersion>("niryo_robot_hardware_interface/software_version", 10);
-        _publish_software_version_thread.reset(new std::thread(std::bind(&HardwareInterface::_publishSoftwareVersion, this)));
+        _publish_software_version_thread.reset(new std::thread(&HardwareInterface::_publishSoftwareVersion, this));
 
         _motors_report_service = _nh.advertiseService("/niryo_robot_hardware_interface/launch_motors_report", &HardwareInterface::_callbackLaunchMotorsReport, this);
         _stop_motors_report_service = _nh.advertiseService("/niryo_robot_hardware_interface/stop_motors_report", &HardwareInterface::_callbackStopMotorsReport, this);
@@ -275,9 +275,9 @@ namespace NiryoRobotHardwareInterface
                 motor_types.push_back("Niryo Stepper");
                 std::string joint_name = "";
                 if (!_simulation_mode)
-                    joint_name = _joints_interface->jointIdToJointName(stepper_motor_state.motors_hw_status.at(i).motor_identity.motor_id, (uint8_t)StepperDriver::StepperMotorType::MOTOR_TYPE_STEPPER);
+                    joint_name = _joints_interface->jointIdToJointName(stepper_motor_state.motors_hw_status.at(i).motor_identity.motor_id, (uint8_t)StepperDriver::StepperMotorType_t::MOTOR_TYPE_STEPPER);
                 else
-                    joint_name = _fake_interface->jointIdToJointName(stepper_motor_state.motors_hw_status.at(i).motor_identity.motor_id, (uint8_t)StepperDriver::StepperMotorType::MOTOR_TYPE_STEPPER);
+                    joint_name = _fake_interface->jointIdToJointName(stepper_motor_state.motors_hw_status.at(i).motor_identity.motor_id, (uint8_t)StepperDriver::StepperMotorType_t::MOTOR_TYPE_STEPPER);
 
                 joint_name = joint_name == "" ? ("Stepper " + std::to_string(dxl_motor_state.motors_hw_status.at(i).motor_identity.motor_id)) : joint_name;
                 motor_names.push_back(joint_name);

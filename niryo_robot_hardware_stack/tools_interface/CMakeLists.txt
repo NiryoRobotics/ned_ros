@@ -10,9 +10,8 @@ find_package(catkin REQUIRED
         std_msgs
         dynamixel_driver
         message_generation
+        utils
 )
-
-find_package(Boost REQUIRED COMPONENTS system)
 
 add_service_files(
   DIRECTORY
@@ -39,6 +38,7 @@ catkin_package(
         roscpp
         std_msgs
         dynamixel_driver
+        utils
 )
 
 include_directories(

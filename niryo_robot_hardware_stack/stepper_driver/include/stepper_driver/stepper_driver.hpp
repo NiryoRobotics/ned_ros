@@ -129,7 +129,7 @@ namespace StepperDriver
 
             void readMotorsState();
             void clearCalibrationTab();
-            e_CanStepperCalibrationStatus getCalibrationResult(uint8_t id, std::shared_ptr<int32_t> &result);
+            e_CanStepperCalibrationStatus getCalibrationResult(uint8_t id, int32_t &result);
 
             void executeJointTrajectoryCmd(std::vector<int32_t> &cmd);
             std::vector<int32_t> &getJointTrajectoryState();
@@ -168,8 +168,8 @@ namespace StepperDriver
             std::vector<int> _motor_id_list;
 
             std::vector<ConveyorState> _conveyor_list;
-
             std::vector<StepperMotorState> _motor_list;
+
             std::vector<uint8_t> _all_motor_connected;
             std::vector<uint8_t> _calibration_motor_list;
             std::map<uint8_t, int> _motor_calibration_map;

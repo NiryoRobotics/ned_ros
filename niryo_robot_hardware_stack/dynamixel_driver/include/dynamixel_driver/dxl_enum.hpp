@@ -16,9 +16,6 @@ namespace DynamixelDriver
         CMD_TYPE_UNKNOWN=100
     };
 
-    //change into a class (with conversion to and from string, plus check of validity)
-
-
     struct DxlMotorType
     {
         enum class type

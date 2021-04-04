@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(cpu_interface)
+project(utils)
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 add_compile_options(-std=c++11)
@@ -24,31 +24,12 @@ include_directories(
 )
 
 add_library(${PROJECT_NAME}
-    src/cpu_interface_core.cpp
-)
-
-add_executable(${PROJECT_NAME}_node
-  src/cpu_interface_node.cpp
-)
-
-add_dependencies(${PROJECT_NAME}_node
-  ${catkin_EXPORTED_TARGETS}
+    src/motor_state.cpp
+    src/motor_cmd.cpp
 )
 
 target_link_libraries(${PROJECT_NAME}
   ${catkin_LIBRARIES}
-)
-
-target_link_libraries(${PROJECT_NAME}_node
-  ${PROJECT_NAME}
-  ${catkin_LIBRARIES}
-)
-
-install(
-  TARGETS ${PROJECT_NAME}
-  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
 )
 
 install(

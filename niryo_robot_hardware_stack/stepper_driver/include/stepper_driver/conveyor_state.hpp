@@ -21,36 +21,55 @@
 #define CONVEYOR_STATE_H
 
 #include <string>
+#include "stepper_driver/stepper_motor_state.hpp"
 
 namespace StepperDriver
 {
-    class ConveyorState {
+    class ConveyorState : public StepperMotorState {
 
         public:
         
             ConveyorState(uint8_t id);
 
-            uint8_t getId();
-            void setId(uint8_t motor_id);
+            virtual void reset() override;
+            virtual bool isValid() const override;
 
-            bool getState();
             void setState(bool state);
-
-            int16_t getSpeed();
             void setSpeed(int16_t speed);
-
-            int8_t getDirection();
             void setDirection(int8_t direction);
 
-            bool operator==(const ConveyorState& other);
+            bool getState() const;
+            int16_t getSpeed() const;
+            int8_t getDirection() const;
+
+            virtual bool operator==(const ConveyorState& other);
+
+            virtual std::string str() const override;
 
         private:
 
-            uint8_t _id;
             bool _state;
             int16_t _speed;
             int8_t _direction;
     };
+
+    inline
+    bool ConveyorState::getState() const
+    {
+        return _state;
+    }
+
+    inline
+    int16_t ConveyorState::getSpeed() const
+    {
+        return _speed;
+    }
+
+    inline
+    int8_t ConveyorState::getDirection() const
+    {
+        return _direction;
+    }
 }
 
 #endif

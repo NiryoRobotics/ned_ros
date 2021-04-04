@@ -22,10 +22,24 @@
 
 namespace JointsInterface {
 
-    JointState::JointState(std::string name, uint8_t type, uint8_t id) :
-        _name(name), _id(id), _type(type)
+    JointState::JointState() :
+        utils::MotorState()
     {
 
+    }
+
+    JointState::JointState(std::string name, uint8_t type, uint8_t id) :
+        utils::MotorState(id),
+        _name(name), _type(type)
+    {
+    }
+
+    void JointState::reset()
+    {
+        _name.clear();
+        _type = 0;
+        _position = 0.0;
+        _need_calibration = false;
     }
 
     bool JointState::operator==(const JointState& m) const
@@ -33,40 +47,14 @@ namespace JointsInterface {
         return((this->_type == m._type) && (this->_id == m._id));
     }
 
-    std::string& JointState::getName()
-    {
-        return _name;
-    }
-
     void JointState::setName(std::string& name)
     {
         _name = name;
     }
 
-
-    uint8_t JointState::getId()
-    {
-        return _id;
-    }
-
-    void JointState::setId(uint8_t id)
-    {
-        _id = id;
-    }
-
-    uint8_t JointState::getType()
-    {
-        return _type;
-    }
-
     void JointState::setType(uint8_t type)
     {
         _type = type;
-    }
-
-    bool JointState::needCalibration()
-    {
-        return _need_calibration;
     }
 
     void JointState::setNeedCalibration(bool need_calibration)
@@ -79,9 +67,5 @@ namespace JointsInterface {
         _position = position;
     }
 
-    double JointState::getPosition()
-    {
-        return _position;
-    }
 } // JointsInterface
 

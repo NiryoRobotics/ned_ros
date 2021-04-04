@@ -10,9 +10,8 @@ find_package(catkin REQUIRED
         dynamixel_sdk
         niryo_robot_msgs
         message_generation
+        utils
 )
-
-find_package(Boost REQUIRED COMPONENTS system)
 
 add_message_files(
   FILES
@@ -45,6 +44,7 @@ catkin_package(
         roscpp
         dynamixel_sdk
         niryo_robot_msgs
+        utils
 )
 
 include_directories(

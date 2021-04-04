@@ -98,7 +98,7 @@ namespace FakeInterface {
 
     std::string FakeJointHardwareInterface::jointIdToJointName(int id, uint8_t motor_type)
     {
-        if (motor_type == (uint8_t)StepperDriver::StepperMotorType::MOTOR_TYPE_STEPPER)
+        if (motor_type == (uint8_t)StepperDriver::StepperMotorType_t::MOTOR_TYPE_STEPPER)
         {
             std::map<uint8_t, std::string>::iterator  it= _map_stepper_name.find(id);
             if (it !=  _map_stepper_name.end())

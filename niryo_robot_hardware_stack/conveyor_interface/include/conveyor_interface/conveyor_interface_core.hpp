@@ -25,12 +25,10 @@
 #include <ros/ros.h>
 #include <vector>
 
-#include "stepper_driver/stepper_driver_core.hpp"
-
-#include "stepper_driver/StepperCmd.h"
 #include "conveyor_interface/SetConveyor.h"
 #include "conveyor_interface/ControlConveyor.h"
 #include "conveyor_interface/ConveyorFeedbackArray.h"
+#include "stepper_driver/stepper_driver_core.hpp"
 #include "niryo_robot_msgs/CommandStatus.h"
 
 namespace ConveyorInterface {
@@ -38,14 +36,14 @@ namespace ConveyorInterface {
     {
         public:
 
-            ConveyorInterfaceCore(std::shared_ptr<StepperDriver::StepperDriverCore> &stepper);
+            ConveyorInterfaceCore(std::shared_ptr<StepperDriver::StepperDriverCore> stepper);
             void initServices();
             void initParams();
 
         private:
 
             ros::NodeHandle _nh;
-            std::shared_ptr<StepperDriver::StepperDriverCore> &_stepper;
+            std::shared_ptr<StepperDriver::StepperDriverCore> _stepper;
 
             ros::ServiceServer _ping_and_set_stepper_server;
             ros::ServiceServer _control_conveyor_server;

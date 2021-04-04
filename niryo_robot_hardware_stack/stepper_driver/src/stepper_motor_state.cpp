@@ -21,60 +21,24 @@
 
 namespace StepperDriver
 {
-    bool StepperMotorState::operator==(const StepperMotorState& m)
+    StepperMotorState::StepperMotorState() :
+        utils::MotorState()
     {
-        return(this->_id == m._id);
     }
 
-    StepperMotorState::StepperMotorState(uint8_t id) 
-        : _id(id)
+    StepperMotorState::StepperMotorState(uint8_t id) :
+        utils::MotorState(id),
+        _last_time_read(0.0),
+        _hw_fail_counter(0.0),
+        _firmware_version("")
     {
-
     }
 
-    uint8_t StepperMotorState::getId() const
+    void StepperMotorState::reset()
     {
-        return _id;
-    }
-
-    void StepperMotorState::setId(uint8_t motor_id)
-    {
-        _id = motor_id;
-    }
-
-    int32_t StepperMotorState::getPositionState() const
-    {
-        return _state_pos;
-    }
-
-    void StepperMotorState::setPositionState(int32_t pos)
-    {
-        _state_pos = pos;
-    }
-
-    int32_t StepperMotorState::getTemperatureState() const
-    {
-        return _state_temperature;
-    }
-
-    void StepperMotorState::setTemperatureState(int32_t temp)
-    {
-        _state_temperature = temp;
-    }
-
-    int32_t StepperMotorState::getHardwareErrorState() const
-    {
-        return _hw_error;
-    }
-
-    void StepperMotorState::setHardwareError(int32_t hw_error)
-    {
-        _hw_error = hw_error;
-    }
-
-    double StepperMotorState::getLastTimeRead() const
-    {
-        return _last_time_read;
+        _last_time_read = 0.0;
+        _hw_fail_counter = 0.0;
+        _firmware_version.clear();
     }
 
     void StepperMotorState::setLastTimeRead(double last_time)
@@ -82,23 +46,23 @@ namespace StepperDriver
         _last_time_read = last_time;
     }
 
-    int StepperMotorState::getHwFailCounter() const
-    {
-        return _hw_fail_counter;
-    }
-
     void StepperMotorState::setHwFailCounter(double fail_counter)
     {
         _hw_fail_counter = fail_counter;
     }
 
-    std::string StepperMotorState::getFirmwareVersion() const
-    {
-        return _firmware_version;
-    }
-
     void StepperMotorState::setFirmwareVersion(std::string& firmware_version)
     {
         _firmware_version = firmware_version;
+    }
+
+    std::string StepperMotorState::str() const
+    {
+        return "stepper";
+    }
+
+    bool StepperMotorState::operator==(const StepperMotorState &other)
+    {
+        return (this->_id == other._id);
     }
 }

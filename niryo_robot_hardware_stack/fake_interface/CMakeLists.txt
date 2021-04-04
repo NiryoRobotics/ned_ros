@@ -17,8 +17,6 @@ find_package(catkin REQUIRED
         actionlib
 )
 
-find_package(Boost REQUIRED COMPONENTS system)
-
 catkin_package(
     INCLUDE_DIRS
         include

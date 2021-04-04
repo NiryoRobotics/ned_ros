@@ -77,7 +77,7 @@ namespace DynamixelDriver
         {
             ROS_INFO("Dynamixel Driver Core - Start control loop");
             _control_loop_flag = true;
-            _control_loop_thread.reset(new thread(bind(&DynamixelDriverCore::controlLoop, this)));
+            _control_loop_thread.reset(new thread(&DynamixelDriverCore::controlLoop, this));
         }
     }
 

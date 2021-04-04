@@ -31,7 +31,9 @@ namespace StepperDriver
         public:
 
             StepperMotorCmd( );
-            StepperMotorCmd(StepperCommandType type, std::vector<uint8_t> motor_id, std::vector<int32_t> params);
+            StepperMotorCmd(StepperCommandType type,
+                            std::vector<uint8_t> motor_id,
+                            std::vector<int32_t> params);
             
             StepperCommandType getType();
             void setType(StepperCommandType type);
@@ -44,7 +46,7 @@ namespace StepperDriver
 
         private:
 
-            StepperCommandType _type = StepperCommandType::CMD_TYPE_NONE;
+            StepperCommandType _type{StepperCommandType::CMD_TYPE_NONE};
             std::vector<uint8_t> _motor_id_list;
             std::vector<int32_t> _param_list;
     };

@@ -1,9 +1,31 @@
+/*
+    conveyor_interface_core.cpp
+    Copyright (C) 2017 Niryo
+    All rights reserved.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include "conveyor_interface/conveyor_interface_core.hpp"
 #include "stepper_driver/conveyor_state.hpp"
 #include <functional>
 
+using namespace std;
+
 namespace ConveyorInterface {
-    ConveyorInterfaceCore::ConveyorInterfaceCore(std::shared_ptr<StepperDriver::StepperDriverCore> &stepper):
+
+    ConveyorInterfaceCore::ConveyorInterfaceCore(shared_ptr<StepperDriver::StepperDriverCore> stepper):
        _stepper(stepper)
     {
         _list_conveyor_id.clear();
@@ -11,7 +33,7 @@ namespace ConveyorInterface {
         initServices();
 
         _conveyors_feedback_publisher = _nh.advertise<conveyor_interface::ConveyorFeedbackArray>("/niryo_robot/conveyor/feedback", 10);
-        _publish_conveyors_feedback_thread.reset(new std::thread(std::bind(&ConveyorInterfaceCore::_publishConveyorsFeedback, this)));
+        _publish_conveyors_feedback_thread.reset(new thread(&ConveyorInterfaceCore::_publishConveyorsFeedback, this));
     }
 
     void ConveyorInterfaceCore::initParams()
@@ -35,7 +57,7 @@ namespace ConveyorInterface {
 
     bool ConveyorInterfaceCore::_callbackPingAndSetConveyor(conveyor_interface::SetConveyor::Request &req, conveyor_interface::SetConveyor::Response &res)
     {
-        std::string message = "";
+        string message = "";
         int result;
         if (_stepper->getCalibrationState() == true)
         {
@@ -73,8 +95,8 @@ namespace ConveyorInterface {
                 ros::Duration(0.05).sleep();
 
                 StepperDriver::StepperMotorCmd cmd;
-                std::vector<uint8_t> stepper_id{conveyor_id};
-                std::vector<int32_t> stepper_params{8};
+                vector<uint8_t> stepper_id{conveyor_id};
+                vector<int32_t> stepper_params{8};
                 cmd.setParams(stepper_params);
                 cmd.setType(StepperDriver::StepperCommandType::CMD_TYPE_MICRO_STEPS);
                 cmd.setMotorsId(stepper_id);
@@ -90,14 +112,14 @@ namespace ConveyorInterface {
                 ros::Duration(0.1).sleep();
 
                 cmd.setType(StepperDriver::StepperCommandType::CMD_TYPE_CONVEYOR);
-                cmd.setParams(std::vector<int32_t>{false, 0, -1});
+                cmd.setParams(vector<int32_t>{false, 0, -1});
                 cmd.setMotorsId(stepper_id);
                 _stepper->setConveyorCommands(cmd);
                 ros::Duration(0.1).sleep();
                 _stepper->setConveyorCommands(cmd);
                 res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
                 message = "Set new conveyor on id ";
-                message += std::to_string(conveyor_id);
+                message += to_string(conveyor_id);
                 message += " OK";
                 res.id = conveyor_id;
             }
@@ -114,9 +136,9 @@ namespace ConveyorInterface {
                     _list_conveyor_id.erase( _list_conveyor_id.begin() + i);
                     _list_available_id.push_back(req.id);
                     _stepper->unsetConveyor(req.id);
-                    std::sort(_list_available_id.begin(), _list_available_id.end(), std::greater<int>());
+                    sort(_list_available_id.begin(), _list_available_id.end(), greater<int>());
                     message = "Remove conveyor id ";
-                    message += std::to_string(req.id);
+                    message += to_string(req.id);
                     res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
                     break;
                 }
@@ -125,7 +147,7 @@ namespace ConveyorInterface {
             {
                 ROS_INFO("Conveyor interface - Conveyor id %d not found", req.id);
                 message = "Conveyor id ";
-                message += std::to_string(req.id);
+                message += to_string(req.id);
                 message += " not found";
                 res.status = niryo_robot_msgs::CommandStatus::NO_CONVEYOR_FOUND;
             }
@@ -137,16 +159,16 @@ namespace ConveyorInterface {
 
     bool ConveyorInterfaceCore::_callbackControlConveyor(conveyor_interface::ControlConveyor::Request &req, conveyor_interface::ControlConveyor::Response &res)
     {
-        std::string message = "";
-        auto conveyor_id = std::find(_list_conveyor_id.begin(), _list_conveyor_id.end() , req.id);
+        string message = "";
+        auto conveyor_id = find(_list_conveyor_id.begin(), _list_conveyor_id.end() , req.id);
         StepperDriver::StepperMotorCmd cmd;
         if(conveyor_id != _list_conveyor_id.end())
         {
-            cmd.setMotorsId(std::vector<uint8_t> {req.id});
+            cmd.setMotorsId(vector<uint8_t> {req.id});
             cmd.setType(StepperDriver::StepperCommandType::CMD_TYPE_CONVEYOR);
-            cmd.setParams(std::vector<int32_t>{req.control_on, req.speed, req.direction});
+            cmd.setParams(vector<int32_t>{req.control_on, req.speed, req.direction});
             message = "Set command on conveyor id ";
-            message += std::to_string(req.id);
+            message += to_string(req.id);
             message += " is OK";
             res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
             _stepper->setConveyorCommands(cmd);
@@ -155,7 +177,7 @@ namespace ConveyorInterface {
         {
             ROS_INFO("Conveyor interface - Conveyor id %d isn't set", req.id);
             message = "Conveyor id ";
-            message += std::to_string(req.id);
+            message += to_string(req.id);
             message += " is not set";
             res.status = niryo_robot_msgs::CommandStatus::CONVEYOR_ID_INVALID;
         }
@@ -173,7 +195,7 @@ namespace ConveyorInterface {
             conveyor_interface::ConveyorFeedbackArray msg;
             conveyor_interface::ConveyorFeedback data;
 
-            std::vector<StepperDriver::ConveyorState> conveyor_list;
+            vector<StepperDriver::ConveyorState> conveyor_list;
             conveyor_list = _stepper->getConveyorStates();
             for(int i = 0; i < conveyor_list.size(); i++)
             {

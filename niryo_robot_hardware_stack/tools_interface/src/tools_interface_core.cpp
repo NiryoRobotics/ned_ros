@@ -27,13 +27,13 @@ using namespace std;
 
 namespace ToolsInterface {
 
-    ToolsInterfaceCore::ToolsInterfaceCore(shared_ptr<DynamixelDriverCore> &dynamixel):
+    ToolsInterfaceCore::ToolsInterfaceCore(shared_ptr<DynamixelDriverCore> dynamixel):
         _dynamixel(dynamixel)
     {
         initParams();
         initServices();
 
-        _check_tool_connection_thread.reset(new thread(bind(&ToolsInterfaceCore::_checkToolConnection, this)));
+        _check_tool_connection_thread.reset(new thread(&ToolsInterfaceCore::_checkToolConnection, this));
 
         pubToolId(0);
     }

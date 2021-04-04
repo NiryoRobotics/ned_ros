@@ -23,17 +23,16 @@ using namespace DynamixelDriver;
 
 namespace ToolsInterface {
 
-    ToolState::ToolState()
-        : DxlMotorState()
+    ToolState::ToolState() :
+        DxlMotorState()
     {
-        reset();
     }
 
-    ToolState::ToolState(uint8_t id, std::string name, DxlMotorType_t type)
-        : DxlMotorState(id, type, true),
-          _name(name),
-          _connected(true),
-          _position(0.0)
+    ToolState::ToolState(uint8_t id, std::string name, DxlMotorType_t type) :
+        DxlMotorState(id, type, true),
+        _name(name),
+        _connected(true),
+        _position(0.0)
     {
     }
 
