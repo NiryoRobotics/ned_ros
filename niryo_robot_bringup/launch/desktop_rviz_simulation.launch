@@ -1,4 +1,6 @@
 <launch>
+    <env name="ROSCONSOLE_CONFIG_FILE"
+        value="$(find niryo_robot_bringup)/config/desktop_rviz_simulation_trace.conf" />
     <!-- Arguments definition -->
     <arg name="gui" default="true"/>
     <arg name="hardware_version" value="ned"/>

@@ -33,63 +33,64 @@
 #include "stepper_driver/StepperCmd.h"
 #include "stepper_driver/conveyor_state.hpp"
 
-#define CAN_CMD_POSITION     0x03
-#define CAN_CMD_TORQUE       0x04
-#define CAN_CMD_MODE         0x07
-#define CAN_CMD_MICRO_STEPS  0x13
-#define CAN_CMD_OFFSET       0x14
-#define CAN_CMD_CALIBRATE    0x15
-#define CAN_CMD_SYNCHRONIZE  0x16
-#define CAN_CMD_MAX_EFFORT   0x17
-#define CAN_CMD_MOVE_REL     0x18
-#define CAN_CMD_RESET        0x19 // not yet implemented
-
-enum class e_CanStepperCalibrationStatus {
-    CAN_STEPPERS_CALIBRATION_UNINITIALIZED = 0,
-    CAN_STEPPERS_CALIBRATION_OK = 1,
-    CAN_STEPPERS_CALIBRATION_TIMEOUT = 2,
-    CAN_STEPPERS_CALIBRATION_BAD_PARAM = 3,
-    CAN_STEPPERS_CALIBRATION_FAIL = 4,
-    CAN_STEPPERS_CALIBRATION_WAITING_USER_INPUT = 5,
-    CAN_STEPPERS_CALIBRATION_IN_PROGRESS = 6,
-};
-
-#define CAN_STEPPERS_CALIBRATION_MODE_AUTO   1
-#define CAN_STEPPERS_CALIBRATION_MODE_MANUAL 2
-
-#define CAN_STEPPERS_WRITE_OFFSET_FAIL -3
-
-#define CAN_DATA_POSITION    0x03
-#define CAN_DATA_DIAGNOSTICS 0x08
-#define CAN_DATA_CALIBRATION_RESULT 0x09
-#define CAN_DATA_FIRMWARE_VERSION 0x10
-#define CAN_DATA_CONVEYOR_STATE 0x07
-
-#define STEPPER_CONTROL_MODE_RELAX    0
-#define STEPPER_CONTROL_MODE_STANDARD 1
-#define STEPPER_CONTROL_MODE_PID_POS  2 
-#define STEPPER_CONTROL_MODE_TORQUE   3
-
-#define STEPPER_CONVEYOR_OFF 20
-#define STEPPER_CONVEYOR_ON 21
-#define CAN_UPDATE_CONVEYOR_ID 23
-#define STEPPER_CONTROL_MODE_PID_POS  2
-#define STEPPER_CONTROL_MODE_TORQUE   3
-
-#define MESSAGE_POSITION_LENGTH 4
-#define MESSAGE_DIAGNOSTICS_LENGTH 4
-#define MESSAGE_FIRMWARE_LENGTH 4
-
-#define CAN_MODEL_NUMBER 10000
-
-#define CAN_SCAN_OK 0
-#define CAN_SCAN_TIMEOUT     -10003
-#define TIME_TO_WAIT_IF_BUSY 0.0005
-
-#define STEPPER_MOTOR_TIMEOUT_VALUE 1.0f // s
 
 namespace StepperDriver
 {
+
+
+    constexpr int CAN_CMD_POSITION    = 0x03;
+    constexpr int CAN_CMD_TORQUE      = 0x04;
+    constexpr int CAN_CMD_MODE        = 0x07;
+    constexpr int CAN_CMD_MICRO_STEPS = 0x13;
+    constexpr int CAN_CMD_OFFSET      = 0x14;
+    constexpr int CAN_CMD_CALIBRATE   = 0x15;
+    constexpr int CAN_CMD_SYNCHRONIZE = 0x16;
+    constexpr int CAN_CMD_MAX_EFFORT  = 0x17;
+    constexpr int CAN_CMD_MOVE_REL    = 0x18;
+    constexpr int CAN_CMD_RESET       = 0x19; // not yet implemented
+
+    enum class e_CanStepperCalibrationStatus {
+        CAN_STEPPERS_CALIBRATION_UNINITIALIZED = 0,
+        CAN_STEPPERS_CALIBRATION_OK = 1,
+        CAN_STEPPERS_CALIBRATION_TIMEOUT = 2,
+        CAN_STEPPERS_CALIBRATION_BAD_PARAM = 3,
+        CAN_STEPPERS_CALIBRATION_FAIL = 4,
+        CAN_STEPPERS_CALIBRATION_WAITING_USER_INPUT = 5,
+        CAN_STEPPERS_CALIBRATION_IN_PROGRESS = 6,
+    };
+
+    constexpr int CAN_STEPPERS_CALIBRATION_MODE_AUTO   = 1;
+    constexpr int CAN_STEPPERS_CALIBRATION_MODE_MANUAL = 2;
+
+    constexpr int CAN_STEPPERS_WRITE_OFFSET_FAIL = -3;
+
+    constexpr int CAN_DATA_POSITION             = 0x03;
+    constexpr int CAN_DATA_DIAGNOSTICS          = 0x08;
+    constexpr int CAN_DATA_CALIBRATION_RESULT   = 0x09;
+    constexpr int CAN_DATA_FIRMWARE_VERSION     = 0x10;
+    constexpr int CAN_DATA_CONVEYOR_STATE       = 0x07;
+
+    constexpr int STEPPER_CONTROL_MODE_RELAX    = 0;
+    constexpr int STEPPER_CONTROL_MODE_STANDARD = 1;
+    constexpr int STEPPER_CONTROL_MODE_PID_POS  = 2;
+    constexpr int STEPPER_CONTROL_MODE_TORQUE   = 3;
+
+    constexpr int STEPPER_CONVEYOR_OFF          = 20;
+    constexpr int STEPPER_CONVEYOR_ON           = 21;
+    constexpr int CAN_UPDATE_CONVEYOR_ID        = 23;
+
+    constexpr int MESSAGE_POSITION_LENGTH       = 4;
+    constexpr int MESSAGE_DIAGNOSTICS_LENGTH    = 4;
+    constexpr int MESSAGE_FIRMWARE_LENGTH       = 4;
+
+    constexpr int CAN_MODEL_NUMBER              = 10000;
+
+    constexpr int CAN_SCAN_OK = 0;
+    constexpr int CAN_SCAN_TIMEOUT   =  -10003;
+    constexpr int TIME_TO_WAIT_IF_BUSY = 0.0005;
+
+    constexpr int STEPPER_MOTOR_TIMEOUT_VALUE = 1.0f; // s
+
     struct CalibrationStepperData
     {
         INT32U rxId;
@@ -175,7 +176,7 @@ namespace StepperDriver
             std::map<uint8_t, int> _motor_calibration_map;
             std::map<uint8_t, CalibrationStepperCmdStatus> _motor_calibration_map_cmd;
 
-            std::shared_ptr<MCP_CAN> mcp_can;
+            std::shared_ptr<MCP_CAN_RPI::MCP_CAN> mcp_can;
             std::thread _calibration_thread;
             std::thread _stepper_timeout_thread;
             std::vector<CalibrationStepperData> _calibration_readed_datas;

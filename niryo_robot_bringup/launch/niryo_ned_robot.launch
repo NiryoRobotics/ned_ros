@@ -1,4 +1,6 @@
 <launch>
+    <env name="ROSCONSOLE_CONFIG_FILE"
+        value="$(find niryo_robot_bringup)/config/niryo_ned_robot_trace.conf" />
     <!-- Arguments definition -->
     <arg name="iot_enabled" default="false"/>
     <arg name="debug" default="false"/>

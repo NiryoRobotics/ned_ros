@@ -8,6 +8,8 @@ int main(int argc, char **argv)
 {
     ros::init(argc, argv, "conveyor_interface_node");
   
+    ROS_DEBUG("Launching conveyor_interface_node");
+
     ros::AsyncSpinner spinner(4);
     spinner.start();
     

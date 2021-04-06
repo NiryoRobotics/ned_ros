@@ -1,4 +1,7 @@
 <launch>
+  <env name="ROSCONSOLE_CONFIG_FILE"
+       value="$(find dynamixel_driver)/config/dynamixel_driver_trace.conf"/>
+
   <arg name="hardware_version" value="ned"/>
 
   <node pkg="dynamixel_driver" type="dynamixel_driver_node" name="dynamixel_driver" output="screen">  

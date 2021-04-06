@@ -23,6 +23,8 @@
 namespace FakeInterface {
     FakeInterfaceCore::FakeInterfaceCore()
     {
+        ROS_DEBUG("Fake Interface Core - ctor");
+
         initParams();
         initServices();
         startPublishersSubscribers();

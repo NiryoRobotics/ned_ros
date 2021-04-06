@@ -14,6 +14,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include "dynamixel_driver/common_def.hpp"
+
 #include "dynamixel_driver/dxl_driver.hpp"
 #include "dynamixel_driver/dxl_enum.hpp"
 #include <string>
@@ -33,6 +35,11 @@ namespace DynamixelDriver
         _hw_fail_counter_read(0),
         _debug_error_message("Dxl Driver - No connection with Dynamixel motors has been made yet")
     {
+        ROS_DEBUG("test debug");
+        ROS_INFO("test info");
+        ROS_WARN("test warn");
+        ROS_ERROR("test error");
+        ROS_FATAL("test fatal");
 
         init();
 
@@ -54,13 +61,6 @@ namespace DynamixelDriver
      */
     int DxlDriver::init()
     {
-        //retrieve debug_mode from config file
-        bool debug_mode = false;
-        _nh.getParam("/niryo_robot_hardware_interface/debug", debug_mode);
-
-        if (debug_mode && ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug))
-            ros::console::notifyLoggerLevelsChanged();
-
         // get params from rosparams
         _nh.getParam("/niryo_robot_hardware_interface/dynamixel_driver/dxl_bus/dxl_uart_device_name", _device_name);
         _nh.getParam("/niryo_robot_hardware_interface/dynamixel_driver/dxl_bus/dxl_baudrate", _uart_baudrate);

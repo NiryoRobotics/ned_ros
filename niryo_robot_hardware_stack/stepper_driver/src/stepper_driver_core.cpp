@@ -6,6 +6,8 @@ namespace StepperDriver
 {
     StepperDriverCore::StepperDriverCore()
     {
+        ROS_DEBUG("Stepper Driver Core - ctor");
+
         init();
     }
 

@@ -4,6 +4,9 @@
 int main(int argc, char** argv)
 {
   ros::init(argc, argv, "stepper_driver_node");
+
+  ROS_DEBUG("Launching stepper_driver_node");
+
   ros::NodeHandle nodeHandle("~");
 
   StepperDriver::StepperDriverCore stepper_node();

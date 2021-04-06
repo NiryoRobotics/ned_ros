@@ -106,6 +106,8 @@ int main(int argc, char **argv)
 {
     ros::init(argc, argv, "dynamixel_driver_test");
   
+    ROS_DEBUG("Launching dynamixel_driver_test");
+
     ros::AsyncSpinner spinner(4);
     spinner.start();
     

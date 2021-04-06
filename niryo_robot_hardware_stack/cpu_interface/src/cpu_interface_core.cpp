@@ -7,6 +7,8 @@ namespace CpuInterface {
         _cpu_temperature = 0;
         initParams();
         startReadingData();
+        ROS_DEBUG("CPU Interface Core - ctor");
+
         ROS_INFO("CPU Interface - Started");
     }
 

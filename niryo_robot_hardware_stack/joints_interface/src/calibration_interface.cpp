@@ -32,9 +32,6 @@ namespace JointsInterface {
                                                shared_ptr<DynamixelDriver::DynamixelDriverCore> &dynamixel) :
         _joint_list(joint_list), _stepper(stepper), _dynamixel(dynamixel)
     {
-        // if( ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug) ) {
-        // ros::console::notifyLoggerLevelsChanged();
-        // }
 
         _nh.getParam("/niryo_robot_hardware_interface/calibration_timeout", _calibration_timeout);
         ROS_DEBUG("Calibration Interface - Calibration timeout %d", _calibration_timeout);
@@ -189,7 +186,7 @@ namespace JointsInterface {
 
         ROS_INFO("Calibration Interface - Wait for calibration result for motor id %d :", id[0]);
         ros::Duration(0.2).sleep();
-        while (_stepper->getCalibrationResult(id[0], calibration_result) == e_CanStepperCalibrationStatus::CAN_STEPPERS_CALIBRATION_IN_PROGRESS)
+        while (_stepper->getCalibrationResult(id[0], calibration_result) == StepperDriver::e_CanStepperCalibrationStatus::CAN_STEPPERS_CALIBRATION_IN_PROGRESS)
         {
             ros::Duration(0.2).sleep();
         }
@@ -421,7 +418,7 @@ namespace JointsInterface {
 
         if (!get_motors_calibration_offsets(motor_id_list, steps_list))
         {
-            return static_cast<int>(e_CanStepperCalibrationStatus::CAN_STEPPERS_CALIBRATION_FAIL);
+            return static_cast<int>(StepperDriver::e_CanStepperCalibrationStatus::CAN_STEPPERS_CALIBRATION_FAIL);
         }
         _stepper->startCalibration(true);
         // 0. Torque ON for motor 2

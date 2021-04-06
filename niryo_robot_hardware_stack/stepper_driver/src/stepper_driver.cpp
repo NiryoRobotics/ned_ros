@@ -62,7 +62,7 @@ namespace StepperDriver
         _is_can_connection_ok = false;
         _debug_error_message = "";
 
-        mcp_can.reset(new MCP_CAN(spi_channel, spi_baudrate, gpio_can_interrupt));
+        mcp_can.reset(new MCP_CAN_RPI::MCP_CAN(spi_channel, spi_baudrate, gpio_can_interrupt));
         _calibration_motor_list.clear();
         setupInterruptGpio();
         setupSpi();

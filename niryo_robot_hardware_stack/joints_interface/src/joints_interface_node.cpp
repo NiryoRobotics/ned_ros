@@ -8,6 +8,8 @@ int main(int argc, char **argv)
 {
     ros::init(argc, argv, "joints_interface_node");
   
+    ROS_DEBUG("Launching joints_interface_node");
+
     ros::AsyncSpinner spinner(4);
     spinner.start();
     

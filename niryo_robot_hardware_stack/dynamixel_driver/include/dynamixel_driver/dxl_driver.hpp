@@ -45,23 +45,22 @@
 #include "dynamixel_driver/synchronize_motor_cmd.hpp"
 #include "dynamixel_driver/single_motor_cmd.hpp"
 
-#define DXL_BUS_PROTOCOL_VERSION 2.0
-
-#define DXL_FAIL_OPEN_PORT -4500
-#define DXL_FAIL_PORT_SET_BAUDRATE -4501
-#define DXL_FAIL_SETUP_GPIO -4502
-
-#define RADIAN_TO_DEGREE 57.295779513082320876798154814105
-
-#define TIME_TO_WAIT_IF_BUSY 0.0005
-
-#define DXL_SCAN_OK 0
-#define DXL_SCAN_MISSING_MOTOR -50
-#define DXL_SCAN_UNALLOWED_MOTOR -51
-#define DXL_WRONG_TYPE -52
-
 namespace DynamixelDriver
 {
+    constexpr float DXL_BUS_PROTOCOL_VERSION = 2.0;
+    constexpr int DXL_FAIL_OPEN_PORT = -4500;
+
+    constexpr int DXL_FAIL_PORT_SET_BAUDRATE = -4501;
+    constexpr int DXL_FAIL_SETUP_GPIO = -4502;
+
+    constexpr double RADIAN_TO_DEGREE = 57.295779513082320876798154814105;
+
+    constexpr double TIME_TO_WAIT_IF_BUSY = 0.0005;
+
+    constexpr int DXL_SCAN_OK = 0;
+    constexpr int DXL_SCAN_MISSING_MOTOR = -50;
+    constexpr int DXL_SCAN_UNALLOWED_MOTOR = -51;
+    constexpr int DXL_WRONG_TYPE = -52;
 
     /**
      * @brief The DxlDriver class

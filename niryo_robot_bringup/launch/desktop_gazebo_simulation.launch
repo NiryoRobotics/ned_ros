@@ -6,6 +6,8 @@ to change _TIMEOUT_SIGINT value in the file /opt/ros/melodic/lib/python2.7/dist-
 This will reduce the amount of time spent waiting during program shutdown
 -->
 <launch>
+    <env name="ROSCONSOLE_CONFIG_FILE"
+        value="$(find niryo_robot_bringup)/config/desktop_gazebo_simulation_trace.conf" />
     <!-- Arguments definition -->
     <arg name="gripper_n_camera" default="true"/>
     <arg name="gui" default="true"/>

@@ -26,6 +26,8 @@ namespace DynamixelDriver
 {
     DynamixelDriverCore::DynamixelDriverCore()
     {
+        ROS_DEBUG("Dynamixel Driver Core - ctor");
+
         init();
     }
 

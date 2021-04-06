@@ -139,6 +139,8 @@ int main(int argc, char **argv)
 {
     ros::init(argc, argv, "stepper_driver_test");
   
+    ROS_DEBUG("Launching stepper_driver_test");
+
     ros::AsyncSpinner spinner(4);
     spinner.start();
     

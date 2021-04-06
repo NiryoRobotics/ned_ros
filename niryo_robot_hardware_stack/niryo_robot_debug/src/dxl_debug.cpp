@@ -51,6 +51,8 @@ int main (int argc, char **argv)
 {
     ros::init(argc, argv, "dxl_debug_tools");
 
+    ROS_DEBUG("Launching dxl_debug_tools");
+
     try {
         // Get args
         po::options_description description("Options");

@@ -197,7 +197,7 @@ namespace ToolsInterface {
         _dynamixel->setEndEffectorCommands(list_cmd);
         list_cmd.clear();
 
-        double dxl_speed = (double)req.open_speed * (double)XL330_STEPS_FOR_1_SPEED; // position . sec-1
+        double dxl_speed = (double)req.open_speed * (double)XL320_STEPS_FOR_1_SPEED; // position . sec-1
         double dxl_steps_to_do = abs((double)req.open_position - (double)_dynamixel->getEndEffectorState(_toolState.getId(), _toolState.getType())); // position
         double seconds_to_wait =  dxl_steps_to_do /  dxl_speed; // sec
         ros::Duration(seconds_to_wait + 0.25).sleep();
@@ -245,7 +245,7 @@ namespace ToolsInterface {
         list_cmd.clear();
 
         // calculate close duration
-        double dxl_speed = (double)req.close_speed *(double) XL330_STEPS_FOR_1_SPEED; // position . sec-1
+        double dxl_speed = (double)req.close_speed *(double) XL320_STEPS_FOR_1_SPEED; // position . sec-1
         double dxl_steps_to_do = abs((double)req.close_position - (double)_dynamixel->getEndEffectorState(_toolState.getId(), _toolState.getType())); // position
         double seconds_to_wait =  dxl_steps_to_do /  dxl_speed; // sec
         ros::Duration(seconds_to_wait + 0.25).sleep();
@@ -293,7 +293,7 @@ namespace ToolsInterface {
         list_cmd.clear();
 
         // calculate pull air duration
-        double dxl_speed = (double)pull_air_velocity * (double)XL330_STEPS_FOR_1_SPEED; // position . sec-1
+        double dxl_speed = (double)pull_air_velocity * (double)XL320_STEPS_FOR_1_SPEED; // position . sec-1
         double dxl_steps_to_do = abs((double)req.pull_air_position - (double)_dynamixel->getEndEffectorState(_toolState.getId(), _toolState.getType())); // position
         double seconds_to_wait = dxl_steps_to_do / dxl_speed; // sec
 
@@ -342,7 +342,7 @@ namespace ToolsInterface {
         list_cmd.clear();
 
         // calculate push air duration
-        double dxl_speed = (double)push_air_velocity * (double)XL330_STEPS_FOR_1_SPEED; // position . sec-1
+        double dxl_speed = (double)push_air_velocity * (double)XL320_STEPS_FOR_1_SPEED; // position . sec-1
         double dxl_steps_to_do = abs((double)req.push_air_position - (double)_dynamixel->getEndEffectorState(_toolState.getId(), _toolState.getType())); // position
         double seconds_to_wait =  dxl_steps_to_do /  dxl_speed; // sec
 
