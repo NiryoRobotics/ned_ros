@@ -48,11 +48,11 @@ tool_list:
       - open_gripper
       - close_gripper
     specs:
-      open_position: 600
-      open_hold_torque: 128
-      close_position: 230
-      close_hold_torque: 128
-      close_max_torque: 1023
+      open_position: 1470
+      open_hold_torque: 500
+      close_position: 370
+      close_hold_torque: 65000
+      close_max_torque: 64000
       open_speed: 300
       close_speed: 300
       limit_open_speed:
@@ -68,11 +68,11 @@ tool_list:
       - open_gripper
       - close_gripper
     specs:
-      open_position: 640
-      open_hold_torque: 128
-      close_position: 400
-      close_hold_torque: 128
-      close_max_torque: 1023
+      open_position: 2380
+      open_hold_torque: 500
+      close_position: 1580
+      close_hold_torque: 65000
+      close_max_torque: 64000
       open_speed: 300
       close_speed: 300
       limit_open_speed:
@@ -88,11 +88,11 @@ tool_list:
       - open_gripper
       - close_gripper
     specs:
-      open_position: 450
-      open_hold_torque: 128
-      close_position: 220
-      close_hold_torque: 160
-      close_max_torque: 1023
+      open_position: 1980
+      open_hold_torque: 500
+      close_position: 970
+      close_hold_torque: 65000
+      close_max_torque: 64000
       open_speed: 300
       close_speed: 300
       limit_open_speed:
