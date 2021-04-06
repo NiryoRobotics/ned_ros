@@ -196,8 +196,6 @@ namespace StepperDriver
             bool _is_can_connection_ok;
             bool _calibration_in_progress;
 
-            bool _debug_mode;
-
             std::string _debug_error_message;
 
             std::vector<int32_t> _stepper_states;

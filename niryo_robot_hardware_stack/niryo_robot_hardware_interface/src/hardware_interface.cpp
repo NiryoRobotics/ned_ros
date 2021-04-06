@@ -149,15 +149,6 @@ namespace NiryoRobotHardwareInterface
 
     void HardwareInterface::initParams()
     {
-        bool debug_mode = false;
-        _nh.getParam("/niryo_robot_hardware_interface/debug", debug_mode);
-        if (debug_mode)
-        {
-            if (ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug))
-            {
-                ros::console::notifyLoggerLevelsChanged();
-            }
-        }
 
         ROS_DEBUG("Hardware Interface - Init Params");
         ros::param::get("~publish_hw_status_frequency", _publish_hw_status_frequency);
@@ -171,7 +162,6 @@ namespace NiryoRobotHardwareInterface
 
         ros::param::get("~can_enabled", _can_enabled);
         ros::param::get("~dxl_enabled", _dxl_enabled);
-
         
         _rpi_image_version.erase(_rpi_image_version.find_last_not_of(" \n\r\t") + 1);
         _ros_niryo_robot_version.erase(_ros_niryo_robot_version.find_last_not_of(" \n\r\t") + 1);

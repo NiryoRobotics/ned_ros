@@ -28,14 +28,6 @@ namespace StepperDriver
         _calibration_in_progress(false),
         _stepper_timeout_thread(&StepperDriver::_verifyMotorTimeoutLoop, this)
     {
-        _nh.getParam("/niryo_robot_hardware_interface/debug", _debug_mode);
-        if (_debug_mode)
-        {
-            if (ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug))
-            {
-                ros::console::notifyLoggerLevelsChanged();
-            }
-        }
 
         int spi_channel, spi_baudrate, gpio_can_interrupt;
 

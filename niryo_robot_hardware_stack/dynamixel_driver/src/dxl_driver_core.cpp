@@ -58,12 +58,6 @@ namespace DynamixelDriver
         _nh.getParam("/niryo_robot_hardware_interface/dynamixel_driver/dxl_hardware_check_connection_frequency", _check_connection_frequency);
         _nh.getParam("/niryo_robot_hardware_interface/dynamixel_driver/dxl_end_effector_frequency", _check_end_effector_frequency);
 
-        bool debug_mode = false;
-        _nh.getParam("/niryo_robot_hardware_interface/debug", debug_mode);
-
-        if (debug_mode && ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug))
-            ros::console::notifyLoggerLevelsChanged();
-
         ROS_DEBUG("Dynamixel Driver Core - dxl_hardware_control_loop_frequency : %f", _control_loop_frequency);
         ROS_DEBUG("Dynamixel Driver Core - dxl_hardware_write_frequency : %f", _write_frequency);
         ROS_DEBUG("Dynamixel Driver Core - dxl_hardware_read_data_frequency : %f", _read_data_frequency);
@@ -203,40 +197,40 @@ namespace DynamixelDriver
             ROS_INFO("Dynamixel Driver Core - Debug - Start Dynamixel Motor Report");
             ros::Duration(1.0).sleep();
             ROS_INFO("Dynamixel Driver Core - Debug - Motor 4 report start :");
-            if (motorScanReport(2, DxlMotorType_t::MOTOR_TYPE_XC430) != niryo_robot_msgs::CommandStatus::SUCCESS)
+            if (motorScanReport(2, DxlMotorType_t::MOTOR_TYPE_XL430) != niryo_robot_msgs::CommandStatus::SUCCESS)
                 response = niryo_robot_msgs::CommandStatus::FAILURE;
             if (!_debug_flag)
                 return niryo_robot_msgs::CommandStatus::ABORTED;
-            if (motorCmdReport(2, DxlMotorType_t::MOTOR_TYPE_XC430) != niryo_robot_msgs::CommandStatus::SUCCESS)
+            if (motorCmdReport(2, DxlMotorType_t::MOTOR_TYPE_XL430) != niryo_robot_msgs::CommandStatus::SUCCESS)
                 response = niryo_robot_msgs::CommandStatus::FAILURE;
             if (!_debug_flag)
                 return niryo_robot_msgs::CommandStatus::ABORTED;
             ROS_INFO("Dynamixel Driver Core - Debug - Motor 5 report start :");
-            if (motorScanReport(3, DxlMotorType_t::MOTOR_TYPE_XC430) != niryo_robot_msgs::CommandStatus::SUCCESS)
+            if (motorScanReport(3, DxlMotorType_t::MOTOR_TYPE_XL430) != niryo_robot_msgs::CommandStatus::SUCCESS)
                 response = niryo_robot_msgs::CommandStatus::FAILURE;
             if (!_debug_flag)
                 return niryo_robot_msgs::CommandStatus::ABORTED;
-            if (motorCmdReport(3, DxlMotorType_t::MOTOR_TYPE_XC430) != niryo_robot_msgs::CommandStatus::SUCCESS)
+            if (motorCmdReport(3, DxlMotorType_t::MOTOR_TYPE_XL430) != niryo_robot_msgs::CommandStatus::SUCCESS)
                 response = niryo_robot_msgs::CommandStatus::FAILURE;
             if (!_debug_flag)
                 return niryo_robot_msgs::CommandStatus::ABORTED;
             ROS_INFO("Dynamixel Driver Core - Debug - Motor 6 report start :");
-            if (motorScanReport(6, DxlMotorType_t::MOTOR_TYPE_XL330) != niryo_robot_msgs::CommandStatus::SUCCESS)
+            if (motorScanReport(6, DxlMotorType_t::MOTOR_TYPE_XL320) != niryo_robot_msgs::CommandStatus::SUCCESS)
                 response = niryo_robot_msgs::CommandStatus::FAILURE;
             if (!_debug_flag)
                 return niryo_robot_msgs::CommandStatus::ABORTED;
-            if (motorCmdReport(6, DxlMotorType_t::MOTOR_TYPE_XL330) != niryo_robot_msgs::CommandStatus::SUCCESS)
+            if (motorCmdReport(6, DxlMotorType_t::MOTOR_TYPE_XL320) != niryo_robot_msgs::CommandStatus::SUCCESS)
                 response = niryo_robot_msgs::CommandStatus::FAILURE;
 
             ros::Duration(1.0).sleep();
             ROS_INFO("Dynamixel Driver Core - Debug - Check for unflash dynamixel motors");
-            motor_found = _dynamixel->type_ping_id(1, DxlMotorType_t::MOTOR_TYPE_XC430);
+            motor_found = _dynamixel->type_ping_id(1, DxlMotorType_t::MOTOR_TYPE_XL430);
             if (motor_found == COMM_SUCCESS)
             {
                 ROS_ERROR("Dynamixel Driver Core - Debug - Find a dynamixel motor unflash");
                 response = niryo_robot_msgs::CommandStatus::FAILURE;
             }
-            motor_found = _dynamixel->type_ping_id(1, DxlMotorType_t::MOTOR_TYPE_XL330);
+            motor_found = _dynamixel->type_ping_id(1, DxlMotorType_t::MOTOR_TYPE_XL320);
             if (motor_found == COMM_SUCCESS)
             {
                 ROS_ERROR("Dynamixel Driver Core - Debug - Find a dynamixel motor unflash");
@@ -540,7 +534,7 @@ namespace DynamixelDriver
         string message = "";
 
         lock_guard<mutex> lck(_control_loop_mutex);
-        int result = _dynamixel->setLeds(led);
+        int result = _dynamixel->setLeds(led, DxlMotorType_t::MOTOR_TYPE_XL320);
 
         res.status = result;
         res.message = message;
@@ -550,7 +544,7 @@ namespace DynamixelDriver
     int DynamixelDriverCore::update_leds(void)
     {
         lock_guard<mutex> lck(_control_loop_mutex);
-        int result = _dynamixel->setLeds(_dynamixel->getLedState());
+        int result = _dynamixel->setLeds(_dynamixel->getLedState(), DxlMotorType_t::MOTOR_TYPE_XL320);
         return result;
     }
 } // namespace DynamixelDriver

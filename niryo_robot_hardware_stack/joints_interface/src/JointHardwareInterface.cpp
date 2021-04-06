@@ -120,14 +120,14 @@ namespace JointsInterface {
         }
         for (int i = 3; i < 5; i++)
         {
-            joints_vect.push_back(JointState(_joints_name[i], (uint8_t)DynamixelDriver::DxlMotorType_t::MOTOR_TYPE_XC430, _joints_id[i]));
+            joints_vect.push_back(JointState(_joints_name[i], (uint8_t)DynamixelDriver::DxlMotorType_t::MOTOR_TYPE_XL430, _joints_id[i]));
             _list_dxl_id.push_back(_joints_id[i]);
             _map_dxl_name[_joints_id[i]] = _joints_name[i];
             _joint_list.push_back(joints_vect[i]);
         }
         for (int i = 5; i < 6; i++)
         {
-            joints_vect.push_back(JointState(_joints_name[i], (uint8_t)DynamixelDriver::DxlMotorType_t::MOTOR_TYPE_XL330, _joints_id[i]));
+            joints_vect.push_back(JointState(_joints_name[i], (uint8_t)DynamixelDriver::DxlMotorType_t::MOTOR_TYPE_XL320, _joints_id[i]));
             _list_dxl_id.push_back(_joints_id[i]);
             _map_dxl_name[_joints_id[i]] = _joints_name[i];
             _joint_list.push_back(joints_vect[i]);
@@ -177,15 +177,15 @@ namespace JointsInterface {
         ros::Duration(0.05).sleep();
 
         // * Joint 4
-        if(!setMotorPID(2, DynamixelDriver::DxlMotorType_t::MOTOR_TYPE_XC430, _p_gain_1, _i_gain_1, _d_gain_1))
+        if(!setMotorPID(2, DynamixelDriver::DxlMotorType_t::MOTOR_TYPE_XL430, _p_gain_1, _i_gain_1, _d_gain_1))
             ROS_ERROR("Joints Hardware Interface - Error setting motor PID for joint 4");
 
         // * Joint 5
-        if(!setMotorPID(3, DynamixelDriver::DxlMotorType_t::MOTOR_TYPE_XC430, _p_gain_1, _i_gain_1, _d_gain_1))
+        if(!setMotorPID(3, DynamixelDriver::DxlMotorType_t::MOTOR_TYPE_XL430, _p_gain_1, _i_gain_1, _d_gain_1))
             ROS_ERROR("Joints Hardware Interface - Error setting motor PID for joint 5");
 
         // * Joint 6
-        if(!setMotorPID(6, DynamixelDriver::DxlMotorType_t::MOTOR_TYPE_XL330, _p_gain_1, _i_gain_1, _d_gain_1))
+        if(!setMotorPID(6, DynamixelDriver::DxlMotorType_t::MOTOR_TYPE_XL320, _p_gain_1, _i_gain_1, _d_gain_1))
             ROS_ERROR("Joints Hardware Interface - Error setting motor PID for joint 6");
 
     }
@@ -362,7 +362,8 @@ namespace JointsInterface {
             if (it !=  _map_stepper_name.end())
                 return it->second;
         }
-        else if (motor_type == (uint8_t)DynamixelDriver::DxlMotorType_t::MOTOR_TYPE_XC430 or motor_type ==(uint8_t)DynamixelDriver::DxlMotorType_t::MOTOR_TYPE_XL330)
+        else if (motor_type == (uint8_t)DynamixelDriver::DxlMotorType_t::MOTOR_TYPE_XL430 ||
+                 motor_type == (uint8_t)DynamixelDriver::DxlMotorType_t::MOTOR_TYPE_XL320)
         {
             std::map<uint8_t, std::string>::iterator  it= _map_dxl_name.find(id);
             if (it !=  _map_dxl_name.end())

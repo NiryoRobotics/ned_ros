@@ -91,7 +91,7 @@ namespace DynamixelDriver
             int setGoalTorque(DxlMotorState& targeted_dxl, uint32_t torque);
             int setGoalVelocity(DxlMotorState& targeted_dxl, uint32_t velocity);
 
-            int setLeds(int led, DxlMotorType_t type = DxlMotorType_t::MOTOR_TYPE_XL330);
+            int setLeds(int led, DxlMotorType_t type = DxlMotorType_t::MOTOR_TYPE_XL320);
 
             int scanAndCheck();
 

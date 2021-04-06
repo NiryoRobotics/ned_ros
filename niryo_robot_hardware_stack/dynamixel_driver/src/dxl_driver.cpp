@@ -35,11 +35,7 @@ namespace DynamixelDriver
         _hw_fail_counter_read(0),
         _debug_error_message("Dxl Driver - No connection with Dynamixel motors has been made yet")
     {
-        ROS_DEBUG("test debug");
-        ROS_INFO("test info");
-        ROS_WARN("test warn");
-        ROS_ERROR("test error");
-        ROS_FATAL("test fatal");
+        ROS_DEBUG("DxlDriver - ctor");
 
         init();
 
