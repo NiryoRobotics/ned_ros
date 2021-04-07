@@ -56,7 +56,7 @@ class MotorDebug:
                                                           LedBlinker)
 
         self.__reset_controller_service = rospy.ServiceProxy('/niryo_robot/joints_interface/steppers_reset_controller',
-                                                      Trigger)
+                                                             Trigger)
 
         # - Subscribers
         self.__is_active_publisher = rospy.Subscriber('~is_active', Bool, self.__callback_commander_is_active)
@@ -77,7 +77,7 @@ class MotorDebug:
         self.__is_running = False
         self.__stop_motor_report_service()
         self.__cancel()
-        #self._set_log_debug(False)
+        # self._set_log_debug(False)
         self.__robot.set_learning_mode(True)
         self.__set_led_state_service(False, 0, 0, 0)
         return EmptyResponse()
@@ -105,7 +105,7 @@ class MotorDebug:
             self.__is_running = True
             self.__set_led_state_service(False, 0, 0, 0)
             if nb_loops < 1:
-                #self._set_log_debug(True)
+                # self._set_log_debug(True)
                 self._display_hardware_params()
                 status, message = self._scan_with_motor_report()
                 self.__check_state()
@@ -140,9 +140,14 @@ class MotorDebug:
                     if error_counter > 0:
                         break
 
+                # add reverse movement on joint 2 at the end
+                final_joint_state = self.__robot.get_joints()
+                final_joint_state[1] = 0.5
+                self.__robot.move_joints(*final_joint_state)
+
             rospy.sleep(1)
             self.__robot.set_learning_mode(True)
-            #self._set_log_debug(False)
+            # self._set_log_debug(False)
             self.__is_running = False
 
             self.__set_led_state_service(error_counter > 0, 5, LedBlinkerRequest.LED_WHITE, 360)

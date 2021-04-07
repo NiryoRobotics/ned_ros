@@ -41,7 +41,6 @@ class CommandInterpreter:
         # Dict containing a mapping between
         # "Command" enumeration (defined in const_communication) and interpreter's functions
         self.__commands_dict = self.__generate_functions_dict()
-
         # - Enumerations mapping
         self.__axis_string_dict_convertor = {
             "X": ShiftPose.AXIS_X,
@@ -330,6 +329,14 @@ class CommandInterpreter:
         value = self.__transform_to_type(value_string, float)
 
         self.__niryo_robot.shift_pose(axis, value)
+        return self.__send_answer()
+
+    @check_nb_args(2)
+    def __shift_linear_pose(self, axis_string, value_string):
+        axis = self.__check_and_get_from_dict(axis_string, self.__axis_string_dict_convertor)
+        value = self.__transform_to_type(value_string, float)
+
+        self.__niryo_robot.shift_linear_pose(axis, value)
         return self.__send_answer()
 
     @check_nb_args(6)
