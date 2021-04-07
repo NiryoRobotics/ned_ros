@@ -236,22 +236,23 @@ class JogController:
         :return: status, message
         :rtype: (GoalStatus, str)
         """
-        if self.can_be_enable():
-            rospy.wait_for_message('/niryo_robot/robot_state', RobotState, timeout=2)
-            rospy.wait_for_message('/joint_states', JointState, timeout=2)
-            self._enabled = True
-            self._reset_last_pub()
-            self._last_command_timer = rospy.get_time()
-            self._publisher_joint_trajectory_timer = rospy.Timer(rospy.Duration(self._timer_rate), self._publish_joint_trajectory)
-            self._check_disable_jog_timer = rospy.Timer(rospy.Duration(1.0 / rospy.get_param("~jog_enable_publish_rate")),
-                    self._check_for_disable)
-            msg_str = "Jog Controller - Enabled"
-            rospy.loginfo(msg_str)
-            return CommandStatus.SUCCESS, msg_str
-        else:
+        if not self.can_be_enable():
             msg_str = "Jog Controller - Wait for the end of command to enable Jog Controller"
             rospy.logwarn(msg_str)
             return CommandStatus.ABORTED, msg_str
+
+        rospy.wait_for_message('/niryo_robot/robot_state', RobotState, timeout=2)
+        rospy.wait_for_message('/joint_states', JointState, timeout=2)
+        self._enabled = True
+        self._reset_last_pub()
+        self._last_command_timer = rospy.get_time()
+        self._publisher_joint_trajectory_timer = rospy.Timer(rospy.Duration(self._timer_rate),
+                                                             self._publish_joint_trajectory)
+        self._check_disable_jog_timer = rospy.Timer(rospy.Duration(1.0 / rospy.get_param("~jog_enable_publish_rate")),
+                                                    self._check_for_disable)
+        msg_str = "Jog Controller - Enabled"
+        rospy.loginfo(msg_str)
+        return CommandStatus.SUCCESS, msg_str
 
     def disable(self):
         """
@@ -260,6 +261,11 @@ class JogController:
         :return: status, message
         :rtype: (GoalStatus, str)
         """
+        if not self._enabled:
+            msg_str = "Jog Controller - Already Disabled"
+            rospy.loginfo(msg_str)
+            return CommandStatus.SUCCESS, msg_str
+
         self._enabled = False
         self._shift_mode = None
         self._target_values = None
