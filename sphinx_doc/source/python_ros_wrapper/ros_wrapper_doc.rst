@@ -39,8 +39,8 @@ Joints & Pose
 ^^^^^^^^^^^^^
 
 .. autoclass:: NiryoRosWrapper
-    :members: get_joints, get_pose, get_pose_as_list, move_joints, move_to_sleep_pose, move_pose,
-              shift_pose, move_linear_pose,
+    :members: get_joints, get_pose, get_pose_as_list, move_joints, move_to_sleep_pose, move_pose,  move_linear_pose,
+              shift_pose, shift_linear_pose, 
               set_jog_use_state, jog_joints_shift, jog_pose_shift,
               forward_kinematics, inverse_kinematics
     :member-order: bysource
