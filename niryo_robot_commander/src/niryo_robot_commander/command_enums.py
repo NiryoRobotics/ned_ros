@@ -12,6 +12,7 @@ class MoveCommandType(object):
 
     # From actual pose
     SHIFT_POSE = 21
+    SHIFT_LINEAR_POSE = 22
 
     # Trajectory
     EXECUTE_TRAJ = 31
