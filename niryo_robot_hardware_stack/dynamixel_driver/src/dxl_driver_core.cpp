@@ -26,7 +26,7 @@ namespace DynamixelDriver
 {
     DynamixelDriverCore::DynamixelDriverCore()
     {
-        ROS_DEBUG("Dynamixel Driver Core - ctor");
+        ROS_DEBUG("DynamixelDriverCore - ctor");
 
         init();
     }
@@ -36,7 +36,6 @@ namespace DynamixelDriver
         _control_loop_flag = false;
         _debug_flag = false;
         _joint_trajectory_controller_cmd.clear();
-        _dxl_cmd.reset(new SynchronizeMotorCmd());
         _end_effector_cmd.clear();
         initParameters();
         _dynamixel.reset(new DxlDriver());
@@ -58,12 +57,12 @@ namespace DynamixelDriver
         _nh.getParam("/niryo_robot_hardware_interface/dynamixel_driver/dxl_hardware_check_connection_frequency", _check_connection_frequency);
         _nh.getParam("/niryo_robot_hardware_interface/dynamixel_driver/dxl_end_effector_frequency", _check_end_effector_frequency);
 
-        ROS_DEBUG("Dynamixel Driver Core - dxl_hardware_control_loop_frequency : %f", _control_loop_frequency);
-        ROS_DEBUG("Dynamixel Driver Core - dxl_hardware_write_frequency : %f", _write_frequency);
-        ROS_DEBUG("Dynamixel Driver Core - dxl_hardware_read_data_frequency : %f", _read_data_frequency);
-        ROS_DEBUG("Dynamixel Driver Core - dxl_hardware_read_status_frequency : %f", _read_status_frequency);
-        ROS_DEBUG("Dynamixel Driver Core - dxl_hardware_check_connection_frequency : %f", _check_connection_frequency);
-        ROS_DEBUG("Dynamixel Driver Core - dxl_end_effector_frequency : %f", _check_end_effector_frequency);
+        ROS_DEBUG("DynamixelDriverCore::initParameters - dxl_hardware_control_loop_frequency : %f", _control_loop_frequency);
+        ROS_DEBUG("DynamixelDriverCore::initParameters - dxl_hardware_write_frequency : %f", _write_frequency);
+        ROS_DEBUG("DynamixelDriverCore::initParameters - dxl_hardware_read_data_frequency : %f", _read_data_frequency);
+        ROS_DEBUG("DynamixelDriverCore::initParameters - dxl_hardware_read_status_frequency : %f", _read_status_frequency);
+        ROS_DEBUG("DynamixelDriverCore::initParameters - dxl_hardware_check_connection_frequency : %f", _check_connection_frequency);
+        ROS_DEBUG("DynamixelDriverCore::initParameters - dxl_end_effector_frequency : %f", _check_end_effector_frequency);
     }
 
     void DynamixelDriverCore::startControlLoop()
@@ -79,7 +78,7 @@ namespace DynamixelDriver
 
     void DynamixelDriverCore::resetHardwareControlLoopRates()
     {
-        ROS_DEBUG("Dynamixel Driver Core - Reset control loop rates");
+        ROS_DEBUG("DynamixelDriverCore::resetHardwareControlLoopRates - Reset control loop rates");
         double now = ros::Time::now().toSec();
         _time_hw_data_last_write = now;
         _time_hw_data_last_read = now;
@@ -90,7 +89,7 @@ namespace DynamixelDriver
 
     void DynamixelDriverCore::activeDebugMode(bool mode)
     {
-        ROS_INFO("Dynamixel Driver Core - Activate debug mode for dynamixel driver core: %d", mode);
+        ROS_INFO("DynamixelDriverCore::activeDebugMode - Activate debug mode for dynamixel driver core: %d", mode);
         _debug_flag = mode;
         _control_loop_flag = !mode;
 
@@ -242,9 +241,9 @@ namespace DynamixelDriver
         return niryo_robot_msgs::CommandStatus::ABORTED;
     }
 
-    void DynamixelDriverCore::setDxlCommands(SynchronizeMotorCmd &cmd)
+    void DynamixelDriverCore::setDxlCommands(const SynchronizeMotorCmd &cmd)
     {
-        _dxl_cmd.reset(new SynchronizeMotorCmd(cmd));
+        _dxl_cmd = cmd;
     }
 
     void DynamixelDriverCore::setTrajectoryControllerCommands(vector<uint32_t> &cmd)
@@ -257,14 +256,22 @@ namespace DynamixelDriver
         vector<uint8_t> motor_list;
         lock_guard<mutex> lck(_control_loop_mutex);
         ROS_INFO("Dynamixel Driver Core - Scan tools...");
-        int result = _dynamixel->getAllIdsOnDxlBus(motor_list);
+        int result = COMM_PORT_BUSY;
+
+        for(int counter = 0; counter < 50 && COMM_SUCCESS != result; ++counter)
+        {
+            result = _dynamixel->getAllIdsOnDxlBus(motor_list);
+            ROS_DEBUG_COND(COMM_SUCCESS != result, "DxlDriver::scanAndCheck status: %d (counter: %d)", result, counter);
+            ros::Duration(TIME_TO_WAIT_IF_BUSY).sleep();
+        }
         ROS_DEBUG("Dynamixel Driver Core - Result getAllIdsOnDxlBus: %d", result);
 
         ostringstream ss;
         for(auto const& m : motor_list)
             ss << m << " ";
         string motor_id_list_string = ss.str();
-        motor_id_list_string.pop_back(); //remove trailing " "
+        if(!motor_id_list_string.empty())
+            motor_id_list_string.pop_back(); //remove trailing " "
 
         ROS_DEBUG("Dynamixel Driver Core - All id on dxl bus: [%s]", motor_id_list_string.c_str());
         return motor_list;
@@ -342,7 +349,7 @@ namespace DynamixelDriver
         for (int i = 0; i < motor_states.size(); i++)
         {
             data.motor_identity.motor_id = motor_states.at(i).getId();
-            data.motor_identity.motor_type = (uint8_t)motor_states.at(i).getType();
+            data.motor_identity.motor_type = static_cast<uint8_t>(motor_states.at(i).getType());
             data.temperature = motor_states.at(i).getTemperatureState();
             data.voltage = double(motor_states.at(i).getVoltageState()) / DXL_VOLTAGE_DIVISOR;
             data.error = motor_states.at(i).getHardwareErrorState();
@@ -374,15 +381,15 @@ namespace DynamixelDriver
             _joint_trajectory_controller_cmd.clear();
             need_sleep = true;
         }
-        if (_dxl_cmd.get() != nullptr)
+        if (_dxl_cmd.isValid())
         {
             if (need_sleep)
                 ros::Duration(0.01).sleep();
-            _dynamixel->readSynchronizeCommand(*_dxl_cmd.get());
+            _dynamixel->readSynchronizeCommand(_dxl_cmd);
             _dxl_cmd.reset();
             need_sleep = true;
         }
-        if (_end_effector_cmd.size() != 0)
+        if (!_end_effector_cmd.empty())
         {
             if (need_sleep)
                 ros::Duration(0.01).sleep();
@@ -401,11 +408,11 @@ namespace DynamixelDriver
             {
                 if (!_dynamixel->isConnectionOk())
                 {
-                    ROS_WARN("Dynamixel Driver Core - Dynamixel connection error");
+                    ROS_WARN("DynamixelDriverCore::controlLoop - Dynamixel connection error");
                     ros::Duration(0.1).sleep();
 
                     vector<uint8_t> missing_ids;
-                    ROS_DEBUG("Dynamixel Driver Core - Scan to find Dxl motors");
+                    ROS_DEBUG("DynamixelDriverCore::controlLoop - Scan to find Dxl motors");
 
                     int bus_state;
                     {
@@ -416,7 +423,7 @@ namespace DynamixelDriver
                     { // wait for connection to be up
                         missing_ids = getRemovedMotorList();
                         for(vector<uint8_t>::const_iterator it = missing_ids.cbegin(); it != missing_ids.cend(); ++it) {
-                            ROS_WARN_THROTTLE(2, "Dynamixel Driver Core - Dynamixel %d do not seem to be connected", *it);
+                            ROS_WARN_THROTTLE(2, "DynamixelDriverCore::controlLoop - Dynamixel %d do not seem to be connected", *it);
                         }
                         ros::Duration(0.25).sleep();
                         {
@@ -424,27 +431,26 @@ namespace DynamixelDriver
                             bus_state = _dynamixel->scanAndCheck();
                         }
                     }
-                    ROS_INFO("Dynamixel Driver Core - Dxl Bus ok");
+                    ROS_INFO("DynamixelDriverCore::controlLoop - Dxl Bus ok");
                 }
+
                 if (_control_loop_flag)
                 {
+                    lock_guard<mutex> lck(_control_loop_mutex);
+                    if (ros::Time::now().toSec() - _time_hw_data_last_read > 1.0 / _read_data_frequency)
                     {
-                        lock_guard<mutex> lck(_control_loop_mutex);
-                        if (ros::Time::now().toSec() - _time_hw_data_last_read > 1.0 / _read_data_frequency)
-                        {
-                            _time_hw_data_last_read += 1.0 / _read_data_frequency;
-                            _dynamixel->readPositionStatus();
-                        }
-                        if (ros::Time::now().toSec() - _time_hw_status_last_read > 1.0 / _read_status_frequency)
-                        {
-                            _time_hw_status_last_read += 1.0 / _read_status_frequency;
-                            _dynamixel->readHwStatus();
-                        }
-                        if (ros::Time::now().toSec() - _time_hw_data_last_write > 1.0 / _write_frequency)
-                        {
-                            _time_hw_data_last_write += 1.0 / _write_frequency;
-                            _executeCommand();
-                        }
+                        _time_hw_data_last_read += 1.0 / _read_data_frequency;
+                        _dynamixel->readPositionStatus();
+                    }
+                    if (ros::Time::now().toSec() - _time_hw_status_last_read > 1.0 / _read_status_frequency)
+                    {
+                        _time_hw_status_last_read += 1.0 / _read_status_frequency;
+                        _dynamixel->readHwStatus();
+                    }
+                    if (ros::Time::now().toSec() - _time_hw_data_last_write > 1.0 / _write_frequency)
+                    {
+                        _time_hw_data_last_write += 1.0 / _write_frequency;
+                        _executeCommand();
                     }
                     control_loop_rate.sleep();
                 }

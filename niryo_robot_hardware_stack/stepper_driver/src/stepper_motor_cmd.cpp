@@ -23,37 +23,23 @@ namespace StepperDriver
 {
     StepperMotorCmd::StepperMotorCmd()
     {
-
     }
 
-    StepperMotorCmd::StepperMotorCmd(StepperCommandType type, std::vector<uint8_t> motor_id, std::vector<int32_t> params)
-        : _type(type), _motor_id_list(motor_id), _param_list(params)
+    StepperMotorCmd::StepperMotorCmd(StepperCommandType_t type,
+                                     std::vector<uint8_t> motor_id,
+                                     std::vector<int32_t> params) :
+        _type(type), _motor_id_list(motor_id), _param_list(params)
     {
-
     }
 
-    StepperCommandType StepperMotorCmd::getType()
-    {
-        return _type;
-    }
-
-    void StepperMotorCmd::setType(StepperCommandType type)
+    void StepperMotorCmd::setType(StepperCommandType_t type)
     {
         _type = type;
     }
-    
-    std::vector<uint8_t>& StepperMotorCmd::getMotorsId()
-    {
-        return _motor_id_list;
-    }
+
     void StepperMotorCmd::setMotorsId(std::vector<uint8_t> motor_id)
     {
         _motor_id_list = motor_id;
-    }
-
-    std::vector<int32_t>& StepperMotorCmd::getParams()
-    {
-        return _param_list;
     }
 
     void StepperMotorCmd::setParams(std::vector<int32_t> params)
@@ -61,4 +47,4 @@ namespace StepperDriver
         _param_list = params;
     }
 
-}
+} //stepper driver

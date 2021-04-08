@@ -29,7 +29,7 @@ class StepperDriverTest {
 
             ros::Duration(2).sleep();
             StepperDriver::StepperMotorCmd cmd_torque;
-            cmd_torque.setType(StepperDriver::StepperCommandType::CMD_TYPE_TORQUE);
+            cmd_torque.setType(StepperDriver::StepperCommandType_t::CMD_TYPE_TORQUE);
             cmd_torque.setMotorsId(id);
             cmd_torque.setParams(std::vector<int32_t> {false, false, false});
             _stepper->setStepperCommands(cmd_torque);
@@ -45,7 +45,7 @@ class StepperDriverTest {
         {
             ROS_INFO("active all arm motors");
             StepperDriver::StepperMotorCmd cmd;
-            cmd.setType(StepperDriver::StepperCommandType::CMD_TYPE_TORQUE);
+            cmd.setType(StepperDriver::StepperCommandType_t::CMD_TYPE_TORQUE);
             cmd.setMotorsId(id);
             cmd.setParams(std::vector<int32_t> {true, true, true});
             _stepper->setStepperCommands(cmd);
@@ -61,13 +61,13 @@ class StepperDriverTest {
             ROS_INFO("move all arm motors");
             StepperDriver::StepperMotorCmd cmd;
 
-            cmd.setType(StepperDriver::StepperCommandType::CMD_TYPE_TORQUE);
+            cmd.setType(StepperDriver::StepperCommandType_t::CMD_TYPE_TORQUE);
             cmd.setMotorsId(id);
             cmd.setParams(std::vector<int32_t> {true, true, true});
             _stepper->setStepperCommands(cmd);
             ros::Duration(1).sleep();
 
-            cmd.setType(StepperDriver::StepperCommandType::CMD_TYPE_POSITION);
+            cmd.setType(StepperDriver::StepperCommandType_t::CMD_TYPE_POSITION);
             cmd.setParams(home_pose);
             _stepper->setStepperCommands(cmd);
             ros::Duration(5).sleep();
@@ -76,7 +76,7 @@ class StepperDriverTest {
             _stepper->setStepperCommands(cmd);
             ros::Duration(5).sleep();
 
-            cmd.setType(StepperDriver::StepperCommandType::CMD_TYPE_TORQUE);
+            cmd.setType(StepperDriver::StepperCommandType_t::CMD_TYPE_TORQUE);
             cmd.setParams(std::vector<int32_t> {false, false, false});
             _stepper->setStepperCommands(cmd);
             ros::Duration(1).sleep();
@@ -103,7 +103,7 @@ class StepperDriverTest {
         {
             StepperDriver::StepperMotorCmd cmd_torque;
 
-            cmd_torque.setType(StepperDriver::StepperCommandType::CMD_TYPE_TORQUE);
+            cmd_torque.setType(StepperDriver::StepperCommandType_t::CMD_TYPE_TORQUE);
             cmd_torque.setMotorsId(std::vector<uint8_t> {1});
             cmd_torque.setParams(std::vector<int32_t> {true});
             _stepper->setStepperCommands(cmd_torque);

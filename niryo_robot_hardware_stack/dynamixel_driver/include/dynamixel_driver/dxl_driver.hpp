@@ -116,7 +116,7 @@ namespace DynamixelDriver
             int getAllIdsOnDxlBus(std::vector<uint8_t> &id_list);
 
         private:
-            int init();
+            void init();
             int setupCommunication();
 
 

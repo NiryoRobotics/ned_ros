@@ -25,7 +25,6 @@ include_directories(
 
 add_library(${PROJECT_NAME}
     src/motor_state.cpp
-    src/motor_cmd.cpp
 )
 
 target_link_libraries(${PROJECT_NAME}

@@ -100,7 +100,7 @@ namespace ConveyorInterface {
                 vector<uint8_t> stepper_id{conveyor_id};
                 vector<int32_t> stepper_params{8};
                 cmd.setParams(stepper_params);
-                cmd.setType(StepperDriver::StepperCommandType::CMD_TYPE_MICRO_STEPS);
+                cmd.setType(StepperDriver::StepperCommandType_t::CMD_TYPE_MICRO_STEPS);
                 cmd.setMotorsId(stepper_id);
                 _stepper->setStepperCommands(cmd);
                 ros::Duration(0.05).sleep();
@@ -108,12 +108,12 @@ namespace ConveyorInterface {
                 stepper_params.clear();
                 stepper_params = {_conveyor_max_effort};
                 cmd.setParams(stepper_params);
-                cmd.setType(StepperDriver::StepperCommandType::CMD_TYPE_MAX_EFFORT);
+                cmd.setType(StepperDriver::StepperCommandType_t::CMD_TYPE_MAX_EFFORT);
                 cmd.setMotorsId(stepper_id);
                 _stepper->setStepperCommands(cmd);
                 ros::Duration(0.1).sleep();
 
-                cmd.setType(StepperDriver::StepperCommandType::CMD_TYPE_CONVEYOR);
+                cmd.setType(StepperDriver::StepperCommandType_t::CMD_TYPE_CONVEYOR);
                 cmd.setParams(vector<int32_t>{false, 0, -1});
                 cmd.setMotorsId(stepper_id);
                 _stepper->setConveyorCommands(cmd);
@@ -167,7 +167,7 @@ namespace ConveyorInterface {
         if(conveyor_id != _list_conveyor_id.end())
         {
             cmd.setMotorsId(vector<uint8_t> {req.id});
-            cmd.setType(StepperDriver::StepperCommandType::CMD_TYPE_CONVEYOR);
+            cmd.setType(StepperDriver::StepperCommandType_t::CMD_TYPE_CONVEYOR);
             cmd.setParams(vector<int32_t>{req.control_on, req.speed, req.direction});
             message = "Set command on conveyor id ";
             message += to_string(req.id);

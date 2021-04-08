@@ -241,107 +241,96 @@ namespace StepperDriver
             params_string += std::to_string(cmd.getParams().at(i)) + " ";
         ROS_DEBUG("Stepper Driver - Received stepper cmd with params %s", params_string.c_str());
 
-        if (cmd.getType() == StepperCommandType::CMD_TYPE_POSITION)
+        switch(cmd.getType())
         {
-            if (cmd.getMotorsId().size() <= cmd.getParams().size())
-            {
-                for (int i = 0; i < cmd.getMotorsId().size(); i++)
-                {
-                    result = sendPositionCommand(cmd.getMotorsId().at(i), cmd.getParams().at(i));
+            case StepperCommandType_t::CMD_TYPE_POSITION:
+                if (cmd.getMotorsId().size() <= cmd.getParams().size()) {
+                    for (int i = 0; i < cmd.getMotorsId().size(); i++) {
+                        result = sendPositionCommand(cmd.getMotorsId().at(i), cmd.getParams().at(i));
+                    }
                 }
-            }
-        }
-        else if (cmd.getType() == StepperCommandType::CMD_TYPE_TORQUE)
-        {
-            if (cmd.getMotorsId().size() <= cmd.getParams().size())
-            {
-                for (int i = 0; i < cmd.getMotorsId().size(); i++)
-                {
-                    result = sendTorqueOnCommand(cmd.getMotorsId().at(i), cmd.getParams().at(i));
+            break;
+            case StepperCommandType_t::CMD_TYPE_TORQUE:
+                if (cmd.getMotorsId().size() <= cmd.getParams().size()) {
+                    for (int i = 0; i < cmd.getMotorsId().size(); i++) {
+                        result = sendTorqueOnCommand(cmd.getMotorsId().at(i), cmd.getParams().at(i));
+                    }
                 }
-            }
-        }
-        else if (cmd.getType() == StepperCommandType::CMD_TYPE_SYNCHRONIZE)
-        {
-            if (cmd.getMotorsId().size() <= cmd.getParams().size())
-            {
-                for (int i = 0; i < cmd.getMotorsId().size(); i++)
+            break;
+            case StepperCommandType_t::CMD_TYPE_SYNCHRONIZE:
+                if (cmd.getMotorsId().size() <= cmd.getParams().size())
                 {
-                    result = sendSynchronizePositionCommand(cmd.getMotorsId().at(i), cmd.getParams().at(i));
+                    for (int i = 0; i < cmd.getMotorsId().size(); i++)
+                    {
+                        result = sendSynchronizePositionCommand(cmd.getMotorsId().at(i), cmd.getParams().at(i));
+                    }
                 }
-            }
+            break;
+            case StepperCommandType_t::CMD_TYPE_RELATIVE_MOVE:
+                if (cmd.getMotorsId().size() > 0 && cmd.getParams().size() >= 2)
+                    result = sendRelativeMoveCommand(cmd.getMotorsId().at(0), cmd.getParams().at(0), cmd.getParams().at(1));
+            break;
+            case StepperCommandType_t::CMD_TYPE_MAX_EFFORT:
+                if (cmd.getMotorsId().size() <= cmd.getParams().size()) {
+                    for (int i = 0; i < cmd.getMotorsId().size(); i++) {
+                        result = sendMaxEffortCommand(cmd.getMotorsId().at(i), cmd.getParams().at(i));
+                    }
+                }
+            break;
+            case StepperCommandType_t::CMD_TYPE_MICRO_STEPS:
+                if (cmd.getMotorsId().size() <= cmd.getParams().size()) {
+                    for (int i = 0; i < cmd.getMotorsId().size(); i++) {
+                        result = sendMicroStepsCommand(cmd.getMotorsId().at(i),
+                                                       cmd.getParams().at(i));
+                    }
+                }
+            break;
+            case StepperCommandType_t::CMD_TYPE_CALIBRATION:
+                if (cmd.getMotorsId().size() > 0 && cmd.getParams().size() >= 4)
+                {
+                    _calibration_motor_list.push_back(cmd.getMotorsId().at(0));
+                    _motor_calibration_map[cmd.getMotorsId().at(0)] = 0;
+                    _motor_calibration_map_cmd[cmd.getMotorsId().at(0)] = {cmd, ros::Time::now()};
+                    result = sendCalibrationCommand(cmd.getMotorsId().at(0), cmd.getParams().at(0), cmd.getParams().at(1), cmd.getParams().at(2), cmd.getParams().at(3));
+                    if (result == CAN_OK &&
+                            _calibration_result != e_CanStepperCalibrationStatus::CAN_STEPPERS_CALIBRATION_IN_PROGRESS)
+                    {
+                        // Join the previous calibration thread (otherwise we cannot reassign the thread)
+                        if (_calibration_thread.joinable())
+                            _calibration_thread.join();
+                        _calibration_thread = std::thread(&StepperDriver::readCalibrationStates, this);
+                    }
+                }
+            break;
+            case StepperCommandType_t::CMD_TYPE_POSITION_OFFSET:
+                if (cmd.getMotorsId().size() > 0 && cmd.getParams().size() >= 2)
+                    result = sendPositionOffsetCommand(cmd.getMotorsId().at(0),
+                                                       cmd.getParams().at(0),
+                                                       cmd.getParams().at(1));
+                break;
+            case StepperCommandType_t::CMD_TYPE_CONVEYOR:
+                if (cmd.getMotorsId().size() > 0 && cmd.getParams().size() >= 3)
+                    result = sendConveyoOnCommand(cmd.getMotorsId().at(0),
+                                                  cmd.getParams().at(0),
+                                                  cmd.getParams().at(1),
+                                                  cmd.getParams().at(2));
+                break;
+            case StepperCommandType_t::CMD_TYPE_UPDATE_CONVEYOR:
+                if (cmd.getMotorsId().size() > 0 && cmd.getParams().size() >= 1)
+                {
+                    result = sendUpdateConveyorId(cmd.getMotorsId().at(0), cmd.getParams().at(0));
+                    if (result == CAN_OK)
+                    {
+                        removeConveyor(cmd.getMotorsId().at(0));
+                        addConveyor(cmd.getParams().at(0));
+                    }
+                }
+            break;
+            case StepperCommandType_t::CMD_TYPE_UNKNOWN:
+            default:
+                break;
         }
-        else if (cmd.getType() == StepperCommandType::CMD_TYPE_RELATIVE_MOVE)
-        {
 
-            if (cmd.getMotorsId().size() > 0 && cmd.getParams().size() >= 2)
-            {
-                result = sendRelativeMoveCommand(cmd.getMotorsId().at(0), cmd.getParams().at(0), cmd.getParams().at(1));
-            }
-        }
-        else if (cmd.getType() == StepperCommandType::CMD_TYPE_MAX_EFFORT)
-        {
-            if (cmd.getMotorsId().size() <= cmd.getParams().size())
-            {
-                for (int i = 0; i < cmd.getMotorsId().size(); i++)
-                {
-                    result = sendMaxEffortCommand(cmd.getMotorsId().at(i), cmd.getParams().at(i));
-                }
-            }
-        }
-        else if (cmd.getType() == StepperCommandType::CMD_TYPE_MICRO_STEPS)
-        {
-            if (cmd.getMotorsId().size() <= cmd.getParams().size())
-            {
-                for (int i = 0; i < cmd.getMotorsId().size(); i++)
-                {
-                    result = sendMicroStepsCommand(cmd.getMotorsId().at(i), cmd.getParams().at(i));
-                }
-            }
-        }
-        else if (cmd.getType() == StepperCommandType::CMD_TYPE_CALIBRATION)
-        {
-            if (cmd.getMotorsId().size() > 0 && cmd.getParams().size() >= 4)
-            {
-                _calibration_motor_list.push_back(cmd.getMotorsId().at(0));
-                _motor_calibration_map[cmd.getMotorsId().at(0)] = 0;
-                _motor_calibration_map_cmd[cmd.getMotorsId().at(0)] = {cmd, ros::Time::now()};
-                result = sendCalibrationCommand(cmd.getMotorsId().at(0), cmd.getParams().at(0), cmd.getParams().at(1), cmd.getParams().at(2), cmd.getParams().at(3));
-                if (result == CAN_OK && _calibration_result != e_CanStepperCalibrationStatus::CAN_STEPPERS_CALIBRATION_IN_PROGRESS)
-                {
-                    // Join the previous calibration thread (otherwise we cannot reassign the thread)
-                    if (_calibration_thread.joinable())
-                        _calibration_thread.join();
-                    _calibration_thread = std::thread(&StepperDriver::readCalibrationStates, this);
-                }
-            }
-        }
-        else if (cmd.getType() == StepperCommandType::CMD_TYPE_POSITION_OFFSET)
-        {
-            if (cmd.getMotorsId().size() > 0 && cmd.getParams().size() >= 2)
-            {
-                result = sendPositionOffsetCommand(cmd.getMotorsId().at(0), cmd.getParams().at(0), cmd.getParams().at(1));
-            }
-        }
-        else if (cmd.getType() == StepperCommandType::CMD_TYPE_CONVEYOR)
-        {
-            if (cmd.getMotorsId().size() > 0 && cmd.getParams().size() >= 3)
-            {
-                result = sendConveyoOnCommand(cmd.getMotorsId().at(0), cmd.getParams().at(0), cmd.getParams().at(1), cmd.getParams().at(2));
-            }
-        }
-        else if (cmd.getType() == StepperCommandType::CMD_TYPE_UPDATE_CONVEYOR)
-        {
-            if (cmd.getMotorsId().size() > 0 && cmd.getParams().size() >= 1)
-            {
-                result = sendUpdateConveyorId(cmd.getMotorsId().at(0), cmd.getParams().at(0));
-                if (result == CAN_OK)
-                {
-                    removeConveyor(cmd.getMotorsId().at(0));
-                    addConveyor(cmd.getParams().at(0));
-                }
-            }
-        }
         ROS_DEBUG("Stepper Driver - Received stepper cmd finished");
         return result;
     }
@@ -792,9 +781,9 @@ namespace StepperDriver
 //                std::string data_str = "";
 //                for(int byte_nb=0; byte_nb<_calibration_readed_datas[0].len; byte_nb++ )
 //                {
-//                    data_str+= " " + std::to_string((int)_calibration_readed_datas[0].rxBuf[byte_nb]);
+//                    data_str+= " " + std::to_string(static_cast<int>(_calibration_readed_datas[0].rxBuf[byte_nb]));
 //                }
-//                ROS_WARN("motor calib: %d, %d, %s", (int)(_calibration_readed_datas[0].rxId & 0x0F), _calibration_readed_datas[0].len, data_str.c_str());
+//                ROS_WARN("motor calib: %d, %d, %s", static_cast<int>(_calibration_readed_datas[0].rxId & 0x0F), _calibration_readed_datas[0].len, data_str.c_str());
 
                 if (_calibration_readed_datas[0].len == 4)
                 {

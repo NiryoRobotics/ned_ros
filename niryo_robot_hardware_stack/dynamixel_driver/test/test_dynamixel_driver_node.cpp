@@ -39,7 +39,7 @@ class DxlDriverTest {
         {
             ROS_INFO("active all arm motors");
             DynamixelDriver::SynchronizeMotorCmd cmd;
-            cmd.setType(DynamixelDriver::DxlCommandType::CMD_TYPE_TORQUE);
+            cmd.setType(DynamixelDriver::DxlCommandType_t::CMD_TYPE_TORQUE);
             cmd.setMotorsId(id);
             cmd.setParams(std::vector<uint32_t> {true, true, true});
             _dynamixel->setDxlCommands(cmd);
@@ -55,14 +55,14 @@ class DxlDriverTest {
             ROS_INFO("move all arm motors");
             DynamixelDriver::SynchronizeMotorCmd cmd;
 
-            cmd.setType(DynamixelDriver::DxlCommandType::CMD_TYPE_TORQUE);
+            cmd.setType(DynamixelDriver::DxlCommandType_t::CMD_TYPE_TORQUE);
             cmd.setMotorsId(id);
             cmd.setParams(std::vector<uint32_t> {true, true, true});
             ROS_INFO("Sending command 1");
             _dynamixel->setDxlCommands(cmd);
             ros::Duration(3).sleep();
 
-            cmd.setType(DynamixelDriver::DxlCommandType::CMD_TYPE_POSITION);
+            cmd.setType(DynamixelDriver::DxlCommandType_t::CMD_TYPE_POSITION);
             cmd.setParams(dxl_home_pose);
             ROS_INFO("Sending command 2");
             _dynamixel->setDxlCommands(cmd);
@@ -78,7 +78,7 @@ class DxlDriverTest {
             _dynamixel->setDxlCommands(cmd);
             ros::Duration(3).sleep();
 
-            cmd.setType(DynamixelDriver::DxlCommandType::CMD_TYPE_TORQUE);
+            cmd.setType(DynamixelDriver::DxlCommandType_t::CMD_TYPE_TORQUE);
             cmd.setParams(std::vector<uint32_t> {false, false, false});
             ROS_INFO("Sending command 5");
             _dynamixel->setDxlCommands(cmd);

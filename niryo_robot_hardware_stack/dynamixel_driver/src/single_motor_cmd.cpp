@@ -5,7 +5,7 @@ using namespace std;
 
 namespace DynamixelDriver
 {
-    SingleMotorCmd::SingleMotorCmd(DxlCommandType type,
+    SingleMotorCmd::SingleMotorCmd(DxlCommandType_t type,
                                    uint8_t motor_id,
                                    uint32_t param) :
         _type(type),
@@ -13,7 +13,7 @@ namespace DynamixelDriver
         _param(param)
     {}
 
-    void SingleMotorCmd::setType(DxlCommandType type)
+    void SingleMotorCmd::setType(DxlCommandType_t type)
     {
         _type = type;
     }
@@ -33,30 +33,7 @@ namespace DynamixelDriver
         ostringstream ss;
         ss << "Single motor cmd - ";
 
-        switch(_type)
-        {
-            case DxlCommandType::CMD_TYPE_POSITION:
-                ss << "Position";
-                break;
-            case DxlCommandType::CMD_TYPE_VELOCITY:
-                ss << "Velocity";
-                break;
-            case DxlCommandType::CMD_TYPE_EFFORT:
-                ss << "Effort";
-                break;
-            case DxlCommandType::CMD_TYPE_TORQUE:
-                ss << "Torque";
-                break;
-            case DxlCommandType::CMD_TYPE_PING:
-                ss << "Ping";
-                break;
-            case DxlCommandType::CMD_TYPE_LEARNING_MODE:
-                ss << "Learning mode";
-                break;
-            default:
-                ss << "Unknown type " << static_cast<int>(_type);
-            break;
-        }
+        ss << DxlCommandType::toString(_type);
 
         ss << ": ";
         ss << "motor " << _id << ": " << _param;

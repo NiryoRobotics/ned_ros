@@ -32,15 +32,15 @@ namespace DynamixelDriver
      */
     DxlDriver::DxlDriver() :
         _is_dxl_connection_ok(false),
-        _hw_fail_counter_read(0),
-        _debug_error_message("Dxl Driver - No connection with Dynamixel motors has been made yet")
+        _debug_error_message("Dxl Driver - No connection with Dynamixel motors has been made yet"),
+      _hw_fail_counter_read(0)
     {
         ROS_DEBUG("DxlDriver - ctor");
 
         init();
 
         if (COMM_SUCCESS != setupCommunication())
-            ROS_WARN("Dxl Driver - Dynamixel Communication Failed");
+            ROS_WARN("DxlDriver - Dynamixel Communication Failed");
     }
 
 
@@ -55,7 +55,7 @@ namespace DynamixelDriver
      * @brief DxlDriver::init
      * @return
      */
-    int DxlDriver::init()
+    void DxlDriver::init()
     {
         // get params from rosparams
         _nh.getParam("/niryo_robot_hardware_interface/dynamixel_driver/dxl_bus/dxl_uart_device_name", _device_name);
@@ -64,7 +64,7 @@ namespace DynamixelDriver
         _dxlPortHandler.reset(dynamixel::PortHandler::getPortHandler(_device_name.c_str()));
         _dxlPacketHandler.reset(dynamixel::PacketHandler::getPacketHandler(DXL_BUS_PROTOCOL_VERSION));
 
-        ROS_DEBUG("Dxl Driver - Dxl : set port name (%s), baudrate(%d)", _device_name.c_str(), _uart_baudrate);
+        ROS_DEBUG("DxlDriver::init - Dxl : set port name (%s), baudrate(%d)", _device_name.c_str(), _uart_baudrate);
 
         //retrieve motor config
         vector<int> idList;
@@ -90,11 +90,11 @@ namespace DynamixelDriver
         motor_string_list.pop_back(); //remove last ","
         motor_string_list += "]";
 
-        ROS_INFO("Dxl Driver - Dxl motor list: %s ", motor_string_list.c_str());
+        ROS_INFO("DxlDriver::init - Dxl motor list: %s ", motor_string_list.c_str());
 
         //check that the two lists have the same size
         if(idList.size() != typeList.size())
-            ROS_ERROR("Dxl Driver - wrong dynamixel configuration. Please check your configuration file dxl_motor_id_list and dxl_motor_type_list");
+            ROS_ERROR("DxlDriver::init - wrong dynamixel configuration. Please check your configuration file dxl_motor_id_list and dxl_motor_type_list");
 
         //put everything in maps
         for(auto i = 0; i < idList.size(); ++i) {
@@ -107,25 +107,25 @@ namespace DynamixelDriver
                 if(DxlMotorType_t::MOTOR_TYPE_UNKNOWN != type)
                     addDynamixel(id, type);
                 else
-                    ROS_ERROR("Dxl Driver - unknown type %s. Please check your configuration file (niryo_robot_hardware_stack/dynamixel_driver/config/motors_config.yaml)", typeList.at(id).c_str());
+                    ROS_ERROR("DxlDriver::init - unknown type %s. Please check your configuration file (niryo_robot_hardware_stack/dynamixel_driver/config/motors_config.yaml)", typeList.at(id).c_str());
             }
             else
-                ROS_ERROR("Dxl Driver - duplicate id %d. Please check your configuration file (niryo_robot_hardware_stack/dynamixel_driver/config/motors_config.yaml)", id);
+                ROS_ERROR("DxlDriver::init - duplicate id %d. Please check your configuration file (niryo_robot_hardware_stack/dynamixel_driver/config/motors_config.yaml)", id);
         }
 
         //display internal data for debug
         for(auto const &s : _state_map)
-            ROS_DEBUG("State map: %d => %s", s.first, s.second.str().c_str());
+            ROS_DEBUG("DxlDriver::init - State map: %d => %s", s.first, s.second.str().c_str());
 
         for(auto const &id : _ids_map) {
             string listOfId;
             for(auto const &i : id.second) listOfId += to_string(i) + " ";
 
-            ROS_DEBUG("Id map: %s => %s", DxlMotorType::toString(id.first).c_str(), listOfId.c_str());
+            ROS_DEBUG("DxlDriver::init - Id map: %s => %s", DxlMotorType::toString(id.first).c_str(), listOfId.c_str());
         }
 
         for(auto const &d : _xdriver_map) {
-            ROS_DEBUG("Driver map: %s => %s", DxlMotorType::toString(d.first).c_str(), d.second->str().c_str());
+            ROS_DEBUG("DxlDriver::init - Driver map: %s => %s", DxlMotorType::toString(d.first).c_str(), d.second->str().c_str());
         }
     }
 
@@ -202,6 +202,8 @@ namespace DynamixelDriver
     {
         int ret = COMM_NOT_AVAILABLE;
 
+        ROS_DEBUG("DxlDriver::setupCommunication - initializing connection...");
+
         if(_dxlPortHandler) {
             _debug_error_message.clear();
 
@@ -209,7 +211,7 @@ namespace DynamixelDriver
             // see schema http://support.robotis.com/en/product/actuator/dynamixel_x/xl-series_main.htm
             if (!_dxlPortHandler->setupGpio())
             {
-                ROS_ERROR("Dxl Driver - Failed to setup direction GPIO pin for Dynamixel half-duplex serial");
+                ROS_ERROR("DxlDriver::setupCommunication - Failed to setup direction GPIO pin for Dynamixel half-duplex serial");
                 _debug_error_message = "Dxl Driver -  Failed to setup direction GPIO pin for Dynamixel half-duplex serial";
                 return DXL_FAIL_SETUP_GPIO;
             }
@@ -217,7 +219,7 @@ namespace DynamixelDriver
             // Open port
             if (!_dxlPortHandler->openPort())
             {
-                ROS_ERROR("Dxl Driver - Failed to open Uart port for Dynamixel bus");
+                ROS_ERROR("DxlDriver::setupCommunication - Failed to open Uart port for Dynamixel bus");
                 _debug_error_message = "Dxl Driver - Failed to open Uart port for Dynamixel bus";
                 return DXL_FAIL_OPEN_PORT;
             }
@@ -225,7 +227,7 @@ namespace DynamixelDriver
             // Set baudrate
             if (!_dxlPortHandler->setBaudRate(_uart_baudrate))
             {
-                ROS_ERROR("Dxl Driver - Failed to set baudrate for Dynamixel bus");
+                ROS_ERROR("DxlDriver::setupCommunication - Failed to set baudrate for Dynamixel bus");
                 _debug_error_message = "Dxl Driver - Failed to set baudrate for Dynamixel bus";
                 return DXL_FAIL_PORT_SET_BAUDRATE;
             }
@@ -234,6 +236,9 @@ namespace DynamixelDriver
             ros::Duration(0.1).sleep();
             ret = COMM_SUCCESS;
         }
+        else
+            ROS_ERROR("DxlDriver::setupCommunication - Invalid port handler");
+
 
         return ret;
     }
@@ -248,20 +253,22 @@ namespace DynamixelDriver
      */
     int DxlDriver::scanAndCheck()
     {
-        int counter = 0;
+        ROS_DEBUG("DxlDriver::scanAndCheck");
+
         _all_motor_connected.clear();
         int result = COMM_PORT_BUSY;
 
-        for(int counter = 0; counter < 50 && result != COMM_SUCCESS; ++counter)
+        for(int counter = 0; counter < 50 && COMM_SUCCESS != result; ++counter)
         {
             result = getAllIdsOnDxlBus(_all_motor_connected);
+            ROS_DEBUG_COND(COMM_SUCCESS != result, "DxlDriver::scanAndCheck status: %d (counter: %d)", result, counter);
             ros::Duration(TIME_TO_WAIT_IF_BUSY).sleep();
         }
 
         if (COMM_SUCCESS != result)
         {
             _debug_error_message = "Dxl Driver - Failed to scan motors, Dynamixel bus is too busy. Will retry...";
-            ROS_WARN_THROTTLE(1, "Dxl Driver - Failed to scan motors, dxl bus is too busy (counter max : %d)", counter);
+            ROS_WARN_THROTTLE(1, "DxlDriver::scanAndCheck - Failed to scan motors, dxl bus is too busy");
             return result;
         }
 
@@ -298,7 +305,7 @@ namespace DynamixelDriver
             result = _xdriver_map.at(targeted_dxl.getType())->ping(targeted_dxl.getId());
         }
         else
-            ROS_ERROR_THROTTLE(1, "Dxl Driver - Wrong dxl type detected: %d", (int)targeted_dxl.getType());
+            ROS_ERROR_THROTTLE(1, "DxlDriver::ping - Wrong dxl type detected: %d", static_cast<int>(targeted_dxl.getType()));
 
         return result;
     }
@@ -330,12 +337,12 @@ namespace DynamixelDriver
         for(auto const &it : _state_map)
         {
             DxlMotorType_t type = it.second.getType();
-            ROS_DEBUG("Dxl Driver - Reboot Dxl motor with ID: %d", it.first);
+            ROS_DEBUG("DxlDriver::rebootMotors - Reboot Dxl motor with ID: %d", it.first);
             if(_xdriver_map.count(type)) {
                 result = _xdriver_map.at(type)->reboot(it.first);
                 if (result != COMM_SUCCESS)
                 {
-                    ROS_WARN("Dxl Driver - Failed to reboot motor: %d", result);
+                    ROS_WARN("DxlDriver::rebootMotors - Failed to reboot motor: %d", result);
                     return_value = result;
                 }
             }
@@ -372,7 +379,7 @@ namespace DynamixelDriver
 
         if (0 < _hw_fail_counter_read)
         {
-            ROS_ERROR_THROTTLE(1, "Dxl Driver - Dxl connection problem - Failed to read from Dxl bus");
+            ROS_ERROR_THROTTLE(1, "DxlDriver::getPosition - Dxl connection problem - Failed to read from Dxl bus");
             _debug_error_message = "Dxl Driver - Connection problem with Dynamixel Bus.";
             _hw_fail_counter_read = 0;
             _is_dxl_connection_ok = false;
@@ -390,15 +397,15 @@ namespace DynamixelDriver
     {
         if (!hasMotors())
         {
-            ROS_ERROR_THROTTLE(1, "Dxl Driver - No motor");
-            _debug_error_message = "Dxl Driver -  No motor";
+            ROS_ERROR_THROTTLE(1, "DxlDriver::readPositionStatus - No motor");
+            _debug_error_message = "DxlDriver::readPositionStatus -  No motor";
             return;
         }
         fillPositionStatus();
 
         if (_hw_fail_counter_read > 25)
         {
-            ROS_ERROR_THROTTLE(1, "Dxl Driver - Dxl connection problem - Failed to read from Dxl bus");
+            ROS_ERROR_THROTTLE(1, "DxlDriver::readPositionStatus - Dxl connection problem - Failed to read from Dxl bus");
             _hw_fail_counter_read = 0;
             _is_dxl_connection_ok = false;
             _debug_error_message = "Dxl Driver - Connection problem with Dynamixel Bus.";
@@ -412,7 +419,7 @@ namespace DynamixelDriver
     {
         if (!hasMotors())
         {
-            ROS_ERROR_THROTTLE(1, "Dxl Driver - No motor");
+            ROS_ERROR_THROTTLE(1, "DxlDriver::readHwStatus - No motor");
             _debug_error_message = "Dxl Driver - No motor";
             return;
         }
@@ -424,7 +431,7 @@ namespace DynamixelDriver
 
         if (_hw_fail_counter_read > 25 )
         {
-            ROS_ERROR_THROTTLE(1, "Dxl Driver - Dxl connection problem - Failed to read from Dxl bus");
+            ROS_ERROR_THROTTLE(1, "DxlDriver::readHwStatus - Dxl connection problem - Failed to read from Dxl bus");
             _hw_fail_counter_read = 0;
 
             _is_dxl_connection_ok = false;
@@ -449,8 +456,9 @@ namespace DynamixelDriver
             for(auto const &id : id_list)
                 ids_str += to_string(id) + " ";
 
-            ROS_DEBUG_THROTTLE(0.5, "Trying to ping ids (%s) on bus using first driver (type: %s)", ids_str.c_str(), DxlMotorType::toString(it->first).c_str());
-            int result = it->second->scan(id_list);
+            ROS_DEBUG_THROTTLE(1, "DxlDriver::getAllIdsOnDxlBus - Found ids (%s) on bus using first driver (type: %s)", ids_str.c_str(),
+                               DxlMotorType::toString(it->first).c_str());
+            result = it->second->scan(id_list);
 
             if (COMM_SUCCESS != result)
             {
@@ -462,7 +470,7 @@ namespace DynamixelDriver
                 { // -3002 or other
                     _debug_error_message = "Dxl Driver - Failed to scan Dynamixel bus.";
                 }
-                ROS_WARN_THROTTLE(1, "Dxl Driver - Broadcast ping failed , result : %d (-3001: timeout, -3002: corrupted packet)", result);
+                ROS_WARN_THROTTLE(1, "DxlDriver::getAllIdsOnDxlBus - Broadcast ping failed , result : %d (-3001: timeout, -3002: corrupted packet)", result);
             }
         }
 
@@ -480,12 +488,9 @@ namespace DynamixelDriver
      */
     void DxlDriver::executeJointTrajectoryCmd(vector<uint32_t> &cmd)
     {
-        SynchronizeMotorCmd syncCmd;
-        syncCmd.setType(DxlCommandType::CMD_TYPE_POSITION);
-        syncCmd.setMotorsId(getArmMotors());
-        syncCmd.setParams(cmd);
+        SynchronizeMotorCmd syncCmd(DxlCommandType_t::CMD_TYPE_POSITION, getArmMotors(), cmd);
 
-        ROS_DEBUG_THROTTLE(0.5, "Dxl Driver - execute JointTrajectoryCmd");
+        ROS_DEBUG_THROTTLE(0.5, "DxlDriver::executeJointTrajectoryCmd");
 
         readSynchronizeCommand(syncCmd);
     }
@@ -496,23 +501,23 @@ namespace DynamixelDriver
      */
     void DxlDriver::readSynchronizeCommand(SynchronizeMotorCmd cmd)
     {
-        ROS_DEBUG_THROTTLE(0.5, "Dxl Driver - readSynchronizeCommand:  %s", cmd.str().c_str());
+        ROS_DEBUG_THROTTLE(0.5, "DxlDriver::readSynchronizeCommand:  %s", cmd.str().c_str());
 
         switch(cmd.getType())
         {
-            case DxlCommandType::CMD_TYPE_POSITION:
+            case DxlCommandType_t::CMD_TYPE_POSITION:
                 syncWritePositionCommand(cmd.getMotorsId(), cmd.getParams());
             break;
-            case DxlCommandType::CMD_TYPE_VELOCITY:
+            case DxlCommandType_t::CMD_TYPE_VELOCITY:
                 syncWriteVelocityCommand(cmd.getMotorsId(), cmd.getParams());
             break;
-            case DxlCommandType::CMD_TYPE_EFFORT:
+            case DxlCommandType_t::CMD_TYPE_EFFORT:
                 syncWriteEffortCommand(cmd.getMotorsId(), cmd.getParams());
             break;
-            case DxlCommandType::CMD_TYPE_TORQUE:
+            case DxlCommandType_t::CMD_TYPE_TORQUE:
                 syncWriteTorqueEnable(cmd.getMotorsId(), cmd.getParams());
             break;
-            case DxlCommandType::CMD_TYPE_LEARNING_MODE:
+            case DxlCommandType_t::CMD_TYPE_LEARNING_MODE:
             {
                 vector<uint8_t> id_list = getArmMotors();
                 vector<uint32_t> cmd_param(id_list.size(), cmd.getParams()[0]);
@@ -521,7 +526,7 @@ namespace DynamixelDriver
             }
             break;
             default:
-                ROS_ERROR("Unknown command type: %d", (int)cmd.getType());
+                ROS_ERROR("DxlDriver::readSynchronizeCommand - Unknown command type: %d", static_cast<int>(cmd.getType()));
             break;
         }
     }
@@ -534,9 +539,9 @@ namespace DynamixelDriver
     {
         int result = -1;
         int counter = 0;
-        int id = (int)cmd.getId();
+        int id = static_cast<int>(cmd.getId());
 
-        ROS_DEBUG_THROTTLE(0.5, "Dxl Driver - readSingleCommand:  %s", cmd.str().c_str());
+        ROS_DEBUG_THROTTLE(0.5, "DxlDriver::readSingleCommand:  %s", cmd.str().c_str());
 
         if(_state_map.count(id) != 0)
         {
@@ -546,19 +551,19 @@ namespace DynamixelDriver
             {
                 switch(cmd.getType())
                 {
-                case DxlCommandType::CMD_TYPE_VELOCITY:
+                case DxlCommandType_t::CMD_TYPE_VELOCITY:
                     result = setGoalVelocity(state, cmd.getParam());
                     break;
-                case DxlCommandType::CMD_TYPE_POSITION:
+                case DxlCommandType_t::CMD_TYPE_POSITION:
                     result = setGoalPosition(state, cmd.getParam());
                     break;
-                case DxlCommandType::CMD_TYPE_EFFORT:
+                case DxlCommandType_t::CMD_TYPE_EFFORT:
                     result = setGoalTorque(state, cmd.getParam());
                     break;
-                case DxlCommandType::CMD_TYPE_TORQUE:
+                case DxlCommandType_t::CMD_TYPE_TORQUE:
                     result = setTorqueEnable(state, cmd.getParam());
                     break;
-                case DxlCommandType::CMD_TYPE_PING:
+                case DxlCommandType_t::CMD_TYPE_PING:
                     result = ping(state);
                     break;
                 default:
@@ -573,7 +578,7 @@ namespace DynamixelDriver
 
         if (result != COMM_SUCCESS)
         {
-            ROS_WARN("Dxl Driver - Failed to write a single command on dxl motor id : %d", id);
+            ROS_WARN("DxlDriver::readSingleCommand - Failed to write a single command on dxl motor id : %d", id);
             _debug_error_message = "Dxl Driver - Failed to write a single command";
         }
     }
@@ -596,7 +601,7 @@ namespace DynamixelDriver
         }
         else
         {
-            ROS_ERROR_THROTTLE(1, "Dxl Driver - Wrong dxl type detected: %s", DxlMotorType::toString(dxl_type).c_str());
+            ROS_ERROR_THROTTLE(1, "DxlDriver::setGoalVelocity - Wrong dxl type detected: %s", DxlMotorType::toString(dxl_type).c_str());
             _debug_error_message = "Dxl Driver - Wrong dxl type detected";
         }
 
@@ -621,7 +626,7 @@ namespace DynamixelDriver
         }
         else
         {
-            ROS_ERROR_THROTTLE(1, "Dxl Driver - Wrong dxl type detected: %s", DxlMotorType::toString(dxl_type).c_str());
+            ROS_ERROR_THROTTLE(1, "DxlDriver::setGoalPosition - Wrong dxl type detected: %s", DxlMotorType::toString(dxl_type).c_str());
             _debug_error_message = "Dxl Driver - Wrong dxl type detected";
         }
         return result;
@@ -645,7 +650,7 @@ namespace DynamixelDriver
         }
         else
         {
-            ROS_ERROR_THROTTLE(1, "Dxl Driver - Wrong dxl type detected: %s", DxlMotorType::toString(dxl_type).c_str());
+            ROS_ERROR_THROTTLE(1, "DxlDriver::setGoalTorque - Wrong dxl type detected: %s", DxlMotorType::toString(dxl_type).c_str());
             _debug_error_message = "Dxl Driver - Wrong dxl type detected";
         }
 
@@ -670,7 +675,7 @@ namespace DynamixelDriver
         }
         else
         {
-            ROS_ERROR_THROTTLE(1, "Dxl Driver - Wrong dxl type detected: %s", DxlMotorType::toString(dxl_type).c_str());
+            ROS_ERROR_THROTTLE(1, "DxlDriver::setTorqueEnable - Wrong dxl type detected: %s", DxlMotorType::toString(dxl_type).c_str());
             _debug_error_message = "Dxl Driver - Wrong dxl type detected";
         }
         return result;
@@ -708,7 +713,7 @@ namespace DynamixelDriver
                 if (COMM_SUCCESS == result)
                     ret = niryo_robot_msgs::CommandStatus::SUCCESS;
                 else
-                    ROS_WARN("Dxl Driver - Failed to write LED");
+                    ROS_WARN("DxlDriver::setLeds - Failed to write LED");
             }
         }
 
@@ -727,23 +732,23 @@ namespace DynamixelDriver
     int DxlDriver::sendCustomDxlCommand(DxlMotorType_t motor_type, uint8_t id, uint32_t reg_address, uint32_t value,  uint32_t byte_number)
     {
         int result;
-        ROS_DEBUG("Dxl Driver - Sending custom command to Dynamixel:\n"
+        ROS_DEBUG("DxlDriver::sendCustomDxlCommand:\n"
                   "Motor type: %d, ID: %d, Value: %d, Address: %d, Size: %d",
-                  (int)motor_type, (int)id, (int)value,
-                  (int)reg_address, (int)byte_number);
+                  static_cast<int>(motor_type), static_cast<int>(id), static_cast<int>(value),
+                  static_cast<int>(reg_address), static_cast<int>(byte_number));
 
         if(_xdriver_map.count(motor_type) && _xdriver_map.at(motor_type))
         {
             result = _xdriver_map.at(motor_type)->customWrite(id, reg_address, value, byte_number);
             if (result != COMM_SUCCESS)
             {
-                ROS_WARN("Dxl Driver - Failed to write custom command: %d", result);
+                ROS_WARN("DxlDriver::sendCustomDxlCommand - Failed to write custom command: %d", result);
                 result = niryo_robot_msgs::CommandStatus::DXL_WRITE_ERROR;
             }
         }
         else
         {
-            ROS_ERROR_THROTTLE(1, "Dxl Driver - driver for motor %s not available", DxlMotorType::toString(motor_type).c_str());
+            ROS_ERROR_THROTTLE(1, "DxlDriver::sendCustomDxlCommand - driver for motor %s not available", DxlMotorType::toString(motor_type).c_str());
             result = niryo_robot_msgs::CommandStatus::WRONG_MOTOR_TYPE;
         }
         ros::Duration(0.005).sleep();
@@ -763,23 +768,23 @@ namespace DynamixelDriver
                                         uint32_t reg_address, uint32_t &value, uint32_t byte_number)
     {
         int result;
-        ROS_DEBUG("Dxl Driver - Reading custom registry from Dynamixel:\n"
+        ROS_DEBUG("DxlDriver::readCustomDxlCommand:\n"
                   "Motor type: %d, ID: %d, Address: %d, Size: %d",
-                  (int)motor_type, (int)id,
-                  (int)reg_address, (int)byte_number);
+                  static_cast<int>(motor_type), static_cast<int>(id),
+                  static_cast<int>(reg_address), static_cast<int>(byte_number));
 
         if(_xdriver_map.count(motor_type) && _xdriver_map.at(motor_type))
         {
             result = _xdriver_map.at(motor_type)->customRead(id, reg_address, value, byte_number);
             if (result != COMM_SUCCESS)
             {
-                ROS_WARN("Dxl Driver - Failed to write custom command: %d", result);
+                ROS_WARN("DxlDriver::readCustomDxlCommand - Failed to write custom command: %d", result);
                 result = niryo_robot_msgs::CommandStatus::DXL_WRITE_ERROR;
             }
         }
         else
         {
-            ROS_ERROR_THROTTLE(1, "Dxl Driver - driver for motor %s not available", DxlMotorType::toString(motor_type).c_str());
+            ROS_ERROR_THROTTLE(1, "DxlDriver::readCustomDxlCommand - driver for motor %s not available", DxlMotorType::toString(motor_type).c_str());
             result = niryo_robot_msgs::CommandStatus::WRONG_MOTOR_TYPE;
         }
         ros::Duration(0.005).sleep();
@@ -849,7 +854,8 @@ namespace DynamixelDriver
      */
     void DxlDriver::fillPositionStatus()
     {
-        readAndFillState(&XDriver::syncReadPosition, &DxlMotorState::setTemperatureState);
+        readAndFillState(&XDriver::syncReadPosition,
+                         &DxlMotorState::setPositionState);
     }
 
     /**
@@ -857,7 +863,8 @@ namespace DynamixelDriver
      */
     void DxlDriver::fillTemperatureStatus()
     {
-        readAndFillState(&XDriver::syncReadTemperature, &DxlMotorState::setTemperatureState);
+        readAndFillState(&XDriver::syncReadTemperature,
+                         &DxlMotorState::setTemperatureState);
     }
 
     /**
@@ -865,7 +872,8 @@ namespace DynamixelDriver
      */
     void DxlDriver::fillVoltageStatus()
     {
-        readAndFillState(&XDriver::syncReadVoltage, &DxlMotorState::setVoltageState);
+        readAndFillState(&XDriver::syncReadVoltage,
+                         &DxlMotorState::setVoltageState);
     }
 
     /**
@@ -873,7 +881,8 @@ namespace DynamixelDriver
      */
     void DxlDriver::fillErrorStatus()
     {
-        readAndFillState(&XDriver::syncReadHwErrorStatus, &DxlMotorState::setHardwareError);
+        readAndFillState(&XDriver::syncReadHwErrorStatus,
+                         &DxlMotorState::setHardwareError);
     }
 
 
@@ -885,7 +894,7 @@ namespace DynamixelDriver
             void (DxlMotorState::*setFunction)(uint32_t))
     {
         // syncread from all drivers for all motors
-        for(auto it : _xdriver_map)
+        for(auto const& it : _xdriver_map)
         {
             DxlMotorType_t type = it.first;
             shared_ptr<XDriver> driver = it.second;
@@ -900,8 +909,8 @@ namespace DynamixelDriver
                     _hw_fail_counter_read = 0;
 
                     // set motors states accordingly
-                    for(auto const &i : id_list)
-                        (_state_map.at(i).*setFunction)(position_list.at(i));
+                    for(auto i = 0; i < id_list.size(); ++i)
+                        (_state_map.at(id_list.at(i)).*setFunction)(position_list.at(i));
                 }
                 else
                     _hw_fail_counter_read++;
@@ -1002,7 +1011,7 @@ namespace DynamixelDriver
 
         if (!drivers_needed_map.empty())
         {
-            ROS_WARN("Dxl Driver - Failed to write synchronize position");
+            ROS_WARN("DxlDriver::syncWriteCommand - Failed to write synchronize position");
             _debug_error_message = "Dxl Driver - Failed to write synchronize position";
         }
     }

@@ -64,7 +64,7 @@ namespace DynamixelDriver
 
         std::vector<DxlMotorState> getDxlStates() const;
 
-        void setDxlCommands(SynchronizeMotorCmd &cmd);
+        void setDxlCommands(const SynchronizeMotorCmd &cmd);
 
         int ping_id(uint8_t id, DxlMotorType_t type);
         std::vector<uint8_t> scanTools();
@@ -109,7 +109,7 @@ namespace DynamixelDriver
         void _executeCommand();
 
         std::vector<uint32_t> _joint_trajectory_controller_cmd;
-        std::shared_ptr<SynchronizeMotorCmd> _dxl_cmd;
+        SynchronizeMotorCmd _dxl_cmd;
         std::vector<SingleMotorCmd> _end_effector_cmd;
 
         ros::ServiceServer _activate_leds_server;

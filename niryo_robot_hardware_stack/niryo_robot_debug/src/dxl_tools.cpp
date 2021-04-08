@@ -72,7 +72,7 @@ void DxlTools::ping(int id)
         printf("Ping failed: %d\n", dxl_comm_result);
     }
     else if (dxl_error != 0) {
-        printf("Ping OK for ID: %d, but an error flag is set on the motor: %d\n", id, (int)dxl_error);
+        printf("Ping OK for ID: %d, but an error flag is set on the motor: %d\n", id, static_cast<int>(dxl_error));
     }
     else {
         printf("Ping succeeded for ID: %d\n", id);

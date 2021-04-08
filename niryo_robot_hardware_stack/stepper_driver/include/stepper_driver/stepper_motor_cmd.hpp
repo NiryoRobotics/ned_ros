@@ -30,26 +30,43 @@ namespace StepperDriver
 
         public:
 
-            StepperMotorCmd( );
-            StepperMotorCmd(StepperCommandType type,
+            StepperMotorCmd();
+            StepperMotorCmd(StepperCommandType_t type,
                             std::vector<uint8_t> motor_id,
                             std::vector<int32_t> params);
             
-            StepperCommandType getType();
-            void setType(StepperCommandType type);
+            StepperCommandType_t getType() const;
+            std::vector<uint8_t> getMotorsId() const;
+            std::vector<int32_t> getParams() const;
 
-            std::vector<uint8_t>& getMotorsId();
+            void setType(StepperCommandType_t type);
             void setMotorsId(std::vector<uint8_t> motor_id);
-
-            std::vector<int32_t>& getParams();
             void setParams(std::vector<int32_t> params);
 
         private:
 
-            StepperCommandType _type{StepperCommandType::CMD_TYPE_NONE};
+            StepperCommandType_t _type{StepperCommandType_t::CMD_TYPE_NONE};
             std::vector<uint8_t> _motor_id_list;
             std::vector<int32_t> _param_list;
     };
-}
+
+    inline
+    StepperCommandType_t StepperMotorCmd::getType() const
+    {
+        return _type;
+    }
+
+    inline
+    std::vector<uint8_t> StepperMotorCmd::getMotorsId() const
+    {
+        return _motor_id_list;
+    }
+
+    inline
+    std::vector<int32_t> StepperMotorCmd::getParams() const
+    {
+        return _param_list;
+    }
+} //stepper driver
 
 #endif

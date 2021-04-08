@@ -22,7 +22,7 @@ namespace NiryoRobotHardwareInterface
             res.message = "";
             return true;
         }
-
+        return true;
     }
 
     bool HardwareInterface::_callbackLaunchMotorsReport(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res)

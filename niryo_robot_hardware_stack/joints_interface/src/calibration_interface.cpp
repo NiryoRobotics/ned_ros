@@ -121,7 +121,7 @@ namespace JointsInterface {
     {
         StepperDriver::StepperMotorCmd stepper_cmd;
 
-        stepper_cmd.setType(StepperDriver::StepperCommandType::CMD_TYPE_TORQUE);
+        stepper_cmd.setType(StepperDriver::StepperCommandType_t::CMD_TYPE_TORQUE);
         vector<uint8_t> id{motor.getId()};
         stepper_cmd.setMotorsId(id);
         vector<int32_t> param{status};
@@ -136,7 +136,7 @@ namespace JointsInterface {
         _motorTorque(motor, true);
 
         StepperDriver::StepperMotorCmd stepper_cmd;
-        stepper_cmd.setType(StepperDriver::StepperCommandType::CMD_TYPE_POSITION);
+        stepper_cmd.setType(StepperDriver::StepperCommandType_t::CMD_TYPE_POSITION);
 
         vector<uint8_t> id{motor.getId()};
         stepper_cmd.setMotorsId(id);
@@ -154,7 +154,7 @@ namespace JointsInterface {
         _motorTorque(motor, true);
 
         StepperDriver::StepperMotorCmd stepper_cmd;
-        stepper_cmd.setType(StepperDriver::StepperCommandType::CMD_TYPE_RELATIVE_MOVE);
+        stepper_cmd.setType(StepperDriver::StepperCommandType_t::CMD_TYPE_RELATIVE_MOVE);
         vector<int32_t> param{steps, delay};
         stepper_cmd.setParams(param);
         vector<uint8_t> id{motor.getId()};
@@ -175,7 +175,7 @@ namespace JointsInterface {
     {
         StepperDriver::StepperMotorCmd stepper_cmd;
 
-        stepper_cmd.setType(StepperDriver::StepperCommandType::CMD_TYPE_CALIBRATION);
+        stepper_cmd.setType(StepperDriver::StepperCommandType_t::CMD_TYPE_CALIBRATION);
         vector<uint8_t> id{motor.getId()};
         stepper_cmd.setMotorsId(id);
 
@@ -212,7 +212,7 @@ namespace JointsInterface {
         sld.sleep();
         StepperDriver::StepperMotorCmd stepper_cmd;
 
-        stepper_cmd.setType(StepperDriver::StepperCommandType::CMD_TYPE_TORQUE);
+        stepper_cmd.setType(StepperDriver::StepperCommandType_t::CMD_TYPE_TORQUE);
 
         vector<uint8_t> id{_joint_list.at(1).getId()};
         stepper_cmd.setMotorsId(id);
@@ -228,7 +228,7 @@ namespace JointsInterface {
         // 2. Move All Dynamixel to Home Position
         DynamixelDriver::SynchronizeMotorCmd dynamixel_cmd;
 
-        dynamixel_cmd.setType(DynamixelDriver::DxlCommandType::CMD_TYPE_TORQUE);
+        dynamixel_cmd.setType(DynamixelDriver::DxlCommandType_t::CMD_TYPE_TORQUE);
         id.clear();
         id = {
             _joint_list.at(3).getId(),
@@ -305,8 +305,8 @@ namespace JointsInterface {
         ros::Duration(2.5).sleep();
 
 
-        dynamixel_cmd.setType(DynamixelDriver::DxlCommandType::CMD_TYPE_TORQUE);
-        stepper_cmd.setType(StepperDriver::StepperCommandType::CMD_TYPE_TORQUE);
+        dynamixel_cmd.setType(DynamixelDriver::DxlCommandType_t::CMD_TYPE_TORQUE);
+        stepper_cmd.setType(StepperDriver::StepperCommandType_t::CMD_TYPE_TORQUE);
 
         dynamixel_cmd.setMotorsId(vector<uint8_t>{
             _joint_list.at(3).getId(),
@@ -396,7 +396,7 @@ namespace JointsInterface {
     {
         StepperDriver::StepperMotorCmd stepper_cmd;
 
-        stepper_cmd.setType(StepperDriver::StepperCommandType::CMD_TYPE_POSITION_OFFSET);
+        stepper_cmd.setType(StepperDriver::StepperCommandType_t::CMD_TYPE_POSITION_OFFSET);
 
         vector<uint8_t> id_cmd = {id};
         vector<int32_t> params_cmd = {offset_to_send, absolute_steps_at_offset_position};

@@ -286,7 +286,7 @@ namespace StepperDriver
         for (int i = 0; i < motor_states.size(); i++)
         {
             data.motor_identity.motor_id = motor_states.at(i).getId();
-            data.motor_identity.motor_type = (uint8_t)StepperMotorType_t::MOTOR_TYPE_STEPPER;
+            data.motor_identity.motor_type = static_cast<uint8_t>(StepperMotorType_t::MOTOR_TYPE_STEPPER);
             data.temperature = motor_states.at(i).getTemperatureState();
             data.error = motor_states.at(i).getHardwareErrorState();
             data.firmware_version = motor_states.at(i).getFirmwareVersion();

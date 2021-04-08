@@ -32,7 +32,6 @@ namespace DynamixelDriver
         _dxlPortHandler(portHandler),
         _dxlPacketHandler(packetHandler)
     {
-
     }
 
     /**
@@ -110,9 +109,9 @@ namespace DynamixelDriver
     {
         ostringstream ss;
 
-        ss << "Driver - type " << (int)_type << "\n";
-        ss << "packet handler" << (_dxlPacketHandler ? "OK" : "Not Ok") << "\n";
-        ss << "port handler" << (_dxlPortHandler ? "OK" : "Not Ok") << "\n";
+        ss << "Driver - type " << static_cast<int>(_type) << "\n";
+        ss << "packet handler " << (_dxlPacketHandler ? "OK" : "Not Ok") << "\n";
+        ss << "port handler " << (_dxlPortHandler ? "OK" : "Not Ok") << "\n";
 
         return ss.str();
     }

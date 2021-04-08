@@ -59,7 +59,7 @@ namespace utils
     {
         ostringstream ss;
 
-        ss << "MotorState (" << (int)_id << ")";
+        ss << "MotorState (" << static_cast<int>(_id) << ")";
         ss << "\n---\n";
 
         ss << "position " << _position_state << "\n"

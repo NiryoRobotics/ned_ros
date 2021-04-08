@@ -53,7 +53,7 @@ namespace DynamixelDriver
     {
         ostringstream ss;
 
-        ss << "DxlMotorState (" << (int)_id << ", " << static_cast<int>(_type) << ", " << _isTool << ")";
+        ss << "DxlMotorState (" << static_cast<int>(_id) << ", " << static_cast<int>(_type) << ", " << _isTool << ")";
         ss << "\n---\n";
 
         ss << MotorState::str();

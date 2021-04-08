@@ -5,17 +5,50 @@
 
 namespace DynamixelDriver
 {
-    enum class DxlCommandType
+    /**
+     * @brief The DxlCommandType struct
+     */
+    struct DxlCommandType
     {
-        CMD_TYPE_POSITION=1,
-        CMD_TYPE_VELOCITY=2,
-        CMD_TYPE_EFFORT=3,
-        CMD_TYPE_TORQUE=4,
-        CMD_TYPE_PING=5,
-        CMD_TYPE_LEARNING_MODE=6,
-        CMD_TYPE_UNKNOWN=100
+        enum class type
+        {
+            CMD_TYPE_POSITION=1,
+            CMD_TYPE_VELOCITY=2,
+            CMD_TYPE_EFFORT=3,
+            CMD_TYPE_TORQUE=4,
+            CMD_TYPE_PING=5,
+            CMD_TYPE_LEARNING_MODE=6,
+            CMD_TYPE_UNKNOWN=100
+        };
+
+        static std::string toString(type t)
+        {
+            switch(t) {
+                case type::CMD_TYPE_POSITION:
+                    return "position";
+                case type::CMD_TYPE_VELOCITY:
+                    return "velocity";
+                case type::CMD_TYPE_EFFORT:
+                    return "effort";
+                case type::CMD_TYPE_TORQUE:
+                    return "torque";
+                case type::CMD_TYPE_PING:
+                    return "ping";
+                case type::CMD_TYPE_LEARNING_MODE:
+                    return "learning mode";
+                case type::CMD_TYPE_UNKNOWN:
+                default:
+                    return "unknown type (" + std::to_string(static_cast<int>(t)) + ")";
+                break;
+            }
+            return "";
+        }
     };
 
+
+    /**
+     * @brief The DxlMotorType struct
+     */
     struct DxlMotorType
     {
         enum class type
@@ -53,7 +86,7 @@ namespace DynamixelDriver
                 case type::MOTOR_TYPE_XL320:
                     return "xl320";
                 default:
-                    return "unknown type (" + std::to_string((int)t) + ")";
+                    return "unknown type (" + std::to_string(static_cast<int>(t)) + ")";
                 break;
             }
             return "";
@@ -61,6 +94,7 @@ namespace DynamixelDriver
 
     };
 
+    using DxlCommandType_t = DxlCommandType::type;
     using DxlMotorType_t = DxlMotorType::type;
 
 } // DynamixelDriver

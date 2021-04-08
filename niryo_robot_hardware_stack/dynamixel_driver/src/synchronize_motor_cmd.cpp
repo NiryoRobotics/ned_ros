@@ -24,18 +24,26 @@ using namespace std;
 
 namespace DynamixelDriver
 {
-    SynchronizeMotorCmd::SynchronizeMotorCmd()
+    SynchronizeMotorCmd::SynchronizeMotorCmd() :
+        _type(DxlCommandType_t::CMD_TYPE_UNKNOWN)
     {
     }
 
-    SynchronizeMotorCmd::SynchronizeMotorCmd(DxlCommandType type,
+    SynchronizeMotorCmd::SynchronizeMotorCmd(DxlCommandType_t type,
                                              vector<uint8_t> motor_id,
                                              vector<uint32_t> params)
         : _type(type), _motor_id_list(motor_id), _param_list(params)
     {
     }
 
-    void SynchronizeMotorCmd::setType(DxlCommandType type)
+    void SynchronizeMotorCmd::reset()
+    {
+        _type = DxlCommandType_t::CMD_TYPE_UNKNOWN;
+        _motor_id_list.clear();
+        _param_list.clear();
+    }
+
+    void SynchronizeMotorCmd::setType(DxlCommandType_t type)
     {
         _type = type;
     }
@@ -60,42 +68,25 @@ namespace DynamixelDriver
 
         ostringstream ss;
         ss << "Sync motor cmd - ";
-        switch(_type)
-        {
-            case DxlCommandType::CMD_TYPE_POSITION:
-                ss << "Position";
-                break;
-            case DxlCommandType::CMD_TYPE_VELOCITY:
-                ss << "Velocity";
-                break;
-            case DxlCommandType::CMD_TYPE_EFFORT:
-                ss << "Effort";
-                break;
-            case DxlCommandType::CMD_TYPE_TORQUE:
-                ss << "Torque";
-                break;
-            case DxlCommandType::CMD_TYPE_PING:
-                ss << "Ping";
-                break;
-            case DxlCommandType::CMD_TYPE_LEARNING_MODE:
-                ss << "Learning mode";
-                break;
-            default:
-                ss << "Unknown type " << static_cast<int>(_type);
-            break;
-        }
+
+        ss << DxlCommandType::toString(_type);
 
         ss << ": ";
 
-        if(!isValid())
+        if(!isValid()) {
             ss << "Corrupted command : motors id list and params list size mismatch";
+        }
         else {
+            ss << "(";
             for(int i = 0; i < _motor_id_list.size(); ++i)
                 ss << " motor " << _motor_id_list.at(i) << ": " << _param_list.at(i) << ",";
+
         }
 
         string_info = ss.str();
         string_info.pop_back();
+
+        string_info += ")";
 
         return string_info;
     }

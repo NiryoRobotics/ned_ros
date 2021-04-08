@@ -157,7 +157,7 @@ namespace JointsInterface {
         StepperDriver::StepperMotorCmd cmd;
         std::vector<int32_t> stepper_params{8, 8, 8};
         cmd.setParams(stepper_params);
-        cmd.setType(StepperDriver::StepperCommandType::CMD_TYPE_MICRO_STEPS);
+        cmd.setType(StepperDriver::StepperCommandType_t::CMD_TYPE_MICRO_STEPS);
         cmd.setMotorsId(_list_stepper_id);
 
         _stepper->setStepperCommands(cmd);
@@ -170,7 +170,7 @@ namespace JointsInterface {
             _max_effort_3};
 
         cmd.setParams(stepper_params);
-        cmd.setType(StepperDriver::StepperCommandType::CMD_TYPE_MAX_EFFORT);
+        cmd.setType(StepperDriver::StepperCommandType_t::CMD_TYPE_MAX_EFFORT);
         cmd.setMotorsId(_list_stepper_id);
 
         _stepper->setStepperCommands(cmd);
@@ -286,8 +286,8 @@ namespace JointsInterface {
         DynamixelDriver::SynchronizeMotorCmd dxl_cmd;
         StepperDriver::StepperMotorCmd stepper_cmd;
 
-        dxl_cmd.setType(DynamixelDriver::DxlCommandType::CMD_TYPE_LEARNING_MODE);
-        stepper_cmd.setType(StepperDriver::StepperCommandType::CMD_TYPE_TORQUE);
+        dxl_cmd.setType(DynamixelDriver::DxlCommandType_t::CMD_TYPE_LEARNING_MODE);
+        stepper_cmd.setType(StepperDriver::StepperCommandType_t::CMD_TYPE_TORQUE);
 
         stepper_cmd.setMotorsId(_list_stepper_id);
 
@@ -310,8 +310,8 @@ namespace JointsInterface {
         StepperDriver::StepperMotorCmd stepper_cmd;
         bool enable_torque = false;
 
-        dxl_cmd.setType(DynamixelDriver::DxlCommandType::CMD_TYPE_LEARNING_MODE);
-        stepper_cmd.setType(StepperDriver::StepperCommandType::CMD_TYPE_TORQUE);
+        dxl_cmd.setType(DynamixelDriver::DxlCommandType_t::CMD_TYPE_LEARNING_MODE);
+        stepper_cmd.setType(StepperDriver::StepperCommandType_t::CMD_TYPE_TORQUE);
 
         stepper_cmd.setMotorsId(_list_stepper_id);
 
@@ -330,7 +330,7 @@ namespace JointsInterface {
         ROS_DEBUG("JointHardwareInterface::synchronizeMotors");
         StepperDriver::StepperMotorCmd stepper_cmd;
 
-        stepper_cmd.setType(StepperDriver::StepperCommandType::CMD_TYPE_SYNCHRONIZE);
+        stepper_cmd.setType(StepperDriver::StepperCommandType_t::CMD_TYPE_SYNCHRONIZE);
 
         stepper_cmd.setMotorsId(_list_stepper_id);
 
@@ -386,13 +386,13 @@ namespace JointsInterface {
     {
         bool res = false;
 
-        ROS_DEBUG("Joints Hardware Interface - Setting PID for motor id: %d (type: %d)", motor_id, (int)motor_type);
+        ROS_DEBUG("Joints Hardware Interface - Setting PID for motor id: %d (type: %d)", motor_id, static_cast<int>(motor_type));
 
         // ** DXL PID configuration ** //
         ros::ServiceClient dxl_client = _nh.serviceClient<dynamixel_driver::SendCustomDxlValue>("/niryo_robot/dynamixel_driver/send_custom_dxl_value");
         dynamixel_driver::SendCustomDxlValue dxl_cmd_srv;
 
-        dxl_cmd_srv.request.motor_type = (int)motor_type;
+        dxl_cmd_srv.request.motor_type = static_cast<int>(motor_type);
         dxl_cmd_srv.request.id = motor_id;
 
         if(DynamixelDriver::DxlMotorType_t::MOTOR_TYPE_XC430 == motor_type ||

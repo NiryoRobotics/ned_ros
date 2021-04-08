@@ -182,15 +182,15 @@ namespace ToolsInterface {
     /*
     // use profile velocity instead
 
-        cmd.setType(DxlCommandType::CMD_TYPE_VELOCITY);
+        cmd.setType(DxlCommandType_t::CMD_TYPE_VELOCITY);
         cmd.setParam(req.open_speed);
         list_cmd.push_back(cmd);
     */
-        cmd.setType(DxlCommandType::CMD_TYPE_POSITION);
+        cmd.setType(DxlCommandType_t::CMD_TYPE_POSITION);
         cmd.setParam(req.open_position);
         list_cmd.push_back(cmd);
 
-        cmd.setType(DxlCommandType::CMD_TYPE_EFFORT);
+        cmd.setType(DxlCommandType_t::CMD_TYPE_EFFORT);
         cmd.setParam(req.open_hold_torque);
         list_cmd.push_back(cmd);
 
@@ -204,7 +204,7 @@ namespace ToolsInterface {
 
         // set hold torque
         cmd.setId(_toolState.getId());
-        cmd.setType(DxlCommandType::CMD_TYPE_EFFORT);
+        cmd.setType(DxlCommandType_t::CMD_TYPE_EFFORT);
         cmd.setParam(req.open_hold_torque);
         list_cmd.push_back(cmd);
         _dynamixel->setEndEffectorCommands(list_cmd);
@@ -229,15 +229,15 @@ namespace ToolsInterface {
         int position_command = ( req.close_position < 50) ? 0 : req.close_position - 50;
     /*
     // use profile velocity instead
-        cmd.setType(DxlCommandType::CMD_TYPE_VELOCITY);
+        cmd.setType(DxlCommandType_t::CMD_TYPE_VELOCITY);
         cmd.setParam(req.close_speed);
         list_cmd.push_back(cmd);
     */
-        cmd.setType(DxlCommandType::CMD_TYPE_POSITION);
+        cmd.setType(DxlCommandType_t::CMD_TYPE_POSITION);
         cmd.setParam(position_command);
         list_cmd.push_back(cmd);
 
-        cmd.setType(DxlCommandType::CMD_TYPE_EFFORT);
+        cmd.setType(DxlCommandType_t::CMD_TYPE_EFFORT);
         cmd.setParam(req.close_max_torque); // two's complement of 1536
         list_cmd.push_back(cmd);
 
@@ -251,7 +251,7 @@ namespace ToolsInterface {
         ros::Duration(seconds_to_wait + 0.25).sleep();
 
         // set hold torque
-        cmd.setType(DxlCommandType::CMD_TYPE_EFFORT);
+        cmd.setType(DxlCommandType_t::CMD_TYPE_EFFORT);
         cmd.setParam(req.close_hold_torque);
         list_cmd.push_back(cmd);
         _dynamixel->setEndEffectorCommands(list_cmd);
@@ -277,15 +277,15 @@ namespace ToolsInterface {
         vector<SingleMotorCmd> list_cmd;
         cmd.setId(_toolState.getId());
 
-        cmd.setType(DxlCommandType::CMD_TYPE_VELOCITY);
+        cmd.setType(DxlCommandType_t::CMD_TYPE_VELOCITY);
         cmd.setParam(pull_air_velocity);
         list_cmd.push_back(cmd);
 
-        cmd.setType(DxlCommandType::CMD_TYPE_POSITION);
+        cmd.setType(DxlCommandType_t::CMD_TYPE_POSITION);
         cmd.setParam(req.pull_air_position);
         list_cmd.push_back(cmd);
 
-        cmd.setType(DxlCommandType::CMD_TYPE_EFFORT);
+        cmd.setType(DxlCommandType_t::CMD_TYPE_EFFORT);
         cmd.setParam(500);
         list_cmd.push_back(cmd);
 
@@ -300,7 +300,7 @@ namespace ToolsInterface {
         ros::Duration(seconds_to_wait + 0.25).sleep();
 
         // set hold torque
-        cmd.setType(DxlCommandType::CMD_TYPE_EFFORT);
+        cmd.setType(DxlCommandType_t::CMD_TYPE_EFFORT);
         cmd.setParam(req.pull_air_hold_torque);
         list_cmd.push_back(cmd);
         _dynamixel->setEndEffectorCommands(list_cmd);
@@ -326,15 +326,15 @@ namespace ToolsInterface {
         vector<SingleMotorCmd> list_cmd;
         cmd.setId(_toolState.getId());
 
-        cmd.setType(DxlCommandType::CMD_TYPE_VELOCITY);
+        cmd.setType(DxlCommandType_t::CMD_TYPE_VELOCITY);
         cmd.setParam(push_air_velocity);
         list_cmd.push_back(cmd);
 
-        cmd.setType(DxlCommandType::CMD_TYPE_POSITION);
+        cmd.setType(DxlCommandType_t::CMD_TYPE_POSITION);
         cmd.setParam(req.push_air_position);
         list_cmd.push_back(cmd);
 
-        cmd.setType(DxlCommandType::CMD_TYPE_EFFORT);
+        cmd.setType(DxlCommandType_t::CMD_TYPE_EFFORT);
         cmd.setParam(64000); // two's complement of 1536
         list_cmd.push_back(cmd);
 
@@ -349,7 +349,7 @@ namespace ToolsInterface {
         ros::Duration(seconds_to_wait + 0.25).sleep();
 
         // set torque to 0
-        cmd.setType(DxlCommandType::CMD_TYPE_EFFORT);
+        cmd.setType(DxlCommandType_t::CMD_TYPE_EFFORT);
         cmd.setParam(0);
         list_cmd.push_back(cmd);
         _dynamixel->setEndEffectorCommands(list_cmd);
