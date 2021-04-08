@@ -94,6 +94,13 @@ namespace ToolsInterface {
                 ROS_ERROR("Tools Interface - duplicate id %d. Please check your configuration file (tools_interface/config/default.yaml)", id);
 
         }
+
+        for(auto const &tool : _available_tools_map) {
+            ROS_DEBUG("ToolsInterfaceCore::initParams - Available tools map: %d => %s",
+                      static_cast<int>(tool.first),
+                      DxlMotorType::toString(tool.second).c_str());
+        }
+
     }
 
     void ToolsInterfaceCore::pubToolId(int id)
@@ -103,7 +110,8 @@ namespace ToolsInterface {
         _current_tools_id_publisher.publish(msg);
     }
 
-    bool ToolsInterfaceCore::_callbackPingAndSetDxlTool(tools_interface::PingDxlTool::Request &req, tools_interface::PingDxlTool::Response &res)
+    bool ToolsInterfaceCore::_callbackPingAndSetDxlTool(tools_interface::PingDxlTool::Request &/*req*/,
+                                                        tools_interface::PingDxlTool::Response &res)
     {
         lock_guard<mutex> lck(_tool_mutex);
         // Unequipped tool
@@ -117,26 +125,21 @@ namespace ToolsInterface {
         // Search new tool
         vector<uint8_t> motor_list;
         motor_list = _dynamixel->scanTools();
-        bool tool_found = false;
-        uint8_t tool_id;
 
-        for(auto i = 0; i < motor_list.size(); ++i) {
-            if(_available_tools_map.count(motor_list.at(i)))
+        for(auto m_id : motor_list) {
+            if(_available_tools_map.count(m_id))
             {
-                tool_id = motor_list.at(i);
-                tool_found = true;
+                _toolState = ToolState(m_id, "auto", _available_tools_map.at(m_id));
                 break;
             }
         }
 
-        if(tool_found)
+        if(_toolState.isValid())
         {
-            _toolState.reset();
-
             // Try 3 times
             int tries = 0;
             bool tool_set = false;
-            while (!tool_set && tries<3)
+            while (!tool_set && tries < 3)
             {
                 tries++;
                 ros::Duration(0.05).sleep();
@@ -144,10 +147,10 @@ namespace ToolsInterface {
 
                 if (res.state != niryo_robot_msgs::CommandStatus::SUCCESS) continue;
 
-                pubToolId(tool_id);
+                pubToolId(_toolState.getId());
 
                 tool_set = true;
-                res.id = tool_id;
+                res.id = _toolState.getId();
                 ros::Duration(0.05).sleep();
                 _dynamixel->update_leds();
                 ROS_INFO("Tools Interface - Set End Effector return : %d", res.state);

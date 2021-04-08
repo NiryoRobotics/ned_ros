@@ -49,24 +49,15 @@ namespace StepperDriver
             void resetHardwareControlLoopRates();
             void controlLoop();
 
-            stepper_driver::StepperArrayMotorHardwareStatus getHwStatus();
-            niryo_robot_msgs::BusState getCanBusState();
-
-            std::vector<StepperMotorState>& getStepperStates();
-
             void setStepperCommands(StepperMotorCmd &cmd);
 
             void setTrajectoryControllerCommands(std::vector<int32_t> &cmd); 
-            std::vector<int32_t>& getTrajectoryControllerStates();
 
             int setConveyor(uint8_t motor_id);
             void unsetConveyor(uint8_t motor_id);
             void setConveyorCommands(StepperMotorCmd &cmd);
-            std::vector<ConveyorState> &getConveyorStates();
 
             void clearCalibrationTab();
-            bool getCalibrationState();
-            e_CanStepperCalibrationStatus getCalibrationResult(uint8_t id, int32_t& calibration_result);
             void startCalibration(bool enable);
 
             void activeDebugMode(bool mode);
@@ -76,6 +67,20 @@ namespace StepperDriver
             bool scanMotorId(int motor_to_find);
 
             bool isConnectionOk() const;
+
+            //getters
+            bool getCalibrationState() const;
+            e_CanStepperCalibrationStatus getCalibrationResult(uint8_t id, int32_t& calibration_result) const;
+            const std::vector<ConveyorState> &getConveyorStates() const;
+
+            stepper_driver::StepperArrayMotorHardwareStatus getHwStatus() const;
+            niryo_robot_msgs::BusState getCanBusState() const;
+
+            const std::vector<StepperMotorState>& getStepperStates() const;
+            const std::vector<int32_t>& getTrajectoryControllerStates() const;
+
+        private:
+            void _executeCommand();
 
         private:
 
@@ -104,7 +109,6 @@ namespace StepperDriver
 
             std::vector<std::thread> _calibration_thread_list;
 
-            void _executeCommand();
 
             ros::Publisher cmd_pub;
 

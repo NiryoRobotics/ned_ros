@@ -49,16 +49,6 @@ namespace StepperDriver
     constexpr int CAN_CMD_MOVE_REL    = 0x18;
     constexpr int CAN_CMD_RESET       = 0x19; // not yet implemented
 
-    enum class e_CanStepperCalibrationStatus {
-        CAN_STEPPERS_CALIBRATION_UNINITIALIZED = 0,
-        CAN_STEPPERS_CALIBRATION_OK = 1,
-        CAN_STEPPERS_CALIBRATION_TIMEOUT = 2,
-        CAN_STEPPERS_CALIBRATION_BAD_PARAM = 3,
-        CAN_STEPPERS_CALIBRATION_FAIL = 4,
-        CAN_STEPPERS_CALIBRATION_WAITING_USER_INPUT = 5,
-        CAN_STEPPERS_CALIBRATION_IN_PROGRESS = 6,
-    };
-
     constexpr int CAN_STEPPERS_CALIBRATION_MODE_AUTO   = 1;
     constexpr int CAN_STEPPERS_CALIBRATION_MODE_MANUAL = 2;
 
@@ -87,15 +77,25 @@ namespace StepperDriver
 
     constexpr int CAN_SCAN_OK = 0;
     constexpr int CAN_SCAN_TIMEOUT   =  -10003;
-    constexpr int TIME_TO_WAIT_IF_BUSY = 0.0005;
+    constexpr double TIME_TO_WAIT_IF_BUSY = 0.0005;
 
-    constexpr int STEPPER_MOTOR_TIMEOUT_VALUE = 1.0f; // s
+    constexpr float STEPPER_MOTOR_TIMEOUT_VALUE = 1.0f; // s
+
+    enum class e_CanStepperCalibrationStatus {
+        CAN_STEPPERS_CALIBRATION_UNINITIALIZED = 0,
+        CAN_STEPPERS_CALIBRATION_OK = 1,
+        CAN_STEPPERS_CALIBRATION_TIMEOUT = 2,
+        CAN_STEPPERS_CALIBRATION_BAD_PARAM = 3,
+        CAN_STEPPERS_CALIBRATION_FAIL = 4,
+        CAN_STEPPERS_CALIBRATION_WAITING_USER_INPUT = 5,
+        CAN_STEPPERS_CALIBRATION_IN_PROGRESS = 6,
+    };
 
     struct CalibrationStepperData
     {
-        INT32U rxId;
-        INT8U len;
-        std::array<INT8U, 8> rxBuf;
+        unsigned long rxId;
+        uint8_t len;
+        std::array<uint8_t, 8> rxBuf;
     };
 
     struct CalibrationStepperCmdStatus
@@ -111,59 +111,77 @@ namespace StepperDriver
             StepperDriver();
             ~StepperDriver();
 
+            void scanAndCheck();
+
+            void addConveyor(uint8_t conveyor_id);
+            void removeConveyor(uint8_t conveyor_id);
+
+            //commands
+
+            bool scanMotorId(int motor_to_find);
+
+            uint8_t sendTorqueOnCommand(int id, int torque_on);
+            uint8_t sendRelativeMoveCommand(int id, int steps, int delay);
+            uint8_t sendUpdateConveyorId(uint8_t old_id, uint8_t new_id);
+
+            void executeJointTrajectoryCmd(std::vector<int32_t> &cmd);
+
+            int readCommand(StepperMotorCmd cmd);
+            void readMotorsState();
+
+            // tests
+            bool isConnectionOk() const;
+
+            //setters
+            void setCalibrationInProgress(bool in_progress);
+            void clearCalibrationTab();
+
+            //getters
+            int getStepperPose(int32_t motor_id) const;
+            const std::vector<int32_t>& getJointTrajectoryState() const;
+            const std::vector<StepperMotorState>& getMotorsState() const;
+            const std::vector<ConveyorState>& getConveyorsState() const;
+            void getBusState(bool& connection_status, std::vector<uint8_t>& motor_list, std::string& error) const;
+
+            e_CanStepperCalibrationStatus getCalibrationResult(uint8_t id, int32_t &result) const;
+            std::string getErrorMessage() const;
+
+    private:
+            int init();
             bool setupInterruptGpio();
             bool setupSpi();
-            INT8U init();
-
-            bool isConnectionOk() const;
 
             void updateMotorList();
             void addMotor(uint8_t motor_id);
             void removeMotor(uint8_t motor_id);
 
-            void addConveyor(uint8_t conveyor_id);
-            void removeConveyor(uint8_t conveyor_id);
-            std::vector<ConveyorState>& getConveyorsState();
-
-            std::vector<StepperMotorState>& getMotorsState();
-            void getBusState(bool& connection_status, std::vector<uint8_t>& motor_list, std::string& error);
-
-            void readMotorsState();
-            void clearCalibrationTab();
-            e_CanStepperCalibrationStatus getCalibrationResult(uint8_t id, int32_t &result);
-
-            void executeJointTrajectoryCmd(std::vector<int32_t> &cmd);
-            std::vector<int32_t> &getJointTrajectoryState();
-            int32_t getStepperPose(int32_t motor_id);
-            int readCommand(StepperMotorCmd cmd);
-
             bool canReadData();
-            INT8U readMsgBuf(INT32U *id, INT8U *len, std::array<INT8U, 8> &buf);
-        
-            void scanAndCheck();
-            
-            INT8U sendPositionCommand(int id, int cmd);
-            INT8U sendRelativeMoveCommand(int id, int steps, int delay);
-            INT8U sendTorqueOnCommand(int id, int torque_on);
-            INT8U sendPositionOffsetCommand(int id, int cmd, int absolute_steps_at_offset_position);
-            INT8U sendCalibrationCommand(int i, int offset, int delay, int direction, int timeout);
-            INT8U sendSynchronizePositionCommand(int id, bool begin_traj);
-            INT8U sendMicroStepsCommand(int id, int micro_steps);
-            INT8U sendMaxEffortCommand(int id, int effort);
+            uint8_t readMsgBuf(unsigned long *id, uint8_t *len, std::array<uint8_t, 8> &buf);
 
-            INT8U sendConveyoOnCommand(int id, bool conveyor_on, int conveyor_speed, int8_t direction);
-            INT8U sendUpdateConveyorId(uint8_t old_id, uint8_t new_id);
+            uint8_t sendPositionCommand(int id, int cmd);
+            uint8_t sendPositionOffsetCommand(int id, int cmd, int absolute_steps_at_offset_position);
+            uint8_t sendCalibrationCommand(int i, int offset, int delay, int direction, int timeout);
+            uint8_t sendSynchronizePositionCommand(int id, bool begin_traj);
+            uint8_t sendMicroStepsCommand(int id, int micro_steps);
+            uint8_t sendMaxEffortCommand(int id, int effort);
 
-            INT8U sendCanMsgBuf(INT32U id, INT8U ext, INT8U len, INT8U *buf);
+            uint8_t sendConveyorOnCommand(int id, bool conveyor_on, int conveyor_speed, int8_t direction);
 
-            std::string getErrorMessage();
-            bool scanMotorId(int motor_to_find);
+            uint8_t sendCanMsgBuf(unsigned long id, uint8_t ext, uint8_t len, uint8_t *buf);
 
-            std::vector<uint8_t> getConnectedMotors();
-            void setCalibrationInProgress(bool in_progress);
+            void readCalibrationStates();
+            bool checkMessageLength(const uint8_t &message_length, int message_type);
+            bool checkMotorsId(int motor_id);
+            void fillMotorPosition(int motor_id, const uint8_t &len, const std::array<uint8_t, 8> &data);
+            void fillMotorDiagnostics(int motor_id, const uint8_t &len, const std::array<uint8_t, 8> &data);
+            void fillMotorFirmware(int motor_id, const uint8_t &len, const std::array<uint8_t, 8> &data);
+            void fillConveyorState(int motor_id, const std::array<uint8_t, 8> &data);
+            void interpreteCalibrationCommand();
+
+            void _verifyMotorTimeoutLoop();
+            void _refreshMotorTimeout();
 
         private:
-
             ros::NodeHandle _nh;
             std::vector<int> _arm_id_list;
             std::vector<int> _motor_id_list;
@@ -180,18 +198,6 @@ namespace StepperDriver
             std::thread _calibration_thread;
             std::thread _stepper_timeout_thread;
             std::vector<CalibrationStepperData> _calibration_readed_datas;
-
-            void readCalibrationStates();
-            bool checkMessageLength(const INT8U &message_length, int message_type);
-            bool checkMotorsId(int motor_id);
-            void fillMotorPosition(int motor_id, const INT8U &len, const std::array<INT8U, 8> &data);
-            void fillMotorDiagnostics(int motor_id, const INT8U &len, const std::array<INT8U, 8> &data);
-            void fillMotorFirmware(int motor_id, const INT8U &len, const std::array<INT8U, 8> &data);
-            void fillConveyorState(int motor_id, const std::array<INT8U, 8> &data);
-            void interpreteCalibrationCommand();
-
-            void _verifyMotorTimeoutLoop();
-            void _refreshMotorTimeout();
 
             bool _is_can_connection_ok;
             bool _calibration_in_progress;

@@ -24,9 +24,9 @@
 namespace StepperDriver
 {
     StepperDriver::StepperDriver() :
-        _calibration_result(e_CanStepperCalibrationStatus::CAN_STEPPERS_CALIBRATION_UNINITIALIZED),
+        _stepper_timeout_thread(&StepperDriver::_verifyMotorTimeoutLoop, this),
         _calibration_in_progress(false),
-        _stepper_timeout_thread(&StepperDriver::_verifyMotorTimeoutLoop, this)
+        _calibration_result(e_CanStepperCalibrationStatus::CAN_STEPPERS_CALIBRATION_UNINITIALIZED)
     {
 
         int spi_channel, spi_baudrate, gpio_can_interrupt;
@@ -47,14 +47,15 @@ namespace StepperDriver
         _conveyor_list.clear();
         _arm_id_list.clear();
         _arm_id_list = _motor_id_list;
-        ROS_DEBUG("Stepper Driver - Can bus parameters: spi_channel : %d", spi_channel);
-        ROS_DEBUG("Stepper Driver - Can bus parameters: spi_baudrate : %d", spi_baudrate);
-        ROS_DEBUG("Stepper Driver - Can bus parameters: spi_baudrate : %d", gpio_can_interrupt);
+        ROS_DEBUG("StepperDriver::StepperDriver - Can bus parameters: spi_channel : %d", spi_channel);
+        ROS_DEBUG("StepperDriver::StepperDriver - Can bus parameters: spi_baudrate : %d", spi_baudrate);
+        ROS_DEBUG("StepperDriver::StepperDriver - Can bus parameters: spi_baudrate : %d", gpio_can_interrupt);
 
         _is_can_connection_ok = false;
         _debug_error_message = "";
 
-        mcp_can.reset(new MCP_CAN_RPI::MCP_CAN(spi_channel, spi_baudrate, gpio_can_interrupt));
+        mcp_can = std::make_shared<MCP_CAN_RPI::MCP_CAN>(spi_channel, spi_baudrate, gpio_can_interrupt);
+
         _calibration_motor_list.clear();
         setupInterruptGpio();
         setupSpi();
@@ -79,7 +80,7 @@ namespace StepperDriver
     {
         if (!mcp_can->setupInterruptGpio())
         {
-            ROS_WARN("Stepper Driver - Failed to start gpio");
+            ROS_WARN("StepperDriver::setupInterruptGpio - Failed to start gpio");
             _debug_error_message = "Failed to start gpio";
             return CAN_GPIO_FAILINIT;
         }
@@ -90,24 +91,24 @@ namespace StepperDriver
     {
         if (!mcp_can->setupSpi())
         {
-            ROS_WARN("Stepper Driver - Failed to start spi");
+            ROS_WARN("StepperDriver::setupSpi - Failed to start spi");
             _debug_error_message = "Failed to start spi";
             return CAN_SPI_FAILINIT;
         }
         return CAN_OK;
     }
 
-    INT8U StepperDriver::init()
+    int StepperDriver::init()
     {
         // no mask or filter used, receive all messages from CAN bus
         // messages with ids != motor_id will be sent to another ROS interface
         // so we can use many CAN devices with this only driver
         int result = mcp_can->begin(MCP_ANY, CAN_1000KBPS, MCP_16MHZ);
-        ROS_DEBUG("Stepper Driver - Result begin can : %d", result);
+        ROS_DEBUG("StepperDriver::init - Result begin can : %d", result);
 
         if (result != CAN_OK)
         {
-            ROS_ERROR("Stepper Driver - Failed to init MCP2515 (CAN bus)");
+            ROS_ERROR("StepperDriver::init - Failed to init MCP2515 (CAN bus)");
             _debug_error_message = "Failed to init MCP2515 (CAN bus)";
             return result;
         }
@@ -126,14 +127,14 @@ namespace StepperDriver
 
     void StepperDriver::addMotor(uint8_t motor_id)
     {
-        ROS_DEBUG("Stepper Driver - Add motor id: %d", motor_id);
+        ROS_DEBUG("StepperDriver::addMotor - Add motor id: %d", motor_id);
         _motor_id_list.push_back(motor_id);
         updateMotorList();
     }
 
     void StepperDriver::removeMotor(uint8_t motor_id)
     {
-        ROS_DEBUG("Stepper Driver - Remove motor id: %d", motor_id);
+        ROS_DEBUG("StepperDriver::removeMotor - Remove motor id: %d", motor_id);
         for (int i = 0; i < _motor_id_list.size(); i++)
         {
             if (_motor_id_list.at(i) == motor_id)
@@ -151,7 +152,7 @@ namespace StepperDriver
         for (int i = 0; i < _motor_id_list.size(); i++)
         {
             StepperMotorState m(_motor_id_list.at(i));
-            ROS_DEBUG("Stepper Driver - Push back id %d", _motor_id_list.at(i));
+            ROS_DEBUG("StepperDriver::updateMotorList - Push back id %d", _motor_id_list.at(i));
             _motor_list.push_back(m);
         }
 
@@ -163,7 +164,7 @@ namespace StepperDriver
             motor_string_list += std::to_string(_motor_id_list.at(i));
         }
         motor_string_list += "]";
-        ROS_INFO("Stepper Driver - Motor list: %s ", motor_string_list.c_str());
+        ROS_INFO("StepperDriver::updateMotorList - Motor list: %s ", motor_string_list.c_str());
     }
 
     void StepperDriver::addConveyor(uint8_t conveyor_id)
@@ -183,12 +184,12 @@ namespace StepperDriver
         }
     }
 
-    std::vector<StepperMotorState> &StepperDriver::getMotorsState()
+    const std::vector<StepperMotorState> &StepperDriver::getMotorsState() const
     {
         return _motor_list;
     }
 
-    void StepperDriver::getBusState(bool &connection_status, std::vector<uint8_t> &motor_list, std::string &error)
+    void StepperDriver::getBusState(bool &connection_status, std::vector<uint8_t> &motor_list, std::string &error) const
     {
         error = _debug_error_message;
         motor_list = _all_motor_connected;
@@ -203,25 +204,25 @@ namespace StepperDriver
             result = sendPositionCommand(_arm_id_list.at(i), cmd.at(i));
             if (result != CAN_OK)
             {
-                ROS_WARN("Stepper Driver - send positions to motor id %d failed", _arm_id_list.at(i));
+                ROS_WARN("StepperDriver::executeJointTrajectoryCmd - send positions to motor id %d failed", _arm_id_list.at(i));
             }
         }
     }
 
-    int32_t StepperDriver::getStepperPose(int32_t motor_id)
+    int StepperDriver::getStepperPose(int32_t motor_id) const
     {
-        for (std::vector<StepperMotorState>::iterator motor_it = _motor_list.begin(); motor_it != _motor_list.end(); motor_it++)
+        for (auto const& motor_it : _motor_list)
         {
-            if (motor_it->getId() == motor_id)
+            if (motor_it.getId() == motor_id)
             {
-                return motor_it->getPositionState();
+                return motor_it.getPositionState();
             }
         }
-        ROS_WARN("Stepper Driver - Get positionsfrom motor id %d failed because doesn't exist", motor_id);
+        ROS_WARN("StepperDriver::getStepperPose - Get positionsfrom motor id %d failed because doesn't exist", motor_id);
         return -1;
     }
 
-    std::vector<int32_t> &StepperDriver::getJointTrajectoryState()
+    const std::vector<int32_t> &StepperDriver::getJointTrajectoryState() const
     {
         return _stepper_states;
     }
@@ -229,17 +230,17 @@ namespace StepperDriver
     int StepperDriver::readCommand(StepperMotorCmd cmd)
     {
         int result = CAN_INVALID_CMD;
-        ROS_DEBUG("Stepper Driver - Received stepper cmd with type %d", int(cmd.getType()));
+        ROS_DEBUG("StepperDriver::readCommand - Received stepper cmd with type %d", int(cmd.getType()));
 
         std::string ids_string = "";
         for (int i = 0; i < cmd.getMotorsId().size(); i++)
             ids_string += std::to_string(cmd.getMotorsId().at(i)) + " ";
-        ROS_DEBUG("Stepper Driver - Received stepper cmd with ids %s", ids_string.c_str());
+        ROS_DEBUG("StepperDriver::readCommand - Received stepper cmd with ids %s", ids_string.c_str());
 
         std::string params_string = "";
         for (int i = 0; i < cmd.getParams().size(); i++)
             params_string += std::to_string(cmd.getParams().at(i)) + " ";
-        ROS_DEBUG("Stepper Driver - Received stepper cmd with params %s", params_string.c_str());
+        ROS_DEBUG("StepperDriver::readCommand - Received stepper cmd with params %s", params_string.c_str());
 
         switch(cmd.getType())
         {
@@ -310,7 +311,7 @@ namespace StepperDriver
                 break;
             case StepperCommandType_t::CMD_TYPE_CONVEYOR:
                 if (cmd.getMotorsId().size() > 0 && cmd.getParams().size() >= 3)
-                    result = sendConveyoOnCommand(cmd.getMotorsId().at(0),
+                    result = sendConveyorOnCommand(cmd.getMotorsId().at(0),
                                                   cmd.getParams().at(0),
                                                   cmd.getParams().at(1),
                                                   cmd.getParams().at(2));
@@ -331,7 +332,7 @@ namespace StepperDriver
                 break;
         }
 
-        ROS_DEBUG("Stepper Driver - Received stepper cmd finished");
+        ROS_DEBUG("StepperDriver::readCommand - Received stepper cmd finished");
         return result;
     }
 
@@ -340,10 +341,10 @@ namespace StepperDriver
         return mcp_can->canReadData();
     }
 
-    INT8U StepperDriver::readMsgBuf(INT32U *id, INT8U *len, std::array<INT8U, 8> &buf)
+    uint8_t StepperDriver::readMsgBuf(unsigned long *id, uint8_t *len, std::array<uint8_t, 8> &buf)
     {
         int hw_fail_counter_read = 0;
-        INT8U status;
+        uint8_t status = 0;
 
         while (hw_fail_counter_read < 10)
         {
@@ -355,7 +356,7 @@ namespace StepperDriver
             else
             {
                 _is_can_connection_ok = false;
-                ROS_WARN_THROTTLE(2, "Stepper Driver - Reading Stepper message on CAN Bus failed");
+                ROS_WARN_THROTTLE(2, "StepperDriver::readMsgBuf - Reading Stepper message on CAN Bus failed");
             }
         }
         return status;
@@ -375,9 +376,9 @@ namespace StepperDriver
             ros::Duration(0.001).sleep(); // check at 1000 Hz
             if (canReadData())
             {
-                INT32U rxId;
-                INT8U len;
-                std::array<INT8U, 8> rxBuf;
+                unsigned long rxId;
+                uint8_t len;
+                std::array<uint8_t, 8> rxBuf;
                 readMsgBuf(&rxId, &len, rxBuf);
                 int motor_id = rxId & 0x0F;
 
@@ -391,7 +392,7 @@ namespace StepperDriver
 
             if (ros::Time::now().toSec() - time_begin_scan > timeout)
             {
-                ROS_ERROR_THROTTLE(2, "Stepper Driver - CAN scan Timeout");
+                ROS_ERROR_THROTTLE(2, "StepperDriver::scanAndCheck - CAN scan Timeout");
                 _debug_error_message = "CAN bus scan failed : motors ";
                 for (int i = 0; i < motors_unfound.size(); i++)
                 {
@@ -400,7 +401,7 @@ namespace StepperDriver
                 }
                 _debug_error_message += "are not connected";
                 _is_can_connection_ok = false;
-                ROS_ERROR_THROTTLE(2, "Stepper Driver - %s", _debug_error_message.c_str());
+                ROS_ERROR_THROTTLE(2, "StepperDriver::scanAndCheck - %s", _debug_error_message.c_str());
             }
         }
         
@@ -414,9 +415,9 @@ namespace StepperDriver
     {
         if (canReadData())
         {
-            INT32U rxId;
-            INT8U len;
-            std::array<INT8U, 8> rxBuf;
+            unsigned long rxId;
+            uint8_t len;
+            std::array<uint8_t, 8> rxBuf;
             readMsgBuf(&rxId, &len, rxBuf);
             int motor_id = rxId & 0x0F;
             bool motor_known;
@@ -429,7 +430,7 @@ namespace StepperDriver
 
             if (len < 1)
             {
-                ROS_ERROR_THROTTLE(1, "Stepper Driver - Received can frame with empty data");
+                ROS_ERROR_THROTTLE(1, "StepperDriver::readMotorsState - Received can frame with empty data");
                 return;
             }
 
@@ -457,11 +458,11 @@ namespace StepperDriver
         }
     }
 
-    void StepperDriver::fillMotorPosition(int motor_id, const INT8U &len, const std::array<INT8U, 8> &data)
+    void StepperDriver::fillMotorPosition(int motor_id, const uint8_t &len, const std::array<uint8_t, 8> &data)
     {
         if (!checkMessageLength(len, MESSAGE_POSITION_LENGTH))
         {
-            ROS_ERROR("Stepper Driver - Position can frame should contain 4 data bytes");
+            ROS_ERROR("StepperDriver::fillMotorPosition - Position can frame should contain 4 data bytes");
             return;
         }
 
@@ -493,11 +494,11 @@ namespace StepperDriver
         return;
     }
 
-    void StepperDriver::fillMotorDiagnostics(int motor_id, const INT8U &len, const std::array<INT8U, 8> &data)
+    void StepperDriver::fillMotorDiagnostics(int motor_id, const uint8_t &len, const std::array<uint8_t, 8> &data)
     {
         if (!checkMessageLength(len, MESSAGE_DIAGNOSTICS_LENGTH))
         {
-            ROS_ERROR("Stepper Driver - Diagnostic can frame should contain 4 data bytes");
+            ROS_ERROR("StepperDriver::fillMotorDiagnostics - Diagnostic can frame should contain 4 data bytes");
         }
 
         int driver_temp_raw = (data[2] << 8) + data[3];
@@ -518,11 +519,11 @@ namespace StepperDriver
         }
     }
 
-    void StepperDriver::fillMotorFirmware(int motor_id, const INT8U &len, const std::array<INT8U, 8> &data)
+    void StepperDriver::fillMotorFirmware(int motor_id, const uint8_t &len, const std::array<uint8_t, 8> &data)
     {
         if (!checkMessageLength(len, MESSAGE_FIRMWARE_LENGTH))
         {
-            ROS_ERROR("Stepper Driver - Firmware version frame should contain 4 data bytes");
+            ROS_ERROR("StepperDriver::fillMotorFirmware - Firmware version frame should contain 4 data bytes");
         }
 
         int v_major = data[1];
@@ -546,7 +547,7 @@ namespace StepperDriver
         }
     }
 
-    void StepperDriver::fillConveyorState(int motor_id, const std::array<INT8U, 8> &data)
+    void StepperDriver::fillConveyorState(int motor_id, const std::array<uint8_t, 8> &data)
     {
         bool state = data[1];
         int16_t speed = data[2];
@@ -607,7 +608,7 @@ namespace StepperDriver
         }
     }
 
-    std::vector<ConveyorState> &StepperDriver::getConveyorsState()
+    const std::vector<ConveyorState> &StepperDriver::getConveyorsState() const
     {
         return _conveyor_list;
     }
@@ -641,7 +642,7 @@ namespace StepperDriver
         return motor_found;
     }
 
-    bool StepperDriver::checkMessageLength(const INT8U &message_length, int message_type)
+    bool StepperDriver::checkMessageLength(const uint8_t &message_length, int message_type)
     {
         if (message_length != message_type)
         {
@@ -650,22 +651,22 @@ namespace StepperDriver
         return true;
     }
 
-    INT8U StepperDriver::sendPositionCommand(int id, int cmd)
+    uint8_t StepperDriver::sendPositionCommand(int id, int cmd)
     {
-        uint8_t data[4] = {CAN_CMD_POSITION, (uint8_t)((cmd >> 16) & 0xFF),
-                           (uint8_t)((cmd >> 8) & 0xFF), (uint8_t)(cmd & 0XFF)};
+        uint8_t data[4] = {CAN_CMD_POSITION, static_cast<uint8_t>((cmd >> 16) & 0xFF),
+                           static_cast<uint8_t>((cmd >> 8) & 0xFF), static_cast<uint8_t>(cmd & 0XFF)};
         return sendCanMsgBuf(id, 0, 4, data);
     }
 
-    INT8U StepperDriver::sendRelativeMoveCommand(int id, int steps, int delay)
+    uint8_t StepperDriver::sendRelativeMoveCommand(int id, int steps, int delay)
     {
         uint8_t data[7] = {CAN_CMD_MOVE_REL,
-                           (uint8_t)((steps >> 16) & 0xFF), (uint8_t)((steps >> 8) & 0xFF), (uint8_t)(steps & 0XFF),
-                           (uint8_t)((delay >> 16) & 0xFF), (uint8_t)((delay >> 8) & 0xFF), (uint8_t)(delay & 0XFF)};
+                           static_cast<uint8_t>((steps >> 16) & 0xFF), static_cast<uint8_t>((steps >> 8) & 0xFF), static_cast<uint8_t>(steps & 0XFF),
+                           static_cast<uint8_t>((delay >> 16) & 0xFF), static_cast<uint8_t>((delay >> 8) & 0xFF), static_cast<uint8_t>(delay & 0XFF)};
         return sendCanMsgBuf(id, 0, 7, data);
     }
 
-    INT8U StepperDriver::sendTorqueOnCommand(int id, int torque_on)
+    uint8_t StepperDriver::sendTorqueOnCommand(int id, int torque_on)
     {
         uint8_t data[2] = {0};
         data[0] = CAN_CMD_MODE;
@@ -673,51 +674,51 @@ namespace StepperDriver
         return sendCanMsgBuf(id, 0, 2, data);
     }
 
-    INT8U StepperDriver::sendPositionOffsetCommand(int id, int cmd, int absolute_steps_at_offset_position)
+    uint8_t StepperDriver::sendPositionOffsetCommand(int id, int cmd, int absolute_steps_at_offset_position)
     {
-        uint8_t data[6] = {CAN_CMD_OFFSET, (uint8_t)((cmd >> 16) & 0xFF),
-                           (uint8_t)((cmd >> 8) & 0xFF), (uint8_t)(cmd & 0XFF),
-                           (uint8_t)((absolute_steps_at_offset_position >> 8) & 0xFF), (uint8_t)(absolute_steps_at_offset_position & 0xFF)};
+        uint8_t data[6] = {CAN_CMD_OFFSET, static_cast<uint8_t>((cmd >> 16) & 0xFF),
+                           static_cast<uint8_t>((cmd >> 8) & 0xFF), static_cast<uint8_t>(cmd & 0XFF),
+                           static_cast<uint8_t>((absolute_steps_at_offset_position >> 8) & 0xFF), static_cast<uint8_t>(absolute_steps_at_offset_position & 0xFF)};
         return sendCanMsgBuf(id, 0, 6, data);
     }
 
-    INT8U StepperDriver::sendSynchronizePositionCommand(int id, bool begin_traj)
+    uint8_t StepperDriver::sendSynchronizePositionCommand(int id, bool begin_traj)
     {
-        uint8_t data[2] = {CAN_CMD_SYNCHRONIZE, (uint8_t)begin_traj};
+        uint8_t data[2] = {CAN_CMD_SYNCHRONIZE, static_cast<uint8_t>(begin_traj)};
         return sendCanMsgBuf(id, 0, 2, data);
     }
 
-    INT8U StepperDriver::sendMicroStepsCommand(int id, int micro_steps)
+    uint8_t StepperDriver::sendMicroStepsCommand(int id, int micro_steps)
     {
-        uint8_t data[2] = {CAN_CMD_MICRO_STEPS, (uint8_t)micro_steps};
+        uint8_t data[2] = {CAN_CMD_MICRO_STEPS, static_cast<uint8_t>(micro_steps)};
         return sendCanMsgBuf(id, 0, 2, data);
     }
 
-    INT8U StepperDriver::sendMaxEffortCommand(int id, int effort)
+    uint8_t StepperDriver::sendMaxEffortCommand(int id, int effort)
     {
-        uint8_t data[2] = {CAN_CMD_MAX_EFFORT, (uint8_t)effort};
+        uint8_t data[2] = {CAN_CMD_MAX_EFFORT, static_cast<uint8_t>(effort)};
         return sendCanMsgBuf(id, 0, 2, data);
     }
 
-    std::string StepperDriver::getErrorMessage()
+    std::string StepperDriver::getErrorMessage() const
     {
         return _debug_error_message;
     }
 
-    INT8U StepperDriver::sendCalibrationCommand(int id, int offset, int delay, int direction, int timeout)
+    uint8_t StepperDriver::sendCalibrationCommand(int id, int offset, int delay, int direction, int timeout)
     {
         direction = (direction > 0 ) ? 1 : 0;
 
-        uint8_t data[8] = {CAN_CMD_CALIBRATE, (uint8_t)((offset >> 16) & 0xFF),
-                           (uint8_t)((offset >> 8) & 0xFF), (uint8_t)(offset & 0XFF),
-                           (uint8_t)((delay >> 8) & 0xFF), (uint8_t)(delay & 0xFF),
-                           (uint8_t)direction, (uint8_t)timeout};
+        uint8_t data[8] = {CAN_CMD_CALIBRATE, static_cast<uint8_t>((offset >> 16) & 0xFF),
+                           static_cast<uint8_t>((offset >> 8) & 0xFF), static_cast<uint8_t>(offset & 0XFF),
+                           static_cast<uint8_t>((delay >> 8) & 0xFF), static_cast<uint8_t>(delay & 0xFF),
+                           static_cast<uint8_t>(direction), static_cast<uint8_t>(timeout)};
         return sendCanMsgBuf(id, 0, 8, data);
     }
 
-    e_CanStepperCalibrationStatus StepperDriver::getCalibrationResult(uint8_t id, int32_t &result)
+    e_CanStepperCalibrationStatus StepperDriver::getCalibrationResult(uint8_t id, int32_t &result) const
     {
-        result = _motor_calibration_map[id];
+        result = _motor_calibration_map.at(id);
         return _calibration_result;
     }
 
@@ -744,9 +745,9 @@ namespace StepperDriver
         {
             if (canReadData())
             {
-                INT32U rxId;
-                INT8U len;
-                std::array<INT8U, 8> rxBuf;
+                unsigned long rxId;
+                uint8_t len;
+                std::array<uint8_t, 8> rxBuf;
 
                 readMsgBuf(&rxId, &len, rxBuf);
                 CalibrationStepperData calib_data = {rxId, len, rxBuf};
@@ -754,10 +755,10 @@ namespace StepperDriver
             }
             else if (ros::Time::now().toSec() - time_thread_begin > calibration_timeout)
             {
-                ROS_ERROR("Stepper Driver - Calibration timeout after: %lf s", ros::Time::now().toSec() - time_thread_begin);
+                ROS_ERROR("StepperDriver::readCalibrationStates - Calibration timeout after: %lf s", ros::Time::now().toSec() - time_thread_begin);
                 for (int i = 0; i < _calibration_motor_list.size(); i++)
                 {
-                    ROS_ERROR("Stepper Driver - Motor %d timeout: may be disconnected", _calibration_motor_list.at(i));
+                    ROS_ERROR("StepperDriver::readCalibrationStates - Motor %d timeout: may be disconnected", _calibration_motor_list.at(i));
                 }
                 _calibration_result = e_CanStepperCalibrationStatus::CAN_STEPPERS_CALIBRATION_TIMEOUT;
                 _calibration_motor_list.clear();
@@ -768,7 +769,7 @@ namespace StepperDriver
         _calibration_motor_list.clear();
         reading_data_thread.join();
         _calibration_result = e_CanStepperCalibrationStatus::CAN_STEPPERS_CALIBRATION_OK;
-        ROS_DEBUG("Stepper Driver - Calibration thread ended with success");
+        ROS_DEBUG("StepperDriver::readCalibrationStates - Calibration thread ended with success");
     }
 
     void StepperDriver::interpreteCalibrationCommand()
@@ -787,8 +788,8 @@ namespace StepperDriver
 
                 if (_calibration_readed_datas[0].len == 4)
                 {
-                    INT32U rxId = _calibration_readed_datas[0].rxId ;
-                    std::array<INT8U, 8> rxBuf = _calibration_readed_datas[0].rxBuf;
+                    unsigned long rxId = _calibration_readed_datas[0].rxId ;
+                    std::array<uint8_t, 8> rxBuf = _calibration_readed_datas[0].rxBuf;
 
                     int motor_id = rxId & 0x0F;
                     for (int i = 0; i < _calibration_motor_list.size(); i++)
@@ -803,22 +804,22 @@ namespace StepperDriver
                                 e_CanStepperCalibrationStatus can_enum_result = static_cast<e_CanStepperCalibrationStatus>(result);
                                 if (can_enum_result == e_CanStepperCalibrationStatus::CAN_STEPPERS_CALIBRATION_TIMEOUT)
                                 {
-                                    ROS_ERROR("Stepper Driver - Motor %d had calibration timeout", motor_id);
+                                    ROS_ERROR("StepperDriver::interpreteCalibrationCommand - Motor %d had calibration timeout", motor_id);
                                     _calibration_result = can_enum_result;
                                     return;
                                 }
                                 else if (can_enum_result == e_CanStepperCalibrationStatus::CAN_STEPPERS_CALIBRATION_BAD_PARAM)
                                 {
-                                    ROS_ERROR("Stepper Driver - Bad params given to motor %d", motor_id);
+                                    ROS_ERROR("StepperDriver::interpreteCalibrationCommand - Bad params given to motor %d", motor_id);
                                     _calibration_result = can_enum_result;
                                     return;
                                 }
                                 else if (can_enum_result == e_CanStepperCalibrationStatus::CAN_STEPPERS_CALIBRATION_OK)
                                 {
-                                    ROS_INFO("Stepper Driver - Motor %d calibration OK", motor_id);
+                                    ROS_INFO("StepperDriver::interpreteCalibrationCommand - Motor %d calibration OK", motor_id);
                                     int steps_at_offset_pos = (rxBuf[2] << 8) + rxBuf[3];
-                                    ROS_INFO("Stepper Driver - Motor %d - Absolute steps at offset position : %d", motor_id, steps_at_offset_pos);
-                                    _motor_calibration_map[motor_id] = (int32_t)steps_at_offset_pos;
+                                    ROS_INFO("StepperDriver::interpreteCalibrationCommand - Motor %d - Absolute steps at offset position : %d", motor_id, steps_at_offset_pos);
+                                    _motor_calibration_map[motor_id] = static_cast<int32_t>(steps_at_offset_pos);
                                     _calibration_motor_list.erase(std::remove(_calibration_motor_list.begin(), _calibration_motor_list.end(), motor_id), _calibration_motor_list.end());
                                     // keep torque ON for axis 1
                                     if (motor_id == 1)
@@ -853,9 +854,9 @@ namespace StepperDriver
             ros::Duration(0.001).sleep(); // check at 1000 Hz
             if (canReadData())
             {
-                INT32U rxId;
-                INT8U len;
-                std::array<INT8U, 8> rxBuf;
+                unsigned long rxId;
+                uint8_t len;
+                std::array<uint8_t, 8> rxBuf;
                 readMsgBuf(&rxId, &len, rxBuf);
                 int motor_id = rxId & 0x0F;
                 if (motor_id == motor_to_find)
@@ -865,18 +866,18 @@ namespace StepperDriver
             }
             if (ros::Time::now().toSec() - time_begin_scan > timeout)
             {
-                ROS_ERROR("Stepper Driver - Motor with id %d not found", motor_to_find);
+                ROS_ERROR("StepperDriver::scanMotorId - Motor with id %d not found", motor_to_find);
                 return motor_found;
             }
         }
         return motor_found;
     }
 
-    INT8U StepperDriver::sendConveyoOnCommand(int id, bool conveyor_on, int conveyor_speed, int8_t direction)
+    uint8_t StepperDriver::sendConveyorOnCommand(int id, bool conveyor_on, int conveyor_speed, int8_t direction)
     {
-        ROS_DEBUG("Stepper Driver - Send conveyor id %d enabled (%d) at speed %d on direction %d",
+        ROS_DEBUG("StepperDriver::scanMotorId - Send conveyor id %d enabled (%d) at speed %d on direction %d",
                   id, static_cast<int>(conveyor_on), conveyor_speed, direction);
-        uint8_t data[3] = {0};
+        uint8_t data[4] = {0};
         data[0] = CAN_CMD_MODE;
         if (conveyor_on)
         {
@@ -892,9 +893,9 @@ namespace StepperDriver
         return sendCanMsgBuf(id, 0, 4, data);
     }
 
-    INT8U StepperDriver::sendUpdateConveyorId(uint8_t old_id, uint8_t new_id)
+    uint8_t StepperDriver::sendUpdateConveyorId(uint8_t old_id, uint8_t new_id)
     {
-        ROS_DEBUG("Stepper Driver - Send update conveyor id from %d to %d", old_id, new_id);
+        ROS_DEBUG("StepperDriver::sendUpdateConveyorId - Send update conveyor id from %d to %d", old_id, new_id);
         uint8_t data[3] = {0};
         data[0] = CAN_CMD_MODE;
         data[1] = CAN_UPDATE_CONVEYOR_ID;
@@ -902,9 +903,9 @@ namespace StepperDriver
         return sendCanMsgBuf(old_id, 0, 3, data);
     }
 
-    INT8U StepperDriver::sendCanMsgBuf(INT32U id, INT8U ext, INT8U len, INT8U *buf)
+    uint8_t StepperDriver::sendCanMsgBuf(unsigned long id, uint8_t ext, uint8_t len, uint8_t *buf)
     {
-        INT8U status;
+        uint8_t status = 0;
         int hw_fail_counter_send = 0;
         while (hw_fail_counter_send < 10)
         {
@@ -916,7 +917,7 @@ namespace StepperDriver
             else
             {
                 _is_can_connection_ok = false;
-                ROS_WARN_THROTTLE(0.5, "Stepper Driver - Sending Stepper message on CAN Bus failed");
+                ROS_WARN_THROTTLE(0.5, "StepperDriver::sendCanMsgBuf - Sending Stepper message on CAN Bus failed");
             }
         }
         return status;

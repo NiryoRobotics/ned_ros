@@ -520,7 +520,7 @@ namespace JointsInterface {
         boost::filesystem::create_directories(directory, returned_error);
         if (returned_error)
         {
-            ROS_WARN("Motor Offset - Could not create directory : %s", folder_name.c_str());
+            ROS_WARN("CalibrationInterface::set_motors_calibration_offsets - Could not create directory : %s", folder_name.c_str());
             return false;
         }
 
@@ -541,13 +541,13 @@ namespace JointsInterface {
         ofstream offset_file(file_name.c_str());
         if (offset_file.is_open())
         {
-            ROS_DEBUG("Motor Offset - Writing calibration offsets to file : \n%s", text_to_write.c_str());
+            ROS_DEBUG("CalibrationInterface::set_motors_calibration_offsets - Writing calibration offsets to file : \n%s", text_to_write.c_str());
             offset_file << text_to_write.c_str();
             offset_file.close();
         }
         else
         {
-            ROS_WARN("Motor Offset - Unable to open file : %s", file_name.c_str());
+            ROS_WARN("CalibrationInterface::set_motors_calibration_offsets - Unable to open file : %s", file_name.c_str());
             return false;
         }
 

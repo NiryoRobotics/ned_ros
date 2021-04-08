@@ -79,7 +79,7 @@ namespace DynamixelDriver
         else {
             ss << "(";
             for(int i = 0; i < _motor_id_list.size(); ++i)
-                ss << " motor " << _motor_id_list.at(i) << ": " << _param_list.at(i) << ",";
+                ss << " motor " << static_cast<int>(_motor_id_list.at(i)) << ": " << _param_list.at(i) << ",";
 
         }
 

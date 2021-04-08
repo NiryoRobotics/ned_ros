@@ -318,7 +318,7 @@ namespace DynamixelDriver
      */
     int DxlDriver::type_ping_id(uint8_t id, DxlMotorType_t type)
     {
-        if(_xdriver_map.count(type)) {
+        if(_xdriver_map.count(type) && _xdriver_map.at(type)) {
             return _xdriver_map.at(type)->ping(id);
         }
 
@@ -452,13 +452,14 @@ namespace DynamixelDriver
         auto it = _xdriver_map.begin();
         if(it != _xdriver_map.end() && it->second)
         {
+            result = it->second->scan(id_list);
+
             string ids_str;
             for(auto const &id : id_list)
                 ids_str += to_string(id) + " ";
 
             ROS_DEBUG_THROTTLE(1, "DxlDriver::getAllIdsOnDxlBus - Found ids (%s) on bus using first driver (type: %s)", ids_str.c_str(),
                                DxlMotorType::toString(it->first).c_str());
-            result = it->second->scan(id_list);
 
             if (COMM_SUCCESS != result)
             {
@@ -733,7 +734,7 @@ namespace DynamixelDriver
     {
         int result;
         ROS_DEBUG("DxlDriver::sendCustomDxlCommand:\n"
-                  "Motor type: %d, ID: %d, Value: %d, Address: %d, Size: %d",
+                  "\t\t Motor type: %d, ID: %d, Value: %d, Address: %d, Size: %d",
                   static_cast<int>(motor_type), static_cast<int>(id), static_cast<int>(value),
                   static_cast<int>(reg_address), static_cast<int>(byte_number));
 
@@ -928,7 +929,8 @@ namespace DynamixelDriver
     void DxlDriver::syncWriteTorqueEnable(const vector<uint8_t>& motor_list,
                                           const vector<uint32_t>& torque_list)
     {
-        syncWriteCommand(&XDriver::syncWriteTorqueEnable, motor_list, torque_list);
+        syncWriteCommand(&XDriver::syncWriteTorqueEnable,
+                         motor_list, torque_list);
     }
 
     /**
@@ -939,7 +941,8 @@ namespace DynamixelDriver
     void DxlDriver::syncWritePositionCommand(const vector<uint8_t>& motor_list,
                                              const vector<uint32_t>& position_list)
     {
-        syncWriteCommand(&XDriver::syncWritePositionGoal, motor_list, position_list);
+        syncWriteCommand(&XDriver::syncWritePositionGoal,
+                         motor_list, position_list);
     }
 
     /**
@@ -950,7 +953,8 @@ namespace DynamixelDriver
     void DxlDriver::syncWriteEffortCommand(const vector<uint8_t>& motor_list,
                                            const vector<uint32_t>& effort_list)
     {
-        syncWriteCommand(&XDriver::syncWriteTorqueGoal, motor_list, effort_list);
+        syncWriteCommand(&XDriver::syncWriteTorqueGoal,
+                         motor_list, effort_list);
     }
 
     /**
@@ -961,7 +965,8 @@ namespace DynamixelDriver
     void DxlDriver::syncWriteVelocityCommand(const vector<uint8_t>& motor_list,
                                              const vector<uint32_t>& velocity_list)
     {
-        syncWriteCommand(&XDriver::syncWriteVelocityGoal, motor_list, velocity_list);
+        syncWriteCommand(&XDriver::syncWriteVelocityGoal,
+                         motor_list, velocity_list);
     }
 
     /**
@@ -974,31 +979,41 @@ namespace DynamixelDriver
                                      const vector<uint32_t>& param_list)
     {
 
-        //map of needed drivers and corresponding list of motor ids
+        //map of needed drivers and corresponding list of motor ids (misses list of params...
         unordered_map<shared_ptr<XDriver>, vector<uint8_t> > drivers_needed_map;
 
         for(auto const &id : motor_list) {
             DxlMotorType_t type = _state_map.at(id).getType();
             shared_ptr<XDriver> driver = _xdriver_map.at(type);
-
-            //if type not yet seen, add an entry to the unordered map
-            if(0 == drivers_needed_map.count(driver)) {
-                drivers_needed_map[driver] = vector<uint8_t>({id});
-            }
-            else {
-                drivers_needed_map[driver].push_back(id);
+            if(driver) {
+                //if type not yet seen, add an entry to the unordered map
+                if(0 == drivers_needed_map.count(driver)) {
+                    drivers_needed_map[driver] = vector<uint8_t>({id});
+                }
+                else {
+                    drivers_needed_map[driver].push_back(id);
+                }
             }
         }
 
         //process all the motors using each successive drivers
         for(int counter = 0; counter < 25; ++counter)
         {
+            ROS_DEBUG("DxlDriver::syncWriteCommand: try to sync write %d", counter);
+
+            for(auto const &d : drivers_needed_map) {
+                ROS_DEBUG("DxlDriver::syncWriteCommand - Driver unordered map: %s", d.first->str().c_str());
+            }
+
             for(auto it = drivers_needed_map.begin(); it != drivers_needed_map.end(); ++it) {
                 if(it->first) {
-                    int results = (it->first.get()->*syncWriteFunction)(it->second, param_list);
+                    for(auto i : it->second)
+                        cout << (int)i << ",";
+                    int results = ((it->first.get())->*syncWriteFunction)(motor_list, param_list);
                     if (COMM_SUCCESS == results) {
                         drivers_needed_map.erase(it);
                     }
+                    ROS_ERROR_COND(COMM_SUCCESS != results, "DxlDriver::syncWriteCommand : unable to sync write function : %d", results);
                 }
             }
 
