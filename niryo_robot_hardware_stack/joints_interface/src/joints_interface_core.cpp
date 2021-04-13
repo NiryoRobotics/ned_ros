@@ -23,10 +23,11 @@
 
 namespace JointsInterface {
 
-    JointsInterfaceCore::JointsInterfaceCore(
-        std::shared_ptr<DynamixelDriver::DynamixelDriverCore> &dynamixel,
-        std::shared_ptr<StepperDriver::StepperDriverCore> &stepper)
-        : _stepper(stepper), _dynamixel(dynamixel)
+    JointsInterfaceCore::JointsInterfaceCore(std::shared_ptr<DynamixelDriver::DynamixelDriverCore> dynamixel,
+                                             std::shared_ptr<StepperDriver::StepperDriverCore> stepper) :
+        _dynamixel(dynamixel),
+        _stepper(stepper)
+
     {
         init();
     }
@@ -226,18 +227,18 @@ namespace JointsInterface {
         resp_status = niryo_robot_msgs::CommandStatus::SUCCESS;
     }
 
-    bool JointsInterfaceCore::getFreeDriveMode()
+    bool JointsInterfaceCore::getFreeDriveMode() const
     {
         return _previous_state_learning_mode;
     }
 
-    void JointsInterfaceCore::getCalibrationState(std::shared_ptr<bool> &need_calibration, std::shared_ptr<bool> &calibration_in_progress)
+    void JointsInterfaceCore::getCalibrationState(bool& need_calibration, bool& calibration_in_progress) const
     {
-        (*need_calibration) = _robot->needCalibration();
-        (*calibration_in_progress) = _robot->isCalibrationInProgress();
+        need_calibration = _robot->needCalibration();
+        calibration_in_progress = _robot->isCalibrationInProgress();
     }
 
-    std::vector<JointState> &JointsInterfaceCore::getJointsState()
+    const std::vector<common::model::JointState> &JointsInterfaceCore::getJointsState() const
     {
         return _robot->getJointsState();
     }

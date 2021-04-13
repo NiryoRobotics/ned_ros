@@ -21,20 +21,22 @@
 #define JOINTS_INTERFACE_CORE_HPP
 
 #include <memory>
+#include <sstream>
+#include <string>
+#include <vector>
+#include <thread>
+#include <functional>
+#include <std_msgs/Empty.h>
+#include <std_msgs/Bool.h>
+
+#include <ros/ros.h>
+
 #include <controller_manager/controller_manager.h>
 #include <control_msgs/FollowJointTrajectoryActionResult.h>
 #include <control_msgs/FollowJointTrajectoryActionGoal.h>
 #include <hardware_interface/joint_state_interface.h>
 #include <hardware_interface/joint_command_interface.h>
 #include <hardware_interface/robot_hw.h>
-#include <ros/ros.h>
-#include <vector>
-#include <sstream>
-#include <string>
-#include <std_msgs/Empty.h>
-#include <std_msgs/Bool.h>
-#include <thread>
-#include <functional>
 
 #include "joints_interface/JointHardwareInterface.hpp"
 #include "niryo_robot_msgs/SetInt.h"
@@ -49,8 +51,8 @@ namespace JointsInterface {
         public:
 
             JointsInterfaceCore(
-                std::shared_ptr<DynamixelDriver::DynamixelDriverCore>& dynamixel,
-                std::shared_ptr<StepperDriver::StepperDriverCore>& stepper);
+                std::shared_ptr<DynamixelDriver::DynamixelDriverCore> dynamixel,
+                std::shared_ptr<StepperDriver::StepperDriverCore> stepper);
 
             void init();
             void initParams();
@@ -60,19 +62,16 @@ namespace JointsInterface {
 
             void rosControlLoop();
 
+            void sendMotorsParams();
             void activateLearningMode(bool learning_mode_on, int &resp_status, std::string &resp_message);
-
             void calibrateJoints();
-
-            bool getFreeDriveMode();
-
-            void getCalibrationState(std::shared_ptr<bool> &need_calibration, std::shared_ptr<bool> &calibration_in_progress);
-
-            std::vector<JointState>& getJointsState();
 
             std::string jointIdToJointName(int id, uint8_t motor_type);
 
-            void sendMotorsParams();
+            bool getFreeDriveMode() const;
+            void getCalibrationState(bool &need_calibration, bool &calibration_in_progress) const;
+
+            const std::vector<common::model::JointState> &getJointsState() const;
 
         private:
 
@@ -93,8 +92,8 @@ namespace JointsInterface {
             void _publishLearningMode();
 
             std::shared_ptr<JointHardwareInterface> _robot;
-            std::shared_ptr<DynamixelDriver::DynamixelDriverCore>& _dynamixel;
-            std::shared_ptr<StepperDriver::StepperDriverCore>& _stepper;
+            std::shared_ptr<DynamixelDriver::DynamixelDriverCore> _dynamixel;
+            std::shared_ptr<StepperDriver::StepperDriverCore> _stepper;
 
             double _publish_learning_mode_frequency;
 

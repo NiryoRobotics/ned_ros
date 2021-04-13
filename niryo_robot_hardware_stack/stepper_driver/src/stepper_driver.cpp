@@ -18,7 +18,9 @@
 */
 
 #include "stepper_driver/stepper_driver.hpp"
-#include "stepper_driver/conveyor_state.hpp"
+#include "model/conveyor_state.hpp"
+#include "model/stepper_command_type_enum.hpp"
+
 #include <functional>
 
 namespace StepperDriver
@@ -135,11 +137,11 @@ namespace StepperDriver
     void StepperDriver::removeMotor(uint8_t motor_id)
     {
         ROS_DEBUG("StepperDriver::removeMotor - Remove motor id: %d", motor_id);
-        for (int i = 0; i < _motor_id_list.size(); i++)
+        for (size_t i = 0; i < _motor_id_list.size(); i++)
         {
             if (_motor_id_list.at(i) == motor_id)
             {
-                _motor_id_list.erase(_motor_id_list.begin() + i);
+                _motor_id_list.erase(_motor_id_list.begin() + static_cast<int>(i));
                 break;
             }
         }
@@ -149,9 +151,9 @@ namespace StepperDriver
     void StepperDriver::updateMotorList()
     {
         _motor_list.clear();
-        for (int i = 0; i < _motor_id_list.size(); i++)
+        for (size_t i = 0; i < _motor_id_list.size(); i++)
         {
-            StepperMotorState m(_motor_id_list.at(i));
+            common::model::StepperMotorState m(_motor_id_list.at(i));
             ROS_DEBUG("StepperDriver::updateMotorList - Push back id %d", _motor_id_list.at(i));
             _motor_list.push_back(m);
         }
@@ -169,13 +171,13 @@ namespace StepperDriver
 
     void StepperDriver::addConveyor(uint8_t conveyor_id)
     {
-        ConveyorState c(conveyor_id);
+        common::model::ConveyorState c(conveyor_id);
         _conveyor_list.push_back(c);
     }
 
     void StepperDriver::removeConveyor(uint8_t conveyor_id)
     {
-        for (int i = 0; i < _conveyor_list.size(); i++)
+        for (size_t i = 0; i < _conveyor_list.size(); i++)
         {
             if (_conveyor_list.at(i).getId() == conveyor_id)
             {
@@ -184,7 +186,7 @@ namespace StepperDriver
         }
     }
 
-    const std::vector<StepperMotorState> &StepperDriver::getMotorsState() const
+    const std::vector<common::model::StepperMotorState> &StepperDriver::getMotorsState() const
     {
         return _motor_list;
     }
@@ -227,7 +229,7 @@ namespace StepperDriver
         return _stepper_states;
     }
 
-    int StepperDriver::readCommand(StepperMotorCmd cmd)
+    int StepperDriver::readCommand(common::model::StepperMotorCmd cmd)
     {
         int result = CAN_INVALID_CMD;
         ROS_DEBUG("StepperDriver::readCommand - Received stepper cmd with type %d", int(cmd.getType()));
@@ -244,21 +246,21 @@ namespace StepperDriver
 
         switch(cmd.getType())
         {
-            case StepperCommandType_t::CMD_TYPE_POSITION:
+            case common::model::EStepperCommandType::CMD_TYPE_POSITION:
                 if (cmd.getMotorsId().size() <= cmd.getParams().size()) {
                     for (int i = 0; i < cmd.getMotorsId().size(); i++) {
                         result = sendPositionCommand(cmd.getMotorsId().at(i), cmd.getParams().at(i));
                     }
                 }
             break;
-            case StepperCommandType_t::CMD_TYPE_TORQUE:
+            case common::model::EStepperCommandType::CMD_TYPE_TORQUE:
                 if (cmd.getMotorsId().size() <= cmd.getParams().size()) {
                     for (int i = 0; i < cmd.getMotorsId().size(); i++) {
                         result = sendTorqueOnCommand(cmd.getMotorsId().at(i), cmd.getParams().at(i));
                     }
                 }
             break;
-            case StepperCommandType_t::CMD_TYPE_SYNCHRONIZE:
+            case common::model::EStepperCommandType::CMD_TYPE_SYNCHRONIZE:
                 if (cmd.getMotorsId().size() <= cmd.getParams().size())
                 {
                     for (int i = 0; i < cmd.getMotorsId().size(); i++)
@@ -267,18 +269,18 @@ namespace StepperDriver
                     }
                 }
             break;
-            case StepperCommandType_t::CMD_TYPE_RELATIVE_MOVE:
+            case common::model::EStepperCommandType::CMD_TYPE_RELATIVE_MOVE:
                 if (cmd.getMotorsId().size() > 0 && cmd.getParams().size() >= 2)
                     result = sendRelativeMoveCommand(cmd.getMotorsId().at(0), cmd.getParams().at(0), cmd.getParams().at(1));
             break;
-            case StepperCommandType_t::CMD_TYPE_MAX_EFFORT:
+            case common::model::EStepperCommandType::CMD_TYPE_MAX_EFFORT:
                 if (cmd.getMotorsId().size() <= cmd.getParams().size()) {
                     for (int i = 0; i < cmd.getMotorsId().size(); i++) {
                         result = sendMaxEffortCommand(cmd.getMotorsId().at(i), cmd.getParams().at(i));
                     }
                 }
             break;
-            case StepperCommandType_t::CMD_TYPE_MICRO_STEPS:
+            case common::model::EStepperCommandType::CMD_TYPE_MICRO_STEPS:
                 if (cmd.getMotorsId().size() <= cmd.getParams().size()) {
                     for (int i = 0; i < cmd.getMotorsId().size(); i++) {
                         result = sendMicroStepsCommand(cmd.getMotorsId().at(i),
@@ -286,7 +288,7 @@ namespace StepperDriver
                     }
                 }
             break;
-            case StepperCommandType_t::CMD_TYPE_CALIBRATION:
+            case common::model::EStepperCommandType::CMD_TYPE_CALIBRATION:
                 if (cmd.getMotorsId().size() > 0 && cmd.getParams().size() >= 4)
                 {
                     _calibration_motor_list.push_back(cmd.getMotorsId().at(0));
@@ -303,20 +305,20 @@ namespace StepperDriver
                     }
                 }
             break;
-            case StepperCommandType_t::CMD_TYPE_POSITION_OFFSET:
+            case common::model::EStepperCommandType::CMD_TYPE_POSITION_OFFSET:
                 if (cmd.getMotorsId().size() > 0 && cmd.getParams().size() >= 2)
                     result = sendPositionOffsetCommand(cmd.getMotorsId().at(0),
                                                        cmd.getParams().at(0),
                                                        cmd.getParams().at(1));
                 break;
-            case StepperCommandType_t::CMD_TYPE_CONVEYOR:
+            case common::model::EStepperCommandType::CMD_TYPE_CONVEYOR:
                 if (cmd.getMotorsId().size() > 0 && cmd.getParams().size() >= 3)
                     result = sendConveyorOnCommand(cmd.getMotorsId().at(0),
                                                   cmd.getParams().at(0),
                                                   cmd.getParams().at(1),
                                                   cmd.getParams().at(2));
                 break;
-            case StepperCommandType_t::CMD_TYPE_UPDATE_CONVEYOR:
+            case common::model::EStepperCommandType::CMD_TYPE_UPDATE_CONVEYOR:
                 if (cmd.getMotorsId().size() > 0 && cmd.getParams().size() >= 1)
                 {
                     result = sendUpdateConveyorId(cmd.getMotorsId().at(0), cmd.getParams().at(0));
@@ -327,7 +329,7 @@ namespace StepperDriver
                     }
                 }
             break;
-            case StepperCommandType_t::CMD_TYPE_UNKNOWN:
+            case common::model::EStepperCommandType::CMD_TYPE_UNKNOWN:
             default:
                 break;
         }
@@ -572,7 +574,7 @@ namespace StepperDriver
             // Only check when motors seems connected and not in calibration (not state received)
             if (this->_is_can_connection_ok && !this->_calibration_in_progress)
             {
-                for (const StepperMotorState &motor : this->_motor_list)
+                for (const auto &motor : this->_motor_list)
                 {
                     const double &last_time_read = motor.getLastTimeRead();
                     if (last_time_read > 0)
@@ -602,13 +604,13 @@ namespace StepperDriver
     void StepperDriver::_refreshMotorTimeout()
     {
         // Refresh time read value for timeout thread
-        for (StepperMotorState &motor_stepper_state : _motor_list)
+        for (common::model::StepperMotorState &motor_stepper_state : _motor_list)
         {
             motor_stepper_state.setLastTimeRead(-1);
         }
     }
 
-    const std::vector<ConveyorState> &StepperDriver::getConveyorsState() const
+    const std::vector<common::model::ConveyorState> &StepperDriver::getConveyorsState() const
     {
         return _conveyor_list;
     }
@@ -830,7 +832,7 @@ namespace StepperDriver
                             }
                             else if ((ros::Time::now() - _motor_calibration_map_cmd[motor_id].cmd_time).toSec() > 0.5)
                             {
-                                StepperMotorCmd cmd = _motor_calibration_map_cmd[motor_id].cmd;
+                                common::model::StepperMotorCmd cmd = _motor_calibration_map_cmd[motor_id].cmd;
                                 _motor_calibration_map_cmd[motor_id].cmd_time = ros::Time::now();
                                 sendCalibrationCommand(motor_id, cmd.getParams().at(0), cmd.getParams().at(1), cmd.getParams().at(2), cmd.getParams().at(3));
                             }

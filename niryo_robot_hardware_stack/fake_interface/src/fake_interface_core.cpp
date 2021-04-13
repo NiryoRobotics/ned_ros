@@ -18,7 +18,13 @@
 */
 
 #include "fake_interface/fake_interface_core.hpp"
+
+//std
 #include <functional>
+#include <std_msgs/Int32.h>
+
+//niryo
+#include "model/tool_state.hpp"
 
 namespace FakeInterface {
     FakeInterfaceCore::FakeInterfaceCore()
@@ -200,35 +206,35 @@ namespace FakeInterface {
             res.id = 0;
         }
         pubToolId(res.id);
-        res.state = TOOL_STATE_PING_OK;
+        res.state = common::model::ToolState::TOOL_STATE_PING_OK;
         return true;
     }
 
     bool FakeInterfaceCore::_callbackOpenGripper(tools_interface::OpenGripper::Request &req, tools_interface::OpenGripper::Response &res)
     {
         ROS_INFO("Fake Hardware Interface - Open gripper with id : %03d", req.id);
-        res.state = GRIPPER_STATE_OPEN;
+        res.state = common::model::ToolState::GRIPPER_STATE_OPEN;
         return true;
     }
 
     bool FakeInterfaceCore::_callbackCloseGripper(tools_interface::CloseGripper::Request &req, tools_interface::CloseGripper::Response &res)
     {
         ROS_INFO("Fake Hardware Interface - Close gripper with id : %03d", req.id);
-        res.state = GRIPPER_STATE_CLOSE;
+        res.state = common::model::ToolState::GRIPPER_STATE_CLOSE;
         return true;
     }
 
     bool FakeInterfaceCore::_callbackPullAirVacuumPump(tools_interface::PullAirVacuumPump::Request &req, tools_interface::PullAirVacuumPump::Response &res)
     {
         ROS_INFO("Fake Hardware Interface - Pull air on vacuum pump with id : %03d", req.id);
-        res.state = VACUUM_PUMP_STATE_PULLED;
+        res.state = common::model::ToolState::VACUUM_PUMP_STATE_PULLED;
         return true;
     }
 
     bool FakeInterfaceCore:: _callbackPushAirVacuumPump(tools_interface::PushAirVacuumPump::Request &req, tools_interface::PushAirVacuumPump::Response &res)
     {
         ROS_INFO("Fake Hardware Interface - Push air on vacuum pump with id : %03d", req.id);
-        res.state = VACUUM_PUMP_STATE_PUSHED;
+        res.state = common::model::ToolState::VACUUM_PUMP_STATE_PUSHED;
         return true;
     }
 
@@ -312,10 +318,10 @@ namespace FakeInterface {
         return can_bus_state;
     }
 
-    void FakeInterfaceCore::getCalibrationState(std::shared_ptr<bool> &need_calibration, std::shared_ptr<bool> &calibration_in_progress)
+    void FakeInterfaceCore::getCalibrationState(bool &need_calibration, bool &calibration_in_progress) const
     {
-        (*need_calibration) = false;
-        (*calibration_in_progress) = false;
+        need_calibration = false;
+        calibration_in_progress = false;
     }
 
     int FakeInterfaceCore::getCpuTemperature()

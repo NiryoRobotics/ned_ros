@@ -1,3 +1,22 @@
+/*
+    stepper_driver_test.cpp
+    Copyright (C) 2021 Niryo
+    All rights reserved.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include <memory>
 #include <ros/ros.h>
 #include <string>
@@ -6,7 +25,10 @@
 #include <functional>
 #include <vector>
 
-#include <stepper_driver/stepper_driver_core.hpp>
+//niryo
+#include "stepper_driver/stepper_driver_core.hpp"
+#include "model/stepper_command_type_enum.hpp"
+
 
 class StepperDriverTest {
 
@@ -28,8 +50,8 @@ class StepperDriverTest {
             _stepper.reset(new StepperDriver::StepperDriverCore());
 
             ros::Duration(2).sleep();
-            StepperDriver::StepperMotorCmd cmd_torque;
-            cmd_torque.setType(StepperDriver::StepperCommandType_t::CMD_TYPE_TORQUE);
+            common::model::StepperMotorCmd cmd_torque;
+            cmd_torque.setType(common::model::EStepperCommandType::CMD_TYPE_TORQUE);
             cmd_torque.setMotorsId(id);
             cmd_torque.setParams(std::vector<int32_t> {false, false, false});
             _stepper->setStepperCommands(cmd_torque);
@@ -44,8 +66,8 @@ class StepperDriverTest {
         void TestServiceActiveTorque()
         {
             ROS_INFO("active all arm motors");
-            StepperDriver::StepperMotorCmd cmd;
-            cmd.setType(StepperDriver::StepperCommandType_t::CMD_TYPE_TORQUE);
+            common::model::StepperMotorCmd cmd;
+            cmd.setType(common::model::EStepperCommandType::CMD_TYPE_TORQUE);
             cmd.setMotorsId(id);
             cmd.setParams(std::vector<int32_t> {true, true, true});
             _stepper->setStepperCommands(cmd);
@@ -59,15 +81,15 @@ class StepperDriverTest {
         void TestPublishPoseCmd()
         {           
             ROS_INFO("move all arm motors");
-            StepperDriver::StepperMotorCmd cmd;
+            common::model::StepperMotorCmd cmd;
 
-            cmd.setType(StepperDriver::StepperCommandType_t::CMD_TYPE_TORQUE);
+            cmd.setType(common::model::EStepperCommandType::CMD_TYPE_TORQUE);
             cmd.setMotorsId(id);
             cmd.setParams(std::vector<int32_t> {true, true, true});
             _stepper->setStepperCommands(cmd);
             ros::Duration(1).sleep();
 
-            cmd.setType(StepperDriver::StepperCommandType_t::CMD_TYPE_POSITION);
+            cmd.setType(common::model::EStepperCommandType::CMD_TYPE_POSITION);
             cmd.setParams(home_pose);
             _stepper->setStepperCommands(cmd);
             ros::Duration(5).sleep();
@@ -76,7 +98,7 @@ class StepperDriverTest {
             _stepper->setStepperCommands(cmd);
             ros::Duration(5).sleep();
 
-            cmd.setType(StepperDriver::StepperCommandType_t::CMD_TYPE_TORQUE);
+            cmd.setType(common::model::EStepperCommandType::CMD_TYPE_TORQUE);
             cmd.setParams(std::vector<int32_t> {false, false, false});
             _stepper->setStepperCommands(cmd);
             ros::Duration(1).sleep();
@@ -101,9 +123,9 @@ class StepperDriverTest {
 
         void TestReceiveState()
         {
-            StepperDriver::StepperMotorCmd cmd_torque;
+            common::model::StepperMotorCmd cmd_torque;
 
-            cmd_torque.setType(StepperDriver::StepperCommandType_t::CMD_TYPE_TORQUE);
+            cmd_torque.setType(common::model::EStepperCommandType::CMD_TYPE_TORQUE);
             cmd_torque.setMotorsId(std::vector<uint8_t> {1});
             cmd_torque.setParams(std::vector<int32_t> {true});
             _stepper->setStepperCommands(cmd_torque);
@@ -114,14 +136,14 @@ class StepperDriverTest {
             // setTrajectoryControllerCommands(std::vector<int32_t> &cmd)
             std::vector<int32_t> cmd = {2620, 0, 0};
             std::vector<int32_t> cmd_send = {0, 0, 0};
-            int p = 1.5;
+            double p = 1.5;
             std::vector<int32_t> stepper_motor_state;
             stepper_motor_state = _stepper->getTrajectoryControllerStates();
             int32_t error = cmd[0] - stepper_motor_state[0];
             while (error > 20 || error < -20)
             {
                 stepper_motor_state = _stepper->getTrajectoryControllerStates();
-                error = (cmd[0] - stepper_motor_state[0])*p;
+                error = static_cast<int>((cmd[0] - stepper_motor_state[0])*p);
                 cmd_send[0] = cmd[0] + error;
                 cmd_send[1] = stepper_motor_state[1];
                 cmd_send[2] = stepper_motor_state[2];

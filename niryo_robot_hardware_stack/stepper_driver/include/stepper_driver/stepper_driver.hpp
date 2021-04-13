@@ -27,16 +27,15 @@
 #include <map>
 #include <ros/ros.h>
 #include "mcp_can_rpi/mcp_can_rpi.h"
-#include "stepper_driver/stepper_motor_state.hpp"
-#include "stepper_driver/stepper_motor_cmd.hpp"
+#include "model/stepper_motor_state.hpp"
+#include "model/stepper_motor_cmd.hpp"
 #include "stepper_driver/StepperMotorCommand.h"
 #include "stepper_driver/StepperCmd.h"
-#include "stepper_driver/conveyor_state.hpp"
+#include "model/conveyor_state.hpp"
 
 
 namespace StepperDriver
 {
-
 
     constexpr int CAN_CMD_POSITION    = 0x03;
     constexpr int CAN_CMD_TORQUE      = 0x04;
@@ -79,7 +78,7 @@ namespace StepperDriver
     constexpr int CAN_SCAN_TIMEOUT   =  -10003;
     constexpr double TIME_TO_WAIT_IF_BUSY = 0.0005;
 
-    constexpr float STEPPER_MOTOR_TIMEOUT_VALUE = 1.0f; // s
+    constexpr double STEPPER_MOTOR_TIMEOUT_VALUE = 1.0; // s
 
     enum class e_CanStepperCalibrationStatus {
         CAN_STEPPERS_CALIBRATION_UNINITIALIZED = 0,
@@ -100,7 +99,7 @@ namespace StepperDriver
 
     struct CalibrationStepperCmdStatus
     {
-        StepperMotorCmd cmd;
+        common::model::StepperMotorCmd cmd;
         ros::Time cmd_time;
     };
 
@@ -126,7 +125,7 @@ namespace StepperDriver
 
             void executeJointTrajectoryCmd(std::vector<int32_t> &cmd);
 
-            int readCommand(StepperMotorCmd cmd);
+            int readCommand(common::model::StepperMotorCmd cmd);
             void readMotorsState();
 
             // tests
@@ -139,8 +138,8 @@ namespace StepperDriver
             //getters
             int getStepperPose(int32_t motor_id) const;
             const std::vector<int32_t>& getJointTrajectoryState() const;
-            const std::vector<StepperMotorState>& getMotorsState() const;
-            const std::vector<ConveyorState>& getConveyorsState() const;
+            const std::vector<common::model::StepperMotorState>& getMotorsState() const;
+            const std::vector<common::model::ConveyorState>& getConveyorsState() const;
             void getBusState(bool& connection_status, std::vector<uint8_t>& motor_list, std::string& error) const;
 
             e_CanStepperCalibrationStatus getCalibrationResult(uint8_t id, int32_t &result) const;
@@ -186,8 +185,8 @@ namespace StepperDriver
             std::vector<int> _arm_id_list;
             std::vector<int> _motor_id_list;
 
-            std::vector<ConveyorState> _conveyor_list;
-            std::vector<StepperMotorState> _motor_list;
+            std::vector<common::model::ConveyorState> _conveyor_list;
+            std::vector<common::model::StepperMotorState> _motor_list;
 
             std::vector<uint8_t> _all_motor_connected;
             std::vector<uint8_t> _calibration_motor_list;

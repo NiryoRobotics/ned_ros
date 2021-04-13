@@ -1,33 +1,43 @@
-// /*
-//     calibration_interface.cpp
-//     Copyright (C) 2020 Niryo
-//     All rights reserved.
+/*
+    calibration_interface.cpp
+    Copyright (C) 2020 Niryo
+    All rights reserved.
 
-//     This program is free software: you can redistribute it and/or modify
-//     it under the terms of the GNU General Public License as published by
-//     the Free Software Foundation, either version 3 of the License, or
-//     (at your option) any later version.
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
 
-//     This program is distributed in the hope that it will be useful,
-//     but WITHOUT ANY WARRANTY; without even the implied warranty of
-//     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-//     GNU General Public License for more details.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
 
-//     You should have received a copy of the GNU General Public License
-//     along with this program.  If not, see <http://www.gnu.org/licenses/>.
-// */
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
 
+//std
+#include <functional>
+
+#include <boost/filesystem.hpp>
+
+//ros
+#include <ros/console.h>
+
+//niryo
+#include "model/stepper_command_type_enum.hpp"
+
+#include "model/dxl_command_type_enum.hpp"
 #include "joints_interface/calibration_interface.hpp"
 #include "joints_interface/Math.hpp"
-#include <ros/console.h>
-#include <functional>
-#include <boost/filesystem.hpp>
+
 
 using namespace std;
 
 namespace JointsInterface {
 
-    CalibrationInterface::CalibrationInterface(vector<JointState> &joint_list,
+    CalibrationInterface::CalibrationInterface(vector<common::model::JointState> &joint_list,
                                                shared_ptr<StepperDriver::StepperDriverCore> &stepper,
                                                shared_ptr<DynamixelDriver::DynamixelDriverCore> &dynamixel) :
         _joint_list(joint_list), _stepper(stepper), _dynamixel(dynamixel)
@@ -117,11 +127,11 @@ namespace JointsInterface {
         return niryo_robot_msgs::CommandStatus::SUCCESS;
     }
 
-    void CalibrationInterface::_motorTorque(JointState &motor, bool status)
+    void CalibrationInterface::_motorTorque(common::model::JointState &motor, bool status)
     {
-        StepperDriver::StepperMotorCmd stepper_cmd;
+        common::model::StepperMotorCmd stepper_cmd;
 
-        stepper_cmd.setType(StepperDriver::StepperCommandType_t::CMD_TYPE_TORQUE);
+        stepper_cmd.setType(common::model::EStepperCommandType::CMD_TYPE_TORQUE);
         vector<uint8_t> id{motor.getId()};
         stepper_cmd.setMotorsId(id);
         vector<int32_t> param{status};
@@ -131,12 +141,12 @@ namespace JointsInterface {
         ros::Duration(0.2).sleep();
     }
 
-    void CalibrationInterface::_moveMotor(JointState &motor, int steps, float delay)
+    void CalibrationInterface::_moveMotor(common::model::JointState &motor, int steps, float delay)
     {
         _motorTorque(motor, true);
 
-        StepperDriver::StepperMotorCmd stepper_cmd;
-        stepper_cmd.setType(StepperDriver::StepperCommandType_t::CMD_TYPE_POSITION);
+        common::model::StepperMotorCmd stepper_cmd;
+        stepper_cmd.setType(common::model::EStepperCommandType::CMD_TYPE_POSITION);
 
         vector<uint8_t> id{motor.getId()};
         stepper_cmd.setMotorsId(id);
@@ -149,12 +159,12 @@ namespace JointsInterface {
         ros::Duration(delay).sleep();
     }
 
-    int CalibrationInterface::_relativeMoveMotor(JointState &motor, int steps, int delay, bool wait)
+    int CalibrationInterface::_relativeMoveMotor(common::model::JointState &motor, int steps, int delay, bool wait)
     {
         _motorTorque(motor, true);
 
-        StepperDriver::StepperMotorCmd stepper_cmd;
-        stepper_cmd.setType(StepperDriver::StepperCommandType_t::CMD_TYPE_RELATIVE_MOVE);
+        common::model::StepperMotorCmd stepper_cmd;
+        stepper_cmd.setType(common::model::EStepperCommandType::CMD_TYPE_RELATIVE_MOVE);
         vector<int32_t> param{steps, delay};
         stepper_cmd.setParams(param);
         vector<uint8_t> id{motor.getId()};
@@ -169,13 +179,14 @@ namespace JointsInterface {
         return 1;
     }
 
-    void CalibrationInterface::_setCalibrationCommand(
-        JointState motor, int offset, int delay, int motor_direction, int calibration_direction, int timeout,
-        int32_t& calibration_result)
+    void CalibrationInterface::_setCalibrationCommand(common::model::JointState motor,
+                                                      int offset, int delay, int motor_direction,
+                                                      int calibration_direction, int timeout,
+                                                      int32_t& calibration_result)
     {
-        StepperDriver::StepperMotorCmd stepper_cmd;
+        common::model::StepperMotorCmd stepper_cmd;
 
-        stepper_cmd.setType(StepperDriver::StepperCommandType_t::CMD_TYPE_CALIBRATION);
+        stepper_cmd.setType(common::model::EStepperCommandType::CMD_TYPE_CALIBRATION);
         vector<uint8_t> id{motor.getId()};
         stepper_cmd.setMotorsId(id);
 
@@ -210,9 +221,9 @@ namespace JointsInterface {
 
         ros::Duration sld(0.2);
         sld.sleep();
-        StepperDriver::StepperMotorCmd stepper_cmd;
+        common::model::StepperMotorCmd stepper_cmd;
 
-        stepper_cmd.setType(StepperDriver::StepperCommandType_t::CMD_TYPE_TORQUE);
+        stepper_cmd.setType(common::model::EStepperCommandType::CMD_TYPE_TORQUE);
 
         vector<uint8_t> id{_joint_list.at(1).getId()};
         stepper_cmd.setMotorsId(id);
@@ -226,9 +237,9 @@ namespace JointsInterface {
         ros::Duration(0.5).sleep();
 
         // 2. Move All Dynamixel to Home Position
-        DynamixelDriver::SynchronizeMotorCmd dynamixel_cmd;
+        common::model::SynchronizeMotorCmd dynamixel_cmd;
 
-        dynamixel_cmd.setType(DynamixelDriver::DxlCommandType_t::CMD_TYPE_TORQUE);
+        dynamixel_cmd.setType(common::model::EDxlCommandType::CMD_TYPE_TORQUE);
         id.clear();
         id = {
             _joint_list.at(3).getId(),
@@ -305,8 +316,8 @@ namespace JointsInterface {
         ros::Duration(2.5).sleep();
 
 
-        dynamixel_cmd.setType(DynamixelDriver::DxlCommandType_t::CMD_TYPE_TORQUE);
-        stepper_cmd.setType(StepperDriver::StepperCommandType_t::CMD_TYPE_TORQUE);
+        dynamixel_cmd.setType(common::model::EDxlCommandType::CMD_TYPE_TORQUE);
+        stepper_cmd.setType(common::model::EStepperCommandType::CMD_TYPE_TORQUE);
 
         dynamixel_cmd.setMotorsId(vector<uint8_t>{
             _joint_list.at(3).getId(),
@@ -339,7 +350,7 @@ namespace JointsInterface {
 
     bool CalibrationInterface::_can_process_manual_calibration(string &result_message)
     {
-        vector<StepperDriver::StepperMotorState> stepper_motor_states;
+        vector<common::model::StepperMotorState> stepper_motor_states;
 
         stepper_motor_states = _stepper->getStepperStates();
 
@@ -394,9 +405,9 @@ namespace JointsInterface {
 
     void CalibrationInterface::_send_calibration_offset(uint8_t id, int offset_to_send, int absolute_steps_at_offset_position)
     {
-        StepperDriver::StepperMotorCmd stepper_cmd;
+        common::model::StepperMotorCmd stepper_cmd;
 
-        stepper_cmd.setType(StepperDriver::StepperCommandType_t::CMD_TYPE_POSITION_OFFSET);
+        stepper_cmd.setType(common::model::EStepperCommandType::CMD_TYPE_POSITION_OFFSET);
 
         vector<uint8_t> id_cmd = {id};
         vector<int32_t> params_cmd = {offset_to_send, absolute_steps_at_offset_position};

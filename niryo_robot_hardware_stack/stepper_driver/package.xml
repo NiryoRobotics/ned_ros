@@ -15,12 +15,12 @@
   <build_depend>mcp_can_rpi</build_depend>
   <build_depend>niryo_robot_msgs</build_depend>
   <build_depend>message_generation</build_depend>
-  <build_depend>utils</build_depend>
+  <build_depend>common</build_depend>
 
   <exec_depend>roscpp</exec_depend>
   <exec_depend>mcp_can_rpi</exec_depend>
   <exec_depend>niryo_robot_msgs</exec_depend>
-  <exec_depend>utils</exec_depend>
+  <exec_depend>common</exec_depend>
 
 </package>
 

@@ -26,6 +26,7 @@
 #include <thread>
 
 #include <controller_manager/controller_manager.h>
+
 #include <hardware_interface/joint_state_interface.h>
 #include <hardware_interface/joint_command_interface.h>
 #include <hardware_interface/robot_hw.h>
@@ -36,28 +37,26 @@
 #include <std_msgs/Empty.h>
 #include <std_msgs/Bool.h>
 
-#include "niryo_robot_msgs/SetInt.h"
-#include "niryo_robot_msgs/SetBool.h"
-#include "niryo_robot_msgs/HardwareStatus.h"
-#include "niryo_robot_msgs/SoftwareVersion.h"
-#include "niryo_robot_msgs/CommandStatus.h"
-#include "niryo_robot_msgs/Trigger.h"
+#include <niryo_robot_msgs/SetInt.h>
+#include <niryo_robot_msgs/SetBool.h>
+#include <niryo_robot_msgs/HardwareStatus.h>
+#include <niryo_robot_msgs/SoftwareVersion.h>
+#include <niryo_robot_msgs/CommandStatus.h>
+#include <niryo_robot_msgs/Trigger.h>
+#include <niryo_robot_msgs/BusState.h>
 
-#include "tools_interface/PingDxlTool.h"
-#include "tools_interface/OpenGripper.h"
-#include "tools_interface/CloseGripper.h"
-#include "tools_interface/PullAirVacuumPump.h"
-#include "tools_interface/PushAirVacuumPump.h"
+#include <tools_interface/PingDxlTool.h>
+#include <tools_interface/OpenGripper.h>
+#include <tools_interface/CloseGripper.h>
+#include <tools_interface/PullAirVacuumPump.h>
+#include <tools_interface/PushAirVacuumPump.h>
 
-#include "conveyor_interface/SetConveyor.h"
-#include "conveyor_interface/ControlConveyor.h"
-#include "conveyor_interface/ConveyorFeedback.h"
+#include <conveyor_interface/SetConveyor.h>
+#include <conveyor_interface/ControlConveyor.h>
+#include <conveyor_interface/ConveyorFeedback.h>
 
-#include "dynamixel_driver/dxl_driver_core.hpp"
-#include "stepper_driver/stepper_driver_core.hpp"
-#include "joints_interface/joints_interface_core.hpp"
-#include "tools_interface/tools_interface_core.hpp"
-#include "conveyor_interface/conveyor_interface_core.hpp"
+#include <dynamixel_driver/DxlArrayMotorHardwareStatus.h>
+#include <stepper_driver/StepperArrayMotorHardwareStatus.h>
 
 #include "fake_interface/FakeJointHardwareInterface.hpp"
 
@@ -77,7 +76,7 @@ namespace FakeInterface {
         niryo_robot_msgs::BusState getDxlBusState();
         stepper_driver::StepperArrayMotorHardwareStatus getStepperHwStatus();
         niryo_robot_msgs::BusState getCanBusState();
-        void getCalibrationState(std::shared_ptr<bool> &need_calibration, std::shared_ptr<bool> &calibration_in_progress);
+        void getCalibrationState(bool &need_calibration, bool &calibration_in_progress) const;
 
         int getCpuTemperature();
 
@@ -86,7 +85,9 @@ namespace FakeInterface {
         std::string jointIdToJointName(int id, uint8_t motor_type);
 
         std::vector<uint8_t> _dxl_motors_id{2, 3, 6};
-        std::vector<uint8_t> _dxl_motors_type{niryo_robot_msgs::MotorHeader::MOTOR_TYPE_XL430, niryo_robot_msgs::MotorHeader::MOTOR_TYPE_XL430, niryo_robot_msgs::MotorHeader::MOTOR_TYPE_XL320};
+        std::vector<uint8_t> _dxl_motors_type{niryo_robot_msgs::MotorHeader::MOTOR_TYPE_XL430,
+                                              niryo_robot_msgs::MotorHeader::MOTOR_TYPE_XL430,
+                                              niryo_robot_msgs::MotorHeader::MOTOR_TYPE_XL320};
 
         std::vector<uint8_t> _stepper_motors_id{1, 2, 3};
 

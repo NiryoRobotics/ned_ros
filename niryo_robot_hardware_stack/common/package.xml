@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>utils</name>
+  <name>common</name>
   <version>0.0.0</version>
-  <description>The utils package gather all utilities and absctract classes of the different models</description>
+  <description>The common package gather all utilities and absctract classes of the different models</description>
   <author>Clement Cocquempot</author>
   <maintainer email="c.cocquempot@niryo.com">Clement Cocquempot</maintainer>
 

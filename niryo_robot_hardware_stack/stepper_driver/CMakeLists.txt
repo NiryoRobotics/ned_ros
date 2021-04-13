@@ -9,7 +9,7 @@ find_package(catkin REQUIRED
         mcp_can_rpi
         niryo_robot_msgs
         message_generation
-        utils
+        common
 )
 
 add_message_files(
@@ -37,12 +37,11 @@ catkin_package(
         include
     LIBRARIES
         ${PROJECT_NAME}
-        ${PROJECT_NAME}_core
     CATKIN_DEPENDS
         roscpp
         mcp_can_rpi
         niryo_robot_msgs
-        utils
+        common
 )
 
 include_directories(
@@ -51,12 +50,6 @@ include_directories(
 )
 
 add_library(${PROJECT_NAME}
-    src/stepper_motor_state.cpp
-    src/conveyor_state.cpp
-    src/stepper_motor_cmd.cpp
-)
-
-add_library(${PROJECT_NAME}_core
     src/stepper_driver_core.cpp
     src/stepper_driver.cpp
 )
@@ -90,23 +83,18 @@ else()
     )
 endif()
 
-target_link_libraries(${PROJECT_NAME}_core
-    ${PROJECT_NAME}
-    ${catkin_LIBRARIES}
-)
-
 target_link_libraries(${PROJECT_NAME}_node
-  ${PROJECT_NAME}_core
+  ${PROJECT_NAME}
   ${catkin_LIBRARIES}
 )
 
 target_link_libraries(${PROJECT_NAME}_test
-  ${PROJECT_NAME}_core
+  ${PROJECT_NAME}
   ${catkin_LIBRARIES}
 )
 
 install(
-  TARGETS ${PROJECT_NAME}_core
+  TARGETS ${PROJECT_NAME}
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}

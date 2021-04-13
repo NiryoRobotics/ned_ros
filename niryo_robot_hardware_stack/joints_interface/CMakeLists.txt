@@ -15,7 +15,7 @@ find_package(catkin REQUIRED
         dynamixel_driver
         stepper_driver
         actionlib
-        utils
+        common
 )
 
 find_package(Boost REQUIRED COMPONENTS system)
@@ -34,7 +34,7 @@ catkin_package(
         dynamixel_driver
         stepper_driver
         actionlib
-        utils
+        common
 )
 
 include_directories(
@@ -43,7 +43,6 @@ include_directories(
 )
 
 add_library(${PROJECT_NAME}
-    src/joint_state.cpp
     src/calibration_interface.cpp
 )
 

@@ -15,6 +15,7 @@ find_package(catkin REQUIRED
         joints_interface
         conveyor_interface
         actionlib
+        common
 )
 
 catkin_package(
@@ -26,12 +27,9 @@ catkin_package(
         roscpp
         niryo_robot_msgs
         std_msgs
-        hardware_interface
         controller_manager
-        tools_interface
-        joints_interface
-        conveyor_interface
         actionlib
+        common
 )
 
 include_directories(

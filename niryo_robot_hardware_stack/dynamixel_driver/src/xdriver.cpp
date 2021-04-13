@@ -15,6 +15,7 @@
 */
 
 #include "dynamixel_driver/xdriver.hpp"
+
 #include <sstream>
 
 using namespace std;
@@ -26,12 +27,17 @@ namespace DynamixelDriver
      * @param portHandler
      * @param packetHandler
      */
-    XDriver::XDriver(DxlMotorType_t type, shared_ptr<dynamixel::PortHandler> &portHandler,
+    XDriver::XDriver(common::model::EDxlMotorType type, shared_ptr<dynamixel::PortHandler> &portHandler,
                      shared_ptr<dynamixel::PacketHandler> &packetHandler) :
         _type(type),
         _dxlPortHandler(portHandler),
         _dxlPacketHandler(packetHandler)
     {
+    }
+
+    XDriver::~XDriver()
+    {
+
     }
 
     /**
@@ -366,15 +372,15 @@ namespace DynamixelDriver
             }
             if (data_len == DXL_LEN_ONE_BYTE)
             {
-                data_list.push_back((uint8_t)groupSyncRead.getData(*it_id, address, data_len));
+                data_list.push_back(static_cast<uint8_t>(groupSyncRead.getData(*it_id, address, data_len)));
             }
             else if (data_len == DXL_LEN_TWO_BYTES)
             {
-                data_list.push_back((uint16_t)groupSyncRead.getData(*it_id, address, data_len));
+                data_list.push_back(static_cast<uint16_t>(groupSyncRead.getData(*it_id, address, data_len)));
             }
             else if (data_len == DXL_LEN_FOUR_BYTES)
             {
-                data_list.push_back((uint32_t)groupSyncRead.getData(*it_id, address, data_len));
+                data_list.push_back(groupSyncRead.getData(*it_id, address, data_len));
             }
         }
 
@@ -401,15 +407,15 @@ namespace DynamixelDriver
         switch(byte_number) {
             case 1:
                 dxl_comm_result = _dxlPacketHandler->write1ByteTxOnly(_dxlPortHandler.get(), id,
-                        reg_address, (uint8_t)value);
+                        reg_address, static_cast<uint8_t>(value));
             break;
             case 2:
                 dxl_comm_result = _dxlPacketHandler->write2ByteTxOnly(_dxlPortHandler.get(), id,
-                        reg_address, (uint16_t)value);
+                        reg_address, static_cast<uint16_t>(value));
             break;
             case 4:
                 dxl_comm_result = _dxlPacketHandler->write4ByteTxOnly(_dxlPortHandler.get(), id,
-                        reg_address, (uint32_t)value);
+                        reg_address, value);
             break;
             default:
                 printf("ERROR: Size param must be 1, 2 or 4 bytes\n");

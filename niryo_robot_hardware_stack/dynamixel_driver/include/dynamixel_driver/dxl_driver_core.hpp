@@ -20,14 +20,18 @@
 #ifndef DXL_DRIVER_CORE_HPP
 #define DXL_DRIVER_CORE_HPP
 
+//std
 #include <memory>
-#include <ros/ros.h>
 #include <string>
 #include <thread>
 #include <queue>
 #include <functional>
 #include <vector>
 #include <mutex>
+#include <std_msgs/Int64MultiArray.h>
+
+//ros
+#include <ros/ros.h>
 
 #include "dynamixel_driver/dxl_driver.hpp"
 #include "dynamixel_driver/DxlArrayMotorHardwareStatus.h"
@@ -38,7 +42,11 @@
 #include "niryo_robot_msgs/SetInt.h"
 #include "niryo_robot_msgs/CommandStatus.h"
 
-#include <std_msgs/Int64MultiArray.h>
+#include "model/dxl_motor_state.hpp"
+#include "model/dxl_motor_type_enum.hpp"
+#include "model/single_motor_cmd.hpp"
+#include "model/synchronize_motor_cmd.hpp"
+
 
 #define DXL_VOLTAGE_DIVISOR 10.0
 
@@ -62,24 +70,24 @@ namespace DynamixelDriver
 
         void setTrajectoryControllerCommands(std::vector<uint32_t>& cmd);
 
-        std::vector<DxlMotorState> getDxlStates() const;
+        std::vector<common::model::DxlMotorState> getDxlStates() const;
 
-        void setDxlCommands(const SynchronizeMotorCmd &cmd);
+        void setDxlCommands(const common::model::SynchronizeMotorCmd &cmd);
 
-        int ping_id(uint8_t id, DxlMotorType_t type);
+        int ping_id(uint8_t id, common::model::EDxlMotorType type);
         std::vector<uint8_t> scanTools();
-        int setEndEffector(uint8_t id, DxlMotorType_t type);
-        void unsetEndEffector(uint8_t id, DxlMotorType_t type);
-        void setEndEffectorCommands(std::vector<SingleMotorCmd> &cmd);
-        uint32_t getEndEffectorState(uint8_t id, DxlMotorType_t type);
+        int setEndEffector(uint8_t id, common::model::EDxlMotorType type);
+        void unsetEndEffector(uint8_t id, common::model::EDxlMotorType type);
+        void setEndEffectorCommands(std::vector<common::model::SingleMotorCmd> &cmd);
+        uint32_t getEndEffectorState(uint8_t id, common::model::EDxlMotorType type);
         std::vector<uint8_t> getRemovedMotorList() const;
         
         int update_leds(void);
 
         void activeDebugMode(bool mode);
         int launchMotorsReport();
-        int motorScanReport(uint8_t motor_id, DxlMotorType_t motor_type);
-        int motorCmdReport(uint8_t motor_id, DxlMotorType_t motor_type);
+        int motorScanReport(uint8_t motor_id, common::model::EDxlMotorType motor_type);
+        int motorCmdReport(uint8_t motor_id, common::model::EDxlMotorType motor_type);
         int rebootMotors();
 
     private:
@@ -104,13 +112,13 @@ namespace DynamixelDriver
         double _time_check_connection_last_read;
         double _time_check_end_effector_last_read;
 
-        std::shared_ptr<DxlDriver> _dynamixel;
+        std::unique_ptr<DxlDriver> _dynamixel;
 
         void _executeCommand();
 
         std::vector<uint32_t> _joint_trajectory_controller_cmd;
-        SynchronizeMotorCmd _dxl_cmd;
-        std::vector<SingleMotorCmd> _end_effector_cmd;
+        common::model::SynchronizeMotorCmd _dxl_cmd;
+        std::vector<common::model::SingleMotorCmd> _end_effector_cmd;
 
         ros::ServiceServer _activate_leds_server;
         ros::ServiceServer _custom_cmd_server;

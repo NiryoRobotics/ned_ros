@@ -23,20 +23,21 @@
 #include <iostream>
 
 #include "dynamixel_sdk/dynamixel_sdk.h"
-#include "dxl_enum.hpp"
-
-#define DXL_LEN_ONE_BYTE 1
-#define DXL_LEN_TWO_BYTES 2
-#define DXL_LEN_FOUR_BYTES 4
-
-#define GROUP_SYNC_REDONDANT_ID 10
-#define GROUP_SYNC_READ_RX_FAIL 11
-#define LEN_ID_DATA_NOT_SAME 20
-
-#define PING_WRONG_MODEL_NUMBER 30
+#include "model/dxl_motor_type_enum.hpp"
 
 namespace DynamixelDriver
 {
+
+    constexpr int DXL_LEN_ONE_BYTE   = 1;
+    constexpr int DXL_LEN_TWO_BYTES  = 2;
+    constexpr int DXL_LEN_FOUR_BYTES = 4;
+
+    constexpr int GROUP_SYNC_REDONDANT_ID = 10;
+    constexpr int GROUP_SYNC_READ_RX_FAIL = 11;
+    constexpr int LEN_ID_DATA_NOT_SAME    = 20;
+
+    constexpr int PING_WRONG_MODEL_NUMBER = 30;
+
     /**
      * @brief The XDriver class
      */
@@ -45,8 +46,10 @@ namespace DynamixelDriver
     {
 
     public:
-        XDriver(DxlMotorType_t type, std::shared_ptr<dynamixel::PortHandler>& portHandler,
+        XDriver(common::model::EDxlMotorType type,
+                std::shared_ptr<dynamixel::PortHandler>& portHandler,
                 std::shared_ptr<dynamixel::PacketHandler>& packetHandler);
+        virtual ~XDriver();
 
         int ping(uint8_t id);
         int getModelNumber(uint8_t id,
@@ -110,7 +113,7 @@ namespace DynamixelDriver
         virtual int customRead(uint8_t id, uint8_t reg_address, uint32_t& value, uint8_t byte_number);
 
     protected:
-        DxlMotorType_t _type;
+        common::model::EDxlMotorType _type;
 
         std::shared_ptr<dynamixel::PortHandler>& _dxlPortHandler;
         std::shared_ptr<dynamixel::PacketHandler>& _dxlPacketHandler;

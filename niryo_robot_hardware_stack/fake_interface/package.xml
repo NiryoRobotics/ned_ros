@@ -19,6 +19,7 @@
   <build_depend>joints_interface</build_depend>
   <build_depend>conveyor_interface</build_depend>
   <build_depend>actionlib</build_depend>
+  <build_depend>common</build_depend>
   
   <exec_depend>roscpp</exec_depend>
   <exec_depend>hardware_interface</exec_depend>
@@ -29,4 +30,5 @@
   <exec_depend>joints_interface</exec_depend>
   <exec_depend>conveyor_interface</exec_depend>
   <exec_depend>actionlib</exec_depend>
+  <exec_depend>common</exec_depend>
 </package>

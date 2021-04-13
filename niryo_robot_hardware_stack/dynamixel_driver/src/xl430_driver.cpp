@@ -15,6 +15,7 @@
 */
 
 #include "dynamixel_driver/xl430_driver.hpp"
+#include "model/dxl_motor_type_enum.hpp"
 
 using namespace std;
 
@@ -27,7 +28,7 @@ namespace DynamixelDriver
      * @param packetHandler
      */
     XL430Driver::XL430Driver(shared_ptr<dynamixel::PortHandler> &portHandler, shared_ptr<dynamixel::PacketHandler> &packetHandler)
-        : XDriver(DxlMotorType_t::MOTOR_TYPE_XL430, portHandler, packetHandler)
+        : XDriver(common::model::EDxlMotorType::MOTOR_TYPE_XL430, portHandler, packetHandler)
     {
     }
 

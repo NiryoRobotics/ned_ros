@@ -1,5 +1,5 @@
 /*
-    hardware_interface.cpp
+    hardware_interface.hpp
     Copyright (C) 2020 Niryo
     All rights reserved.
 
@@ -30,7 +30,6 @@
 #include "dynamixel_driver/dxl_driver_core.hpp"
 #include "stepper_driver/stepper_driver_core.hpp"
 #include "fake_interface/fake_interface_core.hpp"
-#include "dynamixel_driver/dxl_enum.hpp"
 
 #include "niryo_robot_msgs/Trigger.h"
 #include "niryo_robot_msgs/SetBool.h"
@@ -81,6 +80,7 @@ namespace NiryoRobotHardwareInterface
 
         std::shared_ptr<DynamixelDriver::DynamixelDriverCore> _dynamixel_driver;
         std::shared_ptr<StepperDriver::StepperDriverCore> _stepper_driver;
+
         std::shared_ptr<CpuInterface::CpuInterfaceCore> _cpu_interface;
         std::shared_ptr<ConveyorInterface::ConveyorInterfaceCore> _conveyor_interface;
         std::shared_ptr<ToolsInterface::ToolsInterfaceCore> _tools_interface;

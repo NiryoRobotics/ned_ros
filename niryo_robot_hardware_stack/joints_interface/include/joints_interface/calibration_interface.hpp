@@ -26,24 +26,25 @@
 #include <vector>
 #include <thread>
 
-#include "joints_interface/joint_state.hpp"
+#include "model/joint_state.hpp"
 
 #include "stepper_driver/stepper_driver_core.hpp"
 #include "dynamixel_driver/dxl_driver_core.hpp"
 
 #include "niryo_robot_msgs/CommandStatus.h"
 
-#define STEPPERS_MICROSTEPS 8.0
-#define STEPPERS_MOTOR_STEPS_PER_REVOLUTION 200.0
-
 
 namespace JointsInterface {
+
+
+    constexpr double STEPPERS_MICROSTEPS = 8.0;
+    constexpr double STEPPERS_MOTOR_STEPS_PER_REVOLUTION = 200.0;
 
     class CalibrationInterface
     {
 
     public:
-        CalibrationInterface(std::vector<JointState> &joint_list,
+        CalibrationInterface(std::vector<common::model::JointState> &joint_list,
                              std::shared_ptr<StepperDriver::StepperDriverCore> &stepper,
                              std::shared_ptr<DynamixelDriver::DynamixelDriverCore> &dynamixel);
 
@@ -52,11 +53,11 @@ namespace JointsInterface {
         bool CalibrationInprogress();
 
     private:
-        void _setCalibrationCommand(JointState motor, int offset, int delay,
+        void _setCalibrationCommand(common::model::JointState motor, int offset, int delay,
                                     int motor_direction, int calibration_direction, int timeout,
                                     int32_t &calibration_result);
 
-        int _getCalibrationResult(JointState &motor);
+        int _getCalibrationResult(common::model::JointState &motor);
 
         bool _check_steppers_connected();
 
@@ -65,15 +66,15 @@ namespace JointsInterface {
         bool _can_process_manual_calibration(std::string &result_message);
         int _manual_calibration();
 
-        void _motorTorque(JointState &motor, bool status);
-        void _moveMotor(JointState &motor, int steps, float delay);
-        int _relativeMoveMotor(JointState &motor, int steps, int delay, bool wait);
+        void _motorTorque(common::model::JointState &motor, bool status);
+        void _moveMotor(common::model::JointState &motor, int steps, float delay);
+        int _relativeMoveMotor(common::model::JointState &motor, int steps, int delay, bool wait);
 
         bool set_motors_calibration_offsets(std::vector<int> &motor_id_list, std::vector<int> &steps_list);
         bool get_motors_calibration_offsets(std::vector<int> &motor_id_list, std::vector<int> &steps_list);
 
     private:
-        std::vector<JointState> &_joint_list;
+        std::vector<common::model::JointState> &_joint_list;
         ros::NodeHandle _nh;
         std::shared_ptr<StepperDriver::StepperDriverCore> &_stepper;
         std::shared_ptr<DynamixelDriver::DynamixelDriverCore> &_dynamixel;

@@ -1,6 +1,28 @@
-#include "niryo_robot_hardware_interface/hardware_interface.hpp"
-#include "dynamixel_driver/dxl_enum.hpp"
+/*
+    hardware_interface.cpp
+    Copyright (C) 2020 Niryo
+    All rights reserved.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include <functional>
+
+#include "niryo_robot_hardware_interface/hardware_interface.hpp"
+
+#include "model/dxl_motor_type_enum.hpp"
+#include "model/stepper_motor_type_enum.hpp"
 
 namespace NiryoRobotHardwareInterface
 {
@@ -77,58 +99,58 @@ namespace NiryoRobotHardwareInterface
 
     void HardwareInterface::initNodes()
     {
-        ROS_DEBUG("Hardware Interface - Init Nodes");
+        ROS_DEBUG("HardwareInterface::initNodes - Init Nodes");
         if (!_simulation_mode)
         {
 
             if (!_dxl_enabled)
             {
-                ROS_WARN("Hardware Interface - DXL communication is disabled for debug purposes");
+                ROS_WARN("HardwareInterface::initNodes - DXL communication is disabled for debug purposes");
             }
             else
             {
-                ROS_DEBUG("Hardware Interface - Start Dynamixel Driver Node");
+                ROS_DEBUG("HardwareInterface::initNodes - Start Dynamixel Driver Node");
                 _dynamixel_driver.reset(new DynamixelDriver::DynamixelDriverCore());
                 ros::Duration(0.25).sleep();
             }
 
             if (!_can_enabled)
             {
-                ROS_DEBUG("Hardware Interface - CAN communication is disabled for debug purposes");
+                ROS_DEBUG("HardwareInterface::initNodes - CAN communication is disabled for debug purposes");
             }
             else
             {
-                ROS_DEBUG("Hardware Interface - Start Stepper Driver Node");
+                ROS_DEBUG("HardwareInterface::initNodes - Start Stepper Driver Node");
                 _stepper_driver.reset(new StepperDriver::StepperDriverCore());
                 ros::Duration(0.25).sleep();
             }
 
             if (_can_enabled && _dxl_enabled)
             {
-                ROS_DEBUG("Hardware Interface - Start Joints Interface Node");
+                ROS_DEBUG("HardwareInterface::initNodes - Start Joints Interface Node");
                 _joints_interface.reset(new JointsInterface::JointsInterfaceCore(_dynamixel_driver, _stepper_driver));
                 ros::Duration(0.25).sleep();
 
-                ROS_DEBUG("Hardware Interface - Start End Effector Interface Node");
+                ROS_DEBUG("HardwareInterface::initNodes - Start End Effector Interface Node");
                 _tools_interface.reset(new ToolsInterface::ToolsInterfaceCore(_dynamixel_driver));
                 ros::Duration(0.25).sleep();
 
-                ROS_DEBUG("Hardware Interface - Start Tools Interface Node");
+                ROS_DEBUG("HardwareInterface::initNodes - Start Tools Interface Node");
                 _conveyor_interface.reset(new ConveyorInterface::ConveyorInterfaceCore(_stepper_driver));
                 ros::Duration(0.25).sleep();
             }
             else
             {
-                ROS_WARN("Hardware Interface - CAN or DXL communication is disabled. Interfaces will not start");
+                ROS_WARN("HardwareInterface::initNodes - CAN or DXL communication is disabled. Interfaces will not start");
             }
 
-            ROS_DEBUG("Hardware Interface - Start CPU Interface Node");
+            ROS_DEBUG("HardwareInterface::initNodes - Start CPU Interface Node");
             _cpu_interface.reset(new CpuInterface::CpuInterfaceCore());
             ros::Duration(0.25).sleep();
         }
         else
         {
-            ROS_DEBUG("Hardware Interface - Start Fake Interface Node");
+            ROS_DEBUG("HardwareInterface::initNodes - Start Fake Interface Node");
             _fake_interface.reset(new FakeInterface::FakeInterfaceCore());
         }
     }
@@ -189,13 +211,13 @@ namespace NiryoRobotHardwareInterface
             niryo_robot_msgs::BusState dxl_bus_state;
             niryo_robot_msgs::BusState can_bus_state;
 
-            std::vector<JointsInterface::JointState> joints_state;
+            std::vector<common::model::JointState> joints_state;
 
             int cpu_temperature;
             std::string error_message;
 
-            std::shared_ptr<bool> need_calibration(new bool());
-            std::shared_ptr<bool> calibration_in_progress(new bool());
+            bool need_calibration = false;
+            bool calibration_in_progress = false;
 
             std::vector<std::string> motor_names;
             std::vector<std::string> motor_types;
@@ -250,8 +272,8 @@ namespace NiryoRobotHardwareInterface
             error_message += dxl_bus_state.error;
             msg.error_message = error_message;
 
-            msg.calibration_needed = *need_calibration.get();
-            msg.calibration_in_progress = *calibration_in_progress.get();
+            msg.calibration_needed = need_calibration;
+            msg.calibration_in_progress = calibration_in_progress;
 
             motor_names.clear();
             motor_types.clear();
@@ -265,9 +287,11 @@ namespace NiryoRobotHardwareInterface
                 motor_types.push_back("Niryo Stepper");
                 std::string joint_name = "";
                 if (!_simulation_mode)
-                    joint_name = _joints_interface->jointIdToJointName(stepper_motor_state.motors_hw_status.at(i).motor_identity.motor_id, (uint8_t)StepperDriver::StepperMotorType_t::MOTOR_TYPE_STEPPER);
+                    joint_name = _joints_interface->jointIdToJointName(stepper_motor_state.motors_hw_status.at(i).motor_identity.motor_id,
+                                                                       static_cast<uint8_t>(common::model::EStepperMotorType::MOTOR_TYPE_STEPPER));
                 else
-                    joint_name = _fake_interface->jointIdToJointName(stepper_motor_state.motors_hw_status.at(i).motor_identity.motor_id, (uint8_t)StepperDriver::StepperMotorType_t::MOTOR_TYPE_STEPPER);
+                    joint_name = _fake_interface->jointIdToJointName(stepper_motor_state.motors_hw_status.at(i).motor_identity.motor_id,
+                                                                     static_cast<uint8_t>(common::model::EStepperMotorType::MOTOR_TYPE_STEPPER));
 
                 joint_name = joint_name == "" ? ("Stepper " + std::to_string(dxl_motor_state.motors_hw_status.at(i).motor_identity.motor_id)) : joint_name;
                 motor_names.push_back(joint_name);
@@ -283,19 +307,19 @@ namespace NiryoRobotHardwareInterface
 
                 switch(dxl_motor_state.motors_hw_status.at(i).motor_identity.motor_type)
                 {
-                    case (uint8_t)DynamixelDriver::DxlMotorType_t::MOTOR_TYPE_XL320:
+                    case static_cast<uint8_t>(common::model::EDxlMotorType::MOTOR_TYPE_XL320):
                         motor_types.push_back("DXL XL-320");
                     break;
                         
-                    case (uint8_t)DynamixelDriver::DxlMotorType_t::MOTOR_TYPE_XL330:
+                    case static_cast<uint8_t>(common::model::EDxlMotorType::MOTOR_TYPE_XL330):
                         motor_types.push_back("DXL XL-330");
                     break;
                     
-                    case (uint8_t)DynamixelDriver::DxlMotorType_t::MOTOR_TYPE_XL430:
+                    case static_cast<uint8_t>(common::model::EDxlMotorType::MOTOR_TYPE_XL430):
                         motor_types.push_back("DXL XL-430");
                     break;
                     
-                    case (uint8_t)DynamixelDriver::DxlMotorType_t::MOTOR_TYPE_XC430:
+                    case static_cast<uint8_t>(common::model::EDxlMotorType::MOTOR_TYPE_XC430):
                         motor_types.push_back("DXL XC-430");
                     break;
                     default:
@@ -338,7 +362,7 @@ namespace NiryoRobotHardwareInterface
             stepper_driver::StepperArrayMotorHardwareStatus stepper_motor_state;
             std::vector<std::string> motor_names;
             std::vector<std::string> firmware_versions;
-            std::vector<JointsInterface::JointState> joints_state;
+            std::vector<common::model::JointState> joints_state;
 
             if (!_simulation_mode)
             {

@@ -10,7 +10,7 @@ find_package(catkin REQUIRED
         std_msgs
         dynamixel_driver
         message_generation
-        utils
+        common
 )
 
 add_service_files(
@@ -38,7 +38,7 @@ catkin_package(
         roscpp
         std_msgs
         dynamixel_driver
-        utils
+        common
 )
 
 include_directories(
@@ -48,7 +48,6 @@ include_directories(
 
 add_library(${PROJECT_NAME}
     src/tools_interface_core.cpp
-    src/tool_state.cpp
 )
 
 add_executable(${PROJECT_NAME}_node

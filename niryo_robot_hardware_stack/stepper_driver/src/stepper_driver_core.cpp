@@ -1,5 +1,25 @@
+/*
+    stepper_driver_core.cpp
+    Copyright (C) 2020 Niryo
+    All rights reserved.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 #include "stepper_driver/stepper_driver_core.hpp"
-#include "stepper_driver/conveyor_state.hpp"
+#include "model/conveyor_state.hpp"
+#include "model/stepper_motor_type_enum.hpp"
 #include <functional>
 
 namespace StepperDriver
@@ -17,8 +37,8 @@ namespace StepperDriver
         _calibration_in_progress = false;
         _debug_flag = false;
         _joint_trajectory_controller_cmd.clear();
-        _stepper_cmd.reset(new StepperMotorCmd());
-        _conveyor_cmd.reset(new StepperMotorCmd());
+        _stepper_cmd.reset(new common::model::StepperMotorCmd());
+        _conveyor_cmd.reset(new common::model::StepperMotorCmd());
         initParameters();
         _stepper.reset(new StepperDriver());
         startControlLoop();
@@ -184,9 +204,9 @@ namespace StepperDriver
         return niryo_robot_msgs::CommandStatus::ABORTED;
     }
 
-    void StepperDriverCore::setStepperCommands(StepperMotorCmd &cmd)
+    void StepperDriverCore::setStepperCommands(common::model::StepperMotorCmd &cmd)
     {
-        _stepper_cmd.reset(new StepperMotorCmd(cmd));
+        _stepper_cmd.reset(new common::model::StepperMotorCmd(cmd));
     }
 
     void StepperDriverCore::setTrajectoryControllerCommands(std::vector<int32_t> &cmd)
@@ -240,17 +260,17 @@ namespace StepperDriver
         _stepper->removeConveyor(motor_id);
     }
 
-    void StepperDriverCore::setConveyorCommands(StepperMotorCmd &cmd)
+    void StepperDriverCore::setConveyorCommands(common::model::StepperMotorCmd &cmd)
     {
-        _conveyor_cmd.reset(new StepperMotorCmd(cmd));
+        _conveyor_cmd.reset(new common::model::StepperMotorCmd(cmd));
     }
 
-    const std::vector<ConveyorState> &StepperDriverCore::getConveyorStates() const
+    const std::vector<common::model::ConveyorState> &StepperDriverCore::getConveyorStates() const
     {
         return _stepper->getConveyorsState();
     }
 
-    const std::vector<StepperMotorState> &StepperDriverCore::getStepperStates() const
+    const std::vector<common::model::StepperMotorState> &StepperDriverCore::getStepperStates() const
     {
         return _stepper->getMotorsState();
     }
@@ -281,14 +301,14 @@ namespace StepperDriver
         stepper_driver::StepperMotorHardwareStatus data;
         stepper_driver::StepperArrayMotorHardwareStatus hw_state;
 
-        std::vector<StepperMotorState> motor_states = _stepper->getMotorsState();
+        std::vector<common::model::StepperMotorState> motor_states = _stepper->getMotorsState();
 
-        for (int i = 0; i < motor_states.size(); i++)
+        for (size_t i = 0; i < motor_states.size(); i++)
         {
             data.motor_identity.motor_id = motor_states.at(i).getId();
-            data.motor_identity.motor_type = static_cast<uint8_t>(StepperMotorType_t::MOTOR_TYPE_STEPPER);
-            data.temperature = motor_states.at(i).getTemperatureState();
-            data.error = motor_states.at(i).getHardwareErrorState();
+            data.motor_identity.motor_type = static_cast<uint8_t>(common::model::EStepperMotorType::MOTOR_TYPE_STEPPER);
+            data.temperature = static_cast<int>(motor_states.at(i).getTemperatureState());
+            data.error = static_cast<int>(motor_states.at(i).getHardwareErrorState());
             data.firmware_version = motor_states.at(i).getFirmwareVersion();
             hw_state.motors_hw_status.push_back(data);
         }

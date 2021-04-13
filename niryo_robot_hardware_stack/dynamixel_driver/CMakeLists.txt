@@ -10,7 +10,7 @@ find_package(catkin REQUIRED
         dynamixel_sdk
         niryo_robot_msgs
         message_generation
-        utils
+        common
 )
 
 add_message_files(
@@ -44,7 +44,7 @@ catkin_package(
         roscpp
         dynamixel_sdk
         niryo_robot_msgs
-        utils
+        common
 )
 
 include_directories(
@@ -58,9 +58,6 @@ add_library(${PROJECT_NAME}
     src/xl330_driver.cpp
     src/xl430_driver.cpp
     src/xc430_driver.cpp
-    src/dxl_motor_state.cpp
-    src/single_motor_cmd.cpp
-    src/synchronize_motor_cmd.cpp
 )
 
 add_library(${PROJECT_NAME}_core

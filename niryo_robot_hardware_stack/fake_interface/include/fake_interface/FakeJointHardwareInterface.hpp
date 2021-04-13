@@ -25,9 +25,6 @@
 #include <hardware_interface/robot_hw.h>
 #include <ros/ros.h>
 
-#include "stepper_driver/stepper_driver_core.hpp"
-#include "dynamixel_driver/dxl_driver_core.hpp"
-
 namespace FakeInterface {
     class FakeJointHardwareInterface : public hardware_interface::RobotHW
     {

@@ -1,5 +1,5 @@
 /*
-    dxl_driver.hpp
+    stepper_driver_core.hpp
     Copyright (C) 2020 Niryo
     All rights reserved.
 
@@ -49,13 +49,13 @@ namespace StepperDriver
             void resetHardwareControlLoopRates();
             void controlLoop();
 
-            void setStepperCommands(StepperMotorCmd &cmd);
+            void setStepperCommands(common::model::StepperMotorCmd &cmd);
 
             void setTrajectoryControllerCommands(std::vector<int32_t> &cmd); 
 
             int setConveyor(uint8_t motor_id);
             void unsetConveyor(uint8_t motor_id);
-            void setConveyorCommands(StepperMotorCmd &cmd);
+            void setConveyorCommands(common::model::StepperMotorCmd &cmd);
 
             void clearCalibrationTab();
             void startCalibration(bool enable);
@@ -71,12 +71,12 @@ namespace StepperDriver
             //getters
             bool getCalibrationState() const;
             e_CanStepperCalibrationStatus getCalibrationResult(uint8_t id, int32_t& calibration_result) const;
-            const std::vector<ConveyorState> &getConveyorStates() const;
+            const std::vector<common::model::ConveyorState> &getConveyorStates() const;
 
             stepper_driver::StepperArrayMotorHardwareStatus getHwStatus() const;
             niryo_robot_msgs::BusState getCanBusState() const;
 
-            const std::vector<StepperMotorState>& getStepperStates() const;
+            const std::vector<common::model::StepperMotorState>& getStepperStates() const;
             const std::vector<int32_t>& getTrajectoryControllerStates() const;
 
         private:
@@ -95,8 +95,8 @@ namespace StepperDriver
             std::shared_ptr<std::thread> _control_loop_thread;
 
             std::vector<int32_t> _joint_trajectory_controller_cmd;
-            std::shared_ptr<StepperMotorCmd> _stepper_cmd;
-            std::shared_ptr<StepperMotorCmd> _conveyor_cmd;
+            std::shared_ptr<common::model::StepperMotorCmd> _stepper_cmd;
+            std::shared_ptr<common::model::StepperMotorCmd> _conveyor_cmd;
 
             double _control_loop_frequency;
             double _write_frequency;
@@ -105,10 +105,9 @@ namespace StepperDriver
             double _time_hw_last_write;
             double _time_hw_last_check_connection;
 
-            std::shared_ptr<StepperDriver> _stepper;
+            std::unique_ptr<StepperDriver> _stepper;
 
             std::vector<std::thread> _calibration_thread_list;
-
 
             ros::Publisher cmd_pub;
 
