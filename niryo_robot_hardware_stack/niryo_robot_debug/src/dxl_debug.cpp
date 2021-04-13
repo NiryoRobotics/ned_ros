@@ -88,10 +88,10 @@ int main (int argc, char **argv)
         std::cout << "Dxl ID: " << id << "\n";
 
         // Setup Dxl communication
-        dynamixel::PortHandler *portHandler = dynamixel::PortHandler::getPortHandler(serial_port.c_str());
-        dynamixel::PacketHandler *packetHandler = dynamixel::PacketHandler::getPacketHandler(PROTOCOL_VERSION);
+        std::shared_ptr<dynamixel::PortHandler> portHandler(dynamixel::PortHandler::getPortHandler(serial_port.c_str()));
+        std::shared_ptr<dynamixel::PacketHandler> packetHandler(dynamixel::PacketHandler::getPacketHandler(PROTOCOL_VERSION));
 
-        DxlTools dxlTools(portHandler, packetHandler);
+        robotDebug::DxlTools dxlTools(portHandler, packetHandler);
 
         if (dxlTools.setupDxlBus(baudrate) == -1) {
             return -1;

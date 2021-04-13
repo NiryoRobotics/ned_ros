@@ -27,8 +27,9 @@ namespace DynamixelDriver
      * @param portHandler
      * @param packetHandler
      */
-    XDriver::XDriver(common::model::EDxlMotorType type, shared_ptr<dynamixel::PortHandler> &portHandler,
-                     shared_ptr<dynamixel::PacketHandler> &packetHandler) :
+    XDriver::XDriver(common::model::EDxlMotorType type,
+                     shared_ptr<dynamixel::PortHandler> portHandler,
+                     shared_ptr<dynamixel::PacketHandler> packetHandler) :
         _type(type),
         _dxlPortHandler(portHandler),
         _dxlPacketHandler(packetHandler)

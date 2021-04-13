@@ -92,11 +92,11 @@ namespace StepperDriver
 
             std::mutex _control_loop_mutex;
 
-            std::shared_ptr<std::thread> _control_loop_thread;
+            std::unique_ptr<StepperDriver> _stepper;
 
             std::vector<int32_t> _joint_trajectory_controller_cmd;
-            std::shared_ptr<common::model::StepperMotorCmd> _stepper_cmd;
-            std::shared_ptr<common::model::StepperMotorCmd> _conveyor_cmd;
+            std::unique_ptr<common::model::StepperMotorCmd> _stepper_cmd;
+            std::unique_ptr<common::model::StepperMotorCmd> _conveyor_cmd;
 
             double _control_loop_frequency;
             double _write_frequency;
@@ -105,12 +105,7 @@ namespace StepperDriver
             double _time_hw_last_write;
             double _time_hw_last_check_connection;
 
-            std::unique_ptr<StepperDriver> _stepper;
-
-            std::vector<std::thread> _calibration_thread_list;
-
             ros::Publisher cmd_pub;
-
     };    
 }
 

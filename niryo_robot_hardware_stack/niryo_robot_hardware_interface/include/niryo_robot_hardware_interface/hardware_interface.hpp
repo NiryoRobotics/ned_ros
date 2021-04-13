@@ -86,9 +86,6 @@ namespace NiryoRobotHardwareInterface
         std::shared_ptr<ToolsInterface::ToolsInterfaceCore> _tools_interface;
         std::shared_ptr<JointsInterface::JointsInterfaceCore> _joints_interface;
         std::shared_ptr<FakeInterface::FakeInterfaceCore> _fake_interface;
-
-        std::shared_ptr<std::thread> _publish_hardware_status_thread;
-        std::shared_ptr<std::thread> _publish_software_version_thread;
     };
 } // namespace NiryoRobotHardwareInterface
 #endif

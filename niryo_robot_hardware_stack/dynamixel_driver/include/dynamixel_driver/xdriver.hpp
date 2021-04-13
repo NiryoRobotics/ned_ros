@@ -47,8 +47,8 @@ namespace DynamixelDriver
 
     public:
         XDriver(common::model::EDxlMotorType type,
-                std::shared_ptr<dynamixel::PortHandler>& portHandler,
-                std::shared_ptr<dynamixel::PacketHandler>& packetHandler);
+                std::shared_ptr<dynamixel::PortHandler> portHandler,
+                std::shared_ptr<dynamixel::PacketHandler> packetHandler);
         virtual ~XDriver();
 
         int ping(uint8_t id);
@@ -115,8 +115,8 @@ namespace DynamixelDriver
     protected:
         common::model::EDxlMotorType _type;
 
-        std::shared_ptr<dynamixel::PortHandler>& _dxlPortHandler;
-        std::shared_ptr<dynamixel::PacketHandler>& _dxlPacketHandler;
+        std::shared_ptr<dynamixel::PortHandler> _dxlPortHandler;
+        std::shared_ptr<dynamixel::PacketHandler> _dxlPacketHandler;
 
         virtual int syncWrite1Byte(uint8_t address, const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &data_list);
         virtual int syncWrite2Bytes(uint8_t address, const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &data_list);

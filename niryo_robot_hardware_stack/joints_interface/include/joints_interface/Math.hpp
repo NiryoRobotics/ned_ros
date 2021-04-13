@@ -49,6 +49,7 @@
 
 #include <stdint.h>
 
+// CC use templates instead
 int32_t rad_pos_to_steps(double position_rad, double gear_ratio, double direction)
 {
     return (int32_t)((STEPPERS_MOTOR_STEPS_PER_REVOLUTION * STEPPERS_MICROSTEPS * gear_ratio * position_rad * RADIAN_TO_DEGREE / 360.0) * direction);

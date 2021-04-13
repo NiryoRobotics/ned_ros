@@ -65,7 +65,6 @@ namespace ToolsInterface {
             std::mutex _tool_mutex;
 
             void _checkToolConnection();
-            std::shared_ptr<std::thread> _check_tool_connection_thread;
             double _check_tool_connection_frequency;
 
             ros::ServiceServer _ping_and_set_dxl_tool_server;

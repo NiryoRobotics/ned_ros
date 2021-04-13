@@ -67,8 +67,8 @@ namespace DynamixelDriver
     class XL430Driver : public XDriver
     {
     public:
-        XL430Driver(std::shared_ptr<dynamixel::PortHandler>& portHandler,
-                    std::shared_ptr<dynamixel::PacketHandler>& packetHandler);
+        XL430Driver(std::shared_ptr<dynamixel::PortHandler> portHandler,
+                    std::shared_ptr<dynamixel::PacketHandler> packetHandler);
 
         std::string interpreteErrorState(uint32_t hw_state);
 

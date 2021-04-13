@@ -45,8 +45,8 @@ namespace common {
 
                 //getters
                 EStepperCommandType getType() const;
-                std::vector<uint8_t> getMotorsId() const;
-                std::vector<int32_t> getParams() const;
+                const std::vector<uint8_t>& getMotorsId() const;
+                const std::vector<int32_t>& getParams() const;
 
                 std::string str() const;
 
@@ -63,13 +63,13 @@ namespace common {
         }
 
         inline
-        std::vector<uint8_t> StepperMotorCmd::getMotorsId() const
+        const std::vector<uint8_t>& StepperMotorCmd::getMotorsId() const
         {
             return _motor_id_list;
         }
 
         inline
-        std::vector<int32_t> StepperMotorCmd::getParams() const
+        const std::vector<int32_t>& StepperMotorCmd::getParams() const
         {
             return _param_list;
         }

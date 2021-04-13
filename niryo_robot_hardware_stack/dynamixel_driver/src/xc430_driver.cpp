@@ -26,9 +26,11 @@ namespace DynamixelDriver
      * @param portHandler
      * @param packetHandler
      */
-    XC430Driver::XC430Driver(shared_ptr<dynamixel::PortHandler> &portHandler,
-                             shared_ptr<dynamixel::PacketHandler> &packetHandler)
-        : XDriver(common::model::EDxlMotorType::MOTOR_TYPE_XC430, portHandler, packetHandler)
+    XC430Driver::XC430Driver(shared_ptr<dynamixel::PortHandler> portHandler,
+                             shared_ptr<dynamixel::PacketHandler> packetHandler)
+        : XDriver(common::model::EDxlMotorType::MOTOR_TYPE_XC430,
+                  portHandler,
+                  packetHandler)
     {
     }
 

@@ -54,14 +54,6 @@ namespace JointsInterface {
                 std::shared_ptr<DynamixelDriver::DynamixelDriverCore> dynamixel,
                 std::shared_ptr<StepperDriver::StepperDriverCore> stepper);
 
-            void init();
-            void initParams();
-
-            void startServices();
-            void startSubscribers();
-
-            void rosControlLoop();
-
             void sendMotorsParams();
             void activateLearningMode(bool learning_mode_on, int &resp_status, std::string &resp_message);
             void calibrateJoints();
@@ -73,35 +65,34 @@ namespace JointsInterface {
 
             const std::vector<common::model::JointState> &getJointsState() const;
 
-        private:
+        private:    
+            void init(std::shared_ptr<DynamixelDriver::DynamixelDriverCore> dynamixel,
+                      std::shared_ptr<StepperDriver::StepperDriverCore> stepper);
+            void initParams();
 
+            void startServices();
+            void startSubscribers();
+
+            void rosControlLoop();
+
+        private:
             ros::NodeHandle _nh;
 
             bool _callbackResetController(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
-
             void _callbackTrajectoryResult(const control_msgs::FollowJointTrajectoryActionResult& msg);
-
             bool _callbackCalibrateMotors(niryo_robot_msgs::SetInt::Request &req, niryo_robot_msgs::SetInt::Response &res);
-
             bool _callbackRequestNewCalibration(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
-
             bool _callbackActivateLearningMode(niryo_robot_msgs::SetBool::Request &req, niryo_robot_msgs::SetBool::Response &res);
 
             void _publishPackageStates();
-
             void _publishLearningMode();
 
             std::shared_ptr<JointHardwareInterface> _robot;
-            std::shared_ptr<DynamixelDriver::DynamixelDriverCore> _dynamixel;
-            std::shared_ptr<StepperDriver::StepperDriverCore> _stepper;
 
             double _publish_learning_mode_frequency;
-
             double _ros_control_frequency;
 
             std::shared_ptr<controller_manager::ControllerManager> _cm;
-            std::shared_ptr<std::thread> _ros_control_thread;
-            std::shared_ptr<std::thread> _publish_learning_mode_thread;
 
             ros::Subscriber _trajectory_result_subscriber;
 
@@ -114,9 +105,7 @@ namespace JointsInterface {
             ros::ServiceServer _activate_learning_mode_server;
 
             bool _enable_control_loop;
-
             bool _previous_state_learning_mode;
-
             bool _reset_controller;
     };
 } // JointsInterface

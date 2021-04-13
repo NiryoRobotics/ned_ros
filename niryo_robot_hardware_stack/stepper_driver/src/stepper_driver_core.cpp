@@ -17,10 +17,12 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <functional>
+
+#include "util/util_defs.hpp"
 #include "stepper_driver/stepper_driver_core.hpp"
 #include "model/conveyor_state.hpp"
 #include "model/stepper_motor_type_enum.hpp"
-#include <functional>
 
 namespace StepperDriver
 {
@@ -63,11 +65,11 @@ namespace StepperDriver
     void StepperDriverCore::startControlLoop()
     {
         resetHardwareControlLoopRates();
-        if (!_control_loop_thread)
+        if (!_control_loop_flag)
         {
             ROS_DEBUG("StepperDriverCore::startControlLoop - Start control loop thread");
             _control_loop_flag = true;
-            _control_loop_thread.reset(new std::thread(&StepperDriverCore::controlLoop, this));
+            common::util::reallyAsync(&StepperDriverCore::controlLoop, this);
         }
     }
 

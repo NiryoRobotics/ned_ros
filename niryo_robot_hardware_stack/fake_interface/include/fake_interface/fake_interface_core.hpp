@@ -105,13 +105,8 @@ namespace FakeInterface {
         bool _learning_mode;
         std::string _ros_niryo_robot_version;
 
-        std::shared_ptr<FakeJointHardwareInterface> _robot;
-        std::shared_ptr<controller_manager::ControllerManager> _cm;
-
-        std::shared_ptr<std::thread> _ros_control_thread;
-        std::shared_ptr<std::thread> _publish_hardware_status_thread;
-        std::shared_ptr<std::thread> _publish_software_version_thread;
-        std::shared_ptr<std::thread> _publish_learning_mode_thread;
+        std::unique_ptr<FakeJointHardwareInterface> _robot;
+        std::unique_ptr<controller_manager::ControllerManager> _cm;
 
         ros::ServiceServer _reset_controller_server; // workaround to compensate missed steps
         ros::Subscriber _trajectory_result_subscriber;

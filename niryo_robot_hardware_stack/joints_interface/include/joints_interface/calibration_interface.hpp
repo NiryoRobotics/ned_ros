@@ -33,9 +33,7 @@
 
 #include "niryo_robot_msgs/CommandStatus.h"
 
-
 namespace JointsInterface {
-
 
     constexpr double STEPPERS_MICROSTEPS = 8.0;
     constexpr double STEPPERS_MOTOR_STEPS_PER_REVOLUTION = 200.0;
@@ -45,8 +43,8 @@ namespace JointsInterface {
 
     public:
         CalibrationInterface(std::vector<common::model::JointState> &joint_list,
-                             std::shared_ptr<StepperDriver::StepperDriverCore> &stepper,
-                             std::shared_ptr<DynamixelDriver::DynamixelDriverCore> &dynamixel);
+                             std::shared_ptr<StepperDriver::StepperDriverCore> stepper,
+                             std::shared_ptr<DynamixelDriver::DynamixelDriverCore> dynamixel);
 
         int startCalibration(int mode, std::string &result_message);
 
@@ -76,8 +74,8 @@ namespace JointsInterface {
     private:
         std::vector<common::model::JointState> &_joint_list;
         ros::NodeHandle _nh;
-        std::shared_ptr<StepperDriver::StepperDriverCore> &_stepper;
-        std::shared_ptr<DynamixelDriver::DynamixelDriverCore> &_dynamixel;
+        std::shared_ptr<StepperDriver::StepperDriverCore> _stepper;
+        std::shared_ptr<DynamixelDriver::DynamixelDriverCore> _dynamixel;
 
         int _xl430_middle_position, _xl320_middle_position;
         int _xc430_middle_position, _xl330_middle_position;

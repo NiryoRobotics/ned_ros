@@ -15,9 +15,9 @@ int main(int argc, char **argv)
     
     ros::NodeHandle nh;
    
-    std::shared_ptr<StepperDriver::StepperDriverCore> stepper(new StepperDriver::StepperDriverCore());
+    std::shared_ptr<StepperDriver::StepperDriverCore> stepper = std::make_shared<StepperDriver::StepperDriverCore>();
     ros::Duration(1).sleep();
-    std::shared_ptr<ConveyorInterfaceCore> conveyor_interface(new ConveyorInterfaceCore(stepper));
+    std::shared_ptr<ConveyorInterfaceCore> conveyor_interface = std::make_shared<ConveyorInterfaceCore>(stepper);
     ros::Duration(1).sleep();
     
     ros::spin();

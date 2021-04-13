@@ -83,6 +83,7 @@ namespace JointsInterface {
 
         std::shared_ptr<DynamixelDriver::DynamixelDriverCore> _dynamixel;
         std::shared_ptr<StepperDriver::StepperDriverCore> _stepper;
+        std::shared_ptr<CalibrationInterface> _calibration_interface;
 
         std::vector<uint8_t> _list_stepper_id;
         std::map<uint8_t, std::string> _map_stepper_name;
@@ -91,8 +92,6 @@ namespace JointsInterface {
         std::map<uint8_t, std::string> _map_dxl_name;
 
         std::vector<common::model::JointState> _joint_list;
-
-        std::shared_ptr<CalibrationInterface> _calibration_interface;
 
         std::string _joints_name[6] = {""};
         int _joints_id[6] = {0};
@@ -113,7 +112,6 @@ namespace JointsInterface {
         int _i_gain_1, _i_gain_2, _i_gain_3;
         int _d_gain_1, _d_gain_2, _d_gain_3;
         bool _learning_mode;
-
 
     };
 } // JointsInterface

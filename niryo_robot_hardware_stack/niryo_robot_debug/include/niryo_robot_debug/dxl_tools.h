@@ -23,26 +23,31 @@
 #include "dynamixel_sdk/dynamixel_sdk.h"
 #include <string>
 #include <vector>
+#include <memory>
 
-class DxlTools {
+namespace robotDebug {
+    class DxlTools {
 
-    protected:
-        dynamixel::PortHandler* portHandler;
-        dynamixel::PacketHandler* packetHandler;
 
-    public:
-        DxlTools() {}
-        DxlTools(dynamixel::PortHandler* portHandler, dynamixel::PacketHandler* packetHandler);
+        public:
+            DxlTools();
+            DxlTools(std::shared_ptr<dynamixel::PortHandler> portHandler, std::shared_ptr<dynamixel::PacketHandler> packetHandler);
 
-        int setupDxlBus(int baudrate);
-        void broadcastPing();
-        void ping(int id);
-        int setRegister(uint8_t id, uint8_t reg_address,
-                         uint32_t value, uint8_t byte_number);
-        int getRegister(uint8_t id, uint8_t reg_address,
-                        uint32_t &value, uint8_t byte_number);
+            int setupDxlBus(int baudrate);
+            void broadcastPing();
+            void ping(int id);
+            int setRegister(uint8_t id, uint8_t reg_address,
+                             uint32_t value, uint8_t byte_number);
+            int getRegister(uint8_t id, uint8_t reg_address,
+                            uint32_t &value, uint8_t byte_number);
 
-        void closePort();
-};
+            void closePort();
+
+        protected:
+            std::shared_ptr<dynamixel::PortHandler> _portHandler;
+            std::shared_ptr<dynamixel::PacketHandler> _packetHandler;
+
+    };
+} // namespace robotDebug
 
 #endif

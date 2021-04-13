@@ -24,6 +24,8 @@
 #include "model/dxl_motor_type_enum.hpp"
 #include "model/stepper_motor_type_enum.hpp"
 
+#include "util/util_defs.hpp"
+
 namespace NiryoRobotHardwareInterface
 {
     HardwareInterface::HardwareInterface(ros::NodeHandle &nh) : _nh(nh)
@@ -159,10 +161,10 @@ namespace NiryoRobotHardwareInterface
     {
         ROS_DEBUG("Hardware Interface - Init Publisher");
         _hardware_status_publisher = _nh.advertise<niryo_robot_msgs::HardwareStatus>("niryo_robot_hardware_interface/hardware_status", 10);
-        _publish_hardware_status_thread.reset(new std::thread(&HardwareInterface::_publishHardwareStatus, this));
+        common::util::reallyAsync(&HardwareInterface::_publishHardwareStatus, this);
 
         _software_version_publisher = _nh.advertise<niryo_robot_msgs::SoftwareVersion>("niryo_robot_hardware_interface/software_version", 10);
-        _publish_software_version_thread.reset(new std::thread(&HardwareInterface::_publishSoftwareVersion, this));
+        common::util::reallyAsync(&HardwareInterface::_publishSoftwareVersion, this);
 
         _motors_report_service = _nh.advertiseService("/niryo_robot_hardware_interface/launch_motors_report", &HardwareInterface::_callbackLaunchMotorsReport, this);
         _stop_motors_report_service = _nh.advertiseService("/niryo_robot_hardware_interface/stop_motors_report", &HardwareInterface::_callbackStopMotorsReport, this);

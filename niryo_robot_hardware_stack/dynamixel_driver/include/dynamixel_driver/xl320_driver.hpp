@@ -68,8 +68,8 @@ namespace DynamixelDriver
     class XL320Driver : public XDriver
     {
     public:
-        XL320Driver(std::shared_ptr<dynamixel::PortHandler>& portHandler,
-                    std::shared_ptr<dynamixel::PacketHandler>& packetHandler);
+        XL320Driver(std::shared_ptr<dynamixel::PortHandler> portHandler,
+                    std::shared_ptr<dynamixel::PacketHandler> packetHandler);
 
         std::string interpreteErrorState(uint32_t hw_state);
 

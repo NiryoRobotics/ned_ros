@@ -25,6 +25,7 @@
 
 //niryo
 #include "model/tool_state.hpp"
+#include "util/util_defs.hpp"
 
 namespace FakeInterface {
     FakeInterfaceCore::FakeInterfaceCore()
@@ -40,14 +41,14 @@ namespace FakeInterface {
 
         _learning_mode = true;
 
-        if(!_gazebo)
+        if(!_gazebo && _robot)
         {
             ROS_DEBUG("Fake Hardware Interface - Create controller manager");
             _cm.reset(new controller_manager::ControllerManager(_robot.get(), _nh));
             ros::Duration(0.1).sleep();
 
             ROS_DEBUG("Fake Hardware Interface - Starting ROS control thread...");
-            _ros_control_thread.reset(new std::thread(&FakeInterfaceCore::rosControlLoop, this));
+            common::util::reallyAsync(&FakeInterfaceCore::rosControlLoop, this);
         }
 
         pubToolId(0);
@@ -75,7 +76,7 @@ namespace FakeInterface {
 
         _reset_controller_server = _nh.advertiseService("/niryo_robot/joints_interface/steppers_reset_controller",  &FakeInterfaceCore::_callbackResetController, this);
 
-        _publish_learning_mode_thread.reset(new std::thread(&FakeInterfaceCore::_publishLearningMode, this));
+        common::util::reallyAsync(&FakeInterfaceCore::_publishLearningMode, this);
 
     }
 

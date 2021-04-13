@@ -78,8 +78,11 @@ namespace StepperDriver
     constexpr int CAN_SCAN_TIMEOUT   =  -10003;
     constexpr double TIME_TO_WAIT_IF_BUSY = 0.0005;
 
-    constexpr double STEPPER_MOTOR_TIMEOUT_VALUE = 1.0; // s
+    constexpr double STEPPER_MOTOR_TIMEOUT_VALUE = 1.0;
 
+    /**
+     * @brief The e_CanStepperCalibrationStatus enum
+     */
     enum class e_CanStepperCalibrationStatus {
         CAN_STEPPERS_CALIBRATION_UNINITIALIZED = 0,
         CAN_STEPPERS_CALIBRATION_OK = 1,
@@ -90,6 +93,9 @@ namespace StepperDriver
         CAN_STEPPERS_CALIBRATION_IN_PROGRESS = 6,
     };
 
+    /**
+     * @brief The CalibrationStepperData struct
+     */
     struct CalibrationStepperData
     {
         unsigned long rxId;
@@ -97,12 +103,18 @@ namespace StepperDriver
         std::array<uint8_t, 8> rxBuf;
     };
 
+    /**
+     * @brief The CalibrationStepperCmdStatus struct
+     */
     struct CalibrationStepperCmdStatus
     {
         common::model::StepperMotorCmd cmd;
         ros::Time cmd_time;
     };
 
+    /**
+     * @brief The StepperDriver class
+     */
     class StepperDriver
     {
         public:
@@ -136,7 +148,7 @@ namespace StepperDriver
             void clearCalibrationTab();
 
             //getters
-            int getStepperPose(int32_t motor_id) const;
+            uint32_t getStepperPose(int32_t motor_id) const;
             const std::vector<int32_t>& getJointTrajectoryState() const;
             const std::vector<common::model::StepperMotorState>& getMotorsState() const;
             const std::vector<common::model::ConveyorState>& getConveyorsState() const;
@@ -193,9 +205,11 @@ namespace StepperDriver
             std::map<uint8_t, int> _motor_calibration_map;
             std::map<uint8_t, CalibrationStepperCmdStatus> _motor_calibration_map_cmd;
 
-            std::shared_ptr<MCP_CAN_RPI::MCP_CAN> mcp_can;
+            std::unique_ptr<MCP_CAN_RPI::MCP_CAN> mcp_can;
+
             std::thread _calibration_thread;
             std::thread _stepper_timeout_thread;
+
             std::vector<CalibrationStepperData> _calibration_readed_datas;
 
             bool _is_can_connection_ok;

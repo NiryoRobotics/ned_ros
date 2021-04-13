@@ -67,8 +67,8 @@ namespace DynamixelDriver {
     class XC430Driver : public XDriver
     {
     public:
-        XC430Driver(std::shared_ptr<dynamixel::PortHandler>& portHandler,
-                    std::shared_ptr<dynamixel::PacketHandler>& packetHandler);
+        XC430Driver(std::shared_ptr<dynamixel::PortHandler> portHandler,
+                    std::shared_ptr<dynamixel::PacketHandler> packetHandler);
 
         uint32_t rad_pos_to_xc430_pos(double position_rad);
         double xc430_pos_to_rad_pos(int32_t position_dxl);

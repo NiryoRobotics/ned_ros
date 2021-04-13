@@ -38,8 +38,8 @@ using namespace std;
 namespace JointsInterface {
 
     CalibrationInterface::CalibrationInterface(vector<common::model::JointState> &joint_list,
-                                               shared_ptr<StepperDriver::StepperDriverCore> &stepper,
-                                               shared_ptr<DynamixelDriver::DynamixelDriverCore> &dynamixel) :
+                                               shared_ptr<StepperDriver::StepperDriverCore> stepper,
+                                               shared_ptr<DynamixelDriver::DynamixelDriverCore> dynamixel) :
         _joint_list(joint_list), _stepper(stepper), _dynamixel(dynamixel)
     {
 

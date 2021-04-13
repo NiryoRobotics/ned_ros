@@ -17,28 +17,27 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "joints_interface/joints_interface_core.hpp"
 #include <functional>
 
+#include "joints_interface/joints_interface_core.hpp"
+#include "util/util_defs.hpp"
 
 namespace JointsInterface {
 
     JointsInterfaceCore::JointsInterfaceCore(std::shared_ptr<DynamixelDriver::DynamixelDriverCore> dynamixel,
-                                             std::shared_ptr<StepperDriver::StepperDriverCore> stepper) :
-        _dynamixel(dynamixel),
-        _stepper(stepper)
-
+                                             std::shared_ptr<StepperDriver::StepperDriverCore> stepper)
     {
-        init();
+        init(dynamixel, stepper);
     }
 
-    void JointsInterfaceCore::init()
+    void JointsInterfaceCore::init(std::shared_ptr<DynamixelDriver::DynamixelDriverCore> dynamixel,
+                                   std::shared_ptr<StepperDriver::StepperDriverCore> stepper)
     {
         initParams();
         startServices();
         startSubscribers();
         ROS_DEBUG("Joints Interface Core - Start joint hardware interface");
-        _robot.reset(new JointHardwareInterface(_dynamixel, _stepper));
+        _robot.reset(new JointHardwareInterface(dynamixel, stepper));
 
         ROS_DEBUG("Joints Interface Core - Create controller manager");
         _cm.reset(new controller_manager::ControllerManager(_robot.get(), _nh));
@@ -48,7 +47,7 @@ namespace JointsInterface {
         _reset_controller = false;
 
         ROS_DEBUG("Joints Interface Core - Starting ros control thread...");
-        _ros_control_thread.reset(new std::thread(&JointsInterfaceCore::rosControlLoop, this));
+        common::util::reallyAsync(&JointsInterfaceCore::rosControlLoop, this);
 
         ROS_INFO("Joints Interface Core - Started");
         _nh.setParam("/niryo_robot_joint_interface/initialized", true);
@@ -75,7 +74,7 @@ namespace JointsInterface {
         _trajectory_result_subscriber = _nh.subscribe("/niryo_robot_follow_joint_trajectory_controller/follow_joint_trajectory/result",
                                                       10, &JointsInterfaceCore::_callbackTrajectoryResult, this);
         _learning_mode_publisher = _nh.advertise<std_msgs::Bool>("niryo_robot/learning_mode/state", 10);
-        _publish_learning_mode_thread.reset(new std::thread(&JointsInterfaceCore::_publishLearningMode, this));
+        common::util::reallyAsync(&JointsInterfaceCore::_publishLearningMode, this);
     }
 
     void JointsInterfaceCore::rosControlLoop()

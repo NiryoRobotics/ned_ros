@@ -17,11 +17,15 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+#include <functional>
+#include <future>
+
 #include "tools_interface/tools_interface_core.hpp"
 #include "dynamixel_driver/dxl_driver.hpp"
 #include "model/tool_state.hpp"
 #include "model/dxl_command_type_enum.hpp"
-#include <functional>
+
+#include "util/util_defs.hpp"
 
 
 using namespace DynamixelDriver;
@@ -35,7 +39,7 @@ namespace ToolsInterface {
         initParams();
         initServices();
 
-        _check_tool_connection_thread.reset(new thread(&ToolsInterfaceCore::_checkToolConnection, this));
+        common::util::reallyAsync(&ToolsInterfaceCore::_checkToolConnection, this);
 
         pubToolId(0);
     }
