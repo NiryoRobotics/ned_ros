@@ -29,7 +29,7 @@ namespace common {
         {
         }
 
-        JointState::JointState(string name, uint8_t type, uint8_t id) :
+        JointState::JointState(string name, EMotorType type, uint8_t id) :
             AbstractMotorState(id),
             _name(name), _type(type)
         {
@@ -43,7 +43,7 @@ namespace common {
         void JointState::reset()
         {
             _name.clear();
-            _type = 0;
+            _type = EMotorType::MOTOR_TYPE_UNKNOWN;
             _position = 0.0;
             _need_calibration = false;
         }
@@ -63,7 +63,7 @@ namespace common {
             _name = name;
         }
 
-        void JointState::setType(uint8_t type)
+        void JointState::setType(EMotorType type)
         {
             _type = type;
         }

@@ -27,7 +27,7 @@ namespace DynamixelDriver
      * @param portHandler
      * @param packetHandler
      */
-    XDriver::XDriver(common::model::EDxlMotorType type,
+    XDriver::XDriver(common::model::EMotorType type,
                      shared_ptr<dynamixel::PortHandler> portHandler,
                      shared_ptr<dynamixel::PacketHandler> packetHandler) :
         _type(type),
@@ -122,6 +122,7 @@ namespace DynamixelDriver
 
         return ss.str();
     }
+
 
     /*
      *  -----------------   SYNC WRITE   --------------------

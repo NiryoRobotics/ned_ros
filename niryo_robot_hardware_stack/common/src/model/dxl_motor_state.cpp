@@ -32,7 +32,7 @@ namespace common {
             reset();
         }
 
-        DxlMotorState::DxlMotorState(uint8_t id, EDxlMotorType type, bool isTool)
+        DxlMotorState::DxlMotorState(uint8_t id, EMotorType type, bool isTool)
             : AbstractMotorState(id),
               _type(type),
               _isTool(isTool)
@@ -47,7 +47,7 @@ namespace common {
         void DxlMotorState::reset()
         {
             AbstractMotorState::reset();
-            _type = EDxlMotorType::MOTOR_TYPE_UNKNOWN;
+            _type = EMotorType::MOTOR_TYPE_UNKNOWN;
             _isTool = false;
         }
 
@@ -71,7 +71,7 @@ namespace common {
 
         bool DxlMotorState::isValid() const
         {
-            return (0 != _id && EDxlMotorType::MOTOR_TYPE_UNKNOWN != _type);
+            return (0 != _id && EMotorType::MOTOR_TYPE_UNKNOWN != _type);
         }
 
     } // namespace model

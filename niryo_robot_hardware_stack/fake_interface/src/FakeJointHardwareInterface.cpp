@@ -19,8 +19,8 @@
 
 #include "fake_interface/FakeJointHardwareInterface.hpp"
 
-#include "model/dxl_motor_type_enum.hpp"
-#include "model/stepper_motor_type_enum.hpp"
+#include "model/motor_type_enum.hpp"
+#include "model/motor_type_enum.hpp"
 
 namespace FakeInterface {
     FakeJointHardwareInterface::FakeJointHardwareInterface()
@@ -99,23 +99,14 @@ namespace FakeInterface {
         _pos[5] = _cmd[5];
     }
 
-    std::string FakeJointHardwareInterface::jointIdToJointName(int id, uint8_t motor_type)
+    std::string FakeJointHardwareInterface::jointIdToJointName(uint8_t id)
     {
-        if (motor_type == static_cast<uint8_t>(common::model::EStepperMotorType::MOTOR_TYPE_STEPPER))
-        {
-            std::map<uint8_t, std::string>::iterator  it= _map_stepper_name.find(id);
-            if (it !=  _map_stepper_name.end())
-                return it->second;
-        }
-        else if (motor_type == static_cast<uint8_t>(common::model::EDxlMotorType::MOTOR_TYPE_XL320) ||
-                 motor_type == static_cast<uint8_t>(common::model::EDxlMotorType::MOTOR_TYPE_XL330) ||
-                 motor_type == static_cast<uint8_t>(common::model::EDxlMotorType::MOTOR_TYPE_XL430) ||
-                 motor_type == static_cast<uint8_t>(common::model::EDxlMotorType::MOTOR_TYPE_XC430))
-        {
-            std::map<uint8_t, std::string>::iterator it = _map_dxl_name.find(id);
-            if (it != _map_dxl_name.end())
-                return it->second;
-        }
+
+        if(_map_stepper_name.count(id))
+            return _map_stepper_name.at(id);
+        else if(_map_dxl_name.count(id))
+            return _map_dxl_name.at(id);
+
         return "";
     }
 } //FakeInterface

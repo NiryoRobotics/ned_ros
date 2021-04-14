@@ -75,9 +75,11 @@ namespace StepperDriver
     StepperDriver::~StepperDriver()
     {
         if (_stepper_timeout_thread.joinable())
-        {
             _stepper_timeout_thread.join();
-        }
+
+
+        if(_calibration_thread.joinable())
+            _stepper_timeout_thread.join();
     }
 
     bool StepperDriver::setupInterruptGpio()

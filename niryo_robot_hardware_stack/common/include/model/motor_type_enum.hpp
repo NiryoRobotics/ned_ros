@@ -1,5 +1,5 @@
 /*
-    stepper_motor_type_enum.hpp
+    motor_type_enum.hpp
     Copyright (C) 2020 Niryo
     All rights reserved.
 
@@ -17,8 +17,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef STEPPER_MOTOR_TYPE_ENUM
-#define STEPPER_MOTOR_TYPE_ENUM
+#ifndef DXL_MOTOR_TYPE_ENUM
+#define DXL_MOTOR_TYPE_ENUM
 
 #include <map>
 #include <string>
@@ -29,27 +29,31 @@
 namespace common {
     namespace model {
 
-        enum class EStepperMotorType {
-                                       MOTOR_TYPE_STEPPER=1,
-                                       MOTOR_TYPE_UNKNOWN=100
-                                     };
+        enum class EMotorType {
+                                MOTOR_TYPE_STEPPER=1,
+                                MOTOR_TYPE_XL430=2,
+                                MOTOR_TYPE_XL320=3,
+                                MOTOR_TYPE_XL330=4,
+                                MOTOR_TYPE_XC430=5,
+                                MOTOR_TYPE_UNKNOWN=100
+                              };
 
         /**
          * @brief Specialization of AbstractEnum for Acknowledge status enum
          */
-        class StepperMotorTypeEnum : public AbstractEnum<StepperMotorTypeEnum, EStepperMotorType>
+        class MotorTypeEnum : public AbstractEnum<MotorTypeEnum, EMotorType>
         {
         public:
-            StepperMotorTypeEnum(EStepperMotorType e=EStepperMotorType::MOTOR_TYPE_UNKNOWN);
-            StepperMotorTypeEnum(const char* const str);
-            ~StepperMotorTypeEnum() {}
+            MotorTypeEnum(EMotorType e=EMotorType::MOTOR_TYPE_UNKNOWN);
+            MotorTypeEnum(const char* const str);
+            ~MotorTypeEnum() {}
 
         private:
-            friend class AbstractEnum<StepperMotorTypeEnum, EStepperMotorType>;
-            static std::map<EStepperMotorType, std::string> initialize();
+            friend class AbstractEnum<MotorTypeEnum, EMotorType>;
+            static std::map<EMotorType, std::string> initialize();
         };
 
     } // model
 } //common
 
-#endif // STEPPER_MOTOR_TYPE_ENUM
+#endif // DXL_MOTOR_TYPE_ENUM

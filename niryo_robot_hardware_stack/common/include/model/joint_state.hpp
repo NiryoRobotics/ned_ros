@@ -21,9 +21,11 @@
 #define JOINT_STATE_HPP
 
 #include "abstract_motor_state.hpp"
+#include "motor_type_enum.hpp"
 
 #include <stdint.h>
 #include <string>
+
 
 namespace common {
     namespace model {
@@ -33,7 +35,7 @@ namespace common {
 
             public:
                 JointState();
-                JointState(std::string name, uint8_t type, uint8_t id );
+                JointState(std::string name, EMotorType type, uint8_t id );
 
                 virtual ~JointState() override;
 
@@ -41,12 +43,12 @@ namespace common {
                 bool isValid() const override;
 
                 void setName(std::string &name);
-                void setType(uint8_t id);
+                void setType(EMotorType id);
                 void setNeedCalibration(bool need_calibration);
                 void setPosition(double position);
 
                 std::string getName() const;
-                uint8_t getType() const;
+                EMotorType getType() const;
                 bool needCalibration() const;
                 double getPosition() const;
 
@@ -57,7 +59,7 @@ namespace common {
             protected :
 
                 std::string _name;
-                uint8_t _type;
+                EMotorType _type;
 
                 double _position;
                 bool _need_calibration;
@@ -67,7 +69,7 @@ namespace common {
         inline
         bool JointState::isValid() const
         {
-            return (0 != _id && 0 != _type);
+            return (0 != _id && EMotorType::MOTOR_TYPE_UNKNOWN != _type);
         }
 
         inline
@@ -77,7 +79,7 @@ namespace common {
         }
 
         inline
-        uint8_t JointState::getType() const
+        EMotorType JointState::getType() const
         {
             return _type;
         }

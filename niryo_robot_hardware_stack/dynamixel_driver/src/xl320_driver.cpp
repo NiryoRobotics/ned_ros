@@ -15,7 +15,7 @@
 */
 
 #include "dynamixel_driver/xl320_driver.hpp"
-#include "model/dxl_motor_type_enum.hpp"
+#include "model/motor_type_enum.hpp"
 
 using namespace std;
 
@@ -28,7 +28,7 @@ namespace DynamixelDriver
      */
     XL320Driver::XL320Driver(shared_ptr<dynamixel::PortHandler> portHandler,
                              shared_ptr<dynamixel::PacketHandler> packetHandler)
-        : XDriver(common::model::EDxlMotorType::MOTOR_TYPE_XL320,
+        : XDriver(common::model::EMotorType::MOTOR_TYPE_XL320,
                   portHandler,
                   packetHandler)
     {

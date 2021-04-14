@@ -54,11 +54,13 @@ namespace JointsInterface {
                 std::shared_ptr<DynamixelDriver::DynamixelDriverCore> dynamixel,
                 std::shared_ptr<StepperDriver::StepperDriverCore> stepper);
 
+            virtual ~JointsInterfaceCore();
+
             void sendMotorsParams();
             void activateLearningMode(bool learning_mode_on, int &resp_status, std::string &resp_message);
             void calibrateJoints();
 
-            std::string jointIdToJointName(int id, uint8_t motor_type);
+            std::string jointIdToJointName(int id);
 
             bool getFreeDriveMode() const;
             void getCalibrationState(bool &need_calibration, bool &calibration_in_progress) const;
@@ -103,6 +105,9 @@ namespace JointsInterface {
             ros::ServiceServer _request_new_calibration_server;
 
             ros::ServiceServer _activate_learning_mode_server;
+
+            std::thread _publish_learning_mode_thread;
+            std::thread _control_loop_thread;
 
             bool _enable_control_loop;
             bool _previous_state_learning_mode;

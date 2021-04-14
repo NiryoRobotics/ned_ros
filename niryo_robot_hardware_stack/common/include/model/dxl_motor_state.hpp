@@ -22,7 +22,7 @@
 
 #include <string>
 #include "abstract_motor_state.hpp"
-#include "model/dxl_motor_type_enum.hpp"
+#include "model/motor_type_enum.hpp"
 
 namespace common {
     namespace model {
@@ -32,7 +32,7 @@ namespace common {
         {
             public:
                 DxlMotorState();
-                DxlMotorState(uint8_t id, EDxlMotorType type, bool isTool = false);
+                DxlMotorState(uint8_t id, EMotorType type, bool isTool = false);
 
                 virtual ~DxlMotorState() override;
 
@@ -40,7 +40,7 @@ namespace common {
                 virtual bool isValid() const override;
 
                 //getters
-                EDxlMotorType getType() const;
+                EMotorType getType() const;
                 bool isTool() const;
 
                 //setters
@@ -49,13 +49,13 @@ namespace common {
                 virtual std::string str() const override;
 
             protected:
-                EDxlMotorType _type;
+                EMotorType _type;
 
                 bool _isTool;
         };
 
         inline
-        EDxlMotorType DxlMotorState::getType() const
+        EMotorType DxlMotorState::getType() const
         {
             return _type;
         }

@@ -1,5 +1,5 @@
 /*
-    dxl_motor_type_enum.hpp
+    motor_type_enum.hpp
     Copyright (C) 2020 Niryo
     All rights reserved.
 
@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "model/dxl_motor_type_enum.hpp"
+#include "model/motor_type_enum.hpp"
 
 using namespace std;
 
@@ -27,30 +27,31 @@ namespace common {
         /**
          *
          */
-        DxlMotorTypeEnum::DxlMotorTypeEnum(EDxlMotorType e):
-            AbstractEnum<DxlMotorTypeEnum, EDxlMotorType>(e)
+        MotorTypeEnum::MotorTypeEnum(EMotorType e):
+            AbstractEnum<MotorTypeEnum, EMotorType>(e)
         {}
 
         /**
          *
          */
-        DxlMotorTypeEnum::DxlMotorTypeEnum(const char* const str):
-            AbstractEnum<DxlMotorTypeEnum, EDxlMotorType>(str)
+        MotorTypeEnum::MotorTypeEnum(const char* const str):
+            AbstractEnum<MotorTypeEnum, EMotorType>(str)
         {}
 
         /**
          *
          */
-        map<EDxlMotorType, string>
-        DxlMotorTypeEnum::initialize()
+        map<EMotorType, string>
+        MotorTypeEnum::initialize()
         {
-            map<EDxlMotorType, string> m;
+            map<EMotorType, string> m;
 
-            m[EDxlMotorType::MOTOR_TYPE_XL430]    = "xl430";
-            m[EDxlMotorType::MOTOR_TYPE_XL320]    = "xl320";
-            m[EDxlMotorType::MOTOR_TYPE_XL330]    = "xl330";
-            m[EDxlMotorType::MOTOR_TYPE_XC430]    = "xc430";
-            m[EDxlMotorType::MOTOR_TYPE_UNKNOWN]  = "unknown";
+            m[EMotorType::MOTOR_TYPE_STEPPER]    = "stepper";
+            m[EMotorType::MOTOR_TYPE_XL430]    = "xl430";
+            m[EMotorType::MOTOR_TYPE_XL320]    = "xl320";
+            m[EMotorType::MOTOR_TYPE_XL330]    = "xl330";
+            m[EMotorType::MOTOR_TYPE_XC430]    = "xc430";
+            m[EMotorType::MOTOR_TYPE_UNKNOWN]  = "unknown";
 
             return m;
         }

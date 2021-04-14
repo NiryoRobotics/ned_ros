@@ -20,9 +20,12 @@
 #ifndef COMMON_DEFS_H
 #define COMMON_DEFS_H
 
+#define RADIAN_TO_DEGREE 57.295779513082320876798154814105
+#define TIME_TO_WAIT_IF_BUSY   0.0005
 
 namespace common
 {
+
 
 }
 

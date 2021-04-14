@@ -41,7 +41,13 @@ namespace ConveyorInterface {
         ROS_DEBUG("Conveyor Interface Core - ctor");
 
         _conveyors_feedback_publisher = _nh.advertise<conveyor_interface::ConveyorFeedbackArray>("/niryo_robot/conveyor/feedback", 10);
-        _publish_conveyors_feedback_thread.reset(new thread(&ConveyorInterfaceCore::_publishConveyorsFeedback, this));
+        _publish_conveyors_feedback_thread = std::thread(&ConveyorInterfaceCore::_publishConveyorsFeedback, this);
+    }
+
+    ConveyorInterfaceCore::~ConveyorInterfaceCore()
+    {
+        if(_publish_conveyors_feedback_thread.joinable())
+            _publish_conveyors_feedback_thread.join();
     }
 
     void ConveyorInterfaceCore::initParams()

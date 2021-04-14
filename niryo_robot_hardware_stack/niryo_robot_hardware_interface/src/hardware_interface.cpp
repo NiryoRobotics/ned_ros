@@ -21,8 +21,8 @@
 
 #include "niryo_robot_hardware_interface/hardware_interface.hpp"
 
-#include "model/dxl_motor_type_enum.hpp"
-#include "model/stepper_motor_type_enum.hpp"
+#include "model/motor_type_enum.hpp"
+#include "model/motor_type_enum.hpp"
 
 #include "util/util_defs.hpp"
 
@@ -33,6 +33,16 @@ namespace NiryoRobotHardwareInterface
         initParams();
         initNodes();
         initPublishers();
+    }
+
+    HardwareInterface::~HardwareInterface()
+    {
+
+        if(_publish_software_version_thread.joinable())
+            _publish_software_version_thread.join();
+
+        if(_publish_hw_status_thread.joinable())
+            _publish_hw_status_thread.join();
     }
 
     bool HardwareInterface::_callbackStopMotorsReport(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res)
@@ -161,10 +171,10 @@ namespace NiryoRobotHardwareInterface
     {
         ROS_DEBUG("Hardware Interface - Init Publisher");
         _hardware_status_publisher = _nh.advertise<niryo_robot_msgs::HardwareStatus>("niryo_robot_hardware_interface/hardware_status", 10);
-        common::util::reallyAsync(&HardwareInterface::_publishHardwareStatus, this);
+        _publish_hw_status_thread = std::thread(&HardwareInterface::_publishHardwareStatus, this);
 
         _software_version_publisher = _nh.advertise<niryo_robot_msgs::SoftwareVersion>("niryo_robot_hardware_interface/software_version", 10);
-        common::util::reallyAsync(&HardwareInterface::_publishSoftwareVersion, this);
+        _publish_software_version_thread = std::thread(&HardwareInterface::_publishSoftwareVersion, this);
 
         _motors_report_service = _nh.advertiseService("/niryo_robot_hardware_interface/launch_motors_report", &HardwareInterface::_callbackLaunchMotorsReport, this);
         _stop_motors_report_service = _nh.advertiseService("/niryo_robot_hardware_interface/stop_motors_report", &HardwareInterface::_callbackStopMotorsReport, this);
@@ -289,11 +299,9 @@ namespace NiryoRobotHardwareInterface
                 motor_types.push_back("Niryo Stepper");
                 std::string joint_name = "";
                 if (!_simulation_mode)
-                    joint_name = _joints_interface->jointIdToJointName(stepper_motor_state.motors_hw_status.at(i).motor_identity.motor_id,
-                                                                       static_cast<uint8_t>(common::model::EStepperMotorType::MOTOR_TYPE_STEPPER));
+                    joint_name = _joints_interface->jointIdToJointName(stepper_motor_state.motors_hw_status.at(i).motor_identity.motor_id);
                 else
-                    joint_name = _fake_interface->jointIdToJointName(stepper_motor_state.motors_hw_status.at(i).motor_identity.motor_id,
-                                                                     static_cast<uint8_t>(common::model::EStepperMotorType::MOTOR_TYPE_STEPPER));
+                    joint_name = _fake_interface->jointIdToJointName(stepper_motor_state.motors_hw_status.at(i).motor_identity.motor_id);
 
                 joint_name = joint_name == "" ? ("Stepper " + std::to_string(dxl_motor_state.motors_hw_status.at(i).motor_identity.motor_id)) : joint_name;
                 motor_names.push_back(joint_name);
@@ -309,19 +317,19 @@ namespace NiryoRobotHardwareInterface
 
                 switch(dxl_motor_state.motors_hw_status.at(i).motor_identity.motor_type)
                 {
-                    case static_cast<uint8_t>(common::model::EDxlMotorType::MOTOR_TYPE_XL320):
+                    case static_cast<uint8_t>(common::model::EMotorType::MOTOR_TYPE_XL320):
                         motor_types.push_back("DXL XL-320");
                     break;
                         
-                    case static_cast<uint8_t>(common::model::EDxlMotorType::MOTOR_TYPE_XL330):
+                    case static_cast<uint8_t>(common::model::EMotorType::MOTOR_TYPE_XL330):
                         motor_types.push_back("DXL XL-330");
                     break;
                     
-                    case static_cast<uint8_t>(common::model::EDxlMotorType::MOTOR_TYPE_XL430):
+                    case static_cast<uint8_t>(common::model::EMotorType::MOTOR_TYPE_XL430):
                         motor_types.push_back("DXL XL-430");
                     break;
                     
-                    case static_cast<uint8_t>(common::model::EDxlMotorType::MOTOR_TYPE_XC430):
+                    case static_cast<uint8_t>(common::model::EMotorType::MOTOR_TYPE_XC430):
                         motor_types.push_back("DXL XC-430");
                     break;
                     default:
@@ -331,11 +339,9 @@ namespace NiryoRobotHardwareInterface
                 
                 std::string joint_name = "";
                 if (!_simulation_mode)
-                    joint_name = _joints_interface->jointIdToJointName(dxl_motor_state.motors_hw_status.at(i).motor_identity.motor_id, 
-                                                                       dxl_motor_state.motors_hw_status.at(i).motor_identity.motor_type);
+                    joint_name = _joints_interface->jointIdToJointName(dxl_motor_state.motors_hw_status.at(i).motor_identity.motor_id);
                 else
-                    joint_name = _fake_interface->jointIdToJointName(dxl_motor_state.motors_hw_status.at(i).motor_identity.motor_id, 
-                                                                     dxl_motor_state.motors_hw_status.at(i).motor_identity.motor_type);
+                    joint_name = _fake_interface->jointIdToJointName(dxl_motor_state.motors_hw_status.at(i).motor_identity.motor_id);
 
                 joint_name = (joint_name == "") ? "Tool" : joint_name;
                 motor_names.push_back(joint_name);

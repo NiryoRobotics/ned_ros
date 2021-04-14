@@ -47,20 +47,17 @@
 
 namespace DynamixelDriver
 {
+
     constexpr float DXL_BUS_PROTOCOL_VERSION = 2.0;
-    constexpr int DXL_FAIL_OPEN_PORT = -4500;
+    constexpr int DXL_FAIL_OPEN_PORT         = -4500;
 
     constexpr int DXL_FAIL_PORT_SET_BAUDRATE = -4501;
-    constexpr int DXL_FAIL_SETUP_GPIO = -4502;
+    constexpr int DXL_FAIL_SETUP_GPIO        = -4502;
 
-    constexpr double RADIAN_TO_DEGREE = 57.295779513082320876798154814105;
-
-    constexpr double TIME_TO_WAIT_IF_BUSY = 0.0005;
-
-    constexpr int DXL_SCAN_OK = 0;
-    constexpr int DXL_SCAN_MISSING_MOTOR = -50;
-    constexpr int DXL_SCAN_UNALLOWED_MOTOR = -51;
-    constexpr int DXL_WRONG_TYPE = -52;
+    constexpr int DXL_SCAN_OK                = 0;
+    constexpr int DXL_SCAN_MISSING_MOTOR     = -50;
+    constexpr int DXL_SCAN_UNALLOWED_MOTOR   = -51;
+    constexpr int DXL_WRONG_TYPE             = -52;
 
     /**
      * @brief The DxlDriver class
@@ -71,8 +68,8 @@ namespace DynamixelDriver
             DxlDriver();
             virtual ~DxlDriver();
 
-            void addDynamixel(uint8_t id, common::model::EDxlMotorType type, bool isTool = false);
-            void removeDynamixel(uint8_t id, common::model::EDxlMotorType);
+            void addDynamixel(uint8_t id, common::model::EMotorType type, bool isTool = false);
+            void removeDynamixel(uint8_t id, common::model::EMotorType);
 
             //commands
             void executeJointTrajectoryCmd(std::vector<uint32_t> &cmd);
@@ -91,17 +88,17 @@ namespace DynamixelDriver
             int setGoalTorque(common::model::DxlMotorState& targeted_dxl, uint32_t torque);
             int setGoalVelocity(common::model::DxlMotorState& targeted_dxl, uint32_t velocity);
 
-            int setLeds(int led, common::model::EDxlMotorType type);
+            int setLeds(int led, common::model::EMotorType type);
 
             int scanAndCheck();
 
             int ping(common::model::DxlMotorState& targeted_dxl);
-            int type_ping_id(uint8_t id, common::model::EDxlMotorType type);
+            int type_ping_id(uint8_t id, common::model::EMotorType type);
 
             int rebootMotors();
 
-            int sendCustomDxlCommand(common::model::EDxlMotorType motor_type, uint8_t id, uint32_t reg_address, uint32_t value, uint32_t byte_number);
-            int readCustomDxlCommand(common::model::EDxlMotorType motor_type, uint8_t id, uint32_t reg_address, uint32_t &value, uint32_t byte_number);
+            int sendCustomDxlCommand(common::model::EMotorType motor_type, uint8_t id, uint32_t reg_address, uint32_t value, uint32_t byte_number);
+            int readCustomDxlCommand(common::model::EMotorType motor_type, uint8_t id, uint32_t reg_address, uint32_t &value, uint32_t byte_number);
 
             //tests
             bool isConnectionOk() const;
@@ -159,8 +156,8 @@ namespace DynamixelDriver
             std::vector<uint8_t> _removed_motor_id_list;
 
             std::map<uint8_t, common::model::DxlMotorState> _state_map;
-            std::map<common::model::EDxlMotorType, std::vector<uint8_t> > _ids_map;
-            std::map<common::model::EDxlMotorType, std::shared_ptr<XDriver> > _xdriver_map;
+            std::map<common::model::EMotorType, std::vector<uint8_t> > _ids_map;
+            std::map<common::model::EMotorType, std::shared_ptr<XDriver> > _xdriver_map;
 
             // for hardware control
             bool _is_dxl_connection_ok;
@@ -169,6 +166,7 @@ namespace DynamixelDriver
             int _hw_fail_counter_read;
 
             int _led_state;
+
     };
 
     //inline getters
@@ -221,6 +219,34 @@ namespace DynamixelDriver
     {
         return _state_map.size() > 0;
     }
+
+
+    //  Conversions
+
+    /**
+     *
+     */
+    template<typename T>
+    uint32_t rad_pos_to_motor_pos(double position_rad)
+    {
+        static_assert (std::is_base_of<DynamixelDriver::XDriver, T>::value, "T must derive from class XDriver");
+        static_assert(0 != T::TOTAL_ANGLE, "TOTAL_ANGLE of class T must be non null");
+
+        uint32_t converted = T::MIDDLE_POSITION + (position_rad * RADIAN_TO_DEGREE * T::TOTAL_RANGE_POSITION) / T::TOTAL_ANGLE;
+        return converted;
+    }
+
+    template<typename T>
+    double motor_pos_to_rad_pos(uint32_t pos)
+    {
+        static_assert (std::is_base_of<DynamixelDriver::XDriver, T>::value, "T must derive from class XDriver");
+        static_assert(0 != T::TOTAL_RANGE_POSITION, "TOTAL_ANGLE of class T must be non null");
+
+        double converted = ((pos - T::MIDDLE_POSITION) * T::TOTAL_ANGLE) / (RADIAN_TO_DEGREE * T::TOTAL_RANGE_POSITION);
+
+        return converted;
+    }
+
 }
 
 #endif

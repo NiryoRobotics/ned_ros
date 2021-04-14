@@ -41,17 +41,12 @@
 
 namespace ToolsInterface {
 
-    // according to xl-320 datasheet : 1 speed ~ 0.111 rpm ~ 1.8944 dxl position per second
-    constexpr double XL320_STEPS_FOR_1_SPEED = 1.8944; // 0.111 * 1024 / 60
-
-    // according to xl-330 datasheet : 1 speed ~ 0.229 rpm ~ 3.9083 dxl position per second
-    constexpr double XL330_STEPS_FOR_1_SPEED = 15.6331; // 0.229 * 4096 / 60
-
     class ToolsInterfaceCore
     {
         public:
 
             ToolsInterfaceCore(std::shared_ptr<DynamixelDriver::DynamixelDriverCore> dynamixel);
+            virtual ~ToolsInterfaceCore();
 
             void initParams();
             void initServices();
@@ -64,6 +59,8 @@ namespace ToolsInterface {
             common::model::ToolState _toolState;
             std::mutex _tool_mutex;
 
+            std::thread _check_tool_connection_thread;
+
             void _checkToolConnection();
             double _check_tool_connection_frequency;
 
@@ -75,7 +72,7 @@ namespace ToolsInterface {
 
             ros::Publisher _current_tools_id_publisher;
 
-            std::map<uint8_t, common::model::EDxlMotorType> _available_tools_map;
+            std::map<uint8_t, common::model::EMotorType> _available_tools_map;
 
             bool _callbackPingAndSetDxlTool(tools_interface::PingDxlTool::Request &, tools_interface::PingDxlTool::Response &res);
 

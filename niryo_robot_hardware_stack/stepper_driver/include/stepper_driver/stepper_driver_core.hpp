@@ -40,6 +40,7 @@ namespace StepperDriver
         public:
 
             StepperDriverCore();
+            virtual ~StepperDriverCore();
 
             void init();
 
@@ -97,6 +98,8 @@ namespace StepperDriver
             std::vector<int32_t> _joint_trajectory_controller_cmd;
             std::unique_ptr<common::model::StepperMotorCmd> _stepper_cmd;
             std::unique_ptr<common::model::StepperMotorCmd> _conveyor_cmd;
+
+            std::thread _control_loop_thread;
 
             double _control_loop_frequency;
             double _write_frequency;

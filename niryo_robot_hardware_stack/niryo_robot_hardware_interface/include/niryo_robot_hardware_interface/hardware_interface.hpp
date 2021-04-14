@@ -44,6 +44,7 @@ namespace NiryoRobotHardwareInterface
     {
     public:
         HardwareInterface(ros::NodeHandle &nh);
+        virtual ~HardwareInterface();
 
     private:
         ros::NodeHandle &_nh;
@@ -55,6 +56,9 @@ namespace NiryoRobotHardwareInterface
 
         ros::Publisher _hardware_status_publisher;
         ros::Publisher _software_version_publisher;
+
+        std::thread _publish_software_version_thread;
+        std::thread _publish_hw_status_thread;
 
         double _publish_hw_status_frequency;
         double _publish_software_version_frequency;

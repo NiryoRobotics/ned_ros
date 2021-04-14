@@ -49,9 +49,6 @@ namespace JointsInterface {
             std::shared_ptr<DynamixelDriver::DynamixelDriverCore> dynamixel,
             std::shared_ptr<StepperDriver::StepperDriverCore> stepper);
 
-        void initPublisherSubscribers();
-        void initServices();
-        void initMotors();
 
         //careful, this does not override base class methods
         void read();
@@ -66,14 +63,20 @@ namespace JointsInterface {
 
         void setCommandToCurrentPosition();
 
-        bool needCalibration();
-        bool isCalibrationInProgress();
+        bool needCalibration() const;
+        bool isCalibrationInProgress() const;
 
-        std::string jointIdToJointName(int id, uint8_t motor_type);
+        std::string jointIdToJointName(uint8_t id);
         const std::vector<common::model::JointState> &getJointsState() const;
 
     private:
-        bool setMotorPID(int motor_id, common::model::EDxlMotorType motor_type, int p_gain, int i_gain, int d_gain);
+        void initParameters();
+        void initJoints();
+
+        void initPublisherSubscribers();
+        void initServices();
+        void initMotors();
+        bool setMotorPID(int motor_id, common::model::EMotorType motor_type, int p_gain, int i_gain, int d_gain);
 
     private:
         ros::NodeHandle _nh;
@@ -83,7 +86,7 @@ namespace JointsInterface {
 
         std::shared_ptr<DynamixelDriver::DynamixelDriverCore> _dynamixel;
         std::shared_ptr<StepperDriver::StepperDriverCore> _stepper;
-        std::shared_ptr<CalibrationInterface> _calibration_interface;
+        std::unique_ptr<CalibrationInterface> _calibration_interface;
 
         std::vector<uint8_t> _list_stepper_id;
         std::map<uint8_t, std::string> _map_stepper_name;
@@ -93,8 +96,7 @@ namespace JointsInterface {
 
         std::vector<common::model::JointState> _joint_list;
 
-        std::string _joints_name[6] = {""};
-        int _joints_id[6] = {0};
+        int _nb_joints;
 
         double _cmd[6] = {0, 0.64, -1.39, 0, 0, 0};
         double _pos[6] = {0, 0.64, -1.39, 0, 0, 0};

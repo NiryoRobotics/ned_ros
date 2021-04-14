@@ -31,7 +31,7 @@ namespace FakeInterface {
     public:
         FakeJointHardwareInterface();
 
-        std::string jointIdToJointName(int id, uint8_t motor_type);
+        std::string jointIdToJointName(uint8_t id);
 
         void read();
         void write();

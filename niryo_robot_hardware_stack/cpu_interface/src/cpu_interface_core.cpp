@@ -12,6 +12,12 @@ namespace CpuInterface {
         ROS_INFO("CPU Interface - Started");
     }
 
+    CpuInterfaceCore::~CpuInterfaceCore()
+    {
+        if(_read_hardware_data_thread.joinable())
+            _read_hardware_data_thread.join();
+    }
+
     void CpuInterfaceCore::initParams()
     {
         if (ros::param::has("read_rpi_diagnostics_frequency/read_rpi_diagnostics_frequency"))
@@ -49,7 +55,7 @@ namespace CpuInterface {
 
     void CpuInterfaceCore::startReadingData()
     {
-       _read_hardware_data_thread.reset(new std::thread(&CpuInterfaceCore::_readHardwareDataLoop, this));
+       _read_hardware_data_thread = std::thread(&CpuInterfaceCore::_readHardwareDataLoop, this);
     }
 
     void CpuInterfaceCore::_readHardwareDataLoop()

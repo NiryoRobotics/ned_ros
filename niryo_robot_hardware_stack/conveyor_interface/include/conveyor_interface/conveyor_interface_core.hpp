@@ -37,6 +37,8 @@ namespace ConveyorInterface {
         public:
 
             ConveyorInterfaceCore(std::shared_ptr<StepperDriver::StepperDriverCore> stepper);
+            virtual ~ConveyorInterfaceCore();
+
             void initServices();
             void initParams();
 
@@ -50,7 +52,7 @@ namespace ConveyorInterface {
             ros::Publisher _conveyors_feedback_publisher;
 
             ros::Publisher _conveyor_status_publisher;
-            std::shared_ptr<std::thread> _publish_conveyor_status_thread;
+            std::thread _publish_conveyors_feedback_thread;
 
             std::vector<uint8_t> _list_conveyor_id;
             std::vector<uint8_t> _list_available_id;
@@ -59,7 +61,6 @@ namespace ConveyorInterface {
             int _conveyor_max_effort;
             double _publish_feedback_frequency;
 
-            std::shared_ptr<std::thread> _publish_conveyors_feedback_thread;
 
             bool _callbackPingAndSetConveyor(conveyor_interface::SetConveyor::Request &req, conveyor_interface::SetConveyor::Response &res);
             bool _callbackControlConveyor(conveyor_interface::ControlConveyor::Request &req, conveyor_interface::ControlConveyor::Response &res);

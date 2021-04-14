@@ -56,6 +56,13 @@
 // Common
 #include "common_defs.hpp"
 
+namespace DynamixelDriver {
+    class XDriver;
+}
+
+namespace StepperDriver {
+    class StepperDriver;
+}
 
 namespace common {
     namespace util {

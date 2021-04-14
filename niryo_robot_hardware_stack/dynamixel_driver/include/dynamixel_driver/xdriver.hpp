@@ -23,30 +23,21 @@
 #include <iostream>
 
 #include "dynamixel_sdk/dynamixel_sdk.h"
-#include "model/dxl_motor_type_enum.hpp"
+#include "common_defs.hpp"
+#include "model/motor_type_enum.hpp"
 
 namespace DynamixelDriver
 {
 
-    constexpr int DXL_LEN_ONE_BYTE   = 1;
-    constexpr int DXL_LEN_TWO_BYTES  = 2;
-    constexpr int DXL_LEN_FOUR_BYTES = 4;
-
-    constexpr int GROUP_SYNC_REDONDANT_ID = 10;
-    constexpr int GROUP_SYNC_READ_RX_FAIL = 11;
-    constexpr int LEN_ID_DATA_NOT_SAME    = 20;
-
-    constexpr int PING_WRONG_MODEL_NUMBER = 30;
-
     /**
      * @brief The XDriver class
      */
-// CC add list of associated motors ? this would remove the need for a map and for some params
+    // CC add list of associated motors ? this would remove the need for a map and for some params
     class XDriver
     {
 
     public:
-        XDriver(common::model::EDxlMotorType type,
+        XDriver(common::model::EMotorType type,
                 std::shared_ptr<dynamixel::PortHandler> portHandler,
                 std::shared_ptr<dynamixel::PacketHandler> packetHandler);
         virtual ~XDriver();
@@ -113,7 +104,7 @@ namespace DynamixelDriver
         virtual int customRead(uint8_t id, uint8_t reg_address, uint32_t& value, uint8_t byte_number);
 
     protected:
-        common::model::EDxlMotorType _type;
+        common::model::EMotorType _type;
 
         std::shared_ptr<dynamixel::PortHandler> _dxlPortHandler;
         std::shared_ptr<dynamixel::PacketHandler> _dxlPacketHandler;
@@ -126,6 +117,16 @@ namespace DynamixelDriver
         virtual int read2Bytes(uint8_t address, uint8_t id, uint32_t *data);
         virtual int read4Bytes(uint8_t address, uint8_t id, uint32_t *data);
         virtual int syncRead(uint8_t address, uint8_t data_len, const std::vector<uint8_t> &id_list, std::vector<uint32_t> &data_list);
+
+        static constexpr int DXL_LEN_ONE_BYTE        = 1;
+        static constexpr int DXL_LEN_TWO_BYTES       = 2;
+        static constexpr int DXL_LEN_FOUR_BYTES      = 4;
+
+        static constexpr int GROUP_SYNC_REDONDANT_ID = 10;
+        static constexpr int GROUP_SYNC_READ_RX_FAIL = 11;
+        static constexpr int LEN_ID_DATA_NOT_SAME    = 20;
+
+        static constexpr int PING_WRONG_MODEL_NUMBER = 30;
     };
 } //DynamixelDriver
 

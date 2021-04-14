@@ -35,14 +35,11 @@
 
 namespace JointsInterface {
 
-    constexpr double STEPPERS_MICROSTEPS = 8.0;
-    constexpr double STEPPERS_MOTOR_STEPS_PER_REVOLUTION = 200.0;
-
     class CalibrationInterface
     {
 
     public:
-        CalibrationInterface(std::vector<common::model::JointState> &joint_list,
+        CalibrationInterface(std::vector<common::model::JointState> joint_list,
                              std::shared_ptr<StepperDriver::StepperDriverCore> stepper,
                              std::shared_ptr<DynamixelDriver::DynamixelDriverCore> dynamixel);
 
@@ -72,7 +69,7 @@ namespace JointsInterface {
         bool get_motors_calibration_offsets(std::vector<int> &motor_id_list, std::vector<int> &steps_list);
 
     private:
-        std::vector<common::model::JointState> &_joint_list;
+        std::vector<common::model::JointState> _joint_list;
         ros::NodeHandle _nh;
         std::shared_ptr<StepperDriver::StepperDriverCore> _stepper;
         std::shared_ptr<DynamixelDriver::DynamixelDriverCore> _dynamixel;

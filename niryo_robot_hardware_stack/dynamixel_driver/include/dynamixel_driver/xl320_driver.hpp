@@ -23,42 +23,6 @@
 #include "dynamixel_driver/xdriver.hpp"
 #include "dynamixel_sdk/dynamixel_sdk.h"
 
-#define XL320_PROTOCOL_VERSION 2.0
-#define XL320_MODEL_NUMBER 350
-
-// Table here : http://support.robotis.com/en/product/actuator/dynamixel_x/xl_series/xl-320.htm
-#define XL320_ADDR_MODEL_NUMBER 0
-#define XL320_ADDR_FIRMWARE_VERSION 2
-#define XL320_ADDR_ID 3
-#define XL320_ADDR_BAUDRATE 4
-#define XL320_ADDR_RETURN_DELAY_TIME 5
-#define XL320_ADDR_CW_ANGLE_LIMIT 6
-#define XL320_ADDR_CCW_ANGLE_LIMIT 8 // EEPROM
-#define XL320_ADDR_CONTROL_MODE 11
-#define XL320_ADDR_LIMIT_TEMPERATURE 12
-#define XL320_ADDR_LOWER_LIMIT_VOLTAGE 13
-#define XL320_ADDR_UPPER_LIMIT_VOLTAGE 14
-#define XL320_ADDR_MAX_TORQUE 15
-#define XL320_ADDR_RETURN_LEVEL 17
-#define XL320_ADDR_ALARM_SHUTDOWN 18
-
-#define XL320_ADDR_TORQUE_ENABLE 24
-#define XL320_ADDR_LED 25
-#define XL320_ADDR_D_GAIN 27
-#define XL320_ADDR_I_GAIN 28
-#define XL320_ADDR_P_GAIN 29
-#define XL320_ADDR_GOAL_POSITION 30
-#define XL320_ADDR_GOAL_SPEED 32
-#define XL320_ADDR_GOAL_TORQUE 35
-#define XL320_ADDR_PRESENT_POSITION 37 // RAM
-#define XL320_ADDR_PRESENT_SPEED 39
-#define XL320_ADDR_PRESENT_LOAD 41
-#define XL320_ADDR_PRESENT_VOLTAGE 45
-#define XL320_ADDR_PRESENT_TEMPERATURE 46
-#define XL320_ADDR_REGISTERED 47
-#define XL320_ADDR_MOVING 49
-#define XL320_ADDR_HW_ERROR_STATUS 50
-#define XL320_ADDR_PUNCH 51
 
 namespace DynamixelDriver
 {
@@ -123,6 +87,54 @@ namespace DynamixelDriver
         int customWrite(uint8_t id, uint8_t reg_address, uint32_t value, uint8_t byte_number);
         int customRead(uint8_t id, uint8_t reg_address, uint32_t &value, uint8_t byte_number);
 
+    private:
+        static constexpr int XL320_PROTOCOL_VERSION         = 2.0;
+        static constexpr int XL320_MODEL_NUMBER             = 350;
+
+        //see table here : http://support.robotis.com/en/product/actuator/dynamixel_x/xl_series/xl-320.htm
+        static constexpr int XL320_ADDR_MODEL_NUMBER        = 0;
+        static constexpr int XL320_ADDR_FIRMWARE_VERSION    = 2;
+        static constexpr int XL320_ADDR_ID                  = 3;
+        static constexpr int XL320_ADDR_BAUDRATE            = 4;
+        static constexpr int XL320_ADDR_RETURN_DELAY_TIME   = 5;
+        static constexpr int XL320_ADDR_CW_ANGLE_LIMIT      = 6;
+        static constexpr int XL320_ADDR_CCW_ANGLE_LIMIT     = 8; // EEPROM
+        static constexpr int XL320_ADDR_CONTROL_MODE        = 11;
+        static constexpr int XL320_ADDR_LIMIT_TEMPERATURE   = 12;
+        static constexpr int XL320_ADDR_LOWER_LIMIT_VOLTAGE = 13;
+        static constexpr int XL320_ADDR_UPPER_LIMIT_VOLTAGE = 14;
+        static constexpr int XL320_ADDR_MAX_TORQUE          = 15;
+        static constexpr int XL320_ADDR_RETURN_LEVEL        = 17;
+        static constexpr int XL320_ADDR_ALARM_SHUTDOWN      = 18;
+
+        static constexpr int XL320_ADDR_TORQUE_ENABLE       = 24;
+        static constexpr int XL320_ADDR_LED                 = 25;
+        static constexpr int XL320_ADDR_D_GAIN              = 27;
+        static constexpr int XL320_ADDR_I_GAIN              = 28;
+        static constexpr int XL320_ADDR_P_GAIN              = 29;
+        static constexpr int XL320_ADDR_GOAL_POSITION       = 30;
+        static constexpr int XL320_ADDR_GOAL_SPEED          = 32;
+        static constexpr int XL320_ADDR_GOAL_TORQUE         = 35;
+        static constexpr int XL320_ADDR_PRESENT_POSITION    = 37; // RAM
+        static constexpr int XL320_ADDR_PRESENT_SPEED       = 39;
+        static constexpr int XL320_ADDR_PRESENT_LOAD        = 41;
+        static constexpr int XL320_ADDR_PRESENT_VOLTAGE     = 45;
+        static constexpr int XL320_ADDR_PRESENT_TEMPERATURE = 46;
+        static constexpr int XL320_ADDR_REGISTERED          = 47;
+        static constexpr int XL320_ADDR_MOVING              = 49;
+        static constexpr int XL320_ADDR_HW_ERROR_STATUS     = 50;
+        static constexpr int XL320_ADDR_PUNCH               = 51;
+
+    public:
+
+        // according to xl-320 datasheet : 1 speed ~ 0.111 rpm ~ 1.8944 dxl position per second
+        static constexpr double XL320_STEPS_FOR_1_SPEED = 1.8944; // 0.111 * 1024 / 60
+
+        // we stop at 1022 instead of 1023, to get an odd number of positions (1023)
+        // --> so we can get a middle point (511)
+        static constexpr int    TOTAL_RANGE_POSITION    = 1023;
+        static constexpr int    MIDDLE_POSITION         = 511;
+        static constexpr double TOTAL_ANGLE             = 296.67;
     };
 } //DynamixelDriver
 

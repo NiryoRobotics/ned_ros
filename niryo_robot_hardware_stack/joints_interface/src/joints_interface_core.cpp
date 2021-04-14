@@ -30,6 +30,16 @@ namespace JointsInterface {
         init(dynamixel, stepper);
     }
 
+    JointsInterfaceCore::~JointsInterfaceCore()
+    {
+
+        if(_publish_learning_mode_thread.joinable())
+            _publish_learning_mode_thread.join();
+
+        if(_control_loop_thread.joinable())
+            _control_loop_thread.join();
+    }
+
     void JointsInterfaceCore::init(std::shared_ptr<DynamixelDriver::DynamixelDriverCore> dynamixel,
                                    std::shared_ptr<StepperDriver::StepperDriverCore> stepper)
     {
@@ -47,7 +57,7 @@ namespace JointsInterface {
         _reset_controller = false;
 
         ROS_DEBUG("Joints Interface Core - Starting ros control thread...");
-        common::util::reallyAsync(&JointsInterfaceCore::rosControlLoop, this);
+        _control_loop_thread = std::thread(&JointsInterfaceCore::rosControlLoop, this);
 
         ROS_INFO("Joints Interface Core - Started");
         _nh.setParam("/niryo_robot_joint_interface/initialized", true);
@@ -74,7 +84,7 @@ namespace JointsInterface {
         _trajectory_result_subscriber = _nh.subscribe("/niryo_robot_follow_joint_trajectory_controller/follow_joint_trajectory/result",
                                                       10, &JointsInterfaceCore::_callbackTrajectoryResult, this);
         _learning_mode_publisher = _nh.advertise<std_msgs::Bool>("niryo_robot/learning_mode/state", 10);
-        common::util::reallyAsync(&JointsInterfaceCore::_publishLearningMode, this);
+        _publish_learning_mode_thread = std::thread(&JointsInterfaceCore::_publishLearningMode, this);
     }
 
     void JointsInterfaceCore::rosControlLoop()
@@ -254,9 +264,9 @@ namespace JointsInterface {
         }
     }
 
-    std::string JointsInterfaceCore::jointIdToJointName(int id, uint8_t motor_type)
+    std::string JointsInterfaceCore::jointIdToJointName(int id)
     {
-        return _robot->jointIdToJointName(id, motor_type);
+        return _robot->jointIdToJointName(static_cast<uint8_t>(id));
     }
 
 

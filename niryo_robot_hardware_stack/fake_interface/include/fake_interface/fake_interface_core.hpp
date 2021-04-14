@@ -65,6 +65,7 @@ namespace FakeInterface {
     {
     public:
         FakeInterfaceCore();
+        virtual ~FakeInterfaceCore();
 
         void initServices();
         void startPublishersSubscribers();
@@ -82,7 +83,7 @@ namespace FakeInterface {
 
         void pubToolId(int id);
 
-        std::string jointIdToJointName(int id, uint8_t motor_type);
+        std::string jointIdToJointName(int id);
 
         std::vector<uint8_t> _dxl_motors_id{2, 3, 6};
         std::vector<uint8_t> _dxl_motors_type{niryo_robot_msgs::MotorHeader::MOTOR_TYPE_XL430,
@@ -129,6 +130,9 @@ namespace FakeInterface {
         ros::Publisher _software_version_publisher;
         ros::Publisher _learning_mode_publisher;
         ros::Publisher _current_tools_id_publisher;
+
+        std::thread _publish_learning_mode_thread;
+        std::thread _control_loop_thread;
 
         bool _callbackResetController(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
         void _callbackTrajectoryResult(const control_msgs::FollowJointTrajectoryActionResult &msg);

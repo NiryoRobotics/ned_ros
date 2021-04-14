@@ -43,12 +43,11 @@
 #include "niryo_robot_msgs/CommandStatus.h"
 
 #include "model/dxl_motor_state.hpp"
-#include "model/dxl_motor_type_enum.hpp"
+#include "model/motor_type_enum.hpp"
 #include "model/single_motor_cmd.hpp"
 #include "model/synchronize_motor_cmd.hpp"
 
 
-#define DXL_VOLTAGE_DIVISOR 10.0
 
 namespace DynamixelDriver
 {
@@ -57,13 +56,9 @@ namespace DynamixelDriver
     public:
 
         DynamixelDriverCore();
-
-        void init();
-        void initParameters();
+        virtual ~DynamixelDriverCore();
 
         void startControlLoop();
-        void resetHardwareControlLoopRates();
-        void controlLoop();
 
         dynamixel_driver::DxlArrayMotorHardwareStatus getHwStatus();
         niryo_robot_msgs::BusState getDxlBusState();
@@ -74,21 +69,27 @@ namespace DynamixelDriver
 
         void setDxlCommands(const common::model::SynchronizeMotorCmd &cmd);
 
-        int ping_id(uint8_t id, common::model::EDxlMotorType type);
+        int ping_id(uint8_t id, common::model::EMotorType type);
         std::vector<uint8_t> scanTools();
-        int setEndEffector(uint8_t id, common::model::EDxlMotorType type);
-        void unsetEndEffector(uint8_t id, common::model::EDxlMotorType type);
+        int setEndEffector(uint8_t id, common::model::EMotorType type);
+        void unsetEndEffector(uint8_t id, common::model::EMotorType type);
         void setEndEffectorCommands(std::vector<common::model::SingleMotorCmd> &cmd);
-        uint32_t getEndEffectorState(uint8_t id, common::model::EDxlMotorType type);
+        uint32_t getEndEffectorState(uint8_t id, common::model::EMotorType type);
         std::vector<uint8_t> getRemovedMotorList() const;
         
         int update_leds(void);
 
         void activeDebugMode(bool mode);
         int launchMotorsReport();
-        int motorScanReport(uint8_t motor_id, common::model::EDxlMotorType motor_type);
-        int motorCmdReport(uint8_t motor_id, common::model::EDxlMotorType motor_type);
+        int motorScanReport(uint8_t motor_id, common::model::EMotorType motor_type);
+        int motorCmdReport(uint8_t motor_id, common::model::EMotorType motor_type);
         int rebootMotors();
+
+    private:
+        void init();
+        void initParameters();
+        void resetHardwareControlLoopRates();
+        void controlLoop();
 
     private:
         ros::NodeHandle _nh;
@@ -97,7 +98,7 @@ namespace DynamixelDriver
 
         std::mutex _control_loop_mutex;
 
-        std::shared_ptr<std::thread> _control_loop_thread;
+        std::thread _control_loop_thread;
 
         double _control_loop_frequency;
         double _write_frequency;
@@ -127,6 +128,7 @@ namespace DynamixelDriver
         bool callbackActivateLeds(niryo_robot_msgs::SetInt::Request &req, niryo_robot_msgs::SetInt::Response &res);
         bool callbackSendCustomDxlValue(dynamixel_driver::SendCustomDxlValue::Request &req, dynamixel_driver::SendCustomDxlValue::Response &res);
         bool callbackReadCustomDxlValue(dynamixel_driver::ReadCustomDxlValue::Request &req, dynamixel_driver::ReadCustomDxlValue::Response &res);
+
     };
 } //DynamixelDriver
 #endif

@@ -22,7 +22,7 @@
 #include "util/util_defs.hpp"
 #include "stepper_driver/stepper_driver_core.hpp"
 #include "model/conveyor_state.hpp"
-#include "model/stepper_motor_type_enum.hpp"
+#include "model/motor_type_enum.hpp"
 
 namespace StepperDriver
 {
@@ -31,6 +31,12 @@ namespace StepperDriver
         ROS_DEBUG("StepperDriverCore::StepperDriverCore - ctor");
 
         init();
+    }
+
+    StepperDriverCore::~StepperDriverCore()
+    {
+        if(_control_loop_thread.joinable())
+            _control_loop_thread.join();
     }
 
     void StepperDriverCore::init()
@@ -69,7 +75,7 @@ namespace StepperDriver
         {
             ROS_DEBUG("StepperDriverCore::startControlLoop - Start control loop thread");
             _control_loop_flag = true;
-            common::util::reallyAsync(&StepperDriverCore::controlLoop, this);
+            _control_loop_thread = std::thread(&StepperDriverCore::controlLoop, this);
         }
     }
 
@@ -308,7 +314,7 @@ namespace StepperDriver
         for (size_t i = 0; i < motor_states.size(); i++)
         {
             data.motor_identity.motor_id = motor_states.at(i).getId();
-            data.motor_identity.motor_type = static_cast<uint8_t>(common::model::EStepperMotorType::MOTOR_TYPE_STEPPER);
+            data.motor_identity.motor_type = static_cast<uint8_t>(common::model::EMotorType::MOTOR_TYPE_STEPPER);
             data.temperature = static_cast<int>(motor_states.at(i).getTemperatureState());
             data.error = static_cast<int>(motor_states.at(i).getHardwareErrorState());
             data.firmware_version = motor_states.at(i).getFirmwareVersion();

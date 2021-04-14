@@ -27,6 +27,7 @@
 #include "model/tool_state.hpp"
 #include "util/util_defs.hpp"
 
+//CC replace with fake driver ??
 namespace FakeInterface {
     FakeInterfaceCore::FakeInterfaceCore()
     {
@@ -48,12 +49,22 @@ namespace FakeInterface {
             ros::Duration(0.1).sleep();
 
             ROS_DEBUG("Fake Hardware Interface - Starting ROS control thread...");
-            common::util::reallyAsync(&FakeInterfaceCore::rosControlLoop, this);
+            _control_loop_thread = std::thread(&FakeInterfaceCore::rosControlLoop, this);
         }
 
         pubToolId(0);
 
         ros::Duration(0.1).sleep();
+    }
+
+    FakeInterfaceCore::~FakeInterfaceCore()
+    {
+
+        if(_publish_learning_mode_thread.joinable())
+            _publish_learning_mode_thread.join();
+
+        if(_control_loop_thread.joinable())
+            _control_loop_thread.join();
     }
 
     void FakeInterfaceCore::initServices()
@@ -76,7 +87,7 @@ namespace FakeInterface {
 
         _reset_controller_server = _nh.advertiseService("/niryo_robot/joints_interface/steppers_reset_controller",  &FakeInterfaceCore::_callbackResetController, this);
 
-        common::util::reallyAsync(&FakeInterfaceCore::_publishLearningMode, this);
+        _publish_learning_mode_thread = std::thread(&FakeInterfaceCore::_publishLearningMode, this);
 
     }
 
@@ -342,8 +353,8 @@ namespace FakeInterface {
         }
     }
 
-    std::string FakeInterfaceCore::jointIdToJointName(int id, uint8_t motor_type)
+    std::string FakeInterfaceCore::jointIdToJointName(int id)
     {
-        return _robot->jointIdToJointName(id, motor_type);
+        return _robot->jointIdToJointName(static_cast<uint8_t>(id));
     }
 } // FakeInterface

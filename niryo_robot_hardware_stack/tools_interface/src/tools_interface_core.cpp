@@ -39,9 +39,15 @@ namespace ToolsInterface {
         initParams();
         initServices();
 
-        common::util::reallyAsync(&ToolsInterfaceCore::_checkToolConnection, this);
+        _check_tool_connection_thread = std::thread(&ToolsInterfaceCore::_checkToolConnection, this);
 
         pubToolId(0);
+    }
+
+    ToolsInterfaceCore::~ToolsInterfaceCore()
+    {
+        if(_check_tool_connection_thread.joinable())
+            _check_tool_connection_thread.join();
     }
 
     void ToolsInterfaceCore::initServices()
@@ -87,11 +93,11 @@ namespace ToolsInterface {
         for(auto i = 0; i < idList.size(); ++i) {
 
             int id = idList.at(i);
-            common::model::EDxlMotorType type = common::model::DxlMotorTypeEnum(typeList.at(i).c_str());
+            common::model::EMotorType type = common::model::MotorTypeEnum(typeList.at(i).c_str());
 
             if(0 == _available_tools_map.count(id))
             {
-                if(common::model::EDxlMotorType::MOTOR_TYPE_UNKNOWN != type)
+                if(common::model::EMotorType::MOTOR_TYPE_UNKNOWN != type)
                     _available_tools_map.insert(make_pair(id, type));
                 else
                     ROS_ERROR("Tools Interface - unknown type %s. Please check your configuration file (tools_interface/config/default.yaml)", typeList.at(id).c_str());
@@ -104,7 +110,7 @@ namespace ToolsInterface {
         for(auto const &tool : _available_tools_map) {
             ROS_DEBUG("ToolsInterfaceCore::initParams - Available tools map: %d => %s",
                       static_cast<int>(tool.first),
-                      common::model::DxlMotorTypeEnum(tool.second).toString().c_str());
+                      common::model::MotorTypeEnum(tool.second).toString().c_str());
         }
 
     }
@@ -206,7 +212,7 @@ namespace ToolsInterface {
         _dynamixel->setEndEffectorCommands(list_cmd);
         list_cmd.clear();
 
-        double dxl_speed = (double)req.open_speed * (double)XL320_STEPS_FOR_1_SPEED; // position . sec-1
+        double dxl_speed = (double)req.open_speed * (double)DynamixelDriver::XL320Driver::XL320_STEPS_FOR_1_SPEED; // position . sec-1
         double dxl_steps_to_do = abs((double)req.open_position - (double)_dynamixel->getEndEffectorState(_toolState.getId(), _toolState.getType())); // position
         double seconds_to_wait =  dxl_steps_to_do /  dxl_speed; // sec
         ros::Duration(seconds_to_wait + 0.25).sleep();
@@ -254,7 +260,7 @@ namespace ToolsInterface {
         list_cmd.clear();
 
         // calculate close duration
-        double dxl_speed = (double)req.close_speed *(double) XL320_STEPS_FOR_1_SPEED; // position . sec-1
+        double dxl_speed = (double)req.close_speed *(double) DynamixelDriver::XL320Driver::XL320_STEPS_FOR_1_SPEED; // position . sec-1
         double dxl_steps_to_do = abs((double)req.close_position - (double)_dynamixel->getEndEffectorState(_toolState.getId(), _toolState.getType())); // position
         double seconds_to_wait =  dxl_steps_to_do /  dxl_speed; // sec
         ros::Duration(seconds_to_wait + 0.25).sleep();
@@ -302,7 +308,7 @@ namespace ToolsInterface {
         list_cmd.clear();
 
         // calculate pull air duration
-        double dxl_speed = (double)pull_air_velocity * (double)XL320_STEPS_FOR_1_SPEED; // position . sec-1
+        double dxl_speed = (double)pull_air_velocity * (double)DynamixelDriver::XL320Driver::XL320_STEPS_FOR_1_SPEED; // position . sec-1
         double dxl_steps_to_do = abs((double)req.pull_air_position - (double)_dynamixel->getEndEffectorState(_toolState.getId(), _toolState.getType())); // position
         double seconds_to_wait = dxl_steps_to_do / dxl_speed; // sec
 
@@ -351,7 +357,7 @@ namespace ToolsInterface {
         list_cmd.clear();
 
         // calculate push air duration
-        double dxl_speed = (double)push_air_velocity * (double)XL320_STEPS_FOR_1_SPEED; // position . sec-1
+        double dxl_speed = (double)push_air_velocity * (double)DynamixelDriver::XL320Driver::XL320_STEPS_FOR_1_SPEED; // position . sec-1
         double dxl_steps_to_do = abs((double)req.push_air_position - (double)_dynamixel->getEndEffectorState(_toolState.getId(), _toolState.getType())); // position
         double seconds_to_wait =  dxl_steps_to_do /  dxl_speed; // sec
 

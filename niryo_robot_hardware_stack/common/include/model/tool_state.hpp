@@ -23,7 +23,7 @@
 #include <stdint.h>
 #include <string>
 
-#include "dxl_motor_type_enum.hpp"
+#include "motor_type_enum.hpp"
 #include "dxl_motor_state.hpp"
 
 namespace common {
@@ -46,7 +46,7 @@ namespace common {
             public:
                 ToolState();
                 ToolState(uint8_t id, std::string name,
-                          EDxlMotorType type);
+                          EMotorType type);
 
                 virtual ~ToolState() override;
 

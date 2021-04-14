@@ -34,6 +34,7 @@ namespace CpuInterface {
         public:
 
             CpuInterfaceCore();
+            virtual ~CpuInterfaceCore();
 
             void initParams();
 
@@ -52,7 +53,7 @@ namespace CpuInterface {
             void _readCpuTemperature();
             void _readHardwareDataLoop();
 
-            std::shared_ptr<std::thread> _read_hardware_data_thread;
+            std::thread _read_hardware_data_thread;
     };
 } //CpuInterface
 
