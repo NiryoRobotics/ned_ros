@@ -26,7 +26,9 @@ static constexpr double DXL_VOLTAGE_DIVISOR = 10.0;
 
 namespace DynamixelDriver
 {
-    DynamixelDriverCore::DynamixelDriverCore()
+    DynamixelDriverCore::DynamixelDriverCore() :
+        _control_loop_flag(false),
+        _debug_flag(false)
     {
         ROS_DEBUG("DynamixelDriverCore - ctor");
 
@@ -44,7 +46,7 @@ namespace DynamixelDriver
         _control_loop_flag = false;
         _debug_flag = false;
         _joint_trajectory_controller_cmd.clear();
-        _end_effector_cmd.clear();
+
         initParameters();
         _dynamixel.reset(new DxlDriver());
         _dynamixel->scanAndCheck();
@@ -253,8 +255,41 @@ namespace DynamixelDriver
     {
         ROS_DEBUG("DynamixelDriverCore::setDxlCommands - %s", cmd.str().c_str());
 
-        _dxl_cmd = cmd;
+        _dxl_sync_cmds = cmd;
     }
+
+    /**
+     * @brief DynamixelDriverCore::addDxlCommandToQueue
+     * @param cmd
+     */
+    void DynamixelDriverCore::addDxlCommandToQueue(const common::model::SingleMotorCmd &cmd)
+    {
+        ROS_DEBUG("DynamixelDriverCore::addDxlCommandToQueue - %s", cmd.str().c_str());
+
+        _dxl_single_cmds.push(cmd);
+    }
+
+    void DynamixelDriverCore::addDxlCommandToQueue(const std::vector<common::model::SingleMotorCmd> &cmd)
+    {
+        for(auto&& c : cmd)
+            addDxlCommandToQueue(c);
+    }
+
+
+    void DynamixelDriverCore::addEndEffectorCommandToQueue(const common::model::SingleMotorCmd &cmd)
+    {
+        ROS_DEBUG("DynamixelDriverCore::addDxlCommandToQueue - %s", cmd.str().c_str());
+
+        _end_effector_cmds.push(cmd);
+    }
+
+    void DynamixelDriverCore::addEndEffectorCommandToQueue(const vector<common::model::SingleMotorCmd> &cmd)
+    {
+
+        for(auto&& c : cmd)
+            addEndEffectorCommandToQueue(c);
+    }
+
 
     void DynamixelDriverCore::setTrajectoryControllerCommands(vector<uint32_t> &cmd)
     {
@@ -322,13 +357,6 @@ namespace DynamixelDriver
         _dynamixel->removeDynamixel(id, type);
     }
 
-    void DynamixelDriverCore::setEndEffectorCommands(vector<common::model::SingleMotorCmd> &cmd)
-    {
-        ROS_DEBUG("DynamixelDriverCore::setEndEffectorCommands");
-
-        _end_effector_cmd = cmd;
-    }
-
     uint32_t DynamixelDriverCore::getEndEffectorState(uint8_t id, common::model::EMotorType type)
     {
         common::model::DxlMotorState motor(id, type);
@@ -386,6 +414,9 @@ namespace DynamixelDriver
         return dxl_bus_state;
     }
 
+    /**
+     * @brief DynamixelDriverCore::_executeCommand : execute all the cmd in the current queue
+     */
     void DynamixelDriverCore::_executeCommand()
     {
         bool need_sleep = false;
@@ -395,20 +426,28 @@ namespace DynamixelDriver
             _joint_trajectory_controller_cmd.clear();
             need_sleep = true;
         }
-        if (_dxl_cmd.isValid())
+        if (_dxl_sync_cmds.isValid())
         {
             if (need_sleep)
                 ros::Duration(0.01).sleep();
-            _dynamixel->readSynchronizeCommand(_dxl_cmd);
-            _dxl_cmd.reset();
+            _dynamixel->readSynchronizeCommand(_dxl_sync_cmds);
+            _dxl_sync_cmds.reset();
             need_sleep = true;
         }
-        if (!_end_effector_cmd.empty())
+        if (_dxl_single_cmds.empty())
         {
             if (need_sleep)
                 ros::Duration(0.01).sleep();
-            _dynamixel->readSingleCommand(_end_effector_cmd.at(0));
-            _end_effector_cmd.erase (_end_effector_cmd.begin());
+            _dynamixel->readSingleCommand(_dxl_single_cmds.front());
+            _dxl_single_cmds.pop();
+            need_sleep = true;
+        }
+        if (!_end_effector_cmds.empty())
+        {
+            if (need_sleep)
+                ros::Duration(0.01).sleep();
+            _dynamixel->readSingleCommand(_end_effector_cmds.front());
+            _end_effector_cmds.pop();
         }
     }
 

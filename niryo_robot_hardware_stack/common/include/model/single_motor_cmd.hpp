@@ -30,13 +30,13 @@ namespace common {
 
         class SingleMotorCmd
         {
-
-
             public:
                 SingleMotorCmd();
                 SingleMotorCmd(EDxlCommandType type,
                                uint8_t motor_id,
                                uint32_t param);
+
+                void reset();
 
                 //setters
                 void setType(EDxlCommandType type);
@@ -49,9 +49,11 @@ namespace common {
                 uint32_t getParam() const;
 
                 std::string str() const;
+                bool isValid() const;
 
             private:
                 EDxlCommandType _type;
+
                 uint8_t _id;
                 uint32_t _param;
         };

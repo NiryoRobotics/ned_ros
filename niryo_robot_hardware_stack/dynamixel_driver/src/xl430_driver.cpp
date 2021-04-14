@@ -134,6 +134,37 @@ namespace DynamixelDriver
         return COMM_TX_ERROR;
     }
 
+    /*
+     *  -----------------   PID   --------------------
+     */
+
+    int XL430Driver::setPGain(uint8_t id, uint32_t gain)
+    {
+        return _dxlPacketHandler->write2ByteTxOnly(_dxlPortHandler.get(), id, XL430_ADDR_P_GAIN, (uint16_t)gain);
+    }
+
+    int XL430Driver::setIGain(uint8_t id, uint32_t gain)
+    {
+        return _dxlPacketHandler->write2ByteTxOnly(_dxlPortHandler.get(), id, XL430_ADDR_I_GAIN, (uint16_t)gain);
+    }
+
+    int XL430Driver::setDGain(uint8_t id, uint32_t gain)
+    {
+        return _dxlPacketHandler->write2ByteTxOnly(_dxlPortHandler.get(), id, XL430_ADDR_D_GAIN, (uint16_t)gain);
+    }
+
+    int XL430Driver::setff1Gain(uint8_t id, uint32_t gain)
+    {
+        return _dxlPacketHandler->write2ByteTxOnly(_dxlPortHandler.get(), id, XL430_ADDR_FF1_GAIN, (uint16_t)gain);
+    }
+
+    int XL430Driver::setff2Gain(uint8_t id, uint32_t gain)
+    {
+        return _dxlPacketHandler->write2ByteTxOnly(_dxlPortHandler.get(), id, XL430_ADDR_FF2_GAIN, (uint16_t)gain);
+    }
+
+    // others
+
     int XL430Driver::setReturnDelayTime(uint8_t id, uint32_t return_delay_time)
     {
         return _dxlPacketHandler->write1ByteTxOnly(_dxlPortHandler.get(), id, XL430_ADDR_RETURN_DELAY_TIME, (uint8_t)return_delay_time);

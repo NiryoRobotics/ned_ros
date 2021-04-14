@@ -123,7 +123,6 @@ namespace DynamixelDriver
         return ss.str();
     }
 
-
     /*
      *  -----------------   SYNC WRITE   --------------------
      */

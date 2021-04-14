@@ -58,6 +58,7 @@ namespace DynamixelDriver
         // eeprom write
         virtual int changeId(uint8_t id, uint8_t new_id) = 0;
         virtual int changeBaudRate(uint8_t id, uint32_t new_baudrate) = 0;
+
         virtual int setReturnDelayTime(uint8_t id, uint32_t return_delay_time) = 0;
         virtual int setLimitTemperature(uint8_t id, uint32_t temperature) = 0;
         virtual int setMaxTorque(uint8_t id, uint32_t torque) = 0;
@@ -77,6 +78,12 @@ namespace DynamixelDriver
         virtual int setGoalPosition(uint8_t id, uint32_t position) = 0;
         virtual int setGoalVelocity(uint8_t id, uint32_t velocity) = 0;
         virtual int setGoalTorque(uint8_t id, uint32_t torque) = 0;
+
+        virtual int setPGain(uint8_t id, uint32_t gain) = 0;
+        virtual int setIGain(uint8_t id, uint32_t gain) = 0;
+        virtual int setDGain(uint8_t id, uint32_t gain) = 0;
+        virtual int setff1Gain(uint8_t id, uint32_t gain) = 0;
+        virtual int setff2Gain(uint8_t id, uint32_t gain) = 0;
 
         virtual int syncWriteLed(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &led_list) = 0;
         virtual int syncWriteTorqueEnable(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &torque_enable_list) = 0;

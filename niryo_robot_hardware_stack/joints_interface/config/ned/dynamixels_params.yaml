@@ -24,5 +24,3 @@ dynamixels:
     dxl_3_P_gain: 100
     dxl_3_I_gain: 20
     dxl_3_D_gain: 40
-    dxl_3_FF1_gain: 0
-    dxl_3_FF2_gain: 0

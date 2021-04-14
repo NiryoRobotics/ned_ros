@@ -209,7 +209,7 @@ namespace ToolsInterface {
         cmd.setParam(req.open_hold_torque);
         list_cmd.push_back(cmd);
 
-        _dynamixel->setEndEffectorCommands(list_cmd);
+        _dynamixel->addEndEffectorCommandToQueue(list_cmd);
         list_cmd.clear();
 
         double dxl_speed = (double)req.open_speed * (double)DynamixelDriver::XL320Driver::XL320_STEPS_FOR_1_SPEED; // position . sec-1
@@ -222,7 +222,7 @@ namespace ToolsInterface {
         cmd.setType(common::model::EDxlCommandType::CMD_TYPE_EFFORT);
         cmd.setParam(req.open_hold_torque);
         list_cmd.push_back(cmd);
-        _dynamixel->setEndEffectorCommands(list_cmd);
+        _dynamixel->addEndEffectorCommandToQueue(list_cmd);
 
         res.state = common::model::ToolState::GRIPPER_STATE_OPEN;
 
@@ -256,7 +256,7 @@ namespace ToolsInterface {
         cmd.setParam(req.close_max_torque); // two's complement of 1536
         list_cmd.push_back(cmd);
 
-        _dynamixel->setEndEffectorCommands(list_cmd);
+        _dynamixel->addEndEffectorCommandToQueue(list_cmd);
         list_cmd.clear();
 
         // calculate close duration
@@ -269,7 +269,7 @@ namespace ToolsInterface {
         cmd.setType(common::model::EDxlCommandType::CMD_TYPE_EFFORT);
         cmd.setParam(req.close_hold_torque);
         list_cmd.push_back(cmd);
-        _dynamixel->setEndEffectorCommands(list_cmd);
+        _dynamixel->addEndEffectorCommandToQueue(list_cmd);
 
         res.state = common::model::ToolState::GRIPPER_STATE_CLOSE;
 
@@ -304,7 +304,7 @@ namespace ToolsInterface {
         cmd.setParam(500);
         list_cmd.push_back(cmd);
 
-        _dynamixel->setEndEffectorCommands(list_cmd);
+        _dynamixel->addEndEffectorCommandToQueue(list_cmd);
         list_cmd.clear();
 
         // calculate pull air duration
@@ -318,7 +318,7 @@ namespace ToolsInterface {
         cmd.setType(common::model::EDxlCommandType::CMD_TYPE_EFFORT);
         cmd.setParam(req.pull_air_hold_torque);
         list_cmd.push_back(cmd);
-        _dynamixel->setEndEffectorCommands(list_cmd);
+        _dynamixel->addEndEffectorCommandToQueue(list_cmd);
 
         res.state = common::model::ToolState::VACUUM_PUMP_STATE_PULLED;
 
@@ -353,7 +353,7 @@ namespace ToolsInterface {
         cmd.setParam(64000); // two's complement of 1536
         list_cmd.push_back(cmd);
 
-        _dynamixel->setEndEffectorCommands(list_cmd);
+        _dynamixel->addEndEffectorCommandToQueue(list_cmd);
         list_cmd.clear();
 
         // calculate push air duration
@@ -367,7 +367,7 @@ namespace ToolsInterface {
         cmd.setType(common::model::EDxlCommandType::CMD_TYPE_EFFORT);
         cmd.setParam(0);
         list_cmd.push_back(cmd);
-        _dynamixel->setEndEffectorCommands(list_cmd);
+        _dynamixel->addEndEffectorCommandToQueue(list_cmd);
 
         res.state = common::model::ToolState::VACUUM_PUMP_STATE_PUSHED;
 

@@ -133,6 +133,37 @@ namespace DynamixelDriver
         return _dxlPacketHandler->write2ByteTxOnly(_dxlPortHandler.get(), id, XL330_ADDR_GOAL_CURRENT, (uint16_t)torque);
     }
 
+    /*
+     *  -----------------   PID   --------------------
+     */
+
+    int XL330Driver::setPGain(uint8_t id, uint32_t gain)
+    {
+        return _dxlPacketHandler->write2ByteTxOnly(_dxlPortHandler.get(), id, XL330_ADDR_P_GAIN, (uint16_t)gain);
+    }
+
+    int XL330Driver::setIGain(uint8_t id, uint32_t gain)
+    {
+        return _dxlPacketHandler->write2ByteTxOnly(_dxlPortHandler.get(), id, XL330_ADDR_I_GAIN, (uint16_t)gain);
+    }
+
+    int XL330Driver::setDGain(uint8_t id, uint32_t gain)
+    {
+        return _dxlPacketHandler->write2ByteTxOnly(_dxlPortHandler.get(), id, XL330_ADDR_D_GAIN, (uint16_t)gain);
+    }
+
+    int XL330Driver::setff1Gain(uint8_t id, uint32_t gain)
+    {
+        return _dxlPacketHandler->write2ByteTxOnly(_dxlPortHandler.get(), id, XL330_ADDR_FF1_GAIN, (uint16_t)gain);
+    }
+
+    int XL330Driver::setff2Gain(uint8_t id, uint32_t gain)
+    {
+        return _dxlPacketHandler->write2ByteTxOnly(_dxlPortHandler.get(), id, XL330_ADDR_FF2_GAIN, (uint16_t)gain);
+    }
+
+    // others
+
     int XL330Driver::setReturnDelayTime(uint8_t id, uint32_t return_delay_time)
     {
         return _dxlPacketHandler->write1ByteTxOnly(_dxlPortHandler.get(), id, XL330_ADDR_RETURN_DELAY_TIME, (uint8_t)return_delay_time);

@@ -88,6 +88,12 @@ namespace DynamixelDriver
             int setGoalTorque(common::model::DxlMotorState& targeted_dxl, uint32_t torque);
             int setGoalVelocity(common::model::DxlMotorState& targeted_dxl, uint32_t velocity);
 
+            int setPGain(common::model::DxlMotorState& targeted_dxl, uint32_t gain);
+            int setIGain(common::model::DxlMotorState& targeted_dxl, uint32_t gain);
+            int setDGain(common::model::DxlMotorState& targeted_dxl, uint32_t gain);
+            int setFF1Gain(common::model::DxlMotorState& targeted_dxl, uint32_t gain);
+            int setFF2Gain(common::model::DxlMotorState& targeted_dxl, uint32_t gain);
+
             int setLeds(int led, common::model::EMotorType type);
 
             int scanAndCheck();
@@ -115,8 +121,6 @@ namespace DynamixelDriver
         private:
             void init();
             int setupCommunication();
-
-
             void interpreteErrorState();
 
             void checkRemovedMotors();

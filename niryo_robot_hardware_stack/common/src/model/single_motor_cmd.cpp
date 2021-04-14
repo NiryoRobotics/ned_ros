@@ -25,21 +25,25 @@ using namespace std;
 namespace common {
     namespace model {
 
-    SingleMotorCmd::SingleMotorCmd() :
-        _type(EDxlCommandType::CMD_TYPE_UNKNOWN),
-        _id(0),
-        _param(0)
-    {
+        SingleMotorCmd::SingleMotorCmd()
+        {
+            reset();
+        }
 
-    }
-
-    SingleMotorCmd::SingleMotorCmd(EDxlCommandType type,
-                                       uint8_t motor_id,
-                                       uint32_t param) :
-            _type(type),
-            _id(motor_id),
-            _param(param)
+        SingleMotorCmd::SingleMotorCmd(EDxlCommandType type,
+                                           uint8_t motor_id,
+                                           uint32_t param) :
+                _type(type),
+                _id(motor_id),
+                _param(param)
         {}
+
+        void SingleMotorCmd::reset()
+        {
+            _type = EDxlCommandType::CMD_TYPE_UNKNOWN;
+            _id = 0;
+            _param = 0;
+        }
 
         void SingleMotorCmd::setType(EDxlCommandType type)
         {
@@ -67,6 +71,12 @@ namespace common {
             ss << "motor " << _id << ": " << _param;
 
             return ss.str();
+        }
+
+        bool SingleMotorCmd::isValid() const
+        {
+            return (EDxlCommandType::CMD_TYPE_UNKNOWN != _type) &&
+                   (0 != _id);
         }
 
         EDxlCommandType SingleMotorCmd::getType() const

@@ -76,7 +76,7 @@ namespace JointsInterface {
         void initPublisherSubscribers();
         void initServices();
         void initMotors();
-        bool setMotorPID(int motor_id, common::model::EMotorType motor_type, int p_gain, int i_gain, int d_gain);
+        bool setMotorPID(uint8_t motor_id, uint32_t p_gain, uint32_t i_gain, uint32_t d_gain, uint32_t ff1 = 0, uint32_t ff2 = 0);
 
     private:
         ros::NodeHandle _nh;
@@ -98,21 +98,24 @@ namespace JointsInterface {
 
         int _nb_joints;
 
-        double _cmd[6] = {0, 0.64, -1.39, 0, 0, 0};
-        double _pos[6] = {0, 0.64, -1.39, 0, 0, 0};
-        double _vel[6] = {0};
-        double _eff[6] = {0};
+        std::vector<double> _cmd = {0, 0.64, -1.39, 0, 0, 0};
+        std::vector<double> _pos = {0, 0.64, -1.39, 0, 0, 0};
+        std::vector<double> _vel;
+        std::vector<double> _eff;
 
-        double _gear_ratio_1, _gear_ratio_2, _gear_ratio_3;
-        double _home_position_1, _home_position_2, _home_position_3;
-        double _offset_position_stepper_1, _offset_position_stepper_2, _offset_position_stepper_3;
-        double _offset_position_dxl_1, _offset_position_dxl_2, _offset_position_dxl_3;
-        double _direction_1, _direction_2, _direction_3;
-        int _max_effort_1, _max_effort_2, _max_effort_3;
+        double _gear_ratio_1{0.0}, _gear_ratio_2{0.0}, _gear_ratio_3{0.0};
+        double _home_position_1{0.0}, _home_position_2{0.0}, _home_position_3{0.0};
+        double _offset_position_stepper_1{0.0}, _offset_position_stepper_2{0.0}, _offset_position_stepper_3{0.0};
+        double _offset_position_dxl_1{0.0}, _offset_position_dxl_2{0.0}, _offset_position_dxl_3{0.0};
+        double _direction_1{0.0}, _direction_2{0.0}, _direction_3{0.0};
+        int _max_effort_1{0}, _max_effort_2{0}, _max_effort_3{0};
 
-        int _p_gain_1, _p_gain_2, _p_gain_3;
-        int _i_gain_1, _i_gain_2, _i_gain_3;
-        int _d_gain_1, _d_gain_2, _d_gain_3;
+        int _p_gain_1{0}, _p_gain_2{0}, _p_gain_3{0};
+        int _i_gain_1{0}, _i_gain_2{0}, _i_gain_3{0};
+        int _d_gain_1{0}, _d_gain_2{0}, _d_gain_3{0};
+        int _ff1_gain_1{0}, _ff1_gain_2{0}, _ff1_gain_3{0};
+        int _ff2_gain_1{0}, _ff2_gain_2{0}, _ff2_gain_3{0};
+
         bool _learning_mode;
 
     };

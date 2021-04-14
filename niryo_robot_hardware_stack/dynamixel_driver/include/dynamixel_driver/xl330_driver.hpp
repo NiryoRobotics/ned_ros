@@ -36,54 +36,60 @@ namespace DynamixelDriver
         XL330Driver(std::shared_ptr<dynamixel::PortHandler> portHandler,
                     std::shared_ptr<dynamixel::PacketHandler> packetHandler);
 
-        std::string interpreteErrorState(uint32_t hw_state);
+        std::string interpreteErrorState(uint32_t hw_state) override;
 
         //from XDriver interface
-        int checkModelNumber(uint8_t id);
+        int checkModelNumber(uint8_t id) override;
 
         // eeprom write
-        int changeId(uint8_t id, uint8_t new_id);
-        int changeBaudRate(uint8_t id, uint32_t new_baudrate);
-        int setReturnDelayTime(uint8_t id, uint32_t return_delay_time);
-        int setLimitTemperature(uint8_t id, uint32_t temperature);
-        int setMaxTorque(uint8_t id, uint32_t torque);
-        int setReturnLevel(uint8_t id, uint32_t return_level);
-        int setAlarmShutdown(uint8_t id, uint32_t alarm_shutdown);
+        int changeId(uint8_t id, uint8_t new_id) override;
+        int changeBaudRate(uint8_t id, uint32_t new_baudrate) override;
+        int setReturnDelayTime(uint8_t id, uint32_t return_delay_time) override;
+        int setLimitTemperature(uint8_t id, uint32_t temperature) override;
+        int setMaxTorque(uint8_t id, uint32_t torque) override;
+        int setReturnLevel(uint8_t id, uint32_t return_level) override;
+        int setAlarmShutdown(uint8_t id, uint32_t alarm_shutdown) override;
 
         // eeprom read
-        int readReturnDelayTime(uint8_t id, uint32_t *return_delay_time);
-        int readLimitTemperature(uint8_t id, uint32_t *limit_temperature);
-        int readMaxTorque(uint8_t id, uint32_t *max_torque);
-        int readReturnLevel(uint8_t id, uint32_t *return_level);
-        int readAlarmShutdown(uint8_t id, uint32_t *alarm_shutdown);
+        int readReturnDelayTime(uint8_t id, uint32_t *return_delay_time) override;
+        int readLimitTemperature(uint8_t id, uint32_t *limit_temperature) override;
+        int readMaxTorque(uint8_t id, uint32_t *max_torque) override;
+        int readReturnLevel(uint8_t id, uint32_t *return_level) override;
+        int readAlarmShutdown(uint8_t id, uint32_t *alarm_shutdown) override;
 
         // ram write
-        int setTorqueEnable(uint8_t id, uint32_t torque_enable);
-        int setLed(uint8_t id, uint32_t led_value);
-        int setGoalPosition(uint8_t id, uint32_t position);
-        int setGoalVelocity(uint8_t id, uint32_t velocity);
-        int setGoalTorque(uint8_t id, uint32_t torque);
+        int setTorqueEnable(uint8_t id, uint32_t torque_enable) override;
+        int setLed(uint8_t id, uint32_t led_value) override;
+        int setGoalPosition(uint8_t id, uint32_t position) override;
+        int setGoalVelocity(uint8_t id, uint32_t velocity) override;
+        int setGoalTorque(uint8_t id, uint32_t torque) override;
 
-        int syncWriteLed(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &led_list);
-        int syncWriteTorqueEnable(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &torque_enable_list);
-        int syncWritePositionGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &position_list);
-        int syncWriteVelocityGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &velocity_list);
-        int syncWriteTorqueGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &torque_list);
+        int setPGain(uint8_t id, uint32_t gain) override;
+        int setIGain(uint8_t id, uint32_t gain) override;
+        int setDGain(uint8_t id, uint32_t gain) override;
+        int setff1Gain(uint8_t id, uint32_t gain) override;
+        int setff2Gain(uint8_t id, uint32_t gain) override;
+
+        int syncWriteLed(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &led_list) override;
+        int syncWriteTorqueEnable(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &torque_enable_list) override;
+        int syncWritePositionGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &position_list) override;
+        int syncWriteVelocityGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &velocity_list) override;
+        int syncWriteTorqueGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &torque_list) override;
 
         // ram read
-        int readPosition(uint8_t id, uint32_t *present_position);
-        int readVelocity(uint8_t id, uint32_t *present_velocity);
-        int readLoad(uint8_t id, uint32_t *present_load);
-        int readTemperature(uint8_t id, uint32_t *temperature);
-        int readVoltage(uint8_t id, uint32_t *voltage);
-        int readHardwareStatus(uint8_t id, uint32_t *hardware_status);
+        int readPosition(uint8_t id, uint32_t *present_position) override;
+        int readVelocity(uint8_t id, uint32_t *present_velocity) override;
+        int readLoad(uint8_t id, uint32_t *present_load) override;
+        int readTemperature(uint8_t id, uint32_t *temperature) override;
+        int readVoltage(uint8_t id, uint32_t *voltage) override;
+        int readHardwareStatus(uint8_t id, uint32_t *hardware_status) override;
 
-        int syncReadPosition(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &position_list);
-        int syncReadVelocity(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &velocity_list);
-        int syncReadLoad(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &load_list);
-        int syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &temperature_list);
-        int syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &voltage_list);
-        int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list);
+        int syncReadPosition(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &position_list) override;
+        int syncReadVelocity(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &velocity_list) override;
+        int syncReadLoad(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &load_list) override;
+        int syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &temperature_list) override;
+        int syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &voltage_list) override;
+        int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list) override;
 
     private:
         static constexpr int XL330_PROTOCOL_VERSION         = 2.0;
@@ -110,6 +116,13 @@ namespace DynamixelDriver
         static constexpr int XL330_ADDR_LED                 = 65;
         static constexpr int XL330_ADDR_STATUS_RETURN_LEVEL = 68;
         static constexpr int XL330_ADDR_HW_ERROR_STATUS     = 70;
+
+        static constexpr int XL330_ADDR_D_GAIN              = 80;
+        static constexpr int XL330_ADDR_I_GAIN              = 82;
+        static constexpr int XL330_ADDR_P_GAIN              = 84;
+        static constexpr int XL330_ADDR_FF2_GAIN            = 88;
+        static constexpr int XL330_ADDR_FF1_GAIN            = 90;
+
         static constexpr int XL330_ADDR_GOAL_PWM            = 100;
         static constexpr int XL330_ADDR_GOAL_CURRENT        = 102;
         static constexpr int XL330_ADDR_GOAL_VELOCITY       = 104;

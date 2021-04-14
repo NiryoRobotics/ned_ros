@@ -25,15 +25,17 @@ using namespace std;
 namespace common {
     namespace model {
 
-        SynchronizeMotorCmd::SynchronizeMotorCmd() :
-            _type(EDxlCommandType::CMD_TYPE_UNKNOWN)
+        SynchronizeMotorCmd::SynchronizeMotorCmd()
         {
+            reset();
         }
 
         SynchronizeMotorCmd::SynchronizeMotorCmd(EDxlCommandType type,
                                                  vector<uint8_t> motor_id,
-                                                 vector<uint32_t> params)
-            : _type(type), _motor_id_list(motor_id), _param_list(params)
+                                                 vector<uint32_t> params) :
+            _type(type),
+            _motor_id_list(motor_id),
+            _param_list(params)
         {
         }
 

@@ -127,7 +127,7 @@ namespace DynamixelDriver
         return _dxlPacketHandler->write4ByteTxOnly(_dxlPortHandler.get(), id, XC430_ADDR_GOAL_VELOCITY, velocity);
     }
 
-    int XC430Driver::setGoalTorque(uint8_t id, uint32_t torque)
+    int XC430Driver::setGoalTorque(uint8_t /*id*/, uint32_t /*torque*/)
     {
         // No goal torque for this motor ?
         return COMM_TX_ERROR;
@@ -145,9 +145,39 @@ namespace DynamixelDriver
 
     int XC430Driver::setMaxTorque(uint8_t id, uint32_t torque)
     {
-        // No max torque setting for this motor ?
+        // No max torque for this motor
         return COMM_TX_ERROR;
     }
+
+    /*
+     *  -----------------   PID   --------------------
+     */
+    int XC430Driver::setPGain(uint8_t id, uint32_t gain)
+    {
+        return _dxlPacketHandler->write2ByteTxOnly(_dxlPortHandler.get(), id, XC430_ADDR_P_GAIN, (uint16_t)gain);
+    }
+
+    int XC430Driver::setIGain(uint8_t id, uint32_t gain)
+    {
+        return _dxlPacketHandler->write2ByteTxOnly(_dxlPortHandler.get(), id, XC430_ADDR_I_GAIN, (uint16_t)gain);
+    }
+
+    int XC430Driver::setDGain(uint8_t id, uint32_t gain)
+    {
+        return _dxlPacketHandler->write2ByteTxOnly(_dxlPortHandler.get(), id, XC430_ADDR_D_GAIN, (uint16_t)gain);
+    }
+
+    int XC430Driver::setff1Gain(uint8_t id, uint32_t gain)
+    {
+        return _dxlPacketHandler->write2ByteTxOnly(_dxlPortHandler.get(), id, XC430_ADDR_FF1_GAIN, (uint16_t)gain);
+    }
+
+    int XC430Driver::setff2Gain(uint8_t id, uint32_t gain)
+    {
+        return _dxlPacketHandler->write2ByteTxOnly(_dxlPortHandler.get(), id, XC430_ADDR_FF2_GAIN, (uint16_t)gain);
+    }
+
+    //others
 
     int XC430Driver::setReturnLevel(uint8_t id, uint32_t return_level)
     {
@@ -171,7 +201,7 @@ namespace DynamixelDriver
     {
         return syncWrite4Bytes(XC430_ADDR_GOAL_VELOCITY, id_list, velocity_list);
     }
-    int XC430Driver::syncWriteTorqueGoal(const vector<uint8_t> &id_list, const vector<uint32_t> &torque_list)
+    int XC430Driver::syncWriteTorqueGoal(const vector<uint8_t> &/*id_list*/, const vector<uint32_t> &/*torque_list*/)
     {
         // No goal torque for this motor ?
         return COMM_TX_ERROR;

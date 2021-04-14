@@ -118,6 +118,39 @@ namespace DynamixelDriver
         return _dxlPacketHandler->write2ByteTxOnly(_dxlPortHandler.get(), id, XL320_ADDR_GOAL_TORQUE, (uint16_t)torque);
     }
 
+    /*
+     *  -----------------   PID   --------------------
+     */
+
+    int XL320Driver::setPGain(uint8_t id, uint32_t gain)
+    {
+        return _dxlPacketHandler->write2ByteTxOnly(_dxlPortHandler.get(), id, XL320_ADDR_P_GAIN, (uint16_t)gain);
+    }
+
+    int XL320Driver::setIGain(uint8_t id, uint32_t gain)
+    {
+        return _dxlPacketHandler->write2ByteTxOnly(_dxlPortHandler.get(), id, XL320_ADDR_I_GAIN, (uint16_t)gain);
+    }
+
+    int XL320Driver::setDGain(uint8_t id, uint32_t gain)
+    {
+        return _dxlPacketHandler->write2ByteTxOnly(_dxlPortHandler.get(), id, XL320_ADDR_D_GAIN, (uint16_t)gain);
+    }
+
+    int XL320Driver::setff1Gain(uint8_t /*id*/, uint32_t /*gain*/)
+    {
+        //not available for XL320
+        return COMM_TX_ERROR;
+    }
+
+    int XL320Driver::setff2Gain(uint8_t /*id*/, uint32_t /*gain*/)
+    {
+        //not available for XL320
+        return COMM_TX_ERROR;
+    }
+
+    // others
+
     int XL320Driver::setReturnDelayTime(uint8_t id, uint32_t return_delay_time)
     {
         return _dxlPacketHandler->write1ByteTxOnly(_dxlPortHandler.get(), id, XL320_ADDR_RETURN_DELAY_TIME, (uint8_t)return_delay_time);

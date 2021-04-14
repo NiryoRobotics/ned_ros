@@ -35,6 +35,11 @@ namespace common {
                                      CMD_TYPE_TORQUE=4,
                                      CMD_TYPE_PING=5,
                                      CMD_TYPE_LEARNING_MODE=6,
+                                     CMD_TYPE_P_GAIN=7,
+                                     CMD_TYPE_I_GAIN=8,
+                                     CMD_TYPE_D_GAIN=9,
+                                     CMD_TYPE_FF1_GAIN=10,
+                                     CMD_TYPE_FF2_GAIN=11,
                                      CMD_TYPE_UNKNOWN=100
                                    };
 

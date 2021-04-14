@@ -68,12 +68,16 @@ namespace DynamixelDriver
         std::vector<common::model::DxlMotorState> getDxlStates() const;
 
         void setDxlCommands(const common::model::SynchronizeMotorCmd &cmd);
+        void addDxlCommandToQueue(const common::model::SingleMotorCmd &cmd);
+        void addDxlCommandToQueue(const std::vector<common::model::SingleMotorCmd> &cmd);
+
+        void addEndEffectorCommandToQueue(const common::model::SingleMotorCmd &cmd);
+        void addEndEffectorCommandToQueue(const std::vector<common::model::SingleMotorCmd> &cmd);
 
         int ping_id(uint8_t id, common::model::EMotorType type);
         std::vector<uint8_t> scanTools();
         int setEndEffector(uint8_t id, common::model::EMotorType type);
         void unsetEndEffector(uint8_t id, common::model::EMotorType type);
-        void setEndEffectorCommands(std::vector<common::model::SingleMotorCmd> &cmd);
         uint32_t getEndEffectorState(uint8_t id, common::model::EMotorType type);
         std::vector<uint8_t> getRemovedMotorList() const;
         
@@ -117,14 +121,18 @@ namespace DynamixelDriver
 
         void _executeCommand();
 
+        //set a queue of cmds ? need to create an interface then
         std::vector<uint32_t> _joint_trajectory_controller_cmd;
-        common::model::SynchronizeMotorCmd _dxl_cmd;
-        std::vector<common::model::SingleMotorCmd> _end_effector_cmd;
+        common::model::SynchronizeMotorCmd _dxl_sync_cmds;
+        std::queue<common::model::SingleMotorCmd> _dxl_single_cmds;
+
+        std::queue<common::model::SingleMotorCmd> _end_effector_cmds;
 
         ros::ServiceServer _activate_leds_server;
         ros::ServiceServer _custom_cmd_server;
         ros::ServiceServer _custom_cmd_getter;
 
+        //use other callbacks instead of executecommand
         bool callbackActivateLeds(niryo_robot_msgs::SetInt::Request &req, niryo_robot_msgs::SetInt::Response &res);
         bool callbackSendCustomDxlValue(dynamixel_driver::SendCustomDxlValue::Request &req, dynamixel_driver::SendCustomDxlValue::Response &res);
         bool callbackReadCustomDxlValue(dynamixel_driver::ReadCustomDxlValue::Request &req, dynamixel_driver::ReadCustomDxlValue::Response &res);
