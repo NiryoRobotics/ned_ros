@@ -526,7 +526,7 @@ class ArmCommander:
         # Get current end effector pose
         actual_pose = self.__arm.get_current_pose().pose
 
-        # Get list [x, y, z, r, p, y] from pose stamped
+        # Get list [x, y, z, roll, pitch, yaw] from pose stamped
         pose_list = self.pose_to_list(actual_pose)
 
         # Apply shift on pose 
@@ -845,10 +845,10 @@ class ArmCommander:
         :rtype: list[float]
         """
         x, y, z = pose.position.x, pose.position.y, pose.position.z
-        r, p, y = euler_from_quaternion(
+        roll, pitch, yaw = euler_from_quaternion(
             [pose.orientation.x, pose.orientation.y, pose.orientation.z,
              pose.orientation.w])
-        return [x, y, z, r, p, y]
+        return [x, y, z, roll, pitch, yaw]
 
     @staticmethod
     def list_to_pose(list_):
