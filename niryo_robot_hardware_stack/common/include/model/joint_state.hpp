@@ -39,49 +39,38 @@ namespace common {
 
                 virtual ~JointState() override;
 
-                void reset() override;
-                bool isValid() const override;
-
                 void setName(std::string &name);
-                void setType(EMotorType id);
                 void setNeedCalibration(bool need_calibration);
                 void setPosition(double position);
 
                 std::string getName() const;
-                EMotorType getType() const;
                 bool needCalibration() const;
                 double getPosition() const;
 
                 bool operator==(const JointState& other) const;
 
+                // AbstractMotorState interface
+                virtual void reset() override;
+                virtual bool isValid() const override;
                 virtual std::string str() const override;
 
-            protected :
+            protected:
 
                 std::string _name;
-                EMotorType _type;
-
                 double _position;
                 bool _need_calibration;
-
         };
 
         inline
         bool JointState::isValid() const
         {
-            return (0 != _id && EMotorType::MOTOR_TYPE_UNKNOWN != _type);
+            return (0 != getId() && EMotorType::MOTOR_TYPE_UNKNOWN != getType());
         }
 
         inline
         std::string JointState::getName() const
         {
             return _name;
-        }
-
-        inline
-        EMotorType JointState::getType() const
-        {
-            return _type;
         }
 
         inline

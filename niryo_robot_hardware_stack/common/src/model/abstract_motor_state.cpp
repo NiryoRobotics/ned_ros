@@ -26,12 +26,14 @@ namespace common {
     namespace model
     {
 
-        AbstractMotorState::AbstractMotorState()
+        AbstractMotorState::AbstractMotorState() :
+            _type(EMotorType::MOTOR_TYPE_UNKNOWN)
         {
             reset();
         }
 
-        AbstractMotorState::AbstractMotorState(uint8_t id) :
+        AbstractMotorState::AbstractMotorState(uint8_t id, EMotorType type) :
+              _type(type),
               _id(id),
               _position_state(0),
               _temperature_state(0),
@@ -65,15 +67,13 @@ namespace common {
         {
             ostringstream ss;
 
-            ss << "AbstractMotorState (" << static_cast<int>(_id) << ")";
-            ss << "\n---\n";
+            ss << "AbstractMotorState (" << static_cast<int>(_id) << ")" << "\n";
 
             ss << "position " << _position_state << "\n"
                << "temperature " << _temperature_state << "\n"
                << "voltage " << _voltage_state << "\n"
                << "hw_error " << _hw_error_state << "\n"
-               << "hw_error_message \"" << _hw_error_message_state << "\"\n";
-
+               << "hw_error_message \"" << _hw_error_message_state << "\"";
             ss << "\n";
 
             return ss.str();

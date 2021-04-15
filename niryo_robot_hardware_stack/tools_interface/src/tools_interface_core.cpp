@@ -29,6 +29,7 @@
 
 
 using namespace DynamixelDriver;
+using namespace common::model;
 using namespace std;
 
 namespace ToolsInterface {
@@ -93,11 +94,11 @@ namespace ToolsInterface {
         for(auto i = 0; i < idList.size(); ++i) {
 
             int id = idList.at(i);
-            common::model::EMotorType type = common::model::MotorTypeEnum(typeList.at(i).c_str());
+            EMotorType type = MotorTypeEnum(typeList.at(i).c_str());
 
             if(0 == _available_tools_map.count(id))
             {
-                if(common::model::EMotorType::MOTOR_TYPE_UNKNOWN != type)
+                if(EMotorType::MOTOR_TYPE_UNKNOWN != type)
                     _available_tools_map.insert(make_pair(id, type));
                 else
                     ROS_ERROR("Tools Interface - unknown type %s. Please check your configuration file (tools_interface/config/default.yaml)", typeList.at(id).c_str());
@@ -110,7 +111,7 @@ namespace ToolsInterface {
         for(auto const &tool : _available_tools_map) {
             ROS_DEBUG("ToolsInterfaceCore::initParams - Available tools map: %d => %s",
                       static_cast<int>(tool.first),
-                      common::model::MotorTypeEnum(tool.second).toString().c_str());
+                      MotorTypeEnum(tool.second).toString().c_str());
         }
 
     }
@@ -130,7 +131,7 @@ namespace ToolsInterface {
         if(_toolState.getId() != 0)
         {
             _dynamixel->unsetEndEffector(_toolState.getId(), _toolState.getType());
-            res.state = common::model::ToolState::TOOL_STATE_PING_OK;
+            res.state = ToolState::TOOL_STATE_PING_OK;
             res.id = 0;
         }
 
@@ -141,7 +142,7 @@ namespace ToolsInterface {
         for(auto m_id : motor_list) {
             if(_available_tools_map.count(m_id))
             {
-                _toolState = common::model::ToolState(m_id, "auto", _available_tools_map.at(m_id));
+                _toolState = ToolState(m_id, "auto", _available_tools_map.at(m_id));
                 break;
             }
         }
@@ -176,7 +177,7 @@ namespace ToolsInterface {
             pubToolId(0);
 
             ros::Duration(0.05).sleep();
-            res.state = common::model::ToolState::TOOL_STATE_PING_OK;
+            res.state = ToolState::TOOL_STATE_PING_OK;
             res.id = 0;
         }
 
@@ -191,8 +192,8 @@ namespace ToolsInterface {
         {
             return niryo_robot_msgs::CommandStatus::TOOL_ID_INVALID;
         }
-        common::model::SingleMotorCmd cmd;
-        vector<common::model::SingleMotorCmd> list_cmd;
+        SingleMotorCmd cmd;
+        vector<SingleMotorCmd> list_cmd;
         cmd.setId(_toolState.getId());
     /*
     // use profile velocity instead
@@ -201,11 +202,11 @@ namespace ToolsInterface {
         cmd.setParam(req.open_speed);
         list_cmd.push_back(cmd);
     */
-        cmd.setType(common::model::EDxlCommandType::CMD_TYPE_POSITION);
+        cmd.setType(EDxlCommandType::CMD_TYPE_POSITION);
         cmd.setParam(req.open_position);
         list_cmd.push_back(cmd);
 
-        cmd.setType(common::model::EDxlCommandType::CMD_TYPE_EFFORT);
+        cmd.setType(EDxlCommandType::CMD_TYPE_EFFORT);
         cmd.setParam(req.open_hold_torque);
         list_cmd.push_back(cmd);
 
@@ -219,12 +220,12 @@ namespace ToolsInterface {
 
         // set hold torque
         cmd.setId(_toolState.getId());
-        cmd.setType(common::model::EDxlCommandType::CMD_TYPE_EFFORT);
+        cmd.setType(EDxlCommandType::CMD_TYPE_EFFORT);
         cmd.setParam(req.open_hold_torque);
         list_cmd.push_back(cmd);
         _dynamixel->addEndEffectorCommandToQueue(list_cmd);
 
-        res.state = common::model::ToolState::GRIPPER_STATE_OPEN;
+        res.state = ToolState::GRIPPER_STATE_OPEN;
 
         return true;
     }
@@ -237,8 +238,8 @@ namespace ToolsInterface {
             return niryo_robot_msgs::CommandStatus::TOOL_ID_INVALID;
         }
 
-        common::model::SingleMotorCmd cmd;
-        vector<common::model::SingleMotorCmd> list_cmd;
+        SingleMotorCmd cmd;
+        vector<SingleMotorCmd> list_cmd;
         cmd.setId(_toolState.getId());
 
         int position_command = ( req.close_position < 50) ? 0 : req.close_position - 50;
@@ -248,11 +249,11 @@ namespace ToolsInterface {
         cmd.setParam(req.close_speed);
         list_cmd.push_back(cmd);
     */
-        cmd.setType(common::model::EDxlCommandType::CMD_TYPE_POSITION);
+        cmd.setType(EDxlCommandType::CMD_TYPE_POSITION);
         cmd.setParam(position_command);
         list_cmd.push_back(cmd);
 
-        cmd.setType(common::model::EDxlCommandType::CMD_TYPE_EFFORT);
+        cmd.setType(EDxlCommandType::CMD_TYPE_EFFORT);
         cmd.setParam(req.close_max_torque); // two's complement of 1536
         list_cmd.push_back(cmd);
 
@@ -266,12 +267,12 @@ namespace ToolsInterface {
         ros::Duration(seconds_to_wait + 0.25).sleep();
 
         // set hold torque
-        cmd.setType(common::model::EDxlCommandType::CMD_TYPE_EFFORT);
+        cmd.setType(EDxlCommandType::CMD_TYPE_EFFORT);
         cmd.setParam(req.close_hold_torque);
         list_cmd.push_back(cmd);
         _dynamixel->addEndEffectorCommandToQueue(list_cmd);
 
-        res.state = common::model::ToolState::GRIPPER_STATE_CLOSE;
+        res.state = ToolState::GRIPPER_STATE_CLOSE;
 
         return true;
     }
@@ -288,19 +289,19 @@ namespace ToolsInterface {
         int pull_air_velocity = 1023;
 
         // set vacuum pump pos, vel and torque
-        common::model::SingleMotorCmd cmd;
-        vector<common::model::SingleMotorCmd> list_cmd;
+        SingleMotorCmd cmd;
+        vector<SingleMotorCmd> list_cmd;
         cmd.setId(_toolState.getId());
 
-        cmd.setType(common::model::EDxlCommandType::CMD_TYPE_VELOCITY);
+        cmd.setType(EDxlCommandType::CMD_TYPE_VELOCITY);
         cmd.setParam(pull_air_velocity);
         list_cmd.push_back(cmd);
 
-        cmd.setType(common::model::EDxlCommandType::CMD_TYPE_POSITION);
+        cmd.setType(EDxlCommandType::CMD_TYPE_POSITION);
         cmd.setParam(req.pull_air_position);
         list_cmd.push_back(cmd);
 
-        cmd.setType(common::model::EDxlCommandType::CMD_TYPE_EFFORT);
+        cmd.setType(EDxlCommandType::CMD_TYPE_EFFORT);
         cmd.setParam(500);
         list_cmd.push_back(cmd);
 
@@ -315,12 +316,12 @@ namespace ToolsInterface {
         ros::Duration(seconds_to_wait + 0.25).sleep();
 
         // set hold torque
-        cmd.setType(common::model::EDxlCommandType::CMD_TYPE_EFFORT);
+        cmd.setType(EDxlCommandType::CMD_TYPE_EFFORT);
         cmd.setParam(req.pull_air_hold_torque);
         list_cmd.push_back(cmd);
         _dynamixel->addEndEffectorCommandToQueue(list_cmd);
 
-        res.state = common::model::ToolState::VACUUM_PUMP_STATE_PULLED;
+        res.state = ToolState::VACUUM_PUMP_STATE_PULLED;
 
         return true;
     }
@@ -337,19 +338,19 @@ namespace ToolsInterface {
         int push_air_velocity = 1023;
 
         // set vacuum pump pos, vel and torque
-        common::model::SingleMotorCmd cmd;
-        vector<common::model::SingleMotorCmd> list_cmd;
+        SingleMotorCmd cmd;
+        vector<SingleMotorCmd> list_cmd;
         cmd.setId(_toolState.getId());
 
-        cmd.setType(common::model::EDxlCommandType::CMD_TYPE_VELOCITY);
+        cmd.setType(EDxlCommandType::CMD_TYPE_VELOCITY);
         cmd.setParam(push_air_velocity);
         list_cmd.push_back(cmd);
 
-        cmd.setType(common::model::EDxlCommandType::CMD_TYPE_POSITION);
+        cmd.setType(EDxlCommandType::CMD_TYPE_POSITION);
         cmd.setParam(req.push_air_position);
         list_cmd.push_back(cmd);
 
-        cmd.setType(common::model::EDxlCommandType::CMD_TYPE_EFFORT);
+        cmd.setType(EDxlCommandType::CMD_TYPE_EFFORT);
         cmd.setParam(64000); // two's complement of 1536
         list_cmd.push_back(cmd);
 
@@ -364,12 +365,12 @@ namespace ToolsInterface {
         ros::Duration(seconds_to_wait + 0.25).sleep();
 
         // set torque to 0
-        cmd.setType(common::model::EDxlCommandType::CMD_TYPE_EFFORT);
+        cmd.setType(EDxlCommandType::CMD_TYPE_EFFORT);
         cmd.setParam(0);
         list_cmd.push_back(cmd);
         _dynamixel->addEndEffectorCommandToQueue(list_cmd);
 
-        res.state = common::model::ToolState::VACUUM_PUMP_STATE_PUSHED;
+        res.state = ToolState::VACUUM_PUMP_STATE_PUSHED;
 
         return true;
     }

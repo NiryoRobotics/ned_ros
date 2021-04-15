@@ -18,6 +18,7 @@
 */
 
 #include "model/joint_state.hpp"
+#include <sstream>
 
 using namespace std;
 
@@ -30,8 +31,8 @@ namespace common {
         }
 
         JointState::JointState(string name, EMotorType type, uint8_t id) :
-            AbstractMotorState(id),
-            _name(name), _type(type)
+            AbstractMotorState(id, type),
+            _name(name)
         {
         }
 
@@ -40,32 +41,16 @@ namespace common {
 
         }
 
-        void JointState::reset()
-        {
-            _name.clear();
-            _type = EMotorType::MOTOR_TYPE_UNKNOWN;
-            _position = 0.0;
-            _need_calibration = false;
-        }
 
         bool JointState::operator==(const JointState& m) const
         {
             return((this->_type == m._type) && (this->_id == m._id));
         }
 
-        string JointState::str() const
-        {
-            return "Joint state";
-        }
 
         void JointState::setName(string& name)
         {
             _name = name;
-        }
-
-        void JointState::setType(EMotorType type)
-        {
-            _type = type;
         }
 
         void JointState::setNeedCalibration(bool need_calibration)
@@ -76,6 +61,31 @@ namespace common {
         void JointState::setPosition(double position)
         {
             _position = position;
+        }
+
+
+        void JointState::reset()
+        {
+            AbstractMotorState::reset();
+            _name.clear();
+            _position = 0.0;
+            _need_calibration = false;
+        }
+
+        string JointState::str() const
+        {
+            ostringstream ss;
+
+            ss << "JointState : ";
+            ss << "\n---\n";
+            ss << "type: " << MotorTypeEnum(_type).toString() << ", ";
+            ss << "name: " << "\"" << _name << "\"" << ", ";
+            ss << "position: " << _position << ", ";
+            ss << "need calibration: " << (_need_calibration ? "true" : "false");
+            ss << "\n";
+            ss << AbstractMotorState::str();
+
+            return ss.str();
         }
 
     } // namespace model

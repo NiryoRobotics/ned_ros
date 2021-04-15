@@ -19,7 +19,6 @@
 
 
 #include "joints_interface/JointHardwareInterface.hpp"
-#include "dynamixel_driver/SendCustomDxlValue.h"
 
 #include "model/motor_type_enum.hpp"
 #include "util/util_defs.hpp"
@@ -127,46 +126,58 @@ namespace JointsInterface {
         _nh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_3_FF2_gain", _ff2_gain_3);
         ROS_DEBUG("Joints Hardware Interface - Integral Gain dxl: (1 : %d, 2 : %d, 3 : %d)",
                   _ff2_gain_1, _ff2_gain_2, _ff2_gain_3);
+
     }
 
     void JointHardwareInterface::initJoints()
     {
+        _nb_joints = 0;
+
         //retrieve nb joints with checking that the config param exists for both name and id
         while(_nh.hasParam("/niryo_robot_hardware_interface/joint_" + std::to_string(_nb_joints + 1) + "_id") &&
-              _nh.hasParam("/niryo_robot_hardware_interface/joint_" + std::to_string(_nb_joints + 1) + "_name"))
+              _nh.hasParam("/niryo_robot_hardware_interface/joint_" + std::to_string(_nb_joints + 1) + "_name") &&
+              _nh.hasParam("/niryo_robot_hardware_interface/joint_" + std::to_string(_nb_joints + 1) + "_type"))
             _nb_joints++;
-
 
         // connect and register joint state interface
         std::vector<hardware_interface::JointStateHandle> state_handle;
         std::vector<hardware_interface::JointHandle> position_handle;
+
+        _joint_list.clear();
+        _list_stepper_id.clear();
+        _map_stepper_name.clear();
+        _list_dxl_id.clear();
+        _map_dxl_name.clear();
 
         _vel.clear();
         _eff.clear();
 
         for (int j = 0; j < _nb_joints; j++)
         {
+            int joint_id_config = 0;
             string joint_name = "";
             string joint_type = "";
-            int joint_id_config = 0;
+
             _vel.push_back(0);
             _eff.push_back(0);
 
-            _nh.getParam("/niryo_robot_hardware_interface/joint_" + std::to_string(j + 1) + "_id", joint_name);
-            _nh.getParam("/niryo_robot_hardware_interface/joint_" + std::to_string(j + 1) + "_name", joint_id_config);
+            _nh.getParam("/niryo_robot_hardware_interface/joint_" + std::to_string(j + 1) + "_id", joint_id_config);
+            _nh.getParam("/niryo_robot_hardware_interface/joint_" + std::to_string(j + 1) + "_name", joint_name);
             _nh.getParam("/niryo_robot_hardware_interface/joint_" + std::to_string(j + 1) + "_type", joint_type);
 
-            ROS_INFO("JointHardwareInterface::initJoints - New Joints config found : Name : %s ; id : %d", joint_name.c_str(), joint_id_config);
+            //gather info in a jointState
+            MotorTypeEnum eType = MotorTypeEnum(joint_type.c_str());
+            JointState jointState(joint_name, eType, static_cast<uint8_t>(joint_id_config));
 
-            uint8_t joint_id = static_cast<uint8_t>(joint_id_config);
+            ROS_INFO("JointHardwareInterface::initJoints - New Joints config found : %s", jointState.str().c_str());
 
-            hardware_interface::JointStateHandle jStateHandle(joint_name, &_pos.at(j), &_vel.at(j), &_eff.at(j));
+            hardware_interface::JointStateHandle jStateHandle(jointState.getName(), &_pos.at(j), &_vel.at(j), &_eff.at(j));
             state_handle.emplace_back(jStateHandle);
             _joint_state_interface.registerHandle(jStateHandle);
 
             registerInterface(&_joint_state_interface);
 
-            hardware_interface::JointHandle jPosHandle(_joint_state_interface.getHandle(joint_name), &_cmd.at(j));
+            hardware_interface::JointHandle jPosHandle(_joint_state_interface.getHandle(jointState.getName()), &_cmd.at(j));
 
             position_handle.emplace_back(jPosHandle);
             _joint_position_interface.registerHandle(jPosHandle);
@@ -174,29 +185,17 @@ namespace JointsInterface {
             registerInterface(&_joint_position_interface);
 
             // Create motors with previous params
-            _joint_list.clear();
-            _list_stepper_id.clear();
-            _map_stepper_name.clear();
-            _list_dxl_id.clear();
-            _map_dxl_name.clear();
-            std::vector<JointState> joints_vect;
-            //use config instead
 
-            MotorTypeEnum eType = MotorTypeEnum(joint_type.c_str());
-            joints_vect.emplace_back(JointState(joint_name,
-                                                eType,
-                                                joint_id));
-
-            if(EMotorType::MOTOR_TYPE_STEPPER == eType) {
-                _list_stepper_id.emplace_back(joint_id);
-                _map_stepper_name[joint_id] = joint_name;
+            if(EMotorType::MOTOR_TYPE_STEPPER == jointState.getType()) {
+                _list_stepper_id.emplace_back(jointState.getId());
+                _map_stepper_name[jointState.getId()] = jointState.getName();
             }
-            else if(EMotorType::MOTOR_TYPE_UNKNOWN != eType) {
-                _list_dxl_id.push_back(joint_id);
-                _map_dxl_name[joint_id] = joint_name;
+            else if(EMotorType::MOTOR_TYPE_UNKNOWN != jointState.getType()) {
+                _list_dxl_id.push_back(jointState.getId());
+                _map_dxl_name[jointState.getId()] = jointState.getName();
             }
 
-            _joint_list.emplace_back(joints_vect.back());
+            _joint_list.emplace_back(jointState);
         }
     }
 
@@ -243,15 +242,15 @@ namespace JointsInterface {
 
         // * Joint 4
         if(!setMotorPID(2, _p_gain_1, _i_gain_1, _d_gain_1, _ff1_gain_1, _ff2_gain_1))
-            ROS_ERROR("Joints Hardware Interface - Error setting motor PID for joint 4");
+            ROS_ERROR("JointHardwareInterface::sendInitMotorsParams - Error setting motor PID for joint 4");
 
         // * Joint 5
         if(!setMotorPID(3, _p_gain_2, _i_gain_2, _d_gain_2, _ff1_gain_2, _ff2_gain_2))
-            ROS_ERROR("Joints Hardware Interface - Error setting motor PID for joint 5");
+            ROS_ERROR("JointHardwareInterface::sendInitMotorsParams - Error setting motor PID for joint 5");
 
         // * Joint 6
         if(!setMotorPID(6, _p_gain_3, _i_gain_3, _d_gain_3, _ff1_gain_3, _ff2_gain_3))
-            ROS_ERROR("Joints Hardware Interface - Error setting motor PID for joint 6");
+            ROS_ERROR("JointHardwareInterface::sendInitMotorsParams - Error setting motor PID for joint 6");
 
     }
 
@@ -454,7 +453,7 @@ namespace JointsInterface {
     {
         bool res = false;
 
-        ROS_DEBUG("Joints Hardware Interface - Setting PID for motor id: %d", motor_id);
+        ROS_DEBUG("JointHardwareInterface::setMotorPID - Setting PID for motor id: %d", motor_id);
 
         // ** DXL PID configuration ** //
 
@@ -485,6 +484,7 @@ namespace JointsInterface {
             _dynamixel->addDxlCommandToQueue(dxl_cmd_ff2);
 
 
+        res = true;
         return res;
     }
 } // JointsInterface

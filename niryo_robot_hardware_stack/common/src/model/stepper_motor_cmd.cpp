@@ -27,20 +27,18 @@ namespace common {
     namespace model {
 
         StepperMotorCmd::StepperMotorCmd() :
-            _type(EStepperCommandType::CMD_TYPE_NONE)
+            AbstractMotorCmd<EStepperCommandType>(EStepperCommandType::CMD_TYPE_NONE)
         {
+            reset();
         }
 
         StepperMotorCmd::StepperMotorCmd(EStepperCommandType type,
                                          vector<uint8_t> motor_id,
                                          vector<int32_t> params) :
-            _type(type), _motor_id_list(motor_id), _param_list(params)
+            AbstractMotorCmd<EStepperCommandType>(type),
+            _motor_id_list(motor_id),
+            _param_list(params)
         {
-        }
-
-        void StepperMotorCmd::setType(EStepperCommandType type)
-        {
-            _type = type;
         }
 
         void StepperMotorCmd::setMotorsId(vector<uint8_t> motor_id)
@@ -53,14 +51,48 @@ namespace common {
             _param_list = params;
         }
 
+        /**
+         * @brief StepperMotorCmd::reset
+         */
+        void StepperMotorCmd::reset()
+        {
+            setType(EStepperCommandType::CMD_TYPE_NONE);
+            _motor_id_list.clear();
+            _param_list.clear();
+        }
+
+        /**
+         * @brief StepperMotorCmd::str
+         * @return
+         */
         string StepperMotorCmd::str() const
         {
             ostringstream ss;
             ss << "Single motor cmd - ";
 
-            ss << StepperCommandTypeEnum(_type).toString();
+            ss << StepperCommandTypeEnum(_type).toString() << " ";
+
+            ss << "Motors id: ";
+            for (uint8_t m_id : getMotorsId())
+                ss << std::to_string(m_id) << " ";
+
+            ss << "Params: ";
+            for (int32_t param : getParams())
+                ss << std::to_string(param) << " ";
 
             return ss.str();
+        }
+
+        /**
+         * @brief StepperMotorCmd::isValid
+         * @return
+         */
+        bool StepperMotorCmd::isValid() const
+        {
+            return (EStepperCommandType::CMD_TYPE_NONE != _type) &&
+                   (EStepperCommandType::CMD_TYPE_UNKNOWN != _type) &&
+                   (!_motor_id_list.empty()) &&
+                   (_motor_id_list.size() == _param_list.size());
         }
 
     } // namespace model

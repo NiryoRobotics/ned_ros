@@ -50,7 +50,6 @@ namespace common {
 
                 virtual ~ToolState() override;
 
-                void reset() override;
 
                 void setName(std::string name);
                 void setPosition(double position);
@@ -59,6 +58,10 @@ namespace common {
                 double getPosition() const;
 
                 bool isConnected() const;
+
+                //DxlMotorState interface
+                virtual void reset() override;
+                virtual std::string str() const override;
 
             protected:
                 std::string _name;

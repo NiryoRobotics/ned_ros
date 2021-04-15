@@ -25,7 +25,9 @@ using namespace std;
 namespace common {
     namespace model {
 
-        SynchronizeMotorCmd::SynchronizeMotorCmd()
+        SynchronizeMotorCmd::SynchronizeMotorCmd() :
+            AbstractMotorCmd<EDxlCommandType>(EDxlCommandType::CMD_TYPE_UNKNOWN)
+
         {
             reset();
         }
@@ -33,23 +35,12 @@ namespace common {
         SynchronizeMotorCmd::SynchronizeMotorCmd(EDxlCommandType type,
                                                  vector<uint8_t> motor_id,
                                                  vector<uint32_t> params) :
-            _type(type),
+            AbstractMotorCmd<EDxlCommandType>(type),
             _motor_id_list(motor_id),
             _param_list(params)
         {
         }
 
-        void SynchronizeMotorCmd::reset()
-        {
-            _type = EDxlCommandType::CMD_TYPE_UNKNOWN;
-            _motor_id_list.clear();
-            _param_list.clear();
-        }
-
-        void SynchronizeMotorCmd::setType(EDxlCommandType type)
-        {
-            _type = type;
-        }
 
         void SynchronizeMotorCmd::setMotorsId(vector<uint8_t> motor_id)
         {
@@ -62,7 +53,17 @@ namespace common {
         }
 
         /**
-         * @brief SynchronizeMotorCmd::to_string
+         * @brief SynchronizeMotorCmd::reset
+         */
+        void SynchronizeMotorCmd::reset()
+        {
+            setType(EDxlCommandType::CMD_TYPE_UNKNOWN);
+            _motor_id_list.clear();
+            _param_list.clear();
+        }
+
+        /**
+         * @brief SynchronizeMotorCmd::str
          * @return
          */
         string SynchronizeMotorCmd::str() const
@@ -95,11 +96,15 @@ namespace common {
             return string_info;
         }
 
-        bool common::model::SynchronizeMotorCmd::isValid() const
+        /**
+         * @brief SynchronizeMotorCmd::isValid
+         * @return
+         */
+        bool SynchronizeMotorCmd::isValid() const
         {
-            return EDxlCommandType::CMD_TYPE_UNKNOWN != _type &&
-                    !_motor_id_list.empty() &&
-                    (_motor_id_list.size() == _param_list.size());
+            return (EDxlCommandType::CMD_TYPE_UNKNOWN != _type) &&
+                   (!_motor_id_list.empty()) &&
+                   (_motor_id_list.size() == _param_list.size());
         }
 
     } // namespace model

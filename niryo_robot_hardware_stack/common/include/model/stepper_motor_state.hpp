@@ -34,9 +34,6 @@ namespace common {
                 StepperMotorState(uint8_t id);
                 virtual ~StepperMotorState() override;
 
-                virtual void reset() override;
-                virtual bool isValid() const override;
-
                 void setLastTimeRead(double last_time);
                 void setHwFailCounter(double fail_counter);
                 void setFirmwareVersion(std::string& firmware_version);
@@ -45,9 +42,12 @@ namespace common {
                 double getHwFailCounter() const;
                 std::string getFirmwareVersion() const;
 
-                virtual std::string str() const override;
-
                 virtual bool operator==(const StepperMotorState& other);
+
+                // AbstractMotorState interface
+                virtual std::string str() const override;
+                virtual void reset() override;
+                virtual bool isValid() const override;
 
             protected:
                 double _last_time_read;

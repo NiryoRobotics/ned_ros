@@ -25,30 +25,20 @@ using namespace std;
 namespace common {
     namespace model {
 
-        SingleMotorCmd::SingleMotorCmd()
+        SingleMotorCmd::SingleMotorCmd() :
+            AbstractMotorCmd<EDxlCommandType>(EDxlCommandType::CMD_TYPE_UNKNOWN)
         {
             reset();
         }
 
         SingleMotorCmd::SingleMotorCmd(EDxlCommandType type,
-                                           uint8_t motor_id,
-                                           uint32_t param) :
-                _type(type),
-                _id(motor_id),
-                _param(param)
+                                       uint8_t motor_id,
+                                       uint32_t param) :
+            AbstractMotorCmd<EDxlCommandType>(type),
+            _id(motor_id),
+            _param(param)
         {}
 
-        void SingleMotorCmd::reset()
-        {
-            _type = EDxlCommandType::CMD_TYPE_UNKNOWN;
-            _id = 0;
-            _param = 0;
-        }
-
-        void SingleMotorCmd::setType(EDxlCommandType type)
-        {
-            _type = type;
-        }
 
         void SingleMotorCmd::setId(uint8_t id)
         {
@@ -60,6 +50,13 @@ namespace common {
             _param = param;
         }
 
+        void SingleMotorCmd::reset()
+        {
+            setType(EDxlCommandType::CMD_TYPE_UNKNOWN);
+            _id = 0;
+            _param = 0;
+        }
+
         string SingleMotorCmd::str() const
         {
             ostringstream ss;
@@ -68,7 +65,7 @@ namespace common {
             ss << DxlCommandTypeEnum(_type).toString();
 
             ss << ": ";
-            ss << "motor " << _id << ": " << _param;
+            ss << "motor " << static_cast<int>(_id) << ": " << _param;
 
             return ss.str();
         }
@@ -77,11 +74,6 @@ namespace common {
         {
             return (EDxlCommandType::CMD_TYPE_UNKNOWN != _type) &&
                    (0 != _id);
-        }
-
-        EDxlCommandType SingleMotorCmd::getType() const
-        {
-            return _type;
         }
 
     } // namespace model

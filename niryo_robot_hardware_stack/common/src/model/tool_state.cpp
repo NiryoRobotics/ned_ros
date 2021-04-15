@@ -17,6 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include "model/tool_state.hpp"
+#include <sstream>
 
 using namespace std;
 
@@ -46,6 +47,20 @@ namespace common  {
             DxlMotorState::reset();
             _name = "No Tool";
             _position = 0.0;
+        }
+
+        string ToolState::str() const
+        {
+            ostringstream ss;
+
+            ss << "ToolState : ";
+            ss << "name: " << "\"" << _name << "\"" << ", ";
+            ss << "position: " << _position << ", ";
+            ss << "connected: " << (_connected ? "true" : "false");
+            ss << "\n";
+            ss << DxlMotorState::str();
+
+            return ss.str();
         }
 
         void ToolState::setName(std::string name)

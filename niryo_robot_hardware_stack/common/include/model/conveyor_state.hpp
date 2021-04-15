@@ -33,9 +33,6 @@ namespace common {
                 ConveyorState(uint8_t id);
                 virtual ~ConveyorState() override;
 
-                virtual void reset() override;
-                virtual bool isValid() const override;
-
                 void setState(bool state);
                 void setSpeed(int16_t speed);
                 void setDirection(int8_t direction);
@@ -46,10 +43,12 @@ namespace common {
 
                 virtual bool operator==(const ConveyorState& other);
 
+                // StepperMotorState interface
                 virtual std::string str() const override;
+                virtual void reset() override;
+                virtual bool isValid() const override;
 
             private:
-
                 bool _state;
                 int16_t _speed;
                 int8_t _direction;
@@ -71,6 +70,12 @@ namespace common {
         int8_t ConveyorState::getDirection() const
         {
             return _direction;
+        }
+
+        inline
+        bool ConveyorState::isValid() const
+        {
+            return (0 != getId());
         }
 
     } // namespace model

@@ -49,6 +49,7 @@ namespace StepperDriver
         _conveyor_cmd.reset(new common::model::StepperMotorCmd());
         initParameters();
         _stepper.reset(new StepperDriver());
+        _stepper->scanAndCheck();
         startControlLoop();
 
         cmd_pub = _nh.advertise<std_msgs::Int64MultiArray>("stepper_cmd", 1000);

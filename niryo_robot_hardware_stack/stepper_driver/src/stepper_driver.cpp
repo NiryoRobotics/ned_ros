@@ -240,17 +240,7 @@ namespace StepperDriver
     int StepperDriver::readCommand(StepperMotorCmd cmd)
     {
         int result = CAN_INVALID_CMD;
-        ROS_DEBUG("StepperDriver::readCommand - Received stepper cmd with type %d", int(cmd.getType()));
-
-        std::string ids_string = "";
-        for (uint8_t m_id : cmd.getMotorsId())
-            ids_string += std::to_string(m_id) + " ";
-        ROS_DEBUG("StepperDriver::readCommand - Received stepper cmd with ids %s", ids_string.c_str());
-
-        std::string params_string = "";
-        for (int32_t param : cmd.getParams())
-            params_string += std::to_string(param) + " ";
-        ROS_DEBUG("StepperDriver::readCommand - Received stepper cmd with params %s", params_string.c_str());
+        ROS_DEBUG("StepperDriver::readCommand - Received stepper cmd %s", cmd.str().c_str());
 
         switch(cmd.getType())
         {

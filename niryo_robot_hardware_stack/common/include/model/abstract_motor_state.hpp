@@ -20,22 +20,23 @@
 #ifndef ABSTRACT_MOTOR_STATE_H
 #define ABSTRACT_MOTOR_STATE_H
 
+#include "iobject.hpp"
 #include <string>
+
+#include "model/motor_type_enum.hpp"
 
 namespace common {
     namespace model
     {
-        class AbstractMotorState
+        class AbstractMotorState : public IObject
         {
             public:
                 AbstractMotorState();
-                AbstractMotorState(uint8_t id);
-                virtual ~AbstractMotorState();
-
-                virtual void reset();
-                virtual bool isValid() const = 0; //to have an abstract class
+                AbstractMotorState(uint8_t id, EMotorType type);
+                virtual ~AbstractMotorState() override;
 
                 //getters
+                EMotorType getType() const;
                 uint8_t getId() const;
 
                 uint32_t getPositionState() const;
@@ -54,9 +55,13 @@ namespace common {
 
                 virtual bool operator==(const AbstractMotorState& other);
 
-                virtual std::string str() const;
+                // IObject interface
+                virtual void reset() override;
+                virtual std::string str() const override;
+                virtual bool isValid() const override = 0; //not reimplemented to keep this class abstract
 
             protected:
+                EMotorType _type;
                 uint8_t _id;
 
                 // read variables
@@ -66,6 +71,13 @@ namespace common {
                 uint32_t _hw_error_state;
                 std::string _hw_error_message_state;
         };
+
+
+        inline
+        EMotorType AbstractMotorState::getType() const
+        {
+            return _type;
+        }
 
         inline
         uint8_t AbstractMotorState::getId() const

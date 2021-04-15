@@ -23,12 +23,13 @@
 #include <string>
 #include <vector>
 
+#include "model/abstract_motor_cmd.hpp"
 #include "model/dxl_command_type_enum.hpp"
 
 namespace common {
     namespace model {
 
-        class SingleMotorCmd
+        class SingleMotorCmd : public AbstractMotorCmd<EDxlCommandType>
         {
             public:
                 SingleMotorCmd();
@@ -36,24 +37,20 @@ namespace common {
                                uint8_t motor_id,
                                uint32_t param);
 
-                void reset();
-
                 //setters
-                void setType(EDxlCommandType type);
                 void setId(uint8_t id);
                 void setParam(uint32_t param);
 
                 //getters
-                EDxlCommandType getType() const;
                 uint8_t getId() const;
                 uint32_t getParam() const;
 
-                std::string str() const;
-                bool isValid() const;
+                // AbstractMotorCmd interface
+                virtual void reset() override;
+                virtual std::string str() const override;
+                virtual bool isValid() const override;
 
             private:
-                EDxlCommandType _type;
-
                 uint8_t _id;
                 uint32_t _param;
         };

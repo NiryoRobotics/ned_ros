@@ -104,7 +104,8 @@ namespace common {
     AbstractEnum<C, E >::toString() const
     {
         typename std::map<E, std::string>::const_iterator iter = _map.find(_enum);
-        if (iter == _map.end()) throw std::out_of_range("");
+        if (iter == _map.end())
+            throw std::out_of_range("");
         return iter->second;
     }
 

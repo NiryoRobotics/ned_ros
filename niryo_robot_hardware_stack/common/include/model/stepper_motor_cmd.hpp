@@ -23,14 +23,14 @@
 #include <string>
 #include <vector>
 
+#include "model/abstract_motor_cmd.hpp"
 #include "model/stepper_command_type_enum.hpp"
 
 namespace common {
     namespace model {
 
-        class StepperMotorCmd
+        class StepperMotorCmd : public AbstractMotorCmd<EStepperCommandType>
         {
-
             public:
 
                 StepperMotorCmd();
@@ -39,28 +39,22 @@ namespace common {
                                 std::vector<int32_t> params);
 
                 //setters
-                void setType(EStepperCommandType type);
                 void setMotorsId(std::vector<uint8_t> motor_id);
                 void setParams(std::vector<int32_t> params);
 
                 //getters
-                EStepperCommandType getType() const;
                 const std::vector<uint8_t>& getMotorsId() const;
                 const std::vector<int32_t>& getParams() const;
 
-                std::string str() const;
+                // AbstractMotorCmd interface
+                virtual void reset() override;
+                virtual std::string str() const override;
+                virtual bool isValid() const override;
 
             private:
-                EStepperCommandType _type;
                 std::vector<uint8_t> _motor_id_list;
                 std::vector<int32_t> _param_list;
         };
-
-        inline
-        EStepperCommandType StepperMotorCmd::getType() const
-        {
-            return _type;
-        }
 
         inline
         const std::vector<uint8_t>& StepperMotorCmd::getMotorsId() const

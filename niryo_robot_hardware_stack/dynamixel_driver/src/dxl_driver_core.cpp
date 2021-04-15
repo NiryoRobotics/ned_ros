@@ -434,7 +434,7 @@ namespace DynamixelDriver
             _dxl_sync_cmds.reset();
             need_sleep = true;
         }
-        if (_dxl_single_cmds.empty())
+        if (!_dxl_single_cmds.empty())
         {
             if (need_sleep)
                 ros::Duration(0.01).sleep();

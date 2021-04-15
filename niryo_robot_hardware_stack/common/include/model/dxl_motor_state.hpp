@@ -22,7 +22,6 @@
 
 #include <string>
 #include "abstract_motor_state.hpp"
-#include "model/motor_type_enum.hpp"
 
 namespace common {
     namespace model {
@@ -36,34 +35,31 @@ namespace common {
 
                 virtual ~DxlMotorState() override;
 
-                virtual void reset() override;
-                virtual bool isValid() const override;
-
                 //getters
-                EMotorType getType() const;
                 bool isTool() const;
 
                 //setters
                 bool operator==(const DxlMotorState& other);
 
+                // AbstractMotorState interface
                 virtual std::string str() const override;
+                virtual void reset() override;
+                virtual bool isValid() const override;
 
             protected:
-                EMotorType _type;
-
                 bool _isTool;
         };
-
-        inline
-        EMotorType DxlMotorState::getType() const
-        {
-            return _type;
-        }
 
         inline
         bool DxlMotorState::isTool() const
         {
             return _isTool;
+        }
+
+        inline
+        bool DxlMotorState::isValid() const
+        {
+            return (0 != getId() && EMotorType::MOTOR_TYPE_UNKNOWN != getType());
         }
 
     } // namespace model

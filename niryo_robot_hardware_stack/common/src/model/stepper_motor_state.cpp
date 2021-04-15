@@ -18,6 +18,7 @@
 */
 
 #include "model/stepper_motor_state.hpp"
+#include <sstream>
 
 using namespace std;
 
@@ -29,7 +30,7 @@ namespace common {
         }
 
         StepperMotorState::StepperMotorState(uint8_t id) :
-            AbstractMotorState(id),
+            AbstractMotorState(id, EMotorType::MOTOR_TYPE_STEPPER),
             _last_time_read(0.0),
             _hw_fail_counter(0.0),
             _firmware_version("")
@@ -39,13 +40,6 @@ namespace common {
         StepperMotorState::~StepperMotorState()
         {
 
-        }
-
-        void StepperMotorState::reset()
-        {
-            _last_time_read = 0.0;
-            _hw_fail_counter = 0.0;
-            _firmware_version.clear();
         }
 
         void StepperMotorState::setLastTimeRead(double last_time)
@@ -63,9 +57,27 @@ namespace common {
             _firmware_version = firmware_version;
         }
 
+        void StepperMotorState::reset()
+        {
+            AbstractMotorState::reset();
+            _last_time_read = 0.0;
+            _hw_fail_counter = 0.0;
+            _firmware_version.clear();
+        }
+
         string StepperMotorState::str() const
         {
-            return "stepper";
+            ostringstream ss;
+
+            ss << "DxlMotorState : ";
+            ss << "\n---\n";
+            ss << "last time read: " << _last_time_read << ", ";
+            ss << "hw fail counter: " << _hw_fail_counter << ", ";
+            ss << "firmware version: " << "\"" << _firmware_version << "\"";
+            ss << "\n";
+            ss << AbstractMotorState::str();
+
+            return ss.str();
         }
 
         bool StepperMotorState::operator==(const StepperMotorState &other)

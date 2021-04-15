@@ -18,6 +18,7 @@
 */
 
 #include "model/conveyor_state.hpp"
+#include <sstream>
 
 using namespace std;
 
@@ -46,11 +47,6 @@ namespace common {
             _state = false;
         }
 
-        bool ConveyorState::isValid() const
-        {
-            return (_id != 0);
-        }
-
         void ConveyorState::setState(bool state)
         {
             _state = state;
@@ -73,7 +69,17 @@ namespace common {
 
         string ConveyorState::str() const
         {
-            return "conveyor state";
+            ostringstream ss;
+
+            ss << "DxlMotorState : ";
+            ss << "\n---\n";
+            ss << "state: " << (_state ? "true" : "false");
+            ss << "speed: " << static_cast<int>(_speed);
+            ss << "direction: " << static_cast<int>(_direction);
+            ss << "\n";
+            ss << StepperMotorState::str();
+
+            return ss.str();
         }
 
     } // namespace model
