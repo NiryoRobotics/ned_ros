@@ -103,8 +103,8 @@ namespace DynamixelDriver
 
             int rebootMotors();
 
-            int sendCustomDxlCommand(common::model::EMotorType motor_type, uint8_t id, uint32_t reg_address, uint32_t value, uint32_t byte_number);
-            int readCustomDxlCommand(common::model::EMotorType motor_type, uint8_t id, uint32_t reg_address, uint32_t &value, uint32_t byte_number);
+            int sendCustomDxlCommand(common::model::EMotorType motor_type, uint8_t id, int reg_address, int value, int byte_number);
+            int readCustomDxlCommand(common::model::EMotorType motor_type, uint8_t id, int reg_address, int &value, int byte_number);
 
             //tests
             bool isConnectionOk() const;

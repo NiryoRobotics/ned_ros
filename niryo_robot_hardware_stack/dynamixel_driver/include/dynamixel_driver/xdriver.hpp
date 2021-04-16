@@ -107,22 +107,21 @@ namespace DynamixelDriver
         virtual int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list) = 0;
 
         // custom write and read
-        virtual int customWrite(uint8_t id, uint8_t reg_address, uint32_t value, uint8_t byte_number);
-        virtual int customRead(uint8_t id, uint8_t reg_address, uint32_t& value, uint8_t byte_number);
+        virtual int customWrite(uint8_t id, uint8_t reg_address, uint32_t data, uint8_t byte_number);
+        virtual int customRead(uint8_t id, uint8_t reg_address, uint32_t *data, uint8_t byte_number);
 
     protected:
         common::model::EMotorType _type;
 
-        std::shared_ptr<dynamixel::PortHandler> _dxlPortHandler;
-        std::shared_ptr<dynamixel::PacketHandler> _dxlPacketHandler;
-
-        virtual int syncWrite1Byte(uint8_t address, const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &data_list);
-        virtual int syncWrite2Bytes(uint8_t address, const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &data_list);
-        virtual int syncWrite4Bytes(uint8_t address, const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &data_list);
+        virtual int write1Byte(uint8_t address, uint8_t id, uint8_t data);
+        virtual int write2Bytes(uint8_t address, uint8_t id, uint16_t data);
+        virtual int write4Bytes(uint8_t address, uint8_t id, uint32_t data);
 
         virtual int read1Byte(uint8_t address, uint8_t id, uint32_t *data);
         virtual int read2Bytes(uint8_t address, uint8_t id, uint32_t *data);
         virtual int read4Bytes(uint8_t address, uint8_t id, uint32_t *data);
+
+        virtual int syncWrite(uint8_t address, uint8_t data_len, const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &data_list);
         virtual int syncRead(uint8_t address, uint8_t data_len, const std::vector<uint8_t> &id_list, std::vector<uint32_t> &data_list);
 
         static constexpr int DXL_LEN_ONE_BYTE        = 1;
@@ -134,6 +133,10 @@ namespace DynamixelDriver
         static constexpr int LEN_ID_DATA_NOT_SAME    = 20;
 
         static constexpr int PING_WRONG_MODEL_NUMBER = 30;
+
+    private:
+        std::shared_ptr<dynamixel::PortHandler> _dxlPortHandler;
+        std::shared_ptr<dynamixel::PacketHandler> _dxlPacketHandler;
     };
 } //DynamixelDriver
 

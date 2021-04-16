@@ -382,7 +382,7 @@ namespace DynamixelDriver
         return _dynamixel->getRemovedMotorList();
     }
 
-    dynamixel_driver::DxlArrayMotorHardwareStatus DynamixelDriverCore::getHwStatus()
+    dynamixel_driver::DxlArrayMotorHardwareStatus DynamixelDriverCore::getHwStatus() const
     {
         dynamixel_driver::DxlMotorHardwareStatus data;
         dynamixel_driver::DxlArrayMotorHardwareStatus hw_state;
@@ -401,7 +401,7 @@ namespace DynamixelDriver
         return hw_state;
     }
 
-    niryo_robot_msgs::BusState DynamixelDriverCore::getDxlBusState()
+    niryo_robot_msgs::BusState DynamixelDriverCore::getDxlBusState() const
     {
         niryo_robot_msgs::BusState dxl_bus_state;
         string error;
@@ -412,6 +412,17 @@ namespace DynamixelDriver
         dxl_bus_state.motor_id_connected = motor_id;
         dxl_bus_state.error = error;
         return dxl_bus_state;
+    }
+
+    /**
+     * @brief DynamixelDriverCore::update_leds
+     * @return
+     */
+    int DynamixelDriverCore::update_leds(void)
+    {
+        lock_guard<mutex> lck(_control_loop_mutex);
+        int result = _dynamixel->setLeds(_dynamixel->getLedState(), common::model::EMotorType::MOTOR_TYPE_XL320);
+        return result;
     }
 
     /**
@@ -451,6 +462,9 @@ namespace DynamixelDriver
         }
     }
 
+    /**
+     * @brief DynamixelDriverCore::controlLoop
+     */
     void DynamixelDriverCore::controlLoop()
     {
         ros::Rate control_loop_rate = ros::Rate(_control_loop_frequency);
@@ -543,7 +557,11 @@ namespace DynamixelDriver
         }
 
         lock_guard<mutex> lck(_control_loop_mutex);
-        result = _dynamixel->sendCustomDxlCommand(motor_type, req.id, req.reg_address, req.value, req.byte_number);
+        result = _dynamixel->sendCustomDxlCommand(motor_type,
+                                                  req.id,
+                                                  req.reg_address,
+                                                  req.value,
+                                                  req.byte_number);
 
         if (result != COMM_SUCCESS) {
             res.message = "Dynamixel Driver Core - Send custom command failed";
@@ -557,6 +575,12 @@ namespace DynamixelDriver
         return true;
     }
 
+    /**
+     * @brief DynamixelDriverCore::callbackReadCustomDxlValue
+     * @param req
+     * @param res
+     * @return
+     */
     bool DynamixelDriverCore::callbackReadCustomDxlValue(dynamixel_driver::ReadCustomDxlValue::Request &req,
                                                         dynamixel_driver::ReadCustomDxlValue::Response &res)
     {
@@ -572,8 +596,12 @@ namespace DynamixelDriver
         }
 
         lock_guard<mutex> lck(_control_loop_mutex);
-        uint32_t value = 0;
-        result = _dynamixel->readCustomDxlCommand(motor_type, req.id, req.reg_address, value, req.byte_number);
+        int value = 0;
+        result = _dynamixel->readCustomDxlCommand(motor_type,
+                                                  req.id,
+                                                  req.reg_address,
+                                                  value,
+                                                  req.byte_number);
 
         if (result != COMM_SUCCESS) {
             res.message = "Dynamixel Driver Core - Reading custom registry failed";
@@ -587,6 +615,12 @@ namespace DynamixelDriver
         return true;
     }
 
+    /**
+     * @brief DynamixelDriverCore::callbackActivateLeds
+     * @param req
+     * @param res
+     * @return
+     */
     bool DynamixelDriverCore::callbackActivateLeds(niryo_robot_msgs::SetInt::Request &req, niryo_robot_msgs::SetInt::Response &res)
     {
         int led = req.value;
@@ -600,11 +634,5 @@ namespace DynamixelDriver
         return true;
     }
 
-    int DynamixelDriverCore::update_leds(void)
-    {
-        lock_guard<mutex> lck(_control_loop_mutex);
-        int result = _dynamixel->setLeds(_dynamixel->getLedState(), common::model::EMotorType::MOTOR_TYPE_XL320);
-        return result;
-    }
 } // namespace DynamixelDriver
 // namespace DynamixelDriver

@@ -881,17 +881,21 @@ namespace DynamixelDriver
      * @param byte_number
      * @return
      */
-    int DxlDriver::sendCustomDxlCommand(EMotorType motor_type, uint8_t id, uint32_t reg_address, uint32_t value,  uint32_t byte_number)
+    int DxlDriver::sendCustomDxlCommand(EMotorType motor_type, uint8_t id,
+                                        int reg_address, int value,  int byte_number)
     {
-        int result;
+        int result = COMM_TX_FAIL;
         ROS_DEBUG("DxlDriver::sendCustomDxlCommand:\n"
                   "\t\t Motor type: %d, ID: %d, Value: %d, Address: %d, Size: %d",
-                  static_cast<int>(motor_type), static_cast<int>(id), static_cast<int>(value),
-                  static_cast<int>(reg_address), static_cast<int>(byte_number));
+                  static_cast<int>(motor_type), static_cast<int>(id), value,
+                  reg_address, byte_number);
 
         if(_xdriver_map.count(motor_type) && _xdriver_map.at(motor_type))
         {
-            result = _xdriver_map.at(motor_type)->customWrite(id, static_cast<uint8_t>(reg_address), value, static_cast<uint8_t>(byte_number));
+            result = _xdriver_map.at(motor_type)->customWrite(id,
+                                                              static_cast<uint8_t>(reg_address),
+                                                              static_cast<uint32_t>(value),
+                                                              static_cast<uint8_t>(byte_number));
             if (result != COMM_SUCCESS)
             {
                 ROS_WARN("DxlDriver::sendCustomDxlCommand - Failed to write custom command: %d", result);
@@ -917,20 +921,26 @@ namespace DynamixelDriver
      * @return
      */
     int DxlDriver::readCustomDxlCommand(EMotorType motor_type, uint8_t id,
-                                        uint32_t reg_address, uint32_t &value, uint32_t byte_number)
+                                        int reg_address, int& value, int byte_number)
     {
-        int result;
-        ROS_DEBUG("DxlDriver::readCustomDxlCommand:\n"
+        int result = COMM_RX_FAIL;
+        ROS_DEBUG("DxlDriver::readCustomDxlCommand: "
                   "Motor type: %d, ID: %d, Address: %d, Size: %d",
                   static_cast<int>(motor_type), static_cast<int>(id),
-                  static_cast<int>(reg_address), static_cast<int>(byte_number));
+                  reg_address, byte_number);
 
         if(_xdriver_map.count(motor_type) && _xdriver_map.at(motor_type))
         {
-            result = _xdriver_map.at(motor_type)->customRead(id, reg_address, value, byte_number);
+            uint32_t data = 0;
+            result = _xdriver_map.at(motor_type)->customRead(id,
+                                                             static_cast<uint8_t>(reg_address),
+                                                             &data,
+                                                             static_cast<uint8_t>(byte_number));
+            value = static_cast<int>(data);
+
             if (result != COMM_SUCCESS)
             {
-                ROS_WARN("DxlDriver::readCustomDxlCommand - Failed to write custom command: %d", result);
+                ROS_WARN("DxlDriver::readCustomDxlCommand - Failed to read custom command: %d", result);
                 result = niryo_robot_msgs::CommandStatus::DXL_WRITE_ERROR;
             }
         }

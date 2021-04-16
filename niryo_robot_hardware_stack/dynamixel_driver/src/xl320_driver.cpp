@@ -38,17 +38,17 @@ namespace DynamixelDriver
     {
         string hardware_message;
 
-        if (hw_state & 0b00000001)
+        if (hw_state & 1<<0)    //0b00000001
         {
             hardware_message += "Overload";
         }
-        if (hw_state & 0b00000010)
+        if (hw_state & 1<<1)    //0b00000010
         {
             if (hardware_message != "")
                 hardware_message += ", ";
             hardware_message += "OverHeating";
         }
-        if (hw_state & 0b00000100)
+        if (hw_state & 1<<2)    //0b00000100
         {
             if (hardware_message != "")
                 hardware_message += ", ";
@@ -85,37 +85,37 @@ namespace DynamixelDriver
 
     int XL320Driver::changeId(uint8_t id, uint8_t new_id)
     {
-        return _dxlPacketHandler->write1ByteTxOnly(_dxlPortHandler.get(), id, XL320_ADDR_ID, new_id);
+        return write1Byte(XL320_ADDR_ID, id, new_id);
     }
 
     int XL320Driver::changeBaudRate(uint8_t id, uint32_t new_baudrate)
     {
-        return _dxlPacketHandler->write1ByteTxOnly(_dxlPortHandler.get(), id, XL320_ADDR_BAUDRATE, (uint8_t)new_baudrate);
+        return write1Byte(XL320_ADDR_BAUDRATE, id, static_cast<uint8_t>(new_baudrate));
     }
 
     int XL320Driver::setLed(uint8_t id, uint32_t led_value)
     {
-        return _dxlPacketHandler->write1ByteTxOnly(_dxlPortHandler.get(), id, XL320_ADDR_LED, (uint8_t)led_value);
+        return write1Byte(XL320_ADDR_LED, id, static_cast<uint8_t>(led_value));
     }
 
     int XL320Driver::setTorqueEnable(uint8_t id, uint32_t torque_enable)
     {
-        return _dxlPacketHandler->write1ByteTxOnly(_dxlPortHandler.get(), id, XL320_ADDR_TORQUE_ENABLE, (uint8_t)torque_enable);
+        return write1Byte(XL320_ADDR_TORQUE_ENABLE, id, static_cast<uint8_t>(torque_enable));
     }
 
     int XL320Driver::setGoalPosition(uint8_t id, uint32_t position)
     {
-        return _dxlPacketHandler->write2ByteTxOnly(_dxlPortHandler.get(), id, XL320_ADDR_GOAL_POSITION, (uint16_t)position);
+        return write2Bytes(XL320_ADDR_GOAL_POSITION, id, static_cast<uint16_t>(position));
     }
 
     int XL320Driver::setGoalVelocity(uint8_t id, uint32_t velocity)
     {
-        return _dxlPacketHandler->write2ByteTxOnly(_dxlPortHandler.get(), id, XL320_ADDR_GOAL_SPEED, (uint16_t)velocity);
+        return write2Bytes(XL320_ADDR_GOAL_SPEED, id, static_cast<uint16_t>(velocity));
     }
 
     int XL320Driver::setGoalTorque(uint8_t id, uint32_t torque)
     {
-        return _dxlPacketHandler->write2ByteTxOnly(_dxlPortHandler.get(), id, XL320_ADDR_GOAL_TORQUE, (uint16_t)torque);
+        return write2Bytes(XL320_ADDR_GOAL_TORQUE, id, static_cast<uint16_t>(torque));
     }
 
     /*
@@ -124,17 +124,17 @@ namespace DynamixelDriver
 
     int XL320Driver::setPGain(uint8_t id, uint32_t gain)
     {
-        return _dxlPacketHandler->write2ByteTxOnly(_dxlPortHandler.get(), id, XL320_ADDR_P_GAIN, (uint16_t)gain);
+        return write2Bytes(XL320_ADDR_P_GAIN, id, static_cast<uint16_t>(gain));
     }
 
     int XL320Driver::setIGain(uint8_t id, uint32_t gain)
     {
-        return _dxlPacketHandler->write2ByteTxOnly(_dxlPortHandler.get(), id, XL320_ADDR_I_GAIN, (uint16_t)gain);
+        return write2Bytes(XL320_ADDR_I_GAIN, id, static_cast<uint16_t>(gain));
     }
 
     int XL320Driver::setDGain(uint8_t id, uint32_t gain)
     {
-        return _dxlPacketHandler->write2ByteTxOnly(_dxlPortHandler.get(), id, XL320_ADDR_D_GAIN, (uint16_t)gain);
+        return write2Bytes(XL320_ADDR_D_GAIN, id, static_cast<uint16_t>(gain));
     }
 
     int XL320Driver::setff1Gain(uint8_t /*id*/, uint32_t /*gain*/)
@@ -153,27 +153,27 @@ namespace DynamixelDriver
 
     int XL320Driver::setReturnDelayTime(uint8_t id, uint32_t return_delay_time)
     {
-        return _dxlPacketHandler->write1ByteTxOnly(_dxlPortHandler.get(), id, XL320_ADDR_RETURN_DELAY_TIME, (uint8_t)return_delay_time);
+        return write1Byte(XL320_ADDR_RETURN_DELAY_TIME, id, static_cast<uint8_t>(return_delay_time));
     }
 
     int XL320Driver::setLimitTemperature(uint8_t id, uint32_t temperature)
     {
-        return _dxlPacketHandler->write1ByteTxOnly(_dxlPortHandler.get(), id, XL320_ADDR_LIMIT_TEMPERATURE, (uint8_t)temperature);
+        return write1Byte(XL320_ADDR_LIMIT_TEMPERATURE, id, static_cast<uint8_t>(temperature));
     }
 
     int XL320Driver::setMaxTorque(uint8_t id, uint32_t torque)
     {
-        return _dxlPacketHandler->write1ByteTxOnly(_dxlPortHandler.get(), id, XL320_ADDR_MAX_TORQUE, (uint8_t)torque);
+        return write1Byte(XL320_ADDR_MAX_TORQUE, id, static_cast<uint8_t>(torque));
     }
 
     int XL320Driver::setReturnLevel(uint8_t id, uint32_t return_level)
     {
-        return _dxlPacketHandler->write1ByteTxOnly(_dxlPortHandler.get(), id, XL320_ADDR_RETURN_LEVEL, (uint8_t)return_level);
+        return write1Byte(XL320_ADDR_RETURN_LEVEL, id, static_cast<uint8_t>(return_level));
     }
 
     int XL320Driver::setAlarmShutdown(uint8_t id, uint32_t alarm_shutdown)
     {
-        return _dxlPacketHandler->write1ByteTxOnly(_dxlPortHandler.get(), id, XL320_ADDR_ALARM_SHUTDOWN, (uint8_t)alarm_shutdown);
+        return write1Byte(XL320_ADDR_ALARM_SHUTDOWN, id, static_cast<uint8_t>(alarm_shutdown));
     }
 
     /*
@@ -182,25 +182,25 @@ namespace DynamixelDriver
 
     int XL320Driver::syncWritePositionGoal(const vector<uint8_t> &id_list, const vector<uint32_t> &position_list)
     {
-        return syncWrite2Bytes(XL320_ADDR_GOAL_POSITION, id_list, position_list);
+        return syncWrite(XL320_ADDR_GOAL_POSITION, 2, id_list, position_list);
     }
     int XL320Driver::syncWriteVelocityGoal(const vector<uint8_t> &id_list, const vector<uint32_t> &velocity_list)
     {
-        return syncWrite2Bytes(XL320_ADDR_GOAL_SPEED, id_list, velocity_list);
+        return syncWrite(XL320_ADDR_GOAL_SPEED, 2, id_list, velocity_list);
     }
     int XL320Driver::syncWriteTorqueGoal(const vector<uint8_t> &id_list, const vector<uint32_t> &torque_list)
     {
-        return syncWrite2Bytes(XL320_ADDR_GOAL_TORQUE, id_list, torque_list);
+        return syncWrite(XL320_ADDR_GOAL_TORQUE, 2, id_list, torque_list);
     }
 
     int XL320Driver::syncWriteTorqueEnable(const vector<uint8_t> &id_list, const vector<uint32_t> &torque_enable_list)
     {
-        return syncWrite1Byte(XL320_ADDR_TORQUE_ENABLE, id_list, torque_enable_list);
+        return syncWrite(XL320_ADDR_TORQUE_ENABLE, 1, id_list, torque_enable_list);
     }
 
     int XL320Driver::syncWriteLed(const vector<uint8_t> &id_list, const vector<uint32_t> &led_list)
     {
-        return syncWrite1Byte(XL320_ADDR_LED, id_list, led_list);
+        return syncWrite(XL320_ADDR_LED, 1, id_list, led_list);
     }
 
     /*
@@ -302,10 +302,10 @@ namespace DynamixelDriver
      * @param byte_number
      * @return
      */
-    int XL320Driver::customWrite(uint8_t id, uint8_t reg_address, uint32_t value, uint8_t byte_number)
+    int XL320Driver::customWrite(uint8_t id, uint8_t reg_address, uint32_t data, uint8_t byte_number)
     {
         if (4 != byte_number)
-            return XDriver::customWrite(id, reg_address, value, byte_number);
+            return XDriver::customWrite(id, reg_address, data, byte_number);
 
         printf("ERROR: Size param must be 1, 2 or 4 bytes\n");
         return COMM_TX_FAIL;
@@ -319,10 +319,10 @@ namespace DynamixelDriver
      * @param byte_number
      * @return
      */
-    int XL320Driver::customRead(uint8_t id, uint8_t reg_address, uint32_t &value, uint8_t byte_number)
+    int XL320Driver::customRead(uint8_t id, uint8_t reg_address, uint32_t *data, uint8_t byte_number)
     {
         if (4 != byte_number)
-            return XDriver::customRead(id, reg_address, value, byte_number);
+            return XDriver::customRead(id, reg_address, data, byte_number);
 
         printf("ERROR: Size param must be 1, 2 or 4 bytes\n");
         return COMM_TX_FAIL;

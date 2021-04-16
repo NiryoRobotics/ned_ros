@@ -60,12 +60,7 @@ namespace DynamixelDriver
 
         void startControlLoop();
 
-        dynamixel_driver::DxlArrayMotorHardwareStatus getHwStatus();
-        niryo_robot_msgs::BusState getDxlBusState();
-
         void setTrajectoryControllerCommands(std::vector<uint32_t>& cmd);
-
-        std::vector<common::model::DxlMotorState> getDxlStates() const;
 
         void setDxlCommands(const common::model::SynchronizeMotorCmd &cmd);
         void addDxlCommandToQueue(const common::model::SingleMotorCmd &cmd);
@@ -79,6 +74,12 @@ namespace DynamixelDriver
         int setEndEffector(uint8_t id, common::model::EMotorType type);
         void unsetEndEffector(uint8_t id, common::model::EMotorType type);
         uint32_t getEndEffectorState(uint8_t id, common::model::EMotorType type);
+
+        dynamixel_driver::DxlArrayMotorHardwareStatus getHwStatus() const;
+        niryo_robot_msgs::BusState getDxlBusState() const;
+
+        std::vector<common::model::DxlMotorState> getDxlStates() const;
+
         std::vector<uint8_t> getRemovedMotorList() const;
         
         int update_leds(void);
@@ -94,6 +95,12 @@ namespace DynamixelDriver
         void initParameters();
         void resetHardwareControlLoopRates();
         void controlLoop();
+        void _executeCommand();
+
+        //use other callbacks instead of executecommand
+        bool callbackActivateLeds(niryo_robot_msgs::SetInt::Request &req, niryo_robot_msgs::SetInt::Response &res);
+        bool callbackSendCustomDxlValue(dynamixel_driver::SendCustomDxlValue::Request &req, dynamixel_driver::SendCustomDxlValue::Response &res);
+        bool callbackReadCustomDxlValue(dynamixel_driver::ReadCustomDxlValue::Request &req, dynamixel_driver::ReadCustomDxlValue::Response &res);
 
     private:
         ros::NodeHandle _nh;
@@ -119,7 +126,6 @@ namespace DynamixelDriver
 
         std::unique_ptr<DxlDriver> _dynamixel;
 
-        void _executeCommand();
 
         //set a queue of cmds ? need to create an interface then
         std::vector<uint32_t> _joint_trajectory_controller_cmd;
@@ -131,11 +137,6 @@ namespace DynamixelDriver
         ros::ServiceServer _activate_leds_server;
         ros::ServiceServer _custom_cmd_server;
         ros::ServiceServer _custom_cmd_getter;
-
-        //use other callbacks instead of executecommand
-        bool callbackActivateLeds(niryo_robot_msgs::SetInt::Request &req, niryo_robot_msgs::SetInt::Response &res);
-        bool callbackSendCustomDxlValue(dynamixel_driver::SendCustomDxlValue::Request &req, dynamixel_driver::SendCustomDxlValue::Response &res);
-        bool callbackReadCustomDxlValue(dynamixel_driver::ReadCustomDxlValue::Request &req, dynamixel_driver::ReadCustomDxlValue::Response &res);
 
     };
 } //DynamixelDriver

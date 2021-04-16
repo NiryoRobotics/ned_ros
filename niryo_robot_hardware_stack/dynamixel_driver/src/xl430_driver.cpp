@@ -39,29 +39,29 @@ namespace DynamixelDriver
     {
         string hardware_message;
 
-        if (hw_state & 0b00000001)
+        if (hw_state & 1<<0)    //0b00000001
         {
             hardware_message += "Input Voltage";
         }
-        if (hw_state & 0b00000100)
+        if (hw_state & 1<<2)    //0b00000100
         {
             if (hardware_message != "")
                 hardware_message += ", ";
             hardware_message += "OverHeating";
         }
-        if (hw_state & 0b00001000)
+        if (hw_state & 1<<3)    //0b00001000
         {
             if (hardware_message != "")
                 hardware_message += ", ";
             hardware_message += "Motor Encoder";
         }
-        if (hw_state & 0b00010000)
+        if (hw_state & 1<<4)    //0b00010000
         {
             if (hardware_message != "")
                 hardware_message += ", ";
             hardware_message += "Electrical Shock";
         }
-        if (hw_state & 0b00100000)
+        if (hw_state & 1<<5)    //0b00100000
         {
             if (hardware_message != "")
                 hardware_message += ", ";
@@ -100,82 +100,51 @@ namespace DynamixelDriver
 
     int XL430Driver::changeId(uint8_t id, uint8_t new_id)
     {
-        return _dxlPacketHandler->write1ByteTxOnly(_dxlPortHandler.get(), id, XL430_ADDR_ID, new_id);
+        return write1Byte(XL430_ADDR_ID, id, new_id);
     }
 
     int XL430Driver::changeBaudRate(uint8_t id, uint32_t new_baudrate)
     {
-        return _dxlPacketHandler->write1ByteTxOnly(_dxlPortHandler.get(), id, XL430_ADDR_BAUDRATE, (uint8_t)new_baudrate);
+        return write1Byte(XL430_ADDR_BAUDRATE, id, static_cast<uint8_t>(new_baudrate));
     }
 
     int XL430Driver::setLed(uint8_t id, uint32_t led_value)
     {
-        return _dxlPacketHandler->write1ByteTxOnly(_dxlPortHandler.get(), id, XL430_ADDR_LED, (uint8_t)led_value);
+        return write1Byte(XL430_ADDR_LED, id, static_cast<uint8_t>(led_value));
     }
 
     int XL430Driver::setTorqueEnable(uint8_t id, uint32_t torque_enable)
     {
-        return _dxlPacketHandler->write1ByteTxOnly(_dxlPortHandler.get(), id, XL430_ADDR_TORQUE_ENABLE, (uint8_t)torque_enable);
+        return write1Byte(XL430_ADDR_TORQUE_ENABLE, id, static_cast<uint8_t>(torque_enable));
     }
 
     int XL430Driver::setGoalPosition(uint8_t id, uint32_t position)
     {
-        return _dxlPacketHandler->write4ByteTxOnly(_dxlPortHandler.get(), id, XL430_ADDR_GOAL_POSITION, position);
+        return write4Bytes(XL430_ADDR_GOAL_POSITION, id, position);
     }
 
     int XL430Driver::setGoalVelocity(uint8_t id, uint32_t velocity)
     {
-        return _dxlPacketHandler->write4ByteTxOnly(_dxlPortHandler.get(), id, XL430_ADDR_GOAL_VELOCITY, velocity);
+        return write4Bytes(XL430_ADDR_GOAL_VELOCITY, id, velocity);
     }
 
-    int XL430Driver::setGoalTorque(uint8_t id, uint32_t torque)
+    int XL430Driver::setGoalTorque(uint8_t /*id*/, uint32_t /*torque*/)
     {
         // No goal torque for this motor ?
         return COMM_TX_ERROR;
     }
 
-    /*
-     *  -----------------   PID   --------------------
-     */
-
-    int XL430Driver::setPGain(uint8_t id, uint32_t gain)
-    {
-        return _dxlPacketHandler->write2ByteTxOnly(_dxlPortHandler.get(), id, XL430_ADDR_P_GAIN, (uint16_t)gain);
-    }
-
-    int XL430Driver::setIGain(uint8_t id, uint32_t gain)
-    {
-        return _dxlPacketHandler->write2ByteTxOnly(_dxlPortHandler.get(), id, XL430_ADDR_I_GAIN, (uint16_t)gain);
-    }
-
-    int XL430Driver::setDGain(uint8_t id, uint32_t gain)
-    {
-        return _dxlPacketHandler->write2ByteTxOnly(_dxlPortHandler.get(), id, XL430_ADDR_D_GAIN, (uint16_t)gain);
-    }
-
-    int XL430Driver::setff1Gain(uint8_t id, uint32_t gain)
-    {
-        return _dxlPacketHandler->write2ByteTxOnly(_dxlPortHandler.get(), id, XL430_ADDR_FF1_GAIN, (uint16_t)gain);
-    }
-
-    int XL430Driver::setff2Gain(uint8_t id, uint32_t gain)
-    {
-        return _dxlPacketHandler->write2ByteTxOnly(_dxlPortHandler.get(), id, XL430_ADDR_FF2_GAIN, (uint16_t)gain);
-    }
-
-    // others
-
     int XL430Driver::setReturnDelayTime(uint8_t id, uint32_t return_delay_time)
     {
-        return _dxlPacketHandler->write1ByteTxOnly(_dxlPortHandler.get(), id, XL430_ADDR_RETURN_DELAY_TIME, (uint8_t)return_delay_time);
+        return write1Byte(XL430_ADDR_RETURN_DELAY_TIME, id, static_cast<uint8_t>(return_delay_time));
     }
 
     int XL430Driver::setLimitTemperature(uint8_t id, uint32_t temperature)
     {
-        return _dxlPacketHandler->write1ByteTxOnly(_dxlPortHandler.get(), id, XL430_ADDR_TEMPERATURE_LIMIT, (uint8_t)temperature);
+        return write1Byte(XL430_ADDR_TEMPERATURE_LIMIT, id, static_cast<uint8_t>(temperature));
     }
 
-    int XL430Driver::setMaxTorque(uint8_t id, uint32_t torque)
+    int XL430Driver::setMaxTorque(uint8_t /*id*/, uint32_t /*torque*/)
     {
         // No max torque setting for this motor ?
         return COMM_TX_ERROR;
@@ -183,12 +152,40 @@ namespace DynamixelDriver
 
     int XL430Driver::setReturnLevel(uint8_t id, uint32_t return_level)
     {
-        return _dxlPacketHandler->write1ByteTxOnly(_dxlPortHandler.get(), id, XL430_ADDR_STATUS_RETURN_LEVEL, (uint8_t)return_level);
+        return write1Byte(XL430_ADDR_STATUS_RETURN_LEVEL, id, static_cast<uint8_t>(return_level));
     }
 
     int XL430Driver::setAlarmShutdown(uint8_t id, uint32_t alarm_shutdown)
     {
-        return _dxlPacketHandler->write1ByteTxOnly(_dxlPortHandler.get(), id, XL430_ADDR_ALARM_SHUTDOWN, (uint8_t)alarm_shutdown);
+        return write1Byte(XL430_ADDR_ALARM_SHUTDOWN, id, static_cast<uint8_t>(alarm_shutdown));
+    }
+    /*
+     *  -----------------   PID   --------------------
+     */
+
+    int XL430Driver::setPGain(uint8_t id, uint32_t gain)
+    {
+        return write2Bytes(XL430_ADDR_P_GAIN, id, static_cast<uint16_t>(gain));
+    }
+
+    int XL430Driver::setIGain(uint8_t id, uint32_t gain)
+    {
+        return write2Bytes(XL430_ADDR_I_GAIN, id, static_cast<uint16_t>(gain));
+    }
+
+    int XL430Driver::setDGain(uint8_t id, uint32_t gain)
+    {
+        return write2Bytes(XL430_ADDR_D_GAIN, id, static_cast<uint16_t>(gain));
+    }
+
+    int XL430Driver::setff1Gain(uint8_t id, uint32_t gain)
+    {
+        return write2Bytes(XL430_ADDR_FF1_GAIN, id, static_cast<uint16_t>(gain));
+    }
+
+    int XL430Driver::setff2Gain(uint8_t id, uint32_t gain)
+    {
+        return write2Bytes(XL430_ADDR_FF2_GAIN, id, static_cast<uint16_t>(gain));
     }
 
     /*
@@ -197,13 +194,13 @@ namespace DynamixelDriver
 
     int XL430Driver::syncWritePositionGoal(const vector<uint8_t> &id_list,const  vector<uint32_t> &position_list)
     {
-        return syncWrite4Bytes(XL430_ADDR_GOAL_POSITION, id_list, position_list);
+        return syncWrite(XL430_ADDR_GOAL_POSITION, DXL_LEN_FOUR_BYTES, id_list, position_list);
     }
     int XL430Driver::syncWriteVelocityGoal(const vector<uint8_t> &id_list, const vector<uint32_t> &velocity_list)
     {
-        return syncWrite4Bytes(XL430_ADDR_GOAL_VELOCITY, id_list, velocity_list);
+        return syncWrite(XL430_ADDR_GOAL_VELOCITY, DXL_LEN_FOUR_BYTES, id_list, velocity_list);
     }
-    int XL430Driver::syncWriteTorqueGoal(const vector<uint8_t> &id_list, const vector<uint32_t> &torque_list)
+    int XL430Driver::syncWriteTorqueGoal(const vector<uint8_t>& /*id_list*/, const vector<uint32_t> &/*torque_list*/)
     {
         // No goal torque for this motor ?
         return COMM_TX_ERROR;
@@ -211,12 +208,12 @@ namespace DynamixelDriver
 
     int XL430Driver::syncWriteTorqueEnable(const vector<uint8_t> &id_list, const vector<uint32_t> &torque_enable_list)
     {
-        return syncWrite1Byte(XL430_ADDR_TORQUE_ENABLE, id_list, torque_enable_list);
+        return syncWrite(XL430_ADDR_TORQUE_ENABLE, DXL_LEN_ONE_BYTE, id_list, torque_enable_list);
     }
 
     int XL430Driver::syncWriteLed(const vector<uint8_t> &id_list, const vector<uint32_t> &led_list)
     {
-        return syncWrite1Byte(XL430_ADDR_LED, id_list, led_list);
+        return syncWrite(XL430_ADDR_LED, DXL_LEN_ONE_BYTE, id_list, led_list);
     }
 
     /*
@@ -262,7 +259,7 @@ namespace DynamixelDriver
         return read1Byte(XL430_ADDR_TEMPERATURE_LIMIT, id, limit_temperature);
     }
 
-    int XL430Driver::readMaxTorque(uint8_t id, uint32_t *max_torque)
+    int XL430Driver::readMaxTorque(uint8_t /*id*/, uint32_t* /*max_torque*/)
     {
         // No max torque setting for this motor ?
         return COMM_TX_ERROR;
