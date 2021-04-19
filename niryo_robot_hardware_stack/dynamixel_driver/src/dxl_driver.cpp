@@ -520,12 +520,7 @@ namespace DynamixelDriver
                 syncWriteTorqueEnable(cmd.getMotorsId(), cmd.getParams());
             break;
             case EDxlCommandType::CMD_TYPE_LEARNING_MODE:
-            {
-                vector<uint8_t> id_list = getArmMotors();
-                vector<uint32_t> cmd_param(id_list.size(), cmd.getParams()[0]);
-
-                syncWriteTorqueEnable(id_list, cmd_param);
-            }
+                syncWriteTorqueEnable(cmd.getMotorsId(), cmd.getParams());
             break;
             default:
                 ROS_ERROR("DxlDriver::readSynchronizeCommand - Unsupported command type: %d", static_cast<int>(cmd.getType()));

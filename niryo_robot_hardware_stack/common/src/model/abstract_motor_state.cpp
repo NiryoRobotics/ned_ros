@@ -48,6 +48,60 @@ namespace common {
 
         }
 
+        // CC to be removed. For easy refacto only
+        int AbstractMotorState::getTotalRangePosition() const
+        {
+            switch(_type)
+            {
+            case EMotorType::MOTOR_TYPE_XC430:
+                return 4095;
+            case EMotorType::MOTOR_TYPE_XL320:
+                return 1023;
+            case EMotorType::MOTOR_TYPE_XL330:
+                return 4095;
+            case EMotorType::MOTOR_TYPE_XL430:
+                return 4095;
+            default:
+                return 0;
+            }
+        }
+
+        // CC to be removed. For easy refacto only
+        int AbstractMotorState::getMiddlePosition() const
+        {
+            switch(_type)
+            {
+            case EMotorType::MOTOR_TYPE_XC430:
+                return 2047;
+            case EMotorType::MOTOR_TYPE_XL320:
+                return 511;
+            case EMotorType::MOTOR_TYPE_XL330:
+                return 2047;
+            case EMotorType::MOTOR_TYPE_XL430:
+                return 2047;
+            default:
+                return 0;
+            }
+        }
+
+        // CC to be removed. For easy refacto only
+        double AbstractMotorState::getTotalAngle() const
+        {
+            switch(_type)
+            {
+            case EMotorType::MOTOR_TYPE_XC430:
+                return 360.36;
+            case EMotorType::MOTOR_TYPE_XL320:
+                return 296.67;
+            case EMotorType::MOTOR_TYPE_XL330:
+                return 296.67;
+            case EMotorType::MOTOR_TYPE_XL430:
+                return 360.36;
+            default:
+                return 0;
+            }
+        }
+
         void AbstractMotorState::reset()
         {
             _id = 0;

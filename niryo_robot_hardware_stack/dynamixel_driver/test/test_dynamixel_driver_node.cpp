@@ -59,10 +59,10 @@ class DxlDriverTest {
             cmd.setType(common::model::EDxlCommandType::CMD_TYPE_TORQUE);
             cmd.setMotorsId(id);
             cmd.setParams(std::vector<uint32_t> {true, true, true});
-            _dynamixel->setDxlCommands(cmd);
+            _dynamixel->setDxlSyncCommands(cmd);
             ros::Duration(1).sleep();
             cmd.setParams(std::vector<uint32_t> {false, false, false});
-            _dynamixel->setDxlCommands(cmd);
+            _dynamixel->setDxlSyncCommands(cmd);
             ros::Duration(1).sleep();
 
         }
@@ -76,29 +76,29 @@ class DxlDriverTest {
             cmd.setMotorsId(id);
             cmd.setParams(std::vector<uint32_t> {true, true, true});
             ROS_INFO("Sending command 1");
-            _dynamixel->setDxlCommands(cmd);
+            _dynamixel->setDxlSyncCommands(cmd);
             ros::Duration(3).sleep();
 
             cmd.setType(common::model::EDxlCommandType::CMD_TYPE_POSITION);
             cmd.setParams(dxl_home_pose);
             ROS_INFO("Sending command 2");
-            _dynamixel->setDxlCommands(cmd);
+            _dynamixel->setDxlSyncCommands(cmd);
             ros::Duration(3).sleep();
 
             cmd.setParams(dxl_pose_1);
             ROS_INFO("Sending command 3");
-            _dynamixel->setDxlCommands(cmd);
+            _dynamixel->setDxlSyncCommands(cmd);
             ros::Duration(3).sleep();
 
             cmd.setParams(dxl_pose_2);
             ROS_INFO("Sending command 4");
-            _dynamixel->setDxlCommands(cmd);
+            _dynamixel->setDxlSyncCommands(cmd);
             ros::Duration(3).sleep();
 
             cmd.setType(common::model::EDxlCommandType::CMD_TYPE_TORQUE);
             cmd.setParams(std::vector<uint32_t> {false, false, false});
             ROS_INFO("Sending command 5");
-            _dynamixel->setDxlCommands(cmd);
+            _dynamixel->setDxlSyncCommands(cmd);
         }
 
         void TestReceiveState()

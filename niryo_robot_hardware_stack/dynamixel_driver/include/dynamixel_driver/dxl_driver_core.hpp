@@ -62,7 +62,7 @@ namespace DynamixelDriver
 
         void setTrajectoryControllerCommands(std::vector<uint32_t>& cmd);
 
-        void setDxlCommands(const common::model::SynchronizeMotorCmd &cmd);
+        void setDxlSyncCommands(const common::model::SynchronizeMotorCmd &cmd);
         void addDxlCommandToQueue(const common::model::SingleMotorCmd &cmd);
         void addDxlCommandToQueue(const std::vector<common::model::SingleMotorCmd> &cmd);
 
@@ -77,9 +77,7 @@ namespace DynamixelDriver
 
         dynamixel_driver::DxlArrayMotorHardwareStatus getHwStatus() const;
         niryo_robot_msgs::BusState getDxlBusState() const;
-
         std::vector<common::model::DxlMotorState> getDxlStates() const;
-
         std::vector<uint8_t> getRemovedMotorList() const;
         
         int update_leds(void);
@@ -129,9 +127,9 @@ namespace DynamixelDriver
 
         //set a queue of cmds ? need to create an interface then
         std::vector<uint32_t> _joint_trajectory_controller_cmd;
+
         common::model::SynchronizeMotorCmd _dxl_sync_cmds;
         std::queue<common::model::SingleMotorCmd> _dxl_single_cmds;
-
         std::queue<common::model::SingleMotorCmd> _end_effector_cmds;
 
         ros::ServiceServer _activate_leds_server;

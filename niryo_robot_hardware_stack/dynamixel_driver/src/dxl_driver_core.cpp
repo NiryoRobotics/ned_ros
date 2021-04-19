@@ -251,7 +251,7 @@ namespace DynamixelDriver
         return niryo_robot_msgs::CommandStatus::ABORTED;
     }
 
-    void DynamixelDriverCore::setDxlCommands(const common::model::SynchronizeMotorCmd &cmd)
+    void DynamixelDriverCore::setDxlSyncCommands(const common::model::SynchronizeMotorCmd &cmd)
     {
         ROS_DEBUG("DynamixelDriverCore::setDxlCommands - %s", cmd.str().c_str());
 
@@ -289,7 +289,6 @@ namespace DynamixelDriver
         for(auto&& c : cmd)
             addEndEffectorCommandToQueue(c);
     }
-
 
     void DynamixelDriverCore::setTrajectoryControllerCommands(vector<uint32_t> &cmd)
     {

@@ -51,7 +51,6 @@ namespace StepperDriver
             void controlLoop();
 
             void setStepperCommands(common::model::StepperMotorCmd &cmd);
-
             void setTrajectoryControllerCommands(std::vector<int32_t> &cmd); 
 
             int setConveyor(uint8_t motor_id);

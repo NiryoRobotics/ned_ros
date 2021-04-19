@@ -32,7 +32,11 @@ namespace common {
 
         JointState::JointState(string name, EMotorType type, uint8_t id) :
             AbstractMotorState(id, type),
-            _name(name)
+            _name(name),
+            _offset_position(0.0),
+            _position(0.0),
+            _need_calibration(true),
+            _cmd(0.0)
         {
         }
 
@@ -41,12 +45,10 @@ namespace common {
 
         }
 
-
         bool JointState::operator==(const JointState& m) const
         {
             return((this->_type == m._type) && (this->_id == m._id));
         }
-
 
         void JointState::setName(string& name)
         {
@@ -63,6 +65,19 @@ namespace common {
             _position = position;
         }
 
+        void JointState::setOffsetPosition(double offset_position)
+        {
+            _offset_position = offset_position;
+        }
+
+        void JointState::setCmd(double cmd)
+        {
+            _cmd = cmd;
+        }
+
+        //***********************
+        //  AbstractMotor intf
+        //***********************
 
         void JointState::reset()
         {
@@ -70,6 +85,11 @@ namespace common {
             _name.clear();
             _position = 0.0;
             _need_calibration = false;
+        }
+
+        bool common::model::JointState::isValid() const
+        {
+            return (0 != getId() && EMotorType::MOTOR_TYPE_UNKNOWN != getType());
         }
 
         string JointState::str() const

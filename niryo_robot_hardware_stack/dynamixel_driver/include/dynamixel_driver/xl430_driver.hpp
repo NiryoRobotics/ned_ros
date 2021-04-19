@@ -134,12 +134,6 @@ namespace DynamixelDriver
         static constexpr int XL430_ADDR_PRESENT_VOLTAGE     = 144;
         static constexpr int XL430_ADDR_PRESENT_TEMPERATURE = 146;
 
-    public:
-        // we stop at 4094 instead of 4095, to get an odd number of positions (4095)
-        // --> so we can get a middle point (2047)
-        static constexpr int    TOTAL_RANGE_POSITION    = 4095;
-        static constexpr int    MIDDLE_POSITION         = 2047;
-        static constexpr double TOTAL_ANGLE             = 360.36;
     };
 } //DynamixelDriver
 

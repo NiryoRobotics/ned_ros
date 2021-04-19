@@ -65,11 +65,6 @@ namespace StepperDriver
         setupSpi();
         init();
         updateMotorList();
-
-        _stepper_states.clear();
-        _stepper_states.push_back(0);
-        _stepper_states.push_back(0);
-        _stepper_states.push_back(0);
     }
 
     StepperDriver::~StepperDriver()
@@ -230,11 +225,6 @@ namespace StepperDriver
         }
         ROS_WARN("StepperDriver::getStepperPose - Get positionsfrom motor id %d failed because doesn't exist", motor_id);
         return 0;
-    }
-
-    const std::vector<int32_t> &StepperDriver::getJointTrajectoryState() const
-    {
-        return _stepper_states;
     }
 
     int StepperDriver::readCommand(StepperMotorCmd cmd)
@@ -470,18 +460,6 @@ namespace StepperDriver
         if (pos & (1 << 15))
         {
             pos = -1 * ((~pos + 1) & 0xFFFF);
-        }
-        if (motor_id == 1)
-        {
-            _stepper_states[0] = pos;
-        }
-        else if (motor_id == 2)
-        {
-            _stepper_states[1] = pos;
-        }
-        else if (motor_id == 3)
-        {
-            _stepper_states[2] = pos;
         }
 
         for (StepperMotorState motorState : _motor_list)

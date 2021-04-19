@@ -224,33 +224,6 @@ namespace DynamixelDriver
         return _state_map.size() > 0;
     }
 
-
-    //  Conversions
-
-    /**
-     *
-     */
-    template<typename T>
-    uint32_t rad_pos_to_motor_pos(double position_rad)
-    {
-        static_assert (std::is_base_of<DynamixelDriver::XDriver, T>::value, "T must derive from class XDriver");
-        static_assert(0 != T::TOTAL_ANGLE, "TOTAL_ANGLE of class T must be non null");
-
-        uint32_t converted = T::MIDDLE_POSITION + (position_rad * RADIAN_TO_DEGREE * T::TOTAL_RANGE_POSITION) / T::TOTAL_ANGLE;
-        return converted;
-    }
-
-    template<typename T>
-    double motor_pos_to_rad_pos(uint32_t pos)
-    {
-        static_assert (std::is_base_of<DynamixelDriver::XDriver, T>::value, "T must derive from class XDriver");
-        static_assert(0 != T::TOTAL_RANGE_POSITION, "TOTAL_ANGLE of class T must be non null");
-
-        double converted = ((pos - T::MIDDLE_POSITION) * T::TOTAL_ANGLE) / (RADIAN_TO_DEGREE * T::TOTAL_RANGE_POSITION);
-
-        return converted;
-    }
-
 }
 
 #endif

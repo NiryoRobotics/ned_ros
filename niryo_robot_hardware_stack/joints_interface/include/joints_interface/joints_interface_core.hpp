@@ -65,7 +65,7 @@ namespace JointsInterface {
             bool getFreeDriveMode() const;
             void getCalibrationState(bool &need_calibration, bool &calibration_in_progress) const;
 
-            const std::vector<common::model::JointState> &getJointsState() const;
+            const std::vector<std::shared_ptr<common::model::JointState> >& getJointsState() const;
 
         private:    
             void init(std::shared_ptr<DynamixelDriver::DynamixelDriverCore> dynamixel,

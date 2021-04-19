@@ -138,11 +138,6 @@ namespace DynamixelDriver
         // according to xl-320 datasheet : 1 speed ~ 0.111 rpm ~ 1.8944 dxl position per second
         static constexpr double XL320_STEPS_FOR_1_SPEED = 1.8944; // 0.111 * 1024 / 60
 
-        // we stop at 1022 instead of 1023, to get an odd number of positions (1023)
-        // --> so we can get a middle point (511)
-        static constexpr int    TOTAL_RANGE_POSITION    = 1023;
-        static constexpr int    MIDDLE_POSITION         = 511;
-        static constexpr double TOTAL_ANGLE             = 296.67;
     };
 } //DynamixelDriver
 

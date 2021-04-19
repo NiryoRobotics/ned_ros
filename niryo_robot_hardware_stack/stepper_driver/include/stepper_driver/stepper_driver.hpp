@@ -106,17 +106,12 @@ namespace StepperDriver
 
             //getters
             uint32_t getStepperPose(int32_t motor_id) const;
-            const std::vector<int32_t>& getJointTrajectoryState() const;
             const std::vector<common::model::StepperMotorState>& getMotorsState() const;
             const std::vector<common::model::ConveyorState>& getConveyorsState() const;
             void getBusState(bool& connection_status, std::vector<uint8_t>& motor_list, std::string& error) const;
 
             e_CanStepperCalibrationStatus getCalibrationResult(uint8_t id, int32_t &result) const;
             std::string getErrorMessage() const;
-
-            static int stepsPerRev();
-            static int32_t rad_pos_to_steps(double position_rad, double gear_ratio, double direction);
-            static double steps_to_rad_pos(int32_t steps, double gear_ratio, double direction);
 
     private:
             int init();
@@ -178,7 +173,6 @@ namespace StepperDriver
 
             std::string _debug_error_message;
 
-            std::vector<int32_t> _stepper_states;
             e_CanStepperCalibrationStatus _calibration_result;
 
     private:
@@ -223,31 +217,9 @@ namespace StepperDriver
             static constexpr int CAN_SCAN_TIMEOUT                       =  -10003;
 
             static constexpr double STEPPER_MOTOR_TIMEOUT_VALUE         = 1.0;
-
-            static constexpr double STEPPERS_MICROSTEPS                 = 8.0;
-            static constexpr double STEPPERS_MOTOR_STEPS_PER_REVOLUTION = 200.0;
     };
 
-    inline
-    int StepperDriver::stepsPerRev()
-    {
-        return int(STEPPERS_MICROSTEPS * STEPPERS_MOTOR_STEPS_PER_REVOLUTION);
-    }
 
-    inline
-    int32_t
-    StepperDriver::rad_pos_to_steps(double position_rad, double gear_ratio, double direction)
-    {
-        return static_cast<int32_t>(direction * (STEPPERS_MOTOR_STEPS_PER_REVOLUTION * STEPPERS_MICROSTEPS * gear_ratio * position_rad * RADIAN_TO_DEGREE / 360.0));
-    }
-
-    inline
-    double
-    StepperDriver::steps_to_rad_pos(int32_t steps, double gear_ratio, double direction)
-    {
-        assert(0.0 != (STEPPERS_MOTOR_STEPS_PER_REVOLUTION * STEPPERS_MICROSTEPS * gear_ratio * RADIAN_TO_DEGREE));
-        return (direction * steps * 360.0) / (STEPPERS_MOTOR_STEPS_PER_REVOLUTION * STEPPERS_MICROSTEPS * gear_ratio * RADIAN_TO_DEGREE);
-    }
 }
 
 #endif

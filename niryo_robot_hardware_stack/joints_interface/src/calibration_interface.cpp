@@ -33,49 +33,20 @@
 
 #include "joints_interface/calibration_interface.hpp"
 
-using namespace std;
 using namespace common::model;
 
 namespace JointsInterface {
 
-    CalibrationInterface::CalibrationInterface(vector<JointState> joint_list,
-                                               shared_ptr<StepperDriver::StepperDriverCore> stepper,
-                                               shared_ptr<DynamixelDriver::DynamixelDriverCore> dynamixel) :
-        _joint_list(joint_list),
+    CalibrationInterface::CalibrationInterface(std::vector<std::shared_ptr<JointState> > joint_list,
+                                               std::shared_ptr<StepperDriver::StepperDriverCore> stepper,
+                                               std::shared_ptr<DynamixelDriver::DynamixelDriverCore> dynamixel) :
         _stepper(stepper),
-        _dynamixel(dynamixel)
+        _dynamixel(dynamixel),
+        _joint_list(joint_list)
     {
 
         _nh.getParam("/niryo_robot_hardware_interface/calibration_timeout", _calibration_timeout);
         ROS_DEBUG("Calibration Interface - Calibration timeout %d", _calibration_timeout);
-
-        _nh.getParam("/niryo_robot_hardware_interface/steppers/stepper_1_gear_ratio", _gear_ratio_1);
-        _nh.getParam("/niryo_robot_hardware_interface/steppers/stepper_2_gear_ratio", _gear_ratio_2);
-        _nh.getParam("/niryo_robot_hardware_interface/steppers/stepper_3_gear_ratio", _gear_ratio_3);
-        ROS_DEBUG("Calibration Interface - Gear ratios : (1 : %lf, 2 : %lf, 3 : %lf)", _gear_ratio_1, _gear_ratio_2, _gear_ratio_3);
-
-        _nh.getParam("/niryo_robot_hardware_interface/steppers/stepper_1_offset_position", _offset_position_stepper_1);
-        _nh.getParam("/niryo_robot_hardware_interface/steppers/stepper_2_offset_position", _offset_position_stepper_2);
-        _nh.getParam("/niryo_robot_hardware_interface/steppers/stepper_3_offset_position", _offset_position_stepper_3);
-        ROS_DEBUG("Calibration Interface - Angle offsets steppers: (1 : %lf, 2 : %lf, 3 : %lf)", _offset_position_stepper_1, _offset_position_stepper_2, _offset_position_stepper_3);
-
-        _nh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_1_offset_position", _offset_position_dxl_1);
-        _nh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_2_offset_position", _offset_position_dxl_2);
-        _nh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_3_offset_position", _offset_position_dxl_3);
-        ROS_DEBUG("Calibration Interface - Angle offsets dxl: (1 : %lf, 2 : %lf, 3 : %lf)", _offset_position_dxl_1, _offset_position_dxl_2, _offset_position_dxl_3);
-
-        _nh.getParam("/niryo_robot_hardware_interface/steppers/stepper_1_direction", _direction_1);
-        _nh.getParam("/niryo_robot_hardware_interface/steppers/stepper_2_direction", _direction_2);
-        _nh.getParam("/niryo_robot_hardware_interface/steppers/stepper_3_direction", _direction_3);
-        ROS_DEBUG("Calibration Interface - Direction : (1 : %lf, 2 : %lf, 3 : %lf)", _direction_1, _direction_2, _direction_3);
-
-        _nh.getParam("/niryo_robot_hardware_interface/dynamixels/xl430_middle_position", _xl430_middle_position);
-        _nh.getParam("/niryo_robot_hardware_interface/dynamixels/xc430_middle_position", _xc430_middle_position);
-        _nh.getParam("/niryo_robot_hardware_interface/dynamixels/xl320_middle_position", _xl320_middle_position);
-        _nh.getParam("/niryo_robot_hardware_interface/dynamixels/xl330_middle_position", _xl330_middle_position);
-
-        ROS_DEBUG("Calibration Interface - (xl430 middle position %d, xc430 middle position %d, xl320 middle position %d, xl330 middle position %d)",
-                                        _xl430_middle_position, _xc430_middle_position, _xl320_middle_position, _xl330_middle_position);
 
         _motor_calibration_list.clear();
         _calibration_in_progress = false;
@@ -88,7 +59,7 @@ namespace JointsInterface {
         return _calibration_in_progress;
     }
 
-    int CalibrationInterface::startCalibration(int mode, string &result_message)
+    int CalibrationInterface::startCalibration(int mode, std::string &result_message)
     {
         if (mode == 1) // auto
         {
@@ -130,31 +101,31 @@ namespace JointsInterface {
         return niryo_robot_msgs::CommandStatus::SUCCESS;
     }
 
-    void CalibrationInterface::_motorTorque(JointState &motor, bool status)
+    void CalibrationInterface::_motorTorque(const std::shared_ptr<JointState>& motor, bool status)
     {
         StepperMotorCmd stepper_cmd;
 
         stepper_cmd.setType(EStepperCommandType::CMD_TYPE_TORQUE);
-        vector<uint8_t> id{motor.getId()};
+        std::vector<uint8_t> id{motor->getId()};
         stepper_cmd.setMotorsId(id);
-        vector<int32_t> param{status};
+        std::vector<int32_t> param{status};
         stepper_cmd.setParams(param);
 
         _stepper->setStepperCommands(stepper_cmd);
         ros::Duration(0.2).sleep();
     }
 
-    void CalibrationInterface::_moveMotor(JointState &motor, int steps, float delay)
+    void CalibrationInterface::_moveMotor(const std::shared_ptr<JointState>& motor, int steps, float delay)
     {
         _motorTorque(motor, true);
 
         StepperMotorCmd stepper_cmd;
         stepper_cmd.setType(EStepperCommandType::CMD_TYPE_POSITION);
 
-        vector<uint8_t> id{motor.getId()};
+        std::vector<uint8_t> id{motor->getId()};
         stepper_cmd.setMotorsId(id);
 
-        vector<int32_t> param{steps};
+        std::vector<int32_t> param{steps};
         stepper_cmd.setParams(param);
 
         _stepper->setStepperCommands(stepper_cmd);
@@ -162,15 +133,15 @@ namespace JointsInterface {
         ros::Duration(delay).sleep();
     }
 
-    int CalibrationInterface::_relativeMoveMotor(JointState &motor, int steps, int delay, bool wait)
+    int CalibrationInterface::_relativeMoveMotor(const std::shared_ptr<JointState>& motor, int steps, int delay, bool wait)
     {
         _motorTorque(motor, true);
 
         StepperMotorCmd stepper_cmd;
         stepper_cmd.setType(EStepperCommandType::CMD_TYPE_RELATIVE_MOVE);
-        vector<int32_t> param{steps, delay};
+        std::vector<int32_t> param{steps, delay};
         stepper_cmd.setParams(param);
-        vector<uint8_t> id{motor.getId()};
+        std::vector<uint8_t> id{motor->getId()};
         stepper_cmd.setMotorsId(id);
 
         _stepper->setStepperCommands(stepper_cmd);
@@ -182,36 +153,50 @@ namespace JointsInterface {
         return 1;
     }
 
-    void CalibrationInterface::_setCalibrationCommand(JointState motor,
-                                                      int offset, int delay, int motor_direction,
-                                                      int calibration_direction, int timeout,
-                                                      int32_t& calibration_result)
+    /**
+     * @brief CalibrationInterface::_setStepperCalibrationCommand
+     * @param motor_id
+     * @param offset
+     * @param delay
+     * @param motor_direction
+     * @param calibration_direction
+     * @param timeout
+     * @return
+     */
+    int32_t CalibrationInterface::_setStepperCalibrationCommand(uint8_t motor_id,
+                                                                int offset, int delay, int motor_direction,
+                                                                int calibration_direction, int timeout)
     {
+        int32_t calibration_result;
+
         StepperMotorCmd stepper_cmd;
 
         stepper_cmd.setType(EStepperCommandType::CMD_TYPE_CALIBRATION);
-        vector<uint8_t> id{motor.getId()};
-        stepper_cmd.setMotorsId(id);
 
-        vector<int32_t> params{offset, delay, motor_direction * calibration_direction, timeout};
+        std::vector<uint8_t> cmd_ids{motor_id};
+        stepper_cmd.setMotorsId(cmd_ids);
+
+        std::vector<int32_t> params{offset, delay, static_cast<int>(motor_direction * calibration_direction), timeout};
         stepper_cmd.setParams(params);
 
         _stepper->setStepperCommands(stepper_cmd);
 
-        ROS_INFO("Calibration Interface - Wait for calibration result for motor id %d :", id[0]);
+        ROS_INFO("Calibration Interface - Wait for calibration result for motor id %d :", motor_id);
         ros::Duration(0.2).sleep();
-        while (_stepper->getCalibrationResult(id[0], calibration_result) == StepperDriver::e_CanStepperCalibrationStatus::CAN_STEPPERS_CALIBRATION_IN_PROGRESS)
+        while (_stepper->getCalibrationResult(motor_id, calibration_result) == StepperDriver::e_CanStepperCalibrationStatus::CAN_STEPPERS_CALIBRATION_IN_PROGRESS)
         {
             ros::Duration(0.2).sleep();
         }
-        ROS_INFO("Calibration Interface - Motor %d, calibration cmd result %d ", id[0], calibration_result);
+        ROS_INFO("Calibration Interface - Motor %d, calibration cmd result %d ", motor_id, calibration_result);
+
+        return calibration_result;
     }
 
     bool CalibrationInterface::_check_steppers_connected()
     {
         for (size_t stepper_id = 0; stepper_id < 3; stepper_id++)
         {
-            if (!_stepper->scanMotorId(_joint_list.at(stepper_id).getId()))
+            if (!_stepper->scanMotorId(_joint_list.at(stepper_id)->getId()))
                 return false;
         }
         return true;
@@ -228,15 +213,15 @@ namespace JointsInterface {
 
         stepper_cmd.setType(EStepperCommandType::CMD_TYPE_TORQUE);
 
-        vector<uint8_t> id{_joint_list.at(1).getId()};
+        std::vector<uint8_t> id{_joint_list.at(1)->getId()};
         stepper_cmd.setMotorsId(id);
-        vector<int32_t> stepper_param{true};
+        std::vector<int32_t> stepper_param{true};
         stepper_cmd.setParams(stepper_param);
         _stepper->setStepperCommands(stepper_cmd);
         sld.sleep();
 
         // 1. Relative Move Motor 3
-        _relativeMoveMotor(_joint_list.at(2), StepperDriver::StepperDriver::rad_pos_to_steps(0.25, _gear_ratio_3, _direction_3), 500, false);
+        _relativeMoveMotor(_joint_list.at(2), _joint_list.at(2)->rad_pos_to_motor_pos(0.25), 500, false);
         ros::Duration(0.5).sleep();
 
         // 2. Move All Dynamixel to Home Position
@@ -245,139 +230,158 @@ namespace JointsInterface {
         dynamixel_cmd.setType(EDxlCommandType::CMD_TYPE_TORQUE);
         id.clear();
         id = {
-            _joint_list.at(3).getId(),
-            _joint_list.at(4).getId(),
-            _joint_list.at(5).getId()};
+            _joint_list.at(3)->getId(),
+            _joint_list.at(4)->getId(),
+            _joint_list.at(5)->getId()};
         dynamixel_cmd.setMotorsId(id);
-        vector<uint32_t> dxl_param{1, 1, 1};
+        std::vector<uint32_t> dxl_param{1, 1, 1};
         dynamixel_cmd.setParams(dxl_param);
-        _dynamixel->setDxlCommands(dynamixel_cmd);
+        _dynamixel->setDxlSyncCommands(dynamixel_cmd);
         sld.sleep();
 
-        // CC to be generalized
         dxl_param = {
-            DynamixelDriver::rad_pos_to_motor_pos<DynamixelDriver::XL430Driver>(-_offset_position_dxl_1),
-            DynamixelDriver::rad_pos_to_motor_pos<DynamixelDriver::XL430Driver>(-_offset_position_dxl_2),
-            DynamixelDriver::rad_pos_to_motor_pos<DynamixelDriver::XL320Driver>(-_offset_position_dxl_3)};
+              _joint_list.at(3)->rad_pos_to_motor_pos(0),
+              _joint_list.at(4)->rad_pos_to_motor_pos(0),
+              _joint_list.at(5)->rad_pos_to_motor_pos(0)};
         _dynamixel->setTrajectoryControllerCommands(dxl_param);
         sld.sleep();
 
-        _joint_list.at(3).setNeedCalibration(false);
-        _joint_list.at(4).setNeedCalibration(false);
-        _joint_list.at(5).setNeedCalibration(false);
+        _joint_list.at(3)->setNeedCalibration(false);
+        _joint_list.at(4)->setNeedCalibration(false);
+        _joint_list.at(5)->setNeedCalibration(false);
 
         // 3. Send calibration cmd 1 + 2 + 3
 
-        int32_t stepper_1_calibration_result{0};
-        int32_t stepper_2_calibration_result{0};
-        int32_t stepper_3_calibration_result{0};
+        std::vector<int> sensor_offset_results;
 
-        //_stepper->setCalibrationResult(_joint_list.at(0).getId(), 0);
-        thread stepper_1_calibration_thread = thread(&CalibrationInterface::_setCalibrationCommand, this, _joint_list.at(0),
-                                                                StepperDriver::StepperDriver::rad_pos_to_steps(_offset_position_stepper_1, _gear_ratio_1, _direction_1),
-                                                                200, _direction_1, 1, _calibration_timeout, std::ref(stepper_1_calibration_result));
-        sld.sleep();
-        thread stepper_2_calibration_thread = thread(&CalibrationInterface::_setCalibrationCommand, this, _joint_list.at(1),
-                                                                StepperDriver::StepperDriver::rad_pos_to_steps(_offset_position_stepper_2, _gear_ratio_2, _direction_2),
-                                                                1000, _direction_2, 1, _calibration_timeout, std::ref(stepper_2_calibration_result));
-        sld.sleep();
-        thread stepper_3_calibration_thread = thread(&CalibrationInterface::_setCalibrationCommand, this, _joint_list.at(2),
-                                                                StepperDriver::StepperDriver::rad_pos_to_steps(_offset_position_stepper_3, _gear_ratio_3, _direction_3),
-                                                                1000, _direction_3, -1, _calibration_timeout, std::ref(stepper_3_calibration_result));
-        sld.sleep();
+        std::shared_ptr<StepperMotorState> pStepperMotorState_1 = std::dynamic_pointer_cast<StepperMotorState>(_joint_list.at(0));
+        std::shared_ptr<StepperMotorState> pStepperMotorState_2 = std::dynamic_pointer_cast<StepperMotorState>(_joint_list.at(1));
+        std::shared_ptr<StepperMotorState> pStepperMotorState_3 = std::dynamic_pointer_cast<StepperMotorState>(_joint_list.at(2));
 
-        stepper_1_calibration_thread.join();
-        stepper_2_calibration_thread.join();
-        stepper_3_calibration_thread.join();
+        if(pStepperMotorState_1 && pStepperMotorState_1->isValid() &&
+                pStepperMotorState_2 && pStepperMotorState_2->isValid() &&
+                pStepperMotorState_3 && pStepperMotorState_3->isValid())
+        {
+            auto stepper_1_calibration_fut = common::util::reallyAsync(&CalibrationInterface::_setStepperCalibrationCommand, this,
+                                                                       pStepperMotorState_1->getId(),
+                                                                       pStepperMotorState_1->rad_pos_to_motor_pos(0),
+                                                                       200,
+                                                                       pStepperMotorState_1->getDirection(),
+                                                                       1,
+                                                                       _calibration_timeout);
+            sld.sleep();
 
-        if (! stepper_1_calibration_result
-                || ! stepper_2_calibration_result
-                || ! stepper_3_calibration_result)
+            //stepper 2
+            auto stepper_2_calibration_fut = common::util::reallyAsync(&CalibrationInterface::_setStepperCalibrationCommand, this,
+                                                                       pStepperMotorState_2->getId(),
+                                                                       pStepperMotorState_2->rad_pos_to_motor_pos(0),
+                                                                       1000,
+                                                                       pStepperMotorState_2->getDirection(),
+                                                                       1,
+                                                                       _calibration_timeout);
+            sld.sleep();
+
+            //stepper 3
+            auto stepper_3_calibration_fut = common::util::reallyAsync(&CalibrationInterface::_setStepperCalibrationCommand, this,
+                                                                       pStepperMotorState_3->getId(),
+                                                                       pStepperMotorState_3->rad_pos_to_motor_pos(0),
+                                                                       1000,
+                                                                       pStepperMotorState_3->getDirection(),
+                                                                       -1,
+                                                                       _calibration_timeout);
+
+            sld.sleep();
+
+            sensor_offset_results.emplace_back(stepper_1_calibration_fut.get());
+            sensor_offset_results.emplace_back(stepper_2_calibration_fut.get());
+            sensor_offset_results.emplace_back(stepper_3_calibration_fut.get());
+        }
+
+        if (! sensor_offset_results.at(0)
+                || ! sensor_offset_results.at(1)
+                || ! sensor_offset_results.at(2))
         {
             ROS_ERROR("Calibration Interface -  An error occured while calibrating stepper motors");
             return;
         }
         ROS_INFO("Calibration Interface -  New Calibration values : ");
-        ROS_INFO("Calibration Interface -  motor id %d - calibration value %d", _joint_list.at(0).getId(), stepper_1_calibration_result);
-        ROS_INFO("Calibration Interface -  motor id %d - calibration value %d", _joint_list.at(1).getId(), stepper_2_calibration_result);
-        ROS_INFO("Calibration Interface -  motor id %d - calibration value %d", _joint_list.at(2).getId(), stepper_3_calibration_result);
+        ROS_INFO("Calibration Interface -  motor id %d - calibration value %d", _joint_list.at(0)->getId(), sensor_offset_results.at(0));
+        ROS_INFO("Calibration Interface -  motor id %d - calibration value %d", _joint_list.at(1)->getId(), sensor_offset_results.at(1));
+        ROS_INFO("Calibration Interface -  motor id %d - calibration value %d", _joint_list.at(2)->getId(), sensor_offset_results.at(2));
 
-        vector<int> sensor_offset_ids;
-        sensor_offset_ids.push_back(_joint_list.at(0).getId());
-        sensor_offset_ids.push_back(_joint_list.at(1).getId());
-        sensor_offset_ids.push_back(_joint_list.at(2).getId());
-
-        vector<int> sensor_offset_steps;
-        sensor_offset_steps.push_back(stepper_1_calibration_result);
-        sensor_offset_steps.push_back(stepper_2_calibration_result);
-        sensor_offset_steps.push_back(stepper_3_calibration_result);
+        std::vector<int> sensor_offset_ids;
+        sensor_offset_ids.push_back(_joint_list.at(0)->getId());
+        sensor_offset_ids.push_back(_joint_list.at(1)->getId());
+        sensor_offset_ids.push_back(_joint_list.at(2)->getId());
 
         // 4. Move motor 1,2,3 to 0.0
         // -0.01 to bypass error
         sld.sleep();
-        _relativeMoveMotor(_joint_list.at(0), -StepperDriver::StepperDriver::rad_pos_to_steps(_offset_position_stepper_1, _gear_ratio_1, _direction_1), 550, false);
+        _relativeMoveMotor(_joint_list.at(0),
+                           -_joint_list.at(0)->rad_pos_to_motor_pos(0),
+                            550,
+                           false);
+
         ros::Duration(2.5).sleep();
 
-
-        dynamixel_cmd.setType(EDxlCommandType::CMD_TYPE_TORQUE);
+        //forge stepper command
         stepper_cmd.setType(EStepperCommandType::CMD_TYPE_TORQUE);
-
-        dynamixel_cmd.setMotorsId(vector<uint8_t>{
-            _joint_list.at(3).getId(),
-            _joint_list.at(4).getId(),
-            _joint_list.at(5).getId()});
-
-        stepper_cmd.setMotorsId(vector<uint8_t>{
-            _joint_list.at(0).getId(),
-            _joint_list.at(1).getId(),
-            _joint_list.at(2).getId()});
-
-        vector<int32_t> stepper_params{0, 0, 0};
-        vector<uint32_t> dxl_params{0, 0, 0};
-
-        dynamixel_cmd.setParams(dxl_params);
+        stepper_cmd.setMotorsId(std::vector<uint8_t>{
+            _joint_list.at(0)->getId(),
+            _joint_list.at(1)->getId(),
+            _joint_list.at(2)->getId()});
+        std::vector<int32_t> stepper_params{0, 0, 0};
         stepper_cmd.setParams(stepper_params);
 
+        //forge dxl command
+        dynamixel_cmd.setType(EDxlCommandType::CMD_TYPE_TORQUE);
+        dynamixel_cmd.setMotorsId(std::vector<uint8_t>{
+            _joint_list.at(3)->getId(),
+            _joint_list.at(4)->getId(),
+            _joint_list.at(5)->getId()});
+        std::vector<uint32_t> dxl_params{0, 0, 0};
+        dynamixel_cmd.setParams(dxl_params);
+
         _stepper->setStepperCommands(stepper_cmd);
-        _dynamixel->setDxlCommands(dynamixel_cmd);
+        _dynamixel->setDxlSyncCommands(dynamixel_cmd);
         sld.sleep();
 
         // 6. Write sensor_offset_steps to file
-        set_motors_calibration_offsets(sensor_offset_ids, sensor_offset_steps);
+        set_motors_calibration_offsets(sensor_offset_ids, sensor_offset_results);
 
         _stepper->startCalibration(false);
-        _joint_list.at(0).setNeedCalibration(false);
-        _joint_list.at(1).setNeedCalibration(false);
-        _joint_list.at(2).setNeedCalibration(false);
+        _joint_list.at(0)->setNeedCalibration(false);
+        _joint_list.at(1)->setNeedCalibration(false);
+        _joint_list.at(2)->setNeedCalibration(false);
     }
 
-    bool CalibrationInterface::_can_process_manual_calibration(string &result_message)
+    bool CalibrationInterface::_can_process_manual_calibration(std::string &result_message)
     {
-        vector<StepperMotorState> stepper_motor_states;
+        std::vector<StepperMotorState> stepper_motor_states;
 
         stepper_motor_states = _stepper->getStepperStates();
 
         // 1. Check if motors firmware version is ok
         for (StepperMotorState mState : stepper_motor_states)
         {
-            string firmware_version = mState.getFirmwareVersion();
+            std::string firmware_version = mState.getFirmwareVersion();
             if (firmware_version.length() == 0)
             {
-                result_message = "Calibration Interface - No firmware version available for motor " + to_string(mState.getId()) + ". Make sure all motors are connected";
+                result_message = "Calibration Interface - No firmware version available for motor " + std::to_string(mState.getId()) + ". Make sure all motors are connected";
                 ROS_WARN("Calibration Interface - Can't process manual calibration : %s", result_message.c_str());
                 return false;
             }
             if (stoi(firmware_version.substr(0, 1)) < 2)
             {
-                result_message = "Calibration Interface - You need to upgrade stepper firmware for motor " + to_string(mState.getId());
+                result_message = "Calibration Interface - You need to upgrade stepper firmware for motor " + std::to_string(mState.getId());
                 ROS_WARN("Calibration Interface - Can't process manual calibration : %s", result_message.c_str());
                 return false;
             }
         }
 
         // 2. Check if motor offset values have been previously saved (with auto calibration)
-        vector<int> motor_id_list;
-        vector<int> steps_list;
+        std::vector<int> motor_id_list;
+        std::vector<int> steps_list;
         if (!get_motors_calibration_offsets(motor_id_list, steps_list))
         {
             result_message = "Calibration Interface - You need to make one auto calibration before using the manual calibration";
@@ -401,7 +405,7 @@ namespace JointsInterface {
 
             if (!found)
             {
-                result_message = "Calibration Interface - Motor " + to_string(mState.getId()) + " does not have a saved offset value, " + "you need to do one auto calibration";
+                result_message = "Calibration Interface - Motor " + std::to_string(mState.getId()) + " does not have a saved offset value, " + "you need to do one auto calibration";
                 ROS_WARN("Calibration Interface - Can't process manual calibration : %s", result_message.c_str());
                 return false;
             }
@@ -416,8 +420,8 @@ namespace JointsInterface {
 
         stepper_cmd.setType(EStepperCommandType::CMD_TYPE_POSITION_OFFSET);
 
-        vector<uint8_t> id_cmd = {id};
-        vector<int32_t> params_cmd = {offset_to_send, absolute_steps_at_offset_position};
+        std::vector<uint8_t> id_cmd = {id};
+        std::vector<int32_t> params_cmd = {offset_to_send, absolute_steps_at_offset_position};
 
         stepper_cmd.setMotorsId(id_cmd);
         stepper_cmd.setParams(params_cmd);
@@ -427,21 +431,21 @@ namespace JointsInterface {
         params_cmd.clear();
     }
 
-    int CalibrationInterface::_manual_calibration()
+    StepperDriver::e_CanStepperCalibrationStatus CalibrationInterface::_manual_calibration()
     {
         ros::Rate rest(0.5);
         ros::Duration sld(0.2);
-        vector<int> motor_id_list;
-        vector<int> steps_list;
+        std::vector<int> motor_id_list;
+        std::vector<int> steps_list;
 
         if (!get_motors_calibration_offsets(motor_id_list, steps_list))
         {
-            return static_cast<int>(StepperDriver::e_CanStepperCalibrationStatus::CAN_STEPPERS_CALIBRATION_FAIL);
+           return StepperDriver::e_CanStepperCalibrationStatus::CAN_STEPPERS_CALIBRATION_FAIL;
         }
         _stepper->startCalibration(true);
         // 0. Torque ON for motor 2
 
-        int steps_per_rev = StepperDriver::StepperDriver::stepsPerRev();
+        int steps_per_rev = common::model::StepperMotorState::stepsPerRev();
 
         for (size_t i = 0; i < motor_id_list.size(); i++)
         {
@@ -449,49 +453,51 @@ namespace JointsInterface {
             int sensor_offset_steps = steps_list.at(i);
             int absolute_steps_at_offset_position = 0;
 
-            if (motor_id_list.at(i) == _joint_list.at(0).getId())
+            if (motor_id_list.at(i) == _joint_list.at(0)->getId())
             {
-                offset_to_send = (sensor_offset_steps - StepperDriver::StepperDriver::rad_pos_to_steps(_offset_position_stepper_1, _gear_ratio_1, _direction_1)) % steps_per_rev;
+                offset_to_send = sensor_offset_steps - _joint_list.at(0)->rad_pos_to_motor_pos(0) % steps_per_rev;
                 if (offset_to_send < 0)
                     offset_to_send += steps_per_rev;
                 absolute_steps_at_offset_position = offset_to_send;
 
-                _send_calibration_offset(_joint_list.at(0).getId(), offset_to_send, absolute_steps_at_offset_position);
-                _joint_list.at(0).setNeedCalibration(false);
+                _send_calibration_offset(_joint_list.at(0)->getId(), offset_to_send, absolute_steps_at_offset_position);
+                _joint_list.at(0)->setNeedCalibration(false);
                 sld.sleep();
             }
-            else if (motor_id_list.at(i) == _joint_list.at(1).getId())
+            else if (motor_id_list.at(i) == _joint_list.at(1)->getId())
             {
-                offset_to_send = (sensor_offset_steps - StepperDriver::StepperDriver::rad_pos_to_steps(_offset_position_stepper_2, _gear_ratio_2, _direction_2));
+                offset_to_send = sensor_offset_steps - _joint_list.at(1)->rad_pos_to_motor_pos(0);
                 absolute_steps_at_offset_position = sensor_offset_steps;
 
-                _send_calibration_offset(_joint_list.at(1).getId(), offset_to_send, absolute_steps_at_offset_position);
-                _joint_list.at(1).setNeedCalibration(false);
+                _send_calibration_offset(_joint_list.at(1)->getId(), offset_to_send, absolute_steps_at_offset_position);
+                _joint_list.at(1)->setNeedCalibration(false);
                 sld.sleep();
             }
-            else if (motor_id_list.at(i) == _joint_list.at(2).getId())
+            else if (motor_id_list.at(i) == _joint_list.at(2)->getId())
             {
-                offset_to_send = sensor_offset_steps - StepperDriver::StepperDriver::rad_pos_to_steps(_offset_position_stepper_3, _gear_ratio_3, _direction_3);
+                offset_to_send = sensor_offset_steps - _joint_list.at(2)->rad_pos_to_motor_pos(0);
                 absolute_steps_at_offset_position = sensor_offset_steps;
 
-                _send_calibration_offset(_joint_list.at(2).getId(), offset_to_send, absolute_steps_at_offset_position);
-                _joint_list.at(2).setNeedCalibration(false);
+                _send_calibration_offset(_joint_list.at(2)->getId(), offset_to_send, absolute_steps_at_offset_position);
+                _joint_list.at(2)->setNeedCalibration(false);
                 sld.sleep();
             }
         }
         _stepper->startCalibration(false);
+
+        return StepperDriver::e_CanStepperCalibrationStatus::CAN_STEPPERS_CALIBRATION_OK;
     }
 
 
-    bool CalibrationInterface::get_motors_calibration_offsets(vector<int> &motor_id_list, vector<int> &steps_list)
+    bool CalibrationInterface::get_motors_calibration_offsets(std::vector<int> &motor_id_list, std::vector<int> &steps_list)
     {
-        string file_name;
+        std::string file_name;
         ros::param::get("/niryo_robot_hardware_interface/calibration_file", file_name);
 
-        vector<string> lines;
-        string current_line;
+        std::vector<std::string> lines;
+        std::string current_line;
 
-        ifstream offset_file(file_name.c_str());
+        std::ifstream offset_file(file_name.c_str());
         if (offset_file.is_open())
         {
             while (getline(offset_file, current_line))
@@ -516,18 +522,18 @@ namespace JointsInterface {
         return true;
     }
 
-    bool CalibrationInterface::set_motors_calibration_offsets(vector<int> &motor_id_list, vector<int> &steps_list)
+    bool CalibrationInterface::set_motors_calibration_offsets(const std::vector<int> &motor_id_list, const std::vector<int> &steps_list)
     {
         if (motor_id_list.size() != steps_list.size())
         {
             ROS_ERROR("Corrupted command : motors id list and params list size mismatch");
             return false;
         }
-        string file_name;
+        std::string file_name;
         ros::param::get("/niryo_robot_hardware_interface/calibration_file", file_name);
 
         size_t found = file_name.find_last_of("/");
-        string folder_name = file_name.substr(0, found);
+        std::string folder_name = file_name.substr(0, found);
 
         boost::filesystem::path filepath(file_name);
         boost::filesystem::path directory(folder_name);
@@ -542,12 +548,12 @@ namespace JointsInterface {
         }
 
         // Create text to write
-        string text_to_write = "";
+        std::string text_to_write = "";
         for (size_t i = 0; i < motor_id_list.size(); i++)
         {
-            text_to_write += to_string(motor_id_list.at(i));
+            text_to_write += std::to_string(motor_id_list.at(i));
             text_to_write += ":";
-            text_to_write += to_string(steps_list.at(i));
+            text_to_write += std::to_string(steps_list.at(i));
             if (i < motor_id_list.size() - 1)
             {
                 text_to_write += "\n";
@@ -555,7 +561,7 @@ namespace JointsInterface {
         }
 
         // Write to file
-        ofstream offset_file(file_name.c_str());
+        std::ofstream offset_file(file_name.c_str());
         if (offset_file.is_open())
         {
             ROS_DEBUG("CalibrationInterface::set_motors_calibration_offsets - Writing calibration offsets to file : \n%s", text_to_write.c_str());

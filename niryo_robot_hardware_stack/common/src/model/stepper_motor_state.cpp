@@ -19,28 +19,42 @@
 
 #include "model/stepper_motor_state.hpp"
 #include <sstream>
+#include <cassert>
 
 using namespace std;
 
 namespace common {
     namespace model {
         StepperMotorState::StepperMotorState() :
-            AbstractMotorState()
+            JointState ()
         {
         }
 
         StepperMotorState::StepperMotorState(uint8_t id) :
-            AbstractMotorState(id, EMotorType::MOTOR_TYPE_STEPPER),
+            JointState("unknown", EMotorType::MOTOR_TYPE_STEPPER, id),
             _last_time_read(0.0),
             _hw_fail_counter(0.0),
+            _gear_ratio(0.0),
+            _direction(0.0),
+            _max_effort(0.0),
             _firmware_version("")
         {
+        }
+
+        StepperMotorState::StepperMotorState(string name, EMotorType type, uint8_t id) :
+            JointState(name, type, id)
+        {
+
         }
 
         StepperMotorState::~StepperMotorState()
         {
 
         }
+
+        //****************
+        //  Setters
+        //****************
 
         void StepperMotorState::setLastTimeRead(double last_time)
         {
@@ -57,32 +71,69 @@ namespace common {
             _firmware_version = firmware_version;
         }
 
+
+        void StepperMotorState::setGearRatio(double gear_ratio)
+        {
+            _gear_ratio = gear_ratio;
+        }
+        
+        void StepperMotorState::setDirection(double direction)
+        {
+            _direction = direction;
+        }
+
+        void StepperMotorState::setMaxEffort(double max_effort)
+        {
+            _max_effort = max_effort;
+        }
+
+        //*********************
+        //  JointState Interface
+        //********************
+
         void StepperMotorState::reset()
         {
-            AbstractMotorState::reset();
+            JointState::reset();
             _last_time_read = 0.0;
             _hw_fail_counter = 0.0;
             _firmware_version.clear();
         }
 
+        bool StepperMotorState::isValid() const
+        {
+            return (0 != _id);
+        }
+
         string StepperMotorState::str() const
         {
             ostringstream ss;
-
-            ss << "DxlMotorState : ";
+            
+            ss << "StepperMotorState : ";
             ss << "\n---\n";
             ss << "last time read: " << _last_time_read << ", ";
             ss << "hw fail counter: " << _hw_fail_counter << ", ";
             ss << "firmware version: " << "\"" << _firmware_version << "\"";
             ss << "\n";
-            ss << AbstractMotorState::str();
+            ss << JointState::str();
 
             return ss.str();
         }
 
-        bool StepperMotorState::operator==(const StepperMotorState &other)
+        uint32_t StepperMotorState::rad_pos_to_motor_pos(double pos_rad)
         {
-            return (this->_id == other._id);
+            return static_cast<uint32_t>(_direction * (STEPPERS_MOTOR_STEPS_PER_REVOLUTION * STEPPERS_MICROSTEPS * _gear_ratio * (pos_rad - _offset_position) * RADIAN_TO_DEGREE / 360.0));
         }
+
+        double StepperMotorState::to_rad_pos()
+        {
+            assert(0.0 != (STEPPERS_MOTOR_STEPS_PER_REVOLUTION * STEPPERS_MICROSTEPS * _gear_ratio * RADIAN_TO_DEGREE));
+            return (_direction * _position_state * 360.0) / (STEPPERS_MOTOR_STEPS_PER_REVOLUTION * STEPPERS_MICROSTEPS * _gear_ratio * RADIAN_TO_DEGREE);
+        }
+
+        int StepperMotorState::stepsPerRev()
+        {
+            return int(STEPPERS_MICROSTEPS * STEPPERS_MOTOR_STEPS_PER_REVOLUTION);
+        }
+
     } // namespace model
 } // namespace common

@@ -139,10 +139,6 @@ namespace DynamixelDriver
 
         // according to xl-330 datasheet : 1 speed ~ 0.229 rpm ~ 3.9083 dxl position per second
         static constexpr double XL330_STEPS_FOR_1_SPEED     = 15.6331; // 0.229 * 4096 / 60
-
-        static constexpr int    TOTAL_RANGE_POSITION     = 4095;
-        static constexpr int    MIDDLE_POSITION       = 2047;
-        static constexpr double TOTAL_ANGLE           = 296.67;
     };
 } //DynamixelDriver
 

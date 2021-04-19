@@ -223,11 +223,6 @@ namespace StepperDriver
         _joint_trajectory_controller_cmd = cmd;
     }
 
-    const std::vector<int32_t> &StepperDriverCore::getTrajectoryControllerStates() const
-    {
-        return _stepper->getJointTrajectoryState();
-    }
-
     int StepperDriverCore::setConveyor(uint8_t motor_id)
     {
         bool motor_found = false;

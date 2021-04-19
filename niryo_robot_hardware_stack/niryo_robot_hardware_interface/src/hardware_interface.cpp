@@ -230,8 +230,6 @@ namespace NiryoRobotHardwareInterface
             niryo_robot_msgs::BusState dxl_bus_state;
             niryo_robot_msgs::BusState can_bus_state;
 
-            std::vector<common::model::JointState> joints_state;
-
             int cpu_temperature;
             std::string error_message;
 
@@ -258,7 +256,6 @@ namespace NiryoRobotHardwareInterface
                 }
                 if (_can_enabled && _dxl_enabled)
                 {
-                    joints_state = _joints_interface->getJointsState();
                     _joints_interface->getCalibrationState(need_calibration, calibration_in_progress);
                 }
 
@@ -377,7 +374,7 @@ namespace NiryoRobotHardwareInterface
             stepper_driver::StepperArrayMotorHardwareStatus stepper_motor_state;
             std::vector<std::string> motor_names;
             std::vector<std::string> firmware_versions;
-            std::vector<common::model::JointState> joints_state;
+            std::vector<std::shared_ptr<common::model::JointState> > joints_state;
 
             if (!_simulation_mode)
             {
@@ -390,9 +387,9 @@ namespace NiryoRobotHardwareInterface
                     joints_state = _joints_interface->getJointsState();
                 }
 
-                for (int i = 0; i < joints_state.size(); i++)
+                for (std::shared_ptr<common::model::JointState> jState : joints_state)
                 {
-                    motor_names.push_back(joints_state.at(i).getName());
+                    motor_names.push_back(jState->getName());
                 }
             }
             else

@@ -21,17 +21,19 @@
 #define STEPPER_MOTOR_STATE_H
 
 #include <string>
-#include "abstract_motor_state.hpp"
+#include "joint_state.hpp"
 
 namespace common {
     namespace model {
 
-        class StepperMotorState : public AbstractMotorState
+        class StepperMotorState : public JointState
         {
 
             public:
                 StepperMotorState();
                 StepperMotorState(uint8_t id);
+                StepperMotorState(std::string name, EMotorType type, uint8_t id );
+
                 virtual ~StepperMotorState() override;
 
                 void setLastTimeRead(double last_time);
@@ -42,23 +44,59 @@ namespace common {
                 double getHwFailCounter() const;
                 std::string getFirmwareVersion() const;
 
-                virtual bool operator==(const StepperMotorState& other);
+                double getGearRatio() const;
+                void setGearRatio(double gear_ratio);
 
-                // AbstractMotorState interface
-                virtual std::string str() const override;
+                double getDirection() const;
+                void setDirection(double direction);
+
+                double getMaxEffort() const;
+                void setMaxEffort(double max_effort);
+
+                static int stepsPerRev();
+
+                // JointState interface
+            public:
                 virtual void reset() override;
                 virtual bool isValid() const override;
+                virtual std::string str() const override;
+
+                virtual uint32_t rad_pos_to_motor_pos(double pos_rad) override;
+                virtual double to_rad_pos() override;
 
             protected:
                 double _last_time_read;
                 double _hw_fail_counter;
+
+                double _gear_ratio;
+                double _direction;
+                double _max_effort;
+
                 std::string _firmware_version;
+
+            private:
+
+                static constexpr double STEPPERS_MICROSTEPS                 = 8.0;
+                static constexpr double STEPPERS_MOTOR_STEPS_PER_REVOLUTION = 200.0;
+
         };
 
         inline
-        bool StepperMotorState::isValid() const
+        double StepperMotorState::getMaxEffort() const
         {
-            return (0 != _id);
+            return _max_effort;
+        }
+
+        inline
+        double StepperMotorState::getGearRatio() const
+        {
+            return _gear_ratio;
+        }
+
+        inline
+        double StepperMotorState::getDirection() const
+        {
+            return _direction;
         }
 
         inline

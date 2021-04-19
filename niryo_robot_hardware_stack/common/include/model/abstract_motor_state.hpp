@@ -45,6 +45,10 @@ namespace common {
                 uint32_t getHardwareErrorState() const;
                 std::string getHardwareErrorMessageState() const;
 
+                int getTotalRangePosition() const;
+                int getMiddlePosition() const;
+                double getTotalAngle() const;
+
                 //setters
                 void setPositionState(uint32_t pos);
 
@@ -53,6 +57,12 @@ namespace common {
                 void setHardwareError(uint32_t hw_error);
                 void setHardwareError(std::string hw_error_msg);
 
+                // tests
+
+                bool isStepper() const;
+                bool isDynamixel() const;
+
+                //operators
                 virtual bool operator==(const AbstractMotorState& other);
 
                 // IObject interface
@@ -116,6 +126,21 @@ namespace common {
         std::string AbstractMotorState::getHardwareErrorMessageState() const
         {
             return _hw_error_message_state;
+        }
+
+        inline
+        bool AbstractMotorState::isStepper() const
+        {
+            return EMotorType::MOTOR_TYPE_STEPPER == _type;
+        }
+
+        inline
+        bool AbstractMotorState::isDynamixel() const
+        {
+            return (EMotorType::MOTOR_TYPE_XC430 == _type) ||
+                   (EMotorType::MOTOR_TYPE_XL320 == _type) ||
+                   (EMotorType::MOTOR_TYPE_XL330 == _type) ||
+                   (EMotorType::MOTOR_TYPE_XL430 == _type);
         }
 
     } // model

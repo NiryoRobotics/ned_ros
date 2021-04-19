@@ -79,7 +79,7 @@ namespace FakeInterface {
         }
     }
 
-    void FakeJointHardwareInterface::read()
+    void FakeJointHardwareInterface::read(const ros::Time &/*time*/, const ros::Duration &/*period*/)
     {
         _pos[0] = _cmd[0];
         _pos[1] = _cmd[1];
@@ -89,7 +89,7 @@ namespace FakeInterface {
         _pos[5] = _cmd[5];
     }
 
-    void FakeJointHardwareInterface::write()
+    void FakeJointHardwareInterface::write(const ros::Time &/*time*/, const ros::Duration &/*period*/)
     {
         _pos[0] = _cmd[0];
         _pos[1] = _cmd[1];

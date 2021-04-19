@@ -33,8 +33,10 @@ namespace FakeInterface {
 
         std::string jointIdToJointName(uint8_t id);
 
-        void read();
-        void write();
+        // RobotHW interface
+    public:
+        virtual void read(const ros::Time &/*time*/, const ros::Duration &/*period*/) override;
+        virtual void write(const ros::Time &/*time*/, const ros::Duration &/*period*/) override;
 
     private:
         ros::NodeHandle _nh;
@@ -55,7 +57,7 @@ namespace FakeInterface {
         double _pos[6] = {0, 0.6, -1.3, 0, 0, 0};
         double _vel[6] = {0};
         double _eff[6] = {0};
-        double _home_position_1, _home_position_2, _home_position_3;
+
     };
 } //FakeInterface
 

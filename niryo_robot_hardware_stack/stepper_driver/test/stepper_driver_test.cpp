@@ -108,14 +108,16 @@ class StepperDriverTest {
         {
             int freq = 100;
             ros::Rate control_loop_rate = ros::Rate(freq);
-            std::vector<int32_t> stepper_motor_state;
+            std::vector<common::model::StepperMotorState> stepper_motor_state;
             while(ros::ok())
             {
 
                 for(int i = 0 ; i < 1000 ; i++)
                 {
-                    stepper_motor_state = _stepper->getTrajectoryControllerStates();                
-                    std::cout << stepper_motor_state[0] << " " << stepper_motor_state[1] << " " << stepper_motor_state[2] << std::endl;
+                    stepper_motor_state = _stepper->getStepperStates();
+                    std::cout << stepper_motor_state.at(0).getPositionState() << " "
+                              << stepper_motor_state.at(1).getPositionState() << " "
+                              << stepper_motor_state.at(2).getPositionState() << std::endl;
                     control_loop_rate.sleep();
                 }
             }
@@ -137,19 +139,20 @@ class StepperDriverTest {
             std::vector<int32_t> cmd = {2620, 0, 0};
             std::vector<int32_t> cmd_send = {0, 0, 0};
             double p = 1.5;
-            std::vector<int32_t> stepper_motor_state;
-            stepper_motor_state = _stepper->getTrajectoryControllerStates();
-            int32_t error = cmd[0] - stepper_motor_state[0];
-            while (error > 20 || error < -20)
+            std::vector<common::model::StepperMotorState> stepper_motor_state;
+            stepper_motor_state = _stepper->getStepperStates();
+            int32_t error = cmd.at(0) - static_cast<int32_t>(stepper_motor_state.at(0).getPositionState());
+            while (std::abs(error) > 20)
             {
-                stepper_motor_state = _stepper->getTrajectoryControllerStates();
-                error = static_cast<int>((cmd[0] - stepper_motor_state[0])*p);
-                cmd_send[0] = cmd[0] + error;
-                cmd_send[1] = stepper_motor_state[1];
-                cmd_send[2] = stepper_motor_state[2];
+                stepper_motor_state = _stepper->getStepperStates();
+                error = static_cast<int>(cmd.at(0) - static_cast<int32_t>(stepper_motor_state.at(0).getPositionState())*p);
+                cmd_send.at(0) = cmd.at(0) + error;
+                cmd_send.at(1) = static_cast<int32_t>(stepper_motor_state.at(1).getPositionState());
+                cmd_send.at(2) = static_cast<int32_t>(stepper_motor_state.at(2).getPositionState());
                 _stepper->setTrajectoryControllerCommands(cmd_send);
                 control_loop_rate.sleep();
             }
+
             cmd_torque.setParams(std::vector<int32_t> {false});
             _stepper->setStepperCommands(cmd_torque);
             ros::Duration(1).sleep();

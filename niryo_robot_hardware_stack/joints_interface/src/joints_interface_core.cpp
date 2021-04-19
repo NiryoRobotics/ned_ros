@@ -97,10 +97,10 @@ namespace JointsInterface {
         {
             if (_enable_control_loop)
             {
-                _robot->read();
                 current_time = ros::Time::now();
                 elapsed_time = ros::Duration(current_time - last_time);
                 last_time = current_time;
+                _robot->read(current_time, elapsed_time);
 
                 if (_reset_controller)
                 {
@@ -115,7 +115,7 @@ namespace JointsInterface {
                 }
                 if (!_previous_state_learning_mode)
                 {
-                    _robot->write();
+                    _robot->write(current_time, elapsed_time);
                 }
                 control_loop_rate.sleep();
             }
@@ -247,7 +247,7 @@ namespace JointsInterface {
         calibration_in_progress = _robot->isCalibrationInProgress();
     }
 
-    const std::vector<common::model::JointState> &JointsInterfaceCore::getJointsState() const
+    const std::vector<std::shared_ptr<common::model::JointState> > &JointsInterfaceCore::getJointsState() const
     {
         return _robot->getJointsState();
     }

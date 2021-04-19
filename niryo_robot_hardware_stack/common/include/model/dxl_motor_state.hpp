@@ -21,45 +21,61 @@
 #define DXL_MOTOR_STATE_H
 
 #include <string>
-#include "abstract_motor_state.hpp"
+#include "joint_state.hpp"
 
 namespace common {
     namespace model {
 
 
-        class DxlMotorState : public AbstractMotorState
+        class DxlMotorState : public JointState
         {
             public:
                 DxlMotorState();
                 DxlMotorState(uint8_t id, EMotorType type, bool isTool = false);
+                DxlMotorState(std::string name, EMotorType type, uint8_t id , bool isTool = false);
 
                 virtual ~DxlMotorState() override;
 
                 //getters
                 bool isTool() const;
 
-                //setters
-                bool operator==(const DxlMotorState& other);
-
-                // AbstractMotorState interface
+                // JointState interface
                 virtual std::string str() const override;
                 virtual void reset() override;
                 virtual bool isValid() const override;
 
-            protected:
+                virtual uint32_t rad_pos_to_motor_pos(double pos_rad) override;
+                virtual double to_rad_pos() override;
+
+                int getPGain() const;
+                void setPGain(int getPGain);
+
+                int getIGain() const;
+                void setIGain(int getIGain);
+
+                int getDGain() const;
+                void setDGain(int getDGain);
+
+                int getFF1Gain() const;
+                void setFF1Gain(int getFF1Gain);
+
+                int getFF2Gain() const;
+                void setFF2Gain(int value);
+
+        protected:
                 bool _isTool;
+
+                int _p_gain;
+                int _i_gain;
+                int _d_gain;
+                int _ff1_gain;
+                int _ff2_gain;
         };
 
         inline
         bool DxlMotorState::isTool() const
         {
             return _isTool;
-        }
-
-        inline
-        bool DxlMotorState::isValid() const
-        {
-            return (0 != getId() && EMotorType::MOTOR_TYPE_UNKNOWN != getType());
         }
 
     } // namespace model

@@ -128,12 +128,13 @@ namespace FakeInterface {
         ros::Rate control_loop_rate = ros::Rate(_ros_control_frequency);
         while(ros::ok())
         {
-            _robot->read();
             current_time = ros::Time::now();
             elapsed_time = ros::Duration(current_time - last_time);
+            _robot->read(current_time, elapsed_time);
+
             last_time = current_time;
             _cm->update(ros::Time::now(), elapsed_time, false);
-            _robot->write();
+            _robot->write(current_time, elapsed_time);
             control_loop_rate.sleep();
         }
     }
