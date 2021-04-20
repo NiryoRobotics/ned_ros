@@ -221,7 +221,7 @@ namespace JointsInterface {
         sld.sleep();
 
         // 1. Relative Move Motor 3
-        _relativeMoveMotor(_joint_list.at(2), _joint_list.at(2)->rad_pos_to_motor_pos(0.25), 500, false);
+        _relativeMoveMotor(_joint_list.at(2), _joint_list.at(2)->rad_pos_to_motor_pos(_joint_list.at(2)->getOffsetPosition() + 0.25), 500, false);
         ros::Duration(0.5).sleep();
 
         // 2. Move All Dynamixel to Home Position

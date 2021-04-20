@@ -10,7 +10,7 @@ steppers:
     stepper_2_gear_ratio: 8.5625
     stepper_3_gear_ratio: 7.6875
 
-    stepper_2_offset_position: -2.96706
+    stepper_1_offset_position: -2.96706
     stepper_2_offset_position: -0.610865
     stepper_3_offset_position: 1.3439
 
