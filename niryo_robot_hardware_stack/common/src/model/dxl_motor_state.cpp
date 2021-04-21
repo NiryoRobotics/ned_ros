@@ -75,7 +75,13 @@ namespace common {
             ss << "DxlMotorState : ";
             ss << "\n---\n";
             ss << "type: " << MotorTypeEnum(_type).toString() << ", ";
-            ss << "isTool: " << (_isTool ? "true" : "false");
+            ss << "isTool: " << (_isTool ? "true" : "false") << "\n";
+            ss << "p gain: " << _p_gain << ", ";
+            ss << "i gain: " << _i_gain << ", ";
+            ss << "d gain: " << _d_gain << ", ";
+            ss << "ff1 gain: " << _ff1_gain << ", ";
+            ss << "ff2 gain: " << _ff2_gain << ", ";
+
             ss << "\n";
             ss << JointState::str();
 
@@ -103,52 +109,52 @@ namespace common {
 
         }
 
-        int DxlMotorState::getPGain() const
+        uint32_t DxlMotorState::getPGain() const
         {
             return _p_gain;
         }
 
-        void DxlMotorState::setPGain(int p_gain)
+        void DxlMotorState::setPGain(uint32_t p_gain)
         {
             _p_gain = p_gain;
         }
 
-        int DxlMotorState::getIGain() const
+        uint32_t DxlMotorState::getIGain() const
         {
             return _i_gain;
         }
 
-        void DxlMotorState::setIGain(int i_gain)
+        void DxlMotorState::setIGain(uint32_t i_gain)
         {
             _i_gain = i_gain;
         }
 
-        int DxlMotorState::getDGain() const
+        uint32_t DxlMotorState::getDGain() const
         {
             return _d_gain;
         }
 
-        void DxlMotorState::setDGain(int d_gain)
+        void DxlMotorState::setDGain(uint32_t d_gain)
         {
             _d_gain = d_gain;
         }
 
-        int DxlMotorState::getFF1Gain() const
+        uint32_t DxlMotorState::getFF1Gain() const
         {
             return _ff1_gain;
         }
 
-        void DxlMotorState::setFF1Gain(int ff1_gain)
+        void DxlMotorState::setFF1Gain(uint32_t ff1_gain)
         {
             _ff1_gain = ff1_gain;
         }
 
-        int DxlMotorState::getFF2Gain() const
+        uint32_t DxlMotorState::getFF2Gain() const
         {
             return _ff2_gain;
         }
 
-        void DxlMotorState::setFF2Gain(int value)
+        void DxlMotorState::setFF2Gain(uint32_t value)
         {
             _ff2_gain = value;
         }

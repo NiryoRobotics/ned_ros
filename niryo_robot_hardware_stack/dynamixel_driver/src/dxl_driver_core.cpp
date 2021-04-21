@@ -168,7 +168,6 @@ namespace DynamixelDriver
     {
         if (_debug_flag)
         {
-            int result;
             uint32_t old_position;
             uint32_t new_position;
             DxlMotorState dynamixel_motor = DxlMotorState(motor_type, motor_id);
@@ -202,7 +201,7 @@ namespace DynamixelDriver
 
             if (abs(rest) < 50 or abs(rest2) < 50)
             {
-                ROS_WARN("DynamixelDriverCore::motorCmdReport - Debug - Dynamixel Motor %d problem: %d", motor_id, result);
+                ROS_WARN("DynamixelDriverCore::motorCmdReport - Debug - Dynamixel Motor %d problem", motor_id);
                 return niryo_robot_msgs::CommandStatus::FAILURE;
             }
             else
@@ -276,12 +275,16 @@ namespace DynamixelDriver
      */
     void DynamixelDriverCore::addDxlSyncCommandToQueue(const SynchronizeMotorCmd &cmd)
     {
-        ROS_DEBUG_THROTTLE(0.5, "DynamixelDriverCore::addDxlSyncCommandToQueue - %s", cmd.str().c_str());
+        ROS_DEBUG_THROTTLE(0.5, "DynamixelDriverCore::addDxlSyncCommandToQueue(%lu) - %s", _dxl_sync_cmds.size(), cmd.str().c_str());
 
         if(_dxl_sync_cmds.size() > 20)
             ROS_WARN_THROTTLE(0.5, "DynamixelDriverCore::addDxlSyncCommandToQueue: Cmd queue overflow ! %lu", _dxl_sync_cmds.size());
-        else
-            _dxl_sync_cmds.push(cmd);
+        else {
+
+            //add only if the command is different from the last one added
+            if(_dxl_sync_cmds.empty() || cmd != _dxl_sync_cmds.back())
+                _dxl_sync_cmds.push(cmd);
+        }
     }
 
     void DynamixelDriverCore::addDxlSyncCommandToQueue(const std::vector<SynchronizeMotorCmd> &cmd)
@@ -441,11 +444,11 @@ namespace DynamixelDriver
 
     /**
      * @brief DynamixelDriverCore::_executeCommand : execute all the cmd in the current queue
-     */
+     */ // create a unique queue using polymorphism
     void DynamixelDriverCore::_executeCommand()
     {
         bool need_sleep = false;
-        if (!_dxl_sync_cmds.empty())
+        if (!_dxl_sync_cmds.empty() && _dxl_single_cmds.empty())
         {
             _dynamixel->readSynchronizeCommand(_dxl_sync_cmds.front());
             _dxl_sync_cmds.pop();

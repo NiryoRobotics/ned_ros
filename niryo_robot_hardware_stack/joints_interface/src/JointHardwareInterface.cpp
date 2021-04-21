@@ -61,7 +61,7 @@ namespace JointsInterface {
         }
 
         double dxl1_pose = _joint_list.at(3)->getOffsetPosition() + _joint_list.at(3)->to_rad_pos(dxl_motor_state.at(0).getPositionState());
-        double dxl2_pose = _joint_list.at(4)->getOffsetPosition() + _joint_list.at(4)->to_rad_pos(dxl_motor_state.at(1).getMiddlePosition() * 2 - dxl_motor_state.at(1).getPositionState());
+        double dxl2_pose = _joint_list.at(4)->getOffsetPosition() + _joint_list.at(4)->to_rad_pos(dxl_motor_state.at(1).getPositionState());
         double dxl3_pose = _joint_list.at(5)->getOffsetPosition() + _joint_list.at(5)->to_rad_pos(dxl_motor_state.at(2).getPositionState());
         _joint_list.at(3)->pos = (abs(dxl1_pose) < 2 * M_PI) ? dxl1_pose : _joint_list.at(3)->pos;
         _joint_list.at(4)->pos = (abs(dxl1_pose) < 2 * M_PI) ? dxl2_pose : _joint_list.at(4)->pos;
@@ -96,22 +96,22 @@ namespace JointsInterface {
         {
             if(_joint_list.at(j) && _joint_list.at(j)->isValid() && _joint_list.at(j)->isStepper()) {
 
-                uint32_t pos = _joint_list.at(j)->rad_pos_to_motor_pos(_joint_list.at(j)->cmd);
+                int32_t pos = _joint_list.at(j)->rad_pos_to_motor_pos(_joint_list.at(j)->cmd);
                 stepper_cmds.emplace_back(pos);
             }
         }
 
+        double precision = 0.0001;
         SynchronizeMotorCmd dxlMotorCmd(EDxlCommandType::CMD_TYPE_POSITION);
-        dxlMotorCmd.addMotorParam(_joint_list.at(3)->getType(), _joint_list.at(3)->getId(),
-                                  _joint_list.at(3)->rad_pos_to_motor_pos(_joint_list.at(3)->cmd - _joint_list.at(3)->getOffsetPosition()));
-        dxlMotorCmd.addMotorParam(_joint_list.at(4)->getType(), _joint_list.at(4)->getId(),
-                                  (_joint_list.at(4)->getMiddlePosition() * 2 - _joint_list.at(4)->rad_pos_to_motor_pos(_joint_list.at(4)->cmd - _joint_list.at(4)->getOffsetPosition())));
-        dxlMotorCmd.addMotorParam(_joint_list.at(5)->getType(), _joint_list.at(5)->getId(),
-                                  _joint_list.at(5)->rad_pos_to_motor_pos(_joint_list.at(5)->cmd - _joint_list.at(5)->getOffsetPosition()));
-
+        for(std::shared_ptr<common::model::JointState> jState : _joint_list) {
+            if(jState->isDynamixel() && (jState->cmd - jState->pos) < precision) //set a new command only if pos has not yet been reached
+                dxlMotorCmd.addMotorParam(jState->getType(), jState->getId(), static_cast<uint32_t>(jState->rad_pos_to_motor_pos(jState->cmd - jState->getOffsetPosition())));
+            //carefull for dxl 2
+        }
 
         _stepper->setTrajectoryControllerCommands(stepper_cmds); //CC append ? do a queue ?
-        _dynamixel->addDxlSyncCommandToQueue(dxlMotorCmd); // CC warning -> risk of queue overflow
+        if(dxlMotorCmd.isValid())
+            _dynamixel->addDxlSyncCommandToQueue(dxlMotorCmd); // CC warning -> risk of queue overflow
     }
 
     /**
@@ -209,11 +209,11 @@ namespace JointsInterface {
                 _nh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_" + to_string(currentIdDxl) + "_FF2_gain", FF2Gain);
 
                 dxlState->setOffsetPosition(offsetPos);
-                dxlState->setPGain(PGain);
-                dxlState->setIGain(IGain);
-                dxlState->setDGain(DGain);
-                dxlState->setFF1Gain(FF1Gain);
-                dxlState->setFF2Gain(FF2Gain);
+                dxlState->setPGain(static_cast<uint32_t>(PGain));
+                dxlState->setIGain(static_cast<uint32_t>(IGain));
+                dxlState->setDGain(static_cast<uint32_t>(DGain));
+                dxlState->setFF1Gain(static_cast<uint32_t>(FF1Gain));
+                dxlState->setFF2Gain(static_cast<uint32_t>(FF2Gain));
 
                 dxlState->setNeedCalibration(false);
 
@@ -378,7 +378,6 @@ namespace JointsInterface {
             stepper_cmd.setParams(stepper_params);
 
             _stepper->setStepperCommands(stepper_cmd);
-            _dynamixel->clearDxlSyncCommandQueue();
             _dynamixel->addDxlSyncCommandToQueue(dxl_cmd);
 
             _learning_mode = true;
@@ -408,7 +407,6 @@ namespace JointsInterface {
             stepper_cmd.setParams(stepper_params);
 
             _stepper->setStepperCommands(stepper_cmd);
-            _dynamixel->clearDxlSyncCommandQueue();
             _dynamixel->addDxlSyncCommandToQueue(dxl_cmd);
 
             _learning_mode = true;
@@ -488,36 +486,36 @@ namespace JointsInterface {
         // ** DXL PID configuration ** //
 
         // P Gain
-        if(dxlState->getPGain() >= 0) {
-            SingleMotorCmd dxl_cmd_p(EDxlCommandType::CMD_TYPE_P_GAIN, motor_id, static_cast<uint8_t>(dxlState->getPGain()));
+        if(dxlState->getPGain() > 0) {
+            SingleMotorCmd dxl_cmd_p(EDxlCommandType::CMD_TYPE_P_GAIN, motor_id, dxlState->getPGain());
 
             if(dxl_cmd_p.isValid())
                 _dynamixel->addDxlCommandToQueue(dxl_cmd_p);
         }
 
-        if(dxlState->getIGain() >= 0) {
-            SingleMotorCmd dxl_cmd_i(EDxlCommandType::CMD_TYPE_I_GAIN, motor_id, static_cast<uint8_t>(dxlState->getIGain()));
+        if(dxlState->getIGain() > 0) {
+            SingleMotorCmd dxl_cmd_i(EDxlCommandType::CMD_TYPE_I_GAIN, motor_id, dxlState->getIGain());
 
             if(dxl_cmd_i.isValid())
                 _dynamixel->addDxlCommandToQueue(dxl_cmd_i);
         }
 
-        if(dxlState->getDGain() >= 0) {
-            SingleMotorCmd dxl_cmd_d(EDxlCommandType::CMD_TYPE_D_GAIN, motor_id, static_cast<uint8_t>(dxlState->getDGain()));
+        if(dxlState->getDGain() > 0) {
+            SingleMotorCmd dxl_cmd_d(EDxlCommandType::CMD_TYPE_D_GAIN, motor_id, dxlState->getDGain());
 
             if(dxl_cmd_d.isValid())
                 _dynamixel->addDxlCommandToQueue(dxl_cmd_d);
         }
 
         if(dxlState->getFF1Gain() > 0) {
-            SingleMotorCmd dxl_cmd_ff1(EDxlCommandType::CMD_TYPE_FF1_GAIN, motor_id, static_cast<uint8_t>(dxlState->getFF1Gain()));
+            SingleMotorCmd dxl_cmd_ff1(EDxlCommandType::CMD_TYPE_FF1_GAIN, motor_id, dxlState->getFF1Gain());
 
             if(dxl_cmd_ff1.isValid())
                 _dynamixel->addDxlCommandToQueue(dxl_cmd_ff1);
         }
 
         if(dxlState->getFF2Gain() > 0) {
-            SingleMotorCmd dxl_cmd_ff2(EDxlCommandType::CMD_TYPE_FF2_GAIN, motor_id, static_cast<uint8_t>(dxlState->getFF2Gain()));
+            SingleMotorCmd dxl_cmd_ff2(EDxlCommandType::CMD_TYPE_FF2_GAIN, motor_id, dxlState->getFF2Gain());
 
             if(dxl_cmd_ff2.isValid())
                 _dynamixel->addDxlCommandToQueue(dxl_cmd_ff2);

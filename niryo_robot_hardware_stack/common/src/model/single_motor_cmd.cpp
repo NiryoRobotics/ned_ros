@@ -65,7 +65,7 @@ namespace common {
             ss << DxlCommandTypeEnum(_type).toString();
 
             ss << ": ";
-            ss << "motor " << static_cast<int>(_id) << ": " << _param;
+            ss << "motor " << static_cast<int>(_id) << ": " << static_cast<int>(_param);
 
             return ss.str();
         }

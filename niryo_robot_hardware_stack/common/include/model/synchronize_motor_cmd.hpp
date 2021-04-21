@@ -43,11 +43,12 @@ namespace common {
                 }
 
                 bool isValid() const {
-                    return motors_id.size() == params.size() && !motors_id.empty();
+                    return !motors_id.empty() && motors_id.size() == params.size();
                 }
 
                 std::vector<uint8_t> motors_id;
                 std::vector<uint32_t> params;
+
             };
 
             public:
@@ -68,9 +69,26 @@ namespace common {
                 std::string str() const override;
                 bool isValid() const override;
 
+                friend bool operator==(const SynchronizeMotorCmd& lhs, const SynchronizeMotorCmd& rhs);
+
+                friend bool operator==(const SynchronizeMotorCmd::MotorParam& lhs, const SynchronizeMotorCmd::MotorParam& rhs) {
+                    return lhs.params == rhs.params && lhs.motors_id == rhs.motors_id;
+                }
+
             private:
                 std::map<EMotorType, MotorParam > _motor_params_map;
         };
+
+        inline
+        bool operator==(const SynchronizeMotorCmd& lhs, const SynchronizeMotorCmd& rhs) {
+            return lhs._type == rhs._type && lhs._motor_params_map == rhs._motor_params_map;
+        }
+
+        inline
+        bool operator!=(const SynchronizeMotorCmd& lhs, const SynchronizeMotorCmd& rhs) {
+            return !(lhs == rhs);
+        }
+
 
     } // namespace model
 } // namespace common

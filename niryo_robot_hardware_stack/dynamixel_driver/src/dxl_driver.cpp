@@ -866,7 +866,7 @@ namespace DynamixelDriver
 
         if (!typesToProcess.empty())
         {
-            ROS_WARN("DxlDriver::syncWriteCommand - Failed to write synchronize position");
+            ROS_WARN_THROTTLE(0.5, "DxlDriver::syncWriteCommand - Failed to write synchronize position");
             _debug_error_message = "Dxl Driver - Failed to write synchronize position";
         }
     }

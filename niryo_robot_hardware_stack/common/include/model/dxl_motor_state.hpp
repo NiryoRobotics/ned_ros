@@ -47,29 +47,29 @@ namespace common {
                 virtual int rad_pos_to_motor_pos(double pos_rad) override;
                 virtual double to_rad_pos(int position_dxl) override;
 
-                int getPGain() const;
-                void setPGain(int getPGain);
+                uint32_t getPGain() const;
+                void setPGain(uint32_t getPGain);
 
-                int getIGain() const;
-                void setIGain(int getIGain);
+                uint32_t getIGain() const;
+                void setIGain(uint32_t getIGain);
 
-                int getDGain() const;
-                void setDGain(int getDGain);
+                uint32_t getDGain() const;
+                void setDGain(uint32_t getDGain);
 
-                int getFF1Gain() const;
-                void setFF1Gain(int getFF1Gain);
+                uint32_t getFF1Gain() const;
+                void setFF1Gain(uint32_t getFF1Gain);
 
-                int getFF2Gain() const;
-                void setFF2Gain(int value);
+                uint32_t getFF2Gain() const;
+                void setFF2Gain(uint32_t value);
 
         protected:
                 bool _isTool;
 
-                int _p_gain;
-                int _i_gain;
-                int _d_gain;
-                int _ff1_gain;
-                int _ff2_gain;
+                uint32_t _p_gain;
+                uint32_t _i_gain;
+                uint32_t _d_gain;
+                uint32_t _ff1_gain;
+                uint32_t _ff2_gain;
         };
 
         inline
