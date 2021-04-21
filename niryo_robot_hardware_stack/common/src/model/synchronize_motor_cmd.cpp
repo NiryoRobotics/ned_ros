@@ -32,24 +32,27 @@ namespace common {
             reset();
         }
 
-        SynchronizeMotorCmd::SynchronizeMotorCmd(EDxlCommandType type,
-                                                 vector<uint8_t> motor_id,
-                                                 vector<uint32_t> params) :
-            AbstractMotorCmd<EDxlCommandType>(type),
-            _motor_id_list(motor_id),
-            _param_list(params)
+        SynchronizeMotorCmd::SynchronizeMotorCmd(EDxlCommandType type) :
+            AbstractMotorCmd<EDxlCommandType>(type)
         {
         }
 
-
-        void SynchronizeMotorCmd::setMotorsId(vector<uint8_t> motor_id)
+        /**
+         * @brief SynchronizeMotorCmd::addMotorParam
+         * @param type
+         * @param motor_id
+         * @param param
+         */
+        void SynchronizeMotorCmd::addMotorParam(EMotorType type, uint8_t motor_id, uint32_t param)
         {
-            _motor_id_list = motor_id;
-        }
-
-        void SynchronizeMotorCmd::setParams(vector<uint32_t> params)
-        {
-            _param_list = params;
+            //not yet in map
+            if(!_motor_params_map.count(type)){
+                _motor_params_map.insert(make_pair(type, MotorParam(motor_id, param)));
+            }
+            else {
+                _motor_params_map.at(type).motors_id.emplace_back(motor_id);
+                _motor_params_map.at(type).params.emplace_back(param);
+            }
         }
 
         /**
@@ -58,8 +61,7 @@ namespace common {
         void SynchronizeMotorCmd::reset()
         {
             setType(EDxlCommandType::CMD_TYPE_UNKNOWN);
-            _motor_id_list.clear();
-            _param_list.clear();
+            _motor_params_map.clear();
         }
 
         /**
@@ -78,20 +80,24 @@ namespace common {
             ss << ": ";
 
             if(!isValid()) {
-                ss << "Corrupted command : motors id list and params list size mismatch";
+                ss << "Corrupted command : motors id list and params list size mismatch ";
+                string_info = ss.str();
             }
             else {
-                ss << "(";
-                for(size_t i = 0; i < _motor_id_list.size(); ++i)
-                    ss << " motor " << static_cast<int>(_motor_id_list.at(i)) << ": " <<
-                          _param_list.at(i) << ",";
+                ss << "[";
 
+                for(auto const& param: _motor_params_map) {
+                    ss << MotorTypeEnum(param.first).toString() << " => ";
+                    MotorParam p = param.second;
+                    for(size_t i = 0; i < p.motors_id.size() && i < p.params.size(); ++i)
+                        ss << "(" << static_cast<int>(p.motors_id.at(i)) << ", " << p.params.at(i) << ")" << ",";
+                }
+
+                string_info = ss.str();
                 string_info.pop_back();
+
+                string_info += "]";
             }
-
-            string_info = ss.str();
-
-            string_info += ")";
 
             return string_info;
         }
@@ -102,9 +108,52 @@ namespace common {
          */
         bool SynchronizeMotorCmd::isValid() const
         {
-            return (EDxlCommandType::CMD_TYPE_UNKNOWN != _type) &&
-                   (!_motor_id_list.empty()) &&
-                   (_motor_id_list.size() == _param_list.size());
+            if(EDxlCommandType::CMD_TYPE_UNKNOWN == _type || _motor_params_map.empty())
+                return false;
+
+            for(auto const& it_map: _motor_params_map) {
+                if(!it_map.second.isValid())
+                    return false;
+            }
+
+            return true;
+        }
+
+        std::vector<uint8_t>
+        SynchronizeMotorCmd::getMotorsId(EMotorType type) const
+        {
+
+            if(!_motor_params_map.count(type))
+                throw std::out_of_range("type not known of synchonized command");
+
+            return _motor_params_map.at(type).motors_id;
+        }
+
+        std::vector<uint32_t>
+        SynchronizeMotorCmd::getParams(EMotorType type) const
+        {
+            if(!_motor_params_map.count(type))
+                throw std::out_of_range("type not known of synchonized command");
+
+            return _motor_params_map.at(type).params;
+        }
+
+        std::set<EMotorType> SynchronizeMotorCmd::getTypes() const
+        {
+            std::set<EMotorType> types;
+            for (auto const& it: _motor_params_map) {
+                types.insert(it.first);
+            }
+
+            return types;
+        }
+
+        /**
+         * @brief SynchronizeMotorCmd::clear : clears the data (keep the cmd type)
+         */
+        void SynchronizeMotorCmd::clear()
+        {
+            _motor_params_map.clear();
         }
 
     } // namespace model

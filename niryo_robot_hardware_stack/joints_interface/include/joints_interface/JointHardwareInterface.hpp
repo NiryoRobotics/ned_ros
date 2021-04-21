@@ -94,11 +94,6 @@ namespace JointsInterface {
 
         std::vector<std::shared_ptr<common::model::JointState> > _joint_list;
 
-        std::vector<double> _cmd = {0, 0.64, -1.39, 0, 0, 0};
-        std::vector<double> _pos = {0, 0.64, -1.39, 0, 0, 0};
-        std::vector<double> _vel;
-        std::vector<double> _eff;
-
         bool _learning_mode;
     };
 } // JointsInterface

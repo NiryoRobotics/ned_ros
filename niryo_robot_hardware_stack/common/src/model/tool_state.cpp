@@ -29,8 +29,8 @@ namespace common  {
         {
         }
 
-        ToolState::ToolState(uint8_t id, std::string name, EMotorType type) :
-            DxlMotorState(id, type, true),
+        ToolState::ToolState(std::string name, EMotorType type, uint8_t id) :
+            DxlMotorState(type, id, true),
             _name(name),
             _connected(true),
             _position(0.0)

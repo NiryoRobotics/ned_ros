@@ -61,8 +61,8 @@ namespace common {
                 virtual bool isValid() const override;
                 virtual std::string str() const override;
 
-                virtual uint32_t rad_pos_to_motor_pos(double pos_rad) override;
-                virtual double to_rad_pos() override;
+                virtual int rad_pos_to_motor_pos(double pos_rad) override;
+                virtual double to_rad_pos(int pos) override;
 
             protected:
                 double _last_time_read;

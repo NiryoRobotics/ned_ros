@@ -60,9 +60,13 @@ namespace DynamixelDriver
 
         void startControlLoop();
 
-        void setTrajectoryControllerCommands(std::vector<uint32_t>& cmd);
+        void clearDxlSyncCommandQueue();
+        void clearDxlCommandQueue();
+        void clearDxlEndEffectorCommandQueue();
 
-        void setDxlSyncCommands(const common::model::SynchronizeMotorCmd &cmd);
+        void addDxlSyncCommandToQueue(const common::model::SynchronizeMotorCmd &cmd);
+        void addDxlSyncCommandToQueue(const std::vector<common::model::SynchronizeMotorCmd> &cmd);
+
         void addDxlCommandToQueue(const common::model::SingleMotorCmd &cmd);
         void addDxlCommandToQueue(const std::vector<common::model::SingleMotorCmd> &cmd);
 
@@ -71,13 +75,15 @@ namespace DynamixelDriver
 
         int ping_id(uint8_t id, common::model::EMotorType type);
         std::vector<uint8_t> scanTools();
-        int setEndEffector(uint8_t id, common::model::EMotorType type);
-        void unsetEndEffector(uint8_t id, common::model::EMotorType type);
-        uint32_t getEndEffectorState(uint8_t id, common::model::EMotorType type);
+        int setEndEffector(common::model::EMotorType type, uint8_t id);
+        void unsetEndEffector(uint8_t id);
+        uint32_t getEndEffectorState(uint8_t id);
 
         dynamixel_driver::DxlArrayMotorHardwareStatus getHwStatus() const;
         niryo_robot_msgs::BusState getDxlBusState() const;
         std::vector<common::model::DxlMotorState> getDxlStates() const;
+        common::model::DxlMotorState getDxlState(uint8_t motor_id) const;
+
         std::vector<uint8_t> getRemovedMotorList() const;
         
         int update_leds(void);
@@ -124,11 +130,7 @@ namespace DynamixelDriver
 
         std::unique_ptr<DxlDriver> _dynamixel;
 
-
-        //set a queue of cmds ? need to create an interface then
-        std::vector<uint32_t> _joint_trajectory_controller_cmd;
-
-        common::model::SynchronizeMotorCmd _dxl_sync_cmds;
+        std::queue<common::model::SynchronizeMotorCmd> _dxl_sync_cmds;
         std::queue<common::model::SingleMotorCmd> _dxl_single_cmds;
         std::queue<common::model::SingleMotorCmd> _end_effector_cmds;
 
@@ -137,5 +139,24 @@ namespace DynamixelDriver
         ros::ServiceServer _custom_cmd_getter;
 
     };
+
+    inline
+    std::vector<common::model::DxlMotorState> DynamixelDriverCore::getDxlStates() const
+    {
+        return _dynamixel->getMotorsStates();
+    }
+
+    inline
+    common::model::DxlMotorState DynamixelDriverCore::getDxlState(uint8_t motor_id) const
+    {
+        return _dynamixel->getMotorsState(motor_id);
+    }
+
+    inline
+    std::vector<uint8_t> DynamixelDriverCore::getRemovedMotorList() const
+    {
+        return _dynamixel->getRemovedMotorList();
+    }
+
 } //DynamixelDriver
 #endif

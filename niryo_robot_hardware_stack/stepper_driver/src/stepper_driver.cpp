@@ -462,11 +462,11 @@ namespace StepperDriver
             pos = -1 * ((~pos + 1) & 0xFFFF);
         }
 
-        for (StepperMotorState motorState : _motor_list)
+        for (StepperMotorState& motorState : _motor_list)
         {
             if (motor_id == motorState.getId())
             {
-                motorState.setPositionState(static_cast<uint32_t>(pos));
+                motorState.setPositionState(pos);
                 break;
             }
         }

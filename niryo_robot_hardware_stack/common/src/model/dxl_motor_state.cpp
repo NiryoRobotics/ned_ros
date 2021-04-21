@@ -35,7 +35,7 @@ namespace common {
             reset();
         }
 
-        DxlMotorState::DxlMotorState(uint8_t id, EMotorType type, bool isTool) :
+        DxlMotorState::DxlMotorState(EMotorType type, uint8_t id, bool isTool) :
             JointState("unknown", type, id),
             _isTool(isTool)
         {
@@ -82,22 +82,25 @@ namespace common {
             return ss.str();
         }
 
-        uint32_t DxlMotorState::rad_pos_to_motor_pos(double pos_rad)
+        int DxlMotorState::rad_pos_to_motor_pos(double pos_rad)
         {
             double denom = getTotalAngle();
             assert(0.0 != denom);
-            int converted = getMiddlePosition() + static_cast<int>(((pos_rad - _offset_position) * RADIAN_TO_DEGREE * getTotalRangePosition()) / denom);
-
-            return static_cast<uint32_t>(converted);
+            int converted = getMiddlePosition() + static_cast<int>(((pos_rad) * RADIAN_TO_DEGREE * getTotalRangePosition()) / denom);
+            //return (uint32_t)((double)XL430_MIDDLE_POSITION + (position_rad * RADIAN_TO_DEGREE * (double)XL430_TOTAL_RANGE_POSITION) / (double)XL430_TOTAL_ANGLE);
+            return converted;
         }
 
-        double DxlMotorState::to_rad_pos()
+        double DxlMotorState::to_rad_pos(int position_dxl)
         {
-            double denom = (RADIAN_TO_DEGREE * getTotalRangePosition());
+            /*double denom = (RADIAN_TO_DEGREE * getTotalRangePosition());
             assert(0.0 != denom);
             double dxl_pose = _offset_position + ((static_cast<int>(_position_state) - getMiddlePosition()) * getTotalAngle()) / denom;
 
             return std::fmod(dxl_pose, 2 * M_PI); //fmod computes the floating-point remainder of the division operation x/y
+            */
+            return (double)((((double)position_dxl - getMiddlePosition()) * (double)getTotalAngle()) / (RADIAN_TO_DEGREE * (double)getTotalRangePosition()));
+
         }
 
         int DxlMotorState::getPGain() const

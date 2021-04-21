@@ -68,7 +68,7 @@ namespace common {
         string StepperMotorCmd::str() const
         {
             ostringstream ss;
-            ss << "Single motor cmd - ";
+            ss << "Stepper motor cmd - ";
 
             ss << StepperCommandTypeEnum(_type).toString() << " ";
 

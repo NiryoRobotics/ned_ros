@@ -204,10 +204,11 @@ namespace JointsInterface {
 
     void CalibrationInterface::_auto_calibration()
     {
-        _stepper->startCalibration(true);
+        ros::Duration sld(0.2);
+
+        //_stepper->startCalibration(true);
         // 0. Torque ON for motor 2
 
-        ros::Duration sld(0.2);
         sld.sleep();
         StepperMotorCmd stepper_cmd;
 
@@ -221,29 +222,29 @@ namespace JointsInterface {
         sld.sleep();
 
         // 1. Relative Move Motor 3
-        _relativeMoveMotor(_joint_list.at(2), _joint_list.at(2)->rad_pos_to_motor_pos(_joint_list.at(2)->getOffsetPosition() + 0.25), 500, false);
+        _relativeMoveMotor(_joint_list.at(2), _joint_list.at(2)->rad_pos_to_motor_pos(0.25), 500, false);
+        //_relativeMoveMotor(_joint_list.at(2), rad_pos_to_steps(0.25, _gear_ratio_3, _direction_3), 500, false);
         ros::Duration(0.5).sleep();
 
         // 2. Move All Dynamixel to Home Position
         SynchronizeMotorCmd dynamixel_cmd;
-
         dynamixel_cmd.setType(EDxlCommandType::CMD_TYPE_TORQUE);
-        id.clear();
-        id = {
-            _joint_list.at(3)->getId(),
-            _joint_list.at(4)->getId(),
-            _joint_list.at(5)->getId()};
-        dynamixel_cmd.setMotorsId(id);
-        std::vector<uint32_t> dxl_param{1, 1, 1};
-        dynamixel_cmd.setParams(dxl_param);
-        _dynamixel->setDxlSyncCommands(dynamixel_cmd);
+        dynamixel_cmd.addMotorParam(_joint_list.at(3)->getType(),_joint_list.at(3)->getId(), 1);
+        dynamixel_cmd.addMotorParam(_joint_list.at(4)->getType(),_joint_list.at(4)->getId(), 1);
+        dynamixel_cmd.addMotorParam(_joint_list.at(5)->getType(),_joint_list.at(5)->getId(), 1);
+
+        _dynamixel->addDxlSyncCommandToQueue(dynamixel_cmd);
         sld.sleep();
 
-        dxl_param = {
-              _joint_list.at(3)->rad_pos_to_motor_pos(0),
-              _joint_list.at(4)->rad_pos_to_motor_pos(0),
-              _joint_list.at(5)->rad_pos_to_motor_pos(0)};
-        _dynamixel->setTrajectoryControllerCommands(dxl_param);
+        dynamixel_cmd.reset();
+        dynamixel_cmd.setType(EDxlCommandType::CMD_TYPE_POSITION);
+        dynamixel_cmd.addMotorParam(_joint_list.at(3)->getType(),_joint_list.at(3)->getId(),
+                                    _joint_list.at(3)->rad_pos_to_motor_pos(-_joint_list.at(3)->getOffsetPosition()));
+        dynamixel_cmd.addMotorParam(_joint_list.at(4)->getType(),_joint_list.at(4)->getId(),
+                                    _joint_list.at(4)->rad_pos_to_motor_pos(-_joint_list.at(4)->getOffsetPosition()));
+        dynamixel_cmd.addMotorParam(_joint_list.at(5)->getType(),_joint_list.at(5)->getId(),
+                                    _joint_list.at(5)->rad_pos_to_motor_pos(-_joint_list.at(5)->getOffsetPosition()));
+        _dynamixel->addDxlSyncCommandToQueue(dynamixel_cmd);
         sld.sleep();
 
         _joint_list.at(3)->setNeedCalibration(false);
@@ -264,7 +265,7 @@ namespace JointsInterface {
         {
             auto stepper_1_calibration_fut = common::util::reallyAsync(&CalibrationInterface::_setStepperCalibrationCommand, this,
                                                                        pStepperMotorState_1->getId(),
-                                                                       pStepperMotorState_1->rad_pos_to_motor_pos(0),
+                                                                       pStepperMotorState_1->rad_pos_to_motor_pos(pStepperMotorState_1->getOffsetPosition()),
                                                                        200,
                                                                        pStepperMotorState_1->getDirection(),
                                                                        1,
@@ -274,7 +275,7 @@ namespace JointsInterface {
             //stepper 2
             auto stepper_2_calibration_fut = common::util::reallyAsync(&CalibrationInterface::_setStepperCalibrationCommand, this,
                                                                        pStepperMotorState_2->getId(),
-                                                                       pStepperMotorState_2->rad_pos_to_motor_pos(0),
+                                                                       pStepperMotorState_2->rad_pos_to_motor_pos(pStepperMotorState_2->getOffsetPosition()),
                                                                        1000,
                                                                        pStepperMotorState_2->getDirection(),
                                                                        1,
@@ -284,7 +285,7 @@ namespace JointsInterface {
             //stepper 3
             auto stepper_3_calibration_fut = common::util::reallyAsync(&CalibrationInterface::_setStepperCalibrationCommand, this,
                                                                        pStepperMotorState_3->getId(),
-                                                                       pStepperMotorState_3->rad_pos_to_motor_pos(0),
+                                                                       pStepperMotorState_3->rad_pos_to_motor_pos(pStepperMotorState_3->getOffsetPosition()),
                                                                        1000,
                                                                        pStepperMotorState_3->getDirection(),
                                                                        -1,
@@ -318,7 +319,7 @@ namespace JointsInterface {
         // -0.01 to bypass error
         sld.sleep();
         _relativeMoveMotor(_joint_list.at(0),
-                           -_joint_list.at(0)->rad_pos_to_motor_pos(0),
+                           -_joint_list.at(0)->rad_pos_to_motor_pos(_joint_list.at(0)->getOffsetPosition()),
                             550,
                            false);
 
@@ -332,18 +333,16 @@ namespace JointsInterface {
             _joint_list.at(2)->getId()});
         std::vector<int32_t> stepper_params{0, 0, 0};
         stepper_cmd.setParams(stepper_params);
+        _stepper->setStepperCommands(stepper_cmd);
 
         //forge dxl command
+        dynamixel_cmd.reset();
         dynamixel_cmd.setType(EDxlCommandType::CMD_TYPE_TORQUE);
-        dynamixel_cmd.setMotorsId(std::vector<uint8_t>{
-            _joint_list.at(3)->getId(),
-            _joint_list.at(4)->getId(),
-            _joint_list.at(5)->getId()});
-        std::vector<uint32_t> dxl_params{0, 0, 0};
-        dynamixel_cmd.setParams(dxl_params);
+        dynamixel_cmd.addMotorParam(_joint_list.at(3)->getType(),_joint_list.at(3)->getId(), 0);
+        dynamixel_cmd.addMotorParam(_joint_list.at(4)->getType(),_joint_list.at(4)->getId(), 0);
+        dynamixel_cmd.addMotorParam(_joint_list.at(5)->getType(),_joint_list.at(5)->getId(), 0);
 
-        _stepper->setStepperCommands(stepper_cmd);
-        _dynamixel->setDxlSyncCommands(dynamixel_cmd);
+        _dynamixel->addDxlSyncCommandToQueue(dynamixel_cmd);
         sld.sleep();
 
         // 6. Write sensor_offset_steps to file
@@ -455,7 +454,7 @@ namespace JointsInterface {
 
             if (motor_id_list.at(i) == _joint_list.at(0)->getId())
             {
-                offset_to_send = sensor_offset_steps - _joint_list.at(0)->rad_pos_to_motor_pos(0) % steps_per_rev;
+                offset_to_send = sensor_offset_steps - _joint_list.at(0)->rad_pos_to_motor_pos(_joint_list.at(0)->getOffsetPosition()) % steps_per_rev;
                 if (offset_to_send < 0)
                     offset_to_send += steps_per_rev;
                 absolute_steps_at_offset_position = offset_to_send;
@@ -466,7 +465,7 @@ namespace JointsInterface {
             }
             else if (motor_id_list.at(i) == _joint_list.at(1)->getId())
             {
-                offset_to_send = sensor_offset_steps - _joint_list.at(1)->rad_pos_to_motor_pos(0);
+                offset_to_send = sensor_offset_steps - _joint_list.at(1)->rad_pos_to_motor_pos(_joint_list.at(1)->getOffsetPosition());
                 absolute_steps_at_offset_position = sensor_offset_steps;
 
                 _send_calibration_offset(_joint_list.at(1)->getId(), offset_to_send, absolute_steps_at_offset_position);
@@ -475,7 +474,7 @@ namespace JointsInterface {
             }
             else if (motor_id_list.at(i) == _joint_list.at(2)->getId())
             {
-                offset_to_send = sensor_offset_steps - _joint_list.at(2)->rad_pos_to_motor_pos(0);
+                offset_to_send = sensor_offset_steps - _joint_list.at(2)->rad_pos_to_motor_pos(_joint_list.at(2)->getOffsetPosition());
                 absolute_steps_at_offset_position = sensor_offset_steps;
 
                 _send_calibration_offset(_joint_list.at(2)->getId(), offset_to_send, absolute_steps_at_offset_position);

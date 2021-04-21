@@ -130,7 +130,7 @@ namespace ToolsInterface {
         // Unequipped tool
         if(_toolState.getId() != 0)
         {
-            _dynamixel->unsetEndEffector(_toolState.getId(), _toolState.getType());
+            _dynamixel->unsetEndEffector(_toolState.getId());
             res.state = ToolState::TOOL_STATE_PING_OK;
             res.id = 0;
         }
@@ -142,7 +142,7 @@ namespace ToolsInterface {
         for(auto m_id : motor_list) {
             if(_available_tools_map.count(m_id))
             {
-                _toolState = ToolState(m_id, "auto", _available_tools_map.at(m_id));
+                _toolState = ToolState("auto", _available_tools_map.at(m_id), m_id);
                 break;
             }
         }
@@ -156,7 +156,7 @@ namespace ToolsInterface {
             {
                 tries++;
                 ros::Duration(0.05).sleep();
-                res.state = _dynamixel->setEndEffector(_toolState.getId(), _toolState.getType());
+                res.state = _dynamixel->setEndEffector(_toolState.getType(), _toolState.getId());
 
                 if (res.state != niryo_robot_msgs::CommandStatus::SUCCESS) continue;
 
@@ -214,7 +214,7 @@ namespace ToolsInterface {
         list_cmd.clear();
 
         double dxl_speed = (double)req.open_speed * (double)DynamixelDriver::XL320Driver::XL320_STEPS_FOR_1_SPEED; // position . sec-1
-        double dxl_steps_to_do = abs((double)req.open_position - (double)_dynamixel->getEndEffectorState(_toolState.getId(), _toolState.getType())); // position
+        double dxl_steps_to_do = abs((double)req.open_position - (double)_dynamixel->getEndEffectorState(_toolState.getId())); // position
         double seconds_to_wait =  dxl_steps_to_do /  dxl_speed; // sec
         ros::Duration(seconds_to_wait + 0.25).sleep();
 
@@ -262,7 +262,7 @@ namespace ToolsInterface {
 
         // calculate close duration
         double dxl_speed = (double)req.close_speed *(double) DynamixelDriver::XL320Driver::XL320_STEPS_FOR_1_SPEED; // position . sec-1
-        double dxl_steps_to_do = abs((double)req.close_position - (double)_dynamixel->getEndEffectorState(_toolState.getId(), _toolState.getType())); // position
+        double dxl_steps_to_do = abs((double)req.close_position - (double)_dynamixel->getEndEffectorState(_toolState.getId())); // position
         double seconds_to_wait =  dxl_steps_to_do /  dxl_speed; // sec
         ros::Duration(seconds_to_wait + 0.25).sleep();
 
@@ -310,7 +310,7 @@ namespace ToolsInterface {
 
         // calculate pull air duration
         double dxl_speed = (double)pull_air_velocity * (double)DynamixelDriver::XL320Driver::XL320_STEPS_FOR_1_SPEED; // position . sec-1
-        double dxl_steps_to_do = abs((double)req.pull_air_position - (double)_dynamixel->getEndEffectorState(_toolState.getId(), _toolState.getType())); // position
+        double dxl_steps_to_do = abs((double)req.pull_air_position - (double)_dynamixel->getEndEffectorState(_toolState.getId())); // position
         double seconds_to_wait = dxl_steps_to_do / dxl_speed; // sec
 
         ros::Duration(seconds_to_wait + 0.25).sleep();
@@ -359,7 +359,7 @@ namespace ToolsInterface {
 
         // calculate push air duration
         double dxl_speed = (double)push_air_velocity * (double)DynamixelDriver::XL320Driver::XL320_STEPS_FOR_1_SPEED; // position . sec-1
-        double dxl_steps_to_do = abs((double)req.push_air_position - (double)_dynamixel->getEndEffectorState(_toolState.getId(), _toolState.getType())); // position
+        double dxl_steps_to_do = abs((double)req.push_air_position - (double)_dynamixel->getEndEffectorState(_toolState.getId())); // position
         double seconds_to_wait =  dxl_steps_to_do /  dxl_speed; // sec
 
         ros::Duration(seconds_to_wait + 0.25).sleep();
@@ -390,7 +390,7 @@ namespace ToolsInterface {
                     if(_toolState.getId() == motor_list.at(i))
                     {
                         ROS_INFO("Tools Interface - Unset Current Tools");
-                        _dynamixel->unsetEndEffector(_toolState.getId(), _toolState.getType());
+                        _dynamixel->unsetEndEffector(_toolState.getId());
                         _toolState.reset();
                         msg.data = 0;
                         _current_tools_id_publisher.publish(msg);

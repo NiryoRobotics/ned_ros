@@ -56,7 +56,7 @@ namespace common {
             m[EDxlCommandType::CMD_TYPE_I_GAIN] = "I Gain";
             m[EDxlCommandType::CMD_TYPE_D_GAIN] = "D Gain";
             m[EDxlCommandType::CMD_TYPE_FF1_GAIN] = "FF1 Gain";
-            m[EDxlCommandType::CMD_TYPE_FF2_GAIN] = "F2 Gain";
+            m[EDxlCommandType::CMD_TYPE_FF2_GAIN] = "FF2 Gain";
             m[EDxlCommandType::CMD_TYPE_UNKNOWN]  = "unknown type";
 
             return m;

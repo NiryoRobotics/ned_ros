@@ -31,7 +31,7 @@ namespace common {
         {
             public:
                 DxlMotorState();
-                DxlMotorState(uint8_t id, EMotorType type, bool isTool = false);
+                DxlMotorState(EMotorType type, uint8_t id, bool isTool = false);
                 DxlMotorState(std::string name, EMotorType type, uint8_t id , bool isTool = false);
 
                 virtual ~DxlMotorState() override;
@@ -44,8 +44,8 @@ namespace common {
                 virtual void reset() override;
                 virtual bool isValid() const override;
 
-                virtual uint32_t rad_pos_to_motor_pos(double pos_rad) override;
-                virtual double to_rad_pos() override;
+                virtual int rad_pos_to_motor_pos(double pos_rad) override;
+                virtual double to_rad_pos(int position_dxl) override;
 
                 int getPGain() const;
                 void setPGain(int getPGain);

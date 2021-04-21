@@ -50,12 +50,12 @@ namespace StepperDriver
             void resetHardwareControlLoopRates();
             void controlLoop();
 
-            void setStepperCommands(common::model::StepperMotorCmd &cmd);
-            void setTrajectoryControllerCommands(std::vector<int32_t> &cmd); 
+            void setStepperCommands(const common::model::StepperMotorCmd &cmd);
+            void setTrajectoryControllerCommands(const std::vector<int32_t> &cmd);
 
             int setConveyor(uint8_t motor_id);
             void unsetConveyor(uint8_t motor_id);
-            void setConveyorCommands(common::model::StepperMotorCmd &cmd);
+            void setConveyorCommands(const common::model::StepperMotorCmd &cmd);
 
             void clearCalibrationTab();
             void startCalibration(bool enable);
@@ -77,7 +77,6 @@ namespace StepperDriver
             niryo_robot_msgs::BusState getCanBusState() const;
 
             const std::vector<common::model::StepperMotorState>& getStepperStates() const;
-            const std::vector<int32_t>& getTrajectoryControllerStates() const;
 
         private:
             void _executeCommand();

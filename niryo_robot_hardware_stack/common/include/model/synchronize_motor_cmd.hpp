@@ -22,55 +22,55 @@
 
 #include <string>
 #include <vector>
+#include <set>
+#include <memory>
+#include <sstream>
 
 #include "model/abstract_motor_cmd.hpp"
 #include "model/dxl_command_type_enum.hpp"
+#include "model/motor_type_enum.hpp"
+#include "model/dxl_motor_state.hpp"
 
 namespace common {
     namespace model {
 
         class SynchronizeMotorCmd : public AbstractMotorCmd<EDxlCommandType>
         {
+            struct MotorParam {
+                MotorParam(uint8_t id, uint32_t param) {
+                    motors_id.emplace_back(id);
+                    params.emplace_back(param);
+                }
+
+                bool isValid() const {
+                    return motors_id.size() == params.size() && !motors_id.empty();
+                }
+
+                std::vector<uint8_t> motors_id;
+                std::vector<uint32_t> params;
+            };
 
             public:
-
                 SynchronizeMotorCmd();
-                SynchronizeMotorCmd(EDxlCommandType type,
-                                    std::vector<uint8_t> motor_id,
-                                    std::vector<uint32_t> params);
-
+                SynchronizeMotorCmd(EDxlCommandType type);
 
                 //setters
-                void setMotorsId(std::vector<uint8_t> motor_id);
-                void setParams(std::vector<uint32_t> params);
+                void addMotorParam(EMotorType type, uint8_t motor_id, uint32_t param);
 
                 //getters
-                std::vector<uint8_t> getMotorsId() const;
-                std::vector<uint32_t> getParams() const;
+                std::vector<uint8_t> getMotorsId(EMotorType type) const;
+                std::vector<uint32_t> getParams(EMotorType type) const;
+                std::set<EMotorType> getTypes() const;
 
+                void clear();
                 // AbstractMotorCmd interface
                 void reset() override;
                 std::string str() const override;
                 bool isValid() const override;
 
             private:
-                std::vector<uint8_t> _motor_id_list;
-                std::vector<uint32_t> _param_list;
+                std::map<EMotorType, MotorParam > _motor_params_map;
         };
-
-        inline
-        std::vector<uint8_t>
-        SynchronizeMotorCmd::getMotorsId() const
-        {
-            return _motor_id_list;
-        }
-
-        inline
-        std::vector<uint32_t>
-        SynchronizeMotorCmd::getParams() const
-        {
-            return _param_list;
-        }
 
     } // namespace model
 } // namespace common

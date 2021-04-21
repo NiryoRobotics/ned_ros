@@ -68,12 +68,10 @@ namespace DynamixelDriver
             DxlDriver();
             virtual ~DxlDriver();
 
-            void addDynamixel(uint8_t id, common::model::EMotorType type, bool isTool = false);
-            void removeDynamixel(uint8_t id, common::model::EMotorType);
+            void addDynamixel(common::model::EMotorType type, uint8_t id, bool isTool = false);
+            void removeDynamixel(uint8_t id);
 
             //commands
-            void executeJointTrajectoryCmd(std::vector<uint32_t> &cmd);
-
             void readSynchronizeCommand(common::model::SynchronizeMotorCmd cmd);
             void readSingleCommand(common::model::SingleMotorCmd cmd);
 
@@ -81,18 +79,6 @@ namespace DynamixelDriver
 
             void readPositionStatus();
             void readHwStatus();
-
-            int setTorqueEnable(common::model::DxlMotorState& targeted_dxl, uint32_t torque_enable);
-            int setGoalPosition(common::model::DxlMotorState& targeted_dxl, uint32_t position);
-
-            int setGoalTorque(common::model::DxlMotorState& targeted_dxl, uint32_t torque);
-            int setGoalVelocity(common::model::DxlMotorState& targeted_dxl, uint32_t velocity);
-
-            int setPGain(common::model::DxlMotorState& targeted_dxl, uint32_t gain);
-            int setIGain(common::model::DxlMotorState& targeted_dxl, uint32_t gain);
-            int setDGain(common::model::DxlMotorState& targeted_dxl, uint32_t gain);
-            int setFF1Gain(common::model::DxlMotorState& targeted_dxl, uint32_t gain);
-            int setFF2Gain(common::model::DxlMotorState& targeted_dxl, uint32_t gain);
 
             int setLeds(int led, common::model::EMotorType type);
 
@@ -111,7 +97,9 @@ namespace DynamixelDriver
 
             //getters
             std::vector<uint8_t> getRemovedMotorList() const;
-            std::vector<common::model::DxlMotorState> getMotorsState() const;
+            std::vector<common::model::DxlMotorState> getMotorsStates() const;
+            common::model::DxlMotorState getMotorsState(uint8_t motor_id) const;
+
             int getLedState() const;
             std::string getErrorMessage() const;
             void getBusState(bool& connection_state, std::vector<uint8_t>& motor_id, std::string& debug_msg) const;
@@ -127,8 +115,6 @@ namespace DynamixelDriver
 
             bool hasMotors();
 
-            std::vector<uint8_t> getArmMotors();
-
             void fillPositionStatus();
             void fillVoltageStatus();
             void fillTemperatureStatus();
@@ -136,17 +122,14 @@ namespace DynamixelDriver
 
             void readAndFillState(
                 int (XDriver::*syncReadFunction)(const std::vector<uint8_t> &, std::vector<uint32_t> &),
-                void (common::model::DxlMotorState::*setFunction)(uint32_t));
+                void (common::model::DxlMotorState::*setFunction)(int));
 
-            void syncWriteTorqueEnable(const std::vector<uint8_t>& motor_list, const std::vector<uint32_t>& torque_enable);
-            void syncWritePositionCommand(const std::vector<uint8_t>& motor_list, const std::vector<uint32_t>& position_list);
-            void syncWriteVelocityCommand(const std::vector<uint8_t>& motor_list, const std::vector<uint32_t>& velocity_list);
-            void syncWriteEffortCommand(const std::vector<uint8_t>& motor_list, const std::vector<uint32_t>& effort_list);
+            void syncWriteCommand(int (XDriver::*syncWriteFunction)(const std::vector<uint8_t> &,
+                                                                    const std::vector<uint32_t> &),
+                                  const common::model::SynchronizeMotorCmd& cmd);
 
-            void syncWriteCommand(int (XDriver::*syncWriteFunction)(const std::vector<uint8_t> &, const std::vector<uint32_t> &),
-                                  const std::vector<uint8_t> &motor_list,
-                                  const std::vector<uint32_t> &param_list);
-
+            int singleWriteCommand(int (XDriver::*singleWriteFunction)(uint8_t id, uint32_t), common::model::EMotorType dxl_type,
+                                  const common::model::SingleMotorCmd& cmd);
         private:
             ros::NodeHandle _nh;
 
@@ -188,13 +171,22 @@ namespace DynamixelDriver
     }
 
     inline
-    std::vector<common::model::DxlMotorState> DxlDriver::getMotorsState() const
+    std::vector<common::model::DxlMotorState> DxlDriver::getMotorsStates() const
     {
         std::vector<common::model::DxlMotorState> states;
         for (auto it = _state_map.cbegin(); it != _state_map.cend(); ++it)
             states.push_back(it->second);
 
         return states;
+    }
+
+    inline
+    common::model::DxlMotorState DxlDriver::getMotorsState(uint8_t motor_id) const
+    {
+        if(!_state_map.count(motor_id))
+            throw std::out_of_range("DxlDriver::getMotorsState: Unknown motor id");
+
+        return _state_map.at(motor_id);
     }
 
     inline

@@ -39,10 +39,10 @@ namespace common {
                 EMotorType getType() const;
                 uint8_t getId() const;
 
-                uint32_t getPositionState() const;
-                uint32_t getTemperatureState() const;
-                uint32_t getVoltageState() const;
-                uint32_t getHardwareErrorState() const;
+                int getPositionState() const;
+                int getTemperatureState() const;
+                int getVoltageState() const;
+                int getHardwareErrorState() const;
                 std::string getHardwareErrorMessageState() const;
 
                 int getTotalRangePosition() const;
@@ -50,11 +50,11 @@ namespace common {
                 double getTotalAngle() const;
 
                 //setters
-                void setPositionState(uint32_t pos);
+                void setPositionState(int pos);
 
-                void setTemperatureState(uint32_t temp);
-                void setVoltageState(uint32_t volt);
-                void setHardwareError(uint32_t hw_error);
+                void setTemperatureState(int temp);
+                void setVoltageState(int volt);
+                void setHardwareError(int hw_error);
                 void setHardwareError(std::string hw_error_msg);
 
                 // tests
@@ -75,10 +75,10 @@ namespace common {
                 uint8_t _id;
 
                 // read variables
-                uint32_t _position_state;
-                uint32_t _temperature_state;
-                uint32_t _voltage_state;
-                uint32_t _hw_error_state;
+                int _position_state;
+                int _temperature_state;
+                int _voltage_state;
+                int _hw_error_state;
                 std::string _hw_error_message_state;
         };
 
@@ -96,27 +96,27 @@ namespace common {
         }
 
         inline
-        uint32_t AbstractMotorState::getPositionState() const
+        int AbstractMotorState::getPositionState() const
         {
             return _position_state;
         }
 
         inline
-        uint32_t AbstractMotorState::getTemperatureState() const
+        int AbstractMotorState::getTemperatureState() const
         {
             return _temperature_state;
 
         }
 
         inline
-        uint32_t AbstractMotorState::getVoltageState() const
+        int AbstractMotorState::getVoltageState() const
         {
             return _voltage_state;
 
         }
 
         inline
-        uint32_t AbstractMotorState::getHardwareErrorState() const
+        int AbstractMotorState::getHardwareErrorState() const
         {
             return _hw_error_state;
 

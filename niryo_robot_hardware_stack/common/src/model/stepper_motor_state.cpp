@@ -119,15 +119,17 @@ namespace common {
             return ss.str();
         }
 
-        uint32_t StepperMotorState::rad_pos_to_motor_pos(double pos_rad)
+        int StepperMotorState::rad_pos_to_motor_pos(double pos_rad)
         {
-            return static_cast<uint32_t>(_direction * (STEPPERS_MOTOR_STEPS_PER_REVOLUTION * STEPPERS_MICROSTEPS * _gear_ratio * (pos_rad - _offset_position) * RADIAN_TO_DEGREE / 360.0));
+            return ((STEPPERS_MOTOR_STEPS_PER_REVOLUTION * STEPPERS_MICROSTEPS * _gear_ratio * pos_rad * RADIAN_TO_DEGREE / 360.0) * _direction);
+            //return (int32_t)((STEPPERS_MOTOR_STEPS_PER_REVOLUTION * STEPPERS_MICROSTEPS * gear_ratio * position_rad * RADIAN_TO_DEGREE / 360.0) * direction);
         }
 
-        double StepperMotorState::to_rad_pos()
+        double StepperMotorState::to_rad_pos(int pos)
         {
             assert(0.0 != (STEPPERS_MOTOR_STEPS_PER_REVOLUTION * STEPPERS_MICROSTEPS * _gear_ratio * RADIAN_TO_DEGREE));
-            return (_direction * _position_state * 360.0) / (STEPPERS_MOTOR_STEPS_PER_REVOLUTION * STEPPERS_MICROSTEPS * _gear_ratio * RADIAN_TO_DEGREE);
+            return static_cast<double>((static_cast<double>(pos) * 360.0) / (STEPPERS_MOTOR_STEPS_PER_REVOLUTION * STEPPERS_MICROSTEPS * _gear_ratio * RADIAN_TO_DEGREE) * _direction);
+            //return (double)((double)steps * 360.0 / (STEPPERS_MOTOR_STEPS_PER_REVOLUTION * STEPPERS_MICROSTEPS * gear_ratio * RADIAN_TO_DEGREE)) * direction;
         }
 
         int StepperMotorState::stepsPerRev()

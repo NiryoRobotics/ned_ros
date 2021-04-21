@@ -213,12 +213,12 @@ namespace StepperDriver
         return niryo_robot_msgs::CommandStatus::ABORTED;
     }
 
-    void StepperDriverCore::setStepperCommands(common::model::StepperMotorCmd &cmd)
+    void StepperDriverCore::setStepperCommands(const common::model::StepperMotorCmd &cmd)
     {
         _stepper_cmd.reset(new common::model::StepperMotorCmd(cmd));
     }
 
-    void StepperDriverCore::setTrajectoryControllerCommands(std::vector<int32_t> &cmd)
+    void StepperDriverCore::setTrajectoryControllerCommands(const std::vector<int32_t> &cmd)
     {
         _joint_trajectory_controller_cmd = cmd;
     }
@@ -264,7 +264,7 @@ namespace StepperDriver
         _stepper->removeConveyor(motor_id);
     }
 
-    void StepperDriverCore::setConveyorCommands(common::model::StepperMotorCmd &cmd)
+    void StepperDriverCore::setConveyorCommands(const common::model::StepperMotorCmd &cmd)
     {
         _conveyor_cmd.reset(new common::model::StepperMotorCmd(cmd));
     }

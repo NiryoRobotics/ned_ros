@@ -176,7 +176,7 @@ namespace DynamixelDriver
     {
         int dxl_comm_result = -1;
 
-        dynamixel::GroupSyncWrite groupSyncWrite(_dxlPortHandler.get(), _dxlPacketHandler.get(), address, DXL_LEN_FOUR_BYTES);
+        dynamixel::GroupSyncWrite groupSyncWrite(_dxlPortHandler.get(), _dxlPacketHandler.get(), address, data_len);
 
         if (id_list.size() != data_list.size())
             return LEN_ID_DATA_NOT_SAME;

@@ -34,9 +34,7 @@ namespace common {
             AbstractMotorState(id, type),
             _name(name),
             _offset_position(0.0),
-            _position(0.0),
-            _need_calibration(true),
-            _cmd(0.0)
+            _need_calibration(true)
         {
         }
 
@@ -60,19 +58,9 @@ namespace common {
             _need_calibration = need_calibration;
         }
 
-        void JointState::setPosition(double position)
-        {
-            _position = position;
-        }
-
         void JointState::setOffsetPosition(double offset_position)
         {
             _offset_position = offset_position;
-        }
-
-        void JointState::setCmd(double cmd)
-        {
-            _cmd = cmd;
         }
 
         //***********************
@@ -83,7 +71,6 @@ namespace common {
         {
             AbstractMotorState::reset();
             _name.clear();
-            _position = 0.0;
             _need_calibration = false;
         }
 
@@ -100,8 +87,12 @@ namespace common {
             ss << "\n---\n";
             ss << "type: " << MotorTypeEnum(_type).toString() << ", ";
             ss << "name: " << "\"" << _name << "\"" << ", ";
-            ss << "position: " << _position << ", ";
-            ss << "need calibration: " << (_need_calibration ? "true" : "false");
+            ss << "position: " << pos << ", ";
+            ss << "need calibration: " << (_need_calibration ? "true" : "false") << ", ";
+            ss << "pos(" << pos << "), ";
+            ss << "cmd(" << cmd << "), ";
+            ss << "vel(" << vel << "), ";
+            ss << "eff(" << eff << ")";
             ss << "\n";
             ss << AbstractMotorState::str();
 

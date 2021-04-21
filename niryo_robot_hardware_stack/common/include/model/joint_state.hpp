@@ -41,20 +41,16 @@ namespace common {
 
                 void setName(std::string &name);
                 void setNeedCalibration(bool need_calibration);
-                void setPosition(double position);
                 void setOffsetPosition(double offset_position);
-                void setCmd(double cmd);
 
                 std::string getName() const;
                 bool needCalibration() const;
-                double getPosition() const;
                 double getOffsetPosition() const;
-                double getCmd() const;
 
                 virtual bool operator==(const JointState& other) const;
 
-                virtual uint32_t rad_pos_to_motor_pos(double pos_rad) = 0;
-                virtual double to_rad_pos() = 0;
+                virtual int rad_pos_to_motor_pos(double pos_rad) = 0;
+                virtual double to_rad_pos(int position_dxl) = 0;
 
                 // AbstractMotorState interface
                 virtual void reset() override;
@@ -64,9 +60,13 @@ namespace common {
         protected:
                 std::string _name;
                 double _offset_position;
-                double _position;
                 bool _need_calibration;
-                double _cmd;
+
+        public:
+                double pos{0.0};
+                double cmd{0.0};
+                double vel{0.0};
+                double eff{0.0};
         };
 
         inline
@@ -82,21 +82,9 @@ namespace common {
         }
 
         inline
-        double JointState::getPosition() const
-        {
-            return _position;
-        }
-
-        inline
         double JointState::getOffsetPosition() const
         {
             return _offset_position;
-        }
-
-        inline
-        double JointState::getCmd() const
-        {
-            return _cmd;
         }
 
     } // namespace JointsInterface

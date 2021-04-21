@@ -45,8 +45,7 @@ namespace common {
 
             public:
                 ToolState();
-                ToolState(uint8_t id, std::string name,
-                          EMotorType type);
+                ToolState(std::string name, EMotorType type, uint8_t id);
 
                 virtual ~ToolState() override;
 
@@ -55,7 +54,7 @@ namespace common {
                 void setPosition(double position);
 
                 std::string getName() const;
-                double getPosition() const;
+                double getPositionRef() const;
 
                 bool isConnected() const;
 
@@ -77,7 +76,7 @@ namespace common {
         }
 
         inline
-        double ToolState::getPosition() const
+        double ToolState::getPositionRef() const
         {
             return _position;
         }

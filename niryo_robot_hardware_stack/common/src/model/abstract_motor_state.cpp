@@ -133,22 +133,22 @@ namespace common {
             return ss.str();
         }
 
-        void AbstractMotorState::setPositionState(uint32_t pos)
+        void AbstractMotorState::setPositionState(int pos)
         {
             _position_state = pos;
         }
 
-        void AbstractMotorState::setTemperatureState(uint32_t temp)
+        void AbstractMotorState::setTemperatureState(int temp)
         {
             _temperature_state = temp;
         }
 
-        void AbstractMotorState::setVoltageState(uint32_t volt)
+        void AbstractMotorState::setVoltageState(int volt)
         {
             _voltage_state = volt;
         }
 
-        void AbstractMotorState::setHardwareError(uint32_t hw_error)
+        void AbstractMotorState::setHardwareError(int hw_error)
         {
             _hw_error_state = hw_error;
         }
