@@ -122,7 +122,7 @@ namespace StepperDriver
             void addMotor(uint8_t motor_id);
             void removeMotor(uint8_t motor_id);
 
-            bool canReadData();
+            bool canReadData() const;
             uint8_t readMsgBuf(unsigned long *id, uint8_t *len, std::array<uint8_t, 8> &buf);
 
             uint8_t sendPositionCommand(int id, int cmd);
@@ -218,6 +218,18 @@ namespace StepperDriver
 
             static constexpr double STEPPER_MOTOR_TIMEOUT_VALUE         = 1.0;
     };
+
+    inline
+    const std::vector<common::model::StepperMotorState> &StepperDriver::getMotorsState() const
+    {
+        return _motor_list;
+    }
+
+    inline
+    bool StepperDriver::canReadData() const
+    {
+        return mcp_can->canReadData();
+    }
 
 
 }

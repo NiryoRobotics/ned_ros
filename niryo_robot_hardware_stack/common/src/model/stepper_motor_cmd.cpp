@@ -32,21 +32,27 @@ namespace common {
             reset();
         }
 
+        StepperMotorCmd::StepperMotorCmd(EStepperCommandType type) :
+            AbstractMotorCmd<EStepperCommandType>(type)
+        {
+            clear();
+        }
+
         StepperMotorCmd::StepperMotorCmd(EStepperCommandType type,
-                                         vector<uint8_t> motor_id,
+                                         uint8_t motor_id,
                                          vector<int32_t> params) :
             AbstractMotorCmd<EStepperCommandType>(type),
-            _motor_id_list(motor_id),
+            _id(motor_id),
             _param_list(params)
         {
         }
 
-        void StepperMotorCmd::setMotorsId(vector<uint8_t> motor_id)
+        void StepperMotorCmd::setId(uint8_t id)
         {
-            _motor_id_list = motor_id;
+            _id = id;
         }
 
-        void StepperMotorCmd::setParams(vector<int32_t> params)
+        void StepperMotorCmd::setParams(std::vector<int32_t> params)
         {
             _param_list = params;
         }
@@ -57,7 +63,11 @@ namespace common {
         void StepperMotorCmd::reset()
         {
             setType(EStepperCommandType::CMD_TYPE_NONE);
-            _motor_id_list.clear();
+            clear();
+        }
+
+        void StepperMotorCmd::clear()
+        {
             _param_list.clear();
         }
 
@@ -72,9 +82,8 @@ namespace common {
 
             ss << StepperCommandTypeEnum(_type).toString() << " ";
 
-            ss << "Motors id: ";
-            for (uint8_t m_id : getMotorsId())
-                ss << std::to_string(m_id) << " ";
+            ss << "Motor id: ";
+                ss << std::to_string(_id) << " ";
 
             ss << "Params: ";
             for (int32_t param : getParams())
@@ -89,10 +98,24 @@ namespace common {
          */
         bool StepperMotorCmd::isValid() const
         {
-            return (EStepperCommandType::CMD_TYPE_NONE != _type) &&
-                   (EStepperCommandType::CMD_TYPE_UNKNOWN != _type) &&
-                   (!_motor_id_list.empty()) &&
-                   (_motor_id_list.size() == _param_list.size());
+            if ((EStepperCommandType::CMD_TYPE_NONE != _type) &&
+               (EStepperCommandType::CMD_TYPE_UNKNOWN != _type) &&
+               (_id != 0) &&
+               (!_param_list.empty()))
+                    return false;
+
+            switch(_type) {
+                case EStepperCommandType::CMD_TYPE_RELATIVE_MOVE:
+                    return (_param_list.size() == 2);
+                case EStepperCommandType::CMD_TYPE_CALIBRATION:
+                    return (_param_list.size() == 4);
+                case EStepperCommandType::CMD_TYPE_POSITION_OFFSET:
+                    return (_param_list.size() == 4);
+                case EStepperCommandType::CMD_TYPE_CONVEYOR:
+                    return (_param_list.size() == 4);
+                default:
+                    return (_param_list.size() == 1);
+            }
         }
 
     } // namespace model

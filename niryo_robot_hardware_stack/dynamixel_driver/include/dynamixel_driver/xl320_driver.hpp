@@ -90,21 +90,18 @@ namespace DynamixelDriver
         int syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &voltage_list) override;
         int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list) override;
 
-        int customWrite(uint8_t id, uint8_t reg_address, uint32_t data, uint8_t byte_number) override;
-        int customRead(uint8_t id, uint8_t reg_address, uint32_t *data, uint8_t byte_number) override;
-
     private:
         static constexpr int XL320_PROTOCOL_VERSION         = 2.0;
         static constexpr int XL320_MODEL_NUMBER             = 350;
 
         //see table here : http://support.robotis.com/en/product/actuator/dynamixel_x/xl_series/xl-320.htm
-        static constexpr int XL320_ADDR_MODEL_NUMBER        = 0;
+        static constexpr int XL320_ADDR_MODEL_NUMBER        = 0; // EEPROM
         static constexpr int XL320_ADDR_FIRMWARE_VERSION    = 2;
         static constexpr int XL320_ADDR_ID                  = 3;
         static constexpr int XL320_ADDR_BAUDRATE            = 4;
         static constexpr int XL320_ADDR_RETURN_DELAY_TIME   = 5;
         static constexpr int XL320_ADDR_CW_ANGLE_LIMIT      = 6;
-        static constexpr int XL320_ADDR_CCW_ANGLE_LIMIT     = 8; // EEPROM
+        static constexpr int XL320_ADDR_CCW_ANGLE_LIMIT     = 8;
         static constexpr int XL320_ADDR_CONTROL_MODE        = 11;
         static constexpr int XL320_ADDR_LIMIT_TEMPERATURE   = 12;
         static constexpr int XL320_ADDR_LOWER_LIMIT_VOLTAGE = 13;
@@ -113,7 +110,7 @@ namespace DynamixelDriver
         static constexpr int XL320_ADDR_RETURN_LEVEL        = 17;
         static constexpr int XL320_ADDR_ALARM_SHUTDOWN      = 18;
 
-        static constexpr int XL320_ADDR_TORQUE_ENABLE       = 24;
+        static constexpr int XL320_ADDR_TORQUE_ENABLE       = 24; // RAM
         static constexpr int XL320_ADDR_LED                 = 25;
 
         static constexpr int XL320_ADDR_D_GAIN              = 27;
@@ -123,7 +120,7 @@ namespace DynamixelDriver
         static constexpr int XL320_ADDR_GOAL_POSITION       = 30;
         static constexpr int XL320_ADDR_GOAL_SPEED          = 32;
         static constexpr int XL320_ADDR_GOAL_TORQUE         = 35;
-        static constexpr int XL320_ADDR_PRESENT_POSITION    = 37; // RAM
+        static constexpr int XL320_ADDR_PRESENT_POSITION    = 37;
         static constexpr int XL320_ADDR_PRESENT_SPEED       = 39;
         static constexpr int XL320_ADDR_PRESENT_LOAD        = 41;
         static constexpr int XL320_ADDR_PRESENT_VOLTAGE     = 45;

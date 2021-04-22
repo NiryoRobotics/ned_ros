@@ -43,15 +43,27 @@ namespace common {
          * @param motor_id
          * @param param
          */
-        void SynchronizeMotorCmd::addMotorParam(EMotorType type, uint8_t motor_id, uint32_t param)
+        void SynchronizeMotorCmd::addMotorParam(const std::shared_ptr<JointState>& state, uint32_t param)
         {
             //not yet in map
-            if(!_motor_params_map.count(type)){
-                _motor_params_map.insert(make_pair(type, MotorParam(motor_id, param)));
+            if(!_motor_params_map.count(state->getType())){
+                _motor_params_map.insert(make_pair(state->getType(), MotorParam(state->getId(), param)));
             }
             else {
-                _motor_params_map.at(type).motors_id.emplace_back(motor_id);
-                _motor_params_map.at(type).params.emplace_back(param);
+                _motor_params_map.at(state->getType()).motors_id.emplace_back(state->getId());
+                _motor_params_map.at(state->getType()).params.emplace_back(param);
+            }
+        }
+
+        void SynchronizeMotorCmd::addMotorParam(const JointState &state, uint32_t param)
+        {
+            //not yet in map
+            if(!_motor_params_map.count(state.getType())){
+                _motor_params_map.insert(make_pair(state.getType(), MotorParam(state.getId(), param)));
+            }
+            else {
+                _motor_params_map.at(state.getType()).motors_id.emplace_back(state.getId());
+                _motor_params_map.at(state.getType()).params.emplace_back(param);
             }
         }
 
@@ -61,7 +73,7 @@ namespace common {
         void SynchronizeMotorCmd::reset()
         {
             setType(EDxlCommandType::CMD_TYPE_UNKNOWN);
-            _motor_params_map.clear();
+            clear();
         }
 
         /**
@@ -138,7 +150,7 @@ namespace common {
             return _motor_params_map.at(type).params;
         }
 
-        std::set<EMotorType> SynchronizeMotorCmd::getTypes() const
+        std::set<EMotorType> SynchronizeMotorCmd::getMotorTypes() const
         {
             std::set<EMotorType> types;
             for (auto const& it: _motor_params_map) {

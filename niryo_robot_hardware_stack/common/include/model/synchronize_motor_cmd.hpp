@@ -56,14 +56,15 @@ namespace common {
                 SynchronizeMotorCmd(EDxlCommandType type);
 
                 //setters
-                void addMotorParam(EMotorType type, uint8_t motor_id, uint32_t param);
+                void addMotorParam(const std::shared_ptr<JointState> &dxlState, uint32_t param);
+                void addMotorParam(const JointState &dxlState, uint32_t param);
 
                 //getters
                 std::vector<uint8_t> getMotorsId(EMotorType type) const;
                 std::vector<uint32_t> getParams(EMotorType type) const;
-                std::set<EMotorType> getTypes() const;
+                std::set<EMotorType> getMotorTypes() const;
 
-                void clear();
+                void clear() override;
                 // AbstractMotorCmd interface
                 void reset() override;
                 std::string str() const override;

@@ -124,44 +124,150 @@ namespace DynamixelDriver
     }
 
     /*
-     *  -----------------   SYNC WRITE   --------------------
+     *  -----------------   Read Write operations   --------------------
      */
 
-
     /**
-     * @brief XDriver::write1Byte
+     * @brief XDriver::read
      * @param address
+     * @param data_len
      * @param id
      * @param data
      * @return
      */
-    int XDriver::write1Byte(uint8_t address, uint8_t id, uint8_t data)
+    int XDriver::read(uint8_t address, uint8_t data_len, uint8_t id, uint32_t *data)
     {
-        return _dxlPacketHandler->write1ByteTxOnly(_dxlPortHandler.get(), id, address, data);
+        uint8_t dxl_error = 0;
+        int dxl_comm_result = COMM_TX_FAIL;
+
+        switch(data_len)
+        {
+            case DXL_LEN_ONE_BYTE:
+            {
+                uint8_t read_data;
+                dxl_comm_result = _dxlPacketHandler->read1ByteTxRx(_dxlPortHandler.get(), id, address, &read_data, &dxl_error);
+                (*data) = read_data;
+            }
+            break;
+            case DXL_LEN_TWO_BYTES:
+            {
+                uint16_t read_data;
+                dxl_comm_result = _dxlPacketHandler->read2ByteTxRx(_dxlPortHandler.get(), id, address, &read_data, &dxl_error);
+                (*data) = read_data;
+            }
+            break;
+            case DXL_LEN_FOUR_BYTES:
+            {
+                uint32_t read_data;
+                dxl_comm_result = _dxlPacketHandler->read4ByteTxRx(_dxlPortHandler.get(), id, address, &read_data, &dxl_error);
+                (*data) = read_data;
+            }
+            break;
+            default:
+                printf("XDriver::read ERROR: Size param must be 1, 2 or 4 bytes\n");
+            break;
+        }
+
+        if (0 != dxl_error)
+            dxl_comm_result = dxl_error;
+
+        return dxl_comm_result;
     }
 
     /**
-     * @brief XDriver::write2Bytes
+     * @brief XDriver::write
      * @param address
+     * @param data_len
      * @param id
      * @param data
      * @return
      */
-    int XDriver::write2Bytes(uint8_t address, uint8_t id, uint16_t data)
+    int XDriver::write(uint8_t address, uint8_t data_len, uint8_t id, uint32_t data)
     {
-        return _dxlPacketHandler->write2ByteTxOnly(_dxlPortHandler.get(), id, address, data);
+        int dxl_comm_result = COMM_TX_FAIL;
+
+        switch(data_len)
+        {
+            case DXL_LEN_ONE_BYTE:
+                dxl_comm_result = _dxlPacketHandler->write1ByteTxOnly(_dxlPortHandler.get(), id, address, static_cast<uint8_t>(data));
+            break;
+            case DXL_LEN_TWO_BYTES:
+                dxl_comm_result = _dxlPacketHandler->write2ByteTxOnly(_dxlPortHandler.get(), id, address, static_cast<uint16_t>(data));
+            break;
+            case DXL_LEN_FOUR_BYTES:
+                dxl_comm_result = _dxlPacketHandler->write4ByteTxOnly(_dxlPortHandler.get(), id, address, data);
+            break;
+            default:
+                printf("XDriver::write ERROR: Size param must be 1, 2 or 4 bytes\n");
+            break;
+        }
+
+        return dxl_comm_result;
     }
 
     /**
-     * @brief XDriver::write4Bytes
+     * @brief XDriver::syncRead
      * @param address
-     * @param id
-     * @param data
+     * @param data_len
+     * @param id_list
+     * @param data_list
      * @return
      */
-    int XDriver::write4Bytes(uint8_t address, uint8_t id, uint32_t data)
+    int XDriver::syncRead(uint8_t address, uint8_t data_len, const vector<uint8_t> &id_list, vector<uint32_t> &data_list)
     {
-        return _dxlPacketHandler->write4ByteTxOnly(_dxlPortHandler.get(), id, address, data);
+        data_list.clear();
+
+        dynamixel::GroupSyncRead groupSyncRead(_dxlPortHandler.get(), _dxlPacketHandler.get(), address, data_len);
+        int dxl_comm_result = COMM_TX_FAIL;
+
+        vector<uint8_t>::const_iterator it_id;
+
+        for (it_id = id_list.cbegin(); it_id < id_list.cend(); it_id++)
+        {
+            if (!groupSyncRead.addParam(*it_id))
+            {
+                groupSyncRead.clearParam();
+                return GROUP_SYNC_REDONDANT_ID;
+            }
+        }
+
+        dxl_comm_result = groupSyncRead.txRxPacket();
+
+        if (dxl_comm_result != COMM_SUCCESS)
+        {
+            groupSyncRead.clearParam();
+            return dxl_comm_result;
+        }
+
+        bool dxl_getdata_result = false;
+        for (it_id = id_list.cbegin(); it_id < id_list.cend(); it_id++)
+        {
+            dxl_getdata_result = groupSyncRead.isAvailable(*it_id, address, data_len);
+            if (!dxl_getdata_result)
+            {
+                groupSyncRead.clearParam();
+                return GROUP_SYNC_READ_RX_FAIL;
+            }
+
+            switch(data_len)
+            {
+                case DXL_LEN_ONE_BYTE:
+                    data_list.push_back(static_cast<uint8_t>(groupSyncRead.getData(*it_id, address, data_len)));
+                break;
+                case DXL_LEN_TWO_BYTES:
+                    data_list.push_back(static_cast<uint16_t>(groupSyncRead.getData(*it_id, address, data_len)));
+                break;
+                case DXL_LEN_FOUR_BYTES:
+                    data_list.push_back(groupSyncRead.getData(*it_id, address, data_len));
+                break;
+                default:
+                    printf("XDriver::syncRead ERROR: Size param must be 1, 2 or 4 bytes\n");
+                break;
+            }
+        }
+
+        groupSyncRead.clearParam();
+        return dxl_comm_result;
     }
 
     /**
@@ -234,198 +340,4 @@ namespace DynamixelDriver
         return dxl_comm_result;
     }
 
-    /*
-     *  -----------------   READ   --------------------
-     */
-
-    /**
-     * @brief XDriver::read1Byte
-     * @param address
-     * @param id
-     * @param data
-     * @return
-     */
-    int XDriver::read1Byte(uint8_t address, uint8_t id, uint32_t *data)
-    {
-        uint8_t dxl_error = 0;
-        int dxl_comm_result = COMM_TX_FAIL;
-
-        uint8_t read_data;
-        dxl_comm_result = _dxlPacketHandler->read1ByteTxRx(_dxlPortHandler.get(), id, address, &read_data, &dxl_error);
-        (*data) = read_data;
-
-        if (0 != dxl_error)
-            dxl_comm_result = dxl_error;
-
-        return dxl_comm_result;
-    }
-
-    /**
-     * @brief XDriver::read2Bytes
-     * @param address
-     * @param id
-     * @param data
-     * @return
-     */
-    int XDriver::read2Bytes(uint8_t address, uint8_t id, uint32_t *data)
-    {
-        uint8_t dxl_error = 0;
-        int dxl_comm_result = COMM_TX_FAIL;
-
-        uint16_t read_data;
-        dxl_comm_result = _dxlPacketHandler->read2ByteTxRx(_dxlPortHandler.get(), id, address, &read_data, &dxl_error);
-        (*data) = read_data;
-
-        if (0 != dxl_error)
-            dxl_comm_result = dxl_error;
-
-        return dxl_comm_result;
-    }
-
-    /**
-     * @brief XDriver::read4Bytes
-     * @param address
-     * @param id
-     * @param data
-     * @return
-     */
-    int XDriver::read4Bytes(uint8_t address, uint8_t id, uint32_t *data)
-    {
-        uint8_t dxl_error = 0;
-        int dxl_comm_result = COMM_TX_FAIL;
-
-        uint32_t read_data;
-        dxl_comm_result = _dxlPacketHandler->read4ByteTxRx(_dxlPortHandler.get(), id, address, &read_data, &dxl_error);
-        (*data) = read_data;
-
-        if (0 != dxl_error)
-            dxl_comm_result = dxl_error;
-
-        return dxl_comm_result;
-    }
-
-    /*
-     *  -----------------   SYNC READ   --------------------
-     */
-
-    /**
-     * @brief XDriver::syncRead
-     * @param address
-     * @param data_len
-     * @param id_list
-     * @param data_list
-     * @return
-     */
-    int XDriver::syncRead(uint8_t address, uint8_t data_len, const vector<uint8_t> &id_list, vector<uint32_t> &data_list)
-    {
-        data_list.clear();
-
-        dynamixel::GroupSyncRead groupSyncRead(_dxlPortHandler.get(), _dxlPacketHandler.get(), address, data_len);
-        int dxl_comm_result = COMM_TX_FAIL;
-
-        vector<uint8_t>::const_iterator it_id;
-
-        for (it_id = id_list.cbegin(); it_id < id_list.cend(); it_id++)
-        {
-            if (!groupSyncRead.addParam(*it_id))
-            {
-                groupSyncRead.clearParam();
-                return GROUP_SYNC_REDONDANT_ID;
-            }
-        }
-
-        dxl_comm_result = groupSyncRead.txRxPacket();
-
-        if (dxl_comm_result != COMM_SUCCESS)
-        {
-            groupSyncRead.clearParam();
-            return dxl_comm_result;
-        }
-
-        bool dxl_getdata_result = false;
-        for (it_id = id_list.cbegin(); it_id < id_list.cend(); it_id++)
-        {
-            dxl_getdata_result = groupSyncRead.isAvailable(*it_id, address, data_len);
-            if (!dxl_getdata_result)
-            {
-                groupSyncRead.clearParam();
-                return GROUP_SYNC_READ_RX_FAIL;
-            }
-
-            switch(data_len)
-            {
-                case DXL_LEN_ONE_BYTE:
-                    data_list.push_back(static_cast<uint8_t>(groupSyncRead.getData(*it_id, address, data_len)));
-                break;
-                case DXL_LEN_TWO_BYTES:
-                    data_list.push_back(static_cast<uint16_t>(groupSyncRead.getData(*it_id, address, data_len)));
-                break;
-                case DXL_LEN_FOUR_BYTES:
-                    data_list.push_back(groupSyncRead.getData(*it_id, address, data_len));
-                break;
-                default:
-                    printf("XDriver::syncRead ERROR: Size param must be 1, 2 or 4 bytes\n");
-                break;
-            }
-        }
-
-        groupSyncRead.clearParam();
-        return dxl_comm_result;
-    }
-
-    /*
-     *  -----------------   CUSTOM   --------------------
-     */
-
-    /**
-     * @brief XDriver::customWrite
-     * @param id
-     * @param value
-     * @param reg_address
-     * @param byte_number
-     * @return
-     */
-    int XDriver::customWrite(uint8_t id, uint8_t reg_address, uint32_t data, uint8_t byte_number)
-    {
-        int dxl_comm_result = COMM_TX_FAIL;
-
-        switch(byte_number) {
-            case DXL_LEN_ONE_BYTE:
-                return write1Byte(reg_address, id, static_cast<uint8_t>(data));
-            case DXL_LEN_TWO_BYTES:
-                return write1Byte(reg_address, id, static_cast<uint8_t>(data));
-            case DXL_LEN_FOUR_BYTES:
-                return write1Byte(reg_address, id, static_cast<uint8_t>(data));
-            default:
-                printf("ERROR: Size param must be 1, 2 or 4 bytes\n");
-            break;
-        }
-
-        return dxl_comm_result;
-    }
-
-    /**
-     * @brief XDriver::customRead
-     * @param id
-     * @param value
-     * @param reg_address
-     * @param byte_number
-     * @return
-     */
-    int XDriver::customRead(uint8_t id, uint8_t reg_address, uint32_t *data, uint8_t byte_number)
-    {
-        switch(byte_number) {
-            case DXL_LEN_ONE_BYTE:
-                return read1Byte(reg_address, id, data);
-            case DXL_LEN_TWO_BYTES:
-                return read2Bytes(reg_address, id, data);
-            case DXL_LEN_FOUR_BYTES:
-                return read4Bytes(reg_address, id, data);
-            default:
-                printf("ERROR: Size param must be 1, 2 or 4 bytes\n");
-        }
-
-        return COMM_TX_FAIL;
-    }
-
-}
+} //DynamixelDriver

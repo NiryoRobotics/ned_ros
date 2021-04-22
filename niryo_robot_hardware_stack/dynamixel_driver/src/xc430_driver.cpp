@@ -99,32 +99,32 @@ namespace DynamixelDriver
 
     int XC430Driver::changeId(uint8_t id, uint8_t new_id)
     {
-        return write1Byte(XC430_ADDR_ID, id, new_id);
+        return write(XC430_ADDR_ID, 1, id, new_id);
     }
 
     int XC430Driver::changeBaudRate(uint8_t id, uint32_t new_baudrate)
     {
-        return write1Byte(XC430_ADDR_BAUDRATE, id, static_cast<uint8_t>(new_baudrate));
+        return write(XC430_ADDR_BAUDRATE, 1, id, new_baudrate);
     }
 
     int XC430Driver::setLed(uint8_t id, uint32_t led_value)
     {
-        return write1Byte(XC430_ADDR_LED, id, static_cast<uint8_t>(led_value));
+        return write(XC430_ADDR_LED, id, 1, led_value);
     }
 
     int XC430Driver::setTorqueEnable(uint8_t id, uint32_t torque_enable)
     {
-        return write1Byte(XC430_ADDR_TORQUE_ENABLE, id, static_cast<uint8_t>(torque_enable));
+        return write(XC430_ADDR_TORQUE_ENABLE, 1, id, torque_enable);
     }
 
     int XC430Driver::setGoalPosition(uint8_t id, uint32_t position)
     {
-        return write4Bytes(XC430_ADDR_GOAL_POSITION, id, position);
+        return write(XC430_ADDR_GOAL_POSITION, 4, id, position);
     }
 
     int XC430Driver::setGoalVelocity(uint8_t id, uint32_t velocity)
     {
-        return write4Bytes(XC430_ADDR_GOAL_VELOCITY, id, velocity);
+        return write(XC430_ADDR_GOAL_VELOCITY, 4, id, velocity);
     }
 
     int XC430Driver::setGoalTorque(uint8_t /*id*/, uint32_t /*torque*/)
@@ -135,12 +135,12 @@ namespace DynamixelDriver
 
     int XC430Driver::setReturnDelayTime(uint8_t id, uint32_t return_delay_time)
     {
-        return write1Byte(XC430_ADDR_RETURN_DELAY_TIME, id, static_cast<uint8_t>(return_delay_time));
+        return write(XC430_ADDR_RETURN_DELAY_TIME, 1, id, return_delay_time);
     }
 
     int XC430Driver::setLimitTemperature(uint8_t id, uint32_t temperature)
     {
-        return write1Byte(XC430_ADDR_TEMPERATURE_LIMIT, id, static_cast<uint8_t>(temperature));
+        return write(XC430_ADDR_TEMPERATURE_LIMIT, 1, id, temperature);
     }
 
     int XC430Driver::setMaxTorque(uint8_t /*id*/, uint32_t /*torque*/)
@@ -151,12 +151,12 @@ namespace DynamixelDriver
 
     int XC430Driver::setReturnLevel(uint8_t id, uint32_t return_level)
     {
-        return write1Byte(XC430_ADDR_STATUS_RETURN_LEVEL, id, static_cast<uint8_t>(return_level));
+        return write(XC430_ADDR_STATUS_RETURN_LEVEL, 1, id, return_level);
     }
 
     int XC430Driver::setAlarmShutdown(uint8_t id, uint32_t alarm_shutdown)
     {
-        return write1Byte(XC430_ADDR_ALARM_SHUTDOWN, id, static_cast<uint8_t>(alarm_shutdown));
+        return write(XC430_ADDR_ALARM_SHUTDOWN, 1, id, alarm_shutdown);
     }
 
     /*
@@ -164,27 +164,27 @@ namespace DynamixelDriver
      */
     int XC430Driver::setPGain(uint8_t id, uint32_t gain)
     {
-        return write2Bytes(XC430_ADDR_P_GAIN, id, static_cast<uint16_t>(gain));
+        return write(XC430_ADDR_P_GAIN, 2, id, gain);
     }
 
     int XC430Driver::setIGain(uint8_t id, uint32_t gain)
     {
-        return write2Bytes(XC430_ADDR_I_GAIN, id, static_cast<uint16_t>(gain));
+        return write(XC430_ADDR_I_GAIN, 2, id, gain);
     }
 
     int XC430Driver::setDGain(uint8_t id, uint32_t gain)
     {
-        return write2Bytes(XC430_ADDR_D_GAIN, id, static_cast<uint16_t>(gain));
+        return write(XC430_ADDR_D_GAIN, 2, id, gain);
     }
 
     int XC430Driver::setff1Gain(uint8_t id, uint32_t gain)
     {
-        return write2Bytes(XC430_ADDR_FF1_GAIN, id, static_cast<uint16_t>(gain));
+        return write(XC430_ADDR_FF1_GAIN, 2, id, gain);
     }
 
     int XC430Driver::setff2Gain(uint8_t id, uint32_t gain)
     {
-        return write2Bytes(XC430_ADDR_FF2_GAIN, id, static_cast<uint16_t>(gain));
+        return write(XC430_ADDR_FF2_GAIN, 2, id, gain);
     }
     /*
      *  -----------------   SYNC WRITE   --------------------
@@ -192,11 +192,11 @@ namespace DynamixelDriver
 
     int XC430Driver::syncWritePositionGoal(const vector<uint8_t> &id_list, const vector<uint32_t> &position_list)
     {
-        return syncWrite(XC430_ADDR_GOAL_POSITION, DXL_LEN_FOUR_BYTES, id_list, position_list);
+        return syncWrite(XC430_ADDR_GOAL_POSITION, 4, id_list, position_list);
     }
     int XC430Driver::syncWriteVelocityGoal(const vector<uint8_t> &id_list, const vector<uint32_t> &velocity_list)
     {
-        return syncWrite(XC430_ADDR_GOAL_VELOCITY, DXL_LEN_FOUR_BYTES, id_list, velocity_list);
+        return syncWrite(XC430_ADDR_GOAL_VELOCITY, 4, id_list, velocity_list);
     }
     int XC430Driver::syncWriteTorqueGoal(const vector<uint8_t> &/*id_list*/, const vector<uint32_t> &/*torque_list*/)
     {
@@ -206,12 +206,12 @@ namespace DynamixelDriver
 
     int XC430Driver::syncWriteTorqueEnable(const vector<uint8_t> &id_list, const vector<uint32_t> &torque_enable_list)
     {
-        return syncWrite(XC430_ADDR_TORQUE_ENABLE, DXL_LEN_ONE_BYTE, id_list, torque_enable_list);
+        return syncWrite(XC430_ADDR_TORQUE_ENABLE, 1, id_list, torque_enable_list);
     }
 
     int XC430Driver::syncWriteLed(const vector<uint8_t> &id_list, const vector<uint32_t> &led_list)
     {
-        return syncWrite(XC430_ADDR_LED, DXL_LEN_ONE_BYTE, id_list, led_list);
+        return syncWrite(XC430_ADDR_LED, 1, id_list, led_list);
     }
     /*
      *  -----------------   READ   --------------------
@@ -219,41 +219,41 @@ namespace DynamixelDriver
 
     int XC430Driver::readPosition(uint8_t id, uint32_t *present_position)
     {
-        return read4Bytes(XC430_ADDR_PRESENT_POSITION, id, present_position);
+        return read(XC430_ADDR_PRESENT_POSITION, 4, id, present_position);
     }
 
     int XC430Driver::readVelocity(uint8_t id, uint32_t *present_velocity)
     {
-        return read4Bytes(XC430_ADDR_PRESENT_VELOCITY, id, present_velocity);
+        return read(XC430_ADDR_PRESENT_VELOCITY, 4, id, present_velocity);
     }
 
     int XC430Driver::readLoad(uint8_t id, uint32_t *present_load)
     {
-        return read2Bytes(XC430_ADDR_PRESENT_LOAD, id, present_load);
+        return read(XC430_ADDR_PRESENT_LOAD, 2, id, present_load);
     }
 
     int XC430Driver::readTemperature(uint8_t id, uint32_t *temperature)
     {
-        return read1Byte(XC430_ADDR_PRESENT_TEMPERATURE, id, temperature);
+        return read(XC430_ADDR_PRESENT_TEMPERATURE, 1, id, temperature);
     }
 
     int XC430Driver::readVoltage(uint8_t id, uint32_t *voltage)
     {
-        return read2Bytes(XC430_ADDR_PRESENT_VOLTAGE, id, voltage);
+        return read(XC430_ADDR_PRESENT_VOLTAGE, 2, id, voltage);
     }
 
     int XC430Driver::readHardwareStatus(uint8_t id, uint32_t *hardware_status)
     {
-        return read1Byte(XC430_ADDR_HW_ERROR_STATUS, id, hardware_status);
+        return read(XC430_ADDR_HW_ERROR_STATUS, 1, id, hardware_status);
     }
     int XC430Driver::readReturnDelayTime(uint8_t id, uint32_t *return_delay_time)
     {
-        return read1Byte(XC430_ADDR_RETURN_DELAY_TIME, id, return_delay_time);
+        return read(XC430_ADDR_RETURN_DELAY_TIME, 1, id, return_delay_time);
     }
 
     int XC430Driver::readLimitTemperature(uint8_t id, uint32_t *limit_temperature)
     {
-        return read1Byte(XC430_ADDR_TEMPERATURE_LIMIT, id, limit_temperature);
+        return read(XC430_ADDR_TEMPERATURE_LIMIT, 1, id, limit_temperature);
     }
 
     int XC430Driver::readMaxTorque(uint8_t /*id*/, uint32_t* /*max_torque*/)
@@ -264,12 +264,12 @@ namespace DynamixelDriver
 
     int XC430Driver::readReturnLevel(uint8_t id, uint32_t *return_level)
     {
-        return read1Byte(XC430_ADDR_STATUS_RETURN_LEVEL, id, return_level);
+        return read(XC430_ADDR_STATUS_RETURN_LEVEL, 1, id, return_level);
     }
 
     int XC430Driver::readAlarmShutdown(uint8_t id, uint32_t *alarm_shutdown)
     {
-        return read1Byte(XC430_ADDR_ALARM_SHUTDOWN, id, alarm_shutdown);
+        return read(XC430_ADDR_ALARM_SHUTDOWN, 1, id, alarm_shutdown);
     }
 
     /*
@@ -278,30 +278,30 @@ namespace DynamixelDriver
 
     int XC430Driver::syncReadPosition(const vector<uint8_t> &id_list, vector<uint32_t> &position_list)
     {
-        return syncRead(XC430_ADDR_PRESENT_POSITION, DXL_LEN_FOUR_BYTES, id_list, position_list);
+        return syncRead(XC430_ADDR_PRESENT_POSITION, 4, id_list, position_list);
     }
 
     int XC430Driver::syncReadVelocity(const vector<uint8_t> &id_list, vector<uint32_t> &velocity_list)
     {
-        return syncRead(XC430_ADDR_PRESENT_VELOCITY, DXL_LEN_FOUR_BYTES, id_list, velocity_list);
+        return syncRead(XC430_ADDR_PRESENT_VELOCITY, 4, id_list, velocity_list);
     }
     int XC430Driver::syncReadLoad(const vector<uint8_t> &id_list, vector<uint32_t> &load_list)
     {
-        return syncRead(XC430_ADDR_PRESENT_LOAD, DXL_LEN_TWO_BYTES, id_list, load_list);
+        return syncRead(XC430_ADDR_PRESENT_LOAD, 2, id_list, load_list);
     }
 
     int XC430Driver::syncReadTemperature(const vector<uint8_t> &id_list, vector<uint32_t> &temperature_list)
     {
-        return syncRead(XC430_ADDR_PRESENT_TEMPERATURE, DXL_LEN_ONE_BYTE, id_list, temperature_list);
+        return syncRead(XC430_ADDR_PRESENT_TEMPERATURE, 1, id_list, temperature_list);
     }
 
     int XC430Driver::syncReadVoltage(const vector<uint8_t> &id_list, vector<uint32_t> &voltage_list)
     {
-        return syncRead(XC430_ADDR_PRESENT_VOLTAGE, DXL_LEN_TWO_BYTES, id_list, voltage_list);
+        return syncRead(XC430_ADDR_PRESENT_VOLTAGE, 2, id_list, voltage_list);
     }
 
     int XC430Driver::syncReadHwErrorStatus(const vector<uint8_t> &id_list, vector<uint32_t> &hw_error_list)
     {
-        return syncRead(XC430_ADDR_HW_ERROR_STATUS, DXL_LEN_ONE_BYTE, id_list, hw_error_list);
+        return syncRead(XC430_ADDR_HW_ERROR_STATUS, 1, id_list, hw_error_list);
     }
-}
+} // DynamixelDriver

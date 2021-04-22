@@ -24,6 +24,8 @@
 #include "model/conveyor_state.hpp"
 #include "model/motor_type_enum.hpp"
 
+using namespace common::model;
+
 namespace StepperDriver
 {
     StepperDriverCore::StepperDriverCore()
@@ -39,14 +41,13 @@ namespace StepperDriver
             _control_loop_thread.join();
     }
 
+
     void StepperDriverCore::init()
     {
         _control_loop_flag = false;
         _calibration_in_progress = false;
         _debug_flag = false;
         _joint_trajectory_controller_cmd.clear();
-        _stepper_cmd.reset(new common::model::StepperMotorCmd());
-        _conveyor_cmd.reset(new common::model::StepperMotorCmd());
         initParameters();
         _stepper.reset(new StepperDriver());
         _stepper->scanAndCheck();
@@ -69,15 +70,67 @@ namespace StepperDriver
         ROS_DEBUG("StepperDriverCore::initParameters - can_hardware_check_connection_frequency : %f", _check_connection_frequency);
     }
 
-    void StepperDriverCore::startControlLoop()
+    /**
+     * @brief StepperDriverCore::clearCommandQueue
+     */
+    void StepperDriverCore::clearCommandQueue()
     {
-        resetHardwareControlLoopRates();
-        if (!_control_loop_flag)
-        {
-            ROS_DEBUG("StepperDriverCore::startControlLoop - Start control loop thread");
-            _control_loop_flag = true;
-            _control_loop_thread = std::thread(&StepperDriverCore::controlLoop, this);
+        while(!_stepper_cmds.empty())
+            _stepper_cmds.pop();
+    }
+
+    /**
+     * @brief StepperDriverCore::clearConveyorCommandQueue
+     */
+    void StepperDriverCore::clearConveyorCommandQueue()
+    {
+        while(!_conveyor_cmds.empty())
+            _conveyor_cmds.pop();
+    }
+
+    /**
+     * @brief StepperDriverCore::setTrajectoryControllerCommands
+     * @param cmd
+     */
+    void StepperDriverCore::setTrajectoryControllerCommands(const std::vector<int32_t> &cmd)
+    {
+        _joint_trajectory_controller_cmd = cmd;
+    }
+
+    /**
+     * @brief StepperDriverCore::addCommandToQueue
+     * @param cmd
+     */
+    void StepperDriverCore::addCommandToQueue(const StepperMotorCmd &cmd)
+    {
+        ROS_DEBUG("StepperDriverCore::addSingleCommandToQueue - %s", cmd.str().c_str());
+
+        if(cmd.isValid()) {
+            if(cmd.getType() == EStepperCommandType::CMD_TYPE_CONVEYOR) {//keep position cmd apart
+                if(_conveyor_cmds.size() > 20)
+                    ROS_WARN("StepperDriverCore::addCommandToQueue: Cmd queue overflow ! %lu", _conveyor_cmds.size());
+                else {
+                    _conveyor_cmds.push(cmd);
+                }
+            }
+            else {
+                if(_stepper_cmds.size() > 20)
+                    ROS_WARN("StepperDriverCore::addCommandToQueue: Cmd queue overflow ! %lu", _stepper_cmds.size());
+                else {
+                    _stepper_cmds.push(cmd);
+                }
+            }
         }
+    }
+
+    /**
+     * @brief StepperDriverCore::addCommandToQueue
+     * @param cmd
+     */
+    void StepperDriverCore::addCommandToQueue(const std::vector<StepperMotorCmd> &cmd)
+    {
+        for(auto&& c : cmd)
+            addCommandToQueue(c);
     }
 
     void StepperDriverCore::resetHardwareControlLoopRates()
@@ -213,15 +266,6 @@ namespace StepperDriver
         return niryo_robot_msgs::CommandStatus::ABORTED;
     }
 
-    void StepperDriverCore::setStepperCommands(const common::model::StepperMotorCmd &cmd)
-    {
-        _stepper_cmd.reset(new common::model::StepperMotorCmd(cmd));
-    }
-
-    void StepperDriverCore::setTrajectoryControllerCommands(const std::vector<int32_t> &cmd)
-    {
-        _joint_trajectory_controller_cmd = cmd;
-    }
 
     int StepperDriverCore::setConveyor(uint8_t motor_id)
     {
@@ -264,30 +308,10 @@ namespace StepperDriver
         _stepper->removeConveyor(motor_id);
     }
 
-    void StepperDriverCore::setConveyorCommands(const common::model::StepperMotorCmd &cmd)
-    {
-        _conveyor_cmd.reset(new common::model::StepperMotorCmd(cmd));
-    }
-
-    const std::vector<common::model::ConveyorState> &StepperDriverCore::getConveyorStates() const
-    {
-        return _stepper->getConveyorsState();
-    }
-
-    const std::vector<common::model::StepperMotorState> &StepperDriverCore::getStepperStates() const
-    {
-        return _stepper->getMotorsState();
-    }
-
     void StepperDriverCore::startCalibration(bool enable)
     {
         _calibration_in_progress = enable;
         _stepper->setCalibrationInProgress(enable);
-    }
-
-    bool StepperDriverCore::getCalibrationState() const
-    {
-        return _calibration_in_progress;
     }
 
     void StepperDriverCore::clearCalibrationTab()
@@ -305,12 +329,12 @@ namespace StepperDriver
         stepper_driver::StepperMotorHardwareStatus data;
         stepper_driver::StepperArrayMotorHardwareStatus hw_state;
 
-        std::vector<common::model::StepperMotorState> motor_states = _stepper->getMotorsState();
+        std::vector<StepperMotorState> motor_states = _stepper->getMotorsState();
 
         for (size_t i = 0; i < motor_states.size(); i++)
         {
             data.motor_identity.motor_id = motor_states.at(i).getId();
-            data.motor_identity.motor_type = static_cast<uint8_t>(common::model::EMotorType::MOTOR_TYPE_STEPPER);
+            data.motor_identity.motor_type = static_cast<uint8_t>(EMotorType::MOTOR_TYPE_STEPPER);
             data.temperature = static_cast<int>(motor_states.at(i).getTemperatureState());
             data.error = static_cast<int>(motor_states.at(i).getHardwareErrorState());
             data.firmware_version = motor_states.at(i).getFirmwareVersion();
@@ -333,28 +357,14 @@ namespace StepperDriver
         return can_bust_state;
     }
 
-    void StepperDriverCore::_executeCommand()
+    void StepperDriverCore::startControlLoop()
     {
-        std_msgs::Int64MultiArray cmd;
-        if (_joint_trajectory_controller_cmd.size() != 0)
+        resetHardwareControlLoopRates();
+        if (!_control_loop_flag)
         {
-            _stepper->executeJointTrajectoryCmd(_joint_trajectory_controller_cmd);
-            cmd.data.push_back(_joint_trajectory_controller_cmd[0]);
-            cmd.data.push_back(_joint_trajectory_controller_cmd[1]);
-            cmd.data.push_back(_joint_trajectory_controller_cmd[2]);
-            cmd_pub.publish(cmd);
-            // _stepper->readCommand(*_controller_cmd.get());
-            _joint_trajectory_controller_cmd.clear();
-        }
-        if (_stepper_cmd.get() != nullptr)
-        {
-            _stepper->readCommand(*_stepper_cmd.get());
-            _stepper_cmd.reset();
-        }
-        if (_conveyor_cmd.get() != nullptr)
-        {
-            _stepper->readCommand(*_conveyor_cmd.get());
-            _conveyor_cmd.reset();
+            ROS_DEBUG("StepperDriverCore::startControlLoop - Start control loop thread");
+            _control_loop_flag = true;
+            _control_loop_thread = std::thread(&StepperDriverCore::controlLoop, this);
         }
     }
 
@@ -415,14 +425,44 @@ namespace StepperDriver
     }
     }
 
+    void StepperDriverCore::_executeCommand()
+    {
+        bool need_sleep = false;
+
+        std_msgs::Int64MultiArray cmd;
+        if (_joint_trajectory_controller_cmd.size() != 0)
+        {
+            _stepper->executeJointTrajectoryCmd(_joint_trajectory_controller_cmd);
+            cmd.data.push_back(_joint_trajectory_controller_cmd[0]);
+            cmd.data.push_back(_joint_trajectory_controller_cmd[1]);
+            cmd.data.push_back(_joint_trajectory_controller_cmd[2]);
+            cmd_pub.publish(cmd);
+
+            _joint_trajectory_controller_cmd.clear();
+            need_sleep = true;
+        }
+        if (!_stepper_cmds.empty())
+        {
+            if (need_sleep)
+                ros::Duration(0.01).sleep();
+            _stepper->readCommand(_stepper_cmds.front());
+            _stepper_cmds.pop();
+            need_sleep = true;
+        }
+        if (!_conveyor_cmds.empty())
+        {
+            if (need_sleep)
+                ros::Duration(0.01).sleep();
+            _stepper->readCommand(_conveyor_cmds.front());
+            _conveyor_cmds.pop();
+        }
+    }
+
     bool StepperDriverCore::scanMotorId(int motor_to_find)
     {
         std::lock_guard<std::mutex> lck(_control_loop_mutex);
         return _stepper->scanMotorId(motor_to_find);
     }
 
-    bool StepperDriverCore::isConnectionOk() const
-    {
-        return _stepper->isConnectionOk();
-    }
+
 } // namespace StepperDriver

@@ -189,10 +189,7 @@ namespace StepperDriver
         }
     }
 
-    const std::vector<StepperMotorState> &StepperDriver::getMotorsState() const
-    {
-        return _motor_list;
-    }
+
 
     void StepperDriver::getBusState(bool &connection_status, std::vector<uint8_t> &motor_list, std::string &error) const
     {
@@ -227,62 +224,55 @@ namespace StepperDriver
         return 0;
     }
 
+    /**
+     * @brief StepperDriver::readCommand
+     * @param cmd
+     * @return
+     */
     int StepperDriver::readCommand(StepperMotorCmd cmd)
     {
         int result = CAN_INVALID_CMD;
         ROS_DEBUG("StepperDriver::readCommand - Received stepper cmd %s", cmd.str().c_str());
 
-        switch(cmd.getType())
+        if(cmd.isValid()) // certifies that params is not empty
         {
-            case EStepperCommandType::CMD_TYPE_POSITION:
-                if (cmd.getMotorsId().size() <= cmd.getParams().size()) {
-                    for (size_t i = 0; i < cmd.getMotorsId().size(); i++) {
-                        result = sendPositionCommand(cmd.getMotorsId().at(i), cmd.getParams().at(i));
-                    }
-                }
-            break;
-            case EStepperCommandType::CMD_TYPE_TORQUE:
-                if (cmd.getMotorsId().size() <= cmd.getParams().size()) {
-                    for (size_t i = 0; i < cmd.getMotorsId().size(); i++) {
-                        result = sendTorqueOnCommand(cmd.getMotorsId().at(i), cmd.getParams().at(i));
-                    }
-                }
-            break;
-            case EStepperCommandType::CMD_TYPE_SYNCHRONIZE:
-                if (cmd.getMotorsId().size() <= cmd.getParams().size())
-                {
-                    for (size_t i = 0; i < cmd.getMotorsId().size(); i++)
-                    {
-                        result = sendSynchronizePositionCommand(cmd.getMotorsId().at(i), cmd.getParams().at(i));
-                    }
-                }
-            break;
-            case EStepperCommandType::CMD_TYPE_RELATIVE_MOVE:
-                if (cmd.getMotorsId().size() > 0 && cmd.getParams().size() >= 2)
-                    result = sendRelativeMoveCommand(cmd.getMotorsId().at(0), cmd.getParams().at(0), cmd.getParams().at(1));
-            break;
-            case EStepperCommandType::CMD_TYPE_MAX_EFFORT:
-                if (cmd.getMotorsId().size() <= cmd.getParams().size()) {
-                    for (size_t i = 0; i < cmd.getMotorsId().size(); i++) {
-                        result = sendMaxEffortCommand(cmd.getMotorsId().at(i), cmd.getParams().at(i));
-                    }
-                }
-            break;
-            case EStepperCommandType::CMD_TYPE_MICRO_STEPS:
-                if (cmd.getMotorsId().size() <= cmd.getParams().size()) {
-                    for (size_t i = 0; i < cmd.getMotorsId().size(); i++) {
-                        result = sendMicroStepsCommand(cmd.getMotorsId().at(i),
-                                                       cmd.getParams().at(i));
-                    }
-                }
-            break;
-            case EStepperCommandType::CMD_TYPE_CALIBRATION:
-                if (cmd.getMotorsId().size() > 0 && cmd.getParams().size() >= 4)
-                {
-                    _calibration_motor_list.push_back(cmd.getMotorsId().at(0));
-                    _motor_calibration_map[cmd.getMotorsId().at(0)] = 0;
-                    _motor_calibration_map_cmd[cmd.getMotorsId().at(0)] = {cmd, ros::Time::now()};
-                    result = sendCalibrationCommand(cmd.getMotorsId().at(0), cmd.getParams().at(0), cmd.getParams().at(1), cmd.getParams().at(2), cmd.getParams().at(3));
+            switch(cmd.getType())
+            {
+                case EStepperCommandType::CMD_TYPE_POSITION:
+                    result = sendPositionCommand(cmd.getId(),
+                                                 cmd.getParams().front());
+                break;
+                case EStepperCommandType::CMD_TYPE_TORQUE:
+                    result = sendTorqueOnCommand(cmd.getId(),
+                                                 cmd.getParams().front());
+                break;
+                case EStepperCommandType::CMD_TYPE_SYNCHRONIZE:
+                    result = sendSynchronizePositionCommand(cmd.getId(),
+                                                            cmd.getParams().front());
+                break;
+                case EStepperCommandType::CMD_TYPE_RELATIVE_MOVE:
+                    result = sendRelativeMoveCommand(cmd.getId(),
+                                                     cmd.getParams().at(0),
+                                                     cmd.getParams().at(1));
+                break;
+                case EStepperCommandType::CMD_TYPE_MAX_EFFORT:
+                    result = sendMaxEffortCommand(cmd.getId(),
+                                                  cmd.getParams().front());
+                break;
+                case EStepperCommandType::CMD_TYPE_MICRO_STEPS:
+                    result = sendMicroStepsCommand(cmd.getId(),
+                                                   cmd.getParams().front());
+                break;
+                case EStepperCommandType::CMD_TYPE_CALIBRATION:
+                    _calibration_motor_list.push_back(cmd.getId());
+                    _motor_calibration_map[cmd.getId()] = 0;
+                    _motor_calibration_map_cmd[cmd.getId()] = {cmd, ros::Time::now()};
+
+                    result = sendCalibrationCommand(cmd.getId(),
+                                                    cmd.getParams().at(0),
+                                                    cmd.getParams().at(1),
+                                                    cmd.getParams().at(2),
+                                                    cmd.getParams().at(3));
                     if (result == CAN_OK &&
                             _calibration_result != e_CanStepperCalibrationStatus::CAN_STEPPERS_CALIBRATION_IN_PROGRESS)
                     {
@@ -291,45 +281,42 @@ namespace StepperDriver
                             _calibration_thread.join();
                         _calibration_thread = std::thread(&StepperDriver::readCalibrationStates, this);
                     }
-                }
-            break;
-            case EStepperCommandType::CMD_TYPE_POSITION_OFFSET:
-                if (cmd.getMotorsId().size() > 0 && cmd.getParams().size() >= 2)
-                    result = sendPositionOffsetCommand(cmd.getMotorsId().at(0),
-                                                       cmd.getParams().at(0),
-                                                       cmd.getParams().at(1));
                 break;
-            case EStepperCommandType::CMD_TYPE_CONVEYOR:
-                if (cmd.getMotorsId().size() > 0 && cmd.getParams().size() >= 3)
-                    result = sendConveyorOnCommand(cmd.getMotorsId().at(0),
-                                                  cmd.getParams().at(0),
-                                                  cmd.getParams().at(1),
-                                                  cmd.getParams().at(2));
+                case EStepperCommandType::CMD_TYPE_POSITION_OFFSET:
+                        result = sendPositionOffsetCommand(cmd.getId(),
+                                                           cmd.getParams().at(0),
+                                                           cmd.getParams().at(1));
+                    break;
+                case EStepperCommandType::CMD_TYPE_CONVEYOR:
+                        result = sendConveyorOnCommand(cmd.getId(),
+                                                      cmd.getParams().at(0),
+                                                      cmd.getParams().at(1),
+                                                      static_cast<int8_t>(cmd.getParams().at(2)));
+                    break;
+                case EStepperCommandType::CMD_TYPE_UPDATE_CONVEYOR:
+                        result = sendUpdateConveyorId(cmd.getId(),
+                                                      static_cast<uint8_t>(cmd.getParams().front()));
+                        if (result == CAN_OK)
+                        {
+                            removeConveyor(cmd.getId());
+                            addConveyor(static_cast<uint8_t>(cmd.getParams().front()));
+                        }
                 break;
-            case EStepperCommandType::CMD_TYPE_UPDATE_CONVEYOR:
-                if (cmd.getMotorsId().size() > 0 && cmd.getParams().size() >= 1)
-                {
-                    result = sendUpdateConveyorId(cmd.getMotorsId().at(0), cmd.getParams().at(0));
-                    if (result == CAN_OK)
-                    {
-                        removeConveyor(cmd.getMotorsId().at(0));
-                        addConveyor(cmd.getParams().at(0));
-                    }
-                }
-            break;
-            case EStepperCommandType::CMD_TYPE_UNKNOWN:
-            default:
-                break;
+                default:
+                    break;
+            }
         }
 
-        ROS_DEBUG("StepperDriver::readCommand - Received stepper cmd finished");
+        if(CAN_OK != result)
+        {
+            ROS_ERROR_THROTTLE(0.5, "StepperDriver::readCommand - Failed to read stepper cmd");
+            _debug_error_message = "StepperDriver - Failed to read stepper cmd";
+        }
+
+        ROS_DEBUG_THROTTLE(0.5, "StepperDriver::readCommand - Received stepper cmd finished");
         return result;
     }
 
-    bool StepperDriver::canReadData()
-    {
-        return mcp_can->canReadData();
-    }
 
     uint8_t StepperDriver::readMsgBuf(unsigned long *id, uint8_t *len, std::array<uint8_t, 8> &buf)
     {
@@ -770,10 +757,10 @@ namespace StepperDriver
                     unsigned long rxId = _calibration_readed_datas[0].rxId ;
                     std::array<uint8_t, 8> rxBuf = _calibration_readed_datas[0].rxBuf;
 
-                    int motor_id = rxId & 0x0F;
-                    for (uint8_t m_id : _calibration_motor_list)
+                    const int motor_id = rxId & 0x0F;
+                    for (auto const& m_id : _calibration_motor_list)
                     {
-                        if (m_id == motor_id)
+                        if (motor_id == m_id)
                         {
                             // 3. Check control byte
                             int control_byte = rxBuf[0];
@@ -798,20 +785,24 @@ namespace StepperDriver
                                     ROS_INFO("StepperDriver::interpreteCalibrationCommand - Motor %d calibration OK", motor_id);
                                     int steps_at_offset_pos = (rxBuf[2] << 8) + rxBuf[3];
                                     ROS_INFO("StepperDriver::interpreteCalibrationCommand - Motor %d - Absolute steps at offset position : %d", motor_id, steps_at_offset_pos);
-                                    _motor_calibration_map[motor_id] = static_cast<int32_t>(steps_at_offset_pos);
+                                    _motor_calibration_map[m_id] = static_cast<int32_t>(steps_at_offset_pos);
                                     _calibration_motor_list.erase(std::remove(_calibration_motor_list.begin(), _calibration_motor_list.end(), motor_id), _calibration_motor_list.end());
                                     // keep torque ON for axis 1
-                                    if (motor_id == 1)
+                                    if (1 == m_id)
                                     {
                                         sendTorqueOnCommand(1, true);
                                     }
                                 }
                             }
-                            else if ((ros::Time::now() - _motor_calibration_map_cmd[motor_id].cmd_time).toSec() > 0.5)
+                            else if ((ros::Time::now() - _motor_calibration_map_cmd[m_id].cmd_time).toSec() > 0.5)
                             {
-                                StepperMotorCmd cmd = _motor_calibration_map_cmd[motor_id].cmd;
-                                _motor_calibration_map_cmd[motor_id].cmd_time = ros::Time::now();
-                                sendCalibrationCommand(motor_id, cmd.getParams().at(0), cmd.getParams().at(1), cmd.getParams().at(2), cmd.getParams().at(3));
+                                StepperMotorCmd cmd = _motor_calibration_map_cmd[m_id].cmd;
+                                _motor_calibration_map_cmd[m_id].cmd_time = ros::Time::now();
+                                sendCalibrationCommand(m_id,
+                                                       cmd.getParams().at(0),
+                                                       cmd.getParams().at(1),
+                                                       cmd.getParams().at(2),
+                                                       cmd.getParams().at(3));
                             }
                         }
                     }

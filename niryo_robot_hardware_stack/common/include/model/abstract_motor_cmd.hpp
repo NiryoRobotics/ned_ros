@@ -38,6 +38,7 @@ namespace common {
                 virtual ~AbstractMotorCmd();
 
                 virtual void reset() = 0;
+                virtual void clear() = 0;
 
                 //setters
                 void setType(E type);

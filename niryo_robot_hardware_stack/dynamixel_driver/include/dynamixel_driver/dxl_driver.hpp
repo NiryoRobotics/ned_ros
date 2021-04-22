@@ -72,8 +72,8 @@ namespace DynamixelDriver
             void removeDynamixel(uint8_t id);
 
             //commands
-            void readSynchronizeCommand(common::model::SynchronizeMotorCmd cmd);
-            void readSingleCommand(common::model::SingleMotorCmd cmd);
+            int readSynchronizeCommand(common::model::SynchronizeMotorCmd cmd);
+            int readSingleCommand(common::model::SingleMotorCmd cmd);
 
             uint32_t getPosition(common::model::DxlMotorState& motor_state);
 
@@ -90,7 +90,7 @@ namespace DynamixelDriver
             int rebootMotors();
 
             int sendCustomDxlCommand(common::model::EMotorType motor_type, uint8_t id, int reg_address, int value, int byte_number);
-            int readCustomDxlCommand(common::model::EMotorType motor_type, uint8_t id, int reg_address, int &value, int byte_number);
+            int readCustomDxlCommand(common::model::EMotorType motor_type, uint8_t id, int32_t reg_address, int &value, int byte_number);
 
             //tests
             bool isConnectionOk() const;
@@ -124,11 +124,11 @@ namespace DynamixelDriver
                 int (XDriver::*syncReadFunction)(const std::vector<uint8_t> &, std::vector<uint32_t> &),
                 void (common::model::DxlMotorState::*setFunction)(int));
 
-            void syncWriteCommand(int (XDriver::*syncWriteFunction)(const std::vector<uint8_t> &,
+            int _syncWrite(int (XDriver::*syncWriteFunction)(const std::vector<uint8_t> &,
                                                                     const std::vector<uint32_t> &),
                                   const common::model::SynchronizeMotorCmd& cmd);
 
-            int singleWriteCommand(int (XDriver::*singleWriteFunction)(uint8_t id, uint32_t), common::model::EMotorType dxl_type,
+            int _singleWrite(int (XDriver::*singleWriteFunction)(uint8_t id, uint32_t), common::model::EMotorType dxl_type,
                                   const common::model::SingleMotorCmd& cmd);
         private:
             ros::NodeHandle _nh;

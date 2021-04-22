@@ -86,10 +86,7 @@ namespace JointsInterface {
         std::shared_ptr<StepperDriver::StepperDriverCore> _stepper;
         std::unique_ptr<CalibrationInterface> _calibration_interface;
 
-        std::vector<uint8_t> _list_stepper_id;
         std::map<uint8_t, std::string> _map_stepper_name;
-
-        std::vector<uint8_t> _list_dxl_id;
         std::map<uint8_t, std::string> _map_dxl_name;
 
         std::vector<std::shared_ptr<common::model::JointState> > _joint_list;

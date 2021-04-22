@@ -61,13 +61,13 @@ class DxlDriverTest {
             ROS_INFO("active all arm motors");
             common::model::SynchronizeMotorCmd cmd_on(common::model::EDxlCommandType::CMD_TYPE_TORQUE);
             for(auto const& dState : states)
-                cmd_on.addMotorParam(dState.getType(), dState.getId(), 1);
-            _dynamixel->addDxlSyncCommandToQueue(cmd_on);
+                cmd_on.addMotorParam(dState, 1);
+            _dynamixel->setSyncCommand(cmd_on);
 
             common::model::SynchronizeMotorCmd cmd_off(common::model::EDxlCommandType::CMD_TYPE_TORQUE);
             for(auto const& dState : states)
-                cmd_off.addMotorParam(dState.getType(), dState.getId(), 0);
-            _dynamixel->addDxlSyncCommandToQueue(cmd_off);
+                cmd_off.addMotorParam(dState, 0);
+            _dynamixel->setSyncCommand(cmd_off);
 
         }
 
@@ -76,44 +76,44 @@ class DxlDriverTest {
             ROS_INFO("move all arm motors");
             common::model::SynchronizeMotorCmd cmd(common::model::EDxlCommandType::CMD_TYPE_TORQUE);
             for(size_t i = 0; i < states.size(); ++i)
-                cmd.addMotorParam(states.at(i).getType(), states.at(i).getId(), 1);
-            _dynamixel->addDxlSyncCommandToQueue(cmd);
+                cmd.addMotorParam(states.at(i), 1);
+            _dynamixel->setSyncCommand(cmd);
             ROS_INFO("Sending command 1");
-            _dynamixel->addDxlSyncCommandToQueue(cmd);
+            _dynamixel->setSyncCommand(cmd);
             ros::Duration(3).sleep();
 
             cmd.reset();
             cmd.setType(common::model::EDxlCommandType::CMD_TYPE_POSITION);
             for(size_t i = 0; i < states.size(); ++i)
-                cmd.addMotorParam(states.at(i).getType(), states.at(i).getId(), dxl_home_pose.at(i));
+                cmd.addMotorParam(states.at(i), dxl_home_pose.at(i));
 
             ROS_INFO("Sending command 2");
-            _dynamixel->addDxlSyncCommandToQueue(cmd);
+            _dynamixel->setSyncCommand(cmd);
             ros::Duration(3).sleep();
 
             cmd.clear();
             for(size_t i = 0; i < states.size(); ++i)
-                cmd.addMotorParam(states.at(i).getType(), states.at(i).getId(), dxl_pose_1.at(i));
+                cmd.addMotorParam(states.at(i), dxl_pose_1.at(i));
 
             ROS_INFO("Sending command 3");
-            _dynamixel->addDxlSyncCommandToQueue(cmd);
+            _dynamixel->setSyncCommand(cmd);
             ros::Duration(3).sleep();
 
 
             cmd.clear();
             for(size_t i = 0; i < states.size(); ++i)
-                cmd.addMotorParam(states.at(i).getType(), states.at(i).getId(), dxl_pose_2.at(i));
+                cmd.addMotorParam(states.at(i), dxl_pose_2.at(i));
 
             ROS_INFO("Sending command 4");
-            _dynamixel->addDxlSyncCommandToQueue(cmd);
+            _dynamixel->setSyncCommand(cmd);
             ros::Duration(3).sleep();
 
             cmd.reset();
             cmd.setType(common::model::EDxlCommandType::CMD_TYPE_TORQUE);
             for(auto const& dState : states)
-                cmd.addMotorParam(dState.getType(), dState.getId(), 0);
+                cmd.addMotorParam(dState, 0);
             ROS_INFO("Sending command 5");
-            _dynamixel->addDxlSyncCommandToQueue(cmd);
+            _dynamixel->setSyncCommand(cmd);
         }
 
         void TestReceiveState()

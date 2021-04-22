@@ -86,19 +86,13 @@ namespace DynamixelDriver
         }
     }
 
-    void DynamixelDriverCore::clearDxlSyncCommandQueue()
-    {
-        while(!_dxl_sync_cmds.empty())
-            _dxl_sync_cmds.pop();
-    }
-
-    void DynamixelDriverCore::clearDxlCommandQueue()
+    void DynamixelDriverCore::clearSingleCommandQueue()
     {
         while(!_dxl_single_cmds.empty())
             _dxl_single_cmds.pop();
     }
 
-    void DynamixelDriverCore::clearDxlEndEffectorCommandQueue()
+    void DynamixelDriverCore::clearEndEffectorCommandQueue()
     {
         while(!_end_effector_cmds.empty())
             _end_effector_cmds.pop();
@@ -270,51 +264,49 @@ namespace DynamixelDriver
     }
 
     /**
-     * @brief DynamixelDriverCore::addDxlCommandToQueue
+     * @brief DynamixelDriverCore::setDxlSyncCommands
      * @param cmd
      */
-    void DynamixelDriverCore::addDxlSyncCommandToQueue(const SynchronizeMotorCmd &cmd)
+    void DynamixelDriverCore::setSyncCommand(const SynchronizeMotorCmd &cmd)
     {
-        ROS_DEBUG_THROTTLE(0.5, "DynamixelDriverCore::addDxlSyncCommandToQueue(%lu) - %s", _dxl_sync_cmds.size(), cmd.str().c_str());
+        ROS_DEBUG_THROTTLE(0.5, "DynamixelDriverCore::setDxlSyncCommands %s", cmd.str().c_str());
 
-        if(_dxl_sync_cmds.size() > 20)
-            ROS_WARN_THROTTLE(0.5, "DynamixelDriverCore::addDxlSyncCommandToQueue: Cmd queue overflow ! %lu", _dxl_sync_cmds.size());
-        else {
-
-            //add only if the command is different from the last one added
-            if(_dxl_sync_cmds.empty() || cmd != _dxl_sync_cmds.back())
-                _dxl_sync_cmds.push(cmd);
+        if(cmd.isValid()) {
+            if(cmd.getType() == EDxlCommandType::CMD_TYPE_POSITION) //keep position cmd apart
+                _dxl_sync_cmds_traj = cmd;
+            else
+                _dxl_sync_cmds = cmd;
         }
-    }
-
-    void DynamixelDriverCore::addDxlSyncCommandToQueue(const std::vector<SynchronizeMotorCmd> &cmd)
-    {
-        for(auto&& c : cmd)
-            addDxlSyncCommandToQueue(c);
+        else {
+            ROS_WARN("DynamixelDriverCore::setDxlSyncCommand : Invalid command");
+        }
     }
 
     /**
      * @brief DynamixelDriverCore::addDxlCommandToQueue
      * @param cmd
      */
-    void DynamixelDriverCore::addDxlCommandToQueue(const SingleMotorCmd &cmd)
+    void DynamixelDriverCore::addSingleCommandToQueue(const SingleMotorCmd &cmd)
     {
-        ROS_DEBUG_THROTTLE(0.5, "DynamixelDriverCore::addDxlCommandToQueue - %s", cmd.str().c_str());
+        ROS_DEBUG("DynamixelDriverCore::addSingleCommandToQueue - %s", cmd.str().c_str());
 
 
         if(_dxl_single_cmds.size() > 20)
-            ROS_WARN_THROTTLE(0.5, "DynamixelDriverCore::addDxlCommandToQueue: Cmd queue overflow ! %lu", _dxl_single_cmds.size());
+            ROS_WARN("DynamixelDriverCore::addSingleCommandToQueue: Cmd queue overflow ! %lu", _dxl_single_cmds.size());
         else
             _dxl_single_cmds.push(cmd);
     }
 
-    void DynamixelDriverCore::addDxlCommandToQueue(const std::vector<SingleMotorCmd> &cmd)
+    void DynamixelDriverCore::addSingleCommandToQueue(const std::vector<SingleMotorCmd> &cmd)
     {
         for(auto&& c : cmd)
-            addDxlCommandToQueue(c);
+            addSingleCommandToQueue(c);
     }
 
-
+    /**
+     * @brief DynamixelDriverCore::addEndEffectorCommandToQueue
+     * @param cmd
+     */
     void DynamixelDriverCore::addEndEffectorCommandToQueue(const SingleMotorCmd &cmd)
     {
         ROS_DEBUG_THROTTLE(0.5, "DynamixelDriverCore::addEndEffectorCommandToQueue - %s", cmd.str().c_str());
@@ -332,6 +324,10 @@ namespace DynamixelDriver
             addEndEffectorCommandToQueue(c);
     }
 
+    /**
+     * @brief DynamixelDriverCore::scanTools
+     * @return
+     */
     vector<uint8_t> DynamixelDriverCore::scanTools()
     {
         vector<uint8_t> motor_list;
@@ -392,7 +388,7 @@ namespace DynamixelDriver
     }
 
     // CC remove type
-    uint32_t DynamixelDriverCore::getEndEffectorState(uint8_t id)
+    uint32_t DynamixelDriverCore::getEndEffectorState(uint8_t id) const
     {
         DxlMotorState motor_state = _dynamixel->getMotorsState(id);
 
@@ -448,16 +444,17 @@ namespace DynamixelDriver
     void DynamixelDriverCore::_executeCommand()
     {
         bool need_sleep = false;
-        if (!_dxl_sync_cmds.empty() && _dxl_single_cmds.empty())
+
+        if (_dxl_sync_cmds_traj.isValid())
         {
-            _dynamixel->readSynchronizeCommand(_dxl_sync_cmds.front());
-            _dxl_sync_cmds.pop();
+            if (need_sleep)
+                ros::Duration(0.01).sleep();
+            _dynamixel->readSynchronizeCommand(_dxl_sync_cmds_traj);
+            _dxl_sync_cmds_traj.reset();
             need_sleep = true;
         }
         if (!_dxl_single_cmds.empty())
         {
-            if (need_sleep)
-                ros::Duration(0.01).sleep();
             _dynamixel->readSingleCommand(_dxl_single_cmds.front());
             _dxl_single_cmds.pop();
             need_sleep = true;
@@ -468,7 +465,16 @@ namespace DynamixelDriver
                 ros::Duration(0.01).sleep();
             _dynamixel->readSingleCommand(_end_effector_cmds.front());
             _end_effector_cmds.pop();
+            need_sleep = true;
         }
+        if (_dxl_sync_cmds.isValid())
+        {
+            if (need_sleep)
+                ros::Duration(0.01).sleep();
+            _dynamixel->readSynchronizeCommand(_dxl_sync_cmds);
+            _dxl_sync_cmds.reset();
+        }
+
     }
 
     /**

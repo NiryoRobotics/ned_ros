@@ -35,7 +35,7 @@ namespace common {
                 SingleMotorCmd();
                 SingleMotorCmd(EDxlCommandType type,
                                uint8_t motor_id,
-                               uint32_t param);
+                               uint32_t param = 0);
 
                 //setters
                 void setId(uint8_t id);
@@ -47,6 +47,7 @@ namespace common {
 
                 // AbstractMotorCmd interface
                 virtual void reset() override;
+                virtual void clear() override;
                 virtual std::string str() const override;
                 virtual bool isValid() const override;
 

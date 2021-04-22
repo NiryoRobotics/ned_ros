@@ -35,8 +35,8 @@ namespace NiryoRobotHardwareInterface
             ROS_INFO("Sleeping %d ! to have time to attach via gdb", i);
             ros::Duration(1).sleep();
         }
-        ROS_INFO("Waking up");*/
-
+        ROS_INFO("Waking up");
+*/
         initParams();
         initNodes();
         initPublishers();

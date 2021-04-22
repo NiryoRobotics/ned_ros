@@ -32,34 +32,35 @@ namespace common {
         class StepperMotorCmd : public AbstractMotorCmd<EStepperCommandType>
         {
             public:
-
                 StepperMotorCmd();
+                StepperMotorCmd(EStepperCommandType type);
                 StepperMotorCmd(EStepperCommandType type,
-                                std::vector<uint8_t> motor_id,
-                                std::vector<int32_t> params);
+                                uint8_t motor_id,
+                                std::vector<int32_t> params = std::vector<int32_t>());
 
                 //setters
-                void setMotorsId(std::vector<uint8_t> motor_id);
+                void setId(uint8_t id);
                 void setParams(std::vector<int32_t> params);
 
                 //getters
-                const std::vector<uint8_t>& getMotorsId() const;
+                uint8_t getId() const;
                 const std::vector<int32_t>& getParams() const;
 
                 // AbstractMotorCmd interface
                 virtual void reset() override;
+                virtual void clear() override;
                 virtual std::string str() const override;
                 virtual bool isValid() const override;
 
             private:
-                std::vector<uint8_t> _motor_id_list;
+                uint8_t _id;
                 std::vector<int32_t> _param_list;
         };
 
         inline
-        const std::vector<uint8_t>& StepperMotorCmd::getMotorsId() const
+        uint8_t StepperMotorCmd::getId() const
         {
-            return _motor_id_list;
+            return _id;
         }
 
         inline

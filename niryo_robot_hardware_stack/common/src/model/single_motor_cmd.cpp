@@ -53,6 +53,11 @@ namespace common {
         void SingleMotorCmd::reset()
         {
             setType(EDxlCommandType::CMD_TYPE_UNKNOWN);
+            clear();
+        }
+
+        void SingleMotorCmd::clear()
+        {
             _id = 0;
             _param = 0;
         }

@@ -28,6 +28,7 @@
 #include "model/stepper_command_type_enum.hpp"
 
 using namespace std;
+using namespace common::model;
 
 namespace ConveyorInterface {
 
@@ -108,30 +109,22 @@ namespace ConveyorInterface {
                 _list_available_id.pop_back();
                 ros::Duration(0.05).sleep();
 
-                common::model::StepperMotorCmd cmd;
-                vector<uint8_t> stepper_id{conveyor_id};
-                vector<int32_t> stepper_params{8};
-                cmd.setParams(stepper_params);
-                cmd.setType(common::model::EStepperCommandType::CMD_TYPE_MICRO_STEPS);
-                cmd.setMotorsId(stepper_id);
-                _stepper->setStepperCommands(cmd);
+                StepperMotorCmd cmd(EStepperCommandType::CMD_TYPE_MICRO_STEPS, conveyor_id, {8});
+                cmd.setParams({8});
+                _stepper->addCommandToQueue(cmd);
                 ros::Duration(0.05).sleep();
 
-                stepper_params.clear();
-                stepper_params = {_conveyor_max_effort};
-                cmd.setParams(stepper_params);
-                cmd.setType(common::model::EStepperCommandType::CMD_TYPE_MAX_EFFORT);
-                cmd.setMotorsId(stepper_id);
-                _stepper->setStepperCommands(cmd);
+                cmd = StepperMotorCmd(EStepperCommandType::CMD_TYPE_MAX_EFFORT, conveyor_id, {_conveyor_max_effort});
+                _stepper->addCommandToQueue(cmd);
                 ros::Duration(0.1).sleep();
 
-                cmd.setType(common::model::EStepperCommandType::CMD_TYPE_CONVEYOR);
-                cmd.setParams(vector<int32_t>{false, 0, -1});
-                cmd.setMotorsId(stepper_id);
-                _stepper->setConveyorCommands(cmd);
+                cmd = StepperMotorCmd(EStepperCommandType::CMD_TYPE_CONVEYOR, conveyor_id, {false, 0, -1});
+                _stepper->addCommandToQueue(cmd);
                 ros::Duration(0.1).sleep();
-                _stepper->setConveyorCommands(cmd);
+                // CC why two times in a row ?
+                _stepper->addCommandToQueue(cmd);
                 res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
+
                 message = "Set new conveyor on id ";
                 message += to_string(conveyor_id);
                 message += " OK";
@@ -175,17 +168,17 @@ namespace ConveyorInterface {
     {
         string message = "";
         auto conveyor_id = find(_list_conveyor_id.begin(), _list_conveyor_id.end() , req.id);
-        common::model::StepperMotorCmd cmd;
         if(conveyor_id != _list_conveyor_id.end())
         {
-            cmd.setMotorsId(vector<uint8_t> {req.id});
-            cmd.setType(common::model::EStepperCommandType::CMD_TYPE_CONVEYOR);
-            cmd.setParams(vector<int32_t>{req.control_on, req.speed, req.direction});
+            StepperMotorCmd cmd(EStepperCommandType::CMD_TYPE_CONVEYOR,
+                                req.id,
+                                {req.control_on, req.speed, req.direction});
+
             message = "Set command on conveyor id ";
             message += to_string(req.id);
             message += " is OK";
             res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
-            _stepper->setConveyorCommands(cmd);
+            _stepper->addCommandToQueue(cmd);
         }
         else
         {
@@ -209,7 +202,7 @@ namespace ConveyorInterface {
             conveyor_interface::ConveyorFeedbackArray msg;
             conveyor_interface::ConveyorFeedback data;
 
-            vector<common::model::ConveyorState> conveyor_list;
+            vector<ConveyorState> conveyor_list;
             conveyor_list = _stepper->getConveyorStates();
             for(int i = 0; i < conveyor_list.size(); i++)
             {

@@ -33,6 +33,8 @@
 //ros
 #include <ros/ros.h>
 
+#include "model/idriver_core.hpp"
+
 #include "dynamixel_driver/dxl_driver.hpp"
 #include "dynamixel_driver/DxlArrayMotorHardwareStatus.h"
 #include "dynamixel_driver/SendCustomDxlValue.h"
@@ -47,59 +49,60 @@
 #include "model/single_motor_cmd.hpp"
 #include "model/synchronize_motor_cmd.hpp"
 
-
-
 namespace DynamixelDriver
 {
-    class DynamixelDriverCore
+    class DynamixelDriverCore : public common::model::IDriverCore
     {
     public:
 
         DynamixelDriverCore();
-        virtual ~DynamixelDriverCore();
+        virtual ~DynamixelDriverCore() override;
 
-        void startControlLoop();
+        void clearSingleCommandQueue();
+        void clearEndEffectorCommandQueue();
 
-        void clearDxlSyncCommandQueue();
-        void clearDxlCommandQueue();
-        void clearDxlEndEffectorCommandQueue();
-
-        void addDxlSyncCommandToQueue(const common::model::SynchronizeMotorCmd &cmd);
-        void addDxlSyncCommandToQueue(const std::vector<common::model::SynchronizeMotorCmd> &cmd);
-
-        void addDxlCommandToQueue(const common::model::SingleMotorCmd &cmd);
-        void addDxlCommandToQueue(const std::vector<common::model::SingleMotorCmd> &cmd);
+        void setSyncCommand(const common::model::SynchronizeMotorCmd &cmd);
+        void addSingleCommandToQueue(const common::model::SingleMotorCmd &cmd);
+        void addSingleCommandToQueue(const std::vector<common::model::SingleMotorCmd> &cmd);
 
         void addEndEffectorCommandToQueue(const common::model::SingleMotorCmd &cmd);
         void addEndEffectorCommandToQueue(const std::vector<common::model::SingleMotorCmd> &cmd);
 
-        int ping_id(uint8_t id, common::model::EMotorType type);
-        std::vector<uint8_t> scanTools();
         int setEndEffector(common::model::EMotorType type, uint8_t id);
         void unsetEndEffector(uint8_t id);
-        uint32_t getEndEffectorState(uint8_t id);
-
-        dynamixel_driver::DxlArrayMotorHardwareStatus getHwStatus() const;
-        niryo_robot_msgs::BusState getDxlBusState() const;
-        std::vector<common::model::DxlMotorState> getDxlStates() const;
-        common::model::DxlMotorState getDxlState(uint8_t motor_id) const;
-
-        std::vector<uint8_t> getRemovedMotorList() const;
         
+        //direct commands
+        std::vector<uint8_t> scanTools();
+        int ping_id(uint8_t id, common::model::EMotorType type);
+
         int update_leds(void);
 
-        void activeDebugMode(bool mode);
-        int launchMotorsReport();
         int motorScanReport(uint8_t motor_id, common::model::EMotorType motor_type);
         int motorCmdReport(uint8_t motor_id, common::model::EMotorType motor_type);
         int rebootMotors();
 
+        //getters
+        dynamixel_driver::DxlArrayMotorHardwareStatus getHwStatus() const;
+        std::vector<uint8_t> getRemovedMotorList() const;
+        common::model::DxlMotorState getDxlState(uint8_t motor_id) const;
+        std::vector<common::model::DxlMotorState> getDxlStates() const;
+        niryo_robot_msgs::BusState getDxlBusState() const;
+        uint32_t getEndEffectorState(uint8_t id) const;
+
+        // IDriverCore interface
+        void startControlLoop() override;
+
+        void activeDebugMode(bool mode) override;
+
+        bool isConnectionOk() const override;
+        int launchMotorsReport() override;
+
     private:
-        void init();
-        void initParameters();
-        void resetHardwareControlLoopRates();
-        void controlLoop();
-        void _executeCommand();
+        void init() override;
+        void initParameters() override;
+        void resetHardwareControlLoopRates() override;
+        void controlLoop() override;
+        void _executeCommand() override;
 
         //use other callbacks instead of executecommand
         bool callbackActivateLeds(niryo_robot_msgs::SetInt::Request &req, niryo_robot_msgs::SetInt::Response &res);
@@ -112,14 +115,14 @@ namespace DynamixelDriver
         bool _debug_flag;
 
         std::mutex _control_loop_mutex;
-
         std::thread _control_loop_thread;
 
         double _control_loop_frequency;
         double _write_frequency;
-        double _read_data_frequency;            
-        double _read_status_frequency;
         double _check_connection_frequency;
+
+        double _read_data_frequency;
+        double _read_status_frequency;
         double _check_end_effector_frequency;
 
         double _time_hw_data_last_write;
@@ -130,7 +133,8 @@ namespace DynamixelDriver
 
         std::unique_ptr<DxlDriver> _dynamixel;
 
-        std::queue<common::model::SynchronizeMotorCmd> _dxl_sync_cmds;
+        common::model::SynchronizeMotorCmd _dxl_sync_cmds_traj;
+        common::model::SynchronizeMotorCmd _dxl_sync_cmds;
         std::queue<common::model::SingleMotorCmd> _dxl_single_cmds;
         std::queue<common::model::SingleMotorCmd> _end_effector_cmds;
 
@@ -144,6 +148,12 @@ namespace DynamixelDriver
     std::vector<common::model::DxlMotorState> DynamixelDriverCore::getDxlStates() const
     {
         return _dynamixel->getMotorsStates();
+    }
+
+    inline
+    bool DynamixelDriverCore::isConnectionOk() const
+    {
+        return _dynamixel->isConnectionOk();
     }
 
     inline

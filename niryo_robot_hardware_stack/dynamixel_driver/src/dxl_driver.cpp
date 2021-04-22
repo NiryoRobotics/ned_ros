@@ -486,90 +486,101 @@ namespace DynamixelDriver
      * @brief DxlDriver::readSynchronizeCommand
      * @param cmd
      */
-    void DxlDriver::readSynchronizeCommand(SynchronizeMotorCmd cmd)
-    {
+    int DxlDriver::readSynchronizeCommand(SynchronizeMotorCmd cmd)
+    {   
+        int result = COMM_TX_ERROR;
         ROS_DEBUG_THROTTLE(0.5, "DxlDriver::readSynchronizeCommand:  %s", cmd.str().c_str());
 
-        switch(cmd.getType())
-        {
-            case EDxlCommandType::CMD_TYPE_POSITION:
-                syncWriteCommand(&XDriver::syncWritePositionGoal, cmd);
-            break;
-            case EDxlCommandType::CMD_TYPE_VELOCITY:
-                syncWriteCommand(&XDriver::syncWriteVelocityGoal, cmd);
-            break;
-            case EDxlCommandType::CMD_TYPE_EFFORT:
-                syncWriteCommand(&XDriver::syncWriteTorqueGoal, cmd);
-            break;
-            case EDxlCommandType::CMD_TYPE_TORQUE:
-                syncWriteCommand(&XDriver::syncWriteTorqueEnable, cmd);
-            break;
-            case EDxlCommandType::CMD_TYPE_LEARNING_MODE:
-                syncWriteCommand(&XDriver::syncWriteTorqueEnable, cmd);
-            break;
-            default:
-                ROS_ERROR("DxlDriver::readSynchronizeCommand - Unsupported command type: %d", static_cast<int>(cmd.getType()));
-            break;
+        if(cmd.isValid()) {
+            switch(cmd.getType())
+            {
+                case EDxlCommandType::CMD_TYPE_POSITION:
+                    result = _syncWrite(&XDriver::syncWritePositionGoal, cmd);
+                break;
+                case EDxlCommandType::CMD_TYPE_VELOCITY:
+                    result = _syncWrite(&XDriver::syncWriteVelocityGoal, cmd);
+                break;
+                case EDxlCommandType::CMD_TYPE_EFFORT:
+                    result = _syncWrite(&XDriver::syncWriteTorqueGoal, cmd);
+                break;
+                case EDxlCommandType::CMD_TYPE_TORQUE:
+                    result = _syncWrite(&XDriver::syncWriteTorqueEnable, cmd);
+                break;
+                case EDxlCommandType::CMD_TYPE_LEARNING_MODE:
+                    result = _syncWrite(&XDriver::syncWriteTorqueEnable, cmd);
+                break;
+                default:
+                    ROS_ERROR("DxlDriver::readSynchronizeCommand - Unsupported command type: %d", static_cast<int>(cmd.getType()));
+                break;
+            }
         }
+        else {
+            ROS_ERROR("DxlDriver::readSynchronizeCommand - Invalid command");
+        }
+
+        return result;
     }
 
     /**
      * @brief DxlDriver::readSingleCommand
      * @param cmd
      */
-    void DxlDriver::readSingleCommand(SingleMotorCmd cmd)
+    int DxlDriver::readSingleCommand(SingleMotorCmd cmd)
     {
-        int result = -1;
-        int counter = 0;
+        int result = COMM_TX_ERROR;
         uint8_t id = cmd.getId();
 
-        ROS_DEBUG_THROTTLE(0.5, "DxlDriver::readSingleCommand:  %s", cmd.str().c_str());
+        if(cmd.isValid()) {
+            int counter = 0;
 
-        if(_state_map.count(id) != 0)
-        {
-            DxlMotorState state = _state_map.at(id);
+            ROS_DEBUG_THROTTLE(0.5, "DxlDriver::readSingleCommand:  %s", cmd.str().c_str());
 
-            while ((COMM_SUCCESS != result) && (counter < 50))
+            if(_state_map.count(id) != 0)
             {
-                switch(cmd.getType())
+                DxlMotorState state = _state_map.at(id);
+
+                while ((COMM_SUCCESS != result) && (counter < 50))
                 {
-                case EDxlCommandType::CMD_TYPE_VELOCITY:
-                    result = singleWriteCommand(&XDriver::setGoalVelocity, state.getType(), cmd);
-                    break;
-                case EDxlCommandType::CMD_TYPE_POSITION:
-                    result = singleWriteCommand(&XDriver::setGoalPosition, state.getType(), cmd);
-                    break;
-                case EDxlCommandType::CMD_TYPE_EFFORT:
-                    result = singleWriteCommand(&XDriver::setGoalTorque, state.getType(), cmd);
-                    break;
-                case EDxlCommandType::CMD_TYPE_TORQUE:
-                    result = singleWriteCommand(&XDriver::setTorqueEnable, state.getType(), cmd);
-                    break;
-                case EDxlCommandType::CMD_TYPE_P_GAIN:
-                    result = singleWriteCommand(&XDriver::setPGain, state.getType(), cmd);
-                    break;
-                case EDxlCommandType::CMD_TYPE_I_GAIN:
-                    result = singleWriteCommand(&XDriver::setIGain, state.getType(), cmd);
-                    break;
-                case EDxlCommandType::CMD_TYPE_D_GAIN:
-                    result = singleWriteCommand(&XDriver::setDGain, state.getType(), cmd);
-                    break;
-                case EDxlCommandType::CMD_TYPE_FF1_GAIN:
-                    result = singleWriteCommand(&XDriver::setff1Gain, state.getType(), cmd);
-                    break;
-                case EDxlCommandType::CMD_TYPE_FF2_GAIN:
-                    result = singleWriteCommand(&XDriver::setff2Gain, state.getType(), cmd);
-                    break;
-                case EDxlCommandType::CMD_TYPE_PING:
-                    result = ping(state);
-                    break;
-                default:
-                    break;
+                    switch(cmd.getType())
+                    {
+                    case EDxlCommandType::CMD_TYPE_VELOCITY:
+                        result = _singleWrite(&XDriver::setGoalVelocity, state.getType(), cmd);
+                        break;
+                    case EDxlCommandType::CMD_TYPE_POSITION:
+                        result = _singleWrite(&XDriver::setGoalPosition, state.getType(), cmd);
+                        break;
+                    case EDxlCommandType::CMD_TYPE_EFFORT:
+                        result = _singleWrite(&XDriver::setGoalTorque, state.getType(), cmd);
+                        break;
+                    case EDxlCommandType::CMD_TYPE_TORQUE:
+                        result = _singleWrite(&XDriver::setTorqueEnable, state.getType(), cmd);
+                        break;
+                    case EDxlCommandType::CMD_TYPE_P_GAIN:
+                        result = _singleWrite(&XDriver::setPGain, state.getType(), cmd);
+                        break;
+                    case EDxlCommandType::CMD_TYPE_I_GAIN:
+                        result = _singleWrite(&XDriver::setIGain, state.getType(), cmd);
+                        break;
+                    case EDxlCommandType::CMD_TYPE_D_GAIN:
+                        result = _singleWrite(&XDriver::setDGain, state.getType(), cmd);
+                        break;
+                    case EDxlCommandType::CMD_TYPE_FF1_GAIN:
+                        result = _singleWrite(&XDriver::setff1Gain, state.getType(), cmd);
+                        break;
+                    case EDxlCommandType::CMD_TYPE_FF2_GAIN:
+                        result = _singleWrite(&XDriver::setff2Gain, state.getType(), cmd);
+                        break;
+                    case EDxlCommandType::CMD_TYPE_PING:
+                        result = ping(state);
+                        break;
+                    default:
+                        break;
+                    }
+
+                    counter += 1;
+
+                    ros::Duration(TIME_TO_WAIT_IF_BUSY).sleep();
                 }
-
-                counter += 1;
-
-                ros::Duration(TIME_TO_WAIT_IF_BUSY).sleep();
             }
         }
 
@@ -578,6 +589,8 @@ namespace DynamixelDriver
             ROS_WARN("DxlDriver::readSingleCommand - Failed to write a single command on dxl motor id : %d", id);
             _debug_error_message = "Dxl Driver - Failed to write a single command";
         }
+
+        return result;
     }
 
 
@@ -640,10 +653,10 @@ namespace DynamixelDriver
 
         if(_xdriver_map.count(motor_type) && _xdriver_map.at(motor_type))
         {
-            result = _xdriver_map.at(motor_type)->customWrite(id,
-                                                              static_cast<uint8_t>(reg_address),
-                                                              static_cast<uint32_t>(value),
-                                                              static_cast<uint8_t>(byte_number));
+            result = _xdriver_map.at(motor_type)->write(static_cast<uint8_t>(reg_address),
+                                                        static_cast<uint8_t>(byte_number),
+                                                        id,
+                                                        static_cast<uint32_t>(value));
             if (result != COMM_SUCCESS)
             {
                 ROS_WARN("DxlDriver::sendCustomDxlCommand - Failed to write custom command: %d", result);
@@ -669,21 +682,21 @@ namespace DynamixelDriver
      * @return
      */
     int DxlDriver::readCustomDxlCommand(EMotorType motor_type, uint8_t id,
-                                        int reg_address, int& value, int byte_number)
+                                        int32_t reg_address, int& value, int byte_number)
     {
         int result = COMM_RX_FAIL;
         ROS_DEBUG("DxlDriver::readCustomDxlCommand: "
                   "Motor type: %d, ID: %d, Address: %d, Size: %d",
                   static_cast<int>(motor_type), static_cast<int>(id),
-                  reg_address, byte_number);
+                  static_cast<int>(reg_address), byte_number);
 
         if(_xdriver_map.count(motor_type) && _xdriver_map.at(motor_type))
         {
             uint32_t data = 0;
-            result = _xdriver_map.at(motor_type)->customRead(id,
-                                                             static_cast<uint8_t>(reg_address),
-                                                             &data,
-                                                             static_cast<uint8_t>(byte_number));
+            result = _xdriver_map.at(motor_type)->read(static_cast<uint8_t>(reg_address),
+                                                       static_cast<uint8_t>(byte_number),
+                                                       id,
+                                                       &data);
             value = static_cast<int>(data);
 
             if (result != COMM_SUCCESS)
@@ -825,22 +838,23 @@ namespace DynamixelDriver
     }
 
     /**
-     * @brief DxlDriver::syncWriteCommand
+     * @brief DxlDriver::_syncWrite
      * @param motor_list
      * @param param_list
      *
      * // to be reformatted, not beautiful
      */
-    void DxlDriver::syncWriteCommand(int (XDriver::*syncWriteFunction)(const vector<uint8_t>&, const vector<uint32_t>&),
+    int DxlDriver::_syncWrite(int (XDriver::*syncWriteFunction)(const vector<uint8_t>&, const vector<uint32_t>&),
                                      const SynchronizeMotorCmd& cmd)
     {
+        int result = COMM_TX_ERROR;
 
-        set<EMotorType> typesToProcess = cmd.getTypes();
+        set<EMotorType> typesToProcess = cmd.getMotorTypes();
 
         //process all the motors using each successive drivers
         for(int counter = 0; counter < 25; ++counter)
         {
-            ROS_DEBUG_THROTTLE(0.5, "DxlDriver::syncWriteCommand: try to sync write (counter %d)", counter);
+            ROS_DEBUG_THROTTLE(0.5, "DxlDriver::_syncWrite: try to sync write (counter %d)", counter);
 
             for(auto const& it : _xdriver_map) {
                 if(it.second && typesToProcess.count(it.first) != 0) {
@@ -852,30 +866,40 @@ namespace DynamixelDriver
                         typesToProcess.erase(typesToProcess.find(it.first));
                     }
                     else {
-                        ROS_ERROR("DxlDriver::syncWriteCommand : unable to sync write function : %d", results);
+                        ROS_ERROR("DxlDriver::_syncWrite : unable to sync write function : %d", results);
                     }
                 }
             }
 
             //if all drivers are processed, go out of for loop
-            if(typesToProcess.empty())
+            if(typesToProcess.empty()) {
+                result = COMM_SUCCESS;
                 break;
+            }
 
             ros::Duration(TIME_TO_WAIT_IF_BUSY).sleep();
         }
 
-        if (!typesToProcess.empty())
+        if(COMM_SUCCESS != result)
         {
-            ROS_WARN_THROTTLE(0.5, "DxlDriver::syncWriteCommand - Failed to write synchronize position");
+            ROS_ERROR_THROTTLE(0.5, "DxlDriver::_syncWrite - Failed to write synchronize position");
             _debug_error_message = "Dxl Driver - Failed to write synchronize position";
         }
+
+        return result;
     }
 
-    int DxlDriver::singleWriteCommand(int (XDriver::*singleWriteFunction)(uint8_t, uint32_t),
+    /**
+     * @brief DxlDriver::_singleWrite
+     * @param dxl_type
+     * @param cmd
+     * @return
+     */
+    int DxlDriver::_singleWrite(int (XDriver::*singleWriteFunction)(uint8_t, uint32_t),
                                        EMotorType dxl_type,
                                        const SingleMotorCmd &cmd)
     {
-        int result = -1;
+        int result = COMM_TX_ERROR;
 
         if (_xdriver_map.count(dxl_type) != 0 && _xdriver_map.at(dxl_type))
         {
@@ -883,7 +907,7 @@ namespace DynamixelDriver
         }
         else
         {
-            ROS_ERROR_THROTTLE(1, "DxlDriver::singleWriteCommand - Wrong dxl type detected: %s", MotorTypeEnum(dxl_type).toString().c_str());
+            ROS_ERROR_THROTTLE(1, "DxlDriver::_singleWrite - Wrong dxl type detected: %s", MotorTypeEnum(dxl_type).toString().c_str());
             _debug_error_message = "Dxl Driver - Wrong dxl type detected";
         }
         return result;
