@@ -12,6 +12,6 @@ dynamixels:
     dxl_2_P_gain: 1000
     dxl_2_I_gain: 500
 
-    dxl_3_P_gain: 40
-    dxl_3_I_gain: 20
-    dxl_3_D_gain: 100
+    dxl_3_P_gain: 74
+    dxl_3_I_gain: 8
+    dxl_3_D_gain: 5
