@@ -1,0 +1,104 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2021, Niryo All rights reserved. No part of this document
+# may be reproduced or transmitted in any form or by any means without prior
+# written consent of Niryo SAS
+# This file is distributed under the same license as the Ned ROS
+# Documentation package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Ned ROS Documentation 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-04-23 16:51+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.8.0\n"
+
+#: ../../source/stack_hardware/niryo_robot_debug.rst:2
+msgid "Niryo Robot Debug Package"
+msgstr ""
+
+#: ../../source/stack_hardware/niryo_robot_debug.rst:4
+msgid ""
+"This package offer scripts to change ping / scan DXL motors and changes "
+"register values of these motors."
+msgstr ""
+
+#: ../../source/stack_hardware/niryo_robot_debug.rst:7
+msgid "Niryo Robot - Send DXL Custom Value"
+msgstr ""
+
+#: ../../source/stack_hardware/niryo_robot_debug.rst:8
+#: ../../source/stack_hardware/niryo_robot_debug.rst:22
+msgid "This script can be launched via:  ::"
+msgstr ""
+
+#: ../../source/stack_hardware/niryo_robot_debug.rst:13
+msgid "Parameters - Send DXL Custom Value"
+msgstr ""
+
+#: ../../source/stack_hardware/niryo_robot_debug.rst:14
+msgid "**--type [Number]:** Motor type (3 for XL-320, 2 for XL-430)"
+msgstr ""
+
+#: ../../source/stack_hardware/niryo_robot_debug.rst:15
+msgid "**--id [Number]:** Motor ID"
+msgstr ""
+
+#: ../../source/stack_hardware/niryo_robot_debug.rst:16
+msgid "**--address [Number]:** Register address to modify"
+msgstr ""
+
+#: ../../source/stack_hardware/niryo_robot_debug.rst:17
+msgid "**--value [Number]:** Value to store at the register address given"
+msgstr ""
+
+#: ../../source/stack_hardware/niryo_robot_debug.rst:18
+msgid "**--size [Number]:** Size in bytes of the value given"
+msgstr ""
+
+#: ../../source/stack_hardware/niryo_robot_debug.rst:21
+msgid "Niryo Robot - Dxl debug tools"
+msgstr ""
+
+#: ../../source/stack_hardware/niryo_robot_debug.rst:27
+msgid "Parameters - Dxl debug tools"
+msgstr ""
+
+#: ../../source/stack_hardware/niryo_robot_debug.rst:28
+msgid "**--help / -h:** Print help message"
+msgstr ""
+
+#: ../../source/stack_hardware/niryo_robot_debug.rst:29
+msgid "**--baudrate / -b [Number]:** Baudrate (1000000 by default)"
+msgstr ""
+
+#: ../../source/stack_hardware/niryo_robot_debug.rst:30
+msgid "**--port / -p [Number]:** Set port"
+msgstr ""
+
+#: ../../source/stack_hardware/niryo_robot_debug.rst:31
+msgid "**--id / -i [Number]:** Dxl motor ID (0 by default)"
+msgstr ""
+
+#: ../../source/stack_hardware/niryo_robot_debug.rst:32
+msgid "**--scan:** Scan all Dxl motors on the bus"
+msgstr ""
+
+#: ../../source/stack_hardware/niryo_robot_debug.rst:33
+msgid "**--ping:** Ping specific ID"
+msgstr ""
+
+#: ../../source/stack_hardware/niryo_robot_debug.rst:34
+msgid ""
+"**--set-register [Number] [Number] [Number]:** Set a value to a register,"
+" parameters are in the order: register address / value / size (in bytes) "
+"of the value"
+msgstr ""
+

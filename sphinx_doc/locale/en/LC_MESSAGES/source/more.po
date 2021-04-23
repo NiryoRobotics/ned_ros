@@ -1,0 +1,66 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2021, Niryo All rights reserved. No part of this document
+# may be reproduced or transmitted in any form or by any means without prior
+# written consent of Niryo SAS
+# This file is distributed under the same license as the Ned ROS
+# Documentation package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Ned ROS Documentation 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-04-23 16:51+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.8.0\n"
+
+#: ../../source/more.rst:2
+msgid "More ways to control Ned"
+msgstr ""
+
+#: ../../source/more.rst:4
+msgid "There is even more ways to control Ned."
+msgstr ""
+
+#: ../../source/more.rst:6
+msgid ""
+"If you are a beginner, look at :ref:`Blockly <Blockly>` section to "
+"understand the programming fundamentals."
+msgstr ""
+
+#: ../../source/more.rst:8
+msgid ""
+"If you want to go further, maybe experience your own image processing, "
+"multi_robot, AI ,... you can look at :ref:`PyNiryo`"
+msgstr ""
+
+#: ../../source/more.rst:11
+msgid "Blockly"
+msgstr ""
+
+#: ../../source/more.rst:13
+msgid "Check out Niryo Studio"
+msgstr ""
+
+#: ../../source/more.rst:16
+msgid "PyNiryo"
+msgstr ""
+
+#: ../../source/more.rst:17
+msgid ""
+"As explain in the page :ref:`Use Ned TCP Server`, a TCP Server is running"
+" on Ned, which allows it to receive commands from any external device."
+msgstr ""
+
+#: ../../source/more.rst:20
+msgid ""
+"PyNiryo is a Python package available on Pip which allows to command the "
+"Niryo Robots with easy Python Binding"
+msgstr ""
+

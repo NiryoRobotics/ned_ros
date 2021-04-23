@@ -1,0 +1,234 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2021, Niryo All rights reserved. No part of this document
+# may be reproduced or transmitted in any form or by any means without prior
+# written consent of Niryo SAS
+# This file is distributed under the same license as the Ned ROS
+# Documentation package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Ned ROS Documentation 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-04-23 16:51+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.8.0\n"
+
+#: ../../source/ros/niryo_robot_msgs.rst:2
+msgid "Niryo Robot Messages Package"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_msgs.rst:4
+msgid ""
+"This package contains standard messages which can be used by all other "
+"packages."
+msgstr ""
+
+#: ../../source/ros/niryo_robot_msgs.rst:8
+msgid "Niryo Messages"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_msgs.rst:10
+msgid "Ned Messages"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_msgs.rst:16
+#: ../../source/ros/niryo_robot_msgs.rst:40
+msgid "Name"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_msgs.rst:17
+#: ../../source/ros/niryo_robot_msgs.rst:41
+msgid "Description"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_msgs.rst:18
+msgid ":ref:`CommandStatus`"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_msgs.rst:19
+msgid "Enum-wise message for status code"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_msgs.rst:20
+msgid ":ref:`ObjectPose`"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_msgs.rst:21
+msgid "x, y, z, roll, pitch, yaw"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_msgs.rst:22
+msgid ":ref:`RobotState`"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_msgs.rst:23
+msgid "position, rpy, quaternion"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_msgs.rst:24
+msgid ":ref:`RPY`"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_msgs.rst:25
+msgid "roll, pitch, yaw"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_msgs.rst:26
+msgid ":ref:`HardwareStatus`"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_msgs.rst:27
+msgid "several hardware informations"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_msgs.rst:28
+msgid ":ref:`SoftwareVersion`"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_msgs.rst:29
+msgid "several software version"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_msgs.rst:32
+msgid "Niryo Services"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_msgs.rst:34
+msgid "Ned Services"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_msgs.rst:42
+msgid ":ref:`GetBool`"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_msgs.rst:43
+msgid "Return a bool"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_msgs.rst:44
+msgid ":ref:`GetInt`"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_msgs.rst:45
+msgid "Return a integer"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_msgs.rst:46
+msgid ":ref:`GetStringList`"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_msgs.rst:47
+msgid "Return a list of string"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_msgs.rst:48
+msgid ":ref:`SetBool`"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_msgs.rst:49
+msgid "Set a bool and return status"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_msgs.rst:50
+msgid ":ref:`SetInt`"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_msgs.rst:51
+msgid "Set a integer and return status"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_msgs.rst:52
+msgid ":ref:`SetString`"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_msgs.rst:53
+msgid "Set a string and return status"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_msgs.rst:54
+msgid ":ref:`Trigger`"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_msgs.rst:55
+msgid "Trigger a task"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_msgs.rst:59
+msgid "Niryo Message Dependencies"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_msgs.rst:61
+msgid ":msgs_index:`geometry_msgs`"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_msgs.rst:64
+msgid "Niryo Message files"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_msgs.rst:67
+msgid "CommandStatus"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_msgs.rst:73
+msgid "ObjectPose"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_msgs.rst:79
+msgid "RobotState"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_msgs.rst:85
+msgid "RPY"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_msgs.rst:91
+msgid "HardwareStatus"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_msgs.rst:97
+msgid "SoftwareVersion"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_msgs.rst:103
+msgid "Niryo Service files"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_msgs.rst:106
+msgid "GetBool"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_msgs.rst:112
+msgid "GetInt"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_msgs.rst:118
+msgid "GetNameDescriptionList"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_msgs.rst:124
+msgid "GetStringList"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_msgs.rst:130
+msgid "SetBool"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_msgs.rst:136
+msgid "SetInt"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_msgs.rst:142
+msgid "SetString"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_msgs.rst:148
+msgid "Trigger"
+msgstr ""
+
