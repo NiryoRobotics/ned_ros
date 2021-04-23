@@ -189,8 +189,6 @@ namespace StepperDriver
         }
     }
 
-
-
     void StepperDriver::getBusState(bool &connection_status, std::vector<uint8_t> &motor_list, std::string &error) const
     {
         error = _debug_error_message;
@@ -316,7 +314,6 @@ namespace StepperDriver
         ROS_DEBUG_THROTTLE(0.5, "StepperDriver::readCommand - Received stepper cmd finished");
         return result;
     }
-
 
     uint8_t StepperDriver::readMsgBuf(unsigned long *id, uint8_t *len, std::array<uint8_t, 8> &buf)
     {

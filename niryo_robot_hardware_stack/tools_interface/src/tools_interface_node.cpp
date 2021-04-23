@@ -4,8 +4,6 @@
 
 using namespace ToolsInterface;
 
-std::shared_ptr<ToolsInterfaceCore> tool;
-
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "tools_interface_node");
@@ -15,6 +13,8 @@ int main(int argc, char **argv)
     ros::AsyncSpinner spinner(4);
     spinner.start();
     ros::NodeHandle nh;
+
+    std::shared_ptr<ToolsInterfaceCore> tool;
 
     std::shared_ptr<DynamixelDriver::DynamixelDriverCore> dynamixel(new DynamixelDriver::DynamixelDriverCore());
     ros::Duration(1).sleep();

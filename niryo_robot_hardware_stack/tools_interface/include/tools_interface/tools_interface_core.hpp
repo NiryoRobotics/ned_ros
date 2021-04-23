@@ -48,10 +48,11 @@ namespace ToolsInterface {
             ToolsInterfaceCore(std::shared_ptr<DynamixelDriver::DynamixelDriverCore> dynamixel);
             virtual ~ToolsInterfaceCore();
 
+            void pubToolId(int id);
+
+        private:
             void initParams();
             void initServices();
-
-            void pubToolId(int id);
 
         private:
             ros::NodeHandle _nh;

@@ -289,24 +289,9 @@ namespace ToolsInterface {
         int pull_air_velocity = 1023;
 
         // set vacuum pump pos, vel and torque
-        SingleMotorCmd cmd;
-        vector<SingleMotorCmd> list_cmd;
-        cmd.setId(_toolState.getId());
-
-        cmd.setType(EDxlCommandType::CMD_TYPE_VELOCITY);
-        cmd.setParam(pull_air_velocity);
-        list_cmd.push_back(cmd);
-
-        cmd.setType(EDxlCommandType::CMD_TYPE_POSITION);
-        cmd.setParam(req.pull_air_position);
-        list_cmd.push_back(cmd);
-
-        cmd.setType(EDxlCommandType::CMD_TYPE_EFFORT);
-        cmd.setParam(500);
-        list_cmd.push_back(cmd);
-
-        _dynamixel->addEndEffectorCommandToQueue(list_cmd);
-        list_cmd.clear();
+        _dynamixel->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_VELOCITY, _toolState.getId(), pull_air_velocity));
+        _dynamixel->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_POSITION, _toolState.getId(), req.pull_air_position));
+        _dynamixel->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_EFFORT, _toolState.getId(), 500));
 
         // calculate pull air duration
         double dxl_speed = (double)pull_air_velocity * (double)DynamixelDriver::XL320Driver::XL320_STEPS_FOR_1_SPEED; // position . sec-1
@@ -316,10 +301,7 @@ namespace ToolsInterface {
         ros::Duration(seconds_to_wait + 0.25).sleep();
 
         // set hold torque
-        cmd.setType(EDxlCommandType::CMD_TYPE_EFFORT);
-        cmd.setParam(req.pull_air_hold_torque);
-        list_cmd.push_back(cmd);
-        _dynamixel->addEndEffectorCommandToQueue(list_cmd);
+        _dynamixel->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_EFFORT, _toolState.getId(), req.pull_air_hold_torque));
 
         res.state = ToolState::VACUUM_PUMP_STATE_PULLED;
 
@@ -338,24 +320,9 @@ namespace ToolsInterface {
         int push_air_velocity = 1023;
 
         // set vacuum pump pos, vel and torque
-        SingleMotorCmd cmd;
-        vector<SingleMotorCmd> list_cmd;
-        cmd.setId(_toolState.getId());
-
-        cmd.setType(EDxlCommandType::CMD_TYPE_VELOCITY);
-        cmd.setParam(push_air_velocity);
-        list_cmd.push_back(cmd);
-
-        cmd.setType(EDxlCommandType::CMD_TYPE_POSITION);
-        cmd.setParam(req.push_air_position);
-        list_cmd.push_back(cmd);
-
-        cmd.setType(EDxlCommandType::CMD_TYPE_EFFORT);
-        cmd.setParam(64000); // two's complement of 1536
-        list_cmd.push_back(cmd);
-
-        _dynamixel->addEndEffectorCommandToQueue(list_cmd);
-        list_cmd.clear();
+        _dynamixel->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_VELOCITY, _toolState.getId(), push_air_velocity));
+        _dynamixel->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_POSITION, _toolState.getId(), req.push_air_position));
+        _dynamixel->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_EFFORT, _toolState.getId(), 64000));// two's complement of 1536
 
         // calculate push air duration
         double dxl_speed = (double)push_air_velocity * (double)DynamixelDriver::XL320Driver::XL320_STEPS_FOR_1_SPEED; // position . sec-1
@@ -365,10 +332,7 @@ namespace ToolsInterface {
         ros::Duration(seconds_to_wait + 0.25).sleep();
 
         // set torque to 0
-        cmd.setType(EDxlCommandType::CMD_TYPE_EFFORT);
-        cmd.setParam(0);
-        list_cmd.push_back(cmd);
-        _dynamixel->addEndEffectorCommandToQueue(list_cmd);
+        _dynamixel->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_EFFORT, _toolState.getId(), 0));
 
         res.state = ToolState::VACUUM_PUMP_STATE_PUSHED;
 
@@ -385,9 +349,9 @@ namespace ToolsInterface {
                 lock_guard<mutex> lck(_tool_mutex);
                 vector<uint8_t> motor_list;
                 motor_list = _dynamixel->getRemovedMotorList();
-                for(int i = 0 ; i < motor_list.size(); i++)
+                for(auto const& motor : motor_list)
                 {
-                    if(_toolState.getId() == motor_list.at(i))
+                    if(_toolState.getId() == motor)
                     {
                         ROS_INFO("Tools Interface - Unset Current Tools");
                         _dynamixel->unsetEndEffector(_toolState.getId());
