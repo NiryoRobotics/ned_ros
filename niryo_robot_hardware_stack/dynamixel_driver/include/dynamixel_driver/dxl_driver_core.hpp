@@ -86,7 +86,6 @@ namespace DynamixelDriver
         std::vector<uint8_t> getRemovedMotorList() const;
         common::model::DxlMotorState getDxlState(uint8_t motor_id) const;
         std::vector<common::model::DxlMotorState> getDxlStates() const;
-        niryo_robot_msgs::BusState getDxlBusState() const;
         uint32_t getEndEffectorState(uint8_t id) const;
 
         // IDriverCore interface
@@ -96,6 +95,7 @@ namespace DynamixelDriver
 
         bool isConnectionOk() const override;
         int launchMotorsReport() override;
+        niryo_robot_msgs::BusState getBusState() const override;
 
     private:
         void init() override;
@@ -159,7 +159,7 @@ namespace DynamixelDriver
     inline
     common::model::DxlMotorState DynamixelDriverCore::getDxlState(uint8_t motor_id) const
     {
-        return _dynamixel->getMotorsState(motor_id);
+        return _dynamixel->getMotorState(motor_id);
     }
 
     inline

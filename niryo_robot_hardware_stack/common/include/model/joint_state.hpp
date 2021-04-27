@@ -49,7 +49,7 @@ namespace common {
 
                 virtual bool operator==(const JointState& other) const;
 
-                virtual int rad_pos_to_motor_pos(double pos_rad) = 0;
+                virtual int to_motor_pos(double pos_rad) = 0;
                 virtual double to_rad_pos(int position_dxl) = 0;
 
                 // AbstractMotorState interface

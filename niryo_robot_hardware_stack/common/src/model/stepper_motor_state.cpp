@@ -119,7 +119,7 @@ namespace common {
             return ss.str();
         }
 
-        int StepperMotorState::rad_pos_to_motor_pos(double pos_rad)
+        int StepperMotorState::to_motor_pos(double pos_rad)
         {
             return ((STEPPERS_MOTOR_STEPS_PER_REVOLUTION * STEPPERS_MICROSTEPS * _gear_ratio * pos_rad * RADIAN_TO_DEGREE / 360.0) * _direction);
             //return (int32_t)((STEPPERS_MOTOR_STEPS_PER_REVOLUTION * STEPPERS_MICROSTEPS * gear_ratio * position_rad * RADIAN_TO_DEGREE / 360.0) * direction);

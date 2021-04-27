@@ -48,17 +48,15 @@ namespace JointsInterface {
         bool CalibrationInprogress();
 
     private:
-        int32_t _setStepperCalibrationCommand(uint8_t motor_id, int offset, int delay, int motor_direction,
-                                              int calibration_direction, int timeout);
-
-        int _getCalibrationResult(const std::shared_ptr<common::model::JointState>& motor);
+        void setStepperCalibrationCommand(const std::shared_ptr<common::model::StepperMotorState>& pState,
+                                          int32_t delay, int32_t calibration_direction, int32_t timeout);
 
         bool _check_steppers_connected();
 
         void _auto_calibration();
         void _send_calibration_offset(uint8_t id, int offset_to_send, int absolute_steps_at_offset_position);
         bool _can_process_manual_calibration(std::string &result_message);
-        StepperDriver::e_CanStepperCalibrationStatus _manual_calibration();
+        common::model::EStepperCalibrationStatus _manual_calibration();
 
         void _motorTorque(const std::shared_ptr<common::model::JointState>& motor, bool status);
         void _moveMotor(const std::shared_ptr<common::model::JointState>& motor, int steps, float delay);

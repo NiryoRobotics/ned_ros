@@ -28,6 +28,7 @@
 //niryo
 #include "model/stepper_command_type_enum.hpp"
 #include "model/dxl_command_type_enum.hpp"
+#include "model/stepper_calibration_status_enum.hpp"
 
 #include "util/util_defs.hpp"
 
@@ -141,25 +142,19 @@ namespace JointsInterface {
      * @param timeout
      * @return
      */
-    int32_t CalibrationInterface::_setStepperCalibrationCommand(uint8_t motor_id,
-                                                                int offset, int delay, int motor_direction,
-                                                                int calibration_direction, int timeout)
+    void CalibrationInterface::setStepperCalibrationCommand(const std::shared_ptr<StepperMotorState>& pState,
+                                                            int32_t delay, int32_t calibration_direction, int32_t timeout)
     {
-        int32_t calibration_result;
+
+        uint8_t motor_id = pState->getId();
+        int32_t offset = pState->to_motor_pos(pState->getOffsetPosition());
+        int32_t motor_direction = static_cast<int32_t>(pState->getDirection());
 
         StepperMotorCmd stepper_cmd(EStepperCommandType::CMD_TYPE_CALIBRATION, motor_id,
                                     {offset, delay, motor_direction * calibration_direction, timeout});
         _stepper->addCommandToQueue(stepper_cmd);
 
-        ROS_INFO("Calibration Interface - Wait for calibration result for motor id %d :", motor_id);
-        ros::Duration(0.2).sleep();
-        while (_stepper->getCalibrationResult(motor_id, calibration_result) == StepperDriver::e_CanStepperCalibrationStatus::CAN_STEPPERS_CALIBRATION_IN_PROGRESS)
-        {
-            ros::Duration(0.2).sleep();
-        }
-        ROS_INFO("Calibration Interface - Motor %d, calibration cmd result %d ", motor_id, calibration_result);
-
-        return calibration_result;
+        ROS_INFO("Calibration Interface - start calibration for motor id %d :", motor_id);
     }
 
     bool CalibrationInterface::_check_steppers_connected()
@@ -176,16 +171,14 @@ namespace JointsInterface {
     {
         ros::Duration sld(0.2);
 
-        //_stepper->startCalibration(true);
         // 0. Torque ON for motor 2
 
-        sld.sleep();
         StepperMotorCmd stepper_cmd(EStepperCommandType::CMD_TYPE_TORQUE, _joint_list.at(1)->getId(), {true});
         _stepper->addCommandToQueue(stepper_cmd);
         sld.sleep();
 
         // 1. Relative Move Motor 3
-        _relativeMoveMotor(_joint_list.at(2), _joint_list.at(2)->rad_pos_to_motor_pos(0.25), 500, false);
+        _relativeMoveMotor(_joint_list.at(2), _joint_list.at(2)->to_motor_pos(0.25), 500, false);
         //_relativeMoveMotor(_joint_list.at(2), rad_pos_to_steps(0.25, _gear_ratio_3, _direction_3), 500, false);
         ros::Duration(0.5).sleep();
 
@@ -202,11 +195,11 @@ namespace JointsInterface {
         dynamixel_cmd.reset();
         dynamixel_cmd.setType(EDxlCommandType::CMD_TYPE_POSITION);
         dynamixel_cmd.addMotorParam(_joint_list.at(3),
-                                    _joint_list.at(3)->rad_pos_to_motor_pos(-_joint_list.at(3)->getOffsetPosition()));
+                                    _joint_list.at(3)->to_motor_pos(-_joint_list.at(3)->getOffsetPosition()));
         dynamixel_cmd.addMotorParam(_joint_list.at(4),
-                                    _joint_list.at(4)->rad_pos_to_motor_pos(-_joint_list.at(4)->getOffsetPosition()));
+                                    _joint_list.at(4)->to_motor_pos(-_joint_list.at(4)->getOffsetPosition()));
         dynamixel_cmd.addMotorParam(_joint_list.at(5),
-                                    _joint_list.at(5)->rad_pos_to_motor_pos(-_joint_list.at(5)->getOffsetPosition()));
+                                    _joint_list.at(5)->to_motor_pos(-_joint_list.at(5)->getOffsetPosition()));
         _dynamixel->setSyncCommand(dynamixel_cmd);
         sld.sleep();
 
@@ -226,39 +219,24 @@ namespace JointsInterface {
                 pStepperMotorState_2 && pStepperMotorState_2->isValid() &&
                 pStepperMotorState_3 && pStepperMotorState_3->isValid())
         {
-            auto stepper_1_calibration_fut = common::util::reallyAsync(&CalibrationInterface::_setStepperCalibrationCommand, this,
-                                                                       pStepperMotorState_1->getId(),
-                                                                       pStepperMotorState_1->rad_pos_to_motor_pos(pStepperMotorState_1->getOffsetPosition()),
-                                                                       200,
-                                                                       pStepperMotorState_1->getDirection(),
-                                                                       1,
-                                                                       _calibration_timeout);
-            sld.sleep();
+            _stepper->startCalibration();
 
-            //stepper 2
-            auto stepper_2_calibration_fut = common::util::reallyAsync(&CalibrationInterface::_setStepperCalibrationCommand, this,
-                                                                       pStepperMotorState_2->getId(),
-                                                                       pStepperMotorState_2->rad_pos_to_motor_pos(pStepperMotorState_2->getOffsetPosition()),
-                                                                       1000,
-                                                                       pStepperMotorState_2->getDirection(),
-                                                                       1,
-                                                                       _calibration_timeout);
-            sld.sleep();
+            setStepperCalibrationCommand(pStepperMotorState_1, 200, 1, _calibration_timeout);
+            setStepperCalibrationCommand(pStepperMotorState_2, 1000, 1, _calibration_timeout);
+            setStepperCalibrationCommand(pStepperMotorState_3, 1000, -1, _calibration_timeout);
+        }
 
-            //stepper 3
-            auto stepper_3_calibration_fut = common::util::reallyAsync(&CalibrationInterface::_setStepperCalibrationCommand, this,
-                                                                       pStepperMotorState_3->getId(),
-                                                                       pStepperMotorState_3->rad_pos_to_motor_pos(pStepperMotorState_3->getOffsetPosition()),
-                                                                       1000,
-                                                                       pStepperMotorState_3->getDirection(),
-                                                                       -1,
-                                                                       _calibration_timeout);
+        ros::Duration(0.2).sleep();
+        while (_stepper->isCalibrationInProgress())
+        {
+            ros::Duration(0.2).sleep();
+        }
 
-            sld.sleep();
-
-            sensor_offset_results.emplace_back(stepper_1_calibration_fut.get());
-            sensor_offset_results.emplace_back(stepper_2_calibration_fut.get());
-            sensor_offset_results.emplace_back(stepper_3_calibration_fut.get());
+        for(size_t i = 0; i < 3; ++i) {
+            uint8_t motor_id = _joint_list.at(i)->getId();
+            int calibration_result = _stepper->getCalibrationResult(motor_id);
+            sensor_offset_results.emplace_back(calibration_result);
+            ROS_INFO("Calibration Interface - Motor %d, calibration cmd result %d ", motor_id, calibration_result);
         }
 
         if (! sensor_offset_results.at(0)
@@ -282,7 +260,7 @@ namespace JointsInterface {
         // -0.01 to bypass error
         sld.sleep();
         _relativeMoveMotor(_joint_list.at(0),
-                           -_joint_list.at(0)->rad_pos_to_motor_pos(_joint_list.at(0)->getOffsetPosition()),
+                           -_joint_list.at(0)->to_motor_pos(_joint_list.at(0)->getOffsetPosition()),
                             550,
                            false);
 
@@ -311,7 +289,7 @@ namespace JointsInterface {
         // 6. Write sensor_offset_steps to file
         set_motors_calibration_offsets(sensor_offset_ids, sensor_offset_results);
 
-        _stepper->startCalibration(false);
+        _stepper->stopCalibration();
         for(auto const& jState : _joint_list)
         {
             if(jState && jState->isStepper())
@@ -384,7 +362,7 @@ namespace JointsInterface {
         _stepper->addCommandToQueue(stepper_cmd);
     }
 
-    StepperDriver::e_CanStepperCalibrationStatus CalibrationInterface::_manual_calibration()
+    EStepperCalibrationStatus CalibrationInterface::_manual_calibration()
     {
         ros::Rate rest(0.5);
         ros::Duration sld(0.2);
@@ -393,9 +371,9 @@ namespace JointsInterface {
 
         if (!get_motors_calibration_offsets(motor_id_list, steps_list))
         {
-           return StepperDriver::e_CanStepperCalibrationStatus::CAN_STEPPERS_CALIBRATION_FAIL;
+           return EStepperCalibrationStatus::CALIBRATION_FAIL;
         }
-        _stepper->startCalibration(true);
+        _stepper->startCalibration();
         // 0. Torque ON for motor 2
 
         int steps_per_rev = common::model::StepperMotorState::stepsPerRev();
@@ -408,7 +386,7 @@ namespace JointsInterface {
 
             if (motor_id_list.at(i) == _joint_list.at(0)->getId())
             {
-                offset_to_send = sensor_offset_steps - _joint_list.at(0)->rad_pos_to_motor_pos(_joint_list.at(0)->getOffsetPosition()) % steps_per_rev;
+                offset_to_send = sensor_offset_steps - _joint_list.at(0)->to_motor_pos(_joint_list.at(0)->getOffsetPosition()) % steps_per_rev;
                 if (offset_to_send < 0)
                     offset_to_send += steps_per_rev;
                 absolute_steps_at_offset_position = offset_to_send;
@@ -419,7 +397,7 @@ namespace JointsInterface {
             }
             else if (motor_id_list.at(i) == _joint_list.at(1)->getId())
             {
-                offset_to_send = sensor_offset_steps - _joint_list.at(1)->rad_pos_to_motor_pos(_joint_list.at(1)->getOffsetPosition());
+                offset_to_send = sensor_offset_steps - _joint_list.at(1)->to_motor_pos(_joint_list.at(1)->getOffsetPosition());
                 absolute_steps_at_offset_position = sensor_offset_steps;
 
                 _send_calibration_offset(_joint_list.at(1)->getId(), offset_to_send, absolute_steps_at_offset_position);
@@ -428,7 +406,7 @@ namespace JointsInterface {
             }
             else if (motor_id_list.at(i) == _joint_list.at(2)->getId())
             {
-                offset_to_send = sensor_offset_steps - _joint_list.at(2)->rad_pos_to_motor_pos(_joint_list.at(2)->getOffsetPosition());
+                offset_to_send = sensor_offset_steps - _joint_list.at(2)->to_motor_pos(_joint_list.at(2)->getOffsetPosition());
                 absolute_steps_at_offset_position = sensor_offset_steps;
 
                 _send_calibration_offset(_joint_list.at(2)->getId(), offset_to_send, absolute_steps_at_offset_position);
@@ -436,9 +414,9 @@ namespace JointsInterface {
                 sld.sleep();
             }
         }
-        _stepper->startCalibration(false);
+        _stepper->stopCalibration();
 
-        return StepperDriver::e_CanStepperCalibrationStatus::CAN_STEPPERS_CALIBRATION_OK;
+        return EStepperCalibrationStatus::CALIBRATION_OK;
     }
 
 

@@ -88,7 +88,7 @@ namespace common {
             return ss.str();
         }
 
-        int DxlMotorState::rad_pos_to_motor_pos(double pos_rad)
+        int DxlMotorState::to_motor_pos(double pos_rad)
         {
             double denom = getTotalAngle();
             assert(0.0 != denom);

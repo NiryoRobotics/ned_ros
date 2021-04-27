@@ -20,64 +20,44 @@
 #ifndef STEPPER_DRIVER_HPP
 #define STEPPER_DRIVER_HPP
 
+//std
 #include <memory>
 #include <functional>
 #include <string>
 #include <thread>
 #include <map>
+
+//ros
 #include <ros/ros.h>
-#include "mcp_can_rpi/mcp_can_rpi.h"
+
+//niryo
+#include "model/idriver.hpp"
 #include "model/stepper_motor_state.hpp"
 #include "model/stepper_motor_cmd.hpp"
+#include "model/conveyor_state.hpp"
+#include "model/stepper_calibration_status_enum.hpp"
+#include "model/synchronize_stepper_motor_cmd.hpp"
+
 #include "stepper_driver/StepperMotorCommand.h"
 #include "stepper_driver/StepperCmd.h"
-#include "model/conveyor_state.hpp"
+#include "stepper_driver/calibration_stepper_data.hpp"
+
+#include "mcp_can_rpi/mcp_can_rpi.h"
 
 
 namespace StepperDriver
 {
 
-    /**
-     * @brief The e_CanStepperCalibrationStatus enum
-     */
-    enum class e_CanStepperCalibrationStatus {
-        CAN_STEPPERS_CALIBRATION_UNINITIALIZED = 0,
-        CAN_STEPPERS_CALIBRATION_OK = 1,
-        CAN_STEPPERS_CALIBRATION_TIMEOUT = 2,
-        CAN_STEPPERS_CALIBRATION_BAD_PARAM = 3,
-        CAN_STEPPERS_CALIBRATION_FAIL = 4,
-        CAN_STEPPERS_CALIBRATION_WAITING_USER_INPUT = 5,
-        CAN_STEPPERS_CALIBRATION_IN_PROGRESS = 6,
-    };
-
-    /**
-     * @brief The CalibrationStepperData struct
-     */
-    struct CalibrationStepperData
-    {
-        unsigned long rxId;
-        uint8_t len;
-        std::array<uint8_t, 8> rxBuf;
-    };
-
-    /**
-     * @brief The CalibrationStepperCmdStatus struct
-     */
-    struct CalibrationStepperCmdStatus
-    {
-        common::model::StepperMotorCmd cmd;
-        ros::Time cmd_time;
-    };
 
     /**
      * @brief The StepperDriver class
      */
-    class StepperDriver
+    class StepperDriver : public common::model::IDriver
     {
         public:
 
             StepperDriver();
-            virtual ~StepperDriver();
+            virtual ~StepperDriver() override;
 
             void scanAndCheck();
 
@@ -88,92 +68,97 @@ namespace StepperDriver
 
             bool scanMotorId(int motor_to_find);
 
-            uint8_t sendTorqueOnCommand(int id, int torque_on);
-            uint8_t sendRelativeMoveCommand(int id, int steps, int delay);
-            uint8_t sendUpdateConveyorId(uint8_t old_id, uint8_t new_id);
+            int readSynchronizeCommand(const common::model::SynchronizeStepperMotorCmd& cmd);
+            int readSingleCommand(common::model::StepperMotorCmd cmd);
 
-            void executeJointTrajectoryCmd(std::vector<int32_t> &cmd);
-
-            int readCommand(common::model::StepperMotorCmd cmd);
             void readMotorsState();
 
-            // tests
-            bool isConnectionOk() const;
-
             //setters
-            void setCalibrationInProgress(bool in_progress);
-            void clearCalibrationTab();
+            void startCalibration();
+            void stopCalibration();
 
             //getters
-            uint32_t getStepperPose(int32_t motor_id) const;
-            const std::vector<common::model::StepperMotorState>& getMotorsState() const;
-            const std::vector<common::model::ConveyorState>& getConveyorsState() const;
-            void getBusState(bool& connection_status, std::vector<uint8_t>& motor_list, std::string& error) const;
+            uint32_t getStepperPose(uint8_t motor_id) const;
 
-            e_CanStepperCalibrationStatus getCalibrationResult(uint8_t id, int32_t &result) const;
-            std::string getErrorMessage() const;
+            common::model::StepperMotorState getMotorState(uint8_t motor_id) const;
+            std::vector<common::model::StepperMotorState> getMotorsStates() const;
+
+            common::model::ConveyorState getConveyorState(uint8_t motor_id) const;
+            std::vector<common::model::ConveyorState> getConveyorsStates() const;
+
+            int32_t getCalibrationResult(uint8_t id) const;
+            common::model::EStepperCalibrationStatus getCalibrationStatus() const;
+
+            void addMotor(uint8_t id);
+
+            uint8_t sendTorqueOnCommand(uint8_t id, int torque_on);
+            uint8_t sendRelativeMoveCommand(uint8_t id, int steps, int delay);
+            uint8_t sendUpdateConveyorId(uint8_t old_id, uint8_t new_id);
+            bool isCalibrationInProgress() const;
+
+            // IDriver interface
+            void removeMotor(uint8_t id) override;
+            bool isConnectionOk() const override;
+            size_t getNbMotors() const override;
+            void getBusState(bool& connection_status, std::vector<uint8_t>& motor_list, std::string& error) const override;
+            std::string getErrorMessage() const override;
 
     private:
-            int init();
-            bool setupInterruptGpio();
-            bool setupSpi();
+            bool init() override;
+            void initParameters();
+            bool hasMotors() override;
 
-            void updateMotorList();
-            void addMotor(uint8_t motor_id);
-            void removeMotor(uint8_t motor_id);
+            int setupCAN();
 
             bool canReadData() const;
             uint8_t readMsgBuf(unsigned long *id, uint8_t *len, std::array<uint8_t, 8> &buf);
 
-            uint8_t sendPositionCommand(int id, int cmd);
-            uint8_t sendPositionOffsetCommand(int id, int cmd, int absolute_steps_at_offset_position);
-            uint8_t sendCalibrationCommand(int i, int offset, int delay, int direction, int timeout);
+            uint8_t sendPositionCommand(uint8_t id, int cmd);
+            uint8_t sendPositionOffsetCommand(uint8_t id, int cmd, int absolute_steps_at_offset_position);
+            uint8_t sendCalibrationCommand(uint8_t id, int offset, int delay, int direction, int timeout);
             uint8_t sendSynchronizePositionCommand(int id, bool begin_traj);
-            uint8_t sendMicroStepsCommand(int id, int micro_steps);
-            uint8_t sendMaxEffortCommand(int id, int effort);
+            uint8_t sendMicroStepsCommand(uint8_t id, int micro_steps);
+            uint8_t sendMaxEffortCommand(uint8_t id, int effort);
 
-            uint8_t sendConveyorOnCommand(int id, bool conveyor_on, int conveyor_speed, int8_t direction);
+            uint8_t sendConveyorOnCommand(uint8_t id, bool conveyor_on, int conveyor_speed, int8_t direction);
 
             uint8_t sendCanMsgBuf(unsigned long id, uint8_t ext, uint8_t len, uint8_t *buf);
 
             void readCalibrationStates();
             bool checkMessageLength(const uint8_t &message_length, int message_type);
-            bool checkMotorsId(int motor_id);
-            void fillMotorPosition(int motor_id, const uint8_t &len, const std::array<uint8_t, 8> &data);
-            void fillMotorDiagnostics(int motor_id, const uint8_t &len, const std::array<uint8_t, 8> &data);
-            void fillMotorFirmware(int motor_id, const uint8_t &len, const std::array<uint8_t, 8> &data);
-            void fillConveyorState(int motor_id, const std::array<uint8_t, 8> &data);
-            void interpreteCalibrationCommand();
+            bool checkMotorsId(uint8_t motor_id);
+
+            void fillPositionStatus(uint8_t motor_id, const uint8_t &len, const std::array<uint8_t, 8> &data);
+            void fillTemperatureStatus(uint8_t motor_id, const uint8_t &len, const std::array<uint8_t, 8> &data);
+            void fillFirmwareVersion(uint8_t motor_id, const uint8_t &len, const std::array<uint8_t, 8> &data);
+
+            void fillConveyorState(uint8_t motor_id, const std::array<uint8_t, 8> &data);
 
             void _verifyMotorTimeoutLoop();
             void _refreshMotorTimeout();
 
+
         private:
             ros::NodeHandle _nh;
-            std::vector<int> _arm_id_list;
-            std::vector<int> _motor_id_list;
 
-            std::vector<common::model::ConveyorState> _conveyor_list;
-            std::vector<common::model::StepperMotorState> _motor_list;
+            std::map<uint8_t, common::model::ConveyorState> _conveyor_map;
+            std::map<uint8_t, common::model::StepperMotorState> _state_map;
 
             std::vector<uint8_t> _all_motor_connected;
-            std::vector<uint8_t> _calibration_motor_list;
-            std::map<uint8_t, int> _motor_calibration_map;
-            std::map<uint8_t, CalibrationStepperCmdStatus> _motor_calibration_map_cmd;
+
+            std::map<uint8_t, CalibrationStepperData> _calibration_map;
 
             std::unique_ptr<MCP_CAN_RPI::MCP_CAN> mcp_can;
 
             std::thread _calibration_thread;
             std::thread _stepper_timeout_thread;
 
-            std::vector<CalibrationStepperData> _calibration_readed_datas;
-
             bool _is_can_connection_ok;
-            bool _calibration_in_progress;
-
             std::string _debug_error_message;
 
-            e_CanStepperCalibrationStatus _calibration_result;
+            int _calibration_timeout;
+
+            common::model::EStepperCalibrationStatus _calibration_result;
 
     private:
             static constexpr int CAN_CMD_POSITION                       = 0x03;
@@ -194,7 +179,6 @@ namespace StepperDriver
 
             static constexpr int CAN_DATA_POSITION                      = 0x03;
             static constexpr int CAN_DATA_DIAGNOSTICS                   = 0x08;
-            static constexpr int CAN_DATA_CALIBRATION_RESULT            = 0x09;
             static constexpr int CAN_DATA_FIRMWARE_VERSION              = 0x10;
             static constexpr int CAN_DATA_CONVEYOR_STATE                = 0x07;
 
@@ -220,9 +204,9 @@ namespace StepperDriver
     };
 
     inline
-    const std::vector<common::model::StepperMotorState> &StepperDriver::getMotorsState() const
+    size_t StepperDriver::getNbMotors() const
     {
-        return _motor_list;
+        return _state_map.size();
     }
 
     inline
@@ -231,7 +215,17 @@ namespace StepperDriver
         return mcp_can->canReadData();
     }
 
+    inline
+    bool StepperDriver::isCalibrationInProgress() const {
+        return common::model::EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS == _calibration_result;
+    }
 
-}
+    inline
+    bool StepperDriver::hasMotors()
+    {
+        return _state_map.size() > 0;
+    }
+
+} // namespace StepperDriver
 
 #endif

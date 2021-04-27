@@ -44,7 +44,7 @@ namespace common {
                 virtual void reset() override;
                 virtual bool isValid() const override;
 
-                virtual int rad_pos_to_motor_pos(double pos_rad) override;
+                virtual int to_motor_pos(double pos_rad) override;
                 virtual double to_rad_pos(int position_dxl) override;
 
                 uint32_t getPGain() const;

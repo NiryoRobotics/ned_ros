@@ -50,12 +50,11 @@ namespace DynamixelDriver
 
     }
 
-    // CC to be moved outside of ctor ?
     /**
      * @brief DxlDriver::init
      * @return
      */
-    void DxlDriver::init()
+    bool DxlDriver::init()
     {
         // get params from rosparams
         _nh.getParam("/niryo_robot_hardware_interface/dynamixel_driver/dxl_bus/dxl_uart_device_name", _device_name);
@@ -100,13 +99,12 @@ namespace DynamixelDriver
         for(size_t i = 0; i < idList.size(); ++i) {
 
             uint8_t id = static_cast<uint8_t>(idList.at(i));
-            ;
             EMotorType type = MotorTypeEnum(typeList.at(i).c_str());
 
             if(0 == _state_map.count(id))
             {
                 if(EMotorType::MOTOR_TYPE_UNKNOWN != type)
-                    addDynamixel(type, id);
+                    addMotor(type, id);
                 else
                     ROS_ERROR("DxlDriver::init - unknown type %s. Please check your configuration file (niryo_robot_hardware_stack/dynamixel_driver/config/motors_config.yaml)", typeList.at(id).c_str());
             }
@@ -128,6 +126,8 @@ namespace DynamixelDriver
         for(auto const &d : _xdriver_map) {
             ROS_DEBUG("DxlDriver::init - Driver map: %s => %s", MotorTypeEnum(d.first).toString().c_str(), d.second->str().c_str());
         }
+
+        return COMM_SUCCESS;
     }
 
     /**
@@ -135,9 +135,11 @@ namespace DynamixelDriver
      * @param id
      * @param type
      */
-    void DxlDriver::addDynamixel(EMotorType type, uint8_t id, bool isTool)
+    void DxlDriver::addMotor(EMotorType type, uint8_t id, bool isTool)
     {
-        //add id to _ids_map
+        ROS_DEBUG("DxlDriver::addMotor - Add motor id: %d", id);
+
+        //add id to _state_map
         _state_map.insert(make_pair(id, DxlMotorState(type, id, isTool)));
 
         // if not already instanciated
@@ -177,8 +179,10 @@ namespace DynamixelDriver
      * @brief DxlDriver::removeDynamixel
      * @param id
      */
-    void DxlDriver::removeDynamixel(uint8_t id)
+    void DxlDriver::removeMotor(uint8_t id)
     {
+        ROS_DEBUG("DxlDriver::removeMotor - Remove motor id: %d", id);
+
         if(_state_map.count(id)) {
             EMotorType type = _state_map.at(id).getType();
 
@@ -714,6 +718,11 @@ namespace DynamixelDriver
         return result;
     }
 
+    size_t DxlDriver::getNbMotors() const
+    {
+        return _state_map.size();
+    }
+
 
     //********************
     //  Private
@@ -912,5 +921,23 @@ namespace DynamixelDriver
         }
         return result;
     }
+
+    DxlMotorState DxlDriver::getMotorState(uint8_t motor_id) const
+    {
+        if(!_state_map.count(motor_id))
+            throw std::out_of_range("DxlDriver::getMotorsState: Unknown motor id");
+
+        return _state_map.at(motor_id);
+    }
+
+    std::vector<DxlMotorState> DxlDriver::getMotorsStates() const
+    {
+        std::vector<common::model::DxlMotorState> states;
+        for (auto const& it : _state_map)
+            states.push_back(it.second);
+
+        return states;
+    }
+
 
 } // namespace DynamixelDriver

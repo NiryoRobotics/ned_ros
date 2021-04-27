@@ -1,5 +1,5 @@
 /*
-    idriver_core.hpp
+    idriver.hpp
     Copyright (C) 2017 Niryo
     All rights reserved.
 
@@ -17,38 +17,35 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef IDriverCore_H
-#define IDriverCore_H
+#ifndef IDRIVER_H
+#define IDRIVER_H
 
+#include <stdint.h>
 #include <string>
-#include "niryo_robot_msgs/BusState.h"
+#include <vector>
+#include "joint_state.hpp"
 
 namespace common {
     namespace model {
 
-        class IDriverCore
+        class IDriver
         {
             public:
-                virtual ~IDriverCore() = 0;
-
-                virtual void startControlLoop() = 0;
+                virtual ~IDriver() = 0;
+                virtual void removeMotor(uint8_t id) = 0;
                 virtual bool isConnectionOk() const = 0;
 
-                virtual void activeDebugMode(bool mode) = 0;
-
-                virtual int launchMotorsReport() = 0;
-                virtual niryo_robot_msgs::BusState getBusState() const = 0;
+                virtual size_t getNbMotors() const = 0;
+                virtual void getBusState(bool& connection_state, std::vector<uint8_t>& motor_id, std::string& debug_msg) const = 0;
+                virtual std::string getErrorMessage() const = 0;
 
             private:
-                virtual void init() = 0;
-                virtual void initParameters() = 0;
-                virtual void resetHardwareControlLoopRates() = 0;
-                virtual void controlLoop() = 0;
-                virtual void _executeCommand() = 0;
+                virtual bool init() = 0;
+                virtual bool hasMotors() = 0;
         };
 
         inline
-        IDriverCore::~IDriverCore()
+        IDriver::~IDriver()
         {
 
         }

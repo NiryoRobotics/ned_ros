@@ -52,6 +52,7 @@ include_directories(
 add_library(${PROJECT_NAME}
     src/stepper_driver_core.cpp
     src/stepper_driver.cpp
+    src/calibration_stepper_data.cpp
 )
 
 add_executable(${PROJECT_NAME}_node

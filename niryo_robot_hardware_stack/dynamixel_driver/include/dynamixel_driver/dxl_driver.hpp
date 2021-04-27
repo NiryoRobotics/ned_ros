@@ -35,6 +35,8 @@
 #include "niryo_robot_msgs/SetInt.h"
 #include "niryo_robot_msgs/CommandStatus.h"
 
+#include "model/idriver.hpp"
+
 //drivers
 #include "dynamixel_driver/xl320_driver.hpp"
 #include "dynamixel_driver/xl330_driver.hpp"
@@ -62,14 +64,13 @@ namespace DynamixelDriver
     /**
      * @brief The DxlDriver class
      */
-    class DxlDriver
+    class DxlDriver : public common::model::IDriver
     {
         public:
             DxlDriver();
-            virtual ~DxlDriver();
+            virtual ~DxlDriver() override;
 
-            void addDynamixel(common::model::EMotorType type, uint8_t id, bool isTool = false);
-            void removeDynamixel(uint8_t id);
+            void addMotor(common::model::EMotorType type, uint8_t id, bool isTool = false);
 
             //commands
             int readSynchronizeCommand(common::model::SynchronizeMotorCmd cmd);
@@ -92,28 +93,31 @@ namespace DynamixelDriver
             int sendCustomDxlCommand(common::model::EMotorType motor_type, uint8_t id, int reg_address, int value, int byte_number);
             int readCustomDxlCommand(common::model::EMotorType motor_type, uint8_t id, int32_t reg_address, int &value, int byte_number);
 
-            //tests
-            bool isConnectionOk() const;
-
             //getters
             std::vector<uint8_t> getRemovedMotorList() const;
+
             std::vector<common::model::DxlMotorState> getMotorsStates() const;
-            common::model::DxlMotorState getMotorsState(uint8_t motor_id) const;
+            common::model::DxlMotorState getMotorState(uint8_t motor_id) const;
 
             int getLedState() const;
-            std::string getErrorMessage() const;
-            void getBusState(bool& connection_state, std::vector<uint8_t>& motor_id, std::string& debug_msg) const;
 
             int getAllIdsOnDxlBus(std::vector<uint8_t> &id_list);
 
+            void removeMotor(uint8_t id) override;
+            bool isConnectionOk() const override;
+            size_t getNbMotors() const override;
+            void getBusState(bool& connection_state, std::vector<uint8_t>& motor_id, std::string& debug_msg) const override;
+            std::string getErrorMessage() const override;
+
         private:
-            void init();
+            bool init() override;
+            bool hasMotors() override;
+
             int setupCommunication();
             void interpreteErrorState();
 
             void checkRemovedMotors();
 
-            bool hasMotors();
 
             void fillPositionStatus();
             void fillVoltageStatus();
@@ -168,25 +172,6 @@ namespace DynamixelDriver
     std::vector<uint8_t> DxlDriver::getRemovedMotorList() const
     {
         return _removed_motor_id_list;
-    }
-
-    inline
-    std::vector<common::model::DxlMotorState> DxlDriver::getMotorsStates() const
-    {
-        std::vector<common::model::DxlMotorState> states;
-        for (auto it = _state_map.cbegin(); it != _state_map.cend(); ++it)
-            states.push_back(it->second);
-
-        return states;
-    }
-
-    inline
-    common::model::DxlMotorState DxlDriver::getMotorsState(uint8_t motor_id) const
-    {
-        if(!_state_map.count(motor_id))
-            throw std::out_of_range("DxlDriver::getMotorsState: Unknown motor id");
-
-        return _state_map.at(motor_id);
     }
 
     inline

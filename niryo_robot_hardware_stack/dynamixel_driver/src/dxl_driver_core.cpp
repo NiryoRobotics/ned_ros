@@ -366,7 +366,7 @@ namespace DynamixelDriver
         else
         {
             //add dynamixel as a new tool
-            _dynamixel->addDynamixel(type, id, true);
+            _dynamixel->addMotor(type, id, true);
             result = niryo_robot_msgs::CommandStatus::SUCCESS;
         }
         return result;
@@ -384,13 +384,12 @@ namespace DynamixelDriver
     {
         ROS_DEBUG("DynamixelDriverCore::unsetEndEffector - UnsetEndEffector: id %d", id);
         lock_guard<mutex> lck(_control_loop_mutex);
-        _dynamixel->removeDynamixel(id);
+        _dynamixel->removeMotor(id);
     }
 
-    // CC remove type
     uint32_t DynamixelDriverCore::getEndEffectorState(uint8_t id) const
     {
-        DxlMotorState motor_state = _dynamixel->getMotorsState(id);
+        DxlMotorState motor_state = _dynamixel->getMotorState(id);
 
         return static_cast<uint32_t>(motor_state.getPositionState());
     }
@@ -399,22 +398,23 @@ namespace DynamixelDriver
     {
         dynamixel_driver::DxlMotorHardwareStatus data;
         dynamixel_driver::DxlArrayMotorHardwareStatus hw_state;
-        vector<DxlMotorState> motor_states = _dynamixel->getMotorsStates();
-
-        for (int i = 0; i < motor_states.size(); i++)
+;
+        for (size_t i = 0; i < _dynamixel->getNbMotors(); ++i)
         {
-            data.motor_identity.motor_id = motor_states.at(i).getId();
-            data.motor_identity.motor_type = static_cast<uint8_t>(motor_states.at(i).getType());
-            data.temperature = motor_states.at(i).getTemperatureState();
-            data.voltage = double(motor_states.at(i).getVoltageState()) / DXL_VOLTAGE_DIVISOR;
-            data.error = motor_states.at(i).getHardwareErrorState();
-            data.error_msg = motor_states.at(i).getHardwareErrorMessageState();
+            DxlMotorState dxlState = _dynamixel->getMotorState(static_cast<uint8_t>(i));
+
+            data.motor_identity.motor_id = dxlState.getId();
+            data.motor_identity.motor_type = static_cast<uint8_t>(dxlState.getType());
+            data.temperature = static_cast<uint32_t>(dxlState.getTemperatureState());
+            data.voltage = static_cast<double>(dxlState.getVoltageState()) / DXL_VOLTAGE_DIVISOR;
+            data.error = static_cast<uint32_t>(dxlState.getHardwareErrorState());
+            data.error_msg = dxlState.getHardwareErrorMessageState();
             hw_state.motors_hw_status.push_back(data);
         }
         return hw_state;
     }
 
-    niryo_robot_msgs::BusState DynamixelDriverCore::getDxlBusState() const
+    niryo_robot_msgs::BusState DynamixelDriverCore::getBusState() const
     {
         niryo_robot_msgs::BusState dxl_bus_state;
         string error;

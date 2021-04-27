@@ -74,7 +74,7 @@ namespace ConveyorInterface {
     {
         string message = "";
         int result;
-        if (_stepper->getCalibrationState() == true)
+        if (_stepper->isCalibrationInProgress())
         {
             res.status = niryo_robot_msgs::CommandStatus::CALIBRATION_IN_PROGRESS;
             res.message = "Calibration in progress";

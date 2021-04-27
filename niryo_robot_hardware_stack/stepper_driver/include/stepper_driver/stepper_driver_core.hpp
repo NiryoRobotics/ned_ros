@@ -34,6 +34,7 @@
 #include "niryo_robot_msgs/BusState.h"
 #include "niryo_robot_msgs/CommandStatus.h"
 #include <std_msgs/Int64MultiArray.h>
+#include "model/synchronize_stepper_motor_cmd.hpp"
 
 namespace StepperDriver
 {
@@ -47,30 +48,31 @@ namespace StepperDriver
             void clearCommandQueue();
             void clearConveyorCommandQueue();
 
-            void addCommandToQueue(const common::model::StepperMotorCmd &cmd);
-            void addCommandToQueue(const std::vector<common::model::StepperMotorCmd> &cmd);
+            void addCommandToQueue(const common::model::StepperMotorCmd& cmd);
+            void addCommandToQueue(const std::vector<common::model::StepperMotorCmd>& cmd);
 
-            void setTrajectoryControllerCommands(const std::vector<int32_t> &cmd);
+            void setSyncCommand(const common::model::SynchronizeStepperMotorCmd &cmd);
 
             int setConveyor(uint8_t motor_id);
             void unsetConveyor(uint8_t motor_id);
 
-            void clearCalibrationTab();
-            void startCalibration(bool enable);
+            void startCalibration();
+            void stopCalibration();
 
             //direct commands
-            bool scanMotorId(int motor_to_find);
-            int motorReport(int motor_id);
+            bool scanMotorId(uint8_t motor_to_find);
+            int motorReport(uint8_t motor_id);
 
             //getters
-            bool getCalibrationState() const;
-            e_CanStepperCalibrationStatus getCalibrationResult(uint8_t id, int32_t& calibration_result) const;
-            const std::vector<common::model::ConveyorState> &getConveyorStates() const;
+            bool isCalibrationInProgress() const;
+            int32_t getCalibrationResult(uint8_t id) const;
+            std::vector<common::model::ConveyorState> getConveyorStates() const;
+            common::model::StepperMotorState getConveyorState(uint8_t motor_id) const;
 
             stepper_driver::StepperArrayMotorHardwareStatus getHwStatus() const;
-            niryo_robot_msgs::BusState getCanBusState() const;
 
-            const std::vector<common::model::StepperMotorState>& getStepperStates() const;
+            std::vector<common::model::StepperMotorState> getStepperStates() const;
+            common::model::StepperMotorState getStepperState(uint8_t motor_id) const;
 
             // IDriverCore interface
             void startControlLoop() override;
@@ -79,6 +81,8 @@ namespace StepperDriver
 
             bool isConnectionOk() const override;
             int launchMotorsReport() override;
+
+            niryo_robot_msgs::BusState getBusState() const override;
 
         private:
             void init() override;
@@ -95,8 +99,6 @@ namespace StepperDriver
             std::mutex _control_loop_mutex;
             std::thread _control_loop_thread;
 
-            bool _calibration_in_progress;
-
             double _control_loop_frequency;
             double _write_frequency;
             double _check_connection_frequency;
@@ -106,7 +108,7 @@ namespace StepperDriver
 
             std::unique_ptr<StepperDriver> _stepper;
 
-            std::vector<int32_t> _joint_trajectory_controller_cmd;
+            common::model::SynchronizeStepperMotorCmd _joint_trajectory_controller_cmd;
             std::queue<common::model::StepperMotorCmd> _stepper_cmds;
             std::queue<common::model::StepperMotorCmd> _conveyor_cmds;
 
@@ -120,21 +122,38 @@ namespace StepperDriver
     }
 
     inline
-    bool StepperDriverCore::getCalibrationState() const
+    bool StepperDriverCore::isCalibrationInProgress() const
     {
-        return _calibration_in_progress;
+        return _stepper->isCalibrationInProgress();
     }
 
     inline
-    const std::vector<common::model::ConveyorState> &StepperDriverCore::getConveyorStates() const
+    std::vector<common::model::ConveyorState>
+    StepperDriverCore::getConveyorStates() const
     {
-        return _stepper->getConveyorsState();
+        return _stepper->getConveyorsStates();
     }
 
     inline
-    const std::vector<common::model::StepperMotorState> &StepperDriverCore::getStepperStates() const
+    common::model::StepperMotorState
+    StepperDriverCore::getConveyorState(uint8_t motor_id) const
     {
-        return _stepper->getMotorsState();
+        return _stepper->getConveyorState(motor_id);
+    }
+
+    inline
+    std::vector<common::model::StepperMotorState>
+    StepperDriverCore::getStepperStates() const
+    {
+        return _stepper->getMotorsStates();
+    }
+
+    inline
+    common::model::StepperMotorState
+    StepperDriverCore::getStepperState(uint8_t motor_id) const
+    {
+        return _stepper->getMotorState(motor_id);
+
     }
 }
 

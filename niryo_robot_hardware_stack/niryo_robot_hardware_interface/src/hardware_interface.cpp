@@ -247,12 +247,12 @@ namespace NiryoRobotHardwareInterface
                 if (_dxl_enabled)
                 {
                     dxl_motor_state = _dynamixel_driver->getHwStatus();
-                    dxl_bus_state = _dynamixel_driver->getDxlBusState();
+                    dxl_bus_state = _dynamixel_driver->getBusState();
                 }
                 if (_can_enabled)
                 {
                     stepper_motor_state = _stepper_driver->getHwStatus();
-                    can_bus_state = _stepper_driver->getCanBusState();
+                    can_bus_state = _stepper_driver->getBusState();
                 }
                 if (_can_enabled && _dxl_enabled)
                 {
