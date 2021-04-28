@@ -51,7 +51,7 @@ namespace common {
             m[EStepperCommandType::CMD_TYPE_VELOCITY]     = "velocity";
             m[EStepperCommandType::CMD_TYPE_EFFORT]    = "effort";
             m[EStepperCommandType::CMD_TYPE_TORQUE] = "torque";
-            m[EStepperCommandType::CMD_TYPE_SYNCHRONIZE]  = "nonsynchronize";
+            m[EStepperCommandType::CMD_TYPE_SYNCHRONIZE]  = "synchronize";
             m[EStepperCommandType::CMD_TYPE_RELATIVE_MOVE]  = "relative move";
             m[EStepperCommandType::CMD_TYPE_MAX_EFFORT]  = "max effort";
             m[EStepperCommandType::CMD_TYPE_MICRO_STEPS]  = "micro steps";

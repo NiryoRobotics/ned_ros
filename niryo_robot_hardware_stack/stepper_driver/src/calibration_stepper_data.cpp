@@ -29,10 +29,7 @@ namespace StepperDriver
     }
 
     uint8_t CalibrationStepperData::getId() const {
-        if(!isValid())
-            return 0;
-        else
-            return _rxId & 0x0F;
+        return _rxId & 0x0F;
     }
 
     EStepperCalibrationStatus CalibrationStepperData::getStatus() const{

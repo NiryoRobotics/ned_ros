@@ -161,8 +161,10 @@ namespace JointsInterface {
     {
         for(auto const& jState : _joint_list)
         {
-            if (jState && !_stepper->scanMotorId(jState->getId()))
-                return false;
+            if (jState && jState->isStepper()) {
+                if(!_stepper->scanMotorId(jState->getId()))
+                    return false;
+            }
         }
         return true;
     }

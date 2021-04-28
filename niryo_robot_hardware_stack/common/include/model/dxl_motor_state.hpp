@@ -65,11 +65,11 @@ namespace common {
         protected:
                 bool _isTool;
 
-                uint32_t _p_gain;
-                uint32_t _i_gain;
-                uint32_t _d_gain;
-                uint32_t _ff1_gain;
-                uint32_t _ff2_gain;
+                uint32_t _p_gain{0};
+                uint32_t _i_gain{0};
+                uint32_t _d_gain{0};
+                uint32_t _ff1_gain{0};
+                uint32_t _ff2_gain{0};
         };
 
         inline

@@ -121,46 +121,48 @@ namespace StepperDriver
         ROS_DEBUG("StepperDriver::StepperDriver - Can bus parameters: spi_baudrate : %d", spi_baudrate);
         ROS_DEBUG("StepperDriver::StepperDriver - Can bus parameters: spi_baudrate : %d", gpio_can_interrupt);
 
-        mcp_can.reset(new MCP_CAN_RPI::MCP_CAN(spi_channel, spi_baudrate, gpio_can_interrupt));
+        mcp_can.reset(new MCP_CAN_RPI::MCP_CAN(spi_channel, spi_baudrate, static_cast<uint8_t>(gpio_can_interrupt)));
 
         if(mcp_can) {
-            // no mask or filter used, receive all messages from CAN bus
-            // messages with ids != motor_id will be sent to another ROS interface
-            // so we can use many CAN devices with this only driver
-            result = mcp_can->begin(MCP_ANY, CAN_1000KBPS, MCP_16MHZ);
-            ROS_DEBUG("StepperDriver::setupCAN - Result begin can : %d", result);
 
-            if (CAN_OK == result) {
+            if(mcp_can->setupInterruptGpio())
+            {
+                ROS_DEBUG("StepperDriver::setupInterruptGpio - setup successfull");
+                if(mcp_can->setupSpi()) {
+                    ROS_DEBUG("StepperDriver::setupSpi - setup successfull");
 
-                // set mode to normal
-                mcp_can->setMode(MCP_NORMAL);
-                _is_can_connection_ok = false;
-                ros::Duration(0.05).sleep();
+                    // no mask or filter used, receive all messages from CAN bus
+                    // messages with ids != motor_id will be sent to another ROS interface
+                    // so we can use many CAN devices with this only driver
+                    result = mcp_can->begin(MCP_ANY, CAN_1000KBPS, MCP_16MHZ);
+                    ROS_DEBUG("StepperDriver::setupCAN - Result begin can : %d", result);
 
-                if(mcp_can->setupInterruptGpio())
-                {
-                    ROS_DEBUG("StepperDriver::setupInterruptGpio - setup successfull");
-                    if(mcp_can->setupSpi()) {
-                        ROS_DEBUG("StepperDriver::setupSpi - setup successfull");
+                    if (CAN_OK == result) {
+
+                        // set mode to normal
+                        mcp_can->setMode(MCP_NORMAL);
+                        _is_can_connection_ok = false;
+                        ros::Duration(0.05).sleep();
                     }
                     else
                     {
-                        ROS_WARN("StepperDriver::setupSpi - Failed to start spi");
-                        _debug_error_message = "Failed to start spi";
-                        result = CAN_SPI_FAILINIT;
+                        ROS_ERROR("StepperDriver::init - Failed to init MCP2515 (CAN bus)");
+                        _debug_error_message = "Failed to init MCP2515 (CAN bus)";
                     }
+
                 }
                 else
                 {
-                    ROS_WARN("StepperDriver::setupInterruptGpio - Failed to start gpio");
-                    _debug_error_message = "Failed to start gpio";
-                    result = CAN_GPIO_FAILINIT;
+                    ROS_WARN("StepperDriver::setupSpi - Failed to start spi");
+                    _debug_error_message = "Failed to start spi";
+                    result = CAN_SPI_FAILINIT;
                 }
             }
             else
             {
-                ROS_ERROR("StepperDriver::init - Failed to init MCP2515 (CAN bus)");
-                _debug_error_message = "Failed to init MCP2515 (CAN bus)";
+                ROS_WARN("StepperDriver::setupInterruptGpio - Failed to start gpio");
+                _debug_error_message = "Failed to start gpio";
+                result = CAN_GPIO_FAILINIT;
             }
         }
 
@@ -293,7 +295,7 @@ namespace StepperDriver
      * @param motor_id
      * @return
      */
-    uint32_t StepperDriver::getStepperPose(uint8_t motor_id) const
+    int32_t StepperDriver::getStepperPose(uint8_t motor_id) const
     {
         if(!_state_map.count(motor_id)) {
             throw std::out_of_range("DxlDriver::getStepperPose: Unknown motor id");
@@ -358,8 +360,8 @@ namespace StepperDriver
                 case EStepperCommandType::CMD_TYPE_CONVEYOR:
                         result = sendConveyorOnCommand(cmd.getId(),
                                                       cmd.getParams().at(0),
-                                                      cmd.getParams().at(1),
-                                                      static_cast<int8_t>(cmd.getParams().at(2)));
+                                                      static_cast<uint8_t>(cmd.getParams().at(1)),
+                                                      static_cast<uint8_t>(cmd.getParams().at(2)));
                     break;
                 case EStepperCommandType::CMD_TYPE_UPDATE_CONVEYOR:
                         result = sendUpdateConveyorId(cmd.getId(),
@@ -709,7 +711,7 @@ namespace StepperDriver
         return sendCanMsgBuf(id, 0, 6, data);
     }
 
-    uint8_t StepperDriver::sendSynchronizePositionCommand(int id, bool begin_traj)
+    uint8_t StepperDriver::sendSynchronizePositionCommand(uint8_t id, bool begin_traj)
     {
         uint8_t data[2] = {CAN_CMD_SYNCHRONIZE, static_cast<uint8_t>(begin_traj)};
         return sendCanMsgBuf(id, 0, 2, data);
@@ -884,7 +886,7 @@ namespace StepperDriver
         return motor_found;
     }
 
-    uint8_t StepperDriver::sendConveyorOnCommand(uint8_t id, bool conveyor_on, int conveyor_speed, int8_t direction)
+    uint8_t StepperDriver::sendConveyorOnCommand(uint8_t id, bool conveyor_on, uint8_t conveyor_speed, uint8_t direction)
     {
         ROS_DEBUG("StepperDriver::scanMotorId - Send conveyor id %d enabled (%d) at speed %d on direction %d",
                   id, static_cast<int>(conveyor_on), conveyor_speed, direction);

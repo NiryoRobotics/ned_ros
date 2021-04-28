@@ -98,10 +98,10 @@ namespace common {
          */
         bool StepperMotorCmd::isValid() const
         {
-            if ((EStepperCommandType::CMD_TYPE_NONE != _type) &&
-               (EStepperCommandType::CMD_TYPE_UNKNOWN != _type) &&
-               (_id != 0) &&
-               (!_param_list.empty()))
+            if ((EStepperCommandType::CMD_TYPE_NONE == _type) ||
+               (EStepperCommandType::CMD_TYPE_UNKNOWN == _type) ||
+               (_id == 0) ||
+               (_param_list.empty()))
                     return false;
 
             switch(_type) {

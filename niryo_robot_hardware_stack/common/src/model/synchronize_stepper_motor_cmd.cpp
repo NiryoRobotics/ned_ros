@@ -98,7 +98,9 @@ namespace common {
          */
         bool SynchronizeStepperMotorCmd::isValid() const
         {
-            return (EStepperCommandType::CMD_TYPE_UNKNOWN != _type && !_motor_params_map.empty());
+            return (EStepperCommandType::CMD_TYPE_UNKNOWN != _type &&
+                    EStepperCommandType::CMD_TYPE_NONE != _type &&
+                    !_motor_params_map.empty());
         }
 
         std::vector<uint8_t>
@@ -116,7 +118,7 @@ namespace common {
         SynchronizeStepperMotorCmd::getParam(uint8_t motor_id) const
         {
             if(!_motor_params_map.count(motor_id))
-                throw std::out_of_range("type not known of synchonized command");
+                throw std::out_of_range("SynchronizeStepperMotorCmd::getParam : Unknown motor id");
 
             return _motor_params_map.at(motor_id);
         }

@@ -398,11 +398,9 @@ namespace DynamixelDriver
     {
         dynamixel_driver::DxlMotorHardwareStatus data;
         dynamixel_driver::DxlArrayMotorHardwareStatus hw_state;
-;
-        for (size_t i = 0; i < _dynamixel->getNbMotors(); ++i)
-        {
-            DxlMotorState dxlState = _dynamixel->getMotorState(static_cast<uint8_t>(i));
 
+        for (auto const& dxlState : _dynamixel->getMotorsStates())
+        {
             data.motor_identity.motor_id = dxlState.getId();
             data.motor_identity.motor_type = static_cast<uint8_t>(dxlState.getType());
             data.temperature = static_cast<uint32_t>(dxlState.getTemperatureState());

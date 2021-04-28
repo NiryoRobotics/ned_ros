@@ -78,7 +78,7 @@ namespace StepperDriver
             void stopCalibration();
 
             //getters
-            uint32_t getStepperPose(uint8_t motor_id) const;
+            int32_t getStepperPose(uint8_t motor_id) const;
 
             common::model::StepperMotorState getMotorState(uint8_t motor_id) const;
             std::vector<common::model::StepperMotorState> getMotorsStates() const;
@@ -116,11 +116,11 @@ namespace StepperDriver
             uint8_t sendPositionCommand(uint8_t id, int cmd);
             uint8_t sendPositionOffsetCommand(uint8_t id, int cmd, int absolute_steps_at_offset_position);
             uint8_t sendCalibrationCommand(uint8_t id, int offset, int delay, int direction, int timeout);
-            uint8_t sendSynchronizePositionCommand(int id, bool begin_traj);
+            uint8_t sendSynchronizePositionCommand(uint8_t id, bool begin_traj);
             uint8_t sendMicroStepsCommand(uint8_t id, int micro_steps);
             uint8_t sendMaxEffortCommand(uint8_t id, int effort);
 
-            uint8_t sendConveyorOnCommand(uint8_t id, bool conveyor_on, int conveyor_speed, int8_t direction);
+            uint8_t sendConveyorOnCommand(uint8_t id, bool conveyor_on, uint8_t conveyor_speed, uint8_t direction);
 
             uint8_t sendCanMsgBuf(unsigned long id, uint8_t ext, uint8_t len, uint8_t *buf);
 

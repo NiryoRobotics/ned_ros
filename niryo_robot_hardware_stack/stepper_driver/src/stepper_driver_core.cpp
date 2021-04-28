@@ -325,10 +325,8 @@ namespace StepperDriver
         stepper_driver::StepperMotorHardwareStatus data;
         stepper_driver::StepperArrayMotorHardwareStatus hw_state;
 
-        for (size_t i = 0; i < _stepper->getNbMotors(); ++i)
+        for (auto const& stepperState : _stepper->getMotorsStates())
         {
-            StepperMotorState stepperState = _stepper->getMotorState(static_cast<uint8_t>(i));
-
             data.motor_identity.motor_id = stepperState.getId();
             data.motor_identity.motor_type = static_cast<uint8_t>(stepperState.getType());
             data.temperature = static_cast<int32_t>(stepperState.getTemperatureState());
@@ -420,9 +418,9 @@ namespace StepperDriver
         if (_joint_trajectory_controller_cmd.isValid())
         {
             _stepper->readSynchronizeCommand(_joint_trajectory_controller_cmd);
-            cmd.data.push_back(_joint_trajectory_controller_cmd.getParam(0));
-            cmd.data.push_back(_joint_trajectory_controller_cmd.getParam(1));
-            cmd.data.push_back(_joint_trajectory_controller_cmd.getParam(2));
+            for(auto const& id: _joint_trajectory_controller_cmd.getMotorsId())
+                cmd.data.emplace_back(_joint_trajectory_controller_cmd.getParam(id));
+
             cmd_pub.publish(cmd);
 
             _joint_trajectory_controller_cmd.clear();
