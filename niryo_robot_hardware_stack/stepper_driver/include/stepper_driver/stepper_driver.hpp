@@ -26,6 +26,7 @@
 #include <string>
 #include <thread>
 #include <map>
+#include <mutex>
 
 //ros
 #include <ros/ros.h>
@@ -40,14 +41,12 @@
 
 #include "stepper_driver/StepperMotorCommand.h"
 #include "stepper_driver/StepperCmd.h"
-#include "stepper_driver/calibration_stepper_data.hpp"
 
 #include "mcp_can_rpi/mcp_can_rpi.h"
 
 
 namespace StepperDriver
 {
-
 
     /**
      * @brief The StepperDriver class
@@ -59,23 +58,13 @@ namespace StepperDriver
             StepperDriver();
             virtual ~StepperDriver() override;
 
-            void scanAndCheck();
-
-            void addConveyor(uint8_t conveyor_id);
-            void removeConveyor(uint8_t conveyor_id);
-
             //commands
-
-            bool scanMotorId(int motor_to_find);
-
             int readSynchronizeCommand(const common::model::SynchronizeStepperMotorCmd& cmd);
             int readSingleCommand(common::model::StepperMotorCmd cmd);
 
             void readMotorsState();
 
-            //setters
-            void startCalibration();
-            void stopCalibration();
+            bool scanMotorId(int motor_to_find);
 
             //getters
             int32_t getStepperPose(uint8_t motor_id) const;
@@ -84,21 +73,23 @@ namespace StepperDriver
             std::vector<common::model::StepperMotorState> getMotorsStates() const;
 
             common::model::ConveyorState getConveyorState(uint8_t motor_id) const;
-            std::vector<common::model::ConveyorState> getConveyorsStates() const;
 
             int32_t getCalibrationResult(uint8_t id) const;
-            common::model::EStepperCalibrationStatus getCalibrationStatus() const;
-
-            void addMotor(uint8_t id);
+            common::model::EStepperCalibrationStatus getCalibrationStatus(uint8_t id) const;
 
             uint8_t sendTorqueOnCommand(uint8_t id, int torque_on);
             uint8_t sendRelativeMoveCommand(uint8_t id, int steps, int delay);
             uint8_t sendUpdateConveyorId(uint8_t old_id, uint8_t new_id);
             bool isCalibrationInProgress() const;
 
-            // IDriver interface
+            void addMotor(uint8_t id, bool isConveyor = false);
+
+            // IDriver Interface
             void removeMotor(uint8_t id) override;
             bool isConnectionOk() const override;
+
+            int scanAndCheck() override;
+
             size_t getNbMotors() const override;
             void getBusState(bool& connection_status, std::vector<uint8_t>& motor_list, std::string& error) const override;
             std::string getErrorMessage() const override;
@@ -106,12 +97,13 @@ namespace StepperDriver
     private:
             bool init() override;
             void initParameters();
-            bool hasMotors() override;
-
             int setupCAN();
 
+            bool hasMotors() override;
             bool canReadData() const;
+
             uint8_t readMsgBuf(unsigned long *id, uint8_t *len, std::array<uint8_t, 8> &buf);
+            uint8_t sendCanMsgBuf(unsigned long id, uint8_t ext, uint8_t len, uint8_t *buf);
 
             uint8_t sendPositionCommand(uint8_t id, int cmd);
             uint8_t sendPositionOffsetCommand(uint8_t id, int cmd, int absolute_steps_at_offset_position);
@@ -119,46 +111,37 @@ namespace StepperDriver
             uint8_t sendSynchronizePositionCommand(uint8_t id, bool begin_traj);
             uint8_t sendMicroStepsCommand(uint8_t id, int micro_steps);
             uint8_t sendMaxEffortCommand(uint8_t id, int effort);
-
             uint8_t sendConveyorOnCommand(uint8_t id, bool conveyor_on, uint8_t conveyor_speed, uint8_t direction);
-
-            uint8_t sendCanMsgBuf(unsigned long id, uint8_t ext, uint8_t len, uint8_t *buf);
-
-            void readCalibrationStates();
-            bool checkMessageLength(const uint8_t &message_length, int message_type);
-            bool checkMotorsId(uint8_t motor_id);
 
             void fillPositionStatus(uint8_t motor_id, const uint8_t &len, const std::array<uint8_t, 8> &data);
             void fillTemperatureStatus(uint8_t motor_id, const uint8_t &len, const std::array<uint8_t, 8> &data);
             void fillFirmwareVersion(uint8_t motor_id, const uint8_t &len, const std::array<uint8_t, 8> &data);
-
             void fillConveyorState(uint8_t motor_id, const std::array<uint8_t, 8> &data);
+            void fillCalibrationState(uint8_t motor_id, const uint8_t &len, const std::array<uint8_t, 8> &data);
 
             void _verifyMotorTimeoutLoop();
-            void _refreshMotorTimeout();
-
+            void _refreshLastTimeRead();
 
         private:
             ros::NodeHandle _nh;
 
-            std::map<uint8_t, common::model::ConveyorState> _conveyor_map;
-            std::map<uint8_t, common::model::StepperMotorState> _state_map;
-
-            std::vector<uint8_t> _all_motor_connected;
-
-            std::map<uint8_t, CalibrationStepperData> _calibration_map;
-
             std::unique_ptr<MCP_CAN_RPI::MCP_CAN> mcp_can;
 
-            std::thread _calibration_thread;
+            std::mutex _stepper_timeout_mutex;
             std::thread _stepper_timeout_thread;
 
-            bool _is_can_connection_ok;
-            std::string _debug_error_message;
+
+            // cc use a set ?? -> pb with publish
+            std::vector<uint8_t> _all_motor_connected;
+
+            std::map<uint8_t, std::shared_ptr<common::model::StepperMotorState> > _state_map;
 
             int _calibration_timeout;
-
             common::model::EStepperCalibrationStatus _calibration_result;
+
+            // for hardware control
+            bool _is_connection_ok;
+            std::string _debug_error_message;
 
     private:
             static constexpr int CAN_CMD_POSITION                       = 0x03;
@@ -181,6 +164,7 @@ namespace StepperDriver
             static constexpr int CAN_DATA_DIAGNOSTICS                   = 0x08;
             static constexpr int CAN_DATA_FIRMWARE_VERSION              = 0x10;
             static constexpr int CAN_DATA_CONVEYOR_STATE                = 0x07;
+            static constexpr int CAN_DATA_CALIBRATION_RESULT            = 0x09;
 
             static constexpr int STEPPER_CONTROL_MODE_RELAX             = 0;
             static constexpr int STEPPER_CONTROL_MODE_STANDARD          = 1;
@@ -191,14 +175,11 @@ namespace StepperDriver
             static constexpr int STEPPER_CONVEYOR_ON                    = 21;
             static constexpr int CAN_UPDATE_CONVEYOR_ID                 = 23;
 
-            static constexpr int MESSAGE_POSITION_LENGTH                = 4;
-            static constexpr int MESSAGE_DIAGNOSTICS_LENGTH             = 4;
-            static constexpr int MESSAGE_FIRMWARE_LENGTH                = 4;
+            static constexpr uint8_t MESSAGE_POSITION_LENGTH            = 4;
+            static constexpr uint8_t MESSAGE_DIAGNOSTICS_LENGTH         = 4;
+            static constexpr uint8_t MESSAGE_FIRMWARE_LENGTH            = 4;
 
             static constexpr int CAN_MODEL_NUMBER                       = 10000;
-
-            static constexpr int CAN_SCAN_OK                            = 0;
-            static constexpr int CAN_SCAN_TIMEOUT                       =  -10003;
 
             static constexpr double STEPPER_MOTOR_TIMEOUT_VALUE         = 1.0;
     };

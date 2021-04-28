@@ -22,6 +22,7 @@
 
 #include <string>
 #include "niryo_robot_msgs/BusState.h"
+#include "motor_type_enum.hpp"
 
 namespace common {
     namespace model {
@@ -45,6 +46,7 @@ namespace common {
                 virtual void resetHardwareControlLoopRates() = 0;
                 virtual void controlLoop() = 0;
                 virtual void _executeCommand() = 0;
+
         };
 
         inline

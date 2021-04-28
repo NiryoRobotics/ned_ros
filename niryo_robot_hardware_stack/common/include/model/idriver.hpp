@@ -34,6 +34,7 @@ namespace common {
                 virtual ~IDriver() = 0;
                 virtual void removeMotor(uint8_t id) = 0;
                 virtual bool isConnectionOk() const = 0;
+                virtual int scanAndCheck() = 0;
 
                 virtual size_t getNbMotors() const = 0;
                 virtual void getBusState(bool& connection_state, std::vector<uint8_t>& motor_id, std::string& debug_msg) const = 0;

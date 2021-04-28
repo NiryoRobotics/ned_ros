@@ -26,7 +26,7 @@ namespace common {
     namespace model {
 
         ConveyorState::ConveyorState(uint8_t id)
-            : StepperMotorState(id),
+            : StepperMotorState(id, true),
               _state(false),
               _speed(0),
               _direction(-1)

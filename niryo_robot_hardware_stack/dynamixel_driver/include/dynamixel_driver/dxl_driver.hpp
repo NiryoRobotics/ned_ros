@@ -70,7 +70,6 @@ namespace DynamixelDriver
             DxlDriver();
             virtual ~DxlDriver() override;
 
-            void addMotor(common::model::EMotorType type, uint8_t id, bool isTool = false);
 
             //commands
             int readSynchronizeCommand(common::model::SynchronizeMotorCmd cmd);
@@ -83,7 +82,7 @@ namespace DynamixelDriver
 
             int setLeds(int led, common::model::EMotorType type);
 
-            int scanAndCheck();
+            int scanAndCheck() override;
 
             int ping(common::model::DxlMotorState& targeted_dxl);
             int type_ping_id(uint8_t id, common::model::EMotorType type);
@@ -101,8 +100,11 @@ namespace DynamixelDriver
 
             int getLedState() const;
 
-            int getAllIdsOnDxlBus(std::vector<uint8_t> &id_list);
+            int getAllIdsOnBus(std::vector<uint8_t> &id_list);
 
+            void addMotor(common::model::EMotorType type, uint8_t id, bool isTool = false);
+
+            // IDriver Interface
             void removeMotor(uint8_t id) override;
             bool isConnectionOk() const override;
             size_t getNbMotors() const override;
@@ -151,7 +153,7 @@ namespace DynamixelDriver
             std::map<common::model::EMotorType, std::shared_ptr<XDriver> > _xdriver_map;
 
             // for hardware control
-            bool _is_dxl_connection_ok;
+            bool _is_connection_ok;
             std::string _debug_error_message;
 
             int _hw_fail_counter_read;
@@ -165,7 +167,7 @@ namespace DynamixelDriver
     inline
     bool DxlDriver::isConnectionOk() const
     {
-        return _is_dxl_connection_ok;
+        return _is_connection_ok;
     }
 
     inline

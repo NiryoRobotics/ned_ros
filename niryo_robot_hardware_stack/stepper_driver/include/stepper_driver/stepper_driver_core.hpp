@@ -61,7 +61,6 @@ namespace StepperDriver
 
             //direct commands
             bool scanMotorId(uint8_t motor_to_find);
-            int motorReport(uint8_t motor_id);
 
             //getters
             bool isCalibrationInProgress() const;
@@ -91,6 +90,8 @@ namespace StepperDriver
             void controlLoop() override;
             void _executeCommand() override;
 
+            int motorCmdReport(uint8_t motor_id,  common::model::EMotorType motor_type = common::model::EMotorType::MOTOR_TYPE_STEPPER);
+
         private:
             ros::NodeHandle _nh;
             bool _control_loop_flag;
@@ -100,11 +101,17 @@ namespace StepperDriver
             std::thread _control_loop_thread;
 
             double _control_loop_frequency;
-            double _write_frequency;
             double _check_connection_frequency;
 
-            double _time_hw_last_write;
-            double _time_hw_last_check_connection;
+            double _delta_time_data_read;
+            double _delta_time_calib_read;
+            double _delta_time_write;
+
+            double _time_hw_data_last_read;
+            double _time_hw_calib_last_read;
+            double _time_hw_data_last_write;
+
+            double _time_check_connection_last_read;
 
             std::unique_ptr<StepperDriver> _stepper;
 
@@ -125,13 +132,6 @@ namespace StepperDriver
     bool StepperDriverCore::isCalibrationInProgress() const
     {
         return _stepper->isCalibrationInProgress();
-    }
-
-    inline
-    std::vector<common::model::ConveyorState>
-    StepperDriverCore::getConveyorStates() const
-    {
-        return _stepper->getConveyorsStates();
     }
 
     inline

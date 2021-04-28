@@ -17,32 +17,33 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+
 #include "model/stepper_motor_state.hpp"
+
 #include <sstream>
 #include <cassert>
+
+#include "ros/time.h"
 
 using namespace std;
 
 namespace common {
     namespace model {
-        StepperMotorState::StepperMotorState() :
-            JointState ()
+        StepperMotorState::StepperMotorState(bool isConveyor) :
+            JointState (),
+            _isConveyor(isConveyor)
         {
         }
 
-        StepperMotorState::StepperMotorState(uint8_t id) :
+        StepperMotorState::StepperMotorState(uint8_t id, bool isConveyor) :
             JointState("unknown", EMotorType::MOTOR_TYPE_STEPPER, id),
-            _last_time_read(0.0),
-            _hw_fail_counter(0.0),
-            _gear_ratio(0.0),
-            _direction(0.0),
-            _max_effort(0.0),
-            _firmware_version("")
+            _isConveyor(isConveyor)
         {
         }
 
-        StepperMotorState::StepperMotorState(string name, EMotorType type, uint8_t id) :
-            JointState(name, type, id)
+        StepperMotorState::StepperMotorState(string name, EMotorType type, uint8_t id, bool isConveyor) :
+            JointState(name, type, id),
+            _isConveyor(isConveyor)
         {
 
         }
@@ -56,9 +57,9 @@ namespace common {
         //  Setters
         //****************
 
-        void StepperMotorState::setLastTimeRead(double last_time)
+        void StepperMotorState::updateLastTimeRead()
         {
-            _last_time_read = last_time;
+            _last_time_read = ros::Time::now().toSec();
         }
 
         void StepperMotorState::setHwFailCounter(double fail_counter)
@@ -97,6 +98,8 @@ namespace common {
             _last_time_read = 0.0;
             _hw_fail_counter = 0.0;
             _firmware_version.clear();
+            _calibration_value = 0;
+            _calibration_state = EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED;
         }
 
         bool StepperMotorState::isValid() const
@@ -131,11 +134,36 @@ namespace common {
             return static_cast<double>((static_cast<double>(pos) * 360.0) / (STEPPERS_MOTOR_STEPS_PER_REVOLUTION * STEPPERS_MICROSTEPS * _gear_ratio * RADIAN_TO_DEGREE) * _direction);
             //return (double)((double)steps * 360.0 / (STEPPERS_MOTOR_STEPS_PER_REVOLUTION * STEPPERS_MICROSTEPS * gear_ratio * RADIAN_TO_DEGREE)) * direction;
         }
+        
+        common::model::EStepperCalibrationStatus StepperMotorState::getCalibration_state() const
+        {
+            return _calibration_state;
+        }
+        
+        void StepperMotorState::setCalibration_state(const common::model::EStepperCalibrationStatus &calibration_state)
+        {
+            _calibration_state = calibration_state;
+        }
+        
+        int32_t StepperMotorState::getCalibration_value() const
+        {
+            return _calibration_value;
+        }
+        
+        void StepperMotorState::setCalibration_value(const int32_t &calibration_value)
+        {
+            _calibration_value = calibration_value;
+        }
 
+        bool StepperMotorState::isConveyor() const
+        {
+            return _isConveyor;
+        }
+        
         int StepperMotorState::stepsPerRev()
         {
             return int(STEPPERS_MICROSTEPS * STEPPERS_MOTOR_STEPS_PER_REVOLUTION);
         }
-
+        
     } // namespace model
 } // namespace common

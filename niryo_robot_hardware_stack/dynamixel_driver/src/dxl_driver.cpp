@@ -31,7 +31,7 @@ namespace DynamixelDriver
      * @brief DxlDriver::DxlDriver
      */
     DxlDriver::DxlDriver() :
-        _is_dxl_connection_ok(false),
+        _is_connection_ok(false),
         _debug_error_message("Dxl Driver - No connection with Dynamixel motors has been made yet"),
       _hw_fail_counter_read(0)
     {
@@ -259,42 +259,44 @@ namespace DynamixelDriver
     int DxlDriver::scanAndCheck()
     {
         ROS_DEBUG("DxlDriver::scanAndCheck");
+        int result = COMM_PORT_BUSY;
 
         _all_motor_connected.clear();
-        int result = COMM_PORT_BUSY;
+        _is_connection_ok = false;
 
         for(int counter = 0; counter < 50 && COMM_SUCCESS != result; ++counter)
         {
-            result = getAllIdsOnDxlBus(_all_motor_connected);
+            result = getAllIdsOnBus(_all_motor_connected);
             ROS_DEBUG_COND(COMM_SUCCESS != result, "DxlDriver::scanAndCheck status: %d (counter: %d)", result, counter);
             ros::Duration(TIME_TO_WAIT_IF_BUSY).sleep();
         }
 
-        if (COMM_SUCCESS != result)
+        if (COMM_SUCCESS == result)
+        {
+            checkRemovedMotors();
+
+            if (_removed_motor_id_list.empty())
+            {
+                _is_connection_ok = true;
+                _debug_error_message = "";
+                result = DXL_SCAN_OK;
+            }
+            else
+            {
+                _debug_error_message = "Dynamixel(s):";
+                for (auto const &id : _removed_motor_id_list) {
+                    _debug_error_message += " " + to_string(id);
+                }
+                _debug_error_message += " do not seem to be connected";
+            }
+        }
+        else
         {
             _debug_error_message = "Dxl Driver - Failed to scan motors, Dynamixel bus is too busy. Will retry...";
             ROS_WARN_THROTTLE(1, "DxlDriver::scanAndCheck - Failed to scan motors, dxl bus is too busy");
-            return result;
         }
 
-        checkRemovedMotors();
-        if (_removed_motor_id_list.empty())
-        {
-            _is_dxl_connection_ok = true;
-            _debug_error_message = "";
-            return DXL_SCAN_OK;
-        }
-        _is_dxl_connection_ok = false;
-
-        _debug_error_message = "Dynamixel(s):";
-        for (auto const &it : _removed_motor_id_list)
-        {
-            _debug_error_message += " ";
-            _debug_error_message += to_string(it);
-        }
-        _debug_error_message += " do not seem to be connected";
-
-        return DXL_SCAN_MISSING_MOTOR;
+        return result;
     }
 
     /**
@@ -387,7 +389,7 @@ namespace DynamixelDriver
             ROS_ERROR_THROTTLE(1, "DxlDriver::getPosition - Dxl connection problem - Failed to read from Dxl bus");
             _debug_error_message = "Dxl Driver - Connection problem with Dynamixel Bus.";
             _hw_fail_counter_read = 0;
-            _is_dxl_connection_ok = false;
+            _is_connection_ok = false;
         }
 
         return result;
@@ -411,7 +413,7 @@ namespace DynamixelDriver
         {
             ROS_ERROR_THROTTLE(1, "DxlDriver::readPositionStatus - Dxl connection problem - Failed to read from Dxl bus");
             _hw_fail_counter_read = 0;
-            _is_dxl_connection_ok = false;
+            _is_connection_ok = false;
             _debug_error_message = "Dxl Driver - Connection problem with Dynamixel Bus.";
         }
     }
@@ -438,7 +440,7 @@ namespace DynamixelDriver
             ROS_ERROR_THROTTLE(1, "DxlDriver::readHwStatus - Dxl connection problem - Failed to read from Dxl bus");
             _hw_fail_counter_read = 0;
 
-            _is_dxl_connection_ok = false;
+            _is_connection_ok = false;
             _debug_error_message = "Dxl Driver - Connection problem with Dynamixel Bus.";
         }
     }
@@ -448,7 +450,7 @@ namespace DynamixelDriver
      * @param id_list
      * @return
      */
-    int DxlDriver::getAllIdsOnDxlBus(vector<uint8_t> &id_list)
+    int DxlDriver::getAllIdsOnBus(vector<uint8_t> &id_list)
     {
         int result = COMM_RX_FAIL;
 

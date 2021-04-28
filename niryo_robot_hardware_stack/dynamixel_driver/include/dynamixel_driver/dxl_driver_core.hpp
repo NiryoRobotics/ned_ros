@@ -77,8 +77,6 @@ namespace DynamixelDriver
 
         int update_leds(void);
 
-        int motorScanReport(uint8_t motor_id, common::model::EMotorType motor_type);
-        int motorCmdReport(uint8_t motor_id, common::model::EMotorType motor_type);
         int rebootMotors();
 
         //getters
@@ -104,6 +102,9 @@ namespace DynamixelDriver
         void controlLoop() override;
         void _executeCommand() override;
 
+        int motorScanReport(uint8_t motor_id, common::model::EMotorType motor_type);
+        int motorCmdReport(uint8_t motor_id, common::model::EMotorType motor_type);
+
         //use other callbacks instead of executecommand
         bool callbackActivateLeds(niryo_robot_msgs::SetInt::Request &req, niryo_robot_msgs::SetInt::Response &res);
         bool callbackSendCustomDxlValue(dynamixel_driver::SendCustomDxlValue::Request &req, dynamixel_driver::SendCustomDxlValue::Response &res);
@@ -118,12 +119,13 @@ namespace DynamixelDriver
         std::thread _control_loop_thread;
 
         double _control_loop_frequency;
-        double _write_frequency;
         double _check_connection_frequency;
 
-        double _read_data_frequency;
-        double _read_status_frequency;
         double _check_end_effector_frequency;
+
+        double _delta_time_data_read;
+        double _delta_time_status_read;
+        double _delta_time_write;
 
         double _time_hw_data_last_write;
         double _time_hw_data_last_read;

@@ -22,6 +22,7 @@
 
 #include <string>
 #include "joint_state.hpp"
+#include "stepper_calibration_status_enum.hpp"
 
 namespace common {
     namespace model {
@@ -30,13 +31,13 @@ namespace common {
         {
 
             public:
-                StepperMotorState();
-                StepperMotorState(uint8_t id);
-                StepperMotorState(std::string name, EMotorType type, uint8_t id );
+                StepperMotorState(bool isConveyor = false);
+                StepperMotorState(uint8_t id, bool isConveyor = false);
+                StepperMotorState(std::string name, EMotorType type, uint8_t id, bool isConveyor = false );
 
                 virtual ~StepperMotorState() override;
 
-                void setLastTimeRead(double last_time);
+                void updateLastTimeRead();
                 void setHwFailCounter(double fail_counter);
                 void setFirmwareVersion(std::string& firmware_version);
 
@@ -64,15 +65,28 @@ namespace common {
                 virtual int to_motor_pos(double pos_rad) override;
                 virtual double to_rad_pos(int pos) override;
 
-            protected:
-                double _last_time_read;
-                double _hw_fail_counter;
+                common::model::EStepperCalibrationStatus getCalibration_state() const;
+                void setCalibration_state(const common::model::EStepperCalibrationStatus &calibration_state);
 
-                double _gear_ratio;
-                double _direction;
-                double _max_effort;
+                int32_t getCalibration_value() const;
+                void setCalibration_value(const int32_t &calibration_value);
+
+                bool isConveyor() const;
+
+        protected:
+                bool _isConveyor{false};
+
+                double _last_time_read{-1.0};
+                double _hw_fail_counter{0.0};
+
+                double _gear_ratio{0.0};
+                double _direction{0.0};
+                double _max_effort{0.0};
 
                 std::string _firmware_version;
+
+                common::model::EStepperCalibrationStatus _calibration_state{common::model::EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED};
+                int32_t _calibration_value{0};
 
             private:
 
