@@ -43,28 +43,24 @@
     <!--END EFFECTOR: Purpose: Represent information about an end effector.-->
     <end_effector name="tool_eef" parent_link="tool_link" group="tool" />
     <!--DISABLE COLLISIONS: By default it is assumed that any link of the robot could potentially come into collision with any other link in the robot. This tag disables collision checking between a specified pair of links. -->
-    <disable_collisions link1="arm_link" link2="base_link" reason="Never" />
+    <disable_collisions link1="arm_link" link2="base_link" reason="User" />
     <disable_collisions link1="arm_link" link2="elbow_link" reason="Adjacent" />
-    <disable_collisions link1="arm_link" link2="forearm_link" reason="Never" />
+    <disable_collisions link1="arm_link" link2="forearm_link" reason="User" />
     <disable_collisions link1="arm_link" link2="hand_link" reason="Never" />
     <disable_collisions link1="arm_link" link2="shoulder_link" reason="Adjacent" />
     <disable_collisions link1="arm_link" link2="wrist_link" reason="Never" />
-    <disable_collisions link1="base_link" link2="elbow_link" reason="Never" />
+    <disable_collisions link1="base_link" link2="elbow_link" reason="User" />
     <disable_collisions link1="base_link" link2="shoulder_link" reason="Adjacent" />
     <disable_collisions link1="elbow_link" link2="forearm_link" reason="Adjacent" />
     <disable_collisions link1="elbow_link" link2="hand_link" reason="Never" />
     <disable_collisions link1="elbow_link" link2="shoulder_link" reason="Never" />
     <disable_collisions link1="elbow_link" link2="test_collision" reason="User" />
-    <disable_collisions link1="elbow_link" link2="tool_link" reason="Never" />
     <disable_collisions link1="elbow_link" link2="wrist_link" reason="Never" />
     <disable_collisions link1="forearm_link" link2="hand_link" reason="Never" />
     <disable_collisions link1="forearm_link" link2="shoulder_link" reason="User" />
     <disable_collisions link1="forearm_link" link2="test_collision" reason="User" />
-    <disable_collisions link1="forearm_link" link2="tool_link" reason="Never" />
     <disable_collisions link1="forearm_link" link2="wrist_link" reason="Adjacent" />
     <disable_collisions link1="hand_link" link2="test_collision" reason="User" />
-    <disable_collisions link1="hand_link" link2="tool_link" reason="Adjacent" />
     <disable_collisions link1="hand_link" link2="wrist_link" reason="Adjacent" />
     <disable_collisions link1="test_collision" link2="wrist_link" reason="User" />
-    <disable_collisions link1="tool_link" link2="wrist_link" reason="Default" />
 </robot>

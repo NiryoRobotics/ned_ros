@@ -35,6 +35,8 @@
         </collision>
     </link>
 
+
+
     <joint name="joint_1"
            type="revolute">
         <origin xyz="0 0 0.1065"
@@ -173,6 +175,33 @@
             </geometry>
         </collision>
     </link>
+
+    <!-- Test to add collision for the motor of joint 5 -->
+    <link name="test_collision">
+        <inertial>
+            <origin xyz="-0.00811345462189901 -0.000135618649565461 0.107402242790047"
+                    rpy="0 0 0"/>
+            <mass value="0.203543862275952"/>
+            <inertia ixx="0.0015" ixy="0.0" ixz="0.0" iyy="0.0015" iyz="0.0" izz="0.0015"/>
+        </inertial>
+        <collision>
+            <origin xyz="-0.045 0.0 0.1765"
+                    rpy="0 0 0"/>
+            <geometry>
+                <box size="0.03 0.03 0.046"/> <!-- le y et le z sont inverse -->
+            </geometry>
+        </collision>
+    </link>
+
+    
+    <joint name="joint_test"
+           type="fixed">
+        <origin xyz="0 0 0"
+                rpy="0 0 0"/>
+        <parent link="forearm_link"/>
+        <child link="test_collision"/>
+    </joint>
+    <!-- end of test -->
 
     <joint name="joint_5"
            type="revolute">
