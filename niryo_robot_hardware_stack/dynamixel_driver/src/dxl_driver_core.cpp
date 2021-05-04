@@ -48,7 +48,7 @@ namespace DynamixelDriver
         _debug_flag = false;
 
         initParameters();
-        _dynamixel.reset(new DxlDriver());
+        _dynamixel.reset(new DynamixelDriver());
         _dynamixel->scanAndCheck();
         startControlLoop();
 
@@ -293,7 +293,7 @@ namespace DynamixelDriver
     }
 
     /**
-     * @brief DynamixelDriverCore::addDxlCommandToQueue
+     * @brief DynamixelDriverCore::addSingleCommandToQueue
      * @param cmd
      */
     void DynamixelDriverCore::addSingleCommandToQueue(const SingleMotorCmd &cmd)

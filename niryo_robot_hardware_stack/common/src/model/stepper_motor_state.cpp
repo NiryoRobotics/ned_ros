@@ -29,9 +29,9 @@ using namespace std;
 
 namespace common {
     namespace model {
-        StepperMotorState::StepperMotorState(bool isConveyor) :
+        StepperMotorState::StepperMotorState() :
             JointState (),
-            _isConveyor(isConveyor)
+            _isConveyor(false)
         {
         }
 
@@ -51,6 +51,11 @@ namespace common {
         StepperMotorState::~StepperMotorState()
         {
 
+        }
+
+        int StepperMotorState::stepsPerRev()
+        {
+            return int(STEPPERS_MICROSTEPS * STEPPERS_MOTOR_STEPS_PER_REVOLUTION);
         }
 
         //****************
@@ -86,6 +91,15 @@ namespace common {
         void StepperMotorState::setMaxEffort(double max_effort)
         {
             _max_effort = max_effort;
+        }
+
+        void StepperMotorState::setCalibration(const EStepperCalibrationStatus &calibration_state, const int32_t &calibration_value)
+        {
+            _calibration_state = calibration_state;
+            _calibration_value = calibration_value;
+            //if ok, does not need calibration anymore
+            setNeedCalibration(EStepperCalibrationStatus::CALIBRATION_OK != _calibration_state &&
+                               EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED != _calibration_state);
         }
 
         //*********************
@@ -134,36 +148,7 @@ namespace common {
             return static_cast<double>((static_cast<double>(pos) * 360.0) / (STEPPERS_MOTOR_STEPS_PER_REVOLUTION * STEPPERS_MICROSTEPS * _gear_ratio * RADIAN_TO_DEGREE) * _direction);
             //return (double)((double)steps * 360.0 / (STEPPERS_MOTOR_STEPS_PER_REVOLUTION * STEPPERS_MICROSTEPS * gear_ratio * RADIAN_TO_DEGREE)) * direction;
         }
-        
-        common::model::EStepperCalibrationStatus StepperMotorState::getCalibration_state() const
-        {
-            return _calibration_state;
-        }
-        
-        void StepperMotorState::setCalibration_state(const common::model::EStepperCalibrationStatus &calibration_state)
-        {
-            _calibration_state = calibration_state;
-        }
-        
-        int32_t StepperMotorState::getCalibration_value() const
-        {
-            return _calibration_value;
-        }
-        
-        void StepperMotorState::setCalibration_value(const int32_t &calibration_value)
-        {
-            _calibration_value = calibration_value;
-        }
 
-        bool StepperMotorState::isConveyor() const
-        {
-            return _isConveyor;
-        }
-        
-        int StepperMotorState::stepsPerRev()
-        {
-            return int(STEPPERS_MICROSTEPS * STEPPERS_MOTOR_STEPS_PER_REVOLUTION);
-        }
         
     } // namespace model
 } // namespace common

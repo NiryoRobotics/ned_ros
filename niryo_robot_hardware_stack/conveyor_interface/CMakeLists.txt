@@ -1,9 +1,21 @@
+message("Reading conveyor_interface/CMakeLists.txt...")
+
 cmake_minimum_required(VERSION 2.8.3)
 project(conveyor_interface)
 
+option(BUILD_DOCS "Build documentation" OFF)
+option(BUILD_UNIT_TESTS "Build the unit tests" OFF)
+option(BUILD_INTEGRATION_TESTS "Build the integration tests" OFF)
+
+## c++ options
 ## Compile as C++11, supported in ROS Kinetic and newer
 add_compile_options(-std=c++11)
 
+## By adding -Wall and -Werror, the compiler does not ignore warnings anymore,
+## enforcing cleaner code.
+add_definitions(-Wall  -Werror)
+
+## Find catkin macros and libraries
 find_package(catkin REQUIRED
     COMPONENTS
         roscpp
@@ -11,6 +23,10 @@ find_package(catkin REQUIRED
         message_generation
         stepper_driver
 )
+
+###################################
+## catkin specific configuration ##
+###################################
 
 add_message_files(
   FILES
@@ -30,6 +46,10 @@ generate_messages(
     std_msgs
 )
 
+## INCLUDE_DIRS: if your package contains header files
+## LIBRARIES: libraries you create in this project that dependent projects also need
+## CATKIN_DEPENDS: catkin_packages dependent projects also need
+## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS
       include
@@ -42,11 +62,19 @@ catkin_package(
       stepper_driver
 )
 
+#############
+## Build ##
+#############
+
+## Specify additional locations of header files
+## Your package locations should be listed before other locations
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
 )
 
+
+## Declare libs and execs
 add_library(${PROJECT_NAME}
   src/conveyor_interface_core.cpp
 )
@@ -55,18 +83,77 @@ add_executable(${PROJECT_NAME}_node
   src/conveyor_interface_node.cpp
 )
 
+## Add dependencies to exported targets, like ROS msgs or srvs
+add_dependencies(${PROJECT_NAME}
+    stepper_driver_generate_messages_cpp
+)
+
+add_dependencies(${PROJECT_NAME}
+    conveyor_interface_generate_messages_cpp
+)
+
 add_dependencies(${PROJECT_NAME}_node
   ${catkin_EXPORTED_TARGETS}
 )
 
+## Specify libraries to link executable targets against
 target_link_libraries(${PROJECT_NAME}
   ${catkin_LIBRARIES}
 )
 
 target_link_libraries(${PROJECT_NAME}_node
   ${PROJECT_NAME}
-  ${catkin_LIBRARIES}
 )
+
+#############
+##   Doc   ##
+#############
+
+if (BUILD_DOCS)
+    add_custom_target (conveyor_doc ALL
+        rosdoc_lite -o ${CATKIN_PACKAGE_SHARE_DESTINATION}/doc/${PROJECT_NAME} ${CMAKE_CURRENT_LIST_DIR}
+    )
+
+endif()
+
+#############
+## Testing ##
+#############
+if(CATKIN_ENABLE_TESTING)
+  if(BUILD_UNIT_TESTS)
+    catkin_add_gtest(
+      ${PROJECT_NAME}_unit_tests
+      test/unit_tests.cpp
+    )
+    if(TARGET ${PROJECT_NAME}_unit_tests)
+      target_link_libraries(
+        ${PROJECT_NAME}_unit_tests
+        ${PROJECT_NAME}_core
+      )
+    endif()
+  endif(BUILD_UNIT_TESTS)
+
+  if(BUILD_INTEGRATION_TESTS)
+    find_package(catkin REQUIRED rostest)
+
+    add_rostest_gtest(
+      ${PROJECT_NAME}_integration_tests
+      test/test_conveyor_node.test
+      test/test_conveyor_node.cpp
+    )
+    if(TARGET ${PROJECT_NAME}_integration_tests)
+      target_link_libraries(
+        ${PROJECT_NAME}_integration_tests
+        ${PROJECT_NAME}_core
+      )
+    endif()
+  endif(BUILD_INTEGRATION_TESTS)
+
+endif(CATKIN_ENABLE_TESTING)
+
+#############
+## Install ##
+#############
 
 install(
   TARGETS ${PROJECT_NAME}
@@ -75,10 +162,23 @@ install(
   RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
 )
 
+# Mark other files for installation
 install(
   DIRECTORY include/${PROJECT_NAME}/
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 )
 
-add_dependencies(${PROJECT_NAME} stepper_driver_generate_messages_cpp )
-add_dependencies(${PROJECT_NAME} conveyor_interface_generate_messages_cpp )
+install(
+  DIRECTORY doc/
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/doc
+)
+
+install(DIRECTORY launch/
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
+  PATTERN ".svn" EXCLUDE)
+
+##########################
+## Static code analysis ##
+##########################
+
+roslint_cpp()

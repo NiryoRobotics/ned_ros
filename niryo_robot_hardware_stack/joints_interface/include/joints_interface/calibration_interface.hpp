@@ -53,7 +53,7 @@ namespace JointsInterface {
 
         bool _check_steppers_connected();
 
-        void _auto_calibration();
+        common::model::EStepperCalibrationStatus _auto_calibration();
         void _send_calibration_offset(uint8_t id, int offset_to_send, int absolute_steps_at_offset_position);
         bool _can_process_manual_calibration(std::string &result_message);
         common::model::EStepperCalibrationStatus _manual_calibration();
@@ -67,8 +67,8 @@ namespace JointsInterface {
 
     private:
         ros::NodeHandle _nh;
-        std::shared_ptr<StepperDriver::StepperDriverCore> _stepper;
-        std::shared_ptr<DynamixelDriver::DynamixelDriverCore> _dynamixel;
+        std::shared_ptr<StepperDriver::StepperDriverCore> _stepperCore;
+        std::shared_ptr<DynamixelDriver::DynamixelDriverCore> _dynamixelCore;
 
         std::vector<std::shared_ptr<common::model::JointState> > _joint_list;
 

@@ -59,6 +59,8 @@ namespace StepperDriver
             virtual ~StepperDriver() override;
 
             //commands
+            void startCalibration();
+
             int readSynchronizeCommand(const common::model::SynchronizeStepperMotorCmd& cmd);
             int readSingleCommand(common::model::StepperMotorCmd cmd);
 
@@ -72,10 +74,8 @@ namespace StepperDriver
             common::model::StepperMotorState getMotorState(uint8_t motor_id) const;
             std::vector<common::model::StepperMotorState> getMotorsStates() const;
 
-            common::model::ConveyorState getConveyorState(uint8_t motor_id) const;
-
             int32_t getCalibrationResult(uint8_t id) const;
-            common::model::EStepperCalibrationStatus getCalibrationStatus(uint8_t id) const;
+            common::model::EStepperCalibrationStatus getCalibrationStatus() const;
 
             uint8_t sendTorqueOnCommand(uint8_t id, int torque_on);
             uint8_t sendRelativeMoveCommand(uint8_t id, int steps, int delay);
@@ -122,6 +122,9 @@ namespace StepperDriver
             void _verifyMotorTimeoutLoop();
             void _refreshLastTimeRead();
 
+            void updateCurrentCalibrationStatus();
+            double getCurrentTimeout() const;
+
         private:
             ros::NodeHandle _nh;
 
@@ -130,14 +133,13 @@ namespace StepperDriver
             std::mutex _stepper_timeout_mutex;
             std::thread _stepper_timeout_thread;
 
-
             // cc use a set ?? -> pb with publish
             std::vector<uint8_t> _all_motor_connected;
 
             std::map<uint8_t, std::shared_ptr<common::model::StepperMotorState> > _state_map;
 
-            int _calibration_timeout;
-            common::model::EStepperCalibrationStatus _calibration_result;
+            double _calibration_timeout;
+            common::model::EStepperCalibrationStatus _calibration_status;
 
             // for hardware control
             bool _is_connection_ok;
@@ -197,8 +199,14 @@ namespace StepperDriver
     }
 
     inline
+    common::model::EStepperCalibrationStatus StepperDriver::getCalibrationStatus() const
+    {
+        return _calibration_status;
+    }
+
+    inline
     bool StepperDriver::isCalibrationInProgress() const {
-        return common::model::EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS == _calibration_result;
+        return common::model::EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS == _calibration_status;
     }
 
     inline

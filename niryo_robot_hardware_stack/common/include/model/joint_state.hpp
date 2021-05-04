@@ -59,8 +59,8 @@ namespace common {
 
         protected:
                 std::string _name;
-                double _offset_position;
-                bool _need_calibration;
+                double _offset_position{0.0};
+                bool _need_calibration{false};
 
         public:
                 double pos{0.0};

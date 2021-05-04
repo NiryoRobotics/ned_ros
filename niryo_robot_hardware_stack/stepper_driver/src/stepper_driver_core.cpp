@@ -49,7 +49,6 @@ namespace StepperDriver
         _debug_flag = false;
         _joint_trajectory_controller_cmd.setType(EStepperCommandType::CMD_TYPE_POSITION);
         _stepper.reset(new StepperDriver());
-        _stepper->scanAndCheck();
         startControlLoop();
 
         cmd_pub = _nh.advertise<std_msgs::Int64MultiArray>("stepper_cmd", 1000);
@@ -59,20 +58,20 @@ namespace StepperDriver
     {
         _control_loop_frequency = 0.0;
         double write_frequency = 0.0;
-        double read_data_frequency = 0.0;
+        double read_frequency = 0.0;
         _check_connection_frequency = 0.0;
 
         _nh.getParam("/niryo_robot_hardware_interface/stepper_driver/can_hardware_control_loop_frequency", _control_loop_frequency);
         _nh.getParam("/niryo_robot_hardware_interface/stepper_driver/can_hw_write_frequency", write_frequency);
-        _nh.getParam("/niryo_robot_hardware_interface/dynamixel_driver/can_hw_read_data_frequency", read_data_frequency);
+        _nh.getParam("/niryo_robot_hardware_interface/stepper_driver/can_hw_read_frequency", read_frequency);
         _nh.getParam("/niryo_robot_hardware_interface/stepper_driver/can_hw_check_connection_frequency", _check_connection_frequency);
 
         ROS_DEBUG("StepperDriverCore::initParameters - can_hardware_control_loop_frequency : %f", _control_loop_frequency);
-        ROS_DEBUG("StepperDriverCore::initParameters - can_hardware_write_frequency : %f", write_frequency);
-        ROS_DEBUG("StepperDriverCore::initParameters - can_hw_read_data_frequency : %f", read_data_frequency);
-        ROS_DEBUG("StepperDriverCore::initParameters - can_hardware_check_connection_frequency : %f", _check_connection_frequency);
+        ROS_DEBUG("StepperDriverCore::initParameters - can_hw_write_frequency : %f", write_frequency);
+        ROS_DEBUG("StepperDriverCore::initParameters - can_hw_read_frequency : %f", read_frequency);
+        ROS_DEBUG("StepperDriverCore::initParameters - can_hw_check_connection_frequency : %f", _check_connection_frequency);
 
-        _delta_time_data_read = 1.0 / read_data_frequency;
+        _delta_time_data_read = 1.0 / read_frequency;
         _delta_time_write = 1.0 / write_frequency;
     }
 
@@ -267,56 +266,57 @@ namespace StepperDriver
         return response;
     }
 
-
+    /**
+     * @brief StepperDriverCore::setConveyor
+     * @param motor_id
+     * @return
+     */
     int StepperDriverCore::setConveyor(uint8_t motor_id)
     {
-        bool motor_found = false;
-        std::lock_guard<std::mutex> lck(_control_loop_mutex);
-        int result;
+        int result = niryo_robot_msgs::CommandStatus::NO_CONVEYOR_FOUND;
 
-        ros::Duration(0.1).sleep();
-        motor_found = _stepper->scanMotorId(6);
-        ros::Duration(0.1).sleep();
-        if (!motor_found)
+        std::lock_guard<std::mutex> lck(_control_loop_mutex);
+
+        //try to find motor id 6 (default motor id for conveyor
+        if (_stepper->scanMotorId(6))
         {
-            ROS_WARN("StepperDriverCore::setConveyor - No conveyor found");
-            result = niryo_robot_msgs::CommandStatus::NO_CONVEYOR_FOUND;
+            ros::Duration(0.1).sleep();
+
+            if (CAN_OK == _stepper->sendUpdateConveyorId(6, motor_id)) {
+                result = niryo_robot_msgs::CommandStatus::SUCCESS;
+                _stepper->addMotor(motor_id, true);
+            }
+            else {
+                ROS_ERROR("StepperDriverCore::setConveyor : unable to change conveyor ID");
+                result = niryo_robot_msgs::CommandStatus::CAN_WRITE_ERROR;
+            }
         }
         else
         {
-            result = _stepper->sendUpdateConveyorId(6, motor_id);
-            if (result != CAN_OK)
-            {
-                result = niryo_robot_msgs::CommandStatus::CAN_WRITE_ERROR;
-            }
-            else
-            {
-                result = niryo_robot_msgs::CommandStatus::SUCCESS;
-            }
-
-            ros::Duration(0.1).sleep();
-            _stepper->addMotor(motor_id, true);
+            ROS_WARN("StepperDriverCore::setConveyor - No conveyor found");
         }
 
         return result;
     }
 
+    /**
+     * @brief StepperDriverCore::unsetConveyor
+     * @param motor_id
+     */
     void StepperDriverCore::unsetConveyor(uint8_t motor_id)
     {
         std::lock_guard<std::mutex> lck(_control_loop_mutex);
-        _stepper->sendUpdateConveyorId(motor_id, 6);
-        ros::Duration(0.1).sleep();
-        _stepper->removeMotor(motor_id);
+
+        if(_stepper->sendUpdateConveyorId(motor_id, 6))
+            _stepper->removeMotor(motor_id);
+        else
+            ROS_ERROR("StepperDriverCore::unsetConveyor : unable to change conveyor ID");
     }
 
     void StepperDriverCore::startCalibration()
     {
-
-    }
-
-    void StepperDriverCore::stopCalibration()
-    {
-
+        if(_stepper)
+            _stepper->startCalibration();
     }
 
     void StepperDriverCore::startControlLoop()
@@ -330,42 +330,44 @@ namespace StepperDriver
         }
     }
 
+    /**
+     * @brief StepperDriverCore::controlLoop
+     */
     void StepperDriverCore::controlLoop()
     {
         ros::Rate control_loop_rate = ros::Rate(_control_loop_frequency);
         resetHardwareControlLoopRates();
         while (ros::ok())
         {
-            if (_stepper->isConnectionOk())
+
+            if (_control_loop_flag)
             {
-                if (_control_loop_flag)
+                std::lock_guard<std::mutex> lck(_control_loop_mutex);
+
+                // cc calibration results ???
+                if (ros::Time::now().toSec() - _time_hw_data_last_read >= _delta_time_data_read)
                 {
-                    std::lock_guard<std::mutex> lck(_control_loop_mutex);
+                    _time_hw_data_last_read = ros::Time::now().toSec();
+                    _stepper->readMotorsState();
+                }
 
-                    // cc calibration results ???
-                    if (ros::Time::now().toSec() - _time_hw_data_last_read >= _delta_time_data_read)
-                    {
-                        _time_hw_data_last_read = ros::Time::now().toSec();
-                        _stepper->readMotorsState();
-                    }
-
+                if (_stepper->isConnectionOk())
+                {
                     if (ros::Time::now().toSec() - _time_hw_data_last_write >= _delta_time_write)
                     {
                         _time_hw_data_last_write = ros::Time::now().toSec();
                         _executeCommand();
                     }
+                }
 
-                    control_loop_rate.sleep();
-                }
-                else
-                {
-                    ros::Duration(TIME_TO_WAIT_IF_BUSY).sleep();
-                    resetHardwareControlLoopRates();
-                }
+                control_loop_rate.sleep();
             }
-            else {
-                ROS_WARN("StepperDriverCore::controlLoop - Stepper connection error");
+            else
+            {
+                ros::Duration(TIME_TO_WAIT_IF_BUSY).sleep();
+                resetHardwareControlLoopRates();
             }
+
         }
     }
 
@@ -412,13 +414,15 @@ namespace StepperDriver
     //  getters
     //********************
 
-
-
     int32_t StepperDriverCore::getCalibrationResult(uint8_t id) const
     {
         return _stepper->getCalibrationResult(id);
     }
 
+    /**
+     * @brief StepperDriverCore::getHwStatus
+     * @return
+     */
     stepper_driver::StepperArrayMotorHardwareStatus StepperDriverCore::getHwStatus() const
     {
         stepper_driver::StepperMotorHardwareStatus data;
@@ -436,6 +440,10 @@ namespace StepperDriver
         return hw_state;
     }
 
+    /**
+     * @brief StepperDriverCore::getBusState
+     * @return
+     */
     niryo_robot_msgs::BusState StepperDriverCore::getBusState() const
     {
         niryo_robot_msgs::BusState can_bust_state;

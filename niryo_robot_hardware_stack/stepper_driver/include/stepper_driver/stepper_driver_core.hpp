@@ -57,7 +57,6 @@ namespace StepperDriver
             void unsetConveyor(uint8_t motor_id);
 
             void startCalibration();
-            void stopCalibration();
 
             //direct commands
             bool scanMotorId(uint8_t motor_to_find);
@@ -65,8 +64,7 @@ namespace StepperDriver
             //getters
             bool isCalibrationInProgress() const;
             int32_t getCalibrationResult(uint8_t id) const;
-            std::vector<common::model::ConveyorState> getConveyorStates() const;
-            common::model::StepperMotorState getConveyorState(uint8_t motor_id) const;
+            common::model::EStepperCalibrationStatus getCalibrationStatus() const;
 
             stepper_driver::StepperArrayMotorHardwareStatus getHwStatus() const;
 
@@ -135,10 +133,10 @@ namespace StepperDriver
     }
 
     inline
-    common::model::StepperMotorState
-    StepperDriverCore::getConveyorState(uint8_t motor_id) const
+    common::model::EStepperCalibrationStatus
+    StepperDriverCore::getCalibrationStatus() const
     {
-        return _stepper->getConveyorState(motor_id);
+        return _stepper->getCalibrationStatus();
     }
 
     inline

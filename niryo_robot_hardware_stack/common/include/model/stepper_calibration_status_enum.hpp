@@ -30,7 +30,7 @@ namespace common {
     namespace model {
 
         enum class EStepperCalibrationStatus {
-            CALIBRATION_UNINITIALIZED = 0,
+            CALIBRATION_UNINITIALIZED = 0, //means no calibration is expected
             CALIBRATION_OK = 1,
             CALIBRATION_TIMEOUT = 2,
             CALIBRATION_BAD_PARAM = 3,

@@ -28,23 +28,40 @@ using namespace common::model;
 namespace StepperDriver
 {
     StepperDriver::StepperDriver() :
-        _stepper_timeout_thread(&StepperDriver::_verifyMotorTimeoutLoop, this),
-        _calibration_result(EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED),
+        _calibration_status(EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED),
         _is_connection_ok(false)
     {
         ROS_DEBUG("StepperDriver - ctor");
-
         initParameters();
         init();
 
-        if(CAN_OK != setupCAN())
+        if(CAN_OK == setupCAN()) {
+            scanAndCheck();
+
+            _stepper_timeout_thread = std::thread(&StepperDriver::_verifyMotorTimeoutLoop, this);
+        }
+        else {
             ROS_WARN("StepperDriver - Stepper setup Failed");
+        }
     }
 
     StepperDriver::~StepperDriver()
     {
         if (_stepper_timeout_thread.joinable())
             _stepper_timeout_thread.join();
+    }
+
+    void StepperDriver::startCalibration()
+    {
+        ROS_DEBUG("StepperDriver::startCalibration: starting...");
+
+        for(auto const& s: _state_map)
+        {
+            if(s.second)
+                s.second->setCalibration(EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS, 0);
+        }
+
+        _calibration_status = EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS;
     }
 
     /**
@@ -77,7 +94,7 @@ namespace StepperDriver
 
             uint8_t id = static_cast<uint8_t>(idList.at(i));
 
-            if(0 == _state_map.count(id))
+            if(!_state_map.count(id))
                 addMotor(id);
             else
                 ROS_ERROR("StepperDriver::init - duplicate id %d. Please check your configuration file (niryo_robot_hardware_stack/dynamixel_driver/config/motors_config.yaml)", id);
@@ -358,7 +375,7 @@ namespace StepperDriver
             readMsgBuf(&rxId, &len, rxBuf);
             uint8_t motor_id = rxId & 0x0F;
 
-            if (_state_map.count(motor_id) && _state_map.at(motor_id)) //updates last time read of the given motor
+            if (_state_map.count(motor_id) && _state_map.at(motor_id))
             {
                 //update last time read
                 _state_map.at(motor_id)->updateLastTimeRead();
@@ -405,7 +422,6 @@ namespace StepperDriver
         int result = CAN_OK;
 
         _all_motor_connected.clear();
-        _is_connection_ok = true;
 
         _debug_error_message = "";
 
@@ -453,12 +469,18 @@ namespace StepperDriver
 
             result = CAN_FAIL;
         }
+        else {
+            ROS_DEBUG("StepperDriver::scanAndCheck successful");
+            _is_connection_ok = true;
+        }
+
 
         return result;
     }
 
     /**
-     * @brief StepperDriver::scanMotorId : scan the bus for any motor id. It is used mainly to add an unknown id to the current list of id (using addMotor, for a conveyor for example)
+     * @brief StepperDriver::scanMotorId : scan the bus for any motor id. It is used mainly to add an unknown
+     * id to the current list of id (using addMotor, for a conveyor for example)
      * @param motor_to_find
      * @return
      */
@@ -582,8 +604,12 @@ namespace StepperDriver
         {
             if(_state_map.count(motor_id) && _state_map.at(motor_id)) {
                 // fill data
-                _state_map.at(motor_id)->setCalibration_state(static_cast<common::model::EStepperCalibrationStatus>(data[1]));
-                _state_map.at(motor_id)->setCalibration_value((data[2] << 8) + data[3]);
+                EStepperCalibrationStatus status = static_cast<EStepperCalibrationStatus>(data[1]);
+                int32_t value = (data[2] << 8) + data[3];
+                _state_map.at(motor_id)->setCalibration(status, value);
+
+                updateCurrentCalibrationStatus();
+
             }
             else {
                 ROS_ERROR("StepperDriver::fillCalibrationState - unknown motor id %d", static_cast<int>(motor_id));
@@ -615,7 +641,8 @@ namespace StepperDriver
     }
 
     /**
-     * @brief StepperDriver::_verifyMotorTimeoutLoop
+     * @brief StepperDriver::_verifyMotorTimeoutLoop : check that motors are still visible in the duration defined by getCurrentTimeout()
+     * This timeout changed overtime according to the current state of the driver (in calibration or not)
      */
     void StepperDriver::_verifyMotorTimeoutLoop()
     {
@@ -624,18 +651,22 @@ namespace StepperDriver
             std::lock_guard<std::mutex> lck(_stepper_timeout_mutex);
             std::vector<uint8_t> timeout_motors;
 
-            for (const auto &mState : _state_map)
+            for (auto const &mState : _state_map)
             {
+                //we locate the motor for the current id in _all_motor_connected
                 auto position = std::find(_all_motor_connected.begin(), _all_motor_connected.end(), mState.first);
 
-                if (mState.second && ros::Time::now().toSec() - mState.second->getLastTimeRead() > STEPPER_MOTOR_TIMEOUT_VALUE) {
+                //if it has timeout, we remove it from the vector
+                if (mState.second && ros::Time::now().toSec() - mState.second->getLastTimeRead() > getCurrentTimeout())
+                {
                     timeout_motors.emplace_back(mState.first);
                     if(position != _all_motor_connected.end())
                         _all_motor_connected.erase(position);
-                }
-                else {
-                    if(position == _all_motor_connected.end())
-                        _all_motor_connected.push_back(mState.first);
+
+                } //else, if it is not in the list of connected motors, we add it
+                else if(position == _all_motor_connected.end())
+                {
+                    _all_motor_connected.push_back(mState.first);
                 }
             }
 
@@ -650,8 +681,36 @@ namespace StepperDriver
                 _debug_error_message = ss.str();
                 _debug_error_message.pop_back();
             }
+            else {
+                _is_connection_ok = true;
+            }
             ros::Duration(0.1).sleep();
         }
+    }
+
+    void StepperDriver::updateCurrentCalibrationStatus()
+    {
+        //update current state of the calibrationtimeout_motors
+        //rule is : if a status in a motor is worse than one previously found, we take it
+        // we are not taking "uninitialized" into account as it means a calibration as not been started for this motor
+        EStepperCalibrationStatus newStatus = EStepperCalibrationStatus::CALIBRATION_OK;
+        for(auto const& s : _state_map)
+        {
+            if(s.second && newStatus < s.second->getCalibrationState())
+                newStatus = s.second->getCalibrationState();
+        }
+
+        _calibration_status = newStatus;
+
+    }
+
+    double StepperDriver::getCurrentTimeout() const
+    {
+        if(isCalibrationInProgress())
+            return _calibration_timeout;
+        else
+            return STEPPER_MOTOR_TIMEOUT_VALUE;
+
     }
 
 /*
@@ -929,19 +988,7 @@ namespace StepperDriver
         if(!_state_map.count(motor_id) && _state_map.at(motor_id))
             throw std::out_of_range("DxlDriver::getMotorsState: Unknown motor id");
 
-        return _state_map.at(motor_id)->getCalibration_value();
-    }
-
-    /**
-     * @brief StepperDriver::getCalibrationStatus
-     * @return
-     */
-    EStepperCalibrationStatus StepperDriver::getCalibrationStatus(uint8_t motor_id) const
-    {
-        if(!_state_map.count(motor_id) && _state_map.at(motor_id))
-            throw std::out_of_range("DxlDriver::getMotorsState: Unknown motor id");
-
-        return _state_map.at(motor_id)->getCalibration_state();
+        return _state_map.at(motor_id)->getCalibrationValue();
     }
 
     /**
@@ -963,7 +1010,7 @@ namespace StepperDriver
      */
     std::vector<StepperMotorState> StepperDriver::getMotorsStates() const
     {
-        std::vector<common::model::StepperMotorState> states;
+        std::vector<StepperMotorState> states;
         for (auto const& it : _state_map)
             states.push_back(*it.second.get());
 

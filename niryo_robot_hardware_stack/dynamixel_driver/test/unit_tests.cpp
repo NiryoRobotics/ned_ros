@@ -1,5 +1,5 @@
 /*
-    dxl_driver_node.cpp
+    unit_tests.cpp
     Copyright (C) 2020 Niryo
     All rights reserved.
     This program is free software: you can redistribute it and/or modify
@@ -14,19 +14,32 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <ros/ros.h>
+// Bring in my package's API, which is what I'm testing
 #include "dynamixel_driver/dxl_driver_core.hpp"
+#include "dynamixel_driver/dxl_driver.hpp"
 
-int main(int argc, char** argv)
+// Bring in gtest
+#include <gtest/gtest.h>
+
+// Declare a test
+TEST(TestSuite, testInitDriver)
 {
-  ros::init(argc, argv, "dynamixel_driver_node");
+    DynamixelDriver::DynamixelDriver dxl_node;
+    EXPECT_TRUE(dxl_node.isConnectionOk());
+}
 
-  ROS_DEBUG("Launching dynamixel_driver_node");
+// Declare a test
+TEST(TestSuite, testInitDriverCore)
+{
+    DynamixelDriver::DynamixelDriverCore dxl_node;
+    EXPECT_TRUE(dxl_node.isConnectionOk());
+}
 
-  ros::NodeHandle nodeHandle("~");
+// Run all the tests that were declared with TEST()
+int main(int argc, char **argv){
+  testing::InitGoogleTest(&argc, argv);
+  ros::init(argc, argv, "tester");
+  ros::NodeHandle nh;
 
-  DynamixelDriver::DynamixelDriverCore dxl_node;
-
-  ros::spin();
-  return 0;
+  return RUN_ALL_TESTS();
 }

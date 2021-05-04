@@ -32,9 +32,7 @@ namespace common {
 
         JointState::JointState(string name, EMotorType type, uint8_t id) :
             AbstractMotorState(id, type),
-            _name(name),
-            _offset_position(0.0),
-            _need_calibration(true)
+            _name(name)
         {
         }
 

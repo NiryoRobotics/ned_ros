@@ -36,8 +36,7 @@ namespace common {
         }
 
         DxlMotorState::DxlMotorState(EMotorType type, uint8_t id, bool isTool) :
-            JointState("unknown", type, id),
-            _isTool(isTool)
+            DxlMotorState("unknown", type, id, isTool)
         {
         }
 
@@ -45,7 +44,7 @@ namespace common {
             JointState(name, type, id),
             _isTool(isTool)
         {
-
+            setNeedCalibration(false);
         }
 
         DxlMotorState::~DxlMotorState()

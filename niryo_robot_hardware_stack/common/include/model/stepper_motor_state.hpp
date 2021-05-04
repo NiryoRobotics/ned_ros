@@ -31,30 +31,40 @@ namespace common {
         {
 
             public:
-                StepperMotorState(bool isConveyor = false);
+                StepperMotorState();
                 StepperMotorState(uint8_t id, bool isConveyor = false);
                 StepperMotorState(std::string name, EMotorType type, uint8_t id, bool isConveyor = false );
 
                 virtual ~StepperMotorState() override;
 
+                static int stepsPerRev();
+
+                //setters
                 void updateLastTimeRead();
                 void setHwFailCounter(double fail_counter);
                 void setFirmwareVersion(std::string& firmware_version);
+                void setGearRatio(double gear_ratio);
+                void setDirection(double direction);
+                void setMaxEffort(double max_effort);
 
+                void setCalibration(const common::model::EStepperCalibrationStatus &calibration_state,
+                                    const int32_t &calibration_value);
+
+                //getters
                 double getLastTimeRead() const;
                 double getHwFailCounter() const;
                 std::string getFirmwareVersion() const;
 
                 double getGearRatio() const;
-                void setGearRatio(double gear_ratio);
-
                 double getDirection() const;
-                void setDirection(double direction);
-
                 double getMaxEffort() const;
-                void setMaxEffort(double max_effort);
 
-                static int stepsPerRev();
+                common::model::EStepperCalibrationStatus getCalibrationState() const;
+                int32_t getCalibrationValue() const;
+
+                //tests
+                bool isConveyor() const;
+                bool isTimeout() const;
 
                 // JointState interface
             public:
@@ -64,14 +74,6 @@ namespace common {
 
                 virtual int to_motor_pos(double pos_rad) override;
                 virtual double to_rad_pos(int pos) override;
-
-                common::model::EStepperCalibrationStatus getCalibration_state() const;
-                void setCalibration_state(const common::model::EStepperCalibrationStatus &calibration_state);
-
-                int32_t getCalibration_value() const;
-                void setCalibration_value(const int32_t &calibration_value);
-
-                bool isConveyor() const;
 
         protected:
                 bool _isConveyor{false};
@@ -99,6 +101,24 @@ namespace common {
         double StepperMotorState::getMaxEffort() const
         {
             return _max_effort;
+        }
+
+        inline
+        EStepperCalibrationStatus StepperMotorState::getCalibrationState() const
+        {
+            return _calibration_state;
+        }
+
+        inline
+        int32_t StepperMotorState::getCalibrationValue() const
+        {
+            return _calibration_value;
+        }
+
+        inline
+        bool StepperMotorState::isConveyor() const
+        {
+            return _isConveyor;
         }
 
         inline

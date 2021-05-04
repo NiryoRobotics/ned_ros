@@ -202,15 +202,17 @@ namespace ConveyorInterface {
             conveyor_interface::ConveyorFeedbackArray msg;
             conveyor_interface::ConveyorFeedback data;
 
-            vector<ConveyorState> conveyor_list;
-            conveyor_list = _stepper->getConveyorStates();
-            for(int i = 0; i < conveyor_list.size(); i++)
+            // CC to be checked
+            for(auto& sState : _stepper->getStepperStates())
             {
-                data.conveyor_id = conveyor_list.at(i).getId();
-                data.running = conveyor_list.at(i).getState();
-                data.direction = conveyor_list.at(i).getDirection();
-                data.speed = conveyor_list.at(i).getSpeed();
-                msg.conveyors.push_back(data);
+                if(sState.isConveyor()) {
+                    ConveyorState& cState = dynamic_cast<ConveyorState &>(sState);
+                    data.conveyor_id = cState.getId();
+                    data.running = cState.getState();
+                    data.direction = cState.getDirection();
+                    data.speed = cState.getSpeed();
+                    msg.conveyors.push_back(data);
+                }
             }
             _conveyors_feedback_publisher.publish(msg);
             publish_conveyor_feedback_rate.sleep();

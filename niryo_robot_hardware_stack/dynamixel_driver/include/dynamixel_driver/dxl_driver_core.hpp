@@ -133,7 +133,7 @@ namespace DynamixelDriver
         double _time_check_connection_last_read;
         double _time_check_end_effector_last_read;
 
-        std::unique_ptr<DxlDriver> _dynamixel;
+        std::unique_ptr<DynamixelDriver> _dynamixel;
 
         common::model::SynchronizeMotorCmd _dxl_sync_cmds_traj;
         common::model::SynchronizeMotorCmd _dxl_sync_cmds;

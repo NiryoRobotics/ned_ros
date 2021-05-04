@@ -296,15 +296,8 @@ namespace JointsInterface {
      */
     bool JointHardwareInterface::needCalibration() const
     {
-        bool result = false;
-        for (auto const& jState : _joint_list)
-        {
-            if (jState && jState->needCalibration())
-            {
-                result = true;
-                break;
-            }
-        }
+        bool result = EStepperCalibrationStatus::CALIBRATION_OK != _stepper->getCalibrationStatus();
+
         ROS_DEBUG_THROTTLE(2, "JointHardwareInterface::needCalibration - Need calibration returned: %d", static_cast<int>(result));
         return result;
     }

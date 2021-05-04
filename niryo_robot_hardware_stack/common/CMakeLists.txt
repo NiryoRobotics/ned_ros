@@ -1,14 +1,31 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(common)
+option(BUILD_DOCS "Build documentation" OFF)
+option(BUILD_UNIT_TESTS "Build the unit tests" OFF)
 
+## c++ options
 ## Compile as C++11, supported in ROS Kinetic and newer
 add_compile_options(-std=c++11)
 
+## By adding -Wall and -Werror, the compiler does not ignore warnings anymore,
+## enforcing cleaner code.
+add_definitions(-Wall  -Werror)
+
+## Find catkin macros and libraries
 find_package(catkin REQUIRED
     COMPONENTS
         roscpp
+        roslint
 )
 
+###################################
+## catkin specific configuration ##
+###################################
+
+## INCLUDE_DIRS: if your package contains header files
+## LIBRARIES: libraries you create in this project that dependent projects also need
+## CATKIN_DEPENDS: catkin_packages dependent projects also need
+## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
     INCLUDE_DIRS
         include
@@ -18,11 +35,18 @@ catkin_package(
         roscpp
 )
 
+#############
+## Build ##
+#############
+
+## Specify additional locations of header files
+## Your package locations should be listed before other locations
 include_directories(
     include
     ${catkin_INCLUDE_DIRS}
 )
 
+## Declare libs and execs
 add_library(${PROJECT_NAME}
     src/model/abstract_motor_state.cpp
     src/model/conveyor_state.cpp
@@ -40,11 +64,54 @@ add_library(${PROJECT_NAME}
     src/model/stepper_calibration_status_enum.cpp
 )
 
+## Add dependencies to exported targets, like ROS msgs or srvs
+
+## Specify libraries to link executable targets against
 target_link_libraries(${PROJECT_NAME}
   ${catkin_LIBRARIES}
 )
+
+#############
+##   Doc   ##
+#############
+
+if (BUILD_DOCS)
+    add_custom_target (common_doc ALL
+        rosdoc_lite -o ${CATKIN_PACKAGE_SHARE_DESTINATION}/doc/${PROJECT_NAME} ${CMAKE_CURRENT_LIST_DIR}
+    )
+
+endif()
+
+#############
+## Testing ##
+#############
+
+if(CATKIN_ENABLE_TESTING)
+  if(BUILD_UNIT_TESTS)
+    catkin_add_gtest(
+      ${PROJECT_NAME}_unit_tests
+      test/unit_tests.cpp
+    )
+    if(TARGET ${PROJECT_NAME}_unit_tests)
+      target_link_libraries(
+        ${PROJECT_NAME}_unit_tests
+        ${PROJECT_NAME}
+      )
+    endif()
+  endif(BUILD_UNIT_TESTS)
+endif(CATKIN_ENABLE_TESTING)
+
+#############
+## Install ##
+#############
 
 install(
   DIRECTORY include/${PROJECT_NAME}/
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 )
+
+##########################
+## Static code analysis ##
+##########################
+
+roslint_cpp()
