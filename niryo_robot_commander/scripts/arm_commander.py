@@ -32,7 +32,7 @@ from visualization_msgs.msg import Marker, MarkerArray
 from niryo_robot_msgs.msg import RobotState, RPY
 
 # Services
-from moveit_msgs.srv import GetPositionFK, GetPositionIK
+from moveit_msgs.srv import GetPositionFK, GetPositionIK, GetStateValidity
 from niryo_robot_msgs.srv import Trigger
 from niryo_robot_commander.srv import GetFK, GetIK
 from niryo_robot_msgs.srv import SetInt
@@ -416,6 +416,8 @@ class ArmCommander:
         """
         joints = list(arm_cmd.joints)
         self.__validate_params_move(MoveCommandType.JOINTS, joints)
+        self.__check_collision_in_joints_target(joints)
+
         return self.__set_joint_target_moveit(joints)
 
     def __set_joint_target_moveit(self, joints):
@@ -753,6 +755,33 @@ class ArmCommander:
             self.__parameters_validator.validate_shift_pose(args[0])
         else:
             raise ArmCommanderException(CommandStatus.UNKNOWN_COMMAND, "Wrong command type")
+
+    def __check_collision_in_joints_target(self,joints):
+        """
+        Check if the joints target implies a self collision. Raise an exception is a collision is detected.
+        :param joints: list of joints value
+        """
+        try:
+            rospy.wait_for_service('check_state_validity', 2)
+        except (rospy.ServiceException, rospy.ROSException) as e:
+            rospy.logwarn("Arm commander - Impossible to connect to check state validity service : " + str(e))
+        try:
+            check_state_validity = rospy.ServiceProxy('check_state_validity', GetStateValidity)
+            robot_state_target = RobotStateMoveIt()
+            robot_state_target.joint_state.header.frame_id = "world"
+            robot_state_target.joint_state.position = joints
+            robot_state_target.joint_state.name = self.__joints_name
+            group_name = self.__arm.get_name()
+            response = check_state_validity(robot_state_target, group_name, None)
+            if not response.valid and len(response.contacts)>0 :
+                rospy.logwarn('Arm commander - Joints target unreachable because of collision between %s and %s',
+                            response.contacts[0].contact_body_1,response.contacts[0].contact_body_2)
+                raise ArmCommanderException(CommandStatus.INVALID_PARAMETERS,
+                            "Target joints would lead to a collision between links {} and {} ".format(response.contacts[0].contact_body_1,
+                            response.contacts[0].contact_body_2))
+
+        except rospy.ServiceException as e:
+            rospy.logwarn("Arm commander - Failed to check state validity : " + str(e))
 
     @staticmethod
     def __get_plan_time(plan):
