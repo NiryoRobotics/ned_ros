@@ -115,7 +115,7 @@
             <origin xyz="-0.045 0.0 0.1765"
                     rpy="0 0 0"/>
             <geometry>
-                <box size="0.034 0.0285 0.0465"/> 
+                <box size="0.0435 0.0285 0.0465"/>
             </geometry>
         </collision>
     </link>

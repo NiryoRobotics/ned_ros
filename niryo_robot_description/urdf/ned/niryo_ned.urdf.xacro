@@ -188,7 +188,8 @@
             <origin xyz="-0.045 0.0 0.1765"
                     rpy="0 0 0"/>
             <geometry>
-                <box size="0.03 0.03 0.046"/> <!-- le y et le z sont inverse -->
+                <!-- <box size="0.03 0.03 0.046"/>  -->
+                <box size="0.0435 0.0285 0.0465"/>      
             </geometry>
         </collision>
     </link>
