@@ -51,12 +51,12 @@
 
 namespace DynamixelDriver
 {
-    class DynamixelDriverCore : public common::model::IDriverCore
+    class DxlDriverCore : public common::model::IDriverCore
     {
     public:
 
-        DynamixelDriverCore();
-        virtual ~DynamixelDriverCore() override;
+        DxlDriverCore();
+        virtual ~DxlDriverCore() override;
 
         void clearSingleCommandQueue();
         void clearEndEffectorCommandQueue();
@@ -133,7 +133,7 @@ namespace DynamixelDriver
         double _time_check_connection_last_read;
         double _time_check_end_effector_last_read;
 
-        std::unique_ptr<DynamixelDriver> _dynamixel;
+        std::unique_ptr<DxlDriver> _dynamixel;
 
         common::model::SynchronizeMotorCmd _dxl_sync_cmds_traj;
         common::model::SynchronizeMotorCmd _dxl_sync_cmds;
@@ -147,25 +147,25 @@ namespace DynamixelDriver
     };
 
     inline
-    std::vector<common::model::DxlMotorState> DynamixelDriverCore::getDxlStates() const
+    std::vector<common::model::DxlMotorState> DxlDriverCore::getDxlStates() const
     {
         return _dynamixel->getMotorsStates();
     }
 
     inline
-    bool DynamixelDriverCore::isConnectionOk() const
+    bool DxlDriverCore::isConnectionOk() const
     {
         return _dynamixel->isConnectionOk();
     }
 
     inline
-    common::model::DxlMotorState DynamixelDriverCore::getDxlState(uint8_t motor_id) const
+    common::model::DxlMotorState DxlDriverCore::getDxlState(uint8_t motor_id) const
     {
         return _dynamixel->getMotorState(motor_id);
     }
 
     inline
-    std::vector<uint8_t> DynamixelDriverCore::getRemovedMotorList() const
+    std::vector<uint8_t> DxlDriverCore::getRemovedMotorList() const
     {
         return _dynamixel->getRemovedMotorList();
     }

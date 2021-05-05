@@ -34,7 +34,7 @@ using namespace std;
 
 namespace ToolsInterface {
 
-    ToolsInterfaceCore::ToolsInterfaceCore(shared_ptr<DynamixelDriverCore> dynamixel):
+    ToolsInterfaceCore::ToolsInterfaceCore(shared_ptr<DxlDriverCore> dynamixel):
         _dynamixel(dynamixel)
     {
         initParams();
@@ -76,7 +76,7 @@ namespace ToolsInterface {
         //debug - display info
         ostringstream ss;
         ss << "[";
-        for (auto i = 0; i < idList.size() && i < typeList.size() ; ++i) {
+        for (size_t i = 0; i < idList.size() && i < typeList.size() ; ++i) {
             ss << " id " << idList.at(i) << ": " << typeList.at(i) << ",";
         }
 
@@ -91,7 +91,7 @@ namespace ToolsInterface {
             ROS_ERROR("Tools Interface - wrong dynamixel configuration. Please check your configuration file (tools_interface/config/default.yaml)");
 
         //put everything in maps
-        for(auto i = 0; i < idList.size(); ++i) {
+        for(size_t i = 0; i < idList.size(); ++i) {
 
             int id = idList.at(i);
             EMotorType type = MotorTypeEnum(typeList.at(i).c_str());
@@ -190,7 +190,8 @@ namespace ToolsInterface {
         lock_guard<mutex> lck(_tool_mutex);
         if( req.id != _toolState.getId() )
         {
-            return niryo_robot_msgs::CommandStatus::TOOL_ID_INVALID;
+            //return niryo_robot_msgs::CommandStatus::TOOL_ID_INVALID;
+            return false;
         }
         SingleMotorCmd cmd;
         vector<SingleMotorCmd> list_cmd;
@@ -213,7 +214,7 @@ namespace ToolsInterface {
         _dynamixel->addEndEffectorCommandToQueue(list_cmd);
         list_cmd.clear();
 
-        double dxl_speed = (double)req.open_speed * (double)DynamixelDriver::XL320Driver::XL320_STEPS_FOR_1_SPEED; // position . sec-1
+        double dxl_speed = (double)req.open_speed * DynamixelDriver::XL320Driver::XL320_STEPS_FOR_1_SPEED; // position . sec-1
         double dxl_steps_to_do = abs((double)req.open_position - (double)_dynamixel->getEndEffectorState(_toolState.getId())); // position
         double seconds_to_wait =  dxl_steps_to_do /  dxl_speed; // sec
         ros::Duration(seconds_to_wait + 0.25).sleep();
@@ -227,7 +228,7 @@ namespace ToolsInterface {
 
         res.state = ToolState::GRIPPER_STATE_OPEN;
 
-        return true;
+        return niryo_robot_msgs::CommandStatus::SUCCESS;
     }
 
     bool ToolsInterfaceCore::_callbackCloseGripper(tools_interface::CloseGripper::Request &req, tools_interface::CloseGripper::Response &res)
@@ -235,7 +236,8 @@ namespace ToolsInterface {
         lock_guard<mutex> lck(_tool_mutex);
         if( req.id != _toolState.getId() )
         {
-            return niryo_robot_msgs::CommandStatus::TOOL_ID_INVALID;
+           // return niryo_robot_msgs::CommandStatus::TOOL_ID_INVALID;
+            return false;
         }
 
         SingleMotorCmd cmd;
@@ -261,7 +263,7 @@ namespace ToolsInterface {
         list_cmd.clear();
 
         // calculate close duration
-        double dxl_speed = (double)req.close_speed *(double) DynamixelDriver::XL320Driver::XL320_STEPS_FOR_1_SPEED; // position . sec-1
+        double dxl_speed = (double)req.close_speed * DynamixelDriver::XL320Driver::XL320_STEPS_FOR_1_SPEED; // position . sec-1
         double dxl_steps_to_do = abs((double)req.close_position - (double)_dynamixel->getEndEffectorState(_toolState.getId())); // position
         double seconds_to_wait =  dxl_steps_to_do /  dxl_speed; // sec
         ros::Duration(seconds_to_wait + 0.25).sleep();
@@ -283,7 +285,8 @@ namespace ToolsInterface {
         // check gripper id, in case no ping has been done before, or wrong id given
         if( req.id != _toolState.getId() )
         {
-            return niryo_robot_msgs::CommandStatus::TOOL_ID_INVALID;
+            //return niryo_robot_msgs::CommandStatus::TOOL_ID_INVALID;
+            return false;
         }
 
         int pull_air_velocity = 1023;
@@ -294,7 +297,7 @@ namespace ToolsInterface {
         _dynamixel->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_EFFORT, _toolState.getId(), 500));
 
         // calculate pull air duration
-        double dxl_speed = (double)pull_air_velocity * (double)DynamixelDriver::XL320Driver::XL320_STEPS_FOR_1_SPEED; // position . sec-1
+        double dxl_speed = (double)pull_air_velocity * DynamixelDriver::XL320Driver::XL320_STEPS_FOR_1_SPEED; // position . sec-1
         double dxl_steps_to_do = abs((double)req.pull_air_position - (double)_dynamixel->getEndEffectorState(_toolState.getId())); // position
         double seconds_to_wait = dxl_steps_to_do / dxl_speed; // sec
 
@@ -314,7 +317,8 @@ namespace ToolsInterface {
         // check gripper id, in case no ping has been done before, or wrong id given
         if( req.id != _toolState.getId() )
         {
-            return niryo_robot_msgs::CommandStatus::TOOL_ID_INVALID;
+            //return niryo_robot_msgs::CommandStatus::TOOL_ID_INVALID;
+            return false;
         }
 
         int push_air_velocity = 1023;

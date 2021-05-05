@@ -40,7 +40,7 @@ namespace JointsInterface {
 
     CalibrationInterface::CalibrationInterface(std::vector<std::shared_ptr<JointState> > joint_list,
                                                std::shared_ptr<StepperDriver::StepperDriverCore> stepper,
-                                               std::shared_ptr<DynamixelDriver::DynamixelDriverCore> dynamixel) :
+                                               std::shared_ptr<DynamixelDriver::DxlDriverCore> dynamixel) :
         _stepperCore(stepper),
         _dynamixelCore(dynamixel),
         _joint_list(joint_list)

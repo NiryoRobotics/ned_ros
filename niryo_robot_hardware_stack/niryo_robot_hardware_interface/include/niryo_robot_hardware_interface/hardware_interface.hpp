@@ -82,7 +82,7 @@ namespace NiryoRobotHardwareInterface
         bool _callbackRebootMotors(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
         ros::ServiceServer _reboot_motors_service;
 
-        std::shared_ptr<DynamixelDriver::DynamixelDriverCore> _dynamixel_driver;
+        std::shared_ptr<DynamixelDriver::DxlDriverCore> _dynamixel_driver;
         std::shared_ptr<StepperDriver::StepperDriverCore> _stepper_driver;
 
         std::shared_ptr<CpuInterface::CpuInterfaceCore> _cpu_interface;

@@ -1,4 +1,4 @@
-message("Reading conveyor_interface/CMakeLists.txt...")
+message("\n## Reading conveyor_interface/CMakeLists.txt...")
 
 cmake_minimum_required(VERSION 2.8.3)
 project(conveyor_interface)
@@ -22,11 +22,13 @@ find_package(catkin REQUIRED
         std_msgs
         message_generation
         stepper_driver
+        roslint
 )
 
-###################################
-## catkin specific configuration ##
-###################################
+
+###############################################
+# Declare ROS messages, services and actions ##
+###############################################
 
 add_message_files(
   FILES
@@ -46,6 +48,11 @@ generate_messages(
     std_msgs
 )
 
+###################################
+## catkin specific configuration ##
+###################################
+
+
 ## INCLUDE_DIRS: if your package contains header files
 ## LIBRARIES: libraries you create in this project that dependent projects also need
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
@@ -62,9 +69,9 @@ catkin_package(
       stepper_driver
 )
 
-#############
+###########
 ## Build ##
-#############
+###########
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
@@ -72,7 +79,6 @@ include_directories(
   include
   ${catkin_INCLUDE_DIRS}
 )
-
 
 ## Declare libs and execs
 add_library(${PROJECT_NAME}
@@ -111,7 +117,7 @@ target_link_libraries(${PROJECT_NAME}_node
 
 if (BUILD_DOCS)
     add_custom_target (conveyor_doc ALL
-        rosdoc_lite -o ${CATKIN_PACKAGE_SHARE_DESTINATION}/doc/${PROJECT_NAME} ${CMAKE_CURRENT_LIST_DIR}
+        rosdoc_lite -o ${CATKIN_DEVEL_PREFIX}/doc/${PROJECT_NAME} ${CMAKE_CURRENT_LIST_DIR}
     )
 
 endif()
@@ -119,6 +125,7 @@ endif()
 #############
 ## Testing ##
 #############
+
 if(CATKIN_ENABLE_TESTING)
   if(BUILD_UNIT_TESTS)
     catkin_add_gtest(
@@ -170,12 +177,13 @@ install(
 
 install(
   DIRECTORY doc/
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/doc
+  DESTINATION ${CATKIN_DEVEL_PREFIX}/doc/${PROJECT_NAME}
 )
 
-install(DIRECTORY launch/
+install(
+  DIRECTORY launch/
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
-  PATTERN ".svn" EXCLUDE)
+)
 
 ##########################
 ## Static code analysis ##

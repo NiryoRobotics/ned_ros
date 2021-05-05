@@ -41,7 +41,7 @@ namespace JointsInterface {
     public:
         CalibrationInterface(std::vector<std::shared_ptr<common::model::JointState> > joint_list,
                              std::shared_ptr<StepperDriver::StepperDriverCore> stepper,
-                             std::shared_ptr<DynamixelDriver::DynamixelDriverCore> dynamixel);
+                             std::shared_ptr<DynamixelDriver::DxlDriverCore> dynamixel);
 
         int startCalibration(int mode, std::string &result_message);
 
@@ -68,7 +68,7 @@ namespace JointsInterface {
     private:
         ros::NodeHandle _nh;
         std::shared_ptr<StepperDriver::StepperDriverCore> _stepperCore;
-        std::shared_ptr<DynamixelDriver::DynamixelDriverCore> _dynamixelCore;
+        std::shared_ptr<DynamixelDriver::DxlDriverCore> _dynamixelCore;
 
         std::vector<std::shared_ptr<common::model::JointState> > _joint_list;
 

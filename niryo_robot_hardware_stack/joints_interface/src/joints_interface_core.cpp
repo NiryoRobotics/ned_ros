@@ -24,7 +24,7 @@
 
 namespace JointsInterface {
 
-    JointsInterfaceCore::JointsInterfaceCore(std::shared_ptr<DynamixelDriver::DynamixelDriverCore> dynamixel,
+    JointsInterfaceCore::JointsInterfaceCore(std::shared_ptr<DynamixelDriver::DxlDriverCore> dynamixel,
                                              std::shared_ptr<StepperDriver::StepperDriverCore> stepper)
     {
         init(dynamixel, stepper);
@@ -40,7 +40,7 @@ namespace JointsInterface {
             _control_loop_thread.join();
     }
 
-    void JointsInterfaceCore::init(std::shared_ptr<DynamixelDriver::DynamixelDriverCore> dynamixel,
+    void JointsInterfaceCore::init(std::shared_ptr<DynamixelDriver::DxlDriverCore> dynamixel,
                                    std::shared_ptr<StepperDriver::StepperDriverCore> stepper)
     {
         initParams();
@@ -195,7 +195,6 @@ namespace JointsInterface {
      */
     bool JointsInterfaceCore::_callbackActivateLearningMode(niryo_robot_msgs::SetBool::Request &req, niryo_robot_msgs::SetBool::Response &res)
     {
-        bool learning_mode_on = req.value;
         activateLearningMode(req.value, res.status, res.message);
         return true;
     }

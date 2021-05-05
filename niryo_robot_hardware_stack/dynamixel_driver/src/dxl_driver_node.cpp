@@ -25,7 +25,7 @@ int main(int argc, char** argv)
 
   ros::NodeHandle nodeHandle("~");
 
-  DynamixelDriver::DynamixelDriverCore dxl_node;
+  DynamixelDriver::DxlDriverCore dxl_node;
 
   ros::spin();
   return 0;

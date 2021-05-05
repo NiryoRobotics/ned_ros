@@ -16,7 +16,7 @@ int main(int argc, char **argv)
 
     std::shared_ptr<ToolsInterfaceCore> tool;
 
-    std::shared_ptr<DynamixelDriver::DynamixelDriverCore> dynamixel(new DynamixelDriver::DynamixelDriverCore());
+    std::shared_ptr<DynamixelDriver::DxlDriverCore> dynamixel(new DynamixelDriver::DxlDriverCore());
     ros::Duration(1).sleep();
     tool.reset(new ToolsInterfaceCore(dynamixel));
     ros::Duration(1).sleep();

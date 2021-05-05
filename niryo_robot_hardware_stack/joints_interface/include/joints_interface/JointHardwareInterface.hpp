@@ -46,7 +46,7 @@ namespace JointsInterface {
 
     public:
         JointHardwareInterface(
-            std::shared_ptr<DynamixelDriver::DynamixelDriverCore> dynamixel,
+            std::shared_ptr<DynamixelDriver::DxlDriverCore> dynamixel,
             std::shared_ptr<StepperDriver::StepperDriverCore> stepper);
 
         void sendInitMotorsParams();
@@ -82,7 +82,7 @@ namespace JointsInterface {
         hardware_interface::JointStateInterface _joint_state_interface;
         hardware_interface::PositionJointInterface _joint_position_interface;
 
-        std::shared_ptr<DynamixelDriver::DynamixelDriverCore> _dynamixel;
+        std::shared_ptr<DynamixelDriver::DxlDriverCore> _dynamixel;
         std::shared_ptr<StepperDriver::StepperDriverCore> _stepper;
         std::unique_ptr<CalibrationInterface> _calibration_interface;
 

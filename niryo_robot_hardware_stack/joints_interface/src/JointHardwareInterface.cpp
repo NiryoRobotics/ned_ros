@@ -28,7 +28,7 @@ using namespace common::model;
 
 namespace JointsInterface {
 
-    JointHardwareInterface::JointHardwareInterface(shared_ptr<DynamixelDriver::DynamixelDriverCore> dynamixel,
+    JointHardwareInterface::JointHardwareInterface(shared_ptr<DynamixelDriver::DxlDriverCore> dynamixel,
                                                    shared_ptr<StepperDriver::StepperDriverCore> stepper) :
         _dynamixel(dynamixel),
         _stepper(stepper),

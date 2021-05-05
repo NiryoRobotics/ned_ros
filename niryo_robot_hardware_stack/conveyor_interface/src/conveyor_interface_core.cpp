@@ -135,7 +135,7 @@ namespace ConveyorInterface {
         else if (req.cmd == conveyor_interface::SetConveyor::Request::REMOVE)
         {
             bool conveyor_found = false;
-            for(int i = 0; i < _list_conveyor_id.size(); i++)
+            for(size_t i = 0; i < _list_conveyor_id.size(); i++)
             {
                 if(req.id == _list_conveyor_id.at(i))
                 {

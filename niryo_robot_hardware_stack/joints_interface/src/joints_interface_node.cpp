@@ -15,7 +15,7 @@ int main(int argc, char **argv)
     
     ros::NodeHandle nh;
    
-    std::shared_ptr<DynamixelDriver::DynamixelDriverCore> dynamixel(new DynamixelDriver::DynamixelDriverCore());
+    std::shared_ptr<DynamixelDriver::DxlDriverCore> dynamixel(new DynamixelDriver::DxlDriverCore());
     ros::Duration(1).sleep();
 
     std::shared_ptr<StepperDriver::StepperDriverCore> stepper(new StepperDriver::StepperDriverCore());

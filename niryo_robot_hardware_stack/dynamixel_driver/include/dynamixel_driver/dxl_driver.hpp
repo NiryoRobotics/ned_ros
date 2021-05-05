@@ -64,11 +64,11 @@ namespace DynamixelDriver
     /**
      * @brief The DxlDriver class
      */
-    class DynamixelDriver : public common::model::IDriver
+    class DxlDriver : public common::model::IDriver
     {
         public:
-            DynamixelDriver();
-            virtual ~DynamixelDriver() override;
+            DxlDriver();
+            virtual ~DxlDriver() override;
 
 
             //commands
@@ -165,31 +165,31 @@ namespace DynamixelDriver
     //inline getters
 
     inline
-    bool DynamixelDriver::isConnectionOk() const
+    bool DxlDriver::isConnectionOk() const
     {
         return _is_connection_ok;
     }
 
     inline
-    std::vector<uint8_t> DynamixelDriver::getRemovedMotorList() const
+    std::vector<uint8_t> DxlDriver::getRemovedMotorList() const
     {
         return _removed_motor_id_list;
     }
 
     inline
-    std::string DynamixelDriver::getErrorMessage() const
+    std::string DxlDriver::getErrorMessage() const
     {
         return _debug_error_message;
     }
 
     inline
-    int DynamixelDriver::getLedState() const
+    int DxlDriver::getLedState() const
     {
         return _led_state;
     }
 
     inline
-    void DynamixelDriver::getBusState(bool &connection_state, std::vector<uint8_t> &motor_id,
+    void DxlDriver::getBusState(bool &connection_state, std::vector<uint8_t> &motor_id,
                                 std::string &debug_msg) const
     {
         debug_msg = _debug_error_message;
@@ -198,7 +198,7 @@ namespace DynamixelDriver
     }
 
     inline
-    bool DynamixelDriver::hasMotors()
+    bool DxlDriver::hasMotors()
     {
         return _state_map.size() > 0;
     }

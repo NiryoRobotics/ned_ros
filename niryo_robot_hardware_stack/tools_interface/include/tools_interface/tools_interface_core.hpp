@@ -45,7 +45,7 @@ namespace ToolsInterface {
     {
         public:
 
-            ToolsInterfaceCore(std::shared_ptr<DynamixelDriver::DynamixelDriverCore> dynamixel);
+            ToolsInterfaceCore(std::shared_ptr<DynamixelDriver::DxlDriverCore> dynamixel);
             virtual ~ToolsInterfaceCore();
 
             void pubToolId(int id);
@@ -56,7 +56,7 @@ namespace ToolsInterface {
 
         private:
             ros::NodeHandle _nh;
-            std::shared_ptr<DynamixelDriver::DynamixelDriverCore> _dynamixel;
+            std::shared_ptr<DynamixelDriver::DxlDriverCore> _dynamixel;
             common::model::ToolState _toolState;
             std::mutex _tool_mutex;
 

@@ -51,7 +51,7 @@ namespace JointsInterface {
         public:
 
             JointsInterfaceCore(
-                std::shared_ptr<DynamixelDriver::DynamixelDriverCore> dynamixel,
+                std::shared_ptr<DynamixelDriver::DxlDriverCore> dynamixel,
                 std::shared_ptr<StepperDriver::StepperDriverCore> stepper);
 
             virtual ~JointsInterfaceCore();
@@ -68,7 +68,7 @@ namespace JointsInterface {
             const std::vector<std::shared_ptr<common::model::JointState> >& getJointsState() const;
 
         private:    
-            void init(std::shared_ptr<DynamixelDriver::DynamixelDriverCore> dynamixel,
+            void init(std::shared_ptr<DynamixelDriver::DxlDriverCore> dynamixel,
                       std::shared_ptr<StepperDriver::StepperDriverCore> stepper);
             void initParams();
 

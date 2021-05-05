@@ -1,5 +1,8 @@
+message("\n## Reading common/CMakeLists.txt...")
+
 cmake_minimum_required(VERSION 2.8.3)
 project(common)
+
 option(BUILD_DOCS "Build documentation" OFF)
 option(BUILD_UNIT_TESTS "Build the unit tests" OFF)
 
@@ -18,6 +21,10 @@ find_package(catkin REQUIRED
         roslint
 )
 
+###############################################
+# Declare ROS messages, services and actions ##
+###############################################
+
 ###################################
 ## catkin specific configuration ##
 ###################################
@@ -35,9 +42,9 @@ catkin_package(
         roscpp
 )
 
-#############
+###########
 ## Build ##
-#############
+###########
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
@@ -77,7 +84,7 @@ target_link_libraries(${PROJECT_NAME}
 
 if (BUILD_DOCS)
     add_custom_target (common_doc ALL
-        rosdoc_lite -o ${CATKIN_PACKAGE_SHARE_DESTINATION}/doc/${PROJECT_NAME} ${CMAKE_CURRENT_LIST_DIR}
+        rosdoc_lite -o ${CATKIN_DEVEL_PREFIX}/doc/${PROJECT_NAME} ${CMAKE_CURRENT_LIST_DIR}
     )
 
 endif()
@@ -108,6 +115,22 @@ endif(CATKIN_ENABLE_TESTING)
 install(
   DIRECTORY include/${PROJECT_NAME}/
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+)
+
+# Mark other files for installation
+install(
+  DIRECTORY include/${PROJECT_NAME}/
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+)
+
+install(
+  DIRECTORY doc/
+  DESTINATION ${CATKIN_DEVEL_PREFIX}/doc/${PROJECT_NAME}
+)
+
+install(
+  DIRECTORY launch/
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
 )
 
 ##########################

@@ -1,5 +1,8 @@
+message("\n## Reading stepper_driver/CMakeLists.txt...")
+
 cmake_minimum_required(VERSION 2.8.3)
 project(stepper_driver)
+
 option(BUILD_DOCS "Build documentation" OFF)
 option(BUILD_UNIT_TESTS "Build the unit tests" OFF)
 option(BUILD_INTEGRATION_TESTS "Build the integration tests" OFF)
@@ -23,15 +26,9 @@ find_package(catkin REQUIRED
         roslint
 )
 
-if(CATKIN_ENABLE_TESTING)
-    if(BUILD_INTEGRATION_TESTS)
-        find_package(catkin REQUIRED rostest)
-    endif()
-endif()
-
-###################################
-## catkin specific configuration ##
-###################################
+###############################################
+# Declare ROS messages, services and actions ##
+###############################################
 
 add_message_files(
   FILES
@@ -53,6 +50,9 @@ generate_messages(
     niryo_robot_msgs
 )
 
+###################################
+## catkin specific configuration ##
+###################################
 
 ## INCLUDE_DIRS: if your package contains header files
 ## LIBRARIES: libraries you create in this project that dependent projects also need
@@ -70,10 +70,9 @@ catkin_package(
         common
 )
 
-
-#############
+###########
 ## Build ##
-#############
+###########
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
@@ -104,7 +103,11 @@ add_dependencies(${PROJECT_NAME}
 ## Specify libraries to link executable targets against
 
 # wiringPi should be installed only on a Raspberry Pi board
-execute_process( COMMAND uname -m COMMAND tr -d '\n' OUTPUT_VARIABLE ARCHITECTURE )
+execute_process( COMMAND
+        uname -m COMMAND tr -d '\n'
+    OUTPUT_VARIABLE
+        ARCHITECTURE
+)
 
 if (${ARCHITECTURE} MATCHES "^(arm.*|aarch64.*|arm64.*)$")
     message(STATUS "wiringPi library is required - arm processor")
@@ -130,7 +133,7 @@ target_link_libraries(${PROJECT_NAME}_node
 
 if (BUILD_DOCS)
     add_custom_target (stepper_doc ALL
-        rosdoc_lite -o ${CATKIN_PACKAGE_SHARE_DESTINATION}/doc/${PROJECT_NAME} ${CMAKE_CURRENT_LIST_DIR}
+        rosdoc_lite -o ${CATKIN_DEVEL_PREFIX}/doc/${PROJECT_NAME} ${CMAKE_CURRENT_LIST_DIR}
     )
 
 endif()
@@ -138,6 +141,7 @@ endif()
 #############
 ## Testing ##
 #############
+
 if(CATKIN_ENABLE_TESTING)
   if(BUILD_UNIT_TESTS)
     catkin_add_gtest(
@@ -153,17 +157,19 @@ if(CATKIN_ENABLE_TESTING)
   endif(BUILD_UNIT_TESTS)
 
   if(BUILD_INTEGRATION_TESTS)
-    add_rostest_gtest(
-      ${PROJECT_NAME}_integration_tests
-      test/test_stepper_driver_node.test
-      test/test_stepper_driver_node.cpp
-    )
-    if(TARGET ${PROJECT_NAME}_integration_tests)
-      target_link_libraries(
+      find_package(catkin REQUIRED rostest)
+
+      add_rostest_gtest(
         ${PROJECT_NAME}_integration_tests
-        ${PROJECT_NAME}
+        test/test_stepper_driver_node.test
+        test/test_stepper_driver_node.cpp
       )
-    endif()
+      if(TARGET ${PROJECT_NAME}_integration_tests)
+        target_link_libraries(
+          ${PROJECT_NAME}_integration_tests
+          ${PROJECT_NAME}
+        )
+      endif()
   endif(BUILD_INTEGRATION_TESTS)
 
 endif(CATKIN_ENABLE_TESTING)
@@ -187,12 +193,13 @@ install(
 
 install(
   DIRECTORY doc/
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/doc
+  DESTINATION ${CATKIN_DEVEL_PREFIX}/doc/${PROJECT_NAME}
 )
 
-install(DIRECTORY launch/
+install(
+  DIRECTORY launch/
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
-  PATTERN ".svn" EXCLUDE)
+)
 
 ##########################
 ## Static code analysis ##

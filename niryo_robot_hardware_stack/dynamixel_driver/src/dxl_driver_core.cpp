@@ -27,7 +27,7 @@ static constexpr double DXL_VOLTAGE_DIVISOR = 10.0;
 
 namespace DynamixelDriver
 {
-    DynamixelDriverCore::DynamixelDriverCore() :
+    DxlDriverCore::DxlDriverCore() :
         _control_loop_flag(false),
         _debug_flag(false)
     {
@@ -36,28 +36,28 @@ namespace DynamixelDriver
         init();
     }
 
-    DynamixelDriverCore::~DynamixelDriverCore()
+    DxlDriverCore::~DxlDriverCore()
     {
         if(_control_loop_thread.joinable())
                 _control_loop_thread.join();
     }
 
-    void DynamixelDriverCore::init()
+    void DxlDriverCore::init()
     {
         _control_loop_flag = false;
         _debug_flag = false;
 
         initParameters();
-        _dynamixel.reset(new DynamixelDriver());
+        _dynamixel.reset(new DxlDriver());
         _dynamixel->scanAndCheck();
         startControlLoop();
 
-        _activate_leds_server = _nh.advertiseService("niryo_robot/dynamixel_driver/set_dxl_leds", &DynamixelDriverCore::callbackActivateLeds, this);
-        _custom_cmd_server = _nh.advertiseService("niryo_robot/dynamixel_driver/send_custom_dxl_value", &DynamixelDriverCore::callbackSendCustomDxlValue, this);
-        _custom_cmd_getter = _nh.advertiseService("niryo_robot/dynamixel_driver/read_custom_dxl_value", &DynamixelDriverCore::callbackReadCustomDxlValue, this);
+        _activate_leds_server = _nh.advertiseService("niryo_robot/dynamixel_driver/set_dxl_leds", &DxlDriverCore::callbackActivateLeds, this);
+        _custom_cmd_server = _nh.advertiseService("niryo_robot/dynamixel_driver/send_custom_dxl_value", &DxlDriverCore::callbackSendCustomDxlValue, this);
+        _custom_cmd_getter = _nh.advertiseService("niryo_robot/dynamixel_driver/read_custom_dxl_value", &DxlDriverCore::callbackReadCustomDxlValue, this);
     }
 
-    void DynamixelDriverCore::initParameters()
+    void DxlDriverCore::initParameters()
     {
         _control_loop_frequency = 0.0;
         double write_frequency = 0.0;
@@ -85,30 +85,30 @@ namespace DynamixelDriver
         _delta_time_write = 1.0 / write_frequency;
     }
 
-    void DynamixelDriverCore::startControlLoop()
+    void DxlDriverCore::startControlLoop()
     {
         resetHardwareControlLoopRates();
         if (!_control_loop_flag)
         {
             ROS_INFO("DynamixelDriverCore::startControlLoop - Start control loop");
             _control_loop_flag = true;
-            _control_loop_thread = std::thread(&DynamixelDriverCore::controlLoop, this);
+            _control_loop_thread = std::thread(&DxlDriverCore::controlLoop, this);
         }
     }
 
-    void DynamixelDriverCore::clearSingleCommandQueue()
+    void DxlDriverCore::clearSingleCommandQueue()
     {
         while(!_dxl_single_cmds.empty())
             _dxl_single_cmds.pop();
     }
 
-    void DynamixelDriverCore::clearEndEffectorCommandQueue()
+    void DxlDriverCore::clearEndEffectorCommandQueue()
     {
         while(!_end_effector_cmds.empty())
             _end_effector_cmds.pop();
     }
 
-    void DynamixelDriverCore::resetHardwareControlLoopRates()
+    void DxlDriverCore::resetHardwareControlLoopRates()
     {
         ROS_DEBUG("DynamixelDriverCore::resetHardwareControlLoopRates - Reset control loop rates");
         double now = ros::Time::now().toSec();
@@ -119,7 +119,7 @@ namespace DynamixelDriver
         _time_check_end_effector_last_read = now;
     }
 
-    void DynamixelDriverCore::activeDebugMode(bool mode)
+    void DxlDriverCore::activeDebugMode(bool mode)
     {
         ROS_INFO("DynamixelDriverCore::activeDebugMode - Activate debug mode for dynamixel driver core: %d", mode);
         _debug_flag = mode;
@@ -135,7 +135,7 @@ namespace DynamixelDriver
         }
     }
 
-    int DynamixelDriverCore::rebootMotors()
+    int DxlDriverCore::rebootMotors()
     {
         ROS_INFO("DynamixelDriverCore::rebootMotors - Reboot motors");
         lock_guard<mutex> lck(_control_loop_mutex);
@@ -144,7 +144,7 @@ namespace DynamixelDriver
         return result;
     }
 
-    int DynamixelDriverCore::motorScanReport(uint8_t motor_id, EMotorType motor_type)
+    int DxlDriverCore::motorScanReport(uint8_t motor_id, EMotorType motor_type)
     {
         if (_debug_flag)
         {
@@ -168,7 +168,7 @@ namespace DynamixelDriver
         return niryo_robot_msgs::CommandStatus::ABORTED;
     }
 
-    int DynamixelDriverCore::motorCmdReport(uint8_t motor_id, EMotorType motor_type)
+    int DxlDriverCore::motorCmdReport(uint8_t motor_id, EMotorType motor_type)
     {
         if (_debug_flag)
         {
@@ -218,7 +218,7 @@ namespace DynamixelDriver
         return niryo_robot_msgs::CommandStatus::ABORTED;
     }
 
-    int DynamixelDriverCore::launchMotorsReport()
+    int DxlDriverCore::launchMotorsReport()
     {
         if (_debug_flag)
         {
@@ -277,7 +277,7 @@ namespace DynamixelDriver
      * @brief DynamixelDriverCore::setDxlSyncCommands
      * @param cmd
      */
-    void DynamixelDriverCore::setSyncCommand(const SynchronizeMotorCmd &cmd)
+    void DxlDriverCore::setSyncCommand(const SynchronizeMotorCmd &cmd)
     {
         ROS_DEBUG_THROTTLE(0.5, "DynamixelDriverCore::setDxlSyncCommands %s", cmd.str().c_str());
 
@@ -296,7 +296,7 @@ namespace DynamixelDriver
      * @brief DynamixelDriverCore::addSingleCommandToQueue
      * @param cmd
      */
-    void DynamixelDriverCore::addSingleCommandToQueue(const SingleMotorCmd &cmd)
+    void DxlDriverCore::addSingleCommandToQueue(const SingleMotorCmd &cmd)
     {
         ROS_DEBUG("DynamixelDriverCore::addSingleCommandToQueue - %s", cmd.str().c_str());
 
@@ -307,7 +307,7 @@ namespace DynamixelDriver
             _dxl_single_cmds.push(cmd);
     }
 
-    void DynamixelDriverCore::addSingleCommandToQueue(const std::vector<SingleMotorCmd> &cmd)
+    void DxlDriverCore::addSingleCommandToQueue(const std::vector<SingleMotorCmd> &cmd)
     {
         for(auto&& c : cmd)
             addSingleCommandToQueue(c);
@@ -317,7 +317,7 @@ namespace DynamixelDriver
      * @brief DynamixelDriverCore::addEndEffectorCommandToQueue
      * @param cmd
      */
-    void DynamixelDriverCore::addEndEffectorCommandToQueue(const SingleMotorCmd &cmd)
+    void DxlDriverCore::addEndEffectorCommandToQueue(const SingleMotorCmd &cmd)
     {
         ROS_DEBUG_THROTTLE(0.5, "DynamixelDriverCore::addEndEffectorCommandToQueue - %s", cmd.str().c_str());
 
@@ -327,7 +327,7 @@ namespace DynamixelDriver
             _end_effector_cmds.push(cmd);
     }
 
-    void DynamixelDriverCore::addEndEffectorCommandToQueue(const vector<SingleMotorCmd> &cmd)
+    void DxlDriverCore::addEndEffectorCommandToQueue(const vector<SingleMotorCmd> &cmd)
     {
 
         for(auto&& c : cmd)
@@ -340,7 +340,7 @@ namespace DynamixelDriver
      * @param type
      * @return
      */
-    int DynamixelDriverCore::ping_id(uint8_t id, EMotorType type)
+    int DxlDriverCore::ping_id(uint8_t id, EMotorType type)
     {
         lock_guard<mutex> lck(_control_loop_mutex);
         int result = _dynamixel->type_ping_id(id, type);
@@ -351,7 +351,7 @@ namespace DynamixelDriver
      * @brief DynamixelDriverCore::scanTools
      * @return
      */
-    vector<uint8_t> DynamixelDriverCore::scanTools()
+    vector<uint8_t> DxlDriverCore::scanTools()
     {
         vector<uint8_t> motor_list;
         lock_guard<mutex> lck(_control_loop_mutex);
@@ -377,7 +377,7 @@ namespace DynamixelDriver
         return motor_list;
     }
 
-    int DynamixelDriverCore::setEndEffector(EMotorType type, uint8_t id)
+    int DxlDriverCore::setEndEffector(EMotorType type, uint8_t id)
     {
         int result = this->ping_id(id, type);
 
@@ -396,21 +396,21 @@ namespace DynamixelDriver
     }
 
 
-    void DynamixelDriverCore::unsetEndEffector(uint8_t id)
+    void DxlDriverCore::unsetEndEffector(uint8_t id)
     {
         ROS_DEBUG("DynamixelDriverCore::unsetEndEffector - UnsetEndEffector: id %d", id);
         lock_guard<mutex> lck(_control_loop_mutex);
         _dynamixel->removeMotor(id);
     }
 
-    uint32_t DynamixelDriverCore::getEndEffectorState(uint8_t id) const
+    uint32_t DxlDriverCore::getEndEffectorState(uint8_t id) const
     {
         DxlMotorState motor_state = _dynamixel->getMotorState(id);
 
         return static_cast<uint32_t>(motor_state.getPositionState());
     }
 
-    dynamixel_driver::DxlArrayMotorHardwareStatus DynamixelDriverCore::getHwStatus() const
+    dynamixel_driver::DxlArrayMotorHardwareStatus DxlDriverCore::getHwStatus() const
     {
         dynamixel_driver::DxlMotorHardwareStatus data;
         dynamixel_driver::DxlArrayMotorHardwareStatus hw_state;
@@ -428,7 +428,7 @@ namespace DynamixelDriver
         return hw_state;
     }
 
-    niryo_robot_msgs::BusState DynamixelDriverCore::getBusState() const
+    niryo_robot_msgs::BusState DxlDriverCore::getBusState() const
     {
         niryo_robot_msgs::BusState dxl_bus_state;
         string error;
@@ -445,7 +445,7 @@ namespace DynamixelDriver
      * @brief DynamixelDriverCore::update_leds
      * @return
      */
-    int DynamixelDriverCore::update_leds(void)
+    int DxlDriverCore::update_leds(void)
     {
         lock_guard<mutex> lck(_control_loop_mutex);
         int result = _dynamixel->setLeds(_dynamixel->getLedState(), EMotorType::MOTOR_TYPE_XL320);
@@ -455,7 +455,7 @@ namespace DynamixelDriver
     /**
      * @brief DynamixelDriverCore::_executeCommand : execute all the cmd in the current queue
      */ // create a unique queue using polymorphism
-    void DynamixelDriverCore::_executeCommand()
+    void DxlDriverCore::_executeCommand()
     {
         bool need_sleep = false;
 
@@ -494,7 +494,7 @@ namespace DynamixelDriver
     /**
      * @brief DynamixelDriverCore::controlLoop
      */
-    void DynamixelDriverCore::controlLoop()
+    void DxlDriverCore::controlLoop()
     {
         ros::Rate control_loop_rate = ros::Rate(_control_loop_frequency);
         resetHardwareControlLoopRates();
@@ -565,7 +565,7 @@ namespace DynamixelDriver
      * @param res
      * @return
      */
-    bool DynamixelDriverCore::callbackSendCustomDxlValue(dynamixel_driver::SendCustomDxlValue::Request &req,
+    bool DxlDriverCore::callbackSendCustomDxlValue(dynamixel_driver::SendCustomDxlValue::Request &req,
                                                          dynamixel_driver::SendCustomDxlValue::Response &res)
     {
         int result;
@@ -606,7 +606,7 @@ namespace DynamixelDriver
      * @param res
      * @return
      */
-    bool DynamixelDriverCore::callbackReadCustomDxlValue(dynamixel_driver::ReadCustomDxlValue::Request &req,
+    bool DxlDriverCore::callbackReadCustomDxlValue(dynamixel_driver::ReadCustomDxlValue::Request &req,
                                                         dynamixel_driver::ReadCustomDxlValue::Response &res)
     {
         int result;
@@ -646,7 +646,7 @@ namespace DynamixelDriver
      * @param res
      * @return
      */
-    bool DynamixelDriverCore::callbackActivateLeds(niryo_robot_msgs::SetInt::Request &req, niryo_robot_msgs::SetInt::Response &res)
+    bool DxlDriverCore::callbackActivateLeds(niryo_robot_msgs::SetInt::Request &req, niryo_robot_msgs::SetInt::Response &res)
     {
         int led = req.value;
         string message = "";

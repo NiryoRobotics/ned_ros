@@ -129,7 +129,7 @@ namespace NiryoRobotHardwareInterface
             else
             {
                 ROS_DEBUG("HardwareInterface::initNodes - Start Dynamixel Driver Node");
-                _dynamixel_driver.reset(new DynamixelDriver::DynamixelDriverCore());
+                _dynamixel_driver.reset(new DynamixelDriver::DxlDriverCore());
                 ros::Duration(0.25).sleep();
             }
 
@@ -294,32 +294,32 @@ namespace NiryoRobotHardwareInterface
             motor_names.clear();
             motor_types.clear();
 
-            for (int i = 0; i < stepper_motor_state.motors_hw_status.size(); i++)
+            for (auto const& hw_status : stepper_motor_state.motors_hw_status)
             {
-                temperatures.push_back(stepper_motor_state.motors_hw_status.at(i).temperature);
-                voltages.push_back(stepper_motor_state.motors_hw_status.at(i).voltage);
-                hw_errors.push_back(stepper_motor_state.motors_hw_status.at(i).error);
+                temperatures.push_back(hw_status.temperature);
+                voltages.push_back(hw_status.voltage);
+                hw_errors.push_back(hw_status.error);
                 hw_errors_msg.push_back("");
                 motor_types.push_back("Niryo Stepper");
                 std::string joint_name = "";
                 if (!_simulation_mode)
-                    joint_name = _joints_interface->jointIdToJointName(stepper_motor_state.motors_hw_status.at(i).motor_identity.motor_id);
+                    joint_name = _joints_interface->jointIdToJointName(hw_status.motor_identity.motor_id);
                 else
-                    joint_name = _fake_interface->jointIdToJointName(stepper_motor_state.motors_hw_status.at(i).motor_identity.motor_id);
+                    joint_name = _fake_interface->jointIdToJointName(hw_status.motor_identity.motor_id);
 
-                joint_name = joint_name == "" ? ("Stepper " + std::to_string(dxl_motor_state.motors_hw_status.at(i).motor_identity.motor_id)) : joint_name;
+                joint_name = joint_name == "" ? ("Stepper " + std::to_string(hw_status.motor_identity.motor_id)) : joint_name;
                 motor_names.push_back(joint_name);
             }
 
             // for each motor gather info in the dedicated vectors
-            for (int i = 0; i < dxl_motor_state.motors_hw_status.size(); i++)
+            for (auto const& hw_status : dxl_motor_state.motors_hw_status)
             {
-                temperatures.push_back(dxl_motor_state.motors_hw_status.at(i).temperature);
-                voltages.push_back(dxl_motor_state.motors_hw_status.at(i).voltage);
-                hw_errors.push_back(dxl_motor_state.motors_hw_status.at(i).error);
-                hw_errors_msg.push_back(dxl_motor_state.motors_hw_status.at(i).error_msg);
+                temperatures.push_back(static_cast<int32_t>(hw_status.temperature));
+                voltages.push_back(hw_status.voltage);
+                hw_errors.push_back(static_cast<int32_t>(hw_status.error));
+                hw_errors_msg.push_back(hw_status.error_msg);
 
-                switch(dxl_motor_state.motors_hw_status.at(i).motor_identity.motor_type)
+                switch(hw_status.motor_identity.motor_type)
                 {
                     case static_cast<uint8_t>(common::model::EMotorType::MOTOR_TYPE_XL320):
                         motor_types.push_back("DXL XL-320");
@@ -343,9 +343,9 @@ namespace NiryoRobotHardwareInterface
                 
                 std::string joint_name = "";
                 if (!_simulation_mode)
-                    joint_name = _joints_interface->jointIdToJointName(dxl_motor_state.motors_hw_status.at(i).motor_identity.motor_id);
+                    joint_name = _joints_interface->jointIdToJointName(hw_status.motor_identity.motor_id);
                 else
-                    joint_name = _fake_interface->jointIdToJointName(dxl_motor_state.motors_hw_status.at(i).motor_identity.motor_id);
+                    joint_name = _fake_interface->jointIdToJointName(hw_status.motor_identity.motor_id);
 
                 joint_name = (joint_name == "") ? "Tool" : joint_name;
                 motor_names.push_back(joint_name);
@@ -404,9 +404,9 @@ namespace NiryoRobotHardwareInterface
                 motor_names.push_back("joint_6");
             }
 
-            for (int i = 0; i < stepper_motor_state.motors_hw_status.size(); i++)
+            for (auto const& hw_status : stepper_motor_state.motors_hw_status)
             {
-                firmware_versions.push_back(stepper_motor_state.motors_hw_status.at(i).firmware_version);
+                firmware_versions.push_back(hw_status.firmware_version);
             }
 
             niryo_robot_msgs::SoftwareVersion msg;
