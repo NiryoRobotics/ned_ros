@@ -176,8 +176,8 @@
         </collision>
     </link>
 
-    <!-- Test to add collision for the motor of joint 5 -->
-    <link name="test_collision">
+    <!-- add collision for the motor of joint 5 -->
+    <link name="joint5_motor">
         <inertial>
             <origin xyz="-0.00811345462189901 -0.000135618649565461 0.107402242790047"
                     rpy="0 0 0"/>
@@ -199,9 +199,9 @@
         <origin xyz="0 0 0"
                 rpy="0 0 0"/>
         <parent link="forearm_link"/>
-        <child link="test_collision"/>
+        <child link="joint5_motor"/>
     </joint>
-    <!-- end of test -->
+ 
 
     <joint name="joint_5"
            type="revolute">
