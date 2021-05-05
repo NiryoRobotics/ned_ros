@@ -126,6 +126,8 @@ Visualization Manager:
           Value: false
         hand_link:
           Value: false
+        joint5_motor:
+          Value: false
         shoulder_link:
           Value: false
         tool_link:
