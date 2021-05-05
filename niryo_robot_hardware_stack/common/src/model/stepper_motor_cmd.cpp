@@ -26,18 +26,31 @@ using namespace std;
 namespace common {
     namespace model {
 
+        /**
+         * @brief StepperMotorCmd::StepperMotorCmd
+         */
         StepperMotorCmd::StepperMotorCmd() :
             AbstractMotorCmd<EStepperCommandType>(EStepperCommandType::CMD_TYPE_NONE)
         {
             reset();
         }
 
+        /**
+         * @brief StepperMotorCmd::StepperMotorCmd
+         * @param type
+         */
         StepperMotorCmd::StepperMotorCmd(EStepperCommandType type) :
             AbstractMotorCmd<EStepperCommandType>(type)
         {
             clear();
         }
 
+        /**
+         * @brief StepperMotorCmd::StepperMotorCmd
+         * @param type
+         * @param motor_id
+         * @param params
+         */
         StepperMotorCmd::StepperMotorCmd(EStepperCommandType type,
                                          uint8_t motor_id,
                                          vector<int32_t> params) :
@@ -47,15 +60,28 @@ namespace common {
         {
         }
 
+        /**
+         * @brief StepperMotorCmd::setId
+         * @param id
+         */
         void StepperMotorCmd::setId(uint8_t id)
         {
             _id = id;
         }
 
+        /**
+         * @brief StepperMotorCmd::setParams
+         * @param params
+         */
         void StepperMotorCmd::setParams(std::vector<int32_t> params)
         {
             _param_list = params;
         }
+
+
+        //***********************
+        //  AbstractMotorCmd intf
+        //***********************
 
         /**
          * @brief StepperMotorCmd::reset
@@ -66,6 +92,9 @@ namespace common {
             clear();
         }
 
+        /**
+         * @brief StepperMotorCmd::clear
+         */
         void StepperMotorCmd::clear()
         {
             _param_list.clear();

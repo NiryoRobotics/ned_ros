@@ -29,6 +29,9 @@
 namespace common {
     namespace model {
 
+        /**
+         * @brief The SingleMotorCmd class
+         */
         class SingleMotorCmd : public AbstractMotorCmd<EDxlCommandType>
         {
             public:
@@ -56,6 +59,10 @@ namespace common {
                 uint32_t _param;
         };
 
+        /**
+         * @brief SingleMotorCmd::getId
+         * @return
+         */
         inline
         uint8_t
         SingleMotorCmd::getId() const
@@ -63,6 +70,10 @@ namespace common {
             return _id;
         }
 
+        /**
+         * @brief SingleMotorCmd::getParam
+         * @return
+         */
         inline
         uint32_t
         SingleMotorCmd::getParam() const

@@ -29,6 +29,9 @@
 namespace common {
     namespace model {
 
+        /**
+         * @brief The EStepperCommandType enum
+         */
         enum class EStepperCommandType { CMD_TYPE_NONE=0,
                                          CMD_TYPE_POSITION=1,
                                          CMD_TYPE_VELOCITY=2,

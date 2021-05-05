@@ -25,21 +25,24 @@ namespace common {
     namespace model {
 
         /**
-         *
+         * @brief StepperCalibrationStatusEnum::StepperCalibrationStatusEnum
+         * @param e
          */
         StepperCalibrationStatusEnum::StepperCalibrationStatusEnum(EStepperCalibrationStatus e):
             AbstractEnum<StepperCalibrationStatusEnum, EStepperCalibrationStatus>(e)
         {}
 
         /**
-         *
+         * @brief StepperCalibrationStatusEnum::StepperCalibrationStatusEnum
+         * @param str
          */
         StepperCalibrationStatusEnum::StepperCalibrationStatusEnum(const char* const str):
             AbstractEnum<StepperCalibrationStatusEnum, EStepperCalibrationStatus>(str)
         {}
 
         /**
-         *
+         * @brief StepperCalibrationStatusEnum::initialize
+         * @return
          */
         map<EStepperCalibrationStatus, string>
         StepperCalibrationStatusEnum::initialize()

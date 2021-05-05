@@ -30,6 +30,9 @@
 namespace common {
     namespace model {
 
+        /**
+         * @brief The JointState class
+         */
         class JointState : public AbstractMotorState
         {
 
@@ -69,18 +72,30 @@ namespace common {
                 double eff{0.0};
         };
 
+        /**
+         * @brief JointState::getName
+         * @return
+         */
         inline
         std::string JointState::getName() const
         {
             return _name;
         }
 
+        /**
+         * @brief JointState::needCalibration
+         * @return
+         */
         inline
         bool JointState::needCalibration() const
         {
             return _need_calibration;
         }
 
+        /**
+         * @brief JointState::getOffsetPosition
+         * @return
+         */
         inline
         double JointState::getOffsetPosition() const
         {

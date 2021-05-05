@@ -25,20 +25,25 @@ using namespace std;
 namespace common {
     namespace model {
 
+        /**
+         * @brief ConveyorState::ConveyorState
+         * @param id
+         */
         ConveyorState::ConveyorState(uint8_t id)
             : StepperMotorState(id, true),
               _state(false),
-              _speed(0),
-              _direction(-1)
-        {
+              _speed(0)
+        {}
 
-        }
-
+        /**
+         * @brief ConveyorState::~ConveyorState
+         */
         ConveyorState::~ConveyorState()
-        {
+        {}
 
-        }
-
+        /**
+         * @brief ConveyorState::reset
+         */
         void ConveyorState::reset()
         {
             StepperMotorState::reset();
@@ -47,26 +52,38 @@ namespace common {
             _state = false;
         }
 
+        /**
+         * @brief ConveyorState::setState
+         * @param state
+         */
         void ConveyorState::setState(bool state)
         {
             _state = state;
         }
 
+        /**
+         * @brief ConveyorState::setSpeed
+         * @param speed
+         */
         void ConveyorState::setSpeed(int16_t speed)
         {
             _speed = speed;
         }
 
-        void ConveyorState::setDirection(int8_t direction)
-        {
-            _direction = direction;
-        }
-
+        /**
+         * @brief ConveyorState::operator ==
+         * @param m
+         * @return
+         */
         bool ConveyorState::operator==(const ConveyorState& m)
         {
             return (this->_id == m._id);
         }
 
+        /**
+         * @brief ConveyorState::str
+         * @return
+         */
         string ConveyorState::str() const
         {
             ostringstream ss;

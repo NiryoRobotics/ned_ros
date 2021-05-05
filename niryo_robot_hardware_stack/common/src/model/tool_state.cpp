@@ -24,37 +24,78 @@ using namespace std;
 namespace common  {
     namespace model {
 
+        /**
+         * @brief ToolState::ToolState
+         */
         ToolState::ToolState() :
             DxlMotorState()
         {
         }
 
+        /**
+         * @brief ToolState::ToolState
+         * @param name
+         * @param type
+         * @param id
+         */
         ToolState::ToolState(std::string name, EMotorType type, uint8_t id) :
             DxlMotorState(type, id, true),
-            _name(name),
+            _tool_name(name),
             _connected(true),
             _position(0.0)
         {
         }
 
+        /**
+         * @brief ToolState::~ToolState
+         */
         ToolState::~ToolState()
         {
 
         }
 
+        /**
+         * @brief ToolState::setName
+         * @param name
+         */
+        void ToolState::setName(std::string name)
+        {
+            _tool_name = name;
+        }
+
+        /**
+         * @brief ToolState::setPosition
+         * @param position
+         */
+        void ToolState::setPosition(double position)
+        {
+            _position = position;
+        }
+
+        //***********************
+        //  DxlMotorState intf
+        //***********************
+
+        /**
+         * @brief ToolState::reset
+         */
         void ToolState::reset()
         {
             DxlMotorState::reset();
-            _name = "No Tool";
+            _tool_name = "No Tool";
             _position = 0.0;
         }
 
+        /**
+         * @brief ToolState::str
+         * @return
+         */
         string ToolState::str() const
         {
             ostringstream ss;
 
             ss << "ToolState : ";
-            ss << "name: " << "\"" << _name << "\"" << ", ";
+            ss << "name: " << "\"" << _tool_name << "\"" << ", ";
             ss << "position: " << _position << ", ";
             ss << "connected: " << (_connected ? "true" : "false");
             ss << "\n";
@@ -63,15 +104,6 @@ namespace common  {
             return ss.str();
         }
 
-        void ToolState::setName(std::string name)
-        {
-            _name = name;
-        }
-
-        void ToolState::setPosition(double position)
-        {
-            _position = position;
-        }
 
     } // namespace model
 } // namespace common

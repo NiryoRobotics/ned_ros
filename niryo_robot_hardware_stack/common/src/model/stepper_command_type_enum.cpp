@@ -25,21 +25,24 @@ namespace common {
     namespace model {
 
         /**
-         *
+         * @brief StepperCommandTypeEnum::StepperCommandTypeEnum
+         * @param e
          */
         StepperCommandTypeEnum::StepperCommandTypeEnum(EStepperCommandType e):
             AbstractEnum<StepperCommandTypeEnum, EStepperCommandType>(e)
         {}
 
         /**
-         *
+         * @brief StepperCommandTypeEnum::StepperCommandTypeEnum
+         * @param str
          */
         StepperCommandTypeEnum::StepperCommandTypeEnum(const char* const str):
             AbstractEnum<StepperCommandTypeEnum, EStepperCommandType>(str)
         {}
 
         /**
-         *
+         * @brief StepperCommandTypeEnum::initialize
+         * @return
          */
         map<EStepperCommandType, string>
         StepperCommandTypeEnum::initialize()

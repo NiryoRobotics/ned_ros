@@ -29,6 +29,9 @@
 namespace common {
     namespace model {
 
+        /**
+         * @brief The AbstractMotorCmd class
+         */
         template<typename E>
         class AbstractMotorCmd : public IObject
         {
@@ -57,6 +60,10 @@ namespace common {
 
         };
 
+        /**
+         * @brief AbstractMotorCmd<E>::AbstractMotorCmd
+         * @param type
+         */
         template<typename E>
         AbstractMotorCmd<E>::AbstractMotorCmd(E type)
         {
@@ -64,17 +71,28 @@ namespace common {
             _type = type;
         }
 
+        /**
+         * @brief AbstractMotorCmd<E>::~AbstractMotorCmd
+         */
         template<typename E>
         AbstractMotorCmd<E>::~AbstractMotorCmd()
         {
         }
 
+        /**
+         * @brief AbstractMotorCmd<E>::setType
+         * @param type
+         */
         template<typename E>
         void AbstractMotorCmd<E>::setType(E type)
         {
             _type = type;
         }
 
+        /**
+         * @brief AbstractMotorCmd<E>::getType
+         * @return
+         */
         template<typename E>
         E AbstractMotorCmd<E>::getType() const
         {

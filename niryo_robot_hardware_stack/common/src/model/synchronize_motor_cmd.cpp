@@ -25,6 +25,9 @@ using namespace std;
 namespace common {
     namespace model {
 
+        /**
+         * @brief SynchronizeMotorCmd::SynchronizeMotorCmd
+         */
         SynchronizeMotorCmd::SynchronizeMotorCmd() :
             AbstractMotorCmd<EDxlCommandType>(EDxlCommandType::CMD_TYPE_UNKNOWN)
 
@@ -32,6 +35,10 @@ namespace common {
             reset();
         }
 
+        /**
+         * @brief SynchronizeMotorCmd::SynchronizeMotorCmd
+         * @param type
+         */
         SynchronizeMotorCmd::SynchronizeMotorCmd(EDxlCommandType type) :
             AbstractMotorCmd<EDxlCommandType>(type)
         {
@@ -39,8 +46,7 @@ namespace common {
 
         /**
          * @brief SynchronizeMotorCmd::addMotorParam
-         * @param type
-         * @param motor_id
+         * @param state
          * @param param
          */
         void SynchronizeMotorCmd::addMotorParam(const std::shared_ptr<JointState>& state, uint32_t param)
@@ -55,6 +61,11 @@ namespace common {
             }
         }
 
+        /**
+         * @brief SynchronizeMotorCmd::addMotorParam
+         * @param state
+         * @param param
+         */
         void SynchronizeMotorCmd::addMotorParam(const JointState &state, uint32_t param)
         {
             //not yet in map
@@ -66,6 +77,57 @@ namespace common {
                 _motor_params_map.at(state.getType()).params.emplace_back(param);
             }
         }
+
+        //***********************
+        //  Getters
+        //***********************
+
+        /**
+         * @brief SynchronizeMotorCmd::getMotorsId
+         * @param type
+         * @return
+         */
+        std::vector<uint8_t>
+        SynchronizeMotorCmd::getMotorsId(EMotorType type) const
+        {
+
+            if(!_motor_params_map.count(type))
+                throw std::out_of_range("type not known of synchonized command");
+
+            return _motor_params_map.at(type).motors_id;
+        }
+
+        /**
+         * @brief SynchronizeMotorCmd::getParams
+         * @param type
+         * @return
+         */
+        std::vector<uint32_t>
+        SynchronizeMotorCmd::getParams(EMotorType type) const
+        {
+            if(!_motor_params_map.count(type))
+                throw std::out_of_range("type not known of synchonized command");
+
+            return _motor_params_map.at(type).params;
+        }
+
+        /**
+         * @brief SynchronizeMotorCmd::getMotorTypes
+         * @return
+         */
+        std::set<EMotorType> SynchronizeMotorCmd::getMotorTypes() const
+        {
+            std::set<EMotorType> types;
+            for (auto const& it: _motor_params_map) {
+                types.insert(it.first);
+            }
+
+            return types;
+        }
+
+        //***********************
+        //  AbstractMotorCmd intf
+        //***********************
 
         /**
          * @brief SynchronizeMotorCmd::reset
@@ -129,35 +191,6 @@ namespace common {
             }
 
             return true;
-        }
-
-        std::vector<uint8_t>
-        SynchronizeMotorCmd::getMotorsId(EMotorType type) const
-        {
-
-            if(!_motor_params_map.count(type))
-                throw std::out_of_range("type not known of synchonized command");
-
-            return _motor_params_map.at(type).motors_id;
-        }
-
-        std::vector<uint32_t>
-        SynchronizeMotorCmd::getParams(EMotorType type) const
-        {
-            if(!_motor_params_map.count(type))
-                throw std::out_of_range("type not known of synchonized command");
-
-            return _motor_params_map.at(type).params;
-        }
-
-        std::set<EMotorType> SynchronizeMotorCmd::getMotorTypes() const
-        {
-            std::set<EMotorType> types;
-            for (auto const& it: _motor_params_map) {
-                types.insert(it.first);
-            }
-
-            return types;
         }
 
         /**

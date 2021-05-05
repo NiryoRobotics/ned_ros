@@ -25,6 +25,9 @@
 namespace common {
     namespace model {
 
+        /**
+         * @brief The IObject class
+         */
         class IObject
         {
 
@@ -36,6 +39,9 @@ namespace common {
                 virtual bool isValid() const = 0;
         };
 
+        /**
+         * @brief IObject::~IObject
+         */
         inline
         IObject::~IObject()
         {

@@ -451,14 +451,8 @@ namespace JointsInterface {
     }
 
     /**
-     * @brief JointHardwareInterface::setMotorPID : if param is < 0, does not set anything
-     * @param motor_id
-     * @param motor_type
-     * @param p_gain
-     * @param i_gain
-     * @param d_gain
-     * @param ff1 : feed forward gain 1 : only for XL430, XL330 and XC430 motors
-     * @param ff2 : feed forward gain 2 : only for XL430, XL330 and XC430 motors
+     * @brief JointHardwareInterface::setMotorPID
+     * @param dxlState : if a param is < 0, does not set anything
      * @return
      */
     bool JointHardwareInterface::setMotorPID(const shared_ptr<DxlMotorState>& dxlState)

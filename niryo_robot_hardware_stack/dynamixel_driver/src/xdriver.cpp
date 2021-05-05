@@ -24,6 +24,7 @@ namespace DynamixelDriver
 {
     /**
      * @brief XDriver::XDriver
+     * @param type
      * @param portHandler
      * @param packetHandler
      */

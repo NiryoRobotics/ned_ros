@@ -26,6 +26,9 @@
 namespace common {
     namespace model {
 
+        /**
+         * @brief The ConveyorState class
+         */
         class ConveyorState : public StepperMotorState {
 
             public:
@@ -35,11 +38,9 @@ namespace common {
 
                 void setState(bool state);
                 void setSpeed(int16_t speed);
-                void setDirection(int8_t direction);
 
                 bool getState() const;
                 int16_t getSpeed() const;
-                int8_t getDirection() const;
 
                 virtual bool operator==(const ConveyorState& other);
 
@@ -51,27 +52,32 @@ namespace common {
             private:
                 bool _state;
                 int16_t _speed;
-                int8_t _direction;
         };
 
+        /**
+         * @brief ConveyorState::getState
+         * @return
+         */
         inline
         bool ConveyorState::getState() const
         {
             return _state;
         }
 
+        /**
+         * @brief ConveyorState::getSpeed
+         * @return
+         */
         inline
         int16_t ConveyorState::getSpeed() const
         {
             return _speed;
         }
 
-        inline
-        int8_t ConveyorState::getDirection() const
-        {
-            return _direction;
-        }
-
+        /**
+         * @brief ConveyorState::isValid
+         * @return
+         */
         inline
         bool ConveyorState::isValid() const
         {

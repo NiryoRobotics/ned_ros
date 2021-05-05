@@ -29,8 +29,30 @@
 namespace common {
     namespace model {
 
+        /**
+         * @brief The ToolState class
+         */
         class ToolState : public DxlMotorState
         {
+            public:
+                ToolState();
+                ToolState(std::string name, EMotorType type, uint8_t id);
+
+                virtual ~ToolState() override;
+
+
+                void setName(std::string name);
+                void setPosition(double position);
+
+                std::string getToolName() const;
+                double getPositionRef() const;
+
+                bool isConnected() const;
+
+                //DxlMotorState interface
+                virtual void reset() override;
+                virtual std::string str() const override;
+
             public:
                 static constexpr int TOOL_STATE_PING_OK       = 0x01;
                 static constexpr int TOOL_STATE_PING_ERROR    = 0x02;
@@ -43,44 +65,38 @@ namespace common {
                 static constexpr int VACUUM_PUMP_STATE_PULLED = 0x20;
                 static constexpr int VACUUM_PUMP_STATE_PUSHED = 0x21;
 
-            public:
-                ToolState();
-                ToolState(std::string name, EMotorType type, uint8_t id);
-
-                virtual ~ToolState() override;
-
-
-                void setName(std::string name);
-                void setPosition(double position);
-
-                std::string getName() const;
-                double getPositionRef() const;
-
-                bool isConnected() const;
-
-                //DxlMotorState interface
-                virtual void reset() override;
-                virtual std::string str() const override;
-
             protected:
-                std::string _name;
+                // use joint _name ?
+                std::string _tool_name;
 
                 bool _connected;
                 double _position;
         };
 
+        /**
+         * @brief ToolState::getName
+         * @return
+         */
         inline
-        std::string ToolState::getName() const
+        std::string ToolState::getToolName() const
         {
-            return _name;
+            return _tool_name;
         }
 
+        /**
+         * @brief ToolState::getPositionRef
+         * @return
+         */
         inline
         double ToolState::getPositionRef() const
         {
             return _position;
         }
 
+        /**
+         * @brief ToolState::isConnected
+         * @return
+         */
         inline
         bool ToolState::isConnected() const
         {

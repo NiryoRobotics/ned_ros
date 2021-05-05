@@ -26,7 +26,9 @@
 namespace common {
     namespace model {
 
-
+        /**
+         * @brief The DxlMotorState class
+         */
         class DxlMotorState : public JointState
         {
             public:
@@ -48,18 +50,15 @@ namespace common {
                 virtual double to_rad_pos(int position_dxl) override;
 
                 uint32_t getPGain() const;
-                void setPGain(uint32_t getPGain);
-
                 uint32_t getIGain() const;
-                void setIGain(uint32_t getIGain);
-
                 uint32_t getDGain() const;
-                void setDGain(uint32_t getDGain);
-
                 uint32_t getFF1Gain() const;
-                void setFF1Gain(uint32_t getFF1Gain);
-
                 uint32_t getFF2Gain() const;
+
+                void setPGain(uint32_t getPGain);
+                void setIGain(uint32_t getIGain);
+                void setDGain(uint32_t getDGain);
+                void setFF1Gain(uint32_t getFF1Gain);
                 void setFF2Gain(uint32_t value);
 
         protected:
@@ -72,10 +71,64 @@ namespace common {
                 uint32_t _ff2_gain{0};
         };
 
+        /**
+         * @brief DxlMotorState::isTool
+         * @return
+         */
         inline
         bool DxlMotorState::isTool() const
         {
             return _isTool;
+        }
+
+        /**
+         * @brief DxlMotorState::getPGain
+         * @return
+         */
+        inline
+        uint32_t DxlMotorState::getPGain() const
+        {
+            return _p_gain;
+        }
+
+        /**
+         * @brief DxlMotorState::getIGain
+         * @return
+         */
+        inline
+        uint32_t DxlMotorState::getIGain() const
+        {
+            return _i_gain;
+        }
+
+        /**
+         * @brief DxlMotorState::getDGain
+         * @return
+         */
+        inline
+        uint32_t DxlMotorState::getDGain() const
+        {
+            return _d_gain;
+        }
+
+        /**
+         * @brief DxlMotorState::getFF1Gain
+         * @return
+         */
+        inline
+        uint32_t DxlMotorState::getFF1Gain() const
+        {
+            return _ff1_gain;
+        }
+
+        /**
+         * @brief DxlMotorState::getFF2Gain
+         * @return
+         */
+        inline
+        uint32_t DxlMotorState::getFF2Gain() const
+        {
+            return _ff2_gain;
         }
 
     } // namespace model

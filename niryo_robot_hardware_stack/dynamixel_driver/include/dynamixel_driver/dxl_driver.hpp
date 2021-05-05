@@ -130,8 +130,7 @@ namespace DynamixelDriver
                 int (XDriver::*syncReadFunction)(const std::vector<uint8_t> &, std::vector<uint32_t> &),
                 void (common::model::DxlMotorState::*setFunction)(int));
 
-            int _syncWrite(int (XDriver::*syncWriteFunction)(const std::vector<uint8_t> &,
-                                                                    const std::vector<uint32_t> &),
+            int _syncWrite(int (XDriver::*syncWriteFunction)(const std::vector<uint8_t> &, const std::vector<uint32_t> &),
                                   const common::model::SynchronizeMotorCmd& cmd);
 
             int _singleWrite(int (XDriver::*singleWriteFunction)(uint8_t id, uint32_t), common::model::EMotorType dxl_type,

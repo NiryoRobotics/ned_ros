@@ -29,18 +29,34 @@ using namespace std;
 
 namespace common {
     namespace model {
+
+        /**
+         * @brief StepperMotorState::StepperMotorState
+         */
         StepperMotorState::StepperMotorState() :
             JointState (),
             _isConveyor(false)
         {
         }
 
+        /**
+         * @brief StepperMotorState::StepperMotorState
+         * @param id
+         * @param isConveyor
+         */
         StepperMotorState::StepperMotorState(uint8_t id, bool isConveyor) :
             JointState("unknown", EMotorType::MOTOR_TYPE_STEPPER, id),
             _isConveyor(isConveyor)
         {
         }
 
+        /**
+         * @brief StepperMotorState::StepperMotorState
+         * @param name
+         * @param type
+         * @param id
+         * @param isConveyor
+         */
         StepperMotorState::StepperMotorState(string name, EMotorType type, uint8_t id, bool isConveyor) :
             JointState(name, type, id),
             _isConveyor(isConveyor)
@@ -48,11 +64,18 @@ namespace common {
 
         }
 
+        /**
+         * @brief StepperMotorState::~StepperMotorState
+         */
         StepperMotorState::~StepperMotorState()
         {
 
         }
 
+        /**
+         * @brief StepperMotorState::stepsPerRev
+         * @return
+         */
         int StepperMotorState::stepsPerRev()
         {
             return int(STEPPERS_MICROSTEPS * STEPPERS_MOTOR_STEPS_PER_REVOLUTION);
@@ -62,37 +85,64 @@ namespace common {
         //  Setters
         //****************
 
+        /**
+         * @brief StepperMotorState::updateLastTimeRead
+         */
         void StepperMotorState::updateLastTimeRead()
         {
             _last_time_read = ros::Time::now().toSec();
         }
 
+        /**
+         * @brief StepperMotorState::setHwFailCounter
+         * @param fail_counter
+         */
         void StepperMotorState::setHwFailCounter(double fail_counter)
         {
             _hw_fail_counter = fail_counter;
         }
 
+        /**
+         * @brief StepperMotorState::setFirmwareVersion
+         * @param firmware_version
+         */
         void StepperMotorState::setFirmwareVersion(string& firmware_version)
         {
             _firmware_version = firmware_version;
         }
 
-
+        /**
+         * @brief StepperMotorState::setGearRatio
+         * @param gear_ratio
+         */
         void StepperMotorState::setGearRatio(double gear_ratio)
         {
             _gear_ratio = gear_ratio;
         }
         
+        /**
+         * @brief StepperMotorState::setDirection
+         * @param direction
+         */
         void StepperMotorState::setDirection(double direction)
         {
             _direction = direction;
         }
 
+        /**
+         * @brief StepperMotorState::setMaxEffort
+         * @param max_effort
+         */
         void StepperMotorState::setMaxEffort(double max_effort)
         {
             _max_effort = max_effort;
         }
 
+        /**
+         * @brief StepperMotorState::setCalibration
+         * @param calibration_state
+         * @param calibration_value
+         */
         void StepperMotorState::setCalibration(const EStepperCalibrationStatus &calibration_state, const int32_t &calibration_value)
         {
             _calibration_state = calibration_state;
@@ -106,6 +156,9 @@ namespace common {
         //  JointState Interface
         //********************
 
+        /**
+         * @brief StepperMotorState::reset
+         */
         void StepperMotorState::reset()
         {
             JointState::reset();
@@ -116,11 +169,19 @@ namespace common {
             _calibration_state = EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED;
         }
 
+        /**
+         * @brief StepperMotorState::isValid
+         * @return
+         */
         bool StepperMotorState::isValid() const
         {
             return (0 != _id);
         }
 
+        /**
+         * @brief StepperMotorState::str
+         * @return
+         */
         string StepperMotorState::str() const
         {
             ostringstream ss;

@@ -29,17 +29,33 @@ using namespace std;
 namespace common {
     namespace model {
 
+        /**
+         * @brief DxlMotorState::DxlMotorState
+         */
         DxlMotorState::DxlMotorState()
             : JointState()
         {
             reset();
         }
 
+        /**
+         * @brief DxlMotorState::DxlMotorState
+         * @param type
+         * @param id
+         * @param isTool
+         */
         DxlMotorState::DxlMotorState(EMotorType type, uint8_t id, bool isTool) :
             DxlMotorState("unknown", type, id, isTool)
         {
         }
 
+        /**
+         * @brief DxlMotorState::DxlMotorState
+         * @param name
+         * @param type
+         * @param id
+         * @param isTool
+         */
         DxlMotorState::DxlMotorState(string name, EMotorType type, uint8_t id, bool isTool) :
             JointState(name, type, id),
             _isTool(isTool)
@@ -47,6 +63,9 @@ namespace common {
             setNeedCalibration(false);
         }
 
+        /**
+         * @brief DxlMotorState::~DxlMotorState
+         */
         DxlMotorState::~DxlMotorState()
         {
 
@@ -56,17 +75,28 @@ namespace common {
         //  JointState Interface
         //********************
 
+        /**
+         * @brief DxlMotorState::reset
+         */
         void DxlMotorState::reset()
         {
             AbstractMotorState::reset();
             _isTool = false;
         }
 
+        /**
+         * @brief DxlMotorState::isValid
+         * @return
+         */
         bool DxlMotorState::isValid() const
         {
             return (0 != getId() && EMotorType::MOTOR_TYPE_UNKNOWN != getType());
         }
 
+        /**
+         * @brief DxlMotorState::str
+         * @return
+         */
         string DxlMotorState::str() const
         {
             ostringstream ss;
@@ -108,51 +138,46 @@ namespace common {
 
         }
 
-        uint32_t DxlMotorState::getPGain() const
-        {
-            return _p_gain;
-        }
-
+        /**
+         * @brief DxlMotorState::setPGain
+         * @param p_gain
+         */
         void DxlMotorState::setPGain(uint32_t p_gain)
         {
             _p_gain = p_gain;
         }
 
-        uint32_t DxlMotorState::getIGain() const
-        {
-            return _i_gain;
-        }
-
+        /**
+         * @brief DxlMotorState::setIGain
+         * @param i_gain
+         */
         void DxlMotorState::setIGain(uint32_t i_gain)
         {
             _i_gain = i_gain;
         }
 
-        uint32_t DxlMotorState::getDGain() const
-        {
-            return _d_gain;
-        }
-
+        /**
+         * @brief DxlMotorState::setDGain
+         * @param d_gain
+         */
         void DxlMotorState::setDGain(uint32_t d_gain)
         {
             _d_gain = d_gain;
         }
 
-        uint32_t DxlMotorState::getFF1Gain() const
-        {
-            return _ff1_gain;
-        }
-
+        /**
+         * @brief DxlMotorState::setFF1Gain
+         * @param ff1_gain
+         */
         void DxlMotorState::setFF1Gain(uint32_t ff1_gain)
         {
             _ff1_gain = ff1_gain;
         }
 
-        uint32_t DxlMotorState::getFF2Gain() const
-        {
-            return _ff2_gain;
-        }
-
+        /**
+         * @brief DxlMotorState::setFF2Gain
+         * @param value
+         */
         void DxlMotorState::setFF2Gain(uint32_t value)
         {
             _ff2_gain = value;

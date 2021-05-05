@@ -45,7 +45,7 @@ namespace JointsInterface {
 
         int startCalibration(int mode, std::string &result_message);
 
-        bool CalibrationInprogress();
+        bool CalibrationInprogress() const;
 
     private:
         void setStepperCalibrationCommand(const std::shared_ptr<common::model::StepperMotorState>& pState,

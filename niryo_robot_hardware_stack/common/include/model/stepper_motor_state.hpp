@@ -27,6 +27,9 @@
 namespace common {
     namespace model {
 
+        /**
+         * @brief The StepperMotorState class
+         */
         class StepperMotorState : public JointState
         {
 
@@ -67,7 +70,6 @@ namespace common {
                 bool isTimeout() const;
 
                 // JointState interface
-            public:
                 virtual void reset() override;
                 virtual bool isValid() const override;
                 virtual std::string str() const override;
@@ -97,54 +99,90 @@ namespace common {
 
         };
 
+        /**
+         * @brief StepperMotorState::getMaxEffort
+         * @return
+         */
         inline
         double StepperMotorState::getMaxEffort() const
         {
             return _max_effort;
         }
 
+        /**
+         * @brief StepperMotorState::getCalibrationState
+         * @return
+         */
         inline
         EStepperCalibrationStatus StepperMotorState::getCalibrationState() const
         {
             return _calibration_state;
         }
 
+        /**
+         * @brief StepperMotorState::getCalibrationValue
+         * @return
+         */
         inline
         int32_t StepperMotorState::getCalibrationValue() const
         {
             return _calibration_value;
         }
 
+        /**
+         * @brief StepperMotorState::isConveyor
+         * @return
+         */
         inline
         bool StepperMotorState::isConveyor() const
         {
             return _isConveyor;
         }
 
+        /**
+         * @brief StepperMotorState::getGearRatio
+         * @return
+         */
         inline
         double StepperMotorState::getGearRatio() const
         {
             return _gear_ratio;
         }
 
+        /**
+         * @brief StepperMotorState::getDirection
+         * @return
+         */
         inline
         double StepperMotorState::getDirection() const
         {
             return _direction;
         }
 
+        /**
+         * @brief StepperMotorState::getLastTimeRead
+         * @return
+         */
         inline
         double StepperMotorState::getLastTimeRead() const
         {
             return _last_time_read;
         }
 
+        /**
+         * @brief StepperMotorState::getHwFailCounter
+         * @return
+         */
         inline
         double StepperMotorState::getHwFailCounter() const
         {
             return _hw_fail_counter;
         }
 
+        /**
+         * @brief StepperMotorState::getFirmwareVersion
+         * @return
+         */
         inline
         std::string StepperMotorState::getFirmwareVersion() const
         {

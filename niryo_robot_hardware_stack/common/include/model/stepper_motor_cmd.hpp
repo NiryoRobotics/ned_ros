@@ -29,6 +29,9 @@
 namespace common {
     namespace model {
 
+        /**
+         * @brief The StepperMotorCmd class
+         */
         class StepperMotorCmd : public AbstractMotorCmd<EStepperCommandType>
         {
             public:
@@ -57,12 +60,20 @@ namespace common {
                 std::vector<int32_t> _param_list;
         };
 
+        /**
+         * @brief StepperMotorCmd::getId
+         * @return
+         */
         inline
         uint8_t StepperMotorCmd::getId() const
         {
             return _id;
         }
 
+        /**
+         * @brief StepperMotorCmd::getParams
+         * @return
+         */
         inline
         const std::vector<int32_t>& StepperMotorCmd::getParams() const
         {

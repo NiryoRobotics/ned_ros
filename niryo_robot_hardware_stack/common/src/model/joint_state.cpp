@@ -25,37 +25,66 @@ using namespace std;
 namespace common {
     namespace model {
 
+        /**
+         * @brief JointState::JointState
+         */
         JointState::JointState() :
             AbstractMotorState()
         {
         }
 
+        /**
+         * @brief JointState::JointState
+         * @param name
+         * @param type
+         * @param id
+         */
         JointState::JointState(string name, EMotorType type, uint8_t id) :
             AbstractMotorState(id, type),
             _name(name)
         {
         }
 
+        /**
+         * @brief JointState::~JointState
+         */
         JointState::~JointState()
         {
 
         }
 
+        /**
+         * @brief JointState::operator ==
+         * @param m
+         * @return
+         */
         bool JointState::operator==(const JointState& m) const
         {
             return((this->_type == m._type) && (this->_id == m._id));
         }
 
+        /**
+         * @brief JointState::setName
+         * @param name
+         */
         void JointState::setName(string& name)
         {
             _name = name;
         }
 
+        /**
+         * @brief JointState::setNeedCalibration
+         * @param need_calibration
+         */
         void JointState::setNeedCalibration(bool need_calibration)
         {
             _need_calibration = need_calibration;
         }
 
+        /**
+         * @brief JointState::setOffsetPosition
+         * @param offset_position
+         */
         void JointState::setOffsetPosition(double offset_position)
         {
             _offset_position = offset_position;
@@ -65,6 +94,9 @@ namespace common {
         //  AbstractMotor intf
         //***********************
 
+        /**
+         * @brief JointState::reset
+         */
         void JointState::reset()
         {
             AbstractMotorState::reset();
@@ -72,11 +104,19 @@ namespace common {
             _need_calibration = false;
         }
 
+        /**
+         * @brief common::model::JointState::isValid
+         * @return
+         */
         bool common::model::JointState::isValid() const
         {
             return (0 != getId() && EMotorType::MOTOR_TYPE_UNKNOWN != getType());
         }
 
+        /**
+         * @brief JointState::str
+         * @return
+         */
         string JointState::str() const
         {
             ostringstream ss;

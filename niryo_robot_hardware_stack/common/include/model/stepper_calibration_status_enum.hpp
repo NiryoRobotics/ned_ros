@@ -29,6 +29,9 @@
 namespace common {
     namespace model {
 
+        /**
+         * @brief The EStepperCalibrationStatus enum
+         */
         enum class EStepperCalibrationStatus {
             CALIBRATION_UNINITIALIZED = 0, //means no calibration is expected
             CALIBRATION_OK = 1,

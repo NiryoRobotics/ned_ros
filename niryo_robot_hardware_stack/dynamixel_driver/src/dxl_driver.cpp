@@ -131,9 +131,10 @@ namespace DynamixelDriver
     }
 
     /**
-     * @brief DxlDriver::addDynamixel
-     * @param id
+     * @brief DxlDriver::addMotor
      * @param type
+     * @param id
+     * @param isTool
      */
     void DxlDriver::addMotor(EMotorType type, uint8_t id, bool isTool)
     {
@@ -364,19 +365,19 @@ namespace DynamixelDriver
 
     /**
      * @brief DxlDriver::getPosition
-     * @param targeted_dxl
+     * @param motor_state
      * @return
      */
-    uint32_t DxlDriver::getPosition(DxlMotorState &targeted_dxl)
+    uint32_t DxlDriver::getPosition(DxlMotorState &motor_state)
     {
         uint32_t result = 0;
-        EMotorType dxl_type = targeted_dxl.getType();
+        EMotorType dxl_type = motor_state.getType();
 
         if(_xdriver_map.count(dxl_type) && _xdriver_map.at(dxl_type)) {
 
             for(_hw_fail_counter_read = 0; _hw_fail_counter_read < 25; _hw_fail_counter_read++)
             {
-                if (_xdriver_map.at(dxl_type)->readPosition(targeted_dxl.getId(), &result) == COMM_SUCCESS)
+                if (_xdriver_map.at(dxl_type)->readPosition(motor_state.getId(), &result) == COMM_SUCCESS)
                 {
                     _hw_fail_counter_read = 0;
                     break;
@@ -850,13 +851,12 @@ namespace DynamixelDriver
 
     /**
      * @brief DxlDriver::_syncWrite
-     * @param motor_list
-     * @param param_list
-     *
+     * @param cmd
+     * @return
      * // to be reformatted, not beautiful
      */
-    int DxlDriver::_syncWrite(int (XDriver::*syncWriteFunction)(const vector<uint8_t>&, const vector<uint32_t>&),
-                                     const SynchronizeMotorCmd& cmd)
+    int DxlDriver::_syncWrite(int (XDriver::*syncWriteFunction)(const vector<uint8_t> &, const vector<uint32_t> &),
+                              const SynchronizeMotorCmd& cmd)
     {
         int result = COMM_TX_ERROR;
 
@@ -906,9 +906,8 @@ namespace DynamixelDriver
      * @param cmd
      * @return
      */
-    int DxlDriver::_singleWrite(int (XDriver::*singleWriteFunction)(uint8_t, uint32_t),
-                                       EMotorType dxl_type,
-                                       const SingleMotorCmd &cmd)
+    int DxlDriver::_singleWrite(int (XDriver::*singleWriteFunction)(uint8_t id, uint32_t), EMotorType dxl_type,
+                                const SingleMotorCmd& cmd)
     {
         int result = COMM_TX_ERROR;
 

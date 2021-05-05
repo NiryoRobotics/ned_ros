@@ -25,13 +25,20 @@ using namespace std;
 namespace common {
     namespace model
     {
-
+        /**
+         * @brief AbstractMotorState::AbstractMotorState
+         */
         AbstractMotorState::AbstractMotorState() :
             _type(EMotorType::MOTOR_TYPE_UNKNOWN)
         {
             reset();
         }
 
+        /**
+         * @brief AbstractMotorState::AbstractMotorState
+         * @param id
+         * @param type
+         */
         AbstractMotorState::AbstractMotorState(uint8_t id, EMotorType type) :
               _type(type),
               _id(id),
@@ -43,6 +50,9 @@ namespace common {
         {
         }
 
+        /**
+         * @brief AbstractMotorState::~AbstractMotorState
+         */
         AbstractMotorState::~AbstractMotorState()
         {
 
@@ -102,6 +112,9 @@ namespace common {
             }
         }
 
+        /**
+         * @brief AbstractMotorState::reset
+         */
         void AbstractMotorState::reset()
         {
             _id = 0;
@@ -112,11 +125,20 @@ namespace common {
             _hw_error_message_state.clear();
         }
 
+        /**
+         * @brief AbstractMotorState::operator ==
+         * @param m
+         * @return
+         */
         bool AbstractMotorState::operator==(const AbstractMotorState &m)
         {
             return (this->_id == m._id);
         }
 
+        /**
+         * @brief AbstractMotorState::str
+         * @return
+         */
         string AbstractMotorState::str() const
         {
             ostringstream ss;
@@ -133,26 +155,46 @@ namespace common {
             return ss.str();
         }
 
+        /**
+         * @brief AbstractMotorState::setPositionState
+         * @param pos
+         */
         void AbstractMotorState::setPositionState(int pos)
         {
             _position_state = pos;
         }
 
+        /**
+         * @brief AbstractMotorState::setTemperatureState
+         * @param temp
+         */
         void AbstractMotorState::setTemperatureState(int temp)
         {
             _temperature_state = temp;
         }
 
+        /**
+         * @brief AbstractMotorState::setVoltageState
+         * @param volt
+         */
         void AbstractMotorState::setVoltageState(int volt)
         {
             _voltage_state = volt;
         }
 
+        /**
+         * @brief AbstractMotorState::setHardwareError
+         * @param hw_error
+         */
         void AbstractMotorState::setHardwareError(int hw_error)
         {
             _hw_error_state = hw_error;
         }
 
+        /**
+         * @brief AbstractMotorState::setHardwareError
+         * @param hw_error_msg
+         */
         void AbstractMotorState::setHardwareError(string hw_error_msg)
         {
             _hw_error_message_state = hw_error_msg;

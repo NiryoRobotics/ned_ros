@@ -25,12 +25,21 @@ using namespace std;
 namespace common {
     namespace model {
 
+        /**
+         * @brief SingleMotorCmd::SingleMotorCmd
+         */
         SingleMotorCmd::SingleMotorCmd() :
             AbstractMotorCmd<EDxlCommandType>(EDxlCommandType::CMD_TYPE_UNKNOWN)
         {
             reset();
         }
 
+        /**
+         * @brief SingleMotorCmd::SingleMotorCmd
+         * @param type
+         * @param motor_id
+         * @param param
+         */
         SingleMotorCmd::SingleMotorCmd(EDxlCommandType type,
                                        uint8_t motor_id,
                                        uint32_t param) :
@@ -39,29 +48,51 @@ namespace common {
             _param(param)
         {}
 
-
+        /**
+         * @brief SingleMotorCmd::setId
+         * @param id
+         */
         void SingleMotorCmd::setId(uint8_t id)
         {
             _id = id;
         }
 
+        /**
+         * @brief SingleMotorCmd::setParam
+         * @param param
+         */
         void SingleMotorCmd::setParam(uint32_t param)
         {
             _param = param;
         }
 
+
+        //***********************
+        //  AbstractMotorCmd intf
+        //***********************
+
+        /**
+         * @brief SingleMotorCmd::reset
+         */
         void SingleMotorCmd::reset()
         {
             setType(EDxlCommandType::CMD_TYPE_UNKNOWN);
             clear();
         }
 
+        /**
+         * @brief SingleMotorCmd::clear
+         */
         void SingleMotorCmd::clear()
         {
             _id = 0;
             _param = 0;
         }
 
+        /**
+         * @brief SingleMotorCmd::str
+         * @return
+         */
         string SingleMotorCmd::str() const
         {
             ostringstream ss;
@@ -75,6 +106,10 @@ namespace common {
             return ss.str();
         }
 
+        /**
+         * @brief SingleMotorCmd::isValid
+         * @return
+         */
         bool SingleMotorCmd::isValid() const
         {
             return (EDxlCommandType::CMD_TYPE_UNKNOWN != _type) &&

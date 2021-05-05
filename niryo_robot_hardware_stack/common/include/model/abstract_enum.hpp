@@ -28,105 +28,108 @@
 namespace common {
     namespace model {
 
-    /**
-     *
-     */
-    template <class C, typename E>
-    class AbstractEnum
-    {
-    public:
-
-        virtual ~AbstractEnum () {}
-
-        operator E () const { return _enum; }
-        
-        const std::string& toString() const;
-        
-        std::vector<std::string> values(bool sort=false) const;
-                   
-    protected:
-       
-        AbstractEnum(E e = static_cast< E >( 0 ) )
-        : _enum( e )
-        {}
-
-        AbstractEnum(const std::string& s)
-        { fromString(s.c_str()); }
-        
-        AbstractEnum(const char* const str)
-        { fromString(str); }
-        
-    private:       
-        void fromString(const char* const str);
-
-        // use curiously recurring template pattern  (CRTP)
-        static std::map<E, std::string> initialize()
-        { return C::initialize(); }
-        
-        E _enum;
-        static std::map<E, std::string> _map;
-    };
-
-
-    /**
-     * 
-     */
-    template <class C, typename E> 
-    std::map<E, std::string> AbstractEnum<C, E>::_map = initialize();
-
-    /**
-     *
-     */
-    template <class C, typename E>
-    void AbstractEnum<C, E >::fromString(const char* const str)
-    {
-        _enum = static_cast< E >( 0 ); // 
-        if (str)
+        /**
+         * @brief The AbstractEnum class
+         */
+        template <class C, typename E>
+        class AbstractEnum
         {
-            typename std::map<E, std::string>::const_iterator iter = _map.begin();
-            for (; iter != _map.end(); ++iter) 
+        public:
+
+            virtual ~AbstractEnum () {}
+
+            operator E () const { return _enum; }
+
+            const std::string& toString() const;
+
+            std::vector<std::string> values(bool sort=false) const;
+
+        protected:
+
+            AbstractEnum(E e = static_cast< E >( 0 ) )
+            : _enum( e )
+            {}
+
+            AbstractEnum(const std::string& s)
+            { fromString(s.c_str()); }
+
+            AbstractEnum(const char* const str)
+            { fromString(str); }
+
+        private:
+            void fromString(const char* const str);
+
+            // use curiously recurring template pattern  (CRTP)
+            static std::map<E, std::string> initialize()
+            { return C::initialize(); }
+
+            E _enum;
+            static std::map<E, std::string> _map;
+        };
+
+        /**
+         * @brief AbstractEnum<C, E>::_map
+         */
+        template <class C, typename E>
+        std::map<E, std::string> AbstractEnum<C, E>::_map = initialize();
+
+        /**
+         * @brief AbstractEnum<C, E>::fromString
+         * @param str
+         */
+        template <class C, typename E>
+        void AbstractEnum<C, E >::fromString(const char* const str)
+        {
+            _enum = static_cast< E >( 0 ); //
+            if (str)
             {
-                if (iter->second == str)
+                typename std::map<E, std::string>::const_iterator iter = _map.begin();
+                for (; iter != _map.end(); ++iter)
                 {
-                    _enum = iter->first;
-                    break;
+                    if (iter->second == str)
+                    {
+                        _enum = iter->first;
+                        break;
+                    }
                 }
+                if (iter == _map.end()) throw std::out_of_range("");
             }
-            if (iter == _map.end()) throw std::out_of_range("");
         }
-    }
-  
-    /**
-     *
-     */
-    template <class C, typename E>
-    const std::string& 
-    AbstractEnum<C, E >::toString() const
-    {
-        typename std::map<E, std::string>::const_iterator iter = _map.find(_enum);
-        if (iter == _map.end())
-            throw std::out_of_range("");
-        return iter->second;
-    }
 
-    /**
-     *
-     */
-    template <class C, typename E>
-    std::vector<std::string>
-    AbstractEnum<C, E >::values(bool sort) const
-    {
-        std::vector<std::string> values;
-        for (typename std::map<E, std::string>::const_iterator iter = _map.begin();
-             iter != _map.end();
-             ++iter)
+        /**
+         * @brief AbstractEnum<C, E>::toString
+         * @return
+         */
+        template <class C, typename E>
+        const std::string&
+        AbstractEnum<C, E >::toString() const
         {
-            values.push_back(iter->second);
+            typename std::map<E, std::string>::const_iterator iter = _map.find(_enum);
+            if (iter == _map.end())
+                throw std::out_of_range("");
+            return iter->second;
         }
-        if (sort) std::sort(values.begin(), values.end());
-        
-        return values;
-    }
+
+        /**
+         * @brief AbstractEnum<C, E>::values
+         * @param sort
+         * @return
+         */
+        template <class C, typename E>
+        std::vector<std::string>
+        AbstractEnum<C, E >::values(bool sort) const
+        {
+            std::vector<std::string> values;
+            for (typename std::map<E, std::string>::const_iterator iter = _map.begin();
+                 iter != _map.end();
+                 ++iter)
+            {
+                values.push_back(iter->second);
+            }
+            if (sort) std::sort(values.begin(), values.end());
+
+            return values;
+        }
 
     } // model
 } // common

@@ -25,6 +25,9 @@ using namespace std;
 namespace common {
     namespace model {
 
+        /**
+         * @brief SynchronizeStepperMotorCmd::SynchronizeStepperMotorCmd
+         */
         SynchronizeStepperMotorCmd::SynchronizeStepperMotorCmd() :
             AbstractMotorCmd<EStepperCommandType>(EStepperCommandType::CMD_TYPE_NONE)
 
@@ -32,6 +35,10 @@ namespace common {
             reset();
         }
 
+        /**
+         * @brief SynchronizeStepperMotorCmd::SynchronizeStepperMotorCmd
+         * @param type
+         */
         SynchronizeStepperMotorCmd::SynchronizeStepperMotorCmd(EStepperCommandType type) :
             AbstractMotorCmd<EStepperCommandType>(type)
         {
@@ -39,7 +46,6 @@ namespace common {
 
         /**
          * @brief SynchronizeStepperMotorCmd::addMotorParam
-         * @param type
          * @param motor_id
          * @param param
          */
@@ -47,6 +53,39 @@ namespace common {
         {
             _motor_params_map[motor_id] = param;
         }
+
+        /**
+         * @brief SynchronizeStepperMotorCmd::getMotorsId
+         * @return
+         */
+        std::vector<uint8_t>
+        SynchronizeStepperMotorCmd::getMotorsId() const
+        {
+            std::vector<uint8_t> ids;
+            for(auto const& it_map: _motor_params_map) {
+                ids.emplace_back(it_map.first);
+            }
+
+            return ids;
+        }
+
+        /**
+         * @brief SynchronizeStepperMotorCmd::getParam
+         * @param motor_id
+         * @return
+         */
+        int32_t
+        SynchronizeStepperMotorCmd::getParam(uint8_t motor_id) const
+        {
+            if(!_motor_params_map.count(motor_id))
+                throw std::out_of_range("SynchronizeStepperMotorCmd::getParam : Unknown motor id");
+
+            return _motor_params_map.at(motor_id);
+        }
+
+        //***********************
+        //  AbstractMotorCmd intf
+        //***********************
 
         /**
          * @brief SynchronizeStepperMotorCmd::reset
@@ -102,27 +141,6 @@ namespace common {
                     EStepperCommandType::CMD_TYPE_NONE != _type &&
                     !_motor_params_map.empty());
         }
-
-        std::vector<uint8_t>
-        SynchronizeStepperMotorCmd::getMotorsId() const
-        {
-            std::vector<uint8_t> ids;
-            for(auto const& it_map: _motor_params_map) {
-                ids.emplace_back(it_map.first);
-            }
-
-            return ids;
-        }
-
-        int32_t
-        SynchronizeStepperMotorCmd::getParam(uint8_t motor_id) const
-        {
-            if(!_motor_params_map.count(motor_id))
-                throw std::out_of_range("SynchronizeStepperMotorCmd::getParam : Unknown motor id");
-
-            return _motor_params_map.at(motor_id);
-        }
-
 
         /**
          * @brief SynchronizeStepperMotorCmd::clear : clears the data (keep the cmd type)

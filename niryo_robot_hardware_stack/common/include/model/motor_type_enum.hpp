@@ -29,6 +29,9 @@
 namespace common {
     namespace model {
 
+        /**
+         * @brief The EMotorType enum
+         */
         enum class EMotorType {
                                 MOTOR_TYPE_STEPPER=1,
                                 MOTOR_TYPE_XL430=2,

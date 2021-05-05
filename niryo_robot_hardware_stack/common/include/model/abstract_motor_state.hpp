@@ -28,6 +28,10 @@
 namespace common {
     namespace model
     {
+
+        /**
+         * @brief The AbstractMotorState class
+         */
         class AbstractMotorState : public IObject
         {
             public:
@@ -82,58 +86,90 @@ namespace common {
                 std::string _hw_error_message_state;
         };
 
-
+        /**
+         * @brief AbstractMotorState::getType
+         * @return
+         */
         inline
         EMotorType AbstractMotorState::getType() const
         {
             return _type;
         }
 
+        /**
+         * @brief AbstractMotorState::getId
+         * @return
+         */
         inline
         uint8_t AbstractMotorState::getId() const
         {
             return _id;
         }
 
+        /**
+         * @brief AbstractMotorState::getPositionState
+         * @return
+         */
         inline
         int AbstractMotorState::getPositionState() const
         {
             return _position_state;
         }
 
+        /**
+         * @brief AbstractMotorState::getTemperatureState
+         * @return
+         */
         inline
         int AbstractMotorState::getTemperatureState() const
         {
             return _temperature_state;
-
         }
 
+        /**
+         * @brief AbstractMotorState::getVoltageState
+         * @return
+         */
         inline
         int AbstractMotorState::getVoltageState() const
         {
             return _voltage_state;
-
         }
 
+        /**
+         * @brief AbstractMotorState::getHardwareErrorState
+         * @return
+         */
         inline
         int AbstractMotorState::getHardwareErrorState() const
         {
             return _hw_error_state;
-
         }
 
+        /**
+         * @brief AbstractMotorState::getHardwareErrorMessageState
+         * @return
+         */
         inline
         std::string AbstractMotorState::getHardwareErrorMessageState() const
         {
             return _hw_error_message_state;
         }
 
+        /**
+         * @brief AbstractMotorState::isStepper
+         * @return
+         */
         inline
         bool AbstractMotorState::isStepper() const
         {
             return EMotorType::MOTOR_TYPE_STEPPER == _type;
         }
 
+        /**
+         * @brief AbstractMotorState::isDynamixel
+         * @return
+         */
         inline
         bool AbstractMotorState::isDynamixel() const
         {

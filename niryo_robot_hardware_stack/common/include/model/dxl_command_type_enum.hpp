@@ -29,6 +29,9 @@
 namespace common {
     namespace model {
 
+        /**
+         * @brief The EDxlCommandType enum
+         */
         enum class EDxlCommandType { CMD_TYPE_POSITION=1,
                                      CMD_TYPE_VELOCITY=2,
                                      CMD_TYPE_EFFORT=3,

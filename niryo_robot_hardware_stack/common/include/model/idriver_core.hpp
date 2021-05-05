@@ -27,6 +27,9 @@
 namespace common {
     namespace model {
 
+        /**
+         * @brief The IDriverCore class
+         */
         class IDriverCore
         {
             public:
@@ -49,6 +52,9 @@ namespace common {
 
         };
 
+        /**
+         * @brief IDriverCore::~IDriverCore
+         */
         inline
         IDriverCore::~IDriverCore()
         {

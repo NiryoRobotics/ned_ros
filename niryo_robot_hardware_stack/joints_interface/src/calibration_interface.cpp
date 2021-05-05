@@ -38,6 +38,12 @@ using namespace common::model;
 
 namespace JointsInterface {
 
+/**
+     * @brief CalibrationInterface::CalibrationInterface
+     * @param joint_list
+     * @param stepper
+     * @param dynamixel
+     */
     CalibrationInterface::CalibrationInterface(std::vector<std::shared_ptr<JointState> > joint_list,
                                                std::shared_ptr<StepperDriver::StepperDriverCore> stepper,
                                                std::shared_ptr<DynamixelDriver::DxlDriverCore> dynamixel) :
@@ -55,11 +61,21 @@ namespace JointsInterface {
         ROS_INFO("Calibration Interface - Calibration interface started");
     }
 
-    bool CalibrationInterface::CalibrationInprogress()
+    /**
+     * @brief CalibrationInterface::CalibrationInprogress
+     * @return
+     */
+    bool CalibrationInterface::CalibrationInprogress() const
     {
         return _calibration_in_progress;
     }
 
+    /**
+     * @brief CalibrationInterface::startCalibration
+     * @param mode
+     * @param result_message
+     * @return
+     */
     int CalibrationInterface::startCalibration(int mode, std::string &result_message)
     {
         if (mode == 1) // auto
@@ -102,12 +118,23 @@ namespace JointsInterface {
         return niryo_robot_msgs::CommandStatus::SUCCESS;
     }
 
+    /**
+     * @brief CalibrationInterface::_motorTorque
+     * @param motor
+     * @param status
+     */
     void CalibrationInterface::_motorTorque(const std::shared_ptr<JointState>& motor, bool status)
     {
         StepperMotorCmd stepper_cmd(EStepperCommandType::CMD_TYPE_TORQUE, motor->getId(), {status});
         _stepperCore->addCommandToQueue(stepper_cmd);
     }
 
+    /**
+     * @brief CalibrationInterface::_moveMotor
+     * @param motor
+     * @param steps
+     * @param delay
+     */
     void CalibrationInterface::_moveMotor(const std::shared_ptr<JointState>& motor, int steps, float delay)
     {
         _motorTorque(motor, true);
@@ -118,6 +145,14 @@ namespace JointsInterface {
         ros::Duration(delay).sleep();
     }
 
+    /**
+     * @brief CalibrationInterface::_relativeMoveMotor
+     * @param motor
+     * @param steps
+     * @param delay
+     * @param wait
+     * @return
+     */
     int CalibrationInterface::_relativeMoveMotor(const std::shared_ptr<JointState>& motor, int steps, int delay, bool wait)
     {
         _motorTorque(motor, true);
@@ -133,14 +168,11 @@ namespace JointsInterface {
     }
 
     /**
-     * @brief CalibrationInterface::_setStepperCalibrationCommand
-     * @param motor_id
-     * @param offset
+     * @brief CalibrationInterface::setStepperCalibrationCommand
+     * @param pState
      * @param delay
-     * @param motor_direction
      * @param calibration_direction
      * @param timeout
-     * @return
      */
     void CalibrationInterface::setStepperCalibrationCommand(const std::shared_ptr<StepperMotorState>& pState,
                                                             int32_t delay, int32_t calibration_direction, int32_t timeout)
@@ -157,6 +189,10 @@ namespace JointsInterface {
         ROS_INFO("Calibration Interface - start calibration for motor id %d :", motor_id);
     }
 
+    /**
+     * @brief CalibrationInterface::_check_steppers_connected
+     * @return
+     */
     bool CalibrationInterface::_check_steppers_connected()
     {
         for(auto const& jState : _joint_list)
@@ -169,6 +205,10 @@ namespace JointsInterface {
         return true;
     }
 
+    /**
+     * @brief CalibrationInterface::_auto_calibration
+     * @return
+     */
     EStepperCalibrationStatus CalibrationInterface::_auto_calibration()
     {
         ros::Duration sld(0.2);
@@ -292,6 +332,11 @@ namespace JointsInterface {
         return _stepperCore->getCalibrationStatus();
     }
 
+    /**
+     * @brief CalibrationInterface::_can_process_manual_calibration
+     * @param result_message
+     * @return
+     */
     bool CalibrationInterface::_can_process_manual_calibration(std::string &result_message)
     {
         std::vector<StepperMotorState> stepper_motor_states;
@@ -351,12 +396,22 @@ namespace JointsInterface {
         return true;
     }
 
+    /**
+     * @brief CalibrationInterface::_send_calibration_offset
+     * @param id
+     * @param offset_to_send
+     * @param absolute_steps_at_offset_position
+     */
     void CalibrationInterface::_send_calibration_offset(uint8_t id, int offset_to_send, int absolute_steps_at_offset_position)
     {
         StepperMotorCmd stepper_cmd(EStepperCommandType::CMD_TYPE_POSITION_OFFSET, id, {offset_to_send, absolute_steps_at_offset_position});
         _stepperCore->addCommandToQueue(stepper_cmd);
     }
 
+    /**
+     * @brief CalibrationInterface::_manual_calibration
+     * @return
+     */
     EStepperCalibrationStatus CalibrationInterface::_manual_calibration()
     {
         ros::Rate rest(0.5);
@@ -413,7 +468,12 @@ namespace JointsInterface {
         return _stepperCore->getCalibrationStatus();
     }
 
-
+    /**
+     * @brief CalibrationInterface::get_motors_calibration_offsets
+     * @param motor_id_list
+     * @param steps_list
+     * @return
+     */
     bool CalibrationInterface::get_motors_calibration_offsets(std::vector<int> &motor_id_list, std::vector<int> &steps_list)
     {
         std::string file_name;
@@ -447,6 +507,12 @@ namespace JointsInterface {
         return true;
     }
 
+    /**
+     * @brief CalibrationInterface::set_motors_calibration_offsets
+     * @param motor_id_list
+     * @param steps_list
+     * @return
+     */
     bool CalibrationInterface::set_motors_calibration_offsets(const std::vector<int> &motor_id_list, const std::vector<int> &steps_list)
     {
         if (motor_id_list.size() != steps_list.size())

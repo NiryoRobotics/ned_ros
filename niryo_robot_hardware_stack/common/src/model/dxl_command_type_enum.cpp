@@ -25,21 +25,24 @@ namespace common {
     namespace model {
 
         /**
-         *
+         * @brief DxlCommandTypeEnum::DxlCommandTypeEnum
+         * @param e
          */
         DxlCommandTypeEnum::DxlCommandTypeEnum(EDxlCommandType e):
             AbstractEnum<DxlCommandTypeEnum, EDxlCommandType>(e)
         {}
 
         /**
-         *
+         * @brief DxlCommandTypeEnum::DxlCommandTypeEnum
+         * @param str
          */
         DxlCommandTypeEnum::DxlCommandTypeEnum(const char* const str):
             AbstractEnum<DxlCommandTypeEnum, EDxlCommandType>(str)
         {}
 
         /**
-         *
+         * @brief DxlCommandTypeEnum::initialize
+         * @return
          */
         map<EDxlCommandType, string>
         DxlCommandTypeEnum::initialize()

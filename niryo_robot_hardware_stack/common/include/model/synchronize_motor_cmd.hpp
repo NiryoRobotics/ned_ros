@@ -34,6 +34,9 @@
 namespace common {
     namespace model {
 
+        /**
+         * @brief The SynchronizeMotorCmd class
+         */
         class SynchronizeMotorCmd : public AbstractMotorCmd<EDxlCommandType>
         {
             struct MotorParam {
@@ -64,10 +67,10 @@ namespace common {
                 std::vector<uint32_t> getParams(EMotorType type) const;
                 std::set<EMotorType> getMotorTypes() const;
 
-                void clear() override;
                 // AbstractMotorCmd interface
                 void reset() override;
                 std::string str() const override;
+                void clear() override;
                 bool isValid() const override;
 
                 friend bool operator==(const SynchronizeMotorCmd& lhs, const SynchronizeMotorCmd& rhs);
@@ -80,11 +83,23 @@ namespace common {
                 std::map<EMotorType, MotorParam > _motor_params_map;
         };
 
+        /**
+         * @brief operator ==
+         * @param lhs
+         * @param rhs
+         * @return
+         */
         inline
         bool operator==(const SynchronizeMotorCmd& lhs, const SynchronizeMotorCmd& rhs) {
             return lhs._type == rhs._type && lhs._motor_params_map == rhs._motor_params_map;
         }
 
+        /**
+         * @brief operator !=
+         * @param lhs
+         * @param rhs
+         * @return
+         */
         inline
         bool operator!=(const SynchronizeMotorCmd& lhs, const SynchronizeMotorCmd& rhs) {
             return !(lhs == rhs);

@@ -28,6 +28,9 @@
 namespace common {
     namespace model {
 
+        /**
+         * @brief The IDriver class
+         */
         class IDriver
         {
             public:
@@ -45,6 +48,9 @@ namespace common {
                 virtual bool hasMotors() = 0;
         };
 
+        /**
+         * @brief IDriver::~IDriver
+         */
         inline
         IDriver::~IDriver()
         {

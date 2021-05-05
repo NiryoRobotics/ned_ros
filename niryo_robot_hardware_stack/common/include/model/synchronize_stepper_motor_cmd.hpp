@@ -33,6 +33,9 @@
 namespace common {
     namespace model {
 
+        /**
+         * @brief The SynchronizeStepperMotorCmd class
+         */
         class SynchronizeStepperMotorCmd : public AbstractMotorCmd<EStepperCommandType>
         {
             public:

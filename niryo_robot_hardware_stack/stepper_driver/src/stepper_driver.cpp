@@ -190,6 +190,7 @@ namespace StepperDriver
     /**
      * @brief StepperDriver::addMotor
      * @param id
+     * @param isConveyor
      */
     void StepperDriver::addMotor(uint8_t id, bool isConveyor)
     {
@@ -980,7 +981,7 @@ namespace StepperDriver
 
     /**
      * @brief StepperDriver::getCalibrationResult
-     * @param id
+     * @param motor_id
      * @return
      */
     int32_t StepperDriver::getCalibrationResult(uint8_t motor_id) const

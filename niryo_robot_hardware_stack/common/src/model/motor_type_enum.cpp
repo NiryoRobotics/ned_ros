@@ -25,21 +25,24 @@ namespace common {
     namespace model {
 
         /**
-         *
+         * @brief MotorTypeEnum::MotorTypeEnum
+         * @param e
          */
         MotorTypeEnum::MotorTypeEnum(EMotorType e):
             AbstractEnum<MotorTypeEnum, EMotorType>(e)
         {}
 
         /**
-         *
+         * @brief MotorTypeEnum::MotorTypeEnum
+         * @param str
          */
         MotorTypeEnum::MotorTypeEnum(const char* const str):
             AbstractEnum<MotorTypeEnum, EMotorType>(str)
         {}
 
         /**
-         *
+         * @brief MotorTypeEnum::initialize
+         * @return
          */
         map<EMotorType, string>
         MotorTypeEnum::initialize()
