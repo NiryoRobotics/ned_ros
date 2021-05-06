@@ -22,7 +22,7 @@
 JointsInterfaceCore::JointsInterfaceCore(
     boost::shared_ptr<DynamixelDriver::DynamixelDriverCore> &dynamixel,
     boost::shared_ptr<StepperDriver::StepperDriverCore> &stepper)
-    : _stepper(stepper), _dynamixel(dynamixel)
+    : _dynamixel(dynamixel), _stepper(stepper)
 {
     init();
 }
@@ -124,6 +124,7 @@ void JointsInterfaceCore::rosControlLoop()
 */
 bool JointsInterfaceCore::_callbackResetController(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res)
 {
+    (void)req;
     ROS_DEBUG("Joints Interface Core - Reset Controller");
     _robot->setCommandToCurrentPosition();                    // set current command to encoder position
     _cm->update(ros::Time::now(), ros::Duration(0.00), true); // reset controllers to allow a discontinuity in position command
@@ -136,6 +137,7 @@ bool JointsInterfaceCore::_callbackResetController(niryo_robot_msgs::Trigger::Re
 
 void JointsInterfaceCore::_callbackTrajectoryResult(const control_msgs::FollowJointTrajectoryActionResult &msg)
 {
+    (void)msg;
     ROS_DEBUG("Joints Interface Core - Received trajectory RESULT");
     _robot->synchronizeMotors(false);
 }
@@ -166,6 +168,7 @@ bool JointsInterfaceCore::_callbackCalibrateMotors(niryo_robot_msgs::SetInt::Req
 
 bool JointsInterfaceCore::_callbackRequestNewCalibration(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res)
 {
+    (void)req;
     ROS_DEBUG("Joints Interface Core - New calibration requested");
     _previous_state_learning_mode = true;
     _robot->activateLearningMode();
@@ -181,7 +184,6 @@ bool JointsInterfaceCore::_callbackRequestNewCalibration(niryo_robot_msgs::Trigg
  */
 bool JointsInterfaceCore::_callbackActivateLearningMode(niryo_robot_msgs::SetBool::Request &req, niryo_robot_msgs::SetBool::Response &res)
 {
-    bool learning_mode_on = req.value;
     activateLearningMode(req.value, res.status, res.message);
     return true;
 }

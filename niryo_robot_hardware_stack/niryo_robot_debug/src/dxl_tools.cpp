@@ -56,7 +56,7 @@ void DxlTools::broadcastPing()
     }
 
     printf("Detected Dxl motor IDs:\n");
-    for (int i = 0; i < id_list.size(); i++) {
+    for (unsigned int i = 0; i < id_list.size(); i++) {
         printf("- %d\n", id_list.at(i));
     }
 }

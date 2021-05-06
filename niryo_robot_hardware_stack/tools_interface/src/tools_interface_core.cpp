@@ -5,7 +5,7 @@ ToolsInterfaceCore::ToolsInterfaceCore(boost::shared_ptr<DynamixelDriver::Dynami
 {
     initParams();
     initServices();
-    _tool.reset(new ToolState(0, "No tool", DynamixelDriver::DxlMotorType::MOTOR_TYPE_XL320));
+    _tool.reset(new ToolState(0, DynamixelDriver::DxlMotorType::MOTOR_TYPE_XL320));
     _check_tool_connection_thread.reset(new std::thread(boost::bind(&ToolsInterfaceCore::_checkToolConnection, this)));
 
     pubToolId(0);
@@ -50,18 +50,19 @@ void ToolsInterfaceCore::pubToolId(int id)
 
 bool ToolsInterfaceCore::_callbackPingAndSetDxlTool(tools_interface::PingDxlTool::Request &req, tools_interface::PingDxlTool::Response &res)
 {
-    std::lock_guard<std::mutex> lck(_tool_mutex);
-    // Unequipped tool
-    if(_tool->getId() != 0)
+    // A tool is already set
+    if (_tool->getId() != 0)
     {
-        _dynamixel->unsetEndEffector(_tool->getId(), _tool->getType());
-        res.state = TOOL_STATE_PING_OK;
-        res.id = 0;
+        res.id = _tool->getId();
+        res.state = niryo_robot_msgs::CommandStatus::SUCCESS;
+        return true;
     }
 
-    // Search new tool
-    std::vector<uint8_t> motor_list;
-    motor_list = _dynamixel->scanTools();
+    std::lock_guard<std::mutex> lck(_tool_mutex);
+
+    // Search for new tool
+    std::vector<uint8_t> motor_list = _findToolMotorListWithRetries(5);
+
     bool tool_found = false;
     uint8_t tool_id;
     for(int i = 0; i < _tool_id_list.size(); i++)
@@ -74,41 +75,46 @@ bool ToolsInterfaceCore::_callbackPingAndSetDxlTool(tools_interface::PingDxlTool
             break;
         }
     }
+    bool new_tool_set = false;
     if(tool_found)
     {
-        _tool.reset(new ToolState(tool_id, "auto", DynamixelDriver::DxlMotorType::MOTOR_TYPE_XL320));
-
-        // Try 3 times
-        int tries = 0;
-        bool tool_set = false;
-        while (!tool_set && tries<3)
-        {
-            tries++;
-            ros::Duration(0.05).sleep();
-            res.state = _dynamixel->setEndEffector(_tool->getId(), _tool->getType());
-
-            if (res.state != niryo_robot_msgs::CommandStatus::SUCCESS) continue;
-
-            pubToolId(tool_id);
-
-            tool_set = true;
-            res.id = tool_id;
-            ros::Duration(0.05).sleep();
-            _dynamixel->update_leds();
-            ROS_INFO("Tools Interface - Set End Effector return : %d", res.state);
-        }
+        new_tool_set = _equipToolWithRetries(tool_id, DynamixelDriver::DxlMotorType::MOTOR_TYPE_XL320, 5);
     }
-    else
-    {
-        _tool.reset(new ToolState(0, "No tool", DynamixelDriver::DxlMotorType::MOTOR_TYPE_XL320));
-        pubToolId(0);
-
-        ros::Duration(0.05).sleep();
-        res.state = TOOL_STATE_PING_OK;
-        res.id = 0;
-    }
+    res.state = new_tool_set ? niryo_robot_msgs::CommandStatus::SUCCESS : TOOL_STATE_PING_OK;
+    res.id = _tool->getId();
+    pubToolId(_tool->getId());
 
     return true;
+}
+
+std::vector<uint8_t> ToolsInterfaceCore::_findToolMotorListWithRetries(unsigned int max_retries)
+{
+    std::vector<uint8_t> motor_list;
+    while (max_retries > 0 && motor_list.empty())
+    {
+        motor_list = _dynamixel->scanTools();
+        max_retries--;
+        ros::Duration(0.05).sleep();
+    }
+    return motor_list;
+}
+
+bool ToolsInterfaceCore::_equipToolWithRetries(uint8_t tool_id, DynamixelDriver::DxlMotorType tool_type, unsigned max_retries)
+{
+    int result;
+    while (max_retries-- > 0)
+    {
+        result = _dynamixel->setEndEffector(tool_id, tool_type);
+        if (result == niryo_robot_msgs::CommandStatus::SUCCESS)
+        {
+            _tool.reset(new ToolState(tool_id, tool_type));
+            _dynamixel->update_leds();
+            break;
+        }
+        ros::Duration(0.05).sleep();
+    }
+    ROS_INFO("Tools Interface - Set End Effector return : %d", result);
+    return result == niryo_robot_msgs::CommandStatus::SUCCESS;
 }
 
 bool ToolsInterfaceCore::_callbackOpenGripper(tools_interface::OpenGripper::Request &req, tools_interface::OpenGripper::Response &res)
@@ -314,7 +320,7 @@ void ToolsInterfaceCore::_checkToolConnection()
                 {
                     ROS_INFO("Tools Interface - Unset Current Tools");
                     _dynamixel->unsetEndEffector(_tool->getId(), _tool->getType());
-                    _tool.reset(new ToolState(0, "No tool", DynamixelDriver::DxlMotorType::MOTOR_TYPE_XL320));
+                    _tool.reset(new ToolState(0, DynamixelDriver::DxlMotorType::MOTOR_TYPE_XL320));
                     msg.data = 0;
                     _current_tools_id_publisher.publish(msg);
                 }
