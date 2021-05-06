@@ -28,13 +28,10 @@
 class ToolState
 {
     public:
-        ToolState(uint8_t id, std::string name, DynamixelDriver::DxlMotorType type);
+        ToolState(uint8_t id, DynamixelDriver::DxlMotorType type);
 
         void setId(uint8_t id);
         uint8_t getId();
-
-        void setName(std::string name);
-        std::string& getName();
 
         void setType(DynamixelDriver::DxlMotorType type);
         DynamixelDriver::DxlMotorType getType();

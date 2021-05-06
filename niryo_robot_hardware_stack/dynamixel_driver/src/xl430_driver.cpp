@@ -338,6 +338,8 @@ int XL430Driver::setGoalVelocity(uint8_t id, uint32_t velocity)
 
 int XL430Driver::setGoalTorque(uint8_t id, uint32_t torque)
 {
+    (void)id;
+    (void)torque;
     // No goal torque for this motor ?
     return COMM_TX_ERROR;
 }
@@ -354,6 +356,8 @@ int XL430Driver::setLimitTemperature(uint8_t id, uint32_t temperature)
 
 int XL430Driver::setMaxTorque(uint8_t id, uint32_t torque)
 {
+    (void)id;
+    (void)torque;
     // No max torque setting for this motor ?
     return COMM_TX_ERROR;
 }
@@ -402,6 +406,8 @@ int XL430Driver::syncWriteVelocityGoal(std::vector<uint8_t> &id_list, std::vecto
 }
 int XL430Driver::syncWriteTorqueGoal(std::vector<uint8_t> &id_list, std::vector<uint32_t> &torque_list)
 {
+    (void)id_list;
+    (void)torque_list;
     // No goal torque for this motor ?
     return COMM_TX_ERROR;
 }
@@ -461,6 +467,8 @@ int XL430Driver::readLimitTemperature(uint8_t id, uint32_t *limit_temperature)
 
 int XL430Driver::readMaxTorque(uint8_t id, uint32_t *max_torque)
 {
+    (void)id;
+    (void)max_torque;
     // No max torque setting for this motor ?
     return COMM_TX_ERROR;
 }
