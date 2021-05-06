@@ -29,7 +29,7 @@
 #include "model/abstract_motor_cmd.hpp"
 #include "model/dxl_command_type_enum.hpp"
 #include "model/motor_type_enum.hpp"
-#include "model/dxl_motor_state.hpp"
+#include "model/joint_state.hpp"
 
 namespace common {
     namespace model {

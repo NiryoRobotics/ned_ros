@@ -1,6 +1,6 @@
 message("\n## Reading conveyor_interface/CMakeLists.txt...")
 
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.0.2)
 project(conveyor_interface)
 
 option(BUILD_DOCS "Build documentation" OFF)
@@ -22,9 +22,7 @@ find_package(catkin REQUIRED
         std_msgs
         message_generation
         stepper_driver
-        roslint
 )
-
 
 ###############################################
 # Declare ROS messages, services and actions ##
@@ -188,5 +186,8 @@ install(
 ##########################
 ## Static code analysis ##
 ##########################
+find_package(roslint QUIET)
 
-roslint_cpp()
+if(roslint_FOUND)
+    roslint_cpp()
+endif()

@@ -45,13 +45,35 @@ namespace common {
         }
 
         /**
-         * @brief SynchronizeStepperMotorCmd::addMotorParam
-         * @param motor_id
+         * @brief SynchronizeMotorCmd::addMotorParam
+         * @param state
          * @param param
          */
-        void SynchronizeStepperMotorCmd::addMotorParam(uint8_t motor_id, int32_t param)
+        void SynchronizeStepperMotorCmd::addMotorParam(const std::shared_ptr<JointState>& state, int32_t param)
         {
-            _motor_params_map[motor_id] = param;
+            //not yet in map
+            if(!_motor_params_map.count(state->getId())) {
+                _motor_params_map.insert(make_pair(state->getId(), param));
+            }
+            else {
+                _motor_params_map.at(state->getId()) = param;
+            }
+        }
+
+        /**
+         * @brief SynchronizeMotorCmd::addMotorParam
+         * @param state
+         * @param param
+         */
+        void SynchronizeStepperMotorCmd::addMotorParam(const JointState &state, int32_t param)
+        {
+            //not yet in map
+            if(!_motor_params_map.count(state.getId())) {
+                _motor_params_map.insert(make_pair(state.getId(), param));
+            }
+            else {
+                _motor_params_map.at(state.getId()) = param;
+            }
         }
 
         /**

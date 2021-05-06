@@ -1,6 +1,6 @@
 message("\n## Reading mcp_can_rpi/CMakeLists.txt...")
 
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.0.2)
 project(mcp_can_rpi)
 
 option(BUILD_DOCS "Build documentation" OFF)
@@ -19,7 +19,6 @@ add_definitions(-Wall  -Werror)
 find_package(catkin REQUIRED
     COMPONENTS
         roscpp
-        roslint
 )
 
 ###############################################
@@ -64,23 +63,31 @@ add_dependencies(mcp_can_rpi
 ## Specify libraries to link executable targets against
 
 # wiringPi should be installed only on a Raspberry Pi board
-execute_process( COMMAND
-        uname -m COMMAND tr -d '\n'
-    OUTPUT_VARIABLE
-        ARCHITECTURE
-)
-
-if (${ARCHITECTURE} MATCHES "^(arm.*|aarch64.*|arm64.*)$")
-    message(STATUS "wiringPi library is required for mcp_can_rpi (ARM processor)")
+if(CMAKE_CROSSCOMPILING)
+    message(STATUS "Cross compiling : wiringPi library is required")
     target_link_libraries(mcp_can_rpi
-        ${catkin_LIBRARIES} 
+        ${catkin_LIBRARIES}
         -lwiringPi -lrt
     )
 else()
-    message(STATUS "wiringPi library not required")
-    target_link_libraries(mcp_can_rpi 
-        ${catkin_LIBRARIES} 
+    execute_process( COMMAND
+            uname -m COMMAND tr -d '\n'
+        OUTPUT_VARIABLE
+            ARCHITECTURE
     )
+
+    if (${ARCHITECTURE} MATCHES "^(arm.*|aarch64.*|arm64.*)$")
+        message(STATUS "wiringPi library is required for mcp_can_rpi (ARM processor)")
+        target_link_libraries(mcp_can_rpi
+            ${catkin_LIBRARIES}
+            -lwiringPi -lrt
+        )
+    else()
+        message(STATUS "wiringPi library not required")
+        target_link_libraries(mcp_can_rpi
+            ${catkin_LIBRARIES}
+        )
+    endif()
 endif()
 
 #############
@@ -159,5 +166,8 @@ install(
 ##########################
 ## Static code analysis ##
 ##########################
+find_package(roslint QUIET)
 
-roslint_cpp()
+if(roslint_FOUND)
+    roslint_cpp()
+endif()

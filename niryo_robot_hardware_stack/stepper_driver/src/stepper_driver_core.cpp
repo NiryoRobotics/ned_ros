@@ -99,8 +99,13 @@ namespace StepperDriver
      */
     void StepperDriverCore::setSyncCommand(const SynchronizeStepperMotorCmd& cmd)
     {
+        std::lock_guard<std::mutex> lck(_joint_trajectory_mutex);
+
         if(cmd.isValid()) {
-            _joint_trajectory_controller_cmd = cmd;
+            //keep position cmd apart
+            if(cmd.getType() == EStepperCommandType::CMD_TYPE_POSITION) {
+                _joint_trajectory_controller_cmd = cmd;
+            }
         }
     }
 
@@ -378,6 +383,10 @@ namespace StepperDriver
         std_msgs::Int64MultiArray cmd;
         if (_joint_trajectory_controller_cmd.isValid())
         {
+            std::lock_guard<std::mutex> lck(_joint_trajectory_mutex);
+
+            ROS_DEBUG("StepperDriverCore::_executeCommand : %s", _joint_trajectory_controller_cmd.str().c_str());
+
             _stepper->readSynchronizeCommand(_joint_trajectory_controller_cmd);
             for(auto const& id: _joint_trajectory_controller_cmd.getMotorsId())
                 cmd.data.emplace_back(_joint_trajectory_controller_cmd.getParam(id));

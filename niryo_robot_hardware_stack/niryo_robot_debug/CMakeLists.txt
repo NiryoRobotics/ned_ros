@@ -1,6 +1,6 @@
 message("\n## Reading niryo_robot_debug/CMakeLists.txt...")
 
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.0.2)
 project(niryo_robot_debug)
 
 option(BUILD_DOCS "Build documentation" OFF)
@@ -24,7 +24,6 @@ find_package(catkin REQUIRED
         niryo_robot_msgs
         mcp_can_rpi
         dynamixel_sdk
-        roslint
 )
  
 find_package(Boost REQUIRED
@@ -73,29 +72,34 @@ add_executable(dxl_debug_tools
     src/dxl_tools.cpp
 )
 
-#
 # wiringPi should be installed only on a Raspberry Pi board
-#
-
-execute_process( COMMAND
-        uname -m COMMAND tr -d '\n'
-    OUTPUT_VARIABLE
-        ARCHITECTURE
-)
-
-if (${ARCHITECTURE} MATCHES "^(arm.*|aarch64.*|arm64.*)$")
-    message(STATUS "wiringPi library is required - arm processor")
+if(CMAKE_CROSSCOMPILING)
+    message(STATUS "Cross compiling : wiringPi library is required")
     target_link_libraries(dxl_debug_tools
-        ${catkin_LIBRARIES} 
-        ${Boost_LIBRARIES}
+        ${catkin_LIBRARIES}
         -lwiringPi -lrt
     )
 else()
-    message(STATUS "wiringPi library not required")
-    target_link_libraries(dxl_debug_tools
-        ${catkin_LIBRARIES} 
-        ${Boost_LIBRARIES}
+    execute_process( COMMAND
+            uname -m COMMAND tr -d '\n'
+        OUTPUT_VARIABLE
+            ARCHITECTURE
     )
+
+    if (${ARCHITECTURE} MATCHES "^(arm.*|aarch64.*|arm64.*)$")
+        message(STATUS "wiringPi library is required - arm processor")
+        target_link_libraries(dxl_debug_tools
+            ${catkin_LIBRARIES}
+            ${Boost_LIBRARIES}
+            -lwiringPi -lrt
+        )
+    else()
+        message(STATUS "wiringPi library not required")
+        target_link_libraries(dxl_debug_tools
+            ${catkin_LIBRARIES}
+            ${Boost_LIBRARIES}
+        )
+    endif()
 endif()
 
 #############
@@ -171,5 +175,8 @@ install(
 ##########################
 ## Static code analysis ##
 ##########################
+find_package(roslint QUIET)
 
-roslint_cpp()
+if(roslint_FOUND)
+    roslint_cpp()
+endif()

@@ -96,6 +96,7 @@ namespace StepperDriver
             bool _debug_flag;
 
             std::mutex _control_loop_mutex;
+            std::mutex _joint_trajectory_mutex;
             std::thread _control_loop_thread;
 
             double _control_loop_frequency;

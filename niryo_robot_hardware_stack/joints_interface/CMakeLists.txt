@@ -1,6 +1,6 @@
 message("\n## Reading joints_interface/CMakeLists.txt...")
 
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.0.2)
 project(joints_interface)
 
 option(BUILD_DOCS "Build documentation" OFF)
@@ -28,7 +28,6 @@ find_package(catkin REQUIRED
         stepper_driver
         actionlib
         common
-        roslint
 )
 
 find_package(Boost REQUIRED
@@ -189,5 +188,8 @@ install(
 ##########################
 ## Static code analysis ##
 ##########################
+find_package(roslint QUIET)
 
-roslint_cpp()
+if(roslint_FOUND)
+    roslint_cpp()
+endif()

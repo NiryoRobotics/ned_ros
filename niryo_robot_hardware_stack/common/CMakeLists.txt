@@ -1,6 +1,6 @@
 message("\n## Reading common/CMakeLists.txt...")
 
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.0.2)
 project(common)
 
 option(BUILD_DOCS "Build documentation" OFF)
@@ -18,7 +18,6 @@ add_definitions(-Wall  -Werror)
 find_package(catkin REQUIRED
     COMPONENTS
         roscpp
-        roslint
 )
 
 ###############################################
@@ -136,5 +135,8 @@ install(
 ##########################
 ## Static code analysis ##
 ##########################
+find_package(roslint QUIET)
 
-roslint_cpp()
+if(roslint_FOUND)
+    roslint_cpp()
+endif()

@@ -1,6 +1,6 @@
 message("\n## Reading tools_interface/CMakeLists.txt...")
 
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.0.2)
 project(tools_interface)
 
 option(BUILD_DOCS "Build documentation" OFF)
@@ -23,7 +23,6 @@ find_package(catkin REQUIRED
         dynamixel_driver
         message_generation
         common
-        roslint
 )
 
 ###############################################
@@ -185,5 +184,8 @@ install(
 ##########################
 ## Static code analysis ##
 ##########################
+find_package(roslint QUIET)
 
-roslint_cpp()
+if(roslint_FOUND)
+    roslint_cpp()
+endif()

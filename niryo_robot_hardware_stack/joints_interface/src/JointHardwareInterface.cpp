@@ -96,10 +96,11 @@ namespace JointsInterface {
 
         for(auto const& jState : _joint_list)
         {
-            if(jState)
+            if(jState && jState->isValid())
             {
                 if(jState->isStepper()) {
-                    stepper_cmd.addMotorParam(jState->getId(),jState->to_motor_pos(jState->cmd));
+                    stepper_cmd.addMotorParam(jState,
+                                              jState->to_motor_pos(jState->cmd));
                 }
                 else if(jState->isDynamixel()) {
                     dxlMotorCmd.addMotorParam(jState,

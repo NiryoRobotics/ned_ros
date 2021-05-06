@@ -29,6 +29,7 @@
 #include "model/abstract_motor_cmd.hpp"
 #include "model/stepper_command_type_enum.hpp"
 #include "model/motor_type_enum.hpp"
+#include "model/joint_state.hpp"
 
 namespace common {
     namespace model {
@@ -43,7 +44,8 @@ namespace common {
                 SynchronizeStepperMotorCmd(EStepperCommandType type);
 
                 //setters
-                void addMotorParam(uint8_t motor_id, int32_t param);
+                void addMotorParam(const std::shared_ptr<JointState> &dxlState, int32_t param);
+                void addMotorParam(const JointState &dxlState, int32_t param);
 
                 //getters
                 std::vector<uint8_t> getMotorsId() const;
