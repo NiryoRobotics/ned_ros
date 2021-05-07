@@ -134,11 +134,6 @@ namespace DynamixelDriver
         static constexpr int XL330_ADDR_PRESENT_POSITION    = 132;
         static constexpr int XL330_ADDR_PRESENT_VOLTAGE     = 144;
         static constexpr int XL330_ADDR_PRESENT_TEMPERATURE = 146;
-
-    public:
-
-        // according to xl-330 datasheet : 1 speed ~ 0.229 rpm ~ 3.9083 dxl position per second
-        static constexpr double XL330_STEPS_FOR_1_SPEED     = 15.6331; // 0.229 * 4096 / 60
     };
 } //DynamixelDriver
 

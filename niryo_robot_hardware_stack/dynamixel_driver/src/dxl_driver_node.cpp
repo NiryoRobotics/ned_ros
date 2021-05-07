@@ -14,7 +14,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+// ros
 #include <ros/ros.h>
+
+// niryo
 #include "dynamixel_driver/dxl_driver_core.hpp"
 
 int main(int argc, char** argv)

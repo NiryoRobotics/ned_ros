@@ -45,16 +45,15 @@ namespace StepperDriver
             StepperDriverCore();
             virtual ~StepperDriverCore() override;
 
-            void clearCommandQueue();
-            void clearConveyorCommandQueue();
-
-            void addCommandToQueue(const common::model::StepperMotorCmd& cmd);
-            void addCommandToQueue(const std::vector<common::model::StepperMotorCmd>& cmd);
-
-            void setSyncCommand(const common::model::SynchronizeStepperMotorCmd &cmd);
-
             int setConveyor(uint8_t motor_id);
             void unsetConveyor(uint8_t motor_id);
+
+            void clearSingleCommandQueue();
+            void clearConveyorCommandQueue();
+
+            void setSyncCommand(const common::model::SynchronizeStepperMotorCmd &cmd);
+            void addSingleCommandToQueue(const common::model::StepperMotorCmd& cmd);
+            void addSingleCommandToQueue(const std::vector<common::model::StepperMotorCmd>& cmd);
 
             void startCalibration();
 
@@ -90,49 +89,69 @@ namespace StepperDriver
 
             int motorCmdReport(uint8_t motor_id,  common::model::EMotorType motor_type = common::model::EMotorType::MOTOR_TYPE_STEPPER);
 
+            //use other callbacks instead of executecommand
+
         private:
+            //common to dxl_driver_core. Put in abstract class ?
             ros::NodeHandle _nh;
             bool _control_loop_flag;
             bool _debug_flag;
 
             std::mutex _control_loop_mutex;
             std::mutex _joint_trajectory_mutex;
+
             std::thread _control_loop_thread;
 
             double _control_loop_frequency;
-            double _check_connection_frequency;
 
             double _delta_time_data_read;
-            double _delta_time_calib_read;
             double _delta_time_write;
 
             double _time_hw_data_last_read;
-            double _time_hw_calib_last_read;
             double _time_hw_data_last_write;
 
             double _time_check_connection_last_read;
 
+            //specific to stepper
+            double _delta_time_calib_read;
+            double _time_hw_calib_last_read;
+
             std::unique_ptr<StepperDriver> _stepper;
 
-            common::model::SynchronizeStepperMotorCmd _joint_trajectory_controller_cmd;
-            std::queue<common::model::StepperMotorCmd> _stepper_cmds;
+            common::model::SynchronizeStepperMotorCmd _joint_trajectory_cmd;
+            std::queue<common::model::StepperMotorCmd> _stepper_single_cmds;
             std::queue<common::model::StepperMotorCmd> _conveyor_cmds;
 
             ros::Publisher cmd_pub;
+
+        private:
+            static constexpr int QUEUE_OVERFLOW = 20;
     };
 
+    /**
+     * @brief StepperDriverCore::isConnectionOk
+     * @return
+     */
     inline
     bool StepperDriverCore::isConnectionOk() const
     {
         return _stepper->isConnectionOk();
     }
 
+    /**
+     * @brief StepperDriverCore::isCalibrationInProgress
+     * @return
+     */
     inline
     bool StepperDriverCore::isCalibrationInProgress() const
     {
         return _stepper->isCalibrationInProgress();
     }
 
+    /**
+     * @brief StepperDriverCore::getCalibrationStatus
+     * @return
+     */
     inline
     common::model::EStepperCalibrationStatus
     StepperDriverCore::getCalibrationStatus() const
@@ -140,6 +159,10 @@ namespace StepperDriver
         return _stepper->getCalibrationStatus();
     }
 
+    /**
+     * @brief StepperDriverCore::getStepperStates
+     * @return
+     */
     inline
     std::vector<common::model::StepperMotorState>
     StepperDriverCore::getStepperStates() const
@@ -147,6 +170,11 @@ namespace StepperDriver
         return _stepper->getMotorsStates();
     }
 
+    /**
+     * @brief StepperDriverCore::getStepperState
+     * @param motor_id
+     * @return
+     */
     inline
     common::model::StepperMotorState
     StepperDriverCore::getStepperState(uint8_t motor_id) const
@@ -154,6 +182,6 @@ namespace StepperDriver
         return _stepper->getMotorState(motor_id);
 
     }
-}
+} // StepperDriver
 
 #endif

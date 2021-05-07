@@ -26,6 +26,10 @@
 #include <ros/ros.h>
 
 namespace FakeInterface {
+
+    /**
+     * @brief The FakeJointHardwareInterface class
+     */
     class FakeJointHardwareInterface : public hardware_interface::RobotHW
     {
     public:

@@ -20,52 +20,65 @@
 #ifndef CONVEYOR_INTERFACE_CORE_HPP
 #define CONVEYOR_INTERFACE_CORE_HPP
 
+// c++
 #include <memory>
-
-#include <ros/ros.h>
 #include <vector>
+
+// ros
+#include <ros/ros.h>
+
+// niryo
+#include "stepper_driver/stepper_driver_core.hpp"
 
 #include "conveyor_interface/SetConveyor.h"
 #include "conveyor_interface/ControlConveyor.h"
 #include "conveyor_interface/ConveyorFeedbackArray.h"
-#include "stepper_driver/stepper_driver_core.hpp"
 #include "niryo_robot_msgs/CommandStatus.h"
 
 namespace ConveyorInterface {
+
+    /**
+     * @brief The ConveyorInterfaceCore class
+     */
     class ConveyorInterfaceCore
     {
         public:
-
             ConveyorInterfaceCore(std::shared_ptr<StepperDriver::StepperDriverCore> stepper);
             virtual ~ConveyorInterfaceCore();
 
-            void initServices();
-            void initParams();
-
         private:
-
-            ros::NodeHandle _nh;
-            std::shared_ptr<StepperDriver::StepperDriverCore> _stepper;
-
-            ros::ServiceServer _ping_and_set_stepper_server;
-            ros::ServiceServer _control_conveyor_server;
-            ros::Publisher _conveyors_feedback_publisher;
-
-            ros::Publisher _conveyor_status_publisher;
-            std::thread _publish_conveyors_feedback_thread;
-
-            std::vector<uint8_t> _list_conveyor_id;
-            std::vector<uint8_t> _list_available_id;
-            std::vector<int> _list_possible_conveyor_id;
-            int _conveyor_id;
-            int _conveyor_max_effort;
-            double _publish_feedback_frequency;
-
+            void init();
+            void initParams();
+            void startServices();
+            void startPublishers();
 
             bool _callbackPingAndSetConveyor(conveyor_interface::SetConveyor::Request &req, conveyor_interface::SetConveyor::Response &res);
             bool _callbackControlConveyor(conveyor_interface::ControlConveyor::Request &req, conveyor_interface::ControlConveyor::Response &res);
 
             void _publishConveyorsFeedback();
+
+        private:
+            ros::NodeHandle _nh;
+
+            std::thread _publish_conveyors_feedback_thread;
+
+            std::shared_ptr<StepperDriver::StepperDriverCore> _stepper;
+
+            ros::ServiceServer _ping_and_set_stepper_server;
+            ros::ServiceServer _control_conveyor_server;
+
+            ros::Publisher _conveyors_feedback_publisher;
+            ros::Publisher _conveyor_status_publisher;
+
+            std::vector<uint8_t> _list_conveyor_id;
+            std::vector<uint8_t> _available_conveyor_list;
+            std::vector<int> _list_possible_conveyor_id;
+
+
+
+            int _conveyor_id{0};
+            int _conveyor_max_effort{0};
+            double _publish_feedback_frequency{0.0};
     };
 } // ConveyorInterface
 #endif

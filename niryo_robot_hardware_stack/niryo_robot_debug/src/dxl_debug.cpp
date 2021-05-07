@@ -41,7 +41,7 @@ namespace po = boost::program_options;
 
 #ifdef __arm
     #define DEFAULT_PORT "/dev/serial0"
-#elif __aarch64__
+#elifdef __aarch64__
     #define DEFAULT_PORT "/dev/ttyAMA0"
 #else
     #define DEFAULT_PORT ""

@@ -49,7 +49,8 @@ namespace common {
                 int getHardwareErrorState() const;
                 std::string getHardwareErrorMessageState() const;
 
-                int getTotalRangePosition() const;
+                double getStepsForOneSpeed() const;
+                double getTotalRangePosition() const;
                 int getMiddlePosition() const;
                 double getTotalAngle() const;
 

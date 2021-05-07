@@ -23,6 +23,10 @@
 #include "model/motor_type_enum.hpp"
 
 namespace FakeInterface {
+
+    /**
+     * @brief FakeJointHardwareInterface::FakeJointHardwareInterface
+     */
     FakeJointHardwareInterface::FakeJointHardwareInterface()
     {
         ROS_DEBUG("Starting Fake Joint Hardware Interface...");
@@ -40,17 +44,17 @@ namespace FakeInterface {
 
         // connect and register joint state interface
         std::vector<hardware_interface::JointStateHandle> state_handle;
-        for (int i = 0; i < 6; i++)
+        for (size_t i = 0; i < 6; i++)
         {
-            state_handle.push_back(hardware_interface::JointStateHandle(_joints_name[i], &_pos[i], &_vel[i], &_eff[i]));
+            state_handle.emplace_back(hardware_interface::JointStateHandle(_joints_name[i], &_pos[i], &_vel[i], &_eff[i]));
             _joint_state_interface.registerHandle(state_handle[i]);
         }
         registerInterface(&_joint_state_interface);
 
         std::vector<hardware_interface::JointHandle> position_handle;
-        for (int i = 0; i < 6; i++)
+        for (size_t i = 0; i < 6; i++)
         {
-            position_handle.push_back(hardware_interface::JointHandle(_joint_state_interface.getHandle(_joints_name[i]), &_cmd[i]));
+            position_handle.emplace_back(hardware_interface::JointHandle(_joint_state_interface.getHandle(_joints_name[i]), &_cmd[i]));
             _joint_position_interface.registerHandle(position_handle[i]);
         }
         registerInterface(&_joint_position_interface);
@@ -62,23 +66,26 @@ namespace FakeInterface {
         _list_dxl_id.clear();
         _map_dxl_name.clear();
 
-        for (int i = 0; i < 3; i++)
+        for (size_t i = 0; i < 3; i++)
         {
-            _list_stepper_id.push_back(_joints_id[i]);
-            _map_stepper_name[_joints_id[i]] = _joints_name[i];
+            _list_stepper_id.emplace_back(static_cast<uint8_t>(_joints_id[i]));
+            _map_stepper_name[static_cast<uint8_t>(_joints_id[i])] = _joints_name[i];
         }
-        for (int i = 3; i < 5; i++)
+        for (size_t i = 3; i < 5; i++)
         {
-            _list_dxl_id.push_back(_joints_id[i]);
-            _map_dxl_name[_joints_id[i]] = _joints_name[i];
+            _list_dxl_id.emplace_back(static_cast<uint8_t>(_joints_id[i]));
+            _map_dxl_name[static_cast<uint8_t>(_joints_id[i])] = _joints_name[i];
         }
-        for (int i = 5; i < 6; i++)
+        for (size_t i = 5; i < 6; i++)
         {
-            _list_dxl_id.push_back(_joints_id[i]);
-            _map_dxl_name[_joints_id[i]] = _joints_name[i];
+            _list_dxl_id.emplace_back(static_cast<uint8_t>(_joints_id[i]));
+            _map_dxl_name[static_cast<uint8_t>(_joints_id[i])] = _joints_name[i];
         }
     }
 
+    /**
+     * @brief FakeJointHardwareInterface::read
+     */
     void FakeJointHardwareInterface::read(const ros::Time &/*time*/, const ros::Duration &/*period*/)
     {
         _pos[0] = _cmd[0];
@@ -89,6 +96,9 @@ namespace FakeInterface {
         _pos[5] = _cmd[5];
     }
 
+    /**
+     * @brief FakeJointHardwareInterface::write
+     */
     void FakeJointHardwareInterface::write(const ros::Time &/*time*/, const ros::Duration &/*period*/)
     {
         _pos[0] = _cmd[0];
@@ -99,6 +109,11 @@ namespace FakeInterface {
         _pos[5] = _cmd[5];
     }
 
+    /**
+     * @brief FakeJointHardwareInterface::jointIdToJointName
+     * @param id
+     * @return
+     */
     std::string FakeJointHardwareInterface::jointIdToJointName(uint8_t id)
     {
 

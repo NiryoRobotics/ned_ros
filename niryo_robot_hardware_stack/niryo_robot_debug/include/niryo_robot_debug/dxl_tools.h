@@ -26,12 +26,15 @@
 #include <memory>
 
 namespace robotDebug {
+
+    /**
+     * @brief The DxlTools class
+     */
     class DxlTools {
-
-
         public:
             DxlTools();
-            DxlTools(std::shared_ptr<dynamixel::PortHandler> portHandler, std::shared_ptr<dynamixel::PacketHandler> packetHandler);
+            DxlTools(std::shared_ptr<dynamixel::PortHandler> portHandler,
+                     std::shared_ptr<dynamixel::PacketHandler> packetHandler);
 
             int setupDxlBus(int baudrate);
             void broadcastPing();
@@ -48,6 +51,7 @@ namespace robotDebug {
             std::shared_ptr<dynamixel::PacketHandler> _packetHandler;
 
     };
+
 } // namespace robotDebug
 
 #endif

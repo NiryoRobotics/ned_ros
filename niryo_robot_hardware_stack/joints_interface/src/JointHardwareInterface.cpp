@@ -28,6 +28,11 @@ using namespace common::model;
 
 namespace JointsInterface {
 
+    /**
+     * @brief JointHardwareInterface::JointHardwareInterface
+     * @param dynamixel
+     * @param stepper
+     */
     JointHardwareInterface::JointHardwareInterface(shared_ptr<DynamixelDriver::DxlDriverCore> dynamixel,
                                                    shared_ptr<StepperDriver::StepperDriverCore> stepper) :
         _dynamixel(dynamixel),
@@ -49,45 +54,29 @@ namespace JointsInterface {
      */
     void JointHardwareInterface::read(const ros::Time &/*time*/, const ros::Duration &/*period*/)
     {
-        vector<StepperMotorState> stepper_motor_state = _stepper->getStepperStates();
-
         size_t stepper_idx = 0;
         size_t dxl_idx = 0;
 
         for(auto const& jState : _joint_list)
         {
-            if(jState) {
+            if(jState && jState->isValid()) {
                 if(jState->isStepper()) {
                     jState->pos = jState->to_rad_pos(_stepper->getStepperState(jState->getId()).getPositionState());
                     stepper_idx++;
                 }
                 else if (jState->isDynamixel()) {
-                    jState->pos  = jState->getOffsetPosition() + jState->to_rad_pos(_dynamixel->getDxlState(jState->getId()).getPositionState());
-                    //jState->pos = (abs(dxl1_pose) < 2 * M_PI) ? dxl1_pose : jState->pos;
+                    jState->pos  = jState->to_rad_pos(_dynamixel->getDxlState(jState->getId()).getPositionState());
                     dxl_idx++;
                 }
             }
         }
-
-//        _pos[0] = steps_to_rad_pos(stepper_motor_state.at(0), _gear_ratio_1, _direction_1);
-//        _pos[1] = steps_to_rad_pos(stepper_motor_state.at(1), _gear_ratio_2, _direction_2);
-//        _pos[2] = steps_to_rad_pos(stepper_motor_state.at(2), _gear_ratio_3, _direction_3);
-
-//        // Quick fix
-//        double dxl1_pose = _offset_position_dxl_1 + xl430_pos_to_rad_pos(dxl_motor_state.at(0).getPositionState());
-//        double dxl2_pose = _offset_position_dxl_2 + xl430_pos_to_rad_pos(XL430_MIDDLE_POSITION * 2 - dxl_motor_state.at(1).getPositionState());
-//        double dxl3_pose = _offset_position_dxl_3 + xl320_pos_to_rad_pos(dxl_motor_state.at(2).getPositionState());
-//        _pos[3] = abs(dxl1_pose) < 2 * M_PI ? dxl1_pose : _pos[3];
-//        _pos[4] = abs(dxl2_pose) < 2 * M_PI ? dxl2_pose : _pos[4];
-//        _pos[5] = abs(dxl3_pose) < 2 * M_PI ? dxl3_pose : _pos[5];
-
 
         if (!_stepper->isConnectionOk())
             this->newCalibration();
     }
 
     /**
-     * @brief JointHardwareInterface::write
+     * @brief JointHardwareInterface::write: update the position of each joint using the received command from the joint handle
      */
     void JointHardwareInterface::write(const ros::Time &/*time*/, const ros::Duration &/*period*/)
     {
@@ -104,7 +93,7 @@ namespace JointsInterface {
                 }
                 else if(jState->isDynamixel()) {
                     dxlMotorCmd.addMotorParam(jState,
-                                              static_cast<uint32_t>(jState->to_motor_pos(jState->cmd - jState->getOffsetPosition())));
+                                              static_cast<uint32_t>(jState->to_motor_pos(jState->cmd)));
                 }
             }
         }
@@ -133,8 +122,8 @@ namespace JointsInterface {
         _map_stepper_name.clear();
         _map_dxl_name.clear();
 
-        double cmd[3] = {0, 0.64, -1.39};
-        double pos[3] = {0, 0.64, -1.39};
+        //double cmd[3] = {0, 0.64, -1.39};
+        //double pos[3] = {0, 0.64, -1.39};
 
         int currentIdStepper = 1;
         int currentIdDxl = 1;
@@ -173,8 +162,8 @@ namespace JointsInterface {
                     stepperState->setMaxEffort(max_effort);
                     stepperState->setNeedCalibration(true);
 
-                    stepperState->pos = pos[currentIdStepper - 1];
-                    stepperState->cmd = cmd[currentIdStepper - 1];
+                    //stepperState->pos = pos[currentIdStepper - 1];
+                    //stepperState->cmd = cmd[currentIdStepper - 1];
 
                     _joint_list.emplace_back(stepperState);
                     _map_stepper_name[stepperState->getId()] = stepperState->getName();
@@ -232,7 +221,8 @@ namespace JointsInterface {
 
                     registerInterface(&_joint_state_interface);
 
-                    hardware_interface::JointHandle jPosHandle(_joint_state_interface.getHandle(jState->getName()), &_joint_list.at(j)->cmd);
+                    hardware_interface::JointHandle jPosHandle(_joint_state_interface.getHandle(jState->getName()),
+                                                               &_joint_list.at(j)->cmd);
 
                     position_handle.emplace_back(jPosHandle);
                     _joint_position_interface.registerHandle(jPosHandle);
@@ -253,7 +243,7 @@ namespace JointsInterface {
         {
             if(jState && jState->isStepper()) {
                 StepperMotorCmd cmd(EStepperCommandType::CMD_TYPE_MICRO_STEPS, jState->getId(), {8});
-                _stepper->addCommandToQueue(cmd);
+                _stepper->addSingleCommandToQueue(cmd);
             }
         }
         ros::Duration(0.05).sleep();
@@ -263,7 +253,7 @@ namespace JointsInterface {
         {
             if(jState && jState->isStepper()) {
                 StepperMotorCmd cmd(EStepperCommandType::CMD_TYPE_MAX_EFFORT, jState->getId(), {static_cast<int32_t>(dynamic_pointer_cast<StepperMotorState>(jState)->getMaxEffort())});
-                _stepper->addCommandToQueue(cmd);
+                _stepper->addSingleCommandToQueue(cmd);
             }
         }
         ros::Duration(0.05).sleep();
@@ -297,7 +287,7 @@ namespace JointsInterface {
      */
     bool JointHardwareInterface::needCalibration() const
     {
-        bool result = EStepperCalibrationStatus::CALIBRATION_OK != _stepper->getCalibrationStatus();
+        bool result = (EStepperCalibrationStatus::CALIBRATION_OK != _stepper->getCalibrationStatus());
 
         ROS_DEBUG_THROTTLE(2, "JointHardwareInterface::needCalibration - Need calibration returned: %d", static_cast<int>(result));
         return result;
@@ -337,7 +327,7 @@ namespace JointsInterface {
     void JointHardwareInterface::newCalibration()
     {
         for(auto const& jState: _joint_list) {
-            if(jState->isStepper())
+            if(jState && jState->isStepper())
                 jState->setNeedCalibration(true);
         }
     }
@@ -360,7 +350,7 @@ namespace JointsInterface {
                     else if(jState->isStepper()) {
                         stepper_cmd.setId(jState->getId());
                         stepper_cmd.setParams({0});
-                        _stepper->addCommandToQueue(stepper_cmd);
+                        _stepper->addSingleCommandToQueue(stepper_cmd);
                     }
                 }
             }
@@ -381,14 +371,18 @@ namespace JointsInterface {
             SynchronizeMotorCmd dxl_cmd(EDxlCommandType::CMD_TYPE_LEARNING_MODE);
             StepperMotorCmd stepper_cmd(EStepperCommandType::CMD_TYPE_TORQUE);
 
-            for(auto const& jState: _joint_list) {
-                if(jState) {
-                    if(jState->isDynamixel())
+            for(auto const& jState: _joint_list)
+            {
+                if(jState && jState->isValid())
+                {
+                    if(jState->isDynamixel()) {
                         dxl_cmd.addMotorParam(jState, 1);
+                    }
                     else if(jState->isStepper()) {
                         stepper_cmd.setId(jState->getId());
                         stepper_cmd.setParams({1});
-                        _stepper->addCommandToQueue(stepper_cmd);
+
+                        _stepper->addSingleCommandToQueue(stepper_cmd);
                     }
                 }
             }
@@ -409,31 +403,16 @@ namespace JointsInterface {
 
         if(_stepper) {
             StepperMotorCmd stepper_cmd(EStepperCommandType::CMD_TYPE_SYNCHRONIZE);
-            for(auto const& jState: _joint_list) {
-                if(jState && jState->isStepper()) {
+
+            for(auto const& jState: _joint_list)
+            {
+                if(jState && jState->isValid() && jState->isStepper())
+                {
                     StepperMotorCmd cmd(EStepperCommandType::CMD_TYPE_SYNCHRONIZE, jState->getId(), {synchronize});
-                    _stepper->addCommandToQueue(stepper_cmd);
+                    _stepper->addSingleCommandToQueue(stepper_cmd);
                 }
             }
         }
-    }
-
-    /**
-     * @brief JointHardwareInterface::isCalibrationInProgress
-     * @return
-     */
-    bool JointHardwareInterface::isCalibrationInProgress() const
-    {
-        return _calibration_interface->CalibrationInprogress();
-    }
-
-    /**
-     * @brief JointHardwareInterface::getJointsState
-     * @return
-     */
-    const vector<shared_ptr<JointState> >& JointHardwareInterface::getJointsState() const
-    {
-        return _joint_list;
     }
 
     /**

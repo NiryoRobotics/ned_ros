@@ -83,7 +83,7 @@ namespace FakeInterface {
 
         void pubToolId(int id);
 
-        std::string jointIdToJointName(int id);
+        std::string jointIdToJointName(uint8_t id) const;
 
         std::vector<uint8_t> _dxl_motors_id{2, 3, 6};
         std::vector<uint8_t> _dxl_motors_type{niryo_robot_msgs::MotorHeader::MOTOR_TYPE_XL430,

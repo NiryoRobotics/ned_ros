@@ -21,11 +21,17 @@
 
 namespace robotDebug {
 
+    /**
+     * @brief DxlTools::DxlTools
+     */
     DxlTools::DxlTools()
-    {
+    {}
 
-    }
-
+    /**
+     * @brief DxlTools::DxlTools
+     * @param portHandler
+     * @param packetHandler
+     */
     DxlTools::DxlTools(std::shared_ptr<dynamixel::PortHandler> portHandler,
                        std::shared_ptr<dynamixel::PacketHandler> packetHandler) :
         _portHandler(portHandler),
@@ -33,6 +39,11 @@ namespace robotDebug {
     {
     }
 
+    /**
+     * @brief DxlTools::setupDxlBus
+     * @param baudrate
+     * @return
+     */
     int DxlTools::setupDxlBus(int baudrate)
     {
         if (!_portHandler->setupGpio()) {
@@ -52,6 +63,9 @@ namespace robotDebug {
         return 1;
     }
 
+    /**
+     * @brief DxlTools::broadcastPing
+     */
     void DxlTools::broadcastPing()
     {
         int dxl_comm_result = COMM_TX_FAIL;
@@ -69,6 +83,10 @@ namespace robotDebug {
         }
     }
 
+    /**
+     * @brief DxlTools::ping
+     * @param id
+     */
     void DxlTools::ping(int id)
     {
         int dxl_comm_result = COMM_TX_FAIL;
@@ -170,6 +188,9 @@ namespace robotDebug {
         return dxl_comm_result;
     }
 
+    /**
+     * @brief DxlTools::closePort
+     */
     void DxlTools::closePort()
     {
         _portHandler->closePort();

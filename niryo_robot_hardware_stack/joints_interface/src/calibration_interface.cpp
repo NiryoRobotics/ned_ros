@@ -38,7 +38,7 @@ using namespace common::model;
 
 namespace JointsInterface {
 
-/**
+    /**
      * @brief CalibrationInterface::CalibrationInterface
      * @param joint_list
      * @param stepper
@@ -126,7 +126,7 @@ namespace JointsInterface {
     void CalibrationInterface::_motorTorque(const std::shared_ptr<JointState>& motor, bool status)
     {
         StepperMotorCmd stepper_cmd(EStepperCommandType::CMD_TYPE_TORQUE, motor->getId(), {status});
-        _stepperCore->addCommandToQueue(stepper_cmd);
+        _stepperCore->addSingleCommandToQueue(stepper_cmd);
     }
 
     /**
@@ -140,7 +140,7 @@ namespace JointsInterface {
         _motorTorque(motor, true);
 
         StepperMotorCmd stepper_cmd(EStepperCommandType::CMD_TYPE_POSITION, motor->getId(), {steps});
-        _stepperCore->addCommandToQueue(stepper_cmd);
+        _stepperCore->addSingleCommandToQueue(stepper_cmd);
 
         ros::Duration(delay).sleep();
     }
@@ -158,7 +158,7 @@ namespace JointsInterface {
         _motorTorque(motor, true);
 
         StepperMotorCmd stepper_cmd(EStepperCommandType::CMD_TYPE_RELATIVE_MOVE, motor->getId(), {steps, delay});
-        _stepperCore->addCommandToQueue(stepper_cmd);
+        _stepperCore->addSingleCommandToQueue(stepper_cmd);
 
         if (wait)
         {
@@ -184,7 +184,7 @@ namespace JointsInterface {
 
         StepperMotorCmd stepper_cmd(EStepperCommandType::CMD_TYPE_CALIBRATION, motor_id,
                                     {offset, delay, motor_direction * calibration_direction, timeout});
-        _stepperCore->addCommandToQueue(stepper_cmd);
+        _stepperCore->addSingleCommandToQueue(stepper_cmd);
 
         ROS_INFO("Calibration Interface - start calibration for motor id %d :", motor_id);
     }
@@ -216,7 +216,7 @@ namespace JointsInterface {
         // 0. Torque ON for motor 2
 
         StepperMotorCmd stepper_cmd(EStepperCommandType::CMD_TYPE_TORQUE, _joint_list.at(1)->getId(), {true});
-        _stepperCore->addCommandToQueue(stepper_cmd);
+        _stepperCore->addSingleCommandToQueue(stepper_cmd);
         sld.sleep();
 
         // 1. Relative Move Motor 3
@@ -307,7 +307,7 @@ namespace JointsInterface {
                 if(jState && jState->isStepper())
                 {
                     StepperMotorCmd cmd(EStepperCommandType::CMD_TYPE_TORQUE, jState->getId(), {false});
-                    _stepperCore->addCommandToQueue(cmd);
+                    _stepperCore->addSingleCommandToQueue(cmd);
                 }
             }
 
@@ -405,7 +405,7 @@ namespace JointsInterface {
     void CalibrationInterface::_send_calibration_offset(uint8_t id, int offset_to_send, int absolute_steps_at_offset_position)
     {
         StepperMotorCmd stepper_cmd(EStepperCommandType::CMD_TYPE_POSITION_OFFSET, id, {offset_to_send, absolute_steps_at_offset_position});
-        _stepperCore->addCommandToQueue(stepper_cmd);
+        _stepperCore->addSingleCommandToQueue(stepper_cmd);
     }
 
     /**

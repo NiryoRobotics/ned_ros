@@ -20,7 +20,15 @@
 #ifndef IDriverCore_H
 #define IDriverCore_H
 
+// C++
 #include <string>
+#include <thread>
+#include <mutex>
+
+//ros
+#include <ros/node_handle.h>
+
+// niryo
 #include "niryo_robot_msgs/BusState.h"
 #include "motor_type_enum.hpp"
 
@@ -49,6 +57,8 @@ namespace common {
                 virtual void resetHardwareControlLoopRates() = 0;
                 virtual void controlLoop() = 0;
                 virtual void _executeCommand() = 0;
+
+            protected:
 
         };
 

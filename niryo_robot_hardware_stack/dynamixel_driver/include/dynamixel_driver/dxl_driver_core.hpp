@@ -51,12 +51,18 @@
 
 namespace DynamixelDriver
 {
+    /**
+     * @brief The DxlDriverCore class
+     */
     class DxlDriverCore : public common::model::IDriverCore
     {
     public:
 
         DxlDriverCore();
         virtual ~DxlDriverCore() override;
+
+        int setEndEffector(common::model::EMotorType type, uint8_t motor_id);
+        void unsetEndEffector(uint8_t motor_id);
 
         void clearSingleCommandQueue();
         void clearEndEffectorCommandQueue();
@@ -67,24 +73,22 @@ namespace DynamixelDriver
 
         void addEndEffectorCommandToQueue(const common::model::SingleMotorCmd &cmd);
         void addEndEffectorCommandToQueue(const std::vector<common::model::SingleMotorCmd> &cmd);
-
-        int setEndEffector(common::model::EMotorType type, uint8_t id);
-        void unsetEndEffector(uint8_t id);
         
         //direct commands
         std::vector<uint8_t> scanTools();
-        int ping_id(uint8_t id, common::model::EMotorType type);
 
         int update_leds(void);
 
         int rebootMotors();
 
         //getters
-        dynamixel_driver::DxlArrayMotorHardwareStatus getHwStatus() const;
         std::vector<uint8_t> getRemovedMotorList() const;
-        common::model::DxlMotorState getDxlState(uint8_t motor_id) const;
+        double getEndEffectorState(uint8_t id) const;
+
+        dynamixel_driver::DxlArrayMotorHardwareStatus getHwStatus() const;
+
         std::vector<common::model::DxlMotorState> getDxlStates() const;
-        uint32_t getEndEffectorState(uint8_t id) const;
+        common::model::DxlMotorState getDxlState(uint8_t motor_id) const;
 
         // IDriverCore interface
         void startControlLoop() override;
@@ -111,31 +115,35 @@ namespace DynamixelDriver
         bool callbackReadCustomDxlValue(dynamixel_driver::ReadCustomDxlValue::Request &req, dynamixel_driver::ReadCustomDxlValue::Response &res);
 
     private:
+        //common to stepper_driver_core. Put in abstract class ?
         ros::NodeHandle _nh;
         bool _control_loop_flag;
         bool _debug_flag;
 
         std::mutex _control_loop_mutex;
+        std::mutex _joint_trajectory_mutex;
+
         std::thread _control_loop_thread;
 
         double _control_loop_frequency;
-        double _check_connection_frequency;
-
-        double _check_end_effector_frequency;
 
         double _delta_time_data_read;
-        double _delta_time_status_read;
         double _delta_time_write;
 
-        double _time_hw_data_last_write;
         double _time_hw_data_last_read;
-        double _time_hw_status_last_read;
+        double _time_hw_data_last_write;
+
         double _time_check_connection_last_read;
+
+        //specific to dxl
+        double _delta_time_status_read;
+        double _time_hw_status_last_read;
+
         double _time_check_end_effector_last_read;
 
         std::unique_ptr<DxlDriver> _dynamixel;
 
-        common::model::SynchronizeMotorCmd _dxl_sync_cmds_traj;
+        common::model::SynchronizeMotorCmd _joint_trajectory_cmd;
         common::model::SynchronizeMotorCmd _dxl_sync_cmds;
         std::queue<common::model::SingleMotorCmd> _dxl_single_cmds;
         std::queue<common::model::SingleMotorCmd> _end_effector_cmds;
@@ -144,31 +152,51 @@ namespace DynamixelDriver
         ros::ServiceServer _custom_cmd_server;
         ros::ServiceServer _custom_cmd_getter;
 
+    private:
+        static constexpr int QUEUE_OVERFLOW = 20;
+
     };
 
+    /**
+     * @brief DxlDriverCore::getDxlStates
+     * @return
+     */
     inline
     std::vector<common::model::DxlMotorState> DxlDriverCore::getDxlStates() const
     {
         return _dynamixel->getMotorsStates();
     }
 
+    /**
+     * @brief DxlDriverCore::isConnectionOk
+     * @return
+     */
     inline
     bool DxlDriverCore::isConnectionOk() const
     {
         return _dynamixel->isConnectionOk();
     }
 
+    /**
+     * @brief DxlDriverCore::getDxlState
+     * @param motor_id
+     * @return
+     */
     inline
     common::model::DxlMotorState DxlDriverCore::getDxlState(uint8_t motor_id) const
     {
         return _dynamixel->getMotorState(motor_id);
     }
 
+    /**
+     * @brief DxlDriverCore::getRemovedMotorList
+     * @return
+     */
     inline
     std::vector<uint8_t> DxlDriverCore::getRemovedMotorList() const
     {
         return _dynamixel->getRemovedMotorList();
     }
-
 } //DynamixelDriver
+
 #endif

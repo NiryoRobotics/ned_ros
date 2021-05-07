@@ -29,6 +29,9 @@
 
 namespace CpuInterface {
 
+    /**
+     * @brief The CpuInterfaceCore class
+     */
     class CpuInterfaceCore
     {
         public:
@@ -39,22 +42,34 @@ namespace CpuInterface {
             void initParams();
 
             void startReadingData();
-            int getCpuTemperature();
+            int getCpuTemperature() const;
+
+        private:
+            void _readCpuTemperature();
+            void _readHardwareDataLoop();
 
         private:
             ros::NodeHandle _nh;
 
-            int _cpu_temperature;
-
-            double _read_cpu_frequency;
-            int _temperature_warn_threshold;
-            int _temperature_shutdown_threshold;
-
-            void _readCpuTemperature();
-            void _readHardwareDataLoop();
-
             std::thread _read_hardware_data_thread;
+
+            int _cpu_temperature{0};
+
+            double _read_cpu_frequency{0.0};
+            int _temperature_warn_threshold{0};
+            int _temperature_shutdown_threshold{0};
     };
+
+    /**
+     * @brief CpuInterfaceCore::getCpuTemperature
+     * @return
+     */
+    inline
+    int CpuInterfaceCore::getCpuTemperature() const
+    {
+        return _cpu_temperature;
+    }
+
 } //CpuInterface
 
 #endif

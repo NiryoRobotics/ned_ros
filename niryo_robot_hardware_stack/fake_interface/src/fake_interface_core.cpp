@@ -354,8 +354,8 @@ namespace FakeInterface {
         }
     }
 
-    std::string FakeInterfaceCore::jointIdToJointName(int id)
+    std::string FakeInterfaceCore::jointIdToJointName(uint8_t id) const
     {
-        return _robot->jointIdToJointName(static_cast<uint8_t>(id));
+        return _robot->jointIdToJointName(id);
     }
 } // FakeInterface

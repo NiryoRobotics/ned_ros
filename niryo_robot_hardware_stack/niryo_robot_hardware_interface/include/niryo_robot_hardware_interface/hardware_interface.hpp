@@ -40,6 +40,9 @@
 
 namespace NiryoRobotHardwareInterface
 {
+    /**
+     * @brief The HardwareInterface class
+     */
     class HardwareInterface
     {
     public:
@@ -47,12 +50,19 @@ namespace NiryoRobotHardwareInterface
         virtual ~HardwareInterface();
 
     private:
-        ros::NodeHandle &_nh;
+        void initNodes();
+        void initParams();
+        void initPublishers();
 
-        bool _simulation_mode;
-        bool _gazebo;
-        bool _can_enabled;
-        bool _dxl_enabled;
+        bool _callbackLaunchMotorsReport(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
+        bool _callbackStopMotorsReport(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
+        bool _callbackRebootMotors(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
+
+        void _publishHardwareStatus();
+        void _publishSoftwareVersion();
+
+    private:
+        ros::NodeHandle &_nh;
 
         ros::Publisher _hardware_status_publisher;
         ros::Publisher _software_version_publisher;
@@ -60,36 +70,28 @@ namespace NiryoRobotHardwareInterface
         std::thread _publish_software_version_thread;
         std::thread _publish_hw_status_thread;
 
-        double _publish_hw_status_frequency;
-        double _publish_software_version_frequency;
-
-        std::string _rpi_image_version;
-        std::string _ros_niryo_robot_version;
-
-        void initNodes();
-        void initPublishers();
-        void initParams();
-
-        void _publishHardwareStatus();
-        void _publishSoftwareVersion();
-
-        bool _callbackLaunchMotorsReport(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
         ros::ServiceServer _motors_report_service;
-
-        bool _callbackStopMotorsReport(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
         ros::ServiceServer _stop_motors_report_service;
-
-        bool _callbackRebootMotors(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
         ros::ServiceServer _reboot_motors_service;
 
         std::shared_ptr<DynamixelDriver::DxlDriverCore> _dynamixel_driver;
         std::shared_ptr<StepperDriver::StepperDriverCore> _stepper_driver;
-
         std::shared_ptr<CpuInterface::CpuInterfaceCore> _cpu_interface;
         std::shared_ptr<ConveyorInterface::ConveyorInterfaceCore> _conveyor_interface;
         std::shared_ptr<ToolsInterface::ToolsInterfaceCore> _tools_interface;
         std::shared_ptr<JointsInterface::JointsInterfaceCore> _joints_interface;
         std::shared_ptr<FakeInterface::FakeInterfaceCore> _fake_interface;
+
+        bool _simulation_mode{false};
+        bool _gazebo{false};
+        bool _can_enabled{false};
+        bool _dxl_enabled{false};
+
+        double _publish_hw_status_frequency{0.0};
+        double _publish_software_version_frequency{0.0};
+
+        std::string _rpi_image_version;
+        std::string _ros_niryo_robot_version;
     };
 } // namespace NiryoRobotHardwareInterface
 #endif

@@ -133,7 +133,6 @@ namespace DynamixelDriver
         static constexpr int XL430_ADDR_PRESENT_POSITION    = 132;
         static constexpr int XL430_ADDR_PRESENT_VOLTAGE     = 144;
         static constexpr int XL430_ADDR_PRESENT_TEMPERATURE = 146;
-
     };
 } //DynamixelDriver
 

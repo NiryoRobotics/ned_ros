@@ -93,6 +93,27 @@ namespace JointsInterface {
 
         bool _learning_mode;
     };
+
+    /**
+     * @brief JointHardwareInterface::getJointsState
+     * @return
+     */
+    inline
+    bool JointHardwareInterface::isCalibrationInProgress() const
+    {
+        return _calibration_interface->CalibrationInprogress();
+    }
+
+    /**
+     * @brief JointHardwareInterface::getJointsState
+     * @return
+     */
+    inline
+    const std::vector<std::shared_ptr<common::model::JointState> >&
+    JointHardwareInterface::getJointsState() const
+    {
+        return _joint_list;
+    }
 } // JointsInterface
 
 #endif

@@ -129,12 +129,6 @@ namespace DynamixelDriver
         static constexpr int XL320_ADDR_MOVING              = 49;
         static constexpr int XL320_ADDR_HW_ERROR_STATUS     = 50;
         static constexpr int XL320_ADDR_PUNCH               = 51;
-
-    public:
-
-        // according to xl-320 datasheet : 1 speed ~ 0.111 rpm ~ 1.8944 dxl position per second
-        static constexpr double XL320_STEPS_FOR_1_SPEED = 1.8944; // 0.111 * 1024 / 60
-
     };
 } //DynamixelDriver
 

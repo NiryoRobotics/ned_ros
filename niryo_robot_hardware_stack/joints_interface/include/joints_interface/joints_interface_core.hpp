@@ -60,7 +60,7 @@ namespace JointsInterface {
             void activateLearningMode(bool learning_mode_on, int &resp_status, std::string &resp_message);
             void calibrateJoints();
 
-            std::string jointIdToJointName(int id);
+            std::string jointIdToJointName(uint8_t id) const;
 
             bool getFreeDriveMode() const;
             void getCalibrationState(bool &need_calibration, bool &calibration_in_progress) const;
@@ -77,41 +77,81 @@ namespace JointsInterface {
 
             void rosControlLoop();
 
-        private:
-            ros::NodeHandle _nh;
-
             bool _callbackResetController(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
             void _callbackTrajectoryResult(const control_msgs::FollowJointTrajectoryActionResult& msg);
             bool _callbackCalibrateMotors(niryo_robot_msgs::SetInt::Request &req, niryo_robot_msgs::SetInt::Response &res);
             bool _callbackRequestNewCalibration(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
             bool _callbackActivateLearningMode(niryo_robot_msgs::SetBool::Request &req, niryo_robot_msgs::SetBool::Response &res);
 
-            void _publishPackageStates();
             void _publishLearningMode();
 
+        private:
+            ros::NodeHandle _nh;
+
+            bool _enable_control_loop{true};
+            bool _previous_state_learning_mode{true};
+            bool _reset_controller{false};
+
+            double _ros_control_frequency{0.0};
+            double _publish_learning_mode_frequency{0.0};
+
             std::shared_ptr<JointHardwareInterface> _robot;
-
-            double _publish_learning_mode_frequency;
-            double _ros_control_frequency;
-
             std::shared_ptr<controller_manager::ControllerManager> _cm;
 
-            ros::Subscriber _trajectory_result_subscriber;
+            std::thread _publish_learning_mode_thread;
+            std::thread _control_loop_thread;
 
+            ros::Subscriber _trajectory_result_subscriber;
             ros::Publisher _learning_mode_publisher;
 
             ros::ServiceServer _reset_controller_server; // workaround to compensate missed steps
             ros::ServiceServer _calibrate_motors_server;
             ros::ServiceServer _request_new_calibration_server;
-
             ros::ServiceServer _activate_learning_mode_server;
 
-            std::thread _publish_learning_mode_thread;
-            std::thread _control_loop_thread;
-
-            bool _enable_control_loop;
-            bool _previous_state_learning_mode;
-            bool _reset_controller;
     };
+
+    /**
+     * @brief JointsInterfaceCore::jointIdToJointName
+     * @param id
+     * @return
+     */
+    inline
+    std::string JointsInterfaceCore::jointIdToJointName(uint8_t id) const
+    {
+        return _robot->jointIdToJointName(id);
+    }
+
+    /**
+     * @brief JointsInterfaceCore::getFreeDriveMode
+     * @return
+     */
+    inline
+    bool JointsInterfaceCore::getFreeDriveMode() const
+    {
+        return _previous_state_learning_mode;
+    }
+
+    /**
+     * @brief JointsInterfaceCore::getCalibrationState
+     * @param need_calibration
+     * @param calibration_in_progress
+     */
+    inline
+    void JointsInterfaceCore::getCalibrationState(bool &need_calibration, bool &calibration_in_progress) const
+    {
+        need_calibration = _robot->needCalibration();
+        calibration_in_progress = _robot->isCalibrationInProgress();
+    }
+
+    /**
+     * @brief JointsInterfaceCore::getJointsState
+     * @return
+     */
+    inline
+    const std::vector<std::shared_ptr<common::model::JointState> > &JointsInterfaceCore::getJointsState() const
+    {
+        return _robot->getJointsState();
+    }
 } // JointsInterface
 #endif
