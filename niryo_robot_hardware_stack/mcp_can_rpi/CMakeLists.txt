@@ -11,10 +11,6 @@ option(BUILD_INTEGRATION_TESTS "Build the integration tests" OFF)
 ## Compile as C++11, supported in ROS Kinetic and newer
 add_compile_options(-std=c++11)
 
-## By adding -Wall and -Werror, the compiler does not ignore warnings anymore,
-## enforcing cleaner code.
-add_definitions(-Wall  -Werror)
-
 ## Find catkin macros and libraries
 find_package(catkin REQUIRED
     COMPONENTS

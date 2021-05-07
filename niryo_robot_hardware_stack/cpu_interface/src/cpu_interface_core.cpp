@@ -102,7 +102,8 @@ namespace CpuInterface {
             }
             if (_cpu_temperature > _temperature_shutdown_threshold) {
                 ROS_ERROR("CPU Interface - Rpi is too hot, shutdown to avoid any damage");
-                std::system("sudo shutdown now");
+                int ret = std::system("sudo shutdown now");
+                ROS_INFO("Shutdown now: %d", ret);
             }
 
             read_rpi_diagnostics_rate.sleep();
