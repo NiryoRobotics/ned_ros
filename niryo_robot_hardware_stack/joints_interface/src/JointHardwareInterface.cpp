@@ -87,13 +87,13 @@ namespace JointsInterface {
         {
             if(jState && jState->isValid())
             {
-                if(jState->isStepper()) {
-                    stepper_cmd.addMotorParam(jState,
-                                              jState->to_motor_pos(jState->cmd));
+                if(jState->isStepper())
+                {
+                    stepper_cmd.addMotorParam(jState, jState->to_motor_pos(jState->cmd));
                 }
-                else if(jState->isDynamixel()) {
-                    dxlMotorCmd.addMotorParam(jState,
-                                              static_cast<uint32_t>(jState->to_motor_pos(jState->cmd)));
+                else if(jState->isDynamixel())
+                {
+                    dxlMotorCmd.addMotorParam(jState, static_cast<uint32_t>(jState->to_motor_pos(jState->cmd)));
                 }
             }
         }

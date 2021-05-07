@@ -78,7 +78,7 @@ namespace JointsInterface {
      */
     int CalibrationInterface::startCalibration(int mode, std::string &result_message)
     {
-        if (mode == 1) // auto
+        if (AUTO_CALIBRATION == mode) // auto
         {
             _calibration_in_progress = true;
             if (!_check_steppers_connected())
@@ -90,7 +90,7 @@ namespace JointsInterface {
             _auto_calibration();
             _calibration_in_progress = false;
         }
-        else if (mode == 2) // manuel
+        else if (MANUAL_CALIBRATION == mode) // manuel
         {
             _calibration_in_progress = true;
             if (!_can_process_manual_calibration(result_message))
@@ -236,12 +236,9 @@ namespace JointsInterface {
 
         dynamixel_cmd.reset();
         dynamixel_cmd.setType(EDxlCommandType::CMD_TYPE_POSITION);
-        dynamixel_cmd.addMotorParam(_joint_list.at(3),
-                                    _joint_list.at(3)->to_motor_pos(-_joint_list.at(3)->getOffsetPosition()));
-        dynamixel_cmd.addMotorParam(_joint_list.at(4),
-                                    _joint_list.at(4)->to_motor_pos(-_joint_list.at(4)->getOffsetPosition()));
-        dynamixel_cmd.addMotorParam(_joint_list.at(5),
-                                    _joint_list.at(5)->to_motor_pos(-_joint_list.at(5)->getOffsetPosition()));
+        dynamixel_cmd.addMotorParam(_joint_list.at(3), static_cast<uint32_t>(_joint_list.at(3)->to_motor_pos(0)));
+        dynamixel_cmd.addMotorParam(_joint_list.at(4), static_cast<uint32_t>(_joint_list.at(4)->to_motor_pos(0)));
+        dynamixel_cmd.addMotorParam(_joint_list.at(5), static_cast<uint32_t>(_joint_list.at(5)->to_motor_pos(0)));
         _dynamixelCore->setSyncCommand(dynamixel_cmd);
         sld.sleep();
 
@@ -296,7 +293,7 @@ namespace JointsInterface {
             sld.sleep();
             _relativeMoveMotor(_joint_list.at(0),
                                -_joint_list.at(0)->to_motor_pos(_joint_list.at(0)->getOffsetPosition()),
-                                550,
+                               550,
                                false);
 
             ros::Duration(2.5).sleep();

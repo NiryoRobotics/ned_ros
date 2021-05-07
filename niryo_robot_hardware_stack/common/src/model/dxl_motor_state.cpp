@@ -141,6 +141,82 @@ namespace common {
             return _offset_position + static_cast<double>(((position_dxl - getMiddlePosition()) * getTotalAngle()) / denom);
         }
 
+
+        // CC to be removed. For easy refacto only
+        double DxlMotorState::getTotalRangePosition() const
+        {
+            switch(_type)
+            {
+            case EMotorType::MOTOR_TYPE_XC430:
+                return 4095.0;
+            case EMotorType::MOTOR_TYPE_XL320:
+                return 1023.0;
+            case EMotorType::MOTOR_TYPE_XL330:
+                return 4095.0;
+            case EMotorType::MOTOR_TYPE_XL430:
+                return 4095.0;
+            default:
+                return 0.0;
+            }
+        }
+
+        // CC to be removed. For easy refacto only
+        int DxlMotorState::getMiddlePosition() const
+        {
+            switch(_type)
+            {
+            case EMotorType::MOTOR_TYPE_XC430:
+                return 2047;
+            case EMotorType::MOTOR_TYPE_XL320:
+                return 511;
+            case EMotorType::MOTOR_TYPE_XL330:
+                return 2047;
+            case EMotorType::MOTOR_TYPE_XL430:
+                return 2047;
+            default:
+                return 0;
+            }
+        }
+
+        // CC to be removed. For easy refacto only
+        double DxlMotorState::getTotalAngle() const
+        {
+            switch(_type)
+            {
+            case EMotorType::MOTOR_TYPE_XC430:
+                return 360.36;
+            case EMotorType::MOTOR_TYPE_XL320:
+                return 296.67;
+            case EMotorType::MOTOR_TYPE_XL330:
+                return 296.67;
+            case EMotorType::MOTOR_TYPE_XL430:
+                return 360.36;
+            default:
+                return 0;
+            }
+        }
+
+        // CC to be removed. For easy refacto only
+        double DxlMotorState::getStepsForOneSpeed() const
+        {
+            // according to xl-330 datasheet : 1 speed ~ 0.229 rpm ~ 3.9083 dxl position per second
+            // according to xl-320 datasheet : 1 speed ~ 0.111 rpm ~ 1.8944 dxl position per second
+
+            switch(_type)
+            {
+            case EMotorType::MOTOR_TYPE_XC430:
+                return 15.6331; // 0.229 * 4096 / 60
+            case EMotorType::MOTOR_TYPE_XL320:
+                return 1.8944; // 0.111 * 1024 / 60
+            case EMotorType::MOTOR_TYPE_XL330:
+                return 15.6331; // 0.229 * 4096 / 60
+            case EMotorType::MOTOR_TYPE_XL430:
+                return 15.6331; // 0.229 * 4096 / 60
+            default:
+                return 0.0;
+            }
+        }
+
         /**
          * @brief DxlMotorState::setPGain
          * @param p_gain

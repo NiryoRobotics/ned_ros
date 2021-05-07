@@ -55,6 +55,11 @@ namespace common {
                 uint32_t getFF1Gain() const;
                 uint32_t getFF2Gain() const;
 
+                double getStepsForOneSpeed() const;
+                double getTotalRangePosition() const;
+                int getMiddlePosition() const;
+                double getTotalAngle() const;
+
                 void setPGain(uint32_t getPGain);
                 void setIGain(uint32_t getIGain);
                 void setDGain(uint32_t getDGain);

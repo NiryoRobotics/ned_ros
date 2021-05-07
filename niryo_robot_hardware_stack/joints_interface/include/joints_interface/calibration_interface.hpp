@@ -76,6 +76,10 @@ namespace JointsInterface {
         int _calibration_timeout;
 
         std::vector<int32_t> _motor_calibration_list;
+
+        static constexpr int AUTO_CALIBRATION = 1;
+        static constexpr int MANUAL_CALIBRATION = 2;
+
     };
 
 } //JointsInterface
