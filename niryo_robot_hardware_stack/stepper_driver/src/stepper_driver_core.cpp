@@ -297,11 +297,7 @@ namespace StepperDriver
                 lock_guard<mutex> lck(_control_loop_mutex);
 
                 // cc calibration results ???
-                if (ros::Time::now().toSec() - _time_hw_data_last_read >= _delta_time_data_read)
-                {
-                    _time_hw_data_last_read = ros::Time::now().toSec();
-                    _stepper->readMotorsState();
-                }
+                _stepper->readMotorsState();
 
                 if (_stepper->isConnectionOk())
                 {
@@ -313,14 +309,14 @@ namespace StepperDriver
                 }
 
                 bool isFreqMet = control_loop_rate.sleep();
-                ROS_WARN_COND(!isFreqMet, "StepperDriverCore::controlLoop : control loop rate (%f) not met !", _control_loop_frequency);
+                ROS_WARN_COND(!isFreqMet, "StepperDriverCore::rosControlLoop : freq not met : expected (%f s) vs actual (%f s)", control_loop_rate.expectedCycleTime().toSec(), control_loop_rate.cycleTime().toSec());
+                ROS_DEBUG_COND(isFreqMet, "StepperDriverCore::rosControlLoop : freq met : expected (%f s) vs actual (%f s)", control_loop_rate.expectedCycleTime().toSec(), control_loop_rate.cycleTime().toSec());
             }
             else
             {
                 ros::Duration(TIME_TO_WAIT_IF_BUSY).sleep();
                 resetHardwareControlLoopRates();
             }
-
         }
     }
 
@@ -330,8 +326,7 @@ namespace StepperDriver
     void StepperDriverCore::_executeCommand()
     {
         bool need_sleep = false;
-
-        if (_joint_trajectory_cmd.isValid())
+        /*if (_joint_trajectory_cmd.isValid())
         {
             //we need a mutex here to ensure this data is not being modify
             //by another thread during its usage
@@ -340,7 +335,13 @@ namespace StepperDriver
             _joint_trajectory_cmd.reset();
 
             need_sleep = true;
+        }*/
+        if (_joint_trajectory_cmd_vec.size() != 0)
+        {
+            _stepper->executeJointTrajectoryCmd(_joint_trajectory_cmd_vec);
+            need_sleep = true;
         }
+
         if (!_stepper_single_cmds.empty())
         {
             //as we use a queue, we don't need a mutex
@@ -428,6 +429,11 @@ namespace StepperDriver
     {
         while(!_conveyor_cmds.empty())
             _conveyor_cmds.pop();
+    }
+
+    void StepperDriverCore::setTrajectoryControllerCommands(std::vector<int32_t> &cmd)
+    {
+        _joint_trajectory_cmd_vec = cmd;
     }
 
     /**
@@ -549,10 +555,10 @@ namespace StepperDriver
 
         while (ros::ok())
         {
-            if(_joint_trajectory_cmd.isValid()) {
-                for(auto const& id: _joint_trajectory_cmd.getMotorsId())
-                     msg.data.emplace_back(_joint_trajectory_cmd.getParam(id));
-
+            if(_joint_trajectory_cmd_vec.size() == 3) {
+                msg.data.emplace_back(_joint_trajectory_cmd_vec.at(0));
+                msg.data.emplace_back(_joint_trajectory_cmd_vec.at(1));
+                msg.data.emplace_back(_joint_trajectory_cmd_vec.at(2));
                 _command_publisher.publish(msg);
 
                 publish_command_rate.sleep();

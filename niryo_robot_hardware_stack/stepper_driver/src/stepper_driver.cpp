@@ -363,6 +363,19 @@ namespace StepperDriver
         return result;
     }
 
+    void StepperDriver::executeJointTrajectoryCmd(std::vector<int32_t> &cmd)
+    {
+        int result;
+        for (size_t i = 0; i < 3; i++)
+        {
+            result = sendPositionCommand(static_cast<uint8_t>(i+1), cmd.at(i));
+            if (result != CAN_OK)
+            {
+                ROS_WARN("Stepper Driver - send positions to motor id %d failed", static_cast<int>(i+1));
+            }
+        }
+    }
+
     /**
      * @brief StepperDriver::readMotorsState
      */

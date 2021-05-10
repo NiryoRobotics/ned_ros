@@ -61,6 +61,7 @@ namespace StepperDriver
             //commands
             void startCalibration();
 
+
             int readSynchronizeCommand(const common::model::SynchronizeStepperMotorCmd& cmd);
             int readSingleCommand(common::model::StepperMotorCmd cmd);
 
@@ -94,6 +95,7 @@ namespace StepperDriver
             void getBusState(bool& connection_status, std::vector<uint8_t>& motor_list, std::string& error) const override;
             std::string getErrorMessage() const override;
 
+            void executeJointTrajectoryCmd(std::vector<int32_t> &cmd);
     private:
             bool init() override;
             void initParameters();

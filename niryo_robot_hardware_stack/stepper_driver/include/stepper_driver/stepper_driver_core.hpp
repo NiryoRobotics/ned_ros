@@ -79,6 +79,7 @@ namespace StepperDriver
             int launchMotorsReport() override;
 
             niryo_robot_msgs::BusState getBusState() const override;
+            void setTrajectoryControllerCommands(std::vector<int32_t> &cmd);
 
         private:
             void init() override;
@@ -88,6 +89,7 @@ namespace StepperDriver
             void resetHardwareControlLoopRates() override;
             void controlLoop() override;
             void _executeCommand() override;
+
 
             int motorCmdReport(uint8_t motor_id,  common::model::EMotorType motor_type = common::model::EMotorType::MOTOR_TYPE_STEPPER);
 
@@ -129,6 +131,7 @@ namespace StepperDriver
             ros::Publisher _command_publisher;
             std::thread _publish_command_thread;
 
+            std::vector<int32_t> _joint_trajectory_cmd_vec;
         private:
             static constexpr int QUEUE_OVERFLOW = 20;
     };
