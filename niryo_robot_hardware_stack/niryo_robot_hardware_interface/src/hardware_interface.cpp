@@ -41,7 +41,7 @@ namespace NiryoRobotHardwareInterface
         }
         ROS_INFO("Waking up");*/
 
-        initParams();
+        initParameters();
         initNodes();
         initPublishers();
     }
@@ -122,7 +122,6 @@ namespace NiryoRobotHardwareInterface
      */
     void HardwareInterface::initPublishers()
     {
-        ROS_DEBUG("Hardware Interface - Init Publisher");
         _hardware_status_publisher = _nh.advertise<niryo_robot_msgs::HardwareStatus>("niryo_robot_hardware_interface/hardware_status", 10);
         _publish_hw_status_thread = std::thread(&HardwareInterface::_publishHardwareStatus, this);
 
@@ -137,7 +136,7 @@ namespace NiryoRobotHardwareInterface
     /**
      * @brief HardwareInterface::initParams
      */
-    void HardwareInterface::initParams()
+    void HardwareInterface::initParameters()
     {
         ROS_DEBUG("Hardware Interface - Init Params");
 
@@ -413,7 +412,6 @@ namespace NiryoRobotHardwareInterface
         ros::Rate publish_software_version_rate = ros::Rate(_publish_software_version_frequency);
         while (ros::ok())
         {
-
             stepper_driver::StepperArrayMotorHardwareStatus stepper_motor_state;
             std::vector<std::string> motor_names;
             std::vector<std::string> firmware_versions;

@@ -56,7 +56,9 @@ namespace ToolsInterface {
         private:
             void initParams();
             void initServices();
-            void _checkToolConnection();
+            void initPublishers();
+
+            void _publishToolConnection();
 
             bool _callbackPingAndSetDxlTool(tools_interface::PingDxlTool::Request &, tools_interface::PingDxlTool::Response &res);
 
@@ -70,7 +72,6 @@ namespace ToolsInterface {
             ros::NodeHandle _nh;
 
             std::mutex _tool_mutex;
-            std::thread _check_tool_connection_thread;
 
             std::shared_ptr<DynamixelDriver::DxlDriverCore> _dynamixel;
 
@@ -80,7 +81,8 @@ namespace ToolsInterface {
             ros::ServiceServer _pull_air_vacuum_pump_server;
             ros::ServiceServer _push_air_vacuum_pump_server;
 
-            ros::Publisher _current_tools_id_publisher;
+            ros::Publisher _tool_connection_publisher;
+            std::thread _publish_tool_connection_thread;
 
             common::model::ToolState _toolState;
             std::map<uint8_t, common::model::EMotorType> _available_tools_map;

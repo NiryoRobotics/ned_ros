@@ -82,10 +82,10 @@ namespace JointsInterface {
      */
     void JointsInterfaceCore::initParams()
     {
-        _nh.getParam("/niryo_robot_hardware_interface/ros_control_loop_frequency", _ros_control_frequency);
+        _nh.getParam("/niryo_robot_hardware_interface/ros_control_loop_frequency", _control_loop_frequency);
         _nh.getParam("/niryo_robot_hardware_interface/publish_learning_mode_frequency", _publish_learning_mode_frequency);
 
-        ROS_DEBUG("JointsInterfaceCore::initParams - Ros control loop frequency %f", _ros_control_frequency);
+        ROS_DEBUG("JointsInterfaceCore::initParams - Ros control loop frequency %f", _control_loop_frequency);
         ROS_DEBUG("JointsInterfaceCore::initParams - Publish learning mode frequency : %f", _publish_learning_mode_frequency);
     }
 
@@ -180,7 +180,7 @@ namespace JointsInterface {
         ros::Time last_time = ros::Time::now();
         ros::Time current_time = ros::Time::now();
         ros::Duration elapsed_time;
-        ros::Rate control_loop_rate = ros::Rate(_ros_control_frequency);
+        ros::Rate control_loop_rate = ros::Rate(_control_loop_frequency);
 
         while (ros::ok())
         {
@@ -208,7 +208,8 @@ namespace JointsInterface {
                     _robot->write(current_time, elapsed_time);
                 }
 
-                control_loop_rate.sleep();
+                bool isFreqMet = control_loop_rate.sleep();
+                ROS_WARN_COND(!isFreqMet, "JointsInterfaceCore::controlLoop : control loop rate (%f) not met !", _control_loop_frequency);
             }
         }
     }

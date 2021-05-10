@@ -39,7 +39,6 @@ namespace StepperDriver
         ROS_DEBUG("StepperDriverCore::StepperDriverCore - ctor");
 
         initParameters();
-
         init();
     }
 
@@ -50,6 +49,9 @@ namespace StepperDriver
     {
         if(_control_loop_thread.joinable())
             _control_loop_thread.join();
+
+        if(_publish_command_thread.joinable())
+            _publish_command_thread.join();
     }
 
     /**
@@ -59,10 +61,26 @@ namespace StepperDriver
     {
         _stepper.reset(new StepperDriver());
         startControlLoop();
+        initServices();
+        initPublishers();
 
-        //advertise services
+    }
 
-        cmd_pub = _nh.advertise<std_msgs::Int64MultiArray>("stepper_cmd", 1000);
+    /**
+     * @brief StepperDriverCore::initServices
+     */
+    void StepperDriverCore::initServices()
+    {
+
+    }
+
+    /**
+     * @brief StepperDriverCore::initPublishers
+     */
+    void StepperDriverCore::initPublishers()
+    {
+        _command_publisher = _nh.advertise<std_msgs::Int64MultiArray>("stepper_cmd", 1000);
+        _publish_command_thread = std::thread(&StepperDriverCore::_publishCommand, this);
     }
 
     /**
@@ -77,10 +95,12 @@ namespace StepperDriver
         _nh.getParam("/niryo_robot_hardware_interface/stepper_driver/can_hardware_control_loop_frequency", _control_loop_frequency);
         _nh.getParam("/niryo_robot_hardware_interface/stepper_driver/can_hw_write_frequency", write_frequency);
         _nh.getParam("/niryo_robot_hardware_interface/stepper_driver/can_hw_read_frequency", read_frequency);
+        _nh.getParam("/niryo_robot_hardware_interface/stepper_driver/publish_command_frequency", _publish_command_frequency);
 
         ROS_DEBUG("StepperDriverCore::initParameters - can_hardware_control_loop_frequency : %f", _control_loop_frequency);
         ROS_DEBUG("StepperDriverCore::initParameters - can_hw_write_frequency : %f", write_frequency);
         ROS_DEBUG("StepperDriverCore::initParameters - can_hw_read_frequency : %f", read_frequency);
+        ROS_DEBUG("StepperDriverCore::initParameters - publish_command_frequency : %f", _publish_command_frequency);
 
         _delta_time_data_read = 1.0 / read_frequency;
         _delta_time_write = 1.0 / write_frequency;
@@ -90,6 +110,11 @@ namespace StepperDriver
     //  Commands
     //***************
 
+    /**
+     * @brief StepperDriverCore::scanMotorId
+     * @param motor_to_find
+     * @return
+     */
     bool StepperDriverCore::scanMotorId(uint8_t motor_to_find)
     {
         lock_guard<mutex> lck(_control_loop_mutex);
@@ -168,6 +193,7 @@ namespace StepperDriver
 
         return response;
     }
+
 
     /**
      * @brief StepperDriverCore::launchMotorsReport
@@ -266,7 +292,6 @@ namespace StepperDriver
         resetHardwareControlLoopRates();
         while (ros::ok())
         {
-
             if (_control_loop_flag)
             {
                 lock_guard<mutex> lck(_control_loop_mutex);
@@ -287,7 +312,8 @@ namespace StepperDriver
                     }
                 }
 
-                control_loop_rate.sleep();
+                bool isFreqMet = control_loop_rate.sleep();
+                ROS_WARN_COND(!isFreqMet, "StepperDriverCore::controlLoop : control loop rate (%f) not met !", _control_loop_frequency);
             }
             else
             {
@@ -305,20 +331,14 @@ namespace StepperDriver
     {
         bool need_sleep = false;
 
-        std_msgs::Int64MultiArray cmd;
         if (_joint_trajectory_cmd.isValid())
         {
             //we need a mutex here to ensure this data is not being modify
             //by another thread during its usage
             lock_guard<mutex> lck(_joint_trajectory_mutex);
-
             _stepper->readSynchronizeCommand(_joint_trajectory_cmd);
-            for(auto const& id: _joint_trajectory_cmd.getMotorsId())
-                cmd.data.emplace_back(_joint_trajectory_cmd.getParam(id));
-
-            cmd_pub.publish(cmd);
-
             _joint_trajectory_cmd.reset();
+
             need_sleep = true;
         }
         if (!_stepper_single_cmds.empty())
@@ -519,7 +539,26 @@ namespace StepperDriver
     //    Callbacks     *
     //*******************
 
+    /**
+     * @brief StepperDriverCore::_publishCommand
+     */
+    void StepperDriverCore::_publishCommand()
+    {
+        ros::Rate publish_command_rate = ros::Rate(_publish_command_frequency);
+        std_msgs::Int64MultiArray msg;
 
+        while (ros::ok())
+        {
+            if(_joint_trajectory_cmd.isValid()) {
+                for(auto const& id: _joint_trajectory_cmd.getMotorsId())
+                     msg.data.emplace_back(_joint_trajectory_cmd.getParam(id));
+
+                _command_publisher.publish(msg);
+
+                publish_command_rate.sleep();
+            }
+        }
+    }
 
 
 } // namespace StepperDriver

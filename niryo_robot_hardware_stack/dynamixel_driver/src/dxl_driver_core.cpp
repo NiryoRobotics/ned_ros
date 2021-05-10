@@ -392,7 +392,8 @@ namespace DynamixelDriver
                         _time_hw_data_last_write = ros::Time::now().toSec();
                         _executeCommand();
                     }
-                    control_loop_rate.sleep();
+                    bool isFreqMet = control_loop_rate.sleep();
+                    ROS_WARN_COND(!isFreqMet, "DxlDriverCore::controlLoop : control loop rate (%f) not met !", _control_loop_frequency);
                 }
                 else
                 {

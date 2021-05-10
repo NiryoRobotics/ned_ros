@@ -92,7 +92,7 @@ namespace JointsInterface {
             bool _previous_state_learning_mode{true};
             bool _reset_controller{false};
 
-            double _ros_control_frequency{0.0};
+            double _control_loop_frequency{0.0};
             double _publish_learning_mode_frequency{0.0};
 
             std::shared_ptr<JointHardwareInterface> _robot;

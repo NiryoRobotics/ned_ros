@@ -46,8 +46,8 @@ namespace ToolsInterface {
     {
         initParams();
         initServices();
+        initPublishers();
 
-        _check_tool_connection_thread = std::thread(&ToolsInterfaceCore::_checkToolConnection, this);
 
         pubToolId(0);
     }
@@ -57,8 +57,8 @@ namespace ToolsInterface {
      */
     ToolsInterfaceCore::~ToolsInterfaceCore()
     {
-        if(_check_tool_connection_thread.joinable())
-            _check_tool_connection_thread.join();
+        if(_publish_tool_connection_thread.joinable())
+            _publish_tool_connection_thread.join();
     }
 
     /**
@@ -129,7 +129,12 @@ namespace ToolsInterface {
         _pull_air_vacuum_pump_server = _nh.advertiseService("niryo_robot/tools/pull_air_vacuum_pump", &ToolsInterfaceCore::_callbackPullAirVacuumPump, this);
         _push_air_vacuum_pump_server = _nh.advertiseService("niryo_robot/tools/push_air_vacuum_pump", &ToolsInterfaceCore::_callbackPushAirVacuumPump, this);
 
-        _current_tools_id_publisher = _nh.advertise<std_msgs::Int32>("/niryo_robot_hardware/tools/current_id", 1, true);
+    }
+
+    void ToolsInterfaceCore::initPublishers()
+    {
+        _tool_connection_publisher = _nh.advertise<std_msgs::Int32>("/niryo_robot_hardware/tools/current_id", 1, true);
+        _publish_tool_connection_thread = std::thread(&ToolsInterfaceCore::_publishToolConnection, this);
     }
 
     /**
@@ -140,7 +145,7 @@ namespace ToolsInterface {
     {
         std_msgs::Int32 msg;
         msg.data = id;
-        _current_tools_id_publisher.publish(msg);
+        _tool_connection_publisher.publish(msg);
     }
 
     /**
@@ -419,11 +424,11 @@ namespace ToolsInterface {
     }
 
     /**
-     * @brief ToolsInterfaceCore::_checkToolConnection
+     * @brief ToolsInterfaceCore::_publishToolConnection
      */
-    void ToolsInterfaceCore::_checkToolConnection()
+    void ToolsInterfaceCore::_publishToolConnection()
     {
-        ros::Rate check_connection = ros::Rate(_check_tool_connection_frequency);
+        ros::Rate check_connection_rate = ros::Rate(_check_tool_connection_frequency);
         std_msgs::Int32 msg;
 
         while (ros::ok())
@@ -440,11 +445,11 @@ namespace ToolsInterface {
                         _dynamixel->unsetEndEffector(_toolState.getId());
                         _toolState.reset();
                         msg.data = 0;
-                        _current_tools_id_publisher.publish(msg);
+                        _tool_connection_publisher.publish(msg);
                     }
                 }
             }
-            check_connection.sleep();
+            check_connection_rate.sleep();
         }
     }
 } //ToolsInterface

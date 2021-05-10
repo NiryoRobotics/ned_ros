@@ -82,6 +82,8 @@ namespace StepperDriver
 
         private:
             void init() override;
+            void initServices();
+            void initPublishers();
             void initParameters() override;
             void resetHardwareControlLoopRates() override;
             void controlLoop() override;
@@ -90,6 +92,7 @@ namespace StepperDriver
             int motorCmdReport(uint8_t motor_id,  common::model::EMotorType motor_type = common::model::EMotorType::MOTOR_TYPE_STEPPER);
 
             //use other callbacks instead of executecommand
+            void _publishCommand();
 
         private:
             //common to dxl_driver_core. Put in abstract class ?
@@ -122,7 +125,9 @@ namespace StepperDriver
             std::queue<common::model::StepperMotorCmd> _stepper_single_cmds;
             std::queue<common::model::StepperMotorCmd> _conveyor_cmds;
 
-            ros::Publisher cmd_pub;
+            double _publish_command_frequency{0.0};
+            ros::Publisher _command_publisher;
+            std::thread _publish_command_thread;
 
         private:
             static constexpr int QUEUE_OVERFLOW = 20;

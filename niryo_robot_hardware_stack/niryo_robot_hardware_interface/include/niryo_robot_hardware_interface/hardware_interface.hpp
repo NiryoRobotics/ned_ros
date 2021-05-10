@@ -51,7 +51,7 @@ namespace NiryoRobotHardwareInterface
 
     private:
         void initNodes();
-        void initParams();
+        void initParameters();
         void initPublishers();
 
         bool _callbackLaunchMotorsReport(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
