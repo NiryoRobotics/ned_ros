@@ -376,26 +376,27 @@ namespace DynamixelDriver
 
                 if (_control_loop_flag)
                 {
+                    bool needSleep = false;
                     lock_guard<mutex> lck(_control_loop_mutex);
                     if (ros::Time::now().toSec() - _time_hw_data_last_read >= _delta_time_data_read)
                     {
                         _time_hw_data_last_read = ros::Time::now().toSec();
                         _dynamixel->readPositionStatus();
+                        needSleep = true;
                     }
-                    if (ros::Time::now().toSec() - _time_hw_status_last_read >= _delta_time_status_read)
+                    if (!needSleep && ros::Time::now().toSec() - _time_hw_status_last_read >= _delta_time_status_read)
                     {
                         _time_hw_status_last_read = ros::Time::now().toSec();
                         _dynamixel->readHwStatus();
+                        needSleep = true;
                     }
-                    if (ros::Time::now().toSec() - _time_hw_data_last_write >= _delta_time_write)
+                    if (!needSleep && ros::Time::now().toSec() - _time_hw_data_last_write >= _delta_time_write)
                     {
                         _time_hw_data_last_write = ros::Time::now().toSec();
                         _executeCommand();
                     }
                     bool isFreqMet = control_loop_rate.sleep();
-                    ROS_WARN_COND(!isFreqMet, "DxlDriverCore::rosControlLoop : freq not met : expected (%f s) vs actual (%f s)", control_loop_rate.expectedCycleTime().toSec(), control_loop_rate.cycleTime().toSec());
-                    ROS_DEBUG_COND(isFreqMet, "DxlDriverCore::rosControlLoop : freq met : expected (%f s) vs actual (%f s)", control_loop_rate.expectedCycleTime().toSec(), control_loop_rate.cycleTime().toSec());
-
+                    ROS_WARN_COND(!isFreqMet, "DxlDriverCore::ControlLoop : freq not met : expected (%f s) vs actual (%f s)", control_loop_rate.expectedCycleTime().toSec(), control_loop_rate.cycleTime().toSec());
                 }
                 else
                 {
@@ -417,16 +418,13 @@ namespace DynamixelDriver
     {
         bool need_sleep = false;
 
-        if (_joint_trajectory_cmd.isValid())
+        if (!_joint_trajectory_cmd_map.empty())
         {
-            //we need a mutex here to ensure this data is not being modify
-            //by another thread during its usage
-            lock_guard<mutex> lck(_joint_trajectory_mutex);
-
-            _dynamixel->readSynchronizeCommand(_joint_trajectory_cmd);
-            _joint_trajectory_cmd.reset();
+            _dynamixel->executeJointTrajectoryCmd(_joint_trajectory_cmd_map);
+            _joint_trajectory_cmd_map.clear();
             need_sleep = true;
         }
+
         if (!_dxl_single_cmds.empty())
         {
             _dynamixel->readSingleCommand(_dxl_single_cmds.front());
@@ -517,22 +515,25 @@ namespace DynamixelDriver
     }
 
     /**
+     * @brief DxlDriverCore::setTrajectoryControllerCommands
+     * @param cmd
+     */
+    void DxlDriverCore::setTrajectoryControllerCommands(const std::map<uint8_t, uint32_t> &cmd)
+    {
+        _joint_trajectory_cmd_map = cmd;
+    }
+
+    /**
      * @brief DynamixelDriverCore::setSyncCommand
      * @param cmd
      */
     void DxlDriverCore::setSyncCommand(const SynchronizeMotorCmd &cmd)
     {
         if(cmd.isValid()) {
-            //keep position cmd apart
-            if(cmd.getType() == EDxlCommandType::CMD_TYPE_POSITION) {
-                std::lock_guard<std::mutex> lck(_joint_trajectory_mutex);
-                _joint_trajectory_cmd = cmd;
-            }
-            else
-                _dxl_sync_cmds = cmd;
+            _dxl_sync_cmds = cmd;
         }
         else {
-            ROS_WARN("DynamixelDriverCore::setSyncCommand : Invalid command");
+            ROS_WARN("DynamixelDriverCore::setSyncCommand : Invalid command %s", cmd.str().c_str());
         }
     }
 

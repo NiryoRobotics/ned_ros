@@ -600,7 +600,6 @@ namespace DynamixelDriver
         return result;
     }
 
-
     /**
      * @brief DxlDriver::setLeds
      * @param led
@@ -758,14 +757,11 @@ namespace DynamixelDriver
     void DxlDriver::checkRemovedMotors()
     {
         //get list of ids
-        vector<uint8_t> motor_list;
-
         for(auto const& istate: _state_map) {
             auto it = find(_all_motor_connected.begin(), _all_motor_connected.end(), istate.first);
             if (it == _all_motor_connected.end())
-                motor_list.push_back(istate.first);
+                _removed_motor_id_list.emplace_back(istate.first);
         }
-        _removed_motor_id_list = motor_list;
     }
 
     /**
@@ -845,8 +841,6 @@ namespace DynamixelDriver
                     _hw_fail_counter_read++;
             }
         }
-
-        // no need for fillMotorState
     }
 
     /**
@@ -940,5 +934,34 @@ namespace DynamixelDriver
         return states;
     }
 
+    /**
+     * @brief DxlDriver::executeJointTrajectoryCmd
+     * @param cmd_map
+     */
+    void DxlDriver::executeJointTrajectoryCmd(const std::map<uint8_t, uint32_t> &cmd_map)
+    {
+        for(auto const& it : _xdriver_map) {
+            //build list of ids and params for this motor
+            std::vector<uint8_t> ids;
+            std::vector<uint32_t> params;
+            for(auto const& cmd : cmd_map) {
+                if(_state_map.count(cmd.first) && it.first == _state_map.at(cmd.first).getType()) {
+                    ids.emplace_back(cmd.first);
+                    params.emplace_back(cmd.second);
+                }
+            }
+
+            if(it.second) {
+                //syncwrite for this driver. The driver is responsible for sync write only to its associated motors
+                int results = it.second->syncWritePositionGoal(ids, params);
+                //if successful, don't process this driver in the next loop
+                if (COMM_SUCCESS != results)
+                {
+                    ROS_WARN("Dxl Driver - Failed to write position");
+                    _debug_error_message = "Dxl Driver - Failed to write position";
+                }
+            }
+        }
+    }
 
 } // namespace DynamixelDriver

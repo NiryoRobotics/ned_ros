@@ -326,19 +326,10 @@ namespace StepperDriver
     void StepperDriverCore::_executeCommand()
     {
         bool need_sleep = false;
-        /*if (_joint_trajectory_cmd.isValid())
+        if (!_joint_trajectory_cmd_map.empty())
         {
-            //we need a mutex here to ensure this data is not being modify
-            //by another thread during its usage
-            lock_guard<mutex> lck(_joint_trajectory_mutex);
-            _stepper->readSynchronizeCommand(_joint_trajectory_cmd);
-            _joint_trajectory_cmd.reset();
-
-            need_sleep = true;
-        }*/
-        if (_joint_trajectory_cmd_vec.size() != 0)
-        {
-            _stepper->executeJointTrajectoryCmd(_joint_trajectory_cmd_vec);
+            _stepper->executeJointTrajectoryCmd(_joint_trajectory_cmd_map);
+            _joint_trajectory_cmd_map.clear();
             need_sleep = true;
         }
 
@@ -431,29 +422,9 @@ namespace StepperDriver
             _conveyor_cmds.pop();
     }
 
-    void StepperDriverCore::setTrajectoryControllerCommands(std::vector<int32_t> &cmd)
+    void StepperDriverCore::setTrajectoryControllerCommands(const std::map<uint8_t, int32_t> &cmd)
     {
-        _joint_trajectory_cmd_vec = cmd;
-    }
-
-    /**
-     * @brief StepperDriverCore::setTrajectoryControllerCommands
-     * @param cmd
-     */
-    void StepperDriverCore::setSyncCommand(const SynchronizeStepperMotorCmd& cmd)
-    {
-
-        if(cmd.isValid()) {
-            //keep position cmd apart
-            if(cmd.getType() == EStepperCommandType::CMD_TYPE_POSITION) {
-                lock_guard<mutex> lck(_joint_trajectory_mutex);
-
-                _joint_trajectory_cmd = cmd;
-            }
-        }
-        else {
-            ROS_WARN("StepperDriverCore::setSyncCommand : Invalid command");
-        }
+        _joint_trajectory_cmd_map = cmd;
     }
 
     /**
@@ -528,17 +499,17 @@ namespace StepperDriver
      */
     niryo_robot_msgs::BusState StepperDriverCore::getBusState() const
     {
-        niryo_robot_msgs::BusState can_bust_state;
+        niryo_robot_msgs::BusState can_bus_state;
 
         string error;
         bool connection;
         vector<uint8_t> motor_id;
 
         _stepper->getBusState(connection, motor_id, error);
-        can_bust_state.connection_status = connection;
-        can_bust_state.motor_id_connected = motor_id;
-        can_bust_state.error = error;
-        return can_bust_state;
+        can_bus_state.connection_status = connection;
+        can_bus_state.motor_id_connected = motor_id;
+        can_bus_state.error = error;
+        return can_bus_state;
     }
 
     //*******************
@@ -555,16 +526,14 @@ namespace StepperDriver
 
         while (ros::ok())
         {
-            if(_joint_trajectory_cmd_vec.size() == 3) {
-                msg.data.emplace_back(_joint_trajectory_cmd_vec.at(0));
-                msg.data.emplace_back(_joint_trajectory_cmd_vec.at(1));
-                msg.data.emplace_back(_joint_trajectory_cmd_vec.at(2));
+            auto tmpCmd = _joint_trajectory_cmd_map;
+            if(!tmpCmd.empty()) {
+                for(auto const& cmd : tmpCmd)
+                    msg.data.emplace_back(cmd.second);
                 _command_publisher.publish(msg);
-
-                publish_command_rate.sleep();
             }
+            publish_command_rate.sleep();
         }
     }
-
 
 } // namespace StepperDriver

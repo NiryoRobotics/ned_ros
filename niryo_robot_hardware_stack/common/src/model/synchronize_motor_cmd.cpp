@@ -49,32 +49,16 @@ namespace common {
          * @param state
          * @param param
          */
-        void SynchronizeMotorCmd::addMotorParam(const std::shared_ptr<JointState>& state, uint32_t param)
+        void SynchronizeMotorCmd::addMotorParam(EMotorType type, uint8_t id, uint32_t param)
         {
             //not yet in map
-            if(!_motor_params_map.count(state->getType())){
-                _motor_params_map.insert(make_pair(state->getType(), MotorParam(state->getId(), param)));
+            if(!_motor_params_map.count(type)) {
+                _motor_params_map.insert(make_pair(type, MotorParam(id, param)));
+                _types.insert(type);
             }
             else {
-                _motor_params_map.at(state->getType()).motors_id.emplace_back(state->getId());
-                _motor_params_map.at(state->getType()).params.emplace_back(param);
-            }
-        }
-
-        /**
-         * @brief SynchronizeMotorCmd::addMotorParam
-         * @param state
-         * @param param
-         */
-        void SynchronizeMotorCmd::addMotorParam(const JointState &state, uint32_t param)
-        {
-            //not yet in map
-            if(!_motor_params_map.count(state.getType())){
-                _motor_params_map.insert(make_pair(state.getType(), MotorParam(state.getId(), param)));
-            }
-            else {
-                _motor_params_map.at(state.getType()).motors_id.emplace_back(state.getId());
-                _motor_params_map.at(state.getType()).params.emplace_back(param);
+                _motor_params_map.at(type).motors_id.emplace_back(id);
+                _motor_params_map.at(type).params.emplace_back(param);
             }
         }
 
@@ -117,12 +101,7 @@ namespace common {
          */
         std::set<EMotorType> SynchronizeMotorCmd::getMotorTypes() const
         {
-            std::set<EMotorType> types;
-            for (auto const& it: _motor_params_map) {
-                types.insert(it.first);
-            }
-
-            return types;
+            return _types;
         }
 
         //***********************
@@ -199,6 +178,7 @@ namespace common {
         void SynchronizeMotorCmd::clear()
         {
             _motor_params_map.clear();
+            _types.clear();
         }
 
     } // namespace model

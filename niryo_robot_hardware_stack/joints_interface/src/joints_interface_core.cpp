@@ -301,7 +301,7 @@ namespace JointsInterface {
         ROS_DEBUG("JointsInterfaceCore::_callbackRequestNewCalibration - New calibration requested");
         _previous_state_learning_mode = true;
         _robot->activateLearningMode();
-        _robot->newCalibration();
+        _robot->setNeedCalibration();
         res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
         res.message = "Joints Interface Core - New calibration request has been made, you will be requested to confirm it.";
         return true;

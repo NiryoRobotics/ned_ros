@@ -51,7 +51,6 @@ namespace common {
 
                 std::vector<uint8_t> motors_id;
                 std::vector<uint32_t> params;
-
             };
 
             public:
@@ -59,8 +58,7 @@ namespace common {
                 SynchronizeMotorCmd(EDxlCommandType type);
 
                 //setters
-                void addMotorParam(const std::shared_ptr<JointState> &dxlState, uint32_t param);
-                void addMotorParam(const JointState &dxlState, uint32_t param);
+                void addMotorParam(EMotorType type, uint8_t id, uint32_t param);
 
                 //getters
                 std::vector<uint8_t> getMotorsId(EMotorType type) const;
@@ -73,38 +71,10 @@ namespace common {
                 void clear() override;
                 bool isValid() const override;
 
-                friend bool operator==(const SynchronizeMotorCmd& lhs, const SynchronizeMotorCmd& rhs);
-
-                friend bool operator==(const SynchronizeMotorCmd::MotorParam& lhs, const SynchronizeMotorCmd::MotorParam& rhs) {
-                    return lhs.params == rhs.params && lhs.motors_id == rhs.motors_id;
-                }
-
             private:
+                std::set<EMotorType> _types;
                 std::map<EMotorType, MotorParam > _motor_params_map;
         };
-
-        /**
-         * @brief operator ==
-         * @param lhs
-         * @param rhs
-         * @return
-         */
-        inline
-        bool operator==(const SynchronizeMotorCmd& lhs, const SynchronizeMotorCmd& rhs) {
-            return lhs._type == rhs._type && lhs._motor_params_map == rhs._motor_params_map;
-        }
-
-        /**
-         * @brief operator !=
-         * @param lhs
-         * @param rhs
-         * @return
-         */
-        inline
-        bool operator!=(const SynchronizeMotorCmd& lhs, const SynchronizeMotorCmd& rhs) {
-            return !(lhs == rhs);
-        }
-
 
     } // namespace model
 } // namespace common

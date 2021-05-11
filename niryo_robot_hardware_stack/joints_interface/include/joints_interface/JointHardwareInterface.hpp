@@ -52,7 +52,7 @@ namespace JointsInterface {
         void sendInitMotorsParams();
         int calibrateJoints(int mode, std::string &result_message);
         void deactivateLearningMode();
-        void newCalibration();
+        void setNeedCalibration();
         void activateLearningMode();
         void synchronizeMotors(bool synchronize);
 

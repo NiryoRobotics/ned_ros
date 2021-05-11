@@ -213,59 +213,6 @@ namespace StepperDriver
         }
     }
 
-    int StepperDriver::readSynchronizeCommand(const SynchronizeStepperMotorCmd& cmd)
-    {
-        int result = CAN_INVALID_CMD;
-        ROS_DEBUG("StepperDriver::executeJointTrajectoryCmd - Received synchronize stepper cmd %s", cmd.str().c_str());
-
-        std::vector<uint8_t> ids = cmd.getMotorsId();
-        if(cmd.isValid()) // certifies that params is not empty
-        {
-            switch(cmd.getType())
-            {
-                case EStepperCommandType::CMD_TYPE_POSITION:
-                    for(auto&& id : ids) {
-                        result = sendPositionCommand(id, cmd.getParam(id));
-                        if (result != CAN_OK)
-                            ROS_WARN("Stepper Driver - send positions to motor id %d failed", id);
-                    }
-                break;
-                case EStepperCommandType::CMD_TYPE_TORQUE:
-                    for(auto&& id : ids) {
-                        result = sendTorqueOnCommand(id, cmd.getParam(id));
-                        if (result != CAN_OK)
-                            ROS_WARN("Stepper Driver - send positions to motor id %d failed", id);
-                    }
-                break;
-                case EStepperCommandType::CMD_TYPE_MAX_EFFORT:
-                    for(auto&& id : ids) {
-                        result = sendMaxEffortCommand(id, cmd.getParam(id));
-                        if (result != CAN_OK)
-                            ROS_WARN("Stepper Driver - send positions to motor id %d failed", id);
-                    }
-                break;
-                case EStepperCommandType::CMD_TYPE_MICRO_STEPS:
-                    for(auto&& id : ids) {
-                        result = sendMicroStepsCommand(id, cmd.getParam(id));
-                        if (result != CAN_OK)
-                            ROS_WARN("Stepper Driver - send positions to motor id %d failed", id);
-                    }
-                break;
-                default:
-                break;
-            }
-        }
-
-        if(CAN_OK != result)
-        {
-            ROS_ERROR_THROTTLE(0.5, "StepperDriver::readCommand - Failed to read stepper cmd");
-            _debug_error_message = "StepperDriver - Failed to read stepper cmd";
-        }
-
-        ROS_DEBUG_THROTTLE(0.5, "StepperDriver::readCommand - Received stepper cmd finished");
-        return result;
-    }
-
     /**
      * @brief StepperDriver::getStepperPose
      * @param motor_id
@@ -363,15 +310,17 @@ namespace StepperDriver
         return result;
     }
 
-    void StepperDriver::executeJointTrajectoryCmd(std::vector<int32_t> &cmd)
+    /**
+     * @brief StepperDriver::executeJointTrajectoryCmd
+     * @param cmd_map : need to be passed by copy, so that we ensure the data will not change in this method
+     */
+    void StepperDriver::executeJointTrajectoryCmd(std::map<uint8_t, int32_t> cmd_map)
     {
-        int result;
-        for (size_t i = 0; i < 3; i++)
+        for (auto const& cmd : cmd_map)
         {
-            result = sendPositionCommand(static_cast<uint8_t>(i+1), cmd.at(i));
-            if (result != CAN_OK)
+            if (sendPositionCommand(cmd.first, cmd.second) != CAN_OK)
             {
-                ROS_WARN("Stepper Driver - send positions to motor id %d failed", static_cast<int>(i+1));
+                ROS_WARN("Stepper Driver - send positions to motor id %d failed", cmd.first);
             }
         }
     }

@@ -54,25 +54,24 @@ namespace JointsInterface {
      */
     void JointHardwareInterface::read(const ros::Time &/*time*/, const ros::Duration &/*period*/)
     {
-        size_t stepper_idx = 0;
-        size_t dxl_idx = 0;
+        int newPositionState = 0.0;
 
-        for(auto&& jState : _joint_list)
+        for(auto const& jState : _joint_list)
         {
             if(jState && jState->isValid()) {
                 if(jState->isStepper()) {
-                    jState->pos = jState->to_rad_pos(_stepper->getStepperState(jState->getId()).getPositionState());
-                    stepper_idx++;
+                    newPositionState = _stepper->getStepperState(jState->getId()).getPositionState();
                 }
                 else {
-                    jState->pos = jState->to_rad_pos(_dynamixel->getDxlState(jState->getId()).getPositionState());
-                    dxl_idx++;
+                    newPositionState = _dynamixel->getDxlState(jState->getId()).getPositionState();
                 }
+
+                jState->pos = jState->to_rad_pos(newPositionState);
             }
         }
 
         if (!_stepper->isConnectionOk())
-            this->newCalibration();
+            this->setNeedCalibration();
     }
 
     /**
@@ -80,30 +79,26 @@ namespace JointsInterface {
      */
     void JointHardwareInterface::write(const ros::Time &/*time*/, const ros::Duration &/*period*/)
     {
-      //  SynchronizeStepperMotorCmd stepper_cmd(EStepperCommandType::CMD_TYPE_POSITION);
-        SynchronizeMotorCmd dxlMotorCmd(EDxlCommandType::CMD_TYPE_POSITION);
-        std::vector<int32_t> cmd;
+        std::map<uint8_t, int32_t> stepper_cmd;
+        std::map<uint8_t, uint32_t> dxl_cmd;
 
-        for(auto&& jState : _joint_list)
+        for(auto const& jState : _joint_list)
         {
             if(jState && jState->isValid())
             {
                 if(jState->isStepper())
                 {
-                    //stepper_cmd.addMotorParam(jState, jState->to_motor_pos(jState->cmd));
-                    cmd.emplace_back(jState->to_motor_pos(jState->cmd));
+                    stepper_cmd.insert(make_pair(jState->getId(), jState->to_motor_pos(jState->cmd)));
                 }
                 else
                 {
-                  //  dxlMotorCmd.addMotorParam(jState, static_cast<uint32_t>(jState->to_motor_pos(jState->cmd)));
+                //    dxl_cmd.insert(make_pair(jState->getId(), static_cast<uint32_t>(jState->to_motor_pos(jState->cmd))));
                 }
             }
         }
 
-        //_stepper->setSyncCommand(stepper_cmd);
-        _stepper->setTrajectoryControllerCommands(cmd);
-        _dynamixel->setSyncCommand(dxlMotorCmd);
-
+        _stepper->setTrajectoryControllerCommands(stepper_cmd);
+      //  _dynamixel->setTrajectoryControllerCommands(dxl_cmd);
     }
 
     /**
@@ -120,8 +115,6 @@ namespace JointsInterface {
             nb_joints++;
 
         // connect and register joint state interface
-        vector<hardware_interface::JointHandle> position_handle;
-
         _joint_list.clear();
         _map_stepper_name.clear();
         _map_dxl_name.clear();
@@ -222,7 +215,6 @@ namespace JointsInterface {
                     hardware_interface::JointHandle jPosHandle(_joint_state_interface.getHandle(jState->getName()),
                                                                &_joint_list.at(j)->cmd);
 
-                    position_handle.emplace_back(jPosHandle);
                     _joint_position_interface.registerHandle(jPosHandle);
 
                     registerInterface(&_joint_position_interface);
@@ -322,7 +314,7 @@ namespace JointsInterface {
     /**
      * @brief JointHardwareInterface::newCalibration : setNeedCalibration for all steppers
      */
-    void JointHardwareInterface::newCalibration()
+    void JointHardwareInterface::setNeedCalibration()
     {
         for(auto const& jState: _joint_list) {
             if(jState && jState->isStepper())
@@ -344,7 +336,7 @@ namespace JointsInterface {
             for(auto const& jState: _joint_list) {
                 if(jState) {
                     if(jState->isDynamixel())
-                        dxl_cmd.addMotorParam(jState, 0);
+                        dxl_cmd.addMotorParam(jState->getType(), jState->getId(), 0);
                     else if(jState->isStepper()) {
                         stepper_cmd.setId(jState->getId());
                         stepper_cmd.setParams({0});
@@ -374,7 +366,7 @@ namespace JointsInterface {
                 if(jState && jState->isValid())
                 {
                     if(jState->isDynamixel()) {
-                        dxl_cmd.addMotorParam(jState, 1);
+                        dxl_cmd.addMotorParam(jState->getType(), jState->getId(), 1);
                     }
                     else if(jState->isStepper()) {
                         stepper_cmd.setId(jState->getId());

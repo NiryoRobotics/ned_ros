@@ -75,6 +75,9 @@ namespace DynamixelDriver
             int readSynchronizeCommand(common::model::SynchronizeMotorCmd cmd);
             int readSingleCommand(common::model::SingleMotorCmd cmd);
 
+            void executeJointTrajectoryCmd(const std::map<uint8_t, uint32_t> &cmd_map);
+
+
             uint32_t getPosition(common::model::DxlMotorState& motor_state);
 
             void readPositionStatus();
@@ -119,7 +122,6 @@ namespace DynamixelDriver
             void interpreteErrorState();
 
             void checkRemovedMotors();
-
 
             void fillPositionStatus();
             void fillVoltageStatus();

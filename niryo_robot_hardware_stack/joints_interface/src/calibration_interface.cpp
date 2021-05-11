@@ -227,18 +227,18 @@ namespace JointsInterface {
         // 2. Move All Dynamixel to Home Position
         SynchronizeMotorCmd dynamixel_cmd;
         dynamixel_cmd.setType(EDxlCommandType::CMD_TYPE_TORQUE);
-        dynamixel_cmd.addMotorParam(_joint_list.at(3), 1);
-        dynamixel_cmd.addMotorParam(_joint_list.at(4), 1);
-        dynamixel_cmd.addMotorParam(_joint_list.at(5), 1);
+        dynamixel_cmd.addMotorParam(_joint_list.at(3)->getType(), _joint_list.at(3)->getId(), 1);
+        dynamixel_cmd.addMotorParam(_joint_list.at(4)->getType(), _joint_list.at(4)->getId(), 1);
+        dynamixel_cmd.addMotorParam(_joint_list.at(5)->getType(), _joint_list.at(5)->getId(), 1);
 
         _dynamixelCore->setSyncCommand(dynamixel_cmd);
         sld.sleep();
 
         dynamixel_cmd.reset();
         dynamixel_cmd.setType(EDxlCommandType::CMD_TYPE_POSITION);
-        dynamixel_cmd.addMotorParam(_joint_list.at(3), static_cast<uint32_t>(_joint_list.at(3)->to_motor_pos(0)));
-        dynamixel_cmd.addMotorParam(_joint_list.at(4), static_cast<uint32_t>(_joint_list.at(4)->to_motor_pos(0)));
-        dynamixel_cmd.addMotorParam(_joint_list.at(5), static_cast<uint32_t>(_joint_list.at(5)->to_motor_pos(0)));
+        dynamixel_cmd.addMotorParam(_joint_list.at(3)->getType(), _joint_list.at(3)->getId(), static_cast<uint32_t>(_joint_list.at(3)->to_motor_pos(0)));
+        dynamixel_cmd.addMotorParam(_joint_list.at(4)->getType(), _joint_list.at(4)->getId(), static_cast<uint32_t>(_joint_list.at(4)->to_motor_pos(0)));
+        dynamixel_cmd.addMotorParam(_joint_list.at(5)->getType(), _joint_list.at(5)->getId(), static_cast<uint32_t>(_joint_list.at(5)->to_motor_pos(0)));
         _dynamixelCore->setSyncCommand(dynamixel_cmd);
         sld.sleep();
 
@@ -311,9 +311,9 @@ namespace JointsInterface {
             //forge dxl command
             dynamixel_cmd.reset();
             dynamixel_cmd.setType(EDxlCommandType::CMD_TYPE_TORQUE);
-            dynamixel_cmd.addMotorParam(_joint_list.at(3), 0);
-            dynamixel_cmd.addMotorParam(_joint_list.at(4), 0);
-            dynamixel_cmd.addMotorParam(_joint_list.at(5), 0);
+            dynamixel_cmd.addMotorParam(_joint_list.at(3)->getType(), _joint_list.at(3)->getId(), 0);
+            dynamixel_cmd.addMotorParam(_joint_list.at(4)->getType(), _joint_list.at(4)->getId(), 0);
+            dynamixel_cmd.addMotorParam(_joint_list.at(5)->getType(), _joint_list.at(5)->getId(), 0);
 
             _dynamixelCore->setSyncCommand(dynamixel_cmd);
             sld.sleep();

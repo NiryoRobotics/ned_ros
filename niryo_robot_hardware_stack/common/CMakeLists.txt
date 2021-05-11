@@ -66,7 +66,6 @@ add_library(${PROJECT_NAME}
     src/model/single_motor_cmd.cpp
     src/model/synchronize_motor_cmd.cpp
     src/model/stepper_motor_cmd.cpp
-    src/model/synchronize_stepper_motor_cmd.cpp
     src/model/stepper_calibration_status_enum.cpp
 )
 

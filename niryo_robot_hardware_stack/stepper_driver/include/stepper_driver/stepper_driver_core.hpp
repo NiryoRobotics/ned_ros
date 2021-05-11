@@ -51,7 +51,7 @@ namespace StepperDriver
             void clearSingleCommandQueue();
             void clearConveyorCommandQueue();
 
-            void setSyncCommand(const common::model::SynchronizeStepperMotorCmd &cmd);
+            void setTrajectoryControllerCommands(const std::map<uint8_t, int32_t> &cmd);
             void addSingleCommandToQueue(const common::model::StepperMotorCmd& cmd);
             void addSingleCommandToQueue(const std::vector<common::model::StepperMotorCmd>& cmd);
 
@@ -79,7 +79,6 @@ namespace StepperDriver
             int launchMotorsReport() override;
 
             niryo_robot_msgs::BusState getBusState() const override;
-            void setTrajectoryControllerCommands(std::vector<int32_t> &cmd);
 
         private:
             void init() override;
@@ -89,7 +88,6 @@ namespace StepperDriver
             void resetHardwareControlLoopRates() override;
             void controlLoop() override;
             void _executeCommand() override;
-
 
             int motorCmdReport(uint8_t motor_id,  common::model::EMotorType motor_type = common::model::EMotorType::MOTOR_TYPE_STEPPER);
 
@@ -123,7 +121,7 @@ namespace StepperDriver
 
             std::unique_ptr<StepperDriver> _stepper;
 
-            common::model::SynchronizeStepperMotorCmd _joint_trajectory_cmd;
+            std::map<uint8_t, int32_t> _joint_trajectory_cmd_map;
             std::queue<common::model::StepperMotorCmd> _stepper_single_cmds;
             std::queue<common::model::StepperMotorCmd> _conveyor_cmds;
 
@@ -131,7 +129,6 @@ namespace StepperDriver
             ros::Publisher _command_publisher;
             std::thread _publish_command_thread;
 
-            std::vector<int32_t> _joint_trajectory_cmd_vec;
         private:
             static constexpr int QUEUE_OVERFLOW = 20;
     };
