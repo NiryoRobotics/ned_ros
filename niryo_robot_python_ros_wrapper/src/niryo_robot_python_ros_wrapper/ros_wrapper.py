@@ -204,7 +204,6 @@ class NiryoRosWrapper:
             rospy.logwarn("ROS Wrapper - Failed to connect to Robot action server")
 
             raise NiryoRosWrapperException('Action Server is not up : {}'.format(self.__robot_action_server_name))
-
         # Send goal and check response
         goal_state, response = self.__send_goal_and_wait_for_completed(goal)
 
@@ -230,7 +229,6 @@ class NiryoRosWrapper:
 
     def __send_goal_and_wait_for_completed(self, goal):
         self.__robot_action_server_client.send_goal(goal)
-
         if not self.__robot_action_server_client.wait_for_result(timeout=rospy.Duration(self.__action_execute_timeout)):
             self.__robot_action_server_client.cancel_goal()
             self.__robot_action_server_client.stop_tracking_goal()
@@ -517,7 +515,43 @@ class NiryoRosWrapper:
         goal.cmd.arm_cmd.shift.value = value
         return self.__execute_robot_move_action(goal)
 
+    def shift_linear_pose(self, axis, value):
+        """
+        Execute Shift pose action with a linear trajectory
+
+        :param axis: Value of RobotAxis enum corresponding to where the shift happens
+        :type axis: ShiftPose
+        :param value: shift value
+        :type value: float
+        :return: status, message
+        :rtype: (int, str)
+        """
+        goal = RobotMoveGoal()
+        goal.cmd.cmd_type = RobotCommand.MOVE_ONLY
+        goal.cmd.arm_cmd.cmd_type = MoveCommandType.SHIFT_LINEAR_POSE
+        goal.cmd.arm_cmd.shift.axis_number = axis
+        goal.cmd.arm_cmd.shift.value = value
+        return self.__execute_robot_move_action(goal)
+
     def move_linear_pose(self, x, y, z, roll, pitch, yaw):
+        """
+        Move robot end effector pose to a (x, y, z, roll, pitch, yaw) pose, with a linear trajectory
+
+        :param x:
+        :type x: float
+        :param y:
+        :type y: float
+        :param z:
+        :type z: float
+        :param roll:
+        :type roll: float
+        :param pitch:
+        :type pitch: float
+        :param yaw:
+        :type yaw: float
+        :return: status, message
+        :rtype: (int, str)
+        """
         return self.__move_pose_with_cmd(MoveCommandType.LINEAR_POSE, x, y, z, roll, pitch, yaw)
 
     def set_jog_use_state(self, state):

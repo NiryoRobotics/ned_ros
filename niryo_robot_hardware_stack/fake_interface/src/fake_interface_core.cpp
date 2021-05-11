@@ -125,6 +125,7 @@ void FakeInterfaceCore::pubToolId(int id)
 
 bool FakeInterfaceCore::_callbackResetController(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res)
 {
+    (void)req;
     res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
     res.message = "Reset done";
     return true;
@@ -132,12 +133,14 @@ bool FakeInterfaceCore::_callbackResetController(niryo_robot_msgs::Trigger::Requ
 
 void FakeInterfaceCore::_callbackTrajectoryResult(const control_msgs::FollowJointTrajectoryActionResult& msg)
 {
+    (void)msg;
     // Nothing To Do
 }
 
 
 bool FakeInterfaceCore::_callbackCalibrateMotors(niryo_robot_msgs::SetInt::Request &req, niryo_robot_msgs::SetInt::Response &res)
 {
+    (void)req;
     ROS_INFO("Fake Hardware Interface - Calibrate motors");
     res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
     res.message = "Calibration done";
@@ -146,6 +149,7 @@ bool FakeInterfaceCore::_callbackCalibrateMotors(niryo_robot_msgs::SetInt::Reque
 
 bool FakeInterfaceCore::_callbackRequestNewCalibration(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res)
 {
+    (void)req;
     ROS_INFO("Fake Hardware Interface - Request New Calibration");
     res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
     res.message = "New calibration request has been made, you will be requested to confirm it.";
@@ -186,6 +190,7 @@ bool FakeInterfaceCore::_callbackActivateLearningMode(niryo_robot_msgs::SetBool:
 
 bool FakeInterfaceCore::_callbackPingAndSetDxlTool(tools_interface::PingDxlTool::Request &req, tools_interface::PingDxlTool::Response &res)
 {
+    (void)req;
     ROS_DEBUG("Fake Hardware Interface - Ping Dxl Tool");
     if(_simu_gripper)
     {
@@ -231,6 +236,7 @@ bool FakeInterfaceCore:: _callbackPushAirVacuumPump(tools_interface::PushAirVacu
 
 bool FakeInterfaceCore::_callbackPingAndSetConveyor(conveyor_interface::SetConveyor::Request &req, conveyor_interface::SetConveyor::Response &res)
 {
+    (void)req;
     int new_id = 12;
     ROS_INFO("Fake Hardware Interface - Set conveyor with id : %d", new_id);
     std::string message = "";

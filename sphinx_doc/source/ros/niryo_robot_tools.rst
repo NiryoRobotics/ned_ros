@@ -38,7 +38,7 @@ Publisher - Tools
       -  Message Type
       -  Description
    *  -  ``current_id``
-      -  :std_msgs:`std_msgs/Int32<Int32>`
+      -  :std_msgs:`Int32`
       -  Publish the current tool ID
 
 Services - Tools

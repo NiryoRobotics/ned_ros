@@ -34,13 +34,13 @@ namespace DynamixelDriver
             SingleMotorCmd( );
             SingleMotorCmd(DxlCommandType type, uint8_t motor_id, uint32_t param);
 
-            DxlCommandType getType();
+            DxlCommandType getType() const;
             void setType(DxlCommandType type);
 
             void setId(uint8_t id);
-            uint8_t getId();
+            uint8_t getId() const;
 
-            uint32_t getParam();
+            uint32_t getParam() const;
             void setParam(uint32_t param);            
 
         private:

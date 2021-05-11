@@ -136,8 +136,11 @@ class CommandEnum(Enum):
     MOVE_JOINTS = 20
     MOVE_POSE = 21
     SHIFT_POSE = 22
+  
 
     MOVE_LINEAR_POSE = 23
+    SHIFT_LINEAR_POSE = 24
+    
 
     JOG_JOINTS = 25
     JOG_POSE = 26

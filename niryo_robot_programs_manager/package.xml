@@ -1,6 +1,6 @@
 <package>
     <name>niryo_robot_programs_manager</name>
-    <version>3.0.0</version>
+    <version>3.1.0</version>
     <description>The niryo_robot_programs_manager package</description>
 
     <author email="r.lux@niryo.com">Remi Lux</author>

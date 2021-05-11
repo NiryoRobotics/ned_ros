@@ -75,5 +75,8 @@ class ToolsInterfaceCore
 
         bool _callbackPullAirVacuumPump(tools_interface::PullAirVacuumPump::Request &req, tools_interface::PullAirVacuumPump::Response &res);
         bool _callbackPushAirVacuumPump(tools_interface::PushAirVacuumPump::Request &req, tools_interface::PushAirVacuumPump::Response &res);
+
+        bool _equipToolWithRetries(uint8_t tool_id, DynamixelDriver::DxlMotorType tool_type, unsigned max_retries);
+        std::vector<uint8_t> _findToolMotorListWithRetries(unsigned max_retries);
 };
 #endif

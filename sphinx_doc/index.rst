@@ -103,11 +103,3 @@ Learn more on this :doc:`section <source/more>`
    source/tcp_server
    source/matlab_manager
    source/more
-
-****************************
-Indices and tables
-****************************
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`

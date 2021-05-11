@@ -11,7 +11,13 @@ tmp_code_to_execute/
 .idea/*
 venv
 
-_build/
 .pytest_cache/
 
 /dev/
+
+# Mac Stuff
+.DS_Store
+
+# Build files
+_build/
+*.mo

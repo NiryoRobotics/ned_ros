@@ -38,6 +38,7 @@ HR_ORIENTATION_Z = 15
 
 HR_MOVE_JOINTS_COMMAND = 100
 HR_MOVE_POSE_COMMAND = 101
+HR_MOVE_LINEAR_POSE_COMMAND = 102
 HR_STOP_COMMAND = 110
 
 # You should not write any value on those 3 addresses
@@ -83,6 +84,7 @@ def handle_negative_hr(val):
 class HoldingRegisterDataBlock(DataBlock):
 
     def __init__(self):
+        
         super(HoldingRegisterDataBlock, self).__init__()
         self.execution_thread = threading.Thread()
         self.is_action_client_running = False
@@ -126,6 +128,8 @@ class HoldingRegisterDataBlock(DataBlock):
             self.move_joints_command()
         elif address == HR_MOVE_POSE_COMMAND:
             self.move_pose_command()
+        elif address == HR_MOVE_LINEAR_POSE_COMMAND:
+            self.move_linear_pose_command()
         elif address == HR_STOP_COMMAND:
             self.stop_current_command()
         elif address == HR_NEW_CALIBRATION_REQUEST:
@@ -211,6 +215,13 @@ class HoldingRegisterDataBlock(DataBlock):
             pose.append(handle_negative_hr(p) / 1000.0)
         self.move_pose(pose)
 
+    def move_linear_pose_command(self):
+        pose_raw_values = self.getValuesOffset(HR_POSITION_X, 6)
+        pose = []
+        for p in pose_raw_values:
+            pose.append(handle_negative_hr(p) / 1000.0)
+        self.move_linear_pose(pose)
+
     def open_gripper(self, gripper_id, speed):
         goal = RobotMoveGoal()
         goal.cmd.cmd_type = MoveCommandType.TOOL
@@ -245,6 +256,18 @@ class HoldingRegisterDataBlock(DataBlock):
         goal = RobotMoveGoal()
         goal.cmd.cmd_type = RobotCommand.MOVE_ONLY
         goal.cmd.arm_cmd.cmd_type = MoveCommandType.POSE
+        goal.cmd.arm_cmd.position.x = pose[0]
+        goal.cmd.arm_cmd.position.y = pose[1]
+        goal.cmd.arm_cmd.position.z = pose[2]
+        goal.cmd.arm_cmd.rpy.roll = pose[3]
+        goal.cmd.arm_cmd.rpy.pitch = pose[4]
+        goal.cmd.arm_cmd.rpy.yaw = pose[5]
+        self.start_execution_thread(goal)
+
+    def move_linear_pose(self, pose):
+        goal = RobotMoveGoal()
+        goal.cmd.cmd_type = RobotCommand.MOVE_ONLY
+        goal.cmd.arm_cmd.cmd_type = MoveCommandType.LINEAR_POSE
         goal.cmd.arm_cmd.position.x = pose[0]
         goal.cmd.arm_cmd.position.y = pose[1]
         goal.cmd.arm_cmd.position.z = pose[2]
@@ -320,7 +343,6 @@ class HoldingRegisterDataBlock(DataBlock):
         response = self.call_ros_service('/niryo_robot/conveyor/ping_and_set_conveyor',
                                          SetConveyor, 1, 0)
         self.__set_command_done(response.status)
-        print(response)
         if response == CommandStatus.SUCCESS:
             self.setValuesOffset(HR_LAST_ROBOT_CMD_DATA_RESULT, [response.id])
 
@@ -334,7 +356,6 @@ class HoldingRegisterDataBlock(DataBlock):
         conveyor_id = self.getValuesOffset(HR_CONTROL_CONVEYOR_ID, 1)[0]
         response = self.call_ros_service('/niryo_robot/conveyor/ping_and_set_conveyor',
                                          SetConveyor, 2, conveyor_id)
-        print(response)
         self.__set_command_done(response.status)
 
     def control_conveyor(self):

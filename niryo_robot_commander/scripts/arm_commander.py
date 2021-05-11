@@ -25,7 +25,7 @@ from moveit_msgs.msg import PositionIKRequest
 from moveit_msgs.msg import MoveItErrorCodes
 from moveit_msgs.msg import RobotState as RobotStateMoveIt
 from sensor_msgs.msg import JointState
-from std_msgs.msg import Empty, Header, Int32
+from std_msgs.msg import Header, Int32
 from trajectory_msgs.msg import JointTrajectory
 from visualization_msgs.msg import Marker, MarkerArray
 
@@ -77,7 +77,7 @@ class ArmCommander:
         self.__joint_trajectory_publisher = rospy.Publisher('{}/command'.format(joint_controller_base_name),
                                                             JointTrajectory, queue_size=10)
         self.__reset_controller_service = rospy.ServiceProxy('/niryo_robot/joints_interface/steppers_reset_controller',
-                                                      Trigger)
+                                                             Trigger)
 
         # -- Commanders
         # - Move It Commander
@@ -162,6 +162,7 @@ class ArmCommander:
         :type msg: FollowJointTrajectoryActionGoal
         :return: None
         """
+        # rospy.loginfo('CALLBACK NEW GOAL')
         self.__current_goal_id = msg.goal_id.id
         rospy.logdebug("Arm commander - Got a goal id : {}".format(self.__current_goal_id))
 
@@ -317,7 +318,12 @@ class ArmCommander:
             plan = self.__compute_cartesian_plan(list_poses)
         except Exception:
             raise ArmCommanderException(CommandStatus.ARM_COMMANDER_FAILURE, "IK Fail")
-        return self.__execute_plan(plan)
+
+        if plan is not None:
+            return self.__execute_plan(plan)
+        elif plan is None:  #
+            raise ArmCommanderException(CommandStatus.NO_PLAN_AVAILABLE,
+                                        "The goal cannot be reached with a linear trajectory")
 
     def __compute_cartesian_plan(self, list_poses):
         """
@@ -326,22 +332,23 @@ class ArmCommander:
         :param list_poses: list of Pose Object
         :return: Computed plan : RobotTrajectory object
         """
-
-        def dist_2_poses(p1, p2):
-            np_pose1 = np.array([p1.position.x, p1.position.y, p1.position.z, p1.orientation.x, p1.orientation.y,
-                                 p1.orientation.z, p1.orientation.w])
-            np_pose2 = np.array([p2.position.x, p2.position.y, p2.position.z, p2.orientation.x, p2.orientation.y,
-                                 p2.orientation.z, p2.orientation.w])
-
-            return np.linalg.norm(np_pose1 - np_pose2)
-
         if len(list_poses) == 0:
             return GoalStatus.REJECTED, "No Waypoints"
         for i in reversed(range(len(list_poses) - 1)):
-            if dist_2_poses(list_poses[i + 1], list_poses[i]) < 0.001:
+            if self.poses_too_close(list_poses[i + 1], list_poses[i]):
                 list_poses.pop(i)
+
         trajectory_plan, fraction = self.__arm.compute_cartesian_path(list_poses, eef_step=0.05, jump_threshold=0.0)
-        return trajectory_plan
+
+        # Check the fraction value : if 1.0, the trajectory can be linear;
+        # else, the trajectory followed won't be linear.
+        if fraction == 1.0:
+            # delete the very first joints position which is the starting position (current), 
+            # to avoid an error related to increasing time 
+            del trajectory_plan.joint_trajectory.points[0]
+            return trajectory_plan
+        elif fraction < 1.0:
+            return None
 
     def __execute_plan(self, plan):
         """
@@ -503,6 +510,40 @@ class ArmCommander:
         self.__arm.shift_pose_target(arm_cmd.shift.axis_number, arm_cmd.shift.value, self.__end_effector_link)
         return self.__compute_and_execute_plan_to_target()
 
+    def set_shift_linear_pose_target(self, arm_cmd):
+        """
+        Set MoveIt target to a shifted target from actual position
+        Then execute the cartesian trajectory to the target 
+        :param arm_cmd: ArmMoveCommand message containing target values
+        :type : ArmMoveCommand
+        :return: status, message
+        """
+        self.__validate_params_move(MoveCommandType.SHIFT_LINEAR_POSE, arm_cmd.shift)
+
+        axis_number = arm_cmd.shift.axis_number
+        shift_value = arm_cmd.shift.value
+
+        # Get current end effector pose
+        actual_pose = self.__arm.get_current_pose().pose
+
+        # Get list [x, y, z, roll, pitch, yaw] from pose stamped
+        pose_list = self.pose_to_list(actual_pose)
+
+        # Apply shift on pose 
+        pose_list[axis_number] += shift_value
+
+        # Get pose stamped from target pose 
+        msg_pose = self.list_to_pose(pose_list)
+
+        # Check if command is really close to the current position
+        if self.poses_too_close(msg_pose, actual_pose):
+            return CommandStatus.SUCCESS, "Command was already satisfied"
+
+        # set arm pose target
+        self.__arm.set_pose_target(pose_list, self.__end_effector_link)
+
+        return self.__compute_and_execute_cartesian_plan([msg_pose])
+
     def set_linear_trajectory(self, arm_cmd):
         """
         Set MoveIt target to a Pose target with RPY
@@ -516,7 +557,15 @@ class ArmCommander:
         x_q, y_q, z_q, w_q = quaternion_from_euler(roll, pitch, yaw)
         msg_pose = Pose(Point(x, y, z), Quaternion(x_q, y_q, z_q, w_q))
 
-        return self.__compute_and_execute_cartesian_plan([msg_pose])
+        current_pose = self.__arm.get_current_pose().pose
+
+        # If the goal is really close to the current pose, 
+        # avoid useless calculations and return immediately
+        if self.poses_too_close(msg_pose, current_pose):
+            return CommandStatus.SUCCESS, "Command was already satisfied"
+
+        else:
+            return self.__compute_and_execute_cartesian_plan([msg_pose])
 
     # - Trajectory
     def execute_trajectory(self, arm_cmd):
@@ -609,12 +658,6 @@ class ArmCommander:
         Link plans together with a smooth transition between each of them
         """
 
-        def dist_2_poses(p1, p2):
-            np_pose1 = np.array([p1.position.x, p1.position.y, p1.position.z])
-            np_pose2 = np.array([p2.position.x, p2.position.y, p2.position.z])
-            dist = np.linalg.norm(np_pose1 - np_pose2)
-            return dist
-
         def find_limit_point(plan_, dist_smooth, reverse):
             len_plan = len(plan_.joint_trajectory.points)
             ind_ref = -1 if reverse else 0
@@ -625,7 +668,7 @@ class ArmCommander:
                 else:
                     ind = raw_ind
                 pose_i = self.get_forward_kinematics(plan_.joint_trajectory.points[ind].positions)
-                dist_pose_to_target = dist_2_poses(reference_pos, pose_i)
+                dist_pose_to_target = self.dist_2_poses(reference_pos, pose_i)
                 if dist_pose_to_target > dist_smooth:
                     return ind
             else:
@@ -705,6 +748,8 @@ class ArmCommander:
             self.__parameters_validator.validate_position(args[0])
             self.__parameters_validator.validate_orientation_quaternion(args[1])
         elif command_type == MoveCommandType.SHIFT_POSE:
+            self.__parameters_validator.validate_shift_pose(args[0])
+        elif command_type == MoveCommandType.SHIFT_LINEAR_POSE:
             self.__parameters_validator.validate_shift_pose(args[0])
         else:
             raise ArmCommanderException(CommandStatus.UNKNOWN_COMMAND, "Wrong command type")
@@ -786,3 +831,76 @@ class ArmCommander:
             rospy.logerr("Arm commander - IK Failed : code error {}".format(response.error_code.val))
             return False, []
         return True, list(response.solution.joint_state.position[:6])
+
+    # - Useful functions
+
+    @staticmethod
+    def pose_to_list(pose):
+        """
+        Take a ROS Pose and return it as a Python list [x, y, z, roll, pitch, yaw]
+
+        :param pose: a Pose
+        :type pose: Pose
+        :return: The pose as a list
+        :rtype: list[float]
+        """
+        x, y, z = pose.position.x, pose.position.y, pose.position.z
+        roll, pitch, yaw = euler_from_quaternion(
+            [pose.orientation.x, pose.orientation.y, pose.orientation.z,
+             pose.orientation.w])
+        return [x, y, z, roll, pitch, yaw]
+
+    @staticmethod
+    def list_to_pose(list_):
+        """
+        Take a Pose as a Python list [x, y, z, roll, pitch, yaw] and return a ROS Pose
+
+        :param list_: a pose in a list
+        :type list_: list[float]
+        :return: a ROS Pose
+        :rtype: Pose
+        """
+        x, y, z = list_[:3]
+        q_x, q_y, q_z, q_w = quaternion_from_euler(*list_[3:])
+
+        return Pose(Point(x, y, z), Quaternion(q_x, q_y, q_z, q_w))
+
+    @staticmethod
+    def dist_2_poses(p1, p2):
+        """
+        :param p1:
+        :type p1: Pose
+        :param p2:
+        :type p2: Pose
+
+        :return: The distance (in meters) between the two poses
+        :rtype: float
+        """
+        np_pose1 = np.array([p1.position.x, p1.position.y, p1.position.z, p1.orientation.x, p1.orientation.y,
+                             p1.orientation.z, p1.orientation.w])
+        np_pose2 = np.array([p2.position.x, p2.position.y, p2.position.z, p2.orientation.x, p2.orientation.y,
+                             p2.orientation.z, p2.orientation.w])
+
+        return np.linalg.norm(np_pose1 - np_pose2)
+
+    @staticmethod
+    def poses_too_close(p1, p2):
+        """
+        Check that distance between p1 and p2 is bigger than the minimal required distance for a move.
+
+        :param p1:
+        :type p1: Pose
+        :param p2:
+        :type p2: Pose
+
+        :return: True if the distance between p1 and p2 is smaller than 1mm
+        :rtype: bool
+        """
+        np_pose1 = np.array([p1.position.x, p1.position.y, p1.position.z, p1.orientation.x, p1.orientation.y,
+                             p1.orientation.z, p1.orientation.w])
+        np_pose2 = np.array([p2.position.x, p2.position.y, p2.position.z, p2.orientation.x, p2.orientation.y,
+                             p2.orientation.z, p2.orientation.w])
+
+        dist = np.linalg.norm(np_pose1 - np_pose2)
+
+        return dist < 0.001

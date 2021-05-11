@@ -208,7 +208,7 @@ void JointHardwareInterface::sendInitMotorsParams()
     dxl_cmd_srv.request.id = 6;
     dxl_cmd_srv.request.byte_number = 1;
     dxl_cmd_srv.request.value = _p_gain_3;
-    dxl_cmd_srv.request.reg_address = 27;
+    dxl_cmd_srv.request.reg_address = 29;
     if (dxl_client.call(dxl_cmd_srv))
         ROS_DEBUG("Joints Hardware Interface - Set joint 6 P Gain OK");
 
@@ -218,7 +218,7 @@ void JointHardwareInterface::sendInitMotorsParams()
         ROS_DEBUG("Joints Hardware Interface - Set joint 6 I Gain OK");
 
     dxl_cmd_srv.request.value = _d_gain_3;
-    dxl_cmd_srv.request.reg_address = 29;
+    dxl_cmd_srv.request.reg_address = 27;
     if (dxl_client.call(dxl_cmd_srv))
         ROS_DEBUG("Joints Hardware Interface - Set joint 6 D Gain OK");
 }
