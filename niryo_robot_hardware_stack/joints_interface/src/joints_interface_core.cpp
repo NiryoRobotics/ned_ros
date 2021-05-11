@@ -210,7 +210,6 @@ namespace JointsInterface {
 
                 bool isFreqMet = control_loop_rate.sleep();
                 ROS_WARN_COND(!isFreqMet, "JointsInterfaceCore::rosControlLoop : freq not met : expected (%f s) vs actual (%f s)", control_loop_rate.expectedCycleTime().toSec(), control_loop_rate.cycleTime().toSec());
-                ROS_DEBUG_COND(isFreqMet, "JointsInterfaceCore::rosControlLoop : freq met : expected (%f s) vs actual (%f s)", control_loop_rate.expectedCycleTime().toSec(), control_loop_rate.cycleTime().toSec());
 
             }
         }

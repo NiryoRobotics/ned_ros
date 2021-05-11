@@ -165,6 +165,9 @@ namespace ToolsInterface {
             _dynamixel->unsetEndEffector(_toolState.getId());
             res.state = ToolState::TOOL_STATE_PING_OK;
             res.id = 0;
+
+            //reset tool as default = no tool
+            _toolState.reset();
         }
 
         // Search new tool
@@ -197,18 +200,28 @@ namespace ToolsInterface {
 
                     _dynamixel->update_leds();
 
-                    ROS_INFO("ToolsInterfaceCore::_callbackPingAndSetDxlTool - Set End Effector return : %d", res.state);
+                    ROS_INFO("ToolsInterfaceCore::_callbackPingAndSetDxlTool - Set end effector success, return : %d", res.state);
 
                     ret = true;
                     break;
                 }
             }
-        }
-        else
-        {
-            //reset tool as default = no tool
-            _toolState.reset();
 
+            //on failure after three tries
+            if (niryo_robot_msgs::CommandStatus::SUCCESS != res.state)
+            {
+                ROS_ERROR("ToolsInterfaceCore::_callbackPingAndSetDxlTool - Fail to set end effector, return : %d", res.state);
+
+                pubToolId(0);
+
+                ros::Duration(0.05).sleep();
+                res.state = ToolState::TOOL_STATE_PING_ERROR;
+                res.id = 0;
+            }
+        }
+        else //no tool found, no tool set (it is not an error, the tool does not exists)
+        {
+            ret = true;
             pubToolId(0);
 
             ros::Duration(0.05).sleep();

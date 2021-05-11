@@ -67,7 +67,7 @@ namespace DynamixelDriver
         void clearSingleCommandQueue();
         void clearEndEffectorCommandQueue();
 
-        void setTrajectoryControllerCommands(const std::map<uint8_t, uint32_t> &cmd);
+        void setTrajectoryControllerCommands(const std::vector<std::pair<uint8_t, uint32_t> > &cmd);
         void setSyncCommand(const common::model::SynchronizeMotorCmd &cmd);
         void addSingleCommandToQueue(const common::model::SingleMotorCmd &cmd);
         void addSingleCommandToQueue(const std::vector<common::model::SingleMotorCmd> &cmd);
@@ -142,7 +142,8 @@ namespace DynamixelDriver
 
         std::unique_ptr<DxlDriver> _dynamixel;
 
-        std::map<uint8_t, uint32_t> _joint_trajectory_cmd_map;
+        std::vector<std::pair<uint8_t, uint32_t> > _joint_trajectory_cmd;
+
         common::model::SynchronizeMotorCmd _dxl_sync_cmds;
         std::queue<common::model::SingleMotorCmd> _dxl_single_cmds;
         std::queue<common::model::SingleMotorCmd> _end_effector_cmds;

@@ -75,8 +75,7 @@ namespace DynamixelDriver
             int readSynchronizeCommand(common::model::SynchronizeMotorCmd cmd);
             int readSingleCommand(common::model::SingleMotorCmd cmd);
 
-            void executeJointTrajectoryCmd(const std::map<uint8_t, uint32_t> &cmd_map);
-
+            void executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, uint32_t> > cmd_vec);
 
             uint32_t getPosition(common::model::DxlMotorState& motor_state);
 

@@ -93,7 +93,8 @@ namespace StepperDriver
             void getBusState(bool& connection_status, std::vector<uint8_t>& motor_list, std::string& error) const override;
             std::string getErrorMessage() const override;
 
-            void executeJointTrajectoryCmd(std::map<uint8_t, int32_t> cmd_map);
+            void executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, int32_t> > cmd_vec);
+
     private:
             bool init() override;
             void initParameters();

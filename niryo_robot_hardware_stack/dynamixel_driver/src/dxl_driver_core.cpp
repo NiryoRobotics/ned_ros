@@ -418,10 +418,10 @@ namespace DynamixelDriver
     {
         bool need_sleep = false;
 
-        if (!_joint_trajectory_cmd_map.empty())
+        if (!_joint_trajectory_cmd.empty())
         {
-            _dynamixel->executeJointTrajectoryCmd(_joint_trajectory_cmd_map);
-            _joint_trajectory_cmd_map.clear();
+            _dynamixel->executeJointTrajectoryCmd(_joint_trajectory_cmd);
+            _joint_trajectory_cmd.clear();
             need_sleep = true;
         }
 
@@ -518,9 +518,9 @@ namespace DynamixelDriver
      * @brief DxlDriverCore::setTrajectoryControllerCommands
      * @param cmd
      */
-    void DxlDriverCore::setTrajectoryControllerCommands(const std::map<uint8_t, uint32_t> &cmd)
+    void DxlDriverCore::setTrajectoryControllerCommands(const std::vector<std::pair<uint8_t, uint32_t> > &cmd)
     {
-        _joint_trajectory_cmd_map = cmd;
+        _joint_trajectory_cmd = cmd;
     }
 
     /**

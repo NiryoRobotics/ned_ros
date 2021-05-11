@@ -187,17 +187,20 @@ namespace DynamixelDriver
         if(_state_map.count(id)) {
             EMotorType type = _state_map.at(id).getType();
 
+            //std::remove to remove hypothetic duplicates too
             if(_ids_map.count(type)) {
-                auto ids = _ids_map.at(type);
-                auto pos = find(ids.begin(), ids.end(), id);
-                if (pos != ids.end())
-                    ids.erase(pos);
+                auto& ids = _ids_map.at(type);
+                ids.erase(std::remove(ids.begin(), ids.end(), id), ids.end());
             }
+
+
 
             _state_map.erase(id);
         }
 
-        _removed_motor_id_list.push_back(id);
+        _removed_motor_id_list.erase(std::remove(_removed_motor_id_list.begin(),
+                                                 _removed_motor_id_list.end(), id),
+                                     _removed_motor_id_list.end());
     }
 
     /**
@@ -757,11 +760,13 @@ namespace DynamixelDriver
     void DxlDriver::checkRemovedMotors()
     {
         //get list of ids
+        std::vector<uint8_t> motor_list;
         for(auto const& istate: _state_map) {
             auto it = find(_all_motor_connected.begin(), _all_motor_connected.end(), istate.first);
             if (it == _all_motor_connected.end())
-                _removed_motor_id_list.emplace_back(istate.first);
+                motor_list.emplace_back(istate.first);
         }
+        _removed_motor_id_list = motor_list;
     }
 
     /**
@@ -808,6 +813,8 @@ namespace DynamixelDriver
             int (XDriver::*syncReadFunction)(const vector<uint8_t>&, vector<uint32_t>&),
             void (DxlMotorState::*setFunction)(int))
     {
+        unsigned int hw_errors_increment = 0;
+
         // syncread from all drivers for all motors
         for(auto const& it : _xdriver_map)
         {
@@ -822,7 +829,6 @@ namespace DynamixelDriver
 
                 if ((driver.get()->*syncReadFunction)(id_list, position_list) == COMM_SUCCESS)
                 {
-                    _hw_fail_counter_read = 0;
                     if(id_list.size() == position_list.size())
                     {
                         // set motors states accordingly
@@ -834,13 +840,19 @@ namespace DynamixelDriver
                     else {
                         ROS_ERROR( "DxlDriver::readAndFillState : syncreadfunction return vectors mismatch (id_list size %d, position_list size %d)",
                                        static_cast<int>(id_list.size()), static_cast<int>(position_list.size()));
-                        _hw_fail_counter_read++;
+                        hw_errors_increment++;
                     }
                 }
                 else
-                    _hw_fail_counter_read++;
+                    hw_errors_increment++;
             }
         }
+
+        // we reset the global error variable only if no errors
+        if(0 == hw_errors_increment)
+            _hw_fail_counter_read = 0;
+        else
+            _hw_fail_counter_read += hw_errors_increment;
     }
 
     /**
@@ -938,13 +950,13 @@ namespace DynamixelDriver
      * @brief DxlDriver::executeJointTrajectoryCmd
      * @param cmd_map
      */
-    void DxlDriver::executeJointTrajectoryCmd(const std::map<uint8_t, uint32_t> &cmd_map)
+    void DxlDriver::executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, uint32_t> > cmd_vec)
     {
         for(auto const& it : _xdriver_map) {
             //build list of ids and params for this motor
             std::vector<uint8_t> ids;
             std::vector<uint32_t> params;
-            for(auto const& cmd : cmd_map) {
+            for(auto const& cmd : cmd_vec) {
                 if(_state_map.count(cmd.first) && it.first == _state_map.at(cmd.first).getType()) {
                     ids.emplace_back(cmd.first);
                     params.emplace_back(cmd.second);

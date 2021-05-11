@@ -312,11 +312,11 @@ namespace StepperDriver
 
     /**
      * @brief StepperDriver::executeJointTrajectoryCmd
-     * @param cmd_map : need to be passed by copy, so that we ensure the data will not change in this method
+     * @param cmd_vec : need to be passed by copy, so that we ensure the data will not change in this method
      */
-    void StepperDriver::executeJointTrajectoryCmd(std::map<uint8_t, int32_t> cmd_map)
+    void StepperDriver::executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, int32_t> > cmd_vec)
     {
-        for (auto const& cmd : cmd_map)
+        for (auto const& cmd : cmd_vec)
         {
             if (sendPositionCommand(cmd.first, cmd.second) != CAN_OK)
             {

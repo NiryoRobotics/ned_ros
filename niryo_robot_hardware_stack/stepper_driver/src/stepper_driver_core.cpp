@@ -80,7 +80,7 @@ namespace StepperDriver
     void StepperDriverCore::initPublishers()
     {
         _command_publisher = _nh.advertise<std_msgs::Int64MultiArray>("stepper_cmd", 1000);
-        _publish_command_thread = std::thread(&StepperDriverCore::_publishCommand, this);
+        //_publish_command_thread = std::thread(&StepperDriverCore::_publishCommand, this);
     }
 
     /**
@@ -310,7 +310,6 @@ namespace StepperDriver
 
                 bool isFreqMet = control_loop_rate.sleep();
                 ROS_WARN_COND(!isFreqMet, "StepperDriverCore::rosControlLoop : freq not met : expected (%f s) vs actual (%f s)", control_loop_rate.expectedCycleTime().toSec(), control_loop_rate.cycleTime().toSec());
-                ROS_DEBUG_COND(isFreqMet, "StepperDriverCore::rosControlLoop : freq met : expected (%f s) vs actual (%f s)", control_loop_rate.expectedCycleTime().toSec(), control_loop_rate.cycleTime().toSec());
             }
             else
             {
@@ -326,10 +325,10 @@ namespace StepperDriver
     void StepperDriverCore::_executeCommand()
     {
         bool need_sleep = false;
-        if (!_joint_trajectory_cmd_map.empty())
+        if (!_joint_trajectory_cmd.empty())
         {
-            _stepper->executeJointTrajectoryCmd(_joint_trajectory_cmd_map);
-            _joint_trajectory_cmd_map.clear();
+            _stepper->executeJointTrajectoryCmd(_joint_trajectory_cmd);
+            _joint_trajectory_cmd.clear();
             need_sleep = true;
         }
 
@@ -422,9 +421,9 @@ namespace StepperDriver
             _conveyor_cmds.pop();
     }
 
-    void StepperDriverCore::setTrajectoryControllerCommands(const std::map<uint8_t, int32_t> &cmd)
+    void StepperDriverCore::setTrajectoryControllerCommands(const std::vector<std::pair<uint8_t, int32_t> > &cmd)
     {
-        _joint_trajectory_cmd_map = cmd;
+        _joint_trajectory_cmd = cmd;
     }
 
     /**
@@ -526,7 +525,7 @@ namespace StepperDriver
 
         while (ros::ok())
         {
-            auto tmpCmd = _joint_trajectory_cmd_map;
+            auto tmpCmd = _joint_trajectory_cmd;
             if(!tmpCmd.empty()) {
                 for(auto const& cmd : tmpCmd)
                     msg.data.emplace_back(cmd.second);

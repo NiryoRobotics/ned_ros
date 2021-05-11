@@ -51,7 +51,7 @@ namespace StepperDriver
             void clearSingleCommandQueue();
             void clearConveyorCommandQueue();
 
-            void setTrajectoryControllerCommands(const std::map<uint8_t, int32_t> &cmd);
+            void setTrajectoryControllerCommands(const std::vector<std::pair<uint8_t, int32_t> > &cmd);
             void addSingleCommandToQueue(const common::model::StepperMotorCmd& cmd);
             void addSingleCommandToQueue(const std::vector<common::model::StepperMotorCmd>& cmd);
 
@@ -121,7 +121,7 @@ namespace StepperDriver
 
             std::unique_ptr<StepperDriver> _stepper;
 
-            std::map<uint8_t, int32_t> _joint_trajectory_cmd_map;
+            std::vector<std::pair<uint8_t, int32_t> > _joint_trajectory_cmd;
             std::queue<common::model::StepperMotorCmd> _stepper_single_cmds;
             std::queue<common::model::StepperMotorCmd> _conveyor_cmds;
 

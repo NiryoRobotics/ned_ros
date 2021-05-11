@@ -79,8 +79,8 @@ namespace JointsInterface {
      */
     void JointHardwareInterface::write(const ros::Time &/*time*/, const ros::Duration &/*period*/)
     {
-        std::map<uint8_t, int32_t> stepper_cmd;
-        std::map<uint8_t, uint32_t> dxl_cmd;
+        std::vector<std::pair<uint8_t, int32_t> > stepper_cmd;
+        std::vector<std::pair<uint8_t, uint32_t> > dxl_cmd;
 
         for(auto const& jState : _joint_list)
         {
@@ -88,17 +88,17 @@ namespace JointsInterface {
             {
                 if(jState->isStepper())
                 {
-                    stepper_cmd.insert(make_pair(jState->getId(), jState->to_motor_pos(jState->cmd)));
+                    stepper_cmd.emplace_back(jState->getId(), jState->to_motor_pos(jState->cmd));
                 }
                 else
                 {
-                //    dxl_cmd.insert(make_pair(jState->getId(), static_cast<uint32_t>(jState->to_motor_pos(jState->cmd))));
+                    dxl_cmd.emplace_back(jState->getId(), static_cast<uint32_t>(jState->to_motor_pos(jState->cmd)));
                 }
             }
         }
 
         _stepper->setTrajectoryControllerCommands(stepper_cmd);
-      //  _dynamixel->setTrajectoryControllerCommands(dxl_cmd);
+        _dynamixel->setTrajectoryControllerCommands(dxl_cmd);
     }
 
     /**
