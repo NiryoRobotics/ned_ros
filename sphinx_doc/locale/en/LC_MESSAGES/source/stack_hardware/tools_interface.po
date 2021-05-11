@@ -1,0 +1,235 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2021, Niryo All rights reserved. No part of this document
+# may be reproduced or transmitted in any form or by any means without prior
+# written consent of Niryo SAS
+# This file is distributed under the same license as the Ned ROS
+# Documentation package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Ned ROS Documentation 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-04-23 16:51+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.8.0\n"
+
+#: ../../source/stack_hardware/tools_interface.rst:2
+msgid "Niryo Robot Tools Interface Package"
+msgstr ""
+
+#: ../../source/stack_hardware/tools_interface.rst:4
+msgid "This package handles Niryo's conveyor"
+msgstr ""
+
+#: ../../source/stack_hardware/tools_interface.rst:5
+msgid "You can control two conveyors"
+msgstr ""
+
+#: ../../source/stack_hardware/tools_interface.rst:8
+msgid "Tools Interface Node"
+msgstr ""
+
+#: ../../source/stack_hardware/tools_interface.rst:11
+msgid "The ROS Node is made to :"
+msgstr ""
+
+#: ../../source/stack_hardware/tools_interface.rst:10
+msgid "Set and control tools"
+msgstr ""
+
+#: ../../source/stack_hardware/tools_interface.rst:11
+msgid "Publish tool connection state"
+msgstr ""
+
+#: ../../source/stack_hardware/tools_interface.rst:14
+msgid "Parameters - Tools Interface"
+msgstr ""
+
+#: ../../source/stack_hardware/tools_interface.rst:16
+msgid "Tools Interface's Parameters"
+msgstr ""
+
+#: ../../source/stack_hardware/tools_interface.rst:22
+#: ../../source/stack_hardware/tools_interface.rst:43
+#: ../../source/stack_hardware/tools_interface.rst:59
+msgid "Name"
+msgstr ""
+
+#: ../../source/stack_hardware/tools_interface.rst:23
+#: ../../source/stack_hardware/tools_interface.rst:45
+#: ../../source/stack_hardware/tools_interface.rst:61
+msgid "Description"
+msgstr ""
+
+#: ../../source/stack_hardware/tools_interface.rst:24
+msgid "``check_tool_connection_frequency``"
+msgstr ""
+
+#: ../../source/stack_hardware/tools_interface.rst
+msgid "Publish and control rate for tools connection state."
+msgstr ""
+
+#: ../../source/stack_hardware/tools_interface.rst
+msgid "Default : '2.0'"
+msgstr ""
+
+#: ../../source/stack_hardware/tools_interface.rst:27
+msgid "``id_list``"
+msgstr ""
+
+#: ../../source/stack_hardware/tools_interface.rst
+msgid "List of tools id"
+msgstr ""
+
+#: ../../source/stack_hardware/tools_interface.rst
+msgid "Default : '[11,12,13,14,31]'"
+msgstr ""
+
+#: ../../source/stack_hardware/tools_interface.rst:30
+msgid "``motor_type_list``"
+msgstr ""
+
+#: ../../source/stack_hardware/tools_interface.rst
+msgid "List of motor tools type"
+msgstr ""
+
+#: ../../source/stack_hardware/tools_interface.rst
+msgid "Default : '[\"xl320\",\"xl320\",\"xl320\",\"xl320\",\"xl320\"]'"
+msgstr ""
+
+#: ../../source/stack_hardware/tools_interface.rst:35
+msgid "Published Topics - Tools Interface"
+msgstr ""
+
+#: ../../source/stack_hardware/tools_interface.rst:37
+msgid "Tools Interface's Published Topics"
+msgstr ""
+
+#: ../../source/stack_hardware/tools_interface.rst:44
+#: ../../source/stack_hardware/tools_interface.rst:60
+msgid "Message Type"
+msgstr ""
+
+#: ../../source/stack_hardware/tools_interface.rst:46
+msgid "``/niryo_robot_hardware/tools/current_id``"
+msgstr ""
+
+#: ../../source/stack_hardware/tools_interface.rst:47
+msgid ":std_msgs:`Int32`"
+msgstr ""
+
+#: ../../source/stack_hardware/tools_interface.rst:48
+msgid "Current tool ID"
+msgstr ""
+
+#: ../../source/stack_hardware/tools_interface.rst:51
+msgid "Services - Tools Interface"
+msgstr ""
+
+#: ../../source/stack_hardware/tools_interface.rst:53
+msgid "Tool Interface Package Services"
+msgstr ""
+
+#: ../../source/stack_hardware/tools_interface.rst:62
+msgid "``niryo_robot/tools/ping_and_set_dxl_tool``"
+msgstr ""
+
+#: ../../source/stack_hardware/tools_interface.rst:63
+msgid ":ref:`tools_interface/PingDxlTool<PingDxlTool (Service)>`"
+msgstr ""
+
+#: ../../source/stack_hardware/tools_interface.rst:64
+msgid "Scan and set for a tool plugged"
+msgstr ""
+
+#: ../../source/stack_hardware/tools_interface.rst:65
+msgid "``niryo_robot/tools/open_gripper``"
+msgstr ""
+
+#: ../../source/stack_hardware/tools_interface.rst:66
+msgid ":ref:`tools_interface/OpenGripper<OpenGripper (Service)>`"
+msgstr ""
+
+#: ../../source/stack_hardware/tools_interface.rst:67
+msgid "Open a gripper tool"
+msgstr ""
+
+#: ../../source/stack_hardware/tools_interface.rst:68
+msgid "``niryo_robot/tools/close_gripper``"
+msgstr ""
+
+#: ../../source/stack_hardware/tools_interface.rst:69
+msgid ":ref:`tools_interface/CloseGripper<CloseGripper (Service)>`"
+msgstr ""
+
+#: ../../source/stack_hardware/tools_interface.rst:70
+msgid "Close a gripper tool"
+msgstr ""
+
+#: ../../source/stack_hardware/tools_interface.rst:71
+msgid "``niryo_robot/tools/pull_air_vacuum_pump``"
+msgstr ""
+
+#: ../../source/stack_hardware/tools_interface.rst:72
+msgid ":ref:`tools_interface/PullAirVacuumPump<PullAirVacuumPump (Service)>`"
+msgstr ""
+
+#: ../../source/stack_hardware/tools_interface.rst:73
+msgid "Pull vacuum pump tool"
+msgstr ""
+
+#: ../../source/stack_hardware/tools_interface.rst:74
+msgid "``niryo_robot/tools/push_air_vacuum_pump``"
+msgstr ""
+
+#: ../../source/stack_hardware/tools_interface.rst:75
+msgid ":ref:`tools_interface/PushAirVacuumPump<PushAirVacuumPump (Service)>`"
+msgstr ""
+
+#: ../../source/stack_hardware/tools_interface.rst:76
+msgid "Push vacuum pump tool"
+msgstr ""
+
+#: ../../source/stack_hardware/tools_interface.rst:79
+msgid "Dependencies - Tools Interface"
+msgstr ""
+
+#: ../../source/stack_hardware/tools_interface.rst:81
+msgid ":msgs_index:`std_msgs`"
+msgstr ""
+
+#: ../../source/stack_hardware/tools_interface.rst:82
+msgid ":ref:`dynamixel_driver <Niryo Robot Dynamixel Driver Package>`"
+msgstr ""
+
+#: ../../source/stack_hardware/tools_interface.rst:85
+msgid "Services & Messages files - Tools Interface"
+msgstr ""
+
+#: ../../source/stack_hardware/tools_interface.rst:88
+msgid "PingDxlTool (Service)"
+msgstr ""
+
+#: ../../source/stack_hardware/tools_interface.rst:94
+msgid "OpenGripper (Service)"
+msgstr ""
+
+#: ../../source/stack_hardware/tools_interface.rst:100
+msgid "CloseGripper (Service)"
+msgstr ""
+
+#: ../../source/stack_hardware/tools_interface.rst:106
+msgid "PullAirVacuumPump (Service)"
+msgstr ""
+
+#: ../../source/stack_hardware/tools_interface.rst:112
+msgid "PushAirVacuumPump (Service)"
+msgstr ""
+

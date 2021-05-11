@@ -6,13 +6,13 @@ Niryo Robot Stepper Driver Package
 Stepper Driver Node
 --------------------------
 The ROS Node is made to :
- - Send commands to dynamixel motor
- - Receive dynamixel motors data
+ - Send commands to stepper motor
+ - Receive stepper motors data
 
 Parameters - Stepper Driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. list-table:: Dynamixel Driver's Parameters 
+.. list-table:: Stepper Driver's Parameters 
    :header-rows: 1
    :widths: auto
    :stub-columns: 0

@@ -85,7 +85,7 @@ class RobotCommanderNode:
             MoveCommandType.POSE_QUAT: self.__arm_commander.set_pose_quat_target,
             MoveCommandType.LINEAR_POSE: self.__arm_commander.set_linear_trajectory,
             MoveCommandType.SHIFT_POSE: self.__arm_commander.set_shift_pose_target,
-
+            MoveCommandType.SHIFT_LINEAR_POSE: self.__arm_commander.set_shift_linear_pose_target,
             # Trajectory
             MoveCommandType.EXECUTE_TRAJ: self.__arm_commander.execute_trajectory,
 
@@ -97,6 +97,13 @@ class RobotCommanderNode:
         self.__learning_mode_on = True
         rospy.Subscriber('/niryo_robot/learning_mode/state', Bool,
                          self.__callback_learning_mode)
+
+        self.__linear_trajectory_on = False
+
+        # subscribe to the state of the linear_trajectory, if True, 
+        # the arm trajectory should be linear (if possible).
+        rospy.Subscriber('~linear_trajectory/state', Bool,
+                         self.__callback_linear_trajectory_changed)
 
         self.__hardware_status = None
         rospy.Subscriber('/niryo_robot_hardware_interface/hardware_status', HardwareStatus,
@@ -118,6 +125,9 @@ class RobotCommanderNode:
         rospy.Service('~is_active', GetBool,
                       self.__callback_is_active)
 
+        rospy.Service('~linear_trajectory/activate', SetBool,
+                      self.__callback_linear_trajectory)  # service to  manage the linear trajectory calculation or not
+
         # Robot Action Server
         self.__current_goal_handle = actionlib.ServerGoalHandle()
         self.__action_server = actionlib.ActionServer('~robot_action', RobotMoveAction,
@@ -137,13 +147,15 @@ class RobotCommanderNode:
                                                      Bool, queue_size=5)
         rospy.Timer(rospy.Duration(rospy.get_param("~active_publish_rate_sec")), self.__publish_is_active)
 
+        self.__linear_trajectory_state_publisher = rospy.Publisher('~linear_trajectory/state', Bool, queue_size=1)
+
         # Jog
         self.__jog_controller = JogController(arm_param_validator)
 
         # Publish robot state (position, orientation, tool)
         self.__state_publisher = StatePublisher()
 
-        # Set a bool to mentioned this node is initialized
+        # Set a bool to mention this node is initialized
         rospy.set_param('~initialized', True)
 
         rospy.loginfo("Robot Commander - Started")
@@ -169,6 +181,11 @@ class RobotCommanderNode:
             self.__arm_commander.stop_arm()
         self.__learning_mode_on = activate
 
+    def __callback_linear_trajectory_changed(self, msg):
+        activate = msg.data
+        # update the current local linear_trajectory value
+        self.__linear_trajectory_on = activate
+
     def __callback_hardware_status(self, msg):
         self.__hardware_status = msg
 
@@ -192,6 +209,27 @@ class RobotCommanderNode:
             rospy.loginfo("Robot Commander - Receive Cancel Command from button")
         else:
             self.__pause_finished_event.set()
+
+    def __callback_linear_trajectory(self, msg):
+        activate = msg.value
+        to_publish = Bool()
+        resp_message = " "
+        if activate:  # activate linear trajectory calculation
+            if not self.__linear_trajectory_on:
+                self.__linear_trajectory_on = True
+                resp_message = "Activating linear trajectory"
+                to_publish.data = True
+                self.__linear_trajectory_state_publisher.publish(to_publish)
+        elif not activate:
+            if self.__linear_trajectory_on:
+                self.__linear_trajectory_on = False
+                resp_message = "Deactivating linear trajectory"
+                to_publish.data = False
+                self.__linear_trajectory_state_publisher.publish(to_publish)
+
+        status = CommandStatus.SUCCESS
+        message = resp_message
+        return [status, message]
 
     # - Action Server
     def __callback_goal(self, goal_handle):
@@ -315,6 +353,7 @@ class RobotCommanderNode:
             return
         try:
             cmd = self.__current_goal_handle.goal.goal.cmd
+
             (status, message) = self.__interpret_and_execute_command(cmd)
             response = self.create_result(status, message)
             result = response

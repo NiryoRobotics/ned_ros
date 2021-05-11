@@ -46,10 +46,12 @@ Format - Request
 """"""""""""""""""""""""""""
 
 As no function request a payload in input, requests have the following
+
 format : ``<json_packet_size>{'param_list': [<param_1>, <param_2>, ....], 'command': <command_str>}``
 
 Examples - Request
 """"""""""""""""""""""""""""
+
 Calibrate auto : ``{'param_list': ['AUTO'], 'command': 'CALIBRATE'}``
 
 Move joints : ``{'param_list': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], 'command': 'MOVE_JOINTS'}``

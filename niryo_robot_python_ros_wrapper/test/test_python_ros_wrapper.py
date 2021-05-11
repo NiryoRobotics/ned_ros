@@ -97,6 +97,15 @@ class TestPythonWrapper(unittest.TestCase):
         self.assertAlmostEqualVector(new_pose[3:], target_pose[3:], decimal=1)
         self.assertStatus(self.niryo_robot.move_to_sleep_pose())
 
+    def test_linear_pose(self):
+        target_pose = [0.3, 0.09, 0.36, 0.0, 1.0, 0.0]
+        self.assertStatus(self.niryo_robot.move_linear_pose(*target_pose))
+        new_pose = self.niryo_robot.get_pose_as_list()
+        self.assertAlmostEqualVector(new_pose[:3], target_pose[:3], decimal=1)
+        self.assertAlmostEqualVector(new_pose[3:], target_pose[3:], decimal=1)
+        self.assertStatus(self.niryo_robot.shift_linear_pose(ShiftPose.AXIS_Y, -0.04))
+        self.assertStatus(self.niryo_robot.move_to_sleep_pose())
+
     def test_kinematics(self):
         self.assertStatus(self.niryo_robot.move_joints(0.0, 0.0, 0.0, 0.0, 0.0, 0.0))
         initial_pose = self.niryo_robot.get_pose_as_list()

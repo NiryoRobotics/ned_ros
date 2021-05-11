@@ -56,7 +56,7 @@ class MotorDebug:
                                                           LedBlinker)
 
         self.__reset_controller_service = rospy.ServiceProxy('/niryo_robot/joints_interface/steppers_reset_controller',
-                                                      Trigger)
+                                                             Trigger)
 
         # - Subscribers
         self.__is_active_publisher = rospy.Subscriber('~is_active', Bool, self.__callback_commander_is_active)
@@ -77,7 +77,7 @@ class MotorDebug:
         self.__is_running = False
         self.__stop_motor_report_service()
         self.__cancel()
-        #self._set_log_debug(False)
+        # self._set_log_debug(False)
         self.__robot.set_learning_mode(True)
         self.__set_led_state_service(False, 0, 0, 0)
         return EmptyResponse()
@@ -105,7 +105,7 @@ class MotorDebug:
             self.__is_running = True
             self.__set_led_state_service(False, 0, 0, 0)
             if nb_loops < 1:
-                #self._set_log_debug(True)
+                # self._set_log_debug(True)
                 self._display_hardware_params()
                 status, message = self._scan_with_motor_report()
                 self.__check_state()
@@ -131,18 +131,25 @@ class MotorDebug:
                             test_limit_joints = default_joint_pose[:]
                             test_limit_joints[joint_index] = self._joint_limits[joint_name][limit_type]
                             test_limit_joints[joint_index] -= math.copysign(0.1, test_limit_joints[joint_index])
-                            error_counter += 0 if self._play_trajectory(self._create_goal(test_limit_joints)) else 1
+                            error_counter += 0 if self._play_trajectory(self._create_goal(test_limit_joints),
+                                                                        wait=2 if joint_index == 5 else 1) else 1
 
                             rospy.loginfo("Motor Debug - Return to default pose")
-                            error_counter += 0 if self._play_trajectory(self._create_goal(default_joint_pose)) else 1
+                            error_counter += 0 if self._play_trajectory(self._create_goal(default_joint_pose),
+                                                                        wait=2 if joint_index == 5 else 1) else 1
 
                             self.__set_led_state_service(error_counter > 0, 5, LedBlinkerRequest.LED_WHITE, 60)
                     if error_counter > 0:
                         break
+                else:
+                    for _ in range(nb_loops):
+                        self.__play_fun_poses()
+
+                self._play_trajectory(self._create_goal([0.0, 0.50, -1.25, 0.0, 0.0, 0.0]))
 
             rospy.sleep(1)
             self.__robot.set_learning_mode(True)
-            #self._set_log_debug(False)
+            # self._set_log_debug(False)
             self.__is_running = False
 
             self.__set_led_state_service(error_counter > 0, 5, LedBlinkerRequest.LED_WHITE, 360)
@@ -150,6 +157,18 @@ class MotorDebug:
         except:
             self.__is_running = False
             self.__robot.set_learning_mode(True)
+
+    def __play_fun_poses(self):
+        error_cpt = 0
+        waypoints = [[0.16,  0.00, -0.75, -0.56,  0.60, -2.26], 
+                     [2.25, -0.25, -0.90,  1.54, -1.70,  1.70], 
+                     [1.40,  0.35, -0.34, -1.24, -1.23, -0.10],
+                     [0.00,  0.60,  0.46, -1.55, -0.15,  2.50],
+                     [-1.0,  0.00, -1.00, -1.70, -1.35, -0.14]]
+        for wayoint in waypoints:
+            error_cpt += self._play_trajectory(self._create_goal(wayoint))
+
+        return error_cpt
 
     def _scan_with_motor_report(self):
         try:
@@ -161,7 +180,7 @@ class MotorDebug:
         response = self.__motor_report_service()
         return response.status, response.message
 
-    def _play_trajectory(self, goal):
+    def _play_trajectory(self, goal, wait=1):
         self.__check_state()
         rospy.loginfo("Motor Debug - Waiting for the joint_trajectory_action server")
         self.__traj_client.wait_for_server()
@@ -181,7 +200,7 @@ class MotorDebug:
             return False
 
         rospy.loginfo("Trajectory finished")
-        rospy.sleep(2)
+        rospy.sleep(wait)
         self.__check_state()
         return self._check_if_goal_reached(goal)
 

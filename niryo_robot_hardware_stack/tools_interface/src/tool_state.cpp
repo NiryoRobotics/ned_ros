@@ -1,7 +1,7 @@
 #include "tools_interface/tool_state.hpp"
 
-ToolState::ToolState(uint8_t id, std::string name, DynamixelDriver::DxlMotorType type)
-    : _id(id), _name(name), _type(type)
+ToolState::ToolState(uint8_t id, DynamixelDriver::DxlMotorType type)
+    : _id(id), _type(type)
 {
     _connected = true;
     _position = 0.0; 
@@ -25,16 +25,6 @@ void ToolState::setType(DynamixelDriver::DxlMotorType type)
 DynamixelDriver::DxlMotorType ToolState::getType()
 {
     return _type;
-}
-
-std::string& ToolState::getName()
-{
-    return _name;
-}
-
-void ToolState::setName(std::string name)
-{
-    _name = name;
 }
 
 void ToolState::setPosition(double position)
