@@ -77,7 +77,7 @@ include_directories(
 
 ## Declare libs and execs
 add_library(${PROJECT_NAME}
-    src/calibration_interface.cpp
+    src/calibration_manager.cpp
 )
 
 add_library(${PROJECT_NAME}_core

@@ -43,11 +43,9 @@ namespace common {
                 virtual ~JointState() override;
 
                 void setName(std::string &name);
-                void setNeedCalibration(bool need_calibration);
                 void setOffsetPosition(double offset_position);
 
                 std::string getName() const;
-                bool needCalibration() const;
                 double getOffsetPosition() const;
 
                 virtual bool operator==(const JointState& other) const;
@@ -82,15 +80,6 @@ namespace common {
             return _name;
         }
 
-        /**
-         * @brief JointState::needCalibration
-         * @return
-         */
-        inline
-        bool JointState::needCalibration() const
-        {
-            return _need_calibration;
-        }
 
         /**
          * @brief JointState::getOffsetPosition

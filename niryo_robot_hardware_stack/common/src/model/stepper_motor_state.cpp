@@ -72,15 +72,6 @@ namespace common {
 
         }
 
-        /**
-         * @brief StepperMotorState::stepsPerRev
-         * @return
-         */
-        int StepperMotorState::stepsPerRev()
-        {
-            return int(STEPPERS_MICROSTEPS * STEPPERS_MOTOR_STEPS_PER_REVOLUTION);
-        }
-
         //****************
         //  Setters
         //****************
@@ -147,9 +138,6 @@ namespace common {
         {
             _calibration_state = calibration_state;
             _calibration_value = calibration_value;
-            //if ok, does not need calibration anymore
-            setNeedCalibration(EStepperCalibrationStatus::CALIBRATION_OK != _calibration_state &&
-                               EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED != _calibration_state);
         }
 
         //*********************

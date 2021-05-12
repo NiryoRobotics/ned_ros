@@ -40,7 +40,7 @@ namespace common {
 
                 virtual ~StepperMotorState() override;
 
-                static int stepsPerRev();
+                static constexpr int stepsPerRev();
 
                 //setters
                 void updateLastTimeRead();
@@ -163,6 +163,10 @@ namespace common {
          * @brief StepperMotorState::getLastTimeRead
          * @return
          */
+        constexpr int StepperMotorState::stepsPerRev() {
+            return int(STEPPERS_MICROSTEPS * STEPPERS_MOTOR_STEPS_PER_REVOLUTION);
+        }
+
         inline
         double StepperMotorState::getLastTimeRead() const
         {

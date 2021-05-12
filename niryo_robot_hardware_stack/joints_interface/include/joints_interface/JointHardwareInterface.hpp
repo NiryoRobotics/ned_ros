@@ -33,7 +33,7 @@
 #include <hardware_interface/joint_command_interface.h>
 #include <hardware_interface/robot_hw.h>
 
-#include "joints_interface/calibration_interface.hpp"
+#include "joints_interface/calibration_manager.hpp"
 #include "stepper_driver/stepper_driver_core.hpp"
 #include "dynamixel_driver/dxl_driver_core.hpp"
 
@@ -82,9 +82,9 @@ namespace JointsInterface {
         hardware_interface::JointStateInterface _joint_state_interface;
         hardware_interface::PositionJointInterface _joint_position_interface;
 
-        std::shared_ptr<DynamixelDriver::DxlDriverCore> _dynamixel;
-        std::shared_ptr<StepperDriver::StepperDriverCore> _stepper;
-        std::unique_ptr<CalibrationInterface> _calibration_interface;
+        std::shared_ptr<DynamixelDriver::DxlDriverCore> _dynamixelCore;
+        std::shared_ptr<StepperDriver::StepperDriverCore> _stepperCore;
+        std::unique_ptr<CalibrationManager> _calibration_manager;
 
         std::map<uint8_t, std::string> _map_stepper_name;
         std::map<uint8_t, std::string> _map_dxl_name;
@@ -104,7 +104,7 @@ namespace JointsInterface {
     inline
     bool JointHardwareInterface::isCalibrationInProgress() const
     {
-        return _calibration_interface->CalibrationInprogress();
+        return _calibration_manager->CalibrationInprogress();
     }
 
     /**

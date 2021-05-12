@@ -73,15 +73,6 @@ namespace common {
         }
 
         /**
-         * @brief JointState::setNeedCalibration
-         * @param need_calibration
-         */
-        void JointState::setNeedCalibration(bool need_calibration)
-        {
-            _need_calibration = need_calibration;
-        }
-
-        /**
          * @brief JointState::setOffsetPosition
          * @param offset_position
          */

@@ -118,18 +118,8 @@ namespace DynamixelDriver
             bool hasMotors() override;
 
             int setupCommunication();
-            void interpreteErrorState();
 
             void checkRemovedMotors();
-
-            void fillPositionStatus();
-            void fillVoltageStatus();
-            void fillTemperatureStatus();
-            void fillErrorStatus();
-
-            void readAndFillState(
-                int (XDriver::*syncReadFunction)(const std::vector<uint8_t> &, std::vector<uint32_t> &),
-                void (common::model::DxlMotorState::*setFunction)(int));
 
             int _syncWrite(int (XDriver::*syncWriteFunction)(const std::vector<uint8_t> &, const std::vector<uint32_t> &),
                                   const common::model::SynchronizeMotorCmd& cmd);
@@ -160,6 +150,8 @@ namespace DynamixelDriver
 
             int _led_state;
 
+            static constexpr int MAX_HW_FAILURE = 25;
+
     };
 
     //inline getters
@@ -170,24 +162,52 @@ namespace DynamixelDriver
         return _is_connection_ok;
     }
 
+    /**
+     * @brief DxlDriver::getNbMotors
+     * @return
+     */
+    inline
+    size_t DxlDriver::getNbMotors() const
+    {
+        return _state_map.size();
+    }
+
+    /**
+     * @brief DxlDriver::getRemovedMotorList
+     * @return
+     */
     inline
     std::vector<uint8_t> DxlDriver::getRemovedMotorList() const
     {
         return _removed_motor_id_list;
     }
 
+    /**
+     * @brief DxlDriver::getErrorMessage
+     * @return
+     */
     inline
     std::string DxlDriver::getErrorMessage() const
     {
         return _debug_error_message;
     }
 
+    /**
+     * @brief DxlDriver::getLedState
+     * @return
+     */
     inline
     int DxlDriver::getLedState() const
     {
         return _led_state;
     }
 
+    /**
+     * @brief DxlDriver::getBusState
+     * @param connection_state
+     * @param motor_id
+     * @param debug_msg
+     */
     inline
     void DxlDriver::getBusState(bool &connection_state, std::vector<uint8_t> &motor_id,
                                 std::string &debug_msg) const
@@ -197,6 +217,10 @@ namespace DynamixelDriver
         connection_state = isConnectionOk();
     }
 
+    /**
+     * @brief DxlDriver::hasMotors
+     * @return
+     */
     inline
     bool DxlDriver::hasMotors()
     {

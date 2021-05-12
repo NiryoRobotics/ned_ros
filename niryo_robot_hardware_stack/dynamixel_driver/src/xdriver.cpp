@@ -221,11 +221,9 @@ namespace DynamixelDriver
         dynamixel::GroupSyncRead groupSyncRead(_dxlPortHandler.get(), _dxlPacketHandler.get(), address, data_len);
         int dxl_comm_result = COMM_TX_FAIL;
 
-        vector<uint8_t>::const_iterator it_id;
-
-        for (it_id = id_list.cbegin(); it_id < id_list.cend(); it_id++)
+        for (auto const& id : id_list)
         {
-            if (!groupSyncRead.addParam(*it_id))
+            if (!groupSyncRead.addParam(id))
             {
                 groupSyncRead.clearParam();
                 return GROUP_SYNC_REDONDANT_ID;
@@ -234,40 +232,38 @@ namespace DynamixelDriver
 
         dxl_comm_result = groupSyncRead.txRxPacket();
 
-        if (dxl_comm_result != COMM_SUCCESS)
+        if (COMM_SUCCESS == dxl_comm_result)
         {
-            groupSyncRead.clearParam();
-            return dxl_comm_result;
-        }
-
-        bool dxl_getdata_result = false;
-        for (it_id = id_list.cbegin(); it_id < id_list.cend(); it_id++)
-        {
-            dxl_getdata_result = groupSyncRead.isAvailable(*it_id, address, data_len);
-            if (!dxl_getdata_result)
+            for (auto const& id : id_list)
             {
-                groupSyncRead.clearParam();
-                return GROUP_SYNC_READ_RX_FAIL;
-            }
-
-            switch(data_len)
-            {
-                case DXL_LEN_ONE_BYTE:
-                    data_list.push_back(static_cast<uint8_t>(groupSyncRead.getData(*it_id, address, data_len)));
-                break;
-                case DXL_LEN_TWO_BYTES:
-                    data_list.push_back(static_cast<uint16_t>(groupSyncRead.getData(*it_id, address, data_len)));
-                break;
-                case DXL_LEN_FOUR_BYTES:
-                    data_list.push_back(groupSyncRead.getData(*it_id, address, data_len));
-                break;
-                default:
-                    printf("XDriver::syncRead ERROR: Size param must be 1, 2 or 4 bytes\n");
-                break;
+                if (groupSyncRead.isAvailable(id, address, data_len))
+                {
+                    switch(data_len)
+                    {
+                        case DXL_LEN_ONE_BYTE:
+                            data_list.emplace_back(static_cast<uint8_t>(groupSyncRead.getData(id, address, data_len)));
+                        break;
+                        case DXL_LEN_TWO_BYTES:
+                            data_list.emplace_back(static_cast<uint16_t>(groupSyncRead.getData(id, address, data_len)));
+                        break;
+                        case DXL_LEN_FOUR_BYTES:
+                            data_list.emplace_back(groupSyncRead.getData(id, address, data_len));
+                        break;
+                        default:
+                            printf("XDriver::syncRead ERROR: Size param must be 1, 2 or 4 bytes\n");
+                        break;
+                    }
+                }
+                else
+                {
+                    dxl_comm_result = GROUP_SYNC_READ_RX_FAIL;
+                    break;
+                }
             }
         }
 
         groupSyncRead.clearParam();
+
         return dxl_comm_result;
     }
 
@@ -281,62 +277,70 @@ namespace DynamixelDriver
      */
     int XDriver::syncWrite(uint8_t address, uint8_t data_len, const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &data_list)
     {
-        int dxl_comm_result = -1;
+        int dxl_comm_result = COMM_SUCCESS;
 
-        dynamixel::GroupSyncWrite groupSyncWrite(_dxlPortHandler.get(), _dxlPacketHandler.get(), address, data_len);
-
-        if (id_list.size() != data_list.size())
-            return LEN_ID_DATA_NOT_SAME;
-
-        if (0 == id_list.size())
-            return COMM_SUCCESS;
-
-        vector<uint8_t>::const_iterator it_id;
-        vector<uint32_t>::const_iterator it_data;
-
-        bool dxl_senddata_result = false;
-
-        for (it_id = id_list.cbegin(), it_data = data_list.cbegin();
-             it_id < id_list.cend() && it_data < data_list.cend();
-             it_id++, it_data++)
+        if (!id_list.empty())
         {
-            switch(data_len) {
-                case DXL_LEN_ONE_BYTE:
-                {
-                    uint8_t params[1] = {static_cast<uint8_t>(*it_data)};
-                    dxl_senddata_result = groupSyncWrite.addParam(*it_id, params);
-                }
-                break;
-                case DXL_LEN_TWO_BYTES:
-                {
-                    uint8_t params[2] = {DXL_LOBYTE(static_cast<uint16_t>(*it_data)),
-                                         DXL_HIBYTE(static_cast<uint16_t>(*it_data))};
-                    dxl_senddata_result = groupSyncWrite.addParam(*it_id, params);
-                }
-                break;
-                case DXL_LEN_FOUR_BYTES:
-                {
-                    uint8_t params[4] = {DXL_LOBYTE(DXL_LOWORD(*it_data)),
-                                         DXL_HIBYTE(DXL_LOWORD(*it_data)),
-                                         DXL_LOBYTE(DXL_HIWORD(*it_data)),
-                                         DXL_HIBYTE(DXL_HIWORD(*it_data))};
-                    dxl_senddata_result = groupSyncWrite.addParam(*it_id, params);
-                }
-                break;
-                default:
-                    printf("XDriver::syncWrite ERROR: Size param must be 1, 2 or 4 bytes\n");
-                break;
-            }
-
-            if (!dxl_senddata_result)
+            if (id_list.size() == data_list.size())
             {
+                dynamixel::GroupSyncWrite groupSyncWrite(_dxlPortHandler.get(),
+                                                         _dxlPacketHandler.get(),
+                                                         address,
+                                                         data_len);
+
+                bool dxl_senddata_result = false;
+
+                for (size_t i = 0; i < id_list.size(); ++i)
+                {
+                    uint8_t id = id_list.at(i);
+                    uint32_t data = data_list.at(i);
+
+                    switch(data_len)
+                    {
+                        case DXL_LEN_ONE_BYTE:
+                        {
+                            uint8_t params[1] = {static_cast<uint8_t>(data)};
+                            dxl_senddata_result = groupSyncWrite.addParam(id, params);
+                        }
+                        break;
+                        case DXL_LEN_TWO_BYTES:
+                        {
+                            uint8_t params[2] = {DXL_LOBYTE(static_cast<uint16_t>(data)),
+                                                 DXL_HIBYTE(static_cast<uint16_t>(data))};
+                            dxl_senddata_result = groupSyncWrite.addParam(id, params);
+                        }
+                        break;
+                        case DXL_LEN_FOUR_BYTES:
+                        {
+                            uint8_t params[4] = {DXL_LOBYTE(DXL_LOWORD(data)),
+                                                 DXL_HIBYTE(DXL_LOWORD(data)),
+                                                 DXL_LOBYTE(DXL_HIWORD(data)),
+                                                 DXL_HIBYTE(DXL_HIWORD(data))};
+                            dxl_senddata_result = groupSyncWrite.addParam(id, params);
+                        }
+                        break;
+                        default:
+                            printf("XDriver::syncWrite ERROR: Size param must be 1, 2 or 4 bytes\n");
+                        break;
+                    }
+
+                    if (!dxl_senddata_result)
+                    {
+                        dxl_comm_result = GROUP_SYNC_REDONDANT_ID;
+                        break;
+                    }
+                }
+
+                //send group if no error
+                if(GROUP_SYNC_REDONDANT_ID != dxl_comm_result)
+                    dxl_comm_result = groupSyncWrite.txPacket();
+
                 groupSyncWrite.clearParam();
-                return GROUP_SYNC_REDONDANT_ID;
+            }
+            else {
+                dxl_comm_result = LEN_ID_DATA_NOT_SAME;
             }
         }
-
-        dxl_comm_result = groupSyncWrite.txPacket();
-        groupSyncWrite.clearParam();
 
         return dxl_comm_result;
     }

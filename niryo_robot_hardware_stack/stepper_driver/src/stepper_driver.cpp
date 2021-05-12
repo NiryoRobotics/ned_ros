@@ -64,6 +64,13 @@ namespace StepperDriver
         _calibration_status = EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS;
     }
 
+    void StepperDriver::resetCalibration()
+    {
+        ROS_DEBUG("StepperDriver::resetCalibration: reseting...");
+
+        _calibration_status = EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED;
+    }
+
     /**
      * @brief StepperDriver::init : initialize the internal data (map, vectors) based on conf
      * @return
@@ -116,6 +123,10 @@ namespace StepperDriver
 
     }
 
+    /**
+     * @brief StepperDriver::setupCAN
+     * @return
+     */
     int StepperDriver::setupCAN()
     {
         int result = CAN_FAILINIT;

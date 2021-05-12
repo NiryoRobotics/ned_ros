@@ -130,6 +130,12 @@ namespace StepperDriver
             _stepper->startCalibration();
     }
 
+    void StepperDriverCore::resetCalibration()
+    {
+        if(_stepper)
+            _stepper->resetCalibration();
+    }
+
 
     // CC to reformat
     int StepperDriverCore::motorCmdReport(uint8_t motor_id, EMotorType /*motor_type*/)

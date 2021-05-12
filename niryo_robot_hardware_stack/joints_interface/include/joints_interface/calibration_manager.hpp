@@ -35,11 +35,11 @@
 
 namespace JointsInterface {
 
-    class CalibrationInterface
+    class CalibrationManager
     {
 
     public:
-        CalibrationInterface(std::vector<std::shared_ptr<common::model::JointState> > joint_list,
+        CalibrationManager(std::vector<std::shared_ptr<common::model::JointState> > joint_list,
                              std::shared_ptr<StepperDriver::StepperDriverCore> stepper,
                              std::shared_ptr<DynamixelDriver::DxlDriverCore> dynamixel);
 

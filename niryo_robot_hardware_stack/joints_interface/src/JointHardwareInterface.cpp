@@ -35,8 +35,8 @@ namespace JointsInterface {
      */
     JointHardwareInterface::JointHardwareInterface(shared_ptr<DynamixelDriver::DxlDriverCore> dynamixel,
                                                    shared_ptr<StepperDriver::StepperDriverCore> stepper) :
-        _dynamixel(dynamixel),
-        _stepper(stepper),
+        _dynamixelCore(dynamixel),
+        _stepperCore(stepper),
         _learning_mode(true)
     {
 
@@ -46,7 +46,7 @@ namespace JointsInterface {
 
         activateLearningMode();
 
-        _calibration_interface.reset(new CalibrationInterface(_joint_list, _stepper, _dynamixel));
+        _calibration_manager.reset(new CalibrationManager(_joint_list, _stepperCore, _dynamixelCore));
     }
 
     /**
@@ -60,18 +60,18 @@ namespace JointsInterface {
         {
             if(jState && jState->isValid()) {
                 if(jState->isStepper()) {
-                    newPositionState = _stepper->getStepperState(jState->getId()).getPositionState();
+                    newPositionState = _stepperCore->getStepperState(jState->getId()).getPositionState();
                 }
                 else {
-                    newPositionState = _dynamixel->getDxlState(jState->getId()).getPositionState();
+                    newPositionState = _dynamixelCore->getDxlState(jState->getId()).getPositionState();
                 }
 
                 jState->pos = jState->to_rad_pos(newPositionState);
             }
         }
 
-        if (!_stepper->isConnectionOk())
-            this->setNeedCalibration();
+      /*  if (!_stepperCore->isConnectionOk())
+            this->setNeedCalibration();*/
     }
 
     /**
@@ -97,8 +97,8 @@ namespace JointsInterface {
             }
         }
 
-        _stepper->setTrajectoryControllerCommands(stepper_cmd);
-        _dynamixel->setTrajectoryControllerCommands(dxl_cmd);
+        _stepperCore->setTrajectoryControllerCommands(stepper_cmd);
+        _dynamixelCore->setTrajectoryControllerCommands(dxl_cmd);
     }
 
     /**
@@ -154,7 +154,6 @@ namespace JointsInterface {
                     stepperState->setGearRatio(gear_ratio);
                     stepperState->setDirection(direction);
                     stepperState->setMaxEffort(max_effort);
-                    stepperState->setNeedCalibration(true);
 
                     _joint_list.emplace_back(stepperState);
                     _map_stepper_name[stepperState->getId()] = stepperState->getName();
@@ -186,8 +185,6 @@ namespace JointsInterface {
                     dxlState->setDGain(static_cast<uint32_t>(DGain));
                     dxlState->setFF1Gain(static_cast<uint32_t>(FF1Gain));
                     dxlState->setFF2Gain(static_cast<uint32_t>(FF2Gain));
-
-                    dxlState->setNeedCalibration(false);
 
                     _joint_list.emplace_back(dxlState);
 
@@ -233,7 +230,7 @@ namespace JointsInterface {
         {
             if(jState && jState->isStepper()) {
                 StepperMotorCmd cmd(EStepperCommandType::CMD_TYPE_MICRO_STEPS, jState->getId(), {8});
-                _stepper->addSingleCommandToQueue(cmd);
+                _stepperCore->addSingleCommandToQueue(cmd);
             }
         }
         ros::Duration(0.05).sleep();
@@ -243,7 +240,7 @@ namespace JointsInterface {
         {
             if(jState && jState->isStepper()) {
                 StepperMotorCmd cmd(EStepperCommandType::CMD_TYPE_MAX_EFFORT, jState->getId(), {static_cast<int32_t>(dynamic_pointer_cast<StepperMotorState>(jState)->getMaxEffort())});
-                _stepper->addSingleCommandToQueue(cmd);
+                _stepperCore->addSingleCommandToQueue(cmd);
             }
         }
         ros::Duration(0.05).sleep();
@@ -277,7 +274,7 @@ namespace JointsInterface {
      */
     bool JointHardwareInterface::needCalibration() const
     {
-        bool result = (EStepperCalibrationStatus::CALIBRATION_OK != _stepper->getCalibrationStatus());
+        bool result = (EStepperCalibrationStatus::CALIBRATION_OK != _stepperCore->getCalibrationStatus());
 
         ROS_DEBUG_THROTTLE(2, "JointHardwareInterface::needCalibration - Need calibration returned: %d", static_cast<int>(result));
         return result;
@@ -301,7 +298,7 @@ namespace JointsInterface {
         }
         else if (needCalibration())
         {
-            calib_res = _calibration_interface->startCalibration(mode, result_message);
+            calib_res = _calibration_manager->startCalibration(mode, result_message);
         }
         else {
             result_message = "JointHardwareInterface::calibrateJoints - Calibration already done";
@@ -316,10 +313,7 @@ namespace JointsInterface {
      */
     void JointHardwareInterface::setNeedCalibration()
     {
-        for(auto const& jState: _joint_list) {
-            if(jState && jState->isStepper())
-                jState->setNeedCalibration(true);
-        }
+        _stepperCore->resetCalibration();
     }
 
     /**
@@ -329,7 +323,7 @@ namespace JointsInterface {
     {
         ROS_DEBUG("JointHardwareInterface::activateLearningMode - activate learning mode");
 
-        if(_stepper && _dynamixel) {
+        if(_stepperCore && _dynamixelCore) {
             SynchronizeMotorCmd dxl_cmd(EDxlCommandType::CMD_TYPE_LEARNING_MODE);
             StepperMotorCmd stepper_cmd(EStepperCommandType::CMD_TYPE_TORQUE);
 
@@ -340,12 +334,12 @@ namespace JointsInterface {
                     else if(jState->isStepper()) {
                         stepper_cmd.setId(jState->getId());
                         stepper_cmd.setParams({0});
-                        _stepper->addSingleCommandToQueue(stepper_cmd);
+                        _stepperCore->addSingleCommandToQueue(stepper_cmd);
                     }
                 }
             }
 
-            _dynamixel->setSyncCommand(dxl_cmd);
+            _dynamixelCore->setSyncCommand(dxl_cmd);
 
             _learning_mode = true;
         }
@@ -357,7 +351,7 @@ namespace JointsInterface {
     void JointHardwareInterface::deactivateLearningMode()
     {
         ROS_DEBUG("JointHardwareInterface::deactivateLearningMode - deactivate learning mode");
-        if(_stepper && _dynamixel) {
+        if(_stepperCore && _dynamixelCore) {
             SynchronizeMotorCmd dxl_cmd(EDxlCommandType::CMD_TYPE_LEARNING_MODE);
             StepperMotorCmd stepper_cmd(EStepperCommandType::CMD_TYPE_TORQUE);
 
@@ -372,12 +366,12 @@ namespace JointsInterface {
                         stepper_cmd.setId(jState->getId());
                         stepper_cmd.setParams({1});
 
-                        _stepper->addSingleCommandToQueue(stepper_cmd);
+                        _stepperCore->addSingleCommandToQueue(stepper_cmd);
                     }
                 }
             }
 
-            _dynamixel->setSyncCommand(dxl_cmd);
+            _dynamixelCore->setSyncCommand(dxl_cmd);
 
             _learning_mode = true;
         }
@@ -391,7 +385,7 @@ namespace JointsInterface {
     {
         ROS_DEBUG("JointHardwareInterface::synchronizeMotors");
 
-        if(_stepper) {
+        if(_stepperCore) {
             StepperMotorCmd stepper_cmd(EStepperCommandType::CMD_TYPE_SYNCHRONIZE);
 
             for(auto const& jState: _joint_list)
@@ -399,7 +393,7 @@ namespace JointsInterface {
                 if(jState && jState->isValid() && jState->isStepper())
                 {
                     StepperMotorCmd cmd(EStepperCommandType::CMD_TYPE_SYNCHRONIZE, jState->getId(), {synchronize});
-                    _stepper->addSingleCommandToQueue(stepper_cmd);
+                    _stepperCore->addSingleCommandToQueue(stepper_cmd);
                 }
             }
         }
@@ -438,35 +432,35 @@ namespace JointsInterface {
             SingleMotorCmd dxl_cmd_p(EDxlCommandType::CMD_TYPE_P_GAIN, motor_id, dxlState->getPGain());
 
             if(dxl_cmd_p.isValid())
-                _dynamixel->addSingleCommandToQueue(dxl_cmd_p);
+                _dynamixelCore->addSingleCommandToQueue(dxl_cmd_p);
         }
 
         if(dxlState->getIGain() > 0) {
             SingleMotorCmd dxl_cmd_i(EDxlCommandType::CMD_TYPE_I_GAIN, motor_id, dxlState->getIGain());
 
             if(dxl_cmd_i.isValid())
-                _dynamixel->addSingleCommandToQueue(dxl_cmd_i);
+                _dynamixelCore->addSingleCommandToQueue(dxl_cmd_i);
         }
 
         if(dxlState->getDGain() > 0) {
             SingleMotorCmd dxl_cmd_d(EDxlCommandType::CMD_TYPE_D_GAIN, motor_id, dxlState->getDGain());
 
             if(dxl_cmd_d.isValid())
-                _dynamixel->addSingleCommandToQueue(dxl_cmd_d);
+                _dynamixelCore->addSingleCommandToQueue(dxl_cmd_d);
         }
 
         if(dxlState->getFF1Gain() > 0) {
             SingleMotorCmd dxl_cmd_ff1(EDxlCommandType::CMD_TYPE_FF1_GAIN, motor_id, dxlState->getFF1Gain());
 
             if(dxl_cmd_ff1.isValid())
-                _dynamixel->addSingleCommandToQueue(dxl_cmd_ff1);
+                _dynamixelCore->addSingleCommandToQueue(dxl_cmd_ff1);
         }
 
         if(dxlState->getFF2Gain() > 0) {
             SingleMotorCmd dxl_cmd_ff2(EDxlCommandType::CMD_TYPE_FF2_GAIN, motor_id, dxlState->getFF2Gain());
 
             if(dxl_cmd_ff2.isValid())
-                _dynamixel->addSingleCommandToQueue(dxl_cmd_ff2);
+                _dynamixelCore->addSingleCommandToQueue(dxl_cmd_ff2);
         }
 
         return true;

@@ -376,49 +376,94 @@ namespace DynamixelDriver
         uint32_t result = 0;
         EMotorType dxl_type = motor_state.getType();
 
-        if(_xdriver_map.count(dxl_type) && _xdriver_map.at(dxl_type)) {
-
-            for(_hw_fail_counter_read = 0; _hw_fail_counter_read < 25; _hw_fail_counter_read++)
+        if(_xdriver_map.count(dxl_type) && _xdriver_map.at(dxl_type))
+        {
+            for(_hw_fail_counter_read = 0; _hw_fail_counter_read < MAX_HW_FAILURE; ++_hw_fail_counter_read)
             {
-                if (_xdriver_map.at(dxl_type)->readPosition(motor_state.getId(), &result) == COMM_SUCCESS)
+                if (COMM_SUCCESS == _xdriver_map.at(dxl_type)->readPosition(motor_state.getId(), &result))
                 {
                     _hw_fail_counter_read = 0;
                     break;
                 }
             }
-        }
 
-        if (0 < _hw_fail_counter_read)
-        {
-            ROS_ERROR_THROTTLE(1, "DxlDriver::getPosition - Dxl connection problem - Failed to read from Dxl bus");
-            _debug_error_message = "Dxl Driver - Connection problem with Dynamixel Bus.";
-            _hw_fail_counter_read = 0;
-            _is_connection_ok = false;
+            if (0 < _hw_fail_counter_read)
+            {
+                ROS_ERROR_THROTTLE(1, "DxlDriver::getPosition - Dxl connection problem - Failed to read from Dxl bus");
+                _debug_error_message = "Dxl Driver - Connection problem with Dynamixel Bus.";
+                _hw_fail_counter_read = 0;
+                _is_connection_ok = false;
+            }
+
+        }
+        else {
+            ROS_ERROR_THROTTLE(1, "DxlDriver::getPosition - Driver not found for requested motor id");
+            _debug_error_message = "DxlDriver::getPosition - Driver not found for requested motor id";
         }
 
         return result;
     }
-
 
     /**
      * @brief DxlDriver::readPositionState
      */
     void DxlDriver::readPositionStatus()
     {
-        if (!hasMotors())
+        if (hasMotors())
+        {
+            // syncread from all drivers for all motors
+            for(auto const& it : _xdriver_map)
+            {
+                EMotorType type = it.first;
+                shared_ptr<XDriver> driver = it.second;
+
+                if(driver && _ids_map.count(type))
+                {
+                    //we retrieve all the associated id for the type of the current driver
+                    vector<uint8_t> id_list = _ids_map.at(type);
+                    vector<uint32_t> position_list;
+
+                    if (COMM_SUCCESS == driver->syncReadPosition(id_list, position_list))
+                    {
+                        if (id_list.size() == position_list.size())
+                        {
+                            // set motors states accordingly
+                            for(size_t i = 0; i < id_list.size(); ++i)
+                            {
+                                uint8_t id = id_list.at(i);
+                                int position = static_cast<int>(position_list.at(i));
+
+                                if(_state_map.count(id))
+                                {
+                                    _state_map.at(id).setPositionState(position);
+                                }
+                            }
+                            _hw_fail_counter_read = 0;
+                        }
+                        else {
+                            ROS_ERROR( "DxlDriver::readPositionStatus : Fail to sync read position - vector mismatch (id_list size %d, position_list size %d)",
+                                           static_cast<int>(id_list.size()), static_cast<int>(position_list.size()));
+                            _hw_fail_counter_read++;
+                        }
+                    }
+                    else {
+                        _hw_fail_counter_read++;
+                    }
+                }
+            } // for driver_map
+
+            if (_hw_fail_counter_read > MAX_HW_FAILURE)
+            {
+                ROS_ERROR_THROTTLE(1, "DxlDriver::readPositionStatus - Dxl connection problem - Failed to read from Dxl bus");
+                _hw_fail_counter_read = 0;
+                _is_connection_ok = false;
+                _debug_error_message = "Dxl Driver - Connection problem with Dynamixel Bus.";
+            }
+        }
+        else
         {
             ROS_ERROR_THROTTLE(1, "DxlDriver::readPositionStatus - No motor");
             _debug_error_message = "DxlDriver::readPositionStatus -  No motor";
-            return;
-        }
-        fillPositionStatus();
-
-        if (_hw_fail_counter_read > 25)
-        {
-            ROS_ERROR_THROTTLE(1, "DxlDriver::readPositionStatus - Dxl connection problem - Failed to read from Dxl bus");
-            _hw_fail_counter_read = 0;
-            _is_connection_ok = false;
-            _debug_error_message = "Dxl Driver - Connection problem with Dynamixel Bus.";
         }
     }
 
@@ -427,25 +472,118 @@ namespace DynamixelDriver
      */
     void DxlDriver::readHwStatus()
     {
-        if (!hasMotors())
+        if (hasMotors())
+        {
+            unsigned int hw_errors_increment = 0;
+
+            // syncread from all drivers for all motors
+            for(auto const& it : _xdriver_map)
+            {
+                EMotorType type = it.first;
+                shared_ptr<XDriver> driver = it.second;
+
+                if(driver && _ids_map.count(type))
+                {
+                    //we retrieve all the associated id for the type of the current driver
+                    vector<uint8_t> id_list = _ids_map.at(type);
+                    size_t id_list_size = id_list.size();
+
+                    //**************  temperature
+                    vector<uint32_t> temperature_list;
+
+                    if (COMM_SUCCESS != driver->syncReadTemperature(id_list, temperature_list))
+                    {
+                        //this operation can fail, it is normal, so no error message
+
+                        hw_errors_increment++;
+                    }
+                    else if(id_list_size != temperature_list.size())
+                    {
+                        //however, if we have a mismatch here, it is not normal
+
+                        ROS_ERROR( "DxlDriver::readHwStatus : syncReadTemperature failed - vector mistmatch (id_list size %d, temperature_list size %d)",
+                                       static_cast<int>(id_list_size), static_cast<int>(temperature_list.size()));
+                        hw_errors_increment++;
+                    }
+
+                    //**********  voltage
+                    vector<uint32_t> voltage_list;
+
+                    if (COMM_SUCCESS != driver->syncReadVoltage(id_list, voltage_list))
+                    {
+                        hw_errors_increment++;
+                    }
+                    else if(id_list_size != voltage_list.size())
+                    {
+                        ROS_ERROR( "DxlDriver::readHwStatus : syncReadTemperature failed - vector mistmatch (id_list size %d, voltage_list size %d)",
+                                       static_cast<int>(id_list_size), static_cast<int>(voltage_list.size()));
+                        hw_errors_increment++;
+                    }
+
+                    //**********  error state
+                    vector<uint32_t> hw_status_list;
+
+                    if (COMM_SUCCESS != driver->syncReadHwErrorStatus(id_list, hw_status_list))
+                    {
+                        hw_errors_increment++;
+                    }
+                    else if(id_list_size != hw_status_list.size())
+                    {
+                        ROS_ERROR( "DxlDriver::readHwStatus : syncReadTemperature failed - vector mistmatch (id_list size %d, hw_status_list size %d)",
+                                       static_cast<int>(id_list_size), static_cast<int>(hw_status_list.size()));
+                        hw_errors_increment++;
+                    }
+
+                    // set motors states accordingly
+                    for(size_t i = 0; i < id_list_size; ++i)
+                    {
+                        uint8_t id = id_list.at(i);
+
+                        if(_state_map.count(id))
+                        {
+                            DxlMotorState& dxlState = _state_map.at(id);
+
+                            //**************  temperature
+                            if(temperature_list.size() > i) {
+                                dxlState.setTemperatureState(static_cast<int>(temperature_list.at(i)));
+                            }
+
+                            //**********  voltage
+                            if(voltage_list.size() > i) {
+                                dxlState.setVoltageState(static_cast<int>(voltage_list.at(i)));
+                            }
+
+                            //**********  error state
+                            if(hw_status_list.size() > i) {
+                                dxlState.setHardwareError(static_cast<int>(hw_status_list.at(i)));
+                                string hardware_message = driver->interpreteErrorState(hw_status_list.at(i));
+                                dxlState.setHardwareError(hardware_message);
+                            }
+                        }
+                    } // for id_list
+                }
+            } // for driver_map
+
+            // we reset the global error variable only if no errors
+            if(0 == hw_errors_increment)
+                _hw_fail_counter_read = 0;
+            else
+                _hw_fail_counter_read += hw_errors_increment;
+
+            //if too much errors, disconnect
+            if (_hw_fail_counter_read > MAX_HW_FAILURE )
+            {
+                ROS_ERROR_THROTTLE(1, "DxlDriver::readHwStatus - Dxl connection problem - Failed to read from Dxl bus");
+                _hw_fail_counter_read = 0;
+
+                _is_connection_ok = false;
+                _debug_error_message = "Dxl Driver - Connection problem with Dynamixel Bus.";
+            }
+        }
+        else
         {
             ROS_ERROR_THROTTLE(1, "DxlDriver::readHwStatus - No motor");
             _debug_error_message = "Dxl Driver - No motor";
-            return;
-        }
-        fillTemperatureStatus();
-        fillVoltageStatus();
-        fillErrorStatus();
-
-        interpreteErrorState();
-
-        if (_hw_fail_counter_read > 25 )
-        {
-            ROS_ERROR_THROTTLE(1, "DxlDriver::readHwStatus - Dxl connection problem - Failed to read from Dxl bus");
-            _hw_fail_counter_read = 0;
-
-            _is_connection_ok = false;
-            _debug_error_message = "Dxl Driver - Connection problem with Dynamixel Bus.";
         }
     }
 
@@ -723,36 +861,9 @@ namespace DynamixelDriver
         return result;
     }
 
-    size_t DxlDriver::getNbMotors() const
-    {
-        return _state_map.size();
-    }
-
-
     //********************
     //  Private
     //********************
-
-    /**
-     * @brief DxlDriver::interpreteErrorState
-     */
-    void DxlDriver::interpreteErrorState()
-    {
-        for (auto const &it : _state_map)
-        {
-            DxlMotorState motor = it.second;
-            EMotorType motor_type = motor.getType();
-
-            uint32_t hw_state = static_cast<uint32_t>(motor.getHardwareErrorState());
-            string hardware_message;
-
-            if(_xdriver_map.count(motor_type) && _xdriver_map.at(motor_type)) {
-                hardware_message = _xdriver_map.at(motor_type)->interpreteErrorState(hw_state);
-            }
-
-            motor.setHardwareError(hardware_message);
-        }
-    }
 
     /**
      * @brief DxlDriver::checkRemovedMotors
@@ -770,92 +881,6 @@ namespace DynamixelDriver
     }
 
     /**
-     * @brief DxlDriver::fillPositionStatus
-     */
-    void DxlDriver::fillPositionStatus()
-    {
-        readAndFillState(&XDriver::syncReadPosition,
-                         &DxlMotorState::setPositionState);
-    }
-
-    /**
-     * @brief DxlDriver::fillTemperatureStatus
-     */
-    void DxlDriver::fillTemperatureStatus()
-    {
-        readAndFillState(&XDriver::syncReadTemperature,
-                         &DxlMotorState::setTemperatureState);
-    }
-
-    /**
-     * @brief DxlDriver::fillVoltageStatus
-     */
-    void DxlDriver::fillVoltageStatus()
-    {
-        readAndFillState(&XDriver::syncReadVoltage,
-                         &DxlMotorState::setVoltageState);
-    }
-
-    /**
-     * @brief DxlDriver::fillErrorStatus
-     */
-    void DxlDriver::fillErrorStatus()
-    {
-        readAndFillState(&XDriver::syncReadHwErrorStatus,
-                         &DxlMotorState::setHardwareError);
-    }
-
-
-    /**
-     * @brief DxlDriver::readAndFillState
-     */
-    void DxlDriver::readAndFillState(
-            int (XDriver::*syncReadFunction)(const vector<uint8_t>&, vector<uint32_t>&),
-            void (DxlMotorState::*setFunction)(int))
-    {
-        unsigned int hw_errors_increment = 0;
-
-        // syncread from all drivers for all motors
-        for(auto const& it : _xdriver_map)
-        {
-            EMotorType type = it.first;
-            shared_ptr<XDriver> driver = it.second;
-
-            if(driver && _ids_map.count(type) != 0)
-            {
-                //we retrieve all the associated id for the type of the current driver
-                vector<uint8_t> id_list = _ids_map.at(type);
-                vector<uint32_t> position_list;
-
-                if ((driver.get()->*syncReadFunction)(id_list, position_list) == COMM_SUCCESS)
-                {
-                    if(id_list.size() == position_list.size())
-                    {
-                        // set motors states accordingly
-                        for(size_t i = 0; i < id_list.size(); ++i) {
-                            if(_state_map.count(id_list.at(i)) != 0)
-                                (_state_map.at(id_list.at(i)).*setFunction)(static_cast<int>(position_list.at(i)));
-                        }
-                    }
-                    else {
-                        ROS_ERROR( "DxlDriver::readAndFillState : syncreadfunction return vectors mismatch (id_list size %d, position_list size %d)",
-                                       static_cast<int>(id_list.size()), static_cast<int>(position_list.size()));
-                        hw_errors_increment++;
-                    }
-                }
-                else
-                    hw_errors_increment++;
-            }
-        }
-
-        // we reset the global error variable only if no errors
-        if(0 == hw_errors_increment)
-            _hw_fail_counter_read = 0;
-        else
-            _hw_fail_counter_read += hw_errors_increment;
-    }
-
-    /**
      * @brief DxlDriver::_syncWrite
      * @param cmd
      * @return
@@ -869,7 +894,7 @@ namespace DynamixelDriver
         set<EMotorType> typesToProcess = cmd.getMotorTypes();
 
         //process all the motors using each successive drivers
-        for(int counter = 0; counter < 25; ++counter)
+        for(int counter = 0; counter < MAX_HW_FAILURE; ++counter)
         {
             ROS_DEBUG_THROTTLE(0.5, "DxlDriver::_syncWrite: try to sync write (counter %d)", counter);
 
@@ -929,6 +954,11 @@ namespace DynamixelDriver
         return result;
     }
 
+    /**
+     * @brief DxlDriver::getMotorState
+     * @param motor_id
+     * @return
+     */
     DxlMotorState DxlDriver::getMotorState(uint8_t motor_id) const
     {
         if(!_state_map.count(motor_id))
@@ -937,6 +967,10 @@ namespace DynamixelDriver
         return _state_map.at(motor_id);
     }
 
+    /**
+     * @brief DxlDriver::getMotorsStates
+     * @return
+     */
     std::vector<DxlMotorState> DxlDriver::getMotorsStates() const
     {
         std::vector<common::model::DxlMotorState> states;

@@ -56,6 +56,7 @@ namespace StepperDriver
             void addSingleCommandToQueue(const std::vector<common::model::StepperMotorCmd>& cmd);
 
             void startCalibration();
+            void resetCalibration();
 
             //direct commands
             bool scanMotorId(uint8_t motor_to_find);

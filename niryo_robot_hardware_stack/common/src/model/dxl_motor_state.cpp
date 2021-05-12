@@ -60,7 +60,6 @@ namespace common {
             JointState(name, type, id),
             _isTool(isTool)
         {
-            setNeedCalibration(false);
         }
 
         /**

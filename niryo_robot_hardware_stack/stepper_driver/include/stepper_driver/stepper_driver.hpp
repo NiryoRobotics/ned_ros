@@ -60,6 +60,7 @@ namespace StepperDriver
 
             //commands
             void startCalibration();
+            void resetCalibration();
 
             int readSingleCommand(common::model::StepperMotorCmd cmd);
 
