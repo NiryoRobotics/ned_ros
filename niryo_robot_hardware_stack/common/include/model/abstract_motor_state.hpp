@@ -159,7 +159,7 @@ namespace common {
         inline
         bool AbstractMotorState::isStepper() const
         {
-            return EMotorType::MOTOR_TYPE_STEPPER == _type;
+            return EMotorType::STEPPER == _type;
         }
 
         /**
@@ -169,10 +169,10 @@ namespace common {
         inline
         bool AbstractMotorState::isDynamixel() const
         {
-            return (EMotorType::MOTOR_TYPE_XC430 == _type) ||
-                   (EMotorType::MOTOR_TYPE_XL320 == _type) ||
-                   (EMotorType::MOTOR_TYPE_XL330 == _type) ||
-                   (EMotorType::MOTOR_TYPE_XL430 == _type);
+            return (EMotorType::XC430 == _type) ||
+                   (EMotorType::XL320 == _type) ||
+                   (EMotorType::XL330 == _type) ||
+                   (EMotorType::XL430 == _type);
         }
 
     } // model

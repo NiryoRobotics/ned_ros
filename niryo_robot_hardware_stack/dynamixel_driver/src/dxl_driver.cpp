@@ -103,7 +103,7 @@ namespace DynamixelDriver
 
             if(0 == _state_map.count(id))
             {
-                if(EMotorType::MOTOR_TYPE_UNKNOWN != type)
+                if(EMotorType::UNKNOWN != type)
                     addMotor(type, id);
                 else
                     ROS_ERROR("DxlDriver::init - unknown type %s. Please check your configuration file (niryo_robot_hardware_stack/dynamixel_driver/config/motors_config.yaml)", typeList.at(id).c_str());
@@ -156,16 +156,16 @@ namespace DynamixelDriver
         {
             switch(type)
             {
-                case EMotorType::MOTOR_TYPE_XL430:
+                case EMotorType::XL430:
                     _xdriver_map.insert(make_pair(type, make_shared<XL430Driver>(_dxlPortHandler, _dxlPacketHandler)));
                 break;
-                case EMotorType::MOTOR_TYPE_XC430:
+                case EMotorType::XC430:
                     _xdriver_map.insert(make_pair(type, make_shared<XC430Driver>(_dxlPortHandler, _dxlPacketHandler)));
                 break;
-                case EMotorType::MOTOR_TYPE_XL320:
+                case EMotorType::XL320:
                     _xdriver_map.insert(make_pair(type, make_shared<XL320Driver>(_dxlPortHandler, _dxlPacketHandler)));
                 break;
-                case EMotorType::MOTOR_TYPE_XL330:
+                case EMotorType::XL330:
                     _xdriver_map.insert(make_pair(type, make_shared<XL330Driver>(_dxlPortHandler, _dxlPacketHandler)));
                 break;
                 default:
@@ -305,35 +305,24 @@ namespace DynamixelDriver
 
     /**
      * @brief DxlDriver::ping
-     * @param targeted_dxl
+     * @param id
      * @return
+     * The ping method is identical to all drivers, we can just use the first one
+     * (same behaviour in getAllIdsOnBus with scan method)
      */
-    int DxlDriver::ping(DxlMotorState &targeted_dxl)
+    bool DxlDriver::ping(uint8_t id)
     {
-        int result = 0;
+        int result = false;
 
-        if(_xdriver_map.count(targeted_dxl.getType())) {
-            result = _xdriver_map.at(targeted_dxl.getType())->ping(targeted_dxl.getId());
+        auto it = _xdriver_map.begin();
+        if(it != _xdriver_map.end() && it->second)
+        {
+            result = (COMM_SUCCESS == it->second->ping(id));
         }
         else
-            ROS_ERROR_THROTTLE(1, "DxlDriver::ping - Wrong dxl type detected: %d", static_cast<int>(targeted_dxl.getType()));
+            ROS_ERROR_THROTTLE(1, "DxlDriver::ping - the dynamixel drivers seeems uninitialized");
 
         return result;
-    }
-
-    /**
-     * @brief DxlDriver::type_ping_id
-     * @param id
-     * @param type
-     * @return
-     */
-    int DxlDriver::type_ping_id(uint8_t id, EMotorType type)
-    {
-        if(_xdriver_map.count(type) && _xdriver_map.at(type)) {
-            return _xdriver_map.at(type)->ping(id);
-        }
-
-        return COMM_RX_FAIL;
     }
 
     /**
@@ -411,6 +400,8 @@ namespace DynamixelDriver
     {
         if (hasMotors())
         {
+            unsigned int hw_errors_increment = 0;
+
             // syncread from all drivers for all motors
             for(auto const& it : _xdriver_map)
             {
@@ -438,19 +429,24 @@ namespace DynamixelDriver
                                     _state_map.at(id).setPositionState(position);
                                 }
                             }
-                            _hw_fail_counter_read = 0;
                         }
                         else {
                             ROS_ERROR( "DxlDriver::readPositionStatus : Fail to sync read position - vector mismatch (id_list size %d, position_list size %d)",
                                            static_cast<int>(id_list.size()), static_cast<int>(position_list.size()));
-                            _hw_fail_counter_read++;
+                            hw_errors_increment++;
                         }
                     }
                     else {
-                        _hw_fail_counter_read++;
+                        hw_errors_increment++;
                     }
                 }
             } // for driver_map
+
+            // we reset the global error variable only if no errors
+            if(0 == hw_errors_increment)
+                _hw_fail_counter_read = 0;
+            else
+                _hw_fail_counter_read += hw_errors_increment;
 
             if (_hw_fail_counter_read > MAX_HW_FAILURE)
             {
@@ -591,6 +587,8 @@ namespace DynamixelDriver
      * @brief DxlDriver::getAllIdsOnDxlBus
      * @param id_list
      * @return
+     * The scan method is identical to all drivers, we can just use the first one
+     * (same behaviour in ping with ping method)
      */
     int DxlDriver::getAllIdsOnBus(vector<uint8_t> &id_list)
     {
@@ -719,7 +717,7 @@ namespace DynamixelDriver
                         result = _singleWrite(&XDriver::setff2Gain, state.getType(), cmd);
                         break;
                     case EDxlCommandType::CMD_TYPE_PING:
-                        result = ping(state);
+                        result = ping(state.getId()) ? COMM_SUCCESS : COMM_TX_FAIL;
                         break;
                     default:
                         break;

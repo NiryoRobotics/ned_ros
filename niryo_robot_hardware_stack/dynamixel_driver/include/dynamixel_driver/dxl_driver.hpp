@@ -70,45 +70,42 @@ namespace DynamixelDriver
             DxlDriver();
             virtual ~DxlDriver() override;
 
-
             //commands
+            void addMotor(common::model::EMotorType type,
+                          uint8_t id, bool isTool = false);
+
             int readSynchronizeCommand(common::model::SynchronizeMotorCmd cmd);
             int readSingleCommand(common::model::SingleMotorCmd cmd);
-
             void executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, uint32_t> > cmd_vec);
 
-            uint32_t getPosition(common::model::DxlMotorState& motor_state);
-
-            void readPositionStatus();
-            void readHwStatus();
+            int rebootMotors();
 
             int setLeds(int led, common::model::EMotorType type);
-
-            int scanAndCheck() override;
-
-            int ping(common::model::DxlMotorState& targeted_dxl);
-            int type_ping_id(uint8_t id, common::model::EMotorType type);
-
-            int rebootMotors();
 
             int sendCustomDxlCommand(common::model::EMotorType motor_type, uint8_t id, int reg_address, int value, int byte_number);
             int readCustomDxlCommand(common::model::EMotorType motor_type, uint8_t id, int32_t reg_address, int &value, int byte_number);
 
+            void readPositionStatus();
+            void readHwStatus();
+
+            int getAllIdsOnBus(std::vector<uint8_t> &id_list);
+
             //getters
-            std::vector<uint8_t> getRemovedMotorList() const;
+            uint32_t getPosition(common::model::DxlMotorState& motor_state);
+            int getLedState() const;
 
             std::vector<common::model::DxlMotorState> getMotorsStates() const;
             common::model::DxlMotorState getMotorState(uint8_t motor_id) const;
 
-            int getLedState() const;
-
-            int getAllIdsOnBus(std::vector<uint8_t> &id_list);
-
-            void addMotor(common::model::EMotorType type, uint8_t id, bool isTool = false);
+            std::vector<uint8_t> getRemovedMotorList() const;
 
             // IDriver Interface
             void removeMotor(uint8_t id) override;
             bool isConnectionOk() const override;
+
+            int scanAndCheck() override;
+            bool ping(uint8_t id) override;
+
             size_t getNbMotors() const override;
             void getBusState(bool& connection_state, std::vector<uint8_t>& motor_id, std::string& debug_msg) const override;
             std::string getErrorMessage() const override;

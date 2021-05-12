@@ -101,7 +101,7 @@ namespace common {
          */
         bool common::model::JointState::isValid() const
         {
-            return (0 != getId() && EMotorType::MOTOR_TYPE_UNKNOWN != getType());
+            return (0 != getId() && EMotorType::UNKNOWN != getType());
         }
 
         /**

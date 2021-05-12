@@ -28,7 +28,6 @@
 #include <functional>
 #include <vector>
 #include <mutex>
-#include <std_msgs/Int64MultiArray.h>
 
 //ros
 #include <ros/ros.h>
@@ -107,7 +106,7 @@ namespace DynamixelDriver
         void controlLoop() override;
         void _executeCommand() override;
 
-        int motorScanReport(uint8_t motor_id, common::model::EMotorType motor_type);
+        int motorScanReport(uint8_t motor_id);
         int motorCmdReport(uint8_t motor_id, common::model::EMotorType motor_type);
 
         //use other callbacks instead of executecommand

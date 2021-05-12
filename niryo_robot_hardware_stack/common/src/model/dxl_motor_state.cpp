@@ -87,7 +87,7 @@ namespace common {
          */
         bool DxlMotorState::isValid() const
         {
-            return (0 != getId() && EMotorType::MOTOR_TYPE_UNKNOWN != getType());
+            return (0 != getId() && EMotorType::UNKNOWN != getType());
         }
 
         /**
@@ -146,13 +146,13 @@ namespace common {
         {
             switch(_type)
             {
-            case EMotorType::MOTOR_TYPE_XC430:
+            case EMotorType::XC430:
                 return 4095.0;
-            case EMotorType::MOTOR_TYPE_XL320:
+            case EMotorType::XL320:
                 return 1023.0;
-            case EMotorType::MOTOR_TYPE_XL330:
+            case EMotorType::XL330:
                 return 4095.0;
-            case EMotorType::MOTOR_TYPE_XL430:
+            case EMotorType::XL430:
                 return 4095.0;
             default:
                 return 0.0;
@@ -164,13 +164,13 @@ namespace common {
         {
             switch(_type)
             {
-            case EMotorType::MOTOR_TYPE_XC430:
+            case EMotorType::XC430:
                 return 2047;
-            case EMotorType::MOTOR_TYPE_XL320:
+            case EMotorType::XL320:
                 return 511;
-            case EMotorType::MOTOR_TYPE_XL330:
+            case EMotorType::XL330:
                 return 2047;
-            case EMotorType::MOTOR_TYPE_XL430:
+            case EMotorType::XL430:
                 return 2047;
             default:
                 return 0;
@@ -182,13 +182,13 @@ namespace common {
         {
             switch(_type)
             {
-            case EMotorType::MOTOR_TYPE_XC430:
+            case EMotorType::XC430:
                 return 360.36;
-            case EMotorType::MOTOR_TYPE_XL320:
+            case EMotorType::XL320:
                 return 296.67;
-            case EMotorType::MOTOR_TYPE_XL330:
+            case EMotorType::XL330:
                 return 296.67;
-            case EMotorType::MOTOR_TYPE_XL430:
+            case EMotorType::XL430:
                 return 360.36;
             default:
                 return 0;
@@ -203,13 +203,13 @@ namespace common {
 
             switch(_type)
             {
-            case EMotorType::MOTOR_TYPE_XC430:
+            case EMotorType::XC430:
                 return 15.6331; // 0.229 * 4096 / 60
-            case EMotorType::MOTOR_TYPE_XL320:
+            case EMotorType::XL320:
                 return 1.8944; // 0.111 * 1024 / 60
-            case EMotorType::MOTOR_TYPE_XL330:
+            case EMotorType::XL330:
                 return 15.6331; // 0.229 * 4096 / 60
-            case EMotorType::MOTOR_TYPE_XL430:
+            case EMotorType::XL430:
                 return 15.6331; // 0.229 * 4096 / 60
             default:
                 return 0.0;

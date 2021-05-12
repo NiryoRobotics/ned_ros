@@ -59,17 +59,22 @@ namespace StepperDriver
             virtual ~StepperDriver() override;
 
             //commands
+            void addMotor(uint8_t id, bool isConveyor = false);
+
+            int readSingleCommand(common::model::StepperMotorCmd cmd);
+            void executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, int32_t> > cmd_vec);
+
             void startCalibration();
             void resetCalibration();
 
-            int readSingleCommand(common::model::StepperMotorCmd cmd);
+            uint8_t sendTorqueOnCommand(uint8_t id, int torque_on);
+            uint8_t sendRelativeMoveCommand(uint8_t id, int steps, int delay);
+            uint8_t sendUpdateConveyorId(uint8_t old_id, uint8_t new_id);
 
-            void readMotorsState();
-
-            bool scanMotorId(int motor_to_find);
+            void readStatus();
 
             //getters
-            int32_t getStepperPose(uint8_t motor_id) const;
+            int32_t getPosition(uint8_t motor_id) const;
 
             common::model::StepperMotorState getMotorState(uint8_t motor_id) const;
             std::vector<common::model::StepperMotorState> getMotorsStates() const;
@@ -77,24 +82,19 @@ namespace StepperDriver
             int32_t getCalibrationResult(uint8_t id) const;
             common::model::EStepperCalibrationStatus getCalibrationStatus() const;
 
-            uint8_t sendTorqueOnCommand(uint8_t id, int torque_on);
-            uint8_t sendRelativeMoveCommand(uint8_t id, int steps, int delay);
-            uint8_t sendUpdateConveyorId(uint8_t old_id, uint8_t new_id);
             bool isCalibrationInProgress() const;
-
-            void addMotor(uint8_t id, bool isConveyor = false);
 
             // IDriver Interface
             void removeMotor(uint8_t id) override;
             bool isConnectionOk() const override;
 
             int scanAndCheck() override;
+            bool ping(uint8_t motor_to_find) override;
 
             size_t getNbMotors() const override;
             void getBusState(bool& connection_status, std::vector<uint8_t>& motor_list, std::string& error) const override;
             std::string getErrorMessage() const override;
 
-            void executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, int32_t> > cmd_vec);
 
     private:
             bool init() override;

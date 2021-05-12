@@ -100,7 +100,7 @@ namespace ToolsInterface {
 
             if(!_available_tools_map.count(id))
             {
-                if(EMotorType::MOTOR_TYPE_UNKNOWN != type)
+                if(EMotorType::UNKNOWN != type)
                     _available_tools_map.insert(make_pair(id, type));
                 else
                     ROS_ERROR("ToolsInterfaceCore::initParams - unknown type %s. Please check your configuration file (tools_interface/config/default.yaml)", typeList.at(id).c_str());
@@ -131,6 +131,9 @@ namespace ToolsInterface {
 
     }
 
+    /**
+     * @brief ToolsInterfaceCore::initPublishers
+     */
     void ToolsInterfaceCore::initPublishers()
     {
         _tool_connection_publisher = _nh.advertise<std_msgs::Int32>("/niryo_robot_hardware/tools/current_id", 1, true);
@@ -249,13 +252,13 @@ namespace ToolsInterface {
             SingleMotorCmd cmd;
             vector<SingleMotorCmd> list_cmd;
             cmd.setId(_toolState.getId());
-        /*
-        // use profile velocity instead
 
-            cmd.setType(DxlCommandType_t::CMD_TYPE_VELOCITY);
+            // cc for new motors, use profile velocity instead
+            //new dxl motors cannot use this command
+            cmd.setType(EDxlCommandType::CMD_TYPE_VELOCITY);
             cmd.setParam(req.open_speed);
             list_cmd.emplace_back(cmd);
-        */
+
             cmd.setType(EDxlCommandType::CMD_TYPE_POSITION);
             cmd.setParam(req.open_position);
             list_cmd.emplace_back(cmd);
@@ -307,12 +310,14 @@ namespace ToolsInterface {
             cmd.setId(_toolState.getId());
 
             uint32_t position_command = ( req.close_position < 50) ? 0 : req.close_position - 50;
-        /*
-        // use profile velocity instead
-            cmd.setType(DxlCommandType_t::CMD_TYPE_VELOCITY);
+
+
+            // cc for new motors, use profile velocity instead
+            //new dxl motors cannot use this command
+            cmd.setType(EDxlCommandType::CMD_TYPE_VELOCITY);
             cmd.setParam(req.close_speed);
             list_cmd.emplace_back(cmd);
-        */
+
             cmd.setType(EDxlCommandType::CMD_TYPE_POSITION);
             cmd.setParam(position_command);
             list_cmd.emplace_back(cmd);
@@ -366,7 +371,6 @@ namespace ToolsInterface {
             uint32_t pull_air_velocity = 1023;
             uint32_t pull_air_position = static_cast<uint32_t>(req.pull_air_position);
             uint32_t pull_air_hold_torque = static_cast<uint32_t>(req.pull_air_hold_torque);
-
 
             // set vacuum pump pos, vel and torque
             _dynamixel->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_VELOCITY, _toolState.getId(), pull_air_velocity));

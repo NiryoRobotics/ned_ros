@@ -26,7 +26,6 @@
 
 //ros
 #include <ros/ros.h>
-#include <std_msgs/Int64MultiArray.h>
 
 //niryo
 #include <hardware_interface/joint_state_interface.h>

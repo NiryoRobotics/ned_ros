@@ -49,12 +49,12 @@ namespace common {
         {
             map<EMotorType, string> m;
 
-            m[EMotorType::MOTOR_TYPE_STEPPER]    = "stepper";
-            m[EMotorType::MOTOR_TYPE_XL430]    = "xl430";
-            m[EMotorType::MOTOR_TYPE_XL320]    = "xl320";
-            m[EMotorType::MOTOR_TYPE_XL330]    = "xl330";
-            m[EMotorType::MOTOR_TYPE_XC430]    = "xc430";
-            m[EMotorType::MOTOR_TYPE_UNKNOWN]  = "unknown";
+            m[EMotorType::STEPPER]    = "stepper";
+            m[EMotorType::XL430]    = "xl430";
+            m[EMotorType::XL320]    = "xl320";
+            m[EMotorType::XL330]    = "xl330";
+            m[EMotorType::XC430]    = "xc430";
+            m[EMotorType::UNKNOWN]  = "unknown";
 
             return m;
         }

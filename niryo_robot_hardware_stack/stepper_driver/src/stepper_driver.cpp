@@ -225,14 +225,14 @@ namespace StepperDriver
     }
 
     /**
-     * @brief StepperDriver::getStepperPose
+     * @brief StepperDriver::getPosition
      * @param motor_id
      * @return
      */
-    int32_t StepperDriver::getStepperPose(uint8_t motor_id) const
+    int32_t StepperDriver::getPosition(uint8_t motor_id) const
     {
         if(!_state_map.count(motor_id) || !_state_map.at(motor_id)) {
-            throw std::out_of_range("DxlDriver::getStepperPose: Unknown motor id");
+            throw std::out_of_range("DxlDriver::getPosition: Unknown motor id");
         }
 
         return _state_map.at(motor_id)->getPositionState();
@@ -339,7 +339,7 @@ namespace StepperDriver
     /**
      * @brief StepperDriver::readMotorsState
      */
-    void StepperDriver::readMotorsState()
+    void StepperDriver::readStatus()
     {
         if (canReadData())
         {
@@ -453,16 +453,16 @@ namespace StepperDriver
     }
 
     /**
-     * @brief StepperDriver::scanMotorId : scan the bus for any motor id. It is used mainly to add an unknown
+     * @brief StepperDriver::ping : scan the bus for any motor id. It is used mainly to add an unknown
      * id to the current list of id (using addMotor, for a conveyor for example)
      * @param motor_to_find
      * @return
      */
-    bool StepperDriver::scanMotorId(int motor_to_find)
+    bool StepperDriver::ping(uint8_t motor_to_find)
     {
         double time_begin_scan = ros::Time::now().toSec();
-        double timeout = 0.5;
-        while (ros::Time::now().toSec() - time_begin_scan < timeout)
+
+        while (ros::Time::now().toSec() - time_begin_scan < STEPPER_MOTOR_TIMEOUT_VALUE)
         {
             ros::Duration(0.001).sleep(); // check at 1000 Hz
             if (canReadData())
@@ -471,18 +471,17 @@ namespace StepperDriver
                 uint8_t len;
                 std::array<uint8_t, 8> rxBuf;
                 readMsgBuf(&rxId, &len, rxBuf);
-                int motor_id = rxId & 0x0F;
+                uint8_t motor_id = rxId & 0x0F;
 
                 if (motor_id == motor_to_find)
                     return true;
             }
         }
 
-        ROS_ERROR("StepperDriver::scanMotorId - Motor with id %d not found", motor_to_find);
+
+        ROS_ERROR("StepperDriver::scanMotorId - Motor with id %d not found", static_cast<int>(motor_to_find));
         return false;
     }
-
-
 
     /**
      * @brief StepperDriver::fillPositionStatus
@@ -572,6 +571,12 @@ namespace StepperDriver
         }
     }
 
+    /**
+     * @brief StepperDriver::fillCalibrationState
+     * @param motor_id
+     * @param len
+     * @param data
+     */
     void StepperDriver::fillCalibrationState(uint8_t motor_id, const uint8_t &len, const std::array<uint8_t, 8> &data)
     {
         if (MESSAGE_DIAGNOSTICS_LENGTH == len)
@@ -662,6 +667,9 @@ namespace StepperDriver
         }
     }
 
+    /**
+     * @brief StepperDriver::updateCurrentCalibrationStatus
+     */
     void StepperDriver::updateCurrentCalibrationStatus()
     {
         //update current state of the calibrationtimeout_motors
@@ -678,6 +686,10 @@ namespace StepperDriver
 
     }
 
+    /**
+     * @brief StepperDriver::getCurrentTimeout
+     * @return
+     */
     double StepperDriver::getCurrentTimeout() const
     {
         if(isCalibrationInProgress())
@@ -687,104 +699,6 @@ namespace StepperDriver
 
     }
 
-/*
-    void StepperDriver::startCalibration()
-    {
-        //start read calibration state thread
-        if (!isCalibrationInProgress())
-        {
-            //refresh state map
-            _refreshLastTimeRead();
-
-            // Join the previous calibration thread (otherwise we cannot reassign the thread)
-            if (_calibration_thread.joinable())
-                _calibration_thread.join();
-            _calibration_thread = std::thread(&StepperDriver::readCalibrationStates, this);
-        }
-    }
-
-    void StepperDriver::stopCalibration()
-    {
-        _calibration_result  = EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED;
-
-        if (_calibration_thread.joinable())
-            _calibration_thread.join();
-    }
-
-    void StepperDriver::readCalibrationStates()
-    {
-        _calibration_result = EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS;
-        double time_thread_begin = ros::Time::now().toSec();
-
-        //this vector keep a list of motor ids to process. When a motors has been processed, it is removed from the list
-        std::set<uint8_t> motorsToProcess;
-        for(auto const& it: _calibration_map)
-            motorsToProcess.insert(it.first);
-
-        while(!motorsToProcess.empty() && ros::Time::now().toSec() - time_thread_begin < _calibration_timeout)
-        {
-            if (canReadData())
-            {
-                unsigned long rxId;
-                uint8_t len;
-                std::array<uint8_t, 8> rxBuf;
-
-                readMsgBuf(&rxId, &len, rxBuf);
-                CalibrationStepperData calib_data = {rxId, len, rxBuf};
-                uint8_t motor_id = calib_data.getId();
-
-                if(calib_data.isValid() && motorsToProcess.count(motor_id))
-                {
-                    EStepperCalibrationStatus can_enum_result = calib_data.getStatus();
-                    if (EStepperCalibrationStatus::CALIBRATION_OK == can_enum_result)
-                    {
-                        ROS_INFO("StepperDriver::interpreteCalibrationCommand - Motor %d calibration OK", motor_id);
-                        _calibration_map.at(motor_id) = calib_data;
-
-                        ROS_INFO("StepperDriver::interpreteCalibrationCommand - Motor %d - Absolute steps at offset position : %d",
-                                 motor_id,  _calibration_map.at(motor_id).getCalibrationResult());
-
-                        motorsToProcess.erase(motor_id);
-
-                        // keep torque ON for axis 1
-                        if (1 == motor_id)
-                            sendTorqueOnCommand(1, true);
-                    }
-                    else {
-                        switch(can_enum_result)
-                        {
-                        case EStepperCalibrationStatus::CALIBRATION_TIMEOUT:
-                            ROS_ERROR("StepperDriver::interpreteCalibrationCommand - Motor %d had calibration timeout", motor_id);
-                            _calibration_result = can_enum_result;
-                            return;
-                        case EStepperCalibrationStatus::CALIBRATION_BAD_PARAM:
-                            ROS_ERROR("StepperDriver::interpreteCalibrationCommand - Bad params given to motor %d", motor_id);
-                            _calibration_result = can_enum_result;
-                            return;
-                        default:
-                            break;
-                        }
-                    }
-                }
-            } // if (canReadData())
-        } // while
-
-        //if still motors to process -> timeout
-        if (!motorsToProcess.empty())
-        {
-            _calibration_result = EStepperCalibrationStatus::CALIBRATION_TIMEOUT;
-            ROS_ERROR("StepperDriver::readCalibrationStates - Calibration timeout after: %lf s", ros::Time::now().toSec() - time_thread_begin);
-
-            for (uint8_t m_id : motorsToProcess)
-                ROS_ERROR("StepperDriver::readCalibrationStates - Motor %d timeout: may be disconnected", m_id);
-
-        }
-        else {
-            _calibration_result = EStepperCalibrationStatus::CALIBRATION_OK;
-            ROS_DEBUG("StepperDriver::readCalibrationStates - Calibration thread ended with success");
-        }
-    }
-*/
     //***************
     //  Private
     //***************

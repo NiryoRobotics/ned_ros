@@ -45,7 +45,7 @@ namespace common {
          * @param isConveyor
          */
         StepperMotorState::StepperMotorState(uint8_t id, bool isConveyor) :
-            JointState("unknown", EMotorType::MOTOR_TYPE_STEPPER, id),
+            JointState("unknown", EMotorType::STEPPER, id),
             _isConveyor(isConveyor)
         {
         }

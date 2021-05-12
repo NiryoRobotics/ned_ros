@@ -70,8 +70,8 @@ namespace JointsInterface {
             }
         }
 
-      /*  if (!_stepperCore->isConnectionOk())
-            this->setNeedCalibration();*/
+        if (!_stepperCore->isConnectionOk())
+            this->setNeedCalibration();
     }
 
     /**
@@ -136,7 +136,7 @@ namespace JointsInterface {
 
             //gather info in joint  states (polymorphic)
             //CC use factory in state directly
-            if(eType == EMotorType::MOTOR_TYPE_STEPPER) {  //stepper
+            if(eType == EMotorType::STEPPER) {  //stepper
                 auto stepperState = make_shared<StepperMotorState>(joint_name, eType, static_cast<uint8_t>(joint_id_config));
                 if(stepperState) {
                     double offsetPos = 0.0;
@@ -161,7 +161,7 @@ namespace JointsInterface {
                     currentIdStepper++;
                 }
             }
-            else if(eType != EMotorType::MOTOR_TYPE_UNKNOWN) {  //dynamixel
+            else if(eType != EMotorType::UNKNOWN) {  //dynamixel
                 auto dxlState = make_shared<DxlMotorState>(joint_name, eType, static_cast<uint8_t>(joint_id_config));
                 if(dxlState) {
                     double offsetPos = 0.0;

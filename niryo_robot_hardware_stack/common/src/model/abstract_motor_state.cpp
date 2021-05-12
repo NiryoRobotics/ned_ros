@@ -29,7 +29,7 @@ namespace common {
          * @brief AbstractMotorState::AbstractMotorState
          */
         AbstractMotorState::AbstractMotorState() :
-            _type(EMotorType::MOTOR_TYPE_UNKNOWN)
+            _type(EMotorType::UNKNOWN)
         {
             reset();
         }

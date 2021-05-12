@@ -33,12 +33,12 @@ namespace common {
          * @brief The EMotorType enum
          */
         enum class EMotorType {
-                                MOTOR_TYPE_STEPPER=1,
-                                MOTOR_TYPE_XL430=2,
-                                MOTOR_TYPE_XL320=3,
-                                MOTOR_TYPE_XL330=4,
-                                MOTOR_TYPE_XC430=5,
-                                MOTOR_TYPE_UNKNOWN=100
+                                STEPPER=1,
+                                XL430=2,
+                                XL320=3,
+                                XL330=4,
+                                XC430=5,
+                                UNKNOWN=100
                               };
 
         /**
@@ -47,7 +47,7 @@ namespace common {
         class MotorTypeEnum : public AbstractEnum<MotorTypeEnum, EMotorType>
         {
         public:
-            MotorTypeEnum(EMotorType e=EMotorType::MOTOR_TYPE_UNKNOWN);
+            MotorTypeEnum(EMotorType e=EMotorType::UNKNOWN);
             MotorTypeEnum(const char* const str);
             ~MotorTypeEnum() {}
 

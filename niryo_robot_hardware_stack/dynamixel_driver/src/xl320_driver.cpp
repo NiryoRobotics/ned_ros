@@ -28,7 +28,7 @@ namespace DynamixelDriver
      */
     XL320Driver::XL320Driver(shared_ptr<dynamixel::PortHandler> portHandler,
                              shared_ptr<dynamixel::PacketHandler> packetHandler)
-        : XDriver(common::model::EMotorType::MOTOR_TYPE_XL320,
+        : XDriver(common::model::EMotorType::XL320,
                   portHandler,
                   packetHandler)
     {

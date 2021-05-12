@@ -199,8 +199,10 @@ namespace NiryoRobotHardwareInterface
             ROS_WARN("Hardware Interface - Start Motors Report");
             _stepper_driver->activeDebugMode(true);
             _dynamixel_driver->activeDebugMode(true);
+
             int stepper_status = _stepper_driver->launchMotorsReport();
             int dxl_status = _dynamixel_driver->launchMotorsReport();
+
             _stepper_driver->activeDebugMode(false);
             _dynamixel_driver->activeDebugMode(false);
 
@@ -221,7 +223,7 @@ namespace NiryoRobotHardwareInterface
                 res.message += (dxl_status == niryo_robot_msgs::CommandStatus::SUCCESS) ? "Ok" : "Error";
             }
         }
-        return niryo_robot_msgs::CommandStatus::SUCCESS == res.status;
+        return (niryo_robot_msgs::CommandStatus::SUCCESS == res.status);
     }
 
     /**
@@ -360,19 +362,19 @@ namespace NiryoRobotHardwareInterface
 
                 switch(hw_status.motor_identity.motor_type)
                 {
-                    case static_cast<uint8_t>(common::model::EMotorType::MOTOR_TYPE_XL320):
+                    case static_cast<uint8_t>(common::model::EMotorType::XL320):
                         motor_types.emplace_back("DXL XL-320");
                     break;
                         
-                    case static_cast<uint8_t>(common::model::EMotorType::MOTOR_TYPE_XL330):
+                    case static_cast<uint8_t>(common::model::EMotorType::XL330):
                         motor_types.emplace_back("DXL XL-330");
                     break;
                     
-                    case static_cast<uint8_t>(common::model::EMotorType::MOTOR_TYPE_XL430):
+                    case static_cast<uint8_t>(common::model::EMotorType::XL430):
                         motor_types.emplace_back("DXL XL-430");
                     break;
                     
-                    case static_cast<uint8_t>(common::model::EMotorType::MOTOR_TYPE_XC430):
+                    case static_cast<uint8_t>(common::model::EMotorType::XC430):
                         motor_types.emplace_back("DXL XC-430");
                     break;
                     default:
