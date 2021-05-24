@@ -34,7 +34,7 @@ namespace NiryoRobotHardwareInterface
      */
     HardwareInterface::HardwareInterface(ros::NodeHandle &nh) : _nh(nh)
     {
-        /*for(int i = 0; i < 30; i++) {
+       /* for(int i = 0; i < 30; i++) {
 
             ROS_INFO("Sleeping %d ! to have time to attach via gdb", i);
             ros::Duration(1).sleep();

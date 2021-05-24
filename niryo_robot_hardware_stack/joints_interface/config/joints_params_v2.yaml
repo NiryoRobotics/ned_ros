@@ -12,9 +12,9 @@ joint_4_id: 2
 joint_5_id: 3
 joint_6_id: 6
 
-joint_1_type: 1
-joint_2_type: 1
-joint_3_type: 1
-joint_4_type: 2
-joint_5_type: 2
-joint_6_type: 3
+joint_1_type: "stepper"
+joint_2_type: "stepper"
+joint_3_type: "stepper"
+joint_4_type: "xc430"
+joint_5_type: "xc430"
+joint_6_type: "xl330"
