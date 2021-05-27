@@ -395,18 +395,18 @@ namespace StepperDriver
      * @param motor_id
      * @return
      */
-    int StepperDriverCore::setConveyor(uint8_t motor_id)
+    int StepperDriverCore::setConveyor(uint8_t new_motor_id, uint8_t default_conveyor_id)
     {
         int result = niryo_robot_msgs::CommandStatus::NO_CONVEYOR_FOUND;
 
         lock_guard<mutex> lck(_control_loop_mutex);
 
         //try to find motor id 6 (default motor id for conveyor
-        if (_stepper->ping(6))
+        if (_stepper->ping(default_conveyor_id))
         {
-            if (CAN_OK == _stepper->sendUpdateConveyorId(6, motor_id)) {
+            if (CAN_OK == _stepper->sendUpdateConveyorId(default_conveyor_id, new_motor_id)) {
                 //add stepper as a new conveyor
-                _stepper->addMotor(motor_id, true);
+                _stepper->addMotor(new_motor_id, true);
                 result = niryo_robot_msgs::CommandStatus::SUCCESS;
             }
             else {

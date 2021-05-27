@@ -95,7 +95,7 @@ if(CATKIN_ENABLE_TESTING)
   if(BUILD_UNIT_TESTS)
     catkin_add_gtest(
       ${PROJECT_NAME}_unit_tests
-      test/unit_tests.cpp
+      test/motor_states_unit_tests.cpp
     )
     if(TARGET ${PROJECT_NAME}_unit_tests)
       target_link_libraries(

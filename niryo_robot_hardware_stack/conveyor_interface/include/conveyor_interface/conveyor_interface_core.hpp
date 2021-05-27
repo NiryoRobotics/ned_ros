@@ -46,11 +46,16 @@ namespace ConveyorInterface {
             ConveyorInterfaceCore(std::shared_ptr<StepperDriver::StepperDriverCore> stepper);
             virtual ~ConveyorInterfaceCore();
 
+            bool isInitialized();
+
         private:
             void init();
             void initParams();
             void startServices();
             void startPublishers();
+
+            conveyor_interface::SetConveyor::Response addConveyor();
+            conveyor_interface::SetConveyor::Response removeConveyor(uint8_t id);
 
             bool _callbackPingAndSetConveyor(conveyor_interface::SetConveyor::Request &req, conveyor_interface::SetConveyor::Response &res);
             bool _callbackControlConveyor(conveyor_interface::ControlConveyor::Request &req, conveyor_interface::ControlConveyor::Response &res);
@@ -70,15 +75,18 @@ namespace ConveyorInterface {
             ros::Publisher _conveyors_feedback_publisher;
             ros::Publisher _conveyor_status_publisher;
 
-            std::vector<uint8_t> _list_conveyor_id;
-            std::vector<uint8_t> _available_conveyor_list;
-            std::vector<int> _list_possible_conveyor_id;
+            //default id to look for to know if we have a stepper
+            int _default_conveyor_id{6};
 
+            // pool of possible id we can set for a newly connected conveyor
+            std::set<uint8_t> _conveyor_pool_id_list;
 
+            // list of currently connected conveyors
+            std::vector<uint8_t> _current_conveyor_id_list;
 
-            int _conveyor_id{0};
             int _conveyor_max_effort{0};
             double _publish_feedback_frequency{0.0};
     };
 } // ConveyorInterface
+
 #endif

@@ -47,6 +47,7 @@ namespace po = boost::program_options;
     #define DEFAULT_PORT ""
 #endif
 
+
 int main (int argc, char **argv)
 {
     ros::init(argc, argv, "dxl_debug_tools");
@@ -67,7 +68,6 @@ int main (int argc, char **argv)
             ("size", po::value<int>()->default_value(1), "Size (for get-register only)")
             ("set-register", po::value<std::vector<int>>(), "Set a value to a register (args: reg_addr, value, size)");
 
-
         po::positional_options_description p;
         p.add("set-register", -1);
         po::variables_map vars;
@@ -80,12 +80,14 @@ int main (int argc, char **argv)
             return 0;
         }
 
+        // --------   other commands
+
         int baudrate = vars["baudrate"].as<int>();
         std::string serial_port = vars["port"].as<std::string>();
-        int id = vars["id"].as<int>();
+        uint8_t id = vars["id"].as<uint8_t>();
 
         std::cout << "Using baudrate: " << baudrate << ", port: " << serial_port << "\n";
-        std::cout << "Dxl ID: " << id << "\n";
+        std::cout << "Dxl ID: " << static_cast<int>(id) << "\n";
 
         // Setup Dxl communication
         std::shared_ptr<dynamixel::PortHandler> portHandler(dynamixel::PortHandler::getPortHandler(serial_port.c_str()));
@@ -93,63 +95,75 @@ int main (int argc, char **argv)
 
         robotDebug::DxlTools dxlTools(portHandler, packetHandler);
 
-        if (dxlTools.setupDxlBus(baudrate) == -1) {
-            return -1;
-        }
+        if (-1 != dxlTools.setupDxlBus(baudrate))
+        {
+            int dxl_comm_result = COMM_TX_FAIL;
 
-        int dxl_comm_result = COMM_TX_FAIL;
+            // Execute action from args
+            if (vars.count("scan")) //scan
+            {
+                printf("--> SCAN Dxl bus\n");
+                dxlTools.broadcastPing();
+            }
+            else if (vars.count("ping")) //ping
+            {
+                if (0 == id) {
+                    printf("Ping: you need to give an ID! (--id)\n");
+                }
+                else {
+                    printf("--> PING Motor (ID: %d)\n", id);
+                    dxlTools.ping(id);
+                }
+            }
+            else if (vars.count("set-register")) //set-register
+            {
+                std::vector<int> params = vars["set-register"].as<std::vector<int>>();
+                if (params.size() != 3) {
+                    printf("ERROR: set-register needs 3 arguments (reg_addr, value, size)\n");
+                }
+                else {
+                    uint8_t addr = static_cast<uint8_t>(params.at(0));
+                    uint32_t value = static_cast<uint32_t>(params.at(1));
+                    uint8_t size = static_cast<uint8_t>(params.at(2));
 
-        // Execute action from args
-        if (vars.count("scan")) {
-            printf("--> SCAN Dxl bus\n"); 
-            dxlTools.broadcastPing();
-        }
-        else if (vars.count("ping")) {
-            if (id == 0) {
-                printf("Ping: you need to give an ID! (--id)\n");
+                    printf("--> SET REGISTER for Motor (ID:%d)\n", id);
+                    printf("Register address: %d, Value: %d, Size (bytes): %d\n", addr, value, size);
+
+                    dxl_comm_result = dxlTools.setRegister(id, addr, value, size);
+
+                    if (dxl_comm_result != COMM_SUCCESS)
+                        printf("Failed to set register: %d\n", dxl_comm_result);
+                    else
+                        printf("Successfully sent register command\n");
+                }
             }
-            else {
-                printf("--> PING Motor (ID: %d)\n", id);
-                dxlTools.ping(id);
-            }
-        }
-        else if (vars.count("set-register")) {
-            std::vector<int> params = vars["set-register"].as<std::vector<int>>();
-            if (params.size() != 3) {
-                printf("ERROR: set-register needs 3 arguments (reg_addr, value, size)\n");
-            }
-            else {
-                printf("--> SET REGISTER for Motor (ID:%d)\n", id);
-                printf("Register address: %d, Value: %d, Size (bytes): %d\n",
-                        params.at(0), params.at(1), params.at(2));
-                dxl_comm_result = dxlTools.setRegister(id, params.at(0), params.at(1), params.at(2));
+            else if (vars.count("get-register")) // get-register
+            {
+                uint8_t addr = vars["get-register"].as<uint8_t>();
+                uint32_t value = 0;
+                uint8_t size = vars["size"].as<uint8_t>();
+
+                printf("--> GET REGISTER for Motor (ID:%d)\n", id);
+                printf("Register address: %d, Size (bytes): %d\n", addr, size);
+
+                dxl_comm_result = dxlTools.getRegister(id, addr, value, size);
 
                 if (dxl_comm_result != COMM_SUCCESS)
-                    printf("Failed to set register: %d\n", dxl_comm_result);
+                    printf("Failed to get register: %d\n", dxl_comm_result);
                 else
-                    printf("Successfully sent register command\n");
+                    printf("Retrieved value at address %d : %d\n", addr, value);
             }
-        }
-        else if (vars.count("get-register")) {
-            uint8_t addr = vars["get-register"].as<int>();
-            uint8_t size = vars["size"].as<int>();
-            uint32_t value = 0;
-            printf("--> GET REGISTER for Motor (ID:%d)\n", id);
-            printf("Register address: %d, Size (bytes): %d\n", addr, size);
-            dxl_comm_result = dxlTools.getRegister(id, addr, value, size);
+            else //unknown command
+            {
+                std::cout << description << "\n";
+            }
 
-            if (dxl_comm_result != COMM_SUCCESS)
-                printf("Failed to get register: %d\n", dxl_comm_result);
-            else
-                printf("Retrieved value at address %d : %d\n", addr, value);
+            // close port before exit
+            dxlTools.closePort();
+            return 0;
         }
-        else {
-            std::cout << description << "\n";
-        }
-        
-        // close port before exit
-        dxlTools.closePort();
-        return 0;
+
+        return -1;
     }
     catch(po::error& e)
     {

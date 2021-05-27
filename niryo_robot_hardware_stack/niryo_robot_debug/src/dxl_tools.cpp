@@ -120,15 +120,15 @@ namespace robotDebug {
         switch(byte_number) {
             case 1:
                 dxl_comm_result = _packetHandler->write1ByteTxOnly(_portHandler.get(), id,
-                        reg_address, (uint8_t)value);
+                        reg_address, static_cast<uint8_t>(value));
             break;
             case 2:
                 dxl_comm_result = _packetHandler->write2ByteTxOnly(_portHandler.get(), id,
-                        reg_address, (uint16_t)value);
+                        reg_address, static_cast<uint16_t>(value));
             break;
             case 4:
                 dxl_comm_result = _packetHandler->write4ByteTxOnly(_portHandler.get(), id,
-                        reg_address, (uint32_t)value);
+                        reg_address, static_cast<uint32_t>(value));
             break;
             default:
                 printf("ERROR: Size param must be 1, 2 or 4 bytes\n");

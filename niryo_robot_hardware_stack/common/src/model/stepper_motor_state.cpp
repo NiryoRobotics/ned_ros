@@ -188,14 +188,12 @@ namespace common {
         int StepperMotorState::to_motor_pos(double pos_rad)
         {
             return static_cast<int32_t>((STEPPERS_MOTOR_STEPS_PER_REVOLUTION * STEPPERS_MICROSTEPS * _gear_ratio * pos_rad * RADIAN_TO_DEGREE / 360.0) * _direction);
-            //return (int32_t)((STEPPERS_MOTOR_STEPS_PER_REVOLUTION * STEPPERS_MICROSTEPS * gear_ratio * position_rad * RADIAN_TO_DEGREE / 360.0) * direction);
         }
 
         double StepperMotorState::to_rad_pos(int pos)
         {
             assert(0.0 != (STEPPERS_MOTOR_STEPS_PER_REVOLUTION * STEPPERS_MICROSTEPS * _gear_ratio * RADIAN_TO_DEGREE));
             return static_cast<double>((pos * 360.0) / (STEPPERS_MOTOR_STEPS_PER_REVOLUTION * STEPPERS_MICROSTEPS * _gear_ratio * RADIAN_TO_DEGREE) * _direction);
-            //return (double)((double)steps * 360.0 / (STEPPERS_MOTOR_STEPS_PER_REVOLUTION * STEPPERS_MICROSTEPS * gear_ratio * RADIAN_TO_DEGREE)) * direction;
         }
 
         

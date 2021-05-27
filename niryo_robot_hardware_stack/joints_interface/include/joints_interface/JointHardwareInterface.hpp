@@ -90,9 +90,6 @@ namespace JointsInterface {
 
         std::vector<std::shared_ptr<common::model::JointState> > _joint_list;
 
-        double _gear_ratio_1, _gear_ratio_2, _gear_ratio_3;
-        double _direction_1, _direction_2, _direction_3;
-
         bool _learning_mode;
     };
 

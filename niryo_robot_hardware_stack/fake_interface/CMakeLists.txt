@@ -119,37 +119,7 @@ endif()
 ## Testing ##
 #############
 
-if(CATKIN_ENABLE_TESTING)
-  if(BUILD_UNIT_TESTS)
-    catkin_add_gtest(
-      ${PROJECT_NAME}_unit_tests
-      test/unit_tests.cpp
-    )
-    if(TARGET ${PROJECT_NAME}_unit_tests)
-      target_link_libraries(
-        ${PROJECT_NAME}_unit_tests
-        ${PROJECT_NAME}_core
-      )
-    endif()
-  endif(BUILD_UNIT_TESTS)
-
-  if(BUILD_INTEGRATION_TESTS)
-    find_package(catkin REQUIRED rostest)
-
-    add_rostest_gtest(
-      ${PROJECT_NAME}_integration_tests
-      test/test_fake_interface_node.test
-      test/test_fake_interface_node.cpp
-    )
-    if(TARGET ${PROJECT_NAME}_integration_tests)
-      target_link_libraries(
-        ${PROJECT_NAME}_integration_tests
-        ${PROJECT_NAME}_core
-      )
-    endif()
-  endif(BUILD_INTEGRATION_TESTS)
-
-endif(CATKIN_ENABLE_TESTING)
+# no testing
 
 #############
 ## Install ##

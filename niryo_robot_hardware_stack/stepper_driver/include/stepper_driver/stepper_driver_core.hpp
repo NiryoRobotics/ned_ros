@@ -47,7 +47,7 @@ namespace StepperDriver
             StepperDriverCore();
             virtual ~StepperDriverCore() override;
 
-            int setConveyor(uint8_t motor_id);
+            int setConveyor(uint8_t motor_id, uint8_t default_conveyor_id = 6);
             void unsetConveyor(uint8_t motor_id);
 
             void clearSingleCommandQueue();

@@ -51,6 +51,7 @@ namespace ToolsInterface {
             ToolsInterfaceCore(std::shared_ptr<DynamixelDriver::DxlDriverCore> dynamixel);
             virtual ~ToolsInterfaceCore();
 
+            bool isInitialized();
             void pubToolId(int id);
 
         private:
@@ -73,6 +74,9 @@ namespace ToolsInterface {
 
             std::mutex _tool_mutex;
 
+            ros::Publisher _tool_connection_publisher;
+            std::thread _publish_tool_connection_thread;
+
             std::shared_ptr<DynamixelDriver::DxlDriverCore> _dynamixel;
 
             ros::ServiceServer _ping_and_set_dxl_tool_server;
@@ -80,9 +84,6 @@ namespace ToolsInterface {
             ros::ServiceServer _close_gripper_server;
             ros::ServiceServer _pull_air_vacuum_pump_server;
             ros::ServiceServer _push_air_vacuum_pump_server;
-
-            ros::Publisher _tool_connection_publisher;
-            std::thread _publish_tool_connection_thread;
 
             common::model::ToolState _toolState;
             std::map<uint8_t, common::model::EMotorType> _available_tools_map;

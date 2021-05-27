@@ -140,6 +140,11 @@ namespace ToolsInterface {
         _publish_tool_connection_thread = std::thread(&ToolsInterfaceCore::_publishToolConnection, this);
     }
 
+    bool ToolsInterfaceCore::isInitialized()
+    {
+        return !_available_tools_map.empty();
+    }
+
     /**
      * @brief ToolsInterfaceCore::pubToolId
      * @param id
@@ -267,16 +272,6 @@ namespace ToolsInterface {
             cmd.setParam(req.open_hold_torque);
             list_cmd.emplace_back(cmd);
 
-            _dynamixel->addEndEffectorCommandToQueue(list_cmd);
-            list_cmd.clear();
-
-            double dxl_speed = static_cast<double>(req.open_speed * _toolState.getStepsForOneSpeed()); // position . sec-1
-            assert(dxl_speed != 0.00);
-
-            double dxl_steps_to_do = abs(static_cast<double>(req.open_position) - _dynamixel->getEndEffectorState(_toolState.getId())); // position
-            double seconds_to_wait =  dxl_steps_to_do /  dxl_speed; // sec
-            ros::Duration(seconds_to_wait + 0.25).sleep();
-
             // set hold torque
             cmd.setId(_toolState.getId());
             cmd.setType(EDxlCommandType::CMD_TYPE_EFFORT);
@@ -311,7 +306,6 @@ namespace ToolsInterface {
 
             uint32_t position_command = ( req.close_position < 50) ? 0 : req.close_position - 50;
 
-
             // cc for new motors, use profile velocity instead
             //new dxl motors cannot use this command
             cmd.setType(EDxlCommandType::CMD_TYPE_VELOCITY);
@@ -325,19 +319,6 @@ namespace ToolsInterface {
             cmd.setType(EDxlCommandType::CMD_TYPE_EFFORT);
             cmd.setParam(req.close_max_torque); // two's complement of 1536
             list_cmd.emplace_back(cmd);
-
-            _dynamixel->addEndEffectorCommandToQueue(list_cmd);
-            list_cmd.clear();
-
-            // calculate close duration
-            // cc to be removed => acknoledge instead
-            double dxl_speed = static_cast<double>(req.close_speed * _toolState.getStepsForOneSpeed()); // position . sec-1
-            assert(dxl_speed != 0.0);
-
-            double dxl_steps_to_do = abs(static_cast<double>(req.close_position - _dynamixel->getEndEffectorState(_toolState.getId()))); // position
-            double seconds_to_wait =  dxl_steps_to_do /  dxl_speed; // sec
-
-            ros::Duration(seconds_to_wait + 0.25).sleep();
 
             // set hold torque
             cmd.setType(EDxlCommandType::CMD_TYPE_EFFORT);
@@ -377,15 +358,6 @@ namespace ToolsInterface {
             _dynamixel->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_POSITION, _toolState.getId(), pull_air_position));
             _dynamixel->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_EFFORT, _toolState.getId(), 500));
 
-            // calculate pull air duration
-            double dxl_speed = static_cast<double>(pull_air_velocity * _toolState.getStepsForOneSpeed()); // position . sec-1
-            assert(dxl_speed != 0.0);
-
-            double dxl_steps_to_do = abs(static_cast<double>(req.pull_air_position - _dynamixel->getEndEffectorState(_toolState.getId()))); // position
-            double seconds_to_wait = dxl_steps_to_do / dxl_speed; // sec
-
-            ros::Duration(seconds_to_wait + 0.25).sleep();
-
             // set hold torque
             _dynamixel->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_EFFORT, _toolState.getId(), pull_air_hold_torque));
 
@@ -419,15 +391,6 @@ namespace ToolsInterface {
             _dynamixel->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_VELOCITY, _toolState.getId(), push_air_velocity));
             _dynamixel->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_POSITION, _toolState.getId(), push_air_position));
             _dynamixel->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_EFFORT, _toolState.getId(), 64000));// two's complement of 1536
-
-            // calculate push air duration
-            double dxl_speed = static_cast<double>(push_air_velocity * _toolState.getStepsForOneSpeed()); // position . sec-1
-            assert(dxl_speed != 0.0);
-
-            double dxl_steps_to_do = abs(static_cast<double>(req.push_air_position - _dynamixel->getEndEffectorState(_toolState.getId()))); // position
-            double seconds_to_wait =  dxl_steps_to_do /  dxl_speed; // sec
-
-            ros::Duration(seconds_to_wait + 0.25).sleep();
 
             // set torque to 0
             _dynamixel->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_EFFORT, _toolState.getId(), 0));

@@ -24,15 +24,15 @@
 // Declare a test
 TEST(TestSuite, testInitDriver)
 {
-    DynamixelDriver::DynamixelDriver dxl_node;
-    EXPECT_TRUE(dxl_node.isConnectionOk());
+    DynamixelDriver::DxlDriver dxl_driver;
+    EXPECT_TRUE(dxl_driver.isConnectionOk());
 }
 
 // Declare a test
 TEST(TestSuite, testInitDriverCore)
 {
-    DynamixelDriver::DynamixelDriverCore dxl_node;
-    EXPECT_TRUE(dxl_node.isConnectionOk());
+    DynamixelDriver::DxlDriverCore dxl_core;
+    EXPECT_TRUE(dxl_core.isConnectionOk());
 }
 
 // Run all the tests that were declared with TEST()
