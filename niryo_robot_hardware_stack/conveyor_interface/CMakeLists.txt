@@ -114,7 +114,7 @@ target_link_libraries(${PROJECT_NAME}_node
 #############
 
 if (BUILD_DOCS)
-    add_custom_target (conveyor_doc ALL
+    add_custom_target (${PROJECT_NAME}_doc ALL
         rosdoc_lite -o ${CATKIN_DEVEL_PREFIX}/doc/${PROJECT_NAME} ${CMAKE_CURRENT_LIST_DIR}
     )
 
@@ -133,7 +133,7 @@ if(CATKIN_ENABLE_TESTING)
     if(TARGET ${PROJECT_NAME}_unit_tests)
       target_link_libraries(
         ${PROJECT_NAME}_unit_tests
-        ${PROJECT_NAME}_core
+        ${PROJECT_NAME}
       )
     endif()
   endif(BUILD_UNIT_TESTS)
@@ -149,7 +149,7 @@ if(CATKIN_ENABLE_TESTING)
     if(TARGET ${PROJECT_NAME}_integration_tests)
       target_link_libraries(
         ${PROJECT_NAME}_integration_tests
-        ${PROJECT_NAME}_core
+        ${PROJECT_NAME}
       )
     endif()
   endif(BUILD_INTEGRATION_TESTS)

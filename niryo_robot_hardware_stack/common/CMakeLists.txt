@@ -81,7 +81,7 @@ target_link_libraries(${PROJECT_NAME}
 #############
 
 if (BUILD_DOCS)
-    add_custom_target (common_doc ALL
+    add_custom_target (${PROJECT_NAME}_doc ALL
         rosdoc_lite -o ${CATKIN_DEVEL_PREFIX}/doc/${PROJECT_NAME} ${CMAKE_CURRENT_LIST_DIR}
     )
 

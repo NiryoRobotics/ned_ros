@@ -19,7 +19,7 @@
 
 #include <ros/ros.h>
 #include "dynamixel_sdk/dynamixel_sdk.h"
-#include "niryo_robot_debug/dxl_tools.h"
+#include "dxl_debug_tools/dxl_tools.h"
 #include "boost/program_options.hpp"
 #include <iostream>
 #include <string>

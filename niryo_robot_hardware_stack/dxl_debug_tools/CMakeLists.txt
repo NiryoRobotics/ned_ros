@@ -1,7 +1,7 @@
-message("\n## Reading niryo_robot_debug/CMakeLists.txt...")
+message("\n## Reading dxl_debug_tools/CMakeLists.txt...")
 
 cmake_minimum_required(VERSION 3.0.2)
-project(niryo_robot_debug)
+project(dxl_debug_tools)
 
 option(BUILD_DOCS "Build documentation" OFF)
 option(BUILD_UNIT_TESTS "Build the unit tests" OFF)
@@ -22,7 +22,6 @@ find_package(catkin REQUIRED
         rospy
         std_msgs
         niryo_robot_msgs
-        mcp_can_rpi
         dynamixel_sdk
 )
  
@@ -50,7 +49,6 @@ catkin_package(
     rospy 
     std_msgs 
     niryo_robot_msgs
-    mcp_can_rpi
     dynamixel_sdk
 )
 
@@ -67,7 +65,7 @@ include_directories(
 )
 
 ## Declare libs and execs
-add_executable(dxl_debug_tools
+add_executable(${PROJECT_NAME}
     src/dxl_debug.cpp
     src/dxl_tools.cpp
 )
@@ -75,7 +73,7 @@ add_executable(dxl_debug_tools
 # wiringPi should be installed only on a Raspberry Pi board
 if(CMAKE_CROSSCOMPILING)
     message(STATUS "Cross compiling : wiringPi library is required")
-    target_link_libraries(dxl_debug_tools
+    target_link_libraries(${PROJECT_NAME}
         ${catkin_LIBRARIES}
         -lwiringPi -lrt
     )
@@ -88,14 +86,14 @@ else()
 
     if (${ARCHITECTURE} MATCHES "^(arm.*|aarch64.*|arm64.*)$")
         message(STATUS "wiringPi library is required - arm processor")
-        target_link_libraries(dxl_debug_tools
+        target_link_libraries(${PROJECT_NAME}
             ${catkin_LIBRARIES}
             ${Boost_LIBRARIES}
             -lwiringPi -lrt
         )
     else()
         message(STATUS "wiringPi library not required")
-        target_link_libraries(dxl_debug_tools
+        target_link_libraries(${PROJECT_NAME}
             ${catkin_LIBRARIES}
             ${Boost_LIBRARIES}
         )
@@ -107,7 +105,7 @@ endif()
 #############
 
 if (BUILD_DOCS)
-    add_custom_target (niryo_robot_debug_doc ALL
+    add_custom_target (${PROJECT_NAME}_doc ALL
         rosdoc_lite -o ${CATKIN_DEVEL_PREFIX}/doc/${PROJECT_NAME} ${CMAKE_CURRENT_LIST_DIR}
     )
 
@@ -126,7 +124,7 @@ if(CATKIN_ENABLE_TESTING)
     if(TARGET ${PROJECT_NAME}_unit_tests)
       target_link_libraries(
         ${PROJECT_NAME}_unit_tests
-        ${PROJECT_NAME}_core
+        ${PROJECT_NAME}
       )
     endif()
   endif(BUILD_UNIT_TESTS)
@@ -136,13 +134,13 @@ if(CATKIN_ENABLE_TESTING)
 
     add_rostest_gtest(
       ${PROJECT_NAME}_integration_tests
-      test/test_niryo_robot_debug_node.test
-      test/test_niryo_robot_debug_node.cpp
+      test/test_dxl_debug_tools_node.test
+      test/test_dxl_debug_tools_node.cpp
     )
     if(TARGET ${PROJECT_NAME}_integration_tests)
       target_link_libraries(
         ${PROJECT_NAME}_integration_tests
-        ${PROJECT_NAME}_core
+        ${PROJECT_NAME}
       )
     endif()
   endif(BUILD_INTEGRATION_TESTS)

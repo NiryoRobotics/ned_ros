@@ -50,7 +50,7 @@ include_directories(
 )
 
 ## Declare libs and execs
-add_library(dynamixel_sdk
+add_library(${PROJECT_NAME}
   src/packet_handler.cpp
   src/protocol1_packet_handler.cpp
   src/protocol2_packet_handler.cpp
@@ -63,7 +63,7 @@ add_library(dynamixel_sdk
 )
 
 ## Add dependencies to exported targets, like ROS msgs or srvs
-add_dependencies(dynamixel_sdk
+add_dependencies(${PROJECT_NAME}
     ${${PROJECT_NAME}_EXPORTED_TARGETS}
     ${catkin_EXPORTED_TARGETS}
 )
@@ -73,7 +73,7 @@ add_dependencies(dynamixel_sdk
 # wiringPi should be installed only on a Raspberry Pi board
 if(CMAKE_CROSSCOMPILING)
     message(STATUS "Cross compiling : wiringPi library is required")
-    target_link_libraries(dynamixel_sdk
+    target_link_libraries(${PROJECT_NAME}
         ${catkin_LIBRARIES}
         -lwiringPi -lrt
     )
@@ -86,13 +86,13 @@ else()
 
     if (${ARCHITECTURE} MATCHES "^(arm.*|aarch64.*|arm64.*)$")
         message(STATUS "wiringPi library is required - arm processor")
-        target_link_libraries(dynamixel_sdk
+        target_link_libraries(${PROJECT_NAME}
             ${catkin_LIBRARIES}
             -lwiringPi -lrt
         )
     else()
         message(STATUS "wiringPi library not required")
-        target_link_libraries(dynamixel_sdk
+        target_link_libraries(${PROJECT_NAME}
             ${catkin_LIBRARIES}
         )
     endif()
@@ -103,7 +103,7 @@ endif()
 #############
 
 if (BUILD_DOCS)
-    add_custom_target (dynamixel_sdk_doc ALL
+    add_custom_target (${PROJECT_NAME}_doc ALL
         rosdoc_lite -o ${CATKIN_DEVEL_PREFIX}/doc/${PROJECT_NAME} ${CMAKE_CURRENT_LIST_DIR}
     )
 

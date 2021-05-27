@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package>
-  <name>niryo_robot_debug</name>
+  <name>dxl_debug_tools</name>
   <version>3.0.0</version>
   <description>Ned's debug tools</description>
   <author>Edouard Renard</author>

@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "niryo_robot_debug/dxl_tools.h"
+#include "dxl_debug_tools/dxl_tools.h"
 
 namespace robotDebug {
 

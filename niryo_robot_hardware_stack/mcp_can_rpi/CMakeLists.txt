@@ -30,8 +30,10 @@ find_package(catkin REQUIRED
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-  INCLUDE_DIRS include
-  LIBRARIES mcp_can_rpi
+  INCLUDE_DIRS
+    include
+  LIBRARIES
+    ${PROJECT_NAME}
 )
 
 ###########
@@ -46,12 +48,12 @@ include_directories(
 )
 
 ## Declare libs and execs
-add_library(mcp_can_rpi
+add_library(${PROJECT_NAME}
     src/mcp_can_rpi.cpp
 )
 
 ## Add dependencies to exported targets, like ROS msgs or srvs
-add_dependencies(mcp_can_rpi
+add_dependencies(${PROJECT_NAME}
     ${${PROJECT_NAME}_EXPORTED_TARGETS}
     ${catkin_EXPORTED_TARGETS}
 )
@@ -61,7 +63,7 @@ add_dependencies(mcp_can_rpi
 # wiringPi should be installed only on a Raspberry Pi board
 if(CMAKE_CROSSCOMPILING)
     message(STATUS "Cross compiling : wiringPi library is required")
-    target_link_libraries(mcp_can_rpi
+    target_link_libraries(${PROJECT_NAME}
         ${catkin_LIBRARIES}
         -lwiringPi -lrt
     )
@@ -74,13 +76,13 @@ else()
 
     if (${ARCHITECTURE} MATCHES "^(arm.*|aarch64.*|arm64.*)$")
         message(STATUS "wiringPi library is required for mcp_can_rpi (ARM processor)")
-        target_link_libraries(mcp_can_rpi
+        target_link_libraries(${PROJECT_NAME}
             ${catkin_LIBRARIES}
             -lwiringPi -lrt
         )
     else()
         message(STATUS "wiringPi library not required")
-        target_link_libraries(mcp_can_rpi
+        target_link_libraries(${PROJECT_NAME}
             ${catkin_LIBRARIES}
         )
     endif()
@@ -91,7 +93,7 @@ endif()
 #############
 
 if (BUILD_DOCS)
-    add_custom_target (mcp_can_rpi_doc ALL
+    add_custom_target (${PROJECT_NAME}_doc ALL
         rosdoc_lite -o ${CATKIN_DEVEL_PREFIX}/doc/${PROJECT_NAME} ${CMAKE_CURRENT_LIST_DIR}
     )
 
@@ -107,7 +109,7 @@ endif()
 ## Install ##
 #############
 
-install(TARGETS mcp_can_rpi
+install(TARGETS ${PROJECT_NAME}
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
