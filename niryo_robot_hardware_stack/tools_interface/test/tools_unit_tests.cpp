@@ -1,5 +1,5 @@
 /*
-    unit_tests.cpp
+    tools_unit_tests.cpp
     Copyright (C) 2020 Niryo
     All rights reserved.
     This program is free software: you can redistribute it and/or modify
@@ -15,24 +15,18 @@
 */
 
 // Bring in my package's API, which is what I'm testing
-#include "dynamixel_driver/dxl_driver_core.hpp"
-#include "dynamixel_driver/dxl_driver.hpp"
+#include "tools_interface/tools_interface_core.hpp"
 
 // Bring in gtest
 #include <gtest/gtest.h>
 
 // Declare a test
-TEST(TestSuite, testInitDriver)
+TEST(ToolsInterfaceTestSuite, testInit)
 {
-    DynamixelDriver::DxlDriver dxl_driver;
-    EXPECT_TRUE(dxl_driver.isConnectionOk());
-}
+    auto dxl_driver = std::make_shared<DynamixelDriver::DxlDriverCore>();
 
-// Declare a test
-TEST(TestSuite, testInitDriverCore)
-{
-    DynamixelDriver::DxlDriverCore dxl_core;
-    EXPECT_TRUE(dxl_core.isConnectionOk());
+    ToolsInterface::ToolsInterfaceCore tools_core(dxl_driver);
+    EXPECT_TRUE(tools_core.isInitialized());
 }
 
 // Run all the tests that were declared with TEST()

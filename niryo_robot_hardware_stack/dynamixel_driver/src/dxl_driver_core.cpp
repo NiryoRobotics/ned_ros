@@ -155,7 +155,6 @@ namespace DynamixelDriver
     /**
      * @brief DxlDriverCore::motorScanReport
      * @param motor_id
-     * @param motor_type
      * @return
      */
     int DxlDriverCore::motorScanReport(uint8_t motor_id)

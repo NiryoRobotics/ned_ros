@@ -56,7 +56,8 @@ namespace DynamixelDriver
         virtual int checkModelNumber(uint8_t id) = 0;
 
         // eeprom write
-        virtual int changeId(uint8_t id, uint8_t new_id) = 0;
+        virtual int changeId(uint8_t id, uint8_t new_id);
+
         virtual int changeBaudRate(uint8_t id, uint32_t new_baudrate) = 0;
 
         virtual int setReturnDelayTime(uint8_t id, uint32_t return_delay_time) = 0;

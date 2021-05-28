@@ -1,5 +1,5 @@
 /*
-    unit_tests.cpp
+    dxl_tools_unit_tests.cpp
     Copyright (C) 2020 Niryo
     All rights reserved.
     This program is free software: you can redistribute it and/or modify
@@ -13,20 +13,40 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+#define PROTOCOL_VERSION 2.0
+
+#ifdef __arm
+    #define DEFAULT_PORT "/dev/serial0"
+#elifdef __aarch64__
+    #define DEFAULT_PORT "/dev/ttyAMA0"
+#else
+    #define DEFAULT_PORT ""
+#endif
+
 
 // Bring in my package's API, which is what I'm testing
-#include "conveyor_interface/conveyor_interface_core.hpp"
+#include "dynamixel_sdk/port_handler.h"
+#include "dynamixel_sdk/packet_handler.h"
+#include "dxl_debug_tools/dxl_tools.h"
+
+#include <ros/ros.h>
 
 // Bring in gtest
 #include <gtest/gtest.h>
 
 // Declare a test
-TEST(TestSuite, testInit)
+TEST(DxlDebugToolsTestSuite, testInit)
 {
-    auto stepper_driver = std::make_shared<StepperDriver::StepperDriverCore>();
+    // Setup Dxl communication
+    std::string serial_port = DEFAULT_PORT;
+    std::shared_ptr<dynamixel::PortHandler> portHandler(dynamixel::PortHandler::getPortHandler(serial_port.c_str()));
+    std::shared_ptr<dynamixel::PacketHandler> packetHandler(dynamixel::PacketHandler::getPacketHandler(PROTOCOL_VERSION));
 
-    ConveyorInterface::ConveyorInterfaceCore conveyor_core(stepper_driver);
-    EXPECT_TRUE(conveyor_core.isInitialized());
+   /* DxlDebugTools::DxlTools dxlTools(portHandler, packetHandler);
+
+    //for default baudrate, ok
+    ASSERT_NE(dxlTools.setupDxlBus(1000000), -1);*/
+    ASSERT_TRUE(true);
 }
 
 // Run all the tests that were declared with TEST()

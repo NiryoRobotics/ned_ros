@@ -20,12 +20,13 @@
 #ifndef DXL_TOOLS_H
 #define DXL_TOOLS_H
 
-#include "dynamixel_sdk/dynamixel_sdk.h"
 #include <string>
 #include <vector>
 #include <memory>
 
-namespace robotDebug {
+#include "dynamixel_sdk/dynamixel_sdk.h"
+
+namespace DxlDebugTools {
 
     /**
      * @brief The DxlTools class
@@ -52,6 +53,6 @@ namespace robotDebug {
 
     };
 
-} // namespace robotDebug
+} // namespace DxlDebugTools
 
 #endif

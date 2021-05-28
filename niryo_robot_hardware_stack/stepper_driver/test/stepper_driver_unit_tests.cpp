@@ -1,5 +1,5 @@
 /*
-    unit_tests.cpp
+    stepper_driver_unit_tests.cpp
     Copyright (C) 2020 Niryo
     All rights reserved.
     This program is free software: you can redistribute it and/or modify
@@ -15,17 +15,24 @@
 */
 
 // Bring in my package's API, which is what I'm testing
-#include "cpu_interface/cpu_interface_core.hpp"
+#include "stepper_driver/stepper_driver_core.hpp"
+#include "stepper_driver/stepper_driver.hpp"
 
 // Bring in gtest
 #include <gtest/gtest.h>
 
 // Declare a test
-// this one is dummy, does nothing
-TEST(TestSuite, testInit)
+TEST(StepperDriverTestSuite, testInitDriver)
 {
-    CpuInterface::CpuInterfaceCore cpu_core;
-    EXPECT_TRUE(cpu_core.getCpuTemperature() >= 0);
+    StepperDriver::StepperDriver stepper;
+    EXPECT_TRUE(stepper.isConnectionOk());
+}
+
+// Declare a test
+TEST(StepperDriverTestSuite, testInitDriverCore)
+{
+    StepperDriver::StepperDriverCore stepper_core;
+    EXPECT_TRUE(stepper_core.isConnectionOk());
 }
 
 // Run all the tests that were declared with TEST()

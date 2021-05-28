@@ -1,5 +1,5 @@
 /*
-    tools_interface/test/unit_tests.cpp
+    conveyor_unit_tests.cpp
     Copyright (C) 2020 Niryo
     All rights reserved.
     This program is free software: you can redistribute it and/or modify
@@ -15,18 +15,18 @@
 */
 
 // Bring in my package's API, which is what I'm testing
-#include "tools_interface/tools_interface_core.hpp"
+#include "conveyor_interface/conveyor_interface_core.hpp"
 
 // Bring in gtest
 #include <gtest/gtest.h>
 
 // Declare a test
-TEST(TestSuite, testInit)
+TEST(ConveyorTestSuite, testInit)
 {
-    auto dxl_driver = std::make_shared<DynamixelDriver::DxlDriverCore>();
+    auto stepper_driver = std::make_shared<StepperDriver::StepperDriverCore>();
 
-    ToolsInterface::ToolsInterfaceCore tools_core(dxl_driver);
-    EXPECT_TRUE(tools_core.isInitialized());
+    ConveyorInterface::ConveyorInterfaceCore conveyor_core(stepper_driver);
+    EXPECT_TRUE(conveyor_core.isInitialized());
 }
 
 // Run all the tests that were declared with TEST()

@@ -148,9 +148,9 @@ namespace StepperDriver
 
             if(mcp_can->setupInterruptGpio())
             {
-                ROS_DEBUG("StepperDriver::setupInterruptGpio - setup successfull");
+                ROS_DEBUG("StepperDriver::setupCAN - setup successfull");
                 if(mcp_can->setupSpi()) {
-                    ROS_DEBUG("StepperDriver::setupSpi - setup successfull");
+                    ROS_DEBUG("StepperDriver::setupCAN - setup successfull");
 
                     // no mask or filter used, receive all messages from CAN bus
                     // messages with ids != motor_id will be sent to another ROS interface
@@ -167,20 +167,20 @@ namespace StepperDriver
                     }
                     else
                     {
-                        ROS_ERROR("StepperDriver::init - Failed to init MCP2515 (CAN bus)");
+                        ROS_ERROR("StepperDriver::setupCAN - Failed to init MCP2515 (CAN bus)");
                         _debug_error_message = "Failed to init MCP2515 (CAN bus)";
                     }
                 }
                 else
                 {
-                    ROS_WARN("StepperDriver::setupSpi - Failed to start spi");
+                    ROS_WARN("StepperDriver::setupCAN - Failed to start spi");
                     _debug_error_message = "Failed to start spi";
                     result = CAN_SPI_FAILINIT;
                 }
             }
             else
             {
-                ROS_WARN("StepperDriver::setupInterruptGpio - Failed to start gpio");
+                ROS_WARN("StepperDriver::setupCAN - Failed to start gpio");
                 _debug_error_message = "Failed to start gpio";
                 result = CAN_GPIO_FAILINIT;
             }

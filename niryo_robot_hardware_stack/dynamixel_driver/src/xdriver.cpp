@@ -175,6 +175,7 @@ namespace DynamixelDriver
         return dxl_comm_result;
     }
 
+
     /**
      * @brief XDriver::write
      * @param address

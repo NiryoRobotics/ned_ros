@@ -1,5 +1,5 @@
 /*
-    unit_tests.cpp
+    joints_unit_tests.cpp
     Copyright (C) 2020 Niryo
     All rights reserved.
     This program is free software: you can redistribute it and/or modify
@@ -13,37 +13,30 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-#define PROTOCOL_VERSION 2.0
-
-#ifdef __arm
-    #define DEFAULT_PORT "/dev/serial0"
-#elifdef __aarch64__
-    #define DEFAULT_PORT "/dev/ttyAMA0"
-#else
-    #define DEFAULT_PORT ""
-#endif
-
 
 // Bring in my package's API, which is what I'm testing
-#include "niryo_robot_debug/dxl_tools.h"
-
-#include <ros/ros.h>
+#include "joints_interface/joints_interface_core.hpp"
 
 // Bring in gtest
 #include <gtest/gtest.h>
 
 // Declare a test
-TEST(TestSuite, testInit)
+TEST(JointsInterfaceTestSuite, testInitJoints)
 {
-    // Setup Dxl communication
-    std::string serial_port = DEFAULT_PORT;
-    std::shared_ptr<dynamixel::PortHandler> portHandler(dynamixel::PortHandler::getPortHandler(serial_port.c_str()));
-    std::shared_ptr<dynamixel::PacketHandler> packetHandler(dynamixel::PacketHandler::getPacketHandler(PROTOCOL_VERSION));
+    auto dxlDriverCore = std::make_shared<DynamixelDriver::DxlDriverCore>();
+    auto stepperDriverCore = std::make_shared<StepperDriver::StepperDriverCore>();
 
-    robotDebug::DxlTools dxlTools(portHandler, packetHandler);
+    JointsInterface::JointsInterfaceCore joints_core(dxlDriverCore, stepperDriverCore);
 
-    //for default baudrate, ok
-    ASSERT_NE(dxlTools.setupDxlBus(1000000), -1);
+    std::vector<std::shared_ptr<common::model::JointState> > jStates = joints_core.getJointsState();
+
+    //expect list to be filled
+    ASSERT_FALSE(jStates.empty());
+
+    //expect valid states
+    for(auto jState : jStates) {
+        EXPECT_TRUE(jState->isValid());
+    }
 }
 
 // Run all the tests that were declared with TEST()

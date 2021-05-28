@@ -1,5 +1,5 @@
 /*
-    unit_tests.cpp
+    dxl_driver_unit_tests.cpp
     Copyright (C) 2020 Niryo
     All rights reserved.
     This program is free software: you can redistribute it and/or modify
@@ -15,28 +15,24 @@
 */
 
 // Bring in my package's API, which is what I'm testing
-#include "joints_interface/joints_interface_core.hpp"
+#include "dynamixel_driver/dxl_driver_core.hpp"
+#include "dynamixel_driver/dxl_driver.hpp"
 
 // Bring in gtest
 #include <gtest/gtest.h>
 
 // Declare a test
-TEST(TestSuite, testInitJoints)
+TEST(DynamixelDriverTestSuite, testInitDriver)
 {
-    auto dxlDriverCore = std::make_shared<DynamixelDriver::DxlDriverCore>();
-    auto stepperDriverCore = std::make_shared<StepperDriver::StepperDriverCore>();
+    DynamixelDriver::DxlDriver dxl_driver;
+    EXPECT_TRUE(dxl_driver.isConnectionOk());
+}
 
-    JointsInterface::JointsInterfaceCore joints_core(dxlDriverCore, stepperDriverCore);
-
-    std::vector<std::shared_ptr<common::model::JointState> > jStates = joints_core.getJointsState();
-
-    //expect list to be filled
-    ASSERT_FALSE(jStates.empty());
-
-    //expect valid states
-    for(auto jState : jStates) {
-        EXPECT_TRUE(jState->isValid());
-    }
+// Declare a test
+TEST(DynamixelDriverTestSuite, testInitDriverCore)
+{
+    DynamixelDriver::DxlDriverCore dxl_core;
+    EXPECT_TRUE(dxl_core.isConnectionOk());
 }
 
 // Run all the tests that were declared with TEST()

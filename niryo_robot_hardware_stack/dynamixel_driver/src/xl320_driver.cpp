@@ -1,5 +1,5 @@
 /*
-    xl320_driver.cpp
+    driver.cpp
     Copyright (C) 2018 Niryo
     All rights reserved.
     This program is free software: you can redistribute it and/or modify
@@ -17,6 +17,9 @@
 #include "dynamixel_driver/xl320_driver.hpp"
 #include "model/motor_type_enum.hpp"
 
+#include "dynamixel_driver/xl320_reg.hpp"
+#include "dynamixel_driver/motor_driver.hpp"
+
 using namespace std;
 
 namespace DynamixelDriver
@@ -27,11 +30,16 @@ namespace DynamixelDriver
      * @param packetHandler
      */
     XL320Driver::XL320Driver(shared_ptr<dynamixel::PortHandler> portHandler,
-                             shared_ptr<dynamixel::PacketHandler> packetHandler)
-        : XDriver(common::model::EMotorType::XL320,
-                  portHandler,
-                  packetHandler)
+                             shared_ptr<dynamixel::PacketHandler> packetHandler) :
+        XDriver(common::model::EMotorType::XL320,
+                portHandler,
+                packetHandler)
     {
+    }
+
+    XL320Driver::~XL320Driver()
+    {
+
     }
 
     string XL320Driver::interpreteErrorState(uint32_t hw_state)
@@ -70,7 +78,7 @@ namespace DynamixelDriver
 
         if (ping_result == COMM_SUCCESS)
         {
-            if (model_number && model_number != XL320_MODEL_NUMBER)
+            if (model_number && model_number != XL320Reg::MODEL_NUMBER)
             {
                 return PING_WRONG_MODEL_NUMBER;
             }
@@ -85,37 +93,37 @@ namespace DynamixelDriver
 
     int XL320Driver::changeId(uint8_t id, uint8_t new_id)
     {
-        return write(XL320_ADDR_ID, 1, id, new_id);
+        return write(XL320Reg::ADDR_ID, XL320Reg::SIZE_ID, id, new_id);
     }
 
     int XL320Driver::changeBaudRate(uint8_t id, uint32_t new_baudrate)
     {
-        return write(XL320_ADDR_BAUDRATE, 1, id, new_baudrate);
+        return write(XL320Reg::ADDR_BAUDRATE, XL320Reg::SIZE_BAUDRATE, id, new_baudrate);
     }
 
     int XL320Driver::setLed(uint8_t id, uint32_t led_value)
     {
-        return write(XL320_ADDR_LED, 1, id, led_value);
+        return write(XL320Reg::ADDR_LED, XL320Reg::SIZE_LED, id, led_value);
     }
 
     int XL320Driver::setTorqueEnable(uint8_t id, uint32_t torque_enable)
     {
-        return write(XL320_ADDR_TORQUE_ENABLE, 1, id, torque_enable);
+        return write(XL320Reg::ADDR_TORQUE_ENABLE, XL320Reg::SIZE_TORQUE_ENABLE, id, torque_enable);
     }
 
     int XL320Driver::setGoalPosition(uint8_t id, uint32_t position)
     {
-        return write(XL320_ADDR_GOAL_POSITION, 2, id, position);
+        return write(XL320Reg::ADDR_GOAL_POSITION, XL320Reg::SIZE_GOAL_POSITION, id, position);
     }
 
     int XL320Driver::setGoalVelocity(uint8_t id, uint32_t velocity)
     {
-        return write(XL320_ADDR_GOAL_SPEED, 2, id, velocity);
+        return write(XL320Reg::ADDR_GOAL_SPEED, XL320Reg::SIZE_GOAL_SPEED, id, velocity);
     }
 
     int XL320Driver::setGoalTorque(uint8_t id, uint32_t torque)
     {
-        return write(XL320_ADDR_GOAL_TORQUE, 2, id, torque);
+        return write(XL320Reg::ADDR_GOAL_TORQUE, XL320Reg::SIZE_GOAL_TORQUE, id, torque);
     }
 
     /*
@@ -124,17 +132,17 @@ namespace DynamixelDriver
 
     int XL320Driver::setPGain(uint8_t id, uint32_t gain)
     {
-        return write(XL320_ADDR_P_GAIN, 1, id, gain);
+        return write(XL320Reg::ADDR_POSITION_P_GAIN, XL320Reg::SIZE_POSITION_P_GAIN, id, gain);
     }
 
     int XL320Driver::setIGain(uint8_t id, uint32_t gain)
     {
-        return write(XL320_ADDR_I_GAIN, 1, id, gain);
+        return write(XL320Reg::ADDR_POSITION_I_GAIN, XL320Reg::SIZE_POSITION_I_GAIN, id, gain);
     }
 
     int XL320Driver::setDGain(uint8_t id, uint32_t gain)
     {
-        return write(XL320_ADDR_D_GAIN, 1, id, gain);
+        return write(XL320Reg::ADDR_POSITION_D_GAIN, XL320Reg::SIZE_POSITION_D_GAIN, id, gain);
     }
 
     int XL320Driver::setff1Gain(uint8_t /*id*/, uint32_t /*gain*/)
@@ -153,27 +161,27 @@ namespace DynamixelDriver
 
     int XL320Driver::setReturnDelayTime(uint8_t id, uint32_t return_delay_time)
     {
-        return write(XL320_ADDR_RETURN_DELAY_TIME, 1, id, return_delay_time);
+        return write(XL320Reg::ADDR_RETURN_DELAY_TIME, XL320Reg::SIZE_RETURN_DELAY_TIME, id, return_delay_time);
     }
 
     int XL320Driver::setLimitTemperature(uint8_t id, uint32_t temperature)
     {
-        return write(XL320_ADDR_LIMIT_TEMPERATURE, 1, id, temperature);
+        return write(XL320Reg::ADDR_TEMPERATURE_LIMIT, XL320Reg::SIZE_TEMPERATURE_LIMIT, id, temperature);
     }
 
     int XL320Driver::setMaxTorque(uint8_t id, uint32_t torque)
     {
-        return write(XL320_ADDR_MAX_TORQUE, 2, id, torque);
+        return write(XL320Reg::ADDR_MAX_TORQUE, XL320Reg::SIZE_MAX_TORQUE, id, torque);
     }
 
     int XL320Driver::setReturnLevel(uint8_t id, uint32_t return_level)
     {
-        return write(XL320_ADDR_RETURN_LEVEL, 1, id, return_level);
+        return write(XL320Reg::ADDR_RETURN_LEVEL, XL320Reg::SIZE_RETURN_LEVEL, id, return_level);
     }
 
     int XL320Driver::setAlarmShutdown(uint8_t id, uint32_t alarm_shutdown)
     {
-        return write(XL320_ADDR_ALARM_SHUTDOWN, 1, id, alarm_shutdown);
+        return write(XL320Reg::ADDR_ALARM_SHUTDOWN, XL320Reg::SIZE_ALARM_SHUTDOWN, id, alarm_shutdown);
     }
 
     /*
@@ -182,25 +190,25 @@ namespace DynamixelDriver
 
     int XL320Driver::syncWritePositionGoal(const vector<uint8_t> &id_list, const vector<uint32_t> &position_list)
     {
-        return syncWrite(XL320_ADDR_GOAL_POSITION, 2, id_list, position_list);
+        return syncWrite(XL320Reg::ADDR_GOAL_POSITION, XL320Reg::SIZE_GOAL_POSITION, id_list, position_list);
     }
     int XL320Driver::syncWriteVelocityGoal(const vector<uint8_t> &id_list, const vector<uint32_t> &velocity_list)
     {
-        return syncWrite(XL320_ADDR_GOAL_SPEED, 2, id_list, velocity_list);
+        return syncWrite(XL320Reg::ADDR_GOAL_SPEED, XL320Reg::SIZE_GOAL_SPEED, id_list, velocity_list);
     }
     int XL320Driver::syncWriteTorqueGoal(const vector<uint8_t> &id_list, const vector<uint32_t> &torque_list)
     {
-        return syncWrite(XL320_ADDR_GOAL_TORQUE, 2, id_list, torque_list);
+        return syncWrite(XL320Reg::ADDR_GOAL_TORQUE, XL320Reg::SIZE_GOAL_TORQUE, id_list, torque_list);
     }
 
     int XL320Driver::syncWriteTorqueEnable(const vector<uint8_t> &id_list, const vector<uint32_t> &torque_enable_list)
     {
-        return syncWrite(XL320_ADDR_TORQUE_ENABLE, 1, id_list, torque_enable_list);
+        return syncWrite(XL320Reg::ADDR_TORQUE_ENABLE, XL320Reg::SIZE_TORQUE_ENABLE, id_list, torque_enable_list);
     }
 
     int XL320Driver::syncWriteLed(const vector<uint8_t> &id_list, const vector<uint32_t> &led_list)
     {
-        return syncWrite(XL320_ADDR_LED, 1, id_list, led_list);
+        return syncWrite(XL320Reg::ADDR_LED, XL320Reg::SIZE_LED, id_list, led_list);
     }
 
     /*
@@ -209,56 +217,56 @@ namespace DynamixelDriver
 
     int XL320Driver::readPosition(uint8_t id, uint32_t *present_position)
     {
-        return read(XL320_ADDR_PRESENT_POSITION, 2, id, present_position);
+        return read(XL320Reg::ADDR_PRESENT_POSITION, XL320Reg::SIZE_PRESENT_POSITION, id, present_position);
     }
 
     int XL320Driver::readVelocity(uint8_t id, uint32_t *present_velocity)
     {
-        return read(XL320_ADDR_PRESENT_SPEED, 2, id, present_velocity);
+        return read(XL320Reg::ADDR_PRESENT_SPEED, XL320Reg::SIZE_PRESENT_SPEED, id, present_velocity);
     }
 
     int XL320Driver::readLoad(uint8_t id, uint32_t *present_load)
     {
-        return read(XL320_ADDR_PRESENT_LOAD, 2, id, present_load);
+        return read(XL320Reg::ADDR_PRESENT_LOAD, XL320Reg::SIZE_PRESENT_LOAD, id, present_load);
     }
 
     int XL320Driver::readTemperature(uint8_t id, uint32_t *temperature)
     {
-        return read(XL320_ADDR_PRESENT_TEMPERATURE, 1, id, temperature);
+        return read(XL320Reg::ADDR_PRESENT_TEMPERATURE, XL320Reg::SIZE_PRESENT_TEMPERATURE, id, temperature);
     }
 
     int XL320Driver::readVoltage(uint8_t id, uint32_t *voltage)
     {
-        return read(XL320_ADDR_PRESENT_VOLTAGE, 1, id, voltage);
+        return read(XL320Reg::ADDR_PRESENT_VOLTAGE, XL320Reg::SIZE_PRESENT_VOLTAGE, id, voltage);
     }
 
     int XL320Driver::readHardwareStatus(uint8_t id, uint32_t *hardware_status)
     {
-        return read(XL320_ADDR_HW_ERROR_STATUS, 1, id, hardware_status);
+        return read(XL320Reg::ADDR_HW_ERROR_STATUS, XL320Reg::SIZE_HW_ERROR_STATUS, id, hardware_status);
     }
     int XL320Driver::readReturnDelayTime(uint8_t id, uint32_t *return_delay_time)
     {
-        return read(XL320_ADDR_RETURN_DELAY_TIME, 1, id, return_delay_time);
+        return read(XL320Reg::ADDR_RETURN_DELAY_TIME, XL320Reg::SIZE_RETURN_DELAY_TIME, id, return_delay_time);
     }
 
     int XL320Driver::readLimitTemperature(uint8_t id, uint32_t *limit_temperature)
     {
-        return read(XL320_ADDR_LIMIT_TEMPERATURE, 1, id, limit_temperature);
+        return read(XL320Reg::ADDR_TEMPERATURE_LIMIT, XL320Reg::SIZE_TEMPERATURE_LIMIT, id, limit_temperature);
     }
 
     int XL320Driver::readMaxTorque(uint8_t id, uint32_t *max_torque)
     {
-        return read(XL320_ADDR_MAX_TORQUE, 2, id, max_torque);
+        return read(XL320Reg::ADDR_MAX_TORQUE, XL320Reg::SIZE_MAX_TORQUE, id, max_torque);
     }
 
     int XL320Driver::readReturnLevel(uint8_t id, uint32_t *return_level)
     {
-        return read(XL320_ADDR_RETURN_LEVEL, 1, id, return_level);
+        return read(XL320Reg::ADDR_RETURN_LEVEL, XL320Reg::SIZE_RETURN_LEVEL, id, return_level);
     }
 
     int XL320Driver::readAlarmShutdown(uint8_t id, uint32_t *alarm_shutdown)
     {
-        return read(XL320_ADDR_ALARM_SHUTDOWN, 1, id, alarm_shutdown);
+        return read(XL320Reg::ADDR_ALARM_SHUTDOWN, XL320Reg::SIZE_ALARM_SHUTDOWN, id, alarm_shutdown);
     }
 
     /*
@@ -267,31 +275,31 @@ namespace DynamixelDriver
 
     int XL320Driver::syncReadPosition(const vector<uint8_t> &id_list, vector<uint32_t> &position_list)
     {
-        return syncRead(XL320_ADDR_PRESENT_POSITION, 2, id_list, position_list);
+        return syncRead(XL320Reg::ADDR_PRESENT_POSITION, XL320Reg::SIZE_PRESENT_POSITION, id_list, position_list);
     }
 
     int XL320Driver::syncReadVelocity(const vector<uint8_t> &id_list, vector<uint32_t> &velocity_list)
     {
-        return syncRead(XL320_ADDR_PRESENT_SPEED, 2, id_list, velocity_list);
+        return syncRead(XL320Reg::ADDR_PRESENT_SPEED, XL320Reg::SIZE_PRESENT_SPEED, id_list, velocity_list);
     }
     int XL320Driver::syncReadLoad(const vector<uint8_t> &id_list, vector<uint32_t> &load_list)
     {
-        return syncRead(XL320_ADDR_PRESENT_LOAD, 2, id_list, load_list);
+        return syncRead(XL320Reg::ADDR_PRESENT_LOAD, XL320Reg::SIZE_PRESENT_LOAD, id_list, load_list);
     }
 
     int XL320Driver::syncReadTemperature(const vector<uint8_t> &id_list, vector<uint32_t> &temperature_list)
     {
-        return syncRead(XL320_ADDR_PRESENT_TEMPERATURE, 1, id_list, temperature_list);
+        return syncRead(XL320Reg::ADDR_PRESENT_TEMPERATURE, XL320Reg::SIZE_PRESENT_TEMPERATURE, id_list, temperature_list);
     }
 
     int XL320Driver::syncReadVoltage(const vector<uint8_t> &id_list, vector<uint32_t> &voltage_list)
     {
-        return syncRead(XL320_ADDR_PRESENT_VOLTAGE, 1, id_list, voltage_list);
+        return syncRead(XL320Reg::ADDR_PRESENT_VOLTAGE, XL320Reg::SIZE_PRESENT_VOLTAGE, id_list, voltage_list);
     }
 
     int XL320Driver::syncReadHwErrorStatus(const vector<uint8_t> &id_list, vector<uint32_t> &hw_error_list)
     {
-        return syncRead(XL320_ADDR_HW_ERROR_STATUS, 1, id_list, hw_error_list);
+        return syncRead(XL320Reg::ADDR_HW_ERROR_STATUS, XL320Reg::SIZE_HW_ERROR_STATUS, id_list, hw_error_list);
     }
 
 } // DynamixelDriver

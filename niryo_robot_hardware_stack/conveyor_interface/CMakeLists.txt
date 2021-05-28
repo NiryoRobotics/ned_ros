@@ -128,7 +128,8 @@ if(CATKIN_ENABLE_TESTING)
   if(BUILD_UNIT_TESTS)
     catkin_add_gtest(
       ${PROJECT_NAME}_unit_tests
-      test/unit_tests.cpp
+      test/conveyor_unit_tests.cpp
+      #test/conveyor_test.cpp
     )
     if(TARGET ${PROJECT_NAME}_unit_tests)
       target_link_libraries(

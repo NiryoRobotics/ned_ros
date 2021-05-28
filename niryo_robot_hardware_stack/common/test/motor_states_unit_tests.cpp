@@ -27,7 +27,7 @@
 using namespace common::model;
 
 // Declare a test
-TEST(TestSuite, testDefaultInvalid)
+TEST(CommonTestSuite, testDefaultInvalid)
 {
     DxlMotorState dxlState;
     StepperMotorState stepperState;
@@ -37,7 +37,7 @@ TEST(TestSuite, testDefaultInvalid)
 
 }
 
-TEST(TestSuite, testXC430)
+TEST(CommonTestSuite, testXC430)
 {
     DxlMotorState dxlState = DxlMotorState(EMotorType::XC430, 1);
     std::string type_str = MotorTypeEnum(dxlState.getType()).toString();
@@ -59,7 +59,7 @@ TEST(TestSuite, testXC430)
 
 }
 
-TEST(TestSuite, testXL430)
+TEST(CommonTestSuite, testXL430)
 {
     DxlMotorState dxlState = DxlMotorState(EMotorType::XL430, 1);
     std::string type_str = MotorTypeEnum(dxlState.getType()).toString();
@@ -81,7 +81,7 @@ TEST(TestSuite, testXL430)
 
 }
 
-TEST(TestSuite, testXL330)
+TEST(CommonTestSuite, testXL330)
 {
     DxlMotorState dxlState = DxlMotorState(EMotorType::XL330, 1);
     std::string type_str = MotorTypeEnum(dxlState.getType()).toString();
@@ -103,7 +103,7 @@ TEST(TestSuite, testXL330)
 
 }
 
-TEST(TestSuite, testXL320)
+TEST(CommonTestSuite, testXL320)
 {
     DxlMotorState dxlState = DxlMotorState(EMotorType::XL320, 1);
     std::string type_str = MotorTypeEnum(dxlState.getType()).toString();
@@ -125,7 +125,7 @@ TEST(TestSuite, testXL320)
 
 }
 
-TEST(TestSuite, testStepper)
+TEST(CommonTestSuite, testStepper)
 {
     StepperMotorState stepperState = StepperMotorState(1);
     std::string type_str = MotorTypeEnum(stepperState.getType()).toString();

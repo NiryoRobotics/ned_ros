@@ -22,7 +22,7 @@
 
 #include "dynamixel_driver/xdriver.hpp"
 #include "dynamixel_sdk/dynamixel_sdk.h"
-
+#include "xl320_reg.hpp"
 
 namespace DynamixelDriver
 {
@@ -34,6 +34,8 @@ namespace DynamixelDriver
     public:
         XL320Driver(std::shared_ptr<dynamixel::PortHandler> portHandler,
                     std::shared_ptr<dynamixel::PacketHandler> packetHandler);
+
+        virtual ~XL320Driver() override;
 
         std::string interpreteErrorState(uint32_t hw_state) override;
 
@@ -90,46 +92,7 @@ namespace DynamixelDriver
         int syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &voltage_list) override;
         int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list) override;
 
-    private:
-        static constexpr int XL320_PROTOCOL_VERSION         = 2.0;
-        static constexpr int XL320_MODEL_NUMBER             = 350;
-
-        //see table here : http://support.robotis.com/en/product/actuator/dynamixel_x/xl_series/xl-320.htm
-        static constexpr int XL320_ADDR_MODEL_NUMBER        = 0; // EEPROM
-        static constexpr int XL320_ADDR_FIRMWARE_VERSION    = 2;
-        static constexpr int XL320_ADDR_ID                  = 3;
-        static constexpr int XL320_ADDR_BAUDRATE            = 4;
-        static constexpr int XL320_ADDR_RETURN_DELAY_TIME   = 5;
-        static constexpr int XL320_ADDR_CW_ANGLE_LIMIT      = 6;
-        static constexpr int XL320_ADDR_CCW_ANGLE_LIMIT     = 8;
-        static constexpr int XL320_ADDR_CONTROL_MODE        = 11;
-        static constexpr int XL320_ADDR_LIMIT_TEMPERATURE   = 12;
-        static constexpr int XL320_ADDR_LOWER_LIMIT_VOLTAGE = 13;
-        static constexpr int XL320_ADDR_UPPER_LIMIT_VOLTAGE = 14;
-        static constexpr int XL320_ADDR_MAX_TORQUE          = 15;
-        static constexpr int XL320_ADDR_RETURN_LEVEL        = 17;
-        static constexpr int XL320_ADDR_ALARM_SHUTDOWN      = 18;
-
-        static constexpr int XL320_ADDR_TORQUE_ENABLE       = 24; // RAM
-        static constexpr int XL320_ADDR_LED                 = 25;
-
-        static constexpr int XL320_ADDR_D_GAIN              = 27;
-        static constexpr int XL320_ADDR_I_GAIN              = 28;
-        static constexpr int XL320_ADDR_P_GAIN              = 29;
-
-        static constexpr int XL320_ADDR_GOAL_POSITION       = 30;
-        static constexpr int XL320_ADDR_GOAL_SPEED          = 32;
-        static constexpr int XL320_ADDR_GOAL_TORQUE         = 35;
-        static constexpr int XL320_ADDR_PRESENT_POSITION    = 37;
-        static constexpr int XL320_ADDR_PRESENT_SPEED       = 39;
-        static constexpr int XL320_ADDR_PRESENT_LOAD        = 41;
-        static constexpr int XL320_ADDR_PRESENT_VOLTAGE     = 45;
-        static constexpr int XL320_ADDR_PRESENT_TEMPERATURE = 46;
-        static constexpr int XL320_ADDR_REGISTERED          = 47;
-        static constexpr int XL320_ADDR_MOVING              = 49;
-        static constexpr int XL320_ADDR_HW_ERROR_STATUS     = 50;
-        static constexpr int XL320_ADDR_PUNCH               = 51;
     };
 } //DynamixelDriver
 
-#endif
+#endif // XL320_DRIVER_HPP

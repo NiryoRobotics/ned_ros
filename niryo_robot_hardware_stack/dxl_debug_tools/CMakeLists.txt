@@ -119,12 +119,11 @@ if(CATKIN_ENABLE_TESTING)
   if(BUILD_UNIT_TESTS)
     catkin_add_gtest(
       ${PROJECT_NAME}_unit_tests
-      test/unit_tests.cpp
+      test/dxl_tools_unit_tests.cpp
     )
     if(TARGET ${PROJECT_NAME}_unit_tests)
-      target_link_libraries(
-        ${PROJECT_NAME}_unit_tests
-        ${PROJECT_NAME}
+      target_link_libraries(${PROJECT_NAME}_unit_tests
+          ${catkin_LIBRARIES}
       )
     endif()
   endif(BUILD_UNIT_TESTS)
@@ -132,15 +131,13 @@ if(CATKIN_ENABLE_TESTING)
   if(BUILD_INTEGRATION_TESTS)
     find_package(catkin REQUIRED rostest)
 
-    add_rostest_gtest(
-      ${PROJECT_NAME}_integration_tests
+    add_rostest_gtest(${PROJECT_NAME}_integration_tests
       test/test_dxl_debug_tools_node.test
       test/test_dxl_debug_tools_node.cpp
     )
     if(TARGET ${PROJECT_NAME}_integration_tests)
-      target_link_libraries(
-        ${PROJECT_NAME}_integration_tests
-        ${PROJECT_NAME}
+      target_link_libraries(${PROJECT_NAME}_integration_tests
+          ${catkin_LIBRARIES}
       )
     endif()
   endif(BUILD_INTEGRATION_TESTS)

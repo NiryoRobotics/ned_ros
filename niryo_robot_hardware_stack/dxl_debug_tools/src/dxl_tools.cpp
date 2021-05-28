@@ -19,7 +19,7 @@
 
 #include "dxl_debug_tools/dxl_tools.h"
 
-namespace robotDebug {
+namespace DxlDebugTools {
 
     /**
      * @brief DxlTools::DxlTools
