@@ -1,0 +1,4 @@
+<launch>
+    <node pkg="ttl_driver" type="ttl_driver_integration_test" name="ttl_driver"/>
+    <test test-name="test_ttl_driver" pkg="ttl_driver" type="test_ttl_driver" />
+</launch>

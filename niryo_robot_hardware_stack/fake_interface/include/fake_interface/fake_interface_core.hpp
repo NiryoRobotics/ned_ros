@@ -55,7 +55,7 @@
 #include <conveyor_interface/ControlConveyor.h>
 #include <conveyor_interface/ConveyorFeedback.h>
 
-#include <dynamixel_driver/DxlArrayMotorHardwareStatus.h>
+#include <ttl_driver/DxlArrayMotorHardwareStatus.h>
 #include <stepper_driver/StepperArrayMotorHardwareStatus.h>
 
 #include "fake_interface/FakeJointHardwareInterface.hpp"
@@ -73,7 +73,7 @@ namespace FakeInterface {
 
         void rosControlLoop();
 
-        dynamixel_driver::DxlArrayMotorHardwareStatus getDxlHwStatus();
+        ttl_driver::DxlArrayMotorHardwareStatus getDxlHwStatus();
         niryo_robot_msgs::BusState getDxlBusState();
         stepper_driver::StepperArrayMotorHardwareStatus getStepperHwStatus();
         niryo_robot_msgs::BusState getCanBusState();

@@ -29,7 +29,7 @@
 
 // niryo
 #include "model/tool_state.hpp"
-#include "dynamixel_driver/dxl_driver_core.hpp"
+#include "ttl_driver/dxl_driver_core.hpp"
 
 #include "tools_interface/PingDxlTool.h"
 #include "tools_interface/OpenGripper.h"
@@ -48,7 +48,7 @@ namespace ToolsInterface {
     class ToolsInterfaceCore
     {
         public:
-            ToolsInterfaceCore(std::shared_ptr<DynamixelDriver::DxlDriverCore> dynamixel);
+            ToolsInterfaceCore(std::shared_ptr<TTLDriver::DxlDriverCore> dynamixel);
             virtual ~ToolsInterfaceCore();
 
             bool isInitialized();
@@ -77,7 +77,7 @@ namespace ToolsInterface {
             ros::Publisher _tool_connection_publisher;
             std::thread _publish_tool_connection_thread;
 
-            std::shared_ptr<DynamixelDriver::DxlDriverCore> _dynamixel;
+            std::shared_ptr<TTLDriver::DxlDriverCore> _dynamixel;
 
             ros::ServiceServer _ping_and_set_dxl_tool_server;
             ros::ServiceServer _open_gripper_server;

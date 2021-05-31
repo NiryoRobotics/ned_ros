@@ -20,7 +20,7 @@
 import rospy
 import argparse
 
-from dynamixel_driver.srv import SendCustomDxlValue
+from ttl_driver.srv import SendCustomDxlValue
 
 if __name__ == '__main__':
     rospy.init_node("send_custom_dxl_value")
@@ -37,7 +37,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # 2. Call ROS Service
-    service_name = "/niryo_robot/dynamixel_driver/send_custom_dxl_value"
+    service_name = "/niryo_robot/ttl_driver/send_custom_dxl_value"
 
     try:
         rospy.wait_for_service(service_name, 1.0)

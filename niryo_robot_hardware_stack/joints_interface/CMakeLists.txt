@@ -24,7 +24,7 @@ find_package(catkin REQUIRED
         niryo_robot_msgs
         std_msgs
         sensor_msgs
-        dynamixel_driver
+        ttl_driver
         stepper_driver
         actionlib
         common
@@ -58,7 +58,7 @@ catkin_package(
         hardware_interface
         controller_manager
         niryo_robot_msgs
-        dynamixel_driver
+        ttl_driver
         stepper_driver
         actionlib
         common

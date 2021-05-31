@@ -104,7 +104,7 @@ namespace StepperDriver
             if(!_state_map.count(id))
                 addMotor(id);
             else
-                ROS_ERROR("StepperDriver::init - duplicate id %d. Please check your configuration file (niryo_robot_hardware_stack/dynamixel_driver/config/motors_config.yaml)", id);
+                ROS_ERROR("StepperDriver::init - duplicate id %d. Please check your configuration file (niryo_robot_hardware_stack/stepper_driver/config/motors_config.yaml)", id);
         }
 
         //display internal data for debug

@@ -20,7 +20,7 @@ find_package(catkin REQUIRED
     COMPONENTS
         roscpp
         std_msgs
-        dynamixel_driver
+        ttl_driver
         message_generation
         common
 )
@@ -61,7 +61,7 @@ catkin_package(
     CATKIN_DEPENDS
         roscpp
         std_msgs
-        dynamixel_driver
+        ttl_driver
         common
 )
 
@@ -91,7 +91,7 @@ add_dependencies(${PROJECT_NAME}
 )
 
 add_dependencies(${PROJECT_NAME}
-    dynamixel_driver_generate_messages_cpp
+    ttl_driver_generate_messages_cpp
 )
 
 add_dependencies(${PROJECT_NAME}_node

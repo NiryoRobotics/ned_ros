@@ -71,7 +71,7 @@ namespace NiryoRobotHardwareInterface
             if (_dxl_enabled)
             {
                 ROS_DEBUG("HardwareInterface::initNodes - Start Dynamixel Driver Node");
-                _dynamixel_driver = std::make_shared<DynamixelDriver::DxlDriverCore>();
+                _ttl_driver = std::make_shared<TTLDriver::DxlDriverCore>();
                 ros::Duration(0.25).sleep();
             }
             else {
@@ -91,11 +91,11 @@ namespace NiryoRobotHardwareInterface
             if (_can_enabled && _dxl_enabled)
             {
                 ROS_DEBUG("HardwareInterface::initNodes - Start Joints Interface Node");
-                _joints_interface = std::make_shared<JointsInterface::JointsInterfaceCore>(_dynamixel_driver, _stepper_driver);
+                _joints_interface = std::make_shared<JointsInterface::JointsInterfaceCore>(_ttl_driver, _stepper_driver);
                 ros::Duration(0.25).sleep();
 
                 ROS_DEBUG("HardwareInterface::initNodes - Start End Effector Interface Node");
-                _tools_interface = std::make_shared<ToolsInterface::ToolsInterfaceCore>(_dynamixel_driver);
+                _tools_interface = std::make_shared<ToolsInterface::ToolsInterfaceCore>(_ttl_driver);
                 ros::Duration(0.25).sleep();
 
                 ROS_DEBUG("HardwareInterface::initNodes - Start Tools Interface Node");
@@ -178,7 +178,7 @@ namespace NiryoRobotHardwareInterface
         {
             ROS_WARN("Hardware Interface - Stop Motor Report");
             _stepper_driver->activeDebugMode(false);
-            _dynamixel_driver->activeDebugMode(false);
+            _ttl_driver->activeDebugMode(false);
             res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
             res.message = "";
             return true;
@@ -198,13 +198,13 @@ namespace NiryoRobotHardwareInterface
         {
             ROS_WARN("Hardware Interface - Start Motors Report");
             _stepper_driver->activeDebugMode(true);
-            _dynamixel_driver->activeDebugMode(true);
+            _ttl_driver->activeDebugMode(true);
 
             int stepper_status = _stepper_driver->launchMotorsReport();
-            int dxl_status = _dynamixel_driver->launchMotorsReport();
+            int dxl_status = _ttl_driver->launchMotorsReport();
 
             _stepper_driver->activeDebugMode(false);
-            _dynamixel_driver->activeDebugMode(false);
+            _ttl_driver->activeDebugMode(false);
 
             ROS_WARN("Hardware Interface - Motors report ended");
 
@@ -236,7 +236,7 @@ namespace NiryoRobotHardwareInterface
     {
         if (!_simulation_mode)
         {
-            res.status = _dynamixel_driver->rebootMotors();
+            res.status = _ttl_driver->rebootMotors();
             if(COMM_SUCCESS == res.status)
             {
                 res.message = "Reboot motors done";
@@ -266,7 +266,7 @@ namespace NiryoRobotHardwareInterface
 
         while (ros::ok())
         {
-            dynamixel_driver::DxlArrayMotorHardwareStatus dxl_motor_state;
+            ttl_driver::DxlArrayMotorHardwareStatus dxl_motor_state;
             stepper_driver::StepperArrayMotorHardwareStatus stepper_motor_state;
 
             niryo_robot_msgs::BusState dxl_bus_state;
@@ -284,8 +284,8 @@ namespace NiryoRobotHardwareInterface
             {
                 if (_dxl_enabled)
                 {
-                    dxl_motor_state = _dynamixel_driver->getHwStatus();
-                    dxl_bus_state = _dynamixel_driver->getBusState();
+                    dxl_motor_state = _ttl_driver->getHwStatus();
+                    dxl_bus_state = _ttl_driver->getBusState();
                 }
                 if (_can_enabled)
                 {

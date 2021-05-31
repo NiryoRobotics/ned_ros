@@ -23,7 +23,7 @@
 
 // niryo
 #include "joints_interface/joints_interface_core.hpp"
-#include "dynamixel_driver/dxl_driver_core.hpp"
+#include "ttl_driver/dxl_driver_core.hpp"
 #include "stepper_driver/stepper_driver_core.hpp"
 
 int main(int argc, char **argv)
@@ -37,7 +37,7 @@ int main(int argc, char **argv)
     
     ros::NodeHandle nh;
    
-    auto dynamixel = std::make_shared<DynamixelDriver::DxlDriverCore>();
+    auto dynamixel = std::make_shared<TTLDriver::DxlDriverCore>();
     ros::Duration(1).sleep();
 
     auto stepper = std::make_shared<StepperDriver::StepperDriverCore>();

@@ -34,7 +34,7 @@
 
 #include "joints_interface/calibration_manager.hpp"
 #include "stepper_driver/stepper_driver_core.hpp"
-#include "dynamixel_driver/dxl_driver_core.hpp"
+#include "ttl_driver/dxl_driver_core.hpp"
 
 #include "model/joint_state.hpp"
 
@@ -45,7 +45,7 @@ namespace JointsInterface {
 
     public:
         JointHardwareInterface(
-            std::shared_ptr<DynamixelDriver::DxlDriverCore> dynamixel,
+            std::shared_ptr<TTLDriver::DxlDriverCore> dynamixel,
             std::shared_ptr<StepperDriver::StepperDriverCore> stepper);
 
         void sendInitMotorsParams();
@@ -81,7 +81,7 @@ namespace JointsInterface {
         hardware_interface::JointStateInterface _joint_state_interface;
         hardware_interface::PositionJointInterface _joint_position_interface;
 
-        std::shared_ptr<DynamixelDriver::DxlDriverCore> _dynamixelCore;
+        std::shared_ptr<TTLDriver::DxlDriverCore> _dynamixelCore;
         std::shared_ptr<StepperDriver::StepperDriverCore> _stepperCore;
         std::unique_ptr<CalibrationManager> _calibration_manager;
 

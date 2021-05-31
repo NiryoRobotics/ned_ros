@@ -278,10 +278,10 @@ namespace FakeInterface {
         return true;
     }
 
-    dynamixel_driver::DxlArrayMotorHardwareStatus FakeInterfaceCore::getDxlHwStatus()
+    ttl_driver::DxlArrayMotorHardwareStatus FakeInterfaceCore::getDxlHwStatus()
     {
-        dynamixel_driver::DxlMotorHardwareStatus data;
-        dynamixel_driver::DxlArrayMotorHardwareStatus hw_state;
+        ttl_driver::DxlMotorHardwareStatus data;
+        ttl_driver::DxlArrayMotorHardwareStatus hw_state;
         for (int i = 0; i < 3; i++)
         {
             data.motor_identity.motor_id = _dxl_motors_id.at(i);

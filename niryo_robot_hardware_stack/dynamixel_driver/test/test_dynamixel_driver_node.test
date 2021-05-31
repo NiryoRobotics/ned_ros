@@ -1,4 +1,0 @@
-<launch>
-    <node pkg="dynamixel_driver" type="dynamixel_driver_integration_test" name="dynamixel_driver"/>
-    <test test-name="test_dynamixel_driver" pkg="dynamixel_driver" type="test_dynamixel_driver" />
-</launch>

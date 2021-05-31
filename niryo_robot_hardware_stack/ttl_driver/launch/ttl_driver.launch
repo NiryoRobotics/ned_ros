@@ -1,0 +1,13 @@
+<launch>
+  <env name="ROSCONSOLE_CONFIG_FILE"
+       value="$(find ttl_driver)/config/ttl_driver_trace.conf"/>
+
+  <arg name="hardware_version" value="ned"/>
+
+  <node pkg="ttl_driver" type="ttl_driver_node" name="ttl_driver" output="screen">  
+    <rosparam file="$(find ttl_driver)/config/$(arg hardware_version)/dxl_bus_config.yaml" command="load"/>
+    <rosparam file="$(find ttl_driver)/config/motors_config.yaml" command="load"/>
+    <rosparam file="$(find ttl_driver)/config/default.yaml" command="load"/>
+  </node>
+  
+</launch>

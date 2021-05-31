@@ -25,13 +25,13 @@
 
 //niryo
 #include "tools_interface/tools_interface_core.hpp"
-#include "dynamixel_driver/dxl_driver.hpp"
+#include "ttl_driver/dxl_driver.hpp"
 
 #include "model/tool_state.hpp"
 #include "model/dxl_command_type_enum.hpp"
 #include "util/util_defs.hpp"
 
-using namespace DynamixelDriver;
+using namespace TTLDriver;
 using namespace common::model;
 using namespace std;
 

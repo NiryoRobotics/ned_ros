@@ -29,7 +29,7 @@ namespace JointsInterface {
      * @param dynamixel
      * @param stepper
      */
-    JointsInterfaceCore::JointsInterfaceCore(std::shared_ptr<DynamixelDriver::DxlDriverCore> dynamixel,
+    JointsInterfaceCore::JointsInterfaceCore(std::shared_ptr<TTLDriver::DxlDriverCore> dynamixel,
                                              std::shared_ptr<StepperDriver::StepperDriverCore> stepper)
     {
         init(dynamixel, stepper);
@@ -53,7 +53,7 @@ namespace JointsInterface {
      * @param dynamixel
      * @param stepper
      */
-    void JointsInterfaceCore::init(std::shared_ptr<DynamixelDriver::DxlDriverCore> dynamixel,
+    void JointsInterfaceCore::init(std::shared_ptr<TTLDriver::DxlDriverCore> dynamixel,
                                    std::shared_ptr<StepperDriver::StepperDriverCore> stepper)
     {
         initParams();

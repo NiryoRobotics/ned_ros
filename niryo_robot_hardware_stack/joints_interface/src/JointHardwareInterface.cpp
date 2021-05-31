@@ -33,7 +33,7 @@ namespace JointsInterface {
      * @param dynamixel
      * @param stepper
      */
-    JointHardwareInterface::JointHardwareInterface(shared_ptr<DynamixelDriver::DxlDriverCore> dynamixel,
+    JointHardwareInterface::JointHardwareInterface(shared_ptr<TTLDriver::DxlDriverCore> dynamixel,
                                                    shared_ptr<StepperDriver::StepperDriverCore> stepper) :
         _dynamixelCore(dynamixel),
         _stepperCore(stepper),
