@@ -37,8 +37,9 @@ namespace DynamixelDriver {
         XC430Driver(std::shared_ptr<dynamixel::PortHandler> portHandler,
                     std::shared_ptr<dynamixel::PacketHandler> packetHandler);
 
-        // XDriver interface
-    public:
+        virtual ~XC430Driver() override;
+
+        std::string str() const override;
         std::string interpreteErrorState(uint32_t hw_state)  override;
 
          int checkModelNumber(uint8_t id)  override;

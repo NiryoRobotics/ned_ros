@@ -28,10 +28,8 @@ namespace DynamixelDriver
      * @param portHandler
      * @param packetHandler
      */
-    XDriver::XDriver(common::model::EMotorType type,
-                     shared_ptr<dynamixel::PortHandler> portHandler,
+    XDriver::XDriver(shared_ptr<dynamixel::PortHandler> portHandler,
                      shared_ptr<dynamixel::PacketHandler> packetHandler) :
-        _type(type),
         _dxlPortHandler(portHandler),
         _dxlPacketHandler(packetHandler)
     {
@@ -117,7 +115,6 @@ namespace DynamixelDriver
     {
         ostringstream ss;
 
-        ss << "Driver - type " << static_cast<int>(_type) << "\n";
         ss << "packet handler " << (_dxlPacketHandler ? "OK" : "Not Ok") << "\n";
         ss << "port handler " << (_dxlPortHandler ? "OK" : "Not Ok") << "\n";
 

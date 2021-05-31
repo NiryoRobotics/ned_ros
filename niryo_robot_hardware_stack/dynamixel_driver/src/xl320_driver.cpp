@@ -31,17 +31,33 @@ namespace DynamixelDriver
      */
     XL320Driver::XL320Driver(shared_ptr<dynamixel::PortHandler> portHandler,
                              shared_ptr<dynamixel::PacketHandler> packetHandler) :
-        XDriver(common::model::EMotorType::XL320,
-                portHandler,
+        XDriver(portHandler,
                 packetHandler)
     {
     }
 
+    /**
+     * @brief XL320Driver::~XL320Driver
+     */
     XL320Driver::~XL320Driver()
     {
 
     }
 
+    /**
+     * @brief XL320Driver::str
+     * @return
+     */
+    string XL320Driver::str() const
+    {
+       return "Driver - type: XL320" + XDriver::str();
+    }
+
+    /**
+     * @brief XL320Driver::interpreteErrorState
+     * @param hw_state
+     * @return
+     */
     string XL320Driver::interpreteErrorState(uint32_t hw_state)
     {
         string hardware_message;

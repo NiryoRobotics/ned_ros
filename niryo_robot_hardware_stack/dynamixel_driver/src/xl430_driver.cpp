@@ -30,12 +30,32 @@ namespace DynamixelDriver
      */
     XL430Driver::XL430Driver(shared_ptr<dynamixel::PortHandler> portHandler,
                              shared_ptr<dynamixel::PacketHandler> packetHandler)
-        : XDriver(common::model::EMotorType::XL430,
-                  portHandler,
+        : XDriver(portHandler,
                   packetHandler)
     {
     }
 
+    /**
+     * @brief XL430Driver::~XL430Driver
+     */
+    XL430Driver::~XL430Driver()
+    {
+    }
+
+    /**
+     * @brief XL430Driver::str
+     * @return
+     */
+    string XL430Driver::str() const
+    {
+       return "Driver - type: XL430" + XDriver::str();
+    }
+
+    /**
+     * @brief XL430Driver::interpreteErrorState
+     * @param hw_state
+     * @return
+     */
     string XL430Driver::interpreteErrorState(uint32_t hw_state)
     {
         string hardware_message;

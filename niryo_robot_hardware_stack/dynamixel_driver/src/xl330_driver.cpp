@@ -31,12 +31,33 @@ namespace DynamixelDriver
      */
     XL330Driver::XL330Driver(shared_ptr<dynamixel::PortHandler> portHandler,
                              shared_ptr<dynamixel::PacketHandler> packetHandler)
-        : XDriver(common::model::EMotorType::XL330,
-                  portHandler,
+        : XDriver(portHandler,
                   packetHandler)
     {
     }
 
+    /**
+     * @brief XL330Driver::~XL330Driver
+     */
+    XL330Driver::~XL330Driver()
+    {
+
+    }
+
+    /**
+     * @brief XL330Driver::str
+     * @return
+     */
+    string XL330Driver::str() const
+    {
+       return "Driver - type: XL330" + XDriver::str();
+    }
+
+    /**
+     * @brief XL330Driver::interpreteErrorState
+     * @param hw_state
+     * @return
+     */
     string XL330Driver::interpreteErrorState(uint32_t hw_state)
     {
         string hardware_message;

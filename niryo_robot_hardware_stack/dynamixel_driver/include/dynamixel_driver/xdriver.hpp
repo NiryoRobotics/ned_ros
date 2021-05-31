@@ -37,8 +37,7 @@ namespace DynamixelDriver
     {
 
     public:
-        XDriver(common::model::EMotorType type,
-                std::shared_ptr<dynamixel::PortHandler> portHandler,
+        XDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
                 std::shared_ptr<dynamixel::PacketHandler> packetHandler);
         virtual ~XDriver();
 
@@ -48,7 +47,7 @@ namespace DynamixelDriver
         int scan(std::vector<uint8_t> &id_list);
         int reboot(uint8_t id);
 
-        std::string str() const;
+        virtual std::string str() const;
 
         virtual std::string interpreteErrorState(uint32_t hw_state) = 0;
 
@@ -56,7 +55,7 @@ namespace DynamixelDriver
         virtual int checkModelNumber(uint8_t id) = 0;
 
         // eeprom write
-        virtual int changeId(uint8_t id, uint8_t new_id);
+        virtual int changeId(uint8_t id, uint8_t new_id) = 0;
 
         virtual int changeBaudRate(uint8_t id, uint32_t new_baudrate) = 0;
 
@@ -108,14 +107,12 @@ namespace DynamixelDriver
         virtual int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list) = 0;
 
         // custom write and read
-        virtual int read(uint8_t address, uint8_t data_len, uint8_t id, uint32_t *data);
-        virtual int write(uint8_t address, uint8_t data_len, uint8_t id, uint32_t data);
+        int read(uint8_t address, uint8_t data_len, uint8_t id, uint32_t *data);
+        int write(uint8_t address, uint8_t data_len, uint8_t id, uint32_t data);
 
     protected:
-        common::model::EMotorType _type;
-
-        virtual int syncRead(uint8_t address, uint8_t data_len, const std::vector<uint8_t> &id_list, std::vector<uint32_t> &data_list);
-        virtual int syncWrite(uint8_t address, uint8_t data_len, const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &data_list);
+        int syncRead(uint8_t address, uint8_t data_len, const std::vector<uint8_t> &id_list, std::vector<uint32_t> &data_list);
+        int syncWrite(uint8_t address, uint8_t data_len, const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &data_list);
 
         static constexpr int PING_WRONG_MODEL_NUMBER = 30;
 

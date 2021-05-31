@@ -36,6 +36,9 @@ namespace DynamixelDriver
         XL330Driver(std::shared_ptr<dynamixel::PortHandler> portHandler,
                     std::shared_ptr<dynamixel::PacketHandler> packetHandler);
 
+        virtual ~XL330Driver() override;
+
+        std::string str() const override;
         std::string interpreteErrorState(uint32_t hw_state) override;
 
         //from XDriver interface
