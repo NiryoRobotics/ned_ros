@@ -55,11 +55,11 @@ Services - Dynamixel Driver
    *  -  Name
       -  Message Type
       -  Description
-   *  -  ``niryo_robot/dynamixel_driver/set_dxl_leds``
+   *  -  ``niryo_robot/ttl_driver/set_dxl_leds``
       -  :ref:`SetInt`
       -  Control dynmixel LED
-   *  -  ``niryo_robot/dynamixel_driver/send_custom_dxl_value``
-      -  :ref:`dynamixel_driver/SendCustomDxlValue<SendCustomDxlValue (Service)>`
+   *  -  ``niryo_robot/ttl_driver/send_custom_dxl_value``
+      -  :ref:`ttl_driver/SendCustomDxlValue<SendCustomDxlValue (Service)>`
       -  Send a custom dynamixel command
 
 Dependencies - Dynamixel Driver
@@ -74,23 +74,23 @@ Services & Messages files - Dynamixel Driver
 SendCustomDxlValue (Service)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. literalinclude:: ../../../niryo_robot_hardware_stack/dynamixel_driver/srv/SendCustomDxlValue.srv
+.. literalinclude:: ../../../niryo_robot_hardware_stack/ttl_driver/srv/SendCustomDxlValue.srv
    :language: rostype
 
 DxlMotorHardwareStatus (Message)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. literalinclude:: ../../../niryo_robot_hardware_stack/dynamixel_driver/msg/DxlMotorHardwareStatus.msg
+.. literalinclude:: ../../../niryo_robot_hardware_stack/ttl_driver/msg/DxlMotorHardwareStatus.msg
    :language: rostype
 
 DxlMotorCommand (Message)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. literalinclude:: ../../../niryo_robot_hardware_stack/dynamixel_driver/msg/DxlMotorCommand.msg
+.. literalinclude:: ../../../niryo_robot_hardware_stack/ttl_driver/msg/DxlMotorCommand.msg
    :language: rostype
 
 DxlArrayMotorHardwareStatus (Message)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. literalinclude:: ../../../niryo_robot_hardware_stack/dynamixel_driver/msg/DxlArrayMotorHardwareStatus.msg
+.. literalinclude:: ../../../niryo_robot_hardware_stack/ttl_driver/msg/DxlArrayMotorHardwareStatus.msg
    :language: rostype

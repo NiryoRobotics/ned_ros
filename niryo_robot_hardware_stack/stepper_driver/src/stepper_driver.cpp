@@ -205,7 +205,7 @@ namespace StepperDriver
      */
     void StepperDriver::addMotor(uint8_t id, bool isConveyor)
     {
-        ROS_DEBUG("DxlDriver::addMotor - Add motor id: %d", id);
+        ROS_DEBUG("StepperDriver::addMotor - Add motor id: %d", id);
 
         //add id to _state_map
         _state_map.insert(std::make_pair(id, std::make_shared<StepperMotorState>(id, isConveyor)));
@@ -217,7 +217,7 @@ namespace StepperDriver
      */
     void StepperDriver::removeMotor(uint8_t id)
     {
-        ROS_DEBUG("DxlDriver::removeMotor - Remove motor id: %d", id);
+        ROS_DEBUG("StepperDriver::removeMotor - Remove motor id: %d", id);
 
         if(_state_map.count(id)) {
             _state_map.erase(id);
@@ -232,7 +232,7 @@ namespace StepperDriver
     int32_t StepperDriver::getPosition(uint8_t motor_id) const
     {
         if(!_state_map.count(motor_id) || !_state_map.at(motor_id)) {
-            throw std::out_of_range("DxlDriver::getPosition: Unknown motor id");
+            throw std::out_of_range("StepperDriver::getPosition: Unknown motor id");
         }
 
         return _state_map.at(motor_id)->getPositionState();
@@ -874,7 +874,7 @@ namespace StepperDriver
     int32_t StepperDriver::getCalibrationResult(uint8_t motor_id) const
     {
         if(!_state_map.count(motor_id) && _state_map.at(motor_id))
-            throw std::out_of_range("DxlDriver::getMotorsState: Unknown motor id");
+            throw std::out_of_range("StepperDriver::getMotorsState: Unknown motor id");
 
         return _state_map.at(motor_id)->getCalibrationValue();
     }
@@ -887,7 +887,7 @@ namespace StepperDriver
     StepperMotorState StepperDriver::getMotorState(uint8_t motor_id) const
     {
         if(!_state_map.count(motor_id) && _state_map.at(motor_id))
-            throw std::out_of_range("DxlDriver::getMotorsState: Unknown motor id");
+            throw std::out_of_range("StepperDriver::getMotorsState: Unknown motor id");
 
         return *_state_map.at(motor_id).get();
     }

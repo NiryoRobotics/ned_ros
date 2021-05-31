@@ -85,7 +85,7 @@ namespace NiryoRobotHardwareInterface
         bool _simulation_mode{false};
         bool _gazebo{false};
         bool _can_enabled{false};
-        bool _dxl_enabled{false};
+        bool _ttl_enabled{false};
 
         double _publish_hw_status_frequency{0.0};
         double _publish_software_version_frequency{0.0};

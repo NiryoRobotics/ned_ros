@@ -68,7 +68,7 @@ namespace NiryoRobotHardwareInterface
         ROS_DEBUG("HardwareInterface::initNodes - Init Nodes");
         if (!_simulation_mode)
         {
-            if (_dxl_enabled)
+            if (_ttl_enabled)
             {
                 ROS_DEBUG("HardwareInterface::initNodes - Start Dynamixel Driver Node");
                 _ttl_driver = std::make_shared<TTLDriver::DxlDriverCore>();
@@ -88,7 +88,7 @@ namespace NiryoRobotHardwareInterface
                 ROS_DEBUG("HardwareInterface::initNodes - CAN communication is disabled for debug purposes");
             }
 
-            if (_can_enabled && _dxl_enabled)
+            if (_can_enabled && _ttl_enabled)
             {
                 ROS_DEBUG("HardwareInterface::initNodes - Start Joints Interface Node");
                 _joints_interface = std::make_shared<JointsInterface::JointsInterfaceCore>(_ttl_driver, _stepper_driver);
@@ -150,7 +150,7 @@ namespace NiryoRobotHardwareInterface
         ros::param::get("~gazebo", _gazebo);
 
         ros::param::get("~can_enabled", _can_enabled);
-        ros::param::get("~dxl_enabled", _dxl_enabled);
+        ros::param::get("~ttl_enabled", _ttl_enabled);
         
         _rpi_image_version.erase(_rpi_image_version.find_last_not_of(" \n\r\t") + 1);
         _ros_niryo_robot_version.erase(_ros_niryo_robot_version.find_last_not_of(" \n\r\t") + 1);
@@ -159,7 +159,7 @@ namespace NiryoRobotHardwareInterface
         ROS_DEBUG("Hardware Interface - publish_software_version_frequency : %f", _publish_software_version_frequency);
 
         ROS_DEBUG("Hardware Interface - can_enabled : %s", _can_enabled ? "true" : "false");
-        ROS_DEBUG("Hardware Interface - dxl_enabled : %s", _dxl_enabled ? "true" : "false");
+        ROS_DEBUG("Hardware Interface - ttl_enabled : %s", _ttl_enabled ? "true" : "false");
     }
 
     //********************
@@ -282,7 +282,7 @@ namespace NiryoRobotHardwareInterface
 
             if (!_simulation_mode)
             {
-                if (_dxl_enabled)
+                if (_ttl_enabled)
                 {
                     dxl_motor_state = _ttl_driver->getHwStatus();
                     dxl_bus_state = _ttl_driver->getBusState();
@@ -292,7 +292,7 @@ namespace NiryoRobotHardwareInterface
                     stepper_motor_state = _stepper_driver->getHwStatus();
                     can_bus_state = _stepper_driver->getBusState();
                 }
-                if (_can_enabled && _dxl_enabled)
+                if (_can_enabled && _ttl_enabled)
                 {
                     _joints_interface->getCalibrationState(need_calibration, calibration_in_progress);
                 }
@@ -425,7 +425,7 @@ namespace NiryoRobotHardwareInterface
                 {
                     stepper_motor_state = _stepper_driver->getHwStatus();
                 }
-                if (_can_enabled && _dxl_enabled)
+                if (_can_enabled && _ttl_enabled)
                 {
                     joints_state = _joints_interface->getJointsState();
                 }
