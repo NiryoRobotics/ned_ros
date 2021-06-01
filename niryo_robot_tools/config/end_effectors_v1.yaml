@@ -50,7 +50,6 @@ tool_list:
     specs:
       open_position: 600
       open_hold_torque: 128
-      open_max_torque: 1023
       close_position: 230
       close_hold_torque: 128
       close_max_torque: 1023
@@ -71,7 +70,6 @@ tool_list:
     specs:
       open_position: 640
       open_hold_torque: 128
-      open_max_torque: 1023
       close_position: 400
       close_hold_torque: 128
       close_max_torque: 1023
@@ -92,7 +90,6 @@ tool_list:
     specs:
       open_position: 450
       open_hold_torque: 128
-      open_max_torque: 1023
       close_position: 220
       close_hold_torque: 160
       close_max_torque: 1023
@@ -113,7 +110,6 @@ tool_list:
     specs:
       open_position: 518
       open_hold_torque: 128
-      open_max_torque: 1023
       close_position: 157
       close_hold_torque: 160
       close_max_torque: 1023

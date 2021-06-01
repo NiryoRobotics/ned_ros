@@ -269,7 +269,8 @@ namespace ToolsInterface {
             list_cmd.emplace_back(cmd);
 
             cmd.setType(EDxlCommandType::CMD_TYPE_EFFORT);
-            cmd.setParam(req.open_max_torque);
+            //cmd.setParam(req.open_max_torque); // cc adapt niryo studio and srv for that
+            cmd.setParam(1023);
             list_cmd.emplace_back(cmd);
 
             // set hold torque

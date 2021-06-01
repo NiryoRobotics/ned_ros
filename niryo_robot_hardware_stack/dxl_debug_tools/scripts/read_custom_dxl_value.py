@@ -47,7 +47,7 @@ if __name__ == '__main__':
 
     try:
         read_cmd = rospy.ServiceProxy(service_name, ReadCustomDxlValue)
-        response = read_cmd(args.type, args.id, args.address, args.size)
+        response = read_cmd(args.type, args.id, value, args.address, args.size)
         rospy.loginfo(response.message)
     except rospy.ServiceException as e:
         rospy.logwarn(e)
