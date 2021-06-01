@@ -23,7 +23,7 @@
 // Declare a test
 TEST(ToolsInterfaceTestSuite, testInit)
 {
-    auto ttl_driver = std::make_shared<TtlDriver::TtkDriverCore>();
+    auto ttl_driver = std::make_shared<TtlDriver::TtlDriverCore>();
 
     ToolsInterface::ToolsInterfaceCore tools_core(ttl_driver);
     EXPECT_TRUE(tools_core.isInitialized());

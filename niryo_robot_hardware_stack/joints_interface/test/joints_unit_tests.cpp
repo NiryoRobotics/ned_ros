@@ -23,10 +23,10 @@
 // Declare a test
 TEST(JointsInterfaceTestSuite, testInitJoints)
 {
-    auto dxlDriverCore = std::make_shared<DynamixelDriver::DxlDriverCore>();
-    auto stepperDriverCore = std::make_shared<StepperDriver::StepperDriverCore>();
+    auto ttl_driver_core = std::make_shared<TtlDriver::TtlDriverCore>();
+    auto can_driver_core = std::make_shared<CanDriver::CanDriverCore>();
 
-    JointsInterface::JointsInterfaceCore joints_core(dxlDriverCore, stepperDriverCore);
+    JointsInterface::JointsInterfaceCore joints_core(ttl_driver_core, can_driver_core);
 
     std::vector<std::shared_ptr<common::model::JointState> > jStates = joints_core.getJointsState();
 
