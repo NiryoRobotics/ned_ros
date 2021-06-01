@@ -33,10 +33,10 @@ namespace JointsInterface {
      * @param dynamixel
      * @param stepper
      */
-    JointHardwareInterface::JointHardwareInterface(shared_ptr<TTLDriver::DxlDriverCore> dynamixel,
-                                                   shared_ptr<StepperDriver::StepperDriverCore> stepper) :
-        _dynamixelCore(dynamixel),
-        _stepperCore(stepper),
+    JointHardwareInterface::JointHardwareInterface(shared_ptr<TtlDriver::TtlDriverCore> ttl_driver,
+                                                   shared_ptr<CanDriver::CanDriverCore> can_driver) :
+        _ttl_driver_core(ttl_driver),
+        _can_driver_core(can_driver),
         _learning_mode(true)
     {
 
@@ -46,7 +46,7 @@ namespace JointsInterface {
 
         activateLearningMode();
 
-        _calibration_manager.reset(new CalibrationManager(_joint_list, _stepperCore, _dynamixelCore));
+        _calibration_manager.reset(new CalibrationManager(_joint_list, _can_driver_core, _ttl_driver_core));
     }
 
     /**
@@ -60,17 +60,17 @@ namespace JointsInterface {
         {
             if(jState && jState->isValid()) {
                 if(jState->isStepper()) {
-                    newPositionState = _stepperCore->getStepperState(jState->getId()).getPositionState();
+                    newPositionState = _can_driver_core->getStepperState(jState->getId()).getPositionState();
                 }
                 else {
-                    newPositionState = _dynamixelCore->getDxlState(jState->getId()).getPositionState();
+                    newPositionState = _ttl_driver_core->getDxlState(jState->getId()).getPositionState();
                 }
 
                 jState->pos = jState->to_rad_pos(newPositionState);
             }
         }
 
-        if (!_stepperCore->isConnectionOk())
+        if (!_can_driver_core->isConnectionOk())
             this->setNeedCalibration();
     }
 
@@ -97,8 +97,8 @@ namespace JointsInterface {
             }
         }
 
-        _stepperCore->setTrajectoryControllerCommands(stepper_cmd);
-        _dynamixelCore->setTrajectoryControllerCommands(dxl_cmd);
+        _can_driver_core->setTrajectoryControllerCommands(stepper_cmd);
+        _ttl_driver_core->setTrajectoryControllerCommands(dxl_cmd);
     }
 
     /**
@@ -230,7 +230,7 @@ namespace JointsInterface {
         {
             if(jState && jState->isStepper()) {
                 StepperMotorCmd cmd(EStepperCommandType::CMD_TYPE_MICRO_STEPS, jState->getId(), {8});
-                _stepperCore->addSingleCommandToQueue(cmd);
+                _can_driver_core->addSingleCommandToQueue(cmd);
             }
         }
         ros::Duration(0.05).sleep();
@@ -240,7 +240,7 @@ namespace JointsInterface {
         {
             if(jState && jState->isStepper()) {
                 StepperMotorCmd cmd(EStepperCommandType::CMD_TYPE_MAX_EFFORT, jState->getId(), {static_cast<int32_t>(dynamic_pointer_cast<StepperMotorState>(jState)->getMaxEffort())});
-                _stepperCore->addSingleCommandToQueue(cmd);
+                _can_driver_core->addSingleCommandToQueue(cmd);
             }
         }
         ros::Duration(0.05).sleep();
@@ -274,7 +274,7 @@ namespace JointsInterface {
      */
     bool JointHardwareInterface::needCalibration() const
     {
-        bool result = (EStepperCalibrationStatus::CALIBRATION_OK != _stepperCore->getCalibrationStatus());
+        bool result = (EStepperCalibrationStatus::CALIBRATION_OK != _can_driver_core->getCalibrationStatus());
 
         ROS_DEBUG_THROTTLE(2, "JointHardwareInterface::needCalibration - Need calibration returned: %d", static_cast<int>(result));
         return result;
@@ -313,7 +313,7 @@ namespace JointsInterface {
      */
     void JointHardwareInterface::setNeedCalibration()
     {
-        _stepperCore->resetCalibration();
+        _can_driver_core->resetCalibration();
     }
 
     /**
@@ -323,7 +323,7 @@ namespace JointsInterface {
     {
         ROS_DEBUG("JointHardwareInterface::activateLearningMode - activate learning mode");
 
-        if(_stepperCore && _dynamixelCore) {
+        if(_can_driver_core && _ttl_driver_core) {
             SynchronizeMotorCmd dxl_cmd(EDxlCommandType::CMD_TYPE_LEARNING_MODE);
             StepperMotorCmd stepper_cmd(EStepperCommandType::CMD_TYPE_TORQUE);
 
@@ -334,12 +334,12 @@ namespace JointsInterface {
                     else if(jState->isStepper()) {
                         stepper_cmd.setId(jState->getId());
                         stepper_cmd.setParams({0});
-                        _stepperCore->addSingleCommandToQueue(stepper_cmd);
+                        _can_driver_core->addSingleCommandToQueue(stepper_cmd);
                     }
                 }
             }
 
-            _dynamixelCore->setSyncCommand(dxl_cmd);
+            _ttl_driver_core->setSyncCommand(dxl_cmd);
 
             _learning_mode = true;
         }
@@ -351,7 +351,7 @@ namespace JointsInterface {
     void JointHardwareInterface::deactivateLearningMode()
     {
         ROS_DEBUG("JointHardwareInterface::deactivateLearningMode - deactivate learning mode");
-        if(_stepperCore && _dynamixelCore) {
+        if(_can_driver_core && _ttl_driver_core) {
             SynchronizeMotorCmd dxl_cmd(EDxlCommandType::CMD_TYPE_LEARNING_MODE);
             StepperMotorCmd stepper_cmd(EStepperCommandType::CMD_TYPE_TORQUE);
 
@@ -366,12 +366,12 @@ namespace JointsInterface {
                         stepper_cmd.setId(jState->getId());
                         stepper_cmd.setParams({1});
 
-                        _stepperCore->addSingleCommandToQueue(stepper_cmd);
+                        _can_driver_core->addSingleCommandToQueue(stepper_cmd);
                     }
                 }
             }
 
-            _dynamixelCore->setSyncCommand(dxl_cmd);
+            _ttl_driver_core->setSyncCommand(dxl_cmd);
 
             _learning_mode = true;
         }
@@ -385,7 +385,7 @@ namespace JointsInterface {
     {
         ROS_DEBUG("JointHardwareInterface::synchronizeMotors");
 
-        if(_stepperCore) {
+        if(_can_driver_core) {
             StepperMotorCmd stepper_cmd(EStepperCommandType::CMD_TYPE_SYNCHRONIZE);
 
             for(auto const& jState: _joint_list)
@@ -393,7 +393,7 @@ namespace JointsInterface {
                 if(jState && jState->isValid() && jState->isStepper())
                 {
                     StepperMotorCmd cmd(EStepperCommandType::CMD_TYPE_SYNCHRONIZE, jState->getId(), {synchronize});
-                    _stepperCore->addSingleCommandToQueue(stepper_cmd);
+                    _can_driver_core->addSingleCommandToQueue(stepper_cmd);
                 }
             }
         }
@@ -406,6 +406,7 @@ namespace JointsInterface {
      */
     string JointHardwareInterface::jointIdToJointName(uint8_t id) const
     {
+
         if(_map_stepper_name.count(id))
             return _map_stepper_name.at(id);
         else if(_map_dxl_name.count(id))
@@ -432,35 +433,35 @@ namespace JointsInterface {
             SingleMotorCmd dxl_cmd_p(EDxlCommandType::CMD_TYPE_P_GAIN, motor_id, dxlState->getPGain());
 
             if(dxl_cmd_p.isValid())
-                _dynamixelCore->addSingleCommandToQueue(dxl_cmd_p);
+                _ttl_driver_core->addSingleCommandToQueue(dxl_cmd_p);
         }
 
         if(dxlState->getIGain() > 0) {
             SingleMotorCmd dxl_cmd_i(EDxlCommandType::CMD_TYPE_I_GAIN, motor_id, dxlState->getIGain());
 
             if(dxl_cmd_i.isValid())
-                _dynamixelCore->addSingleCommandToQueue(dxl_cmd_i);
+                _ttl_driver_core->addSingleCommandToQueue(dxl_cmd_i);
         }
 
         if(dxlState->getDGain() > 0) {
             SingleMotorCmd dxl_cmd_d(EDxlCommandType::CMD_TYPE_D_GAIN, motor_id, dxlState->getDGain());
 
             if(dxl_cmd_d.isValid())
-                _dynamixelCore->addSingleCommandToQueue(dxl_cmd_d);
+                _ttl_driver_core->addSingleCommandToQueue(dxl_cmd_d);
         }
 
         if(dxlState->getFF1Gain() > 0) {
             SingleMotorCmd dxl_cmd_ff1(EDxlCommandType::CMD_TYPE_FF1_GAIN, motor_id, dxlState->getFF1Gain());
 
             if(dxl_cmd_ff1.isValid())
-                _dynamixelCore->addSingleCommandToQueue(dxl_cmd_ff1);
+                _ttl_driver_core->addSingleCommandToQueue(dxl_cmd_ff1);
         }
 
         if(dxlState->getFF2Gain() > 0) {
             SingleMotorCmd dxl_cmd_ff2(EDxlCommandType::CMD_TYPE_FF2_GAIN, motor_id, dxlState->getFF2Gain());
 
             if(dxl_cmd_ff2.isValid())
-                _dynamixelCore->addSingleCommandToQueue(dxl_cmd_ff2);
+                _ttl_driver_core->addSingleCommandToQueue(dxl_cmd_ff2);
         }
 
         return true;

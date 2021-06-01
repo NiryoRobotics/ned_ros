@@ -278,7 +278,7 @@ namespace FakeInterface {
         return true;
     }
 
-    ttl_driver::DxlArrayMotorHardwareStatus FakeInterfaceCore::getDxlHwStatus()
+    ttl_driver::DxlArrayMotorHardwareStatus FakeInterfaceCore::getTtlHwStatus()
     {
         ttl_driver::DxlMotorHardwareStatus data;
         ttl_driver::DxlArrayMotorHardwareStatus hw_state;
@@ -294,7 +294,7 @@ namespace FakeInterface {
         return hw_state;
     }
 
-    niryo_robot_msgs::BusState FakeInterfaceCore::getDxlBusState()
+    niryo_robot_msgs::BusState FakeInterfaceCore::getTtlBusState()
     {
         niryo_robot_msgs::BusState dxl_bus_state;
 
@@ -304,10 +304,10 @@ namespace FakeInterface {
         return dxl_bus_state;
     }
 
-    stepper_driver::StepperArrayMotorHardwareStatus FakeInterfaceCore::getStepperHwStatus()
+    can_driver::StepperArrayMotorHardwareStatus FakeInterfaceCore::getCanHwStatus()
     {
-        stepper_driver::StepperMotorHardwareStatus data;
-        stepper_driver::StepperArrayMotorHardwareStatus hw_state;
+        can_driver::StepperMotorHardwareStatus data;
+        can_driver::StepperArrayMotorHardwareStatus hw_state;
 
         for(int i = 0; i < 3; i++)
         {

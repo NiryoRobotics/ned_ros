@@ -34,11 +34,11 @@
 #include "xl330_reg.hpp"
 #include "xl320_reg.hpp"
 
-namespace TTLDriver
+namespace TtlDriver
 {
 
     /**
-     * @brief The TTLMotorDriver class
+     * @brief The XDriver class
      */
     template<typename reg_type>
     class XDriver : public AbstractMotorDriver
@@ -235,7 +235,7 @@ namespace TTLDriver
     // definition of methods
 
     /**
-     * @brief TTLMotorDriver<reg_type>::TTLMotorDriver
+     * @brief XDriver<reg_type>::XDriver
      * @param type
      * @param portHandler
      * @param packetHandler
@@ -250,7 +250,7 @@ namespace TTLDriver
     }
 
     /**
-     * @brief TTLMotorDriver<reg_type>::~TTLMotorDriver
+     * @brief XDriver<reg_type>::~XDriver
      */
     template<typename reg_type>
     XDriver<reg_type>::~XDriver()
@@ -559,7 +559,7 @@ namespace TTLDriver
     }
 
     // Stepper : empty class for now
-    // cc will it be in XDriver ? or apart StepperDriver class inheriting from TTLMotorDriver ?
+    // cc will it be in XDriver ? or apart StepperDriver class inheriting from XDriver ?
     template<>
     class XDriver<StepperReg> : public AbstractMotorDriver
     {
@@ -577,7 +577,7 @@ namespace TTLDriver
 
         }
 
-        // TTLMotorDriver interface
+        // XDriver interface
     public:
 
         //specifics to reg type

@@ -1,5 +1,5 @@
 /*
-    stepper_driver.cpp
+    can_driver.cpp
     Copyright (C) 2020 Niryo
     All rights reserved.
     This program is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@
 
 using namespace std;
 
-namespace TTLDriver
+namespace TtlDriver
 {
 
     StepperDriver::StepperDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,

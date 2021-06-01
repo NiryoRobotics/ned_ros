@@ -1,15 +1,15 @@
-Niryo Robot Stepper Driver Package
+Niryo Robot CAN Driver Package
 ===================================
 
 | This package handles stepper motors communication 
 
-Stepper Driver Node
+CAN Driver Node
 --------------------------
 The ROS Node is made to :
  - Send commands to dynamixel motor
  - Receive dynamixel motors data
 
-Parameters - Stepper Driver
+Parameters - CAN Driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. list-table:: Dynamixel Driver's Parameters 
@@ -34,29 +34,29 @@ Parameters - Stepper Driver
          | Default : '[1,2,3]'
 
 
-Dependencies - Stepper Driver
+Dependencies - CAN Driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 - `mcp_can_rpi <https://github.com/coryjfowler/MCP_CAN_lib>`_
 - :ref:`niryo_robot_msgs <Niryo Robot Messages Package>`
 
-Services & Messages files - Stepper Driver
+Services & Messages files - CAN Driver
 -------------------------------------------------
 
 StepperMotorHardwareStatus (Message)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. literalinclude:: ../../../niryo_robot_hardware_stack/stepper_driver/msg/StepperMotorHardwareStatus.msg
+.. literalinclude:: ../../../niryo_robot_hardware_stack/can_driver/msg/StepperMotorHardwareStatus.msg
    :language: rostype
 
 StepperMotorCommand (Message)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. literalinclude:: ../../../niryo_robot_hardware_stack/stepper_driver/msg/StepperMotorCommand.msg
+.. literalinclude:: ../../../niryo_robot_hardware_stack/can_driver/msg/StepperMotorCommand.msg
    :language: rostype
 
 StepperArrayMotorHardwareStatus (Message)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. literalinclude:: ../../../niryo_robot_hardware_stack/stepper_driver/msg/StepperArrayMotorHardwareStatus.msg
+.. literalinclude:: ../../../niryo_robot_hardware_stack/can_driver/msg/StepperArrayMotorHardwareStatus.msg
    :language: rostype

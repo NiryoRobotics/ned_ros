@@ -22,7 +22,7 @@
 
 // niryo
 #include "tools_interface/tools_interface_core.hpp"
-#include "ttl_driver/dxl_driver_core.hpp"
+#include "ttl_driver/ttl_driver_core.hpp"
 
 int main(int argc, char **argv)
 {
@@ -34,10 +34,10 @@ int main(int argc, char **argv)
     spinner.start();
     ros::NodeHandle nh;
 
-    auto dynamixel = std::make_shared<TTLDriver::DxlDriverCore>();
+    auto ttl_driver = std::make_shared<TtlDriver::TtlDriverCore>();
     ros::Duration(1).sleep();
 
-    auto tool = std::make_shared<ToolsInterface::ToolsInterfaceCore>(dynamixel);
+    auto tool = std::make_shared<ToolsInterface::ToolsInterfaceCore>(ttl_driver);
     ros::Duration(1).sleep();
 
     ros::waitForShutdown();

@@ -1,7 +1,7 @@
-message("\n## Reading stepper_driver/CMakeLists.txt...")
+message("\n## Reading can_driver/CMakeLists.txt...")
 
 cmake_minimum_required(VERSION 3.0.2)
-project(stepper_driver)
+project(can_driver)
 
 option(BUILD_DOCS "Build documentation" OFF)
 option(BUILD_UNIT_TESTS "Build the unit tests" OFF)
@@ -82,12 +82,12 @@ include_directories(
 
 ## Declare libs and execs
 add_library(${PROJECT_NAME}
-    src/stepper_driver_core.cpp
-    src/stepper_driver.cpp
+    src/can_driver_core.cpp
+    src/can_driver.cpp
 )
 
 add_executable(${PROJECT_NAME}_node
-  src/stepper_driver_node.cpp
+  src/can_driver_node.cpp
 )
 
 ## Add dependencies to exported targets, like ROS msgs or srvs
@@ -96,7 +96,7 @@ add_dependencies(${PROJECT_NAME}_node
 )
 
 add_dependencies(${PROJECT_NAME}
-    stepper_driver_generate_messages_cpp
+    can_driver_generate_messages_cpp
 )
 
 ## Specify libraries to link executable targets against
@@ -153,7 +153,7 @@ if(CATKIN_ENABLE_TESTING)
   if(BUILD_UNIT_TESTS)
     catkin_add_gtest(
       ${PROJECT_NAME}_unit_tests
-      test/stepper_driver_unit_tests.cpp
+      test/can_driver_unit_tests.cpp
     )
     if(TARGET ${PROJECT_NAME}_unit_tests)
       target_link_libraries(
@@ -168,8 +168,8 @@ if(CATKIN_ENABLE_TESTING)
 
       add_rostest_gtest(
         ${PROJECT_NAME}_integration_tests
-        test/test_stepper_driver_node.test
-        test/test_stepper_driver_node.cpp
+        test/test_can_driver_node.test
+        test/test_can_driver_node.cpp
       )
       if(TARGET ${PROJECT_NAME}_integration_tests)
         target_link_libraries(

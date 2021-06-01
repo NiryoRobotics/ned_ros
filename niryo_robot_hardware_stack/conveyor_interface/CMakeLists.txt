@@ -21,7 +21,7 @@ find_package(catkin REQUIRED
         roscpp
         std_msgs
         message_generation
-        stepper_driver
+        can_driver
 )
 
 ###############################################
@@ -64,7 +64,7 @@ catkin_package(
       roscpp
       std_msgs
       message_runtime
-      stepper_driver
+      can_driver
 )
 
 ###########
@@ -89,7 +89,7 @@ add_executable(${PROJECT_NAME}_node
 
 ## Add dependencies to exported targets, like ROS msgs or srvs
 add_dependencies(${PROJECT_NAME}
-    stepper_driver_generate_messages_cpp
+    can_driver_generate_messages_cpp
 )
 
 add_dependencies(${PROJECT_NAME}

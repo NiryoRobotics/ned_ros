@@ -25,7 +25,7 @@ find_package(catkin REQUIRED
         std_msgs
         sensor_msgs
         ttl_driver
-        stepper_driver
+        can_driver
         actionlib
         common
 )
@@ -59,7 +59,7 @@ catkin_package(
         controller_manager
         niryo_robot_msgs
         ttl_driver
-        stepper_driver
+        can_driver
         actionlib
         common
 )

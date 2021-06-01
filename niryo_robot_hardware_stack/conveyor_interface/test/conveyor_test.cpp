@@ -20,7 +20,7 @@
 #include <ros/ros.h>
 #include "conveyor_interface/conveyor_interface_core.hpp"
 
-#include "stepper_driver/stepper_driver_core.hpp"
+#include "can_driver/can_driver_core.hpp"
 
 boost::shared_ptr<ConveyorInterfaceCore> conveyor_interface_bite;
 
@@ -117,9 +117,9 @@ int main(int argc, char **argv)
     
     ros::NodeHandle nh;
 
-    boost::shared_ptr<StepperDriver::StepperDriverCore> stepper(new StepperDriver::StepperDriverCore());
+    boost::shared_ptr<CanDriver::CanDriverCore> can_driver(new CanDriver::CanDriverCore());
     ros::Duration(1).sleep();
-    conveyor_interface_bite.reset(new ConveyorInterfaceCore(stepper));
+    conveyor_interface_bite.reset(new ConveyorInterfaceCore(can_driver));
     ros::Duration(1).sleep();
     TestConveyor(nh);
     ros::waitForShutdown();

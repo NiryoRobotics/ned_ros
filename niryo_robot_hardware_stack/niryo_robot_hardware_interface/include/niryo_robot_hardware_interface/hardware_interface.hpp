@@ -27,8 +27,8 @@
 #include "tools_interface/tools_interface_core.hpp"
 #include "conveyor_interface/conveyor_interface_core.hpp"
 #include "cpu_interface/cpu_interface_core.hpp"
-#include "ttl_driver/dxl_driver_core.hpp"
-#include "stepper_driver/stepper_driver_core.hpp"
+#include "ttl_driver/ttl_driver_core.hpp"
+#include "can_driver/can_driver_core.hpp"
 #include "fake_interface/fake_interface_core.hpp"
 
 #include "niryo_robot_msgs/Trigger.h"
@@ -74,8 +74,8 @@ namespace NiryoRobotHardwareInterface
         ros::ServiceServer _stop_motors_report_service;
         ros::ServiceServer _reboot_motors_service;
 
-        std::shared_ptr<TTLDriver::DxlDriverCore> _ttl_driver;
-        std::shared_ptr<StepperDriver::StepperDriverCore> _stepper_driver;
+        std::shared_ptr<TtlDriver::TtlDriverCore> _ttl_driver;
+        std::shared_ptr<CanDriver::CanDriverCore> _can_driver;
         std::shared_ptr<CpuInterface::CpuInterfaceCore> _cpu_interface;
         std::shared_ptr<ConveyorInterface::ConveyorInterfaceCore> _conveyor_interface;
         std::shared_ptr<ToolsInterface::ToolsInterfaceCore> _tools_interface;

@@ -25,13 +25,13 @@
 
 //niryo
 #include "tools_interface/tools_interface_core.hpp"
-#include "ttl_driver/dxl_driver.hpp"
+#include "ttl_driver/ttl_driver.hpp"
 
 #include "model/tool_state.hpp"
 #include "model/dxl_command_type_enum.hpp"
 #include "util/util_defs.hpp"
 
-using namespace TTLDriver;
+using namespace TtlDriver;
 using namespace common::model;
 using namespace std;
 
@@ -41,8 +41,8 @@ namespace ToolsInterface {
      * @brief ToolsInterfaceCore::ToolsInterfaceCore
      * @param dynamixel
      */
-    ToolsInterfaceCore::ToolsInterfaceCore(shared_ptr<DxlDriverCore> dynamixel):
-        _dynamixel(dynamixel)
+    ToolsInterfaceCore::ToolsInterfaceCore(shared_ptr<TtlDriverCore> ttl_driver):
+        _ttl_driver_core(ttl_driver)
     {
         initParams();
         initServices();
@@ -170,7 +170,7 @@ namespace ToolsInterface {
         // Unequip tool
         if(_toolState.isValid())
         {
-            _dynamixel->unsetEndEffector(_toolState.getId());
+            _ttl_driver_core->unsetEndEffector(_toolState.getId());
             res.state = ToolState::TOOL_STATE_PING_OK;
             res.id = 0;
 
@@ -179,7 +179,7 @@ namespace ToolsInterface {
         }
 
         // Search new tool
-        vector<uint8_t> motor_list = _dynamixel->scanTools();
+        vector<uint8_t> motor_list = _ttl_driver_core->scanTools();
 
         for(auto const& m_id : motor_list) {
             if(_available_tools_map.count(m_id))
@@ -196,7 +196,7 @@ namespace ToolsInterface {
             for(int tries = 0; tries < 3; tries++)
             {
                 ros::Duration(0.05).sleep();
-                res.state = _dynamixel->setEndEffector(_toolState.getType(), _toolState.getId());
+                res.state = _ttl_driver_core->setEndEffector(_toolState.getType(), _toolState.getId());
 
                 //on success, tool is set, we go out of loop
                 if (niryo_robot_msgs::CommandStatus::SUCCESS == res.state)
@@ -206,7 +206,7 @@ namespace ToolsInterface {
 
                     ros::Duration(0.05).sleep();
 
-                    _dynamixel->update_leds();
+                    _ttl_driver_core->update_leds();
 
                     ROS_INFO("ToolsInterfaceCore::_callbackPingAndSetDxlTool - Set end effector success, return : %d", res.state);
 
@@ -277,7 +277,7 @@ namespace ToolsInterface {
             cmd.setType(EDxlCommandType::CMD_TYPE_EFFORT);
             cmd.setParam(req.open_hold_torque);
             list_cmd.emplace_back(cmd);
-            _dynamixel->addEndEffectorCommandToQueue(list_cmd);
+            _ttl_driver_core->addEndEffectorCommandToQueue(list_cmd);
 
             res.state = ToolState::GRIPPER_STATE_OPEN;
             ret = true;
@@ -324,7 +324,7 @@ namespace ToolsInterface {
             cmd.setType(EDxlCommandType::CMD_TYPE_EFFORT);
             cmd.setParam(req.close_hold_torque);
             list_cmd.emplace_back(cmd);
-            _dynamixel->addEndEffectorCommandToQueue(list_cmd);
+            _ttl_driver_core->addEndEffectorCommandToQueue(list_cmd);
 
             res.state = ToolState::GRIPPER_STATE_CLOSE;
             ret = true;
@@ -354,12 +354,12 @@ namespace ToolsInterface {
             uint32_t pull_air_hold_torque = static_cast<uint32_t>(req.pull_air_hold_torque);
 
             // set vacuum pump pos, vel and torque
-            _dynamixel->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_VELOCITY, _toolState.getId(), pull_air_velocity));
-            _dynamixel->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_POSITION, _toolState.getId(), pull_air_position));
-            _dynamixel->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_EFFORT, _toolState.getId(), 500));
+            _ttl_driver_core->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_VELOCITY, _toolState.getId(), pull_air_velocity));
+            _ttl_driver_core->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_POSITION, _toolState.getId(), pull_air_position));
+            _ttl_driver_core->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_EFFORT, _toolState.getId(), 500));
 
             // set hold torque
-            _dynamixel->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_EFFORT, _toolState.getId(), pull_air_hold_torque));
+            _ttl_driver_core->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_EFFORT, _toolState.getId(), pull_air_hold_torque));
 
             res.state = ToolState::VACUUM_PUMP_STATE_PULLED;
             ret = true;
@@ -388,12 +388,12 @@ namespace ToolsInterface {
             uint32_t push_air_position = static_cast<uint32_t>(req.push_air_position);
 
             // set vacuum pump pos, vel and torque
-            _dynamixel->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_VELOCITY, _toolState.getId(), push_air_velocity));
-            _dynamixel->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_POSITION, _toolState.getId(), push_air_position));
-            _dynamixel->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_EFFORT, _toolState.getId(), 64000));// two's complement of 1536
+            _ttl_driver_core->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_VELOCITY, _toolState.getId(), push_air_velocity));
+            _ttl_driver_core->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_POSITION, _toolState.getId(), push_air_position));
+            _ttl_driver_core->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_EFFORT, _toolState.getId(), 64000));// two's complement of 1536
 
             // set torque to 0
-            _dynamixel->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_EFFORT, _toolState.getId(), 0));
+            _ttl_driver_core->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_EFFORT, _toolState.getId(), 0));
 
             res.state = ToolState::VACUUM_PUMP_STATE_PUSHED;
 
@@ -415,14 +415,14 @@ namespace ToolsInterface {
         {
             {
                 lock_guard<mutex> lck(_tool_mutex);
-                vector<uint8_t> motor_list = _dynamixel->getRemovedMotorList();
+                vector<uint8_t> motor_list = _ttl_driver_core->getRemovedMotorList();
 
                 for(auto const& motor : motor_list)
                 {
                     if(_toolState.getId() == motor)
                     {
                         ROS_INFO("Tools Interface - Unset Current Tools");
-                        _dynamixel->unsetEndEffector(_toolState.getId());
+                        _ttl_driver_core->unsetEndEffector(_toolState.getId());
                         _toolState.reset();
                         msg.data = 0;
                         _tool_connection_publisher.publish(msg);

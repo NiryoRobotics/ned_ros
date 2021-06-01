@@ -28,8 +28,8 @@
 
 #include "model/joint_state.hpp"
 
-#include "stepper_driver/stepper_driver_core.hpp"
-#include "ttl_driver/dxl_driver_core.hpp"
+#include "can_driver/can_driver_core.hpp"
+#include "ttl_driver/ttl_driver_core.hpp"
 
 #include "niryo_robot_msgs/CommandStatus.h"
 
@@ -40,8 +40,8 @@ namespace JointsInterface {
 
     public:
         CalibrationManager(std::vector<std::shared_ptr<common::model::JointState> > joint_list,
-                             std::shared_ptr<StepperDriver::StepperDriverCore> stepper,
-                             std::shared_ptr<TTLDriver::DxlDriverCore> dynamixel);
+                             std::shared_ptr<CanDriver::CanDriverCore> can_driver,
+                             std::shared_ptr<TtlDriver::TtlDriverCore> ttl_driver);
 
         int startCalibration(int mode, std::string &result_message);
 
@@ -67,8 +67,8 @@ namespace JointsInterface {
 
     private:
         ros::NodeHandle _nh;
-        std::shared_ptr<StepperDriver::StepperDriverCore> _stepperCore;
-        std::shared_ptr<TTLDriver::DxlDriverCore> _dynamixelCore;
+        std::shared_ptr<CanDriver::CanDriverCore> _can_driver_core;
+        std::shared_ptr<TtlDriver::TtlDriverCore> _ttl_driver_core;
 
         std::vector<std::shared_ptr<common::model::JointState> > _joint_list;
 

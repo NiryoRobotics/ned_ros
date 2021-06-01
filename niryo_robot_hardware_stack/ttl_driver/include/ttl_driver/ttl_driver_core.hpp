@@ -1,5 +1,5 @@
 /*
-    dxl_driver.hpp
+    ttl_driver_core.hpp
     Copyright (C) 2020 Niryo
     All rights reserved.
 
@@ -17,8 +17,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DXL_DRIVER_CORE_HPP
-#define DXL_DRIVER_CORE_HPP
+#ifndef TTL_DRIVER_CORE_HPP
+#define TTL_DRIVER_CORE_HPP
 
 //std
 #include <memory>
@@ -34,7 +34,7 @@
 
 #include "model/idriver_core.hpp"
 
-#include "ttl_driver/dxl_driver.hpp"
+#include "ttl_driver/ttl_driver.hpp"
 #include "ttl_driver/DxlArrayMotorHardwareStatus.h"
 #include "ttl_driver/SendCustomDxlValue.h"
 #include "ttl_driver/ReadCustomDxlValue.h"
@@ -48,17 +48,17 @@
 #include "model/single_motor_cmd.hpp"
 #include "model/synchronize_motor_cmd.hpp"
 
-namespace TTLDriver
+namespace TtlDriver
 {
     /**
-     * @brief The DxlDriverCore class
+     * @brief The TtlDriverCore class
      */
-    class DxlDriverCore : public common::model::IDriverCore
+    class TtlDriverCore : public common::model::IDriverCore
     {
     public:
 
-        DxlDriverCore();
-        virtual ~DxlDriverCore() override;
+        TtlDriverCore();
+        virtual ~TtlDriverCore() override;
 
         int setEndEffector(common::model::EMotorType type, uint8_t motor_id);
         void unsetEndEffector(uint8_t motor_id);
@@ -115,7 +115,6 @@ namespace TTLDriver
         bool callbackReadCustomDxlValue(ttl_driver::ReadCustomDxlValue::Request &req, ttl_driver::ReadCustomDxlValue::Response &res);
 
     private:
-        //common to stepper_driver_core. Put in abstract class ?
         ros::NodeHandle _nh;
         bool _control_loop_flag;
         bool _debug_flag;
@@ -139,7 +138,7 @@ namespace TTLDriver
 
         double _time_check_end_effector_last_read;
 
-        std::unique_ptr<DxlDriver> _dynamixel;
+        std::unique_ptr<TtlDriver> _ttl_driver;
 
         std::vector<std::pair<uint8_t, uint32_t> > _joint_trajectory_cmd;
 
@@ -157,45 +156,45 @@ namespace TTLDriver
     };
 
     /**
-     * @brief DxlDriverCore::getDxlStates
+     * @brief TtlDriverCore::getDxlStates
      * @return
      */
     inline
-    std::vector<common::model::DxlMotorState> DxlDriverCore::getDxlStates() const
+    std::vector<common::model::DxlMotorState> TtlDriverCore::getDxlStates() const
     {
-        return _dynamixel->getMotorsStates();
+        return _ttl_driver->getMotorsStates();
     }
 
     /**
-     * @brief DxlDriverCore::isConnectionOk
+     * @brief TtlDriverCore::isConnectionOk
      * @return
      */
     inline
-    bool DxlDriverCore::isConnectionOk() const
+    bool TtlDriverCore::isConnectionOk() const
     {
-        return _dynamixel->isConnectionOk();
+        return _ttl_driver->isConnectionOk();
     }
 
     /**
-     * @brief DxlDriverCore::getDxlState
+     * @brief TtlDriverCore::getDxlState
      * @param motor_id
      * @return
      */
     inline
-    common::model::DxlMotorState DxlDriverCore::getDxlState(uint8_t motor_id) const
+    common::model::DxlMotorState TtlDriverCore::getDxlState(uint8_t motor_id) const
     {
-        return _dynamixel->getMotorState(motor_id);
+        return _ttl_driver->getMotorState(motor_id);
     }
 
     /**
-     * @brief DxlDriverCore::getRemovedMotorList
+     * @brief TtlDriverCore::getRemovedMotorList
      * @return
      */
     inline
-    std::vector<uint8_t> DxlDriverCore::getRemovedMotorList() const
+    std::vector<uint8_t> TtlDriverCore::getRemovedMotorList() const
     {
-        return _dynamixel->getRemovedMotorList();
+        return _ttl_driver->getRemovedMotorList();
     }
-} //DynamixelDriver
+} //TtlDriver
 
-#endif
+#endif // TTL_DRIVER_CORE_HPP

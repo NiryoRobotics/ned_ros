@@ -45,10 +45,10 @@ namespace JointsInterface {
      * @param dynamixel
      */
     CalibrationManager::CalibrationManager(std::vector<std::shared_ptr<JointState> > joint_list,
-                                               std::shared_ptr<StepperDriver::StepperDriverCore> stepper,
-                                               std::shared_ptr<TTLDriver::DxlDriverCore> dynamixel) :
-        _stepperCore(stepper),
-        _dynamixelCore(dynamixel),
+                                               std::shared_ptr<CanDriver::CanDriverCore> can_driver,
+                                               std::shared_ptr<TtlDriver::TtlDriverCore> ttl_driver) :
+        _can_driver_core(can_driver),
+        _ttl_driver_core(ttl_driver),
         _joint_list(joint_list)
     {
 
@@ -126,7 +126,7 @@ namespace JointsInterface {
     void CalibrationManager::_motorTorque(const std::shared_ptr<JointState>& motor, bool status)
     {
         StepperMotorCmd stepper_cmd(EStepperCommandType::CMD_TYPE_TORQUE, motor->getId(), {status});
-        _stepperCore->addSingleCommandToQueue(stepper_cmd);
+        _can_driver_core->addSingleCommandToQueue(stepper_cmd);
     }
 
     /**
@@ -140,7 +140,7 @@ namespace JointsInterface {
         _motorTorque(motor, true);
 
         StepperMotorCmd stepper_cmd(EStepperCommandType::CMD_TYPE_POSITION, motor->getId(), {steps});
-        _stepperCore->addSingleCommandToQueue(stepper_cmd);
+        _can_driver_core->addSingleCommandToQueue(stepper_cmd);
 
         ros::Duration(delay).sleep();
     }
@@ -158,7 +158,7 @@ namespace JointsInterface {
         _motorTorque(motor, true);
 
         StepperMotorCmd stepper_cmd(EStepperCommandType::CMD_TYPE_RELATIVE_MOVE, motor->getId(), {steps, delay});
-        _stepperCore->addSingleCommandToQueue(stepper_cmd);
+        _can_driver_core->addSingleCommandToQueue(stepper_cmd);
 
         if (wait)
         {
@@ -184,7 +184,7 @@ namespace JointsInterface {
 
         StepperMotorCmd stepper_cmd(EStepperCommandType::CMD_TYPE_CALIBRATION, motor_id,
                                     {offset, delay, motor_direction * calibration_direction, timeout});
-        _stepperCore->addSingleCommandToQueue(stepper_cmd);
+        _can_driver_core->addSingleCommandToQueue(stepper_cmd);
 
         ROS_INFO("Calibration Interface - start calibration for motor id %d :", motor_id);
     }
@@ -198,7 +198,7 @@ namespace JointsInterface {
         for(auto const& jState : _joint_list)
         {
             if (jState && jState->isStepper()) {
-                if(!_stepperCore->scanMotorId(jState->getId()))
+                if(!_can_driver_core->scanMotorId(jState->getId()))
                     return false;
             }
         }
@@ -216,7 +216,7 @@ namespace JointsInterface {
         // 0. Torque ON for motor 2
 
         StepperMotorCmd stepper_cmd(EStepperCommandType::CMD_TYPE_TORQUE, _joint_list.at(1)->getId(), {true});
-        _stepperCore->addSingleCommandToQueue(stepper_cmd);
+        _can_driver_core->addSingleCommandToQueue(stepper_cmd);
         sld.sleep();
 
         // 1. Relative Move Motor 3
@@ -231,7 +231,7 @@ namespace JointsInterface {
         dynamixel_cmd.addMotorParam(_joint_list.at(4)->getType(), _joint_list.at(4)->getId(), 1);
         dynamixel_cmd.addMotorParam(_joint_list.at(5)->getType(), _joint_list.at(5)->getId(), 1);
 
-        _dynamixelCore->setSyncCommand(dynamixel_cmd);
+        _ttl_driver_core->setSyncCommand(dynamixel_cmd);
         sld.sleep();
 
         dynamixel_cmd.reset();
@@ -239,7 +239,7 @@ namespace JointsInterface {
         dynamixel_cmd.addMotorParam(_joint_list.at(3)->getType(), _joint_list.at(3)->getId(), static_cast<uint32_t>(_joint_list.at(3)->to_motor_pos(0)));
         dynamixel_cmd.addMotorParam(_joint_list.at(4)->getType(), _joint_list.at(4)->getId(), static_cast<uint32_t>(_joint_list.at(4)->to_motor_pos(0)));
         dynamixel_cmd.addMotorParam(_joint_list.at(5)->getType(), _joint_list.at(5)->getId(), static_cast<uint32_t>(_joint_list.at(5)->to_motor_pos(0)));
-        _dynamixelCore->setSyncCommand(dynamixel_cmd);
+        _ttl_driver_core->setSyncCommand(dynamixel_cmd);
         sld.sleep();
 
 
@@ -255,7 +255,7 @@ namespace JointsInterface {
                 pStepperMotorState_2 && pStepperMotorState_2->isValid() &&
                 pStepperMotorState_3 && pStepperMotorState_3->isValid())
         {
-            _stepperCore->startCalibration();
+            _can_driver_core->startCalibration();
 
             setStepperCalibrationCommand(pStepperMotorState_1, 200, 1, _calibration_timeout);
             setStepperCalibrationCommand(pStepperMotorState_2, 1000, 1, _calibration_timeout);
@@ -264,14 +264,14 @@ namespace JointsInterface {
 
         //wait for calibration status done
         sld.sleep();
-        while (_stepperCore->isCalibrationInProgress())
+        while (_can_driver_core->isCalibrationInProgress())
         {
             sld.sleep();
         }
 
         for(size_t i = 0; i < 3; ++i) {
             uint8_t motor_id = _joint_list.at(i)->getId();
-            int calibration_result = _stepperCore->getCalibrationResult(motor_id);
+            int calibration_result = _can_driver_core->getCalibrationResult(motor_id);
             sensor_offset_results.emplace_back(calibration_result);
             ROS_INFO("Calibration Interface - Motor %d, calibration cmd result %d ", motor_id, calibration_result);
         }
@@ -304,7 +304,7 @@ namespace JointsInterface {
                 if(jState && jState->isStepper())
                 {
                     StepperMotorCmd cmd(EStepperCommandType::CMD_TYPE_TORQUE, jState->getId(), {false});
-                    _stepperCore->addSingleCommandToQueue(cmd);
+                    _can_driver_core->addSingleCommandToQueue(cmd);
                 }
             }
 
@@ -315,7 +315,7 @@ namespace JointsInterface {
             dynamixel_cmd.addMotorParam(_joint_list.at(4)->getType(), _joint_list.at(4)->getId(), 0);
             dynamixel_cmd.addMotorParam(_joint_list.at(5)->getType(), _joint_list.at(5)->getId(), 0);
 
-            _dynamixelCore->setSyncCommand(dynamixel_cmd);
+            _ttl_driver_core->setSyncCommand(dynamixel_cmd);
             sld.sleep();
 
             // 6. Write sensor_offset_steps to file
@@ -326,7 +326,7 @@ namespace JointsInterface {
             ROS_ERROR("Calibration Interface -  An error occured while calibrating stepper motors");
         }
 
-        return _stepperCore->getCalibrationStatus();
+        return _can_driver_core->getCalibrationStatus();
     }
 
     /**
@@ -338,7 +338,7 @@ namespace JointsInterface {
     {
         std::vector<StepperMotorState> stepper_motor_states;
 
-        stepper_motor_states = _stepperCore->getStepperStates();
+        stepper_motor_states = _can_driver_core->getStepperStates();
 
         // 1. Check if motors firmware version is ok
         for (StepperMotorState mState : stepper_motor_states)
@@ -402,7 +402,7 @@ namespace JointsInterface {
     void CalibrationManager::_send_calibration_offset(uint8_t id, int offset_to_send, int absolute_steps_at_offset_position)
     {
         StepperMotorCmd stepper_cmd(EStepperCommandType::CMD_TYPE_POSITION_OFFSET, id, {offset_to_send, absolute_steps_at_offset_position});
-        _stepperCore->addSingleCommandToQueue(stepper_cmd);
+        _can_driver_core->addSingleCommandToQueue(stepper_cmd);
     }
 
     /**
@@ -420,7 +420,7 @@ namespace JointsInterface {
         {
            return EStepperCalibrationStatus::CALIBRATION_FAIL;
         }
-        _stepperCore->startCalibration();
+        _can_driver_core->startCalibration();
         // 0. Torque ON for motor 2
 
         int steps_per_rev = common::model::StepperMotorState::stepsPerRev();
@@ -459,7 +459,7 @@ namespace JointsInterface {
             }
         }
 
-        return _stepperCore->getCalibrationStatus();
+        return _can_driver_core->getCalibrationStatus();
     }
 
     /**

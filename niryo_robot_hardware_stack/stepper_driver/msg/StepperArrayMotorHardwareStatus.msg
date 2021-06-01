@@ -1,2 +1,0 @@
-std_msgs/Header header
-stepper_driver/StepperMotorHardwareStatus[] motors_hw_status

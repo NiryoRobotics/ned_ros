@@ -1,5 +1,5 @@
 /*
-    stepper_reg.hpp
+    ttl_driver_node.cpp
     Copyright (C) 2020 Niryo
     All rights reserved.
     This program is free software: you can redistribute it and/or modify
@@ -14,20 +14,22 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef STEPPERREG_HPP
-#define STEPPERREG_HPP
+// ros
+#include <ros/ros.h>
 
-#include <memory>
-#include "model/motor_type_enum.hpp"
+// niryo
+#include "ttl_driver/ttl_driver_core.hpp"
 
-namespace TtlDriver
+int main(int argc, char** argv)
 {
-    struct StepperReg
-    {
-        static constexpr common::model::EMotorType motor_type = common::model::EMotorType::STEPPER;
+  ros::init(argc, argv, "ttl_driver_node");
 
-        //nothing for now, TBC
-    };
-} //DynamixelDriver
+  ROS_DEBUG("Launching ttl_driver_node");
 
-#endif // STEPPERREG_HPP
+  ros::NodeHandle nodeHandle("~");
+
+  TtlDriver::TtlDriverCore ttl_node;
+
+  ros::spin();
+  return 0;
+}

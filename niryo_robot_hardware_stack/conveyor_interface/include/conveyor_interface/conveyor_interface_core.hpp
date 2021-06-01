@@ -28,7 +28,7 @@
 #include <ros/ros.h>
 
 // niryo
-#include "stepper_driver/stepper_driver_core.hpp"
+#include "can_driver/can_driver_core.hpp"
 
 #include "conveyor_interface/SetConveyor.h"
 #include "conveyor_interface/ControlConveyor.h"
@@ -43,7 +43,7 @@ namespace ConveyorInterface {
     class ConveyorInterfaceCore
     {
         public:
-            ConveyorInterfaceCore(std::shared_ptr<StepperDriver::StepperDriverCore> stepper);
+            ConveyorInterfaceCore(std::shared_ptr<CanDriver::CanDriverCore> stepper);
             virtual ~ConveyorInterfaceCore();
 
             bool isInitialized();
@@ -67,7 +67,7 @@ namespace ConveyorInterface {
 
             std::thread _publish_conveyors_feedback_thread;
 
-            std::shared_ptr<StepperDriver::StepperDriverCore> _stepper;
+            std::shared_ptr<CanDriver::CanDriverCore> _can_driver;
 
             ros::ServiceServer _ping_and_set_stepper_server;
             ros::ServiceServer _control_conveyor_server;

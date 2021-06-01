@@ -36,8 +36,8 @@ namespace ConveyorInterface {
      * @brief ConveyorInterfaceCore::ConveyorInterfaceCore
      * @param stepper
      */
-    ConveyorInterfaceCore::ConveyorInterfaceCore(shared_ptr<StepperDriver::StepperDriverCore> stepper):
-       _stepper(stepper)
+    ConveyorInterfaceCore::ConveyorInterfaceCore(shared_ptr<CanDriver::CanDriverCore> can_driver):
+       _can_driver(can_driver)
     {
         init();
 
@@ -121,7 +121,7 @@ namespace ConveyorInterface {
         {
             //take last
             uint8_t conveyor_id = *_conveyor_pool_id_list.rbegin();
-            result = _stepper->setConveyor(conveyor_id, static_cast<uint8_t>(_default_conveyor_id));
+            result = _can_driver->setConveyor(conveyor_id, static_cast<uint8_t>(_default_conveyor_id));
 
             if(niryo_robot_msgs::CommandStatus::SUCCESS == result)
             {
@@ -132,16 +132,16 @@ namespace ConveyorInterface {
 
                 StepperMotorCmd cmd(EStepperCommandType::CMD_TYPE_MICRO_STEPS, conveyor_id, {8});
                 cmd.setParams({8});
-                _stepper->addSingleCommandToQueue(cmd);
+                _can_driver->addSingleCommandToQueue(cmd);
 
                 cmd = StepperMotorCmd(EStepperCommandType::CMD_TYPE_MAX_EFFORT, conveyor_id, {_conveyor_max_effort});
-                _stepper->addSingleCommandToQueue(cmd);
+                _can_driver->addSingleCommandToQueue(cmd);
 
                 cmd = StepperMotorCmd(EStepperCommandType::CMD_TYPE_CONVEYOR, conveyor_id, {false, 0, -1});
-                _stepper->addSingleCommandToQueue(cmd);
+                _can_driver->addSingleCommandToQueue(cmd);
 
                 // CC why two times in a row ?
-                _stepper->addSingleCommandToQueue(cmd);
+                _can_driver->addSingleCommandToQueue(cmd);
                 res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
 
                 res.message = "Set new conveyor on id ";
@@ -191,7 +191,7 @@ namespace ConveyorInterface {
             //remove from currently connected conveyors
             _current_conveyor_id_list.erase(position);
             //remove conveyor
-            _stepper->unsetConveyor(id);
+            _can_driver->unsetConveyor(id);
             res.message = "Remove conveyor id " + to_string(id);
             res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
 
@@ -228,7 +228,7 @@ namespace ConveyorInterface {
     bool ConveyorInterfaceCore::_callbackPingAndSetConveyor(conveyor_interface::SetConveyor::Request &req,
                                                             conveyor_interface::SetConveyor::Response &res)
     {
-        if (!_stepper->isCalibrationInProgress())
+        if (!_can_driver->isCalibrationInProgress())
         {
             switch(req.cmd)
             {
@@ -272,7 +272,7 @@ namespace ConveyorInterface {
             res.message += to_string(req.id);
             res.message += " is OK";
             res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
-            _stepper->addSingleCommandToQueue(cmd);
+            _can_driver->addSingleCommandToQueue(cmd);
         }
         else
         {
@@ -299,7 +299,7 @@ namespace ConveyorInterface {
             conveyor_interface::ConveyorFeedback data;
 
             // CC to be checked
-            for(auto& sState : _stepper->getStepperStates())
+            for(auto& sState : _can_driver->getStepperStates())
             {
                 if(sState.isConveyor()) {
                     ConveyorState& cState = dynamic_cast<ConveyorState &>(sState);

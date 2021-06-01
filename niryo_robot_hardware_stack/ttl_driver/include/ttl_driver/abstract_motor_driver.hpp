@@ -26,7 +26,7 @@
 #include "common_defs.hpp"
 #include "model/motor_type_enum.hpp"
 
-namespace TTLDriver
+namespace TtlDriver
 {
 
     /**

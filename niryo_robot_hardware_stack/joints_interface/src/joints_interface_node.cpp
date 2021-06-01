@@ -23,8 +23,8 @@
 
 // niryo
 #include "joints_interface/joints_interface_core.hpp"
-#include "ttl_driver/dxl_driver_core.hpp"
-#include "stepper_driver/stepper_driver_core.hpp"
+#include "ttl_driver/ttl_driver_core.hpp"
+#include "can_driver/can_driver_core.hpp"
 
 int main(int argc, char **argv)
 {
@@ -37,13 +37,13 @@ int main(int argc, char **argv)
     
     ros::NodeHandle nh;
    
-    auto dynamixel = std::make_shared<TTLDriver::DxlDriverCore>();
+    auto ttl_driver = std::make_shared<TtlDriver::TtlDriverCore>();
     ros::Duration(1).sleep();
 
-    auto stepper = std::make_shared<StepperDriver::StepperDriverCore>();
+    auto can_driver = std::make_shared<CanDriver::CanDriverCore>();
     ros::Duration(1).sleep();
 
-    auto joints = std::make_shared<JointsInterface::JointsInterfaceCore>(dynamixel, stepper);
+    auto joints = std::make_shared<JointsInterface::JointsInterfaceCore>(ttl_driver, can_driver);
     ros::waitForShutdown();
     
     ROS_INFO("Joints Interface - Shutdown node");

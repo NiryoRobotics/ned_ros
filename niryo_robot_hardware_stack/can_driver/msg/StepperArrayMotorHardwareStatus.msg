@@ -1,0 +1,2 @@
+std_msgs/Header header
+can_driver/StepperMotorHardwareStatus[] motors_hw_status

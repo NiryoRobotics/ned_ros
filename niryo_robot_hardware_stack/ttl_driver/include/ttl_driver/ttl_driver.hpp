@@ -1,5 +1,5 @@
 /*
-    dxl_driver.hpp
+    ttl_driver.hpp
     Copyright (C) 2020 Niryo
     All rights reserved.
 
@@ -17,8 +17,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DXL_DRIVER_HPP
-#define DXL_DRIVER_HPP
+#ifndef TTL_DRIVER_HPP
+#define TTL_DRIVER_HPP
 
 #include <memory>
 #include <ros/ros.h>
@@ -43,7 +43,7 @@
 #include "model/synchronize_motor_cmd.hpp"
 #include "model/single_motor_cmd.hpp"
 
-namespace TTLDriver
+namespace TtlDriver
 {
 
     constexpr float DXL_BUS_PROTOCOL_VERSION = 2.0;
@@ -58,13 +58,13 @@ namespace TTLDriver
     constexpr int DXL_WRONG_TYPE             = -52;
 
     /**
-     * @brief The DxlDriver class
+     * @brief The TtlDriver class
      */
-    class DxlDriver : public common::model::IDriver
+    class TtlDriver : public common::model::IDriver
     {
         public:
-            DxlDriver();
-            virtual ~DxlDriver() override;
+            TtlDriver();
+            virtual ~TtlDriver() override;
 
             //commands
             void addMotor(common::model::EMotorType type,
@@ -150,59 +150,59 @@ namespace TTLDriver
     //inline getters
 
     inline
-    bool DxlDriver::isConnectionOk() const
+    bool TtlDriver::isConnectionOk() const
     {
         return _is_connection_ok;
     }
 
     /**
-     * @brief DxlDriver::getNbMotors
+     * @brief TtlDriver::getNbMotors
      * @return
      */
     inline
-    size_t DxlDriver::getNbMotors() const
+    size_t TtlDriver::getNbMotors() const
     {
         return _state_map.size();
     }
 
     /**
-     * @brief DxlDriver::getRemovedMotorList
+     * @brief TtlDriver::getRemovedMotorList
      * @return
      */
     inline
-    std::vector<uint8_t> DxlDriver::getRemovedMotorList() const
+    std::vector<uint8_t> TtlDriver::getRemovedMotorList() const
     {
         return _removed_motor_id_list;
     }
 
     /**
-     * @brief DxlDriver::getErrorMessage
+     * @brief TtlDriver::getErrorMessage
      * @return
      */
     inline
-    std::string DxlDriver::getErrorMessage() const
+    std::string TtlDriver::getErrorMessage() const
     {
         return _debug_error_message;
     }
 
     /**
-     * @brief DxlDriver::getLedState
+     * @brief TtlDriver::getLedState
      * @return
      */
     inline
-    int DxlDriver::getLedState() const
+    int TtlDriver::getLedState() const
     {
         return _led_state;
     }
 
     /**
-     * @brief DxlDriver::getBusState
+     * @brief TtlDriver::getBusState
      * @param connection_state
      * @param motor_id
      * @param debug_msg
      */
     inline
-    void DxlDriver::getBusState(bool &connection_state, std::vector<uint8_t> &motor_id,
+    void TtlDriver::getBusState(bool &connection_state, std::vector<uint8_t> &motor_id,
                                 std::string &debug_msg) const
     {
         debug_msg = _debug_error_message;
@@ -211,15 +211,15 @@ namespace TTLDriver
     }
 
     /**
-     * @brief DxlDriver::hasMotors
+     * @brief TtlDriver::hasMotors
      * @return
      */
     inline
-    bool DxlDriver::hasMotors()
+    bool TtlDriver::hasMotors()
     {
         return _state_map.size() > 0;
     }
 
 }
 
-#endif
+#endif // TTLDRIVER_HPP

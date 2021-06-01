@@ -29,10 +29,10 @@ namespace JointsInterface {
      * @param dynamixel
      * @param stepper
      */
-    JointsInterfaceCore::JointsInterfaceCore(std::shared_ptr<TTLDriver::DxlDriverCore> dynamixel,
-                                             std::shared_ptr<StepperDriver::StepperDriverCore> stepper)
+    JointsInterfaceCore::JointsInterfaceCore(std::shared_ptr<TtlDriver::TtlDriverCore> ttl_driver,
+                                             std::shared_ptr<CanDriver::CanDriverCore> can_driver)
     {
-        init(dynamixel, stepper);
+        init(ttl_driver, can_driver);
     }
 
     /**
@@ -53,8 +53,8 @@ namespace JointsInterface {
      * @param dynamixel
      * @param stepper
      */
-    void JointsInterfaceCore::init(std::shared_ptr<TTLDriver::DxlDriverCore> dynamixel,
-                                   std::shared_ptr<StepperDriver::StepperDriverCore> stepper)
+    void JointsInterfaceCore::init(std::shared_ptr<TtlDriver::TtlDriverCore> ttl_driver,
+                                   std::shared_ptr<CanDriver::CanDriverCore> can_driver)
     {
         initParams();
 
@@ -65,7 +65,7 @@ namespace JointsInterface {
         startSubscribers();
 
         ROS_DEBUG("JointsInterfaceCore::init - Start joint hardware interface");
-        _robot.reset(new JointHardwareInterface(dynamixel, stepper));
+        _robot.reset(new JointHardwareInterface(ttl_driver, can_driver));
 
         ROS_DEBUG("JointsInterfaceCore::init - Create controller manager");
         _cm.reset(new controller_manager::ControllerManager(_robot.get(), _nh));
@@ -325,7 +325,7 @@ namespace JointsInterface {
 
     /**
      * @brief JointsInterfaceCore::_publishLearningMode
-     * //cc maybe put this in ros control loop ?
+     * // cc maybe put this in ros control loop ?
      *
      */
     void JointsInterfaceCore::_publishLearningMode()

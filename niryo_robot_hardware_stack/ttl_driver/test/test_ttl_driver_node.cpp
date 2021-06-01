@@ -22,15 +22,15 @@
 #include <functional>
 #include <vector>
 
-#include <ttl_driver/dxl_driver_core.hpp>
+#include <ttl_driver/ttl_driver_core.hpp>
 #include "model/dxl_command_type_enum.hpp"
 
-class DxlDriverTest {
+class TtlDriverTest {
 
     private:
         ros::NodeHandle nh;
 
-        std::shared_ptr<DynamixelDriver::DynamixelDriverCore> _dynamixel;
+        std::shared_ptr<TtlDriver::TtlDriverCore> _ttl_driver;
 
         std::vector<uint32_t> dxl_home_pose{2000, 2047 , 511};
         std::vector<uint32_t> dxl_pose_1{2047, 2047 , 511};
@@ -39,7 +39,7 @@ class DxlDriverTest {
         std::vector<common::model::DxlMotorState> states;
 
     public:
-        DxlDriverTest()
+        TtlDriverTest()
         {
             ros::NodeHandle nodeHandle("~");
 
@@ -47,7 +47,7 @@ class DxlDriverTest {
             states.emplace_back(common::model::DxlMotorState(common::model::EMotorType::MOTOR_TYPE_XL430, 3));
             states.emplace_back(common::model::DxlMotorState(common::model::EMotorType::MOTOR_TYPE_XL320, 6));
 
-            _dynamixel.reset(new DynamixelDriver::DynamixelDriverCore());
+            _ttl_driver.reset(new TtlDriver::TtlDriverCore());
 
             TestServiceActiveTorque();
             TestPublishPoseCmd();
@@ -62,12 +62,12 @@ class DxlDriverTest {
             common::model::SynchronizeMotorCmd cmd_on(common::model::EDxlCommandType::CMD_TYPE_TORQUE);
             for(auto const& dState : states)
                 cmd_on.addMotorParam(dState, 1);
-            _dynamixel->setSyncCommand(cmd_on);
+            _ttl_driver->setSyncCommand(cmd_on);
 
             common::model::SynchronizeMotorCmd cmd_off(common::model::EDxlCommandType::CMD_TYPE_TORQUE);
             for(auto const& dState : states)
                 cmd_off.addMotorParam(dState, 0);
-            _dynamixel->setSyncCommand(cmd_off);
+            _ttl_driver->setSyncCommand(cmd_off);
 
         }
 
@@ -77,9 +77,9 @@ class DxlDriverTest {
             common::model::SynchronizeMotorCmd cmd(common::model::EDxlCommandType::CMD_TYPE_TORQUE);
             for(size_t i = 0; i < states.size(); ++i)
                 cmd.addMotorParam(states.at(i), 1);
-            _dynamixel->setSyncCommand(cmd);
+            _ttl_driver->setSyncCommand(cmd);
             ROS_INFO("Sending command 1");
-            _dynamixel->setSyncCommand(cmd);
+            _ttl_driver->setSyncCommand(cmd);
             ros::Duration(3).sleep();
 
             cmd.reset();
@@ -88,7 +88,7 @@ class DxlDriverTest {
                 cmd.addMotorParam(states.at(i), dxl_home_pose.at(i));
 
             ROS_INFO("Sending command 2");
-            _dynamixel->setSyncCommand(cmd);
+            _ttl_driver->setSyncCommand(cmd);
             ros::Duration(3).sleep();
 
             cmd.clear();
@@ -96,7 +96,7 @@ class DxlDriverTest {
                 cmd.addMotorParam(states.at(i), dxl_pose_1.at(i));
 
             ROS_INFO("Sending command 3");
-            _dynamixel->setSyncCommand(cmd);
+            _ttl_driver->setSyncCommand(cmd);
             ros::Duration(3).sleep();
 
 
@@ -105,7 +105,7 @@ class DxlDriverTest {
                 cmd.addMotorParam(states.at(i), dxl_pose_2.at(i));
 
             ROS_INFO("Sending command 4");
-            _dynamixel->setSyncCommand(cmd);
+            _ttl_driver->setSyncCommand(cmd);
             ros::Duration(3).sleep();
 
             cmd.reset();
@@ -113,7 +113,7 @@ class DxlDriverTest {
             for(auto const& dState : states)
                 cmd.addMotorParam(dState, 0);
             ROS_INFO("Sending command 5");
-            _dynamixel->setSyncCommand(cmd);
+            _ttl_driver->setSyncCommand(cmd);
         }
 
         void TestReceiveState()
@@ -122,7 +122,7 @@ class DxlDriverTest {
             std::vector<common::model::DxlMotorState> motor_state;
             for(int i = 0 ; i < 100 ; i++)
             {
-                motor_state = _dynamixel->getDxlStates();
+                motor_state = _ttl_driver->getDxlStates();
                 for(size_t j = 0 ; j < motor_state.size() ; j++)
                 {
                     std::cout << " " << motor_state.at(j).getId() << "    " << motor_state.at(j).getPositionState() << std::endl;
@@ -145,7 +145,7 @@ int main(int argc, char **argv)
     
     ros::NodeHandle nh;
    
-    DxlDriverTest test; 
+    TtlDriverTest test; 
 
     ros::waitForShutdown();
     

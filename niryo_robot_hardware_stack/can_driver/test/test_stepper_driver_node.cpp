@@ -1,5 +1,5 @@
 /*
-    stepper_driver_test.cpp
+    can_driver_test.cpp
     Copyright (C) 2021 Niryo
     All rights reserved.
 
@@ -26,16 +26,16 @@
 #include <vector>
 
 //niryo
-#include "stepper_driver/stepper_driver_core.hpp"
+#include "can_driver/can_driver_core.hpp"
 #include "model/stepper_command_type_enum.hpp"
 
 
-class StepperDriverTest {
+class CanDriverTest {
 
     private:
         ros::NodeHandle nh;
 
-        std::shared_ptr<StepperDriver::StepperDriverCore> _stepper;
+        std::shared_ptr<CanDriver::CanDriverCore> _can_driver;
 
         std::vector<int32_t> home_pose{32, 512 , 2322};
         std::vector<int32_t> pose_1{-833, 3046, 3476};
@@ -43,7 +43,7 @@ class StepperDriverTest {
         std::vector<common::model::StepperMotorState> states;
 
     public:
-        StepperDriverTest()
+        CanDriverTest()
         {
             
             ros::NodeHandle nodeHandle("~");
@@ -51,12 +51,12 @@ class StepperDriverTest {
             states.emplace_back(common::model::StepperMotorState(2));
             states.emplace_back(common::model::StepperMotorState(3));
 
-            _stepper.reset(new StepperDriver::StepperDriverCore());
+            _can_driver.reset(new CanDriver::CanDriverCore());
 
             ros::Duration(2).sleep();
             for(auto const& sState : states) {
                 common::model::StepperMotorCmd cmd_torque(common::model::EStepperCommandType::CMD_TYPE_TORQUE, sState.getId(), {false});
-                _stepper->addCommandToQueue(cmd_torque);
+                _can_driver->addCommandToQueue(cmd_torque);
             }
 
             ros::Duration(2).sleep();
@@ -72,13 +72,13 @@ class StepperDriverTest {
             ROS_INFO("active all arm motors");
             for(auto const& sState : states) {
                 common::model::StepperMotorCmd cmd(common::model::EStepperCommandType::CMD_TYPE_TORQUE, sState.getId(), {true});
-                _stepper->addCommandToQueue(cmd);
+                _can_driver->addCommandToQueue(cmd);
             }
             ros::Duration(5).sleep();
 
             for(auto const& sState : states) {
                 common::model::StepperMotorCmd cmd(common::model::EStepperCommandType::CMD_TYPE_TORQUE, sState.getId(), {true});
-                _stepper->addCommandToQueue(cmd);
+                _can_driver->addCommandToQueue(cmd);
             }
             ros::Duration(5).sleep();
 
@@ -90,26 +90,26 @@ class StepperDriverTest {
 
             for(auto const& sState : states) {
                 common::model::StepperMotorCmd cmd(common::model::EStepperCommandType::CMD_TYPE_TORQUE, sState.getId(), {true});
-                _stepper->addCommandToQueue(cmd);
+                _can_driver->addCommandToQueue(cmd);
             }
 
             ros::Duration(1).sleep();
 
             for(size_t j = 0; j < states.size(); ++j) {
                 common::model::StepperMotorCmd cmd(common::model::EStepperCommandType::CMD_TYPE_POSITION, states.at(j).getId(), {home_pose.at(j)});
-                _stepper->addCommandToQueue(cmd);
+                _can_driver->addCommandToQueue(cmd);
             }
             ros::Duration(5).sleep();
 
             for(size_t j = 0; j < states.size(); ++j) {
                 common::model::StepperMotorCmd cmd(common::model::EStepperCommandType::CMD_TYPE_POSITION, states.at(j).getId(), {pose_1.at(j)});
-                _stepper->addCommandToQueue(cmd);
+                _can_driver->addCommandToQueue(cmd);
             }
             ros::Duration(5).sleep();
 
             for(auto const& sState : states) {
                 common::model::StepperMotorCmd cmd(common::model::EStepperCommandType::CMD_TYPE_TORQUE, sState.getId(), {false});
-                _stepper->addCommandToQueue(cmd);
+                _can_driver->addCommandToQueue(cmd);
             }
             ros::Duration(1).sleep();
         }
@@ -124,7 +124,7 @@ class StepperDriverTest {
 
                 for(int i = 0 ; i < 1000 ; i++)
                 {
-                    stepper_motor_state = _stepper->getStepperStates();
+                    stepper_motor_state = _can_driver->getStepperStates();
                     std::cout << stepper_motor_state.at(0).getPositionState() << " "
                               << stepper_motor_state.at(1).getPositionState() << " "
                               << stepper_motor_state.at(2).getPositionState() << std::endl;
@@ -136,7 +136,7 @@ class StepperDriverTest {
         void TestReceiveState()
         {
             common::model::StepperMotorCmd cmd_torque(common::model::EStepperCommandType::CMD_TYPE_TORQUE, 1, {true});
-            _stepper->addCommandToQueue(cmd_torque);
+            _can_driver->addCommandToQueue(cmd_torque);
             ros::Duration(1).sleep();
 
             int freq = 100;
@@ -146,23 +146,23 @@ class StepperDriverTest {
             common::model::SynchronizeStepperMotorCmd cmd_send(common::model::EStepperCommandType::CMD_TYPE_POSITION);
             double p = 1.5;
             std::vector<common::model::StepperMotorState> stepper_motor_states;
-            stepper_motor_states = _stepper->getStepperStates();
+            stepper_motor_states = _can_driver->getStepperStates();
             int32_t error = cmd.at(0) - static_cast<int32_t>(stepper_motor_states.at(0).getPositionState());
             while (std::abs(error) > 20)
             {
-                stepper_motor_states = _stepper->getStepperStates();
+                stepper_motor_states = _can_driver->getStepperStates();
                 error = static_cast<int>(cmd.at(0) - static_cast<int32_t>(stepper_motor_states.at(0).getPositionState())*p);
 
                 cmd_send.addMotorParam(stepper_motor_states.at(0).getId(), cmd.at(0) + error);
                 cmd_send.addMotorParam(stepper_motor_states.at(1).getId(), static_cast<int32_t>(stepper_motor_states.at(1).getPositionState()));
                 cmd_send.addMotorParam(stepper_motor_states.at(2).getId(), static_cast<int32_t>(stepper_motor_states.at(2).getPositionState()));
 
-                _stepper->setSyncCommand(cmd_send);
+                _can_driver->setSyncCommand(cmd_send);
                 control_loop_rate.sleep();
             }
 
             cmd_torque.setParams({false});
-            _stepper->addCommandToQueue(cmd_torque);
+            _can_driver->addCommandToQueue(cmd_torque);
             ros::Duration(1).sleep();
         }
 
@@ -170,16 +170,16 @@ class StepperDriverTest {
 
 int main(int argc, char **argv) 
 {
-    ros::init(argc, argv, "stepper_driver_test");
+    ros::init(argc, argv, "can_driver_test");
   
-    ROS_DEBUG("Launching stepper_driver_test");
+    ROS_DEBUG("Launching can_driver_test");
 
     ros::AsyncSpinner spinner(4);
     spinner.start();
     
     ros::NodeHandle nh;
    
-    StepperDriverTest test; 
+    CanDriverTest test; 
 
     ros::waitForShutdown();
     

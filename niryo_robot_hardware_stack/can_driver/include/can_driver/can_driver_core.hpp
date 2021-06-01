@@ -1,5 +1,5 @@
 /*
-    stepper_driver_core.hpp
+    can_driver_core.hpp
     Copyright (C) 2020 Niryo
     All rights reserved.
 
@@ -17,8 +17,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef STEPPER_DRIVER_CORE_HPP
-#define STEPPER_DRIVER_CORE_HPP
+#ifndef CAN_DRIVER_CORE_HPP
+#define CAN_DRIVER_CORE_HPP
 
 #include <memory>
 #include <ros/ros.h>
@@ -29,23 +29,23 @@
 #include <queue>
 
 #include "model/idriver_core.hpp"
-#include "stepper_driver/stepper_driver.hpp"
-#include "stepper_driver/StepperArrayMotorHardwareStatus.h"
+#include "can_driver/can_driver.hpp"
+#include "can_driver/StepperArrayMotorHardwareStatus.h"
 #include "niryo_robot_msgs/BusState.h"
 #include "niryo_robot_msgs/CommandStatus.h"
 #include "model/synchronize_stepper_motor_cmd.hpp"
 
-namespace StepperDriver
+namespace CanDriver
 {
     /**
-     * @brief The StepperDriverCore class
+     * @brief The CanDriverCore class
      */
-    class StepperDriverCore : public common::model::IDriverCore
+    class CanDriverCore : public common::model::IDriverCore
     {
         public:
 
-            StepperDriverCore();
-            virtual ~StepperDriverCore() override;
+            CanDriverCore();
+            virtual ~CanDriverCore() override;
 
             int setConveyor(uint8_t motor_id, uint8_t default_conveyor_id = 6);
             void unsetConveyor(uint8_t motor_id);
@@ -68,7 +68,7 @@ namespace StepperDriver
             int32_t getCalibrationResult(uint8_t id) const;
             common::model::EStepperCalibrationStatus getCalibrationStatus() const;
 
-            stepper_driver::StepperArrayMotorHardwareStatus getHwStatus() const;
+            can_driver::StepperArrayMotorHardwareStatus getHwStatus() const;
 
             std::vector<common::model::StepperMotorState> getStepperStates() const;
             common::model::StepperMotorState getStepperState(uint8_t motor_id) const;
@@ -93,7 +93,6 @@ namespace StepperDriver
             int motorCmdReport(uint8_t motor_id);
 
         private:
-            //common to dxl_driver_core. Put in abstract class ?
             ros::NodeHandle _nh;
             bool _control_loop_flag;
             bool _debug_flag;
@@ -117,7 +116,7 @@ namespace StepperDriver
             double _delta_time_calib_read;
             double _time_hw_calib_last_read;
 
-            std::unique_ptr<StepperDriver> _stepper;
+            std::unique_ptr<CanDriver> _can_driver;
 
             std::vector<std::pair<uint8_t, int32_t> > _joint_trajectory_cmd;
             std::queue<common::model::StepperMotorCmd> _stepper_single_cmds;
@@ -128,70 +127,70 @@ namespace StepperDriver
     };
 
     /**
-     * @brief StepperDriverCore::isConnectionOk
+     * @brief CanDriverCore::isConnectionOk
      * @return
      */
     inline
-    bool StepperDriverCore::isConnectionOk() const
+    bool CanDriverCore::isConnectionOk() const
     {
-        return _stepper->isConnectionOk();
+        return _can_driver->isConnectionOk();
     }
 
     /**
-     * @brief StepperDriverCore::isCalibrationInProgress
+     * @brief CanDriverCore::isCalibrationInProgress
      * @return
      */
     inline
-    bool StepperDriverCore::isCalibrationInProgress() const
+    bool CanDriverCore::isCalibrationInProgress() const
     {
-        return _stepper->isCalibrationInProgress();
+        return _can_driver->isCalibrationInProgress();
     }
 
     /**
-     * @brief StepperDriverCore::getCalibrationResult
+     * @brief CanDriverCore::getCalibrationResult
      * @param id
      * @return
      */
     inline
-    int32_t StepperDriverCore::getCalibrationResult(uint8_t id) const
+    int32_t CanDriverCore::getCalibrationResult(uint8_t id) const
     {
-        return _stepper->getCalibrationResult(id);
+        return _can_driver->getCalibrationResult(id);
     }
 
     /**
-     * @brief StepperDriverCore::getCalibrationStatus
+     * @brief CanDriverCore::getCalibrationStatus
      * @return
      */
     inline
     common::model::EStepperCalibrationStatus
-    StepperDriverCore::getCalibrationStatus() const
+    CanDriverCore::getCalibrationStatus() const
     {
-        return _stepper->getCalibrationStatus();
+        return _can_driver->getCalibrationStatus();
     }
 
     /**
-     * @brief StepperDriverCore::getStepperStates
+     * @brief CanDriverCore::getStepperStates
      * @return
      */
     inline
     std::vector<common::model::StepperMotorState>
-    StepperDriverCore::getStepperStates() const
+    CanDriverCore::getStepperStates() const
     {
-        return _stepper->getMotorsStates();
+        return _can_driver->getMotorsStates();
     }
 
     /**
-     * @brief StepperDriverCore::getStepperState
+     * @brief CanDriverCore::getStepperState
      * @param motor_id
      * @return
      */
     inline
     common::model::StepperMotorState
-    StepperDriverCore::getStepperState(uint8_t motor_id) const
+    CanDriverCore::getStepperState(uint8_t motor_id) const
     {
-        return _stepper->getMotorState(motor_id);
+        return _can_driver->getMotorState(motor_id);
 
     }
-} // StepperDriver
+} // CanDriver
 
 #endif

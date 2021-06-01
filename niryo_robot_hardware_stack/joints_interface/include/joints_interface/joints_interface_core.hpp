@@ -51,8 +51,8 @@ namespace JointsInterface {
         public:
 
             JointsInterfaceCore(
-                std::shared_ptr<TTLDriver::DxlDriverCore> dynamixel,
-                std::shared_ptr<StepperDriver::StepperDriverCore> stepper);
+                std::shared_ptr<TtlDriver::TtlDriverCore> ttl_driver,
+                std::shared_ptr<CanDriver::CanDriverCore> can_driver);
 
             virtual ~JointsInterfaceCore();
 
@@ -68,8 +68,8 @@ namespace JointsInterface {
             const std::vector<std::shared_ptr<common::model::JointState> >& getJointsState() const;
 
         private:    
-            void init(std::shared_ptr<TTLDriver::DxlDriverCore> dynamixel,
-                      std::shared_ptr<StepperDriver::StepperDriverCore> stepper);
+            void init(std::shared_ptr<TtlDriver::TtlDriverCore> ttl_driver,
+                      std::shared_ptr<CanDriver::CanDriverCore> can_driver);
             void initParams();
 
             void startServices();

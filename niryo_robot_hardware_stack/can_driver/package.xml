@@ -1,11 +1,12 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>stepper_driver</name>
+  <name>can_driver</name>
   <version>0.0.0</version>
-  <description>The stepper_driver package provides an interface bewteen high level ROS packages and stepper motors</description>
+  <description>The can_driver package provides an interface bewteen high level ROS packages and motors on CAN bus</description>
   <author>Etienne Rey-Coquais</author>
   <author>Edouard Renard</author>
-  <maintainer email="e.rey-coquais@niryo.com">Etienne Rey-Coquais</maintainer>
+  <author>Clement Cocquempot</author>
+  <maintainer email="c.cocquempot@niryo.com">Clement Cocquempot</maintainer>
 
   <license>GPLv3</license>
 

@@ -1,5 +1,5 @@
 /*
-    dxl_driver_node.cpp
+    ttl_driver_unit_tests.cpp
     Copyright (C) 2020 Niryo
     All rights reserved.
     This program is free software: you can redistribute it and/or modify
@@ -14,22 +14,32 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-// ros
-#include <ros/ros.h>
+// Bring in my package's API, which is what I'm testing
+#include "ttl_driver/ttl_driver_core.hpp"
+#include "ttl_driver/ttl_driver.hpp"
 
-// niryo
-#include "ttl_driver/dxl_driver_core.hpp"
+// Bring in gtest
+#include <gtest/gtest.h>
 
-int main(int argc, char** argv)
+// Declare a test
+TEST(TtlDriverTestSuite, testInitDriver)
 {
-  ros::init(argc, argv, "dxl_driver_node");
+    TtlDriver::TtlDriver ttl_driver;
+    EXPECT_TRUE(ttl_driver.isConnectionOk());
+}
 
-  ROS_DEBUG("Launching dxl_driver_node");
+// Declare a test
+TEST(TtlDriverTestSuite, testInitDriverCore)
+{
+    TtlDriver::TtlDriverCore ttl_core;
+    EXPECT_TRUE(ttl_core.isConnectionOk());
+}
 
-  ros::NodeHandle nodeHandle("~");
+// Run all the tests that were declared with TEST()
+int main(int argc, char **argv){
+  testing::InitGoogleTest(&argc, argv);
+  ros::init(argc, argv, "tester");
+  ros::NodeHandle nh;
 
-  TTLDriver::DxlDriverCore dxl_node;
-
-  ros::spin();
-  return 0;
+  return RUN_ALL_TESTS();
 }

@@ -12,8 +12,8 @@
         <rosparam file="$(find ttl_driver)/config/$(arg hardware_version)/dxl_bus_config.yaml" command="load"/>
         <rosparam file="$(find ttl_driver)/config/default.yaml" command="load"/>
 
-        <rosparam file="$(find stepper_driver)/config/can_bus.yaml" command="load"/>
-        <rosparam file="$(find stepper_driver)/config/default.yaml" command="load"/>
+        <rosparam file="$(find can_driver)/config/can_bus.yaml" command="load"/>
+        <rosparam file="$(find can_driver)/config/default.yaml" command="load"/>
 
         <rosparam file="$(find joints_interface)/config/default.yaml" command="load" />
         <rosparam file="$(find joints_interface)/config/motors_param.yaml" command="load"/>

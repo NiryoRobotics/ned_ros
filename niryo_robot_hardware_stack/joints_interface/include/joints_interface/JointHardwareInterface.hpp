@@ -33,8 +33,8 @@
 #include <hardware_interface/robot_hw.h>
 
 #include "joints_interface/calibration_manager.hpp"
-#include "stepper_driver/stepper_driver_core.hpp"
-#include "ttl_driver/dxl_driver_core.hpp"
+#include "can_driver/can_driver_core.hpp"
+#include "ttl_driver/ttl_driver_core.hpp"
 
 #include "model/joint_state.hpp"
 
@@ -45,8 +45,8 @@ namespace JointsInterface {
 
     public:
         JointHardwareInterface(
-            std::shared_ptr<TTLDriver::DxlDriverCore> dynamixel,
-            std::shared_ptr<StepperDriver::StepperDriverCore> stepper);
+            std::shared_ptr<TtlDriver::TtlDriverCore> ttl_driver,
+            std::shared_ptr<CanDriver::CanDriverCore> can_driver);
 
         void sendInitMotorsParams();
         int calibrateJoints(int mode, std::string &result_message);
@@ -81,8 +81,8 @@ namespace JointsInterface {
         hardware_interface::JointStateInterface _joint_state_interface;
         hardware_interface::PositionJointInterface _joint_position_interface;
 
-        std::shared_ptr<TTLDriver::DxlDriverCore> _dynamixelCore;
-        std::shared_ptr<StepperDriver::StepperDriverCore> _stepperCore;
+        std::shared_ptr<TtlDriver::TtlDriverCore> _ttl_driver_core;
+        std::shared_ptr<CanDriver::CanDriverCore> _can_driver_core;
         std::unique_ptr<CalibrationManager> _calibration_manager;
 
         std::map<uint8_t, std::string> _map_stepper_name;

@@ -22,7 +22,7 @@
 
 // niryo
 #include "conveyor_interface/conveyor_interface_core.hpp"
-#include "stepper_driver/stepper_driver_core.hpp"
+#include "can_driver/can_driver_core.hpp"
 
 int main(int argc, char **argv) 
 {
@@ -35,10 +35,10 @@ int main(int argc, char **argv)
     
     ros::NodeHandle nh;
    
-    auto stepper = std::make_shared<StepperDriver::StepperDriverCore>();
+    auto can_driver = std::make_shared<CanDriver::CanDriverCore>();
     ros::Duration(1).sleep();
 
-    auto conveyor_interface = std::make_shared<ConveyorInterface::ConveyorInterfaceCore>(stepper);
+    auto conveyor_interface = std::make_shared<ConveyorInterface::ConveyorInterfaceCore>(can_driver);
     ros::Duration(1).sleep();
     
     ros::spin();

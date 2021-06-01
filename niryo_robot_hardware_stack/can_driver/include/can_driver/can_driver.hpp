@@ -1,5 +1,5 @@
 /*
-    StepperDriver.hpp
+    can_driver.hpp
     Copyright (C) 2020 Niryo
     All rights reserved.
 
@@ -17,8 +17,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef STEPPER_DRIVER_HPP
-#define STEPPER_DRIVER_HPP
+#ifndef CAN_DRIVER_HPP
+#define CAN_DRIVER_HPP
 
 //std
 #include <memory>
@@ -39,24 +39,24 @@
 #include "model/stepper_calibration_status_enum.hpp"
 #include "model/synchronize_stepper_motor_cmd.hpp"
 
-#include "stepper_driver/StepperMotorCommand.h"
-#include "stepper_driver/StepperCmd.h"
+#include "can_driver/StepperMotorCommand.h"
+#include "can_driver/StepperCmd.h"
 
 #include "mcp_can_rpi/mcp_can_rpi.h"
 
 
-namespace StepperDriver
+namespace CanDriver
 {
 
     /**
-     * @brief The StepperDriver class
+     * @brief The CanDriver class
      */
-    class StepperDriver : public common::model::IDriver
+    class CanDriver : public common::model::IDriver
     {
         public:
 
-            StepperDriver();
-            virtual ~StepperDriver() override;
+            CanDriver();
+            virtual ~CanDriver() override;
 
             //commands
             void addMotor(uint8_t id, bool isConveyor = false);
@@ -189,34 +189,34 @@ namespace StepperDriver
     };
 
     inline
-    size_t StepperDriver::getNbMotors() const
+    size_t CanDriver::getNbMotors() const
     {
         return _state_map.size();
     }
 
     inline
-    bool StepperDriver::canReadData() const
+    bool CanDriver::canReadData() const
     {
         return mcp_can->canReadData();
     }
 
     inline
-    common::model::EStepperCalibrationStatus StepperDriver::getCalibrationStatus() const
+    common::model::EStepperCalibrationStatus CanDriver::getCalibrationStatus() const
     {
         return _calibration_status;
     }
 
     inline
-    bool StepperDriver::isCalibrationInProgress() const {
+    bool CanDriver::isCalibrationInProgress() const {
         return common::model::EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS == _calibration_status;
     }
 
     inline
-    bool StepperDriver::hasMotors()
+    bool CanDriver::hasMotors()
     {
         return _state_map.size() > 0;
     }
 
-} // namespace StepperDriver
+} // namespace CanDriver
 
 #endif

@@ -20,7 +20,7 @@
 
 using namespace std;
 
-namespace TTLDriver
+namespace TtlDriver
 {
     /**
      * @brief XDriver::XDriver

@@ -23,9 +23,9 @@
 // Declare a test
 TEST(ToolsInterfaceTestSuite, testInit)
 {
-    auto dxl_driver = std::make_shared<DynamixelDriver::DxlDriverCore>();
+    auto ttl_driver = std::make_shared<TtlDriver::TtkDriverCore>();
 
-    ToolsInterface::ToolsInterfaceCore tools_core(dxl_driver);
+    ToolsInterface::ToolsInterfaceCore tools_core(ttl_driver);
     EXPECT_TRUE(tools_core.isInitialized());
 }
 

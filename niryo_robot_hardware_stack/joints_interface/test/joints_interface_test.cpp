@@ -341,7 +341,7 @@ public:
 
 int main(int argc, char **argv)
 {
-    ros::init(argc, argv, "stepper_driver_test");
+    ros::init(argc, argv, "joints_driver_test");
 
     ros::AsyncSpinner spinner(4);
     spinner.start();

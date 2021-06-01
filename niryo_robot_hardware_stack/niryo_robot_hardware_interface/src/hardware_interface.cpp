@@ -71,7 +71,7 @@ namespace NiryoRobotHardwareInterface
             if (_ttl_enabled)
             {
                 ROS_DEBUG("HardwareInterface::initNodes - Start Dynamixel Driver Node");
-                _ttl_driver = std::make_shared<TTLDriver::DxlDriverCore>();
+                _ttl_driver = std::make_shared<TtlDriver::TtlDriverCore>();
                 ros::Duration(0.25).sleep();
             }
             else {
@@ -81,7 +81,7 @@ namespace NiryoRobotHardwareInterface
             if (_can_enabled)
             {
                 ROS_DEBUG("HardwareInterface::initNodes - Start Stepper Driver Node");
-                _stepper_driver = std::make_shared<StepperDriver::StepperDriverCore>();
+                _can_driver = std::make_shared<CanDriver::CanDriverCore>();
                 ros::Duration(0.25).sleep();
             }
             else {
@@ -91,7 +91,7 @@ namespace NiryoRobotHardwareInterface
             if (_can_enabled && _ttl_enabled)
             {
                 ROS_DEBUG("HardwareInterface::initNodes - Start Joints Interface Node");
-                _joints_interface = std::make_shared<JointsInterface::JointsInterfaceCore>(_ttl_driver, _stepper_driver);
+                _joints_interface = std::make_shared<JointsInterface::JointsInterfaceCore>(_ttl_driver, _can_driver);
                 ros::Duration(0.25).sleep();
 
                 ROS_DEBUG("HardwareInterface::initNodes - Start End Effector Interface Node");
@@ -99,7 +99,7 @@ namespace NiryoRobotHardwareInterface
                 ros::Duration(0.25).sleep();
 
                 ROS_DEBUG("HardwareInterface::initNodes - Start Tools Interface Node");
-                _conveyor_interface = std::make_shared<ConveyorInterface::ConveyorInterfaceCore>(_stepper_driver);
+                _conveyor_interface = std::make_shared<ConveyorInterface::ConveyorInterfaceCore>(_can_driver);
                 ros::Duration(0.25).sleep();
             }
             else {
@@ -177,7 +177,7 @@ namespace NiryoRobotHardwareInterface
         if (!_simulation_mode)
         {
             ROS_WARN("Hardware Interface - Stop Motor Report");
-            _stepper_driver->activeDebugMode(false);
+            _can_driver->activeDebugMode(false);
             _ttl_driver->activeDebugMode(false);
             res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
             res.message = "";
@@ -197,19 +197,19 @@ namespace NiryoRobotHardwareInterface
         if (!_simulation_mode)
         {
             ROS_WARN("Hardware Interface - Start Motors Report");
-            _stepper_driver->activeDebugMode(true);
+            _can_driver->activeDebugMode(true);
             _ttl_driver->activeDebugMode(true);
 
-            int stepper_status = _stepper_driver->launchMotorsReport();
-            int dxl_status = _ttl_driver->launchMotorsReport();
+            int can_status = _can_driver->launchMotorsReport();
+            int ttl_status = _ttl_driver->launchMotorsReport();
 
-            _stepper_driver->activeDebugMode(false);
+            _can_driver->activeDebugMode(false);
             _ttl_driver->activeDebugMode(false);
 
             ROS_WARN("Hardware Interface - Motors report ended");
 
-            if ((niryo_robot_msgs::CommandStatus::SUCCESS == stepper_status) &&
-                (niryo_robot_msgs::CommandStatus::SUCCESS == dxl_status))
+            if ((niryo_robot_msgs::CommandStatus::SUCCESS == can_status) &&
+                (niryo_robot_msgs::CommandStatus::SUCCESS == ttl_status))
             {
                 res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
                 res.message = "Hardware interface seems working properly";
@@ -218,9 +218,9 @@ namespace NiryoRobotHardwareInterface
             {
                 res.status = niryo_robot_msgs::CommandStatus::FAILURE;
                 res.message = "Steppers status: ";
-                res.message += (stepper_status == niryo_robot_msgs::CommandStatus::SUCCESS) ? "Ok" : "Error";
+                res.message += (can_status == niryo_robot_msgs::CommandStatus::SUCCESS) ? "Ok" : "Error";
                 res.message += ", Dxl status: ";
-                res.message += (dxl_status == niryo_robot_msgs::CommandStatus::SUCCESS) ? "Ok" : "Error";
+                res.message += (ttl_status == niryo_robot_msgs::CommandStatus::SUCCESS) ? "Ok" : "Error";
             }
         }
         return (niryo_robot_msgs::CommandStatus::SUCCESS == res.status);
@@ -266,10 +266,10 @@ namespace NiryoRobotHardwareInterface
 
         while (ros::ok())
         {
-            ttl_driver::DxlArrayMotorHardwareStatus dxl_motor_state;
-            stepper_driver::StepperArrayMotorHardwareStatus stepper_motor_state;
+            ttl_driver::DxlArrayMotorHardwareStatus ttl_motor_state;
+            can_driver::StepperArrayMotorHardwareStatus can_motor_state;
 
-            niryo_robot_msgs::BusState dxl_bus_state;
+            niryo_robot_msgs::BusState ttl_bus_state;
             niryo_robot_msgs::BusState can_bus_state;
 
             bool need_calibration = false;
@@ -284,13 +284,13 @@ namespace NiryoRobotHardwareInterface
             {
                 if (_ttl_enabled)
                 {
-                    dxl_motor_state = _ttl_driver->getHwStatus();
-                    dxl_bus_state = _ttl_driver->getBusState();
+                    ttl_motor_state = _ttl_driver->getHwStatus();
+                    ttl_bus_state = _ttl_driver->getBusState();
                 }
                 if (_can_enabled)
                 {
-                    stepper_motor_state = _stepper_driver->getHwStatus();
-                    can_bus_state = _stepper_driver->getBusState();
+                    can_motor_state = _can_driver->getHwStatus();
+                    can_bus_state = _can_driver->getBusState();
                 }
                 if (_can_enabled && _ttl_enabled)
                 {
@@ -301,10 +301,10 @@ namespace NiryoRobotHardwareInterface
             }
             else
             {
-                dxl_motor_state = _fake_interface->getDxlHwStatus();
-                stepper_motor_state = _fake_interface->getStepperHwStatus();
+                ttl_motor_state = _fake_interface->getTtlHwStatus();
+                can_motor_state = _fake_interface->getCanHwStatus();
 
-                dxl_bus_state = _fake_interface->getDxlBusState();
+                ttl_bus_state = _fake_interface->getTtlBusState();
                 can_bus_state = _fake_interface->getCanBusState();
 
                 cpu_temperature = _fake_interface->getCpuTemperature();
@@ -315,12 +315,12 @@ namespace NiryoRobotHardwareInterface
             msg.rpi_temperature = cpu_temperature;
             msg.hardware_version = 1;
             
-            msg.connection_up = (dxl_bus_state.connection_status && can_bus_state.connection_status);
+            msg.connection_up = (ttl_bus_state.connection_status && can_bus_state.connection_status);
 
             std::string error_message = can_bus_state.error;
-            if (!dxl_bus_state.error.empty()) {
+            if (!ttl_bus_state.error.empty()) {
                 error_message += "\n";
-                error_message += dxl_bus_state.error;
+                error_message += ttl_bus_state.error;
             }
 
             msg.error_message = error_message;
@@ -335,7 +335,7 @@ namespace NiryoRobotHardwareInterface
             std::vector<std::string> motor_types;
             std::vector<std::string> motor_names;
 
-            for (auto const& hw_status : stepper_motor_state.motors_hw_status)
+            for (auto const& hw_status : can_motor_state.motors_hw_status)
             {
                 temperatures.emplace_back(hw_status.temperature);
                 voltages.emplace_back(hw_status.voltage);
@@ -353,7 +353,7 @@ namespace NiryoRobotHardwareInterface
             }
 
             // for each motor gather info in the dedicated vectors
-            for (auto const& hw_status : dxl_motor_state.motors_hw_status)
+            for (auto const& hw_status : ttl_motor_state.motors_hw_status)
             {
                 temperatures.emplace_back(static_cast<int32_t>(hw_status.temperature));
                 voltages.emplace_back(hw_status.voltage);
@@ -414,7 +414,7 @@ namespace NiryoRobotHardwareInterface
         ros::Rate publish_software_version_rate = ros::Rate(_publish_software_version_frequency);
         while (ros::ok())
         {
-            stepper_driver::StepperArrayMotorHardwareStatus stepper_motor_state;
+            can_driver::StepperArrayMotorHardwareStatus stepper_motor_state;
             std::vector<std::string> motor_names;
             std::vector<std::string> firmware_versions;
             std::vector<std::shared_ptr<common::model::JointState> > joints_state;
@@ -423,7 +423,7 @@ namespace NiryoRobotHardwareInterface
             {
                 if (_can_enabled)
                 {
-                    stepper_motor_state = _stepper_driver->getHwStatus();
+                    stepper_motor_state = _can_driver->getHwStatus();
                 }
                 if (_can_enabled && _ttl_enabled)
                 {
@@ -437,7 +437,7 @@ namespace NiryoRobotHardwareInterface
             }
             else
             {
-                stepper_motor_state = _fake_interface->getStepperHwStatus();
+                stepper_motor_state = _fake_interface->getCanHwStatus();
 
                 motor_names.push_back("joint_1");
                 motor_names.push_back("joint_2");

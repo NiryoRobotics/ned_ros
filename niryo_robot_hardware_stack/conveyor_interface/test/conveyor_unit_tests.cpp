@@ -23,9 +23,9 @@
 // Declare a test
 TEST(ConveyorTestSuite, testInit)
 {
-    auto stepper_driver = std::make_shared<StepperDriver::StepperDriverCore>();
+    auto can_driver = std::make_shared<CanDriver::CanDriverCore>();
 
-    ConveyorInterface::ConveyorInterfaceCore conveyor_core(stepper_driver);
+    ConveyorInterface::ConveyorInterfaceCore conveyor_core(can_driver);
     EXPECT_TRUE(conveyor_core.isInitialized());
 }
 

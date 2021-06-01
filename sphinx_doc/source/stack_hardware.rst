@@ -31,5 +31,5 @@ In this section, you will have access to all information about each Niryo Robot'
    stack_hardware/cpu_interface
    stack_hardware/fake_interface
    stack_hardware/ttl_driver
-   stack_hardware/stepper_driver
+   stack_hardware/can_driver
    stack_hardware/niryo_robot_debug

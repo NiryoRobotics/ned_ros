@@ -89,12 +89,12 @@ add_library(${PROJECT_NAME}
 )
 
 add_library(${PROJECT_NAME}_core
-  src/dxl_driver_core.cpp
-  src/dxl_driver.cpp
+  src/ttl_driver_core.cpp
+  src/ttl_driver.cpp
 )
 
 add_executable(${PROJECT_NAME}_node
-  src/dxl_driver_node.cpp
+  src/ttl_driver_node.cpp
 )
 
 ## Add dependencies to exported targets, like ROS msgs or srvs
@@ -141,7 +141,7 @@ endif()
 if(CATKIN_ENABLE_TESTING)
   if(BUILD_UNIT_TESTS)
     catkin_add_gtest(${PROJECT_NAME}_unit_tests
-      test/dxl_driver_unit_tests.cpp
+      test/ttl_driver_unit_tests.cpp
     )
     if(TARGET ${PROJECT_NAME}_unit_tests)
       target_link_libraries(${PROJECT_NAME}_unit_tests
