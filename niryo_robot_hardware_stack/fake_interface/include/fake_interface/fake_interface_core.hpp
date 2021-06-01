@@ -77,13 +77,14 @@ namespace FakeInterface {
         niryo_robot_msgs::BusState getTtlBusState();
         can_driver::StepperArrayMotorHardwareStatus getCanHwStatus();
         niryo_robot_msgs::BusState getCanBusState();
+
         void getCalibrationState(bool &need_calibration, bool &calibration_in_progress) const;
 
         int getCpuTemperature();
 
         void pubToolId(int id);
 
-        std::string jointIdToJointName(uint8_t id) const;
+        std::string jointIdToJointName(uint8_t id, uint8_t motor_type) const;
 
         std::vector<uint8_t> _dxl_motors_id{2, 3, 6};
         std::vector<uint8_t> _dxl_motors_type{niryo_robot_msgs::MotorHeader::MOTOR_TYPE_XL430,

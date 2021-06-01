@@ -404,10 +404,10 @@ namespace JointsInterface {
      * @param id
      * @return
      */
-    string JointHardwareInterface::jointIdToJointName(uint8_t id) const
+    string JointHardwareInterface::jointIdToJointName(uint8_t id, EMotorType motor_type) const
     {
 
-        if(_map_stepper_name.count(id))
+        if(EMotorType::STEPPER == motor_type && _map_stepper_name.count(id))
             return _map_stepper_name.at(id);
         else if(_map_dxl_name.count(id))
             return _map_dxl_name.at(id);

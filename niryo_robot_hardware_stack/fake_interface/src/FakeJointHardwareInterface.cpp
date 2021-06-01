@@ -114,10 +114,10 @@ namespace FakeInterface {
      * @param id
      * @return
      */
-    std::string FakeJointHardwareInterface::jointIdToJointName(uint8_t id)
+    std::string FakeJointHardwareInterface::jointIdToJointName(uint8_t id, common::model::EMotorType motor_type) const
     {
 
-        if(_map_stepper_name.count(id))
+        if(common::model::EMotorType::STEPPER == motor_type && _map_stepper_name.count(id))
             return _map_stepper_name.at(id);
         else if(_map_dxl_name.count(id))
             return _map_dxl_name.at(id);

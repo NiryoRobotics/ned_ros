@@ -25,6 +25,8 @@
 #include <hardware_interface/robot_hw.h>
 #include <ros/ros.h>
 
+#include "model/motor_type_enum.hpp"
+
 namespace FakeInterface {
 
     /**
@@ -35,7 +37,7 @@ namespace FakeInterface {
     public:
         FakeJointHardwareInterface();
 
-        std::string jointIdToJointName(uint8_t id);
+        std::string jointIdToJointName(uint8_t id, common::model::EMotorType motor_type) const;
 
         // RobotHW interface
     public:

@@ -344,9 +344,9 @@ namespace NiryoRobotHardwareInterface
                 motor_types.emplace_back("Niryo Stepper");
                 std::string joint_name = "";
                 if (!_simulation_mode)
-                    joint_name = _joints_interface->jointIdToJointName(hw_status.motor_identity.motor_id);
+                    joint_name = _joints_interface->jointIdToJointName(hw_status.motor_identity.motor_id, hw_status.motor_identity.motor_type);
                 else
-                    joint_name = _fake_interface->jointIdToJointName(hw_status.motor_identity.motor_id);
+                    joint_name = _fake_interface->jointIdToJointName(hw_status.motor_identity.motor_id, hw_status.motor_identity.motor_type);
 
                 joint_name = joint_name == "" ? ("Stepper " + std::to_string(hw_status.motor_identity.motor_id)) : joint_name;
                 motor_names.emplace_back(joint_name);
@@ -384,9 +384,9 @@ namespace NiryoRobotHardwareInterface
                 
                 std::string joint_name = "";
                 if (!_simulation_mode)
-                    joint_name = _joints_interface->jointIdToJointName(hw_status.motor_identity.motor_id);
+                    joint_name = _joints_interface->jointIdToJointName(hw_status.motor_identity.motor_id, hw_status.motor_identity.motor_type);
                 else
-                    joint_name = _fake_interface->jointIdToJointName(hw_status.motor_identity.motor_id);
+                    joint_name = _fake_interface->jointIdToJointName(hw_status.motor_identity.motor_id, hw_status.motor_identity.motor_type);
 
                 joint_name = (joint_name == "") ? "Tool" : joint_name;
                 motor_names.emplace_back(joint_name);

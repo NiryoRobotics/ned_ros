@@ -43,6 +43,7 @@
 #include "niryo_robot_msgs/SetBool.h"
 #include "niryo_robot_msgs/CommandStatus.h"
 #include "niryo_robot_msgs/Trigger.h"
+#include "model/motor_type_enum.hpp"
 
 namespace JointsInterface {
 
@@ -60,7 +61,7 @@ namespace JointsInterface {
             void activateLearningMode(bool learning_mode_on, int &resp_status, std::string &resp_message);
             void calibrateJoints();
 
-            std::string jointIdToJointName(uint8_t id) const;
+            std::string jointIdToJointName(uint8_t id, uint8_t motor_type) const;
 
             bool getFreeDriveMode() const;
             void getCalibrationState(bool &need_calibration, bool &calibration_in_progress) const;
@@ -117,9 +118,9 @@ namespace JointsInterface {
      * @return
      */
     inline
-    std::string JointsInterfaceCore::jointIdToJointName(uint8_t id) const
+    std::string JointsInterfaceCore::jointIdToJointName(uint8_t id, uint8_t motor_type) const
     {
-        return _robot->jointIdToJointName(id);
+        return _robot->jointIdToJointName(id, static_cast<common::model::EMotorType>(motor_type));
     }
 
     /**
