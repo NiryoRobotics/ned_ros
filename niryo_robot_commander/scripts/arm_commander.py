@@ -125,6 +125,9 @@ class ArmCommander:
         rospy.Service('/niryo_robot/kinematics/inverse', GetIK,
                       self.__callback_get_inverse_kinematics)
 
+        # Check joint validity service (used for self collisions checking)
+        self.check_state_validity = rospy.ServiceProxy('check_state_validity', GetStateValidity)
+
     # -- Publishers call
     def __publish_arm_max_velocity_scaling_factor(self, _):
         """
@@ -762,17 +765,12 @@ class ArmCommander:
         :param joints: list of joints value
         """
         try:
-            rospy.wait_for_service('check_state_validity', 2)
-        except (rospy.ServiceException, rospy.ROSException) as e:
-            rospy.logwarn("Arm commander - Impossible to connect to check state validity service : " + str(e))
-        try:
-            check_state_validity = rospy.ServiceProxy('check_state_validity', GetStateValidity)
             robot_state_target = RobotStateMoveIt()
             robot_state_target.joint_state.header.frame_id = "world"
             robot_state_target.joint_state.position = joints
             robot_state_target.joint_state.name = self.__joints_name
             group_name = self.__arm.get_name()
-            response = check_state_validity(robot_state_target, group_name, None)
+            response = self.check_state_validity(robot_state_target, group_name, None)
             if not response.valid and len(response.contacts) > 0:
                 rospy.logwarn('Arm commander - Joints target unreachable because of collision between %s and %s',
                               response.contacts[0].contact_body_1, response.contacts[0].contact_body_2)
