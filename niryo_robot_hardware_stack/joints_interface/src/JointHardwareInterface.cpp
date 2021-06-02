@@ -135,7 +135,7 @@ namespace JointsInterface {
             MotorTypeEnum eType = MotorTypeEnum(joint_type.c_str());
 
             //gather info in joint  states (polymorphic)
-            //CC use factory in state directly
+            //CC use factory in state directly ?
             if(eType == EMotorType::STEPPER) {  //stepper
                 auto stepperState = make_shared<StepperMotorState>(joint_name, eType, static_cast<uint8_t>(joint_id_config));
                 if(stepperState) {

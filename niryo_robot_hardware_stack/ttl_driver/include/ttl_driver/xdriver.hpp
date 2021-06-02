@@ -22,6 +22,7 @@
 #include <string>
 #include <iostream>
 #include <sstream>
+#include <cassert>
 
 #include "abstract_motor_driver.hpp"
 #include "dynamixel_sdk/dynamixel_sdk.h"
@@ -51,6 +52,7 @@ namespace TtlDriver
 
         //specifics to reg type
         std::string str() const override;
+
         std::string interpreteErrorState(uint32_t hw_state) override;
         int checkModelNumber(uint8_t id) override;
 

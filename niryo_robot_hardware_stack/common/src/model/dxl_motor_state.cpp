@@ -40,17 +40,6 @@ namespace common {
 
         /**
          * @brief DxlMotorState::DxlMotorState
-         * @param type
-         * @param id
-         * @param isTool
-         */
-        DxlMotorState::DxlMotorState(EMotorType type, uint8_t id, bool isTool) :
-            DxlMotorState("unknown", type, id, isTool)
-        {
-        }
-
-        /**
-         * @brief DxlMotorState::DxlMotorState
          * @param name
          * @param type
          * @param id
@@ -60,7 +49,47 @@ namespace common {
             JointState(name, type, id),
             _isTool(isTool)
         {
+            //to put in config ?
+            switch(_type)
+            {
+                case EMotorType::XL320:
+                    _total_angle = 300;
+                    _total_range_position = 1022;
+                    _middle_position = 511;
+                    _steps_for_one_speed =  1.8944; // 0.229 * 4096 / 60
+                break;
+                case EMotorType::XC430:
+                    _total_angle = 360.36;
+                    _total_range_position = 4094;
+                    _middle_position = 2047;
+                    _steps_for_one_speed = 15.6331; // 0.229 * 4096 / 60
+                break;
+                case EMotorType::XL330:
+                    _total_angle = 360.36;
+                    _total_range_position = 4094;
+                    _middle_position = 2047;
+                    _steps_for_one_speed = 15.6331; // 0.229 * 4096 / 60
+                break;
+                case EMotorType::XL430:
+                    _total_angle = 360.36;
+                    _total_range_position = 4094;
+                    _middle_position = 2047;
+                    _steps_for_one_speed = 15.6331; // 0.229 * 4096 / 60
+                break;
+                default:
+                break;
+            }
         }
+
+        /**
+         * @brief DxlMotorState::DxlMotorState
+         * @param type
+         * @param id
+         * @param isTool
+         */
+        DxlMotorState::DxlMotorState(EMotorType type, uint8_t id, bool isTool) :
+            DxlMotorState("unknown", type, id, isTool)
+        {}
 
         /**
          * @brief DxlMotorState::~DxlMotorState
@@ -121,10 +150,9 @@ namespace common {
          */
         int DxlMotorState::to_motor_pos(double pos_rad)
         {
-            double denom = getTotalAngle();
-            assert(0.0 != denom);
+            assert(0.0 != _total_angle);
 
-            return getMiddlePosition() + static_cast<int>(((pos_rad - _offset_position) * RADIAN_TO_DEGREE * getTotalRangePosition()) / denom);
+            return _middle_position + static_cast<int>(((pos_rad - _offset_position) * RADIAN_TO_DEGREE * _total_range_position) / _total_angle);
         }
 
         /**
@@ -134,86 +162,48 @@ namespace common {
          */
         double DxlMotorState::to_rad_pos(int position_dxl)
         {
-            double denom = (RADIAN_TO_DEGREE * getTotalRangePosition());
-            assert(0.0 != denom);
+            assert(0.0 != (RADIAN_TO_DEGREE * _total_range_position));
 
-            return _offset_position + static_cast<double>(((position_dxl - getMiddlePosition()) * getTotalAngle()) / denom);
+            return _offset_position + static_cast<double>(((position_dxl - _middle_position) * _total_angle) / (RADIAN_TO_DEGREE * _total_range_position));
         }
 
-
-        // CC to be removed. For easy refacto only
-        double DxlMotorState::getTotalRangePosition() const
+        /**
+         * @brief DxlMotorState::getTotalRangePosition
+         * @return
+         */
+        int DxlMotorState::getTotalRangePosition() const
         {
-            switch(_type)
-            {
-            case EMotorType::XC430:
-                return 4095.0;
-            case EMotorType::XL320:
-                return 1023.0;
-            case EMotorType::XL330:
-                return 4095.0;
-            case EMotorType::XL430:
-                return 4095.0;
-            default:
-                return 0.0;
-            }
+            return _total_range_position;
         }
 
-        // CC to be removed. For easy refacto only
+        /**
+         * @brief DxlMotorState::getMiddlePosition
+         * @return
+         */
         int DxlMotorState::getMiddlePosition() const
         {
-            switch(_type)
-            {
-            case EMotorType::XC430:
-                return 2047;
-            case EMotorType::XL320:
-                return 511;
-            case EMotorType::XL330:
-                return 2047;
-            case EMotorType::XL430:
-                return 2047;
-            default:
-                return 0;
-            }
+            return _middle_position;
         }
 
-        // CC to be removed. For easy refacto only
+        /**
+         * @brief DxlMotorState::getTotalAngle
+         * @return
+         */
         double DxlMotorState::getTotalAngle() const
         {
-            switch(_type)
-            {
-            case EMotorType::XC430:
-                return 360.36;
-            case EMotorType::XL320:
-                return 296.67;
-            case EMotorType::XL330:
-                return 296.67;
-            case EMotorType::XL430:
-                return 360.36;
-            default:
-                return 0;
-            }
+            return _total_angle;
         }
 
-        // CC to be removed. For easy refacto only
+        /**
+         * @brief DxlMotorState::getStepsForOneSpeed
+         * @return
+         */
         double DxlMotorState::getStepsForOneSpeed() const
         {
             // according to xl-330 datasheet : 1 speed ~ 0.229 rpm ~ 3.9083 dxl position per second
             // according to xl-320 datasheet : 1 speed ~ 0.111 rpm ~ 1.8944 dxl position per second
 
-            switch(_type)
-            {
-            case EMotorType::XC430:
-                return 15.6331; // 0.229 * 4096 / 60
-            case EMotorType::XL320:
-                return 1.8944; // 0.111 * 1024 / 60
-            case EMotorType::XL330:
-                return 15.6331; // 0.229 * 4096 / 60
-            case EMotorType::XL430:
-                return 15.6331; // 0.229 * 4096 / 60
-            default:
-                return 0.0;
-            }
+            return _steps_for_one_speed;
         }
 
         /**

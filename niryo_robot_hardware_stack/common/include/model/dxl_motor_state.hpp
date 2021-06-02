@@ -56,7 +56,7 @@ namespace common {
                 uint32_t getFF2Gain() const;
 
                 double getStepsForOneSpeed() const;
-                double getTotalRangePosition() const;
+                int getTotalRangePosition() const;
                 int getMiddlePosition() const;
                 double getTotalAngle() const;
 
@@ -74,6 +74,11 @@ namespace common {
                 uint32_t _d_gain{0};
                 uint32_t _ff1_gain{0};
                 uint32_t _ff2_gain{0};
+
+                int _total_range_position{0};
+                int _middle_position{0};
+                double _total_angle{0.0};
+                double _steps_for_one_speed{0.0};
         };
 
         /**
