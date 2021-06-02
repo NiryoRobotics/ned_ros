@@ -1,14 +1,17 @@
 <?xml version="1.0"?>
-<package format="2">
+<?xml-model
+  href="http://download.ros.org/schema/package_format3.xsd"
+  schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
   <name>joints_interface</name>
   <version>0.0.0</version>
   <description>The joints_interface package include all hardware componant to control the joints of the robot.</description>
-  <author>Etienne Rey-Coquais</author>
-  <author>Edouard Renard</author>
   <maintainer email="e.rey-coquais@niryo.com">Etienne Rey-Coquais</maintainer>
 
   <license>GPLv3</license>
-
+  <author>Etienne Rey-Coquais</author>
+  <author>Edouard Renard</author>
+  
   <buildtool_depend>catkin</buildtool_depend>
 
   <build_depend>roscpp</build_depend>

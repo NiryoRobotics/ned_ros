@@ -208,7 +208,10 @@ namespace CanDriver
         ROS_DEBUG("CanDriver::addMotor - Add motor id: %d", id);
 
         //add id to _state_map
-        _state_map.insert(std::make_pair(id, std::make_shared<StepperMotorState>(id, isConveyor)));
+        if(isConveyor)
+            _state_map.insert(std::make_pair(id, std::make_shared<ConveyorState>(id)));
+        else
+            _state_map.insert(std::make_pair(id, std::make_shared<StepperMotorState>(id)));
     }
 
     /**
@@ -896,11 +899,11 @@ namespace CanDriver
      * @brief CanDriver::getMotorsStates
      * @return
      */
-    std::vector<StepperMotorState> CanDriver::getMotorsStates() const
+    std::vector<std::shared_ptr<StepperMotorState> > CanDriver::getMotorsStates() const
     {
-        std::vector<StepperMotorState> states;
-        for (auto const& it : _state_map)
-            states.push_back(*it.second.get());
+        std::vector<std::shared_ptr<StepperMotorState> > states;
+        for (auto&& it : _state_map)
+            states.push_back(it.second);
 
         return states;
     }

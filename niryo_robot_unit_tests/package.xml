@@ -1,17 +1,21 @@
-<package>
+<?xml version="1.0"?>
+<?xml-model
+  href="http://download.ros.org/schema/package_format3.xsd"
+  schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
     <name>niryo_robot_unit_tests</name>
     <version>3.0.0</version>
     <description>Package containing unit tests in order to run CI !</description>
-    <author email="r.lux@niryo.com">Remi Lux</author>
     <maintainer email="r.lux@niryo.com">Remi Lux</maintainer>
     <license>GPLv3</license>
-
+    <author email="r.lux@niryo.com">Remi Lux</author>
+    
     <buildtool_depend>catkin</buildtool_depend>
 
     <build_depend>rospy</build_depend>
     <build_depend>rostest</build_depend>
 
-    <run_depend>rospy</run_depend>
-    <run_depend>rostest</run_depend>
+    <exec_depend>rospy</exec_depend>
+    <exec_depend>rostest</exec_depend>
 
 </package>

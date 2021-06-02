@@ -214,28 +214,31 @@ namespace CanDriver
             ros::Duration(0.5).sleep();
             if (CAN_OK == _can_driver->scanAndCheck())
             {
-                for (auto const& state: _can_driver->getMotorsStates())
+                for (auto&& state: _can_driver->getMotorsStates())
                 {
-                    ROS_INFO("CanDriverCore::launchMotorsReport - Debug - Motor %d report start :", static_cast<int>(state.getId()));
+                    if(state) {
 
-                    int cmd_res = motorCmdReport(state.getId());
+                        ROS_INFO("CanDriverCore::launchMotorsReport - Debug - Motor %d report start :", static_cast<int>(state->getId()));
 
-                    if(niryo_robot_msgs::CommandStatus::SUCCESS == cmd_res)
-                    {
-                        nbSuccess++;
-                    }
-                    else
-                    {
-                        nbFailure++;
-                        response = niryo_robot_msgs::CommandStatus::FAILURE;
-                    }
+                        int cmd_res = motorCmdReport(state->getId());
 
-                    results.emplace_back(state.getId(), state.getType(), cmd_res);
+                        if(niryo_robot_msgs::CommandStatus::SUCCESS == cmd_res)
+                        {
+                            nbSuccess++;
+                        }
+                        else
+                        {
+                            nbFailure++;
+                            response = niryo_robot_msgs::CommandStatus::FAILURE;
+                        }
 
-                    if (niryo_robot_msgs::CommandStatus::ABORTED == cmd_res)
-                    {
-                        ROS_INFO("CanDriverCore::launchMotorsReport - Debug - Debug motor aborted");
-                        break;
+                        results.emplace_back(state->getId(), state->getType(), cmd_res);
+
+                        if (niryo_robot_msgs::CommandStatus::ABORTED == cmd_res)
+                        {
+                            ROS_INFO("CanDriverCore::launchMotorsReport - Debug - Debug motor aborted");
+                            break;
+                        }
                     }
                 }
             }
@@ -514,14 +517,16 @@ namespace CanDriver
         can_driver::StepperMotorHardwareStatus data;
         can_driver::StepperArrayMotorHardwareStatus hw_state;
 
-        for (auto const& stepperState : _can_driver->getMotorsStates())
+        for (auto && stepperState : _can_driver->getMotorsStates())
         {
-            data.motor_identity.motor_id = stepperState.getId();
-            data.motor_identity.motor_type = static_cast<uint8_t>(stepperState.getType());
-            data.temperature = static_cast<int32_t>(stepperState.getTemperatureState());
-            data.error = static_cast<int32_t>(stepperState.getHardwareErrorState());
-            data.firmware_version = stepperState.getFirmwareVersion();
-            hw_state.motors_hw_status.push_back(data);
+            if(stepperState) {
+                data.motor_identity.motor_id = stepperState->getId();
+                data.motor_identity.motor_type = static_cast<uint8_t>(stepperState->getType());
+                data.temperature = static_cast<int32_t>(stepperState->getTemperatureState());
+                data.error = static_cast<int32_t>(stepperState->getHardwareErrorState());
+                data.firmware_version = stepperState->getFirmwareVersion();
+                hw_state.motors_hw_status.push_back(data);
+            }
         }
         return hw_state;
     }

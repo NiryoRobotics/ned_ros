@@ -90,7 +90,7 @@ namespace TtlDriver
             uint32_t getPosition(common::model::DxlMotorState& motor_state);
             int getLedState() const;
 
-            std::vector<common::model::DxlMotorState> getMotorsStates() const;
+            std::vector<std::shared_ptr<common::model::DxlMotorState> > getMotorsStates() const;
             common::model::DxlMotorState getMotorState(uint8_t motor_id) const;
 
             std::vector<uint8_t> getRemovedMotorList() const;
@@ -131,7 +131,7 @@ namespace TtlDriver
             std::vector<uint8_t> _all_motor_connected; //with all dxl motors connected (including the tool)
             std::vector<uint8_t> _removed_motor_id_list;
 
-            std::map<uint8_t, common::model::DxlMotorState> _state_map;
+            std::map<uint8_t, std::shared_ptr<common::model::DxlMotorState> > _state_map;
             std::map<common::model::EMotorType, std::vector<uint8_t> > _ids_map;
             std::map<common::model::EMotorType, std::shared_ptr<AbstractMotorDriver> > _xdriver_map;
 

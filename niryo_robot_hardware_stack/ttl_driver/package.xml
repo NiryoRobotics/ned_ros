@@ -1,16 +1,16 @@
 <?xml version="1.0"?>
-<package format="2">
+<?xml-model
+  href="http://download.ros.org/schema/package_format3.xsd"
+  schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
   <name>ttl_driver</name>
-  <version>0.0.0</version>
+  <version>1.0.0</version>
   <description>The ttl_driver package provides an interface bewteen high level ROS packages and motors on TTL bus</description>
-  <author>Etienne Rey-Coquais</author>
-  <author>Edouard Renard</author>
-  <author>Valentin Pitre</author>
-  <author>Clement Cocquempot</author>
   <maintainer email="c.cocquempot@niryo.com">Clement Cocquempot</maintainer>
 
   <license>GPLv3</license>
-
+  <author>Clement Cocquempot</author>
+  
   <buildtool_depend>catkin</buildtool_depend>
 
   <build_depend>roscpp</build_depend>

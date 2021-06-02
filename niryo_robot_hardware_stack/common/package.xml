@@ -1,13 +1,16 @@
 <?xml version="1.0"?>
-<package format="2">
+<?xml-model
+  href="http://download.ros.org/schema/package_format3.xsd"
+  schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
   <name>common</name>
   <version>0.0.0</version>
   <description>The common package gather all utilities and absctract classes of the different models</description>
-  <author>Clement Cocquempot</author>
   <maintainer email="c.cocquempot@niryo.com">Clement Cocquempot</maintainer>
 
   <license>GPLv3</license>
-
+  <author>Clement Cocquempot</author>
+  
   <buildtool_depend>catkin</buildtool_depend>
 
   <build_depend>roscpp</build_depend>

@@ -299,14 +299,14 @@ namespace ConveyorInterface {
             conveyor_interface::ConveyorFeedback data;
 
             // CC to be checked
-            for(auto& sState : _can_driver->getStepperStates())
+            for(auto sState : _can_driver->getStepperStates())
             {
-                if(sState.isConveyor()) {
-                    ConveyorState& cState = dynamic_cast<ConveyorState &>(sState);
-                    data.conveyor_id = cState.getId();
-                    data.running = cState.getState();
-                    data.direction = static_cast<int8_t>(cState.getDirection());
-                    data.speed = cState.getSpeed();
+                if(sState && sState->isConveyor()) {
+                    auto cState = dynamic_pointer_cast<ConveyorState>(sState);
+                    data.conveyor_id = cState->getId();
+                    data.running = cState->getState();
+                    data.direction = static_cast<int8_t>(cState->getDirection());
+                    data.speed = cState->getSpeed();
                     msg.conveyors.push_back(data);
                 }
             }

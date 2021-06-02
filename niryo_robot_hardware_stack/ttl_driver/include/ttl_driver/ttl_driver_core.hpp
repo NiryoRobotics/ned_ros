@@ -87,7 +87,7 @@ namespace TtlDriver
 
         ttl_driver::DxlArrayMotorHardwareStatus getHwStatus() const;
 
-        std::vector<common::model::DxlMotorState> getDxlStates() const;
+        std::vector<std::shared_ptr<common::model::DxlMotorState> > getDxlStates() const;
         common::model::DxlMotorState getDxlState(uint8_t motor_id) const;
 
         // IDriverCore interface
@@ -160,7 +160,8 @@ namespace TtlDriver
      * @return
      */
     inline
-    std::vector<common::model::DxlMotorState> TtlDriverCore::getDxlStates() const
+    std::vector<std::shared_ptr<common::model::DxlMotorState> >
+    TtlDriverCore::getDxlStates() const
     {
         return _ttl_driver->getMotorsStates();
     }

@@ -272,15 +272,23 @@ namespace ToolsInterface {
             //cmd.setParam(req.open_max_torque); // cc adapt niryo studio and srv for that
             cmd.setParam(1023);
             list_cmd.emplace_back(cmd);
-
-            // set hold torque
-            cmd.setId(_toolState.getId());
-            cmd.setType(EDxlCommandType::CMD_TYPE_EFFORT);
-            cmd.setParam(req.open_hold_torque);
-            list_cmd.emplace_back(cmd);
             _ttl_driver_core->addEndEffectorCommandToQueue(list_cmd);
 
+            double dxl_speed = static_cast<double>(req.open_speed * _toolState.getStepsForOneSpeed()); // position . sec-1
+            assert(dxl_speed != 0.00);
+
+            double dxl_steps_to_do = abs(static_cast<double>(req.open_position) - _ttl_driver_core->getEndEffectorState(_toolState.getId())); // position
+            double seconds_to_wait =  dxl_steps_to_do /  dxl_speed + 0.25; // sec
+            ROS_DEBUG("Waiting for %d seconds", static_cast<int>(seconds_to_wait));
+            ros::Duration(seconds_to_wait).sleep();
+
+            // set hold torque
+            cmd.setType(EDxlCommandType::CMD_TYPE_EFFORT);
+            cmd.setParam(req.open_hold_torque);
+            _ttl_driver_core->addEndEffectorCommandToQueue(cmd);
+
             res.state = ToolState::GRIPPER_STATE_OPEN;
+            ROS_DEBUG("Opened !");
             ret = true;
         }
 
@@ -320,14 +328,27 @@ namespace ToolsInterface {
             cmd.setType(EDxlCommandType::CMD_TYPE_EFFORT);
             cmd.setParam(req.close_max_torque); // two's complement of 1536
             list_cmd.emplace_back(cmd);
+            _ttl_driver_core->addEndEffectorCommandToQueue(list_cmd);
+
+            // calculate close duration
+            // cc to be removed => acknoledge instead
+            double dxl_speed = static_cast<double>(req.close_speed * _toolState.getStepsForOneSpeed()); // position . sec-1
+            assert(dxl_speed != 0.0);
+
+            double dxl_steps_to_do = abs(static_cast<double>(req.close_position - _ttl_driver_core->getEndEffectorState(_toolState.getId()))); // position
+            double seconds_to_wait =  dxl_steps_to_do /  dxl_speed + 0.25; // sec
+            ROS_DEBUG("Waiting for %d seconds", static_cast<int>(seconds_to_wait));
+
+            ros::Duration(seconds_to_wait).sleep();
 
             // set hold torque
             cmd.setType(EDxlCommandType::CMD_TYPE_EFFORT);
             cmd.setParam(req.close_hold_torque);
-            list_cmd.emplace_back(cmd);
-            _ttl_driver_core->addEndEffectorCommandToQueue(list_cmd);
+            _ttl_driver_core->addEndEffectorCommandToQueue(cmd);
 
             res.state = ToolState::GRIPPER_STATE_CLOSE;
+            ROS_DEBUG("Closed !");
+
             ret = true;
         }
 

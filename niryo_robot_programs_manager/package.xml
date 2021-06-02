@@ -1,23 +1,27 @@
-<package>
+<?xml version="1.0"?>
+<?xml-model
+  href="http://download.ros.org/schema/package_format3.xsd"
+  schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
     <name>niryo_robot_programs_manager</name>
     <version>3.0.0</version>
     <description>The niryo_robot_programs_manager package</description>
 
-    <author email="r.lux@niryo.com">Remi Lux</author>
     <maintainer email="r.lux@niryo.com">Remi Lux</maintainer>
     <maintainer email="e.rey-coquais@niryo.com">Etienne Rey-Coquais</maintainer>
 
     <license>GPLv3</license>
-
+    <author email="r.lux@niryo.com">Remi Lux</author>
+    
     <buildtool_depend>catkin</buildtool_depend>
 
     <build_depend>niryo_robot_msgs</build_depend>
 
-    <run_depend>niryo_robot_msgs</run_depend>
-    <run_depend>rosbridge_server</run_depend>
-    <run_depend>std_msgs</run_depend>
+    <exec_depend>niryo_robot_msgs</exec_depend>
+    <exec_depend>rosbridge_server</exec_depend>
+    <exec_depend>std_msgs</exec_depend>
 
     <!-- Python Dependencies -->
-    <run_depend>python-yaml</run_depend>
+    <exec_depend>python-yaml</exec_depend>
 
 </package>

@@ -19,6 +19,7 @@
 #include "model/dxl_command_type_enum.hpp"
 #include "ttl_driver/xdriver.hpp"
 #include "ttl_driver/stepper_driver.hpp"
+#include "model/tool_state.hpp"
 
 #include <string>
 #include <algorithm>
@@ -117,7 +118,7 @@ namespace TtlDriver
 
         //display internal data for debug
         for(auto const &s : _state_map)
-            ROS_DEBUG("TtlDriver::init - State map: %d => %s", s.first, s.second.str().c_str());
+            ROS_DEBUG("TtlDriver::init - State map: %d => %s", s.first, s.second->str().c_str());
 
         for(auto const &id : _ids_map) {
             string listOfId;
@@ -144,7 +145,10 @@ namespace TtlDriver
         ROS_DEBUG("TtlDriver::addMotor - Add motor id: %d", id);
 
         //add id to _state_map
-        _state_map.insert(make_pair(id, DxlMotorState(type, id, isTool)));
+        if(isTool)
+            _state_map.insert(make_pair(id, make_shared<ToolState>("auto", type, id)));
+        else
+            _state_map.insert(make_pair(id, make_shared<DxlMotorState>(type, id, isTool)));
 
         // if not already instanciated
         if(0 == _ids_map.count(type)) {
@@ -190,8 +194,8 @@ namespace TtlDriver
     {
         ROS_DEBUG("TtlDriver::removeMotor - Remove motor id: %d", id);
 
-        if(_state_map.count(id)) {
-            EMotorType type = _state_map.at(id).getType();
+        if(_state_map.count(id) && _state_map.at(id)) {
+            EMotorType type = _state_map.at(id)->getType();
 
             //std::remove to remove hypothetic duplicates too
             if(_ids_map.count(type)) {
@@ -342,7 +346,7 @@ namespace TtlDriver
 
         for(auto const &it : _state_map)
         {
-            EMotorType type = it.second.getType();
+            EMotorType type = it.second->getType();
             ROS_DEBUG("TtlDriver::rebootMotors - Reboot Dxl motor with ID: %d", it.first);
             if(_xdriver_map.count(type)) {
                 result = _xdriver_map.at(type)->reboot(it.first);
@@ -432,7 +436,7 @@ namespace TtlDriver
 
                                 if(_state_map.count(id))
                                 {
-                                    _state_map.at(id).setPositionState(position);
+                                    _state_map.at(id)->setPositionState(position);
                                 }
                             }
                         }
@@ -543,23 +547,23 @@ namespace TtlDriver
 
                         if(_state_map.count(id))
                         {
-                            DxlMotorState& dxlState = _state_map.at(id);
+                            auto dxlState = _state_map.at(id);
 
                             //**************  temperature
                             if(temperature_list.size() > i) {
-                                dxlState.setTemperatureState(static_cast<int>(temperature_list.at(i)));
+                                dxlState->setTemperatureState(static_cast<int>(temperature_list.at(i)));
                             }
 
                             //**********  voltage
                             if(voltage_list.size() > i) {
-                                dxlState.setVoltageState(static_cast<int>(voltage_list.at(i)));
+                                dxlState->setVoltageState(static_cast<int>(voltage_list.at(i)));
                             }
 
                             //**********  error state
                             if(hw_status_list.size() > i) {
-                                dxlState.setHardwareError(static_cast<int>(hw_status_list.at(i)));
+                                dxlState->setHardwareError(static_cast<int>(hw_status_list.at(i)));
                                 string hardware_message = driver->interpreteErrorState(hw_status_list.at(i));
-                                dxlState.setHardwareError(hardware_message);
+                                dxlState->setHardwareError(hardware_message);
                             }
                         }
                     } // for id_list
@@ -689,41 +693,41 @@ namespace TtlDriver
 
             if(_state_map.count(id) != 0)
             {
-                DxlMotorState state = _state_map.at(id);
+                auto state = _state_map.at(id);
 
                 while ((COMM_SUCCESS != result) && (counter < 50))
                 {
                     switch(cmd.getType())
                     {
                     case EDxlCommandType::CMD_TYPE_VELOCITY:
-                        result = _singleWrite(&AbstractMotorDriver::setGoalVelocity, state.getType(), cmd);
+                        result = _singleWrite(&AbstractMotorDriver::setGoalVelocity, state->getType(), cmd);
                         break;
                     case EDxlCommandType::CMD_TYPE_POSITION:
-                        result = _singleWrite(&AbstractMotorDriver::setGoalPosition, state.getType(), cmd);
+                        result = _singleWrite(&AbstractMotorDriver::setGoalPosition, state->getType(), cmd);
                         break;
                     case EDxlCommandType::CMD_TYPE_EFFORT:
-                        result = _singleWrite(&AbstractMotorDriver::setGoalTorque, state.getType(), cmd);
+                        result = _singleWrite(&AbstractMotorDriver::setGoalTorque, state->getType(), cmd);
                         break;
                     case EDxlCommandType::CMD_TYPE_TORQUE:
-                        result = _singleWrite(&AbstractMotorDriver::setTorqueEnable, state.getType(), cmd);
+                        result = _singleWrite(&AbstractMotorDriver::setTorqueEnable, state->getType(), cmd);
                         break;
                     case EDxlCommandType::CMD_TYPE_P_GAIN:
-                        result = _singleWrite(&AbstractMotorDriver::setPGain, state.getType(), cmd);
+                        result = _singleWrite(&AbstractMotorDriver::setPGain, state->getType(), cmd);
                         break;
                     case EDxlCommandType::CMD_TYPE_I_GAIN:
-                        result = _singleWrite(&AbstractMotorDriver::setIGain, state.getType(), cmd);
+                        result = _singleWrite(&AbstractMotorDriver::setIGain, state->getType(), cmd);
                         break;
                     case EDxlCommandType::CMD_TYPE_D_GAIN:
-                        result = _singleWrite(&AbstractMotorDriver::setDGain, state.getType(), cmd);
+                        result = _singleWrite(&AbstractMotorDriver::setDGain, state->getType(), cmd);
                         break;
                     case EDxlCommandType::CMD_TYPE_FF1_GAIN:
-                        result = _singleWrite(&AbstractMotorDriver::setff1Gain, state.getType(), cmd);
+                        result = _singleWrite(&AbstractMotorDriver::setff1Gain, state->getType(), cmd);
                         break;
                     case EDxlCommandType::CMD_TYPE_FF2_GAIN:
-                        result = _singleWrite(&AbstractMotorDriver::setff2Gain, state.getType(), cmd);
+                        result = _singleWrite(&AbstractMotorDriver::setff2Gain, state->getType(), cmd);
                         break;
                     case EDxlCommandType::CMD_TYPE_PING:
-                        result = ping(state.getId()) ? COMM_SUCCESS : COMM_TX_FAIL;
+                        result = ping(state->getId()) ? COMM_SUCCESS : COMM_TX_FAIL;
                         break;
                     default:
                         break;
@@ -965,20 +969,20 @@ namespace TtlDriver
      */
     DxlMotorState TtlDriver::getMotorState(uint8_t motor_id) const
     {
-        if(!_state_map.count(motor_id))
+        if(!_state_map.count(motor_id) && _state_map.at(motor_id))
             throw std::out_of_range("TtlDriver::getMotorsState: Unknown motor id");
 
-        return _state_map.at(motor_id);
+        return *_state_map.at(motor_id).get();
     }
 
     /**
      * @brief TtlDriver::getMotorsStates
      * @return
      */
-    std::vector<DxlMotorState> TtlDriver::getMotorsStates() const
+    std::vector<std::shared_ptr<DxlMotorState> > TtlDriver::getMotorsStates() const
     {
-        std::vector<common::model::DxlMotorState> states;
-        for (auto const& it : _state_map)
+        std::vector<std::shared_ptr<common::model::DxlMotorState> > states;
+        for (auto it : _state_map)
             states.push_back(it.second);
 
         return states;
@@ -995,7 +999,7 @@ namespace TtlDriver
             std::vector<uint8_t> ids;
             std::vector<uint32_t> params;
             for(auto const& cmd : cmd_vec) {
-                if(_state_map.count(cmd.first) && it.first == _state_map.at(cmd.first).getType()) {
+                if(_state_map.count(cmd.first) && it.first == _state_map.at(cmd.first)->getType()) {
                     ids.emplace_back(cmd.first);
                     params.emplace_back(cmd.second);
                 }

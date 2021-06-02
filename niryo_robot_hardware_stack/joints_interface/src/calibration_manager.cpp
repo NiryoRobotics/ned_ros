@@ -336,25 +336,25 @@ namespace JointsInterface {
      */
     bool CalibrationManager::_can_process_manual_calibration(std::string &result_message)
     {
-        std::vector<StepperMotorState> stepper_motor_states;
-
-        stepper_motor_states = _can_driver_core->getStepperStates();
+        auto stepper_motor_states = _can_driver_core->getStepperStates();
 
         // 1. Check if motors firmware version is ok
-        for (StepperMotorState mState : stepper_motor_states)
+        for (auto&& mState : stepper_motor_states)
         {
-            std::string firmware_version = mState.getFirmwareVersion();
-            if (firmware_version.length() == 0)
-            {
-                result_message = "Calibration Interface - No firmware version available for motor " + std::to_string(mState.getId()) + ". Make sure all motors are connected";
-                ROS_WARN("Calibration Interface - Can't process manual calibration : %s", result_message.c_str());
-                return false;
-            }
-            if (stoi(firmware_version.substr(0, 1)) < 2)
-            {
-                result_message = "Calibration Interface - You need to upgrade stepper firmware for motor " + std::to_string(mState.getId());
-                ROS_WARN("Calibration Interface - Can't process manual calibration : %s", result_message.c_str());
-                return false;
+            if(mState) {
+                std::string firmware_version = mState->getFirmwareVersion();
+                if (firmware_version.length() == 0)
+                {
+                    result_message = "Calibration Interface - No firmware version available for motor " + std::to_string(mState->getId()) + ". Make sure all motors are connected";
+                    ROS_WARN("Calibration Interface - Can't process manual calibration : %s", result_message.c_str());
+                    return false;
+                }
+                if (stoi(firmware_version.substr(0, 1)) < 2)
+                {
+                    result_message = "Calibration Interface - You need to upgrade stepper firmware for motor " + std::to_string(mState->getId());
+                    ROS_WARN("Calibration Interface - Can't process manual calibration : %s", result_message.c_str());
+                    return false;
+                }
             }
         }
 
@@ -369,24 +369,27 @@ namespace JointsInterface {
         }
 
         // 3. Check if all connected motors have a motor offset value
-        for (StepperMotorState mState : stepper_motor_states)
+        for (auto&& mState : stepper_motor_states)
         {
-            bool found = false;
+            if(mState) {
 
-            for (int m_id : motor_id_list)
-            {
-                if (m_id == mState.getId())
+                bool found = false;
+
+                for (int m_id : motor_id_list)
                 {
-                    found = true;
-                    break;
+                    if (m_id == mState->getId())
+                    {
+                        found = true;
+                        break;
+                    }
                 }
-            }
 
-            if (!found)
-            {
-                result_message = "Calibration Interface - Motor " + std::to_string(mState.getId()) + " does not have a saved offset value, " + "you need to do one auto calibration";
-                ROS_WARN("Calibration Interface - Can't process manual calibration : %s", result_message.c_str());
-                return false;
+                if (!found)
+                {
+                    result_message = "Calibration Interface - Motor " + std::to_string(mState->getId()) + " does not have a saved offset value, " + "you need to do one auto calibration";
+                    ROS_WARN("Calibration Interface - Can't process manual calibration : %s", result_message.c_str());
+                    return false;
+                }
             }
         }
 

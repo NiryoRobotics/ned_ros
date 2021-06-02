@@ -258,31 +258,33 @@ namespace TtlDriver
             ROS_INFO("TtlDriverCore::launchMotorsReport - Debug - Start Dynamixel Motor Report");
             ros::Duration(1.0).sleep();
 
-            for (auto const& state: _ttl_driver->getMotorsStates())
+            for (auto&& state: _ttl_driver->getMotorsStates())
             {
-                ROS_INFO("TtlDriverCore::launchMotorsReport - Debug - Motor %d report start :", static_cast<int>(state.getId()));
+                if(state) {
+                    ROS_INFO("TtlDriverCore::launchMotorsReport - Debug - Motor %d report start :", static_cast<int>(state->getId()));
 
-                int scan_res = motorScanReport(state.getId());
-                int cmd_res = motorCmdReport(state.getId(), state.getType());
+                    int scan_res = motorScanReport(state->getId());
+                    int cmd_res = motorCmdReport(state->getId(), state->getType());
 
-                if(niryo_robot_msgs::CommandStatus::SUCCESS == scan_res
-                        && niryo_robot_msgs::CommandStatus::SUCCESS == cmd_res)
-                {
-                    nbSuccess++;
-                }
-                else
-                {
-                    nbFailure++;
-                    response = niryo_robot_msgs::CommandStatus::FAILURE;
-                }
+                    if(niryo_robot_msgs::CommandStatus::SUCCESS == scan_res
+                            && niryo_robot_msgs::CommandStatus::SUCCESS == cmd_res)
+                    {
+                        nbSuccess++;
+                    }
+                    else
+                    {
+                        nbFailure++;
+                        response = niryo_robot_msgs::CommandStatus::FAILURE;
+                    }
 
-                results.emplace_back(state.getId(), state.getType(), scan_res, cmd_res);
+                    results.emplace_back(state->getId(), state->getType(), scan_res, cmd_res);
 
-                if (niryo_robot_msgs::CommandStatus::ABORTED == scan_res ||
-                        niryo_robot_msgs::CommandStatus::ABORTED == cmd_res)
-                {
-                    ROS_INFO("TtlDriverCore::launchMotorsReport - Debug - Debug motor aborted");
-                    break;
+                    if (niryo_robot_msgs::CommandStatus::ABORTED == scan_res ||
+                            niryo_robot_msgs::CommandStatus::ABORTED == cmd_res)
+                    {
+                        ROS_INFO("TtlDriverCore::launchMotorsReport - Debug - Debug motor aborted");
+                        break;
+                    }
                 }
             }
 
@@ -646,15 +648,17 @@ namespace TtlDriver
         ttl_driver::DxlMotorHardwareStatus data;
         ttl_driver::DxlArrayMotorHardwareStatus hw_state;
 
-        for (auto const& dxlState : _ttl_driver->getMotorsStates())
+        for (auto&& dxlState : _ttl_driver->getMotorsStates())
         {
-            data.motor_identity.motor_id = dxlState.getId();
-            data.motor_identity.motor_type = static_cast<uint8_t>(dxlState.getType());
-            data.temperature = static_cast<uint32_t>(dxlState.getTemperatureState());
-            data.voltage = static_cast<double>(dxlState.getVoltageState()) / DXL_VOLTAGE_DIVISOR;
-            data.error = static_cast<uint32_t>(dxlState.getHardwareErrorState());
-            data.error_msg = dxlState.getHardwareErrorMessageState();
-            hw_state.motors_hw_status.push_back(data);
+            if(dxlState) {
+                data.motor_identity.motor_id = dxlState->getId();
+                data.motor_identity.motor_type = static_cast<uint8_t>(dxlState->getType());
+                data.temperature = static_cast<uint32_t>(dxlState->getTemperatureState());
+                data.voltage = static_cast<double>(dxlState->getVoltageState()) / DXL_VOLTAGE_DIVISOR;
+                data.error = static_cast<uint32_t>(dxlState->getHardwareErrorState());
+                data.error_msg = dxlState->getHardwareErrorMessageState();
+                hw_state.motors_hw_status.push_back(data);
+            }
         }
         return hw_state;
     }

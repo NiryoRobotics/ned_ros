@@ -77,7 +77,7 @@ namespace CanDriver
             int32_t getPosition(uint8_t motor_id) const;
 
             common::model::StepperMotorState getMotorState(uint8_t motor_id) const;
-            std::vector<common::model::StepperMotorState> getMotorsStates() const;
+            std::vector<std::shared_ptr<common::model::StepperMotorState> > getMotorsStates() const;
 
             int32_t getCalibrationResult(uint8_t id) const;
             common::model::EStepperCalibrationStatus getCalibrationStatus() const;

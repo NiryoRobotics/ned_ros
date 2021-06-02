@@ -70,7 +70,7 @@ namespace CanDriver
 
             can_driver::StepperArrayMotorHardwareStatus getHwStatus() const;
 
-            std::vector<common::model::StepperMotorState> getStepperStates() const;
+            std::vector<std::shared_ptr<common::model::StepperMotorState> > getStepperStates() const;
             common::model::StepperMotorState getStepperState(uint8_t motor_id) const;
 
             // IDriverCore interface
@@ -173,7 +173,7 @@ namespace CanDriver
      * @return
      */
     inline
-    std::vector<common::model::StepperMotorState>
+    std::vector<std::shared_ptr<common::model::StepperMotorState> >
     CanDriverCore::getStepperStates() const
     {
         return _can_driver->getMotorsStates();
