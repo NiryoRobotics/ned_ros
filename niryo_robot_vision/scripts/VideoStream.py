@@ -280,4 +280,7 @@ class GazeboStream(VideoStream):
                 self._publisher_compressed_stream.publish(self.__last_image_compressed_msg)
             except rospy.ROSException:
                 return
-            self._actualization_rate_ros.sleep()
+            try:
+                self._actualization_rate_ros.sleep()
+            except rospy.ROSInterruptException:
+                return

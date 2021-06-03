@@ -36,7 +36,14 @@ namespace CanDriver
      */
     CanDriverCore::CanDriverCore() :
         _control_loop_flag(false),
-        _debug_flag(false)
+        _debug_flag(false),
+        _control_loop_frequency(0.0),
+        _delta_time_write(0.0),
+        _time_hw_data_last_read(0.0),
+        _time_hw_data_last_write(0.0),
+        _time_check_connection_last_read(0.0),
+        _delta_time_calib_read(0.0),
+        _time_hw_calib_last_read(0.0)
     {
         ROS_DEBUG("CanDriverCore::CanDriverCore - ctor");
 
@@ -70,18 +77,14 @@ namespace CanDriver
     void CanDriverCore::initParameters()
     {
         _control_loop_frequency = 0.0;
-        double write_frequency = 0.0;
-        double read_frequency = 0.0;
+        double write_frequency = 1.0;
 
         _nh.getParam("/niryo_robot_hardware_interface/can_driver/can_hardware_control_loop_frequency", _control_loop_frequency);
         _nh.getParam("/niryo_robot_hardware_interface/can_driver/can_hw_write_frequency", write_frequency);
-        _nh.getParam("/niryo_robot_hardware_interface/can_driver/can_hw_read_frequency", read_frequency);
 
         ROS_DEBUG("CanDriverCore::initParameters - can_hardware_control_loop_frequency : %f", _control_loop_frequency);
         ROS_DEBUG("CanDriverCore::initParameters - can_hw_write_frequency : %f", write_frequency);
-        ROS_DEBUG("CanDriverCore::initParameters - can_hw_read_frequency : %f", read_frequency);
 
-        _delta_time_data_read = 1.0 / read_frequency;
         _delta_time_write = 1.0 / write_frequency;
     }
 
@@ -334,7 +337,6 @@ namespace CanDriver
             {
                 lock_guard<mutex> lck(_control_loop_mutex);
 
-                // cc calibration results ???
                 _can_driver->readStatus();
 
                 if (_can_driver->isConnectionOk())

@@ -104,7 +104,6 @@ namespace CanDriver
 
             double _control_loop_frequency;
 
-            double _delta_time_data_read;
             double _delta_time_write;
 
             double _time_hw_data_last_read;

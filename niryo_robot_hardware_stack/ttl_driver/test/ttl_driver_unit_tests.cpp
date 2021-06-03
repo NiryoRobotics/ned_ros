@@ -28,13 +28,6 @@ TEST(TtlDriverTestSuite, testInitDriver)
     EXPECT_TRUE(ttl_driver.isConnectionOk());
 }
 
-// Declare a test
-TEST(TtlDriverTestSuite, testInitDriverCore)
-{
-    TtlDriver::TtlDriverCore ttl_core;
-    EXPECT_TRUE(ttl_core.isConnectionOk());
-}
-
 // Run all the tests that were declared with TEST()
 int main(int argc, char **argv){
   testing::InitGoogleTest(&argc, argv);

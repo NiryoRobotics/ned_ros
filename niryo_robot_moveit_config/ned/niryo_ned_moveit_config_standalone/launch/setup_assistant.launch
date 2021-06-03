@@ -1,5 +1,7 @@
+<?xml version="1.0" ?>
 <!-- Re-launch the MoveIt Setup Assistant with this configuration package already loaded -->
-<launch>
+<launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
 
   <!-- Debug Info -->
   <arg name="debug" default="false" />

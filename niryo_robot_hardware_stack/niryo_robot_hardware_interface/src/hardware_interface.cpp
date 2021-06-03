@@ -155,11 +155,19 @@ namespace NiryoRobotHardwareInterface
         _rpi_image_version.erase(_rpi_image_version.find_last_not_of(" \n\r\t") + 1);
         _ros_niryo_robot_version.erase(_ros_niryo_robot_version.find_last_not_of(" \n\r\t") + 1);
 
-        ROS_DEBUG("Hardware Interface - publish_hw_status_frequency : %f", _publish_hw_status_frequency);
-        ROS_DEBUG("Hardware Interface - publish_software_version_frequency : %f", _publish_software_version_frequency);
 
-        ROS_DEBUG("Hardware Interface - can_enabled : %s", _can_enabled ? "true" : "false");
-        ROS_DEBUG("Hardware Interface - ttl_enabled : %s", _ttl_enabled ? "true" : "false");
+
+        ROS_DEBUG("HardwareInterface::initParameters - publish_hw_status_frequency : %f", _publish_hw_status_frequency);
+        ROS_DEBUG("HardwareInterface::initParameters - publish_software_version_frequency : %f", _publish_software_version_frequency);
+
+        ROS_DEBUG("HardwareInterface::initParameters - image_version : %s", _rpi_image_version.c_str());
+        ROS_DEBUG("HardwareInterface::initParameters - ros_version : %s", _ros_niryo_robot_version.c_str());
+
+        ROS_DEBUG("HardwareInterface::initParameters - simulation_mode : %s", _simulation_mode ? "true" : "false");
+        ROS_DEBUG("HardwareInterface::initParameters - gazebo : %s", _gazebo ? "true" : "false");
+
+        ROS_DEBUG("HardwareInterface::initParameters - can_enabled : %s", _can_enabled ? "true" : "false");
+        ROS_DEBUG("HardwareInterface::initParameters - ttl_enabled : %s", _ttl_enabled ? "true" : "false");
     }
 
     //********************

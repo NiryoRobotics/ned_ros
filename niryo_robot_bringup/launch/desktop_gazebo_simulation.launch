@@ -1,3 +1,4 @@
+<?xml version="1.0" ?>
 <!-- This launch file allows to run simulation on Gazebo
 Warning : Some errors are present in Gazebo
 -> It will log some errors because it cannot unload joint_controller (It's because ROS does it before Gazebo)
@@ -5,7 +6,8 @@ Warning : Some errors are present in Gazebo
 to change _TIMEOUT_SIGINT value in the file /opt/ros/melodic/lib/python2.7/dist-packages/roslaunch/nodeprocess.py
 This will reduce the amount of time spent waiting during program shutdown
 -->
-<launch>
+<launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
     <env name="ROSCONSOLE_CONFIG_FILE"
         value="$(find niryo_robot_bringup)/config/desktop_gazebo_simulation_trace.conf" />
     <!-- Arguments definition -->
@@ -38,6 +40,7 @@ This will reduce the amount of time spent waiting during program shutdown
     <include file="$(find niryo_robot_vision)/launch/vision_node.launch" if="$(arg gripper_n_camera)">
         <arg name="simulation_mode" value="true"/>
     </include>
-        <param name="/niryo_robot_vision/initialized" type="bool" value="true" unless="$(arg gripper_n_camera)"/>
+
+    <param name="/niryo_robot_vision/initialized" type="bool" value="true" unless="$(arg gripper_n_camera)"/>
 
 </launch>

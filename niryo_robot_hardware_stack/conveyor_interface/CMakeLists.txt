@@ -125,20 +125,6 @@ endif()
 #############
 
 if(CATKIN_ENABLE_TESTING)
-  if(BUILD_UNIT_TESTS)
-    catkin_add_gtest(
-      ${PROJECT_NAME}_unit_tests
-      test/conveyor_unit_tests.cpp
-      #test/conveyor_test.cpp
-    )
-    if(TARGET ${PROJECT_NAME}_unit_tests)
-      target_link_libraries(
-        ${PROJECT_NAME}_unit_tests
-        ${PROJECT_NAME}
-      )
-    endif()
-  endif(BUILD_UNIT_TESTS)
-
   if(BUILD_INTEGRATION_TESTS)
     find_package(catkin REQUIRED rostest)
 

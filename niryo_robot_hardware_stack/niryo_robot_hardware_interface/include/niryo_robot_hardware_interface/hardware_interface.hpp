@@ -82,13 +82,14 @@ namespace NiryoRobotHardwareInterface
         std::shared_ptr<JointsInterface::JointsInterfaceCore> _joints_interface;
         std::shared_ptr<FakeInterface::FakeInterfaceCore> _fake_interface;
 
-        bool _simulation_mode{false};
-        bool _gazebo{false};
-        bool _can_enabled{false};
-        bool _ttl_enabled{false};
-
         double _publish_hw_status_frequency{0.0};
         double _publish_software_version_frequency{0.0};
+
+        bool _simulation_mode{true};
+        bool _gazebo{false};
+
+        bool _can_enabled{false};
+        bool _ttl_enabled{false};
 
         std::string _rpi_image_version;
         std::string _ros_niryo_robot_version;
