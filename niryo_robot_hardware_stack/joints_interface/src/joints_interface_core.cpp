@@ -237,7 +237,8 @@ namespace JointsInterface {
      *
      *  This behavior is used in robot_commander node.
      */
-    bool JointsInterfaceCore::_callbackResetController(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res)
+    bool JointsInterfaceCore::_callbackResetController(niryo_robot_msgs::Trigger::Request &/*req*/,
+                                                       niryo_robot_msgs::Trigger::Response &res)
     {
         ROS_DEBUG("JointsInterfaceCore::_callbackResetController - Reset Controller");
         _robot->setCommandToCurrentPosition();                    // set current command to encoder position
@@ -295,7 +296,8 @@ namespace JointsInterface {
      * @param res
      * @return
      */
-    bool JointsInterfaceCore::_callbackRequestNewCalibration(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res)
+    bool JointsInterfaceCore::_callbackRequestNewCalibration(niryo_robot_msgs::Trigger::Request &/*req*/,
+                                                             niryo_robot_msgs::Trigger::Response &res)
     {
         ROS_DEBUG("JointsInterfaceCore::_callbackRequestNewCalibration - New calibration requested");
         _previous_state_learning_mode = true;
@@ -315,7 +317,8 @@ namespace JointsInterface {
      * Deactivating learning mode (= activating motors) is possible only if motors are calibrated
      * Activating learning mode is also possible when waiting for calibration
      */
-    bool JointsInterfaceCore::_callbackActivateLearningMode(niryo_robot_msgs::SetBool::Request &req, niryo_robot_msgs::SetBool::Response &res)
+    bool JointsInterfaceCore::_callbackActivateLearningMode(niryo_robot_msgs::SetBool::Request &req,
+                                                            niryo_robot_msgs::SetBool::Response &res)
     {
         ROS_DEBUG("JointsInterfaceCore::_callbackActivateLearningMode - activate learning mode");
 

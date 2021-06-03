@@ -153,9 +153,10 @@ if(CATKIN_ENABLE_TESTING)
   if(BUILD_INTEGRATION_TESTS)
     find_package(catkin REQUIRED rostest)
 
+
     add_rostest_gtest(${PROJECT_NAME}_integration_tests
-       test/ttl_driver_node.test
-       test/ttl_driver_node.cpp
+       test/ttl_driver_service_client.test
+       test/ttl_driver_service_client.cpp
     )
     if(TARGET ${PROJECT_NAME}_integration_tests)
       target_link_libraries(${PROJECT_NAME}_integration_tests

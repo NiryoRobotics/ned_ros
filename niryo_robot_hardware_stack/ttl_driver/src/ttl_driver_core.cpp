@@ -64,9 +64,9 @@ namespace TtlDriver
 
         //advertise services
 
-        _activate_leds_server = _nh.advertiseService("niryo_robot/ttl_driver/set_dxl_leds", &TtlDriverCore::callbackActivateLeds, this);
-        _custom_cmd_server = _nh.advertiseService("niryo_robot/ttl_driver/send_custom_dxl_value", &TtlDriverCore::callbackSendCustomDxlValue, this);
-        _custom_cmd_getter = _nh.advertiseService("niryo_robot/ttl_driver/read_custom_dxl_value", &TtlDriverCore::callbackReadCustomDxlValue, this);
+        _activate_leds_server = _nh.advertiseService("niryo_robot/ttl_driver/set_dxl_leds", &TtlDriverCore::_callbackActivateLeds, this);
+        _custom_cmd_server = _nh.advertiseService("niryo_robot/ttl_driver/send_custom_dxl_value", &TtlDriverCore::_callbackSendCustomDxlValue, this);
+        _custom_cmd_getter = _nh.advertiseService("niryo_robot/ttl_driver/read_custom_dxl_value", &TtlDriverCore::_callbackReadCustomDxlValue, this);
     }
 
     /**
@@ -692,7 +692,7 @@ namespace TtlDriver
      * @param res
      * @return
      */
-    bool TtlDriverCore::callbackSendCustomDxlValue(ttl_driver::SendCustomDxlValue::Request &req,
+    bool TtlDriverCore::_callbackSendCustomDxlValue(ttl_driver::SendCustomDxlValue::Request &req,
                                                    ttl_driver::SendCustomDxlValue::Response &res)
     {
         int result;
@@ -733,7 +733,7 @@ namespace TtlDriver
      * @param res
      * @return
      */
-    bool TtlDriverCore::callbackReadCustomDxlValue(ttl_driver::ReadCustomDxlValue::Request &req,
+    bool TtlDriverCore::_callbackReadCustomDxlValue(ttl_driver::ReadCustomDxlValue::Request &req,
                                                    ttl_driver::ReadCustomDxlValue::Response &res)
     {
         int result;
@@ -773,7 +773,8 @@ namespace TtlDriver
      * @param res
      * @return
      */
-    bool TtlDriverCore::callbackActivateLeds(niryo_robot_msgs::SetInt::Request &req, niryo_robot_msgs::SetInt::Response &res)
+    bool TtlDriverCore::_callbackActivateLeds(niryo_robot_msgs::SetInt::Request &req,
+                                              niryo_robot_msgs::SetInt::Response &res)
     {
         int led = req.value;
         string message = "";

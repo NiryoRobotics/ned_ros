@@ -180,7 +180,8 @@ namespace NiryoRobotHardwareInterface
      * @param res
      * @return
      */
-    bool HardwareInterface::_callbackStopMotorsReport(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res)
+    bool HardwareInterface::_callbackStopMotorsReport(niryo_robot_msgs::Trigger::Request &req,
+                                                      niryo_robot_msgs::Trigger::Response &res)
     {
         if (!_simulation_mode)
         {
@@ -200,7 +201,8 @@ namespace NiryoRobotHardwareInterface
      * @param res
      * @return
      */
-    bool HardwareInterface::_callbackLaunchMotorsReport(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res)
+    bool HardwareInterface::_callbackLaunchMotorsReport(niryo_robot_msgs::Trigger::Request &req,
+                                                        niryo_robot_msgs::Trigger::Response &res)
     {
         if (!_simulation_mode)
         {
@@ -240,7 +242,8 @@ namespace NiryoRobotHardwareInterface
      * @param res
      * @return
      */
-    bool HardwareInterface::_callbackRebootMotors(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res)
+    bool HardwareInterface::_callbackRebootMotors(niryo_robot_msgs::Trigger::Request &req,
+                                                  niryo_robot_msgs::Trigger::Response &res)
     {
         if (!_simulation_mode)
         {

@@ -1,5 +1,5 @@
 /*
-    conveyor_test.cpp
+    conveyor_service_client.cpp
     Copyright (C) 2020 Niryo
     All rights reserved.
 
@@ -23,33 +23,31 @@
 #include <gtest/gtest.h>
 
 #include "conveyor_interface/conveyor_interface_core.hpp"
-#include "can_driver/can_driver_core.hpp"
+
+static std::unique_ptr<ros::NodeHandle> nh(new ros::NodeHandle);
 
 TEST(TESTSuite, setConveyor)
 {
-    ros::ServiceClient client = nh.serviceClient<conveyor_interface::SetConveyor>("niryo_robot/conveyor/ping_and_set_conveyor");
+    ros::ServiceClient client = nh->serviceClient<conveyor_interface::SetConveyor>("niryo_robot/conveyor/ping_and_set_conveyor");
 
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);
 
     conveyor_interface::SetConveyor srv;
     srv.request.id = 6;
-    srv.request.activate = true;
+    srv.request.cmd = conveyor_interface::SetConveyor::Request::ADD;
     client.call(srv);
 
-    EXPECT_EQ(srv.response.status, CommandStatus::SUCCESS);
+    EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
     EXPECT_NE(srv.response.id, srv.request.id);
-
 }
 
 TEST(TESTSuite, controlConveyor1)
 {
-
-    ros::ServiceClient client = nh.serviceClient<conveyor_interface::ControlConveyor>("niryo_robot/tools/control_conveyor");
+    ros::ServiceClient client = nh->serviceClient<conveyor_interface::ControlConveyor>("niryo_robot/tools/control_conveyor");
     
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);
-
     
     conveyor_interface::ControlConveyor srv;
     srv.request.id = 6;
@@ -58,14 +56,14 @@ TEST(TESTSuite, controlConveyor1)
     srv.request.direction = 1;
     client.call(srv);
 
-    EXPECT_EQ(srv.response.status, CommandStatus::SUCCESS);
+    EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
 
 }
 
 TEST(TESTSuite, controlConveyor2)
 {
 
-    ros::ServiceClient client = nh.serviceClient<conveyor_interface::ControlConveyor>("niryo_robot/tools/control_conveyor");
+    ros::ServiceClient client = nh->serviceClient<conveyor_interface::ControlConveyor>("niryo_robot/tools/control_conveyor");
     
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);
@@ -78,7 +76,7 @@ TEST(TESTSuite, controlConveyor2)
     srv.request.direction = -1;
     client.call(srv);
 
-    EXPECT_EQ(srv.response.status, CommandStatus::SUCCESS);
+    EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
 
 }
 
@@ -86,11 +84,10 @@ TEST(TESTSuite, controlConveyor2)
 TEST(TESTSuite, controlConveyor3)
 {
 
-    ros::ServiceClient client = nh.serviceClient<conveyor_interface::ControlConveyor>("niryo_robot/tools/control_conveyor");
+    ros::ServiceClient client = nh->serviceClient<conveyor_interface::ControlConveyor>("niryo_robot/tools/control_conveyor");
     
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);
-
     
     conveyor_interface::ControlConveyor srv;
     srv.request.id = 6;
@@ -99,30 +96,14 @@ TEST(TESTSuite, controlConveyor3)
     srv.request.direction = -1;
     client.call(srv);
 
-    EXPECT_EQ(srv.response.status, CommandStatus::SUCCESS);
+    EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
 
 }
-
-TEST(TESTSuite, updateConveyor)
-{
-    ros::ServiceClient client = nh.serviceClient<conveyor_interface::UpdateConveyorId>("niryo_robot/tools/update_conveyor_id");
-
-    bool exists(client.waitForExistence(ros::Duration(1)));
-    EXPECT_TRUE(exists);
-
-    conveyor_interface::UpdateConveyorId srv;
-    srv.request.old_id = 6;
-    srv.request.new_id = 7;
-    client.call(srv);
-
-    EXPECT_EQ(srv.response.status, CommandStatus::SUCCESS);
-}
-
 
 TEST(TESTSuite, controlConveyor4)
 {
 
-    ros::ServiceClient client = nh.serviceClient<conveyor_interface::ControlConveyor>("niryo_robot/tools/control_conveyor");
+    ros::ServiceClient client = nh->serviceClient<conveyor_interface::ControlConveyor>("niryo_robot/tools/control_conveyor");
     
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);
@@ -135,7 +116,7 @@ TEST(TESTSuite, controlConveyor4)
     srv.request.direction = -1;
     client.call(srv);
 
-    EXPECT_EQ(srv.response.status, CommandStatus::SUCCESS);
+    EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
 
 }
 
@@ -143,7 +124,7 @@ TEST(TESTSuite, controlConveyor4)
 TEST(TESTSuite, controlConveyor5)
 {
 
-    ros::ServiceClient client = nh.serviceClient<conveyor_interface::ControlConveyor>("niryo_robot/tools/control_conveyor");
+    ros::ServiceClient client = nh->serviceClient<conveyor_interface::ControlConveyor>("niryo_robot/tools/control_conveyor");
     
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);
@@ -156,17 +137,29 @@ TEST(TESTSuite, controlConveyor5)
     srv.request.direction = -1;
     client.call(srv);
 
-    EXPECT_EQ(srv.response.status, CommandStatus::SUCCESS);
+    EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
 
+}
+
+TEST(TESTSuite, removeConveyor)
+{
+    ros::ServiceClient client = nh->serviceClient<conveyor_interface::SetConveyor>("niryo_robot/conveyor/ping_and_set_conveyor");
+
+    bool exists(client.waitForExistence(ros::Duration(1)));
+    EXPECT_TRUE(exists);
+
+    conveyor_interface::SetConveyor srv;
+    srv.request.id = 13; //to be checked
+    srv.request.cmd = conveyor_interface::SetConveyor::Request::REMOVE;
+    client.call(srv);
+
+    EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
 }
 
 int main(int argc, char **argv) 
 {
     ros::init(argc, argv, "tools_interface_service_client");
-    
-// shardptr ?    nh.reset(new ros::NodeHandle);
 
-    ros::NodeHandle nh;
     testing::InitGoogleTest(&argc, argv);
 
     return RUN_ALL_TESTS();

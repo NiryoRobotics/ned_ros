@@ -1,5 +1,5 @@
 /*
-    tools_test.cpp
+    tools_interface_service_client.cpp
     Copyright (C) 2020 Niryo
     All rights reserved.
 
@@ -25,15 +25,16 @@
 
 #include "ttl_driver/ttl_driver_core.hpp"
 
+static std::unique_ptr<ros::NodeHandle> nh(new ros::NodeHandle);
+
 TEST(TESTSuite, pingTool)
 {
-    ros::ServiceClient client = nh.serviceClient<tools_interface::PingDxlTool>("niryo_robot/tools/ping_and_set_dxl_tool");
+    ros::ServiceClient client = nh->serviceClient<tools_interface::PingDxlTool>("niryo_robot/tools/ping_and_set_dxl_tool");
 
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);
 
-    simple_rostest::PingDxlTool srv;
-    srv.request.id = 0;
+    tools_interface::PingDxlTool srv;
     client.call(srv);
 
     EXPECT_EQ(srv.response.state, common::model::ToolState::TOOL_STATE_PING_OK);
@@ -42,12 +43,12 @@ TEST(TESTSuite, pingTool)
 
 TEST(TESTSuite, openTool)
 {
-    ros::ServiceClient client = nh.serviceClient<tools_interface::OpenGripper>("niryo_robot/tools/open_gripper");
+    ros::ServiceClient client = nh->serviceClient<tools_interface::OpenGripper>("niryo_robot/tools/open_gripper");
 
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);
 
-    simple_rostest::OpenGripper srv;
+    tools_interface::OpenGripper srv;
     srv.request.open_speed = 600;
     srv.request.open_position = 200;
     srv.request.open_hold_torque = 400;
@@ -61,12 +62,12 @@ TEST(TESTSuite, openTool)
 
 TEST(TESTSuite, CloseGripper)
 {
-    ros::ServiceClient client = nh.serviceClient<tools_interface::CloseGripper>("niryo_robot/tools/close_gripper");
+    ros::ServiceClient client = nh->serviceClient<tools_interface::CloseGripper>("niryo_robot/tools/close_gripper");
 
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);
 
-    simple_rostest::CloseGripper srv;
+    tools_interface::CloseGripper srv;
     srv.request.close_speed = 600;
     srv.request.close_position = 200;
     srv.request.close_hold_torque = 400;
@@ -81,12 +82,12 @@ TEST(TESTSuite, CloseGripper)
 
 TEST(TESTSuite, PullAirVacuumPump)
 {
-    ros::ServiceClient client = nh.serviceClient<tools_interface::PullAirVacuumPump>("niryo_robot/tools/pull_air_vacuum_pump");
+    ros::ServiceClient client = nh->serviceClient<tools_interface::PullAirVacuumPump>("niryo_robot/tools/pull_air_vacuum_pump");
 
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);
 
-    simple_rostest::PullAirVacuumPump srv;
+    tools_interface::PullAirVacuumPump srv;
     srv.request.pull_air_position = 200;
     srv.request.pull_air_hold_torque = 100;
     client.call(srv);
@@ -98,12 +99,12 @@ TEST(TESTSuite, PullAirVacuumPump)
 
 TEST(TESTSuite, PushAirVacuumPump)
 {
-    ros::ServiceClient client = nh.serviceClient<tools_interface::PushAirVacuumPump>("niryo_robot/tools/push_air_vacuum_pump");
+    ros::ServiceClient client = nh->serviceClient<tools_interface::PushAirVacuumPump>("niryo_robot/tools/push_air_vacuum_pump");
 
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);
 
-    simple_rostest::PushAirVacuumPump srv;
+    tools_interface::PushAirVacuumPump srv;
     srv.request.push_air_position = 100;
     client.call(srv);
 
@@ -114,10 +115,7 @@ TEST(TESTSuite, PushAirVacuumPump)
 int main(int argc, char **argv) 
 {
     ros::init(argc, argv, "tools_interface_service_client");
-    
-// shardptr ?    nh.reset(new ros::NodeHandle);
 
-    ros::NodeHandle nh;
     testing::InitGoogleTest(&argc, argv);
 
     return RUN_ALL_TESTS();

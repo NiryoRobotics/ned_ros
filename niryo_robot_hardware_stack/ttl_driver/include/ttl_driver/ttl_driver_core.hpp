@@ -110,9 +110,9 @@ namespace TtlDriver
         int motorCmdReport(uint8_t motor_id, common::model::EMotorType motor_type);
 
         //use other callbacks instead of executecommand
-        bool callbackActivateLeds(niryo_robot_msgs::SetInt::Request &req, niryo_robot_msgs::SetInt::Response &res);
-        bool callbackSendCustomDxlValue(ttl_driver::SendCustomDxlValue::Request &req, ttl_driver::SendCustomDxlValue::Response &res);
-        bool callbackReadCustomDxlValue(ttl_driver::ReadCustomDxlValue::Request &req, ttl_driver::ReadCustomDxlValue::Response &res);
+        bool _callbackActivateLeds(niryo_robot_msgs::SetInt::Request &req, niryo_robot_msgs::SetInt::Response &res);
+        bool _callbackSendCustomDxlValue(ttl_driver::SendCustomDxlValue::Request &req, ttl_driver::SendCustomDxlValue::Response &res);
+        bool _callbackReadCustomDxlValue(ttl_driver::ReadCustomDxlValue::Request &req, ttl_driver::ReadCustomDxlValue::Response &res);
 
     private:
         ros::NodeHandle _nh;

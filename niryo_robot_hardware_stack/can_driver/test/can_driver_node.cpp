@@ -17,18 +17,16 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <memory>
 #include <ros/ros.h>
-#include <string>
-#include <thread>
-#include <queue>
-#include <functional>
-#include <vector>
+#include <ros/service_client.h>
+#include <gtest/gtest.h>
 
 //niryo
 #include "can_driver/can_driver_core.hpp"
 #include "model/stepper_command_type_enum.hpp"
 
+
+static std::unique_ptr<ros::NodeHandle> nh(new ros::NodeHandle);
 
 class CanDriverTest {
 
