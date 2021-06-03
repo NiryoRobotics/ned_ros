@@ -3,7 +3,7 @@
         xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
   <arg name="hardware_version" value="ned"/>
 
-  <node pkg="ttl_driver" type="ttl_driver_test" name="ttl_driver" output="screen">  
+  <node pkg="ttl_driver" type="ttl_driver_integration_tests" name="ttl_driver" output="screen">  
     <rosparam file="$(find ttl_driver)/config/$(arg hardware_version)/dxl_bus_config.yaml" command="load"/>
     <rosparam file="$(find ttl_driver)/config/motors_config.yaml" command="load"/>
     <rosparam file="$(find ttl_driver)/config/default.yaml" command="load"/>

@@ -1,5 +1,5 @@
 /*
-    test_ttl_driver_node.cpp
+    ttl_driver_integration_test.cpp
     Copyright (C) 2020 Niryo
     All rights reserved.
     This program is free software: you can redistribute it and/or modify

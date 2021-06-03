@@ -26,4 +26,5 @@
   <exec_depend>niryo_robot_msgs</exec_depend>
   <exec_depend>common</exec_depend>
 
+  <test_depend>rostest</test_depend>
 </package>

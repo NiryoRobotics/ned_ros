@@ -49,5 +49,8 @@ include_directories(
 #############
 find_package(rostest REQUIRED)
 
-add_rostest(launch/rpi_poses_handlers.test)
-add_rostest(launch/simulation_poses_handlers.test)
+if (${ARCHITECTURE} MATCHES "^(arm.*|aarch64.*|arm64.*)$")
+  add_rostest(test/rpi_poses_handlers.test)
+else()
+  add_rostest(test/simulation_poses_handlers.test)
+endif()

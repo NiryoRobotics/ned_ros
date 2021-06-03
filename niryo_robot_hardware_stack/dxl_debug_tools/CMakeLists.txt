@@ -128,20 +128,6 @@ if(CATKIN_ENABLE_TESTING)
     endif()
   endif(BUILD_UNIT_TESTS)
 
-  if(BUILD_INTEGRATION_TESTS)
-    find_package(catkin REQUIRED rostest)
-
-    add_rostest_gtest(${PROJECT_NAME}_integration_tests
-      test/test_dxl_debug_tools_node.test
-      test/test_dxl_debug_tools_node.cpp
-    )
-    if(TARGET ${PROJECT_NAME}_integration_tests)
-      target_link_libraries(${PROJECT_NAME}_integration_tests
-          ${catkin_LIBRARIES}
-      )
-    endif()
-  endif(BUILD_INTEGRATION_TESTS)
-
 endif(CATKIN_ENABLE_TESTING)
 
 #############
