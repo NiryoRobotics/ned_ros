@@ -142,7 +142,7 @@ namespace CanDriver
         ROS_DEBUG("CanDriver::CanDriver - Can bus parameters: spi_baudrate : %d", spi_baudrate);
         ROS_DEBUG("CanDriver::CanDriver - Can bus parameters: spi_baudrate : %d", gpio_can_interrupt);
 
-        mcp_can.reset(new MCP_CAN_RPI::MCP_CAN(spi_channel, spi_baudrate, static_cast<uint8_t>(gpio_can_interrupt)));
+        mcp_can = std::make_unique<MCP_CAN_RPI::MCP_CAN>(spi_channel, spi_baudrate, static_cast<uint8_t>(gpio_can_interrupt));
 
         if(mcp_can) {
 

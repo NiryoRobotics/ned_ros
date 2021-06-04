@@ -23,8 +23,7 @@ using namespace std;
 namespace TtlDriver
 {
     /**
-     * @brief XDriver::XDriver
-     * @param type
+     * @brief AbstractMotorDriver::AbstractMotorDriver
      * @param portHandler
      * @param packetHandler
      */
@@ -35,13 +34,16 @@ namespace TtlDriver
     {
     }
 
+    /**
+     * @brief AbstractMotorDriver::~AbstractMotorDriver
+     */
     AbstractMotorDriver::~AbstractMotorDriver()
     {
 
     }
 
     /**
-     * @brief XDriver::ping
+     * @brief AbstractMotorDriver::ping
      * @param id
      * @return
      */
@@ -59,7 +61,7 @@ namespace TtlDriver
     }
 
     /**
-     * @brief XDriver::getModelNumber
+     * @brief AbstractMotorDriver::getModelNumber
      * @param id
      * @param dxl_model_number
      * @return
@@ -80,7 +82,7 @@ namespace TtlDriver
     }
 
     /**
-     * @brief XDriver::scan
+     * @brief AbstractMotorDriver::scan
      * @param id_list
      * @return
      */
@@ -90,7 +92,7 @@ namespace TtlDriver
     }
 
     /**
-     * @brief XDriver::reboot
+     * @brief AbstractMotorDriver::reboot
      * @param id
      * @return
      */
@@ -108,7 +110,7 @@ namespace TtlDriver
     }
 
     /**
-     * @brief XDriver::str : build a string describing the object. For debug purpose only
+     * @brief AbstractMotorDriver::str : build a string describing the object. For debug purpose only
      * @return
      */
     string AbstractMotorDriver::str() const
@@ -126,7 +128,7 @@ namespace TtlDriver
      */
 
     /**
-     * @brief XDriver::read
+     * @brief AbstractMotorDriver::read
      * @param address
      * @param data_len
      * @param id
@@ -162,7 +164,7 @@ namespace TtlDriver
             }
             break;
             default:
-                printf("XDriver::read ERROR: Size param must be 1, 2 or 4 bytes\n");
+                printf("AbstractMotorDriver::read ERROR: Size param must be 1, 2 or 4 bytes\n");
             break;
         }
 
@@ -174,7 +176,7 @@ namespace TtlDriver
 
 
     /**
-     * @brief XDriver::write
+     * @brief AbstractMotorDriver::write
      * @param address
      * @param data_len
      * @param id
@@ -197,7 +199,7 @@ namespace TtlDriver
                 dxl_comm_result = _dxlPacketHandler->write4ByteTxOnly(_dxlPortHandler.get(), id, address, data);
             break;
             default:
-                printf("XDriver::write ERROR: Size param must be 1, 2 or 4 bytes\n");
+                printf("AbstractMotorDriver::write ERROR: Size param must be 1, 2 or 4 bytes\n");
             break;
         }
 
@@ -205,7 +207,7 @@ namespace TtlDriver
     }
 
     /**
-     * @brief XDriver::syncRead
+     * @brief AbstractMotorDriver::syncRead
      * @param address
      * @param data_len
      * @param id_list
@@ -248,7 +250,7 @@ namespace TtlDriver
                             data_list.emplace_back(groupSyncRead.getData(id, address, data_len));
                         break;
                         default:
-                            printf("XDriver::syncRead ERROR: Size param must be 1, 2 or 4 bytes\n");
+                            printf("AbstractMotorDriver::syncRead ERROR: Size param must be 1, 2 or 4 bytes\n");
                         break;
                     }
                 }
@@ -266,7 +268,7 @@ namespace TtlDriver
     }
 
     /**
-     * @brief XDriver::syncWrite
+     * @brief AbstractMotorDriver::syncWrite
      * @param address
      * @param data_len
      * @param id_list
@@ -318,7 +320,7 @@ namespace TtlDriver
                         }
                         break;
                         default:
-                            printf("XDriver::syncWrite ERROR: Size param must be 1, 2 or 4 bytes\n");
+                            printf("AbstractMotorDriver::syncWrite ERROR: Size param must be 1, 2 or 4 bytes\n");
                         break;
                     }
 

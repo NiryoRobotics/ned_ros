@@ -26,8 +26,8 @@ namespace JointsInterface {
 
     /**
      * @brief JointsInterfaceCore::JointsInterfaceCore
-     * @param dynamixel
-     * @param stepper
+     * @param ttl_driver
+     * @param can_driver
      */
     JointsInterfaceCore::JointsInterfaceCore(std::shared_ptr<TtlDriver::TtlDriverCore> ttl_driver,
                                              std::shared_ptr<CanDriver::CanDriverCore> can_driver)
@@ -50,8 +50,8 @@ namespace JointsInterface {
 
     /**
      * @brief JointsInterfaceCore::init
-     * @param dynamixel
-     * @param stepper
+     * @param ttl_driver
+     * @param can_driver
      */
     void JointsInterfaceCore::init(std::shared_ptr<TtlDriver::TtlDriverCore> ttl_driver,
                                    std::shared_ptr<CanDriver::CanDriverCore> can_driver)

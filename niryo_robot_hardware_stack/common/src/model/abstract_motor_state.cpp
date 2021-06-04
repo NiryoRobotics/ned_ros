@@ -141,7 +141,7 @@ namespace common {
          * @brief AbstractMotorState::setHardwareError
          * @param hw_error_msg
          */
-        void AbstractMotorState::setHardwareError(string hw_error_msg)
+        void AbstractMotorState::setHardwareError(std::string hw_error_msg)
         {
             _hw_error_message_state = hw_error_msg;
         }

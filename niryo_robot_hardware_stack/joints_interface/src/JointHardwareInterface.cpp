@@ -30,8 +30,8 @@ namespace JointsInterface {
 
     /**
      * @brief JointHardwareInterface::JointHardwareInterface
-     * @param dynamixel
-     * @param stepper
+     * @param ttl_driver
+     * @param can_driver
      */
     JointHardwareInterface::JointHardwareInterface(shared_ptr<TtlDriver::TtlDriverCore> ttl_driver,
                                                    shared_ptr<CanDriver::CanDriverCore> can_driver) :
@@ -46,7 +46,7 @@ namespace JointsInterface {
 
         activateLearningMode();
 
-        _calibration_manager.reset(new CalibrationManager(_joint_list, _can_driver_core, _ttl_driver_core));
+        _calibration_manager = std::make_unique<CalibrationManager>(_joint_list, _can_driver_core, _ttl_driver_core);
     }
 
     /**
@@ -402,6 +402,7 @@ namespace JointsInterface {
     /**
      * @brief JointHardwareInterface::jointIdToJointName
      * @param id
+     * @param motor_type
      * @return
      */
     string JointHardwareInterface::jointIdToJointName(uint8_t id, EMotorType motor_type) const

@@ -45,7 +45,7 @@ namespace common {
          * @param id
          * @param isTool
          */
-        DxlMotorState::DxlMotorState(string name, EMotorType type, uint8_t id, bool isTool) :
+        DxlMotorState::DxlMotorState(std::string name, EMotorType type, uint8_t id, bool isTool) :
             JointState(name, type, id),
             _isTool(isTool)
         {

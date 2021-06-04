@@ -39,7 +39,7 @@ namespace common {
          * @param type
          * @param id
          */
-        JointState::JointState(string name, EMotorType type, uint8_t id) :
+        JointState::JointState(std::string name, EMotorType type, uint8_t id) :
             AbstractMotorState(id, type),
             _name(name)
         {

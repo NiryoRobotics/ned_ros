@@ -53,7 +53,7 @@ namespace common {
          */
         StepperMotorCmd::StepperMotorCmd(EStepperCommandType type,
                                          uint8_t motor_id,
-                                         vector<int32_t> params) :
+                                         std::vector<int32_t> params) :
             AbstractMotorCmd<EStepperCommandType>(type),
             _id(motor_id),
             _param_list(params)

@@ -115,6 +115,7 @@ namespace JointsInterface {
     /**
      * @brief JointsInterfaceCore::jointIdToJointName
      * @param id
+     * @param motor_type
      * @return
      */
     inline

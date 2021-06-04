@@ -46,7 +46,8 @@ namespace common {
 
         /**
          * @brief SynchronizeMotorCmd::addMotorParam
-         * @param state
+         * @param type
+         * @param id
          * @param param
          */
         void SynchronizeMotorCmd::addMotorParam(EMotorType type, uint8_t id, uint32_t param)

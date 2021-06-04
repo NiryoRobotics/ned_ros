@@ -66,7 +66,7 @@ namespace CanDriver
     {
         initParameters();
 
-        _can_driver.reset(new CanDriver());
+        _can_driver = std::make_unique<CanDriver>();
 
         startControlLoop();
     }
@@ -397,7 +397,8 @@ namespace CanDriver
 
     /**
      * @brief CanDriverCore::setConveyor
-     * @param motor_id
+     * @param new_motor_id
+     * @param default_conveyor_id
      * @return
      */
     int CanDriverCore::setConveyor(uint8_t new_motor_id, uint8_t default_conveyor_id)
@@ -474,7 +475,7 @@ namespace CanDriver
      * @brief CanDriverCore::addSingleCommandToQueue
      * @param cmd
      */
-    void CanDriverCore::addSingleCommandToQueue(const StepperMotorCmd &cmd)
+    void CanDriverCore::addSingleCommandToQueue(const common::model::StepperMotorCmd &cmd)
     {
         ROS_DEBUG("CanDriverCore::addSingleCommandToQueue - %s", cmd.str().c_str());
 
@@ -500,7 +501,7 @@ namespace CanDriver
      * @brief CanDriverCore::addSingleCommandToQueue
      * @param cmd
      */
-    void CanDriverCore::addSingleCommandToQueue(const vector<StepperMotorCmd> &cmd)
+    void CanDriverCore::addSingleCommandToQueue(const std::vector<common::model::StepperMotorCmd> &cmd)
     {
         for(auto&& c : cmd)
             addSingleCommandToQueue(c);

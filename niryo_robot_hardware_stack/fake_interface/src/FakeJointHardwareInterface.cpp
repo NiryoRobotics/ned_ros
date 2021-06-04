@@ -112,6 +112,7 @@ namespace FakeInterface {
     /**
      * @brief FakeJointHardwareInterface::jointIdToJointName
      * @param id
+     * @param motor_type
      * @return
      */
     std::string FakeJointHardwareInterface::jointIdToJointName(uint8_t id, common::model::EMotorType motor_type) const

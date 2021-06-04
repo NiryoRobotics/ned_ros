@@ -238,7 +238,6 @@ namespace TtlDriver
 
     /**
      * @brief XDriver<reg_type>::XDriver
-     * @param type
      * @param portHandler
      * @param packetHandler
      */

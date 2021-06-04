@@ -39,7 +39,7 @@ namespace ToolsInterface {
 
     /**
      * @brief ToolsInterfaceCore::ToolsInterfaceCore
-     * @param dynamixel
+     * @param ttl_driver
      */
     ToolsInterfaceCore::ToolsInterfaceCore(shared_ptr<TtlDriverCore> ttl_driver):
         _ttl_driver_core(ttl_driver)

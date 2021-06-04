@@ -44,9 +44,8 @@ namespace JointsInterface {
     {
 
     public:
-        JointHardwareInterface(
-            std::shared_ptr<TtlDriver::TtlDriverCore> ttl_driver,
-            std::shared_ptr<CanDriver::CanDriverCore> can_driver);
+        JointHardwareInterface(std::shared_ptr<TtlDriver::TtlDriverCore> ttl_driver,
+                               std::shared_ptr<CanDriver::CanDriverCore> can_driver);
 
         void sendInitMotorsParams();
         int calibrateJoints(int mode, std::string &result_message);

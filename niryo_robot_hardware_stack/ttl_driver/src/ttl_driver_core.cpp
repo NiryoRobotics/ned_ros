@@ -58,7 +58,7 @@ namespace TtlDriver
     {
         initParameters();
 
-        _ttl_driver.reset(new TtlDriver());
+        _ttl_driver = std::make_unique<TtlDriver>();
         _ttl_driver->scanAndCheck();
         startControlLoop();
 
@@ -494,7 +494,7 @@ namespace TtlDriver
     /**
      * @brief TtlDriverCore::setEndEffector
      * @param type
-     * @param id
+     * @param motor_id
      * @return
      */
     int TtlDriverCore::setEndEffector(EMotorType type, uint8_t motor_id)
@@ -520,7 +520,7 @@ namespace TtlDriver
 
     /**
      * @brief TtlDriverCore::unsetEndEffector
-     * @param id
+     * @param motor_id
      */
     void TtlDriverCore::unsetEndEffector(uint8_t motor_id)
     {
@@ -579,7 +579,7 @@ namespace TtlDriver
      *  Not very good, nothing prevents the user from providing an end effector command here
      * and vice versa with addEndEffectorCmd. To be changed
      */
-    void TtlDriverCore::addSingleCommandToQueue(const SingleMotorCmd &cmd)
+    void TtlDriverCore::addSingleCommandToQueue(const common::model::SingleMotorCmd &cmd)
     {
         ROS_DEBUG("TtlDriverCore::addSingleCommandToQueue - %s", cmd.str().c_str());
 
@@ -596,7 +596,7 @@ namespace TtlDriver
      * @brief TtlDriverCore::addSingleCommandToQueue
      * @param cmd
      */
-    void TtlDriverCore::addSingleCommandToQueue(const std::vector<SingleMotorCmd> &cmd)
+    void TtlDriverCore::addSingleCommandToQueue(const std::vector<common::model::SingleMotorCmd> &cmd)
     {
         for(auto&& c : cmd)
             addSingleCommandToQueue(c);
@@ -606,7 +606,7 @@ namespace TtlDriver
      * @brief TtlDriverCore::addEndEffectorCommandToQueue
      * @param cmd
      */
-    void TtlDriverCore::addEndEffectorCommandToQueue(const SingleMotorCmd &cmd)
+    void TtlDriverCore::addEndEffectorCommandToQueue(const common::model::SingleMotorCmd &cmd)
     {
         if(_end_effector_cmds.size() > QUEUE_OVERFLOW)
             ROS_WARN_THROTTLE(0.5, "TtlDriverCore::addEndEffectorCommandToQueue: Cmd queue overflow ! %lu", _end_effector_cmds.size());
@@ -618,7 +618,7 @@ namespace TtlDriver
      * @brief TtlDriverCore::addEndEffectorCommandToQueue
      * @param cmd
      */
-    void TtlDriverCore::addEndEffectorCommandToQueue(const vector<SingleMotorCmd> &cmd)
+    void TtlDriverCore::addEndEffectorCommandToQueue(const std::vector<common::model::SingleMotorCmd> &cmd)
     {
         for(auto&& c : cmd)
             addEndEffectorCommandToQueue(c);

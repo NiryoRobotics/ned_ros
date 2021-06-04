@@ -38,7 +38,7 @@ namespace FakeInterface {
         startPublishersSubscribers();
 
         ROS_INFO("Fake Hardware Interface - Started ");
-        _robot.reset(new FakeJointHardwareInterface());
+        _robot = std::make_unique<FakeJointHardwareInterface>();
 
         _learning_mode = true;
 

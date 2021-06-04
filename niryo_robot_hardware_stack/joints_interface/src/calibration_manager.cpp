@@ -41,8 +41,8 @@ namespace JointsInterface {
     /**
      * @brief CalibrationManager::CalibrationManager
      * @param joint_list
-     * @param stepper
-     * @param dynamixel
+     * @param can_driver
+     * @param ttl_driver
      */
     CalibrationManager::CalibrationManager(std::vector<std::shared_ptr<JointState> > joint_list,
                                                std::shared_ptr<CanDriver::CanDriverCore> can_driver,

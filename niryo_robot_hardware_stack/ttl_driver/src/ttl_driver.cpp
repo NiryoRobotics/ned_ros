@@ -890,9 +890,9 @@ namespace TtlDriver
 
     /**
      * @brief TtlDriver::_syncWrite
+     * @param syncWriteFunction
      * @param cmd
      * @return
-     * // to be reformatted, not beautiful
      */
     int TtlDriver::_syncWrite(int (AbstractMotorDriver::*syncWriteFunction)(const vector<uint8_t> &, const vector<uint32_t> &),
                               const SynchronizeMotorCmd& cmd)
@@ -941,6 +941,7 @@ namespace TtlDriver
 
     /**
      * @brief TtlDriver::_singleWrite
+     * @param singleWriteFunction
      * @param dxl_type
      * @param cmd
      * @return
@@ -990,7 +991,7 @@ namespace TtlDriver
 
     /**
      * @brief TtlDriver::executeJointTrajectoryCmd
-     * @param cmd_map
+     * @param cmd_vec
      */
     void TtlDriver::executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, uint32_t> > cmd_vec)
     {

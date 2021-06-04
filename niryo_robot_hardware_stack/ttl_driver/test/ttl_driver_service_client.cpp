@@ -23,8 +23,6 @@
 
 #include "ttl_driver/ttl_driver_core.hpp"
 
-#include "ttl_driver/ttl_driver_core.hpp"
-
 static std::unique_ptr<ros::NodeHandle> nh(new ros::NodeHandle);
 
 TEST(TESTSuite, setLeds)
