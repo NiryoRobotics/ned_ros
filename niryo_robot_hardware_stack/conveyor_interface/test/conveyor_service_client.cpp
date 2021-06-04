@@ -24,7 +24,7 @@
 
 #include "conveyor_interface/conveyor_interface_core.hpp"
 
-static std::unique_ptr<ros::NodeHandle> nh(new ros::NodeHandle);
+static auto nh = std::make_unique<ros::NodeHandle>();
 
 TEST(TESTSuite, setConveyor)
 {

@@ -25,7 +25,7 @@
 
 #include "ttl_driver/ttl_driver_core.hpp"
 
-static std::unique_ptr<ros::NodeHandle> nh(new ros::NodeHandle);
+static auto nh = std::make_unique<ros::NodeHandle>();
 
 TEST(TESTSuite, pingTool)
 {

@@ -16,6 +16,12 @@ include_directories(
 #############
 find_package(rostest REQUIRED)
 
+execute_process( COMMAND
+            uname -m COMMAND tr -d '\n'
+        OUTPUT_VARIABLE
+            ARCHITECTURE
+    )
+    
 if (${ARCHITECTURE} MATCHES "^(arm.*|aarch64.*|arm64.*)$")
     add_rostest(test/rpi_python_wrapper.test)
 else()

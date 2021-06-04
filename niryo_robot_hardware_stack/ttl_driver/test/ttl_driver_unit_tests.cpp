@@ -20,10 +20,20 @@
 
 // Bring in gtest
 #include <gtest/gtest.h>
+#include <ros/console.h>
+#include <log4cxx/logger.h>
+
 
 // Declare a test
 TEST(TtlDriverTestSuite, testInitDriver)
 {
+    ros::NodeHandle nh;
+
+    int baudrate = 0;
+    nh.getParam("/dxl_bus/dxl_baudrate", baudrate);
+
+    ROS_INFO("baudrate : %d", baudrate);
+
     TtlDriver::TtlDriver ttl_driver;
     EXPECT_TRUE(ttl_driver.isConnectionOk());
 }
@@ -31,8 +41,14 @@ TEST(TtlDriverTestSuite, testInitDriver)
 // Run all the tests that were declared with TEST()
 int main(int argc, char **argv){
   testing::InitGoogleTest(&argc, argv);
-  ros::init(argc, argv, "tester");
+  ros::init(argc, argv, "ttl_driver_unit_tests");
+
   ros::NodeHandle nh;
+
+
+  if( ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug) )
+     ros::console::notifyLoggerLevelsChanged();
+
 
   return RUN_ALL_TESTS();
 }

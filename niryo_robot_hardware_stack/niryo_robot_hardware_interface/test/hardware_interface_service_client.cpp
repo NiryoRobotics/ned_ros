@@ -23,7 +23,7 @@
 
 #include "niryo_robot_hardware_interface/hardware_interface.hpp"
 
-static std::unique_ptr<ros::NodeHandle> nh(new ros::NodeHandle);
+static auto nh = std::make_unique<ros::NodeHandle>();
 
 TEST(TESTSuite, launchMotorReport)
 {

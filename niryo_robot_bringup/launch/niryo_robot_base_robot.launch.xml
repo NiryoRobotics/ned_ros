@@ -17,7 +17,7 @@
     <!-- PARAMS -->
     <group ns="niryo_robot/info">
         <param name="image_version" type="string"
-            textfile="$(arg conf_location)/version.txt"/>
+            textfile="$(arg conf_location)/version/version.txt"/>
     </group>
 
     <group ns="niryo_robot/robot_state">
