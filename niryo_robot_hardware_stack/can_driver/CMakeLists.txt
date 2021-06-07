@@ -151,18 +151,24 @@ endif()
 #############
 
 if(CATKIN_ENABLE_TESTING)
-  if(BUILD_UNIT_TESTS)
-    catkin_add_gtest(
-      ${PROJECT_NAME}_unit_tests
-      test/can_driver_unit_tests.cpp
-    )
-    if(TARGET ${PROJECT_NAME}_unit_tests)
-      target_link_libraries(
-        ${PROJECT_NAME}_unit_tests
-        ${PROJECT_NAME}
+    if(BUILD_UNIT_TESTS)
+    endif(BUILD_UNIT_TESTS)
+
+    if(BUILD_INTEGRATION_TESTS)
+      find_package(catkin REQUIRED rostest)
+
+      add_rostest_gtest(${PROJECT_NAME}_unit_tests
+        test/can_driver_unit_tests.test
+        test/can_driver_unit_tests.cpp
       )
-    endif()
-  endif(BUILD_UNIT_TESTS)
+      if(TARGET ${PROJECT_NAME}_unit_tests)
+        target_link_libraries(${PROJECT_NAME}_unit_tests
+          ${PROJECT_NAME}
+          ${catkin_LIBRARIES}
+        )
+      endif()
+
+    endif(BUILD_INTEGRATION_TESTS)
 
 endif(CATKIN_ENABLE_TESTING)
 

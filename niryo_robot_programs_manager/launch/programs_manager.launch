@@ -16,6 +16,6 @@
         <param name="programs_dir" type="string" value="$(arg programs_dir)"/>
 
         <rosparam file="$(find niryo_robot_programs_manager)/config/programs_manager_params.yaml" command="load"/>
-
     </node>
+    
 </launch>

@@ -21,19 +21,10 @@
 // Bring in gtest
 #include <gtest/gtest.h>
 #include <ros/console.h>
-#include <log4cxx/logger.h>
-
 
 // Declare a test
 TEST(TtlDriverTestSuite, testInitDriver)
 {
-    ros::NodeHandle nh;
-
-    int baudrate = 0;
-    nh.getParam("/dxl_bus/dxl_baudrate", baudrate);
-
-    ROS_INFO("baudrate : %d", baudrate);
-
     TtlDriver::TtlDriver ttl_driver;
     EXPECT_TRUE(ttl_driver.isConnectionOk());
 }
@@ -45,10 +36,13 @@ int main(int argc, char **argv){
 
   ros::NodeHandle nh;
 
+  //set log level as Debug.
+  // For tests launched using catkin_make run_tests, the logs are located in files only
+  // see build/test_results/ttl_driver/rostest-test_ttl_driver_unit_tests.xml
+  // log file is of the form .ros/log/aac4b920-c76b-11eb-942e-00e04c680780/ttl_driver_unit_tests-1*.log
 
   if( ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug) )
      ros::console::notifyLoggerLevelsChanged();
-
 
   return RUN_ALL_TESTS();
 }

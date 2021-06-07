@@ -120,7 +120,7 @@ namespace ConveyorInterface {
         if(!_conveyor_pool_id_list.empty())
         {
             //take last
-            uint8_t conveyor_id = *_conveyor_pool_id_list.rbegin();
+            uint8_t conveyor_id = *_conveyor_pool_id_list.begin();
             result = _can_driver->setConveyor(conveyor_id, static_cast<uint8_t>(_default_conveyor_id));
 
             if(niryo_robot_msgs::CommandStatus::SUCCESS == result)
@@ -128,7 +128,7 @@ namespace ConveyorInterface {
                 //add id to list of current connected ids
                 _current_conveyor_id_list.push_back(conveyor_id);
                 // remove from pool
-                _conveyor_pool_id_list.erase(std::prev(_conveyor_pool_id_list.end()));
+                _conveyor_pool_id_list.erase(_conveyor_pool_id_list.begin());
 
                 StepperMotorCmd cmd(EStepperCommandType::CMD_TYPE_MICRO_STEPS, conveyor_id, {8});
                 cmd.setParams({8});

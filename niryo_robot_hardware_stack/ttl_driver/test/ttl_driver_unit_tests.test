@@ -4,10 +4,14 @@
 
     <arg name="hardware_version" value="ned"/>
         
-    <rosparam file="$(find ttl_driver)/config/$(arg hardware_version)/dxl_bus_config.yaml" command="load"/>
-    <rosparam file="$(find ttl_driver)/config/motors_config.yaml" command="load"/>
-    <rosparam file="$(find ttl_driver)/config/default.yaml" command="load"/>
-    
+    <group ns="niryo_robot_hardware_interface" >
+        <group ns="ttl_driver" >
+            <rosparam file="$(find ttl_driver)/config/$(arg hardware_version)/dxl_bus_config.yaml" command="load"/>
+            <rosparam file="$(find ttl_driver)/config/motors_config.yaml" command="load"/>
+            <rosparam file="$(find ttl_driver)/config/default.yaml" command="load"/>
+        </group>
+    </group>
+
     <test test-name="ttl_driver_unit_tests" pkg="ttl_driver" type="ttl_driver_unit_tests" />
-        
+
 </launch>

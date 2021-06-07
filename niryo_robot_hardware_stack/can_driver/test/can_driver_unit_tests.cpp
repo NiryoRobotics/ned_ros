@@ -20,6 +20,7 @@
 
 // Bring in gtest
 #include <gtest/gtest.h>
+#include <ros/console.h>
 
 // Declare a test
 TEST(CanDriverTestSuite, testInitDriver)
@@ -38,8 +39,12 @@ TEST(CanDriverTestSuite, testInitDriver)
 // Run all the tests that were declared with TEST()
 int main(int argc, char **argv){
   testing::InitGoogleTest(&argc, argv);
-  ros::init(argc, argv, "can_driver_test");
+  ros::init(argc, argv, "can_driver_unit_tests");
+
   ros::NodeHandle nh;
+
+  if( ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug) )
+     ros::console::notifyLoggerLevelsChanged();
 
   return RUN_ALL_TESTS();
 }

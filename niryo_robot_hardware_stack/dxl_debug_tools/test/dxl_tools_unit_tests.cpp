@@ -38,7 +38,18 @@
 TEST(DxlDebugToolsTestSuite, testInit)
 {
  
-    ASSERT_TRUE(true);
+    int baudrate = 1000000;
+    std::string serial_port = DEFAULT_PORT;
+
+    std::cout << "Using baudrate: " << baudrate << ", port: " << serial_port << "\n";
+
+    // Setup Dxl communication
+    std::shared_ptr<dynamixel::PortHandler> portHandler(dynamixel::PortHandler::getPortHandler(serial_port.c_str()));
+    std::shared_ptr<dynamixel::PacketHandler> packetHandler(dynamixel::PacketHandler::getPacketHandler(PROTOCOL_VERSION));
+
+    DxlDebugTools::DxlTools dxlTools(portHandler, packetHandler);
+
+    ASSERT_TRUE(-1 != dxlTools.setupDxlBus(baudrate));
 }
 
 // Run all the tests that were declared with TEST()

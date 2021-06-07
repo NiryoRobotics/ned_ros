@@ -5,8 +5,38 @@
     <param name="robot_description" command="$(find xacro)/xacro $(find niryo_robot_description)/urdf/ned/niryo_ned.urdf.xacro"/>
 
     <include file="$(find niryo_ned_moveit_config_standalone)/launch/move_group.launch" />
-    <node pkg="hardware_interface" name="hardware_interface_node" type="hardware_interface_node"  output="screen" /> 
+    
+    <node pkg="niryo_robot_hardware_interface" type="niryo_robot_hardware_interface_node"
+    name="niryo_robot_hardware_interface" output="screen">
+        <param name="hardware_version" type="string" value="$(arg hardware_version)"/>
 
+        <rosparam file="$(find niryo_robot_hardware_interface)/config/default.yaml" command="load"/>
+        <rosparam file="$(find cpu_interface)/config/default.yaml" command="load"/>
+
+        <rosparam file="$(find ttl_driver)/config/$(arg hardware_version)/dxl_bus_config.yaml" command="load" ns="ttl_driver"/>
+        <rosparam file="$(find ttl_driver)/config/default.yaml" command="load"  ns="ttl_driver"/>
+
+        <rosparam file="$(find can_driver)/config/can_bus.yaml" command="load" ns="can_driver"/>
+        <rosparam file="$(find can_driver)/config/default.yaml" command="load" ns="can_driver"/>
+
+        <rosparam file="$(find joints_interface)/config/default.yaml" command="load" />
+        <rosparam file="$(find joints_interface)/config/motors_param.yaml" command="load"/>
+        <rosparam file="$(find joints_interface)/config/joints_params.yaml" command="load" />
+        <rosparam file="$(find joints_interface)/config/$(arg hardware_version)/dynamixels_params.yaml" command="load" />
+        <rosparam file="$(find joints_interface)/config/$(arg hardware_version)/steppers_params.yaml" command="load" />
+
+        <rosparam file="$(find tools_interface)/config/default.yaml" command="load" ns="tools_interface"/>
+
+        <rosparam file="$(find conveyor_interface)/config/default.yaml" command="load"/>
+
+        <param name="simulation_mode" type="bool" value="$(arg simulation_mode)"/>
+        <param name="gazebo" type="bool" value="$(arg gazebo)"/>
+        <param name="simu_gripper" type="bool" value="$(arg simu_gripper)"/>
+        <param name="can_enabled" type="bool" value="$(arg can_enabled)"/>
+        <param name="ttl_enabled" type="bool" value="$(arg ttl_enabled)"/>
+        <param name="debug" type="bool" value="$(arg debug)"/>
+
+    </node>
     <test test-name="hardware_interface_integration_tests" pkg="hardware_interface" type="hardware_interface_integration_tests"  /> 
 
 </launch>

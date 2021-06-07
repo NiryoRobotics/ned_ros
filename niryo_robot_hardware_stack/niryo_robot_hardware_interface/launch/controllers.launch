@@ -40,9 +40,8 @@
     </group>
 
     <!-- robot state publisher -->
-    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" output="screen">
-    </node>
-
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" output="screen" />
+    
     <include file="$(find niryo_robot_hardware_interface)/launch/niryo_robot_hardware_interface.launch">
         <arg name="simulation_mode" value="$(arg simulation_mode)"/>
         <arg name="simu_gripper" value="$(arg simu_gripper)"/>

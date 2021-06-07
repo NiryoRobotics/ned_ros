@@ -3,9 +3,23 @@
         xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
 
     <param name="robot_description" command="$(find xacro)/xacro $(find niryo_robot_description)/urdf/ned/niryo_ned.urdf.xacro"/>
+    <arg name="hardware_version" value="ned"/>
+  
+    <group ns="niryo_robot_hardware_interface" >
+      <node pkg="joints_interface" type="joints_interface_node" name="joints_interface" output="screen"> 
+        <rosparam file="$(find ttl_driver)/config/$(arg hardware_version)/dxl_bus_config.yaml" command="load"/>
+        <rosparam file="$(find ttl_driver)/config/default.yaml" command="load"/>
+        <rosparam file="$(find can_driver)/config/can_bus.yaml" command="load"/>
+        <rosparam file="$(find can_driver)/config/default.yaml" command="load"/>
+        <rosparam file="$(find joints_interface)/config/motors_param.yaml" command="load"/>
+        <rosparam file="$(find joints_interface)/config/default.yaml" command="load"/>
+        <rosparam file="$(find joints_interface)/config/joints_params.yaml" command="load"/>
+        <rosparam file="$(find joints_interface)/config/$(arg hardware_version)/dynamixels_params.yaml" command="load"/>
+        <rosparam file="$(find joints_interface)/config/$(arg hardware_version)/steppers_params.yaml" command="load"/>
+      </node>
+    </group>
 
     <include file="$(find niryo_ned_moveit_config_standalone)/launch/move_group.launch" />
-    <node pkg="joints_interface" name="joints_interface_node" type="joints_interface_node"  output="screen" /> 
 
     <test test-name="joints_interface_integration_tests" pkg="joints_interface" type="joints_interface_integration_tests"  /> 
 

@@ -10,9 +10,11 @@
     <arg name="hardware_version" value="ned"/>
     <arg name="debug" default="false"/>
 
-    <group ns="niryo_robot/info">
-        <param name="ros_version"               type="string" command="rosversion niryo_robot_bringup" />
-        <param name="niryo_robot_type"  type="string" value="NIRYO_NED" />
+    <group ns="niryo_robot">
+        <group ns="info">
+            <param name="ros_version"       type="string" command="rosversion niryo_robot_bringup" />
+            <param name="niryo_robot_type"  type="string" value="NIRYO_NED" />
+        </group>
     </group>
 
     <node pkg="niryo_robot_hardware_interface" type="niryo_robot_hardware_interface_node"
