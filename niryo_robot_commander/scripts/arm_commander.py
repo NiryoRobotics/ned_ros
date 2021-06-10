@@ -28,8 +28,8 @@ from sensor_msgs.msg import JointState
 from std_msgs.msg import Header, Int32
 from trajectory_msgs.msg import JointTrajectory
 from visualization_msgs.msg import Marker, MarkerArray
-
 from niryo_robot_msgs.msg import RobotState, RPY
+from niryo_robot_msgs.srv import SetBool
 
 # Services
 from moveit_msgs.srv import GetPositionFK, GetPositionIK, GetStateValidity
@@ -39,6 +39,8 @@ from niryo_robot_msgs.srv import SetInt
 
 # Enums
 from niryo_robot_commander.command_enums import MoveCommandType, ArmCommanderException
+
+TrajectoryTimeOutMin = 3
 
 
 class ArmCommander:
@@ -171,6 +173,17 @@ class ArmCommander:
 
     def __callback_current_feedback(self, msg):
         self.__current_feedback = msg
+        error_tolerance = [0.7, 0.4, 0.35, 0.4, 0.3, 0.45]
+        self.__collision_detected = False
+        for error, tolerance in zip(self.__current_feedback.feedback.error.positions, error_tolerance):
+            if abs(error) > tolerance:
+                    self.__collision_detected = True
+                    self.__set_learning_mode(True)
+                    abort_str = "Command has been aborted due to a collision or " \
+                            "a motor not able to follow the given trajectory"
+                    rospy.logwarn(abort_str)
+                    return CommandStatus.CONTROLLER_PROBLEMS, abort_str
+
 
     def __callback_goal_result(self, msg):
         """
@@ -372,19 +385,19 @@ class ArmCommander:
 
         trajectory_time_out = max(1.5 * self.__get_plan_time(plan), self.__trajectory_minimum_timeout)
 
-        # Send trajectory and wait
+        # Send trajectory and
         self.__arm.execute(plan, wait=False)
         if self.__traj_finished_event.wait(trajectory_time_out):
             if self.__current_goal_result == GoalStatus.SUCCEEDED:
                 return CommandStatus.SUCCESS, "Command has been successfully processed"
             elif self.__current_goal_result == GoalStatus.PREEMPTED:
-                return CommandStatus.STOPPED, "Command has been successfully stopped"
+                if self.__collision_detected:
+                    self.__collision_detected = False
+                    return CommandStatus.STOPPED, "Command has been aborted due to a collision or a motor not able to follow the given trajectory"
+                else:
+                    return CommandStatus.STOPPED, "Command has been successfully stopped"
             elif self.__current_goal_result == GoalStatus.ABORTED:
-                # if joint_trajectory_controller aborts the goal, it will still try to
-                # finish executing the trajectory --> so we ask it to stop from here
-                # http://wiki.ros.org/joint_trajectory_controller -> preemption policy
-                # Send an empty trajectory from the topic interface
-                self.__set_position_hold_mode()
+                self.__set_learning_mode(True)
                 abort_str = "Command has been aborted due to a collision or " \
                             "a motor not able to follow the given trajectory"
                 return CommandStatus.CONTROLLER_PROBLEMS, abort_str
@@ -937,3 +950,22 @@ class ArmCommander:
         dist = np.linalg.norm(np_pose1 - np_pose2)
 
         return dist < 0.001
+
+    @staticmethod
+    def __set_learning_mode(set_bool):
+        """
+        Activate or deactivate the learning mode using the ros service /niryo_robot/learning_mode/activate
+
+        :param set_bool:
+        :type set_bool: bool
+
+        :return: Success if the learning mode was properly activate or deactivate, False if not
+        :rtype: bool
+        """
+        try:
+            rospy.wait_for_service('/niryo_robot/learning_mode/activate', timeout=1)
+            srv = rospy.ServiceProxy('/niryo_robot/learning_mode/activate', SetBool)
+            resp = srv(set_bool)
+            return resp.status == CommandStatus.SUCCESS
+        except (rospy.ServiceException, rospy.ROSException):
+            return False
