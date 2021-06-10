@@ -204,7 +204,6 @@ class NiryoRosWrapper:
             rospy.logwarn("ROS Wrapper - Failed to connect to Robot action server")
 
             raise NiryoRosWrapperException('Action Server is not up : {}'.format(self.__robot_action_server_name))
-        # print('PYTHON ROS WRAPPER : goal :', goal)
         # Send goal and check response
         goal_state, response = self.__send_goal_and_wait_for_completed(goal)
 
@@ -230,7 +229,6 @@ class NiryoRosWrapper:
 
     def __send_goal_and_wait_for_completed(self, goal):
         self.__robot_action_server_client.send_goal(goal)
-        # print('ROS WRAPPER - start goal execution, with goal : ', goal.goal)
         if not self.__robot_action_server_client.wait_for_result(timeout=rospy.Duration(self.__action_execute_timeout)):
             self.__robot_action_server_client.cancel_goal()
             self.__robot_action_server_client.stop_tracking_goal()

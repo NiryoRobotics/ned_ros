@@ -18,7 +18,7 @@ namespace DynamixelDriver
         _control_loop_flag = false;
         _debug_flag = false;
         _joint_trajectory_controller_cmd.clear();
-        _dxl_cmd.reset(new SynchronizeMotorCmd());
+        _dxl_cmd.reset();
         _end_effector_cmd.clear();
         initParameters();
         _dynamixel.reset(new DxlDriver());
@@ -31,8 +31,6 @@ namespace DynamixelDriver
 
     void DynamixelDriverCore::initParameters()
     {
-
-
         _nh.getParam("/niryo_robot_hardware_interface/dynamixel_driver/dxl_hardware_control_loop_frequency", _control_loop_frequency);
         _nh.getParam("/niryo_robot_hardware_interface/dynamixel_driver/dxl_hardware_write_frequency", _write_frequency);
         _nh.getParam("/niryo_robot_hardware_interface/dynamixel_driver/dxl_hardware_read_data_frequency", _read_data_frequency);
@@ -237,10 +235,12 @@ namespace DynamixelDriver
     std::vector<uint8_t> DynamixelDriverCore::scanTools()
     {
         std::vector<uint8_t> motor_list;
-        std::lock_guard<std::mutex> lck(_control_loop_mutex);
         ROS_INFO("Dynamixel Driver Core - Scan tools...");
-        int result = _dynamixel->getAllIdsOnDxlBus(motor_list);
-        ROS_DEBUG("Dynamixel Driver Core - Result getAllIdsOnDxlBus: %d", result);
+        {
+            std::lock_guard<std::mutex> lck(_control_loop_mutex);
+            int result = _dynamixel->getAllIdsOnDxlBus(motor_list);
+            ROS_DEBUG("Dynamixel Driver Core - Result getAllIdsOnDxlBus: %d", result);
+        }
         std::string motor_id_list_string;
         std::for_each(std::begin(motor_list), std::end(motor_list),
                       [&motor_id_list_string](int x) {
@@ -254,15 +254,19 @@ namespace DynamixelDriver
     {
         int result = this->ping_id(id, type);
 
-        if (result != COMM_SUCCESS)
+        if (result == COMM_SUCCESS)
         {
-            ROS_WARN("Dynamixel Driver Core - End effector dxl error: %d with motor id %d", result, id);
-            result = niryo_robot_msgs::CommandStatus::DXL_READ_ERROR;
+            {
+                std::lock_guard<std::mutex> lck(_control_loop_mutex);
+                bool dynamixel_added_successfully = _dynamixel->addDynamixel(id, type);
+                result = dynamixel_added_successfully ? niryo_robot_msgs::CommandStatus::SUCCESS
+                                                        : niryo_robot_msgs::CommandStatus::FAILURE;
+            }
         }
         else
         {
-            _dynamixel->addDynamixel(id, type);
-            result = niryo_robot_msgs::CommandStatus::SUCCESS;
+            ROS_WARN("Dynamixel Driver Core - End effector dxl error: %d with motor id %d", result, id);
+            result = niryo_robot_msgs::CommandStatus::DXL_READ_ERROR;
         }
         return result;
     }
@@ -347,7 +351,7 @@ namespace DynamixelDriver
     void DynamixelDriverCore::_executeCommand()
     {
         bool need_sleep = false;
-        if (_joint_trajectory_controller_cmd.size() != 0)
+        if (!_joint_trajectory_controller_cmd.empty())
         {
             _dynamixel->executeJointTrajectoryCmd(_joint_trajectory_controller_cmd);
             _joint_trajectory_controller_cmd.clear();
@@ -361,12 +365,16 @@ namespace DynamixelDriver
             _dxl_cmd.reset();
             need_sleep = true;
         }
-        if (_end_effector_cmd.size() != 0)
+        if (!_end_effector_cmd.empty())
         {
             if (need_sleep)
                 ros::Duration(0.01).sleep();
-            _dynamixel->readSingleCommand(_end_effector_cmd.at(0));
-            _end_effector_cmd.erase (_end_effector_cmd.begin());
+            SingleMotorCmd end_effector_command = _end_effector_cmd.at(0);
+            if (_dynamixel->ping_id(end_effector_command.getId()) == COMM_SUCCESS)
+            {
+                _dynamixel->readSingleCommand(end_effector_command);
+                _end_effector_cmd.erase (_end_effector_cmd.begin());
+            }
         }
     }
 
@@ -395,7 +403,7 @@ namespace DynamixelDriver
                     { // wait for connection to be up
                         missing_ids = getRemovedMotorList();
                         for(std::vector<int>::iterator it = missing_ids.begin(); it != missing_ids.end(); ++it) {
-                            ROS_WARN_THROTTLE(2, "Dynamixel Driver Core - Dynamixel %d do not seem to be connected", *it);
+                            ROS_WARN_THROTTLE(0.5, "Dynamixel Driver Core - Dynamixel %d do not seem to be connected", *it);
                         }
                         ros::Duration(0.25).sleep();
                         {
@@ -459,7 +467,6 @@ namespace DynamixelDriver
             res.message = "Dynamixel Driver Core - Invalid motor type: should be 1 (XL-320) or 2 (XL-430)";
             return true;
         }
-
         std::lock_guard<std::mutex> lck(_control_loop_mutex);
         result = _dynamixel->sendCustomDxlCommand(motor_type, req.id, req.value, req.reg_address, req.byte_number);
 

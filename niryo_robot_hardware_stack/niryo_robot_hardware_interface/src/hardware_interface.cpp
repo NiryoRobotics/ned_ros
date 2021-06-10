@@ -12,6 +12,7 @@ namespace NiryoRobotHardwareInterface
 
     bool HardwareInterface::_callbackStopMotorsReport(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res)
     {
+        (void)req;
         if (!_simulation_mode)
         {
             ROS_WARN("Hardware Interface - Stop Motor Report");
@@ -21,11 +22,12 @@ namespace NiryoRobotHardwareInterface
             res.message = "";
             return true;
         }
-
+        return false;
     }
 
     bool HardwareInterface::_callbackLaunchMotorsReport(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res)
     {
+        (void)req;
         if (!_simulation_mode)
         {
             ROS_WARN("Hardware Interface - Start Motors Report");
@@ -55,6 +57,7 @@ namespace NiryoRobotHardwareInterface
 
     bool HardwareInterface::_callbackRebootMotors(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res)
     {
+        (void)req;
         if (!_simulation_mode)
         {
             res.status = _dynamixel_driver->rebootMotors();
@@ -265,7 +268,7 @@ namespace NiryoRobotHardwareInterface
             motor_names.clear();
             motor_types.clear();
 
-            for (int i = 0; i < stepper_motor_state.motors_hw_status.size(); i++)
+            for (unsigned int i = 0; i < stepper_motor_state.motors_hw_status.size(); i++)
             {
                 temperatures.push_back(stepper_motor_state.motors_hw_status.at(i).temperature);
                 voltages.push_back(stepper_motor_state.motors_hw_status.at(i).voltage);
@@ -281,7 +284,7 @@ namespace NiryoRobotHardwareInterface
                 joint_name = joint_name == "" ? ("Stepper " + std::to_string(dxl_motor_state.motors_hw_status.at(i).motor_identity.motor_id)) : joint_name;
                 motor_names.push_back(joint_name);
             }
-            for (int i = 0; i < dxl_motor_state.motors_hw_status.size(); i++)
+            for (unsigned int i = 0; i < dxl_motor_state.motors_hw_status.size(); i++)
             {
                 temperatures.push_back(dxl_motor_state.motors_hw_status.at(i).temperature);
                 voltages.push_back(dxl_motor_state.motors_hw_status.at(i).voltage);
@@ -346,7 +349,7 @@ namespace NiryoRobotHardwareInterface
                     joints_state = _joints_interface->getJointsState();
                 }
 
-                for (int i = 0; i < joints_state.size(); i++)
+                for (unsigned int i = 0; i < joints_state.size(); i++)
                 {
                     motor_names.push_back(joints_state.at(i).getName());
                 }
@@ -363,7 +366,7 @@ namespace NiryoRobotHardwareInterface
                 motor_names.push_back("joint_6");
             }
 
-            for (int i = 0; i < stepper_motor_state.motors_hw_status.size(); i++)
+            for (unsigned int i = 0; i < stepper_motor_state.motors_hw_status.size(); i++)
             {
                 firmware_versions.push_back(stepper_motor_state.motors_hw_status.at(i).firmware_version);
             }

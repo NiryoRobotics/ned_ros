@@ -14,6 +14,7 @@ add_message_files(
   PausePlanExecution.msg
   RobotCommand.msg
   ShiftPose.msg
+  CommandJog.msg
 )
 
 add_service_files(

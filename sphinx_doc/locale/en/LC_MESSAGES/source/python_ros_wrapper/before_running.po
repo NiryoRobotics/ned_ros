@@ -1,0 +1,66 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2021, Niryo All rights reserved. No part of this document
+# may be reproduced or transmitted in any form or by any means without prior
+# written consent of Niryo SAS
+# This file is distributed under the same license as the Ned ROS
+# Documentation package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Ned ROS Documentation 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-04-23 16:51+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.8.0\n"
+
+#: ../../source/python_ros_wrapper/before_running.rst:2
+msgid "Before Running your Programs"
+msgstr ""
+
+#: ../../source/python_ros_wrapper/before_running.rst:5
+msgid "The variable PYTHONPATH"
+msgstr ""
+
+#: ../../source/python_ros_wrapper/before_running.rst:6
+msgid ""
+"The Python interpreter needs to have all used packages in the environment"
+" variable **PYTHONPATH**, to do that, you need to have sourced your ROS "
+"environment :"
+msgstr ""
+
+#: ../../source/python_ros_wrapper/before_running.rst:9
+msgid ""
+"If you are coding directly on your robot, it is made directly in every "
+"terminal"
+msgstr ""
+
+#: ../../source/python_ros_wrapper/before_running.rst:10
+msgid ""
+"If your are using simulation, be sure to have followed the setup from "
+":ref:`Setup Ned ROS Environment`"
+msgstr ""
+
+#: ../../source/python_ros_wrapper/before_running.rst:15
+msgid "Required piece of code"
+msgstr ""
+
+#: ../../source/python_ros_wrapper/before_running.rst:17
+msgid ""
+"To run, your program will need some imports & initialisation. We give you"
+" below the piece of code you must use to make Python ROS Wrapper work ::"
+msgstr ""
+
+#: ../../source/python_ros_wrapper/before_running.rst:34
+msgid ""
+"You have now everything you need to control the robot through its Python "
+"ROS Wrapper. To run a script, simply use the command ``python "
+"my_script.py``"
+msgstr ""
+

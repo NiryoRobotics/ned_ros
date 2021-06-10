@@ -87,7 +87,7 @@ namespace DynamixelDriver
 
             void executeJointTrajectoryCmd(std::vector<uint32_t> &cmd);
 
-            void addDynamixel(uint8_t id, DxlMotorType type);
+            bool addDynamixel(uint8_t id, DxlMotorType type);
             void removeDynamixel(uint8_t id, DxlMotorType type);
 
             uint32_t getPosition(DxlMotorState& motor_state);
@@ -183,6 +183,9 @@ namespace DynamixelDriver
             int _hw_fail_counter_read;
 
             std::queue<DxlCustomCommand> _custom_command_queue;
+
+            int _sendDxl320Command(const SingleMotorCmd &cmd);
+            int _sendDxl430Command(const SingleMotorCmd &cmd);
     };
 }
 

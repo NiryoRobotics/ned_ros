@@ -13,7 +13,7 @@ namespace DynamixelDriver
         _param = param;
     }
 
-    DxlCommandType SingleMotorCmd::getType()
+    DxlCommandType SingleMotorCmd::getType() const
     {
         return _type;
     }
@@ -28,7 +28,7 @@ namespace DynamixelDriver
         _id = id;
     }
 
-    uint8_t SingleMotorCmd::getId()
+    uint8_t SingleMotorCmd::getId() const
     {
         return _id;
     }
@@ -38,7 +38,7 @@ namespace DynamixelDriver
         _param = param;
     }
 
-    uint32_t SingleMotorCmd::getParam()
+    uint32_t SingleMotorCmd::getParam() const
     {
         return _param;
     }

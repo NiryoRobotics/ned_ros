@@ -1,0 +1,58 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2021, Niryo All rights reserved. No part of this document
+# may be reproduced or transmitted in any form or by any means without prior
+# written consent of Niryo SAS
+# This file is distributed under the same license as the Ned ROS
+# Documentation package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Ned ROS Documentation 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-04-23 16:51+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.8.0\n"
+
+#: ../../source/stack_hardware.rst:2
+msgid "Hardware ROS Stack Documentation"
+msgstr ""
+
+#: ../../source/stack_hardware.rst:9
+msgid "ROS Logo"
+msgstr ""
+
+#: ../../source/stack_hardware.rst:11
+msgid ""
+"ROS (Robot Operating System) is an Open-Source Robotic Framework which "
+"allows to ease robot software development. The framework is used in "
+"almost each part of Ned's software."
+msgstr ""
+
+#: ../../source/stack_hardware.rst:15
+msgid ""
+"The high-level packages (motion planner, vision, ...) are coded in Python"
+" to give good readability whereas communication with Hardware is "
+"developed in C++ to ensure speed"
+msgstr ""
+
+#: ../../source/stack_hardware.rst:19
+msgid "To learn more about ROS, go on `Official ROS Wiki <http://wiki.ros.org/>`_"
+msgstr ""
+
+#: ../../source/stack_hardware.rst:21
+msgid ""
+"In this section, you will have access to all information about each Niryo"
+" Robot's ROS hardware stack packages"
+msgstr ""
+
+#: ../../source/stack_hardware.rst:23
+msgid "ROS Documentation Sections"
+msgstr ""
+

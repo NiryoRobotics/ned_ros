@@ -285,7 +285,6 @@ class HoldingRegisterDataBlock(DataBlock):
         self.start_execution_thread(goal)
 
     def start_execution_thread(self, goal):
-        #print('MODBUS - start goal execution, with goal : ', goal.goal)
         if not self.execution_thread.is_alive():
             self.execution_thread = threading.Thread(target=self.execute_action,
                                                      args=['niryo_robot_commander/robot_action', RobotMoveAction, goal])
@@ -344,7 +343,6 @@ class HoldingRegisterDataBlock(DataBlock):
         response = self.call_ros_service('/niryo_robot/conveyor/ping_and_set_conveyor',
                                          SetConveyor, 1, 0)
         self.__set_command_done(response.status)
-        print(response)
         if response == CommandStatus.SUCCESS:
             self.setValuesOffset(HR_LAST_ROBOT_CMD_DATA_RESULT, [response.id])
 
@@ -358,7 +356,6 @@ class HoldingRegisterDataBlock(DataBlock):
         conveyor_id = self.getValuesOffset(HR_CONTROL_CONVEYOR_ID, 1)[0]
         response = self.call_ros_service('/niryo_robot/conveyor/ping_and_set_conveyor',
                                          SetConveyor, 2, conveyor_id)
-        print(response)
         self.__set_command_done(response.status)
 
     def control_conveyor(self):
