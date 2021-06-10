@@ -771,13 +771,18 @@ class ArmCommander:
             robot_state_target.joint_state.name = self.__joints_name
             group_name = self.__arm.get_name()
             response = self.check_state_validity(robot_state_target, group_name, None)
-            if not response.valid and len(response.contacts) > 0:
-                rospy.logwarn('Arm commander - Joints target unreachable because of collision between %s and %s',
-                              response.contacts[0].contact_body_1, response.contacts[0].contact_body_2)
-                raise ArmCommanderException(CommandStatus.INVALID_PARAMETERS,
-                                            "Target joints would lead to a collision between links {} and {} ".format(
-                                                response.contacts[0].contact_body_1,
-                                                response.contacts[0].contact_body_2))
+            if not response.valid:
+                if len(response.contacts) > 0:
+                    rospy.logwarn('Arm commander - Joints target unreachable because of collision between %s and %s',
+                                response.contacts[0].contact_body_1, response.contacts[0].contact_body_2)
+                    raise ArmCommanderException(CommandStatus.INVALID_PARAMETERS,
+                                                "Target joints would lead to a collision between links {} and {} ".format(
+                                                    response.contacts[0].contact_body_1,
+                                                    response.contacts[0].contact_body_2))
+                else: # didn't succeed to get the contacts on the real robot
+                    rospy.logwarn('Arm commander - Joints target unreachable because of collision between two parts of Ned')
+                    raise ArmCommanderException(CommandStatus.INVALID_PARAMETERS,
+                                                "Target joints would lead to a collision between two parts of Ned")
 
         except rospy.ServiceException as e:
             rospy.logwarn("Arm commander - Failed to check state validity : " + str(e))
