@@ -12,6 +12,7 @@ a mouse to control the robot)
 
 import rospy
 import math
+import moveit_commander
 from niryo_robot_commander.command_enums import ArmCommanderException
 
 # Command Status
@@ -26,6 +27,7 @@ from trajectory_msgs.msg import JointTrajectoryPoint
 
 from niryo_robot_msgs.msg import HardwareStatus
 from niryo_robot_msgs.msg import RobotState
+from niryo_robot_commander.msg import CommandJog
 
 # Services
 from niryo_robot_commander.srv import GetIK
@@ -55,6 +57,7 @@ class JogController:
         self._joint_trajectory_publisher = rospy.Publisher(
             rospy.get_param("~joint_controller_name") + '/command', JointTrajectory,
             queue_size=3)
+
         # Publishing rate
         self._timer_rate = rospy.get_param("~jog_timer_rate_sec")
         self._publisher_joint_trajectory_timer = None
@@ -75,6 +78,10 @@ class JogController:
         self.__hardware_status = None
         rospy.Subscriber('/niryo_robot_hardware_interface/hardware_status', HardwareStatus,
                          self.__callback_hardware_status)
+
+        self._jog_command_ik = None
+        rospy.Subscriber('/niryo_robot_commander/send_jog_command_ik', CommandJog,
+                         self.__callback_send_jog_command_ik, queue_size=10)
 
         # - Service
         rospy.Service('/niryo_robot/jog_interface/jog_shift_commander', JogShift,
@@ -98,7 +105,11 @@ class JogController:
         self.__joints_rotation_max = jog_limits["joints"]
 
         # - Others param
-        self.__time_without_jog_limit = rospy.get_param("~time_without_jog_limit")
+        self.__time_without_jog_limit = rospy.get_param(
+            "~time_without_jog_TCP_limit")  # jog disabled after one second for the jogTCP Niryo Studio
+
+        # - Move It Commander / Get Arm MoveGroupCommander
+        self.__arm = moveit_commander.MoveGroupCommander("arm")
 
     # - Callbacks
 
@@ -120,26 +131,33 @@ class JogController:
         else:
             return self.disable()
 
-    def __callback_jog_commander(self, msg):
-        if self.__hardware_status.calibration_needed or self.__hardware_status.calibration_in_progress:
-            return CommandStatus.ABORTED, "Cannot send command cause Jog because calibration is not done"
-        if self.__learning_mode_on:
-            try:
-                rospy.wait_for_service('/niryo_robot/learning_mode/activate', 2)
-                service = rospy.ServiceProxy('/niryo_robot/learning_mode/activate', SetBool)
-                result = service(True)
-                if result.status != CommandStatus.SUCCESS:
-                    return CommandStatus.ABORTED, "Cannot send command cause Jog because learning mode is on and" \
-                                                  " cannot be disabled"
-                rospy.sleep(0.1)
-            except (rospy.ROSException, rospy.ServiceException):
-                return CommandStatus.ABORTED, "Error while trying to turn Off learning mode"
+    def __callback_send_jog_command_ik(self, msg):
+        # check if the learning mode is false and the robot is calibrated
+        self.__check_before_use_jog()
 
-        if not self._enabled:
-            ret, str_msg = self.enable()
-            if ret == CommandStatus.ABORTED:
-                return CommandStatus.ABORTED, "Cannot send command cause Jog is not activated and cannot be"
-        self._last_command_timer = rospy.get_time()
+        shift_mode = msg.cmd
+        if shift_mode != self._shift_mode:
+            self._reset_last_pub()
+            self._shift_mode = shift_mode
+
+        shift_command = list(msg.shift_values)
+        shift_command[:3] = [min([v, math.copysign(self.__pose_translation_max, v)], key=abs) for v in
+                             shift_command[:3]]
+        shift_command[3:] = [min([v, math.copysign(self.__pose_rotation_max, v)], key=abs) for v in
+                             shift_command[3:]]
+
+        try:
+            success, potential_target_values = self._get_new_joints_w_ik(shift_command)
+        except ArmCommanderException as e:
+            return e.status, "Error while validating pose : {}".format(e.message)
+        if not success:
+            return CommandStatus.NO_PLAN_AVAILABLE, "Unable to find on invert kinematics for the target position"
+        else:
+            self.__validate_ik_joints(potential_target_values)
+
+    def __callback_jog_commander(self, msg):
+        # check if the learning mode is false and the robot is calibrated
+        self.__check_before_use_jog()
 
         shift_mode = msg.cmd
         if shift_mode != self._shift_mode:
@@ -327,6 +345,53 @@ class JogController:
         for j, joint_value in enumerate(joints):
             joints[j] = max(joints_limits[j].lower, min(joints_limits[j].upper, joint_value))
         return joints
+
+    def __validate_ik_joints(self, joints):
+        """
+        Check if the list of joints values received from the inverse kinematic is usable.
+        If a joint is bigger than 0.5 radian the list becomes None and a warning appears
+
+        :return: List with the values from the inverse kinematic or None if the movement is too complicated
+        :rtype: list
+        """
+
+        actual_joints = list(self._joint_states)
+
+        for i in range(len(joints)):
+            if abs(actual_joints[i] - joints[i]) < 0.5:
+                self._target_values = joints
+            else:
+                msg_str = "Jog Controller can't execute this command"
+                rospy.logwarn(msg_str + str(joints))
+                self._target_values = None
+        return joints
+
+    def __check_before_use_jog(self):
+        """
+        Check if the calibration has already been done on the robot and if the learning mode is off.
+
+        :return: None
+        :rtype: None
+        """
+        if self.__hardware_status.calibration_needed or self.__hardware_status.calibration_in_progress:
+            return CommandStatus.ABORTED, "Cannot send command cause Jog because calibration is not done"
+        if self.__learning_mode_on:
+            try:
+                rospy.wait_for_service('/niryo_robot/learning_mode/activate', 2)
+                service = rospy.ServiceProxy('/niryo_robot/learning_mode/activate', SetBool)
+                result = service(True)
+                if result.status != CommandStatus.SUCCESS:
+                    return CommandStatus.ABORTED, "Cannot send command cause Jog because learning mode is on and" \
+                                                  " cannot be disabled"
+                rospy.sleep(0.1)
+            except (rospy.ROSException, rospy.ServiceException):
+                return CommandStatus.ABORTED, "Error while trying to turn Off learning mode"
+
+        if not self._enabled:
+            ret, str_msg = self.enable()
+            if ret == CommandStatus.ABORTED:
+                return CommandStatus.ABORTED, "Cannot send command cause Jog is not activated and cannot be"
+        self._last_command_timer = rospy.get_time()
 
 
 if __name__ == '__main__':
