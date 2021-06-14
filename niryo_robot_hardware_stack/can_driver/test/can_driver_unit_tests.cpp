@@ -25,14 +25,14 @@
 // Declare a test
 TEST(CanDriverTestSuite, testInitDriver)
 {
-    CanDriver::CanDriver stepper;
+    can_driver::CanDriver stepper;
     EXPECT_TRUE(stepper.isConnectionOk());
 }
 
 // Declare a test
 /*TEST(CanDriverTestSuite, testInitDriverCore)
 {
-    CanDriver::CanDriverCore can_core;
+    can_driver::CanDriverCore can_core;
     EXPECT_TRUE(can_core.isConnectionOk());
 }*/
 

@@ -35,7 +35,7 @@
 #include "xl330_reg.hpp"
 #include "xl320_reg.hpp"
 
-namespace TtlDriver
+namespace ttl_driver
 {
 
     /**

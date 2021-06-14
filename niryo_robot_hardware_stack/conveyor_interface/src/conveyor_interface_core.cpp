@@ -30,13 +30,13 @@
 using namespace std;
 using namespace common::model;
 
-namespace ConveyorInterface {
+namespace conveyor_interface {
 
     /**
      * @brief ConveyorInterfaceCore::ConveyorInterfaceCore
      * @param stepper
      */
-    ConveyorInterfaceCore::ConveyorInterfaceCore(shared_ptr<CanDriver::CanDriverCore> can_driver):
+    ConveyorInterfaceCore::ConveyorInterfaceCore(shared_ptr<can_driver::CanDriverCore> can_driver):
        _can_driver(can_driver)
     {
         init();

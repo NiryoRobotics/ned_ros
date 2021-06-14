@@ -30,7 +30,7 @@
 
 #include "stepper_reg.hpp"
 
-namespace TtlDriver
+namespace ttl_driver
 {
     /**
      * @brief The StepperDriver class

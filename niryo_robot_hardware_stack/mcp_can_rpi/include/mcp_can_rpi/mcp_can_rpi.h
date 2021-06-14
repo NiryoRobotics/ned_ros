@@ -55,7 +55,7 @@
 
 #include "mcp_can_rpi/mcp_can_dfs_rpi.h"
 
-namespace MCP_CAN_RPI
+namespace mcp_can_rpi
 {
     constexpr int MAX_CHAR_IN_MESSAGE = 8;
 

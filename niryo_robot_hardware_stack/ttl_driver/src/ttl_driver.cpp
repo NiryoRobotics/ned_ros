@@ -29,7 +29,7 @@
 using namespace std;
 using namespace common::model;
 
-namespace TtlDriver
+namespace ttl_driver
 {
     /**
      * @brief TtlDriver::TtlDriver
@@ -1019,4 +1019,4 @@ namespace TtlDriver
         }
     }
 
-} // namespace TtlDriver
+} // namespace ttl_driver

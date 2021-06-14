@@ -31,11 +31,11 @@
 #include "model/dxl_command_type_enum.hpp"
 #include "util/util_defs.hpp"
 
-using namespace TtlDriver;
+using namespace ttl_driver;
 using namespace common::model;
 using namespace std;
 
-namespace ToolsInterface {
+namespace tools_interface {
 
     /**
      * @brief ToolsInterfaceCore::ToolsInterfaceCore

@@ -27,7 +27,7 @@
 
 #include "model/motor_type_enum.hpp"
 
-namespace FakeInterface {
+namespace fake_interface {
 
     /**
      * @brief The FakeJointHardwareInterface class

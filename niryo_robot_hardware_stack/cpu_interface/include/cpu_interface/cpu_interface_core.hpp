@@ -27,7 +27,7 @@
 #include <thread>
 #include <string>
 
-namespace CpuInterface {
+namespace cpu_interface {
 
     /**
      * @brief The CpuInterfaceCore class

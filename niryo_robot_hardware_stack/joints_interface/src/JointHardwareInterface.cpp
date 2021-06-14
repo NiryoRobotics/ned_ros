@@ -26,15 +26,15 @@
 using namespace std;
 using namespace common::model;
 
-namespace JointsInterface {
+namespace joints_interface {
 
     /**
      * @brief JointHardwareInterface::JointHardwareInterface
      * @param ttl_driver
      * @param can_driver
      */
-    JointHardwareInterface::JointHardwareInterface(shared_ptr<TtlDriver::TtlDriverCore> ttl_driver,
-                                                   shared_ptr<CanDriver::CanDriverCore> can_driver) :
+    JointHardwareInterface::JointHardwareInterface(shared_ptr<ttl_driver::TtlDriverCore> ttl_driver,
+                                                   shared_ptr<can_driver::CanDriverCore> can_driver) :
         _ttl_driver_core(ttl_driver),
         _can_driver_core(can_driver),
         _learning_mode(true)

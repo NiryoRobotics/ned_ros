@@ -28,7 +28,7 @@ int main(int argc, char** argv)
 
   ros::NodeHandle nodeHandle("~");
 
-  TtlDriver::TtlDriverCore ttl_node;
+  ttl_driver::TtlDriverCore ttl_node;
 
   ros::spin();
   return 0;

@@ -43,7 +43,7 @@
 #include "model/synchronize_motor_cmd.hpp"
 #include "model/single_motor_cmd.hpp"
 
-namespace TtlDriver
+namespace ttl_driver
 {
 
     constexpr float DXL_BUS_PROTOCOL_VERSION = 2.0;

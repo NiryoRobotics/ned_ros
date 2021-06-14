@@ -20,7 +20,7 @@
 
 using namespace std;
 
-namespace TtlDriver
+namespace ttl_driver
 {
     /**
      * @brief AbstractMotorDriver::AbstractMotorDriver

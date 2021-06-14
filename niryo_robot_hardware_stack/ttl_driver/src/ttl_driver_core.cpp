@@ -27,7 +27,7 @@ using namespace common::model;
 
 static constexpr double DXL_VOLTAGE_DIVISOR = 10.0;
 
-namespace TtlDriver
+namespace ttl_driver
 {
     /**
      * @brief TtlDriverCore::TtlDriverCore
@@ -787,4 +787,4 @@ namespace TtlDriver
         return true;
     }
 
-} // namespace DynamixelDriver
+} // namespace ttl_driver

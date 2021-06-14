@@ -26,7 +26,7 @@
 
 #include "dynamixel_sdk/dynamixel_sdk.h"
 
-namespace DxlDebugTools {
+namespace dxl_debug_tools {
 
     /**
      * @brief The DxlTools class
@@ -53,6 +53,6 @@ namespace DxlDebugTools {
 
     };
 
-} // namespace DxlDebugTools
+} // namespace dxl_debug_tools
 
 #endif

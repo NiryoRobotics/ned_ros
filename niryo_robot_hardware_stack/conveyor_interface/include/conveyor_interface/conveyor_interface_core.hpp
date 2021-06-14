@@ -35,7 +35,7 @@
 #include "conveyor_interface/ConveyorFeedbackArray.h"
 #include "niryo_robot_msgs/CommandStatus.h"
 
-namespace ConveyorInterface {
+namespace conveyor_interface {
 
     /**
      * @brief The ConveyorInterfaceCore class
@@ -43,7 +43,7 @@ namespace ConveyorInterface {
     class ConveyorInterfaceCore
     {
         public:
-            ConveyorInterfaceCore(std::shared_ptr<CanDriver::CanDriverCore> stepper);
+            ConveyorInterfaceCore(std::shared_ptr<can_driver::CanDriverCore> stepper);
             virtual ~ConveyorInterfaceCore();
 
             bool isInitialized();
@@ -67,7 +67,7 @@ namespace ConveyorInterface {
 
             std::thread _publish_conveyors_feedback_thread;
 
-            std::shared_ptr<CanDriver::CanDriverCore> _can_driver;
+            std::shared_ptr<can_driver::CanDriverCore> _can_driver;
 
             ros::ServiceServer _ping_and_set_stepper_server;
             ros::ServiceServer _control_conveyor_server;

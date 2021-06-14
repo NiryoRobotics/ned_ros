@@ -93,7 +93,7 @@ int main (int argc, char **argv)
         std::shared_ptr<dynamixel::PortHandler> portHandler(dynamixel::PortHandler::getPortHandler(serial_port.c_str()));
         std::shared_ptr<dynamixel::PacketHandler> packetHandler(dynamixel::PacketHandler::getPacketHandler(PROTOCOL_VERSION));
 
-        DxlDebugTools::DxlTools dxlTools(portHandler, packetHandler);
+        dxl_debug_tools::DxlTools dxlTools(portHandler, packetHandler);
 
         if (-1 != dxlTools.setupDxlBus(baudrate))
         {

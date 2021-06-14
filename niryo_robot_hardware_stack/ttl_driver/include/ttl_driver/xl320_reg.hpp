@@ -20,7 +20,7 @@
 #include <memory>
 #include "model/motor_type_enum.hpp"
 
-namespace TtlDriver
+namespace ttl_driver
 {
     struct XL320Reg
     {

@@ -45,7 +45,7 @@
 #include "mcp_can_rpi/mcp_can_rpi.h"
 
 
-namespace CanDriver
+namespace can_driver
 {
 
     /**
@@ -130,7 +130,7 @@ namespace CanDriver
         private:
             ros::NodeHandle _nh;
 
-            std::unique_ptr<MCP_CAN_RPI::MCP_CAN> mcp_can;
+            std::unique_ptr<mcp_can_rpi::MCP_CAN> mcp_can;
 
             std::mutex _stepper_timeout_mutex;
             std::thread _stepper_timeout_thread;
@@ -217,6 +217,6 @@ namespace CanDriver
         return _state_map.size() > 0;
     }
 
-} // namespace CanDriver
+} // namespace can_driver
 
 #endif

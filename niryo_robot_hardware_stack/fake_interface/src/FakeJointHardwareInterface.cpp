@@ -22,7 +22,7 @@
 #include "model/motor_type_enum.hpp"
 #include "model/motor_type_enum.hpp"
 
-namespace FakeInterface {
+namespace fake_interface {
 
     /**
      * @brief FakeJointHardwareInterface::FakeJointHardwareInterface

@@ -34,7 +34,7 @@ int main(int argc, char **argv)
 
     ros::NodeHandle nh;
 
-    NiryoRobotHardwareInterface::HardwareInterface nd(nh);
+    niryo_robot_hardware_interface::HardwareInterface nd(nh);
     ros::waitForShutdown();
 
     ROS_INFO("Hardware Interface - Shutdown node");

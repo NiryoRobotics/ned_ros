@@ -19,7 +19,7 @@
 
 #include "dxl_debug_tools/dxl_tools.h"
 
-namespace DxlDebugTools {
+namespace dxl_debug_tools {
 
     /**
      * @brief DxlTools::DxlTools

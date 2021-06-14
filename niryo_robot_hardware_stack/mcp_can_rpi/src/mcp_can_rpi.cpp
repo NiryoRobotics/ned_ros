@@ -41,7 +41,7 @@
 
 #include "mcp_can_rpi/mcp_can_rpi.h"
 
-namespace MCP_CAN_RPI {
+namespace mcp_can_rpi {
     /*********************************************************************************************************
     ** Function name:           spiTransfer
     ** Descriptions:            Performs a spi transfer on Raspberry Pi (using wiringPi)

@@ -28,7 +28,7 @@
 #include "util/util_defs.hpp"
 
 //CC replace with fake driver ??
-namespace FakeInterface {
+namespace fake_interface {
     FakeInterfaceCore::FakeInterfaceCore()
     {
         ROS_DEBUG("Fake Interface Core - ctor");

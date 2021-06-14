@@ -40,7 +40,7 @@
 #include "std_msgs/Int32.h"
 
 
-namespace ToolsInterface {
+namespace tools_interface {
 
     /**
      * @brief The ToolsInterfaceCore class
@@ -48,7 +48,7 @@ namespace ToolsInterface {
     class ToolsInterfaceCore
     {
         public:
-            ToolsInterfaceCore(std::shared_ptr<TtlDriver::TtlDriverCore> ttl_driver);
+            ToolsInterfaceCore(std::shared_ptr<ttl_driver::TtlDriverCore> ttl_driver);
             virtual ~ToolsInterfaceCore();
 
             bool isInitialized();
@@ -77,7 +77,7 @@ namespace ToolsInterface {
             ros::Publisher _tool_connection_publisher;
             std::thread _publish_tool_connection_thread;
 
-            std::shared_ptr<TtlDriver::TtlDriverCore> _ttl_driver_core;
+            std::shared_ptr<ttl_driver::TtlDriverCore> _ttl_driver_core;
 
             ros::ServiceServer _ping_and_set_dxl_tool_server;
             ros::ServiceServer _open_gripper_server;

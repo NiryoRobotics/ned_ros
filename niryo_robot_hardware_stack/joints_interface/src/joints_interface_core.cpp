@@ -22,15 +22,15 @@
 #include "joints_interface/joints_interface_core.hpp"
 #include "util/util_defs.hpp"
 
-namespace JointsInterface {
+namespace joints_interface {
 
     /**
      * @brief JointsInterfaceCore::JointsInterfaceCore
      * @param ttl_driver
      * @param can_driver
      */
-    JointsInterfaceCore::JointsInterfaceCore(std::shared_ptr<TtlDriver::TtlDriverCore> ttl_driver,
-                                             std::shared_ptr<CanDriver::CanDriverCore> can_driver)
+    JointsInterfaceCore::JointsInterfaceCore(std::shared_ptr<ttl_driver::TtlDriverCore> ttl_driver,
+                                             std::shared_ptr<can_driver::CanDriverCore> can_driver)
     {
         init(ttl_driver, can_driver);
     }
@@ -53,8 +53,8 @@ namespace JointsInterface {
      * @param ttl_driver
      * @param can_driver
      */
-    void JointsInterfaceCore::init(std::shared_ptr<TtlDriver::TtlDriverCore> ttl_driver,
-                                   std::shared_ptr<CanDriver::CanDriverCore> can_driver)
+    void JointsInterfaceCore::init(std::shared_ptr<ttl_driver::TtlDriverCore> ttl_driver,
+                                   std::shared_ptr<can_driver::CanDriverCore> can_driver)
     {
         initParams();
 

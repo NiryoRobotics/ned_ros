@@ -35,7 +35,7 @@
 #include "niryo_robot_msgs/CommandStatus.h"
 #include "model/synchronize_stepper_motor_cmd.hpp"
 
-namespace CanDriver
+namespace can_driver
 {
     /**
      * @brief The CanDriverCore class

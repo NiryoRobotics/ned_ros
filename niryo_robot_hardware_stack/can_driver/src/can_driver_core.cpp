@@ -29,7 +29,7 @@
 using namespace std;
 using namespace common::model;
 
-namespace CanDriver
+namespace can_driver
 {
     /**
      * @brief CanDriverCore::CanDriverCore
@@ -553,4 +553,4 @@ namespace CanDriver
         return can_bus_state;
     }
 
-} // namespace CanDriver
+} // namespace can_driver

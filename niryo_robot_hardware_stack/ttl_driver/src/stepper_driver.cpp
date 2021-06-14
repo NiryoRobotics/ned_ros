@@ -21,7 +21,7 @@
 
 using namespace std;
 
-namespace TtlDriver
+namespace ttl_driver
 {
 
     StepperDriver::StepperDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,

@@ -60,7 +60,7 @@
 
 #include "fake_interface/FakeJointHardwareInterface.hpp"
 
-namespace FakeInterface {
+namespace fake_interface {
     class FakeInterfaceCore
     {
     public:

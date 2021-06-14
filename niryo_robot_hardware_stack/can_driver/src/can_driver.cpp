@@ -25,7 +25,7 @@
 
 using namespace common::model;
 
-namespace CanDriver
+namespace can_driver
 {
     CanDriver::CanDriver() :
         _calibration_status(EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED),
@@ -142,7 +142,7 @@ namespace CanDriver
         ROS_DEBUG("CanDriver::CanDriver - Can bus parameters: spi_baudrate : %d", spi_baudrate);
         ROS_DEBUG("CanDriver::CanDriver - Can bus parameters: spi_baudrate : %d", gpio_can_interrupt);
 
-        mcp_can = std::make_unique<MCP_CAN_RPI::MCP_CAN>(spi_channel, spi_baudrate, static_cast<uint8_t>(gpio_can_interrupt));
+        mcp_can = std::make_unique<mcp_can_rpi::MCP_CAN>(spi_channel, spi_baudrate, static_cast<uint8_t>(gpio_can_interrupt));
 
         if(mcp_can) {
 
@@ -908,4 +908,4 @@ namespace CanDriver
         return states;
     }
 
-} // namespace CanDriver
+} // namespace can_driver

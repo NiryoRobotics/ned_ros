@@ -37,13 +37,13 @@ int main(int argc, char **argv)
     
     ros::NodeHandle nh;
    
-    auto ttl_driver = std::make_shared<TtlDriver::TtlDriverCore>();
+    auto ttl_driver = std::make_shared<ttl_driver::TtlDriverCore>();
     ros::Duration(1).sleep();
 
-    auto can_driver = std::make_shared<CanDriver::CanDriverCore>();
+    auto can_driver = std::make_shared<can_driver::CanDriverCore>();
     ros::Duration(1).sleep();
 
-    auto joints = std::make_shared<JointsInterface::JointsInterfaceCore>(ttl_driver, can_driver);
+    auto joints = std::make_shared<joints_interface::JointsInterfaceCore>(ttl_driver, can_driver);
     ros::waitForShutdown();
     
     ROS_INFO("Joints Interface - Shutdown node");

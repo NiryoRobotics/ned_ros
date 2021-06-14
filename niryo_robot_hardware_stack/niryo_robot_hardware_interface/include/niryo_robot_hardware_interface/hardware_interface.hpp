@@ -38,7 +38,7 @@
 #include "niryo_robot_msgs/SoftwareVersion.h"
 #include "niryo_robot_msgs/CommandStatus.h"
 
-namespace NiryoRobotHardwareInterface
+namespace niryo_robot_hardware_interface
 {
     /**
      * @brief The HardwareInterface class
@@ -74,13 +74,13 @@ namespace NiryoRobotHardwareInterface
         ros::ServiceServer _stop_motors_report_service;
         ros::ServiceServer _reboot_motors_service;
 
-        std::shared_ptr<TtlDriver::TtlDriverCore> _ttl_driver;
-        std::shared_ptr<CanDriver::CanDriverCore> _can_driver;
-        std::shared_ptr<CpuInterface::CpuInterfaceCore> _cpu_interface;
-        std::shared_ptr<ConveyorInterface::ConveyorInterfaceCore> _conveyor_interface;
-        std::shared_ptr<ToolsInterface::ToolsInterfaceCore> _tools_interface;
-        std::shared_ptr<JointsInterface::JointsInterfaceCore> _joints_interface;
-        std::shared_ptr<FakeInterface::FakeInterfaceCore> _fake_interface;
+        std::shared_ptr<ttl_driver::TtlDriverCore> _ttl_driver;
+        std::shared_ptr<can_driver::CanDriverCore> _can_driver;
+        std::shared_ptr<cpu_interface::CpuInterfaceCore> _cpu_interface;
+        std::shared_ptr<conveyor_interface::ConveyorInterfaceCore> _conveyor_interface;
+        std::shared_ptr<tools_interface::ToolsInterfaceCore> _tools_interface;
+        std::shared_ptr<joints_interface::JointsInterfaceCore> _joints_interface;
+        std::shared_ptr<fake_interface::FakeInterfaceCore> _fake_interface;
 
         double _publish_hw_status_frequency{0.0};
         double _publish_software_version_frequency{0.0};
@@ -94,5 +94,5 @@ namespace NiryoRobotHardwareInterface
         std::string _rpi_image_version;
         std::string _ros_niryo_robot_version;
     };
-} // namespace NiryoRobotHardwareInterface
+} // namespace niryo_robot_hardware_interface
 #endif

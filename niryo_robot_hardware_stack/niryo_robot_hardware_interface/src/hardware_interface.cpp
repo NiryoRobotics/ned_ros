@@ -26,7 +26,7 @@
 
 #include "util/util_defs.hpp"
 
-namespace NiryoRobotHardwareInterface
+namespace niryo_robot_hardware_interface
 {
     /**
      * @brief HardwareInterface::HardwareInterface
@@ -71,7 +71,7 @@ namespace NiryoRobotHardwareInterface
             if (_ttl_enabled)
             {
                 ROS_DEBUG("HardwareInterface::initNodes - Start Dynamixel Driver Node");
-                _ttl_driver = std::make_shared<TtlDriver::TtlDriverCore>();
+                _ttl_driver = std::make_shared<ttl_driver::TtlDriverCore>();
                 ros::Duration(0.25).sleep();
             }
             else {
@@ -81,7 +81,7 @@ namespace NiryoRobotHardwareInterface
             if (_can_enabled)
             {
                 ROS_DEBUG("HardwareInterface::initNodes - Start Stepper Driver Node");
-                _can_driver = std::make_shared<CanDriver::CanDriverCore>();
+                _can_driver = std::make_shared<can_driver::CanDriverCore>();
                 ros::Duration(0.25).sleep();
             }
             else {
@@ -91,15 +91,15 @@ namespace NiryoRobotHardwareInterface
             if (_can_enabled && _ttl_enabled)
             {
                 ROS_DEBUG("HardwareInterface::initNodes - Start Joints Interface Node");
-                _joints_interface = std::make_shared<JointsInterface::JointsInterfaceCore>(_ttl_driver, _can_driver);
+                _joints_interface = std::make_shared<joints_interface::JointsInterfaceCore>(_ttl_driver, _can_driver);
                 ros::Duration(0.25).sleep();
 
                 ROS_DEBUG("HardwareInterface::initNodes - Start End Effector Interface Node");
-                _tools_interface = std::make_shared<ToolsInterface::ToolsInterfaceCore>(_ttl_driver);
+                _tools_interface = std::make_shared<tools_interface::ToolsInterfaceCore>(_ttl_driver);
                 ros::Duration(0.25).sleep();
 
                 ROS_DEBUG("HardwareInterface::initNodes - Start Tools Interface Node");
-                _conveyor_interface = std::make_shared<ConveyorInterface::ConveyorInterfaceCore>(_can_driver);
+                _conveyor_interface = std::make_shared<conveyor_interface::ConveyorInterfaceCore>(_can_driver);
                 ros::Duration(0.25).sleep();
             }
             else {
@@ -107,13 +107,13 @@ namespace NiryoRobotHardwareInterface
             }
 
             ROS_DEBUG("HardwareInterface::initNodes - Start CPU Interface Node");
-            _cpu_interface = std::make_shared<CpuInterface::CpuInterfaceCore>();
+            _cpu_interface = std::make_shared<cpu_interface::CpuInterfaceCore>();
             ros::Duration(0.25).sleep();
         }
         else
         {
             ROS_DEBUG("HardwareInterface::initNodes - Start Fake Interface Node");
-            _fake_interface = std::make_shared<FakeInterface::FakeInterfaceCore>();
+            _fake_interface = std::make_shared<fake_interface::FakeInterfaceCore>();
         }
     }
 
@@ -474,4 +474,4 @@ namespace NiryoRobotHardwareInterface
         }
     }
 
-} // namespace NiryoRobotHardwareInterface
+} // namespace niryo_robot_hardware_interface

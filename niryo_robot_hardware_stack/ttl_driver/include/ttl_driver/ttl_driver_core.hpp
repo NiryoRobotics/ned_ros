@@ -48,7 +48,7 @@
 #include "model/single_motor_cmd.hpp"
 #include "model/synchronize_motor_cmd.hpp"
 
-namespace TtlDriver
+namespace ttl_driver
 {
     /**
      * @brief The TtlDriverCore class

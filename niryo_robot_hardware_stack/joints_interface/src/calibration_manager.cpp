@@ -36,7 +36,7 @@
 
 using namespace common::model;
 
-namespace JointsInterface {
+namespace joints_interface {
 
     /**
      * @brief CalibrationManager::CalibrationManager
@@ -45,8 +45,8 @@ namespace JointsInterface {
      * @param ttl_driver
      */
     CalibrationManager::CalibrationManager(std::vector<std::shared_ptr<JointState> > joint_list,
-                                               std::shared_ptr<CanDriver::CanDriverCore> can_driver,
-                                               std::shared_ptr<TtlDriver::TtlDriverCore> ttl_driver) :
+                                               std::shared_ptr<can_driver::CanDriverCore> can_driver,
+                                               std::shared_ptr<ttl_driver::TtlDriverCore> ttl_driver) :
         _can_driver_core(can_driver),
         _ttl_driver_core(ttl_driver),
         _joint_list(joint_list)

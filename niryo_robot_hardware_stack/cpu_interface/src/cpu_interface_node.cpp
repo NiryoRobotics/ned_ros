@@ -30,7 +30,7 @@
  * @brief readTemperature
  * @param cpu
  */
-void readTemperature(std::shared_ptr<CpuInterface::CpuInterfaceCore> cpu)
+void readTemperature(std::shared_ptr<cpu_interface::CpuInterfaceCore> cpu)
 {
     ros::Rate read_rpi_diagnostics_rate = ros::Rate(1);
 
@@ -53,7 +53,7 @@ int main(int argc, char **argv)
     
     ros::NodeHandle nh;
 
-    auto cpu = std::make_shared<CpuInterface::CpuInterfaceCore>();
+    auto cpu = std::make_shared<cpu_interface::CpuInterfaceCore>();
 
     std::thread readTempThread(readTemperature, cpu);
     readTempThread.join();

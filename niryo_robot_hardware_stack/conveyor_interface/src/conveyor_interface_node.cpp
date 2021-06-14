@@ -35,10 +35,10 @@ int main(int argc, char **argv)
     
     ros::NodeHandle nh;
    
-    auto can_driver = std::make_shared<CanDriver::CanDriverCore>();
+    auto can_driver = std::make_shared<can_driver::CanDriverCore>();
     ros::Duration(1).sleep();
 
-    auto conveyor_interface = std::make_shared<ConveyorInterface::ConveyorInterfaceCore>(can_driver);
+    auto conveyor_interface = std::make_shared<conveyor_interface::ConveyorInterfaceCore>(can_driver);
     ros::Duration(1).sleep();
     
     ros::spin();

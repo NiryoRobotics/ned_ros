@@ -38,14 +38,14 @@
 
 #include "model/joint_state.hpp"
 
-namespace JointsInterface {
+namespace joints_interface {
 
     class JointHardwareInterface : public hardware_interface::RobotHW
     {
 
     public:
-        JointHardwareInterface(std::shared_ptr<TtlDriver::TtlDriverCore> ttl_driver,
-                               std::shared_ptr<CanDriver::CanDriverCore> can_driver);
+        JointHardwareInterface(std::shared_ptr<ttl_driver::TtlDriverCore> ttl_driver,
+                               std::shared_ptr<can_driver::CanDriverCore> can_driver);
 
         void sendInitMotorsParams();
         int calibrateJoints(int mode, std::string &result_message);
@@ -80,8 +80,8 @@ namespace JointsInterface {
         hardware_interface::JointStateInterface _joint_state_interface;
         hardware_interface::PositionJointInterface _joint_position_interface;
 
-        std::shared_ptr<TtlDriver::TtlDriverCore> _ttl_driver_core;
-        std::shared_ptr<CanDriver::CanDriverCore> _can_driver_core;
+        std::shared_ptr<ttl_driver::TtlDriverCore> _ttl_driver_core;
+        std::shared_ptr<can_driver::CanDriverCore> _can_driver_core;
         std::unique_ptr<CalibrationManager> _calibration_manager;
 
         std::map<uint8_t, std::string> _map_stepper_name;

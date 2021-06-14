@@ -31,7 +31,7 @@ int main(int argc, char** argv)
 
   ros::NodeHandle nodeHandle("~");
 
-  CanDriver::CanDriverCore can_node;
+  can_driver::CanDriverCore can_node;
 
   ros::spin();
   return 0;

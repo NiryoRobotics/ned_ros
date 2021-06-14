@@ -25,7 +25,7 @@
 // Declare a test
 TEST(TtlDriverTestSuite, testInitDriver)
 {
-    TtlDriver::TtlDriver ttl_driver;
+    ttl_driver::TtlDriver ttl_driver;
     EXPECT_TRUE(ttl_driver.isConnectionOk());
 }
 

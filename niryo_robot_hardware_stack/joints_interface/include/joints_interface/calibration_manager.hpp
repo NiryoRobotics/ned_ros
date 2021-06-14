@@ -33,15 +33,15 @@
 
 #include "niryo_robot_msgs/CommandStatus.h"
 
-namespace JointsInterface {
+namespace joints_interface {
 
     class CalibrationManager
     {
 
     public:
         CalibrationManager(std::vector<std::shared_ptr<common::model::JointState> > joint_list,
-                             std::shared_ptr<CanDriver::CanDriverCore> can_driver,
-                             std::shared_ptr<TtlDriver::TtlDriverCore> ttl_driver);
+                             std::shared_ptr<can_driver::CanDriverCore> can_driver,
+                             std::shared_ptr<ttl_driver::TtlDriverCore> ttl_driver);
 
         int startCalibration(int mode, std::string &result_message);
 
@@ -67,8 +67,8 @@ namespace JointsInterface {
 
     private:
         ros::NodeHandle _nh;
-        std::shared_ptr<CanDriver::CanDriverCore> _can_driver_core;
-        std::shared_ptr<TtlDriver::TtlDriverCore> _ttl_driver_core;
+        std::shared_ptr<can_driver::CanDriverCore> _can_driver_core;
+        std::shared_ptr<ttl_driver::TtlDriverCore> _ttl_driver_core;
 
         std::vector<std::shared_ptr<common::model::JointState> > _joint_list;
 

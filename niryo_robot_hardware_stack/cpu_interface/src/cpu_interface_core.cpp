@@ -20,7 +20,7 @@
 #include "cpu_interface/cpu_interface_core.hpp"
 #include <functional>
 
-namespace CpuInterface {
+namespace cpu_interface {
 
     /**
      * @brief CpuInterfaceCore::CpuInterfaceCore

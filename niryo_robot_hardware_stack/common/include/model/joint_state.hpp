@@ -91,6 +91,6 @@ namespace common {
             return _offset_position;
         }
 
-    } // namespace JointsInterface
+    } // namespace model
 } // namespace common
 #endif

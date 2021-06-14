@@ -45,15 +45,15 @@
 #include "niryo_robot_msgs/Trigger.h"
 #include "model/motor_type_enum.hpp"
 
-namespace JointsInterface {
+namespace joints_interface {
 
     class JointsInterfaceCore
     {
         public:
 
             JointsInterfaceCore(
-                std::shared_ptr<TtlDriver::TtlDriverCore> ttl_driver,
-                std::shared_ptr<CanDriver::CanDriverCore> can_driver);
+                std::shared_ptr<ttl_driver::TtlDriverCore> ttl_driver,
+                std::shared_ptr<can_driver::CanDriverCore> can_driver);
 
             virtual ~JointsInterfaceCore();
 
@@ -69,8 +69,8 @@ namespace JointsInterface {
             const std::vector<std::shared_ptr<common::model::JointState> >& getJointsState() const;
 
         private:    
-            void init(std::shared_ptr<TtlDriver::TtlDriverCore> ttl_driver,
-                      std::shared_ptr<CanDriver::CanDriverCore> can_driver);
+            void init(std::shared_ptr<ttl_driver::TtlDriverCore> ttl_driver,
+                      std::shared_ptr<can_driver::CanDriverCore> can_driver);
             void initParams();
 
             void startServices();
