@@ -79,6 +79,7 @@ if(CMAKE_CROSSCOMPILING)
     message(STATUS "Cross compiling : wiringPi library is required")
     target_link_libraries(${PROJECT_NAME}
         ${catkin_LIBRARIES}
+        ${Boost_LIBRARIES}
         -lwiringPi -lrt
     )
 else()
