@@ -65,11 +65,14 @@ include_directories(
     ${Boost_INCLUDE_DIRS}
 )
 
+add_library(${PROJECT_NAME}_lib
+    src/dxl_tools.cpp)
+
 ## Declare libs and execs
 add_executable(${PROJECT_NAME}
-    src/dxl_debug.cpp
-    src/dxl_tools.cpp
-)
+    src/dxl_debug.cpp)
+
+target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_lib)
 
 # wiringPi should be installed only on a Raspberry Pi board
 if(CMAKE_CROSSCOMPILING)
@@ -125,6 +128,7 @@ if(CATKIN_ENABLE_TESTING)
     if(TARGET ${PROJECT_NAME}_unit_tests)
       target_link_libraries(${PROJECT_NAME}_unit_tests
           ${catkin_LIBRARIES}
+          ${PROJECT_NAME}_lib
       )
     endif()
   endif(BUILD_UNIT_TESTS)

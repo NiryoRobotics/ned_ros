@@ -37,6 +37,6 @@
         <param name="debug" type="bool" value="$(arg debug)"/>
 
     </node>
-    <test test-name="hardware_interface_integration_tests" pkg="hardware_interface" type="hardware_interface_integration_tests"  /> 
+    <test test-name="niryo_robot_hardware_interface_integration_tests" pkg="niryo_robot_hardware_interface" type="niryo_robot_hardware_interface_integration_tests"  /> 
 
 </launch>
