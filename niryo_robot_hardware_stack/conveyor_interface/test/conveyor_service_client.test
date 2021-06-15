@@ -4,11 +4,9 @@
 
     <!-- launch the conveyor_interface_node node using conveyor_interface_node executable from conveyor_interface package -->
   <group ns="niryo_robot_hardware_interface" >
-    <group ns="conveyor_interface" >
       <node pkg="conveyor_interface" type="conveyor_interface_node" name="conveyor_interface" output="screen">  
         <rosparam file="$(find conveyor_interface)/config/default.yaml" command="load"/>
       </node>
-    </group>  
   </group>
 
   <test test-name="conveyor_interface_integration_tests" pkg="conveyor_interface"  type="conveyor_interface_integration_tests" />
