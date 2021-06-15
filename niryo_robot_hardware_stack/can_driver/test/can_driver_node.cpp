@@ -23,7 +23,7 @@
 
 //niryo
 #include "can_driver/can_driver_core.hpp"
-#include "model/stepper_command_type_enum.hpp"
+#include "common/model/stepper_command_type_enum.hpp"
 
 
 static std::unique_ptr<ros::NodeHandle> nh(new ros::NodeHandle);

@@ -20,8 +20,8 @@
 
 #include "joints_interface/JointHardwareInterface.hpp"
 
-#include "model/motor_type_enum.hpp"
-#include "util/util_defs.hpp"
+#include "common/model/motor_type_enum.hpp"
+#include "common/util/util_defs.hpp"
 
 using namespace std;
 using namespace common::model;

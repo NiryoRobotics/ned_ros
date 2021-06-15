@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "model/conveyor_state.hpp"
+#include "common/model/conveyor_state.hpp"
 #include <sstream>
 
 using namespace std;

@@ -24,8 +24,8 @@
 
 //niryo
 #include "conveyor_interface/conveyor_interface_core.hpp"
-#include "model/conveyor_state.hpp"
-#include "model/stepper_command_type_enum.hpp"
+#include "common/model/conveyor_state.hpp"
+#include "common/model/stepper_command_type_enum.hpp"
 
 using namespace std;
 using namespace common::model;

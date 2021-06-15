@@ -17,8 +17,8 @@
 #include <ros/ros.h>
 
 // Bring in my package's API, which is what I'm testing
-#include "model/dxl_motor_state.hpp"
-#include "model/stepper_motor_state.hpp"
+#include "common/model/dxl_motor_state.hpp"
+#include "common/model/stepper_motor_state.hpp"
 
 
 // Bring in gtest

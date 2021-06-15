@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "model/abstract_motor_state.hpp"
+#include "common/model/abstract_motor_state.hpp"
 #include <sstream>
 
 using namespace std;

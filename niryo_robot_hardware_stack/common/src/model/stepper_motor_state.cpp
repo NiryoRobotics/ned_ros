@@ -18,7 +18,7 @@
 */
 
 
-#include "model/stepper_motor_state.hpp"
+#include "common/model/stepper_motor_state.hpp"
 
 #include <sstream>
 #include <cassert>

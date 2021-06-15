@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "model/dxl_motor_state.hpp"
+#include "common/model/dxl_motor_state.hpp"
 
 #include <sstream>
 #include <math.h>

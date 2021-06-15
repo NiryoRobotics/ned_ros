@@ -26,11 +26,11 @@
 #include <ros/console.h>
 
 //niryo
-#include "model/stepper_command_type_enum.hpp"
-#include "model/dxl_command_type_enum.hpp"
-#include "model/stepper_calibration_status_enum.hpp"
+#include "common/model/stepper_command_type_enum.hpp"
+#include "common/model/dxl_command_type_enum.hpp"
+#include "common/model/stepper_calibration_status_enum.hpp"
 
-#include "util/util_defs.hpp"
+#include "common/util/util_defs.hpp"
 
 #include "joints_interface/calibration_manager.hpp"
 

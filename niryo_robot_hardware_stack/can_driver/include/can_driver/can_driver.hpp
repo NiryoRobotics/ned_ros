@@ -32,12 +32,12 @@
 #include <ros/ros.h>
 
 //niryo
-#include "model/idriver.hpp"
-#include "model/stepper_motor_state.hpp"
-#include "model/stepper_motor_cmd.hpp"
-#include "model/conveyor_state.hpp"
-#include "model/stepper_calibration_status_enum.hpp"
-#include "model/synchronize_stepper_motor_cmd.hpp"
+#include "common/model/idriver.hpp"
+#include "common/model/stepper_motor_state.hpp"
+#include "common/model/stepper_motor_cmd.hpp"
+#include "common/model/conveyor_state.hpp"
+#include "common/model/stepper_calibration_status_enum.hpp"
+#include "common/model/synchronize_stepper_motor_cmd.hpp"
 
 #include "can_driver/StepperMotorCommand.h"
 #include "can_driver/StepperCmd.h"

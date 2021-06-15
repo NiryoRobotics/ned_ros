@@ -36,7 +36,7 @@
 #include "can_driver/can_driver_core.hpp"
 #include "ttl_driver/ttl_driver_core.hpp"
 
-#include "model/joint_state.hpp"
+#include "common/model/joint_state.hpp"
 
 namespace joints_interface {
 

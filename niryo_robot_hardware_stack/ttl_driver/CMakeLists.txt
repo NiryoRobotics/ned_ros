@@ -64,7 +64,6 @@ catkin_package(
         include
     LIBRARIES
         ${PROJECT_NAME}
-        ${PROJECT_NAME}_core
     CATKIN_DEPENDS
         roscpp
         dynamixel_sdk
@@ -85,13 +84,10 @@ include_directories(
 
 ## Declare libs and execs
 add_library(${PROJECT_NAME}
-    src/abstract_motor_driver.cpp
-    src/stepper_driver.cpp
-)
-
-add_library(${PROJECT_NAME}_core
-  src/ttl_driver_core.cpp
   src/ttl_driver.cpp
+  src/ttl_driver_core.cpp
+  src/abstract_motor_driver.cpp
+  src/stepper_driver.cpp
 )
 
 add_executable(${PROJECT_NAME}_node
@@ -101,9 +97,6 @@ add_executable(${PROJECT_NAME}_node
 ## Add dependencies to exported targets, like ROS msgs or srvs
 add_dependencies(${PROJECT_NAME}
     niryo_robot_msgs_generate_messages_cpp
-)
-
-add_dependencies(${PROJECT_NAME}
     ttl_driver_generate_messages_cpp
 )
 
@@ -116,12 +109,8 @@ target_link_libraries(${PROJECT_NAME}
   ${catkin_LIBRARIES}
 )
 
-target_link_libraries(${PROJECT_NAME}_core
-  ${PROJECT_NAME}
-)
-
 target_link_libraries(${PROJECT_NAME}_node
-  ${PROJECT_NAME}_core
+  ${PROJECT_NAME}
 )
 
 #############
@@ -152,7 +141,7 @@ if(CATKIN_ENABLE_TESTING)
     )
     if(TARGET ${PROJECT_NAME}_unit_tests)
       target_link_libraries(${PROJECT_NAME}_unit_tests
-        ${PROJECT_NAME}_core
+        ${PROJECT_NAME}
         ${catkin_LIBRARIES}
       )
     endif()
@@ -163,7 +152,7 @@ if(CATKIN_ENABLE_TESTING)
 #    )
 #    if(TARGET ${PROJECT_NAME}_integration_tests)
 #      target_link_libraries(${PROJECT_NAME}_integration_tests
-#        ${PROJECT_NAME}_core
+#        ${PROJECT_NAME}
 #      )
 #    endif()
 
@@ -176,7 +165,7 @@ endif(CATKIN_ENABLE_TESTING)
 #############
 
 install(
-  TARGETS ${PROJECT_NAME}_core
+  TARGETS ${PROJECT_NAME}
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}

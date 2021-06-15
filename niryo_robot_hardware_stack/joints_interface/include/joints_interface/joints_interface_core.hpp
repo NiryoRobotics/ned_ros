@@ -43,7 +43,7 @@
 #include "niryo_robot_msgs/SetBool.h"
 #include "niryo_robot_msgs/CommandStatus.h"
 #include "niryo_robot_msgs/Trigger.h"
-#include "model/motor_type_enum.hpp"
+#include "common/model/motor_type_enum.hpp"
 
 namespace joints_interface {
 

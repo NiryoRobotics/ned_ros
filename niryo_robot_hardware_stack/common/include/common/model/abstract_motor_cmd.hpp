@@ -23,8 +23,8 @@
 #include <string>
 #include <type_traits>
 
-#include "model/iobject.hpp"
-#include "model/abstract_enum.hpp"
+#include "common/model/iobject.hpp"
+#include "common/model/abstract_enum.hpp"
 
 namespace common {
     namespace model {

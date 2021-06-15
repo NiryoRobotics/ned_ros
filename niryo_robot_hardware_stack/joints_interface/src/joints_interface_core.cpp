@@ -20,7 +20,7 @@
 #include <functional>
 
 #include "joints_interface/joints_interface_core.hpp"
-#include "util/util_defs.hpp"
+#include "common/util/util_defs.hpp"
 
 namespace joints_interface {
 

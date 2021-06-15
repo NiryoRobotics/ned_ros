@@ -23,7 +23,7 @@
 #include "iobject.hpp"
 #include <string>
 
-#include "model/motor_type_enum.hpp"
+#include "common/model/motor_type_enum.hpp"
 
 namespace common {
     namespace model

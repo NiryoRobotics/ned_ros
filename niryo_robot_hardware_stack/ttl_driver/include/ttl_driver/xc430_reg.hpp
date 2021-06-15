@@ -18,7 +18,7 @@
 #define XC430REG_HPP
 
 #include <memory>
-#include "model/motor_type_enum.hpp"
+#include "common/model/motor_type_enum.hpp"
 
 namespace ttl_driver
 {

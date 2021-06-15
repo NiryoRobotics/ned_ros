@@ -27,9 +27,9 @@
 #include "tools_interface/tools_interface_core.hpp"
 #include "ttl_driver/ttl_driver.hpp"
 
-#include "model/tool_state.hpp"
-#include "model/dxl_command_type_enum.hpp"
-#include "util/util_defs.hpp"
+#include "common/model/tool_state.hpp"
+#include "common/model/dxl_command_type_enum.hpp"
+#include "common/util/util_defs.hpp"
 
 using namespace ttl_driver;
 using namespace common::model;

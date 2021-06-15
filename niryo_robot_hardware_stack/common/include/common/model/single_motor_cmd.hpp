@@ -1,6 +1,6 @@
 /*
-    stepper_motor_cmd.hpp
-    Copyright (C) 2017 Niryo
+    single_motor_cmd.hpp
+    Copyright (C) 2020 Niryo
     All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
@@ -17,37 +17,36 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef STEPPER_MOTOR_CMD_H
-#define STEPPER_MOTOR_CMD_H
+#ifndef DXL_SINGLE_MOTOR_CMD_H
+#define DXL_SINGLE_MOTOR_CMD_H
 
 #include <string>
 #include <vector>
 
-#include "model/abstract_motor_cmd.hpp"
-#include "model/stepper_command_type_enum.hpp"
+#include "common/model/abstract_motor_cmd.hpp"
+#include "common/model/dxl_command_type_enum.hpp"
 
 namespace common {
     namespace model {
 
         /**
-         * @brief The StepperMotorCmd class
+         * @brief The SingleMotorCmd class
          */
-        class StepperMotorCmd : public AbstractMotorCmd<EStepperCommandType>
+        class SingleMotorCmd : public AbstractMotorCmd<EDxlCommandType>
         {
             public:
-                StepperMotorCmd();
-                StepperMotorCmd(EStepperCommandType type);
-                StepperMotorCmd(EStepperCommandType type,
-                                uint8_t motor_id,
-                                std::vector<int32_t> params = std::vector<int32_t>());
+                SingleMotorCmd();
+                SingleMotorCmd(EDxlCommandType type,
+                               uint8_t motor_id,
+                               uint32_t param = 0);
 
                 //setters
                 void setId(uint8_t id);
-                void setParams(std::vector<int32_t> params);
+                void setParam(uint32_t param);
 
                 //getters
                 uint8_t getId() const;
-                const std::vector<int32_t>& getParams() const;
+                uint32_t getParam() const;
 
                 // AbstractMotorCmd interface
                 virtual void reset() override;
@@ -57,28 +56,31 @@ namespace common {
 
             private:
                 uint8_t _id;
-                std::vector<int32_t> _param_list;
+                uint32_t _param;
         };
 
         /**
-         * @brief StepperMotorCmd::getId
+         * @brief SingleMotorCmd::getId
          * @return
          */
         inline
-        uint8_t StepperMotorCmd::getId() const
+        uint8_t
+        SingleMotorCmd::getId() const
         {
             return _id;
         }
 
         /**
-         * @brief StepperMotorCmd::getParams
+         * @brief SingleMotorCmd::getParam
          * @return
          */
         inline
-        const std::vector<int32_t>& StepperMotorCmd::getParams() const
+        uint32_t
+        SingleMotorCmd::getParam() const
         {
-            return _param_list;
+            return _param;
         }
+
     } // namespace model
 } // namespace common
 

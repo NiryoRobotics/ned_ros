@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "model/stepper_motor_cmd.hpp"
+#include "common/model/stepper_motor_cmd.hpp"
 
 #include <sstream>
 

@@ -23,8 +23,8 @@
 #include <iostream>
 
 #include "dynamixel_sdk/dynamixel_sdk.h"
-#include "common_defs.hpp"
-#include "model/motor_type_enum.hpp"
+#include "common/common_defs.hpp"
+#include "common/model/motor_type_enum.hpp"
 
 namespace ttl_driver
 {

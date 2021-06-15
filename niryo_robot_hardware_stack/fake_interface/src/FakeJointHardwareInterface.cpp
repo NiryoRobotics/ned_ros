@@ -19,8 +19,8 @@
 
 #include "fake_interface/FakeJointHardwareInterface.hpp"
 
-#include "model/motor_type_enum.hpp"
-#include "model/motor_type_enum.hpp"
+#include "common/model/motor_type_enum.hpp"
+#include "common/model/motor_type_enum.hpp"
 
 namespace fake_interface {
 

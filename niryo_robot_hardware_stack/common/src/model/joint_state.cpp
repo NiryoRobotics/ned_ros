@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "model/joint_state.hpp"
+#include "common/model/joint_state.hpp"
 #include <sstream>
 
 using namespace std;

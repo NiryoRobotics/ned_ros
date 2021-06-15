@@ -32,7 +32,7 @@
 //ros
 #include <ros/ros.h>
 
-#include "model/idriver_core.hpp"
+#include "common/model/idriver_core.hpp"
 
 #include "ttl_driver/ttl_driver.hpp"
 #include "ttl_driver/DxlArrayMotorHardwareStatus.h"
@@ -43,10 +43,10 @@
 #include "niryo_robot_msgs/SetInt.h"
 #include "niryo_robot_msgs/CommandStatus.h"
 
-#include "model/dxl_motor_state.hpp"
-#include "model/motor_type_enum.hpp"
-#include "model/single_motor_cmd.hpp"
-#include "model/synchronize_motor_cmd.hpp"
+#include "common/model/dxl_motor_state.hpp"
+#include "common/model/motor_type_enum.hpp"
+#include "common/model/single_motor_cmd.hpp"
+#include "common/model/synchronize_motor_cmd.hpp"
 
 namespace ttl_driver
 {

@@ -21,10 +21,10 @@
 
 #include <std_msgs/Int64MultiArray.h>
 
-#include "util/util_defs.hpp"
+#include "common/util/util_defs.hpp"
 #include "can_driver/can_driver_core.hpp"
-#include "model/conveyor_state.hpp"
-#include "model/motor_type_enum.hpp"
+#include "common/model/conveyor_state.hpp"
+#include "common/model/motor_type_enum.hpp"
 
 using namespace std;
 using namespace common::model;

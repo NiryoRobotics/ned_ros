@@ -28,7 +28,7 @@
 #include <ros/ros.h>
 
 // niryo
-#include "model/tool_state.hpp"
+#include "common/model/tool_state.hpp"
 #include "ttl_driver/ttl_driver_core.hpp"
 
 #include "tools_interface/PingDxlTool.h"

@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "model/stepper_command_type_enum.hpp"
+#include "common/model/stepper_command_type_enum.hpp"
 
 using namespace std;
 

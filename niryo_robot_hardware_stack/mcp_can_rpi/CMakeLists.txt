@@ -127,10 +127,6 @@ install(
   DESTINATION ${CATKIN_DEVEL_PREFIX}/doc/${PROJECT_NAME}
 )
 
-install(
-  DIRECTORY launch/
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
-)
 
 ##########################
 ## Static code analysis ##

@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "model/motor_type_enum.hpp"
+#include "common/model/motor_type_enum.hpp"
 
 using namespace std;
 

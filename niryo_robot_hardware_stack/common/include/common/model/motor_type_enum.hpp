@@ -23,7 +23,7 @@
 #include <map>
 #include <string>
 
-#include "common_defs.hpp"
+#include "common/common_defs.hpp"
 #include "abstract_enum.hpp"
 
 namespace common {

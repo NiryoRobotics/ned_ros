@@ -24,8 +24,8 @@
 #include <std_msgs/Int32.h>
 
 //niryo
-#include "model/tool_state.hpp"
-#include "util/util_defs.hpp"
+#include "common/model/tool_state.hpp"
+#include "common/util/util_defs.hpp"
 
 //CC replace with fake driver ??
 namespace fake_interface {

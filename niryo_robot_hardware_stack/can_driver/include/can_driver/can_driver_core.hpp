@@ -28,12 +28,12 @@
 #include <functional>
 #include <queue>
 
-#include "model/idriver_core.hpp"
+#include "common/model/idriver_core.hpp"
 #include "can_driver/can_driver.hpp"
 #include "can_driver/StepperArrayMotorHardwareStatus.h"
 #include "niryo_robot_msgs/BusState.h"
 #include "niryo_robot_msgs/CommandStatus.h"
-#include "model/synchronize_stepper_motor_cmd.hpp"
+#include "common/model/synchronize_stepper_motor_cmd.hpp"
 
 namespace can_driver
 {

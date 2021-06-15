@@ -25,7 +25,7 @@
 #include <hardware_interface/robot_hw.h>
 #include <ros/ros.h>
 
-#include "model/motor_type_enum.hpp"
+#include "common/model/motor_type_enum.hpp"
 
 namespace fake_interface {
 

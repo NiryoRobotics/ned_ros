@@ -21,10 +21,10 @@
 
 #include "niryo_robot_hardware_interface/hardware_interface.hpp"
 
-#include "model/motor_type_enum.hpp"
-#include "model/motor_type_enum.hpp"
+#include "common/model/motor_type_enum.hpp"
+#include "common/model/motor_type_enum.hpp"
 
-#include "util/util_defs.hpp"
+#include "common/util/util_defs.hpp"
 
 namespace niryo_robot_hardware_interface
 {

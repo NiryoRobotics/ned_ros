@@ -26,10 +26,10 @@
 #include <memory>
 #include <sstream>
 
-#include "model/abstract_motor_cmd.hpp"
-#include "model/stepper_command_type_enum.hpp"
-#include "model/motor_type_enum.hpp"
-#include "model/joint_state.hpp"
+#include "common/model/abstract_motor_cmd.hpp"
+#include "common/model/stepper_command_type_enum.hpp"
+#include "common/model/motor_type_enum.hpp"
+#include "common/model/joint_state.hpp"
 
 namespace common {
     namespace model {

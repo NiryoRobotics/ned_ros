@@ -18,8 +18,8 @@
 */
 
 #include "can_driver/can_driver.hpp"
-#include "model/conveyor_state.hpp"
-#include "model/stepper_command_type_enum.hpp"
+#include "common/model/conveyor_state.hpp"
+#include "common/model/stepper_command_type_enum.hpp"
 
 #include <functional>
 

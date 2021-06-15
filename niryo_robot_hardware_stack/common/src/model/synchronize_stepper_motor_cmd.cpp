@@ -17,7 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "model/synchronize_stepper_motor_cmd.hpp"
+#include "common/model/synchronize_stepper_motor_cmd.hpp"
 #include <sstream>
 
 using namespace std;

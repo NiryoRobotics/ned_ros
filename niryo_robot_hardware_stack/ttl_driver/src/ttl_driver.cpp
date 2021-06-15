@@ -15,11 +15,11 @@
 */
 
 #include "ttl_driver/ttl_driver.hpp"
-#include "model/motor_type_enum.hpp"
-#include "model/dxl_command_type_enum.hpp"
+#include "common/model/motor_type_enum.hpp"
+#include "common/model/dxl_command_type_enum.hpp"
 #include "ttl_driver/xdriver.hpp"
 #include "ttl_driver/stepper_driver.hpp"
-#include "model/tool_state.hpp"
+#include "common/model/tool_state.hpp"
 
 #include <string>
 #include <algorithm>

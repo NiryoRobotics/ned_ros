@@ -23,7 +23,7 @@
 #include <vector>
 
 #include <ttl_driver/ttl_driver_core.hpp>
-#include "model/dxl_command_type_enum.hpp"
+#include "common/model/dxl_command_type_enum.hpp"
 
 class TtlDriverTest {
 

@@ -35,13 +35,13 @@
 #include "niryo_robot_msgs/SetInt.h"
 #include "niryo_robot_msgs/CommandStatus.h"
 
-#include "model/idriver.hpp"
+#include "common/model/idriver.hpp"
 
 //drivers
 #include "ttl_driver/abstract_motor_driver.hpp"
-#include "model/dxl_motor_state.hpp"
-#include "model/synchronize_motor_cmd.hpp"
-#include "model/single_motor_cmd.hpp"
+#include "common/model/dxl_motor_state.hpp"
+#include "common/model/synchronize_motor_cmd.hpp"
+#include "common/model/single_motor_cmd.hpp"
 
 namespace ttl_driver
 {
