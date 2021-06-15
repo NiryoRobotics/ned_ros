@@ -17,13 +17,18 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+//ros
 #include <ros/ros.h>
-#include "dynamixel_sdk/dynamixel_sdk.h"
-#include "dxl_debug_tools/dxl_tools.h"
-#include "boost/program_options.hpp"
+
+//c++
+#include <boost/program_options.hpp>
 #include <iostream>
 #include <string>
 #include <vector>
+
+//niryo
+#include "dynamixel_sdk/dynamixel_sdk.h"
+#include "dxl_debug_tools/dxl_tools.h"
 
 #define PROTOCOL_VERSION 2.0
 
