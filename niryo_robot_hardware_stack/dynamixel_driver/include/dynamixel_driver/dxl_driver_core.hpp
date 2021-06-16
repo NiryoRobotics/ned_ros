@@ -81,6 +81,7 @@ namespace DynamixelDriver
         int motorScanReport(uint8_t motor_id, DxlMotorType motor_type);
         int motorCmdReport(uint8_t motor_id, DxlMotorType motor_type);
         int rebootMotors();
+        bool rebootMotor(uint8_t motor_id, DxlMotorType motor_type);
 
     private:
         ros::NodeHandle _nh;

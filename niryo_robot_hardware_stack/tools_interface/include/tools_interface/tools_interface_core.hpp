@@ -36,6 +36,7 @@
 #include "dynamixel_driver/dxl_driver_core.hpp"
 
 #include "std_msgs/Int32.h"
+#include "std_srvs/Trigger.h"
 
 class ToolsInterfaceCore
 {
@@ -59,16 +60,18 @@ class ToolsInterfaceCore
         double _check_tool_connection_frequency;
 
         ros::ServiceServer _ping_and_set_dxl_tool_server;
+        ros::ServiceServer _tool_reboot_server;
         ros::ServiceServer _open_gripper_server;
         ros::ServiceServer _close_gripper_server;
         ros::ServiceServer _pull_air_vacuum_pump_server;
         ros::ServiceServer _push_air_vacuum_pump_server;
-        
+
         ros::Publisher _current_tools_id_publisher;
 
         std::vector<uint8_t> _tool_id_list;
 
         bool _callbackPingAndSetDxlTool(tools_interface::PingDxlTool::Request &req, tools_interface::PingDxlTool::Response &res);
+        bool _callbackToolReboot(std_srvs::Trigger::Request &req, std_srvs::Trigger::Response &res);
 
         bool _callbackOpenGripper(tools_interface::OpenGripper::Request &req, tools_interface::OpenGripper::Response &res);
         bool _callbackCloseGripper(tools_interface::CloseGripper::Request &req, tools_interface::CloseGripper::Response &res);

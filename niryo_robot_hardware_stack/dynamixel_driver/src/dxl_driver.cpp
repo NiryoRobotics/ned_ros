@@ -1053,6 +1053,21 @@ namespace DynamixelDriver
         return TOOL_STATE_PING_ERROR;
     }
 
+     int DxlDriver::rebootMotor(uint8_t motor_id, DxlMotorType motor_type)
+    {
+        int result = COMM_NOT_AVAILABLE;
+        if(motor_type == DxlMotorType::MOTOR_TYPE_XL430)
+        {
+            result= _xl430->reboot(motor_id);
+        }
+        if(motor_type == DxlMotorType::MOTOR_TYPE_XL320)
+        {
+            result = _xl320->reboot(motor_id);
+        }
+        return result;
+    }
+
+
     int DxlDriver::rebootMotors()
     {
         int result;
