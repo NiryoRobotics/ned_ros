@@ -74,7 +74,7 @@ whereas on standalone mode or not
 Dependencies - Programs Manager
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- :ref:`niryo_robot_commander <Niryo Robot Commander Package>`
+- :ref:`niryo_robot_arm_commander <Niryo Robot Arm Commander Package>`
 - :ref:`niryo_robot_msgs <Niryo Robot Messages Package>`
 - `python-yaml <https://pyyaml.org/wiki/PyYAMLDocumentation/>`_
 - :msgs_index:`std_msgs`

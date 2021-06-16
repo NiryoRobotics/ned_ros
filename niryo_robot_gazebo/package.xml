@@ -14,7 +14,7 @@
     <run_depend>robot_state_publisher</run_depend>
     <run_depend>effort_controllers</run_depend>
     <run_depend>niryo_robot_description</run_depend>
-    <run_depend>niryo_robot_commander</run_depend>
+    <run_depend>niryo_robot_arm_commander</run_depend>
     <run_depend>niryo_robot_hardware_interface</run_depend>
     <run_depend>gazebo_ros_control</run_depend>
     <run_depend>gazebo_ros</run_depend>

@@ -95,7 +95,7 @@ Dependencies - RPI
 - :msgs_index:`actionlib_msgs`
 - :msgs_index:`sensor_msgs`
 - :ref:`niryo_robot_msgs <Niryo Robot Messages Package>`
-- :ref:`niryo_robot_commander <Niryo Robot Commander Package>`
+- :ref:`niryo_robot_arm_commander <Niryo Robot Arm Commander Package>`
 
 Services & Messages files - RPI
 ----------------------------------------------

@@ -15,7 +15,7 @@ class ShiftPose:
 
 class ToolID:
     """
-    Tools IDs (need to match tools ids in niryo_robot_tools package)
+    Tools IDs (need to match tools ids in niryo_robot_tools_commander package)
     """
 
     def __init__(self):

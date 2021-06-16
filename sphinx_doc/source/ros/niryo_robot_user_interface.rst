@@ -2,11 +2,10 @@ Niryo Robot User Interface Package
 ========================================
 
 This packages handles high-level user interface commands coming from
-MATLAB and TCP requests.
+TCP requests.
 
 You can find their documentations here:
    - :ref:`TCP Server<Use Ned TCP Server>`
-   - :ref:`Matlab Manager<Matlab Manager>`
 
 .. toctree::
    :hidden:
@@ -14,4 +13,3 @@ You can find their documentations here:
    :caption: You can find their documentation here:
 
    ../tcp_server
-   ../matlab_manager
