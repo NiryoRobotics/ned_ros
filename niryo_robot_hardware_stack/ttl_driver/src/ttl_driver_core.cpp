@@ -79,10 +79,10 @@ namespace ttl_driver
         double read_data_frequency = 0.0;
         double read_status_frequency = 0.0;
 
-        _nh.getParam("/ttl_driver/dxl_hardware_control_loop_frequency", _control_loop_frequency);
-        _nh.getParam("/ttl_driver/dxl_hardware_write_frequency", write_frequency);
-        _nh.getParam("/ttl_driver/dxl_hardware_read_data_frequency", read_data_frequency);
-        _nh.getParam("/ttl_driver/dxl_hardware_read_status_frequency", read_status_frequency);
+        _nh.getParam("/niryo_robot_hardware_interface/ttl_driver/dxl_hardware_control_loop_frequency", _control_loop_frequency);
+        _nh.getParam("/niryo_robot_hardware_interface/ttl_driver/dxl_hardware_write_frequency", write_frequency);
+        _nh.getParam("/niryo_robot_hardware_interface/ttl_driver/dxl_hardware_read_data_frequency", read_data_frequency);
+        _nh.getParam("/niryo_robot_hardware_interface/ttl_driver/dxl_hardware_read_status_frequency", read_status_frequency);
 
         ROS_DEBUG("TtlDriverCore::initParameters - dxl_hardware_control_loop_frequency : %f", _control_loop_frequency);
         ROS_DEBUG("TtlDriverCore::initParameters - dxl_hardware_write_frequency : %f", write_frequency);
