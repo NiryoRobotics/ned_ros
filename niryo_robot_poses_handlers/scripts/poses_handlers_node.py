@@ -55,7 +55,7 @@ class PoseHandlerNode:
         rospy.Service('~get_workspace_poses', GetWorkspaceRobotPoses,
                       self.__callback_get_workspace_poses)
         # Grips
-        tool_config_dict = rospy.get_param("niryo_robot_tools/tool_list", dict())
+        tool_config_dict = rospy.get_param("niryo_robot_tools_commander/tool_list", dict())
         self.__tool_id_gripname_dict = {tool["id"]: "default_" + tool["name"].replace(" ", "_")
                                         for tool in tool_config_dict}
         self.__tool_id_gripname_dict[-1] = "default_Calibration_Tip"

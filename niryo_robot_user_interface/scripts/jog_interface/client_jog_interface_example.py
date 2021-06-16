@@ -5,7 +5,7 @@ import rospy
 from niryo_robot_msgs.msg import CommandStatus
 from std_msgs.msg import Bool
 
-from niryo_robot_commander.srv import JogShift, JogShiftRequest
+from niryo_robot_arm_commander.srv import JogShift, JogShiftRequest
 from niryo_robot_msgs.srv import SetBool
 
 

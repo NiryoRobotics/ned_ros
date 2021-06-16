@@ -12,7 +12,7 @@ from niryo_robot_msgs.msg import CommandStatus
 
 # Messages
 from std_msgs.msg import Int32, Bool, Int8
-from niryo_robot_commander.msg import PausePlanExecution
+from niryo_robot_arm_commander.msg import PausePlanExecution
 
 # Services
 from std_srvs.srv import Empty
@@ -53,8 +53,8 @@ class NiryoButton:
         rospy.Subscriber('/niryo_robot/rpi/led_state',
                          Int8, self.__callback_led_state)
 
-        self.__motor_debug_server_start = rospy.ServiceProxy('/niryo_robot_commander/motor_debug_start', SetInt)
-        self.__motor_debug_server_stop = rospy.ServiceProxy('/niryo_robot_commander/motor_debug_stop', Empty)
+        self.__motor_debug_server_start = rospy.ServiceProxy('/niryo_robot_arm_commander/motor_debug_start', SetInt)
+        self.__motor_debug_server_stop = rospy.ServiceProxy('/niryo_robot_arm_commander/motor_debug_stop', Empty)
         self.__motor_debug_thread = Thread(target=self.__motor_debug_server_start, name="motor_debug_button_thread",
                                            args=(self.debug_loop_repetition,))
 
@@ -205,7 +205,7 @@ class NiryoButton:
             status, message = send_trigger_program_autorun()
             if status != CommandStatus.SUCCESS:
                 try:
-                    rospy.wait_for_service("/niryo_robot_commander/motor_debug_start", timeout=0.5)
+                    rospy.wait_for_service("/niryo_robot_arm_commander/motor_debug_start", timeout=0.5)
                     self.__motor_debug_thread = Thread(target=self.__motor_debug_server_start,
                                                         name="motor_debug_button_thread",
                                                         args=(self.debug_loop_repetition,))

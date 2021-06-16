@@ -113,6 +113,8 @@ Accepted Modbus functions :
       -  Send Joint Move command with stored joints
    *  -  101
       -  Send Pose Move command with stored position and orientation
+   *  -  102
+      -  Send Pose Linear Move command with stored position and orientation
    *  -  110
       -  Stop current command execution
    *  -  150
