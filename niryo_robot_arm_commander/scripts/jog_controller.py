@@ -377,12 +377,7 @@ class JogController:
             return CommandStatus.ABORTED, "Cannot send command cause Jog because calibration is not done"
         if self.__learning_mode_on:
             try:
-                rospy.wait_for_service('/niryo_robot/learning_mode/activate', 2)
-                service = rospy.ServiceProxy('/niryo_robot/learning_mode/activate', SetBool)
-                result = service(True)
-                if result.status != CommandStatus.SUCCESS:
-                    return CommandStatus.ABORTED, "Cannot send command cause Jog because learning mode is on and" \
-                                                  " cannot be disabled"
+                self.__set_learning_mode(False)
                 rospy.sleep(0.1)
             except (rospy.ROSException, rospy.ServiceException):
                 return CommandStatus.ABORTED, "Error while trying to turn Off learning mode"
@@ -392,6 +387,26 @@ class JogController:
             if ret == CommandStatus.ABORTED:
                 return CommandStatus.ABORTED, "Cannot send command cause Jog is not activated and cannot be"
         self._last_command_timer = rospy.get_time()
+
+
+    @staticmethod
+    def __set_learning_mode(set_bool):
+        """
+        Activate or deactivate the learning mode using the ros service /niryo_robot/learning_mode/activate
+
+        :param set_bool:
+        :type set_bool: bool
+
+        :return: Success if the learning mode was properly activate or deactivate, False if not
+        :rtype: bool
+        """
+        try:
+            rospy.wait_for_service('/niryo_robot/learning_mode/activate', timeout=1)
+            srv = rospy.ServiceProxy('/niryo_robot/learning_mode/activate', SetBool)
+            resp = srv(set_bool)
+            return resp.status == CommandStatus.SUCCESS
+        except (rospy.ServiceException, rospy.ROSException):
+            return False
 
 
 if __name__ == '__main__':
