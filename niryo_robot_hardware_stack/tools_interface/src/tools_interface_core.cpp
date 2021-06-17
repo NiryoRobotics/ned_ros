@@ -129,7 +129,6 @@ namespace tools_interface {
         _pull_air_vacuum_pump_server = _nh.advertiseService("niryo_robot/tools/pull_air_vacuum_pump", &ToolsInterfaceCore::_callbackPullAirVacuumPump, this);
         _push_air_vacuum_pump_server = _nh.advertiseService("niryo_robot/tools/push_air_vacuum_pump", &ToolsInterfaceCore::_callbackPushAirVacuumPump, this);
         _tool_reboot_server = _nh.advertiseService("niryo_robot/tools/reboot", &ToolsInterfaceCore::_callbackToolReboot, this);
-
     }
 
     /**
@@ -181,6 +180,7 @@ namespace tools_interface {
         }
 
         // Search new tool
+        // CC add retries ?
         vector<uint8_t> motor_list = _ttl_driver_core->scanTools();
 
         for(auto const& m_id : motor_list) {
