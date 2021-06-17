@@ -207,17 +207,20 @@ namespace joints_interface {
 
                     _joint_state_interface.registerHandle(jStateHandle);
 
-                    registerInterface(&_joint_state_interface);
 
                     hardware_interface::JointHandle jPosHandle(_joint_state_interface.getHandle(jState->getName()),
                                                                &_joint_list.at(j)->cmd);
 
                     _joint_position_interface.registerHandle(jPosHandle);
 
-                    registerInterface(&_joint_position_interface);
                 }
             }
-        }
+            //register the interfaces
+
+        } // end for (size_t j = 0; j < nb_joints; j++)
+
+        registerInterface(&_joint_state_interface);
+        registerInterface(&_joint_position_interface);
     }
 
     /**
