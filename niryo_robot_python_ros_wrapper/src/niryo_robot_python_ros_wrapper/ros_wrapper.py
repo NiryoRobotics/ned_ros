@@ -1,6 +1,9 @@
 #!/usr/bin/env python
 
 # Lib
+import time
+
+import rosgraph_msgs.msg
 import rospy
 import actionlib
 
@@ -48,6 +51,16 @@ class NiryoRosWrapperException(Exception):
 
 
 class NiryoRosWrapper:
+
+    # LOGS_LEVELS = {2: 'INFO', 4: 'WARNING', 8: 'ERROR', 16: 'FATAL'}
+    LOGS_LEVELS = {
+        rospy.INFO: 'INFO',
+        rospy.WARN: 'WARNING',
+        rospy.ERROR: 'ERROR',
+        rospy.FATAL: 'FATAL',
+        rospy.DEBUG: 'DEBUG'
+    }
+
     def __init__(self):
         # - Getting ROS parameters
         self.__service_timeout = rospy.get_param("/niryo_robot/python_ros_wrapper/service_timeout")
@@ -105,6 +118,13 @@ class NiryoRosWrapper:
         self.__conveyors_feedback = None
         rospy.Subscriber('/niryo_robot/conveyor/feedback', ConveyorFeedbackArray,
                          self.__callback_sub_conveyors_feedback)
+
+        # - Logs
+
+        self.__logs = []
+        rospy.Subscriber(
+            '/rosout_agg', rosgraph_msgs.msg.Log, self.__callback_rosout_agg
+        )
 
         # - Action server
         # Robot action
@@ -171,6 +191,16 @@ class NiryoRosWrapper:
 
     def __callback_sub_conveyors_feedback(self, conveyors_feedback):
         self.__conveyors_feedback = conveyors_feedback
+
+    def __callback_rosout_agg(self, log):
+        formatted_log = '[{}] [{}.{}]: {} - {}'.format(
+            NiryoRosWrapper.LOGS_LEVELS[log.level],
+            log.header.stamp.secs,
+            log.header.stamp.nsecs,
+            log.name,
+            log.msg,
+        )
+        self.__logs.append(formatted_log)
 
     # -- Service & Action executors
     def __call_service(self, service_name, service_msg_type, *args):
@@ -1634,3 +1664,11 @@ class NiryoRosWrapper:
         result = self.__call_service('/niryo_robot_poses_handlers/get_workspace_list',
                                      GetNameDescriptionList)
         return result.name_list
+
+    #- Logs
+    def get_logs(self, send_log=True):
+        """
+        Returns a generator iterating over all the logs published
+        """
+        while len(self.__logs) > 0:
+            yield self.__logs.pop(0)
