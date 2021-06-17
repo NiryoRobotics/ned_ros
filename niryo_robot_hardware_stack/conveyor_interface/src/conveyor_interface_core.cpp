@@ -1,188 +1,317 @@
+/*
+    conveyor_interface_core.cpp
+    Copyright (C) 2017 Niryo
+    All rights reserved.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
+//c++
+#include <functional>
+
+//ros
+
+//niryo
 #include "conveyor_interface/conveyor_interface_core.hpp"
-#include "stepper_driver/conveyor_state.hpp"
+#include "common/model/conveyor_state.hpp"
+#include "common/model/stepper_command_type_enum.hpp"
 
-ConveyorInterfaceCore::ConveyorInterfaceCore(boost::shared_ptr<StepperDriver::StepperDriverCore> &stepper):
-   _stepper(stepper)
-{
-    _list_conveyor_id.clear();
-    initParams();
-    initServices();
+using namespace std;
+using namespace common::model;
 
-    _conveyors_feedback_publisher = _nh.advertise<conveyor_interface::ConveyorFeedbackArray>("/niryo_robot/conveyor/feedback", 10);
-    _publish_conveyors_feedback_thread.reset(new std::thread(boost::bind(&ConveyorInterfaceCore::_publishConveyorsFeedback, this)));
-}
+namespace conveyor_interface {
 
-void ConveyorInterfaceCore::initParams()
-{
-    _nh.getParam("/niryo_robot_hardware_interface/conveyor/max_effort", _conveyor_max_effort);
-    _nh.getParam("/niryo_robot_hardware_interface/conveyor/id", _conveyor_id);
-    _nh.getParam("/niryo_robot_hardware_interface/conveyor/id_list", _list_possible_conveyor_id);
-    _nh.getParam("/niryo_robot_hardware_interface/conveyor/publish_frequency", _publish_feedback_frequency);
-
-    ROS_DEBUG("Conveyor interface - conveyor max effort : %d", _conveyor_max_effort);
-    ROS_DEBUG("Conveyor interface - Publish_hw_status_frequency : %f", _publish_feedback_frequency);
-    _list_available_id.push_back((uint8_t)_list_possible_conveyor_id.at(1));
-    _list_available_id.push_back((uint8_t)_list_possible_conveyor_id.at(0));
-}
-
-void ConveyorInterfaceCore::initServices()
-{
-    _ping_and_set_stepper_server = _nh.advertiseService("/niryo_robot/conveyor/ping_and_set_conveyor", &ConveyorInterfaceCore::_callbackPingAndSetConveyor, this);
-    _control_conveyor_server = _nh.advertiseService("/niryo_robot/conveyor/control_conveyor", &ConveyorInterfaceCore::_callbackControlConveyor, this);
-}
-
-bool ConveyorInterfaceCore::_callbackPingAndSetConveyor(conveyor_interface::SetConveyor::Request &req, conveyor_interface::SetConveyor::Response &res)
-{
-    std::string message = "";
-    int result;
-    if (_stepper->getCalibrationState() == true)
+    /**
+     * @brief ConveyorInterfaceCore::ConveyorInterfaceCore
+     * @param stepper
+     */
+    ConveyorInterfaceCore::ConveyorInterfaceCore(shared_ptr<can_driver::CanDriverCore> can_driver):
+       _can_driver(can_driver)
     {
-        res.status = niryo_robot_msgs::CommandStatus::CALIBRATION_IN_PROGRESS;
-        res.message = "Calibration in progress";
-        return true;
+        init();
+
+        ROS_DEBUG("ConveyorInterfaceCore::ConveyorInterfaceCore - ctor");
     }
 
-    uint8_t conveyor_id;
-    if(req.cmd == conveyor_interface::SetConveyor::Request::ADD)
+    /**
+     * @brief ConveyorInterfaceCore::~ConveyorInterfaceCore
+     */
+    ConveyorInterfaceCore::~ConveyorInterfaceCore()
     {
-        if(_list_available_id.size() == 0)
+        if(_publish_conveyors_feedback_thread.joinable())
+            _publish_conveyors_feedback_thread.join();
+    }
+
+    /**
+     * @brief ConveyorInterfaceCore::init
+     */
+    void ConveyorInterfaceCore::init()
+    {
+        initParams();
+
+        ROS_DEBUG("ConveyorInterfaceCore::init - Starting services...");
+        startServices();
+
+        ROS_DEBUG("ConveyorInterfaceCore::init - Starting publishers...");
+        startPublishers();
+    }
+
+    /**
+     * @brief ConveyorInterfaceCore::initParams
+     */
+    void ConveyorInterfaceCore::initParams()
+    {
+        std::vector<int> id_pool_list;
+
+        _nh.getParam("/niryo_robot_hardware_interface/conveyor/max_effort", _conveyor_max_effort);
+        _nh.getParam("/niryo_robot_hardware_interface/conveyor/id", _default_conveyor_id);
+        _nh.getParam("/niryo_robot_hardware_interface/conveyor/id_list", id_pool_list);
+
+        _nh.getParam("/niryo_robot_hardware_interface/conveyor/publish_frequency", _publish_feedback_frequency);
+
+        ROS_DEBUG("ConveyorInterfaceCore::initParams - conveyor max effort : %d", _conveyor_max_effort);
+        ROS_DEBUG("ConveyorInterfaceCore::initParams - Publish_hw_status_frequency : %f", _publish_feedback_frequency);
+
+        //initialize pool of possible id we can assign
+        for(int const id : id_pool_list)
+            _conveyor_pool_id_list.insert(static_cast<uint8_t>(id));
+    }
+
+    /**
+     * @brief ConveyorInterfaceCore::startServices
+     */
+    void ConveyorInterfaceCore::startServices()
+    {
+        _ping_and_set_stepper_server = _nh.advertiseService("/niryo_robot/conveyor/ping_and_set_conveyor", &ConveyorInterfaceCore::_callbackPingAndSetConveyor, this);
+        _control_conveyor_server = _nh.advertiseService("/niryo_robot/conveyor/control_conveyor", &ConveyorInterfaceCore::_callbackControlConveyor, this);
+    }
+
+    /**
+     * @brief ConveyorInterfaceCore::startPublishers
+     */
+    void ConveyorInterfaceCore::startPublishers()
+    {
+        _conveyors_feedback_publisher = _nh.advertise<conveyor_interface::ConveyorFeedbackArray>("/niryo_robot/conveyor/feedback", 10);
+        _publish_conveyors_feedback_thread = std::thread(&ConveyorInterfaceCore::_publishConveyorsFeedback, this);
+    }
+
+    /**
+     * @brief ConveyorInterfaceCore::addConveyor
+     * @return
+     */
+    conveyor_interface::SetConveyor::Response
+    ConveyorInterfaceCore::addConveyor()
+    {
+        conveyor_interface::SetConveyor::Response res;
+        int result = niryo_robot_msgs::CommandStatus::FAILURE;
+
+        //if we still have available ids in the pool of ids
+        if(!_conveyor_pool_id_list.empty())
         {
+            //take last
+            uint8_t conveyor_id = *_conveyor_pool_id_list.begin();
+            result = _can_driver->setConveyor(conveyor_id, static_cast<uint8_t>(_default_conveyor_id));
+
+            if(niryo_robot_msgs::CommandStatus::SUCCESS == result)
+            {
+                //add id to list of current connected ids
+                _current_conveyor_id_list.push_back(conveyor_id);
+                // remove from pool
+                _conveyor_pool_id_list.erase(_conveyor_pool_id_list.begin());
+
+                StepperMotorCmd cmd(EStepperCommandType::CMD_TYPE_MICRO_STEPS, conveyor_id, {8});
+                cmd.setParams({8});
+                _can_driver->addSingleCommandToQueue(cmd);
+
+                cmd = StepperMotorCmd(EStepperCommandType::CMD_TYPE_MAX_EFFORT, conveyor_id, {_conveyor_max_effort});
+                _can_driver->addSingleCommandToQueue(cmd);
+
+                cmd = StepperMotorCmd(EStepperCommandType::CMD_TYPE_CONVEYOR, conveyor_id, {false, 0, -1});
+                _can_driver->addSingleCommandToQueue(cmd);
+
+                // CC why two times in a row ?
+                _can_driver->addSingleCommandToQueue(cmd);
+                res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
+
+                res.message = "Set new conveyor on id ";
+                res.message += to_string(conveyor_id);
+                res.message += " OK";
+                res.id = conveyor_id;
+            }
+            else
+            {
+                ROS_INFO("Conveyor interface - No new conveyor found");
+
+                res.status = static_cast<int16_t>(result);
+                res.id = 0;
+                res.message = "No new conveyor found";
+            }
+        }
+        else
+        {
+            ROS_INFO("Conveyor interface - No conveyor available");
+
             res.message = "no conveyor available";
             res.id = 0;
             res.status = niryo_robot_msgs::CommandStatus::NO_CONVEYOR_LEFT;
-            return true; 
         }
-        else
-        {
-            conveyor_id = _list_available_id.back(); 
-        }
-        result = _stepper->setConveyor(conveyor_id);
-        if(result != niryo_robot_msgs::CommandStatus::SUCCESS)
-        {
-            res.status = result;
-            res.id = 0;
-            ROS_INFO("Conveyor interface - No new conveyor found");
-            message = "No new conveyor found";
-        }
-        else
-        {
-            _list_conveyor_id.push_back(conveyor_id);
-            _list_available_id.pop_back();
-            ros::Duration(0.05).sleep();
 
-            StepperDriver::StepperMotorCmd cmd;
-            std::vector<uint8_t> stepper_id{conveyor_id};
-            std::vector<int32_t> stepper_params{8};
-            cmd.setParams(stepper_params);
-            cmd.setType(StepperDriver::StepperCommandType::CMD_TYPE_MICRO_STEPS);
-            cmd.setMotorsId(stepper_id);
-            _stepper->setStepperCommands(cmd);
-            ros::Duration(0.05).sleep();
-
-            stepper_params.clear();
-            stepper_params = {_conveyor_max_effort};
-            cmd.setParams(stepper_params);
-            cmd.setType(StepperDriver::StepperCommandType::CMD_TYPE_MAX_EFFORT);
-            cmd.setMotorsId(stepper_id);
-            _stepper->setStepperCommands(cmd);
-            ros::Duration(0.1).sleep();
-
-            cmd.setType(StepperDriver::StepperCommandType::CMD_TYPE_CONVEYOR);
-            cmd.setParams(std::vector<int32_t>{false, 0, -1});
-            cmd.setMotorsId(stepper_id);
-            _stepper->setConveyorCommands(cmd);
-            ros::Duration(0.1).sleep();
-            _stepper->setConveyorCommands(cmd);
-            res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
-            message = "Set new conveyor on id ";
-            message += std::to_string(conveyor_id);
-            message += " OK";
-            res.id = conveyor_id;
-        }
-        
+        return res;
     }
-    else if (req.cmd == conveyor_interface::SetConveyor::Request::REMOVE)
+
+    /**
+     * @brief ConveyorInterfaceCore::removeConveyor
+     * @param id
+     * @return
+     */
+    conveyor_interface::SetConveyor::Response
+    ConveyorInterfaceCore::removeConveyor(uint8_t id)
     {
-        bool conveyor_found = false;
-        for(int i = 0; i < _list_conveyor_id.size(); i++)
+        conveyor_interface::SetConveyor::Response res;
+
+        //find id in vector
+        auto position = find(_current_conveyor_id_list.begin(), _current_conveyor_id_list.end(), id);
+
+        //found
+        if(position != _current_conveyor_id_list.end())
         {
-            if(req.id == _list_conveyor_id.at(i))
+            _conveyor_pool_id_list.insert(id);
+
+            //remove from currently connected conveyors
+            _current_conveyor_id_list.erase(position);
+            //remove conveyor
+            _can_driver->unsetConveyor(id);
+            res.message = "Remove conveyor id " + to_string(id);
+            res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
+
+        }
+        else
+        {
+            ROS_INFO("Conveyor interface - Conveyor id %d not found", id);
+            res.message = "Conveyor id " + to_string(id) + " not found";
+            res.status = niryo_robot_msgs::CommandStatus::NO_CONVEYOR_FOUND;
+        }
+
+        return res;
+    }
+
+    /**
+     * @brief ConveyorInterfaceCore::isInitialized
+     * @return
+     */
+    bool ConveyorInterfaceCore::isInitialized()
+    {
+        return !_conveyor_pool_id_list.empty();
+    }
+
+    //*******************
+    //  callbacks
+    //*******************
+
+    /**
+     * @brief ConveyorInterfaceCore::_callbackPingAndSetConveyor
+     * @param req
+     * @param res
+     * @return
+     */
+    bool ConveyorInterfaceCore::_callbackPingAndSetConveyor(conveyor_interface::SetConveyor::Request &req,
+                                                            conveyor_interface::SetConveyor::Response &res)
+    {
+        if (!_can_driver->isCalibrationInProgress())
+        {
+            switch(req.cmd)
             {
-                conveyor_found = true;
-                _list_conveyor_id.erase( _list_conveyor_id.begin() + i);
-                _list_available_id.push_back(req.id);
-                _stepper->unsetConveyor(req.id);
-                std::sort(_list_available_id.begin(), _list_available_id.end(), std::greater<int>()); 
-                message = "Remove conveyor id ";
-                message += std::to_string(req.id);
-                res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
+                case conveyor_interface::SetConveyor::Request::ADD:
+                    res = addConveyor();
+                break;
+
+                case conveyor_interface::SetConveyor::Request::REMOVE:
+                    res = removeConveyor(req.id);
+                break;
+
+                default:
                 break;
             }
         }
-        if(!conveyor_found)
+        else
         {
-            ROS_INFO("Conveyor interface - Conveyor id %d not found", req.id);
-            message = "Conveyor id ";
-            message += std::to_string(req.id);
-            message += " not found";
-            res.status = niryo_robot_msgs::CommandStatus::NO_CONVEYOR_FOUND;
+            res.status = niryo_robot_msgs::CommandStatus::CALIBRATION_IN_PROGRESS;
+            res.message = "Calibration in progress";
+        }
+
+        return niryo_robot_msgs::CommandStatus::SUCCESS == res.status;
+    }
+
+    /**
+     * @brief ConveyorInterfaceCore::_callbackControlConveyor
+     * @param req
+     * @param res
+     * @return
+     */
+    bool ConveyorInterfaceCore::_callbackControlConveyor(conveyor_interface::ControlConveyor::Request &req, conveyor_interface::ControlConveyor::Response &res)
+    {
+        //if id found in list
+        if(find(_current_conveyor_id_list.begin(), _current_conveyor_id_list.end() , req.id) != _current_conveyor_id_list.end())
+        {
+            StepperMotorCmd cmd(EStepperCommandType::CMD_TYPE_CONVEYOR,
+                                req.id,
+                                {req.control_on, req.speed, req.direction});
+
+            res.message = "Set command on conveyor id ";
+            res.message += to_string(req.id);
+            res.message += " is OK";
+            res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
+            _can_driver->addSingleCommandToQueue(cmd);
+        }
+        else
+        {
+            ROS_INFO("Conveyor interface - Conveyor id %d isn't set", req.id);
+            res.message = "Conveyor id ";
+            res.message += to_string(req.id);
+            res.message += " is not set";
+            res.status = niryo_robot_msgs::CommandStatus::CONVEYOR_ID_INVALID;
+        }
+
+        return niryo_robot_msgs::CommandStatus::SUCCESS == res.status;
+    }
+
+    /**
+     * @brief ConveyorInterfaceCore::_publishConveyorsFeedback
+     */
+    void ConveyorInterfaceCore::_publishConveyorsFeedback()
+    {
+        ros::Rate publish_conveyor_feedback_rate = ros::Rate(_publish_feedback_frequency);
+
+        while (ros::ok()) {
+
+            conveyor_interface::ConveyorFeedbackArray msg;
+            conveyor_interface::ConveyorFeedback data;
+
+            // CC to be checked
+            for(auto sState : _can_driver->getStepperStates())
+            {
+                if(sState && sState->isConveyor()) {
+                    auto cState = dynamic_pointer_cast<ConveyorState>(sState);
+                    data.conveyor_id = cState->getId();
+                    data.running = cState->getState();
+                    data.direction = static_cast<int8_t>(cState->getDirection());
+                    data.speed = cState->getSpeed();
+                    msg.conveyors.push_back(data);
+                }
+            }
+            _conveyors_feedback_publisher.publish(msg);
+            publish_conveyor_feedback_rate.sleep();
         }
     }
-    res.message = message;
-    return true;
-
-}
-
-bool ConveyorInterfaceCore::_callbackControlConveyor(conveyor_interface::ControlConveyor::Request &req, conveyor_interface::ControlConveyor::Response &res)
-{
-    std::string message = "";
-    auto conveyor_id = std::find(_list_conveyor_id.begin(), _list_conveyor_id.end() , req.id);
-    StepperDriver::StepperMotorCmd cmd;
-    if(conveyor_id != _list_conveyor_id.end())
-    {
-        cmd.setMotorsId(std::vector<uint8_t> {req.id});
-        cmd.setType(StepperDriver::StepperCommandType::CMD_TYPE_CONVEYOR);
-        cmd.setParams(std::vector<int32_t>{req.control_on, req.speed, req.direction});
-        message = "Set command on conveyor id ";
-        message += std::to_string(req.id);
-        message += " is OK";
-        res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
-        _stepper->setConveyorCommands(cmd);
-    }
-    else
-    {
-        ROS_INFO("Conveyor interface - Conveyor id %d isn't set", req.id);
-        message = "Conveyor id ";
-        message += std::to_string(req.id);
-        message += " is not set";
-        res.status = niryo_robot_msgs::CommandStatus::CONVEYOR_ID_INVALID;
-    }
-    
-    res.message = message;
-    return true;
-}
-
-void ConveyorInterfaceCore::_publishConveyorsFeedback()
-{
-    ros::Rate publish_conveyor_feedback_rate = ros::Rate(_publish_feedback_frequency);
-
-    while (ros::ok()) {
-        
-        conveyor_interface::ConveyorFeedbackArray msg;
-        conveyor_interface::ConveyorFeedback data;
-
-        std::vector<StepperDriver::ConveyorState> conveyor_list;
-        conveyor_list = _stepper->getConveyorStates();
-        for(int i = 0; i < conveyor_list.size(); i++)
-        {
-            data.conveyor_id = conveyor_list.at(i).getId();
-            data.running = conveyor_list.at(i).getState();
-            data.direction = conveyor_list.at(i).getDirection();
-            data.speed = conveyor_list.at(i).getSpeed();
-            msg.conveyors.push_back(data);
-        }
-        _conveyors_feedback_publisher.publish(msg);
-        publish_conveyor_feedback_rate.sleep();
-
-    }
-}
+} //ConveyorInterface

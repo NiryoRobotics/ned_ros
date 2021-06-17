@@ -48,42 +48,41 @@
 namespace dynamixel
 {
 
-class WINDECLSPEC PortHandler
-{
- public:
-  static const int DEFAULT_BAUDRATE_ = 1000000;
+    class WINDECLSPEC PortHandler
+    {
+     public:
+      static const int DEFAULT_BAUDRATE_ = 1000000;
 
-  static PortHandler *getPortHandler(const char *port_name);
+      static PortHandler *getPortHandler(const char *port_name);
 
-  bool   is_using_;
+      bool   is_using_;
 
-  virtual ~PortHandler() { }
+      virtual ~PortHandler() { }
 
-  virtual bool setupGpio() = 0;
-  virtual void gpioHigh() = 0;
-  virtual void gpioLow() = 0;
+      virtual bool setupGpio() = 0;
+      virtual void gpioHigh() = 0;
+      virtual void gpioLow() = 0;
 
-  virtual bool    openPort() = 0;
-  virtual void    closePort() = 0;
-  virtual void    clearPort() = 0;
+      virtual bool    openPort() = 0;
+      virtual void    closePort() = 0;
+      virtual void    clearPort() = 0;
 
-  virtual void    setPortName(const char* port_name) = 0;
-  virtual char   *getPortName() = 0;
+      virtual void    setPortName(const char* port_name) = 0;
+      virtual char   *getPortName() = 0;
 
-  virtual bool    setBaudRate(const int baudrate) = 0;
-  virtual int     getBaudRate() = 0;
+      virtual bool    setBaudRate(const int baudrate) = 0;
+      virtual int     getBaudRate() = 0;
 
-  virtual int     getBytesAvailable() = 0;
+      virtual int     getBytesAvailable() = 0;
 
-  virtual int     readPort(uint8_t *packet, int length) = 0;
-  virtual int     writePort(uint8_t *packet, int length) = 0;
+      virtual int     readPort(uint8_t *packet, int length) = 0;
+      virtual int     writePort(uint8_t *packet, int length) = 0;
 
-  virtual void    setPacketTimeout(uint16_t packet_length) = 0;
-  virtual void    setPacketTimeout(double msec) = 0;
-  virtual bool    isPacketTimeout() = 0;
-};
-
-}
+      virtual void    setPacketTimeout(uint16_t packet_length) = 0;
+      virtual void    setPacketTimeout(double msec) = 0;
+      virtual bool    isPacketTimeout() = 0;
+    };
+} //dynamixel
 
 
 #endif /* DYNAMIXEL_SDK_INCLUDE_DYNAMIXEL_SDK_PORTHANDLER_H_ */

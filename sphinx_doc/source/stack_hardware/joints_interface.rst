@@ -80,6 +80,6 @@ Dependencies - Joints Interface
 
 - :wiki_ros:`hardware_interface <hardware_interface>`
 - :wiki_ros:`controller_manager <controller_manager>`
-- :ref:`dynamixel_driver <Niryo Robot Dynamixel Driver Package>`
-- :ref:`stepper_driver <Niryo Robot Stepper Driver Package>`
+- :ref:`ttl_driver <Niryo Robot Dynamixel Driver Package>`
+- :ref:`can_driver <Niryo Robot Stepper Driver Package>`
 - :ref:`niryo_robot_msgs <Niryo Robot Messages Package>`

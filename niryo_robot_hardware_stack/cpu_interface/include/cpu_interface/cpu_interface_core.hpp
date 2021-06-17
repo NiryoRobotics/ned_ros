@@ -20,37 +20,56 @@
 #ifndef CPU_INTERFACE_CORE_HPP
 #define CPU_INTERFACE_CORE_HPP
 
-#include <boost/shared_ptr.hpp>
+#include <memory>
 #include <fstream>
 #include <ros/ros.h>
 #include <vector>
 #include <thread>
 #include <string>
 
-class CpuInterfaceCore
-{
-    public:
-        
-        CpuInterfaceCore();
+namespace cpu_interface {
 
-        void initParams();
+    /**
+     * @brief The CpuInterfaceCore class
+     */
+    class CpuInterfaceCore
+    {
+        public:
 
-        void startReadingData();
-        int getCpuTemperature(); 
+            CpuInterfaceCore();
+            virtual ~CpuInterfaceCore();
 
-    private:
-        ros::NodeHandle _nh;
-        
-        int _cpu_temperature;
+            void initParams();
 
-        double _read_cpu_frequency;
-        int _temperature_warn_threshold;
-        int _temperature_shutdown_threshold;
+            void startReadingData();
+            int getCpuTemperature() const;
 
-        void _readCpuTemperature();
-        void _readHardwareDataLoop();
+        private:
+            void _readCpuTemperature();
+            void _readHardwareDataLoop();
 
-        boost::shared_ptr<std::thread> _read_hardware_data_thread;
-        
-};
+        private:
+            ros::NodeHandle _nh;
+
+            std::thread _read_hardware_data_thread;
+
+            int _cpu_temperature{0};
+
+            double _read_cpu_frequency{0.0};
+            int _temperature_warn_threshold{0};
+            int _temperature_shutdown_threshold{0};
+    };
+
+    /**
+     * @brief CpuInterfaceCore::getCpuTemperature
+     * @return
+     */
+    inline
+    int CpuInterfaceCore::getCpuTemperature() const
+    {
+        return _cpu_temperature;
+    }
+
+} //CpuInterface
+
 #endif

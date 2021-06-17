@@ -20,12 +20,16 @@
 #ifndef TOOLS_INTERFACE_CORE_HPP
 #define TOOLS_INTERFACE_CORE_HPP
 
-#include <boost/shared_ptr.hpp>
-
-#include <ros/ros.h>
+// c++
+#include <memory>
 #include <vector>
 
-#include "tools_interface/tool_state.hpp"
+// ros
+#include <ros/ros.h>
+
+// niryo
+#include "common/model/tool_state.hpp"
+#include "ttl_driver/ttl_driver_core.hpp"
 
 #include "tools_interface/PingDxlTool.h"
 #include "tools_interface/OpenGripper.h"
@@ -33,50 +37,59 @@
 #include "tools_interface/PullAirVacuumPump.h"
 #include "tools_interface/PushAirVacuumPump.h"
 
-#include "dynamixel_driver/dxl_driver_core.hpp"
-
 #include "std_msgs/Int32.h"
 
-class ToolsInterfaceCore
-{
-    public:
-        
-        ToolsInterfaceCore(boost::shared_ptr<DynamixelDriver::DynamixelDriverCore> &dynamixel);
 
-        void initParams();
-        void initServices();
+namespace tools_interface {
 
-        void pubToolId(int id);
+    /**
+     * @brief The ToolsInterfaceCore class
+     */
+    class ToolsInterfaceCore
+    {
+        public:
+            ToolsInterfaceCore(std::shared_ptr<ttl_driver::TtlDriverCore> ttl_driver);
+            virtual ~ToolsInterfaceCore();
 
-    private:
-        ros::NodeHandle _nh;
-        boost::shared_ptr<DynamixelDriver::DynamixelDriverCore> &_dynamixel;
-        boost::shared_ptr<ToolState> _tool;
-        std::mutex _tool_mutex;
+            bool isInitialized();
+            void pubToolId(int id);
 
-        void _checkToolConnection();
-        boost::shared_ptr<std::thread> _check_tool_connection_thread;
-        double _check_tool_connection_frequency;
+        private:
+            void initParams();
+            void initServices();
+            void initPublishers();
 
-        ros::ServiceServer _ping_and_set_dxl_tool_server;
-        ros::ServiceServer _open_gripper_server;
-        ros::ServiceServer _close_gripper_server;
-        ros::ServiceServer _pull_air_vacuum_pump_server;
-        ros::ServiceServer _push_air_vacuum_pump_server;
-        
-        ros::Publisher _current_tools_id_publisher;
+            void _publishToolConnection();
 
-        std::vector<uint8_t> _tool_id_list;
+            bool _callbackPingAndSetDxlTool(tools_interface::PingDxlTool::Request &, tools_interface::PingDxlTool::Response &res);
 
-        bool _callbackPingAndSetDxlTool(tools_interface::PingDxlTool::Request &req, tools_interface::PingDxlTool::Response &res);
+            bool _callbackOpenGripper(tools_interface::OpenGripper::Request &req, tools_interface::OpenGripper::Response &res);
+            bool _callbackCloseGripper(tools_interface::CloseGripper::Request &req, tools_interface::CloseGripper::Response &res);
 
-        bool _callbackOpenGripper(tools_interface::OpenGripper::Request &req, tools_interface::OpenGripper::Response &res);
-        bool _callbackCloseGripper(tools_interface::CloseGripper::Request &req, tools_interface::CloseGripper::Response &res);
+            bool _callbackPullAirVacuumPump(tools_interface::PullAirVacuumPump::Request &req, tools_interface::PullAirVacuumPump::Response &res);
+            bool _callbackPushAirVacuumPump(tools_interface::PushAirVacuumPump::Request &req, tools_interface::PushAirVacuumPump::Response &res);
 
-        bool _callbackPullAirVacuumPump(tools_interface::PullAirVacuumPump::Request &req, tools_interface::PullAirVacuumPump::Response &res);
-        bool _callbackPushAirVacuumPump(tools_interface::PushAirVacuumPump::Request &req, tools_interface::PushAirVacuumPump::Response &res);
+        private:
+            ros::NodeHandle _nh;
 
-        bool _equipToolWithRetries(uint8_t tool_id, DynamixelDriver::DxlMotorType tool_type, unsigned max_retries);
-        std::vector<uint8_t> _findToolMotorListWithRetries(unsigned max_retries);
-};
+            std::mutex _tool_mutex;
+
+            ros::Publisher _tool_connection_publisher;
+            std::thread _publish_tool_connection_thread;
+
+            std::shared_ptr<ttl_driver::TtlDriverCore> _ttl_driver_core;
+
+            ros::ServiceServer _ping_and_set_dxl_tool_server;
+            ros::ServiceServer _open_gripper_server;
+            ros::ServiceServer _close_gripper_server;
+            ros::ServiceServer _pull_air_vacuum_pump_server;
+            ros::ServiceServer _push_air_vacuum_pump_server;
+
+            common::model::ToolState _toolState;
+            std::map<uint8_t, common::model::EMotorType> _available_tools_map;
+
+            double _check_tool_connection_frequency{0.0};
+    };
+} // ToolsInterface
+
 #endif

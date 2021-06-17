@@ -229,8 +229,8 @@ class MotorDebug:
 
     def _set_log_debug(self, debug_mode):
         # loggers_list = self.__get_hardware_loggers_service()
-        for logger_name in ["ros.niryo_robot_hardware_interface", "ros.conveyor_interface", "ros.dynamixel_driver",
-                            "ros.stepper_driver", "ros.tools_interface", "rosout"]:
+        for logger_name in ["ros.niryo_robot_hardware_interface", "ros.conveyor_interface", "ros.ttl_driver",
+                            "ros.can_driver", "ros.tools_interface", "rosout"]:
             log_state = SetLoggerLevelRequest(logger=logger_name, level='DEBUG' if debug_mode else 'INFO')
             self.__hardware_log_level_service(log_state)
 

@@ -1,9 +1,13 @@
-<launch>
+<?xml version="1.0" ?>
+<launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+    <env name="ROSCONSOLE_CONFIG_FILE"
+        value="$(find niryo_robot_bringup)/config/niryo_ned_robot_trace.conf" />
     <!-- Arguments definition -->
     <arg name="iot_enabled" default="false"/>
     <arg name="debug" default="false"/>
 
-    <include file="$(find niryo_robot_bringup)/launch/niryo_robot_base_robot.launch.xml">>
+    <include file="$(find niryo_robot_bringup)/launch/niryo_robot_base_robot.launch.xml">
         <arg name="iot_enabled" value="$(arg iot_enabled)"/>
         <arg name="debug" value="$(arg debug)"/>
     </include>

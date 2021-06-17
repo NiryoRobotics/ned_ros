@@ -1,10 +1,12 @@
-<launch>
+<?xml version="1.0" ?>
+<launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
     <!-- Arguments -->
     <arg name="iot_enabled" default="false"/>
     <arg name="debug" default="false"/>
     <arg name="hardware_version" value="ned"/>
     <arg name="rpi_model" value="4"/>
-    <arg name="conf_location" value="~/.config/niryo"/>
+    <arg name="conf_location" value="$(env HOME)/.config/niryo"/>
 
     <!-- Load URDF -->
     <param name="robot_description"
@@ -15,7 +17,7 @@
     <!-- PARAMS -->
     <group ns="niryo_robot/info">
         <param name="image_version" type="string"
-               textfile="/home/niryo/.config/niryo/version/version.txt"/>
+            textfile="$(arg conf_location)/version/version.txt"/>
     </group>
 
     <group ns="niryo_robot/robot_state">

@@ -79,7 +79,7 @@ Dependencies - Tools Interface
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 - :msgs_index:`std_msgs`
-- :ref:`dynamixel_driver <Niryo Robot Dynamixel Driver Package>`
+- :ref:`ttl_driver <Niryo Robot Dynamixel Driver Package>`
 
 Services & Messages files - Tools Interface
 ----------------------------------------------

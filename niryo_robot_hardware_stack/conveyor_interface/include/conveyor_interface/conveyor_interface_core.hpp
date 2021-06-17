@@ -20,51 +20,73 @@
 #ifndef CONVEYOR_INTERFACE_CORE_HPP
 #define CONVEYOR_INTERFACE_CORE_HPP
 
-#include <boost/shared_ptr.hpp>
-
-#include <ros/ros.h>
+// c++
+#include <memory>
 #include <vector>
 
-#include "stepper_driver/stepper_driver_core.hpp"
+// ros
+#include <ros/ros.h>
 
-#include "stepper_driver/StepperCmd.h"
+// niryo
+#include "can_driver/can_driver_core.hpp"
+
 #include "conveyor_interface/SetConveyor.h"
 #include "conveyor_interface/ControlConveyor.h"
 #include "conveyor_interface/ConveyorFeedbackArray.h"
 #include "niryo_robot_msgs/CommandStatus.h"
 
-class ConveyorInterfaceCore
-{
-    public:
-        
-        ConveyorInterfaceCore(boost::shared_ptr<StepperDriver::StepperDriverCore> &stepper);
-        void initServices();
-        void initParams();
+namespace conveyor_interface {
 
-    private:
+    /**
+     * @brief The ConveyorInterfaceCore class
+     */
+    class ConveyorInterfaceCore
+    {
+        public:
+            ConveyorInterfaceCore(std::shared_ptr<can_driver::CanDriverCore> stepper);
+            virtual ~ConveyorInterfaceCore();
 
-        ros::NodeHandle _nh;
-        boost::shared_ptr<StepperDriver::StepperDriverCore> &_stepper;
+            bool isInitialized();
 
-        ros::ServiceServer _ping_and_set_stepper_server;
-        ros::ServiceServer _control_conveyor_server;
-        ros::Publisher _conveyors_feedback_publisher;
+        private:
+            void init();
+            void initParams();
+            void startServices();
+            void startPublishers();
 
-        ros::Publisher _conveyor_status_publisher;
-        boost::shared_ptr<std::thread> _publish_conveyor_status_thread;
+            conveyor_interface::SetConveyor::Response addConveyor();
+            conveyor_interface::SetConveyor::Response removeConveyor(uint8_t id);
 
-        std::vector<uint8_t> _list_conveyor_id;
-        std::vector<uint8_t> _list_available_id; 
-        std::vector<int> _list_possible_conveyor_id;
-        int _conveyor_id;
-        int _conveyor_max_effort;
-        double _publish_feedback_frequency;
+            bool _callbackPingAndSetConveyor(conveyor_interface::SetConveyor::Request &req, conveyor_interface::SetConveyor::Response &res);
+            bool _callbackControlConveyor(conveyor_interface::ControlConveyor::Request &req, conveyor_interface::ControlConveyor::Response &res);
 
-        boost::shared_ptr<std::thread> _publish_conveyors_feedback_thread;
+            void _publishConveyorsFeedback();
 
-        bool _callbackPingAndSetConveyor(conveyor_interface::SetConveyor::Request &req, conveyor_interface::SetConveyor::Response &res);
-        bool _callbackControlConveyor(conveyor_interface::ControlConveyor::Request &req, conveyor_interface::ControlConveyor::Response &res);
+        private:
+            ros::NodeHandle _nh;
 
-        void _publishConveyorsFeedback();
-};
+            std::thread _publish_conveyors_feedback_thread;
+
+            std::shared_ptr<can_driver::CanDriverCore> _can_driver;
+
+            ros::ServiceServer _ping_and_set_stepper_server;
+            ros::ServiceServer _control_conveyor_server;
+
+            ros::Publisher _conveyors_feedback_publisher;
+            ros::Publisher _conveyor_status_publisher;
+
+            //default id to look for to know if we have a stepper
+            int _default_conveyor_id{6};
+
+            // pool of possible id we can set for a newly connected conveyor
+            std::set<uint8_t> _conveyor_pool_id_list;
+
+            // list of currently connected conveyors
+            std::vector<uint8_t> _current_conveyor_id_list;
+
+            int _conveyor_max_effort{0};
+            double _publish_feedback_frequency{0.0};
+    };
+} // ConveyorInterface
+
 #endif

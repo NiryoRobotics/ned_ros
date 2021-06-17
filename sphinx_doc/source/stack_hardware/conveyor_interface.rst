@@ -67,7 +67,7 @@ Dependencies - Conveyor Interface
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 - :msgs_index:`std_msgs`
-- :ref:`stepper_driver <Niryo Robot Stepper Driver Package>`
+- :ref:`can_driver <Niryo Robot Stepper Driver Package>`
 
 Services & Messages files - Conveyor Interface
 ----------------------------------------------

@@ -36,8 +36,13 @@ catkin_make_n_rostest:
     - rosdep update
     - rosdep install --from-paths src --ignore-src --default-yes --rosdistro $ROS_DISTRO --skip-keys "$SKIPPED_KEYS"
 
+    # Test compiling
     - catkin_make
+
     - source devel/setup.bash
 
-    # Tests
+    # C++ tests
+    - catkin_make run tests --cmake-args -DBUILD_UNIT_TESTS=ON -DBUILD_INTEGRATION_TESTS=ON
+
+    # Python tests
     - python src/niryo_robot_unit_tests/scripts/script_test_headless.py

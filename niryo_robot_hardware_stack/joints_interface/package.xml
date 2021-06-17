@@ -1,14 +1,17 @@
 <?xml version="1.0"?>
-<package format="2">
+<?xml-model
+  href="http://download.ros.org/schema/package_format3.xsd"
+  schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
   <name>joints_interface</name>
   <version>0.0.0</version>
   <description>The joints_interface package include all hardware componant to control the joints of the robot.</description>
-  <author>Etienne Rey-Coquais</author>
-  <author>Edouard Renard</author>
   <maintainer email="e.rey-coquais@niryo.com">Etienne Rey-Coquais</maintainer>
 
   <license>GPLv3</license>
-
+  <author>Etienne Rey-Coquais</author>
+  <author>Edouard Renard</author>
+  
   <buildtool_depend>catkin</buildtool_depend>
 
   <build_depend>roscpp</build_depend>
@@ -16,17 +19,19 @@
   <build_depend>controller_manager</build_depend>
   <build_depend>niryo_robot_msgs</build_depend>
   <build_depend>std_msgs</build_depend>
-  <build_depend>dynamixel_driver</build_depend>
-  <build_depend>stepper_driver</build_depend>
-   <build_depend>actionlib</build_depend>
+  <build_depend>ttl_driver</build_depend>
+  <build_depend>can_driver</build_depend>
+  <build_depend>actionlib</build_depend>
+  <build_depend>common</build_depend>
   
   <exec_depend>roscpp</exec_depend>
   <exec_depend>hardware_interface</exec_depend>
   <exec_depend>controller_manager</exec_depend>
   <exec_depend>niryo_robot_msgs</exec_depend>
   <exec_depend>std_msgs</exec_depend>
-  <exec_depend>dynamixel_driver</exec_depend>
-  <exec_depend>stepper_driver</exec_depend>
+  <exec_depend>ttl_driver</exec_depend>
+  <exec_depend>can_driver</exec_depend>
   <exec_depend>actionlib</exec_depend>
+  <exec_depend>common</exec_depend>
 
 </package>

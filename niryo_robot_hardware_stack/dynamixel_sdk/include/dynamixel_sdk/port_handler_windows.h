@@ -39,53 +39,52 @@
 
 namespace dynamixel
 {
-class WINDECLSPEC PortHandlerWindows : public PortHandler
-{
- private:
-  HANDLE  serial_handle_;
-  LARGE_INTEGER freq_, counter_;
+    class WINDECLSPEC PortHandlerWindows : public PortHandler
+    {
+     private:
+      HANDLE  serial_handle_;
+      LARGE_INTEGER freq_, counter_;
 
-  int     baudrate_;
-  char    port_name_[30];
+      int     baudrate_;
+      char    port_name_[30];
 
-  double  packet_start_time_;
-  double  packet_timeout_;
-  double  tx_time_per_byte_;
+      double  packet_start_time_;
+      double  packet_timeout_;
+      double  tx_time_per_byte_;
 
-  bool    setupPort(const int baudrate);
+      bool    setupPort(const int baudrate);
 
-  double  getCurrentTime();
-  double  getTimeSinceStart();
+      double  getCurrentTime();
+      double  getTimeSinceStart();
 
- public:
-  PortHandlerWindows(const char *port_name);
-  virtual ~PortHandlerWindows() { closePort(); }
-  
-  bool    setupGpio();
-  void    gpioHigh();
-  void    gpioLow();
+     public:
+      PortHandlerWindows(const char *port_name);
+      virtual ~PortHandlerWindows() { closePort(); }
 
-  bool    openPort();
-  void    closePort();
-  void    clearPort();
+      bool    setupGpio();
+      void    gpioHigh();
+      void    gpioLow();
 
-  void    setPortName(const char *port_name);
-  char   *getPortName();
+      bool    openPort();
+      void    closePort();
+      void    clearPort();
 
-  bool    setBaudRate(const int baudrate);
-  int     getBaudRate();
+      void    setPortName(const char *port_name);
+      char   *getPortName();
 
-  int     getBytesAvailable();
+      bool    setBaudRate(const int baudrate);
+      int     getBaudRate();
 
-  int     readPort(uint8_t *packet, int length);
-  int     writePort(uint8_t *packet, int length);
+      int     getBytesAvailable();
 
-  void    setPacketTimeout(uint16_t packet_length);
-  void    setPacketTimeout(double msec);
-  bool    isPacketTimeout();
-};
+      int     readPort(uint8_t *packet, int length);
+      int     writePort(uint8_t *packet, int length);
 
-}
+      void    setPacketTimeout(uint16_t packet_length);
+      void    setPacketTimeout(double msec);
+      bool    isPacketTimeout();
+    };
+} //dynamixel
 
 
 #endif /* DYNAMIXEL_SDK_INCLUDE_DYNAMIXEL_SDK_LINUX_PORTHANDLERWINDOWS_H_ */

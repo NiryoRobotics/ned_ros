@@ -1,4 +1,6 @@
-<launch>
+<?xml version="1.0" ?>
+<launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
   <!-- Set the parameters for the warehouse and run the mongodb server. -->
 
   <!-- The default DB port for moveit (not default MongoDB port to avoid potential conflicts) -->  

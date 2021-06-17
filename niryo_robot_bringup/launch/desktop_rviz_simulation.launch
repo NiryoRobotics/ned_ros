@@ -1,4 +1,8 @@
-<launch>
+<?xml version="1.0" ?>
+<launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+    <env name="ROSCONSOLE_CONFIG_FILE"
+        value="$(find niryo_robot_bringup)/config/desktop_rviz_simulation_trace.conf" />
     <!-- Arguments definition -->
     <arg name="gui" default="true"/>
     <arg name="hardware_version" value="ned"/>

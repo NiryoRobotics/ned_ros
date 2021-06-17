@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.0.2)
 project(niryo_robot_python_ros_wrapper)
 
 find_package(catkin REQUIRED COMPONENTS
@@ -16,5 +16,14 @@ include_directories(
 #############
 find_package(rostest REQUIRED)
 
-add_rostest(launch/rpi_python_wrapper.test)
-add_rostest(launch/simulation_python_wrapper.test)
+execute_process( COMMAND
+            uname -m COMMAND tr -d '\n'
+        OUTPUT_VARIABLE
+            ARCHITECTURE
+    )
+    
+if (${ARCHITECTURE} MATCHES "^(arm.*|aarch64.*|arm64.*)$")
+    add_rostest(test/rpi_python_wrapper.test)
+else()
+    add_rostest(test/simulation_python_wrapper.test)
+endif()

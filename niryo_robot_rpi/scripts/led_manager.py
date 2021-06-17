@@ -104,14 +104,14 @@ class LEDManager:
             leds = 8
 
         try:
-            rospy.wait_for_service('niryo_robot/dynamixel_driver/set_dxl_leds', timeout=1)
+            rospy.wait_for_service('niryo_robot/ttl_driver/set_dxl_leds', timeout=1)
         except rospy.ROSException:
             rospy.logwarn("Niryo ROS control LED service is not up!")
         try:
-            set_dxl_leds = rospy.ServiceProxy('niryo_robot/dynamixel_driver/set_dxl_leds', SetInt)
+            set_dxl_leds = rospy.ServiceProxy('niryo_robot/ttl_driver/set_dxl_leds', SetInt)
             set_dxl_leds(leds)
         except rospy.ServiceException:
-            rospy.logwarn("Could not call niryo_robot/dynamixel_driver/set_dxl_leds service")
+            rospy.logwarn("Could not call niryo_robot/ttl_driver/set_dxl_leds service")
 
     def set_led(self, color, dxl_leds=False):
         r = GPIO.LOW

@@ -20,96 +20,98 @@
 #ifndef JOINT_HARDWARE_INTERFACE_HPP
 #define JOINT_HARDWARE_INTERFACE_HPP
 
-#include <boost/shared_ptr.hpp>
+//std
+#include <memory>
 #include <algorithm>
+
+//ros
+#include <ros/ros.h>
+
+//niryo
 #include <hardware_interface/joint_state_interface.h>
 #include <hardware_interface/joint_command_interface.h>
 #include <hardware_interface/robot_hw.h>
 
-#include "joints_interface/joint_state.hpp"
-#include "joints_interface/calibration_interface.hpp"
+#include "joints_interface/calibration_manager.hpp"
+#include "can_driver/can_driver_core.hpp"
+#include "ttl_driver/ttl_driver_core.hpp"
 
-#include "stepper_driver/stepper_driver_core.hpp"
-#include "dynamixel_driver/dxl_driver_core.hpp"
+#include "common/model/joint_state.hpp"
 
-#include <ros/ros.h>
-#include <std_msgs/Int64MultiArray.h>
+namespace joints_interface {
 
-class JointHardwareInterface : public hardware_interface::RobotHW
-{
+    class JointHardwareInterface : public hardware_interface::RobotHW
+    {
 
-public:
-    JointHardwareInterface(
-        boost::shared_ptr<DynamixelDriver::DynamixelDriverCore> &dynamixel,
-        boost::shared_ptr<StepperDriver::StepperDriverCore> &stepper);
+    public:
+        JointHardwareInterface(std::shared_ptr<ttl_driver::TtlDriverCore> ttl_driver,
+                               std::shared_ptr<can_driver::CanDriverCore> can_driver);
 
-    void initPublisherSubscribers();
-    void initServices();
-    void initMotors();
+        void sendInitMotorsParams();
+        int calibrateJoints(int mode, std::string &result_message);
+        void deactivateLearningMode();
+        void setNeedCalibration();
+        void activateLearningMode();
+        void synchronizeMotors(bool synchronize);
 
-    void sendInitMotorsParams();
+        void setCommandToCurrentPosition();
 
-    void read();
-    void write();
+        bool needCalibration() const;
+        bool isCalibrationInProgress() const;
 
-    bool needCalibration();
+        std::string jointIdToJointName(uint8_t id, common::model::EMotorType motor_type) const;
+        const std::vector<std::shared_ptr<common::model::JointState> >& getJointsState() const;
 
-    int calibrateJoints(int mode, std::string &result_message);
+        // RobotHW interface
+    public:
+        virtual void read(const ros::Time &/*time*/, const ros::Duration &/*period*/) override;
+        virtual void write(const ros::Time &/*time*/, const ros::Duration &/*period*/) override;
 
-    void newCalibration();
+    private:
+        void initJoints();
 
-    bool isCalibrationInProgress();
+        void initPublisherSubscribers();
+        void initServices();
+        bool setMotorPID(const std::shared_ptr<common::model::DxlMotorState> &dxlState);
 
-    void activateLearningMode();
+    private:
+        ros::NodeHandle _nh;
 
-    void deactivateLearningMode();
+        hardware_interface::JointStateInterface _joint_state_interface;
+        hardware_interface::PositionJointInterface _joint_position_interface;
 
-    void setCommandToCurrentPosition();
+        std::shared_ptr<ttl_driver::TtlDriverCore> _ttl_driver_core;
+        std::shared_ptr<can_driver::CanDriverCore> _can_driver_core;
+        std::unique_ptr<CalibrationManager> _calibration_manager;
 
-    void synchronizeMotors(bool synchronise);
+        std::map<uint8_t, std::string> _map_stepper_name;
+        std::map<uint8_t, std::string> _map_dxl_name;
 
-    std::vector<JointState> &getJointsState();
+        std::vector<std::shared_ptr<common::model::JointState> > _joint_list;
 
-    std::string jointIdToJointName(int id, uint8_t motor_type);
+        bool _learning_mode;
+    };
 
-private:
-    ros::NodeHandle _nh;
+    /**
+     * @brief JointHardwareInterface::getJointsState
+     * @return
+     */
+    inline
+    bool JointHardwareInterface::isCalibrationInProgress() const
+    {
+        return _calibration_manager->CalibrationInprogress();
+    }
 
-    hardware_interface::JointStateInterface _joint_state_interface;
-    hardware_interface::PositionJointInterface _joint_position_interface;
-
-    boost::shared_ptr<DynamixelDriver::DynamixelDriverCore> &_dynamixel;
-    boost::shared_ptr<StepperDriver::StepperDriverCore> &_stepper;
-
-    std::vector<uint8_t> _list_stepper_id;
-    std::map<uint8_t, std::string> _map_stepper_name;
-
-    std::vector<uint8_t> _list_dxl_id;
-    std::map<uint8_t, std::string> _map_dxl_name;
-
-    std::vector<JointState> _joint_list;
-
-    boost::shared_ptr<CalibrationInterface> _calibration_interface;
-
-    std::string _joints_name[6] = {""};
-    int _joints_id[6] = {0};
-
-    double _cmd[6] = {0, 0.64, -1.39, 0, 0, 0};
-    double _pos[6] = {0, 0.64, -1.39, 0, 0, 0};
-    double _vel[6] = {0};
-    double _eff[6] = {0};
-
-    double _gear_ratio_1, _gear_ratio_2, _gear_ratio_3;
-    double _home_position_1, _home_position_2, _home_position_3;
-    double _offset_position_stepper_1, _offset_position_stepper_2, _offset_position_stepper_3;
-    double _offset_position_dxl_1, _offset_position_dxl_2, _offset_position_dxl_3;
-    double _direction_1, _direction_2, _direction_3;
-    int _max_effort_1, _max_effort_2, _max_effort_3;
-
-    int _p_gain_1, _p_gain_2, _p_gain_3;
-    int _i_gain_1, _i_gain_2, _i_gain_3;
-    int _d_gain_3;
-    bool _learning_mode;
-};
+    /**
+     * @brief JointHardwareInterface::getJointsState
+     * @return
+     */
+    inline
+    const std::vector<std::shared_ptr<common::model::JointState> >&
+    JointHardwareInterface::getJointsState() const
+    {
+        return _joint_list;
+    }
+} // JointsInterface
 
 #endif
