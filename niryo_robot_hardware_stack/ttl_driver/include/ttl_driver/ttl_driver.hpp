@@ -75,7 +75,7 @@ namespace ttl_driver
             void executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, uint32_t> > cmd_vec);
 
             int rebootMotors();
-            int rebootMotor(uint8_t motor_id, DxlMotorType motor_type);
+            int rebootMotor(uint8_t motor_id);
 
             int setLeds(int led, common::model::EMotorType type);
 

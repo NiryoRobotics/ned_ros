@@ -242,12 +242,17 @@ namespace tools_interface {
         return ret;
     }
 
-    bool ToolsInterfaceCore::_callbackToolReboot(std_srvs::Trigger::Request &req, std_srvs::Trigger::Response &res)
+    /**
+     * @brief ToolsInterfaceCore::_callbackToolReboot
+     * @param res
+     * @return
+     */
+    bool ToolsInterfaceCore::_callbackToolReboot(std_srvs::Trigger::Request &/*req*/, std_srvs::Trigger::Response &res)
     {
-        if (_tool->getId() != 0)
+        if (_toolState.isValid())
         {
             std::lock_guard<std::mutex> lck(_tool_mutex);
-            res.success = _dynamixel->rebootMotor(_tool->getId(), _tool->getType());
+            res.success = _ttl_driver_core->rebootMotor(_toolState.getId());
             res.message = (res.success) ? "Tool reboot succeeded" : "Tool reboot failed";
             return true;
         }

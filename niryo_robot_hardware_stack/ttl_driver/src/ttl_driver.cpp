@@ -361,9 +361,24 @@ namespace ttl_driver
         return return_value;
     }
 
+    /**
+     * @brief TtlDriver::rebootMotor
+     * @param motor_id
+     * @return
+     */
     int TtlDriver::rebootMotor(uint8_t motor_id)
     {
-        int return_value = COMM_SUCCESS;
+        int return_value = COMM_TX_FAIL;
+
+        if(_state_map.count(motor_id) && _state_map.at(motor_id)) {
+            EMotorType type = _state_map.at(motor_id)->getType();
+            ROS_DEBUG("TtlDriver::rebootMotors - Reboot Dxl motor with ID: %d", motor_id);
+            if(_xdriver_map.count(type)) {
+                return_value = _xdriver_map.at(type)->reboot(motor_id);
+
+                ROS_WARN_COND(COMM_SUCCESS != return_value, "TtlDriver::rebootMotors - Failed to reboot motor: %d", return_value);
+            }
+        }
         
         return return_value;
     }
@@ -757,7 +772,7 @@ namespace ttl_driver
     }
 
     /**
-     * @brief TtlDriver::setLeds
+     * @brief TtlDriver::setLeds : set the leds integrated into each motor
      * @param led
      * @param type
      * @return

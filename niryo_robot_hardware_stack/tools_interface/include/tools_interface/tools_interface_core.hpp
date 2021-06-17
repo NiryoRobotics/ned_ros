@@ -23,7 +23,6 @@
 // c++
 #include <memory>
 #include <vector>
-            bool _callbackToolReboot(std_srvs::Trigger::Request &req, std_srvs::Trigger::Response &res);
 
 #include <ros/ros.h>
 
@@ -67,7 +66,7 @@ namespace tools_interface {
             bool _callbackOpenGripper(tools_interface::OpenGripper::Request &req, tools_interface::OpenGripper::Response &res);
             bool _callbackCloseGripper(tools_interface::CloseGripper::Request &req, tools_interface::CloseGripper::Response &res);
 
-            bool _callbackToolReboot(std_srvs::Trigger::Request &req, std_srvs::Trigger::Response &res);
+            bool _callbackToolReboot(std_srvs::Trigger::Request &, std_srvs::Trigger::Response &res);
 
             bool _callbackPullAirVacuumPump(tools_interface::PullAirVacuumPump::Request &req, tools_interface::PullAirVacuumPump::Response &res);
             bool _callbackPushAirVacuumPump(tools_interface::PushAirVacuumPump::Request &req, tools_interface::PushAirVacuumPump::Response &res);
