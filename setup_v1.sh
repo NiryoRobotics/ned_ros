@@ -8,4 +8,3 @@ cp ./niryo_robot_hardware_stack/joints_interface/config/motors_param_v1.yaml ./n
 cp ./niryo_robot_hardware_stack/ttl_driver/config/motors_config_v1.yaml ./niryo_robot_hardware_stack/ttl_driver/config/motors_config.yaml
 cp ./niryo_robot_hardware_stack/tools_interface/config/default_v1.yaml ./niryo_robot_hardware_stack/tools_interface/config/default.yaml
 
-
