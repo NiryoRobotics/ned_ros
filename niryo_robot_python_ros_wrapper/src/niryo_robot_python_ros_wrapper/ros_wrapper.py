@@ -1666,9 +1666,12 @@ class NiryoRosWrapper:
         return result.name_list
 
     #- Logs
-    def get_logs(self, send_log=True):
+    def get_logs(self):
         """
         Returns a generator iterating over all the logs published
+
+        :return: the last logs
+        :rtype: generator[str]
         """
         while len(self.__logs) > 0:
             yield self.__logs.pop(0)
