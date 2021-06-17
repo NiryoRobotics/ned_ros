@@ -15,17 +15,13 @@
     <arg name="can_enabled" default="true"/>
     <arg name="ttl_enabled" default="true"/>
 
-    <node name="niryo_robot_tools" pkg="niryo_robot_tools" type="tool_controller_node.py" output="screen"
-          respawn="false">
-        <param name="simulation_mode" type="bool" value="$(arg simulation_mode)"/>
-        <rosparam file="$(find niryo_robot_tools)/config/end_effectors.yaml"/>
-    </node>
+
     <!-- Load controller settings -->
 
     <group unless="$(arg simu_gripper)">
         <rosparam file="$(find niryo_ned_moveit_config_standalone)/config/ros_controllers.yaml" command="load"/>
-        <!-- spawn controllers -->
 
+        <!-- spawn controllers -->
         <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="log"
               args="joint_state_controller niryo_robot_follow_joint_trajectory_controller"/>
     </group>
@@ -34,9 +30,8 @@
         <rosparam file="$(find niryo_ned_moveit_config_w_gripper1)/config/ros_controllers.yaml" command="load"/>
 
         <!-- spawn controllers -->
-
         <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="log"
-              args="niryo_robot_follow_joint_trajectory_controller gazebo_tool_controller"/>
+              args="niryo_robot_follow_joint_trajectory_controller gazebo_tool_commander"/>
     </group>
 
     <!-- robot state publisher -->

@@ -23,8 +23,8 @@
 // c++
 #include <memory>
 #include <vector>
+            bool _callbackToolReboot(std_srvs::Trigger::Request &req, std_srvs::Trigger::Response &res);
 
-// ros
 #include <ros/ros.h>
 
 // niryo
@@ -38,6 +38,7 @@
 #include "tools_interface/PushAirVacuumPump.h"
 
 #include "std_msgs/Int32.h"
+#include "std_srvs/Trigger.h"
 
 
 namespace tools_interface {
@@ -66,6 +67,8 @@ namespace tools_interface {
             bool _callbackOpenGripper(tools_interface::OpenGripper::Request &req, tools_interface::OpenGripper::Response &res);
             bool _callbackCloseGripper(tools_interface::CloseGripper::Request &req, tools_interface::CloseGripper::Response &res);
 
+            bool _callbackToolReboot(std_srvs::Trigger::Request &req, std_srvs::Trigger::Response &res);
+
             bool _callbackPullAirVacuumPump(tools_interface::PullAirVacuumPump::Request &req, tools_interface::PullAirVacuumPump::Response &res);
             bool _callbackPushAirVacuumPump(tools_interface::PushAirVacuumPump::Request &req, tools_interface::PushAirVacuumPump::Response &res);
 
@@ -82,6 +85,7 @@ namespace tools_interface {
             ros::ServiceServer _ping_and_set_dxl_tool_server;
             ros::ServiceServer _open_gripper_server;
             ros::ServiceServer _close_gripper_server;
+            ros::ServiceServer _tool_reboot_server;
             ros::ServiceServer _pull_air_vacuum_pump_server;
             ros::ServiceServer _push_air_vacuum_pump_server;
 

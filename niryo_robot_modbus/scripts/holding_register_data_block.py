@@ -8,11 +8,11 @@ from data_block import DataBlock
 
 # Messages
 from actionlib_msgs.msg import GoalStatus
-from niryo_robot_commander.command_enums import MoveCommandType
-from niryo_robot_commander.msg import RobotCommand
-from niryo_robot_commander.msg import RobotMoveAction
-from niryo_robot_commander.msg import RobotMoveGoal
+from niryo_robot_arm_commander.msg import RobotMoveAction
+from niryo_robot_arm_commander.msg import RobotMoveGoal
 from niryo_robot_msgs.msg import CommandStatus
+from niryo_robot_tools_commander.msg import ToolCommand, ToolAction
+from niryo_robot_arm_commander.msg import ArmMoveCommand
 
 # Services
 from conveyor_interface.srv import ControlConveyor, SetConveyor
@@ -89,7 +89,6 @@ class HoldingRegisterDataBlock(DataBlock):
         self.execution_thread = threading.Thread()
         self.is_action_client_running = False
         self.cmd_action_client = None
-        self.tool_command_list = rospy.get_param("/niryo_robot_tools/command_list")
 
     def __set_command_in_progress(self):
         """
@@ -223,72 +222,72 @@ class HoldingRegisterDataBlock(DataBlock):
         self.move_linear_pose(pose)
 
     def open_gripper(self, gripper_id, speed):
-        goal = RobotMoveGoal()
-        goal.cmd.cmd_type = MoveCommandType.TOOL
-        goal.cmd.tool_cmd.tool_id = int(gripper_id)
-        goal.cmd.tool_cmd.cmd_type = self.tool_command_list['open_gripper']
-        goal.cmd.tool_cmd.gripper_open_speed = speed
-        self.start_execution_thread(goal)
+        goal = ToolActionGoal()
+        goal.cmd.cmd_type = ToolCommand.OPEN_GRIPPER
+        goal.cmd.tool_id = int(gripper_id)
+        goal.cmd.gripper_open_speed = speed
+        self.start_execution_thread_tool(goal)
 
     def close_gripper(self, gripper_id, speed):
-        goal = RobotMoveGoal()
-        goal.cmd.cmd_type = MoveCommandType.TOOL
-        goal.cmd.tool_cmd.tool_id = int(gripper_id)
-        goal.cmd.tool_cmd.cmd_type = self.tool_command_list['close_gripper']
-        goal.cmd.tool_cmd.gripper_close_speed = speed
-        self.start_execution_thread(goal)
+        goal = ToolActionGoal()
+        goal.cmd.cmd_type = ToolCommand.CLOSE_GRIPPER
+        goal.cmd.tool_id = int(gripper_id)
+        goal.cmd.gripper_close_speed = speed
+        self.start_execution_thread_tool(goal)
 
     def pull_air_vacuum_pump(self, vacuum_pump_id):
-        goal = RobotMoveGoal()
-        goal.cmd.cmd_type = MoveCommandType.TOOL
-        goal.cmd.tool_cmd.tool_id = int(vacuum_pump_id)
-        goal.cmd.tool_cmd.cmd_type = self.tool_command_list['pull_air_vacuum_pump']
-        self.start_execution_thread(goal)
+        goal = ToolActionGoal()
+        goal.cmd.cmd_type = ToolCommand.PULL_AIR_VACUUM_PUMP
+        goal.cmd.tool_id = int(vacuum_pump_id)
+        self.start_execution_thread_tool(goal)
 
     def push_air_vacuum_pump(self, vacuum_pump_id):
-        goal = RobotMoveGoal()
-        goal.cmd.cmd_type = MoveCommandType.TOOL
-        goal.cmd.tool_cmd.tool_id = int(vacuum_pump_id)
-        goal.cmd.tool_cmd.cmd_type = self.tool_command_list['push_air_vacuum_pump']
-        self.start_execution_thread(goal)
+        goal = ToolActionGoal()
+        goal.cmd.cmd_type = ToolCommand.PUSH_AIR_VACUUM_PUMP
+        goal.cmd.tool_id = int(vacuum_pump_id)
+        self.start_execution_thread_tool(goal)
 
     def move_pose(self, pose):
         goal = RobotMoveGoal()
-        goal.cmd.cmd_type = RobotCommand.MOVE_ONLY
-        goal.cmd.arm_cmd.cmd_type = MoveCommandType.POSE
-        goal.cmd.arm_cmd.position.x = pose[0]
-        goal.cmd.arm_cmd.position.y = pose[1]
-        goal.cmd.arm_cmd.position.z = pose[2]
-        goal.cmd.arm_cmd.rpy.roll = pose[3]
-        goal.cmd.arm_cmd.rpy.pitch = pose[4]
-        goal.cmd.arm_cmd.rpy.yaw = pose[5]
-        self.start_execution_thread(goal)
+        goal.cmd.cmd_type = ArmMoveCommand.POSE
+        goal.cmd.position.x = pose[0]
+        goal.cmd.position.y = pose[1]
+        goal.cmd.position.z = pose[2]
+        goal.cmd.rpy.roll = pose[3]
+        goal.cmd.rpy.pitch = pose[4]
+        goal.cmd.rpy.yaw = pose[5]
+        self.start_execution_thread_arm(goal)
 
     def move_linear_pose(self, pose):
         goal = RobotMoveGoal()
-        goal.cmd.cmd_type = RobotCommand.MOVE_ONLY
-        goal.cmd.arm_cmd.cmd_type = MoveCommandType.LINEAR_POSE
-        goal.cmd.arm_cmd.position.x = pose[0]
-        goal.cmd.arm_cmd.position.y = pose[1]
-        goal.cmd.arm_cmd.position.z = pose[2]
-        goal.cmd.arm_cmd.rpy.roll = pose[3]
-        goal.cmd.arm_cmd.rpy.pitch = pose[4]
-        goal.cmd.arm_cmd.rpy.yaw = pose[5]
-        self.start_execution_thread(goal)
+        goal.cmd.cmd_type = ArmMoveCommand.LINEAR_POSE
+        goal.cmd.position.x = pose[0]
+        goal.cmd.position.y = pose[1]
+        goal.cmd.position.z = pose[2]
+        goal.cmd.rpy.roll = pose[3]
+        goal.cmd.rpy.pitch = pose[4]
+        goal.cmd.rpy.yaw = pose[5]
+        self.start_execution_thread_arm(goal)
 
     def move_joints(self, joints):
         goal = RobotMoveGoal()
-        goal.cmd.cmd_type = RobotCommand.MOVE_ONLY
-        goal.cmd.arm_cmd.cmd_type = MoveCommandType.JOINTS
-        goal.cmd.arm_cmd.joints = joints
+        goal.cmd.cmd_type = ArmMoveCommand.JOINTS
+        goal.cmd.joints = joints
 
-        self.start_execution_thread(goal)
+        self.start_execution_thread_arm(goal)
 
-    def start_execution_thread(self, goal):
+    def start_execution_thread_arm(self, goal):
         if not self.execution_thread.is_alive():
             self.execution_thread = threading.Thread(target=self.execute_action,
-                                                     args=['niryo_robot_commander/robot_action', RobotMoveAction, goal])
+                                                     args=['niryo_robot_arm_commander/robot_action', RobotMoveAction, goal]) 
             self.execution_thread.start()
+
+    def start_execution_thread_tool(self, goal):
+        if not self.execution_thread.is_alive():
+            self.execution_thread = threading.Thread(target=self.execute_action,
+                                                     args=['niryo_robot_tools_commander/action_server', ToolAction, goal]) 
+            self.execution_thread.start()
+
 
     def execute_action(self, action_name, action_msg_type, goal):
         self.setValuesOffset(HR_IS_EXECUTING_CMD, [1])

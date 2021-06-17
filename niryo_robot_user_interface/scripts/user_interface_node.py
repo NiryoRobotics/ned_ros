@@ -2,7 +2,6 @@
 
 import rospy
 
-from matlab_manager import MatlabManager
 from niryo_robot_user_interface.tcp_server import TcpServer
 
 
@@ -10,9 +9,6 @@ class UserInterface:
 
     def __init__(self):
         rospy.logdebug("User Interface Node - Entering in Init")
-
-        # Matlab node manager
-        self.__matlab_manager = MatlabManager()
 
         self.__tcp_server = TcpServer().start()
 

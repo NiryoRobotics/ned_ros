@@ -7,6 +7,6 @@
 
   <!-- Load the controllers -->
   <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false"
-    output="log" args="niryo_robot_follow_joint_trajectory_controller gazebo_tool_controller "/>
+    output="log" args="niryo_robot_follow_joint_trajectory_controller gazebo_tool_commander "/>
 
 </launch>

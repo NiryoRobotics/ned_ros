@@ -128,6 +128,7 @@ namespace tools_interface {
         _close_gripper_server = _nh.advertiseService("niryo_robot/tools/close_gripper", &ToolsInterfaceCore::_callbackCloseGripper, this);
         _pull_air_vacuum_pump_server = _nh.advertiseService("niryo_robot/tools/pull_air_vacuum_pump", &ToolsInterfaceCore::_callbackPullAirVacuumPump, this);
         _push_air_vacuum_pump_server = _nh.advertiseService("niryo_robot/tools/push_air_vacuum_pump", &ToolsInterfaceCore::_callbackPushAirVacuumPump, this);
+        _tool_reboot_server = _nh.advertiseService("niryo_robot/tools/reboot", &ToolsInterfaceCore::_callbackToolReboot, this);
 
     }
 
@@ -139,6 +140,7 @@ namespace tools_interface {
         _tool_connection_publisher = _nh.advertise<std_msgs::Int32>("/niryo_robot_hardware/tools/current_id", 1, true);
         _publish_tool_connection_thread = std::thread(&ToolsInterfaceCore::_publishToolConnection, this);
     }
+
 
     bool ToolsInterfaceCore::isInitialized()
     {
@@ -239,37 +241,21 @@ namespace tools_interface {
 
         return ret;
     }
-/* CC MERGE TO BE CHECKED
-    std::vector<uint8_t> ToolsInterfaceCore::_findToolMotorListWithRetries(unsigned int max_retries)
+
+    bool ToolsInterfaceCore::_callbackToolReboot(std_srvs::Trigger::Request &req, std_srvs::Trigger::Response &res)
     {
-        std::vector<uint8_t> motor_list;
-        while (max_retries > 0 && motor_list.empty())
+        if (_tool->getId() != 0)
         {
-            motor_list = _dynamixel->scanTools();
-            max_retries--;
-            ros::Duration(0.05).sleep();
+            std::lock_guard<std::mutex> lck(_tool_mutex);
+            res.success = _dynamixel->rebootMotor(_tool->getId(), _tool->getType());
+            res.message = (res.success) ? "Tool reboot succeeded" : "Tool reboot failed";
+            return true;
         }
-        return motor_list;
+        res.success = true;
+        res.message = "No Tool";
+        return true;
     }
 
-    bool ToolsInterfaceCore::_equipToolWithRetries(uint8_t tool_id, DynamixelDriver::DxlMotorType tool_type, unsigned max_retries)
-    {
-        int result;
-        while (max_retries-- > 0)
-        {
-            result = _dynamixel->setEndEffector(tool_id, tool_type);
-            if (result == niryo_robot_msgs::CommandStatus::SUCCESS)
-            {
-                _tool.reset(new ToolState(tool_id, tool_type));
-                _dynamixel->update_leds();
-                break;
-            }
-            ros::Duration(0.05).sleep();
-        }
-        ROS_INFO("Tools Interface - Set End Effector return : %d", result);
-        return result == niryo_robot_msgs::CommandStatus::SUCCESS;
-    }
-*/
     /**
      * @brief ToolsInterfaceCore::_callbackOpenGripper
      * @param req
@@ -454,7 +440,37 @@ namespace tools_interface {
 
         return ret;
     }
+/*
+    std::vector<uint8_t> ToolsInterfaceCore::_findToolMotorListWithRetries(unsigned int max_retries)
+    {
+        std::vector<uint8_t> motor_list;
+        while (max_retries > 0 && motor_list.empty())
+        {
+            motor_list = _dynamixel->scanTools();
+            max_retries--;
+            ros::Duration(0.05).sleep();
+        }
+        return motor_list;
+    }
 
+    bool ToolsInterfaceCore::_equipToolWithRetries(uint8_t tool_id, DynamixelDriver::DxlMotorType tool_type, unsigned max_retries)
+    {
+        int result;
+        while (max_retries-- > 0)
+        {
+            result = _dynamixel->setEndEffector(tool_id, tool_type);
+            if (result == niryo_robot_msgs::CommandStatus::SUCCESS)
+            {
+                _tool.reset(new ToolState(tool_id, tool_type));
+                _dynamixel->update_leds();
+                break;
+            }
+            ros::Duration(0.05).sleep();
+        }
+        ROS_INFO("Tools Interface - Set End Effector return : %d", result);
+        return result == niryo_robot_msgs::CommandStatus::SUCCESS;
+    }
+*/
     /**
      * @brief ToolsInterfaceCore::_publishToolConnection
      */

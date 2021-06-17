@@ -228,7 +228,7 @@ Simulation option
 The user can disable 3 things by adding the specific string to the command line :
 
 * the Gazebo Graphical Interface : `gui:=false`
-* the camera & the grupper - Vision & Gripper wise functions won't be usable : `gripper_n_camera:=false`
+* the camera & the gripper - Vision & Gripper wise functions won't be usable : `gripper_n_camera:=false`
 
 
 .. hint::

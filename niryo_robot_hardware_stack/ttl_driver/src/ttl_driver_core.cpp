@@ -111,6 +111,20 @@ namespace ttl_driver
         return result;
     }
 
+
+    /**
+     * @brief TtlDriverCore::rebootMotors
+     * @return
+     */
+    int TtlDriverCore::rebootMotor(uint8_t motor_id)
+    {
+        ROS_INFO("TtlDriverCore::rebootMotor - Reboot motor %d", std::to_string(motor_id));
+        lock_guard<mutex> lck(_control_loop_mutex);
+        int result = _ttl_driver->rebootMotor(motor_id);
+        ros::Duration(1.5).sleep();
+        return result;
+    }
+
     /**
      * @brief TtlDriverCore::scanTools
      * @return

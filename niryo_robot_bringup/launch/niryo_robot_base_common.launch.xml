@@ -46,7 +46,12 @@
         <arg name="debug" value="$(arg debug)"/>
     </include>
 
-    <include file="$(find niryo_robot_commander)/launch/robot_commander.launch">
+    <include file="$(find niryo_robot_arm_commander)/launch/robot_commander.launch">
+        <arg name="simu_gripper" value="$(arg simu_gripper)"/>
+    </include>
+
+    <include file="$(find niryo_robot_tools_commander)/launch/tools_commander.launch">
+        <arg name="simulation_mode" value="$(arg simulation_mode)"/>
         <arg name="simu_gripper" value="$(arg simu_gripper)"/>
     </include>
 

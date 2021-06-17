@@ -80,6 +80,7 @@ namespace ttl_driver
         int update_leds(void);
 
         int rebootMotors();
+        int rebootMotor(uint8_t motor_id);
 
         //getters
         std::vector<uint8_t> getRemovedMotorList() const;

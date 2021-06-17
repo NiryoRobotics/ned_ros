@@ -361,6 +361,13 @@ namespace ttl_driver
         return return_value;
     }
 
+    int TtlDriver::rebootMotor(uint8_t motor_id)
+    {
+        int return_value = COMM_SUCCESS;
+        
+        return return_value;
+    }
+
     //******************
     //  Read operations
     //******************
