@@ -28,6 +28,10 @@ state_dict:
 
 namespace_topics: "/niryo_robot/tools/"
 
+# - MoveIt! simulation params
+reference_frame: world
+move_group_tool_commander_name: tool
+
 # Important note:
 # All the values finishing with "_hold_torque" have been computed so the
 # DXL-320 motor won't become too hot.

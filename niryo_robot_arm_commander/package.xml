@@ -3,7 +3,7 @@
   href="http://download.ros.org/schema/package_format3.xsd"
   schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-    <name>niryo_robot_commander</name>
+    <name>niryo_robot_arm_commander</name>
     <version>3.1.0</version>
     <description>
         Interface between user and Moveit! to easily control Ned (arm + tools). Validates params, checks if

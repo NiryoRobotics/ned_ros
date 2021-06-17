@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(niryo_robot_commander)
+project(niryo_robot_arm_commander)
 
 find_package(catkin REQUIRED COMPONENTS
   actionlib_msgs
