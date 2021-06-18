@@ -56,19 +56,3 @@ include_directories(
 #############
 
 # no scripts to install
-
-# Mark other files for installation
-install(
-  DIRECTORY doc/
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/doc
-)
-
-install(
-  DIRECTORY launch/
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
-)
-
-install(
-  DIRECTORY config/
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/config
-)

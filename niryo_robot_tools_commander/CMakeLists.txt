@@ -41,16 +41,11 @@ include_directories(
 
 catkin_install_python(PROGRAMS 
     scripts/tool_commander_node.py
-    scripts/tool_ros_commander_interface.py
+    scripts/tool_ros_command_interface.py
     scripts/tools_classes.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 # Mark other files for installation
-install(
-  DIRECTORY doc/
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/doc
-)
-
 install(
   DIRECTORY launch/
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch

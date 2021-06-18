@@ -25,16 +25,6 @@ catkin_install_python(PROGRAMS
 
 # Mark other files for installation
 install(
-  DIRECTORY doc/
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/doc
-)
-
-install(
   DIRECTORY launch/
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
-)
-
-install(
-  DIRECTORY config/
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/config
 )

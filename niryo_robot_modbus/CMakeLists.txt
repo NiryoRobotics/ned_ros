@@ -22,17 +22,18 @@ include_directories(
 catkin_install_python(PROGRAMS 
     scripts/coil_data_block.py
     scripts/data_block.py
-    scripts/input_data_block.py
+    scripts/discrete_input_data_block.py
     scripts/holding_register_data_block.py
     scripts/input_register_data_block.py
+    scripts/modbus_internal_test.py
     scripts/modbus_server_node.py
     scripts/modbus_server.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 # Mark other files for installation
 install(
-  DIRECTORY doc/
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/doc
+  DIRECTORY config/
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/config
 )
 
 install(
@@ -41,6 +42,7 @@ install(
 )
 
 install(
-  DIRECTORY config/
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/config
+  DIRECTORY examples/
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/examples
 )
+

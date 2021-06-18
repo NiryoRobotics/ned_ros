@@ -160,6 +160,15 @@ if(CATKIN_ENABLE_TESTING)
 
 endif(CATKIN_ENABLE_TESTING)
 
+##########################
+## Static code analysis ##
+##########################
+find_package(roslint QUIET)
+
+if(roslint_FOUND)
+    roslint_cpp()
+endif()
+
 #############
 ## Install ##
 #############
@@ -186,12 +195,3 @@ install(
   DIRECTORY launch/
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
 )
-
-##########################
-## Static code analysis ##
-##########################
-find_package(roslint QUIET)
-
-if(roslint_FOUND)
-    roslint_cpp()
-endif()

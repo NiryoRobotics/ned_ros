@@ -41,15 +41,14 @@ include_directories(
 ## Install ##
 #############
 
-catkin_install_python(PROGRAMS scripts/camera_publisher_and_services.py
+catkin_install_python(PROGRAMS 
+    scripts/camera_publisher_and_services.py
+    scripts/fonctions_camera.py
+    scripts/ObjectDetector.py
+    scripts/VideoStream.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 # Mark other files for installation
-install(
-  DIRECTORY doc/
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/doc
-)
-
 install(
   DIRECTORY launch/
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch

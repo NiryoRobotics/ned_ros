@@ -3,6 +3,8 @@ message("\n## Reading niryo_robot_arm_commander/CMakeLists.txt...")
 cmake_minimum_required(VERSION 3.0.2)
 project(niryo_robot_arm_commander)
 
+option(BUILD_DOCS "Build documentation" OFF)
+
 find_package(catkin REQUIRED COMPONENTS
   actionlib_msgs
   geometry_msgs
@@ -53,6 +55,36 @@ include_directories(
 )
 
 #############
+##   Doc   ##
+#############
+
+if (BUILD_DOCS)
+  find_package(rosdoc_lite QUIET)
+
+  if(rosdoc_lite_FOUND)
+    add_custom_target (${PROJECT_NAME}_doc ALL
+        rosdoc_lite -o ${CATKIN_PACKAGE_SHARE_DESTINATION}/doc ${CMAKE_CURRENT_LIST_DIR}
+    )
+  endif()
+
+endif()
+
+#############
+## Testing ##
+#############
+
+# no testings : external lib
+
+##########################
+## Static code analysis ##
+##########################
+find_package(roslint QUIET)
+
+if(roslint_FOUND)
+    roslint_python()
+endif()
+
+#############
 ## Install ##
 #############
 
@@ -65,10 +97,6 @@ catkin_install_python(PROGRAMS
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 # Mark other files for installation
-install(
-  DIRECTORY doc/
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/doc
-)
 
 install(
   DIRECTORY launch/

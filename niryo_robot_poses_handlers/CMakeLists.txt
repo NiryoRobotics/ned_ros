@@ -64,27 +64,22 @@ else()
   add_rostest(test/simulation_poses_handlers.test)
 endif()
 
-
 #############
 ## Install ##
 #############
 
 catkin_install_python(PROGRAMS 
+    scripts/transform_handlers_node.py
     scripts/poses_handlers_node.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 # Mark other files for installation
 install(
-  DIRECTORY doc/
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/doc
+  DIRECTORY grips/
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/grips
 )
 
 install(
   DIRECTORY launch/
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
-)
-
-install(
-  DIRECTORY config/
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/config
 )
