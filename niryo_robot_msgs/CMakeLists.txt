@@ -56,3 +56,11 @@ include_directories(
 #############
 
 # no scripts to install
+
+
+if (EXISTS ${CMAKE_CURRENT_BINARY_DIR}/doc/${PROJECT_NAME})
+  install(
+    DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc/${PROJECT_NAME}/
+    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/doc
+  )
+endif()

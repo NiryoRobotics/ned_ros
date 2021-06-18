@@ -69,7 +69,7 @@ endif()
 #############
 
 catkin_install_python(PROGRAMS 
-    scripts/transform_handlers_node.py
+    scripts/transform_handler.py
     scripts/poses_handlers_node.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
@@ -83,3 +83,10 @@ install(
   DIRECTORY launch/
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
 )
+
+if (EXISTS ${CMAKE_CURRENT_BINARY_DIR}/doc/${PROJECT_NAME})
+  install(
+    DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc/${PROJECT_NAME}/
+    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/doc
+  )
+endif()

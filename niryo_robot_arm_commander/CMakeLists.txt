@@ -58,12 +58,13 @@ include_directories(
 ##   Doc   ##
 #############
 
-if (BUILD_DOCS)
+find_program(rosdoc_lite_FOUND rosdoc_lite)
+if(BUILD_DOCS AND rosdoc_lite_FOUND)
   find_package(rosdoc_lite QUIET)
 
   if(rosdoc_lite_FOUND)
     add_custom_target (${PROJECT_NAME}_doc ALL
-        rosdoc_lite -o ${CATKIN_PACKAGE_SHARE_DESTINATION}/doc ${CMAKE_CURRENT_LIST_DIR}
+        rosdoc_lite -o ${CMAKE_CURRENT_BINARY_DIR}/doc ${CMAKE_CURRENT_LIST_DIR}
     )
   endif()
 
@@ -74,15 +75,6 @@ endif()
 #############
 
 # no testings : external lib
-
-##########################
-## Static code analysis ##
-##########################
-find_package(roslint QUIET)
-
-if(roslint_FOUND)
-    roslint_python()
-endif()
 
 #############
 ## Install ##
@@ -107,3 +99,19 @@ install(
   DIRECTORY config/
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/config
 )
+
+if (EXISTS ${CMAKE_CURRENT_BINARY_DIR}/doc/${PROJECT_NAME})
+  install(
+    DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc/${PROJECT_NAME}/
+    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/doc
+  )
+endif()
+
+##########################
+## Static code analysis ##
+##########################
+find_package(roslint QUIET)
+
+if(roslint_FOUND)
+    roslint_python()
+endif()
