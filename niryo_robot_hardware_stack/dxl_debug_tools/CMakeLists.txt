@@ -111,7 +111,7 @@ endif()
 
 if (BUILD_DOCS)
     add_custom_target (${PROJECT_NAME}_doc ALL
-        rosdoc_lite -o ${CATKIN_DEVEL_PREFIX}/doc/${PROJECT_NAME} ${CMAKE_CURRENT_LIST_DIR}
+        rosdoc_lite -o ${CATKIN_PACKAGE_SHARE_DESTINATION}/doc ${CMAKE_CURRENT_LIST_DIR}
     )
 
 endif()
@@ -140,8 +140,10 @@ endif(CATKIN_ENABLE_TESTING)
 ## Install ##
 #############
 
-## nothing for now
-
+catkin_install_python(PROGRAMS 
+    scripts/send_custom_dxl_value.py
+    scripts/read_custom_dxl_value.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 # Mark other files for installation
 install(
@@ -151,7 +153,7 @@ install(
 
 install(
   DIRECTORY doc/
-  DESTINATION ${CATKIN_DEVEL_PREFIX}/doc/${PROJECT_NAME}
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/doc
 )
 
 ##########################

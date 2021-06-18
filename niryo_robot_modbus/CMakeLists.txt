@@ -1,3 +1,5 @@
+message("\n## Reading niryo_robot_modbus/CMakeLists.txt...")
+
 cmake_minimum_required(VERSION 3.0.2)
 project(niryo_robot_modbus)
 
@@ -11,4 +13,34 @@ catkin_package()
 
 include_directories(
   ${catkin_INCLUDE_DIRS}
+)
+
+#############
+## Install ##
+#############
+
+catkin_install_python(PROGRAMS 
+    scripts/coil_data_block.py
+    scripts/data_block.py
+    scripts/input_data_block.py
+    scripts/holding_register_data_block.py
+    scripts/input_register_data_block.py
+    scripts/modbus_server_node.py
+    scripts/modbus_server.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+
+# Mark other files for installation
+install(
+  DIRECTORY doc/
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/doc
+)
+
+install(
+  DIRECTORY launch/
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
+)
+
+install(
+  DIRECTORY config/
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/config
 )

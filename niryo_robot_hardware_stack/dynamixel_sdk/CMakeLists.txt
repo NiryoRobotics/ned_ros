@@ -105,7 +105,7 @@ endif()
 
 if (BUILD_DOCS)
     add_custom_target (${PROJECT_NAME}_doc ALL
-        rosdoc_lite -o ${CATKIN_DEVEL_PREFIX}/doc/${PROJECT_NAME} ${CMAKE_CURRENT_LIST_DIR}
+        rosdoc_lite -o ${CATKIN_PACKAGE_SHARE_DESTINATION}/doc ${CMAKE_CURRENT_LIST_DIR}
     )
 
 endif()
@@ -134,7 +134,7 @@ install(
 
 install(
   DIRECTORY doc/
-  DESTINATION ${CATKIN_DEVEL_PREFIX}/doc/${PROJECT_NAME}
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/doc
 )
 
 
