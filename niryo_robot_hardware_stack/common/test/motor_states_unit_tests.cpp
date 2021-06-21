@@ -39,7 +39,7 @@ TEST(CommonTestSuite, testDefaultInvalid)
 
 TEST(CommonTestSuite, testXC430)
 {
-    common::model::DxlMotorState dxlState = DxlMotorState(EMotorType::XC430, 1);
+    common::model::DxlMotorState dxlState = common::model::DxlMotorState(common::model::EMotorType::XC430, 1);
     dxlState.setOffsetPosition(0.42);
     ASSERT_TRUE(dxlState.isValid());
 
@@ -78,8 +78,8 @@ TEST(CommonTestSuite, testXC430)
 
 TEST(CommonTestSuite, testXL430)
 {
-    common::model::DxlMotorState dxlState = DxlMotorState(EMotorType::XL430, 1);
-    std::string type_str = MotorTypeEnum(dxlState.getType()).toString();
+    common::model::DxlMotorState dxlState = common::model::DxlMotorState(common::model::EMotorType::XL430, 1);
+    std::string type_str = common::model::MotorTypeEnum(dxlState.getType()).toString();
     dxlState.setOffsetPosition(0.42);
     ASSERT_TRUE(dxlState.isValid());
 

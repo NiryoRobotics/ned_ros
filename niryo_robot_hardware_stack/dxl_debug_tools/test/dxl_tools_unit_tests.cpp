@@ -42,15 +42,23 @@ TEST(DxlDebugToolsTestSuite, testInit)
     int baudrate = 1000000;
     std::string serial_port = DEFAULT_PORT;
 
-    std::cout << "Using baudrate: " << baudrate << ", port: " << serial_port << "\n";
+    if(serial_port.empty())
+    {
+        std::cout << "Test invalid : not on the correct architecture. Passing" << std::endl;
+        ASSERT_TRUE(true);
+    }
+    else
+    {
+        std::cout << "Using baudrate: " << baudrate << ", port: " << serial_port << std::endl;
 
-    // Setup Dxl communication
-    std::shared_ptr<dynamixel::PortHandler> portHandler(dynamixel::PortHandler::getPortHandler(serial_port.c_str()));
-    std::shared_ptr<dynamixel::PacketHandler> packetHandler(dynamixel::PacketHandler::getPacketHandler(PROTOCOL_VERSION));
+        // Setup Dxl communication
+        std::shared_ptr<dynamixel::PortHandler> portHandler(dynamixel::PortHandler::getPortHandler(serial_port.c_str()));
+        std::shared_ptr<dynamixel::PacketHandler> packetHandler(dynamixel::PacketHandler::getPacketHandler(PROTOCOL_VERSION));
 
-    dxl_debug_tools::DxlTools dxlTools(portHandler, packetHandler);
+        dxl_debug_tools::DxlTools dxlTools(portHandler, packetHandler);
 
-    ASSERT_NE(-1, dxlTools.setupDxlBus(baudrate));
+        ASSERT_NE(-1, dxlTools.setupDxlBus(baudrate));
+    }
 }
 
 // Run all the tests that were declared with TEST()

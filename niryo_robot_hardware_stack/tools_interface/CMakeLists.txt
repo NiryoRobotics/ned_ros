@@ -136,6 +136,7 @@ if(CATKIN_ENABLE_TESTING)
       target_link_libraries(
         ${PROJECT_NAME}_integration_tests
         ${PROJECT_NAME}
+        ${catkin_LIBRARIES}
       )
     endif()
   endif(BUILD_INTEGRATION_TESTS)

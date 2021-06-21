@@ -21,6 +21,8 @@
 #include <ros/service_client.h>
 #include <gtest/gtest.h>
 
+#include "common/model/tool_state.hpp"
+
 #include "tools_interface/tools_interface_core.hpp"
 
 #include "ttl_driver/ttl_driver_core.hpp"
@@ -31,13 +33,15 @@ TEST(TESTSuite, pingTool)
 {
     ros::ServiceClient client = nh->serviceClient<tools_interface::PingDxlTool>("niryo_robot/tools/ping_and_set_dxl_tool");
 
+    common::model::ToolState tState;
+    tState.setName("test");
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);
 
     tools_interface::PingDxlTool srv;
     client.call(srv);
 
-    EXPECT_EQ(srv.response.state, common::model::ToolState::TOOL_STATE_PING_OK);
+    EXPECT_EQ(srv.response.state, 0x01);
 }
 
 
@@ -55,7 +59,7 @@ TEST(TESTSuite, openTool)
 
     client.call(srv);
 
-    EXPECT_EQ(srv.response.state, common::model::ToolState::GRIPPER_STATE_OPEN);
+    EXPECT_EQ(srv.response.state, 0x10);
 }
 
 TEST(TESTSuite, CloseGripper)
@@ -73,7 +77,7 @@ TEST(TESTSuite, CloseGripper)
 
     client.call(srv);
 
-    EXPECT_EQ(srv.response.state, common::model::ToolState::GRIPPER_STATE_CLOSE);
+    EXPECT_EQ(srv.response.state, 0x11);
 }
 
 
@@ -90,7 +94,7 @@ TEST(TESTSuite, PullAirVacuumPump)
     srv.request.pull_air_hold_torque = 100;
     client.call(srv);
 
-    EXPECT_EQ(srv.response.state, common::model::ToolState::VACUUM_PUMP_STATE_PULLED);
+    EXPECT_EQ(srv.response.state, 0x20);
 }
 
 
@@ -106,7 +110,7 @@ TEST(TESTSuite, PushAirVacuumPump)
     srv.request.push_air_position = 100;
     client.call(srv);
 
-    EXPECT_EQ(srv.response.state, common::model::ToolState::VACUUM_PUMP_STATE_PUSHED);
+    EXPECT_EQ(srv.response.state, 0x21);
 }
 
 
