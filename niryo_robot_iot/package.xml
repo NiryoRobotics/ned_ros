@@ -1,6 +1,6 @@
 <package>
     <name>niryo_robot_iot</name>
-    <version>3.1.0</version>
+    <version>3.1.1</version>
     <description>The niryo_robot_iot package</description>
 
     <author email="j.mottier@niryo.com">Justin Mottier</author>
