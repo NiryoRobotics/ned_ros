@@ -14,52 +14,55 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
 #include "common/model/stepper_calibration_status_enum.hpp"
 
-using namespace std;
+#include <map>
+#include <string>
 
-namespace common {
-    namespace model {
+namespace common
+{
+namespace model
+{
 
-        /**
-         * @brief StepperCalibrationStatusEnum::StepperCalibrationStatusEnum
-         * @param e
-         */
-        StepperCalibrationStatusEnum::StepperCalibrationStatusEnum(EStepperCalibrationStatus e):
-            AbstractEnum<StepperCalibrationStatusEnum, EStepperCalibrationStatus>(e)
-        {}
+/**
+ * @brief StepperCalibrationStatusEnum::StepperCalibrationStatusEnum
+ * @param e
+ */
+StepperCalibrationStatusEnum::StepperCalibrationStatusEnum(EStepperCalibrationStatus e):
+    AbstractEnum<StepperCalibrationStatusEnum, EStepperCalibrationStatus>(e)
+{}
 
-        /**
-         * @brief StepperCalibrationStatusEnum::StepperCalibrationStatusEnum
-         * @param str
-         */
-        StepperCalibrationStatusEnum::StepperCalibrationStatusEnum(const char* const str):
-            AbstractEnum<StepperCalibrationStatusEnum, EStepperCalibrationStatus>(str)
-        {}
+/**
+ * @brief StepperCalibrationStatusEnum::StepperCalibrationStatusEnum
+ * @param str
+ */
+StepperCalibrationStatusEnum::StepperCalibrationStatusEnum(const char* const str):
+    AbstractEnum<StepperCalibrationStatusEnum, EStepperCalibrationStatus>(str)
+{}
 
-        /**
-         * @brief StepperCalibrationStatusEnum::initialize
-         * @return
-         */
-        map<EStepperCalibrationStatus, string>
-        StepperCalibrationStatusEnum::initialize()
-        {
-            map<EStepperCalibrationStatus, string> m;
+/**
+ * @brief StepperCalibrationStatusEnum::initialize
+ * @return
+ */
+std::map<EStepperCalibrationStatus, std::string>
+StepperCalibrationStatusEnum::initialize()
+{
+    std::map<EStepperCalibrationStatus, std::string> m;
 
-            m[EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED] = "uninitialized";
-            m[EStepperCalibrationStatus::CALIBRATION_OK]    = "ok";
-            m[EStepperCalibrationStatus::CALIBRATION_TIMEOUT]     = "timeout";
-            m[EStepperCalibrationStatus::CALIBRATION_BAD_PARAM]    = "bad parameter";
-            m[EStepperCalibrationStatus::CALIBRATION_FAIL] = "fail";
-            m[EStepperCalibrationStatus::CALIBRATION_WAITING_USER_INPUT]  = "waiting user input";
-            m[EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS]  = "in progress";
+    m[EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED] = "uninitialized";
+    m[EStepperCalibrationStatus::CALIBRATION_OK]    = "ok";
+    m[EStepperCalibrationStatus::CALIBRATION_TIMEOUT]     = "timeout";
+    m[EStepperCalibrationStatus::CALIBRATION_BAD_PARAM]    = "bad parameter";
+    m[EStepperCalibrationStatus::CALIBRATION_FAIL] = "fail";
+    m[EStepperCalibrationStatus::CALIBRATION_WAITING_USER_INPUT]  = "waiting user input";
+    m[EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS]  = "in progress";
 
-            return m;
-        }
+    return m;
+}
 
-    } // model
-} //common
+}  // namespace model
+}  // namespace common
 

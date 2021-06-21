@@ -14,19 +14,19 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
-//ros
+// ros
 #include <ros/ros.h>
 
-//c++
+// c++
 #include <boost/program_options.hpp>
 #include <iostream>
 #include <string>
 #include <vector>
 
-//niryo
+// niryo
 #include "dynamixel_sdk/dynamixel_sdk.h"
 #include "dxl_debug_tools/dxl_tools.h"
 
@@ -52,14 +52,14 @@ namespace po = boost::program_options;
     #define DEFAULT_PORT ""
 #endif
 
-
-int main (int argc, char **argv)
+int main(int argc, char **argv)
 {
     ros::init(argc, argv, "dxl_debug_tools");
 
     ROS_DEBUG("Launching dxl_debug_tools");
 
-    try {
+    try
+    {
         // Get args
         po::options_description description("Options");
         description.add_options()
@@ -80,7 +80,8 @@ int main (int argc, char **argv)
         po::notify(vars);
 
         // Display usage if no args or --help
-        if (argc == 1 || vars.count("help")) {
+        if (argc == 1 || vars.count("help"))
+        {
             std::cout << description << "\n";
             return 0;
         }
@@ -95,8 +96,11 @@ int main (int argc, char **argv)
         std::cout << "Dxl ID: " << static_cast<int>(id) << "\n";
 
         // Setup Dxl communication
-        std::shared_ptr<dynamixel::PortHandler> portHandler(dynamixel::PortHandler::getPortHandler(serial_port.c_str()));
-        std::shared_ptr<dynamixel::PacketHandler> packetHandler(dynamixel::PacketHandler::getPacketHandler(PROTOCOL_VERSION));
+        std::shared_ptr<dynamixel::PortHandler> portHandler(
+                    dynamixel::PortHandler::getPortHandler(serial_port.c_str()));
+
+        std::shared_ptr<dynamixel::PacketHandler> packetHandler(
+                    dynamixel::PacketHandler::getPacketHandler(PROTOCOL_VERSION));
 
         dxl_debug_tools::DxlTools dxlTools(portHandler, packetHandler);
 
@@ -105,28 +109,32 @@ int main (int argc, char **argv)
             int dxl_comm_result = COMM_TX_FAIL;
 
             // Execute action from args
-            if (vars.count("scan")) //scan
+            if (vars.count("scan"))  // scan
             {
                 printf("--> SCAN Dxl bus\n");
                 dxlTools.broadcastPing();
             }
-            else if (vars.count("ping")) //ping
+            else if (vars.count("ping"))  // ping
             {
-                if (0 == id) {
+                if (0 == id)
+                {
                     printf("Ping: you need to give an ID! (--id)\n");
                 }
-                else {
+                else
+                {
                     printf("--> PING Motor (ID: %d)\n", id);
                     dxlTools.ping(id);
                 }
             }
-            else if (vars.count("set-register")) //set-register
+            else if (vars.count("set-register"))  // set-register
             {
                 std::vector<int> params = vars["set-register"].as<std::vector<int>>();
-                if (params.size() != 3) {
+                if (params.size() != 3)
+                {
                     printf("ERROR: set-register needs 3 arguments (reg_addr, value, size)\n");
                 }
-                else {
+                else
+                {
                     uint8_t addr = static_cast<uint8_t>(params.at(0));
                     uint32_t value = static_cast<uint32_t>(params.at(1));
                     uint8_t size = static_cast<uint8_t>(params.at(2));
@@ -142,7 +150,7 @@ int main (int argc, char **argv)
                         printf("Successfully sent register command\n");
                 }
             }
-            else if (vars.count("get-register")) // get-register
+            else if (vars.count("get-register"))  // get-register
             {
                 uint8_t addr = vars["get-register"].as<uint8_t>();
                 uint32_t value = 0;
@@ -158,7 +166,7 @@ int main (int argc, char **argv)
                 else
                     printf("Retrieved value at address %d : %d\n", addr, value);
             }
-            else //unknown command
+            else  // unknown command
             {
                 std::cout << description << "\n";
             }

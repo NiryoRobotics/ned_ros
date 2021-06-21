@@ -14,107 +14,110 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
 #include "common/model/single_motor_cmd.hpp"
+
+// c++
 #include <sstream>
+#include <string>
 
-using namespace std;
+namespace common
+{
+namespace model
+{
 
-namespace common {
-    namespace model {
+/**
+ * @brief SingleMotorCmd::SingleMotorCmd
+ */
+SingleMotorCmd::SingleMotorCmd() :
+    AbstractMotorCmd<EDxlCommandType>(EDxlCommandType::CMD_TYPE_UNKNOWN)
+{
+    reset();
+}
 
-        /**
-         * @brief SingleMotorCmd::SingleMotorCmd
-         */
-        SingleMotorCmd::SingleMotorCmd() :
-            AbstractMotorCmd<EDxlCommandType>(EDxlCommandType::CMD_TYPE_UNKNOWN)
-        {
-            reset();
-        }
+/**
+ * @brief SingleMotorCmd::SingleMotorCmd
+ * @param type
+ * @param motor_id
+ * @param param
+ */
+SingleMotorCmd::SingleMotorCmd(EDxlCommandType type,
+                               uint8_t motor_id,
+                               uint32_t param) :
+    AbstractMotorCmd<EDxlCommandType>(type),
+    _id(motor_id),
+    _param(param)
+{}
 
-        /**
-         * @brief SingleMotorCmd::SingleMotorCmd
-         * @param type
-         * @param motor_id
-         * @param param
-         */
-        SingleMotorCmd::SingleMotorCmd(EDxlCommandType type,
-                                       uint8_t motor_id,
-                                       uint32_t param) :
-            AbstractMotorCmd<EDxlCommandType>(type),
-            _id(motor_id),
-            _param(param)
-        {}
+/**
+ * @brief SingleMotorCmd::setId
+ * @param id
+ */
+void SingleMotorCmd::setId(uint8_t id)
+{
+    _id = id;
+}
 
-        /**
-         * @brief SingleMotorCmd::setId
-         * @param id
-         */
-        void SingleMotorCmd::setId(uint8_t id)
-        {
-            _id = id;
-        }
-
-        /**
-         * @brief SingleMotorCmd::setParam
-         * @param param
-         */
-        void SingleMotorCmd::setParam(uint32_t param)
-        {
-            _param = param;
-        }
+/**
+ * @brief SingleMotorCmd::setParam
+ * @param param
+ */
+void SingleMotorCmd::setParam(uint32_t param)
+{
+    _param = param;
+}
 
 
-        //***********************
-        //  AbstractMotorCmd intf
-        //***********************
+// ***********************
+//  AbstractMotorCmd intf
+// ***********************
 
-        /**
-         * @brief SingleMotorCmd::reset
-         */
-        void SingleMotorCmd::reset()
-        {
-            setType(EDxlCommandType::CMD_TYPE_UNKNOWN);
-            clear();
-        }
+/**
+ * @brief SingleMotorCmd::reset
+ */
+void SingleMotorCmd::reset()
+{
+    setType(EDxlCommandType::CMD_TYPE_UNKNOWN);
+    clear();
+}
 
-        /**
-         * @brief SingleMotorCmd::clear
-         */
-        void SingleMotorCmd::clear()
-        {
-            _id = 0;
-            _param = 0;
-        }
+/**
+ * @brief SingleMotorCmd::clear
+ */
+void SingleMotorCmd::clear()
+{
+    _id = 0;
+    _param = 0;
+}
 
-        /**
-         * @brief SingleMotorCmd::str
-         * @return
-         */
-        string SingleMotorCmd::str() const
-        {
-            ostringstream ss;
-            ss << "Single motor cmd - ";
+/**
+ * @brief SingleMotorCmd::str
+ * @return
+ */
+std::string SingleMotorCmd::str() const
+{
+    std::ostringstream ss;
+    ss << "Single motor cmd - ";
 
-            ss << DxlCommandTypeEnum(_type).toString();
+    ss << DxlCommandTypeEnum(_type).toString();
 
-            ss << ": ";
-            ss << "motor " << static_cast<int>(_id) << ": " << static_cast<int>(_param);
+    ss << ": ";
+    ss << "motor " << static_cast<int>(_id) << ": " << static_cast<int>(_param);
 
-            return ss.str();
-        }
+    return ss.str();
+}
 
-        /**
-         * @brief SingleMotorCmd::isValid
-         * @return
-         */
-        bool SingleMotorCmd::isValid() const
-        {
-            return (EDxlCommandType::CMD_TYPE_UNKNOWN != _type) &&
-                   (0 != _id);
-        }
+/**
+ * @brief SingleMotorCmd::isValid
+ * @return
+ */
+bool SingleMotorCmd::isValid() const
+{
+    return (EDxlCommandType::CMD_TYPE_UNKNOWN != _type) &&
+           (0 != _id);
+}
 
-    } // namespace model
-} // namespace common
+}  // namespace model
+}  // namespace common

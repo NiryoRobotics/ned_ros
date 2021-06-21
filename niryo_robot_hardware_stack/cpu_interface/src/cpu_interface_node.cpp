@@ -14,11 +14,10 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
 // std
-#include <thread>
 
 // ros
 #include <ros/ros.h>
@@ -42,15 +41,15 @@ void readTemperature(std::shared_ptr<cpu_interface::CpuInterfaceCore> cpu)
     }
 }
 
-int main(int argc, char **argv) 
+int main(int argc, char **argv)
 {
     ros::init(argc, argv, "cpu_interface_node");
-  
+
     ROS_DEBUG("Launching cpu_interface_node");
 
     ros::AsyncSpinner spinner(4);
     spinner.start();
-    
+
     ros::NodeHandle nh;
 
     auto cpu = std::make_shared<cpu_interface::CpuInterfaceCore>();
@@ -58,6 +57,6 @@ int main(int argc, char **argv)
     std::thread readTempThread(readTemperature, cpu);
     readTempThread.join();
     ros::waitForShutdown();
-    
+
     ROS_INFO("shutdown node");
 }

@@ -52,3 +52,12 @@ if (EXISTS ${CMAKE_CURRENT_BINARY_DIR}/doc)
     DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/doc
   )
 endif()
+
+##########################
+## Static code analysis ##
+##########################
+find_package(roslint QUIET)
+
+if(roslint_FOUND)
+    roslint_python()
+endif()

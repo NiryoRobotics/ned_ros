@@ -11,7 +11,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 #define PROTOCOL_VERSION 2.0
 
@@ -29,6 +29,8 @@
 #include "dynamixel_sdk/packet_handler.h"
 #include "dxl_debug_tools/dxl_tools.h"
 
+#include <string>
+
 #include <ros/ros.h>
 
 // Bring in gtest
@@ -37,7 +39,6 @@
 // Declare a test
 TEST(DxlDebugToolsTestSuite, testInit)
 {
- 
     int baudrate = 1000000;
     std::string serial_port = DEFAULT_PORT;
 
@@ -49,11 +50,12 @@ TEST(DxlDebugToolsTestSuite, testInit)
 
     dxl_debug_tools::DxlTools dxlTools(portHandler, packetHandler);
 
-    ASSERT_TRUE(-1 != dxlTools.setupDxlBus(baudrate));
+    ASSERT_NE(-1, dxlTools.setupDxlBus(baudrate));
 }
 
 // Run all the tests that were declared with TEST()
-int main(int argc, char **argv){
+int main(int argc, char **argv)
+{
   testing::InitGoogleTest(&argc, argv);
   ros::init(argc, argv, "dxl_tools_test");
   ros::NodeHandle nh;

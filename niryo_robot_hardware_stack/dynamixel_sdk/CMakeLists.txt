@@ -140,12 +140,7 @@ if (EXISTS ${CMAKE_CURRENT_BINARY_DIR}/doc)
   )
 endif()
 
-
 ##########################
 ## Static code analysis ##
 ##########################
-find_package(roslint QUIET)
-
-if(roslint_FOUND)
-    roslint_cpp()
-endif()
+# no static code analysis on external libs

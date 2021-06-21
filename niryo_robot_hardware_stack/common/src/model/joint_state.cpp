@@ -14,120 +14,122 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
 #include "common/model/joint_state.hpp"
+
+// C++
 #include <sstream>
+#include <string>
 
-using namespace std;
+namespace common
+{
+namespace model
+{
 
-namespace common {
-    namespace model {
+/**
+ * @brief JointState::JointState
+ */
+JointState::JointState() :
+    AbstractMotorState()
+{
+}
 
-        /**
-         * @brief JointState::JointState
-         */
-        JointState::JointState() :
-            AbstractMotorState()
-        {
-        }
+/**
+ * @brief JointState::JointState
+ * @param name
+ * @param type
+ * @param id
+ */
+JointState::JointState(std::string name, EMotorType type, uint8_t id) :
+    AbstractMotorState(id, type),
+    _name(name)
+{
+}
 
-        /**
-         * @brief JointState::JointState
-         * @param name
-         * @param type
-         * @param id
-         */
-        JointState::JointState(std::string name, EMotorType type, uint8_t id) :
-            AbstractMotorState(id, type),
-            _name(name)
-        {
-        }
+/**
+ * @brief JointState::~JointState
+ */
+JointState::~JointState()
+{
+}
 
-        /**
-         * @brief JointState::~JointState
-         */
-        JointState::~JointState()
-        {
+/**
+ * @brief JointState::operator ==
+ * @param m
+ * @return
+ */
+bool JointState::operator==(const JointState& m) const
+{
+    return((this->_type == m._type) && (this->_id == m._id));
+}
 
-        }
+/**
+ * @brief JointState::setName
+ * @param name
+ */
+void JointState::setName(std::string& name)
+{
+    _name = name;
+}
 
-        /**
-         * @brief JointState::operator ==
-         * @param m
-         * @return
-         */
-        bool JointState::operator==(const JointState& m) const
-        {
-            return((this->_type == m._type) && (this->_id == m._id));
-        }
+/**
+ * @brief JointState::setOffsetPosition
+ * @param offset_position
+ */
+void JointState::setOffsetPosition(double offset_position)
+{
+    _offset_position = offset_position;
+}
 
-        /**
-         * @brief JointState::setName
-         * @param name
-         */
-        void JointState::setName(string& name)
-        {
-            _name = name;
-        }
+// ***********************
+//  AbstractMotor intf
+// ***********************
 
-        /**
-         * @brief JointState::setOffsetPosition
-         * @param offset_position
-         */
-        void JointState::setOffsetPosition(double offset_position)
-        {
-            _offset_position = offset_position;
-        }
+/**
+ * @brief JointState::reset
+ */
+void JointState::reset()
+{
+    AbstractMotorState::reset();
+    _name.clear();
+    _need_calibration = false;
+}
 
-        //***********************
-        //  AbstractMotor intf
-        //***********************
+/**
+ * @brief common::model::JointState::isValid
+ * @return
+ */
+bool common::model::JointState::isValid() const
+{
+    return (0 != getId() && EMotorType::UNKNOWN != getType());
+}
 
-        /**
-         * @brief JointState::reset
-         */
-        void JointState::reset()
-        {
-            AbstractMotorState::reset();
-            _name.clear();
-            _need_calibration = false;
-        }
+/**
+ * @brief JointState::str
+ * @return
+ */
+std::string JointState::str() const
+{
+    std::ostringstream ss;
 
-        /**
-         * @brief common::model::JointState::isValid
-         * @return
-         */
-        bool common::model::JointState::isValid() const
-        {
-            return (0 != getId() && EMotorType::UNKNOWN != getType());
-        }
+    ss << "JointState : ";
+    ss << "\n---\n";
+    ss << "type: " << MotorTypeEnum(_type).toString() << ", ";
+    ss << "name: " << "\"" << _name << "\"" << ", ";
+    ss << "position: " << pos << ", ";
+    ss << "need calibration: " << (_need_calibration ? "true" : "false") << ", ";
+    ss << "pos(" << pos << "), ";
+    ss << "cmd(" << cmd << "), ";
+    ss << "vel(" << vel << "), ";
+    ss << "eff(" << eff << ")";
+    ss << "\n";
+    ss << AbstractMotorState::str();
 
-        /**
-         * @brief JointState::str
-         * @return
-         */
-        string JointState::str() const
-        {
-            ostringstream ss;
+    return ss.str();
+}
 
-            ss << "JointState : ";
-            ss << "\n---\n";
-            ss << "type: " << MotorTypeEnum(_type).toString() << ", ";
-            ss << "name: " << "\"" << _name << "\"" << ", ";
-            ss << "position: " << pos << ", ";
-            ss << "need calibration: " << (_need_calibration ? "true" : "false") << ", ";
-            ss << "pos(" << pos << "), ";
-            ss << "cmd(" << cmd << "), ";
-            ss << "vel(" << vel << "), ";
-            ss << "eff(" << eff << ")";
-            ss << "\n";
-            ss << AbstractMotorState::str();
-
-            return ss.str();
-        }
-
-    } // namespace model
-} // namespace common
+}  // namespace model
+}  // namespace common
 

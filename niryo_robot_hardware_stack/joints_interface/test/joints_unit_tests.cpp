@@ -11,11 +11,13 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
 // Bring in my package's API, which is what I'm testing
 #include "joints_interface/joints_interface_core.hpp"
+
+#include <vector>
 
 // Bring in gtest
 #include <gtest/gtest.h>
@@ -23,24 +25,26 @@
 // Declare a test
 TEST(JointsInterfaceTestSuite, testInitJoints)
 {
-    auto ttl_driver_core = std::make_shared<TtlDriver::TtlDriverCore>();
-    auto can_driver_core = std::make_shared<CanDriver::CanDriverCore>();
+    auto ttl_driver_core = std::make_shared<ttl_driver::TtlDriverCore>();
+    auto can_driver_core = std::make_shared<can_driver::CanDriverCore>();
 
-    JointsInterface::JointsInterfaceCore joints_core(ttl_driver_core, can_driver_core);
+    joints_interface::JointsInterfaceCore joints_core(ttl_driver_core, can_driver_core);
 
     std::vector<std::shared_ptr<common::model::JointState> > jStates = joints_core.getJointsState();
 
-    //expect list to be filled
+    // expect list to be filled
     ASSERT_FALSE(jStates.empty());
 
-    //expect valid states
-    for(auto jState : jStates) {
+    // expect valid states
+    for (auto const& jState : jStates)
+    {
         EXPECT_TRUE(jState->isValid());
     }
 }
 
 // Run all the tests that were declared with TEST()
-int main(int argc, char **argv){
+int main(int argc, char **argv)
+{
   testing::InitGoogleTest(&argc, argv);
   ros::init(argc, argv, "tester");
   ros::NodeHandle nh;

@@ -1,20 +1,20 @@
 /*
-    iobject.hpp
-    Copyright (C) 2017 Niryo
-    All rights reserved.
+iobject.hpp
+Copyright (C) 2017 Niryo
+All rights reserved.
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
 #ifndef IOBJECT_H
@@ -22,33 +22,35 @@
 
 #include <string>
 
-namespace common {
-    namespace model {
+namespace common
+{
+namespace model
+{
 
-        /**
-         * @brief The IObject class
-         */
-        class IObject
-        {
+/**
+ * @brief The IObject class
+ */
+class IObject
+{
 
-            public:
-                virtual ~IObject() = 0;
+    public:
+        virtual ~IObject() = 0;
 
-                virtual void reset() = 0;
-                virtual std::string str() const = 0;
-                virtual bool isValid() const = 0;
-        };
+        virtual void reset() = 0;
+        virtual std::string str() const = 0;
+        virtual bool isValid() const = 0;
+};
 
-        /**
-         * @brief IObject::~IObject
-         */
-        inline
-        IObject::~IObject()
-        {
+/**
+ * @brief IObject::~IObject
+ */
+inline
+IObject::~IObject()
+{
 
-        }
+}
 
-    } // namespace model
+} // namespace model
 } // namespace common
 
 #endif

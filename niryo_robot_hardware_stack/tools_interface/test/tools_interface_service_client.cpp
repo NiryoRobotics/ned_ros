@@ -14,7 +14,7 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
 #include <ros/ros.h>
@@ -52,13 +52,11 @@ TEST(TESTSuite, openTool)
     srv.request.open_speed = 600;
     srv.request.open_position = 200;
     srv.request.open_hold_torque = 400;
-    
+
     client.call(srv);
 
     EXPECT_EQ(srv.response.state, common::model::ToolState::GRIPPER_STATE_OPEN);
 }
-
-
 
 TEST(TESTSuite, CloseGripper)
 {
@@ -112,7 +110,7 @@ TEST(TESTSuite, PushAirVacuumPump)
 }
 
 
-int main(int argc, char **argv) 
+int main(int argc, char **argv)
 {
     ros::init(argc, argv, "tools_interface_service_client");
 
