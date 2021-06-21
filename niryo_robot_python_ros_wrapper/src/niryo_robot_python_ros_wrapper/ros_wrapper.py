@@ -37,6 +37,7 @@ from niryo_robot_commander.srv import JogShift, JogShiftRequest
 from niryo_robot_msgs.srv import GetNameDescriptionList, SetBool, SetInt, Trigger
 
 from niryo_robot_rpi.srv import GetDigitalIO, SetDigitalIO
+from niryo_robot_vision.srv import DebugMarkers, DebugMarkersRequest, DebugColorDetection, DebugColorDetectionRequest
 
 # Actions
 from niryo_robot_commander.msg import RobotMoveAction, RobotMoveGoal
@@ -52,7 +53,6 @@ class NiryoRosWrapperException(Exception):
 
 class NiryoRosWrapper:
 
-    # LOGS_LEVELS = {2: 'INFO', 4: 'WARNING', 8: 'ERROR', 16: 'FATAL'}
     LOGS_LEVELS = {
         rospy.INFO: 'INFO',
         rospy.WARN: 'WARNING',
@@ -1621,6 +1621,17 @@ class NiryoRosWrapper:
                 raise NiryoRosWrapperException(
                     'Timeout: could not video stream message (/niryo_robot_vision/camera_intrinsics topic)')
         return self.__camera_intrinsics_message.K, self.__camera_intrinsics_message.D
+
+    def get_debug_markers(self):
+        req = DebugMarkersRequest()
+        result = self.__call_service('/niryo_robot_vision/debug_markers', DebugMarkers, req)
+        return result
+
+    def get_debug_colors(self, color):
+        req = DebugColorDetectionRequest()
+        req.color = color
+        result = self.__call_service('/niryo_robot_vision/debug_colors', DebugColorDetection, req)
+        return result
 
     # - Workspace
     def save_workspace_from_poses(self, name, list_poses_raw):
