@@ -29,7 +29,7 @@ from niryo_robot_msgs.srv import SetInt
 #
 
 """
-todo : 
+todo :
 
 - service to get latest ros log nicely formated
 - detect when ros log is too big (> 1GB) -> alert message
@@ -119,8 +119,8 @@ class RosLogManager:
         # After writing, read new value from file
         self.purge_log_on_startup = self.should_purge_log_on_startup()
 
-    # 
-    # ----- ROS Interface below ----- 
+    #
+    # ----- ROS Interface below -----
     #
 
     @staticmethod

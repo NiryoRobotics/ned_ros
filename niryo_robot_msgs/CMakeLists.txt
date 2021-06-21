@@ -1,3 +1,5 @@
+message("\n## Reading niryo_robot_msgs/CMakeLists.txt...")
+
 cmake_minimum_required(VERSION 3.0.2)
 project(niryo_robot_msgs)
 
@@ -48,3 +50,23 @@ catkin_package(
 include_directories(
   ${catkin_INCLUDE_DIRS}
 )
+
+#############
+## Install ##
+#############
+
+# no scripts to install
+
+
+if (EXISTS ${CMAKE_CURRENT_BINARY_DIR}/doc)
+  install(
+    DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc/
+    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/doc
+  )
+endif()
+
+##########################
+## Static code analysis ##
+##########################
+
+# no scripts to analyse

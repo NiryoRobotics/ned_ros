@@ -93,7 +93,7 @@ class RobotCommanderNode:
 
         self.__linear_trajectory_on = False
 
-        # subscribe to the state of the linear_trajectory, if True, 
+        # subscribe to the state of the linear_trajectory, if True,
         # the arm trajectory should be linear (if possible).
         rospy.Subscriber('~linear_trajectory/state', Bool,
                          self.__callback_linear_trajectory_changed)
@@ -399,7 +399,6 @@ class RobotCommanderNode:
 
     def __cancel_command(self):
         self.__arm_commander.stop_current_plan()  # Send a cancel signal to Moveit interface
-        
 
     @staticmethod
     def __set_learning_mode(set_bool):

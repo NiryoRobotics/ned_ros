@@ -14,90 +14,92 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
 #include "common/model/conveyor_state.hpp"
+
 #include <sstream>
+#include <string>
 
-using namespace std;
+namespace common
+{
+namespace model
+{
 
-namespace common {
-    namespace model {
+/**
+ * @brief ConveyorState::ConveyorState
+ * @param id
+ */
+ConveyorState::ConveyorState(uint8_t id)
+    : StepperMotorState(id, true),
+      _state(false),
+      _speed(0)
+{}
 
-        /**
-         * @brief ConveyorState::ConveyorState
-         * @param id
-         */
-        ConveyorState::ConveyorState(uint8_t id)
-            : StepperMotorState(id, true),
-              _state(false),
-              _speed(0)
-        {}
+/**
+ * @brief ConveyorState::~ConveyorState
+ */
+ConveyorState::~ConveyorState()
+{}
 
-        /**
-         * @brief ConveyorState::~ConveyorState
-         */
-        ConveyorState::~ConveyorState()
-        {}
+/**
+ * @brief ConveyorState::reset
+ */
+void ConveyorState::reset()
+{
+    StepperMotorState::reset();
+    _direction = -1;
+    _speed = 0;
+    _state = false;
+}
 
-        /**
-         * @brief ConveyorState::reset
-         */
-        void ConveyorState::reset()
-        {
-            StepperMotorState::reset();
-            _direction = -1;
-            _speed = 0;
-            _state = false;
-        }
+/**
+ * @brief ConveyorState::setState
+ * @param state
+ */
+void ConveyorState::setState(bool state)
+{
+    _state = state;
+}
 
-        /**
-         * @brief ConveyorState::setState
-         * @param state
-         */
-        void ConveyorState::setState(bool state)
-        {
-            _state = state;
-        }
+/**
+ * @brief ConveyorState::setSpeed
+ * @param speed
+ */
+void ConveyorState::setSpeed(int16_t speed)
+{
+    _speed = speed;
+}
 
-        /**
-         * @brief ConveyorState::setSpeed
-         * @param speed
-         */
-        void ConveyorState::setSpeed(int16_t speed)
-        {
-            _speed = speed;
-        }
+/**
+ * @brief ConveyorState::operator ==
+ * @param m
+ * @return
+ */
+bool ConveyorState::operator==(const ConveyorState& m)
+{
+    return (this->_id == m._id);
+}
 
-        /**
-         * @brief ConveyorState::operator ==
-         * @param m
-         * @return
-         */
-        bool ConveyorState::operator==(const ConveyorState& m)
-        {
-            return (this->_id == m._id);
-        }
+/**
+ * @brief ConveyorState::str
+ * @return
+ */
+std::string ConveyorState::str() const
+{
+    std::ostringstream ss;
 
-        /**
-         * @brief ConveyorState::str
-         * @return
-         */
-        string ConveyorState::str() const
-        {
-            ostringstream ss;
+    ss << "DxlMotorState : ";
+    ss << "\n---\n";
+    ss << "state: " << (_state ? "true" : "false");
+    ss << "speed: " << static_cast<int>(_speed);
+    ss << "direction: " << static_cast<int>(_direction);
+    ss << "\n";
+    ss << StepperMotorState::str();
 
-            ss << "DxlMotorState : ";
-            ss << "\n---\n";
-            ss << "state: " << (_state ? "true" : "false");
-            ss << "speed: " << static_cast<int>(_speed);
-            ss << "direction: " << static_cast<int>(_direction);
-            ss << "\n";
-            ss << StepperMotorState::str();
+    return ss.str();
+}
 
-            return ss.str();
-        }
-
-    } // namespace model
-} // namespace common
+}  // namespace model
+}  // namespace common

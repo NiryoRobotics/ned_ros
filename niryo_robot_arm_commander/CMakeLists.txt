@@ -1,5 +1,9 @@
+message("\n## Reading niryo_robot_arm_commander/CMakeLists.txt...")
+
 cmake_minimum_required(VERSION 3.0.2)
 project(niryo_robot_arm_commander)
+
+option(BUILD_DOCS "Build documentation" OFF)
 
 find_package(catkin REQUIRED COMPONENTS
   actionlib_msgs
@@ -29,6 +33,7 @@ add_action_files(
   RobotMove.action
 )
 
+# enable python module support
 catkin_python_setup()
 
 generate_messages(
@@ -49,3 +54,53 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
+#############
+##   Doc   ##
+#############
+
+
+#############
+## Testing ##
+#############
+
+# no testings : external lib
+
+#############
+## Install ##
+#############
+
+catkin_install_python(PROGRAMS 
+    scripts/arm_commander.py
+    scripts/ArmParametersValidator.py
+    scripts/jog_controller.py
+    scripts/motor_debug.py
+    scripts/robot_commander_node.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+
+# Mark other files for installation
+
+install(
+  DIRECTORY launch/
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
+)
+
+install(
+  DIRECTORY config/
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/config
+)
+
+if (EXISTS ${CMAKE_CURRENT_BINARY_DIR}/doc)
+  install(
+    DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc/
+    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/doc
+  )
+endif()
+
+##########################
+## Static code analysis ##
+##########################
+find_package(roslint QUIET)
+
+if(roslint_FOUND)
+    roslint_python()
+endif()

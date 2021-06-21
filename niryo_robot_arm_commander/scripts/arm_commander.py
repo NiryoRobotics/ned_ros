@@ -180,11 +180,10 @@ class ArmCommander:
             if abs(error) > tolerance:
                     self.__collision_detected = True
                     self.__set_learning_mode(True)
-                    abort_str = "Command has been aborted due to a collision or " \
-                            "a motor not able to follow the given trajectory"
+                    abort_str = "Command has been aborted due to a collision or "
+                    "a motor not able to follow the given trajectory"
                     rospy.logwarn(abort_str)
                     return CommandStatus.CONTROLLER_PROBLEMS, abort_str
-
 
     def __callback_goal_result(self, msg):
         """
@@ -360,8 +359,8 @@ class ArmCommander:
         # Check the fraction value : if 1.0, the trajectory can be linear;
         # else, the trajectory followed won't be linear.
         if fraction == 1.0:
-            # delete the very first joints position which is the starting position (current), 
-            # to avoid an error related to increasing time 
+            # delete the very first joints position which is the starting position (current),
+            # to avoid an error related to increasing time
             del trajectory_plan.joint_trajectory.points[0]
             return trajectory_plan
         elif fraction < 1.0:
@@ -394,7 +393,8 @@ class ArmCommander:
             elif self.__current_goal_result == GoalStatus.PREEMPTED:
                 if self.__collision_detected:
                     self.__collision_detected = False
-                    return CommandStatus.STOPPED, "Command has been aborted due to a collision or a motor not able to follow the given trajectory"
+                    return CommandStatus.STOPPED, "Command has been aborted due to a collision "\
+                                                  "or a motor not able to follow the given trajectory"
                 else:
                     return CommandStatus.STOPPED, "Command has been successfully stopped"
             elif self.__current_goal_result == GoalStatus.ABORTED:
@@ -532,7 +532,7 @@ class ArmCommander:
     def set_shift_linear_pose_target(self, arm_cmd):
         """
         Set MoveIt target to a shifted target from actual position
-        Then execute the cartesian trajectory to the target 
+        Then execute the cartesian trajectory to the target
         :param arm_cmd: ArmMoveCommand message containing target values
         :type : ArmMoveCommand
         :return: status, message
@@ -548,10 +548,10 @@ class ArmCommander:
         # Get list [x, y, z, roll, pitch, yaw] from pose stamped
         pose_list = self.pose_to_list(actual_pose)
 
-        # Apply shift on pose 
+        # Apply shift on pose
         pose_list[axis_number] += shift_value
 
-        # Get pose stamped from target pose 
+        # Get pose stamped from target pose
         msg_pose = self.list_to_pose(pose_list)
 
         # Check if command is really close to the current position
@@ -578,7 +578,7 @@ class ArmCommander:
 
         current_pose = self.__arm.get_current_pose().pose
 
-        # If the goal is really close to the current pose, 
+        # If the goal is really close to the current pose,
         # avoid useless calculations and return immediately
         if self.poses_too_close(msg_pose, current_pose):
             return CommandStatus.SUCCESS, "Command was already satisfied"
@@ -788,13 +788,14 @@ class ArmCommander:
             if not response.valid:
                 if len(response.contacts) > 0:
                     rospy.logwarn('Arm commander - Joints target unreachable because of collision between %s and %s',
-                                response.contacts[0].contact_body_1, response.contacts[0].contact_body_2)
+                                  response.contacts[0].contact_body_1, response.contacts[0].contact_body_2)
                     raise ArmCommanderException(CommandStatus.INVALID_PARAMETERS,
-                                                "Target joints would lead to a collision between links {} and {} ".format(
-                                                    response.contacts[0].contact_body_1,
-                                                    response.contacts[0].contact_body_2))
-                else: # didn't succeed to get the contacts on the real robot
-                    rospy.logwarn('Arm commander - Joints target unreachable because of collision between two parts of Ned')
+                                                "Target joints would lead to a collision between links {} and {} "
+                                                .format(response.contacts[0].contact_body_1,
+                                                        response.contacts[0].contact_body_2))
+                else:  # didn't succeed to get the contacts on the real robot
+                    rospy.logwarn('Arm commander - Joints target unreachable '
+                                  'because of collision between two parts of Ned')
                     raise ArmCommanderException(CommandStatus.INVALID_PARAMETERS,
                                                 "Target joints would lead to a collision between two parts of Ned")
 

@@ -65,14 +65,14 @@ include_directories(
     ${Boost_INCLUDE_DIRS}
 )
 
-add_library(${PROJECT_NAME}_lib
+add_library(${PROJECT_NAME}_core
     src/dxl_tools.cpp)
 
 ## Declare libs and execs
 add_executable(${PROJECT_NAME}
     src/dxl_debug.cpp)
 
-target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_lib)
+target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_core)
 
 # wiringPi should be installed only on a Raspberry Pi board
 if(CMAKE_CROSSCOMPILING)
@@ -109,9 +109,10 @@ endif()
 ##   Doc   ##
 #############
 
-if (BUILD_DOCS)
+find_program(rosdoc_lite_FOUND rosdoc_lite)
+if(BUILD_DOCS AND rosdoc_lite_FOUND)
     add_custom_target (${PROJECT_NAME}_doc ALL
-        rosdoc_lite -o ${CATKIN_DEVEL_PREFIX}/doc/${PROJECT_NAME} ${CMAKE_CURRENT_LIST_DIR}
+        rosdoc_lite -o ${CMAKE_CURRENT_BINARY_DIR}/doc ${CMAKE_CURRENT_LIST_DIR}
     )
 
 endif()
@@ -129,7 +130,7 @@ if(CATKIN_ENABLE_TESTING)
     if(TARGET ${PROJECT_NAME}_unit_tests)
       target_link_libraries(${PROJECT_NAME}_unit_tests
           ${catkin_LIBRARIES}
-          ${PROJECT_NAME}_lib
+          ${PROJECT_NAME}_core
       )
     endif()
   endif(BUILD_UNIT_TESTS)
@@ -140,8 +141,10 @@ endif(CATKIN_ENABLE_TESTING)
 ## Install ##
 #############
 
-## nothing for now
-
+catkin_install_python(PROGRAMS 
+    scripts/send_custom_dxl_value.py
+    scripts/read_custom_dxl_value.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 # Mark other files for installation
 install(
@@ -149,10 +152,12 @@ install(
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 )
 
-install(
-  DIRECTORY doc/
-  DESTINATION ${CATKIN_DEVEL_PREFIX}/doc/${PROJECT_NAME}
-)
+if (EXISTS ${CMAKE_CURRENT_BINARY_DIR}/doc/)
+  install(
+    DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc/
+    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/doc
+  )
+endif()
 
 ##########################
 ## Static code analysis ##

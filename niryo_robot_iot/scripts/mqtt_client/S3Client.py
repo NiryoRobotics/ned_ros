@@ -41,8 +41,11 @@ class S3Client:
     def download_program(self, file_language, file_name):
         try:
             self.__client.download_file(
-                Key='{}/{}/{}'.format(self.__aws_programs_location, self.__language_to_str_map[file_language], file_name),
-                Filename='{}/{}/{}'.format(self.__robot_programs_location, self.__language_to_str_map[file_language],
+                Key='{}/{}/{}'.format(self.__aws_programs_location,
+                                      self.__language_to_str_map[file_language],
+                                      file_name),
+                Filename='{}/{}/{}'.format(self.__robot_programs_location,
+                                           self.__language_to_str_map[file_language],
                                            file_name)
             )
         except KeyError:

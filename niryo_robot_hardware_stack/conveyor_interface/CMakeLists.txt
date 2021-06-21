@@ -114,11 +114,11 @@ target_link_libraries(${PROJECT_NAME}_node
 ##   Doc   ##
 #############
 
-if (BUILD_DOCS)
-    add_custom_target (${PROJECT_NAME}_doc ALL
-        rosdoc_lite -o ${CATKIN_DEVEL_PREFIX}/doc/${PROJECT_NAME} ${CMAKE_CURRENT_LIST_DIR}
-    )
-
+if (EXISTS ${CMAKE_CURRENT_BINARY_DIR}/doc)
+  install(
+    DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc/
+    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/doc
+  )
 endif()
 
 #############
@@ -159,10 +159,12 @@ install(
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 )
 
-install(
-  DIRECTORY doc/
-  DESTINATION ${CATKIN_DEVEL_PREFIX}/doc/${PROJECT_NAME}
-)
+if (EXISTS ${CMAKE_CURRENT_BINARY_DIR}/doc/)
+  install(
+    DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc/
+    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/doc
+  )
+endif()
 
 install(
   DIRECTORY launch/

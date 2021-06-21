@@ -23,7 +23,7 @@ from niryo_robot_msgs.srv import Trigger
  - Each address contains a 16 bits value
  - READ/WRITE registers
 
- --> Used to give commands to the robot 
+ --> Used to give commands to the robot
  ( ! the stored values correspond to the last given command,
  not the current robot state !)
 """
@@ -63,7 +63,7 @@ HR_CLOSE_GRIPPER = 511
 HR_PULL_AIR_VACUUM_PUMP = 512
 HR_PUSH_AIR_VACUUM_PUMP = 513
 
-# conveyor commands 
+# conveyor commands
 HR_PING_AND_SET_CONVEYOR = 520
 HR_REMOVE_CONVEYOR_WITH_ID = 521
 HR_CONTROL_CONVEYOR = 522
@@ -84,7 +84,7 @@ def handle_negative_hr(val):
 class HoldingRegisterDataBlock(DataBlock):
 
     def __init__(self):
-        
+
         super(HoldingRegisterDataBlock, self).__init__()
         self.execution_thread = threading.Thread()
         self.is_action_client_running = False
@@ -279,15 +279,16 @@ class HoldingRegisterDataBlock(DataBlock):
     def start_execution_thread_arm(self, goal):
         if not self.execution_thread.is_alive():
             self.execution_thread = threading.Thread(target=self.execute_action,
-                                                     args=['niryo_robot_arm_commander/robot_action', RobotMoveAction, goal]) 
+                                                     args=['niryo_robot_arm_commander/robot_action',
+                                                           RobotMoveAction, goal])
             self.execution_thread.start()
 
     def start_execution_thread_tool(self, goal):
         if not self.execution_thread.is_alive():
             self.execution_thread = threading.Thread(target=self.execute_action,
-                                                     args=['niryo_robot_tools_commander/action_server', ToolAction, goal]) 
+                                                     args=['niryo_robot_tools_commander/action_server',
+                                                           ToolAction, goal])
             self.execution_thread.start()
-
 
     def execute_action(self, action_name, action_msg_type, goal):
         self.setValuesOffset(HR_IS_EXECUTING_CMD, [1])

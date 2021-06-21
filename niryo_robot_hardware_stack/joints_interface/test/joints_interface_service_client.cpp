@@ -14,7 +14,7 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
 #include <ros/ros.h>
@@ -33,7 +33,7 @@ TEST(TESTSuite, calibrateMotor)
     EXPECT_TRUE(exists);
 
     niryo_robot_msgs::SetInt srv;
-    srv.request.value = 1; //AUTO_CALIBRATION;
+    srv.request.value = 1;  // AUTO_CALIBRATION;
     client.call(srv);
 
     EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);

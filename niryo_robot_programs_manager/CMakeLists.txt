@@ -1,3 +1,5 @@
+message("\n## Reading niryo_robot_programs_manager/CMakeLists.txt...")
+
 cmake_minimum_required(VERSION 3.0.2)
 project(niryo_robot_programs_manager)
 
@@ -23,6 +25,7 @@ add_service_files(
   SetProgramAutorun.srv
 )
 
+# enable python module support
 catkin_python_setup()
 
 generate_messages(
@@ -50,4 +53,40 @@ if (${ARCHITECTURE} MATCHES "^(arm.*|aarch64.*|arm64.*)$")
   add_rostest(test/rpi_programs_manager.test)
 else()
   add_rostest(test/simulation_programs_manager.test)
+endif()
+
+
+#############
+## Install ##
+#############
+
+catkin_install_python(PROGRAMS 
+    scripts/programs_manager_node.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+
+# Mark other files for installation
+install(
+  DIRECTORY launch/
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
+)
+
+install(
+  DIRECTORY config/
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/config
+)
+
+if (EXISTS ${CMAKE_CURRENT_BINARY_DIR}/doc)
+  install(
+    DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc/
+    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/doc
+  )
+endif()
+
+##########################
+## Static code analysis ##
+##########################
+find_package(roslint QUIET)
+
+if(roslint_FOUND)
+    roslint_python()
 endif()

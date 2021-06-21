@@ -115,7 +115,7 @@ class NiryoRosWrapper:
         # Tool action
         self.__tool_action_server_name = '/niryo_robot_tools_commander/action_server'
         self.__tool_action_server_client = actionlib.SimpleActionClient(self.__tool_action_server_name,
-                                                                         ToolAction)
+                                                                        ToolAction)
 
     def __del__(self):
         del self
@@ -243,7 +243,6 @@ class NiryoRosWrapper:
         response = self.__robot_action_server_client.get_result()
 
         return goal_state, response
-
 
     # test pour separer tool package de arm package
     def __execute_tool_action(self, goal):
@@ -461,15 +460,15 @@ class NiryoRosWrapper:
 
         :param j1:
         :type j1: float
-        :param j2: 
+        :param j2:
         :type j2: float
-        :param j3: 
+        :param j3:
         :type j3: float
-        :param j4: 
+        :param j4:
         :type j4: float
-        :param j5: 
+        :param j5:
         :type j5: float
-        :param j6: 
+        :param j6:
         :type j6: float
         :return: status, message
         :rtype: (int, str)
@@ -815,7 +814,7 @@ class NiryoRosWrapper:
         - going down until height = z
         - releasing the object with tool
         - going back over the place
-        
+
         :param x:
         :type x: float
         :param y:
@@ -843,10 +842,10 @@ class NiryoRosWrapper:
         Execute a pick and place. If an error happens during the movement, error will be raised.
         -> Args param is for development purposes
 
-        :param pick_pose: 
-        :type pick_pose: list[float] 
-        :param place_pose: 
-        :type place_pose: list[float] 
+        :param pick_pose:
+        :type pick_pose: list[float]
+        :param place_pose:
+        :type place_pose: list[float]
         :param dist_smoothing: Distance from waypoints before smoothing trajectory
         :type dist_smoothing: float
         :return: status, message
@@ -1144,7 +1143,7 @@ class NiryoRosWrapper:
         goal = ToolActionGoal()
         goal.goal.cmd.tool_id = self.get_current_tool_id()
         goal.goal.cmd.cmd_type = command_int
-        if command_int == ToolCommand.OPEN_GRIPPER :
+        if command_int == ToolCommand.OPEN_GRIPPER:
             goal.goal.cmd.gripper_open_speed = speed
         else:
             goal.goal.cmd.gripper_close_speed = speed
@@ -1173,7 +1172,7 @@ class NiryoRosWrapper:
         goal = ToolActionGoal()
         goal.goal.cmd.tool_id = ToolID.VACUUM_PUMP_1
         goal.goal.cmd.cmd_type = command_int
-        
+
         return self.__execute_tool_action(goal.goal)
 
     # - Electromagnet

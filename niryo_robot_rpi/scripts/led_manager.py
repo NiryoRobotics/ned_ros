@@ -73,7 +73,7 @@ class LEDManager:
                                                     SetInt, self.__callback_set_led_state)
 
         self.__set_led_custom_blinker_server = rospy.Service('/niryo_robot_rpi/set_led_custom_blinker',
-                                LedBlinker, self.__callback_set_led_custom_blinker)
+                                                             LedBlinker, self.__callback_set_led_custom_blinker)
 
         # Subscribe to hotspot and hardware status. Those values will override standard states
         self.hotspot_state_subscriber = rospy.Subscriber('/niryo_robot/wifi/hotspot',

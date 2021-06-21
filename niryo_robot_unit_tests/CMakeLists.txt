@@ -1,3 +1,5 @@
+message("\n## Reading niryo_robot_unit_tests/CMakeLists.txt...")
+
 cmake_minimum_required(VERSION 3.0.2)
 project(niryo_robot_unit_tests)
 
@@ -11,3 +13,12 @@ catkin_package()
 include_directories(
   ${catkin_INCLUDE_DIRS}
 )
+
+##########################
+## Static code analysis ##
+##########################
+find_package(roslint QUIET)
+
+if(roslint_FOUND)
+    roslint_python()
+endif()

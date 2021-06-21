@@ -14,57 +14,60 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
 #include "common/model/dxl_command_type_enum.hpp"
 
-using namespace std;
+#include <map>
+#include <string>
 
-namespace common {
-    namespace model {
+namespace common
+{
+namespace model
+{
 
-        /**
-         * @brief DxlCommandTypeEnum::DxlCommandTypeEnum
-         * @param e
-         */
-        DxlCommandTypeEnum::DxlCommandTypeEnum(EDxlCommandType e):
-            AbstractEnum<DxlCommandTypeEnum, EDxlCommandType>(e)
-        {}
+/**
+ * @brief DxlCommandTypeEnum::DxlCommandTypeEnum
+ * @param e
+ */
+DxlCommandTypeEnum::DxlCommandTypeEnum(EDxlCommandType e):
+    AbstractEnum<DxlCommandTypeEnum, EDxlCommandType>(e)
+{}
 
-        /**
-         * @brief DxlCommandTypeEnum::DxlCommandTypeEnum
-         * @param str
-         */
-        DxlCommandTypeEnum::DxlCommandTypeEnum(const char* const str):
-            AbstractEnum<DxlCommandTypeEnum, EDxlCommandType>(str)
-        {}
+/**
+ * @brief DxlCommandTypeEnum::DxlCommandTypeEnum
+ * @param str
+ */
+DxlCommandTypeEnum::DxlCommandTypeEnum(const char* const str):
+    AbstractEnum<DxlCommandTypeEnum, EDxlCommandType>(str)
+{}
 
-        /**
-         * @brief DxlCommandTypeEnum::initialize
-         * @return
-         */
-        map<EDxlCommandType, string>
-        DxlCommandTypeEnum::initialize()
-        {
-            map<EDxlCommandType, string> m;
+/**
+ * @brief DxlCommandTypeEnum::initialize
+ * @return
+ */
+std::map<EDxlCommandType, std::string>
+DxlCommandTypeEnum::initialize()
+{
+    std::map<EDxlCommandType, std::string> m;
 
-            m[EDxlCommandType::CMD_TYPE_POSITION] = "position";
-            m[EDxlCommandType::CMD_TYPE_VELOCITY]    = "velocity";
-            m[EDxlCommandType::CMD_TYPE_EFFORT]     = "effort";
-            m[EDxlCommandType::CMD_TYPE_TORQUE]    = "torque";
-            m[EDxlCommandType::CMD_TYPE_PING] = "ping";
-            m[EDxlCommandType::CMD_TYPE_LEARNING_MODE]  = "learning mode";
-            m[EDxlCommandType::CMD_TYPE_P_GAIN] = "P Gain";
-            m[EDxlCommandType::CMD_TYPE_I_GAIN] = "I Gain";
-            m[EDxlCommandType::CMD_TYPE_D_GAIN] = "D Gain";
-            m[EDxlCommandType::CMD_TYPE_FF1_GAIN] = "FF1 Gain";
-            m[EDxlCommandType::CMD_TYPE_FF2_GAIN] = "FF2 Gain";
-            m[EDxlCommandType::CMD_TYPE_UNKNOWN]  = "unknown type";
+    m[EDxlCommandType::CMD_TYPE_POSITION] = "position";
+    m[EDxlCommandType::CMD_TYPE_VELOCITY]    = "velocity";
+    m[EDxlCommandType::CMD_TYPE_EFFORT]     = "effort";
+    m[EDxlCommandType::CMD_TYPE_TORQUE]    = "torque";
+    m[EDxlCommandType::CMD_TYPE_PING] = "ping";
+    m[EDxlCommandType::CMD_TYPE_LEARNING_MODE]  = "learning mode";
+    m[EDxlCommandType::CMD_TYPE_P_GAIN] = "P Gain";
+    m[EDxlCommandType::CMD_TYPE_I_GAIN] = "I Gain";
+    m[EDxlCommandType::CMD_TYPE_D_GAIN] = "D Gain";
+    m[EDxlCommandType::CMD_TYPE_FF1_GAIN] = "FF1 Gain";
+    m[EDxlCommandType::CMD_TYPE_FF2_GAIN] = "FF2 Gain";
+    m[EDxlCommandType::CMD_TYPE_UNKNOWN]  = "unknown type";
 
-            return m;
-        }
+    return m;
+}
 
-    } // model
-} //common
+}  // namespace model
+}  // namespace common
 

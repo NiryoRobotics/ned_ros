@@ -14,7 +14,7 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
 // ros
@@ -24,23 +24,23 @@
 #include "conveyor_interface/conveyor_interface_core.hpp"
 #include "can_driver/can_driver_core.hpp"
 
-int main(int argc, char **argv) 
+int main(int argc, char **argv)
 {
     ros::init(argc, argv, "conveyor_interface_node");
-  
+
     ROS_DEBUG("Launching conveyor_interface_node");
 
     ros::AsyncSpinner spinner(4);
     spinner.start();
-    
+
     ros::NodeHandle nh;
-   
+
     auto can_driver = std::make_shared<can_driver::CanDriverCore>();
     ros::Duration(1).sleep();
 
     auto conveyor_interface = std::make_shared<conveyor_interface::ConveyorInterfaceCore>(can_driver);
     ros::Duration(1).sleep();
-    
+
     ros::spin();
 
     return 0;
