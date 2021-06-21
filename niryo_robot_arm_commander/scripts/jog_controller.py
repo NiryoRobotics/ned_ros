@@ -15,6 +15,9 @@ import math
 from niryo_robot_arm_commander.command_enums import ArmCommanderException
 import moveit_commander
 
+# Quaternion 
+from tf.transformations import *
+
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus
 
@@ -319,14 +322,17 @@ class JogController:
         self._last_robot_state_published = self._robot_state
 
     def _get_new_joints_w_ik(self, shift_command):
+        quat_jog = quaternion_from_euler(shift_command[3], shift_command[4], shift_command[5])
+        quat_target = quaternion_multiply(quat_jog,  [self._last_robot_state_published.orientation.x,
+                                          self._last_robot_state_published.orientation.y,
+                                          self._last_robot_state_published.orientation.z,
+                                          self._last_robot_state_published.orientation.w])
+
         self._new_robot_state = RobotState()
         self._new_robot_state.position.x = self._last_robot_state_published.position.x + shift_command[0]
         self._new_robot_state.position.y = self._last_robot_state_published.position.y + shift_command[1]
         self._new_robot_state.position.z = self._last_robot_state_published.position.z + shift_command[2]
-        self._new_robot_state.rpy.roll = self._last_robot_state_published.rpy.roll + shift_command[3]
-        self._new_robot_state.rpy.pitch = self._last_robot_state_published.rpy.pitch + shift_command[4]
-        self._new_robot_state.rpy.yaw = self._last_robot_state_published.rpy.yaw + shift_command[5]
-        self._new_robot_state.orientation = Quaternion()
+        self._new_robot_state.orientation = Quaternion(*quat_target)
 
         self.__validate_params_pose(self._new_robot_state)
 
