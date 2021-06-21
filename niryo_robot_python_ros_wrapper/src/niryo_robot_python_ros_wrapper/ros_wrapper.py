@@ -584,6 +584,16 @@ class NiryoRosWrapper:
         """
         return self.__move_pose_with_cmd(MoveCommandType.LINEAR_POSE, x, y, z, roll, pitch, yaw)
 
+    def stop_move(self):
+        """
+        Stop the robot movement
+
+        :return: list of joints value
+        :rtype: list[float]
+        """
+        result = self.__call_service('/niryo_robot_commander/stop_command', Trigger)
+        return self.__classic_return_w_check(result)
+
     def set_jog_use_state(self, state):
         """
         Turn jog controller On or Off
@@ -746,15 +756,20 @@ class NiryoRosWrapper:
                                      ManagePose, req)
         return self.__classic_return_w_check(result)
 
-    def get_saved_pose_list(self):
+    def get_saved_pose_list(self, with_desc=False):
         """
         Ask the pose manager service which positions are available
 
+        :param with_desc: If it returns the poses descriptions
+        :type with_desc: bool
         :return: list of positions name
         :rtype: list[str]
         """
         result = self.__call_service('/niryo_robot_poses_handlers/get_pose_list',
                                      GetNameDescriptionList)
+        if with_desc:
+            return result.name_list, result.description_list
+
         return result.name_list
 
     # - Pick/Place
@@ -1293,6 +1308,60 @@ class NiryoRosWrapper:
                 raise NiryoRosWrapperException(
                     'Timeout: could not get digital io state (/niryo_robot_rpi/digital_io_state topic)')
         return self.__digital_io_state
+
+    def get_axis_limits(self):
+        """
+        Return the joints and positions min and max values
+
+        :return: An object containing all the values
+        :rtype: dict
+        """
+        path_pattern = '/niryo_robot/robot_command_validation/{}/{}/{}'
+        axis_limits = {
+            'joint_limits': {
+                'joint_1': None,
+                'joint_2': None,
+                'joint_3': None,
+                'joint_4': None,
+                'joint_5': None,
+                'joint_6': None,
+            },
+            'position_limits': {
+                'x': None,
+                'y': None,
+                'z': None,
+            },
+            'rpy_limits': {
+                'roll': None,
+                'pitch': None,
+                'yaw': None,
+            }
+        }
+
+        for axis_group in axis_limits:
+            for axis in axis_limits[axis_group]:
+                try:
+                    limits = {
+                        'min': rospy.get_param(path_pattern.format(axis_group, axis, 'min')),
+                        'max': rospy.get_param(path_pattern.format(axis_group, axis, 'max')),
+                    }
+                except KeyError as e:
+                    return False, str(e)
+
+                axis_limits[axis_group][axis] = limits
+        return True, axis_limits
+
+    def reboot_motors(self):
+        """
+        Reboot the robots motors
+
+        :raises NiryoRosWrapperException:
+        :return: status, message
+        :rtype: (int, str)
+        """
+        result = self.__call_service('/niryo_robot_hardware_interface/reboot_motors', Trigger)
+        return self.__classic_return_w_check(result)
+
 
     # - Conveyor
 
