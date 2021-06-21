@@ -13,3 +13,12 @@ catkin_package()
 include_directories(
   ${catkin_INCLUDE_DIRS}
 )
+
+##########################
+## Static code analysis ##
+##########################
+find_package(roslint QUIET)
+
+if(roslint_FOUND)
+    roslint_python()
+endif()

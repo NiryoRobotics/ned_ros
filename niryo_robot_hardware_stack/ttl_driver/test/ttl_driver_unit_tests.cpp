@@ -11,7 +11,7 @@
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
 // Bring in my package's API, which is what I'm testing
@@ -30,18 +30,19 @@ TEST(TtlDriverTestSuite, testInitDriver)
 }
 
 // Run all the tests that were declared with TEST()
-int main(int argc, char **argv){
+int main(int argc, char **argv)
+{
   testing::InitGoogleTest(&argc, argv);
   ros::init(argc, argv, "ttl_driver_unit_tests");
 
   ros::NodeHandle nh;
 
-  //set log level as Debug.
+  // set log level as Debug.
   // For tests launched using catkin_make run_tests, the logs are located in files only
   // see build/test_results/ttl_driver/rostest-test_ttl_driver_unit_tests.xml
   // log file is of the form .ros/log/aac4b920-c76b-11eb-942e-00e04c680780/ttl_driver_unit_tests-1*.log
 
-  if( ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug) )
+  if ( ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug) )
      ros::console::notifyLoggerLevelsChanged();
 
   return RUN_ALL_TESTS();

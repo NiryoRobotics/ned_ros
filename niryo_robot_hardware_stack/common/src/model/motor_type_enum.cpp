@@ -14,51 +14,53 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
 #include "common/model/motor_type_enum.hpp"
+#include <map>
+#include <string>
 
-using namespace std;
+namespace common
+{
+namespace model
+{
 
-namespace common {
-    namespace model {
+/**
+ * @brief MotorTypeEnum::MotorTypeEnum
+ * @param e
+ */
+MotorTypeEnum::MotorTypeEnum(EMotorType e):
+    AbstractEnum<MotorTypeEnum, EMotorType>(e)
+{}
 
-        /**
-         * @brief MotorTypeEnum::MotorTypeEnum
-         * @param e
-         */
-        MotorTypeEnum::MotorTypeEnum(EMotorType e):
-            AbstractEnum<MotorTypeEnum, EMotorType>(e)
-        {}
+/**
+ * @brief MotorTypeEnum::MotorTypeEnum
+ * @param str
+ */
+MotorTypeEnum::MotorTypeEnum(const char* const str):
+    AbstractEnum<MotorTypeEnum, EMotorType>(str)
+{}
 
-        /**
-         * @brief MotorTypeEnum::MotorTypeEnum
-         * @param str
-         */
-        MotorTypeEnum::MotorTypeEnum(const char* const str):
-            AbstractEnum<MotorTypeEnum, EMotorType>(str)
-        {}
+/**
+ * @brief MotorTypeEnum::initialize
+ * @return
+ */
+std::map<EMotorType, std::string>
+MotorTypeEnum::initialize()
+{
+    std::map<EMotorType, std::string> m;
 
-        /**
-         * @brief MotorTypeEnum::initialize
-         * @return
-         */
-        map<EMotorType, string>
-        MotorTypeEnum::initialize()
-        {
-            map<EMotorType, string> m;
+    m[EMotorType::STEPPER]    = "stepper";
+    m[EMotorType::XL430]    = "xl430";
+    m[EMotorType::XL320]    = "xl320";
+    m[EMotorType::XL330]    = "xl330";
+    m[EMotorType::XC430]    = "xc430";
+    m[EMotorType::UNKNOWN]  = "unknown";
 
-            m[EMotorType::STEPPER]    = "stepper";
-            m[EMotorType::XL430]    = "xl430";
-            m[EMotorType::XL320]    = "xl320";
-            m[EMotorType::XL330]    = "xl330";
-            m[EMotorType::XC430]    = "xc430";
-            m[EMotorType::UNKNOWN]  = "unknown";
+    return m;
+}
 
-            return m;
-        }
-
-    } // model
-} //common
+}  // namespace model
+}  // namespace common
 

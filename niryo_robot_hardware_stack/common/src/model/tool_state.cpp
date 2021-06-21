@@ -14,96 +14,96 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 #include "common/model/tool_state.hpp"
 #include <sstream>
+#include <string>
 
-using namespace std;
+namespace common
+{
+namespace model
+{
 
-namespace common  {
-    namespace model {
+/**
+ * @brief ToolState::ToolState
+ */
+ToolState::ToolState() :
+    DxlMotorState()
+{
+}
 
-        /**
-         * @brief ToolState::ToolState
-         */
-        ToolState::ToolState() :
-            DxlMotorState()
-        {
-        }
+/**
+ * @brief ToolState::ToolState
+ * @param name
+ * @param type
+ * @param id
+ */
+ToolState::ToolState(std::string name, EMotorType type, uint8_t id) :
+    DxlMotorState(type, id, true),
+    _tool_name(name),
+    _connected(true),
+    _position(0.0)
+{
+}
 
-        /**
-         * @brief ToolState::ToolState
-         * @param name
-         * @param type
-         * @param id
-         */
-        ToolState::ToolState(std::string name, EMotorType type, uint8_t id) :
-            DxlMotorState(type, id, true),
-            _tool_name(name),
-            _connected(true),
-            _position(0.0)
-        {
-        }
+/**
+ * @brief ToolState::~ToolState
+ */
+ToolState::~ToolState()
+{
+}
 
-        /**
-         * @brief ToolState::~ToolState
-         */
-        ToolState::~ToolState()
-        {
+/**
+ * @brief ToolState::setName
+ * @param name
+ */
+void ToolState::setName(std::string name)
+{
+    _tool_name = name;
+}
 
-        }
+/**
+ * @brief ToolState::setPosition
+ * @param position
+ */
+void ToolState::setPosition(double position)
+{
+    _position = position;
+}
 
-        /**
-         * @brief ToolState::setName
-         * @param name
-         */
-        void ToolState::setName(std::string name)
-        {
-            _tool_name = name;
-        }
+// ***********************
+//  DxlMotorState intf
+// ***********************
 
-        /**
-         * @brief ToolState::setPosition
-         * @param position
-         */
-        void ToolState::setPosition(double position)
-        {
-            _position = position;
-        }
+/**
+ * @brief ToolState::reset
+ */
+void ToolState::reset()
+{
+    DxlMotorState::reset();
+    _tool_name = "No Tool";
+    _position = 0.0;
+}
 
-        //***********************
-        //  DxlMotorState intf
-        //***********************
+/**
+ * @brief ToolState::str
+ * @return
+ */
+std::string ToolState::str() const
+{
+    std::ostringstream ss;
 
-        /**
-         * @brief ToolState::reset
-         */
-        void ToolState::reset()
-        {
-            DxlMotorState::reset();
-            _tool_name = "No Tool";
-            _position = 0.0;
-        }
+    ss << "ToolState : ";
+    ss << "name: " << "\"" << _tool_name << "\"" << ", ";
+    ss << "position: " << _position << ", ";
+    ss << "connected: " << (_connected ? "true" : "false");
+    ss << "\n";
+    ss << DxlMotorState::str();
 
-        /**
-         * @brief ToolState::str
-         * @return
-         */
-        string ToolState::str() const
-        {
-            ostringstream ss;
-
-            ss << "ToolState : ";
-            ss << "name: " << "\"" << _tool_name << "\"" << ", ";
-            ss << "position: " << _position << ", ";
-            ss << "connected: " << (_connected ? "true" : "false");
-            ss << "\n";
-            ss << DxlMotorState::str();
-
-            return ss.str();
-        }
+    return ss.str();
+}
 
 
-    } // namespace model
-} // namespace common
+}  // namespace model
+}  // namespace common

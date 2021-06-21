@@ -39,3 +39,9 @@ if (EXISTS ${CMAKE_CURRENT_BINARY_DIR}/doc)
     DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/doc
   )
 endif()
+
+##########################
+## Static code analysis ##
+##########################
+
+# no scripts to analyse

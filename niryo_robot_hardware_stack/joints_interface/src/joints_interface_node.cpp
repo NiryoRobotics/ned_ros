@@ -14,7 +14,7 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
 // ros
@@ -29,14 +29,14 @@
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "joints_interface_node");
-  
+
     ROS_DEBUG("Launching joints_interface_node");
 
     ros::AsyncSpinner spinner(4);
     spinner.start();
-    
+
     ros::NodeHandle nh;
-   
+
     auto ttl_driver = std::make_shared<ttl_driver::TtlDriverCore>();
     ros::Duration(1).sleep();
 
@@ -45,6 +45,6 @@ int main(int argc, char **argv)
 
     auto joints = std::make_shared<joints_interface::JointsInterfaceCore>(ttl_driver, can_driver);
     ros::waitForShutdown();
-    
+
     ROS_INFO("Joints Interface - Shutdown node");
 }

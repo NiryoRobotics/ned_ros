@@ -14,188 +14,189 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
-
 
 #include "common/model/stepper_motor_state.hpp"
 
+// c++
 #include <sstream>
 #include <cassert>
+#include <string>
 
 #include "ros/time.h"
 
-using namespace std;
+namespace common
+{
+namespace model
+{
 
-namespace common {
-    namespace model {
+/**
+ * @brief StepperMotorState::StepperMotorState
+ */
+StepperMotorState::StepperMotorState() :
+    JointState(),
+    _isConveyor(false)
+{
+}
 
-        /**
-         * @brief StepperMotorState::StepperMotorState
-         */
-        StepperMotorState::StepperMotorState() :
-            JointState (),
-            _isConveyor(false)
-        {
-        }
+/**
+ * @brief StepperMotorState::StepperMotorState
+ * @param id
+ * @param isConveyor
+ */
+StepperMotorState::StepperMotorState(uint8_t id, bool isConveyor) :
+    JointState("unknown", EMotorType::STEPPER, id),
+    _isConveyor(isConveyor)
+{
+}
 
-        /**
-         * @brief StepperMotorState::StepperMotorState
-         * @param id
-         * @param isConveyor
-         */
-        StepperMotorState::StepperMotorState(uint8_t id, bool isConveyor) :
-            JointState("unknown", EMotorType::STEPPER, id),
-            _isConveyor(isConveyor)
-        {
-        }
+/**
+ * @brief StepperMotorState::StepperMotorState
+ * @param name
+ * @param type
+ * @param id
+ * @param isConveyor
+ */
+StepperMotorState::StepperMotorState(std::string name, EMotorType type, uint8_t id, bool isConveyor) :
+    JointState(name, type, id),
+    _isConveyor(isConveyor)
+{
+}
 
-        /**
-         * @brief StepperMotorState::StepperMotorState
-         * @param name
-         * @param type
-         * @param id
-         * @param isConveyor
-         */
-        StepperMotorState::StepperMotorState(std::string name, EMotorType type, uint8_t id, bool isConveyor) :
-            JointState(name, type, id),
-            _isConveyor(isConveyor)
-        {
+/**
+ * @brief StepperMotorState::~StepperMotorState
+ */
+StepperMotorState::~StepperMotorState()
+{
+}
 
-        }
+// ****************
+//  Setters
+// ****************
 
-        /**
-         * @brief StepperMotorState::~StepperMotorState
-         */
-        StepperMotorState::~StepperMotorState()
-        {
+/**
+ * @brief StepperMotorState::updateLastTimeRead
+ */
+void StepperMotorState::updateLastTimeRead()
+{
+    _last_time_read = ros::Time::now().toSec();
+}
 
-        }
+/**
+ * @brief StepperMotorState::setHwFailCounter
+ * @param fail_counter
+ */
+void StepperMotorState::setHwFailCounter(double fail_counter)
+{
+    _hw_fail_counter = fail_counter;
+}
 
-        //****************
-        //  Setters
-        //****************
+/**
+ * @brief StepperMotorState::setFirmwareVersion
+ * @param firmware_version
+ */
+void StepperMotorState::setFirmwareVersion(std::string& firmware_version)
+{
+    _firmware_version = firmware_version;
+}
 
-        /**
-         * @brief StepperMotorState::updateLastTimeRead
-         */
-        void StepperMotorState::updateLastTimeRead()
-        {
-            _last_time_read = ros::Time::now().toSec();
-        }
+/**
+ * @brief StepperMotorState::setGearRatio
+ * @param gear_ratio
+ */
+void StepperMotorState::setGearRatio(double gear_ratio)
+{
+    _gear_ratio = gear_ratio;
+}
 
-        /**
-         * @brief StepperMotorState::setHwFailCounter
-         * @param fail_counter
-         */
-        void StepperMotorState::setHwFailCounter(double fail_counter)
-        {
-            _hw_fail_counter = fail_counter;
-        }
+/**
+ * @brief StepperMotorState::setDirection
+ * @param direction
+ */
+void StepperMotorState::setDirection(double direction)
+{
+    _direction = direction;
+}
 
-        /**
-         * @brief StepperMotorState::setFirmwareVersion
-         * @param firmware_version
-         */
-        void StepperMotorState::setFirmwareVersion(string& firmware_version)
-        {
-            _firmware_version = firmware_version;
-        }
+/**
+ * @brief StepperMotorState::setMaxEffort
+ * @param max_effort
+ */
+void StepperMotorState::setMaxEffort(double max_effort)
+{
+    _max_effort = max_effort;
+}
 
-        /**
-         * @brief StepperMotorState::setGearRatio
-         * @param gear_ratio
-         */
-        void StepperMotorState::setGearRatio(double gear_ratio)
-        {
-            _gear_ratio = gear_ratio;
-        }
-        
-        /**
-         * @brief StepperMotorState::setDirection
-         * @param direction
-         */
-        void StepperMotorState::setDirection(double direction)
-        {
-            _direction = direction;
-        }
+/**
+ * @brief StepperMotorState::setCalibration
+ * @param calibration_state
+ * @param calibration_value
+ */
+void StepperMotorState::setCalibration(const EStepperCalibrationStatus &calibration_state,
+                                       const int32_t &calibration_value)
+{
+    _calibration_state = calibration_state;
+    _calibration_value = calibration_value;
+}
 
-        /**
-         * @brief StepperMotorState::setMaxEffort
-         * @param max_effort
-         */
-        void StepperMotorState::setMaxEffort(double max_effort)
-        {
-            _max_effort = max_effort;
-        }
+// *********************
+//  JointState Interface
+// ********************
 
-        /**
-         * @brief StepperMotorState::setCalibration
-         * @param calibration_state
-         * @param calibration_value
-         */
-        void StepperMotorState::setCalibration(const EStepperCalibrationStatus &calibration_state, const int32_t &calibration_value)
-        {
-            _calibration_state = calibration_state;
-            _calibration_value = calibration_value;
-        }
+/**
+ * @brief StepperMotorState::reset
+ */
+void StepperMotorState::reset()
+{
+    JointState::reset();
+    _last_time_read = 0.0;
+    _hw_fail_counter = 0.0;
+    _firmware_version.clear();
+    _calibration_value = 0;
+    _calibration_state = EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED;
+}
 
-        //*********************
-        //  JointState Interface
-        //********************
+/**
+ * @brief StepperMotorState::isValid
+ * @return
+ */
+bool StepperMotorState::isValid() const
+{
+    return (0 != _id);
+}
 
-        /**
-         * @brief StepperMotorState::reset
-         */
-        void StepperMotorState::reset()
-        {
-            JointState::reset();
-            _last_time_read = 0.0;
-            _hw_fail_counter = 0.0;
-            _firmware_version.clear();
-            _calibration_value = 0;
-            _calibration_state = EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED;
-        }
+/**
+ * @brief StepperMotorState::str
+ * @return
+ */
+std::string StepperMotorState::str() const
+{
+    std::ostringstream ss;
 
-        /**
-         * @brief StepperMotorState::isValid
-         * @return
-         */
-        bool StepperMotorState::isValid() const
-        {
-            return (0 != _id);
-        }
+    ss << "StepperMotorState : ";
+    ss << "\n---\n";
+    ss << "last time read: " << _last_time_read << ", ";
+    ss << "hw fail counter: " << _hw_fail_counter << ", ";
+    ss << "firmware version: " << "\"" << _firmware_version << "\"";
+    ss << "\n";
+    ss << JointState::str();
 
-        /**
-         * @brief StepperMotorState::str
-         * @return
-         */
-        string StepperMotorState::str() const
-        {
-            ostringstream ss;
-            
-            ss << "StepperMotorState : ";
-            ss << "\n---\n";
-            ss << "last time read: " << _last_time_read << ", ";
-            ss << "hw fail counter: " << _hw_fail_counter << ", ";
-            ss << "firmware version: " << "\"" << _firmware_version << "\"";
-            ss << "\n";
-            ss << JointState::str();
+    return ss.str();
+}
 
-            return ss.str();
-        }
+int StepperMotorState::to_motor_pos(double pos_rad)
+{
+    double numerator = (STEPPERS_MOTOR_STEPS_PER_REVOLUTION * STEPPERS_MICROSTEPS * _gear_ratio * pos_rad / (2*M_PI));
+    return static_cast<int32_t>( numerator / _direction);
+}
 
-        int StepperMotorState::to_motor_pos(double pos_rad)
-        {
-            return static_cast<int32_t>((STEPPERS_MOTOR_STEPS_PER_REVOLUTION * STEPPERS_MICROSTEPS * _gear_ratio * pos_rad / (2*M_PI)) / _direction);
-        }
-
-        double StepperMotorState::to_rad_pos(int pos)
-        {
-            assert(0.0 != (STEPPERS_MOTOR_STEPS_PER_REVOLUTION * STEPPERS_MICROSTEPS * _gear_ratio * RADIAN_TO_DEGREE));
-            return static_cast<double>((pos * 2*M_PI) / (STEPPERS_MOTOR_STEPS_PER_REVOLUTION * STEPPERS_MICROSTEPS * _gear_ratio) * _direction);
-        }        
+double StepperMotorState::to_rad_pos(int pos)
+{
+    assert(0.0 != (STEPPERS_MOTOR_STEPS_PER_REVOLUTION * STEPPERS_MICROSTEPS * _gear_ratio * RADIAN_TO_DEGREE));
+    return static_cast<double>((pos * 2*M_PI) / (STEPPERS_MOTOR_STEPS_PER_REVOLUTION * STEPPERS_MICROSTEPS * _gear_ratio) * _direction);
+}
 
 
-    } // namespace model
-} // namespace common
+}  // namespace model
+}  // namespace common

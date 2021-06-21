@@ -388,7 +388,6 @@ class JogController:
                 return CommandStatus.ABORTED, "Cannot send command cause Jog is not activated and cannot be"
         self._last_command_timer = rospy.get_time()
 
-
     @staticmethod
     def __set_learning_mode(set_bool):
         """

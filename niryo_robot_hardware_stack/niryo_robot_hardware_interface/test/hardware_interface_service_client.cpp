@@ -14,7 +14,7 @@
     GNU General Public License for more details.
 
     You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
 #include <ros/ros.h>
@@ -41,7 +41,7 @@ TEST(TESTSuite, launchMotorReport)
 
 TEST(TESTSuite, stopMotorReport)
 {
-    //we need to launch a motor report before stopping it...
+    // we need to launch a motor report before stopping it...
     ros::ServiceClient client = nh->serviceClient<niryo_robot_msgs::Trigger>("niryo_robot_hardware_interface/stop_motor_report");
 
     bool exists(client.waitForExistence(ros::Duration(1)));

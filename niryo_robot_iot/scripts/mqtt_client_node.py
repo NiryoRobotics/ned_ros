@@ -130,7 +130,6 @@ class MqttClientNode:
         dev_null.close()
         return result
 
-
     def wait_for_internet_connection(self):
         # This is to prevent the node to crash if there is no internet connection
         rate = rospy.Rate(0.1)
@@ -139,9 +138,7 @@ class MqttClientNode:
             rospy.logdebug('MQTT Client - Waiting for an internet connection, re-checking in 10s...')
             rate.sleep()
 
-
     # - MQTT Callbacks
-
     @staticmethod
     def __on_connect_callback(_client, _userdata, _flags, rc):
         if rc == CONNACK_ACCEPTED:

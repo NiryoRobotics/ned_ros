@@ -58,7 +58,6 @@ class ToolCommander:
             self.__tool_simu = moveit_commander.MoveGroupCommander(rospy.get_param("~move_group_tool_commander_name"))
             # Set pose reference frame
             self.__tool_simu.set_pose_reference_frame(rospy.get_param("~reference_frame"))
-            
 
         # Subscriber
         rospy.Subscriber('/niryo_robot_hardware/tools/current_id', Int32,
@@ -146,7 +145,7 @@ class ToolCommander:
 
             function_name = self.__dict_id_commands_to_string[cmd.cmd_type]
             success, message = self.__current_tool(function_name, cmd)  # Execute function from name
-            
+
             self.__current_tool.set_as_non_active()
 
             # 5. Return success or error
@@ -156,7 +155,7 @@ class ToolCommander:
             else:
                 rospy.loginfo("Tool Commander - error : {}".format(message))
                 self.__action_server.set_aborted(self.create_action_result(CommandStatus.TOOL_FAILURE, message))
-        
+
         # Gripper simulated
         elif self.__is_gripper_simulated:
             if cmd.cmd_type == ToolCommand.OPEN_GRIPPER:
@@ -164,14 +163,14 @@ class ToolCommander:
                 self.__tool_simu.go()
             elif cmd.cmd_type == ToolCommand.CLOSE_GRIPPER:
                 self.__tool_simu.set_named_target("close")
-                self.__tool_simu.go()     
-            
+                self.__tool_simu.go()
+
             self.__action_server.set_succeeded(
-                self.create_action_result(CommandStatus.SUCCESS, "Simulated tool action successfully finished"))      
+                self.create_action_result(CommandStatus.SUCCESS, "Simulated tool action successfully finished"))
             return
 
-        #Simulation mode without gripper
-        else: 
+        # Simulation mode without gripper
+        else:
             self.__action_server.set_succeeded(
                 self.create_action_result(CommandStatus.SUCCESS, "Tool action successfully finished"))
 
@@ -231,7 +230,7 @@ class ToolCommander:
                 except KeyError:
                     rospy.logwarn("Tool Commander - Unknown command : {}".format(cmd))
                     continue
-                
+
             new_tool.set_available_commands(tool_command_list)
 
             dict_tools[tool_id] = new_tool
