@@ -8,7 +8,7 @@ from niryo_robot_rpi.srv import SetDigitalIO
  - Each address contains a 1 bit value
  - READ/WRITE registers
 
- --> Used to give commands to the robot 
+ --> Used to give commands to the robot
  ( ! the stored values correspond to the last given command,
  not the current robot state !)
 """

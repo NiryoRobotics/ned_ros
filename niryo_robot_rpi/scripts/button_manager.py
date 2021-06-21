@@ -123,7 +123,7 @@ class NiryoButton:
             python_prog_running_nodes = [s for s in rosnode.get_node_names() if "ros_wrapper" in s]
             python_prog_is_running = bool(python_prog_running_nodes)
 
-        #Deal with new state
+        # Deal with new state
         if not python_prog_is_running:
             # if the state is paused, it means that the pause timout has appeared.
             # Otherwise it's a program that has ended.
@@ -138,7 +138,6 @@ class NiryoButton:
             self.__set_led_state_service(False, 0, 0, 0)
 
         return python_prog_is_running
-
 
     def check_button(self, _event):
         button_was_pressed = self.__is_button_pressed()
@@ -170,7 +169,7 @@ class NiryoButton:
                     self.__trigger_blockly_save_point()
                 elif self.button_mode == ButtonMode.TRIGGER_SEQUENCE_AUTORUN:
                     self.__trigger_sequence_autorun()
-    
+
     def __manage_python_program(self):
         # Pause the current move
         if self._pause_state in [PausePlanExecution.PLAY]:
@@ -207,8 +206,8 @@ class NiryoButton:
                 try:
                     rospy.wait_for_service("/niryo_robot_arm_commander/motor_debug_start", timeout=0.5)
                     self.__motor_debug_thread = Thread(target=self.__motor_debug_server_start,
-                                                        name="motor_debug_button_thread",
-                                                        args=(self.debug_loop_repetition,))
+                                                       name="motor_debug_button_thread",
+                                                       args=(self.debug_loop_repetition,))
                     self.__motor_debug_thread.start()
                 except rospy.ROSException:
                     pass

@@ -6,7 +6,7 @@ from modbus_server import ModbusServer
 
 class ModbusServerNode:
     def __init__(self):
-        # Retrieved parameters    
+        # Retrieved parameters
         self.__modbus_server_address = rospy.get_param("~server_address")
         self.__modbus_server_port = rospy.get_param("~server_port")
 

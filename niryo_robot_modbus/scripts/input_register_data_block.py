@@ -78,7 +78,8 @@ class InputRegisterDataBlock(DataBlock):
     def start_ros_subscribers(self):
         self.joint_state_sub = rospy.Subscriber('/joint_states', JointState, self.sub_joint_states)
         self.robot_state_sub = rospy.Subscriber('/niryo_robot/robot_state', RobotState, self.sub_robot_state)
-        self.selected_tool_id_sub = rospy.Subscriber('/niryo_robot_hardware/tools/current_id', Int32, self.sub_selected_tool_id)
+        self.selected_tool_id_sub = rospy.Subscriber('/niryo_robot_hardware/tools/current_id', Int32,
+                                                     self.sub_selected_tool_id)
         self.learning_mode_sub = rospy.Subscriber('/niryo_robot/learning_mode/state', Bool, self.sub_learning_mode)
         self.hardware_status_sub = rospy.Subscriber('/niryo_robot_hardware_interface/hardware_status', HardwareStatus,
                                                     self.sub_hardware_status)

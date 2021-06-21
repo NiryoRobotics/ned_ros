@@ -279,15 +279,15 @@ class HoldingRegisterDataBlock(DataBlock):
     def start_execution_thread_arm(self, goal):
         if not self.execution_thread.is_alive():
             self.execution_thread = threading.Thread(target=self.execute_action,
-                                                     args=['niryo_robot_arm_commander/robot_action', 
-                                                     RobotMoveAction, goal])
+                                                     args=['niryo_robot_arm_commander/robot_action',
+                                                           RobotMoveAction, goal])
             self.execution_thread.start()
 
     def start_execution_thread_tool(self, goal):
         if not self.execution_thread.is_alive():
             self.execution_thread = threading.Thread(target=self.execute_action,
                                                      args=['niryo_robot_tools_commander/action_server',
-                                                     ToolAction, goal])
+                                                           ToolAction, goal])
             self.execution_thread.start()
 
     def execute_action(self, action_name, action_msg_type, goal):
