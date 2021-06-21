@@ -1,6 +1,6 @@
 <package>
     <name>niryo_robot_vision</name>
-    <version>3.1.0</version>
+    <version>3.1.1</version>
     <description>Niryo vision package</description>
     <author email="r.lux@niryo.com">Remi Lux</author>
     <maintainer email="r.lux@niryo.com">Remi Lux</maintainer>
