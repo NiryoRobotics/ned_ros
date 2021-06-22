@@ -46,9 +46,11 @@ class JointState : public AbstractMotorState
 
         void setName(std::string &name);
         void setOffsetPosition(double offset_position);
+        void setDirection(double direction);
 
         std::string getName() const;
         double getOffsetPosition() const;
+        double getDirection() const;
 
         virtual bool operator==(const JointState& other) const;
 
@@ -64,6 +66,7 @@ protected:
         std::string _name;
         double _offset_position{0.0};
         bool _need_calibration{false};
+        double _direction{0.0};
 
 public:
         double pos{0.0};
@@ -91,6 +94,16 @@ inline
 double JointState::getOffsetPosition() const
 {
     return _offset_position;
+}
+
+/**
+ * @brief JointState::getDirection
+ * @return
+ */
+inline
+double JointState::getDirection() const
+{
+    return _direction;
 }
 
 } // namespace model

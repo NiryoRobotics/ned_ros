@@ -83,6 +83,15 @@ void JointState::setOffsetPosition(double offset_position)
     _offset_position = offset_position;
 }
 
+/**
+ * @brief JointState::setDirection
+ * @param direction
+ */
+void JointState::setDirection(double direction)
+{
+    _direction = direction;
+}
+
 // ***********************
 //  AbstractMotor intf
 // ***********************

@@ -49,7 +49,6 @@ class StepperMotorState : public JointState
         void setHwFailCounter(double fail_counter);
         void setFirmwareVersion(std::string& firmware_version);
         void setGearRatio(double gear_ratio);
-        void setDirection(double direction);
         void setMaxEffort(double max_effort);
 
         void setCalibration(const common::model::EStepperCalibrationStatus &calibration_state,
@@ -61,7 +60,6 @@ class StepperMotorState : public JointState
         std::string getFirmwareVersion() const;
 
         double getGearRatio() const;
-        double getDirection() const;
         double getMaxEffort() const;
 
         common::model::EStepperCalibrationStatus getCalibrationState() const;
@@ -86,7 +84,6 @@ protected:
         double _hw_fail_counter{0.0};
 
         double _gear_ratio{0.0};
-        double _direction{0.0};
         double _max_effort{0.0};
 
         std::string _firmware_version;
@@ -149,16 +146,6 @@ inline
 double StepperMotorState::getGearRatio() const
 {
     return _gear_ratio;
-}
-
-/**
- * @brief StepperMotorState::getDirection
- * @return
- */
-inline
-double StepperMotorState::getDirection() const
-{
-    return _direction;
 }
 
 /**

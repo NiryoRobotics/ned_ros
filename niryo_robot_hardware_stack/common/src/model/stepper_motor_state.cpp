@@ -111,15 +111,6 @@ void StepperMotorState::setGearRatio(double gear_ratio)
 }
 
 /**
- * @brief StepperMotorState::setDirection
- * @param direction
- */
-void StepperMotorState::setDirection(double direction)
-{
-    _direction = direction;
-}
-
-/**
  * @brief StepperMotorState::setMaxEffort
  * @param max_effort
  */
@@ -188,7 +179,7 @@ std::string StepperMotorState::str() const
 int StepperMotorState::to_motor_pos(double pos_rad)
 {
     double numerator = (STEPPERS_MOTOR_STEPS_PER_REVOLUTION * STEPPERS_MICROSTEPS * _gear_ratio * pos_rad / (2*M_PI));
-    return static_cast<int32_t>( numerator / _direction);
+    return static_cast<int32_t>( numerator * _direction);
 }
 
 double StepperMotorState::to_rad_pos(int pos)

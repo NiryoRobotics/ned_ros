@@ -151,11 +151,11 @@ std::string DxlMotorState::str() const
  */
 int DxlMotorState::to_motor_pos(double pos_rad)
 {
-    assert(0.0 != _total_angle);
-
+    double denominator = _total_angle;
+    assert(0.0 != denominator);
     double numerator = ((pos_rad - _offset_position) * RADIAN_TO_DEGREE * _total_range_position);
 
-    return _middle_position + static_cast<int>(numerator / _total_angle);
+    return _middle_position + static_cast<int>(numerator / denominator) * _direction;
 }
 
 /**
@@ -165,9 +165,11 @@ int DxlMotorState::to_motor_pos(double pos_rad)
  */
 double DxlMotorState::to_rad_pos(int position_dxl)
 {
-    assert(0.0 != (RADIAN_TO_DEGREE * _total_range_position));
+    double denominator = RADIAN_TO_DEGREE * _total_range_position;
+    assert(0.0 != denominator);
     double numerator = (position_dxl - _middle_position) * _total_angle;
-    return _offset_position + static_cast<double>( numerator / (RADIAN_TO_DEGREE * _total_range_position));
+
+    return _offset_position + (numerator / denominator) * _direction;
 }
 
 /**
