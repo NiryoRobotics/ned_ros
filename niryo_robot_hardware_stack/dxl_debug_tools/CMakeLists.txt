@@ -65,10 +65,10 @@ include_directories(
     ${Boost_INCLUDE_DIRS}
 )
 
+## Declare libs and execs
 add_library(${PROJECT_NAME}_core
     src/dxl_tools.cpp)
 
-## Declare libs and execs
 add_executable(${PROJECT_NAME}
     src/dxl_debug.cpp)
 
@@ -140,6 +140,18 @@ endif(CATKIN_ENABLE_TESTING)
 #############
 ## Install ##
 #############
+
+install(
+  TARGETS ${PROJECT_NAME}_core
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
+)
+
+install(
+  TARGETS ${PROJECT_NAME}
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
 
 catkin_install_python(PROGRAMS 
     scripts/send_custom_dxl_value.py

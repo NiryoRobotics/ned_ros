@@ -147,6 +147,11 @@ install(
   RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
 )
 
+install(
+  TARGETS ${PROJECT_NAME}_node
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
 # Mark other files for installation
 install(
   DIRECTORY include/${PROJECT_NAME}/
