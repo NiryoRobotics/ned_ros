@@ -104,6 +104,10 @@ class NiryoRosWrapper:
         rospy.Subscriber('/niryo_robot_tools/current_id', Int32,
                          self.__callback_sub_current_tool_id)
 
+        self.__max_velocity_scaling_factor = None
+        rospy.Subscriber('/niryo_robot/max_velocity_scaling_factor', Int32,
+                         self.__callback_sub_max_velocity_scaling_factor)
+
         # - Vision
         self.__compressed_image_message = None
         rospy.Subscriber('/niryo_robot_vision/compressed_video_stream', CompressedImage,
@@ -176,6 +180,9 @@ class NiryoRosWrapper:
 
     def __callback_sub_current_tool_id(self, msg):
         self.__current_tool_id = msg.data
+
+    def __callback_sub_max_velocity_scaling_factor(self, msg):
+        self.__max_velocity_scaling_factor = msg.data
 
     def __callback_sub_hardware_status(self, hw_status):
         self.__hw_status = hw_status
@@ -375,6 +382,14 @@ class NiryoRosWrapper:
                                      SetBool, set_bool)
         rospy.sleep(0.1)
         return self.__classic_return_w_check(result)
+
+    def get_max_velocity_scaling_factor(self):
+        """
+        Get the max velocity scaling factor
+        :return: max velocity scaling factor
+        :rtype: float
+        """
+        return self.__max_velocity_scaling_factor
 
     def set_arm_max_velocity(self, percentage):
         """
@@ -1440,7 +1455,7 @@ class NiryoRosWrapper:
 
     # - Vision
 
-    def get_compressed_image(self):
+    def get_compressed_image(self, with_seq=False):
         """
         Get last stream image in a compressed format
 
@@ -1453,6 +1468,10 @@ class NiryoRosWrapper:
             if rospy.get_time() > timeout:
                 raise NiryoRosWrapperException(
                     'Timeout: could not video stream message (/niryo_robot_vision/compressed_video_stream topic)')
+
+        if with_seq:
+            return self.__compressed_image_message.data, self.__compressed_image_message.header.seq
+
         return self.__compressed_image_message.data
 
     def get_target_pose_from_rel(self, workspace_name, height_offset, x_rel, y_rel, yaw_rel):
