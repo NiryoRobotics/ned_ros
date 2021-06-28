@@ -17,6 +17,11 @@ catkin_make_n_rostest:
 
   image: ros:${ROS_DISTRO}-ros-base-bionic
   stage: build_n_test
+  artifacts:
+    paths:
+      - build
+      - devel
+      - src
   script:
     # updating apt cache
     - apt-get update -y
