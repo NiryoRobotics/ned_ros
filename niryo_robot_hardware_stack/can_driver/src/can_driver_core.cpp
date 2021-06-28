@@ -461,9 +461,9 @@ void CanDriverCore::unsetConveyor(uint8_t motor_id)
 {
     lock_guard<mutex> lck(_control_loop_mutex);
 
-    ROS_DEBUG("CanDriverCore::unsetConveyor - UnsetEndEffector: id %d", motor_id);
+    ROS_DEBUG("CanDriverCore::unsetConveyor - unsetConveyor: id %d", motor_id);
 
-    if (_can_driver->sendUpdateConveyorId(motor_id, 6))
+    if (CAN_OK == _can_driver->sendUpdateConveyorId(motor_id, 6))
         _can_driver->removeMotor(motor_id);
     else
         ROS_ERROR("CanDriverCore::unsetConveyor : unable to change conveyor ID");
