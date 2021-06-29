@@ -14,6 +14,7 @@ catkin_make_n_rostest:
       - tags
       - schedules
       - merge_requests
+      - web
 
   image: ros:${ROS_DISTRO}-ros-base-bionic
   stage: build_n_test
