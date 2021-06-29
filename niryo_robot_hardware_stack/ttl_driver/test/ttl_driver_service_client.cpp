@@ -23,7 +23,7 @@
 
 #include "ttl_driver/ttl_driver_core.hpp"
 
-static auto nh = std::make_unique<ros::NodeHandle>();
+static std::unique_ptr<ros::NodeHandle> nh;
 
 TEST(TESTSuite, setLeds)
 {
@@ -84,6 +84,8 @@ int main(int argc, char **argv)
     ros::init(argc, argv, "ttl_driver_service_client");
 
     testing::InitGoogleTest(&argc, argv);
+
+    nh = std::make_unique<ros::NodeHandle>();
 
     return RUN_ALL_TESTS();
 }

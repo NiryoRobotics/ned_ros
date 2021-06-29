@@ -25,7 +25,7 @@
 
 #include "joints_interface/joints_interface_core.hpp"
 
-static std::unique_ptr<ros::NodeHandle> nh(new ros::NodeHandle);
+static std::unique_ptr<ros::NodeHandle> nh;
 
 TEST(TESTSuite, calibrateMotor)
 {
@@ -419,6 +419,8 @@ class JointsInterfaceTest
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "tools_interface_service_client");
+
+    nh = std::make_unique<ros::NodeHandle>();
 
     testing::InitGoogleTest(&argc, argv);
 

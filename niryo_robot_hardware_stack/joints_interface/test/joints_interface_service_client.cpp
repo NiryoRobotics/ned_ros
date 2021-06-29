@@ -23,7 +23,7 @@
 
 #include "joints_interface/joints_interface_core.hpp"
 
-static auto nh = std::make_unique<ros::NodeHandle>();
+static std::unique_ptr<ros::NodeHandle> nh;
 
 TEST(TESTSuite, calibrateMotor)
 {
@@ -98,6 +98,8 @@ TEST(TESTSuite, resetControllerServer)
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "joints_interface_service_client");
+    
+    nh = std::make_unique<ros::NodeHandle>();
 
     testing::InitGoogleTest(&argc, argv);
 

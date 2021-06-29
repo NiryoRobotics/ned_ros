@@ -27,7 +27,7 @@
 
 #include "ttl_driver/ttl_driver_core.hpp"
 
-static auto nh = std::make_unique<ros::NodeHandle>();
+static std::unique_ptr<ros::NodeHandle> nh;
 
 TEST(TESTSuite, pingTool)
 {
@@ -117,6 +117,8 @@ TEST(TESTSuite, PushAirVacuumPump)
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "tools_interface_service_client");
+
+    nh = std::make_unique<ros::NodeHandle>();
 
     testing::InitGoogleTest(&argc, argv);
 

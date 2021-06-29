@@ -28,7 +28,7 @@
 #include "common/model/stepper_command_type_enum.hpp"
 
 
-static std::unique_ptr<ros::NodeHandle> nh(new ros::NodeHandle);
+static std::unique_ptr<ros::NodeHandle> nh;
 
 class CanDriverTest
 {
@@ -191,7 +191,7 @@ int main(int argc, char **argv)
     ros::AsyncSpinner spinner(4);
     spinner.start();
 
-    ros::NodeHandle nh;
+    nh = std::make_unique<ros::NodeHandle>();
 
     CanDriverTest test;
 

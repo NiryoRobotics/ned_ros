@@ -15,7 +15,6 @@
     <arg name="can_enabled" default="true"/>
     <arg name="ttl_enabled" default="true"/>
 
-
     <!-- Load controller settings -->
 
     <group unless="$(arg simu_gripper)">

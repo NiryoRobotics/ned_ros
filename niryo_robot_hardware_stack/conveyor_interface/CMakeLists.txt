@@ -130,8 +130,8 @@ if(CATKIN_ENABLE_TESTING)
     find_package(catkin REQUIRED rostest)
 
     add_rostest_gtest(${PROJECT_NAME}_integration_tests
-      test/conveyor_service_client.test
-      test/conveyor_service_client.cpp
+      test/conveyor_interface_service_client.test
+      test/conveyor_interface_service_client.cpp
     )
     if(TARGET ${PROJECT_NAME}_integration_tests)
       target_link_libraries(${PROJECT_NAME}_integration_tests

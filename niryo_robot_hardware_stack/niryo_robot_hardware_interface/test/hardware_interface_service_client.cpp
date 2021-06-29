@@ -23,7 +23,7 @@
 
 #include "niryo_robot_hardware_interface/hardware_interface.hpp"
 
-static auto nh = std::make_unique<ros::NodeHandle>();
+static std::unique_ptr<ros::NodeHandle> nh;
 
 TEST(TESTSuite, launchMotorReport)
 {
@@ -70,6 +70,8 @@ TEST(TESTSuite, rebootMotors)
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "hardware_interface_service_client");
+
+    nh = std::make_unique<ros::NodeHandle>();
 
     testing::InitGoogleTest(&argc, argv);
 

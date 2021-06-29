@@ -24,7 +24,7 @@
 
 #include "conveyor_interface/conveyor_interface_core.hpp"
 
-static auto nh = std::make_unique<ros::NodeHandle>();
+static std::unique_ptr<ros::NodeHandle> nh;
 
 TEST(TESTSuite, setConveyor)
 {
@@ -146,7 +146,9 @@ TEST(TESTSuite, removeConveyor)
 
 int main(int argc, char **argv)
 {
-    ros::init(argc, argv, "tools_interface_service_client");
+    ros::init(argc, argv, "conveyor_interface_service_client");
+
+    nh = std::make_unique<ros::NodeHandle>();
 
     testing::InitGoogleTest(&argc, argv);
 
