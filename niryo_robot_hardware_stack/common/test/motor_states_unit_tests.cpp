@@ -39,7 +39,7 @@ TEST(CommonTestSuite, testDefaultInvalid)
 
 TEST(CommonTestSuite, testXC430)
 {
-    common::model::DxlMotorState dxlState = common::model::DxlMotorState(common::model::EMotorType::XC430, 1);
+    common::model::DxlMotorSniryo_robot_arm_commander/epydoc.configtate dxlState = common::model::DxlMotorState(common::model::EMotorType::XC430, 1);
     dxlState.setOffsetPosition(0.42);
     ASSERT_TRUE(dxlState.isValid());
 

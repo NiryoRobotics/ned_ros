@@ -66,7 +66,7 @@ protected:
         std::string _name;
         double _offset_position{0.0};
         bool _need_calibration{false};
-        double _direction{0.0};
+        double _direction{1.0};
 
 public:
         double pos{0.0};

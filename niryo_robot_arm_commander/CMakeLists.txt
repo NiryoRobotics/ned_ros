@@ -58,6 +58,13 @@ include_directories(
 ##   Doc   ##
 #############
 
+find_program(rosdoc_lite_FOUND rosdoc_lite)
+if(BUILD_DOCS AND rosdoc_lite_FOUND)
+    add_custom_target (${PROJECT_NAME}_doc ALL
+        rosdoc_lite -o ${CMAKE_CURRENT_BINARY_DIR}/doc ${CMAKE_CURRENT_LIST_DIR}
+    )
+
+endif()
 
 #############
 ## Testing ##

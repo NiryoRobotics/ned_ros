@@ -15,7 +15,7 @@ import math
 from niryo_robot_arm_commander.command_enums import ArmCommanderException
 import moveit_commander
 
-# Quaternion 
+# Quaternion
 from tf.transformations import *
 
 # Command Status

@@ -42,7 +42,7 @@ TEST(DxlDebugToolsTestSuite, testInit)
     int baudrate = 1000000;
     std::string serial_port = DEFAULT_PORT;
 
-    if(serial_port.empty())
+    if (serial_port.empty())
     {
         std::cout << "Test invalid : not on the correct architecture. Passing" << std::endl;
         ASSERT_TRUE(true);
