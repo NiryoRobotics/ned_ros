@@ -53,7 +53,7 @@ namespace ttl_driver
 TtlDriver::TtlDriver() :
     _is_connection_ok(false),
     _debug_error_message("TtlDriver - No connection with Dynamixel motors has been made yet"),
-  _hw_fail_counter_read(0)
+    _hw_fail_counter_read(0)
 {
     ROS_DEBUG("TtlDriver - ctor");
 
