@@ -15,9 +15,12 @@ from niryo_robot_tools_commander.msg import ToolCommand, ToolAction
 from niryo_robot_arm_commander.msg import ArmMoveCommand
 
 # Services
-from conveyor_interface.srv import ControlConveyor, SetConveyor
+from conveyor_interface.srv import ControlConveyor, SetConveyor, SetConveyorRequest
 from niryo_robot_msgs.srv import SetInt, SetBool
 from niryo_robot_msgs.srv import Trigger
+
+# Actions
+from niryo_robot_tools_commander.msg import ToolActionGoal
 
 """
  - Each address contains a 16 bits value
@@ -56,7 +59,8 @@ HR_START_MANUAL_CALIBRATION = 312
 HR_GRIPPER_OPEN_SPEED = 401
 HR_GRIPPER_CLOSE_SPEED = 402
 
-HR_SELECT_TOOL_FROM_ID = 500
+HR_UPDATE_TOOL_ID = 500
+HR_TOOL_ID = 501
 
 HR_OPEN_GRIPPER = 510
 HR_CLOSE_GRIPPER = 511
@@ -137,16 +141,16 @@ class HoldingRegisterDataBlock(DataBlock):
             self.start_auto_calibration()
         elif address == HR_START_MANUAL_CALIBRATION:
             self.start_manual_calibration()
-        elif address == HR_SELECT_TOOL_FROM_ID:
-            self.select_tool(values[0])
+        elif address == HR_UPDATE_TOOL_ID:
+            self.update_tool()
         elif address == HR_OPEN_GRIPPER:
-            self.open_gripper_command(values[0])
+            self.open_gripper_command()
         elif address == HR_CLOSE_GRIPPER:
-            self.close_gripper_command(values[0])
+            self.close_gripper_command()
         elif address == HR_PULL_AIR_VACUUM_PUMP:
-            self.pull_air_vacuum_pump_command(values[0])
+            self.pull_air_vacuum_pump()
         elif address == HR_PUSH_AIR_VACUUM_PUMP:
-            self.push_air_vacuum_pump_command(values[0])
+            self.push_air_vacuum_pump()
         elif address == HR_PING_AND_SET_CONVEYOR:
             self.ping_and_set_conveyor()
         elif address == HR_REMOVE_CONVEYOR_WITH_ID:
@@ -175,30 +179,30 @@ class HoldingRegisterDataBlock(DataBlock):
         if self.is_action_client_running:
             self.cmd_action_client.cancel_goal()
 
-    def select_tool(self, tool_id):
-        self.call_ros_service('/niryo_robot/update_tool', SetInt, int(tool_id))
+    def update_tool(self):
+        response = self.call_ros_service('/niryo_robot_tools_commander/update_tool', Trigger)
+        response_list = response.message.split(" : ")
+        tool_id = int(response_list[1])
+        self.setValuesOffset(HR_TOOL_ID, [tool_id])
 
-    def open_gripper_command(self, tool_id):
+    def open_gripper_command(self):
         speed = self.getValuesOffset(HR_GRIPPER_OPEN_SPEED, 1)[0]
+        print(speed)
+        tool_id = self.getValuesOffset(HR_TOOL_ID, 1)[0]
         if speed < 100:
             speed = 100
         elif speed > 1000:
             speed = 1000
         self.open_gripper(tool_id, speed)
 
-    def close_gripper_command(self, tool_id):
+    def close_gripper_command(self):
         speed = self.getValuesOffset(HR_GRIPPER_CLOSE_SPEED, 1)[0]
+        tool_id = self.getValuesOffset(HR_TOOL_ID, 1)[0]
         if speed < 100:
             speed = 100
         elif speed > 1000:
             speed = 1000
         self.close_gripper(tool_id, speed)
-
-    def pull_air_vacuum_pump_command(self, tool_id):
-        self.pull_air_vacuum_pump(tool_id)
-
-    def push_air_vacuum_pump_command(self, tool_id):
-        self.push_air_vacuum_pump(tool_id)
 
     def move_joints_command(self):
         joints_raw_values = self.getValuesOffset(HR_JOINTS, 6)
@@ -223,29 +227,29 @@ class HoldingRegisterDataBlock(DataBlock):
 
     def open_gripper(self, gripper_id, speed):
         goal = ToolActionGoal()
-        goal.cmd.cmd_type = ToolCommand.OPEN_GRIPPER
-        goal.cmd.tool_id = int(gripper_id)
-        goal.cmd.gripper_open_speed = speed
-        self.start_execution_thread_tool(goal)
+        goal.goal.cmd.cmd_type = ToolCommand.OPEN_GRIPPER
+        goal.goal.cmd.tool_id = int(gripper_id)
+        goal.goal.cmd.gripper_open_speed = speed
+        self.start_execution_thread_tool(goal.goal)
 
     def close_gripper(self, gripper_id, speed):
         goal = ToolActionGoal()
-        goal.cmd.cmd_type = ToolCommand.CLOSE_GRIPPER
-        goal.cmd.tool_id = int(gripper_id)
-        goal.cmd.gripper_close_speed = speed
-        self.start_execution_thread_tool(goal)
+        goal.goal.cmd.cmd_type = ToolCommand.CLOSE_GRIPPER
+        goal.goal.cmd.tool_id = int(gripper_id)
+        goal.goal.cmd.gripper_close_speed = speed
+        self.start_execution_thread_tool(goal.goal)
 
-    def pull_air_vacuum_pump(self, vacuum_pump_id):
+    def pull_air_vacuum_pump(self):
         goal = ToolActionGoal()
-        goal.cmd.cmd_type = ToolCommand.PULL_AIR_VACUUM_PUMP
-        goal.cmd.tool_id = int(vacuum_pump_id)
-        self.start_execution_thread_tool(goal)
+        goal.goal.cmd.cmd_type = ToolCommand.PULL_AIR_VACUUM_PUMP
+        goal.goal.cmd.tool_id = 31
+        self.start_execution_thread_tool(goal.goal)
 
-    def push_air_vacuum_pump(self, vacuum_pump_id):
+    def push_air_vacuum_pump(self):
         goal = ToolActionGoal()
-        goal.cmd.cmd_type = ToolCommand.PUSH_AIR_VACUUM_PUMP
-        goal.cmd.tool_id = int(vacuum_pump_id)
-        self.start_execution_thread_tool(goal)
+        goal.goal.cmd.cmd_type = ToolCommand.PUSH_AIR_VACUUM_PUMP
+        goal.goal.cmd.tool_id = 31
+        self.start_execution_thread_tool(goal.goal)
 
     def move_pose(self, pose):
         goal = RobotMoveGoal()
@@ -339,12 +343,15 @@ class HoldingRegisterDataBlock(DataBlock):
         to the conveyor_id on result == CommandStatus.SUCCESS
         :rtype:
         """
+        req = SetConveyorRequest()
+        req.cmd = SetConveyorRequest.ADD
         self.__set_command_in_progress()
         response = self.call_ros_service('/niryo_robot/conveyor/ping_and_set_conveyor',
-                                         SetConveyor, 1, 0)
+                                         SetConveyor, req)
         self.__set_command_done(response.status)
-        if response == CommandStatus.SUCCESS:
-            self.setValuesOffset(HR_LAST_ROBOT_CMD_DATA_RESULT, [response.id])
+        if response.status == CommandStatus.SUCCESS:
+            self.setValuesOffset(HR_LAST_ROBOT_CMD_DATA_RESULT, [int(response.id)])
+            self.setValuesOffset(HR_CONTROL_CONVEYOR_ID, [int(response.id)])
 
     def remove_conveyor_with_id(self):
         """
@@ -352,10 +359,12 @@ class HoldingRegisterDataBlock(DataBlock):
         :return: set HR_LAST_ROBOT_CMD_RESULT to CommandStatus Enum
         :rtype:
         """
+        req = SetConveyorRequest()
+        req.cmd = SetConveyorRequest.REMOVE
         self.__set_command_in_progress()
-        conveyor_id = self.getValuesOffset(HR_CONTROL_CONVEYOR_ID, 1)[0]
+        req.id = self.getValuesOffset(HR_CONTROL_CONVEYOR_ID, 1)[0]
         response = self.call_ros_service('/niryo_robot/conveyor/ping_and_set_conveyor',
-                                         SetConveyor, 2, conveyor_id)
+                                         SetConveyor, req)
         self.__set_command_done(response.status)
 
     def control_conveyor(self):
