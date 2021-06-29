@@ -28,7 +28,7 @@
     <exec_depend>moveit_msgs</exec_depend>
     <exec_depend>niryo_robot_hardware_interface</exec_depend>
     <exec_depend>niryo_robot_msgs</exec_depend>
-    <exec_depend>niryo_robot_tools</exec_depend>
+    <exec_depend>niryo_robot_tools_commander</exec_depend>
     <exec_depend>ros_controllers</exec_depend>
     <exec_depend>rosbridge_server</exec_depend>
     <exec_depend>sensor_msgs</exec_depend>
