@@ -53,7 +53,6 @@ TtlDriverCore::TtlDriverCore() :
 {
     ROS_DEBUG("TtlDriverCore - ctor");
 
-
     init();
 }
 

@@ -45,7 +45,7 @@ CanDriver::CanDriver() :
     _is_connection_ok(false)
 {
     ROS_DEBUG("CanDriver - ctor");
-    initParameters();
+    
     init();
 
     if (CAN_OK == setupCAN())
@@ -55,7 +55,7 @@ CanDriver::CanDriver() :
         _stepper_timeout_thread = std::thread(&CanDriver::_verifyMotorTimeoutLoop, this);
     }
     else
-{
+    {
         ROS_WARN("CanDriver - Stepper setup Failed");
     }
 }
@@ -101,6 +101,8 @@ void CanDriver::resetCalibration()
  */
 bool CanDriver::init()
 {
+    _nh.getParam("/niryo_robot_hardware_interface/calibration_timeout", _calibration_timeout);
+
     std::vector<int> idList;
 
     if (_nh.hasParam("/niryo_robot_hardware_interface/can_driver/motors_params/stepper_motor_id_list"))
@@ -137,14 +139,6 @@ bool CanDriver::init()
         ROS_DEBUG("CanDriver::init - State map: %d => %s", s.first, s.second->str().c_str());
 
     return true;
-}
-
-/**
- * @brief CanDriver::initParameters : initiliaze parameters that are direct attribute of this class
- */
-void CanDriver::initParameters()
-{
-    _nh.getParam("/niryo_robot_hardware_interface/calibration_timeout", _calibration_timeout);
 }
 
 /**

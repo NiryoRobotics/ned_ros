@@ -15,7 +15,6 @@
 */
 
 // Bring in my package's API, which is what I'm testing
-#include "can_driver/can_driver_core.hpp"
 #include "can_driver/can_driver.hpp"
 
 // Bring in gtest
@@ -43,9 +42,6 @@ int main(int argc, char **argv)
   ros::init(argc, argv, "can_driver_unit_tests");
 
   ros::NodeHandle nh;
-
-  if ( ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug) )
-     ros::console::notifyLoggerLevelsChanged();
 
   return RUN_ALL_TESTS();
 }

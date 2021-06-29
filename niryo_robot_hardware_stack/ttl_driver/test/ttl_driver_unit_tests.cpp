@@ -26,6 +26,8 @@
 TEST(TtlDriverTestSuite, testInitDriver)
 {
     ttl_driver::TtlDriver ttl_driver;
+    ros::Duration(2).sleep();
+
     EXPECT_TRUE(ttl_driver.isConnectionOk());
 }
 

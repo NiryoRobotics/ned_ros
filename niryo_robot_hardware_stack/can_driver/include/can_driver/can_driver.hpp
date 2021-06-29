@@ -98,10 +98,10 @@ class CanDriver : public common::model::IDriver
 
 private:
         bool init() override;
-        void initParameters();
+        bool hasMotors() override;
+
         int setupCAN();
 
-        bool hasMotors() override;
         bool canReadData() const;
 
         uint8_t readMsgBuf(INT32U *id, uint8_t *len, std::array<uint8_t, 8> &buf);
