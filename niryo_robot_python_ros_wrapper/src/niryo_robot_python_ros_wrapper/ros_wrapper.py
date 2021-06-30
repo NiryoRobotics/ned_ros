@@ -32,6 +32,7 @@ from conveyor_interface.srv import ControlConveyor, SetConveyor, SetConveyorRequ
 from niryo_robot_arm_commander.srv import GetFK, GetIK
 from niryo_robot_arm_commander.srv import JogShift, JogShiftRequest
 from niryo_robot_msgs.srv import GetNameDescriptionList, SetBool, SetInt, Trigger
+from niryo_robot_vision.srv import SetImageParameter
 
 from niryo_robot_rpi.srv import GetDigitalIO, SetDigitalIO
 
@@ -1394,6 +1395,70 @@ class NiryoRosWrapper:
                 raise NiryoRosWrapperException(
                     'Timeout: could not video stream message (/niryo_robot_vision/compressed_video_stream topic)')
         return self.__compressed_image_message.data
+
+    def set_brightness(self, brightness_factor):
+        """
+        Modify image brightness
+
+        :param brightness_factor: How much to adjust the brightness. 0.5 will
+            give a darkened image, 1 will give the original image while
+            2 will enhance the brightness by a factor of 2.
+        :type brightness_factor: float
+        :return: None
+        :rtype: None
+        """
+        result = self.__call_service('/niryo_robot_vision/set_brightness', SetImageParameter, brightness_factor)
+        self.__check_result_status(result)
+
+    def set_contrast(self, contrast_factor):
+        """
+        Modify image contrast
+
+        :param contrast_factor: While a factor of 1 gives original image.
+            Making the factor towards 0 makes the image greyer, while factor>1 increases the contrast of the image.
+        :type contrast_factor: float
+        :return: None
+        :rtype: None
+        """
+        result = self.__call_service('/niryo_robot_vision/set_contrast', SetImageParameter, contrast_factor)
+        self.__check_result_status(result)
+
+    def set_saturation(self, saturation_factor):
+        """
+        Modify image saturation
+
+        :param saturation_factor: How much to adjust the saturation. 0 will
+            give a black and white image, 1 will give the original image while
+            2 will enhance the saturation by a factor of 2.
+        :type saturation_factor: float
+        :return: None
+        :rtype: None
+        """
+        result = self.__call_service('/niryo_robot_vision/set_saturation', SetImageParameter, saturation_factor)
+        self.__check_result_status(result)
+
+    @staticmethod
+    def get_image_parameters():
+        """
+        Get last stream image parameters: Brightness factor, Contrast factor, Saturation factor.
+
+        Brightness factor: How much to adjust the brightness. 0.5 will give a darkened image,
+        1 will give the original image while 2 will enhance the brightness by a factor of 2.
+
+        Contrast factor: While a factor of 1 gives original image.
+        Making the factor towards 0 makes the image greyer, while factor>1 increases the contrast of the image.
+
+        Saturation factor: 0 will give a black and white image, 1 will give the original image while
+        2 will enhance the saturation by a factor of 2.
+
+        :return:  Brightness factor, Contrast factor, Saturation factor
+        :rtype: float, float, float
+        """
+        from niryo_robot_vision.msg import ImageParameters
+
+        img_param_msg = rospy.wait_for_message('/niryo_robot_vision/video_stream_parameters', ImageParameters,
+                                               timeout=5)
+        return img_param_msg.brightness_factor, img_param_msg.contrast_factor, img_param_msg.saturation_factor
 
     def get_target_pose_from_rel(self, workspace_name, height_offset, x_rel, y_rel, yaw_rel):
         """
