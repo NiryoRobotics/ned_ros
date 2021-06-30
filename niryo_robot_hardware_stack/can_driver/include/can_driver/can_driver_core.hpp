@@ -29,6 +29,8 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <queue>
 
 #include "common/model/idriver_core.hpp"
+#include "common/model/iinterface_core.hpp"
+
 #include "can_driver/can_driver.hpp"
 #include "can_driver/StepperArrayMotorHardwareStatus.h"
 #include "niryo_robot_msgs/BusState.h"
@@ -40,12 +42,14 @@ namespace can_driver
 /**
  * @brief The CanDriverCore class
  */
-class CanDriverCore : public common::model::IDriverCore
+class CanDriverCore : public common::model::IDriverCore, public common::model::IInterfaceCore
 {
     public:
 
-        CanDriverCore();
+        CanDriverCore(ros::NodeHandle& nh);
         virtual ~CanDriverCore() override;
+
+        bool init(ros::NodeHandle& nh) override;
 
         int setConveyor(uint8_t motor_id, uint8_t default_conveyor_id = 6);
         void unsetConveyor(uint8_t motor_id);
@@ -84,8 +88,10 @@ class CanDriverCore : public common::model::IDriverCore
         niryo_robot_msgs::BusState getBusState() const override;
 
     private:
-        void init() override;
-        void initParameters() override;
+        virtual void initParameters(ros::NodeHandle &nh) override;
+        virtual void startServices(ros::NodeHandle &nh) override;
+        virtual void startSubscribers(ros::NodeHandle &nh) override;
+        virtual void startPublishers(ros::NodeHandle &nh) override;
 
         void resetHardwareControlLoopRates() override;
         void controlLoop() override;
@@ -94,27 +100,26 @@ class CanDriverCore : public common::model::IDriverCore
         int motorCmdReport(uint8_t motor_id);
 
     private:
-        ros::NodeHandle _nh;
-        bool _control_loop_flag;
-        bool _debug_flag;
+        bool _control_loop_flag{false};
+        bool _debug_flag{false};
 
         std::mutex _control_loop_mutex;
         std::mutex _joint_trajectory_mutex;
 
         std::thread _control_loop_thread;
 
-        double _control_loop_frequency;
+        double _control_loop_frequency{0.0};
 
-        double _delta_time_write;
+        double _delta_time_write{0.0};
 
-        double _time_hw_data_last_read;
-        double _time_hw_data_last_write;
+        double _time_hw_data_last_read{0.0};
+        double _time_hw_data_last_write{0.0};
 
-        double _time_check_connection_last_read;
+        double _time_check_connection_last_read{0.0};
 
         // specific to stepper
-        double _delta_time_calib_read;
-        double _time_hw_calib_last_read;
+        double _delta_time_calib_read{0.0};
+        double _time_hw_calib_last_read{0.0};
 
         std::unique_ptr<CanDriver> _can_driver;
 
@@ -122,7 +127,6 @@ class CanDriverCore : public common::model::IDriverCore
         std::queue<common::model::StepperMotorCmd> _stepper_single_cmds;
         std::queue<common::model::StepperMotorCmd> _conveyor_cmds;
 
-    private:
         static constexpr int QUEUE_OVERFLOW = 20;
 };
 

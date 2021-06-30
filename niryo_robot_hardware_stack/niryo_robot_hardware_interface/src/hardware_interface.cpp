@@ -33,9 +33,19 @@ namespace niryo_robot_hardware_interface
  * @brief HardwareInterface::HardwareInterface
  * @param nh
  */
-HardwareInterface::HardwareInterface(ros::NodeHandle &nh) : _nh(nh)
+HardwareInterface::HardwareInterface(ros::NodeHandle &nh, bool delayed)
 {
-    init(false);
+    if(delayed)
+    {
+        for (int i = 0; i < 30; i++)
+        {
+            ROS_INFO("HardwareInterface::init - Sleeping %d ! to have time to attach via gdb", i);
+            ros::Duration(1).sleep();
+        }
+        ROS_INFO("Waking up");
+    }
+
+    init(nh);
 }
 
 /**
@@ -56,51 +66,47 @@ HardwareInterface::~HardwareInterface()
 
 /**
  * @brief HardwareInterface::init
+ * @param nh
+ * @return
  */
-void HardwareInterface::init(bool delayed)
+bool HardwareInterface::init(ros::NodeHandle& nh)
 {
-    if(delayed)
-    {
-        for (int i = 0; i < 30; i++)
-        {
-            ROS_INFO("HardwareInterface::init - Sleeping %d ! to have time to attach via gdb", i);
-            ros::Duration(1).sleep();
-        }
-        ROS_INFO("Waking up");
-    }
-
     ROS_DEBUG("HardwareInterface::init - Initializing parameters...");
-    initParameters();
+    initParameters(nh);
 
     ROS_DEBUG("HardwareInterface::init - Starting services...");
-    startServices();
+    startServices(nh);
 
     ROS_DEBUG("HardwareInterface::init - Starting subscribers...");
-    startSubscribers();
+    startSubscribers(nh);
 
     ROS_DEBUG("HardwareInterface::init - Starting publishers...");
-    startPublishers();
+    startPublishers(nh);
 
     ROS_DEBUG("HardwareInterface::init - Init Nodes...");
-    initNodes();
+    initNodes(nh);
+
+    return true;
 }
 
 /**
  * @brief HardwareInterface::initParameters
  */
-void HardwareInterface::initParameters()
+void HardwareInterface::initParameters(ros::NodeHandle& nh)
 {
-    ros::param::get("~publish_hw_status_frequency", _publish_hw_status_frequency);
-    ros::param::get("~publish_software_version_frequency", _publish_software_version_frequency);
+    ros::NodeHandle nh_private("~");
 
-    ros::param::get("/niryo_robot/info/image_version", _rpi_image_version);
-    ros::param::get("/niryo_robot/info/ros_version", _ros_niryo_robot_version);
+    nh_private.getParam("publish_hw_status_frequency", _publish_hw_status_frequency);
+    nh_private.getParam("publish_software_version_frequency", _publish_software_version_frequency);
 
-    ros::param::get("~simulation_mode", _simulation_mode);
-    ros::param::get("~gazebo", _gazebo);
+    nh.getParam("/niryo_robot/info/image_version", _rpi_image_version);
+    nh.getParam("/niryo_robot/info/ros_version", _ros_niryo_robot_version);
 
-    ros::param::get("~can_enabled", _can_enabled);
-    ros::param::get("~ttl_enabled", _ttl_enabled);
+    nh_private.getParam("simulation_mode", _simulation_mode);
+    nh_private.getParam("gazebo", _gazebo);
+
+    nh_private.getParam("can_enabled", _can_enabled);
+    nh_private.getParam("ttl_enabled", _ttl_enabled);
 
     _rpi_image_version.erase(_rpi_image_version.find_last_not_of(" \n\r\t") + 1);
     _ros_niryo_robot_version.erase(_ros_niryo_robot_version.find_last_not_of(" \n\r\t") + 1);
@@ -125,22 +131,22 @@ void HardwareInterface::initParameters()
 /**
  * @brief HardwareInterface::startServices
  */
-void HardwareInterface::startServices()
+void HardwareInterface::startServices(ros::NodeHandle& nh)
 {
-    _motors_report_service = _nh.advertiseService("/niryo_robot_hardware_interface/launch_motors_report",
+    _motors_report_service = nh.advertiseService("/niryo_robot_hardware_interface/launch_motors_report",
                                                   &HardwareInterface::_callbackLaunchMotorsReport, this);
 
-    _stop_motors_report_service = _nh.advertiseService("/niryo_robot_hardware_interface/stop_motors_report",
+    _stop_motors_report_service = nh.advertiseService("/niryo_robot_hardware_interface/stop_motors_report",
                                                        &HardwareInterface::_callbackStopMotorsReport, this);
 
-    _reboot_motors_service = _nh.advertiseService("/niryo_robot_hardware_interface/reboot_motors",
+    _reboot_motors_service = nh.advertiseService("/niryo_robot_hardware_interface/reboot_motors",
                                                   &HardwareInterface::_callbackRebootMotors, this);
 }
 
 /**
  * @brief HardwareInterface::startSubscribers
  */
-void HardwareInterface::startSubscribers()
+void HardwareInterface::startSubscribers(ros::NodeHandle& nh)
 {
     ROS_DEBUG("HardwareInterface::startServices - no subscribers to start");
 }
@@ -148,14 +154,14 @@ void HardwareInterface::startSubscribers()
 /**
  * @brief HardwareInterface::startPublishers
  */
-void HardwareInterface::startPublishers()
+void HardwareInterface::startPublishers(ros::NodeHandle& nh)
 {
-    _hardware_status_publisher = _nh.advertise<niryo_robot_msgs::HardwareStatus>(
+    _hardware_status_publisher = nh.advertise<niryo_robot_msgs::HardwareStatus>(
                                             "niryo_robot_hardware_interface/hardware_status", 10);
 
     _publish_hw_status_thread = std::thread(&HardwareInterface::_publishHardwareStatus, this);
 
-    _software_version_publisher = _nh.advertise<niryo_robot_msgs::SoftwareVersion>(
+    _software_version_publisher = nh.advertise<niryo_robot_msgs::SoftwareVersion>(
                                             "niryo_robot_hardware_interface/software_version", 10);
 
     _publish_software_version_thread = std::thread(&HardwareInterface::_publishSoftwareVersion, this);
@@ -165,7 +171,7 @@ void HardwareInterface::startPublishers()
  * @brief HardwareInterface::initNodes
  */
 
-void HardwareInterface::initNodes()
+void HardwareInterface::initNodes(ros::NodeHandle& nh)
 {
     ROS_DEBUG("HardwareInterface::initNodes - Init Nodes");
     if (!_simulation_mode)
@@ -173,7 +179,7 @@ void HardwareInterface::initNodes()
         if (_ttl_enabled)
         {
             ROS_DEBUG("HardwareInterface::initNodes - Start Dynamixel Driver Node");
-            _ttl_driver = std::make_shared<ttl_driver::TtlDriverCore>();
+            _ttl_driver = std::make_shared<ttl_driver::TtlDriverCore>(nh);
             ros::Duration(0.25).sleep();
         }
         else
@@ -184,7 +190,7 @@ void HardwareInterface::initNodes()
         if (_can_enabled)
         {
             ROS_DEBUG("HardwareInterface::initNodes - Start CAN Driver Node");
-            _can_driver = std::make_shared<can_driver::CanDriverCore>();
+            _can_driver = std::make_shared<can_driver::CanDriverCore>(nh);
             ros::Duration(0.25).sleep();
         }
         else
@@ -195,15 +201,15 @@ void HardwareInterface::initNodes()
         if (_can_enabled && _ttl_enabled)
         {
             ROS_DEBUG("HardwareInterface::initNodes - Start Joints Interface Node");
-            _joints_interface = std::make_shared<joints_interface::JointsInterfaceCore>(_ttl_driver, _can_driver);
+            _joints_interface = std::make_shared<joints_interface::JointsInterfaceCore>(nh, _ttl_driver, _can_driver);
             ros::Duration(0.25).sleep();
 
             ROS_DEBUG("HardwareInterface::initNodes - Start End Effector Interface Node");
-            _tools_interface = std::make_shared<tools_interface::ToolsInterfaceCore>(_ttl_driver);
+            _tools_interface = std::make_shared<tools_interface::ToolsInterfaceCore>(nh, _ttl_driver);
             ros::Duration(0.25).sleep();
 
             ROS_DEBUG("HardwareInterface::initNodes - Start Tools Interface Node");
-            _conveyor_interface = std::make_shared<conveyor_interface::ConveyorInterfaceCore>(_can_driver);
+            _conveyor_interface = std::make_shared<conveyor_interface::ConveyorInterfaceCore>(nh, _can_driver);
             ros::Duration(0.25).sleep();
         }
         else
@@ -212,13 +218,13 @@ void HardwareInterface::initNodes()
         }
 
         ROS_DEBUG("HardwareInterface::initNodes - Start CPU Interface Node");
-        _cpu_interface = std::make_shared<cpu_interface::CpuInterfaceCore>();
+        _cpu_interface = std::make_shared<cpu_interface::CpuInterfaceCore>(nh);
         ros::Duration(0.25).sleep();
     }
     else
     {
         ROS_DEBUG("HardwareInterface::initNodes - Start Fake Interface Node");
-        _fake_interface = std::make_shared<fake_interface::FakeInterfaceCore>();
+        _fake_interface = std::make_shared<fake_interface::FakeInterfaceCore>(nh);
     }
 }
 

@@ -53,19 +53,25 @@ namespace joints_interface
  * @param ttl_driver
  * @param can_driver
  */
-JointHardwareInterface::JointHardwareInterface(shared_ptr<ttl_driver::TtlDriverCore> ttl_driver,
+JointHardwareInterface::JointHardwareInterface(ros::NodeHandle& nh,
+                                               shared_ptr<ttl_driver::TtlDriverCore> ttl_driver,
                                                shared_ptr<can_driver::CanDriverCore> can_driver) :
     _ttl_driver_core(ttl_driver),
     _can_driver_core(can_driver),
     _learning_mode(true)
 {
-    initJoints();
+    ROS_DEBUG("JointHardwareInterface::ctor");
+
+    init(nh, nh);
 
     sendInitMotorsParams();
 
     activateLearningMode();
 
-    _calibration_manager = std::make_unique<CalibrationManager>(_joint_list, _can_driver_core, _ttl_driver_core);
+    _calibration_manager = std::make_unique<CalibrationManager>(nh,
+                                                                _joint_list,
+                                                                _can_driver_core,
+                                                                _ttl_driver_core);
 }
 
 /**
@@ -127,14 +133,14 @@ void JointHardwareInterface::write(const ros::Time &/*time*/, const ros::Duratio
  * @brief JointHardwareInterface::initJoints : build the joints by gathering information in config files and instanciating
  * correct state (dxl or stepper)
  */
-void JointHardwareInterface::initJoints()
+bool JointHardwareInterface::init(ros::NodeHandle &rootnh, ros::NodeHandle &robot_hwnh)
 {
     size_t nb_joints = 0;
 
     // retrieve nb joints with checking that the config param exists for both name and id
-    while (_nh.hasParam("/niryo_robot_hardware_interface/joint_" + to_string(nb_joints + 1) + "_id") &&
-          _nh.hasParam("/niryo_robot_hardware_interface/joint_" + to_string(nb_joints + 1) + "_name") &&
-          _nh.hasParam("/niryo_robot_hardware_interface/joint_" + to_string(nb_joints + 1) + "_type"))
+    while (rootnh.hasParam("/niryo_robot_hardware_interface/joint_" + to_string(nb_joints + 1) + "_id") &&
+          rootnh.hasParam("/niryo_robot_hardware_interface/joint_" + to_string(nb_joints + 1) + "_name") &&
+          rootnh.hasParam("/niryo_robot_hardware_interface/joint_" + to_string(nb_joints + 1) + "_type"))
         nb_joints++;
 
     // connect and register joint state interface
@@ -151,9 +157,9 @@ void JointHardwareInterface::initJoints()
         string joint_name = "";
         string joint_type = "";
 
-        _nh.getParam("/niryo_robot_hardware_interface/joint_" + to_string(j + 1) + "_id", joint_id_config);
-        _nh.getParam("/niryo_robot_hardware_interface/joint_" + to_string(j + 1) + "_name", joint_name);
-        _nh.getParam("/niryo_robot_hardware_interface/joint_" + to_string(j + 1) + "_type", joint_type);
+        robot_hwnh.getParam("joint_" + to_string(j + 1) + "_id", joint_id_config);
+        robot_hwnh.getParam("joint_" + to_string(j + 1) + "_name", joint_name);
+        robot_hwnh.getParam("joint_" + to_string(j + 1) + "_type", joint_type);
 
         MotorTypeEnum eType = MotorTypeEnum(joint_type.c_str());
 
@@ -170,10 +176,10 @@ void JointHardwareInterface::initJoints()
                 double direction = 0.0;
                 double max_effort = 0.0;
 
-                _nh.getParam("/niryo_robot_hardware_interface/steppers/stepper_" + to_string(currentIdStepper) + "_offset_position", offsetPos);
-                _nh.getParam("/niryo_robot_hardware_interface/steppers/stepper_" + to_string(currentIdStepper) + "_gear_ratio", gear_ratio);
-                _nh.getParam("/niryo_robot_hardware_interface/steppers/stepper_" + to_string(currentIdStepper) + "_direction", direction);
-                _nh.getParam("/niryo_robot_hardware_interface/steppers/stepper_" + to_string(currentIdStepper) + "_max_effort", max_effort);
+                rootnh.getParam("/niryo_robot_hardware_interface/steppers/stepper_" + to_string(currentIdStepper) + "_offset_position", offsetPos);
+                rootnh.getParam("/niryo_robot_hardware_interface/steppers/stepper_" + to_string(currentIdStepper) + "_gear_ratio", gear_ratio);
+                rootnh.getParam("/niryo_robot_hardware_interface/steppers/stepper_" + to_string(currentIdStepper) + "_direction", direction);
+                rootnh.getParam("/niryo_robot_hardware_interface/steppers/stepper_" + to_string(currentIdStepper) + "_max_effort", max_effort);
 
                 // add parameters
                 stepperState->setOffsetPosition(offsetPos);
@@ -200,13 +206,13 @@ void JointHardwareInterface::initJoints()
                 int FF1Gain = 0;
                 int FF2Gain = 0;
 
-                _nh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_" + to_string(currentIdDxl) + "_offset_position", offsetPos);
-                _nh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_" + to_string(currentIdDxl) + "_direction", direction);
-                _nh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_" + to_string(currentIdDxl) + "_P_gain", PGain);
-                _nh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_" + to_string(currentIdDxl) + "_I_gain", IGain);
-                _nh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_" + to_string(currentIdDxl) + "_D_gain", DGain);
-                _nh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_" + to_string(currentIdDxl) + "_FF1_gain", FF1Gain);
-                _nh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_" + to_string(currentIdDxl) + "_FF2_gain", FF2Gain);
+                rootnh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_" + to_string(currentIdDxl) + "_offset_position", offsetPos);
+                rootnh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_" + to_string(currentIdDxl) + "_direction", direction);
+                rootnh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_" + to_string(currentIdDxl) + "_P_gain", PGain);
+                rootnh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_" + to_string(currentIdDxl) + "_I_gain", IGain);
+                rootnh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_" + to_string(currentIdDxl) + "_D_gain", DGain);
+                rootnh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_" + to_string(currentIdDxl) + "_FF1_gain", FF1Gain);
+                rootnh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_" + to_string(currentIdDxl) + "_FF2_gain", FF2Gain);
 
                 dxlState->setOffsetPosition(offsetPos);
                 dxlState->setDirection(direction);
@@ -251,6 +257,8 @@ void JointHardwareInterface::initJoints()
     // register the interfaces
     registerInterface(&_joint_state_interface);
     registerInterface(&_joint_position_interface);
+
+    return true;
 }
 
 /**
@@ -292,7 +300,7 @@ void JointHardwareInterface::sendInitMotorsParams()
         if (jState && jState->isDynamixel())
         {
             auto dxlState = dynamic_pointer_cast<DxlMotorState>(jState);
-            if (!setMotorPID(dxlState))
+            if (!_ttl_driver_core->setMotorPID(dxlState))
                 ROS_ERROR("JointHardwareInterface::sendInitMotorsParams - Error setting motor PID for dynamixel id %d",
                           static_cast<int>(dxlState->getId()));
         }
@@ -471,60 +479,4 @@ string JointHardwareInterface::jointIdToJointName(uint8_t id, EMotorType motor_t
     return "";
 }
 
-/**
- * @brief JointHardwareInterface::setMotorPID
- * @param dxlState : if a param is < 0, does not set anything
- * @return
- */
-bool JointHardwareInterface::setMotorPID(const shared_ptr<DxlMotorState>& dxlState)
-{
-    uint8_t motor_id = dxlState->getId();
-
-    ROS_DEBUG("JointHardwareInterface::setMotorPID - Setting PID for motor id: %d", static_cast<int>(motor_id));
-
-    // ** DXL PID configuration **
-
-    // P Gain
-    if (dxlState->getPGain() > 0)
-    {
-        SingleMotorCmd dxl_cmd_p(EDxlCommandType::CMD_TYPE_P_GAIN, motor_id, dxlState->getPGain());
-
-        if (dxl_cmd_p.isValid())
-            _ttl_driver_core->addSingleCommandToQueue(dxl_cmd_p);
-    }
-
-    if (dxlState->getIGain() > 0)
-    {
-        SingleMotorCmd dxl_cmd_i(EDxlCommandType::CMD_TYPE_I_GAIN, motor_id, dxlState->getIGain());
-
-        if (dxl_cmd_i.isValid())
-            _ttl_driver_core->addSingleCommandToQueue(dxl_cmd_i);
-    }
-
-    if (dxlState->getDGain() > 0)
-    {
-        SingleMotorCmd dxl_cmd_d(EDxlCommandType::CMD_TYPE_D_GAIN, motor_id, dxlState->getDGain());
-
-        if (dxl_cmd_d.isValid())
-            _ttl_driver_core->addSingleCommandToQueue(dxl_cmd_d);
-    }
-
-    if (dxlState->getFF1Gain() > 0)
-    {
-        SingleMotorCmd dxl_cmd_ff1(EDxlCommandType::CMD_TYPE_FF1_GAIN, motor_id, dxlState->getFF1Gain());
-
-        if (dxl_cmd_ff1.isValid())
-            _ttl_driver_core->addSingleCommandToQueue(dxl_cmd_ff1);
-    }
-
-    if (dxlState->getFF2Gain() > 0)
-    {
-        SingleMotorCmd dxl_cmd_ff2(EDxlCommandType::CMD_TYPE_FF2_GAIN, motor_id, dxlState->getFF2Gain());
-
-        if (dxl_cmd_ff2.isValid())
-            _ttl_driver_core->addSingleCommandToQueue(dxl_cmd_ff2);
-    }
-
-    return true;
-}
 }  // namespace joints_interface

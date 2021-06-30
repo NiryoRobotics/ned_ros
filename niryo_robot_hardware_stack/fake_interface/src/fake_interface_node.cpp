@@ -34,7 +34,7 @@ int main(int argc, char **argv)
 
     ros::NodeHandle nh;
 
-    fake_interface::FakeInterfaceCore nd;
+    fake_interface::FakeInterfaceCore nd(nh);
     ros::waitForShutdown();
 
     ROS_INFO("Fake Joint Interface - Shutdown node");

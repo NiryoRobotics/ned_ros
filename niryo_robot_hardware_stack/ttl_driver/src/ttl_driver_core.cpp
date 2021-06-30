@@ -40,20 +40,21 @@ using ::common::model::EDxlCommandType;
 using ::common::model::SingleMotorCmd;
 using ::common::model::SynchronizeMotorCmd;
 
-static constexpr double DXL_VOLTAGE_DIVISOR = 10.0;
-
 namespace ttl_driver
 {
 /**
  * @brief TtlDriverCore::TtlDriverCore
  */
-TtlDriverCore::TtlDriverCore() :
-    _control_loop_flag(false),
-    _debug_flag(false)
+TtlDriverCore::TtlDriverCore(ros::NodeHandle& nh)
 {
     ROS_DEBUG("TtlDriverCore - ctor");
 
-    init();
+    init(nh);
+
+    _ttl_driver = std::make_unique<TtlDriver>(nh);
+    _ttl_driver->scanAndCheck();
+
+    startControlLoop();
 }
 
 /**
@@ -68,47 +69,37 @@ TtlDriverCore::~TtlDriverCore()
 /**
  * @brief TtlDriverCore::init
  */
-void TtlDriverCore::init()
+bool TtlDriverCore::init(ros::NodeHandle& nh)
 {
-    initParameters();
+    ROS_DEBUG("TtlDriverCore::init - Initializing parameters...");
+    initParameters(nh);
 
-    _ttl_driver = std::make_unique<TtlDriver>();
-    _ttl_driver->scanAndCheck();
-    startControlLoop();
+    ROS_DEBUG("TtlDriverCore::init - Starting services...");
+    startServices(nh);
 
-    // advertise services
+    ROS_DEBUG("TtlDriverCore::init - Starting subscribers...");
+    startSubscribers(nh);
 
-    _activate_leds_server = _nh.advertiseService("niryo_robot/ttl_driver/set_dxl_leds",
-                                                 &TtlDriverCore::_callbackActivateLeds, this);
+    ROS_DEBUG("TtlDriverCore::init - Starting publishers...");
+    startPublishers(nh);
 
-    _custom_cmd_server = _nh.advertiseService("niryo_robot/ttl_driver/send_custom_dxl_value",
-                                              &TtlDriverCore::_callbackSendCustomDxlValue, this);
-
-    _custom_cmd_getter = _nh.advertiseService("niryo_robot/ttl_driver/read_custom_dxl_value",
-                                              &TtlDriverCore::_callbackReadCustomDxlValue, this);
+    return true;
 }
 
 /**
  * @brief TtlDriverCore::initParameters
  */
-void TtlDriverCore::initParameters()
+void TtlDriverCore::initParameters(ros::NodeHandle& nh)
 {
     _control_loop_frequency = 0.0;
     double write_frequency = 0.0;
     double read_data_frequency = 0.0;
     double read_status_frequency = 0.0;
 
-    _nh.getParam("/niryo_robot_hardware_interface/ttl_driver/dxl_hardware_control_loop_frequency",
-                 _control_loop_frequency);
-
-    _nh.getParam("/niryo_robot_hardware_interface/ttl_driver/dxl_hardware_write_frequency",
-                 write_frequency);
-
-    _nh.getParam("/niryo_robot_hardware_interface/ttl_driver/dxl_hardware_read_data_frequency",
-                 read_data_frequency);
-
-    _nh.getParam("/niryo_robot_hardware_interface/ttl_driver/dxl_hardware_read_status_frequency",
-                 read_status_frequency);
+    nh.getParam("dxl_hardware_control_loop_frequency", _control_loop_frequency);
+    nh.getParam("dxl_hardware_write_frequency", write_frequency);
+    nh.getParam("dxl_hardware_read_data_frequency", read_data_frequency);
+    nh.getParam("dxl_hardware_read_status_frequency", read_status_frequency);
 
     ROS_DEBUG("TtlDriverCore::initParameters - dxl_hardware_control_loop_frequency : %f", _control_loop_frequency);
     ROS_DEBUG("TtlDriverCore::initParameters - dxl_hardware_write_frequency : %f", write_frequency);
@@ -118,6 +109,40 @@ void TtlDriverCore::initParameters()
     _delta_time_data_read = 1.0 / read_data_frequency;
     _delta_time_status_read = 1.0 / read_status_frequency;
     _delta_time_write = 1.0 / write_frequency;
+}
+
+/**
+ * @brief TtlDriverCore::startServices
+ * @param nh
+ */
+void TtlDriverCore::startServices(ros::NodeHandle &nh)
+{
+    _activate_leds_server = nh.advertiseService("niryo_robot/ttl_driver/set_dxl_leds",
+                                                 &TtlDriverCore::_callbackActivateLeds, this);
+
+    _custom_cmd_server = nh.advertiseService("niryo_robot/ttl_driver/send_custom_dxl_value",
+                                              &TtlDriverCore::_callbackSendCustomDxlValue, this);
+
+    _custom_cmd_getter = nh.advertiseService("niryo_robot/ttl_driver/read_custom_dxl_value",
+                                             &TtlDriverCore::_callbackReadCustomDxlValue, this);
+}
+
+/**
+ * @brief TtlDriverCore::startSubscribers
+ * @param nh
+ */
+void TtlDriverCore::startSubscribers(ros::NodeHandle &/*nh*/)
+{
+    ROS_DEBUG("TTLDriverCore::startSubscribers - no subscribers to start");
+}
+
+/**
+ * @brief TtlDriverCore::startPublishers
+ * @param nh
+ */
+void TtlDriverCore::startPublishers(ros::NodeHandle &/*nh*/)
+{
+    ROS_DEBUG("TTLDriverCore::startSubscribers - no publishers to start");
 }
 
 // ***************
@@ -596,6 +621,63 @@ void TtlDriverCore::clearEndEffectorCommandQueue()
 {
     while (!_end_effector_cmds.empty())
         _end_effector_cmds.pop();
+}
+
+/**
+ * @brief TtlDriverCore::setMotorPID
+ * @param dxlState
+ * @return
+ */
+bool TtlDriverCore::setMotorPID(const std::shared_ptr<DxlMotorState> &dxlState)
+{
+    uint8_t motor_id = dxlState->getId();
+
+    ROS_DEBUG("TtlDriverCore::setMotorPID - Setting PID for motor id: %d", static_cast<int>(motor_id));
+
+    // ** DXL PID configuration **
+
+    // P Gain
+    if (dxlState->getPGain() > 0)
+    {
+        SingleMotorCmd dxl_cmd_p(EDxlCommandType::CMD_TYPE_P_GAIN, motor_id, dxlState->getPGain());
+
+        if (dxl_cmd_p.isValid())
+            addSingleCommandToQueue(dxl_cmd_p);
+    }
+
+    if (dxlState->getIGain() > 0)
+    {
+        SingleMotorCmd dxl_cmd_i(EDxlCommandType::CMD_TYPE_I_GAIN, motor_id, dxlState->getIGain());
+
+        if (dxl_cmd_i.isValid())
+            addSingleCommandToQueue(dxl_cmd_i);
+    }
+
+    if (dxlState->getDGain() > 0)
+    {
+        SingleMotorCmd dxl_cmd_d(EDxlCommandType::CMD_TYPE_D_GAIN, motor_id, dxlState->getDGain());
+
+        if (dxl_cmd_d.isValid())
+            addSingleCommandToQueue(dxl_cmd_d);
+    }
+
+    if (dxlState->getFF1Gain() > 0)
+    {
+        SingleMotorCmd dxl_cmd_ff1(EDxlCommandType::CMD_TYPE_FF1_GAIN, motor_id, dxlState->getFF1Gain());
+
+        if (dxl_cmd_ff1.isValid())
+            addSingleCommandToQueue(dxl_cmd_ff1);
+    }
+
+    if (dxlState->getFF2Gain() > 0)
+    {
+        SingleMotorCmd dxl_cmd_ff2(EDxlCommandType::CMD_TYPE_FF2_GAIN, motor_id, dxlState->getFF2Gain());
+
+        if (dxl_cmd_ff2.isValid())
+            addSingleCommandToQueue(dxl_cmd_ff2);
+    }
+
+    return true;
 }
 
 /**

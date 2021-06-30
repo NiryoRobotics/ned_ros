@@ -45,18 +45,21 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "niryo_robot_msgs/Trigger.h"
 #include "common/model/motor_type_enum.hpp"
 
+#include "common/model/iinterface_core.hpp"
+
 namespace joints_interface
 {
 
-class JointsInterfaceCore
+class JointsInterfaceCore : common::model::IInterfaceCore
 {
     public:
 
-        JointsInterfaceCore(
-            std::shared_ptr<ttl_driver::TtlDriverCore> ttl_driver,
-            std::shared_ptr<can_driver::CanDriverCore> can_driver);
+        JointsInterfaceCore(ros::NodeHandle& nh,
+                            std::shared_ptr<ttl_driver::TtlDriverCore> ttl_driver,
+                            std::shared_ptr<can_driver::CanDriverCore> can_driver);
+        virtual ~JointsInterfaceCore() override;
 
-        virtual ~JointsInterfaceCore();
+        virtual bool init(ros::NodeHandle& nh) override;
 
         void sendMotorsParams();
         void activateLearningMode(bool learning_mode_on, int &resp_status, std::string &resp_message);
@@ -70,13 +73,10 @@ class JointsInterfaceCore
         const std::vector<std::shared_ptr<common::model::JointState> >& getJointsState() const;
 
     private:
-        void init(std::shared_ptr<ttl_driver::TtlDriverCore> ttl_driver,
-                  std::shared_ptr<can_driver::CanDriverCore> can_driver);
-
-        void initParameters();
-        void startServices();
-        void startSubscribers();
-        void startPublishers();
+        virtual void initParameters(ros::NodeHandle& nh) override;
+        virtual void startServices(ros::NodeHandle& nh) override;
+        virtual void startSubscribers(ros::NodeHandle& nh) override;
+        virtual void startPublishers(ros::NodeHandle& nh) override;
 
         void rosControlLoop();
 
@@ -89,8 +89,6 @@ class JointsInterfaceCore
         void _publishLearningMode();
 
     private:
-        ros::NodeHandle _nh;
-
         bool _enable_control_loop{true};
         bool _previous_state_learning_mode{true};
         bool _reset_controller{false};

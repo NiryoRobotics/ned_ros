@@ -20,6 +20,7 @@ add_definitions(-Wall  -Werror)
 find_package(catkin REQUIRED
     COMPONENTS
         roscpp
+        common
 )
 
 
@@ -42,6 +43,7 @@ catkin_package(
         ${PROJECT_NAME}
     CATKIN_DEPENDS
         roscpp
+        common
 )
 
 ###########

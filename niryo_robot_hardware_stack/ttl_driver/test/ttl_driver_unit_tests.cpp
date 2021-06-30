@@ -22,10 +22,12 @@
 #include <gtest/gtest.h>
 #include <ros/console.h>
 
+static std::unique_ptr<ros::NodeHandle> nh;
+
 // Declare a test
 TEST(TtlDriverTestSuite, testInitDriver)
 {
-    ttl_driver::TtlDriver ttl_driver;
+    ttl_driver::TtlDriver ttl_driver(*nh);
     ttl_driver.scanAndCheck();
 
     EXPECT_TRUE(ttl_driver.isConnectionOk());
@@ -37,15 +39,7 @@ int main(int argc, char **argv)
   testing::InitGoogleTest(&argc, argv);
   ros::init(argc, argv, "ttl_driver_unit_tests");
 
-  ros::NodeHandle nh;
-
-  // set log level as Debug.
-  // For tests launched using catkin_make run_tests, the logs are located in files only
-  // see build/test_results/ttl_driver/rostest-test_ttl_driver_unit_tests.xml
-  // log file is of the form .ros/log/aac4b920-c76b-11eb-942e-00e04c680780/ttl_driver_unit_tests-1*.log
-
-  if ( ros::console::set_logger_level(ROSCONSOLE_DEFAULT_NAME, ros::console::levels::Debug) )
-     ros::console::notifyLoggerLevelsChanged();
+  nh = std::make_unique<ros::NodeHandle>();
 
   return RUN_ALL_TESTS();
 }

@@ -50,14 +50,14 @@ namespace ttl_driver
 /**
  * @brief TtlDriver::TtlDriver
  */
-TtlDriver::TtlDriver() :
+TtlDriver::TtlDriver(ros::NodeHandle& nh) :
     _is_connection_ok(false),
     _debug_error_message("TtlDriver - No connection with Dynamixel motors has been made yet"),
     _hw_fail_counter_read(0)
 {
     ROS_DEBUG("TtlDriver - ctor");
 
-    init();
+    init(nh);
 
     if (COMM_SUCCESS != setupCommunication())
         ROS_WARN("TtlDriver - Dynamixel Communication Failed");
@@ -73,11 +73,11 @@ TtlDriver::~TtlDriver()
  * @brief TtlDriver::init
  * @return
  */
-bool TtlDriver::init()
+bool TtlDriver::init(ros::NodeHandle& nh)
 {
     // get params from rosparams
-    _nh.getParam("/niryo_robot_hardware_interface/ttl_driver/dxl_bus/dxl_uart_device_name", _device_name);
-    _nh.getParam("/niryo_robot_hardware_interface/ttl_driver/dxl_bus/dxl_baudrate", _uart_baudrate);
+    nh.getParam("dxl_bus/dxl_uart_device_name", _device_name);
+    nh.getParam("dxl_bus/dxl_baudrate", _uart_baudrate);
 
     _dxlPortHandler.reset(dynamixel::PortHandler::getPortHandler(_device_name.c_str()));
     _dxlPacketHandler.reset(dynamixel::PacketHandler::getPacketHandler(DXL_BUS_PROTOCOL_VERSION));
@@ -88,15 +88,15 @@ bool TtlDriver::init()
     vector<int> idList;
     vector<string> typeList;
 
-    if (_nh.hasParam("/niryo_robot_hardware_interface/ttl_driver/motors_params/dxl_motor_id_list"))
-        _nh.getParam("/niryo_robot_hardware_interface/ttl_driver/motors_params/dxl_motor_id_list", idList);
+    if (nh.hasParam("motors_params/dxl_motor_id_list"))
+        nh.getParam("motors_params/dxl_motor_id_list", idList);
     else
-        _nh.getParam("/niryo_robot_hardware_interface/motors_params/dxl_motor_id_list", idList);
+        nh.getParam("motors_params/dxl_motor_id_list", idList);
 
-    if (_nh.hasParam("/niryo_robot_hardware_interface/ttl_driver/motors_params/dxl_motor_type_list"))
-        _nh.getParam("/niryo_robot_hardware_interface/ttl_driver/motors_params/dxl_motor_type_list", typeList);
+    if (nh.hasParam("motors_params/dxl_motor_type_list"))
+        nh.getParam("motors_params/dxl_motor_type_list", typeList);
     else
-        _nh.getParam("/niryo_robot_hardware_interface/motors_params/dxl_motor_type_list", typeList);
+        nh.getParam("motors_params/dxl_motor_type_list", typeList);
 
     // debug - display info
     ostringstream ss;

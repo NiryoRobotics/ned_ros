@@ -34,10 +34,10 @@ int main(int argc, char **argv)
     spinner.start();
     ros::NodeHandle nh;
 
-    auto ttl_driver = std::make_shared<ttl_driver::TtlDriverCore>();
+    auto ttl_driver = std::make_shared<ttl_driver::TtlDriverCore>(nh);
     ros::Duration(1).sleep();
 
-    auto tool = std::make_shared<tools_interface::ToolsInterfaceCore>(ttl_driver);
+    auto tool = std::make_shared<tools_interface::ToolsInterfaceCore>(nh, ttl_driver);
     ros::Duration(1).sleep();
 
     ros::waitForShutdown();

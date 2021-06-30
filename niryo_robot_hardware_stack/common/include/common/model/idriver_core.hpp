@@ -54,8 +54,6 @@ class IDriverCore
         virtual niryo_robot_msgs::BusState getBusState() const = 0;
 
     private:
-        virtual void init() = 0;
-        virtual void initParameters() = 0;
         virtual void resetHardwareControlLoopRates() = 0;
         virtual void controlLoop() = 0;
         virtual void _executeCommand() = 0;

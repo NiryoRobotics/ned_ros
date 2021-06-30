@@ -27,35 +27,35 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <thread>
 #include <string>
 
+#include "common/model/iinterface_core.hpp"
+
 namespace cpu_interface
 {
 
 /**
  * @brief The CpuInterfaceCore class
  */
-class CpuInterfaceCore
+class CpuInterfaceCore : public common::model::IInterfaceCore
 {
     public:
 
-        CpuInterfaceCore();
-        virtual ~CpuInterfaceCore();
+        CpuInterfaceCore(ros::NodeHandle& nh);
+        virtual ~CpuInterfaceCore() override;
+        virtual bool init(ros::NodeHandle& nh) override;
 
         void startReadingData();
         int getCpuTemperature() const;
 
     private:
-        void init();
-        void initParameters();
-        void startServices();
-        void startSubscribers();
-        void startPublishers();
+        virtual void initParameters(ros::NodeHandle& nh) override;
+        virtual void startServices(ros::NodeHandle& nh) override;
+        virtual void startSubscribers(ros::NodeHandle& nh) override;
+        virtual void startPublishers(ros::NodeHandle& nh) override;
 
         void _readCpuTemperature();
         void _readHardwareDataLoop();
 
     private:
-        ros::NodeHandle _nh;
-
         std::thread _read_hardware_data_thread;
 
         int _cpu_temperature{0};

@@ -40,15 +40,15 @@ namespace can_driver
 /**
  * @brief CanDriver::CanDriver
  */
-CanDriver::CanDriver() :
+CanDriver::CanDriver(ros::NodeHandle &nh) :
     _calibration_status(EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED),
     _is_connection_ok(false)
 {
     ROS_DEBUG("CanDriver - ctor");
     
-    init();
+    init(nh);
 
-    if (CAN_OK == setupCAN())
+    if (CAN_OK == setupCAN(nh))
     {
         scanAndCheck();
         _stepper_timeout_thread = std::thread(&CanDriver::_verifyMotorTimeoutLoop, this);
@@ -98,16 +98,14 @@ void CanDriver::resetCalibration()
  * @brief CanDriver::init : initialize the internal data (map, vectors) based on conf
  * @return
  */
-bool CanDriver::init()
+bool CanDriver::init(ros::NodeHandle &nh)
 {
-    _nh.getParam("/niryo_robot_hardware_interface/calibration_timeout", _calibration_timeout);
+    nh.getParam("/niryo_robot_hardware_interface/calibration/calibration_timeout", _calibration_timeout);
+    ROS_DEBUG("CanDriver::init - Calibration timeout %f", _calibration_timeout);
 
     std::vector<int> idList;
 
-    if (_nh.hasParam("/niryo_robot_hardware_interface/can_driver/motors_params/stepper_motor_id_list"))
-        _nh.getParam("/niryo_robot_hardware_interface/can_driver/motors_params/stepper_motor_id_list", idList);
-    else
-        _nh.getParam("/niryo_robot_hardware_interface/motors_params/stepper_motor_id_list", idList);
+    nh.getParam("motors_params/stepper_motor_id_list", idList);
 
     // debug - display info
     std::ostringstream ss;
@@ -144,16 +142,16 @@ bool CanDriver::init()
  * @brief CanDriver::setupCAN
  * @return
  */
-int CanDriver::setupCAN()
+int CanDriver::setupCAN(ros::NodeHandle& nh)
 {
     int result = CAN_FAILINIT;
     int spi_channel = 0;
     int spi_baudrate = 0;
     int gpio_can_interrupt = 0;
 
-    _nh.getParam("/niryo_robot_hardware_interface/can_driver/can_bus/spi_channel", spi_channel);
-    _nh.getParam("/niryo_robot_hardware_interface/can_driver/can_bus/spi_baudrate", spi_baudrate);
-    _nh.getParam("/niryo_robot_hardware_interface/can_driver/can_bus/gpio_can_interrupt", gpio_can_interrupt);
+    nh.getParam("can_bus/spi_channel", spi_channel);
+    nh.getParam("can_bus/spi_baudrate", spi_baudrate);
+    nh.getParam("can_bus/gpio_can_interrupt", gpio_can_interrupt);
 
     ROS_DEBUG("CanDriver::CanDriver - Can bus parameters: spi_channel : %d", spi_channel);
     ROS_DEBUG("CanDriver::CanDriver - Can bus parameters: spi_baudrate : %d", spi_baudrate);
@@ -166,10 +164,10 @@ int CanDriver::setupCAN()
     {
         if (mcp_can->setupInterruptGpio())
         {
-            ROS_DEBUG("CanDriver::setupCAN - setup successfull");
+            ROS_DEBUG("CanDriver::setupCAN - setup interrupt GPIO successfull");
             if (mcp_can->setupSpi())
             {
-                ROS_DEBUG("CanDriver::setupCAN - setup successfull");
+                ROS_DEBUG("CanDriver::setupCAN - setup spi successfull");
 
                 // no mask or filter used, receive all messages from CAN bus
                 // messages with ids != motor_id will be sent to another ROS interface
@@ -660,7 +658,8 @@ void CanDriver::fillConveyorState(uint8_t motor_id, const std::array<uint8_t, 8>
  */
 void CanDriver::_verifyMotorTimeoutLoop()
 {
-    while (_nh.ok())
+    ros::NodeHandle nh("~");
+    while (nh.ok())
     {
         std::lock_guard<std::mutex> lck(_stepper_timeout_mutex);
         std::vector<uint8_t> timeout_motors;
@@ -723,6 +722,7 @@ void CanDriver::updateCurrentCalibrationStatus()
 
 /**
  * @brief CanDriver::getCurrentTimeout
+ * used to adapt the timeout according to the state of the can (calibration or not)
  * @return
  */
 double CanDriver::getCurrentTimeout() const

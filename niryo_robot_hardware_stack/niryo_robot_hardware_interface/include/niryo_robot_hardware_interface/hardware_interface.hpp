@@ -23,6 +23,8 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <ros/ros.h>
 #include <memory>
 
+#include "common/model/iinterface_core.hpp"
+
 #include "joints_interface/joints_interface_core.hpp"
 #include "tools_interface/tools_interface_core.hpp"
 #include "conveyor_interface/conveyor_interface_core.hpp"
@@ -43,20 +45,20 @@ namespace niryo_robot_hardware_interface
 /**
  * @brief The HardwareInterface class
  */
-class HardwareInterface
+class HardwareInterface : common::model::IInterfaceCore
 {
 public:
-    HardwareInterface(ros::NodeHandle &nh);
-    virtual ~HardwareInterface();
+    HardwareInterface(ros::NodeHandle &nh, bool delayed = false);
+    virtual ~HardwareInterface() override;
+    virtual bool init(ros::NodeHandle &nh) override;
 
 private:
-    void init(bool delayed = false);
+    virtual void initParameters(ros::NodeHandle &nh) override;
+    virtual void startServices(ros::NodeHandle &nh) override;
+    virtual void startSubscribers(ros::NodeHandle &nh) override;
+    virtual void startPublishers(ros::NodeHandle &nh) override;
 
-    void initParameters();
-    void startServices();
-    void startSubscribers();
-    void startPublishers();
-    void initNodes();
+    void initNodes(ros::NodeHandle &nh);
 
     bool _callbackLaunchMotorsReport(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
     bool _callbackStopMotorsReport(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
@@ -66,8 +68,6 @@ private:
     void _publishSoftwareVersion();
 
 private:
-    ros::NodeHandle &_nh;
-
     ros::Publisher _hardware_status_publisher;
     ros::Publisher _software_version_publisher;
 
@@ -97,6 +97,7 @@ private:
 
     std::string _rpi_image_version;
     std::string _ros_niryo_robot_version;
+
 };
 } // namespace niryo_robot_hardware_interface
 #endif

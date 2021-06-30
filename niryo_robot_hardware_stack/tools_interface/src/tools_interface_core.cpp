@@ -52,12 +52,13 @@ namespace tools_interface
  * @brief ToolsInterfaceCore::ToolsInterfaceCore
  * @param ttl_driver
  */
-ToolsInterfaceCore::ToolsInterfaceCore(shared_ptr<ttl_driver::TtlDriverCore> ttl_driver):
+ToolsInterfaceCore::ToolsInterfaceCore(ros::NodeHandle& nh,
+                                       shared_ptr<ttl_driver::TtlDriverCore> ttl_driver):
     _ttl_driver_core(ttl_driver)
 {
     ROS_DEBUG("ToolsInterfaceCore::ctor");
 
-    init();
+    init(nh);
 
     pubToolId(0);
 }
@@ -73,36 +74,39 @@ ToolsInterfaceCore::~ToolsInterfaceCore()
 
 /**
  * @brief ToolsInterfaceCore::init
+ * @param nh
+ * @return
  */
-void ToolsInterfaceCore::init()
+bool ToolsInterfaceCore::init(ros::NodeHandle& nh)
 {
     ROS_DEBUG("ToolsInterfaceCore::init - Initializing parameters...");
-    initParameters();
+    initParameters(nh);
 
     ROS_DEBUG("ToolsInterfaceCore::init - Starting services...");
-    startServices();
+    startServices(nh);
 
     ROS_DEBUG("ToolsInterfaceCore::init - Starting subscribers...");
-    startSubscribers();
+    startSubscribers(nh);
 
     ROS_DEBUG("ToolsInterfaceCore::init - Starting publishers...");
-    startPublishers();
+    startPublishers(nh);
+
+    return true;
 }
 
 /**
  * @brief ToolsInterfaceCore::initParameters
  */
-void ToolsInterfaceCore::initParameters()
+void ToolsInterfaceCore::initParameters(ros::NodeHandle& nh)
 {
     vector<int> idList;
     vector<string> typeList;
 
     _available_tools_map.clear();
-    _nh.getParam("/niryo_robot_hardware_interface/tools_interface/tools_params/id_list", idList);
-    _nh.getParam("/niryo_robot_hardware_interface/tools_interface/tools_params/type_list", typeList);
+    nh.getParam("tools_params/id_list", idList);
+    nh.getParam("tools_params/type_list", typeList);
 
-    _nh.getParam("/niryo_robot_hardware_interface/tools_interface/check_tool_connection_frequency",
-                 _check_tool_connection_frequency);
+    nh.getParam("check_tool_connection_frequency", _check_tool_connection_frequency);
 
     // debug - display info
     ostringstream ss;
@@ -154,31 +158,31 @@ void ToolsInterfaceCore::initParameters()
 /**
  * @brief ToolsInterfaceCore::startServices
  */
-void ToolsInterfaceCore::startServices()
+void ToolsInterfaceCore::startServices(ros::NodeHandle& nh)
 {
-    _ping_and_set_dxl_tool_server = _nh.advertiseService("niryo_robot/tools/ping_and_set_dxl_tool",
+    _ping_and_set_dxl_tool_server = nh.advertiseService("niryo_robot/tools/ping_and_set_dxl_tool",
                                                          &ToolsInterfaceCore::_callbackPingAndSetDxlTool, this);
 
-    _open_gripper_server = _nh.advertiseService("niryo_robot/tools/open_gripper",
+    _open_gripper_server = nh.advertiseService("niryo_robot/tools/open_gripper",
                                                 &ToolsInterfaceCore::_callbackOpenGripper, this);
 
-    _close_gripper_server = _nh.advertiseService("niryo_robot/tools/close_gripper",
+    _close_gripper_server = nh.advertiseService("niryo_robot/tools/close_gripper",
                                                  &ToolsInterfaceCore::_callbackCloseGripper, this);
 
-    _pull_air_vacuum_pump_server = _nh.advertiseService("niryo_robot/tools/pull_air_vacuum_pump",
+    _pull_air_vacuum_pump_server = nh.advertiseService("niryo_robot/tools/pull_air_vacuum_pump",
                                                         &ToolsInterfaceCore::_callbackPullAirVacuumPump, this);
 
-    _push_air_vacuum_pump_server = _nh.advertiseService("niryo_robot/tools/push_air_vacuum_pump",
+    _push_air_vacuum_pump_server = nh.advertiseService("niryo_robot/tools/push_air_vacuum_pump",
                                                         &ToolsInterfaceCore::_callbackPushAirVacuumPump, this);
 
-    _tool_reboot_server = _nh.advertiseService("niryo_robot/tools/reboot",
+    _tool_reboot_server = nh.advertiseService("niryo_robot/tools/reboot",
                                                &ToolsInterfaceCore::_callbackToolReboot, this);
 }
 
 /**
  * @brief ToolsInterfaceCore::startSubscribers
  */
-void ToolsInterfaceCore::startSubscribers()
+void ToolsInterfaceCore::startSubscribers(ros::NodeHandle& /*nh*/)
 {
     ROS_DEBUG("No subscribers to start");
 }
@@ -186,9 +190,9 @@ void ToolsInterfaceCore::startSubscribers()
 /**
  * @brief ToolsInterfaceCore::startPublishers
  */
-void ToolsInterfaceCore::startPublishers()
+void ToolsInterfaceCore::startPublishers(ros::NodeHandle& nh)
 {
-    _tool_connection_publisher = _nh.advertise<std_msgs::Int32>("/niryo_robot_hardware/tools/current_id", 1, true);
+    _tool_connection_publisher = nh.advertise<std_msgs::Int32>("/niryo_robot_hardware/tools/current_id", 1, true);
     _publish_tool_connection_thread = std::thread(&ToolsInterfaceCore::_publishToolConnection, this);
 }
 

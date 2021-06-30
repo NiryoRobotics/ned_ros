@@ -55,8 +55,10 @@ class CanDriver : public common::model::IDriver
 {
     public:
 
-        CanDriver();
+        CanDriver(ros::NodeHandle& nh);
         virtual ~CanDriver() override;
+
+        bool init(ros::NodeHandle& nh) override;
 
         // commands
         void addMotor(uint8_t id, bool isConveyor = false);
@@ -97,10 +99,9 @@ class CanDriver : public common::model::IDriver
 
 
 private:
-        bool init() override;
         bool hasMotors() override;
 
-        int setupCAN();
+        int setupCAN(ros::NodeHandle& nh);
 
         bool canReadData() const;
 
@@ -128,8 +129,6 @@ private:
         double getCurrentTimeout() const;
 
     private:
-        ros::NodeHandle _nh;
-
         std::unique_ptr<mcp_can_rpi::MCP_CAN> mcp_can;
 
         std::mutex _stepper_timeout_mutex;
