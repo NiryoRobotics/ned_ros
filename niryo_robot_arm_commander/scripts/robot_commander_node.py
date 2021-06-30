@@ -14,6 +14,7 @@ from ArmParametersValidator import ArmParametersValidator
 from motor_debug import MotorDebug
 
 from jog_controller import JogController
+from transform_handler import ArmTCPTransformHandler
 from niryo_robot_arm_commander.command_enums import *
 
 # Command Status
@@ -60,8 +61,12 @@ class RobotCommanderNode:
         # - Load all the sub-commanders
         # First, get Parameters Validator for Arm
         arm_param_validator = ArmParametersValidator(rospy.get_param("/niryo_robot/robot_command_validation"))
+
+        # Transform handler
+        self.__transform_handler = ArmTCPTransformHandler()
+
         # Initialize Arm
-        self.__arm_commander = ArmCommander(arm_param_validator)
+        self.__arm_commander = ArmCommander(arm_param_validator, self.__transform_handler)
 
         rospy.logdebug("Robot Commander - Sub Commanders are loaded")
 
@@ -146,7 +151,7 @@ class RobotCommanderNode:
         self.__jog_controller = JogController(arm_param_validator)
 
         # Publish robot state (position, orientation, tool)
-        self.__state_publisher = StatePublisher()
+        self.__state_publisher = StatePublisher(self.__transform_handler)
 
         # Set a bool to mention this node is initialized
         rospy.set_param('~initialized', True)
@@ -171,7 +176,7 @@ class RobotCommanderNode:
     def __callback_learning_mode(self, msg):
         activate = msg.data
         if not self.__learning_mode_on and activate:
-            self.__arm_commander.stop_arm()
+            self.__arm_commander.trajectories_executor.stop_arm()
         self.__learning_mode_on = activate
 
     def __callback_linear_trajectory_changed(self, msg):
@@ -398,8 +403,7 @@ class RobotCommanderNode:
         return self.dict_interpreter_move_cmd[cmd_type](cmd)
 
     def __cancel_command(self):
-        self.__arm_commander.stop_current_plan()  # Send a cancel signal to Moveit interface
-        
+        self.__arm_commander.trajectories_executor.stop_current_plan()  # Send a cancel signal to Moveit interface
 
     @staticmethod
     def __set_learning_mode(set_bool):
@@ -443,13 +447,14 @@ class StatePublisher:
      in the Topic '/niryo_robot/robot_state' at a certain rate
     """
 
-    def __init__(self):
+    def __init__(self, transform_handler):
 
         # Tf listener (position + rpy) of end effector tool
         self.__position = [0, 0, 0]
         self.__quaternion = [0, 0, 0, 0]
         self.__rpy = [0, 0, 0]
-        self.__tf_listener = tf.TransformListener()
+
+        self.__transform_handler = transform_handler
 
         # State publisher
         self.__robot_state_publisher = rospy.Publisher(
@@ -462,12 +467,13 @@ class StatePublisher:
 
     def __update_ee_link_pose(self):
         try:
-            (pos, rot) = self.__tf_listener.lookupTransform('base_link', 'tool_link', rospy.Time(0))
-            self.__position = pos
-            self.__quaternion = rot
-            self.__rpy = tf.transformations.euler_from_quaternion(rot)
+            t = self.__transform_handler.lookup_transform('base_link', 'TCP', rospy.Time(0))
+            self.__position = self.vector3_to_list(t.transform.translation)
+            self.__quaternion = self.quaternion_to_list(t.transform.rotation)
+            self.__rpy = tf.transformations.euler_from_quaternion(self.__quaternion)
         except (LookupException, ConnectivityException, ExtrapolationException):
-            rospy.loginfo_throttle(1, "State Publisher - Failed to get TF base_link -> ee_link")
+            self.__transform_handler.set_empty_tcp_to_ee_link_transform("tool_link")
+            rospy.loginfo_throttle(1, "State Publisher - Failed to get TF base_link -> TCP")
 
     def __publish_state(self, _):
         self.__update_ee_link_pose()
@@ -507,6 +513,14 @@ class StatePublisher:
             elif angle < -pi:
                 euler[i] = angle % (2 * pi)
         return euler
+
+    @staticmethod
+    def quaternion_to_list(quat):
+        return [quat.x, quat.y, quat.z, quat.w]
+
+    @staticmethod
+    def vector3_to_list(vect):
+        return [vect.x, vect.y, vect.z]
 
 
 if __name__ == '__main__':

@@ -1,0 +1,9 @@
+geometry_msgs/Point position
+
+#Only one of the two is required.
+#If both are filled, the quaternion will be chosen by default
+niryo_robot_msgs/RPY rpy
+geometry_msgs/Quaternion orientation
+---
+int32 status
+string message
