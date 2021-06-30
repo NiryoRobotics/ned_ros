@@ -961,7 +961,7 @@ class NiryoRosWrapper:
         """
         Execute trajectory from a list of pose
 
-        :param list_poses_raw: list of [x, y, z, qx, qy, qz, qw]
+        :param list_poses_raw: list of [x, y, z, qx, qy, qz, qw] or list of [x, y, z, roll, pitch, yaw]
         :type list_poses_raw: list[list[float]]
         :param dist_smoothing: Distance from waypoints before smoothing trajectory
         :type dist_smoothing: float
@@ -984,25 +984,80 @@ class NiryoRosWrapper:
             list_poses.append(Pose(point, orientation))
         return self.__execute_trajectory_from_formatted_poses(list_poses, dist_smoothing)
 
+    def execute_trajectory_from_poses_and_joints(self, list_pose_joints, list_type=None, dist_smoothing=0.0):
+        """
+        Execute trajectory from list of poses and joints
+
+        :param list_pose_joints: List of [x,y,z,qx,qy,qz,qw] or list of [x,y,z,roll,pitch,yaw] or a list of [j1,j2,j3,j4,j5,j6]
+        :type list_pose_joints: list[list[float]]
+        :param list_type: List of string 'pose' or 'joint', or ['pose'] (if poses only) or ['joint'] (if joints only)
+        :type list_type: list[string]
+        :param dist_smoothing: Distance from waypoints before smoothing trajectory
+        :type dist_smoothing: float
+        :return: status, message
+        :rtype: (int, str)
+        """
+        if list_type is None:
+            list_type = ['pose']
+        list_pose_waypoints = []
+
+        if len(list_type) == 1: # only one type of object
+            if list_type[0] == "pose":  # every elem in list is a pose
+                list_pose_waypoints = list_pose_joints
+            elif list_type[0] == "joint":  # every elem in list is a joint
+                list_pose_waypoints = [self.forward_kinematics(*joint) for joint in list_pose_joints]
+
+            else:
+                raise NiryoRosWrapperException(
+                    'Execute trajectory from poses and joints - Wrong list_type argument : got '
+                    + list_type[0] + ", expected 'pose' or 'joint'")
+
+        elif len(list_type) == len(list_pose_joints):
+            # convert every joints to poses
+            for target, type_  in zip(list_pose_joints, list_type):
+                if type_ == 'joint':
+                    pose_from_joint = self.forward_kinematics(*target)
+                    list_pose_waypoints.append(pose_from_joint)
+                elif type_ == 'pose':
+                    list_pose_waypoints.append(target)
+                else:
+                    raise NiryoRosWrapperException(
+                        'Execute trajectory from poses and joints - Wrong list_type argument at index ' + str(i) +
+                        ' got ' + type_ + ", expected 'pose' or 'joint'")
+
+        else:
+            raise NiryoRosWrapperException(
+                'Execute trajectory from poses and joints - List of waypoints (size ' + str(len(list_pose_joints)) +
+                ') and list of type (size ' + str(len(list_type)) + ') must be the same size.')
+
+        return self.execute_trajectory_from_poses(list_pose_waypoints, dist_smoothing)
+
     def save_trajectory(self, trajectory_name, list_poses_raw):
         """
         Save trajectory object and send it to the trajectory manager service
 
         :param trajectory_name: name which will have the trajectory
         :type trajectory_name: str
-        :param list_poses_raw: list of [x, y, z, qx, qy, qz, qw]
+        :param list_poses_raw: list of [x, y, z, qx, qy, qz, qw] or list of [x, y, z, roll, pitch, yaw]
         :type list_poses_raw: list[list[float]]
         :return: status, message
         :rtype: (int, str)
         """
         from niryo_robot_poses_handlers.srv import ManageTrajectory, ManageTrajectoryRequest
+        from niryo_robot_poses_handlers.transform_functions import quaternion_from_euler
 
         req = ManageTrajectoryRequest()
         req.cmd = ManageTrajectoryRequest.SAVE
         req.name = trajectory_name
         list_poses = []
         for pose in list_poses_raw:
-            list_poses.append(Pose(Point(*pose[:3]), Quaternion(*pose[3:])))
+            angle = pose[3:]
+            if len(angle) == 3:
+                quaternion = quaternion_from_euler(*angle)
+            else:
+                quaternion = angle
+            orientation = Quaternion(*quaternion)
+            list_poses.append(Pose(Point(*pose[:3]), orientation))
         req.poses = list_poses
 
         result = self.__call_service('/niryo_robot_poses_handlers/manage_trajectory',
