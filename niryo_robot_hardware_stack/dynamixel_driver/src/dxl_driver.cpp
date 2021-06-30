@@ -1059,13 +1059,40 @@ namespace DynamixelDriver
         if(motor_type == DxlMotorType::MOTOR_TYPE_XL430)
         {
             result= _xl430->reboot(motor_id);
+            if (result==COMM_SUCCESS)
+            {
+                ros::Time start_time = ros::Time::now();
+                uint32_t tmp=0;
+                int wait_result =_xl430->readTemperature(motor_id, &tmp);
+                while(wait_result!=COMM_SUCCESS || tmp==0){
+                    if ((ros::Time::now() - start_time).toSec() > 1)
+                        return wait_result;
+                    ros::Duration(0.1).sleep();
+                    wait_result =_xl430->readTemperature(motor_id, &tmp);
+                }
+            }
         }
         if(motor_type == DxlMotorType::MOTOR_TYPE_XL320)
         {
             result = _xl320->reboot(motor_id);
+            uint32_t tmp=0;
+            if (result==COMM_SUCCESS)
+            {
+                ros::Time start_time = ros::Time::now();
+                uint32_t tmp=0;
+                int wait_result =_xl320->readTemperature(motor_id, &tmp);
+                while(wait_result!=COMM_SUCCESS || tmp==0){
+                    if ((ros::Time::now() - start_time).toSec() > 1)
+                        return wait_result;
+                    ros::Duration(0.1).sleep();
+                    wait_result =_xl320->readTemperature(motor_id, &tmp);
+                }
+            }
         }
         return result;
     }
+            // wait for new data
+
 
 
     int DxlDriver::rebootMotors()
