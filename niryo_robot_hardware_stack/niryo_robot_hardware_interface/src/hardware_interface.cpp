@@ -35,16 +35,7 @@ namespace niryo_robot_hardware_interface
  */
 HardwareInterface::HardwareInterface(ros::NodeHandle &nh) : _nh(nh)
 {
-   /* for (int i = 0; i < 30; i++) {
-
-        ROS_INFO("Sleeping %d ! to have time to attach via gdb", i);
-        ros::Duration(1).sleep();
-    }
-    ROS_INFO("Waking up");*/
-
-    initParameters();
-    initNodes();
-    initPublishers();
+    init(false);
 }
 
 /**
@@ -64,6 +55,113 @@ HardwareInterface::~HardwareInterface()
 }
 
 /**
+ * @brief HardwareInterface::init
+ */
+void HardwareInterface::init(bool delayed)
+{
+    if(delayed)
+    {
+        for (int i = 0; i < 30; i++)
+        {
+            ROS_INFO("HardwareInterface::init - Sleeping %d ! to have time to attach via gdb", i);
+            ros::Duration(1).sleep();
+        }
+        ROS_INFO("Waking up");
+    }
+
+    ROS_DEBUG("HardwareInterface::init - Initializing parameters...");
+    initParameters();
+
+    ROS_DEBUG("HardwareInterface::init - Starting services...");
+    startServices();
+
+    ROS_DEBUG("HardwareInterface::init - Starting subscribers...");
+    startSubscribers();
+
+    ROS_DEBUG("HardwareInterface::init - Starting publishers...");
+    startPublishers();
+
+    ROS_DEBUG("HardwareInterface::init - Init Nodes...");
+    initNodes();
+}
+
+/**
+ * @brief HardwareInterface::initParameters
+ */
+void HardwareInterface::initParameters()
+{
+    ros::param::get("~publish_hw_status_frequency", _publish_hw_status_frequency);
+    ros::param::get("~publish_software_version_frequency", _publish_software_version_frequency);
+
+    ros::param::get("/niryo_robot/info/image_version", _rpi_image_version);
+    ros::param::get("/niryo_robot/info/ros_version", _ros_niryo_robot_version);
+
+    ros::param::get("~simulation_mode", _simulation_mode);
+    ros::param::get("~gazebo", _gazebo);
+
+    ros::param::get("~can_enabled", _can_enabled);
+    ros::param::get("~ttl_enabled", _ttl_enabled);
+
+    _rpi_image_version.erase(_rpi_image_version.find_last_not_of(" \n\r\t") + 1);
+    _ros_niryo_robot_version.erase(_ros_niryo_robot_version.find_last_not_of(" \n\r\t") + 1);
+
+    ROS_DEBUG("HardwareInterface::initParameters - publish_hw_status_frequency : %f",
+                            _publish_hw_status_frequency);
+    ROS_DEBUG("HardwareInterface::initParameters - publish_software_version_frequency : %f",
+                            _publish_software_version_frequency);
+
+    ROS_DEBUG("HardwareInterface::initParameters - image_version : %s",
+                            _rpi_image_version.c_str());
+    ROS_DEBUG("HardwareInterface::initParameters - ros_version : %s",
+                            _ros_niryo_robot_version.c_str());
+
+    ROS_DEBUG("HardwareInterface::initParameters - simulation_mode : %s", _simulation_mode ? "true" : "false");
+    ROS_DEBUG("HardwareInterface::initParameters - gazebo : %s", _gazebo ? "true" : "false");
+
+    ROS_DEBUG("HardwareInterface::initParameters - can_enabled : %s", _can_enabled ? "true" : "false");
+    ROS_DEBUG("HardwareInterface::initParameters - ttl_enabled : %s", _ttl_enabled ? "true" : "false");
+}
+
+/**
+ * @brief HardwareInterface::startServices
+ */
+void HardwareInterface::startServices()
+{
+    _motors_report_service = _nh.advertiseService("/niryo_robot_hardware_interface/launch_motors_report",
+                                                  &HardwareInterface::_callbackLaunchMotorsReport, this);
+
+    _stop_motors_report_service = _nh.advertiseService("/niryo_robot_hardware_interface/stop_motors_report",
+                                                       &HardwareInterface::_callbackStopMotorsReport, this);
+
+    _reboot_motors_service = _nh.advertiseService("/niryo_robot_hardware_interface/reboot_motors",
+                                                  &HardwareInterface::_callbackRebootMotors, this);
+}
+
+/**
+ * @brief HardwareInterface::startSubscribers
+ */
+void HardwareInterface::startSubscribers()
+{
+    ROS_DEBUG("HardwareInterface::startServices - no subscribers to start");
+}
+
+/**
+ * @brief HardwareInterface::startPublishers
+ */
+void HardwareInterface::startPublishers()
+{
+    _hardware_status_publisher = _nh.advertise<niryo_robot_msgs::HardwareStatus>(
+                                            "niryo_robot_hardware_interface/hardware_status", 10);
+
+    _publish_hw_status_thread = std::thread(&HardwareInterface::_publishHardwareStatus, this);
+
+    _software_version_publisher = _nh.advertise<niryo_robot_msgs::SoftwareVersion>(
+                                            "niryo_robot_hardware_interface/software_version", 10);
+
+    _publish_software_version_thread = std::thread(&HardwareInterface::_publishSoftwareVersion, this);
+}
+
+/**
  * @brief HardwareInterface::initNodes
  */
 
@@ -79,7 +177,7 @@ void HardwareInterface::initNodes()
             ros::Duration(0.25).sleep();
         }
         else
-{
+        {
             ROS_WARN("HardwareInterface::initNodes - DXL communication is disabled for debug purposes");
         }
 
@@ -90,7 +188,7 @@ void HardwareInterface::initNodes()
             ros::Duration(0.25).sleep();
         }
         else
-{
+        {
             ROS_DEBUG("HardwareInterface::initNodes - CAN communication is disabled for debug purposes");
         }
 
@@ -109,7 +207,7 @@ void HardwareInterface::initNodes()
             ros::Duration(0.25).sleep();
         }
         else
-{
+        {
             ROS_WARN("HardwareInterface::initNodes - CAN and DXL communication is disabled. Interfaces will not start");
         }
 
@@ -122,72 +220,6 @@ void HardwareInterface::initNodes()
         ROS_DEBUG("HardwareInterface::initNodes - Start Fake Interface Node");
         _fake_interface = std::make_shared<fake_interface::FakeInterfaceCore>();
     }
-}
-
-/**
- * @brief HardwareInterface::initPublishers
- */
-void HardwareInterface::initPublishers()
-{
-    _hardware_status_publisher = _nh.advertise<niryo_robot_msgs::HardwareStatus>(
-                                            "niryo_robot_hardware_interface/hardware_status", 10);
-
-    _publish_hw_status_thread = std::thread(&HardwareInterface::_publishHardwareStatus, this);
-
-    _software_version_publisher = _nh.advertise<niryo_robot_msgs::SoftwareVersion>(
-                                            "niryo_robot_hardware_interface/software_version", 10);
-
-    _publish_software_version_thread = std::thread(&HardwareInterface::_publishSoftwareVersion, this);
-
-    _motors_report_service = _nh.advertiseService("/niryo_robot_hardware_interface/launch_motors_report",
-                                                  &HardwareInterface::_callbackLaunchMotorsReport, this);
-
-    _stop_motors_report_service = _nh.advertiseService("/niryo_robot_hardware_interface/stop_motors_report",
-                                                       &HardwareInterface::_callbackStopMotorsReport, this);
-
-    _reboot_motors_service = _nh.advertiseService("/niryo_robot_hardware_interface/reboot_motors",
-                                                  &HardwareInterface::_callbackRebootMotors, this);
-}
-
-/**
- * @brief HardwareInterface::initParams
- */
-void HardwareInterface::initParameters()
-{
-    ROS_DEBUG("Hardware Interface - Init Params");
-
-    ros::param::get("~publish_hw_status_frequency", _publish_hw_status_frequency);
-    ros::param::get("~publish_software_version_frequency", _publish_software_version_frequency);
-
-    ros::param::get("/niryo_robot/info/image_version", _rpi_image_version);
-    ros::param::get("/niryo_robot/info/ros_version", _ros_niryo_robot_version);
-
-    ros::param::get("~simulation_mode", _simulation_mode);
-    ros::param::get("~gazebo", _gazebo);
-
-    ros::param::get("~can_enabled", _can_enabled);
-    ros::param::get("~ttl_enabled", _ttl_enabled);
-
-    _rpi_image_version.erase(_rpi_image_version.find_last_not_of(" \n\r\t") + 1);
-    _ros_niryo_robot_version.erase(_ros_niryo_robot_version.find_last_not_of(" \n\r\t") + 1);
-
-
-
-    ROS_DEBUG("HardwareInterface::initParameters - publish_hw_status_frequency : %f",
-                            _publish_hw_status_frequency);
-    ROS_DEBUG("HardwareInterface::initParameters - publish_software_version_frequency : %f",
-                            _publish_software_version_frequency);
-
-    ROS_DEBUG("HardwareInterface::initParameters - image_version : %s",
-                            _rpi_image_version.c_str());
-    ROS_DEBUG("HardwareInterface::initParameters - ros_version : %s",
-                            _ros_niryo_robot_version.c_str());
-
-    ROS_DEBUG("HardwareInterface::initParameters - simulation_mode : %s", _simulation_mode ? "true" : "false");
-    ROS_DEBUG("HardwareInterface::initParameters - gazebo : %s", _gazebo ? "true" : "false");
-
-    ROS_DEBUG("HardwareInterface::initParameters - can_enabled : %s", _can_enabled ? "true" : "false");
-    ROS_DEBUG("HardwareInterface::initParameters - ttl_enabled : %s", _ttl_enabled ? "true" : "false");
 }
 
 // ********************

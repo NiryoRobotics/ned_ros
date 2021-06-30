@@ -58,13 +58,17 @@ JointsInterfaceCore::~JointsInterfaceCore()
 void JointsInterfaceCore::init(std::shared_ptr<ttl_driver::TtlDriverCore> ttl_driver,
                                std::shared_ptr<can_driver::CanDriverCore> can_driver)
 {
-    initParams();
+    ROS_DEBUG("JointsInterfaceCore::init - Initializing parameters...");
+    initParameters();
 
     ROS_DEBUG("JointsInterfaceCore::init - Starting services...");
     startServices();
 
     ROS_DEBUG("JointsInterfaceCore::init - Starting subscribers...");
     startSubscribers();
+
+    ROS_DEBUG("JointsInterfaceCore::init - Starting publishers...");
+    startPublishers();
 
     ROS_DEBUG("JointsInterfaceCore::init - Start joint hardware interface");
     _robot.reset(new JointHardwareInterface(ttl_driver, can_driver));
@@ -80,20 +84,15 @@ void JointsInterfaceCore::init(std::shared_ptr<ttl_driver::TtlDriverCore> ttl_dr
 }
 
 /**
- * @brief JointsInterfaceCore::initParams
+ * @brief JointsInterfaceCore::initParameters
  */
-void JointsInterfaceCore::initParams()
+void JointsInterfaceCore::initParameters()
 {
-    _nh.getParam("/niryo_robot_hardware_interface/ros_control_loop_frequency",
-                 _control_loop_frequency);
+    _nh.getParam("/niryo_robot_hardware_interface/ros_control_loop_frequency", _control_loop_frequency);
+    _nh.getParam("/niryo_robot_hardware_interface/publish_learning_mode_frequency", _publish_learning_mode_frequency);
 
-    _nh.getParam("/niryo_robot_hardware_interface/publish_learning_mode_frequency",
-                 _publish_learning_mode_frequency);
-
-    ROS_DEBUG("JointsInterfaceCore::initParams - Ros control loop frequency %f",
-              _control_loop_frequency);
-    ROS_DEBUG("JointsInterfaceCore::initParams - Publish learning mode frequency : %f",
-              _publish_learning_mode_frequency);
+    ROS_DEBUG("JointsInterfaceCore::initParameters - Ros control loop frequency %f", _control_loop_frequency);
+    ROS_DEBUG("JointsInterfaceCore::initParameters - Publish learning mode frequency : %f", _publish_learning_mode_frequency);
 }
 
 /**
@@ -120,7 +119,14 @@ void JointsInterfaceCore::startServices()
 void JointsInterfaceCore::startSubscribers()
 {
     _trajectory_result_subscriber = _nh.subscribe("/niryo_robot_follow_joint_trajectory_controller/follow_joint_trajectory/result",
-                                                  10, &JointsInterfaceCore::_callbackTrajectoryResult, this);
+                                                  10, &JointsInterfaceCore::_callbackTrajectoryResult, this);  
+}
+
+/**
+ * @brief JointsInterfaceCore::startPublishers
+ */
+void JointsInterfaceCore::startPublishers()
+{
     _learning_mode_publisher = _nh.advertise<std_msgs::Bool>("niryo_robot/learning_mode/state", 10);
     _publish_learning_mode_thread = std::thread(&JointsInterfaceCore::_publishLearningMode, this);
 }

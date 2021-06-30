@@ -68,20 +68,17 @@ public:
     FakeInterfaceCore();
     virtual ~FakeInterfaceCore();
 
-    void initServices();
-    void startPublishersSubscribers();
-    void initParams();
-
     void rosControlLoop();
 
-    ttl_driver::DxlArrayMotorHardwareStatus getTtlHwStatus();
-    niryo_robot_msgs::BusState getTtlBusState();
-    can_driver::StepperArrayMotorHardwareStatus getCanHwStatus();
+    ttl_driver::DxlArrayMotorHardwareStatus getTtlHwStatus() const;
+    niryo_robot_msgs::BusState getTtlBusState() const;
+    can_driver::StepperArrayMotorHardwareStatus getCanHwStatus() const;
     niryo_robot_msgs::BusState getCanBusState();
 
-    void getCalibrationState(bool &need_calibration, bool &calibration_in_progress) const;
+    void getCalibrationState(bool &need_calibration,
+                             bool &calibration_in_progress) const;
 
-    int getCpuTemperature();
+    int getCpuTemperature() const;
 
     void pubToolId(int id);
 
@@ -95,17 +92,43 @@ public:
     std::vector<uint8_t> _stepper_motors_id{1, 2, 3};
 
 private:
+    void init();
+    void initParameters();
+    void startServices();
+    void startSubscribers();
+    void startPublishers();
+
+    bool _callbackResetController(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
+    void _callbackTrajectoryResult(const control_msgs::FollowJointTrajectoryActionResult &msg);
+
+    bool _callbackCalibrateMotors(niryo_robot_msgs::SetInt::Request &req, niryo_robot_msgs::SetInt::Response &res);
+    bool _callbackRequestNewCalibration(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
+    bool _callbackActivateLearningMode(niryo_robot_msgs::SetBool::Request &req, niryo_robot_msgs::SetBool::Response &res);
+
+    bool _callbackPingAndSetDxlTool(tools_interface::PingDxlTool::Request &req, tools_interface::PingDxlTool::Response &res);
+    bool _callbackOpenGripper(tools_interface::OpenGripper::Request &req, tools_interface::OpenGripper::Response &res);
+    bool _callbackCloseGripper(tools_interface::CloseGripper::Request &req, tools_interface::CloseGripper::Response &res);
+    bool _callbackPullAirVacuumPump(tools_interface::PullAirVacuumPump::Request &req, tools_interface::PullAirVacuumPump::Response &res);
+    bool _callbackPushAirVacuumPump(tools_interface::PushAirVacuumPump::Request &req, tools_interface::PushAirVacuumPump::Response &res);
+
+    bool _callbackPingAndSetConveyor(conveyor_interface::SetConveyor::Request &req, conveyor_interface::SetConveyor::Response &res);
+    bool _callbackControlConveyor(conveyor_interface::ControlConveyor::Request &req, conveyor_interface::ControlConveyor::Response &res);
+
+    void _publishLearningMode();
+
+private:
     ros::NodeHandle _nh;
 
-    double _publish_hw_status_frequency;
-    double _publish_software_version_frequency;
-    double _publish_learning_mode_frequency;
-    double _ros_control_frequency;
+    double _publish_hw_status_frequency{0.0};
+    double _publish_software_version_frequency{0.0};
+    double _publish_learning_mode_frequency{0.0};
+    double _ros_control_frequency{0.0};
 
-    bool _gazebo;
-    bool _simu_gripper;
+    bool _gazebo{false};
+    bool _simu_gripper{true};
 
-    bool _learning_mode;
+    bool _learning_mode{true};
+
     std::string _ros_niryo_robot_version;
 
     std::unique_ptr<FakeJointHardwareInterface> _robot;
@@ -135,24 +158,6 @@ private:
 
     std::thread _publish_learning_mode_thread;
     std::thread _control_loop_thread;
-
-    bool _callbackResetController(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
-    void _callbackTrajectoryResult(const control_msgs::FollowJointTrajectoryActionResult &msg);
-
-    bool _callbackCalibrateMotors(niryo_robot_msgs::SetInt::Request &req, niryo_robot_msgs::SetInt::Response &res);
-    bool _callbackRequestNewCalibration(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
-    bool _callbackActivateLearningMode(niryo_robot_msgs::SetBool::Request &req, niryo_robot_msgs::SetBool::Response &res);
-
-    bool _callbackPingAndSetDxlTool(tools_interface::PingDxlTool::Request &req, tools_interface::PingDxlTool::Response &res);
-    bool _callbackOpenGripper(tools_interface::OpenGripper::Request &req, tools_interface::OpenGripper::Response &res);
-    bool _callbackCloseGripper(tools_interface::CloseGripper::Request &req, tools_interface::CloseGripper::Response &res);
-    bool _callbackPullAirVacuumPump(tools_interface::PullAirVacuumPump::Request &req, tools_interface::PullAirVacuumPump::Response &res);
-    bool _callbackPushAirVacuumPump(tools_interface::PushAirVacuumPump::Request &req, tools_interface::PushAirVacuumPump::Response &res);
-
-    bool _callbackPingAndSetConveyor(conveyor_interface::SetConveyor::Request &req, conveyor_interface::SetConveyor::Response &res);
-    bool _callbackControlConveyor(conveyor_interface::ControlConveyor::Request &req, conveyor_interface::ControlConveyor::Response &res);
-
-    void _publishLearningMode();
 };
 } // FakeInterface
 

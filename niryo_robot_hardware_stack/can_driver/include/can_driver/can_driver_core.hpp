@@ -86,6 +86,7 @@ class CanDriverCore : public common::model::IDriverCore
     private:
         void init() override;
         void initParameters() override;
+
         void resetHardwareControlLoopRates() override;
         void controlLoop() override;
         void _executeCommand() override;

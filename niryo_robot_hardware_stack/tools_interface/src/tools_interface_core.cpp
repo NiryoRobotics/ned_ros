@@ -55,10 +55,9 @@ namespace tools_interface
 ToolsInterfaceCore::ToolsInterfaceCore(shared_ptr<ttl_driver::TtlDriverCore> ttl_driver):
     _ttl_driver_core(ttl_driver)
 {
-    initParams();
-    initServices();
-    initPublishers();
+    ROS_DEBUG("ToolsInterfaceCore::ctor");
 
+    init();
 
     pubToolId(0);
 }
@@ -73,9 +72,27 @@ ToolsInterfaceCore::~ToolsInterfaceCore()
 }
 
 /**
- * @brief ToolsInterfaceCore::initParams
+ * @brief ToolsInterfaceCore::init
  */
-void ToolsInterfaceCore::initParams()
+void ToolsInterfaceCore::init()
+{
+    ROS_DEBUG("ToolsInterfaceCore::init - Initializing parameters...");
+    initParameters();
+
+    ROS_DEBUG("ToolsInterfaceCore::init - Starting services...");
+    startServices();
+
+    ROS_DEBUG("ToolsInterfaceCore::init - Starting subscribers...");
+    startSubscribers();
+
+    ROS_DEBUG("ToolsInterfaceCore::init - Starting publishers...");
+    startPublishers();
+}
+
+/**
+ * @brief ToolsInterfaceCore::initParameters
+ */
+void ToolsInterfaceCore::initParameters()
 {
     vector<int> idList;
     vector<string> typeList;
@@ -99,11 +116,11 @@ void ToolsInterfaceCore::initParams()
     available_tools_list.pop_back();  // remove last ","
     available_tools_list += "]";
 
-    ROS_INFO("ToolsInterfaceCore::initParams - List of tool ids : %s", available_tools_list.c_str());
+    ROS_INFO("ToolsInterfaceCore::initParameters - List of tool ids : %s", available_tools_list.c_str());
 
     // check that the two lists have the same size
     if (idList.size() != typeList.size())
-        ROS_ERROR("ToolsInterfaceCore::initParams - wrong dynamixel configuration. "
+        ROS_ERROR("ToolsInterfaceCore::initParameters - wrong dynamixel configuration. "
                   "Please check your configuration file (tools_interface/config/default.yaml)");
 
     // put everything in maps
@@ -117,27 +134,27 @@ void ToolsInterfaceCore::initParams()
             if (EMotorType::UNKNOWN != type)
                 _available_tools_map.insert(std::make_pair(id, type));
             else
-                ROS_ERROR("ToolsInterfaceCore::initParams - unknown type %s. "
+                ROS_ERROR("ToolsInterfaceCore::initParameters - unknown type %s. "
                           "Please check your configuration file (tools_interface/config/default.yaml)",
                           typeList.at(id).c_str());
         }
         else
-            ROS_ERROR("ToolsInterfaceCore::initParams - duplicate id %d. "
+            ROS_ERROR("ToolsInterfaceCore::initParameters - duplicate id %d. "
                       "Please check your configuration file (tools_interface/config/default.yaml)", id);
     }
 
     for (auto const &tool : _available_tools_map)
     {
-        ROS_DEBUG("ToolsInterfaceCore::initParams - Available tools map: %d => %s",
+        ROS_DEBUG("ToolsInterfaceCore::initParameters - Available tools map: %d => %s",
                                         static_cast<int>(tool.first),
                                         MotorTypeEnum(tool.second).toString().c_str());
     }
 }
 
 /**
- * @brief ToolsInterfaceCore::initServices
+ * @brief ToolsInterfaceCore::startServices
  */
-void ToolsInterfaceCore::initServices()
+void ToolsInterfaceCore::startServices()
 {
     _ping_and_set_dxl_tool_server = _nh.advertiseService("niryo_robot/tools/ping_and_set_dxl_tool",
                                                          &ToolsInterfaceCore::_callbackPingAndSetDxlTool, this);
@@ -159,15 +176,26 @@ void ToolsInterfaceCore::initServices()
 }
 
 /**
- * @brief ToolsInterfaceCore::initPublishers
+ * @brief ToolsInterfaceCore::startSubscribers
  */
-void ToolsInterfaceCore::initPublishers()
+void ToolsInterfaceCore::startSubscribers()
+{
+    ROS_DEBUG("No subscribers to start");
+}
+
+/**
+ * @brief ToolsInterfaceCore::startPublishers
+ */
+void ToolsInterfaceCore::startPublishers()
 {
     _tool_connection_publisher = _nh.advertise<std_msgs::Int32>("/niryo_robot_hardware/tools/current_id", 1, true);
     _publish_tool_connection_thread = std::thread(&ToolsInterfaceCore::_publishToolConnection, this);
 }
 
-
+/**
+ * @brief ToolsInterfaceCore::isInitialized
+ * @return
+ */
 bool ToolsInterfaceCore::isInitialized()
 {
     return !_available_tools_map.empty();

@@ -50,9 +50,13 @@ public:
     virtual ~HardwareInterface();
 
 private:
-    void initNodes();
+    void init(bool delayed = false);
+
     void initParameters();
-    void initPublishers();
+    void startServices();
+    void startSubscribers();
+    void startPublishers();
+    void initNodes();
 
     bool _callbackLaunchMotorsReport(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
     bool _callbackStopMotorsReport(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);

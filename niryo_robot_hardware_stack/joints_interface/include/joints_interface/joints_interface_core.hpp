@@ -72,10 +72,11 @@ class JointsInterfaceCore
     private:
         void init(std::shared_ptr<ttl_driver::TtlDriverCore> ttl_driver,
                   std::shared_ptr<can_driver::CanDriverCore> can_driver);
-        void initParams();
 
+        void initParameters();
         void startServices();
         void startSubscribers();
+        void startPublishers();
 
         void rosControlLoop();
 
@@ -110,7 +111,6 @@ class JointsInterfaceCore
         ros::ServiceServer _calibrate_motors_server;
         ros::ServiceServer _request_new_calibration_server;
         ros::ServiceServer _activate_learning_mode_server;
-
 };
 
 /**

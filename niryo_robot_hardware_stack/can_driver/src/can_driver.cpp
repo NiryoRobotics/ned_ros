@@ -51,7 +51,6 @@ CanDriver::CanDriver() :
     if (CAN_OK == setupCAN())
     {
         scanAndCheck();
-
         _stepper_timeout_thread = std::thread(&CanDriver::_verifyMotorTimeoutLoop, this);
     }
     else

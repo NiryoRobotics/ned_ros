@@ -56,9 +56,11 @@ class ToolsInterfaceCore
         void pubToolId(int id);
 
     private:
-        void initParams();
-        void initServices();
-        void initPublishers();
+        void init();
+        void initParameters();
+        void startServices();
+        void startSubscribers();
+        void startPublishers();
 
         void _publishToolConnection();
 

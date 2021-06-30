@@ -66,19 +66,22 @@ ConveyorInterfaceCore::~ConveyorInterfaceCore()
  */
 void ConveyorInterfaceCore::init()
 {
-    initParams();
+    initParameters();
 
     ROS_DEBUG("ConveyorInterfaceCore::init - Starting services...");
     startServices();
+
+    ROS_DEBUG("ConveyorInterfaceCore::init - Starting subscribers...");
+    startSubscribers();
 
     ROS_DEBUG("ConveyorInterfaceCore::init - Starting publishers...");
     startPublishers();
 }
 
 /**
- * @brief ConveyorInterfaceCore::initParams
+ * @brief ConveyorInterfaceCore::initParameters
  */
-void ConveyorInterfaceCore::initParams()
+void ConveyorInterfaceCore::initParameters()
 {
     std::vector<int> id_pool_list;
 
@@ -88,8 +91,22 @@ void ConveyorInterfaceCore::initParams()
 
     _nh.getParam("/niryo_robot_hardware_interface/conveyor/publish_frequency", _publish_feedback_frequency);
 
-    ROS_DEBUG("ConveyorInterfaceCore::initParams - conveyor max effort : %d", _conveyor_max_effort);
-    ROS_DEBUG("ConveyorInterfaceCore::initParams - Publish_hw_status_frequency : %f", _publish_feedback_frequency);
+    ROS_DEBUG("ConveyorInterfaceCore::initParameters - conveyor max effort : %d", _conveyor_max_effort);
+    ROS_DEBUG("ConveyorInterfaceCore::initParameters - default conveyor id : %d", _default_conveyor_id);
+
+    ROS_DEBUG("ConveyorInterfaceCore::initParameters - Publish_hw_status_frequency : %f", _publish_feedback_frequency);
+
+    // debug - display info
+    std::ostringstream ss;
+    ss << "[";
+    for (size_t i = 0; i < id_pool_list.size(); ++i)
+        ss << " id " << id_pool_list.at(i) << ",";
+
+    std::string motor_string_list = ss.str();
+    motor_string_list.pop_back();  // remove last ","
+    motor_string_list += "]";
+
+    ROS_INFO("ConveyorInterfaceCore::init - Stepper motor list: %s ", motor_string_list.c_str());
 
     // initialize pool of possible id we can assign
     for (int const id : id_pool_list)
@@ -106,6 +123,14 @@ void ConveyorInterfaceCore::startServices()
 
     _control_conveyor_server = _nh.advertiseService("/niryo_robot/conveyor/control_conveyor",
                                                     &ConveyorInterfaceCore::_callbackControlConveyor, this);
+}
+
+/**
+ * @brief ConveyorInterfaceCore::startSubscribers
+ */
+void ConveyorInterfaceCore::startSubscribers()
+{
+    ROS_DEBUG("ConveyorInterfaceCore::startSubscribers - no subscriber to start");
 }
 
 /**

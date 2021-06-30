@@ -51,8 +51,9 @@ class ConveyorInterfaceCore
 
     private:
         void init();
-        void initParams();
+        void initParameters();
         void startServices();
+        void startSubscribers();
         void startPublishers();
 
         conveyor_interface::SetConveyor::Response addConveyor();

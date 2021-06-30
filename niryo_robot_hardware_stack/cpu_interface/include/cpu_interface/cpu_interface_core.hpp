@@ -40,12 +40,16 @@ class CpuInterfaceCore
         CpuInterfaceCore();
         virtual ~CpuInterfaceCore();
 
-        void initParams();
-
         void startReadingData();
         int getCpuTemperature() const;
 
     private:
+        void init();
+        void initParameters();
+        void startServices();
+        void startSubscribers();
+        void startPublishers();
+
         void _readCpuTemperature();
         void _readHardwareDataLoop();
 

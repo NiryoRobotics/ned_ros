@@ -35,14 +35,10 @@ FakeInterfaceCore::FakeInterfaceCore()
 {
     ROS_DEBUG("Fake Interface Core - ctor");
 
-    initParams();
-    initServices();
-    startPublishersSubscribers();
+    init();
 
     ROS_INFO("Fake Hardware Interface - Started ");
     _robot = std::make_unique<FakeJointHardwareInterface>();
-
-    _learning_mode = true;
 
     if (!_gazebo && _robot)
     {
@@ -72,11 +68,53 @@ FakeInterfaceCore::~FakeInterfaceCore()
 }
 
 /**
- * @brief FakeInterfaceCore::initServices
+ * @brief FakeInterfaceCore::init
  */
-void FakeInterfaceCore::initServices()
+void FakeInterfaceCore::init()
 {
-    ROS_DEBUG("Fake Hardware Interface - Init Services");
+    initParameters();
+
+    ROS_DEBUG("FakeInterfaceCore::init - Starting services...");
+    startServices();
+
+    ROS_DEBUG("FakeInterfaceCore::init - Starting subscribers...");
+    startSubscribers();
+
+    ROS_DEBUG("FakeInterfaceCore::init - Starting publishers...");
+    startPublishers();
+}
+
+/**
+ * @brief FakeInterfaceCore::initParameters
+ */
+void FakeInterfaceCore::initParameters()
+{
+    ros::param::get("~gazebo", _gazebo);
+    ros::param::get("~simu_gripper", _simu_gripper);
+    ros::param::get("~ros_control_loop_frequency", _ros_control_frequency);
+
+    ROS_DEBUG("FakeInterfaceCore::initParameters - gazebo ? %s", _gazebo ? "yes" : "no");
+    ROS_DEBUG("FakeInterfaceCore::initParameters - simu_gripper ? %s", _simu_gripper ? "yes" : "no");
+    ROS_DEBUG("FakeInterfaceCore::initParameters - ros control loop freqeuncy %f", _ros_control_frequency);
+
+    ros::param::get("~publish_hw_status_frequency", _publish_hw_status_frequency);
+    ros::param::get("~publish_software_version_frequency", _publish_software_version_frequency);
+    ros::param::get("~publish_learning_mode_frequency", _publish_learning_mode_frequency);
+    ros::param::get("/niryo_robot/info/ros_version", _ros_niryo_robot_version);
+
+    _ros_niryo_robot_version.erase(_ros_niryo_robot_version.find_last_not_of(" \n\r\t") + 1);
+
+    ROS_DEBUG("FakeInterfaceCore::initParameters - Publish_hw_status_frequency : %f", _publish_hw_status_frequency);
+    ROS_DEBUG("FakeInterfaceCore::initParameters - Publish_software_version_frequency : %f", _publish_software_version_frequency);
+    ROS_DEBUG("FakeInterfaceCore::initParameters - Publish_learning_mode_frequency : %f", _publish_learning_mode_frequency);
+    ROS_DEBUG("FakeInterfaceCore::initParameters - ROS version : %s", _ros_niryo_robot_version.c_str());
+}
+
+/**
+ * @brief FakeInterfaceCore::startServices
+ */
+void FakeInterfaceCore::startServices()
+{
     _calibrate_motors_server = _nh.advertiseService("/niryo_robot/joints_interface/calibrate_motors",
                                                     &FakeInterfaceCore::_callbackCalibrateMotors, this);
 
@@ -115,39 +153,23 @@ void FakeInterfaceCore::initServices()
     _publish_learning_mode_thread = std::thread(&FakeInterfaceCore::_publishLearningMode, this);
 }
 
+
 /**
- * @brief FakeInterfaceCore::startPublishersSubscribers
+ * @brief FakeInterfaceCore::startSubscribers
  */
-void FakeInterfaceCore::startPublishersSubscribers()
+void FakeInterfaceCore::startSubscribers()
 {
-    ROS_DEBUG("Fake Hardware Interface - Init Subscribers");
     _trajectory_result_subscriber = _nh.subscribe(
                 "/niryo_robot_follow_joint_trajectory_controller/follow_joint_trajectory/result",
                 10, &FakeInterfaceCore::_callbackTrajectoryResult, this);
-    _current_tools_id_publisher = _nh.advertise<std_msgs::Int32>("/niryo_robot_hardware/tools/current_id", 1, true);
 }
 
 /**
- * @brief FakeInterfaceCore::initParams
+ * @brief FakeInterfaceCore::startPublishers
  */
-void FakeInterfaceCore::initParams()
+void FakeInterfaceCore::startPublishers()
 {
-    ROS_DEBUG("Fake Hardware Interface - Init Params");
-    ros::param::get("~gazebo", _gazebo);
-    ros::param::get("~simu_gripper", _simu_gripper);
-    ros::param::get("~ros_control_loop_frequency", _ros_control_frequency);
-    ROS_DEBUG("Fake Hardware Interface - ros control loop freqeuncy %f", _ros_control_frequency);
-
-    ros::param::get("~publish_hw_status_frequency", _publish_hw_status_frequency);
-    ros::param::get("~publish_software_version_frequency", _publish_software_version_frequency);
-    ros::param::get("~publish_learning_mode_frequency", _publish_learning_mode_frequency);
-    ros::param::get("/niryo_robot/info/ros_version", _ros_niryo_robot_version);
-
-    _ros_niryo_robot_version.erase(_ros_niryo_robot_version.find_last_not_of(" \n\r\t") + 1);
-
-    ROS_DEBUG("Fake Hardware Interface - Publish_hw_status_frequency : %f", _publish_hw_status_frequency);
-    ROS_DEBUG("Fake Hardware Interface - Publish_software_version_frequency : %f", _publish_software_version_frequency);
-    ROS_DEBUG("Fake Hardware Interface - Publish_learning_mode_frequency : %f", _publish_learning_mode_frequency);
+    _current_tools_id_publisher = _nh.advertise<std_msgs::Int32>("/niryo_robot_hardware/tools/current_id", 1, true);
 }
 
 /**
@@ -397,7 +419,7 @@ bool FakeInterfaceCore::_callbackControlConveyor(conveyor_interface::ControlConv
  * @brief FakeInterfaceCore::getTtlHwStatus
  * @return
  */
-ttl_driver::DxlArrayMotorHardwareStatus FakeInterfaceCore::getTtlHwStatus()
+ttl_driver::DxlArrayMotorHardwareStatus FakeInterfaceCore::getTtlHwStatus() const
 {
     ttl_driver::DxlMotorHardwareStatus data;
     ttl_driver::DxlArrayMotorHardwareStatus hw_state;
@@ -417,7 +439,7 @@ ttl_driver::DxlArrayMotorHardwareStatus FakeInterfaceCore::getTtlHwStatus()
  * @brief FakeInterfaceCore::getTtlBusState
  * @return
  */
-niryo_robot_msgs::BusState FakeInterfaceCore::getTtlBusState()
+niryo_robot_msgs::BusState FakeInterfaceCore::getTtlBusState() const
 {
     niryo_robot_msgs::BusState dxl_bus_state;
 
@@ -431,7 +453,7 @@ niryo_robot_msgs::BusState FakeInterfaceCore::getTtlBusState()
  * @brief FakeInterfaceCore::getCanHwStatus
  * @return
  */
-can_driver::StepperArrayMotorHardwareStatus FakeInterfaceCore::getCanHwStatus()
+can_driver::StepperArrayMotorHardwareStatus FakeInterfaceCore::getCanHwStatus() const
 {
     can_driver::StepperMotorHardwareStatus data;
     can_driver::StepperArrayMotorHardwareStatus hw_state;
@@ -477,7 +499,7 @@ void FakeInterfaceCore::getCalibrationState(bool &need_calibration, bool &calibr
  * @brief FakeInterfaceCore::getCpuTemperature
  * @return
  */
-int FakeInterfaceCore::getCpuTemperature()
+int FakeInterfaceCore::getCpuTemperature() const
 {
     return 0;
 }
@@ -507,4 +529,5 @@ std::string FakeInterfaceCore::jointIdToJointName(uint8_t id, uint8_t motor_type
 {
     return _robot->jointIdToJointName(id, static_cast<common::model::EMotorType>(motor_type));
 }
+
 }  // namespace fake_interface
