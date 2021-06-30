@@ -227,7 +227,7 @@ class JogController:
          # this error tolerance is lower than the one in arm_commander bc the jog is much slower
         error_tolerance = [0.2, 0.2, 0.2, 0.2, 0.2, 0.2] # TODO: recalculate those values
         for error, tolerance in zip(current_joints_error, error_tolerance):
-            if abs(error) > tolerance and self._enabled:
+            if abs(error) > tolerance and self._enabled and self._shift_mode == JogShiftRequest.JOINTS_SHIFT:
                     self.__collision_detected = True
                     self.__set_learning_mode(True)
                     abort_str = "Command has been aborted due to a collision or " \
