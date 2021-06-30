@@ -157,7 +157,7 @@ int CanDriver::setupCAN()
 
     ROS_DEBUG("CanDriver::CanDriver - Can bus parameters: spi_channel : %d", spi_channel);
     ROS_DEBUG("CanDriver::CanDriver - Can bus parameters: spi_baudrate : %d", spi_baudrate);
-    ROS_DEBUG("CanDriver::CanDriver - Can bus parameters: spi_baudrate : %d", gpio_can_interrupt);
+    ROS_DEBUG("CanDriver::CanDriver - Can bus parameters: gpio_can_interrupt : %d", gpio_can_interrupt);
 
     mcp_can = std::make_unique<mcp_can_rpi::MCP_CAN>(spi_channel, spi_baudrate,
                                                      static_cast<uint8_t>(gpio_can_interrupt));
