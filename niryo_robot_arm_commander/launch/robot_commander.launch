@@ -28,7 +28,7 @@
         <param name="start_state_max_bounds_error" value="0.1"/>
     </group>
 
-    <!-- Launch Robot commander node -->
+    <!-- Launch Arm commander node -->
     <node name="niryo_robot_arm_commander" pkg="niryo_robot_arm_commander" type="robot_commander_node.py" output="screen"
           respawn="false">
         <rosparam command="load" file="$(find niryo_robot_arm_commander)/config/commander_params.yaml"/>

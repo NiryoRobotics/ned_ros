@@ -46,7 +46,7 @@ from niryo_robot_arm_commander.msg import RobotMoveResult
 
 class RobotCommanderNode:
     """
-    This class is in charge of the Robot Commander Node
+    This class is in charge of the Arm Commander Node
     It contains:
     - The State Publisher
     - Arm & Tools Commanders
@@ -55,7 +55,7 @@ class RobotCommanderNode:
     """
 
     def __init__(self):
-        rospy.logdebug("Robot Commander - Entering in Init")
+        rospy.logdebug("Arm Commander - Entering in Init")
         # Initialize MoveIt!
         moveit_commander.roscpp_initialize(sys.argv)
         # - Load all the sub-commanders
@@ -68,7 +68,7 @@ class RobotCommanderNode:
         # Initialize Arm
         self.__arm_commander = ArmCommander(arm_param_validator, self.__transform_handler)
 
-        rospy.logdebug("Robot Commander - Sub Commanders are loaded")
+        rospy.logdebug("Arm Commander - Sub Commanders are loaded")
 
         # Initialize motor debug
         self.__motor_debug = MotorDebug()
@@ -138,7 +138,7 @@ class RobotCommanderNode:
         # Starting Action server
         self.__start_action_server()
 
-        rospy.logdebug("Robot Commander - Services & Actions server are created")
+        rospy.logdebug("Arm Commander - Services & Actions server are created")
 
         # - Publisher
         self.__is_active_publisher = rospy.Publisher('~is_active',
@@ -156,11 +156,11 @@ class RobotCommanderNode:
         # Set a bool to mention this node is initialized
         rospy.set_param('~initialized', True)
 
-        rospy.loginfo("Robot Commander - Started")
+        rospy.loginfo("Arm Commander - Started")
 
     def __start_action_server(self):
         self.__action_server.start()
-        rospy.logdebug("Robot Commander - Action Server started")
+        rospy.logdebug("Arm Commander - Action Server started")
 
     # -- CALLBACKS
     # - Subscribers
@@ -198,13 +198,13 @@ class RobotCommanderNode:
     def __callback_pause_movement(self, msg):
         self.__pause_state = msg.state
         if msg.state == PausePlanExecution.PAUSE:
-            rospy.loginfo("Robot Commander - Receive Set Pause Mode from button")
+            rospy.loginfo("Arm Commander - Receive Set Pause Mode from button")
             self.__pause_finished_event.clear()
             self.__cancel_command()
         elif msg.state == PausePlanExecution.CANCEL:
             self.__pause_finished_event.set()
             self.__cancel_command()
-            rospy.loginfo("Robot Commander - Receive Cancel Command from button")
+            rospy.loginfo("Arm Commander - Receive Cancel Command from button")
         else:
             self.__pause_finished_event.set()
 
