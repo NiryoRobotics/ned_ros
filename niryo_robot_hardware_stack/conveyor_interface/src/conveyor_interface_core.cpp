@@ -47,9 +47,9 @@ namespace conveyor_interface
 ConveyorInterfaceCore::ConveyorInterfaceCore(shared_ptr<can_driver::CanDriverCore> can_driver):
     _can_driver(can_driver)
 {
-    init();
-
     ROS_DEBUG("ConveyorInterfaceCore::ConveyorInterfaceCore - ctor");
+
+    init();
 }
 
 /**
@@ -304,6 +304,7 @@ bool ConveyorInterfaceCore::_callbackControlConveyor(conveyor_interface::Control
  */
 void ConveyorInterfaceCore::_publishConveyorsFeedback()
 {
+    ROS_DEBUG("ConveyorInterfaceCore::_publishConveyorsFeedback - start ros loop");
     ros::Rate publish_conveyor_feedback_rate = ros::Rate(_publish_feedback_frequency);
 
     while (ros::ok())
@@ -322,6 +323,8 @@ void ConveyorInterfaceCore::_publishConveyorsFeedback()
                 data.direction = static_cast<int8_t>(cState->getDirection());
                 data.speed = cState->getSpeed();
                 msg.conveyors.push_back(data);
+
+                ROS_DEBUG("ConveyorInterfaceCore::_publishConveyorsFeedback - Found a conveyor, publishing data : %s", cState->str().c_str());
             }
         }
         _conveyors_feedback_publisher.publish(msg);

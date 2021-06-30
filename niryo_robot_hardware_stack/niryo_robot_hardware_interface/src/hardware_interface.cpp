@@ -85,7 +85,7 @@ void HardwareInterface::initNodes()
 
         if (_can_enabled)
         {
-            ROS_DEBUG("HardwareInterface::initNodes - Start Stepper Driver Node");
+            ROS_DEBUG("HardwareInterface::initNodes - Start CAN Driver Node");
             _can_driver = std::make_shared<can_driver::CanDriverCore>();
             ros::Duration(0.25).sleep();
         }
