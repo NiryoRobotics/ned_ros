@@ -15,7 +15,7 @@ import math
 from niryo_robot_arm_commander.command_enums import ArmCommanderException
 import moveit_commander
 
-# Quaternion 
+# Quaternion
 from tf.transformations import *
 
 # Command Status
@@ -215,7 +215,7 @@ class JogController:
             return
         msg = JointTrajectory()
         msg.header.stamp = rospy.Time.now()
-        msg.joint_names = ['joint_1', 'joint_2', 'joint_3', 'joint_4', 'joint_5', 'joint_6']
+        msg.joint_names = rospy.get_param('~joint_names')
 
         point = JointTrajectoryPoint()
         point.positions = self._target_values

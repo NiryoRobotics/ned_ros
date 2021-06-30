@@ -22,7 +22,7 @@ class ToolValidationException(Exception):
 # Base class for any tool
 #
 class Tool(object):
-    def __init__(self, tool_id, tool_name, tools_state, ros_command_interface):
+    def __init__(self, tool_id, tool_name, tool_transformation, tools_state, ros_command_interface):
         self._functions_dict = {}
         self._id = tool_id
         self._name = tool_name
@@ -30,6 +30,7 @@ class Tool(object):
         self.ros_command_interface = ros_command_interface
         self._is_active = False
         self.available_commands = []
+        self._tool_transformation = tool_transformation
 
     # To override
     @staticmethod
@@ -56,6 +57,10 @@ class Tool(object):
     def name(self):
         return self._name
 
+    @property
+    def transformation(self):
+        return self._tool_transformation
+
     def set_available_commands(self, cmd_list):
         self.available_commands = cmd_list
 
@@ -73,8 +78,8 @@ class Tool(object):
 
 
 class NoTool(Tool):
-    def __init__(self, tool_id, tool_name, tools_state, ros_command_interface):
-        super(NoTool, self).__init__(tool_id, tool_name, tools_state, ros_command_interface)
+    def __init__(self, tool_id, tool_name, tool_transformation, tools_state, ros_command_interface):
+        super(NoTool, self).__init__(tool_id, tool_name, tool_transformation, tools_state, ros_command_interface)
 
     @staticmethod
     def get_type():
@@ -89,8 +94,8 @@ class NoTool(Tool):
 
 
 class Gripper(Tool):
-    def __init__(self, tool_id, tool_name, tools_state, ros_command_interface, specs):
-        super(Gripper, self).__init__(tool_id, tool_name, tools_state, ros_command_interface)
+    def __init__(self, tool_id, tool_name, tool_transformation, tools_state, ros_command_interface, specs):
+        super(Gripper, self).__init__(tool_id, tool_name, tool_transformation, tools_state, ros_command_interface)
 
         self.open_position = specs["open_position"]
         self.open_hold_torque = specs["open_hold_torque"]
@@ -160,8 +165,8 @@ class Gripper(Tool):
 
 
 class Electromagnet(Tool):
-    def __init__(self, tool_id, tool_name, tools_state, ros_command_interface):
-        super(Electromagnet, self).__init__(tool_id, tool_name, tools_state, ros_command_interface)
+    def __init__(self, tool_id, tool_name, tool_transformation, tools_state, ros_command_interface):
+        super(Electromagnet, self).__init__(tool_id, tool_name, tool_transformation, tools_state, ros_command_interface)
         self._functions_dict = {
             "setup_digital_io": self.setup_digital_io,
             "activate_digital_io": self.activate_digital_io,
@@ -205,8 +210,8 @@ class Electromagnet(Tool):
 
 
 class VacuumPump(Tool):
-    def __init__(self, tool_id, tool_name, tools_state, ros_command_interface, specs):
-        super(VacuumPump, self).__init__(tool_id, tool_name, tools_state, ros_command_interface)
+    def __init__(self, tool_id, tool_name, tool_transformation, tools_state, ros_command_interface, specs):
+        super(VacuumPump, self).__init__(tool_id, tool_name, tool_transformation, tools_state, ros_command_interface)
         self.__pull_air_position = specs["pull_air_position"]
         self.__pull_air_hold_torque = specs["pull_air_hold_torque"]
         self.__push_air_position = specs["push_air_position"]

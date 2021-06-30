@@ -32,8 +32,8 @@ from conveyor_interface.srv import ControlConveyor, SetConveyor, SetConveyorRequ
 from niryo_robot_arm_commander.srv import GetFK, GetIK
 from niryo_robot_arm_commander.srv import JogShift, JogShiftRequest
 from niryo_robot_msgs.srv import GetNameDescriptionList, SetBool, SetInt, Trigger
+from niryo_robot_tools_commander.srv import SetTCP, SetTCPRequest
 from niryo_robot_vision.srv import SetImageParameter
-
 from niryo_robot_rpi.srv import GetDigitalIO, SetDigitalIO
 
 # Actions
@@ -112,6 +112,11 @@ class NiryoRosWrapper:
         self.__robot_action_server_name = '/niryo_robot_arm_commander/robot_action'
         self.__robot_action_server_client = actionlib.SimpleActionClient(self.__robot_action_server_name,
                                                                          RobotMoveAction)
+
+        # Tool action
+        self.__tool_action_server_name = '/niryo_robot_tools_commander/action_server'
+        self.__tool_action_server_client = actionlib.SimpleActionClient(self.__tool_action_server_name,
+                                                                        ToolAction)
 
         # Tool action
         self.__tool_action_server_name = '/niryo_robot_tools_commander/action_server'
@@ -242,6 +247,49 @@ class NiryoRosWrapper:
 
         goal_state = self.__robot_action_server_client.get_state()
         response = self.__robot_action_server_client.get_result()
+
+        return goal_state, response
+
+    # test pour separer tool package de arm package
+    def __execute_tool_action(self, goal):
+        # Connect to server
+        if not self.__tool_action_server_client.wait_for_server(rospy.Duration(self.__action_connection_timeout)):
+            rospy.logwarn("ROS Wrapper - Failed to connect to Tool action server")
+
+            raise NiryoRosWrapperException('Action Server is not up : {}'.format(self.__tool_action_server_name))
+        # Send goal and check response
+        goal_state, response = self.__send_tool_goal_and_wait_for_completed(goal)
+
+        if response.status == CommandStatus.GOAL_STILL_ACTIVE:
+            rospy.loginfo("ROS Wrapper - Command still active: try to stop it")
+            self.__tool_action_server_client.cancel_goal()
+            self.__tool_action_server_client.stop_tracking_goal()
+            rospy.sleep(0.2)
+            rospy.loginfo("ROS Wrapper - Trying to resend command ...")
+            goal_state, response = self.__send_tool_goal_and_wait_for_completed(goal)
+
+        if goal_state != GoalStatus.SUCCEEDED:
+            self.__tool_action_server_client.stop_tracking_goal()
+
+        if goal_state == GoalStatus.REJECTED:
+            raise NiryoRosWrapperException('Goal has been rejected : {}'.format(response.message))
+        elif goal_state == GoalStatus.ABORTED:
+            raise NiryoRosWrapperException('Goal has been aborted : {}'.format(response.message))
+        elif goal_state != GoalStatus.SUCCEEDED:
+            raise NiryoRosWrapperException('Error when processing goal : {}'.format(response.message))
+
+        return response.status, response.message
+
+    # test send goal to tool action server
+    def __send_tool_goal_and_wait_for_completed(self, goal):
+        self.__tool_action_server_client.send_goal(goal)
+        if not self.__tool_action_server_client.wait_for_result(timeout=rospy.Duration(self.__action_execute_timeout)):
+            self.__tool_action_server_client.cancel_goal()
+            self.__tool_action_server_client.stop_tracking_goal()
+            raise NiryoRosWrapperException('Action Server timeout : {}'.format(self.__robot_action_server_name))
+
+        goal_state = self.__tool_action_server_client.get_state()
+        response = self.__tool_action_server_client.get_result()
 
         return goal_state, response
 
@@ -1174,7 +1222,7 @@ class NiryoRosWrapper:
         goal = ToolActionGoal()
         goal.goal.cmd.tool_id = ToolID.VACUUM_PUMP_1
         goal.goal.cmd.cmd_type = command_int
-        
+
         return self.__execute_tool_action(goal.goal)
 
     # - Electromagnet
@@ -1223,6 +1271,51 @@ class NiryoRosWrapper:
         goal.goal.cmd.cmd_type = command_int
         goal.goal.cmd.gpio = pin
         return self.__execute_tool_action(goal.goal)
+
+    # - TCP
+    def enable_tcp(self, enable=True):
+        """
+        Enables or disables the TCP function (Tool Center Point).
+        If activation is requested, the last recorded TCP value will be applied.
+        The default value depends on the gripper equipped.
+        If deactivation is requested, the TCP will be coincident with the tool_link.
+
+        :param enable: True to enable, False otherwise.
+        :type enable: Bool
+        :return: status, message
+        :rtype: (int, str)
+        """
+        result = self.__call_service('/niryo_robot_tools_commander/enable_tcp',
+                                     SetBool, enable)
+        return self.__classic_return_w_check(result)
+
+    def set_tcp(self, x, y, z, roll, pitch, yaw):
+        """
+        Activates the TCP function (Tool Center Point)
+        and defines the transformation between the tool_link frame and the TCP frame.
+
+        :param x:
+        :type x: float
+        :param y:
+        :type y: float
+        :param z:
+        :type z: float
+        :param roll:
+        :type roll: float
+        :param pitch:
+        :type pitch: float
+        :param yaw:
+        :type yaw: float
+        :return: status, message
+        :rtype: (int, str)
+        """
+        req = SetTCPRequest()
+        req.position = Point(x, y, z)
+        req.rpy = RPY(roll, pitch, yaw)
+
+        result = self.__call_service('/niryo_robot_tools_commander/set_tcp',
+                                     SetTCP, req)
+        return self.__classic_return_w_check(result)
 
     # - Hardware
 
@@ -1483,8 +1576,7 @@ class NiryoRosWrapper:
         from niryo_robot_poses_handlers.srv import GetTargetPose, GetTargetPoseRequest
 
         result = self.__call_service('/niryo_robot_poses_handlers/get_target_pose', GetTargetPose,
-                                     workspace_name, GetTargetPoseRequest.GRIP_AUTO, self.get_current_tool_id(),
-                                     height_offset, x_rel, y_rel, yaw_rel)
+                                     workspace_name, height_offset, x_rel, y_rel, yaw_rel)
         self.__check_result_status(result)
         return result.target_pose
 
@@ -1507,8 +1599,7 @@ class NiryoRosWrapper:
         object_found, rel_pose, obj_shape, obj_color = self.detect_object(workspace_name, shape, color)
         if not object_found:
             return False, None, "", ""
-        obj_pose = self.get_target_pose_from_rel(
-            workspace_name, height_offset, rel_pose.x, rel_pose.y, rel_pose.yaw)
+        obj_pose = self.get_target_pose_from_rel(workspace_name, height_offset, rel_pose.x, rel_pose.y, rel_pose.yaw)
         return True, obj_pose, obj_shape, obj_color
 
     def vision_pick_w_obs_joints(self, workspace_name, height_offset, shape, color, observation_joints):

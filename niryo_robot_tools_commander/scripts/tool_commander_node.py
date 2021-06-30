@@ -7,6 +7,8 @@ import moveit_commander
 from tools_classes import *
 from tool_ros_command_interface import ToolRosCommandInterface
 
+from transform_handler import ToolTransformHandler
+
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus
 
@@ -40,6 +42,9 @@ class ToolCommander:
     def __init__(self):
         self.__tools_state = ToolsState(rospy.get_param("~state_dict"))
         self.__ros_command_interface = ToolRosCommandInterface(self.__tools_state.ROS_COMMUNICATION_PROBLEM)
+
+        # Transform Handlers
+        self.__transform_handler = ToolTransformHandler()
 
         self.__current_tool = None
 
@@ -79,6 +84,7 @@ class ToolCommander:
                                                             self.__callback_goal, auto_start=False)
         self.__end_init()
 
+        rospy.logdebug("Poses Handlers - Transform Handler created")
         # Set a bool to mentioned this node is initialized
         rospy.set_param('~initialized', True)
 
@@ -93,8 +99,7 @@ class ToolCommander:
     def __callback_current_tool_id(self, msg):
         if self.__current_tool != "electromagnet":
             id_ = msg.data
-            tool = self.__available_tools[id_]
-            self.__current_tool = tool
+            self.set_tool(self.__available_tools[id_])
 
         self.__tool_id_publisher.publish(self.__current_tool.get_id())
 
@@ -185,8 +190,7 @@ class ToolCommander:
             # no tool found in available tools
             return self.create_response(CommandStatus.TOOL_ID_INVALID, "This ID does not match any available tool ID")
 
-        self.__current_tool = self.__available_tools[id_]
-        self.__tool_id_publisher.publish(id_)
+        self.set_tool(self.__available_tools[id_])
 
         return self.create_response(CommandStatus.SUCCESS,
                                     "New tool has been set, id : {}".format(id_))
@@ -197,8 +201,8 @@ class ToolCommander:
             # no tool found in available tools
             return self.create_response(CommandStatus.TOOL_ID_INVALID, "This ID does not match any electromagnet ID")
 
-        self.__current_tool = self.__available_tools[id_]
-        self.__tool_id_publisher.publish(self.__current_tool.get_id())
+        self.set_tool(self.__available_tools[id_])
+
         return CommandStatus.SUCCESS, "Electromagnet properly equipped"
 
     # Functions
@@ -210,15 +214,16 @@ class ToolCommander:
         dict_tools = {}
 
         for tool in tool_config_dict:
-            tool_type, tool_id, tool_name, specs = (tool[key] for key in ['type', 'id', 'name', 'specs'])
+            tool_type, tool_id, tool_name, tool_transformation, specs = (tool[key] for key in ['type', 'id', 'name', 'transformation', 'specs'])
+            tool_transformation = self.__transform_handler.transform_from_dict(tool_transformation)
             if tool_type == Gripper.get_type():
-                new_tool = Gripper(tool_id, tool_name, self.__tools_state, self.__ros_command_interface, specs)
+                new_tool = Gripper(tool_id, tool_name, tool_transformation, self.__tools_state, self.__ros_command_interface, specs)
             elif tool_type == Electromagnet.get_type():
-                new_tool = Electromagnet(tool_id, tool_name, self.__tools_state, self.__ros_command_interface)
+                new_tool = Electromagnet(tool_id, tool_name, tool_transformation, self.__tools_state, self.__ros_command_interface)
             elif tool_type == VacuumPump.get_type():
-                new_tool = VacuumPump(tool_id, tool_name, self.__tools_state, self.__ros_command_interface, specs)
+                new_tool = VacuumPump(tool_id, tool_name, tool_transformation, self.__tools_state, self.__ros_command_interface, specs)
             elif tool_type == NoTool.get_type():
-                new_tool = NoTool(tool_id, tool_name, self.__tools_state, self.__ros_command_interface)
+                new_tool = NoTool(tool_id, tool_name, tool_transformation, self.__tools_state, self.__ros_command_interface)
             else:
                 rospy.logwarn("Tool Commander - Type not recognized from tool config list : " + str(tool['type']))
                 continue
@@ -240,6 +245,11 @@ class ToolCommander:
 
     def update_tool(self):
         return self.__ros_command_interface.ping_dxl_tool()
+
+    def set_tool(self, tool_name):
+        self.__current_tool = tool_name
+        self.__tool_id_publisher.publish(self.__current_tool.get_id())
+        self.__transform_handler.set_tool(self.__current_tool.transformation)
 
     # - General Purposes
     @staticmethod

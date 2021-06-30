@@ -6,11 +6,20 @@ find_package(catkin REQUIRED
   actionlib_msgs
   message_generation
   std_msgs
+  geometry_msgs
+  niryo_robot_msgs
 )
 
 add_message_files(
   FILES
+  TCP.msg
   ToolCommand.msg
+)
+
+add_service_files(
+  DIRECTORY srv
+  FILES
+  SetTCP.srv
 )
 
 add_action_files(
@@ -23,6 +32,8 @@ generate_messages(
   DEPENDENCIES
   actionlib_msgs
   std_msgs
+  geometry_msgs
+  niryo_robot_msgs
 )
 
 catkin_package(
