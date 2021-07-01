@@ -35,10 +35,23 @@ class ToolsState:
 
         self.ROS_COMMUNICATION_PROBLEM = state_dict["ros_communication_problem"]
 
+    def __str__(self):
+        return str(self.__class__) + ": " + str(self.__dict__)
 
 class ToolCommander:
     def __init__(self):
         self.__tools_state = ToolsState(rospy.get_param("~state_dict"))
+        self.__is_simulation = rospy.get_param("~simulation_mode")
+        self.__is_gripper_simulated = rospy.get_param("~simu_gripper")
+        move_group_tool_commander_name = rospy.get_param("~move_group_tool_commander_name")
+        reference_frame = rospy.get_param("~reference_frame")
+        
+        rospy.logdebug("ToolCommander.init - state_dict: {}".format(str(self.__tools_state)))
+        rospy.logdebug("ToolCommander.init - simulation_mode: {}".format(self.__is_simulation))
+        rospy.logdebug("ToolCommander.init - simu_gripper: {}".format(self.__is_gripper_simulated))
+        rospy.logdebug("ToolCommander.init - move_group_tool_commander_name: {}".format(move_group_tool_commander_name))
+        rospy.logdebug("ToolCommander.init - reference_frame: {}".format(reference_frame))
+
         self.__ros_command_interface = ToolRosCommandInterface(self.__tools_state.ROS_COMMUNICATION_PROBLEM)
 
         self.__current_tool = None
@@ -48,16 +61,13 @@ class ToolCommander:
         self.__dict_id_commands_to_string = {string: id_ for id_, string
                                              in self.__dict_commands_string_to_id.iteritems()}
 
-        self.__is_simulation = rospy.get_param("~simulation_mode")
-
         # if gripper simulated, setup variables to control it through moveit
-        self.__is_gripper_simulated = rospy.get_param("~simu_gripper")
 
         if self.__is_gripper_simulated:
             # Get Tool MoveGroupCommander
-            self.__tool_simu = moveit_commander.MoveGroupCommander(rospy.get_param("~move_group_tool_commander_name"))
+            self.__tool_simu = moveit_commander.MoveGroupCommander(move_group_tool_commander_name)
             # Set pose reference frame
-            self.__tool_simu.set_pose_reference_frame(rospy.get_param("~reference_frame"))
+            self.__tool_simu.set_pose_reference_frame(reference_frame)
 
         # Subscriber
         rospy.Subscriber('/niryo_robot_hardware/tools/current_id', Int32,
@@ -205,6 +215,9 @@ class ToolCommander:
         # Get params from rosparams
         tool_config_dict = rospy.get_param("~tool_list")
         list_commands_all_tools = rospy.get_param("~command_list")
+
+        rospy.logdebug("ToolCommander.create_tools - tool_list: {}".format(tool_config_dict))
+        rospy.logdebug("ToolCommander.create_tools - command_list: {}".format(list_commands_all_tools))
 
         dict_tools = {}
 

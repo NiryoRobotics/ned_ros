@@ -116,16 +116,18 @@ void CpuInterfaceCore::startPublishers(ros::NodeHandle& /*nh*/)
  */
 void CpuInterfaceCore::_readCpuTemperature()
 {
-#if defined __arm__ || defined __aarch64__
-    std::fstream cpu_temp_file("/sys/class/thermal/thermal_zone0/temp", std::ios_base::in);
-
-    int read_temp;
-    cpu_temp_file >> read_temp;
-    if (read_temp > 0)
+    std::fstream cpu_temp_file("/sys/class/thermal/thermal_zone0/temp", std::fstream::in);
+    if (cpu_temp_file.good())
     {
-        _cpu_temperature = read_temp / 1000;
+        int read_temp = 0;
+        cpu_temp_file >> read_temp;
+        if (read_temp > 0)
+        {
+            _cpu_temperature = read_temp / 1000;
+        }
+
+        cpu_temp_file.close();
     }
-#endif
 }
 
 /**

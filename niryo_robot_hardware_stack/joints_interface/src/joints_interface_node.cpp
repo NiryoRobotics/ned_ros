@@ -35,12 +35,16 @@ int main(int argc, char **argv)
     ros::AsyncSpinner spinner(4);
     spinner.start();
 
-    ros::NodeHandle nh;
 
-    auto ttl_driver = std::make_shared<ttl_driver::TtlDriverCore>(nh);
+    ros::NodeHandle nh_ttl("ttl_driver");
+    ros::NodeHandle nh_can("can_driver");
+    
+    ros::NodeHandle nh("~");
+
+    auto ttl_driver = std::make_shared<ttl_driver::TtlDriverCore>(nh_ttl);
     ros::Duration(1).sleep();
 
-    auto can_driver = std::make_shared<can_driver::CanDriverCore>(nh);
+    auto can_driver = std::make_shared<can_driver::CanDriverCore>(nh_can);
     ros::Duration(1).sleep();
 
     auto joints = std::make_shared<joints_interface::JointsInterfaceCore>(nh, ttl_driver, can_driver);

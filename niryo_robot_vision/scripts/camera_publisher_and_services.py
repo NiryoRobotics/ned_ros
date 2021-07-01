@@ -37,7 +37,12 @@ class VisionNode:
         rospy.logdebug("Vision Node - Entering in Init")
         # -- ROS
         self.__path_package = rospkg.RosPack().get_path('niryo_robot_vision')
+
         self.__simulation_mode = rospy.get_param('~simulation_mode')
+        self.__debug_compression_quality = rospy.get_param("~debug_compression_quality")
+
+        rospy.logdebug("VisionNode.init - debug_compression_quality: {}".format(self.__debug_compression_quality))
+        rospy.logdebug("VisionNode.init - simulation mode: {}".format(self.__simulation_mode))
 
         # PUBLISHERS
         self.__publisher_compressed_stream = rospy.Publisher('~compressed_video_stream',
@@ -62,7 +67,6 @@ class VisionNode:
         rospy.Service('~take_picture', TakePicture,
                       self.__callback_take_picture)
 
-        self.__debug_compression_quality = rospy.get_param("~debug_compression_quality")
         rospy.Service('~debug_markers', DebugMarkers,
                       self.__callback_debug_markers)
         rospy.Service('~debug_colors', DebugColorDetection,
@@ -83,6 +87,7 @@ class VisionNode:
 
     def __generate_calib_object_from_setup(self):
         calibration_object_name = rospy.get_param("~obj_calib_name")
+        rospy.logdebug("VisionNode.init - obj_calib_name: {}".format(calibration_object_name))
 
         path_yaml = os.path.join(self.__path_package, "config/{}.yaml".format(calibration_object_name))
         if not os.path.isfile(path_yaml):
@@ -119,9 +124,6 @@ class VisionNode:
         obj_type = ObjectType[req.obj_type]
         obj_color = ColorHSV[req.obj_color]
         workspace_ratio = req.workspace_ratio
-        ret_image = req.ret_image
-
-        # Creating ObjectDetector, an object for object detection
         self.__object_detector = ObjectDetector(
             obj_type=obj_type, obj_color=obj_color,
             workspace_ratio=workspace_ratio,

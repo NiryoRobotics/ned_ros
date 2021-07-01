@@ -40,6 +40,8 @@ todo :
 class RosLogManager:
 
     def __init__(self):
+        rospy.logdebug("RosLogManager - Entering in Init")
+
         self.log_size_treshold = rospy.get_param("~ros_log_size_threshold")
         self.log_path = rospy.get_param("~ros_log_location")
         self.should_purge_log_on_startup_file = rospy.get_param("~should_purge_ros_log_on_startup_file")

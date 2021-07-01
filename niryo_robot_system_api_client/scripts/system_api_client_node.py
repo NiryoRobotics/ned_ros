@@ -16,6 +16,9 @@ class SystemApiClientNode:
         domain = rospy.get_param('~server_domain')
         port = rospy.get_param('~server_port')
 
+        rospy.logdebug("SystemApiClientNode.init - server_domain: {}".format(domain))
+        rospy.logdebug("SystemApiClientNode.init - server_port: {}".format(port))
+
         self.client = HttpClient(domain, port)
 
         self.set_robot_name_server = rospy.Service('/niryo_robot/wifi/set_robot_name', SetString,

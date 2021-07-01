@@ -27,6 +27,11 @@ class VideoStream(object):
         self._frame_rate = rospy.get_param("~frame_rate")
         self._subsample_read = rospy.get_param("~subsampling")
 
+        rospy.logdebug("VideoStream.init - undistort_stream: {}".format(self._undistort_stream))
+        rospy.logdebug("VideoStream.init - display: {}".format(self._display))
+        rospy.logdebug("VideoStream.init - frame_rate: {}".format(self._frame_rate))
+        rospy.logdebug("VideoStream.init - subsampling: {}".format(self._subsample_read))
+
         self._actualization_rate_ros = rospy.Rate(1.1 * int(self._frame_rate))
 
         # - Publisher about Running/Stopped Stream
@@ -40,6 +45,7 @@ class VideoStream(object):
         # - SERVICES
         self.__service_start_stop = rospy.Service('~start_stop_video_streaming',
                                                   SetBool, self._callback_start_stop)
+
 
     # -- CALLBACKS
     def _callback_start_stop(self, req):
@@ -122,6 +128,14 @@ class WebcamStream(VideoStream):
         super(WebcamStream, self).__init__(calibration_object, publisher_compressed_stream)
 
         self.__cam_port = rospy.get_param("~camera_port")
+        restart_rate = rospy.get_param("~restart_rate")
+        self.__actualization_rate_no_stream = rospy.Rate(restart_rate)
+        self.__max_restart_time = rospy.get_param("~max_restart_time")
+
+        rospy.logdebug("WebcamStream.init - camera_port: {}".format(self.__cam_port))
+        rospy.logdebug("WebcamStream.init - restart_rate: {}".format(restart_rate))
+        rospy.logdebug("WebcamStream.init - max_restart_time: {}".format(self.__max_restart_time))
+
         self.__last_time_read = None
         self.__frame_raw = None
         self.__frame_undistort = None
@@ -129,9 +143,6 @@ class WebcamStream(VideoStream):
         self.__lock_image = Lock()
 
         # Stop Stream handling
-        self.__actualization_rate_no_stream = rospy.Rate(rospy.get_param("~restart_rate"))
-        self.__max_restart_time = rospy.get_param("~max_restart_time")
-
         self.__count_grab_failed = 0
 
     # -- PUBLIC

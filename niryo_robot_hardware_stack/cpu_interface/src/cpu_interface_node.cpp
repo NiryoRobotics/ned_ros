@@ -50,7 +50,7 @@ int main(int argc, char **argv)
     ros::AsyncSpinner spinner(4);
     spinner.start();
 
-    ros::NodeHandle nh;
+    ros::NodeHandle nh("~");
 
     auto cpu = std::make_shared<cpu_interface::CpuInterfaceCore>(nh);
 

@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 
-
 import rospy
 
 from button_manager import NiryoButton
@@ -14,6 +13,8 @@ from niryo_robot_rpi.fans_manager import FansManager
 class NiryoRobotRpi:
 
     def __init__(self):
+        rospy.logdebug("NiryoRobotRpi - Entering in Init")
+
         self.__digital_io_panel = DigitalIOPanel()
         self.__fans_manager = FansManager()
         self.__led_manager = LEDManager()

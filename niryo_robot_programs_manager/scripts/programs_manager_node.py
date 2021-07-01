@@ -407,7 +407,7 @@ class ProgramManagerNode:
 
 
 if __name__ == "__main__":
-    rospy.init_node('niryo_programs_manager', anonymous=False, log_level=rospy.INFO)
+    rospy.init_node('niryo_programs_manager', anonymous=False, log_level=rospy.DEBUG)
     try:
         node = ProgramManagerNode()
         rospy.spin()

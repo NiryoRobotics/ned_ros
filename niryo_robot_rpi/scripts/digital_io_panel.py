@@ -52,6 +52,8 @@ SW_2_NAME = 'SW2'
 class DigitalPin:
 
     def __init__(self, lock, pin, name, mode=GPIO.IN, state=GPIO.LOW):
+        rospy.logdebug("DigitalPin - Entering in Init")
+
         self.lock = lock
         self.pin = pin
         self.name = name

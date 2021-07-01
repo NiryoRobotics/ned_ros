@@ -12,6 +12,8 @@ from niryo_robot_msgs.srv import SetInt
 
 class ShutdownManager:
     def __init__(self):
+        rospy.logdebug("ShutdownManager - Entering in Init")
+
         rospy.Service('~shutdown_rpi', SetInt, self.callback_shutdown_rpi)
 
     @staticmethod

@@ -32,9 +32,11 @@ int main(int argc, char **argv)
 
     ros::AsyncSpinner spinner(4);
     spinner.start();
-    ros::NodeHandle nh;
 
-    auto ttl_driver = std::make_shared<ttl_driver::TtlDriverCore>(nh);
+    ros::NodeHandle nh_ttl("ttl_driver");
+    ros::NodeHandle nh("~");
+
+    auto ttl_driver = std::make_shared<ttl_driver::TtlDriverCore>(nh_ttl);
     ros::Duration(1).sleep();
 
     auto tool = std::make_shared<tools_interface::ToolsInterfaceCore>(nh, ttl_driver);
