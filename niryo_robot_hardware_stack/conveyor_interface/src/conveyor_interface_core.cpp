@@ -19,6 +19,7 @@
 
 // c++
 #include <vector>
+#include <string>
 #include <functional>
 
 // ros

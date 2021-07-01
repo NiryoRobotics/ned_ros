@@ -29,6 +29,7 @@ namespace joints_interface
 
 /**
  * @brief JointsInterfaceCore::JointsInterfaceCore
+ * @param nh
  * @param ttl_driver
  * @param can_driver
  */
@@ -65,8 +66,8 @@ JointsInterfaceCore::~JointsInterfaceCore()
 
 /**
  * @brief JointsInterfaceCore::init
- * @param ttl_driver
- * @param can_driver
+ * @param nh
+ * @return
  */
 bool JointsInterfaceCore::init(ros::NodeHandle& nh)
 {
@@ -121,7 +122,7 @@ void JointsInterfaceCore::startServices(ros::NodeHandle& nh)
 void JointsInterfaceCore::startSubscribers(ros::NodeHandle& nh)
 {
     _trajectory_result_subscriber = nh.subscribe("/niryo_robot_follow_joint_trajectory_controller/follow_joint_trajectory/result",
-                                                  10, &JointsInterfaceCore::_callbackTrajectoryResult, this);  
+                                                  10, &JointsInterfaceCore::_callbackTrajectoryResult, this);
 }
 
 /**

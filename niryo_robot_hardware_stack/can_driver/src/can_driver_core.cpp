@@ -92,7 +92,7 @@ bool CanDriverCore::init(ros::NodeHandle& nh)
  * @brief CanDriverCore::initParameters
  */
 void CanDriverCore::initParameters(ros::NodeHandle& nh)
-{    
+{
     _control_loop_frequency = 0.0;
     double write_frequency = 1.0;
 

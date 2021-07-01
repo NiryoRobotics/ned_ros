@@ -50,6 +50,7 @@ namespace joints_interface
 
 /**
  * @brief JointHardwareInterface::JointHardwareInterface
+ * @param nh
  * @param ttl_driver
  * @param can_driver
  */

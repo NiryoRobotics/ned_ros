@@ -45,7 +45,7 @@ CanDriver::CanDriver(ros::NodeHandle &nh) :
     _is_connection_ok(false)
 {
     ROS_DEBUG("CanDriver - ctor");
-    
+
     init(nh);
 
     if (CAN_OK == setupCAN(nh))

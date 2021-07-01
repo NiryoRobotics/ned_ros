@@ -50,6 +50,7 @@ namespace tools_interface
 
 /**
  * @brief ToolsInterfaceCore::ToolsInterfaceCore
+ * @param nh
  * @param ttl_driver
  */
 ToolsInterfaceCore::ToolsInterfaceCore(ros::NodeHandle& nh,

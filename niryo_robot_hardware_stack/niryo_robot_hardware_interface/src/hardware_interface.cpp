@@ -32,10 +32,11 @@ namespace niryo_robot_hardware_interface
 /**
  * @brief HardwareInterface::HardwareInterface
  * @param nh
+ * @param delayed
  */
 HardwareInterface::HardwareInterface(ros::NodeHandle &nh, bool delayed)
 {
-    if(delayed)
+    if (delayed)
     {
         for (int i = 0; i < 30; i++)
         {

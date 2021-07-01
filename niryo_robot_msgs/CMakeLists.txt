@@ -52,11 +52,18 @@ include_directories(
 )
 
 #############
+##   Doc   ##
+#############
+
+#############
+## Testing ##
+#############
+
+#############
 ## Install ##
 #############
 
 # no scripts to install
-
 
 if (EXISTS ${CMAKE_CURRENT_BINARY_DIR}/doc)
   install(

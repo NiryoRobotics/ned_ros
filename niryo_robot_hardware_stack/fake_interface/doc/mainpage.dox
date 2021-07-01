@@ -20,7 +20,7 @@ This package provides the following nodes :
 \subsection PACKAGE_NAME_node
 
 
-\subsubsection Usage
+\subsubsection Node Usage
 \verbatim
 $ PACKAGE_NAME_node
 \endverbatim
