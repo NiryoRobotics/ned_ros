@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import rospy
+import logging
 from std_msgs.msg import Int32, Bool
 from enum import IntEnum
 
@@ -192,5 +193,11 @@ class NiryoFakeRpi:
 
 if __name__ == '__main__':
     rospy.init_node('niryo_robot_rpi', anonymous=False, log_level=rospy.INFO)
+
+    # change logger level according to node parameter
+    log_level = rospy.get_param("~log_level")
+    logger = logging.getLogger("rosout")
+    logger.setLevel(log_level)
+
     NiryoFakeRpi()
     rospy.spin()

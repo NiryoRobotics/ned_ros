@@ -4,6 +4,8 @@
     <env name="ROSCONSOLE_CONFIG_FILE"
         value="$(find niryo_robot_bringup)/config/desktop_rviz_simulation_trace.conf" />
     <!-- Arguments definition -->
+    <arg name="log_level" default="INFO" />
+
     <arg name="gui" default="true"/>
     <arg name="hardware_version" value="ned"/>
 
@@ -19,11 +21,12 @@
 
     <!-- Define most of ROS parameters -->
     <include file="$(find niryo_robot_bringup)/launch/niryo_robot_base_simulation.launch.xml">
+        <arg name="log_level" value="$(arg log_level)" />
     </include>
 
     <group if="$(arg gui)">
         <!-- Launching Rviz -->
-        <node name="rviz" pkg="rviz" type="rviz" args="-d $(find niryo_robot_description)/config/default_config.rviz"/>
+        <node name="rviz" pkg="rviz" type="rviz" args="-d $(find niryo_robot_description)/config/default_config.rviz" />
     </group>
 
     <group ns="niryo_robot/info">

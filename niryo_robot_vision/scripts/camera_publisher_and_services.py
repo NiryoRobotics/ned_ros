@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
 import rospy
+import logging
+
 import rospkg
 
 import yaml
@@ -178,7 +180,14 @@ class VisionNode:
 
 
 if __name__ == '__main__':
+    # we need to layun
     rospy.init_node('niryo_robot_vision', anonymous=False, log_level=rospy.INFO)
+
+    # change logger level according to node parameter
+    log_level = rospy.get_param("~log_level")
+    logger = logging.getLogger("rosout")
+    logger.setLevel(log_level)
+
     try:
         vision_node = VisionNode()
         rospy.spin()

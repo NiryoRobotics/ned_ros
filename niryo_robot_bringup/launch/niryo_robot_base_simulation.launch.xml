@@ -2,6 +2,8 @@
 <launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
     <!-- Arguments -->
+    <arg name="log_level" default="INFO" />
+
     <arg name="gazebo" default="false"/>
     <arg name="hardware_version" value="ned"/>
     <arg name="simu_gripper" default="false"/>
@@ -13,12 +15,15 @@
 
     <!-- Including shared params & nodes -->
     <include file="$(find niryo_robot_bringup)/launch/niryo_robot_base_common.launch.xml">
+        <arg name="log_level" value="$(arg log_level)" />
         <arg name="gazebo" value="$(arg gazebo)"/>
         <arg name="simulation_mode" value="true"/>
         <arg name="simu_gripper" value="$(arg simu_gripper)"/>
     </include>
 
     <!-- Ghost node for enabling RPI simulation -->
-    <include file="$(find niryo_robot_rpi)/launch/rpi_simulation.launch"/>
+    <include file="$(find niryo_robot_rpi)/launch/rpi_simulation.launch">
+        <arg name="log_level" value="$(arg log_level)" />
+    </include>
 
 </launch>

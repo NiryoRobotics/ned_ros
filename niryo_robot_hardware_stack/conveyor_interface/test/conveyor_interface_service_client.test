@@ -2,18 +2,18 @@
 <launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
 
-  <!-- launch the conveyor_interface_node node using conveyor_interface_node executable from conveyor_interface package -->
+    <!-- launch the conveyor_interface_node node using conveyor_interface_node executable from conveyor_interface package -->
 
-  <group ns="niryo_robot_hardware_interface" >
-    <group ns="can_driver">
-      <rosparam file="$(find can_driver)/config/can_bus.yaml" command="load"/>
-      <rosparam file="$(find can_driver)/config/motors_config.yaml" command="load"/>
-      <rosparam file="$(find can_driver)/config/default.yaml" command="load"/>  
-    </group>  
-  </group>
-  
-  <include file="$(find conveyor_interface)/launch/conveyor_interface.launch" />
+    <group ns="niryo_robot_hardware_interface" >
+        <group ns="can_driver">
+            <rosparam file="$(find can_driver)/config/can_bus.yaml" command="load"/>
+            <rosparam file="$(find can_driver)/config/motors_config.yaml" command="load"/>
+            <rosparam file="$(find can_driver)/config/default.yaml" command="load"/>  
+        </group>  
+    </group>
+    
+    <include file="$(find conveyor_interface)/launch/conveyor_interface.launch" />
 
-  <test test-name="conveyor_interface_integration_tests" pkg="conveyor_interface"  type="conveyor_interface_integration_tests" />
+    <test test-name="conveyor_interface_integration_tests" pkg="conveyor_interface"  type="conveyor_interface_integration_tests" />
 
 </launch>

@@ -1,10 +1,13 @@
 <?xml version="1.0" ?>
 <launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+    <!-- Arguments -->
+    <arg name="log_level" default="INFO" />
     <arg name="server_address" default="0.0.0.0"/>
     <arg name="server_port" default="5020"/>
 
     <node name="niryo_robot_modbus" pkg="niryo_robot_modbus" type="modbus_server_node.py" output="screen">
+        <param name="log_level" type="string" value="$(arg log_level)" />
         <param name="server_address" type="string" value="$(arg server_address)"/>
         <param name="server_port" type="int" value="$(arg server_port)"/>
     </node>

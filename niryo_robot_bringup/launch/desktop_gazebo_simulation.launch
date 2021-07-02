@@ -11,6 +11,8 @@ This will reduce the amount of time spent waiting during program shutdown
     <env name="ROSCONSOLE_CONFIG_FILE"
         value="$(find niryo_robot_bringup)/config/desktop_gazebo_simulation_trace.conf" />
     <!-- Arguments definition -->
+    <arg name="log_level" default="INFO" />
+
     <arg name="gripper_n_camera" default="true"/>
     <arg name="gui" default="true"/>
     <arg name="hardware_version" value="ned"/>
@@ -27,6 +29,7 @@ This will reduce the amount of time spent waiting during program shutdown
 
     <!-- Define most of ROS parameters -->
     <include file="$(find niryo_robot_bringup)/launch/niryo_robot_base_simulation.launch.xml">
+        <arg name="log_level" value="$(arg log_level)" />
         <arg name="simu_gripper" value="$(arg gripper_n_camera)"/>
         <arg name="gazebo" value="true"/>
     </include>
@@ -38,6 +41,7 @@ This will reduce the amount of time spent waiting during program shutdown
 
     <!-- Launching vision if the user didn't swap camera arg to false -->
     <include file="$(find niryo_robot_vision)/launch/vision_node.launch" if="$(arg gripper_n_camera)">
+        <arg name="log_level" value="$(arg log_level)" />
         <arg name="simulation_mode" value="true"/>
     </include>
 

@@ -2,6 +2,7 @@
 
 # Libs
 import rospy
+import logging
 
 from transform_handler import TransformHandler
 from niryo_robot_poses_handlers.transform_functions import euler_from_quaternion
@@ -45,6 +46,9 @@ class PoseHandlerNode:
 
         # Workspaces
         ws_dir = rospy.get_param("~workspace_dir")
+        tool_config_dict = rospy.get_param("niryo_robot_tools_commander/tool_list", dict())
+        grip_dir = rospy.get_param("~grip_dir")
+
         self.__ws_manager = WorkspaceManager(ws_dir)
         rospy.Service('~manage_workspace', ManageWorkspace,
                       self.__callback_manage_workspace)
@@ -55,12 +59,10 @@ class PoseHandlerNode:
         rospy.Service('~get_workspace_poses', GetWorkspaceRobotPoses,
                       self.__callback_get_workspace_poses)
         # Grips
-        tool_config_dict = rospy.get_param("niryo_robot_tools_commander/tool_list", dict())
         self.__tool_id_gripname_dict = {tool["id"]: "default_" + tool["name"].replace(" ", "_")
                                         for tool in tool_config_dict}
         self.__tool_id_gripname_dict[-1] = "default_Calibration_Tip"
 
-        grip_dir = rospy.get_param("~grip_dir")
         self.__grip_manager = GripManager(grip_dir, self.__tool_id_gripname_dict.values())
         rospy.Service('~get_target_pose', GetTargetPose,
                       self.__callback_target_pose)
@@ -461,6 +463,12 @@ class PoseHandlerNode:
 
 if __name__ == "__main__":
     rospy.init_node('niryo_robot_poses_handlers', anonymous=False, log_level=rospy.INFO)
+    
+    # change logger level according to node parameter
+    log_level = rospy.get_param("~log_level")
+    logger = logging.getLogger("rosout")
+    logger.setLevel(log_level)
+
     try:
         vision_node = PoseHandlerNode()
         rospy.spin()

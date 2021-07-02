@@ -2,9 +2,9 @@
 <launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
 
-  <!-- launch the tools_interface_node node using tools_interface_node executable from tools_interface package -->
-  <include file="$(find tools_interface)/launch/tools_interface.launch" />
-  
-  <test test-name="tools_interface_integration_tests" pkg="tools_interface"  type="tools_interface_integration_tests" />
+    <!-- launch the tools_interface_node node using tools_interface_node executable from tools_interface package -->
+    <include file="$(find tools_interface)/launch/tools_interface.launch" />
+    
+    <test test-name="tools_interface_integration_tests" pkg="tools_interface"  type="tools_interface_integration_tests" />
 
 </launch>
