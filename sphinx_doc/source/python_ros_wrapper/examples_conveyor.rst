@@ -1,17 +1,17 @@
-Examples: Conveyor
+Examples: Conveyor Belt
 ========================
 
-This document shows how to use Ned's conveyor belt
+This document shows how to use Ned's Conveyor Belt.
 
-| If you want see more about Ned's conveyor belt functions, you can look at :ref:`API - Conveyor<Conveyor>`
+| If you want see more about Ned's Conveyor Belt functions, you can look at :ref:`API - Conveyor<Conveyor>`.
 
 .. note::
-    Imports & initialisation aren't mentioned, but you shouldn't forget it !
+    Imports & initialisation are not mentioned, but you should not forget it!
 
-Simple Conveyor control
+Simple Conveyor Belt control
 -------------------------------
-This short example show how to connect a conveyor, activating connection and
-launch his motor : ::
+This short example show how to connect a Conveyor Belt, activating connection and
+launch his motor: ::
 
     niryo_robot = NiryoRosWrapper()
 
@@ -28,10 +28,10 @@ launch his motor : ::
     niryo_robot.unset_conveyor(conveyor_id)
 
 
-Advanced Conveyor control
+Advanced Conveyor Belt control
 -------------------------------
 This example shows how to do a certain amount of pick & place by using
-the conveyor with the infrared sensor ::
+the Conveyor Belt with the infrared sensor: ::
 
 
     def run_conveyor(robot, conveyor):

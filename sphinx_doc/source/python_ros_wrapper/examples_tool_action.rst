@@ -1,17 +1,17 @@
-Examples: Tool Action
+Examples: tool action
 ========================
 
-This page shows how to control Ned's tools via the Python ROS Wrapper
+This page shows how to control Ned's tools via the Python ROS Wrapper.
 
-If you want see more, you can look at :ref:`API - Tools<Tools>`
+If you want see more, you can look at :ref:`API - Tools<Tools>`.
 
 .. danger::
-    If you are using the real robot, make sure the environment around it is clear
+    If you are using the real robot, make sure the environment around it is clear.
 
 Tool control
 -------------------
 
-Equip Tool
+Equip tool
 ^^^^^^^^^^^^
 
 In order to use a tool, it should be plugged mechanically to the robot but also
@@ -19,9 +19,9 @@ connected software wise.
 
 To do that, we should use the function
 :meth:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.update_tool`
-which take no argument. It will scan motor connections and set the new tool !
+which take no argument. It will scan motor connections and set the new tool!
 
-The line to equip a new tool is ::
+The line to equip a new tool is: ::
 
     niryo_robot.update_tool()
 
@@ -30,14 +30,14 @@ The line to equip a new tool is ::
 Grasping
 ^^^^^^^^^^^^
 
-To grasp with any tool, you can use the function
-:meth:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.grasp_with_tool`. This action correspond to :
+To grasp with any tool, you can use the function:
+:meth:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.grasp_with_tool`. This action correspond to:
 
- - Close gripper for Grippers
- - Pull Air for Vacuum pump
- - Activate for Electromagnet
+ - Close gripper for Grippers.
+ - Pull Air for Vacuum pump.
+ - Activate for Electromagnet.
 
-The code to grasp is ::
+The code to grasp is: ::
 
     #!/usr/bin/env python
 
@@ -59,7 +59,7 @@ The code to grasp is ::
     niryo_robot.grasp_with_tool()
 
 
-To grasp by specifying parameters ::
+To grasp by specifying parameters: ::
 
     #!/usr/bin/env python
 
@@ -91,18 +91,18 @@ To grasp by specifying parameters ::
 Releasing
 ^^^^^^^^^^^^
 
-To release with any tool, you can use the function
+To release with any tool, you can use the function:
 :meth:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.release_with_tool`. This action correspond to:
 
-  - Open gripper for Grippers
-  - Push Air for Vacuum pump
-  - Deactivate for Electromagnet
+  - Open gripper for Grippers.
+  - Push Air for Vacuum pump.
+  - Deactivate for Electromagnet.
 
-The line to release is ::
+The line to release is: ::
 
     niryo_robot.release_with_tool()
 
-To release by specifying parameters ::
+To release by specifying parameters: ::
 
     #!/usr/bin/env python
 
@@ -132,13 +132,13 @@ To release by specifying parameters ::
 
 
 
-Pick & Place with tools
+Pick & place with tools
 -------------------------
 
 There is a plenty of ways to realise a pick and place with the ROS Wrapper. Methods will
-be presented from the lowest to highest level
+be presented from the lowest to highest level.
 
-Code used will be ::
+Code used will be: ::
 
     # Imports
     from niryo_robot_python_ros_wrapper import *
@@ -159,9 +159,9 @@ Code used will be ::
         pick_n_place_version_x(niryo_robot)
     
 
-First Solution : the heaviest
+First solution: the heaviest
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Everything is done by hand ::
+Everything is done by hand: ::
 
     def pick_n_place_version_1(niryo_ned):
         height_offset = 0.05  # Offset according to Z-Axis to go over pick & place poses
@@ -194,9 +194,9 @@ Everything is done by hand ::
                             place_pose[3], place_pose[4], place_pose[5])
 
 
-Second Solution : Pick from pose & Place from pose functions
+Second solution: pick from pose & place from pose functions
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-We use predefined functions ::
+We use predefined functions: ::
 
     def pick_n_place_version_3(niryo_ned):
         # Pick
@@ -204,9 +204,9 @@ We use predefined functions ::
         # Place
         niryo_ned.place_from_pose(*place_pose)
 
-Third Solution : All in one
+Third solution: all in one
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-We use THE predifined function ::
+We use THE predifined function: ::
 
     def pick_n_place_version_4(niryo_ned):
         # Pick & Place

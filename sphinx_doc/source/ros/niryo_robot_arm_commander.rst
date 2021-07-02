@@ -1,23 +1,23 @@
-Niryo Robot Arm Commander Package
+Niryo robot arm commander package
 ========================================
 
 | This package is the one dealing with all commander related stuff.
-| It is composed of only one node, which is running separately the arm commander and the tool commander
+| It is composed of only one node, which is running separately the arm commander and the tool commander.
 
 
-Arm Commander Node
+Arm commander node
 --------------------------
-The ROS Node is made to interact with :
+The ROS Node is made to interact with:
  - The Arm through MoveIt!
- - The tolls through the tools commander
+ - The tools through the tools commander.
 
-All commands are firstly received on the actionlib server which
- * Handles concurrent requests
- * Checks if the command can't be processed due to other factors (ex: learning mode)
- * Validates parameters
- * Calls required controllers and returns appropriate status and message
+All commands are firstly received on the actionlib server which:
+ * Handles concurrent requests.
+ * Checks if the command can't be processed due to other factors (ex: learning mode).
+ * Validates parameters.
+ * Calls required controllers and returns appropriate status and message.
 
-The namespace used is : |namespace_emphasize|
+The namespace used is: |namespace_emphasize|
 
 Parameters - Commander
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -34,11 +34,11 @@ Parameters - Commander
       -  | Reference frame used by MoveIt! for moveP.
          | Default : 'world'
    *  -  ``move_group_commander_name``
-      -  Name of the group that MoveIt is controlling. By default : "arm"
+      -  Name of the group that MoveIt is controlling. By default: "arm"
    *  -  ``jog_timer_rate_sec``
       -  Publish rate for jog controller
    *  -  ``simu_gripper``
-      -  If you are using the simulated gripper and want to control the gripper
+      -  If you are using the simulated Gripper and want to control the Gripper
 
 
 Action Server - Commander
@@ -103,7 +103,7 @@ Messages - Commander
    *  -  :ref:`PausePlanExecution<PausePlanExecution (Message)>`
       -  Pause movement execution
 
-All these services are available as soon as the node is started
+All these services are available as soon as the node is started.
 
 Dependencies - Commander
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -125,7 +125,7 @@ Dependencies - Commander
 - :msgs_index:`trajectory_msgs`
 
 
-Action, Services & Messages files - Commander
+Action, services & messages files - Commander
 ------------------------------------------------------
 
 RobotMove (Action)

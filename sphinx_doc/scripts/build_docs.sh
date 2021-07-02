@@ -22,18 +22,5 @@ for dir in "$lang_path"/*/; do
   language="${dir##*/}" # remove everything before the last "/"
 
   # Build documentation
-  python -m sphinx -D language="$language" -b html . "${build_path}"/"$language"
-done
-
-# - Display docs paths
-echo ""
-echo "--- Path to Docs ---"
-echo ""
-
-for dir in "$lang_path"/*/; do
-  # Obtain language
-  dir=${dir%*/}         # remove the trailing "/"
-  language="${dir##*/}" # remove everything before the last "/"
-  echo "** ${language} **"
-  echo $(realpath "${build_path}/${language}/index.html")
+  sphinx-build -D language="$language" -b html . "${build_path}"/"$language"
 done

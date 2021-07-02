@@ -1,4 +1,4 @@
-Niryo Robot Hardware Interface Package
+Niryo robot hardware interface package
 =======================================
 
 | This package handles packages related to the robot's hardware.
@@ -9,21 +9,21 @@ Niryo Robot Hardware Interface Package
    :height: 500px
    :align: center
 
-   Global overview of hardware stack packages organization
+   Global overview of hardware stack packages organization.
 
-Hardware Interface Node
+Hardware interface node
 --------------------------
-The ROS Node is made to launch hardware interface and communication :
- - Conveyor interface
+The ROS Node is made to launch hardware interface and communication:
+ - Conveyor Belt interface
  - Joints interface
  - Tools interface
  - Fake interface
  - Dynamixel driver
  - Stepper driver
 
-The namespace used is : |namespace_emphasize|
+The namespace used is: |namespace_emphasize|.
 
-Parameters - Hardware Interface
+Parameters - hardware interface
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. list-table:: Hardware Interface's Parameters
@@ -41,7 +41,7 @@ Parameters - Hardware Interface
       -  | Publish rate for software status.
          | Default : '2.0'
 
-Published Topics - Hardware Interface
+Published topics - hardware interface
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. list-table:: Hardware Interface's Published Topics
@@ -60,7 +60,7 @@ Published Topics - Hardware Interface
       -  :ref:`niryo_robot_msgs/SoftwareVersion<SoftwareVersion>`
       -  Raspberry and stepper software version
 
-Services - Hardware Interface
+Services - hardware interface
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. list-table:: Hardware Interface Package Services
@@ -82,7 +82,7 @@ Services - Hardware Interface
       -  :ref:`Trigger`
       -  Stop motors report
 
-Dependencies - Hardware Interface
+Dependencies - hardware interface
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 - :ref:`tools_interface <Niryo Robot Tools Interface Package>`

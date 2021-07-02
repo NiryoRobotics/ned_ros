@@ -1,10 +1,10 @@
-Niryo Robot Messages Package
+Niryo robot messages package
 ===========================================================
 
 This package contains standard messages which can be used by all other packages.
 
 
-Niryo Messages
+Niryo messages
 ---------------------
 
 .. list-table:: Ned Messages
@@ -28,7 +28,7 @@ Niryo Messages
    *  -  :ref:`SoftwareVersion`
       -  several software version 
 
-Niryo Services
+Niryo services
 ----------------------
 
 .. list-table:: Ned Services
@@ -55,12 +55,12 @@ Niryo Services
       -  Trigger a task
 
 
-Niryo Message Dependencies
+Niryo message dependencies
 -----------------------------------
 
 - :msgs_index:`geometry_msgs`
 
-Niryo Message files
+Niryo message files
 -----------------------------------
 
 CommandStatus

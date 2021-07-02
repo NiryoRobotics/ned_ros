@@ -1,0 +1,82 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2021, Niryo All rights reserved. No part of this document
+# may be reproduced or transmitted in any form or by any means without prior
+# written consent of Niryo SAS
+# This file is distributed under the same license as the Ned ROS
+# Documentation package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Ned ROS Documentation 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-04-26 12:18+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.8.0\n"
+
+#: ../../source/matlab_manager.rst:2
+msgid "Matlab manager"
+msgstr ""
+
+#: ../../source/matlab_manager.rst:4
+msgid ""
+"This package allow to receive :ref:`RobotCommand<RobotCommand (message)>`"
+" from Matlab and move the robot accordingly."
+msgstr ""
+
+#: ../../source/matlab_manager.rst:7
+msgid "Matlab manager node"
+msgstr ""
+
+#: ../../source/matlab_manager.rst:8
+msgid ""
+"The ROS Node is made of one topic that enables to receive goals from "
+"Matlab."
+msgstr ""
+
+#: ../../source/matlab_manager.rst:11
+msgid "Dependencies - Matlab manager"
+msgstr ""
+
+#: ../../source/matlab_manager.rst:12
+msgid ":ref:`niryo_robot_commander <Niryo Robot Commander Package>`"
+msgstr ""
+
+#: ../../source/matlab_manager.rst:16
+msgid "Services files - Matlab manager"
+msgstr ""
+
+#: ../../source/matlab_manager.rst:19
+msgid "MatlabMoveResult (Service)"
+msgstr ""
+
+#~ msgid "Matlab Manager"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "This package allow to receive "
+#~ ":ref:`RobotCommand<RobotCommand (message)>` from "
+#~ "matlab and move the robot accordingly."
+#~ msgstr ""
+
+#~ msgid "Matlab Manager Node"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "The ROS Node is made of one "
+#~ "topic that enables to receive goals "
+#~ "from matlab."
+#~ msgstr ""
+
+#~ msgid "Dependencies - Matlab Manager"
+#~ msgstr ""
+
+#~ msgid "Services files - Matlab Manager"
+#~ msgstr ""
+

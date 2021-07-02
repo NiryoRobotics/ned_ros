@@ -1,15 +1,15 @@
-Niryo Robot Tools Commander Package
+Niryo robot tools commander package
 ========================================
 
 Provides functionalities to control end-effectors and accessories for Ned.
 
-Tools Commander Node
+Tools Commander node
 --------------------------
 The ROS Node is made of services to equip tool, an action server for tool command and topics for the current tool or the tool state.
 
-The namespace used is : |namespace_emphasize|
+The namespace used is: |namespace_emphasize|
 
-Action Server - Tools
+Action server - tools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. list-table:: Tools Package Action Server
@@ -25,7 +25,7 @@ Action Server - Tools
       -  :ref:`ToolAction<ToolAction (Action)>`
       -  Command the tool through an action server
 
-Publisher - Tools
+Publisher - tools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. list-table:: Tools Package Publishers
@@ -41,7 +41,7 @@ Publisher - Tools
       -  :std_msgs:`Int32`
       -  Publish the current tool ID
 
-Services - Tools
+Services - tools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. list-table:: Tools Package Services
@@ -60,12 +60,12 @@ Services - Tools
       -  :ref:`SetInt`
       -  Equip the electromagnet with the motor ID given as parameter
 
-Dependencies - Tools
+Dependencies - tools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 * :ref:`niryo_robot_msgs <Niryo Robot Messages Package>`
 * :msgs_index:`std_msgs`
 
-Action, Services & Messages files - Tools
+Action, services & messages files - tools
 ------------------------------------------------------
 
 ToolAction (Action)

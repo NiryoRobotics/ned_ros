@@ -11,14 +11,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-23 16:51+0200\n"
+"POT-Creation-Date: 2021-06-10 11:46+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.8.0\n"
+"Generated-By: Babel 2.9.1\n"
 
 #: ../../source/python_ros_wrapper/examples_movement.rst:2
 msgid "Examples: Movement"
@@ -33,11 +33,13 @@ msgstr ""
 #: ../../source/python_ros_wrapper/examples_movement.rst:6
 msgid ""
 "If you want see more, you can look at :ref:`API - Joints & Pose<Joints & "
-"Pose>`"
+"Pose>`."
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_movement.rst:9
-msgid "If you are using the real robot, make sure the environment around is clear"
+msgid ""
+"If you are using the real robot, make sure the environment around is "
+"clear."
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_movement.rst:12
@@ -46,17 +48,17 @@ msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_movement.rst:14
 msgid ""
-"To do a moveJ, you should pass 6 floats : (j1, j2, j3, j4, j5, j6) to the"
-" method "
-":meth:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_joints`"
-" : ::"
+"To do a moveJ, you should pass 6 floats: (j1, j2, j3, j4, j5, j6) to the "
+"method "
+":meth:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_joints`:"
+" ::"
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_movement.rst:29
 msgid ""
 "To get joints, we use "
-":meth:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_joints`"
-"  ::"
+":meth:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_joints`:"
+" ::"
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_movement.rst:35
@@ -65,19 +67,69 @@ msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_movement.rst:37
 msgid ""
-"To do a moveP, you should pass 6 floats : (x, y, z, roll, pitch, yaw) to "
+"To do a moveP, you should pass 6 floats: (x, y, z, roll, pitch, yaw) to "
 "the method "
-":meth:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_pose`"
+":meth:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_pose`."
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_movement.rst:40
-msgid "See on this example ::"
+msgid "See on this example: ::"
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_movement.rst:54
 msgid ""
 "To get pose, we use "
-":meth:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_pose`"
-"  ::"
+":meth:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_pose`:"
+" ::"
 msgstr ""
+
+#~ msgid ""
+#~ "If you want see more, you can "
+#~ "look at :ref:`API - Joints & "
+#~ "Pose<Joints & Pose>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "If you are using the real robot,"
+#~ " make sure the environment around is"
+#~ " clear"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "To do a moveJ, you should pass "
+#~ "6 floats : (j1, j2, j3, j4, "
+#~ "j5, j6) to the method "
+#~ ":meth:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_joints`"
+#~ " : ::"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "To get joints, we use "
+#~ ":meth:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_joints`"
+#~ "  ::"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "To do a moveP, you should pass "
+#~ "6 floats : (x, y, z, roll, "
+#~ "pitch, yaw) to the method "
+#~ ":meth:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_pose`"
+#~ msgstr ""
+
+#~ msgid "See on this example ::"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "To get pose, we use "
+#~ ":meth:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_pose`"
+#~ "  ::"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "To do a moveJ, you should pass "
+#~ "6 floats : (j1, j2, j3, j4, "
+#~ "j5, j6) to the method "
+#~ ":meth:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_joints`:"
+#~ " ::"
+#~ msgstr ""
 

@@ -1,22 +1,22 @@
-Python ROS Wrapper Documentation
+Python ROS Wrapper documentation
 =====================================
 
-This file presents the different Functions, Classes & Enums available with the API
+This file presents the different Functions, Classes & Enums available with the API.
 
 .. contents::
    :local:
    :depth: 1
 
-API Functions
+API functions
 ------------------------------------
 
-| This class allows you to control the robot via internal API
-| By controlling, we mean
+| This class allows you to control the robot via internal API.
+| By controlling, we mean:
 
-- Moving the robot
-- Using Vision
-- Controlling Conveyors
-- Playing with Hardware
+- Moving the robot.
+- Using Vision.
+- Controlling Conveyors Belt.
+- Playing with hardware.
 
 List of functions subsections:
 
@@ -45,14 +45,14 @@ Joints & Pose
               forward_kinematics, inverse_kinematics
     :member-order: bysource
 
-Saved Poses
+Saved poses
 ^^^^^^^^^^^^^
 
 .. autoclass:: NiryoRosWrapper
     :members: move_pose_saved, get_pose_saved, save_pose, delete_pose, get_saved_pose_list
     :member-order: bysource
 
-Pick & Place
+Pick & place
 ^^^^^^^^^^^^^
 
 .. autoclass:: NiryoRosWrapper
@@ -84,7 +84,7 @@ Hardware
               get_hardware_status, get_digital_io_state
     :member-order: bysource
 
-Conveyor
+Conveyor Belt
 ^^^^^^^^^^^^^
 
 .. autoclass:: NiryoRosWrapper

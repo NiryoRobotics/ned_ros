@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-23 16:51+0200\n"
+"POT-Creation-Date: 2021-04-26 12:18+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,7 +21,7 @@ msgstr ""
 "Generated-By: Babel 2.8.0\n"
 
 #: ../../source/ros.rst:2
-msgid "ROS Stack Documentation"
+msgid "ROS Stack documentation"
 msgstr ""
 
 #: ../../source/ros.rst:9
@@ -39,20 +39,44 @@ msgstr ""
 msgid ""
 "The high-level packages (motion planner, vision, ...) are coded in Python"
 " to give good readability whereas communication with Hardware is "
-"developed in C++ to ensure speed"
+"developed in C++ to ensure speed."
 msgstr ""
 
 #: ../../source/ros.rst:19
-msgid "To learn more about ROS, go on `Official ROS Wiki <http://wiki.ros.org/>`_"
+msgid ""
+"To learn more about ROS, go on `Official ROS Wiki "
+"<http://wiki.ros.org/>`_."
 msgstr ""
 
 #: ../../source/ros.rst:21
 msgid ""
 "In this section, you will have access to all information about each Niryo"
-" Robot's ROS packages"
+" Robot's ROS packages."
 msgstr ""
 
 #: ../../source/ros.rst:23
 msgid "ROS Documentation Sections"
 msgstr ""
+
+#~ msgid "ROS Stack Documentation"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "The high-level packages (motion planner,"
+#~ " vision, ...) are coded in Python "
+#~ "to give good readability whereas "
+#~ "communication with Hardware is developed "
+#~ "in C++ to ensure speed"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "To learn more about ROS, go on "
+#~ "`Official ROS Wiki <http://wiki.ros.org/>`_"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "In this section, you will have "
+#~ "access to all information about each "
+#~ "Niryo Robot's ROS packages"
+#~ msgstr ""
 

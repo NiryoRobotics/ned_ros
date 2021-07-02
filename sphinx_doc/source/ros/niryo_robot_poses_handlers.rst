@@ -1,26 +1,26 @@
-Niryo Robot Poses Handlers Package
+Niryo robot poses handlers package
 ======================================================
 
 This package is in charge of dealing with transforms, workspace, grips and
 trajectories.
 
 
-Poses Handlers Node
+Poses handlers node
 --------------------------
 
-Description - Poses Handlers
+Description - Poses handlers
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The ROS Node is made of several services to deal with transforms, workspace, grips and
 trajectories.
 
-The namespace used is : |namespace_emphasize|
+The namespace used is: |namespace_emphasize|
 
 Workspaces
 """""""""""""
 
 A workspace is defined by 4 markers that form a rectangle. With the help of the robot's calibration
-tip, the marker positions are learnt. The camera returns poses (x, y, yaw) relative to the workspace.
+tip, the marker positions are learned. The camera returns poses (x, y, yaw) relative to the workspace.
 We can then infer the absolute object pose in robot coordinates.
 
 Grips
@@ -38,16 +38,16 @@ for custom grip positions.
 The vision pick loop
 """"""""""""""""""""""""""""""
 
-1. Camera detects object relative to markers and sends x<sub>rel</sub>, y<sub>rel</sub>, yaw<sub>rel</sub>
-2. The object is placed on the workspace, revealing the object pose in robot coordinates x, y, z, roll, pitch, yaw
+1. Camera detects object relative to markers and sends x<sub>rel</sub>, y<sub>rel</sub>, yaw<sub>rel</sub>.
+2. The object is placed on the workspace, revealing the object pose in robot coordinates x, y, z, roll, pitch, yaw.
 3. The grip is applied on the absolute object pose and gives the pose the robot should move to.
 
-Poses & Trajectories
+Poses & trajectories
 """"""""""""""""""""""""""""""""""
 
-List of Poses
+List of poses
 
-Parameters - Poses Handlers
+Parameters - Poses handlers
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. list-table:: Poses Handlers' Parameters
    :header-rows: 1
@@ -66,7 +66,7 @@ Parameters - Poses Handlers
    *  -  ``trajectories_dir``
       -  Path to the Trajectory storage mother folder
 
-Services - Poses Handlers
+Services - Poses handlers
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. list-table:: Poses Handlers' Services
@@ -87,14 +87,14 @@ Services - Poses Handlers
       -  Get ratio of a workspace
    *  -  ``get_workspace_list``
       -  :ref:`GetNameDescriptionList`
-      -  Get list of workspaces' name & description
+      -  Get list of workspaces name & description
    *  -  ``get_workspace_poses``
       -  :ref:`GetWorkspaceRobotPoses<GetWorkspaceRobotPoses (Service)>`
       -  Get workspace's robot poses
 
    *  -  ``get_target_pose``
       -  :ref:`GetTargetPose<GetTargetPose (Service)>`
-      -  Get saved programs' name
+      -  Get saved programs name
 
    *  -  ``manage_pose``
       -  :ref:`ManagePose<ManagePose (Service)>`
@@ -104,7 +104,7 @@ Services - Poses Handlers
       -  Get Pose
    *  -  ``get_pose_list``
       -  :ref:`GetNameDescriptionList`
-      -  Get list of poses' name & description
+      -  Get list of poses name & description
 
    *  -  ``manage_trajectory``
       -  :ref:`ManageTrajectory<ManageTrajectory (Service)>`
@@ -114,12 +114,12 @@ Services - Poses Handlers
       -  Get Trajectory
    *  -  ``get_trajectory_list``
       -  :ref:`GetNameDescriptionList`
-      -  Get list of trajectories' name & description
+      -  Get list of trajectories name & description
 
 
-All these services are available as soon as the node is started
+All these services are available as soon as the node is started.
 
-Dependencies - Poses Handlers
+Dependencies - Poses handlers
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 - :msgs_index:`geometry_msgs`
@@ -128,7 +128,7 @@ Dependencies - Poses Handlers
 - :wiki_ros:`tf`
 
 
-Services & Messages files - Poses Handlers
+Services & messages files - Poses handlers
 ----------------------------------------------
 
 GetPose (Service)

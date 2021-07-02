@@ -1,0 +1,292 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2021, Niryo All rights reserved. No part of this document
+# may be reproduced or transmitted in any form or by any means without prior
+# written consent of Niryo SAS
+# This file is distributed under the same license as the Ned ROS
+# Documentation package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Ned ROS Documentation 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-04-26 12:18+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.8.0\n"
+
+#: ../../source/stack_hardware/fake_interface.rst:2
+msgid "Niryo robot fake interface package"
+msgstr "Package 'Fake Interface' du robot Niryo"
+
+#: ../../source/stack_hardware/fake_interface.rst:4
+msgid ""
+"This package provides fakes hardware interface when the robot is used in "
+"simulation."
+msgstr ""
+"Ce package fournit une interface fictive du matériel lorsque le robot est utilisé lors "
+"d'une simulation."
+
+#: ../../source/stack_hardware/fake_interface.rst:7
+msgid "Fake interface node"
+msgstr "Noeud 'Fake Interface'"
+
+#: ../../source/stack_hardware/fake_interface.rst:11
+msgid "The ROS Node is made to simulate:"
+msgstr "Le noeud ROS est conçu pour simuler :"
+
+#: ../../source/stack_hardware/fake_interface.rst:9
+msgid "tools interface"
+msgstr "L'interface des outils"
+
+#: ../../source/stack_hardware/fake_interface.rst:10
+msgid "Conveyor Belt interface"
+msgstr "L'interface du Convoyeur"
+
+#: ../../source/stack_hardware/fake_interface.rst:11
+msgid "joints interface"
+msgstr "L'interface des axes"
+
+#: ../../source/stack_hardware/fake_interface.rst:14
+msgid "Published topics - fake interface"
+msgstr "Topics diffusés - 'Fake Interface'"
+
+#: ../../source/stack_hardware/fake_interface.rst:16
+msgid "Fake Interface's Published Topics"
+msgstr "Les Topics diffusés de la 'Fake Interface'"
+
+#: ../../source/stack_hardware/fake_interface.rst:22
+#: ../../source/stack_hardware/fake_interface.rst:41
+msgid "Name"
+msgstr "Nom"
+
+#: ../../source/stack_hardware/fake_interface.rst:23
+#: ../../source/stack_hardware/fake_interface.rst:42
+msgid "Message Type"
+msgstr "Type du message"
+
+#: ../../source/stack_hardware/fake_interface.rst:24
+#: ../../source/stack_hardware/fake_interface.rst:43
+msgid "Description"
+msgstr "Description"
+
+#: ../../source/stack_hardware/fake_interface.rst:25
+msgid "``/niryo_robot/learning_mode/state``"
+msgstr ""
+
+#: ../../source/stack_hardware/fake_interface.rst:26
+msgid ":std_msgs:`Bool`"
+msgstr ""
+
+#: ../../source/stack_hardware/fake_interface.rst:27
+msgid "Learning mode state"
+msgstr "État du mode d'apprentissage"
+
+#: ../../source/stack_hardware/fake_interface.rst:28
+msgid "``/niryo_robot_hardware/tools/current_id``"
+msgstr ""
+
+#: ../../source/stack_hardware/fake_interface.rst:29
+msgid ":std_msgs:`Int32`"
+msgstr ""
+
+#: ../../source/stack_hardware/fake_interface.rst:30
+msgid "Current tool ID"
+msgstr "ID de l'outil actuel"
+
+#: ../../source/stack_hardware/fake_interface.rst:33
+msgid "Services - fake interface"
+msgstr "Services - 'Fake Interface'"
+
+#: ../../source/stack_hardware/fake_interface.rst:35
+msgid "Fake Interface Package Services"
+msgstr "Package de services de la 'Fake Interface'"
+
+#: ../../source/stack_hardware/fake_interface.rst:44
+msgid "``/niryo_robot/joints_interface/calibrate_motors``"
+msgstr ""
+
+#: ../../source/stack_hardware/fake_interface.rst:45
+msgid ":ref:`SetInt`"
+msgstr ""
+
+#: ../../source/stack_hardware/fake_interface.rst:46
+msgid ""
+"Start motors calibration - value can be 1 for auto calibration, 2 for "
+"manual"
+msgstr ""
+"Activer la calibration des moteurs - La valeur peut être 1 pour une calibration automatique, "
+"et 2 pour une calibration manuelle"
+
+#: ../../source/stack_hardware/fake_interface.rst:47
+msgid "``/niryo_robot/joints_interface/request_new_calibration``"
+msgstr ""
+
+#: ../../source/stack_hardware/fake_interface.rst:48
+#: ../../source/stack_hardware/fake_interface.rst:51
+msgid ":ref:`Trigger`"
+msgstr ""
+
+#: ../../source/stack_hardware/fake_interface.rst:49
+msgid "Unset motors calibration"
+msgstr "Désactiver la calibration des moteurs"
+
+#: ../../source/stack_hardware/fake_interface.rst:50
+msgid "``niryo_robot/learning_mode/activate``"
+msgstr ""
+
+#: ../../source/stack_hardware/fake_interface.rst:52
+msgid "Either activate or deactivate learning mode"
+msgstr "Activer ou désactiver le mode apprentissage"
+
+#: ../../source/stack_hardware/fake_interface.rst:53
+msgid "``niryo_robot/tools/ping_and_set_dxl_tool``"
+msgstr ""
+
+#: ../../source/stack_hardware/fake_interface.rst:54
+msgid ":ref:`tools_interface/PingDxlTool<PingDxlTool (Service)>`"
+msgstr ""
+
+#: ../../source/stack_hardware/fake_interface.rst:55
+msgid "Scan and set for a tool plugged"
+msgstr "Scanner et configurer un outil branché "
+
+#: ../../source/stack_hardware/fake_interface.rst:56
+msgid "``niryo_robot/tools/open_gripper``"
+msgstr ""
+
+#: ../../source/stack_hardware/fake_interface.rst:57
+msgid ":ref:`tools_interface/OpenGripper<OpenGripper (Service)>`"
+msgstr ""
+
+#: ../../source/stack_hardware/fake_interface.rst:58
+msgid "Open a Gripper tool"
+msgstr "Ouvrir le Gripper"
+
+#: ../../source/stack_hardware/fake_interface.rst:59
+msgid "``niryo_robot/tools/close_gripper``"
+msgstr ""
+
+#: ../../source/stack_hardware/fake_interface.rst:60
+msgid ":ref:`tools_interface/CloseGripper<CloseGripper (Service)>`"
+msgstr ""
+
+#: ../../source/stack_hardware/fake_interface.rst:61
+msgid "Close a Gripper tool"
+msgstr "Fermer le Gripper"
+
+#: ../../source/stack_hardware/fake_interface.rst:62
+msgid "``niryo_robot/tools/pull_air_vacuum_pump``"
+msgstr ""
+
+#: ../../source/stack_hardware/fake_interface.rst:63
+msgid ":ref:`tools_interface/PullAirVacuumPump<PullAirVacuumPump (Service)>`"
+msgstr ""
+
+#: ../../source/stack_hardware/fake_interface.rst:64
+msgid "Pull Vacuum Pump tool"
+msgstr "Activer la Pompe à vide"
+
+#: ../../source/stack_hardware/fake_interface.rst:65
+msgid "``niryo_robot/tools/push_air_vacuum_pump``"
+msgstr ""
+
+#: ../../source/stack_hardware/fake_interface.rst:66
+msgid ":ref:`tools_interface/PushAirVacuumPump<PushAirVacuumPump (Service)>`"
+msgstr ""
+
+#: ../../source/stack_hardware/fake_interface.rst:67
+msgid "Push Vacuum Pump tool"
+msgstr "Désactiver la Pompe à vide"
+
+#: ../../source/stack_hardware/fake_interface.rst:68
+msgid "``/niryo_robot/conveyor/control_conveyor``"
+msgstr ""
+
+#: ../../source/stack_hardware/fake_interface.rst:69
+msgid ":ref:`ControlConveyor<ControlConveyor (Service)>`"
+msgstr ""
+
+#: ../../source/stack_hardware/fake_interface.rst:70
+msgid "Send a command to the desired Conveyor Belt"
+msgstr "Envoyer une commande au Convoyeur souhaité"
+
+#: ../../source/stack_hardware/fake_interface.rst:71
+msgid "``/niryo_robot/conveyor/ping_and_set_conveyor``"
+msgstr ""
+
+#: ../../source/stack_hardware/fake_interface.rst:72
+msgid ":ref:`SetConveyor<SetConveyor (Service)>`"
+msgstr ""
+
+#: ../../source/stack_hardware/fake_interface.rst:73
+msgid "Scan and set a new Conveyor Belt"
+msgstr "Scanner et configurer un nouveau Convoyeur"
+
+#: ../../source/stack_hardware/fake_interface.rst:76
+msgid "Dependencies - fake interface"
+msgstr "Dépendances - 'Fake Interface'"
+
+#: ../../source/stack_hardware/fake_interface.rst:77
+msgid ":msgs_index:`std_msgs`"
+msgstr ""
+
+#: ../../source/stack_hardware/fake_interface.rst:78
+msgid ":wiki_ros:`hardware_interface <hardware_interface>`"
+msgstr ""
+
+#: ../../source/stack_hardware/fake_interface.rst:79
+msgid ":wiki_ros:`controller_manager <controller_manager>`"
+msgstr ""
+
+#: ../../source/stack_hardware/fake_interface.rst:80
+msgid ":ref:`niryo_robot_msgs <Niryo Robot Messages Package>`"
+msgstr ""
+
+#: ../../source/stack_hardware/fake_interface.rst:81
+msgid ":ref:`tools_interface <Niryo Robot Tools Interface Package>`"
+msgstr ""
+
+#: ../../source/stack_hardware/fake_interface.rst:82
+msgid ":ref:`joints_interface <Niryo Robot Joints Interface Package>`"
+msgstr ""
+
+#: ../../source/stack_hardware/fake_interface.rst:83
+msgid ":ref:`conveyor_interface <Niryo Robot Conveyor Interface Package>`"
+msgstr ""
+
+#~ msgid "Niryo Robot Fake Interface Package"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "This package provides fakes hardware "
+#~ "interface when the robot is used "
+#~ "in simulation"
+#~ msgstr ""
+
+#~ msgid "Fake Interface Node"
+#~ msgstr ""
+
+#~ msgid "Published Topics - Fake Interface"
+#~ msgstr ""
+
+#~ msgid "Services - Fake Interface"
+#~ msgstr ""
+
+#~ msgid "Conveyor Interface Package Services"
+#~ msgstr ""
+
+#~ msgid "Send a command to the desired conveyor"
+#~ msgstr ""
+
+#~ msgid "Scan and set a new conveyor"
+#~ msgstr ""
+
+#~ msgid "Dependencies - Fake Interface"
+#~ msgstr ""
+

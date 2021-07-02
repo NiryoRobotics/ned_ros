@@ -11,72 +11,85 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-23 16:51+0200\n"
+"POT-Creation-Date: 2021-06-10 11:46+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.8.0\n"
+"Generated-By: Babel 2.9.1\n"
 
 #: ../../source/ros/niryo_robot_rpi.rst:2
-msgid "Niryo Robot RPI Package"
-msgstr ""
+msgid "Niryo robot RPI package"
+msgstr "Package RPI du robot Niryo"
 
 #: ../../source/ros/niryo_robot_rpi.rst:4
 msgid ""
-"This package deals with raspberry pi related stuff (Button, fans, I/O, "
-"leds, ...)"
+"This package deals with Raspberry Pi related stuff (Button, fans, I/O, "
+"leds, ...)."
 msgstr ""
+"Ce package traite des éléments liés à Raspberry Pi (Bouton, ventilateurs,"
+" E/S, LED,…)."
 
 #: ../../source/ros/niryo_robot_rpi.rst:8
-msgid "RPI Node"
-msgstr ""
+msgid "Raspberry Pi Node"
+msgstr "Noeud Raspberry Pi (RPI)"
 
 #: ../../source/ros/niryo_robot_rpi.rst:9
 msgid ""
 "The ROS Node manages the following components: - Physical top button: "
-"executes actions when the button is pressed. - Digital I/O panel : gets "
+"executes actions when the button is pressed. - Digital I/O panel: gets "
 "commands and sends the current state of digital I/Os. Also controls tools"
-" like the electromagnet. - Robot fans - Led : sets the LED color. - ROS "
-"log : can remove all previous logs on startup to prevent a lack of disk "
+" like the Electromagnet. - Robot fans. - Led: sets the LED color. - ROS "
+"log: can remove all previous logs on startup to prevent a lack of disk "
 "space in the long run (SD cards do not have infinite storage)."
 msgstr ""
+"Le nœud ROS gère les composants suivants : - Bouton supérieur physique : "
+"éxécute des actions lorsque le bouton est pressé. - Panneau d'E/S "
+"numériques : reçoit les commandes et envoie l'état actuel des E/S "
+"numériques. Contrôle également des outils comme l'électroaimant. - Les "
+"ventilateurs du robot. - LED : règle la couleur de la LED. - ROS log : "
+"peut supprimer tous les logs précédents au démarrage pour éviter un "
+"manque d'espace disque à long terme (les cartes SD n'ont pas de stockage "
+"infini)."
 
 #: ../../source/ros/niryo_robot_rpi.rst:16
-msgid "The namespace used is : |namespace_emphasize|"
-msgstr ""
+msgid "The namespace used is: |namespace_emphasize|"
+msgstr "L'espace de nom utilisé est : |namespace_emphasize|"
 
 #: ../../source/ros/niryo_robot_rpi.rst:18
 msgid ""
 "**Note that this package should not be used when you are using Ned ROS "
-"stack on your computer, in simulation mode.**executes actions when the "
+"stack on your computer in simulation mode. Executes actions when the "
 "button is pressed.**"
 msgstr ""
+"**Noter que ce package ne doit pas être utilisé lorsque vous utilisez la "
+"stack ROS Ned sur votre ordinateur, en mode simulation. Il faut éxécuter "
+"des actions lorsque le bouton est pressé.**"
 
 #: ../../source/ros/niryo_robot_rpi.rst:21
-msgid "Publisher - RPI"
-msgstr ""
+msgid "Publisher - Raspberry Pi"
+msgstr "Diffuseur - Raspberry Pi"
 
 #: ../../source/ros/niryo_robot_rpi.rst:23
 msgid "RPI Package's Publishers"
-msgstr ""
+msgstr "Diffuseurs du package RPI"
 
 #: ../../source/ros/niryo_robot_rpi.rst:29
 #: ../../source/ros/niryo_robot_rpi.rst:60
 msgid "Name"
-msgstr ""
+msgstr "Nom"
 
 #: ../../source/ros/niryo_robot_rpi.rst:30
 #: ../../source/ros/niryo_robot_rpi.rst:61
 msgid "Message Type"
-msgstr ""
+msgstr "Type du message"
 
 #: ../../source/ros/niryo_robot_rpi.rst:31
 #: ../../source/ros/niryo_robot_rpi.rst:62
 msgid "Description"
-msgstr ""
+msgstr "Description"
 
 #: ../../source/ros/niryo_robot_rpi.rst:32
 msgid "``pause_state``"
@@ -88,7 +101,7 @@ msgstr ""
 
 #: ../../source/ros/niryo_robot_rpi.rst:34
 msgid "Publish the current execution state launched when button is pressed"
-msgstr ""
+msgstr "Publier l'état d'exécution actuel lancé lorsque le bouton est enfoncé"
 
 #: ../../source/ros/niryo_robot_rpi.rst:35
 msgid "``/niryo_robot/blockly/save_current_point``"
@@ -100,9 +113,11 @@ msgstr ""
 
 #: ../../source/ros/niryo_robot_rpi.rst:37
 msgid ""
-"Publish current point when user is in blockly page to save block by "
+"Publish current point when user is in Blockly page to save block by "
 "pressing button"
 msgstr ""
+"Publier le point actuel lorsque l'utilisateur est sur Blockly pour "
+"enregistrer le bloc en appuyant sur le bouton"
 
 #: ../../source/ros/niryo_robot_rpi.rst:38
 msgid "``/niryo_robot/rpi/is_button_pressed``"
@@ -114,7 +129,7 @@ msgstr ""
 
 #: ../../source/ros/niryo_robot_rpi.rst:40
 msgid "Publish the button state (true if pressed)"
-msgstr ""
+msgstr "Publier l'état du bouton (vrai si appuyé)"
 
 #: ../../source/ros/niryo_robot_rpi.rst:41
 msgid "``digital_io_state``"
@@ -127,6 +142,8 @@ msgstr ""
 #: ../../source/ros/niryo_robot_rpi.rst:43
 msgid "Publish the I/Os state by giving for each it's pin / name / mode / state"
 msgstr ""
+"Publier l’état des E/S numériques en donnant pour chacun son pin / nom / "
+"mode / état"
 
 #: ../../source/ros/niryo_robot_rpi.rst:44
 msgid "``/niryo_robot/rpi/led_state``"
@@ -138,7 +155,7 @@ msgstr ""
 
 #: ../../source/ros/niryo_robot_rpi.rst:46
 msgid "Publish the current led color"
-msgstr ""
+msgstr "Publier la couleur actuelle de la led"
 
 #: ../../source/ros/niryo_robot_rpi.rst:47
 msgid "``ros_log_status``"
@@ -153,14 +170,16 @@ msgid ""
 "Publish the current log status (log size / available disk / boolean if "
 "should delete ros log on startup)"
 msgstr ""
+"Publier l'état actuel du journal (taille du journal / disque disponible /"
+" booléen si doit supprimer le journal ros au démarrage)"
 
 #: ../../source/ros/niryo_robot_rpi.rst:52
-msgid "Services - RPI"
+msgid "Services - Raspberry Pi"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_rpi.rst:54
 msgid "RPI Services"
-msgstr ""
+msgstr "Services RPI"
 
 #: ../../source/ros/niryo_robot_rpi.rst:63
 msgid "``shutdown_rpi``"
@@ -174,8 +193,8 @@ msgid ":ref:`SetInt<SetInt>`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_rpi.rst:65
-msgid "Shutdown the raspberry pi"
-msgstr ""
+msgid "Shutdown the Raspberry Pi"
+msgstr "Arrêtez le Raspberry Pi"
 
 #: ../../source/ros/niryo_robot_rpi.rst:66
 msgid "``/niryo_robot/rpi/change_button_mode``"
@@ -184,6 +203,8 @@ msgstr ""
 #: ../../source/ros/niryo_robot_rpi.rst:68
 msgid "Change top button mode (autorun program, blockly, nothing, ...)"
 msgstr ""
+"Changer le mode du bouton supérieur (programme d'exécution automatique, "
+"blockly, rien,…)"
 
 #: ../../source/ros/niryo_robot_rpi.rst:69
 msgid "``get_digital_io``"
@@ -195,7 +216,7 @@ msgstr ""
 
 #: ../../source/ros/niryo_robot_rpi.rst:71
 msgid "Get digital IO state list"
-msgstr ""
+msgstr "Obtenir la liste des états d'E/S numériques"
 
 #: ../../source/ros/niryo_robot_rpi.rst:72
 msgid "``set_digital_io_mode``"
@@ -208,7 +229,7 @@ msgstr ""
 
 #: ../../source/ros/niryo_robot_rpi.rst:74
 msgid "Set a digital IO to the mode given"
-msgstr ""
+msgstr "Régler une E/S numérique sur le mode indiqué"
 
 #: ../../source/ros/niryo_robot_rpi.rst:75
 msgid "``set_digital_io_state``"
@@ -216,7 +237,7 @@ msgstr ""
 
 #: ../../source/ros/niryo_robot_rpi.rst:77
 msgid "Set a digital IO to the state given"
-msgstr ""
+msgstr "Mettre une E/S numérique à l'état donné"
 
 #: ../../source/ros/niryo_robot_rpi.rst:78
 msgid "``set_led_state``"
@@ -228,7 +249,7 @@ msgstr ""
 
 #: ../../source/ros/niryo_robot_rpi.rst:80
 msgid "Set led state"
-msgstr ""
+msgstr "Définir l'état de la LED"
 
 #: ../../source/ros/niryo_robot_rpi.rst:81
 msgid "``set_led_custom_blinker``"
@@ -240,15 +261,16 @@ msgstr ""
 
 #: ../../source/ros/niryo_robot_rpi.rst:83
 msgid "Set the led in blink mode with the color given"
-msgstr ""
+msgstr "Régler la LED en mode clignotant avec la couleur donnée"
 
 #: ../../source/ros/niryo_robot_rpi.rst:84
 msgid "``purge_ros_logs``"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_rpi.rst:86
-msgid "Purge ros log"
-msgstr ""
+#, fuzzy
+msgid "Purge ROS log"
+msgstr "Purger ROS log"
 
 #: ../../source/ros/niryo_robot_rpi.rst:87
 msgid "``set_purge_ros_log_on_startup``"
@@ -256,13 +278,15 @@ msgstr ""
 
 #: ../../source/ros/niryo_robot_rpi.rst:89
 msgid ""
-"Modify the permanent settings that tells if robot should purge it's ros "
+"Modify the permanent settings that tells if robot should purge it's ROS "
 "log at each boot"
 msgstr ""
+"Modifier les paramètres permanents qui indiquent si le robot doit purger "
+"son ROS log à chaque démarrage"
 
 #: ../../source/ros/niryo_robot_rpi.rst:92
-msgid "Dependencies - RPI"
-msgstr ""
+msgid "Dependencies - Raspberry Pi"
+msgstr "Dépendances - Raspberry Pi"
 
 #: ../../source/ros/niryo_robot_rpi.rst:94
 msgid ":msgs_index:`std_msgs`"
@@ -285,8 +309,8 @@ msgid ":ref:`niryo_robot_arm_commander <Niryo Robot Commander Package>`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_rpi.rst:101
-msgid "Services & Messages files - RPI"
-msgstr ""
+msgid "Services & Messages files - Raspberry Pi"
+msgstr "Fichiers Services & Messages - Raspberry Pi"
 
 #: ../../source/ros/niryo_robot_rpi.rst:104
 msgid "ChangeMotorConfig (Service)"
@@ -311,4 +335,47 @@ msgstr ""
 #: ../../source/ros/niryo_robot_rpi.rst:135
 msgid "LogStatus (Service)"
 msgstr ""
+
+#~ msgid "Niryo Robot RPI Package"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "This package deals with raspberry pi "
+#~ "related stuff (Button, fans, I/O, leds,"
+#~ " ...)"
+#~ msgstr ""
+
+#~ msgid "RPI Node"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "The ROS Node manages the following "
+#~ "components: - Physical top button: "
+#~ "executes actions when the button is "
+#~ "pressed. - Digital I/O panel : "
+#~ "gets commands and sends the current "
+#~ "state of digital I/Os. Also controls "
+#~ "tools like the electromagnet. - Robot"
+#~ " fans - Led : sets the LED "
+#~ "color. - ROS log : can remove "
+#~ "all previous logs on startup to "
+#~ "prevent a lack of disk space in"
+#~ " the long run (SD cards do not"
+#~ " have infinite storage)."
+#~ msgstr ""
+
+#~ msgid "The namespace used is : |namespace_emphasize|"
+#~ msgstr ""
+
+#~ msgid "Publisher - RPI"
+#~ msgstr ""
+
+#~ msgid "Services - RPI"
+#~ msgstr ""
+
+#~ msgid "Dependencies - RPI"
+#~ msgstr ""
+
+#~ msgid "Services & Messages files - RPI"
+#~ msgstr ""
 

@@ -1,4 +1,4 @@
-Hardware ROS Stack Documentation
+Hardware ROS Stack documentation
 =========================================
 
 .. figure:: ../images/ros_logo.png
@@ -13,12 +13,12 @@ allows to ease robot software development. The framework is used
 in almost each part of Ned's software.
 
 The high-level packages (motion planner, vision, ...) are coded in Python to give
-good readability whereas communication with Hardware is developed in C++ to ensure speed
+good readability whereas communication with Hardware is developed in C++ to ensure speed.
 
 .. note::
-   To learn more about ROS, go on `Official ROS Wiki <http://wiki.ros.org/>`_
+   To learn more about ROS, go on `Official ROS Wiki <http://wiki.ros.org/>`_.
 
-In this section, you will have access to all information about each Niryo Robot's ROS hardware stack packages
+In this section, you will have access to all information about each Niryo robot's ROS hardware stack packages.
 
 .. toctree::
    :maxdepth: 2

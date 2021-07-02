@@ -21,3 +21,5 @@ venv
 # Build files
 _build/
 *.mo
+docs_build/
+docker/
