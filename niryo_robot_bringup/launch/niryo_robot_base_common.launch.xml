@@ -5,7 +5,7 @@
     <arg name="log_level" default="INFO" />
 
     <arg name="gazebo" default="false"/>
-    <arg name="hardware_version" value="ned"/>
+    <arg name="hardware_version" default="ned"/>
     <arg name="simu_gripper" default="false"/>
     <arg name="simulation_mode" default="false"/>
     <arg name="debug" default="false"/>
@@ -35,7 +35,6 @@
     <!-- Launching TF ROS Bridge-->
     <node name="tf2_web_republisher" pkg="tf2_web_republisher" type="tf2_web_republisher"/>
     <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch">
-        <arg name="log_level" value="$(arg log_level)" />
         <arg name="port" value="9090"/>
         <arg name="output" value="log" unless="$(eval 'kinetic' == arg('ros_version'))"/>
     </include>

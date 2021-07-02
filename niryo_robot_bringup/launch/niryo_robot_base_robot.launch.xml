@@ -6,7 +6,7 @@
 
     <arg name="iot_enabled" default="false"/>
     <arg name="debug" default="false"/>
-    <arg name="hardware_version" value="ned"/>
+    <arg name="hardware_version" default="ned"/>
     <arg name="rpi_model" value="4"/>
     <arg name="conf_location" value="$(env HOME)/.config/niryo"/>
 

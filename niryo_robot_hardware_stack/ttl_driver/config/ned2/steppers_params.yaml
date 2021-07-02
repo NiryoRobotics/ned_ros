@@ -1,0 +1,27 @@
+#
+#  Stepper caracteristics for Ned's hardware
+#
+steppers:
+    stepper_1_id: 1
+    stepper_2_id: 2
+    stepper_3_id: 3
+
+    stepper_1_gear_ratio: 5.4375
+    stepper_2_gear_ratio: 8.5625
+    stepper_3_gear_ratio: 7.6875
+
+    stepper_1_offset_position: 2.96706
+    stepper_2_offset_position: 0.610865
+    stepper_3_offset_position: -1.3439
+
+    stepper_1_home_position: 0.0
+    stepper_2_home_position: 0.5
+    stepper_3_home_position: -1.25
+
+    stepper_1_direction: -1.0
+    stepper_2_direction: -1.0
+    stepper_3_direction: -1.0
+
+    stepper_1_max_effort: 110
+    stepper_2_max_effort: 130
+    stepper_3_max_effort: 120

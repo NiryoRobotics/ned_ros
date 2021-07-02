@@ -5,7 +5,7 @@
     <arg name="log_level" default="INFO" />
 
     <arg name="gazebo" default="false"/>
-    <arg name="hardware_version" value="ned"/>
+    <arg name="hardware_version" default="ned"/>
     <arg name="simu_gripper" default="false"/>
 
     <!-- PARAMS -->

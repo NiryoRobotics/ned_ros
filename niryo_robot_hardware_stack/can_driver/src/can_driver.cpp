@@ -100,7 +100,7 @@ void CanDriver::resetCalibration()
  */
 bool CanDriver::init(ros::NodeHandle &nh)
 {
-    nh.getParam("/niryo_robot_hardware_interface/calibration/calibration_timeout", _calibration_timeout);
+    nh.getParam("/niryo_robot_hardware_interface/joints_interface/calibration_timeout", _calibration_timeout);
     ROS_DEBUG("CanDriver::init - Calibration timeout %f", _calibration_timeout);
 
     std::vector<int> idList;
@@ -149,9 +149,9 @@ int CanDriver::setupCAN(ros::NodeHandle& nh)
     int spi_baudrate = 0;
     int gpio_can_interrupt = 0;
 
-    nh.getParam("can_bus/spi_channel", spi_channel);
-    nh.getParam("can_bus/spi_baudrate", spi_baudrate);
-    nh.getParam("can_bus/gpio_can_interrupt", gpio_can_interrupt);
+    nh.getParam("bus_config/spi_channel", spi_channel);
+    nh.getParam("bus_config/spi_baudrate", spi_baudrate);
+    nh.getParam("bus_config/gpio_can_interrupt", gpio_can_interrupt);
 
     ROS_DEBUG("CanDriver::CanDriver - Can bus parameters: spi_channel : %d", spi_channel);
     ROS_DEBUG("CanDriver::CanDriver - Can bus parameters: spi_baudrate : %d", spi_baudrate);
@@ -658,8 +658,7 @@ void CanDriver::fillConveyorState(uint8_t motor_id, const std::array<uint8_t, 8>
  */
 void CanDriver::_verifyMotorTimeoutLoop()
 {
-    ros::NodeHandle nh("~");
-    while (nh.ok())
+    while (ros::ok())
     {
         std::lock_guard<std::mutex> lck(_stepper_timeout_mutex);
         std::vector<uint8_t> timeout_motors;

@@ -2,8 +2,8 @@
 <launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
     <arg name="log_level" default="INFO" />
-    <arg name="hardware_version" value="ned"/>
-    <arg name="simu_gripper"/>
+    <arg name="hardware_version" default="ned"/>
+    <arg name="simu_gripper" default="true"/>
 
     <!-- Command validation params -->
     <group ns="niryo_robot/robot_command_validation">

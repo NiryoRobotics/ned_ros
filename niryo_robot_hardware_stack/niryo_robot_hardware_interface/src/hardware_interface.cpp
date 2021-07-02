@@ -75,6 +75,9 @@ bool HardwareInterface::init(ros::NodeHandle& nh)
     ROS_DEBUG("HardwareInterface::init - Initializing parameters...");
     initParameters(nh);
 
+    ROS_DEBUG("HardwareInterface::init - Init Nodes...");
+    initNodes(nh);
+
     ROS_DEBUG("HardwareInterface::init - Starting services...");
     startServices(nh);
 
@@ -83,9 +86,6 @@ bool HardwareInterface::init(ros::NodeHandle& nh)
 
     ROS_DEBUG("HardwareInterface::init - Starting publishers...");
     startPublishers(nh);
-
-    ROS_DEBUG("HardwareInterface::init - Init Nodes...");
-    initNodes(nh);
 
     return true;
 }
@@ -157,14 +157,10 @@ void HardwareInterface::startSubscribers(ros::NodeHandle& nh)
  */
 void HardwareInterface::startPublishers(ros::NodeHandle& nh)
 {
-    _hardware_status_publisher = nh.advertise<niryo_robot_msgs::HardwareStatus>(
-                                            "niryo_robot_hardware_interface/hardware_status", 10);
-
+    _hardware_status_publisher = nh.advertise<niryo_robot_msgs::HardwareStatus>("hardware_status", 10);
     _publish_hw_status_thread = std::thread(&HardwareInterface::_publishHardwareStatus, this);
 
-    _software_version_publisher = nh.advertise<niryo_robot_msgs::SoftwareVersion>(
-                                            "niryo_robot_hardware_interface/software_version", 10);
-
+    _software_version_publisher = nh.advertise<niryo_robot_msgs::SoftwareVersion>("software_version", 10);
     _publish_software_version_thread = std::thread(&HardwareInterface::_publishSoftwareVersion, this);
 }
 
@@ -526,6 +522,7 @@ void HardwareInterface::_publishSoftwareVersion()
             motor_names.push_back("joint_4");
             motor_names.push_back("joint_5");
             motor_names.push_back("joint_6");
+            
         }
 
         for (auto const& hw_status : stepper_motor_state.motors_hw_status)

@@ -123,7 +123,7 @@ void FakeInterfaceCore::startServices(ros::NodeHandle& nh)
     _request_new_calibration_server = nh.advertiseService("/niryo_robot/joints_interface/request_new_calibration",
                                                            &FakeInterfaceCore::_callbackRequestNewCalibration, this);
 
-    _activate_learning_mode_server = nh.advertiseService("niryo_robot/learning_mode/activate",
+    _activate_learning_mode_server = nh.advertiseService("/niryo_robot/learning_mode/activate",
                                                           &FakeInterfaceCore::_callbackActivateLearningMode, this);
 
     _ping_and_set_dxl_tool_server = nh.advertiseService("/niryo_robot/tools/ping_and_set_dxl_tool",
@@ -457,6 +457,8 @@ niryo_robot_msgs::BusState FakeInterfaceCore::getTtlBusState() const
  */
 can_driver::StepperArrayMotorHardwareStatus FakeInterfaceCore::getCanHwStatus() const
 {
+    ROS_DEBUG("FakeInterfaceCore::getCanHwStatus");
+
     can_driver::StepperMotorHardwareStatus data;
     can_driver::StepperArrayMotorHardwareStatus hw_state;
 

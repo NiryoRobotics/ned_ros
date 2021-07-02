@@ -7,7 +7,7 @@
     <arg name="log_level" default="INFO" />
 
     <arg name="gui" default="true"/>
-    <arg name="hardware_version" value="ned"/>
+    <arg name="hardware_version" default="ned"/>
 
     <!-- Load URDF -->
     <arg name="urdf_path" value="urdf/$(arg hardware_version)/niryo_$(arg hardware_version).urdf.xacro"/>

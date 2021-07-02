@@ -76,8 +76,8 @@ TtlDriver::~TtlDriver()
 bool TtlDriver::init(ros::NodeHandle& nh)
 {
     // get params from rosparams
-    nh.getParam("dxl_bus/dxl_uart_device_name", _device_name);
-    nh.getParam("dxl_bus/dxl_baudrate", _uart_baudrate);
+    nh.getParam("bus_config/uart_device_name", _device_name);
+    nh.getParam("bus_config/baudrate", _uart_baudrate);
 
     _dxlPortHandler.reset(dynamixel::PortHandler::getPortHandler(_device_name.c_str()));
     _dxlPacketHandler.reset(dynamixel::PacketHandler::getPacketHandler(DXL_BUS_PROTOCOL_VERSION));
@@ -88,16 +88,9 @@ bool TtlDriver::init(ros::NodeHandle& nh)
     vector<int> idList;
     vector<string> typeList;
 
-    if (nh.hasParam("motors_params/dxl_motor_id_list"))
-        nh.getParam("motors_params/dxl_motor_id_list", idList);
-    else
-        nh.getParam("motors_params/dxl_motor_id_list", idList);
-
-    if (nh.hasParam("motors_params/dxl_motor_type_list"))
-        nh.getParam("motors_params/dxl_motor_type_list", typeList);
-    else
-        nh.getParam("motors_params/dxl_motor_type_list", typeList);
-
+    nh.getParam("motors_params/dxl_motor_id_list", idList);
+    nh.getParam("motors_params/dxl_motor_type_list", typeList);
+    
     // debug - display info
     ostringstream ss;
     ss << "[";

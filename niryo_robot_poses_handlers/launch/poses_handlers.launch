@@ -4,7 +4,7 @@
     <!-- Arguments -->
     <arg name="log_level" default="INFO" />
     <arg name="simulation_mode" default="false" />
-    <arg name="hardware_version" value="ned"/>
+    <arg name="hardware_version" default="ned"/>
 
     <arg name="dir_desktop" value="~/.niryo/simulation/"/>
     <arg name="dir_rpi" value="~/niryo_robot_saved_files/"/>

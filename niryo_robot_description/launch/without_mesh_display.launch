@@ -1,16 +1,15 @@
 <?xml version="1.0" ?>
 <launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">    
-    <arg name="hardware_version" value="ned"/>
+    <arg name="hardware_version" default="ned"/>
     <arg name="joints_gui" default="true"/>
 
     <arg name="urdf_path"
          value="$(find niryo_robot_description)/urdf/$(arg hardware_version)/without_mesh_niryo_$(arg hardware_version).urdf.xacro"/>
 
     <param name="robot_description" command="$(find xacro)/xacro $(arg urdf_path)"/>
-    <param name="use_gui" value="$(arg joints_gui)"/>
 
-    <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher" />
-    <node name="robot_state_publisher" pkg="robot_state_publisher" type="state_publisher" />
+    <node name="joint_state_publisher_gui" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui" />
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" />
     <node name="rviz" pkg="rviz" type="rviz" args="-d $(find niryo_robot_description)/config/default_config.rviz" />
 </launch>

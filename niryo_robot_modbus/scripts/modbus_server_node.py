@@ -11,6 +11,9 @@ class ModbusServerNode:
         self.__modbus_server_address = rospy.get_param("~server_address")
         self.__modbus_server_port = rospy.get_param("~server_port")
 
+        rospy.logdebug("ModbusServerNode.Init - server_address: %s", self.__modbus_server_address)
+        rospy.logdebug("ModbusServerNode.Init - server_port: %s", self.__modbus_server_port)
+        
         # Create Modbus server
         self.__modbus_server = ModbusServer(self.__modbus_server_address, self.__modbus_server_port)
 
