@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-02 17:46+0200\n"
+"POT-Creation-Date: 2021-07-05 14:57+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -168,6 +168,7 @@ msgstr ""
 
 #: ../../source/ros/niryo_robot_rpi.rst:64
 #: ../../source/ros/niryo_robot_rpi.rst:67
+#: ../../source/ros/niryo_robot_rpi.rst:79
 #: ../../source/ros/niryo_robot_rpi.rst:85
 #: ../../source/ros/niryo_robot_rpi.rst:88
 msgid ":ref:`SetInt<SetInt>`"
@@ -220,10 +221,6 @@ msgstr ""
 
 #: ../../source/ros/niryo_robot_rpi.rst:78
 msgid "``set_led_state``"
-msgstr ""
-
-#: ../../source/ros/niryo_robot_rpi.rst:79
-msgid ":ref:`std_msgs/SetInt<SetInt>`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_rpi.rst:80
@@ -382,5 +379,8 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid ":ref:`niryo_robot_arm_commander <Niryo Robot Commander Package>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`std_msgs/SetInt<SetInt>`"
 #~ msgstr ""
 

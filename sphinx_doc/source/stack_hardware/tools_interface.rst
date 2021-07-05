@@ -73,11 +73,15 @@ Services - tools interface
    *  -  ``niryo_robot/tools/push_air_vacuum_pump``
       -  :ref:`tools_interface/PushAirVacuumPump<PushAirVacuumPump (Service)>`
       -  Push vacuum pump tool
+   *  -  ``niryo_robot/tools/reboot``
+      -  :std_srvs:`Trigger`
+      -  Reboot the motor of the eqquiped tool
 
 Dependencies - tools interface
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 - :msgs_index:`std_msgs`
+- :msgs_index:`std_srvs`
 - :ref:`dynamixel_driver <Niryo Robot Dynamixel Driver Package>`
 
 Services & messages files - tools interface
