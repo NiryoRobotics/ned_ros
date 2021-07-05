@@ -139,9 +139,9 @@ bool JointHardwareInterface::init(ros::NodeHandle &rootnh, ros::NodeHandle &robo
     size_t nb_joints = 0;
 
     // retrieve nb joints with checking that the config param exists for both name and id
-    while (rootnh.hasParam("/niryo_robot_hardware_interface/joint_" + to_string(nb_joints + 1) + "_id") &&
-          rootnh.hasParam("/niryo_robot_hardware_interface/joint_" + to_string(nb_joints + 1) + "_name") &&
-          rootnh.hasParam("/niryo_robot_hardware_interface/joint_" + to_string(nb_joints + 1) + "_type"))
+    while (robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "_id") &&
+          robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "_name") &&
+          robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "_type"))
         nb_joints++;
 
     // connect and register joint state interface
@@ -177,10 +177,10 @@ bool JointHardwareInterface::init(ros::NodeHandle &rootnh, ros::NodeHandle &robo
                 double direction = 0.0;
                 double max_effort = 0.0;
 
-                rootnh.getParam("/niryo_robot_hardware_interface/steppers/stepper_" + to_string(currentIdStepper) + "_offset_position", offsetPos);
-                rootnh.getParam("/niryo_robot_hardware_interface/steppers/stepper_" + to_string(currentIdStepper) + "_gear_ratio", gear_ratio);
-                rootnh.getParam("/niryo_robot_hardware_interface/steppers/stepper_" + to_string(currentIdStepper) + "_direction", direction);
-                rootnh.getParam("/niryo_robot_hardware_interface/steppers/stepper_" + to_string(currentIdStepper) + "_max_effort", max_effort);
+                robot_hwnh.getParam("can_driver/steppers/stepper_" + to_string(currentIdStepper) + "_offset_position", offsetPos);
+                robot_hwnh.getParam("can_driver/steppers/stepper_" + to_string(currentIdStepper) + "_gear_ratio", gear_ratio);
+                robot_hwnh.getParam("can_driver/steppers/stepper_" + to_string(currentIdStepper) + "_direction", direction);
+                robot_hwnh.getParam("can_driver/steppers/stepper_" + to_string(currentIdStepper) + "_max_effort", max_effort);
 
                 // add parameters
                 stepperState->setOffsetPosition(offsetPos);
@@ -207,13 +207,13 @@ bool JointHardwareInterface::init(ros::NodeHandle &rootnh, ros::NodeHandle &robo
                 int FF1Gain = 0;
                 int FF2Gain = 0;
 
-                rootnh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_" + to_string(currentIdDxl) + "_offset_position", offsetPos);
-                rootnh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_" + to_string(currentIdDxl) + "_direction", direction);
-                rootnh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_" + to_string(currentIdDxl) + "_P_gain", PGain);
-                rootnh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_" + to_string(currentIdDxl) + "_I_gain", IGain);
-                rootnh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_" + to_string(currentIdDxl) + "_D_gain", DGain);
-                rootnh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_" + to_string(currentIdDxl) + "_FF1_gain", FF1Gain);
-                rootnh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_" + to_string(currentIdDxl) + "_FF2_gain", FF2Gain);
+                robot_hwnh.getParam("ttl_driver/dynamixels/dxl_" + to_string(currentIdDxl) + "_offset_position", offsetPos);
+                robot_hwnh.getParam("ttl_driver/dynamixels/dxl_" + to_string(currentIdDxl) + "_direction", direction);
+                robot_hwnh.getParam("ttl_driver/dynamixels/dxl_" + to_string(currentIdDxl) + "_P_gain", PGain);
+                robot_hwnh.getParam("ttl_driver/dynamixels/dxl_" + to_string(currentIdDxl) + "_I_gain", IGain);
+                robot_hwnh.getParam("ttl_driver/dynamixels/dxl_" + to_string(currentIdDxl) + "_D_gain", DGain);
+                robot_hwnh.getParam("ttl_driver/dynamixels/dxl_" + to_string(currentIdDxl) + "_FF1_gain", FF1Gain);
+                robot_hwnh.getParam("ttl_driver/dynamixels/dxl_" + to_string(currentIdDxl) + "_FF2_gain", FF2Gain);
 
                 dxlState->setOffsetPosition(offsetPos);
                 dxlState->setDirection(direction);

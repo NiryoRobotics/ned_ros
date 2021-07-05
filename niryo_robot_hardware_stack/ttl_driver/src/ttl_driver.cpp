@@ -76,8 +76,8 @@ TtlDriver::~TtlDriver()
 bool TtlDriver::init(ros::NodeHandle& nh)
 {
     // get params from rosparams
-    nh.getParam("bus_config/uart_device_name", _device_name);
-    nh.getParam("bus_config/baudrate", _uart_baudrate);
+    nh.getParam("bus_params/uart_device_name", _device_name);
+    nh.getParam("bus_params/baudrate", _uart_baudrate);
 
     _dxlPortHandler.reset(dynamixel::PortHandler::getPortHandler(_device_name.c_str()));
     _dxlPacketHandler.reset(dynamixel::PacketHandler::getPacketHandler(DXL_BUS_PROTOCOL_VERSION));
