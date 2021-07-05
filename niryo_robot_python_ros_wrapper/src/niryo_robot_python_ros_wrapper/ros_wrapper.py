@@ -8,7 +8,7 @@ import rospy
 import actionlib
 
 # Command Status
-from niryo_robot_msgs.msg import CommandStatus
+from niryo_robot_msgs.msg import CommandStatus, SoftwareVersion
 
 # Messages
 from actionlib_msgs.msg import GoalStatus
@@ -34,7 +34,7 @@ from niryo_robot_rpi.msg import DigitalIOState
 from conveyor_interface.srv import ControlConveyor, SetConveyor, SetConveyorRequest
 from niryo_robot_commander.srv import GetFK, GetIK
 from niryo_robot_commander.srv import JogShift, JogShiftRequest
-from niryo_robot_msgs.srv import GetNameDescriptionList, SetBool, SetInt, Trigger
+from niryo_robot_msgs.srv import GetNameDescriptionList, SetBool, SetInt, Trigger, SetString
 
 from niryo_robot_rpi.srv import GetDigitalIO, SetDigitalIO
 from niryo_robot_vision.srv import DebugMarkers, DebugMarkersRequest, DebugColorDetection, DebugColorDetectionRequest
@@ -68,6 +68,10 @@ class NiryoRosWrapper:
         self.__action_execute_timeout = rospy.get_param("/niryo_robot/python_ros_wrapper/action_execute_timeout")
         self.__action_preempt_timeout = rospy.get_param("/niryo_robot/python_ros_wrapper/action_preempt_timeout")
         self.__tool_command_list = rospy.get_param("/niryo_robot_tools/command_list")
+        self.__simulation_mode = rospy.get_param("/niryo_robot/simulation_mode")
+        self.__hardware_version = rospy.get_param("/niryo_robot/hardware_version")
+        self.__can_enabled = rospy.get_param("/niryo_robot_hardware_interface/can_enabled")
+        self.__dxl_enabled = rospy.get_param("/niryo_robot_hardware_interface/dxl_enabled")
 
         # - Publishers
         # Highlight publisher (to highlight blocks in Blockly interface)
@@ -107,6 +111,12 @@ class NiryoRosWrapper:
         self.__max_velocity_scaling_factor = None
         rospy.Subscriber('/niryo_robot/max_velocity_scaling_factor', Int32,
                          self.__callback_sub_max_velocity_scaling_factor)
+
+        # - Software
+
+        self.__software_version = None
+        rospy.Subscriber('/niryo_robot_hardware_interface/software_version', SoftwareVersion,
+                         self.__callback_software_version)
 
         # - Vision
         self.__compressed_image_message = None
@@ -183,6 +193,9 @@ class NiryoRosWrapper:
 
     def __callback_sub_max_velocity_scaling_factor(self, msg):
         self.__max_velocity_scaling_factor = msg.data
+
+    def __callback_software_version(self, msg):
+        self.__software_version = msg
 
     def __callback_sub_hardware_status(self, hw_status):
         self.__hw_status = hw_status
@@ -1246,6 +1259,13 @@ class NiryoRosWrapper:
 
     # - Hardware
 
+    @property
+    def simulation_mode(self):
+        """
+        The simulation mode
+        """
+        return self.__simulation_mode
+
     def set_pin_mode(self, pin_id, pin_mode):
         """
         Set pin number pin_id to mode pin_mode
@@ -1293,6 +1313,27 @@ class NiryoRosWrapper:
             return PinState.LOW
         else:
             return PinState.HIGH
+
+    @property
+    def hardware_version(self):
+        """
+        Get the robot hardware version
+        """
+        return self.__hardware_version
+
+    @property
+    def can_enabled(self):
+        """
+        Get can_enabled
+        """
+        return self.__can_enabled
+
+    @property
+    def dxl_enabled(self):
+        """
+        Get dxl_enabled
+        """
+        return self.__dxl_enabled
 
     def get_hardware_status(self):
         """
@@ -1377,6 +1418,31 @@ class NiryoRosWrapper:
         result = self.__call_service('/niryo_robot_hardware_interface/reboot_motors', Trigger)
         return self.__classic_return_w_check(result)
 
+    # - Software
+
+    def get_software_version(self):
+        """
+        Get the robot software version
+
+        :return: rpi_image_version, ros_niryo_robot_version, motor_names, stepper_firmware_versions
+        :rtype: (str, str, list[str], list[str])
+        """
+        print(self.__software_version)
+        return self.__software_version
+
+    def set_robot_name(self, name):
+        """
+        Set the robot name
+
+        :param name: the new name of the robot
+        :type name: str
+        :return: status, message
+        :rtype: int, str
+        """
+        req = SetString()
+        req.data = name
+        result = self.__call_service('/niryo_robot/wifi/set_robot_name', SetString, req)
+        return self.__classic_return_w_check(result)
 
     # - Conveyor
 
@@ -1753,7 +1819,7 @@ class NiryoRosWrapper:
         self.__check_result_status(result)
         return result.ratio
 
-    def get_workspace_list(self):
+    def get_workspace_list(self, with_desc=False):
         """
         Ask the workspace manager service names of the available workspace
 
@@ -1762,6 +1828,8 @@ class NiryoRosWrapper:
         """
         result = self.__call_service('/niryo_robot_poses_handlers/get_workspace_list',
                                      GetNameDescriptionList)
+        if with_desc:
+            return result.name_list, result.description_list
         return result.name_list
 
     #- Logs
