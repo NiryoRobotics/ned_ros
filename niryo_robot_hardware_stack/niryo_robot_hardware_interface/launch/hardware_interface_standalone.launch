@@ -13,12 +13,12 @@
     <arg name="debug" default="false"/>
 
     <!-- Launch controllers -->
-    <rosparam file="$(find niryo_ned_moveit_config_standalone)/config/ros_controllers.yaml" command="load"/>
+    <rosparam file="$(find niryo_ned_moveit_config_standalone)/config/$(arg hardware_version)/ros_controllers.yaml" command="load"/>
     <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="log"
             args="joint_state_controller niryo_robot_follow_joint_trajectory_controller"/>
 
     <!-- Load URDF -->
-    <arg name="urdf_path" value="$(find niryo_robot_description)/urdf/$(arg hardware_version)/niryo_$(arg hardware_version).urdf.xacro"/>
+    <arg name="urdf_path" value="$(find niryo_robot_description)/urdf/$(arg hardware_version)/niryo_ned.urdf.xacro"/>
     <param name="robot_description" command="$(find xacro)/xacro $(arg urdf_path)"/>
 
     <!-- Launch Robot state publisher -->
@@ -56,6 +56,8 @@
         <rosparam file="$(find joints_interface)/config/$(arg hardware_version)/joints_params.yaml" command="load"/>
 
         <rosparam file="$(find tools_interface)/config/default.yaml" command="load" ns="tools_interface"/>
+        <rosparam file="$(find tools_interface)/config/$(arg hardware_version)/tools_config.yaml" command="load" ns="tools_interface"/>
+
         <rosparam file="$(find conveyor_interface)/config/default.yaml" command="load"/>
 
         <param name="simulation_mode" type="bool" value="$(arg simulation_mode)"/>
@@ -64,7 +66,6 @@
         <param name="can_enabled" type="bool" value="$(arg can_enabled)"/>
         <param name="dxl_enabled" type="bool" value="$(arg dxl_enabled)"/>
         <param name="debug" type="bool" value="$(arg debug)"/>
-
     </node>
 
 </launch>

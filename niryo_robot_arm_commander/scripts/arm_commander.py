@@ -50,12 +50,16 @@ class ArmCommander:
     """
 
     def __init__(self, parameters_validator):
+        rospy.logdebug("Arm Commander - Entering in Init")
 
         # Getting reference frame from robot_commander.launch
         self.__reference_frame = rospy.get_param("~reference_frame")
+        rospy.logdebug("ArmCommander.init - reference_frame: %s", self.__reference_frame)
 
         # - Subscribers
         joint_controller_base_name = rospy.get_param("~joint_controller_name")
+        rospy.logdebug("ArmCommander.init - joint_controller_name: %s", joint_controller_base_name)
+
         rospy.Subscriber('{}/follow_joint_trajectory/goal'.format(joint_controller_base_name),
                          FollowJointTrajectoryActionGoal, self.__callback_new_goal)
 
@@ -85,7 +89,10 @@ class ArmCommander:
         # -- Commanders
         # - Move It Commander
         # Get Arm MoveGroupCommander
-        self.__arm = moveit_commander.MoveGroupCommander(rospy.get_param("~move_group_commander_name"))
+        move_group_commander_name = rospy.get_param("~move_group_commander_name")
+        rospy.logdebug("ArmCommander.init - move_group_commander_name: %s", move_group_commander_name)
+
+        self.__arm = moveit_commander.MoveGroupCommander(move_group_commander_name)
         # Get end effector link
         self.__end_effector_link = self.__arm.get_end_effector_link()
 
@@ -97,7 +104,7 @@ class ArmCommander:
         self.__arm.set_goal_joint_tolerance(rospy.get_param("~goal_joint_tolerance"))
         self.__arm.set_goal_position_tolerance(rospy.get_param("~goal_position_tolerance"))
         self.__arm.set_goal_orientation_tolerance(rospy.get_param("~goal_orientation_tolerance"))
-
+       
         rospy.loginfo("Arm commander - MoveIt! successfully connected to move_group '{}'".format(self.__arm.get_name()))
         rospy.logdebug("Arm commander - MoveIt! will move '{}' in the"
                        " planning_frame '{}'".format(self.__end_effector_link, self.__arm.get_planning_frame()))

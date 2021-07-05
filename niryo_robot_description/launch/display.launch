@@ -6,7 +6,7 @@
     <arg name="joints_gui" default="true"/>
 
     <arg name="urdf_path"
-         value="$(find niryo_robot_description)/urdf/$(arg hardware_version)/niryo_$(arg hardware_version).urdf.xacro"/>
+         value="$(find niryo_robot_description)/urdf/$(arg hardware_version)/niryo_ned.urdf.xacro"/>
 
     <param name="robot_description" command="$(find xacro)/xacro $(arg urdf_path)"/>
     <param name="use_gui" value="$(arg joints_gui)"/>

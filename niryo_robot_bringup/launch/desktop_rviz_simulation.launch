@@ -1,4 +1,6 @@
 <?xml version="1.0" ?>
+<!-- This launch file allows to run simulation on Rviz
+-->
 <launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
     <env name="ROSCONSOLE_CONFIG_FILE"
@@ -10,7 +12,7 @@
     <arg name="hardware_version" default="ned"/>
 
     <!-- Load URDF -->
-    <arg name="urdf_path" value="urdf/$(arg hardware_version)/niryo_$(arg hardware_version).urdf.xacro"/>
+    <arg name="urdf_path" value="urdf/$(arg hardware_version)/niryo_ned.urdf.xacro"/>
 
     <param name="robot_description"
            command="$(find xacro)/xacro $(find niryo_robot_description)/$(arg urdf_path)"/>
@@ -18,10 +20,11 @@
     <param name="robot_description_tf2"
            command="$(find xacro)/xacro $(find niryo_robot_description)/$(arg urdf_path)"/>
 
-
     <!-- Define most of ROS parameters -->
     <include file="$(find niryo_robot_bringup)/launch/niryo_robot_base_simulation.launch.xml">
         <arg name="log_level" value="$(arg log_level)" />
+        <arg name="simu_gripper" value="false"/>
+        <arg name="gazebo" value="false"/>
     </include>
 
     <group if="$(arg gui)">

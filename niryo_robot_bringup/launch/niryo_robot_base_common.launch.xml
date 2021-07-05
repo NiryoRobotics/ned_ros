@@ -30,7 +30,7 @@
 
     </group>
 
-    <arg name="ros_version" value="$(optenv ROS_DISTRO kinetic)"/>
+    <arg name="ros_version" value="$(optenv ROS_DISTRO melodic)"/>
 
     <!-- Launching TF ROS Bridge-->
     <node name="tf2_web_republisher" pkg="tf2_web_republisher" type="tf2_web_republisher"/>
@@ -51,12 +51,14 @@
     <include file="$(find niryo_robot_arm_commander)/launch/robot_commander.launch">
         <arg name="log_level" value="$(arg log_level)" />
         <arg name="simu_gripper" value="$(arg simu_gripper)"/>
+        <arg name="hardware_version" value="$(arg hardware_version)"/>
     </include>
 
     <include file="$(find niryo_robot_tools_commander)/launch/tools_commander.launch">
         <arg name="log_level" value="$(arg log_level)" />
         <arg name="simulation_mode" value="$(arg simulation_mode)"/>
         <arg name="simu_gripper" value="$(arg simu_gripper)"/>
+        <arg name="hardware_version" value="$(arg hardware_version)"/>
     </include>
 
     <include file="$(find niryo_robot_poses_handlers)/launch/poses_handlers.launch">

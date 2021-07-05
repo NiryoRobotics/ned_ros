@@ -61,6 +61,7 @@ class RobotCommanderNode:
         # - Load all the sub-commanders
         # First, get Parameters Validator for Arm
         arm_param_validator = ArmParametersValidator(rospy.get_param("/niryo_robot/robot_command_validation"))
+
         # Initialize Arm
         self.__arm_commander = ArmCommander(arm_param_validator)
 
@@ -111,6 +112,12 @@ class RobotCommanderNode:
         self.__pause_finished_event = threading.Event()
         self.__pause_finished_event.set()
         self.__pause_timeout = rospy.get_param("~pause_timeout")
+        self.__command_still_active_max_tries = rospy.get_param("~command_still_active_max_tries")
+        active_publish_rate_sec = rospy.get_param("~active_publish_rate_sec")
+
+        rospy.logdebug("RobotCommanderNode.init - pause_timeout: %s", self.__pause_timeout)
+        rospy.logdebug("RobotCommanderNode.init - command_still_active_max_tries: %s", self.__command_still_active_max_tries)
+        rospy.logdebug("RobotCommanderNode.init - active_publish_rate_sec: %s", active_publish_rate_sec)
 
         # - Services
         rospy.Service('~stop_command', Trigger,
@@ -129,8 +136,6 @@ class RobotCommanderNode:
                                                       auto_start=False)
         self.__action_server_thread = threading.Thread()
         self.__action_server_lock = threading.Lock()
-        self.__command_still_active_max_tries = rospy.get_param("~command_still_active_max_tries")
-
         # Starting Action server
         self.__start_action_server()
 
@@ -139,7 +144,7 @@ class RobotCommanderNode:
         # - Publisher
         self.__is_active_publisher = rospy.Publisher('~is_active',
                                                      Bool, queue_size=5)
-        rospy.Timer(rospy.Duration(rospy.get_param("~active_publish_rate_sec")), self.__publish_is_active)
+        rospy.Timer(rospy.Duration(active_publish_rate_sec), self.__publish_is_active)
 
         self.__linear_trajectory_state_publisher = rospy.Publisher('~linear_trajectory/state', Bool, queue_size=1)
 
@@ -457,6 +462,7 @@ class StatePublisher:
 
         # Get params from rosparams
         rate_publish_state = rospy.get_param("/niryo_robot/robot_state/rate_publish_state")
+        rospy.logdebug("StatePublisher.init - rate_publish_state: %s", rate_publish_state)
 
         rospy.Timer(rospy.Duration(1.0 / rate_publish_state), self.__publish_state)
 
