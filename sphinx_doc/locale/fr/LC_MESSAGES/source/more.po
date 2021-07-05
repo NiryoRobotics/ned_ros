@@ -61,7 +61,7 @@ msgid ""
 "As explain in the page :ref:`Use Ned TCP Server`, a TCP Server is running"
 " on Ned, which allows it to receive commands from any external device."
 msgstr ""
-"Comme expliqué dans la page :ref:`Utilisation du serveur Ned TCP`, un serveur TCP s'exécute"
+"Comme expliqué dans la page :ref:`Utilisation du serveur Ned TCP <Use Ned TCP Server>`, un serveur TCP s'exécute"
 " sur Ned, ce qui lui permet de recevoir des commandes de n'importe quel périphérique externe."
 
 #: ../../source/more.rst:20
