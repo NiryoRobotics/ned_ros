@@ -990,7 +990,8 @@ class NiryoRosWrapper:
 
         :param list_pose_joints: List of [x,y,z,qx,qy,qz,qw] or list of [x,y,z,roll,pitch,yaw] or a list of [j1,j2,j3,j4,j5,j6]
         :type list_pose_joints: list[list[float]]
-        :param list_type: List of string 'pose' or 'joint', or ['pose'] (if poses only) or ['joint'] (if joints only)
+        :param list_type: List of string 'pose' or 'joint', or ['pose'] (if poses only) or ['joint'] (if joints only).
+                    If None, it is assumed there are only poses in the list.
         :type list_type: list[string]
         :param dist_smoothing: Distance from waypoints before smoothing trajectory
         :type dist_smoothing: float
