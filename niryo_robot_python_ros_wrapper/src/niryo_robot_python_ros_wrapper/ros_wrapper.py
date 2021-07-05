@@ -245,19 +245,6 @@ class NiryoRosWrapper:
 
         return goal_state, response
 
-    # test send goal to tool action server
-    def __send_tool_goal_and_wait_for_completed(self, goal):
-        self.__tool_action_server_client.send_goal(goal)
-        if not self.__tool_action_server_client.wait_for_result(timeout=rospy.Duration(self.__action_execute_timeout)):
-            self.__tool_action_server_client.cancel_goal()
-            self.__tool_action_server_client.stop_tracking_goal()
-            raise NiryoRosWrapperException('Action Server timeout : {}'.format(self.__robot_action_server_name))
-
-        goal_state = self.__tool_action_server_client.get_state()
-        response = self.__tool_action_server_client.get_result()
-
-        return goal_state, response
-
     # test pour separer tool package de arm package
     def __execute_tool_action(self, goal):
         # Connect to server
@@ -966,7 +953,7 @@ class NiryoRosWrapper:
             list_type = ['pose']
         list_pose_waypoints = []
 
-        if len(list_type) == 1: # only one type of object
+        if len(list_type) == 1:  # only one type of object
             if list_type[0] == "pose":  # every elem in list is a pose
                 list_pose_waypoints = list_pose_joints
             elif list_type[0] == "joint":  # every elem in list is a joint
@@ -979,7 +966,7 @@ class NiryoRosWrapper:
 
         elif len(list_type) == len(list_pose_joints):
             # convert every joints to poses
-            for target, type_  in zip(list_pose_joints, list_type):
+            for target, type_ in zip(list_pose_joints, list_type):
                 if type_ == 'joint':
                     pose_from_joint = self.forward_kinematics(*target)
                     list_pose_waypoints.append(pose_from_joint)
@@ -1337,6 +1324,18 @@ class NiryoRosWrapper:
                                      SetTCP, req)
         return self.__classic_return_w_check(result)
 
+    def reset_tcp(self):
+        """
+        Reset the TCP (Tool Center Point) transformation.
+        The PCO will be reset according to the tool equipped.
+
+        :return: status, message
+        :rtype: (int, str)
+        """
+        result = self.__call_service('/niryo_robot_tools_commander/reset_tcp',
+                                     Trigger)
+        return self.__classic_return_w_check(result)
+
     # - Hardware
 
     def set_pin_mode(self, pin_id, pin_mode):
@@ -1517,11 +1516,11 @@ class NiryoRosWrapper:
             give a darkened image, 1 will give the original image while
             2 will enhance the brightness by a factor of 2.
         :type brightness_factor: float
-        :return: None
-        :rtype: None
+        :return: status, message
+        :rtype: (int, str)
         """
         result = self.__call_service('/niryo_robot_vision/set_brightness', SetImageParameter, brightness_factor)
-        self.__check_result_status(result)
+        return self.__classic_return_w_check(result)
 
     def set_contrast(self, contrast_factor):
         """
@@ -1530,11 +1529,11 @@ class NiryoRosWrapper:
         :param contrast_factor: While a factor of 1 gives original image.
             Making the factor towards 0 makes the image greyer, while factor>1 increases the contrast of the image.
         :type contrast_factor: float
-        :return: None
-        :rtype: None
+        :return: status, message
+        :rtype: (int, str)
         """
         result = self.__call_service('/niryo_robot_vision/set_contrast', SetImageParameter, contrast_factor)
-        self.__check_result_status(result)
+        return self.__classic_return_w_check(result)
 
     def set_saturation(self, saturation_factor):
         """
@@ -1544,11 +1543,11 @@ class NiryoRosWrapper:
             give a black and white image, 1 will give the original image while
             2 will enhance the saturation by a factor of 2.
         :type saturation_factor: float
-        :return: None
-        :rtype: None
+        :return: status, message
+        :rtype: (int, str)
         """
         result = self.__call_service('/niryo_robot_vision/set_saturation', SetImageParameter, saturation_factor)
-        self.__check_result_status(result)
+        return self.__classic_return_w_check(result)
 
     @staticmethod
     def get_image_parameters():

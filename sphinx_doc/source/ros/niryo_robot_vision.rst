@@ -23,6 +23,7 @@ The namespace used is: |namespace_emphasize|
 
 Parameters - Vision
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 .. list-table:: Vision Package's Parameters
    :header-rows: 1
    :widths: auto
@@ -59,6 +60,9 @@ Publisher - Vision
    *  -  ``compressed_video_stream``
       -  :sensor_msgs:`CompressedImage`
       -  Publish the last image read as a compressed image
+   *  -  ``video_stream_parameters``
+      -  :ref:`ImageParameters<ImageParameters (Topic)>`
+      -  Publish the brightness, contrast and saturation settings of the video stream
 
 Services - Vision
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -87,6 +91,15 @@ Services - Vision
    *  -  ``take_picture``
       -  :ref:`TakePicture<TakePicture (Service)>`
       -  Save a picture in the specified folder
+   *  -  ``set_brightness``
+      -  :ref:`SetImageParameter<SetImageParameter (Service)>`
+      -  Set the brightness of the video stream
+   *  -  ``set_contrast``
+      -  :ref:`SetImageParameter<SetImageParameter (Service)>`
+      -  Set the contrast of the video stream
+   *  -  ``set_saturation``
+      -  :ref:`SetImageParameter<SetImageParameter (Service)>`
+      -  Set the saturation of the video stream
 
 
 All these services are available as soon as the node is started.
@@ -96,6 +109,17 @@ Dependencies - Vision
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 * :ref:`niryo_robot_msgs <Niryo Robot Messages Package>`
 * :msgs_index:`sensor_msgs`
+
+
+Topics files - Vision
+--------------------------
+
+ImageParameters (Topic)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. literalinclude:: ../../../niryo_robot_vision/msg/ImageParameters.msg
+   :language: rostype
+
 
 
 Services files - Vision
@@ -128,6 +152,11 @@ TakePicture (Service)
 .. literalinclude:: ../../../niryo_robot_vision/srv/TakePicture.srv
    :language: rostype
 
+SetImageParameter (Service)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. literalinclude:: ../../../niryo_robot_vision/srv/SetImageParameter.srv
+   :language: rostype
 
 
 .. |namespace| replace:: /niryo_robot_vision/

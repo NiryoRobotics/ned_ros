@@ -76,7 +76,7 @@ Services - Raspberry Pi
       -  :ref:`SetDigitalIO<SetDigitalIO (Service)>`
       -  Set a digital IO to the state given
    *  -  ``set_led_state``
-      -  :ref:`std_msgs/SetInt<SetInt>`
+      -  :ref:`SetInt<SetInt>`
       -  Set led state
    *  -  ``set_led_custom_blinker``
       -  :ref:`LedBlinker<LedBlinker (Service)>`
