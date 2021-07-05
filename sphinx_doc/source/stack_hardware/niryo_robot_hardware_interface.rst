@@ -87,7 +87,7 @@ Dependencies - hardware interface
 
 - :ref:`tools_interface <Niryo Robot Tools Interface Package>`
 - :ref:`joints_interface <Niryo Robot Joints Interface Package>`
-- :ref:`conveyor_interface <Niryo Robot Conveyor Interface Package>` 
+- :ref:`conveyor_interface <Niryo robot Conveyor Belt interface package>`
 - :ref:`cpu_interface <Niryo Robot CPU Interface Package>`   
 - :ref:`fake_interface <Niryo Robot Fake Interface Package>`     
 - :ref:`niryo_robot_msgs <Niryo Robot Messages Package>`

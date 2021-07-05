@@ -9,7 +9,6 @@ Arm commander node
 --------------------------
 The ROS Node is made to interact with:
  - The Arm through MoveIt!
- - The tools through the tools commander.
 
 All commands are firstly received on the actionlib server which:
  * Handles concurrent requests.

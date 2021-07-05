@@ -139,7 +139,6 @@ msgstr ""
 "les fonctions accessibles et des exemples d’utilisation."
 
 #: ../../index.rst:72
-#, fuzzy
 msgid "More ways"
 msgstr "Les autres alternatives :"
 

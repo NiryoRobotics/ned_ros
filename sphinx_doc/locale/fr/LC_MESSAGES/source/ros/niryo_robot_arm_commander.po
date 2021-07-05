@@ -21,8 +21,8 @@ msgstr ""
 "Generated-By: Babel 2.8.0\n"
 
 #: ../../source/ros/niryo_robot_arm_commander.rst:2
-msgid "Niryo robot commander package"
-msgstr "Le package des commandes du robot Niryo"
+msgid "Niryo robot arm commander package"
+msgstr "Le package des commandes du bras robot Niryo"
 
 #: ../../source/ros/niryo_robot_arm_commander.rst:4
 msgid "This package is the one dealing with all commander related stuff."
@@ -49,7 +49,7 @@ msgid "The Arm through MoveIt!"
 msgstr "Le bras via MoveIt!"
 
 #: ../../source/ros/niryo_robot_arm_commander.rst:12
-msgid "The tools through the tool controller."
+msgid "The tools through the tools commander."
 msgstr "Les outils via le contrôleur d'outil."
 
 #: ../../source/ros/niryo_robot_arm_commander.rst:18

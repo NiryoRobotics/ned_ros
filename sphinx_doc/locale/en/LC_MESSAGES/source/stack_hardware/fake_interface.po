@@ -253,7 +253,7 @@ msgid ":ref:`joints_interface <Niryo Robot Joints Interface Package>`"
 msgstr ""
 
 #: ../../source/stack_hardware/fake_interface.rst:83
-msgid ":ref:`conveyor_interface <Niryo Robot Conveyor Interface Package>`"
+msgid ":ref:`conveyor_interface <Niryo robot Conveyor Belt interface package>`"
 msgstr ""
 
 #~ msgid "Niryo Robot Fake Interface Package"

@@ -22,7 +22,7 @@ msgstr ""
 
 #: ../../source/stack_hardware/conveyor_interface.rst:2
 msgid "Niryo robot Conveyor Belt interface package"
-msgstr "Package de l'interface Convoyeur du robot Niryo"
+msgstr "Package de l'interface convoyeur du robot Niryo"
 
 #: ../../source/stack_hardware/conveyor_interface.rst:4
 msgid "This package handles Niryo's Conveyor Belt."
@@ -119,7 +119,7 @@ msgstr "Services - Interface Convoyeur"
 
 #: ../../source/stack_hardware/conveyor_interface.rst:50
 msgid "Conveyor Belt Interface Package Services"
-msgstr "Services du package de l'interface Convoyeur"
+msgstr "Services du package de l'interface convoyeur"
 
 #: ../../source/stack_hardware/conveyor_interface.rst:59
 msgid "``control_conveyor``"

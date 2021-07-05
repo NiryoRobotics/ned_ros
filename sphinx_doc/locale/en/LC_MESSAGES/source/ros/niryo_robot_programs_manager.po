@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-26 12:18+0200\n"
+"POT-Creation-Date: 2021-07-02 17:46+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -200,7 +200,7 @@ msgid "Dependencies - Programs manager"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_programs_manager.rst:78
-msgid ":ref:`niryo_robot_arm_commander <Niryo Robot Commander Package>`"
+msgid ":ref:`niryo_robot_arm_commander <Niryo Robot Arm Commander Package>`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_programs_manager.rst:79
@@ -293,5 +293,8 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "Services & Messages files - Programs Manager"
+#~ msgstr ""
+
+#~ msgid ":ref:`niryo_robot_arm_commander <Niryo Robot Commander Package>`"
 #~ msgstr ""
 

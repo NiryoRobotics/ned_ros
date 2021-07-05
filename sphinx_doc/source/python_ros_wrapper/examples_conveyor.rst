@@ -3,7 +3,7 @@ Examples: Conveyor Belt
 
 This document shows how to use Ned's Conveyor Belt.
 
-| If you want see more about Ned's Conveyor Belt functions, you can look at :ref:`API - Conveyor<Conveyor>`.
+| If you want see more about Ned's Conveyor Belt functions, you can look at :ref:`API - Conveyor<Conveyor Belt>`.
 
 .. note::
     Imports & initialisation are not mentioned, but you should not forget it!

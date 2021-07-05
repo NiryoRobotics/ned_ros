@@ -97,7 +97,6 @@ msgstr ""
 " : ::"
 
 #: ../../source/python_ros_wrapper/examples_basics.rst:60
-#, fuzzy
 msgid ""
 "As the robot is now calibrated, we can do a Move Joints by giving the 6 "
 "axis positions in radians! To do so, we use "

@@ -80,4 +80,4 @@ Dependencies - fake interface
 - :ref:`niryo_robot_msgs <Niryo Robot Messages Package>`
 - :ref:`tools_interface <Niryo Robot Tools Interface Package>`
 - :ref:`joints_interface <Niryo Robot Joints Interface Package>`
-- :ref:`conveyor_interface <Niryo Robot Conveyor Interface Package>` 
+- :ref:`conveyor_interface <Niryo robot Conveyor Belt interface package>`
