@@ -121,7 +121,7 @@ class NiryoRosWrapper:
         # Tool action
         self.__tool_action_server_name = '/niryo_robot_tools_commander/action_server'
         self.__tool_action_server_client = actionlib.SimpleActionClient(self.__tool_action_server_name,
-                                                                         ToolAction)
+                                                                        ToolAction)
 
     def __del__(self):
         del self
@@ -249,50 +249,6 @@ class NiryoRosWrapper:
         response = self.__robot_action_server_client.get_result()
 
         return goal_state, response
-
-    # test pour separer tool package de arm package
-    def __execute_tool_action(self, goal):
-        # Connect to server
-        if not self.__tool_action_server_client.wait_for_server(rospy.Duration(self.__action_connection_timeout)):
-            rospy.logwarn("ROS Wrapper - Failed to connect to Tool action server")
-
-            raise NiryoRosWrapperException('Action Server is not up : {}'.format(self.__tool_action_server_name))
-        # Send goal and check response
-        goal_state, response = self.__send_tool_goal_and_wait_for_completed(goal)
-
-        if response.status == CommandStatus.GOAL_STILL_ACTIVE:
-            rospy.loginfo("ROS Wrapper - Command still active: try to stop it")
-            self.__tool_action_server_client.cancel_goal()
-            self.__tool_action_server_client.stop_tracking_goal()
-            rospy.sleep(0.2)
-            rospy.loginfo("ROS Wrapper - Trying to resend command ...")
-            goal_state, response = self.__send_tool_goal_and_wait_for_completed(goal)
-
-        if goal_state != GoalStatus.SUCCEEDED:
-            self.__tool_action_server_client.stop_tracking_goal()
-
-        if goal_state == GoalStatus.REJECTED:
-            raise NiryoRosWrapperException('Goal has been rejected : {}'.format(response.message))
-        elif goal_state == GoalStatus.ABORTED:
-            raise NiryoRosWrapperException('Goal has been aborted : {}'.format(response.message))
-        elif goal_state != GoalStatus.SUCCEEDED:
-            raise NiryoRosWrapperException('Error when processing goal : {}'.format(response.message))
-
-        return response.status, response.message
-
-    # test send goal to tool action server
-    def __send_tool_goal_and_wait_for_completed(self, goal):
-        self.__tool_action_server_client.send_goal(goal)
-        if not self.__tool_action_server_client.wait_for_result(timeout=rospy.Duration(self.__action_execute_timeout)):
-            self.__tool_action_server_client.cancel_goal()
-            self.__tool_action_server_client.stop_tracking_goal()
-            raise NiryoRosWrapperException('Action Server timeout : {}'.format(self.__robot_action_server_name))
-
-        goal_state = self.__tool_action_server_client.get_state()
-        response = self.__tool_action_server_client.get_result()
-
-        return goal_state, response
-
 
     # test pour separer tool package de arm package
     def __execute_tool_action(self, goal):
@@ -1002,7 +958,7 @@ class NiryoRosWrapper:
             list_type = ['pose']
         list_pose_waypoints = []
 
-        if len(list_type) == 1: # only one type of object
+        if len(list_type) == 1:  # only one type of object
             if list_type[0] == "pose":  # every elem in list is a pose
                 list_pose_waypoints = list_pose_joints
             elif list_type[0] == "joint":  # every elem in list is a joint
@@ -1015,7 +971,7 @@ class NiryoRosWrapper:
 
         elif len(list_type) == len(list_pose_joints):
             # convert every joints to poses
-            for target, type_  in zip(list_pose_joints, list_type):
+            for target, type_ in zip(list_pose_joints, list_type):
                 if type_ == 'joint':
                     pose_from_joint = self.forward_kinematics(*target)
                     list_pose_waypoints.append(pose_from_joint)
@@ -1249,7 +1205,7 @@ class NiryoRosWrapper:
         goal = ToolActionGoal()
         goal.goal.cmd.tool_id = self.get_current_tool_id()
         goal.goal.cmd.cmd_type = command_int
-        if command_int == ToolCommand.OPEN_GRIPPER :
+        if command_int == ToolCommand.OPEN_GRIPPER:
             goal.goal.cmd.gripper_open_speed = speed
         else:
             goal.goal.cmd.gripper_close_speed = speed
