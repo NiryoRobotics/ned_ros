@@ -73,7 +73,8 @@ Tools
 .. autoclass:: NiryoRosWrapper
     :members: get_current_tool_id, update_tool, grasp_with_tool,release_with_tool,
               open_gripper, close_gripper, pull_air_vacuum_pump, push_air_vacuum_pump,
-              setup_electromagnet, activate_electromagnet, deactivate_electromagnet
+              setup_electromagnet, activate_electromagnet, deactivate_electromagnet,
+              enable_tcp, set_tcp, reset_tcp
     :member-order: bysource
 
 Hardware
@@ -98,7 +99,8 @@ Vision
     :members: get_compressed_image, get_target_pose_from_rel, get_target_pose_from_cam,
               vision_pick_w_obs_joints, vision_pick_w_obs_pose, vision_pick, move_to_object, detect_object, get_camera_intrinsics,
               save_workspace_from_poses, save_workspace_from_points,
-              delete_workspace, get_workspace_ratio, get_workspace_list, get_workspace_poses
+              delete_workspace, get_workspace_ratio, get_workspace_list, get_workspace_poses,
+              set_brightness, set_contrast, set_saturation
     :member-order: bysource
 
 
