@@ -20,13 +20,12 @@
         </include>
         <include file="$(find niryo_ned_moveit_config_standalone)/launch/move_group.launch" unless="$(arg simu_gripper)"/>
     </group>
+
     <!-- Moveit move_group params -->
     <group ns="/move_group">
         <!-- Disable Moveit! controller timeout -->
         <param name="trajectory_execution/execution_duration_monitoring" value="false"/>
-
         <param name="trajectory_execution/allowed_start_tolerance" value="0.0"/>
-
         <!-- Allows joints to be outside of min and max values when starting -->
         <param name="start_state_max_bounds_error" value="0.1"/>
     </group>

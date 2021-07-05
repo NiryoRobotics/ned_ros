@@ -66,9 +66,10 @@ class JogController:
             queue_size=3)
 
         # - Joint controller state, used to check collisions
-        rospy.Subscriber(rospy.get_param("~joint_controller_name") + '/state', JointTrajectoryControllerState,
-            self.__callback_joint_controller_state)
-            
+        rospy.Subscriber(rospy.get_param("~joint_controller_name") + '/state', 
+                         JointTrajectoryControllerState,
+                         self.__callback_joint_controller_state)
+
         # Publishing rate
         self._timer_rate = rospy.get_param("~jog_timer_rate_sec")
         self._publisher_joint_trajectory_timer = None
@@ -99,7 +100,6 @@ class JogController:
         rospy.Subscriber('/niryo_robot_arm_commander/send_jog_joints_command', CommandJog,
                          self.__callback_send_jog_joints_command, queue_size=10)
 
-
         # - Service
         rospy.Service('/niryo_robot/jog_interface/jog_shift_commander', JogShift,
                       self.__callback_jog_commander)
@@ -118,7 +118,8 @@ class JogController:
         self._last_target_values = [0.0 for _ in range(6)]
         self._target_values = None
         self.__joints_name = ['joint_1', 'joint_2', 'joint_3', 'joint_4', 'joint_5', 'joint_6']
-        self._current_jogged_joint = None # current jogged joint, used for NS TODO: change if we want to allow several jog at the same time
+        # current jogged joint, used for NS TODO: change if we want to allow several jog at the same time
+        self._current_jogged_joint = None
 
         # - Move It Commander / Get Arm MoveGroupCommander
         self.__arm = moveit_commander.MoveGroupCommander(rospy.get_param("~move_group_commander_name"))
