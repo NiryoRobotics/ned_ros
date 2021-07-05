@@ -1,13 +1,13 @@
-# ned2/joint_limits.yaml
+# ned/joint_limits.yaml
 # joint_limits.yaml allows the dynamics properties specified in the URDF to be overwritten or augmented as needed
 # Specific joint properties can be changed with the keys [max_position, min_position, max_velocity, max_acceleration]
 # Joint limits can be turned off with [has_velocity_limits, has_acceleration_limits]
 joint_limits:
   joint_1:
     has_velocity_limits: true
-    max_velocity: 2.6
+    max_velocity: 2.4
     has_acceleration_limits: true
-    max_acceleration: 2.6
+    max_acceleration: 2.2
   joint_2:
     has_velocity_limits: true
     max_velocity: 2.0

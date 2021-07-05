@@ -28,6 +28,7 @@ niryo_robot_follow_joint_trajectory_controller:
         joint_6: {trajectory: 1.0, goal: 0.3}
     stop_trajectory_duration: 1.0
     state_publish_rate: 20
+    allow_partial_joints_goal: true # to send partial joints, so they are not all updated for the jog joints
     #action_monitor_rate: 20
 
 

@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-23 16:51+0200\n"
+"POT-Creation-Date: 2021-07-02 17:46+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,7 +21,7 @@ msgstr ""
 "Generated-By: Babel 2.8.0\n"
 
 #: ../../source/ros/niryo_robot_tools_commander.rst:2
-msgid "Niryo Robot Tools Package"
+msgid "Niryo robot tools commander package"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_tools_commander.rst:4
@@ -29,7 +29,7 @@ msgid "Provides functionalities to control end-effectors and accessories for Ned
 msgstr ""
 
 #: ../../source/ros/niryo_robot_tools_commander.rst:7
-msgid "Tools Node"
+msgid "Tools Commander node"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_tools_commander.rst:8
@@ -39,11 +39,11 @@ msgid ""
 msgstr ""
 
 #: ../../source/ros/niryo_robot_tools_commander.rst:10
-msgid "The namespace used is : |namespace_emphasize|"
+msgid "The namespace used is: |namespace_emphasize|"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_tools_commander.rst:13
-msgid "Action Server - Tools"
+msgid "Action server - tools"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_tools_commander.rst:15
@@ -69,7 +69,7 @@ msgid "Description"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_tools_commander.rst:24
-msgid "``robot_action``"
+msgid "``action_server``"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_tools_commander.rst:25
@@ -81,7 +81,7 @@ msgid "Command the tool through an action server"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_tools_commander.rst:29
-msgid "Publisher - Tools"
+msgid "Publisher - tools"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_tools_commander.rst:31
@@ -101,7 +101,7 @@ msgid "Publish the current tool ID"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_tools_commander.rst:45
-msgid "Services - Tools"
+msgid "Services - tools"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_tools_commander.rst:47
@@ -135,7 +135,7 @@ msgid "Equip the electromagnet with the motor ID given as parameter"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_tools_commander.rst:64
-msgid "Dependencies - Tools"
+msgid "Dependencies - tools"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_tools_commander.rst:65
@@ -147,7 +147,7 @@ msgid ":msgs_index:`std_msgs`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_tools_commander.rst:69
-msgid "Action, Services & Messages files - Tools"
+msgid "Action, services & messages files - tools"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_tools_commander.rst:72
@@ -157,4 +157,28 @@ msgstr ""
 #: ../../source/ros/niryo_robot_tools_commander.rst:78
 msgid "ToolCommand (Message)"
 msgstr ""
+
+#~ msgid "Niryo Robot Tools Commander Package"
+#~ msgstr ""
+
+#~ msgid "Tools Commander Node"
+#~ msgstr ""
+
+#~ msgid "The namespace used is : |namespace_emphasize|"
+#~ msgstr ""
+
+#~ msgid "Action Server - Tools"
+#~ msgstr ""
+
+#~ msgid "Publisher - Tools"
+#~ msgstr ""
+
+#~ msgid "Services - Tools"
+#~ msgstr ""
+
+#~ msgid "Dependencies - Tools"
+#~ msgstr ""
+
+#~ msgid "Action, Services & Messages files - Tools"
+#~ msgstr ""
 

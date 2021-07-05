@@ -397,7 +397,19 @@ int TtlDriver::rebootMotor(uint8_t motor_id)
         if (_xdriver_map.count(type))
         {
             return_value = _xdriver_map.at(type)->reboot(motor_id);
-
+            if (COMM_SUCCESS == return_value)
+            {
+                ros::Time start_time = ros::Time::now();
+                uint32_t tmp = 0;
+                int wait_result =_xdriver_map.at(type)->readTemperature(motor_id, &tmp);
+                while(COMM_SUCCESS != wait_result || !tmp)
+                {
+                    if ((ros::Time::now() - start_time).toSec() > 1)
+                        break;
+                    ros::Duration(0.1).sleep();
+                    wait_result =_xdriver_map.at(type)->readTemperature(motor_id, &tmp);
+                }
+            }
             ROS_WARN_COND(COMM_SUCCESS != return_value,
                           "TtlDriver::rebootMotors - Failed to reboot motor: %d",
                           return_value);

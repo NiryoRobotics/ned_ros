@@ -4,7 +4,7 @@
 import rospy
 import logging
 
-from transform_handler import TransformHandler
+from transform_handler import PosesTransformHandler
 from niryo_robot_poses_handlers.transform_functions import euler_from_quaternion
 from niryo_robot_poses_handlers.file_manager import NiryoRobotFileException
 from niryo_robot_poses_handlers.grip_manager import GripManager
@@ -20,6 +20,8 @@ from geometry_msgs.msg import Pose, Point, Quaternion
 from niryo_robot_msgs.msg import RobotState
 from niryo_robot_msgs.msg import RPY
 from niryo_robot_poses_handlers.msg import NiryoPose
+from std_msgs.msg import Int32
+from niryo_robot_tools_commander.msg import TCP
 
 # Services
 from niryo_robot_msgs.srv import GetNameDescriptionList
@@ -43,6 +45,14 @@ class PoseHandlerNode:
 
     def __init__(self):
         rospy.logdebug("Poses Handlers - Entering in Init")
+
+        # Subscribers
+        self.__tcp_enabled = False
+        rospy.Subscriber('/niryo_robot_tools_commander/tcp', TCP, self.__callback_tcp)
+
+        self.__tool_id = 0
+        rospy.Subscriber('/niryo_robot_tools_commander/current_id', Int32,  self.__callback_tool_id)
+
 
         # Workspaces
         ws_dir = rospy.get_param("~workspace_dir")
@@ -68,7 +78,7 @@ class PoseHandlerNode:
                       self.__callback_target_pose)
 
         # Transform Handlers
-        self.__transform_handler = TransformHandler(self.__grip_manager)
+        self.__transform_handler = PosesTransformHandler(self.__grip_manager)
 
         rospy.logdebug("Poses Handlers - Transform Handler created")
 
@@ -100,6 +110,12 @@ class PoseHandlerNode:
         rospy.loginfo("Poses Handlers - Started")
 
     # -- ROS CALLBACKS
+    def __callback_tcp(self, msg):
+        self.__tcp_enabled = msg.enabled
+
+    def __callback_tool_id(self, msg):
+        self.__tool_id = msg.data
+
     # Workspace
     def __callback_manage_workspace(self, req):
         cmd = req.cmd
@@ -161,12 +177,7 @@ class PoseHandlerNode:
     # Grips
     def __callback_target_pose(self, req):
         try:
-            if req.grip == req.GRIP_AUTO:
-                pose = self.get_target_pose_auto_grip(req.workspace, req.tool_id, req.height_offset,
-                                                      req.x_rel, req.y_rel, req.yaw_rel)
-            else:
-                pose = self.get_target_pose(req.workspace, req.grip, req.height_offset,
-                                            req.x_rel, req.y_rel, req.yaw_rel)
+            pose = self.get_target_pose(req.workspace, req.height_offset, req.x_rel, req.y_rel, req.yaw_rel)
             return CommandStatus.SUCCESS, "Success", pose
         except Exception as e:
             return CommandStatus.POSES_HANDLER_COMPUTE_FAILURE, str(e), RobotState()
@@ -306,36 +317,28 @@ class PoseHandlerNode:
         return current_ws.x_width / current_ws.y_width
 
     # Grips
-    def get_target_pose_auto_grip(self, workspace, tool_id, height_offset, x_rel, y_rel, yaw_rel):
-        """
-        Loads the default grip corresponding to the tool_id and calls get_target_pose.
-
-        See arguments of 'get_target_pose'
-        """
-        return self.get_target_pose(workspace, self.__tool_id_gripname_dict[tool_id], height_offset,
-                                    x_rel, y_rel, yaw_rel)
-
-    def get_target_pose(self, workspace, grip, height_offset, x_rel, y_rel, yaw_rel):
+    def get_target_pose(self, workspace, height_offset, x_rel, y_rel, yaw_rel):
         """
         Computes the robot pose that can be used to grab an object which is
-        positioned relative to the given workspace using the specified grip.
+        positioned relative to the given workspace.
 
         :param workspace: name of the workspace the object is in
-        :param grip: name of the grip to use to pick the object
-        :param height_offset: z-offset that is added to the grip
+        :param height_offset: z-offset that is added
         :param x_rel: x relative position of the object inside working zone
         :param y_rel: y relative position of the object inside working zone
         :param yaw_rel: angle of the object inside working zone
         """
         current_ws = self.__ws_manager.read(workspace)
-        current_grip = self.__grip_manager.read(grip)
-        current_grip.transform.transform.translation.z += height_offset
-
-        self.__transform_handler.set_grip(current_grip)
         self.__transform_handler.set_relative_pose_object(current_ws, x_rel, y_rel, yaw_rel,
                                                           yaw_center=current_ws.yaw_center)
+        if self.__tcp_enabled:
+            base_link_to_tool_target = self.__transform_handler.get_object_transform(z_off=height_offset)
+        else:
+            current_grip = self.__grip_manager.read(self.__tool_id_gripname_dict[self.__tool_id])
+            current_grip.transform.transform.translation.z += height_offset
+            self.__transform_handler.set_grip(current_grip)
+            base_link_to_tool_target = self.__transform_handler.get_gripping_transform()
 
-        base_link_to_tool_target = self.__transform_handler.get_gripping_transform()
         q = base_link_to_tool_target.transform.rotation
 
         roll, pitch, yaw = euler_from_quaternion([q.x, q.y, q.z, q.w])

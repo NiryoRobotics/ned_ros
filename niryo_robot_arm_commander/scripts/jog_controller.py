@@ -26,7 +26,10 @@ from geometry_msgs.msg import Quaternion
 from sensor_msgs.msg import JointState
 from std_msgs.msg import Bool
 from trajectory_msgs.msg import JointTrajectory
+from control_msgs.msg import JointTrajectoryControllerState
 from trajectory_msgs.msg import JointTrajectoryPoint
+from moveit_msgs.msg import RobotState as RobotStateMoveIt
+from moveit_msgs.msg import Constraints
 
 from niryo_robot_msgs.msg import HardwareStatus
 from niryo_robot_msgs.msg import RobotState
@@ -37,6 +40,7 @@ from niryo_robot_arm_commander.srv import GetIK
 from niryo_robot_arm_commander.srv import JogShift, JogShiftRequest
 from niryo_robot_msgs.srv import SetBool
 from niryo_robot_msgs.srv import GetBool
+from moveit_msgs.srv import GetStateValidity
 
 
 class JogController:
@@ -61,6 +65,10 @@ class JogController:
             rospy.get_param("~joint_controller_name") + '/command', JointTrajectory,
             queue_size=3)
 
+        # - Joint controller state, used to check collisions
+        rospy.Subscriber(rospy.get_param("~joint_controller_name") + '/state', JointTrajectoryControllerState,
+            self.__callback_joint_controller_state)
+            
         # Publishing rate
         self._timer_rate = rospy.get_param("~jog_timer_rate_sec")
         self._publisher_joint_trajectory_timer = None
@@ -82,13 +90,22 @@ class JogController:
         rospy.Subscriber('/niryo_robot_hardware_interface/hardware_status', HardwareStatus,
                          self.__callback_hardware_status)
 
+        # topic used to jog pose via Niryo Studio, to avoid calling the service
         self._jog_command_ik = None
         rospy.Subscriber('/niryo_robot_arm_commander/send_jog_command_ik', CommandJog,
                          self.__callback_send_jog_command_ik, queue_size=10)
 
+        # topic used to jog joints via Niryo Studio, to avoid calling the service
+        rospy.Subscriber('/niryo_robot_arm_commander/send_jog_joints_command', CommandJog,
+                         self.__callback_send_jog_joints_command, queue_size=10)
+
+
         # - Service
         rospy.Service('/niryo_robot/jog_interface/jog_shift_commander', JogShift,
                       self.__callback_jog_commander)
+
+        # Check joint validity service (used for self collisions checking)
+        self.check_state_validity = rospy.ServiceProxy('check_state_validity', GetStateValidity)
 
         # - Kinematics
         self._new_robot_state = RobotState()
@@ -97,8 +114,14 @@ class JogController:
 
         # - Values Init
         self._shift_mode = None
+        self.__collision_detected = False
         self._last_target_values = [0.0 for _ in range(6)]
         self._target_values = None
+        self.__joints_name = ['joint_1', 'joint_2', 'joint_3', 'joint_4', 'joint_5', 'joint_6']
+        self._current_jogged_joint = None # current jogged joint, used for NS TODO: change if we want to allow several jog at the same time
+
+        # - Move It Commander / Get Arm MoveGroupCommander
+        self.__arm = moveit_commander.MoveGroupCommander(rospy.get_param("~move_group_commander_name"))
 
         # Validation
         self.__parameters_validator = parameters_validator
@@ -110,9 +133,6 @@ class JogController:
         # - Others param
         self.__time_without_jog_limit = rospy.get_param(
             "~time_without_jog_TCP_limit")  # jog disabled after one second for the jogTCP Niryo Studio
-
-        # - Move It Commander / Get Arm MoveGroupCommander
-        self.__arm = moveit_commander.MoveGroupCommander("arm")
 
     # - Callbacks
 
@@ -158,6 +178,67 @@ class JogController:
         else:
             self.__validate_ik_joints(potential_target_values)
 
+    def __callback_send_jog_joints_command(self,msg):
+        # check if the learning mode is false and the robot is calibrated
+        self.__check_before_use_jog()
+
+        shift_mode = msg.cmd
+        if shift_mode != self._shift_mode:
+            self._reset_last_pub()
+            self._shift_mode = shift_mode
+
+        shift_command = list(msg.shift_values)
+        if shift_mode == JogShiftRequest.JOINTS_SHIFT:
+            # Accumulate multiple commands if they come faster than the publish rate
+            shift_command = [min([v, math.copysign(self.__joints_rotation_max, v)], key=abs) for v in shift_command]
+            target_values = [actual + shift for actual, shift in
+                             zip(self._last_target_values, shift_command)]
+
+            # get the index of the jogged joint. TODO : manage when jogging two or more joints at the same time
+            joint_to_shift=next((index) for index, value in enumerate(shift_command) if value!=0)
+
+            target_values = self.__limit_params_joints(target_values)
+
+            try:
+                self.__validate_params_joints(target_values) # validate joints according to joints limits
+            except ArmCommanderException as e:
+                return e.status, "Error while validating joints : {}".format(e.message) # TODO: change the return for a logwarn?
+
+            # validate target joints validity, based on collisions checking
+            try:
+                valid, link_colliding1, link_colliding2 = self.__check_joint_validity_moveit(target_values)
+                if not valid:
+                    return
+            except rospy.ServiceException as e:
+                rospy.logwarn("Jog Controller - Error while validating joint : {}".format(e.message))
+            
+            if self.__collision_detected:
+                return
+
+            self._target_values = target_values
+            self._current_jogged_joint = joint_to_shift
+            self._new_robot_state = RobotState()
+
+
+    def __callback_joint_controller_state(self,msg): 
+        # check if collision when jogging joints
+        current_joints_error = msg.error.positions
+
+         # this error tolerance is lower than the one in arm_commander bc the jog is much slower
+        error_tolerance = [0.2, 0.2, 0.2, 0.2, 0.2, 0.2] # TODO: recalculate those values
+        for error, tolerance in zip(current_joints_error, error_tolerance):
+            if abs(error) > tolerance and self._enabled and self._shift_mode == JogShiftRequest.JOINTS_SHIFT:
+                    self.__collision_detected = True
+                    self.__set_learning_mode(True)
+                    abort_str = "Command has been aborted due to a collision or " \
+                            "a motor not able to follow the given trajectory"
+                    rospy.logwarn(abort_str)
+                    self.disable() 
+                    rospy.sleep(1) # sleep so if the arrow in NS is still pressed, the jog wont re-start directly. TODO : Not sure it is working.
+                    return
+
+        self.__collision_detected = False
+
     def __callback_jog_commander(self, msg):
         # check if the learning mode is false and the robot is calibrated
         self.__check_before_use_jog()
@@ -190,9 +271,21 @@ class JogController:
             target_values = self.__limit_params_joints(target_values)
 
             try:
-                self.__validate_params_joints(target_values)
+                self.__validate_params_joints(target_values) # validate joints according to joints limits
             except ArmCommanderException as e:
                 return e.status, "Error while validating joints : {}".format(e.message)
+
+            # validate target joints validity, based on collisions checking
+            try:
+                valid, link_colliding1, link_colliding2 = self.__check_joint_validity_moveit(target_values)
+                if not valid:
+                    if link_colliding1 is not None and link_colliding2 is not None:
+                        return CommandStatus.JOG_CONTROLLER_FAILURE, "Joints target unreachable because of collision between {} and {}".format(link_colliding1,link_colliding2)
+                    else:
+                        return CommandStatus.JOG_CONTROLLER_FAILURE, "Joints target unreachable because of collision between two parts of Ned"
+            except rospy.ServiceException as e:
+                return e, "Error while validating joint : {}".format(e.message)
+                
 
             self._target_values = target_values
             self._new_robot_state = RobotState()
@@ -215,21 +308,29 @@ class JogController:
             return
         msg = JointTrajectory()
         msg.header.stamp = rospy.Time.now()
-        msg.joint_names = ['joint_1', 'joint_2', 'joint_3', 'joint_4', 'joint_5', 'joint_6']
 
         point = JointTrajectoryPoint()
-        point.positions = self._target_values
-        point.time_from_start = rospy.Duration(self._timer_rate)
 
+        if self._shift_mode == JogShiftRequest.JOINTS_SHIFT:
+            # if jogging joint, we send a command with only one joint, thanks to the allow_partial_joints_goal parameter,
+            # so the other joints are not affected by the jog.
+            msg.joint_names = ['joint_{}'.format(self._current_jogged_joint+1)] # TODO: adapt to the joint_names param
+            point.positions = [self._target_values[self._current_jogged_joint]]
+        else:
+            msg.joint_names = rospy.get_param('~joint_names')
+            point.positions = self._target_values
+        point.time_from_start = rospy.Duration(self._timer_rate)
         msg.points = [point]
+        current_target_values = self._target_values
 
         self._joint_trajectory_publisher.publish(msg)
 
         # Reset Target
         self._target_values = None
+        self._current_jogged_joint = None
 
         # Save state for next time
-        self._last_target_values = point.positions
+        self._last_target_values = current_target_values
         self._last_robot_state_published = self._new_robot_state
 
     # - Setters & Getters
@@ -290,6 +391,7 @@ class JogController:
         self._enabled = False
         self._shift_mode = None
         self._target_values = None
+        self._current_jogged_joint = None
         # Shutdown timer (Only launched when jog enabled)
         self._publisher_joint_trajectory_timer.shutdown()
         self._publisher_joint_trajectory_timer = None
@@ -346,6 +448,33 @@ class JogController:
     def __validate_params_joints(self, joints):
         self.__parameters_validator.validate_joints(joints)
 
+    def __check_joint_validity_moveit(self, joints):
+        """
+        Check target joint validity (no collision) with MoveIt. 
+        :return: The target joint validity in a boolean, and the two links colliding if available
+        """
+        robot_state_target = RobotStateMoveIt()
+        robot_state_target.joint_state.header.frame_id = "world"
+        robot_state_target.joint_state.position = joints
+        robot_state_target.joint_state.name = self.__joints_name
+        group_name = self.__arm.get_name()
+        null_constraints = Constraints()
+        try:
+            response = self.check_state_validity(robot_state_target, group_name, null_constraints)
+            if not response.valid:
+                if len(response.contacts) > 0:
+                    rospy.logwarn('Jog Controller - Joints target unreachable because of collision between %s and %s',
+                                response.contacts[0].contact_body_1, response.contacts[0].contact_body_2)
+                    return False, response.contacts[0].contact_body_1, response.contacts[0].contact_body_2
+                else: # didn't succeed to get the contacts on the real robot
+                    rospy.logwarn('Jog Controller - Joints target unreachable because of collision between two parts of Ned')
+                    return False, None, None
+            else: 
+                return True, None, None
+
+        except AttributeError as e: # maybe delete later, usefull for the test on real robot when using the service
+            return True,None,None
+
     def __limit_params_joints(self, joints):
         joints_limits = self.__parameters_validator.get_joints_limits()
         for j, joint_value in enumerate(joints):
@@ -370,6 +499,7 @@ class JogController:
                 msg_str = "Jog Controller can't execute this command"
                 rospy.logwarn(msg_str + str(joints))
                 self._target_values = None
+                self._current_jogged_joint = None
         return joints
 
     def __check_before_use_jog(self):

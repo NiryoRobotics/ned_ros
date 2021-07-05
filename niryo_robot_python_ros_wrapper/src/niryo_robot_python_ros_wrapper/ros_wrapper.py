@@ -32,7 +32,8 @@ from conveyor_interface.srv import ControlConveyor, SetConveyor, SetConveyorRequ
 from niryo_robot_arm_commander.srv import GetFK, GetIK
 from niryo_robot_arm_commander.srv import JogShift, JogShiftRequest
 from niryo_robot_msgs.srv import GetNameDescriptionList, SetBool, SetInt, Trigger
-
+from niryo_robot_tools_commander.srv import SetTCP, SetTCPRequest
+from niryo_robot_vision.srv import SetImageParameter
 from niryo_robot_rpi.srv import GetDigitalIO, SetDigitalIO
 
 # Actions
@@ -241,6 +242,19 @@ class NiryoRosWrapper:
 
         goal_state = self.__robot_action_server_client.get_state()
         response = self.__robot_action_server_client.get_result()
+
+        return goal_state, response
+
+    # test send goal to tool action server
+    def __send_tool_goal_and_wait_for_completed(self, goal):
+        self.__tool_action_server_client.send_goal(goal)
+        if not self.__tool_action_server_client.wait_for_result(timeout=rospy.Duration(self.__action_execute_timeout)):
+            self.__tool_action_server_client.cancel_goal()
+            self.__tool_action_server_client.stop_tracking_goal()
+            raise NiryoRosWrapperException('Action Server timeout : {}'.format(self.__robot_action_server_name))
+
+        goal_state = self.__tool_action_server_client.get_state()
+        response = self.__tool_action_server_client.get_result()
 
         return goal_state, response
 
@@ -911,7 +925,7 @@ class NiryoRosWrapper:
         """
         Execute trajectory from a list of pose
 
-        :param list_poses_raw: list of [x, y, z, qx, qy, qz, qw]
+        :param list_poses_raw: list of [x, y, z, qx, qy, qz, qw] or list of [x, y, z, roll, pitch, yaw]
         :type list_poses_raw: list[list[float]]
         :param dist_smoothing: Distance from waypoints before smoothing trajectory
         :type dist_smoothing: float
@@ -934,25 +948,81 @@ class NiryoRosWrapper:
             list_poses.append(Pose(point, orientation))
         return self.__execute_trajectory_from_formatted_poses(list_poses, dist_smoothing)
 
+    def execute_trajectory_from_poses_and_joints(self, list_pose_joints, list_type=None, dist_smoothing=0.0):
+        """
+        Execute trajectory from list of poses and joints
+
+        :param list_pose_joints: List of [x,y,z,qx,qy,qz,qw] or list of [x,y,z,roll,pitch,yaw] or a list of [j1,j2,j3,j4,j5,j6]
+        :type list_pose_joints: list[list[float]]
+        :param list_type: List of string 'pose' or 'joint', or ['pose'] (if poses only) or ['joint'] (if joints only).
+                    If None, it is assumed there are only poses in the list.
+        :type list_type: list[string]
+        :param dist_smoothing: Distance from waypoints before smoothing trajectory
+        :type dist_smoothing: float
+        :return: status, message
+        :rtype: (int, str)
+        """
+        if list_type is None:
+            list_type = ['pose']
+        list_pose_waypoints = []
+
+        if len(list_type) == 1: # only one type of object
+            if list_type[0] == "pose":  # every elem in list is a pose
+                list_pose_waypoints = list_pose_joints
+            elif list_type[0] == "joint":  # every elem in list is a joint
+                list_pose_waypoints = [self.forward_kinematics(*joint) for joint in list_pose_joints]
+
+            else:
+                raise NiryoRosWrapperException(
+                    'Execute trajectory from poses and joints - Wrong list_type argument : got '
+                    + list_type[0] + ", expected 'pose' or 'joint'")
+
+        elif len(list_type) == len(list_pose_joints):
+            # convert every joints to poses
+            for target, type_  in zip(list_pose_joints, list_type):
+                if type_ == 'joint':
+                    pose_from_joint = self.forward_kinematics(*target)
+                    list_pose_waypoints.append(pose_from_joint)
+                elif type_ == 'pose':
+                    list_pose_waypoints.append(target)
+                else:
+                    raise NiryoRosWrapperException(
+                        'Execute trajectory from poses and joints - Wrong list_type argument at index ' + str(i) +
+                        ' got ' + type_ + ", expected 'pose' or 'joint'")
+
+        else:
+            raise NiryoRosWrapperException(
+                'Execute trajectory from poses and joints - List of waypoints (size ' + str(len(list_pose_joints)) +
+                ') and list of type (size ' + str(len(list_type)) + ') must be the same size.')
+
+        return self.execute_trajectory_from_poses(list_pose_waypoints, dist_smoothing)
+
     def save_trajectory(self, trajectory_name, list_poses_raw):
         """
         Save trajectory object and send it to the trajectory manager service
 
         :param trajectory_name: name which will have the trajectory
         :type trajectory_name: str
-        :param list_poses_raw: list of [x, y, z, qx, qy, qz, qw]
+        :param list_poses_raw: list of [x, y, z, qx, qy, qz, qw] or list of [x, y, z, roll, pitch, yaw]
         :type list_poses_raw: list[list[float]]
         :return: status, message
         :rtype: (int, str)
         """
         from niryo_robot_poses_handlers.srv import ManageTrajectory, ManageTrajectoryRequest
+        from niryo_robot_poses_handlers.transform_functions import quaternion_from_euler
 
         req = ManageTrajectoryRequest()
         req.cmd = ManageTrajectoryRequest.SAVE
         req.name = trajectory_name
         list_poses = []
         for pose in list_poses_raw:
-            list_poses.append(Pose(Point(*pose[:3]), Quaternion(*pose[3:])))
+            angle = pose[3:]
+            if len(angle) == 3:
+                quaternion = quaternion_from_euler(*angle)
+            else:
+                quaternion = angle
+            orientation = Quaternion(*quaternion)
+            list_poses.append(Pose(Point(*pose[:3]), orientation))
         req.poses = list_poses
 
         result = self.__call_service('/niryo_robot_poses_handlers/manage_trajectory',
@@ -1222,6 +1292,51 @@ class NiryoRosWrapper:
         goal.goal.cmd.gpio = pin
         return self.__execute_tool_action(goal.goal)
 
+    # - TCP
+    def enable_tcp(self, enable=True):
+        """
+        Enables or disables the TCP function (Tool Center Point).
+        If activation is requested, the last recorded TCP value will be applied.
+        The default value depends on the gripper equipped.
+        If deactivation is requested, the TCP will be coincident with the tool_link.
+
+        :param enable: True to enable, False otherwise.
+        :type enable: Bool
+        :return: status, message
+        :rtype: (int, str)
+        """
+        result = self.__call_service('/niryo_robot_tools_commander/enable_tcp',
+                                     SetBool, enable)
+        return self.__classic_return_w_check(result)
+
+    def set_tcp(self, x, y, z, roll, pitch, yaw):
+        """
+        Activates the TCP function (Tool Center Point)
+        and defines the transformation between the tool_link frame and the TCP frame.
+
+        :param x:
+        :type x: float
+        :param y:
+        :type y: float
+        :param z:
+        :type z: float
+        :param roll:
+        :type roll: float
+        :param pitch:
+        :type pitch: float
+        :param yaw:
+        :type yaw: float
+        :return: status, message
+        :rtype: (int, str)
+        """
+        req = SetTCPRequest()
+        req.position = Point(x, y, z)
+        req.rpy = RPY(roll, pitch, yaw)
+
+        result = self.__call_service('/niryo_robot_tools_commander/set_tcp',
+                                     SetTCP, req)
+        return self.__classic_return_w_check(result)
+
     # - Hardware
 
     def set_pin_mode(self, pin_id, pin_mode):
@@ -1394,6 +1509,70 @@ class NiryoRosWrapper:
                     'Timeout: could not video stream message (/niryo_robot_vision/compressed_video_stream topic)')
         return self.__compressed_image_message.data
 
+    def set_brightness(self, brightness_factor):
+        """
+        Modify image brightness
+
+        :param brightness_factor: How much to adjust the brightness. 0.5 will
+            give a darkened image, 1 will give the original image while
+            2 will enhance the brightness by a factor of 2.
+        :type brightness_factor: float
+        :return: None
+        :rtype: None
+        """
+        result = self.__call_service('/niryo_robot_vision/set_brightness', SetImageParameter, brightness_factor)
+        self.__check_result_status(result)
+
+    def set_contrast(self, contrast_factor):
+        """
+        Modify image contrast
+
+        :param contrast_factor: While a factor of 1 gives original image.
+            Making the factor towards 0 makes the image greyer, while factor>1 increases the contrast of the image.
+        :type contrast_factor: float
+        :return: None
+        :rtype: None
+        """
+        result = self.__call_service('/niryo_robot_vision/set_contrast', SetImageParameter, contrast_factor)
+        self.__check_result_status(result)
+
+    def set_saturation(self, saturation_factor):
+        """
+        Modify image saturation
+
+        :param saturation_factor: How much to adjust the saturation. 0 will
+            give a black and white image, 1 will give the original image while
+            2 will enhance the saturation by a factor of 2.
+        :type saturation_factor: float
+        :return: None
+        :rtype: None
+        """
+        result = self.__call_service('/niryo_robot_vision/set_saturation', SetImageParameter, saturation_factor)
+        self.__check_result_status(result)
+
+    @staticmethod
+    def get_image_parameters():
+        """
+        Get last stream image parameters: Brightness factor, Contrast factor, Saturation factor.
+
+        Brightness factor: How much to adjust the brightness. 0.5 will give a darkened image,
+        1 will give the original image while 2 will enhance the brightness by a factor of 2.
+
+        Contrast factor: While a factor of 1 gives original image.
+        Making the factor towards 0 makes the image greyer, while factor>1 increases the contrast of the image.
+
+        Saturation factor: 0 will give a black and white image, 1 will give the original image while
+        2 will enhance the saturation by a factor of 2.
+
+        :return:  Brightness factor, Contrast factor, Saturation factor
+        :rtype: float, float, float
+        """
+        from niryo_robot_vision.msg import ImageParameters
+
+        img_param_msg = rospy.wait_for_message('/niryo_robot_vision/video_stream_parameters', ImageParameters,
+                                               timeout=5)
+        return img_param_msg.brightness_factor, img_param_msg.contrast_factor, img_param_msg.saturation_factor
+
     def get_target_pose_from_rel(self, workspace_name, height_offset, x_rel, y_rel, yaw_rel):
         """
         Given a pose (x_rel, y_rel, yaw_rel) relative to a workspace, this function
@@ -1417,8 +1596,7 @@ class NiryoRosWrapper:
         from niryo_robot_poses_handlers.srv import GetTargetPose, GetTargetPoseRequest
 
         result = self.__call_service('/niryo_robot_poses_handlers/get_target_pose', GetTargetPose,
-                                     workspace_name, GetTargetPoseRequest.GRIP_AUTO, self.get_current_tool_id(),
-                                     height_offset, x_rel, y_rel, yaw_rel)
+                                     workspace_name, height_offset, x_rel, y_rel, yaw_rel)
         self.__check_result_status(result)
         return result.target_pose
 
@@ -1441,8 +1619,7 @@ class NiryoRosWrapper:
         object_found, rel_pose, obj_shape, obj_color = self.detect_object(workspace_name, shape, color)
         if not object_found:
             return False, None, "", ""
-        obj_pose = self.get_target_pose_from_rel(
-            workspace_name, height_offset, rel_pose.x, rel_pose.y, rel_pose.yaw)
+        obj_pose = self.get_target_pose_from_rel(workspace_name, height_offset, rel_pose.x, rel_pose.y, rel_pose.yaw)
         return True, obj_pose, obj_shape, obj_color
 
     def vision_pick_w_obs_joints(self, workspace_name, height_offset, shape, color, observation_joints):

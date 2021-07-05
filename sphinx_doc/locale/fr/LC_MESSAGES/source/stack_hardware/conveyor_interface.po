@@ -1,0 +1,239 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2021, Niryo All rights reserved. No part of this document
+# may be reproduced or transmitted in any form or by any means without prior
+# written consent of Niryo SAS
+# This file is distributed under the same license as the Ned ROS
+# Documentation package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Ned ROS Documentation 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-04-26 12:18+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.8.0\n"
+
+#: ../../source/stack_hardware/conveyor_interface.rst:2
+msgid "Niryo robot Conveyor Belt interface package"
+msgstr "Package de l'interface convoyeur du robot Niryo"
+
+#: ../../source/stack_hardware/conveyor_interface.rst:4
+msgid "This package handles Niryo's Conveyor Belt."
+msgstr "Ce package gère le Convoyeur Niryo."
+
+#: ../../source/stack_hardware/conveyor_interface.rst:5
+msgid "You can control two Conveyors Belt."
+msgstr "Il est possible de contrôler jusqu'à deux Convoyeurs."
+
+#: ../../source/stack_hardware/conveyor_interface.rst:8
+msgid "Conveyor Belt interface node"
+msgstr "Noeud de l'interface Convoyeur"
+
+#: ../../source/stack_hardware/conveyor_interface.rst:12
+msgid "The ROS Node is made to:"
+msgstr "Le noeud ROS est conçu pour :"
+
+#: ../../source/stack_hardware/conveyor_interface.rst:10
+msgid "Initialize Conveyor Belt motor parameters."
+msgstr "Initialiser les paramètres du moteur du Convoyeur."
+
+#: ../../source/stack_hardware/conveyor_interface.rst:11
+msgid "Set and control Conveyors Belt."
+msgstr "Régler et contrôler le Convoyeur."
+
+#: ../../source/stack_hardware/conveyor_interface.rst:12
+msgid "Publish Conveyors Belt state."
+msgstr "Diffuser l'état du Convoyeur"
+
+#: ../../source/stack_hardware/conveyor_interface.rst:14
+msgid "The namespace used is: |namespace_emphasize|"
+msgstr "L'espace de nom utilisé est |namespace_emphasize|"
+
+#: ../../source/stack_hardware/conveyor_interface.rst:17
+msgid "Parameters - Conveyor Belt interface"
+msgstr "Paramètres - Interface Convoyeur"
+
+#: ../../source/stack_hardware/conveyor_interface.rst:19
+msgid "Conveyor Belt Interface's Parameters"
+msgstr "Paramètres de l'interface Convoyeur"
+
+#: ../../source/stack_hardware/conveyor_interface.rst:25
+#: ../../source/stack_hardware/conveyor_interface.rst:40
+#: ../../source/stack_hardware/conveyor_interface.rst:56
+msgid "Name"
+msgstr "Nom"
+
+#: ../../source/stack_hardware/conveyor_interface.rst:26
+#: ../../source/stack_hardware/conveyor_interface.rst:42
+#: ../../source/stack_hardware/conveyor_interface.rst:58
+msgid "Description"
+msgstr "Description"
+
+#: ../../source/stack_hardware/conveyor_interface.rst:27
+msgid "``publish_frequency``"
+msgstr ""
+
+#: ../../source/stack_hardware/conveyor_interface.rst
+msgid "Publish rate for conveyors state."
+msgstr "Diffuser le taux pour l'état des convoyeurs"
+
+#: ../../source/stack_hardware/conveyor_interface.rst
+msgid "Default: '2.0'"
+msgstr "Par défault : '2.0'"
+
+#: ../../source/stack_hardware/conveyor_interface.rst:32
+msgid "Published topics - Conveyor Belt interface"
+msgstr "Topics diffusés - Interface Convoyeur"
+
+#: ../../source/stack_hardware/conveyor_interface.rst:34
+msgid "Conveyor Belt Interface's Published Topics"
+msgstr "Topics diffusés de l'interface Convoyeur"
+
+#: ../../source/stack_hardware/conveyor_interface.rst:41
+#: ../../source/stack_hardware/conveyor_interface.rst:57
+msgid "Message Type"
+msgstr "Type du message"
+
+#: ../../source/stack_hardware/conveyor_interface.rst:43
+msgid "``feedback``"
+msgstr ""
+
+#: ../../source/stack_hardware/conveyor_interface.rst:44
+msgid ":ref:`ConveyorFeedbackArray<ConveyorFeedbackArray (Message)>`"
+msgstr ""
+
+#: ../../source/stack_hardware/conveyor_interface.rst:45
+msgid "Conveyors Belt states"
+msgstr "État du Convoyeur"
+
+#: ../../source/stack_hardware/conveyor_interface.rst:48
+msgid "Services - Conveyor Belt interface"
+msgstr "Services - Interface Convoyeur"
+
+#: ../../source/stack_hardware/conveyor_interface.rst:50
+msgid "Conveyor Belt Interface Package Services"
+msgstr "Services du package de l'interface convoyeur"
+
+#: ../../source/stack_hardware/conveyor_interface.rst:59
+msgid "``control_conveyor``"
+msgstr ""
+
+#: ../../source/stack_hardware/conveyor_interface.rst:60
+msgid ":ref:`ControlConveyor<ControlConveyor (Service)>`"
+msgstr ""
+
+#: ../../source/stack_hardware/conveyor_interface.rst:61
+msgid "Send a command to the desired Conveyor Belt"
+msgstr "Envoyer une commande au Convoyeur souhaité"
+
+#: ../../source/stack_hardware/conveyor_interface.rst:62
+msgid "``ping_and_set_conveyor``"
+msgstr ""
+
+#: ../../source/stack_hardware/conveyor_interface.rst:63
+msgid ":ref:`SetConveyor<SetConveyor (Service)>`"
+msgstr ""
+
+#: ../../source/stack_hardware/conveyor_interface.rst:64
+msgid "Scan and set a new Conveyor Belt"
+msgstr "Scanner et définir un nouveau Convoyeur"
+
+#: ../../source/stack_hardware/conveyor_interface.rst:67
+msgid "Dependencies - Conveyor Belt interface"
+msgstr "Dépendances - Interface Convoyeur"
+
+#: ../../source/stack_hardware/conveyor_interface.rst:69
+msgid ":msgs_index:`std_msgs`"
+msgstr ""
+
+#: ../../source/stack_hardware/conveyor_interface.rst:70
+msgid ":ref:`stepper_driver <Niryo Robot Stepper Driver Package>`"
+msgstr ""
+
+#: ../../source/stack_hardware/conveyor_interface.rst:73
+msgid "Services & messages files - Conveyor Belt interface"
+msgstr "Fichiers de services et de messages - Interface Convoyeur"
+
+#: ../../source/stack_hardware/conveyor_interface.rst:76
+msgid "ControlConveyor (Service)"
+msgstr ""
+
+#: ../../source/stack_hardware/conveyor_interface.rst:82
+msgid "SetConveyor (Service)"
+msgstr ""
+
+#: ../../source/stack_hardware/conveyor_interface.rst:88
+msgid "ConveyorFeedbackArray (Message)"
+msgstr ""
+
+#: ../../source/stack_hardware/conveyor_interface.rst:94
+msgid "ConveyorFeedback (Message)"
+msgstr ""
+
+#~ msgid "Niryo Robot Conveyor Interface Package"
+#~ msgstr "Package de l’interface Convoyeur du robot Niryo"
+
+#~ msgid "This package handles Niryo's conveyor."
+#~ msgstr "Ce package gère le Convoyeur Niryo."
+
+#~ msgid "You can control two conveyors."
+#~ msgstr "Il est possible de contrôler jusqu’à deux Convoyeurs."
+
+#~ msgid "Conveyor Interface Node"
+#~ msgstr "Noeud de l’interface Convoyeur"
+
+#~ msgid "The ROS Node is made to:"
+#~ msgstr "Le noeud ROS est conçu pour :"
+
+#~ msgid "Initialize conveyor motor parameters"
+#~ msgstr "Initialiser les paramètres du moteur du Convoyeur."
+
+#~ msgid "Set and control conveyors"
+#~ msgstr "Régler et contrôler le Convoyeur."
+
+#~ msgid "Publish conveyors state"
+#~ msgstr "Publier l’état du Convoyeur"
+
+#~ msgid "The namespace used is : |namespace_emphasize|"
+#~ msgstr "L'espace de nom utilisé est |namespace_emphasize|"
+
+#~ msgid "Parameters - Conveyor Interface"
+#~ msgstr "Paramètres - Interface Convoyeur"
+
+#~ msgid "Conveyor Interface's Parameters"
+#~ msgstr "Paramètres de l’interface Convoyeur"
+
+#~ msgid "Published Topics - Conveyor Interface"
+#~ msgstr "Sujets publiés - Interface Convoyeur"
+
+#~ msgid "Conveyor Interface's Published Topics"
+#~ msgstr "Sujets publiés de l’interface Convoyeur"
+
+#~ msgid "Conveyors states"
+#~ msgstr "État du Convoyeur"
+
+#~ msgid "Services - Conveyor Interface"
+#~ msgstr "Services - Interface Convoyeur"
+
+#~ msgid "Conveyor Interface Package Services"
+#~ msgstr "Services du package de l’interface Convoyeur"
+
+#~ msgid "Send a command to the desired conveyor"
+#~ msgstr "Envoyer une commande au Convoyeur souhaité"
+
+#~ msgid "Scan and set a new conveyor"
+#~ msgstr "Scanner et définir un nouveau Convoyeur"
+
+#~ msgid "Dependencies - Conveyor Interface"
+#~ msgstr "Dépendances - Interface Convoyeur"
+
+#~ msgid "Services & Messages files - Conveyor Interface"
+#~ msgstr "Fichiers de services et de messages - Interface Convoyeur"
+

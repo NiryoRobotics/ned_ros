@@ -1,0 +1,277 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2021, Niryo All rights reserved. No part of this document
+# may be reproduced or transmitted in any form or by any means without prior
+# written consent of Niryo SAS
+# This file is distributed under the same license as the Ned ROS
+# Documentation package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Ned ROS Documentation 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-06-10 11:46+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.9.1\n"
+
+#: ../../source/stack_hardware/joints_interface.rst:2
+msgid "Niryo robot joints interface package"
+msgstr "Package de l’interface axes du robot Niryo"
+
+#: ../../source/stack_hardware/joints_interface.rst:4
+msgid "This package handles packages related to the robot's joints controller."
+msgstr "Ce package gère les packages liés au contrôleur des axes du robot."
+
+#: ../../source/stack_hardware/joints_interface.rst:5
+msgid "It provides an interface to :wiki_ros:`ros_control`."
+msgstr "Il fournit une interface à :wiki_ros:`ros_control`."
+
+#: ../../source/stack_hardware/joints_interface.rst:8
+msgid "Joints interface node"
+msgstr "Nœud de l'interface axes"
+
+#: ../../source/stack_hardware/joints_interface.rst:14
+msgid "The ROS Node is made to:"
+msgstr "Le nœud ROS est conçu pour :"
+
+#: ../../source/stack_hardware/joints_interface.rst:10
+msgid ""
+"Interface robot's motors to joint trajectory controller, from "
+":wiki_ros:`ros_control` package."
+msgstr ""
+"Interfacer les moteurs du robot au contrôleur de trajectoire articulaire,"
+" à partir du package :wiki_ros:`ros_control`."
+
+#: ../../source/stack_hardware/joints_interface.rst:11
+msgid ""
+"Create a controller manager, from :wiki_ros:`controller_manager` package,"
+" to provides the infrastructure to load, unload, start and stop "
+"controllers."
+msgstr ""
+"Créer un gestionnaire de contrôle, à partir du package "
+":wiki_ros:`controller_manager`, pour fournir l'infrastructure nécessaire "
+"pour charger, décharger, démarrer et arrêter les contrôleurs."
+
+#: ../../source/stack_hardware/joints_interface.rst:12
+msgid "Interface with motors calibration."
+msgstr "Interfacer avec calibration des moteurs"
+
+#: ../../source/stack_hardware/joints_interface.rst:13
+msgid "Initialize motors parameters."
+msgstr "Initialiser des paramètres moteurs"
+
+#: ../../source/stack_hardware/joints_interface.rst:17
+msgid "Parameters - joints interface"
+msgstr "Paramètres - Interface axes"
+
+#: ../../source/stack_hardware/joints_interface.rst:19
+msgid "Joint Interface's Parameters"
+msgstr "Paramètres de l'interface axes"
+
+#: ../../source/stack_hardware/joints_interface.rst:25
+#: ../../source/stack_hardware/joints_interface.rst:49
+#: ../../source/stack_hardware/joints_interface.rst:65
+msgid "Name"
+msgstr "Nom"
+
+#: ../../source/stack_hardware/joints_interface.rst:26
+#: ../../source/stack_hardware/joints_interface.rst:51
+#: ../../source/stack_hardware/joints_interface.rst:67
+msgid "Description"
+msgstr "Description"
+
+#: ../../source/stack_hardware/joints_interface.rst:27
+msgid "``ros_control_loop_frequency``"
+msgstr ""
+
+#: ../../source/stack_hardware/joints_interface.rst
+msgid "control loop frequency."
+msgstr "Fréquence de la boucle de contrôle"
+
+#: ../../source/stack_hardware/joints_interface.rst
+msgid "Default: '100.0'"
+msgstr "Par défault : '100.0'"
+
+#: ../../source/stack_hardware/joints_interface.rst:30
+msgid "``publish_learning_mode_frequency``"
+msgstr ""
+
+#: ../../source/stack_hardware/joints_interface.rst
+msgid "Publish rate for learning mode state."
+msgstr "Taux de diffusion pour l'état du mode d'apprentissage"
+
+#: ../../source/stack_hardware/joints_interface.rst
+#, fuzzy
+msgid "Default: '2.0'"
+msgstr "Par défault : '2.0'"
+
+#: ../../source/stack_hardware/joints_interface.rst:33
+msgid "``calibration_timeout``"
+msgstr ""
+
+#: ../../source/stack_hardware/joints_interface.rst
+msgid "Waiting time between 2 commands during the calibration process."
+msgstr "Temps d'attente entre 2 commandes pendant la calibration"
+
+#: ../../source/stack_hardware/joints_interface.rst
+#, fuzzy
+msgid "Default: '30'"
+msgstr "Par défault : '30'"
+
+#: ../../source/stack_hardware/joints_interface.rst:36
+msgid "``calibration_file``"
+msgstr ""
+
+#: ../../source/stack_hardware/joints_interface.rst
+msgid "File directory where is saved motors calibration value."
+msgstr ""
+"Répertoire de fichiers où est enregistrée la valeur de calibration des "
+"moteurs"
+
+#: ../../source/stack_hardware/joints_interface.rst
+msgid ""
+"Default: "
+"'/home/niryo/niryo_robot_saved_files/stepper_motor_calibration_offsets.txt'"
+msgstr ""
+"Par défault : "
+"'/home/niryo/niryo_robot_saved_files/stepper_motor_calibration_offsets.txt'"
+
+#: ../../source/stack_hardware/joints_interface.rst:41
+msgid "Published topics - joints interface"
+msgstr "Topics diffusés - Interface axes"
+
+#: ../../source/stack_hardware/joints_interface.rst:43
+msgid "Joint Interface's Published Topics"
+msgstr "Topics diffusés de l'interface axes"
+
+#: ../../source/stack_hardware/joints_interface.rst:50
+#: ../../source/stack_hardware/joints_interface.rst:66
+msgid "Message Type"
+msgstr "Type du message"
+
+#: ../../source/stack_hardware/joints_interface.rst:52
+msgid "``/niryo_robot/learning_mode/state``"
+msgstr ""
+
+#: ../../source/stack_hardware/joints_interface.rst:53
+msgid ":std_msgs:`Bool`"
+msgstr ""
+
+#: ../../source/stack_hardware/joints_interface.rst:54
+msgid "Learning mode state"
+msgstr "État du mode apprentissage"
+
+#: ../../source/stack_hardware/joints_interface.rst:57
+msgid "Services - joints interface"
+msgstr "Services - Interface axes"
+
+#: ../../source/stack_hardware/joints_interface.rst:59
+msgid "Joint Interface Package Services"
+msgstr "Services du package de l'interface axes"
+
+#: ../../source/stack_hardware/joints_interface.rst:68
+msgid "``/niryo_robot/joints_interface/calibrate_motors``"
+msgstr ""
+
+#: ../../source/stack_hardware/joints_interface.rst:69
+msgid ":ref:`SetInt`"
+msgstr ""
+
+#: ../../source/stack_hardware/joints_interface.rst:70
+msgid ""
+"Start motors calibration - value can be 1 for auto calibration, 2 for "
+"manual"
+msgstr ""
+"Démarrer la calibration des moteurs - la valeur peut être 1 pour la "
+"calibration automatique, 2 pour la calibration manuelle"
+
+#: ../../source/stack_hardware/joints_interface.rst:71
+msgid "``/niryo_robot/joints_interface/request_new_calibration``"
+msgstr ""
+
+#: ../../source/stack_hardware/joints_interface.rst:72
+#: ../../source/stack_hardware/joints_interface.rst:75
+msgid ":ref:`Trigger`"
+msgstr ""
+
+#: ../../source/stack_hardware/joints_interface.rst:73
+msgid "Unset motors calibration"
+msgstr "Désactiver la calibration des moteurs"
+
+#: ../../source/stack_hardware/joints_interface.rst:74
+msgid "``niryo_robot/learning_mode/activate``"
+msgstr ""
+
+#: ../../source/stack_hardware/joints_interface.rst:76
+msgid "Either activate or deactivate learning mode"
+msgstr "Activer ou désactiver le mode d'apprentissage"
+
+#: ../../source/stack_hardware/joints_interface.rst:79
+msgid "Dependencies - joints interface"
+msgstr "Dépendances - Interface axes"
+
+#: ../../source/stack_hardware/joints_interface.rst:81
+msgid ":wiki_ros:`hardware_interface <hardware_interface>`"
+msgstr ""
+
+#: ../../source/stack_hardware/joints_interface.rst:82
+msgid ":wiki_ros:`controller_manager <controller_manager>`"
+msgstr ""
+
+#: ../../source/stack_hardware/joints_interface.rst:83
+msgid ":ref:`dynamixel_driver <Niryo Robot Dynamixel Driver Package>`"
+msgstr ""
+
+#: ../../source/stack_hardware/joints_interface.rst:84
+msgid ":ref:`stepper_driver <Niryo Robot Stepper Driver Package>`"
+msgstr ""
+
+#: ../../source/stack_hardware/joints_interface.rst:85
+msgid ":ref:`niryo_robot_msgs <Niryo Robot Messages Package>`"
+msgstr ""
+
+#~ msgid "Niryo Robot Joints Interface Package"
+#~ msgstr "Package de l’interface axes du robot Niryo"
+
+#~ msgid "It provides an interface to :wiki_ros:`ros_control`"
+#~ msgstr "Il fournit une interface à :wiki_ros:`ros_control`."
+
+#~ msgid "Joints Interface Node"
+#~ msgstr "Nœud de l’interface axes"
+
+#~ msgid "The ROS Node is made to :"
+#~ msgstr "Le nœud ROS est conçu pour :"
+
+#~ msgid ""
+#~ "Interface robot's motors to joint "
+#~ "trajectory controller, from :wiki_ros:`ros_control`"
+#~ " package"
+#~ msgstr ""
+#~ "Interfacer les moteurs du robot au "
+#~ "contrôleur de trajectoire articulaire, à "
+#~ "partir du package :wiki_ros:`ros_control`"
+
+#~ msgid "Interface with motors calibration"
+#~ msgstr "Interface avec calibration des moteurs"
+
+#~ msgid "Initialize motors parameters"
+#~ msgstr "Initialisation des paramètres moteurs"
+
+#~ msgid "Parameters - Joints Interface"
+#~ msgstr "Paramètres - Interface axes"
+
+#~ msgid "Published Topics - Joints Interface"
+#~ msgstr "Sujets publiés - Interface axes"
+
+#~ msgid "Services - Joints Interface"
+#~ msgstr "Services - Interface axes"
+
+#~ msgid "Dependencies - Joints Interface"
+#~ msgstr "Dépendances - Interface axes"
+

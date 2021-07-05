@@ -1,7 +1,13 @@
 #!/usr/bin/env python
 
 
+class MovingStyle(object):
+    CLASSIC = 1
+    LINEAR = 2
+
+
 # - Exceptions
+
 class RobotCommanderException(Exception):
     def __init__(self, status, message):
         self.status = status

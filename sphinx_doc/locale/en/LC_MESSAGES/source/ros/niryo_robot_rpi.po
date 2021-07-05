@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-23 16:51+0200\n"
+"POT-Creation-Date: 2021-07-02 17:46+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,42 +21,42 @@ msgstr ""
 "Generated-By: Babel 2.8.0\n"
 
 #: ../../source/ros/niryo_robot_rpi.rst:2
-msgid "Niryo Robot RPI Package"
+msgid "Niryo robot RPI package"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_rpi.rst:4
 msgid ""
-"This package deals with raspberry pi related stuff (Button, fans, I/O, "
-"leds, ...)"
+"This package deals with Raspberry Pi related stuff (Button, fans, I/O, "
+"leds, ...)."
 msgstr ""
 
 #: ../../source/ros/niryo_robot_rpi.rst:8
-msgid "RPI Node"
+msgid "Raspberry Pi Node"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_rpi.rst:9
 msgid ""
 "The ROS Node manages the following components: - Physical top button: "
-"executes actions when the button is pressed. - Digital I/O panel : gets "
+"executes actions when the button is pressed. - Digital I/O panel: gets "
 "commands and sends the current state of digital I/Os. Also controls tools"
-" like the electromagnet. - Robot fans - Led : sets the LED color. - ROS "
-"log : can remove all previous logs on startup to prevent a lack of disk "
+" like the Electromagnet. - Robot fans. - Led: sets the LED color. - ROS "
+"log: can remove all previous logs on startup to prevent a lack of disk "
 "space in the long run (SD cards do not have infinite storage)."
 msgstr ""
 
 #: ../../source/ros/niryo_robot_rpi.rst:16
-msgid "The namespace used is : |namespace_emphasize|"
+msgid "The namespace used is: |namespace_emphasize|"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_rpi.rst:18
 msgid ""
 "**Note that this package should not be used when you are using Ned ROS "
-"stack on your computer, in simulation mode.**executes actions when the "
+"stack on your computer in simulation mode. Executes actions when the "
 "button is pressed.**"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_rpi.rst:21
-msgid "Publisher - RPI"
+msgid "Publisher - Raspberry Pi"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_rpi.rst:23
@@ -100,7 +100,7 @@ msgstr ""
 
 #: ../../source/ros/niryo_robot_rpi.rst:37
 msgid ""
-"Publish current point when user is in blockly page to save block by "
+"Publish current point when user is in Blockly page to save block by "
 "pressing button"
 msgstr ""
 
@@ -155,7 +155,7 @@ msgid ""
 msgstr ""
 
 #: ../../source/ros/niryo_robot_rpi.rst:52
-msgid "Services - RPI"
+msgid "Services - Raspberry Pi"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_rpi.rst:54
@@ -174,7 +174,7 @@ msgid ":ref:`SetInt<SetInt>`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_rpi.rst:65
-msgid "Shutdown the raspberry pi"
+msgid "Shutdown the Raspberry Pi"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_rpi.rst:66
@@ -247,7 +247,7 @@ msgid "``purge_ros_logs``"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_rpi.rst:86
-msgid "Purge ros log"
+msgid "Purge ROS log"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_rpi.rst:87
@@ -256,12 +256,12 @@ msgstr ""
 
 #: ../../source/ros/niryo_robot_rpi.rst:89
 msgid ""
-"Modify the permanent settings that tells if robot should purge it's ros "
+"Modify the permanent settings that tells if robot should purge it's ROS "
 "log at each boot"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_rpi.rst:92
-msgid "Dependencies - RPI"
+msgid "Dependencies - Raspberry Pi"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_rpi.rst:94
@@ -281,11 +281,11 @@ msgid ":ref:`niryo_robot_msgs <Niryo Robot Messages Package>`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_rpi.rst:98
-msgid ":ref:`niryo_robot_arm_commander <Niryo Robot Commander Package>`"
+msgid ":ref:`niryo_robot_arm_commander <Niryo Robot Arm Commander Package>`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_rpi.rst:101
-msgid "Services & Messages files - RPI"
+msgid "Services & Messages files - Raspberry Pi"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_rpi.rst:104
@@ -311,4 +311,76 @@ msgstr ""
 #: ../../source/ros/niryo_robot_rpi.rst:135
 msgid "LogStatus (Service)"
 msgstr ""
+
+#~ msgid "Niryo Robot RPI Package"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "This package deals with raspberry pi "
+#~ "related stuff (Button, fans, I/O, leds,"
+#~ " ...)"
+#~ msgstr ""
+
+#~ msgid "RPI Node"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "The ROS Node manages the following "
+#~ "components: - Physical top button: "
+#~ "executes actions when the button is "
+#~ "pressed. - Digital I/O panel : "
+#~ "gets commands and sends the current "
+#~ "state of digital I/Os. Also controls "
+#~ "tools like the electromagnet. - Robot"
+#~ " fans - Led : sets the LED "
+#~ "color. - ROS log : can remove "
+#~ "all previous logs on startup to "
+#~ "prevent a lack of disk space in"
+#~ " the long run (SD cards do not"
+#~ " have infinite storage)."
+#~ msgstr ""
+
+#~ msgid "The namespace used is : |namespace_emphasize|"
+#~ msgstr ""
+
+#~ msgid "Publisher - RPI"
+#~ msgstr ""
+
+#~ msgid "Services - RPI"
+#~ msgstr ""
+
+#~ msgid "Dependencies - RPI"
+#~ msgstr ""
+
+#~ msgid "Services & Messages files - RPI"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "**Note that this package should not "
+#~ "be used when you are using Ned "
+#~ "ROS stack on your computer, in "
+#~ "simulation mode.**executes actions when the"
+#~ " button is pressed.**"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Publish current point when user is "
+#~ "in blockly page to save block by"
+#~ " pressing button"
+#~ msgstr ""
+
+#~ msgid "Shutdown the raspberry pi"
+#~ msgstr ""
+
+#~ msgid "Purge ros log"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Modify the permanent settings that tells"
+#~ " if robot should purge it's ros "
+#~ "log at each boot"
+#~ msgstr ""
+
+#~ msgid ":ref:`niryo_robot_arm_commander <Niryo Robot Commander Package>`"
+#~ msgstr ""
 

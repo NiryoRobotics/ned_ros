@@ -11,17 +11,17 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-23 16:51+0200\n"
+"POT-Creation-Date: 2021-06-10 11:46+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.8.0\n"
+"Generated-By: Babel 2.9.1\n"
 
 #: ../../source/stack_hardware/joints_interface.rst:2
-msgid "Niryo Robot Joints Interface Package"
+msgid "Niryo robot joints interface package"
 msgstr ""
 
 #: ../../source/stack_hardware/joints_interface.rst:4
@@ -29,21 +29,21 @@ msgid "This package handles packages related to the robot's joints controller."
 msgstr ""
 
 #: ../../source/stack_hardware/joints_interface.rst:5
-msgid "It provides an interface to :wiki_ros:`ros_control`"
+msgid "It provides an interface to :wiki_ros:`ros_control`."
 msgstr ""
 
 #: ../../source/stack_hardware/joints_interface.rst:8
-msgid "Joints Interface Node"
+msgid "Joints interface node"
 msgstr ""
 
 #: ../../source/stack_hardware/joints_interface.rst:14
-msgid "The ROS Node is made to :"
+msgid "The ROS Node is made to:"
 msgstr ""
 
 #: ../../source/stack_hardware/joints_interface.rst:10
 msgid ""
 "Interface robot's motors to joint trajectory controller, from "
-":wiki_ros:`ros_control` package"
+":wiki_ros:`ros_control` package."
 msgstr ""
 
 #: ../../source/stack_hardware/joints_interface.rst:11
@@ -54,15 +54,15 @@ msgid ""
 msgstr ""
 
 #: ../../source/stack_hardware/joints_interface.rst:12
-msgid "Interface with motors calibration"
+msgid "Interface with motors calibration."
 msgstr ""
 
 #: ../../source/stack_hardware/joints_interface.rst:13
-msgid "Initialize motors parameters"
+msgid "Initialize motors parameters."
 msgstr ""
 
 #: ../../source/stack_hardware/joints_interface.rst:17
-msgid "Parameters - Joints Interface"
+msgid "Parameters - joints interface"
 msgstr ""
 
 #: ../../source/stack_hardware/joints_interface.rst:19
@@ -90,7 +90,7 @@ msgid "control loop frequency."
 msgstr ""
 
 #: ../../source/stack_hardware/joints_interface.rst
-msgid "Default : '100.0'"
+msgid "Default: '100.0'"
 msgstr ""
 
 #: ../../source/stack_hardware/joints_interface.rst:30
@@ -102,7 +102,7 @@ msgid "Publish rate for learning mode state."
 msgstr ""
 
 #: ../../source/stack_hardware/joints_interface.rst
-msgid "Default : '2.0'"
+msgid "Default: '2.0'"
 msgstr ""
 
 #: ../../source/stack_hardware/joints_interface.rst:33
@@ -110,11 +110,11 @@ msgid "``calibration_timeout``"
 msgstr ""
 
 #: ../../source/stack_hardware/joints_interface.rst
-msgid "Waiting time in ms between 2 commands during the calibration process."
+msgid "Waiting time between 2 commands during the calibration process."
 msgstr ""
 
 #: ../../source/stack_hardware/joints_interface.rst
-msgid "Default : '30'"
+msgid "Default: '30'"
 msgstr ""
 
 #: ../../source/stack_hardware/joints_interface.rst:36
@@ -127,12 +127,12 @@ msgstr ""
 
 #: ../../source/stack_hardware/joints_interface.rst
 msgid ""
-"Default : "
+"Default: "
 "'/home/niryo/niryo_robot_saved_files/stepper_motor_calibration_offsets.txt'"
 msgstr ""
 
 #: ../../source/stack_hardware/joints_interface.rst:41
-msgid "Published Topics - Joints Interface"
+msgid "Published topics - joints interface"
 msgstr ""
 
 #: ../../source/stack_hardware/joints_interface.rst:43
@@ -157,7 +157,7 @@ msgid "Learning mode state"
 msgstr ""
 
 #: ../../source/stack_hardware/joints_interface.rst:57
-msgid "Services - Joints Interface"
+msgid "Services - joints interface"
 msgstr ""
 
 #: ../../source/stack_hardware/joints_interface.rst:59
@@ -200,7 +200,7 @@ msgid "Either activate or deactivate learning mode"
 msgstr ""
 
 #: ../../source/stack_hardware/joints_interface.rst:79
-msgid "Dependencies - Joints Interface"
+msgid "Dependencies - joints interface"
 msgstr ""
 
 #: ../../source/stack_hardware/joints_interface.rst:81
@@ -222,4 +222,57 @@ msgstr ""
 #: ../../source/stack_hardware/joints_interface.rst:85
 msgid ":ref:`niryo_robot_msgs <Niryo Robot Messages Package>`"
 msgstr ""
+
+#~ msgid "Niryo Robot Joints Interface Package"
+#~ msgstr ""
+
+#~ msgid "It provides an interface to :wiki_ros:`ros_control`"
+#~ msgstr ""
+
+#~ msgid "Joints Interface Node"
+#~ msgstr ""
+
+#~ msgid "The ROS Node is made to :"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Interface robot's motors to joint "
+#~ "trajectory controller, from :wiki_ros:`ros_control`"
+#~ " package"
+#~ msgstr ""
+
+#~ msgid "Interface with motors calibration"
+#~ msgstr ""
+
+#~ msgid "Initialize motors parameters"
+#~ msgstr ""
+
+#~ msgid "Parameters - Joints Interface"
+#~ msgstr ""
+
+#~ msgid "Published Topics - Joints Interface"
+#~ msgstr ""
+
+#~ msgid "Services - Joints Interface"
+#~ msgstr ""
+
+#~ msgid "Dependencies - Joints Interface"
+#~ msgstr ""
+
+#~ msgid "Default : '100.0'"
+#~ msgstr ""
+
+#~ msgid "Default : '2.0'"
+#~ msgstr ""
+
+#~ msgid "Waiting time in ms between 2 commands during the calibration process."
+#~ msgstr ""
+
+#~ msgid "Default : '30'"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Default : "
+#~ "'/home/niryo/niryo_robot_saved_files/stepper_motor_calibration_offsets.txt'"
+#~ msgstr ""
 

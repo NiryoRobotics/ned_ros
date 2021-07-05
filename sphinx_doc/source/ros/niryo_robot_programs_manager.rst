@@ -1,21 +1,22 @@
-Niryo Robot Programs Manager Package
+Niryo robot programs manager package
 ======================================================
 
 This package is in charge of interpreting/running/saving programs.
 It is used by Niryo Studio.
 
 
-Programs Manager Node
+Programs manager node
 --------------------------
+
 The ROS Node is made of several services to deal with the storage and running of
-programs
+programs.
 
 Call are not available from the Python ROS Wrapper, as it made to run its programs
-with the Python ROS Wrapper
+with the Python ROS Wrapper.
 
-The namespace used is : |namespace_emphasize|
+The namespace used is: |namespace_emphasize|
 
-Parameters - Programs Manager
+Parameters - Programs manager
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. list-table:: Programs Manager's Parameters
    :header-rows: 1
@@ -30,7 +31,7 @@ Parameters - Programs Manager
    *  -  ``programs_dir``
       -  Path to the Program storage mother folder
 
-Services - Programs Manager
+Services - Programs manager
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. list-table:: Programs manager Services
@@ -69,9 +70,9 @@ Services - Programs Manager
 
 
 All these services are available as soon as the node is started
-whereas on standalone mode or not
+whereas on standalone mode or not.
 
-Dependencies - Programs Manager
+Dependencies - Programs manager
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 - :ref:`niryo_robot_arm_commander <Niryo Robot Arm Commander Package>`
@@ -80,7 +81,7 @@ Dependencies - Programs Manager
 - :msgs_index:`std_msgs`
 
 
-Services & Messages files - Programs Manager
+Services & messages files - Programs manager
 ----------------------------------------------
 
 ExecuteProgram (Service)

@@ -1,4 +1,4 @@
-Niryo Robot User Interface Package
+Niryo robot user interface package
 ========================================
 
 This packages handles high-level user interface commands coming from

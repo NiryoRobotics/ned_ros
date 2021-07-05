@@ -132,6 +132,8 @@ Visualization Manager:
           Value: false
         tool_link:
           Value: false
+        TCP:
+          Value: false
         world:
           Value: false
         wrist_link:

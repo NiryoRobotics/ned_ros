@@ -1,4 +1,4 @@
-Niryo Robot Vision Package
+Niryo robot vision package
 ======================================
 
 This package is the one dealing with all vision related stuff.
@@ -6,20 +6,20 @@ This package is the one dealing with all vision related stuff.
 
 Vision Node
 --------------------------
-The ROS Node is made of several services to deal with video streaming, object detection.
+The ROS Node is made of several services to deal with video streaming, object detection...
 The node is working exactly the same way if you chose to use it on simulation or reality.
 
-This node can be launched locally in a standalone mode via the command ::
+This node can be launched locally in a standalone mode via the command: ::
 
  roslaunch niryo_robot_vision vision_node_local.launch
 
 Configuration (Frame Per Second, Camera Port, Video Resolution) can be
-edited in the config file :
+edited in the config file:
 
- - For "standard" Node : *niryo_robot_vision/config/video_server_setup.yaml*
- - For local Node : *niryo_robot_vision/config/video_server_setup_local.yaml*
+ - For "standard" Node: *niryo_robot_vision/config/video_server_setup.yaml*
+ - For local Node: *niryo_robot_vision/config/video_server_setup_local.yaml*
 
-The namespace used is : |namespace_emphasize|
+The namespace used is: |namespace_emphasize|
 
 Parameters - Vision
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -34,8 +34,8 @@ Parameters - Vision
    *  -  ``frame_rate``
       -  Stream frame rate
    *  -  ``simulation_mode``
-      -  | Set to True if you are using the gazebo simulation.
-         | It will adapt how the node get its video steam
+      -  | Set to true if you are using the gazebo simulation.
+         | It will adapt how the node get its video stream
    *  -  ``debug_compression_quality``
       -  Debug Stream compression quality
    *  -  ``stream_compression_quality``
@@ -89,7 +89,7 @@ Services - Vision
       -  Save a picture in the specified folder
 
 
-All these services are available as soon as the node is started
+All these services are available as soon as the node is started.
 
 
 Dependencies - Vision

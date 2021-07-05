@@ -1,14 +1,14 @@
-Niryo Robot CPU Interface Package
+Niryo robot CPU interface package
 =================================
 
-| This package handles CPU states
+| This package handles CPU states.
 
-CPU Interface Node
+CPU interface node
 --------------------------
-The ROS Node is made to :
- - monitor CPU temperature
+The ROS Node is made to:
+ - monitor CPU temperature.
 
-Parameters - CPU Interface
+Parameters - CPU interface
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. list-table:: CPU Interface's Parameters 
@@ -21,10 +21,10 @@ Parameters - CPU Interface
       -  Description
    *  -  ``read_rpi_diagnostics_frequency``
       -  | Publish rate for CPU temperature
-         | Default : '0.25'
+         | Default: '0.25'
    *  -  ``temperature_warn_threshold``
       -  | CPU temperature [celsius] threshold before a warn message
-         | Default : '75'
+         | Default: '75'
    *  -  ``temperature_shutdown_threshold``
       -  | CPU temperature [celsius] threshold before shutdown the robot
-         | Default : '85'
+         | Default: '85'
