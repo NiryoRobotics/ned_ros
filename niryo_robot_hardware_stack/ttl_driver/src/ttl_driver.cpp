@@ -220,6 +220,10 @@ void TtlDriver::removeMotor(uint8_t id)
         {
             auto& ids = _ids_map.at(type);
             ids.erase(std::remove(ids.begin(), ids.end(), id), ids.end());
+            if (ids.empty())
+            {
+                _ids_map.erase(type);
+            }
         }
 
         _state_map.erase(id);

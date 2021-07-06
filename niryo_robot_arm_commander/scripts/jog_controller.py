@@ -66,7 +66,7 @@ class JogController:
             queue_size=3)
 
         # - Joint controller state, used to check collisions
-        rospy.Subscriber(rospy.get_param("~joint_controller_name") + '/state', 
+        rospy.Subscriber(rospy.get_param("~joint_controller_name") + '/state',
                          JointTrajectoryControllerState,
                          self.__callback_joint_controller_state)
 
