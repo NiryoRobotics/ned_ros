@@ -1842,3 +1842,17 @@ class NiryoRosWrapper:
         """
         while len(self.__logs) > 0:
             yield self.__logs.pop(0)
+
+    def purge_logs(self):
+        """
+        Purge the ros logs and discard the following
+        Restart the robot to have logs again
+
+        :return: status, message
+        :rtype: (int, str)
+        """
+        req = SetInt()
+        # The request is ignored by the service
+        req.value = 0
+        result = self.__call_service('/niryo_robot_rpi/purge_ros_logs', SetInt, req)
+        return self.__classic_return_w_check(result)
