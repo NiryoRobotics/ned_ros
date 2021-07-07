@@ -10,7 +10,7 @@
       <rosparam file="$(find ttl_driver)/config/$(arg hardware_version)/dxl_bus_config.yaml" command="load"/>
       <rosparam file="$(find ttl_driver)/config/default.yaml" command="load"/>
 
-      <rosparam file="$(find can_driver)/config/bus_params.yaml" command="load"/>
+      <rosparam file="$(find can_driver)/config/bus_config.yaml" command="load"/>
       <rosparam file="$(find can_driver)/config/default.yaml" command="load"/>
       <rosparam file="$(find can_driver)/config/steppers_params.yaml" command="load"/>
 

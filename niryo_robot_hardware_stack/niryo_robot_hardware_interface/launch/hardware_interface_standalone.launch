@@ -12,7 +12,6 @@
     <arg name="hardware_version" default="ned"/>
     <arg name="debug" default="false"/>
 
-
     <!-- Launch controllers -->
     <rosparam file="$(find niryo_ned_moveit_config_standalone)/config/$(arg hardware_version)/ros_controllers.yaml" command="load"/>
     <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="log"
@@ -43,17 +42,17 @@
         <rosparam file="$(find niryo_robot_hardware_interface)/config/default.yaml" command="load"/>
         <rosparam file="$(find cpu_interface)/config/default.yaml" command="load"/>
 
-        <rosparam file="$(find dynamixel_driver)/config/$(arg hardware_version)/dxl_bus_config.yaml" command="load" ns="dynamixel_driver"/>
-        <rosparam file="$(find dynamixel_driver)/config/default.yaml" command="load"  ns="dynamixel_driver"/>
+        <rosparam file="$(find ttl_driver)/config/$(arg hardware_version)/dxl_bus_config.yaml" command="load" ns="dynamixel_driver"/>
+        <rosparam file="$(find ttl_driver)/config/default.yaml" command="load"  ns="dynamixel_driver"/>
 
-        <rosparam file="$(find stepper_driver)/config/bus_params.yaml" command="load" ns="stepper_driver"/>
-        <rosparam file="$(find stepper_driver)/config/default.yaml" command="load" ns="stepper_driver"/>
+        <rosparam file="$(find can_driver)/config/bus_config.yaml" command="load" ns="stepper_driver"/>
+        <rosparam file="$(find can_driver)/config/default.yaml" command="load" ns="stepper_driver"/>
+        <rosparam file="$(find can_driver)/config/steppers_params.yaml" command="load" />
 
         <rosparam file="$(find joints_interface)/config/default.yaml" command="load" />
-        <rosparam file="$(find joints_interface)/config/motors_param.yaml" command="load"/>
-        <rosparam file="$(find joints_interface)/config/joints_params.yaml" command="load" />
+        <rosparam file="$(find joints_interface)/config/$(arg hardware_version)/motors_param.yaml" command="load"/>
+        <rosparam file="$(find joints_interface)/config/$(arg hardware_version)/joints_params.yaml" command="load" />
         <rosparam file="$(find joints_interface)/config/$(arg hardware_version)/dynamixels_params.yaml" command="load" />
-        <rosparam file="$(find joints_interface)/config/$(arg hardware_version)/steppers_params.yaml" command="load" />
 
         <rosparam file="$(find tools_interface)/config/default.yaml" command="load" ns="tools_interface"/>
         <rosparam file="$(find conveyor_interface)/config/default.yaml" command="load"/>
