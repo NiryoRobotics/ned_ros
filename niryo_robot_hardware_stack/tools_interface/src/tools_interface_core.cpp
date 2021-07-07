@@ -57,6 +57,7 @@ ToolsInterfaceCore::ToolsInterfaceCore(ros::NodeHandle &nh,
                                        shared_ptr<ttl_driver::TtlDriverCore> ttl_driver):
     _ttl_driver_core(ttl_driver)
 {
+    ROS_DEBUG("ToolsInterfaceCore::ctor");
 
     init(nh);
 
@@ -151,6 +152,7 @@ void ToolsInterfaceCore::initParameters(ros::NodeHandle& nh)
 
 /**
  * @brief ToolsInterfaceCore::startServices
+ * @param nh
  */
 void ToolsInterfaceCore::startServices(ros::NodeHandle& nh)
 {
@@ -184,6 +186,7 @@ void ToolsInterfaceCore::startSubscribers(ros::NodeHandle& /*nh*/)
 
 /**
  * @brief ToolsInterfaceCore::startPublishers
+ * @param nh
  */
 void ToolsInterfaceCore::startPublishers(ros::NodeHandle& nh)
 {

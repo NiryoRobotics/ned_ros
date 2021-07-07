@@ -38,7 +38,7 @@ FakeInterfaceCore::FakeInterfaceCore(ros::NodeHandle& nh)
     init(nh);
 
     ROS_INFO("Fake Hardware Interface - Started ");
-    _robot = std::make_unique<FakeJointHardwareInterface>();
+    _robot = std::make_unique<FakeJointHardwareInterface>(nh);
 
     _learning_mode = true;
 
@@ -95,7 +95,7 @@ void FakeInterfaceCore::startServices(ros::NodeHandle& nh)
     _request_new_calibration_server = _nh.advertiseService("/niryo_robot/joints_interface/request_new_calibration",
                                                            &FakeInterfaceCore::_callbackRequestNewCalibration, this);
 
-    _activate_learning_mode_server = _nh.advertiseService("niryo_robot/learning_mode/activate",
+    _activate_learning_mode_server = _nh.advertiseService("/niryo_robot/learning_mode/activate",
                                                           &FakeInterfaceCore::_callbackActivateLearningMode, this);
 
     _ping_and_set_dxl_tool_server = _nh.advertiseService("/niryo_robot/tools/ping_and_set_dxl_tool",

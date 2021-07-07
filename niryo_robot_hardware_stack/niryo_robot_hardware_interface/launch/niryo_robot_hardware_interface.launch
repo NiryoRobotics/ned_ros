@@ -10,9 +10,11 @@
     <arg name="ttl_enabled" default="true"/>
     <arg name="hardware_version" default="ned"/>
     <arg name="debug" default="false"/>
+    <arg name="image_version" default="" />
 
     <group ns="niryo_robot">
         <group ns="info">
+            <param name="image_version"     type="string" value="$(arg image_version)"/>
             <param name="ros_version"       type="string" command="rosversion niryo_robot_bringup" />
             <param name="niryo_robot_type"  type="string" value="NIRYO_NED" />
         </group>

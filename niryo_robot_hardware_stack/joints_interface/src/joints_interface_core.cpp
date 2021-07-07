@@ -29,6 +29,7 @@ namespace joints_interface
 
 /**
  * @brief JointsInterfaceCore::JointsInterfaceCore
+ * @param nh
  * @param ttl_driver
  * @param can_driver
  */
@@ -63,7 +64,12 @@ JointsInterfaceCore::~JointsInterfaceCore()
         _control_loop_thread.join();
 }
 
-bool JointsInterfaceCore::init(ros::NodeHandle &nh)
+/**
+ * @brief JointsInterfaceCore::init
+ * @param nh
+ * @return
+ */
+bool JointsInterfaceCore::init(ros::NodeHandle& nh)
 {
     initParameters(nh);
 
@@ -77,9 +83,10 @@ bool JointsInterfaceCore::init(ros::NodeHandle &nh)
 }
 
 /**
- * @brief JointsInterfaceCore::initParams
+ * @brief JointsInterfaceCore::initParameters
+ * @param nh
  */
-void JointsInterfaceCore::initParameters(ros::NodeHandle &nh)
+void JointsInterfaceCore::initParameters(ros::NodeHandle& nh)
 {
     _nh.getParam("/niryo_robot_hardware_interface/ros_control_loop_frequency",
                  _control_loop_frequency);
@@ -95,8 +102,9 @@ void JointsInterfaceCore::initParameters(ros::NodeHandle &nh)
 
 /**
  * @brief JointsInterfaceCore::startServices
+ * @param nh
  */
-void JointsInterfaceCore::startServices(ros::NodeHandle &nh)
+void JointsInterfaceCore::startServices(ros::NodeHandle& nh)
 {
     _calibrate_motors_server = _nh.advertiseService("/niryo_robot/joints_interface/calibrate_motors",
                                                     &JointsInterfaceCore::_callbackCalibrateMotors, this);
@@ -113,8 +121,9 @@ void JointsInterfaceCore::startServices(ros::NodeHandle &nh)
 
 /**
  * @brief JointsInterfaceCore::startSubscribers
+ * @param nh
  */
-void JointsInterfaceCore::startSubscribers(ros::NodeHandle &nh)
+void JointsInterfaceCore::startSubscribers(ros::NodeHandle& nh)
 {
     _trajectory_result_subscriber = _nh.subscribe("/niryo_robot_follow_joint_trajectory_controller/follow_joint_trajectory/result",
                                                   10, &JointsInterfaceCore::_callbackTrajectoryResult, this);
@@ -126,7 +135,7 @@ void JointsInterfaceCore::startSubscribers(ros::NodeHandle &nh)
  * @brief JointsInterfaceCore::startPublishers
  * @param nh
  */
-void JointsInterfaceCore::startPublishers(ros::NodeHandle &nh)
+void JointsInterfaceCore::startPublishers(ros::NodeHandle& nh)
 {
 
 }

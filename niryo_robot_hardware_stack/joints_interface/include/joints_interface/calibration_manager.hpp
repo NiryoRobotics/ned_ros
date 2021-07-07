@@ -40,15 +40,20 @@ class CalibrationManager
 {
 
 public:
-    CalibrationManager(std::vector<std::shared_ptr<common::model::JointState> > joint_list,
+    CalibrationManager(ros::NodeHandle& nh,
+                       std::vector<std::shared_ptr<common::model::JointState> > joint_list,
                        std::shared_ptr<can_driver::CanDriverCore> can_driver,
                        std::shared_ptr<ttl_driver::TtlDriverCore> ttl_driver);
+
+    virtual ~CalibrationManager();
 
     int startCalibration(int mode, std::string &result_message);
 
     bool CalibrationInprogress() const;
 
 private:
+    void initParameters(ros::NodeHandle& nh);
+
     void setStepperCalibrationCommand(const std::shared_ptr<common::model::StepperMotorState>& pState,
                                       int32_t delay, int32_t calibration_direction, int32_t timeout);
 
@@ -60,7 +65,7 @@ private:
     common::model::EStepperCalibrationStatus _manual_calibration();
 
     void _motorTorque(const std::shared_ptr<common::model::JointState>& motor, bool status);
-    void _moveMotor(const std::shared_ptr<common::model::JointState>& motor, int steps, float delay);
+    void _moveMotor(const std::shared_ptr<common::model::JointState>& motor, int steps, double delay);
     int _relativeMoveMotor(const std::shared_ptr<common::model::JointState>& motor, int steps, int delay, bool wait);
 
     bool set_motors_calibration_offsets(const std::vector<int>& motor_id_list, const std::vector<int> &steps_list);
@@ -73,8 +78,9 @@ private:
 
     std::vector<std::shared_ptr<common::model::JointState> > _joint_list;
 
-    bool _calibration_in_progress;
-    int _calibration_timeout;
+    bool _calibration_in_progress{false};
+    int _calibration_timeout{0};
+    std::string _calibration_file_name;
 
     std::vector<int32_t> _motor_calibration_list;
 

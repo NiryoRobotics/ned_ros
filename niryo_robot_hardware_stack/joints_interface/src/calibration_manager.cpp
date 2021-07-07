@@ -50,24 +50,45 @@ namespace joints_interface
 
 /**
  * @brief CalibrationManager::CalibrationManager
+ * @param nh
  * @param joint_list
  * @param can_driver
  * @param ttl_driver
  */
-CalibrationManager::CalibrationManager(std::vector<std::shared_ptr<JointState> > joint_list,
+CalibrationManager::CalibrationManager(ros::NodeHandle& nh,
+                                       std::vector<std::shared_ptr<JointState> > joint_list,
                                        std::shared_ptr<can_driver::CanDriverCore> can_driver,
                                        std::shared_ptr<ttl_driver::TtlDriverCore> ttl_driver) :
     _can_driver_core(can_driver),
     _ttl_driver_core(ttl_driver),
     _joint_list(joint_list)
 {
-    _nh.getParam("/niryo_robot_hardware_interface/calibration_timeout", _calibration_timeout);
-    ROS_DEBUG("Calibration Interface - Calibration timeout %d", _calibration_timeout);
+    ROS_DEBUG("CalibrationManager::ctor");
 
-    _motor_calibration_list.clear();
-    _calibration_in_progress = false;
+    initParameters(nh);
 
     ROS_INFO("Calibration Interface - Calibration interface started");
+}
+
+/**
+ * @brief CalibrationManager::~CalibrationManager
+ */
+CalibrationManager::~CalibrationManager()
+{
+
+}
+
+/**
+ * @brief CalibrationManager::initParameters
+ * @param nh
+ */
+void CalibrationManager::initParameters(ros::NodeHandle &nh)
+{
+    _nh.getParam("/niryo_robot_hardware_interface/calibration_timeout", _calibration_timeout);
+    ros::param::get("/niryo_robot_hardware_interface/calibration_file", _calibration_file_name);
+
+    ROS_DEBUG("Calibration Interface - Calibration timeout %d", _calibration_timeout);
+    ROS_DEBUG("Calibration Interface - Calibration file name %s", _calibration_file_name.c_str());
 }
 
 /**
@@ -144,7 +165,7 @@ void CalibrationManager::_motorTorque(const std::shared_ptr<JointState>& motor, 
  * @param steps
  * @param delay
  */
-void CalibrationManager::_moveMotor(const std::shared_ptr<JointState>& motor, int steps, float delay)
+void CalibrationManager::_moveMotor(const std::shared_ptr<JointState>& motor, int steps, double delay)
 {
     _motorTorque(motor, true);
 
@@ -516,13 +537,11 @@ EStepperCalibrationStatus CalibrationManager::_manual_calibration()
  */
 bool CalibrationManager::get_motors_calibration_offsets(std::vector<int> &motor_id_list, std::vector<int> &steps_list)
 {
-    std::string file_name;
-    ros::param::get("/niryo_robot_hardware_interface/calibration_file", file_name);
 
     std::vector<std::string> lines;
     std::string current_line;
 
-    std::ifstream offset_file(file_name.c_str());
+    std::ifstream offset_file(_calibration_file_name.c_str());
     if (offset_file.is_open())
     {
         while (getline(offset_file, current_line))
@@ -541,7 +560,7 @@ bool CalibrationManager::get_motors_calibration_offsets(std::vector<int> &motor_
     }
     else
     {
-        ROS_WARN("Motor Offset - Unable to open file : %s", file_name.c_str());
+        ROS_WARN("Motor Offset - Unable to open file : %s", _calibration_file_name.c_str());
         return false;
     }
     return true;
@@ -561,13 +580,11 @@ bool CalibrationManager::set_motors_calibration_offsets(const std::vector<int> &
         ROS_ERROR("Corrupted command : motors id list and params list size mismatch");
         return false;
     }
-    std::string file_name;
-    ros::param::get("/niryo_robot_hardware_interface/calibration_file", file_name);
 
-    size_t found = file_name.find_last_of("/");
-    std::string folder_name = file_name.substr(0, found);
+    size_t found = _calibration_file_name.find_last_of("/");
+    std::string folder_name = _calibration_file_name.substr(0, found);
 
-    boost::filesystem::path filepath(file_name);
+    boost::filesystem::path filepath(_calibration_file_name);
     boost::filesystem::path directory(folder_name);
 
     // Create dir if not exist
@@ -594,7 +611,7 @@ bool CalibrationManager::set_motors_calibration_offsets(const std::vector<int> &
     }
 
     // Write to file
-    std::ofstream offset_file(file_name.c_str());
+    std::ofstream offset_file(_calibration_file_name.c_str());
     if (offset_file.is_open())
     {
         ROS_DEBUG("CalibrationManager::set_motors_calibration_offsets - Writing calibration offsets to file : \n%s",
@@ -606,7 +623,7 @@ bool CalibrationManager::set_motors_calibration_offsets(const std::vector<int> &
     else
     {
         ROS_WARN("CalibrationManager::set_motors_calibration_offsets - Unable to open file : %s",
-                 file_name.c_str());
+                 _calibration_file_name.c_str());
         return false;
     }
 

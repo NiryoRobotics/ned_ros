@@ -35,35 +35,34 @@ namespace fake_interface
  */
 class FakeJointHardwareInterface : public hardware_interface::RobotHW
 {
-public:
-    FakeJointHardwareInterface();
+    public:
+        FakeJointHardwareInterface(ros::NodeHandle& nh);
 
-    std::string jointIdToJointName(uint8_t id, common::model::EMotorType motor_type) const;
+        std::string jointIdToJointName(uint8_t id, common::model::EMotorType motor_type) const;
 
-    // RobotHW interface
-public:
-    virtual void read(const ros::Time &/*time*/, const ros::Duration &/*period*/) override;
-    virtual void write(const ros::Time &/*time*/, const ros::Duration &/*period*/) override;
+        // RobotHW interface
+    public:
+        virtual void read(const ros::Time &/*time*/, const ros::Duration &/*period*/) override;
+        virtual void write(const ros::Time &/*time*/, const ros::Duration &/*period*/) override;
 
-private:
-    ros::NodeHandle _nh;
+    private:
+        ros::NodeHandle _nh;
+        std::vector<uint8_t> _list_stepper_id;
+        std::map<uint8_t, std::string> _map_stepper_name;
 
-    std::vector<uint8_t> _list_stepper_id;
-    std::map<uint8_t, std::string> _map_stepper_name;
+        std::vector<uint8_t> _list_dxl_id;
+        std::map<uint8_t, std::string> _map_dxl_name;
 
-    std::vector<uint8_t> _list_dxl_id;
-    std::map<uint8_t, std::string> _map_dxl_name;
+        hardware_interface::JointStateInterface _joint_state_interface;
+        hardware_interface::PositionJointInterface _joint_position_interface;
 
-    hardware_interface::JointStateInterface _joint_state_interface;
-    hardware_interface::PositionJointInterface _joint_position_interface;
+        std::string _joints_name[6] = {""};
+        int _joints_id[6] = {0};
 
-    std::string _joints_name[6] = {""};
-    int _joints_id[6] = {0};
-
-    double _cmd[6] = {0, 0.6, -1.3, 0, 0, 0};
-    double _pos[6] = {0, 0.6, -1.3, 0, 0, 0};
-    double _vel[6] = {0};
-    double _eff[6] = {0};
+        double _cmd[6] = {0, 0.6, -1.3, 0, 0, 0};
+        double _pos[6] = {0, 0.6, -1.3, 0, 0, 0};
+        double _vel[6] = {0};
+        double _eff[6] = {0};
 
 };
 } // FakeInterface

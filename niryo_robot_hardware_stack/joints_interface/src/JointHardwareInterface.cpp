@@ -50,6 +50,7 @@ namespace joints_interface
 
 /**
  * @brief JointHardwareInterface::JointHardwareInterface
+ * @param nh
  * @param ttl_driver
  * @param can_driver
  */
@@ -57,8 +58,7 @@ JointHardwareInterface::JointHardwareInterface(ros::NodeHandle& nh,
                                                shared_ptr<ttl_driver::TtlDriverCore> ttl_driver,
                                                shared_ptr<can_driver::CanDriverCore> can_driver) :
     _ttl_driver_core(ttl_driver),
-    _can_driver_core(can_driver),
-    _learning_mode(true)
+    _can_driver_core(can_driver)
 {
     init(nh, nh);
 
@@ -66,7 +66,7 @@ JointHardwareInterface::JointHardwareInterface(ros::NodeHandle& nh,
 
     activateLearningMode();
 
-    _calibration_manager = std::make_unique<CalibrationManager>(_joint_list, _can_driver_core, _ttl_driver_core);
+    _calibration_manager = std::make_unique<CalibrationManager>(nh, _joint_list, _can_driver_core, _ttl_driver_core);
 }
 
 /**

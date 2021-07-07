@@ -30,7 +30,7 @@ namespace fake_interface
 /**
  * @brief FakeJointHardwareInterface::FakeJointHardwareInterface
  */
-FakeJointHardwareInterface::FakeJointHardwareInterface()
+FakeJointHardwareInterface::FakeJointHardwareInterface(ros::NodeHandle& nh)
 {
     ROS_DEBUG("Starting Fake Joint Hardware Interface...");
 

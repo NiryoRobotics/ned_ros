@@ -86,7 +86,7 @@ private:
 
     std::vector<std::shared_ptr<common::model::JointState> > _joint_list;
 
-    bool _learning_mode;
+    bool _learning_mode{true};
 };
 
 /**
