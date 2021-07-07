@@ -33,13 +33,14 @@ int main(int argc, char **argv)
     ros::AsyncSpinner spinner(4);
     spinner.start();
 
-    ros::NodeHandle nh;
+    ros::NodeHandle nh_can("can_driver");
+    ros::NodeHandle nh("~");
 
-        auto can_driver = std::make_shared<can_driver::CanDriverCore>();
-        ros::Duration(0.25).sleep();
+    auto can_driver = std::make_shared<can_driver::CanDriverCore>(nh_can);
+    ros::Duration(0.25).sleep();
 
-        auto conveyor_interface = std::make_shared<conveyor_interface::ConveyorInterfaceCore>(can_driver);
-        ros::Duration(0.25).sleep();
+    auto conveyor_interface = std::make_shared<conveyor_interface::ConveyorInterfaceCore>(nh, can_driver);
+    ros::Duration(0.25).sleep();
 
     ros::spin();
 

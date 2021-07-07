@@ -17,8 +17,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
-#ifndef IDRIVER_H
-#define IDRIVER_H
+#ifndef IINTERFACE_CORE_H
+#define IINTERFACE_CORE_H
 
 #include <stdint.h>
 #include <string>
@@ -33,32 +33,26 @@ namespace model
 {
 
 /**
- * @brief The IDriver class
+ * @brief The IInterfaceCore class
  */
-class IDriver
+class IInterfaceCore
 {
     public:
-        virtual ~IDriver() = 0;
+        virtual ~IInterfaceCore() = 0;
         virtual bool init(ros::NodeHandle& nh) = 0;
 
-        virtual void removeMotor(uint8_t id) = 0;
-        virtual bool isConnectionOk() const = 0;
-        virtual int scanAndCheck() = 0;
-        virtual bool ping(uint8_t id) = 0;
-
-        virtual size_t getNbMotors() const = 0;
-        virtual void getBusState(bool& connection_state, std::vector<uint8_t>& motor_id, std::string& debug_msg) const = 0;
-        virtual std::string getErrorMessage() const = 0;
-
     private:
-        virtual bool hasMotors() = 0;
+        virtual void initParameters(ros::NodeHandle& nh) = 0;
+        virtual void startServices(ros::NodeHandle& nh) = 0;
+        virtual void startSubscribers(ros::NodeHandle& nh) = 0;
+        virtual void startPublishers(ros::NodeHandle& nh) = 0;
 };
 
 /**
- * @brief IDriver::~IDriver
+ * @brief IInterfaceCore::~IInterfaceCore
  */
 inline
-IDriver::~IDriver()
+IInterfaceCore::~IInterfaceCore()
 {
 
 }
@@ -66,4 +60,4 @@ IDriver::~IDriver()
 } // namespace model
 } // namespace common
 
-#endif
+#endif // IINTERFACE_CORE
