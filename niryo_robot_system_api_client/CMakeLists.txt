@@ -16,6 +16,28 @@ include_directories(
 )
 
 #############
+##   Doc   ##
+#############
+
+if(BUILD_DOCS)
+  find_program(rosdoc_lite_FOUND rosdoc_lite)
+  if(rosdoc_lite_FOUND)
+      add_custom_target (${PROJECT_NAME}_doc ALL
+          rosdoc_lite -o ${CMAKE_CURRENT_BINARY_DIR}/doc ${CMAKE_CURRENT_LIST_DIR}
+      )
+  else()
+    message(WARNING "rosdoc_lite not found. Skipping documentation building")
+  endif()
+
+endif(BUILD_DOCS)
+
+#############
+## Testing ##
+#############
+
+# no testings : external lib
+
+#############
 ## Install ##
 #############
 
@@ -39,7 +61,7 @@ endif()
 ##########################
 ## Static code analysis ##
 ##########################
-find_package(roslint QUIET)
+find_package(roslint)
 
 if(roslint_FOUND)
     roslint_python()

@@ -48,21 +48,42 @@ include_directories(
 )
 
 #############
+##   Doc   ##
+#############
+
+if(BUILD_DOCS)
+  find_program(rosdoc_lite_FOUND rosdoc_lite)
+  if(rosdoc_lite_FOUND)
+      add_custom_target (${PROJECT_NAME}_doc ALL
+          rosdoc_lite -o ${CMAKE_CURRENT_BINARY_DIR}/doc ${CMAKE_CURRENT_LIST_DIR}
+      )
+  else()
+    message(WARNING "rosdoc_lite not found. Skipping documentation building")
+  endif()
+
+endif(BUILD_DOCS)
+
+#############
 ## Testing ##
 #############
-find_package(rostest REQUIRED)
 
-execute_process( COMMAND
-            uname -m COMMAND tr -d '\n'
-        OUTPUT_VARIABLE
-            ARCHITECTURE
-    )
-    
-if (${ARCHITECTURE} MATCHES "^(arm.*|aarch64.*|arm64.*)$")
-  add_rostest(test/rpi_poses_handlers.test)
-else()
-  add_rostest(test/simulation_poses_handlers.test)
-endif()
+if(CATKIN_ENABLE_TESTING)
+
+  find_package(rostest REQUIRED)
+
+  execute_process( COMMAND
+              uname -m COMMAND tr -d '\n'
+          OUTPUT_VARIABLE
+              ARCHITECTURE
+      )
+      
+  if (${ARCHITECTURE} MATCHES "^(arm.*|aarch64.*|arm64.*)$")
+    add_rostest(test/rpi_poses_handlers.test)
+  else()
+    add_rostest(test/simulation_poses_handlers.test)
+  endif()
+
+endif(CATKIN_ENABLE_TESTING)
 
 #############
 ## Install ##
@@ -94,7 +115,7 @@ endif()
 ##########################
 ## Static code analysis ##
 ##########################
-find_package(roslint QUIET)
+find_package(roslint)
 
 if(roslint_FOUND)
     roslint_python()

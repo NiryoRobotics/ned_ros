@@ -1,8 +1,9 @@
 <?xml version="1.0" ?>
 <launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
-    <arg name="hardware_version" value="ned"/>
-    <arg name="simu_gripper"/>
+    <arg name="log_level" default="INFO" />
+    <arg name="hardware_version" default="ned"/>
+    <arg name="simu_gripper" default="true"/>
 
     <!-- Command validation params -->
     <group ns="niryo_robot/robot_command_validation">
@@ -13,26 +14,27 @@
     <env name="ROSCONSOLE_CONFIG_FILE" value="$(find niryo_robot_arm_commander)/config/rosconsole.config"/>
 
     <!-- Moveit move_group -->
-    <group if="$(eval hardware_version == 'ned')">
+    <group if="$(eval hardware_version == 'ned' or hardware_version == 'ned2')">
         <include file="$(find niryo_ned_moveit_config_w_gripper1)/launch/move_group.launch" if="$(arg simu_gripper)">
             <arg name="load_robot_description" value="false"/>
         </include>
         <include file="$(find niryo_ned_moveit_config_standalone)/launch/move_group.launch" unless="$(arg simu_gripper)"/>
     </group>
+
     <!-- Moveit move_group params -->
     <group ns="/move_group">
         <!-- Disable Moveit! controller timeout -->
         <param name="trajectory_execution/execution_duration_monitoring" value="false"/>
-
         <param name="trajectory_execution/allowed_start_tolerance" value="0.0"/>
-
         <!-- Allows joints to be outside of min and max values when starting -->
         <param name="start_state_max_bounds_error" value="0.1"/>
     </group>
 
-    <!-- Launch Robot commander node -->
+    <!-- Launch Arm commander node -->
     <node name="niryo_robot_arm_commander" pkg="niryo_robot_arm_commander" type="robot_commander_node.py" output="screen"
           respawn="false">
+        <param name="log_level" type="string" value="$(arg log_level)" />
+
         <rosparam command="load" file="$(find niryo_robot_arm_commander)/config/commander_params.yaml"/>
         <rosparam command="load" file="$(find niryo_robot_arm_commander)/config/jog_params.yaml"/>
         <param name="simu_gripper" type="bool" value="$(arg simu_gripper)"/>

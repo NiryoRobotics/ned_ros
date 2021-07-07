@@ -1,13 +1,13 @@
 Niryo Robot CAN Driver Package
 ===================================
 
-| This package handles stepper motors communication 
+| This package handles stepper motors communication.
 
 CAN Driver Node
 --------------------------
-The ROS Node is made to :
- - Send commands to stepper motor
- - Receive stepper motors data
+The ROS Node is made to:
+ - Send commands to stepper motors.
+ - Receive stepper motors data.
 
 Parameters - CAN Driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -22,16 +22,16 @@ Parameters - CAN Driver
       -  Description
    *  -  ``can_hardware_control_loop_frequency``
       -  | control loop frequency.
-         | Default : '1500.0'
+         | Default: '1500.0'
    *  -  ``can_hw_write_frequency``
       -  | Write frequency.
-         | Default : '50.0'
+         | Default: '50.0'
    *  -  ``can_hw_check_connection_frequency``
-      -  | Check can connection frequency.
-         | Default : '2.0'
+      -  | Check steppers connection frequency.
+         | Default: '2.0'
    *  -  ``stepper_motor_id_list``
       -  | list of steppers ID
-         | Default : '[1,2,3]'
+         | Default: '[1,2,3]'
 
 
 Dependencies - CAN Driver

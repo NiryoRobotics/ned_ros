@@ -1,16 +1,15 @@
-Niryo Robot Tools Interface Package
+Niryo robot tools interface package
 ====================================
 
-| This package handles Niryo's conveyor
-| You can control two conveyors
+| This package handles Niryo's tools.
 
-Tools Interface Node
+Tools interface node
 --------------------------
-The ROS Node is made to :
- - Set and control tools
- - Publish tool connection state
+The ROS Node is made to:
+ - Set and control tools.
+ - Publish tool connection state.
 
-Parameters - Tools Interface
+Parameters - tools interface
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. list-table:: Tools Interface's Parameters 
@@ -23,15 +22,15 @@ Parameters - Tools Interface
       -  Description
    *  -  ``check_tool_connection_frequency``
       -  | Publish and control rate for tools connection state.
-         | Default : '2.0'
+         | Default: '2.0'
    *  -  ``id_list``
       -  | List of tools id
-         | Default : '[11,12,13,14,31]'
+         | Default: '[11,12,13,14,31]'
    *  -  ``motor_type_list``
       -  | List of motor tools type 
-         | Default : '["xl320","xl320","xl320","xl320","xl320"]'
+         | Default: '["xl320","xl320","xl320","xl320","xl320"]'
 
-Published Topics - Tools Interface
+Published topics - tools interface
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. list-table:: Tools Interface's Published Topics
@@ -47,7 +46,7 @@ Published Topics - Tools Interface
       -  :std_msgs:`Int32`
       -  Current tool ID
 
-Services - Tools Interface
+Services - tools interface
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. list-table:: Tool Interface Package Services
@@ -74,14 +73,17 @@ Services - Tools Interface
    *  -  ``niryo_robot/tools/push_air_vacuum_pump``
       -  :ref:`tools_interface/PushAirVacuumPump<PushAirVacuumPump (Service)>`
       -  Push vacuum pump tool
+   *  -  ``niryo_robot/tools/reboot``
+      -  :std_srvs:`Trigger`
+      -  Reboot the motor of the eqquiped tool
 
-Dependencies - Tools Interface
+Dependencies - tools interface
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- :msgs_index:`std_msgs`
-- :ref:`ttl_driver <Niryo Robot Dynamixel Driver Package>`
+- :msgs_index:`std_srvs`
+- :ref:`ttl_driver <Niryo Robot TTL Driver Package>`
 
-Services & Messages files - Tools Interface
+Services & messages files - tools interface
 ----------------------------------------------
 
 PingDxlTool (Service)

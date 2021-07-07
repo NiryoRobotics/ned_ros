@@ -31,6 +31,8 @@ class ButtonMode:
 
 class NiryoButton:
     def __init__(self):
+        rospy.logdebug("NiryoButton - Entering in Init")
+
         self.pin = rospy.get_param("~button/gpio")
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(self.pin, GPIO.IN, pull_up_down=GPIO.PUD_UP)

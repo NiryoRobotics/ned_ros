@@ -18,4 +18,4 @@ As explain in the page :ref:`Use Ned TCP Server`, a TCP Server is running on Ned
 which allows it to receive commands from any external device.
 
 PyNiryo is a Python package available on Pip which allows to command the Niryo Robots
-with easy Python Binding
+with easy Python Binding.

@@ -12,6 +12,14 @@ find_package(catkin REQUIRED)
 catkin_package()
 
 #############
+##   Doc   ##
+#############
+
+#############
+## Testing ##
+#############
+
+#############
 ## Install ##
 #############
 
@@ -51,7 +59,7 @@ endif()
 ##########################
 ## Static code analysis ##
 ##########################
-find_package(roslint QUIET)
+find_package(roslint)
 
 if(roslint_FOUND)
     roslint_python()

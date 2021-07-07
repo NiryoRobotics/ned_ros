@@ -1,15 +1,15 @@
-Niryo Robot Debug Package
+Niryo robot debug package
 ====================================
 
-This package offer scripts to change ping / scan DXL motors and changes register values of these motors.
+This package offer scripts to change ping/scan DXL motors and changes register values of these motors.
 
-Niryo Robot - Send DXL Custom Value
+Niryo robot - Send DXL custom value
 ------------------------------------
 This script can be launched via:  ::
 
  rosrun niryo_robot_debug send_custom_dxl_value.py
 
-Parameters - Send DXL Custom Value
+Parameters - Send DXL custom value
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
     - **--type [Number]:** Motor type (3 for XL-320, 2 for XL-430)
     - **--id [Number]:** Motor ID
@@ -17,7 +17,7 @@ Parameters - Send DXL Custom Value
     - **--value [Number]:** Value to store at the register address given
     - **--size [Number]:** Size in bytes of the value given
 
-Niryo Robot - Dxl debug tools
+Niryo robot - Dxl debug tools
 ------------------------------------
 This script can be launched via:  ::
 

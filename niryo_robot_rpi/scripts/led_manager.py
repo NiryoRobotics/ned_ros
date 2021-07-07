@@ -49,6 +49,8 @@ LED_WHITE = 7
 
 class LEDManager:
     def __init__(self):
+        rospy.logdebug("LEDManager - Entering in Init")
+
         # Set warning false, and don't cleanup LED GPIO after exit
         # So the LED will be red only after the Rpi is shutdown
         GPIO.setwarnings(False)

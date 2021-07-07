@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-23 16:51+0200\n"
+"POT-Creation-Date: 2021-07-05 15:03+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,41 +21,41 @@ msgstr ""
 "Generated-By: Babel 2.8.0\n"
 
 #: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:2
-msgid "Python ROS Wrapper Documentation"
+msgid "Python ROS Wrapper documentation"
 msgstr ""
 
 #: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:4
 msgid ""
 "This file presents the different Functions, Classes & Enums available "
-"with the API"
+"with the API."
 msgstr ""
 
 #: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:11
-msgid "API Functions"
+msgid "API functions"
 msgstr ""
 
 #: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:13
-msgid "This class allows you to control the robot via internal API"
+msgid "This class allows you to control the robot via internal API."
 msgstr ""
 
 #: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:14
-msgid "By controlling, we mean"
+msgid "By controlling, we mean:"
 msgstr ""
 
 #: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:16
-msgid "Moving the robot"
+msgid "Moving the robot."
 msgstr ""
 
 #: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:17
-msgid "Using Vision"
+msgid "Using Vision."
 msgstr ""
 
 #: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:18
-msgid "Controlling Conveyors"
+msgid "Controlling Conveyors Belt."
 msgstr ""
 
 #: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:19
-msgid "Playing with Hardware"
+msgid "Playing with hardware."
 msgstr ""
 
 #: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:21
@@ -86,6 +86,7 @@ msgstr ""
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.detect_object
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.digital_read
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.digital_write
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.enable_tcp
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_from_poses
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_saved
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.forward_kinematics
@@ -124,15 +125,20 @@ msgstr ""
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.pull_air_vacuum_pump
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.push_air_vacuum_pump
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.release_with_tool
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.reset_tcp
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_pose
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_trajectory
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_workspace_from_points
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_workspace_from_poses
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_arm_max_velocity
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_brightness
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_contrast
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_conveyor
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_jog_use_state
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_learning_mode
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_pin_mode
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_saturation
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_tcp
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.setup_electromagnet
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.shift_linear_pose
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.shift_pose
@@ -152,6 +158,7 @@ msgstr ""
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.delete_trajectory:5
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.delete_workspace:5
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.digital_write:7
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.enable_tcp:8
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_from_poses:7
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_saved:5
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.grasp_with_tool:9
@@ -169,14 +176,19 @@ msgstr ""
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.pull_air_vacuum_pump:3
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.push_air_vacuum_pump:3
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.release_with_tool:9
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.reset_tcp:4
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_pose:17
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_trajectory:7
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_workspace_from_points:7
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_workspace_from_poses:8
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_arm_max_velocity:5
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_brightness:7
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_contrast:6
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_jog_use_state:5
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_learning_mode:5
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_pin_mode:7
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_saturation:7
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_tcp:16
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.setup_electromagnet:5
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.shift_linear_pose:7
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.shift_pose:7
@@ -197,6 +209,7 @@ msgstr ""
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.detect_object
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.digital_read
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.digital_write
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.enable_tcp
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_from_poses
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_saved
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.forward_kinematics
@@ -235,15 +248,20 @@ msgstr ""
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.pull_air_vacuum_pump
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.push_air_vacuum_pump
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.release_with_tool
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.reset_tcp
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_pose
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_trajectory
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_workspace_from_points
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_workspace_from_poses
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_arm_max_velocity
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_brightness
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_contrast
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_conveyor
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_jog_use_state
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_learning_mode
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_pin_mode
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_saturation
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_tcp
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.setup_electromagnet
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.shift_linear_pose
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.shift_pose
@@ -282,6 +300,7 @@ msgstr ""
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.detect_object
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.digital_read
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.digital_write
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.enable_tcp
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_from_poses
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_saved
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.forward_kinematics
@@ -310,9 +329,13 @@ msgstr ""
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_workspace_from_points
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_workspace_from_poses
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_arm_max_velocity
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_brightness
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_contrast
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_jog_use_state
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_learning_mode
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_pin_mode
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_saturation
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_tcp
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.setup_electromagnet
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.shift_linear_pose
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.shift_pose
@@ -446,7 +469,7 @@ msgid "Compute inverse kinematics"
 msgstr ""
 
 #: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:49
-msgid "Saved Poses"
+msgid "Saved poses"
 msgstr ""
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_pose_saved:1
@@ -490,7 +513,7 @@ msgid "list of positions name"
 msgstr ""
 
 #: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:56
-msgid "Pick & Place"
+msgid "Pick & place"
 msgstr ""
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.pick_from_pose:1
@@ -546,9 +569,7 @@ msgstr ""
 msgid "If trajectory file doesn't exist"
 msgstr ""
 
-#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_from_poses:3
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_trajectory_saved:7
-#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_trajectory:5
 #: of
 msgid "list of [x, y, z, qx, qy, qz, qw]"
 msgstr ""
@@ -561,6 +582,12 @@ msgstr ""
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_from_poses:1
 #: of
 msgid "Execute trajectory from a list of pose"
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_from_poses:3
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_trajectory:5
+#: of
+msgid "list of [x, y, z, qx, qy, qz, qw] or list of [x, y, z, roll, pitch, yaw]"
 msgstr ""
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_trajectory:1
@@ -675,7 +702,31 @@ msgstr ""
 msgid "Deactivate electromagnet associated to electromagnet_id on pin_id"
 msgstr ""
 
-#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:80
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.enable_tcp:1 of
+msgid ""
+"Enables or disables the TCP function (Tool Center Point). If activation "
+"is requested, the last recorded TCP value will be applied. The default "
+"value depends on the gripper equipped. If deactivation is requested, the "
+"TCP will be coincident with the tool_link."
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.enable_tcp:6 of
+msgid "True to enable, False otherwise."
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_tcp:1 of
+msgid ""
+"Activates the TCP function (Tool Center Point) and defines the "
+"transformation between the tool_link frame and the TCP frame."
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.reset_tcp:1 of
+msgid ""
+"Reset the TCP (Tool Center Point) transformation. The PCO will be reset "
+"according to the tool equipped."
+msgstr ""
+
+#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:81
 msgid "Hardware"
 msgstr ""
 
@@ -718,8 +769,8 @@ msgstr ""
 msgid "Infos contains in a DigitalIOState object (see niryo_robot_msgs)"
 msgstr ""
 
-#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:88
-msgid "Conveyor"
+#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:89
+msgid "Conveyor Belt"
 msgstr ""
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_conveyor:1 of
@@ -767,7 +818,7 @@ msgstr ""
 msgid "Target direction"
 msgstr ""
 
-#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:95
+#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:96
 msgid "Vision"
 msgstr ""
 
@@ -779,6 +830,43 @@ msgstr ""
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_compressed_image:3
 #: of
 msgid "string containing a JPEG compressed image"
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_brightness:1
+#: of
+msgid "Modify image brightness"
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_brightness:3
+#: of
+msgid ""
+"How much to adjust the brightness. 0.5 will give a darkened image, 1 will"
+" give the original image while 2 will enhance the brightness by a factor "
+"of 2."
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_contrast:1 of
+msgid "Modify image contrast"
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_contrast:3 of
+msgid ""
+"While a factor of 1 gives original image. Making the factor towards 0 "
+"makes the image greyer, while factor>1 increases the contrast of the "
+"image."
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_saturation:1
+#: of
+msgid "Modify image saturation"
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_saturation:3
+#: of
+msgid ""
+"How much to adjust the saturation. 0 will give a black and white image, 1"
+" will give the original image while 2 will enhance the saturation by a "
+"factor of 2."
 msgstr ""
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_target_pose_from_rel:1
@@ -942,7 +1030,7 @@ msgstr ""
 msgid "list of workspaces name"
 msgstr ""
 
-#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:106
+#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:108
 msgid "Enums"
 msgstr ""
 
@@ -961,4 +1049,500 @@ msgstr ""
 #: niryo_robot_python_ros_wrapper.ros_wrapper_enums.PinID:1 of
 msgid "Pins ID"
 msgstr ""
+
+#~ msgid "Python ROS Wrapper Documentation"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "This file presents the different "
+#~ "Functions, Classes & Enums available "
+#~ "with the API"
+#~ msgstr ""
+
+#~ msgid "API Functions"
+#~ msgstr ""
+
+#~ msgid "This class allows you to control the robot via internal API"
+#~ msgstr ""
+
+#~ msgid "By controlling, we mean"
+#~ msgstr ""
+
+#~ msgid "Moving the robot"
+#~ msgstr ""
+
+#~ msgid "Using Vision"
+#~ msgstr ""
+
+#~ msgid "Controlling Conveyors"
+#~ msgstr ""
+
+#~ msgid "Playing with Hardware"
+#~ msgstr ""
+
+#~ msgid "Saved Poses"
+#~ msgstr ""
+
+#~ msgid "Pick & Place"
+#~ msgstr ""
+
+#~ msgid "Conveyor"
+#~ msgstr ""
+
+#~ msgid "Python ROS wrapper documentation"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Call service to calibrate motors then"
+#~ " wait for its end. If failed, "
+#~ "raise NiryoRosWrapperException"
+#~ msgstr ""
+
+#~ msgid "Returns"
+#~ msgstr ""
+
+#~ msgid "status, message"
+#~ msgstr ""
+
+#~ msgid "Return type"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Use /niryo_robot/learning_mode/state topic "
+#~ "subscriber to get learning mode status"
+#~ msgstr ""
+
+#~ msgid "``True`` if activate else ``False``"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Call service to set_learning_mode according"
+#~ " to set_bool. If failed, raise "
+#~ "NiryoRosWrapperException"
+#~ msgstr ""
+
+#~ msgid "Parameters"
+#~ msgstr ""
+
+#~ msgid "``True`` to activate, ``False`` to deactivate"
+#~ msgstr ""
+
+#~ msgid "Set relative max velocity (in %)"
+#~ msgstr ""
+
+#~ msgid "Percentage of max velocity"
+#~ msgstr ""
+
+#~ msgid "Use /joint_states topic to get joints status"
+#~ msgstr ""
+
+#~ msgid "list of joints value"
+#~ msgstr ""
+
+#~ msgid "Use /niryo_robot/robot_state topic to get pose status"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "RobotState object (position.x/y/z && "
+#~ "rpy.roll/pitch/yaw && orientation.x/y/z/w)"
+#~ msgstr ""
+
+#~ msgid "list corresponding to [x, y, z, roll, pitch, yaw]"
+#~ msgstr ""
+
+#~ msgid "Execute Move joints action"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Move to Sleep pose which allows "
+#~ "the user to activate the learning "
+#~ "mode without the risk of the robot"
+#~ " hitting something because of gravity"
+#~ msgstr ""
+
+#~ msgid "Move robot end effector pose to a (x, y, z, roll, pitch, yaw) pose."
+#~ msgstr ""
+
+#~ msgid "Execute Shift pose action"
+#~ msgstr ""
+
+#~ msgid "Value of RobotAxis enum corresponding to where the shift happens"
+#~ msgstr ""
+
+#~ msgid "shift value"
+#~ msgstr ""
+
+#~ msgid "Execute Shift pose action with a linear trajectory"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Move robot end effector pose to a"
+#~ " (x, y, z, roll, pitch, yaw) "
+#~ "pose, with a linear trajectory"
+#~ msgstr ""
+
+#~ msgid "Turn jog controller On or Off"
+#~ msgstr ""
+
+#~ msgid "``True`` to turn on, else ``False``"
+#~ msgstr ""
+
+#~ msgid "Make a Jog on joints position"
+#~ msgstr ""
+
+#~ msgid "list corresponding to the shift to be applied to each joint"
+#~ msgstr ""
+
+#~ msgid "Make a Jog on end-effector position"
+#~ msgstr ""
+
+#~ msgid "Compute forward kinematics"
+#~ msgstr ""
+
+#~ msgid "Compute inverse kinematics"
+#~ msgstr ""
+
+#~ msgid "Move robot end effector pose to a pose saved"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Get saved pose from robot intern "
+#~ "storage Will raise error if position "
+#~ "does not exist"
+#~ msgstr ""
+
+#~ msgid "Pose Name"
+#~ msgstr ""
+
+#~ msgid "x, y, z, roll, pitch, yaw"
+#~ msgstr ""
+
+#~ msgid "Save pose in robot's memory"
+#~ msgstr ""
+
+#~ msgid "Send delete command to the pose manager service"
+#~ msgstr ""
+
+#~ msgid "Ask the pose manager service which positions are available"
+#~ msgstr ""
+
+#~ msgid "list of positions name"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Execute a picking from a position. "
+#~ "If an error happens during the "
+#~ "movement, error will be raised. A "
+#~ "picking is described as : - going"
+#~ " over the object - going down "
+#~ "until height = z - grasping with"
+#~ " tool - going back over the "
+#~ "object"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Execute a placing from a position. "
+#~ "If an error happens during the "
+#~ "movement, error will be raised. A "
+#~ "placing is described as : - going"
+#~ " over the place - going down "
+#~ "until height = z - releasing the"
+#~ " object with tool - going back "
+#~ "over the place"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Execute a pick and place. If an"
+#~ " error happens during the movement, "
+#~ "error will be raised. -> Args "
+#~ "param is for development purposes"
+#~ msgstr ""
+
+#~ msgid "Distance from waypoints before smoothing trajectory"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Get saved trajectory from robot intern"
+#~ " storage Will raise error if position"
+#~ " does not exist"
+#~ msgstr ""
+
+#~ msgid "Raises"
+#~ msgstr ""
+
+#~ msgid "If trajectory file doesn't exist"
+#~ msgstr ""
+
+#~ msgid "list of [x, y, z, qx, qy, qz, qw]"
+#~ msgstr ""
+
+#~ msgid "Execute trajectory saved in Robot internal storage"
+#~ msgstr ""
+
+#~ msgid "Execute trajectory from a list of pose"
+#~ msgstr ""
+
+#~ msgid "Save trajectory object and send it to the trajectory manager service"
+#~ msgstr ""
+
+#~ msgid "name which will have the trajectory"
+#~ msgstr ""
+
+#~ msgid "Send delete command to the trajectory manager service"
+#~ msgstr ""
+
+#~ msgid "name"
+#~ msgstr ""
+
+#~ msgid "Ask the pose trajectory service which trajectories are available"
+#~ msgstr ""
+
+#~ msgid "list of trajectory name"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Use /niryo_robot_hardware/tools/current_id  topic to"
+#~ " get current tool id"
+#~ msgstr ""
+
+#~ msgid "Tool Id"
+#~ msgstr ""
+
+#~ msgid "Call service niryo_robot_tools_commander/update_tool to update tool"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Grasp with the tool linked to "
+#~ "tool_id. This action correspond to - "
+#~ "Close gripper for Grippers - Pull "
+#~ "Air for Vacuum pump - Activate for"
+#~ " Electromagnet"
+#~ msgstr ""
+
+#~ msgid "[Only required for electromagnet] Pin ID of the electromagnet"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Release with the tool associated to "
+#~ "tool_id. This action correspond to - "
+#~ "Open gripper for Grippers - Push "
+#~ "Air for Vacuum pump - Deactivate "
+#~ "for Electromagnet"
+#~ msgstr ""
+
+#~ msgid "Open gripper with a speed 'speed'"
+#~ msgstr ""
+
+#~ msgid "Default -> 500"
+#~ msgstr ""
+
+#~ msgid "Close gripper with a speed 'speed'"
+#~ msgstr ""
+
+#~ msgid "Pull air"
+#~ msgstr ""
+
+#~ msgid "Setup electromagnet on pin"
+#~ msgstr ""
+
+#~ msgid "Pin ID"
+#~ msgstr ""
+
+#~ msgid "Activate electromagnet associated to electromagnet_id on pin_id"
+#~ msgstr ""
+
+#~ msgid "Deactivate electromagnet associated to electromagnet_id on pin_id"
+#~ msgstr ""
+
+#~ msgid "Set pin number pin_id to mode pin_mode"
+#~ msgstr ""
+
+#~ msgid "Set pin_id state to pin_state"
+#~ msgstr ""
+
+#~ msgid "Read pin number pin_id and return its state"
+#~ msgstr ""
+
+#~ msgid "state"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Get hardware status : Temperature, "
+#~ "Hardware version, motors names & types"
+#~ " ..."
+#~ msgstr ""
+
+#~ msgid "Infos contains in a HardwareStatus object (see niryo_robot_msgs)"
+#~ msgstr ""
+
+#~ msgid "Get Digital IO state : Names, modes, states"
+#~ msgstr ""
+
+#~ msgid "Infos contains in a DigitalIOState object (see niryo_robot_msgs)"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Scan for conveyor on can bus. If"
+#~ " conveyor detected, return the conveyor "
+#~ "ID"
+#~ msgstr ""
+
+#~ msgid "ID"
+#~ msgstr ""
+
+#~ msgid "Remove specific conveyor."
+#~ msgstr ""
+
+#~ msgid "Basically, ConveyorID.ONE or ConveyorID.TWO"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Control conveyor associated to conveyor_id."
+#~ " Then stops it if bool_control_on is"
+#~ " False, else refreshes it speed and"
+#~ " direction"
+#~ msgstr ""
+
+#~ msgid "ConveyorID.ID_1 or ConveyorID.ID_2"
+#~ msgstr ""
+
+#~ msgid "True for activate, False for deactivate"
+#~ msgstr ""
+
+#~ msgid "target speed"
+#~ msgstr ""
+
+#~ msgid "Target direction"
+#~ msgstr ""
+
+#~ msgid "Get last stream image in a compressed format"
+#~ msgstr ""
+
+#~ msgid "string containing a JPEG compressed image"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Given a pose (x_rel, y_rel, yaw_rel) "
+#~ "relative to a workspace, this function"
+#~ " returns the robot pose in which "
+#~ "the current tool will be able to"
+#~ " pick an object at this pose. "
+#~ "The height_offset argument (in m) "
+#~ "defines how high the tool will "
+#~ "hover over the workspace. If "
+#~ "height_offset = 0, the tool will "
+#~ "nearly touch the workspace."
+#~ msgstr ""
+
+#~ msgid "name of the workspace"
+#~ msgstr ""
+
+#~ msgid "offset between the workspace and the target height"
+#~ msgstr ""
+
+#~ msgid "target_pose"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "First detects the specified object using"
+#~ " the camera and then returns the "
+#~ "robot pose in which the object can"
+#~ " be picked with the current tool"
+#~ msgstr ""
+
+#~ msgid "shape of the target"
+#~ msgstr ""
+
+#~ msgid "color of the target"
+#~ msgstr ""
+
+#~ msgid "object_found, object_pose, object_shape, object_color"
+#~ msgstr ""
+
+#~ msgid "Move Joints to observation_joints, then execute a vision pick"
+#~ msgstr ""
+
+#~ msgid "Move Pose to observation_pose, then execute a vision pick"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Picks the specified object from the "
+#~ "workspace. This function has multiple "
+#~ "phases: 1. detect object using the "
+#~ "camera 2. prepare the current tool "
+#~ "for picking 3. approach the object "
+#~ "4. move down to the correct "
+#~ "picking pose 5. actuate the current "
+#~ "tool 6. lift the object"
+#~ msgstr ""
+
+#~ msgid "object_found, object_shape, object_color"
+#~ msgstr ""
+
+#~ msgid "Same as `get_target_pose_from_cam` but directly moves to this position"
+#~ msgstr ""
+
+#~ msgid "Get calibration object: camera intrinsics, distortions coefficients"
+#~ msgstr ""
+
+#~ msgid "raw camera intrinsics, distortions coefficients"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Save workspace by giving the poses "
+#~ "of the robot to point its 4 "
+#~ "corners with the calibration Tip. "
+#~ "Corners should be in the good "
+#~ "order"
+#~ msgstr ""
+
+#~ msgid "workspace name"
+#~ msgstr ""
+
+#~ msgid "list of 4 corners pose"
+#~ msgstr ""
+
+#~ msgid "Save workspace by giving the poses of its 4 corners in the good order"
+#~ msgstr ""
+
+#~ msgid "list of 4 corners [x, y, z]"
+#~ msgstr ""
+
+#~ msgid "Call workspace manager to delete a certain workspace"
+#~ msgstr ""
+
+#~ msgid "Get the 4 workspace poses of the workspace called 'name'"
+#~ msgstr ""
+
+#~ msgid "List of the 4 workspace poses"
+#~ msgstr ""
+
+#~ msgid "Give the length over width ratio of a certain workspace"
+#~ msgstr ""
+
+#~ msgid "ratio"
+#~ msgstr ""
+
+#~ msgid "Ask the workspace manager service names of the available workspace"
+#~ msgstr ""
+
+#~ msgid "list of workspaces name"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Tools IDs (need to match tools ids"
+#~ " in niryo_robot_tools_commander package)"
+#~ msgstr ""
+
+#~ msgid "Pin Mode is either OUTPUT or INPUT"
+#~ msgstr ""
+
+#~ msgid "Pin State is either LOW or HIGH"
+#~ msgstr ""
+
+#~ msgid "Pins ID"
+#~ msgstr ""
+
+#~ msgid "None"
+#~ msgstr ""
 

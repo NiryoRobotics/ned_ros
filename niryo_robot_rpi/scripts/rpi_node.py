@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
-
 import rospy
+import logging
 
 from button_manager import NiryoButton
 from digital_io_panel import DigitalIOPanel
@@ -14,6 +14,8 @@ from niryo_robot_rpi.fans_manager import FansManager
 class NiryoRobotRpi:
 
     def __init__(self):
+        rospy.logdebug("NiryoRobotRpi - Entering in Init")
+
         self.__digital_io_panel = DigitalIOPanel()
         self.__fans_manager = FansManager()
         self.__led_manager = LEDManager()
@@ -24,6 +26,12 @@ class NiryoRobotRpi:
 
 if __name__ == '__main__':
     rospy.init_node('niryo_robot_rpi', anonymous=False, log_level=rospy.INFO)
+
+    # change logger level according to node parameter
+    log_level = rospy.get_param("~log_level")
+    logger = logging.getLogger("rosout")
+    logger.setLevel(log_level)
+
     try:
         node = NiryoRobotRpi()
         rospy.spin()

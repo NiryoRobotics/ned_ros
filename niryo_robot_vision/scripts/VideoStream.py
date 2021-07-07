@@ -3,6 +3,9 @@ import rospy
 
 from cv_bridge import CvBridge
 import cv2
+import numpy as np
+from PIL import ImageEnhance
+from PIL import Image as PILImage
 
 from threading import Lock, Thread
 
@@ -12,9 +15,11 @@ from fonctions_camera import generate_msg_from_image
 from niryo_robot_msgs.msg import CommandStatus
 from sensor_msgs.msg import CompressedImage, Image
 from std_msgs.msg import Bool
+from niryo_robot_vision.msg import ImageParameters
 
 # Service
 from niryo_robot_msgs.srv import SetBool
+from niryo_robot_vision.srv import SetImageParameter
 
 
 class VideoStream(object):
@@ -27,7 +32,16 @@ class VideoStream(object):
         self._frame_rate = rospy.get_param("~frame_rate")
         self._subsample_read = rospy.get_param("~subsampling")
 
+        rospy.logdebug("VideoStream.init - undistort_stream: {}".format(self._undistort_stream))
+        rospy.logdebug("VideoStream.init - display: {}".format(self._display))
+        rospy.logdebug("VideoStream.init - frame_rate: {}".format(self._frame_rate))
+        rospy.logdebug("VideoStream.init - subsampling: {}".format(self._subsample_read))
+
         self._actualization_rate_ros = rospy.Rate(1.1 * int(self._frame_rate))
+
+        self._saturation = 1.0
+        self._contrast = 1.0
+        self._brightness = 1.0
 
         # - Publisher about Running/Stopped Stream
         self._running = False
@@ -35,11 +49,20 @@ class VideoStream(object):
 
         self._publisher_camera_stream_running = rospy.Publisher('~video_stream_is_active',
                                                                 Bool, queue_size=2)
+
+        self._publisher_stream_parameters = rospy.Publisher('~video_stream_parameters',
+                                                            ImageParameters, queue_size=2, latch=True)
+        self._publish_image_parameters()
+
         rospy.Timer(rospy.Duration(1.0 / rospy.get_param("~is_active_rate")),
                     self._publish_is_active)
         # - SERVICES
         self.__service_start_stop = rospy.Service('~start_stop_video_streaming',
                                                   SetBool, self._callback_start_stop)
+
+        rospy.Service('~set_saturation', SetImageParameter, self._callback_set_saturation)
+        rospy.Service('~set_brightness', SetImageParameter, self._callback_set_brightness)
+        rospy.Service('~set_contrast', SetImageParameter, self._callback_set_contrast)
 
     # -- CALLBACKS
     def _callback_start_stop(self, req):
@@ -96,8 +119,26 @@ class VideoStream(object):
 
                 return CommandStatus.SUCCESS, message
 
+    def _callback_set_saturation(self, req):
+        self._saturation = req.factor
+        self._publish_image_parameters()
+        return CommandStatus.SUCCESS, "Success"
+
+    def _callback_set_brightness(self, req):
+        self._brightness = req.factor
+        self._publish_image_parameters()
+        return CommandStatus.SUCCESS, "Success"
+
+    def _callback_set_contrast(self, req):
+        self._contrast = req.factor
+        self._publish_image_parameters()
+        return CommandStatus.SUCCESS, "Success"
+
     def _publish_is_active(self, _):
         self._publisher_camera_stream_running.publish(self._running)
+
+    def _publish_image_parameters(self):
+        self._publisher_stream_parameters.publish(self._brightness, self._contrast, self._saturation)
 
     # -- METHODS
 
@@ -122,6 +163,14 @@ class WebcamStream(VideoStream):
         super(WebcamStream, self).__init__(calibration_object, publisher_compressed_stream)
 
         self.__cam_port = rospy.get_param("~camera_port")
+        restart_rate = rospy.get_param("~restart_rate")
+        self.__actualization_rate_no_stream = rospy.Rate(restart_rate)
+        self.__max_restart_time = rospy.get_param("~max_restart_time")
+
+        rospy.logdebug("WebcamStream.init - camera_port: {}".format(self.__cam_port))
+        rospy.logdebug("WebcamStream.init - restart_rate: {}".format(restart_rate))
+        rospy.logdebug("WebcamStream.init - max_restart_time: {}".format(self.__max_restart_time))
+
         self.__last_time_read = None
         self.__frame_raw = None
         self.__frame_undistort = None
@@ -129,9 +178,6 @@ class WebcamStream(VideoStream):
         self.__lock_image = Lock()
 
         # Stop Stream handling
-        self.__actualization_rate_no_stream = rospy.Rate(rospy.get_param("~restart_rate"))
-        self.__max_restart_time = rospy.get_param("~max_restart_time")
-
         self.__count_grab_failed = 0
 
     # -- PUBLIC
@@ -141,6 +187,8 @@ class WebcamStream(VideoStream):
             return None
         with self.__lock_image:
             ret, frame = self.__video_stream.retrieve()
+
+        frame = self.adjust_image(frame)
         if ret is False:
             return None
         if self._calibration_object.is_set():
@@ -171,6 +219,28 @@ class WebcamStream(VideoStream):
         self.__video_stream.set(cv2.CAP_PROP_FRAME_HEIGHT, h)
         # Set frame rate
         self.__video_stream.set(cv2.CAP_PROP_FPS, self._frame_rate)
+
+    def adjust_image(self, img):
+        if self._brightness == self._contrast == self._saturation == 1.:
+            return img
+
+        im_pil = PILImage.fromarray(img)
+
+        if self._brightness != 1.:
+            brightness_filter = ImageEnhance.Brightness(im_pil)
+            im_pil = brightness_filter.enhance(self._brightness)
+
+        if self._contrast != 1.:
+            contrast_filter = ImageEnhance.Contrast(im_pil)
+            im_pil = contrast_filter.enhance(self._contrast)
+
+        if self._saturation != 1.:
+            color_filter = ImageEnhance.Color(im_pil)
+            im_pil = color_filter.enhance(self._saturation)
+
+        # For reversing the operation:
+        im_np = np.asarray(im_pil)
+        return im_np
 
     def _loop(self):
         while not rospy.is_shutdown():
@@ -212,6 +282,7 @@ class WebcamStream(VideoStream):
                     else:
                         self.__frame_undistort = None
                     used_image = self.__frame_undistort if self._undistort_stream else self.__frame_raw
+                    used_image = self.adjust_image(used_image)
                     if self._display:
                         cv2.imshow("Video Stream", used_image)
                         cv2.waitKey(1)

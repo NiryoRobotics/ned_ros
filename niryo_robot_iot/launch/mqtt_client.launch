@@ -1,9 +1,12 @@
 <?xml version="1.0" ?>
 <launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+    <!-- Arguments -->
+    <arg name="log_level" default="INFO" />
     <arg name="conf_location" default="~/.config/niryo"/>
 
     <node name="niryo_robot_mqtt_client" pkg="niryo_robot_iot" type="mqtt_client_node.py" output="screen">
+        <param name="log_level" type="string" value="$(arg log_level)" />
         <rosparam file="$(find niryo_robot_iot)/config/aws_const.yaml"/>
         <rosparam file="$(find niryo_robot_iot)/config/iot_params.yaml"/>
         <param name="conf_location" value="$(arg conf_location)"/>

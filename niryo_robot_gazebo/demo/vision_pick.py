@@ -46,11 +46,12 @@ if __name__ == '__main__':
         print "creating workspaces ..."
         create_wks_gazebo(n)
         create_wks2_gazebo(n)
+        print "Workspaces created ..."
 
         obs_joints = [0, 0.4, -0.4, 0, -1.57, 0]
-
         cubes_cpt = 0
         while n.vision_pick_w_obs_joints("gazebo_1", 0.002, ObjectShape.ANY, ObjectColor.ANY, obs_joints)[0]:
+            print "Object picked ..."
             pose = n.get_target_pose_from_rel("gazebo_2", 0.005 + cubes_cpt*0.02, 0.5, 0.5, 0.0)
             n.place_from_pose(pose.position.x, pose.position.y, pose.position.z,
                               pose.rpy.roll, pose.rpy.pitch, pose.rpy.yaw)

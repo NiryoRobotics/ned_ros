@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import rospy
+import logging
 
 from niryo_robot_user_interface.tcp_server import TcpServer
 
@@ -23,6 +24,12 @@ class UserInterface:
 
 if __name__ == '__main__':
     rospy.init_node('niryo_robot_user_interface', anonymous=False, log_level=rospy.INFO)
+
+    # change logger level according to node parameter
+    log_level = rospy.get_param("~log_level")
+    logger = logging.getLogger("rosout")
+    logger.setLevel(log_level)
+
     try:
         ui = UserInterface()
         rospy.on_shutdown(ui.shutdown)

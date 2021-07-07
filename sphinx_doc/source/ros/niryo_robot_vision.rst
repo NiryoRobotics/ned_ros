@@ -1,4 +1,4 @@
-Niryo Robot Vision Package
+Niryo robot vision package
 ======================================
 
 This package is the one dealing with all vision related stuff.
@@ -6,23 +6,24 @@ This package is the one dealing with all vision related stuff.
 
 Vision Node
 --------------------------
-The ROS Node is made of several services to deal with video streaming, object detection.
+The ROS Node is made of several services to deal with video streaming, object detection...
 The node is working exactly the same way if you chose to use it on simulation or reality.
 
-This node can be launched locally in a standalone mode via the command ::
+This node can be launched locally in a standalone mode via the command: ::
 
  roslaunch niryo_robot_vision vision_node_local.launch
 
 Configuration (Frame Per Second, Camera Port, Video Resolution) can be
-edited in the config file :
+edited in the config file:
 
- - For "standard" Node : *niryo_robot_vision/config/video_server_setup.yaml*
- - For local Node : *niryo_robot_vision/config/video_server_setup_local.yaml*
+ - For "standard" Node: *niryo_robot_vision/config/video_server_setup.yaml*
+ - For local Node: *niryo_robot_vision/config/video_server_setup_local.yaml*
 
-The namespace used is : |namespace_emphasize|
+The namespace used is: |namespace_emphasize|
 
 Parameters - Vision
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 .. list-table:: Vision Package's Parameters
    :header-rows: 1
    :widths: auto
@@ -34,8 +35,8 @@ Parameters - Vision
    *  -  ``frame_rate``
       -  Stream frame rate
    *  -  ``simulation_mode``
-      -  | Set to True if you are using the gazebo simulation.
-         | It will adapt how the node get its video steam
+      -  | Set to true if you are using the gazebo simulation.
+         | It will adapt how the node get its video stream
    *  -  ``debug_compression_quality``
       -  Debug Stream compression quality
    *  -  ``stream_compression_quality``
@@ -59,6 +60,9 @@ Publisher - Vision
    *  -  ``compressed_video_stream``
       -  :sensor_msgs:`CompressedImage`
       -  Publish the last image read as a compressed image
+   *  -  ``video_stream_parameters``
+      -  :ref:`ImageParameters<ImageParameters (Topic)>`
+      -  Publish the brightness, contrast and saturation settings of the video stream
 
 Services - Vision
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -87,15 +91,35 @@ Services - Vision
    *  -  ``take_picture``
       -  :ref:`TakePicture<TakePicture (Service)>`
       -  Save a picture in the specified folder
+   *  -  ``set_brightness``
+      -  :ref:`SetImageParameter<SetImageParameter (Service)>`
+      -  Set the brightness of the video stream
+   *  -  ``set_contrast``
+      -  :ref:`SetImageParameter<SetImageParameter (Service)>`
+      -  Set the contrast of the video stream
+   *  -  ``set_saturation``
+      -  :ref:`SetImageParameter<SetImageParameter (Service)>`
+      -  Set the saturation of the video stream
 
 
-All these services are available as soon as the node is started
+All these services are available as soon as the node is started.
 
 
 Dependencies - Vision
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 * :ref:`niryo_robot_msgs <Niryo Robot Messages Package>`
 * :msgs_index:`sensor_msgs`
+
+
+Topics files - Vision
+--------------------------
+
+ImageParameters (Topic)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. literalinclude:: ../../../niryo_robot_vision/msg/ImageParameters.msg
+   :language: rostype
+
 
 
 Services files - Vision
@@ -128,6 +152,11 @@ TakePicture (Service)
 .. literalinclude:: ../../../niryo_robot_vision/srv/TakePicture.srv
    :language: rostype
 
+SetImageParameter (Service)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. literalinclude:: ../../../niryo_robot_vision/srv/SetImageParameter.srv
+   :language: rostype
 
 
 .. |namespace| replace:: /niryo_robot_vision/

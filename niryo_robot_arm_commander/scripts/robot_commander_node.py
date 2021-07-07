@@ -2,6 +2,7 @@
 
 # Lib
 import rospy
+import logging
 import actionlib
 import threading
 
@@ -14,6 +15,7 @@ from ArmParametersValidator import ArmParametersValidator
 from motor_debug import MotorDebug
 
 from jog_controller import JogController
+from transform_handler import ArmTCPTransformHandler
 from niryo_robot_arm_commander.command_enums import *
 
 # Command Status
@@ -45,7 +47,7 @@ from niryo_robot_arm_commander.msg import RobotMoveResult
 
 class RobotCommanderNode:
     """
-    This class is in charge of the Robot Commander Node
+    This class is in charge of the Arm Commander Node
     It contains:
     - The State Publisher
     - Arm & Tools Commanders
@@ -54,16 +56,20 @@ class RobotCommanderNode:
     """
 
     def __init__(self):
-        rospy.logdebug("Robot Commander - Entering in Init")
+        rospy.logdebug("Arm Commander - Entering in Init")
         # Initialize MoveIt!
         moveit_commander.roscpp_initialize(sys.argv)
         # - Load all the sub-commanders
         # First, get Parameters Validator for Arm
         arm_param_validator = ArmParametersValidator(rospy.get_param("/niryo_robot/robot_command_validation"))
-        # Initialize Arm
-        self.__arm_commander = ArmCommander(arm_param_validator)
 
-        rospy.logdebug("Robot Commander - Sub Commanders are loaded")
+        # Transform handler
+        self.__transform_handler = ArmTCPTransformHandler()
+
+        # Initialize Arm
+        self.__arm_commander = ArmCommander(arm_param_validator, self.__transform_handler)
+
+        rospy.logdebug("Arm Commander - Sub Commanders are loaded")
 
         # Initialize motor debug
         self.__motor_debug = MotorDebug()
@@ -110,6 +116,12 @@ class RobotCommanderNode:
         self.__pause_finished_event = threading.Event()
         self.__pause_finished_event.set()
         self.__pause_timeout = rospy.get_param("~pause_timeout")
+        self.__command_still_active_max_tries = rospy.get_param("~command_still_active_max_tries")
+        active_publish_rate_sec = rospy.get_param("~active_publish_rate_sec")
+
+        rospy.logdebug("RobotCommanderNode.init - pause_timeout: %s", self.__pause_timeout)
+        rospy.logdebug("RobotCommanderNode.init - command_still_active_max_tries: %s", self.__command_still_active_max_tries)
+        rospy.logdebug("RobotCommanderNode.init - active_publish_rate_sec: %s", active_publish_rate_sec)
 
         # - Services
         rospy.Service('~stop_command', Trigger,
@@ -128,17 +140,15 @@ class RobotCommanderNode:
                                                       auto_start=False)
         self.__action_server_thread = threading.Thread()
         self.__action_server_lock = threading.Lock()
-        self.__command_still_active_max_tries = rospy.get_param("~command_still_active_max_tries")
-
         # Starting Action server
         self.__start_action_server()
 
-        rospy.logdebug("Robot Commander - Services & Actions server are created")
+        rospy.logdebug("Arm Commander - Services & Actions server are created")
 
         # - Publisher
         self.__is_active_publisher = rospy.Publisher('~is_active',
                                                      Bool, queue_size=5)
-        rospy.Timer(rospy.Duration(rospy.get_param("~active_publish_rate_sec")), self.__publish_is_active)
+        rospy.Timer(rospy.Duration(active_publish_rate_sec), self.__publish_is_active)
 
         self.__linear_trajectory_state_publisher = rospy.Publisher('~linear_trajectory/state', Bool, queue_size=1)
 
@@ -146,16 +156,16 @@ class RobotCommanderNode:
         self.__jog_controller = JogController(arm_param_validator)
 
         # Publish robot state (position, orientation, tool)
-        self.__state_publisher = StatePublisher()
+        self.__state_publisher = StatePublisher(self.__transform_handler)
 
         # Set a bool to mention this node is initialized
         rospy.set_param('~initialized', True)
 
-        rospy.loginfo("Robot Commander - Started")
+        rospy.loginfo("Arm Commander - Started")
 
     def __start_action_server(self):
         self.__action_server.start()
-        rospy.logdebug("Robot Commander - Action Server started")
+        rospy.logdebug("Arm Commander - Action Server started")
 
     # -- CALLBACKS
     # - Subscribers
@@ -171,7 +181,7 @@ class RobotCommanderNode:
     def __callback_learning_mode(self, msg):
         activate = msg.data
         if not self.__learning_mode_on and activate:
-            self.__arm_commander.stop_arm()
+            self.__arm_commander.trajectories_executor.stop_arm()
         self.__learning_mode_on = activate
 
     def __callback_linear_trajectory_changed(self, msg):
@@ -193,13 +203,13 @@ class RobotCommanderNode:
     def __callback_pause_movement(self, msg):
         self.__pause_state = msg.state
         if msg.state == PausePlanExecution.PAUSE:
-            rospy.loginfo("Robot Commander - Receive Set Pause Mode from button")
+            rospy.loginfo("Arm Commander - Receive Set Pause Mode from button")
             self.__pause_finished_event.clear()
             self.__cancel_command()
         elif msg.state == PausePlanExecution.CANCEL:
             self.__pause_finished_event.set()
             self.__cancel_command()
-            rospy.loginfo("Robot Commander - Receive Cancel Command from button")
+            rospy.loginfo("Arm Commander - Receive Cancel Command from button")
         else:
             self.__pause_finished_event.set()
 
@@ -398,7 +408,7 @@ class RobotCommanderNode:
         return self.dict_interpreter_move_cmd[cmd_type](cmd)
 
     def __cancel_command(self):
-        self.__arm_commander.stop_current_plan()  # Send a cancel signal to Moveit interface
+        self.__arm_commander.trajectories_executor.stop_current_plan()  # Send a cancel signal to Moveit interface
 
     @staticmethod
     def __set_learning_mode(set_bool):
@@ -442,13 +452,14 @@ class StatePublisher:
      in the Topic '/niryo_robot/robot_state' at a certain rate
     """
 
-    def __init__(self):
+    def __init__(self, transform_handler):
 
         # Tf listener (position + rpy) of end effector tool
         self.__position = [0, 0, 0]
         self.__quaternion = [0, 0, 0, 0]
         self.__rpy = [0, 0, 0]
-        self.__tf_listener = tf.TransformListener()
+
+        self.__transform_handler = transform_handler
 
         # State publisher
         self.__robot_state_publisher = rospy.Publisher(
@@ -456,17 +467,19 @@ class StatePublisher:
 
         # Get params from rosparams
         rate_publish_state = rospy.get_param("/niryo_robot/robot_state/rate_publish_state")
+        rospy.logdebug("StatePublisher.init - rate_publish_state: %s", rate_publish_state)
 
         rospy.Timer(rospy.Duration(1.0 / rate_publish_state), self.__publish_state)
 
     def __update_ee_link_pose(self):
         try:
-            (pos, rot) = self.__tf_listener.lookupTransform('base_link', 'tool_link', rospy.Time(0))
-            self.__position = pos
-            self.__quaternion = rot
-            self.__rpy = tf.transformations.euler_from_quaternion(rot)
+            t = self.__transform_handler.lookup_transform('base_link', 'TCP', rospy.Time(0))
+            self.__position = self.vector3_to_list(t.transform.translation)
+            self.__quaternion = self.quaternion_to_list(t.transform.rotation)
+            self.__rpy = tf.transformations.euler_from_quaternion(self.__quaternion)
         except (LookupException, ConnectivityException, ExtrapolationException):
-            rospy.loginfo_throttle(1, "State Publisher - Failed to get TF base_link -> ee_link")
+            self.__transform_handler.set_empty_tcp_to_ee_link_transform("tool_link")
+            rospy.loginfo_throttle(1, "State Publisher - Failed to get TF base_link -> TCP")
 
     def __publish_state(self, _):
         self.__update_ee_link_pose()
@@ -507,9 +520,23 @@ class StatePublisher:
                 euler[i] = angle % (2 * pi)
         return euler
 
+    @staticmethod
+    def quaternion_to_list(quat):
+        return [quat.x, quat.y, quat.z, quat.w]
+
+    @staticmethod
+    def vector3_to_list(vect):
+        return [vect.x, vect.y, vect.z]
+
 
 if __name__ == '__main__':
     rospy.init_node('niryo_robot_arm_commander', anonymous=False, log_level=rospy.INFO)
+
+    # change logger level according to node parameter
+    log_level = rospy.get_param("~log_level")
+    logger = logging.getLogger("rosout")
+    logger.setLevel(log_level)
+
     try:
         node = RobotCommanderNode()
         rospy.spin()

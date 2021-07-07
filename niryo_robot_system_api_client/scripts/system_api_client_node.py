@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
 import rospy
+import logging
+
 from niryo_robot_system_api_client.HttpClient import HttpClient
 
 from std_msgs.msg import Bool
@@ -15,6 +17,9 @@ class SystemApiClientNode:
 
         domain = rospy.get_param('~server_domain')
         port = rospy.get_param('~server_port')
+
+        rospy.logdebug("SystemApiClientNode.init - server_domain: {}".format(domain))
+        rospy.logdebug("SystemApiClientNode.init - server_port: {}".format(port))
 
         self.client = HttpClient(domain, port)
 
@@ -84,5 +89,11 @@ class SystemApiClientNode:
 
 if __name__ == "__main__":
     rospy.init_node('niryo_robot_system_api_client', anonymous=False, log_level=rospy.INFO)
+
+    # change logger level according to node parameter
+    log_level = rospy.get_param("~log_level")
+    logger = logging.getLogger("rosout")
+    logger.setLevel(log_level)
+
     SystemApiClientNode()
     rospy.spin()

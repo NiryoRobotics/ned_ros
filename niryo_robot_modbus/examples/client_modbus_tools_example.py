@@ -15,7 +15,7 @@ if __name__ == '__main__':
     # print "Pull vaccuum pomp"
     # client.write_register(512, 1)
     # time.sleep(2)
-# 
+    #
     # print "Push vaccuum pomp"
     # client.write_register(513, 1)
     # time.sleep(2)

@@ -8,6 +8,14 @@ find_package(catkin REQUIRED)
 catkin_package()
 
 #############
+##   Doc   ##
+#############
+
+#############
+## Testing ##
+#############
+
+#############
 ## Install ##
 #############
 

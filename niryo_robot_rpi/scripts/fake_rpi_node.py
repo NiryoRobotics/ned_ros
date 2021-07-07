@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import rospy
+import logging
 from std_msgs.msg import Int32, Bool
 from enum import IntEnum
 
@@ -13,6 +14,8 @@ from niryo_robot_rpi.srv import SetDigitalIO
 
 class FakeNiryoButton:
     def __init__(self):
+        rospy.logdebug("FakeNiryoButton - Entering in Init")
+
         # Publisher used to send info to Niryo Studio, so the user can add a move block
         # by pressing the button
         self.save_point_publisher = rospy.Publisher(
@@ -189,6 +192,12 @@ class NiryoFakeRpi:
 
 
 if __name__ == '__main__':
-    rospy.init_node('niryo_robot_rpi')
+    rospy.init_node('niryo_robot_rpi', anonymous=False, log_level=rospy.INFO)
+
+    # change logger level according to node parameter
+    log_level = rospy.get_param("~log_level")
+    logger = logging.getLogger("rosout")
+    logger.setLevel(log_level)
+
     NiryoFakeRpi()
     rospy.spin()
