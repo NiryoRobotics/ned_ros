@@ -1,0 +1,54 @@
+# Settings for ros_control control loop
+hardware_control_loop:
+    loop_hz: 25
+
+# Publish all joint states -----------------------
+joint_state_controller:
+    type: "joint_state_controller/JointStateController"
+    publish_rate: 50
+
+controller_list:
+    - name: "niryo_robot_follow_joint_trajectory_controller"
+      action_ns: follow_joint_trajectory
+      type: FollowJointTrajectory
+      default: true
+      joints:
+          - joint_1
+          - joint_2
+          - joint_3
+          - joint_4
+          - joint_5
+          - joint_6
+
+# Joint Trajectory Controller - position based -----------------------
+niryo_robot_follow_joint_trajectory_controller:
+    type: "position_controllers/JointTrajectoryController"
+    joints:
+        - joint_1
+        - joint_2
+        - joint_3
+        - joint_4
+        - joint_5
+        - joint_6
+    constraints:
+        goal_time: 1.0
+        stopped_velocity_tolerance: 0.05
+        joint_1: {trajectory: 0.5, goal: 0.2}
+        joint_2: {trajectory: 0.5, goal: 0.2}
+        joint_3: {trajectory: 0.5, goal: 0.2}
+        joint_4: {trajectory: 0.5, goal: 0.2}
+        joint_5: {trajectory: 1.0, goal: 0.3}
+        joint_6: {trajectory: 1.0, goal: 0.3}
+    stop_trajectory_duration: 1.0
+    state_publish_rate: 20
+    allow_partial_joints_goal: true # to send partial joints, so they are not all updated for the jog joints
+    action_monitor_rate: 10
+
+# parameters for Gazebo ROS control plugin
+gazebo_ros_control/pid_gains:
+    joint_1: {p: 100, d: 1, i: 1, i_clamp: 1}
+    joint_2: {p: 100, d: 1, i: 1, i_clamp: 1}
+    joint_3: {p: 100, d: 1, i: 1, i_clamp: 1}
+    joint_4: {p: 100, d: 1, i: 1, i_clamp: 1}
+    joint_5: {p: 100, d: 1, i: 1, i_clamp: 1}
+    joint_6: {p: 100, d: 1, i: 1, i_clamp: 1}
