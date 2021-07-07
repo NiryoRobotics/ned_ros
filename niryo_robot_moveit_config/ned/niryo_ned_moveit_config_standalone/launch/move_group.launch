@@ -1,6 +1,4 @@
-<?xml version="1.0" ?>
-<launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+<launch>
 
     <include file="$(find niryo_ned_moveit_config_standalone)/launch/planning_context.launch"/>
 
