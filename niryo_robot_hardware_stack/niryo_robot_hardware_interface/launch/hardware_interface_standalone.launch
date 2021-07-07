@@ -1,12 +1,15 @@
+<?xml version="1.0" ?>
 <!-- Launch file used to launch the hardware interface (which publish the joint state), with drivers, controllers, robot_description, and robot_state -->
-<launch>
+<launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+
     <arg name="execute_on_niryo_robot_raspberry_pi_image" default="true" />
     <arg name="simulation_mode" default="false"/>
     <arg name="simu_gripper" default="false"/>
     <arg name="gazebo" default="false"/>
     <arg name="can_enabled" default="true"/>
     <arg name="dxl_enabled" default="true"/>
-    <arg name="hardware_version" value="ned"/>
+    <arg name="hardware_version" default="ned"/>
     <arg name="debug" default="false"/>
 
 
@@ -16,7 +19,7 @@
             args="joint_state_controller niryo_robot_follow_joint_trajectory_controller"/>
 
     <!-- Load URDF -->
-    <arg name="urdf_path" value="$(find niryo_robot_description)/urdf/$(arg hardware_version)/niryo_$(arg hardware_version).urdf.xacro"/>
+    <arg name="urdf_path" value="$(find niryo_robot_description)/urdf/$(arg hardware_version)/niryo_ned.urdf.xacro"/>
     <param name="robot_description" command="$(find xacro)/xacro $(arg urdf_path)"/>
 
     <!-- Launch Robot state publisher -->
@@ -61,7 +64,6 @@
         <param name="can_enabled" type="bool" value="$(arg can_enabled)"/>
         <param name="dxl_enabled" type="bool" value="$(arg dxl_enabled)"/>
         <param name="debug" type="bool" value="$(arg debug)"/>
-
     </node>
 
 </launch>

@@ -1,13 +1,14 @@
 <?xml version="1.0" ?>
 <launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+    <!-- Arguments -->
     <arg name="execute_on_niryo_robot_raspberry_pi_image" default="true" />
     <arg name="simulation_mode" default="true"/>
     <arg name="simu_gripper" default="false"/>
     <arg name="gazebo" default="false"/>
     <arg name="can_enabled" default="true"/>
     <arg name="ttl_enabled" default="true"/>
-    <arg name="hardware_version" value="ned"/>
+    <arg name="hardware_version" default="ned"/>
     <arg name="debug" default="false"/>
 
     <group ns="niryo_robot">
@@ -47,7 +48,6 @@
         <param name="can_enabled" type="bool" value="$(arg can_enabled)"/>
         <param name="ttl_enabled" type="bool" value="$(arg ttl_enabled)"/>
         <param name="debug" type="bool" value="$(arg debug)"/>
-
     </node>
 
 </launch>
