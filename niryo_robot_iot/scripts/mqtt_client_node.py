@@ -2,6 +2,7 @@
 
 # Libs
 import rospy
+import logging
 
 import os
 import subprocess
@@ -24,13 +25,19 @@ class MqttClientNode:
 
         # - Ros Params
         self.__aws_endpoint = rospy.get_param('~aws_endpoint')
+        rospy.logdebug("MqttClientNode.Init - aws_endpoint: %s", self.__aws_endpoint)
+
         self.__aws_port = rospy.get_param('~aws_port')
+        rospy.logdebug("MqttClientNode.Init - aws_port: %s", self.__aws_port)
 
         conf_location = os.path.expanduser(rospy.get_param('~conf_location'))
+        rospy.logdebug("MqttClientNode.Init - conf_location: %s", conf_location)
+
         self.__certs_location = "{}/certs".format(conf_location)
         self.__credentials_location = "{}/credentials".format(conf_location)
 
         self.__still_alive_publish_duration = rospy.get_param('~still_alive_publish_duration')
+        rospy.logdebug("MqttClientNode.Init - still_alive_publish_duration: %s", self.__still_alive_publish_duration)
 
         # - Serial
 
@@ -39,10 +46,15 @@ class MqttClientNode:
         # - Credentials
 
         self.__ca_file = os.path.join(self.__certs_location, rospy.get_param('~ca_name'))
+        rospy.logdebug("MqttClientNode.Init - ca_file: %s", self.__ca_file)
+
         cert_filename = '{}{}'.format(self.__serial, rospy.get_param('~cert_suffix'))
         self.__cert_file = os.path.join(self.__certs_location, cert_filename)
+        rospy.logdebug("MqttClientNode.Init - cert_file: %s", self.__cert_file)
+
         key_filename = '{}{}'.format(self.__serial, rospy.get_param('~key_suffix'))
         self.__key_file = os.path.join(self.__certs_location, key_filename)
+        rospy.logdebug("MqttClientNode.Init - key_file: %s", self.__key_file)
 
         self.wait_for_credentials_creation()
         self.wait_for_internet_connection()
@@ -63,6 +75,10 @@ class MqttClientNode:
         s3_programs_dir = rospy.get_param('~s3_programs_dir')
         robot_programs_dir = rospy.get_param('/niryo_robot_programs_manager/programs_dir',
                                              default="niryo_robot_programs")
+
+        rospy.logdebug("MqttClientNode.Init - s3_bucket: %s", s3_bucket)
+        rospy.logdebug("MqttClientNode.Init - s3_programs_dir: %s", s3_programs_dir)
+        rospy.logdebug("MqttClientNode.Init - robot_programs_dir: %s", robot_programs_dir)
 
         self.__subscriber = MqttSubscriber(s3_credentials_location, s3_bucket,
                                            robot_programs_dir, s3_programs_dir, self.__user_id)
@@ -227,6 +243,12 @@ class MqttClientNode:
 
 if __name__ == "__main__":
     rospy.init_node('niryo_robot_mqtt_client', anonymous=False, log_level=rospy.INFO)
+
+    # change logger level according to node parameter
+    log_level = rospy.get_param("~log_level")
+    logger = logging.getLogger("rosout")
+    logger.setLevel(log_level)
+
     try:
         node = MqttClientNode()
         rospy.spin()

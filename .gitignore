@@ -16,3 +16,12 @@ _build/
 .pytest_cache/
 
 /dev/
+
+# Mac Stuff
+.DS_Store
+
+# Build files
+_build/
+*.mo
+docs_build/
+docker/
