@@ -21,10 +21,12 @@
 #include <gtest/gtest.h>
 #include <ros/console.h>
 
+static std::unique_ptr<ros::NodeHandle> nh;
+
 // Declare a test
 TEST(CanDriverTestSuite, testInitDriver)
 {
-    can_driver::CanDriver stepper;
+    can_driver::CanDriver stepper(*nh);
     EXPECT_TRUE(stepper.isConnectionOk());
 }
 
@@ -41,7 +43,7 @@ int main(int argc, char **argv)
   testing::InitGoogleTest(&argc, argv);
   ros::init(argc, argv, "can_driver_unit_tests");
 
-  ros::NodeHandle nh;
+  nh = std::make_unique<ros::NodeHandle>();
 
   return RUN_ALL_TESTS();
 }

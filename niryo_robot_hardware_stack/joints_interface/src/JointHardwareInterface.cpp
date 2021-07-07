@@ -60,6 +60,8 @@ JointHardwareInterface::JointHardwareInterface(ros::NodeHandle& nh,
     _ttl_driver_core(ttl_driver),
     _can_driver_core(can_driver)
 {
+    ROS_DEBUG("JointHardwareInterface::ctor");
+
     init(nh, nh);
 
     sendInitMotorsParams();

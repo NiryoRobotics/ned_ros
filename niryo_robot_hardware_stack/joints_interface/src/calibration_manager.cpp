@@ -85,7 +85,7 @@ CalibrationManager::~CalibrationManager()
 void CalibrationManager::initParameters(ros::NodeHandle &nh)
 {
     _nh.getParam("/niryo_robot_hardware_interface/calibration_timeout", _calibration_timeout);
-    ros::param::get("/niryo_robot_hardware_interface/calibration_file", _calibration_file_name);
+    _nh.getParam("/niryo_robot_hardware_interface/calibration_file", _calibration_file_name);
 
     ROS_DEBUG("Calibration Interface - Calibration timeout %d", _calibration_timeout);
     ROS_DEBUG("Calibration Interface - Calibration file name %s", _calibration_file_name.c_str());

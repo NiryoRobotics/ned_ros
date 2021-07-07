@@ -76,11 +76,41 @@ FakeInterfaceCore::~FakeInterfaceCore()
  */
 bool FakeInterfaceCore::init(ros::NodeHandle &nh)
 {
+    ROS_DEBUG("FakeInterfaceCore::init - Init parameters...");
     initParameters(nh);
+
+    ROS_DEBUG("FakeInterfaceCore::init - Starting services...");
     startServices(nh);
+
+    ROS_DEBUG("FakeInterfaceCore::init - Starting subscribers...");
     startSubscribers(nh);
 
+    ROS_DEBUG("FakeInterfaceCore::init - Starting publishers...");
+    startPublishers(nh);
+
     return true;
+}
+
+/**
+ * @brief FakeInterfaceCore::initParams
+ */
+void FakeInterfaceCore::initParameters(ros::NodeHandle &nh)
+{
+    ros::param::get("~gazebo", _gazebo);
+    ros::param::get("~simu_gripper", _simu_gripper);
+    ros::param::get("~ros_control_loop_frequency", _ros_control_frequency);
+    ROS_DEBUG("Fake Hardware Interface - ros control loop freqeuncy %f", _ros_control_frequency);
+
+    ros::param::get("~publish_hw_status_frequency", _publish_hw_status_frequency);
+    ros::param::get("~publish_software_version_frequency", _publish_software_version_frequency);
+    ros::param::get("~publish_learning_mode_frequency", _publish_learning_mode_frequency);
+    ros::param::get("/niryo_robot/info/ros_version", _ros_niryo_robot_version);
+
+    _ros_niryo_robot_version.erase(_ros_niryo_robot_version.find_last_not_of(" \n\r\t") + 1);
+
+    ROS_DEBUG("Fake Hardware Interface - Publish_hw_status_frequency : %f", _publish_hw_status_frequency);
+    ROS_DEBUG("Fake Hardware Interface - Publish_software_version_frequency : %f", _publish_software_version_frequency);
+    ROS_DEBUG("Fake Hardware Interface - Publish_learning_mode_frequency : %f", _publish_learning_mode_frequency);
 }
 
 /**
@@ -88,7 +118,6 @@ bool FakeInterfaceCore::init(ros::NodeHandle &nh)
  */
 void FakeInterfaceCore::startServices(ros::NodeHandle& nh)
 {
-    ROS_DEBUG("Fake Hardware Interface - Init Services");
     _calibrate_motors_server = _nh.advertiseService("/niryo_robot/joints_interface/calibrate_motors",
                                                     &FakeInterfaceCore::_callbackCalibrateMotors, this);
 
@@ -128,11 +157,10 @@ void FakeInterfaceCore::startServices(ros::NodeHandle& nh)
 }
 
 /**
- * @brief FakeInterfaceCore::startPublishersSubscribers
+ * @brief FakeInterfaceCore::startSubscribers
  */
 void FakeInterfaceCore::startSubscribers(ros::NodeHandle& nh)
 {
-    ROS_DEBUG("Fake Hardware Interface - Init Subscribers");
     _trajectory_result_subscriber = _nh.subscribe(
                 "/niryo_robot_follow_joint_trajectory_controller/follow_joint_trajectory/result",
                 10, &FakeInterfaceCore::_callbackTrajectoryResult, this);
@@ -146,29 +174,6 @@ void FakeInterfaceCore::startSubscribers(ros::NodeHandle& nh)
 void FakeInterfaceCore::startPublishers(ros::NodeHandle &nh)
 {
 
-}
-
-/**
- * @brief FakeInterfaceCore::initParams
- */
-void FakeInterfaceCore::initParameters(ros::NodeHandle &nh)
-{
-    ROS_DEBUG("Fake Hardware Interface - Init Params");
-    ros::param::get("~gazebo", _gazebo);
-    ros::param::get("~simu_gripper", _simu_gripper);
-    ros::param::get("~ros_control_loop_frequency", _ros_control_frequency);
-    ROS_DEBUG("Fake Hardware Interface - ros control loop freqeuncy %f", _ros_control_frequency);
-
-    ros::param::get("~publish_hw_status_frequency", _publish_hw_status_frequency);
-    ros::param::get("~publish_software_version_frequency", _publish_software_version_frequency);
-    ros::param::get("~publish_learning_mode_frequency", _publish_learning_mode_frequency);
-    ros::param::get("/niryo_robot/info/ros_version", _ros_niryo_robot_version);
-
-    _ros_niryo_robot_version.erase(_ros_niryo_robot_version.find_last_not_of(" \n\r\t") + 1);
-
-    ROS_DEBUG("Fake Hardware Interface - Publish_hw_status_frequency : %f", _publish_hw_status_frequency);
-    ROS_DEBUG("Fake Hardware Interface - Publish_software_version_frequency : %f", _publish_software_version_frequency);
-    ROS_DEBUG("Fake Hardware Interface - Publish_learning_mode_frequency : %f", _publish_learning_mode_frequency);
 }
 
 /**
@@ -528,4 +533,5 @@ std::string FakeInterfaceCore::jointIdToJointName(uint8_t id, uint8_t motor_type
 {
     return _robot->jointIdToJointName(id, static_cast<common::model::EMotorType>(motor_type));
 }
+
 }  // namespace fake_interface

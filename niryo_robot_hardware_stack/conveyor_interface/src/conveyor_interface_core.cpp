@@ -66,12 +66,15 @@ ConveyorInterfaceCore::~ConveyorInterfaceCore()
 /**
  * @brief ConveyorInterfaceCore::init
  */
-bool ConveyorInterfaceCore::init(ros::NodeHandle &nh)
+bool ConveyorInterfaceCore::init(ros::NodeHandle& nh)
 {
     initParameters(nh);
 
     ROS_DEBUG("ConveyorInterfaceCore::init - Starting services...");
     startServices(nh);
+
+    ROS_DEBUG("ConveyorInterfaceCore::init - Starting subscribers...");
+    startSubscribers(nh);
 
     ROS_DEBUG("ConveyorInterfaceCore::init - Starting publishers...");
     startPublishers(nh);
@@ -82,7 +85,7 @@ bool ConveyorInterfaceCore::init(ros::NodeHandle &nh)
 /**
  * @brief ConveyorInterfaceCore::initParams
  */
-void ConveyorInterfaceCore::initParameters(ros::NodeHandle &nh)
+void ConveyorInterfaceCore::initParameters(ros::NodeHandle& nh)
 {
     std::vector<int> id_pool_list;
 
@@ -92,8 +95,21 @@ void ConveyorInterfaceCore::initParameters(ros::NodeHandle &nh)
 
     _nh.getParam("/niryo_robot_hardware_interface/conveyor/publish_frequency", _publish_feedback_frequency);
 
-    ROS_DEBUG("ConveyorInterfaceCore::initParams - conveyor max effort : %d", _conveyor_max_effort);
-    ROS_DEBUG("ConveyorInterfaceCore::initParams - Publish_hw_status_frequency : %f", _publish_feedback_frequency);
+    ROS_DEBUG("ConveyorInterfaceCore::initParameters - conveyor max effort : %d", _conveyor_max_effort);
+    ROS_DEBUG("ConveyorInterfaceCore::initParameters - default conveyor id : %d", _default_conveyor_id);
+
+    // debug - display info
+    std::ostringstream ss;
+    ss << "[";
+    for (size_t i = 0; i < id_pool_list.size(); ++i)
+        ss << " id " << id_pool_list.at(i) << ",";
+
+    std::string id_pool_list_string = ss.str();
+    id_pool_list_string.pop_back();  // remove last ","
+    id_pool_list_string += "]";
+
+    ROS_DEBUG("ConveyorInterfaceCore::init - conveyor pool id list: %s ", id_pool_list_string.c_str());
+    ROS_DEBUG("ConveyorInterfaceCore::initParameters - Publish_hw_status_frequency : %f", _publish_feedback_frequency);
 
     // initialize pool of possible id we can assign
     for (int const id : id_pool_list)
@@ -103,7 +119,7 @@ void ConveyorInterfaceCore::initParameters(ros::NodeHandle &nh)
 /**
  * @brief ConveyorInterfaceCore::startServices
  */
-void ConveyorInterfaceCore::startServices(ros::NodeHandle &nh)
+void ConveyorInterfaceCore::startServices(ros::NodeHandle& nh)
 {
     _ping_and_set_stepper_server = _nh.advertiseService("/niryo_robot/conveyor/ping_and_set_conveyor",
                                                         &ConveyorInterfaceCore::_callbackPingAndSetConveyor, this);
@@ -116,7 +132,7 @@ void ConveyorInterfaceCore::startServices(ros::NodeHandle &nh)
  * @brief ConveyorInterfaceCore::startSubscribers
  * @param nh
  */
-void ConveyorInterfaceCore::startSubscribers(ros::NodeHandle &nh)
+void ConveyorInterfaceCore::startSubscribers(ros::NodeHandle& nh)
 {
     ROS_DEBUG("ConveyorInterfaceCore::startSubscribers - no subscriber to start");
 }
@@ -124,7 +140,7 @@ void ConveyorInterfaceCore::startSubscribers(ros::NodeHandle &nh)
 /**
  * @brief ConveyorInterfaceCore::startPublishers
  */
-void ConveyorInterfaceCore::startPublishers(ros::NodeHandle &nh)
+void ConveyorInterfaceCore::startPublishers(ros::NodeHandle& nh)
 {
     _conveyors_feedback_publisher = _nh.advertise<conveyor_interface::ConveyorFeedbackArray>(
                                                     "/niryo_robot/conveyor/feedback", 10);

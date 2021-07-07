@@ -31,6 +31,7 @@ CpuInterfaceCore::CpuInterfaceCore(ros::NodeHandle& nh)
     ROS_DEBUG("CPU Interface Core - ctor");
 
     init(nh);
+    startReadingData();
 
     ROS_INFO("CPU Interface - Started");
 }
@@ -46,8 +47,17 @@ CpuInterfaceCore::~CpuInterfaceCore()
 
 bool CpuInterfaceCore::init(ros::NodeHandle &nh)
 {
+    ROS_DEBUG("CpuInterfaceCore::init - Init parameters...");
     initParameters(nh);
-    startReadingData();
+
+    ROS_DEBUG("CpuInterfaceCore::init - Starting services...");
+    startServices(nh);
+
+    ROS_DEBUG("CpuInterfaceCore::init - Starting subscribers...");
+    startSubscribers(nh);
+
+    ROS_DEBUG("CpuInterfaceCore::init - Starting publishers...");
+    startPublishers(nh);
 
     return true;
 }
@@ -57,9 +67,9 @@ bool CpuInterfaceCore::init(ros::NodeHandle &nh)
  */
 void CpuInterfaceCore::initParameters(ros::NodeHandle &nh)
 {
-    if (ros::param::has("read_rpi_diagnostics_frequency/read_rpi_diagnostics_frequency"))
+    if (_nh.hasParam("read_rpi_diagnostics_frequency/read_rpi_diagnostics_frequency"))
     {
-        ros::param::get("read_rpi_diagnostics_frequency/read_rpi_diagnostics_frequency", _read_cpu_frequency);
+        _nh.getParam("read_rpi_diagnostics_frequency/read_rpi_diagnostics_frequency", _read_cpu_frequency);
     }
     else
     {
@@ -68,8 +78,10 @@ void CpuInterfaceCore::initParameters(ros::NodeHandle &nh)
         _nh.getParam("/niryo_robot_hardware_interface/temperature_warn_threshold", _temperature_warn_threshold);
         _nh.getParam("/niryo_robot_hardware_interface/temperature_shutdown_threshold", _temperature_shutdown_threshold);
     }
-    ROS_DEBUG("CPU Interface - Read temperature frequency %f", _read_cpu_frequency);
-}
+
+    ROS_DEBUG("CPU Interface::initParameters - Read temperature frequency %f", _read_cpu_frequency);
+    ROS_DEBUG("CPU Interface::initParameters - Temperature warn threshold %d", _temperature_warn_threshold);
+    ROS_DEBUG("CPU Interface::initParameters - Temperature shutdown threshold %d", _temperature_shutdown_threshold);}
 
 /**
  * @brief CpuInterfaceCore::startServices
@@ -100,16 +112,18 @@ void CpuInterfaceCore::startPublishers(ros::NodeHandle& /*nh*/)
  */
 void CpuInterfaceCore::_readCpuTemperature()
 {
-#if defined __arm__ || defined __aarch64__
-    std::fstream cpu_temp_file("/sys/class/thermal/thermal_zone0/temp", std::ios_base::in);
-
-    int read_temp;
-    cpu_temp_file >> read_temp;
-    if (read_temp > 0)
+    std::fstream cpu_temp_file("/sys/class/thermal/thermal_zone0/temp", std::fstream::in);
+    if (cpu_temp_file.good())
     {
-        _cpu_temperature = read_temp / 1000;
+        int read_temp = 0;
+        cpu_temp_file >> read_temp;
+        if (read_temp > 0)
+        {
+            _cpu_temperature = read_temp / 1000;
+        }
+
+        cpu_temp_file.close();
     }
-#endif
 }
 
 /**

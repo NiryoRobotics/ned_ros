@@ -167,10 +167,10 @@ int CanDriver::setupCAN()
     {
         if (mcp_can->setupInterruptGpio())
         {
-            ROS_DEBUG("CanDriver::setupCAN - setup successfull");
+            ROS_DEBUG("CanDriver::setupCAN - setup interrupt GPIO successfull");
             if (mcp_can->setupSpi())
             {
-                ROS_DEBUG("CanDriver::setupCAN - setup successfull");
+                ROS_DEBUG("CanDriver::setupCAN - setup spi successfull");
 
                 // no mask or filter used, receive all messages from CAN bus
                 // messages with ids != motor_id will be sent to another ROS interface
