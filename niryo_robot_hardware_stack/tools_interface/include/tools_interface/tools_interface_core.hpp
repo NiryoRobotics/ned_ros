@@ -27,6 +27,8 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <ros/ros.h>
 
 // niryo
+#include "common/model/iinterface_core.hpp"
+
 #include "common/model/tool_state.hpp"
 #include "ttl_driver/ttl_driver_core.hpp"
 
@@ -46,20 +48,23 @@ namespace tools_interface
 /**
  * @brief The ToolsInterfaceCore class
  */
-class ToolsInterfaceCore
+class ToolsInterfaceCore : public common::model::IInterfaceCore
 {
     public:
-        ToolsInterfaceCore(ros::NodeHandle &nh,
+        ToolsInterfaceCore(ros::NodeHandle& nh,
                            std::shared_ptr<ttl_driver::TtlDriverCore> ttl_driver);
-        virtual ~ToolsInterfaceCore();
+        virtual ~ToolsInterfaceCore() override;
+
+        virtual bool init(ros::NodeHandle &nh) override;
 
         bool isInitialized();
         void pubToolId(int id);
 
     private:
-        void initParams();
-        void initServices();
-        void initPublishers();
+        virtual void initParameters(ros::NodeHandle& nh) override;
+        virtual void startServices(ros::NodeHandle& nh) override;
+        virtual void startSubscribers(ros::NodeHandle& nh) override;
+        virtual void startPublishers(ros::NodeHandle& nh) override;
 
         void _publishToolConnection();
 
@@ -75,7 +80,6 @@ class ToolsInterfaceCore
 
     private:
         ros::NodeHandle _nh;
-
         std::mutex _tool_mutex;
 
         ros::Publisher _tool_connection_publisher;

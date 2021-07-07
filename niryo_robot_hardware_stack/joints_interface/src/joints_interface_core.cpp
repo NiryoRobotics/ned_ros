@@ -36,7 +36,19 @@ JointsInterfaceCore::JointsInterfaceCore(ros::NodeHandle& nh,
                                          std::shared_ptr<ttl_driver::TtlDriverCore> ttl_driver,
                                          std::shared_ptr<can_driver::CanDriverCore> can_driver)
 {
-    init(ttl_driver, can_driver);
+    init(nh);
+
+    ROS_DEBUG("JointsInterfaceCore::init - Start joint hardware interface");
+    _robot.reset(new JointHardwareInterface(nh, ttl_driver, can_driver));
+
+    ROS_DEBUG("JointsInterfaceCore::init - Create controller manager");
+    _cm.reset(new controller_manager::ControllerManager(_robot.get(), _nh));
+
+    ROS_DEBUG("JointsInterfaceCore::init - Starting ros control thread...");
+    _control_loop_thread = std::thread(&JointsInterfaceCore::rosControlLoop, this);
+
+    ROS_INFO("JointsInterfaceCore::init - Started");
+    _nh.setParam("/niryo_robot_joint_interface/initialized", true);
 }
 
 /**
@@ -51,39 +63,23 @@ JointsInterfaceCore::~JointsInterfaceCore()
         _control_loop_thread.join();
 }
 
-/**
- * @brief JointsInterfaceCore::init
- * @param ttl_driver
- * @param can_driver
- */
-void JointsInterfaceCore::init(std::shared_ptr<ttl_driver::TtlDriverCore> ttl_driver,
-                               std::shared_ptr<can_driver::CanDriverCore> can_driver)
+bool JointsInterfaceCore::init(ros::NodeHandle &nh)
 {
-    initParams();
+    initParameters(nh);
 
     ROS_DEBUG("JointsInterfaceCore::init - Starting services...");
-    startServices();
+    startServices(nh);
 
     ROS_DEBUG("JointsInterfaceCore::init - Starting subscribers...");
-    startSubscribers();
+    startSubscribers(nh);
 
-    ROS_DEBUG("JointsInterfaceCore::init - Start joint hardware interface");
-    _robot.reset(new JointHardwareInterface(ttl_driver, can_driver));
-
-    ROS_DEBUG("JointsInterfaceCore::init - Create controller manager");
-    _cm.reset(new controller_manager::ControllerManager(_robot.get(), _nh));
-
-    ROS_DEBUG("JointsInterfaceCore::init - Starting ros control thread...");
-    _control_loop_thread = std::thread(&JointsInterfaceCore::rosControlLoop, this);
-
-    ROS_INFO("JointsInterfaceCore::init - Started");
-    _nh.setParam("/niryo_robot_joint_interface/initialized", true);
+    return true;
 }
 
 /**
  * @brief JointsInterfaceCore::initParams
  */
-void JointsInterfaceCore::initParams()
+void JointsInterfaceCore::initParameters(ros::NodeHandle &nh)
 {
     _nh.getParam("/niryo_robot_hardware_interface/ros_control_loop_frequency",
                  _control_loop_frequency);
@@ -100,7 +96,7 @@ void JointsInterfaceCore::initParams()
 /**
  * @brief JointsInterfaceCore::startServices
  */
-void JointsInterfaceCore::startServices()
+void JointsInterfaceCore::startServices(ros::NodeHandle &nh)
 {
     _calibrate_motors_server = _nh.advertiseService("/niryo_robot/joints_interface/calibrate_motors",
                                                     &JointsInterfaceCore::_callbackCalibrateMotors, this);
@@ -118,12 +114,21 @@ void JointsInterfaceCore::startServices()
 /**
  * @brief JointsInterfaceCore::startSubscribers
  */
-void JointsInterfaceCore::startSubscribers()
+void JointsInterfaceCore::startSubscribers(ros::NodeHandle &nh)
 {
     _trajectory_result_subscriber = _nh.subscribe("/niryo_robot_follow_joint_trajectory_controller/follow_joint_trajectory/result",
                                                   10, &JointsInterfaceCore::_callbackTrajectoryResult, this);
     _learning_mode_publisher = _nh.advertise<std_msgs::Bool>("niryo_robot/learning_mode/state", 10);
     _publish_learning_mode_thread = std::thread(&JointsInterfaceCore::_publishLearningMode, this);
+}
+
+/**
+ * @brief JointsInterfaceCore::startPublishers
+ * @param nh
+ */
+void JointsInterfaceCore::startPublishers(ros::NodeHandle &nh)
+{
+
 }
 
 // *********************

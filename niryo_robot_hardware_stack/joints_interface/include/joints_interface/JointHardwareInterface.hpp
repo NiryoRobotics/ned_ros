@@ -45,7 +45,8 @@ class JointHardwareInterface : public hardware_interface::RobotHW
 {
 
 public:
-    JointHardwareInterface(std::shared_ptr<ttl_driver::TtlDriverCore> ttl_driver,
+    JointHardwareInterface(ros::NodeHandle& nh,
+                           std::shared_ptr<ttl_driver::TtlDriverCore> ttl_driver,
                            std::shared_ptr<can_driver::CanDriverCore> can_driver);
 
     void sendInitMotorsParams();
@@ -65,15 +66,10 @@ public:
 
     // RobotHW interface
 public:
+    bool init(ros::NodeHandle& rootnh, ros::NodeHandle &robot_hwnh) override;
+
     virtual void read(const ros::Time &/*time*/, const ros::Duration &/*period*/) override;
     virtual void write(const ros::Time &/*time*/, const ros::Duration &/*period*/) override;
-
-private:
-    void initJoints();
-
-    void initPublisherSubscribers();
-    void initServices();
-    bool setMotorPID(const std::shared_ptr<common::model::DxlMotorState> &dxlState);
 
 private:
     ros::NodeHandle _nh;

@@ -53,13 +53,14 @@ namespace joints_interface
  * @param ttl_driver
  * @param can_driver
  */
-JointHardwareInterface::JointHardwareInterface(shared_ptr<ttl_driver::TtlDriverCore> ttl_driver,
+JointHardwareInterface::JointHardwareInterface(ros::NodeHandle& nh,
+                                               shared_ptr<ttl_driver::TtlDriverCore> ttl_driver,
                                                shared_ptr<can_driver::CanDriverCore> can_driver) :
     _ttl_driver_core(ttl_driver),
     _can_driver_core(can_driver),
     _learning_mode(true)
 {
-    initJoints();
+    init(nh, nh);
 
     sendInitMotorsParams();
 
@@ -127,7 +128,7 @@ void JointHardwareInterface::write(const ros::Time &/*time*/, const ros::Duratio
  * @brief JointHardwareInterface::initJoints : build the joints by gathering information in config files and instanciating
  * correct state (dxl or stepper)
  */
-void JointHardwareInterface::initJoints()
+bool JointHardwareInterface::init(ros::NodeHandle& rootnh, ros::NodeHandle &robot_hwnh)
 {
     size_t nb_joints = 0;
 
@@ -251,6 +252,8 @@ void JointHardwareInterface::initJoints()
     // register the interfaces
     registerInterface(&_joint_state_interface);
     registerInterface(&_joint_position_interface);
+
+    return true;
 }
 
 /**
@@ -292,7 +295,7 @@ void JointHardwareInterface::sendInitMotorsParams()
         if (jState && jState->isDynamixel())
         {
             auto dxlState = dynamic_pointer_cast<DxlMotorState>(jState);
-            if (!setMotorPID(dxlState))
+            if (!_ttl_driver_core->setMotorPID(dxlState))
                 ROS_ERROR("JointHardwareInterface::sendInitMotorsParams - Error setting motor PID for dynamixel id %d",
                           static_cast<int>(dxlState->getId()));
         }
@@ -471,60 +474,4 @@ string JointHardwareInterface::jointIdToJointName(uint8_t id, EMotorType motor_t
     return "";
 }
 
-/**
- * @brief JointHardwareInterface::setMotorPID
- * @param dxlState : if a param is < 0, does not set anything
- * @return
- */
-bool JointHardwareInterface::setMotorPID(const shared_ptr<DxlMotorState>& dxlState)
-{
-    uint8_t motor_id = dxlState->getId();
-
-    ROS_DEBUG("JointHardwareInterface::setMotorPID - Setting PID for motor id: %d", static_cast<int>(motor_id));
-
-    // ** DXL PID configuration **
-
-    // P Gain
-    if (dxlState->getPGain() > 0)
-    {
-        SingleMotorCmd dxl_cmd_p(EDxlCommandType::CMD_TYPE_P_GAIN, motor_id, dxlState->getPGain());
-
-        if (dxl_cmd_p.isValid())
-            _ttl_driver_core->addSingleCommandToQueue(dxl_cmd_p);
-    }
-
-    if (dxlState->getIGain() > 0)
-    {
-        SingleMotorCmd dxl_cmd_i(EDxlCommandType::CMD_TYPE_I_GAIN, motor_id, dxlState->getIGain());
-
-        if (dxl_cmd_i.isValid())
-            _ttl_driver_core->addSingleCommandToQueue(dxl_cmd_i);
-    }
-
-    if (dxlState->getDGain() > 0)
-    {
-        SingleMotorCmd dxl_cmd_d(EDxlCommandType::CMD_TYPE_D_GAIN, motor_id, dxlState->getDGain());
-
-        if (dxl_cmd_d.isValid())
-            _ttl_driver_core->addSingleCommandToQueue(dxl_cmd_d);
-    }
-
-    if (dxlState->getFF1Gain() > 0)
-    {
-        SingleMotorCmd dxl_cmd_ff1(EDxlCommandType::CMD_TYPE_FF1_GAIN, motor_id, dxlState->getFF1Gain());
-
-        if (dxl_cmd_ff1.isValid())
-            _ttl_driver_core->addSingleCommandToQueue(dxl_cmd_ff1);
-    }
-
-    if (dxlState->getFF2Gain() > 0)
-    {
-        SingleMotorCmd dxl_cmd_ff2(EDxlCommandType::CMD_TYPE_FF2_GAIN, motor_id, dxlState->getFF2Gain());
-
-        if (dxl_cmd_ff2.isValid())
-            _ttl_driver_core->addSingleCommandToQueue(dxl_cmd_ff2);
-    }
-
-    return true;
-}
 }  // namespace joints_interface

@@ -131,12 +131,12 @@ void HardwareInterface::initNodes(ros::NodeHandle &nh)
 void HardwareInterface::initPublishers(ros::NodeHandle &nh)
 {
     _hardware_status_publisher = _nh.advertise<niryo_robot_msgs::HardwareStatus>(
-                                            "niryo_robot_hardware_interface/hardware_status", 10);
+                                            "/niryo_robot_hardware_interface/hardware_status", 10);
 
     _publish_hw_status_thread = std::thread(&HardwareInterface::_publishHardwareStatus, this);
 
     _software_version_publisher = _nh.advertise<niryo_robot_msgs::SoftwareVersion>(
-                                            "niryo_robot_hardware_interface/software_version", 10);
+                                            "/niryo_robot_hardware_interface/software_version", 10);
 
     _publish_software_version_thread = std::thread(&HardwareInterface::_publishSoftwareVersion, this);
 

@@ -50,16 +50,15 @@ namespace tools_interface
 
 /**
  * @brief ToolsInterfaceCore::ToolsInterfaceCore
+ * @param nh
  * @param ttl_driver
  */
 ToolsInterfaceCore::ToolsInterfaceCore(ros::NodeHandle &nh,
                                        shared_ptr<ttl_driver::TtlDriverCore> ttl_driver):
     _ttl_driver_core(ttl_driver)
 {
-    initParams();
-    initServices();
-    initPublishers();
 
+    init(nh);
 
     pubToolId(0);
 }
@@ -74,9 +73,24 @@ ToolsInterfaceCore::~ToolsInterfaceCore()
 }
 
 /**
- * @brief ToolsInterfaceCore::initParams
+ * @brief ToolsInterfaceCore::init
+ * @param nh
+ * @return
  */
-void ToolsInterfaceCore::initParams()
+bool ToolsInterfaceCore::init(ros::NodeHandle &nh)
+{
+    initParameters(nh);
+    startServices(nh);
+    startPublishers(nh);
+
+    return true;
+}
+
+/**
+ * @brief ToolsInterfaceCore::initParameters
+ * @param nh
+ */
+void ToolsInterfaceCore::initParameters(ros::NodeHandle &nh)
 {
     vector<int> idList;
     vector<string> typeList;
@@ -136,39 +150,51 @@ void ToolsInterfaceCore::initParams()
 }
 
 /**
- * @brief ToolsInterfaceCore::initServices
+ * @brief ToolsInterfaceCore::startServices
  */
-void ToolsInterfaceCore::initServices()
+void ToolsInterfaceCore::startServices(ros::NodeHandle &nh)
 {
-    _ping_and_set_dxl_tool_server = _nh.advertiseService("niryo_robot/tools/ping_and_set_dxl_tool",
+    _ping_and_set_dxl_tool_server = _nh.advertiseService("/niryo_robot/tools/ping_and_set_dxl_tool",
                                                          &ToolsInterfaceCore::_callbackPingAndSetDxlTool, this);
 
-    _open_gripper_server = _nh.advertiseService("niryo_robot/tools/open_gripper",
+    _open_gripper_server = _nh.advertiseService("/niryo_robot/tools/open_gripper",
                                                 &ToolsInterfaceCore::_callbackOpenGripper, this);
 
-    _close_gripper_server = _nh.advertiseService("niryo_robot/tools/close_gripper",
+    _close_gripper_server = _nh.advertiseService("/niryo_robot/tools/close_gripper",
                                                  &ToolsInterfaceCore::_callbackCloseGripper, this);
 
-    _pull_air_vacuum_pump_server = _nh.advertiseService("niryo_robot/tools/pull_air_vacuum_pump",
+    _pull_air_vacuum_pump_server = _nh.advertiseService("/niryo_robot/tools/pull_air_vacuum_pump",
                                                         &ToolsInterfaceCore::_callbackPullAirVacuumPump, this);
 
-    _push_air_vacuum_pump_server = _nh.advertiseService("niryo_robot/tools/push_air_vacuum_pump",
+    _push_air_vacuum_pump_server = _nh.advertiseService("/niryo_robot/tools/push_air_vacuum_pump",
                                                         &ToolsInterfaceCore::_callbackPushAirVacuumPump, this);
 
-    _tool_reboot_server = _nh.advertiseService("niryo_robot/tools/reboot",
+    _tool_reboot_server = _nh.advertiseService("/niryo_robot/tools/reboot",
                                                &ToolsInterfaceCore::_callbackToolReboot, this);
 }
 
 /**
- * @brief ToolsInterfaceCore::initPublishers
+ * @brief ToolsInterfaceCore::startSubscribers
+ * @param nh
  */
-void ToolsInterfaceCore::initPublishers()
+void ToolsInterfaceCore::startSubscribers(ros::NodeHandle &nh)
+{
+
+}
+
+/**
+ * @brief ToolsInterfaceCore::startPublishers
+ */
+void ToolsInterfaceCore::startPublishers(ros::NodeHandle &nh)
 {
     _tool_connection_publisher = _nh.advertise<std_msgs::Int32>("/niryo_robot_hardware/tools/current_id", 1, true);
     _publish_tool_connection_thread = std::thread(&ToolsInterfaceCore::_publishToolConnection, this);
 }
 
-
+/**
+ * @brief ToolsInterfaceCore::isInitialized
+ * @return
+ */
 bool ToolsInterfaceCore::isInitialized()
 {
     return !_available_tools_map.empty();

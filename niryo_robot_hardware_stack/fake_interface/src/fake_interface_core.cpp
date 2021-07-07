@@ -35,9 +35,7 @@ FakeInterfaceCore::FakeInterfaceCore(ros::NodeHandle& nh)
 {
     ROS_DEBUG("Fake Interface Core - ctor");
 
-    initParams();
-    initServices();
-    startPublishersSubscribers();
+    init(nh);
 
     ROS_INFO("Fake Hardware Interface - Started ");
     _robot = std::make_unique<FakeJointHardwareInterface>();
@@ -72,9 +70,23 @@ FakeInterfaceCore::~FakeInterfaceCore()
 }
 
 /**
- * @brief FakeInterfaceCore::initServices
+ * @brief FakeInterfaceCore::init
+ * @param nh
+ * @return
  */
-void FakeInterfaceCore::initServices()
+bool FakeInterfaceCore::init(ros::NodeHandle &nh)
+{
+    initParameters(nh);
+    startServices(nh);
+    startSubscribers(nh);
+
+    return true;
+}
+
+/**
+ * @brief FakeInterfaceCore::startServices
+ */
+void FakeInterfaceCore::startServices(ros::NodeHandle& nh)
 {
     ROS_DEBUG("Fake Hardware Interface - Init Services");
     _calibrate_motors_server = _nh.advertiseService("/niryo_robot/joints_interface/calibrate_motors",
@@ -118,7 +130,7 @@ void FakeInterfaceCore::initServices()
 /**
  * @brief FakeInterfaceCore::startPublishersSubscribers
  */
-void FakeInterfaceCore::startPublishersSubscribers()
+void FakeInterfaceCore::startSubscribers(ros::NodeHandle& nh)
 {
     ROS_DEBUG("Fake Hardware Interface - Init Subscribers");
     _trajectory_result_subscriber = _nh.subscribe(
@@ -128,9 +140,18 @@ void FakeInterfaceCore::startPublishersSubscribers()
 }
 
 /**
+ * @brief FakeInterfaceCore::startPublishers
+ * @param nh
+ */
+void FakeInterfaceCore::startPublishers(ros::NodeHandle &nh)
+{
+
+}
+
+/**
  * @brief FakeInterfaceCore::initParams
  */
-void FakeInterfaceCore::initParams()
+void FakeInterfaceCore::initParameters(ros::NodeHandle &nh)
 {
     ROS_DEBUG("Fake Hardware Interface - Init Params");
     ros::param::get("~gazebo", _gazebo);
@@ -397,7 +418,7 @@ bool FakeInterfaceCore::_callbackControlConveyor(conveyor_interface::ControlConv
  * @brief FakeInterfaceCore::getTtlHwStatus
  * @return
  */
-ttl_driver::DxlArrayMotorHardwareStatus FakeInterfaceCore::getTtlHwStatus()
+ttl_driver::DxlArrayMotorHardwareStatus FakeInterfaceCore::getTtlHwStatus() const
 {
     ttl_driver::DxlMotorHardwareStatus data;
     ttl_driver::DxlArrayMotorHardwareStatus hw_state;
@@ -417,7 +438,7 @@ ttl_driver::DxlArrayMotorHardwareStatus FakeInterfaceCore::getTtlHwStatus()
  * @brief FakeInterfaceCore::getTtlBusState
  * @return
  */
-niryo_robot_msgs::BusState FakeInterfaceCore::getTtlBusState()
+niryo_robot_msgs::BusState FakeInterfaceCore::getTtlBusState() const
 {
     niryo_robot_msgs::BusState dxl_bus_state;
 
@@ -431,7 +452,7 @@ niryo_robot_msgs::BusState FakeInterfaceCore::getTtlBusState()
  * @brief FakeInterfaceCore::getCanHwStatus
  * @return
  */
-can_driver::StepperArrayMotorHardwareStatus FakeInterfaceCore::getCanHwStatus()
+can_driver::StepperArrayMotorHardwareStatus FakeInterfaceCore::getCanHwStatus() const
 {
     can_driver::StepperMotorHardwareStatus data;
     can_driver::StepperArrayMotorHardwareStatus hw_state;
@@ -477,7 +498,7 @@ void FakeInterfaceCore::getCalibrationState(bool &need_calibration, bool &calibr
  * @brief FakeInterfaceCore::getCpuTemperature
  * @return
  */
-int FakeInterfaceCore::getCpuTemperature()
+int FakeInterfaceCore::getCpuTemperature() const
 {
     return 0;
 }

@@ -33,6 +33,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <ros/ros.h>
 
 #include "common/model/idriver_core.hpp"
+#include "common/model/iinterface_core.hpp"
 
 #include "ttl_driver/ttl_driver.hpp"
 #include "ttl_driver/DxlArrayMotorHardwareStatus.h"
@@ -53,12 +54,14 @@ namespace ttl_driver
 /**
  * @brief The TtlDriverCore class
  */
-class TtlDriverCore : public common::model::IDriverCore
+class TtlDriverCore : public common::model::IDriverCore, public common::model::IInterfaceCore
 {
     public:
 
-        TtlDriverCore(ros::NodeHandle &nh);
+        TtlDriverCore(ros::NodeHandle& nh);
         virtual ~TtlDriverCore() override;
+
+        bool init(ros::NodeHandle& nh) override;
 
         int setEndEffector(common::model::EMotorType type, uint8_t motor_id);
         void unsetEndEffector(uint8_t motor_id);
@@ -66,6 +69,7 @@ class TtlDriverCore : public common::model::IDriverCore
         void clearSingleCommandQueue();
         void clearEndEffectorCommandQueue();
 
+        bool setMotorPID(const std::shared_ptr<common::model::DxlMotorState>& dxlState);
         void setTrajectoryControllerCommands(const std::vector<std::pair<uint8_t, uint32_t> > &cmd);
         void setSyncCommand(const common::model::SynchronizeMotorCmd &cmd);
         void addSingleCommandToQueue(const common::model::SingleMotorCmd &cmd);
@@ -101,8 +105,11 @@ class TtlDriverCore : public common::model::IDriverCore
         niryo_robot_msgs::BusState getBusState() const override;
 
     private:
-        void init();
-        void initParameters();
+        virtual void initParameters(ros::NodeHandle& nh) override;
+        virtual void startServices(ros::NodeHandle& nh) override;
+        virtual void startSubscribers(ros::NodeHandle &nh) override;
+        virtual void startPublishers(ros::NodeHandle &nh) override;
+
         void resetHardwareControlLoopRates() override;
         void controlLoop() override;
         void _executeCommand() override;
@@ -117,6 +124,7 @@ class TtlDriverCore : public common::model::IDriverCore
 
     private:
         ros::NodeHandle _nh;
+
         bool _control_loop_flag{false};
         bool _debug_flag{false};
 

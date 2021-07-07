@@ -45,18 +45,21 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "niryo_robot_msgs/Trigger.h"
 #include "common/model/motor_type_enum.hpp"
 
+#include "common/model/iinterface_core.hpp"
+
 namespace joints_interface
 {
 
-class JointsInterfaceCore
+class JointsInterfaceCore : common::model::IInterfaceCore
 {
     public:
 
         JointsInterfaceCore(ros::NodeHandle& nh,
                             std::shared_ptr<ttl_driver::TtlDriverCore> ttl_driver,
                             std::shared_ptr<can_driver::CanDriverCore> can_driver);
+        virtual ~JointsInterfaceCore() override;
 
-        virtual ~JointsInterfaceCore();
+        virtual bool init(ros::NodeHandle& nh) override;
 
         void sendMotorsParams();
         void activateLearningMode(bool learning_mode_on, int &resp_status, std::string &resp_message);
@@ -70,12 +73,10 @@ class JointsInterfaceCore
         const std::vector<std::shared_ptr<common::model::JointState> >& getJointsState() const;
 
     private:
-        void init(std::shared_ptr<ttl_driver::TtlDriverCore> ttl_driver,
-                  std::shared_ptr<can_driver::CanDriverCore> can_driver);
-        void initParams();
-
-        void startServices();
-        void startSubscribers();
+        virtual void initParameters(ros::NodeHandle& nh) override;
+        virtual void startServices(ros::NodeHandle& nh) override;
+        virtual void startSubscribers(ros::NodeHandle& nh) override;
+        virtual void startPublishers(ros::NodeHandle& nh) override;
 
         void rosControlLoop();
 
@@ -110,7 +111,6 @@ class JointsInterfaceCore
         ros::ServiceServer _calibrate_motors_server;
         ros::ServiceServer _request_new_calibration_server;
         ros::ServiceServer _activate_learning_mode_server;
-
 };
 
 /**

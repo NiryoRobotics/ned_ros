@@ -41,8 +41,8 @@ class CalibrationManager
 
 public:
     CalibrationManager(std::vector<std::shared_ptr<common::model::JointState> > joint_list,
-                         std::shared_ptr<can_driver::CanDriverCore> can_driver,
-                         std::shared_ptr<ttl_driver::TtlDriverCore> ttl_driver);
+                       std::shared_ptr<can_driver::CanDriverCore> can_driver,
+                       std::shared_ptr<ttl_driver::TtlDriverCore> ttl_driver);
 
     int startCalibration(int mode, std::string &result_message);
 

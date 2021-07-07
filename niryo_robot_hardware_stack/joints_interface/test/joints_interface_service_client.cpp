@@ -98,7 +98,7 @@ TEST(TESTSuite, resetControllerServer)
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "joints_interface_service_client");
-    
+
     nh = std::make_unique<ros::NodeHandle>();
 
     testing::InitGoogleTest(&argc, argv);
