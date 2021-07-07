@@ -35,25 +35,28 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "conveyor_interface/ConveyorFeedbackArray.h"
 #include "niryo_robot_msgs/CommandStatus.h"
 
+#include "common/model/iinterface_core.hpp"
+
 namespace conveyor_interface
 {
 
 /**
  * @brief The ConveyorInterfaceCore class
  */
-class ConveyorInterfaceCore
+class ConveyorInterfaceCore : public common::model::IInterfaceCore
 {
     public:
-        ConveyorInterfaceCore(ros::NodeHandle &nh, std::shared_ptr<can_driver::CanDriverCore> stepper);
-        virtual ~ConveyorInterfaceCore();
+        ConveyorInterfaceCore(ros::NodeHandle& nh, std::shared_ptr<can_driver::CanDriverCore> stepper);
+        virtual ~ConveyorInterfaceCore() override;
+        virtual bool init(ros::NodeHandle& nh) override;
 
         bool isInitialized();
 
     private:
-        void init();
-        void initParams();
-        void startServices();
-        void startPublishers();
+        virtual void initParameters(ros::NodeHandle& nh) override;
+        virtual void startServices(ros::NodeHandle& nh) override;
+        virtual void startSubscribers(ros::NodeHandle& nh) override;
+        virtual void startPublishers(ros::NodeHandle& nh) override;
 
         conveyor_interface::SetConveyor::Response addConveyor();
         conveyor_interface::SetConveyor::Response removeConveyor(uint8_t id);

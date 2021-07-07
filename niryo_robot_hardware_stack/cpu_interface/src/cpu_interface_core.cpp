@@ -28,9 +28,9 @@ namespace cpu_interface
  */
 CpuInterfaceCore::CpuInterfaceCore(ros::NodeHandle& nh)
 {
-    initParams();
-    startReadingData();
     ROS_DEBUG("CPU Interface Core - ctor");
+
+    init(nh);
 
     ROS_INFO("CPU Interface - Started");
 }
@@ -44,10 +44,18 @@ CpuInterfaceCore::~CpuInterfaceCore()
         _read_hardware_data_thread.join();
 }
 
+bool CpuInterfaceCore::init(ros::NodeHandle &nh)
+{
+    initParameters(nh);
+    startReadingData();
+
+    return true;
+}
+
 /**
  * @brief CpuInterfaceCore::initParams
  */
-void CpuInterfaceCore::initParams()
+void CpuInterfaceCore::initParameters(ros::NodeHandle &nh)
 {
     if (ros::param::has("read_rpi_diagnostics_frequency/read_rpi_diagnostics_frequency"))
     {
@@ -61,6 +69,30 @@ void CpuInterfaceCore::initParams()
         _nh.getParam("/niryo_robot_hardware_interface/temperature_shutdown_threshold", _temperature_shutdown_threshold);
     }
     ROS_DEBUG("CPU Interface - Read temperature frequency %f", _read_cpu_frequency);
+}
+
+/**
+ * @brief CpuInterfaceCore::startServices
+ */
+void CpuInterfaceCore::startServices(ros::NodeHandle& /*nh*/)
+{
+    ROS_DEBUG("CpuInterfaceCore::startServices - no services to start");
+}
+
+/**
+ * @brief CpuInterfaceCore::startSubscribers
+ */
+void CpuInterfaceCore::startSubscribers(ros::NodeHandle& /*nh*/)
+{
+    ROS_DEBUG("CpuInterfaceCore::startSubscribers - no subscribers to start");
+}
+
+/**
+ * @brief CpuInterfaceCore::startPublishers
+ */
+void CpuInterfaceCore::startPublishers(ros::NodeHandle& /*nh*/)
+{
+    ROS_DEBUG("CpuInterfaceCore::startPublishers - no publishers to start");
 }
 
 /**

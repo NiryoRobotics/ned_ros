@@ -19,6 +19,7 @@
 
 // c++
 #include <vector>
+#include <string>
 #include <functional>
 
 // ros
@@ -44,12 +45,13 @@ namespace conveyor_interface
  * @brief ConveyorInterfaceCore::ConveyorInterfaceCore
  * @param stepper
  */
-ConveyorInterfaceCore::ConveyorInterfaceCore(ros::NodeHandle& nh, shared_ptr<can_driver::CanDriverCore> can_driver):
+ConveyorInterfaceCore::ConveyorInterfaceCore(ros::NodeHandle& nh,
+                                             shared_ptr<can_driver::CanDriverCore> can_driver):
     _can_driver(can_driver)
 {
     ROS_DEBUG("ConveyorInterfaceCore::ConveyorInterfaceCore - ctor");
 
-    init();
+    init(nh);
 }
 
 /**
@@ -64,21 +66,23 @@ ConveyorInterfaceCore::~ConveyorInterfaceCore()
 /**
  * @brief ConveyorInterfaceCore::init
  */
-void ConveyorInterfaceCore::init()
+bool ConveyorInterfaceCore::init(ros::NodeHandle &nh)
 {
-    initParams();
+    initParameters(nh);
 
     ROS_DEBUG("ConveyorInterfaceCore::init - Starting services...");
-    startServices();
+    startServices(nh);
 
     ROS_DEBUG("ConveyorInterfaceCore::init - Starting publishers...");
-    startPublishers();
+    startPublishers(nh);
+
+    return true;
 }
 
 /**
  * @brief ConveyorInterfaceCore::initParams
  */
-void ConveyorInterfaceCore::initParams()
+void ConveyorInterfaceCore::initParameters(ros::NodeHandle &nh)
 {
     std::vector<int> id_pool_list;
 
@@ -99,7 +103,7 @@ void ConveyorInterfaceCore::initParams()
 /**
  * @brief ConveyorInterfaceCore::startServices
  */
-void ConveyorInterfaceCore::startServices()
+void ConveyorInterfaceCore::startServices(ros::NodeHandle &nh)
 {
     _ping_and_set_stepper_server = _nh.advertiseService("/niryo_robot/conveyor/ping_and_set_conveyor",
                                                         &ConveyorInterfaceCore::_callbackPingAndSetConveyor, this);
@@ -109,9 +113,18 @@ void ConveyorInterfaceCore::startServices()
 }
 
 /**
+ * @brief ConveyorInterfaceCore::startSubscribers
+ * @param nh
+ */
+void ConveyorInterfaceCore::startSubscribers(ros::NodeHandle &nh)
+{
+    ROS_DEBUG("ConveyorInterfaceCore::startSubscribers - no subscriber to start");
+}
+
+/**
  * @brief ConveyorInterfaceCore::startPublishers
  */
-void ConveyorInterfaceCore::startPublishers()
+void ConveyorInterfaceCore::startPublishers(ros::NodeHandle &nh)
 {
     _conveyors_feedback_publisher = _nh.advertise<conveyor_interface::ConveyorFeedbackArray>(
                                                     "/niryo_robot/conveyor/feedback", 10);
