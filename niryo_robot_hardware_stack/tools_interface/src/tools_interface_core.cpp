@@ -90,7 +90,7 @@ bool ToolsInterfaceCore::init(ros::NodeHandle &nh)
  * @brief ToolsInterfaceCore::initParameters
  * @param nh
  */
-void ToolsInterfaceCore::initParameters(ros::NodeHandle &nh)
+void ToolsInterfaceCore::initParameters(ros::NodeHandle& nh)
 {
     vector<int> idList;
     vector<string> typeList;
@@ -114,11 +114,11 @@ void ToolsInterfaceCore::initParameters(ros::NodeHandle &nh)
     available_tools_list.pop_back();  // remove last ","
     available_tools_list += "]";
 
-    ROS_INFO("ToolsInterfaceCore::initParams - List of tool ids : %s", available_tools_list.c_str());
+    ROS_INFO("ToolsInterfaceCore::initParameters - List of tool ids : %s", available_tools_list.c_str());
 
     // check that the two lists have the same size
     if (idList.size() != typeList.size())
-        ROS_ERROR("ToolsInterfaceCore::initParams - wrong dynamixel configuration. "
+        ROS_ERROR("ToolsInterfaceCore::initParameters - wrong dynamixel configuration. "
                   "Please check your configuration file (tools_interface/config/default.yaml)");
 
     // put everything in maps
@@ -132,18 +132,18 @@ void ToolsInterfaceCore::initParameters(ros::NodeHandle &nh)
             if (EMotorType::UNKNOWN != type)
                 _available_tools_map.insert(std::make_pair(id, type));
             else
-                ROS_ERROR("ToolsInterfaceCore::initParams - unknown type %s. "
+                ROS_ERROR("ToolsInterfaceCore::initParameters - unknown type %s. "
                           "Please check your configuration file (tools_interface/config/default.yaml)",
                           typeList.at(id).c_str());
         }
         else
-            ROS_ERROR("ToolsInterfaceCore::initParams - duplicate id %d. "
+            ROS_ERROR("ToolsInterfaceCore::initParameters - duplicate id %d. "
                       "Please check your configuration file (tools_interface/config/default.yaml)", id);
     }
 
     for (auto const &tool : _available_tools_map)
     {
-        ROS_DEBUG("ToolsInterfaceCore::initParams - Available tools map: %d => %s",
+        ROS_DEBUG("ToolsInterfaceCore::initParameters - Available tools map: %d => %s",
                                         static_cast<int>(tool.first),
                                         MotorTypeEnum(tool.second).toString().c_str());
     }
@@ -152,7 +152,7 @@ void ToolsInterfaceCore::initParameters(ros::NodeHandle &nh)
 /**
  * @brief ToolsInterfaceCore::startServices
  */
-void ToolsInterfaceCore::startServices(ros::NodeHandle &nh)
+void ToolsInterfaceCore::startServices(ros::NodeHandle& nh)
 {
     _ping_and_set_dxl_tool_server = _nh.advertiseService("/niryo_robot/tools/ping_and_set_dxl_tool",
                                                          &ToolsInterfaceCore::_callbackPingAndSetDxlTool, this);
@@ -177,15 +177,15 @@ void ToolsInterfaceCore::startServices(ros::NodeHandle &nh)
  * @brief ToolsInterfaceCore::startSubscribers
  * @param nh
  */
-void ToolsInterfaceCore::startSubscribers(ros::NodeHandle &nh)
+void ToolsInterfaceCore::startSubscribers(ros::NodeHandle& /*nh*/)
 {
-
+    ROS_DEBUG("No subscribers to start");
 }
 
 /**
  * @brief ToolsInterfaceCore::startPublishers
  */
-void ToolsInterfaceCore::startPublishers(ros::NodeHandle &nh)
+void ToolsInterfaceCore::startPublishers(ros::NodeHandle& nh)
 {
     _tool_connection_publisher = _nh.advertise<std_msgs::Int32>("/niryo_robot_hardware/tools/current_id", 1, true);
     _publish_tool_connection_thread = std::thread(&ToolsInterfaceCore::_publishToolConnection, this);

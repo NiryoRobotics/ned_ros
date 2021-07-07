@@ -36,16 +36,7 @@ namespace niryo_robot_hardware_interface
 HardwareInterface::HardwareInterface(ros::NodeHandle &nh) :
     _nh(nh)
 {
-   /* for (int i = 0; i < 30; i++) {
-
-        ROS_INFO("Sleeping %d ! to have time to attach via gdb", i);
-        ros::Duration(1).sleep();
-    }
-    ROS_INFO("Waking up");*/
-
-    initParameters(nh);
-    initNodes(nh);
-    initPublishers(nh);
+    init(nh);
 }
 
 /**
@@ -65,93 +56,22 @@ HardwareInterface::~HardwareInterface()
 }
 
 /**
- * @brief HardwareInterface::initNodes
+ * @brief HardwareInterface::init
+ * @param nh
+ * @return
  */
-
-void HardwareInterface::initNodes(ros::NodeHandle &nh)
+bool HardwareInterface::init(ros::NodeHandle &nh)
 {
-    ROS_DEBUG("HardwareInterface::initNodes - Init Nodes");
-    if (!_simulation_mode)
-    {
-        if (_ttl_enabled)
-        {
-            ROS_DEBUG("HardwareInterface::initNodes - Start Dynamixel Driver Node");
-            _ttl_driver = std::make_shared<ttl_driver::TtlDriverCore>(nh);
-            ros::Duration(0.25).sleep();
-        }
-        else
-{
-            ROS_WARN("HardwareInterface::initNodes - DXL communication is disabled for debug purposes");
-        }
+    initParameters(nh);
+    initNodes(nh);
+    startPublishers(nh);
 
-        if (_can_enabled)
-        {
-            ROS_DEBUG("HardwareInterface::initNodes - Start CAN Driver Node");
-            _can_driver = std::make_shared<can_driver::CanDriverCore>(nh);
-            ros::Duration(0.25).sleep();
-        }
-        else
-{
-            ROS_DEBUG("HardwareInterface::initNodes - CAN communication is disabled for debug purposes");
-        }
-
-        if (_can_enabled && _ttl_enabled)
-        {
-            ROS_DEBUG("HardwareInterface::initNodes - Start Joints Interface Node");
-            _joints_interface = std::make_shared<joints_interface::JointsInterfaceCore>(nh, _ttl_driver, _can_driver);
-            ros::Duration(0.25).sleep();
-
-            ROS_DEBUG("HardwareInterface::initNodes - Start End Effector Interface Node");
-            _tools_interface = std::make_shared<tools_interface::ToolsInterfaceCore>(nh, _ttl_driver);
-            ros::Duration(0.25).sleep();
-
-            ROS_DEBUG("HardwareInterface::initNodes - Start Tools Interface Node");
-            _conveyor_interface = std::make_shared<conveyor_interface::ConveyorInterfaceCore>(nh, _can_driver);
-            ros::Duration(0.25).sleep();
-        }
-        else
-        {
-            ROS_WARN("HardwareInterface::initNodes - CAN and DXL communication is disabled. Interfaces will not start");
-        }
-
-        ROS_DEBUG("HardwareInterface::initNodes - Start CPU Interface Node");
-        _cpu_interface = std::make_shared<cpu_interface::CpuInterfaceCore>(nh);
-        ros::Duration(0.25).sleep();
-    }
-    else
-    {
-        ROS_DEBUG("HardwareInterface::initNodes - Start Fake Interface Node");
-        _fake_interface = std::make_shared<fake_interface::FakeInterfaceCore>(nh);
-    }
+    return true;
 }
 
 /**
- * @brief HardwareInterface::initPublishers
- */
-void HardwareInterface::initPublishers(ros::NodeHandle &nh)
-{
-    _hardware_status_publisher = _nh.advertise<niryo_robot_msgs::HardwareStatus>(
-                                            "/niryo_robot_hardware_interface/hardware_status", 10);
-
-    _publish_hw_status_thread = std::thread(&HardwareInterface::_publishHardwareStatus, this);
-
-    _software_version_publisher = _nh.advertise<niryo_robot_msgs::SoftwareVersion>(
-                                            "/niryo_robot_hardware_interface/software_version", 10);
-
-    _publish_software_version_thread = std::thread(&HardwareInterface::_publishSoftwareVersion, this);
-
-    _motors_report_service = _nh.advertiseService("/niryo_robot_hardware_interface/launch_motors_report",
-                                                  &HardwareInterface::_callbackLaunchMotorsReport, this);
-
-    _stop_motors_report_service = _nh.advertiseService("/niryo_robot_hardware_interface/stop_motors_report",
-                                                       &HardwareInterface::_callbackStopMotorsReport, this);
-
-    _reboot_motors_service = _nh.advertiseService("/niryo_robot_hardware_interface/reboot_motors",
-                                                  &HardwareInterface::_callbackRebootMotors, this);
-}
-
-/**
- * @brief HardwareInterface::initParams
+ * @brief HardwareInterface::initParameters
+ * @param nh
  */
 void HardwareInterface::initParameters(ros::NodeHandle &nh)
 {
@@ -189,6 +109,110 @@ void HardwareInterface::initParameters(ros::NodeHandle &nh)
 
     ROS_DEBUG("HardwareInterface::initParameters - can_enabled : %s", _can_enabled ? "true" : "false");
     ROS_DEBUG("HardwareInterface::initParameters - ttl_enabled : %s", _ttl_enabled ? "true" : "false");
+}
+
+/**
+ * @brief HardwareInterface::initNodes
+ * @param nh
+ */
+void HardwareInterface::initNodes(ros::NodeHandle &nh)
+{
+    ROS_DEBUG("HardwareInterface::initNodes - Init Nodes");
+    if (!_simulation_mode)
+    {
+        if (_ttl_enabled)
+        {
+            ROS_DEBUG("HardwareInterface::initNodes - Start Dynamixel Driver Node");
+            _ttl_driver = std::make_shared<ttl_driver::TtlDriverCore>(nh);
+            ros::Duration(0.25).sleep();
+        }
+        else
+        {
+            ROS_WARN("HardwareInterface::initNodes - DXL communication is disabled for debug purposes");
+        }
+
+        if (_can_enabled)
+        {
+            ROS_DEBUG("HardwareInterface::initNodes - Start CAN Driver Node");
+            _can_driver = std::make_shared<can_driver::CanDriverCore>(nh);
+            ros::Duration(0.25).sleep();
+        }
+        else
+        {
+            ROS_DEBUG("HardwareInterface::initNodes - CAN communication is disabled for debug purposes");
+        }
+
+        if (_can_enabled && _ttl_enabled)
+        {
+            ROS_DEBUG("HardwareInterface::initNodes - Start Joints Interface Node");
+            _joints_interface = std::make_shared<joints_interface::JointsInterfaceCore>(nh, _ttl_driver, _can_driver);
+            ros::Duration(0.25).sleep();
+
+            ROS_DEBUG("HardwareInterface::initNodes - Start End Effector Interface Node");
+            _tools_interface = std::make_shared<tools_interface::ToolsInterfaceCore>(nh, _ttl_driver);
+            ros::Duration(0.25).sleep();
+
+            ROS_DEBUG("HardwareInterface::initNodes - Start Tools Interface Node");
+            _conveyor_interface = std::make_shared<conveyor_interface::ConveyorInterfaceCore>(nh, _can_driver);
+            ros::Duration(0.25).sleep();
+        }
+        else
+        {
+            ROS_WARN("HardwareInterface::initNodes - CAN and DXL communication is disabled. Interfaces will not start");
+        }
+
+        ROS_DEBUG("HardwareInterface::initNodes - Start CPU Interface Node");
+        _cpu_interface = std::make_shared<cpu_interface::CpuInterfaceCore>(nh);
+        ros::Duration(0.25).sleep();
+    }
+    else
+    {
+        ROS_DEBUG("HardwareInterface::initNodes - Start Fake Interface Node");
+        _fake_interface = std::make_shared<fake_interface::FakeInterfaceCore>(nh);
+    }
+}
+
+/**
+ * @brief HardwareInterface::startServices
+ * @param nh
+ */
+void HardwareInterface::startServices(ros::NodeHandle &nh)
+{
+
+}
+
+/**
+ * @brief HardwareInterface::startSubscribers
+ * @param nh
+ */
+void HardwareInterface::startSubscribers(ros::NodeHandle &nh)
+{
+    ROS_DEBUG("HardwareInterface::startServices - no subscribers to start");
+}
+
+/**
+ * @brief HardwareInterface::startPublishers
+ */
+void HardwareInterface::startPublishers(ros::NodeHandle &nh)
+{
+    _hardware_status_publisher = _nh.advertise<niryo_robot_msgs::HardwareStatus>(
+                                            "/niryo_robot_hardware_interface/hardware_status", 10);
+
+    _publish_hw_status_thread = std::thread(&HardwareInterface::_publishHardwareStatus, this);
+
+    _software_version_publisher = _nh.advertise<niryo_robot_msgs::SoftwareVersion>(
+                                            "/niryo_robot_hardware_interface/software_version", 10);
+
+    _publish_software_version_thread = std::thread(&HardwareInterface::_publishSoftwareVersion, this);
+
+    _motors_report_service = _nh.advertiseService("/niryo_robot_hardware_interface/launch_motors_report",
+                                                  &HardwareInterface::_callbackLaunchMotorsReport, this);
+
+    _stop_motors_report_service = _nh.advertiseService("/niryo_robot_hardware_interface/stop_motors_report",
+                                                       &HardwareInterface::_callbackStopMotorsReport, this);
+
+    _reboot_motors_service = _nh.advertiseService("/niryo_robot_hardware_interface/reboot_motors",
+                                                  &HardwareInterface::_callbackRebootMotors, this);
 }
 
 // ********************
