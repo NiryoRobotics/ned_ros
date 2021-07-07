@@ -2,15 +2,17 @@
 <launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
     <!-- Arguments -->
+    <arg name="log_level" default="INFO" />
+
     <arg name="gazebo" default="false"/>
-    <arg name="hardware_version" value="ned"/>
+    <arg name="hardware_version" default="ned"/>
     <arg name="simu_gripper" default="false"/>
     <arg name="simulation_mode" default="false"/>
     <arg name="debug" default="false"/>
 
     <!-- SHARED PARAMS -->
     <group ns="niryo_robot">
-        <param name="hardware_version" type="str" value="$(arg hardware_version)"/>
+        <param name="hardware_version" type="string" value="$(arg hardware_version)"/>
         <param name="reboot_when_auto_change_version" type="bool" value="true"/>
         <param name="simulation_mode" type="bool" value="$(arg simulation_mode)"/>
 
@@ -28,13 +30,13 @@
 
     </group>
 
-    <arg name="ros_version" value="$(optenv ROS_DISTRO kinetic)"/>
+    <arg name="ros_version" value="$(optenv ROS_DISTRO melodic)"/>
 
     <!-- Launching TF ROS Bridge-->
     <node name="tf2_web_republisher" pkg="tf2_web_republisher" type="tf2_web_republisher"/>
     <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch">
         <arg name="port" value="9090"/>
-         <arg name="output" value="log" unless="$(eval 'kinetic' == arg('ros_version'))"/>
+        <arg name="output" value="log" unless="$(eval 'kinetic' == arg('ros_version'))"/>
     </include>
 
     <!-- Including launch files -->
@@ -47,24 +49,33 @@
     </include>
 
     <include file="$(find niryo_robot_arm_commander)/launch/robot_commander.launch">
+        <arg name="log_level" value="$(arg log_level)" />
         <arg name="simu_gripper" value="$(arg simu_gripper)"/>
+        <arg name="hardware_version" value="$(arg hardware_version)"/>
     </include>
 
     <include file="$(find niryo_robot_tools_commander)/launch/tools_commander.launch">
+        <arg name="log_level" value="$(arg log_level)" />
         <arg name="simulation_mode" value="$(arg simulation_mode)"/>
         <arg name="simu_gripper" value="$(arg simu_gripper)"/>
+        <arg name="hardware_version" value="$(arg hardware_version)"/>
     </include>
 
     <include file="$(find niryo_robot_poses_handlers)/launch/poses_handlers.launch">
+        <arg name="log_level" value="$(arg log_level)" />
         <arg name="simulation_mode" value="$(arg simulation_mode)"/>
     </include>
 
     <include file="$(find niryo_robot_programs_manager)/launch/programs_manager.launch">
+        <arg name="log_level" value="$(arg log_level)" />
         <arg name="simulation_mode" value="$(arg simulation_mode)"/>
     </include>
 
     <include file="$(find niryo_robot_user_interface)/launch/user_interface.launch">
+        <arg name="log_level" value="$(arg log_level)" />
     </include>
 
-    <include file="$(find niryo_robot_modbus)/launch/modbus_server.launch"/>
+    <include file="$(find niryo_robot_modbus)/launch/modbus_server.launch">
+        <arg name="log_level" value="$(arg log_level)" />
+    </include>
 </launch>

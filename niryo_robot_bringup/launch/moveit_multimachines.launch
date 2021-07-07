@@ -1,6 +1,7 @@
-
-<launch>
-    <arg name="hardware_version" value="ned"/>
+<?xml version="1.0" ?>
+<launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+    <arg name="hardware_version" default="ned"/>
 
     <!-- Command validation params -->
     <group ns="niryo_robot/robot_command_validation">
@@ -11,7 +12,7 @@
     <env name="ROSCONSOLE_CONFIG_FILE" value="$(find niryo_robot_arm_commander)/config/rosconsole.config"/>
 
     <!-- Moveit move_group -->
-    <group if="$(eval hardware_version == 'ned')">
+    <group if="$(eval hardware_version == 'ned' or hardware_version == 'ned2')">
         <include file="$(find niryo_ned_moveit_config_standalone)/launch/move_group.launch"/>
     </group>
     <!-- Moveit move_group params -->
@@ -26,4 +27,3 @@
     </group>
 
 </launch>
-
