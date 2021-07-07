@@ -39,8 +39,9 @@
         <rosparam file="$(find joints_interface)/config/default.yaml" command="load" />
 
         <rosparam file="$(find tools_interface)/config/default.yaml" command="load" ns="tools_interface"/>
+        <rosparam file="$(find tools_interface)/config/$(arg hardware_version)/tools_config.yaml" command="load" ns="tools_interface"/>
 
-        <rosparam file="$(find conveyor_interface)/config/default.yaml" command="load"/>
+        <rosparam file="$(find conveyor_interface)/config/default.yaml" command="load" ns="conveyor"/>
 
         <param name="simulation_mode" type="bool" value="$(arg simulation_mode)"/>
         <param name="gazebo" type="bool" value="$(arg gazebo)"/>

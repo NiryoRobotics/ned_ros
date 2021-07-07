@@ -76,8 +76,8 @@ TtlDriver::~TtlDriver()
 bool TtlDriver::init()
 {
     // get params from rosparams
-    _nh.getParam("/niryo_robot_hardware_interface/ttl_driver/bus_params/dxl_uart_device_name", _device_name);
-    _nh.getParam("/niryo_robot_hardware_interface/ttl_driver/bus_params/dxl_baudrate", _uart_baudrate);
+    _nh.getParam("/niryo_robot_hardware_interface/ttl_driver/bus_params/uart_device_name", _device_name);
+    _nh.getParam("/niryo_robot_hardware_interface/ttl_driver/bus_params/baudrate", _uart_baudrate);
 
     _dxlPortHandler.reset(dynamixel::PortHandler::getPortHandler(_device_name.c_str()));
     _dxlPacketHandler.reset(dynamixel::PacketHandler::getPacketHandler(DXL_BUS_PROTOCOL_VERSION));
