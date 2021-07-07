@@ -31,7 +31,7 @@
 // CC replace with fake driver ??
 namespace fake_interface
 {
-FakeInterfaceCore::FakeInterfaceCore()
+FakeInterfaceCore::FakeInterfaceCore(ros::NodeHandle& nh)
 {
     ROS_DEBUG("Fake Interface Core - ctor");
 

@@ -44,7 +44,7 @@ namespace conveyor_interface
  * @brief ConveyorInterfaceCore::ConveyorInterfaceCore
  * @param stepper
  */
-ConveyorInterfaceCore::ConveyorInterfaceCore(shared_ptr<can_driver::CanDriverCore> can_driver):
+ConveyorInterfaceCore::ConveyorInterfaceCore(ros::NodeHandle& nh, shared_ptr<can_driver::CanDriverCore> can_driver):
     _can_driver(can_driver)
 {
     ROS_DEBUG("ConveyorInterfaceCore::ConveyorInterfaceCore - ctor");

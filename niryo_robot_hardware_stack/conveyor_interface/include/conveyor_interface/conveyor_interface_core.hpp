@@ -44,7 +44,7 @@ namespace conveyor_interface
 class ConveyorInterfaceCore
 {
     public:
-        ConveyorInterfaceCore(std::shared_ptr<can_driver::CanDriverCore> stepper);
+        ConveyorInterfaceCore(ros::NodeHandle &nh, std::shared_ptr<can_driver::CanDriverCore> stepper);
         virtual ~ConveyorInterfaceCore();
 
         bool isInitialized();

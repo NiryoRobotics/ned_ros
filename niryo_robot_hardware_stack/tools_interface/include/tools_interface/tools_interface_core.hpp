@@ -49,7 +49,8 @@ namespace tools_interface
 class ToolsInterfaceCore
 {
     public:
-        ToolsInterfaceCore(std::shared_ptr<ttl_driver::TtlDriverCore> ttl_driver);
+        ToolsInterfaceCore(ros::NodeHandle &nh,
+                           std::shared_ptr<ttl_driver::TtlDriverCore> ttl_driver);
         virtual ~ToolsInterfaceCore();
 
         bool isInitialized();

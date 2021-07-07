@@ -41,8 +41,7 @@ namespace can_driver
  * @brief CanDriver::CanDriver
  */
 CanDriver::CanDriver() :
-    _calibration_status(EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED),
-    _is_connection_ok(false)
+    _calibration_status(EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED)
 {
     ROS_DEBUG("CanDriver - ctor");
     
@@ -102,6 +101,7 @@ void CanDriver::resetCalibration()
 bool CanDriver::init()
 {
     _nh.getParam("/niryo_robot_hardware_interface/calibration_timeout", _calibration_timeout);
+    ROS_DEBUG("CanDriver::init - Calibration timeout %f", _calibration_timeout);
 
     std::vector<int> idList;
 
@@ -158,7 +158,7 @@ int CanDriver::setupCAN()
 
     ROS_DEBUG("CanDriver::CanDriver - Can bus parameters: spi_channel : %d", spi_channel);
     ROS_DEBUG("CanDriver::CanDriver - Can bus parameters: spi_baudrate : %d", spi_baudrate);
-    ROS_DEBUG("CanDriver::CanDriver - Can bus parameters: spi_baudrate : %d", gpio_can_interrupt);
+    ROS_DEBUG("CanDriver::CanDriver - Can bus parameters: gpio_can_interrupt : %d", gpio_can_interrupt);
 
     mcp_can = std::make_unique<mcp_can_rpi::MCP_CAN>(spi_channel, spi_baudrate,
                                                      static_cast<uint8_t>(gpio_can_interrupt));
@@ -661,7 +661,7 @@ void CanDriver::fillConveyorState(uint8_t motor_id, const std::array<uint8_t, 8>
  */
 void CanDriver::_verifyMotorTimeoutLoop()
 {
-    while (_nh.ok())
+    while (ros::ok())
     {
         std::lock_guard<std::mutex> lck(_stepper_timeout_mutex);
         std::vector<uint8_t> timeout_motors;
@@ -724,6 +724,7 @@ void CanDriver::updateCurrentCalibrationStatus()
 
 /**
  * @brief CanDriver::getCurrentTimeout
+ * used to adapt the timeout according to the state of the can (calibration or not)
  * @return
  */
 double CanDriver::getCurrentTimeout() const

@@ -50,9 +50,9 @@ public:
     virtual ~HardwareInterface();
 
 private:
-    void initNodes();
-    void initParameters();
-    void initPublishers();
+    void initNodes(ros::NodeHandle &nh);
+    void initParameters(ros::NodeHandle &nh);
+    void initPublishers(ros::NodeHandle &nh);
 
     bool _callbackLaunchMotorsReport(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
     bool _callbackStopMotorsReport(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);

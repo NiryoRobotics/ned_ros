@@ -32,7 +32,8 @@ namespace joints_interface
  * @param ttl_driver
  * @param can_driver
  */
-JointsInterfaceCore::JointsInterfaceCore(std::shared_ptr<ttl_driver::TtlDriverCore> ttl_driver,
+JointsInterfaceCore::JointsInterfaceCore(ros::NodeHandle& nh,
+                                         std::shared_ptr<ttl_driver::TtlDriverCore> ttl_driver,
                                          std::shared_ptr<can_driver::CanDriverCore> can_driver)
 {
     init(ttl_driver, can_driver);

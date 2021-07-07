@@ -26,7 +26,7 @@ namespace cpu_interface
 /**
  * @brief CpuInterfaceCore::CpuInterfaceCore
  */
-CpuInterfaceCore::CpuInterfaceCore()
+CpuInterfaceCore::CpuInterfaceCore(ros::NodeHandle& nh)
 {
     initParams();
     startReadingData();

@@ -48,20 +48,11 @@ namespace can_driver
 /**
  * @brief CanDriverCore::CanDriverCore
  */
-CanDriverCore::CanDriverCore() :
-    _control_loop_flag(false),
-    _debug_flag(false),
-    _control_loop_frequency(0.0),
-    _delta_time_write(0.0),
-    _time_hw_data_last_read(0.0),
-    _time_hw_data_last_write(0.0),
-    _time_check_connection_last_read(0.0),
-    _delta_time_calib_read(0.0),
-    _time_hw_calib_last_read(0.0)
+CanDriverCore::CanDriverCore(ros::NodeHandle& nh)
 {
     ROS_DEBUG("CanDriverCore::CanDriverCore - ctor");
 
-    init();
+    init(nh);
 }
 
 /**
@@ -76,19 +67,21 @@ CanDriverCore::~CanDriverCore()
 /**
  * @brief CanDriverCore::init
  */
-void CanDriverCore::init()
+bool CanDriverCore::init(ros::NodeHandle& nh)
 {
-    initParameters();
+    initParameters(nh);
 
     _can_driver = std::make_unique<CanDriver>();
 
     startControlLoop();
+
+    return true;
 }
 
 /**
  * @brief CanDriverCore::initParameters
  */
-void CanDriverCore::initParameters()
+void CanDriverCore::initParameters(ros::NodeHandle& /*nh*/)
 {
     _control_loop_frequency = 0.0;
     double write_frequency = 1.0;
@@ -106,6 +99,31 @@ void CanDriverCore::initParameters()
               write_frequency);
 
     _delta_time_write = 1.0 / write_frequency;
+}
+
+/**
+ * @brief CanDriverCore::startServices
+ */
+void CanDriverCore::startServices(ros::NodeHandle &/*nh*/)
+{
+    ROS_DEBUG("CanDriverCore::startServices - no services to start");
+}
+
+/**
+ * @brief CanDriverCore::startSubscribers
+ */
+void CanDriverCore::startSubscribers(ros::NodeHandle &/*nh*/)
+{
+    ROS_DEBUG("CanDriverCore::startServices - no subscribers to start");
+}
+
+/**
+ * @brief CanDriverCore::startPublishers
+ * @param nh
+ */
+void CanDriverCore::startPublishers(ros::NodeHandle &/*nh*/)
+{
+    ROS_DEBUG("CanDriverCore::startServices - no publishers to start");
 }
 
 // ***************

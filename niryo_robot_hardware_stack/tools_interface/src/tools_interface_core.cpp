@@ -52,7 +52,8 @@ namespace tools_interface
  * @brief ToolsInterfaceCore::ToolsInterfaceCore
  * @param ttl_driver
  */
-ToolsInterfaceCore::ToolsInterfaceCore(shared_ptr<ttl_driver::TtlDriverCore> ttl_driver):
+ToolsInterfaceCore::ToolsInterfaceCore(ros::NodeHandle &nh,
+                                       shared_ptr<ttl_driver::TtlDriverCore> ttl_driver):
     _ttl_driver_core(ttl_driver)
 {
     initParams();

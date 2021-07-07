@@ -55,8 +55,8 @@ namespace joints_interface
  * @param ttl_driver
  */
 CalibrationManager::CalibrationManager(std::vector<std::shared_ptr<JointState> > joint_list,
-                                           std::shared_ptr<can_driver::CanDriverCore> can_driver,
-                                           std::shared_ptr<ttl_driver::TtlDriverCore> ttl_driver) :
+                                       std::shared_ptr<can_driver::CanDriverCore> can_driver,
+                                       std::shared_ptr<ttl_driver::TtlDriverCore> ttl_driver) :
     _can_driver_core(can_driver),
     _ttl_driver_core(ttl_driver),
     _joint_list(joint_list)

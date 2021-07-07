@@ -55,10 +55,10 @@ class CanDriver : public common::model::IDriver
 {
     public:
 
-        CanDriver(ros::NodeHandle& nh);
+        CanDriver();
         virtual ~CanDriver() override;
 
-        bool init(ros::NodeHandle& nh) override;
+        bool init() override;
 
         // commands
         void addMotor(uint8_t id, bool isConveyor = false);
@@ -101,7 +101,7 @@ class CanDriver : public common::model::IDriver
 private:
         bool hasMotors() override;
 
-        int setupCAN(ros::NodeHandle& nh);
+        int setupCAN();
 
         bool canReadData() const;
 
@@ -141,11 +141,11 @@ private:
 
         std::map<uint8_t, std::shared_ptr<common::model::StepperMotorState> > _state_map;
 
-        double _calibration_timeout;
+        double _calibration_timeout{30.0};
         common::model::EStepperCalibrationStatus _calibration_status;
 
         // for hardware control
-        bool _is_connection_ok;
+        bool _is_connection_ok{false};
         std::string _debug_error_message;
 
 private:
@@ -189,29 +189,49 @@ private:
         static constexpr double STEPPER_MOTOR_TIMEOUT_VALUE         = 1.0;
 };
 
+/**
+ * @brief CanDriver::getNbMotors
+ * @return
+ */
 inline
 size_t CanDriver::getNbMotors() const
 {
     return _state_map.size();
 }
 
+/**
+ * @brief CanDriver::canReadData
+ * @return
+ */
 inline
 bool CanDriver::canReadData() const
 {
     return mcp_can->canReadData();
 }
 
+/**
+ * @brief CanDriver::getCalibrationStatus
+ * @return
+ */
 inline
 common::model::EStepperCalibrationStatus CanDriver::getCalibrationStatus() const
 {
     return _calibration_status;
 }
 
+/**
+ * @brief CanDriver::isCalibrationInProgress
+ * @return
+ */
 inline
 bool CanDriver::isCalibrationInProgress() const {
     return common::model::EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS == _calibration_status;
 }
 
+/**
+ * @brief CanDriver::hasMotors
+ * @return
+ */
 inline
 bool CanDriver::hasMotors()
 {

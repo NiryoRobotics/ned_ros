@@ -52,9 +52,9 @@ class JointsInterfaceCore
 {
     public:
 
-        JointsInterfaceCore(
-            std::shared_ptr<ttl_driver::TtlDriverCore> ttl_driver,
-            std::shared_ptr<can_driver::CanDriverCore> can_driver);
+        JointsInterfaceCore(ros::NodeHandle& nh,
+                            std::shared_ptr<ttl_driver::TtlDriverCore> ttl_driver,
+                            std::shared_ptr<can_driver::CanDriverCore> can_driver);
 
         virtual ~JointsInterfaceCore();
 

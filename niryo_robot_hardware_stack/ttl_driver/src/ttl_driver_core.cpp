@@ -47,9 +47,7 @@ namespace ttl_driver
 /**
  * @brief TtlDriverCore::TtlDriverCore
  */
-TtlDriverCore::TtlDriverCore() :
-    _control_loop_flag(false),
-    _debug_flag(false)
+TtlDriverCore::TtlDriverCore(ros::NodeHandle& nh)
 {
     ROS_DEBUG("TtlDriverCore - ctor");
 

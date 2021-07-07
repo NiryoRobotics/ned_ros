@@ -65,7 +65,7 @@ namespace fake_interface
 class FakeInterfaceCore
 {
 public:
-    FakeInterfaceCore();
+    FakeInterfaceCore(ros::NodeHandle& nh);
     virtual ~FakeInterfaceCore();
 
     void initServices();

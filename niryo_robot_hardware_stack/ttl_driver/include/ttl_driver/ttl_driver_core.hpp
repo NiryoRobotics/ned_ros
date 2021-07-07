@@ -55,105 +55,104 @@ namespace ttl_driver
  */
 class TtlDriverCore : public common::model::IDriverCore
 {
-public:
+    public:
 
-    TtlDriverCore();
-    virtual ~TtlDriverCore() override;
+        TtlDriverCore(ros::NodeHandle &nh);
+        virtual ~TtlDriverCore() override;
 
-    int setEndEffector(common::model::EMotorType type, uint8_t motor_id);
-    void unsetEndEffector(uint8_t motor_id);
+        int setEndEffector(common::model::EMotorType type, uint8_t motor_id);
+        void unsetEndEffector(uint8_t motor_id);
 
-    void clearSingleCommandQueue();
-    void clearEndEffectorCommandQueue();
+        void clearSingleCommandQueue();
+        void clearEndEffectorCommandQueue();
 
-    void setTrajectoryControllerCommands(const std::vector<std::pair<uint8_t, uint32_t> > &cmd);
-    void setSyncCommand(const common::model::SynchronizeMotorCmd &cmd);
-    void addSingleCommandToQueue(const common::model::SingleMotorCmd &cmd);
-    void addSingleCommandToQueue(const std::vector<common::model::SingleMotorCmd> &cmd);
+        void setTrajectoryControllerCommands(const std::vector<std::pair<uint8_t, uint32_t> > &cmd);
+        void setSyncCommand(const common::model::SynchronizeMotorCmd &cmd);
+        void addSingleCommandToQueue(const common::model::SingleMotorCmd &cmd);
+        void addSingleCommandToQueue(const std::vector<common::model::SingleMotorCmd> &cmd);
 
-    void addEndEffectorCommandToQueue(const common::model::SingleMotorCmd &cmd);
-    void addEndEffectorCommandToQueue(const std::vector<common::model::SingleMotorCmd> &cmd);
+        void addEndEffectorCommandToQueue(const common::model::SingleMotorCmd &cmd);
+        void addEndEffectorCommandToQueue(const std::vector<common::model::SingleMotorCmd> &cmd);
 
-    // direct commands
-    std::vector<uint8_t> scanTools();
+        // direct commands
+        std::vector<uint8_t> scanTools();
 
-    int update_leds(void);
+        int update_leds(void);
 
-    int rebootMotors();
-    bool rebootMotor(uint8_t motor_id);
+        int rebootMotors();
+        bool rebootMotor(uint8_t motor_id);
 
-    // getters
-    std::vector<uint8_t> getRemovedMotorList() const;
-    double getEndEffectorState(uint8_t id) const;
+        // getters
+        std::vector<uint8_t> getRemovedMotorList() const;
+        double getEndEffectorState(uint8_t id) const;
 
-    ttl_driver::DxlArrayMotorHardwareStatus getHwStatus() const;
+        ttl_driver::DxlArrayMotorHardwareStatus getHwStatus() const;
 
-    std::vector<std::shared_ptr<common::model::DxlMotorState> > getDxlStates() const;
-    common::model::DxlMotorState getDxlState(uint8_t motor_id) const;
+        std::vector<std::shared_ptr<common::model::DxlMotorState> > getDxlStates() const;
+        common::model::DxlMotorState getDxlState(uint8_t motor_id) const;
 
-    // IDriverCore interface
-    void startControlLoop() override;
+        // IDriverCore interface
+        void startControlLoop() override;
 
-    void activeDebugMode(bool mode) override;
+        void activeDebugMode(bool mode) override;
 
-    bool isConnectionOk() const override;
-    int launchMotorsReport() override;
-    niryo_robot_msgs::BusState getBusState() const override;
+        bool isConnectionOk() const override;
+        int launchMotorsReport() override;
+        niryo_robot_msgs::BusState getBusState() const override;
 
-private:
-    void init() override;
-    void initParameters() override;
-    void resetHardwareControlLoopRates() override;
-    void controlLoop() override;
-    void _executeCommand() override;
+    private:
+        void init();
+        void initParameters();
+        void resetHardwareControlLoopRates() override;
+        void controlLoop() override;
+        void _executeCommand() override;
 
-    int motorScanReport(uint8_t motor_id);
-    int motorCmdReport(uint8_t motor_id, common::model::EMotorType motor_type);
+        int motorScanReport(uint8_t motor_id);
+        int motorCmdReport(uint8_t motor_id, common::model::EMotorType motor_type);
 
-    // use other callbacks instead of executecommand
-    bool _callbackActivateLeds(niryo_robot_msgs::SetInt::Request &req, niryo_robot_msgs::SetInt::Response &res);
-    bool _callbackSendCustomDxlValue(ttl_driver::SendCustomDxlValue::Request &req, ttl_driver::SendCustomDxlValue::Response &res);
-    bool _callbackReadCustomDxlValue(ttl_driver::ReadCustomDxlValue::Request &req, ttl_driver::ReadCustomDxlValue::Response &res);
+        // use other callbacks instead of executecommand
+        bool _callbackActivateLeds(niryo_robot_msgs::SetInt::Request &req, niryo_robot_msgs::SetInt::Response &res);
+        bool _callbackSendCustomDxlValue(ttl_driver::SendCustomDxlValue::Request &req, ttl_driver::SendCustomDxlValue::Response &res);
+        bool _callbackReadCustomDxlValue(ttl_driver::ReadCustomDxlValue::Request &req, ttl_driver::ReadCustomDxlValue::Response &res);
 
-private:
-    ros::NodeHandle _nh;
-    bool _control_loop_flag;
-    bool _debug_flag;
+    private:
+        ros::NodeHandle _nh;
+        bool _control_loop_flag{false};
+        bool _debug_flag{false};
 
-    std::mutex _control_loop_mutex;
-    std::thread _control_loop_thread;
+        std::mutex _control_loop_mutex;
+        std::thread _control_loop_thread;
 
-    double _control_loop_frequency;
+        double _control_loop_frequency{0.0};
 
-    double _delta_time_data_read;
-    double _delta_time_write;
+        double _delta_time_data_read{0.0};
+        double _delta_time_write{0.0};
 
-    double _time_hw_data_last_read;
-    double _time_hw_data_last_write;
+        double _time_hw_data_last_read{0.0};
+        double _time_hw_data_last_write{0.0};
 
-    double _time_check_connection_last_read;
+        double _time_check_connection_last_read{0.0};
 
-    // specific to dxl
-    double _delta_time_status_read;
-    double _time_hw_status_last_read;
+        // specific to dxl
+        double _delta_time_status_read{0.0};
+        double _time_hw_status_last_read{0.0};
 
-    double _time_check_end_effector_last_read;
+        double _time_check_end_effector_last_read{0.0};
 
-    std::unique_ptr<TtlDriver> _ttl_driver;
+        std::unique_ptr<TtlDriver> _ttl_driver;
 
-    std::vector<std::pair<uint8_t, uint32_t> > _joint_trajectory_cmd;
+        std::vector<std::pair<uint8_t, uint32_t> > _joint_trajectory_cmd;
 
-    common::model::SynchronizeMotorCmd _dxl_sync_cmds;
-    std::queue<common::model::SingleMotorCmd> _dxl_single_cmds;
-    std::queue<common::model::SingleMotorCmd> _end_effector_cmds;
+        common::model::SynchronizeMotorCmd _dxl_sync_cmds;
+        std::queue<common::model::SingleMotorCmd> _dxl_single_cmds;
+        std::queue<common::model::SingleMotorCmd> _end_effector_cmds;
 
-    ros::ServiceServer _activate_leds_server;
-    ros::ServiceServer _custom_cmd_server;
-    ros::ServiceServer _custom_cmd_getter;
+        ros::ServiceServer _activate_leds_server;
+        ros::ServiceServer _custom_cmd_server;
+        ros::ServiceServer _custom_cmd_getter;
 
-private:
-    static constexpr int QUEUE_OVERFLOW = 20;
-
+        static constexpr int QUEUE_OVERFLOW = 20;
+        static constexpr double DXL_VOLTAGE_DIVISOR = 10.0;
 };
 
 /**

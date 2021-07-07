@@ -37,7 +37,7 @@ class CpuInterfaceCore
 {
     public:
 
-        CpuInterfaceCore();
+        CpuInterfaceCore(ros::NodeHandle& nh);
         virtual ~CpuInterfaceCore();
 
         void initParams();
