@@ -20,9 +20,9 @@ This package provides the following nodes :
 \subsection PACKAGE_NAME_node
 
 
-\subsubsection Usage
+\subsubsection Node Usage
 \verbatim
-$ PACKAGE_NAME_node
+$ PACKAGE_NAME_node/niryo_robot_hardware_interface/conveyor_interface/id:
 \endverbatim
 
 \par Example

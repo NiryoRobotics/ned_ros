@@ -117,13 +117,17 @@ target_link_libraries(${PROJECT_NAME}_node
 ##   Doc   ##
 #############
 
-find_program(rosdoc_lite_FOUND rosdoc_lite)
-if(BUILD_DOCS AND rosdoc_lite_FOUND)
-    add_custom_target (${PROJECT_NAME}_doc ALL
-        rosdoc_lite -o ${CMAKE_CURRENT_BINARY_DIR}/doc ${CMAKE_CURRENT_LIST_DIR}
-    )
+if(BUILD_DOCS)
+  find_program(rosdoc_lite_FOUND rosdoc_lite)
+  if(rosdoc_lite_FOUND)
+      add_custom_target (${PROJECT_NAME}_doc ALL
+          rosdoc_lite -o ${CMAKE_CURRENT_BINARY_DIR}/doc ${CMAKE_CURRENT_LIST_DIR}
+      )
+  else()
+    message(WARNING "rosdoc_lite not found. Skipping documentation building")
+  endif()
 
-endif()
+endif(BUILD_DOCS)
 
 #############
 ## Testing ##
@@ -147,15 +151,15 @@ if(CATKIN_ENABLE_TESTING)
       )
     endif()
 
-#    add_rostest_gtest(${PROJECT_NAME}_services_tests
-#       test/ttl_driver_service_client.test
-#       test/ttl_driver_service_client.cpp
-#    )
-#    if(TARGET ${PROJECT_NAME}_integration_tests)
-#      target_link_libraries(${PROJECT_NAME}_integration_tests
-#        ${PROJECT_NAME}
-#      )
-#    endif()
+    add_rostest_gtest(${PROJECT_NAME}_services_tests
+       test/ttl_driver_service_client.test
+       test/ttl_driver_service_client.cpp
+    )
+    if(TARGET ${PROJECT_NAME}_integration_tests)
+      target_link_libraries(${PROJECT_NAME}_integration_tests
+        ${PROJECT_NAME}
+      )
+    endif()
 
   endif(BUILD_INTEGRATION_TESTS)
 
@@ -205,7 +209,7 @@ install(
 ##########################
 ## Static code analysis ##
 ##########################
-find_package(roslint QUIET)
+find_package(roslint)
 
 if(roslint_FOUND)
     roslint_cpp()

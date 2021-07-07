@@ -23,7 +23,7 @@ This package provides the following nodes :
 
 ttl_driver_node launched Ttl::DriverCore as a standalone node
 
-\subsubsection Usage
+\subsubsection Node Usage
 \verbatim
 $ ttl_driver_node
 \endverbatim
