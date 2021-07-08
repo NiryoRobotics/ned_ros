@@ -75,6 +75,8 @@ class ArmCommander:
 
         # Set pose reference frame
         self.__arm.set_pose_reference_frame(self.__reference_frame)
+        self.__arm.set_max_velocity_scaling_factor(1)
+        self.__arm.set_max_acceleration_scaling_factor(1)
 
         # Set planning parameters
         self.__arm.allow_replanning(rospy.get_param("~allow_replanning"))
