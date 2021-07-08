@@ -105,10 +105,7 @@ bool CanDriver::init()
 
     std::vector<int> idList;
 
-    if (_nh.hasParam("/niryo_robot_hardware_interface/can_driver/motors_params/stepper_motor_id_list"))
-        _nh.getParam("/niryo_robot_hardware_interface/can_driver/motors_params/stepper_motor_id_list", idList);
-    else
-        _nh.getParam("/niryo_robot_hardware_interface/motors_params/stepper_motor_id_list", idList);
+    _nh.getParam("/niryo_robot_hardware_interface/can_driver/motors_params/motor_id_list", idList);
 
     // debug - display info
     std::ostringstream ss;

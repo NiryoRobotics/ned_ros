@@ -1,3 +1,3 @@
 motors_params:
-    stepper_motor_id_list: [1,2,3]    
-    stepper_motor_type_list: ["stepper","stepper","stepper"]
+    motor_id_list: [1,2,3]    
+    motor_type_list: ["stepper","stepper","stepper"]

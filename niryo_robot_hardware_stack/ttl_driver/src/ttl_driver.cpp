@@ -88,15 +88,8 @@ bool TtlDriver::init()
     vector<int> idList;
     vector<string> typeList;
 
-    if (_nh.hasParam("/niryo_robot_hardware_interface/ttl_driver/motors_params/dxl_motor_id_list"))
-        _nh.getParam("/niryo_robot_hardware_interface/ttl_driver/motors_params/dxl_motor_id_list", idList);
-    else
-        _nh.getParam("/niryo_robot_hardware_interface/motors_params/dxl_motor_id_list", idList);
-
-    if (_nh.hasParam("/niryo_robot_hardware_interface/ttl_driver/motors_params/dxl_motor_type_list"))
-        _nh.getParam("/niryo_robot_hardware_interface/ttl_driver/motors_params/dxl_motor_type_list", typeList);
-    else
-        _nh.getParam("/niryo_robot_hardware_interface/motors_params/dxl_motor_type_list", typeList);
+    _nh.getParam("/niryo_robot_hardware_interface/ttl_driver/motors_params/motor_id_list", idList);
+    _nh.getParam("/niryo_robot_hardware_interface/ttl_driver/motors_params/motor_type_list", typeList);
 
     // debug - display info
     ostringstream ss;
@@ -113,7 +106,7 @@ bool TtlDriver::init()
     // check that the two lists have the same size
     if (idList.size() != typeList.size())
         ROS_ERROR("TtlDriver::init - wrong dynamixel configuration. "
-                  "Please check your configuration file dxl_motor_id_list and dxl_motor_type_list");
+                  "Please check your configuration file motor_id_list and motor_type_list");
 
     // put everything in maps
     for (size_t i = 0; i < idList.size(); ++i)
