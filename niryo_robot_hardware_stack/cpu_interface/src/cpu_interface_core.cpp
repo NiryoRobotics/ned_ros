@@ -25,6 +25,7 @@ namespace cpu_interface
 
 /**
  * @brief CpuInterfaceCore::CpuInterfaceCore
+ * @param nh
  */
 CpuInterfaceCore::CpuInterfaceCore(ros::NodeHandle& nh)
 {
@@ -45,6 +46,10 @@ CpuInterfaceCore::~CpuInterfaceCore()
         _read_hardware_data_thread.join();
 }
 
+/**
+ * @brief CpuInterfaceCore::init
+ * @param nh
+ */
 bool CpuInterfaceCore::init(ros::NodeHandle &nh)
 {
     ROS_DEBUG("CpuInterfaceCore::init - Init parameters...");
@@ -63,25 +68,20 @@ bool CpuInterfaceCore::init(ros::NodeHandle &nh)
 }
 
 /**
- * @brief CpuInterfaceCore::initParams
+ * @brief CpuInterfaceCore::initParameters
+ * @param nh
  */
 void CpuInterfaceCore::initParameters(ros::NodeHandle &nh)
 {
-    if (_nh.hasParam("read_rpi_diagnostics_frequency/read_rpi_diagnostics_frequency"))
-    {
-        _nh.getParam("read_rpi_diagnostics_frequency/read_rpi_diagnostics_frequency", _read_cpu_frequency);
-    }
-    else
-    {
-        ROS_INFO("CPU Interface - No params found. Init with default value");
-        _nh.getParam("/niryo_robot_hardware_interface/read_rpi_diagnostics_frequency", _read_cpu_frequency);
-        _nh.getParam("/niryo_robot_hardware_interface/temperature_warn_threshold", _temperature_warn_threshold);
-        _nh.getParam("/niryo_robot_hardware_interface/temperature_shutdown_threshold", _temperature_shutdown_threshold);
-    }
+    ROS_INFO("CpuInterfaceCore::initParameters - No params found. Init with default value");
+    _nh.getParam("/niryo_robot_hardware_interface/read_rpi_diagnostics_frequency", _read_cpu_frequency);
+    _nh.getParam("/niryo_robot_hardware_interface/temperature_warn_threshold", _temperature_warn_threshold);
+    _nh.getParam("/niryo_robot_hardware_interface/temperature_shutdown_threshold", _temperature_shutdown_threshold);
 
     ROS_DEBUG("CPU Interface::initParameters - Read temperature frequency %f", _read_cpu_frequency);
     ROS_DEBUG("CPU Interface::initParameters - Temperature warn threshold %d", _temperature_warn_threshold);
-    ROS_DEBUG("CPU Interface::initParameters - Temperature shutdown threshold %d", _temperature_shutdown_threshold);}
+    ROS_DEBUG("CPU Interface::initParameters - Temperature shutdown threshold %d", _temperature_shutdown_threshold);
+}
 
 /**
  * @brief CpuInterfaceCore::startServices

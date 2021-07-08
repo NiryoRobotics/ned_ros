@@ -82,11 +82,11 @@ bool FakeInterfaceCore::init(ros::NodeHandle &nh)
     ROS_DEBUG("FakeInterfaceCore::init - Starting services...");
     startServices(nh);
 
-    ROS_DEBUG("FakeInterfaceCore::init - Starting subscribers...");
-    startSubscribers(nh);
-
     ROS_DEBUG("FakeInterfaceCore::init - Starting publishers...");
     startPublishers(nh);
+
+    ROS_DEBUG("FakeInterfaceCore::init - Starting subscribers...");
+    startSubscribers(nh);
 
     return true;
 }
@@ -99,7 +99,10 @@ void FakeInterfaceCore::initParameters(ros::NodeHandle &nh)
     ros::param::get("~gazebo", _gazebo);
     ros::param::get("~simu_gripper", _simu_gripper);
     ros::param::get("~ros_control_loop_frequency", _ros_control_frequency);
-    ROS_DEBUG("Fake Hardware Interface - ros control loop freqeuncy %f", _ros_control_frequency);
+    
+    ROS_DEBUG("FakeInterfaceCore::initParameters - gazebo ? %s", _gazebo ? "yes" : "no");
+    ROS_DEBUG("FakeInterfaceCore::initParameters - simu_gripper ? %s", _simu_gripper ? "yes" : "no");
+    ROS_DEBUG("FakeInterfaceCore::initParameters - ros control loop freqeuncy %f", _ros_control_frequency);
 
     ros::param::get("~publish_hw_status_frequency", _publish_hw_status_frequency);
     ros::param::get("~publish_software_version_frequency", _publish_software_version_frequency);
@@ -108,9 +111,10 @@ void FakeInterfaceCore::initParameters(ros::NodeHandle &nh)
 
     _ros_niryo_robot_version.erase(_ros_niryo_robot_version.find_last_not_of(" \n\r\t") + 1);
 
-    ROS_DEBUG("Fake Hardware Interface - Publish_hw_status_frequency : %f", _publish_hw_status_frequency);
-    ROS_DEBUG("Fake Hardware Interface - Publish_software_version_frequency : %f", _publish_software_version_frequency);
-    ROS_DEBUG("Fake Hardware Interface - Publish_learning_mode_frequency : %f", _publish_learning_mode_frequency);
+    ROS_DEBUG("FakeInterfaceCore::initParameters - Publish_hw_status_frequency : %f", _publish_hw_status_frequency);
+    ROS_DEBUG("FakeInterfaceCore::initParameters - Publish_software_version_frequency : %f", _publish_software_version_frequency);
+    ROS_DEBUG("FakeInterfaceCore::initParameters - Publish_learning_mode_frequency : %f", _publish_learning_mode_frequency);
+    ROS_DEBUG("FakeInterfaceCore::initParameters - ROS version : %s", _ros_niryo_robot_version.c_str());
 }
 
 /**
@@ -148,12 +152,9 @@ void FakeInterfaceCore::startServices(ros::NodeHandle& nh)
     _control_conveyor_server = _nh.advertiseService("/niryo_robot/conveyor/control_conveyor",
                                                     &FakeInterfaceCore::_callbackControlConveyor, this);
 
-    _learning_mode_publisher = _nh.advertise<std_msgs::Bool>("/niryo_robot/learning_mode/state", 10);
-
     _reset_controller_server = _nh.advertiseService("/niryo_robot/joints_interface/steppers_reset_controller",
                                                     &FakeInterfaceCore::_callbackResetController, this);
 
-    _publish_learning_mode_thread = std::thread(&FakeInterfaceCore::_publishLearningMode, this);
 }
 
 /**
@@ -164,7 +165,6 @@ void FakeInterfaceCore::startSubscribers(ros::NodeHandle& nh)
     _trajectory_result_subscriber = _nh.subscribe(
                 "/niryo_robot_follow_joint_trajectory_controller/follow_joint_trajectory/result",
                 10, &FakeInterfaceCore::_callbackTrajectoryResult, this);
-    _current_tools_id_publisher = _nh.advertise<std_msgs::Int32>("/niryo_robot_hardware/tools/current_id", 1, true);
 }
 
 /**
@@ -173,7 +173,10 @@ void FakeInterfaceCore::startSubscribers(ros::NodeHandle& nh)
  */
 void FakeInterfaceCore::startPublishers(ros::NodeHandle &nh)
 {
+    _current_tools_id_publisher = _nh.advertise<std_msgs::Int32>("/niryo_robot_hardware/tools/current_id", 1, true);
 
+    _learning_mode_publisher = _nh.advertise<std_msgs::Bool>("/niryo_robot/learning_mode/state", 10);
+    _publish_learning_mode_thread = std::thread(&FakeInterfaceCore::_publishLearningMode, this);
 }
 
 /**

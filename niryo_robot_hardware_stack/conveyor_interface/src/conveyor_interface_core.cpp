@@ -43,6 +43,7 @@ namespace conveyor_interface
 
 /**
  * @brief ConveyorInterfaceCore::ConveyorInterfaceCore
+ * @param nh
  * @param stepper
  */
 ConveyorInterfaceCore::ConveyorInterfaceCore(ros::NodeHandle& nh,
@@ -65,6 +66,7 @@ ConveyorInterfaceCore::~ConveyorInterfaceCore()
 
 /**
  * @brief ConveyorInterfaceCore::init
+ * @param nh
  */
 bool ConveyorInterfaceCore::init(ros::NodeHandle& nh)
 {
@@ -83,7 +85,8 @@ bool ConveyorInterfaceCore::init(ros::NodeHandle& nh)
 }
 
 /**
- * @brief ConveyorInterfaceCore::initParams
+ * @brief ConveyorInterfaceCore::initParameters
+ * @param nh
  */
 void ConveyorInterfaceCore::initParameters(ros::NodeHandle& nh)
 {
@@ -118,6 +121,7 @@ void ConveyorInterfaceCore::initParameters(ros::NodeHandle& nh)
 
 /**
  * @brief ConveyorInterfaceCore::startServices
+ * @param nh
  */
 void ConveyorInterfaceCore::startServices(ros::NodeHandle& nh)
 {
