@@ -53,6 +53,10 @@ CanDriverCore::CanDriverCore(ros::NodeHandle& nh)
     ROS_DEBUG("CanDriverCore::CanDriverCore - ctor");
 
     init(nh);
+
+    _can_driver = std::make_unique<CanDriver>();
+
+    startControlLoop();
 }
 
 /**
@@ -69,11 +73,17 @@ CanDriverCore::~CanDriverCore()
  */
 bool CanDriverCore::init(ros::NodeHandle& nh)
 {
+    ROS_DEBUG("CanDriverCore::init - Initializing parameters...");
     initParameters(nh);
 
-    _can_driver = std::make_unique<CanDriver>();
+    ROS_DEBUG("CanDriverCore::init - Starting services...");
+    startServices(nh);
 
-    startControlLoop();
+    ROS_DEBUG("CanDriverCore::init - Starting subscribers...");
+    startSubscribers(nh);
+
+    ROS_DEBUG("CanDriverCore::init - Starting publishers...");
+    startPublishers(nh);
 
     return true;
 }

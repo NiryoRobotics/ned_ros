@@ -70,6 +70,11 @@ class ArmCommander:
         # Check joint validity service (used for self collisions checking)
         self.check_state_validity = rospy.ServiceProxy('check_state_validity', GetStateValidity)
 
+        # set default velocity and acceleration to 100% 
+        self.__arm.set_max_velocity_scaling_factor(1)
+        self.__arm.set_max_acceleration_scaling_factor(1)
+
+
     def __init_move_group_commander(self):
         # Get Arm MoveGroupCommander
         move_group_commander_name = rospy.get_param("~move_group_commander_name")
@@ -103,12 +108,16 @@ class ArmCommander:
         :param _: TimeEvent object which is not used
         :return: None
         """
+        rospy.logdebug("ArmCommander.init - __publish_arm_max_velocity_scaling_factor: %d", self.__max_velocity_scaling_factor)
+
         msg = Int32()
         msg.data = self.__max_velocity_scaling_factor
         self.__max_velocity_scaling_factor_pub.publish(msg)
 
     # -- Callbacks
     def __callback_set_max_velocity_scaling_factor(self, req):
+        rospy.logdebug("ArmCommander.init - __callback_set_max_velocity_scaling_factor: %d", req.value)
+
         if not 0 < req.value <= 100:
             return {'status': CommandStatus.INVALID_PARAMETERS, 'message': 'Value must be between 1 and 100'}
         try:
