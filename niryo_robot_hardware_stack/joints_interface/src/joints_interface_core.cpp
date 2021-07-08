@@ -71,10 +71,14 @@ JointsInterfaceCore::~JointsInterfaceCore()
  */
 bool JointsInterfaceCore::init(ros::NodeHandle& nh)
 {
+    ROS_DEBUG("JointsInterfaceCore::init - Initializing parameters...");
     initParameters(nh);
 
     ROS_DEBUG("JointsInterfaceCore::init - Starting services...");
     startServices(nh);
+
+    ROS_DEBUG("JointsInterfaceCore::init - Starting publishers...");
+    startPublishers(nh);
 
     ROS_DEBUG("JointsInterfaceCore::init - Starting subscribers...");
     startSubscribers(nh);
@@ -127,8 +131,6 @@ void JointsInterfaceCore::startSubscribers(ros::NodeHandle& nh)
 {
     _trajectory_result_subscriber = _nh.subscribe("/niryo_robot_follow_joint_trajectory_controller/follow_joint_trajectory/result",
                                                   10, &JointsInterfaceCore::_callbackTrajectoryResult, this);
-    _learning_mode_publisher = _nh.advertise<std_msgs::Bool>("niryo_robot/learning_mode/state", 10);
-    _publish_learning_mode_thread = std::thread(&JointsInterfaceCore::_publishLearningMode, this);
 }
 
 /**
@@ -137,7 +139,8 @@ void JointsInterfaceCore::startSubscribers(ros::NodeHandle& nh)
  */
 void JointsInterfaceCore::startPublishers(ros::NodeHandle& nh)
 {
-
+    _learning_mode_publisher = _nh.advertise<std_msgs::Bool>("niryo_robot/learning_mode/state", 10);
+    _publish_learning_mode_thread = std::thread(&JointsInterfaceCore::_publishLearningMode, this);
 }
 
 // *********************
