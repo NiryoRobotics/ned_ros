@@ -447,13 +447,11 @@ void JointHardwareInterface::synchronizeMotors(bool synchronize)
 
     if (_can_driver_core)
     {
-        StepperMotorCmd stepper_cmd(EStepperCommandType::CMD_TYPE_SYNCHRONIZE);
-
         for (auto const& jState : _joint_list)
         {
             if (jState && jState->isValid() && jState->isStepper())
             {
-                StepperMotorCmd cmd(EStepperCommandType::CMD_TYPE_SYNCHRONIZE, jState->getId(), {synchronize});
+                StepperMotorCmd stepper_cmd(EStepperCommandType::CMD_TYPE_SYNCHRONIZE, jState->getId(), {synchronize});
                 _can_driver_core->addSingleCommandToQueue(stepper_cmd);
             }
         }
