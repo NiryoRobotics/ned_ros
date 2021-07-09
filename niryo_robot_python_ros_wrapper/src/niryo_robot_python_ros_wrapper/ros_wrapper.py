@@ -2,7 +2,7 @@
 
 # Lib
 import time
-
+import threading
 import rosgraph_msgs.msg
 import rospy
 import actionlib
@@ -140,6 +140,16 @@ class NiryoRosWrapper:
             '/rosout_agg', rosgraph_msgs.msg.Log, self.__callback_rosout_agg
         )
 
+        # - Blockly
+
+        self.__highlighted_block = None
+        rospy.Subscriber(
+            '/niryo_robot_blockly/highlight_block', String, self.__callback_highlight_block
+        )
+
+        self.__save_current_position_event = threading.Event()
+        rospy.Subscriber('/niryo_robot/blockly/save_current_point', Int32, self.__callback_save_current_position)
+
         # - Action server
         # Robot action
         self.__robot_action_server_name = '/niryo_robot_commander/robot_action'
@@ -221,6 +231,12 @@ class NiryoRosWrapper:
             log.msg,
         )
         self.__logs.append(formatted_log)
+
+    def __callback_highlight_block(self, block):
+        self.__highlighted_block = block.data
+        
+    def __callback_save_current_position(self, _res):
+        self.__save_current_position_event.set()
 
     # -- Service & Action executors
     def __call_service(self, service_name, service_msg_type, *args):
@@ -1259,8 +1275,7 @@ class NiryoRosWrapper:
 
     # - Hardware
 
-    @property
-    def simulation_mode(self):
+    def get_simulation_mode(self):
         """
         The simulation mode
         """
@@ -1314,22 +1329,19 @@ class NiryoRosWrapper:
         else:
             return PinState.HIGH
 
-    @property
-    def hardware_version(self):
+    def get_hardware_version(self):
         """
         Get the robot hardware version
         """
         return self.__hardware_version
 
-    @property
-    def can_enabled(self):
+    def get_can_enabled(self):
         """
         Get can_enabled
         """
         return self.__can_enabled
 
-    @property
-    def dxl_enabled(self):
+    def get_dxl_enabled(self):
         """
         Get dxl_enabled
         """
@@ -1928,3 +1940,23 @@ class NiryoRosWrapper:
         req.value = 1 if value is True else 0
         result = self.__call_service('/niryo_robot_rpi/set_purge_ros_log_on_startup', SetInt, req)
         return self.__classic_return_w_check(result)
+
+    # - Blockly
+
+    def get_highlighted_block(self):
+        """
+        Returns the blockly highlighted block
+
+        :return: the highlighted block id
+        :rtype: str
+        """
+        return self.__highlighted_block
+
+    def get_save_point_event(self):
+        """
+        Returns an event which is set when a pose must be saved
+
+        :return: the event
+        :rtype: Event
+        """
+        return self.__save_current_position_event
