@@ -118,7 +118,7 @@ class JogController:
         self._last_target_values = [0.0 for _ in range(6)]
         self._target_values = None
         self.__joints_name = ['joint_1', 'joint_2', 'joint_3', 'joint_4', 'joint_5', 'joint_6']
-        self._current_jogged_joint = []
+        self._current_jogged_joints = []
 
         # - Move It Commander / Get Arm MoveGroupCommander
         self.__arm = moveit_commander.MoveGroupCommander(rospy.get_param("~move_group_commander_name"))
@@ -216,7 +216,7 @@ class JogController:
                 return
 
             self._target_values = target_values
-            self._current_jogged_joint = joints_to_jog
+            self._current_jogged_joints = joints_to_jog
             self._new_robot_state = RobotState()
 
 
@@ -289,7 +289,7 @@ class JogController:
                 return e, "Error while validating joint : {}".format(e.message)
                 
 
-            self._current_jogged_joint = joints_to_jog
+            self._current_jogged_joints = joints_to_jog
             self._target_values = target_values
             self._new_robot_state = RobotState()
         return CommandStatus.SUCCESS, "Command send"
@@ -319,7 +319,7 @@ class JogController:
             # so the other joints are not affected by the jog.
             joint_names = []
             positions = []
-            for elem in self._current_jogged_joint:
+            for elem in self._current_jogged_joints:
                 joint_names.append('joint_{}'.format(elem+1)) # TODO: adapt to the joint_names param
                 positions.append(self._target_values[elem])
 
@@ -338,7 +338,7 @@ class JogController:
 
         # Reset Target
         self._target_values = None
-        self._current_jogged_joint = None
+        self._current_jogged_joints = None
 
         # Save state for next time
         self._last_target_values = current_target_values
@@ -402,7 +402,7 @@ class JogController:
         self._enabled = False
         self._shift_mode = None
         self._target_values = None
-        self._current_jogged_joint = None
+        self._current_jogged_joints = None
         # Shutdown timer (Only launched when jog enabled)
         self._publisher_joint_trajectory_timer.shutdown()
         self._publisher_joint_trajectory_timer = None
@@ -510,7 +510,7 @@ class JogController:
                 msg_str = "Jog Controller can't execute this command"
                 rospy.logwarn(msg_str + str(joints))
                 self._target_values = None
-                self._current_jogged_joint = None
+                self._current_jogged_joints = None
         return joints
 
     def __check_before_use_jog(self):
