@@ -118,7 +118,7 @@ class JogController:
         self._last_target_values = [0.0 for _ in range(6)]
         self._target_values = None
         self.__joints_name = ['joint_1', 'joint_2', 'joint_3', 'joint_4', 'joint_5', 'joint_6']
-        self._current_jogged_joint = None # current jogged joint, used for NS TODO: change if we want to allow several jog at the same time
+        self._current_jogged_joint = []
 
         # - Move It Commander / Get Arm MoveGroupCommander
         self.__arm = moveit_commander.MoveGroupCommander(rospy.get_param("~move_group_commander_name"))
@@ -194,8 +194,8 @@ class JogController:
             target_values = [actual + shift for actual, shift in
                              zip(self._last_target_values, shift_command)]
 
-            # get the index of the jogged joint. TODO : manage when jogging two or more joints at the same time
-            joint_to_jog=next((index) for index, value in enumerate(shift_command) if value!=0)
+            # get index of the jogged joints in a list
+            joints_to_jog = [i for i, value in enumerate(shift_command) if value != 0]
 
             target_values = self.__limit_params_joints(target_values)
 
@@ -216,7 +216,7 @@ class JogController:
                 return
 
             self._target_values = target_values
-            self._current_jogged_joint = joint_to_jog
+            self._current_jogged_joint = joints_to_jog
             self._new_robot_state = RobotState()
 
 
@@ -270,7 +270,7 @@ class JogController:
 
             target_values = self.__limit_params_joints(target_values)
 
-            joint_to_jog=next((index) for index, value in enumerate(shift_command) if value!=0) # get jogged joint
+            joints_to_jog = [i for i, value in enumerate(shift_command) if value != 0]
 
             try:
                 self.__validate_params_joints(target_values) # validate joints according to joints limits
@@ -289,7 +289,7 @@ class JogController:
                 return e, "Error while validating joint : {}".format(e.message)
                 
 
-            self._current_jogged_joint = joint_to_jog
+            self._current_jogged_joint = joints_to_jog
             self._target_values = target_values
             self._new_robot_state = RobotState()
         return CommandStatus.SUCCESS, "Command send"
@@ -317,14 +317,22 @@ class JogController:
         if self._shift_mode == JogShiftRequest.JOINTS_SHIFT:
             # if jogging joint, we send a command with only one joint, thanks to the allow_partial_joints_goal parameter,
             # so the other joints are not affected by the jog.
-            msg.joint_names = ['joint_{}'.format(self._current_jogged_joint+1)] # TODO: adapt to the joint_names param
-            point.positions = [self._target_values[self._current_jogged_joint]]
+            joint_names = []
+            positions = []
+            for elem in self._current_jogged_joint:
+                joint_names.append('joint_{}'.format(elem+1)) # TODO: adapt to the joint_names param
+                positions.append(self._target_values[elem])
+
+            msg.joint_names = joint_names
+            point.positions = positions
+                
         else:
             msg.joint_names = rospy.get_param('~joint_names')
             point.positions = self._target_values
         point.time_from_start = rospy.Duration(self._timer_rate)
         msg.points = [point]
         current_target_values = self._target_values
+        print 'sending', msg
 
         self._joint_trajectory_publisher.publish(msg)
 
