@@ -195,7 +195,7 @@ class JogController:
                              zip(self._last_target_values, shift_command)]
 
             # get the index of the jogged joint. TODO : manage when jogging two or more joints at the same time
-            joint_to_shift=next((index) for index, value in enumerate(shift_command) if value!=0)
+            joint_to_jog=next((index) for index, value in enumerate(shift_command) if value!=0)
 
             target_values = self.__limit_params_joints(target_values)
 
@@ -216,7 +216,7 @@ class JogController:
                 return
 
             self._target_values = target_values
-            self._current_jogged_joint = joint_to_shift
+            self._current_jogged_joint = joint_to_jog
             self._new_robot_state = RobotState()
 
 
@@ -270,6 +270,8 @@ class JogController:
 
             target_values = self.__limit_params_joints(target_values)
 
+            joint_to_jog=next((index) for index, value in enumerate(shift_command) if value!=0) # get jogged joint
+
             try:
                 self.__validate_params_joints(target_values) # validate joints according to joints limits
             except ArmCommanderException as e:
@@ -287,6 +289,7 @@ class JogController:
                 return e, "Error while validating joint : {}".format(e.message)
                 
 
+            self._current_jogged_joint = joint_to_jog
             self._target_values = target_values
             self._new_robot_state = RobotState()
         return CommandStatus.SUCCESS, "Command send"
