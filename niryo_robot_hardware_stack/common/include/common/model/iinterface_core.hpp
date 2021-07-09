@@ -44,8 +44,8 @@ class IInterfaceCore
     private:
         virtual void initParameters(ros::NodeHandle& nh) = 0;
         virtual void startServices(ros::NodeHandle& nh) = 0;
-        virtual void startSubscribers(ros::NodeHandle& nh) = 0;
         virtual void startPublishers(ros::NodeHandle& nh) = 0;
+        virtual void startSubscribers(ros::NodeHandle& nh) = 0;
 };
 
 /**

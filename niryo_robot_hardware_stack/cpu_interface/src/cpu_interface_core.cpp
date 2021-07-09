@@ -58,11 +58,11 @@ bool CpuInterfaceCore::init(ros::NodeHandle &nh)
     ROS_DEBUG("CpuInterfaceCore::init - Starting services...");
     startServices(nh);
 
-    ROS_DEBUG("CpuInterfaceCore::init - Starting subscribers...");
-    startSubscribers(nh);
-
     ROS_DEBUG("CpuInterfaceCore::init - Starting publishers...");
     startPublishers(nh);
+
+    ROS_DEBUG("CpuInterfaceCore::init - Starting subscribers...");
+    startSubscribers(nh);
 
     return true;
 }
@@ -92,19 +92,19 @@ void CpuInterfaceCore::startServices(ros::NodeHandle& /*nh*/)
 }
 
 /**
- * @brief CpuInterfaceCore::startSubscribers
- */
-void CpuInterfaceCore::startSubscribers(ros::NodeHandle& /*nh*/)
-{
-    ROS_DEBUG("CpuInterfaceCore::startSubscribers - no subscribers to start");
-}
-
-/**
  * @brief CpuInterfaceCore::startPublishers
  */
 void CpuInterfaceCore::startPublishers(ros::NodeHandle& /*nh*/)
 {
     ROS_DEBUG("CpuInterfaceCore::startPublishers - no publishers to start");
+}
+
+/**
+ * @brief CpuInterfaceCore::startSubscribers
+ */
+void CpuInterfaceCore::startSubscribers(ros::NodeHandle& /*nh*/)
+{
+    ROS_DEBUG("CpuInterfaceCore::startSubscribers - no subscribers to start");
 }
 
 /**

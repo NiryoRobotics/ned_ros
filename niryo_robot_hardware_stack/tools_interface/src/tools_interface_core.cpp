@@ -53,7 +53,7 @@ namespace tools_interface
  * @param nh
  * @param ttl_driver
  */
-ToolsInterfaceCore::ToolsInterfaceCore(ros::NodeHandle &nh,
+ToolsInterfaceCore::ToolsInterfaceCore(ros::NodeHandle& nh,
                                        shared_ptr<ttl_driver::TtlDriverCore> ttl_driver):
     _ttl_driver_core(ttl_driver)
 {
@@ -80,9 +80,17 @@ ToolsInterfaceCore::~ToolsInterfaceCore()
  */
 bool ToolsInterfaceCore::init(ros::NodeHandle &nh)
 {
+    ROS_DEBUG("ToolsInterfaceCore::init - Initializing parameters...");
     initParameters(nh);
+
+    ROS_DEBUG("ToolsInterfaceCore::init - Starting services...");
     startServices(nh);
+
+    ROS_DEBUG("ToolsInterfaceCore::init - Starting publishers...");
     startPublishers(nh);
+
+    ROS_DEBUG("ToolsInterfaceCore::init - Starting subscribers...");
+    startSubscribers(nh);
 
     return true;
 }
@@ -176,15 +184,6 @@ void ToolsInterfaceCore::startServices(ros::NodeHandle& nh)
 }
 
 /**
- * @brief ToolsInterfaceCore::startSubscribers
- * @param nh
- */
-void ToolsInterfaceCore::startSubscribers(ros::NodeHandle& /*nh*/)
-{
-    ROS_DEBUG("No subscribers to start");
-}
-
-/**
  * @brief ToolsInterfaceCore::startPublishers
  * @param nh
  */
@@ -192,6 +191,15 @@ void ToolsInterfaceCore::startPublishers(ros::NodeHandle& nh)
 {
     _tool_connection_publisher = _nh.advertise<std_msgs::Int32>("/niryo_robot_hardware/tools/current_id", 1, true);
     _publish_tool_connection_thread = std::thread(&ToolsInterfaceCore::_publishToolConnection, this);
+}
+
+/**
+ * @brief ToolsInterfaceCore::startSubscribers
+ * @param nh
+ */
+void ToolsInterfaceCore::startSubscribers(ros::NodeHandle& /*nh*/)
+{
+    ROS_DEBUG("No subscribers to start");
 }
 
 /**

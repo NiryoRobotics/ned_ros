@@ -97,8 +97,8 @@ class FakeInterfaceCore : common::model::IInterfaceCore
     private:
         virtual void initParameters(ros::NodeHandle& nh) override;
         virtual void startServices(ros::NodeHandle& nh) override;
-        virtual void startSubscribers(ros::NodeHandle& nh) override;
         virtual void startPublishers(ros::NodeHandle& nh) override;
+        virtual void startSubscribers(ros::NodeHandle& nh) override;
 
         bool _callbackResetController(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
         void _callbackTrajectoryResult(const control_msgs::FollowJointTrajectoryActionResult &msg);

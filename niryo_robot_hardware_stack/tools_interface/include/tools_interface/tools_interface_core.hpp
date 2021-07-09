@@ -63,8 +63,8 @@ class ToolsInterfaceCore : public common::model::IInterfaceCore
     private:
         virtual void initParameters(ros::NodeHandle& nh) override;
         virtual void startServices(ros::NodeHandle& nh) override;
-        virtual void startSubscribers(ros::NodeHandle& nh) override;
         virtual void startPublishers(ros::NodeHandle& nh) override;
+        virtual void startSubscribers(ros::NodeHandle& nh) override;
 
         void _publishToolConnection();
 

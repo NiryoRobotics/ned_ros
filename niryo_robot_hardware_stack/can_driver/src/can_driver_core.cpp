@@ -79,11 +79,11 @@ bool CanDriverCore::init(ros::NodeHandle& nh)
     ROS_DEBUG("CanDriverCore::init - Starting services...");
     startServices(nh);
 
-    ROS_DEBUG("CanDriverCore::init - Starting subscribers...");
-    startSubscribers(nh);
-
     ROS_DEBUG("CanDriverCore::init - Starting publishers...");
     startPublishers(nh);
+
+    ROS_DEBUG("CanDriverCore::init - Starting subscribers...");
+    startSubscribers(nh);
 
     return true;
 }
@@ -120,20 +120,20 @@ void CanDriverCore::startServices(ros::NodeHandle &/*nh*/)
 }
 
 /**
- * @brief CanDriverCore::startSubscribers
- */
-void CanDriverCore::startSubscribers(ros::NodeHandle &/*nh*/)
-{
-    ROS_DEBUG("CanDriverCore::startServices - no subscribers to start");
-}
-
-/**
  * @brief CanDriverCore::startPublishers
  * @param nh
  */
 void CanDriverCore::startPublishers(ros::NodeHandle &/*nh*/)
 {
     ROS_DEBUG("CanDriverCore::startServices - no publishers to start");
+}
+
+/**
+ * @brief CanDriverCore::startSubscribers
+ */
+void CanDriverCore::startSubscribers(ros::NodeHandle &/*nh*/)
+{
+    ROS_DEBUG("CanDriverCore::startServices - no subscribers to start");
 }
 
 // ***************

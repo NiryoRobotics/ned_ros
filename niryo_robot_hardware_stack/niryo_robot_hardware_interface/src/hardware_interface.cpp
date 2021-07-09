@@ -62,9 +62,20 @@ HardwareInterface::~HardwareInterface()
  */
 bool HardwareInterface::init(ros::NodeHandle &nh)
 {
+    ROS_DEBUG("HardwareInterface::init - Initializing parameters...");
     initParameters(nh);
+
+    ROS_DEBUG("HardwareInterface::init - Init Nodes...");
     initNodes(nh);
+
+    ROS_DEBUG("HardwareInterface::init - Starting services...");
+    startServices(nh);
+
+    ROS_DEBUG("HardwareInterface::init - Starting publishers...");
     startPublishers(nh);
+
+    ROS_DEBUG("HardwareInterface::init - Starting subscribers...");
+    startSubscribers(nh);
 
     return true;
 }
@@ -75,8 +86,6 @@ bool HardwareInterface::init(ros::NodeHandle &nh)
  */
 void HardwareInterface::initParameters(ros::NodeHandle &nh)
 {
-    ROS_DEBUG("Hardware Interface - Init Params");
-
     ros::param::get("~publish_hw_status_frequency", _publish_hw_status_frequency);
     ros::param::get("~publish_software_version_frequency", _publish_software_version_frequency);
 
@@ -91,8 +100,6 @@ void HardwareInterface::initParameters(ros::NodeHandle &nh)
 
     _rpi_image_version.erase(_rpi_image_version.find_last_not_of(" \n\r\t") + 1);
     _ros_niryo_robot_version.erase(_ros_niryo_robot_version.find_last_not_of(" \n\r\t") + 1);
-
-
 
     ROS_DEBUG("HardwareInterface::initParameters - publish_hw_status_frequency : %f",
                             _publish_hw_status_frequency);
@@ -178,16 +185,14 @@ void HardwareInterface::initNodes(ros::NodeHandle &nh)
  */
 void HardwareInterface::startServices(ros::NodeHandle &nh)
 {
+    _motors_report_service = _nh.advertiseService("/niryo_robot_hardware_interface/launch_motors_report",
+                                                  &HardwareInterface::_callbackLaunchMotorsReport, this);
 
-}
+    _stop_motors_report_service = _nh.advertiseService("/niryo_robot_hardware_interface/stop_motors_report",
+                                                       &HardwareInterface::_callbackStopMotorsReport, this);
 
-/**
- * @brief HardwareInterface::startSubscribers
- * @param nh
- */
-void HardwareInterface::startSubscribers(ros::NodeHandle &nh)
-{
-    ROS_DEBUG("HardwareInterface::startServices - no subscribers to start");
+    _reboot_motors_service = _nh.advertiseService("/niryo_robot_hardware_interface/reboot_motors",
+                                                  &HardwareInterface::_callbackRebootMotors, this);
 }
 
 /**
@@ -197,22 +202,21 @@ void HardwareInterface::startPublishers(ros::NodeHandle &nh)
 {
     _hardware_status_publisher = _nh.advertise<niryo_robot_msgs::HardwareStatus>(
                                             "/niryo_robot_hardware_interface/hardware_status", 10);
-
     _publish_hw_status_thread = std::thread(&HardwareInterface::_publishHardwareStatus, this);
 
     _software_version_publisher = _nh.advertise<niryo_robot_msgs::SoftwareVersion>(
                                             "/niryo_robot_hardware_interface/software_version", 10);
-
     _publish_software_version_thread = std::thread(&HardwareInterface::_publishSoftwareVersion, this);
 
-    _motors_report_service = _nh.advertiseService("/niryo_robot_hardware_interface/launch_motors_report",
-                                                  &HardwareInterface::_callbackLaunchMotorsReport, this);
+}
 
-    _stop_motors_report_service = _nh.advertiseService("/niryo_robot_hardware_interface/stop_motors_report",
-                                                       &HardwareInterface::_callbackStopMotorsReport, this);
-
-    _reboot_motors_service = _nh.advertiseService("/niryo_robot_hardware_interface/reboot_motors",
-                                                  &HardwareInterface::_callbackRebootMotors, this);
+/**
+ * @brief HardwareInterface::startSubscribers
+ * @param nh
+ */
+void HardwareInterface::startSubscribers(ros::NodeHandle &nh)
+{
+    ROS_DEBUG("HardwareInterface::startSubscribers - no subscribers to start");
 }
 
 // ********************

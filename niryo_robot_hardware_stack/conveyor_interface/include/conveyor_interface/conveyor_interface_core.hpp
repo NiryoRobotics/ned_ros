@@ -55,8 +55,8 @@ class ConveyorInterfaceCore : public common::model::IInterfaceCore
     private:
         virtual void initParameters(ros::NodeHandle& nh) override;
         virtual void startServices(ros::NodeHandle& nh) override;
-        virtual void startSubscribers(ros::NodeHandle& nh) override;
         virtual void startPublishers(ros::NodeHandle& nh) override;
+        virtual void startSubscribers(ros::NodeHandle& nh) override;
 
         conveyor_interface::SetConveyor::Response addConveyor();
         conveyor_interface::SetConveyor::Response removeConveyor(uint8_t id);

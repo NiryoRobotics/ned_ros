@@ -66,22 +66,21 @@ TtlDriverCore::~TtlDriverCore()
  */
 bool TtlDriverCore::init(ros::NodeHandle& nh)
 {
+    ROS_DEBUG("TtlDriverCore::init - Init parameters...");
     initParameters(nh);
 
     _ttl_driver = std::make_unique<TtlDriver>();
     _ttl_driver->scanAndCheck();
     startControlLoop();
 
-    // advertise services
+    ROS_DEBUG("TtlDriverCore::init - Starting services...");
+    startServices(nh);
 
-    _activate_leds_server = _nh.advertiseService("niryo_robot/ttl_driver/set_dxl_leds",
-                                                 &TtlDriverCore::_callbackActivateLeds, this);
+    ROS_DEBUG("TtlDriverCore::init - Starting publishers...");
+    startPublishers(nh);
 
-    _custom_cmd_server = _nh.advertiseService("niryo_robot/ttl_driver/send_custom_dxl_value",
-                                              &TtlDriverCore::_callbackSendCustomDxlValue, this);
-
-    _custom_cmd_getter = _nh.advertiseService("niryo_robot/ttl_driver/read_custom_dxl_value",
-                                              &TtlDriverCore::_callbackReadCustomDxlValue, this);
+    ROS_DEBUG("TtlDriverCore::init - Starting subscribers...");
+    startSubscribers(nh);
 
     return true;
 }
@@ -124,16 +123,15 @@ void TtlDriverCore::initParameters(ros::NodeHandle& nh)
  */
 void TtlDriverCore::startServices(ros::NodeHandle &/*nh*/)
 {
-    ROS_DEBUG("TTLDriverCore::startServices - no services to start");
-}
+    // advertise services
+    _activate_leds_server = _nh.advertiseService("/niryo_robot/ttl_driver/set_dxl_leds",
+                                                 &TtlDriverCore::_callbackActivateLeds, this);
 
-/**
- * @brief TtlDriverCore::startSubscribers
- * @param nh
- */
-void TtlDriverCore::startSubscribers(ros::NodeHandle &/*nh*/)
-{
-    ROS_DEBUG("TTLDriverCore::startSubscribers - no subscribers to start");
+    _custom_cmd_server = _nh.advertiseService("/niryo_robot/ttl_driver/send_custom_dxl_value",
+                                              &TtlDriverCore::_callbackSendCustomDxlValue, this);
+
+    _custom_cmd_getter = _nh.advertiseService("/niryo_robot/ttl_driver/read_custom_dxl_value",
+                                              &TtlDriverCore::_callbackReadCustomDxlValue, this);
 }
 
 /**
@@ -143,6 +141,15 @@ void TtlDriverCore::startSubscribers(ros::NodeHandle &/*nh*/)
 void TtlDriverCore::startPublishers(ros::NodeHandle &/*nh*/)
 {
     ROS_DEBUG("TTLDriverCore::startSubscribers - no publishers to start");
+}
+
+/**
+ * @brief TtlDriverCore::startSubscribers
+ * @param nh
+ */
+void TtlDriverCore::startSubscribers(ros::NodeHandle &/*nh*/)
+{
+    ROS_DEBUG("TTLDriverCore::startSubscribers - no subscribers to start");
 }
 
 // ***************

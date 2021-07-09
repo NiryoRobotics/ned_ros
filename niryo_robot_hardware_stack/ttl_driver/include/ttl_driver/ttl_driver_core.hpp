@@ -107,8 +107,8 @@ class TtlDriverCore : public common::model::IDriverCore, public common::model::I
     private:
         virtual void initParameters(ros::NodeHandle& nh) override;
         virtual void startServices(ros::NodeHandle& nh) override;
-        virtual void startSubscribers(ros::NodeHandle &nh) override;
         virtual void startPublishers(ros::NodeHandle &nh) override;
+        virtual void startSubscribers(ros::NodeHandle &nh) override;
 
         void resetHardwareControlLoopRates() override;
         void controlLoop() override;
