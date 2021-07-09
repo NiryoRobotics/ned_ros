@@ -1418,6 +1418,40 @@ class NiryoRosWrapper:
         result = self.__call_service('/niryo_robot_hardware_interface/reboot_motors', Trigger)
         return self.__classic_return_w_check(result)
 
+
+    # - Button
+
+    def __change_button_mode(self, mode):
+        req = SetInt()
+        req.value = mode
+        result = self.__call_service('/niryo_robot/rpi/change_button_mode', SetInt, req)
+        return self.__classic_return_w_check(result)
+
+    def set_button_do_nothing(self):
+        """
+        Disable the button
+        :return: status, message
+        :rtype: (int, str)
+        """
+        return self.__change_button_mode(0)
+
+    def set_button_trigger_sequence_autorun(self):
+        """
+        Set the button in trigger sequence autorun mode
+        :return: status, message
+        :rtype: (int, str)
+        """
+        return self.__change_button_mode(1)
+
+    def set_button_blockly_save_point(self):
+        """
+        Set the button in blockly save point mode
+        :return: status, message
+        :rtype: (int, str)
+        """
+        return self.__change_button_mode(2)
+
+
     # - Software
 
     def get_software_version(self):
@@ -1443,6 +1477,29 @@ class NiryoRosWrapper:
         req.data = name
         result = self.__call_service('/niryo_robot/wifi/set_robot_name', SetString, req)
         return self.__classic_return_w_check(result)
+
+    def __call_shutdown_rpi(self, value):
+        req = SetInt()
+        req.value = value
+        result = self.__call_service('/niryo_robot_rpi/shutdown_rpi', SetInt, req)
+        return self.__classic_return_w_check(result)
+
+    def shutdown_rpi(self):
+        """
+        Shutdown the rpi
+        :return: status, message
+        :rtype: (int, str)
+        """
+        return self.__call_shutdown_rpi(1)
+
+    def reboot_rpi(self):
+        """
+        Shutdown the rpi
+        :return: status, message
+        :rtype: (int, str)
+        """
+        return self.__call_shutdown_rpi(2)
+
 
     # - Conveyor
 
@@ -1833,6 +1890,7 @@ class NiryoRosWrapper:
         return result.name_list
 
     #- Logs
+
     def get_logs(self):
         """
         Returns a generator iterating over all the logs published
@@ -1855,4 +1913,18 @@ class NiryoRosWrapper:
         # The request is ignored by the service
         req.value = 0
         result = self.__call_service('/niryo_robot_rpi/purge_ros_logs', SetInt, req)
+        return self.__classic_return_w_check(result)
+
+    def purge_logs_on_startup(self, value):
+        """
+        Purge the ros logs at rpi startup
+
+        :param value: If the rpi have to purge the logs at startup
+        :type value: bool
+        :return: status, message
+        :rtype: (int, str)
+        """
+        req = SetInt()
+        req.value = 1 if value is True else 0
+        result = self.__call_service('/niryo_robot_rpi/set_purge_ros_log_on_startup', SetInt, req)
         return self.__classic_return_w_check(result)
