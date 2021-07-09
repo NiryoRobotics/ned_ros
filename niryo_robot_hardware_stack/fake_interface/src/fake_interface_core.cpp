@@ -96,18 +96,19 @@ bool FakeInterfaceCore::init(ros::NodeHandle &nh)
  */
 void FakeInterfaceCore::initParameters(ros::NodeHandle &nh)
 {
-    ros::param::get("~gazebo", _gazebo);
-    ros::param::get("~simu_gripper", _simu_gripper);
-    ros::param::get("~ros_control_loop_frequency", _ros_control_frequency);
+    ros::NodeHandle nh_private("~");
+    nh_private.getParam("gazebo", _gazebo);
+    nh_private.getParam("simu_gripper", _simu_gripper);
+    nh_private.getParam("ros_control_loop_frequency", _ros_control_frequency);
     
     ROS_DEBUG("FakeInterfaceCore::initParameters - gazebo ? %s", _gazebo ? "yes" : "no");
     ROS_DEBUG("FakeInterfaceCore::initParameters - simu_gripper ? %s", _simu_gripper ? "yes" : "no");
     ROS_DEBUG("FakeInterfaceCore::initParameters - ros control loop freqeuncy %f", _ros_control_frequency);
 
-    ros::param::get("~publish_hw_status_frequency", _publish_hw_status_frequency);
-    ros::param::get("~publish_software_version_frequency", _publish_software_version_frequency);
-    ros::param::get("~publish_learning_mode_frequency", _publish_learning_mode_frequency);
-    ros::param::get("/niryo_robot/info/ros_version", _ros_niryo_robot_version);
+    nh_private.getParam("publish_hw_status_frequency", _publish_hw_status_frequency);
+    nh_private.getParam("publish_software_version_frequency", _publish_software_version_frequency);
+    nh_private.getParam("publish_learning_mode_frequency", _publish_learning_mode_frequency);
+    _nh.getParam("/niryo_robot/info/ros_version", _ros_niryo_robot_version);
 
     _ros_niryo_robot_version.erase(_ros_niryo_robot_version.find_last_not_of(" \n\r\t") + 1);
 

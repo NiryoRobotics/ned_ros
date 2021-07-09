@@ -86,17 +86,19 @@ bool HardwareInterface::init(ros::NodeHandle &nh)
  */
 void HardwareInterface::initParameters(ros::NodeHandle &nh)
 {
-    ros::param::get("~publish_hw_status_frequency", _publish_hw_status_frequency);
-    ros::param::get("~publish_software_version_frequency", _publish_software_version_frequency);
+    ros::NodeHandle nh_private("~");
 
-    ros::param::get("/niryo_robot/info/image_version", _rpi_image_version);
-    ros::param::get("/niryo_robot/info/ros_version", _ros_niryo_robot_version);
+    nh_private.getParam("publish_hw_status_frequency", _publish_hw_status_frequency);
+    nh_private.getParam("publish_software_version_frequency", _publish_software_version_frequency);
 
-    ros::param::get("~simulation_mode", _simulation_mode);
-    ros::param::get("~gazebo", _gazebo);
+    _nh.getParam("/niryo_robot/info/image_version", _rpi_image_version);
+    _nh.getParam("/niryo_robot/info/ros_version", _ros_niryo_robot_version);
 
-    ros::param::get("~can_enabled", _can_enabled);
-    ros::param::get("~ttl_enabled", _ttl_enabled);
+    nh_private.getParam("simulation_mode", _simulation_mode);
+    nh_private.getParam("gazebo", _gazebo);
+
+    nh_private.getParam("can_enabled", _can_enabled);
+    nh_private.getParam("ttl_enabled", _ttl_enabled);
 
     _rpi_image_version.erase(_rpi_image_version.find_last_not_of(" \n\r\t") + 1);
     _ros_niryo_robot_version.erase(_ros_niryo_robot_version.find_last_not_of(" \n\r\t") + 1);

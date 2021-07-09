@@ -51,6 +51,9 @@ DxlMotorState::DxlMotorState(std::string name, EMotorType type, uint8_t id, bool
     _isTool(isTool)
 {
     // to put in config ?
+    
+    // according to xl-330 datasheet : 1 speed ~ 0.229 rpm ~ 3.9083 dxl position per second
+    // according to xl-320 datasheet : 1 speed ~ 0.111 rpm ~ 1.8944 dxl position per second
     switch (_type)
     {
         case EMotorType::XL320:
@@ -205,9 +208,7 @@ double DxlMotorState::getTotalAngle() const
  */
 double DxlMotorState::getStepsForOneSpeed() const
 {
-    // according to xl-330 datasheet : 1 speed ~ 0.229 rpm ~ 3.9083 dxl position per second
-    // according to xl-320 datasheet : 1 speed ~ 0.111 rpm ~ 1.8944 dxl position per second
-
+    
     return _steps_for_one_speed;
 }
 
