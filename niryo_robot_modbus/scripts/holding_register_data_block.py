@@ -76,6 +76,10 @@ HR_CONTROL_CONVEYOR_SPEED = 524
 HR_CONTROL_CONVEYOR_ID = 525
 HR_STOP_CONVEYOR_WITH_ID = 526
 
+# TCP
+HR_ENABLE_TCP = 600
+HR_SET_TCP = 601
+
 
 # Positive number : 0 - 32767
 # Negative number : 32768 - 65535
@@ -159,6 +163,10 @@ class HoldingRegisterDataBlock(DataBlock):
             self.control_conveyor()
         elif address == HR_STOP_CONVEYOR_WITH_ID:
             self.stop_conveyor()
+        elif address == HR_ENABLE_TCP:
+            self.enable_tcp(values[0])
+        elif address == HR_SET_TCP:
+            self.set_tcp(values)
 
     def request_new_calibration(self):
         self.call_ros_service('/niryo_robot/joints_interface/request_new_calibration', Trigger)
@@ -187,7 +195,6 @@ class HoldingRegisterDataBlock(DataBlock):
 
     def open_gripper_command(self):
         speed = self.getValuesOffset(HR_GRIPPER_OPEN_SPEED, 1)[0]
-        print(speed)
         tool_id = self.getValuesOffset(HR_TOOL_ID, 1)[0]
         if speed < 100:
             speed = 100
@@ -284,14 +291,16 @@ class HoldingRegisterDataBlock(DataBlock):
         if not self.execution_thread.is_alive():
             self.execution_thread = threading.Thread(target=self.execute_action,
                                                      args=['niryo_robot_arm_commander/robot_action',
-                                                           RobotMoveAction, goal])
+                                                           RobotMoveAction,
+                                                           goal])
             self.execution_thread.start()
 
     def start_execution_thread_tool(self, goal):
         if not self.execution_thread.is_alive():
             self.execution_thread = threading.Thread(target=self.execute_action,
                                                      args=['niryo_robot_tools_commander/action_server',
-                                                           ToolAction, goal])
+                                                           ToolAction,
+                                                           goal])
             self.execution_thread.start()
 
     def execute_action(self, action_name, action_msg_type, goal):
@@ -400,3 +409,42 @@ class HoldingRegisterDataBlock(DataBlock):
         response = self.call_ros_service('/niryo_robot/conveyor/control_conveyor',
                                          ControlConveyor, conveyor_id, False, 0, 1)
         self.__set_command_done(response.status)
+
+    def enable_tcp(self, enable):
+        """
+        Enables or disables the TCP function (Tool Center Point).
+        If activation is requested, the last recorded TCP value will be applied.
+        The default value depends on the gripper equipped.
+        If deactivation is requested, the TCP will be coincident with the tool_link.
+
+        :param enable: True to enable, False otherwise.
+        :type enable: Bool
+        :return: status, message
+        :rtype: (int, str)
+        """
+        response = self.call_ros_service('/niryo_robot_tools_commander/enable_tcp', SetBool, bool(enable))
+        return self.__set_command_done(response.status)
+
+    def set_tcp(self, tcp_rpy_raw_values):
+        """
+        Activates the TCP function (Tool Center Point)
+        and defines the transformation between the tool_link frame and the TCP frame.
+
+        :param tcp_rpy_raw_values: [x, y, z, roll, pitch, yaw] as raw values
+        :type tcp_rpy_raw_values: list[float]
+        :return: status, message
+        :rtype: (int, str)
+        """
+        from niryo_robot_tools_commander.srv import SetTCP, SetTCPRequest
+        from geometry_msgs.msg import Point
+
+        tcp = [handle_negative_hr(axis) / 1000.0 for axis in tcp_rpy_raw_values]
+
+        req = SetTCPRequest()
+        req.position = Point(*tcp[:3])
+        req.rpy.roll = tcp[3]
+        req.rpy.pitch = tcp[4]
+        req.rpy.yaw = tcp[5]
+
+        response = self.call_ros_service('/niryo_robot_tools_commander/set_tcp', SetTCP, req)
+        return self.__set_command_done(response.status)

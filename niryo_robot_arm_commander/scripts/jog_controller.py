@@ -118,8 +118,7 @@ class JogController:
         self._last_target_values = [0.0 for _ in range(6)]
         self._target_values = None
         self.__joints_name = ['joint_1', 'joint_2', 'joint_3', 'joint_4', 'joint_5', 'joint_6']
-        # current jogged joint, used for NS TODO: change if we want to allow several jog at the same time
-        self._current_jogged_joint = None
+        self._current_jogged_joints = []
 
         # - Move It Commander / Get Arm MoveGroupCommander
         self.__arm = moveit_commander.MoveGroupCommander(rospy.get_param("~move_group_commander_name"))
@@ -195,15 +194,15 @@ class JogController:
             target_values = [actual + shift for actual, shift in
                              zip(self._last_target_values, shift_command)]
 
-            # get the index of the jogged joint. TODO : manage when jogging two or more joints at the same time
-            joint_to_shift=next((index) for index, value in enumerate(shift_command) if value!=0)
+            # get index of the jogged joints in a list
+            joints_to_jog = [i for i, value in enumerate(shift_command) if value != 0]
 
             target_values = self.__limit_params_joints(target_values)
 
             try:
                 self.__validate_params_joints(target_values) # validate joints according to joints limits
             except ArmCommanderException as e:
-                return e.status, "Error while validating joints : {}".format(e.message) # TODO: change the return for a logwarn?
+                rospy.logwarn("Jog Controller - Error while validating joint : {}".format(e.message))
 
             # validate target joints validity, based on collisions checking
             try:
@@ -217,7 +216,7 @@ class JogController:
                 return
 
             self._target_values = target_values
-            self._current_jogged_joint = joint_to_shift
+            self._current_jogged_joints = joints_to_jog
             self._new_robot_state = RobotState()
 
 
@@ -226,7 +225,7 @@ class JogController:
         current_joints_error = msg.error.positions
 
          # this error tolerance is lower than the one in arm_commander bc the jog is much slower
-        error_tolerance = [0.2, 0.2, 0.2, 0.2, 0.2, 0.2] # TODO: recalculate those values
+        error_tolerance = [0.2, 0.2, 0.2, 0.2, 0.2, 0.2] # TODO: recalculate those values for the jog
         for error, tolerance in zip(current_joints_error, error_tolerance):
             if abs(error) > tolerance and self._enabled and self._shift_mode == JogShiftRequest.JOINTS_SHIFT:
                     self.__collision_detected = True
@@ -235,7 +234,7 @@ class JogController:
                             "a motor not able to follow the given trajectory"
                     rospy.logwarn(abort_str)
                     self.disable() 
-                    rospy.sleep(1) # sleep so if the arrow in NS is still pressed, the jog wont re-start directly. TODO : Not sure it is working.
+                    rospy.sleep(1) # sleep so if the arrow in NS is still pressed, the jog wont re-start directly. 
                     return
 
         self.__collision_detected = False
@@ -271,6 +270,8 @@ class JogController:
 
             target_values = self.__limit_params_joints(target_values)
 
+            joints_to_jog = [i for i, value in enumerate(shift_command) if value != 0]
+
             try:
                 self.__validate_params_joints(target_values) # validate joints according to joints limits
             except ArmCommanderException as e:
@@ -288,6 +289,7 @@ class JogController:
                 return e, "Error while validating joint : {}".format(e.message)
                 
 
+            self._current_jogged_joints = joints_to_jog
             self._target_values = target_values
             self._new_robot_state = RobotState()
         return CommandStatus.SUCCESS, "Command send"
@@ -309,14 +311,21 @@ class JogController:
             return
         msg = JointTrajectory()
         msg.header.stamp = rospy.Time.now()
-
+        
         point = JointTrajectoryPoint()
 
         if self._shift_mode == JogShiftRequest.JOINTS_SHIFT:
             # if jogging joint, we send a command with only one joint, thanks to the allow_partial_joints_goal parameter,
             # so the other joints are not affected by the jog.
-            msg.joint_names = ['joint_{}'.format(self._current_jogged_joint+1)] # TODO: adapt to the joint_names param
-            point.positions = [self._target_values[self._current_jogged_joint]]
+            joint_names = []
+            positions = []
+            for elem in self._current_jogged_joints:
+                joint_names.append('joint_{}'.format(elem+1)) 
+                positions.append(self._target_values[elem])
+
+            msg.joint_names = joint_names
+            point.positions = positions
+                
         else:
             msg.joint_names = rospy.get_param('~joint_names')
             point.positions = self._target_values
@@ -328,7 +337,7 @@ class JogController:
 
         # Reset Target
         self._target_values = None
-        self._current_jogged_joint = None
+        self._current_jogged_joints = None
 
         # Save state for next time
         self._last_target_values = current_target_values
@@ -392,7 +401,7 @@ class JogController:
         self._enabled = False
         self._shift_mode = None
         self._target_values = None
-        self._current_jogged_joint = None
+        self._current_jogged_joints = None
         # Shutdown timer (Only launched when jog enabled)
         self._publisher_joint_trajectory_timer.shutdown()
         self._publisher_joint_trajectory_timer = None
@@ -500,7 +509,7 @@ class JogController:
                 msg_str = "Jog Controller can't execute this command"
                 rospy.logwarn(msg_str + str(joints))
                 self._target_values = None
-                self._current_jogged_joint = None
+                self._current_jogged_joints = None
         return joints
 
     def __check_before_use_jog(self):
