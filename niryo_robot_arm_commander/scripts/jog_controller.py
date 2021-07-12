@@ -223,8 +223,8 @@ class JogController:
         # check if collision when jogging joints
         current_joints_error = msg.error.positions
 
-         # this error tolerance is lower than the one in arm_commander bc the jog is much slower
-        error_tolerance = [0.2, 0.2, 0.2, 0.2, 0.2, 0.2] # TODO: recalculate those values for the jog
+        # this error tolerance is lower than the one in arm_commander bc the jog is much slower
+        error_tolerance = [0.2, 0.2, 0.2, 0.2, 0.2, 0.2]  # TODO: recalculate those values for the jog
         for error, tolerance in zip(current_joints_error, error_tolerance):
             if abs(error) > tolerance and self._enabled and self._shift_mode == JogShiftRequest.JOINTS_SHIFT:
                     self.__collision_detected = True
@@ -232,8 +232,8 @@ class JogController:
                     abort_str = ("Command has been aborted due to a collision or "
                                  "a motor not able to follow the given trajectory")
                     rospy.logwarn(abort_str)
-                    self.disable() 
-                    rospy.sleep(1) # sleep so if the arrow in NS is still pressed, the jog wont re-start directly. 
+                    self.disable()
+                    rospy.sleep(1)  # sleep so if the arrow in NS is still pressed, the jog wont re-start directly.
                     return
 
         self.__collision_detected = False
@@ -312,7 +312,7 @@ class JogController:
             return
         msg = JointTrajectory()
         msg.header.stamp = rospy.Time.now()
-        
+
         point = JointTrajectoryPoint()
 
         if self._shift_mode == JogShiftRequest.JOINTS_SHIFT:
@@ -322,12 +322,12 @@ class JogController:
             joint_names = []
             positions = []
             for elem in self._current_jogged_joints:
-                joint_names.append('joint_{}'.format(elem+1)) 
+                joint_names.append('joint_{}'.format(elem+1))
                 positions.append(self._target_values[elem])
 
             msg.joint_names = joint_names
             point.positions = positions
-                
+
         else:
             msg.joint_names = rospy.get_param('~joint_names')
             point.positions = self._target_values
