@@ -27,6 +27,7 @@ find_package(catkin REQUIRED
         fake_interface
         message_generation
         niryo_robot_msgs
+        joints_driver
 )
 
 ###############################################
@@ -55,6 +56,7 @@ catkin_package(
         fake_interface
         message_runtime
         niryo_robot_msgs
+        joints_driver
 )
 
 ###########
