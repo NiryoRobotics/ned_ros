@@ -76,8 +76,8 @@ TtlDriver::~TtlDriver()
 bool TtlDriver::init()
 {
     // get params from rosparams
-    _nh.getParam("/niryo_robot_hardware_interface/motors_driver/ttl_bus/uart_device_name", _device_name);
-    _nh.getParam("/niryo_robot_hardware_interface/motors_driver/ttl_bus/baudrate", _uart_baudrate);
+    _nh.getParam("/niryo_robot_hardware_interface/joints_driver/ttl_bus/uart_device_name", _device_name);
+    _nh.getParam("/niryo_robot_hardware_interface/joints_driver/ttl_bus/baudrate", _uart_baudrate);
 
     _dxlPortHandler.reset(dynamixel::PortHandler::getPortHandler(_device_name.c_str()));
     _dxlPacketHandler.reset(dynamixel::PacketHandler::getPacketHandler(DXL_BUS_PROTOCOL_VERSION));
@@ -88,8 +88,8 @@ bool TtlDriver::init()
     vector<int> idList;
     vector<string> typeList;
 
-    _nh.getParam("/niryo_robot_hardware_interface/motors_driver/motors_types/motor_id_list", idList);
-    _nh.getParam("/niryo_robot_hardware_interface/motors_driver/motors_types/motor_type_list", typeList);
+    _nh.getParam("/niryo_robot_hardware_interface/joints_driver/motors_types/motor_id_list", idList);
+    _nh.getParam("/niryo_robot_hardware_interface/joints_driver/motors_types/motor_type_list", typeList);
 
     // debug - display info
     ostringstream ss;
