@@ -44,7 +44,7 @@ CanDriver::CanDriver() :
     _calibration_status(EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED)
 {
     ROS_DEBUG("CanDriver - ctor");
-    
+
     init();
 
     if (CAN_OK == setupCAN())

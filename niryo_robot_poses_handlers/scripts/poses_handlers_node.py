@@ -53,7 +53,6 @@ class PoseHandlerNode:
         self.__tool_id = 0
         rospy.Subscriber('/niryo_robot_tools_commander/current_id', Int32,  self.__callback_tool_id)
 
-
         # Workspaces
         ws_dir = rospy.get_param("~workspace_dir")
         tool_config_dict = rospy.get_param("niryo_robot_tools_commander/tool_list", dict())
@@ -466,7 +465,7 @@ class PoseHandlerNode:
 
 if __name__ == "__main__":
     rospy.init_node('niryo_robot_poses_handlers', anonymous=False, log_level=rospy.INFO)
-    
+
     # change logger level according to node parameter
     log_level = rospy.get_param("~log_level")
     logger = logging.getLogger("rosout")

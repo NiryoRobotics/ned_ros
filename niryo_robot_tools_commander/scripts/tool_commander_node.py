@@ -42,6 +42,7 @@ class ToolsState:
     def __str__(self):
         return str(self.__class__) + ": " + str(self.__dict__)
 
+
 class ToolCommander:
     def __init__(self):
         self.__tools_state = ToolsState(rospy.get_param("~state_dict"))
@@ -49,7 +50,7 @@ class ToolCommander:
         self.__is_gripper_simulated = rospy.get_param("~simu_gripper")
         move_group_tool_commander_name = rospy.get_param("~move_group_tool_commander_name")
         reference_frame = rospy.get_param("~reference_frame")
-        
+
         rospy.logdebug("ToolCommander.init - state_dict: {}".format(str(self.__tools_state)))
         rospy.logdebug("ToolCommander.init - simulation_mode: {}".format(self.__is_simulation))
         rospy.logdebug("ToolCommander.init - simu_gripper: {}".format(self.__is_gripper_simulated))
@@ -228,16 +229,21 @@ class ToolCommander:
         dict_tools = {}
 
         for tool in tool_config_dict:
-            tool_type, tool_id, tool_name, tool_transformation, specs = (tool[key] for key in ['type', 'id', 'name', 'transformation', 'specs'])
+            (tool_type, tool_id, tool_name,
+             tool_transformation, specs) = (tool[key] for key in ['type', 'id', 'name', 'transformation', 'specs'])
             tool_transformation = self.__transform_handler.transform_from_dict(tool_transformation)
             if tool_type == Gripper.get_type():
-                new_tool = Gripper(tool_id, tool_name, tool_transformation, self.__tools_state, self.__ros_command_interface, specs)
+                new_tool = Gripper(tool_id, tool_name, tool_transformation,
+                                   self.__tools_state, self.__ros_command_interface, specs)
             elif tool_type == Electromagnet.get_type():
-                new_tool = Electromagnet(tool_id, tool_name, tool_transformation, self.__tools_state, self.__ros_command_interface)
+                new_tool = Electromagnet(tool_id, tool_name, tool_transformation,
+                                         self.__tools_state, self.__ros_command_interface)
             elif tool_type == VacuumPump.get_type():
-                new_tool = VacuumPump(tool_id, tool_name, tool_transformation, self.__tools_state, self.__ros_command_interface, specs)
+                new_tool = VacuumPump(tool_id, tool_name, tool_transformation,
+                                      self.__tools_state, self.__ros_command_interface, specs)
             elif tool_type == NoTool.get_type():
-                new_tool = NoTool(tool_id, tool_name, tool_transformation, self.__tools_state, self.__ros_command_interface)
+                new_tool = NoTool(tool_id, tool_name, tool_transformation,
+                                  self.__tools_state, self.__ros_command_interface)
             else:
                 rospy.logwarn("Tool Commander - Type not recognized from tool config list : " + str(tool['type']))
                 continue

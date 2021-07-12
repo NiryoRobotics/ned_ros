@@ -119,9 +119,12 @@ class RobotCommanderNode:
         self.__command_still_active_max_tries = rospy.get_param("~command_still_active_max_tries")
         active_publish_rate_sec = rospy.get_param("~active_publish_rate_sec")
 
-        rospy.logdebug("RobotCommanderNode.init - pause_timeout: %s", self.__pause_timeout)
-        rospy.logdebug("RobotCommanderNode.init - command_still_active_max_tries: %s", self.__command_still_active_max_tries)
-        rospy.logdebug("RobotCommanderNode.init - active_publish_rate_sec: %s", active_publish_rate_sec)
+        rospy.logdebug("RobotCommanderNode.init - pause_timeout: %s",
+                       self.__pause_timeout)
+        rospy.logdebug("RobotCommanderNode.init - command_still_active_max_tries: %s",
+                       self.__command_still_active_max_tries)
+        rospy.logdebug("RobotCommanderNode.init - active_publish_rate_sec: %s",
+                       active_publish_rate_sec)
 
         # - Services
         rospy.Service('~stop_command', Trigger,

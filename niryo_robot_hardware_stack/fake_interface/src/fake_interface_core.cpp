@@ -100,7 +100,7 @@ void FakeInterfaceCore::initParameters(ros::NodeHandle &nh)
     nh_private.getParam("gazebo", _gazebo);
     nh_private.getParam("simu_gripper", _simu_gripper);
     nh_private.getParam("ros_control_loop_frequency", _ros_control_frequency);
-    
+
     ROS_DEBUG("FakeInterfaceCore::initParameters - gazebo ? %s", _gazebo ? "yes" : "no");
     ROS_DEBUG("FakeInterfaceCore::initParameters - simu_gripper ? %s", _simu_gripper ? "yes" : "no");
     ROS_DEBUG("FakeInterfaceCore::initParameters - ros control loop freqeuncy %f", _ros_control_frequency);

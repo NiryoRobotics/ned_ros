@@ -939,7 +939,8 @@ class NiryoRosWrapper:
         """
         Execute trajectory from list of poses and joints
 
-        :param list_pose_joints: List of [x,y,z,qx,qy,qz,qw] or list of [x,y,z,roll,pitch,yaw] or a list of [j1,j2,j3,j4,j5,j6]
+        :param list_pose_joints: List of [x,y,z,qx,qy,qz,qw]
+        or list of [x,y,z,roll,pitch,yaw] or a list of [j1,j2,j3,j4,j5,j6]
         :type list_pose_joints: list[list[float]]
         :param list_type: List of string 'pose' or 'joint', or ['pose'] (if poses only) or ['joint'] (if joints only).
                     If None, it is assumed there are only poses in the list.
@@ -961,8 +962,9 @@ class NiryoRosWrapper:
 
             else:
                 raise NiryoRosWrapperException(
-                    'Execute trajectory from poses and joints - Wrong list_type argument : got '
-                    + list_type[0] + ", expected 'pose' or 'joint'")
+                    "Execute trajectory from poses and joints - Wrong list_type argument : got " +
+                    list_type[0] +
+                    ", expected 'pose' or 'joint'")
 
         elif len(list_type) == len(list_pose_joints):
             # convert every joints to poses
