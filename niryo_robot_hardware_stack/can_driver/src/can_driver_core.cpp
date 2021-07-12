@@ -96,10 +96,10 @@ void CanDriverCore::initParameters(ros::NodeHandle& /*nh*/)
     _control_loop_frequency = 0.0;
     double write_frequency = 1.0;
 
-    _nh.getParam("/niryo_robot_hardware_interface/can_driver/can_hardware_control_loop_frequency",
+    _nh.getParam("/niryo_robot_hardware_interface/motors_driver/can_hardware_control_loop_frequency",
                  _control_loop_frequency);
 
-    _nh.getParam("/niryo_robot_hardware_interface/can_driver/can_hw_write_frequency",
+    _nh.getParam("/niryo_robot_hardware_interface/motors_driver/can_hw_write_frequency",
                  write_frequency);
 
     ROS_DEBUG("CanDriverCore::initParameters - can_hardware_control_loop_frequency : %f",

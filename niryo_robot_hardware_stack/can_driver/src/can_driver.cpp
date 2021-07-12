@@ -105,7 +105,7 @@ bool CanDriver::init()
 
     std::vector<int> idList;
 
-    _nh.getParam("/niryo_robot_hardware_interface/can_driver/motors_params/motor_id_list", idList);
+    _nh.getParam("/niryo_robot_hardware_interface/motors_driver/motors_types/motor_id_list", idList);
 
     // debug - display info
     std::ostringstream ss;
@@ -149,9 +149,9 @@ int CanDriver::setupCAN()
     int spi_baudrate = 0;
     int gpio_can_interrupt = 0;
 
-    _nh.getParam("/niryo_robot_hardware_interface/can_driver/bus_params/spi_channel", spi_channel);
-    _nh.getParam("/niryo_robot_hardware_interface/can_driver/bus_params/spi_baudrate", spi_baudrate);
-    _nh.getParam("/niryo_robot_hardware_interface/can_driver/bus_params/gpio_can_interrupt", gpio_can_interrupt);
+    _nh.getParam("/niryo_robot_hardware_interface/motors_driver/can_bus/spi_channel", spi_channel);
+    _nh.getParam("/niryo_robot_hardware_interface/motors_driver/can_bus/spi_baudrate", spi_baudrate);
+    _nh.getParam("/niryo_robot_hardware_interface/motors_driver/can_bus/gpio_can_interrupt", gpio_can_interrupt);
 
     ROS_DEBUG("CanDriver::CanDriver - Can bus parameters: spi_channel : %d", spi_channel);
     ROS_DEBUG("CanDriver::CanDriver - Can bus parameters: spi_baudrate : %d", spi_baudrate);
