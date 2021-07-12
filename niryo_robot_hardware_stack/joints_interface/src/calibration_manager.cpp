@@ -75,7 +75,6 @@ CalibrationManager::CalibrationManager(ros::NodeHandle& nh,
  */
 CalibrationManager::~CalibrationManager()
 {
-
 }
 
 /**
@@ -536,7 +535,6 @@ EStepperCalibrationStatus CalibrationManager::_manual_calibration()
  */
 bool CalibrationManager::get_motors_calibration_offsets(std::vector<int> &motor_id_list, std::vector<int> &steps_list)
 {
-
     std::vector<std::string> lines;
     std::string current_line;
 

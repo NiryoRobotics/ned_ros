@@ -38,7 +38,7 @@ int main(int argc, char **argv)
 
     ros::NodeHandle nh_ttl("ttl_driver");
     ros::NodeHandle nh_can("can_driver");
-    
+
     ros::NodeHandle nh("~");
 
     auto ttl_driver = std::make_shared<ttl_driver::TtlDriverCore>(nh_ttl);

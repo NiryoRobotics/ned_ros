@@ -178,7 +178,7 @@ class JogController:
         else:
             self.__validate_ik_joints(potential_target_values)
 
-    def __callback_send_jog_joints_command(self,msg):
+    def __callback_send_jog_joints_command(self, msg):
         # check if the learning mode is false and the robot is calibrated
         self.__check_before_use_jog()
 
@@ -200,7 +200,7 @@ class JogController:
             target_values = self.__limit_params_joints(target_values)
 
             try:
-                self.__validate_params_joints(target_values) # validate joints according to joints limits
+                self.__validate_params_joints(target_values)  # validate joints according to joints limits
             except ArmCommanderException as e:
                 rospy.logwarn("Jog Controller - Error while validating joint : {}".format(e.message))
 
@@ -211,7 +211,7 @@ class JogController:
                     return
             except rospy.ServiceException as e:
                 rospy.logwarn("Jog Controller - Error while validating joint : {}".format(e.message))
-            
+
             if self.__collision_detected:
                 return
 
@@ -219,8 +219,7 @@ class JogController:
             self._current_jogged_joints = joints_to_jog
             self._new_robot_state = RobotState()
 
-
-    def __callback_joint_controller_state(self,msg): 
+    def __callback_joint_controller_state(self, msg):
         # check if collision when jogging joints
         current_joints_error = msg.error.positions
 
@@ -230,8 +229,8 @@ class JogController:
             if abs(error) > tolerance and self._enabled and self._shift_mode == JogShiftRequest.JOINTS_SHIFT:
                     self.__collision_detected = True
                     self.__set_learning_mode(True)
-                    abort_str = "Command has been aborted due to a collision or " \
-                            "a motor not able to follow the given trajectory"
+                    abort_str = ("Command has been aborted due to a collision or "
+                                 "a motor not able to follow the given trajectory")
                     rospy.logwarn(abort_str)
                     self.disable() 
                     rospy.sleep(1) # sleep so if the arrow in NS is still pressed, the jog wont re-start directly. 
@@ -273,7 +272,7 @@ class JogController:
             joints_to_jog = [i for i, value in enumerate(shift_command) if value != 0]
 
             try:
-                self.__validate_params_joints(target_values) # validate joints according to joints limits
+                self.__validate_params_joints(target_values)  # validate joints according to joints limits
             except ArmCommanderException as e:
                 return e.status, "Error while validating joints : {}".format(e.message)
 
@@ -282,12 +281,14 @@ class JogController:
                 valid, link_colliding1, link_colliding2 = self.__check_joint_validity_moveit(target_values)
                 if not valid:
                     if link_colliding1 is not None and link_colliding2 is not None:
-                        return CommandStatus.JOG_CONTROLLER_FAILURE, "Joints target unreachable because of collision between {} and {}".format(link_colliding1,link_colliding2)
+                        return (CommandStatus.JOG_CONTROLLER_FAILURE,
+                                "Joints target unreachable because of collision between {} and {}"
+                                .format(link_colliding1, link_colliding2))
                     else:
-                        return CommandStatus.JOG_CONTROLLER_FAILURE, "Joints target unreachable because of collision between two parts of Ned"
+                        return (CommandStatus.JOG_CONTROLLER_FAILURE,
+                                "Joints target unreachable because of collision between two parts of Ned")
             except rospy.ServiceException as e:
                 return e, "Error while validating joint : {}".format(e.message)
-                
 
             self._current_jogged_joints = joints_to_jog
             self._target_values = target_values
@@ -315,7 +316,8 @@ class JogController:
         point = JointTrajectoryPoint()
 
         if self._shift_mode == JogShiftRequest.JOINTS_SHIFT:
-            # if jogging joint, we send a command with only one joint, thanks to the allow_partial_joints_goal parameter,
+            # if jogging joint, we send a command with only one joint,
+            # thanks to the allow_partial_joints_goal parameter,
             # so the other joints are not affected by the jog.
             joint_names = []
             positions = []
@@ -373,8 +375,8 @@ class JogController:
             rospy.logwarn(msg_str)
             return CommandStatus.ABORTED, msg_str
 
-        rospy.wait_for_message('/niryo_robot/robot_state', RobotState, timeout=2)
-        rospy.wait_for_message('/joint_states', JointState, timeout=2)
+        rospy.wait_for_message("/niryo_robot/robot_state", RobotState, timeout=2)
+        rospy.wait_for_message("/joint_states", JointState, timeout=2)
         self._enabled = True
         self._reset_last_pub()
         self._last_command_timer = rospy.get_time()
@@ -460,7 +462,7 @@ class JogController:
 
     def __check_joint_validity_moveit(self, joints):
         """
-        Check target joint validity (no collision) with MoveIt. 
+        Check target joint validity (no collision) with MoveIt.
         :return: The target joint validity in a boolean, and the two links colliding if available
         """
         robot_state_target = RobotStateMoveIt()
@@ -473,17 +475,18 @@ class JogController:
             response = self.check_state_validity(robot_state_target, group_name, null_constraints)
             if not response.valid:
                 if len(response.contacts) > 0:
-                    rospy.logwarn('Jog Controller - Joints target unreachable because of collision between %s and %s',
-                                response.contacts[0].contact_body_1, response.contacts[0].contact_body_2)
+                    rospy.logwarn("Jog Controller - Joints target unreachable because of collision between %s and %s",
+                                  response.contacts[0].contact_body_1, response.contacts[0].contact_body_2)
                     return False, response.contacts[0].contact_body_1, response.contacts[0].contact_body_2
-                else: # didn't succeed to get the contacts on the real robot
-                    rospy.logwarn('Jog Controller - Joints target unreachable because of collision between two parts of Ned')
+                else:  # didn't succeed to get the contacts on the real robot
+                    rospy.logwarn("Jog Controller - Joints target unreachable"
+                                  " because of collision between two parts of Ned")
                     return False, None, None
-            else: 
+            else:
                 return True, None, None
 
-        except AttributeError as e: # maybe delete later, usefull for the test on real robot when using the service
-            return True,None,None
+        except AttributeError as e:  # maybe delete later, usefull for the test on real robot when using the service
+            return True, None, None
 
     def __limit_params_joints(self, joints):
         joints_limits = self.__parameters_validator.get_joints_limits()
@@ -546,8 +549,8 @@ class JogController:
         :rtype: bool
         """
         try:
-            rospy.wait_for_service('/niryo_robot/learning_mode/activate', timeout=1)
-            srv = rospy.ServiceProxy('/niryo_robot/learning_mode/activate', SetBool)
+            rospy.wait_for_service("/niryo_robot/learning_mode/activate", timeout=1)
+            srv = rospy.ServiceProxy("/niryo_robot/learning_mode/activate", SetBool)
             resp = srv(set_bool)
             return resp.status == CommandStatus.SUCCESS
         except (rospy.ServiceException, rospy.ROSException):

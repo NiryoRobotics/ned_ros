@@ -209,7 +209,6 @@ void HardwareInterface::startPublishers(ros::NodeHandle &nh)
     _software_version_publisher = _nh.advertise<niryo_robot_msgs::SoftwareVersion>(
                                             "/niryo_robot_hardware_interface/software_version", 10);
     _publish_software_version_thread = std::thread(&HardwareInterface::_publishSoftwareVersion, this);
-
 }
 
 /**
