@@ -332,7 +332,6 @@ class JogController:
         point.time_from_start = rospy.Duration(self._timer_rate)
         msg.points = [point]
         current_target_values = self._target_values
-        print 'sending', msg
 
         self._joint_trajectory_publisher.publish(msg)
 
