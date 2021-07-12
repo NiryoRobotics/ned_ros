@@ -202,7 +202,7 @@ class JogController:
             try:
                 self.__validate_params_joints(target_values) # validate joints according to joints limits
             except ArmCommanderException as e:
-                return e.status, "Error while validating joints : {}".format(e.message) # TODO: change the return for a logwarn?
+                rospy.logwarn("Jog Controller - Error while validating joint : {}".format(e.message))
 
             # validate target joints validity, based on collisions checking
             try:
@@ -225,7 +225,7 @@ class JogController:
         current_joints_error = msg.error.positions
 
          # this error tolerance is lower than the one in arm_commander bc the jog is much slower
-        error_tolerance = [0.2, 0.2, 0.2, 0.2, 0.2, 0.2] # TODO: recalculate those values
+        error_tolerance = [0.2, 0.2, 0.2, 0.2, 0.2, 0.2] # TODO: recalculate those values for the jog
         for error, tolerance in zip(current_joints_error, error_tolerance):
             if abs(error) > tolerance and self._enabled and self._shift_mode == JogShiftRequest.JOINTS_SHIFT:
                     self.__collision_detected = True
@@ -234,7 +234,7 @@ class JogController:
                             "a motor not able to follow the given trajectory"
                     rospy.logwarn(abort_str)
                     self.disable() 
-                    rospy.sleep(1) # sleep so if the arrow in NS is still pressed, the jog wont re-start directly. TODO : Not sure it is working.
+                    rospy.sleep(1) # sleep so if the arrow in NS is still pressed, the jog wont re-start directly. 
                     return
 
         self.__collision_detected = False
@@ -311,7 +311,7 @@ class JogController:
             return
         msg = JointTrajectory()
         msg.header.stamp = rospy.Time.now()
-
+        
         point = JointTrajectoryPoint()
 
         if self._shift_mode == JogShiftRequest.JOINTS_SHIFT:
@@ -320,7 +320,7 @@ class JogController:
             joint_names = []
             positions = []
             for elem in self._current_jogged_joints:
-                joint_names.append('joint_{}'.format(elem+1)) # TODO: adapt to the joint_names param
+                joint_names.append('joint_{}'.format(elem+1)) 
                 positions.append(self._target_values[elem])
 
             msg.joint_names = joint_names
