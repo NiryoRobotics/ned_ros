@@ -87,7 +87,7 @@ void JointState::setOffsetPosition(double offset_position)
  * @brief JointState::setDirection
  * @param direction
  */
-void JointState::setDirection(double direction)
+void JointState::setDirection(int direction)
 {
     _direction = direction;
 }

@@ -136,17 +136,25 @@ public:
         return write(reg_type::ADDR_GOAL_TORQUE, reg_type::SIZE_GOAL_TORQUE, id, torque);
     }
 
-    int setPGain(uint8_t id, uint32_t gain ) override
+    int setPositionPGain(uint8_t id, uint32_t gain ) override
     {
         return write(reg_type::ADDR_POSITION_P_GAIN, reg_type::SIZE_POSITION_P_GAIN, id, gain);
     }
-    int setIGain(uint8_t id, uint32_t gain ) override
+    int setPositionIGain(uint8_t id, uint32_t gain ) override
     {
         return write(reg_type::ADDR_POSITION_I_GAIN, reg_type::SIZE_POSITION_I_GAIN, id, gain);
     }
-    int setDGain(uint8_t id, uint32_t gain ) override
+    int setPositionDGain(uint8_t id, uint32_t gain ) override
     {
         return write(reg_type::ADDR_POSITION_D_GAIN, reg_type::SIZE_POSITION_D_GAIN, id, gain);
+    }
+    int setVelocityPGain(uint8_t id, uint32_t gain ) override
+    {
+        return write(reg_type::ADDR_VELOCITY_P_GAIN, reg_type::SIZE_VELOCITY_P_GAIN, id, gain);
+    }
+    int setVelocityIGain(uint8_t id, uint32_t gain ) override
+    {
+        return write(reg_type::ADDR_VELOCITY_I_GAIN, reg_type::SIZE_VELOCITY_I_GAIN, id, gain);
     }
     int setff1Gain(uint8_t id, uint32_t gain ) override
     {
@@ -325,6 +333,20 @@ std::string XDriver<XL320Reg>::interpreteErrorState(uint32_t hw_state)
     }
 
     return hardware_message;
+}
+
+template<>
+int XDriver<XL320Reg>::setVelocityPGain(uint8_t /*id*/, uint32_t /*gain*/)
+{
+    std::cout << "setVelocityPGain not available for motor XL320" << std::endl;
+    return COMM_TX_ERROR;
+}
+
+template<>
+int XDriver<XL320Reg>::setVelocityIGain(uint8_t /*id*/, uint32_t /*gain*/)
+{
+    std::cout << "setVelocityIGain not available for motor XL320" << std::endl;
+    return COMM_TX_ERROR;
 }
 
 template<>
@@ -521,7 +543,7 @@ std::string XDriver<XL330Reg>::interpreteErrorState(uint32_t hw_state)
     return hardware_message;
 }
 
-// CL330 works with current instead of load
+// XL330 works with current instead of load
 
 template<>
 int XDriver<XL330Reg>::setGoalTorque(uint8_t id, uint32_t torque)
@@ -606,9 +628,9 @@ public:
     virtual int setGoalPosition(uint8_t id, uint32_t position) override{ std::cout << "not implemented" << std::endl; return 0; }
     virtual int setGoalVelocity(uint8_t id, uint32_t velocity) override{ std::cout << "not implemented" << std::endl; return 0; }
     virtual int setGoalTorque(uint8_t id, uint32_t torque) override{ std::cout << "not implemented" << std::endl; return 0; }
-    virtual int setPGain(uint8_t id, uint32_t gain) override{ std::cout << "not implemented" << std::endl; return 0; }
-    virtual int setIGain(uint8_t id, uint32_t gain) override{ std::cout << "not implemented" << std::endl; return 0; }
-    virtual int setDGain(uint8_t id, uint32_t gain) override{ std::cout << "not implemented" << std::endl; return 0; }
+    virtual int setPositionPGain(uint8_t id, uint32_t gain) override{ std::cout << "not implemented" << std::endl; return 0; }
+    virtual int setPositionIGain(uint8_t id, uint32_t gain) override{ std::cout << "not implemented" << std::endl; return 0; }
+    virtual int setPositionDGain(uint8_t id, uint32_t gain) override{ std::cout << "not implemented" << std::endl; return 0; }
     virtual int setff1Gain(uint8_t id, uint32_t gain) override{ std::cout << "not implemented" << std::endl; return 0; }
     virtual int setff2Gain(uint8_t id, uint32_t gain) override{ std::cout << "not implemented" << std::endl; return 0; }
     virtual int syncWriteLed(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &led_list) override{ std::cout << "not implemented" << std::endl; return 0; }

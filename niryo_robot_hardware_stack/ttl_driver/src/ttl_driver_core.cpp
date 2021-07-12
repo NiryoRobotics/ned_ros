@@ -722,31 +722,49 @@ bool TtlDriverCore::setMotorPID(const std::shared_ptr<DxlMotorState> &dxlState)
 
     // ** DXL PID configuration **
 
-    // P Gain
-    if (dxlState->getPGain() > 0)
+    // Position Gain
+    if (dxlState->getPositionPGain() > 0)
     {
-        SingleMotorCmd dxl_cmd_p(EDxlCommandType::CMD_TYPE_P_GAIN, motor_id, dxlState->getPGain());
+        SingleMotorCmd dxl_cmd_pos_p(EDxlCommandType::CMD_TYPE_POSITION_P_GAIN, motor_id, dxlState->getPositionPGain());
 
-        if (dxl_cmd_p.isValid())
-            addSingleCommandToQueue(dxl_cmd_p);
+        if (dxl_cmd_pos_p.isValid())
+            addSingleCommandToQueue(dxl_cmd_pos_p);
     }
 
-    if (dxlState->getIGain() > 0)
+    if (dxlState->getPositionIGain() > 0)
     {
-        SingleMotorCmd dxl_cmd_i(EDxlCommandType::CMD_TYPE_I_GAIN, motor_id, dxlState->getIGain());
+        SingleMotorCmd dxl_cmd_pos_i(EDxlCommandType::CMD_TYPE_POSITION_I_GAIN, motor_id, dxlState->getPositionIGain());
 
-        if (dxl_cmd_i.isValid())
-            addSingleCommandToQueue(dxl_cmd_i);
+        if (dxl_cmd_pos_i.isValid())
+            addSingleCommandToQueue(dxl_cmd_pos_i);
     }
 
-    if (dxlState->getDGain() > 0)
+    if (dxlState->getPositionDGain() > 0)
     {
-        SingleMotorCmd dxl_cmd_d(EDxlCommandType::CMD_TYPE_D_GAIN, motor_id, dxlState->getDGain());
+        SingleMotorCmd dxl_cmd_pos_d(EDxlCommandType::CMD_TYPE_POSITION_D_GAIN, motor_id, dxlState->getPositionDGain());
 
-        if (dxl_cmd_d.isValid())
-            addSingleCommandToQueue(dxl_cmd_d);
+        if (dxl_cmd_pos_d.isValid())
+            addSingleCommandToQueue(dxl_cmd_pos_d);
     }
 
+    // Velocity Gain
+    if (dxlState->getVelocityPGain() > 0)
+    {
+        SingleMotorCmd dxl_cmd_vel_p(EDxlCommandType::CMD_TYPE_VELOCITY_P_GAIN, motor_id, dxlState->getVelocityPGain());
+
+        if (dxl_cmd_vel_p.isValid())
+            addSingleCommandToQueue(dxl_cmd_vel_p);
+    }
+
+    if (dxlState->getVelocityIGain() > 0)
+    {
+        SingleMotorCmd dxl_cmd_vel_i(EDxlCommandType::CMD_TYPE_VELOCITY_I_GAIN, motor_id, dxlState->getVelocityIGain());
+
+        if (dxl_cmd_vel_i.isValid())
+            addSingleCommandToQueue(dxl_cmd_vel_i);
+    }
+
+    // Feed Forward Gain
     if (dxlState->getFF1Gain() > 0)
     {
         SingleMotorCmd dxl_cmd_ff1(EDxlCommandType::CMD_TYPE_FF1_GAIN, motor_id, dxlState->getFF1Gain());

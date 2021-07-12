@@ -170,13 +170,15 @@ bool JointHardwareInterface::init(ros::NodeHandle& rootnh, ros::NodeHandle &robo
             {
                 double offsetPos = 0.0;
                 double gear_ratio = 0.0;
-                double direction = 0.0;
+                int direction = 1;
                 double max_effort = 0.0;
 
-                _nh.getParam("/niryo_robot_hardware_interface/steppers/stepper_" + to_string(currentIdStepper) + "_offset_position", offsetPos);
-                _nh.getParam("/niryo_robot_hardware_interface/steppers/stepper_" + to_string(currentIdStepper) + "_gear_ratio", gear_ratio);
-                _nh.getParam("/niryo_robot_hardware_interface/steppers/stepper_" + to_string(currentIdStepper) + "_direction", direction);
-                _nh.getParam("/niryo_robot_hardware_interface/steppers/stepper_" + to_string(currentIdStepper) + "_max_effort", max_effort);
+                std::string currentStepperNamespace = "/niryo_robot_hardware_interface/steppers/stepper_" + to_string(currentIdStepper);
+
+                _nh.getParam(currentStepperNamespace + "/offset_position", offsetPos);
+                _nh.getParam(currentStepperNamespace + "/gear_ratio", gear_ratio);
+                _nh.getParam(currentStepperNamespace + "/direction", direction);
+                _nh.getParam(currentStepperNamespace + "/max_effort", max_effort);
 
                 // add parameters
                 stepperState->setOffsetPosition(offsetPos);
@@ -196,26 +198,40 @@ bool JointHardwareInterface::init(ros::NodeHandle& rootnh, ros::NodeHandle &robo
             if (dxlState)
             {
                 double offsetPos = 0.0;
-                double direction = 0.0;
-                int PGain = 0;
-                int IGain = 0;
-                int DGain = 0;
+                int direction = 1;
+                int positionPGain = 0;
+                int positionIGain = 0;
+                int positionDGain = 0;
+                int velocityPGain = 0;
+                int velocityIGain = 0;
                 int FF1Gain = 0;
                 int FF2Gain = 0;
 
-                _nh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_" + to_string(currentIdDxl) + "_offset_position", offsetPos);
-                _nh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_" + to_string(currentIdDxl) + "_direction", direction);
-                _nh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_" + to_string(currentIdDxl) + "_P_gain", PGain);
-                _nh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_" + to_string(currentIdDxl) + "_I_gain", IGain);
-                _nh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_" + to_string(currentIdDxl) + "_D_gain", DGain);
-                _nh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_" + to_string(currentIdDxl) + "_FF1_gain", FF1Gain);
-                _nh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_" + to_string(currentIdDxl) + "_FF2_gain", FF2Gain);
+                std::string currentDxlNamespace = "/niryo_robot_hardware_interface/dynamixels/dxl_" + to_string(currentIdDxl);
+
+                _nh.getParam(currentDxlNamespace + "/offset_position", offsetPos);
+                _nh.getParam(currentDxlNamespace + "/direction", direction);
+
+                _nh.getParam(currentDxlNamespace + "/position_P_gain", positionPGain);
+                _nh.getParam(currentDxlNamespace + "/position_I_gain", positionIGain);
+                _nh.getParam(currentDxlNamespace + "/position_D_gain", positionDGain);
+
+                _nh.getParam(currentDxlNamespace + "/velocity_P_gain", velocityPGain);
+                _nh.getParam(currentDxlNamespace + "/velocity_I_gain", velocityIGain);
+
+                _nh.getParam(currentDxlNamespace + "/FF1_gain", FF1Gain);
+                _nh.getParam(currentDxlNamespace + "/FF2_gain", FF2Gain);
 
                 dxlState->setOffsetPosition(offsetPos);
                 dxlState->setDirection(direction);
-                dxlState->setPGain(static_cast<uint32_t>(PGain));
-                dxlState->setIGain(static_cast<uint32_t>(IGain));
-                dxlState->setDGain(static_cast<uint32_t>(DGain));
+
+                dxlState->setPositionPGain(static_cast<uint32_t>(positionPGain));
+                dxlState->setPositionIGain(static_cast<uint32_t>(positionIGain));
+                dxlState->setPositionDGain(static_cast<uint32_t>(positionDGain));
+
+                dxlState->setVelocityPGain(static_cast<uint32_t>(velocityPGain));
+                dxlState->setVelocityIGain(static_cast<uint32_t>(velocityIGain));
+
                 dxlState->setFF1Gain(static_cast<uint32_t>(FF1Gain));
                 dxlState->setFF2Gain(static_cast<uint32_t>(FF2Gain));
 

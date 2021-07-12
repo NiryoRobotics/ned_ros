@@ -135,7 +135,7 @@ void JointsInterfaceCore::startPublishers(ros::NodeHandle& nh)
 
 /**
  * @brief JointsInterfaceCore::startSubscribers
- * @param nh
+ * @param nhdxl_1_P_gain
  */
 void JointsInterfaceCore::startSubscribers(ros::NodeHandle& nh)
 {

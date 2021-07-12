@@ -354,7 +354,7 @@ void ConveyorInterfaceCore::_publishConveyorsFeedback()
                 auto cState = dynamic_pointer_cast<ConveyorState>(sState);
                 data.conveyor_id = cState->getId();
                 data.running = cState->getState();
-                data.direction = static_cast<int8_t>(cState->getDirection());
+                data.direction = cState->getDirection();
                 data.speed = cState->getSpeed();
                 msg.conveyors.push_back(data);
 

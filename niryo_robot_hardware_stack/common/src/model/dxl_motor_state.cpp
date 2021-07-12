@@ -135,12 +135,13 @@ std::string DxlMotorState::str() const
     ss << "\n---\n";
     ss << "type: " << MotorTypeEnum(_type).toString() << ", ";
     ss << "isTool: " << (_isTool ? "true" : "false") << "\n";
-    ss << "p gain: " << _p_gain << ", ";
-    ss << "i gain: " << _i_gain << ", ";
-    ss << "d gain: " << _d_gain << ", ";
+    ss << "position p gain: " << _pos_p_gain << ", ";
+    ss << "position i gain: " << _pos_i_gain << ", ";
+    ss << "position d gain: " << _pos_d_gain << ", ";
+    ss << "velocity p gain: " << _vel_p_gain << ", ";
+    ss << "velocity i gain: " << _vel_i_gain << ", ";
     ss << "ff1 gain: " << _ff1_gain << ", ";
     ss << "ff2 gain: " << _ff2_gain << ", ";
-
     ss << "\n";
     ss << JointState::str();
 
@@ -213,30 +214,48 @@ double DxlMotorState::getStepsForOneSpeed() const
 }
 
 /**
- * @brief DxlMotorState::setPGain
+ * @brief DxlMotorState::setPositionPGain
  * @param p_gain
  */
-void DxlMotorState::setPGain(uint32_t p_gain)
+void DxlMotorState::setPositionPGain(uint32_t p_gain)
 {
-    _p_gain = p_gain;
+    _pos_p_gain = p_gain;
 }
 
 /**
- * @brief DxlMotorState::setIGain
+ * @brief DxlMotorState::setPositionIGain
  * @param i_gain
  */
-void DxlMotorState::setIGain(uint32_t i_gain)
+void DxlMotorState::setPositionIGain(uint32_t i_gain)
 {
-    _i_gain = i_gain;
+    _pos_i_gain = i_gain;
 }
 
 /**
- * @brief DxlMotorState::setDGain
+ * @brief DxlMotorState::setPositionDGain
  * @param d_gain
  */
-void DxlMotorState::setDGain(uint32_t d_gain)
+void DxlMotorState::setPositionDGain(uint32_t d_gain)
 {
-    _d_gain = d_gain;
+    _pos_d_gain = d_gain;
+}
+
+/**
+ * @brief DxlMotorState::setPositionPGain
+ * @param p_gain
+ */
+void DxlMotorState::setVelocityPGain(uint32_t p_gain)
+{
+    _vel_p_gain = p_gain;
+}
+
+/**
+ * @brief DxlMotorState::setPositionIGain
+ * @param i_gain
+ */
+void DxlMotorState::setVelocityIGain(uint32_t i_gain)
+{
+    _vel_i_gain = i_gain;
 }
 
 /**

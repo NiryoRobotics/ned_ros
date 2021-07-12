@@ -794,14 +794,20 @@ int TtlDriver::readSingleCommand(SingleMotorCmd cmd)
                 case EDxlCommandType::CMD_TYPE_TORQUE:
                     result = _singleWrite(&AbstractMotorDriver::setTorqueEnable, state->getType(), cmd);
                     break;
-                case EDxlCommandType::CMD_TYPE_P_GAIN:
-                    result = _singleWrite(&AbstractMotorDriver::setPGain, state->getType(), cmd);
+                case EDxlCommandType::CMD_TYPE_POSITION_P_GAIN:
+                    result = _singleWrite(&AbstractMotorDriver::setPositionPGain, state->getType(), cmd);
                     break;
-                case EDxlCommandType::CMD_TYPE_I_GAIN:
-                    result = _singleWrite(&AbstractMotorDriver::setIGain, state->getType(), cmd);
+                case EDxlCommandType::CMD_TYPE_POSITION_I_GAIN:
+                    result = _singleWrite(&AbstractMotorDriver::setPositionIGain, state->getType(), cmd);
                     break;
-                case EDxlCommandType::CMD_TYPE_D_GAIN:
-                    result = _singleWrite(&AbstractMotorDriver::setDGain, state->getType(), cmd);
+                case EDxlCommandType::CMD_TYPE_POSITION_D_GAIN:
+                    result = _singleWrite(&AbstractMotorDriver::setPositionDGain, state->getType(), cmd);
+                    break;
+                case EDxlCommandType::CMD_TYPE_VELOCITY_P_GAIN:
+                    result = _singleWrite(&AbstractMotorDriver::setVelocityPGain, state->getType(), cmd);
+                    break;
+                case EDxlCommandType::CMD_TYPE_VELOCITY_I_GAIN:
+                    result = _singleWrite(&AbstractMotorDriver::setVelocityIGain, state->getType(), cmd);
                     break;
                 case EDxlCommandType::CMD_TYPE_FF1_GAIN:
                     result = _singleWrite(&AbstractMotorDriver::setff1Gain, state->getType(), cmd);

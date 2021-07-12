@@ -197,7 +197,7 @@ int CanDriverCore::motorCmdReport(uint8_t motor_id)
         {
             lock_guard<mutex> lck(_control_loop_mutex);
             ROS_INFO("CanDriverCore::launchMotorsReport - Debug - Send move command on motor %d", motor_id);
-            _can_driver->sendRelativeMoveCommand(motor_id, -1000*direction, 1500);
+            _can_driver->sendRelativeMoveCommand(motor_id, -1000 * direction, 1500);
             ros::Duration(0.2).sleep();
         }
         ros::Duration(3).sleep();
