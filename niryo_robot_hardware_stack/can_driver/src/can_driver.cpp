@@ -103,33 +103,35 @@ bool CanDriver::init()
     _nh.getParam("/niryo_robot_hardware_interface/calibration_timeout", _calibration_timeout);
     ROS_DEBUG("CanDriver::init - Calibration timeout %f", _calibration_timeout);
 
-    std::vector<int> idList;
-    std::vector<std::string> typeList;
+    std::vector<int> idListRaw;
+    std::vector<std::string> typeListRaw;
     std::vector<std::string> typeProtocolList;
 
-    _nh.getParam("/niryo_robot_hardware_interface/joints_driver/motors_types/motor_id_list", idList);
-    _nh.getParam("/niryo_robot_hardware_interface/joints_driver/motors_types/motor_type_list", typeList);
-    _nh.getParam("/niryo_robot_hardware_interface/joints_driver/motors_types/protocol_type_list", typeProtocolList);
+    _nh.getParam("/niryo_robot_hardware_interface/joints_driver/motors_types/motor_id_list", idListRaw);
+    _nh.getParam("/niryo_robot_hardware_interface/joints_driver/motors_types/motor_type_list", typeListRaw);
+    _nh.getParam("/niryo_robot_hardware_interface/joints_driver/motors_types/motor_type_protocol", typeProtocolList);
     
     // check that the two lists have the same size
-    if (idList.size() != typeList.size() || idList.size() != typeProtocolList.size())
+    if (idListRaw.size() != typeListRaw.size() || idListRaw.size() != typeProtocolList.size())
         ROS_ERROR("CanDriver::init - wrong motors configuration. "
                   "Please check your configuration file motor_id_list, motor_type_list, protocol_type_list");
 
-    for (size_t i = 0; i < idList.size(); ++i)
+    std::vector<int> idList;
+    std::vector<std::string> typeList;
+
+    for (size_t i = 0; i < typeProtocolList.size(); i++)
     {
-        if (typeProtocolList[i] != "can")
+        if (typeProtocolList[i] == "can")
         {
-            idList.erase(idList.begin() + i);
-            typeList.erase(typeList.begin() + i);
-            typeProtocolList.erase(typeProtocolList.begin() + i);
+            idList.push_back(idListRaw.at(i));
+            typeList.push_back(typeListRaw.at(i));
         }
     }
 
     // debug - display info
     std::ostringstream ss;
     ss << "[";
-    for (size_t i = 0; i < idList.size(); ++i)
+    for (size_t i = 0; i < idList.size(); i++)
         ss << " id " << idList.at(i) << ",";
 
     std::string motor_string_list = ss.str();
@@ -139,7 +141,7 @@ bool CanDriver::init()
     ROS_INFO("CanDriver::init - Stepper motor list: %s ", motor_string_list.c_str());
 
     // put everything in maps
-    for (size_t i = 0; i < idList.size(); ++i)
+    for (size_t i = 0; i < idList.size(); i++)
     {
         uint8_t id = static_cast<uint8_t>(idList.at(i));
 
