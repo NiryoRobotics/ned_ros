@@ -35,6 +35,7 @@ from niryo_robot_msgs.srv import GetNameDescriptionList, SetBool, SetInt, Trigge
 from niryo_robot_tools_commander.srv import SetTCP, SetTCPRequest
 from niryo_robot_vision.srv import SetImageParameter
 from niryo_robot_rpi.srv import GetDigitalIO, SetDigitalIO
+from std_srvs.srv import Trigger as StdTrigger
 
 # Actions
 from niryo_robot_arm_commander.msg import RobotMoveAction, RobotMoveGoal
@@ -112,11 +113,6 @@ class NiryoRosWrapper:
         self.__robot_action_server_name = '/niryo_robot_arm_commander/robot_action'
         self.__robot_action_server_client = actionlib.SimpleActionClient(self.__robot_action_server_name,
                                                                          RobotMoveAction)
-
-        # Tool action
-        self.__tool_action_server_name = '/niryo_robot_tools_commander/action_server'
-        self.__tool_action_server_client = actionlib.SimpleActionClient(self.__tool_action_server_name,
-                                                                        ToolAction)
 
         # Tool action
         self.__tool_action_server_name = '/niryo_robot_tools_commander/action_server'
@@ -1340,6 +1336,18 @@ class NiryoRosWrapper:
         result = self.__call_service('/niryo_robot_tools_commander/reset_tcp',
                                      Trigger)
         return self.__classic_return_w_check(result)
+
+    def tool_reboot(self):
+        """
+        Reboot the motor of the tool equipped. Useful when an Overload error occurs. (cf HardwareStatus)
+
+        :return: success, message
+        :rtype: (bool, str)
+        """
+        result = self.__call_service('/niryo_robot/tools/reboot',
+                                     StdTrigger)
+
+        return result.success, result.message
 
     # - Hardware
 
