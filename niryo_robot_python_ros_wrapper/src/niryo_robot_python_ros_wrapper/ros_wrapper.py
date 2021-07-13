@@ -38,6 +38,7 @@ from niryo_robot_msgs.srv import GetNameDescriptionList, SetBool, SetInt, Trigge
 
 from niryo_robot_rpi.srv import GetDigitalIO, SetDigitalIO
 from niryo_robot_vision.srv import DebugMarkers, DebugMarkersRequest, DebugColorDetection, DebugColorDetectionRequest
+from niryo_robot_programs_manager.srv import SetProgramAutorun, SetProgramAutorunRequest, GetProgramAutorunInfos, GetProgramList, ManageProgram, ManageProgramRequest, GetProgram, GetProgramRequest
 
 # Actions
 from niryo_robot_commander.msg import RobotMoveAction, RobotMoveGoal
@@ -234,7 +235,7 @@ class NiryoRosWrapper:
 
     def __callback_highlight_block(self, block):
         self.__highlighted_block = block.data
-        
+
     def __callback_save_current_position(self, _res):
         self.__save_current_position_event.set()
 
@@ -486,15 +487,15 @@ class NiryoRosWrapper:
 
         :param j1:
         :type j1: float
-        :param j2: 
+        :param j2:
         :type j2: float
-        :param j3: 
+        :param j3:
         :type j3: float
-        :param j4: 
+        :param j4:
         :type j4: float
-        :param j5: 
+        :param j5:
         :type j5: float
-        :param j6: 
+        :param j6:
         :type j6: float
         :return: status, message
         :rtype: (int, str)
@@ -859,7 +860,7 @@ class NiryoRosWrapper:
         - going down until height = z
         - releasing the object with tool
         - going back over the place
-        
+
         :param x:
         :type x: float
         :param y:
@@ -887,10 +888,10 @@ class NiryoRosWrapper:
         Execute a pick and place. If an error happens during the movement, error will be raised.
         -> Args param is for development purposes
 
-        :param pick_pose: 
-        :type pick_pose: list[float] 
-        :param place_pose: 
-        :type place_pose: list[float] 
+        :param pick_pose:
+        :type pick_pose: list[float]
+        :param place_pose:
+        :type place_pose: list[float]
         :param dist_smoothing: Distance from waypoints before smoothing trajectory
         :type dist_smoothing: float
         :return: status, message
@@ -1430,6 +1431,16 @@ class NiryoRosWrapper:
         result = self.__call_service('/niryo_robot_hardware_interface/reboot_motors', Trigger)
         return self.__classic_return_w_check(result)
 
+    def debug_motors(self):
+        """
+        Debug the motors by going to each stop
+
+        :return: status, message
+        :rtype: (int, str)
+        """
+        result = self.__call_service('/niryo_robot_commander/motor_debug_start', SetInt, 0)
+        return self.__classic_return_w_check(result)
+
 
     # - Button
 
@@ -1960,3 +1971,99 @@ class NiryoRosWrapper:
         :rtype: Event
         """
         return self.__save_current_position_event
+
+    # - Programs
+
+    def get_programs_list(self):
+        """
+        Get all the programs stored in the robot
+
+        :return: names, descriptions
+        :rtype: list[str], list[str]
+        """
+        result = self.__call_service('/niryo_robot_programs_manager/get_program_list', GetProgramList)
+        return result.programs_names, result.programs_description
+
+    def add_program(self, name, language, description, code):
+        """
+        Create a program
+
+        :param name: the program's name
+        :type name: str
+        :param language: the program's language
+        :type language: ProgramLanguage
+        :param description: the program's description
+        :type description: str
+        :param code: the program's code
+        :type code: str
+
+        :return: status, message
+        :rtype: (int, str)
+        """
+        req = ManageProgramRequest()
+        req.cmd = 1
+        req.name = name
+        req.language.used = language
+        req.description = description
+        req.code = code
+        result = self.__call_service('/niryo_robot_programs_manager/manage_program', ManageProgram, req)
+        return self.__classic_return_w_check(result)
+
+    def get_program(self, name, language):
+        """
+        Get a program's code
+
+        :param name: the program's name
+        :type name: str
+        :param language: the program's language
+        :type language: ProgramLanguage
+        :return: the program's code
+        :rtype: str
+        """
+        req = GetProgramRequest()
+        req.name = name
+        req.language.used = language
+        result = self.__call_service('/niryo_robot_programs_manager/get_program', GetProgram, req)
+        self.__check_result_status(result)
+        return result.code
+
+    def set_autorun(self, name, language, mode):
+        """
+        Set a program as the autorun
+
+        :param name: the name of the program
+        :type name: str
+        :param language: the language of the program
+        :type language: ProgramLanguage
+        :param mode: the mode of the autorun
+        :type mode: AutorunMode
+        """
+        req = SetProgramAutorunRequest()
+        req.name = name
+        req.language.used = language
+        req.mode = mode
+        result = self.__call_service('/niryo_robot_programs_manager/set_program_autorun', SetProgramAutorun, req)
+        return self.__classic_return_w_check(result)
+
+    # - Autorun
+
+    def start_autorun(self):
+        """
+        Start the program set as autorun
+
+        :return: status, message
+        :rtype: (int, str)
+        """
+        result = self.__call_service('/niryo_robot_programs_manager/execute_program_autorun', Trigger)
+        return self.__classic_return_w_check(result)
+
+    def get_autorun(self):
+        """
+        Get the autorun infos
+
+        :return: language, name, mode
+        :rtype: (int, str, int)
+        """
+        result = self.__call_service('/niryo_robot_programs_manager/get_program_autorun_infos', GetProgramAutorunInfos)
+        self.__check_result_status(result)
+        return result.language.used, result.name, result.mode
