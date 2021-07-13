@@ -71,7 +71,7 @@ include_directories(
 ## Declare libs and execs
 add_library(${PROJECT_NAME}
     src/fake_interface_core.cpp
-    src/FakeJointHardwareInterface.cpp
+    src/fake_joint_hardware_interface.cpp
 )
 
 add_executable(${PROJECT_NAME}_node

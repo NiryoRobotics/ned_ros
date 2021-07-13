@@ -38,7 +38,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <hardware_interface/joint_command_interface.h>
 #include <hardware_interface/robot_hw.h>
 
-#include "joints_interface/JointHardwareInterface.hpp"
+#include "joints_interface/joint_hardware_interface.hpp"
 #include "niryo_robot_msgs/SetInt.h"
 #include "niryo_robot_msgs/SetBool.h"
 #include "niryo_robot_msgs/CommandStatus.h"

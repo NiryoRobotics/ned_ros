@@ -38,7 +38,8 @@ FakeInterfaceCore::FakeInterfaceCore(ros::NodeHandle& nh)
     init(nh);
 
     ROS_INFO("Fake Hardware Interface - Started ");
-    _robot = std::make_unique<FakeJointHardwareInterface>(nh);
+    ros::NodeHandle nh_joints(nh, "joints_interface");
+    _robot = std::make_unique<FakeJointHardwareInterface>(nh_joints);
 
     _learning_mode = true;
 

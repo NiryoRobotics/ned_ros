@@ -83,7 +83,7 @@ add_library(${PROJECT_NAME}
 
 add_library(${PROJECT_NAME}_core
     src/joints_interface_core.cpp
-    src/JointHardwareInterface.cpp
+    src/joint_hardware_interface.cpp
 )
 
 add_executable(${PROJECT_NAME}_node

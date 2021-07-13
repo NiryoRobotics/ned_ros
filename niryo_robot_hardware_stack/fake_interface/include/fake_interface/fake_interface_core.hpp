@@ -58,7 +58,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <ttl_driver/DxlArrayMotorHardwareStatus.h>
 #include <can_driver/StepperArrayMotorHardwareStatus.h>
 
-#include "fake_interface/FakeJointHardwareInterface.hpp"
+#include "fake_interface/fake_joint_hardware_interface.hpp"
 
 #include "common/model/iinterface_core.hpp"
 

@@ -1,5 +1,5 @@
 /*
-FakeJointHardwareInterface.cpp
+fake_joint_hardware_interface.hpp
 Copyright (C) 2020 Niryo
 All rights reserved.
 

@@ -1,5 +1,5 @@
 /*
-    JointHardwareInterface.cpp
+    joint_hardware_interface.cpp
     Copyright (C) 2020 Niryo
     All rights reserved.
 
@@ -18,7 +18,7 @@
 */
 
 
-#include "joints_interface/JointHardwareInterface.hpp"
+#include "joints_interface/joint_hardware_interface.hpp"
 
 // c++
 #include <vector>
@@ -70,7 +70,7 @@ JointHardwareInterface::JointHardwareInterface(ros::NodeHandle& rootnh,
 
     activateLearningMode();
 
-    _calibration_manager = std::make_unique<CalibrationManager>(rootnh, _joint_list, _can_driver_core, _ttl_driver_core);
+    _calibration_manager = std::make_unique<CalibrationManager>(robot_hwnh, _joint_list, _can_driver_core, _ttl_driver_core);
 }
 
 /**
