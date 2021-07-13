@@ -4,11 +4,11 @@
 import rospy
 import os
 
-from niryo_robot_iot.SerialNumber import SerialNumber
+from niryo_robot_serial_number.SerialNumber import SerialNumber
 
 # Message / Service
 from niryo_robot_msgs.msg import CommandStatus
-from niryo_robot_iot.srv import GetSerial
+from niryo_robot_serial_number.srv import GetSerial
 
 
 class SerialNumberNode:

@@ -1,7 +1,7 @@
 <package>
-    <name>niryo_robot_iot</name>
+    <name>niryo_robot_serial_number</name>
     <version>3.1.0</version>
-    <description>The niryo_robot_iot package</description>
+    <description>The niryo_robot_serial_number package</description>
 
     <author email="j.mottier@niryo.com">Justin Mottier</author>
     <maintainer email="j.mottier@niryo.com">Justin Mottier</maintainer>
@@ -11,11 +11,5 @@
     <buildtool_depend>catkin</buildtool_depend>
 
     <run_depend>rospy</run_depend>
-
-    <!-- Python Dependencies -->
-
-    <run_depend>python-paho-mqtt-pip</run_depend>
-    <run_depend>python-pexpect</run_depend>
-    <run_depend>python-boto3</run_depend>
 
 </package>
