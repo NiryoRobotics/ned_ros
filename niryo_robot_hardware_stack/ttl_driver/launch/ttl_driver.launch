@@ -8,7 +8,7 @@
       <node pkg="ttl_driver" type="ttl_driver_node" name="ttl_driver" output="screen">  
         <rosparam file="$(find ttl_driver)/config/$(arg hardware_version)/bus_config.yaml" command="load"/>
         <rosparam file="$(find ttl_driver)/config/$(arg hardware_version)/motors_config.yaml" command="load"/>
-        <rosparam file="$(find ttl_driver)/config/$(arg hardware_version)/dynamixels_params.yaml" command="load"/>
+        <rosparam file="$(find ttl_driver)/config/$(arg hardware_version)/dynamixel_params.yaml" command="load"/>
         <rosparam file="$(find ttl_driver)/config/default.yaml" command="load"/>
       </node>
   </group>
