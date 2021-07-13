@@ -45,7 +45,8 @@ class JointHardwareInterface : public hardware_interface::RobotHW
 {
 
 public:
-    JointHardwareInterface(ros::NodeHandle& nh,
+    JointHardwareInterface(ros::NodeHandle& rootnh, 
+                           ros::NodeHandle& robot_hwnh,
                            std::shared_ptr<ttl_driver::TtlDriverCore> ttl_driver,
                            std::shared_ptr<can_driver::CanDriverCore> can_driver);
 

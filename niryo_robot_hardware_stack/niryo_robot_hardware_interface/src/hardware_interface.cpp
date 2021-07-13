@@ -86,19 +86,17 @@ bool HardwareInterface::init(ros::NodeHandle &nh)
  */
 void HardwareInterface::initParameters(ros::NodeHandle &nh)
 {
-    ros::NodeHandle nh_private("~");
+    nh.getParam("publish_hw_status_frequency", _publish_hw_status_frequency);
+    nh.getParam("publish_software_version_frequency", _publish_software_version_frequency);
 
-    nh_private.getParam("publish_hw_status_frequency", _publish_hw_status_frequency);
-    nh_private.getParam("publish_software_version_frequency", _publish_software_version_frequency);
+    nh.getParam("/niryo_robot/info/image_version", _rpi_image_version);
+    nh.getParam("/niryo_robot/info/ros_version", _ros_niryo_robot_version);
 
-    _nh.getParam("/niryo_robot/info/image_version", _rpi_image_version);
-    _nh.getParam("/niryo_robot/info/ros_version", _ros_niryo_robot_version);
+    nh.getParam("simulation_mode", _simulation_mode);
+    nh.getParam("gazebo", _gazebo);
 
-    nh_private.getParam("simulation_mode", _simulation_mode);
-    nh_private.getParam("gazebo", _gazebo);
-
-    nh_private.getParam("can_enabled", _can_enabled);
-    nh_private.getParam("ttl_enabled", _ttl_enabled);
+    nh.getParam("can_enabled", _can_enabled);
+    nh.getParam("ttl_enabled", _ttl_enabled);
 
     _rpi_image_version.erase(_rpi_image_version.find_last_not_of(" \n\r\t") + 1);
     _ros_niryo_robot_version.erase(_ros_niryo_robot_version.find_last_not_of(" \n\r\t") + 1);
@@ -132,7 +130,8 @@ void HardwareInterface::initNodes(ros::NodeHandle &nh)
         if (_ttl_enabled)
         {
             ROS_DEBUG("HardwareInterface::initNodes - Start Dynamixel Driver Node");
-            _ttl_driver = std::make_shared<ttl_driver::TtlDriverCore>(nh);
+            ros::NodeHandle nh_ttl(nh, "ttl_driver");
+            _ttl_driver = std::make_shared<ttl_driver::TtlDriverCore>(nh_ttl);
             ros::Duration(0.25).sleep();
         }
         else
@@ -143,7 +142,8 @@ void HardwareInterface::initNodes(ros::NodeHandle &nh)
         if (_can_enabled)
         {
             ROS_DEBUG("HardwareInterface::initNodes - Start CAN Driver Node");
-            _can_driver = std::make_shared<can_driver::CanDriverCore>(nh);
+            ros::NodeHandle nh_can(nh, "can_driver");
+            _can_driver = std::make_shared<can_driver::CanDriverCore>(nh_can);
             ros::Duration(0.25).sleep();
         }
         else
@@ -154,15 +154,18 @@ void HardwareInterface::initNodes(ros::NodeHandle &nh)
         if (_can_enabled && _ttl_enabled)
         {
             ROS_DEBUG("HardwareInterface::initNodes - Start Joints Interface Node");
-            _joints_interface = std::make_shared<joints_interface::JointsInterfaceCore>(nh, _ttl_driver, _can_driver);
+            ros::NodeHandle nh_joints(nh, "joints_interface");
+            _joints_interface = std::make_shared<joints_interface::JointsInterfaceCore>(nh, nh_joints, _ttl_driver, _can_driver);
             ros::Duration(0.25).sleep();
 
             ROS_DEBUG("HardwareInterface::initNodes - Start End Effector Interface Node");
-            _tools_interface = std::make_shared<tools_interface::ToolsInterfaceCore>(nh, _ttl_driver);
+            ros::NodeHandle nh_tool(nh, "tools_interface");
+            _tools_interface = std::make_shared<tools_interface::ToolsInterfaceCore>(nh_tool, _ttl_driver);
             ros::Duration(0.25).sleep();
 
             ROS_DEBUG("HardwareInterface::initNodes - Start Tools Interface Node");
-            _conveyor_interface = std::make_shared<conveyor_interface::ConveyorInterfaceCore>(nh, _can_driver);
+            ros::NodeHandle nh_conveyor(nh, "conveyor");
+            _conveyor_interface = std::make_shared<conveyor_interface::ConveyorInterfaceCore>(nh_conveyor, _can_driver);
             ros::Duration(0.25).sleep();
         }
         else

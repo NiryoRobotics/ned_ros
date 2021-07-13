@@ -17,13 +17,15 @@
            command="$(find xacro)/xacro $(find niryo_robot_description)/urdf/$(arg hardware_version)/niryo_ned.urdf.xacro"/>
 
     <!-- PARAMS -->
-    <group ns="niryo_robot/info">
-        <param name="image_version" type="string"
-            textfile="$(arg conf_location)/version/version.txt"/>
-    </group>
+    <group ns="niryo_robot">
+        <group ns="info">
+            <param name="image_version" type="string"
+                textfile="$(arg conf_location)/version/version.txt"/>
+        </group>
 
-    <group ns="niryo_robot/robot_state">
-        <param name="rate_publish_state" type="double" value="5.0"/>
+        <group ns="robot_state">
+            <param name="rate_publish_state" type="double" value="5.0"/>
+        </group>
     </group>
 
     <!-- Including shared params & nodes -->

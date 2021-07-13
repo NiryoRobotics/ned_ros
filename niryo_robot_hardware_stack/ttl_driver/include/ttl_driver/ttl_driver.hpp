@@ -63,8 +63,10 @@ constexpr int DXL_WRONG_TYPE             = -52;
 class TtlDriver : public common::model::IDriver
 {
     public:
-        TtlDriver();
+        TtlDriver(ros::NodeHandle& nh);
         virtual ~TtlDriver() override;
+
+        bool init(ros::NodeHandle& nh) override;
 
         // commands
         void addMotor(common::model::EMotorType type,
@@ -108,7 +110,6 @@ class TtlDriver : public common::model::IDriver
         std::string getErrorMessage() const override;
 
     private:
-        bool init() override;
         bool hasMotors() override;
 
         int setupCommunication();

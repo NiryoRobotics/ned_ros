@@ -33,14 +33,15 @@ namespace joints_interface
  * @param ttl_driver
  * @param can_driver
  */
-JointsInterfaceCore::JointsInterfaceCore(ros::NodeHandle& nh,
+JointsInterfaceCore::JointsInterfaceCore(ros::NodeHandle& rootnh, 
+                                         ros::NodeHandle& robot_hwnh,
                                          std::shared_ptr<ttl_driver::TtlDriverCore> ttl_driver,
                                          std::shared_ptr<can_driver::CanDriverCore> can_driver)
 {
-    init(nh);
+    init(robot_hwnh);
 
     ROS_DEBUG("JointsInterfaceCore::init - Start joint hardware interface");
-    _robot.reset(new JointHardwareInterface(nh, ttl_driver, can_driver));
+    _robot.reset(new JointHardwareInterface(rootnh, robot_hwnh, ttl_driver, can_driver));
 
     ROS_DEBUG("JointsInterfaceCore::init - Create controller manager");
     _cm.reset(new controller_manager::ControllerManager(_robot.get(), _nh));
@@ -92,11 +93,8 @@ bool JointsInterfaceCore::init(ros::NodeHandle& nh)
  */
 void JointsInterfaceCore::initParameters(ros::NodeHandle& nh)
 {
-    _nh.getParam("/niryo_robot_hardware_interface/ros_control_loop_frequency",
-                 _control_loop_frequency);
-
-    _nh.getParam("/niryo_robot_hardware_interface/publish_learning_mode_frequency",
-                 _publish_learning_mode_frequency);
+    nh.getParam("ros_control_loop_frequency", _control_loop_frequency);
+    nh.getParam("publish_learning_mode_frequency", _publish_learning_mode_frequency);
 
     ROS_DEBUG("JointsInterfaceCore::initParams - Ros control loop frequency %f",
               _control_loop_frequency);

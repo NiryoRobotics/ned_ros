@@ -40,14 +40,14 @@ namespace can_driver
 /**
  * @brief CanDriver::CanDriver
  */
-CanDriver::CanDriver() :
+CanDriver::CanDriver(ros::NodeHandle& nh) :
     _calibration_status(EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED)
 {
     ROS_DEBUG("CanDriver - ctor");
 
-    init();
+    init(nh);
 
-    if (CAN_OK == setupCAN())
+    if (CAN_OK == setupCAN(nh))
     {
         scanAndCheck();
 
@@ -98,14 +98,14 @@ void CanDriver::resetCalibration()
  * @brief CanDriver::init : initialize the internal data (map, vectors) based on conf
  * @return
  */
-bool CanDriver::init()
+bool CanDriver::init(ros::NodeHandle& nh)
 {
-    _nh.getParam("/niryo_robot_hardware_interface/calibration_timeout", _calibration_timeout);
+    nh.getParam("/niryo_robot_hardware_interface/joints_interface/calibration_timeout", _calibration_timeout);
     ROS_DEBUG("CanDriver::init - Calibration timeout %f", _calibration_timeout);
 
     std::vector<int> idList;
 
-    _nh.getParam("/niryo_robot_hardware_interface/can_driver/motors_params/motor_id_list", idList);
+    nh.getParam("motors_params/motor_id_list", idList);
 
     // debug - display info
     std::ostringstream ss;
@@ -142,16 +142,17 @@ bool CanDriver::init()
  * @brief CanDriver::setupCAN
  * @return
  */
-int CanDriver::setupCAN()
+int CanDriver::setupCAN(ros::NodeHandle& nh)
 {
     int result = CAN_FAILINIT;
     int spi_channel = 0;
     int spi_baudrate = 0;
     int gpio_can_interrupt = 0;
 
-    _nh.getParam("/niryo_robot_hardware_interface/can_driver/bus_params/spi_channel", spi_channel);
-    _nh.getParam("/niryo_robot_hardware_interface/can_driver/bus_params/spi_baudrate", spi_baudrate);
-    _nh.getParam("/niryo_robot_hardware_interface/can_driver/bus_params/gpio_can_interrupt", gpio_can_interrupt);
+    ros::NodeHandle nh_private("~");
+    nh.getParam("bus_params/spi_channel", spi_channel);
+    nh.getParam("bus_params/spi_baudrate", spi_baudrate);
+    nh.getParam("bus_params/gpio_can_interrupt", gpio_can_interrupt);
 
     ROS_DEBUG("CanDriver::CanDriver - Can bus parameters: spi_channel : %d", spi_channel);
     ROS_DEBUG("CanDriver::CanDriver - Can bus parameters: spi_baudrate : %d", spi_baudrate);

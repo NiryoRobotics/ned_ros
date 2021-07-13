@@ -69,7 +69,7 @@ bool TtlDriverCore::init(ros::NodeHandle& nh)
     ROS_DEBUG("TtlDriverCore::init - Init parameters...");
     initParameters(nh);
 
-    _ttl_driver = std::make_unique<TtlDriver>();
+    _ttl_driver = std::make_unique<TtlDriver>(nh);
     _ttl_driver->scanAndCheck();
     startControlLoop();
 

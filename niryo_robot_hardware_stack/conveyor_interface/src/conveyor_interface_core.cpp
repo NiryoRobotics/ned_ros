@@ -93,11 +93,11 @@ void ConveyorInterfaceCore::initParameters(ros::NodeHandle& nh)
 {
     std::vector<int> id_pool_list;
 
-    _nh.getParam("/niryo_robot_hardware_interface/conveyor/max_effort", _conveyor_max_effort);
-    _nh.getParam("/niryo_robot_hardware_interface/conveyor/id", _default_conveyor_id);
-    _nh.getParam("/niryo_robot_hardware_interface/conveyor/id_list", id_pool_list);
+    nh.getParam("max_effort", _conveyor_max_effort);
+    nh.getParam("id", _default_conveyor_id);
+    nh.getParam("id_list", id_pool_list);
 
-    _nh.getParam("/niryo_robot_hardware_interface/conveyor/publish_frequency", _publish_feedback_frequency);
+    nh.getParam("publish_frequency", _publish_feedback_frequency);
 
     ROS_DEBUG("ConveyorInterfaceCore::initParameters - conveyor max effort : %d", _conveyor_max_effort);
     ROS_DEBUG("ConveyorInterfaceCore::initParameters - default conveyor id : %d", _default_conveyor_id);
@@ -113,7 +113,7 @@ void ConveyorInterfaceCore::initParameters(ros::NodeHandle& nh)
     id_pool_list_string += "]";
 
     ROS_DEBUG("ConveyorInterfaceCore::init - conveyor pool id list: %s ", id_pool_list_string.c_str());
-    ROS_DEBUG("ConveyorInterfaceCore::initParameters - Publish_hw_status_frequency : %f", _publish_feedback_frequency);
+    ROS_DEBUG("ConveyorInterfaceCore::initParameters - publish feedback frequency : %f", _publish_feedback_frequency);
 
     // initialize pool of possible id we can assign
     for (int const id : id_pool_list)

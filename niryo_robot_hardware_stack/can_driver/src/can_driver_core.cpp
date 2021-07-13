@@ -54,7 +54,7 @@ CanDriverCore::CanDriverCore(ros::NodeHandle& nh)
 
     init(nh);
 
-    _can_driver = std::make_unique<CanDriver>();
+    _can_driver = std::make_unique<CanDriver>(nh);
 
     startControlLoop();
 }

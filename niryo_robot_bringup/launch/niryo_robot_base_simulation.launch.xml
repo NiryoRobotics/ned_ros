@@ -9,8 +9,10 @@
     <arg name="simu_gripper" default="false"/>
 
     <!-- PARAMS -->
-    <group ns="niryo_robot/robot_state">
-        <param name="rate_publish_state" type="double" value="20.0"/>
+    <group ns="niryo_robot">
+        <group ns="robot_state">
+            <param name="rate_publish_state" type="double" value="20.0"/>
+        </group>
     </group>
 
     <!-- Including shared params & nodes -->

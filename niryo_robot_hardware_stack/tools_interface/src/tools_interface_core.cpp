@@ -105,10 +105,10 @@ void ToolsInterfaceCore::initParameters(ros::NodeHandle& nh)
     vector<string> typeList;
 
     _available_tools_map.clear();
-    _nh.getParam("/niryo_robot_hardware_interface/tools_interface/tools_params/id_list", idList);
-    _nh.getParam("/niryo_robot_hardware_interface/tools_interface/tools_params/type_list", typeList);
+    nh.getParam("tools_params/id_list", idList);
+    nh.getParam("tools_params/type_list", typeList);
 
-    _nh.getParam("/niryo_robot_hardware_interface/tools_interface/check_tool_connection_frequency",
+    nh.getParam("check_tool_connection_frequency",
                  _check_tool_connection_frequency);
 
     // debug - display info

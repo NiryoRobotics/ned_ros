@@ -8,9 +8,10 @@
     <arg name="simu_gripper" default="false"/>
     <arg name="gazebo" default="false"/>
     <arg name="can_enabled" default="true"/>
-    <arg name="dxl_enabled" default="true"/>
+    <arg name="ttl_enabled" default="true"/>
     <arg name="hardware_version" default="ned"/>
     <arg name="debug" default="false"/>
+    <arg name="image_version" default="" />
 
     <!-- Launch controllers -->
     <rosparam file="$(find niryo_ned_moveit_config_standalone)/config/$(arg hardware_version)/ros_controllers.yaml" command="load"/>
@@ -27,9 +28,12 @@
     <!-- <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher"/> -->
 
     <!-- Set global parameters -->
-    <group ns="niryo_robot/info">
-        <param name="ros_version"               type="string" command="rosversion niryo_robot_bringup" />
-        <param name="niryo_robot_type"  type="string" value="NIRYO_NED" />
+    <group ns="niryo_robot">
+        <group ns="info">
+            <param name="image_version"     type="string" value="$(arg image_version)"/>
+            <param name="ros_version"       type="string" command="rosversion niryo_robot_bringup" />
+            <param name="niryo_robot_type"  type="string" value="NIRYO_NED" />
+        </group>
     </group>
 
     <!-- Launch hardware interface  -->
@@ -52,8 +56,8 @@
         <rosparam file="$(find can_driver)/config/steppers_params.yaml" command="load" />
         <rosparam file="$(find can_driver)/config/default.yaml" command="load" ns="can_driver"/>
 
-        <rosparam file="$(find joints_interface)/config/$(arg hardware_version)/joints_params.yaml" command="load" />
-        <rosparam file="$(find joints_interface)/config/default.yaml" command="load" />
+        <rosparam file="$(find joints_interface)/config/$(arg hardware_version)/joints_params.yaml" command="load" ns="joints_interface" />
+        <rosparam file="$(find joints_interface)/config/default.yaml" command="load" ns="joints_interface" />
 
         <rosparam file="$(find tools_interface)/config/default.yaml" command="load" ns="tools_interface"/>
         <rosparam file="$(find tools_interface)/config/$(arg hardware_version)/tools_config.yaml" command="load" ns="tools_interface"/>
@@ -64,7 +68,7 @@
         <param name="gazebo" type="bool" value="$(arg gazebo)"/>
         <param name="simu_gripper" type="bool" value="$(arg simu_gripper)"/>
         <param name="can_enabled" type="bool" value="$(arg can_enabled)"/>
-        <param name="dxl_enabled" type="bool" value="$(arg dxl_enabled)"/>
+        <param name="ttl_enabled" type="bool" value="$(arg ttl_enabled)"/>
         <param name="debug" type="bool" value="$(arg debug)"/>
     </node>
 
