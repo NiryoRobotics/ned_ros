@@ -771,13 +771,30 @@ bool TtlDriverCore::setMotorPID(const std::shared_ptr<DxlMotorState> &dxlState)
 // ***************
 
 /**
+ * @brief TtlDriverCore::getDxlStates
+ * @return
+ */
+std::vector<std::shared_ptr<common::model::DxlMotorState> >
+TtlDriverCore::getDxlStates() const
+{
+    std::vector<std::shared_ptr<common::model::DxlMotorState> > DxlstateList;
+    std::vector<std::shared_ptr<common::model::JointState> > stateList;
+    for (auto it = stateList.begin(); it != stateList.end(); it++)
+    {
+        if (it->get()->getType() != EMotorType::STEPPER)
+            DxlstateList.push_back(std::dynamic_pointer_cast<common::model::DxlMotorState>(*it));
+    }
+    return DxlstateList;
+}
+
+/**
  * @brief TtlDriverCore::getEndEffectorState
  * @param id
  * @return
  */
 double TtlDriverCore::getEndEffectorState(uint8_t id) const
 {
-    DxlMotorState motor_state = _ttl_driver->getMotorState(id);
+    DxlMotorState motor_state = _ttl_driver->getMotorState<DxlMotorState>(id);
     return static_cast<double>(motor_state.getPositionState());
 }
 

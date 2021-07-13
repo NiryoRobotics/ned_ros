@@ -20,6 +20,7 @@
 #include "ttl_driver/xdriver.hpp"
 #include "ttl_driver/stepper_driver.hpp"
 #include "common/model/tool_state.hpp"
+#include "common/model/stepper_motor_state.hpp"
 
 #include <utility>
 #include <vector>
@@ -36,6 +37,8 @@ using ::std::ostringstream;
 using ::std::to_string;
 using ::std::set;
 
+using ::common::model::StepperMotorState;
+using ::common::model::JointState;
 using ::common::model::EMotorType;
 using ::common::model::DxlMotorState;
 using ::common::model::ToolState;
@@ -87,10 +90,26 @@ bool TtlDriver::init()
     // retrieve motor config
     vector<int> idList;
     vector<string> typeList;
+    vector<string> typeProtocolList;
 
     _nh.getParam("/niryo_robot_hardware_interface/joints_driver/motors_types/motor_id_list", idList);
     _nh.getParam("/niryo_robot_hardware_interface/joints_driver/motors_types/motor_type_list", typeList);
+    _nh.getParam("/niryo_robot_hardware_interface/joints_driver/motors_types/protocol_type_list", typeProtocolList);
 
+    // check that the two lists have the same size
+    if (idList.size() != typeList.size() || idList.size() != typeProtocolList.size())
+        ROS_ERROR("TtlDriver::init - wrong motors configuration. "
+                  "Please check your configuration file motor_id_list, motor_type_list, protocol_type_list");
+
+    for (size_t i = 0; i < idList.size(); ++i)
+    {
+        if (typeProtocolList[i] != "ttl")
+        {
+            idList.erase(idList.begin() + i);
+            typeList.erase(typeList.begin() + i);
+            typeProtocolList.erase(typeProtocolList.begin() + i);
+        }
+    }
     // debug - display info
     ostringstream ss;
     ss << "[";
@@ -103,18 +122,19 @@ bool TtlDriver::init()
 
     ROS_INFO("TtlDriver::init - Dxl motor list: %s ", motor_string_list.c_str());
 
-    // check that the two lists have the same size
-    if (idList.size() != typeList.size())
-        ROS_ERROR("TtlDriver::init - wrong dynamixel configuration. "
-                  "Please check your configuration file motor_id_list and motor_type_list");
-
     // put everything in maps
     for (size_t i = 0; i < idList.size(); ++i)
     {
         uint8_t id = static_cast<uint8_t>(idList.at(i));
         EMotorType type = MotorTypeEnum(typeList.at(i).c_str());
 
-        if (0 == _state_map.count(id))
+        if (0 != _state_map.count(id))
+        {
+            ROS_ERROR("TtlDriver::init - duplicate id %d. Please check your configuration file "
+                      "(niryo_robot_hardware_stack/ttl_driver/config/motors_config.yaml)",
+                      id);
+        }
+        else
         {
             if (EMotorType::UNKNOWN != type)
                 addMotor(type, id);
@@ -122,11 +142,7 @@ bool TtlDriver::init()
                 ROS_ERROR("TtlDriver::init - unknown type %s. Please check your configuration file "
                           "(niryo_robot_hardware_stack/ttl_driver/config/motors_config.yaml)",
                           typeList.at(id).c_str());
-        }
-        else
-            ROS_ERROR("TtlDriver::init - duplicate id %d. Please check your configuration file "
-                      "(niryo_robot_hardware_stack/ttl_driver/config/motors_config.yaml)",
-                      id);
+        }            
     }
 
     // display internal data for debug
@@ -160,10 +176,14 @@ void TtlDriver::addMotor(EMotorType type, uint8_t id, bool isTool)
     ROS_DEBUG("TtlDriver::addMotor - Add motor id: %d", id);
 
     // add id to _state_map
-    if (isTool)
-        _state_map.insert(make_pair(id, std::make_shared<ToolState>("auto", type, id)));
-    else
-        _state_map.insert(make_pair(id, std::make_shared<DxlMotorState>(type, id, isTool)));
+    if (type == EMotorType::STEPPER)
+        _state_map.insert(make_pair(id, std::make_shared<StepperMotorState>(id, false)));
+    else {
+        if (isTool)
+            _state_map.insert(make_pair(id, std::make_shared<ToolState>("auto", type, id)));
+        else
+            _state_map.insert(make_pair(id, std::make_shared<DxlMotorState>(type, id, isTool)));
+    }
 
     // if not already instanciated
     if (0 == _ids_map.count(type))
@@ -1057,25 +1077,12 @@ int TtlDriver::_singleWrite(int (AbstractMotorDriver::*singleWriteFunction)(uint
 }
 
 /**
- * @brief TtlDriver::getMotorState
- * @param motor_id
- * @return
- */
-DxlMotorState TtlDriver::getMotorState(uint8_t motor_id) const
-{
-    if (!_state_map.count(motor_id) && _state_map.at(motor_id))
-        throw std::out_of_range("TtlDriver::getMotorsState: Unknown motor id");
-
-    return *_state_map.at(motor_id).get();
-}
-
-/**
  * @brief TtlDriver::getMotorsStates
  * @return
  */
-std::vector<std::shared_ptr<DxlMotorState> > TtlDriver::getMotorsStates() const
+std::vector<std::shared_ptr<JointState> > TtlDriver::getMotorsStates() const
 {
-    std::vector<std::shared_ptr<common::model::DxlMotorState> > states;
+    std::vector<std::shared_ptr<common::model::JointState> > states;
     for (auto it : _state_map)
         states.push_back(it.second);
 

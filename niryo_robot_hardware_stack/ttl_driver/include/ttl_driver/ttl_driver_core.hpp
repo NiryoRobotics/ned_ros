@@ -28,6 +28,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <functional>
 #include <vector>
 #include <mutex>
+#include <exception>
 
 // ros
 #include <ros/ros.h>
@@ -164,17 +165,6 @@ class TtlDriverCore : public common::model::IDriverCore, public common::model::I
 };
 
 /**
- * @brief TtlDriverCore::getDxlStates
- * @return
- */
-inline
-std::vector<std::shared_ptr<common::model::DxlMotorState> >
-TtlDriverCore::getDxlStates() const
-{
-    return _ttl_driver->getMotorsStates();
-}
-
-/**
  * @brief TtlDriverCore::isConnectionOk
  * @return
  */
@@ -192,7 +182,9 @@ bool TtlDriverCore::isConnectionOk() const
 inline
 common::model::DxlMotorState TtlDriverCore::getDxlState(uint8_t motor_id) const
 {
-    return _ttl_driver->getMotorState(motor_id);
+    if (!_ttl_driver->getMotorState<common::model::DxlMotorState>(motor_id).isDynamixel())
+        throw std::runtime_error("TtlDriverCore: getDxlState: This id is not reserved for Dxl motor");
+    return _ttl_driver->getMotorState<common::model::DxlMotorState>(motor_id);
 }
 
 /**

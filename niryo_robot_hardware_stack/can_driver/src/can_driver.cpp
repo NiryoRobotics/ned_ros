@@ -104,8 +104,27 @@ bool CanDriver::init()
     ROS_DEBUG("CanDriver::init - Calibration timeout %f", _calibration_timeout);
 
     std::vector<int> idList;
+    std::vector<std::string> typeList;
+    std::vector<std::string> typeProtocolList;
 
     _nh.getParam("/niryo_robot_hardware_interface/joints_driver/motors_types/motor_id_list", idList);
+    _nh.getParam("/niryo_robot_hardware_interface/joints_driver/motors_types/motor_type_list", typeList);
+    _nh.getParam("/niryo_robot_hardware_interface/joints_driver/motors_types/protocol_type_list", typeProtocolList);
+    
+    // check that the two lists have the same size
+    if (idList.size() != typeList.size() || idList.size() != typeProtocolList.size())
+        ROS_ERROR("CanDriver::init - wrong motors configuration. "
+                  "Please check your configuration file motor_id_list, motor_type_list, protocol_type_list");
+
+    for (size_t i = 0; i < idList.size(); ++i)
+    {
+        if (typeProtocolList[i] != "can")
+        {
+            idList.erase(idList.begin() + i);
+            typeList.erase(typeList.begin() + i);
+            typeProtocolList.erase(typeProtocolList.begin() + i);
+        }
+    }
 
     // debug - display info
     std::ostringstream ss;

@@ -91,8 +91,9 @@ class TtlDriver : public common::model::IDriver
         uint32_t getPosition(common::model::DxlMotorState& motor_state);
         int getLedState() const;
 
-        std::vector<std::shared_ptr<common::model::DxlMotorState> > getMotorsStates() const;
-        common::model::DxlMotorState getMotorState(uint8_t motor_id) const;
+        std::vector<std::shared_ptr<common::model::JointState> > getMotorsStates() const;
+        template<class T>
+        T getMotorState(uint8_t motor_id) const;
 
         std::vector<uint8_t> getRemovedMotorList() const;
 
@@ -132,7 +133,7 @@ class TtlDriver : public common::model::IDriver
         std::vector<uint8_t> _all_motor_connected; // with all dxl motors connected (including the tool)
         std::vector<uint8_t> _removed_motor_id_list;
 
-        std::map<uint8_t, std::shared_ptr<common::model::DxlMotorState> > _state_map;
+        std::map<uint8_t, std::shared_ptr<common::model::JointState> > _state_map;
         std::map<common::model::EMotorType, std::vector<uint8_t> > _ids_map;
         std::map<common::model::EMotorType, std::shared_ptr<AbstractMotorDriver> > _xdriver_map;
 
@@ -149,6 +150,20 @@ class TtlDriver : public common::model::IDriver
 };
 
 // inline getters
+
+/**
+ * @brief TtlDriver::getMotorState
+ * @param motor_id
+ * @return
+ */
+template<class T>
+T TtlDriver::getMotorState(uint8_t motor_id) const
+{
+    if (!_state_map.count(motor_id) && _state_map.at(motor_id))
+        throw std::out_of_range("TtlDriver::getMotorsState: Unknown motor id");
+
+    return *(dynamic_cast<T*>(_state_map.at(motor_id).get()));
+}
 
 inline
 bool TtlDriver::isConnectionOk() const

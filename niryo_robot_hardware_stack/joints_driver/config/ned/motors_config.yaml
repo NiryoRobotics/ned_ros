@@ -1,3 +1,4 @@
 motors_types:
     motor_id_list: [1,2,3,2,3,6]
     motor_type_list: ["stepper","stepper","stepper","xl430","xl430","xl320"]
+    motor_type_protocol: ["can", "can", "can", "ttl", "ttl", "ttl"]
