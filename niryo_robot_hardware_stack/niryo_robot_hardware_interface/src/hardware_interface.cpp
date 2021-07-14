@@ -328,7 +328,7 @@ void HardwareInterface::_publishHardwareStatus()
 
     while (ros::ok())
     {
-        ttl_driver::DxlArrayMotorHardwareStatus ttl_motor_state;
+        ttl_driver::ArrayMotorHardwareStatus ttl_motor_state;
         can_driver::StepperArrayMotorHardwareStatus can_motor_state;
 
         niryo_robot_msgs::BusState ttl_bus_state;

@@ -32,17 +32,17 @@ find_package(catkin REQUIRED
 
 add_message_files(
   FILES
-    DxlArrayMotorHardwareStatus.msg
-    DxlMotorCommand.msg
-    DxlMotorHardwareStatus.msg
+    ArrayMotorHardwareStatus.msg
+    MotorCommand.msg
+    MotorHardwareStatus.msg
 )
 
 add_service_files(
   DIRECTORY
     srv
   FILES
-    SendCustomDxlValue.srv
-    ReadCustomDxlValue.srv
+    SendCustomValue.srv
+    ReadCustomValue.srv
 )
 
 generate_messages(

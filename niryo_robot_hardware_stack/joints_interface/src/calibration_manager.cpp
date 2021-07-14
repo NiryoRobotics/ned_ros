@@ -255,7 +255,7 @@ EStepperCalibrationStatus CalibrationManager::_auto_calibration()
     ros::Duration(0.5).sleep();
 
     // 2. Move All Dynamixel to Home Position
-    SynchronizeMotorCmd dynamixel_cmd;
+    SynchronizeMotorCmd<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum> dynamixel_cmd;
     dynamixel_cmd.setType(EDxlCommandType::CMD_TYPE_TORQUE);
     dynamixel_cmd.addMotorParam(_joint_list.at(3)->getType(), _joint_list.at(3)->getId(), 1);
     dynamixel_cmd.addMotorParam(_joint_list.at(4)->getType(), _joint_list.at(4)->getId(), 1);

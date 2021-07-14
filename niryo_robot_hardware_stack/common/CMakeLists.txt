@@ -64,8 +64,6 @@ add_library(${PROJECT_NAME}
     src/model/motor_type_enum.cpp
     src/model/dxl_command_type_enum.cpp
     src/model/stepper_command_type_enum.cpp
-    src/model/single_motor_cmd.cpp
-    src/model/synchronize_motor_cmd.cpp
     src/model/stepper_motor_cmd.cpp
     src/model/stepper_calibration_status_enum.cpp
 )

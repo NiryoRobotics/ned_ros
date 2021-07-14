@@ -34,11 +34,12 @@ namespace model
 /**
  * @brief The SingleMotorCmd class
  */
-class SingleMotorCmd : public AbstractMotorCmd<EDxlCommandType>
+template<typename T, typename TE>
+class SingleMotorCmd : public AbstractMotorCmd<T>
 {
     public:
         SingleMotorCmd();
-        SingleMotorCmd(EDxlCommandType type,
+        SingleMotorCmd(T type,
                        uint8_t motor_id,
                        uint32_t param = 0);
 
@@ -65,9 +66,10 @@ class SingleMotorCmd : public AbstractMotorCmd<EDxlCommandType>
  * @brief SingleMotorCmd::getId
  * @return
  */
+template<typename T, typename TE>
 inline
 uint8_t
-SingleMotorCmd::getId() const
+SingleMotorCmd<T, TE>::getId() const
 {
     return _id;
 }
@@ -76,11 +78,111 @@ SingleMotorCmd::getId() const
  * @brief SingleMotorCmd::getParam
  * @return
  */
+template<typename T, typename TE>
 inline
 uint32_t
-SingleMotorCmd::getParam() const
+SingleMotorCmd<T, TE>::getParam() const
 {
     return _param;
+}
+
+/**
+ * @brief SingleMotorCmd::SingleMotorCmd
+ */
+template<typename T, typename TE>
+SingleMotorCmd<T, TE>::SingleMotorCmd() :
+    AbstractMotorCmd<T>(T::CMD_TYPE_UNKNOWN)
+{
+    reset();
+}
+
+/**
+ * @brief SingleMotorCmd::SingleMotorCmd
+ * @param type
+ * @param motor_id
+ * @param param
+ */
+template<typename T, typename TE>
+SingleMotorCmd<T, TE>::SingleMotorCmd(T type,
+                               uint8_t motor_id,
+                               uint32_t param) :
+    AbstractMotorCmd<EDxlCommandType>(type),
+    _id(motor_id),
+    _param(param)
+{}
+
+/**
+ * @brief SingleMotorCmd::setId
+ * @param id
+ */
+template<typename T, typename TE>
+void SingleMotorCmd<T, TE>::setId(uint8_t id)
+{
+    _id = id;
+}
+
+/**
+ * @brief SingleMotorCmd::setParam
+ * @param param
+ */
+template<typename T, typename TE>
+void SingleMotorCmd<T, TE>::setParam(uint32_t param)
+{
+    _param = param;
+}
+
+
+// ***********************
+//  AbstractMotorCmd intf
+// ***********************
+
+/**
+ * @brief SingleMotorCmd::reset
+ */
+template<typename T, typename TE>
+void SingleMotorCmd<T, TE>::reset()
+{
+    this->setType(T::CMD_TYPE_UNKNOWN);
+    clear();
+}
+
+/**
+ * @brief SingleMotorCmd::clear
+ */
+template<typename T, typename TE>
+void SingleMotorCmd<T, TE>::clear()
+{
+    _id = 0;
+    _param = 0;
+}
+
+/**
+ * @brief SingleMotorCmd::str
+ * @return
+ */
+template<typename T, typename TE>
+std::string SingleMotorCmd<T, TE>::str() const
+{
+    std::ostringstream ss;
+    ss << "Single motor cmd - ";
+
+    ss << TE(this->getType()).toString();
+
+    ss << ": ";
+    ss << "motor " << static_cast<int>(_id) << ": " << static_cast<int>(_param);
+
+    return ss.str();
+}
+
+/**
+ * @brief SingleMotorCmd::isValid
+ * @return
+ */
+template<typename T, typename TE>
+bool SingleMotorCmd<T, TE>::isValid() const
+{
+    return (T::CMD_TYPE_UNKNOWN != this->getType()) &&
+           (0 != _id);
 }
 
 } // namespace model

@@ -343,8 +343,8 @@ bool ToolsInterfaceCore::_callbackOpenGripper(tools_interface::OpenGripper::Requ
 
     if ( req.id == _toolState.getId() )
     {
-        SingleMotorCmd cmd;
-        vector<SingleMotorCmd> list_cmd;
+        SingleMotorCmd<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum> cmd;
+        vector<SingleMotorCmd<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum>> list_cmd;
         cmd.setId(_toolState.getId());
 
         // cc for new motors, use profile velocity instead
@@ -401,8 +401,8 @@ bool ToolsInterfaceCore::_callbackCloseGripper(tools_interface::CloseGripper::Re
 
     if ( req.id == _toolState.getId() )
     {
-        SingleMotorCmd cmd;
-        vector<SingleMotorCmd> list_cmd;
+        SingleMotorCmd<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum> cmd;
+        vector<SingleMotorCmd<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum>> list_cmd;
         cmd.setId(_toolState.getId());
 
         uint32_t position_command = (req.close_position < 50) ? 0 : req.close_position - 50;
@@ -470,17 +470,17 @@ bool ToolsInterfaceCore::_callbackPullAirVacuumPump(tools_interface::PullAirVacu
         uint32_t pull_air_hold_torque = static_cast<uint32_t>(req.pull_air_hold_torque);
 
         // set vacuum pump pos, vel and torque
-        _ttl_driver_core->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_VELOCITY,
+        _ttl_driver_core->addEndEffectorCommandToQueue(SingleMotorCmd<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum>(EDxlCommandType::CMD_TYPE_VELOCITY,
                                                                       _toolState.getId(), pull_air_velocity));
 
-        _ttl_driver_core->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_POSITION,
+        _ttl_driver_core->addEndEffectorCommandToQueue(SingleMotorCmd<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum>(EDxlCommandType::CMD_TYPE_POSITION,
                                                                       _toolState.getId(), pull_air_position));
 
-        _ttl_driver_core->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_EFFORT,
+        _ttl_driver_core->addEndEffectorCommandToQueue(SingleMotorCmd<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum>(EDxlCommandType::CMD_TYPE_EFFORT,
                                                                       _toolState.getId(), 500));
 
         // set hold torque
-        _ttl_driver_core->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_EFFORT,
+        _ttl_driver_core->addEndEffectorCommandToQueue(SingleMotorCmd<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum>(EDxlCommandType::CMD_TYPE_EFFORT,
                                                                       _toolState.getId(), pull_air_hold_torque));
 
         res.state = ToolState::VACUUM_PUMP_STATE_PULLED;
@@ -510,18 +510,18 @@ bool ToolsInterfaceCore:: _callbackPushAirVacuumPump(tools_interface::PushAirVac
         uint32_t push_air_position = static_cast<uint32_t>(req.push_air_position);
 
         // set vacuum pump pos, vel and torque
-        _ttl_driver_core->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_VELOCITY,
+        _ttl_driver_core->addEndEffectorCommandToQueue(SingleMotorCmd<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum>(EDxlCommandType::CMD_TYPE_VELOCITY,
                                                                       _toolState.getId(), push_air_velocity));
 
-        _ttl_driver_core->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_POSITION,
+        _ttl_driver_core->addEndEffectorCommandToQueue(SingleMotorCmd<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum>(EDxlCommandType::CMD_TYPE_POSITION,
                                                                       _toolState.getId(), push_air_position));
 
-        _ttl_driver_core->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_EFFORT,
+        _ttl_driver_core->addEndEffectorCommandToQueue(SingleMotorCmd<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum>(EDxlCommandType::CMD_TYPE_EFFORT,
                                                                       _toolState.getId(), 64000));
         // 64000 is two's complement of 1536
 
         // set torque to 0
-        _ttl_driver_core->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_EFFORT,
+        _ttl_driver_core->addEndEffectorCommandToQueue(SingleMotorCmd<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum>(EDxlCommandType::CMD_TYPE_EFFORT,
                                                                       _toolState.getId(), 0));
 
         res.state = ToolState::VACUUM_PUMP_STATE_PUSHED;

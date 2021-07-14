@@ -54,8 +54,9 @@ class AbstractMotorCmd : public IObject
         // tests
         virtual bool isValid() const = 0;
 
-    protected:
         E _type;
+    protected:
+        
 
     private:
         AbstractMotorCmd() = delete;

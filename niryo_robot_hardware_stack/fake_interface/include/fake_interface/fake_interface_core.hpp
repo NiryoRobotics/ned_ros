@@ -55,7 +55,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <conveyor_interface/ControlConveyor.h>
 #include <conveyor_interface/ConveyorFeedback.h>
 
-#include <ttl_driver/DxlArrayMotorHardwareStatus.h>
+#include <ttl_driver/ArrayMotorHardwareStatus.h>
 #include <can_driver/StepperArrayMotorHardwareStatus.h>
 
 #include "fake_interface/FakeJointHardwareInterface.hpp"
@@ -73,7 +73,7 @@ class FakeInterfaceCore : common::model::IInterfaceCore
 
         void rosControlLoop();
 
-        ttl_driver::DxlArrayMotorHardwareStatus getTtlHwStatus() const;
+        ttl_driver::ArrayMotorHardwareStatus getTtlHwStatus() const;
         niryo_robot_msgs::BusState getTtlBusState() const;
         can_driver::StepperArrayMotorHardwareStatus getCanHwStatus() const;
         niryo_robot_msgs::BusState getCanBusState();

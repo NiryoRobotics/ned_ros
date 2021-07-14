@@ -34,6 +34,7 @@ using ::std::string;
 using ::std::to_string;
 using ::std::dynamic_pointer_cast;
 
+using ::common::model::DxlCommandTypeEnum;
 using ::common::model::MotorTypeEnum;
 using ::common::model::EMotorType;
 using ::common::model::StepperMotorState;
@@ -376,7 +377,7 @@ void JointHardwareInterface::activateLearningMode()
 
     if (_can_driver_core && _ttl_driver_core)
     {
-        SynchronizeMotorCmd dxl_cmd(EDxlCommandType::CMD_TYPE_LEARNING_MODE);
+        SynchronizeMotorCmd<EDxlCommandType, DxlCommandTypeEnum> dxl_cmd(EDxlCommandType::CMD_TYPE_LEARNING_MODE);
         StepperMotorCmd stepper_cmd(EStepperCommandType::CMD_TYPE_TORQUE);
 
         for (auto const& jState : _joint_list)
@@ -410,7 +411,7 @@ void JointHardwareInterface::deactivateLearningMode()
     ROS_DEBUG("JointHardwareInterface::deactivateLearningMode - deactivate learning mode");
     if (_can_driver_core && _ttl_driver_core)
     {
-        SynchronizeMotorCmd dxl_cmd(EDxlCommandType::CMD_TYPE_LEARNING_MODE);
+        SynchronizeMotorCmd<EDxlCommandType, DxlCommandTypeEnum> dxl_cmd(EDxlCommandType::CMD_TYPE_LEARNING_MODE);
         StepperMotorCmd stepper_cmd(EStepperCommandType::CMD_TYPE_TORQUE);
 
         for (auto const& jState : _joint_list)

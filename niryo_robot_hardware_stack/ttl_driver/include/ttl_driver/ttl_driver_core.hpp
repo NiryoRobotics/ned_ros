@@ -37,14 +37,15 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "common/model/iinterface_core.hpp"
 
 #include "ttl_driver/ttl_driver.hpp"
-#include "ttl_driver/DxlArrayMotorHardwareStatus.h"
-#include "ttl_driver/SendCustomDxlValue.h"
-#include "ttl_driver/ReadCustomDxlValue.h"
+#include "ttl_driver/ArrayMotorHardwareStatus.h"
+#include "ttl_driver/SendCustomValue.h"
+#include "ttl_driver/ReadCustomValue.h"
 
 #include "niryo_robot_msgs/BusState.h"
 #include "niryo_robot_msgs/SetInt.h"
 #include "niryo_robot_msgs/CommandStatus.h"
 
+#include "common/model/stepper_motor_state.hpp"
 #include "common/model/dxl_motor_state.hpp"
 #include "common/model/motor_type_enum.hpp"
 #include "common/model/single_motor_cmd.hpp"
@@ -70,14 +71,14 @@ class TtlDriverCore : public common::model::IDriverCore, public common::model::I
         void clearSingleCommandQueue();
         void clearEndEffectorCommandQueue();
 
-        bool setMotorPID(const std::shared_ptr<common::model::DxlMotorState>& dxlState);
+        bool setMotorPID(const std::shared_ptr<common::model::JointState>& motorState);
         void setTrajectoryControllerCommands(const std::vector<std::pair<uint8_t, uint32_t> > &cmd);
-        void setSyncCommand(const common::model::SynchronizeMotorCmd &cmd);
-        void addSingleCommandToQueue(const common::model::SingleMotorCmd &cmd);
-        void addSingleCommandToQueue(const std::vector<common::model::SingleMotorCmd> &cmd);
+        void setSyncCommand(const common::model::SynchronizeMotorCmd<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum> &cmd);
+        void addSingleCommandToQueue(const common::model::SingleMotorCmd<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum> &cmd);
+        void addSingleCommandToQueue(const std::vector<common::model::SingleMotorCmd<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum>> &cmd);
 
-        void addEndEffectorCommandToQueue(const common::model::SingleMotorCmd &cmd);
-        void addEndEffectorCommandToQueue(const std::vector<common::model::SingleMotorCmd> &cmd);
+        void addEndEffectorCommandToQueue(const common::model::SingleMotorCmd<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum> &cmd);
+        void addEndEffectorCommandToQueue(const std::vector<common::model::SingleMotorCmd<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum>> &cmd);
 
         // direct commands
         std::vector<uint8_t> scanTools();
@@ -91,7 +92,7 @@ class TtlDriverCore : public common::model::IDriverCore, public common::model::I
         std::vector<uint8_t> getRemovedMotorList() const;
         double getEndEffectorState(uint8_t id) const;
 
-        ttl_driver::DxlArrayMotorHardwareStatus getHwStatus() const;
+        ttl_driver::ArrayMotorHardwareStatus getHwStatus() const;
 
         std::vector<std::shared_ptr<common::model::DxlMotorState> > getDxlStates() const;
         common::model::DxlMotorState getDxlState(uint8_t motor_id) const;
@@ -120,8 +121,8 @@ class TtlDriverCore : public common::model::IDriverCore, public common::model::I
 
         // use other callbacks instead of executecommand
         bool _callbackActivateLeds(niryo_robot_msgs::SetInt::Request &req, niryo_robot_msgs::SetInt::Response &res);
-        bool _callbackSendCustomDxlValue(ttl_driver::SendCustomDxlValue::Request &req, ttl_driver::SendCustomDxlValue::Response &res);
-        bool _callbackReadCustomDxlValue(ttl_driver::ReadCustomDxlValue::Request &req, ttl_driver::ReadCustomDxlValue::Response &res);
+        bool _callbackSendCustomValue(ttl_driver::SendCustomValue::Request &req, ttl_driver::SendCustomValue::Response &res);
+        bool _callbackReadCustomValue(ttl_driver::ReadCustomValue::Request &req, ttl_driver::ReadCustomValue::Response &res);
 
     private:
         ros::NodeHandle _nh;
@@ -152,9 +153,9 @@ class TtlDriverCore : public common::model::IDriverCore, public common::model::I
 
         std::vector<std::pair<uint8_t, uint32_t> > _joint_trajectory_cmd;
 
-        common::model::SynchronizeMotorCmd _dxl_sync_cmds;
-        std::queue<common::model::SingleMotorCmd> _dxl_single_cmds;
-        std::queue<common::model::SingleMotorCmd> _end_effector_cmds;
+        common::model::SynchronizeMotorCmd<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum> _dxl_sync_cmds;
+        std::queue<common::model::SingleMotorCmd<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum>> _dxl_single_cmds;
+        std::queue<common::model::SingleMotorCmd<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum>> _dxl_end_effector_cmds;
 
         ros::ServiceServer _activate_leds_server;
         ros::ServiceServer _custom_cmd_server;
@@ -172,19 +173,6 @@ inline
 bool TtlDriverCore::isConnectionOk() const
 {
     return _ttl_driver->isConnectionOk();
-}
-
-/**
- * @brief TtlDriverCore::getDxlState
- * @param motor_id
- * @return
- */
-inline
-common::model::DxlMotorState TtlDriverCore::getDxlState(uint8_t motor_id) const
-{
-    if (!_ttl_driver->getMotorState<common::model::DxlMotorState>(motor_id).isDynamixel())
-        throw std::runtime_error("TtlDriverCore: getDxlState: This id is not reserved for Dxl motor");
-    return _ttl_driver->getMotorState<common::model::DxlMotorState>(motor_id);
 }
 
 /**

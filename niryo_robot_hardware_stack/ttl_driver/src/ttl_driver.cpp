@@ -453,36 +453,66 @@ int TtlDriver::rebootMotor(uint8_t motor_id)
  * @param motor_state
  * @return
  */
-uint32_t TtlDriver::getPosition(DxlMotorState &motor_state)
+uint32_t TtlDriver::getPosition(JointState &motor_state)
 {
     uint32_t result = 0;
-    EMotorType dxl_type = motor_state.getType();
-
-    if (_xdriver_map.count(dxl_type) && _xdriver_map.at(dxl_type))
+    if (motor_state.isDynamixel())
     {
-        for (_hw_fail_counter_read = 0; _hw_fail_counter_read < MAX_HW_FAILURE; ++_hw_fail_counter_read)
+        EMotorType dxl_type = motor_state.getType();
+        if (_xdriver_map.count(dxl_type) && _xdriver_map.at(dxl_type))
         {
-            if (COMM_SUCCESS == _xdriver_map.at(dxl_type)->readPosition(motor_state.getId(), &result))
+            for (_hw_fail_counter_read = 0; _hw_fail_counter_read < MAX_HW_FAILURE; ++_hw_fail_counter_read)
             {
+                if (COMM_SUCCESS == _xdriver_map.at(dxl_type)->readPosition(motor_state.getId(), &result))
+                {
+                    _hw_fail_counter_read = 0;
+                    break;
+                }
+            }
+
+            if (0 < _hw_fail_counter_read)
+            {
+                ROS_ERROR_THROTTLE(1, "TtlDriver::getPosition - Dxl connection problem - Failed to read from Dxl bus");
+                _debug_error_message = "TtlDriver - Connection problem with Dynamixel Bus.";
                 _hw_fail_counter_read = 0;
-                break;
+                _is_connection_ok = false;
             }
         }
-
-        if (0 < _hw_fail_counter_read)
+        else
         {
-            ROS_ERROR_THROTTLE(1, "TtlDriver::getPosition - Dxl connection problem - Failed to read from Dxl bus");
-            _debug_error_message = "TtlDriver - Connection problem with Dynamixel Bus.";
-            _hw_fail_counter_read = 0;
-            _is_connection_ok = false;
+            ROS_ERROR_THROTTLE(1, "TtlDriver::getPosition - Driver not found for requested motor id");
+            _debug_error_message = "TtlDriver::getPosition - Driver not found for requested motor id";
         }
     }
-    else
+    if (motor_state.isStepper())
     {
-        ROS_ERROR_THROTTLE(1, "TtlDriver::getPosition - Driver not found for requested motor id");
-        _debug_error_message = "TtlDriver::getPosition - Driver not found for requested motor id";
-    }
+        // Get position with stepper motors
+        EMotorType stepper_type = motor_state.getType();
+        if (_xdriver_map.count(stepper_type) && _xdriver_map.at(stepper_type))
+        {
+            for (_hw_fail_counter_read = 0; _hw_fail_counter_read < MAX_HW_FAILURE; ++_hw_fail_counter_read)
+            {
+                if (COMM_SUCCESS == _xdriver_map.at(stepper_type)->readPosition(motor_state.getId(), &result))
+                {
+                    _hw_fail_counter_read = 0;
+                    break;
+                }
+            }
 
+            if (0 < _hw_fail_counter_read)
+            {
+                ROS_ERROR_THROTTLE(1, "TtlDriver::getPosition - Stepper connection problem - Failed to read from stepper bus");
+                _debug_error_message = "TtlDriver - Connection problem with Stepper Bus.";
+                _hw_fail_counter_read = 0;
+                _is_connection_ok = false;
+            }
+        }
+        else
+        {
+            ROS_ERROR_THROTTLE(1, "TtlDriver::getPosition - Driver not found for requested motor id");
+            _debug_error_message = "TtlDriver::getPosition - Driver not found for requested motor id";
+        }
+    }
     return result;
 }
 
@@ -739,121 +769,6 @@ int TtlDriver::getAllIdsOnBus(vector<uint8_t> &id_list)
 // ******************
 
 /**
- * @brief TtlDriver::readSynchronizeCommand
- * @param cmd
- */
-int TtlDriver::readSynchronizeCommand(SynchronizeMotorCmd cmd)
-{
-    int result = COMM_TX_ERROR;
-    ROS_DEBUG_THROTTLE(0.5, "TtlDriver::readSynchronizeCommand:  %s", cmd.str().c_str());
-
-    if (cmd.isValid())
-    {
-        switch (cmd.getType())
-        {
-            case EDxlCommandType::CMD_TYPE_POSITION:
-                result = _syncWrite(&AbstractMotorDriver::syncWritePositionGoal, cmd);
-            break;
-            case EDxlCommandType::CMD_TYPE_VELOCITY:
-                result = _syncWrite(&AbstractMotorDriver::syncWriteVelocityGoal, cmd);
-            break;
-            case EDxlCommandType::CMD_TYPE_EFFORT:
-                result = _syncWrite(&AbstractMotorDriver::syncWriteTorqueGoal, cmd);
-            break;
-            case EDxlCommandType::CMD_TYPE_TORQUE:
-                result = _syncWrite(&AbstractMotorDriver::syncWriteTorqueEnable, cmd);
-            break;
-            case EDxlCommandType::CMD_TYPE_LEARNING_MODE:
-                result = _syncWrite(&AbstractMotorDriver::syncWriteTorqueEnable, cmd);
-            break;
-            default:
-                ROS_ERROR("TtlDriver::readSynchronizeCommand - Unsupported command type: %d",
-                          static_cast<int>(cmd.getType()));
-            break;
-        }
-    }
-    else
-{
-        ROS_ERROR("TtlDriver::readSynchronizeCommand - Invalid command");
-    }
-
-    return result;
-}
-
-/**
- * @brief TtlDriver::readSingleCommand
- * @param cmd
- */
-int TtlDriver::readSingleCommand(SingleMotorCmd cmd)
-{
-    int result = COMM_TX_ERROR;
-    uint8_t id = cmd.getId();
-
-    if (cmd.isValid())
-    {
-        int counter = 0;
-
-        ROS_DEBUG_THROTTLE(0.5, "TtlDriver::readSingleCommand:  %s", cmd.str().c_str());
-
-        if (_state_map.count(id) != 0)
-        {
-            auto state = _state_map.at(id);
-
-            while ((COMM_SUCCESS != result) && (counter < 50))
-            {
-                switch (cmd.getType())
-                {
-                case EDxlCommandType::CMD_TYPE_VELOCITY:
-                    result = _singleWrite(&AbstractMotorDriver::setGoalVelocity, state->getType(), cmd);
-                    break;
-                case EDxlCommandType::CMD_TYPE_POSITION:
-                    result = _singleWrite(&AbstractMotorDriver::setGoalPosition, state->getType(), cmd);
-                    break;
-                case EDxlCommandType::CMD_TYPE_EFFORT:
-                    result = _singleWrite(&AbstractMotorDriver::setGoalTorque, state->getType(), cmd);
-                    break;
-                case EDxlCommandType::CMD_TYPE_TORQUE:
-                    result = _singleWrite(&AbstractMotorDriver::setTorqueEnable, state->getType(), cmd);
-                    break;
-                case EDxlCommandType::CMD_TYPE_P_GAIN:
-                    result = _singleWrite(&AbstractMotorDriver::setPGain, state->getType(), cmd);
-                    break;
-                case EDxlCommandType::CMD_TYPE_I_GAIN:
-                    result = _singleWrite(&AbstractMotorDriver::setIGain, state->getType(), cmd);
-                    break;
-                case EDxlCommandType::CMD_TYPE_D_GAIN:
-                    result = _singleWrite(&AbstractMotorDriver::setDGain, state->getType(), cmd);
-                    break;
-                case EDxlCommandType::CMD_TYPE_FF1_GAIN:
-                    result = _singleWrite(&AbstractMotorDriver::setff1Gain, state->getType(), cmd);
-                    break;
-                case EDxlCommandType::CMD_TYPE_FF2_GAIN:
-                    result = _singleWrite(&AbstractMotorDriver::setff2Gain, state->getType(), cmd);
-                    break;
-                case EDxlCommandType::CMD_TYPE_PING:
-                    result = ping(state->getId()) ? COMM_SUCCESS : COMM_TX_FAIL;
-                    break;
-                default:
-                    break;
-                }
-
-                counter += 1;
-
-                ros::Duration(TIME_TO_WAIT_IF_BUSY).sleep();
-            }
-        }
-    }
-
-    if (result != COMM_SUCCESS)
-    {
-        ROS_WARN("TtlDriver::readSingleCommand - Failed to write a single command on dxl motor id : %d", id);
-        _debug_error_message = "TtlDriver - Failed to write a single command";
-    }
-
-    return result;
-}
-
-/**
  * @brief TtlDriver::setLeds : set the leds integrated into each motor
  * @param led
  * @param type
@@ -902,11 +817,11 @@ int TtlDriver::setLeds(int led, EMotorType type)
  * @param byte_number
  * @return
  */
-int TtlDriver::sendCustomDxlCommand(EMotorType motor_type, uint8_t id,
+int TtlDriver::sendCustomCommand(EMotorType motor_type, uint8_t id,
                                     int reg_address, int value,  int byte_number)
 {
     int result = COMM_TX_FAIL;
-    ROS_DEBUG("TtlDriver::sendCustomDxlCommand:\n"
+    ROS_DEBUG("TtlDriver::sendCustomCommand:\n"
               "\t\t Motor type: %d, ID: %d, Value: %d, Address: %d, Size: %d",
               static_cast<int>(motor_type), static_cast<int>(id), value,
               reg_address, byte_number);
@@ -919,13 +834,13 @@ int TtlDriver::sendCustomDxlCommand(EMotorType motor_type, uint8_t id,
                                                     static_cast<uint32_t>(value));
         if (result != COMM_SUCCESS)
         {
-            ROS_WARN("TtlDriver::sendCustomDxlCommand - Failed to write custom command: %d", result);
-            result = niryo_robot_msgs::CommandStatus::DXL_WRITE_ERROR;
+            ROS_WARN("TtlDriver::sendCustomCommand - Failed to write custom command: %d", result);
+            result = niryo_robot_msgs::CommandStatus::DXL_WRITE_ERROR;     //Todo: change DXL_WRITE_ERROR -> WRITE_ERROR
         }
     }
     else
     {
-        ROS_ERROR_THROTTLE(1, "TtlDriver::sendCustomDxlCommand - driver for motor %s not available",
+        ROS_ERROR_THROTTLE(1, "TtlDriver::sendCustomCommand - driver for motor %s not available",
                            MotorTypeEnum(motor_type).toString().c_str());
         result = niryo_robot_msgs::CommandStatus::WRONG_MOTOR_TYPE;
     }
@@ -942,11 +857,11 @@ int TtlDriver::sendCustomDxlCommand(EMotorType motor_type, uint8_t id,
  * @param byte_number
  * @return
  */
-int TtlDriver::readCustomDxlCommand(EMotorType motor_type, uint8_t id,
+int TtlDriver::readCustomCommand(EMotorType motor_type, uint8_t id,
                                     int32_t reg_address, int& value, int byte_number)
 {
     int result = COMM_RX_FAIL;
-    ROS_DEBUG("TtlDriver::readCustomDxlCommand: Motor type: %d, ID: %d, Address: %d, Size: %d",
+    ROS_DEBUG("TtlDriver::readCustomCommand: Motor type: %d, ID: %d, Address: %d, Size: %d",
               static_cast<int>(motor_type), static_cast<int>(id),
               static_cast<int>(reg_address), byte_number);
 
@@ -961,13 +876,13 @@ int TtlDriver::readCustomDxlCommand(EMotorType motor_type, uint8_t id,
 
         if (result != COMM_SUCCESS)
         {
-            ROS_WARN("TtlDriver::readCustomDxlCommand - Failed to read custom command: %d", result);
-            result = niryo_robot_msgs::CommandStatus::DXL_WRITE_ERROR;
+            ROS_WARN("TtlDriver::readCustomCommand - Failed to read custom command: %d", result);
+            result = niryo_robot_msgs::CommandStatus::DXL_READ_ERROR;  //Todo: change DXL_READ_ERROR -> READ_ERROR
         }
     }
     else
     {
-        ROS_ERROR_THROTTLE(1, "TtlDriver::readCustomDxlCommand - driver for motor %s not available",
+        ROS_ERROR_THROTTLE(1, "TtlDriver::readCustomCommand - driver for motor %s not available",
                            MotorTypeEnum(motor_type).toString().c_str());
         result = niryo_robot_msgs::CommandStatus::WRONG_MOTOR_TYPE;
     }
@@ -993,88 +908,6 @@ void TtlDriver::checkRemovedMotors()
             motor_list.emplace_back(istate.first);
     }
     _removed_motor_id_list = motor_list;
-}
-
-/**
- * @brief TtlDriver::_syncWrite
- * @param syncWriteFunction
- * @param cmd
- * @return
- */
-int TtlDriver::_syncWrite(int (AbstractMotorDriver::*syncWriteFunction)(const vector<uint8_t> &,
-                                                                        const vector<uint32_t> &),
-                          const SynchronizeMotorCmd& cmd)
-{
-    int result = COMM_TX_ERROR;
-
-    set<EMotorType> typesToProcess = cmd.getMotorTypes();
-
-    // process all the motors using each successive drivers
-    for (int counter = 0; counter < MAX_HW_FAILURE; ++counter)
-    {
-        ROS_DEBUG_THROTTLE(0.5, "TtlDriver::_syncWrite: try to sync write (counter %d)", counter);
-
-        for (auto const& it : _xdriver_map)
-        {
-            if (it.second && typesToProcess.count(it.first) != 0)
-            {
-                // syncwrite for this driver. The driver is responsible for sync write only to its associated motors
-                int results = ((it.second.get())->*syncWriteFunction)(cmd.getMotorsId(it.first), cmd.getParams(it.first));
-                ros::Duration(0.05).sleep();
-                // if successful, don't process this driver in the next loop
-                if (COMM_SUCCESS == results)
-                {
-                    typesToProcess.erase(typesToProcess.find(it.first));
-                }
-                else
-{
-                    ROS_ERROR("TtlDriver::_syncWrite : unable to sync write function : %d", results);
-                }
-            }
-        }
-
-        // if all drivers are processed, go out of for loop
-        if (typesToProcess.empty())
-        {
-            result = COMM_SUCCESS;
-            break;
-        }
-
-        ros::Duration(TIME_TO_WAIT_IF_BUSY).sleep();
-    }
-
-    if (COMM_SUCCESS != result)
-    {
-        ROS_ERROR_THROTTLE(0.5, "TtlDriver::_syncWrite - Failed to write synchronize position");
-        _debug_error_message = "TtlDriver - Failed to write synchronize position";
-    }
-
-    return result;
-}
-
-/**
- * @brief TtlDriver::_singleWrite
- * @param singleWriteFunction
- * @param dxl_type
- * @param cmd
- * @return
- */
-int TtlDriver::_singleWrite(int (AbstractMotorDriver::*singleWriteFunction)(uint8_t id, uint32_t), EMotorType dxl_type,
-                            const SingleMotorCmd& cmd)
-{
-    int result = COMM_TX_ERROR;
-
-    if (_xdriver_map.count(dxl_type) != 0 && _xdriver_map.at(dxl_type))
-    {
-        result = (_xdriver_map.at(dxl_type).get()->*singleWriteFunction)(cmd.getId(), cmd.getParam());
-    }
-    else
-    {
-        ROS_ERROR_THROTTLE(1, "TtlDriver::_singleWrite - Wrong dxl type detected: %s",
-                           MotorTypeEnum(dxl_type).toString().c_str());
-        _debug_error_message = "TtlDriver - Wrong dxl type detected";
-    }
-    return result;
 }
 
 /**
