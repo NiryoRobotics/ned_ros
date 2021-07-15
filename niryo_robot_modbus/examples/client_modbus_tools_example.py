@@ -7,16 +7,16 @@ import time
 
 if __name__ == '__main__':
     print "--- START"
-    client = ModbusTcpClient('192.168.1.118', port=5020)
+    client = ModbusTcpClient('localhost', port=5020)
 
     client.connect()
     print "Connected to modbus server"
 
-    # print "Pull vaccuum pomp"
+    # print "Pull vaccuum pump"
     # client.write_register(512, 1)
     # time.sleep(2)
-# 
-    # print "Push vaccuum pomp"
+
+    # print "Push vaccuum pump"
     # client.write_register(513, 1)
     # time.sleep(2)
 
