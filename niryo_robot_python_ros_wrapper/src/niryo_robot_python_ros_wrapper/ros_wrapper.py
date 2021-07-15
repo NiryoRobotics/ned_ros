@@ -38,7 +38,7 @@ from niryo_robot_msgs.srv import GetNameDescriptionList, SetBool, SetInt, Trigge
 
 from niryo_robot_rpi.srv import GetDigitalIO, SetDigitalIO
 from niryo_robot_vision.srv import DebugMarkers, DebugMarkersRequest, DebugColorDetection, DebugColorDetectionRequest
-from niryo_robot_programs_manager.srv import SetProgramAutorun, SetProgramAutorunRequest, GetProgramAutorunInfos, GetProgramList, ManageProgram, ManageProgramRequest, GetProgram, GetProgramRequest
+from niryo_robot_programs_manager.srv import SetProgramAutorun, SetProgramAutorunRequest, GetProgramAutorunInfos, GetProgramList, ManageProgram, ManageProgramRequest, GetProgram, GetProgramRequest, ExecuteProgram, ExecuteProgramRequest
 
 # Actions
 from niryo_robot_commander.msg import RobotMoveAction, RobotMoveGoal
@@ -2043,6 +2043,54 @@ class NiryoRosWrapper:
         req.language.used = language
         req.mode = mode
         result = self.__call_service('/niryo_robot_programs_manager/set_program_autorun', SetProgramAutorun, req)
+        return self.__classic_return_w_check(result)
+
+    def start_program(self, name, language):
+        """
+        Start a program
+
+        :param name: The program's name
+        :type name: str
+        :param language: the program's language
+        :type language: ProgramLanguage
+        :return: status, message
+        :rtype: (int, str)
+        """
+        req = ExecuteProgramRequest()
+        req.name = name
+        req.language.used = language
+        result = self.__call_service('/niryo_robot_programs_manager/execute_program', ExecuteProgram, req)
+        return self.__classic_return_w_check(result)
+
+    def stop_program(self):
+        """
+        Stop the currently running program
+
+        :return: status, message
+        :rtype: (int, str)
+        """
+        result = self.__call_service('/niryo_robot_programs_manager/stop_program', Trigger)
+        return self.__classic_return_w_check(result)
+
+    def delete_program(self, name, language):
+        """
+        Delete a program
+
+        :param name: the program's name
+        :type name: str
+        :param language: the program's language
+        :type language: ProgramLanguage
+
+        :return: status, message
+        :rtype: (int, str)
+        """
+        req = ManageProgramRequest()
+        req.cmd = -1
+        req.name = name
+        req.language.used = language
+
+        result = self.__call_service('/niryo_robot_programs_manager/manage_program', ManageProgram, req)
+
         return self.__classic_return_w_check(result)
 
     # - Autorun
