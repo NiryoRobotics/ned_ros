@@ -1445,9 +1445,7 @@ class NiryoRosWrapper:
     # - Button
 
     def __change_button_mode(self, mode):
-        req = SetInt()
-        req.value = mode
-        result = self.__call_service('/niryo_robot/rpi/change_button_mode', SetInt, req)
+        result = self.__call_service('/niryo_robot/rpi/change_button_mode', SetInt, mode)
         return self.__classic_return_w_check(result)
 
     def set_button_do_nothing(self):
@@ -1502,9 +1500,7 @@ class NiryoRosWrapper:
         return self.__classic_return_w_check(result)
 
     def __call_shutdown_rpi(self, value):
-        req = SetInt()
-        req.value = value
-        result = self.__call_service('/niryo_robot_rpi/shutdown_rpi', SetInt, req)
+        result = self.__call_service('/niryo_robot_rpi/shutdown_rpi', SetInt, value)
         return self.__classic_return_w_check(result)
 
     def shutdown_rpi(self):
@@ -1932,10 +1928,8 @@ class NiryoRosWrapper:
         :return: status, message
         :rtype: (int, str)
         """
-        req = SetInt()
-        # The request is ignored by the service
-        req.value = 0
-        result = self.__call_service('/niryo_robot_rpi/purge_ros_logs', SetInt, req)
+        # The request data is ignored by the service
+        result = self.__call_service('/niryo_robot_rpi/purge_ros_logs', SetInt, 0)
         return self.__classic_return_w_check(result)
 
     def purge_logs_on_startup(self, value):
@@ -1947,9 +1941,8 @@ class NiryoRosWrapper:
         :return: status, message
         :rtype: (int, str)
         """
-        req = SetInt()
-        req.value = 1 if value is True else 0
-        result = self.__call_service('/niryo_robot_rpi/set_purge_ros_log_on_startup', SetInt, req)
+        value = 1 if value is True else 0
+        result = self.__call_service('/niryo_robot_rpi/set_purge_ros_log_on_startup', SetInt, value)
         return self.__classic_return_w_check(result)
 
     # - Blockly
