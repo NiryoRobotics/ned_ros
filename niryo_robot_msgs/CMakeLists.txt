@@ -17,6 +17,7 @@ add_message_files(
   RobotState.msg
   RPY.msg
   SoftwareVersion.msg
+  CommandJog.msg
 )
 
 add_service_files(
