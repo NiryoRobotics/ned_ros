@@ -4,11 +4,11 @@
 import rospy
 import os
 
-from niryo_robot_serial_number.SerialNumber import SerialNumber
+from niryo_robot_credentials.SerialNumber import SerialNumber
 
 # Message / Service
 from niryo_robot_msgs.msg import CommandStatus
-from niryo_robot_serial_number.srv import GetSerial
+from niryo_robot_credentials.srv import GetSerial
 
 
 class SerialNumberNode:
@@ -42,7 +42,7 @@ class SerialNumberNode:
 
 
 if __name__ == "__main__":
-    rospy.init_node('niryo_robot_serial_number', anonymous=False, log_level=rospy.INFO)
+    rospy.init_node('niryo_robot_credentials', anonymous=False, log_level=rospy.INFO)
     try:
         node = SerialNumberNode()
         rospy.spin()

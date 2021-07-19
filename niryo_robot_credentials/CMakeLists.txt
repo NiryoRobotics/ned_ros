@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(niryo_robot_serial_number)
+project(niryo_robot_credentials)
 
 find_package(catkin REQUIRED COMPONENTS
   rospy
