@@ -28,7 +28,7 @@ static std::unique_ptr<ros::NodeHandle> nh;
 
 TEST(TESTSuite, setLeds)
 {
-    ros::ServiceClient client = nh->serviceClient<niryo_robot_msgs::SetInt>("/niryo_robot/tools/ping_and_set_dxl_tool");
+    ros::ServiceClient client = nh->serviceClient<niryo_robot_msgs::SetInt>("/niryo_robot/ttl_driver/set_dxl_leds");
 
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);
@@ -42,7 +42,7 @@ TEST(TESTSuite, setLeds)
 
 TEST(TESTSuite, sendCustomValue)
 {
-    ros::ServiceClient client = nh->serviceClient<ttl_driver::SendCustomDxlValue>("/niryo_robot/tools/open_gripper");
+    ros::ServiceClient client = nh->serviceClient<ttl_driver::SendCustomDxlValue>("/niryo_robot/ttl_driver/send_custom_dxl_value");
 
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);
@@ -62,7 +62,7 @@ TEST(TESTSuite, sendCustomValue)
 
 TEST(TESTSuite, readCustomValue)
 {
-    ros::ServiceClient client = nh->serviceClient<ttl_driver::ReadCustomDxlValue>("/niryo_robot/tools/close_gripper");
+    ros::ServiceClient client = nh->serviceClient<ttl_driver::ReadCustomDxlValue>("/niryo_robot/ttl_driver/read_custom_dxl_value");
 
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);
