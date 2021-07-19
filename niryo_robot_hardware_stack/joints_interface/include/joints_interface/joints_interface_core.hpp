@@ -54,9 +54,7 @@ class JointsInterfaceCore : common::model::IInterfaceCore
 {
     public:
 
-        JointsInterfaceCore(ros::NodeHandle& nh,
-                            std::shared_ptr<ttl_driver::TtlDriverCore> ttl_driver,
-                            std::shared_ptr<can_driver::CanDriverCore> can_driver);
+        JointsInterfaceCore(ros::NodeHandle& nh, std::shared_ptr<joint_driver::JointDriver> jdriver);
         virtual ~JointsInterfaceCore() override;
 
         virtual bool init(ros::NodeHandle& nh) override;

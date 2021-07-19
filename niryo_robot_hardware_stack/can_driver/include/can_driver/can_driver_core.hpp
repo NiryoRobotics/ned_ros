@@ -57,7 +57,7 @@ class CanDriverCore : public common::model::IDriverCore, public common::model::I
         void clearSingleCommandQueue();
         void clearConveyorCommandQueue();
 
-        void setTrajectoryControllerCommands(const std::vector<std::pair<uint8_t, int32_t> > &cmd);
+        void setTrajectoryControllerCommands(const std::vector<std::pair<uint8_t, uint32_t> > &cmd);
         void addSingleCommandToQueue(const common::model::StepperMotorCmd& cmd);
         void addSingleCommandToQueue(const std::vector<common::model::StepperMotorCmd>& cmd);
 
@@ -74,8 +74,10 @@ class CanDriverCore : public common::model::IDriverCore, public common::model::I
 
         can_driver::StepperArrayMotorHardwareStatus getHwStatus() const;
 
+        //TODO: have to remove this method used in convoyer interface. getStates not work properly in this moment
         std::vector<std::shared_ptr<common::model::StepperMotorState> > getStepperStates() const;
-        common::model::StepperMotorState getStepperState(uint8_t motor_id) const;
+        std::vector<std::shared_ptr<common::model::JointState> > getStates() const override;
+        common::model::JointState getState(uint8_t motor_id) const override;
 
         // IDriverCore interface
         void startControlLoop() override;
@@ -85,6 +87,7 @@ class CanDriverCore : public common::model::IDriverCore, public common::model::I
         bool isConnectionOk() const override;
         int launchMotorsReport() override;
 
+        std::string getTypeDriver() const override;
         niryo_robot_msgs::BusState getBusState() const override;
 
     private:
@@ -124,7 +127,7 @@ class CanDriverCore : public common::model::IDriverCore, public common::model::I
 
         std::unique_ptr<CanDriver> _can_driver;
 
-        std::vector<std::pair<uint8_t, int32_t> > _joint_trajectory_cmd;
+        std::vector<std::pair<uint8_t, uint32_t> > _joint_trajectory_cmd;
         std::queue<common::model::StepperMotorCmd> _stepper_single_cmds;
         std::queue<common::model::StepperMotorCmd> _conveyor_cmds;
 
@@ -174,27 +177,23 @@ CanDriverCore::getCalibrationStatus() const
 }
 
 /**
- * @brief CanDriverCore::getStepperStates
- * @return
- */
-inline
-std::vector<std::shared_ptr<common::model::StepperMotorState> >
-CanDriverCore::getStepperStates() const
-{
-    return _can_driver->getMotorsStates();
-}
-
-/**
  * @brief CanDriverCore::getStepperState
  * @param motor_id
  * @return
  */
 inline
-common::model::StepperMotorState
-CanDriverCore::getStepperState(uint8_t motor_id) const
+common::model::JointState
+CanDriverCore::getState(uint8_t motor_id) const
 {
-    return _can_driver->getMotorState(motor_id);
+    return static_cast<common::model::JointState>(_can_driver->getMotorState(motor_id));
 
+}
+
+inline
+std::string
+CanDriverCore::getTypeDriver() const
+{
+    return "can";
 }
 } // CanDriver
 

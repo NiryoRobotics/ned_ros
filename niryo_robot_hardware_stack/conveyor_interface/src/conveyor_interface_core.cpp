@@ -345,20 +345,23 @@ void ConveyorInterfaceCore::_publishConveyorsFeedback()
     {
         conveyor_interface::ConveyorFeedbackArray msg;
         conveyor_interface::ConveyorFeedback data;
-
+        
         // CC to be checked
         for (auto sState : _can_driver->getStepperStates())
         {
-            if (sState && sState->isConveyor())
+            if (sState->isStepper())
             {
-                auto cState = dynamic_pointer_cast<ConveyorState>(sState);
-                data.conveyor_id = cState->getId();
-                data.running = cState->getState();
-                data.direction = static_cast<int8_t>(cState->getDirection());
-                data.speed = cState->getSpeed();
-                msg.conveyors.push_back(data);
+                if (sState && dynamic_pointer_cast<common::model::StepperMotorState>(sState)->isConveyor())
+                {
+                    auto cState = dynamic_pointer_cast<ConveyorState>(sState);
+                    data.conveyor_id = cState->getId();
+                    data.running = cState->getState();
+                    data.direction = static_cast<int8_t>(cState->getDirection());
+                    data.speed = cState->getSpeed();
+                    msg.conveyors.push_back(data);
 
-                ROS_DEBUG("ConveyorInterfaceCore::_publishConveyorsFeedback - Found a conveyor, publishing data : %s", cState->str().c_str());
+                    ROS_DEBUG("ConveyorInterfaceCore::_publishConveyorsFeedback - Found a conveyor, publishing data : %s", cState->str().c_str());
+                }
             }
         }
         _conveyors_feedback_publisher.publish(msg);

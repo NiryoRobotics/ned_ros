@@ -261,7 +261,7 @@ EStepperCalibrationStatus CalibrationManager::_auto_calibration()
     dynamixel_cmd.addMotorParam(_joint_list.at(4)->getType(), _joint_list.at(4)->getId(), 1);
     dynamixel_cmd.addMotorParam(_joint_list.at(5)->getType(), _joint_list.at(5)->getId(), 1);
 
-    _ttl_driver_core->setSyncCommand(dynamixel_cmd);
+    _ttl_driver_core->setSyncCommand<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum>(dynamixel_cmd);
     sld.sleep();
 
     dynamixel_cmd.reset();
@@ -279,7 +279,7 @@ EStepperCalibrationStatus CalibrationManager::_auto_calibration()
                                 _joint_list.at(5)->getId(),
                                 static_cast<uint32_t>(_joint_list.at(5)->to_motor_pos(0)));
 
-    _ttl_driver_core->setSyncCommand(dynamixel_cmd);
+    _ttl_driver_core->setSyncCommand<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum>(dynamixel_cmd);
     sld.sleep();
 
 
@@ -367,7 +367,7 @@ EStepperCalibrationStatus CalibrationManager::_auto_calibration()
         dynamixel_cmd.addMotorParam(_joint_list.at(4)->getType(), _joint_list.at(4)->getId(), 0);
         dynamixel_cmd.addMotorParam(_joint_list.at(5)->getType(), _joint_list.at(5)->getId(), 0);
 
-        _ttl_driver_core->setSyncCommand(dynamixel_cmd);
+        _ttl_driver_core->setSyncCommand<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum>(dynamixel_cmd);
         sld.sleep();
 
         // 6. Write sensor_offset_steps to file
@@ -388,14 +388,15 @@ EStepperCalibrationStatus CalibrationManager::_auto_calibration()
  */
 bool CalibrationManager::_can_process_manual_calibration(std::string &result_message)
 {
-    auto stepper_motor_states = _can_driver_core->getStepperStates();
+    auto stepper_motor_states = _can_driver_core->getStates();
 
     // 1. Check if motors firmware version is ok
     for (auto const& mState : stepper_motor_states)
     {
         if (mState)
         {
-            std::string firmware_version = mState->getFirmwareVersion();
+            // TODO: do not cast directly StepperMotorState here
+            std::string firmware_version = std::dynamic_pointer_cast<StepperMotorState>(mState)->getFirmwareVersion();
             if (firmware_version.length() == 0)
             {
                 result_message = "Calibration Interface - No firmware version available for motor " +

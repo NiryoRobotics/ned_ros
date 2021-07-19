@@ -129,46 +129,52 @@ void HardwareInterface::initNodes(ros::NodeHandle &nh)
     ROS_DEBUG("HardwareInterface::initNodes - Init Nodes");
     if (!_simulation_mode)
     {
-        if (_ttl_enabled)
-        {
-            ROS_DEBUG("HardwareInterface::initNodes - Start Dynamixel Driver Node");
-            _ttl_driver = std::make_shared<ttl_driver::TtlDriverCore>(nh);
-            ros::Duration(0.25).sleep();
-        }
-        else
-        {
-            ROS_WARN("HardwareInterface::initNodes - DXL communication is disabled for debug purposes");
-        }
+        // if (_ttl_enabled)
+        // {
+        //     ROS_DEBUG("HardwareInterface::initNodes - Start Dynamixel Driver Node");
+        //     _ttl_driver = std::make_shared<ttl_driver::TtlDriverCore>(nh);
+        //     ros::Duration(0.25).sleep();
+        // }
+        // else
+        // {
+        //     ROS_WARN("HardwareInterface::initNodes - DXL communication is disabled for debug purposes");
+        // }
 
-        if (_can_enabled)
-        {
-            ROS_DEBUG("HardwareInterface::initNodes - Start CAN Driver Node");
-            _can_driver = std::make_shared<can_driver::CanDriverCore>(nh);
-            ros::Duration(0.25).sleep();
-        }
-        else
-        {
-            ROS_DEBUG("HardwareInterface::initNodes - CAN communication is disabled for debug purposes");
-        }
+        // if (_can_enabled)
+        // {
+        //     ROS_DEBUG("HardwareInterface::initNodes - Start CAN Driver Node");
+        //     _can_driver = std::make_shared<can_driver::CanDriverCore>(nh);
+        //     ros::Duration(0.25).sleep();
+        // }
+        // else
+        // {
+        //     ROS_DEBUG("HardwareInterface::initNodes - CAN communication is disabled for debug purposes");
+        // }
+        _joint_driver = std::make_shared<joint_driver::JointDriver>(nh);
+        ros::Duration(0.25).sleep();
 
-        if (_can_enabled && _ttl_enabled)
-        {
-            ROS_DEBUG("HardwareInterface::initNodes - Start Joints Interface Node");
-            _joints_interface = std::make_shared<joints_interface::JointsInterfaceCore>(nh, _ttl_driver, _can_driver);
-            ros::Duration(0.25).sleep();
+        // if (_can_enabled && _ttl_enabled)
+        // {
+        ROS_DEBUG("HardwareInterface::initNodes - Start Joints Interface Node");
+        _joints_interface = std::make_shared<joints_interface::JointsInterfaceCore>(nh, _joint_driver);
+        if (_joint_driver->haveCan())
+            _can_driver = _joint_driver->getCanDriverCore();
+        if (_joint_driver->haveTtl())
+            _ttl_driver = _joint_driver->getTtlDriverCore();
+        ros::Duration(0.25).sleep();
 
-            ROS_DEBUG("HardwareInterface::initNodes - Start End Effector Interface Node");
-            _tools_interface = std::make_shared<tools_interface::ToolsInterfaceCore>(nh, _ttl_driver);
-            ros::Duration(0.25).sleep();
+        ROS_DEBUG("HardwareInterface::initNodes - Start End Effector Interface Node");
+        _tools_interface = std::make_shared<tools_interface::ToolsInterfaceCore>(nh, _ttl_driver);
+        ros::Duration(0.25).sleep();
 
-            ROS_DEBUG("HardwareInterface::initNodes - Start Tools Interface Node");
-            _conveyor_interface = std::make_shared<conveyor_interface::ConveyorInterfaceCore>(nh, _can_driver);
-            ros::Duration(0.25).sleep();
-        }
-        else
-        {
-            ROS_WARN("HardwareInterface::initNodes - CAN and DXL communication is disabled. Interfaces will not start");
-        }
+        ROS_DEBUG("HardwareInterface::initNodes - Start Tools Interface Node");
+        _conveyor_interface = std::make_shared<conveyor_interface::ConveyorInterfaceCore>(nh, _can_driver);
+        ros::Duration(0.25).sleep();
+        // }
+        // else
+        // {
+        //     ROS_WARN("HardwareInterface::initNodes - CAN and DXL communication is disabled. Interfaces will not start");
+        // }
 
         ROS_DEBUG("HardwareInterface::initNodes - Start CPU Interface Node");
         _cpu_interface = std::make_shared<cpu_interface::CpuInterfaceCore>(nh);

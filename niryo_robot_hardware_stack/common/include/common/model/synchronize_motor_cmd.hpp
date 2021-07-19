@@ -25,9 +25,11 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <set>
 #include <memory>
 #include <sstream>
+#include <typeinfo>
 
 #include "common/model/abstract_motor_cmd.hpp"
 #include "common/model/dxl_command_type_enum.hpp"
+#include "common/model/stepper_command_type_enum.hpp"
 #include "common/model/motor_type_enum.hpp"
 #include "common/model/joint_state.hpp"
 
@@ -69,6 +71,8 @@ class SynchronizeMotorCmd : public AbstractMotorCmd<T>
         std::set<EMotorType> getMotorTypes() const;
 
         // AbstractMotorCmd interface
+        bool isCmdStepper() const override;
+        bool isCmdDxl() const override;
         void reset() override;
         std::string str() const override;
         void clear() override;
@@ -235,6 +239,28 @@ bool SynchronizeMotorCmd<T, TE>::isValid() const
     }
 
     return true;
+}
+
+/**
+ * @brief SynchronizeMotorCmd::isCmdStepper
+ * @param none
+ * @return
+ */
+template<typename T, typename TE>
+bool SynchronizeMotorCmd<T, TE>::isCmdStepper() const
+{
+    return typeid(T) == typeid(common::model::StepperCommandTypeEnum);
+}
+
+/**
+ * @brief SynchronizeMotorCmd::isCmdDxl
+ * @param none
+ * @return
+ */
+template<typename T, typename TE>
+bool SynchronizeMotorCmd<T, TE>::isCmdDxl() const
+{
+    return typeid(T) == typeid(common::model::DxlCommandTypeEnum);
 }
 
 /**

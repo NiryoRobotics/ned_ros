@@ -27,6 +27,7 @@ find_package(catkin REQUIRED
         sensor_msgs
         ttl_driver
         can_driver
+        joints_driver
         actionlib
         common
 )
@@ -61,6 +62,7 @@ catkin_package(
         niryo_robot_msgs
         ttl_driver
         can_driver
+        joints_driver
         actionlib
         common
 )

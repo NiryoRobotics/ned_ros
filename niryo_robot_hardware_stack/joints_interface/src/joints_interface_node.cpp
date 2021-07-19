@@ -36,18 +36,14 @@ int main(int argc, char **argv)
     spinner.start();
 
 
-    ros::NodeHandle nh_ttl("ttl_driver");
-    ros::NodeHandle nh_can("can_driver");
+    ros::NodeHandle nh_joint("joint_driver");
     
     ros::NodeHandle nh("~");
 
-    auto ttl_driver = std::make_shared<ttl_driver::TtlDriverCore>(nh_ttl);
+    auto joint_driver = std::make_shared<joint_driver::JointDriver>(nh_joint);
     ros::Duration(1).sleep();
 
-    auto can_driver = std::make_shared<can_driver::CanDriverCore>(nh_can);
-    ros::Duration(1).sleep();
-
-    auto joints = std::make_shared<joints_interface::JointsInterfaceCore>(nh, ttl_driver, can_driver);
+    auto joints = std::make_shared<joints_interface::JointsInterfaceCore>(nh, joint_driver);
     ros::waitForShutdown();
 
     ROS_INFO("Joints Interface - Shutdown node");

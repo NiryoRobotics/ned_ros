@@ -33,14 +33,12 @@ namespace joints_interface
  * @param ttl_driver
  * @param can_driver
  */
-JointsInterfaceCore::JointsInterfaceCore(ros::NodeHandle& nh,
-                                         std::shared_ptr<ttl_driver::TtlDriverCore> ttl_driver,
-                                         std::shared_ptr<can_driver::CanDriverCore> can_driver)
+JointsInterfaceCore::JointsInterfaceCore(ros::NodeHandle& nh, std::shared_ptr<joint_driver::JointDriver> jdriver)
 {
     init(nh);
 
     ROS_DEBUG("JointsInterfaceCore::init - Start joint hardware interface");
-    _robot.reset(new JointHardwareInterface(nh, ttl_driver, can_driver));
+    _robot.reset(new JointHardwareInterface(nh, jdriver));
 
     ROS_DEBUG("JointsInterfaceCore::init - Create controller manager");
     _cm.reset(new controller_manager::ControllerManager(_robot.get(), _nh));

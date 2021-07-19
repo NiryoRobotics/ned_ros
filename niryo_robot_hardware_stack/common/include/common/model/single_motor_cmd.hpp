@@ -52,6 +52,8 @@ class SingleMotorCmd : public AbstractMotorCmd<T>
         uint32_t getParam() const;
 
         // AbstractMotorCmd interface
+        bool isCmdStepper() const override;
+        bool isCmdDxl() const override;
         virtual void reset() override;
         virtual void clear() override;
         virtual std::string str() const override;
@@ -135,6 +137,28 @@ void SingleMotorCmd<T, TE>::setParam(uint32_t param)
 // ***********************
 //  AbstractMotorCmd intf
 // ***********************
+
+/**
+ * @brief SingleMotorCmd::isCmdStepper
+ * @param none
+ * @return
+ */
+template<typename T, typename TE>
+bool SingleMotorCmd<T, TE>::isCmdStepper() const
+{
+    return typeid(T) == typeid(common::model::StepperCommandTypeEnum);
+}
+
+/**
+ * @brief SingleMotorCmd::isCmdDxl
+ * @param none
+ * @return
+ */
+template<typename T, typename TE>
+bool SingleMotorCmd<T, TE>::isCmdDxl() const
+{
+    return typeid(T) == typeid(common::model::DxlCommandTypeEnum);
+}
 
 /**
  * @brief SingleMotorCmd::reset

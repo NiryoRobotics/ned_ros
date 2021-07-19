@@ -670,26 +670,26 @@ void TtlDriver::readHwStatus()
 
                     if (_state_map.count(id))
                     {
-                        auto dxlState = _state_map.at(id);
+                        auto State = _state_map.at(id);
 
                         // **************  temperature
                         if (temperature_list.size() > i)
                         {
-                            dxlState->setTemperatureState(static_cast<int>(temperature_list.at(i)));
+                            State->setTemperatureState(static_cast<int>(temperature_list.at(i)));
                         }
 
                         // **********  voltage
                         if (voltage_list.size() > i)
                         {
-                            dxlState->setVoltageState(static_cast<int>(voltage_list.at(i)));
+                            State->setVoltageState(static_cast<int>(voltage_list.at(i)));
                         }
 
                         // **********  error state
                         if (hw_status_list.size() > i)
                         {
-                            dxlState->setHardwareError(static_cast<int>(hw_status_list.at(i)));
+                            State->setHardwareError(static_cast<int>(hw_status_list.at(i)));
                             string hardware_message = driver->interpreteErrorState(hw_status_list.at(i));
-                            dxlState->setHardwareError(hardware_message);
+                            State->setHardwareError(hardware_message);
                         }
                     }
                 }  // for id_list

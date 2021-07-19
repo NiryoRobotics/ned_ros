@@ -368,7 +368,7 @@ int CanDriver::readSingleCommand(StepperMotorCmd cmd)
  * @brief CanDriver::executeJointTrajectoryCmd
  * @param cmd_vec : need to be passed by copy, so that we ensure the data will not change in this method
  */
-void CanDriver::executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, int32_t> > cmd_vec)
+void CanDriver::executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, uint32_t> > cmd_vec)
 {
     for (auto const& cmd : cmd_vec)
     {

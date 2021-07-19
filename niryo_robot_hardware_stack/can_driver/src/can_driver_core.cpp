@@ -519,7 +519,7 @@ void CanDriverCore::clearConveyorCommandQueue()
  * @brief CanDriverCore::setTrajectoryControllerCommands
  * @param cmd
  */
-void CanDriverCore::setTrajectoryControllerCommands(const std::vector<std::pair<uint8_t, int32_t> > &cmd)
+void CanDriverCore::setTrajectoryControllerCommands(const std::vector<std::pair<uint8_t, uint32_t> > &cmd)
 {
     _joint_trajectory_cmd = cmd;
 }
@@ -595,6 +595,31 @@ can_driver::StepperArrayMotorHardwareStatus CanDriverCore::getHwStatus() const
         }
     }
     return hw_state;
+}
+
+/**
+ * @brief CanDriverCore::getStates
+ * @return
+ */
+std::vector<std::shared_ptr<common::model::JointState> >
+CanDriverCore::getStates() const
+{
+    std::vector<std::shared_ptr<common::model::JointState> > jstates;
+    for (auto it = _can_driver->getMotorsStates().begin(); it != _can_driver->getMotorsStates().end(); it++)
+    {
+        jstates.emplace_back(std::make_shared<common::model::JointState>(*it->get()));
+    }
+    return jstates;
+}
+
+/**
+ * @brief CanDriverCore::getStates
+ * @return
+ */
+std::vector<std::shared_ptr<common::model::StepperMotorState> >
+CanDriverCore::getStepperStates() const
+{
+    return _can_driver->getMotorsStates();
 }
 
 /**

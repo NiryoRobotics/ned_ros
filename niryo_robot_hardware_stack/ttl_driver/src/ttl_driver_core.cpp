@@ -269,7 +269,8 @@ int TtlDriverCore::motorCmdReport(uint8_t motor_id, EMotorType motor_type)
         // torque on
         ros::Duration(0.5).sleep();
         ROS_INFO("TtlDriverCore::motorCmdReport - Debug - Send torque on command on dxl %d", motor_id);
-        _ttl_driver->readSingleCommand(SingleMotorCmd<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum>(EDxlCommandType::CMD_TYPE_TORQUE, motor_id, 1));
+        _ttl_driver->readSingleCommand<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum>
+                                (SingleMotorCmd<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum>(EDxlCommandType::CMD_TYPE_TORQUE, motor_id, 1));
         ros::Duration(0.5).sleep();
 
         // set position to old position + 200
@@ -277,7 +278,8 @@ int TtlDriverCore::motorCmdReport(uint8_t motor_id, EMotorType motor_type)
         ROS_INFO("TtlDriverCore::motorCmdReport - Debug - get dxl %d pose: %d ", motor_id, old_position);
         ros::Duration(0.5).sleep();
         ROS_INFO("TtlDriverCore::motorCmdReport - Debug - Send dxl %d pose: %d ", motor_id, old_position + 200);
-        _ttl_driver->readSingleCommand(SingleMotorCmd<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum>(EDxlCommandType::CMD_TYPE_POSITION,
+        _ttl_driver->readSingleCommand<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum>
+                                (SingleMotorCmd<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum>(EDxlCommandType::CMD_TYPE_POSITION,
                                                       motor_id, old_position + 200));
 
         // set position back to old position
@@ -287,7 +289,8 @@ int TtlDriverCore::motorCmdReport(uint8_t motor_id, EMotorType motor_type)
         int rest = static_cast<int>(new_position - old_position);
 
         ROS_INFO("TtlDriverCore - Debug - Send dxl %d pose: %d ", motor_id, old_position);
-        _ttl_driver->readSingleCommand(SingleMotorCmd<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum>(EDxlCommandType::CMD_TYPE_POSITION, motor_id, old_position));
+        _ttl_driver->readSingleCommand<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum>
+                                (SingleMotorCmd<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum>(EDxlCommandType::CMD_TYPE_POSITION, motor_id, old_position));
 
         ros::Duration(2).sleep();
         uint32_t new_position2 = _ttl_driver->getPosition(dynamixel_motor);
@@ -296,7 +299,8 @@ int TtlDriverCore::motorCmdReport(uint8_t motor_id, EMotorType motor_type)
 
         // torque off
         ROS_INFO("TtlDriverCore::motorCmdReport - Debug - Send torque off command on dxl %d", motor_id);
-        _ttl_driver->readSingleCommand(SingleMotorCmd<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum>(EDxlCommandType::CMD_TYPE_TORQUE, motor_id, 0));
+        _ttl_driver->readSingleCommand<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum>
+                                (SingleMotorCmd<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum>(EDxlCommandType::CMD_TYPE_TORQUE, motor_id, 0));
 
         if (abs(rest) < 50 || abs(rest2) < 50)
         {
@@ -547,7 +551,7 @@ void TtlDriverCore::_executeCommand()
 
     if (!_dxl_single_cmds.empty())
     {
-        _ttl_driver->readSingleCommand(_dxl_single_cmds.front());
+        _ttl_driver->readSingleCommand<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum>(_dxl_single_cmds.front());
         _dxl_single_cmds.pop();
         need_sleep = true;
     }
@@ -556,7 +560,7 @@ void TtlDriverCore::_executeCommand()
         // as we use a queue, we don't need a mutex
         if (need_sleep)
             ros::Duration(0.01).sleep();
-        _ttl_driver->readSingleCommand(_dxl_end_effector_cmds.front());
+        _ttl_driver->readSingleCommand<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum>(_dxl_end_effector_cmds.front());
         _dxl_end_effector_cmds.pop();
         need_sleep = true;
     }
@@ -642,52 +646,6 @@ void TtlDriverCore::setTrajectoryControllerCommands(const std::vector<std::pair<
 }
 
 /**
- * @brief TtlDriverCore::setSyncCommand
- * @param cmd
- */
-void TtlDriverCore::setSyncCommand(const SynchronizeMotorCmd<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum> &cmd)
-{
-    if (cmd.isValid())
-    {
-        _dxl_sync_cmds = cmd;
-    }
-    else
-    {
-        ROS_WARN("TtlDriverCore::setSyncCommand : Invalid command %s", cmd.str().c_str());
-    }
-}
-
-/**
- * @brief TtlDriverCore::addSingleCommandToQueue
- * @param cmd
- *
- *  Not very good, nothing prevents the user from providing an end effector command here
- * and vice versa with addEndEffectorCmd. To be changed
- */
-void TtlDriverCore::addSingleCommandToQueue(const common::model::SingleMotorCmd<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum> &cmd)
-{
-    ROS_DEBUG("TtlDriverCore::addSingleCommandToQueue - %s", cmd.str().c_str());
-
-    if (cmd.isValid())
-    {
-        if (_dxl_single_cmds.size() > QUEUE_OVERFLOW)
-            ROS_WARN("TtlDriverCore::addSingleCommandToQueue: Cmd queue overflow ! %lu", _dxl_single_cmds.size());
-        else
-            _dxl_single_cmds.push(cmd);
-    }
-}
-
-/**
- * @brief TtlDriverCore::addSingleCommandToQueue
- * @param cmd
- */
-void TtlDriverCore::addSingleCommandToQueue(const std::vector<common::model::SingleMotorCmd<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum>> &cmd)
-{
-    for (auto const& c : cmd)
-        addSingleCommandToQueue(c);
-}
-
-/**
  * @brief TtlDriverCore::addEndEffectorCommandToQueue
  * @param cmd
  */
@@ -733,7 +691,7 @@ bool TtlDriverCore::setMotorPID(const std::shared_ptr<JointState> &motorState)
             SingleMotorCmd<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum> dxl_cmd_p(EDxlCommandType::CMD_TYPE_P_GAIN, motor_id, dxlState->getPGain());
 
             if (dxl_cmd_p.isValid())
-                addSingleCommandToQueue(dxl_cmd_p);
+                addSingleCommandToQueue<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum>(dxl_cmd_p);
         }
 
         if (dxlState->getIGain() > 0)
@@ -741,7 +699,7 @@ bool TtlDriverCore::setMotorPID(const std::shared_ptr<JointState> &motorState)
             SingleMotorCmd<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum> dxl_cmd_i(EDxlCommandType::CMD_TYPE_I_GAIN, motor_id, dxlState->getIGain());
 
             if (dxl_cmd_i.isValid())
-                addSingleCommandToQueue(dxl_cmd_i);
+                addSingleCommandToQueue<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum>(dxl_cmd_i);
         }
 
         if (dxlState->getDGain() > 0)
@@ -749,7 +707,7 @@ bool TtlDriverCore::setMotorPID(const std::shared_ptr<JointState> &motorState)
             SingleMotorCmd<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum> dxl_cmd_d(EDxlCommandType::CMD_TYPE_D_GAIN, motor_id, dxlState->getDGain());
 
             if (dxl_cmd_d.isValid())
-                addSingleCommandToQueue(dxl_cmd_d);
+                addSingleCommandToQueue<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum>(dxl_cmd_d);
         }
 
         if (dxlState->getFF1Gain() > 0)
@@ -757,7 +715,7 @@ bool TtlDriverCore::setMotorPID(const std::shared_ptr<JointState> &motorState)
             SingleMotorCmd<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum> dxl_cmd_ff1(EDxlCommandType::CMD_TYPE_FF1_GAIN, motor_id, dxlState->getFF1Gain());
 
             if (dxl_cmd_ff1.isValid())
-                addSingleCommandToQueue(dxl_cmd_ff1);
+                addSingleCommandToQueue<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum>(dxl_cmd_ff1);
         }
 
         if (dxlState->getFF2Gain() > 0)
@@ -765,7 +723,7 @@ bool TtlDriverCore::setMotorPID(const std::shared_ptr<JointState> &motorState)
             SingleMotorCmd<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum> dxl_cmd_ff2(EDxlCommandType::CMD_TYPE_FF2_GAIN, motor_id, dxlState->getFF2Gain());
 
             if (dxl_cmd_ff2.isValid())
-                addSingleCommandToQueue(dxl_cmd_ff2);
+                addSingleCommandToQueue<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum>(dxl_cmd_ff2);
         }
     }
     else if (motorState->isStepper())
@@ -781,32 +739,24 @@ bool TtlDriverCore::setMotorPID(const std::shared_ptr<JointState> &motorState)
 // ***************
 
 /**
- * @brief TtlDriverCore::getDxlState
+ * @brief TtlDriverCore::getState
  * @param motor_id
  * @return
  */
-common::model::DxlMotorState TtlDriverCore::getDxlState(uint8_t motor_id) const
+common::model::JointState TtlDriverCore::getState(uint8_t motor_id) const
 {
-    if (!_ttl_driver->getMotorState<common::model::DxlMotorState>(motor_id).isDynamixel())
-        throw std::runtime_error("TtlDriverCore: getDxlState: This id is not reserved for Dxl motor");
+    // Check type of motor type
     return _ttl_driver->getMotorState<common::model::DxlMotorState>(motor_id);
 }
 
 /**
- * @brief TtlDriverCore::getDxlStates
+ * @brief TtlDriverCore::getStates
  * @return
  */
-std::vector<std::shared_ptr<common::model::DxlMotorState> >
-TtlDriverCore::getDxlStates() const
+std::vector<std::shared_ptr<common::model::JointState> >
+TtlDriverCore::getStates() const
 {
-    std::vector<std::shared_ptr<common::model::DxlMotorState> > DxlstateList;
-    std::vector<std::shared_ptr<common::model::JointState> > stateList;
-    for (auto it = stateList.begin(); it != stateList.end(); it++)
-    {
-        if (it->get()->getType() != EMotorType::STEPPER)
-            DxlstateList.push_back(std::dynamic_pointer_cast<common::model::DxlMotorState>(*it));
-    }
-    return DxlstateList;
+    return _ttl_driver->getMotorsStates();
 }
 
 /**
