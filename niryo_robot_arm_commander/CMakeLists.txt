@@ -12,7 +12,6 @@ add_message_files(
   ArmMoveCommand.msg
   PausePlanExecution.msg
   ShiftPose.msg
-  CommandJog.msg
 )
 
 add_service_files(
