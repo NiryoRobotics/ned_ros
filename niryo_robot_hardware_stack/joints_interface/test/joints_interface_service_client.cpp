@@ -25,26 +25,11 @@
 
 static std::unique_ptr<ros::NodeHandle> nh;
 
-TEST(TESTSuite, calibrateMotor)
-{
-    ros::ServiceClient client = nh->serviceClient<niryo_robot_msgs::SetInt>("/niryo_robot/joints_interface/calibrate_motors");
-
-    bool exists(client.waitForExistence(ros::Duration(1)));
-    EXPECT_TRUE(exists);
-
-    niryo_robot_msgs::SetInt srv;
-    srv.request.value = 1;  // AUTO_CALIBRATION;
-    client.call(srv);
-
-    EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
-}
-
-
 TEST(TESTSuite, deactivateLearningMode)
 {
-    ros::ServiceClient client = nh->serviceClient<niryo_robot_msgs::SetBool>("niryo_robot/learning_mode/activate");
+    ros::ServiceClient client = nh->serviceClient<niryo_robot_msgs::SetBool>("/niryo_robot/learning_mode/activate");
 
-    bool exists(client.waitForExistence(ros::Duration(1)));
+    bool exists(client.waitForExistence(ros::Duration(5)));
     EXPECT_TRUE(exists);
 
     niryo_robot_msgs::SetBool srv;
@@ -54,16 +39,28 @@ TEST(TESTSuite, deactivateLearningMode)
     EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
 }
 
-
 TEST(TESTSuite, activateLearningMode)
 {
-    ros::ServiceClient client = nh->serviceClient<niryo_robot_msgs::SetBool>("niryo_robot/learning_mode/activate");
+    ros::ServiceClient client = nh->serviceClient<niryo_robot_msgs::SetBool>("/niryo_robot/learning_mode/activate");
 
-    bool exists(client.waitForExistence(ros::Duration(1)));
+    bool exists(client.waitForExistence(ros::Duration(10)));
     EXPECT_TRUE(exists);
 
     niryo_robot_msgs::SetBool srv;
     srv.request.value = true;
+    client.call(srv);
+
+    EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
+}
+
+TEST(TESTSuite, resetControllerServer)
+{
+    ros::ServiceClient client = nh->serviceClient<niryo_robot_msgs::Trigger>("/niryo_robot/joints_interface/steppers_reset_controller");
+
+    bool exists(client.waitForExistence(ros::Duration(1)));
+    EXPECT_TRUE(exists);
+
+    niryo_robot_msgs::Trigger srv;
     client.call(srv);
 
     EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
@@ -82,14 +79,15 @@ TEST(TESTSuite, requestNewCalibration)
     EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
 }
 
-TEST(TESTSuite, resetControllerServer)
+TEST(TESTSuite, calibrateMotor)
 {
-    ros::ServiceClient client = nh->serviceClient<niryo_robot_msgs::Trigger>("/niryo_robot/joints_interface/steppers_reset_controller");
+    ros::ServiceClient client = nh->serviceClient<niryo_robot_msgs::SetInt>("/niryo_robot/joints_interface/calibrate_motors");
 
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);
 
-    niryo_robot_msgs::Trigger srv;
+    niryo_robot_msgs::SetInt srv;
+    srv.request.value = 1;  // AUTO_CALIBRATION;
     client.call(srv);
 
     EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);

@@ -29,7 +29,8 @@ namespace joints_interface
 
 /**
  * @brief JointsInterfaceCore::JointsInterfaceCore
- * @param nh
+ * @param rootnh
+ * @param robot_hwnh
  * @param ttl_driver
  * @param can_driver
  */
@@ -114,7 +115,7 @@ void JointsInterfaceCore::startServices(ros::NodeHandle& nh)
     _request_new_calibration_server = nh.advertiseService("/niryo_robot/joints_interface/request_new_calibration",
                                                            &JointsInterfaceCore::_callbackRequestNewCalibration, this);
 
-    _activate_learning_mode_server = nh.advertiseService("niryo_robot/learning_mode/activate",
+    _activate_learning_mode_server = nh.advertiseService("/niryo_robot/learning_mode/activate",
                                                           &JointsInterfaceCore::_callbackActivateLearningMode, this);
 
     _reset_controller_server = nh.advertiseService("/niryo_robot/joints_interface/steppers_reset_controller",
@@ -133,7 +134,7 @@ void JointsInterfaceCore::startPublishers(ros::NodeHandle& nh)
 
 /**
  * @brief JointsInterfaceCore::startSubscribers
- * @param nhdxl_1_P_gain
+ * @param nh
  */
 void JointsInterfaceCore::startSubscribers(ros::NodeHandle& nh)
 {
@@ -147,31 +148,31 @@ void JointsInterfaceCore::startSubscribers(ros::NodeHandle& nh)
 
 /**
  * @brief JointsInterfaceCore::activateLearningMode
- * @param learning_mode_on
- * @param resp_status
- * @param resp_message
+ * @param activate
+ * @param ostatus
+ * @param omessage
  */
-void JointsInterfaceCore::activateLearningMode(bool learning_mode_on, int &resp_status, std::string &resp_message)
+void JointsInterfaceCore::activateLearningMode(bool activate, int &ostatus, std::string &omessage)
 {
-    resp_message = " ";
+    omessage.clear();
 
     if (!_robot->isCalibrationInProgress())  // if not in calibration
     {
-        if (_previous_state_learning_mode != learning_mode_on)  // if state different
+        if (_previous_state_learning_mode != activate)  // if state different
         {
-            if (!learning_mode_on)
+            if (!activate)
             {
                 _reset_controller = true;
                 _robot->deactivateLearningMode();
-                resp_message = "Deactivating learning mode";
+                omessage = "Deactivating learning mode";
             }
             else
             {
                 _robot->activateLearningMode();
-                resp_message = "Activating learning mode";
+                omessage = "Activating learning mode";
             }
 
-            _previous_state_learning_mode = learning_mode_on;
+            _previous_state_learning_mode = activate;
             // publish new state
             std_msgs::Bool msg;
             msg.data = _previous_state_learning_mode;
@@ -179,15 +180,15 @@ void JointsInterfaceCore::activateLearningMode(bool learning_mode_on, int &resp_
         }
         else
         {
-            resp_message = (learning_mode_on) ? "Learning mode already activated"
+            omessage = activate ? "Learning mode already activated"
                                               : "Learning mode already deactivating";
         }
-        resp_status = niryo_robot_msgs::CommandStatus::SUCCESS;
+        ostatus = niryo_robot_msgs::CommandStatus::SUCCESS;
     }
     else
     {
-        resp_message = "Joints Interface Core - You can't activate/deactivate learning mode during motors calibration";
-        resp_status = niryo_robot_msgs::CommandStatus::CALIBRATION_NOT_DONE;
+        omessage = "Joints Interface Core - You can't activate/deactivate learning mode during motors calibration";
+        ostatus = niryo_robot_msgs::CommandStatus::CALIBRATION_NOT_DONE;
     }
 }
 
@@ -284,17 +285,8 @@ bool JointsInterfaceCore::_callbackResetController(niryo_robot_msgs::Trigger::Re
 
     res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
     res.message = "Reset done";
-    return true;
-}
 
-/**
- * @brief JointsInterfaceCore::_callbackTrajectoryResult
- * @param msg
- */
-void JointsInterfaceCore::_callbackTrajectoryResult(const control_msgs::FollowJointTrajectoryActionResult &msg)
-{
-    ROS_DEBUG("JointsInterfaceCore::_callbackTrajectoryResult - Received trajectory RESULT");
-    _robot->synchronizeMotors(false);
+    return (niryo_robot_msgs::CommandStatus::SUCCESS == res.status);
 }
 
 /**
@@ -319,12 +311,13 @@ bool JointsInterfaceCore::_callbackCalibrateMotors(niryo_robot_msgs::SetInt::Req
     // we set flag learning_mode_on, but we don't activate from here
     // learning_mode should be activated in comm, AFTER motors have been calibrated
     // --> this fixes an issue where motors will jump back to a previous cmd after being calibrated
-    if (result == niryo_robot_msgs::CommandStatus::SUCCESS)
+    if (niryo_robot_msgs::CommandStatus::SUCCESS == result)
     {
         _previous_state_learning_mode = true;
         _robot->activateLearningMode();
         _enable_control_loop = true;
     }
+
     return true;
 }
 
@@ -341,9 +334,11 @@ bool JointsInterfaceCore::_callbackRequestNewCalibration(niryo_robot_msgs::Trigg
     _previous_state_learning_mode = true;
     _robot->activateLearningMode();
     _robot->setNeedCalibration();
+
     res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
     res.message = "Joints Interface Core - New calibration request has been made, you will be requested to confirm it.";
-    return true;
+
+    return (niryo_robot_msgs::CommandStatus::SUCCESS == res.status);
 }
 
 /**
@@ -361,7 +356,17 @@ bool JointsInterfaceCore::_callbackActivateLearningMode(niryo_robot_msgs::SetBoo
     ROS_DEBUG("JointsInterfaceCore::_callbackActivateLearningMode - activate learning mode");
 
     activateLearningMode(req.value, res.status, res.message);
-    return true;
+    return (niryo_robot_msgs::CommandStatus::SUCCESS == res.status);
+}
+
+/**
+ * @brief JointsInterfaceCore::_callbackTrajectoryResult
+ * @param msg
+ */
+void JointsInterfaceCore::_callbackTrajectoryResult(const control_msgs::FollowJointTrajectoryActionResult &msg)
+{
+    ROS_DEBUG("JointsInterfaceCore::_callbackTrajectoryResult - Received trajectory RESULT");
+    _robot->synchronizeMotors(false);
 }
 
 /**

@@ -364,8 +364,7 @@ bool TtlDriver::ping(uint8_t id)
  */
 int TtlDriver::rebootMotors()
 {
-    int return_value = COMM_SUCCESS;
-    int result = 0;
+    int return_value = niryo_robot_msgs::CommandStatus::FAILURE;
 
     for (auto const &it : _state_map)
     {
@@ -373,8 +372,13 @@ int TtlDriver::rebootMotors()
         ROS_DEBUG("TtlDriver::rebootMotors - Reboot Dxl motor with ID: %d", it.first);
         if (_xdriver_map.count(type))
         {
-            result = _xdriver_map.at(type)->reboot(it.first);
-            if (result != COMM_SUCCESS)
+            int result = _xdriver_map.at(type)->reboot(it.first);
+            if(COMM_SUCCESS == result)
+            {
+                ROS_DEBUG("TtlDriver::rebootMotors - Reboot motor successfull");
+                return_value = niryo_robot_msgs::CommandStatus::SUCCESS;
+            }
+            else
             {
                 ROS_WARN("TtlDriver::rebootMotors - Failed to reboot motor: %d", result);
                 return_value = result;

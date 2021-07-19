@@ -4,6 +4,11 @@
     <arg name="hardware_version" default="ned"/>
 
     <group ns="niryo_robot_hardware_interface" >
+        <rosparam file="$(find ttl_driver)/config/$(arg hardware_version)/bus_config.yaml" command="load" ns="ttl_driver"/>
+        <rosparam file="$(find ttl_driver)/config/$(arg hardware_version)/motors_config.yaml" command="load" ns="ttl_driver"/>
+        <rosparam file="$(find ttl_driver)/config/$(arg hardware_version)/dynamixels_params.yaml" command="load" />
+        <rosparam file="$(find ttl_driver)/config/default.yaml" command="load"  ns="ttl_driver"/>
+
         <node pkg="tools_interface" type="tools_interface_node" name="tools_interface" output="screen">  
             <rosparam file="$(find tools_interface)/config/default.yaml" command="load"/>
             <rosparam file="$(find tools_interface)/config/$(arg hardware_version)/tools_config.yaml" command="load"/>

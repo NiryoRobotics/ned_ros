@@ -63,8 +63,7 @@ class JointsInterfaceCore : common::model::IInterfaceCore
         virtual bool init(ros::NodeHandle& nh) override;
 
         void sendMotorsParams();
-        void activateLearningMode(bool learning_mode_on, int &resp_status, std::string &resp_message);
-        void calibrateJoints();
+        void activateLearningMode(bool activate, int &ostatus, std::string &omessage);
 
         std::string jointIdToJointName(uint8_t id, uint8_t motor_type) const;
 
@@ -82,10 +81,11 @@ class JointsInterfaceCore : common::model::IInterfaceCore
         void rosControlLoop();
 
         bool _callbackResetController(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
-        void _callbackTrajectoryResult(const control_msgs::FollowJointTrajectoryActionResult& msg);
         bool _callbackCalibrateMotors(niryo_robot_msgs::SetInt::Request &req, niryo_robot_msgs::SetInt::Response &res);
         bool _callbackRequestNewCalibration(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
         bool _callbackActivateLearningMode(niryo_robot_msgs::SetBool::Request &req, niryo_robot_msgs::SetBool::Response &res);
+
+        void _callbackTrajectoryResult(const control_msgs::FollowJointTrajectoryActionResult& msg);
 
         void _publishLearningMode();
 

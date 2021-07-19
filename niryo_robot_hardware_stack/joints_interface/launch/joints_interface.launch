@@ -28,7 +28,7 @@
   <rosparam command="load" file="$(find joints_interface)/config/niryo_ned_controllers.yaml" />
 
   <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="log"
-      args="joint_state_controller niryo_robot_follow_joint_trajectory_controller --shutdown-timeout 1"/>
+      args="joint_state_controller niryo_robot_follow_joint_trajectory_controller"/>
 
   <!-- robot state publisher -->
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" output="screen" />  

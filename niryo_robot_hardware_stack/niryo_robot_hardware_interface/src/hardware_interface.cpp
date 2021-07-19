@@ -236,16 +236,28 @@ void HardwareInterface::startSubscribers(ros::NodeHandle& /*nh*/)
 bool HardwareInterface::_callbackStopMotorsReport(niryo_robot_msgs::Trigger::Request &req,
                                                   niryo_robot_msgs::Trigger::Response &res)
 {
+    res.status = niryo_robot_msgs::CommandStatus::FAILURE;
+
     if (!_simulation_mode)
     {
         ROS_WARN("Hardware Interface - Stop Motor Report");
-        _can_driver->activeDebugMode(false);
-        _ttl_driver->activeDebugMode(false);
+
+        if(_can_driver)
+            _can_driver->activeDebugMode(false);
+
+        if(_ttl_driver)
+            _ttl_driver->activeDebugMode(false);
+
         res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
         res.message = "";
-        return true;
     }
-    return true;
+    else
+    {
+        res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
+        res.message = "Simulation mode : fake stop motor report";
+    }
+
+    return (niryo_robot_msgs::CommandStatus::SUCCESS == res.status);
 }
 
 /**
@@ -257,17 +269,28 @@ bool HardwareInterface::_callbackStopMotorsReport(niryo_robot_msgs::Trigger::Req
 bool HardwareInterface::_callbackLaunchMotorsReport(niryo_robot_msgs::Trigger::Request &req,
                                                     niryo_robot_msgs::Trigger::Response &res)
 {
+    res.status = niryo_robot_msgs::CommandStatus::FAILURE;
+
     if (!_simulation_mode)
     {
         ROS_WARN("Hardware Interface - Start Motors Report");
-        _can_driver->activeDebugMode(true);
-        _ttl_driver->activeDebugMode(true);
 
-        int can_status = _can_driver->launchMotorsReport();
-        int ttl_status = _ttl_driver->launchMotorsReport();
+        int can_status = niryo_robot_msgs::CommandStatus::FAILURE;
+        int ttl_status = niryo_robot_msgs::CommandStatus::FAILURE;
 
-        _can_driver->activeDebugMode(false);
-        _ttl_driver->activeDebugMode(false);
+        if(_can_driver)
+        {
+            _can_driver->activeDebugMode(true);
+            can_status = _can_driver->launchMotorsReport();
+            _can_driver->activeDebugMode(false);
+        }
+
+        if(_ttl_driver)
+        {
+            _ttl_driver->activeDebugMode(true);
+            ttl_status = _ttl_driver->launchMotorsReport();
+            _ttl_driver->activeDebugMode(false);
+        }
 
         ROS_WARN("Hardware Interface - Motors report ended");
 
@@ -286,6 +309,12 @@ bool HardwareInterface::_callbackLaunchMotorsReport(niryo_robot_msgs::Trigger::R
             res.message += (ttl_status == niryo_robot_msgs::CommandStatus::SUCCESS) ? "Ok" : "Error";
         }
     }
+    else
+    {
+        res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
+        res.message = "Simulation mode : fake launch motor report";
+    }
+
     return (niryo_robot_msgs::CommandStatus::SUCCESS == res.status);
 }
 
@@ -298,10 +327,14 @@ bool HardwareInterface::_callbackLaunchMotorsReport(niryo_robot_msgs::Trigger::R
 bool HardwareInterface::_callbackRebootMotors(niryo_robot_msgs::Trigger::Request &req,
                                               niryo_robot_msgs::Trigger::Response &res)
 {
+    res.status = niryo_robot_msgs::CommandStatus::FAILURE;
+
     if (!_simulation_mode)
     {
-        res.status = _ttl_driver->rebootMotors();
-        if (COMM_SUCCESS == res.status)
+        if(_ttl_driver)
+            res.status = _ttl_driver->rebootMotors();
+
+        if (niryo_robot_msgs::CommandStatus::SUCCESS == res.status)
         {
             res.message = "Reboot motors done";
 
@@ -317,8 +350,13 @@ bool HardwareInterface::_callbackRebootMotors(niryo_robot_msgs::Trigger::Request
             res.message = "Reboot motors Problems";
         }
     }
+    else
+    {
+        res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
+        res.message = "Simulation mode : fake reboot motor service";
+    }
 
-    return true;
+    return (niryo_robot_msgs::CommandStatus::SUCCESS == res.status);
 }
 
 /**
@@ -346,17 +384,17 @@ void HardwareInterface::_publishHardwareStatus()
 
         if (!_simulation_mode)
         {
-            if (_ttl_enabled)
+            if (_ttl_driver)
             {
                 ttl_motor_state = _ttl_driver->getHwStatus();
                 ttl_bus_state = _ttl_driver->getBusState();
             }
-            if (_can_enabled)
+            if (_can_driver)
             {
                 can_motor_state = _can_driver->getHwStatus();
                 can_bus_state = _can_driver->getBusState();
             }
-            if (_can_enabled && _ttl_enabled)
+            if (_joints_interface)
             {
                 _joints_interface->getCalibrationState(need_calibration, calibration_in_progress);
             }
@@ -408,12 +446,16 @@ void HardwareInterface::_publishHardwareStatus()
             hw_errors_msg.emplace_back("");
             motor_types.emplace_back("Niryo Stepper");
             std::string joint_name = "";
-            if (!_simulation_mode)
+            if (_joints_interface)
+            {
                 joint_name = _joints_interface->jointIdToJointName(hw_status.motor_identity.motor_id,
                                                                    hw_status.motor_identity.motor_type);
-            else
+            }
+            else if (_fake_interface)
+            {
                 joint_name = _fake_interface->jointIdToJointName(hw_status.motor_identity.motor_id,
                                                                  hw_status.motor_identity.motor_type);
+            }
 
             joint_name = joint_name == "" ? ("Stepper " + std::to_string(hw_status.motor_identity.motor_id))
                                           : joint_name;
@@ -452,12 +494,12 @@ void HardwareInterface::_publishHardwareStatus()
             }
 
             std::string joint_name = "";
-            if (!_simulation_mode)
+            if (_joints_interface)
             {
                 joint_name = _joints_interface->jointIdToJointName(hw_status.motor_identity.motor_id,
                                                                    hw_status.motor_identity.motor_type);
             }
-            else
+            else if (_fake_interface)
             {
                 joint_name = _fake_interface->jointIdToJointName(hw_status.motor_identity.motor_id,
                                                                  hw_status.motor_identity.motor_type);
@@ -496,11 +538,11 @@ void HardwareInterface::_publishSoftwareVersion()
 
         if (!_simulation_mode)
         {
-            if (_can_enabled)
+            if (_can_driver)
             {
                 stepper_motor_state = _can_driver->getHwStatus();
             }
-            if (_can_enabled && _ttl_enabled)
+            if (_joints_interface)
             {
                 joints_state = _joints_interface->getJointsState();
             }

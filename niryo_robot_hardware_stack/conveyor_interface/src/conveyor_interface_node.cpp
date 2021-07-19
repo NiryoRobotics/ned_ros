@@ -42,7 +42,6 @@ int main(int argc, char **argv)
     auto conveyor_interface = std::make_shared<conveyor_interface::ConveyorInterfaceCore>(nh, can_driver);
     ros::Duration(0.25).sleep();
 
-    ros::spin();
-
+    ros::waitForShutdown();
     return 0;
 }

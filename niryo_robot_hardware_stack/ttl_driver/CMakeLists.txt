@@ -151,7 +151,7 @@ if(CATKIN_ENABLE_TESTING)
       )
     endif()
 
-    add_rostest_gtest(${PROJECT_NAME}_services_tests
+    add_rostest_gtest(${PROJECT_NAME}_integration_tests
        test/ttl_driver_service_client.test
        test/ttl_driver_service_client.cpp
     )

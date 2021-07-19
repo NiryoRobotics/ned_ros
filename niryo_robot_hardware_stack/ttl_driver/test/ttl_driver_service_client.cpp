@@ -17,8 +17,9 @@
     along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
-#include <ros/ros.h>
 #include <ros/service_client.h>
+
+#include <ros/ros.h>
 #include <gtest/gtest.h>
 
 #include "ttl_driver/ttl_driver_core.hpp"
@@ -27,7 +28,7 @@ static std::unique_ptr<ros::NodeHandle> nh;
 
 TEST(TESTSuite, setLeds)
 {
-    ros::ServiceClient client = nh->serviceClient<niryo_robot_msgs::SetInt>("niryo_robot/tools/ping_and_set_dxl_tool");
+    ros::ServiceClient client = nh->serviceClient<niryo_robot_msgs::SetInt>("/niryo_robot/tools/ping_and_set_dxl_tool");
 
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);
@@ -41,7 +42,7 @@ TEST(TESTSuite, setLeds)
 
 TEST(TESTSuite, sendCustomValue)
 {
-    ros::ServiceClient client = nh->serviceClient<ttl_driver::SendCustomDxlValue>("niryo_robot/tools/open_gripper");
+    ros::ServiceClient client = nh->serviceClient<ttl_driver::SendCustomDxlValue>("/niryo_robot/tools/open_gripper");
 
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);
@@ -61,7 +62,7 @@ TEST(TESTSuite, sendCustomValue)
 
 TEST(TESTSuite, readCustomValue)
 {
-    ros::ServiceClient client = nh->serviceClient<ttl_driver::ReadCustomDxlValue>("niryo_robot/tools/close_gripper");
+    ros::ServiceClient client = nh->serviceClient<ttl_driver::ReadCustomDxlValue>("/niryo_robot/tools/close_gripper");
 
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);
