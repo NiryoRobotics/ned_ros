@@ -11,32 +11,32 @@ from niryo_robot_msgs.msg import CommandStatus
 from niryo_robot_credentials.srv import GetSerial
 
 
-class SerialNumberNode:
+class CredentialsNode:
     def __init__(self):
-        rospy.logdebug("Serial Number Node - Entering in Init")
+        rospy.logdebug("Credentials Node - Entering in Init")
 
         serial_path = os.path.expanduser(rospy.get_param("~serial_path"))
         self.__serial_number = SerialNumber(serial_path=serial_path)
 
         # Service
-        rospy.Service('~get', GetSerial,
+        rospy.Service('~get_serial', GetSerial,
                       self.__callback_get_serial)
 
         # Set a bool to mentioned this node is initialized
         rospy.set_param('~initialized', True)
 
-        rospy.logdebug("Serial Number Node - Node Started")
+        rospy.logdebug("Credentials Node - Node Started")
 
     def __callback_get_serial(self, _req):
         try:
             serial_number = self.__serial_number.read_serial()
         except OSError:
-            rospy.logerr("Serial Number Node - Unable to read serial")
+            rospy.logerr("Credentials Node - Unable to read serial")
             return CommandStatus.SERIAL_FILE_ERROR, "File error"
-        rospy.logdebug("Serial Number Node - Serial Read")
+        rospy.logdebug("Credentials Node - Serial Read")
 
         if not serial_number:
-            rospy.logerr("Serial Number Node - Serial file is empty")
+            rospy.logerr("Credentials Node - Serial file is empty")
             return CommandStatus.SERIAL_UNKNOWN_ERROR, "No serial"
         return CommandStatus.SUCCESS, serial_number
 
@@ -44,7 +44,7 @@ class SerialNumberNode:
 if __name__ == "__main__":
     rospy.init_node('niryo_robot_credentials', anonymous=False, log_level=rospy.INFO)
     try:
-        node = SerialNumberNode()
+        node = CredentialsNode()
         rospy.spin()
     except rospy.ROSInterruptException:
         pass
