@@ -9,7 +9,8 @@ find_package(catkin REQUIRED COMPONENTS
 add_service_files(
   DIRECTORY srv
   FILES
-  GetSerial.srv
+  GetCredential.srv
+  SetCredential.srv
 )
 
 catkin_python_setup()

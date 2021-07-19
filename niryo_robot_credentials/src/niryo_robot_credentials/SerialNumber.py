@@ -11,6 +11,7 @@ class SerialNumber:
         try:
             f = open(self.__serial_path, 'r')
             content = f.read().rstrip()
+            f.close()
         except IOError:
             content = None
 
