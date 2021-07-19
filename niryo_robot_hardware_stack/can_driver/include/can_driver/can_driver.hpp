@@ -129,8 +129,6 @@ private:
         double getCurrentTimeout() const;
 
     private:
-        ros::NodeHandle _nh;
-
         std::unique_ptr<mcp_can_rpi::MCP_CAN> mcp_can;
 
         std::mutex _stepper_timeout_mutex;

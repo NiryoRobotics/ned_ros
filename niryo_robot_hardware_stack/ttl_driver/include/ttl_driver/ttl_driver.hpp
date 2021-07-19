@@ -122,8 +122,6 @@ class TtlDriver : public common::model::IDriver
         int _singleWrite(int (AbstractMotorDriver::*singleWriteFunction)(uint8_t id, uint32_t), common::model::EMotorType dxl_type,
                               const common::model::SingleMotorCmd& cmd);
     private:
-        ros::NodeHandle _nh;
-
         std::shared_ptr<dynamixel::PortHandler> _dxlPortHandler;
         std::shared_ptr<dynamixel::PacketHandler> _dxlPacketHandler;
 
@@ -146,7 +144,6 @@ class TtlDriver : public common::model::IDriver
         int _led_state;
 
         static constexpr int MAX_HW_FAILURE = 25;
-
 };
 
 // inline getters

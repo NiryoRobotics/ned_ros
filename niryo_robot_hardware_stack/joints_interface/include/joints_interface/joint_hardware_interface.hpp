@@ -43,51 +43,48 @@ namespace joints_interface
 
 class JointHardwareInterface : public hardware_interface::RobotHW
 {
+    public:
+        JointHardwareInterface(ros::NodeHandle& rootnh,
+                               ros::NodeHandle& robot_hwnh,
+                               std::shared_ptr<ttl_driver::TtlDriverCore> ttl_driver,
+                               std::shared_ptr<can_driver::CanDriverCore> can_driver);
 
-public:
-    JointHardwareInterface(ros::NodeHandle& rootnh, 
-                           ros::NodeHandle& robot_hwnh,
-                           std::shared_ptr<ttl_driver::TtlDriverCore> ttl_driver,
-                           std::shared_ptr<can_driver::CanDriverCore> can_driver);
+        void sendInitMotorsParams();
+        int calibrateJoints(int mode, std::string &result_message);
+        void deactivateLearningMode();
+        void setNeedCalibration();
+        void activateLearningMode();
+        void synchronizeMotors(bool synchronize);
 
-    void sendInitMotorsParams();
-    int calibrateJoints(int mode, std::string &result_message);
-    void deactivateLearningMode();
-    void setNeedCalibration();
-    void activateLearningMode();
-    void synchronizeMotors(bool synchronize);
+        void setCommandToCurrentPosition();
 
-    void setCommandToCurrentPosition();
+        bool needCalibration() const;
+        bool isCalibrationInProgress() const;
 
-    bool needCalibration() const;
-    bool isCalibrationInProgress() const;
+        std::string jointIdToJointName(uint8_t id, common::model::EMotorType motor_type) const;
+        const std::vector<std::shared_ptr<common::model::JointState> >& getJointsState() const;
 
-    std::string jointIdToJointName(uint8_t id, common::model::EMotorType motor_type) const;
-    const std::vector<std::shared_ptr<common::model::JointState> >& getJointsState() const;
+        // RobotHW interface
+    public:
+        bool init(ros::NodeHandle& rootnh, ros::NodeHandle &robot_hwnh) override;
 
-    // RobotHW interface
-public:
-    bool init(ros::NodeHandle& rootnh, ros::NodeHandle &robot_hwnh) override;
+        virtual void read(const ros::Time &/*time*/, const ros::Duration &/*period*/) override;
+        virtual void write(const ros::Time &/*time*/, const ros::Duration &/*period*/) override;
 
-    virtual void read(const ros::Time &/*time*/, const ros::Duration &/*period*/) override;
-    virtual void write(const ros::Time &/*time*/, const ros::Duration &/*period*/) override;
+    private:
+        hardware_interface::JointStateInterface _joint_state_interface;
+        hardware_interface::PositionJointInterface _joint_position_interface;
 
-private:
-    ros::NodeHandle _nh;
+        std::shared_ptr<ttl_driver::TtlDriverCore> _ttl_driver_core;
+        std::shared_ptr<can_driver::CanDriverCore> _can_driver_core;
+        std::unique_ptr<CalibrationManager> _calibration_manager;
 
-    hardware_interface::JointStateInterface _joint_state_interface;
-    hardware_interface::PositionJointInterface _joint_position_interface;
+        std::map<uint8_t, std::string> _map_stepper_name;
+        std::map<uint8_t, std::string> _map_dxl_name;
 
-    std::shared_ptr<ttl_driver::TtlDriverCore> _ttl_driver_core;
-    std::shared_ptr<can_driver::CanDriverCore> _can_driver_core;
-    std::unique_ptr<CalibrationManager> _calibration_manager;
+        std::vector<std::shared_ptr<common::model::JointState> > _joint_list;
 
-    std::map<uint8_t, std::string> _map_stepper_name;
-    std::map<uint8_t, std::string> _map_dxl_name;
-
-    std::vector<std::shared_ptr<common::model::JointState> > _joint_list;
-
-    bool _learning_mode{true};
+        bool _learning_mode{true};
 };
 
 /**

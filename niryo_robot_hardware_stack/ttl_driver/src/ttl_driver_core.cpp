@@ -121,16 +121,16 @@ void TtlDriverCore::initParameters(ros::NodeHandle& nh)
  * @brief TtlDriverCore::startServices
  * @param nh
  */
-void TtlDriverCore::startServices(ros::NodeHandle &/*nh*/)
+void TtlDriverCore::startServices(ros::NodeHandle& nh)
 {
     // advertise services
-    _activate_leds_server = _nh.advertiseService("/niryo_robot/ttl_driver/set_dxl_leds",
+    _activate_leds_server = nh.advertiseService("/niryo_robot/ttl_driver/set_dxl_leds",
                                                  &TtlDriverCore::_callbackActivateLeds, this);
 
-    _custom_cmd_server = _nh.advertiseService("/niryo_robot/ttl_driver/send_custom_dxl_value",
+    _custom_cmd_server = nh.advertiseService("/niryo_robot/ttl_driver/send_custom_dxl_value",
                                               &TtlDriverCore::_callbackSendCustomDxlValue, this);
 
-    _custom_cmd_getter = _nh.advertiseService("/niryo_robot/ttl_driver/read_custom_dxl_value",
+    _custom_cmd_getter = nh.advertiseService("/niryo_robot/ttl_driver/read_custom_dxl_value",
                                               &TtlDriverCore::_callbackReadCustomDxlValue, this);
 }
 

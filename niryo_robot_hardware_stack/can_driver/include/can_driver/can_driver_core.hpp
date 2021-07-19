@@ -100,7 +100,6 @@ class CanDriverCore : public common::model::IDriverCore, public common::model::I
         int motorCmdReport(uint8_t motor_id);
 
     private:
-        ros::NodeHandle _nh;
         bool _control_loop_flag{false};
         bool _debug_flag{false};
 

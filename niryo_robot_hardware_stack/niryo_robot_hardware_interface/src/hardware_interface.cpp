@@ -188,15 +188,15 @@ void HardwareInterface::initNodes(ros::NodeHandle &nh)
  * @brief HardwareInterface::startServices
  * @param nh
  */
-void HardwareInterface::startServices(ros::NodeHandle &nh)
+void HardwareInterface::startServices(ros::NodeHandle& nh)
 {
-    _motors_report_service = _nh.advertiseService("/niryo_robot_hardware_interface/launch_motors_report",
+    _motors_report_service = nh.advertiseService("/niryo_robot_hardware_interface/launch_motors_report",
                                                   &HardwareInterface::_callbackLaunchMotorsReport, this);
 
-    _stop_motors_report_service = _nh.advertiseService("/niryo_robot_hardware_interface/stop_motors_report",
+    _stop_motors_report_service = nh.advertiseService("/niryo_robot_hardware_interface/stop_motors_report",
                                                        &HardwareInterface::_callbackStopMotorsReport, this);
 
-    _reboot_motors_service = _nh.advertiseService("/niryo_robot_hardware_interface/reboot_motors",
+    _reboot_motors_service = nh.advertiseService("/niryo_robot_hardware_interface/reboot_motors",
                                                   &HardwareInterface::_callbackRebootMotors, this);
 }
 
@@ -205,11 +205,11 @@ void HardwareInterface::startServices(ros::NodeHandle &nh)
  */
 void HardwareInterface::startPublishers(ros::NodeHandle &nh)
 {
-    _hardware_status_publisher = _nh.advertise<niryo_robot_msgs::HardwareStatus>(
+    _hardware_status_publisher = nh.advertise<niryo_robot_msgs::HardwareStatus>(
                                             "/niryo_robot_hardware_interface/hardware_status", 10);
     _publish_hw_status_thread = std::thread(&HardwareInterface::_publishHardwareStatus, this);
 
-    _software_version_publisher = _nh.advertise<niryo_robot_msgs::SoftwareVersion>(
+    _software_version_publisher = nh.advertise<niryo_robot_msgs::SoftwareVersion>(
                                             "/niryo_robot_hardware_interface/software_version", 10);
     _publish_software_version_thread = std::thread(&HardwareInterface::_publishSoftwareVersion, this);
 }
@@ -218,7 +218,7 @@ void HardwareInterface::startPublishers(ros::NodeHandle &nh)
  * @brief HardwareInterface::startSubscribers
  * @param nh
  */
-void HardwareInterface::startSubscribers(ros::NodeHandle &nh)
+void HardwareInterface::startSubscribers(ros::NodeHandle& /*nh*/)
 {
     ROS_DEBUG("HardwareInterface::startSubscribers - no subscribers to start");
 }

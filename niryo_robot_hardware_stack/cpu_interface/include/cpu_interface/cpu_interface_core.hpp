@@ -56,7 +56,6 @@ class CpuInterfaceCore : public common::model::IInterfaceCore
         void _readHardwareDataLoop();
 
     private:
-        ros::NodeHandle _nh;
         std::thread _read_hardware_data_thread;
 
         int _cpu_temperature{0};

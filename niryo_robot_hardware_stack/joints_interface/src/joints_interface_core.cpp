@@ -50,7 +50,7 @@ JointsInterfaceCore::JointsInterfaceCore(ros::NodeHandle& rootnh,
     _control_loop_thread = std::thread(&JointsInterfaceCore::rosControlLoop, this);
 
     ROS_INFO("JointsInterfaceCore::init - Started");
-    _nh.setParam("/niryo_robot_joint_interface/initialized", true);
+    rootnh.setParam("/niryo_robot_joint_interface/initialized", true);
 }
 
 /**
@@ -108,16 +108,16 @@ void JointsInterfaceCore::initParameters(ros::NodeHandle& nh)
  */
 void JointsInterfaceCore::startServices(ros::NodeHandle& nh)
 {
-    _calibrate_motors_server = _nh.advertiseService("/niryo_robot/joints_interface/calibrate_motors",
+    _calibrate_motors_server = nh.advertiseService("/niryo_robot/joints_interface/calibrate_motors",
                                                     &JointsInterfaceCore::_callbackCalibrateMotors, this);
 
-    _request_new_calibration_server = _nh.advertiseService("/niryo_robot/joints_interface/request_new_calibration",
+    _request_new_calibration_server = nh.advertiseService("/niryo_robot/joints_interface/request_new_calibration",
                                                            &JointsInterfaceCore::_callbackRequestNewCalibration, this);
 
-    _activate_learning_mode_server = _nh.advertiseService("niryo_robot/learning_mode/activate",
+    _activate_learning_mode_server = nh.advertiseService("niryo_robot/learning_mode/activate",
                                                           &JointsInterfaceCore::_callbackActivateLearningMode, this);
 
-    _reset_controller_server = _nh.advertiseService("/niryo_robot/joints_interface/steppers_reset_controller",
+    _reset_controller_server = nh.advertiseService("/niryo_robot/joints_interface/steppers_reset_controller",
                                                     &JointsInterfaceCore::_callbackResetController, this);
 }
 
@@ -127,7 +127,7 @@ void JointsInterfaceCore::startServices(ros::NodeHandle& nh)
  */
 void JointsInterfaceCore::startPublishers(ros::NodeHandle& nh)
 {
-    _learning_mode_publisher = _nh.advertise<std_msgs::Bool>("niryo_robot/learning_mode/state", 10);
+    _learning_mode_publisher = nh.advertise<std_msgs::Bool>("niryo_robot/learning_mode/state", 10);
     _publish_learning_mode_thread = std::thread(&JointsInterfaceCore::_publishLearningMode, this);
 }
 
@@ -137,7 +137,7 @@ void JointsInterfaceCore::startPublishers(ros::NodeHandle& nh)
  */
 void JointsInterfaceCore::startSubscribers(ros::NodeHandle& nh)
 {
-    _trajectory_result_subscriber = _nh.subscribe("/niryo_robot_follow_joint_trajectory_controller/follow_joint_trajectory/result",
+    _trajectory_result_subscriber = nh.subscribe("/niryo_robot_follow_joint_trajectory_controller/follow_joint_trajectory/result",
                                                   10, &JointsInterfaceCore::_callbackTrajectoryResult, this);
 }
 

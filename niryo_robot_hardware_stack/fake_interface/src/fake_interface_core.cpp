@@ -31,14 +31,14 @@
 // CC replace with fake driver ??
 namespace fake_interface
 {
-FakeInterfaceCore::FakeInterfaceCore(ros::NodeHandle& nh)
+FakeInterfaceCore::FakeInterfaceCore(ros::NodeHandle& rootnh)
 {
     ROS_DEBUG("Fake Interface Core - ctor");
 
-    init(nh);
+    init(rootnh);
 
     ROS_INFO("Fake Hardware Interface - Started ");
-    ros::NodeHandle nh_joints(nh, "joints_interface");
+    ros::NodeHandle nh_joints(rootnh, "joints_interface");
     _robot = std::make_unique<FakeJointHardwareInterface>(nh_joints);
 
     _learning_mode = true;
@@ -95,7 +95,7 @@ bool FakeInterfaceCore::init(ros::NodeHandle &nh)
 /**
  * @brief FakeInterfaceCore::initParams
  */
-void FakeInterfaceCore::initParameters(ros::NodeHandle &nh)
+void FakeInterfaceCore::initParameters(ros::NodeHandle& nh)
 {
     nh.getParam("gazebo", _gazebo);
     nh.getParam("simu_gripper", _simu_gripper);
@@ -128,37 +128,37 @@ void FakeInterfaceCore::initParameters(ros::NodeHandle &nh)
  */
 void FakeInterfaceCore::startServices(ros::NodeHandle& nh)
 {
-    _calibrate_motors_server = _nh.advertiseService("/niryo_robot/joints_interface/calibrate_motors",
+    _calibrate_motors_server = nh.advertiseService("/niryo_robot/joints_interface/calibrate_motors",
                                                     &FakeInterfaceCore::_callbackCalibrateMotors, this);
 
-    _request_new_calibration_server = _nh.advertiseService("/niryo_robot/joints_interface/request_new_calibration",
+    _request_new_calibration_server = nh.advertiseService("/niryo_robot/joints_interface/request_new_calibration",
                                                            &FakeInterfaceCore::_callbackRequestNewCalibration, this);
 
-    _activate_learning_mode_server = _nh.advertiseService("/niryo_robot/learning_mode/activate",
+    _activate_learning_mode_server = nh.advertiseService("/niryo_robot/learning_mode/activate",
                                                           &FakeInterfaceCore::_callbackActivateLearningMode, this);
 
-    _ping_and_set_dxl_tool_server = _nh.advertiseService("/niryo_robot/tools/ping_and_set_dxl_tool",
+    _ping_and_set_dxl_tool_server = nh.advertiseService("/niryo_robot/tools/ping_and_set_dxl_tool",
                                                          &FakeInterfaceCore::_callbackPingAndSetDxlTool, this);
 
-    _open_gripper_server = _nh.advertiseService("/niryo_robot/tools/open_gripper",
+    _open_gripper_server = nh.advertiseService("/niryo_robot/tools/open_gripper",
                                                 &FakeInterfaceCore::_callbackOpenGripper, this);
 
-    _close_gripper_server = _nh.advertiseService("/niryo_robot/tools/close_gripper",
+    _close_gripper_server = nh.advertiseService("/niryo_robot/tools/close_gripper",
                                                  &FakeInterfaceCore::_callbackCloseGripper, this);
 
-    _pull_air_vacuum_pump_server = _nh.advertiseService("/niryo_robot/tools/pull_air_vacuum_pump",
+    _pull_air_vacuum_pump_server = nh.advertiseService("/niryo_robot/tools/pull_air_vacuum_pump",
                                                         &FakeInterfaceCore::_callbackPullAirVacuumPump, this);
 
-    _push_air_vacuum_pump_server = _nh.advertiseService("/niryo_robot/tools/push_air_vacuum_pump",
+    _push_air_vacuum_pump_server = nh.advertiseService("/niryo_robot/tools/push_air_vacuum_pump",
                                                         &FakeInterfaceCore::_callbackPushAirVacuumPump, this);
 
-    _ping_and_set_stepper_server = _nh.advertiseService("/niryo_robot/conveyor/ping_and_set_conveyor",
+    _ping_and_set_stepper_server = nh.advertiseService("/niryo_robot/conveyor/ping_and_set_conveyor",
                                                         &FakeInterfaceCore::_callbackPingAndSetConveyor, this);
 
-    _control_conveyor_server = _nh.advertiseService("/niryo_robot/conveyor/control_conveyor",
+    _control_conveyor_server = nh.advertiseService("/niryo_robot/conveyor/control_conveyor",
                                                     &FakeInterfaceCore::_callbackControlConveyor, this);
 
-    _reset_controller_server = _nh.advertiseService("/niryo_robot/joints_interface/steppers_reset_controller",
+    _reset_controller_server = nh.advertiseService("/niryo_robot/joints_interface/steppers_reset_controller",
                                                     &FakeInterfaceCore::_callbackResetController, this);
 }
 
@@ -168,9 +168,9 @@ void FakeInterfaceCore::startServices(ros::NodeHandle& nh)
  */
 void FakeInterfaceCore::startPublishers(ros::NodeHandle &nh)
 {
-    _current_tools_id_publisher = _nh.advertise<std_msgs::Int32>("/niryo_robot_hardware/tools/current_id", 1, true);
+    _current_tools_id_publisher = nh.advertise<std_msgs::Int32>("/niryo_robot_hardware/tools/current_id", 1, true);
 
-    _learning_mode_publisher = _nh.advertise<std_msgs::Bool>("/niryo_robot/learning_mode/state", 10);
+    _learning_mode_publisher = nh.advertise<std_msgs::Bool>("/niryo_robot/learning_mode/state", 10);
     _publish_learning_mode_thread = std::thread(&FakeInterfaceCore::_publishLearningMode, this);
 }
 
@@ -179,7 +179,7 @@ void FakeInterfaceCore::startPublishers(ros::NodeHandle &nh)
  */
 void FakeInterfaceCore::startSubscribers(ros::NodeHandle& nh)
 {
-    _trajectory_result_subscriber = _nh.subscribe(
+    _trajectory_result_subscriber = nh.subscribe(
                 "/niryo_robot_follow_joint_trajectory_controller/follow_joint_trajectory/result",
                 10, &FakeInterfaceCore::_callbackTrajectoryResult, this);
 }
