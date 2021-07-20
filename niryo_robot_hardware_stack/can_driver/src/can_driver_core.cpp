@@ -605,21 +605,11 @@ std::vector<std::shared_ptr<common::model::JointState> >
 CanDriverCore::getStates() const
 {
     std::vector<std::shared_ptr<common::model::JointState> > jstates;
-    for (auto it = _can_driver->getMotorsStates().begin(); it != _can_driver->getMotorsStates().end(); it++)
+    for (size_t i = 0; i < _can_driver->getMotorsStates().size(); i++)
     {
-        jstates.emplace_back(std::make_shared<common::model::JointState>(*it->get()));
+        jstates.push_back(_can_driver->getMotorsStates().at(i));
     }
     return jstates;
-}
-
-/**
- * @brief CanDriverCore::getStates
- * @return
- */
-std::vector<std::shared_ptr<common::model::StepperMotorState> >
-CanDriverCore::getStepperStates() const
-{
-    return _can_driver->getMotorsStates();
 }
 
 /**

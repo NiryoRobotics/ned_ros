@@ -74,8 +74,6 @@ class CanDriverCore : public common::model::IDriverCore, public common::model::I
 
         can_driver::StepperArrayMotorHardwareStatus getHwStatus() const;
 
-        //TODO: have to remove this method used in convoyer interface. getStates not work properly in this moment
-        std::vector<std::shared_ptr<common::model::StepperMotorState> > getStepperStates() const;
         std::vector<std::shared_ptr<common::model::JointState> > getStates() const override;
         common::model::JointState getState(uint8_t motor_id) const override;
 
