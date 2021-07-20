@@ -45,14 +45,19 @@ class CredentialsNode:
         return CommandStatus.SUCCESS, serial_number
 
     def __callback_get_api_key(self, _req):
+        rospy.logdebug("Credentials Node - Api Key Read")
         api_key = self.__api_key.read_key()
+
         if api_key is None:
+            rospy.logerr("Credentials Node - Unable to open the api key file")
             return CommandStatus.CREDENTIALS_FILE_ERROR, "Couldn't access the file"
         return CommandStatus.SUCCESS, api_key
 
     def __callback_set_api_key(self, req):
+        rospy.logdebug("Credentials Node - Api Key Write")
         success = self.__api_key.write_key(req.credential)
         if not success:
+            rospy.logerr("Credentials Node - Unable to open the api key file")
             return CommandStatus.CREDENTIALS_FILE_ERROR, "Couldn't access the file"
         return CommandStatus.SUCCESS, 'The API key has been successfully set'
 
