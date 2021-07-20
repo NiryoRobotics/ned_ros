@@ -82,8 +82,8 @@ bool TtlDriver::init()
     _nh.getParam("/niryo_robot_hardware_interface/joints_driver/ttl_bus/uart_device_name", _device_name);
     _nh.getParam("/niryo_robot_hardware_interface/joints_driver/ttl_bus/baudrate", _uart_baudrate);
 
-    _dxlPortHandler.reset(dynamixel::PortHandler::getPortHandler(_device_name.c_str()));
-    _dxlPacketHandler.reset(dynamixel::PacketHandler::getPacketHandler(DXL_BUS_PROTOCOL_VERSION));
+    _PortHandler.reset(dynamixel::PortHandler::getPortHandler(_device_name.c_str()));
+    _PacketHandler.reset(dynamixel::PacketHandler::getPacketHandler(DXL_BUS_PROTOCOL_VERSION));
 
     ROS_DEBUG("TtlDriver::init - Dxl : set port name (%s), baudrate(%d)", _device_name.c_str(), _uart_baudrate);
 
@@ -121,7 +121,7 @@ bool TtlDriver::init()
     motor_string_list.pop_back();  // remove last ","
     motor_string_list += "]";
 
-    ROS_INFO("TtlDriver::init - Dxl motor list: %s ", motor_string_list.c_str());
+    ROS_INFO("TtlDriver::init - motor list: %s ", motor_string_list.c_str());
 
     // put everything in maps
     for (size_t i = 0; i < idList.size(); i++)
@@ -138,7 +138,7 @@ bool TtlDriver::init()
         else
         {
             if (EMotorType::UNKNOWN != type)
-                addMotor(type, id);
+                addMotor(type, id, EType::JOINT);
             else
                 ROS_ERROR("TtlDriver::init - unknown type %s. Please check your configuration file "
                           "(niryo_robot_hardware_stack/ttl_driver/config/motors_config.yaml)",
@@ -158,7 +158,7 @@ bool TtlDriver::init()
         ROS_DEBUG("TtlDriver::init - Id map: %s => %s", MotorTypeEnum(id.first).toString().c_str(), listOfId.c_str());
     }
 
-    for (auto const &d : _xdriver_map)
+    for (auto const &d : _driver_map)
     {
         ROS_DEBUG("TtlDriver::init - Driver map: %s => %s", MotorTypeEnum(d.first).toString().c_str(), d.second->str().c_str());
     }
@@ -172,18 +172,22 @@ bool TtlDriver::init()
  * @param id
  * @param isTool
  */
-void TtlDriver::addMotor(EMotorType type, uint8_t id, bool isTool)
+void TtlDriver::addMotor(EMotorType type, uint8_t id, EType type_used)
 {
     ROS_DEBUG("TtlDriver::addMotor - Add motor id: %d", id);
 
     // add id to _state_map
     if (type == EMotorType::STEPPER)
-        _state_map.insert(make_pair(id, std::make_shared<StepperMotorState>(id, false)));
-    else {
-        if (isTool)
-            _state_map.insert(make_pair(id, std::make_shared<ToolState>("auto", type, id)));
+        if (type_used == EType::CONVOYER)
+            _state_map.insert(make_pair(id, std::make_shared<StepperMotorState>(id, true)));
         else
-            _state_map.insert(make_pair(id, std::make_shared<DxlMotorState>(type, id, isTool)));
+            _state_map.insert(make_pair(id, std::make_shared<StepperMotorState>(id)));
+    else if (type != EMotorType::UNKNOWN)
+    {
+        if (type_used == EType::TOOL)
+            _state_map.insert(make_pair(id, std::make_shared<DxlMotorState>(type, id, true)));
+        else
+            _state_map.insert(make_pair(id, std::make_shared<ToolState>("auto", type, id)));
     }
 
     // if not already instanciated
@@ -197,25 +201,24 @@ void TtlDriver::addMotor(EMotorType type, uint8_t id, bool isTool)
     }
 
     // if not already instanciated
-    if (0 == _xdriver_map.count(type))
+    if (0 == _driver_map.count(type))
     {
         switch (type)
         {
             case EMotorType::STEPPER:
-                _xdriver_map.insert(make_pair(type,
-                      std::make_shared<StepperDriver >(_dxlPortHandler, _dxlPacketHandler)));
+                _driver_map.insert(make_pair(type, std::make_shared<XDriver<StepperReg> >(_PortHandler, _PacketHandler)));
             break;
             case EMotorType::XL430:
-                _xdriver_map.insert(make_pair(type, std::make_shared<XDriver<XL430Reg> >(_dxlPortHandler, _dxlPacketHandler)));
+                _driver_map.insert(make_pair(type, std::make_shared<XDriver<XL430Reg> >(_PortHandler, _PacketHandler)));
             break;
             case EMotorType::XC430:
-                _xdriver_map.insert(make_pair(type, std::make_shared<XDriver<XC430Reg> >(_dxlPortHandler, _dxlPacketHandler)));
+                _driver_map.insert(make_pair(type, std::make_shared<XDriver<XC430Reg> >(_PortHandler, _PacketHandler)));
             break;
             case EMotorType::XL320:
-                _xdriver_map.insert(make_pair(type, std::make_shared<XDriver<XL320Reg> >(_dxlPortHandler, _dxlPacketHandler)));
+                _driver_map.insert(make_pair(type, std::make_shared<XDriver<XL320Reg> >(_PortHandler, _PacketHandler)));
             break;
             case EMotorType::XL330:
-                _xdriver_map.insert(make_pair(type, std::make_shared<XDriver<XL330Reg> >(_dxlPortHandler, _dxlPacketHandler)));
+                _driver_map.insert(make_pair(type, std::make_shared<XDriver<XL330Reg> >(_PortHandler, _PacketHandler)));
             break;
             default:
                 ROS_ERROR("TtlDriver - Unable to instanciate driver, unknown type");
@@ -265,13 +268,14 @@ int TtlDriver::setupCommunication()
 
     ROS_DEBUG("TtlDriver::setupCommunication - initializing connection...");
 
-    if (_dxlPortHandler)
+    // Dxl bus setup
+    if (_PortHandler)
     {
         _debug_error_message.clear();
 
         // setup half-duplex direction GPIO
         // see schema http:// support.robotis.com/en/product/actuator/dynamixel_x/xl-series_main.htm
-        if (!_dxlPortHandler->setupGpio())
+        if (!_PortHandler->setupGpio())
         {
             ROS_ERROR("TtlDriver::setupCommunication - Failed to setup direction GPIO pin for Dynamixel half-duplex serial");
             _debug_error_message = "TtlDriver -  Failed to setup direction GPIO pin for Dynamixel half-duplex serial";
@@ -279,7 +283,7 @@ int TtlDriver::setupCommunication()
         }
 
         // Open port
-        if (!_dxlPortHandler->openPort())
+        if (!_PortHandler->openPort())
         {
             ROS_ERROR("TtlDriver::setupCommunication - Failed to open Uart port for Dynamixel bus");
             _debug_error_message = "TtlDriver - Failed to open Uart port for Dynamixel bus";
@@ -287,7 +291,7 @@ int TtlDriver::setupCommunication()
         }
 
         // Set baudrate
-        if (!_dxlPortHandler->setBaudRate(_uart_baudrate))
+        if (!_PortHandler->setBaudRate(_uart_baudrate))
         {
             ROS_ERROR("TtlDriver::setupCommunication - Failed to set baudrate for Dynamixel bus");
             _debug_error_message = "TtlDriver - Failed to set baudrate for Dynamixel bus";
@@ -301,7 +305,7 @@ int TtlDriver::setupCommunication()
     else
         ROS_ERROR("TtlDriver::setupCommunication - Invalid port handler");
 
-
+    // TODO: set up for stepper bus
     return ret;
 }
 
@@ -340,7 +344,7 @@ int TtlDriver::scanAndCheck()
         }
         else
         {
-            _debug_error_message = "Dynamixel(s):";
+            _debug_error_message = "Motor(s):";
             for (auto const &id : _removed_motor_id_list)
             {
                 _debug_error_message += " " + to_string(id);
@@ -350,8 +354,8 @@ int TtlDriver::scanAndCheck()
     }
     else
     {
-        _debug_error_message = "TtlDriver - Failed to scan motors, Dynamixel bus is too busy. Will retry...";
-        ROS_WARN_THROTTLE(1, "TtlDriver::scanAndCheck - Failed to scan motors, dxl bus is too busy");
+        _debug_error_message = "TtlDriver - Failed to scan motors, physical bus is too busy. Will retry...";
+        ROS_WARN_THROTTLE(1, "TtlDriver::scanAndCheck - Failed to scan motors, physical bus is too busy");
     }
 
     return result;
@@ -368,8 +372,8 @@ bool TtlDriver::ping(uint8_t id)
 {
     int result = false;
 
-    auto it = _xdriver_map.begin();
-    if (it != _xdriver_map.end() && it->second)
+    auto it = _driver_map.begin();
+    if (it != _driver_map.end() && it->second)
     {
         result = (COMM_SUCCESS == it->second->ping(id));
     }
@@ -392,9 +396,9 @@ int TtlDriver::rebootMotors()
     {
         EMotorType type = it.second->getType();
         ROS_DEBUG("TtlDriver::rebootMotors - Reboot Dxl motor with ID: %d", it.first);
-        if (_xdriver_map.count(type))
+        if (_driver_map.count(type))
         {
-            result = _xdriver_map.at(type)->reboot(it.first);
+            result = _driver_map.at(type)->reboot(it.first);
             if (result != COMM_SUCCESS)
             {
                 ROS_WARN("TtlDriver::rebootMotors - Failed to reboot motor: %d", result);
@@ -418,21 +422,21 @@ int TtlDriver::rebootMotor(uint8_t motor_id)
     if (_state_map.count(motor_id) && _state_map.at(motor_id))
     {
         EMotorType type = _state_map.at(motor_id)->getType();
-        ROS_DEBUG("TtlDriver::rebootMotors - Reboot Dxl motor with ID: %d", motor_id);
-        if (_xdriver_map.count(type))
+        ROS_DEBUG("TtlDriver::rebootMotors - Reboot motor with ID: %d", motor_id);
+        if (_driver_map.count(type))
         {
-            return_value = _xdriver_map.at(type)->reboot(motor_id);
+            return_value = _driver_map.at(type)->reboot(motor_id);
             if (COMM_SUCCESS == return_value)
             {
                 ros::Time start_time = ros::Time::now();
                 uint32_t tmp = 0;
-                int wait_result =_xdriver_map.at(type)->readTemperature(motor_id, &tmp);
+                int wait_result =_driver_map.at(type)->readTemperature(motor_id, &tmp);
                 while(COMM_SUCCESS != wait_result || !tmp)
                 {
                     if ((ros::Time::now() - start_time).toSec() > 1)
                         break;
                     ros::Duration(0.1).sleep();
-                    wait_result =_xdriver_map.at(type)->readTemperature(motor_id, &tmp);
+                    wait_result =_driver_map.at(type)->readTemperature(motor_id, &tmp);
                 }
             }
             ROS_WARN_COND(COMM_SUCCESS != return_value,
@@ -456,62 +460,30 @@ int TtlDriver::rebootMotor(uint8_t motor_id)
 uint32_t TtlDriver::getPosition(JointState &motor_state)
 {
     uint32_t result = 0;
-    if (motor_state.isDynamixel())
+    EMotorType motor_type = motor_state.getType();
+    if (_driver_map.count(motor_type) && _driver_map.at(motor_type))
     {
-        EMotorType dxl_type = motor_state.getType();
-        if (_xdriver_map.count(dxl_type) && _xdriver_map.at(dxl_type))
+        for (_hw_fail_counter_read = 0; _hw_fail_counter_read < MAX_HW_FAILURE; ++_hw_fail_counter_read)
         {
-            for (_hw_fail_counter_read = 0; _hw_fail_counter_read < MAX_HW_FAILURE; ++_hw_fail_counter_read)
+            if (COMM_SUCCESS == _driver_map.at(motor_type)->readPosition(motor_state.getId(), &result))
             {
-                if (COMM_SUCCESS == _xdriver_map.at(dxl_type)->readPosition(motor_state.getId(), &result))
-                {
-                    _hw_fail_counter_read = 0;
-                    break;
-                }
-            }
-
-            if (0 < _hw_fail_counter_read)
-            {
-                ROS_ERROR_THROTTLE(1, "TtlDriver::getPosition - Dxl connection problem - Failed to read from Dxl bus");
-                _debug_error_message = "TtlDriver - Connection problem with Dynamixel Bus.";
                 _hw_fail_counter_read = 0;
-                _is_connection_ok = false;
+                break;
             }
         }
-        else
+
+        if (0 < _hw_fail_counter_read)
         {
-            ROS_ERROR_THROTTLE(1, "TtlDriver::getPosition - Driver not found for requested motor id");
-            _debug_error_message = "TtlDriver::getPosition - Driver not found for requested motor id";
+            ROS_ERROR_THROTTLE(1, "TtlDriver::getPosition - motor connection problem - Failed to read from bus");
+            _debug_error_message = "TtlDriver - Connection problem with Bus.";
+            _hw_fail_counter_read = 0;
+            _is_connection_ok = false;
         }
     }
-    if (motor_state.isStepper())
+    else
     {
-        // Get position with stepper motors
-        EMotorType stepper_type = motor_state.getType();
-        if (_xdriver_map.count(stepper_type) && _xdriver_map.at(stepper_type))
-        {
-            for (_hw_fail_counter_read = 0; _hw_fail_counter_read < MAX_HW_FAILURE; ++_hw_fail_counter_read)
-            {
-                if (COMM_SUCCESS == _xdriver_map.at(stepper_type)->readPosition(motor_state.getId(), &result))
-                {
-                    _hw_fail_counter_read = 0;
-                    break;
-                }
-            }
-
-            if (0 < _hw_fail_counter_read)
-            {
-                ROS_ERROR_THROTTLE(1, "TtlDriver::getPosition - Stepper connection problem - Failed to read from stepper bus");
-                _debug_error_message = "TtlDriver - Connection problem with Stepper Bus.";
-                _hw_fail_counter_read = 0;
-                _is_connection_ok = false;
-            }
-        }
-        else
-        {
-            ROS_ERROR_THROTTLE(1, "TtlDriver::getPosition - Driver not found for requested motor id");
-            _debug_error_message = "TtlDriver::getPosition - Driver not found for requested motor id";
-        }
+        ROS_ERROR_THROTTLE(1, "TtlDriver::getPosition - Driver not found for requested motor id");
+        _debug_error_message = "TtlDriver::getPosition - Driver not found for requested motor id";
     }
     return result;
 }
@@ -526,7 +498,7 @@ void TtlDriver::readPositionStatus()
         unsigned int hw_errors_increment = 0;
 
         // syncread from all drivers for all motors
-        for (auto const& it : _xdriver_map)
+        for (auto const& it : _driver_map)
         {
             EMotorType type = it.first;
             shared_ptr<AbstractMotorDriver> driver = it.second;
@@ -577,11 +549,11 @@ void TtlDriver::readPositionStatus()
 
         if (_hw_fail_counter_read > MAX_HW_FAILURE)
         {
-            ROS_ERROR_THROTTLE(1, "TtlDriver::readPositionStatus - Dxl connection problem - "
-                                  "Failed to read from Dxl bus");
+            ROS_ERROR_THROTTLE(1, "TtlDriver::readPositionStatus - motor connection problem - "
+                                  "Failed to read from bus");
             _hw_fail_counter_read = 0;
             _is_connection_ok = false;
-            _debug_error_message = "TtlDriver - Connection problem with Dynamixel Bus.";
+            _debug_error_message = "TtlDriver - Connection problem with physical Bus.";
         }
     }
     else
@@ -601,7 +573,7 @@ void TtlDriver::readHwStatus()
         unsigned int hw_errors_increment = 0;
 
         // syncread from all drivers for all motors
-        for (auto const& it : _xdriver_map)
+        for (auto const& it : _driver_map)
         {
             EMotorType type = it.first;
             shared_ptr<AbstractMotorDriver> driver = it.second;
@@ -705,11 +677,11 @@ void TtlDriver::readHwStatus()
         // if too much errors, disconnect
         if (_hw_fail_counter_read > MAX_HW_FAILURE )
         {
-            ROS_ERROR_THROTTLE(1, "TtlDriver::readHwStatus - Dxl connection problem - Failed to read from Dxl bus");
+            ROS_ERROR_THROTTLE(1, "TtlDriver::readHwStatus - motor connection problem - Failed to read from physical bus");
             _hw_fail_counter_read = 0;
 
             _is_connection_ok = false;
-            _debug_error_message = "TtlDriver - Connection problem with Dynamixel Bus.";
+            _debug_error_message = "TtlDriver - Connection problem with physical Bus.";
         }
     }
     else
@@ -731,8 +703,8 @@ int TtlDriver::getAllIdsOnBus(vector<uint8_t> &id_list)
     int result = COMM_RX_FAIL;
 
     // 1. Get all ids from dxl bus. We can use any driver for that
-    auto it = _xdriver_map.begin();
-    if (it != _xdriver_map.end() && it->second)
+    auto it = _driver_map.begin();
+    if (it != _driver_map.end() && it->second)
     {
         result = it->second->scan(id_list);
 
@@ -748,12 +720,12 @@ int TtlDriver::getAllIdsOnBus(vector<uint8_t> &id_list)
         {
             if (COMM_RX_TIMEOUT != result)
             {  // -3001
-                _debug_error_message = "TtlDriver - No Dynamixel motor found. "
+                _debug_error_message = "TtlDriver - No motor found. "
                                        "Make sure that motors are correctly connected and powered on.";
             }
             else
             {  // -3002 or other
-                _debug_error_message = "TtlDriver - Failed to scan Dynamixel bus.";
+                _debug_error_message = "TtlDriver - Failed to scan bus.";
             }
             ROS_WARN_THROTTLE(1, "TtlDriver::getAllIdsOnDxlBus - Broadcast ping failed, "
                               "result : %d (-3001: timeout, -3002: corrupted packet)",
@@ -776,16 +748,16 @@ int TtlDriver::getAllIdsOnBus(vector<uint8_t> &id_list)
  */
 int TtlDriver::setLeds(int led, EMotorType type)
 {
-    int ret = niryo_robot_msgs::CommandStatus::DXL_WRITE_ERROR;
+    int ret = niryo_robot_msgs::CommandStatus::TTL_WRITE_ERROR;
     _led_state = led;
 
     // get list of motors of the given type
     vector<uint8_t> id_list;
-    if (_ids_map.count(type) && _xdriver_map.count(type))
+    if (_ids_map.count(type) && _driver_map.count(type))
     {
         id_list = _ids_map.at(type);
 
-        auto driver = _xdriver_map.at(type);
+        auto driver = _driver_map.at(type);
 
         // sync write led state
         vector<uint32_t> command_led_id(id_list.size(), static_cast<uint32_t>(led));
@@ -826,16 +798,16 @@ int TtlDriver::sendCustomCommand(EMotorType motor_type, uint8_t id,
               static_cast<int>(motor_type), static_cast<int>(id), value,
               reg_address, byte_number);
 
-    if (_xdriver_map.count(motor_type) && _xdriver_map.at(motor_type))
+    if (_driver_map.count(motor_type) && _driver_map.at(motor_type))
     {
-        result = _xdriver_map.at(motor_type)->write(static_cast<uint8_t>(reg_address),
+        result = _driver_map.at(motor_type)->write(static_cast<uint8_t>(reg_address),
                                                     static_cast<uint8_t>(byte_number),
                                                     id,
                                                     static_cast<uint32_t>(value));
         if (result != COMM_SUCCESS)
         {
             ROS_WARN("TtlDriver::sendCustomCommand - Failed to write custom command: %d", result);
-            result = niryo_robot_msgs::CommandStatus::DXL_WRITE_ERROR;     //Todo: change DXL_WRITE_ERROR -> WRITE_ERROR
+            result = niryo_robot_msgs::CommandStatus::TTL_WRITE_ERROR;     //Todo: change TTL_WRITE_ERROR -> WRITE_ERROR
         }
     }
     else
@@ -865,10 +837,10 @@ int TtlDriver::readCustomCommand(EMotorType motor_type, uint8_t id,
               static_cast<int>(motor_type), static_cast<int>(id),
               static_cast<int>(reg_address), byte_number);
 
-    if (_xdriver_map.count(motor_type) && _xdriver_map.at(motor_type))
+    if (_driver_map.count(motor_type) && _driver_map.at(motor_type))
     {
         uint32_t data = 0;
-        result = _xdriver_map.at(motor_type)->read(static_cast<uint8_t>(reg_address),
+        result = _driver_map.at(motor_type)->read(static_cast<uint8_t>(reg_address),
                                                    static_cast<uint8_t>(byte_number),
                                                    id,
                                                    &data);
@@ -877,7 +849,7 @@ int TtlDriver::readCustomCommand(EMotorType motor_type, uint8_t id,
         if (result != COMM_SUCCESS)
         {
             ROS_WARN("TtlDriver::readCustomCommand - Failed to read custom command: %d", result);
-            result = niryo_robot_msgs::CommandStatus::DXL_READ_ERROR;  //Todo: change DXL_READ_ERROR -> READ_ERROR
+            result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
         }
     }
     else
@@ -929,7 +901,7 @@ std::vector<std::shared_ptr<JointState> > TtlDriver::getMotorsStates() const
  */
 void TtlDriver::executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, uint32_t> > cmd_vec)
 {
-    for (auto const& it : _xdriver_map)
+    for (auto const& it : _driver_map)
     {
         // build list of ids and params for this motor
         std::vector<uint8_t> ids;

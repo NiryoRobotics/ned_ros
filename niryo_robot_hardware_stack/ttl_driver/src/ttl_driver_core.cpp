@@ -586,7 +586,7 @@ void TtlDriverCore::_executeCommand()
  */
 int TtlDriverCore::setEndEffector(EMotorType type, uint8_t motor_id)
 {
-    int result = niryo_robot_msgs::CommandStatus::DXL_READ_ERROR;
+    int result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
 
     lock_guard<mutex> lck(_control_loop_mutex);
 
@@ -594,7 +594,7 @@ int TtlDriverCore::setEndEffector(EMotorType type, uint8_t motor_id)
     if (_ttl_driver->ping(motor_id))
     {
         // add dynamixel as a new tool
-        _ttl_driver->addMotor(type, motor_id, true);
+        _ttl_driver->addMotor(type, motor_id, TtlDriver::EType::TOOL);
         result = niryo_robot_msgs::CommandStatus::SUCCESS;
     }
     else

@@ -32,6 +32,12 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 
 namespace ttl_driver
 {
+
+/**
+ * Parameters for Stepper
+ * TODO: add paramters for stepper
+*/
+
 /**
  * @brief The StepperDriver class
  */

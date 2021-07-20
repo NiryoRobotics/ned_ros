@@ -47,6 +47,9 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 namespace ttl_driver
 {
 
+/**
+ * Parameters for DXL
+*/
 constexpr float DXL_BUS_PROTOCOL_VERSION = 2.0;
 constexpr int DXL_FAIL_OPEN_PORT         = -4500;
 
@@ -64,12 +67,19 @@ constexpr int DXL_WRONG_TYPE             = -52;
 class TtlDriver : public common::model::IDriver
 {
     public:
+        enum class EType
+        {
+            TOOL,
+            CONVOYER,
+            JOINT,
+        };
+    public:
         TtlDriver();
         virtual ~TtlDriver() override;
 
         // commands
         void addMotor(common::model::EMotorType type,
-                      uint8_t id, bool isTool = false);
+                      uint8_t id, EType type_used);
         
         template<typename Type, typename TypeEnum>
         int readSynchronizeCommand(common::model::SynchronizeMotorCmd<Type, TypeEnum> cmd);
@@ -112,7 +122,6 @@ class TtlDriver : public common::model::IDriver
         size_t getNbMotors() const override;
         void getBusState(bool& connection_state, std::vector<uint8_t>& motor_id, std::string& debug_msg) const override;
         std::string getErrorMessage() const override;
-
     private:
         bool init() override;
         bool hasMotors() override;
@@ -131,8 +140,8 @@ class TtlDriver : public common::model::IDriver
     private:
         ros::NodeHandle _nh;
 
-        std::shared_ptr<dynamixel::PortHandler> _dxlPortHandler;
-        std::shared_ptr<dynamixel::PacketHandler> _dxlPacketHandler;
+        std::shared_ptr<dynamixel::PortHandler> _PortHandler;
+        std::shared_ptr<dynamixel::PacketHandler> _PacketHandler;
 
         std::string _device_name;
         int _uart_baudrate;
@@ -142,7 +151,7 @@ class TtlDriver : public common::model::IDriver
 
         std::map<uint8_t, std::shared_ptr<common::model::JointState> > _state_map;
         std::map<common::model::EMotorType, std::vector<uint8_t> > _ids_map;
-        std::map<common::model::EMotorType, std::shared_ptr<AbstractMotorDriver> > _xdriver_map;
+        std::map<common::model::EMotorType, std::shared_ptr<AbstractMotorDriver> > _driver_map;
 
         // for hardware control
         bool _is_connection_ok;
@@ -309,7 +318,7 @@ int TtlDriver::_syncWrite(int (AbstractMotorDriver::*syncWriteFunction)(const st
     {
         ROS_DEBUG_THROTTLE(0.5, "TtlDriver::_syncWrite: try to sync write (counter %d)", counter);
 
-        for (auto const& it : _xdriver_map)
+        for (auto const& it : _driver_map)
         {
             if (it.second && typesToProcess.count(it.first) != 0)
             {
@@ -434,9 +443,9 @@ int TtlDriver::_singleWrite(int (AbstractMotorDriver::*singleWriteFunction)(uint
 {
     int result = COMM_TX_ERROR;
 
-    if (_xdriver_map.count(motor_type) != 0 && _xdriver_map.at(motor_type))
+    if (_driver_map.count(motor_type) != 0 && _driver_map.at(motor_type))
     {
-        result = (_xdriver_map.at(motor_type).get()->*singleWriteFunction)(cmd.getId(), cmd.getParam());
+        result = (_driver_map.at(motor_type).get()->*singleWriteFunction)(cmd.getId(), cmd.getParam());
     }
     else
     {
