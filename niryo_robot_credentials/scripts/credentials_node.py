@@ -18,7 +18,7 @@ class CredentialsNode:
 
         serial_number_file_path = os.path.expanduser(rospy.get_param("~serial_number_file_path"))
         api_key_file_path = os.path.expanduser(rospy.get_param('~api_key_file_path'))
-        self.__serial_number = SerialNumber(serial_path=serial_number_file_path)
+        self.__serial_number = SerialNumber(serial_number_file_path=serial_number_file_path)
         self.__api_key = ApiKey(api_key_file_path=api_key_file_path)
 
         # Service
@@ -32,16 +32,16 @@ class CredentialsNode:
         rospy.logdebug("Credentials Node - Node Started")
 
     def __callback_get_serial(self, _req):
-        try:
-            serial_number = self.__serial_number.read_serial()
-        except OSError:
-            rospy.logerr("Credentials Node - Unable to read serial")
-            return CommandStatus.CREDENTIALS_FILE_ERROR, "File error"
         rospy.logdebug("Credentials Node - Serial Read")
+        serial_number = self.__serial_number.read_serial()
 
-        if not serial_number:
+        if serial_number == '':
             rospy.logerr("Credentials Node - Serial file is empty")
             return CommandStatus.CREDENTIALS_UNKNOWN_ERROR, "No serial"
+        elif serial_number is None:
+            rospy.logerr("Credentials Node - Unable to open the serial file")
+            return CommandStatus.CREDENTIALS_FILE_ERROR, "No serial"
+
         return CommandStatus.SUCCESS, serial_number
 
     def __callback_get_api_key(self, _req):
@@ -60,6 +60,7 @@ class CredentialsNode:
             rospy.logerr("Credentials Node - Unable to open the api key file")
             return CommandStatus.CREDENTIALS_FILE_ERROR, "Couldn't access the file"
         return CommandStatus.SUCCESS, 'The API key has been successfully set'
+
 
 if __name__ == "__main__":
     rospy.init_node('niryo_robot_credentials', anonymous=False, log_level=rospy.INFO)
