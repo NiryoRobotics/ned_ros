@@ -6,9 +6,11 @@
 
     <arg name="iot_enabled" default="false"/>
     <arg name="debug" default="false"/>
+    <arg name="ttl_enabled" default="true"/>
+    <arg name="can_enabled" default="true"/>
     <arg name="hardware_version" default="ned"/>
     <arg name="rpi_model" value="4"/>
-    <arg name="conf_location" value="$(env HOME)/.config/niryo"/>
+    <arg name="conf_location" default="$(env HOME)/.config/niryo/version/version.txt"/>
 
     <!-- Load URDF -->
     <param name="robot_description"
@@ -19,8 +21,7 @@
     <!-- PARAMS -->
     <group ns="niryo_robot">
         <group ns="info">
-            <param name="image_version" type="string"
-                textfile="$(arg conf_location)/version/version.txt"/>
+            <param name="image_version" type="string" textfile="$(arg conf_location)"/>
         </group>
 
         <group ns="robot_state">
@@ -33,6 +34,8 @@
     <include file="$(find niryo_robot_bringup)/launch/niryo_robot_base_common.launch.xml">
         <arg name="log_level" value="$(arg log_level)" />
         <arg name="simulation_mode" value="false"/>
+        <arg name="can_enabled" value="$(arg can_enabled)"/>
+        <arg name="ttl_enabled" value="$(arg ttl_enabled)"/>
         <arg name="debug" value="$(arg debug)"/>
     </include>
 

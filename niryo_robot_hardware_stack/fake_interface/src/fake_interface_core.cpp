@@ -31,15 +31,15 @@
 // CC replace with fake driver ??
 namespace fake_interface
 {
-FakeInterfaceCore::FakeInterfaceCore(ros::NodeHandle& rootnh)
+FakeInterfaceCore::FakeInterfaceCore(ros::NodeHandle& rootnh, 
+                                     ros::NodeHandle& robot_hwnh)
 {
     ROS_DEBUG("Fake Interface Core - ctor");
 
     init(rootnh);
 
     ROS_INFO("Fake Hardware Interface - Started ");
-    ros::NodeHandle nh_joints(rootnh, "joints_interface");
-    _robot = std::make_unique<FakeJointHardwareInterface>(nh_joints);
+    _robot = std::make_unique<FakeJointHardwareInterface>(robot_hwnh);
 
     _learning_mode = true;
 
@@ -100,25 +100,25 @@ void FakeInterfaceCore::initParameters(ros::NodeHandle& nh)
     nh.getParam("gazebo", _gazebo);
     nh.getParam("simu_gripper", _simu_gripper);
 
-    ROS_DEBUG("FakeInterfaceCore::initParameters - gazebo ? %s", _gazebo ? "yes" : "no");
-    ROS_DEBUG("FakeInterfaceCore::initParameters - simu_gripper ? %s", _simu_gripper ? "yes" : "no");
-
     nh.getParam("publish_hw_status_frequency", _publish_hw_status_frequency);
     nh.getParam("publish_software_version_frequency", _publish_software_version_frequency);
+    
+    // joints params
+    nh.getParam("ros_control_loop_frequency", _ros_control_frequency);
+    nh.getParam("publish_learning_mode_frequency", _publish_learning_mode_frequency);
+    
+    // global params
+    nh.getParam("/niryo_robot/info/ros_version", _ros_niryo_robot_version);
+    
+    ROS_DEBUG("FakeInterfaceCore::initParameters - gazebo ? %s", _gazebo ? "yes" : "no");
+    ROS_DEBUG("FakeInterfaceCore::initParameters - simu_gripper ? %s", _simu_gripper ? "yes" : "no");
 
     ROS_DEBUG("FakeInterfaceCore::initParameters - Publish_hw_status_frequency : %f", _publish_hw_status_frequency);
     ROS_DEBUG("FakeInterfaceCore::initParameters - Publish_software_version_frequency : %f", _publish_software_version_frequency);
     
-    // joints params
-    nh.getParam("joints_interface/ros_control_loop_frequency", _ros_control_frequency);
-    nh.getParam("joints_interface/publish_learning_mode_frequency", _publish_learning_mode_frequency);
-    
-    ROS_DEBUG("FakeInterfaceCore::initParameters - ros control loop freqeuncy %f", _ros_control_frequency);
+    ROS_DEBUG("FakeInterfaceCore::initParameters - ros control loop frequency %f", _ros_control_frequency);
     ROS_DEBUG("FakeInterfaceCore::initParameters - Publish_learning_mode_frequency : %f", _publish_learning_mode_frequency);
     
-    // global params
-    nh.getParam("/niryo_robot/info/ros_version", _ros_niryo_robot_version);
-
     _ros_niryo_robot_version.erase(_ros_niryo_robot_version.find_last_not_of(" \n\r\t") + 1);
     ROS_DEBUG("FakeInterfaceCore::initParameters - ROS version : %s", _ros_niryo_robot_version.c_str());
 }

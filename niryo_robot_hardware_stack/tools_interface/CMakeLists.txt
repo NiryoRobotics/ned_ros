@@ -133,10 +133,13 @@ if(CATKIN_ENABLE_TESTING)
   if(BUILD_INTEGRATION_TESTS)
     find_package(catkin REQUIRED rostest)
 
-    add_rostest_gtest(${PROJECT_NAME}_integration_tests
-      test/tools_interface_service_client.test
-      test/tools_interface_service_client.cpp
-    )
+    if (${ARCHITECTURE} MATCHES "^(arm.*|aarch64.*|arm64.*)$")
+      add_rostest_gtest(${PROJECT_NAME}_integration_tests
+        test/tools_interface_service_client.test
+        test/tools_interface_service_client.cpp
+      )
+    endif()
+
     if(TARGET ${PROJECT_NAME}_integration_tests)
       target_link_libraries(
         ${PROJECT_NAME}_integration_tests

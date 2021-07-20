@@ -162,10 +162,12 @@ if(CATKIN_ENABLE_TESTING)
     if(BUILD_INTEGRATION_TESTS)
       find_package(catkin REQUIRED rostest)
 
-      add_rostest_gtest(${PROJECT_NAME}_unit_tests
-        test/can_driver_unit_tests.test
-        test/can_driver_unit_tests.cpp
-      )
+      if (${ARCHITECTURE} MATCHES "^(arm.*|aarch64.*|arm64.*)$")
+        add_rostest_gtest(${PROJECT_NAME}_unit_tests
+          test/can_driver_unit_tests.test
+          test/can_driver_unit_tests.cpp
+        )
+      endif()
       if(TARGET ${PROJECT_NAME}_unit_tests)
         target_link_libraries(${PROJECT_NAME}_unit_tests
           ${PROJECT_NAME}

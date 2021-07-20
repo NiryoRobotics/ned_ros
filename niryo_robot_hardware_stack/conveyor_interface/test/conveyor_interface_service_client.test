@@ -3,17 +3,6 @@
         xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
 
     <!-- launch the conveyor_interface_node node using conveyor_interface_node executable from conveyor_interface package -->
-
-    <group ns="niryo_robot_hardware_interface" >
-        <group ns="can_driver">
-            <rosparam file="$(find can_driver)/config/bus_config.yaml" command="load"/>
-            <rosparam file="$(find can_driver)/config/motors_config.yaml" command="load"/>
-            <rosparam file="$(find can_driver)/config/default.yaml" command="load"/>  
-        </group>
-
-        <rosparam file="$(find joints_interface)/config/default.yaml" command="load" ns="joints_interface" />
-    </group>
-    
     <include file="$(find conveyor_interface)/launch/conveyor_interface.launch" />
 
     <test test-name="conveyor_interface_integration_tests" pkg="conveyor_interface"  type="conveyor_interface_integration_tests" />

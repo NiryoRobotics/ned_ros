@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 
+from select import error
 import rospy
-
+import socket
 from threading import Thread
 
 from pymodbus.server.sync import ModbusTcpServer
@@ -32,8 +33,13 @@ class ModbusServer:
         self.identity.ModelName = 'pymodbus Server'
         self.identity.MajorMinorRevision = '1.0'
 
-        self.server = ModbusTcpServer(context=self.context,
-                                      framer=None, identity=self.identity, address=(address, port))
+        try:
+            self.server = ModbusTcpServer(context=self.context,
+                                        framer=None, identity=self.identity, address=(address, port))
+
+        except socket.error as err:
+            rospy.logerr("ModbusServer.init : TCP server unable to start : %s", err)
+            self.server = None
 
     def start(self):
         t = Thread(target=self.__start_server)
@@ -42,13 +48,15 @@ class ModbusServer:
     def __start_server(self):
         self.discrete_input.start_ros_subscribers()
         self.input_register.start_ros_subscribers()
-        self.server.serve_forever()
+        if self.server is not None:
+            self.server.serve_forever()
 
     def stop(self):
         rospy.loginfo("Modbus - Stopping ROS subscribers")
         self.discrete_input.stop_ros_subscribers()
         self.input_register.stop_ros_subscribers()
 
-        rospy.loginfo("Modbus - Closing Server")
-        self.server.server_close()
-        self.server.shutdown()
+        if self.server is not None:
+            rospy.loginfo("Modbus - Closing Server")
+            self.server.server_close()
+            self.server.shutdown()

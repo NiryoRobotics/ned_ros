@@ -67,7 +67,7 @@ namespace fake_interface
 class FakeInterfaceCore : common::model::IInterfaceCore
 {
     public:
-        FakeInterfaceCore(ros::NodeHandle& nh);
+        FakeInterfaceCore(ros::NodeHandle& rootnh, ros::NodeHandle& robot_hwnh);
         virtual ~FakeInterfaceCore() override;
         virtual bool init(ros::NodeHandle& nh) override;
 

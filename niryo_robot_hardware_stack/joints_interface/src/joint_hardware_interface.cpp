@@ -413,7 +413,7 @@ void JointHardwareInterface::activateLearningMode()
                 }
             }
         }
-
+        
         _ttl_driver_core->setSyncCommand(dxl_cmd);
 
         _learning_mode = true;

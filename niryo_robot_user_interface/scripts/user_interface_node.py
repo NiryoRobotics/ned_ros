@@ -11,15 +11,22 @@ class UserInterface:
     def __init__(self):
         rospy.logdebug("User Interface Node - Entering in Init")
 
-        self.__tcp_server = TcpServer().start()
+        ip_address = rospy.get_param("~ip_address", '')
+        port = rospy.get_param("~tcp_port", 40001)
 
-        # Set a bool to mentioned this node is initialized
-        rospy.set_param('~initialized', True)
+        self.__tcp_server = TcpServer(ip_address, port).start()
+        if self.__tcp_server is not None:
+            # Set a bool to mentioned this node is initialized
+            rospy.set_param('~initialized', True)
+            rospy.loginfo("User Interface Node - Started")
+        else:
+            rospy.set_param('~initialized', False)
+            rospy.logerr("User Interface Node - Not correctly Started")
 
-        rospy.loginfo("User Interface Node - Started")
 
     def shutdown(self):
-        self.__tcp_server.quit()
+        if self.__tcp_server is not None:
+            self.__tcp_server.quit()
 
 
 if __name__ == '__main__':

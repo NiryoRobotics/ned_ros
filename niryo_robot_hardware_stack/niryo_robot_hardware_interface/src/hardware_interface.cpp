@@ -180,7 +180,8 @@ void HardwareInterface::initNodes(ros::NodeHandle &nh)
     else
     {
         ROS_DEBUG("HardwareInterface::initNodes - Start Fake Interface Node");
-        _fake_interface = std::make_shared<fake_interface::FakeInterfaceCore>(nh);
+        ros::NodeHandle nh_joints(nh, "joints_interface");
+        _fake_interface = std::make_shared<fake_interface::FakeInterfaceCore>(nh, nh_joints);
     }
 }
 

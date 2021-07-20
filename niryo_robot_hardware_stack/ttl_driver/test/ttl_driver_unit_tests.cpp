@@ -25,7 +25,7 @@
 // Declare a test
 TEST(TtlDriverTestSuite, testInitDriver)
 {
-    ros::NodeHandle nh("~");
+    ros::NodeHandle nh;
     ttl_driver::TtlDriver ttl_driver(nh);
     ttl_driver.scanAndCheck();
 
