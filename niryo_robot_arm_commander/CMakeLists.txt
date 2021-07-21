@@ -82,8 +82,11 @@ catkin_install_python(PROGRAMS
     scripts/arm_commander.py
     scripts/ArmParametersValidator.py
     scripts/jog_controller.py
+    scripts/kinematics_handler.py
     scripts/motor_debug.py
     scripts/robot_commander_node.py
+    scripts/trajectories_executor.py
+    scripts/transform_handler.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 # Mark other files for installation
