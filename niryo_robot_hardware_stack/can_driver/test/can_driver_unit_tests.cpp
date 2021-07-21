@@ -24,7 +24,7 @@
 // Declare a test
 TEST(CanDriverTestSuite, testInitDriver)
 {
-    ros::NodeHandle nh("~");
+    ros::NodeHandle nh;
 
     can_driver::CanDriver stepper(nh);
     EXPECT_TRUE(stepper.isConnectionOk());
