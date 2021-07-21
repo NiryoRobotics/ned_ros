@@ -3,6 +3,13 @@ message("\n## Reading niryo_robot_programs_manager/CMakeLists.txt...")
 cmake_minimum_required(VERSION 3.0.2)
 project(niryo_robot_programs_manager)
 
+#retrieve architecture
+execute_process( COMMAND
+            uname -m COMMAND tr -d '\n'
+        OUTPUT_VARIABLE
+            ARCHITECTURE
+    )
+
 find_package(catkin REQUIRED COMPONENTS
   message_generation
 )
@@ -62,12 +69,6 @@ if(CATKIN_ENABLE_TESTING)
 
   find_package(rostest REQUIRED)
 
-  execute_process( COMMAND
-              uname -m COMMAND tr -d '\n'
-          OUTPUT_VARIABLE
-              ARCHITECTURE
-      )
-      
   if (${ARCHITECTURE} MATCHES "^(arm.*|aarch64.*|arm64.*)$")
     add_rostest(test/rpi_programs_manager.test)
   else()
