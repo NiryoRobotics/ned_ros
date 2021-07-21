@@ -52,8 +52,6 @@ class StepperMotorCmd : public AbstractMotorCmd<EStepperCommandType>
         const std::vector<int32_t>& getParams() const;
 
         // AbstractMotorCmd interface
-        virtual bool isCmdStepper() const override;
-        virtual bool isCmdDxl() const override;
         virtual void reset() override;
         virtual void clear() override;
         virtual std::string str() const override;

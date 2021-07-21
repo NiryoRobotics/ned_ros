@@ -74,14 +74,11 @@ class TtlDriverCore : public common::model::IDriverCore, public common::model::I
         bool setMotorPID(const std::shared_ptr<common::model::JointState>& motorState);
         void setTrajectoryControllerCommands(const std::vector<std::pair<uint8_t, uint32_t> > &cmd);
 
-        template<typename Type, typename TypeEnum>
-        void setSyncCommand(const common::model::SynchronizeMotorCmd<Type, TypeEnum> &cmd);
+        void setSyncCommand(const common::model::SynchronizeMotorCmdI &cmd);
 
-        template<typename Type, typename TypeEnum>
-        void addSingleCommandToQueue(const common::model::SingleMotorCmd<Type, TypeEnum> &cmd);
+        void addSingleCommandToQueue(const common::model::SingleMotorCmdI &cmd);
 
-        template<typename Type, typename TypeEnum>
-        void addSingleCommandToQueue(const std::vector<common::model::SingleMotorCmd<Type, TypeEnum>> &cmd);
+        void addSingleCommandToQueue(const std::vector<common::model::SingleMotorCmdI> &cmd);
 
         void addEndEffectorCommandToQueue(const common::model::SingleMotorCmd<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum> &cmd);
         void addEndEffectorCommandToQueue(const std::vector<common::model::SingleMotorCmd<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum>> &cmd);
@@ -160,8 +157,9 @@ class TtlDriverCore : public common::model::IDriverCore, public common::model::I
 
         std::vector<std::pair<uint8_t, uint32_t> > _joint_trajectory_cmd;
 
-        common::model::SynchronizeMotorCmd<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum> _dxl_sync_cmds;
-        std::queue<common::model::SingleMotorCmd<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum>> _dxl_single_cmds;
+        // dxl cmds
+        common::model::SynchronizeMotorCmdI _sync_cmds;
+        std::queue<common::model::SingleMotorCmdI> _single_cmds;
         std::queue<common::model::SingleMotorCmd<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum>> _dxl_end_effector_cmds;
 
         ros::ServiceServer _activate_leds_server;
@@ -196,69 +194,6 @@ inline
 std::string TtlDriverCore::getTypeDriver() const
 {
     return "ttl";
-}
-
-/**
- * @brief TtlDriverCore::setSyncCommand
- * @param cmd
- */
-template<typename Type, typename TypeEnum>
-void TtlDriverCore::setSyncCommand(const common::model::SynchronizeMotorCmd<Type, TypeEnum> &cmd)
-{
-    if (cmd.isCmdDxl())
-    {
-        if (cmd.isValid())
-        {
-            _dxl_sync_cmds = cmd;
-        }
-        else
-        {
-            ROS_WARN("TtlDriverCore::setSyncCommand : Invalid command %s", cmd.str().c_str());
-        }
-    }
-    else if (cmd.isCmdStepper())
-    {
-        ROS_INFO("TtlDriverCore::setSyncCommand : Implement set sync command for stepper");
-    }
-}
-
-/**
- * @brief TtlDriverCore::addSingleCommandToQueue
- * @param cmd
- *
- *  Not very good, nothing prevents the user from providing an end effector command here
- * and vice versa with addEndEffectorCmd. To be changed
- */
-template<typename Type, typename TypeEnum>
-void TtlDriverCore::addSingleCommandToQueue(const common::model::SingleMotorCmd<Type, TypeEnum> &cmd)
-{
-    ROS_DEBUG("TtlDriverCore::addSingleCommandToQueue - %s", cmd.str().c_str());
-
-    if (cmd.isCmdDxl())
-    {
-        if (cmd.isValid())
-        {
-            if (_dxl_single_cmds.size() > QUEUE_OVERFLOW)
-                ROS_WARN("TtlDriverCore::addSingleCommandToQueue: Cmd queue overflow ! %lu", _dxl_single_cmds.size());
-            else
-                _dxl_single_cmds.push(cmd);
-        }
-    }
-    else if (cmd.isCmdStepper())
-    {
-        ROS_INFO("TllDriverCore:: implement addSingCommandToQueue if cmd is used for stepper");
-    }
-}
-
-/**
- * @brief TtlDriverCore::addSingleCommandToQueue
- * @param cmd
- */
-template<typename Type, typename TypeEnum>
-void TtlDriverCore::addSingleCommandToQueue(const std::vector<common::model::SingleMotorCmd<Type, TypeEnum>> &cmd)
-{
-    for (auto const& c : cmd)
-        addSingleCommandToQueue(c);
 }
 
 } // TtlDriver

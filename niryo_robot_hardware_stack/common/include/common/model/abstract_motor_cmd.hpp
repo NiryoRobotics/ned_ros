@@ -51,11 +51,6 @@ class AbstractMotorCmd : public IObject
         // getters
         E getType() const;
 
-        // tests
-        virtual bool isCmdStepper() const = 0;
-        virtual bool isCmdDxl() const = 0;
-        virtual bool isValid() const = 0;
-
         E _type;
     protected:
         

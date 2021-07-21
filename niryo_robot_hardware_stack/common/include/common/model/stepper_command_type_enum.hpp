@@ -48,6 +48,12 @@ enum class EStepperCommandType { CMD_TYPE_NONE=0,
                                  CMD_TYPE_CONVEYOR=11,
                                  CMD_TYPE_UPDATE_CONVEYOR=12,
                                  CMD_TYPE_LEARNING_MODE=13,
+                                 CMD_TYPE_PING=14,
+                                 CMD_TYPE_P_GAIN=15,
+                                 CMD_TYPE_I_GAIN=16,
+                                 CMD_TYPE_D_GAIN=17,
+                                 CMD_TYPE_FF1_GAIN=18,
+                                 CMD_TYPE_FF2_GAIN=19,
                                  CMD_TYPE_UNKNOWN=100
                                };
 

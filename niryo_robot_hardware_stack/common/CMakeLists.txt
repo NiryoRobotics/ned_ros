@@ -66,6 +66,7 @@ add_library(${PROJECT_NAME}
     src/model/stepper_command_type_enum.cpp
     src/model/stepper_motor_cmd.cpp
     src/model/stepper_calibration_status_enum.cpp
+    src/model/synchronize_motor_cmd_interface.cpp
 )
 
 ## Add dependencies to exported targets, like ROS msgs or srvs

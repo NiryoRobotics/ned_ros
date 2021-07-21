@@ -66,6 +66,12 @@ StepperCommandTypeEnum::initialize()
     m[EStepperCommandType::CMD_TYPE_CONVEYOR]  = "conveyor";
     m[EStepperCommandType::CMD_TYPE_UPDATE_CONVEYOR]  = "update conveyor";
     m[EStepperCommandType::CMD_TYPE_LEARNING_MODE]  = "learning mode";
+    m[EStepperCommandType::CMD_TYPE_PING] = "ping";
+    m[EStepperCommandType::CMD_TYPE_P_GAIN] = "P Gain";
+    m[EStepperCommandType::CMD_TYPE_I_GAIN] = "I Gain";
+    m[EStepperCommandType::CMD_TYPE_D_GAIN] = "D Gain";
+    m[EStepperCommandType::CMD_TYPE_FF1_GAIN] = "FF1 Gain";
+    m[EStepperCommandType::CMD_TYPE_FF2_GAIN] = "FF2 Gain";
     m[EStepperCommandType::CMD_TYPE_UNKNOWN]  = "unknown type";
 
     return m;

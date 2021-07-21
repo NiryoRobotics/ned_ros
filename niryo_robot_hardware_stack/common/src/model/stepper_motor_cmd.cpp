@@ -86,22 +86,6 @@ void StepperMotorCmd::setParams(std::vector<int32_t> params)
 // ***********************
 
 /**
- * @brief StepperMotorCmd::isCmdStepper
- */
-bool StepperMotorCmd::isCmdStepper() const
-{
-    return true;
-}
-
-/**
- * @brief StepperMotorCmd::isCmdDxl
- */
-bool StepperMotorCmd::isCmdDxl() const
-{
-    return false;
-}
-
-/**
  * @brief StepperMotorCmd::reset
  */
 void StepperMotorCmd::reset()

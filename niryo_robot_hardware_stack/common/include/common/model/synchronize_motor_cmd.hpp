@@ -32,6 +32,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "common/model/stepper_command_type_enum.hpp"
 #include "common/model/motor_type_enum.hpp"
 #include "common/model/joint_state.hpp"
+#include "common/model/synchronize_motor_cmd_interface.hpp"
 
 namespace common
 {
@@ -42,7 +43,7 @@ namespace model
  * @brief The SynchronizeMotorCmd class
  */
 template<typename T, typename TE> 
-class SynchronizeMotorCmd : public AbstractMotorCmd<T>
+class SynchronizeMotorCmd : public AbstractMotorCmd<T>, public SynchronizeMotorCmdI
 {
     struct MotorParam {
         MotorParam(uint8_t id, uint32_t param) {
@@ -61,14 +62,6 @@ class SynchronizeMotorCmd : public AbstractMotorCmd<T>
     public:
         SynchronizeMotorCmd();
         SynchronizeMotorCmd(T type);
-
-        // setters
-        void addMotorParam(EMotorType type, uint8_t id, uint32_t param);
-
-        // getters
-        std::vector<uint8_t> getMotorsId(EMotorType type) const;
-        std::vector<uint32_t> getParams(EMotorType type) const;
-        std::set<EMotorType> getMotorTypes() const;
 
         // AbstractMotorCmd interface
         bool isCmdStepper() const override;
@@ -102,70 +95,6 @@ template<typename T, typename TE>
 SynchronizeMotorCmd<T, TE>::SynchronizeMotorCmd(T type) :
     AbstractMotorCmd<T>(type)
 {
-}
-
-/**
- * @brief SynchronizeMotorCmd::addMotorParam
- * @param type
- * @param id
- * @param param
- */
-template<typename T, typename TE>
-void SynchronizeMotorCmd<T, TE>::addMotorParam(EMotorType type, uint8_t id, uint32_t param)
-{
-    // not yet in map
-    if (!_motor_params_map.count(type))
-    {
-        _motor_params_map.insert(std::make_pair(type, MotorParam(id, param)));
-        _types.insert(type);
-    }
-    else
-    {
-        _motor_params_map.at(type).motors_id.emplace_back(id);
-        _motor_params_map.at(type).params.emplace_back(param);
-    }
-}
-
-// ***********************
-//  Getters
-// ***********************
-
-/**
- * @brief SynchronizeMotorCmd::getMotorsId
- * @param type
- * @return
- */
-template<typename T, typename TE>
-std::vector<uint8_t> SynchronizeMotorCmd<T, TE>::getMotorsId(EMotorType type) const
-{
-    if (!_motor_params_map.count(type))
-        throw std::out_of_range("type not known of synchonized command");
-
-    return _motor_params_map.at(type).motors_id;
-}
-
-/**
- * @brief SynchronizeMotorCmd::getParams
- * @param type
- * @return
- */
-template<typename T, typename TE>
-std::vector<uint32_t> SynchronizeMotorCmd<T, TE>::getParams(EMotorType type) const
-{
-    if (!_motor_params_map.count(type))
-        throw std::out_of_range("type not known of synchonized command");
-
-    return _motor_params_map.at(type).params;
-}
-
-/**
- * @brief SynchronizeMotorCmd::getMotorTypes
- * @return
- */
-template<typename T, typename TE>
-std::set<EMotorType> SynchronizeMotorCmd<T, TE>::getMotorTypes() const
-{
-    return _types;
 }
 
 // ***********************

@@ -409,7 +409,7 @@ void JointHardwareInterface::activateLearningMode()
         }
 
         // TODO: set 2 methods of can and ttl coherent 
-        _ttl_driver_core->setSyncCommand<EDxlCommandType, DxlCommandTypeEnum>(dxl_cmd);
+        _ttl_driver_core->setSyncCommand(dxl_cmd);
 
         _learning_mode = true;
     }
@@ -446,7 +446,7 @@ void JointHardwareInterface::deactivateLearningMode()
         }
 
         // TODO: set 2 methods of can and ttl coherent 
-        _ttl_driver_core->setSyncCommand<EDxlCommandType, DxlCommandTypeEnum>(dxl_cmd);
+        _ttl_driver_core->setSyncCommand(dxl_cmd);
 
         _learning_mode = true;
     }

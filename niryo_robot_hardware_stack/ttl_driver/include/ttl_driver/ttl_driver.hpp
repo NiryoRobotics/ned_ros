@@ -62,6 +62,10 @@ constexpr int DXL_SCAN_UNALLOWED_MOTOR   = -51;
 constexpr int DXL_WRONG_TYPE             = -52;
 
 /**
+ * Parameters for Stepper
+*/
+
+/**
  * @brief The TtlDriver class
  */
 class TtlDriver : public common::model::IDriver

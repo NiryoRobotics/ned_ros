@@ -25,6 +25,8 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 
 #include "common/model/abstract_motor_cmd.hpp"
 #include "common/model/dxl_command_type_enum.hpp"
+#include "common/model/stepper_command_type_enum.hpp"
+#include "common/model/single_motor_cmd_interface.hpp"
 
 namespace common
 {
@@ -35,21 +37,13 @@ namespace model
  * @brief The SingleMotorCmd class
  */
 template<typename T, typename TE>
-class SingleMotorCmd : public AbstractMotorCmd<T>
+class SingleMotorCmd : public AbstractMotorCmd<T>, public SingleMotorCmdI
 {
     public:
         SingleMotorCmd();
         SingleMotorCmd(T type,
                        uint8_t motor_id,
                        uint32_t param = 0);
-
-        // setters
-        void setId(uint8_t id);
-        void setParam(uint32_t param);
-
-        // getters
-        uint8_t getId() const;
-        uint32_t getParam() const;
 
         // AbstractMotorCmd interface
         bool isCmdStepper() const override;
@@ -63,30 +57,6 @@ class SingleMotorCmd : public AbstractMotorCmd<T>
         uint8_t _id;
         uint32_t _param;
 };
-
-/**
- * @brief SingleMotorCmd::getId
- * @return
- */
-template<typename T, typename TE>
-inline
-uint8_t
-SingleMotorCmd<T, TE>::getId() const
-{
-    return _id;
-}
-
-/**
- * @brief SingleMotorCmd::getParam
- * @return
- */
-template<typename T, typename TE>
-inline
-uint32_t
-SingleMotorCmd<T, TE>::getParam() const
-{
-    return _param;
-}
 
 /**
  * @brief SingleMotorCmd::SingleMotorCmd
@@ -112,27 +82,6 @@ SingleMotorCmd<T, TE>::SingleMotorCmd(T type,
     _id(motor_id),
     _param(param)
 {}
-
-/**
- * @brief SingleMotorCmd::setId
- * @param id
- */
-template<typename T, typename TE>
-void SingleMotorCmd<T, TE>::setId(uint8_t id)
-{
-    _id = id;
-}
-
-/**
- * @brief SingleMotorCmd::setParam
- * @param param
- */
-template<typename T, typename TE>
-void SingleMotorCmd<T, TE>::setParam(uint32_t param)
-{
-    _param = param;
-}
-
 
 // ***********************
 //  AbstractMotorCmd intf
