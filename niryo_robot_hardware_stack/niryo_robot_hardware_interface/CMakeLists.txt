@@ -13,7 +13,7 @@ execute_process( COMMAND
         OUTPUT_VARIABLE
             ARCHITECTURE
     )
-    
+
 ## c++ options
 ## Compile as C++14, supported in ROS Melodic and newer
 set(CMAKE_CXX_STANDARD 14)
@@ -198,8 +198,10 @@ install(
 ##########################
 ## Static code analysis ##
 ##########################
-find_package(roslint)
+find_package(roslint QUIET)
 
 if(roslint_FOUND)
     roslint_cpp()
+else()
+    message(WARNING "roslint not found. Skipping roslint target building")
 endif()

@@ -22,10 +22,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_definitions(-Wall  -Werror)
 
 ## Find catkin macros and libraries
-find_package(catkin REQUIRED
-    COMPONENTS
-      roscpp
-)
+find_package(catkin REQUIRED)
 
 ###############################################
 # Declare ROS messages, services and actions ##

@@ -223,8 +223,10 @@ install(
 ##########################
 ## Static code analysis ##
 ##########################
-find_package(roslint)
+find_package(roslint QUIET)
 
 if(roslint_FOUND)
     roslint_cpp()
+else()
+    message(WARNING "roslint not found. Skipping roslint target building")
 endif()
