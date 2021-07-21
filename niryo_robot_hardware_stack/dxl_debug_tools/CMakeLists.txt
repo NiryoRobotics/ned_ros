@@ -26,10 +26,7 @@ add_definitions(-Wall  -Werror)
 ## Find catkin macros and libraries
 find_package(catkin REQUIRED
     COMPONENTS
-        roscpp
-        rospy
-        std_msgs
-        niryo_robot_msgs
+    	roscpp
         dynamixel_sdk
 )
  
@@ -53,10 +50,7 @@ find_package(Boost REQUIRED
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   CATKIN_DEPENDS 
-    roscpp 
-    rospy 
-    std_msgs 
-    niryo_robot_msgs
+    roscpp
     dynamixel_sdk
 )
 
