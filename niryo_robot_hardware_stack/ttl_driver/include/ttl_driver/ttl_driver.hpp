@@ -369,7 +369,7 @@ int TtlDriver::readSingleCommand(common::model::SingleMotorCmd<Type, TypeEnum> c
 {
     int result = COMM_TX_ERROR;
     uint8_t id = cmd.getId();
-
+    
     if (cmd.isValid())
     {
         int counter = 0;

@@ -158,8 +158,8 @@ class TtlDriverCore : public common::model::IDriverCore, public common::model::I
         std::vector<std::pair<uint8_t, uint32_t> > _joint_trajectory_cmd;
 
         // dxl cmds
-        common::model::SynchronizeMotorCmdI _sync_cmds;
-        std::queue<common::model::SingleMotorCmdI> _single_cmds;
+        std::shared_ptr<common::model::SynchronizeMotorCmdI> _sync_cmds;
+        std::queue<std::shared_ptr<common::model::SingleMotorCmdI>> _single_cmds;
         std::queue<common::model::SingleMotorCmd<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum>> _dxl_end_effector_cmds;
 
         ros::ServiceServer _activate_leds_server;

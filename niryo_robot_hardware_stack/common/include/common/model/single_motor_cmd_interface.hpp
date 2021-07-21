@@ -35,6 +35,9 @@ class SingleMotorCmdI
 {
     public:
         SingleMotorCmdI() {}
+        SingleMotorCmdI(uint8_t motor_id,
+                       uint32_t param = 0);
+
         virtual ~SingleMotorCmdI() {};
 
         // setters
@@ -50,10 +53,20 @@ class SingleMotorCmdI
         virtual bool isCmdDxl() const;
         virtual bool isValid() const;
         virtual std::string str() const;
-    private:
+    protected:
         uint8_t _id;
         uint32_t _param;
 };
+
+/**
+ * @brief SingleMotorCmdI::SingleMotorCmdI
+ * @return
+ */
+
+inline SingleMotorCmdI::SingleMotorCmdI(uint8_t motor_id, uint32_t param) :
+                _id(motor_id),
+                _param(param)
+{}
 
 /**
  * @brief SingleMotorCmdI::getId

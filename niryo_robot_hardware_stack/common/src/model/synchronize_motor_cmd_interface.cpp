@@ -18,6 +18,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
 #include "common/model/synchronize_motor_cmd_interface.hpp"
+#include <ros/ros.h>
 
 namespace common
 {

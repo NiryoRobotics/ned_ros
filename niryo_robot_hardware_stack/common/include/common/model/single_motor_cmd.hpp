@@ -52,10 +52,6 @@ class SingleMotorCmd : public AbstractMotorCmd<T>, public SingleMotorCmdI
         virtual void clear() override;
         virtual std::string str() const override;
         virtual bool isValid() const override;
-
-    private:
-        uint8_t _id;
-        uint32_t _param;
 };
 
 /**
@@ -79,8 +75,7 @@ SingleMotorCmd<T, TE>::SingleMotorCmd(T type,
                                uint8_t motor_id,
                                uint32_t param) :
     AbstractMotorCmd<EDxlCommandType>(type),
-    _id(motor_id),
-    _param(param)
+    SingleMotorCmdI(motor_id, param)
 {}
 
 // ***********************
@@ -95,7 +90,7 @@ SingleMotorCmd<T, TE>::SingleMotorCmd(T type,
 template<typename T, typename TE>
 bool SingleMotorCmd<T, TE>::isCmdStepper() const
 {
-    return typeid(T) == typeid(common::model::StepperCommandTypeEnum);
+    return typeid(T) == typeid(common::model::EStepperCommandType);
 }
 
 /**
@@ -106,7 +101,7 @@ bool SingleMotorCmd<T, TE>::isCmdStepper() const
 template<typename T, typename TE>
 bool SingleMotorCmd<T, TE>::isCmdDxl() const
 {
-    return typeid(T) == typeid(common::model::DxlCommandTypeEnum);
+    return typeid(T) == typeid(common::model::EDxlCommandType);
 }
 
 /**

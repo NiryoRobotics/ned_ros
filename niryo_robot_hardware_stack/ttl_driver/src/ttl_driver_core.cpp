@@ -120,6 +120,8 @@ void TtlDriverCore::initParameters(ros::NodeHandle& nh)
     _delta_time_data_read = 1.0 / read_data_frequency;
     _delta_time_status_read = 1.0 / read_status_frequency;
     _delta_time_write = 1.0 / write_frequency;
+
+    _sync_cmds.reset(new common::model::SynchronizeMotorCmdI);
 }
 
 /**
@@ -559,13 +561,15 @@ void TtlDriverCore::_executeCommand()
         _joint_trajectory_cmd.clear();
         _need_sleep = true;
     }
-
+    
     if (!_single_cmds.empty())
     {
-        if (_single_cmds.front().isCmdDxl())
-            _ttl_driver->readSingleCommand(dynamic_cast<common::model::SingleMotorCmd<EDxlCommandType, DxlCommandTypeEnum> &>(_single_cmds.front()));
+        if (_single_cmds.front()->isCmdDxl())
+        {
+            _ttl_driver->readSingleCommand(*dynamic_cast<const common::model::SingleMotorCmd<EDxlCommandType, DxlCommandTypeEnum> *>(_single_cmds.front().get()));
+        }
         else
-            _ttl_driver->readSingleCommand(dynamic_cast<common::model::SingleMotorCmd<EStepperCommandType, StepperCommandTypeEnum> &>(_single_cmds.front()));
+            _ttl_driver->readSingleCommand(*dynamic_cast<const common::model::SingleMotorCmd<EStepperCommandType, StepperCommandTypeEnum> *>(_single_cmds.front().get()));
         _single_cmds.pop();
         _need_sleep = true;
     }
@@ -580,16 +584,16 @@ void TtlDriverCore::_executeCommand()
         _need_sleep = true;
     }
 
-    if (_sync_cmds.isValid())
+    if (_sync_cmds->isValid())
     {
         // as we use a queue, we don't need a mutex
         if (_need_sleep)
             ros::Duration(0.01).sleep();
-        if (_sync_cmds.isCmdDxl())
-            _ttl_driver->readSynchronizeCommand(dynamic_cast<common::model::SynchronizeMotorCmd<EDxlCommandType, DxlCommandTypeEnum> &>(_sync_cmds));
+        if (_sync_cmds->isCmdDxl())
+            _ttl_driver->readSynchronizeCommand(*dynamic_cast<common::model::SynchronizeMotorCmd<EDxlCommandType, DxlCommandTypeEnum> *>(_sync_cmds.get()));
         else
-            _ttl_driver->readSynchronizeCommand(dynamic_cast<common::model::SynchronizeMotorCmd<EStepperCommandType, StepperCommandTypeEnum> &>(_sync_cmds));
-        _sync_cmds.reset();
+            _ttl_driver->readSynchronizeCommand(*dynamic_cast<common::model::SynchronizeMotorCmd<EStepperCommandType, StepperCommandTypeEnum> *>(_sync_cmds.get()));
+        _sync_cmds->reset();
     }
 }
 
@@ -670,9 +674,15 @@ void TtlDriverCore::setTrajectoryControllerCommands(const std::vector<std::pair<
  */
 void TtlDriverCore::setSyncCommand(const common::model::SynchronizeMotorCmdI &cmd)
 {
-    if (cmd.isValid() && (cmd.isCmdStepper() || cmd.isCmdDxl()))
+
+    if (cmd.isValid())
     {
-        _sync_cmds = cmd;
+        if (cmd.isCmdDxl())
+        {
+            _sync_cmds = std::make_shared<common::model::SynchronizeMotorCmd<EDxlCommandType, DxlCommandTypeEnum>>(*dynamic_cast<const common::model::SynchronizeMotorCmd<EDxlCommandType, DxlCommandTypeEnum> *>(&cmd));
+        }
+        else
+            _sync_cmds = std::make_shared<common::model::SynchronizeMotorCmd<EStepperCommandType, StepperCommandTypeEnum>>(*dynamic_cast<const common::model::SynchronizeMotorCmd<EStepperCommandType, StepperCommandTypeEnum> *>(&cmd));
     }
     else
         ROS_WARN("TtlDriverCore::setSyncCommand : Invalid command %s", cmd.str().c_str());
@@ -689,12 +699,20 @@ void TtlDriverCore::addSingleCommandToQueue(const common::model::SingleMotorCmdI
 {
     ROS_DEBUG("TtlDriverCore::addSingleCommandToQueue - %s", cmd.str().c_str());
 
-    if (cmd.isValid() && (cmd.isCmdStepper() || cmd.isCmdDxl()))
+    if (cmd.isValid())
     {
         if (_single_cmds.size() > QUEUE_OVERFLOW)
             ROS_WARN("TtlDriverCore::addSingleCommandToQueue: dxl cmd queue overflow ! %lu", _single_cmds.size());
+        else if (cmd.isCmdDxl())
+        {
+            std::shared_ptr<common::model::SingleMotorCmd<EDxlCommandType, DxlCommandTypeEnum>> dxl_cmd = std::make_shared<common::model::SingleMotorCmd<EDxlCommandType, DxlCommandTypeEnum>>(*dynamic_cast<const common::model::SingleMotorCmd<EDxlCommandType, DxlCommandTypeEnum> *>(&cmd));
+            _single_cmds.push(dxl_cmd);
+        }
         else
-            _single_cmds.push(cmd);
+        {
+            std::shared_ptr<common::model::SingleMotorCmd<EStepperCommandType, StepperCommandTypeEnum>> stepper_cmd = std::make_shared<common::model::SingleMotorCmd<EStepperCommandType, StepperCommandTypeEnum>>(*dynamic_cast<const common::model::SingleMotorCmd<EStepperCommandType, StepperCommandTypeEnum> *>(&cmd));
+            _single_cmds.push(stepper_cmd);
+        }
     }
     else
     {
@@ -758,7 +776,9 @@ bool TtlDriverCore::setMotorPID(const std::shared_ptr<JointState> &motorState)
             SingleMotorCmd<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum> dxl_cmd_p(EDxlCommandType::CMD_TYPE_P_GAIN, motor_id, dxlState->getPGain());
 
             if (dxl_cmd_p.isValid())
+            {
                 addSingleCommandToQueue(dxl_cmd_p);
+            }
         }
 
         if (dxlState->getIGain() > 0)

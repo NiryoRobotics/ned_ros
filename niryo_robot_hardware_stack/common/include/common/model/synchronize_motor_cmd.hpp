@@ -45,20 +45,6 @@ namespace model
 template<typename T, typename TE> 
 class SynchronizeMotorCmd : public AbstractMotorCmd<T>, public SynchronizeMotorCmdI
 {
-    struct MotorParam {
-        MotorParam(uint8_t id, uint32_t param) {
-            motors_id.emplace_back(id);
-            params.emplace_back(param);
-        }
-
-        bool isValid() const {
-            return !motors_id.empty() && motors_id.size() == params.size();
-        }
-
-        std::vector<uint8_t> motors_id;
-        std::vector<uint32_t> params;
-    };
-
     public:
         SynchronizeMotorCmd();
         SynchronizeMotorCmd(T type);
@@ -70,10 +56,6 @@ class SynchronizeMotorCmd : public AbstractMotorCmd<T>, public SynchronizeMotorC
         std::string str() const override;
         void clear() override;
         bool isValid() const override;
-
-    private:
-        std::set<EMotorType> _types;
-        std::map<EMotorType, MotorParam > _motor_params_map;
 };
 
 /**
@@ -159,7 +141,9 @@ template<typename T, typename TE>
 bool SynchronizeMotorCmd<T, TE>::isValid() const
 {
     if (T::CMD_TYPE_UNKNOWN == this->getType() || _motor_params_map.empty())
+    {
         return false;
+    }
 
     for (auto const& it_map : _motor_params_map)
     {
@@ -178,7 +162,7 @@ bool SynchronizeMotorCmd<T, TE>::isValid() const
 template<typename T, typename TE>
 bool SynchronizeMotorCmd<T, TE>::isCmdStepper() const
 {
-    return typeid(T) == typeid(common::model::StepperCommandTypeEnum);
+    return typeid(T) == typeid(common::model::EStepperCommandType);
 }
 
 /**
@@ -189,7 +173,7 @@ bool SynchronizeMotorCmd<T, TE>::isCmdStepper() const
 template<typename T, typename TE>
 bool SynchronizeMotorCmd<T, TE>::isCmdDxl() const
 {
-    return typeid(T) == typeid(common::model::DxlCommandTypeEnum);
+    return typeid(T) == typeid(common::model::EDxlCommandType);
 }
 
 /**

@@ -74,7 +74,7 @@ class SynchronizeMotorCmdI
         virtual std::string str() const;
         virtual void reset();
 
-    private:
+    protected:
         std::set<EMotorType> _types;
         std::map<EMotorType, MotorParam > _motor_params_map;
 };
