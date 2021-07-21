@@ -155,22 +155,28 @@ void HardwareInterface::initNodes(ros::NodeHandle &nh)
         {
             ROS_DEBUG("HardwareInterface::initNodes - Start Joints Interface Node");
             ros::NodeHandle nh_joints(nh, "joints_interface");
-            _joints_interface = std::make_shared<joints_interface::JointsInterfaceCore>(nh, nh_joints, _ttl_driver, _can_driver);
+            _joints_interface = std::make_shared<joints_interface::JointsInterfaceCore>(nh,
+                                                                                        nh_joints,
+                                                                                        _ttl_driver,
+                                                                                        _can_driver);
             ros::Duration(0.25).sleep();
 
             ROS_DEBUG("HardwareInterface::initNodes - Start End Effector Interface Node");
             ros::NodeHandle nh_tool(nh, "tools_interface");
-            _tools_interface = std::make_shared<tools_interface::ToolsInterfaceCore>(nh_tool, _ttl_driver);
+            _tools_interface = std::make_shared<tools_interface::ToolsInterfaceCore>(nh_tool,
+                                                                                     _ttl_driver);
             ros::Duration(0.25).sleep();
 
             ROS_DEBUG("HardwareInterface::initNodes - Start Tools Interface Node");
             ros::NodeHandle nh_conveyor(nh, "conveyor");
-            _conveyor_interface = std::make_shared<conveyor_interface::ConveyorInterfaceCore>(nh_conveyor, _can_driver);
+            _conveyor_interface = std::make_shared<conveyor_interface::ConveyorInterfaceCore>(nh_conveyor,
+                                                                                              _can_driver);
             ros::Duration(0.25).sleep();
         }
         else
         {
-            ROS_WARN("HardwareInterface::initNodes - CAN and DXL communication is disabled. Interfaces will not start");
+            ROS_WARN("HardwareInterface::initNodes - CAN and DXL communication is disabled. "
+                     "Interfaces will not start");
         }
 
         ROS_DEBUG("HardwareInterface::initNodes - Start CPU Interface Node");
@@ -243,10 +249,10 @@ bool HardwareInterface::_callbackStopMotorsReport(niryo_robot_msgs::Trigger::Req
     {
         ROS_WARN("Hardware Interface - Stop Motor Report");
 
-        if(_can_driver)
+        if (_can_driver)
             _can_driver->activeDebugMode(false);
 
-        if(_ttl_driver)
+        if (_ttl_driver)
             _ttl_driver->activeDebugMode(false);
 
         res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
@@ -279,14 +285,14 @@ bool HardwareInterface::_callbackLaunchMotorsReport(niryo_robot_msgs::Trigger::R
         int can_status = niryo_robot_msgs::CommandStatus::FAILURE;
         int ttl_status = niryo_robot_msgs::CommandStatus::FAILURE;
 
-        if(_can_driver)
+        if (_can_driver)
         {
             _can_driver->activeDebugMode(true);
             can_status = _can_driver->launchMotorsReport();
             _can_driver->activeDebugMode(false);
         }
 
-        if(_ttl_driver)
+        if (_ttl_driver)
         {
             _ttl_driver->activeDebugMode(true);
             ttl_status = _ttl_driver->launchMotorsReport();
@@ -332,7 +338,7 @@ bool HardwareInterface::_callbackRebootMotors(niryo_robot_msgs::Trigger::Request
 
     if (!_simulation_mode)
     {
-        if(_ttl_driver)
+        if (_ttl_driver)
             res.status = _ttl_driver->rebootMotors();
 
         if (niryo_robot_msgs::CommandStatus::SUCCESS == res.status)

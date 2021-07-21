@@ -27,7 +27,7 @@ static std::unique_ptr<ros::NodeHandle> nh;
 
 TEST(TESTSuite, deactivateLearningMode)
 {
-    ros::ServiceClient client = nh->serviceClient<niryo_robot_msgs::SetBool>("/niryo_robot/learning_mode/activate");
+    auto client = nh->serviceClient<niryo_robot_msgs::SetBool>("/niryo_robot/learning_mode/activate");
 
     bool exists(client.waitForExistence(ros::Duration(5)));
     EXPECT_TRUE(exists);
@@ -41,7 +41,7 @@ TEST(TESTSuite, deactivateLearningMode)
 
 TEST(TESTSuite, activateLearningMode)
 {
-    ros::ServiceClient client = nh->serviceClient<niryo_robot_msgs::SetBool>("/niryo_robot/learning_mode/activate");
+    auto client = nh->serviceClient<niryo_robot_msgs::SetBool>("/niryo_robot/learning_mode/activate");
 
     bool exists(client.waitForExistence(ros::Duration(10)));
     EXPECT_TRUE(exists);
@@ -55,7 +55,7 @@ TEST(TESTSuite, activateLearningMode)
 
 TEST(TESTSuite, resetControllerServer)
 {
-    ros::ServiceClient client = nh->serviceClient<niryo_robot_msgs::Trigger>("/niryo_robot/joints_interface/steppers_reset_controller");
+    auto client = nh->serviceClient<niryo_robot_msgs::Trigger>("/niryo_robot/joints_interface/steppers_reset_controller");
 
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);
@@ -68,7 +68,7 @@ TEST(TESTSuite, resetControllerServer)
 
 TEST(TESTSuite, requestNewCalibration)
 {
-    ros::ServiceClient client = nh->serviceClient<niryo_robot_msgs::Trigger>("/niryo_robot/joints_interface/request_new_calibration");
+    auto client = nh->serviceClient<niryo_robot_msgs::Trigger>("/niryo_robot/joints_interface/request_new_calibration");
 
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);
@@ -81,7 +81,7 @@ TEST(TESTSuite, requestNewCalibration)
 
 TEST(TESTSuite, calibrateMotor)
 {
-    ros::ServiceClient client = nh->serviceClient<niryo_robot_msgs::SetInt>("/niryo_robot/joints_interface/calibrate_motors");
+    auto client = nh->serviceClient<niryo_robot_msgs::SetInt>("/niryo_robot/joints_interface/calibrate_motors");
 
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);

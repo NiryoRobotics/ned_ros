@@ -34,10 +34,11 @@ namespace joints_interface
  * @param ttl_driver
  * @param can_driver
  */
-JointsInterfaceCore::JointsInterfaceCore(ros::NodeHandle& rootnh, 
+JointsInterfaceCore::JointsInterfaceCore(ros::NodeHandle& rootnh,
                                          ros::NodeHandle& robot_hwnh,
                                          std::shared_ptr<ttl_driver::TtlDriverCore> ttl_driver,
-                                         std::shared_ptr<can_driver::CanDriverCore> can_driver)
+                                         std::shared_ptr<can_driver::CanDriverCore> can_driver) :
+    _joint_controller_name("/niryo_robot_follow_joint_trajectory_controller")
 {
     init(robot_hwnh);
 
@@ -138,7 +139,7 @@ void JointsInterfaceCore::startPublishers(ros::NodeHandle& nh)
  */
 void JointsInterfaceCore::startSubscribers(ros::NodeHandle& nh)
 {
-    _trajectory_result_subscriber = nh.subscribe("/niryo_robot_follow_joint_trajectory_controller/follow_joint_trajectory/result",
+    _trajectory_result_subscriber = nh.subscribe(_joint_controller_name + "/follow_joint_trajectory/result",
                                                   10, &JointsInterfaceCore::_callbackTrajectoryResult, this);
 }
 

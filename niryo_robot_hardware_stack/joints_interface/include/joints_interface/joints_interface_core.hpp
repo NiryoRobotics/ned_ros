@@ -98,6 +98,7 @@ class JointsInterfaceCore : common::model::IInterfaceCore
 
         double _control_loop_frequency{0.0};
         double _publish_learning_mode_frequency{0.0};
+        std::string _joint_controller_name;
 
         std::shared_ptr<JointHardwareInterface> _robot;
         std::shared_ptr<controller_manager::ControllerManager> _cm;

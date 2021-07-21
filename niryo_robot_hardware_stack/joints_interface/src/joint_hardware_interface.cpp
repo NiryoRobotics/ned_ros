@@ -55,7 +55,7 @@ namespace joints_interface
  * @param ttl_driver
  * @param can_driver
  */
-JointHardwareInterface::JointHardwareInterface(ros::NodeHandle& rootnh, 
+JointHardwareInterface::JointHardwareInterface(ros::NodeHandle& rootnh,
                                                ros::NodeHandle& robot_hwnh,
                                                shared_ptr<ttl_driver::TtlDriverCore> ttl_driver,
                                                shared_ptr<can_driver::CanDriverCore> can_driver) :
@@ -70,7 +70,10 @@ JointHardwareInterface::JointHardwareInterface(ros::NodeHandle& rootnh,
 
     activateLearningMode();
 
-    _calibration_manager = std::make_unique<CalibrationManager>(robot_hwnh, _joint_list, _can_driver_core, _ttl_driver_core);
+    _calibration_manager = std::make_unique<CalibrationManager>(robot_hwnh,
+                                                                _joint_list,
+                                                                _can_driver_core,
+                                                                _ttl_driver_core);
 }
 
 /**
@@ -286,10 +289,9 @@ void JointHardwareInterface::sendInitMotorsParams()
     {
         if (jState && jState->isStepper())
         {
-            StepperMotorCmd cmd(
-                        EStepperCommandType::CMD_TYPE_MICRO_STEPS,
-                        jState->getId(),
-                        {8});
+            StepperMotorCmd cmd(EStepperCommandType::CMD_TYPE_MICRO_STEPS,
+                                jState->getId(),
+                                {8});
             _can_driver_core->addSingleCommandToQueue(cmd);
         }
     }
@@ -301,9 +303,7 @@ void JointHardwareInterface::sendInitMotorsParams()
         if (jState && jState->isStepper())
         {
             StepperMotorCmd cmd(EStepperCommandType::CMD_TYPE_MAX_EFFORT, jState->getId(),
-                                {
-                                    static_cast<int32_t>(dynamic_pointer_cast<StepperMotorState>(jState)->getMaxEffort())
-                                });
+                                {static_cast<int32_t>(dynamic_pointer_cast<StepperMotorState>(jState)->getMaxEffort())});
             _can_driver_core->addSingleCommandToQueue(cmd);
         }
     }
@@ -413,7 +413,7 @@ void JointHardwareInterface::activateLearningMode()
                 }
             }
         }
-        
+
         _ttl_driver_core->setSyncCommand(dxl_cmd);
 
         _learning_mode = true;

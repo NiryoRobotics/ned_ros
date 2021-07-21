@@ -35,7 +35,7 @@ class ModbusServer:
 
         try:
             self.server = ModbusTcpServer(context=self.context,
-                                        framer=None, identity=self.identity, address=(address, port))
+                                          framer=None, identity=self.identity, address=(address, port))
 
         except socket.error as err:
             rospy.logerr("ModbusServer.init : TCP server unable to start : %s", err)

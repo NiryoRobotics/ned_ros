@@ -3,7 +3,7 @@
         xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
     <!-- Arguments -->
     <arg name="hardware_version" default="ned"/>
-    <arg name="simu_gripper" default="true"/>
+    <arg name="simu_gripper" default="false"/>
     <arg name="gazebo" default="false"/>
     
     <include file="$(find fake_interface)/launch/fake_interface_base.launch.xml" >

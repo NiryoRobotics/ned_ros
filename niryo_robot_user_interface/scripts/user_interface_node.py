@@ -23,7 +23,6 @@ class UserInterface:
             rospy.set_param('~initialized', False)
             rospy.logerr("User Interface Node - Not correctly Started")
 
-
     def shutdown(self):
         if self.__tcp_server is not None:
             self.__tcp_server.quit()

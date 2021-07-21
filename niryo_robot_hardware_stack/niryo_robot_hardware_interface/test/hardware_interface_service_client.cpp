@@ -27,7 +27,7 @@ static std::unique_ptr<ros::NodeHandle> nh;
 
 TEST(TESTSuite, launchMotorReport)
 {
-    ros::ServiceClient client = nh->serviceClient<niryo_robot_msgs::Trigger>("/niryo_robot_hardware_interface/launch_motors_report");
+    auto client = nh->serviceClient<niryo_robot_msgs::Trigger>("/niryo_robot_hardware_interface/launch_motors_report");
 
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);
@@ -42,7 +42,7 @@ TEST(TESTSuite, launchMotorReport)
 TEST(TESTSuite, stopMotorReport)
 {
     // we need to launch a motor report before stopping it...
-    ros::ServiceClient client = nh->serviceClient<niryo_robot_msgs::Trigger>("/niryo_robot_hardware_interface/stop_motors_report");
+    auto client = nh->serviceClient<niryo_robot_msgs::Trigger>("/niryo_robot_hardware_interface/stop_motors_report");
 
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);
@@ -56,7 +56,7 @@ TEST(TESTSuite, stopMotorReport)
 
 TEST(TESTSuite, rebootMotors)
 {
-    ros::ServiceClient client = nh->serviceClient<niryo_robot_msgs::Trigger>("/niryo_robot_hardware_interface/reboot_motors");
+    auto client = nh->serviceClient<niryo_robot_msgs::Trigger>("/niryo_robot_hardware_interface/reboot_motors");
 
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);

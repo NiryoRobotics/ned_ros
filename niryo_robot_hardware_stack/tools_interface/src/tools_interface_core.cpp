@@ -283,7 +283,8 @@ bool ToolsInterfaceCore::_callbackPingAndSetDxlTool(tools_interface::PingDxlTool
             }
             else
             {
-                ROS_WARN("ToolsInterfaceCore::_callbackPingAndSetDxlTool - Set end effector failure, return : %d. Retrying (%d)...",
+                ROS_WARN("ToolsInterfaceCore::_callbackPingAndSetDxlTool - "
+                         "Set end effector failure, return : %d. Retrying (%d)...",
                          result, tries);
             }
         }
@@ -373,9 +374,8 @@ bool ToolsInterfaceCore::_callbackOpenGripper(tools_interface::OpenGripper::Requ
         double dxl_speed = static_cast<double>(req.open_speed * _toolState.getStepsForOneSpeed());  // position . sec-1
         assert(dxl_speed != 0.00);
 
-        double dxl_steps_to_do = std::abs(static_cast<double>(
-                                          // position
-                                          req.open_position) - _ttl_driver_core->getEndEffectorState(_toolState.getId()));
+        double dxl_steps_to_do = std::abs(static_cast<double>(req.open_position) -
+                                          _ttl_driver_core->getEndEffectorState(_toolState.getId()));
 
         double seconds_to_wait =  dxl_steps_to_do /  dxl_speed + 0.25;  // sec
         ROS_DEBUG("Waiting for %d seconds", static_cast<int>(seconds_to_wait));
@@ -434,8 +434,8 @@ bool ToolsInterfaceCore::_callbackCloseGripper(tools_interface::CloseGripper::Re
         assert(dxl_speed != 0.0);
 
         // position
-        double dxl_steps_to_do = std::abs(static_cast<double>(req.close_position
-                                                              - _ttl_driver_core->getEndEffectorState(_toolState.getId())));
+        double dxl_steps_to_do = std::abs(static_cast<double>(req.close_position) -
+                                          _ttl_driver_core->getEndEffectorState(_toolState.getId()));
         double seconds_to_wait =  dxl_steps_to_do /  dxl_speed + 0.25;  // sec
         ROS_DEBUG("Waiting for %d seconds", static_cast<int>(seconds_to_wait));
 
@@ -474,17 +474,17 @@ bool ToolsInterfaceCore::_callbackPullAirVacuumPump(tools_interface::PullAirVacu
         uint32_t pull_air_hold_torque = static_cast<uint32_t>(req.pull_air_hold_torque);
 
         // set vacuum pump pos, vel and torque
-        if(_ttl_driver_core)
+        if (_ttl_driver_core)
         {
             _ttl_driver_core->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_VELOCITY,
                                                                           _toolState.getId(), pull_air_velocity));
-    
+
             _ttl_driver_core->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_POSITION,
                                                                           _toolState.getId(), pull_air_position));
-    
+
             _ttl_driver_core->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_EFFORT,
                                                                           _toolState.getId(), 500));
-    
+
             // set hold torque
             _ttl_driver_core->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_EFFORT,
                                                                           _toolState.getId(), pull_air_hold_torque));
@@ -516,7 +516,7 @@ bool ToolsInterfaceCore:: _callbackPushAirVacuumPump(tools_interface::PushAirVac
         uint32_t push_air_position = static_cast<uint32_t>(req.push_air_position);
 
         // set vacuum pump pos, vel and torque
-        if(_ttl_driver_core)
+        if (_ttl_driver_core)
         {
             _ttl_driver_core->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_VELOCITY,
                                                                           _toolState.getId(), push_air_velocity));

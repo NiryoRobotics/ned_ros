@@ -31,7 +31,7 @@ static std::unique_ptr<ros::NodeHandle> nh;
 
 TEST(TESTSuite, pingTool)
 {
-    ros::ServiceClient client = nh->serviceClient<tools_interface::PingDxlTool>("/niryo_robot/tools/ping_and_set_dxl_tool");
+    auto client = nh->serviceClient<tools_interface::PingDxlTool>("/niryo_robot/tools/ping_and_set_dxl_tool");
 
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);
@@ -39,14 +39,14 @@ TEST(TESTSuite, pingTool)
     tools_interface::PingDxlTool srv;
     client.call(srv);
 
-    //surprisingly we must first create a variable to have it work
+    // surprisingly we must first create a variable to have it work
     int res = common::model::ToolState::TOOL_STATE_PING_OK;
     EXPECT_EQ(srv.response.state, res);
 }
 
 TEST(TESTSuite, openTool)
 {
-    ros::ServiceClient client = nh->serviceClient<tools_interface::OpenGripper>("/niryo_robot/tools/open_gripper");
+    auto client = nh->serviceClient<tools_interface::OpenGripper>("/niryo_robot/tools/open_gripper");
 
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);
@@ -64,7 +64,7 @@ TEST(TESTSuite, openTool)
 
 TEST(TESTSuite, CloseGripper)
 {
-    ros::ServiceClient client = nh->serviceClient<tools_interface::CloseGripper>("/niryo_robot/tools/close_gripper");
+    auto client = nh->serviceClient<tools_interface::CloseGripper>("/niryo_robot/tools/close_gripper");
 
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);
@@ -83,7 +83,7 @@ TEST(TESTSuite, CloseGripper)
 
 TEST(TESTSuite, ToolReboot)
 {
-    ros::ServiceClient client = nh->serviceClient<std_srvs::Trigger>("/niryo_robot/tools/reboot");
+    auto client = nh->serviceClient<std_srvs::Trigger>("/niryo_robot/tools/reboot");
 
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);
@@ -96,7 +96,7 @@ TEST(TESTSuite, ToolReboot)
 
 TEST(TESTSuite, PullAirVacuumPump)
 {
-    ros::ServiceClient client = nh->serviceClient<tools_interface::PullAirVacuumPump>("/niryo_robot/tools/pull_air_vacuum_pump");
+    auto client = nh->serviceClient<tools_interface::PullAirVacuumPump>("/niryo_robot/tools/pull_air_vacuum_pump");
 
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);
@@ -112,7 +112,7 @@ TEST(TESTSuite, PullAirVacuumPump)
 
 TEST(TESTSuite, PushAirVacuumPump)
 {
-    ros::ServiceClient client = nh->serviceClient<tools_interface::PushAirVacuumPump>("/niryo_robot/tools/push_air_vacuum_pump");
+    auto client = nh->serviceClient<tools_interface::PushAirVacuumPump>("/niryo_robot/tools/push_air_vacuum_pump");
 
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);

@@ -3,7 +3,6 @@
         xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
     <!-- Arguments -->
     <arg name="simulation_mode" default="true"/>
-    <arg name="simu_gripper" default="false"/>
     <arg name="can_enabled" default="false"/>
     <arg name="ttl_enabled" default="false"/>
     <arg name="hardware_version" default="ned"/>

@@ -865,8 +865,10 @@ bool TtlDriverCore::_callbackSendCustomDxlValue(ttl_driver::SendCustomDxlValue::
     else
     {
         res.status = niryo_robot_msgs::CommandStatus::WRONG_MOTOR_TYPE;
-        res.message = "TtlDriverCore - Invalid motor type: should be 2 (XL-430) or 3 (XL-320) or 4 (XL-330) or 5 (XC-430)";
-        return true;
+        res.message = "TtlDriverCore - Invalid motor type: should be";
+// (CC) to be changed with loop
+//        2(XL - 430) or 3(XL - 320) or 4(XL - 330) or 5(XC - 430) ";
+            return true;
     }
 
     lock_guard<mutex> lck(_control_loop_mutex);
@@ -905,7 +907,11 @@ bool TtlDriverCore::_callbackReadCustomDxlValue(ttl_driver::ReadCustomDxlValue::
     else
     {
         res.status = niryo_robot_msgs::CommandStatus::WRONG_MOTOR_TYPE;
-        res.message = "TtlDriverCore - Invalid motor type: should be 2 (XL-430) or 3 (XL-320) or 4 (XL-330) or 5 (XC-430)";
+        // (CC) to be changed with for loop
+        res.message = "TtlDriverCore - Invalid motor type: should be";
+        /*
+        2(XL - 430) "
+                    " or 3 (XL-320) or 4 (XL-330) or 5 (XC-430)";*/
         return true;
     }
 

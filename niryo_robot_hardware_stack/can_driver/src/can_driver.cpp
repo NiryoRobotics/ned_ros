@@ -833,8 +833,12 @@ uint8_t CanDriver::sendPositionCommand(uint8_t id, int cmd)
 uint8_t CanDriver::sendRelativeMoveCommand(uint8_t id, int steps, int delay)
 {
     uint8_t data[7] = {CAN_CMD_MOVE_REL,
-                       static_cast<uint8_t>((steps >> 16) & 0xFF), static_cast<uint8_t>((steps >> 8) & 0xFF), static_cast<uint8_t>(steps & 0XFF),
-                       static_cast<uint8_t>((delay >> 16) & 0xFF), static_cast<uint8_t>((delay >> 8) & 0xFF), static_cast<uint8_t>(delay & 0XFF)};
+                       static_cast<uint8_t>((steps >> 16) & 0xFF),
+                       static_cast<uint8_t>((steps >> 8) & 0xFF),
+                       static_cast<uint8_t>(steps & 0XFF),
+                       static_cast<uint8_t>((delay >> 16) & 0xFF),
+                       static_cast<uint8_t>((delay >> 8) & 0xFF),
+                       static_cast<uint8_t>(delay & 0XFF)};
     return sendCanMsgBuf(id, 0, 7, data);
 }
 
