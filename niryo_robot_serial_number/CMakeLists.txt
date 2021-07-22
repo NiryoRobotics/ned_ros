@@ -52,11 +52,6 @@ endif(BUILD_DOCS)
 #############
 
 catkin_install_python(PROGRAMS 
-    scripts/mqtt_client/MqttClient.py
-    scripts/mqtt_client/MqttPublisher.py
-    scripts/mqtt_client/MqttSubscriber.py
-    scripts/mqtt_client/S3Client.py
-    scripts/mqtt_client_node.py
     scripts/serial_number_node.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
@@ -64,11 +59,6 @@ catkin_install_python(PROGRAMS
 install(
   DIRECTORY launch/
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
-)
-
-install(
-  DIRECTORY config/
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/config
 )
 
 if (EXISTS ${CMAKE_CURRENT_BINARY_DIR}/doc)
