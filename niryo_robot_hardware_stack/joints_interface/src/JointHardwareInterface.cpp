@@ -94,10 +94,9 @@ void JointHardwareInterface::read(const ros::Time &/*time*/, const ros::Duration
         }
     }
 
-    if (_can_driver_core) {
-        if (!_can_driver_core->isConnectionOk())
-            this->setNeedCalibration();
-    }
+    // (CC) calibration with only joints used can ?
+    if (_can_driver_core && !_can_driver_core->isConnectionOk())
+        this->setNeedCalibration();
 }
 
 /**

@@ -58,8 +58,12 @@ namespace ttl_driver
  */
 class TtlDriverCore : public common::model::IDriverCore, public common::model::IInterfaceCore
 {
-    public:
+    typedef common::model::SynchronizeMotorCmd<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum> DxlSyncCmd;
+    typedef common::model::SynchronizeMotorCmd<common::model::EStepperCommandType, common::model::StepperCommandTypeEnum> StepperSyncCmd;
+    typedef common::model::SingleMotorCmd<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum> DxlSingleCmd;
+    typedef common::model::SingleMotorCmd<common::model::EStepperCommandType, common::model::StepperCommandTypeEnum> StepperSingleCmd;
 
+    public:
         TtlDriverCore(ros::NodeHandle& nh);
         virtual ~TtlDriverCore() override;
 
