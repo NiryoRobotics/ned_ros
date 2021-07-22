@@ -29,7 +29,7 @@ TEST(TtlDriverTestSuite, testInitDriver)
     ttl_driver::TtlDriver ttl_driver(nh);
     ttl_driver.scanAndCheck();
 
-  EXPECT_TRUE(ttl_driver.isConnectionOk());
+    EXPECT_TRUE(ttl_driver.isConnectionOk());
 }
 
 // Run all the tests that were declared with TEST()
