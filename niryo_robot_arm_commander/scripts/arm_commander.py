@@ -411,7 +411,7 @@ class ArmCommander:
 
         self.__arm.set_start_state_to_current_state()
         plan = self.__link_plans(dist_smoothing, *list_plans)
-        # self.__display_traj(plan, id_=int(1000 * dist_smoothing))
+        self.display_traj(plan, id_=int(1000 * dist_smoothing))
         return self.__traj_executor.execute_plan(plan)
 
     def __link_plans(self, dist_smoothing=0.0, *plans):

@@ -1758,7 +1758,7 @@ class NiryoRosWrapper:
         Save workspace by giving the poses of the robot to point its 4 corners
         with the calibration Tip. Corners should be in the good order
 
-        :param name: workspace name
+        :param name: workspace name, max 30 char.
         :type name: str
         :param list_poses_raw: list of 4 corners pose
         :type list_poses_raw: list[list]
@@ -1770,7 +1770,9 @@ class NiryoRosWrapper:
         list_poses = [self.list_to_robot_state_msg(*pose) for pose in list_poses_raw]
         req = ManageWorkspaceRequest()
         req.cmd = ManageWorkspaceRequest.SAVE
-        req.workspace.name = name
+        if len(name)>30:
+            rospy.logwarn('ROS Wrapper - Workspace name is too long, using : %s instead', name[:30])
+        req.workspace.name = name[:30]
         req.workspace.poses = list_poses
         result = self.__call_service('/niryo_robot_poses_handlers/manage_workspace',
                                      ManageWorkspace, req)
@@ -1780,7 +1782,7 @@ class NiryoRosWrapper:
         """
         Save workspace by giving the poses of its 4 corners in the good order
 
-        :param name: workspace name
+        :param name: workspace name, max 30 char.
         :type name: str
         :param list_points_raw: list of 4 corners [x, y, z]
         :type list_points_raw: list[list[float]]
@@ -1792,7 +1794,9 @@ class NiryoRosWrapper:
         list_points = [Point(*point) for point in list_points_raw]
         req = ManageWorkspaceRequest()
         req.cmd = ManageWorkspaceRequest.SAVE_WITH_POINTS
-        req.workspace.name = name
+        if len(name)>30:
+            rospy.logwarn('ROS Wrapper - Workspace name is too long, using : %s instead', name[:30])
+        req.workspace.name = name[:30]
         req.workspace.points = list_points
         result = self.__call_service('/niryo_robot_poses_handlers/manage_workspace',
                                      ManageWorkspace, req)

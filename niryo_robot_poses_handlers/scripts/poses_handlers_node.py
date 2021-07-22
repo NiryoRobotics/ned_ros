@@ -119,6 +119,9 @@ class PoseHandlerNode:
     def __callback_manage_workspace(self, req):
         cmd = req.cmd
         workspace = req.workspace
+        if len(workspace.name)>30:
+            rospy.logwarn('Poses Handlers - Workspace name is too long, using : %s instead', workspace.name[:30])
+        workspace.name = workspace.name[:30]
         if cmd == req.SAVE:
             if len(workspace.poses) != 4:
                 return CommandStatus.WORKSPACE_CREATION_FAILED, "Workspaces have 4 positions, {} given".format(

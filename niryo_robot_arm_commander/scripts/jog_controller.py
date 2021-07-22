@@ -33,7 +33,7 @@ from moveit_msgs.msg import Constraints
 
 from niryo_robot_msgs.msg import HardwareStatus
 from niryo_robot_msgs.msg import RobotState
-from niryo_robot_arm_commander.msg import CommandJog
+from niryo_robot_msgs.msg import CommandJog
 
 # Services
 from niryo_robot_arm_commander.srv import GetIK
@@ -94,7 +94,7 @@ class JogController:
         # topic used to jog pose via Niryo Studio, to avoid calling the service
         self._jog_command_ik = None
         rospy.Subscriber('/niryo_robot_arm_commander/send_jog_command_ik', CommandJog,
-                         self.__callback_send_jog_command_ik, queue_size=10)
+                         self.__callback_send_jog_command_ik, queue_size=20)
 
         # topic used to jog joints via Niryo Studio, to avoid calling the service
         rospy.Subscriber('/niryo_robot_arm_commander/send_jog_joints_command', CommandJog,
