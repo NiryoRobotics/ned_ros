@@ -561,6 +561,14 @@ void CanDriverCore::addSingleCommandToQueue(const common::model::StepperMotorCmd
 
 /**
  * @brief CanDriverCore::addSingleCommandToQueue
+*/
+void CanDriverCore::addSingleCommandToQueue(const common::model::SingleMotorCmdI& cmd)
+{
+    return addSingleCommandToQueue(cmd);
+}
+
+/**
+ * @brief CanDriverCore::addSingleCommandToQueue
  * @param cmd
  */
 void CanDriverCore::addSingleCommandToQueue(const std::vector<common::model::StepperMotorCmd> &cmd)

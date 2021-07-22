@@ -32,7 +32,8 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "niryo_robot_msgs/BusState.h"
 #include "motor_type_enum.hpp"
 #include "common/model/joint_state.hpp"
-
+#include "common/model/single_motor_cmd_interface.hpp"
+#include "common/model/stepper_calibration_status_enum.hpp"
 namespace common
 {
 namespace model
@@ -48,6 +49,15 @@ class IDriverCore
 
         virtual void startControlLoop() = 0;
         virtual bool isConnectionOk() const = 0;
+        virtual bool scanMotorId(uint8_t motor_to_find) = 0;
+        virtual void addSingleCommandToQueue(const common::model::SingleMotorCmdI &cmd) = 0;
+        
+        // calibration
+        virtual void startCalibration() = 0;
+        virtual void resetCalibration() = 0;
+        virtual bool isCalibrationInProgress() const = 0;
+        virtual int32_t getCalibrationResult(uint8_t id) const = 0;
+        virtual common::model::EStepperCalibrationStatus getCalibrationStatus() const = 0;
 
         virtual void activeDebugMode(bool mode) = 0;
 

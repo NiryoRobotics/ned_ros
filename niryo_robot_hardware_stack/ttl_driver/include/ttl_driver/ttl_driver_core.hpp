@@ -80,7 +80,7 @@ class TtlDriverCore : public common::model::IDriverCore, public common::model::I
 
         void setSyncCommand(const common::model::SynchronizeMotorCmdI &cmd);
 
-        void addSingleCommandToQueue(const common::model::SingleMotorCmdI &cmd);
+        void addSingleCommandToQueue(const common::model::SingleMotorCmdI &cmd) override;
 
         void addSingleCommandToQueue(const std::vector<common::model::SingleMotorCmdI> &cmd);
 
@@ -107,6 +107,14 @@ class TtlDriverCore : public common::model::IDriverCore, public common::model::I
         std::string getTypeDriver() const override;
         // IDriverCore interface
         void startControlLoop() override;
+
+        bool scanMotorId(uint8_t motor_to_find) override;
+
+        void startCalibration() override;
+        void resetCalibration() override ;
+        bool isCalibrationInProgress() const override ;
+        int32_t getCalibrationResult(uint8_t id) const override ;
+        common::model::EStepperCalibrationStatus getCalibrationStatus() const;
 
         void activeDebugMode(bool mode) override;
 

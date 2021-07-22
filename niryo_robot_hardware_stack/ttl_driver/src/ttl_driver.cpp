@@ -37,6 +37,7 @@ using ::std::ostringstream;
 using ::std::to_string;
 using ::std::set;
 
+using ::common::model::EStepperCalibrationStatus;
 using ::common::model::StepperMotorState;
 using ::common::model::JointState;
 using ::common::model::EMotorType;
@@ -54,6 +55,7 @@ namespace ttl_driver
  * @brief TtlDriver::TtlDriver
  */
 TtlDriver::TtlDriver() :
+    _calibration_status(EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED),
     _is_connection_ok(false),
     _debug_error_message("TtlDriver - No connection with Dynamixel motors has been made yet"),
     _hw_fail_counter_read(0)
@@ -736,6 +738,61 @@ int TtlDriver::getAllIdsOnBus(vector<uint8_t> &id_list)
     return result;
 }
 
+/**
+ * @brief TtlDriver::startCalibration
+ */
+void TtlDriver::startCalibration()
+{
+    ROS_DEBUG("TtlDriver::startCalibration: starting...");
+
+    for (auto const& s : _state_map)
+    {
+        if (s.second && s.second->isStepper())
+            std::dynamic_pointer_cast<StepperMotorState>(s.second)->setCalibration(EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS, 0);
+    }
+
+    _calibration_status = EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS;
+}
+
+/**
+ * @brief TtlDriver::resetCalibration
+ */
+void TtlDriver::resetCalibration()
+{
+    ROS_DEBUG("TtlDriver::resetCalibration: reseting...");
+
+    _calibration_status = EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED;
+}
+
+/**
+ * @brief TtlDriver::isCalibrationInProgress
+ * @return
+ */
+bool TtlDriver::isCalibrationInProgress() const {
+    return common::model::EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS == _calibration_status;
+}
+
+/**
+ * @brief TtlDriver::getCalibrationResult
+ * @param motor_id
+ * @return
+ */
+int32_t TtlDriver::getCalibrationResult(uint8_t motor_id) const
+{
+    if (!_state_map.count(motor_id) && _state_map.at(motor_id))
+        throw std::out_of_range("TtlDriver::getMotorsState: Unknown motor id");
+
+    return std::dynamic_pointer_cast<common::model::StepperMotorState>(_state_map.at(motor_id))->getCalibrationValue();
+}
+
+/**
+ * @brief TtlDriver::getCalibrationStatus
+ * @return
+ */
+common::model::EStepperCalibrationStatus TtlDriver::getCalibrationStatus() const
+{
+    return _calibration_status;
+}
 // ******************
 //  Write operations
 // ******************

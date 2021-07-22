@@ -439,6 +439,63 @@ void TtlDriverCore::startControlLoop()
 }
 
 /**
+ * @brief TtlDriverCore::scanMotorId
+*/
+bool TtlDriverCore::scanMotorId(uint8_t motor_to_find)
+{
+    ROS_INFO("TtlDriverCore::scanMotorId need to be implemented used in calibration manager");
+    return true;
+}
+
+/**
+ * @brief TtlDriverCore::startCalibration
+ */
+void TtlDriverCore::startCalibration()
+{
+    if (_ttl_driver)
+        _ttl_driver->startCalibration();
+}
+
+/**
+ * @brief TtlDriverCore::resetCalibration
+ */
+void TtlDriverCore::resetCalibration()
+{
+    if (_ttl_driver)
+        _ttl_driver->resetCalibration();
+}
+
+/**
+ * @brief CanDriverCore::isCalibrationInProgress
+ * @return
+ */
+bool TtlDriverCore::isCalibrationInProgress() const
+{
+    return _ttl_driver->isCalibrationInProgress();
+}
+
+/**
+ * @brief TtlDriverCore::getCalibrationResult
+ * @param id
+ * @return
+ */
+int32_t TtlDriverCore::getCalibrationResult(uint8_t id) const
+{
+    return _ttl_driver->getCalibrationResult(id);
+}
+
+/**
+ * @brief TtlDriverCore::getCalibrationStatus
+ * @return
+ */
+inline
+common::model::EStepperCalibrationStatus
+TtlDriverCore::getCalibrationStatus() const
+{
+    return _ttl_driver->getCalibrationStatus();
+}
+
+/**
  * @brief TtlDriverCore::resetHardwareControlLoopRates
  */
 void TtlDriverCore::resetHardwareControlLoopRates()

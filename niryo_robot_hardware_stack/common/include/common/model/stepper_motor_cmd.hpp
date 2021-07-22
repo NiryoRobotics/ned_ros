@@ -25,7 +25,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 
 #include "common/model/abstract_motor_cmd.hpp"
 #include "common/model/stepper_command_type_enum.hpp"
-
+#include "common/model/single_motor_cmd_interface.hpp"
 namespace common
 {
 namespace model
@@ -34,7 +34,7 @@ namespace model
 /**
  * @brief The StepperMotorCmd class
  */
-class StepperMotorCmd : public AbstractMotorCmd<EStepperCommandType>
+class StepperMotorCmd : public AbstractMotorCmd<EStepperCommandType>, public SingleMotorCmdI
 {
     public:
         StepperMotorCmd();
@@ -49,9 +49,11 @@ class StepperMotorCmd : public AbstractMotorCmd<EStepperCommandType>
 
         // getters
         uint8_t getId() const;
-        const std::vector<int32_t>& getParams() const;
+        std::vector<int32_t> getParams() const override;
 
         // AbstractMotorCmd interface
+        bool isCmdStepper() const override;
+        bool isCmdDxl() const override;
         virtual void reset() override;
         virtual void clear() override;
         virtual std::string str() const override;
@@ -77,10 +79,27 @@ uint8_t StepperMotorCmd::getId() const
  * @return
  */
 inline
-const std::vector<int32_t>& StepperMotorCmd::getParams() const
+std::vector<int32_t> StepperMotorCmd::getParams() const
 {
     return _param_list;
 }
+
+/**
+ * @brief StepperMotorCmd::isCmdStepper
+*/
+inline bool StepperMotorCmd::isCmdStepper() const
+{
+    return true;
+}
+
+/**
+ * @brief StepperMotorCmd::isCmdStepper
+*/
+inline bool StepperMotorCmd::isCmdDxl() const
+{
+    return false;
+}
+
 } // namespace model
 } // namespace common
 

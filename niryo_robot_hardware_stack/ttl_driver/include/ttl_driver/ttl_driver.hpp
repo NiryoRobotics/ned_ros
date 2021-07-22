@@ -43,6 +43,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "common/model/dxl_motor_state.hpp"
 #include "common/model/synchronize_motor_cmd.hpp"
 #include "common/model/single_motor_cmd.hpp"
+#include "common/model/stepper_calibration_status_enum.hpp"
 
 namespace ttl_driver
 {
@@ -106,6 +107,12 @@ class TtlDriver : public common::model::IDriver
 
         int getAllIdsOnBus(std::vector<uint8_t> &id_list);
 
+        void startCalibration();
+        void resetCalibration();
+        bool isCalibrationInProgress() const;
+        int32_t getCalibrationResult(uint8_t id) const;
+        common::model::EStepperCalibrationStatus getCalibrationStatus() const;
+
         // getters
         uint32_t getPosition(common::model::JointState& motor_state);
         int getLedState() const;
@@ -157,12 +164,14 @@ class TtlDriver : public common::model::IDriver
         std::map<common::model::EMotorType, std::vector<uint8_t> > _ids_map;
         std::map<common::model::EMotorType, std::shared_ptr<AbstractMotorDriver> > _driver_map;
 
+        double _calibration_timeout{30.0};
+        common::model::EStepperCalibrationStatus _calibration_status;
         // for hardware control
         bool _is_connection_ok;
         std::string _debug_error_message;
 
         int _hw_fail_counter_read;
-
+        
         int _led_state;
 
         static constexpr int MAX_HW_FAILURE = 25;

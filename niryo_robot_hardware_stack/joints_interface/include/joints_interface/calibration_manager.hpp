@@ -28,8 +28,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 
 #include "common/model/joint_state.hpp"
 
-#include "can_driver/can_driver_core.hpp"
-#include "ttl_driver/ttl_driver_core.hpp"
+#include "joints_driver/joints_driver.hpp"
 
 #include "niryo_robot_msgs/CommandStatus.h"
 
@@ -42,8 +41,7 @@ class CalibrationManager
 public:
     CalibrationManager(ros::NodeHandle& nh,
                        std::vector<std::shared_ptr<common::model::JointState> > joint_list,
-                       std::shared_ptr<can_driver::CanDriverCore> can_driver,
-                       std::shared_ptr<ttl_driver::TtlDriverCore> ttl_driver);
+                       std::shared_ptr<joint_driver::JointDriver> joint_driver);
 
     virtual ~CalibrationManager();
 
@@ -75,7 +73,8 @@ private:
     ros::NodeHandle _nh;
     std::shared_ptr<can_driver::CanDriverCore> _can_driver_core;
     std::shared_ptr<ttl_driver::TtlDriverCore> _ttl_driver_core;
-
+    std::shared_ptr<joint_driver::JointDriver> _jdriver;
+    
     std::vector<std::shared_ptr<common::model::JointState> > _joint_list;
 
     bool _calibration_in_progress{false};

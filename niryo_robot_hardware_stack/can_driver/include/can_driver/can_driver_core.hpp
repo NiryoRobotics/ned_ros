@@ -58,19 +58,20 @@ class CanDriverCore : public common::model::IDriverCore, public common::model::I
         void clearConveyorCommandQueue();
 
         void setTrajectoryControllerCommands(const std::vector<std::pair<uint8_t, uint32_t> > &cmd);
+        void addSingleCommandToQueue(const common::model::SingleMotorCmdI& cmd) override;
         void addSingleCommandToQueue(const common::model::StepperMotorCmd& cmd);
         void addSingleCommandToQueue(const std::vector<common::model::StepperMotorCmd>& cmd);
 
-        void startCalibration();
-        void resetCalibration();
+        void startCalibration() override;
+        void resetCalibration() override;
 
         // direct commands
         bool scanMotorId(uint8_t motor_to_find);
 
         // getters
-        bool isCalibrationInProgress() const;
-        int32_t getCalibrationResult(uint8_t id) const;
-        common::model::EStepperCalibrationStatus getCalibrationStatus() const;
+        bool isCalibrationInProgress() const override ;
+        int32_t getCalibrationResult(uint8_t id) const override;
+        common::model::EStepperCalibrationStatus getCalibrationStatus() const override;
 
         can_driver::StepperArrayMotorHardwareStatus getHwStatus() const;
 

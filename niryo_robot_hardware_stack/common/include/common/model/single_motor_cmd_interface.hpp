@@ -43,10 +43,13 @@ class SingleMotorCmdI
         // setters
         void setId(uint8_t id);
         void setParam(uint32_t param);
+        void setParams(std::vector<int32_t> params); 
 
         // getters
         uint8_t getId() const;
         uint32_t getParam() const;
+        // using in case steppers
+        virtual std::vector<int32_t> getParams() const;
 
         // AbstractMotorCmd interface
         virtual bool isCmdStepper() const;
@@ -89,6 +92,16 @@ uint32_t SingleMotorCmdI::getParam() const
 }
 
 /**
+ * @brief SingleMotorCmdI::getParam
+ * @return
+ */
+inline
+std::vector<int32_t> SingleMotorCmdI::getParams() const
+{
+    return {(int32_t)_param};
+}
+
+/**
  * @brief SingleMotorCmdI::setId
  * @param id
  */
@@ -106,6 +119,16 @@ inline
 void SingleMotorCmdI::setParam(uint32_t param)
 {
     _param = param;
+}
+
+/**
+ * @brief SingleMotorCmdI::setParam
+ * @param param
+ */
+inline
+void SingleMotorCmdI::setParams(std::vector<int32_t> params) 
+{
+    _param = params[0];
 }
 
 /**
