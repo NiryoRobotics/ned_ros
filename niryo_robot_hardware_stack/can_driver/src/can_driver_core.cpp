@@ -564,7 +564,8 @@ void CanDriverCore::addSingleCommandToQueue(const common::model::StepperMotorCmd
 */
 void CanDriverCore::addSingleCommandToQueue(const common::model::SingleMotorCmdI& cmd)
 {
-    return addSingleCommandToQueue(cmd);
+    if (cmd.isCmdStepper())
+        return addSingleCommandToQueue(dynamic_cast<const common::model::StepperMotorCmd &>(cmd));
 }
 
 /**

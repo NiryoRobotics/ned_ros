@@ -736,10 +736,10 @@ void TtlDriverCore::setSyncCommand(const common::model::SynchronizeMotorCmdI &cm
     {
         if (cmd.isCmdDxl())
         {
-            _sync_cmds = std::make_shared<common::model::SynchronizeMotorCmdI>(*dynamic_cast<const DxlSyncCmd *>(&cmd));
+            _sync_cmds = std::make_shared<DxlSyncCmd>(*dynamic_cast<const DxlSyncCmd *>(&cmd));
         }
         else
-            _sync_cmds = std::make_shared<common::model::SynchronizeMotorCmdI>(*dynamic_cast<const StepperSyncCmd *>(&cmd));
+            _sync_cmds = std::make_shared<StepperSyncCmd>(*dynamic_cast<const StepperSyncCmd *>(&cmd));
     }
     else
         ROS_WARN("TtlDriverCore::setSyncCommand : Invalid command %s", cmd.str().c_str());

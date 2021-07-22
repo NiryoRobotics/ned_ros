@@ -58,8 +58,8 @@ class CanDriverCore : public common::model::IDriverCore, public common::model::I
         void clearConveyorCommandQueue();
 
         void setTrajectoryControllerCommands(const std::vector<std::pair<uint8_t, uint32_t> > &cmd);
-        void addSingleCommandToQueue(const common::model::SingleMotorCmdI& cmd) override;
-        void addSingleCommandToQueue(const common::model::StepperMotorCmd& cmd);
+        void addSingleCommandToQueue(const common::model::SingleMotorCmdI &cmd) override;
+        void addSingleCommandToQueue(const common::model::StepperMotorCmd &cmd);
         void addSingleCommandToQueue(const std::vector<common::model::StepperMotorCmd>& cmd);
 
         void startCalibration() override;
