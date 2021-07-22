@@ -1,4 +1,6 @@
 from enum import Enum, unique
+
+
 # import cv2
 
 
@@ -14,7 +16,6 @@ class ColorRequest(Enum):
     NONE = 0
 
 
-
 # Different object shapes that can be requested to the visions functions in Modbus
 @unique
 class ShapeRequest(Enum):
@@ -24,4 +25,3 @@ class ShapeRequest(Enum):
     TRIANGLE = 3
 
     NONE = 0
-

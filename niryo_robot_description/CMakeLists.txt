@@ -51,5 +51,12 @@ endif()
 ##########################
 ## Static code analysis ##
 ##########################
+find_package(roslint QUIET)
 
-# no scripts to analyse
+if(roslint_FOUND)
+    # no static code analysis on external libs
+    # create empty target (needed for catkin build --make-args roslint)
+    add_custom_target(roslint)
+else()
+    message(WARNING "roslint not found. Skipping roslint target building")
+endif()

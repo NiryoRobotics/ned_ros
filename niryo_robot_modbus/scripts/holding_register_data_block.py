@@ -25,7 +25,6 @@ from sensor_msgs.msg import CameraInfo
 from niryo_robot_tools_commander.msg import ToolCommand, ToolAction
 from niryo_robot_arm_commander.msg import ArmMoveCommand
 
-
 # Services
 from conveyor_interface.srv import ControlConveyor, SetConveyor, SetConveyorRequest
 from niryo_robot_msgs.srv import SetInt, SetBool
@@ -120,11 +119,11 @@ HR_YAW_REL = 623
 HR_SHAPE_REQUEST = 624
 HR_COLOR_REQUEST = 625
 
- # Workspaces' names are limited to 30 characters, so the number of register to store it is 15 (2 char = 1 register)
+# Workspaces' names are limited to 30 characters, so the number of register to store it is 15 (2 char = 1 register)
 HR_WORKSPACE_NAME = 626
 
-# Use next registers at address 641.
 
+# Use next registers at address 641.
 
 
 # Positive number : 0 - 32767
@@ -156,9 +155,9 @@ class HoldingRegisterDataBlock(DataBlock):
 
         # Tool
         self.current_tool_id = None
-        self.list_id_grippers = [11, 12, 13, 14] 
+        self.list_id_grippers = [11, 12, 13, 14]
         rospy.Subscriber('/niryo_robot_hardware/tools/current_id', Int32,
-                                                     self.sub_selected_tool_id)
+                         self.sub_selected_tool_id)
 
         # Variables
         self.workspace_name = None
@@ -179,16 +178,15 @@ class HoldingRegisterDataBlock(DataBlock):
 
         self.null_robot_state = RobotState()
 
-
     def setValuesOffset(self, address, values):
         # if values is not a list, transform it to a list or it won't work
         if type(values) != list:
-            values = [values] 
-        # set values in register
+            values = [values]
+            # set values in register
         super(HoldingRegisterDataBlock, self).setValuesOffset(address,
-                                                              values) 
+                                                              values)
 
-    # - Callbacks
+        # - Callbacks
 
     def sub_selected_tool_id(self, msg):
         value = int(msg.data)
@@ -387,7 +385,7 @@ class HoldingRegisterDataBlock(DataBlock):
         self.start_execution_thread_tool(goal.goal)
 
     def move_pose(self, pose):
-        goal = RobotMoveActionGoal() 
+        goal = RobotMoveActionGoal()
         goal.goal.cmd.cmd_type = ArmMoveCommand.POSE
         goal.goal.cmd.position.x = pose[0]
         goal.goal.cmd.position.y = pose[1]
@@ -430,7 +428,8 @@ class HoldingRegisterDataBlock(DataBlock):
                                                            ToolAction,
                                                            goal])
             self.execution_thread.start()
-            self.execution_thread.join() # added thread.join to avoid errors when thread is long (caused issue in vision pick)
+            # added thread.join to avoid errors when thread is long (caused issue in vision pick)
+            self.execution_thread.join()
 
     def execute_action(self, action_name, action_msg_type, goal):
         self.setValuesOffset(HR_IS_EXECUTING_CMD, [1])
@@ -578,8 +577,7 @@ class HoldingRegisterDataBlock(DataBlock):
         response = self.call_ros_service('/niryo_robot_tools_commander/set_tcp', SetTCP, req)
         return self.__set_command_done(response.status)
 
-
-    # - Vision related methods 
+    # - Vision related methods
 
     def get_target_pose_from_rel(self, height_offset=None, x_rel=None, y_rel=None, yaw_rel=None, sub_called=False):
         """
@@ -605,7 +603,8 @@ class HoldingRegisterDataBlock(DataBlock):
         :rtype: int, RobotState
         """
 
-        # manage arguments, so we can pass another value in arg than class variable (usefull for vision_pick for instance)
+        # manage arguments, so we can pass another value in arg than class variable
+        # (usefull for vision_pick for instance)
         if height_offset is None:
             height_offset = self.height_offset
         if x_rel is None:
@@ -614,7 +613,6 @@ class HoldingRegisterDataBlock(DataBlock):
             y_rel = self.y_rel
         if yaw_rel is None:
             yaw_rel = self.yaw_rel
-
 
         if any(elem is None for elem in [x_rel, y_rel, yaw_rel]):
             if not sub_called:
@@ -629,8 +627,8 @@ class HoldingRegisterDataBlock(DataBlock):
             self.__set_command_in_progress()
 
         if x_rel == 0 and y_rel == 0 and yaw_rel == 0:
-            # if the relative position is zero, it means it was previously set to zero because 
-            # no object was detected in the workspace. The relative position corresponding to those 3 zero values 
+            # if the relative position is zero, it means it was previously set to zero because
+            # no object was detected in the workspace. The relative position corresponding to those 3 zero values
             # is located on the first landmark of the workspace. If an object is placed there,
             # it won't be detected anyway, so we set the position result registers to 0.
             if not sub_called:
@@ -642,11 +640,11 @@ class HoldingRegisterDataBlock(DataBlock):
 
         # - Get target pose from relative pose of object
         response = self.call_ros_service('/niryo_robot_poses_handlers/get_target_pose', GetTargetPose,
-                                         self.workspace_name,height_offset, x_rel, y_rel, yaw_rel)
+                                         self.workspace_name, height_offset, x_rel, y_rel, yaw_rel)
 
         if response.status == CommandStatus.SUCCESS:
             if not sub_called:
-                # store pose in result register and update higher_address_result 
+                # store pose in result register and update higher_address_result
                 obj_pose = self.get_pose_for_registers_from_target_pose(response.target_pose)
                 self.setValuesOffset(HR_VISION_TARGET_POSE, obj_pose)
                 self.__set_command_done(response.status)
@@ -737,7 +735,8 @@ class HoldingRegisterDataBlock(DataBlock):
             height_offset=self.height_offset + 0.05, x_rel=obj_rel_pose.x,
             y_rel=obj_rel_pose.y, yaw_rel=obj_rel_pose.yaw, sub_called=True)
 
-        if pick_pose_response_status == CommandStatus.SUCCESS and approach_pose_response_status == CommandStatus.SUCCESS:
+        if (pick_pose_response_status == CommandStatus.SUCCESS and
+                approach_pose_response_status == CommandStatus.SUCCESS):
             # - First store shape and color of object
             self.store_pose_shape_color_in_registers(None, obj_type_str, obj_color_str)
 
@@ -785,7 +784,7 @@ class HoldingRegisterDataBlock(DataBlock):
         """
         self.__set_command_in_progress()
 
-         # - Get target pose of object from camera
+        # - Get target pose of object from camera
         response_status, obj_found, obj_pose, obj_type_str, obj_color_str = self.get_target_pose_from_cam(
             sub_called=True)
 
@@ -804,7 +803,7 @@ class HoldingRegisterDataBlock(DataBlock):
 
     def detect_object(self, sub_called=False):
         """
-        Find the first detected object according to requested shape and color. 
+        Find the first detected object according to requested shape and color.
 
         :param sub_called: True if the function is called by another method, False otherwise
         :type sub_called: bool
@@ -821,12 +820,14 @@ class HoldingRegisterDataBlock(DataBlock):
         # Check that workspace_name, vision_shape and vision_color are not None. If they are, empty registers.
         if any(elem is None for elem in [self.workspace_name, self.vision_shape, self.vision_color]):
             if not sub_called:
-                self.store_pose_shape_color_in_registers(ObjectPose(*([0] * 6)), ShapeRequest.NONE.name, ColorRequest.NONE.name)
+                self.store_pose_shape_color_in_registers(ObjectPose(*([0] * 6)), ShapeRequest.NONE.name,
+                                                         ColorRequest.NONE.name)
                 rospy.logwarn(
                     'Modbus Server - Impossible to detect object : Workspace name, Shape or Color requested is None')
                 return
             else:
-                return CommandStatus.INVALID_PARAMETERS, ObjectPose(*([0] * 6)), ShapeRequest.NONE.name, ColorRequest.NONE.name
+                return CommandStatus.INVALID_PARAMETERS, ObjectPose(
+                    *([0] * 6)), ShapeRequest.NONE.name, ColorRequest.NONE.name
 
         if not sub_called:
             self.__set_command_in_progress()
@@ -854,7 +855,8 @@ class HoldingRegisterDataBlock(DataBlock):
 
         elif response.status == CommandStatus.OBJECT_NOT_FOUND:
             if not sub_called:
-                self.store_pose_shape_color_in_registers(response.obj_pose, ShapeRequest.NONE.name, ColorRequest.NONE.name)
+                self.store_pose_shape_color_in_registers(response.obj_pose, ShapeRequest.NONE.name,
+                                                         ColorRequest.NONE.name)
             else:
                 return response.status, response.obj_pose, ShapeRequest.NONE.name, ColorRequest.NONE.name
 
@@ -885,18 +887,16 @@ class HoldingRegisterDataBlock(DataBlock):
         response = self.call_ros_service('/niryo_robot_poses_handlers/get_workspace_ratio',
                                          GetWorkspaceRatio, ws_name)
 
-        if response.status == CommandStatus.SUCCESS: 
+        if response.status == CommandStatus.SUCCESS:
             return response.status, response.ratio
         else:
             rospy.logwarn('Modbus Server - Impossible to get workspace ratio : %s', response.message)
             return response.status, response.ratio
 
-
     # - Functions called when a client stored a value in a register and we need to update the class variable accordingly
 
     def update_workspace_name(self, values):
         self.workspace_name = self.convert_register_to_string(values)
-
 
     def update_vision_shape(self, value):
         """
@@ -1005,7 +1005,7 @@ class HoldingRegisterDataBlock(DataBlock):
         return string_value
 
     @staticmethod
-    def convert_string_to_register(value): # currently not used because no need to write string in register
+    def convert_string_to_register(value):  # currently not used because no need to write string in register
         """
         Convert a string value to a list of registers
         :param value: A string
@@ -1015,8 +1015,8 @@ class HoldingRegisterDataBlock(DataBlock):
         """
         if isinstance(value, str):
             if pymodbus.__version__ == '1.3.2':
-                # by default, on Version 1.3.2, endian is Endian.Little, 
-                # so registers were written in the reverse order. 
+                # by default, on Version 1.3.2, endian is Endian.Little,
+                # so registers were written in the reverse order.
                 # For now, we use this version on the raspberry pi
                 # and v 2.4.0 in simulation
                 builder = BinaryPayloadBuilder(endian=Endian.Big)
@@ -1075,8 +1075,8 @@ class HoldingRegisterDataBlock(DataBlock):
 
     def store_pose_shape_color_in_registers(self, obj_pose, obj_type_str, obj_color_str):
         """
-        Store pose, shape and color of object detected in appropriate registers. 
-        If obj_pose is a null array/object, set [HR_VISION_TARGET_POSE: HR_VISION_TARGET_POSE+5] to 0. If 
+        Store pose, shape and color of object detected in appropriate registers.
+        If obj_pose is a null array/object, set [HR_VISION_TARGET_POSE: HR_VISION_TARGET_POSE+5] to 0. If
         obj_pose is None, those registers are not updated.
         If obj_type_str (or obj_color_str) is None, HR_VISION_SHAPE_FOUND (or HR_VISION_COLOR_FOUND) is not updated.
         If obj_type_str (or obj_color_str) is ShapeRequest.NONE.name (or ColorRequest.NONE.name), set the register to 0.
@@ -1084,7 +1084,7 @@ class HoldingRegisterDataBlock(DataBlock):
         Registers are set to 0 if no object was detected. They are not updated in case the function
         used doesn't return any information on the variable.
 
-        obj_type_str and obj_color_str should be string, like 'ANY' or 'BLUE'. 
+        obj_type_str and obj_color_str should be string, like 'ANY' or 'BLUE'.
         :param obj_pose: a pose
         :type obj_pose: either a RobotState, an ObjectPose or an array of 6x0. If None, the register is not updated.
         :param obj_type_str: name of the object type, corresponding to a name in ShapeRequest
@@ -1103,7 +1103,7 @@ class HoldingRegisterDataBlock(DataBlock):
             self.setValuesOffset(HR_VISION_TARGET_POSE, obj_pose)
 
         # Type (Shape)
-        if obj_type_str is not None: 
+        if obj_type_str is not None:
             obj_shape_register = handle_negative_to_write_in_register(ShapeRequest[obj_type_str].value)
             self.setValuesOffset(HR_VISION_SHAPE_FOUND, [obj_shape_register])
 
@@ -1112,14 +1112,10 @@ class HoldingRegisterDataBlock(DataBlock):
             obj_color_register = handle_negative_to_write_in_register(ColorRequest[obj_color_str].value)
             self.setValuesOffset(HR_VISION_COLOR_FOUND, [obj_color_register])
 
-
-    def reset_result_registers(self,address_list): # currently not used 
+    def reset_result_registers(self, address_list):  # currently not used
         """
         Empty results register at the beginning of a vision method
         to delete old results
         """
         for address in address_list:
-            self.setValuesOffset(address,[0])
-
-
-
+            self.setValuesOffset(address, [0])

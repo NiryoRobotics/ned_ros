@@ -1770,7 +1770,7 @@ class NiryoRosWrapper:
         list_poses = [self.list_to_robot_state_msg(*pose) for pose in list_poses_raw]
         req = ManageWorkspaceRequest()
         req.cmd = ManageWorkspaceRequest.SAVE
-        if len(name)>30:
+        if len(name) > 30:
             rospy.logwarn('ROS Wrapper - Workspace name is too long, using : %s instead', name[:30])
         req.workspace.name = name[:30]
         req.workspace.poses = list_poses
@@ -1794,7 +1794,7 @@ class NiryoRosWrapper:
         list_points = [Point(*point) for point in list_points_raw]
         req = ManageWorkspaceRequest()
         req.cmd = ManageWorkspaceRequest.SAVE_WITH_POINTS
-        if len(name)>30:
+        if len(name) > 30:
             rospy.logwarn('ROS Wrapper - Workspace name is too long, using : %s instead', name[:30])
         req.workspace.name = name[:30]
         req.workspace.points = list_points
