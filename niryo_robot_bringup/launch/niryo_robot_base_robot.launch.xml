@@ -1,6 +1,5 @@
 <launch>
     <!-- Arguments -->
-    <arg name="iot_enabled" default="false"/>
     <arg name="debug" default="false"/>
     <arg name="hardware_version" value="ned"/>
     <arg name="rpi_model" value="4"/>
@@ -38,14 +37,7 @@
         <arg name="simulation_mode" value="false"/>
     </include>
 
-    <include file="$(find niryo_robot_iot)/launch/serial_number.launch"/>
-
-    <group if="$(arg iot_enabled)">
-        <!-- Launching IOT nodes -->
-        <include file="$(find niryo_robot_iot)/launch/mqtt_client.launch">
-            <arg name="conf_location" value="$(arg conf_location)"/>
-        </include>
-    </group>
+    <include file="$(find niryo_robot_serial_number)/launch/serial_number.launch"/>
 
     <include file="$(find niryo_robot_system_api_client)/launch/system_api_client.launch">
         <arg name="simulation_mode" value="false"/>

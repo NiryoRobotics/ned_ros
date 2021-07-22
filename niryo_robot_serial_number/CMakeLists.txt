@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(niryo_robot_iot)
+project(niryo_robot_serial_number)
 
 find_package(catkin REQUIRED COMPONENTS
   rospy
@@ -10,7 +10,6 @@ add_service_files(
   DIRECTORY srv
   FILES
   GetSerial.srv
-  MqttPublish.srv
 )
 
 catkin_python_setup()

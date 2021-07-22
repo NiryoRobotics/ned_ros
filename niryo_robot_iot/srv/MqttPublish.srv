@@ -1,5 +1,0 @@
-string command
-string[] args
----
-int16 status
-string message
