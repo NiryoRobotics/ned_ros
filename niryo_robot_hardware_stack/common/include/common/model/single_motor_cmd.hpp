@@ -46,6 +46,9 @@ class SingleMotorCmd : public AbstractMotorCmd<T>, public SingleMotorCmdI
                        uint32_t param = 0);
 
         // AbstractMotorCmd interface
+        // getters
+        virtual int getTypeCmd() const override;
+
         bool isCmdStepper() const override;
         bool isCmdDxl() const override;
         virtual void reset() override;
@@ -81,6 +84,16 @@ SingleMotorCmd<T, TE>::SingleMotorCmd(T type,
 // ***********************
 //  AbstractMotorCmd intf
 // ***********************
+
+/**
+ * @brief SingleMotorCmd::getType
+ * @return
+ */
+template<typename T, typename TE>
+int SingleMotorCmd<T, TE>::getTypeCmd() const
+{
+    return (int)this->getType();
+}
 
 /**
  * @brief SingleMotorCmd::isCmdStepper

@@ -30,7 +30,6 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 
 #include "common/model/idriver_core.hpp"
 #include "common/model/iinterface_core.hpp"
-
 #include "can_driver/can_driver.hpp"
 #include "can_driver/StepperArrayMotorHardwareStatus.h"
 #include "niryo_robot_msgs/BusState.h"
@@ -58,9 +57,9 @@ class CanDriverCore : public common::model::IDriverCore, public common::model::I
         void clearConveyorCommandQueue();
 
         void setTrajectoryControllerCommands(const std::vector<std::pair<uint8_t, uint32_t> > &cmd);
-        void addSingleCommandToQueue(const common::model::SingleMotorCmdI &cmd) override;
-        void addSingleCommandToQueue(const common::model::StepperMotorCmd &cmd);
-        void addSingleCommandToQueue(const std::vector<common::model::StepperMotorCmd>& cmd);
+        void addSingleCommandToQueue(std::shared_ptr<common::model::SingleMotorCmdI> cmd) override;
+
+        void addSingleCommandToQueue(std::vector<std::shared_ptr<common::model::SingleMotorCmdI>> cmd) override;
 
         void startCalibration() override;
         void resetCalibration() override;
@@ -127,8 +126,8 @@ class CanDriverCore : public common::model::IDriverCore, public common::model::I
         std::unique_ptr<CanDriver> _can_driver;
 
         std::vector<std::pair<uint8_t, uint32_t> > _joint_trajectory_cmd;
-        std::queue<common::model::StepperMotorCmd> _stepper_single_cmds;
-        std::queue<common::model::StepperMotorCmd> _conveyor_cmds;
+        std::queue<std::shared_ptr<common::model::SingleMotorCmdI>> _stepper_single_cmds;
+        std::queue<std::shared_ptr<common::model::SingleMotorCmdI>> _conveyor_cmds;
 
         static constexpr int QUEUE_OVERFLOW = 20;
 };

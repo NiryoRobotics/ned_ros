@@ -80,9 +80,9 @@ class TtlDriverCore : public common::model::IDriverCore, public common::model::I
 
         void setSyncCommand(const common::model::SynchronizeMotorCmdI &cmd);
 
-        void addSingleCommandToQueue(const common::model::SingleMotorCmdI &cmd) override;
-
-        void addSingleCommandToQueue(const std::vector<common::model::SingleMotorCmdI> &cmd);
+        void addSingleCommandToQueue(std::shared_ptr<common::model::SingleMotorCmdI> cmd) override;
+        
+        void addSingleCommandToQueue(std::vector<std::shared_ptr<common::model::SingleMotorCmdI>> cmd) override;
 
         void addEndEffectorCommandToQueue(const common::model::SingleMotorCmd<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum> &cmd);
         void addEndEffectorCommandToQueue(const std::vector<common::model::SingleMotorCmd<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum>> &cmd);
@@ -172,7 +172,7 @@ class TtlDriverCore : public common::model::IDriverCore, public common::model::I
         // dxl cmds
         std::shared_ptr<common::model::SynchronizeMotorCmdI> _sync_cmds;
         std::queue<std::shared_ptr<common::model::SingleMotorCmdI>> _single_cmds;
-        std::queue<common::model::SingleMotorCmd<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum>> _dxl_end_effector_cmds;
+        std::queue<std::shared_ptr<common::model::SingleMotorCmd<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum>>> _dxl_end_effector_cmds;
 
         ros::ServiceServer _activate_leds_server;
         ros::ServiceServer _custom_cmd_server;

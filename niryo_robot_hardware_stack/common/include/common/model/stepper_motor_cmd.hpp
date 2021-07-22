@@ -52,6 +52,9 @@ class StepperMotorCmd : public AbstractMotorCmd<EStepperCommandType>, public Sin
         std::vector<int32_t> getParams() const override;
 
         // AbstractMotorCmd interface
+        // getters
+        virtual int getTypeCmd() const override;
+
         bool isCmdStepper() const override;
         bool isCmdDxl() const override;
         virtual void reset() override;
@@ -82,6 +85,15 @@ inline
 std::vector<int32_t> StepperMotorCmd::getParams() const
 {
     return _param_list;
+}
+
+/**
+ * @brief SingleMotorCmd::getType
+ * @return
+ */
+inline int StepperMotorCmd::getTypeCmd() const
+{
+    return (int)getType();
 }
 
 /**

@@ -33,7 +33,7 @@ using ::common::model::ConveyorState;
 using ::common::model::StepperMotorState;
 using ::common::model::EStepperCommandType;
 using ::common::model::StepperMotorCmd;
-
+using ::common::model::SingleMotorCmdI;
 namespace can_driver
 {
 
@@ -287,66 +287,66 @@ int32_t CanDriver::getPosition(uint8_t motor_id) const
  * @param cmd
  * @return
  */
-int CanDriver::readSingleCommand(StepperMotorCmd cmd)
+int CanDriver::readSingleCommand(std::shared_ptr<SingleMotorCmdI> cmd)
 {
     int result = CAN_INVALID_CMD;
-    ROS_DEBUG("CanDriver::readCommand - Received stepper cmd %s", cmd.str().c_str());
+    ROS_DEBUG("CanDriver::readCommand - Received stepper cmd %s", cmd->str().c_str());
 
-    if (cmd.isValid())  // certifies that params is not empty
+    if (cmd->isValid())  // certifies that params is not empty
     {
-        switch (cmd.getType())
+        switch (EStepperCommandType(cmd->getTypeCmd()))
         {
             case EStepperCommandType::CMD_TYPE_POSITION:
-                result = sendPositionCommand(cmd.getId(),
-                                             cmd.getParams().front());
+                result = sendPositionCommand(cmd->getId(),
+                                             cmd->getParams().front());
             break;
             case EStepperCommandType::CMD_TYPE_TORQUE:
-                result = sendTorqueOnCommand(cmd.getId(),
-                                             cmd.getParams().front());
+                result = sendTorqueOnCommand(cmd->getId(),
+                                             cmd->getParams().front());
             break;
             case EStepperCommandType::CMD_TYPE_SYNCHRONIZE:
-                result = sendSynchronizePositionCommand(cmd.getId(),
-                                                        cmd.getParams().front());
+                result = sendSynchronizePositionCommand(cmd->getId(),
+                                                        cmd->getParams().front());
             break;
             case EStepperCommandType::CMD_TYPE_RELATIVE_MOVE:
-                result = sendRelativeMoveCommand(cmd.getId(),
-                                                 cmd.getParams().at(0),
-                                                 cmd.getParams().at(1));
+                result = sendRelativeMoveCommand(cmd->getId(),
+                                                 cmd->getParams().at(0),
+                                                 cmd->getParams().at(1));
             break;
             case EStepperCommandType::CMD_TYPE_MAX_EFFORT:
-                result = sendMaxEffortCommand(cmd.getId(),
-                                              cmd.getParams().front());
+                result = sendMaxEffortCommand(cmd->getId(),
+                                              cmd->getParams().front());
             break;
             case EStepperCommandType::CMD_TYPE_MICRO_STEPS:
-                result = sendMicroStepsCommand(cmd.getId(),
-                                               cmd.getParams().front());
+                result = sendMicroStepsCommand(cmd->getId(),
+                                               cmd->getParams().front());
             break;
             case EStepperCommandType::CMD_TYPE_CALIBRATION:
-                result = sendCalibrationCommand(cmd.getId(),
-                                                cmd.getParams().at(0),
-                                                cmd.getParams().at(1),
-                                                cmd.getParams().at(2),
-                                                cmd.getParams().at(3));
+                result = sendCalibrationCommand(cmd->getId(),
+                                                cmd->getParams().at(0),
+                                                cmd->getParams().at(1),
+                                                cmd->getParams().at(2),
+                                                cmd->getParams().at(3));
 
             break;
             case EStepperCommandType::CMD_TYPE_POSITION_OFFSET:
-                    result = sendPositionOffsetCommand(cmd.getId(),
-                                                       cmd.getParams().at(0),
-                                                       cmd.getParams().at(1));
+                    result = sendPositionOffsetCommand(cmd->getId(),
+                                                       cmd->getParams().at(0),
+                                                       cmd->getParams().at(1));
                 break;
             case EStepperCommandType::CMD_TYPE_CONVEYOR:
-                    result = sendConveyorOnCommand(cmd.getId(),
-                                                  cmd.getParams().at(0),
-                                                  static_cast<uint8_t>(cmd.getParams().at(1)),
-                                                  static_cast<uint8_t>(cmd.getParams().at(2)));
+                    result = sendConveyorOnCommand(cmd->getId(),
+                                                  cmd->getParams().at(0),
+                                                  static_cast<uint8_t>(cmd->getParams().at(1)),
+                                                  static_cast<uint8_t>(cmd->getParams().at(2)));
                 break;
             case EStepperCommandType::CMD_TYPE_UPDATE_CONVEYOR:
-                    result = sendUpdateConveyorId(cmd.getId(),
-                                                  static_cast<uint8_t>(cmd.getParams().front()));
+                    result = sendUpdateConveyorId(cmd->getId(),
+                                                  static_cast<uint8_t>(cmd->getParams().front()));
                     if (result == CAN_OK)
                     {
-                        removeMotor(cmd.getId());
-                        addMotor(static_cast<uint8_t>(cmd.getParams().front()));
+                        removeMotor(cmd->getId());
+                        addMotor(static_cast<uint8_t>(cmd->getParams().front()));
                     }
             break;
             default:

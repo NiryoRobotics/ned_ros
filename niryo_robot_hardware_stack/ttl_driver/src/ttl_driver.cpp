@@ -230,6 +230,32 @@ void TtlDriver::addMotor(EMotorType type, uint8_t id, EType type_used)
 }
 
 /**
+ * @brief TtlDriver::_singleWrite
+ * @param singleWriteFunction
+ * @param dxl_type
+ * @param cmd
+ * @return
+ */
+
+int TtlDriver::_singleWrite(int (AbstractMotorDriver::*singleWriteFunction)(uint8_t id, uint32_t), common::model::EMotorType motor_type,
+                            std::shared_ptr<common::model::SingleMotorCmdI> cmd)
+{
+    int result = COMM_TX_ERROR;
+
+    if (_driver_map.count(motor_type) != 0 && _driver_map.at(motor_type))
+    {
+        result = (_driver_map.at(motor_type).get()->*singleWriteFunction)(cmd->getId(), cmd->getParam());
+    }
+    else
+    {
+        ROS_ERROR_THROTTLE(1, "TtlDriver::_singleWrite - Wrong dxl type detected: %s",
+                           common::model::MotorTypeEnum(motor_type).toString().c_str());
+        _debug_error_message = "TtlDriver - Wrong dxl type detected";
+    }
+    return result;
+}
+
+/**
  * @brief TtlDriver::removeDynamixel
  * @param id
  */

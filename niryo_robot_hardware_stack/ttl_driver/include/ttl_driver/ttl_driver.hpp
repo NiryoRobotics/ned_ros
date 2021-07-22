@@ -89,8 +89,8 @@ class TtlDriver : public common::model::IDriver
         template<typename Type, typename TypeEnum>
         int readSynchronizeCommand(common::model::SynchronizeMotorCmd<Type, TypeEnum> cmd);
         
-        template<typename Type, typename TypeEnum>
-        int readSingleCommand(common::model::SingleMotorCmd<Type, TypeEnum> cmd);
+        template<typename Type>
+        int readSingleCommand(std::shared_ptr<common::model::SingleMotorCmdI> cmd);
             
         void executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, uint32_t> > cmd_vec);
 
@@ -145,9 +145,8 @@ class TtlDriver : public common::model::IDriver
         int _syncWrite(int (AbstractMotorDriver::*syncWriteFunction)(const std::vector<uint8_t> &, const std::vector<uint32_t> &),
                               const common::model::SynchronizeMotorCmd<Type, TypeEnum>& cmd);
         
-        template<typename Type, typename TypeEnum>
         int _singleWrite(int (AbstractMotorDriver::*singleWriteFunction)(uint8_t id, uint32_t), common::model::EMotorType motor_type,
-                              const common::model::SingleMotorCmd<Type, TypeEnum>& cmd);
+                              std::shared_ptr<common::model::SingleMotorCmdI> cmd);
     private:
         ros::NodeHandle _nh;
 
@@ -373,17 +372,17 @@ int TtlDriver::_syncWrite(int (AbstractMotorDriver::*syncWriteFunction)(const st
  * @brief TtlDriver::readSingleCommand
  * @param cmd
  */
-template<typename Type, typename TypeEnum>
-int TtlDriver::readSingleCommand(common::model::SingleMotorCmd<Type, TypeEnum> cmd)
+template<typename Type>
+int TtlDriver::readSingleCommand(std::shared_ptr<common::model::SingleMotorCmdI> cmd)
 {
     int result = COMM_TX_ERROR;
-    uint8_t id = cmd.getId();
+    uint8_t id = cmd->getId();
     
-    if (cmd.isValid())
+    if (cmd->isValid())
     {
         int counter = 0;
 
-        ROS_DEBUG_THROTTLE(0.5, "TtlDriver::readSingleCommand:  %s", cmd.str().c_str());
+        ROS_DEBUG_THROTTLE(0.5, "TtlDriver::readSingleCommand:  %s", cmd->str().c_str());
 
         if (_state_map.count(id) != 0)
         {
@@ -391,7 +390,7 @@ int TtlDriver::readSingleCommand(common::model::SingleMotorCmd<Type, TypeEnum> c
 
             while ((COMM_SUCCESS != result) && (counter < 50))
             {
-                switch (cmd.getType())
+                switch ((Type)cmd->getTypeCmd())
                 {
                 case Type::CMD_TYPE_VELOCITY:
                     result = _singleWrite(&AbstractMotorDriver::setGoalVelocity, state->getType(), cmd);
@@ -440,32 +439,6 @@ int TtlDriver::readSingleCommand(common::model::SingleMotorCmd<Type, TypeEnum> c
         _debug_error_message = "TtlDriver - Failed to write a single command";
     }
 
-    return result;
-}
-
-/**
- * @brief TtlDriver::_singleWrite
- * @param singleWriteFunction
- * @param dxl_type
- * @param cmd
- * @return
- */
-template<typename Type, typename TypeEnum>
-int TtlDriver::_singleWrite(int (AbstractMotorDriver::*singleWriteFunction)(uint8_t id, uint32_t), common::model::EMotorType motor_type,
-                            const common::model::SingleMotorCmd<Type, TypeEnum>& cmd)
-{
-    int result = COMM_TX_ERROR;
-
-    if (_driver_map.count(motor_type) != 0 && _driver_map.at(motor_type))
-    {
-        result = (_driver_map.at(motor_type).get()->*singleWriteFunction)(cmd.getId(), cmd.getParam());
-    }
-    else
-    {
-        ROS_ERROR_THROTTLE(1, "TtlDriver::_singleWrite - Wrong dxl type detected: %s",
-                           common::model::MotorTypeEnum(motor_type).toString().c_str());
-        _debug_error_message = "TtlDriver - Wrong dxl type detected";
-    }
     return result;
 }
 

@@ -56,6 +56,8 @@ class SingleMotorCmdI
         virtual bool isCmdDxl() const;
         virtual bool isValid() const;
         virtual std::string str() const;
+        // This method help get type of a command through SingleMotorCmd interface
+        virtual int getTypeCmd() const;
     protected:
         uint8_t _id;
         uint32_t _param;
@@ -161,6 +163,14 @@ inline bool SingleMotorCmdI::isValid() const
 inline std::string SingleMotorCmdI::str() const
 {
     return "";
+}
+
+/**
+ * @brief SingleMotorCmdI::getType()
+*/
+inline int SingleMotorCmdI::getTypeCmd() const
+{
+    return 0;
 }
 
 } // namespace model

@@ -528,13 +528,13 @@ void CanDriverCore::setTrajectoryControllerCommands(const std::vector<std::pair<
  * @brief CanDriverCore::addSingleCommandToQueue
  * @param cmd
  */
-void CanDriverCore::addSingleCommandToQueue(const common::model::StepperMotorCmd &cmd)
+void CanDriverCore::addSingleCommandToQueue(std::shared_ptr<common::model::SingleMotorCmdI> cmd)
 {
-    ROS_DEBUG("CanDriverCore::addSingleCommandToQueue - %s", cmd.str().c_str());
+    ROS_DEBUG("CanDriverCore::addSingleCommandToQueue - %s", cmd->str().c_str());
 
-    if (cmd.isValid())
+    if (cmd->isValid())
     {
-        if (cmd.getType() == EStepperCommandType::CMD_TYPE_CONVEYOR)
+        if (cmd->getTypeCmd() == (int)EStepperCommandType::CMD_TYPE_CONVEYOR)
         {  // keep position cmd apart
             if (_conveyor_cmds.size() > QUEUE_OVERFLOW)
             {
@@ -561,18 +561,9 @@ void CanDriverCore::addSingleCommandToQueue(const common::model::StepperMotorCmd
 
 /**
  * @brief CanDriverCore::addSingleCommandToQueue
-*/
-void CanDriverCore::addSingleCommandToQueue(const common::model::SingleMotorCmdI& cmd)
-{
-    if (cmd.isCmdStepper())
-        return addSingleCommandToQueue(dynamic_cast<const common::model::StepperMotorCmd &>(cmd));
-}
-
-/**
- * @brief CanDriverCore::addSingleCommandToQueue
  * @param cmd
  */
-void CanDriverCore::addSingleCommandToQueue(const std::vector<common::model::StepperMotorCmd> &cmd)
+void CanDriverCore::addSingleCommandToQueue(std::vector<std::shared_ptr<common::model::SingleMotorCmdI>> cmd)
 {
     for (auto const& c : cmd)
         addSingleCommandToQueue(c);

@@ -272,7 +272,8 @@ void JointHardwareInterface::sendInitMotorsParams()
                         {8});
             if (_jdriver->getProtocolOfMotor(jState->getName())->getTypeDriver() == "can")
             {
-                _can_driver_core->addSingleCommandToQueue(cmd);
+                _can_driver_core->addSingleCommandToQueue(
+                                std::make_shared<StepperMotorCmd>(cmd));
             }
             // TODO implement addSingleCommandToQueue with the same form for ttl_driver_core
             // else
@@ -291,9 +292,9 @@ void JointHardwareInterface::sendInitMotorsParams()
                                     static_cast<int32_t>(dynamic_pointer_cast<StepperMotorState>(jState)->getMaxEffort())
                                 });
             if (_jdriver->getProtocolOfMotor(jState->getName())->getTypeDriver() == "can")
-                _can_driver_core->addSingleCommandToQueue(cmd);
+                _can_driver_core->addSingleCommandToQueue(std::make_shared<StepperMotorCmd>(cmd));
             else
-                _can_driver_core->addSingleCommandToQueue(cmd);  // TODO implement addSingleCommandToQueue with the same form for ttl_driver_core
+                _ttl_driver_core->addSingleCommandToQueue(std::make_shared<StepperMotorCmd>(cmd));  // TODO implement addSingleCommandToQueue with the same form for ttl_driver_core
 
         }
     }
@@ -405,9 +406,9 @@ void JointHardwareInterface::activateLearningMode()
                     stepper_cmd.setId(jState->getId());
                     stepper_cmd.setParams({0});
                     if (_jdriver->getProtocolOfMotor(jState->getName())->getTypeDriver() == "can")
-                        _can_driver_core->addSingleCommandToQueue(stepper_cmd);
+                        _can_driver_core->addSingleCommandToQueue(std::make_shared<StepperMotorCmd>(stepper_cmd));
                     else
-                        _ttl_driver_core->addSingleCommandToQueue(stepper_cmd); // TODO: verify it. stepper use 0 torque in learning mode 
+                        _ttl_driver_core->addSingleCommandToQueue(std::make_shared<StepperMotorCmd>(stepper_cmd)); // TODO: verify it. stepper use 0 torque in learning mode 
                 }
             }
         }
@@ -444,9 +445,9 @@ void JointHardwareInterface::deactivateLearningMode()
                     stepper_cmd.setParams({1});
 
                     if (_jdriver->getProtocolOfMotor(jState->getName())->getTypeDriver() == "can")
-                        _can_driver_core->addSingleCommandToQueue(stepper_cmd);
+                        _can_driver_core->addSingleCommandToQueue(std::make_shared<StepperMotorCmd>(stepper_cmd));
                     else
-                        _ttl_driver_core->addSingleCommandToQueue(stepper_cmd); // TODO: verify it. stepper use 0 torque in learning mode 
+                        _ttl_driver_core->addSingleCommandToQueue(std::make_shared<StepperMotorCmd>(stepper_cmd)); // TODO: verify it. stepper use 0 torque in learning mode 
                 }
             }
         }
@@ -472,9 +473,9 @@ void JointHardwareInterface::synchronizeMotors(bool synchronize)
         {
             StepperMotorCmd stepper_cmd(EStepperCommandType::CMD_TYPE_SYNCHRONIZE, jState->getId(), {synchronize});
             if (_jdriver->getProtocolOfMotor(jState->getName())->getTypeDriver() == "can")
-                _can_driver_core->addSingleCommandToQueue(stepper_cmd);
+                _can_driver_core->addSingleCommandToQueue(std::make_shared<StepperMotorCmd>(stepper_cmd));
             else
-                _ttl_driver_core->addSingleCommandToQueue(stepper_cmd); // (CC) only steppers are called when synchronizeMotors ?
+                _ttl_driver_core->addSingleCommandToQueue(std::make_shared<StepperMotorCmd>(stepper_cmd)); // (CC) only steppers are called when synchronizeMotors ?
         }
     }
 }
