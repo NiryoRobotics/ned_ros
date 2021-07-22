@@ -16,5 +16,6 @@
     <!--  Launch Main node  -->
     <node name="niryo_robot_user_interface" pkg="niryo_robot_user_interface" type="user_interface_node.py" output="screen" >
         <param name="log_level" type="string" value="$(arg log_level)" />
+        <rosparam file="$(find niryo_robot_user_interface)/config/default.yaml"/>
     </node>
 </launch>

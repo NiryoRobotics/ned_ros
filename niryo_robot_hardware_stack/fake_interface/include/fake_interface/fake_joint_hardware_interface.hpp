@@ -1,5 +1,5 @@
 /*
-FakeJointHardwareInterface.cpp
+fake_joint_hardware_interface.hpp
 Copyright (C) 2020 Niryo
 All rights reserved.
 
@@ -46,7 +46,6 @@ class FakeJointHardwareInterface : public hardware_interface::RobotHW
         virtual void write(const ros::Time &/*time*/, const ros::Duration &/*period*/) override;
 
     private:
-        ros::NodeHandle _nh;
         std::vector<uint8_t> _list_stepper_id;
         std::map<uint8_t, std::string> _map_stepper_name;
 

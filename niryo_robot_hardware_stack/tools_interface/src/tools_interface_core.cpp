@@ -105,10 +105,10 @@ void ToolsInterfaceCore::initParameters(ros::NodeHandle& nh)
     vector<string> typeList;
 
     _available_tools_map.clear();
-    _nh.getParam("/niryo_robot_hardware_interface/tools_interface/tools_params/id_list", idList);
-    _nh.getParam("/niryo_robot_hardware_interface/tools_interface/tools_params/type_list", typeList);
+    nh.getParam("tools_params/id_list", idList);
+    nh.getParam("tools_params/type_list", typeList);
 
-    _nh.getParam("/niryo_robot_hardware_interface/tools_interface/check_tool_connection_frequency",
+    nh.getParam("check_tool_connection_frequency",
                  _check_tool_connection_frequency);
 
     // debug - display info
@@ -164,22 +164,22 @@ void ToolsInterfaceCore::initParameters(ros::NodeHandle& nh)
  */
 void ToolsInterfaceCore::startServices(ros::NodeHandle& nh)
 {
-    _ping_and_set_dxl_tool_server = _nh.advertiseService("/niryo_robot/tools/ping_and_set_dxl_tool",
+    _ping_and_set_dxl_tool_server = nh.advertiseService("/niryo_robot/tools/ping_and_set_dxl_tool",
                                                          &ToolsInterfaceCore::_callbackPingAndSetDxlTool, this);
 
-    _open_gripper_server = _nh.advertiseService("/niryo_robot/tools/open_gripper",
+    _open_gripper_server = nh.advertiseService("/niryo_robot/tools/open_gripper",
                                                 &ToolsInterfaceCore::_callbackOpenGripper, this);
 
-    _close_gripper_server = _nh.advertiseService("/niryo_robot/tools/close_gripper",
+    _close_gripper_server = nh.advertiseService("/niryo_robot/tools/close_gripper",
                                                  &ToolsInterfaceCore::_callbackCloseGripper, this);
 
-    _pull_air_vacuum_pump_server = _nh.advertiseService("/niryo_robot/tools/pull_air_vacuum_pump",
+    _pull_air_vacuum_pump_server = nh.advertiseService("/niryo_robot/tools/pull_air_vacuum_pump",
                                                         &ToolsInterfaceCore::_callbackPullAirVacuumPump, this);
 
-    _push_air_vacuum_pump_server = _nh.advertiseService("/niryo_robot/tools/push_air_vacuum_pump",
+    _push_air_vacuum_pump_server = nh.advertiseService("/niryo_robot/tools/push_air_vacuum_pump",
                                                         &ToolsInterfaceCore::_callbackPushAirVacuumPump, this);
 
-    _tool_reboot_server = _nh.advertiseService("/niryo_robot/tools/reboot",
+    _tool_reboot_server = nh.advertiseService("/niryo_robot/tools/reboot",
                                                &ToolsInterfaceCore::_callbackToolReboot, this);
 }
 
@@ -189,7 +189,7 @@ void ToolsInterfaceCore::startServices(ros::NodeHandle& nh)
  */
 void ToolsInterfaceCore::startPublishers(ros::NodeHandle& nh)
 {
-    _tool_connection_publisher = _nh.advertise<std_msgs::Int32>("/niryo_robot_hardware/tools/current_id", 1, true);
+    _tool_connection_publisher = nh.advertise<std_msgs::Int32>("/niryo_robot_hardware/tools/current_id", 1, true);
     _publish_tool_connection_thread = std::thread(&ToolsInterfaceCore::_publishToolConnection, this);
 }
 
@@ -231,13 +231,12 @@ bool ToolsInterfaceCore::_callbackPingAndSetDxlTool(tools_interface::PingDxlTool
                                                     tools_interface::PingDxlTool::Response &res)
 {
     lock_guard<mutex> lck(_tool_mutex);
-    bool ret = false;
+    res.state = ToolState::TOOL_STATE_PING_ERROR;
 
     // Unequip tool
     if (_toolState.isValid())
     {
         _ttl_driver_core->unsetEndEffector(_toolState.getId());
-        res.state = ToolState::TOOL_STATE_PING_OK;
         res.id = 0;
 
         // reset tool as default = no tool
@@ -264,28 +263,34 @@ bool ToolsInterfaceCore::_callbackPingAndSetDxlTool(tools_interface::PingDxlTool
         for (int tries = 0; tries < 3; tries++)
         {
             ros::Duration(0.05).sleep();
-            res.state = _ttl_driver_core->setEndEffector(_toolState.getType(), _toolState.getId());
+            int result = _ttl_driver_core->setEndEffector(_toolState.getType(), _toolState.getId());
 
             // on success, tool is set, we go out of loop
-            if (niryo_robot_msgs::CommandStatus::SUCCESS == res.state)
+            if (niryo_robot_msgs::CommandStatus::SUCCESS == result)
             {
                 pubToolId(_toolState.getId());
+                res.state = ToolState::TOOL_STATE_PING_OK;
                 res.id = _toolState.getId();
 
                 ros::Duration(0.05).sleep();
 
+                // cc put it in setEnd Effector ? only used here
                 _ttl_driver_core->update_leds();
 
-                ROS_INFO("ToolsInterfaceCore::_callbackPingAndSetDxlTool - Set end effector success, return : %d",
-                         res.state);
+                ROS_INFO("ToolsInterfaceCore::_callbackPingAndSetDxlTool - Set end effector success");
 
-                ret = true;
                 break;
+            }
+            else
+            {
+                ROS_WARN("ToolsInterfaceCore::_callbackPingAndSetDxlTool - "
+                         "Set end effector failure, return : %d. Retrying (%d)...",
+                         result, tries);
             }
         }
 
         // on failure after three tries
-        if (niryo_robot_msgs::CommandStatus::SUCCESS != res.state)
+        if (ToolState::TOOL_STATE_PING_OK != res.state)
         {
             ROS_ERROR("ToolsInterfaceCore::_callbackPingAndSetDxlTool - Fail to set end effector, return : %d",
                       res.state);
@@ -293,13 +298,11 @@ bool ToolsInterfaceCore::_callbackPingAndSetDxlTool(tools_interface::PingDxlTool
             pubToolId(0);
 
             ros::Duration(0.05).sleep();
-            res.state = ToolState::TOOL_STATE_PING_ERROR;
             res.id = 0;
         }
     }
     else  // no tool found, no tool set (it is not an error, the tool does not exists)
     {
-        ret = true;
         pubToolId(0);
 
         ros::Duration(0.05).sleep();
@@ -307,7 +310,7 @@ bool ToolsInterfaceCore::_callbackPingAndSetDxlTool(tools_interface::PingDxlTool
         res.id = 0;
     }
 
-    return ret;
+    return (ToolState::TOOL_STATE_PING_OK == res.state);
 }
 
 /**
@@ -317,16 +320,21 @@ bool ToolsInterfaceCore::_callbackPingAndSetDxlTool(tools_interface::PingDxlTool
  */
 bool ToolsInterfaceCore::_callbackToolReboot(std_srvs::Trigger::Request &/*req*/, std_srvs::Trigger::Response &res)
 {
+    res.success = false;
+
     if (_toolState.isValid())
     {
         std::lock_guard<std::mutex> lck(_tool_mutex);
         res.success = _ttl_driver_core->rebootMotor(_toolState.getId());
         res.message = (res.success) ? "Tool reboot succeeded" : "Tool reboot failed";
-        return true;
     }
-    res.success = true;
-    res.message = "No Tool";
-    return true;
+    else
+    {
+        res.success = true;
+        res.message = "No Tool";
+    }
+
+    return res.success;
 }
 
 /**
@@ -339,9 +347,9 @@ bool ToolsInterfaceCore::_callbackOpenGripper(tools_interface::OpenGripper::Requ
                                               tools_interface::OpenGripper::Response &res)
 {
     lock_guard<mutex> lck(_tool_mutex);
-    bool ret = false;
+    res.state = ToolState::TOOL_STATE_WRONG_ID;
 
-    if ( req.id == _toolState.getId() )
+    if (_toolState.isValid() && req.id == _toolState.getId())
     {
         SingleMotorCmd cmd;
         vector<SingleMotorCmd> list_cmd;
@@ -366,9 +374,8 @@ bool ToolsInterfaceCore::_callbackOpenGripper(tools_interface::OpenGripper::Requ
         double dxl_speed = static_cast<double>(req.open_speed * _toolState.getStepsForOneSpeed());  // position . sec-1
         assert(dxl_speed != 0.00);
 
-        double dxl_steps_to_do = std::abs(static_cast<double>(
-                                          // position
-                                          req.open_position) - _ttl_driver_core->getEndEffectorState(_toolState.getId()));
+        double dxl_steps_to_do = std::abs(static_cast<double>(req.open_position) -
+                                          _ttl_driver_core->getEndEffectorState(_toolState.getId()));
 
         double seconds_to_wait =  dxl_steps_to_do /  dxl_speed + 0.25;  // sec
         ROS_DEBUG("Waiting for %d seconds", static_cast<int>(seconds_to_wait));
@@ -381,10 +388,9 @@ bool ToolsInterfaceCore::_callbackOpenGripper(tools_interface::OpenGripper::Requ
 
         res.state = ToolState::GRIPPER_STATE_OPEN;
         ROS_DEBUG("Opened !");
-        ret = true;
     }
 
-    return ret;
+    return (ToolState::GRIPPER_STATE_OPEN == res.state);
 }
 
 /**
@@ -397,9 +403,9 @@ bool ToolsInterfaceCore::_callbackCloseGripper(tools_interface::CloseGripper::Re
                                                tools_interface::CloseGripper::Response &res)
 {
     lock_guard<mutex> lck(_tool_mutex);
-    bool ret = false;
+    res.state = ToolState::TOOL_STATE_WRONG_ID;
 
-    if ( req.id == _toolState.getId() )
+    if (_toolState.isValid() && req.id == _toolState.getId())
     {
         SingleMotorCmd cmd;
         vector<SingleMotorCmd> list_cmd;
@@ -428,8 +434,8 @@ bool ToolsInterfaceCore::_callbackCloseGripper(tools_interface::CloseGripper::Re
         assert(dxl_speed != 0.0);
 
         // position
-        double dxl_steps_to_do = std::abs(static_cast<double>(req.close_position
-                                                              - _ttl_driver_core->getEndEffectorState(_toolState.getId())));
+        double dxl_steps_to_do = std::abs(static_cast<double>(req.close_position) -
+                                          _ttl_driver_core->getEndEffectorState(_toolState.getId()));
         double seconds_to_wait =  dxl_steps_to_do /  dxl_speed + 0.25;  // sec
         ROS_DEBUG("Waiting for %d seconds", static_cast<int>(seconds_to_wait));
 
@@ -442,11 +448,9 @@ bool ToolsInterfaceCore::_callbackCloseGripper(tools_interface::CloseGripper::Re
 
         res.state = ToolState::GRIPPER_STATE_CLOSE;
         ROS_DEBUG("Closed !");
-
-        ret = true;
     }
 
-    return ret;
+    return (ToolState::GRIPPER_STATE_CLOSE == res.state);
 }
 
 /**
@@ -459,10 +463,10 @@ bool ToolsInterfaceCore::_callbackPullAirVacuumPump(tools_interface::PullAirVacu
                                                     tools_interface::PullAirVacuumPump::Response &res)
 {
     lock_guard<mutex> lck(_tool_mutex);
-    bool ret = false;
+    res.state = ToolState::TOOL_STATE_WRONG_ID;
 
     // check gripper id, in case no ping has been done before, or wrong id given
-    if ( req.id == _toolState.getId() )
+    if (_toolState.isValid() && req.id == _toolState.getId())
     {
         // to be put in tool state
         uint32_t pull_air_velocity = 1023;
@@ -470,24 +474,26 @@ bool ToolsInterfaceCore::_callbackPullAirVacuumPump(tools_interface::PullAirVacu
         uint32_t pull_air_hold_torque = static_cast<uint32_t>(req.pull_air_hold_torque);
 
         // set vacuum pump pos, vel and torque
-        _ttl_driver_core->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_VELOCITY,
-                                                                      _toolState.getId(), pull_air_velocity));
+        if (_ttl_driver_core)
+        {
+            _ttl_driver_core->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_VELOCITY,
+                                                                          _toolState.getId(), pull_air_velocity));
 
-        _ttl_driver_core->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_POSITION,
-                                                                      _toolState.getId(), pull_air_position));
+            _ttl_driver_core->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_POSITION,
+                                                                          _toolState.getId(), pull_air_position));
 
-        _ttl_driver_core->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_EFFORT,
-                                                                      _toolState.getId(), 500));
+            _ttl_driver_core->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_EFFORT,
+                                                                          _toolState.getId(), 500));
 
-        // set hold torque
-        _ttl_driver_core->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_EFFORT,
-                                                                      _toolState.getId(), pull_air_hold_torque));
+            // set hold torque
+            _ttl_driver_core->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_EFFORT,
+                                                                          _toolState.getId(), pull_air_hold_torque));
+        }
 
         res.state = ToolState::VACUUM_PUMP_STATE_PULLED;
-        ret = true;
     }
 
-    return ret;
+    return (ToolState::VACUUM_PUMP_STATE_PULLED == res.state);
 }
 
 /**
@@ -500,36 +506,37 @@ bool ToolsInterfaceCore:: _callbackPushAirVacuumPump(tools_interface::PushAirVac
                                                      tools_interface::PushAirVacuumPump::Response &res)
 {
     lock_guard<mutex> lck(_tool_mutex);
-    bool ret = false;
+    res.state = ToolState::TOOL_STATE_WRONG_ID;
 
     // check gripper id, in case no ping has been done before, or wrong id given
-    if ( req.id == _toolState.getId() )
+    if (_toolState.isValid() && req.id == _toolState.getId())
     {
         // to be defined in the toolstate
         uint32_t push_air_velocity = 1023;
         uint32_t push_air_position = static_cast<uint32_t>(req.push_air_position);
 
         // set vacuum pump pos, vel and torque
-        _ttl_driver_core->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_VELOCITY,
-                                                                      _toolState.getId(), push_air_velocity));
+        if (_ttl_driver_core)
+        {
+            _ttl_driver_core->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_VELOCITY,
+                                                                          _toolState.getId(), push_air_velocity));
 
-        _ttl_driver_core->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_POSITION,
-                                                                      _toolState.getId(), push_air_position));
+            _ttl_driver_core->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_POSITION,
+                                                                          _toolState.getId(), push_air_position));
 
-        _ttl_driver_core->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_EFFORT,
-                                                                      _toolState.getId(), 64000));
-        // 64000 is two's complement of 1536
+            _ttl_driver_core->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_EFFORT,
+                                                                          _toolState.getId(), 64000));
+            // 64000 is two's complement of 1536
 
-        // set torque to 0
-        _ttl_driver_core->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_EFFORT,
-                                                                      _toolState.getId(), 0));
+            // set torque to 0
+            _ttl_driver_core->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_EFFORT,
+                                                                          _toolState.getId(), 0));
+        }
 
         res.state = ToolState::VACUUM_PUMP_STATE_PUSHED;
-
-        ret = true;
     }
 
-    return ret;
+    return (ToolState::VACUUM_PUMP_STATE_PUSHED == res.state);
 }
 /*
 std::vector<uint8_t> ToolsInterfaceCore::_findToolMotorListWithRetries(unsigned int max_retries)

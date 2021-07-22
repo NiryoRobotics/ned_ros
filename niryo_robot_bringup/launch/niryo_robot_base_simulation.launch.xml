@@ -4,21 +4,23 @@
     <!-- Arguments -->
     <arg name="log_level" default="INFO" />
 
-    <arg name="gazebo" default="false"/>
     <arg name="hardware_version" default="ned"/>
     <arg name="simu_gripper" default="false"/>
+    <arg name="gazebo" default="false"/>
 
     <!-- PARAMS -->
-    <group ns="niryo_robot/robot_state">
-        <param name="rate_publish_state" type="double" value="20.0"/>
+    <group ns="niryo_robot">
+        <group ns="robot_state">
+            <param name="rate_publish_state" type="double" value="20.0"/>
+        </group>
     </group>
 
     <!-- Including shared params & nodes -->
     <include file="$(find niryo_robot_bringup)/launch/niryo_robot_base_common.launch.xml">
         <arg name="log_level" value="$(arg log_level)" />
-        <arg name="gazebo" value="$(arg gazebo)"/>
         <arg name="simulation_mode" value="true"/>
         <arg name="simu_gripper" value="$(arg simu_gripper)"/>
+        <arg name="gazebo" value="$(arg gazebo)"/>
     </include>
 
     <!-- Ghost node for enabling RPI simulation -->

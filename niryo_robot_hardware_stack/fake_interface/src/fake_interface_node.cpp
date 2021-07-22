@@ -32,9 +32,10 @@ int main(int argc, char **argv)
     ros::AsyncSpinner spinner(4);
     spinner.start();
 
-    ros::NodeHandle nh("~");
+    ros::NodeHandle nh;
+    ros::NodeHandle nh_joints(nh, "joints_interface");
 
-    fake_interface::FakeInterfaceCore nd(nh);
+    fake_interface::FakeInterfaceCore nd(nh, nh_joints);
     ros::waitForShutdown();
 
     ROS_INFO("Fake Joint Interface - Shutdown node");

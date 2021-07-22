@@ -83,8 +83,8 @@ CalibrationManager::~CalibrationManager()
  */
 void CalibrationManager::initParameters(ros::NodeHandle &nh)
 {
-    _nh.getParam("/niryo_robot_hardware_interface/calibration_timeout", _calibration_timeout);
-    _nh.getParam("/niryo_robot_hardware_interface/calibration_file", _calibration_file_name);
+    nh.getParam("calibration_timeout", _calibration_timeout);
+    nh.getParam("calibration_file", _calibration_file_name);
 
     ROS_DEBUG("Calibration Interface - Calibration timeout %d", _calibration_timeout);
     ROS_DEBUG("Calibration Interface - Calibration file name %s", _calibration_file_name.c_str());
@@ -421,7 +421,8 @@ bool CalibrationManager::_can_process_manual_calibration(std::string &result_mes
     std::vector<int> steps_list;
     if (!get_motors_calibration_offsets(motor_id_list, steps_list))
     {
-        result_message = "Calibration Interface - You need to make one auto calibration before using the manual calibration";
+        result_message = "Calibration Interface - You need to make an "
+                         "auto calibration before using the manual calibration";
         ROS_WARN("Calibration Interface - Can't process manual calibration : %s",
                  result_message.c_str());
         return false;
@@ -466,7 +467,8 @@ bool CalibrationManager::_can_process_manual_calibration(std::string &result_mes
  */
 void CalibrationManager::_send_calibration_offset(uint8_t id, int offset_to_send, int absolute_steps_at_offset_position)
 {
-    StepperMotorCmd stepper_cmd(EStepperCommandType::CMD_TYPE_POSITION_OFFSET, id, {offset_to_send, absolute_steps_at_offset_position});
+    StepperMotorCmd stepper_cmd(EStepperCommandType::CMD_TYPE_POSITION_OFFSET, id,
+                                {offset_to_send, absolute_steps_at_offset_position});
     _can_driver_core->addSingleCommandToQueue(stepper_cmd);
 }
 

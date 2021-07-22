@@ -123,8 +123,6 @@ class TtlDriverCore : public common::model::IDriverCore, public common::model::I
         bool _callbackReadCustomDxlValue(ttl_driver::ReadCustomDxlValue::Request &req, ttl_driver::ReadCustomDxlValue::Response &res);
 
     private:
-        ros::NodeHandle _nh;
-
         bool _control_loop_flag{false};
         bool _debug_flag{false};
 

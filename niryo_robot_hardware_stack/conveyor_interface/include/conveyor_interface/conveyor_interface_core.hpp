@@ -67,8 +67,6 @@ class ConveyorInterfaceCore : public common::model::IInterfaceCore
         void _publishConveyorsFeedback();
 
     private:
-        ros::NodeHandle _nh;
-
         std::thread _publish_conveyors_feedback_thread;
 
         std::shared_ptr<can_driver::CanDriverCore> _can_driver;

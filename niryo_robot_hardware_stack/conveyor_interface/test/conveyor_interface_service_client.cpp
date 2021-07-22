@@ -28,7 +28,7 @@ static std::unique_ptr<ros::NodeHandle> nh;
 
 TEST(TESTSuite, setConveyor)
 {
-    ros::ServiceClient client = nh->serviceClient<conveyor_interface::SetConveyor>("/niryo_robot/conveyor/ping_and_set_conveyor");
+    auto client = nh->serviceClient<conveyor_interface::SetConveyor>("/niryo_robot/conveyor/ping_and_set_conveyor");
 
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);
@@ -44,7 +44,7 @@ TEST(TESTSuite, setConveyor)
 
 TEST(TESTSuite, controlConveyor1)
 {
-    ros::ServiceClient client = nh->serviceClient<conveyor_interface::ControlConveyor>("/niryo_robot/tools/control_conveyor");
+    auto client = nh->serviceClient<conveyor_interface::ControlConveyor>("/niryo_robot/conveyor/control_conveyor");
 
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);
@@ -61,7 +61,7 @@ TEST(TESTSuite, controlConveyor1)
 
 TEST(TESTSuite, controlConveyor2)
 {
-    ros::ServiceClient client = nh->serviceClient<conveyor_interface::ControlConveyor>("/niryo_robot/tools/control_conveyor");
+    auto client = nh->serviceClient<conveyor_interface::ControlConveyor>("/niryo_robot/conveyor/control_conveyor");
 
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);
@@ -79,7 +79,7 @@ TEST(TESTSuite, controlConveyor2)
 
 TEST(TESTSuite, controlConveyor3)
 {
-    ros::ServiceClient client = nh->serviceClient<conveyor_interface::ControlConveyor>("/niryo_robot/tools/control_conveyor");
+    auto client = nh->serviceClient<conveyor_interface::ControlConveyor>("/niryo_robot/conveyor/control_conveyor");
 
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);
@@ -96,7 +96,7 @@ TEST(TESTSuite, controlConveyor3)
 
 TEST(TESTSuite, controlConveyor4)
 {
-    ros::ServiceClient client = nh->serviceClient<conveyor_interface::ControlConveyor>("/niryo_robot/tools/control_conveyor");
+    auto client = nh->serviceClient<conveyor_interface::ControlConveyor>("/niryo_robot/conveyor/control_conveyor");
 
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);
@@ -114,7 +114,7 @@ TEST(TESTSuite, controlConveyor4)
 
 TEST(TESTSuite, controlConveyor5)
 {
-    ros::ServiceClient client = nh->serviceClient<conveyor_interface::ControlConveyor>("/niryo_robot/tools/control_conveyor");
+    auto client = nh->serviceClient<conveyor_interface::ControlConveyor>("/niryo_robot/conveyor/control_conveyor");
 
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);
@@ -131,7 +131,7 @@ TEST(TESTSuite, controlConveyor5)
 
 TEST(TESTSuite, removeConveyor)
 {
-    ros::ServiceClient client = nh->serviceClient<conveyor_interface::SetConveyor>("/niryo_robot/conveyor/ping_and_set_conveyor");
+    auto client = nh->serviceClient<conveyor_interface::SetConveyor>("/niryo_robot/conveyor/ping_and_set_conveyor");
 
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);

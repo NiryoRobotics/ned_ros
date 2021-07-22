@@ -53,6 +53,11 @@ install(
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
 )
 
+install(
+  DIRECTORY config/
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/config
+)
+
 if (EXISTS ${CMAKE_CURRENT_BINARY_DIR}/doc)
   install(
     DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc/
@@ -63,8 +68,10 @@ endif()
 ##########################
 ## Static code analysis ##
 ##########################
-find_package(roslint)
+find_package(roslint QUIET)
 
 if(roslint_FOUND)
     roslint_python()
+else()
+    message(WARNING "roslint not found. Skipping roslint target building")
 endif()

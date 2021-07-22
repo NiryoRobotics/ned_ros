@@ -185,7 +185,10 @@ int StepperMotorState::to_motor_pos(double pos_rad)
 double StepperMotorState::to_rad_pos(int pos)
 {
     assert(0.0 != (STEPPERS_MOTOR_STEPS_PER_REVOLUTION * STEPPERS_MICROSTEPS * _gear_ratio * RADIAN_TO_DEGREE));
-    return static_cast<double>((pos * 2*M_PI) / (STEPPERS_MOTOR_STEPS_PER_REVOLUTION * STEPPERS_MICROSTEPS * _gear_ratio) * _direction);
+    return static_cast<double>(
+                (pos * 2*M_PI) /
+                (STEPPERS_MOTOR_STEPS_PER_REVOLUTION * STEPPERS_MICROSTEPS * _gear_ratio) *
+                _direction);
 }
 
 

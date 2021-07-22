@@ -1,0 +1,59 @@
+<?xml version="1.0" ?>
+<launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+    <!-- Arguments -->
+    <arg name="simulation_mode" default="true"/>
+    <arg name="can_enabled" default="false"/>
+    <arg name="ttl_enabled" default="false"/>
+    <arg name="hardware_version" default="ned"/>
+    <arg name="niryo_robot_type" default="NIRYO_NED" />
+    <arg name="image_version" default="" />
+
+    <group ns="niryo_robot">
+        <group ns="info">
+            <param name="image_version" type="string" value="$(arg image_version)" />
+            <param name="ros_version" type="string" command="rosversion niryo_robot_bringup" />
+            <param name="niryo_robot_type" type="string"  value="$(arg niryo_robot_type)" />
+        </group>
+    </group>
+
+    <group ns="niryo_robot_hardware_interface">
+
+        <group if="$(arg simulation_mode)" >
+            <include file="$(find fake_interface)/launch/fake_interface_base.launch.xml" >
+                <arg name="hardware_version" value="$(arg hardware_version)" />
+            </include>
+        </group>
+
+        <group unless="$(arg simulation_mode)" >
+
+            <include file="$(find joints_interface)/launch/joints_interface_base.launch.xml" >
+                <arg name="hardware_version" value="$(arg hardware_version)" />
+            </include>
+            
+            <!-- use can_driver config -->
+            <group if="$(arg can_enabled)" >
+                <include file="$(find can_driver)/launch/can_driver_base.launch.xml" >
+                    <arg name="hardware_version" value="$(arg hardware_version)" />
+                </include>
+                
+                <rosparam file="$(find conveyor_interface)/config/default.yaml" command="load" ns="conveyor"/>
+            </group>
+            
+            <!--use ttl_driver config -->
+            <group if="$(arg ttl_enabled)" >
+                <include file="$(find ttl_driver)/launch/ttl_driver_base.launch.xml" >
+                    <arg name="hardware_version" value="$(arg hardware_version)" />
+                </include>
+                
+                <include file="$(find tools_interface)/launch/tools_interface_base.launch.xml" >
+                    <arg name="hardware_version" value="$(arg hardware_version)" />
+                </include>
+            </group>
+            
+            <rosparam file="$(find cpu_interface)/config/default.yaml" command="load"/>
+        </group>
+        
+    </group>
+    
+</launch>

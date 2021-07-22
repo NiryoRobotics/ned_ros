@@ -1,5 +1,5 @@
 /*
-    FakeJointHardwareInterface.cpp
+    fake_joint_hardware_interface.cpp
     Copyright (C) 2020 Niryo
     All rights reserved.
 
@@ -17,7 +17,7 @@
     along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
-#include "fake_interface/FakeJointHardwareInterface.hpp"
+#include "fake_interface/fake_joint_hardware_interface.hpp"
 
 #include <string>
 #include <vector>
@@ -36,8 +36,8 @@ FakeJointHardwareInterface::FakeJointHardwareInterface(ros::NodeHandle& nh)
 
     for (int i = 0; i < 6; i++)
     {
-        _nh.getParam("/niryo_robot_hardware_interface/joint_" + std::to_string(i + 1) + "_id", _joints_id[i]);
-        _nh.getParam("/niryo_robot_hardware_interface/joint_" + std::to_string(i + 1) + "_name", _joints_name[i]);
+        nh.getParam("joint_" + std::to_string(i + 1) + "_id", _joints_id[i]);
+        nh.getParam("joint_" + std::to_string(i + 1) + "_name", _joints_name[i]);
     }
 
     ROS_INFO("Fake Joint Interface - Joints' Name : (1 : %s, 2 : %s, 3 : %s)",

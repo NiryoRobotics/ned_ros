@@ -4,12 +4,9 @@
   <!-- Arguments -->
   <arg name="hardware_version" default="ned"/>
 
-  <group ns="niryo_robot_hardware_interface" >
-      <node pkg="ttl_driver" type="ttl_driver_node" name="ttl_driver" output="screen">  
-        <rosparam file="$(find ttl_driver)/config/$(arg hardware_version)/bus_config.yaml" command="load"/>
-        <rosparam file="$(find ttl_driver)/config/$(arg hardware_version)/motors_config.yaml" command="load"/>
-        <rosparam file="$(find ttl_driver)/config/$(arg hardware_version)/dynamixel_params.yaml" command="load"/>
-        <rosparam file="$(find ttl_driver)/config/default.yaml" command="load"/>
-      </node>
-  </group>
+  <include file="$(find ttl_driver)/launch/ttl_driver_base.launch.xml" >
+      <arg name="hardware_version" value="$(arg hardware_version)" />
+  </include>
+
+  <node pkg="ttl_driver" type="ttl_driver_node" name="ttl_driver" output="screen" />
 </launch>

@@ -1,5 +1,5 @@
 /*
-    JointHardwareInterface.cpp
+    joint_hardware_interface.cpp
     Copyright (C) 2020 Niryo
     All rights reserved.
 
@@ -18,7 +18,7 @@
 */
 
 
-#include "joints_interface/JointHardwareInterface.hpp"
+#include "joints_interface/joint_hardware_interface.hpp"
 
 // c++
 #include <vector>
@@ -50,11 +50,13 @@ namespace joints_interface
 
 /**
  * @brief JointHardwareInterface::JointHardwareInterface
- * @param nh
+ * @param rootnh
+ * @param robot_hwnh
  * @param ttl_driver
  * @param can_driver
  */
-JointHardwareInterface::JointHardwareInterface(ros::NodeHandle& nh,
+JointHardwareInterface::JointHardwareInterface(ros::NodeHandle& rootnh,
+                                               ros::NodeHandle& robot_hwnh,
                                                shared_ptr<ttl_driver::TtlDriverCore> ttl_driver,
                                                shared_ptr<can_driver::CanDriverCore> can_driver) :
     _ttl_driver_core(ttl_driver),
@@ -62,13 +64,16 @@ JointHardwareInterface::JointHardwareInterface(ros::NodeHandle& nh,
 {
     ROS_DEBUG("JointHardwareInterface::ctor");
 
-    init(nh, nh);
+    init(rootnh, robot_hwnh);
 
     sendInitMotorsParams();
 
     activateLearningMode();
 
-    _calibration_manager = std::make_unique<CalibrationManager>(nh, _joint_list, _can_driver_core, _ttl_driver_core);
+    _calibration_manager = std::make_unique<CalibrationManager>(robot_hwnh,
+                                                                _joint_list,
+                                                                _can_driver_core,
+                                                                _ttl_driver_core);
 }
 
 /**
@@ -135,9 +140,9 @@ bool JointHardwareInterface::init(ros::NodeHandle& rootnh, ros::NodeHandle &robo
     size_t nb_joints = 0;
 
     // retrieve nb joints with checking that the config param exists for both name and id
-    while (_nh.hasParam("/niryo_robot_hardware_interface/joint_" + to_string(nb_joints + 1) + "_id") &&
-          _nh.hasParam("/niryo_robot_hardware_interface/joint_" + to_string(nb_joints + 1) + "_name") &&
-          _nh.hasParam("/niryo_robot_hardware_interface/joint_" + to_string(nb_joints + 1) + "_type"))
+    while (robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "_id") &&
+          robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "_name") &&
+          robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "_type"))
         nb_joints++;
 
     // connect and register joint state interface
@@ -154,9 +159,9 @@ bool JointHardwareInterface::init(ros::NodeHandle& rootnh, ros::NodeHandle &robo
         string joint_name = "";
         string joint_type = "";
 
-        _nh.getParam("/niryo_robot_hardware_interface/joint_" + to_string(j + 1) + "_id", joint_id_config);
-        _nh.getParam("/niryo_robot_hardware_interface/joint_" + to_string(j + 1) + "_name", joint_name);
-        _nh.getParam("/niryo_robot_hardware_interface/joint_" + to_string(j + 1) + "_type", joint_type);
+        robot_hwnh.getParam("joint_" + to_string(j + 1) + "_id", joint_id_config);
+        robot_hwnh.getParam("joint_" + to_string(j + 1) + "_name", joint_name);
+        robot_hwnh.getParam("joint_" + to_string(j + 1) + "_type", joint_type);
 
         MotorTypeEnum eType = MotorTypeEnum(joint_type.c_str());
 
@@ -173,12 +178,12 @@ bool JointHardwareInterface::init(ros::NodeHandle& rootnh, ros::NodeHandle &robo
                 int direction = 1;
                 double max_effort = 0.0;
 
-                std::string currentStepperNamespace = "/niryo_robot_hardware_interface/steppers/stepper_" + to_string(currentIdStepper);
+                std::string currentStepperNamespace = "steppers/stepper_" + to_string(currentIdStepper);
 
-                _nh.getParam(currentStepperNamespace + "/offset_position", offsetPos);
-                _nh.getParam(currentStepperNamespace + "/gear_ratio", gear_ratio);
-                _nh.getParam(currentStepperNamespace + "/direction", direction);
-                _nh.getParam(currentStepperNamespace + "/max_effort", max_effort);
+                rootnh.getParam(currentStepperNamespace + "/offset_position", offsetPos);
+                rootnh.getParam(currentStepperNamespace + "/gear_ratio", gear_ratio);
+                rootnh.getParam(currentStepperNamespace + "/direction", direction);
+                rootnh.getParam(currentStepperNamespace + "/max_effort", max_effort);
 
                 // add parameters
                 stepperState->setOffsetPosition(offsetPos);
@@ -207,20 +212,20 @@ bool JointHardwareInterface::init(ros::NodeHandle& rootnh, ros::NodeHandle &robo
                 int FF1Gain = 0;
                 int FF2Gain = 0;
 
-                std::string currentDxlNamespace = "/niryo_robot_hardware_interface/dynamixels/dxl_" + to_string(currentIdDxl);
+                std::string currentDxlNamespace = "dynamixels/dxl_" + to_string(currentIdDxl);
 
-                _nh.getParam(currentDxlNamespace + "/offset_position", offsetPos);
-                _nh.getParam(currentDxlNamespace + "/direction", direction);
+                rootnh.getParam(currentDxlNamespace + "/offset_position", offsetPos);
+                rootnh.getParam(currentDxlNamespace + "/direction", direction);
 
-                _nh.getParam(currentDxlNamespace + "/position_P_gain", positionPGain);
-                _nh.getParam(currentDxlNamespace + "/position_I_gain", positionIGain);
-                _nh.getParam(currentDxlNamespace + "/position_D_gain", positionDGain);
+                rootnh.getParam(currentDxlNamespace + "/position_P_gain", positionPGain);
+                rootnh.getParam(currentDxlNamespace + "/position_I_gain", positionIGain);
+                rootnh.getParam(currentDxlNamespace + "/position_D_gain", positionDGain);
 
-                _nh.getParam(currentDxlNamespace + "/velocity_P_gain", velocityPGain);
-                _nh.getParam(currentDxlNamespace + "/velocity_I_gain", velocityIGain);
+                rootnh.getParam(currentDxlNamespace + "/velocity_P_gain", velocityPGain);
+                rootnh.getParam(currentDxlNamespace + "/velocity_I_gain", velocityIGain);
 
-                _nh.getParam(currentDxlNamespace + "/FF1_gain", FF1Gain);
-                _nh.getParam(currentDxlNamespace + "/FF2_gain", FF2Gain);
+                rootnh.getParam(currentDxlNamespace + "/FF1_gain", FF1Gain);
+                rootnh.getParam(currentDxlNamespace + "/FF2_gain", FF2Gain);
 
                 dxlState->setOffsetPosition(offsetPos);
                 dxlState->setDirection(direction);
@@ -284,10 +289,9 @@ void JointHardwareInterface::sendInitMotorsParams()
     {
         if (jState && jState->isStepper())
         {
-            StepperMotorCmd cmd(
-                        EStepperCommandType::CMD_TYPE_MICRO_STEPS,
-                        jState->getId(),
-                        {8});
+            StepperMotorCmd cmd(EStepperCommandType::CMD_TYPE_MICRO_STEPS,
+                                jState->getId(),
+                                {8});
             _can_driver_core->addSingleCommandToQueue(cmd);
         }
     }
@@ -299,9 +303,7 @@ void JointHardwareInterface::sendInitMotorsParams()
         if (jState && jState->isStepper())
         {
             StepperMotorCmd cmd(EStepperCommandType::CMD_TYPE_MAX_EFFORT, jState->getId(),
-                                {
-                                    static_cast<int32_t>(dynamic_pointer_cast<StepperMotorState>(jState)->getMaxEffort())
-                                });
+                                {static_cast<int32_t>(dynamic_pointer_cast<StepperMotorState>(jState)->getMaxEffort())});
             _can_driver_core->addSingleCommandToQueue(cmd);
         }
     }

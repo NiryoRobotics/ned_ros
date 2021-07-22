@@ -50,14 +50,14 @@ namespace ttl_driver
 /**
  * @brief TtlDriver::TtlDriver
  */
-TtlDriver::TtlDriver() :
+TtlDriver::TtlDriver(ros::NodeHandle& nh) :
     _is_connection_ok(false),
     _debug_error_message("TtlDriver - No connection with Dynamixel motors has been made yet"),
     _hw_fail_counter_read(0)
 {
     ROS_DEBUG("TtlDriver - ctor");
 
-    init();
+    init(nh);
 
     if (COMM_SUCCESS != setupCommunication())
         ROS_WARN("TtlDriver - Dynamixel Communication Failed");
@@ -73,11 +73,11 @@ TtlDriver::~TtlDriver()
  * @brief TtlDriver::init
  * @return
  */
-bool TtlDriver::init()
+bool TtlDriver::init(ros::NodeHandle& nh)
 {
     // get params from rosparams
-    _nh.getParam("/niryo_robot_hardware_interface/ttl_driver/bus_params/uart_device_name", _device_name);
-    _nh.getParam("/niryo_robot_hardware_interface/ttl_driver/bus_params/baudrate", _uart_baudrate);
+    nh.getParam("bus_params/uart_device_name", _device_name);
+    nh.getParam("bus_params/baudrate", _uart_baudrate);
 
     _dxlPortHandler.reset(dynamixel::PortHandler::getPortHandler(_device_name.c_str()));
     _dxlPacketHandler.reset(dynamixel::PacketHandler::getPacketHandler(DXL_BUS_PROTOCOL_VERSION));
@@ -88,8 +88,8 @@ bool TtlDriver::init()
     vector<int> idList;
     vector<string> typeList;
 
-    _nh.getParam("/niryo_robot_hardware_interface/ttl_driver/motors_params/motor_id_list", idList);
-    _nh.getParam("/niryo_robot_hardware_interface/ttl_driver/motors_params/motor_type_list", typeList);
+    nh.getParam("motors_params/motor_id_list", idList);
+    nh.getParam("motors_params/motor_type_list", typeList);
 
     // debug - display info
     ostringstream ss;
@@ -143,7 +143,9 @@ bool TtlDriver::init()
 
     for (auto const &d : _xdriver_map)
     {
-        ROS_DEBUG("TtlDriver::init - Driver map: %s => %s", MotorTypeEnum(d.first).toString().c_str(), d.second->str().c_str());
+        ROS_DEBUG("TtlDriver::init - Driver map: %s => %s",
+                  MotorTypeEnum(d.first).toString().c_str(),
+                  d.second->str().c_str());
     }
 
     return COMM_SUCCESS;
@@ -182,19 +184,23 @@ void TtlDriver::addMotor(EMotorType type, uint8_t id, bool isTool)
         {
             case EMotorType::STEPPER:
                 _xdriver_map.insert(make_pair(type,
-                      std::make_shared<StepperDriver >(_dxlPortHandler, _dxlPacketHandler)));
+                        std::make_shared<StepperDriver >(_dxlPortHandler, _dxlPacketHandler)));
             break;
             case EMotorType::XL430:
-                _xdriver_map.insert(make_pair(type, std::make_shared<XDriver<XL430Reg> >(_dxlPortHandler, _dxlPacketHandler)));
+                _xdriver_map.insert(make_pair(type,
+                        std::make_shared<XDriver<XL430Reg> >(_dxlPortHandler, _dxlPacketHandler)));
             break;
             case EMotorType::XC430:
-                _xdriver_map.insert(make_pair(type, std::make_shared<XDriver<XC430Reg> >(_dxlPortHandler, _dxlPacketHandler)));
+                _xdriver_map.insert(make_pair(type,
+                        std::make_shared<XDriver<XC430Reg> >(_dxlPortHandler, _dxlPacketHandler)));
             break;
             case EMotorType::XL320:
-                _xdriver_map.insert(make_pair(type, std::make_shared<XDriver<XL320Reg> >(_dxlPortHandler, _dxlPacketHandler)));
+                _xdriver_map.insert(make_pair(type,
+                        std::make_shared<XDriver<XL320Reg> >(_dxlPortHandler, _dxlPacketHandler)));
             break;
             case EMotorType::XL330:
-                _xdriver_map.insert(make_pair(type, std::make_shared<XDriver<XL330Reg> >(_dxlPortHandler, _dxlPacketHandler)));
+                _xdriver_map.insert(make_pair(type,
+                        std::make_shared<XDriver<XL330Reg> >(_dxlPortHandler, _dxlPacketHandler)));
             break;
             default:
                 ROS_ERROR("TtlDriver - Unable to instanciate driver, unknown type");
@@ -252,8 +258,10 @@ int TtlDriver::setupCommunication()
         // see schema http:// support.robotis.com/en/product/actuator/dynamixel_x/xl-series_main.htm
         if (!_dxlPortHandler->setupGpio())
         {
-            ROS_ERROR("TtlDriver::setupCommunication - Failed to setup direction GPIO pin for Dynamixel half-duplex serial");
-            _debug_error_message = "TtlDriver -  Failed to setup direction GPIO pin for Dynamixel half-duplex serial";
+            ROS_ERROR("TtlDriver::setupCommunication - Failed to setup direction GPIO pin "
+                      "for Dynamixel half-duplex serial");
+            _debug_error_message = "TtlDriver -  Failed to setup direction GPIO pin "
+                                   "for Dynamixel half-duplex serial";
             return DXL_FAIL_SETUP_GPIO;
         }
 
@@ -364,8 +372,7 @@ bool TtlDriver::ping(uint8_t id)
  */
 int TtlDriver::rebootMotors()
 {
-    int return_value = COMM_SUCCESS;
-    int result = 0;
+    int return_value = niryo_robot_msgs::CommandStatus::FAILURE;
 
     for (auto const &it : _state_map)
     {
@@ -373,8 +380,13 @@ int TtlDriver::rebootMotors()
         ROS_DEBUG("TtlDriver::rebootMotors - Reboot Dxl motor with ID: %d", it.first);
         if (_xdriver_map.count(type))
         {
-            result = _xdriver_map.at(type)->reboot(it.first);
-            if (result != COMM_SUCCESS)
+            int result = _xdriver_map.at(type)->reboot(it.first);
+            if (COMM_SUCCESS == result)
+            {
+                ROS_DEBUG("TtlDriver::rebootMotors - Reboot motor successfull");
+                return_value = niryo_robot_msgs::CommandStatus::SUCCESS;
+            }
+            else
             {
                 ROS_WARN("TtlDriver::rebootMotors - Failed to reboot motor: %d", result);
                 return_value = result;
@@ -1004,7 +1016,8 @@ int TtlDriver::_syncWrite(int (AbstractMotorDriver::*syncWriteFunction)(const ve
             if (it.second && typesToProcess.count(it.first) != 0)
             {
                 // syncwrite for this driver. The driver is responsible for sync write only to its associated motors
-                int results = ((it.second.get())->*syncWriteFunction)(cmd.getMotorsId(it.first), cmd.getParams(it.first));
+                int results = ((it.second.get())->*syncWriteFunction)(cmd.getMotorsId(it.first),
+                                                                      cmd.getParams(it.first));
                 ros::Duration(0.05).sleep();
                 // if successful, don't process this driver in the next loop
                 if (COMM_SUCCESS == results)

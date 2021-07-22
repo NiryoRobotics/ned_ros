@@ -63,8 +63,10 @@ constexpr int DXL_WRONG_TYPE             = -52;
 class TtlDriver : public common::model::IDriver
 {
     public:
-        TtlDriver();
+        TtlDriver(ros::NodeHandle& nh);
         virtual ~TtlDriver() override;
+
+        bool init(ros::NodeHandle& nh) override;
 
         // commands
         void addMotor(common::model::EMotorType type,
@@ -108,7 +110,6 @@ class TtlDriver : public common::model::IDriver
         std::string getErrorMessage() const override;
 
     private:
-        bool init() override;
         bool hasMotors() override;
 
         int setupCommunication();
@@ -121,8 +122,6 @@ class TtlDriver : public common::model::IDriver
         int _singleWrite(int (AbstractMotorDriver::*singleWriteFunction)(uint8_t id, uint32_t), common::model::EMotorType dxl_type,
                               const common::model::SingleMotorCmd& cmd);
     private:
-        ros::NodeHandle _nh;
-
         std::shared_ptr<dynamixel::PortHandler> _dxlPortHandler;
         std::shared_ptr<dynamixel::PacketHandler> _dxlPacketHandler;
 
@@ -145,7 +144,6 @@ class TtlDriver : public common::model::IDriver
         int _led_state;
 
         static constexpr int MAX_HW_FAILURE = 25;
-
 };
 
 // inline getters

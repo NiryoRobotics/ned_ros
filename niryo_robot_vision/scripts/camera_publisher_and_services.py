@@ -129,7 +129,7 @@ class VisionNode:
         self.__object_detector = ObjectDetector(
             obj_type=obj_type, obj_color=obj_color,
             workspace_ratio=workspace_ratio,
-            ret_image_bool=ret_image,
+            ret_image_bool=req.ret_image,
         )
 
         # Launching pipeline

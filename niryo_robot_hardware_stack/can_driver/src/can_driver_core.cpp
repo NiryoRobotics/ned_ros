@@ -54,7 +54,7 @@ CanDriverCore::CanDriverCore(ros::NodeHandle& nh)
 
     init(nh);
 
-    _can_driver = std::make_unique<CanDriver>();
+    _can_driver = std::make_unique<CanDriver>(nh);
 
     startControlLoop();
 }
@@ -398,7 +398,8 @@ void CanDriverCore::controlLoop()
             }
 
             bool isFreqMet = control_loop_rate.sleep();
-            ROS_DEBUG_COND(!isFreqMet, "CanDriverCore::rosControlLoop : freq not met : expected (%f s) vs actual (%f s)",
+            ROS_DEBUG_COND(!isFreqMet,
+                           "CanDriverCore::rosControlLoop : freq not met : expected (%f s) vs actual (%f s)",
                            control_loop_rate.expectedCycleTime().toSec(),
                            control_loop_rate.cycleTime().toSec());
         }

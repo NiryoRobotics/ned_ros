@@ -28,7 +28,10 @@ TEST(JointsInterfaceTestSuite, testInitJoints)
     auto ttl_driver_core = std::make_shared<ttl_driver::TtlDriverCore>();
     auto can_driver_core = std::make_shared<can_driver::CanDriverCore>();
 
-    joints_interface::JointsInterfaceCore joints_core(ttl_driver_core, can_driver_core);
+    ros::NodeHandle nh;
+    ros::NodeHandle nh_joints(nh, "joints_interface");
+
+    joints_interface::JointsInterfaceCore joints_core(nh, nh_joints, ttl_driver_core, can_driver_core);
 
     std::vector<std::shared_ptr<common::model::JointState> > jStates = joints_core.getJointsState();
 

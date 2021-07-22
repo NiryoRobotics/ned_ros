@@ -93,11 +93,11 @@ void ConveyorInterfaceCore::initParameters(ros::NodeHandle& nh)
 {
     std::vector<int> id_pool_list;
 
-    _nh.getParam("/niryo_robot_hardware_interface/conveyor/max_effort", _conveyor_max_effort);
-    _nh.getParam("/niryo_robot_hardware_interface/conveyor/id", _default_conveyor_id);
-    _nh.getParam("/niryo_robot_hardware_interface/conveyor/id_list", id_pool_list);
+    nh.getParam("max_effort", _conveyor_max_effort);
+    nh.getParam("id", _default_conveyor_id);
+    nh.getParam("id_list", id_pool_list);
 
-    _nh.getParam("/niryo_robot_hardware_interface/conveyor/publish_frequency", _publish_feedback_frequency);
+    nh.getParam("publish_frequency", _publish_feedback_frequency);
 
     ROS_DEBUG("ConveyorInterfaceCore::initParameters - conveyor max effort : %d", _conveyor_max_effort);
     ROS_DEBUG("ConveyorInterfaceCore::initParameters - default conveyor id : %d", _default_conveyor_id);
@@ -113,7 +113,7 @@ void ConveyorInterfaceCore::initParameters(ros::NodeHandle& nh)
     id_pool_list_string += "]";
 
     ROS_DEBUG("ConveyorInterfaceCore::init - conveyor pool id list: %s ", id_pool_list_string.c_str());
-    ROS_DEBUG("ConveyorInterfaceCore::initParameters - Publish_hw_status_frequency : %f", _publish_feedback_frequency);
+    ROS_DEBUG("ConveyorInterfaceCore::initParameters - publish feedback frequency : %f", _publish_feedback_frequency);
 
     // initialize pool of possible id we can assign
     for (int const id : id_pool_list)
@@ -126,10 +126,10 @@ void ConveyorInterfaceCore::initParameters(ros::NodeHandle& nh)
  */
 void ConveyorInterfaceCore::startServices(ros::NodeHandle& nh)
 {
-    _ping_and_set_stepper_server = _nh.advertiseService("/niryo_robot/conveyor/ping_and_set_conveyor",
+    _ping_and_set_stepper_server = nh.advertiseService("/niryo_robot/conveyor/ping_and_set_conveyor",
                                                         &ConveyorInterfaceCore::_callbackPingAndSetConveyor, this);
 
-    _control_conveyor_server = _nh.advertiseService("/niryo_robot/conveyor/control_conveyor",
+    _control_conveyor_server = nh.advertiseService("/niryo_robot/conveyor/control_conveyor",
                                                     &ConveyorInterfaceCore::_callbackControlConveyor, this);
 }
 
@@ -138,7 +138,7 @@ void ConveyorInterfaceCore::startServices(ros::NodeHandle& nh)
  */
 void ConveyorInterfaceCore::startPublishers(ros::NodeHandle& nh)
 {
-    _conveyors_feedback_publisher = _nh.advertise<conveyor_interface::ConveyorFeedbackArray>(
+    _conveyors_feedback_publisher = nh.advertise<conveyor_interface::ConveyorFeedbackArray>(
                                                     "/niryo_robot/conveyor/feedback", 10);
     _publish_conveyors_feedback_thread = std::thread(&ConveyorInterfaceCore::_publishConveyorsFeedback, this);
 }
@@ -147,7 +147,7 @@ void ConveyorInterfaceCore::startPublishers(ros::NodeHandle& nh)
  * @brief ConveyorInterfaceCore::startSubscribers
  * @param nh
  */
-void ConveyorInterfaceCore::startSubscribers(ros::NodeHandle& nh)
+void ConveyorInterfaceCore::startSubscribers(ros::NodeHandle& /*nh*/)
 {
     ROS_DEBUG("ConveyorInterfaceCore::startSubscribers - no subscriber to start");
 }
@@ -354,7 +354,8 @@ void ConveyorInterfaceCore::_publishConveyorsFeedback()
                 auto cState = dynamic_pointer_cast<ConveyorState>(sState);
                 data.conveyor_id = cState->getId();
                 data.running = cState->getState();
-                data.direction = cState->getDirection();
+                // (CC) implicit conversion loses integer precision
+                data.direction = static_cast<int8_t>(cState->getDirection());
                 data.speed = cState->getSpeed();
                 msg.conveyors.push_back(data);
 

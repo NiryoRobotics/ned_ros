@@ -7,6 +7,13 @@ option(BUILD_DOCS "Build documentation" OFF)
 option(BUILD_UNIT_TESTS "Build the unit tests" OFF)
 option(BUILD_INTEGRATION_TESTS "Build the integration tests" OFF)
 
+#retrieve architecture
+execute_process( COMMAND
+            uname -m COMMAND tr -d '\n'
+        OUTPUT_VARIABLE
+            ARCHITECTURE
+    )
+
 ## c++ options
 ## Compile as C++14, supported in ROS Melodic and newer
 set(CMAKE_CXX_STANDARD 14)
@@ -133,10 +140,13 @@ if(CATKIN_ENABLE_TESTING)
   if(BUILD_INTEGRATION_TESTS)
     find_package(catkin REQUIRED rostest)
 
-    add_rostest_gtest(${PROJECT_NAME}_integration_tests
-      test/tools_interface_service_client.test
-      test/tools_interface_service_client.cpp
-    )
+    if (${ARCHITECTURE} MATCHES "^(arm.*|aarch64.*|arm64.*)$")
+      add_rostest_gtest(${PROJECT_NAME}_integration_tests
+        test/tools_interface_service_client.test
+        test/tools_interface_service_client.cpp
+      )
+    endif()
+
     if(TARGET ${PROJECT_NAME}_integration_tests)
       target_link_libraries(
         ${PROJECT_NAME}_integration_tests
@@ -189,8 +199,10 @@ install(
 ##########################
 ## Static code analysis ##
 ##########################
-find_package(roslint)
+find_package(roslint QUIET)
 
 if(roslint_FOUND)
     roslint_cpp()
+else()
+    message(WARNING "roslint not found. Skipping roslint target building")
 endif()
