@@ -5,14 +5,6 @@ project(dxl_debug_tools)
 
 option(BUILD_DOCS "Build documentation" OFF)
 option(BUILD_UNIT_TESTS "Build the unit tests" OFF)
-option(BUILD_INTEGRATION_TESTS "Build the integration tests" OFF)
-
-#retrieve architecture
-execute_process( COMMAND
-            uname -m COMMAND tr -d '\n'
-        OUTPUT_VARIABLE
-            ARCHITECTURE
-    )
 
 ## c++ options
 ## Compile as C++14, supported in ROS Melodic and newer
@@ -26,13 +18,11 @@ add_definitions(-Wall  -Werror)
 ## Find catkin macros and libraries
 find_package(catkin REQUIRED
     COMPONENTS
-    	roscpp
-        dynamixel_sdk
+      dynamixel_sdk
 )
  
 find_package(Boost REQUIRED
     COMPONENTS
-        system
         program_options
 )
 
@@ -50,7 +40,6 @@ find_package(Boost REQUIRED
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   CATKIN_DEPENDS 
-    roscpp
     dynamixel_sdk
 )
 
@@ -73,33 +62,11 @@ add_library(${PROJECT_NAME}_core
 add_executable(${PROJECT_NAME}
     src/dxl_debug.cpp)
 
-target_link_libraries(${PROJECT_NAME} ${PROJECT_NAME}_core)
-
-# wiringPi should be installed only on a Raspberry Pi board
-if(CMAKE_CROSSCOMPILING)
-    message(STATUS "Cross compiling : wiringPi library is required")
-    target_link_libraries(${PROJECT_NAME}
-        ${catkin_LIBRARIES}
-        ${Boost_LIBRARIES}
-        -lwiringPi -lrt
-    )
-else()
-
-    if (${ARCHITECTURE} MATCHES "^(arm.*|aarch64.*|arm64.*)$")
-        message(STATUS "wiringPi library is required - arm processor")
-        target_link_libraries(${PROJECT_NAME}
-            ${catkin_LIBRARIES}
-            ${Boost_LIBRARIES}
-            -lwiringPi -lrt
-        )
-    else()
-        message(STATUS "wiringPi library not required")
-        target_link_libraries(${PROJECT_NAME}
-            ${catkin_LIBRARIES}
-            ${Boost_LIBRARIES}
-        )
-    endif()
-endif()
+target_link_libraries(${PROJECT_NAME} 
+    ${PROJECT_NAME}_core
+    ${catkin_LIBRARIES}
+    ${Boost_LIBRARIES}
+)
 
 #############
 ##   Doc   ##

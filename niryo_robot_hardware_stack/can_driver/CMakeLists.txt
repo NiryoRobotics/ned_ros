@@ -7,13 +7,6 @@ option(BUILD_DOCS "Build documentation" OFF)
 option(BUILD_UNIT_TESTS "Build the unit tests" OFF)
 option(BUILD_INTEGRATION_TESTS "Build the integration tests" OFF)
 
-#retrieve architecture
-execute_process( COMMAND
-            uname -m COMMAND tr -d '\n'
-        OUTPUT_VARIABLE
-            ARCHITECTURE
-    )
-
 ## c++ options
 ## Compile as C++14, supported in ROS Melodic and newer
 set(CMAKE_CXX_STANDARD 14)
@@ -108,33 +101,12 @@ add_dependencies(${PROJECT_NAME}
 )
 
 ## Specify libraries to link executable targets against
-
-# wiringPi should be installed only on a Raspberry Pi board
-if(CMAKE_CROSSCOMPILING)
-    message(STATUS "Cross compiling : wiringPi library is required")
-    target_link_libraries(${PROJECT_NAME}
-        ${catkin_LIBRARIES}
-        -lwiringPi -lrt
-    )
-else()
-
-    if (${ARCHITECTURE} MATCHES "^(arm.*|aarch64.*|arm64.*)$")
-        message(STATUS "wiringPi library is required - arm processor")
-        target_link_libraries(${PROJECT_NAME}
-            ${catkin_LIBRARIES}
-            -lwiringPi -lrt
-        )
-    else()
-        message(STATUS "wiringPi library not required")
-        target_link_libraries(${PROJECT_NAME}
-            ${catkin_LIBRARIES}
-        )
-    endif()
-endif()
+target_link_libraries(${PROJECT_NAME}
+    ${catkin_LIBRARIES}
+)
 
 target_link_libraries(${PROJECT_NAME}_node
   ${PROJECT_NAME}
-  ${catkin_LIBRARIES}
 )
 
 #############
