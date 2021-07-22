@@ -1,7 +1,7 @@
-message("\n## Reading niryo_robot_iot/CMakeLists.txt...")
+message("\n## Reading niryo_robot_serial_number/CMakeLists.txt...")
 
 cmake_minimum_required(VERSION 3.0.2)
-project(niryo_robot_iot)
+project(niryo_robot_serial_number)
 
 find_package(catkin REQUIRED COMPONENTS
   rospy
@@ -12,7 +12,6 @@ add_service_files(
   DIRECTORY srv
   FILES
   GetSerial.srv
-  MqttPublish.srv
 )
 
 # enable python module support

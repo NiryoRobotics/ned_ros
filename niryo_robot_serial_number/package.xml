@@ -3,9 +3,9 @@
   href="http://download.ros.org/schema/package_format3.xsd"
   schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-    <name>niryo_robot_iot</name>
+    <name>niryo_robot_serial_number</name>
     <version>3.1.0</version>
-    <description>The niryo_robot_iot package</description>
+    <description>The niryo_robot_serial_number package</description>
 
     <maintainer email="j.mottier@niryo.com">Justin Mottier</maintainer>
     <maintainer email="c.ducatez@niryo.com">Corentin Ducatez</maintainer>
@@ -15,11 +15,5 @@
     <buildtool_depend>catkin</buildtool_depend>
 
     <exec_depend>rospy</exec_depend>
-
-    <!-- Python Dependencies -->
-
-    <exec_depend>python-paho-mqtt-pip</exec_depend>
-    <exec_depend>python-pexpect</exec_depend>
-    <exec_depend>python-boto3</exec_depend>
 
 </package>
