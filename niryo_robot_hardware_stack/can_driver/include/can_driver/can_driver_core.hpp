@@ -61,6 +61,8 @@ class CanDriverCore : public common::model::IDriverCore, public common::model::I
 
         void addSingleCommandToQueue(std::vector<std::shared_ptr<common::model::SingleMotorCmdI>> cmd) override;
 
+        void setSyncCommand(std::shared_ptr<common::model::SynchronizeMotorCmdI> cmd) override;
+
         void startCalibration() override;
         void resetCalibration() override;
 

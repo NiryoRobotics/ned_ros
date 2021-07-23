@@ -270,7 +270,9 @@ EStepperCalibrationStatus CalibrationManager::_auto_calibration()
     dynamixel_cmd.addMotorParam(_joint_list.at(5)->getType(), _joint_list.at(5)->getId(), 1);
 
     // (CC): only dxl use sync cmd
-    _ttl_driver_core->setSyncCommand(dynamixel_cmd);
+    _ttl_driver_core->setSyncCommand(std::make_shared<SynchronizeMotorCmd<
+                                        common::model::EDxlCommandType,
+                                        common::model::DxlCommandTypeEnum>>(dynamixel_cmd));
     sld.sleep();
 
     dynamixel_cmd.reset();
@@ -289,7 +291,9 @@ EStepperCalibrationStatus CalibrationManager::_auto_calibration()
                                 static_cast<uint32_t>(_joint_list.at(5)->to_motor_pos(0)));
 
     // (CC): only dxl use sync cmd
-    _ttl_driver_core->setSyncCommand(dynamixel_cmd);
+    _ttl_driver_core->setSyncCommand(std::make_shared<SynchronizeMotorCmd<
+                                        common::model::EDxlCommandType,
+                                        common::model::DxlCommandTypeEnum>>(dynamixel_cmd));
     sld.sleep();
 
 
@@ -383,7 +387,9 @@ EStepperCalibrationStatus CalibrationManager::_auto_calibration()
         dynamixel_cmd.addMotorParam(_joint_list.at(5)->getType(), _joint_list.at(5)->getId(), 0);
 
         // (CC) only dxl use sync cmd
-        _ttl_driver_core->setSyncCommand(dynamixel_cmd);
+        _ttl_driver_core->setSyncCommand(std::make_shared<SynchronizeMotorCmd<
+                                        common::model::EDxlCommandType,
+                                        common::model::DxlCommandTypeEnum>>(dynamixel_cmd));
         sld.sleep();
 
         // 6. Write sensor_offset_steps to file

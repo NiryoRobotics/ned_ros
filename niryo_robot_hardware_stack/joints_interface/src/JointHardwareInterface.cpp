@@ -414,7 +414,9 @@ void JointHardwareInterface::activateLearningMode()
         }
 
         // (CC): only dxl use sync cmd
-        _ttl_driver_core->setSyncCommand(dxl_cmd);
+        _ttl_driver_core->setSyncCommand(std::make_shared<common::model::SynchronizeMotorCmd<
+                                        common::model::EDxlCommandType,
+                                        common::model::DxlCommandTypeEnum>>(dxl_cmd));
 
         _learning_mode = true;
     }
@@ -452,8 +454,9 @@ void JointHardwareInterface::deactivateLearningMode()
             }
         }
 
-        // (CC): only dxl use sync cmd
-        _ttl_driver_core->setSyncCommand(dxl_cmd);
+        _ttl_driver_core->setSyncCommand(std::make_shared<common::model::SynchronizeMotorCmd<
+                                        common::model::EDxlCommandType,
+                                        common::model::DxlCommandTypeEnum>>(dxl_cmd));
 
         _learning_mode = true;
     }

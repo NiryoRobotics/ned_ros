@@ -50,6 +50,7 @@ class SynchronizeMotorCmd : public AbstractMotorCmd<T>, public SynchronizeMotorC
         SynchronizeMotorCmd(T type);
 
         // AbstractMotorCmd interface
+        int getTypeCmd() const override;
         bool isCmdStepper() const override;
         bool isCmdDxl() const override;
         void reset() override;
@@ -131,6 +132,16 @@ std::string SynchronizeMotorCmd<T, TE>::str() const
     }
 
     return string_info;
+}
+
+/**
+ * @brief SingleMotorCmd::getType
+ * @return
+ */
+template<typename T, typename TE>
+int SynchronizeMotorCmd<T, TE>::getTypeCmd() const
+{
+    return (int)this->getType();
 }
 
 /**

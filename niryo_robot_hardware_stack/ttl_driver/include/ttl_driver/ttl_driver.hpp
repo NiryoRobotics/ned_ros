@@ -86,8 +86,8 @@ class TtlDriver : public common::model::IDriver
         void addMotor(common::model::EMotorType type,
                       uint8_t id, EType type_used);
         
-        template<typename Type, typename TypeEnum>
-        int readSynchronizeCommand(common::model::SynchronizeMotorCmd<Type, TypeEnum> cmd);
+        template<typename Type>
+        int readSynchronizeCommand(std::shared_ptr<common::model::SynchronizeMotorCmdI> cmd);
         
         template<typename Type>
         int readSingleCommand(std::shared_ptr<common::model::SingleMotorCmdI> cmd);
@@ -141,9 +141,8 @@ class TtlDriver : public common::model::IDriver
 
         void checkRemovedMotors();
 
-        template<typename Type, typename TypeEnum>
         int _syncWrite(int (AbstractMotorDriver::*syncWriteFunction)(const std::vector<uint8_t> &, const std::vector<uint32_t> &),
-                              const common::model::SynchronizeMotorCmd<Type, TypeEnum>& cmd);
+                              std::shared_ptr<common::model::SynchronizeMotorCmdI> cmd);
         
         int _singleWrite(int (AbstractMotorDriver::*singleWriteFunction)(uint8_t id, uint32_t), common::model::EMotorType motor_type,
                               std::shared_ptr<common::model::SingleMotorCmdI> cmd);
@@ -272,15 +271,15 @@ bool TtlDriver::hasMotors()
  * @brief TtlDriver::readSynchronizeCommand
  * @param cmd
  */
-template<typename Type, typename TypeEnum>
-int TtlDriver::readSynchronizeCommand(common::model::SynchronizeMotorCmd<Type, TypeEnum> cmd)
+template<typename Type>
+int TtlDriver::readSynchronizeCommand(std::shared_ptr<common::model::SynchronizeMotorCmdI> cmd)
 {
     int result = COMM_TX_ERROR;
-    ROS_DEBUG_THROTTLE(0.5, "TtlDriver::readSynchronizeCommand:  %s", cmd.str().c_str());
+    ROS_DEBUG_THROTTLE(0.5, "TtlDriver::readSynchronizeCommand:  %s", cmd->str().c_str());
 
-    if (cmd.isValid())
+    if (cmd->isValid())
     {
-        switch (cmd.getType())
+        switch (Type(cmd->getTypeCmd()))
         {
             case Type::CMD_TYPE_POSITION:
                 result = _syncWrite(&AbstractMotorDriver::syncWritePositionGoal, cmd);
@@ -299,70 +298,13 @@ int TtlDriver::readSynchronizeCommand(common::model::SynchronizeMotorCmd<Type, T
             break;
             default:
                 ROS_ERROR("TtlDriver::readSynchronizeCommand - Unsupported command type: %d",
-                          static_cast<int>(cmd.getType()));
+                                cmd->getTypeCmd());
             break;
         }
     }
     else
 {
         ROS_ERROR("TtlDriver::readSynchronizeCommand - Invalid command");
-    }
-
-    return result;
-}
-
-/**
- * @brief TtlDriver::_syncWrite
- * @param syncWriteFunction
- * @param cmd
- * @return
- */
-template<typename Type, typename TypeEnum>
-int TtlDriver::_syncWrite(int (AbstractMotorDriver::*syncWriteFunction)(const std::vector<uint8_t> &, const std::vector<uint32_t> &),
-                              const common::model::SynchronizeMotorCmd<Type, TypeEnum>& cmd)
-{
-    int result = COMM_TX_ERROR;
-
-    std::set<common::model::EMotorType> typesToProcess = cmd.getMotorTypes();
-
-    // process all the motors using each successive drivers
-    for (int counter = 0; counter < MAX_HW_FAILURE; ++counter)
-    {
-        ROS_DEBUG_THROTTLE(0.5, "TtlDriver::_syncWrite: try to sync write (counter %d)", counter);
-
-        for (auto const& it : _driver_map)
-        {
-            if (it.second && typesToProcess.count(it.first) != 0)
-            {
-                // syncwrite for this driver. The driver is responsible for sync write only to its associated motors
-                int results = ((it.second.get())->*syncWriteFunction)(cmd.getMotorsId(it.first), cmd.getParams(it.first));
-                ros::Duration(0.05).sleep();
-                // if successful, don't process this driver in the next loop
-                if (COMM_SUCCESS == results)
-                {
-                    typesToProcess.erase(typesToProcess.find(it.first));
-                }
-                else
-{
-                    ROS_ERROR("TtlDriver::_syncWrite : unable to sync write function : %d", results);
-                }
-            }
-        }
-
-        // if all drivers are processed, go out of for loop
-        if (typesToProcess.empty())
-        {
-            result = COMM_SUCCESS;
-            break;
-        }
-
-        ros::Duration(TIME_TO_WAIT_IF_BUSY).sleep();
-    }
-
-    if (COMM_SUCCESS != result)
-    {
-        ROS_ERROR_THROTTLE(0.5, "TtlDriver::_syncWrite - Failed to write synchronize position");
-        _debug_error_message = "TtlDriver - Failed to write synchronize position";
     }
 
     return result;

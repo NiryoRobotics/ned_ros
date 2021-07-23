@@ -33,6 +33,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "motor_type_enum.hpp"
 #include "common/model/joint_state.hpp"
 #include "common/model/single_motor_cmd_interface.hpp"
+#include "common/model/synchronize_motor_cmd_interface.hpp"
 #include "common/model/stepper_calibration_status_enum.hpp"
 namespace common
 {
@@ -52,6 +53,7 @@ class IDriverCore
         virtual bool scanMotorId(uint8_t motor_to_find) = 0;
         virtual void addSingleCommandToQueue(std::shared_ptr<common::model::SingleMotorCmdI> cmd) = 0;
         virtual void addSingleCommandToQueue(std::vector<std::shared_ptr<common::model::SingleMotorCmdI>> cmd) = 0;
+        virtual void setSyncCommand(std::shared_ptr<common::model::SynchronizeMotorCmdI> cmd) = 0;
         // calibration
         virtual void startCalibration() = 0;
         virtual void resetCalibration() = 0;

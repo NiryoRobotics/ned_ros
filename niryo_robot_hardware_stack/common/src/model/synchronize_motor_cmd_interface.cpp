@@ -90,6 +90,14 @@ std::set<EMotorType> SynchronizeMotorCmdI::getMotorTypes() const
 }
 
 /**
+ * @brief SynchronizeMotorCmdI::getTypeCmd()
+*/
+int SynchronizeMotorCmdI::getTypeCmd() const
+{
+    return 0;
+}
+
+/**
  * @brief SynchronizeMotorCmdI::isCmdStepper
 */
 bool SynchronizeMotorCmdI::isCmdStepper() const

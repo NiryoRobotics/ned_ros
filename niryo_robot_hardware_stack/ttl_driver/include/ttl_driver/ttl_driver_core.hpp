@@ -78,7 +78,7 @@ class TtlDriverCore : public common::model::IDriverCore, public common::model::I
         bool setMotorPID(const std::shared_ptr<common::model::JointState>& motorState);
         void setTrajectoryControllerCommands(const std::vector<std::pair<uint8_t, uint32_t> > &cmd);
 
-        void setSyncCommand(const common::model::SynchronizeMotorCmdI &cmd);
+        void setSyncCommand(std::shared_ptr<common::model::SynchronizeMotorCmdI> cmd) override;
 
         void addSingleCommandToQueue(std::shared_ptr<common::model::SingleMotorCmdI> cmd) override;
         

@@ -647,9 +647,9 @@ void TtlDriverCore::_executeCommand()
         if (_need_sleep)
             ros::Duration(0.01).sleep();
         if (_sync_cmds->isCmdDxl())
-            _ttl_driver->readSynchronizeCommand(*dynamic_cast<DxlSyncCmd *>(_sync_cmds.get()));
+            _ttl_driver->readSynchronizeCommand<EDxlCommandType>(_sync_cmds);
         else
-            _ttl_driver->readSynchronizeCommand(*dynamic_cast<StepperSyncCmd *>(_sync_cmds.get()));
+            _ttl_driver->readSynchronizeCommand<EDxlCommandType>(_sync_cmds);
         _sync_cmds->reset();
     }
 }
@@ -729,20 +729,15 @@ void TtlDriverCore::setTrajectoryControllerCommands(const std::vector<std::pair<
  * @brief TtlDriverCore::setSyncCommand
  * @param cmd
  */
-void TtlDriverCore::setSyncCommand(const common::model::SynchronizeMotorCmdI &cmd)
+void TtlDriverCore::setSyncCommand(std::shared_ptr<common::model::SynchronizeMotorCmdI> cmd)
 {
 
-    if (cmd.isValid())
+    if (cmd->isValid())
     {
-        if (cmd.isCmdDxl())
-        {
-            _sync_cmds = std::make_shared<DxlSyncCmd>(*dynamic_cast<const DxlSyncCmd *>(&cmd));
-        }
-        else
-            _sync_cmds = std::make_shared<StepperSyncCmd>(*dynamic_cast<const StepperSyncCmd *>(&cmd));
+            _sync_cmds = cmd;
     }
     else
-        ROS_WARN("TtlDriverCore::setSyncCommand : Invalid command %s", cmd.str().c_str());
+        ROS_WARN("TtlDriverCore::setSyncCommand : Invalid command %s", cmd->str().c_str());
 }
 
 /**

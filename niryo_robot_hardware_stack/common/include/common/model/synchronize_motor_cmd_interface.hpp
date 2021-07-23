@@ -68,6 +68,9 @@ class SynchronizeMotorCmdI
         std::set<EMotorType> getMotorTypes() const;
 
         // AbstractMotorCmd interface
+        // This method help get type of a command through SynchronizeMotorCmd interface
+        virtual int getTypeCmd() const;
+
         virtual bool isCmdStepper() const;
         virtual bool isCmdDxl() const;
         virtual bool isValid() const;

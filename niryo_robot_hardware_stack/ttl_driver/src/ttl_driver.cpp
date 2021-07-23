@@ -230,6 +230,62 @@ void TtlDriver::addMotor(EMotorType type, uint8_t id, EType type_used)
 }
 
 /**
+ * @brief TtlDriver::_syncWrite
+ * @param syncWriteFunction
+ * @param cmd
+ * @return
+ */
+int TtlDriver::_syncWrite(int (AbstractMotorDriver::*syncWriteFunction)(const std::vector<uint8_t> &, const std::vector<uint32_t> &),
+                              std::shared_ptr<common::model::SynchronizeMotorCmdI> cmd)
+{
+    int result = COMM_TX_ERROR;
+
+    std::set<common::model::EMotorType> typesToProcess = cmd->getMotorTypes();
+
+    // process all the motors using each successive drivers
+    for (int counter = 0; counter < MAX_HW_FAILURE; ++counter)
+    {
+        ROS_DEBUG_THROTTLE(0.5, "TtlDriver::_syncWrite: try to sync write (counter %d)", counter);
+
+        for (auto const& it : _driver_map)
+        {
+            if (it.second && typesToProcess.count(it.first) != 0)
+            {
+                // syncwrite for this driver. The driver is responsible for sync write only to its associated motors
+                int results = ((it.second.get())->*syncWriteFunction)(cmd->getMotorsId(it.first), cmd->getParams(it.first));
+                ros::Duration(0.05).sleep();
+                // if successful, don't process this driver in the next loop
+                if (COMM_SUCCESS == results)
+                {
+                    typesToProcess.erase(typesToProcess.find(it.first));
+                }
+                else
+{
+                    ROS_ERROR("TtlDriver::_syncWrite : unable to sync write function : %d", results);
+                }
+            }
+        }
+
+        // if all drivers are processed, go out of for loop
+        if (typesToProcess.empty())
+        {
+            result = COMM_SUCCESS;
+            break;
+        }
+
+        ros::Duration(TIME_TO_WAIT_IF_BUSY).sleep();
+    }
+
+    if (COMM_SUCCESS != result)
+    {
+        ROS_ERROR_THROTTLE(0.5, "TtlDriver::_syncWrite - Failed to write synchronize position");
+        _debug_error_message = "TtlDriver - Failed to write synchronize position";
+    }
+
+    return result;
+}
+
+/**
  * @brief TtlDriver::_singleWrite
  * @param singleWriteFunction
  * @param dxl_type

@@ -569,6 +569,14 @@ void CanDriverCore::addSingleCommandToQueue(std::vector<std::shared_ptr<common::
         addSingleCommandToQueue(c);
 }
 
+/**
+ * @brief CanDriverCore::setSyncCommand
+ * @param cmd
+ */
+void CanDriverCore::setSyncCommand(std::shared_ptr<common::model::SynchronizeMotorCmdI> cmd)
+{
+    ROS_INFO("CanDriverCore::setSyncCommand: need to implement");
+}
 // ********************
 //  getters
 // ********************
