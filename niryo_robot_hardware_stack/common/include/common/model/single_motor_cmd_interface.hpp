@@ -35,8 +35,11 @@ class SingleMotorCmdI
 {
     public:
         SingleMotorCmdI() {}
+
         SingleMotorCmdI(uint8_t motor_id,
                        uint32_t param = 0);
+
+        SingleMotorCmdI(uint8_t motor_id, std::vector<int32_t> params = std::vector<int32_t>());
 
         virtual ~SingleMotorCmdI() {};
 
@@ -61,6 +64,7 @@ class SingleMotorCmdI
     protected:
         uint8_t _id;
         uint32_t _param;
+        std::vector<int32_t> _param_list;
 };
 
 /**
@@ -72,6 +76,20 @@ inline SingleMotorCmdI::SingleMotorCmdI(uint8_t motor_id, uint32_t param) :
                 _id(motor_id),
                 _param(param)
 {}
+
+/**
+ * @brief SingleMotorCmdI::StepperMotorCmd
+ * @param type
+ * @param motor_id
+ * @param params
+ */
+inline 
+SingleMotorCmdI::SingleMotorCmdI(uint8_t motor_id,
+                                 std::vector<int32_t> params) :
+    _id(motor_id),
+    _param_list(params)
+{
+}
 
 /**
  * @brief SingleMotorCmdI::getId
@@ -100,7 +118,7 @@ uint32_t SingleMotorCmdI::getParam() const
 inline
 std::vector<int32_t> SingleMotorCmdI::getParams() const
 {
-    return {(int32_t)_param};
+    return _param_list;
 }
 
 /**
@@ -130,7 +148,7 @@ void SingleMotorCmdI::setParam(uint32_t param)
 inline
 void SingleMotorCmdI::setParams(std::vector<int32_t> params) 
 {
-    _param = params[0];
+    _param_list = params;
 }
 
 /**

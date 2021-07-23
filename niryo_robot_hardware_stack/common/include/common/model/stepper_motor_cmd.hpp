@@ -43,14 +43,6 @@ class StepperMotorCmd : public AbstractMotorCmd<EStepperCommandType>, public Sin
                         uint8_t motor_id,
                         std::vector<int32_t> params = std::vector<int32_t>());
 
-        // setters
-        void setId(uint8_t id);
-        void setParams(std::vector<int32_t> params);
-
-        // getters
-        uint8_t getId() const;
-        std::vector<int32_t> getParams() const override;
-
         // AbstractMotorCmd interface
         // getters
         virtual int getTypeCmd() const override;
@@ -61,31 +53,7 @@ class StepperMotorCmd : public AbstractMotorCmd<EStepperCommandType>, public Sin
         virtual void clear() override;
         virtual std::string str() const override;
         virtual bool isValid() const override;
-
-    private:
-        uint8_t _id;
-        std::vector<int32_t> _param_list;
 };
-
-/**
- * @brief StepperMotorCmd::getId
- * @return
- */
-inline
-uint8_t StepperMotorCmd::getId() const
-{
-    return _id;
-}
-
-/**
- * @brief StepperMotorCmd::getParams
- * @return
- */
-inline
-std::vector<int32_t> StepperMotorCmd::getParams() const
-{
-    return _param_list;
-}
 
 /**
  * @brief SingleMotorCmd::getType
@@ -93,7 +61,7 @@ std::vector<int32_t> StepperMotorCmd::getParams() const
  */
 inline int StepperMotorCmd::getTypeCmd() const
 {
-    return (int)getType();
+    return (int)this->getType();
 }
 
 /**
