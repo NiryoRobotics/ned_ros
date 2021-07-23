@@ -33,9 +33,13 @@ void JointDriver::init(ros::NodeHandle &nh)
   vector<string> protocols_list;
 
   // get params in file config
-  nh.getParam("drivers_params/drivers_list", drivers_list);
-  while (nh.hasParam("joint_" + std::to_string(nb_joints + 1) + "_name") &&
-          nh.hasParam("joint_" + std::to_string(nb_joints + 1) + "_protocol"))
+  // get config in joints_driver package
+  ros::NodeHandle nh_joints_drv(nh, "joints_driver");
+  nh_joints_drv.getParam("drivers_params/drivers_list", drivers_list);
+
+  // get config in joint interface
+  while (nh_joints_drv.hasParam("joint_" + std::to_string(nb_joints + 1) + "_name") &&
+          nh_joints_drv.hasParam("joint_" + std::to_string(nb_joints + 1) + "_protocol"))
     nb_joints++;
 
   for (auto it = drivers_list.begin(); it != drivers_list.end(); it++)
@@ -43,15 +47,16 @@ void JointDriver::init(ros::NodeHandle &nh)
     if (*it == "can" && _haveCan == false)
     {
       ROS_DEBUG("JointDriver: Create Can driver core");
-      ros::NodeHandle nh_can(nh, "ttl_driver");
+      ros::NodeHandle nh_can(nh, "can_driver");
       _haveCan = true;
-      _canDriverCore.reset(new CanDriverCore(nh));
+      _canDriverCore.reset(new CanDriverCore(nh_can));
     }
     else if (*it == "ttl" && _haveTtl == false)
     {
-      ROS_DEBUG("JointDriver: Create Ttl driver core");
+      ROS_DEBUG("JointsDriver: Create Ttl driver core");
+      ros::NodeHandle nh_ttl(nh, "ttl_driver");
       _haveTtl = true;
-      _ttlDriverCore.reset(new TtlDriverCore(nh));
+      _ttlDriverCore.reset(new TtlDriverCore(nh_ttl));
     }
   }
 
@@ -60,8 +65,8 @@ void JointDriver::init(ros::NodeHandle &nh)
     string joint_name;
     string protocol;
 
-    nh.getParam("joint_" + std::to_string(j + 1) + "_name", joint_name);
-    nh.getParam("joint_" + std::to_string(j + 1) + "_protocol", protocol);
+    nh_joints_drv.getParam("joint_" + std::to_string(j + 1) + "_name", joint_name);
+    nh_joints_drv.getParam("joint_" + std::to_string(j + 1) + "_protocol", protocol);
     
     if (protocol == "can")
     {

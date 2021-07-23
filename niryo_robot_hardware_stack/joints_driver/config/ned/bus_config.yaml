@@ -1,3 +1,4 @@
+# not used actually
 can_bus:
     spi_channel: 0
     spi_baudrate: 1000000

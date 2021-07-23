@@ -9,6 +9,10 @@
 
   <param name="robot_description" command="$(find xacro)/xacro $(find niryo_robot_description)/urdf/ned/niryo_ned.urdf.xacro" />
 
+  <include file="$(find joints_driver)/launch/joints_driver_base.launch.xml" >
+    <arg name="hardware_version" value="$(arg hardware_version)" />
+  </include>
+
   <!-- use can_driver config -->
   <group if="$(arg can_enabled)" >
       <include file="$(find can_driver)/launch/can_driver_base.launch.xml" >
@@ -22,10 +26,6 @@
           <arg name="hardware_version" value="$(arg hardware_version)" />
       </include>
   </group>
-
-  <include file="$(find joints_driver)/launch/joints_driver_base.launch.xml" >
-    <arg name="hardware_version" value="$(arg hardware_version)" />
-  </include>
 
   <include file="$(find joints_interface)/launch/joints_interface_base.launch.xml" >
     <arg name="hardware_version" value="$(arg hardware_version)" />

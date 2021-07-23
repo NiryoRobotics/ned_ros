@@ -127,29 +127,7 @@ void HardwareInterface::initNodes(ros::NodeHandle &nh)
     ROS_DEBUG("HardwareInterface::initNodes - Init Nodes");
     if (!_simulation_mode)
     {
-        // if (_ttl_enabled)
-        // {
-        //     ROS_DEBUG("HardwareInterface::initNodes - Start Dynamixel Driver Node");
-        //     _ttl_driver = std::make_shared<ttl_driver::TtlDriverCore>(nh);
-        //     ros::Duration(0.25).sleep();
-        // }
-        // else
-        // {
-        //     ROS_WARN("HardwareInterface::initNodes - DXL communication is disabled for debug purposes");
-        // }
-
-        // if (_can_enabled)
-        // {
-        //     ROS_DEBUG("HardwareInterface::initNodes - Start CAN Driver Node");
-        //     _can_driver = std::make_shared<can_driver::CanDriverCore>(nh);
-        //     ros::Duration(0.25).sleep();
-        // }
-        // else
-        // {
-        //     ROS_DEBUG("HardwareInterface::initNodes - CAN communication is disabled for debug purposes");
-        // }
         ROS_DEBUG("HardwareInterface::initNodes - Start Joints Driver Node");
-        ros::NodeHandle nh_ttl(nh, "joint_driver");
         _joint_driver = std::make_shared<joint_driver::JointDriver>(nh);
         ros::Duration(0.25).sleep();
 
