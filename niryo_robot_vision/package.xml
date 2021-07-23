@@ -14,10 +14,15 @@
 
     <build_depend>niryo_robot_msgs</build_depend>
     <build_depend>sensor_msgs</build_depend>
+    <build_depend>message_generation</build_depend>
+
+    <build_export_depend>niryo_robot_msgs</build_export_depend>
+    <build_export_depend>sensor_msgs</build_export_depend>
 
     <exec_depend>niryo_robot_msgs</exec_depend>
     <exec_depend>rosbridge_server</exec_depend>
     <exec_depend>sensor_msgs</exec_depend>
+    <exec_depend>message_runtime</exec_depend>
 
     <!-- Python Dependencies -->
     <exec_depend>python-numpy</exec_depend>

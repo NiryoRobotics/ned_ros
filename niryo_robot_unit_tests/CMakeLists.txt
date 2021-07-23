@@ -1,7 +1,6 @@
-message("\n## Reading niryo_robot_unit_tests/CMakeLists.txt...")
-
 cmake_minimum_required(VERSION 3.0.2)
 project(niryo_robot_unit_tests)
+message("\n## Reading ${PROJECT_NAME}/CMakeLists.txt...")
 
 find_package(catkin REQUIRED COMPONENTS
   rospy

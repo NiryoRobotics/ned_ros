@@ -19,6 +19,11 @@
     <build_depend>actionlib_msgs</build_depend>
     <build_depend>geometry_msgs</build_depend>
     <build_depend>niryo_robot_msgs</build_depend>
+    <build_depend>message_generation</build_depend>
+
+    <build_export_depend>actionlib_msgs</build_export_depend>
+    <build_export_depend>niryo_robot_msgs</build_export_depend>
+    <build_export_depend>geometry_msgs</build_export_depend>
 
     <exec_depend>actionlib</exec_depend>
     <exec_depend>actionlib_msgs</exec_depend>
@@ -35,6 +40,9 @@
     <exec_depend>std_msgs</exec_depend>
     <exec_depend>tf2_web_republisher</exec_depend>
     <exec_depend>trajectory_msgs</exec_depend>
+    <exec_depend>message_runtime</exec_depend>
+    <exec_depend>niryo_ned_moveit_config_w_gripper1</exec_depend>
+    <exec_depend>niryo_ned_moveit_config_standalone</exec_depend>
 
     <!-- Python Dependencies -->
     <exec_depend>python-numpy</exec_depend>

@@ -1,13 +1,11 @@
-message("\n## Reading niryo_robot_gazebo/CMakeLists.txt...")
-
 cmake_minimum_required(VERSION 3.0.2)
 project(niryo_robot_gazebo)
+message("\n## Reading ${PROJECT_NAME}/CMakeLists.txt...")
 
-find_package(catkin COMPONENTS
-  gazebo_ros
+find_package(catkin REQUIRED
+  COMPONENTS
+    gazebo_ros
 )
-
-find_package(catkin REQUIRED)
 
 catkin_package()
 
@@ -48,13 +46,6 @@ install(
   DIRECTORY worlds/
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/worlds
 )
-
-if (EXISTS ${CMAKE_CURRENT_BINARY_DIR}/doc)
-  install(
-    DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc/
-    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/doc
-  )
-endif()
 
 ##########################
 ## Static code analysis ##

@@ -5,7 +5,8 @@
 <package format="3">
   <name>fake_interface</name>
   <version>0.0.0</version>
-  <description>The fake_interface package</description>
+  <description>Provides a fake interface to be used instead of joints interface 
+               when simulating the robot on a dev machine</description>
   <maintainer email="e.rey-coquais@niryo.com">Etienne Rey-Coquais</maintainer>
 
   <license>GPLv3</license>
@@ -24,6 +25,13 @@
   <build_depend>actionlib</build_depend>
   <build_depend>common</build_depend>
   
+  <build_export_depend>roscpp</build_export_depend>
+  <build_export_depend>controller_manager</build_export_depend>
+  <build_export_depend>actionlib</build_export_depend>
+  <build_export_depend>std_msgs</build_export_depend>
+  <build_export_depend>niryo_robot_msgs</build_export_depend>
+  <build_export_depend>common</build_export_depend>
+
   <exec_depend>roscpp</exec_depend>
   <exec_depend>hardware_interface</exec_depend>
   <exec_depend>controller_manager</exec_depend>

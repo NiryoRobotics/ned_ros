@@ -1,11 +1,7 @@
-message("\n## Reading tools_interface/CMakeLists.txt...")
-
 cmake_minimum_required(VERSION 3.0.2)
 project(tools_interface)
+message("\n## Reading ${PROJECT_NAME}/CMakeLists.txt...")
 
-option(BUILD_DOCS "Build documentation" OFF)
-option(BUILD_UNIT_TESTS "Build the unit tests" OFF)
-option(BUILD_INTEGRATION_TESTS "Build the integration tests" OFF)
 
 #retrieve architecture
 execute_process( COMMAND
@@ -26,11 +22,11 @@ add_definitions(-Wall  -Werror)
 ## Find catkin macros and libraries
 find_package(catkin REQUIRED
     COMPONENTS
-        roscpp
-        std_msgs
-        ttl_driver
-        message_generation
-        common
+      common
+      message_generation
+      roscpp
+      std_msgs
+      ttl_driver
 )
 
 ###############################################
@@ -67,10 +63,11 @@ catkin_package(
     LIBRARIES
         ${PROJECT_NAME}
     CATKIN_DEPENDS
+        common
+        message_runtime
         roscpp
         std_msgs
         ttl_driver
-        common
 )
 
 ###########
@@ -95,7 +92,7 @@ add_executable(${PROJECT_NAME}_node
 
 ## Add dependencies to exported targets, like ROS msgs or srvs
 add_dependencies(${PROJECT_NAME}
-    tools_interface_generate_messages_cpp
+    ${PROJECT_NAME}_generate_messages_cpp
 )
 
 add_dependencies(${PROJECT_NAME}
@@ -120,43 +117,38 @@ target_link_libraries(${PROJECT_NAME}_node
 ##   Doc   ##
 #############
 
-if(BUILD_DOCS)
-  find_program(rosdoc_lite_FOUND rosdoc_lite)
-  if(rosdoc_lite_FOUND)
-      add_custom_target (${PROJECT_NAME}_doc ALL
-          rosdoc_lite -o ${CMAKE_CURRENT_BINARY_DIR}/doc ${CMAKE_CURRENT_LIST_DIR}
-      )
-  else()
-    message(WARNING "rosdoc_lite not found. Skipping documentation building")
-  endif()
-
-endif(BUILD_DOCS)
+find_program(rosdoc_lite_FOUND rosdoc_lite)
+if(rosdoc_lite_FOUND)
+    add_custom_target (${PROJECT_NAME}_doc ALL
+        rosdoc_lite -o ${CMAKE_CURRENT_BINARY_DIR}/doc ${CMAKE_CURRENT_LIST_DIR}
+    )
+else()
+  message(WARNING "rosdoc_lite not found. Skipping documentation building")
+endif()
 
 #############
 ## Testing ##
 #############
 
 if(CATKIN_ENABLE_TESTING)
-  if(BUILD_INTEGRATION_TESTS)
-    find_package(catkin REQUIRED rostest)
+  find_package(rostest REQUIRED)
 
-    if (${ARCHITECTURE} MATCHES "^(arm.*|aarch64.*|arm64.*)$")
-      add_rostest_gtest(${PROJECT_NAME}_integration_tests
-        test/tools_interface_service_client.test
-        test/tools_interface_service_client.cpp
-      )
-    endif()
+  if ("${ARCHITECTURE}" MATCHES "^(arm.*|aarch64.*|arm64.*)$")
+    add_rostest_gtest(${PROJECT_NAME}_integration_tests
+      test/service_client.test
+      test/service_client.cpp
+    )
+  endif()
 
-    if(TARGET ${PROJECT_NAME}_integration_tests)
-      target_link_libraries(
-        ${PROJECT_NAME}_integration_tests
-        ${PROJECT_NAME}
-        ${catkin_LIBRARIES}
-      )
-    endif()
-  endif(BUILD_INTEGRATION_TESTS)
+  if(TARGET ${PROJECT_NAME}_integration_tests)
+    target_link_libraries(
+      ${PROJECT_NAME}_integration_tests
+      ${PROJECT_NAME}
+      ${catkin_LIBRARIES}
+    )
+  endif()
 
-endif(CATKIN_ENABLE_TESTING)
+endif()
 
 #############
 ## Install ##
@@ -180,7 +172,7 @@ install(
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 )
 
-if (EXISTS ${CMAKE_CURRENT_BINARY_DIR}/doc/)
+if(rosdoc_lite_FOUND)
   install(
     DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc/
     DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/doc

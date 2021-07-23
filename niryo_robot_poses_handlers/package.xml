@@ -20,7 +20,13 @@
     <build_depend>geometry_msgs</build_depend>
     <build_depend>moveit_msgs</build_depend>
     <build_depend>niryo_robot_msgs</build_depend>
+    <build_depend>message_generation</build_depend>
 
+    <build_export_depend>moveit_msgs</build_export_depend>
+    <build_export_depend>niryo_robot_msgs</build_export_depend>
+    <build_export_depend>geometry_msgs</build_export_depend>
+
+    <exec_depend>message_runtime</exec_depend>
     <exec_depend>moveit_msgs</exec_depend>
     <exec_depend>niryo_robot_msgs</exec_depend>
     <exec_depend>niryo_robot_tools_commander</exec_depend>

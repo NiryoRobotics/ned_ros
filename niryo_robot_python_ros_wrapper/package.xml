@@ -5,7 +5,7 @@
 <package format="3">
   <name>niryo_robot_python_ros_wrapper</name>
   <version>3.1.0</version>
-  <description>Python ROS Wrapper to get Niryo Robot ROS functionalities, without knowing ROS</description>
+  <description>Provides a python ROS Wrapper to get Niryo Robot ROS functionalities, without knowing ROS</description>
   <maintainer email="r.lux@niryo.com">Remi Lux</maintainer>
   <maintainer email="c.ducatez@niryo.com">Corentin Ducatez</maintainer>
   <license>GPLv3</license>
@@ -18,6 +18,12 @@
   <build_depend>niryo_robot_msgs</build_depend>
   <build_depend>niryo_robot_arm_commander</build_depend>
   <build_depend>niryo_robot_tools_commander</build_depend>
+
+  <build_export_depend>actionlib_msgs</build_export_depend>
+  <build_export_depend>niryo_robot_msgs</build_export_depend>
+  <build_export_depend>geometry_msgs</build_export_depend>
+  <build_export_depend>niryo_robot_tools_commander</build_export_depend>
+  <build_export_depend>niryo_robot_arm_commander</build_export_depend>
   
   <exec_depend>actionlib_msgs</exec_depend>
   <exec_depend>geometry_msgs</exec_depend>
