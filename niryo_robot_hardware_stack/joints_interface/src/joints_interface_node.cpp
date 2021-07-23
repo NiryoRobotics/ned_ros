@@ -35,15 +35,16 @@ int main(int argc, char **argv)
     ros::AsyncSpinner spinner(4);
     spinner.start();
 
+    ros::NodeHandle nh;
 
     ros::NodeHandle nh_joint("joint_driver");
     
-    ros::NodeHandle nh("~");
+    ros::NodeHandle nh_private("~");
 
     auto joint_driver = std::make_shared<joint_driver::JointDriver>(nh_joint);
     ros::Duration(1).sleep();
 
-    auto joints = std::make_shared<joints_interface::JointsInterfaceCore>(nh, joint_driver);
+    auto joints = std::make_shared<joints_interface::JointsInterfaceCore>(nh, nh_private, joint_driver);
     ros::waitForShutdown();
 
     ROS_INFO("Joints Interface - Shutdown node");

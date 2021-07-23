@@ -77,7 +77,6 @@ CalibrationManager::CalibrationManager(ros::NodeHandle& nh,
  */
 CalibrationManager::~CalibrationManager()
 {
-
 }
 
 /**
@@ -86,8 +85,8 @@ CalibrationManager::~CalibrationManager()
  */
 void CalibrationManager::initParameters(ros::NodeHandle &nh)
 {
-    _nh.getParam("/niryo_robot_hardware_interface/calibration_timeout", _calibration_timeout);
-    _nh.getParam("/niryo_robot_hardware_interface/calibration_file", _calibration_file_name);
+    nh.getParam("calibration_timeout", _calibration_timeout);
+    nh.getParam("calibration_file", _calibration_file_name);
 
     ROS_DEBUG("Calibration Interface - Calibration timeout %d", _calibration_timeout);
     ROS_DEBUG("Calibration Interface - Calibration file name %s", _calibration_file_name.c_str());
@@ -259,7 +258,6 @@ EStepperCalibrationStatus CalibrationManager::_auto_calibration()
 
     // 1. Relative Move Motor 3
     _relativeMoveMotor(_joint_list.at(2), _joint_list.at(2)->to_motor_pos(0.25), 500, false);
-    // _relativeMoveMotor(_joint_list.at(2), rad_pos_to_steps(0.25, _gear_ratio_3, _direction_3), 500, false);
     ros::Duration(0.5).sleep();
 
     // 2. Move All Dynamixel to Home Position
@@ -450,7 +448,8 @@ bool CalibrationManager::_can_process_manual_calibration(std::string &result_mes
     std::vector<int> steps_list;
     if (!get_motors_calibration_offsets(motor_id_list, steps_list))
     {
-        result_message = "Calibration Interface - You need to make one auto calibration before using the manual calibration";
+        result_message = "Calibration Interface - You need to make an "
+                         "auto calibration before using the manual calibration";
         ROS_WARN("Calibration Interface - Can't process manual calibration : %s",
                  result_message.c_str());
         return false;
@@ -574,7 +573,6 @@ EStepperCalibrationStatus CalibrationManager::_manual_calibration()
  */
 bool CalibrationManager::get_motors_calibration_offsets(std::vector<int> &motor_id_list, std::vector<int> &steps_list)
 {
-
     std::vector<std::string> lines;
     std::string current_line;
 

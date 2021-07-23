@@ -13,7 +13,7 @@ namespace joint_driver
 {
     class JointDriver {
     public:
-        JointDriver(ros::NodeHandle nh);
+        JointDriver(ros::NodeHandle &nh);
         ~JointDriver();
 
         bool haveCan() const;
@@ -24,7 +24,6 @@ namespace joint_driver
         std::shared_ptr<can_driver::CanDriverCore> getCanDriverCore() const;
         std::shared_ptr<common::model::IDriverCore> getProtocolOfMotor(std::string name) const;
     private:
-        ros::NodeHandle _nh;
         std::shared_ptr<ttl_driver::TtlDriverCore> _ttlDriverCore;
         std::shared_ptr<can_driver::CanDriverCore> _canDriverCore;
 
@@ -32,7 +31,7 @@ namespace joint_driver
         
         bool _haveCan;
         bool _haveTtl;
-        void init();
+        void init(ros::NodeHandle &nh);
     };
 }   // joint_driver
 

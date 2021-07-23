@@ -79,9 +79,13 @@ public:
     virtual int setGoalVelocity(uint8_t id, uint32_t velocity) = 0;
     virtual int setGoalTorque(uint8_t id, uint32_t torque) = 0;
 
-    virtual int setPGain(uint8_t id, uint32_t gain) = 0;
-    virtual int setIGain(uint8_t id, uint32_t gain) = 0;
-    virtual int setDGain(uint8_t id, uint32_t gain) = 0;
+    virtual int setPositionPGain(uint8_t id, uint32_t gain) = 0;
+    virtual int setPositionIGain(uint8_t id, uint32_t gain) = 0;
+    virtual int setPositionDGain(uint8_t id, uint32_t gain) = 0;
+
+    virtual int setVelocityPGain(uint8_t id, uint32_t gain) = 0;
+    virtual int setVelocityIGain(uint8_t id, uint32_t gain) = 0;
+
     virtual int setff1Gain(uint8_t id, uint32_t gain) = 0;
     virtual int setff2Gain(uint8_t id, uint32_t gain) = 0;
 

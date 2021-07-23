@@ -1,20 +1,33 @@
 dynamixels:
-    dxl_1_offset_position: 0.7853982
-    dxl_2_offset_position: 0
-    dxl_3_offset_position: 2.1415926
+    dxl_1:
+        offset_position: 0.7853982
+        direction: 1
+        position_P_gain: 640
+        position_I_gain: 500
+        position_D_gain: 1000
+        velocity_P_gain: 0
+        velocity_I_gain: 0
+        FF1_gain: 0
+        FF2_gain: 0
 
-    dxl_1_direction: 1
-    dxl_2_direction: -1
-    dxl_3_direction: 1
+    dxl_2:
+        offset_position: 0
+        direction: -1
+        position_P_gain: 640
+        position_I_gain: 500
+        position_D_gain: 1000
+        velocity_P_gain: 0
+        velocity_I_gain: 0
+        FF1_gain: 0
+        FF2_gain: 0
 
-    dxl_1_P_gain: 640
-    dxl_1_I_gain: 500
-    dxl_1_D_gain: 1000
-
-    dxl_2_P_gain: 640
-    dxl_2_I_gain: 500
-    dxl_2_D_gain: 1000
-
-    dxl_3_P_gain: 100
-    dxl_3_I_gain: 20
-    dxl_3_D_gain: 40
+    dxl_3:
+        offset_position: 2.1415926
+        direction: 1
+        position_P_gain: 100
+        position_I_gain: 20
+        position_D_gain: 40
+        velocity_P_gain: 0
+        velocity_I_gain: 0
+        FF1_gain: 0
+        FF2_gain: 0

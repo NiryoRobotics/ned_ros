@@ -19,6 +19,7 @@ add_message_files(
   RobotState.msg
   RPY.msg
   SoftwareVersion.msg
+  CommandJog.msg
 )
 
 add_service_files(
@@ -75,5 +76,13 @@ endif()
 ##########################
 ## Static code analysis ##
 ##########################
+find_package(roslint QUIET)
 
-# no scripts to analyse
+if(roslint_FOUND)
+    # no static code analysis on external libs
+    # create empty target (needed for catkin build --make-args roslint)
+    message(STATUS "no lint analysis for this packet. Create empty target for conveniency")
+    roslint_cpp(empty) # hack to create an empty roslint target
+else()
+    message(WARNING "roslint not found. Skipping roslint target building")
+endif()

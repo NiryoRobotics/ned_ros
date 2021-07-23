@@ -74,7 +74,7 @@ bool TtlDriverCore::init(ros::NodeHandle& nh)
     ROS_DEBUG("TtlDriverCore::init - Init parameters...");
     initParameters(nh);
 
-    _ttl_driver = std::make_unique<TtlDriver>();
+    _ttl_driver = std::make_unique<TtlDriver>(nh);
     _ttl_driver->scanAndCheck();
     startControlLoop();
 
@@ -100,16 +100,16 @@ void TtlDriverCore::initParameters(ros::NodeHandle& nh)
     double read_data_frequency = 0.0;
     double read_status_frequency = 0.0;
 
-    _nh.getParam("/niryo_robot_hardware_interface/joints_driver/ttl_hardware_control_loop_frequency",
+    nh.getParam("ttl_hardware_control_loop_frequency",
                  _control_loop_frequency);
 
-    _nh.getParam("/niryo_robot_hardware_interface/joints_driver/ttl_hardware_write_frequency",
+    nh.getParam("ttl_hardware_write_frequency",
                  write_frequency);
 
-    _nh.getParam("/niryo_robot_hardware_interface/joints_driver/ttl_hardware_read_data_frequency",
+    nh.getParam("ttl_hardware_read_data_frequency",
                  read_data_frequency);
 
-    _nh.getParam("/niryo_robot_hardware_interface/joints_driver/ttl_hardware_read_status_frequency",
+    nh.getParam("ttl_hardware_read_status_frequency",
                  read_status_frequency);
 
     ROS_DEBUG("TtlDriverCore::initParameters - ttl_hardware_control_loop_frequency : %f", _control_loop_frequency);
@@ -128,16 +128,16 @@ void TtlDriverCore::initParameters(ros::NodeHandle& nh)
  * @brief TtlDriverCore::startServices
  * @param nh
  */
-void TtlDriverCore::startServices(ros::NodeHandle &/*nh*/)
+void TtlDriverCore::startServices(ros::NodeHandle& nh)
 {
     // advertise services
-    _activate_leds_server = _nh.advertiseService("/niryo_robot/ttl_driver/set_dxl_leds",
+    _activate_leds_server = nh.advertiseService("/niryo_robot/ttl_driver/set_dxl_leds",
                                                  &TtlDriverCore::_callbackActivateLeds, this);
 
-    _custom_cmd_server = _nh.advertiseService("/niryo_robot/ttl_driver/send_custom_value_to_motor",
+    _custom_cmd_server = nh.advertiseService("/niryo_robot/ttl_driver/send_custom_value_to_motor",
                                               &TtlDriverCore::_callbackSendCustomValue, this);
 
-    _custom_cmd_getter = _nh.advertiseService("/niryo_robot/ttl_driver/read_custom_value_from_motor",
+    _custom_cmd_getter = nh.advertiseService("/niryo_robot/ttl_driver/read_custom_value_from_motor",
                                               &TtlDriverCore::_callbackReadCustomValue, this);
 }
 
@@ -814,33 +814,46 @@ bool TtlDriverCore::setMotorPID(const std::shared_ptr<JointState> &motorState)
 
         // ** DXL PID configuration **
 
-        // P Gain
-        if (dxlState->getPGain() > 0)
+        // Position Gain
+        if (dxlState->getPositionPGain() > 0)
         {
-            std::shared_ptr<DxlSingleCmd> dxl_cmd_p(new DxlSingleCmd(EDxlCommandType::CMD_TYPE_P_GAIN, motor_id, dxlState->getPGain()));
+            std::shared_ptr<DxlSingleCmd> dxl_cmd_pos_p(new DxlSingleCmd(EDxlCommandType::CMD_TYPE_POSITION_P_GAIN, motor_id, dxlState->getPositionPGain()));
 
-            if (dxl_cmd_p->isValid())
-            {
-                addSingleCommandToQueue(dxl_cmd_p);
-            }
+            if (dxl_cmd_pos_p->isValid())
+                addSingleCommandToQueue(dxl_cmd_pos_p);
+        }
+        if (dxlState->getPositionIGain() > 0)
+        {
+            std::shared_ptr<DxlSingleCmd> dxl_cmd_pos_i(new DxlSingleCmd(EDxlCommandType::CMD_TYPE_POSITION_I_GAIN, motor_id, dxlState->getPositionIGain()));
+
+            if (dxl_cmd_pos_i->isValid())
+                addSingleCommandToQueue(dxl_cmd_pos_i);
         }
 
-        if (dxlState->getIGain() > 0)
+        if (dxlState->getPositionDGain() > 0)
         {
-            std::shared_ptr<DxlSingleCmd> dxl_cmd_i(new DxlSingleCmd(EDxlCommandType::CMD_TYPE_I_GAIN, motor_id, dxlState->getIGain()));
+            std::shared_ptr<DxlSingleCmd> dxl_cmd_pos_d(new DxlSingleCmd(EDxlCommandType::CMD_TYPE_POSITION_D_GAIN, motor_id, dxlState->getPositionDGain()));
 
-            if (dxl_cmd_i->isValid())
-                addSingleCommandToQueue(dxl_cmd_i);
+            if (dxl_cmd_pos_d->isValid())
+                addSingleCommandToQueue(dxl_cmd_pos_d);
         }
 
-        if (dxlState->getDGain() > 0)
+        // Velocity Gain
+        if (dxlState->getVelocityPGain() > 0)
         {
-            std::shared_ptr<DxlSingleCmd> dxl_cmd_d(new DxlSingleCmd(EDxlCommandType::CMD_TYPE_D_GAIN, motor_id, dxlState->getDGain()));
+            std::shared_ptr<DxlSingleCmd> dxl_cmd_vel_p(new DxlSingleCmd(EDxlCommandType::CMD_TYPE_VELOCITY_P_GAIN, motor_id, dxlState->getVelocityPGain()));
 
-            if (dxl_cmd_d->isValid())
-                addSingleCommandToQueue(dxl_cmd_d);
+            if (dxl_cmd_vel_p->isValid())
+                addSingleCommandToQueue(dxl_cmd_vel_p);
         }
 
+        if (dxlState->getVelocityIGain() > 0)
+        {
+            std::shared_ptr<DxlSingleCmd> dxl_cmd_vel_i(new DxlSingleCmd(EDxlCommandType::CMD_TYPE_VELOCITY_I_GAIN, motor_id, dxlState->getVelocityIGain()));
+
+            if (dxl_cmd_vel_i->isValid())
+                addSingleCommandToQueue(dxl_cmd_vel_i);
+        }
         if (dxlState->getFF1Gain() > 0)
         {
             std::shared_ptr<DxlSingleCmd> dxl_cmd_ff1(new DxlSingleCmd(EDxlCommandType::CMD_TYPE_FF1_GAIN, motor_id, dxlState->getFF1Gain()));

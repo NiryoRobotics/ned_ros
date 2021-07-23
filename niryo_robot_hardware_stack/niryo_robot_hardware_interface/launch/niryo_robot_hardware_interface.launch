@@ -6,48 +6,32 @@
     <arg name="simulation_mode" default="true"/>
     <arg name="simu_gripper" default="false"/>
     <arg name="gazebo" default="false"/>
-    <arg name="can_enabled" default="true"/>
-    <arg name="ttl_enabled" default="true"/>
+    <arg name="can_enabled" default="false"/>
+    <arg name="ttl_enabled" default="false"/>
     <arg name="hardware_version" default="ned"/>
     <arg name="debug" default="false"/>
     <arg name="image_version" default="" />
 
-    <group ns="niryo_robot">
-        <group ns="info">
-            <param name="image_version"     type="string" value="$(arg image_version)"/>
-            <param name="ros_version"       type="string" command="rosversion niryo_robot_bringup" />
-            <param name="niryo_robot_type"  type="string" value="NIRYO_NED" />
-        </group>
-    </group>
+    <!--use base config -->
+    <include file="$(find niryo_robot_hardware_interface)/launch/niryo_robot_hardware_interface_base.launch.xml" >
+        <arg name="simulation_mode" value="$(arg simulation_mode)" />
+        <arg name="can_enabled" value="$(arg can_enabled)" />
+        <arg name="ttl_enabled" value="$(arg ttl_enabled)" />
+        <arg name="hardware_version" value="$(arg hardware_version)" />
+    </include>
 
-    <node pkg="niryo_robot_hardware_interface" type="niryo_robot_hardware_interface_node"
+    <node pkg="niryo_robot_hardware_interface" type="niryo_robot_hardware_interface_node" 
           name="niryo_robot_hardware_interface" output="screen">
-
+          
         <param name="hardware_version" type="string" value="$(arg hardware_version)"/>
-
-        <rosparam file="$(find niryo_robot_hardware_interface)/config/default.yaml" command="load"/>
-        <rosparam file="$(find cpu_interface)/config/default.yaml" command="load"/>
-
-        <rosparam file="$(find joints_driver)/config/$(arg hardware_version)/bus_config.yaml" command="load" ns="joints_driver"/>
-        <rosparam file="$(find joints_driver)/config/$(arg hardware_version)/motors_config.yaml" command="load" ns="joints_driver"/>
-        <rosparam file="$(find joints_driver)/config/$(arg hardware_version)/motors_params.yaml" command="load" />
-        <rosparam file="$(find joints_driver)/config/$(arg hardware_version)/default.yaml" command="load"  ns="joints_driver"/>
-        <rosparam file="$(find joints_driver)/config/$(arg hardware_version)/drivers_config.yaml" command="load" ns="joints_driver"/>
-
-        <rosparam file="$(find joints_interface)/config/$(arg hardware_version)/joints_params.yaml" command="load" />
-        <rosparam file="$(find joints_interface)/config/default.yaml" command="load" />
-
-        <rosparam file="$(find tools_interface)/config/default.yaml" command="load" ns="tools_interface"/>
-        <rosparam file="$(find tools_interface)/config/$(arg hardware_version)/tools_config.yaml" command="load" ns="tools_interface"/>
-
-        <rosparam file="$(find conveyor_interface)/config/default.yaml" command="load" ns="conveyor"/>
-
         <param name="simulation_mode" type="bool" value="$(arg simulation_mode)"/>
-        <param name="gazebo" type="bool" value="$(arg gazebo)"/>
         <param name="simu_gripper" type="bool" value="$(arg simu_gripper)"/>
+        <param name="gazebo" type="bool" value="$(arg gazebo)"/>
         <param name="can_enabled" type="bool" value="$(arg can_enabled)"/>
         <param name="ttl_enabled" type="bool" value="$(arg ttl_enabled)"/>
         <param name="debug" type="bool" value="$(arg debug)"/>
+        
+        <rosparam file="$(find niryo_robot_hardware_interface)/config/default.yaml" command="load"/>
     </node>
 
 </launch>

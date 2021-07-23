@@ -76,6 +76,7 @@ catkin_install_python(PROGRAMS
     scripts/tool_commander_node.py
     scripts/tool_ros_command_interface.py
     scripts/tools_classes.py
+    scripts/transform_handler.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 # Mark other files for installation
@@ -99,8 +100,10 @@ endif()
 ##########################
 ## Static code analysis ##
 ##########################
-find_package(roslint)
+find_package(roslint QUIET)
 
 if(roslint_FOUND)
     roslint_python()
+else()
+    message(WARNING "roslint not found. Skipping roslint target building")
 endif()

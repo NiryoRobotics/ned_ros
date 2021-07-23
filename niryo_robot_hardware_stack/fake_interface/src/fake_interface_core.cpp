@@ -31,14 +31,15 @@
 // CC replace with fake driver ??
 namespace fake_interface
 {
-FakeInterfaceCore::FakeInterfaceCore(ros::NodeHandle& nh)
+FakeInterfaceCore::FakeInterfaceCore(ros::NodeHandle& rootnh,
+                                     ros::NodeHandle& robot_hwnh)
 {
     ROS_DEBUG("Fake Interface Core - ctor");
 
-    init(nh);
+    init(rootnh);
 
     ROS_INFO("Fake Hardware Interface - Started ");
-    _robot = std::make_unique<FakeJointHardwareInterface>(nh);
+    _robot = std::make_unique<FakeJointHardwareInterface>(robot_hwnh);
 
     _learning_mode = true;
 
@@ -94,27 +95,31 @@ bool FakeInterfaceCore::init(ros::NodeHandle &nh)
 /**
  * @brief FakeInterfaceCore::initParams
  */
-void FakeInterfaceCore::initParameters(ros::NodeHandle &nh)
+void FakeInterfaceCore::initParameters(ros::NodeHandle& nh)
 {
-    ros::NodeHandle nh_private("~");
-    nh_private.getParam("gazebo", _gazebo);
-    nh_private.getParam("simu_gripper", _simu_gripper);
-    nh_private.getParam("ros_control_loop_frequency", _ros_control_frequency);
-    
+    nh.getParam("gazebo", _gazebo);
+    nh.getParam("simu_gripper", _simu_gripper);
+
+    nh.getParam("publish_hw_status_frequency", _publish_hw_status_frequency);
+    nh.getParam("publish_software_version_frequency", _publish_software_version_frequency);
+
+    // joints params
+    nh.getParam("ros_control_loop_frequency", _ros_control_frequency);
+    nh.getParam("publish_learning_mode_frequency", _publish_learning_mode_frequency);
+
+    // global params
+    nh.getParam("/niryo_robot/info/ros_version", _ros_niryo_robot_version);
+
     ROS_DEBUG("FakeInterfaceCore::initParameters - gazebo ? %s", _gazebo ? "yes" : "no");
     ROS_DEBUG("FakeInterfaceCore::initParameters - simu_gripper ? %s", _simu_gripper ? "yes" : "no");
-    ROS_DEBUG("FakeInterfaceCore::initParameters - ros control loop freqeuncy %f", _ros_control_frequency);
-
-    nh_private.getParam("publish_hw_status_frequency", _publish_hw_status_frequency);
-    nh_private.getParam("publish_software_version_frequency", _publish_software_version_frequency);
-    nh_private.getParam("publish_learning_mode_frequency", _publish_learning_mode_frequency);
-    _nh.getParam("/niryo_robot/info/ros_version", _ros_niryo_robot_version);
-
-    _ros_niryo_robot_version.erase(_ros_niryo_robot_version.find_last_not_of(" \n\r\t") + 1);
 
     ROS_DEBUG("FakeInterfaceCore::initParameters - Publish_hw_status_frequency : %f", _publish_hw_status_frequency);
     ROS_DEBUG("FakeInterfaceCore::initParameters - Publish_software_version_frequency : %f", _publish_software_version_frequency);
+
+    ROS_DEBUG("FakeInterfaceCore::initParameters - ros control loop frequency %f", _ros_control_frequency);
     ROS_DEBUG("FakeInterfaceCore::initParameters - Publish_learning_mode_frequency : %f", _publish_learning_mode_frequency);
+
+    _ros_niryo_robot_version.erase(_ros_niryo_robot_version.find_last_not_of(" \n\r\t") + 1);
     ROS_DEBUG("FakeInterfaceCore::initParameters - ROS version : %s", _ros_niryo_robot_version.c_str());
 }
 
@@ -123,37 +128,37 @@ void FakeInterfaceCore::initParameters(ros::NodeHandle &nh)
  */
 void FakeInterfaceCore::startServices(ros::NodeHandle& nh)
 {
-    _calibrate_motors_server = _nh.advertiseService("/niryo_robot/joints_interface/calibrate_motors",
+    _calibrate_motors_server = nh.advertiseService("/niryo_robot/joints_interface/calibrate_motors",
                                                     &FakeInterfaceCore::_callbackCalibrateMotors, this);
 
-    _request_new_calibration_server = _nh.advertiseService("/niryo_robot/joints_interface/request_new_calibration",
+    _request_new_calibration_server = nh.advertiseService("/niryo_robot/joints_interface/request_new_calibration",
                                                            &FakeInterfaceCore::_callbackRequestNewCalibration, this);
 
-    _activate_learning_mode_server = _nh.advertiseService("/niryo_robot/learning_mode/activate",
+    _activate_learning_mode_server = nh.advertiseService("/niryo_robot/learning_mode/activate",
                                                           &FakeInterfaceCore::_callbackActivateLearningMode, this);
 
-    _ping_and_set_dxl_tool_server = _nh.advertiseService("/niryo_robot/tools/ping_and_set_dxl_tool",
+    _ping_and_set_dxl_tool_server = nh.advertiseService("/niryo_robot/tools/ping_and_set_dxl_tool",
                                                          &FakeInterfaceCore::_callbackPingAndSetDxlTool, this);
 
-    _open_gripper_server = _nh.advertiseService("/niryo_robot/tools/open_gripper",
+    _open_gripper_server = nh.advertiseService("/niryo_robot/tools/open_gripper",
                                                 &FakeInterfaceCore::_callbackOpenGripper, this);
 
-    _close_gripper_server = _nh.advertiseService("/niryo_robot/tools/close_gripper",
+    _close_gripper_server = nh.advertiseService("/niryo_robot/tools/close_gripper",
                                                  &FakeInterfaceCore::_callbackCloseGripper, this);
 
-    _pull_air_vacuum_pump_server = _nh.advertiseService("/niryo_robot/tools/pull_air_vacuum_pump",
+    _pull_air_vacuum_pump_server = nh.advertiseService("/niryo_robot/tools/pull_air_vacuum_pump",
                                                         &FakeInterfaceCore::_callbackPullAirVacuumPump, this);
 
-    _push_air_vacuum_pump_server = _nh.advertiseService("/niryo_robot/tools/push_air_vacuum_pump",
+    _push_air_vacuum_pump_server = nh.advertiseService("/niryo_robot/tools/push_air_vacuum_pump",
                                                         &FakeInterfaceCore::_callbackPushAirVacuumPump, this);
 
-    _ping_and_set_stepper_server = _nh.advertiseService("/niryo_robot/conveyor/ping_and_set_conveyor",
+    _ping_and_set_stepper_server = nh.advertiseService("/niryo_robot/conveyor/ping_and_set_conveyor",
                                                         &FakeInterfaceCore::_callbackPingAndSetConveyor, this);
 
-    _control_conveyor_server = _nh.advertiseService("/niryo_robot/conveyor/control_conveyor",
+    _control_conveyor_server = nh.advertiseService("/niryo_robot/conveyor/control_conveyor",
                                                     &FakeInterfaceCore::_callbackControlConveyor, this);
 
-    _reset_controller_server = _nh.advertiseService("/niryo_robot/joints_interface/steppers_reset_controller",
+    _reset_controller_server = nh.advertiseService("/niryo_robot/joints_interface/steppers_reset_controller",
                                                     &FakeInterfaceCore::_callbackResetController, this);
 }
 
@@ -163,9 +168,9 @@ void FakeInterfaceCore::startServices(ros::NodeHandle& nh)
  */
 void FakeInterfaceCore::startPublishers(ros::NodeHandle &nh)
 {
-    _current_tools_id_publisher = _nh.advertise<std_msgs::Int32>("/niryo_robot_hardware/tools/current_id", 1, true);
+    _current_tools_id_publisher = nh.advertise<std_msgs::Int32>("/niryo_robot_hardware/tools/current_id", 1, true);
 
-    _learning_mode_publisher = _nh.advertise<std_msgs::Bool>("/niryo_robot/learning_mode/state", 10);
+    _learning_mode_publisher = nh.advertise<std_msgs::Bool>("/niryo_robot/learning_mode/state", 10);
     _publish_learning_mode_thread = std::thread(&FakeInterfaceCore::_publishLearningMode, this);
 }
 
@@ -174,7 +179,7 @@ void FakeInterfaceCore::startPublishers(ros::NodeHandle &nh)
  */
 void FakeInterfaceCore::startSubscribers(ros::NodeHandle& nh)
 {
-    _trajectory_result_subscriber = _nh.subscribe(
+    _trajectory_result_subscriber = nh.subscribe(
                 "/niryo_robot_follow_joint_trajectory_controller/follow_joint_trajectory/result",
                 10, &FakeInterfaceCore::_callbackTrajectoryResult, this);
 }
@@ -223,7 +228,8 @@ bool FakeInterfaceCore::_callbackResetController(niryo_robot_msgs::Trigger::Requ
 {
     res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
     res.message = "Reset done";
-    return true;
+
+    return (niryo_robot_msgs::CommandStatus::SUCCESS == res.status);
 }
 
 /**
@@ -236,7 +242,7 @@ void FakeInterfaceCore::_callbackTrajectoryResult(const control_msgs::FollowJoin
 }
 
 /**
- * @brief FakeInterfaceCore::_callbackCalibrateMotors
+ * @brief FakeInterfaceCore::_callbackCalibrateMotorstrue
  * @param req
  * @param res
  * @return
@@ -247,7 +253,8 @@ bool FakeInterfaceCore::_callbackCalibrateMotors(niryo_robot_msgs::SetInt::Reque
     ROS_INFO("Fake Hardware Interface - Calibrate motors");
     res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
     res.message = "Calibration done";
-    return true;
+
+    return (niryo_robot_msgs::CommandStatus::SUCCESS == res.status);
 }
 
 /**
@@ -262,7 +269,8 @@ bool FakeInterfaceCore::_callbackRequestNewCalibration(niryo_robot_msgs::Trigger
     ROS_INFO("Fake Hardware Interface - Request New Calibration");
     res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
     res.message = "New calibration request has been made, you will be requested to confirm it.";
-    return true;
+
+    return (niryo_robot_msgs::CommandStatus::SUCCESS == res.status);
 }
 
 /**
@@ -274,17 +282,16 @@ bool FakeInterfaceCore::_callbackRequestNewCalibration(niryo_robot_msgs::Trigger
 bool FakeInterfaceCore::_callbackActivateLearningMode(niryo_robot_msgs::SetBool::Request &req,
                                                       niryo_robot_msgs::SetBool::Response &res)
 {
-    bool learning_mode_on;
+    bool activated = req.value;
     std_msgs::Bool msg;
 
-    learning_mode_on = req.value;
-    if (learning_mode_on == _learning_mode)
+    if (activated == _learning_mode)
     {
-        res.message = (learning_mode_on) ? "Learning mode already activated" : "Learning mode already deactivating";
+        res.message = (activated) ? "Learning mode already activated" : "Learning mode already deactivating";
     }
     else
     {
-        if (!learning_mode_on)
+        if (!activated)
         {
             ROS_INFO("Fake Hardware Interface - Deactivate Learning Mode");
             res.message = "Deactivating learning mode";
@@ -294,13 +301,14 @@ bool FakeInterfaceCore::_callbackActivateLearningMode(niryo_robot_msgs::SetBool:
             ROS_INFO("Fake Hardware Interface - Activate Learning Mode");
             res.message =  "Activating learning mode";
         }
-        _learning_mode = learning_mode_on;
+        _learning_mode = activated;
         msg.data = _learning_mode;
         _learning_mode_publisher.publish(msg);
     }
 
     res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
-    return true;
+
+    return (niryo_robot_msgs::CommandStatus::SUCCESS == res.status);
 }
 
 /**
@@ -323,7 +331,8 @@ bool FakeInterfaceCore::_callbackPingAndSetDxlTool(tools_interface::PingDxlTool:
     }
     pubToolId(res.id);
     res.state = common::model::ToolState::TOOL_STATE_PING_OK;
-    return true;
+
+    return (common::model::ToolState::TOOL_STATE_PING_OK == res.state);
 }
 
 /**
@@ -337,7 +346,8 @@ bool FakeInterfaceCore::_callbackOpenGripper(tools_interface::OpenGripper::Reque
 {
     ROS_INFO("Fake Hardware Interface - Open gripper with id : %03d", req.id);
     res.state = common::model::ToolState::GRIPPER_STATE_OPEN;
-    return true;
+
+    return (common::model::ToolState::GRIPPER_STATE_OPEN == res.state);
 }
 
 /**
@@ -351,7 +361,8 @@ bool FakeInterfaceCore::_callbackCloseGripper(tools_interface::CloseGripper::Req
 {
     ROS_INFO("Fake Hardware Interface - Close gripper with id : %03d", req.id);
     res.state = common::model::ToolState::GRIPPER_STATE_CLOSE;
-    return true;
+
+    return (common::model::ToolState::GRIPPER_STATE_CLOSE == res.state);
 }
 
 /**
@@ -365,7 +376,8 @@ bool FakeInterfaceCore::_callbackPullAirVacuumPump(tools_interface::PullAirVacuu
 {
     ROS_INFO("Fake Hardware Interface - Pull air on vacuum pump with id : %03d", req.id);
     res.state = common::model::ToolState::VACUUM_PUMP_STATE_PULLED;
-    return true;
+
+    return (common::model::ToolState::VACUUM_PUMP_STATE_PULLED == res.state);
 }
 
 /**
@@ -379,7 +391,8 @@ bool FakeInterfaceCore:: _callbackPushAirVacuumPump(tools_interface::PushAirVacu
 {
     ROS_INFO("Fake Hardware Interface - Push air on vacuum pump with id : %03d", req.id);
     res.state = common::model::ToolState::VACUUM_PUMP_STATE_PUSHED;
-    return true;
+
+    return (common::model::ToolState::VACUUM_PUMP_STATE_PUSHED == res.state);
 }
 
 /**
@@ -400,7 +413,8 @@ bool FakeInterfaceCore::_callbackPingAndSetConveyor(conveyor_interface::SetConve
     res.message = message;
     res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
     res.id = new_id;
-    return true;
+
+    return (niryo_robot_msgs::CommandStatus::SUCCESS == res.status);
 }
 
 /**
@@ -419,7 +433,8 @@ bool FakeInterfaceCore::_callbackControlConveyor(conveyor_interface::ControlConv
     message += " is OK";
     res.message = message;
     res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
-    return true;
+
+    return (niryo_robot_msgs::CommandStatus::SUCCESS == res.status);
 }
 
 /**
@@ -439,6 +454,7 @@ ttl_driver::ArrayMotorHardwareStatus FakeInterfaceCore::getTtlHwStatus() const
         data.error = 0;
         hw_state.motors_hw_status.push_back(data);
     }
+
     return hw_state;
 }
 

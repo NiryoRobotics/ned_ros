@@ -54,7 +54,8 @@ namespace ttl_driver
 /**
  * @brief TtlDriver::TtlDriver
  */
-TtlDriver::TtlDriver() :
+TtlDriver::TtlDriver(ros::NodeHandle& nh) :
+    _nh(nh),
     _calibration_status(EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED),
     _is_connection_ok(false),
     _debug_error_message("TtlDriver - No connection with Dynamixel motors has been made yet"),
@@ -62,7 +63,7 @@ TtlDriver::TtlDriver() :
 {
     ROS_DEBUG("TtlDriver - ctor");
 
-    init();
+    init(nh);
 
     if (COMM_SUCCESS != setupCommunication())
         ROS_WARN("TtlDriver - Dynamixel Communication Failed");
@@ -78,11 +79,11 @@ TtlDriver::~TtlDriver()
  * @brief TtlDriver::init
  * @return
  */
-bool TtlDriver::init()
+bool TtlDriver::init(ros::NodeHandle& nh)
 {
     // get params from rosparams
-    _nh.getParam("/niryo_robot_hardware_interface/joints_driver/ttl_bus/uart_device_name", _device_name);
-    _nh.getParam("/niryo_robot_hardware_interface/joints_driver/ttl_bus/baudrate", _uart_baudrate);
+    nh.getParam("ttl_bus/uart_device_name", _device_name);
+    nh.getParam("ttl_bus/baudrate", _uart_baudrate);
 
     _PortHandler.reset(dynamixel::PortHandler::getPortHandler(_device_name.c_str()));
     _PacketHandler.reset(dynamixel::PacketHandler::getPacketHandler(DXL_BUS_PROTOCOL_VERSION));
@@ -94,9 +95,9 @@ bool TtlDriver::init()
     vector<string> typeListRaw;
     vector<string> typeProtocolList;
 
-    _nh.getParam("/niryo_robot_hardware_interface/joints_driver/motors_types/motor_id_list", idListRaw);
-    _nh.getParam("/niryo_robot_hardware_interface/joints_driver/motors_types/motor_type_list", typeListRaw);
-    _nh.getParam("/niryo_robot_hardware_interface/joints_driver/motors_types/motor_type_protocol", typeProtocolList);
+    _nh.getParam("motors_types/motor_id_list", idListRaw);
+    _nh.getParam("motors_types/motor_type_list", typeListRaw);
+    _nh.getParam("motors_types/motor_type_protocol", typeProtocolList);
 
     // check that the two lists have the same size
     if (idListRaw.size() != typeListRaw.size() || idListRaw.size() != typeProtocolList.size())
@@ -162,7 +163,9 @@ bool TtlDriver::init()
 
     for (auto const &d : _driver_map)
     {
-        ROS_DEBUG("TtlDriver::init - Driver map: %s => %s", MotorTypeEnum(d.first).toString().c_str(), d.second->str().c_str());
+        ROS_DEBUG("TtlDriver::init - Driver map: %s => %s",
+                  MotorTypeEnum(d.first).toString().c_str(),
+                  d.second->str().c_str());
     }
 
     return COMM_SUCCESS;
@@ -361,8 +364,10 @@ int TtlDriver::setupCommunication()
         // see schema http:// support.robotis.com/en/product/actuator/dynamixel_x/xl-series_main.htm
         if (!_PortHandler->setupGpio())
         {
-            ROS_ERROR("TtlDriver::setupCommunication - Failed to setup direction GPIO pin for Dynamixel half-duplex serial");
-            _debug_error_message = "TtlDriver -  Failed to setup direction GPIO pin for Dynamixel half-duplex serial";
+            ROS_ERROR("TtlDriver::setupCommunication - Failed to setup direction GPIO pin "
+                      "for Dynamixel half-duplex serial");
+            _debug_error_message = "TtlDriver -  Failed to setup direction GPIO pin "
+                                   "for Dynamixel half-duplex serial";
             return DXL_FAIL_SETUP_GPIO;
         }
 
@@ -473,8 +478,7 @@ bool TtlDriver::ping(uint8_t id)
  */
 int TtlDriver::rebootMotors()
 {
-    int return_value = COMM_SUCCESS;
-    int result = 0;
+    int return_value = niryo_robot_msgs::CommandStatus::FAILURE;
 
     for (auto const &it : _state_map)
     {
@@ -482,8 +486,13 @@ int TtlDriver::rebootMotors()
         ROS_DEBUG("TtlDriver::rebootMotors - Reboot Dxl motor with ID: %d", it.first);
         if (_driver_map.count(type))
         {
-            result = _driver_map.at(type)->reboot(it.first);
-            if (result != COMM_SUCCESS)
+            int result = _driver_map.at(type)->reboot(it.first);
+            if (COMM_SUCCESS == result)
+            {
+                ROS_DEBUG("TtlDriver::rebootMotors - Reboot motor successfull");
+                return_value = niryo_robot_msgs::CommandStatus::SUCCESS;
+            }
+            else
             {
                 ROS_WARN("TtlDriver::rebootMotors - Failed to reboot motor: %d", result);
                 return_value = result;
@@ -515,7 +524,7 @@ int TtlDriver::rebootMotor(uint8_t motor_id)
                 ros::Time start_time = ros::Time::now();
                 uint32_t tmp = 0;
                 int wait_result =_driver_map.at(type)->readTemperature(motor_id, &tmp);
-                while(COMM_SUCCESS != wait_result || !tmp)
+                while (COMM_SUCCESS != wait_result || !tmp)
                 {
                     if ((ros::Time::now() - start_time).toSec() > 1)
                         break;

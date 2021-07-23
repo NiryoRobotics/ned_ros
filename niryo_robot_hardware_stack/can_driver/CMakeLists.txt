@@ -101,38 +101,12 @@ add_dependencies(${PROJECT_NAME}
 )
 
 ## Specify libraries to link executable targets against
-
-# wiringPi should be installed only on a Raspberry Pi board
-if(CMAKE_CROSSCOMPILING)
-    message(STATUS "Cross compiling : wiringPi library is required")
-    target_link_libraries(${PROJECT_NAME}
-        ${catkin_LIBRARIES}
-        -lwiringPi -lrt
-    )
-else()
-    execute_process( COMMAND
-            uname -m COMMAND tr -d '\n'
-        OUTPUT_VARIABLE
-            ARCHITECTURE
-    )
-
-    if (${ARCHITECTURE} MATCHES "^(arm.*|aarch64.*|arm64.*)$")
-        message(STATUS "wiringPi library is required - arm processor")
-        target_link_libraries(${PROJECT_NAME}
-            ${catkin_LIBRARIES}
-            -lwiringPi -lrt
-        )
-    else()
-        message(STATUS "wiringPi library not required")
-        target_link_libraries(${PROJECT_NAME}
-            ${catkin_LIBRARIES}
-        )
-    endif()
-endif()
+target_link_libraries(${PROJECT_NAME}
+    ${catkin_LIBRARIES}
+)
 
 target_link_libraries(${PROJECT_NAME}_node
   ${PROJECT_NAME}
-  ${catkin_LIBRARIES}
 )
 
 #############
@@ -162,10 +136,12 @@ if(CATKIN_ENABLE_TESTING)
     if(BUILD_INTEGRATION_TESTS)
       find_package(catkin REQUIRED rostest)
 
-      add_rostest_gtest(${PROJECT_NAME}_unit_tests
-        test/can_driver_unit_tests.test
-        test/can_driver_unit_tests.cpp
-      )
+      if (${ARCHITECTURE} MATCHES "^(arm.*|aarch64.*|arm64.*)$")
+        add_rostest_gtest(${PROJECT_NAME}_unit_tests
+          test/can_driver_unit_tests.test
+          test/can_driver_unit_tests.cpp
+        )
+      endif()
       if(TARGET ${PROJECT_NAME}_unit_tests)
         target_link_libraries(${PROJECT_NAME}_unit_tests
           ${PROJECT_NAME}
@@ -219,8 +195,10 @@ install(
 ##########################
 ## Static code analysis ##
 ##########################
-find_package(roslint)
+find_package(roslint QUIET)
 
 if(roslint_FOUND)
     roslint_cpp()
+else()
+    message(WARNING "roslint not found. Skipping roslint target building")
 endif()

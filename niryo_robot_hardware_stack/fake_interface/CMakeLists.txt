@@ -71,7 +71,7 @@ include_directories(
 ## Declare libs and execs
 add_library(${PROJECT_NAME}
     src/fake_interface_core.cpp
-    src/FakeJointHardwareInterface.cpp
+    src/fake_joint_hardware_interface.cpp
 )
 
 add_executable(${PROJECT_NAME}_node
@@ -164,8 +164,10 @@ install(
 ##########################
 ## Static code analysis ##
 ##########################
-find_package(roslint)
+find_package(roslint QUIET)
 
 if(roslint_FOUND)
     roslint_cpp()
+else()
+    message(WARNING "roslint not found. Skipping roslint target building")
 endif()

@@ -3,31 +3,13 @@
         xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
     <!-- Arguments -->
     <arg name="hardware_version" default="ned"/>
-
-    <group ns="niryo_robot">
-        <group ns="info">
-            <param name="ros_version"       type="string" command="rosversion niryo_robot_bringup" />
-            <param name="niryo_robot_type"  type="string" value="NIRYO_NED" />
-        </group>
-    </group>
-
-    <group ns="niryo_robot_hardware_interface" >
-        <node pkg="fake_interface" type="fake_interface_node" name="fake_interface" output="screen">  
-            <rosparam file="$(find cpu_interface)/config/default.yaml" command="load"/>
-
-            <rosparam file="$(find ttl_driver)/config/$(arg hardware_version)/bus_config.yaml" command="load" ns="ttl_driver"/>
-            <rosparam file="$(find ttl_driver)/config/$(arg hardware_version)/motors_config.yaml" command="load" ns="ttl_driver"/>
-            <rosparam file="$(find ttl_driver)/config/$(arg hardware_version)/dynamixels_params.yaml" command="load" />
-            <rosparam file="$(find ttl_driver)/config/default.yaml" command="load"  ns="ttl_driver"/>
+    <arg name="simu_gripper" default="false"/>
+    <arg name="gazebo" default="false"/>
     
-            <rosparam file="$(find can_driver)/config/bus_config.yaml" command="load" ns="can_driver"/>
-            <rosparam file="$(find can_driver)/config/motors_config.yaml" command="load" ns="can_driver"/>
-            <rosparam file="$(find can_driver)/config/steppers_params.yaml" command="load" />
-            <rosparam file="$(find can_driver)/config/default.yaml" command="load" ns="can_driver"/>
+    <include file="$(find fake_interface)/launch/fake_interface_base.launch.xml" >
+        <arg name="hardware_version" value="$(arg hardware_version)" />
+    </include>
     
-            <rosparam file="$(find joints_interface)/config/$(arg hardware_version)/joints_params.yaml" command="load" />
-            <rosparam file="$(find joints_interface)/config/default.yaml" command="load" />
-        </node>
-    </group>
+    <node pkg="fake_interface" type="fake_interface_node" name="fake_interface" output="screen" />
 
 </launch>

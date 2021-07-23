@@ -27,4 +27,6 @@
   <exec_depend>sensor_msgs</exec_depend>
   <exec_depend>std_msgs</exec_depend>
 
+  <test_depend>rostest</test_depend>
+
 </package>

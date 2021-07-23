@@ -105,8 +105,8 @@ class TrajectoriesExecutor:
             if abs(error) > tolerance:
                     self.__collision_detected = True
                     self.__set_learning_mode(True)
-                    abort_str = "Command has been aborted due to a collision or " \
-                            "a motor not able to follow the given trajectory"
+                    abort_str = ("Command has been aborted due to a collision or "
+                                 "a motor not able to follow the given trajectory")
                     rospy.logwarn(abort_str)
                     return CommandStatus.CONTROLLER_PROBLEMS, abort_str
 
@@ -154,7 +154,6 @@ class TrajectoriesExecutor:
             rospy.logwarn("Arm commander - Will retry to compute "
                           "& execute trajectory {} time(s)".format(self.__compute_plan_max_tries - tries))
 
-
     def __get_computed_plan(self):
         """
         Get computed plan from MoveIt
@@ -200,8 +199,8 @@ class TrajectoriesExecutor:
         # Check the fraction value : if 1.0, the trajectory can be linear;
         # else, the trajectory followed won't be linear.
         if fraction == 1.0:
-            # delete the very first joints position which is the starting position (current), 
-            # to avoid an error related to increasing time 
+            # delete the very first joints position which is the starting position (current),
+            # to avoid an error related to increasing time
             del trajectory_plan.joint_trajectory.points[0]
             return trajectory_plan
         elif fraction < 1.0:
@@ -234,7 +233,8 @@ class TrajectoriesExecutor:
             elif self.__current_goal_result == GoalStatus.PREEMPTED:
                 if self.__collision_detected:
                     self.__collision_detected = False
-                    return CommandStatus.STOPPED, "Command has been aborted due to a collision or a motor not able to follow the given trajectory"
+                    return CommandStatus.STOPPED, ("Command has been aborted due to a collision"
+                                                   " or a motor not able to follow the given trajectory")
                 else:
                     return CommandStatus.STOPPED, "Command has been successfully stopped"
             elif self.__current_goal_result == GoalStatus.ABORTED:
@@ -323,7 +323,6 @@ class TrajectoriesExecutor:
             return resp.status == CommandStatus.SUCCESS
         except (rospy.ServiceException, rospy.ROSException):
             return False
-
 
     def display_traj(self, point_list, id_=1):
         topic_display = 'visualization_marker_array'

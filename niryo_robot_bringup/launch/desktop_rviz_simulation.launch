@@ -32,7 +32,9 @@
         <node name="rviz" pkg="rviz" type="rviz" args="-d $(find niryo_robot_description)/config/default_config.rviz" />
     </group>
 
-    <group ns="niryo_robot/info">
-        <param name="/niryo_robot_vision/initialized" type="bool" value="true"/>
+    <group ns="niryo_robot">
+        <group ns="info">
+            <param name="/niryo_robot_vision/initialized" type="bool" value="true"/>
+        </group>
     </group>
 </launch>

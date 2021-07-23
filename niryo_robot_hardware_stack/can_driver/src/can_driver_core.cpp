@@ -54,7 +54,7 @@ CanDriverCore::CanDriverCore(ros::NodeHandle& nh)
 
     init(nh);
 
-    _can_driver = std::make_unique<CanDriver>();
+    _can_driver = std::make_unique<CanDriver>(nh);
 
     startControlLoop();
 }
@@ -91,15 +91,15 @@ bool CanDriverCore::init(ros::NodeHandle& nh)
 /**
  * @brief CanDriverCore::initParameters
  */
-void CanDriverCore::initParameters(ros::NodeHandle& /*nh*/)
+void CanDriverCore::initParameters(ros::NodeHandle& nh)
 {
     _control_loop_frequency = 0.0;
     double write_frequency = 1.0;
 
-    _nh.getParam("/niryo_robot_hardware_interface/joints_driver/can_hardware_control_loop_frequency",
+    nh.getParam("can_hardware_control_loop_frequency",
                  _control_loop_frequency);
 
-    _nh.getParam("/niryo_robot_hardware_interface/joints_driver/can_hw_write_frequency",
+    nh.getParam("can_hw_write_frequency",
                  write_frequency);
 
     ROS_DEBUG("CanDriverCore::initParameters - can_hardware_control_loop_frequency : %f",
@@ -575,7 +575,7 @@ void CanDriverCore::addSingleCommandToQueue(std::vector<std::shared_ptr<common::
  */
 void CanDriverCore::setSyncCommand(std::shared_ptr<common::model::SynchronizeMotorCmdI> cmd)
 {
-    ROS_INFO("CanDriverCore::setSyncCommand: need to implement");
+    ROS_INFO("CanDriverCore::setSyncCommand: need to be implemented");
 }
 // ********************
 //  getters

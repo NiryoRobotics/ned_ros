@@ -79,7 +79,6 @@ class ToolsInterfaceCore : public common::model::IInterfaceCore
         bool _callbackPushAirVacuumPump(tools_interface::PushAirVacuumPump::Request &req, tools_interface::PushAirVacuumPump::Response &res);
 
     private:
-        ros::NodeHandle _nh;
         std::mutex _tool_mutex;
 
         ros::Publisher _tool_connection_publisher;

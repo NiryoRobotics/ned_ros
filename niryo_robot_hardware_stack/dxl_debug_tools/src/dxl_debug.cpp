@@ -17,9 +17,6 @@
     along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
-// ros
-#include <ros/ros.h>
-
 // c++
 #include <boost/program_options.hpp>
 #include <iostream>
@@ -54,10 +51,6 @@ namespace po = boost::program_options;
 
 int main(int argc, char **argv)
 {
-    ros::init(argc, argv, "dxl_debug_tools");
-
-    ROS_DEBUG("Launching dxl_debug_tools");
-
     try
     {
         // Get args

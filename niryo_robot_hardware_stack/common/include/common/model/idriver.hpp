@@ -39,7 +39,7 @@ class IDriver
 {
     public:
         virtual ~IDriver() = 0;
-        virtual bool init() = 0;
+        virtual bool init(ros::NodeHandle& nh) = 0;
 
         virtual void removeMotor(uint8_t id) = 0;
         virtual bool isConnectionOk() const = 0;

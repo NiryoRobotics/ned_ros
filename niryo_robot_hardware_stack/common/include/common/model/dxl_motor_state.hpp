@@ -51,9 +51,13 @@ class DxlMotorState : public JointState
         virtual int to_motor_pos(double pos_rad) override;
         virtual double to_rad_pos(int position_dxl) override;
 
-        uint32_t getPGain() const;
-        uint32_t getIGain() const;
-        uint32_t getDGain() const;
+        uint32_t getPositionPGain() const;
+        uint32_t getPositionIGain() const;
+        uint32_t getPositionDGain() const;
+
+        uint32_t getVelocityPGain() const;
+        uint32_t getVelocityIGain() const;
+
         uint32_t getFF1Gain() const;
         uint32_t getFF2Gain() const;
 
@@ -62,18 +66,26 @@ class DxlMotorState : public JointState
         int getMiddlePosition() const;
         double getTotalAngle() const;
 
-        void setPGain(uint32_t getPGain);
-        void setIGain(uint32_t getIGain);
-        void setDGain(uint32_t getDGain);
+        void setPositionPGain(uint32_t p_gain);
+        void setPositionIGain(uint32_t i_gain);
+        void setPositionDGain(uint32_t d_gain);
+
+        void setVelocityPGain(uint32_t p_gain);
+        void setVelocityIGain(uint32_t i_gain);
+
         void setFF1Gain(uint32_t getFF1Gain);
         void setFF2Gain(uint32_t value);
 
 protected:
         bool _isTool;
 
-        uint32_t _p_gain{0};
-        uint32_t _i_gain{0};
-        uint32_t _d_gain{0};
+        uint32_t _pos_p_gain{0};
+        uint32_t _pos_i_gain{0};
+        uint32_t _pos_d_gain{0};
+
+        uint32_t _vel_p_gain{0};
+        uint32_t _vel_i_gain{0};
+
         uint32_t _ff1_gain{0};
         uint32_t _ff2_gain{0};
 
@@ -94,33 +106,54 @@ bool DxlMotorState::isTool() const
 }
 
 /**
- * @brief DxlMotorState::getPGain
+ * @brief DxlMotorState::getPositionPGain
  * @return
  */
 inline
-uint32_t DxlMotorState::getPGain() const
+uint32_t DxlMotorState::getPositionPGain() const
 {
-    return _p_gain;
+    return _pos_p_gain;
 }
 
 /**
- * @brief DxlMotorState::getIGain
+ * @brief DxlMotorState::getPositionIGain
  * @return
  */
 inline
-uint32_t DxlMotorState::getIGain() const
+uint32_t DxlMotorState::getPositionIGain() const
 {
-    return _i_gain;
+    return _pos_i_gain;
 }
 
 /**
- * @brief DxlMotorState::getDGain
+ * @brief DxlMotorState::getPositionDGain
+ * @return
+ */
+
+inline
+uint32_t DxlMotorState::getPositionDGain() const
+{
+    return _pos_d_gain;
+}
+
+/**
+ * @brief DxlMotorState::getVelocityPGain
  * @return
  */
 inline
-uint32_t DxlMotorState::getDGain() const
+uint32_t DxlMotorState::getVelocityPGain() const
 {
-    return _d_gain;
+    return _vel_p_gain;
+}
+
+/**
+ * @brief DxlMotorState::getVelocityIGain
+ * @return
+ */
+inline
+uint32_t DxlMotorState::getVelocityIGain() const
+{
+    return _vel_i_gain;
 }
 
 /**

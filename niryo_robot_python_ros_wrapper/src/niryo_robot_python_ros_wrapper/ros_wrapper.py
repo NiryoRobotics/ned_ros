@@ -35,6 +35,7 @@ from niryo_robot_msgs.srv import GetNameDescriptionList, SetBool, SetInt, Trigge
 from niryo_robot_tools_commander.srv import SetTCP, SetTCPRequest
 from niryo_robot_vision.srv import SetImageParameter
 from niryo_robot_rpi.srv import GetDigitalIO, SetDigitalIO
+from std_srvs.srv import Trigger as StdTrigger
 
 # Actions
 from niryo_robot_arm_commander.msg import RobotMoveAction, RobotMoveGoal
@@ -939,7 +940,8 @@ class NiryoRosWrapper:
         """
         Execute trajectory from list of poses and joints
 
-        :param list_pose_joints: List of [x,y,z,qx,qy,qz,qw] or list of [x,y,z,roll,pitch,yaw] or a list of [j1,j2,j3,j4,j5,j6]
+        :param list_pose_joints: List of [x,y,z,qx,qy,qz,qw]
+        or list of [x,y,z,roll,pitch,yaw] or a list of [j1,j2,j3,j4,j5,j6]
         :type list_pose_joints: list[list[float]]
         :param list_type: List of string 'pose' or 'joint', or ['pose'] (if poses only) or ['joint'] (if joints only).
                     If None, it is assumed there are only poses in the list.
@@ -961,8 +963,9 @@ class NiryoRosWrapper:
 
             else:
                 raise NiryoRosWrapperException(
-                    'Execute trajectory from poses and joints - Wrong list_type argument : got '
-                    + list_type[0] + ", expected 'pose' or 'joint'")
+                    "Execute trajectory from poses and joints - Wrong list_type argument : got " +
+                    list_type[0] +
+                    ", expected 'pose' or 'joint'")
 
         elif len(list_type) == len(list_pose_joints):
             # convert every joints to poses
@@ -1335,6 +1338,18 @@ class NiryoRosWrapper:
         result = self.__call_service('/niryo_robot_tools_commander/reset_tcp',
                                      Trigger)
         return self.__classic_return_w_check(result)
+
+    def tool_reboot(self):
+        """
+        Reboot the motor of the tool equipped. Useful when an Overload error occurs. (cf HardwareStatus)
+
+        :return: success, message
+        :rtype: (bool, str)
+        """
+        result = self.__call_service('/niryo_robot/tools/reboot',
+                                     StdTrigger)
+
+        return result.success, result.message
 
     # - Hardware
 
@@ -1743,7 +1758,7 @@ class NiryoRosWrapper:
         Save workspace by giving the poses of the robot to point its 4 corners
         with the calibration Tip. Corners should be in the good order
 
-        :param name: workspace name
+        :param name: workspace name, max 30 char.
         :type name: str
         :param list_poses_raw: list of 4 corners pose
         :type list_poses_raw: list[list]
@@ -1755,7 +1770,9 @@ class NiryoRosWrapper:
         list_poses = [self.list_to_robot_state_msg(*pose) for pose in list_poses_raw]
         req = ManageWorkspaceRequest()
         req.cmd = ManageWorkspaceRequest.SAVE
-        req.workspace.name = name
+        if len(name) > 30:
+            rospy.logwarn('ROS Wrapper - Workspace name is too long, using : %s instead', name[:30])
+        req.workspace.name = name[:30]
         req.workspace.poses = list_poses
         result = self.__call_service('/niryo_robot_poses_handlers/manage_workspace',
                                      ManageWorkspace, req)
@@ -1765,7 +1782,7 @@ class NiryoRosWrapper:
         """
         Save workspace by giving the poses of its 4 corners in the good order
 
-        :param name: workspace name
+        :param name: workspace name, max 30 char.
         :type name: str
         :param list_points_raw: list of 4 corners [x, y, z]
         :type list_points_raw: list[list[float]]
@@ -1777,7 +1794,9 @@ class NiryoRosWrapper:
         list_points = [Point(*point) for point in list_points_raw]
         req = ManageWorkspaceRequest()
         req.cmd = ManageWorkspaceRequest.SAVE_WITH_POINTS
-        req.workspace.name = name
+        if len(name) > 30:
+            rospy.logwarn('ROS Wrapper - Workspace name is too long, using : %s instead', name[:30])
+        req.workspace.name = name[:30]
         req.workspace.points = list_points
         result = self.__call_service('/niryo_robot_poses_handlers/manage_workspace',
                                      ManageWorkspace, req)

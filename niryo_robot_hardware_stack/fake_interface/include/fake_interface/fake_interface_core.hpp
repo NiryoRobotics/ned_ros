@@ -58,7 +58,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <ttl_driver/ArrayMotorHardwareStatus.h>
 #include <can_driver/StepperArrayMotorHardwareStatus.h>
 
-#include "fake_interface/FakeJointHardwareInterface.hpp"
+#include "fake_interface/fake_joint_hardware_interface.hpp"
 
 #include "common/model/iinterface_core.hpp"
 
@@ -67,7 +67,7 @@ namespace fake_interface
 class FakeInterfaceCore : common::model::IInterfaceCore
 {
     public:
-        FakeInterfaceCore(ros::NodeHandle& nh);
+        FakeInterfaceCore(ros::NodeHandle& rootnh, ros::NodeHandle& robot_hwnh);
         virtual ~FakeInterfaceCore() override;
         virtual bool init(ros::NodeHandle& nh) override;
 

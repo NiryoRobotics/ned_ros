@@ -70,10 +70,9 @@ class ArmCommander:
         # Check joint validity service (used for self collisions checking)
         self.check_state_validity = rospy.ServiceProxy('check_state_validity', GetStateValidity)
 
-        # set default velocity and acceleration to 100% 
+        # set default velocity and acceleration to 100%
         self.__arm.set_max_velocity_scaling_factor(1)
         self.__arm.set_max_acceleration_scaling_factor(1)
-
 
     def __init_move_group_commander(self):
         # Get Arm MoveGroupCommander
@@ -86,13 +85,15 @@ class ArmCommander:
 
         # Set pose reference frame
         self.__arm.set_pose_reference_frame(self.__reference_frame)
+        self.__arm.set_max_velocity_scaling_factor(1)
+        self.__arm.set_max_acceleration_scaling_factor(1)
 
         # Set planning parameters
         self.__arm.allow_replanning(rospy.get_param("~allow_replanning"))
         self.__arm.set_goal_joint_tolerance(rospy.get_param("~goal_joint_tolerance"))
         self.__arm.set_goal_position_tolerance(rospy.get_param("~goal_position_tolerance"))
         self.__arm.set_goal_orientation_tolerance(rospy.get_param("~goal_orientation_tolerance"))
-       
+
         rospy.loginfo("Arm commander - MoveIt! successfully connected to move_group '{}'".format(self.__arm.get_name()))
         rospy.logdebug("Arm commander - MoveIt! will move '{}' in the"
                        " planning_frame '{}'".format(self.__end_effector_link, self.__arm.get_planning_frame()))
@@ -108,7 +109,8 @@ class ArmCommander:
         :param _: TimeEvent object which is not used
         :return: None
         """
-        rospy.logdebug("ArmCommander.init - __publish_arm_max_velocity_scaling_factor: %d", self.__max_velocity_scaling_factor)
+        rospy.logdebug("ArmCommander.init - __publish_arm_max_velocity_scaling_factor: %d",
+                       self.__max_velocity_scaling_factor)
 
         msg = Int32()
         msg.data = self.__max_velocity_scaling_factor
@@ -280,7 +282,7 @@ class ArmCommander:
         # Apply shift on pose
         pose_list[axis_number] += shift_value
 
-        # Get pose stamped from target pose 
+        # Get pose stamped from target pose
         msg_pose = list_to_pose(pose_list)
 
         # Check if command is really close to the current position
@@ -361,7 +363,8 @@ class ArmCommander:
         list_tcp_poses = arm_cmd.list_poses
         if len(list_tcp_poses) == 0:
             return CommandStatus.NO_PLAN_AVAILABLE, "Can't generate plan from a list of length 0"
-        list_ee_poses = [self.__transform_handler.tcp_to_ee_link_pose_target(tcp_pose, self.__end_effector_link) for tcp_pose in list_tcp_poses]
+        list_ee_poses = [self.__transform_handler.tcp_to_ee_link_pose_target(tcp_pose, self.__end_effector_link)
+                         for tcp_pose in list_tcp_poses]
 
         dist_smoothing = arm_cmd.dist_smoothing
 
@@ -408,7 +411,7 @@ class ArmCommander:
 
         self.__arm.set_start_state_to_current_state()
         plan = self.__link_plans(dist_smoothing, *list_plans)
-        # self.__display_traj(plan, id_=int(1000 * dist_smoothing))
+        self.display_traj(plan, id_=int(1000 * dist_smoothing))
         return self.__traj_executor.execute_plan(plan)
 
     def __link_plans(self, dist_smoothing=0.0, *plans):

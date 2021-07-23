@@ -79,8 +79,10 @@ class TtlDriver : public common::model::IDriver
             JOINT,
         };
     public:
-        TtlDriver();
+        TtlDriver(ros::NodeHandle& nh);
         virtual ~TtlDriver() override;
+
+        bool init(ros::NodeHandle& nh) override;
 
         // commands
         void addMotor(common::model::EMotorType type,
@@ -134,7 +136,6 @@ class TtlDriver : public common::model::IDriver
         void getBusState(bool& connection_state, std::vector<uint8_t>& motor_id, std::string& debug_msg) const override;
         std::string getErrorMessage() const override;
     private:
-        bool init() override;
         bool hasMotors() override;
 
         int setupCommunication();
@@ -173,7 +174,6 @@ class TtlDriver : public common::model::IDriver
         int _led_state;
 
         static constexpr int MAX_HW_FAILURE = 25;
-
 };
 
 // inline getters
@@ -346,14 +346,20 @@ int TtlDriver::readSingleCommand(std::shared_ptr<common::model::SingleMotorCmdI>
                 case Type::CMD_TYPE_TORQUE:
                     result = _singleWrite(&AbstractMotorDriver::setTorqueEnable, state->getType(), cmd);
                     break;
-                case Type::CMD_TYPE_P_GAIN:
-                    result = _singleWrite(&AbstractMotorDriver::setPGain, state->getType(), cmd);
+                case Type::CMD_TYPE_POSITION_P_GAIN:
+                    result = _singleWrite(&AbstractMotorDriver::setPositionPGain, state->getType(), cmd);
                     break;
-                case Type::CMD_TYPE_I_GAIN:
-                    result = _singleWrite(&AbstractMotorDriver::setIGain, state->getType(), cmd);
+                case Type::CMD_TYPE_POSITION_I_GAIN:
+                    result = _singleWrite(&AbstractMotorDriver::setPositionIGain, state->getType(), cmd);
                     break;
-                case Type::CMD_TYPE_D_GAIN:
-                    result = _singleWrite(&AbstractMotorDriver::setDGain, state->getType(), cmd);
+                case Type::CMD_TYPE_POSITION_D_GAIN:
+                    result = _singleWrite(&AbstractMotorDriver::setPositionDGain, state->getType(), cmd);
+                    break;
+                case Type::CMD_TYPE_VELOCITY_P_GAIN:
+                    result = _singleWrite(&AbstractMotorDriver::setVelocityPGain, state->getType(), cmd);
+                    break;
+                case Type::CMD_TYPE_VELOCITY_I_GAIN:
+                    result = _singleWrite(&AbstractMotorDriver::setVelocityIGain, state->getType(), cmd);
                     break;
                 case Type::CMD_TYPE_FF1_GAIN:
                     result = _singleWrite(&AbstractMotorDriver::setff1Gain, state->getType(), cmd);

@@ -4,8 +4,10 @@
     <arg name="hardware_version" default="ned"/>
 
     <!-- Command validation params -->
-    <group ns="niryo_robot/robot_command_validation">
-        <rosparam file="$(find niryo_robot_arm_commander)/config/$(arg hardware_version)/robot_command_validation.yaml"/>
+    <group ns="niryo_robot">
+        <group ns="robot_command_validation">
+            <rosparam file="$(find niryo_robot_arm_commander)/config/$(arg hardware_version)/robot_command_validation.yaml"/>
+        </group>
     </group>
 
     <!-- Override MoveIt default logging from INFO to WARn -->

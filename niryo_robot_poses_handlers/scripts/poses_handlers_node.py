@@ -53,7 +53,6 @@ class PoseHandlerNode:
         self.__tool_id = 0
         rospy.Subscriber('/niryo_robot_tools_commander/current_id', Int32,  self.__callback_tool_id)
 
-
         # Workspaces
         ws_dir = rospy.get_param("~workspace_dir")
         tool_config_dict = rospy.get_param("niryo_robot_tools_commander/tool_list", dict())
@@ -120,6 +119,9 @@ class PoseHandlerNode:
     def __callback_manage_workspace(self, req):
         cmd = req.cmd
         workspace = req.workspace
+        if len(workspace.name) > 30:
+            rospy.logwarn('Poses Handlers - Workspace name is too long, using : %s instead', workspace.name[:30])
+        workspace.name = workspace.name[:30]
         if cmd == req.SAVE:
             if len(workspace.poses) != 4:
                 return CommandStatus.WORKSPACE_CREATION_FAILED, "Workspaces have 4 positions, {} given".format(
@@ -466,7 +468,7 @@ class PoseHandlerNode:
 
 if __name__ == "__main__":
     rospy.init_node('niryo_robot_poses_handlers', anonymous=False, log_level=rospy.INFO)
-    
+
     # change logger level according to node parameter
     log_level = rospy.get_param("~log_level")
     logger = logging.getLogger("rosout")

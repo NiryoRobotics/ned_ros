@@ -153,19 +153,31 @@ int StepperDriver::setGoalTorque(uint8_t /*id*/, uint32_t /*torque*/)
     return 0;
 }
 
-int StepperDriver::setPGain(uint8_t /*id*/, uint32_t /*gain*/)
+int StepperDriver::setPositionPGain(uint8_t /*id*/, uint32_t /*gain*/)
 {
     std::cout << "not implemented" << std::endl;
     return 0;
 }
 
-int StepperDriver::setIGain(uint8_t /*id*/, uint32_t /*gain*/)
+int StepperDriver::setPositionIGain(uint8_t /*id*/, uint32_t /*gain*/)
 {
     std::cout << "not implemented" << std::endl;
     return 0;
 }
 
-int StepperDriver::setDGain(uint8_t /*id*/, uint32_t /*gain*/)
+int StepperDriver::setVelocityPGain(uint8_t /*id*/, uint32_t /*gain*/)
+{
+    std::cout << "not implemented" << std::endl;
+    return 0;
+}
+
+int StepperDriver::setVelocityIGain(uint8_t /*id*/, uint32_t /*gain*/)
+{
+    std::cout << "not implemented" << std::endl;
+    return 0;
+}
+
+int StepperDriver::setPositionDGain(uint8_t /*id*/, uint32_t /*gain*/)
 {
     std::cout << "not implemented" << std::endl;
     return 0;

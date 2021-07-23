@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<?xml-model
+  href="http://download.ros.org/schema/package_format3.xsd"
+  schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+    <name>niryo_robot_serial_number</name>
+    <version>3.1.0</version>
+    <description>The niryo_robot_serial_number package</description>
+
+    <maintainer email="j.mottier@niryo.com">Justin Mottier</maintainer>
+    <maintainer email="c.ducatez@niryo.com">Corentin Ducatez</maintainer>
+    <license>GPLv3</license>
+    <author email="j.mottier@niryo.com">Justin Mottier</author>
+    
+    <buildtool_depend>catkin</buildtool_depend>
+
+    <exec_depend>rospy</exec_depend>
+
+</package>

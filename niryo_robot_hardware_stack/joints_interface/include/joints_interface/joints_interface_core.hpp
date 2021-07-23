@@ -38,7 +38,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <hardware_interface/joint_command_interface.h>
 #include <hardware_interface/robot_hw.h>
 
-#include "joints_interface/JointHardwareInterface.hpp"
+#include "joints_interface/joint_hardware_interface.hpp"
 #include "niryo_robot_msgs/SetInt.h"
 #include "niryo_robot_msgs/SetBool.h"
 #include "niryo_robot_msgs/CommandStatus.h"
@@ -54,14 +54,15 @@ class JointsInterfaceCore : common::model::IInterfaceCore
 {
     public:
 
-        JointsInterfaceCore(ros::NodeHandle& nh, std::shared_ptr<joint_driver::JointDriver> jdriver);
+        JointsInterfaceCore(ros::NodeHandle& rootnh, 
+                            ros::NodeHandle& robot_hwnh,
+                            std::shared_ptr<joint_driver::JointDriver> jdriver);
         virtual ~JointsInterfaceCore() override;
 
         virtual bool init(ros::NodeHandle& nh) override;
 
         void sendMotorsParams();
-        void activateLearningMode(bool learning_mode_on, int &resp_status, std::string &resp_message);
-        void calibrateJoints();
+        void activateLearningMode(bool activate, int &ostatus, std::string &omessage);
 
         std::string jointIdToJointName(uint8_t id, uint8_t motor_type) const;
 
@@ -79,10 +80,11 @@ class JointsInterfaceCore : common::model::IInterfaceCore
         void rosControlLoop();
 
         bool _callbackResetController(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
-        void _callbackTrajectoryResult(const control_msgs::FollowJointTrajectoryActionResult& msg);
         bool _callbackCalibrateMotors(niryo_robot_msgs::SetInt::Request &req, niryo_robot_msgs::SetInt::Response &res);
         bool _callbackRequestNewCalibration(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
         bool _callbackActivateLearningMode(niryo_robot_msgs::SetBool::Request &req, niryo_robot_msgs::SetBool::Response &res);
+
+        void _callbackTrajectoryResult(const control_msgs::FollowJointTrajectoryActionResult& msg);
 
         void _publishLearningMode();
 
@@ -95,6 +97,7 @@ class JointsInterfaceCore : common::model::IInterfaceCore
 
         double _control_loop_frequency{0.0};
         double _publish_learning_mode_frequency{0.0};
+        std::string _joint_controller_name;
 
         std::shared_ptr<JointHardwareInterface> _robot;
         std::shared_ptr<controller_manager::ControllerManager> _cm;

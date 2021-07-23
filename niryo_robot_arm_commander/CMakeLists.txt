@@ -16,7 +16,6 @@ add_message_files(
   ArmMoveCommand.msg
   PausePlanExecution.msg
   ShiftPose.msg
-  CommandJog.msg
 )
 
 add_service_files(
@@ -82,8 +81,11 @@ catkin_install_python(PROGRAMS
     scripts/arm_commander.py
     scripts/ArmParametersValidator.py
     scripts/jog_controller.py
+    scripts/kinematics_handler.py
     scripts/motor_debug.py
     scripts/robot_commander_node.py
+    scripts/trajectories_executor.py
+    scripts/transform_handler.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 # Mark other files for installation
@@ -108,8 +110,10 @@ endif()
 ##########################
 ## Static code analysis ##
 ##########################
-find_package(roslint)
+find_package(roslint QUIET)
 
 if(roslint_FOUND)
     roslint_python()
+else()
+  message(WARNING "roslint not found. Skipping roslint target building")
 endif()

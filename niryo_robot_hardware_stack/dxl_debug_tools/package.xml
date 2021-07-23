@@ -12,18 +12,8 @@
   
   <buildtool_depend>catkin</buildtool_depend>
 
-  <build_depend>roscpp</build_depend>
-  <build_depend>rospy</build_depend>
-  <build_depend>std_msgs</build_depend>
-  <build_depend>niryo_robot_msgs</build_depend>
   <build_depend>dynamixel_sdk</build_depend>
-  <build_depend>mcp_can_rpi</build_depend>
-
-  <exec_depend>roscpp</exec_depend>
-  <exec_depend>rospy</exec_depend>
-  <exec_depend>std_msgs</exec_depend>
-  <exec_depend>niryo_robot_msgs</exec_depend>
+  
   <exec_depend>dynamixel_sdk</exec_depend>
-  <exec_depend>mcp_can_rpi</exec_depend>
 
 </package>

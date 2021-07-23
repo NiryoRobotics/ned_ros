@@ -141,8 +141,6 @@ class TtlDriverCore : public common::model::IDriverCore, public common::model::I
         bool _callbackReadCustomValue(ttl_driver::ReadCustomValue::Request &req, ttl_driver::ReadCustomValue::Response &res);
 
     private:
-        ros::NodeHandle _nh;
-
         bool _control_loop_flag{false};
         bool _debug_flag{false};
 

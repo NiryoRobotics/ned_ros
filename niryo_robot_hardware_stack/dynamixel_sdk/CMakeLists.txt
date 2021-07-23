@@ -5,6 +5,13 @@ project(dynamixel_sdk)
 
 option(BUILD_DOCS "Build documentation" OFF)
 
+#retrieve architecture
+execute_process( COMMAND
+            uname -m COMMAND tr -d '\n'
+        OUTPUT_VARIABLE
+            ARCHITECTURE
+    )
+
 ## c++ options
 ## Compile as C++14, supported in ROS Melodic and newer
 set(CMAKE_CXX_STANDARD 14)
@@ -15,10 +22,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_definitions(-Wall  -Werror)
 
 ## Find catkin macros and libraries
-find_package(catkin REQUIRED
-    COMPONENTS
-      roscpp
-)
+find_package(catkin REQUIRED)
 
 ###############################################
 # Declare ROS messages, services and actions ##
@@ -76,20 +80,15 @@ if(CMAKE_CROSSCOMPILING)
     message(STATUS "Cross compiling : wiringPi library is required")
     target_link_libraries(${PROJECT_NAME}
         ${catkin_LIBRARIES}
-        -lwiringPi -lrt
+        -lwiringPi -lrt -lcrypt
     )
 else()
-    execute_process( COMMAND
-            uname -m COMMAND tr -d '\n'
-        OUTPUT_VARIABLE
-            ARCHITECTURE
-    )
 
     if (${ARCHITECTURE} MATCHES "^(arm.*|aarch64.*|arm64.*)$")
         message(STATUS "wiringPi library is required - arm processor")
         target_link_libraries(${PROJECT_NAME}
             ${catkin_LIBRARIES}
-            -lwiringPi -lrt
+            -lwiringPi -lrt -lcrypt
         )
     else()
         message(STATUS "wiringPi library not required")
@@ -147,4 +146,12 @@ endif()
 ##########################
 ## Static code analysis ##
 ##########################
-# no static code analysis on external libs
+find_package(roslint QUIET)
+
+if(roslint_FOUND)
+    # no static code analysis on external libs
+    # create empty target (needed for catkin build --make-args roslint)
+    roslint_cpp(empty) # hack to create an empty roslint target
+else()
+    message(WARNING "roslint not found. Skipping roslint target building")
+endif()

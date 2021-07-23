@@ -1,52 +1,60 @@
 #
 #  Stepper caracteristics for Ned's hardware
 #
+#
+#  Stepper caracteristics for Ned's hardware
+#
 steppers:
-    stepper_1_id: 1
-    stepper_2_id: 2
-    stepper_3_id: 3
+    stepper_1:
+        id: 1
+        gear_ratio: 5.4375
+        offset_position: 2.96706
+        home_position: 0.0
+        direction: -1
+        max_effort: 110
 
-    stepper_1_gear_ratio: 5.4375
-    stepper_2_gear_ratio: 8.5625
-    stepper_3_gear_ratio: 7.6875
-
-    stepper_1_offset_position: 2.96706
-    stepper_2_offset_position: 0.610865
-    stepper_3_offset_position: -1.3439
-
-    stepper_1_home_position: 0.0
-    stepper_2_home_position: 0.5
-    stepper_3_home_position: -1.25
-
-    stepper_1_direction: -1.0
-    stepper_2_direction: -1.0
-    stepper_3_direction: -1.0
-
-    stepper_1_max_effort: 110
-    stepper_2_max_effort: 130
-    stepper_3_max_effort: 120
+    stepper_2:
+        id: 2
+        gear_ratio: 8.5625
+        offset_position: 0.610865
+        home_position: 0.5
+        direction: -1
+        max_effort: 130
+        
+    stepper_3:
+        id: 3
+        gear_ratio: 7.6875
+        offset_position: -1.3439
+        home_position: -1.25
+        direction: -1
+        max_effort: 120
 
 dynamixels:
-    dxl_1_offset_position: 0
-    dxl_2_offset_position: 0
-    dxl_3_offset_position: 0
+    dxl_1:
+        offset_position: 0
+        direction: 1
+        position_P_gain: 640
+        position_I_gain: 500
+        position_D_gain: 1000
+        velocity_P_gain: 0
+        velocity_I_gain: 0
+        FF1_gain: 0
+        FF2_gain: 0
 
-    dxl_1_direction: 1
-    dxl_2_direction: -1
-    dxl_3_direction: 1
+    dxl_2:
+        offset_position: 0
+        direction: -1
+        position_P_gain: 640
+        position_I_gain: 500
+        position_D_gain: 1000
+        velocity_P_gain: 0
+        velocity_I_gain: 0
+        FF1_gain: 0
+        FF2_gain: 0
 
-    dxl_1_P_gain: 640
-    dxl_1_I_gain: 500
-    dxl_1_D_gain: 1000
-    dxl_1_FF1_gain: 0
-    dxl_1_FF2_gain: 0
-
-    dxl_2_P_gain: 640
-    dxl_2_I_gain: 500
-    dxl_2_D_gain: 1000
-    dxl_2_FF1_gain: 0
-    dxl_2_FF2_gain: 0
-
-    dxl_3_P_gain: 84
-    dxl_3_I_gain: 9
-    dxl_3_D_gain: 5
+    dxl_3:
+        direction: 1
+        offset_position: 0
+        position_P_gain: 84
+        position_I_gain: 9
+        position_D_gain: 5

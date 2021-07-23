@@ -7,6 +7,13 @@ option(BUILD_DOCS "Build documentation" OFF)
 option(BUILD_UNIT_TESTS "Build the unit tests" OFF)
 option(BUILD_INTEGRATION_TESTS "Build the integration tests" OFF)
 
+#retrieve architecture
+execute_process( COMMAND
+            uname -m COMMAND tr -d '\n'
+        OUTPUT_VARIABLE
+            ARCHITECTURE
+    )
+
 ## c++ options
 ## Compile as C++14, supported in ROS Melodic and newer
 set(CMAKE_CXX_STANDARD 14)
@@ -69,11 +76,6 @@ if(CMAKE_CROSSCOMPILING)
         -lwiringPi -lrt
     )
 else()
-    execute_process( COMMAND
-            uname -m COMMAND tr -d '\n'
-        OUTPUT_VARIABLE
-            ARCHITECTURE
-    )
 
     if (${ARCHITECTURE} MATCHES "^(arm.*|aarch64.*|arm64.*)$")
         message(STATUS "wiringPi library is required for mcp_can_rpi (ARM processor)")
@@ -139,4 +141,13 @@ endif()
 ##########################
 ## Static code analysis ##
 ##########################
-# no static code analysis on external libs
+find_package(roslint QUIET)
+
+if(roslint_FOUND)
+    # no static code analysis on external libs
+    # create empty target (needed for catkin build --make-args roslint)
+    message(STATUS "no lint analysis for this packet. Create empty target for conveniency")
+    roslint_cpp(empty) # hack to create an empty roslint target
+else()
+    message(WARNING "roslint not found. Skipping roslint target building")
+endif()

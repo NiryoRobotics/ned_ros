@@ -4,11 +4,12 @@
     <!-- Arguments -->
     <arg name="log_level" default="INFO" />
 
-    <arg name="iot_enabled" default="false"/>
     <arg name="debug" default="false"/>
+    <arg name="ttl_enabled" default="true"/>
+    <arg name="can_enabled" default="true"/>
     <arg name="hardware_version" default="ned"/>
     <arg name="rpi_model" value="4"/>
-    <arg name="conf_location" value="$(env HOME)/.config/niryo"/>
+    <arg name="conf_location" default="$(env HOME)/.config/niryo/version/version.txt"/>
 
     <!-- Load URDF -->
     <param name="robot_description"
@@ -17,13 +18,14 @@
            command="$(find xacro)/xacro $(find niryo_robot_description)/urdf/$(arg hardware_version)/niryo_ned.urdf.xacro"/>
 
     <!-- PARAMS -->
-    <group ns="niryo_robot/info">
-        <param name="image_version" type="string"
-            textfile="$(arg conf_location)/version/version.txt"/>
-    </group>
+    <group ns="niryo_robot">
+        <group ns="info">
+            <param name="image_version" type="string" textfile="$(arg conf_location)"/>
+        </group>
 
-    <group ns="niryo_robot/robot_state">
-        <param name="rate_publish_state" type="double" value="5.0"/>
+        <group ns="robot_state">
+            <param name="rate_publish_state" type="double" value="5.0"/>
+        </group>
     </group>
 
     <!-- Including shared params & nodes -->
@@ -31,6 +33,8 @@
     <include file="$(find niryo_robot_bringup)/launch/niryo_robot_base_common.launch.xml">
         <arg name="log_level" value="$(arg log_level)" />
         <arg name="simulation_mode" value="false"/>
+        <arg name="can_enabled" value="$(arg can_enabled)"/>
+        <arg name="ttl_enabled" value="$(arg ttl_enabled)"/>
         <arg name="debug" value="$(arg debug)"/>
     </include>
 
@@ -46,17 +50,9 @@
         <arg name="simulation_mode" value="false"/>
     </include>
 
-    <include file="$(find niryo_robot_iot)/launch/serial_number.launch">
+    <include file="$(find niryo_robot_serial_number)/launch/serial_number.launch">
         <arg name="log_level" value="$(arg log_level)" />
     </include>
-
-    <group if="$(arg iot_enabled)">
-        <!-- Launching IOT nodes -->
-        <include file="$(find niryo_robot_iot)/launch/mqtt_client.launch">
-            <arg name="log_level" value="$(arg log_level)" />
-            <arg name="conf_location" value="$(arg conf_location)"/>
-        </include>
-    </group>
 
     <include file="$(find niryo_robot_system_api_client)/launch/system_api_client.launch">
         <arg name="log_level" value="$(arg log_level)" />

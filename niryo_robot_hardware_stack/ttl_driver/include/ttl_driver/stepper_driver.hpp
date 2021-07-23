@@ -70,9 +70,11 @@ public:
     virtual int setGoalPosition(uint8_t id, uint32_t position) override;
     virtual int setGoalVelocity(uint8_t id, uint32_t velocity) override;
     virtual int setGoalTorque(uint8_t id, uint32_t torque) override;
-    virtual int setPGain(uint8_t id, uint32_t gain) override;
-    virtual int setIGain(uint8_t id, uint32_t gain) override;
-    virtual int setDGain(uint8_t id, uint32_t gain) override;
+    virtual int setPositionPGain(uint8_t id, uint32_t gain) override;
+    virtual int setPositionIGain(uint8_t id, uint32_t gain) override;
+    virtual int setPositionDGain(uint8_t id, uint32_t gain) override;
+    virtual int setVelocityPGain(uint8_t id, uint32_t gain) override;
+    virtual int setVelocityIGain(uint8_t id, uint32_t gain) override;
     virtual int setff1Gain(uint8_t id, uint32_t gain) override;
     virtual int setff2Gain(uint8_t id, uint32_t gain) override;
     virtual int syncWriteLed(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &led_list) override;

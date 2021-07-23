@@ -6,10 +6,12 @@
     <arg name="simu_gripper" default="true"/>
 
     <!-- Command validation params -->
-    <group ns="niryo_robot/robot_command_validation">
-        <rosparam file="$(find niryo_robot_arm_commander)/config/$(arg hardware_version)/robot_command_validation.yaml"/>
+    <group ns="niryo_robot">
+        <group ns="robot_command_validation">
+            <rosparam file="$(find niryo_robot_arm_commander)/config/$(arg hardware_version)/robot_command_validation.yaml"/>
+        </group>
     </group>
-
+        
     <!-- Override MoveIt default logging from INFO to WARn -->
     <env name="ROSCONSOLE_CONFIG_FILE" value="$(find niryo_robot_arm_commander)/config/rosconsole.config"/>
 
@@ -37,6 +39,5 @@
 
         <rosparam command="load" file="$(find niryo_robot_arm_commander)/config/commander_params.yaml"/>
         <rosparam command="load" file="$(find niryo_robot_arm_commander)/config/jog_params.yaml"/>
-        <param name="simu_gripper" type="bool" value="$(arg simu_gripper)"/>
     </node>
 </launch>

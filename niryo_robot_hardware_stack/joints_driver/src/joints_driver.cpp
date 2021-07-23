@@ -12,21 +12,20 @@ using ::can_driver::CanDriverCore;
 
 namespace joint_driver
 {
-JointDriver::JointDriver(ros::NodeHandle nh)
+JointDriver::JointDriver(ros::NodeHandle &nh)
 {
-  _nh = nh;
   ROS_DEBUG("JointsDriver - ctor");
 
   _haveCan = false;
   _haveTtl = false;
-  init();
+  init(nh);
 }
 
 JointDriver::~JointDriver()
 {
 }
 
-void JointDriver::init()
+void JointDriver::init(ros::NodeHandle &nh)
 {
   ROS_DEBUG("JointDriver: initialize");
   size_t nb_joints = 0;
@@ -34,9 +33,9 @@ void JointDriver::init()
   vector<string> protocols_list;
 
   // get params in file config
-  _nh.getParam("/niryo_robot_hardware_interface/joints_driver/drivers_params/drivers_list", drivers_list);
-  while (_nh.hasParam("/niryo_robot_hardware_interface/joint_" + std::to_string(nb_joints + 1) + "_name") &&
-          _nh.hasParam("/niryo_robot_hardware_interface/joint_" + std::to_string(nb_joints + 1) + "_protocol"))
+  nh.getParam("drivers_params/drivers_list", drivers_list);
+  while (nh.hasParam("joint_" + std::to_string(nb_joints + 1) + "_name") &&
+          nh.hasParam("joint_" + std::to_string(nb_joints + 1) + "_protocol"))
     nb_joints++;
 
   for (auto it = drivers_list.begin(); it != drivers_list.end(); it++)
@@ -44,14 +43,15 @@ void JointDriver::init()
     if (*it == "can" && _haveCan == false)
     {
       ROS_DEBUG("JointDriver: Create Can driver core");
+      ros::NodeHandle nh_can(nh, "ttl_driver");
       _haveCan = true;
-      _canDriverCore.reset(new CanDriverCore(_nh));
+      _canDriverCore.reset(new CanDriverCore(nh));
     }
     else if (*it == "ttl" && _haveTtl == false)
     {
       ROS_DEBUG("JointDriver: Create Ttl driver core");
       _haveTtl = true;
-      _ttlDriverCore.reset(new TtlDriverCore(_nh));
+      _ttlDriverCore.reset(new TtlDriverCore(nh));
     }
   }
 
@@ -60,8 +60,8 @@ void JointDriver::init()
     string joint_name;
     string protocol;
 
-    _nh.getParam("/niryo_robot_hardware_interface/joint_" + std::to_string(j + 1) + "_name", joint_name);
-    _nh.getParam("/niryo_robot_hardware_interface/joint_" + std::to_string(j + 1) + "_protocol", protocol);
+    nh.getParam("joint_" + std::to_string(j + 1) + "_name", joint_name);
+    nh.getParam("joint_" + std::to_string(j + 1) + "_protocol", protocol);
     
     if (protocol == "can")
     {

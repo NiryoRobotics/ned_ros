@@ -1,0 +1,14 @@
+<?xml version="1.0" ?>
+<launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+  <!-- Arguments -->
+  <arg name="hardware_version" default="ned"/>
+
+  <group ns="joints_driver" >
+    <rosparam file="$(find joints_driver)/config/$(arg hardware_version)/default.yaml" command="load"/>
+    <rosparam file="$(find joints_driver)/config/$(arg hardware_version)/drivers_config.yaml" command="load"/>
+    <rosparam file="$(find joints_driver)/config/$(arg hardware_version)/motors_config.yaml" command="load"/>
+    <rosparam file="$(find joints_driver)/config/$(arg hardware_version)/motors_params.yaml" command="load"/>
+    <rosparam file="$(find joints_driver)/config/$(arg hardware_version)/bus_config.yaml" command="load"/>
+  </group>
+</launch>
