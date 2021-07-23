@@ -5,7 +5,7 @@
 <package format="3">
   <name>common</name>
   <version>0.0.0</version>
-  <description>The common package gather all utilities and absctract classes of the different models</description>
+  <description>Gathers all utilities and absctract classes of the different models</description>
   <maintainer email="c.cocquempot@niryo.com">Clement Cocquempot</maintainer>
 
   <license>GPLv3</license>
@@ -15,6 +15,8 @@
 
   <build_depend>roscpp</build_depend>
   
+  <build_export_depend>roscpp</build_export_depend>
+
   <exec_depend>roscpp</exec_depend>
 
 </package>

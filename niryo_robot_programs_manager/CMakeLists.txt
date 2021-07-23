@@ -1,7 +1,6 @@
-message("\n## Reading niryo_robot_programs_manager/CMakeLists.txt...")
-
 cmake_minimum_required(VERSION 3.0.2)
 project(niryo_robot_programs_manager)
+message("\n## Reading ${PROJECT_NAME}/CMakeLists.txt...")
 
 #retrieve architecture
 execute_process( COMMAND
@@ -39,7 +38,10 @@ generate_messages(
   DEPENDENCIES
 )
 
-catkin_package()
+catkin_package(
+  CATKIN_DEPENDS
+    message_runtime
+)
 
 include_directories(
   ${catkin_INCLUDE_DIRS}
@@ -49,17 +51,14 @@ include_directories(
 ##   Doc   ##
 #############
 
-if(BUILD_DOCS)
-  find_program(rosdoc_lite_FOUND rosdoc_lite)
-  if(rosdoc_lite_FOUND)
-      add_custom_target (${PROJECT_NAME}_doc ALL
-          rosdoc_lite -o ${CMAKE_CURRENT_BINARY_DIR}/doc ${CMAKE_CURRENT_LIST_DIR}
-      )
-  else()
-    message(WARNING "rosdoc_lite not found. Skipping documentation building")
-  endif()
-
-endif(BUILD_DOCS)
+find_program(rosdoc_lite_FOUND rosdoc_lite)
+if(rosdoc_lite_FOUND)
+    add_custom_target (${PROJECT_NAME}_doc ALL
+        rosdoc_lite -o ${CMAKE_CURRENT_BINARY_DIR}/doc ${CMAKE_CURRENT_LIST_DIR}
+    )
+else()
+  message(WARNING "rosdoc_lite not found. Skipping documentation building")
+endif()
 
 #############
 ## Testing ##
@@ -69,12 +68,12 @@ if(CATKIN_ENABLE_TESTING)
 
   find_package(rostest REQUIRED)
 
-  if (${ARCHITECTURE} MATCHES "^(arm.*|aarch64.*|arm64.*)$")
+  if ("${ARCHITECTURE}" MATCHES "^(arm.*|aarch64.*|arm64.*)$")
     add_rostest(test/rpi_programs_manager.test)
   else()
     add_rostest(test/simulation_programs_manager.test)
   endif()
-endif(CATKIN_ENABLE_TESTING)
+endif()
 
 #############
 ## Install ##
@@ -95,7 +94,7 @@ install(
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/config
 )
 
-if (EXISTS ${CMAKE_CURRENT_BINARY_DIR}/doc)
+if(rosdoc_lite_FOUND)
   install(
     DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc/
     DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/doc

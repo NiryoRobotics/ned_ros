@@ -1,14 +1,14 @@
-message("\n## Reading niryo_robot_rpi/CMakeLists.txt...")
-
 cmake_minimum_required(VERSION 3.0.2)
 project(niryo_robot_rpi)
+message("\n## Reading ${PROJECT_NAME}/CMakeLists.txt...")
 
 find_package(catkin REQUIRED COMPONENTS
   actionlib_msgs
-  sensor_msgs
+  message_generation
   niryo_robot_msgs
-  rospy
   roscpp
+  rospy
+  sensor_msgs
   std_msgs
 )
 
@@ -32,13 +32,20 @@ catkin_python_setup()
 
 generate_messages(
   DEPENDENCIES
-  niryo_robot_msgs
-  std_msgs
   actionlib_msgs
+  niryo_robot_msgs
   sensor_msgs
+  std_msgs
 )
 
-catkin_package()
+catkin_package(
+  CATKIN_DEPENDS
+  actionlib_msgs
+  message_runtime
+  niryo_robot_msgs
+  sensor_msgs
+  std_msgs
+)
 
 include_directories(
   ${catkin_INCLUDE_DIRS}
@@ -49,17 +56,14 @@ include_directories(
 ##   Doc   ##
 #############
 
-if(BUILD_DOCS)
-  find_program(rosdoc_lite_FOUND rosdoc_lite)
-  if(rosdoc_lite_FOUND)
-      add_custom_target (${PROJECT_NAME}_doc ALL
-          rosdoc_lite -o ${CMAKE_CURRENT_BINARY_DIR}/doc ${CMAKE_CURRENT_LIST_DIR}
-      )
-  else()
-    message(WARNING "rosdoc_lite not found. Skipping documentation building")
-  endif()
-
-endif(BUILD_DOCS)
+find_program(rosdoc_lite_FOUND rosdoc_lite)
+if(rosdoc_lite_FOUND)
+    add_custom_target (${PROJECT_NAME}_doc ALL
+        rosdoc_lite -o ${CMAKE_CURRENT_BINARY_DIR}/doc ${CMAKE_CURRENT_LIST_DIR}
+    )
+else()
+  message(WARNING "rosdoc_lite not found. Skipping documentation building")
+endif()
 
 #############
 ## Testing ##
@@ -92,7 +96,7 @@ install(
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/config
 )
 
-if (EXISTS ${CMAKE_CURRENT_BINARY_DIR}/doc)
+if(rosdoc_lite_FOUND)
   install(
     DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc/
     DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/doc

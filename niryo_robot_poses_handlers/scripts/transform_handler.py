@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 # Libs
 import rospy
 import tf2_ros

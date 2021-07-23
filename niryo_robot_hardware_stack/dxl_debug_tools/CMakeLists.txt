@@ -1,10 +1,6 @@
-message("\n## Reading dxl_debug_tools/CMakeLists.txt...")
-
 cmake_minimum_required(VERSION 3.0.2)
 project(dxl_debug_tools)
-
-option(BUILD_DOCS "Build documentation" OFF)
-option(BUILD_UNIT_TESTS "Build the unit tests" OFF)
+message("\n## Reading ${PROJECT_NAME}/CMakeLists.txt...")
 
 ## c++ options
 ## Compile as C++14, supported in ROS Melodic and newer
@@ -72,37 +68,31 @@ target_link_libraries(${PROJECT_NAME}
 ##   Doc   ##
 #############
 
-if(BUILD_DOCS)
-  find_program(rosdoc_lite_FOUND rosdoc_lite)
-  if(rosdoc_lite_FOUND)
-      add_custom_target (${PROJECT_NAME}_doc ALL
-          rosdoc_lite -o ${CMAKE_CURRENT_BINARY_DIR}/doc ${CMAKE_CURRENT_LIST_DIR}
-      )
-  else()
-    message(WARNING "rosdoc_lite not found. Skipping documentation building")
-  endif()
-
-endif(BUILD_DOCS)
+find_program(rosdoc_lite_FOUND rosdoc_lite)
+if(rosdoc_lite_FOUND)
+    add_custom_target (${PROJECT_NAME}_doc ALL
+        rosdoc_lite -o ${CMAKE_CURRENT_BINARY_DIR}/doc ${CMAKE_CURRENT_LIST_DIR}
+    )
+else()
+  message(WARNING "rosdoc_lite not found. Skipping documentation building")
+endif()
 
 #############
 ## Testing ##
 #############
 
 if(CATKIN_ENABLE_TESTING)
-  if(BUILD_UNIT_TESTS)
-    catkin_add_gtest(
-      ${PROJECT_NAME}_unit_tests
-      test/dxl_tools_unit_tests.cpp
+  catkin_add_gtest(
+    ${PROJECT_NAME}_unit_tests
+    test/dxl_tools_unit_tests.cpp
+  )
+  if(TARGET ${PROJECT_NAME}_unit_tests)
+    target_link_libraries(${PROJECT_NAME}_unit_tests
+        ${catkin_LIBRARIES}
+        ${PROJECT_NAME}_core
     )
-    if(TARGET ${PROJECT_NAME}_unit_tests)
-      target_link_libraries(${PROJECT_NAME}_unit_tests
-          ${catkin_LIBRARIES}
-          ${PROJECT_NAME}_core
-      )
-    endif()
-  endif(BUILD_UNIT_TESTS)
-
-endif(CATKIN_ENABLE_TESTING)
+  endif()
+endif()
 
 #############
 ## Install ##
@@ -131,7 +121,7 @@ install(
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 )
 
-if (EXISTS ${CMAKE_CURRENT_BINARY_DIR}/doc/)
+if(rosdoc_lite_FOUND)
   install(
     DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc/
     DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/doc

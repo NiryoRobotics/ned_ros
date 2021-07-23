@@ -5,7 +5,7 @@
 <package format="3">
     <name>niryo_robot_programs_manager</name>
     <version>3.1.0</version>
-    <description>The niryo_robot_programs_manager package</description>
+    <description>Deals with programs loaded in the robot</description>
 
     <maintainer email="r.lux@niryo.com">Remi Lux</maintainer>
     <maintainer email="e.rey-coquais@niryo.com">Etienne Rey-Coquais</maintainer>
@@ -16,10 +16,12 @@
     <buildtool_depend>catkin</buildtool_depend>
 
     <build_depend>niryo_robot_msgs</build_depend>
+    <build_depend>message_generation</build_depend>
 
     <exec_depend>niryo_robot_msgs</exec_depend>
     <exec_depend>rosbridge_server</exec_depend>
     <exec_depend>std_msgs</exec_depend>
+    <exec_depend>message_runtime</exec_depend>
 
     <!-- Python Dependencies -->
     <exec_depend>python-yaml</exec_depend>
