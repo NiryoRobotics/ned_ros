@@ -27,30 +27,24 @@
 
     <link name="world"/>
 
-    <link name="base_link">
-	</link>
+    <link name="base_link"/>
 
-    <link name="shoulder_link">
-	</link>
+    <link name="shoulder_link"/>
 
-    <link name="arm_link">
-	</link>
+    <link name="arm_link"/>
 	
-    <link name="elbow_link">
-	</link>
+    <link name="elbow_link"/>
 
-    <link name="forearm_link">
-	</link>
+    <link name="forearm_link"/>
 
-    <link name="wrist_link">
-	</link>
+    <link name="wrist_link"/>
 	
-    <link name="hand_link">
-	</link>
-	
-    <link name="tool_link">
-	</link>
+    <link name="hand_link"/>
 
+    <link name="tool_link"/>
+
+    <!-- add collision for the motor of joint 5 -->
+    <link name="joint5_motor"/>
 
 	<!--Joints -->
 
@@ -92,22 +86,6 @@
 		<axis xyz="0 0 1" />
 	</joint>
 
-	<!-- add collision for the motor of joint 5 -->
-    <link name="joint5_motor">
-        <collision>
-            <origin xyz="-0.045 0.0 0.1765" rpy="0 0 0"/>
-            <geometry> <box size="0.0435 0.0285 0.0465"/> </geometry>
-        </collision>
-    </link>
-
-
-    <joint name="joint_test"  type="fixed">
-        <origin xyz="0 0 0" rpy="0 0 0"/>
-        <parent link="forearm_link"/>
-        <child link="joint5_motor"/>
-    </joint>
-
-
 	<joint name="joint_5" type="revolute">
         <parent link="forearm_link" />
         <child link="wrist_link" />
@@ -128,6 +106,13 @@
         <parent link="hand_link" />
         <child link="tool_link" />
         <origin xyz="0 0 ${distance_hand_tool}" rpy="${-PI/2} ${-PI/2} 0" />
+	</joint>
+
+	<!-- add collision for the motor of joint 5 -->
+    <joint name="joint5_motor_joint" type="fixed">
+        <parent link="forearm_link" />
+        <child link="joint5_motor" />
+        <origin xyz="0 0 0" rpy="0 0 0" />
 	</joint>
 
 </robot>

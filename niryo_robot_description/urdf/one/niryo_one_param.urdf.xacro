@@ -15,8 +15,6 @@
     <xacro:property name="distance_wrist_hand_y" value="-0.0055" />
     <xacro:property name="distance_hand_tool" value="0.0073" />
 
-	<xacro:property name="PI" value="3.14159265359" />
-
     <xacro:property name="limit_low_shoulder_rotation" value="-3.05433" />
     <xacro:property name="limit_up_shoulder_rotation" value="3.05433" />
     <xacro:property name="limit_low_arm_rotation" value="-1.91986" />
