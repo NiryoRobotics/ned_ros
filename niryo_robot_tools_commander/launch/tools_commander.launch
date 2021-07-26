@@ -1,12 +1,13 @@
 <launch>
     <arg name="simulation_mode" default="false"/>
     <arg name="simu_gripper" default="false"/>
+    <arg name="hardware_version" default="ned"/>
 
     <node name="niryo_robot_tools_commander" pkg="niryo_robot_tools_commander" type="tool_commander_node.py" output="screen"
           respawn="false">
         <param name="simulation_mode" type="bool" value="$(arg simulation_mode)"/>
          <param name="simu_gripper" type="bool" value="$(arg simu_gripper)"/>
-        <rosparam file="$(find niryo_robot_tools_commander)/config/end_effectors.yaml"/>
+        <rosparam file="$(find niryo_robot_tools_commander)/config/$(arg hardware_version)/end_effectors.yaml"/>
     </node>
 
 </launch>

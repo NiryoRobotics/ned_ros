@@ -4,5 +4,6 @@
 
     <include file="$(find niryo_robot_bringup)/launch/niryo_robot_base_robot.launch.xml">>
         <arg name="debug" value="$(arg debug)"/>
+        <arg name="hardware_version" value="ned"/>
     </include>
 </launch>

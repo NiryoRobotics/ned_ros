@@ -1,5 +1,5 @@
 <launch>
-    <arg name="hardware_version" value="ned"/>
+    <arg name="hardware_version" default="ned"/>
 
     <group ns="niryo_robot/info">
         <param name="ros_version"               type="string" command="rosversion niryo_robot_bringup" />

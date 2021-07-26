@@ -1,0 +1,11 @@
+<launch>
+    <!-- Arguments definition -->
+    <arg name="iot_enabled" default="false"/>
+
+    <!-- Start ROS as Niryo One -->
+    <include file="$(find niryo_robot_bringup)/launch/niryo_robot_base_robot.launch.xml">>
+        <arg name="debug" value="$(arg debug)"/>
+        <arg name="hardware_version" value="one"/>
+        <arg name="rpi_model" value="3"/>
+    </include>
+</launch>

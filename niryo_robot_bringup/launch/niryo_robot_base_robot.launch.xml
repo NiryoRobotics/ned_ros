@@ -1,8 +1,8 @@
 <launch>
     <!-- Arguments -->
     <arg name="debug" default="false"/>
-    <arg name="hardware_version" value="ned"/>
-    <arg name="rpi_model" value="4"/>
+    <arg name="hardware_version" default="ned"/>
+    <arg name="rpi_model" default="4"/>
     <arg name="conf_location" value="~/.config/niryo"/>
 
     <!-- Load URDF -->
@@ -25,12 +25,13 @@
 
     <include file="$(find niryo_robot_bringup)/launch/niryo_robot_base_common.launch.xml">
         <arg name="simulation_mode" value="false"/>
+        <arg name="hardware_version" value="$(arg hardware_version)"/>
         <arg name="debug" value="$(arg debug)"/>
     </include>
 
     <!--   Rpi node (IO / fan / ...)   -->
-    <!-- Ned RPI 4 -->
-    <include file="$(find niryo_robot_rpi)/launch/rpi_4.launch"/>
+    <!-- Niryo One RPI 3 -->
+    <include file="$(find niryo_robot_rpi)/launch/rpi_$(eval rpi_model).launch"/>
 
     <!-- Launching vision node -->
     <include file="$(find niryo_robot_vision)/launch/vision_node.launch">

@@ -1,5 +1,5 @@
 <launch>
-    <arg name="hardware_version" value="ned"/>
+    <arg name="hardware_version" default="ned"/>
     <arg name="joints_gui" default="true"/>
 
     <arg name="urdf_path"

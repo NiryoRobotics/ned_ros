@@ -5,7 +5,7 @@
     <arg name="gazebo" default="false"/>
     <arg name="can_enabled" default="true"/>
     <arg name="dxl_enabled" default="true"/>
-    <arg name="hardware_version" value="ned"/>
+    <arg name="hardware_version" default="ned"/>
     <arg name="debug" default="false"/>
 
     <group ns="niryo_robot/info">
