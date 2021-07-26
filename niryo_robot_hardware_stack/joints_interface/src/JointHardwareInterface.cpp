@@ -84,20 +84,22 @@ JointHardwareInterface::JointHardwareInterface(
     _nh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_1_offset_position", _offset_position_dxl_1);
     _nh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_2_offset_position", _offset_position_dxl_2);
     _nh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_3_offset_position", _offset_position_dxl_3);
-    ROS_DEBUG("Joints Hardware Interface - Angle offsets dxk: (1 : %lf, 2 : %lf, 3 : %lf)", _offset_position_dxl_1, _offset_position_dxl_2, _offset_position_dxl_3);
+    ROS_DEBUG("Joints Hardware Interface - Angle offsets dxl: (1 : %lf, 2 : %lf, 3 : %lf)", _offset_position_dxl_1, _offset_position_dxl_2, _offset_position_dxl_3);
 
     _nh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_1_P_gain", _p_gain_1);
     _nh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_2_P_gain", _p_gain_2);
     _nh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_3_P_gain", _p_gain_3);
-    ROS_DEBUG("Joints Hardware Interface - Proportional Gain dxk: (1 : %d, 2 : %d, 3 : %d)", _p_gain_1, _p_gain_2, _p_gain_3);
+    ROS_DEBUG("Joints Hardware Interface - Proportional Gain dxl: (1 : %d, 2 : %d, 3 : %d)", _p_gain_1, _p_gain_2, _p_gain_3);
 
     _nh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_1_I_gain", _i_gain_1);
     _nh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_2_I_gain", _i_gain_2);
     _nh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_3_I_gain", _i_gain_3);
-    ROS_DEBUG("Joints Hardware Interface - Integral Gain dxk: (1 : %d, 2 : %d, 3 : %d)", _i_gain_1, _i_gain_2, _i_gain_3);
+    ROS_DEBUG("Joints Hardware Interface - Integral Gain dxl: (1 : %d, 2 : %d, 3 : %d)", _i_gain_1, _i_gain_2, _i_gain_3);
 
-    _nh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_3_D_gain", _d_gain_3);
-    ROS_DEBUG("Joints Hardware Interface - Integral Gain dxk: (3 : %d)",  _d_gain_3);
+    _nh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_1_I_gain", _d_gain_1);
+    _nh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_2_I_gain", _d_gain_2);
+    _nh.getParam("/niryo_robot_hardware_interface/dynamixels/dxl_3_I_gain", _d_gain_3);
+    ROS_DEBUG("Joints Hardware Interface - Differential Gain dxl: (1 : %d, 2 : %d, 3 : %d)", _d_gain_1, _d_gain_2, _d_gain_3);
 
     // Create motors with previous params
     _joint_list.clear();
@@ -180,7 +182,7 @@ void JointHardwareInterface::sendInitMotorsParams()
     dxl_cmd_srv.request.id = 2;
     dxl_cmd_srv.request.byte_number = 2;
     dxl_cmd_srv.request.value = _p_gain_1;
-    dxl_cmd_srv.request.reg_address = 80;
+    dxl_cmd_srv.request.reg_address = 84;
     if (dxl_client.call(dxl_cmd_srv))
         ROS_DEBUG("Joints Hardware Interface - Set joint 4 P Gain OK");
 
@@ -189,12 +191,17 @@ void JointHardwareInterface::sendInitMotorsParams()
     if (dxl_client.call(dxl_cmd_srv))
         ROS_DEBUG("Joints Hardware Interface - Set joint 4 I Gain OK");
 
+    dxl_cmd_srv.request.value = _d_gain_1;
+    dxl_cmd_srv.request.reg_address = 80;
+    if (dxl_client.call(dxl_cmd_srv))
+        ROS_DEBUG("Joints Hardware Interface - Set joint 4 D Gain OK");
+
     // * Joint 5
     dxl_cmd_srv.request.motor_type = 2;
     dxl_cmd_srv.request.id = 3;
     dxl_cmd_srv.request.byte_number = 2;
     dxl_cmd_srv.request.value = _p_gain_2;
-    dxl_cmd_srv.request.reg_address = 80;
+    dxl_cmd_srv.request.reg_address = 84;
     if (dxl_client.call(dxl_cmd_srv))
         ROS_DEBUG("Joints Hardware Interface - Set joint 5 P Gain OK");
 
@@ -202,6 +209,11 @@ void JointHardwareInterface::sendInitMotorsParams()
     dxl_cmd_srv.request.reg_address = 82;
     if (dxl_client.call(dxl_cmd_srv))
         ROS_DEBUG("Joints Hardware Interface - Set joint 5 I Gain OK");
+
+    dxl_cmd_srv.request.value = _d_gain_2;
+    dxl_cmd_srv.request.reg_address = 80;
+    if (dxl_client.call(dxl_cmd_srv))
+        ROS_DEBUG("Joints Hardware Interface - Set joint 5 D Gain OK");
 
     // * Joint 6
     dxl_cmd_srv.request.motor_type = 3;

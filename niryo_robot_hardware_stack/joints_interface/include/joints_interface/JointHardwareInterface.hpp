@@ -108,7 +108,7 @@ private:
 
     int _p_gain_1, _p_gain_2, _p_gain_3;
     int _i_gain_1, _i_gain_2, _i_gain_3;
-    int _d_gain_3;
+    int _d_gain_1, _d_gain_2, _d_gain_3;
     bool _learning_mode;
 };
 

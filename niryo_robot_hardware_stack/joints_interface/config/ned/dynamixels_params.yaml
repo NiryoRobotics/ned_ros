@@ -6,11 +6,14 @@ dynamixels:
     xl430_middle_position: 2047
     xl320_middle_position: 511
 
-    dxl_1_P_gain: 1000
-    dxl_1_I_gain: 500
 
-    dxl_2_P_gain: 1000
+    dxl_1_P_gain: 640
+    dxl_1_I_gain: 500
+    dxl_1_D_gain: 1000
+
+    dxl_2_P_gain: 640
     dxl_2_I_gain: 500
+    dxl_2_D_gain: 1000
 
     dxl_3_P_gain: 84
     dxl_3_I_gain: 9
