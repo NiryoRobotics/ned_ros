@@ -1648,7 +1648,6 @@ class NiryoRosWrapper:
         :return: rpi_image_version, ros_niryo_robot_version, motor_names, stepper_firmware_versions
         :rtype: (str, str, list[str], list[str])
         """
-        print(self.__software_version)
         return self.__software_version
 
     def set_robot_name(self, name):
