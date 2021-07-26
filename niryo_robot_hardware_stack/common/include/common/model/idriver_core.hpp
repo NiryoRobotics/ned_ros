@@ -51,9 +51,9 @@ class IDriverCore
         virtual void startControlLoop() = 0;
         virtual bool isConnectionOk() const = 0;
         virtual bool scanMotorId(uint8_t motor_to_find) = 0;
-        virtual void addSingleCommandToQueue(std::shared_ptr<common::model::SingleMotorCmdI> cmd) = 0;
-        virtual void addSingleCommandToQueue(std::vector<std::shared_ptr<common::model::SingleMotorCmdI>> cmd) = 0;
-        virtual void setSyncCommand(std::shared_ptr<common::model::SynchronizeMotorCmdI> cmd) = 0;
+        virtual void addSingleCommandToQueue(std::shared_ptr<common::model::ISingleMotorCmd> cmd) = 0;
+        virtual void addSingleCommandToQueue(std::vector<std::shared_ptr<common::model::ISingleMotorCmd>> cmd) = 0;
+        virtual void setSyncCommand(std::shared_ptr<common::model::ISynchronizeMotorCmd> cmd) = 0;
         // calibration
         virtual void startCalibration() = 0;
         virtual void resetCalibration() = 0;

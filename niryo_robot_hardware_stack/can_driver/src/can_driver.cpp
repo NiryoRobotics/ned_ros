@@ -32,8 +32,6 @@ using ::common::model::EStepperCalibrationStatus;
 using ::common::model::ConveyorState;
 using ::common::model::StepperMotorState;
 using ::common::model::EStepperCommandType;
-using ::common::model::StepperMotorCmd;
-using ::common::model::SingleMotorCmdI;
 namespace can_driver
 {
 
@@ -103,36 +101,22 @@ bool CanDriver::init(ros::NodeHandle& nh)
     nh.getParam("/niryo_robot_hardware_interface/joints_interface/calibration_timeout", _calibration_timeout);
     ROS_DEBUG("CanDriver::init - Calibration timeout %f", _calibration_timeout);
 
-    std::vector<int> idListRaw;
-    std::vector<std::string> typeListRaw;
-    std::vector<std::string> typeProtocolList;
-
-    nh.getParam("motors_params/motor_id_list", idListRaw);
-    nh.getParam("motors_params/motor_type_list", typeListRaw);
-    nh.getParam("motors_params/motor_type_protocol", typeProtocolList);
-    
-    // check that the two lists have the same size
-    if (idListRaw.size() != typeListRaw.size() || idListRaw.size() != typeProtocolList.size())
-        ROS_ERROR("CanDriver::init - wrong motors configuration. "
-                  "Please check your configuration file motor_id_list, motor_type_list, protocol_type_list");
-
     std::vector<int> idList;
     std::vector<std::string> typeList;
 
-    for (size_t i = 0; i < typeProtocolList.size(); ++i)
-    {
-        if (typeProtocolList[i] == "can")
-        {
-            idList.push_back(idListRaw.at(i));
-            typeList.push_back(typeListRaw.at(i));
-        }
-    }
+    nh.getParam("motors_params/motor_id_list", idList);
+    nh.getParam("motors_params/motor_type_list", typeList);
+    
+    // check that the two lists have the same size
+    if (idList.size() != typeList.size())
+        ROS_ERROR("CanDriver::init - wrong motors configuration. "
+                  "Please check your configuration file motor_id_list, motor_type_list");
 
     // debug - display info
     std::ostringstream ss;
     ss << "[";
     for (size_t i = 0; i < idList.size(); ++i)
-        ss << " id " << idList.at(i) << ",";
+        ss << " id " << idList.at(i) << ": " << typeList.at(i) << ",";
 
     std::string motor_string_list = ss.str();
     motor_string_list.pop_back();  // remove last ","
@@ -288,7 +272,7 @@ int32_t CanDriver::getPosition(uint8_t motor_id) const
  * @param cmd
  * @return
  */
-int CanDriver::readSingleCommand(std::shared_ptr<SingleMotorCmdI> cmd)
+int CanDriver::readSingleCommand(std::shared_ptr<common::model::ISingleMotorCmd> cmd)
 {
     int result = CAN_INVALID_CMD;
     ROS_DEBUG("CanDriver::readCommand - Received stepper cmd %s", cmd->str().c_str());

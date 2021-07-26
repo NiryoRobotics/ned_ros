@@ -51,9 +51,8 @@ class AbstractMotorCmd : public IObject
         // getters
         E getType() const;
 
-        E _type;
     protected:
-        
+        E _type;
 
     private:
         AbstractMotorCmd() = delete;

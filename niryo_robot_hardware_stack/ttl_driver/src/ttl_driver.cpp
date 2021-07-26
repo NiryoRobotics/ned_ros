@@ -90,33 +90,21 @@ bool TtlDriver::init(ros::NodeHandle& nh)
     ROS_DEBUG("TtlDriver::init - Dxl : set port name (%s), baudrate(%d)", _device_name.c_str(), _uart_baudrate);
 
     // retrieve motor config
-    vector<int> idListRaw;
-    vector<string> typeListRaw;
-    vector<string> typeProtocolList;
-
-    nh.getParam("motors_params/motor_id_list", idListRaw);
-    nh.getParam("motors_params/motor_type_list", typeListRaw);
-    nh.getParam("motors_params/motor_type_protocol", typeProtocolList);
-
-    // check that the two lists have the same size
-    if (idListRaw.size() != typeListRaw.size() || idListRaw.size() != typeProtocolList.size())
-        ROS_ERROR("TtlDriver::init - wrong motors configuration. "
-                  "Please check your configuration file motor_id_list, motor_type_list, protocol_type_list");
-
     vector<int> idList;
     vector<string> typeList;
-    for (size_t i = 0; i < typeProtocolList.size(); i++)
-    {
-        if (typeProtocolList[i] == "ttl")
-        {
-            idList.push_back(idListRaw.at(i));
-            typeList.push_back(typeListRaw.at(i));
-        }
-    }
+
+    nh.getParam("motors_params/motor_id_list", idList);
+    nh.getParam("motors_params/motor_type_list", typeList);
+
+    // check that the two lists have the same size
+    if (idList.size() != typeList.size())
+        ROS_ERROR("TtlDriver::init - wrong motors configuration. "
+                  "Please check your configuration file motor_id_list, motor_type_list");
+
     // debug - display info
     ostringstream ss;
     ss << "[";
-    for (size_t i = 0; i < idList.size() && i < typeList.size() ; i++)
+    for (size_t i = 0; i < idList.size() ; i++)
         ss << " id " << idList.at(i) << ": " << typeList.at(i) << ",";
 
     string motor_string_list = ss.str();
@@ -238,7 +226,7 @@ void TtlDriver::addMotor(EMotorType type, uint8_t id, EType type_used)
  * @return
  */
 int TtlDriver::_syncWrite(int (AbstractMotorDriver::*syncWriteFunction)(const std::vector<uint8_t> &, const std::vector<uint32_t> &),
-                              std::shared_ptr<common::model::SynchronizeMotorCmdI> cmd)
+                              std::shared_ptr<common::model::ISynchronizeMotorCmd> cmd)
 {
     int result = COMM_TX_ERROR;
 
@@ -296,7 +284,7 @@ int TtlDriver::_syncWrite(int (AbstractMotorDriver::*syncWriteFunction)(const st
  */
 
 int TtlDriver::_singleWrite(int (AbstractMotorDriver::*singleWriteFunction)(uint8_t id, uint32_t), common::model::EMotorType motor_type,
-                            std::shared_ptr<common::model::SingleMotorCmdI> cmd)
+                            std::shared_ptr<common::model::ISingleMotorCmd> cmd)
 {
     int result = COMM_TX_ERROR;
 

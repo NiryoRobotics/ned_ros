@@ -57,11 +57,11 @@ class CanDriverCore : public common::model::IDriverCore, public common::model::I
         void clearConveyorCommandQueue();
 
         void setTrajectoryControllerCommands(const std::vector<std::pair<uint8_t, int32_t> > &cmd);
-        void addSingleCommandToQueue(std::shared_ptr<common::model::SingleMotorCmdI> cmd) override;
+        void addSingleCommandToQueue(std::shared_ptr<common::model::ISingleMotorCmd> cmd) override;
 
-        void addSingleCommandToQueue(std::vector<std::shared_ptr<common::model::SingleMotorCmdI>> cmd) override;
+        void addSingleCommandToQueue(std::vector<std::shared_ptr<common::model::ISingleMotorCmd>> cmd) override;
 
-        void setSyncCommand(std::shared_ptr<common::model::SynchronizeMotorCmdI> cmd) override;
+        void setSyncCommand(std::shared_ptr<common::model::ISynchronizeMotorCmd> cmd) override;
 
         void startCalibration() override;
         void resetCalibration() override;
@@ -127,8 +127,8 @@ class CanDriverCore : public common::model::IDriverCore, public common::model::I
         std::unique_ptr<CanDriver> _can_driver;
 
         std::vector<std::pair<uint8_t, int32_t> > _joint_trajectory_cmd;
-        std::queue<std::shared_ptr<common::model::SingleMotorCmdI>> _stepper_single_cmds;
-        std::queue<std::shared_ptr<common::model::SingleMotorCmdI>> _conveyor_cmds;
+        std::queue<std::shared_ptr<common::model::ISingleMotorCmd>> _stepper_single_cmds;
+        std::queue<std::shared_ptr<common::model::ISingleMotorCmd>> _conveyor_cmds;
 
         static constexpr int QUEUE_OVERFLOW = 20;
 };

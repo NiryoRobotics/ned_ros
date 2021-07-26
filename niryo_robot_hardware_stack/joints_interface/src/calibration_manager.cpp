@@ -261,39 +261,37 @@ EStepperCalibrationStatus CalibrationManager::_auto_calibration()
     ros::Duration(0.5).sleep();
 
     // 2. Move All Dynamixel to Home Position
-    SynchronizeMotorCmd<common::model::EDxlCommandType, common::model::DxlCommandTypeEnum> dynamixel_cmd;
-    dynamixel_cmd.setType(EDxlCommandType::CMD_TYPE_TORQUE);
-    dynamixel_cmd.addMotorParam(_joint_list.at(3)->getType(), _joint_list.at(3)->getId(), 1);
-    dynamixel_cmd.addMotorParam(_joint_list.at(4)->getType(), _joint_list.at(4)->getId(), 1);
-    dynamixel_cmd.addMotorParam(_joint_list.at(5)->getType(), _joint_list.at(5)->getId(), 1);
+    if(_ttl_driver_core)
+    {
+        common::model::DxlSyncCmd dynamixel_cmd;
+        dynamixel_cmd.setType(EDxlCommandType::CMD_TYPE_TORQUE);
+        dynamixel_cmd.addMotorParam(_joint_list.at(3)->getType(), _joint_list.at(3)->getId(), 1);
+        dynamixel_cmd.addMotorParam(_joint_list.at(4)->getType(), _joint_list.at(4)->getId(), 1);
+        dynamixel_cmd.addMotorParam(_joint_list.at(5)->getType(), _joint_list.at(5)->getId(), 1);
 
-    // (CC): only dxl use sync cmd
-    _ttl_driver_core->setSyncCommand(std::make_shared<SynchronizeMotorCmd<
-                                        common::model::EDxlCommandType,
-                                        common::model::DxlCommandTypeEnum>>(dynamixel_cmd));
-    sld.sleep();
+        // (CC): only dxl use sync cmd
+        _ttl_driver_core->setSyncCommand(std::make_shared<common::model::DxlSyncCmd>(dynamixel_cmd));
+        sld.sleep();
 
-    dynamixel_cmd.reset();
-    dynamixel_cmd.setType(EDxlCommandType::CMD_TYPE_POSITION);
+        dynamixel_cmd.reset();
+        dynamixel_cmd.setType(EDxlCommandType::CMD_TYPE_POSITION);
 
-    dynamixel_cmd.addMotorParam(_joint_list.at(3)->getType(),
-                                _joint_list.at(3)->getId(),
-                                static_cast<uint32_t>(_joint_list.at(3)->to_motor_pos(0)));
+        dynamixel_cmd.addMotorParam(_joint_list.at(3)->getType(),
+                                    _joint_list.at(3)->getId(),
+                                    static_cast<uint32_t>(_joint_list.at(3)->to_motor_pos(0)));
 
-    dynamixel_cmd.addMotorParam(_joint_list.at(4)->getType(),
-                                _joint_list.at(4)->getId(),
-                                static_cast<uint32_t>(_joint_list.at(4)->to_motor_pos(0)));
+        dynamixel_cmd.addMotorParam(_joint_list.at(4)->getType(),
+                                    _joint_list.at(4)->getId(),
+                                    static_cast<uint32_t>(_joint_list.at(4)->to_motor_pos(0)));
 
-    dynamixel_cmd.addMotorParam(_joint_list.at(5)->getType(),
-                                _joint_list.at(5)->getId(),
-                                static_cast<uint32_t>(_joint_list.at(5)->to_motor_pos(0)));
+        dynamixel_cmd.addMotorParam(_joint_list.at(5)->getType(),
+                                    _joint_list.at(5)->getId(),
+                                    static_cast<uint32_t>(_joint_list.at(5)->to_motor_pos(0)));
 
-    // (CC): only dxl use sync cmd
-    _ttl_driver_core->setSyncCommand(std::make_shared<SynchronizeMotorCmd<
-                                        common::model::EDxlCommandType,
-                                        common::model::DxlCommandTypeEnum>>(dynamixel_cmd));
-    sld.sleep();
-
+        // (CC): only dxl use sync cmd
+        _ttl_driver_core->setSyncCommand(std::make_shared<common::model::DxlSyncCmd>(dynamixel_cmd));
+        sld.sleep();
+    }
 
     // 3. Send calibration cmd 1 + 2 + 3
 
@@ -314,7 +312,7 @@ EStepperCalibrationStatus CalibrationManager::_auto_calibration()
     {
         if (_can_driver_core)
             _can_driver_core->startCalibration();
-        else
+        else if(_ttl_driver_core)
             _ttl_driver_core->startCalibration();
 
         setStepperCalibrationCommand(pStepperMotorState_1, 200, 1, _calibration_timeout);
@@ -324,7 +322,7 @@ EStepperCalibrationStatus CalibrationManager::_auto_calibration()
 
     // wait for calibration status done
     sld.sleep();
-    while (_can_driver_core->isCalibrationInProgress() || _ttl_driver_core->isCalibrationInProgress())
+    while ((_can_driver_core && _can_driver_core->isCalibrationInProgress()) || (_ttl_driver_core && _ttl_driver_core->isCalibrationInProgress()))
     {
         sld.sleep();
     }
@@ -378,17 +376,18 @@ EStepperCalibrationStatus CalibrationManager::_auto_calibration()
         }
 
         // forge dxl command
-        dynamixel_cmd.reset();
-        dynamixel_cmd.setType(EDxlCommandType::CMD_TYPE_TORQUE);
-        dynamixel_cmd.addMotorParam(_joint_list.at(3)->getType(), _joint_list.at(3)->getId(), 0);
-        dynamixel_cmd.addMotorParam(_joint_list.at(4)->getType(), _joint_list.at(4)->getId(), 0);
-        dynamixel_cmd.addMotorParam(_joint_list.at(5)->getType(), _joint_list.at(5)->getId(), 0);
+        if(_ttl_driver_core)
+        {
+            common::model::DxlSyncCmd dynamixel_cmd;
+            dynamixel_cmd.setType(EDxlCommandType::CMD_TYPE_TORQUE);
+            dynamixel_cmd.addMotorParam(_joint_list.at(3)->getType(), _joint_list.at(3)->getId(), 0);
+            dynamixel_cmd.addMotorParam(_joint_list.at(4)->getType(), _joint_list.at(4)->getId(), 0);
+            dynamixel_cmd.addMotorParam(_joint_list.at(5)->getType(), _joint_list.at(5)->getId(), 0);
 
-        // (CC) only dxl use sync cmd
-        _ttl_driver_core->setSyncCommand(std::make_shared<SynchronizeMotorCmd<
-                                        common::model::EDxlCommandType,
-                                        common::model::DxlCommandTypeEnum>>(dynamixel_cmd));
-        sld.sleep();
+            // (CC) only dxl use sync cmd
+            _ttl_driver_core->setSyncCommand(std::make_shared<common::model::DxlSyncCmd>(dynamixel_cmd));
+            sld.sleep();
+        }
 
         // 6. Write sensor_offset_steps to file
         set_motors_calibration_offsets(sensor_offset_ids, sensor_offset_results);
@@ -400,7 +399,7 @@ EStepperCalibrationStatus CalibrationManager::_auto_calibration()
     common::model::EStepperCalibrationStatus  calibration_status;
     if (_can_driver_core)
         calibration_status = _can_driver_core->getCalibrationStatus();
-    else
+    else if (_ttl_driver_core)
         calibration_status = _ttl_driver_core->getCalibrationStatus();
     return calibration_status;
 }
@@ -412,73 +411,76 @@ EStepperCalibrationStatus CalibrationManager::_auto_calibration()
  */
 bool CalibrationManager::_can_process_manual_calibration(std::string &result_message)
 {
-    auto stepper_motor_states = _can_driver_core->getStates();
-
-    // 1. Check if motors firmware version is ok
-    for (auto const& mState : stepper_motor_states)
+    if (_can_driver_core)
     {
-        if (mState)
+        auto stepper_motor_states = _can_driver_core->getStates();
+
+        // 1. Check if motors firmware version is ok
+        for (auto const& mState : stepper_motor_states)
         {
-            // (CC) check firmware version only need for stepper, need verify
-            std::string firmware_version = std::dynamic_pointer_cast<StepperMotorState>(mState)->getFirmwareVersion();
-            if (firmware_version.length() == 0)
+            if (mState)
             {
-                result_message = "Calibration Interface - No firmware version available for motor " +
-                                 std::to_string(mState->getId()) +
-                                 ". Make sure all motors are connected";
-
-                ROS_WARN("Calibration Interface - Can't process manual calibration : %s",
-                         result_message.c_str());
-                return false;
-            }
-            if (stoi(firmware_version.substr(0, 1)) < 2)
-            {
-                result_message = "Calibration Interface - You need to upgrade stepper firmware for motor " +
-                                    std::to_string(mState->getId());
-
-                ROS_WARN("Calibration Interface - Can't process manual calibration : %s",
-                         result_message.c_str());
-                return false;
-            }
-        }
-    }
-
-    // 2. Check if motor offset values have been previously saved (with auto calibration)
-    std::vector<int> motor_id_list;
-    std::vector<int> steps_list;
-    if (!get_motors_calibration_offsets(motor_id_list, steps_list))
-    {
-        result_message = "Calibration Interface - You need to make an "
-                         "auto calibration before using the manual calibration";
-        ROS_WARN("Calibration Interface - Can't process manual calibration : %s",
-                 result_message.c_str());
-        return false;
-    }
-
-    // 3. Check if all connected motors have a motor offset value
-    for (auto const& mState : stepper_motor_states)
-    {
-        if (mState)
-        {
-            bool found = false;
-
-            for (int m_id : motor_id_list)
-            {
-                if (m_id == mState->getId())
+                // (CC) check firmware version only need for stepper, need verify
+                std::string firmware_version = std::dynamic_pointer_cast<StepperMotorState>(mState)->getFirmwareVersion();
+                if (firmware_version.length() == 0)
                 {
-                    found = true;
-                    break;
+                    result_message = "Calibration Interface - No firmware version available for motor " +
+                                    std::to_string(mState->getId()) +
+                                    ". Make sure all motors are connected";
+
+                    ROS_WARN("Calibration Interface - Can't process manual calibration : %s",
+                            result_message.c_str());
+                    return false;
+                }
+                if (stoi(firmware_version.substr(0, 1)) < 2)
+                {
+                    result_message = "Calibration Interface - You need to upgrade stepper firmware for motor " +
+                                        std::to_string(mState->getId());
+
+                    ROS_WARN("Calibration Interface - Can't process manual calibration : %s",
+                            result_message.c_str());
+                    return false;
                 }
             }
+        }
 
-            if (!found)
+        // 2. Check if motor offset values have been previously saved (with auto calibration)
+        std::vector<int> motor_id_list;
+        std::vector<int> steps_list;
+        if (!get_motors_calibration_offsets(motor_id_list, steps_list))
+        {
+            result_message = "Calibration Interface - You need to make an "
+                            "auto calibration before using the manual calibration";
+            ROS_WARN("Calibration Interface - Can't process manual calibration : %s",
+                    result_message.c_str());
+            return false;
+        }
+
+        // 3. Check if all connected motors have a motor offset value
+        for (auto const& mState : stepper_motor_states)
+        {
+            if (mState)
             {
-                result_message = "Calibration Interface - Motor " +
-                                 std::to_string(mState->getId()) +
-                                 " does not have a saved offset value, " +
-                                 "you need to do one auto calibration";
-                ROS_WARN("Calibration Interface - Can't process manual calibration : %s", result_message.c_str());
-                return false;
+                bool found = false;
+
+                for (int m_id : motor_id_list)
+                {
+                    if (m_id == mState->getId())
+                    {
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found)
+                {
+                    result_message = "Calibration Interface - Motor " +
+                                    std::to_string(mState->getId()) +
+                                    " does not have a saved offset value, " +
+                                    "you need to do one auto calibration";
+                    ROS_WARN("Calibration Interface - Can't process manual calibration : %s", result_message.c_str());
+                    return false;
+                }
             }
         }
     }
@@ -498,7 +500,7 @@ void CalibrationManager::_send_calibration_offset(uint8_t id, int offset_to_send
     if (_can_driver_core)
         _can_driver_core->addSingleCommandToQueue(
                         std::make_shared<StepperMotorCmd>(stepper_cmd));
-    else 
+    else if (_ttl_driver_core)
         _ttl_driver_core->addSingleCommandToQueue(
                         std::make_shared<StepperMotorCmd>(stepper_cmd)); // (CC) call add single command to Queue by if else but not
                                                                         // by polymorphism make the program will work for the case all stepper use can or ttl,
@@ -522,7 +524,7 @@ EStepperCalibrationStatus CalibrationManager::_manual_calibration()
     }
     if (_can_driver_core)
         _can_driver_core->startCalibration();
-    else
+    else if (_ttl_driver_core)
         _ttl_driver_core->startCalibration();
     
     // 0. Torque ON for motor 2
@@ -561,8 +563,12 @@ EStepperCalibrationStatus CalibrationManager::_manual_calibration()
             sld.sleep();
         }
     }
+    if(_can_driver_core)
+        return _can_driver_core->getCalibrationStatus();
+    else if(_ttl_driver_core)
+        return _ttl_driver_core->getCalibrationStatus();
 
-    return _can_driver_core->getCalibrationStatus();
+    return EStepperCalibrationStatus::CALIBRATION_FAIL;
 }
 
 /**

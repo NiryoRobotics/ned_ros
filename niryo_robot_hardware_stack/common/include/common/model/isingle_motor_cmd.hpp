@@ -31,17 +31,17 @@ namespace model
 /**
  * @brief The SingleMotorCmd class
  */
-class SingleMotorCmdI
+class ISingleMotorCmd
 {
     public:
-        SingleMotorCmdI() {}
+        ISingleMotorCmd() {}
 
-        SingleMotorCmdI(uint8_t motor_id,
+        ISingleMotorCmd(uint8_t motor_id,
                        uint32_t param = 0);
 
-        SingleMotorCmdI(uint8_t motor_id, std::vector<int32_t> params = std::vector<int32_t>());
+        ISingleMotorCmd(uint8_t motor_id, std::vector<int32_t> params = std::vector<int32_t>());
 
-        virtual ~SingleMotorCmdI() {};
+        virtual ~ISingleMotorCmd() {};
 
         // setters
         void setId(uint8_t id);
@@ -67,23 +67,23 @@ class SingleMotorCmdI
 };
 
 /**
- * @brief SingleMotorCmdI::SingleMotorCmdI
+ * @brief ISingleMotorCmd::ISingleMotorCmd
  * @return
  */
 
-inline SingleMotorCmdI::SingleMotorCmdI(uint8_t motor_id, uint32_t param) :
+inline ISingleMotorCmd::ISingleMotorCmd(uint8_t motor_id, uint32_t param) :
                 _id(motor_id),
                 _param(param)
 {}
 
 /**
- * @brief SingleMotorCmdI::StepperMotorCmd
+ * @brief ISingleMotorCmd::ISingleMotorCmd
  * @param type
  * @param motor_id
  * @param params
  */
 inline 
-SingleMotorCmdI::SingleMotorCmdI(uint8_t motor_id,
+ISingleMotorCmd::ISingleMotorCmd(uint8_t motor_id,
                                  std::vector<int32_t> params) :
     _id(motor_id),
     _param_list(params)
@@ -91,101 +91,101 @@ SingleMotorCmdI::SingleMotorCmdI(uint8_t motor_id,
 }
 
 /**
- * @brief SingleMotorCmdI::getId
+ * @brief ISingleMotorCmd::getId
  * @return
  */
 inline
-uint8_t SingleMotorCmdI::getId() const
+uint8_t ISingleMotorCmd::getId() const
 {
     return _id;
 }
 
 /**
- * @brief SingleMotorCmdI::getParam
+ * @brief ISingleMotorCmd::getParam
  * @return
  */
 inline
-uint32_t SingleMotorCmdI::getParam() const
+uint32_t ISingleMotorCmd::getParam() const
 {
     return _param;
 }
 
 /**
- * @brief SingleMotorCmdI::getParam
+ * @brief ISingleMotorCmd::getParam
  * @return
  */
 inline
-std::vector<int32_t> SingleMotorCmdI::getParams() const
+std::vector<int32_t> ISingleMotorCmd::getParams() const
 {
     return _param_list;
 }
 
 /**
- * @brief SingleMotorCmdI::setId
+ * @brief ISingleMotorCmd::setId
  * @param id
  */
 inline
-void SingleMotorCmdI::setId(uint8_t id)
+void ISingleMotorCmd::setId(uint8_t id)
 {
     _id = id;
 }
 
 /**
- * @brief SingleMotorCmdI::setParam
+ * @brief ISingleMotorCmd::setParam
  * @param param
  */
 inline
-void SingleMotorCmdI::setParam(uint32_t param)
+void ISingleMotorCmd::setParam(uint32_t param)
 {
     _param = param;
 }
 
 /**
- * @brief SingleMotorCmdI::setParam
+ * @brief ISingleMotorCmd::setParam
  * @param param
  */
 inline
-void SingleMotorCmdI::setParams(std::vector<int32_t> params) 
+void ISingleMotorCmd::setParams(std::vector<int32_t> params) 
 {
     _param_list = params;
 }
 
 /**
- * @brief SingleMotorCmdI::isCmdStepper
+ * @brief ISingleMotorCmd::isCmdStepper
 */
-inline bool SingleMotorCmdI::isCmdStepper() const
+inline bool ISingleMotorCmd::isCmdStepper() const
 {
     return false;
 }
 
 /**
- * @brief SingleMotorCmdI::isCmdDxl
+ * @brief ISingleMotorCmd::isCmdDxl
 */
-inline bool SingleMotorCmdI::isCmdDxl() const
+inline bool ISingleMotorCmd::isCmdDxl() const
 {
     return false;
 }
 
 /**
- * @brief SingleMotorCmdI::isValid
+ * @brief ISingleMotorCmd::isValid
 */
-inline bool SingleMotorCmdI::isValid() const
+inline bool ISingleMotorCmd::isValid() const
 {
     return false;
 }
 
 /**
- * @brief SingleMotorCmdI::str
+ * @brief ISingleMotorCmd::str
 */
-inline std::string SingleMotorCmdI::str() const
+inline std::string ISingleMotorCmd::str() const
 {
     return "";
 }
 
 /**
- * @brief SingleMotorCmdI::getType()
+ * @brief ISingleMotorCmd::getType()
 */
-inline int SingleMotorCmdI::getTypeCmd() const
+inline int ISingleMotorCmd::getTypeCmd() const
 {
     return 0;
 }

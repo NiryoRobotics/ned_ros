@@ -57,7 +57,7 @@ StepperMotorCmd::StepperMotorCmd(EStepperCommandType type,
                                  uint8_t motor_id,
                                  std::vector<int32_t> params) :
     AbstractMotorCmd<EStepperCommandType>(type),
-    SingleMotorCmdI(motor_id, params)
+    ISingleMotorCmd(motor_id, params)
 {
 }
 

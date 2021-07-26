@@ -1,4 +1,3 @@
 motors_params:
     motor_id_list: [2,3,6]
     motor_type_list: ["xl430","xl430","xl320"]
-    motor_type_protocol: ["ttl", "ttl", "ttl"]

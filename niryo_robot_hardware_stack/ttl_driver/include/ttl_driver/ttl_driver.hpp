@@ -89,10 +89,10 @@ class TtlDriver : public common::model::IDriver
                       uint8_t id, EType type_used);
         
         template<typename Type>
-        int readSynchronizeCommand(std::shared_ptr<common::model::SynchronizeMotorCmdI> cmd);
+        int readSynchronizeCommand(std::shared_ptr<common::model::ISynchronizeMotorCmd> cmd);
         
         template<typename Type>
-        int readSingleCommand(std::shared_ptr<common::model::SingleMotorCmdI> cmd);
+        int readSingleCommand(std::shared_ptr<common::model::ISingleMotorCmd> cmd);
             
         void executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, uint32_t> > cmd_vec);
 
@@ -143,10 +143,10 @@ class TtlDriver : public common::model::IDriver
         void checkRemovedMotors();
 
         int _syncWrite(int (AbstractMotorDriver::*syncWriteFunction)(const std::vector<uint8_t> &, const std::vector<uint32_t> &),
-                              std::shared_ptr<common::model::SynchronizeMotorCmdI> cmd);
+                              std::shared_ptr<common::model::ISynchronizeMotorCmd> cmd);
         
         int _singleWrite(int (AbstractMotorDriver::*singleWriteFunction)(uint8_t id, uint32_t), common::model::EMotorType motor_type,
-                              std::shared_ptr<common::model::SingleMotorCmdI> cmd);
+                              std::shared_ptr<common::model::ISingleMotorCmd> cmd);
     private:
         std::shared_ptr<dynamixel::PortHandler> _PortHandler;
         std::shared_ptr<dynamixel::PacketHandler> _PacketHandler;
@@ -270,7 +270,7 @@ bool TtlDriver::hasMotors()
  * @param cmd
  */
 template<typename Type>
-int TtlDriver::readSynchronizeCommand(std::shared_ptr<common::model::SynchronizeMotorCmdI> cmd)
+int TtlDriver::readSynchronizeCommand(std::shared_ptr<common::model::ISynchronizeMotorCmd> cmd)
 {
     int result = COMM_TX_ERROR;
     ROS_DEBUG_THROTTLE(0.5, "TtlDriver::readSynchronizeCommand:  %s", cmd->str().c_str());
@@ -313,7 +313,7 @@ int TtlDriver::readSynchronizeCommand(std::shared_ptr<common::model::Synchronize
  * @param cmd
  */
 template<typename Type>
-int TtlDriver::readSingleCommand(std::shared_ptr<common::model::SingleMotorCmdI> cmd)
+int TtlDriver::readSingleCommand(std::shared_ptr<common::model::ISingleMotorCmd> cmd)
 {
     int result = COMM_TX_ERROR;
     uint8_t id = cmd->getId();

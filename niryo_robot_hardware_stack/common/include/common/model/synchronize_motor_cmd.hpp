@@ -43,7 +43,7 @@ namespace model
  * @brief The SynchronizeMotorCmd class
  */
 template<typename T, typename TE> 
-class SynchronizeMotorCmd : public AbstractMotorCmd<T>, public SynchronizeMotorCmdI
+class SynchronizeMotorCmd : public AbstractMotorCmd<T>, public ISynchronizeMotorCmd
 {
     public:
         SynchronizeMotorCmd();
@@ -196,6 +196,9 @@ void SynchronizeMotorCmd<T, TE>::clear()
     _motor_params_map.clear();
     _types.clear();
 }
+
+using DxlSyncCmd = SynchronizeMotorCmd<EDxlCommandType, DxlCommandTypeEnum>;
+using StepperSyncCmd = SynchronizeMotorCmd<EStepperCommandType, StepperCommandTypeEnum>;
 
 } // namespace model
 } // namespace common

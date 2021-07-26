@@ -417,7 +417,7 @@ void JointHardwareInterface::activateLearningMode()
 {
     ROS_DEBUG("JointHardwareInterface::activateLearningMode - activate learning mode");
 
-    SynchronizeMotorCmd<EDxlCommandType, DxlCommandTypeEnum> dxl_cmd(EDxlCommandType::CMD_TYPE_LEARNING_MODE);
+    common::model::DxlSyncCmd dxl_cmd(EDxlCommandType::CMD_TYPE_LEARNING_MODE);
     StepperMotorCmd stepper_cmd(EStepperCommandType::CMD_TYPE_TORQUE);
 
     for (auto const& jState : _joint_list)
@@ -448,9 +448,7 @@ void JointHardwareInterface::activateLearningMode()
 
     // (CC): only dxl use sync cmd
     if(_ttl_driver_core)
-        _ttl_driver_core->setSyncCommand(std::make_shared<common::model::SynchronizeMotorCmd<
-                                            common::model::EDxlCommandType,
-                                            common::model::DxlCommandTypeEnum>>(dxl_cmd));
+        _ttl_driver_core->setSyncCommand(std::make_shared<common::model::DxlSyncCmd>(dxl_cmd));
 
     _learning_mode = true;
 
@@ -463,7 +461,7 @@ void JointHardwareInterface::deactivateLearningMode()
 {
     ROS_DEBUG("JointHardwareInterface::deactivateLearningMode - deactivate learning mode");
 
-    SynchronizeMotorCmd<EDxlCommandType, DxlCommandTypeEnum> dxl_cmd(EDxlCommandType::CMD_TYPE_LEARNING_MODE);
+    common::model::DxlSyncCmd dxl_cmd(EDxlCommandType::CMD_TYPE_LEARNING_MODE);
     StepperMotorCmd stepper_cmd(EStepperCommandType::CMD_TYPE_TORQUE);
 
     for (auto const& jState : _joint_list)
@@ -494,9 +492,7 @@ void JointHardwareInterface::deactivateLearningMode()
     }
 
     if(_ttl_driver_core)
-        _ttl_driver_core->setSyncCommand(std::make_shared<common::model::SynchronizeMotorCmd<
-                                            common::model::EDxlCommandType,
-                                            common::model::DxlCommandTypeEnum>>(dxl_cmd));
+        _ttl_driver_core->setSyncCommand(std::make_shared<common::model::DxlSyncCmd>(dxl_cmd));
 
     _learning_mode = true;
 

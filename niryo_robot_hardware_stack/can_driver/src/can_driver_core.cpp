@@ -529,7 +529,7 @@ void CanDriverCore::setTrajectoryControllerCommands(const std::vector<std::pair<
  * @brief CanDriverCore::addSingleCommandToQueue
  * @param cmd
  */
-void CanDriverCore::addSingleCommandToQueue(std::shared_ptr<common::model::SingleMotorCmdI> cmd)
+void CanDriverCore::addSingleCommandToQueue(std::shared_ptr<common::model::ISingleMotorCmd> cmd)
 {
     ROS_DEBUG("CanDriverCore::addSingleCommandToQueue - %s", cmd->str().c_str());
 
@@ -564,7 +564,7 @@ void CanDriverCore::addSingleCommandToQueue(std::shared_ptr<common::model::Singl
  * @brief CanDriverCore::addSingleCommandToQueue
  * @param cmd
  */
-void CanDriverCore::addSingleCommandToQueue(std::vector<std::shared_ptr<common::model::SingleMotorCmdI>> cmd)
+void CanDriverCore::addSingleCommandToQueue(std::vector<std::shared_ptr<common::model::ISingleMotorCmd>> cmd)
 {
     for (auto const& c : cmd)
         addSingleCommandToQueue(c);
@@ -574,7 +574,7 @@ void CanDriverCore::addSingleCommandToQueue(std::vector<std::shared_ptr<common::
  * @brief CanDriverCore::setSyncCommand
  * @param cmd
  */
-void CanDriverCore::setSyncCommand(std::shared_ptr<common::model::SynchronizeMotorCmdI> cmd)
+void CanDriverCore::setSyncCommand(std::shared_ptr<common::model::ISynchronizeMotorCmd> cmd)
 {
     ROS_INFO("CanDriverCore::setSyncCommand: need to be implemented");
 }

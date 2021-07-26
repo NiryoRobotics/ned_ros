@@ -25,21 +25,21 @@ namespace common
 namespace model
 {
 
-SynchronizeMotorCmdI::SynchronizeMotorCmdI()
+ISynchronizeMotorCmd::ISynchronizeMotorCmd()
 {
 }
 
-SynchronizeMotorCmdI::~SynchronizeMotorCmdI()
+ISynchronizeMotorCmd::~ISynchronizeMotorCmd()
 {
 }
 
 /**
- * @brief SynchronizeMotorCmdI::addMotorParam
+ * @brief ISynchronizeMotorCmd::addMotorParam
  * @param type
  * @param id
  * @param param
  */
-void SynchronizeMotorCmdI::addMotorParam(EMotorType type, uint8_t id, uint32_t param)
+void ISynchronizeMotorCmd::addMotorParam(EMotorType type, uint8_t id, uint32_t param)
 {
     // not yet in map
     if (!_motor_params_map.count(type))
@@ -55,11 +55,11 @@ void SynchronizeMotorCmdI::addMotorParam(EMotorType type, uint8_t id, uint32_t p
 }
 
 /**
- * @brief SynchronizeMotorCmdI::getMotorsId
+ * @brief ISynchronizeMotorCmd::getMotorsId
  * @param type
  * @return
  */
-std::vector<uint8_t> SynchronizeMotorCmdI::getMotorsId(EMotorType type) const
+std::vector<uint8_t> ISynchronizeMotorCmd::getMotorsId(EMotorType type) const
 {
     if (!_motor_params_map.count(type))
         throw std::out_of_range("type not known of synchonized command");
@@ -68,11 +68,11 @@ std::vector<uint8_t> SynchronizeMotorCmdI::getMotorsId(EMotorType type) const
 }
 
 /**
- * @brief SynchronizeMotorCmdI::getParams
+ * @brief ISynchronizeMotorCmd::getParams
  * @param type
  * @return
  */
-std::vector<uint32_t> SynchronizeMotorCmdI::getParams(EMotorType type) const
+std::vector<uint32_t> ISynchronizeMotorCmd::getParams(EMotorType type) const
 {
     if (!_motor_params_map.count(type))
         throw std::out_of_range("type not known of synchonized command");
@@ -81,58 +81,58 @@ std::vector<uint32_t> SynchronizeMotorCmdI::getParams(EMotorType type) const
 }
 
 /**
- * @brief SynchronizeMotorCmdI::getMotorTypes
+ * @brief ISynchronizeMotorCmd::getMotorTypes
  * @return
  */
-std::set<EMotorType> SynchronizeMotorCmdI::getMotorTypes() const
+std::set<EMotorType> ISynchronizeMotorCmd::getMotorTypes() const
 {
     return _types;
 }
 
 /**
- * @brief SynchronizeMotorCmdI::getTypeCmd()
+ * @brief ISynchronizeMotorCmd::getTypeCmd()
 */
-int SynchronizeMotorCmdI::getTypeCmd() const
+int ISynchronizeMotorCmd::getTypeCmd() const
 {
     return 0;
 }
 
 /**
- * @brief SynchronizeMotorCmdI::isCmdStepper
+ * @brief ISynchronizeMotorCmd::isCmdStepper
 */
-bool SynchronizeMotorCmdI::isCmdStepper() const
+bool ISynchronizeMotorCmd::isCmdStepper() const
 {
     return false;
 }
 
 /**
- * @brief SynchronizeMotorCmdI::isCmdDxl
+ * @brief ISynchronizeMotorCmd::isCmdDxl
 */
-bool SynchronizeMotorCmdI::isCmdDxl() const
+bool ISynchronizeMotorCmd::isCmdDxl() const
 {
     return false;
 }
 
 /**
- * @brief SynchronizeMotorCmdI::isValid
+ * @brief ISynchronizeMotorCmd::isValid
 */
-bool SynchronizeMotorCmdI::isValid() const
+bool ISynchronizeMotorCmd::isValid() const
 {
     return false;
 }
 
 /**
- * @brief SynchronizeMotorCmdI::str
+ * @brief ISynchronizeMotorCmd::str
 */
-std::string SynchronizeMotorCmdI::str() const
+std::string ISynchronizeMotorCmd::str() const
 {
     return "";
 }
 
 /**
- * @brief SynchronizeMotorCmdI::reset
+ * @brief ISynchronizeMotorCmd::reset
 */
-void SynchronizeMotorCmdI::reset()
+void ISynchronizeMotorCmd::reset()
 {
 }
 }

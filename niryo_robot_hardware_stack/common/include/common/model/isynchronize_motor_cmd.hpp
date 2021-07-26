@@ -39,7 +39,7 @@ namespace model
 /**
  * @brief The SynchronizeMotorCmd class
  */
-class SynchronizeMotorCmdI
+class ISynchronizeMotorCmd
 {
     struct MotorParam {
         MotorParam(uint8_t id, uint32_t param) {
@@ -56,8 +56,8 @@ class SynchronizeMotorCmdI
     };
 
     public:
-        SynchronizeMotorCmdI();
-        virtual ~SynchronizeMotorCmdI();
+        ISynchronizeMotorCmd();
+        virtual ~ISynchronizeMotorCmd();
 
         // setters
         void addMotorParam(EMotorType type, uint8_t id, uint32_t param);

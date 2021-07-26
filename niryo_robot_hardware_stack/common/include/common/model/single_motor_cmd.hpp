@@ -37,7 +37,7 @@ namespace model
  * @brief The SingleMotorCmd class
  */
 template<typename T, typename TE>
-class SingleMotorCmd : public AbstractMotorCmd<T>, public SingleMotorCmdI
+class SingleMotorCmd : public AbstractMotorCmd<T>, public ISingleMotorCmd
 {
     public:
         SingleMotorCmd();
@@ -78,7 +78,7 @@ SingleMotorCmd<T, TE>::SingleMotorCmd(T type,
                                uint8_t motor_id,
                                uint32_t param) :
     AbstractMotorCmd<EDxlCommandType>(type),
-    SingleMotorCmdI(motor_id, param)
+    ISingleMotorCmd(motor_id, param)
 {}
 
 // ***********************
@@ -165,6 +165,10 @@ bool SingleMotorCmd<T, TE>::isValid() const
     return (T::CMD_TYPE_UNKNOWN != this->getType()) &&
            (0 != _id);
 }
+
+
+using DxlSingleCmd = SingleMotorCmd<EDxlCommandType, DxlCommandTypeEnum>;
+using StepperSingleCmd = SingleMotorCmd<EStepperCommandType, StepperCommandTypeEnum>;
 
 } // namespace model
 } // namespace common

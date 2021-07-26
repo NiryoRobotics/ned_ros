@@ -34,7 +34,7 @@ namespace model
 /**
  * @brief The StepperMotorCmd class
  */
-class StepperMotorCmd : public AbstractMotorCmd<EStepperCommandType>, public SingleMotorCmdI
+class StepperMotorCmd : public AbstractMotorCmd<EStepperCommandType>, public ISingleMotorCmd
 {
     public:
         StepperMotorCmd();
