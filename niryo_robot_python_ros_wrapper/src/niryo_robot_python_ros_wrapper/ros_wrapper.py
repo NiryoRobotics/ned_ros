@@ -40,6 +40,7 @@ from niryo_robot_vision.srv import SetImageParameter
 from niryo_robot_rpi.srv import GetDigitalIO, SetDigitalIO
 from niryo_robot_vision.srv import DebugMarkers, DebugMarkersRequest, DebugColorDetection, DebugColorDetectionRequest
 from niryo_robot_programs_manager.srv import SetProgramAutorun, SetProgramAutorunRequest, GetProgramAutorunInfos, GetProgramList, ManageProgram, ManageProgramRequest, GetProgram, GetProgramRequest, ExecuteProgram, ExecuteProgramRequest
+from niryo_robot_serial_number.srv import GetSerial
 from std_srvs.srv import Trigger as StdTrigger
 
 # Actions
@@ -71,7 +72,6 @@ class NiryoRosWrapper:
         self.__action_connection_timeout = rospy.get_param("/niryo_robot/python_ros_wrapper/action_connection_timeout")
         self.__action_execute_timeout = rospy.get_param("/niryo_robot/python_ros_wrapper/action_execute_timeout")
         self.__action_preempt_timeout = rospy.get_param("/niryo_robot/python_ros_wrapper/action_preempt_timeout")
-        self.__tool_command_list = rospy.get_param("/niryo_robot_tools/command_list")
         self.__simulation_mode = rospy.get_param("/niryo_robot/simulation_mode")
         self.__hardware_version = rospy.get_param("/niryo_robot/hardware_version")
         self.__can_enabled = rospy.get_param("/niryo_robot_hardware_interface/can_enabled")
@@ -1683,6 +1683,15 @@ class NiryoRosWrapper:
         :rtype: (int, str)
         """
         return self.__call_shutdown_rpi(2)
+
+    def get_serial_number(self):
+        """
+        Get the serial number
+        :return: status, message
+        :rtype: (int, str)
+        """
+        result = self.__call_service('/niryo_robot_serial_number/get', GetSerial)
+        return self.__classic_return_w_check(result)
 
 
     # - Conveyor
