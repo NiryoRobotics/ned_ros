@@ -64,7 +64,7 @@ class CanDriver : public common::model::IDriver
         void addMotor(uint8_t id, bool isConveyor = false);
 
         int readSingleCommand(std::shared_ptr<common::model::SingleMotorCmdI> cmd);
-        void executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, uint32_t> > cmd_vec);
+        void executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, int32_t> > cmd_vec);
 
         void startCalibration();
         void resetCalibration();

@@ -148,8 +148,6 @@ class TtlDriver : public common::model::IDriver
         int _singleWrite(int (AbstractMotorDriver::*singleWriteFunction)(uint8_t id, uint32_t), common::model::EMotorType motor_type,
                               std::shared_ptr<common::model::SingleMotorCmdI> cmd);
     private:
-        ros::NodeHandle _nh;
-
         std::shared_ptr<dynamixel::PortHandler> _PortHandler;
         std::shared_ptr<dynamixel::PacketHandler> _PacketHandler;
 

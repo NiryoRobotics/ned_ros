@@ -100,16 +100,16 @@ void CanDriver::resetCalibration()
  */
 bool CanDriver::init(ros::NodeHandle& nh)
 {
-    nh.getParam("calibration_timeout", _calibration_timeout);
+    nh.getParam("/niryo_robot_hardware_interface/joints_interface/calibration_timeout", _calibration_timeout);
     ROS_DEBUG("CanDriver::init - Calibration timeout %f", _calibration_timeout);
 
     std::vector<int> idListRaw;
     std::vector<std::string> typeListRaw;
     std::vector<std::string> typeProtocolList;
 
-    nh.getParam("motors_types/motor_id_list", idListRaw);
-    nh.getParam("motors_types/motor_type_list", typeListRaw);
-    nh.getParam("motors_types/motor_type_protocol", typeProtocolList);
+    nh.getParam("motors_params/motor_id_list", idListRaw);
+    nh.getParam("motors_params/motor_type_list", typeListRaw);
+    nh.getParam("motors_params/motor_type_protocol", typeProtocolList);
     
     // check that the two lists have the same size
     if (idListRaw.size() != typeListRaw.size() || idListRaw.size() != typeProtocolList.size())
@@ -119,7 +119,7 @@ bool CanDriver::init(ros::NodeHandle& nh)
     std::vector<int> idList;
     std::vector<std::string> typeList;
 
-    for (size_t i = 0; i < typeProtocolList.size(); i++)
+    for (size_t i = 0; i < typeProtocolList.size(); ++i)
     {
         if (typeProtocolList[i] == "can")
         {
@@ -131,7 +131,7 @@ bool CanDriver::init(ros::NodeHandle& nh)
     // debug - display info
     std::ostringstream ss;
     ss << "[";
-    for (size_t i = 0; i < idList.size(); i++)
+    for (size_t i = 0; i < idList.size(); ++i)
         ss << " id " << idList.at(i) << ",";
 
     std::string motor_string_list = ss.str();
@@ -141,7 +141,7 @@ bool CanDriver::init(ros::NodeHandle& nh)
     ROS_INFO("CanDriver::init - Stepper motor list: %s ", motor_string_list.c_str());
 
     // put everything in maps
-    for (size_t i = 0; i < idList.size(); i++)
+    for (size_t i = 0; i < idList.size(); ++i)
     {
         uint8_t id = static_cast<uint8_t>(idList.at(i));
 
@@ -171,9 +171,9 @@ int CanDriver::setupCAN(ros::NodeHandle& nh)
     int gpio_can_interrupt = 0;
 
     ros::NodeHandle nh_private("~");
-    nh.getParam("can_bus/spi_channel", spi_channel);
-    nh.getParam("can_bus/spi_baudrate", spi_baudrate);
-    nh.getParam("can_bus/gpio_can_interrupt", gpio_can_interrupt);
+    nh.getParam("bus_params/spi_channel", spi_channel);
+    nh.getParam("bus_params/spi_baudrate", spi_baudrate);
+    nh.getParam("bus_params/gpio_can_interrupt", gpio_can_interrupt);
 
     ROS_DEBUG("CanDriver::CanDriver - Can bus parameters: spi_channel : %d", spi_channel);
     ROS_DEBUG("CanDriver::CanDriver - Can bus parameters: spi_baudrate : %d", spi_baudrate);
@@ -369,7 +369,7 @@ int CanDriver::readSingleCommand(std::shared_ptr<SingleMotorCmdI> cmd)
  * @brief CanDriver::executeJointTrajectoryCmd
  * @param cmd_vec : need to be passed by copy, so that we ensure the data will not change in this method
  */
-void CanDriver::executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, uint32_t> > cmd_vec)
+void CanDriver::executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, int32_t> > cmd_vec)
 {
     for (auto const& cmd : cmd_vec)
     {

@@ -1,9 +1,0 @@
-# not used actually
-can_bus:
-    spi_channel: 0
-    spi_baudrate: 1000000
-    gpio_can_interrupt: 25
-
-ttl_bus:
-    baudrate: 1000000
-    uart_device_name: "/dev/ttyAMA0"

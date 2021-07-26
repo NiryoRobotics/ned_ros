@@ -107,7 +107,7 @@ void JointHardwareInterface::read(const ros::Time &/*time*/, const ros::Duration
  */
 void JointHardwareInterface::write(const ros::Time &/*time*/, const ros::Duration &/*period*/)
 {
-    std::vector<std::pair<uint8_t, uint32_t> > can_cmd;
+    std::vector<std::pair<uint8_t, int32_t> > can_cmd;
     std::vector<std::pair<uint8_t, uint32_t> > ttl_cmd;
 
     for (auto const& jState : _joint_list)

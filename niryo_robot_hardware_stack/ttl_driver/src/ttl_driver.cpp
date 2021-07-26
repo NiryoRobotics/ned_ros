@@ -55,7 +55,6 @@ namespace ttl_driver
  * @brief TtlDriver::TtlDriver
  */
 TtlDriver::TtlDriver(ros::NodeHandle& nh) :
-    _nh(nh),
     _calibration_status(EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED),
     _is_connection_ok(false),
     _debug_error_message("TtlDriver - No connection with Dynamixel motors has been made yet"),
@@ -82,8 +81,8 @@ TtlDriver::~TtlDriver()
 bool TtlDriver::init(ros::NodeHandle& nh)
 {
     // get params from rosparams
-    nh.getParam("ttl_bus/uart_device_name", _device_name);
-    nh.getParam("ttl_bus/baudrate", _uart_baudrate);
+    nh.getParam("bus_params/uart_device_name", _device_name);
+    nh.getParam("bus_params/baudrate", _uart_baudrate);
 
     _PortHandler.reset(dynamixel::PortHandler::getPortHandler(_device_name.c_str()));
     _PacketHandler.reset(dynamixel::PacketHandler::getPacketHandler(DXL_BUS_PROTOCOL_VERSION));
@@ -95,9 +94,9 @@ bool TtlDriver::init(ros::NodeHandle& nh)
     vector<string> typeListRaw;
     vector<string> typeProtocolList;
 
-    _nh.getParam("motors_types/motor_id_list", idListRaw);
-    _nh.getParam("motors_types/motor_type_list", typeListRaw);
-    _nh.getParam("motors_types/motor_type_protocol", typeProtocolList);
+    nh.getParam("motors_params/motor_id_list", idListRaw);
+    nh.getParam("motors_params/motor_type_list", typeListRaw);
+    nh.getParam("motors_params/motor_type_protocol", typeProtocolList);
 
     // check that the two lists have the same size
     if (idListRaw.size() != typeListRaw.size() || idListRaw.size() != typeProtocolList.size())
@@ -315,7 +314,7 @@ int TtlDriver::_singleWrite(int (AbstractMotorDriver::*singleWriteFunction)(uint
 }
 
 /**
- * @brief TtlDriver::removeDynamixel
+ * @brief TtlDriver::removeMotor
  * @param id
  */
 void TtlDriver::removeMotor(uint8_t id)

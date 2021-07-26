@@ -197,7 +197,7 @@ int CanDriverCore::motorCmdReport(uint8_t motor_id)
         {
             lock_guard<mutex> lck(_control_loop_mutex);
             ROS_INFO("CanDriverCore::launchMotorsReport - Debug - Send move command on motor %d", motor_id);
-            _can_driver->sendRelativeMoveCommand(motor_id, -1000*direction, 1500);
+            _can_driver->sendRelativeMoveCommand(motor_id, -1000 * direction, 1500);
             ros::Duration(0.2).sleep();
         }
         ros::Duration(3).sleep();
@@ -398,7 +398,8 @@ void CanDriverCore::controlLoop()
             }
 
             bool isFreqMet = control_loop_rate.sleep();
-            ROS_DEBUG_COND(!isFreqMet, "CanDriverCore::rosControlLoop : freq not met : expected (%f s) vs actual (%f s)",
+            ROS_DEBUG_COND(!isFreqMet, 
+                           "CanDriverCore::rosControlLoop : freq not met : expected (%f s) vs actual (%f s)",
                            control_loop_rate.expectedCycleTime().toSec(),
                            control_loop_rate.cycleTime().toSec());
         }
@@ -519,7 +520,7 @@ void CanDriverCore::clearConveyorCommandQueue()
  * @brief CanDriverCore::setTrajectoryControllerCommands
  * @param cmd
  */
-void CanDriverCore::setTrajectoryControllerCommands(const std::vector<std::pair<uint8_t, uint32_t> > &cmd)
+void CanDriverCore::setTrajectoryControllerCommands(const std::vector<std::pair<uint8_t, int32_t> > &cmd)
 {
     _joint_trajectory_cmd = cmd;
 }

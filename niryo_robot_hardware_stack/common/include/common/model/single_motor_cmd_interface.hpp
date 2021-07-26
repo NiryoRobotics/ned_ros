@@ -54,7 +54,6 @@ class SingleMotorCmdI
         // using in case steppers
         virtual std::vector<int32_t> getParams() const;
 
-        // AbstractMotorCmd interface
         virtual bool isCmdStepper() const;
         virtual bool isCmdDxl() const;
         virtual bool isValid() const;
