@@ -436,14 +436,34 @@ class CommandInterpreter:
     def __execute_trajectory_from_poses(self, *param_list):
         list_poses = []
         for pose in param_list[0]:
-            if len(pose) != 7:
-                self.__raise_exception_expected_parameters_nbr(7, len(pose))
+            if len(pose) != 7 and len(pose) != 6:
+                self.__raise_exception_expected_parameters_nbr('7 or 6', len(pose))
             list_poses.append(self.__map_list(pose, float))
 
         dist_smoothing = param_list[1]
         self.__check_type(dist_smoothing, float)
 
         self.__niryo_robot.execute_trajectory_from_poses(list_poses, dist_smoothing)
+        return self.__send_answer()
+
+    @check_nb_args(3)
+    def __execute_trajectory_from_poses_and_joints(self, *param_list):
+        list_poses_joints = []
+        for pose_joint in param_list[0]:
+            if len(pose_joint) != 7 and len(pose_joint) != 6:
+                self.__raise_exception_expected_parameters_nbr('7 or 6', len(pose_joint))
+            list_poses_joints.append(self.__map_list(pose_joint, float))
+
+        list_type = []
+        for type_ in param_list[1]:
+            if type_ != 'joint' and type_ != 'pose':
+                self.__raise_exception_expected_choice("'pose' or 'joint'", type_)
+            list_type.append(type_)
+
+        dist_smoothing = param_list[2]
+        self.__check_type(dist_smoothing, float)
+
+        self.__niryo_robot.execute_trajectory_from_poses_and_joints(list_poses_joints, list_type, dist_smoothing)
         return self.__send_answer()
 
     @check_nb_args(1)
@@ -455,8 +475,8 @@ class CommandInterpreter:
     def __save_trajectory(self, *param_list):
         list_poses = []
         for pose in param_list[1]:
-            if len(pose) != 7:
-                self.__raise_exception_expected_parameters_nbr(7, len(pose))
+            if len(pose) != 7 and len(pose) != 6:
+                self.__raise_exception_expected_parameters_nbr('7 or 6', len(pose))
             list_poses.append(self.__map_list(pose, float))
 
         self.__niryo_robot.save_trajectory(param_list[0], list_poses)
@@ -534,11 +554,34 @@ class CommandInterpreter:
         self.__niryo_robot.activate_electromagnet(pin)
         return self.__send_answer()
 
-    @check_nb_args(2)
+    @check_nb_args(1)
     def __deactivate_electromagnet(self, pin_string):
         pin = self.__check_and_get_from_dict(pin_string, self.__pin_nbr_string_dict_convertor)
 
         self.__niryo_robot.deactivate_electromagnet(pin)
+        return self.__send_answer()
+
+    # TCP
+    @check_nb_args(1)
+    def __enable_tcp(self, enable):
+        boolean_enable = self.__check_and_get_from_dict(enable, self.__boolean_string_dict_converter)
+        self.__niryo_robot.enable_tcp(boolean_enable)
+        return self.__send_answer()
+
+    @check_nb_args(6)
+    def __set_tcp(self, *param_list):
+        parameters_value_array = self.__map_list(param_list, float)
+        self.__niryo_robot.set_tcp(*parameters_value_array)
+        return self.__send_answer()
+
+    @check_nb_args(0)
+    def __reset_tcp(self):
+        self.__niryo_robot.reset_tcp()
+        return self.__send_answer()
+
+    @check_nb_args(0)
+    def __tool_reboot(self):
+        self.__niryo_robot.tool_reboot()
         return self.__send_answer()
 
     # - Hardware
@@ -625,6 +668,26 @@ class CommandInterpreter:
     def __get_image_compressed(self):
         compressed_image = self.__niryo_robot.get_compressed_image()
         return self.__send_answer_with_payload(compressed_image)
+
+    @check_nb_args(1)
+    def __set_image_brightness(self, brightness_factor):
+        self.__niryo_robot.set_brightness(brightness_factor)
+        return self.__send_answer()
+
+    @check_nb_args(1)
+    def __set_image_contrast(self, contrast_factor):
+        self.__niryo_robot.set_contrast(contrast_factor)
+        return self.__send_answer()
+
+    @check_nb_args(1)
+    def __set_image_saturation(self, saturation_factor):
+        self.__niryo_robot.set_saturation(saturation_factor)
+        return self.__send_answer()
+
+    @check_nb_args(0)
+    def __get_image_parameters(self):
+        brightness_factor, contrast_factor, saturation_factor = self.__niryo_robot.get_image_parameters()
+        return self.__send_answer(brightness_factor, contrast_factor, saturation_factor)
 
     @check_nb_args(5)
     def __get_target_pose_from_rel(self, *param_list):

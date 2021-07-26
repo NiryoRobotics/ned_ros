@@ -1,0 +1,4 @@
+float64 factor
+---
+int32 status
+string message

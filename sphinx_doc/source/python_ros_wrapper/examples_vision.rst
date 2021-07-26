@@ -1,16 +1,16 @@
 Examples: Vision
 ========================
-This document shows how to use Ned's vision set
+This document shows how to use Ned's Vision Set.
 
-If you want see more about Ned's vision functions, you can look at :ref:`API - Vision<Vision>`
+If you want see more about Ned's Vision functions, you can look at :ref:`API - Vision<Vision>`.
 
 Beforehand
 -------------------------------
 To realize the following examples, you need to have
-create a workspace
+create a workspace.
 
 As the examples start always the same, there is the code you need to
-add at the beginning of all of them ::
+add at the beginning of all of them: ::
 
     #!/usr/bin/env python
 
@@ -38,9 +38,9 @@ add at the beginning of all of them ::
     niryo_robot.update_tool()
 
 
-Simple Vision Pick
+Simple Vision pick
 -------------------------------
-This short example show how to do your first vision pick : ::
+This short example show how to do your first vision pick: ::
 
     niryo_robot.move_pose(*observation_pose)
     # Trying to pick target using camera
@@ -53,9 +53,3 @@ This short example show how to do your first vision pick : ::
         niryo_robot.place_from_pose(*place_pose)
 
     niryo_robot.set_learning_mode(True)
-
-Multi Reference Conditioning
--------------------------------
-
-Conditioning with Conveyor
--------------------------------

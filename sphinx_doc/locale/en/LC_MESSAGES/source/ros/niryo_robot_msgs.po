@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-23 16:51+0200\n"
+"POT-Creation-Date: 2021-04-26 12:18+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,7 +21,7 @@ msgstr ""
 "Generated-By: Babel 2.8.0\n"
 
 #: ../../source/ros/niryo_robot_msgs.rst:2
-msgid "Niryo Robot Messages Package"
+msgid "Niryo robot messages package"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_msgs.rst:4
@@ -31,7 +31,7 @@ msgid ""
 msgstr ""
 
 #: ../../source/ros/niryo_robot_msgs.rst:8
-msgid "Niryo Messages"
+msgid "Niryo messages"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_msgs.rst:10
@@ -97,7 +97,7 @@ msgid "several software version"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_msgs.rst:32
-msgid "Niryo Services"
+msgid "Niryo services"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_msgs.rst:34
@@ -161,7 +161,7 @@ msgid "Trigger a task"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_msgs.rst:59
-msgid "Niryo Message Dependencies"
+msgid "Niryo message dependencies"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_msgs.rst:61
@@ -169,7 +169,7 @@ msgid ":msgs_index:`geometry_msgs`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_msgs.rst:64
-msgid "Niryo Message files"
+msgid "Niryo message files"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_msgs.rst:67
@@ -231,4 +231,19 @@ msgstr ""
 #: ../../source/ros/niryo_robot_msgs.rst:148
 msgid "Trigger"
 msgstr ""
+
+#~ msgid "Niryo Robot Messages Package"
+#~ msgstr ""
+
+#~ msgid "Niryo Messages"
+#~ msgstr ""
+
+#~ msgid "Niryo Services"
+#~ msgstr ""
+
+#~ msgid "Niryo Message Dependencies"
+#~ msgstr ""
+
+#~ msgid "Niryo Message files"
+#~ msgstr ""
 

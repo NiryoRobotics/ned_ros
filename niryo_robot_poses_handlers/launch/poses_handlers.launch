@@ -9,6 +9,9 @@
     <arg name="saved_files_dir" value="$(arg dir_rpi)" unless="$(arg simulation_mode)"/>
 
     <node name="niryo_robot_poses_handlers" pkg="niryo_robot_poses_handlers" type="poses_handlers_node.py" output="screen">
+        <rosparam file="$(find niryo_robot_poses_handlers)/config/gazebo_workspaces.yaml" command="load"
+                  if="$(arg simulation_mode)"/>
+
         <param name="grip_dir" type="string" value="$(find niryo_robot_poses_handlers)/grips/$(arg hardware_version)/"/>
 
         <param name="workspace_dir" type="string"  value="$(arg saved_files_dir)niryo_robot_workspaces/"  />

@@ -11,30 +11,30 @@ Control with Python ROS Wrapper
 In order to control Ned more easily than calling each topics & services one by one,
 a Python ROS Wrapper has been built on top of ROS.
 
-For instance, a script realizing a moveJ via Python ROS Wrapper will look like : ::
+For instance, a script realizing a moveJ via Python ROS Wrapper will look like: ::
 
     niryo_robot = NiryoRosWrapper()
     niryo_robot.move_joints(0.1, -0.2, 0.0, 1.1, -0.5, 0.2)
 
 
-What this code is doing in a hidden way :
+What this code is doing in a hidden way:
 
  - It generates a :ref:`RobotMove Action Goal<RobotMove (Action)>` and set
-   it as a joint command with the corresponding joints value
- - Send goal to the Commander Action Server
- - Wait for the Commander Action Server to set Action as Finished
- - Check if action finished with a success
+   it as a joint command with the corresponding joints value.
+ - Send goal to the Arm Commander Action Server.
+ - Wait for the Arm Commander Action Server to set Action as finished.
+ - Check if action finished with a success.
 
 
 In this section, we will give some examples on how to use the Python ROS Wrapper to control the
 Ned, as well as a complete documentation of the functions available in the
-Ned Python ROS Wrapper
+Ned Python ROS Wrapper.
 
 .. hint::
     The Python ROS Wrapper forces the user to write his code directly in the robot, or, at least,
     copy the code on the robot via a terminal command.
     If you do not want that, and run code directly from your computer
-    you can use the python Package :ref:`PyNiryo`
+    you can use the python Package :ref:`PyNiryo`.
 
 
 .. toctree::

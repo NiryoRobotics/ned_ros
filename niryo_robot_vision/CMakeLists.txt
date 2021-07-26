@@ -7,12 +7,18 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
 )
 
+add_message_files(
+  FILES
+  ImageParameters.msg
+)
+
 add_service_files(
   DIRECTORY srv
   FILES
   DebugColorDetection.srv
   DebugMarkers.srv
   ObjDetection.srv
+  SetImageParameter.srv
   TakePicture.srv
 )
 

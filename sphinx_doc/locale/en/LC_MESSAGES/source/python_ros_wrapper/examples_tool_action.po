@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-23 16:51+0200\n"
+"POT-Creation-Date: 2021-04-26 12:18+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,21 +21,21 @@ msgstr ""
 "Generated-By: Babel 2.8.0\n"
 
 #: ../../source/python_ros_wrapper/examples_tool_action.rst:2
-msgid "Examples: Tool Action"
+msgid "Examples: tool action"
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_tool_action.rst:4
-msgid "This page shows how to control Ned's tools via the Python ROS Wrapper"
+msgid "This page shows how to control Ned's tools via the Python ROS Wrapper."
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_tool_action.rst:6
-msgid "If you want see more, you can look at :ref:`API - Tools<Tools>`"
+msgid "If you want see more, you can look at :ref:`API - Tools<Tools>`."
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_tool_action.rst:9
 msgid ""
 "If you are using the real robot, make sure the environment around it is "
-"clear"
+"clear."
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_tool_action.rst:12
@@ -43,7 +43,7 @@ msgid "Tool control"
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_tool_action.rst:15
-msgid "Equip Tool"
+msgid "Equip tool"
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_tool_action.rst:17
@@ -57,11 +57,11 @@ msgid ""
 "To do that, we should use the function "
 ":meth:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.update_tool`"
 " which take no argument. It will scan motor connections and set the new "
-"tool !"
+"tool!"
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_tool_action.rst:24
-msgid "The line to equip a new tool is ::"
+msgid "The line to equip a new tool is: ::"
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_tool_action.rst:31
@@ -70,29 +70,29 @@ msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_tool_action.rst:33
 msgid ""
-"To grasp with any tool, you can use the function "
+"To grasp with any tool, you can use the function: "
 ":meth:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.grasp_with_tool`."
-" This action correspond to :"
+" This action correspond to:"
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_tool_action.rst:36
-msgid "Close gripper for Grippers"
+msgid "Close gripper for Grippers."
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_tool_action.rst:37
-msgid "Pull Air for Vacuum pump"
+msgid "Pull Air for Vacuum pump."
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_tool_action.rst:38
-msgid "Activate for Electromagnet"
+msgid "Activate for Electromagnet."
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_tool_action.rst:40
-msgid "The code to grasp is ::"
+msgid "The code to grasp is: ::"
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_tool_action.rst:62
-msgid "To grasp by specifying parameters ::"
+msgid "To grasp by specifying parameters: ::"
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_tool_action.rst:92
@@ -101,66 +101,172 @@ msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_tool_action.rst:94
 msgid ""
-"To release with any tool, you can use the function "
+"To release with any tool, you can use the function: "
 ":meth:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.release_with_tool`."
 " This action correspond to:"
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_tool_action.rst:97
-msgid "Open gripper for Grippers"
+msgid "Open gripper for Grippers."
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_tool_action.rst:98
-msgid "Push Air for Vacuum pump"
+msgid "Push Air for Vacuum pump."
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_tool_action.rst:99
-msgid "Deactivate for Electromagnet"
+msgid "Deactivate for Electromagnet."
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_tool_action.rst:101
-msgid "The line to release is ::"
+msgid "The line to release is: ::"
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_tool_action.rst:105
-msgid "To release by specifying parameters ::"
+msgid "To release by specifying parameters: ::"
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_tool_action.rst:136
-msgid "Pick & Place with tools"
+msgid "Pick & place with tools"
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_tool_action.rst:138
 msgid ""
 "There is a plenty of ways to realise a pick and place with the ROS "
-"Wrapper. Methods will be presented from the lowest to highest level"
+"Wrapper. Methods will be presented from the lowest to highest level."
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_tool_action.rst:141
-msgid "Code used will be ::"
+msgid "Code used will be: ::"
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_tool_action.rst:163
-msgid "First Solution : the heaviest"
+msgid "First solution: the heaviest"
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_tool_action.rst:164
-msgid "Everything is done by hand ::"
+msgid "Everything is done by hand: ::"
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_tool_action.rst:198
-msgid "Second Solution : Pick from pose & Place from pose functions"
+msgid "Second solution: pick from pose & place from pose functions"
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_tool_action.rst:199
-msgid "We use predefined functions ::"
+msgid "We use predefined functions: ::"
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_tool_action.rst:208
-msgid "Third Solution : All in one"
+msgid "Third solution: all in one"
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_tool_action.rst:209
-msgid "We use THE predifined function ::"
+msgid "We use THE predifined function: ::"
 msgstr ""
+
+#~ msgid "Examples: Tool Action"
+#~ msgstr ""
+
+#~ msgid "This page shows how to control Ned's tools via the Python ROS Wrapper"
+#~ msgstr ""
+
+#~ msgid "If you want see more, you can look at :ref:`API - Tools<Tools>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "If you are using the real robot,"
+#~ " make sure the environment around it"
+#~ " is clear"
+#~ msgstr ""
+
+#~ msgid "Equip Tool"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "To do that, we should use the "
+#~ "function "
+#~ ":meth:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.update_tool`"
+#~ " which take no argument. It will "
+#~ "scan motor connections and set the "
+#~ "new tool !"
+#~ msgstr ""
+
+#~ msgid "The line to equip a new tool is ::"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "To grasp with any tool, you can"
+#~ " use the function "
+#~ ":meth:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.grasp_with_tool`."
+#~ " This action correspond to :"
+#~ msgstr ""
+
+#~ msgid "Close gripper for Grippers"
+#~ msgstr ""
+
+#~ msgid "Pull Air for Vacuum pump"
+#~ msgstr ""
+
+#~ msgid "Activate for Electromagnet"
+#~ msgstr ""
+
+#~ msgid "The code to grasp is ::"
+#~ msgstr ""
+
+#~ msgid "To grasp by specifying parameters ::"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "To release with any tool, you can"
+#~ " use the function "
+#~ ":meth:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.release_with_tool`."
+#~ " This action correspond to:"
+#~ msgstr ""
+
+#~ msgid "Open gripper for Grippers"
+#~ msgstr ""
+
+#~ msgid "Push Air for Vacuum pump"
+#~ msgstr ""
+
+#~ msgid "Deactivate for Electromagnet"
+#~ msgstr ""
+
+#~ msgid "The line to release is ::"
+#~ msgstr ""
+
+#~ msgid "To release by specifying parameters ::"
+#~ msgstr ""
+
+#~ msgid "Pick & Place with tools"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "There is a plenty of ways to "
+#~ "realise a pick and place with the"
+#~ " ROS Wrapper. Methods will be "
+#~ "presented from the lowest to highest "
+#~ "level"
+#~ msgstr ""
+
+#~ msgid "Code used will be ::"
+#~ msgstr ""
+
+#~ msgid "First Solution : the heaviest"
+#~ msgstr ""
+
+#~ msgid "Everything is done by hand ::"
+#~ msgstr ""
+
+#~ msgid "Second Solution : Pick from pose & Place from pose functions"
+#~ msgstr ""
+
+#~ msgid "We use predefined functions ::"
+#~ msgstr ""
+
+#~ msgid "Third Solution : All in one"
+#~ msgstr ""
+
+#~ msgid "We use THE predifined function ::"
+#~ msgstr ""
 

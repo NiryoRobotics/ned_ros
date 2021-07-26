@@ -15,7 +15,7 @@ class ShiftPose:
 
 class ToolID:
     """
-    Tools IDs (need to match tools ids in niryo_robot_tools package)
+    Tools IDs (need to match tools ids in niryo_robot_tools_commander package)
     """
 
     def __init__(self):
@@ -185,6 +185,7 @@ class CommandEnum(Enum):
     SAVE_TRAJECTORY = 83
     DELETE_TRAJECTORY = 84
     GET_SAVED_TRAJECTORY_LIST = 85
+    EXECUTE_TRAJECTORY_FROM_POSES_AND_JOINTS = 86
 
     # - Tools
     UPDATE_TOOL = 120
@@ -198,6 +199,10 @@ class CommandEnum(Enum):
     GET_CURRENT_TOOL_ID = 128
     GRASP_WITH_TOOL = 129
     RELEASE_WITH_TOOL = 130
+    ENABLE_TCP = 140
+    SET_TCP = 141
+    RESET_TCP = 142
+    TOOL_REBOOT = 145
 
     # - Hardware
     SET_PIN_MODE = 150
@@ -228,3 +233,8 @@ class CommandEnum(Enum):
     DELETE_WORKSPACE = 222
     GET_WORKSPACE_RATIO = 223
     GET_WORKSPACE_LIST = 224
+
+    SET_IMAGE_BRIGHTNESS = 230
+    SET_IMAGE_CONTRAST = 231
+    SET_IMAGE_SATURATION = 232
+    GET_IMAGE_PARAMETERS = 235

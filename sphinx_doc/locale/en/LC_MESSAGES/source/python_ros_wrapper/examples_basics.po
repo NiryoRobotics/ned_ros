@@ -11,14 +11,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-23 16:51+0200\n"
+"POT-Creation-Date: 2021-06-10 11:46+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.8.0\n"
+"Generated-By: Babel 2.9.1\n"
 
 #: ../../source/python_ros_wrapper/examples_basics.rst:2
 msgid "Examples: Basics"
@@ -27,11 +27,13 @@ msgstr ""
 #: ../../source/python_ros_wrapper/examples_basics.rst:4
 msgid ""
 "In this file, two short programs are implemented & commented in order to "
-"help you understand the philosophy behind the Python ROS Wrapper"
+"help you understand the philosophy behind the Python ROS Wrapper."
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_basics.rst:8
-msgid "If you are using the real robot, make sure the environment around is clear"
+msgid ""
+"If you are using the real robot, make sure the environment around is "
+"clear."
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_basics.rst:12
@@ -43,42 +45,42 @@ msgid "The following example shows a first use case. It's a simple MoveJ. ::"
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_basics.rst:35
-msgid "Code Details - First Move J"
+msgid "Code details - First MoveJ"
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_basics.rst:36
 msgid ""
 "First of all, we indicate to the shell that we are running a Python "
-"Script ::"
+"Script: ::"
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_basics.rst:40
-msgid "Then, We import the API package to be able to access functions ::"
+msgid "Then, We import the API package to be able to access functions: ::"
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_basics.rst:44
-msgid "Then, we instantiate a ROS Node in order to communicate with ROS master ::"
+msgid "Then, we install a ROS Node in order to communicate with ROS master: ::"
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_basics.rst:51
 msgid ""
 "We start a "
 ":class:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper` "
-"instance ::"
+"instance: ::"
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_basics.rst:55
 msgid ""
 "Once the connection is done, we calibrate the robot using its "
 ":meth:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.calibrate_auto`"
-" function ::"
+" function: ::"
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_basics.rst:60
 msgid ""
 "As the robot is now calibrated, we can do a Move Joints by giving the 6 "
-"axis positions in radians ! To do so, we use "
-":meth:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_joints`"
+"axis positions in radians! To do so, we use "
+":meth:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_joints`:"
 " ::"
 msgstr ""
 
@@ -89,22 +91,22 @@ msgstr ""
 #: ../../source/python_ros_wrapper/examples_basics.rst:68
 msgid ""
 "For our second example, we are going to develop an algorithm of pick and "
-"place ::"
+"place: ::"
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_basics.rst:99
-msgid "Code Details - First Pick And Place"
+msgid "Code details - first pick and place"
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_basics.rst:101
-msgid "First of all, we do the imports and start a ROS Node ::"
+msgid "First of all, we do the imports and start a ROS Node: ::"
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_basics.rst:110
 msgid ""
 "Then, create a "
 ":class:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper` "
-"instance & calibrate the robot ::"
+"instance & calibrate the robot: ::"
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_basics.rst:117
@@ -116,34 +118,155 @@ msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_basics.rst:122
 msgid ""
-"Now that our initialization is done, we can open the gripper (or push air"
-" from the vacuum) with "
+"Now that our initialization is done, we can open the Gripper (or push air"
+" from the Vacuum pump) with "
 ":meth:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.release_with_tool`,"
 " go to the picking pose via "
 ":meth:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_pose`"
 " & then catch an object with "
-":meth:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.grasp_with_tool`"
-" ! ::"
+":meth:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.grasp_with_tool`!"
+" ::"
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_basics.rst:135
-msgid "We now get to the place pose, and place the object ::"
+msgid "We now get to the place pose, and place the object. ::"
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_basics.rst:144
-msgid "Notes - Basics Examples"
+msgid "Notes - Basics examples"
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_basics.rst:147
 msgid ""
 "You may not have fully understood how to move the robot and use tools of "
 "Ned and that is totally fine because you will find more details on "
-"another examples page !"
+"another examples page!"
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_basics.rst:149
 msgid ""
 "The important thing to remember from this page is how to import the "
-"library & connect to the robot"
+"library & connect to the robot."
 msgstr ""
+
+#~ msgid ""
+#~ "In this file, two short programs "
+#~ "are implemented & commented in order "
+#~ "to help you understand the philosophy"
+#~ " behind the Python ROS Wrapper"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "If you are using the real robot,"
+#~ " make sure the environment around is"
+#~ " clear"
+#~ msgstr ""
+
+#~ msgid "Code Details - First Move J"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "First of all, we indicate to the"
+#~ " shell that we are running a "
+#~ "Python Script ::"
+#~ msgstr ""
+
+#~ msgid "Then, We import the API package to be able to access functions ::"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Then, we instantiate a ROS Node in"
+#~ " order to communicate with ROS master"
+#~ " ::"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "We start a "
+#~ ":class:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper`"
+#~ " instance ::"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Once the connection is done, we "
+#~ "calibrate the robot using its "
+#~ ":meth:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.calibrate_auto`"
+#~ " function ::"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "As the robot is now calibrated, we"
+#~ " can do a Move Joints by giving"
+#~ " the 6 axis positions in radians "
+#~ "! To do so, we use "
+#~ ":meth:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_joints`"
+#~ " ::"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "For our second example, we are "
+#~ "going to develop an algorithm of "
+#~ "pick and place ::"
+#~ msgstr ""
+
+#~ msgid "Code Details - First Pick And Place"
+#~ msgstr ""
+
+#~ msgid "First of all, we do the imports and start a ROS Node ::"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Then, create a "
+#~ ":class:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper`"
+#~ " instance & calibrate the robot ::"
+#~ msgstr ""
+
+#~ msgid "Notes - Basics Examples"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "You may not have fully understood "
+#~ "how to move the robot and use "
+#~ "tools of Ned and that is totally"
+#~ " fine because you will find more "
+#~ "details on another examples page !"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "The important thing to remember from "
+#~ "this page is how to import the "
+#~ "library & connect to the robot"
+#~ msgstr ""
+
+#~ msgid "Code details - First Move J"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Then, we instantiate a ROS Node in"
+#~ " order to communicate with ROS "
+#~ "master: ::"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "As the robot is now calibrated, we"
+#~ " can do a Move Joints by giving"
+#~ " the 6 axis positions in radians "
+#~ "! To do so, we use "
+#~ ":meth:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_joints`:"
+#~ " ::"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Now that our initialization is done, "
+#~ "we can open the gripper (or push"
+#~ " air from the vacuum) with "
+#~ ":meth:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.release_with_tool`,"
+#~ " go to the picking pose via "
+#~ ":meth:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_pose`"
+#~ " & then catch an object with "
+#~ ":meth:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.grasp_with_tool`"
+#~ " ! ::"
+#~ msgstr ""
+
+#~ msgid "We now get to the place pose, and place the object ::"
+#~ msgstr ""
 

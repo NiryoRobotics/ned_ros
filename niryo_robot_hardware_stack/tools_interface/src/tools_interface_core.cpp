@@ -18,6 +18,7 @@ void ToolsInterfaceCore::initServices()
     _close_gripper_server = _nh.advertiseService("niryo_robot/tools/close_gripper", &ToolsInterfaceCore::_callbackCloseGripper, this);
     _pull_air_vacuum_pump_server = _nh.advertiseService("niryo_robot/tools/pull_air_vacuum_pump", &ToolsInterfaceCore::_callbackPullAirVacuumPump, this);
     _push_air_vacuum_pump_server = _nh.advertiseService("niryo_robot/tools/push_air_vacuum_pump", &ToolsInterfaceCore::_callbackPushAirVacuumPump, this);
+    _tool_reboot_server = _nh.advertiseService("niryo_robot/tools/reboot", &ToolsInterfaceCore::_callbackToolReboot, this);
 
     _current_tools_id_publisher = _nh.advertise<std_msgs::Int32>("/niryo_robot_hardware/tools/current_id", 1, true);
 }
@@ -84,6 +85,20 @@ bool ToolsInterfaceCore::_callbackPingAndSetDxlTool(tools_interface::PingDxlTool
     res.id = _tool->getId();
     pubToolId(_tool->getId());
 
+    return true;
+}
+
+bool ToolsInterfaceCore::_callbackToolReboot(std_srvs::Trigger::Request &req, std_srvs::Trigger::Response &res)
+{
+    if (_tool->getId() != 0)
+    {
+        std::lock_guard<std::mutex> lck(_tool_mutex);
+        res.success = _dynamixel->rebootMotor(_tool->getId(), _tool->getType());
+        res.message = (res.success) ? "Tool reboot succeeded" : "Tool reboot failed";
+        return true;
+    }
+    res.success = true;
+    res.message = "No Tool";
     return true;
 }
 

@@ -1,15 +1,15 @@
-Niryo Robot Stepper Driver Package
+Niryo robot stepper driver package
 ===================================
 
-| This package handles stepper motors communication 
+| This package handles stepper motors communication.
 
-Stepper Driver Node
+Stepper driver node
 --------------------------
-The ROS Node is made to :
- - Send commands to stepper motor
- - Receive stepper motors data
+The ROS Node is made to:
+ - Send commands to stepper motors.
+ - Receive stepper motors data.
 
-Parameters - Stepper Driver
+Parameters - stepper driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. list-table:: Stepper Driver's Parameters 
@@ -22,25 +22,25 @@ Parameters - Stepper Driver
       -  Description
    *  -  ``can_hardware_control_loop_frequency``
       -  | control loop frequency.
-         | Default : '1500.0'
+         | Default: '1500.0'
    *  -  ``can_hw_write_frequency``
       -  | Write frequency.
-         | Default : '50.0'
+         | Default: '50.0'
    *  -  ``can_hw_check_connection_frequency``
-      -  | Check can connection frequency.
-         | Default : '2.0'
+      -  | Check steppers connection frequency.
+         | Default: '2.0'
    *  -  ``stepper_motor_id_list``
       -  | list of steppers ID
-         | Default : '[1,2,3]'
+         | Default: '[1,2,3]'
 
 
-Dependencies - Stepper Driver
+Dependencies - stepper driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 - `mcp_can_rpi <https://github.com/coryjfowler/MCP_CAN_lib>`_
 - :ref:`niryo_robot_msgs <Niryo Robot Messages Package>`
 
-Services & Messages files - Stepper Driver
+Services & messages files - stepper driver
 -------------------------------------------------
 
 StepperMotorHardwareStatus (Message)

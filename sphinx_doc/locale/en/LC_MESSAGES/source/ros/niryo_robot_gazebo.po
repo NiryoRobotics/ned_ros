@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-23 16:51+0200\n"
+"POT-Creation-Date: 2021-04-26 12:18+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,7 +21,7 @@ msgstr ""
 "Generated-By: Babel 2.8.0\n"
 
 #: ../../source/ros/niryo_robot_gazebo.rst:2
-msgid "Niryo Robot Gazebo Package"
+msgid "Niryo robot Gazebo package"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_gazebo.rst:10
@@ -40,11 +40,11 @@ msgstr ""
 msgid ""
 "When launching the Gazebo version of the ROS Stack, the file "
 "**niryo_robot_gazebo_world.launch.xml** will be called to generate the "
-"Gazebo world"
+"Gazebo world."
 msgstr ""
 
 #: ../../source/ros/niryo_robot_gazebo.rst:21
-msgid "Create your own World"
+msgid "Create your own world"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_gazebo.rst:23
@@ -57,6 +57,26 @@ msgstr ""
 #: ../../source/ros/niryo_robot_gazebo.rst:27
 msgid ""
 "You can take a look at the Gazebo world by launching it without robot by "
-"precising the world name in the arg *world_name* ::"
+"precising the world name in the arg *world_name*: ::"
 msgstr ""
+
+#~ msgid "Niryo Robot Gazebo Package"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "When launching the Gazebo version of "
+#~ "the ROS Stack, the file "
+#~ "**niryo_robot_gazebo_world.launch.xml** will be "
+#~ "called to generate the Gazebo world"
+#~ msgstr ""
+
+#~ msgid "Create your own World"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "You can take a look at the "
+#~ "Gazebo world by launching it without "
+#~ "robot by precising the world name "
+#~ "in the arg *world_name* ::"
+#~ msgstr ""
 
