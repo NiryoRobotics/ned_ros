@@ -1,6 +1,6 @@
 <launch>
     <!-- Arguments definition -->
-    <arg name="iot_enabled" default="false"/>
+    <arg name="debug" default="false"/>
 
     <!-- Start ROS as Niryo One -->
     <include file="$(find niryo_robot_bringup)/launch/niryo_robot_base_robot.launch.xml">>
