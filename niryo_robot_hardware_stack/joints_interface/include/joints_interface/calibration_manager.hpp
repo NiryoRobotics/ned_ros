@@ -70,12 +70,11 @@ public:
         bool get_motors_calibration_offsets(std::vector<int> &motor_id_list, std::vector<int>& steps_list);
 
 private:
-    ros::NodeHandle _nh;
-    std::shared_ptr<can_driver::CanDriverCore> _can_driver_core;
-    std::shared_ptr<ttl_driver::TtlDriverCore> _ttl_driver_core;
-    std::shared_ptr<joint_driver::JointDriver> _jdriver;
-    
-    std::vector<std::shared_ptr<common::model::JointState> > _joint_list;
+        std::shared_ptr<can_driver::CanDriverCore> _can_driver_core;
+        std::shared_ptr<ttl_driver::TtlDriverCore> _ttl_driver_core;
+        std::shared_ptr<joint_driver::JointDriver> _jdriver;
+        
+        std::vector<std::shared_ptr<common::model::JointState> > _joint_list;
 
         bool _calibration_in_progress{false};
         int _calibration_timeout{0};
