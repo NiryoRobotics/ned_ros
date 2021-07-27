@@ -32,6 +32,7 @@
 #include "can_driver/can_driver_core.hpp"
 #include "common/model/conveyor_state.hpp"
 #include "common/model/motor_type_enum.hpp"
+#include "common/model/stepper_command_type_enum.hpp"
 
 using ::std::lock_guard;
 using ::std::mutex;

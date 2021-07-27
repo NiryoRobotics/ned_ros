@@ -48,8 +48,6 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "common/model/stepper_motor_state.hpp"
 #include "common/model/dxl_motor_state.hpp"
 #include "common/model/motor_type_enum.hpp"
-#include "common/model/single_motor_cmd.hpp"
-#include "common/model/synchronize_motor_cmd.hpp"
 
 namespace ttl_driver
 {
@@ -163,7 +161,7 @@ class TtlDriverCore : public common::model::IDriverCore, public common::model::I
 
         std::vector<std::pair<uint8_t, uint32_t> > _joint_trajectory_cmd;
 
-        // dxl cmds
+        // ttl cmds
         std::shared_ptr<common::model::ISynchronizeMotorCmd> _sync_cmds;
         std::queue<std::shared_ptr<common::model::ISingleMotorCmd> > _single_cmds;
         std::queue < std::shared_ptr < common::model::DxlSingleCmd> > _dxl_end_effector_cmds;

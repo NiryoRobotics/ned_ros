@@ -23,7 +23,6 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <string>
 #include <type_traits>
 
-#include "common/model/iobject.hpp"
 #include "common/model/abstract_enum.hpp"
 
 namespace common
@@ -35,14 +34,13 @@ namespace model
  * @brief The AbstractMotorCmd class
  */
 template<typename E>
-class AbstractMotorCmd : public IObject
+class AbstractMotorCmd
 {
 
     public:
         AbstractMotorCmd(E type);
         virtual ~AbstractMotorCmd();
 
-        virtual void reset() = 0;
         virtual void clear() = 0;
 
         // setters

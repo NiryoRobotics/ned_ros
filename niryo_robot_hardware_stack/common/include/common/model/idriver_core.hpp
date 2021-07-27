@@ -32,8 +32,8 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "niryo_robot_msgs/BusState.h"
 #include "motor_type_enum.hpp"
 #include "common/model/joint_state.hpp"
-#include "common/model/single_motor_cmd_interface.hpp"
-#include "common/model/synchronize_motor_cmd_interface.hpp"
+#include "common/model/isingle_motor_cmd.hpp"
+#include "common/model/isynchronize_motor_cmd.hpp"
 #include "common/model/stepper_calibration_status_enum.hpp"
 namespace common
 {
@@ -75,8 +75,6 @@ class IDriverCore
         virtual void controlLoop() = 0;
         virtual void _executeCommand() = 0;
 
-    protected:
-
 };
 
 /**
@@ -85,7 +83,6 @@ class IDriverCore
 inline
 IDriverCore::~IDriverCore()
 {
-
 }
 
 } // namespace model

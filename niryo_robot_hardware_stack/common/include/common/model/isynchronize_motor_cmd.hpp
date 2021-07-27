@@ -1,5 +1,5 @@
 /*
-synchronize_motor_cmd_interface.hpp
+isynchronize_motor_cmd.hpp
 Copyright (C) 2020 Niryo
 All rights reserved.
 
@@ -17,8 +17,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
-#ifndef _SYNCHRONIZE_MOTOR_CMD_INTERFACE_H
-#define _SYNCHRONIZE_MOTOR_CMD_INTERFACE_H
+#ifndef _ISYNCHRONIZE_MOTOR_CMD_H
+#define _ISYNCHRONIZE_MOTOR_CMD_H
 
 #include <string>
 #include <vector>
@@ -26,6 +26,8 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <memory>
 #include <sstream>
 #include <typeinfo>
+
+#include "common/model/iobject.hpp"
 
 #include "common/model/abstract_motor_cmd.hpp"
 #include "common/model/motor_type_enum.hpp"
@@ -39,50 +41,43 @@ namespace model
 /**
  * @brief The SynchronizeMotorCmd class
  */
-class ISynchronizeMotorCmd
+
+class ISynchronizeMotorCmd : public IObject
 {
-    struct MotorParam {
-        MotorParam(uint8_t id, uint32_t param) {
-            motors_id.emplace_back(id);
-            params.emplace_back(param);
-        }
-
-        bool isValid() const {
-            return !motors_id.empty() && motors_id.size() == params.size();
-        }
-
-        std::vector<uint8_t> motors_id;
-        std::vector<uint32_t> params;
-    };
-
     public:
-        ISynchronizeMotorCmd();
-        virtual ~ISynchronizeMotorCmd();
+        virtual ~ISynchronizeMotorCmd() override = 0;
 
         // setters
-        void addMotorParam(EMotorType type, uint8_t id, uint32_t param);
+        virtual void addMotorParam(EMotorType type, uint8_t id, uint32_t param) = 0;
 
         // getters
-        std::vector<uint8_t> getMotorsId(EMotorType type) const;
-        std::vector<uint32_t> getParams(EMotorType type) const;
-        std::set<EMotorType> getMotorTypes() const;
+        virtual std::vector<uint8_t> getMotorsId(EMotorType type) const = 0;
+        virtual std::vector<uint32_t> getParams(EMotorType type) const = 0;
+        virtual std::set<EMotorType> getMotorTypes() const = 0;
 
         // AbstractMotorCmd interface
         // This method help get type of a command through SynchronizeMotorCmd interface
-        virtual int getTypeCmd() const;
+        virtual int getTypeCmd() const = 0;
 
-        virtual bool isCmdStepper() const;
-        virtual bool isCmdDxl() const;
-        virtual bool isValid() const;
-        virtual std::string str() const;
-        virtual void reset();
+        virtual bool isCmdStepper() const = 0;
+        virtual bool isCmdDxl() const = 0;
 
-    protected:
-        std::set<EMotorType> _types;
-        std::map<EMotorType, MotorParam > _motor_params_map;
+    // IObject interface
+    public:
+        virtual void reset() override = 0;
+        virtual std::string str() const override = 0;
+        virtual bool isValid() const override = 0;
 };
+
+/**
+ * @brief ISynchronizeMotorCmd::~ISynchronizeMotorCmd
+ */
+inline
+ISynchronizeMotorCmd::~ISynchronizeMotorCmd()
+{
+}
 
 } // namespace model
 } // namespace common
 
-#endif // _SYNCHRONIZE_MOTOR_CMD_INTERFACE_H
+#endif // _ISYNCHRONIZE_MOTOR_CMD_H

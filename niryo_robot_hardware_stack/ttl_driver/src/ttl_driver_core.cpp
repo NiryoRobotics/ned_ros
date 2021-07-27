@@ -121,7 +121,7 @@ void TtlDriverCore::initParameters(ros::NodeHandle& nh)
     _delta_time_status_read = 1.0 / read_status_frequency;
     _delta_time_write = 1.0 / write_frequency;
 
-    _sync_cmds.reset(new common::model::ISynchronizeMotorCmd);
+    _sync_cmds->reset();
 }
 
 /**

@@ -34,7 +34,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "can_driver/StepperArrayMotorHardwareStatus.h"
 #include "niryo_robot_msgs/BusState.h"
 #include "niryo_robot_msgs/CommandStatus.h"
-#include "common/model/synchronize_stepper_motor_cmd.hpp"
+#include "common/model/isingle_motor_cmd.hpp"
 
 namespace can_driver
 {
@@ -67,7 +67,7 @@ class CanDriverCore : public common::model::IDriverCore, public common::model::I
         void resetCalibration() override;
 
         // direct commands
-        bool scanMotorId(uint8_t motor_to_find);
+        bool scanMotorId(uint8_t motor_to_find) override;
 
         // getters
         bool isCalibrationInProgress() const override ;

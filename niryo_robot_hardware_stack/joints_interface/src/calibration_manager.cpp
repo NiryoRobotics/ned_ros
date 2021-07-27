@@ -39,10 +39,9 @@
 
 using ::common::model::JointState;
 using ::common::model::EStepperCommandType;
-using ::common::model::StepperMotorCmd;
+using ::common::model::StepperSingleCmd;
 using ::common::model::StepperMotorState;
 using ::common::model::EStepperCalibrationStatus;
-using ::common::model::SynchronizeMotorCmd;
 using ::common::model::EDxlCommandType;
 
 namespace joints_interface
@@ -156,9 +155,9 @@ int CalibrationManager::startCalibration(int mode, std::string &result_message)
  */
 void CalibrationManager::_motorTorque(const std::shared_ptr<JointState>& motor, bool status)
 {
-    StepperMotorCmd stepper_cmd(EStepperCommandType::CMD_TYPE_TORQUE, motor->getId(), {status});
+    StepperSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_TORQUE, motor->getId(), {status});
     _jdriver->getProtocolOfMotor(motor->getName())->addSingleCommandToQueue(
-                                std::make_shared<StepperMotorCmd>(stepper_cmd));
+                                std::make_shared<StepperSingleCmd>(stepper_cmd));
 }
 
 /**
@@ -171,9 +170,9 @@ void CalibrationManager::_moveMotor(const std::shared_ptr<JointState>& motor, in
 {
     _motorTorque(motor, true);
 
-    StepperMotorCmd stepper_cmd(EStepperCommandType::CMD_TYPE_POSITION, motor->getId(), {steps});
+    StepperSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_POSITION, motor->getId(), {static_cast<uint32_t>(steps)});
     _jdriver->getProtocolOfMotor(motor->getName())->addSingleCommandToQueue(
-                                std::make_shared<StepperMotorCmd>(stepper_cmd));
+                                std::make_shared<StepperSingleCmd>(stepper_cmd));
 
     ros::Duration(delay).sleep();
 }
@@ -190,9 +189,9 @@ int CalibrationManager::_relativeMoveMotor(const std::shared_ptr<JointState>& mo
 {
     _motorTorque(motor, true);
 
-    StepperMotorCmd stepper_cmd(EStepperCommandType::CMD_TYPE_RELATIVE_MOVE, motor->getId(), {steps, delay});
+    StepperSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_RELATIVE_MOVE, motor->getId(), {steps, delay});
     _jdriver->getProtocolOfMotor(motor->getName())->addSingleCommandToQueue(
-                                std::make_shared<StepperMotorCmd>(stepper_cmd));
+                                std::make_shared<StepperSingleCmd>(stepper_cmd));
 
     if (wait)
     {
@@ -216,10 +215,10 @@ void CalibrationManager::setStepperCalibrationCommand(const std::shared_ptr<Step
     int32_t motor_direction = static_cast<int32_t>(pState->getDirection());
 
     // TODO need implement ttl driver for EStepperCommandType::CMD_TYPE_CALIBRATION cmd
-    StepperMotorCmd stepper_cmd(EStepperCommandType::CMD_TYPE_CALIBRATION, motor_id,
+    StepperSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_CALIBRATION, motor_id,
                                 {offset, delay, motor_direction * calibration_direction, timeout});
     _jdriver->getProtocolOfMotor(pState->getName())->addSingleCommandToQueue(
-                                std::make_shared<StepperMotorCmd>(stepper_cmd));
+                                std::make_shared<StepperSingleCmd>(stepper_cmd));
 
     ROS_INFO("Calibration Interface - start calibration for motor id %d :", motor_id);
 }
@@ -251,9 +250,9 @@ EStepperCalibrationStatus CalibrationManager::_auto_calibration()
 
     // 0. Torque ON for motor 2
 
-    StepperMotorCmd stepper_cmd(EStepperCommandType::CMD_TYPE_TORQUE, _joint_list.at(1)->getId(), {true});
+    StepperSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_TORQUE, _joint_list.at(1)->getId(), {true});
     _jdriver->getProtocolOfMotor(_joint_list.at(1)->getName())->addSingleCommandToQueue(
-                                std::make_shared<StepperMotorCmd>(stepper_cmd));
+                                std::make_shared<StepperSingleCmd>(stepper_cmd));
     sld.sleep();
 
     // 1. Relative Move Motor 3
@@ -368,9 +367,9 @@ EStepperCalibrationStatus CalibrationManager::_auto_calibration()
         {
             if (jState && jState->isStepper())
             {
-                StepperMotorCmd cmd(EStepperCommandType::CMD_TYPE_TORQUE, jState->getId(), {false});
+                StepperSingleCmd cmd(EStepperCommandType::CMD_TYPE_TORQUE, jState->getId(), {false});
                 _jdriver->getProtocolOfMotor(jState->getName())->addSingleCommandToQueue(
-                                            std::make_shared<StepperMotorCmd>(cmd)
+                                            std::make_shared<StepperSingleCmd>(cmd)
                 );
             }
         }
@@ -396,7 +395,7 @@ EStepperCalibrationStatus CalibrationManager::_auto_calibration()
     {
         ROS_ERROR("Calibration Interface -  An error occured while calibrating stepper motors");
     }
-    common::model::EStepperCalibrationStatus  calibration_status;
+    common::model::EStepperCalibrationStatus  calibration_status = common::model::EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED;
     if (_can_driver_core)
         calibration_status = _can_driver_core->getCalibrationStatus();
     else if (_ttl_driver_core)
@@ -496,13 +495,13 @@ bool CalibrationManager::_can_process_manual_calibration(std::string &result_mes
  */
 void CalibrationManager::_send_calibration_offset(uint8_t id, int offset_to_send, int absolute_steps_at_offset_position)
 {
-    StepperMotorCmd stepper_cmd(EStepperCommandType::CMD_TYPE_POSITION_OFFSET, id, {offset_to_send, absolute_steps_at_offset_position});
+    StepperSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_POSITION_OFFSET, id, {offset_to_send, absolute_steps_at_offset_position});
     if (_can_driver_core)
         _can_driver_core->addSingleCommandToQueue(
-                        std::make_shared<StepperMotorCmd>(stepper_cmd));
+                        std::make_shared<StepperSingleCmd>(stepper_cmd));
     else if (_ttl_driver_core)
         _ttl_driver_core->addSingleCommandToQueue(
-                        std::make_shared<StepperMotorCmd>(stepper_cmd)); // (CC) call add single command to Queue by if else but not
+                        std::make_shared<StepperSingleCmd>(stepper_cmd)); // (CC) call add single command to Queue by if else but not
                                                                         // by polymorphism make the program will work for the case all stepper use can or ttl,
                                                                         // not 2 protocol in the same time 
 }

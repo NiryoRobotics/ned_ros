@@ -35,17 +35,14 @@ using ::std::string;
 using ::std::to_string;
 using ::std::dynamic_pointer_cast;
 
-using ::common::model::DxlCommandTypeEnum;
 using ::common::model::MotorTypeEnum;
 using ::common::model::EMotorType;
 using ::common::model::StepperMotorState;
 using ::common::model::DxlMotorState;
-using ::common::model::StepperMotorCmd;
+using ::common::model::StepperSingleCmd;
 using ::common::model::EStepperCalibrationStatus;
-using ::common::model::SynchronizeMotorCmd;
 using ::common::model::EStepperCommandType;
 using ::common::model::EDxlCommandType;
-using ::common::model::SingleMotorCmd;
 
 namespace joints_interface
 {
@@ -285,14 +282,14 @@ void JointHardwareInterface::sendInitMotorsParams()
     {
         if (jState && jState->isStepper())
         {
-            StepperMotorCmd cmd(
+            StepperSingleCmd cmd(
                         EStepperCommandType::CMD_TYPE_MICRO_STEPS,
                         jState->getId(),
                         {8});
             if (_jdriver->getProtocolOfMotor(jState->getName())->getTypeDriver() == "can")
             {
                 if(_can_driver_core)
-                    _can_driver_core->addSingleCommandToQueue(std::make_shared<StepperMotorCmd>(cmd));
+                    _can_driver_core->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(cmd));
             }
             // TODO implement addSingleCommandToQueue with the same form for ttl_driver_core
             // else
@@ -306,19 +303,19 @@ void JointHardwareInterface::sendInitMotorsParams()
     {
         if (jState && jState->isStepper())
         {
-            StepperMotorCmd cmd(EStepperCommandType::CMD_TYPE_MAX_EFFORT, jState->getId(),
+            StepperSingleCmd cmd(EStepperCommandType::CMD_TYPE_MAX_EFFORT, jState->getId(),
                                 {
-                                    static_cast<int32_t>(dynamic_pointer_cast<StepperMotorState>(jState)->getMaxEffort())
+                                    static_cast<uint32_t>(dynamic_pointer_cast<StepperMotorState>(jState)->getMaxEffort())
                                 });
             if (_jdriver->getProtocolOfMotor(jState->getName())->getTypeDriver() == "can")
             {
                 if (_can_driver_core)
-                    _can_driver_core->addSingleCommandToQueue(std::make_shared<StepperMotorCmd>(cmd));
+                    _can_driver_core->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(cmd));
             }
             else
             {
                 if (_ttl_driver_core)   
-                    _ttl_driver_core->addSingleCommandToQueue(std::make_shared<StepperMotorCmd>(cmd));  // TODO implement addSingleCommandToQueue with the same form for ttl_driver_core
+                    _ttl_driver_core->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(cmd));  // TODO implement addSingleCommandToQueue with the same form for ttl_driver_core
             }
 
         }
@@ -418,7 +415,7 @@ void JointHardwareInterface::activateLearningMode()
     ROS_DEBUG("JointHardwareInterface::activateLearningMode - activate learning mode");
 
     common::model::DxlSyncCmd dxl_cmd(EDxlCommandType::CMD_TYPE_LEARNING_MODE);
-    StepperMotorCmd stepper_cmd(EStepperCommandType::CMD_TYPE_TORQUE);
+    StepperSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_TORQUE);
 
     for (auto const& jState : _joint_list)
     {
@@ -435,12 +432,12 @@ void JointHardwareInterface::activateLearningMode()
                 if (_jdriver->getProtocolOfMotor(jState->getName())->getTypeDriver() == "can")
                 {
                     if(_can_driver_core)
-                        _can_driver_core->addSingleCommandToQueue(std::make_shared<StepperMotorCmd>(stepper_cmd));
+                        _can_driver_core->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(stepper_cmd));
                 }
                 else
                 {
                     if(_ttl_driver_core)
-                        _ttl_driver_core->addSingleCommandToQueue(std::make_shared<StepperMotorCmd>(stepper_cmd)); // TODO: verify it. stepper use 0 torque in learning mode 
+                        _ttl_driver_core->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(stepper_cmd)); // TODO: verify it. stepper use 0 torque in learning mode 
                 }
             }
         }
@@ -462,7 +459,7 @@ void JointHardwareInterface::deactivateLearningMode()
     ROS_DEBUG("JointHardwareInterface::deactivateLearningMode - deactivate learning mode");
 
     common::model::DxlSyncCmd dxl_cmd(EDxlCommandType::CMD_TYPE_LEARNING_MODE);
-    StepperMotorCmd stepper_cmd(EStepperCommandType::CMD_TYPE_TORQUE);
+    StepperSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_TORQUE);
 
     for (auto const& jState : _joint_list)
     {
@@ -480,12 +477,12 @@ void JointHardwareInterface::deactivateLearningMode()
                 if (_jdriver->getProtocolOfMotor(jState->getName())->getTypeDriver() == "can")
                 {
                     if(_can_driver_core)   
-                        _can_driver_core->addSingleCommandToQueue(std::make_shared<StepperMotorCmd>(stepper_cmd));
+                        _can_driver_core->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(stepper_cmd));
                 }
                 else
                 {
                     if(_ttl_driver_core)
-                        _ttl_driver_core->addSingleCommandToQueue(std::make_shared<StepperMotorCmd>(stepper_cmd)); // TODO: verify it. stepper use 0 torque in learning mode 
+                        _ttl_driver_core->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(stepper_cmd)); // TODO: verify it. stepper use 0 torque in learning mode 
                 }
             }
         }
@@ -510,17 +507,17 @@ void JointHardwareInterface::synchronizeMotors(bool synchronize)
     {
         if (jState && jState->isValid() && jState->isStepper())
         {
-            StepperMotorCmd stepper_cmd(EStepperCommandType::CMD_TYPE_SYNCHRONIZE, jState->getId(), {synchronize});
+            StepperSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_SYNCHRONIZE, jState->getId(), {synchronize});
             if (_jdriver->getProtocolOfMotor(jState->getName())->getTypeDriver() == "can")
             {
                 if (_can_driver_core)
-                    _can_driver_core->addSingleCommandToQueue(std::make_shared<StepperMotorCmd>(stepper_cmd));
+                    _can_driver_core->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(stepper_cmd));
             }
             else
             {
                  // (Thuc) only steppers are called when synchronizeMotors ?
                 if (_ttl_driver_core)
-                    _ttl_driver_core->addSingleCommandToQueue(std::make_shared<StepperMotorCmd>(stepper_cmd));
+                    _ttl_driver_core->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(stepper_cmd));
             }
         }
     }

@@ -1,5 +1,5 @@
 /*
-single_motor_cmd_interface.hpp
+isingle_motor_cmd.hpp
 Copyright (C) 2020 Niryo
 All rights reserved.
 
@@ -17,11 +17,13 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
-#ifndef _SINGLE_MOTOR_CMD_INTERFACE_H
-#define _SINGLE_MOTOR_CMD_INTERFACE_H
+#ifndef _ISINGLE_MOTOR_CMD_H
+#define _ISINGLE_MOTOR_CMD_H
 
 #include <string>
 #include <vector>
+
+#include "common/model/iobject.hpp"
 
 namespace common
 {
@@ -31,166 +33,44 @@ namespace model
 /**
  * @brief The SingleMotorCmd class
  */
-class ISingleMotorCmd
+class ISingleMotorCmd : public IObject
 {
     public:
-        ISingleMotorCmd() {}
-
-        ISingleMotorCmd(uint8_t motor_id,
-                       uint32_t param = 0);
-
-        ISingleMotorCmd(uint8_t motor_id, std::vector<int32_t> params = std::vector<int32_t>());
-
-        virtual ~ISingleMotorCmd() {};
+        virtual ~ISingleMotorCmd() override = 0;
 
         // setters
-        void setId(uint8_t id);
-        void setParam(uint32_t param);
-        void setParams(std::vector<int32_t> params); 
+        virtual void setId(uint8_t id) = 0;
+        virtual void setParam(uint32_t param) = 0;
+        virtual void setParams(std::vector<int32_t> params) = 0;
 
         // getters
-        uint8_t getId() const;
-        uint32_t getParam() const;
+        virtual uint8_t getId() const = 0;
+        virtual uint32_t getParam() const = 0;
         // using in case steppers
-        virtual std::vector<int32_t> getParams() const;
+        virtual std::vector<int32_t> getParams() const = 0;
 
-        virtual bool isCmdStepper() const;
-        virtual bool isCmdDxl() const;
-        virtual bool isValid() const;
-        virtual std::string str() const;
-        // This method help get type of a command through SingleMotorCmd interface
-        virtual int getTypeCmd() const;
-    protected:
-        uint8_t _id;
-        uint32_t _param;
-        std::vector<int32_t> _param_list;
+        virtual bool isCmdStepper() const = 0;
+        virtual bool isCmdDxl() const = 0;
+
+        virtual int getTypeCmd() const = 0;
+
+    // IObject interface
+    public:
+        virtual void reset() override = 0;
+        virtual std::string str() const override = 0;
+        virtual bool isValid() const override = 0;
 };
 
 /**
- * @brief ISingleMotorCmd::ISingleMotorCmd
- * @return
- */
-
-inline ISingleMotorCmd::ISingleMotorCmd(uint8_t motor_id, uint32_t param) :
-                _id(motor_id),
-                _param(param)
-{}
-
-/**
- * @brief ISingleMotorCmd::ISingleMotorCmd
- * @param type
- * @param motor_id
- * @param params
- */
-inline 
-ISingleMotorCmd::ISingleMotorCmd(uint8_t motor_id,
-                                 std::vector<int32_t> params) :
-    _id(motor_id),
-    _param_list(params)
-{
-}
-
-/**
- * @brief ISingleMotorCmd::getId
- * @return
+ * @brief ISingleMotorCmd::~ISingleMotorCmd
  */
 inline
-uint8_t ISingleMotorCmd::getId() const
+ISingleMotorCmd::~ISingleMotorCmd()
 {
-    return _id;
-}
 
-/**
- * @brief ISingleMotorCmd::getParam
- * @return
- */
-inline
-uint32_t ISingleMotorCmd::getParam() const
-{
-    return _param;
-}
-
-/**
- * @brief ISingleMotorCmd::getParam
- * @return
- */
-inline
-std::vector<int32_t> ISingleMotorCmd::getParams() const
-{
-    return _param_list;
-}
-
-/**
- * @brief ISingleMotorCmd::setId
- * @param id
- */
-inline
-void ISingleMotorCmd::setId(uint8_t id)
-{
-    _id = id;
-}
-
-/**
- * @brief ISingleMotorCmd::setParam
- * @param param
- */
-inline
-void ISingleMotorCmd::setParam(uint32_t param)
-{
-    _param = param;
-}
-
-/**
- * @brief ISingleMotorCmd::setParam
- * @param param
- */
-inline
-void ISingleMotorCmd::setParams(std::vector<int32_t> params) 
-{
-    _param_list = params;
-}
-
-/**
- * @brief ISingleMotorCmd::isCmdStepper
-*/
-inline bool ISingleMotorCmd::isCmdStepper() const
-{
-    return false;
-}
-
-/**
- * @brief ISingleMotorCmd::isCmdDxl
-*/
-inline bool ISingleMotorCmd::isCmdDxl() const
-{
-    return false;
-}
-
-/**
- * @brief ISingleMotorCmd::isValid
-*/
-inline bool ISingleMotorCmd::isValid() const
-{
-    return false;
-}
-
-/**
- * @brief ISingleMotorCmd::str
-*/
-inline std::string ISingleMotorCmd::str() const
-{
-    return "";
-}
-
-/**
- * @brief ISingleMotorCmd::getType()
-*/
-inline int ISingleMotorCmd::getTypeCmd() const
-{
-    return 0;
 }
 
 } // namespace model
 } // namespace common
 
-#endif
+#endif // _ISINGLE_MOTOR_CMD_H
