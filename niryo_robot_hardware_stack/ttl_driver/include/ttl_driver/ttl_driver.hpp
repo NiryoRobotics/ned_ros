@@ -277,7 +277,7 @@ int TtlDriver::readSynchronizeCommand(std::shared_ptr<common::model::ISynchroniz
 
     if (cmd->isValid())
     {
-        switch (Type(cmd->getTypeCmd()))
+        switch (Type(cmd->getType()))
         {
             case Type::CMD_TYPE_POSITION:
                 result = _syncWrite(&AbstractMotorDriver::syncWritePositionGoal, cmd);
@@ -295,8 +295,7 @@ int TtlDriver::readSynchronizeCommand(std::shared_ptr<common::model::ISynchroniz
                 result = _syncWrite(&AbstractMotorDriver::syncWriteTorqueEnable, cmd);
             break;
             default:
-                ROS_ERROR("TtlDriver::readSynchronizeCommand - Unsupported command type: %d",
-                                cmd->getTypeCmd());
+                ROS_ERROR("TtlDriver::readSynchronizeCommand - Unsupported command type: %d", cmd->getType());
             break;
         }
     }
@@ -330,7 +329,7 @@ int TtlDriver::readSingleCommand(std::shared_ptr<common::model::ISingleMotorCmd>
 
             while ((COMM_SUCCESS != result) && (counter < 50))
             {
-                switch ((Type)cmd->getTypeCmd())
+                switch (static_cast<Type>(cmd->getType()))
                 {
                 case Type::CMD_TYPE_VELOCITY:
                     result = _singleWrite(&AbstractMotorDriver::setGoalVelocity, state->getType(), cmd);

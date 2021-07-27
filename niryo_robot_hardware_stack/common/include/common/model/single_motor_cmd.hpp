@@ -24,7 +24,6 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <vector>
 #include <sstream>
 
-#include "common/model/abstract_motor_cmd.hpp"
 #include "common/model/dxl_command_type_enum.hpp"
 #include "common/model/stepper_command_type_enum.hpp"
 #include "common/model/isingle_motor_cmd.hpp"
@@ -38,7 +37,7 @@ namespace model
  * @brief The SingleMotorCmd class
  */
 template<typename E>
-class SingleMotorCmd : public AbstractMotorCmd<E>, public ISingleMotorCmd
+class SingleMotorCmd : public ISingleMotorCmd
 {
     public:
         SingleMotorCmd();
@@ -51,9 +50,12 @@ class SingleMotorCmd : public AbstractMotorCmd<E>, public ISingleMotorCmd
                        uint8_t motor_id,
                        std::vector<int32_t> params = std::vector<int32_t>());
 
-        // AbstractMotorCmd interface
-        virtual void clear() override;
+        // setters
+        void clear();
+        void setType(E type);
 
+        // getters
+        int getType() const override;
 
         // ISingleMotorCmd interface
         void setId(uint8_t id) override;
@@ -69,27 +71,28 @@ class SingleMotorCmd : public AbstractMotorCmd<E>, public ISingleMotorCmd
         bool isCmdStepper() const override;
         bool isCmdDxl() const override;
 
-        virtual int getTypeCmd() const override;
-
         // IObject interface
         virtual void reset() override;
         virtual std::string str() const override;
         virtual bool isValid() const override;
 
     private:
+        E _type;
+
         uint8_t _id;
         uint32_t _param;
         std::vector<int32_t> _param_list;
+
 };
 
 /**
  * @brief SingleMotorCmd::SingleMotorCmd
+ * @param type
  */
 template<typename E>
 SingleMotorCmd<E>::SingleMotorCmd() :
-    AbstractMotorCmd<E>(E::CMD_TYPE_UNKNOWN)
+    SingleMotorCmd(E::CMD_TYPE_UNKNOWN)
 {
-    reset();
 }
 
 /**
@@ -97,9 +100,11 @@ SingleMotorCmd<E>::SingleMotorCmd() :
  * @param type
  */
 template<typename E>
-SingleMotorCmd<E>::SingleMotorCmd(E type) :
-    AbstractMotorCmd<E>(type)
+SingleMotorCmd<E>::SingleMotorCmd(E type)
 {
+    static_assert(std::is_enum<E>::value, "E must be an enum");
+    setType(type);
+
     clear();
 }
 
@@ -113,10 +118,12 @@ template<typename E>
 SingleMotorCmd<E>::SingleMotorCmd(E type,
                                   uint8_t motor_id,
                                   uint32_t param) :
-    AbstractMotorCmd<E>(type),
     _id(motor_id),
     _param(param)
 {
+    static_assert(std::is_enum<E>::value, "E must be an enum");
+    setType(type);
+
 }
 
 /**
@@ -129,13 +136,47 @@ template<typename E>
 SingleMotorCmd<E>::SingleMotorCmd(E type,
                                   uint8_t motor_id,
                                   std::vector<int32_t> params) :
-    AbstractMotorCmd<E>(type),
     _id(motor_id),
     _param_list(params)
-{}
+{
+    static_assert(std::is_enum<E>::value, "E must be an enum");
+    setType(type);
+}
+
+
+/**
+ * @brief SingleMotorCmd::clear
+ */
+template<typename E>
+void SingleMotorCmd<E>::clear()
+{
+    _id = 0;
+    _param = 0;
+    _param_list.clear();
+}
+
+/**
+ * @brief SingleMotorCmd<E>::setType
+ * @param type
+ */
+template<typename E>
+void SingleMotorCmd<E>::setType(E type)
+{
+    _type = type;
+}
+
+/**
+ * @brief SingleMotorCmd<E>::getType
+ * @return
+ */
+template<typename E>
+int SingleMotorCmd<E>::getType() const
+{
+    return static_cast<int>(_type);
+}
 
 // ***********************
-//  AbstractMotorCmd intf
+//  ISingleMotorCmd intf
 // ***********************
 
 /**
@@ -200,16 +241,6 @@ SingleMotorCmd<E>::getParams() const
 }
 
 /**
- * @brief SingleMotorCmd::getTypeCmd
- * @return
- */
-template<typename E>
-int SingleMotorCmd<E>::getTypeCmd() const
-{
-    return (int)this->getType();
-}
-
-/**
  * @brief SingleMotorCmd::isCmdStepper
  * @param none
  * @return
@@ -239,17 +270,6 @@ void SingleMotorCmd<E>::reset()
 {
     this->setType(E::CMD_TYPE_UNKNOWN);
     clear();
-}
-
-/**
- * @brief SingleMotorCmd::clear
- */
-template<typename E>
-void SingleMotorCmd<E>::clear()
-{
-    _id = 0;
-    _param = 0;
-    _param_list.clear();
 }
 
 
@@ -283,7 +303,7 @@ template<>
 inline
 bool SingleMotorCmd<EDxlCommandType>::isValid() const
 {
-    return (EDxlCommandType::CMD_TYPE_UNKNOWN != this->getType()) &&
+    return (EDxlCommandType::CMD_TYPE_UNKNOWN != _type) &&
            (0 != _id);
 }
 

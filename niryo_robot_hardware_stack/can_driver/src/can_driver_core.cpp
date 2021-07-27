@@ -536,7 +536,7 @@ void CanDriverCore::addSingleCommandToQueue(std::shared_ptr<common::model::ISing
 
     if (cmd->isValid())
     {
-        if (cmd->getTypeCmd() == (int)EStepperCommandType::CMD_TYPE_CONVEYOR)
+        if (cmd->getType() == (int)EStepperCommandType::CMD_TYPE_CONVEYOR)
         {  // keep position cmd apart
             if (_conveyor_cmds.size() > QUEUE_OVERFLOW)
             {

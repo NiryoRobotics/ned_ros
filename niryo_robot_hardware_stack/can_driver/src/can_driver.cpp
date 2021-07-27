@@ -279,7 +279,7 @@ int CanDriver::readSingleCommand(std::shared_ptr<common::model::ISingleMotorCmd>
 
     if (cmd->isValid())  // certifies that params is not empty
     {
-        switch (EStepperCommandType(cmd->getTypeCmd()))
+        switch (EStepperCommandType(cmd->getType()))
         {
             case EStepperCommandType::CMD_TYPE_POSITION:
                 result = sendPositionCommand(cmd->getId(),

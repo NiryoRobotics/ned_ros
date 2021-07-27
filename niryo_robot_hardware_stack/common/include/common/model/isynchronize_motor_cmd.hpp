@@ -29,7 +29,6 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 
 #include "common/model/iobject.hpp"
 
-#include "common/model/abstract_motor_cmd.hpp"
 #include "common/model/motor_type_enum.hpp"
 #include "common/model/joint_state.hpp"
 
@@ -55,9 +54,8 @@ class ISynchronizeMotorCmd : public IObject
         virtual std::vector<uint32_t> getParams(EMotorType type) const = 0;
         virtual std::set<EMotorType> getMotorTypes() const = 0;
 
-        // AbstractMotorCmd interface
         // This method help get type of a command through SynchronizeMotorCmd interface
-        virtual int getTypeCmd() const = 0;
+        virtual int getType() const = 0;
 
         virtual bool isCmdStepper() const = 0;
         virtual bool isCmdDxl() const = 0;

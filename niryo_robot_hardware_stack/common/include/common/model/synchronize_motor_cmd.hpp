@@ -27,7 +27,6 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <sstream>
 #include <typeinfo>
 
-#include "common/model/abstract_motor_cmd.hpp"
 #include "common/model/dxl_command_type_enum.hpp"
 #include "common/model/stepper_command_type_enum.hpp"
 #include "common/model/motor_type_enum.hpp"
@@ -43,7 +42,7 @@ namespace model
  * @brief The SynchronizeMotorCmd class
  */
 template<typename E> 
-class SynchronizeMotorCmd : public AbstractMotorCmd<E>, public ISynchronizeMotorCmd
+class SynchronizeMotorCmd : public ISynchronizeMotorCmd
 {
     struct MotorParam {
         MotorParam(uint8_t id, uint32_t param) {
@@ -63,8 +62,12 @@ class SynchronizeMotorCmd : public AbstractMotorCmd<E>, public ISynchronizeMotor
         SynchronizeMotorCmd();
         SynchronizeMotorCmd(E type);
 
-        // AbstractMotorCmd interface
-        void clear() override;
+        // setters
+        void clear();
+        void setType(E type);
+
+        // getters
+        int getType() const override;
 
         // ISynchronizeMotor interface
 
@@ -76,7 +79,6 @@ class SynchronizeMotorCmd : public AbstractMotorCmd<E>, public ISynchronizeMotor
         std::vector<uint32_t> getParams(EMotorType type) const override;
         std::set<EMotorType> getMotorTypes() const override;
 
-        int getTypeCmd() const override;
         bool isCmdStepper() const override;
         bool isCmdDxl() const override;
 
@@ -86,19 +88,20 @@ class SynchronizeMotorCmd : public AbstractMotorCmd<E>, public ISynchronizeMotor
         virtual bool isValid() const override;
 
     private:
-        std::set<EMotorType> _types;
+        E _type;
+
+        std::set<EMotorType> _motor_types;
         std::map<EMotorType, MotorParam > _motor_params_map;
 };
 
 /**
  * @brief SynchronizeMotorCmd::SynchronizeMotorCmd
+ * @param type
  */
 template<typename E>
 SynchronizeMotorCmd<E>::SynchronizeMotorCmd() :
-    AbstractMotorCmd<E>(E::CMD_TYPE_UNKNOWN)
-
+    SynchronizeMotorCmd(E::CMD_TYPE_UNKNOWN)
 {
-    reset();
 }
 
 /**
@@ -106,9 +109,42 @@ SynchronizeMotorCmd<E>::SynchronizeMotorCmd() :
  * @param type
  */
 template<typename E>
-SynchronizeMotorCmd<E>::SynchronizeMotorCmd(E type) :
-    AbstractMotorCmd<E>(type)
+SynchronizeMotorCmd<E>::SynchronizeMotorCmd(E type)
 {
+    static_assert(std::is_enum<E>::value, "E must be an enum");
+    setType(type);
+
+    clear();
+}
+
+/**
+ * @brief SynchronizeMotorCmd::clear : clears the data (keep the cmd type)
+ */
+template<typename E>
+void SynchronizeMotorCmd<E>::clear()
+{
+    _motor_params_map.clear();
+    _motor_types.clear();
+}
+
+/**
+ * @brief SingleMotorCmd<E>::setType
+ * @param type
+ */
+template<typename E>
+void SynchronizeMotorCmd<E>::setType(E type)
+{
+    _type = type;
+}
+
+/**
+ * @brief SingleMotorCmd<E>::getType
+ * @return
+ */
+template<typename E>
+int SynchronizeMotorCmd<E>::getType() const
+{
+    return static_cast<int>(_type);
 }
 
 // ***********************
@@ -128,7 +164,7 @@ void SynchronizeMotorCmd<E>::addMotorParam(EMotorType type, uint8_t id, uint32_t
     if (!_motor_params_map.count(type))
     {
         _motor_params_map.insert(std::make_pair(type, MotorParam(id, param)));
-        _types.insert(type);
+        _motor_types.insert(type);
     }
     else
     {
@@ -175,17 +211,7 @@ template<typename E>
 std::set<EMotorType> 
 SynchronizeMotorCmd<E>::getMotorTypes() const
 {
-    return _types;
-}
-
-/**
- * @brief SingleMotorCmd::getTypeCmd
- * @return
- */
-template<typename E>
-int SynchronizeMotorCmd<E>::getTypeCmd() const
-{
-    return (int)this->getType();
+    return _motor_types;
 }
 
 /**
@@ -195,7 +221,7 @@ int SynchronizeMotorCmd<E>::getTypeCmd() const
 template<typename E>
 bool SynchronizeMotorCmd<E>::isValid() const
 {
-    if (E::CMD_TYPE_UNKNOWN == this->getType() || _motor_params_map.empty())
+    if (E::CMD_TYPE_UNKNOWN == _type || _motor_params_map.empty())
     {
         return false;
     }
@@ -241,16 +267,6 @@ void SynchronizeMotorCmd<E>::reset()
     clear();
 }
 
-/**
- * @brief SynchronizeMotorCmd::clear : clears the data (keep the cmd type)
- */
-template<typename E>
-void SynchronizeMotorCmd<E>::clear()
-{
-    _motor_params_map.clear();
-    _types.clear();
-}
-
 //********************************
 // specializations for dynamixel
 //********************************
@@ -263,7 +279,7 @@ std::string SynchronizeMotorCmd<common::model::EDxlCommandType>::str() const
 
     std::ostringstream ss;
     ss << "Sync motor cmd - ";
-    ss << DxlCommandTypeEnum(this->getType()).toString();
+    ss << DxlCommandTypeEnum(_type).toString();
     ss << ": ";
 
     if (!isValid())
@@ -305,7 +321,7 @@ std::string SynchronizeMotorCmd<common::model::EStepperCommandType>::str() const
 
     std::ostringstream ss;
     ss << "Sync motor cmd - ";
-    ss << StepperCommandTypeEnum(this->getType()).toString();
+    ss << StepperCommandTypeEnum(_type).toString();
     ss << ": ";
 
     if (!isValid())

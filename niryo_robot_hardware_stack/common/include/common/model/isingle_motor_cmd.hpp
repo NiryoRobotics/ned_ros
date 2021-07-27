@@ -52,7 +52,7 @@ class ISingleMotorCmd : public IObject
         virtual bool isCmdStepper() const = 0;
         virtual bool isCmdDxl() const = 0;
 
-        virtual int getTypeCmd() const = 0;
+        virtual int getType() const = 0;
 
     // IObject interface
     public:

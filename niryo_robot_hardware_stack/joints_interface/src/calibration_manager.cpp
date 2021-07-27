@@ -262,8 +262,7 @@ EStepperCalibrationStatus CalibrationManager::_auto_calibration()
     // 2. Move All Dynamixel to Home Position
     if(_ttl_driver_core)
     {
-        common::model::DxlSyncCmd dynamixel_cmd;
-        dynamixel_cmd.setType(EDxlCommandType::CMD_TYPE_TORQUE);
+        common::model::DxlSyncCmd dynamixel_cmd(EDxlCommandType::CMD_TYPE_TORQUE);
         dynamixel_cmd.addMotorParam(_joint_list.at(3)->getType(), _joint_list.at(3)->getId(), 1);
         dynamixel_cmd.addMotorParam(_joint_list.at(4)->getType(), _joint_list.at(4)->getId(), 1);
         dynamixel_cmd.addMotorParam(_joint_list.at(5)->getType(), _joint_list.at(5)->getId(), 1);
@@ -377,8 +376,7 @@ EStepperCalibrationStatus CalibrationManager::_auto_calibration()
         // forge dxl command
         if(_ttl_driver_core)
         {
-            common::model::DxlSyncCmd dynamixel_cmd;
-            dynamixel_cmd.setType(EDxlCommandType::CMD_TYPE_TORQUE);
+            common::model::DxlSyncCmd dynamixel_cmd(EDxlCommandType::CMD_TYPE_TORQUE);
             dynamixel_cmd.addMotorParam(_joint_list.at(3)->getType(), _joint_list.at(3)->getId(), 0);
             dynamixel_cmd.addMotorParam(_joint_list.at(4)->getType(), _joint_list.at(4)->getId(), 0);
             dynamixel_cmd.addMotorParam(_joint_list.at(5)->getType(), _joint_list.at(5)->getId(), 0);
