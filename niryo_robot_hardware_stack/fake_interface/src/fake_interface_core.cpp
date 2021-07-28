@@ -90,6 +90,7 @@ void FakeInterfaceCore::initParams()
     ros::param::get("~publish_software_version_frequency", _publish_software_version_frequency);
     ros::param::get("~publish_learning_mode_frequency", _publish_learning_mode_frequency);
     ros::param::get("/niryo_robot/info/ros_version", _ros_niryo_robot_version);
+    ros::param::get("/niryo_robot/info//niryo_robot_hardware_interface/hardware_version", _hardware_version);
 
     _ros_niryo_robot_version.erase(_ros_niryo_robot_version.find_last_not_of(" \n\r\t") + 1);
 

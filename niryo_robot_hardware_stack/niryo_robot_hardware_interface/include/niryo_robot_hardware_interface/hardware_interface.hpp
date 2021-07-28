@@ -62,6 +62,7 @@ namespace NiryoRobotHardwareInterface
 
         std::string _rpi_image_version;
         std::string _ros_niryo_robot_version;
+        std::string _hardware_version;
 
         void initNodes();
         void initPublishers();

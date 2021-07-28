@@ -167,6 +167,7 @@ namespace NiryoRobotHardwareInterface
 
         ros::param::get("/niryo_robot/info/image_version", _rpi_image_version);
         ros::param::get("/niryo_robot/info/ros_version", _ros_niryo_robot_version);
+        ros::param::get("/niryo_robot_hardware_interface/hardware_version", _hardware_version);
 
         ros::param::get("~simulation_mode", _simulation_mode);
         ros::param::get("~gazebo", _gazebo);
@@ -249,7 +250,7 @@ namespace NiryoRobotHardwareInterface
             }
 
             msg.rpi_temperature = cpu_temperature;
-            msg.hardware_version = 1;
+            msg.hardware_version = _hardware_version;
             
             msg.connection_up = (dxl_bus_state.connection_status && can_bus_state.connection_status);
 
@@ -376,6 +377,7 @@ namespace NiryoRobotHardwareInterface
             msg.stepper_firmware_versions = firmware_versions;
             msg.rpi_image_version = _rpi_image_version;
             msg.ros_niryo_robot_version = _ros_niryo_robot_version;
+            msg.robot_version = _hardware_version;
 
             _software_version_publisher.publish(msg);
             publish_software_version_rate.sleep();

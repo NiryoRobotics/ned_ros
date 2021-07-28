@@ -102,6 +102,7 @@ private:
 
     bool _learning_mode;
     std::string _ros_niryo_robot_version;
+    std::string _hardware_version;
 
     boost::shared_ptr<FakeJointHardwareInterface> _robot;
     boost::shared_ptr<controller_manager::ControllerManager> _cm;
