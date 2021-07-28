@@ -1,14 +1,17 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(stepper_driver)
+message("\n## Reading ${PROJECT_NAME}/CMakeLists.txt...")
+
 ## Compile as C++11, supported in ROS Kinetic and newer
 add_compile_options(-std=c++11)
 
 find_package(catkin REQUIRED
     COMPONENTS
-        roscpp
         mcp_can_rpi
-        niryo_robot_msgs
         message_generation
+        niryo_robot_msgs
+        roscpp
+        std_msgs
 )
 
 find_package(Boost REQUIRED COMPONENTS system)
@@ -29,8 +32,8 @@ add_service_files(
 
 generate_messages(
   DEPENDENCIES
-    std_msgs
     niryo_robot_msgs
+    std_msgs
 )
 
 catkin_package(
@@ -40,10 +43,20 @@ catkin_package(
         ${PROJECT_NAME}
         ${PROJECT_NAME}_core
     CATKIN_DEPENDS
-        roscpp
         mcp_can_rpi
+        message_runtime
         niryo_robot_msgs
+        roscpp
+        std_msgs
 )
+
+###########
+## Build ##
+###########
+
+## Specify additional locations of header files
+## Your package locations should be listed before other locations
+
 
 include_directories(
     include
@@ -51,43 +64,57 @@ include_directories(
 )
 
 add_library(${PROJECT_NAME}
-    src/stepper_motor_state.cpp
-    src/stepper_motor_cmd.cpp
     src/conveyor_state.cpp
+    src/stepper_motor_cmd.cpp
+    src/stepper_motor_state.cpp
 )
 
 add_library(${PROJECT_NAME}_core
-    src/stepper_driver_core.cpp
-    src/stepper_driver.cpp
+    src/${PROJECT_NAME}.cpp
+    src/${PROJECT_NAME}_core.cpp
 )
 
 add_executable(${PROJECT_NAME}_node
-  src/stepper_driver_node.cpp
+  src/${PROJECT_NAME}_node.cpp
 )
 
 add_executable(${PROJECT_NAME}_test
-  test/stepper_driver_test.cpp
+test/${PROJECT_NAME}_test.cpp
 )
 
+## Add dependencies to exported targets, like ROS msgs or srvs
 add_dependencies(${PROJECT_NAME}_node
   ${catkin_EXPORTED_TARGETS}
 )
-#
+
+add_dependencies(${PROJECT_NAME} 
+  ${PROJECT_NAME}_generate_messages_cpp
+)
+
+## Specify libraries to link executable targets against
+execute_process( COMMAND uname -m COMMAND tr -d '\n' OUTPUT_VARIABLE ARCHITECTURE )
+
 # wiringPi should be installed only on a Raspberry Pi board
-#
-
-EXECUTE_PROCESS( COMMAND uname -m COMMAND tr -d '\n' OUTPUT_VARIABLE ARCHITECTURE )
-
-if (${ARCHITECTURE} MATCHES "^(arm.*|aarch64.*|arm64.*)$")
-    message(STATUS "wiringPi library is required - arm processor")
+if(CMAKE_CROSSCOMPILING)
+    message(STATUS "Cross compiling : wiringPi library is required")
     target_link_libraries(${PROJECT_NAME}
-        ${catkin_LIBRARIES} 
-        -lwiringPi -lrt)
-else()
-    message(STATUS "wiringPi library not required")
-    target_link_libraries(${PROJECT_NAME}
-        ${catkin_LIBRARIES} 
+        ${catkin_LIBRARIES}
+        -lwiringPi -lrt -lcrypt
     )
+else()
+
+    if ("${ARCHITECTURE}" MATCHES "^(arm.*|aarch64.*|arm64.*)$")
+        message(STATUS "wiringdxl_debug_toolsPi library is required for ${PROJECT_NAME} (ARM processor)")
+        target_link_libraries(${PROJECT_NAME}
+            ${catkin_LIBRARIES}
+            -lwiringPi -lrt -lcrypt
+        )
+    else()
+        message(STATUS "wiringPi library not required")
+        target_link_libraries(${PROJECT_NAME}
+            ${catkin_LIBRARIES}
+        )
+    endif()
 endif()
 
 target_link_libraries(${PROJECT_NAME}_core
@@ -97,12 +124,21 @@ target_link_libraries(${PROJECT_NAME}_core
 
 target_link_libraries(${PROJECT_NAME}_node
   ${PROJECT_NAME}_core
-  ${catkin_LIBRARIES}
 )
 
 target_link_libraries(${PROJECT_NAME}_test
   ${PROJECT_NAME}_core
-  ${catkin_LIBRARIES}
+)
+
+#############
+## Install ##
+#############
+
+install(
+  TARGETS ${PROJECT_NAME}
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
 )
 
 install(
@@ -113,8 +149,25 @@ install(
 )
 
 install(
+  TARGETS ${PROJECT_NAME}_node
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
+
+# Mark other files for installation
+install(
   DIRECTORY include/${PROJECT_NAME}/
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 )
 
-add_dependencies(${PROJECT_NAME} stepper_driver_generate_messages_cpp)
+##########################
+## Static code analysis ##
+##########################
+
+find_package(roslint QUIET)
+
+if(roslint_FOUND)
+    roslint_cpp()
+else()
+    message(WARNING "roslint not found. Skipping roslint target building")
+endif()

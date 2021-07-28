@@ -4,6 +4,7 @@ project(niryo_robot_arm_commander)
 find_package(catkin REQUIRED COMPONENTS
   actionlib_msgs
   geometry_msgs
+  message_generation
   niryo_robot_msgs
 )
 
@@ -32,8 +33,8 @@ catkin_python_setup()
 
 generate_messages(
   DEPENDENCIES
-  geometry_msgs
   actionlib_msgs
+  geometry_msgs
   niryo_robot_msgs
 )
 
@@ -41,10 +42,16 @@ catkin_package(
   CATKIN_DEPENDS
   actionlib_msgs
   geometry_msgs
+  message_runtime
   niryo_robot_msgs
 )
 
 include_directories(
   ${catkin_INCLUDE_DIRS}
+)
+
+catkin_install_python(
+    PROGRAMS scripts/robot_commander_node.py
+    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 

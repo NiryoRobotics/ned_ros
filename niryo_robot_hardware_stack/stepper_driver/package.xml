@@ -2,7 +2,7 @@
 <package format="2">
   <name>stepper_driver</name>
   <version>0.0.0</version>
-  <description>The stepper_driver package provides an interface bewteen high level ROS packages and stepper motors</description>
+  <description>It provides an interface bewteen high level ROS packages and stepper motors</description>
   <author>Etienne Rey-Coquais</author>
   <author>Edouard Renard</author>
   <maintainer email="e.rey-coquais@niryo.com">Etienne Rey-Coquais</maintainer>
@@ -15,10 +15,17 @@
   <build_depend>mcp_can_rpi</build_depend>
   <build_depend>niryo_robot_msgs</build_depend>
   <build_depend>message_generation</build_depend>
+  <build_depend>std_msgs</build_depend>
 
   <exec_depend>roscpp</exec_depend>
   <exec_depend>mcp_can_rpi</exec_depend>
   <exec_depend>niryo_robot_msgs</exec_depend>
+  <exec_depend>message_runtime</exec_depend>
+
+  <build_export_depend>std_msgs</build_export_depend>
+  <build_export_depend>mcp_can_rpi</build_export_depend>
+  <build_export_depend>roscpp</build_export_depend>
+  <build_export_depend>niryo_robot_msgs</build_export_depend>
 
 </package>
 
