@@ -2,7 +2,7 @@
 <package format="2">
   <name>joints_interface</name>
   <version>0.0.0</version>
-  <description>The joints_interface package include all hardware componant to control the joints of the robot.</description>
+  <description>It includes all hardware componant to control the joints of the robot.</description>
   <author>Etienne Rey-Coquais</author>
   <author>Edouard Renard</author>
   <maintainer email="e.rey-coquais@niryo.com">Etienne Rey-Coquais</maintainer>
@@ -18,7 +18,8 @@
   <build_depend>std_msgs</build_depend>
   <build_depend>dynamixel_driver</build_depend>
   <build_depend>stepper_driver</build_depend>
-   <build_depend>actionlib</build_depend>
+  <build_depend>actionlib</build_depend>
+  <build_depend>sensor_msgs</build_depend>
   
   <exec_depend>roscpp</exec_depend>
   <exec_depend>hardware_interface</exec_depend>
@@ -27,6 +28,16 @@
   <exec_depend>std_msgs</exec_depend>
   <exec_depend>dynamixel_driver</exec_depend>
   <exec_depend>stepper_driver</exec_depend>
+  <exec_depend>xacro</exec_depend>
+  <exec_depend>niryo_robot_description</exec_depend>
   <exec_depend>actionlib</exec_depend>
+  <exec_depend>robot_state_publisher</exec_depend>
 
+  <build_export_depend>roscpp</build_export_depend>
+  <build_export_depend>actionlib</build_export_depend>
+  <build_export_depend>dynamixel_driver</build_export_depend>
+  <build_export_depend>stepper_driver</build_export_depend>
+  <build_export_depend>controller_manager</build_export_depend>
+  <build_export_depend>hardware_interface</build_export_depend>
+  <build_export_depend>niryo_robot_msgs</build_export_depend>
 </package>
