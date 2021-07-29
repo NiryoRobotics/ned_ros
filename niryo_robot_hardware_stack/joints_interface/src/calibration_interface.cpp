@@ -414,6 +414,9 @@ int CalibrationInterface::_manual_calibration()
 
     int steps_per_rev = int(STEPPERS_MICROSTEPS * STEPPERS_MOTOR_STEPS_PER_REVOLUTION);
 
+    std::string hardware_version = "";
+    ros::param::get("/niryo_robot_hardware_interface/hardware_version", hardware_version);
+
     for (int i = 0; i < motor_id_list.size(); i++)
     {
         int offset_to_send = 0;
@@ -434,9 +437,18 @@ int CalibrationInterface::_manual_calibration()
 
         else if (motor_id_list.at(i) == _joint_list.at(1).getId())
         {
-            offset_to_send = (sensor_offset_steps - rad_pos_to_steps(_offset_position_stepper_2, _gear_ratio_2, _direction_2));
-            absolute_steps_at_offset_position = sensor_offset_steps;
-
+            offset_to_send = sensor_offset_steps - rad_pos_to_steps(_offset_position_stepper_2, _gear_ratio_2, _direction_2);
+            if (hardware_version == "ned")
+            {
+                absolute_steps_at_offset_position = sensor_offset_steps;
+            }
+            else if (hardware_version == "one")
+            {
+                offset_to_send %= steps_per_rev;
+                if (offset_to_send < 0)
+                    offset_to_send += steps_per_rev;
+                absolute_steps_at_offset_position = offset_to_send;
+            }
             _send_calibration_offset(_joint_list.at(1).getId(), offset_to_send, absolute_steps_at_offset_position);
             _joint_list.at(1).setNeedCalibration(false);
             sld.sleep();
@@ -444,6 +456,7 @@ int CalibrationInterface::_manual_calibration()
 
         else if (motor_id_list.at(i) == _joint_list.at(2).getId())
         {
+
             offset_to_send = sensor_offset_steps - rad_pos_to_steps(_offset_position_stepper_3, _gear_ratio_3, _direction_3);
             absolute_steps_at_offset_position = sensor_offset_steps;
 

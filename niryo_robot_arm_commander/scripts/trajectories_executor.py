@@ -272,18 +272,15 @@ class TrajectoriesExecutor:
         Take a plan and retime it
         """
         start_state = self.__get_plan_start_robot_state(plan)
-
-        if optimize:
-            algorithm = "time_optimal_trajectory_generation"
-        else:
-            algorithm = "iterative_time_parameterization"
-
         if self.__hardware_version == "one":
             # for ros kinetic
-            plan_out = self.__arm.retime_trajectory(start_state, plan,
-                                                    velocity_scaling_factor=velocity_scaling_factor,
-                                                    algorithm=algorithm)
+            plan_out = self.__arm.retime_trajectory(start_state, plan, velocity_scaling_factor=velocity_scaling_factor)
         else:
+            if optimize:
+                algorithm = "time_optimal_trajectory_generation"
+            else:
+                algorithm = "iterative_time_parameterization"
+
             plan_out = self.__arm.retime_trajectory(start_state, plan,
                                                     velocity_scaling_factor=velocity_scaling_factor,
                                                     acceleration_scaling_factor=acceleration_scaling_factor,
