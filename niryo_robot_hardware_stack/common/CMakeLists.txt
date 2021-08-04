@@ -1,10 +1,7 @@
-message("\n## Reading common/CMakeLists.txt...")
-
 cmake_minimum_required(VERSION 3.0.2)
 project(common)
+message("\n## Reading ${PROJECT_NAME}/CMakeLists.txt...")
 
-option(BUILD_DOCS "Build documentation" OFF)
-option(BUILD_UNIT_TESTS "Build the unit tests" OFF)
 
 ## c++ options
 ## Compile as C++14, supported in ROS Melodic and newer
@@ -57,14 +54,17 @@ include_directories(
 add_library(${PROJECT_NAME}
     src/model/abstract_motor_state.cpp
     src/model/conveyor_state.cpp
+    src/model/dxl_command_type_enum.cpp
     src/model/dxl_motor_state.cpp
     src/model/joint_state.cpp
-    src/model/tool_state.cpp
-    src/model/stepper_motor_state.cpp
     src/model/motor_type_enum.cpp
-    src/model/dxl_command_type_enum.cpp
-    src/model/stepper_command_type_enum.cpp
+    src/model/single_motor_cmd.cpp
     src/model/stepper_calibration_status_enum.cpp
+    src/model/stepper_command_type_enum.cpp
+    src/model/stepper_motor_cmd.cpp
+    src/model/stepper_motor_state.cpp
+    src/model/synchronize_motor_cmd.cpp
+    src/model/tool_state.cpp
 )
 
 ## Add dependencies to exported targets, like ROS msgs or srvs
@@ -78,36 +78,31 @@ target_link_libraries(${PROJECT_NAME}
 ##   Doc   ##
 #############
 
-if(BUILD_DOCS)
-  find_program(rosdoc_lite_FOUND rosdoc_lite)
-  if(rosdoc_lite_FOUND)
-      add_custom_target (${PROJECT_NAME}_doc ALL
-          rosdoc_lite -o ${CMAKE_CURRENT_BINARY_DIR}/doc ${CMAKE_CURRENT_LIST_DIR}
-      )
-  else()
-    message(WARNING "rosdoc_lite not found. Skipping documentation building")
-  endif()
-
-endif(BUILD_DOCS)
+find_program(rosdoc_lite_FOUND rosdoc_lite)
+if(rosdoc_lite_FOUND)
+    add_custom_target (${PROJECT_NAME}_doc ALL
+        rosdoc_lite -o ${CMAKE_CURRENT_BINARY_DIR}/doc ${CMAKE_CURRENT_LIST_DIR}
+    )
+else()
+  message(WARNING "rosdoc_lite not found. Skipping documentation building")
+endif()
 
 #############
 ## Testing ##
 #############
 
 if(CATKIN_ENABLE_TESTING)
-  if(BUILD_UNIT_TESTS)
-    catkin_add_gtest(
+  catkin_add_gtest(
+    ${PROJECT_NAME}_unit_tests
+    test/unit_tests.cpp
+  )
+  if(TARGET ${PROJECT_NAME}_unit_tests)
+    target_link_libraries(
       ${PROJECT_NAME}_unit_tests
-      test/motor_states_unit_tests.cpp
+      ${PROJECT_NAME}
     )
-    if(TARGET ${PROJECT_NAME}_unit_tests)
-      target_link_libraries(
-        ${PROJECT_NAME}_unit_tests
-        ${PROJECT_NAME}
-      )
-    endif()
-  endif(BUILD_UNIT_TESTS)
-endif(CATKIN_ENABLE_TESTING)
+  endif()
+endif()
 
 #############
 ## Install ##
@@ -125,7 +120,7 @@ install(
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 )
 
-if (EXISTS ${CMAKE_CURRENT_BINARY_DIR}/doc/)
+if(rosdoc_lite_FOUND)
   install(
     DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc/
     DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/doc

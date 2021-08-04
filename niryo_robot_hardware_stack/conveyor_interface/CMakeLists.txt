@@ -1,11 +1,6 @@
-message("\n## Reading conveyor_interface/CMakeLists.txt...")
-
 cmake_minimum_required(VERSION 3.0.2)
 project(conveyor_interface)
-
-option(BUILD_DOCS "Build documentation" OFF)
-option(BUILD_UNIT_TESTS "Build the unit tests" OFF)
-option(BUILD_INTEGRATION_TESTS "Build the integration tests" OFF)
+message("\n## Reading ${PROJECT_NAME}/CMakeLists.txt...")
 
 #retrieve architecture
 execute_process( COMMAND
@@ -26,10 +21,11 @@ add_definitions(-Wall  -Werror)
 ## Find catkin macros and libraries
 find_package(catkin REQUIRED
     COMPONENTS
-        roscpp
-        std_msgs
-        message_generation
-        can_driver
+      can_driver
+      message_generation
+      niryo_robot_msgs
+      roscpp
+      std_msgs
 )
 
 ###############################################
@@ -69,10 +65,10 @@ catkin_package(
   LIBRARIES
       ${PROJECT_NAME}
   CATKIN_DEPENDS
+      can_driver
+      message_runtime
       roscpp
       std_msgs
-      message_runtime
-      can_driver
 )
 
 ###########
@@ -101,7 +97,7 @@ add_dependencies(${PROJECT_NAME}
 )
 
 add_dependencies(${PROJECT_NAME}
-    conveyor_interface_generate_messages_cpp
+  ${PROJECT_NAME}_generate_messages_cpp
 )
 
 add_dependencies(${PROJECT_NAME}_node
@@ -121,40 +117,35 @@ target_link_libraries(${PROJECT_NAME}_node
 ##   Doc   ##
 #############
 
-if(BUILD_DOCS)
-  find_program(rosdoc_lite_FOUND rosdoc_lite)
-  if(rosdoc_lite_FOUND)
-      add_custom_target (${PROJECT_NAME}_doc ALL
-          rosdoc_lite -o ${CMAKE_CURRENT_BINARY_DIR}/doc ${CMAKE_CURRENT_LIST_DIR}
-      )
-  else()
-    message(WARNING "rosdoc_lite not found. Skipping documentation building")
-  endif()
-
-endif(BUILD_DOCS)
+find_program(rosdoc_lite_FOUND rosdoc_lite)
+if(rosdoc_lite_FOUND)
+    add_custom_target (${PROJECT_NAME}_doc ALL
+        rosdoc_lite -o ${CMAKE_CURRENT_BINARY_DIR}/doc ${CMAKE_CURRENT_LIST_DIR}
+    )
+else()
+  message(WARNING "rosdoc_lite not found. Skipping documentation building")
+endif()
 
 #############
 ## Testing ##
 #############
 
 if(CATKIN_ENABLE_TESTING)
-  if(BUILD_INTEGRATION_TESTS)
-    find_package(catkin REQUIRED rostest)
+  find_package(rostest REQUIRED)
 
-    if (${ARCHITECTURE} MATCHES "^(arm.*|aarch64.*|arm64.*)$")
-      add_rostest_gtest(${PROJECT_NAME}_integration_tests
-        test/conveyor_interface_service_client.test
-        test/conveyor_interface_service_client.cpp
-      )
-    endif()
-    if(TARGET ${PROJECT_NAME}_integration_tests)
-      target_link_libraries(${PROJECT_NAME}_integration_tests
-        ${PROJECT_NAME}
-      )
-    endif()
-  endif(BUILD_INTEGRATION_TESTS)
+  if ("${ARCHITECTURE}" MATCHES "^(arm.*|aarch64.*|arm64.*)$")
+    add_rostest_gtest(${PROJECT_NAME}_integration_tests
+      test/service_client.test
+      test/service_client.cpp
+    )
+  endif()
+  if(TARGET ${PROJECT_NAME}_integration_tests)
+    target_link_libraries(${PROJECT_NAME}_integration_tests
+      ${PROJECT_NAME}
+    )
+  endif()
 
-endif(CATKIN_ENABLE_TESTING)
+endif()
 
 #############
 ## Install ##
@@ -178,7 +169,7 @@ install(
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 )
 
-if (EXISTS ${CMAKE_CURRENT_BINARY_DIR}/doc/)
+if(rosdoc_lite_FOUND)
   install(
     DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc/
     DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/doc

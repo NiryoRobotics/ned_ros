@@ -25,9 +25,6 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <thread>
 #include <mutex>
 
-// ros
-#include <ros/node_handle.h>
-
 // niryo
 #include "niryo_robot_msgs/BusState.h"
 #include "motor_type_enum.hpp"

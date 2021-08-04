@@ -14,13 +14,12 @@
     along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
-#include <ros/ros.h>
-
 // Bring in my package's API, which is what I'm testing
 #include "common/model/dxl_motor_state.hpp"
 #include "common/model/stepper_motor_state.hpp"
 
 #include <string>
+#include <math.h>
 
 // Bring in gtest
 #include <gtest/gtest.h>
@@ -231,8 +230,6 @@ TEST(CommonTestSuite, testStepper)
 int main(int argc, char **argv)
 {
   testing::InitGoogleTest(&argc, argv);
-  ros::init(argc, argv, "common_test");
-  ros::NodeHandle nh("~");
 
   return RUN_ALL_TESTS();
 }

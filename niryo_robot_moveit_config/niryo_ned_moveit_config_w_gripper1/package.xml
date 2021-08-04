@@ -27,11 +27,18 @@
   <exec_depend>moveit_kinematics</exec_depend>
   <exec_depend>moveit_planners_ompl</exec_depend>
   <exec_depend>moveit_ros_visualization</exec_depend>
+  <exec_depend>moveit_ros_benchmarks</exec_depend>
+  <exec_depend>moveit_ros_warehouse</exec_depend>
+  <exec_depend>warehouse_ros_mongo</exec_depend>
   <exec_depend>moveit_setup_assistant</exec_depend>
   <exec_depend>joint_state_publisher</exec_depend>
   <exec_depend>robot_state_publisher</exec_depend>
+  <exec_depend>controller_manager</exec_depend>
   <exec_depend>tf2_ros</exec_depend>
+  <exec_depend>gazebo_ros</exec_depend>
   <exec_depend>xacro</exec_depend>
+  <exec_depend>rviz</exec_depend>
+  <exec_depend>joy</exec_depend>
   <!-- This package is referenced in the warehouse launch files, but does not build out of the box at the moment. Commented the dependency until this works. -->
   <!-- <exec_depend>warehouse_ros_mongo</exec_depend> -->
   <exec_depend>niryo_robot_description</exec_depend>

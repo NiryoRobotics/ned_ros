@@ -1,9 +1,7 @@
-message("\n## Reading mcp_can_rpi/CMakeLists.txt...")
-
 cmake_minimum_required(VERSION 3.0.2)
 project(dynamixel_sdk)
+message("\n## Reading ${PROJECT_NAME}/CMakeLists.txt...")
 
-option(BUILD_DOCS "Build documentation" OFF)
 
 #retrieve architecture
 execute_process( COMMAND
@@ -56,15 +54,15 @@ include_directories(
 
 ## Declare libs and execs
 add_library(${PROJECT_NAME}
-  src/packet_handler.cpp
-  src/protocol1_packet_handler.cpp
-  src/protocol2_packet_handler.cpp
-  src/group_sync_read.cpp
-  src/group_sync_write.cpp
   src/group_bulk_read.cpp
   src/group_bulk_write.cpp
+  src/group_sync_read.cpp
+  src/group_sync_write.cpp
+  src/packet_handler.cpp
   src/port_handler.cpp
   src/port_handler_linux.cpp
+  src/protocol1_packet_handler.cpp
+  src/protocol2_packet_handler.cpp
 )
 
 ## Add dependencies to exported targets, like ROS msgs or srvs
@@ -84,7 +82,7 @@ if(CMAKE_CROSSCOMPILING)
     )
 else()
 
-    if (${ARCHITECTURE} MATCHES "^(arm.*|aarch64.*|arm64.*)$")
+    if ("${ARCHITECTURE}" MATCHES "^(arm.*|aarch64.*|arm64.*)$")
         message(STATUS "wiringPi library is required - arm processor")
         target_link_libraries(${PROJECT_NAME}
             ${catkin_LIBRARIES}
@@ -102,17 +100,14 @@ endif()
 ##   Doc   ##
 #############
 
-if(BUILD_DOCS)
-  find_program(rosdoc_lite_FOUND rosdoc_lite)
-  if(rosdoc_lite_FOUND)
-      add_custom_target (${PROJECT_NAME}_doc ALL
-          rosdoc_lite -o ${CMAKE_CURRENT_BINARY_DIR}/doc ${CMAKE_CURRENT_LIST_DIR}
-      )
-  else()
-    message(WARNING "rosdoc_lite not found. Skipping documentation building")
-  endif()
-
-endif(BUILD_DOCS)
+find_program(rosdoc_lite_FOUND rosdoc_lite)
+if(rosdoc_lite_FOUND)
+    add_custom_target (${PROJECT_NAME}_doc ALL
+        rosdoc_lite -o ${CMAKE_CURRENT_BINARY_DIR}/doc ${CMAKE_CURRENT_LIST_DIR}
+    )
+else()
+  message(WARNING "rosdoc_lite not found. Skipping documentation building")
+endif()
 
 #############
 ## Testing ##
@@ -136,7 +131,7 @@ install(
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 )
 
-if (EXISTS ${CMAKE_CURRENT_BINARY_DIR}/doc/)
+if(rosdoc_lite_FOUND)
   install(
     DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc/
     DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/doc

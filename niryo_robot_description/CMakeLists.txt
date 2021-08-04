@@ -1,7 +1,6 @@
-message("\n## Reading niryo_robot_description/CMakeLists.txt...")
-
 cmake_minimum_required(VERSION 3.0.2)
 project(niryo_robot_description)
+message("\n## Reading ${PROJECT_NAME}/CMakeLists.txt...")
 
 find_package(catkin REQUIRED)
 
@@ -40,13 +39,6 @@ install(
   DIRECTORY urdf/
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/urdf
 )
-
-if (EXISTS ${CMAKE_CURRENT_BINARY_DIR}/doc)
-  install(
-    DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc/
-    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/doc
-  )
-endif()
 
 ##########################
 ## Static code analysis ##

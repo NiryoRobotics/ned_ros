@@ -1,11 +1,6 @@
-message("\n## Reading can_driver/CMakeLists.txt...")
-
 cmake_minimum_required(VERSION 3.0.2)
 project(can_driver)
-
-option(BUILD_DOCS "Build documentation" OFF)
-option(BUILD_UNIT_TESTS "Build the unit tests" OFF)
-option(BUILD_INTEGRATION_TESTS "Build the integration tests" OFF)
+message("\n## Reading ${PROJECT_NAME}/CMakeLists.txt...")
 
 ## c++ options
 ## Compile as C++14, supported in ROS Melodic and newer
@@ -19,11 +14,12 @@ add_definitions(-Wall  -Werror)
 ## Find catkin macros and libraries
 find_package(catkin REQUIRED
     COMPONENTS
-        roscpp
-        mcp_can_rpi
-        niryo_robot_msgs
-        message_generation
-        common
+      common
+      mcp_can_rpi
+      message_generation
+      niryo_robot_msgs
+      roscpp
+      std_msgs
 )
 
 ###############################################
@@ -46,8 +42,8 @@ add_service_files(
 
 generate_messages(
   DEPENDENCIES
-    std_msgs
     niryo_robot_msgs
+    std_msgs
 )
 
 ###################################
@@ -64,10 +60,12 @@ catkin_package(
     LIBRARIES
         ${PROJECT_NAME}
     CATKIN_DEPENDS
-        roscpp
-        mcp_can_rpi
-        niryo_robot_msgs
         common
+        mcp_can_rpi
+        message_runtime
+        niryo_robot_msgs
+        roscpp
+        std_msgs
 )
 
 ###########
@@ -83,8 +81,8 @@ include_directories(
 
 ## Declare libs and execs
 add_library(${PROJECT_NAME}
-    src/can_driver_core.cpp
-    src/can_driver.cpp
+  src/can_driver.cpp
+  src/can_driver_core.cpp
 )
 
 add_executable(${PROJECT_NAME}_node
@@ -97,7 +95,7 @@ add_dependencies(${PROJECT_NAME}_node
 )
 
 add_dependencies(${PROJECT_NAME}
-    can_driver_generate_messages_cpp
+  ${PROJECT_NAME}_generate_messages_cpp
 )
 
 ## Specify libraries to link executable targets against
@@ -113,45 +111,36 @@ target_link_libraries(${PROJECT_NAME}_node
 ##   Doc   ##
 #############
 
-if(BUILD_DOCS)
-  find_program(rosdoc_lite_FOUND rosdoc_lite)
-  if(rosdoc_lite_FOUND)
-      add_custom_target (${PROJECT_NAME}_doc ALL
-          rosdoc_lite -o ${CMAKE_CURRENT_BINARY_DIR}/doc ${CMAKE_CURRENT_LIST_DIR}
-      )
-  else()
-    message(WARNING "rosdoc_lite not found. Skipping documentation building")
-  endif()
-
-endif(BUILD_DOCS)
+find_program(rosdoc_lite_FOUND rosdoc_lite)
+if(rosdoc_lite_FOUND)
+    add_custom_target (${PROJECT_NAME}_doc ALL
+        rosdoc_lite -o ${CMAKE_CURRENT_BINARY_DIR}/doc ${CMAKE_CURRENT_LIST_DIR}
+    )
+else()
+  message(WARNING "rosdoc_lite not found. Skipping documentation building")
+endif()
 
 #############
 ## Testing ##
 #############
 
 if(CATKIN_ENABLE_TESTING)
-    if(BUILD_UNIT_TESTS)
-    endif(BUILD_UNIT_TESTS)
+    find_package(rostest REQUIRED)
 
-    if(BUILD_INTEGRATION_TESTS)
-      find_package(catkin REQUIRED rostest)
+    if ("${ARCHITECTURE}" MATCHES "^(arm.*|aarch64.*|arm64.*)$")
+      add_rostest_gtest(${PROJECT_NAME}_unit_tests
+        test/unit_tests.test
+        test/unit_tests.cpp
+      )
+    endif()
+    if(TARGET ${PROJECT_NAME}_unit_tests)
+      target_link_libraries(${PROJECT_NAME}_unit_tests
+        ${PROJECT_NAME}
+        ${catkin_LIBRARIES}
+      )
+    endif()
 
-      if (${ARCHITECTURE} MATCHES "^(arm.*|aarch64.*|arm64.*)$")
-        add_rostest_gtest(${PROJECT_NAME}_unit_tests
-          test/can_driver_unit_tests.test
-          test/can_driver_unit_tests.cpp
-        )
-      endif()
-      if(TARGET ${PROJECT_NAME}_unit_tests)
-        target_link_libraries(${PROJECT_NAME}_unit_tests
-          ${PROJECT_NAME}
-          ${catkin_LIBRARIES}
-        )
-      endif()
-
-    endif(BUILD_INTEGRATION_TESTS)
-
-endif(CATKIN_ENABLE_TESTING)
+endif()
 
 #############
 ## Install ##
@@ -175,7 +164,7 @@ install(
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 )
 
-if (EXISTS ${CMAKE_CURRENT_BINARY_DIR}/doc/)
+if(rosdoc_lite_FOUND)
   install(
     DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc/
     DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/doc

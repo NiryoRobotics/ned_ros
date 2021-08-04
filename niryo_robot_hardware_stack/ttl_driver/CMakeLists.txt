@@ -1,11 +1,7 @@
-message("\n## Reading ttl_driver/CMakeLists.txt...")
-
 cmake_minimum_required(VERSION 3.0.2)
 project(ttl_driver)
+message("\n## Reading ${PROJECT_NAME}/CMakeLists.txt...")
 
-option(BUILD_DOCS "Build documentation" OFF)
-option(BUILD_UNIT_TESTS "Build the unit tests" OFF)
-option(BUILD_INTEGRATION_TESTS "Build the integration tests" OFF)
 
 #retrieve architecture
 execute_process( COMMAND
@@ -26,11 +22,12 @@ add_definitions(-Wall  -Werror)
 ## Find catkin macros and libraries
 find_package(catkin REQUIRED
     COMPONENTS
-        roscpp
-        dynamixel_sdk
-        niryo_robot_msgs
-        message_generation
-        common
+      common
+      dynamixel_sdk
+      message_generation
+      niryo_robot_msgs
+      roscpp
+      std_msgs
 )
 
 ###############################################
@@ -54,8 +51,8 @@ add_service_files(
 
 generate_messages(
   DEPENDENCIES
-    std_msgs
     niryo_robot_msgs
+    std_msgs
 )
 
 ###################################
@@ -72,10 +69,12 @@ catkin_package(
     LIBRARIES
         ${PROJECT_NAME}
     CATKIN_DEPENDS
-        roscpp
-        dynamixel_sdk
-        niryo_robot_msgs
         common
+        dynamixel_sdk
+        message_runtime
+        niryo_robot_msgs
+        roscpp
+        std_msgs
 )
 
 ###########
@@ -91,11 +90,11 @@ include_directories(
 
 ## Declare libs and execs
 add_library(${PROJECT_NAME}
-  src/ttl_manager.cpp
-  src/ttl_interface_core.cpp
-  src/abstract_ttl_driver.cpp
   src/abstract_dxl_driver.cpp
   src/abstract_stepper_driver.cpp
+  src/abstract_ttl_driver.cpp
+  src/ttl_interface_core.cpp
+  src/ttl_manager.cpp
 )
 
 add_executable(${PROJECT_NAME}_node
@@ -105,7 +104,7 @@ add_executable(${PROJECT_NAME}_node
 ## Add dependencies to exported targets, like ROS msgs or srvs
 add_dependencies(${PROJECT_NAME}
     niryo_robot_msgs_generate_messages_cpp
-    ttl_driver_generate_messages_cpp
+    ${PROJECT_NAME}_generate_messages_cpp
 )
 
 add_dependencies(${PROJECT_NAME}_node
@@ -125,59 +124,50 @@ target_link_libraries(${PROJECT_NAME}_node
 ##   Doc   ##
 #############
 
-if(BUILD_DOCS)
-  find_program(rosdoc_lite_FOUND rosdoc_lite)
-  if(rosdoc_lite_FOUND)
-      add_custom_target (${PROJECT_NAME}_doc ALL
-          rosdoc_lite -o ${CMAKE_CURRENT_BINARY_DIR}/doc ${CMAKE_CURRENT_LIST_DIR}
-      )
-  else()
-    message(WARNING "rosdoc_lite not found. Skipping documentation building")
-  endif()
-
-endif(BUILD_DOCS)
+find_program(rosdoc_lite_FOUND rosdoc_lite)
+if(rosdoc_lite_FOUND)
+    add_custom_target (${PROJECT_NAME}_doc ALL
+        rosdoc_lite -o ${CMAKE_CURRENT_BINARY_DIR}/doc ${CMAKE_CURRENT_LIST_DIR}
+    )
+else()
+  message(WARNING "rosdoc_lite not found. Skipping documentation building")
+endif()
 
 #############
 ## Testing ##
 #############
 
 if(CATKIN_ENABLE_TESTING)
-  if(BUILD_UNIT_TESTS)
-  endif(BUILD_UNIT_TESTS)
+  find_package(rostest REQUIRED)
 
-  if(BUILD_INTEGRATION_TESTS)
-    find_package(catkin REQUIRED rostest)
+  if ("${ARCHITECTURE}" MATCHES "^(arm.*|aarch64.*|arm64.*)$")
+    add_rostest_gtest(${PROJECT_NAME}_unit_tests
+      test/unit_tests.test
+      test/unit_tests.cpp
+    )
+  endif()
 
-    if (${ARCHITECTURE} MATCHES "^(arm.*|aarch64.*|arm64.*)$")
-      add_rostest_gtest(${PROJECT_NAME}_unit_tests
-        test/ttl_driver_unit_tests.test
-        test/ttl_driver_unit_tests.cpp
-      )
-    endif()
+  if(TARGET ${PROJECT_NAME}_unit_tests)
+    target_link_libraries(${PROJECT_NAME}_unit_tests
+      ${PROJECT_NAME}
+      ${catkin_LIBRARIES}
+    )
+  endif()
 
-    if(TARGET ${PROJECT_NAME}_unit_tests)
-      target_link_libraries(${PROJECT_NAME}_unit_tests
-        ${PROJECT_NAME}
-        ${catkin_LIBRARIES}
-      )
-    endif()
+  if ("${ARCHITECTURE}" MATCHES "^(arm.*|aarch64.*|arm64.*)$")
+    add_rostest_gtest(${PROJECT_NAME}_integration_tests
+      test/service_client.test
+      test/service_client.cpp
+    )
+  endif()
+  
+  if(TARGET ${PROJECT_NAME}_integration_tests)
+    target_link_libraries(${PROJECT_NAME}_integration_tests
+      ${PROJECT_NAME}
+    )
+  endif()
 
-    if (${ARCHITECTURE} MATCHES "^(arm.*|aarch64.*|arm64.*)$")
-      add_rostest_gtest(${PROJECT_NAME}_integration_tests
-        test/ttl_driver_service_client.test
-        test/ttl_driver_service_client.cpp
-      )
-    endif()
-    
-    if(TARGET ${PROJECT_NAME}_integration_tests)
-      target_link_libraries(${PROJECT_NAME}_integration_tests
-        ${PROJECT_NAME}
-      )
-    endif()
-
-  endif(BUILD_INTEGRATION_TESTS)
-
-endif(CATKIN_ENABLE_TESTING)
+endif()
 
 
 #############
@@ -203,7 +193,7 @@ install(
 )
 
 
-if (EXISTS ${CMAKE_CURRENT_BINARY_DIR}/doc/)
+if(rosdoc_lite_FOUND)
   install(
     DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc/
     DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/doc
