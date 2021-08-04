@@ -18,6 +18,7 @@
 
     <build_depend>actionlib_msgs</build_depend>
     <build_depend>geometry_msgs</build_depend>
+    <build_depend>message_generation</build_depend>
     <build_depend>niryo_robot_msgs</build_depend>
     <build_depend>message_generation</build_depend>
 
@@ -31,9 +32,6 @@
     <exec_depend>geometry_msgs</exec_depend>
     <exec_depend>moveit</exec_depend>
     <exec_depend>moveit_msgs</exec_depend>
-    <exec_depend>niryo_robot_hardware_interface</exec_depend>
-    <exec_depend>niryo_robot_msgs</exec_depend>
-    <exec_depend>niryo_robot_tools_commander</exec_depend>
     <exec_depend>ros_controllers</exec_depend>
     <exec_depend>rosbridge_server</exec_depend>
     <exec_depend>sensor_msgs</exec_depend>
@@ -41,6 +39,11 @@
     <exec_depend>tf2_web_republisher</exec_depend>
     <exec_depend>trajectory_msgs</exec_depend>
     <exec_depend>message_runtime</exec_depend>
+
+    <!-- Niryo Dependencies -->
+    <exec_depend>niryo_robot_hardware_interface</exec_depend>
+    <exec_depend>niryo_robot_msgs</exec_depend>
+    <exec_depend>niryo_robot_tools_commander</exec_depend>
     <exec_depend>niryo_ned_moveit_config_w_gripper1</exec_depend>
     <exec_depend>niryo_ned_moveit_config_standalone</exec_depend>
 

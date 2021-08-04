@@ -87,7 +87,7 @@ add_library(${PROJECT_NAME}
 )
 
 add_executable(${PROJECT_NAME}_node
-  src/tools_interface_node.cpp
+  src/${PROJECT_NAME}_node.cpp
 )
 
 ## Add dependencies to exported targets, like ROS msgs or srvs

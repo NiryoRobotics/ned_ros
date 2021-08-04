@@ -67,6 +67,13 @@ class PoseHandlerNode:
                       self.__callback_workspace_list)
         rospy.Service('~get_workspace_poses', GetWorkspaceRobotPoses,
                       self.__callback_get_workspace_poses)
+
+        if rospy.has_param('~gazebo_workspaces'):
+            for ws_name, ws_poses in rospy.get_param('~gazebo_workspaces').items():
+                if ws_name not in self.get_available_workspaces()[0]:
+                    rospy.loginfo("Poses Handler - Adding the {} workspace...".format(ws_name))
+                    self.create_workspace_from_points(ws_name, "", [Point(*point) for point in ws_poses])
+
         # Grips
         self.__tool_id_gripname_dict = {tool["id"]: "default_" + tool["name"].replace(" ", "_")
                                         for tool in tool_config_dict}

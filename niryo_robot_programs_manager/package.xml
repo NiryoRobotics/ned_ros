@@ -8,6 +8,7 @@
     <description>Deals with programs loaded in the robot</description>
 
     <maintainer email="r.lux@niryo.com">Remi Lux</maintainer>
+    <maintainer email="v.pitre@niryo.com">Valentin Pitre</maintainer>
     <maintainer email="e.rey-coquais@niryo.com">Etienne Rey-Coquais</maintainer>
 
     <license>GPLv3</license>

@@ -11,6 +11,7 @@
         - Handles Trajectories
     </description>
     <maintainer email="r.lux@niryo.com">Rémi Lux</maintainer>
+    <maintainer email="v.pitre@niryo.com">Valentin Pitre</maintainer>
     <license>GPLv3</license>
     <author>Andreas Voigt</author>
     <author email="r.lux@niryo.com">Rémi Lux</author>
