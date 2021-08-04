@@ -47,6 +47,11 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
+catkin_install_python(
+    PROGRAMS scripts/programs_manager_node.py
+    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
 #############
 ##   Doc   ##
 #############

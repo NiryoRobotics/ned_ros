@@ -84,11 +84,11 @@ include_directories(
 
 ## Declare libs and execs
 add_library(${PROJECT_NAME}
-  src/conveyor_interface_core.cpp
+  src/${PROJECT_NAME}_core.cpp
 )
 
 add_executable(${PROJECT_NAME}_node
-  src/conveyor_interface_node.cpp
+  src/${PROJECT_NAME}_node.cpp
 )
 
 ## Add dependencies to exported targets, like ROS msgs or srvs

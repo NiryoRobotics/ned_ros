@@ -1,5 +1,6 @@
 import os
 import sys
+from sphinx.builders.html import StandaloneHTMLBuilder
 
 sys.path.insert(0, os.path.abspath('../niryo_robot_python_ros_wrapper/src/'))
 
@@ -28,6 +29,14 @@ extensions = [
     'sphinx.ext.githubpages',
     'sphinx.ext.extlinks',
     'sphinx.ext.todo',
+    'sphinx_togglebutton'
+]
+
+StandaloneHTMLBuilder.supported_image_types = [
+    'image/svg+xml',
+    'image/gif',
+    'image/png',
+    'image/jpeg'
 ]
 
 # SpinxContribROS
@@ -40,6 +49,9 @@ todo_emit_warnings = True
 # Documentation infos
 source_suffix = '.rst'
 master_doc = 'index'
+
+# Toggle button text
+togglebutton_hint = ""
 
 
 def generate_dict_trad(lang):

@@ -8,6 +8,7 @@
   <description>Niryo "Standards messages" used in other Niryo Robot packages</description>
   <maintainer email="r.lux@niryo.com">Rémi Lux</maintainer>
   <maintainer email="c.ducatez@niryo.com">Corentin Ducatez</maintainer>
+  <maintainer email="v.pitre@niryo.com">Valentin Pitre</maintainer>
   <license>GPLv3</license>
   <author email="r.lux@niryo.com">Rémi Lux</author>
   
