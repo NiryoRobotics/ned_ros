@@ -17,7 +17,6 @@
     along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
-
 #include "joints_interface/joint_hardware_interface.hpp"
 
 // c++
@@ -68,7 +67,7 @@ JointHardwareInterface::JointHardwareInterface(ros::NodeHandle& rootnh,
         _ttl_interface = _jdriver->getTtlInterfaceCore();
 
     init(rootnh, robot_hwnh);
-    
+
     sendInitMotorsParams();
 
     activateLearningMode();
@@ -288,12 +287,12 @@ void JointHardwareInterface::sendInitMotorsParams()
                         {8});
             if (_jdriver->getProtocolOfMotor(jState->getName())->getTypeDriver() == "can")
             {
-                if(_can_interface_core)
+                if (_can_interface_core)
                     _can_interface_core->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(cmd));
             }
-            // TODO implement addSingleCommandToQueue with the same form for ttl_interface_core
+            // TODO(Thuc) implement addSingleCommandToQueue with the same form for ttl_interface_core
             // else
-            //     _ttl_interface->addSingleCommandToQueue(cmd); 
+            //     _ttl_interface->addSingleCommandToQueue(cmd);
         }
     }
     ros::Duration(0.05).sleep();
@@ -314,10 +313,12 @@ void JointHardwareInterface::sendInitMotorsParams()
             }
             else
             {
-                if (_ttl_interface)   
-                    _ttl_interface->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(cmd));  // TODO implement addSingleCommandToQueue with the same form for ttl_interface_core
+                if (_ttl_interface)
+                {
+                    // TODO(Thuc) implement addSingleCommandToQueue with the same form for ttl_interface_core
+                    _ttl_interface->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(cmd));
+                }
             }
-
         }
     }
     ros::Duration(0.05).sleep();
@@ -404,7 +405,7 @@ void JointHardwareInterface::setNeedCalibration()
 {
     if (_can_interface_core)
         _can_interface_core->resetCalibration();
-    // TODO implement if calibration with ttl
+    // TODO(Thuc) implement if calibration with ttl
 }
 
 /**
@@ -438,7 +439,7 @@ void JointHardwareInterface::activateLearningMode()
                 {
                     if (_ttl_interface)
                     {
-                        // TODO: verify it. stepper use 0 torque in learning mode
+                        // TODO(Thuc): verify it. stepper use 0 torque in learning mode
                         _ttl_interface->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(stepper_cmd));
                     }
                 }

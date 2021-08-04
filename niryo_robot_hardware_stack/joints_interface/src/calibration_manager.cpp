@@ -214,7 +214,7 @@ void CalibrationManager::setStepperCalibrationCommand(const std::shared_ptr<Step
     int32_t offset = pState->to_motor_pos(pState->getOffsetPosition());
     int32_t motor_direction = static_cast<int32_t>(pState->getDirection());
 
-    // TODO need implement ttl driver for EStepperCommandType::CMD_TYPE_CALIBRATION cmd
+    // TODO(Thuc) need implement ttl driver for EStepperCommandType::CMD_TYPE_CALIBRATION cmd
     StepperSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_CALIBRATION, motor_id,
                                 {offset, delay, motor_direction * calibration_direction, timeout});
     _jdriver->getProtocolOfMotor(pState->getName())->addSingleCommandToQueue(
@@ -260,7 +260,7 @@ EStepperCalibrationStatus CalibrationManager::_auto_calibration()
     ros::Duration(0.5).sleep();
 
     // 2. Move All Dynamixel to Home Position
-    if(_ttl_interface)
+    if (_ttl_interface)
     {
         common::model::DxlSyncCmd dynamixel_cmd(EDxlCommandType::CMD_TYPE_TORQUE);
         dynamixel_cmd.addMotorParam(_joint_list.at(3)->getType(), _joint_list.at(3)->getId(), 1);
@@ -310,7 +310,7 @@ EStepperCalibrationStatus CalibrationManager::_auto_calibration()
     {
         if (_can_interface_core)
             _can_interface_core->startCalibration();
-        else if(_ttl_interface)
+        else if (_ttl_interface)
             _ttl_interface->startCalibration();
 
         setStepperCalibrationCommand(pStepperMotorState_1, 200, 1, _calibration_timeout);
@@ -368,13 +368,12 @@ EStepperCalibrationStatus CalibrationManager::_auto_calibration()
             {
                 StepperSingleCmd cmd(EStepperCommandType::CMD_TYPE_TORQUE, jState->getId(), {false});
                 _jdriver->getProtocolOfMotor(jState->getName())->addSingleCommandToQueue(
-                                            std::make_shared<StepperSingleCmd>(cmd)
-                );
+                                            std::make_shared<StepperSingleCmd>(cmd));
             }
         }
 
         // forge dxl command
-        if(_ttl_interface)
+        if (_ttl_interface)
         {
             common::model::DxlSyncCmd dynamixel_cmd(EDxlCommandType::CMD_TYPE_TORQUE);
             dynamixel_cmd.addMotorParam(_joint_list.at(3)->getType(), _joint_list.at(3)->getId(), 0);
@@ -499,9 +498,10 @@ void CalibrationManager::_send_calibration_offset(uint8_t id, int offset_to_send
                         std::make_shared<StepperSingleCmd>(stepper_cmd));
     else if (_ttl_interface)
         _ttl_interface->addSingleCommandToQueue(
-                        std::make_shared<StepperSingleCmd>(stepper_cmd)); // (CC) call add single command to Queue by if else but not
-                                                                        // by polymorphism make the program will work for the case all stepper use can or ttl,
-                                                                        // not 2 protocol in the same time 
+                        std::make_shared<StepperSingleCmd>(stepper_cmd));
+                        // (Thuc) call add single command to Queue by if else but not
+                        // by polymorphism make the program will work for the case all stepper use can or ttl,
+                        // not 2 protocol in the same time
 }
 
 /**
@@ -523,7 +523,7 @@ EStepperCalibrationStatus CalibrationManager::_manual_calibration()
         _can_interface_core->startCalibration();
     else if (_ttl_interface)
         _ttl_interface->startCalibration();
-    
+
     // 0. Torque ON for motor 2
     int steps_per_rev = common::model::StepperMotorState::stepsPerRev();
 
@@ -560,9 +560,9 @@ EStepperCalibrationStatus CalibrationManager::_manual_calibration()
             sld.sleep();
         }
     }
-    if(_can_interface_core)
+    if (_can_interface_core)
         return _can_interface_core->getCalibrationStatus();
-    else if(_ttl_interface)
+    else if (_ttl_interface)
         return _ttl_interface->getCalibrationStatus();
 
     return EStepperCalibrationStatus::CALIBRATION_FAIL;

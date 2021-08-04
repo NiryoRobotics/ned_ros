@@ -28,17 +28,16 @@ namespace ttl_driver
 AbstractStepperDriver::AbstractStepperDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
                                              std::shared_ptr<dynamixel::PacketHandler> packetHandler) :
     AbstractTtlDriver(portHandler, packetHandler)
-{
-}
+{}
 
 AbstractStepperDriver::~AbstractStepperDriver()
 {}
 
 int AbstractStepperDriver::writeSingleCmd(std::shared_ptr<common::model::AbstractTtlSingleMotorCmd>& cmd)
 {
-    if (cmd)
+    if (cmd && cmd->isValid())
     {
-        switch(EStepperCommandType(cmd->getCmdType()))
+        switch (EStepperCommandType(cmd->getCmdType()))
         {
         case EStepperCommandType::CMD_TYPE_VELOCITY:
             return setGoalVelocity(cmd->getId(), cmd->getParam());
@@ -61,7 +60,7 @@ int AbstractStepperDriver::writeSyncCmd(int type, const std::vector<uint8_t>& id
     assert(!ids.empty() && "AbstractStepperDriver::writeSyncCmdwriteSyncCmd: ids is empty");
     assert(!params.empty() && "AbstractStepperDriver::writeSyncCmdwriteSyncCmd: params is empty");
 
-    switch(EStepperCommandType(type))
+    switch (EStepperCommandType(type))
     {
     case EStepperCommandType::CMD_TYPE_POSITION:
         return syncWritePositionGoal(ids, params);

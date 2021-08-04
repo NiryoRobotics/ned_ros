@@ -284,7 +284,9 @@ int TtlInterfaceCore::motorCmdReport(uint8_t motor_id, EMotorType motor_type)
             ROS_INFO("TtlInterfaceCore::motorCmdReport: Implement in case we have stepper");
         else
         {
-            std::shared_ptr<AbstractTtlSingleMotorCmd> cmd_torque = std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_TORQUE, motor_id, std::initializer_list<uint32_t>{1});
+            std::shared_ptr<AbstractTtlSingleMotorCmd> cmd_torque = std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_TORQUE,
+                                                                                                   motor_id,
+                                                                                                   std::initializer_list<uint32_t>{1});
             _ttl_manager->writeSingleCommand(cmd_torque);
             ros::Duration(0.5).sleep();
 
@@ -293,7 +295,9 @@ int TtlInterfaceCore::motorCmdReport(uint8_t motor_id, EMotorType motor_type)
             ROS_INFO("TtlInterfaceCore::motorCmdReport - Debug - get dxl %d pose: %d ", motor_id, old_position);
             ros::Duration(0.5).sleep();
             ROS_INFO("TtlInterfaceCore::motorCmdReport - Debug - Send dxl %d pose: %d ", motor_id, old_position + 200);
-            std::shared_ptr<AbstractTtlSingleMotorCmd> cmd_pos = std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_POSITION, motor_id, std::initializer_list<uint32_t>{old_position + 200});
+            std::shared_ptr<AbstractTtlSingleMotorCmd> cmd_pos = std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_POSITION,
+                                                                                                motor_id,
+                                                                                                std::initializer_list<uint32_t>{old_position + 200});
             _ttl_manager->writeSingleCommand(cmd_pos);
 
             // set position back to old position
@@ -303,7 +307,9 @@ int TtlInterfaceCore::motorCmdReport(uint8_t motor_id, EMotorType motor_type)
             int rest = static_cast<int>(new_position - old_position);
 
             ROS_INFO("TtlInterfaceCore - Debug - Send dxl %d pose: %d ", motor_id, old_position);
-            std::shared_ptr<AbstractTtlSingleMotorCmd> cmd_pos_2 = std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_POSITION, motor_id, std::initializer_list<uint32_t>{old_position});
+            std::shared_ptr<AbstractTtlSingleMotorCmd> cmd_pos_2 = std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_POSITION,
+                                                                                                  motor_id,
+                                                                                                  std::initializer_list<uint32_t>{old_position});
             _ttl_manager->writeSingleCommand(cmd_pos_2);
 
             ros::Duration(2).sleep();
@@ -313,7 +319,9 @@ int TtlInterfaceCore::motorCmdReport(uint8_t motor_id, EMotorType motor_type)
 
             // torque off
             ROS_INFO("TtlInterfaceCore::motorCmdReport - Debug - Send torque off command on dxl %d", motor_id);
-            std::shared_ptr<AbstractTtlSingleMotorCmd> cmd_torque_2 = std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_TORQUE, motor_id, std::initializer_list<uint32_t>{0});
+            std::shared_ptr<AbstractTtlSingleMotorCmd> cmd_torque_2 = std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_TORQUE,
+                                                                                                     motor_id,
+                                                                                                     std::initializer_list<uint32_t>{0});
             _ttl_manager->writeSingleCommand(cmd_torque_2);
 
             if (abs(rest) < 50 || abs(rest2) < 50)
@@ -728,12 +736,11 @@ void TtlInterfaceCore::setTrajectoryControllerCommands(const std::vector<std::pa
  */
 void TtlInterfaceCore::setSyncCommand(const std::shared_ptr<common::model::ISynchronizeMotorCmd>& cmd)
 {
-
     if (cmd->isValid())
     {
-        if(cmd->isStepperCmd())
+        if (cmd->isStepperCmd())
             _sync_cmds = std::dynamic_pointer_cast<common::model::StepperTtlSyncCmd>(cmd);
-        else if(cmd->isDxlCmd())
+        else if (cmd->isDxlCmd())
             _sync_cmds = std::dynamic_pointer_cast<common::model::DxlSyncCmd>(cmd);
     }
     else
@@ -755,7 +762,7 @@ void TtlInterfaceCore::addSingleCommandToQueue(const std::shared_ptr<common::mod
     {
         if (_single_cmds_queue.size() > QUEUE_OVERFLOW)
             ROS_WARN("TtlInterfaceCore::addSingleCommandToQueue: dxl cmd queue overflow ! %lu", _single_cmds_queue.size());
-        
+
         if (cmd->isDxlCmd())
             _single_cmds_queue.push(std::dynamic_pointer_cast<common::model::DxlSingleCmd>(cmd));
         else if (cmd->isStepperCmd())

@@ -20,6 +20,7 @@
 #include "common/model/single_motor_cmd.hpp"
 
 #include <cassert>
+#include <vector>
 
 using ::common::model::EDxlCommandType;
 

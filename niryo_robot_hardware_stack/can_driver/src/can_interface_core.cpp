@@ -400,7 +400,7 @@ void CanInterfaceCore::controlLoop()
             }
 
             bool isFreqMet = control_loop_rate.sleep();
-            ROS_DEBUG_COND(!isFreqMet, 
+            ROS_DEBUG_COND(!isFreqMet,
                            "CanInterfaceCore::rosControlLoop : freq not met : expected (%f s) vs actual (%f s)",
                            control_loop_rate.expectedCycleTime().toSec(),
                            control_loop_rate.cycleTime().toSec());
@@ -537,10 +537,9 @@ void CanInterfaceCore::addSingleCommandToQueue(const std::shared_ptr<common::mod
 {
     ROS_DEBUG("CanInterfaceCore::addSingleCommandToQueue - %s", cmd->str().c_str());
 
-    if (cmd->isValid())
+    if (cmd && cmd->isValid())
     {
-
-        if (cmd->getCmdType() == (int)EStepperCommandType::CMD_TYPE_CONVEYOR)
+        if (cmd->getCmdType() == static_cast<int>(EStepperCommandType::CMD_TYPE_CONVEYOR))
         {  // keep position cmd apart
             if (_conveyor_cmds.size() > QUEUE_OVERFLOW)
             {
@@ -608,6 +607,7 @@ can_driver::StepperArrayMotorHardwareStatus CanInterfaceCore::getHwStatus() cons
             hw_state.motors_hw_status.push_back(data);
         }
     }
+
     return hw_state;
 }
 

@@ -862,7 +862,7 @@ int TtlManager::sendCustomCommand(EMotorType motor_type, uint8_t id,
         if (result != COMM_SUCCESS)
         {
             ROS_WARN("TtlManager::sendCustomCommand - Failed to write custom command: %d", result);
-            // Todo: change TTL_WRITE_ERROR -> WRITE_ERROR
+            // TODO(Thuc): change TTL_WRITE_ERROR -> WRITE_ERROR
             result = niryo_robot_msgs::CommandStatus::TTL_WRITE_ERROR;
         }
     }
