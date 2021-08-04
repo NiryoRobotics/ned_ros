@@ -1,5 +1,5 @@
 /*
-idriver.hpp
+i_bus_manager.hpp
 Copyright (C) 2017 Niryo
 All rights reserved.
 
@@ -17,8 +17,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
-#ifndef IDRIVER_H
-#define IDRIVER_H
+#ifndef I_BUS_MANAGER_H
+#define I_BUS_MANAGER_H
 
 #include <stdint.h>
 #include <string>
@@ -33,12 +33,12 @@ namespace model
 {
 
 /**
- * @brief The IDriver class
+ * @brief The IBusManager class
  */
-class IDriver
+class IBusManager
 {
     public:
-        virtual ~IDriver() = 0;
+        virtual ~IBusManager() = 0;
         virtual bool init(ros::NodeHandle& nh) = 0;
 
         virtual void removeMotor(uint8_t id) = 0;
@@ -55,10 +55,10 @@ class IDriver
 };
 
 /**
- * @brief IDriver::~IDriver
+ * @brief IBusManager::~IBusManager
  */
 inline
-IDriver::~IDriver()
+IBusManager::~IBusManager()
 {
 
 }
@@ -66,4 +66,4 @@ IDriver::~IDriver()
 } // namespace model
 } // namespace common
 
-#endif
+#endif // I_BUS_MANAGER

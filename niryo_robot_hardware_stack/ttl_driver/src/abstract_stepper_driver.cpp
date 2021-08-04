@@ -18,6 +18,7 @@
 #include "common/model/stepper_command_type_enum.hpp"
 
 #include <cassert>
+#include <vector>
 
 using ::common::model::EStepperCommandType;
 

@@ -36,7 +36,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "niryo_robot_msgs/SetInt.h"
 #include "niryo_robot_msgs/CommandStatus.h"
 
-#include "common/model/idriver.hpp"
+#include "common/model/i_bus_manager.hpp"
 
 // drivers
 #include "ttl_driver/abstract_ttl_driver.hpp"
@@ -69,7 +69,7 @@ constexpr int TTL_WRONG_TYPE             = -52;
 /**
  * @brief The TtlManager class
  */
-class TtlManager : public common::model::IDriver
+class TtlManager : public common::model::IBusManager
 {
     public:
         enum class EType
@@ -122,7 +122,7 @@ class TtlManager : public common::model::IDriver
 
         std::vector<uint8_t> getRemovedMotorList() const;
 
-        // IDriver Interface
+        // IBusManager Interface
         void removeMotor(uint8_t id) override;
         bool isConnectionOk() const override;
 

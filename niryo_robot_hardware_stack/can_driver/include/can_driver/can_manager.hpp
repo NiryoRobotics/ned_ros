@@ -1,5 +1,5 @@
 /*
-    can_driver.hpp
+    can_manager.hpp
     Copyright (C) 2020 Niryo
     All rights reserved.
 
@@ -33,7 +33,7 @@
 
 
 // niryo
-#include "common/model/idriver.hpp"
+#include "common/model/i_bus_manager.hpp"
 #include "common/model/stepper_motor_state.hpp"
 #include "common/model/conveyor_state.hpp"
 #include "common/model/stepper_calibration_status_enum.hpp"
@@ -49,14 +49,14 @@ namespace can_driver
 {
 
 /**
- * @brief The CanDriver class
+ * @brief The CanManager class
  */
-class CanDriver : public common::model::IDriver
+class CanManager : public common::model::IBusManager
 {
     public:
 
-        CanDriver(ros::NodeHandle& nh);
-        virtual ~CanDriver() override;
+        CanManager(ros::NodeHandle& nh);
+        virtual ~CanManager() override;
 
         bool init(ros::NodeHandle& nh) override;
 
@@ -86,7 +86,7 @@ class CanDriver : public common::model::IDriver
 
         bool isCalibrationInProgress() const;
 
-        // IDriver Interface
+        // IBusManager Interface
         void removeMotor(uint8_t id) override;
         bool isConnectionOk() const override;
 
@@ -188,50 +188,50 @@ private:
 };
 
 /**
- * @brief CanDriver::getNbMotors
+ * @brief CanManager::getNbMotors
  * @return
  */
 inline
-size_t CanDriver::getNbMotors() const
+size_t CanManager::getNbMotors() const
 {
     return _state_map.size();
 }
 
 /**
- * @brief CanDriver::canReadData
+ * @brief CanManager::canReadData
  * @return
  */
 inline
-bool CanDriver::canReadData() const
+bool CanManager::canReadData() const
 {
     return mcp_can->canReadData();
 }
 
 /**
- * @brief CanDriver::getCalibrationStatus
+ * @brief CanManager::getCalibrationStatus
  * @return
  */
 inline
-common::model::EStepperCalibrationStatus CanDriver::getCalibrationStatus() const
+common::model::EStepperCalibrationStatus CanManager::getCalibrationStatus() const
 {
     return _calibration_status;
 }
 
 /**
- * @brief CanDriver::isCalibrationInProgress
+ * @brief CanManager::isCalibrationInProgress
  * @return
  */
 inline
-bool CanDriver::isCalibrationInProgress() const {
+bool CanManager::isCalibrationInProgress() const {
     return common::model::EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS == _calibration_status;
 }
 
 /**
- * @brief CanDriver::hasMotors
+ * @brief CanManager::hasMotors
  * @return
  */
 inline
-bool CanDriver::hasMotors()
+bool CanManager::hasMotors()
 {
     return _state_map.size() > 0;
 }

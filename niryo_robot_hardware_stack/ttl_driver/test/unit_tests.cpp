@@ -26,7 +26,7 @@
 TEST(TtlDriverTestSuite, testInitDriver)
 {
     ros::NodeHandle nh;
-    ttl_driver::TtlDriver ttl_driver(nh);
+    ttl_driver::TtlInterfaceCore ttl_interface(nh);
     ttl_driver.scanAndCheck();
 
     EXPECT_TRUE(ttl_driver.isConnectionOk());

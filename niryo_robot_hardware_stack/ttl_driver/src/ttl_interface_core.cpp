@@ -468,7 +468,7 @@ void TtlInterfaceCore::resetCalibration()
 }
 
 /**
- * @brief CanDriverCore::isCalibrationInProgress
+ * @brief CanInterfaceCore::isCalibrationInProgress
  * @return
  */
 bool TtlInterfaceCore::isCalibrationInProgress() const
@@ -756,9 +756,9 @@ void TtlInterfaceCore::addSingleCommandToQueue(const std::shared_ptr<common::mod
         if (_single_cmds_queue.size() > QUEUE_OVERFLOW)
             ROS_WARN("TtlInterfaceCore::addSingleCommandToQueue: dxl cmd queue overflow ! %lu", _single_cmds_queue.size());
         
-        if(cmd->isDxlCmd())
+        if (cmd->isDxlCmd())
             _single_cmds_queue.push(std::dynamic_pointer_cast<common::model::DxlSingleCmd>(cmd));
-        else if(cmd->isStepperCmd())
+        else if (cmd->isStepperCmd())
             _single_cmds_queue.push(std::dynamic_pointer_cast<common::model::StepperTtlSingleCmd>(cmd));
     }
     else
@@ -952,7 +952,10 @@ ttl_driver::ArrayMotorHardwareStatus TtlInterfaceCore::getHwStatus() const
             if (State->isDynamixel())
                 data.voltage = static_cast<double>(State->getVoltageState()) / TTL_VOLTAGE_DIVISOR;
             else if (State->isStepper())
-                data.voltage = static_cast<double>(State->getVoltageState()); // TODO: Get correctly voltage of stepper
+            {
+                 // TODO(Thuc): Get correctly voltage of stepper
+                data.voltage = static_cast<double>(State->getVoltageState());
+            }
             data.error = static_cast<uint32_t>(State->getHardwareErrorState());
             data.error_msg = State->getHardwareErrorMessageState();
             hw_state.motors_hw_status.push_back(data);

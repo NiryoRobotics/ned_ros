@@ -1,5 +1,5 @@
 /*
-can_driver_core.hpp
+can_interface_core.hpp
 Copyright (C) 2020 Niryo
 All rights reserved.
 
@@ -28,9 +28,9 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <functional>
 #include <queue>
 
-#include "common/model/idriver_core.hpp"
-#include "common/model/iinterface_core.hpp"
-#include "can_driver/can_driver.hpp"
+#include "common/model/i_driver_core.hpp"
+#include "common/model/i_interface_core.hpp"
+#include "can_driver/can_manager.hpp"
 #include "can_driver/StepperArrayMotorHardwareStatus.h"
 #include "niryo_robot_msgs/BusState.h"
 #include "niryo_robot_msgs/CommandStatus.h"
@@ -39,14 +39,14 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 namespace can_driver
 {
 /**
- * @brief The CanDriverCore class
+ * @brief The CanInterfaceCore class
  */
-class CanDriverCore : public common::model::IDriverCore, public common::model::IInterfaceCore
+class CanInterfaceCore : public common::model::IDriverCore, public common::model::IInterfaceCore
 {
     public:
 
-        CanDriverCore(ros::NodeHandle& nh);
-        virtual ~CanDriverCore() override;
+        CanInterfaceCore(ros::NodeHandle& nh);
+        virtual ~CanInterfaceCore() override;
 
         bool init(ros::NodeHandle& nh) override;
 
@@ -124,7 +124,7 @@ class CanDriverCore : public common::model::IDriverCore, public common::model::I
         double _delta_time_calib_read{0.0};
         double _time_hw_calib_last_read{0.0};
 
-        std::unique_ptr<CanDriver> _can_driver;
+        std::unique_ptr<CanManager> _can_manager;
 
         std::vector<std::pair<uint8_t, int32_t> > _joint_trajectory_cmd;
         std::queue<std::shared_ptr<common::model::AbstractCanSingleMotorCmd>> _stepper_single_cmds;
@@ -134,66 +134,66 @@ class CanDriverCore : public common::model::IDriverCore, public common::model::I
 };
 
 /**
- * @brief CanDriverCore::isConnectionOk
+ * @brief CanInterfaceCore::isConnectionOk
  * @return
  */
 inline
-bool CanDriverCore::isConnectionOk() const
+bool CanInterfaceCore::isConnectionOk() const
 {
-    return _can_driver->isConnectionOk();
+    return _can_manager->isConnectionOk();
 }
 
 /**
- * @brief CanDriverCore::isCalibrationInProgress
+ * @brief CanInterfaceCore::isCalibrationInProgress
  * @return
  */
 inline
-bool CanDriverCore::isCalibrationInProgress() const
+bool CanInterfaceCore::isCalibrationInProgress() const
 {
-    return _can_driver->isCalibrationInProgress();
+    return _can_manager->isCalibrationInProgress();
 }
 
 /**
- * @brief CanDriverCore::getCalibrationResult
+ * @brief CanInterfaceCore::getCalibrationResult
  * @param id
  * @return
  */
 inline
-int32_t CanDriverCore::getCalibrationResult(uint8_t id) const
+int32_t CanInterfaceCore::getCalibrationResult(uint8_t id) const
 {
-    return _can_driver->getCalibrationResult(id);
+    return _can_manager->getCalibrationResult(id);
 }
 
 /**
- * @brief CanDriverCore::getCalibrationStatus
+ * @brief CanInterfaceCore::getCalibrationStatus
  * @return
  */
 inline
 common::model::EStepperCalibrationStatus
-CanDriverCore::getCalibrationStatus() const
+CanInterfaceCore::getCalibrationStatus() const
 {
-    return _can_driver->getCalibrationStatus();
+    return _can_manager->getCalibrationStatus();
 }
 
 /**
- * @brief CanDriverCore::getStepperState
+ * @brief CanInterfaceCore::getStepperState
  * @param motor_id
  * @return
  */
 inline
 common::model::JointState
-CanDriverCore::getState(uint8_t motor_id) const
+CanInterfaceCore::getState(uint8_t motor_id) const
 {
-    return static_cast<common::model::JointState>(_can_driver->getMotorState(motor_id));
+    return static_cast<common::model::JointState>(_can_manager->getMotorState(motor_id));
 
 }
 
 inline
 std::string
-CanDriverCore::getTypeDriver() const
+CanInterfaceCore::getTypeDriver() const
 {
     return "can";
 }
-} // CanDriver
+} // CanManager
 
 #endif

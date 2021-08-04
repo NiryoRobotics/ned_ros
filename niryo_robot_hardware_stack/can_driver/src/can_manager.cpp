@@ -1,5 +1,5 @@
 /*
-    can_driver.cpp
+    can_manager.cpp
     Copyright (C) 2020 Niryo
     All rights reserved.
 
@@ -17,7 +17,7 @@
     along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
-#include "can_driver/can_driver.hpp"
+#include "can_driver/can_manager.hpp"
 #include "common/model/conveyor_state.hpp"
 #include "common/model/stepper_command_type_enum.hpp"
 
@@ -36,12 +36,12 @@ namespace can_driver
 {
 
 /**
- * @brief CanDriver::CanDriver
+ * @brief CanManager::CanManager
  */
-CanDriver::CanDriver(ros::NodeHandle& nh) :
+CanManager::CanManager(ros::NodeHandle& nh) :
     _calibration_status(EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED)
 {
-    ROS_DEBUG("CanDriver - ctor");
+    ROS_DEBUG("CanManager - ctor");
 
     init(nh);
 
@@ -49,29 +49,29 @@ CanDriver::CanDriver(ros::NodeHandle& nh) :
     {
         scanAndCheck();
 
-        _stepper_timeout_thread = std::thread(&CanDriver::_verifyMotorTimeoutLoop, this);
+        _stepper_timeout_thread = std::thread(&CanManager::_verifyMotorTimeoutLoop, this);
     }
     else
     {
-        ROS_WARN("CanDriver - Stepper setup Failed");
+        ROS_WARN("CanManager - Stepper setup Failed");
     }
 }
 
 /**
- * @brief CanDriver::~CanDriver
+ * @brief CanManager::~CanManager
  */
-CanDriver::~CanDriver()
+CanManager::~CanManager()
 {
     if (_stepper_timeout_thread.joinable())
         _stepper_timeout_thread.join();
 }
 
 /**
- * @brief CanDriver::startCalibration
+ * @brief CanManager::startCalibration
  */
-void CanDriver::startCalibration()
+void CanManager::startCalibration()
 {
-    ROS_DEBUG("CanDriver::startCalibration: starting...");
+    ROS_DEBUG("CanManager::startCalibration: starting...");
 
     for (auto const& s : _state_map)
     {
@@ -83,33 +83,33 @@ void CanDriver::startCalibration()
 }
 
 /**
- * @brief CanDriver::resetCalibration
+ * @brief CanManager::resetCalibration
  */
-void CanDriver::resetCalibration()
+void CanManager::resetCalibration()
 {
-    ROS_DEBUG("CanDriver::resetCalibration: reseting...");
+    ROS_DEBUG("CanManager::resetCalibration: reseting...");
 
     _calibration_status = EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED;
 }
 
 /**
- * @brief CanDriver::init : initialize the internal data (map, vectors) based on conf
+ * @brief CanManager::init : initialize the internal data (map, vectors) based on conf
  * @return
  */
-bool CanDriver::init(ros::NodeHandle& nh)
+bool CanManager::init(ros::NodeHandle& nh)
 {
     nh.getParam("/niryo_robot_hardware_interface/joints_interface/calibration_timeout", _calibration_timeout);
-    ROS_DEBUG("CanDriver::init - Calibration timeout %f", _calibration_timeout);
+    ROS_DEBUG("CanManager::init - Calibration timeout %f", _calibration_timeout);
 
     std::vector<int> idList;
     std::vector<std::string> typeList;
 
     nh.getParam("motors_params/motor_id_list", idList);
     nh.getParam("motors_params/motor_type_list", typeList);
-    
+
     // check that the two lists have the same size
     if (idList.size() != typeList.size())
-        ROS_ERROR("CanDriver::init - wrong motors configuration. "
+        ROS_ERROR("CanManager::init - wrong motors configuration. "
                   "Please check your configuration file motor_id_list, motor_type_list");
 
     // debug - display info
@@ -122,7 +122,7 @@ bool CanDriver::init(ros::NodeHandle& nh)
     motor_string_list.pop_back();  // remove last ","
     motor_string_list += "]";
 
-    ROS_INFO("CanDriver::init - Stepper motor list: %s ", motor_string_list.c_str());
+    ROS_INFO("CanManager::init - Stepper motor list: %s ", motor_string_list.c_str());
 
     // put everything in maps
     for (size_t i = 0; i < idList.size(); ++i)
@@ -132,22 +132,22 @@ bool CanDriver::init(ros::NodeHandle& nh)
         if (!_state_map.count(id))
             addMotor(id);
         else
-            ROS_ERROR("CanDriver::init - duplicate id %d. Please check your configuration file "
+            ROS_ERROR("CanManager::init - duplicate id %d. Please check your configuration file "
                       "(niryo_robot_hardware_stack/can_driver/config/motors_config.yaml)", id);
     }
 
     // display internal data for debug
     for (auto const &s : _state_map)
-        ROS_DEBUG("CanDriver::init - State map: %d => %s", s.first, s.second->str().c_str());
+        ROS_DEBUG("CanManager::init - State map: %d => %s", s.first, s.second->str().c_str());
 
     return true;
 }
 
 /**
- * @brief CanDriver::setupCAN
+ * @brief CanManager::setupCAN
  * @return
  */
-int CanDriver::setupCAN(ros::NodeHandle& nh)
+int CanManager::setupCAN(ros::NodeHandle& nh)
 {
     int result = CAN_FAILINIT;
     int spi_channel = 0;
@@ -159,9 +159,9 @@ int CanDriver::setupCAN(ros::NodeHandle& nh)
     nh.getParam("bus_params/spi_baudrate", spi_baudrate);
     nh.getParam("bus_params/gpio_can_interrupt", gpio_can_interrupt);
 
-    ROS_DEBUG("CanDriver::CanDriver - Can bus parameters: spi_channel : %d", spi_channel);
-    ROS_DEBUG("CanDriver::CanDriver - Can bus parameters: spi_baudrate : %d", spi_baudrate);
-    ROS_DEBUG("CanDriver::CanDriver - Can bus parameters: gpio_can_interrupt : %d", gpio_can_interrupt);
+    ROS_DEBUG("CanManager::CanManager - Can bus parameters: spi_channel : %d", spi_channel);
+    ROS_DEBUG("CanManager::CanManager - Can bus parameters: spi_baudrate : %d", spi_baudrate);
+    ROS_DEBUG("CanManager::CanManager - Can bus parameters: gpio_can_interrupt : %d", gpio_can_interrupt);
 
     mcp_can = std::make_unique<mcp_can_rpi::MCP_CAN>(spi_channel, spi_baudrate,
                                                      static_cast<uint8_t>(gpio_can_interrupt));
@@ -170,16 +170,16 @@ int CanDriver::setupCAN(ros::NodeHandle& nh)
     {
         if (mcp_can->setupInterruptGpio())
         {
-            ROS_DEBUG("CanDriver::setupCAN - setup interrupt GPIO successfull");
+            ROS_DEBUG("CanManager::setupCAN - setup interrupt GPIO successfull");
             if (mcp_can->setupSpi())
             {
-                ROS_DEBUG("CanDriver::setupCAN - setup spi successfull");
+                ROS_DEBUG("CanManager::setupCAN - setup spi successfull");
 
                 // no mask or filter used, receive all messages from CAN bus
                 // messages with ids != motor_id will be sent to another ROS interface
                 // so we can use many CAN devices with this only driver
                 result = mcp_can->begin(MCP_ANY, CAN_1000KBPS, MCP_16MHZ);
-                ROS_DEBUG("CanDriver::setupCAN - Result begin can : %d", result);
+                ROS_DEBUG("CanManager::setupCAN - Result begin can : %d", result);
 
                 if (CAN_OK == result)
                 {
@@ -190,20 +190,20 @@ int CanDriver::setupCAN(ros::NodeHandle& nh)
                 }
                 else
                 {
-                    ROS_ERROR("CanDriver::setupCAN - Failed to init MCP2515 (CAN bus)");
+                    ROS_ERROR("CanManager::setupCAN - Failed to init MCP2515 (CAN bus)");
                     _debug_error_message = "Failed to init MCP2515 (CAN bus)";
                 }
             }
             else
             {
-                ROS_WARN("CanDriver::setupCAN - Failed to start spi");
+                ROS_WARN("CanManager::setupCAN - Failed to start spi");
                 _debug_error_message = "Failed to start spi";
                 result = CAN_SPI_FAILINIT;
             }
         }
         else
         {
-            ROS_WARN("CanDriver::setupCAN - Failed to start gpio");
+            ROS_WARN("CanManager::setupCAN - Failed to start gpio");
             _debug_error_message = "Failed to start gpio";
             result = CAN_GPIO_FAILINIT;
         }
@@ -213,22 +213,22 @@ int CanDriver::setupCAN(ros::NodeHandle& nh)
 }
 
 /**
- * @brief CanDriver::isConnectionOk
+ * @brief CanManager::isConnectionOk
  * @return
  */
-bool CanDriver::isConnectionOk() const
+bool CanManager::isConnectionOk() const
 {
     return _is_connection_ok;
 }
 
 /**
- * @brief CanDriver::addMotor
+ * @brief CanManager::addMotor
  * @param id
  * @param isConveyor
  */
-void CanDriver::addMotor(uint8_t id, bool isConveyor)
+void CanManager::addMotor(uint8_t id, bool isConveyor)
 {
-    ROS_DEBUG("CanDriver::addMotor - Add motor id: %d", id);
+    ROS_DEBUG("CanManager::addMotor - Add motor id: %d", id);
 
     // add id to _state_map
     if (isConveyor)
@@ -238,12 +238,12 @@ void CanDriver::addMotor(uint8_t id, bool isConveyor)
 }
 
 /**
- * @brief CanDriver::removeMotor
+ * @brief CanManager::removeMotor
  * @param id
  */
-void CanDriver::removeMotor(uint8_t id)
+void CanManager::removeMotor(uint8_t id)
 {
-    ROS_DEBUG("CanDriver::removeMotor - Remove motor id: %d", id);
+    ROS_DEBUG("CanManager::removeMotor - Remove motor id: %d", id);
 
     if (_state_map.count(id))
     {
@@ -252,15 +252,15 @@ void CanDriver::removeMotor(uint8_t id)
 }
 
 /**
- * @brief CanDriver::getPosition
+ * @brief CanManager::getPosition
  * @param motor_id
  * @return
  */
-int32_t CanDriver::getPosition(uint8_t motor_id) const
+int32_t CanManager::getPosition(uint8_t motor_id) const
 {
     if (!_state_map.count(motor_id) || !_state_map.at(motor_id))
     {
-        throw std::out_of_range("CanDriver::getPosition: Unknown motor id");
+        throw std::out_of_range("CanManager::getPosition: Unknown motor id");
     }
 
     return _state_map.at(motor_id)->getPositionState();
@@ -268,14 +268,14 @@ int32_t CanDriver::getPosition(uint8_t motor_id) const
 
 
 /**
- * @brief CanDriver::readCommand
+ * @brief CanManager::readCommand
  * @param cmd
  * @return
  */
-int CanDriver::readSingleCommand(std::shared_ptr<common::model::AbstractCanSingleMotorCmd> cmd)
+int CanManager::readSingleCommand(std::shared_ptr<common::model::AbstractCanSingleMotorCmd> cmd)
 {
     int result = CAN_INVALID_CMD;
-    ROS_DEBUG("CanDriver::readCommand - Received stepper cmd %s", cmd->str().c_str());
+    ROS_DEBUG("CanManager::readCommand - Received stepper cmd %s", cmd->str().c_str());
 
     if (cmd->isValid())  // certifies that params is not empty
     {
@@ -341,19 +341,19 @@ int CanDriver::readSingleCommand(std::shared_ptr<common::model::AbstractCanSingl
 
     if (CAN_OK != result)
     {
-        ROS_ERROR_THROTTLE(0.5, "CanDriver::readCommand - Failed to read stepper cmd");
-        _debug_error_message = "CanDriver - Failed to read stepper cmd";
+        ROS_ERROR_THROTTLE(0.5, "CanManager::readCommand - Failed to read stepper cmd");
+        _debug_error_message = "CanManager - Failed to read stepper cmd";
     }
 
-    ROS_DEBUG_THROTTLE(0.5, "CanDriver::readCommand - Received stepper cmd finished");
+    ROS_DEBUG_THROTTLE(0.5, "CanManager::readCommand - Received stepper cmd finished");
     return result;
 }
 
 /**
- * @brief CanDriver::executeJointTrajectoryCmd
+ * @brief CanManager::executeJointTrajectoryCmd
  * @param cmd_vec : need to be passed by copy, so that we ensure the data will not change in this method
  */
-void CanDriver::executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, int32_t> > cmd_vec)
+void CanManager::executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, int32_t> > cmd_vec)
 {
     for (auto const& cmd : cmd_vec)
     {
@@ -365,9 +365,9 @@ void CanDriver::executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, int32_t
 }
 
 /**
- * @brief CanDriver::readMotorsState
+ * @brief CanManager::readMotorsState
  */
-void CanDriver::readStatus()
+void CanManager::readStatus()
 {
     if (canReadData())
     {
@@ -401,7 +401,7 @@ void CanDriver::readStatus()
                     fillCalibrationState(motor_id, len, rxBuf);
                     break;
                 default:
-                    ROS_ERROR("CanDriver::readMotorsState : unknown control byte value");
+                    ROS_ERROR("CanManager::readMotorsState : unknown control byte value");
                 break;
             }
         }
@@ -414,14 +414,14 @@ void CanDriver::readStatus()
 }
 
 /**
- * @brief CanDriver::scanAndCheck : to check if all motors in state are accessible
+ * @brief CanManager::scanAndCheck : to check if all motors in state are accessible
  * @return
  */
-int CanDriver::scanAndCheck()
+int CanManager::scanAndCheck()
 {
     std::lock_guard<std::mutex> lck(_stepper_timeout_mutex);
 
-    ROS_DEBUG("CanDriver::scanAndCheck");
+    ROS_DEBUG("CanManager::scanAndCheck");
     int result = CAN_OK;
 
     _all_motor_connected.clear();
@@ -462,7 +462,7 @@ int CanDriver::scanAndCheck()
     // if timeout
     if (!motors_unfound.empty())
     {
-        ROS_ERROR_THROTTLE(2, "CanDriver::scanAndCheck - CAN scan Timeout");
+        ROS_ERROR_THROTTLE(2, "CanManager::scanAndCheck - CAN scan Timeout");
         _debug_error_message = "CAN bus scan failed : motors ";
         for (uint8_t m_id : motors_unfound)
             _debug_error_message += " " + std::to_string(m_id) + ",";
@@ -470,13 +470,13 @@ int CanDriver::scanAndCheck()
         _debug_error_message += "are not connected";
 
         _is_connection_ok = false;
-        ROS_ERROR_THROTTLE(2, "CanDriver::scanAndCheck - %s", _debug_error_message.c_str());
+        ROS_ERROR_THROTTLE(2, "CanManager::scanAndCheck - %s", _debug_error_message.c_str());
 
         result = CAN_FAIL;
     }
     else
     {
-        ROS_DEBUG("CanDriver::scanAndCheck successful");
+        ROS_DEBUG("CanManager::scanAndCheck successful");
         _is_connection_ok = true;
     }
 
@@ -484,12 +484,12 @@ int CanDriver::scanAndCheck()
 }
 
 /**
- * @brief CanDriver::ping : scan the bus for any motor id. It is used mainly to add an unknown
+ * @brief CanManager::ping : scan the bus for any motor id. It is used mainly to add an unknown
  * id to the current list of id (using addMotor, for a conveyor for example)
  * @param motor_to_find
  * @return
  */
-bool CanDriver::ping(uint8_t motor_to_find)
+bool CanManager::ping(uint8_t motor_to_find)
 {
     double time_begin_scan = ros::Time::now().toSec();
 
@@ -510,17 +510,17 @@ bool CanDriver::ping(uint8_t motor_to_find)
     }
 
 
-    ROS_ERROR("CanDriver::scanMotorId - Motor with id %d not found", static_cast<int>(motor_to_find));
+    ROS_ERROR("CanManager::scanMotorId - Motor with id %d not found", static_cast<int>(motor_to_find));
     return false;
 }
 
 /**
- * @brief CanDriver::fillPositionStatus
+ * @brief CanManager::fillPositionStatus
  * @param motor_id
  * @param len
  * @param data
  */
-void CanDriver::fillPositionStatus(uint8_t motor_id, const uint8_t &len, const std::array<uint8_t, 8> &data)
+void CanManager::fillPositionStatus(uint8_t motor_id, const uint8_t &len, const std::array<uint8_t, 8> &data)
 {
     if (MESSAGE_DIAGNOSTICS_LENGTH == len)
     {
@@ -533,22 +533,22 @@ void CanDriver::fillPositionStatus(uint8_t motor_id, const uint8_t &len, const s
         }
         else
         {
-            ROS_ERROR("CanDriver::fillPositionStatus - unknown motor id %d", static_cast<int>(motor_id));
+            ROS_ERROR("CanManager::fillPositionStatus - unknown motor id %d", static_cast<int>(motor_id));
         }
     }
     else
     {
-        ROS_ERROR("CanDriver::fillPositionStatus - frame should contain 4 data bytes");
+        ROS_ERROR("CanManager::fillPositionStatus - frame should contain 4 data bytes");
     }
 }
 
 /**
- * @brief CanDriver::fillTemperatureStatus
+ * @brief CanManager::fillTemperatureStatus
  * @param motor_id
  * @param len
  * @param data
  */
-void CanDriver::fillTemperatureStatus(uint8_t motor_id, const uint8_t &len, const std::array<uint8_t, 8> &data)
+void CanManager::fillTemperatureStatus(uint8_t motor_id, const uint8_t &len, const std::array<uint8_t, 8> &data)
 {
     if (MESSAGE_DIAGNOSTICS_LENGTH == len)
     {
@@ -566,22 +566,22 @@ void CanDriver::fillTemperatureStatus(uint8_t motor_id, const uint8_t &len, cons
         }
         else
         {
-            ROS_ERROR("CanDriver::fillTemperatureStatus - unknown motor id %d", static_cast<int>(motor_id));
+            ROS_ERROR("CanManager::fillTemperatureStatus - unknown motor id %d", static_cast<int>(motor_id));
         }
     }
     else
     {
-        ROS_ERROR("CanDriver::fillTemperatureStatus - frame should contain 4 data bytes");
+        ROS_ERROR("CanManager::fillTemperatureStatus - frame should contain 4 data bytes");
     }
 }
 
 /**
- * @brief CanDriver::fillFirmwareVersion
+ * @brief CanManager::fillFirmwareVersion
  * @param motor_id
  * @param len
  * @param data
  */
-void CanDriver::fillFirmwareVersion(uint8_t motor_id, const uint8_t &len, const std::array<uint8_t, 8> &data)
+void CanManager::fillFirmwareVersion(uint8_t motor_id, const uint8_t &len, const std::array<uint8_t, 8> &data)
 {
     if (MESSAGE_DIAGNOSTICS_LENGTH == len)
     {
@@ -599,22 +599,22 @@ void CanDriver::fillFirmwareVersion(uint8_t motor_id, const uint8_t &len, const 
         }
         else
         {
-            ROS_ERROR("CanDriver::fillFirmwareVersion - unknown motor id %d", static_cast<int>(motor_id));
+            ROS_ERROR("CanManager::fillFirmwareVersion - unknown motor id %d", static_cast<int>(motor_id));
         }
     }
     else
 {
-        ROS_ERROR("CanDriver::fillFirmwareVersion - frame should contain 4 data bytes");
+        ROS_ERROR("CanManager::fillFirmwareVersion - frame should contain 4 data bytes");
     }
 }
 
 /**
- * @brief CanDriver::fillCalibrationState
+ * @brief CanManager::fillCalibrationState
  * @param motor_id
  * @param len
  * @param data
  */
-void CanDriver::fillCalibrationState(uint8_t motor_id, const uint8_t &len, const std::array<uint8_t, 8> &data)
+void CanManager::fillCalibrationState(uint8_t motor_id, const uint8_t &len, const std::array<uint8_t, 8> &data)
 {
     if (MESSAGE_DIAGNOSTICS_LENGTH == len)
     {
@@ -629,21 +629,21 @@ void CanDriver::fillCalibrationState(uint8_t motor_id, const uint8_t &len, const
         }
         else
         {
-            ROS_ERROR("CanDriver::fillCalibrationState - unknown motor id %d", static_cast<int>(motor_id));
+            ROS_ERROR("CanManager::fillCalibrationState - unknown motor id %d", static_cast<int>(motor_id));
         }
     }
     else
     {
-        ROS_ERROR("CanDriver::fillCalibrationState - frame should contain 4 data bytes");
+        ROS_ERROR("CanManager::fillCalibrationState - frame should contain 4 data bytes");
     }
 }
 
 /**
- * @brief CanDriver::fillConveyorState
+ * @brief CanManager::fillConveyorState
  * @param motor_id
  * @param data
  */
-void CanDriver::fillConveyorState(uint8_t motor_id, const std::array<uint8_t, 8> &data)
+void CanManager::fillConveyorState(uint8_t motor_id, const std::array<uint8_t, 8> &data)
 {
     if (_state_map.count(motor_id) && _state_map.at(motor_id))
     {
@@ -659,10 +659,10 @@ void CanDriver::fillConveyorState(uint8_t motor_id, const std::array<uint8_t, 8>
 }
 
 /**
- * @brief CanDriver::_verifyMotorTimeoutLoop : check that motors are still visible in the duration defined by getCurrentTimeout()
+ * @brief CanManager::_verifyMotorTimeoutLoop : check that motors are still visible in the duration defined by getCurrentTimeout()
  * This timeout changed overtime according to the current state of the driver (in calibration or not)
  */
-void CanDriver::_verifyMotorTimeoutLoop()
+void CanManager::_verifyMotorTimeoutLoop()
 {
     while (ros::ok())
     {
@@ -708,9 +708,9 @@ void CanDriver::_verifyMotorTimeoutLoop()
 }
 
 /**
- * @brief CanDriver::updateCurrentCalibrationStatus
+ * @brief CanManager::updateCurrentCalibrationStatus
  */
-void CanDriver::updateCurrentCalibrationStatus()
+void CanManager::updateCurrentCalibrationStatus()
 {
     // update current state of the calibrationtimeout_motors
     // rule is : if a status in a motor is worse than one previously found, we take it
@@ -726,11 +726,11 @@ void CanDriver::updateCurrentCalibrationStatus()
 }
 
 /**
- * @brief CanDriver::getCurrentTimeout
+ * @brief CanManager::getCurrentTimeout
  * used to adapt the timeout according to the state of the can (calibration or not)
  * @return
  */
-double CanDriver::getCurrentTimeout() const
+double CanManager::getCurrentTimeout() const
 {
     if (isCalibrationInProgress())
         return _calibration_timeout;
@@ -743,41 +743,41 @@ double CanDriver::getCurrentTimeout() const
 // ***************
 
 /**
- * @brief CanDriver::readMsgBuf
+ * @brief CanManager::readMsgBuf
  * @param id
  * @param len
  * @param buf
  * @return
  */
-uint8_t CanDriver::readMsgBuf(INT32U *id, uint8_t *len, std::array<uint8_t, 8> &buf)
+uint8_t CanManager::readMsgBuf(INT32U *id, uint8_t *len, std::array<uint8_t, 8> &buf)
 {
     uint8_t status = CAN_FAIL;
 
     for (auto i = 0; i < 10 && CAN_OK != status; ++i)
     {
         status = mcp_can->readMsgBuf(id, len, buf.data());
-        ROS_WARN_COND(CAN_OK != status, "CanDriver::readMsgBuf - Reading Stepper message on CAN Bus failed");
+        ROS_WARN_COND(CAN_OK != status, "CanManager::readMsgBuf - Reading Stepper message on CAN Bus failed");
     }
 
     return status;
 }
 
 /**
- * @brief CanDriver::sendCanMsgBuf
+ * @brief CanManager::sendCanMsgBuf
  * @param id
  * @param ext
  * @param len
  * @param buf
  * @return
  */
-uint8_t CanDriver::sendCanMsgBuf(uint32_t id, uint8_t ext, uint8_t len, uint8_t *buf)
+uint8_t CanManager::sendCanMsgBuf(uint32_t id, uint8_t ext, uint8_t len, uint8_t *buf)
 {
     uint8_t status = CAN_FAIL;
 
     for (auto i = 0; i < 10 && CAN_OK != status; ++i)
     {
         status = mcp_can->sendMsgBuf(id, ext, len, buf);
-        ROS_WARN_COND(CAN_OK != status, "CanDriver::sendCanMsgBuf - Sending Stepper message on CAN Bus failed");
+        ROS_WARN_COND(CAN_OK != status, "CanManager::sendCanMsgBuf - Sending Stepper message on CAN Bus failed");
     }
 
     return status;
@@ -788,16 +788,16 @@ uint8_t CanDriver::sendCanMsgBuf(uint32_t id, uint8_t ext, uint8_t len, uint8_t 
 // *****************
 
 /**
- * @brief CanDriver::sendConveyorOnCommand
+ * @brief CanManager::sendConveyorOnCommand
  * @param id
  * @param conveyor_on
  * @param conveyor_speed
  * @param direction
  * @return
  */
-uint8_t CanDriver::sendConveyorOnCommand(uint8_t id, bool conveyor_on, uint8_t conveyor_speed, uint8_t direction)
+uint8_t CanManager::sendConveyorOnCommand(uint8_t id, bool conveyor_on, uint8_t conveyor_speed, uint8_t direction)
 {
-    ROS_DEBUG("CanDriver::scanMotorId - Send conveyor id %d enabled (%d) at speed %d on direction %d",
+    ROS_DEBUG("CanManager::scanMotorId - Send conveyor id %d enabled (%d) at speed %d on direction %d",
               id, static_cast<int>(conveyor_on), conveyor_speed, direction);
     uint8_t data[4] = {0};
     data[0] = CAN_CMD_MODE;
@@ -816,12 +816,12 @@ uint8_t CanDriver::sendConveyorOnCommand(uint8_t id, bool conveyor_on, uint8_t c
 }
 
 /**
- * @brief CanDriver::sendPositionCommand
+ * @brief CanManager::sendPositionCommand
  * @param id
  * @param cmd
  * @return
  */
-uint8_t CanDriver::sendPositionCommand(uint8_t id, int cmd)
+uint8_t CanManager::sendPositionCommand(uint8_t id, int cmd)
 {
     uint8_t data[4] = {CAN_CMD_POSITION, static_cast<uint8_t>((cmd >> 16) & 0xFF),
                        static_cast<uint8_t>((cmd >> 8) & 0xFF), static_cast<uint8_t>(cmd & 0XFF)};
@@ -829,13 +829,13 @@ uint8_t CanDriver::sendPositionCommand(uint8_t id, int cmd)
 }
 
 /**
- * @brief CanDriver::sendRelativeMoveCommand
+ * @brief CanManager::sendRelativeMoveCommand
  * @param id
  * @param steps
  * @param delay
  * @return
  */
-uint8_t CanDriver::sendRelativeMoveCommand(uint8_t id, int steps, int delay)
+uint8_t CanManager::sendRelativeMoveCommand(uint8_t id, int steps, int delay)
 {
     uint8_t data[7] = {CAN_CMD_MOVE_REL,
                        static_cast<uint8_t>((steps >> 16) & 0xFF),
@@ -848,12 +848,12 @@ uint8_t CanDriver::sendRelativeMoveCommand(uint8_t id, int steps, int delay)
 }
 
 /**
- * @brief CanDriver::sendTorqueOnCommand
+ * @brief CanManager::sendTorqueOnCommand
  * @param id
  * @param torque_on
  * @return
  */
-uint8_t CanDriver::sendTorqueOnCommand(uint8_t id, int torque_on)
+uint8_t CanManager::sendTorqueOnCommand(uint8_t id, int torque_on)
 {
     uint8_t data[2] = {0};
     data[0] = CAN_CMD_MODE;
@@ -862,13 +862,13 @@ uint8_t CanDriver::sendTorqueOnCommand(uint8_t id, int torque_on)
 }
 
 /**
- * @brief CanDriver::sendPositionOffsetCommand
+ * @brief CanManager::sendPositionOffsetCommand
  * @param id
  * @param cmd
  * @param absolute_steps_at_offset_position
  * @return
  */
-uint8_t CanDriver::sendPositionOffsetCommand(uint8_t id, int cmd, int absolute_steps_at_offset_position)
+uint8_t CanManager::sendPositionOffsetCommand(uint8_t id, int cmd, int absolute_steps_at_offset_position)
 {
     uint8_t data[6] = {CAN_CMD_OFFSET, static_cast<uint8_t>((cmd >> 16) & 0xFF),
                        static_cast<uint8_t>((cmd >> 8) & 0xFF), static_cast<uint8_t>(cmd & 0XFF),
@@ -878,43 +878,43 @@ uint8_t CanDriver::sendPositionOffsetCommand(uint8_t id, int cmd, int absolute_s
 }
 
 /**
- * @brief CanDriver::sendSynchronizePositionCommand
+ * @brief CanManager::sendSynchronizePositionCommand
  * @param id
  * @param begin_traj
  * @return
  */
-uint8_t CanDriver::sendSynchronizePositionCommand(uint8_t id, bool begin_traj)
+uint8_t CanManager::sendSynchronizePositionCommand(uint8_t id, bool begin_traj)
 {
     uint8_t data[2] = {CAN_CMD_SYNCHRONIZE, static_cast<uint8_t>(begin_traj)};
     return sendCanMsgBuf(id, 0, 2, data);
 }
 
 /**
- * @brief CanDriver::sendMicroStepsCommand
+ * @brief CanManager::sendMicroStepsCommand
  * @param id
  * @param micro_steps
  * @return
  */
-uint8_t CanDriver::sendMicroStepsCommand(uint8_t id, int micro_steps)
+uint8_t CanManager::sendMicroStepsCommand(uint8_t id, int micro_steps)
 {
     uint8_t data[2] = {CAN_CMD_MICRO_STEPS, static_cast<uint8_t>(micro_steps)};
     return sendCanMsgBuf(id, 0, 2, data);
 }
 
 /**
- * @brief CanDriver::sendMaxEffortCommand
+ * @brief CanManager::sendMaxEffortCommand
  * @param id
  * @param effort
  * @return
  */
-uint8_t CanDriver::sendMaxEffortCommand(uint8_t id, int effort)
+uint8_t CanManager::sendMaxEffortCommand(uint8_t id, int effort)
 {
     uint8_t data[2] = {CAN_CMD_MAX_EFFORT, static_cast<uint8_t>(effort)};
     return sendCanMsgBuf(id, 0, 2, data);
 }
 
 /**
- * @brief CanDriver::sendCalibrationCommand
+ * @brief CanManager::sendCalibrationCommand
  * @param id
  * @param offset
  * @param delay
@@ -922,7 +922,7 @@ uint8_t CanDriver::sendMaxEffortCommand(uint8_t id, int effort)
  * @param timeout
  * @return
  */
-uint8_t CanDriver::sendCalibrationCommand(uint8_t id, int offset, int delay, int direction, int timeout)
+uint8_t CanManager::sendCalibrationCommand(uint8_t id, int offset, int delay, int direction, int timeout)
 {
     direction = (direction > 0) ? 1 : 0;
 
@@ -934,14 +934,14 @@ uint8_t CanDriver::sendCalibrationCommand(uint8_t id, int offset, int delay, int
 }
 
 /**
- * @brief CanDriver::sendUpdateConveyorId
+ * @brief CanManager::sendUpdateConveyorId
  * @param old_id
  * @param new_id
  * @return
  */
-uint8_t CanDriver::sendUpdateConveyorId(uint8_t old_id, uint8_t new_id)
+uint8_t CanManager::sendUpdateConveyorId(uint8_t old_id, uint8_t new_id)
 {
-    ROS_DEBUG("CanDriver::sendUpdateConveyorId - Send update conveyor id from %d to %d", old_id, new_id);
+    ROS_DEBUG("CanManager::sendUpdateConveyorId - Send update conveyor id from %d to %d", old_id, new_id);
     uint8_t data[3] = {0};
     data[0] = CAN_CMD_MODE;
     data[1] = CAN_UPDATE_CONVEYOR_ID;
@@ -955,21 +955,21 @@ uint8_t CanDriver::sendUpdateConveyorId(uint8_t old_id, uint8_t new_id)
 // ******************
 
 /**
- * @brief CanDriver::getErrorMessage
+ * @brief CanManager::getErrorMessage
  * @return
  */
-std::string CanDriver::getErrorMessage() const
+std::string CanManager::getErrorMessage() const
 {
     return _debug_error_message;
 }
 
 /**
- * @brief CanDriver::getBusState
+ * @brief CanManager::getBusState
  * @param connection_status
  * @param motor_list
  * @param error
  */
-void CanDriver::getBusState(bool &connection_status, std::vector<uint8_t> &motor_list, std::string &error) const
+void CanManager::getBusState(bool &connection_status, std::vector<uint8_t> &motor_list, std::string &error) const
 {
     error = _debug_error_message;
     motor_list = _all_motor_connected;
@@ -977,36 +977,36 @@ void CanDriver::getBusState(bool &connection_status, std::vector<uint8_t> &motor
 }
 
 /**
- * @brief CanDriver::getCalibrationResult
+ * @brief CanManager::getCalibrationResult
  * @param motor_id
  * @return
  */
-int32_t CanDriver::getCalibrationResult(uint8_t motor_id) const
+int32_t CanManager::getCalibrationResult(uint8_t motor_id) const
 {
     if (!_state_map.count(motor_id) && _state_map.at(motor_id))
-        throw std::out_of_range("CanDriver::getMotorsState: Unknown motor id");
+        throw std::out_of_range("CanManager::getMotorsState: Unknown motor id");
 
     return _state_map.at(motor_id)->getCalibrationValue();
 }
 
 /**
- * @brief CanDriver::getMotorsState
+ * @brief CanManager::getMotorsState
  * @param motor_id
  * @return
  */
-StepperMotorState CanDriver::getMotorState(uint8_t motor_id) const
+StepperMotorState CanManager::getMotorState(uint8_t motor_id) const
 {
     if (!_state_map.count(motor_id) && _state_map.at(motor_id))
-        throw std::out_of_range("CanDriver::getMotorsState: Unknown motor id");
+        throw std::out_of_range("CanManager::getMotorsState: Unknown motor id");
 
     return *_state_map.at(motor_id).get();
 }
 
 /**
- * @brief CanDriver::getMotorsStates
+ * @brief CanManager::getMotorsStates
  * @return
  */
-std::vector<std::shared_ptr<StepperMotorState> > CanDriver::getMotorsStates() const
+std::vector<std::shared_ptr<StepperMotorState> > CanManager::getMotorsStates() const
 {
     std::vector<std::shared_ptr<StepperMotorState> > states;
     for (auto const& it : _state_map)

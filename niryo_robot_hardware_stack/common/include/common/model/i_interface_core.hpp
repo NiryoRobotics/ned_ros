@@ -1,5 +1,5 @@
 /*
-idriver.hpp
+i_interface_core.hpp
 Copyright (C) 2017 Niryo
 All rights reserved.
 
@@ -17,8 +17,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
-#ifndef IINTERFACE_CORE_H
-#define IINTERFACE_CORE_H
+#ifndef I_INTERFACE_CORE_H
+#define I_INTERFACE_CORE_H
 
 #include <stdint.h>
 #include <string>
@@ -60,4 +60,4 @@ IInterfaceCore::~IInterfaceCore()
 } // namespace model
 } // namespace common
 
-#endif // IINTERFACE_CORE
+#endif // I_INTERFACE_CORE

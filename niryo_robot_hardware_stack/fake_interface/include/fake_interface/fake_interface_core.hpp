@@ -60,7 +60,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 
 #include "fake_interface/fake_joint_hardware_interface.hpp"
 
-#include "common/model/iinterface_core.hpp"
+#include "common/model/i_interface_core.hpp"
 
 namespace fake_interface
 {

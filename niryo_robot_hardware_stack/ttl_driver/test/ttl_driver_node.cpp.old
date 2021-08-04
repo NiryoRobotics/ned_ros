@@ -29,7 +29,7 @@ class TtlDriverTest
     private:
         ros::NodeHandle nh;
 
-        std::shared_ptr<ttl_driver::TtlDriverCore> _ttl_driver;
+        std::shared_ptr<ttl_driver::TtlInterfaceCore> _ttl_interface;
 
         std::vector<uint32_t> dxl_home_pose{2000, 2047 , 511};
         std::vector<uint32_t> dxl_pose_1{2047, 2047 , 511};
@@ -46,7 +46,7 @@ class TtlDriverTest
             states.emplace_back(common::model::DxlMotorState(common::model::EMotorType::XL430, 3));
             states.emplace_back(common::model::DxlMotorState(common::model::EMotorType::XL320, 6));
 
-            _ttl_driver.reset(new TtlDriver::TtlDriverCore());
+            _ttl_interface.reset(new TtlDriver::TtlDriverCore());
 
             TestServiceActiveTorque();
             TestPublishPoseCmd();
@@ -60,12 +60,12 @@ class TtlDriverTest
             common::model::SynchronizeMotorCmd cmd_on(common::model::EDxlCommandType::CMD_TYPE_TORQUE);
             for (auto const& dState : states)
                 cmd_on.addMotorParam(dState, 1);
-            _ttl_driver->setSyncCommand(cmd_on);
+            _ttl_interface->setSyncCommand(cmd_on);
 
             common::model::SynchronizeMotorCmd cmd_off(common::model::EDxlCommandType::CMD_TYPE_TORQUE);
             for (auto const& dState : states)
                 cmd_off.addMotorParam(dState, 0);
-            _ttl_driver->setSyncCommand(cmd_off);
+            _ttl_interface->setSyncCommand(cmd_off);
         }
 
         void TestPublishPoseCmd()
@@ -74,9 +74,9 @@ class TtlDriverTest
             common::model::SynchronizeMotorCmd cmd(common::model::EDxlCommandType::CMD_TYPE_TORQUE);
             for (size_t i = 0; i < states.size(); ++i)
                 cmd.addMotorParam(states.at(i), 1);
-            _ttl_driver->setSyncCommand(cmd);
+            _ttl_interface->setSyncCommand(cmd);
             ROS_INFO("Sending command 1");
-            _ttl_driver->setSyncCommand(cmd);
+            _ttl_interface->setSyncCommand(cmd);
             ros::Duration(3).sleep();
 
             cmd.reset();
@@ -85,7 +85,7 @@ class TtlDriverTest
                 cmd.addMotorParam(states.at(i), dxl_home_pose.at(i));
 
             ROS_INFO("Sending command 2");
-            _ttl_driver->setSyncCommand(cmd);
+            _ttl_interface->setSyncCommand(cmd);
             ros::Duration(3).sleep();
 
             cmd.clear();
@@ -93,7 +93,7 @@ class TtlDriverTest
                 cmd.addMotorParam(states.at(i), dxl_pose_1.at(i));
 
             ROS_INFO("Sending command 3");
-            _ttl_driver->setSyncCommand(cmd);
+            _ttl_interface->setSyncCommand(cmd);
             ros::Duration(3).sleep();
 
 
@@ -102,7 +102,7 @@ class TtlDriverTest
                 cmd.addMotorParam(states.at(i), dxl_pose_2.at(i));
 
             ROS_INFO("Sending command 4");
-            _ttl_driver->setSyncCommand(cmd);
+            _ttl_interface->setSyncCommand(cmd);
             ros::Duration(3).sleep();
 
             cmd.reset();
@@ -110,7 +110,7 @@ class TtlDriverTest
             for (auto const& dState : states)
                 cmd.addMotorParam(dState, 0);
             ROS_INFO("Sending command 5");
-            _ttl_driver->setSyncCommand(cmd);
+            _ttl_interface->setSyncCommand(cmd);
         }
 
         void TestReceiveState()
@@ -119,7 +119,7 @@ class TtlDriverTest
             std::vector<common::model::DxlMotorState> motor_state;
             for (int i = 0 ; i < 100 ; i++)
             {
-                motor_state = _ttl_driver->getDxlStates();
+                motor_state = _ttl_interface->getDxlStates();
                 for (size_t j = 0 ; j < motor_state.size() ; j++)
                 {
                     std::cout << " " << motor_state.at(j).getId()

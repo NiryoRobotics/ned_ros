@@ -1,5 +1,5 @@
 /*
-    can_driver_core.cpp
+    can_interface_core.cpp
     Copyright (C) 2020 Niryo
     All rights reserved.
 
@@ -29,7 +29,7 @@
 
 // common
 #include "common/util/util_defs.hpp"
-#include "can_driver/can_driver_core.hpp"
+#include "can_driver/can_interface_core.hpp"
 #include "common/model/conveyor_state.hpp"
 #include "common/model/motor_type_enum.hpp"
 #include "common/model/stepper_command_type_enum.hpp"
@@ -48,52 +48,52 @@ using ::common::model::EStepperCommandType;
 namespace can_driver
 {
 /**
- * @brief CanDriverCore::CanDriverCore
+ * @brief CanInterfaceCore::CanInterfaceCore
  */
-CanDriverCore::CanDriverCore(ros::NodeHandle& nh)
+CanInterfaceCore::CanInterfaceCore(ros::NodeHandle& nh)
 {
-    ROS_DEBUG("CanDriverCore::CanDriverCore - ctor");
+    ROS_DEBUG("CanInterfaceCore::CanInterfaceCore - ctor");
 
     init(nh);
 
-    _can_driver = std::make_unique<CanDriver>(nh);
+    _can_manager = std::make_unique<CanManager>(nh);
 
     startControlLoop();
 }
 
 /**
- * @brief CanDriverCore::~CanDriverCore
+ * @brief CanInterfaceCore::~CanInterfaceCore
  */
-CanDriverCore::~CanDriverCore()
+CanInterfaceCore::~CanInterfaceCore()
 {
     if (_control_loop_thread.joinable())
         _control_loop_thread.join();
 }
 
 /**
- * @brief CanDriverCore::init
+ * @brief CanInterfaceCore::init
  */
-bool CanDriverCore::init(ros::NodeHandle& nh)
+bool CanInterfaceCore::init(ros::NodeHandle& nh)
 {
-    ROS_DEBUG("CanDriverCore::init - Initializing parameters...");
+    ROS_DEBUG("CanInterfaceCore::init - Initializing parameters...");
     initParameters(nh);
 
-    ROS_DEBUG("CanDriverCore::init - Starting services...");
+    ROS_DEBUG("CanInterfaceCore::init - Starting services...");
     startServices(nh);
 
-    ROS_DEBUG("CanDriverCore::init - Starting publishers...");
+    ROS_DEBUG("CanInterfaceCore::init - Starting publishers...");
     startPublishers(nh);
 
-    ROS_DEBUG("CanDriverCore::init - Starting subscribers...");
+    ROS_DEBUG("CanInterfaceCore::init - Starting subscribers...");
     startSubscribers(nh);
 
     return true;
 }
 
 /**
- * @brief CanDriverCore::initParameters
+ * @brief CanInterfaceCore::initParameters
  */
-void CanDriverCore::initParameters(ros::NodeHandle& nh)
+void CanInterfaceCore::initParameters(ros::NodeHandle& nh)
 {
     _control_loop_frequency = 0.0;
     double write_frequency = 1.0;
@@ -104,38 +104,38 @@ void CanDriverCore::initParameters(ros::NodeHandle& nh)
     nh.getParam("can_hw_write_frequency",
                  write_frequency);
 
-    ROS_DEBUG("CanDriverCore::initParameters - can_hardware_control_loop_frequency : %f",
+    ROS_DEBUG("CanInterfaceCore::initParameters - can_hardware_control_loop_frequency : %f",
               _control_loop_frequency);
 
-    ROS_DEBUG("CanDriverCore::initParameters - can_hw_write_frequency : %f",
+    ROS_DEBUG("CanInterfaceCore::initParameters - can_hw_write_frequency : %f",
               write_frequency);
 
     _delta_time_write = 1.0 / write_frequency;
 }
 
 /**
- * @brief CanDriverCore::startServices
+ * @brief CanInterfaceCore::startServices
  */
-void CanDriverCore::startServices(ros::NodeHandle &/*nh*/)
+void CanInterfaceCore::startServices(ros::NodeHandle &/*nh*/)
 {
-    ROS_DEBUG("CanDriverCore::startServices - no services to start");
+    ROS_DEBUG("CanInterfaceCore::startServices - no services to start");
 }
 
 /**
- * @brief CanDriverCore::startPublishers
+ * @brief CanInterfaceCore::startPublishers
  * @param nh
  */
-void CanDriverCore::startPublishers(ros::NodeHandle &/*nh*/)
+void CanInterfaceCore::startPublishers(ros::NodeHandle &/*nh*/)
 {
-    ROS_DEBUG("CanDriverCore::startServices - no publishers to start");
+    ROS_DEBUG("CanInterfaceCore::startServices - no publishers to start");
 }
 
 /**
- * @brief CanDriverCore::startSubscribers
+ * @brief CanInterfaceCore::startSubscribers
  */
-void CanDriverCore::startSubscribers(ros::NodeHandle &/*nh*/)
+void CanInterfaceCore::startSubscribers(ros::NodeHandle &/*nh*/)
 {
-    ROS_DEBUG("CanDriverCore::startServices - no subscribers to start");
+    ROS_DEBUG("CanInterfaceCore::startServices - no subscribers to start");
 }
 
 // ***************
@@ -143,40 +143,40 @@ void CanDriverCore::startSubscribers(ros::NodeHandle &/*nh*/)
 // ***************
 
 /**
- * @brief CanDriverCore::scanMotorId
+ * @brief CanInterfaceCore::scanMotorId
  * @param motor_to_find
  * @return
  */
-bool CanDriverCore::scanMotorId(uint8_t motor_to_find)
+bool CanInterfaceCore::scanMotorId(uint8_t motor_to_find)
 {
     lock_guard<mutex> lck(_control_loop_mutex);
-    return _can_driver->ping(motor_to_find);
+    return _can_manager->ping(motor_to_find);
 }
 
 /**
- * @brief CanDriverCore::startCalibration
+ * @brief CanInterfaceCore::startCalibration
  */
-void CanDriverCore::startCalibration()
+void CanInterfaceCore::startCalibration()
 {
-    if (_can_driver)
-        _can_driver->startCalibration();
+    if (_can_manager)
+        _can_manager->startCalibration();
 }
 
 /**
- * @brief CanDriverCore::resetCalibration
+ * @brief CanInterfaceCore::resetCalibration
  */
-void CanDriverCore::resetCalibration()
+void CanInterfaceCore::resetCalibration()
 {
-    if (_can_driver)
-        _can_driver->resetCalibration();
+    if (_can_manager)
+        _can_manager->resetCalibration();
 }
 
 /**
- * @brief CanDriverCore::motorCmdReport
+ * @brief CanInterfaceCore::motorCmdReport
  * @param motor_id
  * @return
  */
-int CanDriverCore::motorCmdReport(uint8_t motor_id)
+int CanInterfaceCore::motorCmdReport(uint8_t motor_id)
 {
     int ret = niryo_robot_msgs::CommandStatus::ABORTED;
 
@@ -185,8 +185,8 @@ int CanDriverCore::motorCmdReport(uint8_t motor_id)
         // torque on
         {
             lock_guard<mutex> lck(_control_loop_mutex);
-            ROS_INFO("CanDriverCore::launchMotorsReport - Debug - Send torque on command on motor %d", motor_id);
-            _can_driver->sendTorqueOnCommand(motor_id, 1);
+            ROS_INFO("CanInterfaceCore::launchMotorsReport - Debug - Send torque on command on motor %d", motor_id);
+            _can_manager->sendTorqueOnCommand(motor_id, 1);
         }
         ros::Duration(0.2).sleep();
 
@@ -194,24 +194,24 @@ int CanDriverCore::motorCmdReport(uint8_t motor_id)
         // WARNING : the stepper motor 2 direction is hardcoded here
         // there is no easy way to change that for now
         int direction = (motor_id == 2) ? -1 : 1;
-        int32_t old_position = _can_driver->getPosition(motor_id);
-        ROS_INFO("CanDriverCore::launchMotorsReport - Debug - Get pose on motor %d: %d", motor_id, old_position);
+        int32_t old_position = _can_manager->getPosition(motor_id);
+        ROS_INFO("CanInterfaceCore::launchMotorsReport - Debug - Get pose on motor %d: %d", motor_id, old_position);
         {
             lock_guard<mutex> lck(_control_loop_mutex);
-            ROS_INFO("CanDriverCore::launchMotorsReport - Debug - Send move command on motor %d", motor_id);
-            _can_driver->sendRelativeMoveCommand(motor_id, -1000 * direction, 1500);
+            ROS_INFO("CanInterfaceCore::launchMotorsReport - Debug - Send move command on motor %d", motor_id);
+            _can_manager->sendRelativeMoveCommand(motor_id, -1000 * direction, 1500);
             ros::Duration(0.2).sleep();
         }
         ros::Duration(3).sleep();
 
         // move back
-        int32_t new_position = _can_driver->getPosition(motor_id);
-        ROS_INFO("CanDriverCore::launchMotorsReport - Debug - Get pose on motor %d: %d", motor_id, new_position);
+        int32_t new_position = _can_manager->getPosition(motor_id);
+        ROS_INFO("CanInterfaceCore::launchMotorsReport - Debug - Get pose on motor %d: %d", motor_id, new_position);
         {
             lock_guard<mutex> lck(_control_loop_mutex);
 
-            ROS_INFO("CanDriverCore::launchMotorsReport - Debug - Send move command on motor %d", motor_id);
-            _can_driver->sendRelativeMoveCommand(motor_id, 1000*direction, 1000);
+            ROS_INFO("CanInterfaceCore::launchMotorsReport - Debug - Send move command on motor %d", motor_id);
+            _can_manager->sendRelativeMoveCommand(motor_id, 1000*direction, 1000);
             ros::Duration(0.2).sleep();
         }
         int rest = static_cast<int>(new_position - old_position);
@@ -219,19 +219,19 @@ int CanDriverCore::motorCmdReport(uint8_t motor_id)
         ros::Duration(3).sleep();
 
         // torque off
-        int32_t new_position2 = _can_driver->getPosition(motor_id);
-        ROS_INFO("CanDriverCore::launchMotorsReport - Debug - Get pose on motor %d: %d", motor_id, new_position2);
+        int32_t new_position2 = _can_manager->getPosition(motor_id);
+        ROS_INFO("CanInterfaceCore::launchMotorsReport - Debug - Get pose on motor %d: %d", motor_id, new_position2);
         {
             lock_guard<mutex> lck(_control_loop_mutex);
-            ROS_INFO("CanDriverCore::launchMotorsReport - Debug - Send torque off command on motor %d", motor_id);
-            _can_driver->sendTorqueOnCommand(motor_id, 0);
+            ROS_INFO("CanInterfaceCore::launchMotorsReport - Debug - Send torque off command on motor %d", motor_id);
+            _can_manager->sendTorqueOnCommand(motor_id, 0);
             ros::Duration(0.2).sleep();
         }
         int rest2 = static_cast<int>(new_position2 - new_position);
 
         if (abs(rest) < 250 || abs(rest2) < 250)
         {
-            ROS_WARN("CanDriverCore::launchMotorsReport - Debug - Pose error on motor %d", motor_id);
+            ROS_WARN("CanInterfaceCore::launchMotorsReport - Debug - Pose error on motor %d", motor_id);
             ret = niryo_robot_msgs::CommandStatus::FAILURE;
         }
         else
@@ -242,7 +242,7 @@ int CanDriverCore::motorCmdReport(uint8_t motor_id)
     }
     else
     {
-        ROS_INFO("CanDriverCore::launchMotorsReport - Debug - Debug motor aborted");
+        ROS_INFO("CanInterfaceCore::launchMotorsReport - Debug - Debug motor aborted");
     }
 
     return ret;
@@ -250,10 +250,10 @@ int CanDriverCore::motorCmdReport(uint8_t motor_id)
 
 
 /**
- * @brief CanDriverCore::launchMotorsReport
+ * @brief CanInterfaceCore::launchMotorsReport
  * @return
  */
-int CanDriverCore::launchMotorsReport()
+int CanInterfaceCore::launchMotorsReport()
 {
     int response = niryo_robot_msgs::CommandStatus::ABORTED;
     unsigned int nbSuccess = 0;
@@ -263,15 +263,15 @@ int CanDriverCore::launchMotorsReport()
 
     if (_debug_flag)
     {
-        ROS_INFO("CanDriverCore::launchMotorsReport - Debug - Start Stepper Motor Report");
+        ROS_INFO("CanInterfaceCore::launchMotorsReport - Debug - Start Stepper Motor Report");
         ros::Duration(0.5).sleep();
-        if (CAN_OK == _can_driver->scanAndCheck())
+        if (CAN_OK == _can_manager->scanAndCheck())
         {
-            for (auto const& state : _can_driver->getMotorsStates())
+            for (auto const& state : _can_manager->getMotorsStates())
             {
                 if (state)
                 {
-                    ROS_INFO("CanDriverCore::launchMotorsReport - Debug - Motor %d report start :",
+                    ROS_INFO("CanInterfaceCore::launchMotorsReport - Debug - Motor %d report start :",
                              static_cast<int>(state->getId()));
 
                     int cmd_res = motorCmdReport(state->getId());
@@ -290,7 +290,7 @@ int CanDriverCore::launchMotorsReport()
 
                     if (niryo_robot_msgs::CommandStatus::ABORTED == cmd_res)
                     {
-                        ROS_INFO("CanDriverCore::launchMotorsReport - Debug - Debug motor aborted");
+                        ROS_INFO("CanInterfaceCore::launchMotorsReport - Debug - Debug motor aborted");
                         break;
                     }
                 }
@@ -320,7 +320,7 @@ int CanDriverCore::launchMotorsReport()
     }
     else
     {
-        ROS_ERROR("CanDriverCore::launchMotorsReport - Debug - Debug mode not enabled");
+        ROS_ERROR("CanInterfaceCore::launchMotorsReport - Debug - Debug mode not enabled");
     }
 
     return response;
@@ -331,25 +331,25 @@ int CanDriverCore::launchMotorsReport()
 // ****************
 
 /**
- * @brief CanDriverCore::startControlLoop
+ * @brief CanInterfaceCore::startControlLoop
  */
-void CanDriverCore::startControlLoop()
+void CanInterfaceCore::startControlLoop()
 {
     resetHardwareControlLoopRates();
     if (!_control_loop_flag)
     {
-        ROS_DEBUG("CanDriverCore::startControlLoop - Start control loop thread");
+        ROS_DEBUG("CanInterfaceCore::startControlLoop - Start control loop thread");
         _control_loop_flag = true;
-        _control_loop_thread = thread(&CanDriverCore::controlLoop, this);
+        _control_loop_thread = thread(&CanInterfaceCore::controlLoop, this);
     }
 }
 
 /**
- * @brief CanDriverCore::resetHardwareControlLoopRates
+ * @brief CanInterfaceCore::resetHardwareControlLoopRates
  */
-void CanDriverCore::resetHardwareControlLoopRates()
+void CanInterfaceCore::resetHardwareControlLoopRates()
 {
-    ROS_DEBUG("CanDriverCore::resetHardwareControlLoopRates - Reset control loop rates");
+    ROS_DEBUG("CanInterfaceCore::resetHardwareControlLoopRates - Reset control loop rates");
     double now = ros::Time::now().toSec();
     _time_hw_data_last_write = now;
     _time_hw_data_last_read = now;
@@ -358,27 +358,27 @@ void CanDriverCore::resetHardwareControlLoopRates()
 }
 
 /**
- * @brief CanDriverCore::activeDebugMode
+ * @brief CanInterfaceCore::activeDebugMode
  * @param mode
  */
-void CanDriverCore::activeDebugMode(bool mode)
+void CanInterfaceCore::activeDebugMode(bool mode)
 {
-    ROS_INFO("CanDriverCore::activeDebugMode - Activate debug mode for stepper driver core: %d", mode);
+    ROS_INFO("CanInterfaceCore::activeDebugMode - Activate debug mode for stepper driver core: %d", mode);
     _debug_flag = mode;
 
     if (!mode)
     {
         lock_guard<mutex> lck(_control_loop_mutex);
-        _can_driver->sendTorqueOnCommand(2, 0);
+        _can_manager->sendTorqueOnCommand(2, 0);
         ros::Duration(0.2).sleep();
-        _can_driver->sendTorqueOnCommand(3, 0);
+        _can_manager->sendTorqueOnCommand(3, 0);
     }
 }
 
 /**
- * @brief CanDriverCore::controlLoop
+ * @brief CanInterfaceCore::controlLoop
  */
-void CanDriverCore::controlLoop()
+void CanInterfaceCore::controlLoop()
 {
     ros::Rate control_loop_rate = ros::Rate(_control_loop_frequency);
     resetHardwareControlLoopRates();
@@ -388,9 +388,9 @@ void CanDriverCore::controlLoop()
         {
             lock_guard<mutex> lck(_control_loop_mutex);
 
-            _can_driver->readStatus();
+            _can_manager->readStatus();
 
-            if (_can_driver->isConnectionOk())
+            if (_can_manager->isConnectionOk())
             {
                 if (ros::Time::now().toSec() - _time_hw_data_last_write >= _delta_time_write)
                 {
@@ -401,7 +401,7 @@ void CanDriverCore::controlLoop()
 
             bool isFreqMet = control_loop_rate.sleep();
             ROS_DEBUG_COND(!isFreqMet, 
-                           "CanDriverCore::rosControlLoop : freq not met : expected (%f s) vs actual (%f s)",
+                           "CanInterfaceCore::rosControlLoop : freq not met : expected (%f s) vs actual (%f s)",
                            control_loop_rate.expectedCycleTime().toSec(),
                            control_loop_rate.cycleTime().toSec());
         }
@@ -414,14 +414,14 @@ void CanDriverCore::controlLoop()
 }
 
 /**
- * @brief CanDriverCore::_executeCommand
+ * @brief CanInterfaceCore::_executeCommand
  */
-void CanDriverCore::_executeCommand()
+void CanInterfaceCore::_executeCommand()
 {
     bool need_sleep = false;
     if (!_joint_trajectory_cmd.empty())
     {
-        _can_driver->executeJointTrajectoryCmd(_joint_trajectory_cmd);
+        _can_manager->executeJointTrajectoryCmd(_joint_trajectory_cmd);
         _joint_trajectory_cmd.clear();
         need_sleep = true;
     }
@@ -431,7 +431,7 @@ void CanDriverCore::_executeCommand()
         // as we use a queue, we don't need a mutex
         if (need_sleep)
             ros::Duration(0.01).sleep();
-        _can_driver->readSingleCommand(_stepper_single_cmds.front());
+        _can_manager->readSingleCommand(_stepper_single_cmds.front());
         _stepper_single_cmds.pop();
         need_sleep = true;
     }
@@ -440,7 +440,7 @@ void CanDriverCore::_executeCommand()
         // as we use a queue, we don't need a mutex
         if (need_sleep)
             ros::Duration(0.01).sleep();
-        _can_driver->readSingleCommand(_conveyor_cmds.front());
+        _can_manager->readSingleCommand(_conveyor_cmds.front());
         _conveyor_cmds.pop();
     }
 }
@@ -450,92 +450,92 @@ void CanDriverCore::_executeCommand()
 // *************
 
 /**
- * @brief CanDriverCore::setConveyor
+ * @brief CanInterfaceCore::setConveyor
  * @param new_motor_id
  * @param default_conveyor_id
  * @return
  */
-int CanDriverCore::setConveyor(uint8_t new_motor_id, uint8_t default_conveyor_id)
+int CanInterfaceCore::setConveyor(uint8_t new_motor_id, uint8_t default_conveyor_id)
 {
     int result = niryo_robot_msgs::CommandStatus::NO_CONVEYOR_FOUND;
 
     lock_guard<mutex> lck(_control_loop_mutex);
 
     // try to find motor id 6 (default motor id for conveyor
-    if (_can_driver->ping(default_conveyor_id))
+    if (_can_manager->ping(default_conveyor_id))
     {
-        if (CAN_OK == _can_driver->sendUpdateConveyorId(default_conveyor_id, new_motor_id))
+        if (CAN_OK == _can_manager->sendUpdateConveyorId(default_conveyor_id, new_motor_id))
         {
             // add stepper as a new conveyor
-            _can_driver->addMotor(new_motor_id, true);
+            _can_manager->addMotor(new_motor_id, true);
             result = niryo_robot_msgs::CommandStatus::SUCCESS;
         }
         else
         {
-            ROS_ERROR("CanDriverCore::setConveyor : unable to change conveyor ID");
+            ROS_ERROR("CanInterfaceCore::setConveyor : unable to change conveyor ID");
             result = niryo_robot_msgs::CommandStatus::CAN_WRITE_ERROR;
         }
     }
     else
     {
-        ROS_WARN("CanDriverCore::setConveyor - No conveyor found");
+        ROS_WARN("CanInterfaceCore::setConveyor - No conveyor found");
     }
 
     return result;
 }
 
 /**
- * @brief CanDriverCore::unsetConveyor
+ * @brief CanInterfaceCore::unsetConveyor
  * @param motor_id
  */
-void CanDriverCore::unsetConveyor(uint8_t motor_id)
+void CanInterfaceCore::unsetConveyor(uint8_t motor_id)
 {
     lock_guard<mutex> lck(_control_loop_mutex);
 
-    ROS_DEBUG("CanDriverCore::unsetConveyor - unsetConveyor: id %d", motor_id);
+    ROS_DEBUG("CanInterfaceCore::unsetConveyor - unsetConveyor: id %d", motor_id);
 
-    if (CAN_OK == _can_driver->sendUpdateConveyorId(motor_id, 6))
-        _can_driver->removeMotor(motor_id);
+    if (CAN_OK == _can_manager->sendUpdateConveyorId(motor_id, 6))
+        _can_manager->removeMotor(motor_id);
     else
-        ROS_ERROR("CanDriverCore::unsetConveyor : unable to change conveyor ID");
+        ROS_ERROR("CanInterfaceCore::unsetConveyor : unable to change conveyor ID");
 }
 
 /**
- * @brief CanDriverCore::clearSingleCommandQueue
+ * @brief CanInterfaceCore::clearSingleCommandQueue
  */
-void CanDriverCore::clearSingleCommandQueue()
+void CanInterfaceCore::clearSingleCommandQueue()
 {
     while (!_stepper_single_cmds.empty())
         _stepper_single_cmds.pop();
 }
 
 /**
- * @brief CanDriverCore::clearConveyorCommandQueue
+ * @brief CanInterfaceCore::clearConveyorCommandQueue
  */
-void CanDriverCore::clearConveyorCommandQueue()
+void CanInterfaceCore::clearConveyorCommandQueue()
 {
     while (!_conveyor_cmds.empty())
         _conveyor_cmds.pop();
 }
 
 /**
- * @brief CanDriverCore::setTrajectoryControllerCommands
+ * @brief CanInterfaceCore::setTrajectoryControllerCommands
  * @param cmd
  */
-void CanDriverCore::setTrajectoryControllerCommands(const std::vector<std::pair<uint8_t, int32_t> > &cmd)
+void CanInterfaceCore::setTrajectoryControllerCommands(const std::vector<std::pair<uint8_t, int32_t> > &cmd)
 {
     _joint_trajectory_cmd = cmd;
 }
 
 /**
- * @brief CanDriverCore::addSingleCommandToQueue
+ * @brief CanInterfaceCore::addSingleCommandToQueue
  * @param cmd : needs to be a ptr for two reasons :
  * - cannot be a template method because we need it to be virtual (no static polymorphism possible)
  * - dynamic polymorphism necessary to be able to cast into a derived class
  */
-void CanDriverCore::addSingleCommandToQueue(const std::shared_ptr<common::model::ISingleMotorCmd>& cmd)
+void CanInterfaceCore::addSingleCommandToQueue(const std::shared_ptr<common::model::ISingleMotorCmd>& cmd)
 {
-    ROS_DEBUG("CanDriverCore::addSingleCommandToQueue - %s", cmd->str().c_str());
+    ROS_DEBUG("CanInterfaceCore::addSingleCommandToQueue - %s", cmd->str().c_str());
 
     if (cmd->isValid())
     {
@@ -544,7 +544,7 @@ void CanDriverCore::addSingleCommandToQueue(const std::shared_ptr<common::model:
         {  // keep position cmd apart
             if (_conveyor_cmds.size() > QUEUE_OVERFLOW)
             {
-                ROS_WARN("CanDriverCore::addCommandToQueue: Cmd queue overflow ! %lu", _conveyor_cmds.size());
+                ROS_WARN("CanInterfaceCore::addCommandToQueue: Cmd queue overflow ! %lu", _conveyor_cmds.size());
             }
             else
             {
@@ -555,7 +555,7 @@ void CanDriverCore::addSingleCommandToQueue(const std::shared_ptr<common::model:
         {
             if (_stepper_single_cmds.size() > QUEUE_OVERFLOW)
             {
-                ROS_WARN("CanDriverCore::addCommandToQueue: Cmd queue overflow ! %lu", _stepper_single_cmds.size());
+                ROS_WARN("CanInterfaceCore::addCommandToQueue: Cmd queue overflow ! %lu", _stepper_single_cmds.size());
             }
             else
             {
@@ -566,37 +566,37 @@ void CanDriverCore::addSingleCommandToQueue(const std::shared_ptr<common::model:
 }
 
 /**
- * @brief CanDriverCore::addSingleCommandToQueue
+ * @brief CanInterfaceCore::addSingleCommandToQueue
  * @param cmd
  */
-void CanDriverCore::addSingleCommandToQueue(const std::vector<std::shared_ptr<common::model::ISingleMotorCmd> >& cmd)
+void CanInterfaceCore::addSingleCommandToQueue(const std::vector<std::shared_ptr<common::model::ISingleMotorCmd> >& cmd)
 {
     for (auto const& c : cmd)
         addSingleCommandToQueue(c);
 }
 
 /**
- * @brief CanDriverCore::setSyncCommand
+ * @brief CanInterfaceCore::setSyncCommand
  * @param cmd
  */
-void CanDriverCore::setSyncCommand(const std::shared_ptr<common::model::ISynchronizeMotorCmd>& cmd)
+void CanInterfaceCore::setSyncCommand(const std::shared_ptr<common::model::ISynchronizeMotorCmd>& cmd)
 {
-    ROS_INFO("CanDriverCore::setSyncCommand: need to be implemented");
+    ROS_INFO("CanInterfaceCore::setSyncCommand: need to be implemented");
 }
 // ********************
 //  getters
 // ********************
 
 /**
- * @brief CanDriverCore::getHwStatus
+ * @brief CanInterfaceCore::getHwStatus
  * @return
  */
-can_driver::StepperArrayMotorHardwareStatus CanDriverCore::getHwStatus() const
+can_driver::StepperArrayMotorHardwareStatus CanInterfaceCore::getHwStatus() const
 {
     can_driver::StepperMotorHardwareStatus data;
     can_driver::StepperArrayMotorHardwareStatus hw_state;
 
-    for (auto const& stepperState : _can_driver->getMotorsStates())
+    for (auto const& stepperState : _can_manager->getMotorsStates())
     {
         if (stepperState)
         {
@@ -612,25 +612,25 @@ can_driver::StepperArrayMotorHardwareStatus CanDriverCore::getHwStatus() const
 }
 
 /**
- * @brief CanDriverCore::getStates
+ * @brief CanInterfaceCore::getStates
  * @return
  */
 std::vector<std::shared_ptr<common::model::JointState> >
-CanDriverCore::getStates() const
+CanInterfaceCore::getStates() const
 {
     std::vector<std::shared_ptr<common::model::JointState> > jstates;
-    for (size_t i = 0; i < _can_driver->getMotorsStates().size(); i++)
+    for (size_t i = 0; i < _can_manager->getMotorsStates().size(); i++)
     {
-        jstates.push_back(_can_driver->getMotorsStates().at(i));
+        jstates.push_back(_can_manager->getMotorsStates().at(i));
     }
     return jstates;
 }
 
 /**
- * @brief CanDriverCore::getBusState
+ * @brief CanInterfaceCore::getBusState
  * @return
  */
-niryo_robot_msgs::BusState CanDriverCore::getBusState() const
+niryo_robot_msgs::BusState CanInterfaceCore::getBusState() const
 {
     niryo_robot_msgs::BusState can_bus_state;
 
@@ -638,7 +638,7 @@ niryo_robot_msgs::BusState CanDriverCore::getBusState() const
     bool connection;
     vector<uint8_t> motor_id;
 
-    _can_driver->getBusState(connection, motor_id, error);
+    _can_manager->getBusState(connection, motor_id, error);
     can_bus_state.connection_status = connection;
     can_bus_state.motor_id_connected = motor_id;
     can_bus_state.error = error;

@@ -15,7 +15,7 @@
 */
 
 // Bring in my package's API, which is what I'm testing
-#include "can_driver/can_driver.hpp"
+#include "can_driver/can_manager.hpp"
 
 // Bring in gtest
 #include <gtest/gtest.h>
@@ -26,14 +26,14 @@ TEST(CanDriverTestSuite, testInitDriver)
 {
     ros::NodeHandle nh;
 
-    can_driver::CanDriver stepper(nh);
+    can_driver::CanManager stepper(nh);
     EXPECT_TRUE(stepper.isConnectionOk());
 }
 
 // Declare a test
 /*TEST(CanDriverTestSuite, testInitDriverCore)
 {
-    can_driver::CanDriverCore can_core;
+    can_driver::CanInterfaceCore can_core;
     EXPECT_TRUE(can_core.isConnectionOk());
 }*/
 

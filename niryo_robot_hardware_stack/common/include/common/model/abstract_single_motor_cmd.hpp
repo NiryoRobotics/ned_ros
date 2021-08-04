@@ -23,7 +23,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <string>
 #include <vector>
 
-#include "common/model/iobject.hpp"
+#include "common/model/i_object.hpp"
 
 namespace common
 {

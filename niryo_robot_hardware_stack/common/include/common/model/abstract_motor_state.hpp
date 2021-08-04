@@ -20,7 +20,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #ifndef ABSTRACT_MOTOR_STATE_H
 #define ABSTRACT_MOTOR_STATE_H
 
-#include "iobject.hpp"
+#include "i_object.hpp"
 #include <string>
 
 #include "common/model/motor_type_enum.hpp"

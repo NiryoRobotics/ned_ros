@@ -24,7 +24,7 @@
 // niryo
 #include "joints_interface/joints_interface_core.hpp"
 #include "ttl_driver/ttl_interface_core.hpp"
-#include "can_driver/can_driver_core.hpp"
+#include "can_driver/can_interface_core.hpp"
 
 int main(int argc, char **argv)
 {
@@ -38,7 +38,7 @@ int main(int argc, char **argv)
     ros::NodeHandle nh;
 
     ros::NodeHandle nh_joint("joint_driver");
-    
+
     ros::NodeHandle nh_private("~");
 
     auto joint_driver = std::make_shared<joint_driver::JointDriver>(nh_joint);

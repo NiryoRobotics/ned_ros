@@ -63,8 +63,8 @@ CalibrationManager::CalibrationManager(ros::NodeHandle& nh,
     ROS_DEBUG("CalibrationManager::ctor");
 
     // get can driver and ttl driver if exist
-    _can_driver_core = joint_driver->getCanDriverCore();
-    _ttl_interface = joint_driver->getTtlDriverCore();
+    _can_interface_core = joint_driver->getCanInterfaceCore();
+    _ttl_interface = joint_driver->getTtlInterfaceCore();
 
     initParameters(nh);
 
@@ -267,7 +267,7 @@ EStepperCalibrationStatus CalibrationManager::_auto_calibration()
         dynamixel_cmd.addMotorParam(_joint_list.at(4)->getType(), _joint_list.at(4)->getId(), 1);
         dynamixel_cmd.addMotorParam(_joint_list.at(5)->getType(), _joint_list.at(5)->getId(), 1);
 
-        // (CC): only dxl use sync cmd
+        // TODO(CC): only dxl use sync cmd
         _ttl_interface->setSyncCommand(std::make_shared<common::model::DxlSyncCmd>(dynamixel_cmd));
         sld.sleep();
 
@@ -286,7 +286,7 @@ EStepperCalibrationStatus CalibrationManager::_auto_calibration()
                                     _joint_list.at(5)->getId(),
                                     static_cast<uint32_t>(_joint_list.at(5)->to_motor_pos(0)));
 
-        // (CC): only dxl use sync cmd
+        // TODO(Thuc): only dxl use sync cmd
         _ttl_interface->setSyncCommand(std::make_shared<common::model::DxlSyncCmd>(dynamixel_cmd));
         sld.sleep();
     }
@@ -308,8 +308,8 @@ EStepperCalibrationStatus CalibrationManager::_auto_calibration()
             pStepperMotorState_2 && pStepperMotorState_2->isValid() &&
             pStepperMotorState_3 && pStepperMotorState_3->isValid())
     {
-        if (_can_driver_core)
-            _can_driver_core->startCalibration();
+        if (_can_interface_core)
+            _can_interface_core->startCalibration();
         else if(_ttl_interface)
             _ttl_interface->startCalibration();
 
@@ -320,7 +320,7 @@ EStepperCalibrationStatus CalibrationManager::_auto_calibration()
 
     // wait for calibration status done
     sld.sleep();
-    while ((_can_driver_core && _can_driver_core->isCalibrationInProgress()) || (_ttl_interface && _ttl_interface->isCalibrationInProgress()))
+    while ((_can_interface_core && _can_interface_core->isCalibrationInProgress()) || (_ttl_interface && _ttl_interface->isCalibrationInProgress()))
     {
         sld.sleep();
     }
@@ -381,7 +381,7 @@ EStepperCalibrationStatus CalibrationManager::_auto_calibration()
             dynamixel_cmd.addMotorParam(_joint_list.at(4)->getType(), _joint_list.at(4)->getId(), 0);
             dynamixel_cmd.addMotorParam(_joint_list.at(5)->getType(), _joint_list.at(5)->getId(), 0);
 
-            // (CC) only dxl use sync cmd
+            // TODO(Thuc) only dxl use sync cmd
             _ttl_interface->setSyncCommand(std::make_shared<common::model::DxlSyncCmd>(dynamixel_cmd));
             sld.sleep();
         }
@@ -394,8 +394,8 @@ EStepperCalibrationStatus CalibrationManager::_auto_calibration()
         ROS_ERROR("Calibration Interface -  An error occured while calibrating stepper motors");
     }
     common::model::EStepperCalibrationStatus  calibration_status = common::model::EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED;
-    if (_can_driver_core)
-        calibration_status = _can_driver_core->getCalibrationStatus();
+    if (_can_interface_core)
+        calibration_status = _can_interface_core->getCalibrationStatus();
     else if (_ttl_interface)
         calibration_status = _ttl_interface->getCalibrationStatus();
     return calibration_status;
@@ -408,16 +408,16 @@ EStepperCalibrationStatus CalibrationManager::_auto_calibration()
  */
 bool CalibrationManager::_can_process_manual_calibration(std::string &result_message)
 {
-    if (_can_driver_core)
+    if (_can_interface_core)
     {
-        auto stepper_motor_states = _can_driver_core->getStates();
+        auto stepper_motor_states = _can_interface_core->getStates();
 
         // 1. Check if motors firmware version is ok
         for (auto const& mState : stepper_motor_states)
         {
             if (mState)
             {
-                // (CC) check firmware version only need for stepper, need verify
+                // TODO(Thuc) check firmware version only need for stepper, need verify
                 std::string firmware_version = std::dynamic_pointer_cast<StepperMotorState>(mState)->getFirmwareVersion();
                 if (firmware_version.length() == 0)
                 {
@@ -494,8 +494,8 @@ bool CalibrationManager::_can_process_manual_calibration(std::string &result_mes
 void CalibrationManager::_send_calibration_offset(uint8_t id, int offset_to_send, int absolute_steps_at_offset_position)
 {
     StepperSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_POSITION_OFFSET, id, {offset_to_send, absolute_steps_at_offset_position});
-    if (_can_driver_core)
-        _can_driver_core->addSingleCommandToQueue(
+    if (_can_interface_core)
+        _can_interface_core->addSingleCommandToQueue(
                         std::make_shared<StepperSingleCmd>(stepper_cmd));
     else if (_ttl_interface)
         _ttl_interface->addSingleCommandToQueue(
@@ -519,8 +519,8 @@ EStepperCalibrationStatus CalibrationManager::_manual_calibration()
     {
        return EStepperCalibrationStatus::CALIBRATION_FAIL;
     }
-    if (_can_driver_core)
-        _can_driver_core->startCalibration();
+    if (_can_interface_core)
+        _can_interface_core->startCalibration();
     else if (_ttl_interface)
         _ttl_interface->startCalibration();
     
@@ -560,8 +560,8 @@ EStepperCalibrationStatus CalibrationManager::_manual_calibration()
             sld.sleep();
         }
     }
-    if(_can_driver_core)
-        return _can_driver_core->getCalibrationStatus();
+    if(_can_interface_core)
+        return _can_interface_core->getCalibrationStatus();
     else if(_ttl_interface)
         return _ttl_interface->getCalibrationStatus();
 

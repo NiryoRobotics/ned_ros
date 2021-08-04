@@ -1,6 +1,6 @@
 #include <joints_driver/joints_driver.hpp>
 #include <ttl_driver/ttl_interface_core.hpp>
-#include <can_driver/can_driver_core.hpp>
+#include <can_driver/can_interface_core.hpp>
 
 #include <string>
 #include <vector>
@@ -8,7 +8,7 @@
 using ::std::vector;
 using ::std::string;
 using ::ttl_driver::TtlInterfaceCore;
-using ::can_driver::CanDriverCore;
+using ::can_driver::CanInterfaceCore;
 
 namespace joint_driver
 {
@@ -49,14 +49,14 @@ void JointDriver::init(ros::NodeHandle &nh)
       ROS_DEBUG("JointDriver: Create Can driver core");
       ros::NodeHandle nh_can(nh, "can_driver");
       _haveCan = true;
-      _canDriverCore.reset(new CanDriverCore(nh_can));
+      _canInterfaceCore.reset(new CanInterfaceCore(nh_can));
     }
     else if (it == "ttl" && _haveTtl == false)
     {
       ROS_DEBUG("JointsDriver: Create Ttl driver core");
       ros::NodeHandle nh_ttl(nh, "ttl_driver");
       _haveTtl = true;
-      _ttlDriverCore.reset(new TtlInterfaceCore(nh_ttl));
+      _ttlInterfaceCore.reset(new TtlInterfaceCore(nh_ttl));
     }
   }
 
@@ -70,11 +70,11 @@ void JointDriver::init(ros::NodeHandle &nh)
     
     if (protocol == "can")
     {
-      _m_name_proto.insert(std::make_pair(joint_name, _canDriverCore));
+      _m_name_proto.insert(std::make_pair(joint_name, _canInterfaceCore));
     }
     else if (protocol == "ttl")
     {
-      _m_name_proto.insert(std::make_pair(joint_name, _ttlDriverCore));
+      _m_name_proto.insert(std::make_pair(joint_name, _ttlInterfaceCore));
     }
     else
       ROS_ERROR("Can't recognize protocol used for motor %s. Verify file config", joint_name.c_str());
@@ -82,19 +82,19 @@ void JointDriver::init(ros::NodeHandle &nh)
 }
 
 /**
- * @brief JointDriver::getTtlDriverCore
+ * @brief JointDriver::getTtlInterfaceCore
 */
-std::shared_ptr<ttl_driver::TtlInterfaceCore> JointDriver::getTtlDriverCore() const
+std::shared_ptr<ttl_driver::TtlInterfaceCore> JointDriver::getTtlInterfaceCore() const
 {
-    return _ttlDriverCore;
+    return _ttlInterfaceCore;
 }
 
 /**
- * @brief JointDriver::getCanDriverCore
+ * @brief JointDriver::getCanInterfaceCore
 */
-std::shared_ptr<can_driver::CanDriverCore> JointDriver::getCanDriverCore() const
+std::shared_ptr<can_driver::CanInterfaceCore> JointDriver::getCanInterfaceCore() const
 {
-    return _canDriverCore;
+    return _canInterfaceCore;
 }
 
 /**

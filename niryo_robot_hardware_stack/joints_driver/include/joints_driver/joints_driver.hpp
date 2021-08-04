@@ -3,7 +3,7 @@
 
 #include <ros/ros.h>
 #include <ttl_driver/ttl_interface_core.hpp>
-#include <can_driver/can_driver_core.hpp>
+#include <can_driver/can_interface_core.hpp>
 
 #include <memory>
 #include <map>
@@ -20,12 +20,12 @@ namespace joint_driver
         bool haveTtl() const;
 
         // getters
-        std::shared_ptr<ttl_driver::TtlInterfaceCore> getTtlDriverCore() const;
-        std::shared_ptr<can_driver::CanDriverCore> getCanDriverCore() const;
+        std::shared_ptr<ttl_driver::TtlInterfaceCore> getTtlInterfaceCore() const;
+        std::shared_ptr<can_driver::CanInterfaceCore> getCanInterfaceCore() const;
         std::shared_ptr<common::model::IDriverCore> getProtocolOfMotor(std::string name) const;
     private:
-        std::shared_ptr<ttl_driver::TtlInterfaceCore> _ttlDriverCore;
-        std::shared_ptr<can_driver::CanDriverCore> _canDriverCore;
+        std::shared_ptr<ttl_driver::TtlInterfaceCore> _ttlInterfaceCore;
+        std::shared_ptr<can_driver::CanInterfaceCore> _canInterfaceCore;
 
         std::map<std::string, std::shared_ptr<common::model::IDriverCore>> _m_name_proto; 
         

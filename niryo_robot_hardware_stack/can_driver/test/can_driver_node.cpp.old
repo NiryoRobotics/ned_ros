@@ -24,7 +24,7 @@
 #include <vector>
 
 // niryo
-#include "can_driver/can_driver_core.hpp"
+#include "can_driver/can_interface_core.hpp"
 #include "common/model/stepper_command_type_enum.hpp"
 
 
@@ -35,7 +35,7 @@ class CanDriverTest
     private:
         ros::NodeHandle nh;
 
-        std::shared_ptr<can_driver::CanDriverCore> _can_driver;
+        std::shared_ptr<can_driver::CanInterfaceCore> _can_interface;
 
         std::vector<int32_t> home_pose{32, 512, 2322};
         std::vector<int32_t> pose_1{-833, 3046, 3476};
@@ -50,14 +50,14 @@ class CanDriverTest
             states.emplace_back(common::model::StepperMotorState(2));
             states.emplace_back(common::model::StepperMotorState(3));
 
-            _can_driver.reset(new can_driver::CanDriverCore());
+            _can_interface.reset(new can_driver::CanInterfaceCore());
 
             ros::Duration(2).sleep();
             for (auto const& sState : states)
             {
                 common::model::StepperSingleCmd cmd_torque(common::model::EStepperCommandType::CMD_TYPE_TORQUE,
                                                           sState.getId(), {false});
-                _can_driver->addSingleCommandToQueue(cmd_torque);
+                _can_interface->addSingleCommandToQueue(cmd_torque);
             }
 
             ros::Duration(2).sleep();
@@ -75,7 +75,7 @@ class CanDriverTest
             {
                 common::model::StepperSingleCmd cmd(common::model::EStepperCommandType::CMD_TYPE_TORQUE,
                                                    sState.getId(), {true});
-                _can_driver->addSingleCommandToQueue(cmd);
+                _can_interface->addSingleCommandToQueue(cmd);
             }
             ros::Duration(5).sleep();
 
@@ -83,7 +83,7 @@ class CanDriverTest
             {
                 common::model::StepperSingleCmd cmd(common::model::EStepperCommandType::CMD_TYPE_TORQUE,
                                                    sState.getId(), {true});
-                _can_driver->addSingleCommandToQueue(cmd);
+                _can_interface->addSingleCommandToQueue(cmd);
             }
             ros::Duration(5).sleep();
         }
@@ -96,7 +96,7 @@ class CanDriverTest
             {
                 common::model::StepperSingleCmd cmd(common::model::EStepperCommandType::CMD_TYPE_TORQUE,
                                                    sState.getId(), {true});
-                _can_driver->addSingleCommandToQueue(cmd);
+                _can_interface->addSingleCommandToQueue(cmd);
             }
 
             ros::Duration(1).sleep();
@@ -105,7 +105,7 @@ class CanDriverTest
             {
                 common::model::StepperSingleCmd cmd(common::model::EStepperCommandType::CMD_TYPE_POSITION,
                                                    states.at(j).getId(), {home_pose.at(j)});
-                _can_driver->addSingleCommandToQueue(cmd);
+                _can_interface->addSingleCommandToQueue(cmd);
             }
             ros::Duration(5).sleep();
 
@@ -113,7 +113,7 @@ class CanDriverTest
             {
                 common::model::StepperSingleCmd cmd(common::model::EStepperCommandType::CMD_TYPE_POSITION,
                                                    states.at(j).getId(), {pose_1.at(j)});
-                _can_driver->addSingleCommandToQueue(cmd);
+                _can_interface->addSingleCommandToQueue(cmd);
             }
             ros::Duration(5).sleep();
 
@@ -121,7 +121,7 @@ class CanDriverTest
             {
                 common::model::StepperSingleCmd cmd(common::model::EStepperCommandType::CMD_TYPE_TORQUE,
                                                    sState.getId(), {false});
-                _can_driver->addSingleCommandToQueue(cmd);
+                _can_interface->addSingleCommandToQueue(cmd);
             }
             ros::Duration(1).sleep();
         }
@@ -135,7 +135,7 @@ class CanDriverTest
             {
                 for (int i = 0 ; i < 1000 ; i++)
                 {
-                    stepper_motor_state = _can_driver->getStepperStates();
+                    stepper_motor_state = _can_interface->getStepperStates();
                     std::cout << stepper_motor_state.at(0)->getPositionState() << " "
                               << stepper_motor_state.at(1)->getPositionState() << " "
                               << stepper_motor_state.at(2)->getPositionState() << std::endl;
@@ -147,7 +147,7 @@ class CanDriverTest
         void TestReceiveState()
         {
             common::model::StepperSingleCmd cmd_torque(common::model::EStepperCommandType::CMD_TYPE_TORQUE, 1, {true});
-            _can_driver->addSingleCommandToQueue(cmd_torque);
+            _can_interface->addSingleCommandToQueue(cmd_torque);
             ros::Duration(1).sleep();
 
             int freq = 100;
@@ -157,11 +157,11 @@ class CanDriverTest
             common::model::StepperSyncCmd cmd_send(common::model::EStepperCommandType::CMD_TYPE_POSITION);
             double p = 1.5;
             std::vector<std::shared_ptr<common::model::StepperMotorState> > stepper_motor_states;
-            stepper_motor_states = _can_driver->getStepperStates();
+            stepper_motor_states = _can_interface->getStepperStates();
             int32_t error = cmd.at(0) - static_cast<int32_t>(stepper_motor_states.at(0)->getPositionState());
             while (std::abs(error) > 20)
             {
-                stepper_motor_states = _can_driver->getStepperStates();
+                stepper_motor_states = _can_interface->getStepperStates();
                 error = static_cast<int>(cmd.at(0) - static_cast<int32_t>(stepper_motor_states.at(0)->getPositionState())*p);
 
                 cmd_send.addMotorParam(stepper_motor_states.at(0), cmd.at(0) + error);
@@ -172,12 +172,12 @@ class CanDriverTest
                 cmd_send.addMotorParam(stepper_motor_states.at(2),
                                        static_cast<int32_t>(stepper_motor_states.at(2)->getPositionState()));
 
-                _can_driver->setSyncCommand(cmd_send);
+                _can_interface->setSyncCommand(cmd_send);
                 control_loop_rate.sleep();
             }
 
             cmd_torque.setParams({false});
-            _can_driver->addSingleCommandToQueue(cmd_torque);
+            _can_interface->addSingleCommandToQueue(cmd_torque);
             ros::Duration(1).sleep();
         }
 };

@@ -29,18 +29,16 @@ namespace ttl_driver
 AbstractDxlDriver::AbstractDxlDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
                                      std::shared_ptr<dynamixel::PacketHandler> packetHandler) :
     AbstractTtlDriver(portHandler, packetHandler)
-{
-
-}
+{}
 
 AbstractDxlDriver::~AbstractDxlDriver()
 {}
 
 int AbstractDxlDriver::writeSingleCmd(std::shared_ptr<common::model::AbstractTtlSingleMotorCmd > &cmd)
 {
-    if(cmd && cmd->isValid())
+    if (cmd && cmd->isValid())
     {
-        switch(EDxlCommandType(cmd->getCmdType()))
+        switch (EDxlCommandType(cmd->getCmdType()))
         {
         case EDxlCommandType::CMD_TYPE_VELOCITY:
             return setGoalVelocity(cmd->getId(), cmd->getParam());
@@ -80,7 +78,7 @@ int AbstractDxlDriver::writeSyncCmd(int type, const std::vector<uint8_t>& ids, c
 {
     assert(!ids.empty() && "AbstractDxlDriver::writeSyncCmd: ids is empty");
     assert(!params.empty() && "AbstractDxlDriver::writeSyncCmd: params is empty");
-    switch(EDxlCommandType(type))
+    switch (EDxlCommandType(type))
     {
     case EDxlCommandType::CMD_TYPE_POSITION:
         return syncWritePositionGoal(ids, params);
