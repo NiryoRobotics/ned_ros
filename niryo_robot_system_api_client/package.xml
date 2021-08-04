@@ -5,7 +5,7 @@
 <package format="3">
   <name>niryo_robot_system_api_client</name>
   <version>3.1.0</version>
-  <description>Provides the system API client for the robot</description>
+  <description>Provides a ROS interface to manage the robot wifi hotspot</description>
   <maintainer email="j.mottier@niryo.com">Justin Mottier</maintainer>
   <maintainer email="c.ducatez@niryo.com">Corentin Ducatez</maintainer>
   <license>GPLv3</license>

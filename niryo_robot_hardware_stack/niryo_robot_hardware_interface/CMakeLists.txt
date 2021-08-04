@@ -67,13 +67,13 @@ catkin_package(
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
 include_directories(
-    include
-    ${catkin_INCLUDE_DIRS}
+  include
+  ${catkin_INCLUDE_DIRS}
 )
 
 ## Declare libs and execs
 add_library(${PROJECT_NAME}
-    src/hardware_interface.cpp
+  src/hardware_interface.cpp
 )
 
 add_executable(${PROJECT_NAME}_node
