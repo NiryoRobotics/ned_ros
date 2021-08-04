@@ -32,9 +32,10 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "niryo_robot_msgs/BusState.h"
 #include "motor_type_enum.hpp"
 #include "common/model/joint_state.hpp"
-#include "common/model/isingle_motor_cmd.hpp"
-#include "common/model/isynchronize_motor_cmd.hpp"
+#include "common/model/abstract_single_motor_cmd.hpp"
+#include "common/model/abstract_synchronize_motor_cmd.hpp"
 #include "common/model/stepper_calibration_status_enum.hpp"
+
 namespace common
 {
 namespace model
@@ -51,9 +52,10 @@ class IDriverCore
         virtual void startControlLoop() = 0;
         virtual bool isConnectionOk() const = 0;
         virtual bool scanMotorId(uint8_t motor_to_find) = 0;
-        virtual void addSingleCommandToQueue(std::shared_ptr<common::model::ISingleMotorCmd> cmd) = 0;
-        virtual void addSingleCommandToQueue(std::vector<std::shared_ptr<common::model::ISingleMotorCmd>> cmd) = 0;
-        virtual void setSyncCommand(std::shared_ptr<common::model::ISynchronizeMotorCmd> cmd) = 0;
+        virtual void addSingleCommandToQueue(const std::shared_ptr<common::model::ISingleMotorCmd>& cmd) = 0;
+        virtual void addSingleCommandToQueue(const std::vector<std::shared_ptr<common::model::ISingleMotorCmd> >& cmd) = 0;
+        virtual void setSyncCommand(const std::shared_ptr<common::model::ISynchronizeMotorCmd>& cmd) = 0;
+
         // calibration
         virtual void startCalibration() = 0;
         virtual void resetCalibration() = 0;

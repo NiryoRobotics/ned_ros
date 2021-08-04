@@ -18,7 +18,7 @@
 #include <ros/ros.h>
 
 // niryo
-#include "ttl_driver/ttl_driver_core.hpp"
+#include "ttl_driver/ttl_interface_core.hpp"
 
 int main(int argc, char** argv)
 {
@@ -28,7 +28,7 @@ int main(int argc, char** argv)
 
   ros::NodeHandle nodeHandle("~");
 
-  ttl_driver::TtlDriverCore ttl_node(nodeHandle);
+  ttl_driver::TtlInterfaceCore ttl_node(nodeHandle);
 
   ros::spin();
   return 0;

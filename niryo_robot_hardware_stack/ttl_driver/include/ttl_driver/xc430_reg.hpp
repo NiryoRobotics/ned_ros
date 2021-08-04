@@ -14,8 +14,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
-#ifndef XC430REG_HPP
-#define XC430REG_HPP
+#ifndef XC430_REG_HPP
+#define XC430_REG_HPP
 
 #include <memory>
 #include "common/model/motor_type_enum.hpp"
@@ -46,9 +46,6 @@ struct XC430Reg
     static constexpr std::uint8_t ADDR_BAUDRATE                 = 8;
     static constexpr std::uint8_t SIZE_BAUDRATE                 = 1;
 
-    static constexpr std::uint8_t ADDR_RETURN_DELAY_TIME        = 9;
-    static constexpr std::uint8_t SIZE_RETURN_DELAY_TIME        = 1;
-
     static constexpr std::uint8_t ADDR_DRIVE_MODE               = 10;
     static constexpr std::uint8_t SIZE_DRIVE_MODE               = 1;
 
@@ -58,29 +55,11 @@ struct XC430Reg
     static constexpr std::uint8_t ADDR_HOMING_OFFSET            = 20;
     static constexpr std::uint8_t SIZE_HOMING_OFFSET            = 4;
 
-    static constexpr std::uint8_t ADDR_TEMPERATURE_LIMIT        = 31;
-    static constexpr std::uint8_t SIZE_TEMPERATURE_LIMIT        = 1;
-
-    static constexpr std::uint8_t ADDR_MAX_VOLTAGE_LIMIT        = 32;
-    static constexpr std::uint8_t SIZE_MAX_VOLTAGE_LIMIT        = 2;
-
-    static constexpr std::uint8_t ADDR_MIN_VOLTAGE_LIMIT        = 34;
-    static constexpr std::uint8_t SIZE_MIN_VOLTAGE_LIMIT        = 2;
-
-    static constexpr std::uint8_t ADDR_PWM_LIMIT                = 36;
-    static constexpr std::uint8_t SIZE_PWM_LIMIT                = 2;
-
-    static constexpr std::uint8_t ADDR_VELOCITY_LIMIT           = 44;
-    static constexpr std::uint8_t SIZE_VELOCITY_LIMIT           = 4;
-
     static constexpr std::uint8_t ADDR_MAX_POSITION_LIMIT       = 48;
     static constexpr std::uint8_t SIZE_MAX_POSITION_LIMIT       = 4;
 
     static constexpr std::uint8_t ADDR_MIN_POSITION_LIMIT       = 52;
     static constexpr std::uint8_t SIZE_MIN_POSITION_LIMIT       = 4;
-
-    static constexpr std::uint8_t ADDR_ALARM_SHUTDOWN           = 63;
-    static constexpr std::uint8_t SIZE_ALARM_SHUTDOWN           = 1;
 
     // RAM
     static constexpr std::uint8_t ADDR_TORQUE_ENABLE            = 64;
@@ -88,9 +67,6 @@ struct XC430Reg
 
     static constexpr std::uint8_t ADDR_LED                      = 65;
     static constexpr std::uint8_t SIZE_LED                      = 1;
-
-    static constexpr std::uint8_t ADDR_STATUS_RETURN_LEVEL      = 68;
-    static constexpr std::uint8_t SIZE_STATUS_RETURN_LEVEL      = 1;
 
     static constexpr std::uint8_t ADDR_REGISTERED_INSTRUCTION   = 69;
     static constexpr std::uint8_t SIZE_REGISTERED_INSTRUCTION   = 1;
@@ -169,4 +145,4 @@ struct XC430Reg
 };
 } // DynamixelDriver
 
-#endif // XC430REG_HPP
+#endif // XC430_REG_HPP

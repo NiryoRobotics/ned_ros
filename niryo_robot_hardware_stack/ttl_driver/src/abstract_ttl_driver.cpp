@@ -14,7 +14,7 @@
     along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
-#include "ttl_driver/abstract_motor_driver.hpp"
+#include "ttl_driver/abstract_ttl_driver.hpp"
 
 #include <sstream>
 #include <vector>
@@ -27,12 +27,13 @@ using ::std::ostringstream;
 
 namespace ttl_driver
 {
+
 /**
- * @brief AbstractMotorDriver::AbstractMotorDriver
+ * @brief AbstractTtlDriver::AbstractTtlDriver
  * @param portHandler
  * @param packetHandler
  */
-AbstractMotorDriver::AbstractMotorDriver(shared_ptr<dynamixel::PortHandler> portHandler,
+AbstractTtlDriver::AbstractTtlDriver(shared_ptr<dynamixel::PortHandler> portHandler,
                  shared_ptr<dynamixel::PacketHandler> packetHandler) :
     _dxlPortHandler(portHandler),
     _dxlPacketHandler(packetHandler)
@@ -40,18 +41,19 @@ AbstractMotorDriver::AbstractMotorDriver(shared_ptr<dynamixel::PortHandler> port
 }
 
 /**
- * @brief AbstractMotorDriver::~AbstractMotorDriver
+ * @brief AbstractTtlDriver::~AbstractTtlDriver
  */
-AbstractMotorDriver::~AbstractMotorDriver()
+AbstractTtlDriver::~AbstractTtlDriver()
 {
 }
 
+
 /**
- * @brief AbstractMotorDriver::ping
+ * @brief AbstractTtlDriver::ping
  * @param id
  * @return
  */
-int AbstractMotorDriver::ping(uint8_t id)
+int AbstractTtlDriver::ping(uint8_t id)
 {
     uint8_t dxl_error = 0;
 
@@ -65,18 +67,18 @@ int AbstractMotorDriver::ping(uint8_t id)
 }
 
 /**
- * @brief AbstractMotorDriver::getModelNumber
+ * @brief AbstractTtlDriver::getModelNumber
  * @param id
  * @param dxl_model_number
  * @return
  */
-int AbstractMotorDriver::getModelNumber(uint8_t id, uint16_t *dxl_model_number)
+int AbstractTtlDriver::getModelNumber(uint8_t id, uint16_t& dxl_model_number)
 {
     uint8_t dxl_error = 0;
 
     int result = _dxlPacketHandler->ping(_dxlPortHandler.get(),
                                          id,
-                                         dxl_model_number,
+                                         &dxl_model_number,
                                          &dxl_error);
 
     if (0 != dxl_error)
@@ -86,21 +88,21 @@ int AbstractMotorDriver::getModelNumber(uint8_t id, uint16_t *dxl_model_number)
 }
 
 /**
- * @brief AbstractMotorDriver::scan
+ * @brief AbstractTtlDriver::scan
  * @param id_list
  * @return
  */
-int AbstractMotorDriver::scan(vector<uint8_t> &id_list)
+int AbstractTtlDriver::scan(vector<uint8_t> &id_list)
 {
     return _dxlPacketHandler->broadcastPing(_dxlPortHandler.get(), id_list);
 }
 
 /**
- * @brief AbstractMotorDriver::reboot
+ * @brief AbstractTtlDriver::reboot
  * @param id
  * @return
  */
-int AbstractMotorDriver::reboot(uint8_t id)
+int AbstractTtlDriver::reboot(uint8_t id)
 {
     int result = -1;
 
@@ -114,10 +116,10 @@ int AbstractMotorDriver::reboot(uint8_t id)
 }
 
 /**
- * @brief AbstractMotorDriver::str : build a string describing the object. For debug purpose only
+ * @brief AbstractTtlDriver::str : build a string describing the object. For debug purpose only
  * @return
  */
-string AbstractMotorDriver::str() const
+string AbstractTtlDriver::str() const
 {
     ostringstream ss;
 
@@ -132,14 +134,14 @@ string AbstractMotorDriver::str() const
  */
 
 /**
- * @brief AbstractMotorDriver::read
+ * @brief AbstractTtlDriver::read
  * @param address
  * @param data_len
  * @param id
  * @param data
  * @return
  */
-int AbstractMotorDriver::read(uint8_t address, uint8_t data_len, uint8_t id, uint32_t *data)
+int AbstractTtlDriver::read(uint8_t address, uint8_t data_len, uint8_t id, uint32_t& data)
 {
     uint8_t dxl_error = 0;
     int dxl_comm_result = COMM_TX_FAIL;
@@ -151,7 +153,7 @@ int AbstractMotorDriver::read(uint8_t address, uint8_t data_len, uint8_t id, uin
             uint8_t read_data;
             dxl_comm_result = _dxlPacketHandler->read1ByteTxRx(_dxlPortHandler.get(),
                                                                id, address, &read_data, &dxl_error);
-            (*data) = read_data;
+            data = read_data;
         }
         break;
         case DXL_LEN_TWO_BYTES:
@@ -159,7 +161,7 @@ int AbstractMotorDriver::read(uint8_t address, uint8_t data_len, uint8_t id, uin
             uint16_t read_data;
             dxl_comm_result = _dxlPacketHandler->read2ByteTxRx(_dxlPortHandler.get(),
                                                                id, address, &read_data, &dxl_error);
-            (*data) = read_data;
+            data = read_data;
         }
         break;
         case DXL_LEN_FOUR_BYTES:
@@ -167,11 +169,11 @@ int AbstractMotorDriver::read(uint8_t address, uint8_t data_len, uint8_t id, uin
             uint32_t read_data;
             dxl_comm_result = _dxlPacketHandler->read4ByteTxRx(_dxlPortHandler.get(),
                                                                id, address, &read_data, &dxl_error);
-            (*data) = read_data;
+            data = read_data;
         }
         break;
         default:
-            printf("AbstractMotorDriver::read ERROR: Size param must be 1, 2 or 4 bytes\n");
+            printf("AbstractTtlDriver::read ERROR: Size param must be 1, 2 or 4 bytes\n");
         break;
     }
 
@@ -183,14 +185,14 @@ int AbstractMotorDriver::read(uint8_t address, uint8_t data_len, uint8_t id, uin
 
 
 /**
- * @brief AbstractMotorDriver::write
+ * @brief AbstractTtlDriver::write
  * @param address
  * @param data_len
  * @param id
  * @param data
  * @return
  */
-int AbstractMotorDriver::write(uint8_t address, uint8_t data_len, uint8_t id, uint32_t data)
+int AbstractTtlDriver::write(uint8_t address, uint8_t data_len, uint8_t id, uint32_t data)
 {
     int dxl_comm_result = COMM_TX_FAIL;
 
@@ -209,7 +211,7 @@ int AbstractMotorDriver::write(uint8_t address, uint8_t data_len, uint8_t id, ui
                                                                   id, address, data);
         break;
         default:
-            printf("AbstractMotorDriver::write ERROR: Size param must be 1, 2 or 4 bytes\n");
+            printf("AbstractTtlDriver::write ERROR: Size param must be 1, 2 or 4 bytes\n");
         break;
     }
 
@@ -217,14 +219,14 @@ int AbstractMotorDriver::write(uint8_t address, uint8_t data_len, uint8_t id, ui
 }
 
 /**
- * @brief AbstractMotorDriver::syncRead
+ * @brief AbstractTtlDriver::syncRead
  * @param address
  * @param data_len
  * @param id_list
  * @param data_list
  * @return
  */
-int AbstractMotorDriver::syncRead(uint8_t address, uint8_t data_len,
+int AbstractTtlDriver::syncRead(uint8_t address, uint8_t data_len,
                                   const vector<uint8_t> &id_list, vector<uint32_t> &data_list)
 {
     data_list.clear();
@@ -261,7 +263,7 @@ int AbstractMotorDriver::syncRead(uint8_t address, uint8_t data_len,
                         data_list.emplace_back(groupSyncRead.getData(id, address, data_len));
                     break;
                     default:
-                        printf("AbstractMotorDriver::syncRead ERROR: Size param must be 1, 2 or 4 bytes\n");
+                        printf("AbstractTtlDriver::syncRead ERROR: Size param must be 1, 2 or 4 bytes\n");
                     break;
                 }
             }
@@ -279,14 +281,14 @@ int AbstractMotorDriver::syncRead(uint8_t address, uint8_t data_len,
 }
 
 /**
- * @brief AbstractMotorDriver::syncWrite
+ * @brief AbstractTtlDriver::syncWrite
  * @param address
  * @param data_len
  * @param id_list
  * @param data_list
  * @return
  */
-int AbstractMotorDriver::syncWrite(uint8_t address, uint8_t data_len,
+int AbstractTtlDriver::syncWrite(uint8_t address, uint8_t data_len,
                                    const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &data_list)
 {
     int dxl_comm_result = COMM_SUCCESS;
@@ -334,7 +336,7 @@ int AbstractMotorDriver::syncWrite(uint8_t address, uint8_t data_len,
                     }
                     break;
                     default:
-                        printf("AbstractMotorDriver::syncWrite ERROR: Size param must be 1, 2 or 4 bytes\n");
+                        printf("AbstractTtlDriver::syncWrite ERROR: Size param must be 1, 2 or 4 bytes\n");
                     break;
                 }
 

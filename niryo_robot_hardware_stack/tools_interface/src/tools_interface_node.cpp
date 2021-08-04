@@ -22,7 +22,7 @@
 
 // niryo
 #include "tools_interface/tools_interface_core.hpp"
-#include "ttl_driver/ttl_driver_core.hpp"
+#include "ttl_driver/ttl_interface_core.hpp"
 
 int main(int argc, char **argv)
 {
@@ -36,7 +36,7 @@ int main(int argc, char **argv)
     ros::NodeHandle nh_ttl("ttl_driver");
     ros::NodeHandle nh("~");
 
-    auto ttl_driver = std::make_shared<ttl_driver::TtlDriverCore>(nh_ttl);
+    auto ttl_driver = std::make_shared<ttl_driver::TtlInterfaceCore>(nh_ttl);
     ros::Duration(1).sleep();
 
     auto tool = std::make_shared<tools_interface::ToolsInterfaceCore>(nh, ttl_driver);

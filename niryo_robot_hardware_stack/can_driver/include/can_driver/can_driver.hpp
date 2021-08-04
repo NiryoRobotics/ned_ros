@@ -37,7 +37,7 @@
 #include "common/model/stepper_motor_state.hpp"
 #include "common/model/conveyor_state.hpp"
 #include "common/model/stepper_calibration_status_enum.hpp"
-#include "common/model/isingle_motor_cmd.hpp"
+#include "common/model/abstract_single_motor_cmd.hpp"
 
 #include "can_driver/StepperMotorCommand.h"
 #include "can_driver/StepperCmd.h"
@@ -63,7 +63,7 @@ class CanDriver : public common::model::IDriver
         // commands
         void addMotor(uint8_t id, bool isConveyor = false);
 
-        int readSingleCommand(std::shared_ptr<common::model::ISingleMotorCmd> cmd);
+        int readSingleCommand(std::shared_ptr<common::model::AbstractCanSingleMotorCmd> cmd);
         void executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, int32_t> > cmd_vec);
 
         void startCalibration();
