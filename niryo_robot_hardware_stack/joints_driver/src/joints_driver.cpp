@@ -1,5 +1,5 @@
 #include <joints_driver/joints_driver.hpp>
-#include <ttl_driver/ttl_driver_core.hpp>
+#include <ttl_driver/ttl_interface_core.hpp>
 #include <can_driver/can_driver_core.hpp>
 
 #include <string>
@@ -7,7 +7,7 @@
 
 using ::std::vector;
 using ::std::string;
-using ::ttl_driver::TtlDriverCore;
+using ::ttl_driver::TtlInterfaceCore;
 using ::can_driver::CanDriverCore;
 
 namespace joint_driver
@@ -42,21 +42,21 @@ void JointDriver::init(ros::NodeHandle &nh)
           nh_joints_drv.hasParam("joint_" + std::to_string(nb_joints + 1) + "_protocol"))
     nb_joints++;
 
-  for (auto it = drivers_list.begin(); it != drivers_list.end(); it++)
+  for (auto it : drivers_list)
   {
-    if (*it == "can" && _haveCan == false)
+    if (it == "can" && _haveCan == false)
     {
       ROS_DEBUG("JointDriver: Create Can driver core");
       ros::NodeHandle nh_can(nh, "can_driver");
       _haveCan = true;
       _canDriverCore.reset(new CanDriverCore(nh_can));
     }
-    else if (*it == "ttl" && _haveTtl == false)
+    else if (it == "ttl" && _haveTtl == false)
     {
       ROS_DEBUG("JointsDriver: Create Ttl driver core");
       ros::NodeHandle nh_ttl(nh, "ttl_driver");
       _haveTtl = true;
-      _ttlDriverCore.reset(new TtlDriverCore(nh_ttl));
+      _ttlDriverCore.reset(new TtlInterfaceCore(nh_ttl));
     }
   }
 
@@ -84,7 +84,7 @@ void JointDriver::init(ros::NodeHandle &nh)
 /**
  * @brief JointDriver::getTtlDriverCore
 */
-std::shared_ptr<ttl_driver::TtlDriverCore> JointDriver::getTtlDriverCore() const
+std::shared_ptr<ttl_driver::TtlInterfaceCore> JointDriver::getTtlDriverCore() const
 {
     return _ttlDriverCore;
 }

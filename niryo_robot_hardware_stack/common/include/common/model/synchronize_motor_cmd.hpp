@@ -31,7 +31,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "common/model/stepper_command_type_enum.hpp"
 #include "common/model/motor_type_enum.hpp"
 #include "common/model/joint_state.hpp"
-#include "common/model/isynchronize_motor_cmd.hpp"
+#include "common/model/abstract_synchronize_motor_cmd.hpp"
 
 namespace common
 {
@@ -41,46 +41,27 @@ namespace model
 /**
  * @brief The SynchronizeMotorCmd class
  */
-template<typename E> 
-class SynchronizeMotorCmd : public ISynchronizeMotorCmd
+template<typename E, typename ParamType>
+class SynchronizeMotorCmd : public AbstractSynchronizeMotorCmd<ParamType>
 {
-    struct MotorParam {
-        MotorParam(uint8_t id, uint32_t param) {
-            motors_id.emplace_back(id);
-            params.emplace_back(param);
-        }
-
-        bool isValid() const {
-            return !motors_id.empty() && motors_id.size() == params.size();
-        }
-
-        std::vector<uint8_t> motors_id;
-        std::vector<uint32_t> params;
-    };
-
     public:
         SynchronizeMotorCmd();
         SynchronizeMotorCmd(E type);
 
+        virtual ~SynchronizeMotorCmd() override;
+
         // setters
-        void clear();
         void setType(E type);
 
         // getters
-        int getType() const override;
-
-        // ISynchronizeMotor interface
-
-        // setters
-        void addMotorParam(EMotorType type, uint8_t id, uint32_t param) override;
-
-        // getters
-        std::vector<uint8_t> getMotorsId(EMotorType type) const override;
-        std::vector<uint32_t> getParams(EMotorType type) const override;
-        std::set<EMotorType> getMotorTypes() const override;
-
-        bool isCmdStepper() const override;
-        bool isCmdDxl() const override;
+        E getType() const;
+        int getCmdType() const override
+        {
+            return static_cast<int>(_type);
+        }
+        // AbstractSingleMotorCmd interface
+        virtual bool isStepperCmd() const override;
+        virtual bool isDxlCmd() const override;
 
         // IObject interface
         virtual void reset() override;
@@ -88,19 +69,16 @@ class SynchronizeMotorCmd : public ISynchronizeMotorCmd
         virtual bool isValid() const override;
 
     private:
-        E _type;
-
-        std::set<EMotorType> _motor_types;
-        std::map<EMotorType, MotorParam > _motor_params_map;
+        E _type{E::CMD_TYPE_UNKNOWN};
 };
 
 /**
  * @brief SynchronizeMotorCmd::SynchronizeMotorCmd
  * @param type
  */
-template<typename E>
-SynchronizeMotorCmd<E>::SynchronizeMotorCmd() :
-    SynchronizeMotorCmd(E::CMD_TYPE_UNKNOWN)
+template<typename E, typename ParamType>
+SynchronizeMotorCmd<E, ParamType>::SynchronizeMotorCmd() :
+    AbstractSynchronizeMotorCmd<ParamType>()
 {
 }
 
@@ -108,31 +86,30 @@ SynchronizeMotorCmd<E>::SynchronizeMotorCmd() :
  * @brief SynchronizeMotorCmd::SynchronizeMotorCmd
  * @param type
  */
-template<typename E>
-SynchronizeMotorCmd<E>::SynchronizeMotorCmd(E type)
+template<typename E, typename ParamType>
+SynchronizeMotorCmd<E, ParamType>::SynchronizeMotorCmd(E type) :
+    SynchronizeMotorCmd()
 {
     static_assert(std::is_enum<E>::value, "E must be an enum");
     setType(type);
 
-    clear();
+    this->clear();
 }
 
 /**
- * @brief SynchronizeMotorCmd::clear : clears the data (keep the cmd type)
+ * @brief SynchronizeMotorCmd::SynchronizeMotorCmd
+ * @param type
  */
-template<typename E>
-void SynchronizeMotorCmd<E>::clear()
-{
-    _motor_params_map.clear();
-    _motor_types.clear();
-}
+template<typename E, typename ParamType>
+SynchronizeMotorCmd<E, ParamType>::~SynchronizeMotorCmd()
+{}
 
 /**
  * @brief SingleMotorCmd<E>::setType
  * @param type
  */
-template<typename E>
-void SynchronizeMotorCmd<E>::setType(E type)
+template<typename E, typename ParamType>
+void SynchronizeMotorCmd<E, ParamType>::setType(E type)
 {
     _type = type;
 }
@@ -141,98 +118,10 @@ void SynchronizeMotorCmd<E>::setType(E type)
  * @brief SingleMotorCmd<E>::getType
  * @return
  */
-template<typename E>
-int SynchronizeMotorCmd<E>::getType() const
+template<typename E, typename ParamType>
+E SynchronizeMotorCmd<E, ParamType>::getType() const
 {
-    return static_cast<int>(_type);
-}
-
-// ***********************
-//  ISynchronizeMotorCmd intf
-// ***********************
-
-/**
- * @brief SynchronizeMotorCmd::addMotorParam
- * @param type
- * @param id
- * @param param
- */
-template<typename E>
-void SynchronizeMotorCmd<E>::addMotorParam(EMotorType type, uint8_t id, uint32_t param)
-{
-    // not yet in map
-    if (!_motor_params_map.count(type))
-    {
-        _motor_params_map.insert(std::make_pair(type, MotorParam(id, param)));
-        _motor_types.insert(type);
-    }
-    else
-    {
-        _motor_params_map.at(type).motors_id.emplace_back(id);
-        _motor_params_map.at(type).params.emplace_back(param);
-    }
-}
-
-/**
- * @brief SynchronizeMotorCmd::getMotorsId
- * @param type
- * @return
- */
-template<typename E>
-std::vector<uint8_t> 
-SynchronizeMotorCmd<E>::getMotorsId(EMotorType type) const
-{
-    if (!_motor_params_map.count(type))
-        throw std::out_of_range("type not known of synchonized command");
-
-    return _motor_params_map.at(type).motors_id;
-}
-
-/**
- * @brief SynchronizeMotorCmd::getParams
- * @param type
- * @return
- */
-template<typename E>
-std::vector<uint32_t> 
-SynchronizeMotorCmd<E>::getParams(EMotorType type) const
-{
-    if (!_motor_params_map.count(type))
-        throw std::out_of_range("type not known of synchonized command");
-
-    return _motor_params_map.at(type).params;
-}
-
-/**
- * @brief SynchronizeMotorCmd::getMotorTypes
- * @return
- */
-template<typename E>
-std::set<EMotorType> 
-SynchronizeMotorCmd<E>::getMotorTypes() const
-{
-    return _motor_types;
-}
-
-/**
- * @brief SynchronizeMotorCmd::isValid
- * @return
- */
-template<typename E>
-bool SynchronizeMotorCmd<E>::isValid() const
-{
-    if (E::CMD_TYPE_UNKNOWN == _type || _motor_params_map.empty())
-    {
-        return false;
-    }
-
-    for (auto const& it_map : _motor_params_map)
-    {
-        if (!it_map.second.isValid())
-            return false;
-    }
-
-    return true;
+    return _type;
 }
 
 /**
@@ -240,8 +129,8 @@ bool SynchronizeMotorCmd<E>::isValid() const
  * @param none
  * @return
  */
-template<typename E>
-bool SynchronizeMotorCmd<E>::isCmdStepper() const
+template<typename E, typename ParamType>
+bool SynchronizeMotorCmd<E, ParamType>::isStepperCmd() const
 {
     return typeid(E) == typeid(common::model::EStepperCommandType);
 }
@@ -251,8 +140,8 @@ bool SynchronizeMotorCmd<E>::isCmdStepper() const
  * @param none
  * @return
  */
-template<typename E>
-bool SynchronizeMotorCmd<E>::isCmdDxl() const
+template<typename E, typename ParamType>
+bool SynchronizeMotorCmd<E, ParamType>::isDxlCmd() const
 {
     return typeid(E) == typeid(common::model::EDxlCommandType);
 }
@@ -260,11 +149,32 @@ bool SynchronizeMotorCmd<E>::isCmdDxl() const
 /**
  * @brief SynchronizeMotorCmd::reset
  */
-template<typename E>
-void SynchronizeMotorCmd<E>::reset()
+template<typename E, typename ParamType>
+void SynchronizeMotorCmd<E, ParamType>::reset()
 {
     this->setType(E::CMD_TYPE_UNKNOWN);
-    clear();
+    this->clear();
+}
+
+/**
+ * @brief SynchronizeMotorCmd::isValid
+ * @return
+ */
+template<typename E, typename ParamType>
+bool SynchronizeMotorCmd<E, ParamType>::isValid() const
+{
+    if (E::CMD_TYPE_UNKNOWN == getType() || this->_motor_params_map.empty())
+    {
+        return false;
+    }
+
+    for (auto const& it_map : this->_motor_params_map)
+    {
+        if (!it_map.second.isValid())
+            return false;
+    }
+
+    return true;
 }
 
 //********************************
@@ -273,7 +183,7 @@ void SynchronizeMotorCmd<E>::reset()
 
 template<>
 inline
-std::string SynchronizeMotorCmd<common::model::EDxlCommandType>::str() const
+std::string SynchronizeMotorCmd<common::model::EDxlCommandType, uint32_t>::str() const
 {
     std::string string_info;
 
@@ -308,14 +218,13 @@ std::string SynchronizeMotorCmd<common::model::EDxlCommandType>::str() const
     return string_info;
 }
 
-
 //********************************
 // specializations for steppers
 //********************************
 
 template<>
 inline
-std::string SynchronizeMotorCmd<common::model::EStepperCommandType>::str() const
+std::string SynchronizeMotorCmd<common::model::EStepperCommandType, int32_t>::str() const
 {
     std::string string_info;
 
@@ -351,8 +260,9 @@ std::string SynchronizeMotorCmd<common::model::EStepperCommandType>::str() const
 }
 
 
-using DxlSyncCmd = SynchronizeMotorCmd<EDxlCommandType>;
-using StepperSyncCmd = SynchronizeMotorCmd<EStepperCommandType>;
+using DxlSyncCmd = SynchronizeMotorCmd<EDxlCommandType, uint32_t>;
+using StepperTtlSyncCmd = SynchronizeMotorCmd<EStepperCommandType, uint32_t>;
+using StepperSyncCmd = SynchronizeMotorCmd<EStepperCommandType, int32_t>;
 
 } // namespace model
 } // namespace common

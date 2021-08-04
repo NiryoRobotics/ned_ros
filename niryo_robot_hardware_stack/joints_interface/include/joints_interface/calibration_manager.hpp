@@ -71,7 +71,7 @@ public:
 
 private:
         std::shared_ptr<can_driver::CanDriverCore> _can_driver_core;
-        std::shared_ptr<ttl_driver::TtlDriverCore> _ttl_driver_core;
+        std::shared_ptr<ttl_driver::TtlInterfaceCore> _ttl_interface;
         std::shared_ptr<joint_driver::JointDriver> _jdriver;
         
         std::vector<std::shared_ptr<common::model::JointState> > _joint_list;

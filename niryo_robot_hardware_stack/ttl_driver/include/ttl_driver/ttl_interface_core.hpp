@@ -1,5 +1,5 @@
 /*
-ttl_driver_core.hpp
+ttl_interface_core.hpp
 Copyright (C) 2020 Niryo
 All rights reserved.
 
@@ -17,8 +17,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
-#ifndef TTL_DRIVER_CORE_HPP
-#define TTL_DRIVER_CORE_HPP
+#ifndef TTL_INTERFACE_CORE_HPP
+#define TTL_INTERFACE_CORE_HPP
 
 // std
 #include <memory>
@@ -36,7 +36,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "common/model/idriver_core.hpp"
 #include "common/model/iinterface_core.hpp"
 
-#include "ttl_driver/ttl_driver.hpp"
+#include "ttl_driver/ttl_manager.hpp"
 #include "ttl_driver/ArrayMotorHardwareStatus.h"
 #include "ttl_driver/SendCustomValue.h"
 #include "ttl_driver/ReadCustomValue.h"
@@ -49,17 +49,19 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "common/model/dxl_motor_state.hpp"
 #include "common/model/motor_type_enum.hpp"
 
+#include "ttl_driver/abstract_ttl_driver.hpp"
+
 namespace ttl_driver
 {
 /**
- * @brief The TtlDriverCore class
+ * @brief The TtlInterfaceCore class schedules and manager the communication in the TTL bus
  */
-class TtlDriverCore : public common::model::IDriverCore, public common::model::IInterfaceCore
+class TtlInterfaceCore : public common::model::IDriverCore, public common::model::IInterfaceCore
 {
 
     public:
-        TtlDriverCore(ros::NodeHandle& nh);
-        virtual ~TtlDriverCore() override;
+        TtlInterfaceCore(ros::NodeHandle& nh);
+        virtual ~TtlInterfaceCore() override;
 
         bool init(ros::NodeHandle& nh) override;
 
@@ -72,14 +74,15 @@ class TtlDriverCore : public common::model::IDriverCore, public common::model::I
         bool setMotorPID(const std::shared_ptr<common::model::JointState>& motorState);
         void setTrajectoryControllerCommands(const std::vector<std::pair<uint8_t, uint32_t> > &cmd);
 
-        void setSyncCommand(std::shared_ptr<common::model::ISynchronizeMotorCmd> cmd) override;
+        void setSyncCommand(const std::shared_ptr<common::model::ISynchronizeMotorCmd>& cmd) override;
 
-        void addSingleCommandToQueue(std::shared_ptr<common::model::ISingleMotorCmd> cmd) override;
-        
-        void addSingleCommandToQueue(std::vector<std::shared_ptr<common::model::ISingleMotorCmd>> cmd) override;
+        void addSingleCommandToQueue(const std::shared_ptr<common::model::ISingleMotorCmd>& cmd) override;
+        void addSingleCommandToQueue(const std::vector<std::shared_ptr<common::model::ISingleMotorCmd> >& cmd) override;
 
-        void addEndEffectorCommandToQueue(const common::model::DxlSingleCmd& cmd);
-        void addEndEffectorCommandToQueue(const std::vector<common::model::DxlSingleCmd> &cmd);
+        void addEndEffectorCommandToQueue(const std::shared_ptr<common::model::DxlSingleCmd> &cmd);
+        void addEndEffectorCommandToQueue(const std::vector< std::shared_ptr<common::model::DxlSingleCmd> >& cmd);
+
+        // add conveyor cmds here
 
         // direct commands
         std::vector<uint8_t> scanTools();
@@ -108,7 +111,7 @@ class TtlDriverCore : public common::model::IDriverCore, public common::model::I
         void resetCalibration() override ;
         bool isCalibrationInProgress() const override ;
         int32_t getCalibrationResult(uint8_t id) const override ;
-        common::model::EStepperCalibrationStatus getCalibrationStatus() const;
+        common::model::EStepperCalibrationStatus getCalibrationStatus() const override;
 
         void activeDebugMode(bool mode) override;
 
@@ -157,49 +160,49 @@ class TtlDriverCore : public common::model::IDriverCore, public common::model::I
 
         double _time_check_end_effector_last_read{0.0};
 
-        std::unique_ptr<TtlDriver> _ttl_driver;
+        std::unique_ptr<TtlManager> _ttl_manager;
 
         std::vector<std::pair<uint8_t, uint32_t> > _joint_trajectory_cmd;
 
         // ttl cmds
-        std::shared_ptr<common::model::ISynchronizeMotorCmd> _sync_cmds;
-        std::queue<std::shared_ptr<common::model::ISingleMotorCmd> > _single_cmds;
-        std::queue < std::shared_ptr < common::model::DxlSingleCmd> > _dxl_end_effector_cmds;
+        std::shared_ptr<common::model::AbstractTtlSynchronizeMotorCmd> _sync_cmds;
+        std::queue<std::shared_ptr<common::model::AbstractTtlSingleMotorCmd> > _single_cmds_queue;
+        std::queue <std::shared_ptr<common::model::AbstractTtlSingleMotorCmd> > _end_effector_cmds_queue;
 
         ros::ServiceServer _activate_leds_server;
         ros::ServiceServer _custom_cmd_server;
         ros::ServiceServer _custom_cmd_getter;
 
         static constexpr int QUEUE_OVERFLOW = 20;
-        static constexpr double DXL_VOLTAGE_DIVISOR = 10.0;
+        static constexpr double TTL_VOLTAGE_DIVISOR = 10.0;
 };
 
 /**
- * @brief TtlDriverCore::isConnectionOk
+ * @brief TtlInterfaceCore::isConnectionOk
  * @return
  */
 inline
-bool TtlDriverCore::isConnectionOk() const
+bool TtlInterfaceCore::isConnectionOk() const
 {
-    return _ttl_driver->isConnectionOk();
+    return _ttl_manager->isConnectionOk();
 }
 
 /**
- * @brief TtlDriverCore::getRemovedMotorList
+ * @brief TtlInterfaceCore::getRemovedMotorList
  * @return
  */
 inline
-std::vector<uint8_t> TtlDriverCore::getRemovedMotorList() const
+std::vector<uint8_t> TtlInterfaceCore::getRemovedMotorList() const
 {
-    return _ttl_driver->getRemovedMotorList();
+    return _ttl_manager->getRemovedMotorList();
 }
 
 inline
-std::string TtlDriverCore::getTypeDriver() const
+std::string TtlInterfaceCore::getTypeDriver() const
 {
     return "ttl";
 }
 
-} // TtlDriver
+} // TtlManager
 
-#endif // TTL_DRIVER_CORE_HPP
+#endif // TTL_INTERFACE_CORE_HPP

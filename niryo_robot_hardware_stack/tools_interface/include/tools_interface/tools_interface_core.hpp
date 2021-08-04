@@ -30,7 +30,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "common/model/iinterface_core.hpp"
 
 #include "common/model/tool_state.hpp"
-#include "ttl_driver/ttl_driver_core.hpp"
+#include "ttl_driver/ttl_interface_core.hpp"
 
 #include "tools_interface/PingDxlTool.h"
 #include "tools_interface/OpenGripper.h"
@@ -52,7 +52,7 @@ class ToolsInterfaceCore : public common::model::IInterfaceCore
 {
     public:
         ToolsInterfaceCore(ros::NodeHandle& nh,
-                           std::shared_ptr<ttl_driver::TtlDriverCore> ttl_driver);
+                           std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface);
         virtual ~ToolsInterfaceCore() override;
 
         virtual bool init(ros::NodeHandle &nh) override;
@@ -84,7 +84,7 @@ class ToolsInterfaceCore : public common::model::IInterfaceCore
         ros::Publisher _tool_connection_publisher;
         std::thread _publish_tool_connection_thread;
 
-        std::shared_ptr<ttl_driver::TtlDriverCore> _ttl_driver_core;
+        std::shared_ptr<ttl_driver::TtlInterfaceCore> _ttl_interface;
 
         ros::ServiceServer _ping_and_set_dxl_tool_server;
         ros::ServiceServer _open_gripper_server;

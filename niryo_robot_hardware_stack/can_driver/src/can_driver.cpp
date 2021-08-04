@@ -272,14 +272,14 @@ int32_t CanDriver::getPosition(uint8_t motor_id) const
  * @param cmd
  * @return
  */
-int CanDriver::readSingleCommand(std::shared_ptr<common::model::ISingleMotorCmd> cmd)
+int CanDriver::readSingleCommand(std::shared_ptr<common::model::AbstractCanSingleMotorCmd> cmd)
 {
     int result = CAN_INVALID_CMD;
     ROS_DEBUG("CanDriver::readCommand - Received stepper cmd %s", cmd->str().c_str());
 
     if (cmd->isValid())  // certifies that params is not empty
     {
-        switch (EStepperCommandType(cmd->getType()))
+        switch (EStepperCommandType(cmd->getCmdType()))
         {
             case EStepperCommandType::CMD_TYPE_POSITION:
                 result = sendPositionCommand(cmd->getId(),

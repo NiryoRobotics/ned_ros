@@ -33,6 +33,7 @@
 #include "common/model/conveyor_state.hpp"
 #include "common/model/motor_type_enum.hpp"
 #include "common/model/stepper_command_type_enum.hpp"
+#include "common/model/single_motor_cmd.hpp"
 
 using ::std::lock_guard;
 using ::std::mutex;
@@ -528,15 +529,18 @@ void CanDriverCore::setTrajectoryControllerCommands(const std::vector<std::pair<
 
 /**
  * @brief CanDriverCore::addSingleCommandToQueue
- * @param cmd
+ * @param cmd : needs to be a ptr for two reasons :
+ * - cannot be a template method because we need it to be virtual (no static polymorphism possible)
+ * - dynamic polymorphism necessary to be able to cast into a derived class
  */
-void CanDriverCore::addSingleCommandToQueue(std::shared_ptr<common::model::ISingleMotorCmd> cmd)
+void CanDriverCore::addSingleCommandToQueue(const std::shared_ptr<common::model::ISingleMotorCmd>& cmd)
 {
     ROS_DEBUG("CanDriverCore::addSingleCommandToQueue - %s", cmd->str().c_str());
 
     if (cmd->isValid())
     {
-        if (cmd->getType() == (int)EStepperCommandType::CMD_TYPE_CONVEYOR)
+
+        if (cmd->getCmdType() == (int)EStepperCommandType::CMD_TYPE_CONVEYOR)
         {  // keep position cmd apart
             if (_conveyor_cmds.size() > QUEUE_OVERFLOW)
             {
@@ -544,7 +548,7 @@ void CanDriverCore::addSingleCommandToQueue(std::shared_ptr<common::model::ISing
             }
             else
             {
-                _conveyor_cmds.push(cmd);
+                _conveyor_cmds.push(std::dynamic_pointer_cast<common::model::StepperSingleCmd>(cmd));
             }
         }
         else
@@ -555,7 +559,7 @@ void CanDriverCore::addSingleCommandToQueue(std::shared_ptr<common::model::ISing
             }
             else
             {
-                _stepper_single_cmds.push(cmd);
+                _stepper_single_cmds.push(std::dynamic_pointer_cast<common::model::StepperSingleCmd>(cmd));
             }
         }
     }
@@ -565,7 +569,7 @@ void CanDriverCore::addSingleCommandToQueue(std::shared_ptr<common::model::ISing
  * @brief CanDriverCore::addSingleCommandToQueue
  * @param cmd
  */
-void CanDriverCore::addSingleCommandToQueue(std::vector<std::shared_ptr<common::model::ISingleMotorCmd>> cmd)
+void CanDriverCore::addSingleCommandToQueue(const std::vector<std::shared_ptr<common::model::ISingleMotorCmd> >& cmd)
 {
     for (auto const& c : cmd)
         addSingleCommandToQueue(c);
@@ -575,7 +579,7 @@ void CanDriverCore::addSingleCommandToQueue(std::vector<std::shared_ptr<common::
  * @brief CanDriverCore::setSyncCommand
  * @param cmd
  */
-void CanDriverCore::setSyncCommand(std::shared_ptr<common::model::ISynchronizeMotorCmd> cmd)
+void CanDriverCore::setSyncCommand(const std::shared_ptr<common::model::ISynchronizeMotorCmd>& cmd)
 {
     ROS_INFO("CanDriverCore::setSyncCommand: need to be implemented");
 }

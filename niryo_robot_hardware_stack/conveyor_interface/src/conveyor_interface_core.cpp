@@ -177,18 +177,19 @@ ConveyorInterfaceCore::addConveyor()
             // remove from pool
             _conveyor_pool_id_list.erase(_conveyor_pool_id_list.begin());
 
-            StepperSingleCmd cmd(EStepperCommandType::CMD_TYPE_MICRO_STEPS, conveyor_id, {8});
-            cmd.setParams({8});
-            _can_driver->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(cmd));
+            _can_driver->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_MICRO_STEPS,
+                                                                                    conveyor_id, std::initializer_list<int32_t>{8}));
 
-            cmd = StepperSingleCmd(EStepperCommandType::CMD_TYPE_MAX_EFFORT, conveyor_id, {static_cast<uint32_t>(_conveyor_max_effort)});
-            _can_driver->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(cmd));
+            _can_driver->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_MAX_EFFORT,
+                                                                                    conveyor_id, std::initializer_list<int32_t>{_conveyor_max_effort}));
 
-            cmd = StepperSingleCmd(EStepperCommandType::CMD_TYPE_CONVEYOR, conveyor_id, {false, 0, -1});
-            _can_driver->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(cmd));
+            _can_driver->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_CONVEYOR,
+                                                                                    conveyor_id, std::initializer_list<int32_t>{false, 0, -1}));
 
             // CC why two times in a row ?
-            _can_driver->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(cmd));
+            _can_driver->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_CONVEYOR,
+                                                                                    conveyor_id, std::initializer_list<int32_t>{false, 0, -1}));
+
             res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
 
             res.message = "Set new conveyor on id ";
@@ -320,7 +321,8 @@ bool ConveyorInterfaceCore::_callbackControlConveyor(conveyor_interface::Control
         res.message += to_string(req.id);
         res.message += " is OK";
         res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
-        _can_driver->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(cmd));
+        _can_driver->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_CONVEYOR,
+                                                                                req.id, std::initializer_list<int32_t>{req.control_on, req.speed, req.direction}));
     }
     else
     {

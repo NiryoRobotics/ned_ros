@@ -30,7 +30,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "conveyor_interface/conveyor_interface_core.hpp"
 #include "cpu_interface/cpu_interface_core.hpp"
 #include "joints_driver/joints_driver.hpp"
-#include "ttl_driver/ttl_driver_core.hpp"
+#include "ttl_driver/ttl_interface_core.hpp"
 #include "can_driver/can_driver_core.hpp"
 #include "fake_interface/fake_interface_core.hpp"
 
@@ -81,7 +81,7 @@ class HardwareInterface : common::model::IInterfaceCore
         ros::ServiceServer _reboot_motors_service;
 
         std::shared_ptr<joint_driver::JointDriver> _joint_driver;
-        std::shared_ptr<ttl_driver::TtlDriverCore> _ttl_driver;
+        std::shared_ptr<ttl_driver::TtlInterfaceCore> _ttl_interface;
         std::shared_ptr<can_driver::CanDriverCore> _can_driver;
         std::shared_ptr<cpu_interface::CpuInterfaceCore> _cpu_interface;
         std::shared_ptr<conveyor_interface::ConveyorInterfaceCore> _conveyor_interface;

@@ -23,7 +23,7 @@
 
 // niryo
 #include "joints_interface/joints_interface_core.hpp"
-#include "ttl_driver/ttl_driver_core.hpp"
+#include "ttl_driver/ttl_interface_core.hpp"
 #include "can_driver/can_driver_core.hpp"
 
 int main(int argc, char **argv)
