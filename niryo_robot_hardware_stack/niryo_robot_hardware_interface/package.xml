@@ -30,6 +30,7 @@
   <build_export_depend>niryo_robot_msgs</build_export_depend>
   <build_export_depend>cpu_interface</build_export_depend>
   <build_export_depend>conveyor_interface</build_export_depend>
+  <build_export_depend>joints_driver</build_export_depend>
   <build_export_depend>joints_interface</build_export_depend>
 
   <exec_depend>roscpp</exec_depend>

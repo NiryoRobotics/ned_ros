@@ -1,11 +1,6 @@
-message("\n## Reading joints_driver/CMakeLists.txt...")
-
 cmake_minimum_required(VERSION 3.0.2)
 project(joints_driver)
-
-option(BUILD_DOCS "Build documentation" OFF)
-option(BUILD_UNIT_TESTS "Build the unit tests" OFF)
-option(BUILD_INTEGRATION_TESTS "Build the integration tests" OFF)
+message("\n## Reading ${PROJECT_NAME}/CMakeLists.txt...")
 
 ## c++ options
 ## Compile as C++14, supported in ROS Melodic and newer
@@ -19,11 +14,11 @@ add_definitions(-Wall  -Werror)
 ## Find catkin macros and libraries
 find_package(catkin REQUIRED
     COMPONENTS
-        roscpp
-        niryo_robot_msgs
-        message_generation
-        common
         can_driver
+        common
+        message_generation
+        niryo_robot_msgs
+        roscpp
         ttl_driver
 )
 
@@ -31,25 +26,7 @@ find_package(catkin REQUIRED
 # Declare ROS messages, services and actions ##
 ###############################################
 
-# add_message_files(
-#   FILES
-#     StepperArrayMotorHardwareStatus.msg
-#     StepperMotorCommand.msg
-#     StepperMotorHardwareStatus.msg
-# )
-
-# add_service_files(
-#   DIRECTORY
-#     srv
-#   FILES
-#     StepperCmd.srv
-# )
-
-# generate_messages(
-#   DEPENDENCIES
-#     std_msgs
-#     niryo_robot_msgs
-# )
+# nothing to do
 
 ###################################
 ## catkin specific configuration ##
@@ -65,10 +42,10 @@ catkin_package(
     LIBRARIES
         ${PROJECT_NAME}
     CATKIN_DEPENDS
-        roscpp
-        niryo_robot_msgs
-        common
         can_driver
+        common
+        niryo_robot_msgs
+        roscpp
         ttl_driver
 )
 
@@ -98,40 +75,6 @@ add_dependencies(${PROJECT_NAME}_node
   ${catkin_EXPORTED_TARGETS}
 )
 
-# add_dependencies(${PROJECT_NAME}
-#     can_driver_generate_messages_cpp
-# )
-
-## Specify libraries to link executable targets against
-
-# wiringPi should be installed only on a Raspberry Pi board
-if(CMAKE_CROSSCOMPILING)
-    message(STATUS "Cross compiling : wiringPi library is required")
-    target_link_libraries(${PROJECT_NAME}
-        ${catkin_LIBRARIES}
-        -lwiringPi -lrt
-    )
-else()
-    execute_process( COMMAND
-            uname -m COMMAND tr -d '\n'
-        OUTPUT_VARIABLE
-            ARCHITECTURE
-    )
-
-    if (${ARCHITECTURE} MATCHES "^(arm.*|aarch64.*|arm64.*)$")
-        message(STATUS "wiringPi library is required - arm processor")
-        target_link_libraries(${PROJECT_NAME}
-            ${catkin_LIBRARIES}
-            -lwiringPi -lrt
-        )
-    else()
-        message(STATUS "wiringPi library not required")
-        target_link_libraries(${PROJECT_NAME}
-            ${catkin_LIBRARIES}
-        )
-    endif()
-endif()
-
 target_link_libraries(${PROJECT_NAME}_node
   ${PROJECT_NAME}
   ${catkin_LIBRARIES}
@@ -141,43 +84,31 @@ target_link_libraries(${PROJECT_NAME}_node
 ##   Doc   ##
 #############
 
-if(BUILD_DOCS)
-  find_program(rosdoc_lite_FOUND rosdoc_lite)
-  if(rosdoc_lite_FOUND)
-      add_custom_target (${PROJECT_NAME}_doc ALL
-          rosdoc_lite -o ${CMAKE_CURRENT_BINARY_DIR}/doc ${CMAKE_CURRENT_LIST_DIR}
-      )
-  else()
-    message(WARNING "rosdoc_lite not found. Skipping documentation building")
-  endif()
-
-endif(BUILD_DOCS)
+find_program(rosdoc_lite_FOUND rosdoc_lite)
+if(rosdoc_lite_FOUND)
+    add_custom_target (${PROJECT_NAME}_doc ALL
+        rosdoc_lite -o ${CMAKE_CURRENT_BINARY_DIR}/doc ${CMAKE_CURRENT_LIST_DIR}
+    )
+else()
+  message(WARNING "rosdoc_lite not found. Skipping documentation building")
+endif()
 
 #############
 ## Testing ##
 #############
 
-# if(CATKIN_ENABLE_TESTING)
-#     if(BUILD_UNIT_TESTS)
-#     endif(BUILD_UNIT_TESTS)
 
-#     if(BUILD_INTEGRATION_TESTS)
-#       find_package(catkin REQUIRED rostest)
+if(CATKIN_ENABLE_TESTING)
+    find_package(rostest REQUIRED)
 
-#       add_rostest_gtest(${PROJECT_NAME}_unit_tests
-#         test/can_driver_unit_tests.test
-#         test/can_driver_unit_tests.cpp
-#       )
-#       if(TARGET ${PROJECT_NAME}_unit_tests)
-#         target_link_libraries(${PROJECT_NAME}_unit_tests
-#           ${PROJECT_NAME}
-#           ${catkin_LIBRARIES}
-#         )
-#       endif()
+    if(TARGET ${PROJECT_NAME}_unit_tests)
+      target_link_libraries(${PROJECT_NAME}_unit_tests
+        ${PROJECT_NAME}
+        ${catkin_LIBRARIES}
+      )
+    endif()
 
-#     endif(BUILD_INTEGRATION_TESTS)
-
-# endif(CATKIN_ENABLE_TESTING)
+endif()
 
 #############
 ## Install ##
@@ -201,7 +132,7 @@ install(
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 )
 
-if (EXISTS ${CMAKE_CURRENT_BINARY_DIR}/doc/)
+if(rosdoc_lite_FOUND)
   install(
     DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc/
     DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/doc

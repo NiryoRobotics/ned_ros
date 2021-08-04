@@ -81,8 +81,8 @@ include_directories(
 
 ## Declare libs and execs
 add_library(${PROJECT_NAME}
-  src/can_manager.cpp
   src/can_interface_core.cpp
+  src/can_manager.cpp
 )
 
 add_executable(${PROJECT_NAME}_node
