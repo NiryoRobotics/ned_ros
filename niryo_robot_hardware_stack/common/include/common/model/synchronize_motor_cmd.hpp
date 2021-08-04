@@ -73,8 +73,7 @@ class SynchronizeMotorCmd : public AbstractSynchronizeMotorCmd<ParamType>
 };
 
 /**
- * @brief SynchronizeMotorCmd::SynchronizeMotorCmd
- * @param type
+ * @brief SynchronizeMotorCmd<E, ParamType>::SynchronizeMotorCmd
  */
 template<typename E, typename ParamType>
 SynchronizeMotorCmd<E, ParamType>::SynchronizeMotorCmd() :
@@ -83,7 +82,7 @@ SynchronizeMotorCmd<E, ParamType>::SynchronizeMotorCmd() :
 }
 
 /**
- * @brief SynchronizeMotorCmd::SynchronizeMotorCmd
+ * @brief SynchronizeMotorCmd<E, ParamType>::SynchronizeMotorCmd
  * @param type
  */
 template<typename E, typename ParamType>
@@ -97,15 +96,14 @@ SynchronizeMotorCmd<E, ParamType>::SynchronizeMotorCmd(E type) :
 }
 
 /**
- * @brief SynchronizeMotorCmd::SynchronizeMotorCmd
- * @param type
+ * @brief SynchronizeMotorCmd<E, ParamType>::SynchronizeMotorCmd
  */
 template<typename E, typename ParamType>
 SynchronizeMotorCmd<E, ParamType>::~SynchronizeMotorCmd()
 {}
 
 /**
- * @brief SingleMotorCmd<E>::setType
+ * @brief SynchronizeMotorCmd<E, ParamType>::setType
  * @param type
  */
 template<typename E, typename ParamType>
@@ -115,7 +113,7 @@ void SynchronizeMotorCmd<E, ParamType>::setType(E type)
 }
 
 /**
- * @brief SingleMotorCmd<E>::getType
+ * @brief SynchronizeMotorCmd<E, ParamType>::getType
  * @return
  */
 template<typename E, typename ParamType>
@@ -125,8 +123,7 @@ E SynchronizeMotorCmd<E, ParamType>::getType() const
 }
 
 /**
- * @brief SynchronizeMotorCmd::isCmdStepper
- * @param none
+ * @brief SynchronizeMotorCmd<E, ParamType>::isCmdStepper
  * @return
  */
 template<typename E, typename ParamType>
@@ -136,8 +133,7 @@ bool SynchronizeMotorCmd<E, ParamType>::isStepperCmd() const
 }
 
 /**
- * @brief SynchronizeMotorCmd::isCmdDxl
- * @param none
+ * @brief SynchronizeMotorCmd<E, ParamType>::isCmdDxl
  * @return
  */
 template<typename E, typename ParamType>
@@ -147,7 +143,7 @@ bool SynchronizeMotorCmd<E, ParamType>::isDxlCmd() const
 }
 
 /**
- * @brief SynchronizeMotorCmd::reset
+ * @brief SynchronizeMotorCmd<E, ParamType>::reset
  */
 template<typename E, typename ParamType>
 void SynchronizeMotorCmd<E, ParamType>::reset()
@@ -157,7 +153,7 @@ void SynchronizeMotorCmd<E, ParamType>::reset()
 }
 
 /**
- * @brief SynchronizeMotorCmd::isValid
+ * @brief SynchronizeMotorCmd<E, ParamType>::isValid
  * @return
  */
 template<typename E, typename ParamType>
@@ -181,6 +177,10 @@ bool SynchronizeMotorCmd<E, ParamType>::isValid() const
 // specializations for dynamixel
 //********************************
 
+/**
+ * @brief SynchronizeMotorCmd<common::model::EDxlCommandType, uint32_t>::str
+ * @return
+ */
 template<>
 inline
 std::string SynchronizeMotorCmd<common::model::EDxlCommandType, uint32_t>::str() const
@@ -222,6 +222,10 @@ std::string SynchronizeMotorCmd<common::model::EDxlCommandType, uint32_t>::str()
 // specializations for steppers
 //********************************
 
+/**
+ * @brief SynchronizeMotorCmd<common::model::EStepperCommandType, int32_t>::str
+ * @return
+ */
 template<>
 inline
 std::string SynchronizeMotorCmd<common::model::EStepperCommandType, int32_t>::str() const

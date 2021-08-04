@@ -17,9 +17,9 @@
     along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
-#include <joints_driver/joints_driver.hpp>
-#include <ttl_driver/ttl_interface_core.hpp>
-#include <can_driver/can_interface_core.hpp>
+#include "joints_driver/joints_driver.hpp"
+#include "ttl_driver/ttl_interface_core.hpp"
+#include "can_driver/can_interface_core.hpp"
 
 #include <string>
 #include <vector>
@@ -111,7 +111,8 @@ std::shared_ptr<ttl_driver::TtlInterfaceCore> JointDriver::getTtlInterfaceCore()
 /**
  * @brief JointDriver::getCanInterfaceCore
 */
-std::shared_ptr<can_driver::CanInterfaceCore> JointDriver::getCanInterfaceCore() const
+std::shared_ptr<can_driver::CanInterfaceCore>
+JointDriver::getCanInterfaceCore() const
 {
     return _canInterfaceCore;
 }

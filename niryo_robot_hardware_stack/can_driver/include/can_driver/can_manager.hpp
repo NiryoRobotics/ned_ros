@@ -98,7 +98,7 @@ class CanManager : public common::model::IBusManager
         std::string getErrorMessage() const override;
 
 
-private:
+    private:
         bool hasMotors() override;
 
         int setupCAN(ros::NodeHandle& nh);

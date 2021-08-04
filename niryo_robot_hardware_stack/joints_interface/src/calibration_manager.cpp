@@ -51,8 +51,7 @@ namespace joints_interface
  * @brief CalibrationManager::CalibrationManager
  * @param nh
  * @param joint_list
- * @param can_driver
- * @param ttl_driver
+ * @param joint_driver
  */
 CalibrationManager::CalibrationManager(ros::NodeHandle& nh,
                                        std::vector<std::shared_ptr<JointState> > joint_list,

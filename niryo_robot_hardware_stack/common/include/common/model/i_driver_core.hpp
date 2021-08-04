@@ -17,8 +17,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
-#ifndef IDriverCore_H
-#define IDriverCore_H
+#ifndef I_DriverCore_H
+#define I_DriverCore_H
 
 // C++
 #include <string>
@@ -87,4 +87,4 @@ IDriverCore::~IDriverCore()
 } // namespace model
 } // namespace common
 
-#endif
+#endif // I_DRIVER_CORE_H

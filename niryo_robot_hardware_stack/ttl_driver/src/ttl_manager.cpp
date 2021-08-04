@@ -68,7 +68,9 @@ TtlManager::TtlManager(ros::NodeHandle& nh) :
         ROS_WARN("TtlManager - Dynamixel Communication Failed");
 }
 
-
+/**
+ * @brief TtlManager::~TtlManager
+ */
 TtlManager::~TtlManager()
 {
     // we use an "init()" in the ctor. Thus there should be some kind of "uninit" in the dtor
@@ -162,7 +164,7 @@ bool TtlManager::init(ros::NodeHandle& nh)
  * @brief TtlManager::addMotor
  * @param type
  * @param id
- * @param isTool
+ * @param type_used
  */
 void TtlManager::addMotor(EMotorType type, uint8_t id, EType type_used)
 {
@@ -794,9 +796,8 @@ common::model::EStepperCalibrationStatus TtlManager::getCalibrationStatus() cons
 // ******************
 
 /**
- * @brief TtlManager::setLeds : set the leds integrated into each motor
+ * @brief TtlManager::setLeds
  * @param led
- * @param type
  * @return
  */
 int TtlManager::setLeds(int led)

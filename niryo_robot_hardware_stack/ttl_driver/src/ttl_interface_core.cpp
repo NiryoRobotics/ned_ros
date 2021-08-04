@@ -816,10 +816,9 @@ void TtlInterfaceCore::addEndEffectorCommandToQueue(const std::vector<std::share
         addEndEffectorCommandToQueue(c);
 }
 
-
 /**
  * @brief TtlInterfaceCore::setMotorPID
- * @param dxlState
+ * @param motorState
  * @return
  */
 bool TtlInterfaceCore::setMotorPID(const std::shared_ptr<JointState> &motorState)

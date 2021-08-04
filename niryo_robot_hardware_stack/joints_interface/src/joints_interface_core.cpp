@@ -31,8 +31,7 @@ namespace joints_interface
  * @brief JointsInterfaceCore::JointsInterfaceCore
  * @param rootnh
  * @param robot_hwnh
- * @param ttl_driver
- * @param can_driver
+ * @param jdriver
  */
 JointsInterfaceCore::JointsInterfaceCore(ros::NodeHandle& rootnh,
                                          ros::NodeHandle& robot_hwnh,

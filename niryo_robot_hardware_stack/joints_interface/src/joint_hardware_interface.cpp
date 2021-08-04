@@ -50,8 +50,7 @@ namespace joints_interface
  * @brief JointHardwareInterface::JointHardwareInterface
  * @param rootnh
  * @param robot_hwnh
- * @param ttl_driver
- * @param can_driver
+ * @param jdriver
  */
 JointHardwareInterface::JointHardwareInterface(ros::NodeHandle& rootnh,
                                                ros::NodeHandle& robot_hwnh,

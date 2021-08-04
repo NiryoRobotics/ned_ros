@@ -62,7 +62,6 @@ include_directories(
 
 ## Declare libs and execs
 add_library(${PROJECT_NAME}
-    # src/joints_driver_core.cpp
     src/joints_driver.cpp
 )
 
@@ -73,6 +72,10 @@ add_executable(${PROJECT_NAME}_node
 ## Add dependencies to exported targets, like ROS msgs or srvs
 add_dependencies(${PROJECT_NAME}_node
   ${catkin_EXPORTED_TARGETS}
+)
+
+target_link_libraries(${PROJECT_NAME}
+  ${catkin_LIBRARIES}
 )
 
 target_link_libraries(${PROJECT_NAME}_node

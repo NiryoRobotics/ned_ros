@@ -578,7 +578,7 @@ void CanInterfaceCore::addSingleCommandToQueue(const std::vector<std::shared_ptr
  * @brief CanInterfaceCore::setSyncCommand
  * @param cmd
  */
-void CanInterfaceCore::setSyncCommand(const std::shared_ptr<common::model::ISynchronizeMotorCmd>& cmd)
+void CanInterfaceCore::setSyncCommand(const std::shared_ptr<common::model::ISynchronizeMotorCmd>& /*cmd*/)
 {
     ROS_INFO("CanInterfaceCore::setSyncCommand: need to be implemented");
 }
