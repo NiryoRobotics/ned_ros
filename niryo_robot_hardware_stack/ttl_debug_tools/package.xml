@@ -3,7 +3,7 @@
   href="http://download.ros.org/schema/package_format3.xsd"
   schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-  <name>dxl_debug_tools</name>
+  <name>ttl_debug_tools</name>
   <version>3.0.0</version>
   <description>Ned's debug tools</description>
   <maintainer email="v.pitre@niryo.com">Valentin Pitre</maintainer>

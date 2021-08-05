@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# send_custom_dxl_value.py
+# send_custom_value.py
 # Copyright (C) 2018 Niryo
 # All rights reserved.
 #
@@ -23,7 +23,7 @@ import argparse
 from ttl_driver.srv import SendCustomValue
 
 if __name__ == '__main__':
-    rospy.init_node("send_custom_dxl_value")
+    rospy.init_node("send_custom_value")
 
     # 1. Parse args
     parser = argparse.ArgumentParser(description='Send custom value to a Dynamixel motor during Ned runtime')
@@ -37,7 +37,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     # 2. Call ROS Service
-    service_name = "/niryo_robot/ttl_driver/send_custom_dxl_value"
+    service_name = "/niryo_robot/ttl_driver/send_custom_value"
 
     try:
         rospy.wait_for_service(service_name, 1.0)

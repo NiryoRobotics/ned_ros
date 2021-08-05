@@ -137,10 +137,10 @@ void TtlInterfaceCore::startServices(ros::NodeHandle& nh)
     _activate_leds_server = nh.advertiseService("/niryo_robot/ttl_driver/set_dxl_leds",
                                                  &TtlInterfaceCore::_callbackActivateLeds, this);
 
-    _custom_cmd_server = nh.advertiseService("/niryo_robot/ttl_driver/send_custom_value_to_motor",
+    _custom_cmd_server = nh.advertiseService("/niryo_robot/ttl_driver/send_custom_value",
                                               &TtlInterfaceCore::_callbackSendCustomValue, this);
 
-    _custom_cmd_getter = nh.advertiseService("/niryo_robot/ttl_driver/read_custom_value_from_motor",
+    _custom_cmd_getter = nh.advertiseService("/niryo_robot/ttl_driver/read_custom_value",
                                               &TtlInterfaceCore::_callbackReadCustomValue, this);
 }
 

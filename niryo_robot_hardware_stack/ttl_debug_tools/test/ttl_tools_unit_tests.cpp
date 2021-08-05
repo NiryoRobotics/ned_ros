@@ -1,5 +1,5 @@
 /*
-    dxl_tools_unit_tests.cpp
+    ttl_tools_unit_tests.cpp
     Copyright (C) 2020 Niryo
     All rights reserved.
     This program is free software: you can redistribute it and/or modify
@@ -27,7 +27,7 @@
 // Bring in my package's API, which is what I'm testing
 #include "dynamixel_sdk/port_handler.h"
 #include "dynamixel_sdk/packet_handler.h"
-#include "dxl_debug_tools/dxl_tools.h"
+#include "ttl_debug_tools/ttl_tools.h"
 
 #include <string>
 
@@ -35,7 +35,7 @@
 #include <gtest/gtest.h>
 
 // Declare a test
-TEST(DxlDebugToolsTestSuite, testInit)
+TEST(TtlDebugToolsTestSuite, testInit)
 {
     int baudrate = 1000000;
     std::string serial_port = DEFAULT_PORT;
@@ -49,13 +49,13 @@ TEST(DxlDebugToolsTestSuite, testInit)
     {
         std::cout << "Using baudrate: " << baudrate << ", port: " << serial_port << std::endl;
 
-        // Setup Dxl communication
+        // Setup TTL communication
         std::shared_ptr<dynamixel::PortHandler> portHandler(dynamixel::PortHandler::getPortHandler(serial_port.c_str()));
         std::shared_ptr<dynamixel::PacketHandler> packetHandler(dynamixel::PacketHandler::getPacketHandler(PROTOCOL_VERSION));
 
-        dxl_debug_tools::DxlTools dxlTools(portHandler, packetHandler);
+        ttl_debug_tools::TtlTools ttlTools(portHandler, packetHandler);
 
-        ASSERT_NE(-1, dxlTools.setupDxlBus(baudrate));
+        ASSERT_NE(-1, ttlTools.setupBus(baudrate));
     }
 }
 

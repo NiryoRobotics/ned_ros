@@ -1,5 +1,5 @@
 /*
-dxl_tools.h
+ttl_tools.h
 Copyright (C) 2018 Niryo
 All rights reserved.
 
@@ -17,28 +17,28 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef DXL_DEBUG_TOOLS_DXL_TOOLS_H
-#define DXL_DEBUG_TOOLS_DXL_TOOLS_H
+#ifndef TTL_DEBUG_TOOLS_TTL_TOOLS_H
+#define TTL_DEBUG_TOOLS_TTL_TOOLS_H
 
 #include <string>
 #include <memory>
 
 #include "dynamixel_sdk/dynamixel_sdk.h"
 
-namespace dxl_debug_tools
+namespace ttl_debug_tools
 {
 
 /**
- * @brief The DxlTools class
+ * @brief The TtlTools class
  */
-class DxlTools
+class TtlTools
 {
     public:
-        DxlTools();
-        DxlTools(std::shared_ptr<dynamixel::PortHandler> portHandler,
+        TtlTools();
+        TtlTools(std::shared_ptr<dynamixel::PortHandler> portHandler,
                  std::shared_ptr<dynamixel::PacketHandler> packetHandler);
 
-        int setupDxlBus(int baudrate);
+        int setupBus(int baudrate);
         void broadcastPing();
         void ping(int id);
         int setRegister(uint8_t id, uint8_t reg_address,
@@ -53,6 +53,6 @@ class DxlTools
         std::shared_ptr<dynamixel::PacketHandler> _packetHandler;
 };
 
-}  // namespace dxl_debug_tools
+}  // namespace ttl_debug_tools
 
-#endif  // DXL_DEBUG_TOOLS_DXL_TOOLS_H
+#endif  // TTL_DEBUG_TOOLS_TTL_TOOLS_H

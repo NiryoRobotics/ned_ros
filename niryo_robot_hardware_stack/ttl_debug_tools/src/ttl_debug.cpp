@@ -1,5 +1,5 @@
 /*
-    dxl_debug.cpp
+    ttl_debug.cpp
     Copyright (C) 2018 Niryo
     All rights reserved.
 
@@ -25,7 +25,7 @@
 
 // niryo
 #include "dynamixel_sdk/dynamixel_sdk.h"
-#include "dxl_debug_tools/dxl_tools.h"
+#include "ttl_debug_tools/ttl_tools.h"
 
 #define PROTOCOL_VERSION 2.0
 
@@ -59,8 +59,8 @@ int main(int argc, char **argv)
             ("help,h", "Print help message")
             ("baudrate,b", po::value<int>()->default_value(1000000), "Baud rate")
             ("port,p", po::value<std::string>()->default_value(DEFAULT_PORT), "Set port")
-            ("id,i", po::value<int>()->default_value(0), "Dxl motor ID")
-            ("scan", "Scan all Dxl motors on the bus")
+            ("id,i", po::value<int>()->default_value(0), "Motor ID")
+            ("scan", "Scan all motors on the TTL bus")
             ("ping", "ping specific ID")
             ("get-register", po::value<int>()->default_value(-1), "Get a value from a register (arg: reg_addr)")
             ("size", po::value<int>()->default_value(1), "Size (for get-register only)")
@@ -86,26 +86,26 @@ int main(int argc, char **argv)
         int id = vars["id"].as<int>();
 
         std::cout << "Using baudrate: " << baudrate << ", port: " << serial_port << "\n";
-        std::cout << "Dxl ID: " << static_cast<int>(id) << "\n";
+        std::cout << "Motor ID: " << id << "\n";
 
-        // Setup Dxl communication
+        // Setup TTL communication
         std::shared_ptr<dynamixel::PortHandler> portHandler(
                     dynamixel::PortHandler::getPortHandler(serial_port.c_str()));
 
         std::shared_ptr<dynamixel::PacketHandler> packetHandler(
                     dynamixel::PacketHandler::getPacketHandler(PROTOCOL_VERSION));
 
-        dxl_debug_tools::DxlTools dxlTools(portHandler, packetHandler);
+        ttl_debug_tools::TtlTools ttlTools(portHandler, packetHandler);
 
-        if (-1 != dxlTools.setupDxlBus(baudrate))
+        if (-1 != ttlTools.setupBus(baudrate))
         {
-            int dxl_comm_result = COMM_TX_FAIL;
+            int comm_result = COMM_TX_FAIL;
 
             // Execute action from args
             if (vars.count("scan"))  // scan
             {
-                printf("--> SCAN Dxl bus\n");
-                dxlTools.broadcastPing();
+                printf("--> SCAN TTL bus\n");
+                ttlTools.broadcastPing();
             }
             else if (vars.count("ping"))  // ping
             {
@@ -116,7 +116,7 @@ int main(int argc, char **argv)
                 else
                 {
                     printf("--> PING Motor (ID: %d)\n", id);
-                    dxlTools.ping(id);
+                    ttlTools.ping(id);
                 }
             }
             else if (vars.count("set-register"))  // set-register
@@ -135,10 +135,10 @@ int main(int argc, char **argv)
                     printf("--> SET REGISTER for Motor (ID:%d)\n", id);
                     printf("Register address: %d, Value: %d, Size (bytes): %d\n", addr, value, size);
 
-                    dxl_comm_result = dxlTools.setRegister(id, addr, value, size);
+                    comm_result = ttlTools.setRegister(static_cast<uint8_t>(id), addr, value, size);
 
-                    if (dxl_comm_result != COMM_SUCCESS)
-                        printf("Failed to set register: %d\n", dxl_comm_result);
+                    if (comm_result != COMM_SUCCESS)
+                        printf("Failed to set register: %d\n", comm_result);
                     else
                         printf("Successfully sent register command\n");
                 }
@@ -152,10 +152,10 @@ int main(int argc, char **argv)
                 printf("--> GET REGISTER for Motor (ID:%d)\n", id);
                 printf("Register address: %d, Size (bytes): %d\n", addr, size);
 
-                dxl_comm_result = dxlTools.getRegister(id, addr, value, size);
+                comm_result = ttlTools.getRegister(static_cast<uint8_t>(id), addr, value, size);
 
-                if (dxl_comm_result != COMM_SUCCESS)
-                    printf("Failed to get register: %d\n", dxl_comm_result);
+                if (comm_result != COMM_SUCCESS)
+                    printf("Failed to get register: %d\n", comm_result);
                 else
                     printf("Retrieved value at address %d : %d\n", addr, value);
             }
@@ -165,7 +165,7 @@ int main(int argc, char **argv)
             }
 
             // close port before exit
-            dxlTools.closePort();
+            ttlTools.closePort();
             return 0;
         }
 

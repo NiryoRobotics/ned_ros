@@ -21,7 +21,7 @@ Niryo robot - Dxl debug tools
 ------------------------------------
 This script can be launched via:  ::
 
- rosrun niryo_robot_debug dxl_debug_tools
+ rosrun niryo_robot_debug ttl_debug_tools
 
 Parameters - Dxl debug tools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

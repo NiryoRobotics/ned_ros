@@ -1,5 +1,5 @@
 /*
-    dxl_tools.cpp
+    ttl_tools.cpp
     Copyright (C) 2018 Niryo
     All rights reserved.
 
@@ -19,23 +19,23 @@
 
 #include <vector>
 
-#include "dxl_debug_tools/dxl_tools.h"
+#include "ttl_debug_tools/ttl_tools.h"
 
-namespace dxl_debug_tools
+namespace ttl_debug_tools
 {
 
 /**
- * @brief DxlTools::DxlTools
+ * @brief TtlTools::TtlTools
  */
-DxlTools::DxlTools()
+TtlTools::TtlTools()
 {}
 
 /**
- * @brief DxlTools::DxlTools
+ * @brief TtlTools::TtlTools
  * @param portHandler
  * @param packetHandler
  */
-DxlTools::DxlTools(std::shared_ptr<dynamixel::PortHandler> portHandler,
+TtlTools::TtlTools(std::shared_ptr<dynamixel::PortHandler> portHandler,
                    std::shared_ptr<dynamixel::PacketHandler> packetHandler) :
     _portHandler(portHandler),
     _packetHandler(packetHandler)
@@ -43,11 +43,11 @@ DxlTools::DxlTools(std::shared_ptr<dynamixel::PortHandler> portHandler,
 }
 
 /**
- * @brief DxlTools::setupDxlBus
+ * @brief TtlTools::setupTtlBus
  * @param baudrate
  * @return
  */
-int DxlTools::setupDxlBus(int baudrate)
+int TtlTools::setupBus(int baudrate)
 {
     if (!_portHandler->setupGpio())
     {
@@ -65,26 +65,26 @@ int DxlTools::setupDxlBus(int baudrate)
         return -1;
     }
 
-    printf("Dxl Bus successfully setup\n");
+    printf("Ttl Bus successfully setup\n");
     return 1;
 }
 
 /**
- * @brief DxlTools::broadcastPing
+ * @brief TtlTools::broadcastPing
  */
-void DxlTools::broadcastPing()
+void TtlTools::broadcastPing()
 {
-    int dxl_comm_result = COMM_TX_FAIL;
+    int comm_result = COMM_TX_FAIL;
     std::vector<uint8_t> id_list;
 
-    dxl_comm_result = _packetHandler->broadcastPing(_portHandler.get(), id_list);
-    if (dxl_comm_result != COMM_SUCCESS)
+    comm_result = _packetHandler->broadcastPing(_portHandler.get(), id_list);
+    if (comm_result != COMM_SUCCESS)
     {
-        printf("Failed to scan Dynamixel bus: %d\n", dxl_comm_result);
+        printf("Failed to scan Dynamixel bus: %d\n", comm_result);
         return;
     }
 
-    printf("Detected Dxl motor IDs:\n");
+    printf("Detected Ttl motor IDs:\n");
     for (uint8_t id : id_list)
     {
         printf("- %d\n", id);
@@ -92,23 +92,23 @@ void DxlTools::broadcastPing()
 }
 
 /**
- * @brief DxlTools::ping
+ * @brief TtlTools::ping
  * @param id
  */
-void DxlTools::ping(int id)
+void TtlTools::ping(int id)
 {
-    int dxl_comm_result = COMM_TX_FAIL;
-    uint8_t dxl_error = 0;
-    uint16_t dxl_model_number;
+    int comm_result = COMM_TX_FAIL;
+    uint8_t error = 0;
+    uint16_t model_number;
 
-    dxl_comm_result = _packetHandler->ping(_portHandler.get(), static_cast<uint8_t>(id), &dxl_model_number, &dxl_error);
-    if (dxl_comm_result != COMM_SUCCESS)
+    comm_result = _packetHandler->ping(_portHandler.get(), static_cast<uint8_t>(id), &model_number, &error);
+    if (comm_result != COMM_SUCCESS)
     {
-        printf("Ping failed: %d\n", dxl_comm_result);
+        printf("Ping failed: %d\n", comm_result);
     }
-    else if (dxl_error != 0)
+    else if (error != 0)
     {
-        printf("Ping OK for ID: %d, but an error flag is set on the motor: %d\n", id, static_cast<int>(dxl_error));
+        printf("Ping OK for ID: %d, but an error flag is set on the motor: %d\n", id, static_cast<int>(error));
     }
     else
     {
@@ -117,29 +117,29 @@ void DxlTools::ping(int id)
 }
 
 /**
- * @brief DxlTools::setRegister
+ * @brief TtlTools::setRegister
  * @param id
  * @param reg_address
  * @param value
  * @param byte_number
  */
-int DxlTools::setRegister(uint8_t id, uint8_t reg_address,
+int TtlTools::setRegister(uint8_t id, uint8_t reg_address,
                            uint32_t value, uint8_t byte_number)
 {
-    int dxl_comm_result = COMM_TX_FAIL;
+    int comm_result = COMM_TX_FAIL;
 
     switch (byte_number)
     {
         case 1:
-            dxl_comm_result = _packetHandler->write1ByteTxOnly(_portHandler.get(), id,
+            comm_result = _packetHandler->write1ByteTxOnly(_portHandler.get(), id,
                     reg_address, static_cast<uint8_t>(value));
         break;
         case 2:
-            dxl_comm_result = _packetHandler->write2ByteTxOnly(_portHandler.get(), id,
+            comm_result = _packetHandler->write2ByteTxOnly(_portHandler.get(), id,
                     reg_address, static_cast<uint16_t>(value));
         break;
         case 4:
-            dxl_comm_result = _packetHandler->write4ByteTxOnly(_portHandler.get(), id,
+            comm_result = _packetHandler->write4ByteTxOnly(_portHandler.get(), id,
                     reg_address, static_cast<uint32_t>(value));
         break;
         default:
@@ -147,45 +147,45 @@ int DxlTools::setRegister(uint8_t id, uint8_t reg_address,
         break;
     }
 
-    return dxl_comm_result;
+    return comm_result;
 }
 
 /**
- * @brief DxlTools::getRegister
+ * @brief TtlTools::getRegister
  * @param id
  * @param reg_address
  * @param value
  * @param byte_number
  * @return
  */
-int DxlTools::getRegister(uint8_t id, uint8_t reg_address, uint32_t &value, uint8_t byte_number)
+int TtlTools::getRegister(uint8_t id, uint8_t reg_address, uint32_t &value, uint8_t byte_number)
 {
-    int dxl_comm_result = COMM_TX_FAIL;
-    uint8_t dxl_error = 0;
+    int comm_result = COMM_TX_FAIL;
+    uint8_t error = 0;
 
     switch (byte_number)
     {
         case 1:
         {
             uint8_t read_data;
-            dxl_comm_result = _packetHandler->read1ByteTxRx(_portHandler.get(), id,
-                                        reg_address, &read_data, &dxl_error);
+            comm_result = _packetHandler->read1ByteTxRx(_portHandler.get(), id,
+                                        reg_address, &read_data, &error);
             value = read_data;
         }
         break;
         case 2:
         {
             uint16_t read_data;
-            dxl_comm_result = _packetHandler->read2ByteTxRx(_portHandler.get(), id,
-                                        reg_address, &read_data, &dxl_error);
+            comm_result = _packetHandler->read2ByteTxRx(_portHandler.get(), id,
+                                        reg_address, &read_data, &error);
             value = read_data;
         }
         break;
         case 4:
         {
             uint32_t read_data;
-            dxl_comm_result = _packetHandler->read4ByteTxRx(_portHandler.get(), id,
-                                        reg_address, &read_data, &dxl_error);
+            comm_result = _packetHandler->read4ByteTxRx(_portHandler.get(), id,
+                                        reg_address, &read_data, &error);
             value = read_data;
         }
         break;
@@ -194,17 +194,17 @@ int DxlTools::getRegister(uint8_t id, uint8_t reg_address, uint32_t &value, uint
         break;
     }
 
-    if (0 != dxl_error)
-        dxl_comm_result = dxl_error;
+    if (0 != error)
+        comm_result = error;
 
-    return dxl_comm_result;
+    return comm_result;
 }
 
 /**
- * @brief DxlTools::closePort
+ * @brief TtlTools::closePort
  */
-void DxlTools::closePort()
+void TtlTools::closePort()
 {
     _portHandler->closePort();
 }
-}  // namespace dxl_debug_tools
+}  // namespace ttl_debug_tools

@@ -42,7 +42,7 @@ TEST(TESTSuite, setLeds)
 
 TEST(TESTSuite, sendCustomValue)
 {
-    auto client = nh->serviceClient<ttl_driver::SendCustomValue>("/niryo_robot/ttl_driver/send_custom_dxl_value");
+    auto client = nh->serviceClient<ttl_driver::SendCustomValue>("/niryo_robot/ttl_driver/send_custom_value");
 
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);
@@ -62,7 +62,7 @@ TEST(TESTSuite, sendCustomValue)
 
 TEST(TESTSuite, readCustomValue)
 {
-    auto client = nh->serviceClient<ttl_driver::ReadCustomValue>("/niryo_robot/ttl_driver/read_custom_dxl_value");
+    auto client = nh->serviceClient<ttl_driver::ReadCustomValue>("/niryo_robot/ttl_driver/read_custom_value");
 
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);

@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(dxl_debug_tools)
+project(ttl_debug_tools)
 message("\n## Reading ${PROJECT_NAME}/CMakeLists.txt...")
 
 ## c++ options
@@ -53,10 +53,10 @@ include_directories(
 
 ## Declare libs and execs
 add_library(${PROJECT_NAME}_core
-    src/dxl_tools.cpp)
+    src/ttl_tools.cpp)
 
 add_executable(${PROJECT_NAME}
-    src/dxl_debug.cpp)
+    src/ttl_debug.cpp)
 
 target_link_libraries(${PROJECT_NAME} 
     ${PROJECT_NAME}_core
@@ -84,7 +84,7 @@ endif()
 if(CATKIN_ENABLE_TESTING)
   catkin_add_gtest(
     ${PROJECT_NAME}_unit_tests
-    test/dxl_tools_unit_tests.cpp
+    test/ttl_tools_unit_tests.cpp
   )
   if(TARGET ${PROJECT_NAME}_unit_tests)
     target_link_libraries(${PROJECT_NAME}_unit_tests
@@ -111,8 +111,8 @@ install(
 )
 
 catkin_install_python(PROGRAMS 
-    scripts/send_custom_dxl_value.py
-    scripts/read_custom_dxl_value.py
+    scripts/send_custom_value.py
+    scripts/read_custom_value.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 # Mark other files for installation
