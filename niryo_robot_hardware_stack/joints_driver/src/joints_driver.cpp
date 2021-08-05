@@ -31,6 +31,9 @@ using ::can_driver::CanInterfaceCore;
 
 namespace joint_driver
 {
+/**
+ * @brief JointDriver::JointDriver
+*/
 JointDriver::JointDriver(ros::NodeHandle &nh)
 {
   ROS_DEBUG("JointsDriver - ctor");
@@ -40,10 +43,17 @@ JointDriver::JointDriver(ros::NodeHandle &nh)
   init(nh);
 }
 
+/**
+ * @brief JointDriver::~JointDriver
+*/
 JointDriver::~JointDriver()
 {
 }
 
+/**
+ * @brief JointDriver::~init
+ * @param nh
+*/
 void JointDriver::init(ros::NodeHandle &nh)
 {
   ROS_DEBUG("JointDriver: initialize");

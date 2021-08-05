@@ -27,14 +27,24 @@ using ::common::model::EDxlCommandType;
 namespace ttl_driver
 {
 
+/**
+ * @brief AbstractDxlDriver::AbstractDxlDriver
+*/
 AbstractDxlDriver::AbstractDxlDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
                                      std::shared_ptr<dynamixel::PacketHandler> packetHandler) :
     AbstractTtlDriver(portHandler, packetHandler)
 {}
 
+/**
+ * @brief AbstractDxlDriver::~AbstractDxlDriver
+*/
 AbstractDxlDriver::~AbstractDxlDriver()
 {}
 
+/**
+ * @brief AbstractDxlDriver::writeSingleCmd
+ * @param cmd
+*/
 int AbstractDxlDriver::writeSingleCmd(std::shared_ptr<common::model::AbstractTtlSingleMotorCmd > &cmd)
 {
     if (cmd && cmd->isValid())
@@ -74,7 +84,12 @@ int AbstractDxlDriver::writeSingleCmd(std::shared_ptr<common::model::AbstractTtl
     return 0;
 }
 
-
+/**
+ * @brief AbstractDxlDriver::writeSyncCmd
+ * @param type
+ * @param ids
+ * @param params
+*/
 int AbstractDxlDriver::writeSyncCmd(int type, const std::vector<uint8_t>& ids, const std::vector<uint32_t>& params)
 {
     assert(!ids.empty() && "AbstractDxlDriver::writeSyncCmd: ids is empty");

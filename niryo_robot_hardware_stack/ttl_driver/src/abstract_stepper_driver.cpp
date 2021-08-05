@@ -25,14 +25,24 @@ using ::common::model::EStepperCommandType;
 namespace ttl_driver
 {
 
+/**
+ * @brief AbstractStepperDriver::AbstractStepperDriver
+*/
 AbstractStepperDriver::AbstractStepperDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
                                              std::shared_ptr<dynamixel::PacketHandler> packetHandler) :
     AbstractTtlDriver(portHandler, packetHandler)
 {}
 
+/**
+ * @brief AbstractStepperDriver::~AbstractStepperDriver
+*/
 AbstractStepperDriver::~AbstractStepperDriver()
 {}
 
+/**
+ * @brief AbstractStepperDriver::writeSingleCmd
+ * @param cmd
+*/
 int AbstractStepperDriver::writeSingleCmd(std::shared_ptr<common::model::AbstractTtlSingleMotorCmd>& cmd)
 {
     int result = COMM_TX_FAIL;
@@ -66,6 +76,12 @@ int AbstractStepperDriver::writeSingleCmd(std::shared_ptr<common::model::Abstrac
     return 0;
 }
 
+/**
+ * @brief AbstractStepperDriver::writeSyncCmd
+ * @param type
+ * @param ids
+ * @param params
+*/
 int AbstractStepperDriver::writeSyncCmd(int type, const std::vector<uint8_t>& ids, const std::vector<uint32_t>& params)
 {
     assert(!ids.empty() && "AbstractStepperDriver::writeSyncCmdwriteSyncCmd: ids is empty");
