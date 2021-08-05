@@ -194,7 +194,7 @@ ConveyorInterfaceCore::addConveyor()
             }
             if (_conveyor_driver->getTypeDriver() == "ttl")
             {
-                // TODO: These types of command not exist in stepper ttl, we have implement it (thuc)
+                // TODO(thuc): These types of command not exist in stepper ttl, we have implement it
             }
 
             res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
@@ -333,7 +333,7 @@ bool ConveyorInterfaceCore::_callbackControlConveyor(conveyor_interface::Control
                                                                                 req.id, std::initializer_list<int32_t>{req.control_on, req.speed, req.direction}));
         else
         {
-            // TODO: handle data before add command to ttl_interface_core (thuc)
+            // TODO(thuc): handle data before add command to ttl_interface_core
         }
     }
     else

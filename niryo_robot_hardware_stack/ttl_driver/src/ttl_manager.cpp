@@ -659,20 +659,20 @@ void TtlManager::readHwStatus()
                             bool state;
                             uint32_t speed;
                             int8_t direction;
-                            if (COMM_SUCCESS != stepper_driver->getConveyorSpeed(id, speed)) 
+                            if (COMM_SUCCESS != stepper_driver->getConveyorSpeed(id, speed))
                             {
                                 hw_errors_increment++;
                             }
-                            if (COMM_SUCCESS != stepper_driver->getConveyorDirection(id, direction)) 
+                            if (COMM_SUCCESS != stepper_driver->getConveyorDirection(id, direction))
                             {
                                 hw_errors_increment++;
                             }
-                            if (COMM_SUCCESS != stepper_driver->getConveyorState(id, state)) 
+                            if (COMM_SUCCESS != stepper_driver->getConveyorState(id, state))
                             {
                                 hw_errors_increment++;
                             }
                             auto cState = std::dynamic_pointer_cast<ConveyorState>(_state_map.at(id));
-                            // TODO: handle datas before set in state of conveyor - type data in ttl conveyor is differrent with data in can conveyor
+                            // TODO(thuc): handle datas before set in state of conveyor - type data in ttl conveyor is differrent with data in can conveyor
                             cState->setDirection(direction);
                             cState->setSpeed(speed);
                             cState->setState(state);
