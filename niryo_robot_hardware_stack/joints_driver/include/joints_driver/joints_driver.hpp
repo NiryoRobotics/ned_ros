@@ -42,15 +42,18 @@ namespace joint_driver
         std::shared_ptr<ttl_driver::TtlInterfaceCore> getTtlInterfaceCore() const;
         std::shared_ptr<can_driver::CanInterfaceCore> getCanInterfaceCore() const;
         std::shared_ptr<common::model::IDriverCore> getProtocolOfMotor(std::string name) const;
+
+    private:
+        void init(ros::NodeHandle &nh);
+
     private:
         std::shared_ptr<ttl_driver::TtlInterfaceCore> _ttlInterfaceCore;
         std::shared_ptr<can_driver::CanInterfaceCore> _canInterfaceCore;
 
         std::map<std::string, std::shared_ptr<common::model::IDriverCore>> _m_name_proto; 
         
-        bool _haveCan;
-        bool _haveTtl;
-        void init(ros::NodeHandle &nh);
+        bool _haveCan{false};
+        bool _haveTtl{false};
     };
 }   // joint_driver
 

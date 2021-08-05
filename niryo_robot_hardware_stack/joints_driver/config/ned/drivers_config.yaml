@@ -1,2 +1,0 @@
-drivers_params:
-  drivers_list: ["can", "ttl"]

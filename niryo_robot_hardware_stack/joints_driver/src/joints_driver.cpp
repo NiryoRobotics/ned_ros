@@ -1,5 +1,5 @@
 /*
-    joint_driver.cpp
+    joints_driver.cpp
     Copyright (C) 2020 Niryo
     All rights reserved.
 
@@ -38,8 +38,6 @@ JointDriver::JointDriver(ros::NodeHandle &nh)
 {
   ROS_DEBUG("JointsDriver - ctor");
 
-  _haveCan = false;
-  _haveTtl = false;
   init(nh);
 }
 
@@ -63,12 +61,11 @@ void JointDriver::init(ros::NodeHandle &nh)
 
   // get params in file config
   // get config in joints_driver package
-  ros::NodeHandle nh_joints_drv(nh, "joints_driver");
-  nh_joints_drv.getParam("drivers_params/drivers_list", drivers_list);
+  nh.getParam("drivers_params/drivers_list", drivers_list);
 
   // get config in joint interface
-  while (nh_joints_drv.hasParam("joint_" + std::to_string(nb_joints + 1) + "_name") &&
-          nh_joints_drv.hasParam("joint_" + std::to_string(nb_joints + 1) + "_protocol"))
+  while (nh.hasParam("joint_" + std::to_string(nb_joints + 1) + "_name") &&
+          nh.hasParam("joint_" + std::to_string(nb_joints + 1) + "_protocol"))
     nb_joints++;
 
   for (auto it : drivers_list)
@@ -94,8 +91,8 @@ void JointDriver::init(ros::NodeHandle &nh)
     string joint_name;
     string protocol;
 
-    nh_joints_drv.getParam("joint_" + std::to_string(j + 1) + "_name", joint_name);
-    nh_joints_drv.getParam("joint_" + std::to_string(j + 1) + "_protocol", protocol);
+    nh.getParam("joint_" + std::to_string(j + 1) + "_name", joint_name);
+    nh.getParam("joint_" + std::to_string(j + 1) + "_protocol", protocol);
 
     if (protocol == "can")
     {
