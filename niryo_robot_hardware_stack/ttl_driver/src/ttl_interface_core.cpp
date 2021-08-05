@@ -784,7 +784,7 @@ void TtlInterfaceCore::clearConveyorCommandQueue()
 //  */
 // void TtlInterfaceCore::clearEndEffectorCommandQueue()
 // {
-    
+
     // while (!_end_effector_cmds_queue.empty())
     //     _end_effector_cmds_queue.pop();
 // }
@@ -830,12 +830,12 @@ void TtlInterfaceCore::addSingleCommandToQueue(const std::shared_ptr<common::mod
     {
         if (_single_cmds_queue.size() > QUEUE_OVERFLOW)
             ROS_WARN("TtlInterfaceCore::addSingleCommandToQueue: dxl cmd queue overflow ! %lu", _single_cmds_queue.size());
-        
+
         if (cmd->isDxlCmd())
             _single_cmds_queue.push(std::dynamic_pointer_cast<common::model::DxlSingleCmd>(cmd));
         else if (cmd->isStepperCmd())
         {
-            if (cmd->getCmdType() == (int)EStepperCommandType::CMD_TYPE_CONVEYOR)
+            if (cmd->getCmdType() == static_cast<int>(EStepperCommandType::CMD_TYPE_CONVEYOR))
             {
                 if (_conveyor_cmds_queue.size() > QUEUE_OVERFLOW)
                     ROS_WARN("TtlInterfaceCore::addCommandToQueue: Cmd queue overflow ! %lu", _conveyor_cmds_queue.size());
