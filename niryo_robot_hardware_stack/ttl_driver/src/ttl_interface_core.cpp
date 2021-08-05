@@ -630,15 +630,6 @@ void TtlInterfaceCore::_executeCommand()
         _single_cmds_queue.pop();
         _need_sleep = true;
     }
-    // if (!_end_effector_cmds_queue.empty())
-    // {
-    //     // as we use a queue, we don't need a mutex
-    //     if (_need_sleep)
-    //         ros::Duration(0.01).sleep();
-    //     _ttl_manager->writeSingleCommand(_end_effector_cmds_queue.front());
-    //     _end_effector_cmds_queue.pop();
-    //     _need_sleep = true;
-    // }
     if (!_conveyor_cmds_queue.empty())
     {
         // as we use a queue, we don't need a mutex
