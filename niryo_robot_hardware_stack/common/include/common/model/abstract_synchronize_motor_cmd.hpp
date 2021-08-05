@@ -32,7 +32,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "common/model/stepper_command_type_enum.hpp"
 #include "common/model/motor_type_enum.hpp"
 #include "common/model/joint_state.hpp"
-
+#include <ros/ros.h>
 namespace common
 {
 namespace model
@@ -72,6 +72,9 @@ class AbstractSynchronizeMotorCmd : public ISynchronizeMotorCmd
         AbstractSynchronizeMotorCmd();
         virtual ~AbstractSynchronizeMotorCmd() = 0;
 
+        // test
+        bool isValid() const;
+
         // setters
         void clear();
         void addMotorParam(EMotorType type, uint8_t id, ParamType param);
@@ -97,6 +100,21 @@ AbstractSynchronizeMotorCmd<ParamType>::AbstractSynchronizeMotorCmd()
 template<typename ParamType>
 AbstractSynchronizeMotorCmd<ParamType>::~AbstractSynchronizeMotorCmd()
 {}
+
+template<typename ParamType>
+bool AbstractSynchronizeMotorCmd<ParamType>::isValid() const
+{
+    if (_motor_params_map.size() == 0)
+        return false;
+    for (auto it : _motor_params_map)
+    {
+        if (it.second.isValid())
+            continue;
+        else
+            return false;
+    }
+    return true;
+}
 
 template<typename ParamType>
 void AbstractSynchronizeMotorCmd<ParamType>::clear()

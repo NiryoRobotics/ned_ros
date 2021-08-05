@@ -77,9 +77,7 @@ class AbstractSingleMotorCmd : public ISingleMotorCmd
 template<typename ParamType>
 AbstractSingleMotorCmd<ParamType>::AbstractSingleMotorCmd(uint8_t id) :
     _id(id)
-{
-    clear();
-}
+{}
 
 /**
  * @brief AbstractSingleMotorCmd<ParamType>::~AbstractSingleMotorCmd

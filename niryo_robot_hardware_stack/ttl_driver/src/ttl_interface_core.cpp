@@ -122,8 +122,6 @@ void TtlInterfaceCore::initParameters(ros::NodeHandle& nh)
     _delta_time_data_read = 1.0 / read_data_frequency;
     _delta_time_status_read = 1.0 / read_status_frequency;
     _delta_time_write = 1.0 / write_frequency;
-
-    _sync_cmds->reset();
 }
 
 /**
@@ -620,22 +618,18 @@ void TtlInterfaceCore::controlLoop()
 void TtlInterfaceCore::_executeCommand()
 {
     bool _need_sleep = false;
-
     if (!_joint_trajectory_cmd.empty())
     {
         _ttl_manager->executeJointTrajectoryCmd(_joint_trajectory_cmd);
         _joint_trajectory_cmd.clear();
         _need_sleep = true;
     }
-    
     if (!_single_cmds_queue.empty())
     {
         _ttl_manager->writeSingleCommand(_single_cmds_queue.front());
-
         _single_cmds_queue.pop();
         _need_sleep = true;
     }
-
     // if (!_end_effector_cmds_queue.empty())
     // {
     //     // as we use a queue, we don't need a mutex
@@ -645,7 +639,6 @@ void TtlInterfaceCore::_executeCommand()
     //     _end_effector_cmds_queue.pop();
     //     _need_sleep = true;
     // }
-
     if (!_conveyor_cmds_queue.empty())
     {
         // as we use a queue, we don't need a mutex
@@ -654,15 +647,12 @@ void TtlInterfaceCore::_executeCommand()
         _ttl_manager->writeSingleCommand(_conveyor_cmds_queue.front());
         _conveyor_cmds_queue.pop();
     }
-
-    if (_sync_cmds->isValid())
+    if (_sync_cmds && _sync_cmds->isValid())
     {
         // as we use a queue, we don't need a mutex
         if (_need_sleep)
             ros::Duration(0.01).sleep();
-
         _ttl_manager->writeSynchronizeCommand(_sync_cmds);
-
         _sync_cmds->reset();
     }
 }

@@ -540,7 +540,8 @@ void CanInterfaceCore::addSingleCommandToQueue(const std::shared_ptr<common::mod
     if (cmd && cmd->isValid())
     {
         if (cmd->getCmdType() == static_cast<int>(EStepperCommandType::CMD_TYPE_CONVEYOR))
-        {  // keep position cmd apart
+        {  
+            // keep position cmd apart
             if (_conveyor_cmds.size() > QUEUE_OVERFLOW)
             {
                 ROS_WARN("CanInterfaceCore::addCommandToQueue: Cmd queue overflow ! %lu", _conveyor_cmds.size());

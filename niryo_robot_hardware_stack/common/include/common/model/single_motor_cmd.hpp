@@ -93,9 +93,9 @@ template<typename E, typename ParamType>
 SingleMotorCmd<E, ParamType>::SingleMotorCmd(E type) :
     SingleMotorCmd()
 {
-    setType(type);
+    static_assert(std::is_enum<E>::value, "E must be an enum");
 
-    this->clear();
+    this->setType(type);
 }
 
 /**
