@@ -53,6 +53,10 @@ class IDriverCore
         virtual void addSingleCommandToQueue(const std::vector<std::shared_ptr<common::model::ISingleMotorCmd> >& cmd) = 0;
         virtual void setSyncCommand(const std::shared_ptr<common::model::ISynchronizeMotorCmd>& cmd) = 0;
 
+        // driver for conveyor
+        virtual int setConveyor(uint8_t motor_id, uint8_t default_conveyor_id = 6) = 0;
+        virtual void unsetConveyor(uint8_t motor_id) =0;
+
         // calibration
         virtual void startCalibration() = 0;
         virtual void resetCalibration() = 0;

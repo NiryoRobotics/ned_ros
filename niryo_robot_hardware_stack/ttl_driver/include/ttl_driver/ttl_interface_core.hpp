@@ -69,20 +69,25 @@ class TtlInterfaceCore : public common::model::IDriverCore, public common::model
         void unsetEndEffector(uint8_t motor_id);
 
         void clearSingleCommandQueue();
-        void clearEndEffectorCommandQueue();
+        // void clearEndEffectorCommandQueue();
+        void clearConveyorCommandQueue();
 
         bool setMotorPID(const std::shared_ptr<common::model::JointState>& motorState);
         void setTrajectoryControllerCommands(const std::vector<std::pair<uint8_t, uint32_t> > &cmd);
 
         void setSyncCommand(const std::shared_ptr<common::model::ISynchronizeMotorCmd>& cmd) override;
 
+        // we have to use ISingleMotorCmd instead of AbstractTtlMotorCmd because this is pure virtual method in IDriverCore
+        // IDriverCore used by Can and Ttl so AbstractTtlMotorCmd or AbstractCanMotorCmd can't be used in this case
         void addSingleCommandToQueue(const std::shared_ptr<common::model::ISingleMotorCmd>& cmd) override;
         void addSingleCommandToQueue(const std::vector<std::shared_ptr<common::model::ISingleMotorCmd> >& cmd) override;
 
         void addEndEffectorCommandToQueue(const std::shared_ptr<common::model::DxlSingleCmd> &cmd);
         void addEndEffectorCommandToQueue(const std::vector< std::shared_ptr<common::model::DxlSingleCmd> >& cmd);
 
-        // add conveyor cmds here
+        // conveyor control
+        int setConveyor(uint8_t motor_id, uint8_t default_conveyor_id = 6) override;
+        void unsetConveyor(uint8_t motor_id) override;
 
         // direct commands
         std::vector<uint8_t> scanTools();
@@ -167,7 +172,8 @@ class TtlInterfaceCore : public common::model::IDriverCore, public common::model
         // ttl cmds
         std::shared_ptr<common::model::AbstractTtlSynchronizeMotorCmd> _sync_cmds;
         std::queue<std::shared_ptr<common::model::AbstractTtlSingleMotorCmd> > _single_cmds_queue;
-        std::queue <std::shared_ptr<common::model::AbstractTtlSingleMotorCmd> > _end_effector_cmds_queue;
+        // std::queue <std::shared_ptr<common::model::AbstractTtlSingleMotorCmd> > _end_effector_cmds_queue;
+        std::queue<std::shared_ptr<common::model::AbstractTtlSingleMotorCmd> > _conveyor_cmds_queue;
 
         ros::ServiceServer _activate_leds_server;
         ros::ServiceServer _custom_cmd_server;

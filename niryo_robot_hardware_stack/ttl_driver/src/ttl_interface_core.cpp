@@ -47,7 +47,6 @@ using ::common::model::SynchronizeMotorCmd;
 using ::common::model::AbstractTtlSingleMotorCmd;
 using ::common::model::DxlSingleCmd;
 
-
 namespace ttl_driver
 {
 /**
@@ -476,7 +475,7 @@ void TtlInterfaceCore::resetCalibration()
 }
 
 /**
- * @brief CanInterfaceCore::isCalibrationInProgress
+ * @brief TtlInterfaceCore::isCalibrationInProgress
  * @return
  */
 bool TtlInterfaceCore::isCalibrationInProgress() const
@@ -637,14 +636,23 @@ void TtlInterfaceCore::_executeCommand()
         _need_sleep = true;
     }
 
-    if (!_end_effector_cmds_queue.empty())
+    // if (!_end_effector_cmds_queue.empty())
+    // {
+    //     // as we use a queue, we don't need a mutex
+    //     if (_need_sleep)
+    //         ros::Duration(0.01).sleep();
+    //     _ttl_manager->writeSingleCommand(_end_effector_cmds_queue.front());
+    //     _end_effector_cmds_queue.pop();
+    //     _need_sleep = true;
+    // }
+
+    if (!_conveyor_cmds_queue.empty())
     {
         // as we use a queue, we don't need a mutex
         if (_need_sleep)
             ros::Duration(0.01).sleep();
-        _ttl_manager->writeSingleCommand(_end_effector_cmds_queue.front());
-        _end_effector_cmds_queue.pop();
-        _need_sleep = true;
+        _ttl_manager->writeSingleCommand(_conveyor_cmds_queue.front());
+        _conveyor_cmds_queue.pop();
     }
 
     if (_sync_cmds->isValid())
@@ -702,6 +710,56 @@ void TtlInterfaceCore::unsetEndEffector(uint8_t motor_id)
     _ttl_manager->removeMotor(motor_id);
 }
 
+/**
+ * @brief TtlInterfaceCore::setConveyor
+ * @param new_motor_id
+ * @param default_conveyor_id
+ * @return
+ */
+int TtlInterfaceCore::setConveyor(uint8_t new_motor_id, uint8_t default_conveyor_id)
+{
+    int result = niryo_robot_msgs::CommandStatus::NO_CONVEYOR_FOUND;
+
+    lock_guard<mutex> lck(_control_loop_mutex);
+
+    // try to find motor id 6 (default motor id for conveyor
+    if (_ttl_manager->ping(default_conveyor_id))
+    {
+        if (COMM_SUCCESS == _ttl_manager->changeId(EMotorType::STEPPER, default_conveyor_id, new_motor_id))
+        {
+            // add stepper as a new conveyor
+            _ttl_manager->addMotor(EMotorType::STEPPER, new_motor_id, ttl_driver::TtlManager::EType::CONVOYER);
+            result = niryo_robot_msgs::CommandStatus::SUCCESS;
+        }
+        else
+        {
+            ROS_ERROR("TtlInterfaceCore::setConveyor : unable to change conveyor ID");
+            result = niryo_robot_msgs::CommandStatus::TTL_WRITE_ERROR;
+        }
+    }
+    else
+    {
+        ROS_WARN("TtlInterfaceCore::setConveyor - No conveyor found");
+    }
+
+    return result;
+}
+
+/**
+ * @brief TtlInterfaceCore::unsetConveyor
+ * @param motor_id
+ */
+void TtlInterfaceCore::unsetConveyor(uint8_t motor_id)
+{
+    lock_guard<mutex> lck(_control_loop_mutex);
+
+    ROS_DEBUG("TtlInterfaceCore::unsetConveyor - unsetConveyor: id %d", motor_id);
+
+    if (COMM_SUCCESS == _ttl_manager->changeId(EMotorType::STEPPER, motor_id, 6))
+        _ttl_manager->removeMotor(motor_id);
+    else
+        ROS_ERROR("TtlInterfaceCore::unsetConveyor : unable to change conveyor ID");
+}
 
 /**
  * @brief TtlInterfaceCore::clearSingleCommandQueue
@@ -713,13 +771,23 @@ void TtlInterfaceCore::clearSingleCommandQueue()
 }
 
 /**
- * @brief TtlInterfaceCore::clearEndEffectorCommandQueue
+ * @brief TtlInterfaceCore::clearConveyorCommandQueue
  */
-void TtlInterfaceCore::clearEndEffectorCommandQueue()
+void TtlInterfaceCore::clearConveyorCommandQueue()
 {
-    while (!_end_effector_cmds_queue.empty())
-        _end_effector_cmds_queue.pop();
+    while (!_conveyor_cmds_queue.empty())
+        _conveyor_cmds_queue.pop();
 }
+
+// /**
+//  * @brief TtlInterfaceCore::clearEndEffectorCommandQueue
+//  */
+// void TtlInterfaceCore::clearEndEffectorCommandQueue()
+// {
+    
+    // while (!_end_effector_cmds_queue.empty())
+    //     _end_effector_cmds_queue.pop();
+// }
 
 /**
  * @brief TtlInterfaceCore::setTrajectoryControllerCommands
@@ -762,11 +830,21 @@ void TtlInterfaceCore::addSingleCommandToQueue(const std::shared_ptr<common::mod
     {
         if (_single_cmds_queue.size() > QUEUE_OVERFLOW)
             ROS_WARN("TtlInterfaceCore::addSingleCommandToQueue: dxl cmd queue overflow ! %lu", _single_cmds_queue.size());
-
+        
         if (cmd->isDxlCmd())
             _single_cmds_queue.push(std::dynamic_pointer_cast<common::model::DxlSingleCmd>(cmd));
         else if (cmd->isStepperCmd())
-            _single_cmds_queue.push(std::dynamic_pointer_cast<common::model::StepperTtlSingleCmd>(cmd));
+        {
+            if (cmd->getCmdType() == (int)EStepperCommandType::CMD_TYPE_CONVEYOR)
+            {
+                if (_conveyor_cmds_queue.size() > QUEUE_OVERFLOW)
+                    ROS_WARN("TtlInterfaceCore::addCommandToQueue: Cmd queue overflow ! %lu", _conveyor_cmds_queue.size());
+                else
+                    _conveyor_cmds_queue.push(std::dynamic_pointer_cast<common::model::StepperTtlSingleCmd>(cmd));
+            }
+            else
+                _single_cmds_queue.push(std::dynamic_pointer_cast<common::model::StepperTtlSingleCmd>(cmd));
+        }
     }
     else
     {
@@ -794,11 +872,11 @@ void TtlInterfaceCore::addEndEffectorCommandToQueue(const std::shared_ptr<common
 
     if (cmd->isValid())
     {
-        if (_end_effector_cmds_queue.size() > QUEUE_OVERFLOW)
+        if (_single_cmds_queue.size() > QUEUE_OVERFLOW)
             ROS_WARN_THROTTLE(0.5, "TtlInterfaceCore::addEndEffectorCommandToQueue: Cmd queue overflow ! %lu",
-                              _end_effector_cmds_queue.size());
+                              _single_cmds_queue.size());
         else
-            _end_effector_cmds_queue.push(cmd);
+            _single_cmds_queue.push(cmd);
     }
     else
     {
