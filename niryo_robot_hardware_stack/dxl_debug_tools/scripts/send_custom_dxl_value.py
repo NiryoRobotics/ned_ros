@@ -20,7 +20,7 @@
 import rospy
 import argparse
 
-from ttl_driver.srv import SendCustomDxlValue
+from ttl_driver.srv import SendCustomValue
 
 if __name__ == '__main__':
     rospy.init_node("send_custom_dxl_value")
@@ -47,7 +47,7 @@ if __name__ == '__main__':
         exit()
 
     try:
-        send_cmd = rospy.ServiceProxy(service_name, SendCustomDxlValue)
+        send_cmd = rospy.ServiceProxy(service_name, SendCustomValue)
         response = send_cmd(args.type, args.id, args.value, args.address, args.size)
         rospy.loginfo(response.message)
     except rospy.ServiceException as e:

@@ -59,6 +59,11 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
+catkin_install_python(
+    PROGRAMS scripts/poses_handlers_node.py
+    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
 #############
 ##   Doc   ##
 #############

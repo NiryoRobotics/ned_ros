@@ -28,14 +28,14 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <ros/ros.h>
 
 // niryo
-#include "can_driver/can_driver_core.hpp"
+#include "can_driver/can_interface_core.hpp"
 
 #include "conveyor_interface/SetConveyor.h"
 #include "conveyor_interface/ControlConveyor.h"
 #include "conveyor_interface/ConveyorFeedbackArray.h"
 #include "niryo_robot_msgs/CommandStatus.h"
 
-#include "common/model/iinterface_core.hpp"
+#include "common/model/i_interface_core.hpp"
 
 namespace conveyor_interface
 {

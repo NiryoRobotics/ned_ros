@@ -19,11 +19,21 @@
   <build_depend>can_driver</build_depend>
   <build_depend>ttl_driver</build_depend>
 
+  <build_export_depend>roscpp</build_export_depend>
+  <build_export_depend>niryo_robot_msgs</build_export_depend>
+  <build_export_depend>common</build_export_depend>
+  <build_export_depend>can_driver</build_export_depend>
+  <build_export_depend>ttl_driver</build_export_depend>
+
   <exec_depend>roscpp</exec_depend>
   <exec_depend>niryo_robot_msgs</exec_depend>
   <exec_depend>common</exec_depend>
   <exec_depend>can_driver</exec_depend>
   <exec_depend>ttl_driver</exec_depend>
+  <exec_depend>xacro</exec_depend>
+  <exec_depend>niryo_robot_description</exec_depend>
+  <exec_depend>controller_manager</exec_depend>
+  <exec_depend>robot_state_publisher</exec_depend>
 
   <test_depend>rostest</test_depend>
 </package>

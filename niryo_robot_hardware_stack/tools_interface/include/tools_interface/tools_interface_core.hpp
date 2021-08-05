@@ -27,7 +27,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <ros/ros.h>
 
 // niryo
-#include "common/model/iinterface_core.hpp"
+#include "common/model/i_interface_core.hpp"
 
 #include "common/model/tool_state.hpp"
 #include "ttl_driver/ttl_interface_core.hpp"

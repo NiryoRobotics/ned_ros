@@ -34,6 +34,7 @@
   <build_export_depend>can_driver</build_export_depend>
   <build_export_depend>ttl_driver</build_export_depend>
   <build_export_depend>common</build_export_depend>
+  <build_export_depend>joints_driver</build_export_depend>
 
   <exec_depend>roscpp</exec_depend>
   <exec_depend>hardware_interface</exec_depend>

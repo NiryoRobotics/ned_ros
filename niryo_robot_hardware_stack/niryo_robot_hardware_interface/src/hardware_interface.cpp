@@ -137,9 +137,9 @@ void HardwareInterface::initNodes(ros::NodeHandle &nh)
         ros::NodeHandle nh_joints(nh, "joints_interface");
         _joints_interface = std::make_shared<joints_interface::JointsInterfaceCore>(nh, nh_joints, _joint_driver);
         if (_joint_driver->haveCan())
-            _can_driver = _joint_driver->getCanDriverCore();
+            _can_interface = _joint_driver->getCanInterfaceCore();
         if (_joint_driver->haveTtl())
-            _ttl_interface = _joint_driver->getTtlDriverCore();
+            _ttl_interface = _joint_driver->getTtlInterfaceCore();
         ros::Duration(0.25).sleep();
 
         ROS_DEBUG("HardwareInterface::initNodes - Start End Effector Interface Node");
@@ -149,7 +149,7 @@ void HardwareInterface::initNodes(ros::NodeHandle &nh)
 
         ROS_DEBUG("HardwareInterface::initNodes - Start Tools Interface Node");
         ros::NodeHandle nh_conveyor(nh, "conveyor");
-        _conveyor_interface = std::make_shared<conveyor_interface::ConveyorInterfaceCore>(nh_conveyor, _can_driver);
+        _conveyor_interface = std::make_shared<conveyor_interface::ConveyorInterfaceCore>(nh_conveyor, _can_interface);
         ros::Duration(0.25).sleep();
         // }
         // else
@@ -227,8 +227,8 @@ bool HardwareInterface::_callbackStopMotorsReport(niryo_robot_msgs::Trigger::Req
     {
         ROS_WARN("Hardware Interface - Stop Motor Report");
 
-        if (_can_driver)
-            _can_driver->activeDebugMode(false);
+        if (_can_interface)
+            _can_interface->activeDebugMode(false);
 
         if (_ttl_interface)
             _ttl_interface->activeDebugMode(false);
@@ -263,11 +263,11 @@ bool HardwareInterface::_callbackLaunchMotorsReport(niryo_robot_msgs::Trigger::R
         int can_status = niryo_robot_msgs::CommandStatus::FAILURE;
         int ttl_status = niryo_robot_msgs::CommandStatus::FAILURE;
 
-        if (_can_driver)
+        if (_can_interface)
         {
-            _can_driver->activeDebugMode(true);
-            can_status = _can_driver->launchMotorsReport();
-            _can_driver->activeDebugMode(false);
+            _can_interface->activeDebugMode(true);
+            can_status = _can_interface->launchMotorsReport();
+            _can_interface->activeDebugMode(false);
         }
 
         if (_ttl_interface)
@@ -374,10 +374,10 @@ void HardwareInterface::_publishHardwareStatus()
                 ttl_motor_state = _ttl_interface->getHwStatus();
                 ttl_bus_state = _ttl_interface->getBusState();
             }
-            if (_can_driver)
+            if (_can_interface)
             {
-                can_motor_state = _can_driver->getHwStatus();
-                can_bus_state = _can_driver->getBusState();
+                can_motor_state = _can_interface->getHwStatus();
+                can_bus_state = _can_interface->getBusState();
             }
             if (_joints_interface)
             {
@@ -523,9 +523,9 @@ void HardwareInterface::_publishSoftwareVersion()
 
         if (!_simulation_mode)
         {
-            if (_can_driver)
+            if (_can_interface)
             {
-                stepper_motor_state = _can_driver->getHwStatus();
+                stepper_motor_state = _can_interface->getHwStatus();
             }
             if (_joints_interface)
             {

@@ -23,4 +23,6 @@
   <exec_depend>roscpp</exec_depend>
   <exec_depend>common</exec_depend>
 
+  <build_export_depend>roscpp</build_export_depend>
+
 </package>

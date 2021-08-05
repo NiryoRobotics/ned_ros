@@ -7,6 +7,7 @@
   <version>3.1.0</version>
   <description>Provides roslaunch scripts to start Ned packages and initialize ROS params</description>
   <maintainer email="r.lux@niryo.com">Rémi Lux</maintainer>
+  <maintainer email="v.pitre@niryo.com">Valentin Pitre</maintainer>
   <maintainer email="c.ducatez@niryo.com">Corentin Ducatez</maintainer>
   <license>GPLv3</license>
   <author email="r.lux@niryo.com">Rémi Lux</author>

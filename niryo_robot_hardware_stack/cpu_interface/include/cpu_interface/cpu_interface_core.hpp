@@ -27,7 +27,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <thread>
 #include <string>
 
-#include "common/model/iinterface_core.hpp"
+#include "common/model/i_interface_core.hpp"
 
 namespace cpu_interface
 {

@@ -45,8 +45,8 @@ add_service_files(
   DIRECTORY
     srv
   FILES
-    SendCustomValue.srv
     ReadCustomValue.srv
+    SendCustomValue.srv
 )
 
 generate_messages(

@@ -17,7 +17,6 @@
     along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
-
 #include "joints_interface/joint_hardware_interface.hpp"
 
 // c++
@@ -51,8 +50,7 @@ namespace joints_interface
  * @brief JointHardwareInterface::JointHardwareInterface
  * @param rootnh
  * @param robot_hwnh
- * @param ttl_driver
- * @param can_driver
+ * @param jdriver
  */
 JointHardwareInterface::JointHardwareInterface(ros::NodeHandle& rootnh,
                                                ros::NodeHandle& robot_hwnh,
@@ -63,12 +61,12 @@ JointHardwareInterface::JointHardwareInterface(ros::NodeHandle& rootnh,
     // Initialize joints driver
     _jdriver = jdriver;
     if (_jdriver->haveCan())
-        _can_driver_core = _jdriver->getCanDriverCore();
+        _can_interface_core = _jdriver->getCanInterfaceCore();
     if (_jdriver->haveTtl())
-        _ttl_interface = _jdriver->getTtlDriverCore();
+        _ttl_interface = _jdriver->getTtlInterfaceCore();
 
     init(rootnh, robot_hwnh);
-    
+
     sendInitMotorsParams();
 
     activateLearningMode();
@@ -93,7 +91,7 @@ void JointHardwareInterface::read(const ros::Time &/*time*/, const ros::Duration
         }
     }
 
-    if (_can_driver_core && !_can_driver_core->isConnectionOk())
+    if (_can_interface_core && !_can_interface_core->isConnectionOk())
         this->setNeedCalibration();
 }
 
@@ -116,8 +114,8 @@ void JointHardwareInterface::write(const ros::Time &/*time*/, const ros::Duratio
         }
     }
 
-    if (_can_driver_core)
-        _can_driver_core->setTrajectoryControllerCommands(can_cmd);
+    if (_can_interface_core)
+        _can_interface_core->setTrajectoryControllerCommands(can_cmd);
     if (_ttl_interface)
         _ttl_interface->setTrajectoryControllerCommands(ttl_cmd);
 }
@@ -288,12 +286,12 @@ void JointHardwareInterface::sendInitMotorsParams()
                         {8});
             if (_jdriver->getProtocolOfMotor(jState->getName())->getTypeDriver() == "can")
             {
-                if(_can_driver_core)
-                    _can_driver_core->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(cmd));
+                if (_can_interface_core)
+                    _can_interface_core->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(cmd));
             }
-            // TODO implement addSingleCommandToQueue with the same form for ttl_interface_core
+            // TODO(Thuc) implement addSingleCommandToQueue with the same form for ttl_interface_core
             // else
-            //     _ttl_interface->addSingleCommandToQueue(cmd); 
+            //     _ttl_interface->addSingleCommandToQueue(cmd);
         }
     }
     ros::Duration(0.05).sleep();
@@ -309,15 +307,17 @@ void JointHardwareInterface::sendInitMotorsParams()
                                 });
             if (_jdriver->getProtocolOfMotor(jState->getName())->getTypeDriver() == "can")
             {
-                if (_can_driver_core)
-                    _can_driver_core->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(cmd));
+                if (_can_interface_core)
+                    _can_interface_core->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(cmd));
             }
             else
             {
-                if (_ttl_interface)   
-                    _ttl_interface->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(cmd));  // TODO implement addSingleCommandToQueue with the same form for ttl_interface_core
+                if (_ttl_interface)
+                {
+                    // TODO(Thuc) implement addSingleCommandToQueue with the same form for ttl_interface_core
+                    _ttl_interface->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(cmd));
+                }
             }
-
         }
     }
     ros::Duration(0.05).sleep();
@@ -360,8 +360,8 @@ void JointHardwareInterface::setCommandToCurrentPosition()
 bool JointHardwareInterface::needCalibration() const
 {
     bool result = false;
-    if (_can_driver_core)
-        result = (EStepperCalibrationStatus::CALIBRATION_OK != _can_driver_core->getCalibrationStatus());
+    if (_can_interface_core)
+        result = (EStepperCalibrationStatus::CALIBRATION_OK != _can_interface_core->getCalibrationStatus());
 
     ROS_DEBUG_THROTTLE(2, "JointHardwareInterface::needCalibration - Need calibration returned: %d",
                        static_cast<int>(result));
@@ -402,9 +402,9 @@ int JointHardwareInterface::calibrateJoints(int mode, string &result_message)
  */
 void JointHardwareInterface::setNeedCalibration()
 {
-    if (_can_driver_core)
-        _can_driver_core->resetCalibration();
-    // TODO implement if calibration with ttl
+    if (_can_interface_core)
+        _can_interface_core->resetCalibration();
+    // TODO(Thuc) implement if calibration with ttl
 }
 
 /**
@@ -431,24 +431,26 @@ void JointHardwareInterface::activateLearningMode()
                 stepper_cmd.setParams({0});
                 if (_jdriver->getProtocolOfMotor(jState->getName())->getTypeDriver() == "can")
                 {
-                    if(_can_driver_core)
-                        _can_driver_core->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(stepper_cmd));
+                    if (_can_interface_core)
+                        _can_interface_core->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(stepper_cmd));
                 }
                 else
                 {
-                    if(_ttl_interface)
-                        _ttl_interface->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(stepper_cmd)); // TODO: verify it. stepper use 0 torque in learning mode 
+                    if (_ttl_interface)
+                    {
+                        // TODO(Thuc): verify it. stepper use 0 torque in learning mode
+                        _ttl_interface->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(stepper_cmd));
+                    }
                 }
             }
         }
     }
 
-    // (CC): only dxl use sync cmd
-    if(_ttl_interface)
+    // TODO(Thuc): only dxl use sync cmd
+    if (_ttl_interface)
         _ttl_interface->setSyncCommand(std::make_shared<common::model::DxlSyncCmd>(dxl_cmd));
 
     _learning_mode = true;
-
 }
 
 /**
@@ -476,23 +478,25 @@ void JointHardwareInterface::deactivateLearningMode()
 
                 if (_jdriver->getProtocolOfMotor(jState->getName())->getTypeDriver() == "can")
                 {
-                    if(_can_driver_core)   
-                        _can_driver_core->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(stepper_cmd));
+                    if (_can_interface_core)
+                        _can_interface_core->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(stepper_cmd));
                 }
                 else
                 {
-                    if(_ttl_interface)
-                        _ttl_interface->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(stepper_cmd)); // TODO: verify it. stepper use 0 torque in learning mode 
+                    if (_ttl_interface)
+                    {
+                        // TODO(Thuc): verify it. stepper use 0 torque in learning mode
+                        _ttl_interface->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(stepper_cmd));
+                    }
                 }
             }
         }
     }
 
-    if(_ttl_interface)
+    if (_ttl_interface)
         _ttl_interface->setSyncCommand(std::make_shared<common::model::DxlSyncCmd>(dxl_cmd));
 
     _learning_mode = true;
-
 }
 
 /**
@@ -510,8 +514,8 @@ void JointHardwareInterface::synchronizeMotors(bool synchronize)
             StepperSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_SYNCHRONIZE, jState->getId(), {synchronize});
             if (_jdriver->getProtocolOfMotor(jState->getName())->getTypeDriver() == "can")
             {
-                if (_can_driver_core)
-                    _can_driver_core->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(stepper_cmd));
+                if (_can_interface_core)
+                    _can_interface_core->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(stepper_cmd));
             }
             else
             {

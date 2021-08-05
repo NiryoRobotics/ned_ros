@@ -33,8 +33,8 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 // ros
 #include <ros/ros.h>
 
-#include "common/model/idriver_core.hpp"
-#include "common/model/iinterface_core.hpp"
+#include "common/model/i_driver_core.hpp"
+#include "common/model/i_interface_core.hpp"
 
 #include "ttl_driver/ttl_manager.hpp"
 #include "ttl_driver/ArrayMotorHardwareStatus.h"

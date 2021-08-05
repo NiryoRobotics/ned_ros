@@ -93,7 +93,7 @@ add_library(${PROJECT_NAME}_core
 )
 
 add_executable(${PROJECT_NAME}_node
-  src/joints_interface_node.cpp
+    src/joints_interface_node.cpp
 )
 
 ## Add dependencies to exported targets, like ROS msgs or srvs
@@ -101,8 +101,10 @@ add_dependencies(${PROJECT_NAME}
     niryo_robot_msgs_generate_messages_cpp
 )
 
+## Add dependencies to exported targets, like ROS msgs or srvs
+
 add_dependencies(${PROJECT_NAME}_node
-  ${catkin_EXPORTED_TARGETS}
+    ${catkin_EXPORTED_TARGETS}
 )
 
 ## Specify libraries to link executable targets against
@@ -154,6 +156,10 @@ if(CATKIN_ENABLE_TESTING)
   endif()
 
 endif()
+
+#############
+## Install ##
+#############
 
 #############
 ## Install ##

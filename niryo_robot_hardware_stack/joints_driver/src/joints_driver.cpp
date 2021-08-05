@@ -1,6 +1,25 @@
-#include <joints_driver/joints_driver.hpp>
-#include <ttl_driver/ttl_interface_core.hpp>
-#include <can_driver/can_driver_core.hpp>
+/*
+    joint_driver.cpp
+    Copyright (C) 2020 Niryo
+    All rights reserved.
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http:// www.gnu.org/licenses/>.
+*/
+
+#include "joints_driver/joints_driver.hpp"
+#include "ttl_driver/ttl_interface_core.hpp"
+#include "can_driver/can_interface_core.hpp"
 
 #include <string>
 #include <vector>
@@ -8,7 +27,7 @@
 using ::std::vector;
 using ::std::string;
 using ::ttl_driver::TtlInterfaceCore;
-using ::can_driver::CanDriverCore;
+using ::can_driver::CanInterfaceCore;
 
 namespace joint_driver
 {
@@ -49,14 +68,14 @@ void JointDriver::init(ros::NodeHandle &nh)
       ROS_DEBUG("JointDriver: Create Can driver core");
       ros::NodeHandle nh_can(nh, "can_driver");
       _haveCan = true;
-      _canDriverCore.reset(new CanDriverCore(nh_can));
+      _canInterfaceCore.reset(new CanInterfaceCore(nh_can));
     }
     else if (it == "ttl" && _haveTtl == false)
     {
       ROS_DEBUG("JointsDriver: Create Ttl driver core");
       ros::NodeHandle nh_ttl(nh, "ttl_driver");
       _haveTtl = true;
-      _ttlDriverCore.reset(new TtlInterfaceCore(nh_ttl));
+      _ttlInterfaceCore.reset(new TtlInterfaceCore(nh_ttl));
     }
   }
 
@@ -67,14 +86,14 @@ void JointDriver::init(ros::NodeHandle &nh)
 
     nh_joints_drv.getParam("joint_" + std::to_string(j + 1) + "_name", joint_name);
     nh_joints_drv.getParam("joint_" + std::to_string(j + 1) + "_protocol", protocol);
-    
+
     if (protocol == "can")
     {
-      _m_name_proto.insert(std::make_pair(joint_name, _canDriverCore));
+      _m_name_proto.insert(std::make_pair(joint_name, _canInterfaceCore));
     }
     else if (protocol == "ttl")
     {
-      _m_name_proto.insert(std::make_pair(joint_name, _ttlDriverCore));
+      _m_name_proto.insert(std::make_pair(joint_name, _ttlInterfaceCore));
     }
     else
       ROS_ERROR("Can't recognize protocol used for motor %s. Verify file config", joint_name.c_str());
@@ -82,19 +101,20 @@ void JointDriver::init(ros::NodeHandle &nh)
 }
 
 /**
- * @brief JointDriver::getTtlDriverCore
+ * @brief JointDriver::getTtlInterfaceCore
 */
-std::shared_ptr<ttl_driver::TtlInterfaceCore> JointDriver::getTtlDriverCore() const
+std::shared_ptr<ttl_driver::TtlInterfaceCore> JointDriver::getTtlInterfaceCore() const
 {
-    return _ttlDriverCore;
+    return _ttlInterfaceCore;
 }
 
 /**
- * @brief JointDriver::getCanDriverCore
+ * @brief JointDriver::getCanInterfaceCore
 */
-std::shared_ptr<can_driver::CanDriverCore> JointDriver::getCanDriverCore() const
+std::shared_ptr<can_driver::CanInterfaceCore>
+JointDriver::getCanInterfaceCore() const
 {
-    return _canDriverCore;
+    return _canInterfaceCore;
 }
 
 /**
@@ -121,4 +141,4 @@ bool JointDriver::haveTtl() const
     return _haveTtl;
 }
 
-} // namespace joint_driver
+}  // namespace joint_driver

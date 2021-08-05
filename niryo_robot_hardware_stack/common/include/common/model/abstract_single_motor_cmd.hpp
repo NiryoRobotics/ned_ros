@@ -23,7 +23,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <string>
 #include <vector>
 
-#include "common/model/iobject.hpp"
+#include "common/model/i_object.hpp"
 
 namespace common
 {
@@ -69,9 +69,10 @@ class AbstractSingleMotorCmd : public ISingleMotorCmd
         AbstractSingleMotorCmd() = delete;
 };
 
+
 /**
- * @brief SingleMotorCmd::SingleMotorCmd
- * @param type
+ * @brief AbstractSingleMotorCmd<ParamType>::AbstractSingleMotorCmd
+ * @param id
  */
 template<typename ParamType>
 AbstractSingleMotorCmd<ParamType>::AbstractSingleMotorCmd(uint8_t id) :
@@ -81,15 +82,14 @@ AbstractSingleMotorCmd<ParamType>::AbstractSingleMotorCmd(uint8_t id) :
 }
 
 /**
- * @brief SingleMotorCmd::SingleMotorCmd
- * @param type
+ * @brief AbstractSingleMotorCmd<ParamType>::~AbstractSingleMotorCmd
  */
 template<typename ParamType>
 AbstractSingleMotorCmd<ParamType>::~AbstractSingleMotorCmd()
 {}
 
 /**
- * @brief SingleMotorCmd::clear
+ * @brief AbstractSingleMotorCmd<ParamType>::clear
  */
 template<typename ParamType>
 void AbstractSingleMotorCmd<ParamType>::clear()
@@ -103,7 +103,7 @@ void AbstractSingleMotorCmd<ParamType>::clear()
 // ***********************
 
 /**
- * @brief SingleMotorCmd::setId
+ * @brief AbstractSingleMotorCmd<ParamType>::setId
  * @param id
  */
 template<typename ParamType>
@@ -113,7 +113,7 @@ void AbstractSingleMotorCmd<ParamType>::setId(uint8_t id)
 }
 
 /**
- * @brief SingleMotorCmd::setParam
+ * @brief AbstractSingleMotorCmd<ParamType>::setParam
  * @param param
  */
 template<typename ParamType>
@@ -124,8 +124,8 @@ void AbstractSingleMotorCmd<ParamType>::setParam(ParamType param)
 }
 
 /**
- * @brief SingleMotorCmd::setParam
- * @param param
+ * @brief AbstractSingleMotorCmd<ParamType>::setParams
+ * @param params
  */
 template<typename ParamType>
 void AbstractSingleMotorCmd<ParamType>::setParams(std::vector<ParamType> params)
@@ -134,7 +134,7 @@ void AbstractSingleMotorCmd<ParamType>::setParams(std::vector<ParamType> params)
 }
 
 /**
- * @brief SingleMotorCmd::getId
+ * @brief AbstractSingleMotorCmd<ParamType>::getId
  * @return
  */
 template<typename ParamType>
@@ -144,7 +144,7 @@ uint8_t AbstractSingleMotorCmd<ParamType>::getId() const
 }
 
 /**
- * @brief SingleMotorCmd::getParam
+ * @brief AbstractSingleMotorCmd<ParamType>::getParam
  * @return
  */
 template<typename ParamType>
@@ -154,7 +154,7 @@ ParamType AbstractSingleMotorCmd<ParamType>::getParam() const
 }
 
 /**
- * @brief SingleMotorCmd::getParams
+ * @brief AbstractSingleMotorCmd<ParamType>::getParams
  * @return
  */
 template<typename ParamType>

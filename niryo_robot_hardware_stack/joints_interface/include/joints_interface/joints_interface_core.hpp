@@ -45,7 +45,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "niryo_robot_msgs/Trigger.h"
 #include "common/model/motor_type_enum.hpp"
 
-#include "common/model/iinterface_core.hpp"
+#include "common/model/i_interface_core.hpp"
 
 namespace joints_interface
 {

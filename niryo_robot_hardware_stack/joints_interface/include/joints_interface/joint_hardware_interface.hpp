@@ -33,7 +33,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <hardware_interface/robot_hw.h>
 
 #include "joints_interface/calibration_manager.hpp"
-#include "can_driver/can_driver_core.hpp"
+#include "can_driver/can_interface_core.hpp"
 #include "ttl_driver/ttl_interface_core.hpp"
 #include "joints_driver/joints_driver.hpp"
 #include "common/model/joint_state.hpp"
@@ -76,7 +76,7 @@ class JointHardwareInterface : public hardware_interface::RobotHW
         hardware_interface::PositionJointInterface _joint_position_interface;
 
         std::shared_ptr<ttl_driver::TtlInterfaceCore> _ttl_interface;
-        std::shared_ptr<can_driver::CanDriverCore> _can_driver_core;
+        std::shared_ptr<can_driver::CanInterfaceCore> _can_interface_core;
         std::shared_ptr<joint_driver::JointDriver> _jdriver;
         std::unique_ptr<CalibrationManager> _calibration_manager;
 

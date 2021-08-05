@@ -43,7 +43,7 @@ namespace po = boost::program_options;
 
 #ifdef __arm
     #define DEFAULT_PORT "/dev/serial0"
-#elifdef __aarch64__
+#elif __aarch64__
     #define DEFAULT_PORT "/dev/ttyAMA0"
 #else
     #define DEFAULT_PORT ""
@@ -83,7 +83,7 @@ int main(int argc, char **argv)
 
         int baudrate = vars["baudrate"].as<int>();
         std::string serial_port = vars["port"].as<std::string>();
-        uint8_t id = vars["id"].as<uint8_t>();
+        int id = vars["id"].as<int>();
 
         std::cout << "Using baudrate: " << baudrate << ", port: " << serial_port << "\n";
         std::cout << "Dxl ID: " << static_cast<int>(id) << "\n";

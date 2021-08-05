@@ -70,7 +70,7 @@ public:
         bool get_motors_calibration_offsets(std::vector<int> &motor_id_list, std::vector<int>& steps_list);
 
 private:
-        std::shared_ptr<can_driver::CanDriverCore> _can_driver_core;
+        std::shared_ptr<can_driver::CanInterfaceCore> _can_interface_core;
         std::shared_ptr<ttl_driver::TtlInterfaceCore> _ttl_interface;
         std::shared_ptr<joint_driver::JointDriver> _jdriver;
         

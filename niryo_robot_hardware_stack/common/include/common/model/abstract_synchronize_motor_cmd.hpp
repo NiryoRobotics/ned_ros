@@ -27,7 +27,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <sstream>
 #include <typeinfo>
 
-#include "common/model/iobject.hpp"
+#include "common/model/i_object.hpp"
 #include "common/model/dxl_command_type_enum.hpp"
 #include "common/model/stepper_command_type_enum.hpp"
 #include "common/model/motor_type_enum.hpp"

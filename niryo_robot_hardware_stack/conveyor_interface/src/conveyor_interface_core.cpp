@@ -360,7 +360,7 @@ void ConveyorInterfaceCore::_publishConveyorsFeedback()
     {
         conveyor_interface::ConveyorFeedbackArray msg;
         conveyor_interface::ConveyorFeedback data;
-        
+
         // CC to be checked
         for (auto sState : _conveyor_driver->getStates())
         {
@@ -371,8 +371,8 @@ void ConveyorInterfaceCore::_publishConveyorsFeedback()
                     auto cState = dynamic_pointer_cast<ConveyorState>(sState);
                     data.conveyor_id = cState->getId();
                     data.running = cState->getState();
-                    
-                    // (CC) implicit conversion loses integer precision
+
+                    // TODO(CC) implicit conversion loses integer precision
                     data.direction = static_cast<int8_t>(cState->getDirection());
                     data.speed = cState->getSpeed();
                     msg.conveyors.push_back(data);

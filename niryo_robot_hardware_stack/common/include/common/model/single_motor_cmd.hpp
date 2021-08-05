@@ -76,8 +76,7 @@ class SingleMotorCmd : public AbstractSingleMotorCmd<ParamType>
 };
 
 /**
- * @brief SingleMotorCmd::SingleMotorCmd
- * @param type
+ * @brief SingleMotorCmd<E, ParamType>::SingleMotorCmd
  */
 template<typename E, typename ParamType>
 SingleMotorCmd<E, ParamType>::SingleMotorCmd() :
@@ -87,7 +86,7 @@ SingleMotorCmd<E, ParamType>::SingleMotorCmd() :
 }
 
 /**
- * @brief SingleMotorCmd::SingleMotorCmd
+ * @brief SingleMotorCmd<E, ParamType>::SingleMotorCmd
  * @param type
  */
 template<typename E, typename ParamType>
@@ -100,10 +99,9 @@ SingleMotorCmd<E, ParamType>::SingleMotorCmd(E type) :
 }
 
 /**
- * @brief SingleMotorCmd::SingleMotorCmd
+ * @brief SingleMotorCmd<E, ParamType>::SingleMotorCmd
  * @param type
  * @param motor_id
- * @param params
  */
 template<typename E, typename ParamType>
 SingleMotorCmd<E, ParamType>::SingleMotorCmd(E type,
@@ -116,10 +114,10 @@ SingleMotorCmd<E, ParamType>::SingleMotorCmd(E type,
 }
 
 /**
- * @brief SingleMotorCmd::SingleMotorCmd
+ * @brief SingleMotorCmd<E, ParamType>::SingleMotorCmd
  * @param type
  * @param motor_id
- * @param param
+ * @param params
  */
 template<typename E, typename ParamType>
 SingleMotorCmd<E, ParamType>::SingleMotorCmd(E type,
@@ -158,8 +156,7 @@ E SingleMotorCmd<E, ParamType>::getType() const
 }
 
 /**
- * @brief SingleMotorCmd::isCmdStepper
- * @param none
+ * @brief SingleMotorCmd<E, ParamType>::isCmdStepper
  * @return
  */
 template<typename E, typename ParamType>
@@ -169,8 +166,7 @@ bool SingleMotorCmd<E, ParamType>::isStepperCmd() const
 }
 
 /**
- * @brief SingleMotorCmd::isCmdDxl
- * @param none
+ * @brief SingleMotorCmd<E, ParamType>::isCmdDxl
  * @return
  */
 template<typename E, typename ParamType>
@@ -180,7 +176,7 @@ bool SingleMotorCmd<E, ParamType>::isDxlCmd() const
 }
 
 /**
- * @brief SingleMotorCmd::reset
+ * @brief SingleMotorCmd<E, ParamType>::reset
  */
 template<typename E, typename ParamType>
 void SingleMotorCmd<E, ParamType>::reset()
@@ -193,6 +189,10 @@ void SingleMotorCmd<E, ParamType>::reset()
 // specializations for dynamixel
 //********************************
 
+/**
+ * @brief SingleMotorCmd<EDxlCommandType, uint32_t>::str
+ * @return
+ */
 template<>
 inline
 std::string SingleMotorCmd<EDxlCommandType, uint32_t>::str() const
@@ -215,7 +215,7 @@ std::string SingleMotorCmd<EDxlCommandType, uint32_t>::str() const
 }
 
 /**
- * @brief SingleMotorCmd::isValid
+ * @brief SingleMotorCmd<EDxlCommandType, uint32_t>::isValid
  * @return
  */
 template<>
@@ -230,6 +230,10 @@ bool SingleMotorCmd<EDxlCommandType, uint32_t>::isValid() const
 // specializations for steppers
 //********************************
 
+/**
+ * @brief SingleMotorCmd<EStepperCommandType, int32_t>::str
+ * @return
+ */
 template<>
 inline
 std::string SingleMotorCmd<EStepperCommandType, int32_t>::str() const
@@ -249,6 +253,10 @@ std::string SingleMotorCmd<EStepperCommandType, int32_t>::str() const
     return ss.str();
 }
 
+/**
+ * @brief SingleMotorCmd<EStepperCommandType, int32_t>::isValid
+ * @return
+ */
 template<>
 inline
 bool SingleMotorCmd<EStepperCommandType, int32_t>::isValid() const

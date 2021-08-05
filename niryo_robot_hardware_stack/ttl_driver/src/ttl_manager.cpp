@@ -70,7 +70,9 @@ TtlManager::TtlManager(ros::NodeHandle& nh) :
         ROS_WARN("TtlManager - Dynamixel Communication Failed");
 }
 
-
+/**
+ * @brief TtlManager::~TtlManager
+ */
 TtlManager::~TtlManager()
 {
     // we use an "init()" in the ctor. Thus there should be some kind of "uninit" in the dtor
@@ -135,7 +137,7 @@ bool TtlManager::init(ros::NodeHandle& nh)
                 ROS_ERROR("TtlManager::init - unknown type %s. Please check your configuration file "
                           "(niryo_robot_hardware_stack/ttl_driver/config/motors_config.yaml)",
                           typeList.at(id).c_str());
-        }            
+        }
     }
 
     // display internal data for debug
@@ -164,7 +166,7 @@ bool TtlManager::init(ros::NodeHandle& nh)
  * @brief TtlManager::addMotor
  * @param type
  * @param id
- * @param isTool
+ * @param type_used
  */
 void TtlManager::addMotor(EMotorType type, uint8_t id, EType type_used)
 {
@@ -312,7 +314,7 @@ int TtlManager::setupCommunication()
     else
         ROS_ERROR("TtlManager::setupCommunication - Invalid port handler");
 
-    // TODO: set up for stepper bus
+    // TODO(Thuc): set up for stepper bus
     return ret;
 }
 
@@ -441,13 +443,13 @@ int TtlManager::rebootMotor(uint8_t motor_id)
             {
                 ros::Time start_time = ros::Time::now();
                 uint32_t tmp = 0;
-                int wait_result =_driver_map.at(type)->readTemperature(motor_id, tmp);
+                int wait_result = _driver_map.at(type)->readTemperature(motor_id, tmp);
                 while (COMM_SUCCESS != wait_result || !tmp)
                 {
                     if ((ros::Time::now() - start_time).toSec() > 1)
                         break;
                     ros::Duration(0.1).sleep();
-                    wait_result =_driver_map.at(type)->readTemperature(motor_id, tmp);
+                    wait_result = _driver_map.at(type)->readTemperature(motor_id, tmp);
                 }
             }
             ROS_WARN_COND(COMM_SUCCESS != return_value,
@@ -838,9 +840,8 @@ common::model::EStepperCalibrationStatus TtlManager::getCalibrationStatus() cons
 // ******************
 
 /**
- * @brief TtlManager::setLeds : set the leds integrated into each motor
+ * @brief TtlManager::setLeds
  * @param led
- * @param type
  * @return
  */
 int TtlManager::setLeds(int led)
@@ -880,7 +881,7 @@ int TtlManager::setLeds(int led)
 }
 
 /**
- * @brief TtlManager::sendCustomDxlCommand
+ * @brief TtlManager::sendCustomCommand
  * @param motor_type
  * @param id
  * @param reg_address
@@ -906,7 +907,8 @@ int TtlManager::sendCustomCommand(EMotorType motor_type, uint8_t id,
         if (result != COMM_SUCCESS)
         {
             ROS_WARN("TtlManager::sendCustomCommand - Failed to write custom command: %d", result);
-            result = niryo_robot_msgs::CommandStatus::TTL_WRITE_ERROR;     //Todo: change TTL_WRITE_ERROR -> WRITE_ERROR
+            // TODO(Thuc): change TTL_WRITE_ERROR -> WRITE_ERROR
+            result = niryo_robot_msgs::CommandStatus::TTL_WRITE_ERROR;
         }
     }
     else
@@ -920,7 +922,7 @@ int TtlManager::sendCustomCommand(EMotorType motor_type, uint8_t id,
 }
 
 /**
- * @brief TtlManager::readCustomDxlCommand
+ * @brief TtlManager::readCustomCommand
  * @param motor_type
  * @param id
  * @param reg_address
@@ -1031,7 +1033,6 @@ void TtlManager::executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, uint32
 
 int TtlManager::writeSynchronizeCommand(std::shared_ptr<common::model::AbstractTtlSynchronizeMotorCmd>& cmd)
 {
-
     int result = COMM_TX_ERROR;
     ROS_DEBUG_THROTTLE(0.5, "TtlManager::writeSynchronizeCommand:  %s", cmd->str().c_str());
 
@@ -1121,7 +1122,6 @@ int TtlManager::writeSingleCommand(std::shared_ptr<common::model::AbstractTtlSin
 
                 ros::Duration(TIME_TO_WAIT_IF_BUSY).sleep();
             }
-
         }
     }
 

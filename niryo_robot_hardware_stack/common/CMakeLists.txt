@@ -15,7 +15,8 @@ add_definitions(-Wall  -Werror)
 ## Find catkin macros and libraries
 find_package(catkin REQUIRED
     COMPONENTS
-        roscpp
+      niryo_robot_msgs
+      roscpp
 )
 
 ###############################################
@@ -36,6 +37,7 @@ catkin_package(
     LIBRARIES
         ${PROJECT_NAME}
     CATKIN_DEPENDS
+        niryo_robot_msgs
         roscpp
 )
 
