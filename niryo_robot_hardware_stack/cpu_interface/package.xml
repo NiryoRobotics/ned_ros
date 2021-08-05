@@ -23,6 +23,6 @@
   <exec_depend>roscpp</exec_depend>
   <exec_depend>common</exec_depend>
 
-  <build_export_depend>roscpp</build_export_depend>
-
+  <test_depend>python-catkin-lint</test_depend>
+  <test_depend>roslint</test_depend>
 </package>

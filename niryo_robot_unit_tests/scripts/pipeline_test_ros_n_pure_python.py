@@ -11,7 +11,7 @@ import argparse
 list_test_files_simulation = [
     ["niryo_robot_poses_handlers", "simulation_poses_handlers.test", False],
     ["niryo_robot_programs_manager", "simulation_programs_manager.test", False],
-    ["niryo_robot_python_ros_wrapper", "simulation_python_wrapper.test", True],
+    ["niryo_robot_python_ros_wrapper", "simu_gazebo_python_wrapper.test", True],
 ]
 
 list_test_files_rpi = [

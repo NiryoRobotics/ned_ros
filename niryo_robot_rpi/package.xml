@@ -35,4 +35,6 @@
   <exec_depend>python-flask</exec_depend>
   <exec_depend>python-rpi.gpio</exec_depend>
   
+  <test_depend>python-catkin-lint</test_depend>
+  <test_depend>roslint</test_depend>
 </package>

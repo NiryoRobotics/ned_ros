@@ -113,6 +113,18 @@ endif()
 ## Testing ##
 #############
 
+if(CATKIN_ENABLE_TESTING)
+  ##########################
+  ## Static code analysis ##
+  ##########################
+  find_package(roslint QUIET)
+
+  if(roslint_FOUND)
+    roslint_cpp(empty)
+  else()
+      message(WARNING "roslint not found. Skipping roslint target building")
+  endif()
+endif()
 # no testings : external lib
 
 #############
@@ -131,22 +143,9 @@ install(
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 )
 
-if(rosdoc_lite_FOUND)
+if (rosdoc_lite_FOUND AND (EXISTS "${CMAKE_CURRENT_BINARY_DIR}/doc/"))
   install(
     DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc/
     DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/doc
   )
-endif()
-
-##########################
-## Static code analysis ##
-##########################
-find_package(roslint QUIET)
-
-if(roslint_FOUND)
-    # no static code analysis on external libs
-    # create empty target (needed for catkin build --make-args roslint)
-    roslint_cpp(empty) # hack to create an empty roslint target
-else()
-    message(WARNING "roslint not found. Skipping roslint target building")
 endif()

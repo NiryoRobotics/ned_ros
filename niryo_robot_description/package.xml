@@ -19,4 +19,5 @@
   <exec_depend>xacro</exec_depend>
   <exec_depend>rviz</exec_depend>
 
+  <test_depend>python-catkin-lint</test_depend>
 </package>

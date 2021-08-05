@@ -48,4 +48,6 @@
   <!-- Python Dependencies -->
   <exec_depend>python-numpy</exec_depend>
 
+  <test_depend>python-catkin-lint</test_depend>
+  <test_depend>roslint</test_depend>
 </package>

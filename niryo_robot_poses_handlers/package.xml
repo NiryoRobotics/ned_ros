@@ -3,39 +3,40 @@
   href="http://download.ros.org/schema/package_format3.xsd"
   schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-    <name>niryo_robot_poses_handlers</name>
-    <version>3.1.0</version>
-    <description>
-        - Handles the conversion of workspace-relative poses to robot poses
-        - Handles Poses
-        - Handles Trajectories
-    </description>
-    <maintainer email="r.lux@niryo.com">Rémi Lux</maintainer>
-    <maintainer email="v.pitre@niryo.com">Valentin Pitre</maintainer>
-    <license>GPLv3</license>
-    <author>Andreas Voigt</author>
-    <author email="r.lux@niryo.com">Rémi Lux</author>
-    
-    <buildtool_depend>catkin</buildtool_depend>
+  <name>niryo_robot_poses_handlers</name>
+  <version>3.1.0</version>
+  <description>
+      - Handles the conversion of workspace-relative poses to robot poses
+      - Handles Poses
+      - Handles Trajectories
+  </description>
+  <maintainer email="r.lux@niryo.com">Rémi Lux</maintainer>
+  <maintainer email="v.pitre@niryo.com">Valentin Pitre</maintainer>
+  <license>GPLv3</license>
+  <author>Andreas Voigt</author>
+  <author email="r.lux@niryo.com">Rémi Lux</author>
+  
+  <buildtool_depend>catkin</buildtool_depend>
 
-    <build_depend>geometry_msgs</build_depend>
-    <build_depend>moveit_msgs</build_depend>
-    <build_depend>niryo_robot_msgs</build_depend>
-    <build_depend>message_generation</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>moveit_msgs</build_depend>
+  <build_depend>niryo_robot_msgs</build_depend>
+  <build_depend>message_generation</build_depend>
 
-    <build_export_depend>moveit_msgs</build_export_depend>
-    <build_export_depend>niryo_robot_msgs</build_export_depend>
-    <build_export_depend>geometry_msgs</build_export_depend>
+  <build_export_depend>moveit_msgs</build_export_depend>
+  <build_export_depend>niryo_robot_msgs</build_export_depend>
+  <build_export_depend>geometry_msgs</build_export_depend>
 
-    <exec_depend>message_runtime</exec_depend>
-    <exec_depend>moveit_msgs</exec_depend>
-    <exec_depend>niryo_robot_msgs</exec_depend>
-    <exec_depend>niryo_robot_tools_commander</exec_depend>
-    <exec_depend>tf</exec_depend>
+  <exec_depend>message_runtime</exec_depend>
+  <exec_depend>moveit_msgs</exec_depend>
+  <exec_depend>niryo_robot_msgs</exec_depend>
+  <exec_depend>niryo_robot_tools_commander</exec_depend>
+  <exec_depend>tf</exec_depend>
 
-    <!-- Python Dependencies -->
-    <exec_depend>python-numpy</exec_depend>
+  <!-- Python Dependencies -->
+  <exec_depend>python-numpy</exec_depend>
 
-    <test_depend>rostest</test_depend>
-
+  <test_depend>rostest</test_depend>
+  <test_depend>python-catkin-lint</test_depend>
+  <test_depend>roslint</test_depend>
 </package>

@@ -3,31 +3,33 @@
   href="http://download.ros.org/schema/package_format3.xsd"
   schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-    <name>niryo_robot_vision</name>
-    <version>3.1.0</version>
-    <description>Niryo vision package</description>
-    <maintainer email="r.lux@niryo.com">Remi Lux</maintainer>
-    <license>GPLv3</license>
-    <author email="r.lux@niryo.com">Remi Lux</author>
-    
-    <buildtool_depend>catkin</buildtool_depend>
+  <name>niryo_robot_vision</name>
+  <version>3.1.0</version>
+  <description>Niryo vision package</description>
+  <maintainer email="r.lux@niryo.com">Remi Lux</maintainer>
+  <license>GPLv3</license>
+  <author email="r.lux@niryo.com">Remi Lux</author>
+  
+  <buildtool_depend>catkin</buildtool_depend>
 
-    <build_depend>niryo_robot_msgs</build_depend>
-    <build_depend>sensor_msgs</build_depend>
-    <build_depend>message_generation</build_depend>
+  <build_depend>niryo_robot_msgs</build_depend>
+  <build_depend>sensor_msgs</build_depend>
+  <build_depend>message_generation</build_depend>
 
-    <build_export_depend>niryo_robot_msgs</build_export_depend>
-    <build_export_depend>sensor_msgs</build_export_depend>
+  <build_export_depend>niryo_robot_msgs</build_export_depend>
+  <build_export_depend>sensor_msgs</build_export_depend>
 
-    <exec_depend>niryo_robot_msgs</exec_depend>
-    <exec_depend>rosbridge_server</exec_depend>
-    <exec_depend>sensor_msgs</exec_depend>
-    <exec_depend>message_runtime</exec_depend>
+  <exec_depend>niryo_robot_msgs</exec_depend>
+  <exec_depend>rosbridge_server</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>message_runtime</exec_depend>
 
-    <!-- Python Dependencies -->
-    <exec_depend>python-numpy</exec_depend>
-    <exec_depend>python-opencv</exec_depend>
-    <exec_depend>python-yaml</exec_depend>
-    <exec_depend>python-imaging</exec_depend>
+  <!-- Python Dependencies -->
+  <exec_depend>python-numpy</exec_depend>
+  <exec_depend>python-opencv</exec_depend>
+  <exec_depend>python-yaml</exec_depend>
+  <exec_depend>python-imaging</exec_depend>
 
+  <test_depend>python-catkin-lint</test_depend>
+  <test_depend>roslint</test_depend>
 </package>
