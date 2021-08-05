@@ -837,7 +837,7 @@ int TtlManager::setLeds(int led)
 }
 
 /**
- * @brief TtlManager::sendCustomDxlCommand
+ * @brief TtlManager::sendCustomCommand
  * @param motor_type
  * @param id
  * @param reg_address
@@ -878,7 +878,7 @@ int TtlManager::sendCustomCommand(EMotorType motor_type, uint8_t id,
 }
 
 /**
- * @brief TtlManager::readCustomDxlCommand
+ * @brief TtlManager::readCustomCommand
  * @param motor_type
  * @param id
  * @param reg_address

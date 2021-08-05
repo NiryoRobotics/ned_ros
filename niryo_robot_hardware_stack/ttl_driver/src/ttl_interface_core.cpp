@@ -994,7 +994,7 @@ niryo_robot_msgs::BusState TtlInterfaceCore::getBusState() const
 // *******************
 
 /**
- * @brief TtlInterfaceCore::callbackSendCustomDxlValue
+ * @brief TtlInterfaceCore::callbackSendCustomValue
  * @param req
  * @param res
  * @return
@@ -1036,7 +1036,7 @@ bool TtlInterfaceCore::_callbackSendCustomValue(ttl_driver::SendCustomValue::Req
 }
 
 /**
- * @brief TtlInterfaceCore::callbackReadCustomDxlValue
+ * @brief TtlInterfaceCore::callbackReadCustomValue
  * @param req
  * @param res
  * @return

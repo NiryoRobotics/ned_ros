@@ -59,7 +59,7 @@ Services - Dynamixel Driver
       -  :ref:`SetInt`
       -  Control dynmixel LED
    *  -  ``niryo_robot/ttl_driver/send_custom_dxl_value``
-      -  :ref:`ttl_driver/SendCustomDxlValue<SendCustomDxlValue (Service)>`
+      -  :ref:`ttl_driver/SendCustomValue<SendCustomValue (Service)>`
       -  Send a custom dynamixel command
 
 Dependencies - Dynamixel Driver
@@ -71,10 +71,10 @@ Dependencies - Dynamixel Driver
 Services & Messages files - Dynamixel Driver
 --------------------------------------------------
 
-SendCustomDxlValue (Service)
+SendCustomValue (Service)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. literalinclude:: ../../../niryo_robot_hardware_stack/ttl_driver/srv/SendCustomDxlValue.srv
+.. literalinclude:: ../../../niryo_robot_hardware_stack/ttl_driver/srv/SendCustomValue.srv
    :language: rostype
 
 DxlMotorHardwareStatus (Message)

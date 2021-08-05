@@ -20,7 +20,7 @@
 import rospy
 import argparse
 
-from ttl_driver.srv import ReadCustomDxlValue
+from ttl_driver.srv import ReadCustomValue
 
 if __name__ == '__main__':
     rospy.init_node("read_custom_dxl_value")
@@ -46,7 +46,7 @@ if __name__ == '__main__':
         exit()
 
     try:
-        read_cmd = rospy.ServiceProxy(service_name, ReadCustomDxlValue)
+        read_cmd = rospy.ServiceProxy(service_name, ReadCustomValue)
         response = read_cmd(args.type, args.id, value, args.address, args.size)
         rospy.loginfo(response.message)
     except rospy.ServiceException as e:
