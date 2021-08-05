@@ -117,6 +117,18 @@ endif()
 ## Testing ##
 #############
 
+if(CATKIN_ENABLE_TESTING)
+  ##########################
+  ## Static code analysis ##
+  ##########################
+  find_package(roslint QUIET)
+
+  if(roslint_FOUND)
+    roslint_cpp()
+  else()
+      message(WARNING "roslint not found. Skipping roslint target building")
+  endif()
+endif()
 # no testing
 
 #############
@@ -141,7 +153,7 @@ install(
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 )
 
-if(rosdoc_lite_FOUND)
+if (rosdoc_lite_FOUND AND (EXISTS "${CMAKE_CURRENT_BINARY_DIR}/doc/"))
   install(
     DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc/
     DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/doc
@@ -152,14 +164,3 @@ install(
   DIRECTORY launch/
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
 )
-
-##########################
-## Static code analysis ##
-##########################
-find_package(roslint QUIET)
-
-if(roslint_FOUND)
-    roslint_cpp()
-else()
-    message(WARNING "roslint not found. Skipping roslint target building")
-endif()

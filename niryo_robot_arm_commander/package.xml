@@ -3,51 +3,52 @@
   href="http://download.ros.org/schema/package_format3.xsd"
   schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-    <name>niryo_robot_arm_commander</name>
-    <version>3.1.0</version>
-    <description>
-        Interface between user and Moveit! to easily control Ned (arm + tools). Validates params, checks if
-        previous trajectory has not finished, ...
-    </description>
-    <maintainer email="r.lux@niryo.com">Rémi Lux</maintainer>
-    <maintainer email="v.pitre@niryo.com">Valentin Pitre</maintainer>
-    <license>GPLv3</license>
-    <author email="r.lux@niryo.com">Rémi Lux</author>
-    
-    <buildtool_depend>catkin</buildtool_depend>
+  <name>niryo_robot_arm_commander</name>
+  <version>3.1.0</version>
+  <description>
+      Interface between user and Moveit! to easily control Ned (arm + tools). Validates params, checks if
+      previous trajectory has not finished, ...
+  </description>
+  <maintainer email="r.lux@niryo.com">Rémi Lux</maintainer>
+  <maintainer email="v.pitre@niryo.com">Valentin Pitre</maintainer>
+  <license>GPLv3</license>
+  <author email="r.lux@niryo.com">Rémi Lux</author>
+  
+  <buildtool_depend>catkin</buildtool_depend>
 
-    <build_depend>actionlib_msgs</build_depend>
-    <build_depend>geometry_msgs</build_depend>
-    <build_depend>message_generation</build_depend>
-    <build_depend>niryo_robot_msgs</build_depend>
-    <build_depend>message_generation</build_depend>
+  <build_depend>actionlib_msgs</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>niryo_robot_msgs</build_depend>
+  <build_depend>message_generation</build_depend>
 
-    <build_export_depend>actionlib_msgs</build_export_depend>
-    <build_export_depend>niryo_robot_msgs</build_export_depend>
-    <build_export_depend>geometry_msgs</build_export_depend>
+  <build_export_depend>actionlib_msgs</build_export_depend>
+  <build_export_depend>niryo_robot_msgs</build_export_depend>
+  <build_export_depend>geometry_msgs</build_export_depend>
 
-    <exec_depend>actionlib</exec_depend>
-    <exec_depend>actionlib_msgs</exec_depend>
-    <exec_depend>control_msgs</exec_depend>
-    <exec_depend>geometry_msgs</exec_depend>
-    <exec_depend>moveit</exec_depend>
-    <exec_depend>moveit_msgs</exec_depend>
-    <exec_depend>ros_controllers</exec_depend>
-    <exec_depend>rosbridge_server</exec_depend>
-    <exec_depend>sensor_msgs</exec_depend>
-    <exec_depend>std_msgs</exec_depend>
-    <exec_depend>tf2_web_republisher</exec_depend>
-    <exec_depend>trajectory_msgs</exec_depend>
-    <exec_depend>message_runtime</exec_depend>
+  <exec_depend>actionlib</exec_depend>
+  <exec_depend>actionlib_msgs</exec_depend>
+  <exec_depend>control_msgs</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>moveit</exec_depend>
+  <exec_depend>moveit_msgs</exec_depend>
+  <exec_depend>ros_controllers</exec_depend>
+  <exec_depend>rosbridge_server</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>tf2_web_republisher</exec_depend>
+  <exec_depend>trajectory_msgs</exec_depend>
+  <exec_depend>message_runtime</exec_depend>
 
-    <!-- Niryo Dependencies -->
-    <exec_depend>niryo_robot_hardware_interface</exec_depend>
-    <exec_depend>niryo_robot_msgs</exec_depend>
-    <exec_depend>niryo_robot_tools_commander</exec_depend>
-    <exec_depend>niryo_ned_moveit_config_w_gripper1</exec_depend>
-    <exec_depend>niryo_ned_moveit_config_standalone</exec_depend>
+  <!-- Niryo Dependencies -->
+  <exec_depend>niryo_robot_hardware_interface</exec_depend>
+  <exec_depend>niryo_robot_msgs</exec_depend>
+  <exec_depend>niryo_robot_tools_commander</exec_depend>
+  <exec_depend>niryo_ned_moveit_config_w_gripper1</exec_depend>
+  <exec_depend>niryo_ned_moveit_config_standalone</exec_depend>
 
-    <!-- Python Dependencies -->
-    <exec_depend>python-numpy</exec_depend>
+  <!-- Python Dependencies -->
+  <exec_depend>python-numpy</exec_depend>
 
+  <test_depend>python-catkin-lint</test_depend>
+  <test_depend>roslint</test_depend>
 </package>

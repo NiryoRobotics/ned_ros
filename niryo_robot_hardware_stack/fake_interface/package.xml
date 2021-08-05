@@ -42,4 +42,7 @@
   <exec_depend>conveyor_interface</exec_depend>
   <exec_depend>actionlib</exec_depend>
   <exec_depend>common</exec_depend>
+
+  <test_depend>python-catkin-lint</test_depend>
+  <test_depend>roslint</test_depend>
 </package>

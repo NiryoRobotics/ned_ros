@@ -14,4 +14,6 @@
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>roscpp</build_depend>
 
+  <test_depend>python-catkin-lint</test_depend>
+  <test_depend>roslint</test_depend>
 </package>

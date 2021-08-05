@@ -50,5 +50,6 @@
   <exec_depend>niryo_ned_moveit_config_w_gripper1</exec_depend>
 
   <test_depend>rostest</test_depend>
-
+  <test_depend>python-catkin-lint</test_depend>
+  <test_depend>roslint</test_depend>
 </package>

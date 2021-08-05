@@ -9,17 +9,19 @@ find_package(catkin REQUIRED COMPONENTS
 
 catkin_package()
 
+if(CATKIN_ENABLE_TESTING)
+  ##########################
+  ## Static code analysis ##
+  ##########################
+  find_package(roslint QUIET)
+
+  if(roslint_FOUND)
+      roslint_python()
+  else()
+      message(WARNING "roslint not found. Skipping roslint target building")
+  endif()
+endif()
+
 include_directories(
   ${catkin_INCLUDE_DIRS}
 )
-
-##########################
-## Static code analysis ##
-##########################
-find_package(roslint QUIET)
-
-if(roslint_FOUND)
-    roslint_python()
-else()
-    message(WARNING "roslint not found. Skipping roslint target building")
-endif()

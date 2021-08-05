@@ -3,29 +3,31 @@
   href="http://download.ros.org/schema/package_format3.xsd"
   schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
-    <name>niryo_robot_gazebo</name>
-    <version>3.1.0</version>
-    <description>Gazebo simulation for Ned</description>
-    <maintainer email="r.lux@niryo.com">Rémi Lux</maintainer>
-    <maintainer email="v.pitre@niryo.com">Valentin Pitre</maintainer>
-    <license>GPLv3</license>
-    <author email="r.lux@niryo.com">Rémi Lux</author>
-    
-    <buildtool_depend>catkin</buildtool_depend>
-    <build_depend>gazebo_ros</build_depend>
+  <name>niryo_robot_gazebo</name>
+  <version>3.1.0</version>
+  <description>Gazebo simulation for Ned</description>
+  <maintainer email="r.lux@niryo.com">Rémi Lux</maintainer>
+  <maintainer email="v.pitre@niryo.com">Valentin Pitre</maintainer>
+  <license>GPLv3</license>
+  <author email="r.lux@niryo.com">Rémi Lux</author>
+  
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>gazebo_ros</build_depend>
 
-    <exec_depend>controller_manager</exec_depend>
-    <exec_depend>joint_state_controller</exec_depend>
-    <exec_depend>robot_state_publisher</exec_depend>
-    <exec_depend>effort_controllers</exec_depend>
-    <exec_depend>niryo_robot_description</exec_depend>
-    <exec_depend>niryo_robot_arm_commander</exec_depend>
-    <exec_depend>niryo_robot_hardware_interface</exec_depend>
-    <exec_depend>gazebo_ros_control</exec_depend>
-    <exec_depend>gazebo_ros</exec_depend>
+  <exec_depend>controller_manager</exec_depend>
+  <exec_depend>joint_state_controller</exec_depend>
+  <exec_depend>robot_state_publisher</exec_depend>
+  <exec_depend>effort_controllers</exec_depend>
+  <exec_depend>niryo_robot_description</exec_depend>
+  <exec_depend>niryo_robot_arm_commander</exec_depend>
+  <exec_depend>niryo_robot_hardware_interface</exec_depend>
+  <exec_depend>gazebo_ros_control</exec_depend>
+  <exec_depend>gazebo_ros</exec_depend>
 
-    <export>
-        <gazebo_ros gazebo_model_path="${prefix}/models"/>
-        <gazebo_ros gazebo_media_path="${prefix}"/>
-    </export>
+  <export>
+      <gazebo_ros gazebo_model_path="${prefix}/models"/>
+      <gazebo_ros gazebo_media_path="${prefix}"/>
+  </export>
+
+  <test_depend>python-catkin-lint</test_depend>
 </package>

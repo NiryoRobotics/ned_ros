@@ -23,6 +23,19 @@ catkin_make_n_rostest:
       - build
       - devel
       - src
+  
+  artifacts:
+    when: always
+    paths:
+        - build/test_results/*/rostest-*.xml
+        - build/test_results/*/gtest-*.xml
+        - build/test_results/*/rosunit-*.xml
+    reports:
+      junit:
+        - build/test_results/*/rostest-*.xml
+        - build/test_results/*/gtest-*.xml
+        - build/test_results/*/rosunit-*.xml
+
   script:
     # updating apt cache
     - apt-get update -y
@@ -42,19 +55,21 @@ catkin_make_n_rostest:
     - rosdep update
     - rosdep install --from-paths src --ignore-src --default-yes --rosdistro $ROS_DISTRO --skip-keys "$SKIPPED_KEYS"
 
-    # Test compiling
+    # Compile project
     - catkin_make
-
-    # Test documentation build
-    - catkin_make --cmake-args -DBUILD_DOCS=ON
 
     - source devel/setup.bash
 
-    # C++ tests
-    - catkin_make run_tests --cmake-args -DBUILD_UNIT_TESTS=ON -DBUILD_INTEGRATION_TESTS=ON
+    # Launch roscore in background
+    - roscore&
 
-    # Python tests
-    - python src/niryo_robot_unit_tests/scripts/script_test_headless.py
+    # Launch all tests (python / C++)
+    # Note: Without -j1, multiple jobs was running and problems occured for xml results output files
+    # (sometimes a part of file was duplicated and unreadable by scripts then)
+    - catkin_make run_tests -j1
 
     # Check code linting
     - catkin_make roslint
+
+    # Check config files (package.xml + CMakeLists.txt)
+    - catkin_lint -W2 --rosdistro melodic --ignore missing_directory --explain src --show-ignored

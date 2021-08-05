@@ -33,4 +33,6 @@
   <exec_depend>common</exec_depend>
 
   <test_depend>rostest</test_depend>
+  <test_depend>python-catkin-lint</test_depend>
+  <test_depend>roslint</test_depend>
 </package>

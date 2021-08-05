@@ -43,5 +43,5 @@
   <!-- <exec_depend>warehouse_ros_mongo</exec_depend> -->
   <exec_depend>niryo_robot_description</exec_depend>
 
-
+  <test_depend>python-catkin-lint</test_depend>
 </package>
