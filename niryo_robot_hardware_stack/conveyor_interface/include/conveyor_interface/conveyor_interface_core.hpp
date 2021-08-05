@@ -46,7 +46,7 @@ namespace conveyor_interface
 class ConveyorInterfaceCore : public common::model::IInterfaceCore
 {
     public:
-        ConveyorInterfaceCore(ros::NodeHandle& nh, std::shared_ptr<can_driver::CanDriverCore> stepper);
+        ConveyorInterfaceCore(ros::NodeHandle& nh, std::shared_ptr<common::model::IDriverCore> conveyor_driver);
         virtual ~ConveyorInterfaceCore() override;
         virtual bool init(ros::NodeHandle& nh) override;
 
@@ -69,7 +69,7 @@ class ConveyorInterfaceCore : public common::model::IInterfaceCore
     private:
         std::thread _publish_conveyors_feedback_thread;
 
-        std::shared_ptr<can_driver::CanDriverCore> _can_driver;
+        std::shared_ptr<common::model::IDriverCore> _conveyor_driver;
 
         ros::ServiceServer _ping_and_set_stepper_server;
         ros::ServiceServer _control_conveyor_server;

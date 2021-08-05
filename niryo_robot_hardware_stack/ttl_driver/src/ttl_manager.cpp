@@ -21,6 +21,7 @@
 #include "ttl_driver/stepper_driver.hpp"
 #include "common/model/tool_state.hpp"
 #include "common/model/stepper_motor_state.hpp"
+#include "common/model/conveyor_state.hpp"
 
 #include <utility>
 #include <vector>
@@ -39,6 +40,7 @@ using ::std::set;
 
 using ::common::model::EStepperCalibrationStatus;
 using ::common::model::StepperMotorState;
+using ::common::model::ConveyorState;
 using ::common::model::JointState;
 using ::common::model::EMotorType;
 using ::common::model::DxlMotorState;
@@ -171,7 +173,7 @@ void TtlManager::addMotor(EMotorType type, uint8_t id, EType type_used)
     // add id to _state_map
     if (type == EMotorType::STEPPER)
         if (type_used == EType::CONVOYER)
-            _state_map.insert(make_pair(id, std::make_shared<StepperMotorState>(id, true)));
+            _state_map.insert(make_pair(id, std::make_shared<ConveyorState>(id)));
         else
             _state_map.insert(make_pair(id, std::make_shared<StepperMotorState>(id)));
     else if (type != EMotorType::UNKNOWN)
@@ -217,6 +219,17 @@ void TtlManager::addMotor(EMotorType type, uint8_t id, EType type_used)
             break;
         }
     }
+}
+
+/**
+ * @brief TtlManager::changeId
+ * @param id
+ * @param old_id
+ * @param new_id
+ */
+int TtlManager::changeId(common::model::EMotorType type, uint8_t old_id, uint8_t new_id)
+{
+    return _driver_map.at(type)->changeId(old_id, new_id);
 }
 
 /**
@@ -633,6 +646,37 @@ void TtlManager::readHwStatus()
                     hw_errors_increment++;
                 }
 
+                // **********  conveyor state
+                if (type == EMotorType::STEPPER)
+                {
+                    for (auto id : _ids_map.at(type))
+                    {
+                        if (std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(id))->isConveyor())
+                        {
+                            shared_ptr<ttl_driver::AbstractStepperDriver> stepper_driver = std::dynamic_pointer_cast<ttl_driver::AbstractStepperDriver>(driver);
+                            bool state;
+                            uint32_t speed;
+                            int8_t direction;
+                            if (COMM_SUCCESS != stepper_driver->getConveyorSpeed(id, speed)) 
+                            {
+                                hw_errors_increment++;
+                            }
+                            if (COMM_SUCCESS != stepper_driver->getConveyorDirection(id, direction)) 
+                            {
+                                hw_errors_increment++;
+                            }
+                            if (COMM_SUCCESS != stepper_driver->getConveyorState(id, state)) 
+                            {
+                                hw_errors_increment++;
+                            }
+                            auto cState = std::dynamic_pointer_cast<ConveyorState>(_state_map.at(id));
+                            // TODO: handle datas before set in state of conveyor - type data in ttl conveyor is differrent with data in can conveyor
+                            cState->setDirection(direction);
+                            cState->setSpeed(speed);
+                            cState->setState(state);
+                        }
+                    }
+                }
                 // set motors states accordingly
                 for (size_t i = 0; i < id_list_size; ++i)
                 {

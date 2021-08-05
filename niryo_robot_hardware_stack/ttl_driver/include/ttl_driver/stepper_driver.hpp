@@ -76,7 +76,12 @@ class StepperDriver : public AbstractStepperDriver
     public:
         virtual int startHoming(uint8_t id) override;
         virtual int getHomingStatus(uint8_t id, uint32_t &status) override;
-
+        // conveyor control
+        virtual int setGoalConveyorDirection(uint8_t id, int8_t direction) override;
+        virtual int setConveyorState(uint8_t id, bool state) override;
+        virtual int getConveyorSpeed(uint8_t id, uint32_t &velocity) override;
+        virtual int getConveyorDirection(uint8_t id, int8_t &direction) override;
+        virtual int getConveyorState(uint8_t id, bool &state) override;
 };
 
 // definition of methods
@@ -261,6 +266,40 @@ int StepperDriver<reg_type>::getHomingStatus(uint8_t id, uint32_t &status)
     return read(reg_type::ADDR_HOMING_STATUS, reg_type::SIZE_HOMING_STATUS, id, status);
 }
 
+template<typename reg_type>
+int StepperDriver<reg_type>::setGoalConveyorDirection(uint8_t id, int8_t direction)
+{
+    ROS_INFO("StepperDriver<reg_type>::setGoalConveyorDirection: need to be implemented!");
+    return 0;
 }
 
+template<typename reg_type>
+int StepperDriver<reg_type>::setConveyorState(uint8_t id, bool state)
+{
+    ROS_INFO("StepperDriver<reg_type>::setConveyorState: need to be implemented!");
+    return 0;
+}
+
+template<typename reg_type>
+int StepperDriver<reg_type>::getConveyorSpeed(uint8_t id, uint32_t &velocity)
+{
+    ROS_INFO("StepperDriver<reg_type>::getConveyorSpeed: need to be implemented!");
+    return 0;
+}
+
+template<typename reg_type>
+int StepperDriver<reg_type>::getConveyorDirection(uint8_t id, int8_t &direction)
+{
+    ROS_INFO("StepperDriver<reg_type>::getConveyorDirection: need to be implemented!");
+    return 0;
+}
+
+template<typename reg_type>
+int StepperDriver<reg_type>::getConveyorState(uint8_t id, bool &state)
+{
+    ROS_INFO("StepperDriver<reg_type>::getConveyorStatus: need to be implemented!");
+    return 0;
+}
+
+}
 #endif // STEPPER_DRIVER_HPP

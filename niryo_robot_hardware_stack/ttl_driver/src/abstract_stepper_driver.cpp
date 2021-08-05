@@ -35,6 +35,7 @@ AbstractStepperDriver::~AbstractStepperDriver()
 
 int AbstractStepperDriver::writeSingleCmd(std::shared_ptr<common::model::AbstractTtlSingleMotorCmd>& cmd)
 {
+    int result = COMM_TX_FAIL;
     if (cmd)
     {
         switch(EStepperCommandType(cmd->getCmdType()))
@@ -47,6 +48,16 @@ int AbstractStepperDriver::writeSingleCmd(std::shared_ptr<common::model::Abstrac
             return setTorqueEnable(cmd->getId(), cmd->getParam());
         case EStepperCommandType::CMD_TYPE_PING:
             return ping(cmd->getId());
+        case EStepperCommandType::CMD_TYPE_CONVEYOR:
+            // TODO: decide type of data sent in case ttl conveyor (thuc)
+            result = setConveyorState(cmd->getId(), static_cast<bool>(cmd->getParams().at(0)));
+            if (result == COMM_SUCCESS)
+            {
+                result = setGoalVelocity(cmd->getId(), cmd->getParams().at(1));
+                if (result == COMM_SUCCESS)
+                    return setGoalConveyorDirection(cmd->getId(), static_cast<int8_t>(cmd->getParams().at(2)));
+            }
+            return result;
         default:
             std::cout << "Command not implemented" << std::endl;
         }

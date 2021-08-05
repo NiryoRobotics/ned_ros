@@ -48,8 +48,8 @@ namespace conveyor_interface
  * @param stepper
  */
 ConveyorInterfaceCore::ConveyorInterfaceCore(ros::NodeHandle& nh,
-                                             shared_ptr<can_driver::CanDriverCore> can_driver):
-    _can_driver(can_driver)
+                                             shared_ptr<common::model::IDriverCore> conveyor_driver):
+    _conveyor_driver(conveyor_driver)
 {
     ROS_DEBUG("ConveyorInterfaceCore::ConveyorInterfaceCore - ctor");
 
@@ -168,7 +168,7 @@ ConveyorInterfaceCore::addConveyor()
     {
         // take last
         uint8_t conveyor_id = *_conveyor_pool_id_list.begin();
-        result = _can_driver->setConveyor(conveyor_id, static_cast<uint8_t>(_default_conveyor_id));
+        result = _conveyor_driver->setConveyor(conveyor_id, static_cast<uint8_t>(_default_conveyor_id));
 
         if (niryo_robot_msgs::CommandStatus::SUCCESS == result)
         {
@@ -177,18 +177,25 @@ ConveyorInterfaceCore::addConveyor()
             // remove from pool
             _conveyor_pool_id_list.erase(_conveyor_pool_id_list.begin());
 
-            _can_driver->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_MICRO_STEPS,
-                                                                                    conveyor_id, std::initializer_list<int32_t>{8}));
+            if (_conveyor_driver->getTypeDriver() == "can")
+            {
+                _conveyor_driver->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_MICRO_STEPS,
+                                                                                        conveyor_id, std::initializer_list<int32_t>{8}));
 
-            _can_driver->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_MAX_EFFORT,
-                                                                                    conveyor_id, std::initializer_list<int32_t>{_conveyor_max_effort}));
+                _conveyor_driver->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_MAX_EFFORT,
+                                                                                        conveyor_id, std::initializer_list<int32_t>{_conveyor_max_effort}));
 
-            _can_driver->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_CONVEYOR,
-                                                                                    conveyor_id, std::initializer_list<int32_t>{false, 0, -1}));
+                _conveyor_driver->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_CONVEYOR,
+                                                                                        conveyor_id, std::initializer_list<int32_t>{false, 0, -1}));
 
-            // CC why two times in a row ?
-            _can_driver->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_CONVEYOR,
-                                                                                    conveyor_id, std::initializer_list<int32_t>{false, 0, -1}));
+                // CC why two times in a row ?
+                _conveyor_driver->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_CONVEYOR,
+                                                                                       conveyor_id, std::initializer_list<int32_t>{false, 0, -1}));
+            }
+            if (_conveyor_driver->getTypeDriver() == "ttl")
+            {
+                // TODO: These types of command not exist in stepper ttl, we have implement it (thuc)
+            }
 
             res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
 
@@ -239,7 +246,7 @@ ConveyorInterfaceCore::removeConveyor(uint8_t id)
         // remove from currently connected conveyors
         _current_conveyor_id_list.erase(position);
         // remove conveyor
-        _can_driver->unsetConveyor(id);
+        _conveyor_driver->unsetConveyor(id);
         res.message = "Remove conveyor id " + to_string(id);
         res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
     }
@@ -275,7 +282,7 @@ bool ConveyorInterfaceCore::isInitialized()
 bool ConveyorInterfaceCore::_callbackPingAndSetConveyor(conveyor_interface::SetConveyor::Request &req,
                                                         conveyor_interface::SetConveyor::Response &res)
 {
-    if (!_can_driver->isCalibrationInProgress())
+    if (!_conveyor_driver->isCalibrationInProgress())
     {
         switch (req.cmd)
         {
@@ -321,8 +328,13 @@ bool ConveyorInterfaceCore::_callbackControlConveyor(conveyor_interface::Control
         res.message += to_string(req.id);
         res.message += " is OK";
         res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
-        _can_driver->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_CONVEYOR,
+        if (_conveyor_driver->getTypeDriver() == "can")
+            _conveyor_driver->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_CONVEYOR,
                                                                                 req.id, std::initializer_list<int32_t>{req.control_on, req.speed, req.direction}));
+        else
+        {
+            // TODO: handle data before add command to ttl_interface_core (thuc)
+        }
     }
     else
     {
@@ -350,7 +362,7 @@ void ConveyorInterfaceCore::_publishConveyorsFeedback()
         conveyor_interface::ConveyorFeedback data;
         
         // CC to be checked
-        for (auto sState : _can_driver->getStates())
+        for (auto sState : _conveyor_driver->getStates())
         {
             if (sState->isStepper())
             {
