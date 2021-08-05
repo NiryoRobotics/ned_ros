@@ -45,7 +45,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "niryo_robot_msgs/Trigger.h"
 #include "common/model/motor_type_enum.hpp"
 
-#include "common/model/iinterface_core.hpp"
+#include "common/model/i_interface_core.hpp"
 
 namespace joints_interface
 {
@@ -56,8 +56,7 @@ class JointsInterfaceCore : common::model::IInterfaceCore
 
         JointsInterfaceCore(ros::NodeHandle& rootnh, 
                             ros::NodeHandle& robot_hwnh,
-                            std::shared_ptr<ttl_driver::TtlDriverCore> ttl_driver,
-                            std::shared_ptr<can_driver::CanDriverCore> can_driver);
+                            std::shared_ptr<joint_driver::JointDriver> jdriver);
         virtual ~JointsInterfaceCore() override;
 
         virtual bool init(ros::NodeHandle& nh) override;

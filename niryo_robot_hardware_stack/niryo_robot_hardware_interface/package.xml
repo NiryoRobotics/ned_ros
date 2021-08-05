@@ -22,6 +22,7 @@
   <build_depend>fake_interface</build_depend>
   <build_depend>message_generation</build_depend>
   <build_depend>niryo_robot_msgs</build_depend>
+  <build_depend>joints_driver</build_depend>
 
   <build_export_depend>roscpp</build_export_depend>
   <build_export_depend>tools_interface</build_export_depend>
@@ -29,6 +30,7 @@
   <build_export_depend>niryo_robot_msgs</build_export_depend>
   <build_export_depend>cpu_interface</build_export_depend>
   <build_export_depend>conveyor_interface</build_export_depend>
+  <build_export_depend>joints_driver</build_export_depend>
   <build_export_depend>joints_interface</build_export_depend>
 
   <exec_depend>roscpp</exec_depend>
@@ -39,6 +41,7 @@
   <exec_depend>fake_interface</exec_depend>
   <exec_depend>message_runtime</exec_depend>
   <exec_depend>niryo_robot_msgs</exec_depend>
+  <exec_depend>joints_driver</exec_depend>
   <exec_depend>controller_manager</exec_depend>
   <exec_depend>niryo_robot_description</exec_depend>
   <exec_depend>robot_state_publisher</exec_depend>

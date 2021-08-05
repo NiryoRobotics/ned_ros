@@ -21,7 +21,7 @@
 #include <ros/ros.h>
 
 // niryo
-#include "can_driver/can_driver_core.hpp"
+#include "can_driver/can_interface_core.hpp"
 
 int main(int argc, char** argv)
 {
@@ -31,7 +31,7 @@ int main(int argc, char** argv)
 
   ros::NodeHandle nodeHandle("~");
 
-  can_driver::CanDriverCore can_node(nodeHandle);
+  can_driver::CanInterfaceCore can_node(nodeHandle);
 
   ros::spin();
   return 0;

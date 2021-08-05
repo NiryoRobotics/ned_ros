@@ -66,6 +66,22 @@ bool JointState::operator==(const JointState& m) const
 }
 
 /**
+ * @brief JointState::to_motor_pos
+*/
+int JointState::to_motor_pos(double pos_rad)
+{
+    return 0;
+}
+
+/**
+ * @brief JointState::to_rad_pos
+*/
+double JointState::to_rad_pos(int position_dxl)
+{
+    return 0;
+}
+
+/**
  * @brief JointState::setName
  * @param name
  */

@@ -33,9 +33,9 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <hardware_interface/robot_hw.h>
 
 #include "joints_interface/calibration_manager.hpp"
-#include "can_driver/can_driver_core.hpp"
-#include "ttl_driver/ttl_driver_core.hpp"
-
+#include "can_driver/can_interface_core.hpp"
+#include "ttl_driver/ttl_interface_core.hpp"
+#include "joints_driver/joints_driver.hpp"
 #include "common/model/joint_state.hpp"
 
 namespace joints_interface
@@ -43,11 +43,11 @@ namespace joints_interface
 
 class JointHardwareInterface : public hardware_interface::RobotHW
 {
+
     public:
         JointHardwareInterface(ros::NodeHandle& rootnh,
-                               ros::NodeHandle& robot_hwnh,
-                               std::shared_ptr<ttl_driver::TtlDriverCore> ttl_driver,
-                               std::shared_ptr<can_driver::CanDriverCore> can_driver);
+                                ros::NodeHandle& robot_hwnh,
+                                std::shared_ptr<joint_driver::JointDriver> jdriver);
 
         void sendInitMotorsParams();
         int calibrateJoints(int mode, std::string &result_message);
@@ -75,8 +75,9 @@ class JointHardwareInterface : public hardware_interface::RobotHW
         hardware_interface::JointStateInterface _joint_state_interface;
         hardware_interface::PositionJointInterface _joint_position_interface;
 
-        std::shared_ptr<ttl_driver::TtlDriverCore> _ttl_driver_core;
-        std::shared_ptr<can_driver::CanDriverCore> _can_driver_core;
+        std::shared_ptr<ttl_driver::TtlInterfaceCore> _ttl_interface;
+        std::shared_ptr<can_driver::CanInterfaceCore> _can_interface_core;
+        std::shared_ptr<joint_driver::JointDriver> _jdriver;
         std::unique_ptr<CalibrationManager> _calibration_manager;
 
         std::map<uint8_t, std::string> _map_stepper_name;

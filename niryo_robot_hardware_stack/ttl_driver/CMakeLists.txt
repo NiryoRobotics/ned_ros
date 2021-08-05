@@ -36,17 +36,17 @@ find_package(catkin REQUIRED
 
 add_message_files(
   FILES
-    DxlArrayMotorHardwareStatus.msg
-    DxlMotorCommand.msg
-    DxlMotorHardwareStatus.msg
+    ArrayMotorHardwareStatus.msg
+    MotorCommand.msg
+    MotorHardwareStatus.msg
 )
 
 add_service_files(
   DIRECTORY
     srv
   FILES
-    ReadCustomDxlValue.srv
-    SendCustomDxlValue.srv
+    ReadCustomValue.srv
+    SendCustomValue.srv
 )
 
 generate_messages(
@@ -90,10 +90,11 @@ include_directories(
 
 ## Declare libs and execs
 add_library(${PROJECT_NAME}
-  src/abstract_motor_driver.cpp
-  src/stepper_driver.cpp
-  src/ttl_driver.cpp
-  src/ttl_driver_core.cpp
+  src/abstract_dxl_driver.cpp
+  src/abstract_stepper_driver.cpp
+  src/abstract_ttl_driver.cpp
+  src/ttl_interface_core.cpp
+  src/ttl_manager.cpp
 )
 
 add_executable(${PROJECT_NAME}_node

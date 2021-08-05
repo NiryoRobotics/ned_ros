@@ -14,8 +14,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
-#ifndef XL330REG_HPP
-#define XL330REG_HPP
+#ifndef XL330_REG_HPP
+#define XL330_REG_HPP
 
 #include <memory>
 #include "common/model/motor_type_enum.hpp"
@@ -175,4 +175,4 @@ struct XL330Reg
 };
 } // DynamixelDriver
 
-#endif // XL330REG_HPP
+#endif // XL330_REG_HPP

@@ -22,9 +22,11 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 
 #include <string>
 #include <vector>
+#include <sstream>
 
-#include "common/model/abstract_motor_cmd.hpp"
 #include "common/model/dxl_command_type_enum.hpp"
+#include "common/model/stepper_command_type_enum.hpp"
+#include "common/model/abstract_single_motor_cmd.hpp"
 
 namespace common
 {
@@ -34,54 +36,257 @@ namespace model
 /**
  * @brief The SingleMotorCmd class
  */
-class SingleMotorCmd : public AbstractMotorCmd<EDxlCommandType>
+template<typename E, typename ParamType>
+class SingleMotorCmd : public AbstractSingleMotorCmd<ParamType>
 {
     public:
         SingleMotorCmd();
-        SingleMotorCmd(EDxlCommandType type,
+        SingleMotorCmd(E type);
+        SingleMotorCmd(E type,
+                       uint8_t motor_id);
+
+        SingleMotorCmd(E type,
                        uint8_t motor_id,
-                       uint32_t param = 0);
+                       std::vector<ParamType> params);
+
+        virtual ~SingleMotorCmd() override;
 
         // setters
-        void setId(uint8_t id);
-        void setParam(uint32_t param);
+        void setType(E type);
 
         // getters
-        uint8_t getId() const;
-        uint32_t getParam() const;
+        E getType() const;
+        int getCmdType() const override
+        {
+            return static_cast<int>(_type);
+        }
 
-        // AbstractMotorCmd interface
+        // AbstractSingleMotorCmd interface
+        virtual bool isStepperCmd() const override;
+        virtual bool isDxlCmd() const override;
+
+        // IObject interface
         virtual void reset() override;
-        virtual void clear() override;
         virtual std::string str() const override;
         virtual bool isValid() const override;
 
     private:
-        uint8_t _id;
-        uint32_t _param;
+        E _type{E::CMD_TYPE_UNKNOWN};
+
 };
 
 /**
- * @brief SingleMotorCmd::getId
- * @return
+ * @brief SingleMotorCmd<E, ParamType>::SingleMotorCmd
  */
-inline
-uint8_t
-SingleMotorCmd::getId() const
+template<typename E, typename ParamType>
+SingleMotorCmd<E, ParamType>::SingleMotorCmd() :
+    AbstractSingleMotorCmd<ParamType>(0)
 {
-    return _id;
+    static_assert(std::is_enum<E>::value, "E must be an enum");
 }
 
 /**
- * @brief SingleMotorCmd::getParam
+ * @brief SingleMotorCmd<E, ParamType>::SingleMotorCmd
+ * @param type
+ */
+template<typename E, typename ParamType>
+SingleMotorCmd<E, ParamType>::SingleMotorCmd(E type) :
+    SingleMotorCmd()
+{
+    static_assert(std::is_enum<E>::value, "E must be an enum");
+
+    this->setType(type);
+}
+
+/**
+ * @brief SingleMotorCmd<E, ParamType>::SingleMotorCmd
+ * @param type
+ * @param motor_id
+ */
+template<typename E, typename ParamType>
+SingleMotorCmd<E, ParamType>::SingleMotorCmd(E type,
+                                             uint8_t motor_id) :
+    AbstractSingleMotorCmd<ParamType>(motor_id)
+{
+    static_assert(std::is_enum<E>::value, "E must be an enum");
+
+    this->setType(type);
+}
+
+/**
+ * @brief SingleMotorCmd<E, ParamType>::SingleMotorCmd
+ * @param type
+ * @param motor_id
+ * @param params
+ */
+template<typename E, typename ParamType>
+SingleMotorCmd<E, ParamType>::SingleMotorCmd(E type,
+                                  uint8_t motor_id,
+                                  std::vector<ParamType> params) :
+    AbstractSingleMotorCmd<ParamType>(motor_id)
+{
+    static_assert(std::is_enum<E>::value, "E must be an enum");
+
+    this->setType(type);
+    this->setParams(params);
+}
+
+template<typename E, typename ParamType>
+SingleMotorCmd<E, ParamType>::~SingleMotorCmd()
+{}
+
+/**
+ * @brief SingleMotorCmd<E, ParamType>::setType
+ * @param type
+ */
+template<typename E, typename ParamType>
+void SingleMotorCmd<E, ParamType>::setType(E type)
+{
+    _type = type;
+}
+
+/**
+ * @brief SingleMotorCmd<E, ParamType>::getType
  * @return
  */
-inline
-uint32_t
-SingleMotorCmd::getParam() const
+template<typename E, typename ParamType>
+E SingleMotorCmd<E, ParamType>::getType() const
 {
-    return _param;
+    return _type;
 }
+
+/**
+ * @brief SingleMotorCmd<E, ParamType>::isCmdStepper
+ * @return
+ */
+template<typename E, typename ParamType>
+bool SingleMotorCmd<E, ParamType>::isStepperCmd() const
+{
+    return typeid(E) == typeid(common::model::EStepperCommandType);
+}
+
+/**
+ * @brief SingleMotorCmd<E, ParamType>::isCmdDxl
+ * @return
+ */
+template<typename E, typename ParamType>
+bool SingleMotorCmd<E, ParamType>::isDxlCmd() const
+{
+    return typeid(E) == typeid(common::model::EDxlCommandType);
+}
+
+/**
+ * @brief SingleMotorCmd<E, ParamType>::reset
+ */
+template<typename E, typename ParamType>
+void SingleMotorCmd<E, ParamType>::reset()
+{
+    this->setType(E::CMD_TYPE_UNKNOWN);
+    this->clear();
+}
+
+//********************************
+// specializations for dynamixel
+//********************************
+
+/**
+ * @brief SingleMotorCmd<EDxlCommandType, uint32_t>::str
+ * @return
+ */
+template<>
+inline
+std::string SingleMotorCmd<EDxlCommandType, uint32_t>::str() const
+{
+    std::ostringstream ss;
+    ss << "Dynamixel motor cmd - ";
+
+    ss << DxlCommandTypeEnum(_type).toString() << " ";
+
+    ss << "Motor id: ";
+        ss << std::to_string(_id) << " ";
+
+    if(!_param_list.empty())
+    {
+        ss << "; param: ";
+        ss << std::to_string(getParam());
+    }
+
+    return ss.str();
+}
+
+/**
+ * @brief SingleMotorCmd<EDxlCommandType, uint32_t>::isValid
+ * @return
+ */
+template<>
+inline
+bool SingleMotorCmd<EDxlCommandType, uint32_t>::isValid() const
+{
+    return (EDxlCommandType::CMD_TYPE_UNKNOWN != _type) &&
+           (0 != _id);
+}
+
+//********************************
+// specializations for steppers
+//********************************
+
+/**
+ * @brief SingleMotorCmd<EStepperCommandType, int32_t>::str
+ * @return
+ */
+template<>
+inline
+std::string SingleMotorCmd<EStepperCommandType, int32_t>::str() const
+{
+    std::ostringstream ss;
+    ss << "Stepper motor cmd - ";
+
+    ss << StepperCommandTypeEnum(_type).toString() << " ";
+
+    ss << "Motor id: ";
+        ss << std::to_string(_id) << " ";
+
+    ss << "Params: ";
+    for (int32_t param : getParams())
+        ss << std::to_string(static_cast<int32_t>(param)) << " ";
+
+    return ss.str();
+}
+
+/**
+ * @brief SingleMotorCmd<EStepperCommandType, int32_t>::isValid
+ * @return
+ */
+template<>
+inline
+bool SingleMotorCmd<EStepperCommandType, int32_t>::isValid() const
+{
+    if ((EStepperCommandType::CMD_TYPE_NONE == getType()) ||
+       (EStepperCommandType::CMD_TYPE_UNKNOWN == getType()) ||
+       (getId() == 0) ||
+       (_param_list.empty()))
+            return false;
+
+    switch (_type)
+    {
+        case EStepperCommandType::CMD_TYPE_RELATIVE_MOVE:
+            return (_param_list.size() == 2);
+        case EStepperCommandType::CMD_TYPE_CALIBRATION:
+            return (_param_list.size() == 4);
+        case EStepperCommandType::CMD_TYPE_POSITION_OFFSET:
+            return (_param_list.size() == 4);
+        case EStepperCommandType::CMD_TYPE_CONVEYOR:
+            return (_param_list.size() == 3);
+        default:
+            return (_param_list.size() == 1);
+    }
+}
+
+// using for simplified usage
+
+using DxlSingleCmd = SingleMotorCmd<EDxlCommandType, uint32_t>;
+using StepperTtlSingleCmd = SingleMotorCmd<EStepperCommandType, uint32_t>;
+using StepperSingleCmd = SingleMotorCmd<EStepperCommandType, int32_t>;
 
 } // namespace model
 } // namespace common

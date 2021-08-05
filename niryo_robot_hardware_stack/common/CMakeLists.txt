@@ -15,7 +15,8 @@ add_definitions(-Wall  -Werror)
 ## Find catkin macros and libraries
 find_package(catkin REQUIRED
     COMPONENTS
-        roscpp
+      niryo_robot_msgs
+      roscpp
 )
 
 ###############################################
@@ -36,6 +37,7 @@ catkin_package(
     LIBRARIES
         ${PROJECT_NAME}
     CATKIN_DEPENDS
+        niryo_robot_msgs
         roscpp
 )
 
@@ -58,12 +60,9 @@ add_library(${PROJECT_NAME}
     src/model/dxl_motor_state.cpp
     src/model/joint_state.cpp
     src/model/motor_type_enum.cpp
-    src/model/single_motor_cmd.cpp
     src/model/stepper_calibration_status_enum.cpp
     src/model/stepper_command_type_enum.cpp
-    src/model/stepper_motor_cmd.cpp
     src/model/stepper_motor_state.cpp
-    src/model/synchronize_motor_cmd.cpp
     src/model/tool_state.cpp
 )
 

@@ -1,0 +1,39 @@
+<?xml version="1.0"?>
+<launch xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+  
+  <!-- Arguments -->
+  <arg name="can_enabled" default="true" />
+  <arg name="ttl_enabled" default="true" />
+  <arg name="hardware_version" default="ned" />
+
+  <param name="robot_description" command="$(find xacro)/xacro $(find niryo_robot_description)/urdf/ned/niryo_ned.urdf.xacro" />
+
+  <include file="$(find joints_driver)/launch/joints_driver_base.launch.xml" >
+    <arg name="hardware_version" value="$(arg hardware_version)" />
+  </include>
+
+  <!-- use can_driver config -->
+  <group if="$(arg can_enabled)" >
+      <include file="$(find can_driver)/launch/can_driver_base.launch.xml" >
+          <arg name="hardware_version" value="$(arg hardware_version)" />
+      </include>
+  </group>
+  
+  <!--use ttl_driver config -->
+  <group if="$(arg ttl_enabled)" >
+      <include file="$(find ttl_driver)/launch/ttl_driver_base.launch.xml" >
+          <arg name="hardware_version" value="$(arg hardware_version)" />
+      </include>
+  </group>
+  
+  <node pkg="joints_driver" type="joints_driver_node" name="joints_driver" output="screen" />
+
+  <!-- spawn controllers -->
+  
+  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="log" args="joint_state_controller niryo_robot_follow_joint_trajectory_controller" />
+
+  <!-- robot state publisher -->
+  <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" output="screen" />
+
+</launch>

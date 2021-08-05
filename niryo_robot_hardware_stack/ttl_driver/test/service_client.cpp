@@ -42,12 +42,12 @@ TEST(TESTSuite, setLeds)
 
 TEST(TESTSuite, sendCustomValue)
 {
-    auto client = nh->serviceClient<ttl_driver::SendCustomDxlValue>("/niryo_robot/ttl_driver/send_custom_dxl_value");
+    auto client = nh->serviceClient<ttl_driver::SendCustomValue>("/niryo_robot/ttl_driver/send_custom_value");
 
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);
 
-    ttl_driver::SendCustomDxlValue srv;
+    ttl_driver::SendCustomValue srv;
     /* to be defined
     srv.request.motor_type = ;
     srv.request.id = ;
@@ -62,12 +62,12 @@ TEST(TESTSuite, sendCustomValue)
 
 TEST(TESTSuite, readCustomValue)
 {
-    auto client = nh->serviceClient<ttl_driver::ReadCustomDxlValue>("/niryo_robot/ttl_driver/read_custom_dxl_value");
+    auto client = nh->serviceClient<ttl_driver::ReadCustomValue>("/niryo_robot/ttl_driver/read_custom_value");
 
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);
 
-    ttl_driver::ReadCustomDxlValue srv;
+    ttl_driver::ReadCustomValue srv;
     /* to be defined
     srv.request.motor_type = ;
     srv.request.id = ;

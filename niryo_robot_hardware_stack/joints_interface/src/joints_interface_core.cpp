@@ -31,19 +31,17 @@ namespace joints_interface
  * @brief JointsInterfaceCore::JointsInterfaceCore
  * @param rootnh
  * @param robot_hwnh
- * @param ttl_driver
- * @param can_driver
+ * @param jdriver
  */
 JointsInterfaceCore::JointsInterfaceCore(ros::NodeHandle& rootnh,
                                          ros::NodeHandle& robot_hwnh,
-                                         std::shared_ptr<ttl_driver::TtlDriverCore> ttl_driver,
-                                         std::shared_ptr<can_driver::CanDriverCore> can_driver) :
+                                         std::shared_ptr<joint_driver::JointDriver> jdriver) :
     _joint_controller_name("/niryo_robot_follow_joint_trajectory_controller")
 {
     init(robot_hwnh);
 
     ROS_DEBUG("JointsInterfaceCore::init - Start joint hardware interface");
-    _robot.reset(new JointHardwareInterface(rootnh, robot_hwnh, ttl_driver, can_driver));
+    _robot.reset(new JointHardwareInterface(rootnh, robot_hwnh, jdriver));
 
     ROS_DEBUG("JointsInterfaceCore::init - Create controller manager");
     _cm.reset(new controller_manager::ControllerManager(_robot.get(), _nh));

@@ -28,14 +28,14 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <ros/ros.h>
 
 // niryo
-#include "can_driver/can_driver_core.hpp"
+#include "can_driver/can_interface_core.hpp"
 
 #include "conveyor_interface/SetConveyor.h"
 #include "conveyor_interface/ControlConveyor.h"
 #include "conveyor_interface/ConveyorFeedbackArray.h"
 #include "niryo_robot_msgs/CommandStatus.h"
 
-#include "common/model/iinterface_core.hpp"
+#include "common/model/i_interface_core.hpp"
 
 namespace conveyor_interface
 {
@@ -46,7 +46,7 @@ namespace conveyor_interface
 class ConveyorInterfaceCore : public common::model::IInterfaceCore
 {
     public:
-        ConveyorInterfaceCore(ros::NodeHandle& nh, std::shared_ptr<can_driver::CanDriverCore> stepper);
+        ConveyorInterfaceCore(ros::NodeHandle& nh, std::shared_ptr<common::model::IDriverCore> conveyor_driver);
         virtual ~ConveyorInterfaceCore() override;
         virtual bool init(ros::NodeHandle& nh) override;
 
@@ -69,7 +69,7 @@ class ConveyorInterfaceCore : public common::model::IInterfaceCore
     private:
         std::thread _publish_conveyors_feedback_thread;
 
-        std::shared_ptr<can_driver::CanDriverCore> _can_driver;
+        std::shared_ptr<common::model::IDriverCore> _conveyor_driver;
 
         ros::ServiceServer _ping_and_set_stepper_server;
         ros::ServiceServer _control_conveyor_server;

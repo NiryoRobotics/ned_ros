@@ -26,14 +26,12 @@
 
 // niryo
 #include "tools_interface/tools_interface_core.hpp"
-#include "ttl_driver/ttl_driver.hpp"
+#include "ttl_driver/ttl_manager.hpp"
 
 #include "common/model/tool_state.hpp"
 #include "common/model/dxl_command_type_enum.hpp"
 #include "common/util/util_defs.hpp"
 
-using ::std::vector;
-using ::std::shared_ptr;
 using ::std::string;
 using ::std::ostringstream;
 using ::std::lock_guard;
@@ -43,7 +41,8 @@ using ::common::model::EMotorType;
 using ::common::model::MotorTypeEnum;
 using ::common::model::ToolState;
 using ::common::model::EDxlCommandType;
-using ::common::model::SingleMotorCmd;
+using ::common::model::DxlCommandTypeEnum;
+using ::common::model::DxlSingleCmd;
 
 namespace tools_interface
 {
@@ -51,11 +50,11 @@ namespace tools_interface
 /**
  * @brief ToolsInterfaceCore::ToolsInterfaceCore
  * @param nh
- * @param ttl_driver
+ * @param ttl_interface
  */
 ToolsInterfaceCore::ToolsInterfaceCore(ros::NodeHandle& nh,
-                                       shared_ptr<ttl_driver::TtlDriverCore> ttl_driver):
-    _ttl_driver_core(ttl_driver)
+                                       std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface):
+    _ttl_interface(ttl_interface)
 {
     ROS_DEBUG("ToolsInterfaceCore::ctor");
 
@@ -101,8 +100,8 @@ bool ToolsInterfaceCore::init(ros::NodeHandle &nh)
  */
 void ToolsInterfaceCore::initParameters(ros::NodeHandle& nh)
 {
-    vector<int> idList;
-    vector<string> typeList;
+    std::vector<int> idList;
+    std::vector<string> typeList;
 
     _available_tools_map.clear();
     nh.getParam("tools_params/id_list", idList);
@@ -236,7 +235,7 @@ bool ToolsInterfaceCore::_callbackPingAndSetDxlTool(tools_interface::PingDxlTool
     // Unequip tool
     if (_toolState.isValid())
     {
-        _ttl_driver_core->unsetEndEffector(_toolState.getId());
+        _ttl_interface->unsetEndEffector(_toolState.getId());
         res.id = 0;
 
         // reset tool as default = no tool
@@ -245,7 +244,7 @@ bool ToolsInterfaceCore::_callbackPingAndSetDxlTool(tools_interface::PingDxlTool
 
     // Search new tool
     // CC add retries ?
-    vector<uint8_t> motor_list = _ttl_driver_core->scanTools();
+    std::vector<uint8_t> motor_list = _ttl_interface->scanTools();
 
     for (auto const& m_id : motor_list)
     {
@@ -263,7 +262,7 @@ bool ToolsInterfaceCore::_callbackPingAndSetDxlTool(tools_interface::PingDxlTool
         for (int tries = 0; tries < 3; tries++)
         {
             ros::Duration(0.05).sleep();
-            int result = _ttl_driver_core->setEndEffector(_toolState.getType(), _toolState.getId());
+            int result = _ttl_interface->setEndEffector(_toolState.getType(), _toolState.getId());
 
             // on success, tool is set, we go out of loop
             if (niryo_robot_msgs::CommandStatus::SUCCESS == result)
@@ -275,7 +274,7 @@ bool ToolsInterfaceCore::_callbackPingAndSetDxlTool(tools_interface::PingDxlTool
                 ros::Duration(0.05).sleep();
 
                 // cc put it in setEnd Effector ? only used here
-                _ttl_driver_core->update_leds();
+                _ttl_interface->update_leds();
 
                 ROS_INFO("ToolsInterfaceCore::_callbackPingAndSetDxlTool - Set end effector success");
 
@@ -325,7 +324,7 @@ bool ToolsInterfaceCore::_callbackToolReboot(std_srvs::Trigger::Request &/*req*/
     if (_toolState.isValid())
     {
         std::lock_guard<std::mutex> lck(_tool_mutex);
-        res.success = _ttl_driver_core->rebootMotor(_toolState.getId());
+        res.success = _ttl_interface->rebootMotor(_toolState.getId());
         res.message = (res.success) ? "Tool reboot succeeded" : "Tool reboot failed";
     }
     else
@@ -348,43 +347,35 @@ bool ToolsInterfaceCore::_callbackOpenGripper(tools_interface::OpenGripper::Requ
 {
     lock_guard<mutex> lck(_tool_mutex);
     res.state = ToolState::TOOL_STATE_WRONG_ID;
+    uint8_t tool_id = _toolState.getId();
 
-    if (_toolState.isValid() && req.id == _toolState.getId())
+    if (_toolState.isValid() && req.id == tool_id)
     {
-        SingleMotorCmd cmd;
-        vector<SingleMotorCmd> list_cmd;
-        cmd.setId(_toolState.getId());
-
         // cc for new motors, use profile velocity instead
         // new dxl motors cannot use this command
-        cmd.setType(EDxlCommandType::CMD_TYPE_VELOCITY);
-        cmd.setParam(req.open_speed);
-        list_cmd.emplace_back(cmd);
+        _ttl_interface->addEndEffectorCommandToQueue(std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_VELOCITY,
+                                                                                    tool_id, std::initializer_list<uint32_t>{req.open_speed}));
 
-        cmd.setType(EDxlCommandType::CMD_TYPE_POSITION);
-        cmd.setParam(req.open_position);
-        list_cmd.emplace_back(cmd);
+        _ttl_interface->addEndEffectorCommandToQueue(std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_POSITION,
+                                                                                    tool_id,  std::initializer_list<uint32_t>{req.open_position}));
 
-        cmd.setType(EDxlCommandType::CMD_TYPE_EFFORT);
         // cmd.setParam(req.open_max_torque);  // cc adapt niryo studio and srv for that
-        cmd.setParam(1023);
-        list_cmd.emplace_back(cmd);
-        _ttl_driver_core->addEndEffectorCommandToQueue(list_cmd);
+        _ttl_interface->addEndEffectorCommandToQueue(std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_EFFORT,
+                                                                                    tool_id,  std::initializer_list<uint32_t>{1023}));
 
         double dxl_speed = static_cast<double>(req.open_speed * _toolState.getStepsForOneSpeed());  // position . sec-1
         assert(dxl_speed != 0.00);
 
         double dxl_steps_to_do = std::abs(static_cast<double>(req.open_position) -
-                                          _ttl_driver_core->getEndEffectorState(_toolState.getId()));
+                                          _ttl_interface->getEndEffectorState(tool_id));
 
         double seconds_to_wait =  dxl_steps_to_do /  dxl_speed + 0.25;  // sec
         ROS_DEBUG("Waiting for %d seconds", static_cast<int>(seconds_to_wait));
         ros::Duration(seconds_to_wait).sleep();
 
         // set hold torque
-        cmd.setType(EDxlCommandType::CMD_TYPE_EFFORT);
-        cmd.setParam(req.open_hold_torque);
-        _ttl_driver_core->addEndEffectorCommandToQueue(cmd);
+        _ttl_interface->addEndEffectorCommandToQueue(std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_EFFORT,
+                                                                                    tool_id,  std::initializer_list<uint32_t>{req.open_hold_torque}));
 
         res.state = ToolState::GRIPPER_STATE_OPEN;
         ROS_DEBUG("Opened !");
@@ -404,29 +395,22 @@ bool ToolsInterfaceCore::_callbackCloseGripper(tools_interface::CloseGripper::Re
 {
     lock_guard<mutex> lck(_tool_mutex);
     res.state = ToolState::TOOL_STATE_WRONG_ID;
+    uint8_t tool_id = _toolState.getId();
 
-    if (_toolState.isValid() && req.id == _toolState.getId())
+    if (_toolState.isValid() && req.id == tool_id)
     {
-        SingleMotorCmd cmd;
-        vector<SingleMotorCmd> list_cmd;
-        cmd.setId(_toolState.getId());
-
         uint32_t position_command = (req.close_position < 50) ? 0 : req.close_position - 50;
 
         // cc for new motors, use profile velocity instead
         // new dxl motors cannot use this command
-        cmd.setType(EDxlCommandType::CMD_TYPE_VELOCITY);
-        cmd.setParam(req.close_speed);
-        list_cmd.emplace_back(cmd);
+        _ttl_interface->addEndEffectorCommandToQueue(std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_VELOCITY,
+                                                                                    tool_id, std::initializer_list<uint32_t>{req.close_speed}));
 
-        cmd.setType(EDxlCommandType::CMD_TYPE_POSITION);
-        cmd.setParam(position_command);
-        list_cmd.emplace_back(cmd);
+        _ttl_interface->addEndEffectorCommandToQueue(std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_POSITION,
+                                                                                    tool_id, std::initializer_list<uint32_t>{position_command}));
 
-        cmd.setType(EDxlCommandType::CMD_TYPE_EFFORT);
-        cmd.setParam(req.close_max_torque);  // two's complement of 1536
-        list_cmd.emplace_back(cmd);
-        _ttl_driver_core->addEndEffectorCommandToQueue(list_cmd);
+        _ttl_interface->addEndEffectorCommandToQueue(std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_EFFORT,
+                                                                                    tool_id, std::initializer_list<uint32_t>{req.close_max_torque}));
 
         // calculate close duration
         // cc to be removed => acknoledge instead
@@ -435,16 +419,15 @@ bool ToolsInterfaceCore::_callbackCloseGripper(tools_interface::CloseGripper::Re
 
         // position
         double dxl_steps_to_do = std::abs(static_cast<double>(req.close_position) -
-                                          _ttl_driver_core->getEndEffectorState(_toolState.getId()));
+                                          _ttl_interface->getEndEffectorState(tool_id));
         double seconds_to_wait =  dxl_steps_to_do /  dxl_speed + 0.25;  // sec
         ROS_DEBUG("Waiting for %d seconds", static_cast<int>(seconds_to_wait));
 
         ros::Duration(seconds_to_wait).sleep();
 
         // set hold torque
-        cmd.setType(EDxlCommandType::CMD_TYPE_EFFORT);
-        cmd.setParam(req.close_hold_torque);
-        _ttl_driver_core->addEndEffectorCommandToQueue(cmd);
+        _ttl_interface->addEndEffectorCommandToQueue(std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_EFFORT,
+                                                                                    tool_id, std::initializer_list<uint32_t>{req.close_hold_torque}));
 
         res.state = ToolState::GRIPPER_STATE_CLOSE;
         ROS_DEBUG("Closed !");
@@ -464,6 +447,7 @@ bool ToolsInterfaceCore::_callbackPullAirVacuumPump(tools_interface::PullAirVacu
 {
     lock_guard<mutex> lck(_tool_mutex);
     res.state = ToolState::TOOL_STATE_WRONG_ID;
+    uint8_t tool_id = _toolState.getId();
 
     // check gripper id, in case no ping has been done before, or wrong id given
     if (_toolState.isValid() && req.id == _toolState.getId())
@@ -474,20 +458,20 @@ bool ToolsInterfaceCore::_callbackPullAirVacuumPump(tools_interface::PullAirVacu
         uint32_t pull_air_hold_torque = static_cast<uint32_t>(req.pull_air_hold_torque);
 
         // set vacuum pump pos, vel and torque
-        if (_ttl_driver_core)
+        if (_ttl_interface)
         {
-            _ttl_driver_core->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_VELOCITY,
-                                                                          _toolState.getId(), pull_air_velocity));
+            _ttl_interface->addEndEffectorCommandToQueue(std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_VELOCITY,
+                                                                                        tool_id, std::initializer_list<uint32_t>{pull_air_velocity}));
 
-            _ttl_driver_core->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_POSITION,
-                                                                          _toolState.getId(), pull_air_position));
+            _ttl_interface->addEndEffectorCommandToQueue(std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_POSITION,
+                                                                                        tool_id, std::initializer_list<uint32_t>{pull_air_position}));
 
-            _ttl_driver_core->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_EFFORT,
-                                                                          _toolState.getId(), 500));
+            _ttl_interface->addEndEffectorCommandToQueue(std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_EFFORT,
+                                                                                        tool_id, std::initializer_list<uint32_t>{500}));
 
             // set hold torque
-            _ttl_driver_core->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_EFFORT,
-                                                                          _toolState.getId(), pull_air_hold_torque));
+            _ttl_interface->addEndEffectorCommandToQueue(std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_EFFORT,
+                                                                                        tool_id, std::initializer_list<uint32_t>{pull_air_hold_torque}));
         }
 
         res.state = ToolState::VACUUM_PUMP_STATE_PULLED;
@@ -507,6 +491,7 @@ bool ToolsInterfaceCore:: _callbackPushAirVacuumPump(tools_interface::PushAirVac
 {
     lock_guard<mutex> lck(_tool_mutex);
     res.state = ToolState::TOOL_STATE_WRONG_ID;
+    uint8_t tool_id = _toolState.getId();
 
     // check gripper id, in case no ping has been done before, or wrong id given
     if (_toolState.isValid() && req.id == _toolState.getId())
@@ -516,23 +501,22 @@ bool ToolsInterfaceCore:: _callbackPushAirVacuumPump(tools_interface::PushAirVac
         uint32_t push_air_position = static_cast<uint32_t>(req.push_air_position);
 
         // set vacuum pump pos, vel and torque
-        if (_ttl_driver_core)
+        if (_ttl_interface)
         {
-            _ttl_driver_core->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_VELOCITY,
-                                                                          _toolState.getId(), push_air_velocity));
+            _ttl_interface->addEndEffectorCommandToQueue(std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_VELOCITY,
+                                                                                        tool_id, std::initializer_list<uint32_t>{push_air_velocity}));
 
-            _ttl_driver_core->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_POSITION,
-                                                                          _toolState.getId(), push_air_position));
+            _ttl_interface->addEndEffectorCommandToQueue(std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_POSITION,
+                                                                                        tool_id, std::initializer_list<uint32_t>{push_air_position}));
 
-            _ttl_driver_core->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_EFFORT,
-                                                                          _toolState.getId(), 64000));
+            _ttl_interface->addEndEffectorCommandToQueue(std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_EFFORT,
+                                                                                        tool_id, std::initializer_list<uint32_t>{64000}));
             // 64000 is two's complement of 1536
 
             // set torque to 0
-            _ttl_driver_core->addEndEffectorCommandToQueue(SingleMotorCmd(EDxlCommandType::CMD_TYPE_EFFORT,
-                                                                          _toolState.getId(), 0));
+            _ttl_interface->addEndEffectorCommandToQueue(std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_EFFORT,
+                                                                                        tool_id, std::initializer_list<uint32_t>{0}));
         }
-
         res.state = ToolState::VACUUM_PUMP_STATE_PUSHED;
     }
 
@@ -581,14 +565,14 @@ void ToolsInterfaceCore::_publishToolConnection()
     {
         {
             lock_guard<mutex> lck(_tool_mutex);
-            vector<uint8_t> motor_list = _ttl_driver_core->getRemovedMotorList();
+            std::vector<uint8_t> motor_list = _ttl_interface->getRemovedMotorList();
 
             for (auto const& motor : motor_list)
             {
                 if (_toolState.getId() == motor)
                 {
                     ROS_INFO("Tools Interface - Unset Current Tools");
-                    _ttl_driver_core->unsetEndEffector(_toolState.getId());
+                    _ttl_interface->unsetEndEffector(_toolState.getId());
                     _toolState.reset();
                     msg.data = 0;
                     _tool_connection_publisher.publish(msg);

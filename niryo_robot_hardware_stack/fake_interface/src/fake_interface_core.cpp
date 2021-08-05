@@ -441,10 +441,10 @@ bool FakeInterfaceCore::_callbackControlConveyor(conveyor_interface::ControlConv
  * @brief FakeInterfaceCore::getTtlHwStatus
  * @return
  */
-ttl_driver::DxlArrayMotorHardwareStatus FakeInterfaceCore::getTtlHwStatus() const
+ttl_driver::ArrayMotorHardwareStatus FakeInterfaceCore::getTtlHwStatus() const
 {
-    ttl_driver::DxlMotorHardwareStatus data;
-    ttl_driver::DxlArrayMotorHardwareStatus hw_state;
+    ttl_driver::MotorHardwareStatus data;
+    ttl_driver::ArrayMotorHardwareStatus hw_state;
     for (size_t i = 0; i < 3; i++)
     {
         data.motor_identity.motor_id = _dxl_motors_id.at(i);
