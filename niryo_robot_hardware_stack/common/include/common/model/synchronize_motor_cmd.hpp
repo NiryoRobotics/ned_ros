@@ -17,8 +17,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
-#ifndef DXL_SYNCHRONIZE_MOTOR_CMD_H
-#define DXL_SYNCHRONIZE_MOTOR_CMD_H
+#ifndef SYNCHRONIZE_MOTOR_CMD_H
+#define SYNCHRONIZE_MOTOR_CMD_H
 
 #include <string>
 #include <vector>
@@ -271,4 +271,4 @@ using StepperSyncCmd = SynchronizeMotorCmd<EStepperCommandType, int32_t>;
 } // namespace model
 } // namespace common
 
-#endif
+#endif // SYNCHRONIZE_MOTOR_CMD_H

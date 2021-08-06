@@ -29,10 +29,11 @@ namespace model
 
 /**
  * @brief ConveyorState::ConveyorState
+ * @param bus_proto
  * @param id
  */
-ConveyorState::ConveyorState(uint8_t id)
-    : StepperMotorState(id, true),
+ConveyorState::ConveyorState(EBusProtocol bus_proto, uint8_t id)
+    : StepperMotorState(bus_proto, id, true),
       _state(false),
       _speed(0)
 {}

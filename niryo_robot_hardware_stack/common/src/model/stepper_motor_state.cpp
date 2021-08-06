@@ -42,11 +42,12 @@ StepperMotorState::StepperMotorState() :
 
 /**
  * @brief StepperMotorState::StepperMotorState
+ * @param bus_proto
  * @param id
  * @param isConveyor
  */
-StepperMotorState::StepperMotorState(uint8_t id, bool isConveyor) :
-    JointState("unknown", EMotorType::STEPPER, id),
+StepperMotorState::StepperMotorState(EBusProtocol bus_proto, uint8_t id, bool isConveyor) :
+    JointState("unknown", EMotorType::STEPPER, bus_proto, id),
     _isConveyor(isConveyor)
 {
 }
@@ -55,11 +56,14 @@ StepperMotorState::StepperMotorState(uint8_t id, bool isConveyor) :
  * @brief StepperMotorState::StepperMotorState
  * @param name
  * @param type
+ * @param bus_proto
  * @param id
  * @param isConveyor
  */
-StepperMotorState::StepperMotorState(std::string name, EMotorType type, uint8_t id, bool isConveyor) :
-    JointState(name, type, id),
+StepperMotorState::StepperMotorState(std::string name,
+                                     EMotorType type, EBusProtocol bus_proto,
+                                     uint8_t id, bool isConveyor) :
+    JointState(name, type, bus_proto, id),
     _isConveyor(isConveyor)
 {
 }

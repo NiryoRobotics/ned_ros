@@ -45,14 +45,13 @@ namespace conveyor_interface
 /**
  * @brief ConveyorInterfaceCore::ConveyorInterfaceCore
  * @param nh
- * @param stepper
+ * @param conveyor_driver
  */
 ConveyorInterfaceCore::ConveyorInterfaceCore(ros::NodeHandle& nh,
                                              shared_ptr<common::model::IDriverCore> conveyor_driver):
     _conveyor_driver(conveyor_driver)
 {
     ROS_DEBUG("ConveyorInterfaceCore::ConveyorInterfaceCore - ctor");
-
     init(nh);
 }
 
@@ -94,13 +93,19 @@ void ConveyorInterfaceCore::initParameters(ros::NodeHandle& nh)
 {
     std::vector<int> id_pool_list;
 
-    nh.getParam("max_effort", _conveyor_max_effort);
+    if(nh.hasParam("max_effort"))
+        nh.getParam("max_effort", _conveyor_max_effort);
+
+    if(nh.hasParam("micro_steps"))
+        nh.getParam("micro_steps", _conveyor_micro_steps);
+
     nh.getParam("id", _default_conveyor_id);
     nh.getParam("id_list", id_pool_list);
 
     nh.getParam("publish_frequency", _publish_feedback_frequency);
 
     ROS_DEBUG("ConveyorInterfaceCore::initParameters - conveyor max effort : %d", _conveyor_max_effort);
+    ROS_DEBUG("ConveyorInterfaceCore::initParameters - conveyor max effort : %d", _conveyor_micro_steps);
     ROS_DEBUG("ConveyorInterfaceCore::initParameters - default conveyor id : %d", _default_conveyor_id);
 
     // debug - display info
@@ -177,10 +182,13 @@ ConveyorInterfaceCore::addConveyor()
             // remove from pool
             _conveyor_pool_id_list.erase(_conveyor_pool_id_list.begin());
 
-            if (_conveyor_driver->getTypeDriver() == "can")
+            switch(_conveyor_driver->getBusProtocol())
             {
+            case common::model::EBusProtocol::CAN:
+                ROS_DEBUG("ConveyorInterfaceCore::addConveyor : Initializing for CAN bus");
+
                 _conveyor_driver->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_MICRO_STEPS,
-                                                                                        conveyor_id, std::initializer_list<int32_t>{8}));
+                                                                                        conveyor_id, std::initializer_list<int32_t>{_conveyor_micro_steps}));
 
                 _conveyor_driver->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_MAX_EFFORT,
                                                                                         conveyor_id, std::initializer_list<int32_t>{_conveyor_max_effort}));
@@ -191,13 +199,14 @@ ConveyorInterfaceCore::addConveyor()
                 // CC why two times in a row ?
                 _conveyor_driver->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_CONVEYOR,
                                                                                        conveyor_id, std::initializer_list<int32_t>{false, 0, -1}));
+            break;
+            case common::model::EBusProtocol::TTL:
+                ROS_DEBUG("ConveyorInterfaceCore::addConveyor : Not implemented yet for TTL bus");
+            break;
+            default:
+                ROS_ERROR("ConveyorInterfaceCore::addConveyor : Invalid bus protocol given for the conveyor : %s",
+                          common::model::BusProtocolEnum(_conveyor_driver->getBusProtocol()).toString().c_str());
             }
-            if (_conveyor_driver->getTypeDriver() == "ttl")
-            {
-                // TODO(thuc): These types of command not exist in stepper ttl, we have implement it
-            }
-
-            res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
 
             res.message = "Set new conveyor on id ";
             res.message += to_string(conveyor_id);
@@ -208,10 +217,11 @@ ConveyorInterfaceCore::addConveyor()
         {
             ROS_INFO("Conveyor interface - No new conveyor found");
 
-            res.status = static_cast<int16_t>(result);
             res.id = 0;
             res.message = "No new conveyor found";
         }
+
+        res.status = static_cast<int16_t>(result);
     }
     else
     {
@@ -328,13 +338,10 @@ bool ConveyorInterfaceCore::_callbackControlConveyor(conveyor_interface::Control
         res.message += to_string(req.id);
         res.message += " is OK";
         res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
-        if (_conveyor_driver->getTypeDriver() == "can")
-            _conveyor_driver->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_CONVEYOR,
-                                                                                req.id, std::initializer_list<int32_t>{req.control_on, req.speed, req.direction}));
-        else
-        {
-            // TODO(thuc): handle data before add command to ttl_interface_core
-        }
+
+        _conveyor_driver->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_CONVEYOR,
+                                                                            req.id, std::initializer_list<int32_t>{req.control_on, req.speed, req.direction}));
+
     }
     else
     {

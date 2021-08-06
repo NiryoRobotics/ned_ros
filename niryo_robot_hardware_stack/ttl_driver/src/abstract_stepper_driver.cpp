@@ -45,7 +45,6 @@ AbstractStepperDriver::~AbstractStepperDriver()
 */
 int AbstractStepperDriver::writeSingleCmd(std::shared_ptr<common::model::AbstractTtlSingleMotorCmd>& cmd)
 {
-    int result = COMM_TX_FAIL;
     if (cmd->isValid())
     {
         switch (EStepperCommandType(cmd->getCmdType()))
@@ -59,21 +58,19 @@ int AbstractStepperDriver::writeSingleCmd(std::shared_ptr<common::model::Abstrac
         case EStepperCommandType::CMD_TYPE_PING:
             return ping(cmd->getId());
         case EStepperCommandType::CMD_TYPE_CONVEYOR:
-            // TODO(thuc): decide type of data sent in case ttl conveyor
-            result = setConveyorState(cmd->getId(), static_cast<bool>(cmd->getParams().at(0)));
-            if (result == COMM_SUCCESS)
-            {
-                result = setGoalVelocity(cmd->getId(), cmd->getParams().at(1));
-                if (result == COMM_SUCCESS)
-                    return setGoalConveyorDirection(cmd->getId(), static_cast<int8_t>(cmd->getParams().at(2)));
-            }
-            return result;
+        {
+            //convert direction and speed into signed speed
+            int dir = cmd->getParams().at(2) > 0 ? 1 : -1;
+            //normal warning : we need to put an int32 inside an uint32_t
+            uint32_t speed = static_cast<int32_t>(cmd->getParams().at(1) * dir);
+            return setGoalVelocity(cmd->getId(), speed);
+        }
         default:
             std::cout << "Command not implemented" << std::endl;
         }
     }
 
-    return 0;
+    return COMM_TX_FAIL;
 }
 
 /**

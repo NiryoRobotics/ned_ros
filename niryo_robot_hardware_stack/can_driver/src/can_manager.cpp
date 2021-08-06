@@ -20,6 +20,7 @@
 #include "can_driver/can_manager.hpp"
 #include "common/model/conveyor_state.hpp"
 #include "common/model/stepper_command_type_enum.hpp"
+#include "common/model/bus_protocol_enum.hpp"
 
 // c++
 #include <functional>
@@ -32,6 +33,8 @@ using ::common::model::EStepperCalibrationStatus;
 using ::common::model::ConveyorState;
 using ::common::model::StepperMotorState;
 using ::common::model::EStepperCommandType;
+using ::common::model::EBusProtocol;
+
 namespace can_driver
 {
 
@@ -232,9 +235,9 @@ void CanManager::addMotor(uint8_t id, bool isConveyor)
 
     // add id to _state_map
     if (isConveyor)
-        _state_map.insert(std::make_pair(id, std::make_shared<ConveyorState>(id)));
+        _state_map.insert(std::make_pair(id, std::make_shared<ConveyorState>(EBusProtocol::CAN, id)));
     else
-        _state_map.insert(std::make_pair(id, std::make_shared<StepperMotorState>(id)));
+        _state_map.insert(std::make_pair(id, std::make_shared<StepperMotorState>(EBusProtocol::CAN, id)));
 }
 
 /**

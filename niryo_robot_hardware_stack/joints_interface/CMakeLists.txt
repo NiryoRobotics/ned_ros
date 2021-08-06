@@ -27,7 +27,6 @@ find_package(catkin REQUIRED
       common
       controller_manager
       hardware_interface
-      joints_driver
       niryo_robot_msgs
       roscpp
       sensor_msgs
@@ -64,7 +63,6 @@ catkin_package(
         common
         controller_manager
         hardware_interface
-        joints_driver
         niryo_robot_msgs
         roscpp
         ttl_driver

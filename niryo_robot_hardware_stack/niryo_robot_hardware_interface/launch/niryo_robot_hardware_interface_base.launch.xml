@@ -31,10 +31,6 @@
                 <arg name="hardware_version" value="$(arg hardware_version)" />
             </include>
             
-            <include file="$(find joints_driver)/launch/joints_driver_base.launch.xml" >
-                <arg name="hardware_version" value="$(arg hardware_version)" />
-            </include>
-
             <!-- use can_driver config -->
             <group if="$(arg can_enabled)" >
                 <include file="$(find can_driver)/launch/can_driver_base.launch.xml" >

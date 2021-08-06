@@ -24,6 +24,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <string>
 
 #include "common/model/motor_type_enum.hpp"
+#include "common/model/bus_protocol_enum.hpp"
 
 namespace common
 {
@@ -36,12 +37,14 @@ namespace model
 class AbstractMotorState : public IObject
 {
     public:
+
         AbstractMotorState();
-        AbstractMotorState(uint8_t id, EMotorType type);
+        AbstractMotorState(EMotorType type, EBusProtocol bus_proto, uint8_t id);
         virtual ~AbstractMotorState() override;
 
         // getters
         EMotorType getType() const;
+        EBusProtocol getBusProtocol() const;
         uint8_t getId() const;
 
         int getPositionState() const;
@@ -59,7 +62,6 @@ class AbstractMotorState : public IObject
         void setHardwareError(std::string hw_error_msg);
 
         // tests
-
         bool isStepper() const;
         bool isDynamixel() const;
 
@@ -73,6 +75,8 @@ class AbstractMotorState : public IObject
 
     protected:
         EMotorType _type;
+        EBusProtocol _bus_proto;
+
         uint8_t _id;
 
         // read variables
@@ -91,6 +95,16 @@ inline
 EMotorType AbstractMotorState::getType() const
 {
     return _type;
+}
+
+/**
+ * @brief AbstractMotorState::getBusProtocol
+ * @return
+ */
+inline
+EBusProtocol AbstractMotorState::getBusProtocol() const
+{
+    return _bus_proto;
 }
 
 /**

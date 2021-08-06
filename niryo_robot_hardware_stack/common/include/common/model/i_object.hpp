@@ -17,8 +17,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
-#ifndef IOBJECT_H
-#define IOBJECT_H
+#ifndef I_OBJECT_H
+#define I_OBJECT_H
 
 #include <string>
 
@@ -53,4 +53,4 @@ IObject::~IObject()
 } // namespace model
 } // namespace common
 
-#endif
+#endif // I_OBJECT_H
