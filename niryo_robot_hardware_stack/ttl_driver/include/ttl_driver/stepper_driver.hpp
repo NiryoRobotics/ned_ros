@@ -169,6 +169,7 @@ int StepperDriver<reg_type>::setGoalPosition(uint8_t id, uint32_t position)
     return write(reg_type::ADDR_GOAL_POSITION, reg_type::SIZE_GOAL_POSITION, id, position);
 }
 
+// according to the registers, the data should be an int32_t ?
 template<typename reg_type>
 int StepperDriver<reg_type>::setGoalVelocity(uint8_t id, uint32_t velocity)
 {

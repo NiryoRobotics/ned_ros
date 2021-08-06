@@ -37,10 +37,10 @@ namespace model
  */
 class JointState : public AbstractMotorState
 {
-
+    
     public:
         JointState();
-        JointState(std::string name, EMotorType type, uint8_t id );
+        JointState(std::string name, EMotorType type, EBusProtocol bus_proto, uint8_t id);
 
         virtual ~JointState() override;
 
@@ -52,7 +52,7 @@ class JointState : public AbstractMotorState
         double getOffsetPosition() const;
         int getDirection() const;
 
-        virtual bool operator==(const JointState& other) const;
+        virtual bool operator==(const JointState &other) const;
 
         virtual int to_motor_pos(double pos_rad);
         virtual double to_rad_pos(int position_dxl);

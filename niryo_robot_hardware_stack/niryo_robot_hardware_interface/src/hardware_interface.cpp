@@ -124,38 +124,66 @@ void HardwareInterface::initParameters(ros::NodeHandle &nh)
  */
 void HardwareInterface::initNodes(ros::NodeHandle &nh)
 {
+    // TODO(CC) to be adapted with conf
+    std::string conveyor_bus = "can";
     ROS_DEBUG("HardwareInterface::initNodes - Init Nodes");
     if (!_simulation_mode)
     {
-        ROS_DEBUG("HardwareInterface::initNodes - Start Joints Driver Node");
-        _joint_driver = std::make_shared<joint_driver::JointDriver>(nh);
-        ros::Duration(0.25).sleep();
+        if (_ttl_enabled)
+        {
+            ROS_DEBUG("HardwareInterface::initNodes - Start Dynamixel Driver Node");
+            ros::NodeHandle nh_ttl(nh, "ttl_driver");
+            _ttl_interface = std::make_shared<ttl_driver::TtlInterfaceCore>(nh_ttl);
+            ros::Duration(0.25).sleep();
 
-        // if (_can_enabled && _ttl_enabled)
-        // {
+            ROS_DEBUG("HardwareInterface::initNodes - Start End Effector Interface Node");
+            ros::NodeHandle nh_tool(nh, "tools_interface");
+            _tools_interface = std::make_shared<tools_interface::ToolsInterfaceCore>(nh_tool,
+                                                                                     _ttl_interface);
+            ros::Duration(0.25).sleep();
+
+            if (conveyor_bus == "ttl")
+            {
+                ROS_DEBUG("HardwareInterface::initNodes - Start Tools Interface Node");
+                ros::NodeHandle nh_conveyor(nh, "conveyor");
+                _conveyor_interface = std::make_shared<conveyor_interface::ConveyorInterfaceCore>(nh_conveyor,
+                                                                                                  _ttl_interface);
+                ros::Duration(0.25).sleep();
+            }
+        }
+        else
+        {
+            ROS_WARN("HardwareInterface::initNodes - DXL communication is disabled for debug purposes");
+        }
+
+        if (_can_enabled)
+        {
+            ROS_DEBUG("HardwareInterface::initNodes - Start CAN Driver Node");
+            ros::NodeHandle nh_can(nh, "can_driver");
+            _can_interface = std::make_shared<can_driver::CanInterfaceCore>(nh_can);
+            ros::Duration(0.25).sleep();
+
+            if (conveyor_bus == "can")
+            {
+                ROS_DEBUG("HardwareInterface::initNodes - Start Tools Interface Node");
+                ros::NodeHandle nh_conveyor(nh, "conveyor");
+                _conveyor_interface = std::make_shared<conveyor_interface::ConveyorInterfaceCore>(nh_conveyor,
+                                                                                                  _can_interface);
+                ros::Duration(0.25).sleep();
+            }
+        }
+        else
+        {
+            ROS_DEBUG("HardwareInterface::initNodes - CAN communication is disabled for debug purposes");
+        }
+        
         ROS_DEBUG("HardwareInterface::initNodes - Start Joints Interface Node");
         ros::NodeHandle nh_joints(nh, "joints_interface");
-        _joints_interface = std::make_shared<joints_interface::JointsInterfaceCore>(nh, nh_joints, _joint_driver);
-        if (_joint_driver->haveCan())
-            _can_interface = _joint_driver->getCanInterfaceCore();
-        if (_joint_driver->haveTtl())
-            _ttl_interface = _joint_driver->getTtlInterfaceCore();
+        _joints_interface = std::make_shared<joints_interface::JointsInterfaceCore>(nh,
+                                                                                    nh_joints,
+                                                                                    _ttl_interface,
+                                                                                    _can_interface);
         ros::Duration(0.25).sleep();
-
-        ROS_DEBUG("HardwareInterface::initNodes - Start End Effector Interface Node");
-        ros::NodeHandle nh_tool(nh, "tools_interface");
-        _tools_interface = std::make_shared<tools_interface::ToolsInterfaceCore>(nh_tool, _ttl_interface);
-        ros::Duration(0.25).sleep();
-
-        ROS_DEBUG("HardwareInterface::initNodes - Start Tools Interface Node");
-        ros::NodeHandle nh_conveyor(nh, "conveyor");
-        _conveyor_interface = std::make_shared<conveyor_interface::ConveyorInterfaceCore>(nh_conveyor, _can_interface);
-        ros::Duration(0.25).sleep();
-        // }
-        // else
-        // {
-        //     ROS_WARN("HardwareInterface::initNodes - CAN and DXL communication is disabled. Interfaces will not start");
-        // }
 
         ROS_DEBUG("HardwareInterface::initNodes - Start CPU Interface Node");
         _cpu_interface = std::make_shared<cpu_interface::CpuInterfaceCore>(nh);

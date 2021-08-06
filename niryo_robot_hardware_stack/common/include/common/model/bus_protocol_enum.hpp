@@ -17,8 +17,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
-#ifndef MOTOR_TYPE_ENUM
-#define MOTOR_TYPE_ENUM
+#ifndef BUS_PROTOCOL_ENUM
+#define BUS_PROTOCOL_ENUM
 
 #include <map>
 #include <string>
@@ -34,31 +34,28 @@ namespace model
 /**
  * @brief The EMotorType enum
  */
-enum class EMotorType {
-                        STEPPER=1,
-                        XL430=2,
-                        XL320=3,
-                        XL330=4,
-                        XC430=5,
-                        UNKNOWN=100
+enum class EBusProtocol {
+                        TTL,
+                        CAN,
+                        UNKNOWN
                       };
 
 /**
  * @brief Specialization of AbstractEnum for Acknowledge status enum
  */
-class MotorTypeEnum : public AbstractEnum<MotorTypeEnum, EMotorType>
+class BusProtocolEnum : public AbstractEnum<BusProtocolEnum, EBusProtocol>
 {
 public:
-    MotorTypeEnum(EMotorType e=EMotorType::UNKNOWN);
-    MotorTypeEnum(const char* const str);
-    ~MotorTypeEnum() {}
+    BusProtocolEnum(EBusProtocol e=EBusProtocol::UNKNOWN);
+    BusProtocolEnum(const char* const str);
+    ~BusProtocolEnum() {}
 
 private:
-    friend class AbstractEnum<MotorTypeEnum, EMotorType>;
-    static std::map<EMotorType, std::string> initialize();
+    friend class AbstractEnum<BusProtocolEnum, EBusProtocol>;
+    static std::map<EBusProtocol, std::string> initialize();
 };
 
 } // model
 } // common
 
-#endif // MOTOR_TYPE_ENUM
+#endif // BUS_PROTOCOL_ENUM

@@ -35,7 +35,7 @@ class ConveyorState : public StepperMotorState {
 
     public:
 
-        ConveyorState(uint8_t id);
+        ConveyorState(EBusProtocol bus_proto, uint8_t id);
         virtual ~ConveyorState() override;
 
         void setState(bool state);

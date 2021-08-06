@@ -27,8 +27,10 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <thread>
 
 #include "common/model/joint_state.hpp"
+#include "common/model/bus_protocol_enum.hpp"
 
-#include "joints_driver/joints_driver.hpp"
+#include "ttl_driver/ttl_interface_core.hpp"
+#include "can_driver/can_interface_core.hpp"
 
 #include "niryo_robot_msgs/CommandStatus.h"
 
@@ -41,7 +43,8 @@ class CalibrationManager
 public:
     CalibrationManager(ros::NodeHandle& nh,
                        std::vector<std::shared_ptr<common::model::JointState> > joint_list,
-                       std::shared_ptr<joint_driver::JointDriver> joint_driver);
+                       std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface,
+                       std::shared_ptr<can_driver::CanInterfaceCore> can_interface);
 
         virtual ~CalibrationManager();
 
@@ -69,10 +72,11 @@ public:
         bool set_motors_calibration_offsets(const std::vector<int>& motor_id_list, const std::vector<int> &steps_list);
         bool get_motors_calibration_offsets(std::vector<int> &motor_id_list, std::vector<int>& steps_list);
 
+        std::shared_ptr<common::model::IDriverCore> getProtocolOfMotor(common::model::EBusProtocol bus_proto) const;
+
 private:
-        std::shared_ptr<can_driver::CanInterfaceCore> _can_interface_core;
         std::shared_ptr<ttl_driver::TtlInterfaceCore> _ttl_interface;
-        std::shared_ptr<joint_driver::JointDriver> _jdriver;
+        std::shared_ptr<can_driver::CanInterfaceCore> _can_interface;
         
         std::vector<std::shared_ptr<common::model::JointState> > _joint_list;
 

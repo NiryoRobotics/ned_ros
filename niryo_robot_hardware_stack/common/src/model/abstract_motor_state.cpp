@@ -33,18 +33,21 @@ namespace model
  * @brief AbstractMotorState::AbstractMotorState
  */
 AbstractMotorState::AbstractMotorState() :
-    _type(EMotorType::UNKNOWN)
+    _type(EMotorType::UNKNOWN),
+    _bus_proto(EBusProtocol::UNKNOWN)
 {
     reset();
 }
 
 /**
  * @brief AbstractMotorState::AbstractMotorState
- * @param id
  * @param type
+ * @param bus_proto
+ * @param id
  */
-AbstractMotorState::AbstractMotorState(uint8_t id, EMotorType type) :
+AbstractMotorState::AbstractMotorState(EMotorType type, EBusProtocol bus_proto, uint8_t id) :
       _type(type),
+      _bus_proto(bus_proto),
       _id(id),
       _position_state(0),
       _temperature_state(0),
