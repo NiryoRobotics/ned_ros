@@ -789,7 +789,7 @@ void TtlManager::startCalibration()
 
     for (auto const& s : _state_map)
     {
-        if (s.second && s.second->isStepper())
+        if (s.second && s.second->isStepper() && !std::dynamic_pointer_cast<StepperMotorState>(s.second)->isConveyor())
             std::dynamic_pointer_cast<StepperMotorState>(s.second)->setCalibration(EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS, 0);
     }
 

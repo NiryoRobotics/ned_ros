@@ -75,7 +75,7 @@ void CanManager::startCalibration()
 
     for (auto const& s : _state_map)
     {
-        if (s.second)
+        if (s.second && !s.second->isConveyor())
             s.second->setCalibration(EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS, 0);
     }
 
