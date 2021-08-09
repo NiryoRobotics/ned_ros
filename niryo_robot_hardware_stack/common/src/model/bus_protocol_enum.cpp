@@ -51,8 +51,8 @@ BusProtocolEnum::initialize()
 {
     std::map<EBusProtocol, std::string> m;
 
-    m[EBusProtocol::TTL]    = "TTL";
-    m[EBusProtocol::CAN]    = "CAN";
+    m[EBusProtocol::TTL]    = "ttl";
+    m[EBusProtocol::CAN]    = "can";
     m[EBusProtocol::UNKNOWN]  = "unknown";
 
     return m;

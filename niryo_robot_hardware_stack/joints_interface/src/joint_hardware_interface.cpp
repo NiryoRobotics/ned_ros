@@ -158,7 +158,6 @@ bool JointHardwareInterface::init(ros::NodeHandle& rootnh, ros::NodeHandle &robo
         robot_hwnh.getParam("joint_" + to_string(j + 1) + "_name", joint_name);
         robot_hwnh.getParam("joint_" + to_string(j + 1) + "_type", joint_type);
         robot_hwnh.getParam("joint_" + to_string(j + 1) + "_bus", joint_bus);
-
         MotorTypeEnum eType = MotorTypeEnum(joint_type.c_str());
         BusProtocolEnum eBusProto = BusProtocolEnum(joint_bus.c_str());
 
