@@ -203,7 +203,7 @@ install(
 )
 
 
-if (rosdoc_lite_FOUND AND (EXISTS "${CMAKE_CURRENT_BINARY_DIR}/doc/"))
+if (rosdoc_lite_FOUND)
   install(
     DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc/
     DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/doc
