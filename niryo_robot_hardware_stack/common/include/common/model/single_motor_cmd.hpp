@@ -17,8 +17,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
-#ifndef DXL_SINGLE_MOTOR_CMD_H
-#define DXL_SINGLE_MOTOR_CMD_H
+#ifndef SINGLE_MOTOR_CMD_H
+#define SINGLE_MOTOR_CMD_H
 
 #include <string>
 #include <vector>
@@ -291,4 +291,4 @@ using StepperSingleCmd = SingleMotorCmd<EStepperCommandType, int32_t>;
 } // namespace model
 } // namespace common
 
-#endif
+#endif // SINGLE_MOTOR_CMD_H

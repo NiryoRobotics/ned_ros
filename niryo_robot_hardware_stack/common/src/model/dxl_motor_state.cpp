@@ -43,11 +43,16 @@ DxlMotorState::DxlMotorState()
  * @brief DxlMotorState::DxlMotorState
  * @param name
  * @param type
+ * @param bus_proto
  * @param id
  * @param isTool
  */
-DxlMotorState::DxlMotorState(std::string name, EMotorType type, uint8_t id, bool isTool) :
-    JointState(name, type, id),
+DxlMotorState::DxlMotorState(std::string name,
+                             EMotorType type,
+                             EBusProtocol bus_proto,
+                             uint8_t id,
+                             bool isTool) :
+    JointState(name, type, bus_proto, id),
     _isTool(isTool)
 {
     // to put in config ?
@@ -88,11 +93,15 @@ DxlMotorState::DxlMotorState(std::string name, EMotorType type, uint8_t id, bool
 /**
  * @brief DxlMotorState::DxlMotorState
  * @param type
+ * @param bus_proto
  * @param id
  * @param isTool
  */
-DxlMotorState::DxlMotorState(EMotorType type, uint8_t id, bool isTool) :
-    DxlMotorState("unknown", type, id, isTool)
+DxlMotorState::DxlMotorState(EMotorType type, 
+                             EBusProtocol bus_proto, 
+                             uint8_t id, 
+                             bool isTool) :
+    DxlMotorState("unknown", type, bus_proto, id, isTool)
 {}
 
 /**

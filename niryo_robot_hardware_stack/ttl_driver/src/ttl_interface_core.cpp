@@ -272,7 +272,7 @@ int TtlInterfaceCore::motorCmdReport(uint8_t motor_id, EMotorType motor_type)
         if (motor_type == EMotorType::UNKNOWN)
             return 0;
 
-        JointState motor = JointState("unknow", motor_type, motor_id);
+        JointState tmp_state = JointState("unknown", motor_type, common::model::EBusProtocol::TTL, motor_id);
 
         // torque on
         ros::Duration(0.5).sleep();
@@ -288,7 +288,7 @@ int TtlInterfaceCore::motorCmdReport(uint8_t motor_id, EMotorType motor_type)
             ros::Duration(0.5).sleep();
 
             // set position to old position + 200
-            uint32_t old_position = _ttl_manager->getPosition(motor);
+            uint32_t old_position = _ttl_manager->getPosition(tmp_state);
             ROS_INFO("TtlInterfaceCore::motorCmdReport - Debug - get dxl %d pose: %d ", motor_id, old_position);
             ros::Duration(0.5).sleep();
             ROS_INFO("TtlInterfaceCore::motorCmdReport - Debug - Send dxl %d pose: %d ", motor_id, old_position + 200);
@@ -299,7 +299,7 @@ int TtlInterfaceCore::motorCmdReport(uint8_t motor_id, EMotorType motor_type)
 
             // set position back to old position
             ros::Duration(2).sleep();
-            uint32_t new_position = _ttl_manager->getPosition(motor);
+            uint32_t new_position = _ttl_manager->getPosition(tmp_state);
             ROS_INFO("TtlInterfaceCore::motorCmdReport - Debug - get dxl %d pose: %d ", motor_id, new_position);
             int rest = static_cast<int>(new_position - old_position);
 
@@ -310,7 +310,7 @@ int TtlInterfaceCore::motorCmdReport(uint8_t motor_id, EMotorType motor_type)
             _ttl_manager->writeSingleCommand(cmd_pos_2);
 
             ros::Duration(2).sleep();
-            uint32_t new_position2 = _ttl_manager->getPosition(motor);
+            uint32_t new_position2 = _ttl_manager->getPosition(tmp_state);
             ROS_INFO("TtlInterfaceCore::motorCmdReport - Debug - get dxl %d pose: %d ", motor_id, new_position2);
             int rest2 = static_cast<int>(new_position2 - new_position);
 

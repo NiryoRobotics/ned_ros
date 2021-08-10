@@ -87,7 +87,10 @@ class ConveyorInterfaceCore : public common::model::IInterfaceCore
         std::vector<uint8_t> _current_conveyor_id_list;
 
         int _conveyor_max_effort{0};
+        int _conveyor_micro_steps{8};
         double _publish_feedback_frequency{0.0};
+
+        common::model::EBusProtocol _bus_protocol;
 };
 } // ConveyorInterface
 

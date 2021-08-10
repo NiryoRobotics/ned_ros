@@ -50,6 +50,7 @@ using ::common::model::SynchronizeMotorCmd;
 using ::common::model::SingleMotorCmd;
 using ::common::model::EDxlCommandType;
 using ::common::model::EMotorType;
+using ::common::model::EBusProtocol;
 
 namespace ttl_driver
 {
@@ -168,53 +169,55 @@ bool TtlManager::init(ros::NodeHandle& nh)
  * @param id
  * @param type_used
  */
-void TtlManager::addMotor(EMotorType type, uint8_t id, EType type_used)
+void TtlManager::addMotor(EMotorType motor_type, uint8_t id, EType type_used)
 {
     ROS_DEBUG("TtlManager::addMotor - Add motor id: %d", id);
 
     // add id to _state_map
-    if (type == EMotorType::STEPPER)
-        if (type_used == EType::CONVOYER)
-            _state_map.insert(make_pair(id, std::make_shared<ConveyorState>(id)));
+    if (EMotorType::STEPPER == motor_type)
+    {
+        if (EType::CONVOYER == type_used)
+            _state_map.insert(make_pair(id, std::make_shared<ConveyorState>(EBusProtocol::TTL, id)));
         else
-            _state_map.insert(make_pair(id, std::make_shared<StepperMotorState>(id)));
-    else if (type != EMotorType::UNKNOWN)
+            _state_map.insert(make_pair(id, std::make_shared<StepperMotorState>(EBusProtocol::TTL, id)));
+    }
+    else if (EMotorType::UNKNOWN != motor_type)
     {
         if (type_used == EType::TOOL)
-            _state_map.insert(make_pair(id, std::make_shared<DxlMotorState>(type, id, true)));
+            _state_map.insert(make_pair(id, std::make_shared<ToolState>("auto", motor_type, id)));
         else
-            _state_map.insert(make_pair(id, std::make_shared<ToolState>("auto", type, id)));
+            _state_map.insert(make_pair(id, std::make_shared<DxlMotorState>(motor_type, EBusProtocol::TTL, id)));
     }
 
     // if not already instanciated
-    if (0 == _ids_map.count(type))
+    if (0 == _ids_map.count(motor_type))
     {
-        _ids_map.insert(make_pair(type, vector<uint8_t>({id})));
+        _ids_map.insert(make_pair(motor_type, vector<uint8_t>({id})));
     }
     else
     {
-        _ids_map.at(type).push_back(id);
+        _ids_map.at(motor_type).push_back(id);
     }
 
     // if not already instanciated
-    if (0 == _driver_map.count(type))
+    if (0 == _driver_map.count(motor_type))
     {
-        switch (type)
+        switch (motor_type)
         {
             case EMotorType::STEPPER:
-                _driver_map.insert(make_pair(type, std::make_shared<StepperDriver<StepperReg> >(_portHandler, _packetHandler)));
+                _driver_map.insert(make_pair(motor_type, std::make_shared<StepperDriver<StepperReg> >(_portHandler, _packetHandler)));
             break;
             case EMotorType::XL430:
-                _driver_map.insert(make_pair(type, std::make_shared<DxlDriver<XL430Reg> >(_portHandler, _packetHandler)));
+                _driver_map.insert(make_pair(motor_type, std::make_shared<DxlDriver<XL430Reg> >(_portHandler, _packetHandler)));
             break;
             case EMotorType::XC430:
-                _driver_map.insert(make_pair(type, std::make_shared<DxlDriver<XC430Reg> >(_portHandler, _packetHandler)));
+                _driver_map.insert(make_pair(motor_type, std::make_shared<DxlDriver<XC430Reg> >(_portHandler, _packetHandler)));
             break;
             case EMotorType::XL320:
-                _driver_map.insert(make_pair(type, std::make_shared<DxlDriver<XL320Reg> >(_portHandler, _packetHandler)));
+                _driver_map.insert(make_pair(motor_type, std::make_shared<DxlDriver<XL320Reg> >(_portHandler, _packetHandler)));
             break;
             case EMotorType::XL330:
-                _driver_map.insert(make_pair(type, std::make_shared<DxlDriver<XL330Reg> >(_portHandler, _packetHandler)));
+                _driver_map.insert(make_pair(motor_type, std::make_shared<DxlDriver<XL330Reg> >(_portHandler, _packetHandler)));
             break;
             default:
                 ROS_ERROR("TtlManager - Unable to instanciate driver, unknown type");
@@ -225,13 +228,14 @@ void TtlManager::addMotor(EMotorType type, uint8_t id, EType type_used)
 
 /**
  * @brief TtlManager::changeId
- * @param id
+ * @param motor_type
  * @param old_id
  * @param new_id
+ * @return
  */
-int TtlManager::changeId(common::model::EMotorType type, uint8_t old_id, uint8_t new_id)
+int TtlManager::changeId(common::model::EMotorType motor_type, uint8_t old_id, uint8_t new_id)
 {
-    return _driver_map.at(type)->changeId(old_id, new_id);
+    return _driver_map.at(motor_type)->changeId(old_id, new_id);
 }
 
 /**

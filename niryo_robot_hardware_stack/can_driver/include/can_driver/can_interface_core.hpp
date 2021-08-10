@@ -87,7 +87,6 @@ class CanInterfaceCore : public common::model::IDriverCore, public common::model
         bool isConnectionOk() const override;
         int launchMotorsReport() override;
 
-        std::string getTypeDriver() const override;
         niryo_robot_msgs::BusState getBusState() const override;
 
     private:
@@ -131,6 +130,10 @@ class CanInterfaceCore : public common::model::IDriverCore, public common::model
         std::queue<std::shared_ptr<common::model::AbstractCanSingleMotorCmd>> _conveyor_cmds;
 
         static constexpr int QUEUE_OVERFLOW = 20;
+
+        // IDriverCore interface
+public:
+        virtual common::model::EBusProtocol getBusProtocol() const override;
 };
 
 /**
@@ -141,6 +144,17 @@ inline
 bool CanInterfaceCore::isConnectionOk() const
 {
     return _can_manager->isConnectionOk();
+}
+
+/**
+ * @brief CanInterfaceCore::getBusProtocol
+ * @return
+ */
+inline
+common::model::EBusProtocol
+CanInterfaceCore::getBusProtocol() const
+{
+    return common::model::EBusProtocol::CAN;
 }
 
 /**
@@ -188,12 +202,6 @@ CanInterfaceCore::getState(uint8_t motor_id) const
 
 }
 
-inline
-std::string
-CanInterfaceCore::getTypeDriver() const
-{
-    return "can";
-}
 } // CanManager
 
 #endif

@@ -25,7 +25,6 @@ find_package(catkin REQUIRED
       conveyor_interface
       cpu_interface
       fake_interface
-      joints_driver
       joints_interface
       message_generation
       niryo_robot_msgs
@@ -54,7 +53,6 @@ catkin_package(
         conveyor_interface
         cpu_interface
         fake_interface
-        joints_driver
         joints_interface
         message_runtime
         niryo_robot_msgs

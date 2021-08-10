@@ -37,14 +37,17 @@ int main(int argc, char **argv)
 
     ros::NodeHandle nh;
 
-    ros::NodeHandle nh_joint("joint_driver");
-
     ros::NodeHandle nh_private("~");
 
-    auto joint_driver = std::make_shared<joint_driver::JointDriver>(nh_joint);
+    ros::NodeHandle nh_ttl("ttl_driver");
+    auto ttl_driver = std::make_shared<ttl_driver::TtlInterfaceCore>(nh_ttl);
     ros::Duration(1).sleep();
 
-    auto joints = std::make_shared<joints_interface::JointsInterfaceCore>(nh, nh_private, joint_driver);
+    ros::NodeHandle nh_can("can_driver");
+    auto can_driver = std::make_shared<can_driver::CanInterfaceCore>(nh_can);
+    ros::Duration(1).sleep();
+
+    auto joints = std::make_shared<joints_interface::JointsInterfaceCore>(nh, nh_private, ttl_driver, can_driver);
     ros::waitForShutdown();
 
     ROS_INFO("Joints Interface - Shutdown node");

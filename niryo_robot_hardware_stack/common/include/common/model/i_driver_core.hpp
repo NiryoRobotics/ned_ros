@@ -46,6 +46,8 @@ class IDriverCore
     public:
         virtual ~IDriverCore() = 0;
 
+        virtual common::model::EBusProtocol getBusProtocol() const = 0;
+
         virtual void startControlLoop() = 0;
         virtual bool isConnectionOk() const = 0;
         virtual bool scanMotorId(uint8_t motor_to_find) = 0;
@@ -72,12 +74,10 @@ class IDriverCore
         virtual std::vector<std::shared_ptr<common::model::JointState> > getStates() const = 0;
         virtual common::model::JointState getState(uint8_t motor_id) const = 0;
         
-        virtual std::string getTypeDriver() const = 0;
     private:
         virtual void resetHardwareControlLoopRates() = 0;
         virtual void controlLoop() = 0;
         virtual void _executeCommand() = 0;
-
 };
 
 /**

@@ -105,7 +105,6 @@ class TtlInterfaceCore : public common::model::IDriverCore, public common::model
         std::vector<std::shared_ptr<common::model::JointState> > getStates() const override;
         common::model::JointState getState(uint8_t motor_id) const override;
 
-        std::string getTypeDriver() const override;
         // IDriverCore interface
         void startControlLoop() override;
 
@@ -179,6 +178,10 @@ class TtlInterfaceCore : public common::model::IDriverCore, public common::model
 
         static constexpr int QUEUE_OVERFLOW = 20;
         static constexpr double TTL_VOLTAGE_DIVISOR = 10.0;
+
+        // IDriverCore interface
+public:
+        virtual common::model::EBusProtocol getBusProtocol() const override;
 };
 
 /**
@@ -192,6 +195,17 @@ bool TtlInterfaceCore::isConnectionOk() const
 }
 
 /**
+ * @brief TtlInterfaceCore::getBusProtocol
+ * @return
+ */
+inline
+common::model::EBusProtocol
+TtlInterfaceCore::getBusProtocol() const
+{
+    return common::model::EBusProtocol::TTL;
+}
+
+/**
  * @brief TtlInterfaceCore::getRemovedMotorList
  * @return
  */
@@ -199,12 +213,6 @@ inline
 std::vector<uint8_t> TtlInterfaceCore::getRemovedMotorList() const
 {
     return _ttl_manager->getRemovedMotorList();
-}
-
-inline
-std::string TtlInterfaceCore::getTypeDriver() const
-{
-    return "ttl";
 }
 
 } // TtlManager

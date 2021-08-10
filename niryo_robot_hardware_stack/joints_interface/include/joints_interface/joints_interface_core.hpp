@@ -56,7 +56,8 @@ class JointsInterfaceCore : common::model::IInterfaceCore
 
         JointsInterfaceCore(ros::NodeHandle& rootnh, 
                             ros::NodeHandle& robot_hwnh,
-                            std::shared_ptr<joint_driver::JointDriver> jdriver);
+                            std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface,
+                            std::shared_ptr<can_driver::CanInterfaceCore> can_interface);
         virtual ~JointsInterfaceCore() override;
 
         virtual bool init(ros::NodeHandle& nh) override;
@@ -102,6 +103,9 @@ class JointsInterfaceCore : common::model::IInterfaceCore
         std::shared_ptr<JointHardwareInterface> _robot;
         std::shared_ptr<controller_manager::ControllerManager> _cm;
 
+        std::shared_ptr<ttl_driver::TtlInterfaceCore> _ttl_interface;
+        std::shared_ptr<can_driver::CanInterfaceCore> _can_interface;
+
         std::thread _publish_learning_mode_thread;
         std::thread _control_loop_thread;
 
@@ -112,6 +116,7 @@ class JointsInterfaceCore : common::model::IInterfaceCore
         ros::ServiceServer _calibrate_motors_server;
         ros::ServiceServer _request_new_calibration_server;
         ros::ServiceServer _activate_learning_mode_server;
+
 };
 
 /**
@@ -157,5 +162,6 @@ const std::vector<std::shared_ptr<common::model::JointState> > &JointsInterfaceC
 {
     return _robot->getJointsState();
 }
+
 } // JointsInterface
 #endif
