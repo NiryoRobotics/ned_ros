@@ -31,6 +31,7 @@
     <!-- Including shared params & nodes -->
 
     <include file="$(find niryo_robot_bringup)/launch/niryo_robot_base_common.launch.xml">
+        <arg name="hardware_version" value="$(arg hardware_version)" />
         <arg name="log_level" value="$(arg log_level)" />
         <arg name="simulation_mode" value="false"/>
         <arg name="can_enabled" value="$(arg can_enabled)"/>
