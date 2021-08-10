@@ -145,9 +145,9 @@ int main(int argc, char **argv)
             }
             else if (vars.count("get-register"))  // get-register
             {
-                uint8_t addr = vars["get-register"].as<uint8_t>();
+                uint8_t addr = static_cast<uint8_t>(vars["get-register"].as<int>());
                 uint32_t value = 0;
-                uint8_t size = vars["size"].as<uint8_t>();
+                uint8_t size = static_cast<uint8_t>(vars["size"].as<int>());
 
                 printf("--> GET REGISTER for Motor (ID:%d)\n", id);
                 printf("Register address: %d, Size (bytes): %d\n", addr, size);
