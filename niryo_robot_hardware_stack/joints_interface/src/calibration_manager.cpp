@@ -95,10 +95,10 @@ void CalibrationManager::initParameters(ros::NodeHandle &nh)
  * @param bus_proto
  * @return
  */
-std::shared_ptr<common::model::IDriverCore> 
+std::shared_ptr<common::model::IDriverCore>
 CalibrationManager::getProtocolOfMotor(EBusProtocol bus_proto) const
 {
-    switch(bus_proto)
+    switch (bus_proto)
     {
     case EBusProtocol::CAN:
         return _can_interface;

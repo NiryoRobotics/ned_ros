@@ -119,7 +119,7 @@ void JointHardwareInterface::write(const ros::Time &/*time*/, const ros::Duratio
 
     if (_can_interface)
         _can_interface->setTrajectoryControllerCommands(can_cmd);
-    
+
     if (_ttl_interface)
         _ttl_interface->setTrajectoryControllerCommands(ttl_cmd);
 }
@@ -135,7 +135,7 @@ bool JointHardwareInterface::init(ros::NodeHandle& rootnh, ros::NodeHandle &robo
     // retrieve nb joints with checking that the config param exists for both name and id
     while (robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "_id") &&
           robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "_name") &&
-          robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "_type") && 
+          robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "_type") &&
           robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "_bus"))
         nb_joints++;
 
@@ -197,8 +197,8 @@ bool JointHardwareInterface::init(ros::NodeHandle& rootnh, ros::NodeHandle &robo
         }
         else if (eType != EMotorType::UNKNOWN)
         {  // dynamixel
-            auto dxlState = std::make_shared<DxlMotorState>(joint_name, 
-                                                            eType, 
+            auto dxlState = std::make_shared<DxlMotorState>(joint_name,
+                                                            eType,
                                                             eBusProto,
                                                             static_cast<uint8_t>(joint_id_config));
             if (dxlState)

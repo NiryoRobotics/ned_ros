@@ -38,7 +38,8 @@ TEST(CommonTestSuite, testDefaultInvalid)
 
 TEST(CommonTestSuite, testXC430)
 {
-    common::model::DxlMotorState dxlState = common::model::DxlMotorState(common::model::EMotorType::XC430, 1);
+    common::model::DxlMotorState dxlState = common::model::DxlMotorState(common::model::EMotorType::XC430,
+                                                                         common::model::EBusProtocol::TTL, 1);
     dxlState.setOffsetPosition(0.42);
     ASSERT_TRUE(dxlState.isValid());
 
@@ -77,7 +78,8 @@ TEST(CommonTestSuite, testXC430)
 
 TEST(CommonTestSuite, testXL430)
 {
-    common::model::DxlMotorState dxlState = common::model::DxlMotorState(common::model::EMotorType::XL430, 1);
+    common::model::DxlMotorState dxlState = common::model::DxlMotorState(common::model::EMotorType::XL430,
+                                                                         common::model::EBusProtocol::TTL, 1);
     std::string type_str = common::model::MotorTypeEnum(dxlState.getType()).toString();
     dxlState.setOffsetPosition(0.42);
     ASSERT_TRUE(dxlState.isValid());
@@ -113,7 +115,8 @@ TEST(CommonTestSuite, testXL430)
 
 TEST(CommonTestSuite, testXL330)
 {
-    common::model::DxlMotorState dxlState = common::model::DxlMotorState(common::model::EMotorType::XL330, 1);
+    common::model::DxlMotorState dxlState = common::model::DxlMotorState(common::model::EMotorType::XL330,
+                                                                         common::model::EBusProtocol::TTL, 1);
     std::string type_str = common::model::MotorTypeEnum(dxlState.getType()).toString();
     dxlState.setOffsetPosition(0.42);
     ASSERT_TRUE(dxlState.isValid());
@@ -152,7 +155,8 @@ TEST(CommonTestSuite, testXL330)
 
 TEST(CommonTestSuite, testXL320)
 {
-    common::model::DxlMotorState dxlState = common::model::DxlMotorState(common::model::EMotorType::XL320, 1);
+    common::model::DxlMotorState dxlState = common::model::DxlMotorState(common::model::EMotorType::XL320,
+                                                                         common::model::EBusProtocol::TTL, 1);
     std::string type_str = common::model::MotorTypeEnum(dxlState.getType()).toString();
     dxlState.setOffsetPosition(0.42);
     ASSERT_TRUE(dxlState.isValid());
@@ -193,7 +197,7 @@ TEST(CommonTestSuite, testXL320)
 
 TEST(CommonTestSuite, testStepper)
 {
-    common::model::StepperMotorState stepperState = common::model::StepperMotorState(1);
+    common::model::StepperMotorState stepperState = common::model::StepperMotorState(common::model::EBusProtocol::CAN, 1);
     stepperState.setGearRatio(800.0);
     stepperState.setDirection(-1);
     std::string type_str = common::model::MotorTypeEnum(stepperState.getType()).toString();

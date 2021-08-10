@@ -176,7 +176,7 @@ void HardwareInterface::initNodes(ros::NodeHandle &nh)
         {
             ROS_DEBUG("HardwareInterface::initNodes - CAN communication is disabled for debug purposes");
         }
-        
+
         ROS_DEBUG("HardwareInterface::initNodes - Start Joints Interface Node");
         ros::NodeHandle nh_joints(nh, "joints_interface");
         _joints_interface = std::make_shared<joints_interface::JointsInterfaceCore>(nh,

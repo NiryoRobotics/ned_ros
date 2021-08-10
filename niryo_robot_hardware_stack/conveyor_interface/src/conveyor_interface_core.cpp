@@ -93,10 +93,10 @@ void ConveyorInterfaceCore::initParameters(ros::NodeHandle& nh)
 {
     std::vector<int> id_pool_list;
 
-    if(nh.hasParam("max_effort"))
+    if (nh.hasParam("max_effort"))
         nh.getParam("max_effort", _conveyor_max_effort);
 
-    if(nh.hasParam("micro_steps"))
+    if (nh.hasParam("micro_steps"))
         nh.getParam("micro_steps", _conveyor_micro_steps);
 
     nh.getParam("id", _default_conveyor_id);
@@ -182,7 +182,7 @@ ConveyorInterfaceCore::addConveyor()
             // remove from pool
             _conveyor_pool_id_list.erase(_conveyor_pool_id_list.begin());
 
-            switch(_conveyor_driver->getBusProtocol())
+            switch (_conveyor_driver->getBusProtocol())
             {
             case common::model::EBusProtocol::CAN:
                 ROS_DEBUG("ConveyorInterfaceCore::addConveyor : Initializing for CAN bus");
@@ -341,7 +341,6 @@ bool ConveyorInterfaceCore::_callbackControlConveyor(conveyor_interface::Control
 
         _conveyor_driver->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_CONVEYOR,
                                                                             req.id, std::initializer_list<int32_t>{req.control_on, req.speed, req.direction}));
-
     }
     else
     {

@@ -97,9 +97,9 @@ DxlMotorState::DxlMotorState(std::string name,
  * @param id
  * @param isTool
  */
-DxlMotorState::DxlMotorState(EMotorType type, 
-                             EBusProtocol bus_proto, 
-                             uint8_t id, 
+DxlMotorState::DxlMotorState(EMotorType type,
+                             EBusProtocol bus_proto,
+                             uint8_t id,
                              bool isTool) :
     DxlMotorState("unknown", type, bus_proto, id, isTool)
 {}

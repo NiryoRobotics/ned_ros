@@ -59,9 +59,9 @@ int AbstractStepperDriver::writeSingleCmd(std::shared_ptr<common::model::Abstrac
             return ping(cmd->getId());
         case EStepperCommandType::CMD_TYPE_CONVEYOR:
         {
-            //convert direction and speed into signed speed
+            // convert direction and speed into signed speed
             int dir = cmd->getParams().at(2) > 0 ? 1 : -1;
-            //normal warning : we need to put an int32 inside an uint32_t
+            // normal warning : we need to put an int32 inside an uint32_t
             uint32_t speed = static_cast<int32_t>(cmd->getParams().at(1) * dir);
             return setGoalVelocity(cmd->getId(), speed);
         }

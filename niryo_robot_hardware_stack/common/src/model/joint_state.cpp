@@ -43,7 +43,7 @@ JointState::JointState() :
  * @param bus_proto
  * @param id
  */
-JointState::JointState(std::string name, EMotorType type, 
+JointState::JointState(std::string name, EMotorType type,
                        EBusProtocol bus_proto, uint8_t id) :
     AbstractMotorState(type, bus_proto, id),
     _name(name)
