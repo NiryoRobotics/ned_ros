@@ -39,9 +39,9 @@ class ToolRosCommandInterface:
 
     # Gripper
 
-    def open_gripper(self, gripper_id, open_position, open_speed, open_hold_torque):
+    def open_gripper(self, gripper_id, open_position, open_speed, open_hold_torque, open_max_torque):
         try:
-            resp = self.__service_open_gripper(gripper_id, open_position, open_speed, open_hold_torque)
+            resp = self.__service_open_gripper(gripper_id, open_position, open_speed, open_hold_torque, open_max_torque)
             return resp.state
         except rospy.ServiceException:
             rospy.logerr("ROS Tool Interface - Failed to Open Gripper")
@@ -57,17 +57,23 @@ class ToolRosCommandInterface:
             return self.__state_ros_communication_problem
 
     # Vacuum
-    def pull_air_vacuum_pump(self, vp_id, vp_pull_air_position, vp_pull_air_hold_torque):
+    def pull_air_vacuum_pump(
+                    self, vp_id, vp_pull_air_velocity, vp_pull_air_position,
+                    vp_pull_air_max_torque, vp_pull_air_hold_torque):
         try:
-            resp = self.__service_pull_air_vacuum_pump(vp_id, vp_pull_air_position, vp_pull_air_hold_torque)
+            resp = self.__service_pull_air_vacuum_pump(
+                                        vp_id, vp_pull_air_velocity, vp_pull_air_position,
+                                        vp_pull_air_max_torque, vp_pull_air_hold_torque)
             return resp.state
         except rospy.ServiceException:
             rospy.logerr("ROS Tool Interface - Failed to Pull Air")
             return self.__state_ros_communication_problem
 
-    def push_air_vacuum_pump(self, vp_id, vp_push_air_position):
+    def push_air_vacuum_pump(self, vp_id, vp_push_air_velocity, vp_push_air_position, vp_push_air_max_torque):
         try:
-            resp = self.__service_push_air_vacuum_pump(vp_id, vp_push_air_position)
+            resp = self.__service_push_air_vacuum_pump(
+                                            vp_id, vp_push_air_velocity,
+                                            vp_push_air_position, vp_push_air_max_torque)
             return resp.state
         except rospy.ServiceException:
             rospy.logerr("ROS Tool Interface - Failed to Push Air")
