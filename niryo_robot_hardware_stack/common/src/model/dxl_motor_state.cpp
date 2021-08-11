@@ -57,7 +57,6 @@ DxlMotorState::DxlMotorState(std::string name,
 {
     // to put in config ?
 
-    // according to xl-330 datasheet : 1 speed ~ 0.229 rpm ~ 3.9083 dxl position per second
     // according to xl-320 datasheet : 1 speed ~ 0.111 rpm ~ 1.8944 dxl position per second
     switch (_type)
     {
@@ -65,25 +64,25 @@ DxlMotorState::DxlMotorState(std::string name,
             _total_angle = 300;
             _total_range_position = 1022;
             _middle_position = 511;
-            _steps_for_one_speed =  1.8944;  // 0.229 * 4096 / 60
+            _steps_for_one_speed =  1.8944;  // 0.111 * 1024 / 60
         break;
         case EMotorType::XC430:
             _total_angle = 360.36;
             _total_range_position = 4094;
             _middle_position = 2047;
-            _steps_for_one_speed = 15.6331;  // 0.229 * 4096 / 60
+            _steps_for_one_speed = 15.6330667;  // 0.229 * 4096 / 60
         break;
         case EMotorType::XL330:
             _total_angle = 360.36;
             _total_range_position = 4094;
             _middle_position = 2047;
-            _steps_for_one_speed = 15.6331;  // 0.229 * 4096 / 60
+            _steps_for_one_speed = 15.6330667;  // 0.229 * 4096 / 60
         break;
         case EMotorType::XL430:
             _total_angle = 360.36;
             _total_range_position = 4094;
             _middle_position = 2047;
-            _steps_for_one_speed = 15.6331;  // 0.229 * 4096 / 60
+            _steps_for_one_speed = 15.6330667;  // 0.229 * 4096 / 60
         break;
         default:
         break;
