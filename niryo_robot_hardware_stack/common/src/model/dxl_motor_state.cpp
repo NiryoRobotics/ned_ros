@@ -62,26 +62,26 @@ DxlMotorState::DxlMotorState(std::string name,
     {
         case EMotorType::XL320:
             _total_angle = 300;
-            _total_range_position = 1022;
-            _middle_position = 511;
+            _total_range_position = 1024;
+            _middle_position = 512;
             _steps_for_one_speed =  1.8944;  // 0.111 * 1024 / 60
         break;
         case EMotorType::XC430:
-            _total_angle = 360.36;
-            _total_range_position = 4094;
-            _middle_position = 2047;
+            _total_angle = 360;
+            _total_range_position = 4096;
+            _middle_position = 2048;
             _steps_for_one_speed = 15.6330667;  // 0.229 * 4096 / 60
         break;
         case EMotorType::XL330:
-            _total_angle = 360.36;
-            _total_range_position = 4094;
-            _middle_position = 2047;
+            _total_angle = 360;
+            _total_range_position = 4096;
+            _middle_position = 2048;
             _steps_for_one_speed = 15.6330667;  // 0.229 * 4096 / 60
         break;
         case EMotorType::XL430:
-            _total_angle = 360.36;
-            _total_range_position = 4094;
-            _middle_position = 2047;
+            _total_angle = 360;
+            _total_range_position = 4096;
+            _middle_position = 2048;
             _steps_for_one_speed = 15.6330667;  // 0.229 * 4096 / 60
         break;
         default:
@@ -167,7 +167,7 @@ int DxlMotorState::to_motor_pos(double pos_rad)
     assert(0.0 != denominator);
     double numerator = ((pos_rad - _offset_position) * RADIAN_TO_DEGREE * _total_range_position);
 
-    return _middle_position + static_cast<int>(numerator / denominator) * _direction;
+    return _middle_position + std::round(numerator / denominator) * _direction;
 }
 
 /**
