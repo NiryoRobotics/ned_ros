@@ -24,9 +24,9 @@ dynamixels:
     dxl_3:
         offset_position: 0
         direction: 1
-        position_P_gain: 84
-        position_I_gain: 9
-        position_D_gain: 5
+        position_P_gain: 640
+        position_I_gain: 500
+        position_D_gain: 1000
         velocity_P_gain: 0
         velocity_I_gain: 0
         FF1_gain: 0
