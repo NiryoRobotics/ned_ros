@@ -24,9 +24,158 @@
 // Bring in gtest
 #include <gtest/gtest.h>
 
-static constexpr double precision = 0.002;
+namespace {
 
-// Declare a test
+
+using ::common::model::EMotorType;
+using ::common::model::MotorTypeEnum;
+
+
+// For common features 
+// EMotorType : type of the dxl motor
+// double : offset
+
+class DXLCommonTest : public testing::TestWithParam<std::tuple<EMotorType, double> >
+{
+    protected:
+        void SetUp() override {
+            std::cout << "Test for MotorType " << MotorTypeEnum(std::get<0>(GetParam())).toString() << std::endl;
+
+            dxlState = common::model::DxlMotorState(std::get<0>(GetParam()),
+                                                    common::model::EBusProtocol::TTL, 1);
+            dxlState.setOffsetPosition(std::get<1>(GetParam()));
+
+            //define precision according to smallest motor step in radian
+            //we divide by two because we are looking for the closest integer
+            ASSERT_NE(dxlState.getTotalRangePosition(), 0);
+            precision = (dxlState.getTotalAngle() / dxlState.getTotalRangePosition())/RADIAN_TO_DEGREE;
+            precision /= 2;
+        }
+
+        common::model::DxlMotorState dxlState;
+        double precision;
+};
+
+// TODO(CC) find a better way to avoid redundancy of this setup method
+// For identity testing
+// double : rad_pos
+class DXLIdentityRadTest : public testing::TestWithParam<std::tuple<EMotorType, double, double> >
+{
+    protected:
+    void SetUp() override {
+        std::cout << "Test for MotorType " << MotorTypeEnum(std::get<0>(GetParam())).toString() << std::endl;
+
+        dxlState = common::model::DxlMotorState(std::get<0>(GetParam()),
+                                                common::model::EBusProtocol::TTL, 1);
+        dxlState.setOffsetPosition(std::get<1>(GetParam()));
+
+        //define precision according to smallest motor step in radian
+        //we divide by two because we are looking for the closest integer
+        ASSERT_NE(dxlState.getTotalRangePosition(), 0);
+        precision = (dxlState.getTotalAngle() / dxlState.getTotalRangePosition())/RADIAN_TO_DEGREE;
+        precision /= 2;
+    }
+
+        common::model::DxlMotorState dxlState;
+        double precision;
+};
+
+// int : motor_pos
+class DXLIdentityMotorTest : public testing::TestWithParam<std::tuple<EMotorType, double, int> >
+{
+    protected:
+    void SetUp() override {
+        std::cout << "Test for MotorType " << MotorTypeEnum(std::get<0>(GetParam())).toString() << std::endl;
+
+        dxlState = common::model::DxlMotorState(std::get<0>(GetParam()),
+                                                common::model::EBusProtocol::TTL, 1);
+        dxlState.setOffsetPosition(std::get<1>(GetParam()));
+
+        //define precision according to smallest motor step in radian
+        //we divide by two because we are looking for the closest integer
+        ASSERT_NE(dxlState.getTotalRangePosition(), 0);
+        precision = (dxlState.getTotalAngle() / dxlState.getTotalRangePosition())/RADIAN_TO_DEGREE;
+        precision /= 2;
+    }
+    
+    common::model::DxlMotorState dxlState;
+    double precision;
+};
+
+TEST_P(DXLCommonTest, validity) {
+    ASSERT_TRUE(dxlState.isValid());
+}
+
+TEST_P(DXLCommonTest, zero) {
+    // check 0 (middle pos)
+    EXPECT_NEAR(dxlState.to_rad_pos(dxlState.getMiddlePosition()),
+                dxlState.getOffsetPosition(), precision) << "to_motor_pos failed";
+
+    EXPECT_NEAR(dxlState.to_motor_pos(dxlState.getOffsetPosition()),
+                dxlState.getMiddlePosition(), precision) << "to_motor_pos failed";
+}
+
+TEST_P(DXLCommonTest, extremeLow) {
+    // check to_rad_pos extreme values
+    double totalAngle_rad = dxlState.getTotalAngle() / RADIAN_TO_DEGREE;
+    EXPECT_NEAR(dxlState.to_rad_pos(0), dxlState.getOffsetPosition() - totalAngle_rad/2, precision)
+                 << "to_motor_pos failed";
+}
+
+TEST_P(DXLCommonTest, extremeHigh) {
+    double totalAngle_rad = dxlState.getTotalAngle() / RADIAN_TO_DEGREE;
+
+    EXPECT_NEAR(dxlState.to_rad_pos(dxlState.getTotalRangePosition()),
+                dxlState.getOffsetPosition() + totalAngle_rad/2, precision)
+                << "to_motor_pos failed";
+}
+
+TEST_P(DXLIdentityRadTest, identityFromRad) {
+    // check combinations is identity
+    double test_rad = std::get<2>(GetParam());
+    EXPECT_NEAR(dxlState.to_rad_pos(dxlState.to_motor_pos(test_rad)),
+                test_rad, precision)
+        << "to_rad_pos o to_motor_pos is not identity";
+}
+
+TEST_P(DXLIdentityMotorTest, identityFromMotorPos) {
+    // check combinations is identity
+    int test_pos = std::get<2>(GetParam());
+    
+    EXPECT_EQ(dxlState.to_motor_pos(dxlState.to_rad_pos(test_pos)), test_pos)
+              << "to_motor_pos o to_rad_pos is not identity";
+}
+
+INSTANTIATE_TEST_CASE_P(CommonTests,
+                         DXLCommonTest,
+                         testing::Combine(
+                            testing::Values(EMotorType::XL320,
+                                            EMotorType::XL330,
+                                            EMotorType::XL430,
+                                            EMotorType::XC430),
+                            testing::Range(-2.0, 2.0, 0.6)));
+
+INSTANTIATE_TEST_CASE_P(IdentityRadTests,
+                         DXLIdentityRadTest,
+                         testing::Combine(
+                            testing::Values(EMotorType::XL320,
+                                            EMotorType::XL330,
+                                            EMotorType::XL430,
+                                            EMotorType::XC430),
+                            testing::Range(-2.0, 2.0, 0.6),
+                            testing::Range(-M_PI, M_PI, 0.29)));
+
+INSTANTIATE_TEST_CASE_P(IdentityMotorTests,
+                         DXLIdentityMotorTest,
+                         testing::Combine(
+                            testing::Values(EMotorType::XL320,
+                                            EMotorType::XL330,
+                                            EMotorType::XL430,
+                                            EMotorType::XC430),
+                            testing::Range(-2.0, 2.0, 0.6),
+                            testing::Range(0, 4000, 600)));
+                            
+// Global Tests
 TEST(CommonTestSuite, testDefaultInvalid)
 {
     common::model::DxlMotorState dxlState;
@@ -36,165 +185,7 @@ TEST(CommonTestSuite, testDefaultInvalid)
     EXPECT_FALSE(stepperState.isValid());
 }
 
-TEST(CommonTestSuite, testXC430)
-{
-    common::model::DxlMotorState dxlState = common::model::DxlMotorState(common::model::EMotorType::XC430,
-                                                                         common::model::EBusProtocol::TTL, 1);
-    dxlState.setOffsetPosition(0.42);
-    ASSERT_TRUE(dxlState.isValid());
-
-    // check 0 (middle pos)
-    EXPECT_NEAR(dxlState.to_rad_pos(dxlState.getMiddlePosition()),
-                dxlState.getOffsetPosition(), precision) << "to_motor_pos failed";
-
-    EXPECT_NEAR(dxlState.to_motor_pos(dxlState.getOffsetPosition()),
-                dxlState.getMiddlePosition(), precision) << "to_motor_pos failed";
-
-    // check to_rad_pos extreme values
-    double totalAngle_rad = dxlState.getTotalAngle() / RADIAN_TO_DEGREE;
-    EXPECT_NEAR(dxlState.to_rad_pos(0), dxlState.getOffsetPosition() - totalAngle_rad/2,
-                precision) << "to_motor_pos failed";
-
-    EXPECT_NEAR(dxlState.to_rad_pos(dxlState.getTotalRangePosition()),
-                dxlState.getOffsetPosition() + totalAngle_rad/2, precision)
-                << "to_motor_pos failed";
-
-    // check to_motor_pos extreme values
-    EXPECT_EQ(dxlState.to_motor_pos(dxlState.getOffsetPosition() + totalAngle_rad/2),
-              static_cast<int>(dxlState.getTotalRangePosition())) << "to_motor_pos failed";
-
-    EXPECT_EQ(dxlState.to_motor_pos(dxlState.getOffsetPosition() - totalAngle_rad/2), 0)
-              << "to_motor_pos failed";
-
-    // check combinations is identity
-    double test_rad = M_PI/4;
-    int test_pos = 500;
-    EXPECT_NEAR(dxlState.to_rad_pos(dxlState.to_motor_pos(test_rad)),
-                test_rad, precision) << "to_rad_pos o to_motor_pos is not identity";
-
-    EXPECT_EQ(dxlState.to_motor_pos(dxlState.to_rad_pos(test_pos)), test_pos)
-              << "to_motor_pos o to_rad_pos is not identity";
-}
-
-TEST(CommonTestSuite, testXL430)
-{
-    common::model::DxlMotorState dxlState = common::model::DxlMotorState(common::model::EMotorType::XL430,
-                                                                         common::model::EBusProtocol::TTL, 1);
-    std::string type_str = common::model::MotorTypeEnum(dxlState.getType()).toString();
-    dxlState.setOffsetPosition(0.42);
-    ASSERT_TRUE(dxlState.isValid());
-
-    // check 0 (middle pos)
-    EXPECT_NEAR(dxlState.to_rad_pos(dxlState.getMiddlePosition()),
-                dxlState.getOffsetPosition(), precision) << "to_motor_pos failed";
-
-    EXPECT_NEAR(dxlState.to_motor_pos(dxlState.getOffsetPosition()),
-                dxlState.getMiddlePosition(), precision) << "to_motor_pos failed";
-
-    // check to_rad_pos extreme values
-    double totalAngle_rad = dxlState.getTotalAngle() / RADIAN_TO_DEGREE;
-    EXPECT_NEAR(dxlState.to_rad_pos(0), dxlState.getOffsetPosition() - totalAngle_rad/2,
-                precision) << "to_motor_pos failed";
-    EXPECT_NEAR(dxlState.to_rad_pos(dxlState.getTotalRangePosition()),
-                dxlState.getOffsetPosition() + totalAngle_rad/2, precision) << "to_motor_pos failed";
-
-    // check to_motor_pos extreme values
-    EXPECT_EQ(dxlState.to_motor_pos(dxlState.getOffsetPosition() + totalAngle_rad/2),
-              static_cast<int>(dxlState.getTotalRangePosition())) << "to_motor_pos failed";
-    EXPECT_EQ(dxlState.to_motor_pos(dxlState.getOffsetPosition() - totalAngle_rad/2), 0)
-                    << "to_motor_pos failed";
-
-    // check combinations is identity
-    double test_rad = M_PI/4;
-    int test_pos = 1000;
-    EXPECT_NEAR(dxlState.to_rad_pos(dxlState.to_motor_pos(test_rad)), test_rad, precision)
-                << "to_rad_pos o to_motor_pos is not identity";
-    EXPECT_EQ(dxlState.to_motor_pos(dxlState.to_rad_pos(test_pos)), test_pos)
-              << "to_motor_pos o to_rad_pos is not identity";
-}
-
-TEST(CommonTestSuite, testXL330)
-{
-    common::model::DxlMotorState dxlState = common::model::DxlMotorState(common::model::EMotorType::XL330,
-                                                                         common::model::EBusProtocol::TTL, 1);
-    std::string type_str = common::model::MotorTypeEnum(dxlState.getType()).toString();
-    dxlState.setOffsetPosition(0.42);
-    ASSERT_TRUE(dxlState.isValid());
-
-    // check 0 (middle pos)
-    EXPECT_NEAR(dxlState.to_rad_pos(dxlState.getMiddlePosition()),
-                dxlState.getOffsetPosition(), precision) << "to_motor_pos failed";
-
-    EXPECT_NEAR(dxlState.to_motor_pos(dxlState.getOffsetPosition()),
-                dxlState.getMiddlePosition(), precision) << "to_motor_pos failed";
-
-    // check to_rad_pos extreme values
-    double totalAngle_rad = dxlState.getTotalAngle() / RADIAN_TO_DEGREE;
-    EXPECT_NEAR(dxlState.to_rad_pos(0), dxlState.getOffsetPosition() - totalAngle_rad/2,
-                precision) << "to_motor_pos failed";
-
-    EXPECT_NEAR(dxlState.to_rad_pos(dxlState.getTotalRangePosition()),
-                dxlState.getOffsetPosition() + totalAngle_rad/2, precision)
-                << "to_motor_pos failed";
-
-    // check to_motor_pos extreme values
-    EXPECT_EQ(dxlState.to_motor_pos(dxlState.getOffsetPosition() + totalAngle_rad/2),
-              static_cast<int>(dxlState.getTotalRangePosition())) << "to_motor_pos failed";
-    EXPECT_EQ(dxlState.to_motor_pos(dxlState.getOffsetPosition() - totalAngle_rad/2), 0)
-              << "to_motor_pos failed";
-
-    // check combinations is identity
-    double test_rad = M_PI/4;
-    int test_pos = 1000;
-    EXPECT_NEAR(dxlState.to_rad_pos(dxlState.to_motor_pos(test_rad)), test_rad, precision)
-                << "to_rad_pos o to_motor_pos is not identity";
-
-    EXPECT_EQ(dxlState.to_motor_pos(dxlState.to_rad_pos(test_pos)), test_pos)
-                << "to_motor_pos o to_rad_pos is not identity";
-}
-
-TEST(CommonTestSuite, testXL320)
-{
-    common::model::DxlMotorState dxlState = common::model::DxlMotorState(common::model::EMotorType::XL320,
-                                                                         common::model::EBusProtocol::TTL, 1);
-    std::string type_str = common::model::MotorTypeEnum(dxlState.getType()).toString();
-    dxlState.setOffsetPosition(0.42);
-    ASSERT_TRUE(dxlState.isValid());
-
-    // check 0 (middle pos)
-    EXPECT_NEAR(dxlState.to_rad_pos(dxlState.getMiddlePosition()),
-                dxlState.getOffsetPosition(), precision) << "to_motor_pos failed";
-
-    EXPECT_NEAR(dxlState.to_motor_pos(dxlState.getOffsetPosition()),
-                dxlState.getMiddlePosition(), precision) << "to_motor_pos failed";
-
-    // check to_rad_pos extreme values
-    double totalAngle_rad = dxlState.getTotalAngle() / RADIAN_TO_DEGREE;
-    EXPECT_NEAR(dxlState.to_rad_pos(0),
-                dxlState.getOffsetPosition() - totalAngle_rad/2, precision)
-                << "to_motor_pos failed";
-
-    EXPECT_NEAR(dxlState.to_rad_pos(dxlState.getTotalRangePosition()),
-                dxlState.getOffsetPosition() + totalAngle_rad/2, precision)
-            << "to_motor_pos failed";
-
-    // check to_motor_pos extreme values
-    EXPECT_EQ(dxlState.to_motor_pos(dxlState.getOffsetPosition() + totalAngle_rad/2),
-              static_cast<int>(dxlState.getTotalRangePosition())) << "to_motor_pos failed";
-
-    EXPECT_EQ(dxlState.to_motor_pos(dxlState.getOffsetPosition() - totalAngle_rad/2), 0)
-              << "to_motor_pos failed";
-
-    // check combinations is identity
-    double test_rad = M_PI/4;
-    int test_pos = 1000;
-    EXPECT_NEAR(dxlState.to_rad_pos(dxlState.to_motor_pos(test_rad)),
-                test_rad, precision) << "to_rad_pos o to_motor_pos is not identity";
-
-    EXPECT_EQ(dxlState.to_motor_pos(dxlState.to_rad_pos(test_pos)), test_pos)
-              << "to_motor_pos o to_rad_pos is not identity";
-}
-
+// Stepper Tests
 TEST(CommonTestSuite, testStepper)
 {
     common::model::StepperMotorState stepperState = common::model::StepperMotorState(common::model::EBusProtocol::CAN, 1);
@@ -223,13 +214,15 @@ TEST(CommonTestSuite, testStepper)
     // check combinations is identity
     double test_rad = M_PI/3;
     int test_pos = 300;
+    double precision = 0.0001;
     EXPECT_NEAR(stepperState.to_rad_pos(stepperState.to_motor_pos(test_rad)), test_rad, precision)
-                    << "to_rad_pos o to_motor_pos is not identity for motor ";
+        << "to_rad_pos o to_motor_pos is not identity for motor ";
 
     EXPECT_EQ(stepperState.to_motor_pos(stepperState.to_rad_pos(test_pos)), test_pos)
                     << "to_motor_pos o to_rad_pos is not identity for motor ";
 }
 
+}
 // Run all the tests that were declared with TEST()
 int main(int argc, char **argv)
 {
@@ -237,3 +230,4 @@ int main(int argc, char **argv)
 
   return RUN_ALL_TESTS();
 }
+
