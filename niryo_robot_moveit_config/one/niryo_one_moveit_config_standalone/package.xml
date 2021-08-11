@@ -6,7 +6,7 @@
      An automatically generated package with all the configuration and launch files for using the niryo_one with the MoveIt! Motion Planning Framework
   </description>
   <author email="e.renard@niryo.com">Edouard Renard</author>
-  <maintainer email="e.renard@niryo.com">Edouard Renard</maintainer>
+  <maintainer email="v.pitre@niryo.com">Valentin Pitre</maintainer>
 
   <license>GPLv3</license>
 
@@ -16,17 +16,26 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
+  <run_depend>joint_state_publisher</run_depend>
+  <run_depend>joy</run_depend>
   <run_depend>moveit_ros_move_group</run_depend>
   <run_depend>moveit_kinematics</run_depend>
   <run_depend>moveit_planners_ompl</run_depend>
   <run_depend>moveit_ros_visualization</run_depend>
-  <run_depend>joint_state_publisher</run_depend>
+  <run_depend>moveit_ros_benchmarks</run_depend>
+  <run_depend>moveit_ros_warehouse</run_depend>
+  <run_depend>moveit_setup_assistant</run_depend>
   <run_depend>robot_state_publisher</run_depend>
+  <run_depend>rviz</run_depend>
   <run_depend>xacro</run_depend>
+
+
   <!-- This package is referenced in the warehouse launch files, but does not build out of the box at the moment. Commented the dependency until this works. -->
-  <!-- <run_depend>warehouse_ros_mongo</run_depend> -->
+  <run_depend>warehouse_ros_mongo</run_depend>
+
   <build_depend>niryo_robot_description</build_depend>
   <run_depend>niryo_robot_description</run_depend>
+
 
 
 </package>

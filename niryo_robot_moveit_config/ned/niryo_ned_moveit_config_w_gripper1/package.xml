@@ -6,7 +6,6 @@
      An automatically generated package with all the configuration and launch files for using Ned with the MoveIt! Motion Planning Framework
   </description>
   <author email="r.lux@niryo.com">Rémi lux</author>
-  <maintainer email="r.lux@niryo.com">Rémi lux</maintainer>
   <maintainer email="v.pitre@niryo.com">Valentin Pitre</maintainer>
 
   <license>BSD</license>
