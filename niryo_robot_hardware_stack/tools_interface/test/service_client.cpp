@@ -52,6 +52,7 @@ TEST(TESTSuite, openTool)
     EXPECT_TRUE(exists);
 
     tools_interface::OpenGripper srv;
+    srv.request.open_max_torque = 1023;
     srv.request.open_speed = 600;
     srv.request.open_position = 200;
     srv.request.open_hold_torque = 400;
@@ -102,7 +103,9 @@ TEST(TESTSuite, PullAirVacuumPump)
     EXPECT_TRUE(exists);
 
     tools_interface::PullAirVacuumPump srv;
+    srv.request.pull_air_velocity = 1023;
     srv.request.pull_air_position = 200;
+    srv.request.pull_air_max_torque = 500;
     srv.request.pull_air_hold_torque = 100;
     client.call(srv);
 
@@ -118,7 +121,9 @@ TEST(TESTSuite, PushAirVacuumPump)
     EXPECT_TRUE(exists);
 
     tools_interface::PushAirVacuumPump srv;
+    srv.request.push_air_velocity = 1023;
     srv.request.push_air_position = 100;
+    srv.request.push_air_max_torque = 64000;
     client.call(srv);
 
     int res = common::model::ToolState::VACUUM_PUMP_STATE_PUSHED;

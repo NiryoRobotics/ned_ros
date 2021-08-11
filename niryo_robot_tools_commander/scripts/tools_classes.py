@@ -99,6 +99,7 @@ class Gripper(Tool):
 
         self.open_position = specs["open_position"]
         self.open_hold_torque = specs["open_hold_torque"]
+        self.open_max_torque = specs["open_max_torque"]
         self.close_position = specs["close_position"]
         self.close_hold_torque = specs["close_hold_torque"]
         self.close_max_torque = specs["close_max_torque"]
@@ -147,7 +148,7 @@ class Gripper(Tool):
 
     def open_gripper(self, cmd):
         state = self.ros_command_interface.open_gripper(
-            self._id, self.open_position, cmd.gripper_open_speed, self.open_hold_torque)
+            self._id, self.open_position, cmd.gripper_open_speed, self.open_hold_torque, self.open_max_torque)
         return self.return_gripper_status(state)
 
     def close_gripper(self, cmd):
@@ -155,10 +156,11 @@ class Gripper(Tool):
             self._id, self.close_position, cmd.gripper_close_speed, self.close_hold_torque, self.close_max_torque)
         return self.return_gripper_status(state)
 
-    def update_params(self, open_position, open_hold_torque, close_position,
+    def update_params(self, open_position, open_hold_torque, open_max_torque, close_position,
                       close_hold_torque, close_max_torque):
         self.open_position = open_position
         self.open_hold_torque = open_hold_torque
+        self.open_max_torque = open_max_torque
         self.close_position = close_position
         self.close_hold_torque = close_hold_torque
         self.close_max_torque = close_max_torque
@@ -212,9 +214,13 @@ class Electromagnet(Tool):
 class VacuumPump(Tool):
     def __init__(self, tool_id, tool_name, tool_transformation, tools_state, ros_command_interface, specs):
         super(VacuumPump, self).__init__(tool_id, tool_name, tool_transformation, tools_state, ros_command_interface)
+        self.__pull_air_velocity = specs["pull_air_velocity"]
         self.__pull_air_position = specs["pull_air_position"]
+        self.__pull_air_max_torque = specs["pull_air_max_torque"]
         self.__pull_air_hold_torque = specs["pull_air_hold_torque"]
+        self.__push_air_velocity = specs["push_air_velocity"]
         self.__push_air_position = specs["push_air_position"]
+        self.__push_air_max_torque = specs["push_air_max_torque"]
 
         self._functions_dict = {
             "pull_air_vacuum_pump": self.pull_air_vacuum_pump,
@@ -252,15 +258,26 @@ class VacuumPump(Tool):
             return False, "Error : Unknown vacuum pump return" + str(state)
 
     def pull_air_vacuum_pump(self, _):
-        state = self.ros_command_interface.pull_air_vacuum_pump(self._id, self.__pull_air_position,
+        state = self.ros_command_interface.pull_air_vacuum_pump(self._id, self.__pull_air_velocity,
+                                                                self.__pull_air_position,
+                                                                self.__pull_air_max_torque,
                                                                 self.__pull_air_hold_torque)
         return self.return_vaccump_pump_state(state)
 
     def push_air_vacuum_pump(self, _):
-        state = self.ros_command_interface.push_air_vacuum_pump(self._id, self.__push_air_position)
+        state = self.ros_command_interface.push_air_vacuum_pump(self._id, self.__push_air_velocity,
+                                                                self.__push_air_position,
+                                                                self.__push_air_max_torque)
         return self.return_vaccump_pump_state(state)
 
-    def update_params(self, pull_air_position, pull_air_hold_torque, push_air_position):
+    def update_params(
+            self, pull_air_velocity, pull_air_position,
+            pull_air_max_torque, pull_air_hold_torque,
+            push_air_velocity, push_air_position, push_air_max_torque):
+        self.__pull_air_velocity = pull_air_velocity
         self.__pull_air_position = pull_air_position
+        self.__pull_air_max_torque = pull_air_max_torque
         self.__pull_air_hold_torque = pull_air_hold_torque
+        self.__push_air_velocity = push_air_velocity
         self.__push_air_position = push_air_position
+        self.__push_air_max_torque = push_air_max_torque

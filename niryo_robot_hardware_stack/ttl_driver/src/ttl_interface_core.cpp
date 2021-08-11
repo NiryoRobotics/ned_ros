@@ -669,6 +669,12 @@ int TtlInterfaceCore::setEndEffector(EMotorType type, uint8_t motor_id)
     {
         // add dynamixel as a new tool
         _ttl_manager->addMotor(type, motor_id, TtlManager::EType::TOOL);
+        // Enable torque
+        std::shared_ptr<AbstractTtlSingleMotorCmd> cmd_torque = std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_TORQUE,
+                                                            motor_id, std::initializer_list<uint32_t>{1});
+        _ttl_manager->writeSingleCommand(cmd_torque);
+        ros::Duration(0.01).sleep();
+
         result = niryo_robot_msgs::CommandStatus::SUCCESS;
     }
     else

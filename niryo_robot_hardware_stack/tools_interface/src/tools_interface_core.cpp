@@ -351,17 +351,16 @@ bool ToolsInterfaceCore::_callbackOpenGripper(tools_interface::OpenGripper::Requ
 
     if (_toolState.isValid() && req.id == tool_id)
     {
-        // cc for new motors, use profile velocity instead
-        // new dxl motors cannot use this command
         _ttl_interface->addEndEffectorCommandToQueue(std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_VELOCITY,
-                                                                                    tool_id, std::initializer_list<uint32_t>{req.open_speed}));
+                                                                                   tool_id, std::initializer_list<uint32_t>{req.open_speed}));
 
         _ttl_interface->addEndEffectorCommandToQueue(std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_POSITION,
                                                                                     tool_id,  std::initializer_list<uint32_t>{req.open_position}));
 
         // cmd.setParam(req.open_max_torque);  // cc adapt niryo studio and srv for that
+        // need to set max torque. It makes cmd changing speed take effect
         _ttl_interface->addEndEffectorCommandToQueue(std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_EFFORT,
-                                                                                    tool_id,  std::initializer_list<uint32_t>{1023}));
+                                                                                    tool_id,  std::initializer_list<uint32_t>{req.open_max_torque}));
 
         double dxl_speed = static_cast<double>(req.open_speed * _toolState.getStepsForOneSpeed());  // position . sec-1
         assert(dxl_speed != 0.00);
@@ -401,10 +400,8 @@ bool ToolsInterfaceCore::_callbackCloseGripper(tools_interface::CloseGripper::Re
     {
         uint32_t position_command = (req.close_position < 50) ? 0 : req.close_position - 50;
 
-        // cc for new motors, use profile velocity instead
-        // new dxl motors cannot use this command
         _ttl_interface->addEndEffectorCommandToQueue(std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_VELOCITY,
-                                                                                    tool_id, std::initializer_list<uint32_t>{req.close_speed}));
+                                                                                   tool_id, std::initializer_list<uint32_t>{req.close_speed}));
 
         _ttl_interface->addEndEffectorCommandToQueue(std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_POSITION,
                                                                                     tool_id, std::initializer_list<uint32_t>{position_command}));
@@ -453,10 +450,10 @@ bool ToolsInterfaceCore::_callbackPullAirVacuumPump(tools_interface::PullAirVacu
     if (_toolState.isValid() && req.id == _toolState.getId())
     {
         // to be put in tool state
-        uint32_t pull_air_velocity = 1023;
+        uint32_t pull_air_velocity = static_cast<uint32_t>(req.pull_air_velocity);
         uint32_t pull_air_position = static_cast<uint32_t>(req.pull_air_position);
         uint32_t pull_air_hold_torque = static_cast<uint32_t>(req.pull_air_hold_torque);
-
+        uint32_t pull_air_max_torque = static_cast<uint32_t>(req.pull_air_max_torque);
         // set vacuum pump pos, vel and torque
         if (_ttl_interface)
         {
@@ -467,7 +464,20 @@ bool ToolsInterfaceCore::_callbackPullAirVacuumPump(tools_interface::PullAirVacu
                                                                                         tool_id, std::initializer_list<uint32_t>{pull_air_position}));
 
             _ttl_interface->addEndEffectorCommandToQueue(std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_EFFORT,
-                                                                                        tool_id, std::initializer_list<uint32_t>{500}));
+                                                                                        tool_id, std::initializer_list<uint32_t>{pull_air_max_torque}));
+
+            // calculate close duration
+            // cc to be removed => acknoledge instead
+            double dxl_speed = static_cast<double>(req.pull_air_velocity * _toolState.getStepsForOneSpeed());  // position . sec-1
+            assert(dxl_speed != 0.0);
+
+            // position
+            double dxl_steps_to_do = std::abs(static_cast<double>(req.pull_air_position) -
+                                            _ttl_interface->getEndEffectorState(tool_id));
+            double seconds_to_wait =  dxl_steps_to_do /  dxl_speed + 0.5;  // sec
+            ROS_DEBUG("Waiting for %d seconds", static_cast<int>(seconds_to_wait));
+
+            ros::Duration(seconds_to_wait).sleep();
 
             // set hold torque
             _ttl_interface->addEndEffectorCommandToQueue(std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_EFFORT,
@@ -497,8 +507,9 @@ bool ToolsInterfaceCore:: _callbackPushAirVacuumPump(tools_interface::PushAirVac
     if (_toolState.isValid() && req.id == _toolState.getId())
     {
         // to be defined in the toolstate
-        uint32_t push_air_velocity = 1023;
+        uint32_t push_air_velocity = static_cast<uint32_t>(req.push_air_velocity);
         uint32_t push_air_position = static_cast<uint32_t>(req.push_air_position);
+        uint32_t push_air_max_torque = static_cast<uint32_t>(req.push_air_max_torque);
 
         // set vacuum pump pos, vel and torque
         if (_ttl_interface)
@@ -510,8 +521,19 @@ bool ToolsInterfaceCore:: _callbackPushAirVacuumPump(tools_interface::PushAirVac
                                                                                         tool_id, std::initializer_list<uint32_t>{push_air_position}));
 
             _ttl_interface->addEndEffectorCommandToQueue(std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_EFFORT,
-                                                                                        tool_id, std::initializer_list<uint32_t>{64000}));
-            // 64000 is two's complement of 1536
+                                                                                        tool_id, std::initializer_list<uint32_t>{push_air_max_torque}));
+
+            // cc to be removed => acknoledge instead
+            double dxl_speed = static_cast<double>(req.push_air_velocity * _toolState.getStepsForOneSpeed());  // position . sec-1
+            assert(dxl_speed != 0.0);
+
+            // position
+            double dxl_steps_to_do = std::abs(static_cast<double>(req.push_air_position) -
+                                            _ttl_interface->getEndEffectorState(tool_id));
+            double seconds_to_wait =  dxl_steps_to_do /  dxl_speed + 0.25;  // sec
+            ROS_DEBUG("Waiting for %d seconds", static_cast<int>(seconds_to_wait));
+
+            ros::Duration(seconds_to_wait).sleep();
 
             // set torque to 0
             _ttl_interface->addEndEffectorCommandToQueue(std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_EFFORT,
@@ -522,37 +544,7 @@ bool ToolsInterfaceCore:: _callbackPushAirVacuumPump(tools_interface::PushAirVac
 
     return (ToolState::VACUUM_PUMP_STATE_PUSHED == res.state);
 }
-/*
-std::vector<uint8_t> ToolsInterfaceCore::_findToolMotorListWithRetries(unsigned int max_retries)
-{
-    std::vector<uint8_t> motor_list;
-    while (max_retries > 0 && motor_list.empty())
-    {
-        motor_list = _dynamixel->scanTools();
-        max_retries--;
-        ros::Duration(0.05).sleep();
-    }
-    return motor_list;
-}
 
-bool ToolsInterfaceCore::_equipToolWithRetries(uint8_t tool_id, DynamixelDriver::DxlMotorType tool_type, unsigned max_retries)
-{
-    int result;
-    while (max_retries-- > 0)
-    {
-        result = _dynamixel->setEndEffector(tool_id, tool_type);
-        if (result == niryo_robot_msgs::CommandStatus::SUCCESS)
-        {
-            _tool.reset(new ToolState(tool_id, tool_type));
-            _dynamixel->update_leds();
-            break;
-        }
-        ros::Duration(0.05).sleep();
-    }
-    ROS_INFO("Tools Interface - Set End Effector return : %d", result);
-    return result == niryo_robot_msgs::CommandStatus::SUCCESS;
-}
-*/
 /**
  * @brief ToolsInterfaceCore::_publishToolConnection
  */
