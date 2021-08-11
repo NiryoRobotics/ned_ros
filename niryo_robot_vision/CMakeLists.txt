@@ -32,10 +32,16 @@ generate_messages(
 
 catkin_package(
   CATKIN_DEPENDS
+  message_runtime
   niryo_robot_msgs
   sensor_msgs
 )
 
 include_directories(
   ${catkin_INCLUDE_DIRS}
+)
+
+catkin_install_python(
+    PROGRAMS scripts/camera_publisher_and_services.py
+    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
