@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(tools_interface)
+project(end_effector_interface)
 message("\n## Reading ${PROJECT_NAME}/CMakeLists.txt...")
 
 
@@ -32,22 +32,6 @@ find_package(catkin REQUIRED
 ###############################################
 # Declare ROS messages, services and actions ##
 ###############################################
-
-add_service_files(
-  DIRECTORY
-    srv
-  FILES
-    CloseGripper.srv
-    OpenGripper.srv
-    PingDxlTool.srv
-    PullAirVacuumPump.srv
-    PushAirVacuumPump.srv
-)
-
-generate_messages(
-  DEPENDENCIES
-    std_msgs
-)
 
 ###################################
 ## catkin specific configuration ##
@@ -83,16 +67,11 @@ include_directories(
 
 ## Declare libs and execs
 add_library(${PROJECT_NAME}
-    src/tools_interface_core.cpp
+    src/end_effector_interface_core.cpp
 )
 
 add_executable(${PROJECT_NAME}_node
   src/${PROJECT_NAME}_node.cpp
-)
-
-## Add dependencies to exported targets, like ROS msgs or srvs
-add_dependencies(${PROJECT_NAME}
-    ${PROJECT_NAME}_generate_messages_cpp
 )
 
 add_dependencies(${PROJECT_NAME}_node
