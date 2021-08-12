@@ -17,6 +17,7 @@
 // Bring in my package's API, which is what I'm testing
 #include "common/model/dxl_motor_state.hpp"
 #include "common/model/stepper_motor_state.hpp"
+#include "common/model/single_motor_cmd.hpp"
 
 #include <string>
 #include <math.h>
@@ -258,6 +259,57 @@ TEST(CommonTestSuite, testDefaultInvalid)
 
     EXPECT_FALSE(dxlState.isValid());
     EXPECT_FALSE(stepperState.isValid());
+}
+
+TEST(CommonTestSuite, testCreationDxlCmd)
+{
+    // DxlSingleCmd valid param
+    common::model::DxlSingleCmd cmd;
+    ASSERT_FALSE(cmd.isValid());
+
+    common::model::DxlSingleCmd dxlCmd(common::model::EDxlCommandType::CMD_TYPE_POSITION, 1, std::initializer_list<uint32_t>{5});
+    ASSERT_TRUE(dxlCmd.isValid());
+    ASSERT_TRUE(dxlCmd.isDxlCmd());
+
+    ASSERT_TRUE(dxlCmd.getParam() == 5);
+    ASSERT_TRUE(dxlCmd.getId() == 1);
+
+    dxlCmd.reset();
+    ASSERT_FALSE(dxlCmd.isValid());
+    ASSERT_FALSE(dxlCmd.getId() == 1);
+    ASSERT_FALSE(dxlCmd.getParam() != 5);
+}
+
+TEST(CommonTestSuite, testCreationStepperTtlCmd)
+{
+    // DxlSingleCmd valid param
+    common::model::StepperTtlSingleCmd cmd(common::model::EStepperCommandType::CMD_TYPE_POSITION, 1, std::initializer_list<uint32_t>{5});
+    ASSERT_TRUE(cmd.isValid());
+    ASSERT_TRUE(cmd.isStepperCmd());
+
+    ASSERT_TRUE(cmd.getParam() == 5);
+    ASSERT_TRUE(cmd.getId() == 1);
+    
+    cmd.reset();
+    ASSERT_FALSE(cmd.isValid());
+    ASSERT_FALSE(cmd.getId() == 1);
+    ASSERT_FALSE(cmd.getParam() != 5);
+}
+
+TEST(CommonTestSuite, testCreationStepperCmd)
+{
+    // DxlSingleCmd valid param
+    common::model::StepperSingleCmd cmd(common::model::EStepperCommandType::CMD_TYPE_POSITION, 1, std::initializer_list<int32_t>{5});
+    ASSERT_TRUE(cmd.isValid());
+    ASSERT_TRUE(cmd.isStepperCmd());
+
+    ASSERT_TRUE(cmd.getParam() == 5);
+    ASSERT_TRUE(cmd.getId() == 1);
+    
+    cmd.reset();
+    ASSERT_FALSE(cmd.isValid());
+    ASSERT_FALSE(cmd.getId() == 1);
+    ASSERT_FALSE(cmd.getParam() != 5);
 }
 }
 
