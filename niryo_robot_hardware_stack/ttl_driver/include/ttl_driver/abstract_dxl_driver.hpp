@@ -18,7 +18,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #define ABSTRACT_DXL_DRIVER_HPP
 
 // ttl
-#include "abstract_ttl_driver.hpp"
+#include "abstract_motor_driver.hpp"
 
 //std
 #include <memory>
@@ -30,21 +30,23 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 namespace ttl_driver
 {
 
-class AbstractDxlDriver : public AbstractTtlDriver
+class AbstractDxlDriver : public AbstractMotorDriver
 {
     public:
         AbstractDxlDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
                           std::shared_ptr<dynamixel::PacketHandler> packetHandler);
         virtual ~AbstractDxlDriver() override;
 
-    // AbstractTtlDriver interface
+
     public:
+        // AbstractMotorDriver interface
+        virtual std::string str() const override;
+
         virtual int writeSingleCmd(std::shared_ptr<common::model::AbstractTtlSingleMotorCmd> &cmd) override;
         virtual int writeSyncCmd(int type, const std::vector<uint8_t> &ids, const std::vector<uint32_t> &params) override;
 
-        // specific DXL commands
     public:
-        virtual std::string interpreteErrorState(uint32_t hw_state) override = 0;
+        // specific DXL commands
 
         // ram write
         virtual int setLed(uint8_t id, uint32_t led_value ) = 0;
@@ -67,9 +69,8 @@ class AbstractDxlDriver : public AbstractTtlDriver
 
         virtual int readVelocity(uint8_t id, uint32_t& present_velocity) = 0;
         virtual int syncReadVelocity(const std::vector<uint8_t>& id_list, std::vector<uint32_t>& velocity_list) = 0;
-
 };
 
-} // DynamixelDriver
+} // ttl_driver
 
 #endif // ABSTRACT_DXL_DRIVER_HPP

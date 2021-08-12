@@ -125,6 +125,6 @@ struct XL320Reg
     static constexpr std::uint8_t ADDR_PUNCH               = 51;
     static constexpr std::uint8_t SIZE_PUNCH               = 2;
 };
-} // DynamixelDriver
+} // ttl_driver
 
 #endif // XL320_REG_HPP

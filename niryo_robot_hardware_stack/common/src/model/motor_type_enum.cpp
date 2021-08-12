@@ -51,12 +51,13 @@ MotorTypeEnum::initialize()
 {
     std::map<EMotorType, std::string> m;
 
-    m[EMotorType::STEPPER]    = "stepper";
-    m[EMotorType::XL430]    = "xl430";
-    m[EMotorType::XL320]    = "xl320";
-    m[EMotorType::XL330]    = "xl330";
-    m[EMotorType::XC430]    = "xc430";
-    m[EMotorType::UNKNOWN]  = "unknown";
+    m[EMotorType::STEPPER]          = "Niryo Stepper";
+    m[EMotorType::XL430]            = "DXL XL430";
+    m[EMotorType::XL320]            = "DXL XL-320";
+    m[EMotorType::XL330]            = "DXL XL330";
+    m[EMotorType::XC430]            = "DXL XC430";
+    m[EMotorType::END_EFFECTOR]     = "End Effector";
+    m[EMotorType::UNKNOWN]          = "DXL UNKOWN";
 
     return m;
 }

@@ -15,14 +15,8 @@
 */
 
 #include "ttl_driver/ttl_manager.hpp"
-#include "common/model/motor_type_enum.hpp"
-#include "common/model/dxl_command_type_enum.hpp"
-#include "ttl_driver/dxl_driver.hpp"
-#include "ttl_driver/stepper_driver.hpp"
-#include "common/model/tool_state.hpp"
-#include "common/model/stepper_motor_state.hpp"
-#include "common/model/conveyor_state.hpp"
 
+// cpp
 #include <utility>
 #include <vector>
 #include <set>
@@ -30,6 +24,18 @@
 #include <algorithm>
 #include <sstream>
 #include <unordered_map>
+
+// niryo
+#include "common/model/motor_type_enum.hpp"
+#include "common/model/dxl_command_type_enum.hpp"
+#include "common/model/tool_state.hpp"
+#include "common/model/stepper_motor_state.hpp"
+#include "common/model/conveyor_state.hpp"
+
+#include "ttl_driver/dxl_driver.hpp"
+#include "ttl_driver/stepper_driver.hpp"
+
+#include "ttl_driver/stepper_reg.hpp"
 
 using ::std::shared_ptr;
 using ::std::vector;
@@ -518,7 +524,7 @@ void TtlManager::readPositionStatus()
         for (auto const& it : _driver_map)
         {
             EMotorType type = it.first;
-            shared_ptr<AbstractTtlDriver> driver = it.second;
+            shared_ptr<AbstractMotorDriver> driver = it.second;
 
             if (driver && _ids_map.count(type))
             {
@@ -593,7 +599,7 @@ void TtlManager::readHwStatus()
         for (auto const& it : _driver_map)
         {
             EMotorType type = it.first;
-            shared_ptr<AbstractTtlDriver> driver = it.second;
+            shared_ptr<AbstractMotorDriver> driver = it.second;
 
             if (driver && _ids_map.count(type))
             {
@@ -663,15 +669,15 @@ void TtlManager::readHwStatus()
                             bool state;
                             uint32_t speed;
                             int8_t direction;
-                            if (COMM_SUCCESS != stepper_driver->getConveyorSpeed(id, speed))
+                            if (COMM_SUCCESS != stepper_driver->readConveyorSpeed(id, speed))
                             {
                                 hw_errors_increment++;
                             }
-                            if (COMM_SUCCESS != stepper_driver->getConveyorDirection(id, direction))
+                            if (COMM_SUCCESS != stepper_driver->readConveyorDirection(id, direction))
                             {
                                 hw_errors_increment++;
                             }
-                            if (COMM_SUCCESS != stepper_driver->getConveyorState(id, state))
+                            if (COMM_SUCCESS != stepper_driver->readConveyorState(id, state))
                             {
                                 hw_errors_increment++;
                             }
@@ -828,7 +834,7 @@ int32_t TtlManager::getCalibrationResult(uint8_t motor_id) const
     if (!_state_map.count(motor_id) && _state_map.at(motor_id))
         throw std::out_of_range("TtlManager::getMotorsState: Unknown motor id");
 
-    return std::dynamic_pointer_cast<common::model::StepperMotorState>(_state_map.at(motor_id))->getCalibrationValue();
+    return std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(motor_id))->getCalibrationValue();
 }
 
 /**
@@ -852,7 +858,7 @@ int TtlManager::setLeds(int led)
 {
     int ret = niryo_robot_msgs::CommandStatus::TTL_WRITE_ERROR;
     _led_state = led;
-    // retrieve type from register
+    // TODO(CC) retrieve type from register
     EMotorType mType = common::model::EMotorType::XL320;
 
     // get list of motors of the given type
@@ -861,7 +867,7 @@ int TtlManager::setLeds(int led)
     {
         id_list = _ids_map.at(mType);
 
-        auto driver = std::dynamic_pointer_cast<DxlDriver<XL320Reg> >(_driver_map.at(mType));
+        auto driver = std::dynamic_pointer_cast<AbstractDxlDriver>(_driver_map.at(mType));
 
         // sync write led state
         vector<uint32_t> command_led_id(id_list.size(), static_cast<uint32_t>(led));
@@ -905,9 +911,9 @@ int TtlManager::sendCustomCommand(EMotorType motor_type, uint8_t id,
     if (_driver_map.count(motor_type) && _driver_map.at(motor_type))
     {
         result = _driver_map.at(motor_type)->write(static_cast<uint8_t>(reg_address),
-                                                    static_cast<uint8_t>(byte_number),
-                                                    id,
-                                                    static_cast<uint32_t>(value));
+                                                   static_cast<uint8_t>(byte_number),
+                                                   id,
+                                                   static_cast<uint32_t>(value));
         if (result != COMM_SUCCESS)
         {
             ROS_WARN("TtlManager::sendCustomCommand - Failed to write custom command: %d", result);
@@ -946,9 +952,9 @@ int TtlManager::readCustomCommand(EMotorType motor_type, uint8_t id,
     {
         uint32_t data = 0;
         result = _driver_map.at(motor_type)->read(static_cast<uint8_t>(reg_address),
-                                                   static_cast<uint8_t>(byte_number),
-                                                   id,
-                                                   data);
+                                                  static_cast<uint8_t>(byte_number),
+                                                  id,
+                                                  data);
         value = static_cast<int>(data);
 
         if (result != COMM_SUCCESS)

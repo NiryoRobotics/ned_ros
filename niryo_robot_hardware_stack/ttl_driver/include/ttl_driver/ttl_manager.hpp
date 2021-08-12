@@ -39,7 +39,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "common/model/i_bus_manager.hpp"
 
 // drivers
-#include "ttl_driver/abstract_ttl_driver.hpp"
+#include "ttl_driver/abstract_motor_driver.hpp"
 #include "common/model/dxl_motor_state.hpp"
 #include "common/model/synchronize_motor_cmd.hpp"
 #include "common/model/single_motor_cmd.hpp"
@@ -152,7 +152,7 @@ class TtlManager : public common::model::IBusManager
 
         std::map<uint8_t, std::shared_ptr<common::model::JointState> > _state_map;
         std::map<common::model::EMotorType, std::vector<uint8_t> > _ids_map;
-        std::map<common::model::EMotorType, std::shared_ptr<AbstractTtlDriver> > _driver_map;
+        std::map<common::model::EMotorType, std::shared_ptr<AbstractMotorDriver> > _driver_map;
 
         double _calibration_timeout{30.0};
         common::model::EStepperCalibrationStatus _calibration_status;
@@ -254,6 +254,6 @@ bool TtlManager::hasMotors()
     return _state_map.size() > 0;
 }
 
-}
+} // ttl_driver
 
 #endif // TTLDRIVER_HPP

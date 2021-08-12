@@ -18,6 +18,7 @@
 #include "common/model/stepper_command_type_enum.hpp"
 
 #include <cassert>
+#include <string>
 #include <vector>
 
 using ::common::model::EStepperCommandType;
@@ -30,7 +31,7 @@ namespace ttl_driver
 */
 AbstractStepperDriver::AbstractStepperDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
                                              std::shared_ptr<dynamixel::PacketHandler> packetHandler) :
-    AbstractTtlDriver(portHandler, packetHandler)
+    AbstractMotorDriver(portHandler, packetHandler)
 {}
 
 /**
@@ -38,6 +39,11 @@ AbstractStepperDriver::AbstractStepperDriver(std::shared_ptr<dynamixel::PortHand
 */
 AbstractStepperDriver::~AbstractStepperDriver()
 {}
+
+std::string AbstractStepperDriver::str() const
+{
+    return "Stepper Driver (" + AbstractMotorDriver::str() + ")";
+}
 
 /**
  * @brief AbstractStepperDriver::writeSingleCmd

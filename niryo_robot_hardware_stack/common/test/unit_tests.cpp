@@ -18,6 +18,7 @@
 #include "common/model/dxl_motor_state.hpp"
 #include "common/model/stepper_motor_state.hpp"
 
+#include <tuple>
 #include <string>
 #include <math.h>
 
@@ -31,7 +32,7 @@ using ::common::model::EMotorType;
 using ::common::model::MotorTypeEnum;
 
 
-// For common features 
+// For common features
 // EMotorType : type of the dxl motor
 // double : offset
 
@@ -45,8 +46,8 @@ class DXLCommonTest : public testing::TestWithParam<std::tuple<EMotorType, doubl
                                                     common::model::EBusProtocol::TTL, 1);
             dxlState.setOffsetPosition(std::get<1>(GetParam()));
 
-            //define precision according to smallest motor step in radian
-            //we divide by two because we are looking for the closest integer
+            // define precision according to smallest motor step in radian
+            // we divide by two because we are looking for the closest integer
             ASSERT_NE(dxlState.getTotalRangePosition(), 0);
             precision = (dxlState.getTotalAngle() / dxlState.getTotalRangePosition())/RADIAN_TO_DEGREE;
             precision /= 2;
@@ -69,8 +70,8 @@ class DXLIdentityRadTest : public testing::TestWithParam<std::tuple<EMotorType, 
                                                 common::model::EBusProtocol::TTL, 1);
         dxlState.setOffsetPosition(std::get<1>(GetParam()));
 
-        //define precision according to smallest motor step in radian
-        //we divide by two because we are looking for the closest integer
+        // define precision according to smallest motor step in radian
+        // we divide by two because we are looking for the closest integer
         ASSERT_NE(dxlState.getTotalRangePosition(), 0);
         precision = (dxlState.getTotalAngle() / dxlState.getTotalRangePosition())/RADIAN_TO_DEGREE;
         precision /= 2;
@@ -91,13 +92,13 @@ class DXLIdentityMotorTest : public testing::TestWithParam<std::tuple<EMotorType
                                                 common::model::EBusProtocol::TTL, 1);
         dxlState.setOffsetPosition(std::get<1>(GetParam()));
 
-        //define precision according to smallest motor step in radian
-        //we divide by two because we are looking for the closest integer
+        // define precision according to smallest motor step in radian
+        // we divide by two because we are looking for the closest integer
         ASSERT_NE(dxlState.getTotalRangePosition(), 0);
         precision = (dxlState.getTotalAngle() / dxlState.getTotalRangePosition())/RADIAN_TO_DEGREE;
         precision /= 2;
     }
-    
+
     common::model::DxlMotorState dxlState;
     double precision;
 };
@@ -141,7 +142,7 @@ TEST_P(DXLIdentityRadTest, identityFromRad) {
 TEST_P(DXLIdentityMotorTest, identityFromMotorPos) {
     // check combinations is identity
     int test_pos = std::get<2>(GetParam());
-    
+
     EXPECT_EQ(dxlState.to_motor_pos(dxlState.to_rad_pos(test_pos)), test_pos)
               << "to_motor_pos o to_rad_pos is not identity";
 }
@@ -174,7 +175,7 @@ INSTANTIATE_TEST_CASE_P(IdentityMotorTests,
                                             EMotorType::XC430),
                             testing::Range(-2.0, 2.0, 0.6),
                             testing::Range(0, 4000, 600)));
-                            
+
 // Global Tests
 TEST(CommonTestSuite, testDefaultInvalid)
 {
@@ -222,7 +223,7 @@ TEST(CommonTestSuite, testStepper)
                     << "to_motor_pos o to_rad_pos is not identity for motor ";
 }
 
-}
+}  // namespace
 // Run all the tests that were declared with TEST()
 int main(int argc, char **argv)
 {

@@ -167,6 +167,7 @@ struct XL430Reg
     static constexpr std::uint8_t ADDR_PRESENT_TEMPERATURE      = 146;
     static constexpr std::uint8_t SIZE_PRESENT_TEMPERATURE      = 1;
 };
-} // DynamixelDriver
+
+} // ttl_driver
 
 #endif // XL430_REG_HPP

@@ -49,7 +49,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "common/model/dxl_motor_state.hpp"
 #include "common/model/motor_type_enum.hpp"
 
-#include "ttl_driver/abstract_ttl_driver.hpp"
+#include "ttl_driver/abstract_motor_driver.hpp"
 
 namespace ttl_driver
 {
@@ -215,6 +215,6 @@ std::vector<uint8_t> TtlInterfaceCore::getRemovedMotorList() const
     return _ttl_manager->getRemovedMotorList();
 }
 
-} // TtlManager
+} // ttl_driver
 
 #endif // TTL_INTERFACE_CORE_HPP

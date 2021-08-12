@@ -484,27 +484,7 @@ void HardwareInterface::_publishHardwareStatus()
             hw_errors.emplace_back(static_cast<int32_t>(hw_status.error));
             hw_errors_msg.emplace_back(hw_status.error_msg);
 
-            switch (hw_status.motor_identity.motor_type)
-            {
-                case static_cast<uint8_t>(common::model::EMotorType::XL320):
-                    motor_types.emplace_back("DXL XL-320");
-                break;
-
-                case static_cast<uint8_t>(common::model::EMotorType::XL330):
-                    motor_types.emplace_back("DXL XL-330");
-                break;
-
-                case static_cast<uint8_t>(common::model::EMotorType::XL430):
-                    motor_types.emplace_back("DXL XL-430");
-                break;
-
-                case static_cast<uint8_t>(common::model::EMotorType::XC430):
-                    motor_types.emplace_back("DXL XC-430");
-                break;
-                default:
-                    motor_types.emplace_back("DXL UNKOWN");
-                break;
-            }
+            motor_types.emplace_back(common::model::MotorTypeEnum(static_cast<common::model::EMotorType>(hw_status.motor_identity.motor_type)).toString());
 
             std::string joint_name = "";
             if (_joints_interface)

@@ -119,12 +119,13 @@ int AbstractTtlDriver::reboot(uint8_t id)
  * @brief AbstractTtlDriver::str : build a string describing the object. For debug purpose only
  * @return
  */
-string AbstractTtlDriver::str() const
+std::string AbstractTtlDriver::str() const
 {
     ostringstream ss;
 
-    ss << "packet handler " << (_dxlPacketHandler ? "OK" : "Not Ok") << "\n";
-    ss << "port handler " << (_dxlPortHandler ? "OK" : "Not Ok") << "\n";
+    ss << "TTL Driver : "
+       << "packet handler " << (_dxlPacketHandler ? "OK" : "Not Ok") << ","
+       << "port handler " << (_dxlPortHandler ? "OK" : "Not Ok");
 
     return ss.str();
 }

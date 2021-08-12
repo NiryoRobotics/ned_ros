@@ -40,6 +40,7 @@ enum class EMotorType {
                         XL320=3,
                         XL330=4,
                         XC430=5,
+                        END_EFFECTOR=10,
                         UNKNOWN=100
                       };
 
