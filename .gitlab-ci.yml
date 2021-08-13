@@ -8,9 +8,9 @@ variables:
   # OVH's folder where the documentation will be stored
   # TARGET_FOLDER_OVH: ~/docs/dev/
 
-  TARGET_FOLDER_OVH: ~/docs/test-cicd/dev/
+  TARGET_FOLDER_OVH: ~/docs/dev/
 
-  BASE_FOLDER_DOC_URL: https://docs.niryo.com/test-cicd/dev
+  BASE_FOLDER_DOC_URL: https://docs.niryo.com/dev
 
   ##############################################################################
 
