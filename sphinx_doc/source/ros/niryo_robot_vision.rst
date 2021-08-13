@@ -1,4 +1,4 @@
-Niryo robot vision package
+Niryo_robot_vision
 ======================================
 
 This package is the one dealing with all vision related stuff.
@@ -94,7 +94,7 @@ All these services are available as soon as the node is started.
 
 Dependencies - Vision
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-* :ref:`niryo_robot_msgs <source/ros/niryo_robot_msgs:Niryo Robot Messages Package>`
+* :doc:`niryo_robot_msgs`
 * :msgs_index:`sensor_msgs`
 
 

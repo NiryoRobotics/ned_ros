@@ -1,4 +1,4 @@
-Niryo robot Gazebo package
+Niryo_robot_gazebo
 ========================================
 
 

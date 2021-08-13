@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-12 08:22+0000\n"
+"POT-Creation-Date: 2021-08-13 09:48+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,7 +21,7 @@ msgstr ""
 "Generated-By: Babel 2.9.1\n"
 
 #: ../../source/ros/niryo_robot_programs_manager.rst:2
-msgid "Niryo robot programs manager package"
+msgid "Niryo_robot_programs_manager"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_programs_manager.rst:4
@@ -212,15 +212,11 @@ msgid "Dependencies - Programs manager"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_programs_manager.rst:78
-msgid ""
-":ref:`niryo_robot_commander <source/ros/niryo_robot_commander:Niryo Robot"
-" Commander Package>`"
+msgid ":doc:`niryo_robot_commander`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_programs_manager.rst:79
-msgid ""
-":ref:`niryo_robot_msgs <source/ros/niryo_robot_msgs:Niryo Robot Messages "
-"Package>`"
+msgid ":doc:`niryo_robot_msgs`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_programs_manager.rst:80
@@ -336,5 +332,31 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid ":ref:`niryo_robot_msgs <Niryo Robot Messages Package>`"
+#~ msgstr ""
+
+#~ msgid "Niryo robot programs manager package"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`niryo_robot_commander "
+#~ "<source/ros/niryo_robot_commander:Niryo Robot Commander"
+#~ " Package>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`niryo_robot_msgs <source/ros/niryo_robot_msgs:Niryo "
+#~ "Robot Messages Package>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`niryo_robot_commander <niryo_robot_commander>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`niryo_robot_msgs <niryo_robot_msgs>`"
+#~ msgstr ""
+
+#~ msgid ":doc:`ros/niryo_robot_commander`"
+#~ msgstr ""
+
+#~ msgid ":doc:`ros/niryo_robot_msgs`"
 #~ msgstr ""
 

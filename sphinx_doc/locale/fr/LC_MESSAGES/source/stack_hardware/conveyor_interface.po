@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-12 08:22+0000\n"
+"POT-Creation-Date: 2021-08-12 16:24+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,8 +21,8 @@ msgstr ""
 "Generated-By: Babel 2.9.1\n"
 
 #: ../../source/stack_hardware/conveyor_interface.rst:2
-msgid "Niryo robot Conveyor Belt interface package"
-msgstr "Package de l'interface Convoyeur du robot Niryo"
+msgid "Conveyor_interface"
+msgstr ""
 
 #: ../../source/stack_hardware/conveyor_interface.rst:4
 msgid "This package handles Niryo's Conveyor Belt."
@@ -38,7 +38,7 @@ msgstr "Noeud de l'interface Convoyeur"
 
 #: ../../source/stack_hardware/conveyor_interface.rst:12
 msgid "The ROS Node is made to:"
-msgstr "Le noeud ROS est conçu pour :"
+msgstr "Le nœud ROS est conçu pour :"
 
 #: ../../source/stack_hardware/conveyor_interface.rst:10
 msgid "Initialize Conveyor Belt motor parameters."
@@ -160,9 +160,7 @@ msgid ":msgs_index:`std_msgs`"
 msgstr ""
 
 #: ../../source/stack_hardware/conveyor_interface.rst:70
-msgid ""
-":ref:`stepper_driver <source/stack_hardware/stepper_driver:Niryo Robot "
-"Stepper Driver Package>`"
+msgid ":doc:`stepper_driver <stepper_driver>`"
 msgstr ""
 
 #: ../../source/stack_hardware/conveyor_interface.rst:73
@@ -255,5 +253,19 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid ":ref:`stepper_driver <Niryo Robot Stepper Driver Package>`"
+#~ msgstr ""
+
+#~ msgid "Niryo robot Conveyor Belt interface package"
+#~ msgstr "Package de l'interface Convoyeur du robot Niryo"
+
+#~ msgid ""
+#~ ":ref:`stepper_driver <source/stack_hardware/stepper_driver:Niryo"
+#~ " Robot Stepper Driver Package>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`stepper_driver <source/stack_hardware/stepper_driver>`"
+#~ msgstr ""
+
+#~ msgid ":doc:`stepper_driver <source/stack_hardware/stepper_driver>`"
 #~ msgstr ""
 

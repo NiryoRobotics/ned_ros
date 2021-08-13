@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-12 08:22+0000\n"
+"POT-Creation-Date: 2021-08-13 09:50+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,8 +21,8 @@ msgstr ""
 "Generated-By: Babel 2.9.1\n"
 
 #: ../../source/ros/niryo_robot_vision.rst:2
-msgid "Niryo robot vision package"
-msgstr "Package de vision du robot Niryo"
+msgid "Niryo_robot_vision"
+msgstr ""
 
 #: ../../source/ros/niryo_robot_vision.rst:4
 msgid "This package is the one dealing with all vision related stuff."
@@ -38,7 +38,7 @@ msgid ""
 "object detection... The node is working exactly the same way if you chose"
 " to use it on simulation or reality."
 msgstr ""
-"Le noeud ROS est composé de plusieurs services pour gérer le streaming "
+"Le nœud ROS est composé de plusieurs services pour gérer le streaming "
 "vidéo, la détection d'objets... Le nœud fonctionne exactement de la même "
 "manière si vous avez choisi de l'utiliser sur la simulation ou la "
 "réalité."
@@ -58,13 +58,13 @@ msgstr ""
 #: ../../source/ros/niryo_robot_vision.rst:19
 msgid "For \"standard\" Node: *niryo_robot_vision/config/video_server_setup.yaml*"
 msgstr ""
-"Pour un noeud \"standard\" : "
+"Pour un nœud \"standard\" : "
 "*niryo_robot_vision/config/video_server_setup.yaml*"
 
 #: ../../source/ros/niryo_robot_vision.rst:20
 msgid "For local Node: *niryo_robot_vision/config/video_server_setup_local.yaml*"
 msgstr ""
-"Pour un noeud local : "
+"Pour un nœud local : "
 "*niryo_robot_vision/config/video_server_setup_local.yaml*"
 
 #: ../../source/ros/niryo_robot_vision.rst:22
@@ -245,9 +245,7 @@ msgid "Dependencies - Vision"
 msgstr "Dépendances - Vision"
 
 #: ../../source/ros/niryo_robot_vision.rst:97
-msgid ""
-":ref:`niryo_robot_msgs <source/ros/niryo_robot_msgs:Niryo Robot Messages "
-"Package>`"
+msgid ":doc:`niryo_robot_msgs`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_vision.rst:98
@@ -332,5 +330,10 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid ":ref:`niryo_robot_msgs <Niryo Robot Messages Package>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`niryo_robot_msgs <source/ros/niryo_robot_msgs:Niryo "
+#~ "Robot Messages Package>`"
 #~ msgstr ""
 

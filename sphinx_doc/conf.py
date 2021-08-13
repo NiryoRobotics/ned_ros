@@ -16,9 +16,9 @@ copyright = shared_conf.copyright
 author = shared_conf.author
 
 # The short X.Y version
-version = u'v3.1'
+version = u'v2.0'
 # The full version, including alpha/beta/rc tags
-release = u'v3.1.2'
+release = u'v2.0.0'
 
 # -- General configuration ---------------------------------------------------
 
@@ -63,7 +63,10 @@ translation_object["en"]["PROJECT_NAME"] = "Ned ROS documentation"
 
 html_context = {}
 
-html_context["BASE_FOLDER_URL"] = "https://docs.niryo.com/dev/ros"
+# object_given_to_html["BASE_FOLDER_URL"] = "https://docs.niryo.com/dev/ros"
+
+# Only for testing purpose
+html_context["BASE_FOLDER_URL"] = "https://docs.niryo.com/test-cicd/dev/ros"
 
 
 html_context["TRANSLATION"] = translation_object[language if language is not None else 'en']

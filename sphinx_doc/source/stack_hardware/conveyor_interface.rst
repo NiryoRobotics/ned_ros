@@ -1,4 +1,4 @@
-Niryo robot Conveyor Belt interface package
+Conveyor_interface
 ===========================================
 
 | This package handles Niryo's Conveyor Belt.
@@ -67,7 +67,7 @@ Dependencies - Conveyor Belt interface
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 - :msgs_index:`std_msgs`
-- :ref:`stepper_driver <source/stack_hardware/stepper_driver:Niryo Robot Stepper Driver Package>`
+- :doc:`stepper_driver <stepper_driver>`
 
 Services & messages files - Conveyor Belt interface
 ------------------------------------------------------

@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-12 08:22+0000\n"
+"POT-Creation-Date: 2021-08-13 09:50+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,7 +21,7 @@ msgstr ""
 "Generated-By: Babel 2.9.1\n"
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:2
-msgid "Niryo robot poses handlers package"
+msgid "Niryo_robot_poses_handlers"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:4
@@ -328,9 +328,7 @@ msgid ":msgs_index:`moveit_msgs`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:127
-msgid ""
-":ref:`niryo_robot_msgs <source/ros/niryo_robot_msgs:Niryo Robot Messages "
-"Package>`"
+msgid ":doc:`niryo_robot_msgs`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:128
@@ -482,5 +480,19 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid ":ref:`niryo_robot_msgs <Niryo Robot Messages Package>`"
+#~ msgstr ""
+
+#~ msgid "Niryo robot poses handlers package"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`niryo_robot_msgs <source/ros/niryo_robot_msgs:Niryo "
+#~ "Robot Messages Package>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`niryo_robot_msgs <niryo_robot_msgs>`"
+#~ msgstr ""
+
+#~ msgid ":doc:`ros/niryo_robot_msgs`"
 #~ msgstr ""
 

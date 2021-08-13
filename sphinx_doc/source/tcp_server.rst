@@ -1,4 +1,4 @@
-Use Ned TCP server
+Use Ned's TCP server
 ========================================
 
 Ned is permanently running a TCP Server to acquire requests.

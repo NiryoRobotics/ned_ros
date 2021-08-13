@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-12 08:22+0000\n"
+"POT-Creation-Date: 2021-08-13 09:42+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,8 +21,8 @@ msgstr ""
 "Generated-By: Babel 2.9.1\n"
 
 #: ../../source/ros/niryo_robot_user_interface.rst:2
-msgid "Niryo robot user interface package"
-msgstr "Package d'interface utilisateur du robot Niryo"
+msgid "Niryo_robot_user_interface"
+msgstr ""
 
 #: ../../source/ros/niryo_robot_user_interface.rst:4
 msgid ""
@@ -37,7 +37,7 @@ msgid "You can find their documentations here:"
 msgstr "Vous pouvez trouver leurs documentations ici :"
 
 #: ../../source/ros/niryo_robot_user_interface.rst:8
-msgid ":ref:`TCP Server<source/tcp_server:Use Ned TCP server>`"
+msgid ":ref:`TCP Server<source/tcp_server:Use Ned's TCP server>`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_user_interface.rst:9
@@ -51,5 +51,8 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid ":ref:`Matlab Manager<Matlab Manager>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`TCP Server<source/tcp_server:Use Ned TCP server>`"
 #~ msgstr ""
 

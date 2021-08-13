@@ -1,4 +1,4 @@
-Niryo robot dynamixel driver package
+Dynamixel_driver
 =====================================
 
 | This package handles dynamixel motors communication through dynamixel sdk.
@@ -66,7 +66,7 @@ Dependencies - Dynamixel Driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 - :wiki_ros:`dynamixel_sdk` 
-- :ref:`niryo_robot_msgs <source/ros/niryo_robot_msgs:Niryo Robot Messages Package>`
+- :doc:`../ros/niryo_robot_msgs`
 
 Services & Messages files - Dynamixel Driver
 --------------------------------------------------

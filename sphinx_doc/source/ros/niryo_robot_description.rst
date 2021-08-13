@@ -1,4 +1,4 @@
-Niryo robot description package
+Niryo_robot_description
 ========================================
 
 This package contains URDF files and meshes (collada + stl) for Ned.

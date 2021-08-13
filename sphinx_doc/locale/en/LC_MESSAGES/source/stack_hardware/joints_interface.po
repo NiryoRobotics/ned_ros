@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-12 08:22+0000\n"
+"POT-Creation-Date: 2021-08-13 09:53+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,7 +21,7 @@ msgstr ""
 "Generated-By: Babel 2.9.1\n"
 
 #: ../../source/stack_hardware/joints_interface.rst:2
-msgid "Niryo robot joints interface package"
+msgid "Joints_interface"
 msgstr ""
 
 #: ../../source/stack_hardware/joints_interface.rst:4
@@ -212,21 +212,15 @@ msgid ":wiki_ros:`controller_manager <controller_manager>`"
 msgstr ""
 
 #: ../../source/stack_hardware/joints_interface.rst:83
-msgid ""
-":ref:`dynamixel_driver <source/stack_hardware/dynamixel_driver:Niryo "
-"Robot Dynamixel Driver Package>`"
+msgid ":doc:`dynamixel_driver`"
 msgstr ""
 
 #: ../../source/stack_hardware/joints_interface.rst:84
-msgid ""
-":ref:`stepper_driver <source/stack_hardware/stepper_driver:Niryo Robot "
-"Stepper Driver Package>`"
+msgid ":doc:`stepper_driver`"
 msgstr ""
 
 #: ../../source/stack_hardware/joints_interface.rst:85
-msgid ""
-":ref:`niryo_robot_msgs <source/ros/niryo_robot_msgs:Niryo Robot Messages "
-"Package>`"
+msgid ":doc:`../ros/niryo_robot_msgs`"
 msgstr ""
 
 #~ msgid "Niryo Robot Joints Interface Package"
@@ -295,5 +289,24 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid ":ref:`niryo_robot_msgs <Niryo Robot Messages Package>`"
+#~ msgstr ""
+
+#~ msgid "Niryo robot joints interface package"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`dynamixel_driver "
+#~ "<source/stack_hardware/dynamixel_driver:Niryo Robot "
+#~ "Dynamixel Driver Package>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`stepper_driver <source/stack_hardware/stepper_driver:Niryo"
+#~ " Robot Stepper Driver Package>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`niryo_robot_msgs <source/ros/niryo_robot_msgs:Niryo "
+#~ "Robot Messages Package>`"
 #~ msgstr ""
 
