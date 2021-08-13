@@ -118,3 +118,22 @@ extlinks = {
         'https://docs.niryo.com/product/ned/source/software/niryo_studio.html#connecting-simulation-to-niryo-studio/%s',
         None),
 }
+
+TRANSLATE_CAPTIONS_JS="""
+window.onload = function ()
+{
+    const matches = document.querySelectorAll(".wy-menu-vertical p span");
+    // Due to sphinx version problem (sphinxcontribros)
+    // Change dynamically titles in left menu
+    if (document.documentElement.lang == 'fr') {
+        matches[0].innerText = "Introduction"
+        matches[1].innerText = "Packages"
+        matches[2].innerText = "Pour aller plus loin..."
+    }
+}
+"""
+# Add custom JS that translate captions in left menu bar
+def setup(app):
+    # 3. Tell Sphinx to add your JS code. Sphinx will insert
+    #    the `body` into the html inside a <script> tag:
+    app.add_js_file(None, body=TRANSLATE_CAPTIONS_JS)

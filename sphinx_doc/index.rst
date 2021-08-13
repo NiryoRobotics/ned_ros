@@ -102,16 +102,3 @@ Learn more on this :doc:`section <source/more>`.
    source/tcp_server
    source/matlab_manager
    source/more
-
-.. raw:: html
-
-   <script>const matches = document.querySelectorAll(".wy-menu-vertical p span");
-   // Due to sphinx version problem (sphinxcontribros)
-   // Change dynamically titles in left menu
-   if (document.documentElement.lang == 'fr')
-   {
-      matches[0].innerText = "Introduction"
-      matches[1].innerText = "Packages"
-      matches[2].innerText = "Pour aller plus loin..."
-   }
-   </script>
