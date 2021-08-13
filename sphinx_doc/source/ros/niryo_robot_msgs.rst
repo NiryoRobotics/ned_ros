@@ -1,10 +1,10 @@
-Niryo Robot Messages Package
+Niryo robot messages package
 ===========================================================
 
 This package contains standard messages which can be used by all other packages.
 
 
-Niryo Messages
+Niryo messages
 ---------------------
 
 .. list-table:: Ned Messages
@@ -15,20 +15,20 @@ Niryo Messages
 
    *  -  Name
       -  Description
-   *  -  :ref:`CommandStatus`
+   *  -  :ref:`source/ros/niryo_robot_msgs:CommandStatus`
       -  Enum-wise message for status code
-   *  -  :ref:`ObjectPose`
+   *  -  :ref:`source/ros/niryo_robot_msgs:ObjectPose`
       -  x, y, z, roll, pitch, yaw
-   *  -  :ref:`RobotState`
+   *  -  :ref:`source/ros/niryo_robot_msgs:RobotState`
       -  position, rpy, quaternion
-   *  -  :ref:`RPY`
+   *  -  :ref:`source/ros/niryo_robot_msgs:RPY`
       -  roll, pitch, yaw
-   *  -  :ref:`HardwareStatus`
+   *  -  :ref:`source/ros/niryo_robot_msgs:HardwareStatus`
       -  several hardware informations 
-   *  -  :ref:`SoftwareVersion`
+   *  -  :ref:`source/ros/niryo_robot_msgs:SoftwareVersion`
       -  several software version 
 
-Niryo Services
+Niryo services
 ----------------------
 
 .. list-table:: Ned Services
@@ -39,28 +39,28 @@ Niryo Services
 
    *  -  Name
       -  Description
-   *  -  :ref:`GetBool`
+   *  -  :ref:`source/ros/niryo_robot_msgs:GetBool`
       -  Return a bool
-   *  -  :ref:`GetInt`
+   *  -  :ref:`source/ros/niryo_robot_msgs:GetInt`
       -  Return a integer
-   *  -  :ref:`GetStringList`
+   *  -  :ref:`source/ros/niryo_robot_msgs:GetStringList`
       -  Return a list of string
-   *  -  :ref:`SetBool`
+   *  -  :ref:`source/ros/niryo_robot_msgs:SetBool`
       -  Set a bool and return status
-   *  -  :ref:`SetInt`
+   *  -  :ref:`source/ros/niryo_robot_msgs:SetInt`
       -  Set a integer and return status
-   *  -  :ref:`SetString`
+   *  -  :ref:`source/ros/niryo_robot_msgs:SetString`
       -  Set a string and return status
-   *  -  :ref:`Trigger`
+   *  -  :ref:`source/ros/niryo_robot_msgs:Trigger`
       -  Trigger a task
 
 
-Niryo Message Dependencies
+Niryo message dependencies
 -----------------------------------
 
 - :msgs_index:`geometry_msgs`
 
-Niryo Message files
+Niryo message files
 -----------------------------------
 
 CommandStatus

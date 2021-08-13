@@ -1,6 +1,6 @@
 <package>
   <name>niryo_robot_description</name>
-  <version>3.1.1</version>
+  <version>3.1.2</version>
   <description>Provides URDF files</description>
   <author email="r.lux@niryo.com">Rémi Lux</author>
   <maintainer email="r.lux@niryo.com">Rémi Lux</maintainer>

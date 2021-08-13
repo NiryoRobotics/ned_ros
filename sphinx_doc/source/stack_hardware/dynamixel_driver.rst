@@ -1,13 +1,13 @@
-Niryo Robot Dynamixel Driver Package
+Niryo robot dynamixel driver package
 =====================================
 
-| This package handles dynamixel motors communication through dynamixel sdk 
-| It provides an interface to :wiki_ros:`dynamixel_sdk` 
+| This package handles dynamixel motors communication through dynamixel sdk.
+| It provides an interface to :wiki_ros:`dynamixel_sdk`.
 
 Dynamixel Driver Node
 --------------------------
-The ROS Node is made to :
- - Send commands to dynamixel motor
+The ROS Node is made to:
+ - Send commands to dynamixel motors
  - Receive dynamixel motors data
 
 Parameters - Dynamixel Driver
@@ -23,30 +23,30 @@ Parameters - Dynamixel Driver
       -  Description
    *  -  ``dxl_hardware_control_loop_frequency``
       -  | control loop frequency.
-         | Default : '100.0'
+         | Default: '100.0'
    *  -  ``dxl_hardware_write_frequency``
       -  | Write frequency.
-         | Default : '50.0'
+         | Default: '50.0'
    *  -  ``dxl_hardware_read_data_frequency``
       -  | Read frequency.
-         | Default : '15.0'
+         | Default: '15.0'
    *  -  ``dxl_hardware_read_status_frequency``
-      -  | Read dynmixels status frequency.
-         | Default : '0.5'
+      -  | Read dynamixels status frequency.
+         | Default: '0.5'
    *  -  ``dxl_hardware_check_connection_frequency``
-      -  | Check dynmixels connection frequency.
-         | Default : '2.0'
+      -  | Check dynamixels connection frequency.
+         | Default: '2.0'
    *  -  ``dxl_motor_id_list``
-      -  | list of dynmixels ID
-         | Default : '[2,3,6]'
+      -  | list of dynamixels ID
+         | Default: '[2,3,6]'
    *  -  ``dxl_motor_type_list``
-      -  | list of dynmixels type
-         | Default : '["xl430","xl430","xl320"]'
+      -  | list of dynamixels type
+         | Default: '["xl430","xl430","xl320"]'
 
 Services - Dynamixel Driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. list-table:: Dynmixel Driver Package Services
+.. list-table:: Dynamixel Driver Package Services
    :header-rows: 1
    :widths: auto
    :stub-columns: 0
@@ -56,17 +56,17 @@ Services - Dynamixel Driver
       -  Message Type
       -  Description
    *  -  ``niryo_robot/dynamixel_driver/set_dxl_leds``
-      -  :ref:`SetInt`
-      -  Control dynmixel LED
+      -  :ref:`source/ros/niryo_robot_msgs:SetInt`
+      -  Control dynamixel LED
    *  -  ``niryo_robot/dynamixel_driver/send_custom_dxl_value``
-      -  :ref:`dynamixel_driver/SendCustomDxlValue<SendCustomDxlValue (Service)>`
+      -  :ref:`dynamixel_driver/SendCustomDxlValue<source/stack_hardware/dynamixel_driver:SendCustomDxlValue (Service)>`
       -  Send a custom dynamixel command
 
 Dependencies - Dynamixel Driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 - :wiki_ros:`dynamixel_sdk` 
-- :ref:`niryo_robot_msgs <Niryo Robot Messages Package>`
+- :ref:`niryo_robot_msgs <source/ros/niryo_robot_msgs:Niryo Robot Messages Package>`
 
 Services & Messages files - Dynamixel Driver
 --------------------------------------------------

@@ -1,21 +1,22 @@
-Niryo Robot Programs Manager Package
+Niryo robot programs manager package
 ======================================================
 
 This package is in charge of interpreting/running/saving programs.
 It is used by Niryo Studio.
 
 
-Programs Manager Node
+Programs manager node
 --------------------------
+
 The ROS Node is made of several services to deal with the storage and running of
-programs
+programs.
 
 Call are not available from the Python ROS Wrapper, as it made to run its programs
-with the Python ROS Wrapper
+with the Python ROS Wrapper.
 
-The namespace used is : |namespace_emphasize|
+The namespace used is: |namespace_emphasize|
 
-Parameters - Programs Manager
+Parameters - Programs manager
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. list-table:: Programs Manager's Parameters
    :header-rows: 1
@@ -30,7 +31,7 @@ Parameters - Programs Manager
    *  -  ``programs_dir``
       -  Path to the Program storage mother folder
 
-Services - Programs Manager
+Services - Programs manager
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. list-table:: Programs manager Services
@@ -43,44 +44,44 @@ Services - Programs Manager
       -  Message Type
       -  Description
    *  -  ``execute_program``
-      -  :ref:`ExecuteProgram<ExecuteProgram (Service)>`
+      -  :ref:`ExecuteProgram<source/ros/niryo_robot_programs_manager:ExecuteProgram (Service)>`
       -  Execute a program
    *  -  ``execute_program_autorun``
-      -  :ref:`Trigger`
+      -  :ref:`source/ros/niryo_robot_msgs:Trigger`
       -  Execute autorun program
    *  -  ``get_program``
-      -  :ref:`GetProgram<GetProgram (Service)>`
+      -  :ref:`GetProgram<source/ros/niryo_robot_programs_manager:GetProgram (Service)>`
       -  Retrieve saved program
    *  -  ``get_program_autorun_infos``
-      -  :ref:`GetProgramAutorunInfos<GetProgramAutorunInfos (Service)>`
+      -  :ref:`GetProgramAutorunInfos<source/ros/niryo_robot_programs_manager:GetProgramAutorunInfos (Service)>`
       -  Get autorun settings
    *  -  ``get_program_list``
-      -  :ref:`GetProgramList<GetProgramList (Service)>`
+      -  :ref:`GetProgramList<source/ros/niryo_robot_programs_manager:GetProgramList (Service)>`
       -  Get saved programs' name
    *  -  ``manage_program``
-      -  :ref:`ManageProgram<ManageProgram (Service)>`
+      -  :ref:`ManageProgram<source/ros/niryo_robot_programs_manager:ManageProgram (Service)>`
       -  Save and Delete programs
    *  -  ``set_program_autorun``
-      -  :ref:`SetProgramAutorun<SetProgramAutorun (Service)>`
+      -  :ref:`SetProgramAutorun<source/ros/niryo_robot_programs_manager:SetProgramAutorun (Service)>`
       -  Set autorun settings
    *  -  ``stop_program``
-      -  :ref:`Trigger`
+      -  :ref:`source/ros/niryo_robot_msgs:Trigger`
       -  Stop the current running program
 
 
 All these services are available as soon as the node is started
-whereas on standalone mode or not
+whereas on standalone mode or not.
 
-Dependencies - Programs Manager
+Dependencies - Programs manager
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- :ref:`niryo_robot_commander <Niryo Robot Commander Package>`
-- :ref:`niryo_robot_msgs <Niryo Robot Messages Package>`
+- :ref:`niryo_robot_commander <source/ros/niryo_robot_commander:Niryo Robot Commander Package>`
+- :ref:`niryo_robot_msgs <source/ros/niryo_robot_msgs:Niryo Robot Messages Package>`
 - `python-yaml <https://pyyaml.org/wiki/PyYAMLDocumentation/>`_
 - :msgs_index:`std_msgs`
 
 
-Services & Messages files - Programs Manager
+Services & messages files - Programs manager
 ----------------------------------------------
 
 ExecuteProgram (Service)

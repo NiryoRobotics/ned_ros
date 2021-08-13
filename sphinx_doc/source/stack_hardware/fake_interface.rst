@@ -1,16 +1,16 @@
-Niryo Robot Fake Interface Package
+Niryo robot fake interface package
 ===================================
 
-| This package provides fakes hardware interface when the robot is used in simulation 
+| This package provides fakes hardware interface when the robot is used in simulation.
 
-Fake Interface Node
+Fake interface node
 --------------------------
-The ROS Node is made to simulate :
+The ROS Node is made to simulate:
  - tools interface
- - conveyor interface
+ - Conveyor Belt interface
  - joints interface
 
-Published Topics - Fake Interface
+Published topics - fake interface
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. list-table:: Fake Interface's Published Topics
@@ -29,10 +29,10 @@ Published Topics - Fake Interface
       -  :std_msgs:`Int32`
       -  Current tool ID
 
-Services - Fake Interface
+Services - fake interface
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. list-table:: Conveyor Interface Package Services
+.. list-table:: Fake Interface Package Services
    :header-rows: 1
    :widths: auto
    :stub-columns: 0
@@ -42,42 +42,42 @@ Services - Fake Interface
       -  Message Type
       -  Description
    *  -  ``/niryo_robot/joints_interface/calibrate_motors``
-      -  :ref:`SetInt`
+      -  :ref:`source/ros/niryo_robot_msgs:SetInt`
       -  Start motors calibration - value can be 1 for auto calibration, 2 for manual
    *  -  ``/niryo_robot/joints_interface/request_new_calibration``
-      -  :ref:`Trigger`
+      -  :ref:`source/ros/niryo_robot_msgs:Trigger`
       -  Unset motors calibration
    *  -  ``niryo_robot/learning_mode/activate``
-      -  :ref:`Trigger`
+      -  :ref:`source/ros/niryo_robot_msgs:Trigger`
       -  Either activate or deactivate learning mode
    *  -  ``niryo_robot/tools/ping_and_set_dxl_tool``
-      -  :ref:`tools_interface/PingDxlTool<PingDxlTool (Service)>`
+      -  :ref:`tools_interface/PingDxlTool<source/stack_hardware/tools_interface:PingDxlTool (Service)>`
       -  Scan and set for a tool plugged
    *  -  ``niryo_robot/tools/open_gripper``
-      -  :ref:`tools_interface/OpenGripper<OpenGripper (Service)>`
-      -  Open a gripper tool
+      -  :ref:`tools_interface/OpenGripper<source/stack_hardware/tools_interface:OpenGripper (Service)>`
+      -  Open a Gripper tool
    *  -  ``niryo_robot/tools/close_gripper``
-      -  :ref:`tools_interface/CloseGripper<CloseGripper (Service)>`
-      -  Close a gripper tool
+      -  :ref:`tools_interface/CloseGripper<source/stack_hardware/tools_interface:CloseGripper (Service)>`
+      -  Close a Gripper tool
    *  -  ``niryo_robot/tools/pull_air_vacuum_pump``
-      -  :ref:`tools_interface/PullAirVacuumPump<PullAirVacuumPump (Service)>`
-      -  Pull vacuum pump tool
+      -  :ref:`tools_interface/PullAirVacuumPump<source/stack_hardware/tools_interface:PullAirVacuumPump (Service)>`
+      -  Pull Vacuum Pump tool
    *  -  ``niryo_robot/tools/push_air_vacuum_pump``
-      -  :ref:`tools_interface/PushAirVacuumPump<PushAirVacuumPump (Service)>`
-      -  Push vacuum pump tool
+      -  :ref:`tools_interface/PushAirVacuumPump<source/stack_hardware/tools_interface:PushAirVacuumPump (Service)>`
+      -  Push Vacuum Pump tool
    *  -  ``/niryo_robot/conveyor/control_conveyor``
-      -  :ref:`ControlConveyor<ControlConveyor (Service)>`
-      -  Send a command to the desired conveyor
+      -  :ref:`ControlConveyor<source/stack_hardware/conveyor_interface:ControlConveyor (Service)>`
+      -  Send a command to the desired Conveyor Belt
    *  -  ``/niryo_robot/conveyor/ping_and_set_conveyor``
-      -  :ref:`SetConveyor<SetConveyor (Service)>`
-      -  Scan and set a new conveyor
+      -  :ref:`SetConveyor<source/stack_hardware/conveyor_interface:SetConveyor (Service)>`
+      -  Scan and set a new Conveyor Belt
 
-Dependencies - Fake Interface
+Dependencies - fake interface
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 - :msgs_index:`std_msgs`
 - :wiki_ros:`hardware_interface <hardware_interface>`
 - :wiki_ros:`controller_manager <controller_manager>`
-- :ref:`niryo_robot_msgs <Niryo Robot Messages Package>`
-- :ref:`tools_interface <Niryo Robot Tools Interface Package>`
-- :ref:`joints_interface <Niryo Robot Joints Interface Package>`
-- :ref:`conveyor_interface <Niryo Robot Conveyor Interface Package>` 
+- :ref:`niryo_robot_msgs <source/ros/niryo_robot_msgs:Niryo Robot Messages Package>`
+- :ref:`tools_interface <source/stack_hardware/tools_interface:Niryo Robot Tools Interface Package>`
+- :ref:`joints_interface <source/stack_hardware/joints_interface:Niryo Robot Joints Interface Package>`
+- :ref:`conveyor_interface <source/stack_hardware/conveyor_interface:Niryo Robot Conveyor Belt Interface Package>` 

@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-23 16:51+0200\n"
+"POT-Creation-Date: 2021-04-26 12:18+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,17 +21,17 @@ msgstr ""
 "Generated-By: Babel 2.8.0\n"
 
 #: ../../source/stack_hardware/niryo_robot_debug.rst:2
-msgid "Niryo Robot Debug Package"
+msgid "Niryo robot debug package"
 msgstr ""
 
 #: ../../source/stack_hardware/niryo_robot_debug.rst:4
 msgid ""
-"This package offer scripts to change ping / scan DXL motors and changes "
+"This package offer scripts to change ping/scan DXL motors and changes "
 "register values of these motors."
 msgstr ""
 
 #: ../../source/stack_hardware/niryo_robot_debug.rst:7
-msgid "Niryo Robot - Send DXL Custom Value"
+msgid "Niryo robot - Send DXL custom value"
 msgstr ""
 
 #: ../../source/stack_hardware/niryo_robot_debug.rst:8
@@ -40,7 +40,7 @@ msgid "This script can be launched via:  ::"
 msgstr ""
 
 #: ../../source/stack_hardware/niryo_robot_debug.rst:13
-msgid "Parameters - Send DXL Custom Value"
+msgid "Parameters - Send DXL custom value"
 msgstr ""
 
 #: ../../source/stack_hardware/niryo_robot_debug.rst:14
@@ -64,7 +64,7 @@ msgid "**--size [Number]:** Size in bytes of the value given"
 msgstr ""
 
 #: ../../source/stack_hardware/niryo_robot_debug.rst:21
-msgid "Niryo Robot - Dxl debug tools"
+msgid "Niryo robot - Dxl debug tools"
 msgstr ""
 
 #: ../../source/stack_hardware/niryo_robot_debug.rst:27
@@ -101,4 +101,22 @@ msgid ""
 " parameters are in the order: register address / value / size (in bytes) "
 "of the value"
 msgstr ""
+
+#~ msgid "Niryo Robot Debug Package"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "This package offer scripts to change "
+#~ "ping / scan DXL motors and changes"
+#~ " register values of these motors."
+#~ msgstr ""
+
+#~ msgid "Niryo Robot - Send DXL Custom Value"
+#~ msgstr ""
+
+#~ msgid "Parameters - Send DXL Custom Value"
+#~ msgstr ""
+
+#~ msgid "Niryo Robot - Dxl debug tools"
+#~ msgstr ""
 

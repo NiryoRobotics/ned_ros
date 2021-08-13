@@ -1,6 +1,6 @@
 <package>
   <name>niryo_robot_bringup</name>
-  <version>3.1.1</version>
+  <version>3.1.2</version>
   <description>Provides roslaunch scripts to start Ned packages and initialize ROS params</description>
   <author email="r.lux@niryo.com">Rémi Lux</author>
   <maintainer email="r.lux@niryo.com">Rémi Lux</maintainer>

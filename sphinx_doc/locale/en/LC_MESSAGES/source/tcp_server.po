@@ -11,23 +11,23 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-23 16:51+0200\n"
+"POT-Creation-Date: 2021-08-12 08:22+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.8.0\n"
+"Generated-By: Babel 2.9.1\n"
 
 #: ../../source/tcp_server.rst:2
-msgid "Use Ned TCP Server"
+msgid "Use Ned TCP server"
 msgstr ""
 
 #: ../../source/tcp_server.rst:4
 msgid ""
 "Ned is permanently running a TCP Server to acquire requests. This server "
-"is built on top of the :doc:`Ned Python ROS Wrapper <ros_wrapper>`"
+"is built on top of the :doc:`Ned Python ROS Wrapper <ros_wrapper>`."
 msgstr ""
 
 #: ../../source/tcp_server.rst:7
@@ -49,8 +49,8 @@ msgstr ""
 
 #: ../../source/tcp_server.rst:17
 msgid ""
-"To access the server, you will have to use to Robot's IP Adress and "
-"communicate via the **port 40001**"
+"To access the server, you will have to use to robot's IP adress and "
+"communicate via the **port 40001**."
 msgstr ""
 
 #: ../../source/tcp_server.rst:21
@@ -70,7 +70,7 @@ msgid ""
 msgstr ""
 
 #: ../../source/tcp_server.rst:27
-msgid "Packet Convention"
+msgid "Packet convention"
 msgstr ""
 
 #: ../../source/tcp_server.rst:30
@@ -85,20 +85,20 @@ msgstr ""
 
 #: ../../source/tcp_server.rst:34
 msgid ""
-"Every package have this following shape : "
-"``<json_packet_size>{<json_content>}<payload>``"
+"Every package have this following shape: "
+"``<json_packet_size>{<json_content>}<payload>``."
 msgstr ""
 
 #: ../../source/tcp_server.rst:36
-msgid "The JSON packet size is an unsigned short coded on 2 bytes"
+msgid "The JSON packet size is an unsigned short coded on 2 bytes."
 msgstr ""
 
 #: ../../source/tcp_server.rst:38
-msgid "The JSON contains command's name & params"
+msgid "The JSON contains command's name & params."
 msgstr ""
 
 #: ../../source/tcp_server.rst:40
-msgid "Payload contains *heavy* data like an image"
+msgid "Payload contains *heavy* data like an image."
 msgstr ""
 
 #: ../../source/tcp_server.rst:43
@@ -110,13 +110,13 @@ msgid "Format - Request"
 msgstr ""
 
 #: ../../source/tcp_server.rst:48
-msgid "As no function request a payload in input, requests have the following"
+msgid "As no function request a payload in input, requests have the following."
 msgstr ""
 
 #: ../../source/tcp_server.rst:50
 msgid ""
-"format : ``<json_packet_size>{'param_list': [<param_1>, <param_2>, ....],"
-" 'command': <command_str>}``"
+"Format: ``<json_packet_size>{'param_list': [<param_1>, <param_2>, ....], "
+"'command': <command_str>}``"
 msgstr ""
 
 #: ../../source/tcp_server.rst:53
@@ -124,13 +124,13 @@ msgid "Examples - Request"
 msgstr ""
 
 #: ../../source/tcp_server.rst:55
-msgid "Calibrate auto : ``{'param_list': ['AUTO'], 'command': 'CALIBRATE'}``"
+msgid "Calibrate auto: ``{'param_list': ['AUTO'], 'command': 'CALIBRATE'}``"
 msgstr ""
 
 #: ../../source/tcp_server.rst:57
 msgid ""
-"Move joints : ``{'param_list': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], 'command':"
-" 'MOVE_JOINTS'}``"
+"Move joints: ``{'param_list': [0.0, 0.0, 0.0, 0.0, 0.0, 0.0], 'command': "
+"'MOVE_JOINTS'}``"
 msgstr ""
 
 #: ../../source/tcp_server.rst:60
@@ -144,11 +144,11 @@ msgstr ""
 #: ../../source/tcp_server.rst:65
 msgid ""
 "Firstly, answers indicate to the user if its command has been well "
-"executed. This is indicated in the JSON by the parameter \"status\""
+"executed. This is indicated in the JSON by the parameter \"status\"."
 msgstr ""
 
 #: ../../source/tcp_server.rst:68
-msgid "A successful answer will have the format :"
+msgid "A successful answer will have the format:"
 msgstr ""
 
 #: ../../source/tcp_server.rst:70
@@ -160,7 +160,7 @@ msgstr ""
 
 #: ../../source/tcp_server.rst:72
 msgid ""
-"An unsuccessful answer will have the format : ``{'status': 'KO', "
+"An unsuccessful answer will have the format: ``{'status': 'KO', "
 "'message': <message_str>}``"
 msgstr ""
 
@@ -170,8 +170,8 @@ msgstr ""
 
 #: ../../source/tcp_server.rst:77
 msgid ""
-"Calibrate Auto : ``{'status': 'OK', 'list_ret_param': [], 'payload_size':"
-" 0, 'command': 'CALIBRATE'}``"
+"Calibrate Auto: ``{'status': 'OK', 'list_ret_param': [], 'payload_size': "
+"0, 'command': 'CALIBRATE'}``"
 msgstr ""
 
 #: ../../source/tcp_server.rst:80
@@ -181,10 +181,100 @@ msgid ""
 msgstr ""
 
 #: ../../source/tcp_server.rst:86
-msgid "Commands enum for TCP Server"
+msgid "Commands enum for TCP server"
 msgstr ""
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper_enums.CommandEnum:1 of
 msgid "Enumeration of all commands used"
 msgstr ""
+
+#~ msgid "Use Ned TCP Server"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Ned is permanently running a TCP "
+#~ "Server to acquire requests. This server"
+#~ " is built on top of the "
+#~ ":doc:`Ned Python ROS Wrapper <ros_wrapper>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "To access the server, you will "
+#~ "have to use to Robot's IP Adress"
+#~ " and communicate via the **port "
+#~ "40001**"
+#~ msgstr ""
+
+#~ msgid "Packet Convention"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Every package have this following shape"
+#~ " : ``<json_packet_size>{<json_content>}<payload>``"
+#~ msgstr ""
+
+#~ msgid "The JSON packet size is an unsigned short coded on 2 bytes"
+#~ msgstr ""
+
+#~ msgid "The JSON contains command's name & params"
+#~ msgstr ""
+
+#~ msgid "Payload contains *heavy* data like an image"
+#~ msgstr ""
+
+#~ msgid "As no function request a payload in input, requests have the following"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "format : ``<json_packet_size>{'param_list': "
+#~ "[<param_1>, <param_2>, ....], 'command': "
+#~ "<command_str>}``"
+#~ msgstr ""
+
+#~ msgid "Calibrate auto : ``{'param_list': ['AUTO'], 'command': 'CALIBRATE'}``"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Move joints : ``{'param_list': [0.0, "
+#~ "0.0, 0.0, 0.0, 0.0, 0.0], 'command': "
+#~ "'MOVE_JOINTS'}``"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Firstly, answers indicate to the user"
+#~ " if its command has been well "
+#~ "executed. This is indicated in the "
+#~ "JSON by the parameter \"status\""
+#~ msgstr ""
+
+#~ msgid "A successful answer will have the format :"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "An unsuccessful answer will have the "
+#~ "format : ``{'status': 'KO', 'message': "
+#~ "<message_str>}``"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Calibrate Auto : ``{'status': 'OK', "
+#~ "'list_ret_param': [], 'payload_size': 0, "
+#~ "'command': 'CALIBRATE'}``"
+#~ msgstr ""
+
+#~ msgid "Commands enum for TCP Server"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Every package have this following shape"
+#~ " : ``<json_packet_size>{<json_content>}<payload>``."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "format: ``<json_packet_size>{'param_list': [<param_1>, "
+#~ "<param_2>, ....], 'command': <command_str>}``"
+#~ msgstr ""
+
+#~ msgid "Enumeration of all commands used"
+#~ msgstr ""
 
