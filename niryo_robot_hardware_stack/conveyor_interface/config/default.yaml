@@ -3,3 +3,4 @@ micro_steps : 8
 id : 6
 id_list : [12,13]
 publish_frequency : 2
+bus: "can"

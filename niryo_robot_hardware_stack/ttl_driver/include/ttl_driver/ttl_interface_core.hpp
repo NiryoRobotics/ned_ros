@@ -55,6 +55,7 @@ namespace ttl_driver
 {
 /**
  * @brief The TtlInterfaceCore class schedules and manager the communication in the TTL bus
+ * its main purpose it to manage queues of commands for the TTL Motors
  */
 class TtlInterfaceCore : public common::model::IDriverCore, public common::model::IInterfaceCore
 {

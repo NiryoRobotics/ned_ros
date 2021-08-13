@@ -67,7 +67,10 @@ constexpr int TTL_WRONG_TYPE             = -52;
 */
 
 /**
- * @brief The TtlManager class
+ * @brief The TtlManager class manages the different motor drivers connected on the TTL bus
+ * it is used by ttl_interface_core to send or receive data to the ttl bus
+ * it also manages the lifecycle of all motors driver (do we need to add also the end effector driver in it ?)
+ *
  */
 class TtlManager : public common::model::IBusManager
 {
@@ -155,14 +158,15 @@ class TtlManager : public common::model::IBusManager
         std::map<common::model::EMotorType, std::shared_ptr<AbstractMotorDriver> > _driver_map;
 
         double _calibration_timeout{30.0};
-        common::model::EStepperCalibrationStatus _calibration_status;
+        common::model::EStepperCalibrationStatus _calibration_status{common::model::EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED};
+
         // for hardware control
-        bool _is_connection_ok;
+        bool _is_connection_ok{false};
         std::string _debug_error_message;
 
-        int _hw_fail_counter_read;
+        int _hw_fail_counter_read{0};
         
-        int _led_state;
+        int _led_state{-1};
 
         static constexpr int MAX_HW_FAILURE = 25;
 };

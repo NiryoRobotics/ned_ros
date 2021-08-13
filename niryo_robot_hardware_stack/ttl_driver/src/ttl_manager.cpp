@@ -64,10 +64,7 @@ namespace ttl_driver
  * @brief TtlManager::TtlManager
  */
 TtlManager::TtlManager(ros::NodeHandle& nh) :
-    _calibration_status(EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED),
-    _is_connection_ok(false),
-    _debug_error_message("TtlManager - No connection with Dynamixel motors has been made yet"),
-    _hw_fail_counter_read(0)
+    _debug_error_message("TtlManager - No connection with Dynamixel motors has been made yet")
 {
     ROS_DEBUG("TtlManager - ctor");
 

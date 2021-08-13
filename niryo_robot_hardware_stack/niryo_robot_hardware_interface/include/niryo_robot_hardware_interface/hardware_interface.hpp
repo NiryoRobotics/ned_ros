@@ -27,6 +27,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 
 #include "joints_interface/joints_interface_core.hpp"
 #include "tools_interface/tools_interface_core.hpp"
+#include "end_effector_interface/end_effector_interface_core.hpp"
 #include "conveyor_interface/conveyor_interface_core.hpp"
 #include "cpu_interface/cpu_interface_core.hpp"
 #include "ttl_driver/ttl_interface_core.hpp"
@@ -84,6 +85,7 @@ class HardwareInterface : common::model::IInterfaceCore
         std::shared_ptr<cpu_interface::CpuInterfaceCore> _cpu_interface;
         std::shared_ptr<conveyor_interface::ConveyorInterfaceCore> _conveyor_interface;
         std::shared_ptr<tools_interface::ToolsInterfaceCore> _tools_interface;
+        std::shared_ptr<end_effector_interface::EndEffectorInterfaceCore> _end_effector_interface;
         std::shared_ptr<joints_interface::JointsInterfaceCore> _joints_interface;
         std::shared_ptr<fake_interface::FakeInterfaceCore> _fake_interface;
 
@@ -95,6 +97,8 @@ class HardwareInterface : common::model::IInterfaceCore
 
         bool _can_enabled{false};
         bool _ttl_enabled{false};
+
+        common::model::EBusProtocol _conveyor_bus{common::model::EBusProtocol::CAN};
 
         std::string _rpi_image_version;
         std::string _ros_niryo_robot_version;

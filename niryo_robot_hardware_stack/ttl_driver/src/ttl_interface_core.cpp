@@ -850,7 +850,7 @@ void TtlInterfaceCore::addSingleCommandToQueue(const std::vector<std::shared_ptr
 }
 
 /**
- * @brief TtlInterfaceCore::addEndEffectorCommandToQueue
+ * @brief TtlInterfaceCore::addEndEffectorCommandToQueue : TODO(CC) to be removed
  * @param cmd
  */
 void TtlInterfaceCore::addEndEffectorCommandToQueue(const std::shared_ptr<common::model::DxlSingleCmd>& cmd)

@@ -3,13 +3,8 @@
         xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
     <arg name="hardware_version" default="ned"/>
 
-    <!-- use can_driver config -->
-    <include file="$(find can_driver)/launch/can_driver_base.launch.xml" >
-        <arg name="hardware_version" value="$(arg hardware_version)" />
-    </include>
-
-    <node pkg="conveyor_interface" type="conveyor_interface_node" name="conveyor_interface" output="screen">  
-        <rosparam file="$(find conveyor_interface)/config/default.yaml" command="load"/>
-    </node>
+    <group ns="conveyor_interface">
+        <rosparam file="$(find conveyor_interface)/config/default.yaml" command="load"/>  
+    </group>
 
 </launch>

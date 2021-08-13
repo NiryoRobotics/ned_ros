@@ -37,8 +37,8 @@ namespace end_effector_interface
  * @param ttl_interface
  */
 EndEffectorInterfaceCore::EndEffectorInterfaceCore(ros::NodeHandle& nh,
-                                                   std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface):
-    _ttl_interface(ttl_interface)
+                                                   std::shared_ptr<ttl_driver::EndEffectorDriver<ttl_driver::EndEffectorReg> > ee_driver):
+    _ee_driver(ee_driver)
 {
     ROS_DEBUG("EndEffectorInterfaceCore::ctor");
 
@@ -80,7 +80,10 @@ bool EndEffectorInterfaceCore::init(ros::NodeHandle &nh)
  */
 void EndEffectorInterfaceCore::initParameters(ros::NodeHandle& nh)
 {
-        ROS_DEBUG("No parameters to init");
+    int id = -1;
+    nh.getParam("tools_params/id_list", id);
+    _id = static_cast<uint8_t>(id);
+    ROS_DEBUG("EndEffectorInterfaceCore::initParameters - end effector id : %d", _id);
 }
 
 /**
