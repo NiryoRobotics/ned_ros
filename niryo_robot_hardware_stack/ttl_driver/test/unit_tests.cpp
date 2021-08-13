@@ -24,13 +24,17 @@
 #include <ros/console.h>
 
 // Declare a test
+
+/******************************************************/
+/************ Tests of ttl interface ******************/
+/******************************************************/
+
 class TtlInterfaceTestSuite : public ::testing::Test {
   protected:
-    void SetUp() override
+    static void SetUpTestCase()
     {
-      ros::NodeHandle nh;
-      ttl_interface = std::make_unique<ttl_driver::TtlInterfaceCore>(nh);
-
+      ros::NodeHandle nh("ttl_driver");
+      ttl_interface = std::make_shared<ttl_driver::TtlInterfaceCore>(nh);
       // check connections
       EXPECT_TRUE(ttl_interface->isConnectionOk());
       EXPECT_TRUE(ttl_interface->scanMotorId(2));
@@ -38,36 +42,33 @@ class TtlInterfaceTestSuite : public ::testing::Test {
       EXPECT_TRUE(ttl_interface->scanMotorId(6));
     }
 
-    std::unique_ptr<ttl_driver::TtlInterfaceCore> ttl_interface;
+    static void TearDownTestCase()
+    {
+      ros::shutdown();
+    }
+
+    static std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface;
 };
 
+std::shared_ptr<ttl_driver::TtlInterfaceCore> TtlInterfaceTestSuite::ttl_interface;
+
+// Test reboot motors
 TEST_F(TtlInterfaceTestSuite, testRebootMotors)
 {
   EXPECT_EQ(ttl_interface->rebootMotors(), niryo_robot_msgs::CommandStatus::SUCCESS);
 }
 
+// Test reboot motor with wrong id
 TEST_F(TtlInterfaceTestSuite, testRebootMotorsWrongID)
 {
   EXPECT_NE(ttl_interface->rebootMotor(7), niryo_robot_msgs::CommandStatus::SUCCESS);
 }
 
-TEST_F(TtlInterfaceTestSuite, testCalibration)
-{
-  EXPECT_EQ(ttl_interface->getCalibrationStatus(), common::model::EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED);
-
-  ttl_interface->startCalibration();
-  
-  EXPECT_EQ(ttl_interface->getCalibrationStatus(), common::model::EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS);
-
-  ros::Duration(10.0).sleep();
-  EXPECT_EQ(ttl_interface->getCalibrationStatus(), common::model::EStepperCalibrationStatus::CALIBRATION_OK);
-}
-
 class TtlManagerTestSuite : public ::testing::Test {
   protected:
-    void SetUp() override
+    static void SetUpTestCase()
     {
-      ros::NodeHandle nh;
+      ros::NodeHandle nh("ttl_driver");
       ttl_drv = std::make_shared<ttl_driver::TtlManager>(nh);
 
       // check connections
@@ -76,12 +77,20 @@ class TtlManagerTestSuite : public ::testing::Test {
       EXPECT_TRUE(ttl_drv->ping(6));
     }
 
-    std::shared_ptr<ttl_driver::TtlManager> ttl_drv;
+    static std::shared_ptr<ttl_driver::TtlManager> ttl_drv;
 };
 
+std::shared_ptr<ttl_driver::TtlManager> TtlManagerTestSuite::ttl_drv;
 
+/******************************************************/
+/************** Tests of ttl manager ******************/
+/******************************************************/
+
+/*
+* Theses tests is used to test NED v1
+*/
 // Test driver received cmd
-TEST_F(TtlManagerTestSuite, testCmds)
+TEST_F(TtlManagerTestSuite, testSingleCmds)
 {
   std::shared_ptr<common::model::AbstractTtlSingleMotorCmd> cmd_1 = std::make_shared<common::model::DxlSingleCmd>(
                                                                           common::model::EDxlCommandType::CMD_TYPE_TORQUE,
@@ -98,6 +107,7 @@ TEST_F(TtlManagerTestSuite, testCmds)
   EXPECT_EQ(ttl_drv->writeSingleCommand(cmd_2), COMM_TX_ERROR);
   ros::Duration(0.01).sleep();
 
+  // wrong type cmd
   std::shared_ptr<common::model::AbstractTtlSingleMotorCmd> cmd_3 = std::make_shared<common::model::DxlSingleCmd>(
                                                                           common::model::EDxlCommandType::CMD_TYPE_UNKNOWN,
                                                                           2,
@@ -105,48 +115,53 @@ TEST_F(TtlManagerTestSuite, testCmds)
   EXPECT_NE(ttl_drv->writeSingleCommand(cmd_3), COMM_SUCCESS);
   ros::Duration(0.01).sleep();
 
+  // wrong type of cmd object
   std::shared_ptr<common::model::AbstractTtlSingleMotorCmd> cmd_4 = std::make_shared<common::model::StepperTtlSingleCmd>(
                                                                           common::model::EStepperCommandType::CMD_TYPE_TORQUE,
                                                                           2,
                                                                           std::initializer_list<uint32_t>{1});
   EXPECT_NE(ttl_drv->writeSingleCommand(cmd_4), COMM_SUCCESS);
-
-  // sync cmd
-  std::shared_ptr<common::model::DxlSyncCmd> dynamixel_cmd = std::make_shared<common::model::DxlSyncCmd>(
-                                                            common::model::EDxlCommandType::CMD_TYPE_TORQUE);
-  dynamixel_cmd->addMotorParam(common::model::EMotorType::XL430, 2, 1);
-  dynamixel_cmd->addMotorParam(common::model::EMotorType::XL430, 3, 1);
-
-  EXPECT_EQ(ttl_drv->writeSynchronizeCommand(dynamixel_cmd), COMM_SUCCESS);
-  ros::Duration(0.5).sleep();
-
-  // wrong id
-  std::shared_ptr<common::model::DxlSyncCmd> dynamixel_cmd = std::make_shared<common::model::DxlSyncCmd>(
-                                                            common::model::EDxlCommandType::CMD_TYPE_TORQUE);
-  dynamixel_cmd->addMotorParam(common::model::EMotorType::XL430, 5, 1);
-  dynamixel_cmd->addMotorParam(common::model::EMotorType::XL430, 3, 1);
-
-  EXPECT_NE(ttl_drv->writeSynchronizeCommand(dynamixel_cmd), COMM_SUCCESS);
-  ros::Duration(0.5).sleep();
-
-  // wrong motor type
-  std::shared_ptr<common::model::DxlSyncCmd> dynamixel_cmd = std::make_shared<common::model::DxlSyncCmd>(
-                                                            common::model::EDxlCommandType::CMD_TYPE_TORQUE);
-  dynamixel_cmd->addMotorParam(common::model::EMotorType::XL320, 5, 1);
-  dynamixel_cmd->addMotorParam(common::model::EMotorType::XL320, 3, 1);
-
-  EXPECT_NE(ttl_drv->writeSynchronizeCommand(dynamixel_cmd), COMM_SUCCESS);
-
-  // wrong cmd type
-  std::shared_ptr<common::model::DxlSyncCmd> dynamixel_cmd = std::make_shared<common::model::DxlSyncCmd>(
-                                                            common::model::EDxlCommandType::CMD_TYPE_UNKNOWN);
-  dynamixel_cmd->addMotorParam(common::model::EMotorType::XL320, 5, 1);
-  dynamixel_cmd->addMotorParam(common::model::EMotorType::XL320, 3, 1);
-
-  EXPECT_NE(ttl_drv->writeSynchronizeCommand(dynamixel_cmd), COMM_SUCCESS);
 }
 
-TEST_F(TtlManagerTestSuite, ScanTest)
+TEST_F(TtlManagerTestSuite, testSyncCmds)
+{
+  // sync cmd
+  std::shared_ptr<common::model::DxlSyncCmd> dynamixel_cmd_1 = std::make_shared<common::model::DxlSyncCmd>(
+                                                            common::model::EDxlCommandType::CMD_TYPE_TORQUE);
+  dynamixel_cmd_1->addMotorParam(common::model::EMotorType::XL430, 2, 1);
+  dynamixel_cmd_1->addMotorParam(common::model::EMotorType::XL430, 3, 1);
+
+  EXPECT_EQ(ttl_drv->writeSynchronizeCommand(dynamixel_cmd_1), COMM_SUCCESS);
+  ros::Duration(0.5).sleep();
+  
+  // sync cmd with different motor types
+  std::shared_ptr<common::model::DxlSyncCmd> dynamixel_cmd_2 = std::make_shared<common::model::DxlSyncCmd>(
+                                                            common::model::EDxlCommandType::CMD_TYPE_TORQUE);
+  dynamixel_cmd_2->addMotorParam(common::model::EMotorType::XL430, 2, 1);
+  dynamixel_cmd_2->addMotorParam(common::model::EMotorType::XL320, 6, 1);
+
+  EXPECT_EQ(ttl_drv->writeSynchronizeCommand(dynamixel_cmd_2), COMM_SUCCESS);
+  ros::Duration(0.5).sleep();
+
+  // redondant id
+  std::shared_ptr<common::model::DxlSyncCmd> dynamixel_cmd_3 = std::make_shared<common::model::DxlSyncCmd>(
+                                                            common::model::EDxlCommandType::CMD_TYPE_TORQUE);
+  dynamixel_cmd_3->addMotorParam(common::model::EMotorType::XL430, 3, 1);
+  dynamixel_cmd_3->addMotorParam(common::model::EMotorType::XL430, 3, 1);
+
+  EXPECT_NE(ttl_drv->writeSynchronizeCommand(dynamixel_cmd_3), COMM_SUCCESS);
+
+  // wrong cmd type
+  std::shared_ptr<common::model::DxlSyncCmd> dynamixel_cmd_4 = std::make_shared<common::model::DxlSyncCmd>(
+                                                            common::model::EDxlCommandType::CMD_TYPE_UNKNOWN);
+  dynamixel_cmd_4->addMotorParam(common::model::EMotorType::XL320, 5, 1);
+  dynamixel_cmd_4->addMotorParam(common::model::EMotorType::XL320, 3, 1);
+
+  EXPECT_NE(ttl_drv->writeSynchronizeCommand(dynamixel_cmd_4), COMM_SUCCESS);
+}
+
+// Test driver scan motors
+TEST_F(TtlManagerTestSuite, scanTest)
 {
   EXPECT_EQ(ttl_drv->scanAndCheck(), COMM_SUCCESS);
 }
@@ -156,8 +171,6 @@ int main(int argc, char **argv)
 {
   testing::InitGoogleTest(&argc, argv);
   ros::init(argc, argv, "ttl_driver_unit_tests");
-
-  ros::NodeHandle nh;
 
   return RUN_ALL_TESTS();
 }

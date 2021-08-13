@@ -22,7 +22,7 @@
 #include <ros/ros.h>
 #include <gtest/gtest.h>
 
-#include "ttl_driver/ttl_driver_core.hpp"
+#include "ttl_driver/ttl_interface_core.hpp"
 
 static std::unique_ptr<ros::NodeHandle> nh;
 
@@ -48,15 +48,15 @@ TEST(TESTSuite, sendCustomValue)
     EXPECT_TRUE(exists);
 
     ttl_driver::SendCustomValue srv;
-    /* to be defined
-    srv.request.motor_type = ;
-    srv.request.id = ;
-    srv.request.reg_address = ;
-    srv.request.value = ;
-    srv.request.byte_number = ;
+
+    srv.request.motor_type = 2; // xl430
+    srv.request.id = 2;
+    srv.request.reg_address = 64; // Torque enable for xl430
+    srv.request.value = 1;
+    srv.request.byte_number = 1;
 
     client.call(srv);
-*/
+
     EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
 }
 
@@ -68,14 +68,14 @@ TEST(TESTSuite, readCustomValue)
     EXPECT_TRUE(exists);
 
     ttl_driver::ReadCustomValue srv;
-    /* to be defined
-    srv.request.motor_type = ;
-    srv.request.id = ;
-    srv.request.reg_address = ;
-    srv.request.byte_number = ;
+    // to be defined
+    srv.request.motor_type = 2; // xl430
+    srv.request.id = 2;
+    srv.request.reg_address = 6;
+    srv.request.byte_number = 1;
 
     client.call(srv);
-*/
+
     EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
 }
 
