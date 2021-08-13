@@ -1,6 +1,6 @@
 <package>
     <name>niryo_robot_commander</name>
-    <version>3.1.1</version>
+    <version>3.1.2</version>
     <description>
         Interface between user and Moveit! to easily control Ned (arm + tools). Validates params, checks if
         previous trajectory has not finished, ...

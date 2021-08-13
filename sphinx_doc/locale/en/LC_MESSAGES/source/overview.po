@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-23 16:51+0200\n"
+"POT-Creation-Date: 2021-04-26 12:18+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -33,11 +33,22 @@ msgstr ""
 #: ../../source/overview.rst:7
 msgid ""
 "On the following figure, you will see an global overview of the Niryo "
-"Robot Software in order to understand where are placed each part of the "
+"robot software in order to understand where are placed each part of the "
 "software."
 msgstr ""
 
 #: ../../source/overview.rst:16
-msgid "Niryo Robot v3 Software"
+msgid "Niryo robot v3 software"
 msgstr ""
+
+#~ msgid ""
+#~ "On the following figure, you will "
+#~ "see an global overview of the "
+#~ "Niryo Robot Software in order to "
+#~ "understand where are placed each part"
+#~ " of the software."
+#~ msgstr ""
+
+#~ msgid "Niryo Robot v3 Software"
+#~ msgstr ""
 

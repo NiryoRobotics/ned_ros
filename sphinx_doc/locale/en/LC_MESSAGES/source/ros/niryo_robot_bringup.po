@@ -11,17 +11,17 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-23 16:51+0200\n"
+"POT-Creation-Date: 2021-06-10 11:46+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.8.0\n"
+"Generated-By: Babel 2.9.1\n"
 
 #: ../../source/ros/niryo_robot_bringup.rst:2
-msgid "Niryo Robot Bringup Package"
+msgid "Niryo robot Bringup package"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_bringup.rst:3
@@ -33,7 +33,7 @@ msgstr ""
 #: ../../source/ros/niryo_robot_bringup.rst:5
 msgid ""
 "Launch files are placed in the *launch* folder. Only files with "
-"**.launch** extension can be executed"
+"**.launch** extension can be executed."
 msgstr ""
 
 #: ../../source/ros/niryo_robot_bringup.rst:13
@@ -41,7 +41,7 @@ msgid "Bring Up Launch Files' organization"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_bringup.rst:16
-msgid "On RPI"
+msgid "On RasberryPI"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_bringup.rst:19
@@ -59,7 +59,11 @@ msgid "This file is automatically launched when Ned boots (Ned RPi4B image)."
 msgstr ""
 
 #: ../../source/ros/niryo_robot_bringup.rst:24
-msgid "Command to launch Ned's ROS Stack::"
+msgid "Command to launch Ned's ROS Stack:"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_bringup.rst:26
+msgid "roslaunch niryo_robot_bringup niryo_ned_robot.launch"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_bringup.rst:29
@@ -73,35 +77,35 @@ msgid ""
 msgstr ""
 
 #: ../../source/ros/niryo_robot_bringup.rst:34
-msgid "For both of following launch files, you can set :"
+msgid "For both of following launch files, you can set:"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_bringup.rst:34
-msgid "*gui* to \"false\" in order to disable graphical interface"
+msgid "*gui* to \"false\" in order to disable graphical interface."
 msgstr ""
 
 #: ../../source/ros/niryo_robot_bringup.rst:37
-msgid "Gazebo Simulation"
+msgid "Gazebo simulation"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_bringup.rst:43
 msgid ""
 "Run Gazebo simulation. The robot can do everything that is not hardware-"
-"related :"
+"related:"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_bringup.rst:40
-msgid "move, get_pose"
+msgid "move, get_pose."
 msgstr ""
 
 #: ../../source/ros/niryo_robot_bringup.rst:41
-msgid "use the camera (to disable it, set \"camera\" parameter to 'false')"
+msgid "use the camera (to disable it, set \"camera\" parameter to 'false')."
 msgstr ""
 
 #: ../../source/ros/niryo_robot_bringup.rst:42
 msgid ""
 "use the Gripper 1 (to disable it, set \"simu_gripper\" parameter to "
-"'false')"
+"'false')."
 msgstr ""
 
 #: ../../source/ros/niryo_robot_bringup.rst:43
@@ -109,15 +113,15 @@ msgid "save/run programs, go to saved pose, ..."
 msgstr ""
 
 #: ../../source/ros/niryo_robot_bringup.rst:45
-msgid "Command to launch the simulation ::"
+msgid "Command to launch the simulation: ::"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_bringup.rst:49
-msgid "To disable camera & gripper ::"
+msgid "To disable camera & gripper: ::"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_bringup.rst:54
-msgid "Rviz Simulation"
+msgid "Rviz simulation"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_bringup.rst:56
@@ -127,7 +131,7 @@ msgid ""
 msgstr ""
 
 #: ../../source/ros/niryo_robot_bringup.rst:58
-msgid "To run it, use the command ::"
+msgid "To run it, use the command: ::"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_bringup.rst:63
@@ -139,4 +143,57 @@ msgid ""
 "*niryo_robot_base* files setup many rosparams, these files should be "
 "launched before any other package."
 msgstr ""
+
+#~ msgid "Niryo Robot Bringup Package"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Launch files are placed in the "
+#~ "*launch* folder. Only files with "
+#~ "**.launch** extension can be executed"
+#~ msgstr ""
+
+#~ msgid "On RPI"
+#~ msgstr ""
+
+#~ msgid "For both of following launch files, you can set :"
+#~ msgstr ""
+
+#~ msgid "*gui* to \"false\" in order to disable graphical interface"
+#~ msgstr ""
+
+#~ msgid "Gazebo Simulation"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Run Gazebo simulation. The robot can "
+#~ "do everything that is not hardware-"
+#~ "related :"
+#~ msgstr ""
+
+#~ msgid "move, get_pose"
+#~ msgstr ""
+
+#~ msgid "use the camera (to disable it, set \"camera\" parameter to 'false')"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "use the Gripper 1 (to disable it,"
+#~ " set \"simu_gripper\" parameter to 'false')"
+#~ msgstr ""
+
+#~ msgid "Command to launch the simulation ::"
+#~ msgstr ""
+
+#~ msgid "To disable camera & gripper ::"
+#~ msgstr ""
+
+#~ msgid "Rviz Simulation"
+#~ msgstr ""
+
+#~ msgid "To run it, use the command ::"
+#~ msgstr ""
+
+#~ msgid "Command to launch Ned's ROS Stack::"
+#~ msgstr ""
 

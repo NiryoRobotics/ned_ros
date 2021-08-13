@@ -11,17 +11,17 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-23 16:51+0200\n"
+"POT-Creation-Date: 2021-08-12 08:22+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.8.0\n"
+"Generated-By: Babel 2.9.1\n"
 
 #: ../../source/simulation.rst:3
-msgid "Use Niryo Robot through Simulation"
+msgid "Use Niryo robot through simulation"
 msgstr ""
 
 #: ../../source/simulation.rst:5
@@ -35,60 +35,60 @@ msgid "Ned in Gazebo Simulation"
 msgstr ""
 
 #: ../../source/simulation.rst:13
-msgid "In this tutorial, you will learn how to setup simulation on a computer"
+msgid "In this tutorial, you will learn how to setup simulation on a computer."
 msgstr ""
 
 #: ../../source/simulation.rst:16
 msgid ""
 "You can use :niryo_studio_simulation:`Niryo Studio with the "
 "simulation<>`. For that, you just have to connect Niryo Studio to "
-"\"Localhost\""
+"\"Localhost\"."
 msgstr ""
 
 #: ../../source/simulation.rst:20
-msgid "Simulation Environment Installation"
+msgid "Simulation environment installation"
 msgstr ""
 
 #: ../../source/simulation.rst:23
 msgid ""
 "The whole ROS Stack is developed and tested on ROS **Melodic** which "
 "requires **Ubuntu 18.04** to run correctly. The using of another ROS "
-"version or OS may lead to malfunctions of some packages"
+"version or OS may lead to malfunctions of some packages."
 msgstr ""
 
 #: ../../source/simulation.rst:27
 msgid ""
 "To allow the simulation to run on your computer, you will need to install"
-" ROS and some packages"
+" ROS and some packages."
 msgstr ""
 
 #: ../../source/simulation.rst:30
-msgid "Installation Index :"
+msgid "Installation index:"
 msgstr ""
 
 #: ../../source/simulation.rst:37
-msgid "Prepare Environment"
+msgid "Prepare environment"
 msgstr ""
 
 #: ../../source/simulation.rst:39
-msgid "All terminal command listed are for Ubuntu users"
+msgid "All terminal command listed are for Ubuntu users."
 msgstr ""
 
 #: ../../source/simulation.rst:41
 msgid ""
 "Place yourself in the folder of your choice and create a folder "
-"**catkin_ws_niryo_ned** as well as a sub-folder **src** ::"
+"**catkin_ws_niryo_ned** as well as a sub-folder **src**: ::"
 msgstr ""
 
 #: ../../source/simulation.rst:46
 msgid ""
 "Then go to the folder **catkin_ws_niryo_ned** and clone Ned repository in"
 " the folder **src**. For the future operation, be sure to stay in the "
-"**catkin_ws_niryo_ned** folder ::"
+"**catkin_ws_niryo_ned** folder: ::"
 msgstr ""
 
 #: ../../source/simulation.rst:55
-msgid "Install ROS Dependencies"
+msgid "Install ROS dependencies"
 msgstr ""
 
 #: ../../source/simulation.rst:58
@@ -100,17 +100,17 @@ msgid ""
 "You firstly need to install ROS Melodic. To do so, follow the ROS "
 "official tutorial `here "
 "<http://wiki.ros.org/melodic/Installation/Ubuntu>`_ and chose the "
-"**Desktop-Full Install**"
+"**Desktop-Full Install**."
 msgstr ""
 
 #: ../../source/simulation.rst:65
-msgid "Install Additional Packages"
+msgid "Install additional packages"
 msgstr ""
 
 #: ../../source/simulation.rst:66
 msgid ""
 "To ensure the functioning of all Ned's packages, you need to install "
-"several more packages :"
+"several more packages:"
 msgstr ""
 
 #: ../../source/simulation.rst:70
@@ -121,7 +121,7 @@ msgstr ""
 msgid ""
 "For each packages, we have referenced all the dependencies in their "
 "respective *package.xml* file, which allow to install each dependency via"
-" *rosdep* command ::"
+" *rosdep* command: ::"
 msgstr ""
 
 #: ../../source/simulation.rst:79
@@ -129,7 +129,7 @@ msgid "Method 2 : Full install"
 msgstr ""
 
 #: ../../source/simulation.rst:81
-msgid "ROS packages needed are :"
+msgid "ROS packages needed are:"
 msgstr ""
 
 #: ../../source/simulation.rst:83
@@ -169,11 +169,11 @@ msgid "python-wstool"
 msgstr ""
 
 #: ../../source/simulation.rst:93
-msgid "To install a package on Ubuntu : ::"
+msgid "To install a package on Ubuntu: ::"
 msgstr ""
 
 #: ../../source/simulation.rst:98
-msgid "Melodic specific packages needed are :"
+msgid "Melodic specific packages needed are:"
 msgstr ""
 
 #: ../../source/simulation.rst:100
@@ -201,19 +201,19 @@ msgid "joint-state-publisher-gui"
 msgstr ""
 
 #: ../../source/simulation.rst:107
-msgid "To install a ROS Melodic's package on Ubuntu : ::"
+msgid "To install a ROS Melodic's package on Ubuntu: ::"
 msgstr ""
 
 #: ../../source/simulation.rst:113
-msgid "Setup Ned ROS Environment"
+msgid "Setup Ned ROS environment"
 msgstr ""
 
 #: ../../source/simulation.rst:116
-msgid "Be sure to be still placed in the **catkin_ws_niryo_ned** folder"
+msgid "Be sure to be still placed in the **catkin_ws_niryo_ned** folder."
 msgstr ""
 
 #: ../../source/simulation.rst:118
-msgid "Then perform the **make** of Ned's ROS Stack via the command ::"
+msgid "Then perform the **make** of Ned's ROS Stack via the command: ::"
 msgstr ""
 
 #: ../../source/simulation.rst:122
@@ -225,33 +225,33 @@ msgstr ""
 #: ../../source/simulation.rst:125
 msgid ""
 "It is necessary to source the configuration file to add all Ned packages "
-"to ROS environment. To do so, run the command ::"
+"to ROS environment. To do so, run the command: ::"
 msgstr ""
 
 #: ../../source/simulation.rst:130
 msgid ""
 "It is necessary to run this command each time you launch a new terminal. "
 "If you want to make this sourcing appends for all your futur terminals, "
-"you can add it to your **bashrc** file ::"
+"you can add it to your **bashrc** file: ::"
 msgstr ""
 
 #: ../../source/simulation.rst:137
-msgid "Installation is now finished !"
+msgid "Installation is now finished!"
 msgstr ""
 
 #: ../../source/simulation.rst:141
-msgid "Simulation Utilization"
+msgid "Simulation utilization"
 msgstr ""
 
 #: ../../source/simulation.rst:144
 msgid ""
 "If you haven't follow the step of :ref:`Simulation Environment "
-"Installation <Simulation Environment Installation>`, you won't be able to"
-" use the simulation"
+"Installation <source/simulation:Simulation Environment Installation>`. "
+"you won't be able to use the simulation."
 msgstr ""
 
 #: ../../source/simulation.rst:147
-msgid "Hardware features won't be accessible"
+msgid "Hardware features won't be accessible."
 msgstr ""
 
 #: ../../source/simulation.rst:150
@@ -265,35 +265,35 @@ msgstr ""
 msgid ""
 "It also helps for developing purpose → no need to transfer code, compile "
 "and restart the robot which is way slower than doing it on a desktop "
-"computer"
+"computer."
 msgstr ""
 
 #: ../../source/simulation.rst:156
-msgid "Without Physics - Visualization"
+msgid "Without physics - Visualization"
 msgstr ""
 
 #: ../../source/simulation.rst:158
-msgid "The visualization happens with Rviz which is a powerful tool"
+msgid "The visualization happens with Rviz which is a powerful tool."
 msgstr ""
 
 #: ../../source/simulation.rst:161
-msgid "Control with Trackbar"
+msgid "Control with trackbar"
 msgstr ""
 
 #: ../../source/simulation.rst:163
 msgid ""
 "This visualization allows an easy first control of the robot, and helps "
-"to understand joints disposal. You can access it by using the command ::"
+"to understand joints disposal. You can access it by using the command: ::"
 msgstr ""
 
 #: ../../source/simulation.rst:168
 msgid ""
 "Rviz should open with a window containing 6 trackbars. Each of these "
-"trackbars allows to control the corresponding joint"
+"trackbars allows to control the corresponding joint."
 msgstr ""
 
 #: ../../source/simulation.rst:174
-msgid "Example of trackbars use"
+msgid "Example of trackbars use."
 msgstr ""
 
 #: ../../source/simulation.rst:177
@@ -302,8 +302,8 @@ msgstr ""
 
 #: ../../source/simulation.rst:180
 msgid ""
-"Not only Rviz can display the Robot, it can also be linked with ROS "
-"controllers to show robot's actions from ROS commands !"
+"Not only Rviz can display the robot, it can also be linked with ROS "
+"controllers to show robot's actions from ROS commands!"
 msgstr ""
 
 #: ../../source/simulation.rst:181
@@ -313,47 +313,47 @@ msgid ""
 msgstr ""
 
 #: ../../source/simulation.rst:183 ../../source/simulation.rst:212
-msgid "To run it : ::"
+msgid "To run it: ::"
 msgstr ""
 
 #: ../../source/simulation.rst:190
-msgid "Rviz Opening, with the robot ready to be controlled with ROS !"
+msgid "Rviz opening, with the robot ready to be controlled with ROS!"
 msgstr ""
 
 #: ../../source/simulation.rst:193
-msgid "With Physics - Simulation"
+msgid "With physics - Simulation"
 msgstr ""
 
 #: ../../source/simulation.rst:195
 msgid ""
 "For the simulation, Ned use Gazebo, a well known tool among the ROS "
-"community. It allows :"
+"community. It allows:"
 msgstr ""
 
 #: ../../source/simulation.rst:198
-msgid "collision"
+msgid "collision."
 msgstr ""
 
 #: ../../source/simulation.rst:199
 msgid ""
 "world creation → An virtual environment in which the robot can deal with "
-"objects"
+"objects."
 msgstr ""
 
 #: ../../source/simulation.rst:200
-msgid "Gripper & Camera using"
+msgid "Gripper & Camera using."
 msgstr ""
 
 #: ../../source/simulation.rst:202
 msgid ""
 "The Niryo Gripper 1 has been replicated in Gazebo. The Camera is also "
-"implemented"
+"implemented."
 msgstr ""
 
 #: ../../source/simulation.rst:206
 msgid ""
 "Gazebo also generates camera distortion, which brings the simulation even"
-" closer from the reality !"
+" closer from the reality!"
 msgstr ""
 
 #: ../../source/simulation.rst:209
@@ -365,13 +365,13 @@ msgid "A specific world has been created to use Ned in Gazebo with 2 workspaces.
 msgstr ""
 
 #: ../../source/simulation.rst:219
-msgid "Gazebo view, with the robot ready to be controlled with ROS !"
+msgid "Gazebo view, with the robot ready to be controlled with ROS!"
 msgstr ""
 
 #: ../../source/simulation.rst:222
 msgid ""
 "You can edit Gazebo world to do your own ! It's placed in the folder "
-"*worlds* of the package niryo_robot_gazebo"
+"*worlds* of the package niryo_robot_gazebo."
 msgstr ""
 
 #: ../../source/simulation.rst:226
@@ -381,22 +381,281 @@ msgstr ""
 #: ../../source/simulation.rst:228
 msgid ""
 "The user can disable 3 things by adding the specific string to the "
-"command line :"
+"command line:"
 msgstr ""
 
 #: ../../source/simulation.rst:230
-msgid "the Gazebo Graphical Interface : `gui:=false`"
+msgid "the Gazebo graphical interface: `gui:=false`."
 msgstr ""
 
 #: ../../source/simulation.rst:231
 msgid ""
-"the camera & the grupper - Vision & Gripper wise functions won't be "
-"usable : `gripper_n_camera:=false`"
+"the Camera & the Gripper - Vision & Gripper wise functions won't be "
+"usable: `gripper_n_camera:=false`."
 msgstr ""
 
 #: ../../source/simulation.rst:235
 msgid ""
-"Gazebo can be very slow. If your tests do not need gripper and camera, "
-"consider using Rviz to alleviate your CPU"
+"Gazebo can be very slow. If your tests do not need Gripper and Camera, "
+"consider using Rviz to alleviate your CPU."
 msgstr ""
+
+#~ msgid "Use Niryo Robot through Simulation"
+#~ msgstr ""
+
+#~ msgid "In this tutorial, you will learn how to setup simulation on a computer"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "You can use :niryo_studio_simulation:`Niryo "
+#~ "Studio with the simulation<>`. For that,"
+#~ " you just have to connect Niryo "
+#~ "Studio to \"Localhost\""
+#~ msgstr ""
+
+#~ msgid "Simulation Environment Installation"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "The whole ROS Stack is developed "
+#~ "and tested on ROS **Melodic** which "
+#~ "requires **Ubuntu 18.04** to run "
+#~ "correctly. The using of another ROS "
+#~ "version or OS may lead to "
+#~ "malfunctions of some packages"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "To allow the simulation to run on"
+#~ " your computer, you will need to "
+#~ "install ROS and some packages"
+#~ msgstr ""
+
+#~ msgid "Installation Index :"
+#~ msgstr ""
+
+#~ msgid "Prepare Environment"
+#~ msgstr ""
+
+#~ msgid "All terminal command listed are for Ubuntu users"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Place yourself in the folder of "
+#~ "your choice and create a folder "
+#~ "**catkin_ws_niryo_ned** as well as a "
+#~ "sub-folder **src** ::"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Then go to the folder "
+#~ "**catkin_ws_niryo_ned** and clone Ned "
+#~ "repository in the folder **src**. For"
+#~ " the future operation, be sure to "
+#~ "stay in the **catkin_ws_niryo_ned** folder "
+#~ "::"
+#~ msgstr ""
+
+#~ msgid "Install ROS Dependencies"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "You firstly need to install ROS "
+#~ "Melodic. To do so, follow the ROS"
+#~ " official tutorial `here "
+#~ "<http://wiki.ros.org/melodic/Installation/Ubuntu>`_ and "
+#~ "chose the **Desktop-Full Install**"
+#~ msgstr ""
+
+#~ msgid "Install Additional Packages"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "To ensure the functioning of all "
+#~ "Ned's packages, you need to install "
+#~ "several more packages :"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "For each packages, we have referenced"
+#~ " all the dependencies in their "
+#~ "respective *package.xml* file, which allow "
+#~ "to install each dependency via *rosdep*"
+#~ " command ::"
+#~ msgstr ""
+
+#~ msgid "ROS packages needed are :"
+#~ msgstr ""
+
+#~ msgid "To install a package on Ubuntu : ::"
+#~ msgstr ""
+
+#~ msgid "Melodic specific packages needed are :"
+#~ msgstr ""
+
+#~ msgid "To install a ROS Melodic's package on Ubuntu : ::"
+#~ msgstr ""
+
+#~ msgid "Setup Ned ROS Environment"
+#~ msgstr ""
+
+#~ msgid "Be sure to be still placed in the **catkin_ws_niryo_ned** folder"
+#~ msgstr ""
+
+#~ msgid "Then perform the **make** of Ned's ROS Stack via the command ::"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "It is necessary to source the "
+#~ "configuration file to add all Ned "
+#~ "packages to ROS environment. To do "
+#~ "so, run the command ::"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "It is necessary to run this "
+#~ "command each time you launch a new"
+#~ " terminal. If you want to make "
+#~ "this sourcing appends for all your "
+#~ "futur terminals, you can add it to"
+#~ " your **bashrc** file ::"
+#~ msgstr ""
+
+#~ msgid "Installation is now finished !"
+#~ msgstr ""
+
+#~ msgid "Simulation Utilization"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "If you haven't follow the step of"
+#~ " :ref:`Simulation Environment Installation "
+#~ "<Simulation Environment Installation>`, you "
+#~ "won't be able to use the "
+#~ "simulation"
+#~ msgstr ""
+
+#~ msgid "Hardware features won't be accessible"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "It also helps for developing purpose "
+#~ "→ no need to transfer code, "
+#~ "compile and restart the robot which "
+#~ "is way slower than doing it on "
+#~ "a desktop computer"
+#~ msgstr ""
+
+#~ msgid "Without Physics - Visualization"
+#~ msgstr ""
+
+#~ msgid "The visualization happens with Rviz which is a powerful tool"
+#~ msgstr ""
+
+#~ msgid "Control with Trackbar"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "This visualization allows an easy first"
+#~ " control of the robot, and helps "
+#~ "to understand joints disposal. You can"
+#~ " access it by using the command "
+#~ "::"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Rviz should open with a window "
+#~ "containing 6 trackbars. Each of these"
+#~ " trackbars allows to control the "
+#~ "corresponding joint"
+#~ msgstr ""
+
+#~ msgid "Example of trackbars use"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Not only Rviz can display the "
+#~ "Robot, it can also be linked with"
+#~ " ROS controllers to show robot's "
+#~ "actions from ROS commands !"
+#~ msgstr ""
+
+#~ msgid "To run it : ::"
+#~ msgstr ""
+
+#~ msgid "Rviz Opening, with the robot ready to be controlled with ROS !"
+#~ msgstr ""
+
+#~ msgid "With Physics - Simulation"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "For the simulation, Ned use Gazebo, "
+#~ "a well known tool among the ROS"
+#~ " community. It allows :"
+#~ msgstr ""
+
+#~ msgid "collision"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "world creation → An virtual environment"
+#~ " in which the robot can deal "
+#~ "with objects"
+#~ msgstr ""
+
+#~ msgid "Gripper & Camera using"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "The Niryo Gripper 1 has been "
+#~ "replicated in Gazebo. The Camera is "
+#~ "also implemented"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Gazebo also generates camera distortion, "
+#~ "which brings the simulation even closer"
+#~ " from the reality !"
+#~ msgstr ""
+
+#~ msgid "Gazebo view, with the robot ready to be controlled with ROS !"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "You can edit Gazebo world to do"
+#~ " your own ! It's placed in the"
+#~ " folder *worlds* of the package "
+#~ "niryo_robot_gazebo"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "The user can disable 3 things by"
+#~ " adding the specific string to the"
+#~ " command line :"
+#~ msgstr ""
+
+#~ msgid "the Gazebo Graphical Interface : `gui:=false`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "the camera & the grupper - Vision"
+#~ " & Gripper wise functions won't be"
+#~ " usable : `gripper_n_camera:=false`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Gazebo can be very slow. If your"
+#~ " tests do not need gripper and "
+#~ "camera, consider using Rviz to alleviate"
+#~ " your CPU"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "If you haven't follow the step of"
+#~ " :ref:`Simulation Environment Installation "
+#~ "<Simulation Environment Installation>`. you "
+#~ "won't be able to use the "
+#~ "simulation."
+#~ msgstr ""
 

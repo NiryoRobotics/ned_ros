@@ -1,4 +1,4 @@
-Niryo Robot Vision Package
+Niryo robot vision package
 ======================================
 
 This package is the one dealing with all vision related stuff.
@@ -6,20 +6,20 @@ This package is the one dealing with all vision related stuff.
 
 Vision Node
 --------------------------
-The ROS Node is made of several services to deal with video streaming, object detection.
+The ROS Node is made of several services to deal with video streaming, object detection...
 The node is working exactly the same way if you chose to use it on simulation or reality.
 
-This node can be launched locally in a standalone mode via the command ::
+This node can be launched locally in a standalone mode via the command: ::
 
  roslaunch niryo_robot_vision vision_node_local.launch
 
 Configuration (Frame Per Second, Camera Port, Video Resolution) can be
-edited in the config file :
+edited in the config file:
 
- - For "standard" Node : *niryo_robot_vision/config/video_server_setup.yaml*
- - For local Node : *niryo_robot_vision/config/video_server_setup_local.yaml*
+ - For "standard" Node: *niryo_robot_vision/config/video_server_setup.yaml*
+ - For local Node: *niryo_robot_vision/config/video_server_setup_local.yaml*
 
-The namespace used is : |namespace_emphasize|
+The namespace used is: |namespace_emphasize|
 
 Parameters - Vision
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -34,8 +34,8 @@ Parameters - Vision
    *  -  ``frame_rate``
       -  Stream frame rate
    *  -  ``simulation_mode``
-      -  | Set to True if you are using the gazebo simulation.
-         | It will adapt how the node get its video steam
+      -  | Set to true if you are using the gazebo simulation.
+         | It will adapt how the node get its video stream
    *  -  ``debug_compression_quality``
       -  Debug Stream compression quality
    *  -  ``stream_compression_quality``
@@ -73,28 +73,28 @@ Services - Vision
       -  Message Type
       -  Description
    *  -  ``debug_colors``
-      -  :ref:`DebugColorDetection<DebugColorDetection (Service)>`
+      -  :ref:`DebugColorDetection<source/ros/niryo_robot_vision:DebugColorDetection (Service)>`
       -  Return an annotated image to emphasize what happened with color detection
    *  -  ``debug_markers``
-      -  :ref:`DebugMarkers<DebugMarkers (Service)>`
+      -  :ref:`DebugMarkers<source/ros/niryo_robot_vision:DebugMarkers (Service)>`
       -  Return an annotated image to emphasize what happened with markers detection
    *  -  ``obj_detection_rel``
-      -  :ref:`ObjDetection<ObjDetection (Service)>`
+      -  :ref:`ObjDetection<source/ros/niryo_robot_vision:ObjDetection (Service)>`
       -  Object detection service
    *  -  ``start_stop_video_streaming``
-      -  :ref:`SetBool`
+      -  :ref:`source/ros/niryo_robot_msgs:SetBool`
       -  Start or Stop video streaming
    *  -  ``take_picture``
-      -  :ref:`TakePicture<TakePicture (Service)>`
+      -  :ref:`TakePicture<source/ros/niryo_robot_vision:TakePicture (Service)>`
       -  Save a picture in the specified folder
 
 
-All these services are available as soon as the node is started
+All these services are available as soon as the node is started.
 
 
 Dependencies - Vision
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-* :ref:`niryo_robot_msgs <Niryo Robot Messages Package>`
+* :ref:`niryo_robot_msgs <source/ros/niryo_robot_msgs:Niryo Robot Messages Package>`
 * :msgs_index:`sensor_msgs`
 
 

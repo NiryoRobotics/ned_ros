@@ -1,20 +1,20 @@
-Use Modbus TCP Server
+Use Modbus TCP server
 ====================================
 
 Ned is permanently running a Modbus TCP Server that enables Ned to communicate with a PLC, or another computer in the same network.
 
-Connection - Modbus TCP Server
+Connection - Modbus TCP server
 ------------------------------------
 The Modbus TCP server is running on port 5020 by default.
 
-Description -  Modbus TCP Server
+Description -  Modbus TCP server
 ------------------------------------
 It has been built on top of the `pymodbus library <https://pymodbus.readthedocs.io/en/latest/index.html>`_.
 
-All 4 Modbus datastores are implemented :
-    - Coil
-    - Discrete Input
-    - Holding Register
+All 4 Modbus datastores are implemented:
+    - Coil.
+    - Discrete Input.
+    - Holding Register.
     - Input Register.
 
 Each datastore has a different set of functionalities. Note that each datastore contains a completely different set of data.
@@ -25,9 +25,9 @@ Coil
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Each address contains a 1bit value.
 
-READ/WRITE (the stored values correspond to the last given command, not the current robot state)
+READ/WRITE (the stored values correspond to the last given command, not the current robot state).
 
-Accepted Modbus functions :
+Accepted Modbus functions:
     - 0x01: READ_COILS
     - 0x05: WRITE_SINGLE_COIL
 
@@ -55,13 +55,13 @@ Digital I/O numbers used for Modbus:
    *  -  200-299
       -  Can be used to store your own variables
 
-Discrete Input
+Discrete input
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Each address contains a 1bit value.
 
 READ-ONLY
 
-Accepted Modbus functions :
+Accepted Modbus functions:
     - 0x02: READ_DISCRETE_INPUTS
 
 Digital I/O numbers used for Modbus:
@@ -84,15 +84,15 @@ Digital I/O numbers used for Modbus:
    *  -  100-105
       -  Digital I/O state (High = 1, Low = 0)
 
-This datastore can be used to read Digital I/O mode and state of the robot. See :ref:`Coil` above for digital I/O number mapping. 
+This datastore can be used to read Digital I/O mode and state of the robot. See :ref:`source/ros/niryo_robot_modbus:Coil` above for digital I/O number mapping. 
 
-Holding Register
+Holding register
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Each address contains a 16bits value.
 
 READ/WRITE (the stored values correspond to the last given command, not the current robot state)
 
-Accepted Modbus functions :
+Accepted Modbus functions:
     - 0x03: READ_HOLDING_REGISTERS
     - 0x06: WRITE_SINGLE_REGISTER
 
@@ -138,7 +138,7 @@ Accepted Modbus functions :
    *  -  402
       -  Gripper close speed (100-1000)
    *  -  500
-      -  Select tool from given id **
+      -  Select tool from given id
    *  -  510
       -  Open gripper with given id
    *  -  511
@@ -148,24 +148,24 @@ Accepted Modbus functions :
    *  -  513 
       -  Push air vacuum pump from given id
    *  -  520 
-      -  Enable a conveyor newly connected [on success: store it's ID at 152]
+      -  Enable a Conveyor Belt newly connected [on success: store it's ID at 152]
    *  -  521 
-      -  Detach / disable conveyor with the conveyor ID given at 525
+      -  Detach / disable Conveyor Belt with the Conveyor Belt ID given at 525
    *  -  522 
-      -  Control conveyor with the conveyor ID given at 525
+      -  Control Conveyor Belt with the Conveyor Belt ID given at 525
    *  -  523 [related to 522]
-      -  Conveyor direction (backward = -1 , forward = 1)
+      -  Conveyor Belt direction (backward = -1 , forward = 1)
    *  -  524 [related to 522]
-      -  Conveyor speed (0-100)(%)
+      -  Conveyor Belt speed (0-100)(%)
    *  -  525 [related to 520/521/522/526]
-      -  Store the conveyor ID for all related command
+      -  Store the Conveyor Belt ID for all related command
    *  -  526 
-      -  Stop conveyor with the conveyor ID given at 525
+      -  Stop Conveyor Belt with the Conveyor Belt ID given at 525
 
 Input Register
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Each address contains a 16 bit value.
+Each address contains a 16bits value.
 
 READ-ONLY
 
@@ -230,5 +230,5 @@ Dependencies - Modbus TCP Server
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 - `pymodbus library <https://pymodbus.readthedocs.io/en/latest/index.html>`_
-- :ref:`niryo_robot_msgs <Niryo Robot Messages Package>`
+- :ref:`niryo_robot_msgs <source/ros/niryo_robot_msgs:Niryo Robot Messages Package>`
 - :msgs_index:`std_msgs`

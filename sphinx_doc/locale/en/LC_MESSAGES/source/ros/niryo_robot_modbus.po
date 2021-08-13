@@ -11,17 +11,17 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-23 16:51+0200\n"
+"POT-Creation-Date: 2021-08-12 08:22+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.8.0\n"
+"Generated-By: Babel 2.9.1\n"
 
 #: ../../source/ros/niryo_robot_modbus.rst:2
-msgid "Use Modbus TCP Server"
+msgid "Use Modbus TCP server"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:4
@@ -31,7 +31,7 @@ msgid ""
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:7
-msgid "Connection - Modbus TCP Server"
+msgid "Connection - Modbus TCP server"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:8
@@ -39,7 +39,7 @@ msgid "The Modbus TCP server is running on port 5020 by default."
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:11
-msgid "Description -  Modbus TCP Server"
+msgid "Description -  Modbus TCP server"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:12
@@ -49,22 +49,19 @@ msgid ""
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:18
-msgid "All 4 Modbus datastores are implemented :"
+msgid "All 4 Modbus datastores are implemented:"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:15
-#: ../../source/ros/niryo_robot_modbus.rst:25
-msgid "Coil"
+msgid "Coil."
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:16
-#: ../../source/ros/niryo_robot_modbus.rst:59
-msgid "Discrete Input"
+msgid "Discrete Input."
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:17
-#: ../../source/ros/niryo_robot_modbus.rst:90
-msgid "Holding Register"
+msgid "Holding Register."
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:18
@@ -81,22 +78,26 @@ msgstr ""
 msgid "Address tables start at 0."
 msgstr ""
 
+#: ../../source/ros/niryo_robot_modbus.rst:25
+msgid "Coil"
+msgstr ""
+
 #: ../../source/ros/niryo_robot_modbus.rst:26
 #: ../../source/ros/niryo_robot_modbus.rst:60
 msgid "Each address contains a 1bit value."
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:28
-#: ../../source/ros/niryo_robot_modbus.rst:93
 msgid ""
 "READ/WRITE (the stored values correspond to the last given command, not "
-"the current robot state)"
+"the current robot state)."
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:32
 #: ../../source/ros/niryo_robot_modbus.rst:65
 #: ../../source/ros/niryo_robot_modbus.rst:97
-msgid "Accepted Modbus functions :"
+#: ../../source/ros/niryo_robot_modbus.rst:173
+msgid "Accepted Modbus functions:"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:31
@@ -192,6 +193,10 @@ msgstr ""
 msgid "Can be used to store your own variables"
 msgstr ""
 
+#: ../../source/ros/niryo_robot_modbus.rst:59
+msgid "Discrete input"
+msgstr ""
+
 #: ../../source/ros/niryo_robot_modbus.rst:62
 #: ../../source/ros/niryo_robot_modbus.rst:170
 msgid "READ-ONLY"
@@ -204,11 +209,23 @@ msgstr ""
 #: ../../source/ros/niryo_robot_modbus.rst:87
 msgid ""
 "This datastore can be used to read Digital I/O mode and state of the "
-"robot. See :ref:`Coil` above for digital I/O number mapping."
+"robot. See :ref:`source/ros/niryo_robot_modbus:Coil` above for digital "
+"I/O number mapping."
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:90
+msgid "Holding register"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:91
+#: ../../source/ros/niryo_robot_modbus.rst:168
 msgid "Each address contains a 16bits value."
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:93
+msgid ""
+"READ/WRITE (the stored values correspond to the last given command, not "
+"the current robot state)"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:96
@@ -356,7 +373,7 @@ msgid "500"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:141
-msgid "Select tool from given id **"
+msgid "Select tool from given id"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:142
@@ -396,7 +413,7 @@ msgid "520"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:151
-msgid "Enable a conveyor newly connected [on success: store it's ID at 152]"
+msgid "Enable a Conveyor Belt newly connected [on success: store it's ID at 152]"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:152
@@ -404,7 +421,7 @@ msgid "521"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:153
-msgid "Detach / disable conveyor with the conveyor ID given at 525"
+msgid "Detach / disable Conveyor Belt with the Conveyor Belt ID given at 525"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:154
@@ -412,7 +429,7 @@ msgid "522"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:155
-msgid "Control conveyor with the conveyor ID given at 525"
+msgid "Control Conveyor Belt with the Conveyor Belt ID given at 525"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:156
@@ -420,7 +437,7 @@ msgid "523 [related to 522]"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:157
-msgid "Conveyor direction (backward = -1 , forward = 1)"
+msgid "Conveyor Belt direction (backward = -1 , forward = 1)"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:158
@@ -428,7 +445,7 @@ msgid "524 [related to 522]"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:159
-msgid "Conveyor speed (0-100)(%)"
+msgid "Conveyor Belt speed (0-100)(%)"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:160
@@ -436,7 +453,7 @@ msgid "525 [related to 520/521/522/526]"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:161
-msgid "Store the conveyor ID for all related command"
+msgid "Store the Conveyor Belt ID for all related command"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:162
@@ -444,19 +461,11 @@ msgid "526"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:163
-msgid "Stop conveyor with the conveyor ID given at 525"
+msgid "Stop Conveyor Belt with the Conveyor Belt ID given at 525"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:166
 msgid "Input Register"
-msgstr ""
-
-#: ../../source/ros/niryo_robot_modbus.rst:168
-msgid "Each address contains a 16 bit value."
-msgstr ""
-
-#: ../../source/ros/niryo_robot_modbus.rst:173
-msgid "Accepted Modbus functions:"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:173
@@ -620,10 +629,70 @@ msgid "`pymodbus library <https://pymodbus.readthedocs.io/en/latest/index.html>`
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:233
-msgid ":ref:`niryo_robot_msgs <Niryo Robot Messages Package>`"
+msgid ""
+":ref:`niryo_robot_msgs <source/ros/niryo_robot_msgs:Niryo Robot Messages "
+"Package>`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:234
 msgid ":msgs_index:`std_msgs`"
 msgstr ""
+
+#~ msgid "Use Modbus TCP Server"
+#~ msgstr ""
+
+#~ msgid "Connection - Modbus TCP Server"
+#~ msgstr ""
+
+#~ msgid "Description -  Modbus TCP Server"
+#~ msgstr ""
+
+#~ msgid "All 4 Modbus datastores are implemented :"
+#~ msgstr ""
+
+#~ msgid "Discrete Input"
+#~ msgstr ""
+
+#~ msgid "Holding Register"
+#~ msgstr ""
+
+#~ msgid "Accepted Modbus functions :"
+#~ msgstr ""
+
+#~ msgid "Enable a conveyor newly connected [on success: store it's ID at 152]"
+#~ msgstr ""
+
+#~ msgid "Detach / disable conveyor with the conveyor ID given at 525"
+#~ msgstr ""
+
+#~ msgid "Control conveyor with the conveyor ID given at 525"
+#~ msgstr ""
+
+#~ msgid "Conveyor direction (backward = -1 , forward = 1)"
+#~ msgstr ""
+
+#~ msgid "Conveyor speed (0-100)(%)"
+#~ msgstr ""
+
+#~ msgid "Store the conveyor ID for all related command"
+#~ msgstr ""
+
+#~ msgid "Stop conveyor with the conveyor ID given at 525"
+#~ msgstr ""
+
+#~ msgid "Select tool from given id **"
+#~ msgstr ""
+
+#~ msgid "Each address contains a 16 bit value."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "This datastore can be used to read"
+#~ " Digital I/O mode and state of "
+#~ "the robot. See :ref:`Coil` above for "
+#~ "digital I/O number mapping."
+#~ msgstr ""
+
+#~ msgid ":ref:`niryo_robot_msgs <Niryo Robot Messages Package>`"
+#~ msgstr ""
 

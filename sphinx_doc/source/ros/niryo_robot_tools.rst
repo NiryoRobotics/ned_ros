@@ -1,15 +1,15 @@
-Niryo Robot Tools Package
+Niryo robot tools package
 ========================================
 
 Provides functionalities to control end-effectors and accessories for Ned.
 
-Tools Node
+Tools node
 --------------------------
 The ROS Node is made of services to equip tool, an action server for tool command and topics for the current tool or the tool state.
 
-The namespace used is : |namespace_emphasize|
+The namespace used is: |namespace_emphasize|
 
-Action Server - Tools
+Action server - tools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. list-table:: Tools Package Action Server
@@ -22,10 +22,10 @@ Action Server - Tools
       -  Message Type
       -  Description
    *  -  ``robot_action``
-      -  :ref:`ToolAction<ToolAction (Action)>`
+      -  :ref:`ToolAction<source/ros/niryo_robot_tools:ToolAction (Action)>`
       -  Command the tool through an action server
 
-Publisher - Tools
+Publisher - tools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. list-table:: Tools Package Publishers
@@ -41,7 +41,7 @@ Publisher - Tools
       -  :std_msgs:`Int32`
       -  Publish the current tool ID
 
-Services - Tools
+Services - tools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. list-table:: Tools Package Services
@@ -54,18 +54,18 @@ Services - Tools
       -  Message Type
       -  Description
    *  -  ``update_tool``
-      -  :ref:`Trigger`
+      -  :ref:`source/ros/niryo_robot_msgs:Trigger`
       -  Ping/scan for a dxl motor flashed with an ID corresponding to a tool and equip it (if found)
    *  -  ``equip_electromagnet``
-      -  :ref:`SetInt`
+      -  :ref:`source/ros/niryo_robot_msgs:SetInt`
       -  Equip the electromagnet with the motor ID given as parameter
 
-Dependencies - Tools
+Dependencies - tools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-* :ref:`niryo_robot_msgs <Niryo Robot Messages Package>`
+* :ref:`niryo_robot_msgs <source/ros/niryo_robot_msgs:Niryo Robot Messages Package>`
 * :msgs_index:`std_msgs`
 
-Action, Services & Messages files - Tools
+Action, services & messages files - tools
 ------------------------------------------------------
 
 ToolAction (Action)

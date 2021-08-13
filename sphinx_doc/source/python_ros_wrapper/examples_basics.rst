@@ -2,10 +2,10 @@ Examples: Basics
 ==========================
 
 In this file, two short programs are implemented & commented in order to
-help you understand the philosophy behind the Python ROS Wrapper
+help you understand the philosophy behind the Python ROS Wrapper.
 
 .. danger::
-    If you are using the real robot, make sure the environment around is clear
+    If you are using the real robot, make sure the environment around is clear.
 
 
 Your first move joint
@@ -31,34 +31,34 @@ It's a simple MoveJ. ::
     niryo_robot.move_joints(0.1, -0.2, 0.0, 1.1, -0.5, 0.2)
 
 
-Code Details - First Move J
+Code details - First MoveJ
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-First of all, we indicate to the shell that we are running a Python Script ::
+First of all, we indicate to the shell that we are running a Python Script: ::
 
     #!/usr/bin/env python
 
-Then, We import the API package to be able to access functions ::
+Then, We import the API package to be able to access functions: ::
 
     from niryo_robot_python_ros_wrapper import *
 
-Then, we instantiate a ROS Node in order to communicate with ROS master ::
+Then, we install a ROS Node in order to communicate with ROS master: ::
 
     import rospy
 
     # Initializing ROS node
     rospy.init_node('niryo_ned_example_python_ros_wrapper')
 
-We start a :class:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper` instance ::
+We start a :class:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper` instance: ::
 
     niryo_robot = NiryoRosWrapper()
 
 Once the connection is done, we calibrate the robot using its
-:meth:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.calibrate_auto` function ::
+:meth:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.calibrate_auto` function: ::
 
     niryo_robot.calibrate_auto()
 
 As the robot is now calibrated, we can do a Move Joints by giving the 6 axis positions
-in radians ! To do so, we use :meth:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_joints` ::
+in radians! To do so, we use :meth:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_joints`: ::
 
     niryo_robot.move_joints(0.1, -0.2, 0.0, 1.1, -0.5, 0.2)
 
@@ -66,7 +66,7 @@ in radians ! To do so, we use :meth:`~.niryo_robot_python_ros_wrapper.ros_wrappe
 Your first pick and place
 -------------------------------
 For our second example, we are going to develop an algorithm of
-pick and place ::
+pick and place: ::
 
     #!/usr/bin/env python
 
@@ -95,10 +95,10 @@ pick and place ::
     # Placing !
     niryo_robot.release_with_tool()
 
-Code Details - First Pick And Place
+Code details - first pick and place
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-First of all, we do the imports and start a ROS Node ::
+First of all, we do the imports and start a ROS Node: ::
 
     #!/usr/bin/env python
 
@@ -108,7 +108,7 @@ First of all, we do the imports and start a ROS Node ::
     rospy.init_node('niryo_robot_example_python_ros_wrapper')
 
 Then, create a :class:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper` instance
-& calibrate the robot ::
+& calibrate the robot: ::
 
     niryo_robot = NiryoRosWrapper()
     niryo_robot.calibrate_auto()
@@ -119,11 +119,11 @@ with :meth:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.update_
 
     niryo_robot.update_tool()
 
-Now that our initialization is done, we can open the gripper (or push air from the vacuum)
+Now that our initialization is done, we can open the Gripper (or push air from the Vacuum pump)
 with :meth:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.release_with_tool`,
 go to the picking pose via :meth:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_pose`
 & then catch an object
-with :meth:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.grasp_with_tool` ! ::
+with :meth:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.grasp_with_tool`! ::
 
     # Opening Gripper/Pushing Air
     niryo_robot.release_with_tool()
@@ -132,7 +132,7 @@ with :meth:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.grasp_w
     # Picking
     niryo_robot.grasp_with_tool()
 
-We now get to the place pose, and place the object ::
+We now get to the place pose, and place the object. ::
 
     # Moving to place pose
     niryo_robot.move_pose(0.2, -0.1, 0.14, 0.0, 1.57, 0)
@@ -140,10 +140,10 @@ We now get to the place pose, and place the object ::
     niryo_robot.release_with_tool()
 
 
-Notes - Basics Examples
+Notes - Basics examples
 ---------------------------
 | You may not have fully understood how to move the robot and use
  tools of Ned and that is totally fine because you will find
- more details on another examples page !
+ more details on another examples page!
 | The important thing to remember from this page is how to import the library & connect
- to the robot
+ to the robot.
