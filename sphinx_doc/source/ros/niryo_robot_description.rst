@@ -1,9 +1,9 @@
-Niryo Robot Description Package
+Niryo robot description package
 ========================================
 
 This package contains URDF files and meshes (collada + stl) for Ned.
 
-To display Ned on Rviz ::
+To display Ned on Rviz: ::
 
  roslaunch niryo_robot_description display.launch
 

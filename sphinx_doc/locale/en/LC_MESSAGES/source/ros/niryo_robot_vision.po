@@ -11,17 +11,17 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-23 16:51+0200\n"
+"POT-Creation-Date: 2021-08-12 08:22+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.8.0\n"
+"Generated-By: Babel 2.9.1\n"
 
 #: ../../source/ros/niryo_robot_vision.rst:2
-msgid "Niryo Robot Vision Package"
+msgid "Niryo robot vision package"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_vision.rst:4
@@ -35,32 +35,30 @@ msgstr ""
 #: ../../source/ros/niryo_robot_vision.rst:9
 msgid ""
 "The ROS Node is made of several services to deal with video streaming, "
-"object detection. The node is working exactly the same way if you chose "
-"to use it on simulation or reality."
+"object detection... The node is working exactly the same way if you chose"
+" to use it on simulation or reality."
 msgstr ""
 
 #: ../../source/ros/niryo_robot_vision.rst:12
-msgid "This node can be launched locally in a standalone mode via the command ::"
+msgid "This node can be launched locally in a standalone mode via the command: ::"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_vision.rst:16
 msgid ""
 "Configuration (Frame Per Second, Camera Port, Video Resolution) can be "
-"edited in the config file :"
+"edited in the config file:"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_vision.rst:19
-msgid ""
-"For \"standard\" Node : "
-"*niryo_robot_vision/config/video_server_setup.yaml*"
+msgid "For \"standard\" Node: *niryo_robot_vision/config/video_server_setup.yaml*"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_vision.rst:20
-msgid "For local Node : *niryo_robot_vision/config/video_server_setup_local.yaml*"
+msgid "For local Node: *niryo_robot_vision/config/video_server_setup_local.yaml*"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_vision.rst:22
-msgid "The namespace used is : |namespace_emphasize|"
+msgid "The namespace used is: |namespace_emphasize|"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_vision.rst:25
@@ -96,11 +94,11 @@ msgid "``simulation_mode``"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_vision.rst
-msgid "Set to True if you are using the gazebo simulation."
+msgid "Set to true if you are using the gazebo simulation."
 msgstr ""
 
 #: ../../source/ros/niryo_robot_vision.rst
-msgid "It will adapt how the node get its video steam"
+msgid "It will adapt how the node get its video stream"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_vision.rst:39
@@ -165,7 +163,9 @@ msgid "``debug_colors``"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_vision.rst:76
-msgid ":ref:`DebugColorDetection<DebugColorDetection (Service)>`"
+msgid ""
+":ref:`DebugColorDetection<source/ros/niryo_robot_vision:DebugColorDetection"
+" (Service)>`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_vision.rst:77
@@ -177,7 +177,7 @@ msgid "``debug_markers``"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_vision.rst:79
-msgid ":ref:`DebugMarkers<DebugMarkers (Service)>`"
+msgid ":ref:`DebugMarkers<source/ros/niryo_robot_vision:DebugMarkers (Service)>`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_vision.rst:80
@@ -191,7 +191,7 @@ msgid "``obj_detection_rel``"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_vision.rst:82
-msgid ":ref:`ObjDetection<ObjDetection (Service)>`"
+msgid ":ref:`ObjDetection<source/ros/niryo_robot_vision:ObjDetection (Service)>`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_vision.rst:83
@@ -203,7 +203,7 @@ msgid "``start_stop_video_streaming``"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_vision.rst:85
-msgid ":ref:`SetBool`"
+msgid ":ref:`source/ros/niryo_robot_msgs:SetBool`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_vision.rst:86
@@ -215,7 +215,7 @@ msgid "``take_picture``"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_vision.rst:88
-msgid ":ref:`TakePicture<TakePicture (Service)>`"
+msgid ":ref:`TakePicture<source/ros/niryo_robot_vision:TakePicture (Service)>`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_vision.rst:89
@@ -223,7 +223,7 @@ msgid "Save a picture in the specified folder"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_vision.rst:92
-msgid "All these services are available as soon as the node is started"
+msgid "All these services are available as soon as the node is started."
 msgstr ""
 
 #: ../../source/ros/niryo_robot_vision.rst:96
@@ -231,7 +231,9 @@ msgid "Dependencies - Vision"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_vision.rst:97
-msgid ":ref:`niryo_robot_msgs <Niryo Robot Messages Package>`"
+msgid ""
+":ref:`niryo_robot_msgs <source/ros/niryo_robot_msgs:Niryo Robot Messages "
+"Package>`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_vision.rst:98
@@ -257,4 +259,68 @@ msgstr ""
 #: ../../source/ros/niryo_robot_vision.rst:126
 msgid "TakePicture (Service)"
 msgstr ""
+
+#~ msgid "Niryo Robot Vision Package"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "This node can be launched locally "
+#~ "in a standalone mode via the "
+#~ "command ::"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Configuration (Frame Per Second, Camera "
+#~ "Port, Video Resolution) can be edited"
+#~ " in the config file :"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "For \"standard\" Node : "
+#~ "*niryo_robot_vision/config/video_server_setup.yaml*"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "For local Node : "
+#~ "*niryo_robot_vision/config/video_server_setup_local.yaml*"
+#~ msgstr ""
+
+#~ msgid "The namespace used is : |namespace_emphasize|"
+#~ msgstr ""
+
+#~ msgid "All these services are available as soon as the node is started"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "The ROS Node is made of several"
+#~ " services to deal with video "
+#~ "streaming, object detection. The node is"
+#~ " working exactly the same way if "
+#~ "you chose to use it on simulation"
+#~ " or reality."
+#~ msgstr ""
+
+#~ msgid "Set to True if you are using the gazebo simulation."
+#~ msgstr ""
+
+#~ msgid "It will adapt how the node get its video steam"
+#~ msgstr ""
+
+#~ msgid ":ref:`DebugColorDetection<DebugColorDetection (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`DebugMarkers<DebugMarkers (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`ObjDetection<ObjDetection (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`SetBool`"
+#~ msgstr ""
+
+#~ msgid ":ref:`TakePicture<TakePicture (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`niryo_robot_msgs <Niryo Robot Messages Package>`"
+#~ msgstr ""
 

@@ -11,17 +11,17 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-23 16:51+0200\n"
+"POT-Creation-Date: 2021-08-12 08:22+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.8.0\n"
+"Generated-By: Babel 2.9.1\n"
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:2
-msgid "Niryo Robot Poses Handlers Package"
+msgid "Niryo robot poses handlers package"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:4
@@ -31,11 +31,11 @@ msgid ""
 msgstr ""
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:9
-msgid "Poses Handlers Node"
+msgid "Poses handlers node"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:12
-msgid "Description - Poses Handlers"
+msgid "Description - Poses handlers"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:14
@@ -45,7 +45,7 @@ msgid ""
 msgstr ""
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:17
-msgid "The namespace used is : |namespace_emphasize|"
+msgid "The namespace used is: |namespace_emphasize|"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:20
@@ -55,7 +55,7 @@ msgstr ""
 #: ../../source/ros/niryo_robot_poses_handlers.rst:22
 msgid ""
 "A workspace is defined by 4 markers that form a rectangle. With the help "
-"of the robot's calibration tip, the marker positions are learnt. The "
+"of the robot's calibration tip, the marker positions are learned. The "
 "camera returns poses (x, y, yaw) relative to the workspace. We can then "
 "infer the absolute object pose in robot coordinates."
 msgstr ""
@@ -86,13 +86,13 @@ msgstr ""
 #: ../../source/ros/niryo_robot_poses_handlers.rst:41
 msgid ""
 "Camera detects object relative to markers and sends x<sub>rel</sub>, "
-"y<sub>rel</sub>, yaw<sub>rel</sub>"
+"y<sub>rel</sub>, yaw<sub>rel</sub>."
 msgstr ""
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:42
 msgid ""
 "The object is placed on the workspace, revealing the object pose in robot"
-" coordinates x, y, z, roll, pitch, yaw"
+" coordinates x, y, z, roll, pitch, yaw."
 msgstr ""
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:43
@@ -102,15 +102,15 @@ msgid ""
 msgstr ""
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:46
-msgid "Poses & Trajectories"
+msgid "Poses & trajectories"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:48
-msgid "List of Poses"
+msgid "List of poses"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:51
-msgid "Parameters - Poses Handlers"
+msgid "Parameters - Poses handlers"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:52
@@ -160,7 +160,7 @@ msgid "Path to the Trajectory storage mother folder"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:70
-msgid "Services - Poses Handlers"
+msgid "Services - Poses handlers"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:72
@@ -176,7 +176,9 @@ msgid "``manage_workspace``"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:83
-msgid ":ref:`ManageWorkspace<ManageWorkspace (Service)>`"
+msgid ""
+":ref:`ManageWorkspace<source/ros/niryo_robot_poses_handlers:ManageWorkspace"
+" (Service)>`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:84
@@ -188,7 +190,9 @@ msgid "``get_workspace_ratio``"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:86
-msgid ":ref:`GetWorkspaceRatio<GetWorkspaceRatio (Service)>`"
+msgid ""
+":ref:`GetWorkspaceRatio<source/ros/niryo_robot_poses_handlers:GetWorkspaceRatio"
+" (Service)>`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:87
@@ -202,11 +206,11 @@ msgstr ""
 #: ../../source/ros/niryo_robot_poses_handlers.rst:89
 #: ../../source/ros/niryo_robot_poses_handlers.rst:106
 #: ../../source/ros/niryo_robot_poses_handlers.rst:116
-msgid ":ref:`GetNameDescriptionList`"
+msgid ":ref:`source/ros/niryo_robot_msgs:GetNameDescriptionList`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:90
-msgid "Get list of workspaces' name & description"
+msgid "Get list of workspaces name & description"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:91
@@ -214,7 +218,9 @@ msgid "``get_workspace_poses``"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:92
-msgid ":ref:`GetWorkspaceRobotPoses<GetWorkspaceRobotPoses (Service)>`"
+msgid ""
+":ref:`GetWorkspaceRobotPoses<source/ros/niryo_robot_poses_handlers:GetWorkspaceRobotPoses"
+" (Service)>`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:93
@@ -226,11 +232,13 @@ msgid "``get_target_pose``"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:96
-msgid ":ref:`GetTargetPose<GetTargetPose (Service)>`"
+msgid ""
+":ref:`GetTargetPose<source/ros/niryo_robot_poses_handlers:GetTargetPose "
+"(Service)>`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:97
-msgid "Get saved programs' name"
+msgid "Get saved programs name"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:99
@@ -238,7 +246,9 @@ msgid "``manage_pose``"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:100
-msgid ":ref:`ManagePose<ManagePose (Service)>`"
+msgid ""
+":ref:`ManagePose<source/ros/niryo_robot_poses_handlers:ManagePose "
+"(Service)>`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:101
@@ -250,7 +260,7 @@ msgid "``get_pose``"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:103
-msgid ":ref:`GetPose<GetPose (Service)>`"
+msgid ":ref:`GetPose<source/ros/niryo_robot_poses_handlers:GetPose (Service)>`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:104
@@ -262,7 +272,7 @@ msgid "``get_pose_list``"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:107
-msgid "Get list of poses' name & description"
+msgid "Get list of poses name & description"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:109
@@ -270,7 +280,9 @@ msgid "``manage_trajectory``"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:110
-msgid ":ref:`ManageTrajectory<ManageTrajectory (Service)>`"
+msgid ""
+":ref:`ManageTrajectory<source/ros/niryo_robot_poses_handlers:ManageTrajectory"
+" (Service)>`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:111
@@ -282,7 +294,9 @@ msgid "``get_trajectory``"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:113
-msgid ":ref:`GetTrajectory<GetTrajectory (Service)>`"
+msgid ""
+":ref:`GetTrajectory<source/ros/niryo_robot_poses_handlers:GetTrajectory "
+"(Service)>`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:114
@@ -294,15 +308,15 @@ msgid "``get_trajectory_list``"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:117
-msgid "Get list of trajectories' name & description"
+msgid "Get list of trajectories name & description"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:120
-msgid "All these services are available as soon as the node is started"
+msgid "All these services are available as soon as the node is started."
 msgstr ""
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:123
-msgid "Dependencies - Poses Handlers"
+msgid "Dependencies - Poses handlers"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:125
@@ -314,7 +328,9 @@ msgid ":msgs_index:`moveit_msgs`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:127
-msgid ":ref:`niryo_robot_msgs <Niryo Robot Messages Package>`"
+msgid ""
+":ref:`niryo_robot_msgs <source/ros/niryo_robot_msgs:Niryo Robot Messages "
+"Package>`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:128
@@ -322,7 +338,7 @@ msgid ":wiki_ros:`tf`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:132
-msgid "Services & Messages files - Poses Handlers"
+msgid "Services & messages files - Poses handlers"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:135
@@ -368,4 +384,103 @@ msgstr ""
 #: ../../source/ros/niryo_robot_poses_handlers.rst:205
 msgid "Workspace (Message)"
 msgstr ""
+
+#~ msgid "Niryo Robot Poses Handlers Package"
+#~ msgstr ""
+
+#~ msgid "Poses Handlers Node"
+#~ msgstr ""
+
+#~ msgid "Description - Poses Handlers"
+#~ msgstr ""
+
+#~ msgid "The namespace used is : |namespace_emphasize|"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "A workspace is defined by 4 "
+#~ "markers that form a rectangle. With "
+#~ "the help of the robot's calibration "
+#~ "tip, the marker positions are learnt."
+#~ " The camera returns poses (x, y, "
+#~ "yaw) relative to the workspace. We "
+#~ "can then infer the absolute object "
+#~ "pose in robot coordinates."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Camera detects object relative to "
+#~ "markers and sends x<sub>rel</sub>, "
+#~ "y<sub>rel</sub>, yaw<sub>rel</sub>"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "The object is placed on the "
+#~ "workspace, revealing the object pose in"
+#~ " robot coordinates x, y, z, roll, "
+#~ "pitch, yaw"
+#~ msgstr ""
+
+#~ msgid "Poses & Trajectories"
+#~ msgstr ""
+
+#~ msgid "List of Poses"
+#~ msgstr ""
+
+#~ msgid "Parameters - Poses Handlers"
+#~ msgstr ""
+
+#~ msgid "Services - Poses Handlers"
+#~ msgstr ""
+
+#~ msgid "All these services are available as soon as the node is started"
+#~ msgstr ""
+
+#~ msgid "Dependencies - Poses Handlers"
+#~ msgstr ""
+
+#~ msgid "Services & Messages files - Poses Handlers"
+#~ msgstr ""
+
+#~ msgid "Get list of workspaces' name & description"
+#~ msgstr ""
+
+#~ msgid "Get saved programs' name"
+#~ msgstr ""
+
+#~ msgid "Get list of poses' name & description"
+#~ msgstr ""
+
+#~ msgid "Get list of trajectories' name & description"
+#~ msgstr ""
+
+#~ msgid ":ref:`ManageWorkspace<ManageWorkspace (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`GetWorkspaceRatio<GetWorkspaceRatio (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`GetNameDescriptionList`"
+#~ msgstr ""
+
+#~ msgid ":ref:`GetWorkspaceRobotPoses<GetWorkspaceRobotPoses (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`GetTargetPose<GetTargetPose (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`ManagePose<ManagePose (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`GetPose<GetPose (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`ManageTrajectory<ManageTrajectory (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`GetTrajectory<GetTrajectory (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`niryo_robot_msgs <Niryo Robot Messages Package>`"
+#~ msgstr ""
 

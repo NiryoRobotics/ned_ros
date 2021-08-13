@@ -1,18 +1,18 @@
-Matlab Manager
+Matlab manager
 ========================================
 
-This package allow to receive :ref:`RobotCommand<RobotCommand (message)>` from matlab and move the robot accordingly.
+This package allow to receive :ref:`RobotCommand<source/ros/niryo_robot_commander:RobotCommand (message)>` from Matlab and move the robot accordingly.
 
-Matlab Manager Node
+Matlab manager node
 --------------------------
-The ROS Node is made of one topic that enables to receive goals from matlab.
+The ROS Node is made of one topic that enables to receive goals from Matlab.
 
-Dependencies - Matlab Manager
+Dependencies - Matlab manager
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-- :ref:`niryo_robot_commander <Niryo Robot Commander Package>`
+- :ref:`niryo_robot_commander <source/ros/niryo_robot_commander:Niryo Robot Commander Package>`
 
 
-Services files - Matlab Manager
+Services files - Matlab manager
 -----------------------------------
 
 MatlabMoveResult (Service)

@@ -1,16 +1,15 @@
-Niryo Robot Tools Interface Package
+Niryo robot tools interface package
 ====================================
 
-| This package handles Niryo's conveyor
-| You can control two conveyors
+| This package handles Niryo's tools.
 
-Tools Interface Node
+Tools interface node
 --------------------------
-The ROS Node is made to :
- - Set and control tools
- - Publish tool connection state
+The ROS Node is made to:
+ - Set and control tools.
+ - Publish tool connection state.
 
-Parameters - Tools Interface
+Parameters - tools interface
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. list-table:: Tools Interface's Parameters 
@@ -23,15 +22,15 @@ Parameters - Tools Interface
       -  Description
    *  -  ``check_tool_connection_frequency``
       -  | Publish and control rate for tools connection state.
-         | Default : '2.0'
+         | Default: '2.0'
    *  -  ``id_list``
       -  | List of tools id
-         | Default : '[11,12,13,14,31]'
+         | Default: '[11,12,13,14,31]'
    *  -  ``motor_type_list``
       -  | List of motor tools type 
-         | Default : '["xl320","xl320","xl320","xl320","xl320"]'
+         | Default: '["xl320","xl320","xl320","xl320","xl320"]'
 
-Published Topics - Tools Interface
+Published topics - tools interface
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. list-table:: Tools Interface's Published Topics
@@ -47,7 +46,7 @@ Published Topics - Tools Interface
       -  :std_msgs:`Int32`
       -  Current tool ID
 
-Services - Tools Interface
+Services - tools interface
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. list-table:: Tool Interface Package Services
@@ -60,28 +59,28 @@ Services - Tools Interface
       -  Message Type
       -  Description
    *  -  ``niryo_robot/tools/ping_and_set_dxl_tool``
-      -  :ref:`tools_interface/PingDxlTool<PingDxlTool (Service)>`
+      -  :ref:`tools_interface/PingDxlTool<source/stack_hardware/tools_interface:PingDxlTool (Service)>`
       -  Scan and set for a tool plugged
    *  -  ``niryo_robot/tools/open_gripper``
-      -  :ref:`tools_interface/OpenGripper<OpenGripper (Service)>`
+      -  :ref:`tools_interface/OpenGripper<source/stack_hardware/tools_interface:OpenGripper (Service)>`
       -  Open a gripper tool
    *  -  ``niryo_robot/tools/close_gripper``
-      -  :ref:`tools_interface/CloseGripper<CloseGripper (Service)>`
+      -  :ref:`tools_interface/CloseGripper<source/stack_hardware/tools_interface:CloseGripper (Service)>`
       -  Close a gripper tool
    *  -  ``niryo_robot/tools/pull_air_vacuum_pump``
-      -  :ref:`tools_interface/PullAirVacuumPump<PullAirVacuumPump (Service)>`
+      -  :ref:`tools_interface/PullAirVacuumPump<source/stack_hardware/tools_interface:PullAirVacuumPump (Service)>`
       -  Pull vacuum pump tool
    *  -  ``niryo_robot/tools/push_air_vacuum_pump``
-      -  :ref:`tools_interface/PushAirVacuumPump<PushAirVacuumPump (Service)>`
+      -  :ref:`tools_interface/PushAirVacuumPump<source/stack_hardware/tools_interface:PushAirVacuumPump (Service)>`
       -  Push vacuum pump tool
 
-Dependencies - Tools Interface
+Dependencies - tools interface
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 - :msgs_index:`std_msgs`
-- :ref:`dynamixel_driver <Niryo Robot Dynamixel Driver Package>`
+- :ref:`dynamixel_driver <source/stack_hardware/dynamixel_driver:Niryo Robot Dynamixel Driver Package>`
 
-Services & Messages files - Tools Interface
+Services & messages files - tools interface
 ----------------------------------------------
 
 PingDxlTool (Service)

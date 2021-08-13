@@ -1,6 +1,6 @@
 <package>
   <name>niryo_robot_tools</name>
-  <version>3.1.1</version>
+  <version>3.1.2</version>
   <description>Provides functionalities to control end-effectors and accessories for Niryo Robot</description>
   <author>Edouard Renard</author>
   <author email="r.lux@niryo.com">Rémi Lux</author>

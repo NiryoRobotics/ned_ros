@@ -1,22 +1,22 @@
-Niryo Robot Conveyor Interface Package
+Niryo robot Conveyor Belt interface package
 ===========================================
 
-| This package handles Niryo's conveyor
-| You can control two conveyors
+| This package handles Niryo's Conveyor Belt.
+| You can control two Conveyors Belt.
 
-Conveyor Interface Node
---------------------------
-The ROS Node is made to :
- - Initialize conveyor motor parameters
- - Set and control conveyors
- - Publish conveyors state
+Conveyor Belt interface node
+-----------------------------
+The ROS Node is made to:
+ - Initialize Conveyor Belt motor parameters.
+ - Set and control Conveyors Belt.
+ - Publish Conveyors Belt state.
 
-The namespace used is : |namespace_emphasize|
+The namespace used is: |namespace_emphasize|
 
-Parameters - Conveyor Interface
+Parameters - Conveyor Belt interface
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. list-table:: Conveyor Interface's Parameters 
+.. list-table:: Conveyor Belt Interface's Parameters 
    :header-rows: 1
    :widths: auto
    :stub-columns: 0
@@ -26,12 +26,12 @@ Parameters - Conveyor Interface
       -  Description
    *  -  ``publish_frequency``
       -  | Publish rate for conveyors state.
-         | Default : '2.0'
+         | Default: '2.0'
 
-Published Topics - Conveyor Interface
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Published topics - Conveyor Belt interface
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. list-table:: Conveyor Interface's Published Topics
+.. list-table:: Conveyor Belt Interface's Published Topics
    :header-rows: 1
    :widths: auto
    :stub-columns: 0
@@ -41,13 +41,13 @@ Published Topics - Conveyor Interface
       -  Message Type
       -  Description
    *  -  ``feedback``
-      -  :ref:`ConveyorFeedbackArray<ConveyorFeedbackArray (Message)>`
-      -  Conveyors states
+      -  :ref:`ConveyorFeedbackArray<source/stack_hardware/conveyor_interface:ConveyorFeedbackArray (Message)>`
+      -  Conveyors Belt states
 
-Services - Conveyor Interface
+Services - Conveyor Belt interface
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. list-table:: Conveyor Interface Package Services
+.. list-table:: Conveyor Belt Interface Package Services
    :header-rows: 1
    :widths: auto
    :stub-columns: 0
@@ -57,20 +57,20 @@ Services - Conveyor Interface
       -  Message Type
       -  Description
    *  -  ``control_conveyor``
-      -  :ref:`ControlConveyor<ControlConveyor (Service)>`
-      -  Send a command to the desired conveyor
+      -  :ref:`ControlConveyor<source/stack_hardware/conveyor_interface:ControlConveyor (Service)>`
+      -  Send a command to the desired Conveyor Belt
    *  -  ``ping_and_set_conveyor``
-      -  :ref:`SetConveyor<SetConveyor (Service)>`
-      -  Scan and set a new conveyor
+      -  :ref:`SetConveyor<source/stack_hardware/conveyor_interface:SetConveyor (Service)>`
+      -  Scan and set a new Conveyor Belt
 
-Dependencies - Conveyor Interface
+Dependencies - Conveyor Belt interface
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 - :msgs_index:`std_msgs`
-- :ref:`stepper_driver <Niryo Robot Stepper Driver Package>`
+- :ref:`stepper_driver <source/stack_hardware/stepper_driver:Niryo Robot Stepper Driver Package>`
 
-Services & Messages files - Conveyor Interface
-----------------------------------------------
+Services & messages files - Conveyor Belt interface
+------------------------------------------------------
 
 ControlConveyor (Service)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

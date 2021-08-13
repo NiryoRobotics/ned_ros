@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-23 16:51+0200\n"
+"POT-Creation-Date: 2021-04-26 12:18+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,7 +21,7 @@ msgstr ""
 "Generated-By: Babel 2.8.0\n"
 
 #: ../../source/ros/niryo_robot_description.rst:2
-msgid "Niryo Robot Description Package"
+msgid "Niryo robot description package"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_description.rst:4
@@ -29,7 +29,7 @@ msgid "This package contains URDF files and meshes (collada + stl) for Ned."
 msgstr ""
 
 #: ../../source/ros/niryo_robot_description.rst:6
-msgid "To display Ned on Rviz ::"
+msgid "To display Ned on Rviz: ::"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_description.rst:11
@@ -38,4 +38,10 @@ msgid ""
 "To use the following commands, you must have setup Ned ros stack on your "
 "computer."
 msgstr ""
+
+#~ msgid "Niryo Robot Description Package"
+#~ msgstr ""
+
+#~ msgid "To display Ned on Rviz ::"
+#~ msgstr ""
 

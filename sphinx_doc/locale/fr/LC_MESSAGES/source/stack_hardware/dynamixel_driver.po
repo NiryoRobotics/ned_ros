@@ -1,0 +1,246 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2021, Niryo All rights reserved. No part of this document
+# may be reproduced or transmitted in any form or by any means without prior
+# written consent of Niryo SAS
+# This file is distributed under the same license as the Ned ROS
+# Documentation package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Ned ROS Documentation 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-08-12 08:22+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.9.1\n"
+
+#: ../../source/stack_hardware/dynamixel_driver.rst:2
+msgid "Niryo robot dynamixel driver package"
+msgstr "Package 'Dynamixel driver' du robot Niryo"
+
+#: ../../source/stack_hardware/dynamixel_driver.rst:4
+msgid "This package handles dynamixel motors communication through dynamixel sdk."
+msgstr "Ce package gère la communication des moteurs dynamixel via dynamixel sdk."
+
+#: ../../source/stack_hardware/dynamixel_driver.rst:5
+msgid "It provides an interface to :wiki_ros:`dynamixel_sdk`."
+msgstr "Il fournit une interface à dynamixel_sdk."
+
+#: ../../source/stack_hardware/dynamixel_driver.rst:8
+msgid "Dynamixel Driver Node"
+msgstr "Noeud 'Dynamixel driver'"
+
+#: ../../source/stack_hardware/dynamixel_driver.rst:11
+msgid "The ROS Node is made to:"
+msgstr "Le noeud ROS est conçu pour :"
+
+#: ../../source/stack_hardware/dynamixel_driver.rst:10
+msgid "Send commands to dynamixel motors"
+msgstr "Envoyer des commandes aux moteurs dynamixel"
+
+#: ../../source/stack_hardware/dynamixel_driver.rst:11
+msgid "Receive dynamixel motors data"
+msgstr "Recevoir les données des moteurs dynamixel"
+
+#: ../../source/stack_hardware/dynamixel_driver.rst:14
+msgid "Parameters - Dynamixel Driver"
+msgstr "Paramètres - 'Dynamixel driver'"
+
+#: ../../source/stack_hardware/dynamixel_driver.rst:16
+msgid "Dynamixel Driver's Parameters"
+msgstr "Paramètres 'Dynamixel driver'"
+
+#: ../../source/stack_hardware/dynamixel_driver.rst:22
+#: ../../source/stack_hardware/dynamixel_driver.rst:55
+msgid "Name"
+msgstr "Nom"
+
+#: ../../source/stack_hardware/dynamixel_driver.rst:23
+#: ../../source/stack_hardware/dynamixel_driver.rst:57
+msgid "Description"
+msgstr "Description"
+
+#: ../../source/stack_hardware/dynamixel_driver.rst:24
+msgid "``dxl_hardware_control_loop_frequency``"
+msgstr ""
+
+#: ../../source/stack_hardware/dynamixel_driver.rst
+msgid "control loop frequency."
+msgstr "La fréquence de la boucle de contrôle"
+
+#: ../../source/stack_hardware/dynamixel_driver.rst
+msgid "Default: '100.0'"
+msgstr "Par défault : '100.0'"
+
+#: ../../source/stack_hardware/dynamixel_driver.rst:27
+msgid "``dxl_hardware_write_frequency``"
+msgstr ""
+
+#: ../../source/stack_hardware/dynamixel_driver.rst
+msgid "Write frequency."
+msgstr "La fréquence d'écriture"
+
+#: ../../source/stack_hardware/dynamixel_driver.rst
+msgid "Default: '50.0'"
+msgstr "Par défault : '50.0'"
+
+#: ../../source/stack_hardware/dynamixel_driver.rst:30
+msgid "``dxl_hardware_read_data_frequency``"
+msgstr ""
+
+#: ../../source/stack_hardware/dynamixel_driver.rst
+msgid "Read frequency."
+msgstr "La fréquence de lecture"
+
+#: ../../source/stack_hardware/dynamixel_driver.rst
+msgid "Default: '15.0'"
+msgstr "Par défault : '15.0'"
+
+#: ../../source/stack_hardware/dynamixel_driver.rst:33
+msgid "``dxl_hardware_read_status_frequency``"
+msgstr ""
+
+#: ../../source/stack_hardware/dynamixel_driver.rst
+msgid "Read dynamixels status frequency."
+msgstr "La fréquence de la lecture du statut des dynamixels"
+
+#: ../../source/stack_hardware/dynamixel_driver.rst
+msgid "Default: '0.5'"
+msgstr "Par défault : '0.5'"
+
+#: ../../source/stack_hardware/dynamixel_driver.rst:36
+msgid "``dxl_hardware_check_connection_frequency``"
+msgstr ""
+
+#: ../../source/stack_hardware/dynamixel_driver.rst
+msgid "Check dynamixels connection frequency."
+msgstr "La fréquence de la vérification des connexions des dynamixels"
+
+#: ../../source/stack_hardware/dynamixel_driver.rst
+msgid "Default: '2.0'"
+msgstr "Par défault : '2.0'"
+
+#: ../../source/stack_hardware/dynamixel_driver.rst:39
+msgid "``dxl_motor_id_list``"
+msgstr ""
+
+#: ../../source/stack_hardware/dynamixel_driver.rst
+msgid "list of dynamixels ID"
+msgstr "Liste des ID des dynamixels"
+
+#: ../../source/stack_hardware/dynamixel_driver.rst
+msgid "Default: '[2,3,6]'"
+msgstr "Par défault : '[2,3,6]'"
+
+#: ../../source/stack_hardware/dynamixel_driver.rst:42
+msgid "``dxl_motor_type_list``"
+msgstr ""
+
+#: ../../source/stack_hardware/dynamixel_driver.rst
+msgid "list of dynamixels type"
+msgstr "Liste des types de dynamixels"
+
+#: ../../source/stack_hardware/dynamixel_driver.rst
+msgid "Default: '[\"xl430\",\"xl430\",\"xl320\"]'"
+msgstr "Par défault : '[\"xl430\",\"xl430\",\"xl320\"]'"
+
+#: ../../source/stack_hardware/dynamixel_driver.rst:47
+msgid "Services - Dynamixel Driver"
+msgstr "Services - 'Dynamixel driver'"
+
+#: ../../source/stack_hardware/dynamixel_driver.rst:49
+msgid "Dynamixel Driver Package Services"
+msgstr "Package services 'Dynamixel driver'"
+
+#: ../../source/stack_hardware/dynamixel_driver.rst:56
+msgid "Message Type"
+msgstr "Type du message"
+
+#: ../../source/stack_hardware/dynamixel_driver.rst:58
+msgid "``niryo_robot/dynamixel_driver/set_dxl_leds``"
+msgstr ""
+
+#: ../../source/stack_hardware/dynamixel_driver.rst:59
+msgid ":ref:`source/ros/niryo_robot_msgs:SetInt`"
+msgstr ""
+
+#: ../../source/stack_hardware/dynamixel_driver.rst:60
+msgid "Control dynamixel LED"
+msgstr "Contrôler la LED de la dynamixel"
+
+#: ../../source/stack_hardware/dynamixel_driver.rst:61
+msgid "``niryo_robot/dynamixel_driver/send_custom_dxl_value``"
+msgstr ""
+
+#: ../../source/stack_hardware/dynamixel_driver.rst:62
+msgid ""
+":ref:`dynamixel_driver/SendCustomDxlValue<source/stack_hardware/dynamixel_driver:SendCustomDxlValue"
+" (Service)>`"
+msgstr ""
+
+#: ../../source/stack_hardware/dynamixel_driver.rst:63
+msgid "Send a custom dynamixel command"
+msgstr "Envoyer une commande dynamixel personnalisée"
+
+#: ../../source/stack_hardware/dynamixel_driver.rst:66
+msgid "Dependencies - Dynamixel Driver"
+msgstr "Dépendances - 'Dynamixel driver'"
+
+#: ../../source/stack_hardware/dynamixel_driver.rst:68
+msgid ":wiki_ros:`dynamixel_sdk`"
+msgstr ""
+
+#: ../../source/stack_hardware/dynamixel_driver.rst:69
+msgid ""
+":ref:`niryo_robot_msgs <source/ros/niryo_robot_msgs:Niryo Robot Messages "
+"Package>`"
+msgstr ""
+
+#: ../../source/stack_hardware/dynamixel_driver.rst:72
+msgid "Services & Messages files - Dynamixel Driver"
+msgstr "Fichiers services et messages - 'Dynamixel driver'"
+
+#: ../../source/stack_hardware/dynamixel_driver.rst:75
+msgid "SendCustomDxlValue (Service)"
+msgstr ""
+
+#: ../../source/stack_hardware/dynamixel_driver.rst:81
+msgid "DxlMotorHardwareStatus (Message)"
+msgstr ""
+
+#: ../../source/stack_hardware/dynamixel_driver.rst:87
+msgid "DxlMotorCommand (Message)"
+msgstr ""
+
+#: ../../source/stack_hardware/dynamixel_driver.rst:93
+msgid "DxlArrayMotorHardwareStatus (Message)"
+msgstr ""
+
+#~ msgid "Niryo Robot Dynamixel Driver Package"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "This package handles dynamixel motors "
+#~ "communication through dynamixel sdk"
+#~ msgstr ""
+
+#~ msgid "It provides an interface to :wiki_ros:`dynamixel_sdk`"
+#~ msgstr ""
+
+#~ msgid ":ref:`SetInt`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`dynamixel_driver/SendCustomDxlValue<SendCustomDxlValue "
+#~ "(Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`niryo_robot_msgs <Niryo Robot Messages Package>`"
+#~ msgstr ""
+
