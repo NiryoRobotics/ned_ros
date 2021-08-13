@@ -1,4 +1,4 @@
-Niryo robot poses handlers package
+Niryo_robot_poses_handlers
 ======================================================
 
 This package is in charge of dealing with transforms, workspace, grips and
@@ -124,7 +124,7 @@ Dependencies - Poses handlers
 
 - :msgs_index:`geometry_msgs`
 - :msgs_index:`moveit_msgs`
-- :ref:`niryo_robot_msgs <source/ros/niryo_robot_msgs:Niryo Robot Messages Package>`
+- :doc:`niryo_robot_msgs`
 - :wiki_ros:`tf`
 
 

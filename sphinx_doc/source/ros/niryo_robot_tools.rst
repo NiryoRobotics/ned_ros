@@ -1,4 +1,4 @@
-Niryo robot tools package
+Niryo_robot_tools
 ========================================
 
 Provides functionalities to control end-effectors and accessories for Ned.
@@ -62,7 +62,7 @@ Services - tools
 
 Dependencies - tools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-* :ref:`niryo_robot_msgs <source/ros/niryo_robot_msgs:Niryo Robot Messages Package>`
+* :doc:`niryo_robot_msgs`
 * :msgs_index:`std_msgs`
 
 Action, services & messages files - tools

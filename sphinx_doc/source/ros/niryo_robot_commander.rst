@@ -1,4 +1,4 @@
-Niryo robot commander package
+Niryo_robot_commander
 ========================================
 
 | This package is the one dealing with all commander related stuff.
@@ -116,8 +116,8 @@ Dependencies - Commander
 - :msgs_index:`geometry_msgs`
 - `MoveIt! <https://moveit.ros.org/>`_
 - :msgs_index:`moveit_msgs`
-- :ref:`niryo_robot_msgs <source/ros/niryo_robot_msgs:Niryo Robot Messages Package>`
-- :ref:`niryo_robot_tools <source/ros/niryo_robot_tools:Niryo Robot Tools Package>`
+- :doc:`niryo_robot_msgs`
+- :doc:`niryo_robot_tools`
 - `python-numpy <https://numpy.org/>`_
 - :wiki_ros:`ros_controllers`
 - :wiki_ros:`rosbridge_server`

@@ -1,4 +1,4 @@
-Niryo robot joints interface package
+Joints_interface
 ====================================
 
 | This package handles packages related to the robot's joints controller.
@@ -80,6 +80,6 @@ Dependencies - joints interface
 
 - :wiki_ros:`hardware_interface <hardware_interface>`
 - :wiki_ros:`controller_manager <controller_manager>`
-- :ref:`dynamixel_driver <source/stack_hardware/dynamixel_driver:Niryo Robot Dynamixel Driver Package>`
-- :ref:`stepper_driver <source/stack_hardware/stepper_driver:Niryo Robot Stepper Driver Package>`
-- :ref:`niryo_robot_msgs <source/ros/niryo_robot_msgs:Niryo Robot Messages Package>`
+- :doc:`dynamixel_driver`
+- :doc:`stepper_driver`
+- :doc:`../ros/niryo_robot_msgs`

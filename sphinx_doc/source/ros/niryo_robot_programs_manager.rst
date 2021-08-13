@@ -1,4 +1,4 @@
-Niryo robot programs manager package
+Niryo_robot_programs_manager
 ======================================================
 
 This package is in charge of interpreting/running/saving programs.
@@ -75,8 +75,8 @@ whereas on standalone mode or not.
 Dependencies - Programs manager
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- :ref:`niryo_robot_commander <source/ros/niryo_robot_commander:Niryo Robot Commander Package>`
-- :ref:`niryo_robot_msgs <source/ros/niryo_robot_msgs:Niryo Robot Messages Package>`
+- :doc:`niryo_robot_commander`
+- :doc:`niryo_robot_msgs`
 - `python-yaml <https://pyyaml.org/wiki/PyYAMLDocumentation/>`_
 - :msgs_index:`std_msgs`
 

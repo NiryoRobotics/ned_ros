@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-12 08:22+0000\n"
+"POT-Creation-Date: 2021-08-12 16:14+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -34,32 +34,33 @@ msgid ""
 "section to understand the programming fundamentals."
 msgstr ""
 
-#: ../../source/more.rst:8
+#: ../../source/more.rst:7
 msgid ""
 "If you want to go further, maybe experience your own image processing, "
-"multi_robot, AI ,... you can look at :ref:`source/more:PyNiryo`"
+"multi-robot, AI... You can go to :ref:`source/more:PyNiryo` for more "
+"information."
 msgstr ""
 
-#: ../../source/more.rst:11
+#: ../../source/more.rst:10
 msgid "Blockly"
 msgstr ""
 
-#: ../../source/more.rst:13
+#: ../../source/more.rst:12
 msgid "Check out Niryo Studio"
 msgstr ""
 
-#: ../../source/more.rst:16
+#: ../../source/more.rst:15
 msgid "PyNiryo"
 msgstr ""
 
-#: ../../source/more.rst:17
+#: ../../source/more.rst:16
 msgid ""
-"As explain in the page :ref:`source/tcp_server:Use Ned TCP Server`, a TCP"
-" Server is running on Ned, which allows it to receive commands from any "
-"external device."
+"As explain in the page :ref:`source/tcp_server:Use Ned's TCP server`, a "
+"TCP Server is running on Ned, which allows it to receive commands from "
+"any external device."
 msgstr ""
 
-#: ../../source/more.rst:20
+#: ../../source/more.rst:19
 msgid ""
 "PyNiryo is a Python package available on Pip which allows to command the "
 "Niryo Robots with easy Python Binding."
@@ -91,5 +92,43 @@ msgstr ""
 #~ " running on Ned, which allows it "
 #~ "to receive commands from any external"
 #~ " device."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "If you want to go further, maybe"
+#~ " experience your own image processing, "
+#~ "multi_robot, AI ,... you can look "
+#~ "at :ref:`source/more:PyNiryo`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "As explain in the page "
+#~ ":ref:`source/tcp_server:Use Ned TCP Server`, a"
+#~ " TCP Server is running on Ned, "
+#~ "which allows it to receive commands "
+#~ "from any external device."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "As explain in the page "
+#~ ":doc:`source/tcp_server`, a TCP Server is "
+#~ "running on Ned, which allows it to"
+#~ " receive commands from any external "
+#~ "device."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "As explain in the  :doc:`page "
+#~ "<source/tcp_server>`, a TCP Server is "
+#~ "running on Ned, which allows it to"
+#~ " receive commands from any external "
+#~ "device."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "If you want to go further, maybe"
+#~ " experience your own image processing, "
+#~ "multi-robot, AI... You can go to"
+#~ " :ref:`source/more:PyNiryo`"
 #~ msgstr ""
 

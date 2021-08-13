@@ -6,6 +6,8 @@ variables:
   # Documentation name
   DOCUMENTATION_NAME: ros
   # OVH's folder where the documentation will be stored
+  # TARGET_FOLDER_OVH: ~/docs/dev/
+
   TARGET_FOLDER_OVH: ~/docs/dev/
 
   BASE_FOLDER_DOC_URL: https://docs.niryo.com/dev
@@ -154,6 +156,8 @@ upload_doc:
       # Redirect index.html to last version
       RewriteCond %{QUERY_STRING} ^$
       RewriteRule ^index.html$ ${BASE_FOLDER_DOC_URL}/${DOCUMENTATION_NAME}/$CI_COMMIT_TAG/en/index.html [R=301,NC]
+
+      ErrorDocument 403 ${BASE_FOLDER_DOC_URL}/${DOCUMENTATION_NAME}/$CI_COMMIT_TAG/en/source/tutorials/index.html
 
       # Disable directory listing when accessing directy folder web address
       Options -Indexes

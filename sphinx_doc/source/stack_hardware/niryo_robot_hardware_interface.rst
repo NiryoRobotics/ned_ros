@@ -1,4 +1,4 @@
-Niryo robot hardware interface package
+Niryo_robot_hardware_interface
 =======================================
 
 | This package handles packages related to the robot's hardware.
@@ -85,11 +85,11 @@ Services - hardware interface
 Dependencies - hardware interface
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- :ref:`tools_interface <source/stack_hardware/tools_interface:Niryo Robot Tools Interface Package>`
-- :ref:`joints_interface <source/stack_hardware/joints_interface:Niryo Robot Joints Interface Package>`
-- :ref:`conveyor_interface <source/stack_hardware/conveyor_interface:Niryo robot Conveyor Belt interface package>` 
-- :ref:`cpu_interface <source/stack_hardware/cpu_interface:Niryo Robot CPU Interface Package>`   
-- :ref:`fake_interface <source/stack_hardware/fake_interface:Niryo Robot Fake Interface Package>`     
-- :ref:`niryo_robot_msgs <source/ros/niryo_robot_msgs:Niryo Robot Messages Package>`
+- :doc:`tools_interface`
+- :doc:`joints_interface`
+- :doc:`conveyor_interface`
+- :doc:`cpu_interface`
+- :doc:`fake_interface`
+- :doc:`../ros/niryo_robot_msgs`
 
 .. |namespace_emphasize| replace:: ``/niryo_robot_hardware_interface/``

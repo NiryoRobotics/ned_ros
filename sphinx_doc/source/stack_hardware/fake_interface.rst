@@ -1,4 +1,4 @@
-Niryo robot fake interface package
+Fake_interface
 ===================================
 
 | This package provides fakes hardware interface when the robot is used in simulation.
@@ -77,7 +77,7 @@ Dependencies - fake interface
 - :msgs_index:`std_msgs`
 - :wiki_ros:`hardware_interface <hardware_interface>`
 - :wiki_ros:`controller_manager <controller_manager>`
-- :ref:`niryo_robot_msgs <source/ros/niryo_robot_msgs:Niryo Robot Messages Package>`
-- :ref:`tools_interface <source/stack_hardware/tools_interface:Niryo Robot Tools Interface Package>`
-- :ref:`joints_interface <source/stack_hardware/joints_interface:Niryo Robot Joints Interface Package>`
-- :ref:`conveyor_interface <source/stack_hardware/conveyor_interface:Niryo Robot Conveyor Belt Interface Package>` 
+- :doc:`../ros/niryo_robot_msgs`
+- :doc:`tools_interface`
+- :doc:`joints_interface`
+- :doc:`conveyor_interface` 

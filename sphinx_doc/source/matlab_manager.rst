@@ -9,7 +9,7 @@ The ROS Node is made of one topic that enables to receive goals from Matlab.
 
 Dependencies - Matlab manager
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-- :ref:`niryo_robot_commander <source/ros/niryo_robot_commander:Niryo Robot Commander Package>`
+- :doc:`ros/niryo_robot_commander`
 
 
 Services files - Matlab manager

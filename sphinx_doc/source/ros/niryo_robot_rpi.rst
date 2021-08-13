@@ -1,4 +1,4 @@
-Niryo robot RPI package
+Niryo_robot_rpi
 ========================================
 
 This package deals with Raspberry Pi related stuff (Button, fans, I/O, leds, ...).
@@ -94,8 +94,8 @@ Dependencies - Raspberry Pi
 - :msgs_index:`std_msgs`
 - :msgs_index:`actionlib_msgs`
 - :msgs_index:`sensor_msgs`
-- :ref:`niryo_robot_msgs <source/ros/niryo_robot_msgs:Niryo Robot Messages Package>`
-- :ref:`niryo_robot_commander <source/ros/niryo_robot_commander:Niryo Robot Commander Package>`
+- :doc:`niryo_robot_msgs`
+- :doc:`niryo_robot_commander`
 
 Services & Messages files - Raspberry Pi
 ----------------------------------------------

@@ -1,4 +1,4 @@
-Niryo robot stepper driver package
+Stepper_driver
 ===================================
 
 | This package handles stepper motors communication.
@@ -38,7 +38,7 @@ Dependencies - stepper driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 - `mcp_can_rpi <https://github.com/coryjfowler/MCP_CAN_lib>`_
-- :ref:`niryo_robot_msgs <source/ros/niryo_robot_msgs:Niryo Robot Messages Package>`
+- :doc:`../ros/niryo_robot_msgs`
 
 Services & messages files - stepper driver
 -------------------------------------------------

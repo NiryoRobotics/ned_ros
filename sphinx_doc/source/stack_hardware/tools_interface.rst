@@ -1,4 +1,4 @@
-Niryo robot tools interface package
+Tools_interface
 ====================================
 
 | This package handles Niryo's tools.
@@ -78,7 +78,7 @@ Dependencies - tools interface
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 - :msgs_index:`std_msgs`
-- :ref:`dynamixel_driver <source/stack_hardware/dynamixel_driver:Niryo Robot Dynamixel Driver Package>`
+- :doc:`dynamixel_driver`
 
 Services & messages files - tools interface
 ----------------------------------------------

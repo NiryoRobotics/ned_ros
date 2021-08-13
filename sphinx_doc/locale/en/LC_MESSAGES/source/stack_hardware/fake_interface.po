@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-12 08:22+0000\n"
+"POT-Creation-Date: 2021-08-13 09:51+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,7 +21,7 @@ msgstr ""
 "Generated-By: Babel 2.9.1\n"
 
 #: ../../source/stack_hardware/fake_interface.rst:2
-msgid "Niryo robot fake interface package"
+msgid "Fake_interface"
 msgstr ""
 
 #: ../../source/stack_hardware/fake_interface.rst:4
@@ -255,27 +255,19 @@ msgid ":wiki_ros:`controller_manager <controller_manager>`"
 msgstr ""
 
 #: ../../source/stack_hardware/fake_interface.rst:80
-msgid ""
-":ref:`niryo_robot_msgs <source/ros/niryo_robot_msgs:Niryo Robot Messages "
-"Package>`"
+msgid ":doc:`../ros/niryo_robot_msgs`"
 msgstr ""
 
 #: ../../source/stack_hardware/fake_interface.rst:81
-msgid ""
-":ref:`tools_interface <source/stack_hardware/tools_interface:Niryo Robot "
-"Tools Interface Package>`"
+msgid ":doc:`tools_interface`"
 msgstr ""
 
 #: ../../source/stack_hardware/fake_interface.rst:82
-msgid ""
-":ref:`joints_interface <source/stack_hardware/joints_interface:Niryo "
-"Robot Joints Interface Package>`"
+msgid ":doc:`joints_interface`"
 msgstr ""
 
 #: ../../source/stack_hardware/fake_interface.rst:83
-msgid ""
-":ref:`conveyor_interface <source/stack_hardware/conveyor_interface:Niryo "
-"Robot Conveyor Belt Interface Package>`"
+msgid ":doc:`conveyor_interface`"
 msgstr ""
 
 #~ msgid "Niryo Robot Fake Interface Package"
@@ -366,5 +358,31 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid ":ref:`conveyor_interface <Niryo Robot Conveyor Interface Package>`"
+#~ msgstr ""
+
+#~ msgid "Niryo robot fake interface package"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`tools_interface "
+#~ "<source/stack_hardware/tools_interface:Niryo Robot Tools"
+#~ " Interface Package>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`joints_interface "
+#~ "<source/stack_hardware/joints_interface:Niryo Robot Joints"
+#~ " Interface Package>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`conveyor_interface "
+#~ "<source/stack_hardware/conveyor_interface:Niryo Robot "
+#~ "Conveyor Belt Interface Package>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`niryo_robot_msgs <source/ros/niryo_robot_msgs:Niryo "
+#~ "Robot Messages Package>`"
 #~ msgstr ""
 

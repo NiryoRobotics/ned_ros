@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-12 08:22+0000\n"
+"POT-Creation-Date: 2021-08-13 09:53+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,8 +21,8 @@ msgstr ""
 "Generated-By: Babel 2.9.1\n"
 
 #: ../../source/stack_hardware/tools_interface.rst:2
-msgid "Niryo robot tools interface package"
-msgstr "Package de l'interface outils du robot Niryo"
+msgid "Tools_interface"
+msgstr ""
 
 #: ../../source/stack_hardware/tools_interface.rst:4
 msgid "This package handles Niryo's tools."
@@ -30,11 +30,11 @@ msgstr "Ce package gère les outils Niryo."
 
 #: ../../source/stack_hardware/tools_interface.rst:7
 msgid "Tools interface node"
-msgstr "Noeud de l'interface outils"
+msgstr "Noeud de tools_interface"
 
 #: ../../source/stack_hardware/tools_interface.rst:10
 msgid "The ROS Node is made to:"
-msgstr "Le noeud ROS est conçu pour :"
+msgstr "Le nœud ROS est conçu pour :"
 
 #: ../../source/stack_hardware/tools_interface.rst:9
 msgid "Set and control tools."
@@ -212,9 +212,7 @@ msgid ":msgs_index:`std_msgs`"
 msgstr ""
 
 #: ../../source/stack_hardware/tools_interface.rst:81
-msgid ""
-":ref:`dynamixel_driver <source/stack_hardware/dynamixel_driver:Niryo "
-"Robot Dynamixel Driver Package>`"
+msgid ":doc:`dynamixel_driver`"
 msgstr ""
 
 #: ../../source/stack_hardware/tools_interface.rst:84
@@ -293,5 +291,14 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid ":ref:`dynamixel_driver <Niryo Robot Dynamixel Driver Package>`"
+#~ msgstr ""
+
+#~ msgid "Niryo robot tools interface package"
+#~ msgstr "Package de l'interface outils du robot Niryo"
+
+#~ msgid ""
+#~ ":ref:`dynamixel_driver "
+#~ "<source/stack_hardware/dynamixel_driver:Niryo Robot "
+#~ "Dynamixel Driver Package>`"
 #~ msgstr ""
 

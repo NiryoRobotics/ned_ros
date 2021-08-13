@@ -1,4 +1,4 @@
-Niryo robot messages package
+Niryo_robot_msgs
 ===========================================================
 
 This package contains standard messages which can be used by all other packages.

@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-12 08:22+0000\n"
+"POT-Creation-Date: 2021-08-13 09:47+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -30,8 +30,9 @@ msgid ""
 ":ref:`RobotCommand<source/ros/niryo_robot_commander:RobotCommand "
 "(message)>` from Matlab and move the robot accordingly."
 msgstr ""
-"Ce package permet de recevoir :ref:`les commandes du robot<source/ros/niryo_robot_commander:RobotCommand "
-"(message)>` depuis Matlab et de déplacer le robot en conséquence."
+"Ce package permet de recevoir :ref:`les commandes du "
+"robot<source/ros/niryo_robot_commander:RobotCommand (message)>` depuis "
+"Matlab et de déplacer le robot en conséquence."
 
 #: ../../source/matlab_manager.rst:7
 msgid "Matlab manager node"
@@ -50,10 +51,8 @@ msgid "Dependencies - Matlab manager"
 msgstr "Dépendances - Matlab manager"
 
 #: ../../source/matlab_manager.rst:12
-msgid ""
-":ref:`niryo_robot_commander <source/ros/niryo_robot_commander:Niryo Robot"
-" Commander Package>`"
-msgstr ":ref:`commandes_robot_niryo <source/ros/niryo_robot_commander:Niryo Robot Commander Package>`"
+msgid ":doc:`ros/niryo_robot_commander`"
+msgstr ""
 
 #: ../../source/matlab_manager.rst:16
 msgid "Services files - Matlab manager"
@@ -93,4 +92,16 @@ msgstr ""
 
 #~ msgid "Services files - Matlab Manager"
 #~ msgstr "Fichiers de services - Matlab Manager"
+
+#~ msgid ":ref:`niryo_robot_commander <ros/niryo_robot_commander>`"
+#~ msgstr ""
+#~ ":ref:`commandes_robot_niryo "
+#~ "<source/ros/niryo_robot_commander:Niryo Robot Commander"
+#~ " Package>`"
+
+#~ msgid ":dpc:`niryo_robot_commander`"
+#~ msgstr ""
+
+#~ msgid ":doc:`niryo_robot_commander`"
+#~ msgstr ""
 
