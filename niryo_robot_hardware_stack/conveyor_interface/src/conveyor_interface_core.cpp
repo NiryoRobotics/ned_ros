@@ -298,11 +298,11 @@ bool ConveyorInterfaceCore::_callbackPingAndSetConveyor(conveyor_interface::SetC
         {
             case conveyor_interface::SetConveyor::Request::ADD:
                 res = addConveyor();
-            break;
+                break;
 
             case conveyor_interface::SetConveyor::Request::REMOVE:
                 res = removeConveyor(req.id);
-            break;
+                break;
 
             default:
             break;
@@ -314,7 +314,7 @@ bool ConveyorInterfaceCore::_callbackPingAndSetConveyor(conveyor_interface::SetC
         res.message = "Calibration in progress";
     }
 
-    return niryo_robot_msgs::CommandStatus::SUCCESS == res.status;
+    return true;
 }
 
 /**
@@ -351,7 +351,7 @@ bool ConveyorInterfaceCore::_callbackControlConveyor(conveyor_interface::Control
         res.status = niryo_robot_msgs::CommandStatus::CONVEYOR_ID_INVALID;
     }
 
-    return niryo_robot_msgs::CommandStatus::SUCCESS == res.status;
+    return true;
 }
 
 /**
