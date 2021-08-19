@@ -16,26 +16,103 @@
 
 // Bring in my package's API, which is what I'm testing
 #include "can_driver/can_manager.hpp"
-
+#include "can_driver/can_interface_core.hpp"
+#include "common/model/single_motor_cmd.hpp"
 // Bring in gtest
 #include <gtest/gtest.h>
 #include <ros/console.h>
 
-// Declare a test
-TEST(CanDriverTestSuite, testInitDriver)
-{
-    ros::NodeHandle nh;
+class CanInterfaceTestSuite : public ::testing::Test {
+  protected:
+    static void SetUpTestCase()
+    {
+      ros::NodeHandle nh("can_driver");
+      can_interface = std::make_shared<can_driver::CanInterfaceCore>(nh);
+    }
 
-    can_driver::CanManager stepper(nh);
-    EXPECT_TRUE(stepper.isConnectionOk());
+    static void TearDownTestCase()
+    {
+      ros::shutdown();
+    }
+
+    static std::shared_ptr<can_driver::CanInterfaceCore> can_interface;
+};
+
+std::shared_ptr<can_driver::CanInterfaceCore> CanInterfaceTestSuite::can_interface;
+// Declare a test
+TEST_F(CanInterfaceTestSuite, testConnection)
+{
+    EXPECT_TRUE(can_interface->isConnectionOk());
 }
 
-// Declare a test
-/*TEST(CanDriverTestSuite, testInitDriverCore)
+// Apply for NED1
+class CanManagerTestSuite : public ::testing::Test {
+  protected:
+    static void SetUpTestCase()
+    {
+      ros::NodeHandle nh("can_driver");
+      can_manager = std::make_shared<can_driver::CanManager>(nh);
+      // check connections
+      EXPECT_TRUE(can_manager->isConnectionOk());
+      EXPECT_EQ(static_cast<int>(can_manager->getNbMotors()), 3);
+      EXPECT_TRUE(can_manager->ping(1));
+      EXPECT_TRUE(can_manager->ping(2));
+      EXPECT_TRUE(can_manager->ping(3));
+    }
+
+    static void TearDownTestCase()
+    {
+      ros::shutdown();
+    }
+
+    static std::shared_ptr<can_driver::CanManager> can_manager;
+};
+
+std::shared_ptr<can_driver::CanManager> CanManagerTestSuite::can_manager;
+
+TEST_F(CanManagerTestSuite, addAndRemoveMotor)
 {
-    can_driver::CanInterfaceCore can_core;
-    EXPECT_TRUE(can_core.isConnectionOk());
-}*/
+    EXPECT_THROW(can_manager->getPosition(10), std::out_of_range);
+    can_manager->addMotor(10);
+    EXPECT_EQ(can_manager->getPosition(10), 0);
+
+    can_manager->removeMotor(10);
+    EXPECT_THROW(can_manager->getPosition(10), std::out_of_range);
+}
+
+TEST_F(CanManagerTestSuite, testSingleCmds)
+{
+    std::shared_ptr<common::model::StepperSingleCmd> cmd_1 = std::make_shared<common::model::StepperSingleCmd>(
+                                                                          common::model::EStepperCommandType::CMD_TYPE_TORQUE,
+                                                                          2,
+                                                                          std::initializer_list<int32_t>{1});
+    EXPECT_EQ(can_manager->readSingleCommand(cmd_1), CAN_OK);
+    ros::Duration(0.01).sleep();
+
+    std::shared_ptr<common::model::StepperSingleCmd> cmd_2 = std::make_shared<common::model::StepperSingleCmd>(
+                                                                          common::model::EStepperCommandType::CMD_TYPE_TORQUE,
+                                                                          2,
+                                                                          std::initializer_list<int32_t>{0});
+    EXPECT_EQ(can_manager->readSingleCommand(cmd_2), CAN_OK);
+
+    ros::Duration(0.01).sleep();
+
+    // wrong id
+    std::shared_ptr<common::model::StepperSingleCmd> cmd_3 = std::make_shared<common::model::StepperSingleCmd>(
+                                                                            common::model::EStepperCommandType::CMD_TYPE_TORQUE,
+                                                                            7,
+                                                                            std::initializer_list<int32_t>{1});
+    EXPECT_NE(can_manager->readSingleCommand(cmd_3), CAN_OK);
+    ros::Duration(0.01).sleep();
+
+    // wrong type cmd
+    std::shared_ptr<common::model::StepperSingleCmd> cmd_4 = std::make_shared<common::model::StepperSingleCmd>(
+                                                                            common::model::EStepperCommandType::CMD_TYPE_UNKNOWN,
+                                                                            2,
+                                                                            std::initializer_list<int32_t>{1});
+    EXPECT_NE(can_manager->readSingleCommand(cmd_4), CAN_OK);
+    ros::Duration(0.01).sleep();
+}
 
 // Run all the tests that were declared with TEST()
 int main(int argc, char **argv)
