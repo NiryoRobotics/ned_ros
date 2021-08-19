@@ -93,7 +93,7 @@ python_test:
 
 
 build_doc:
-  image: registry.gitlab.com/niryo/dockers/build_docs/ned_ros_stack:v1.0.2
+  image: registry.gitlab.com/niryo/dockers/build_docs/ned_ros_stack:v1.0.4
   rules:
   #   ## Just in case we would restrict to master (https:// stackoverflow.com/a/64448994)
   #   # If a it's a tag && protected tag
@@ -121,8 +121,6 @@ build_doc:
     - scripts/generate_pdf.sh -o ${CI_COMMIT_TAG}/generated_pdfs
     - mv ${NIRYO_HOME_FOLDER}/* ${previous_path}
   after_script:
-    - ls
-    - pwd
     - mv src/sphinx_doc/${CI_COMMIT_TAG} ${CI_COMMIT_TAG}
   artifacts:
     paths:
