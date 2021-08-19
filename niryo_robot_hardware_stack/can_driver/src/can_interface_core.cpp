@@ -236,7 +236,7 @@ int CanInterfaceCore::motorCmdReport(uint8_t motor_id)
         }
         else
         {
-            ROS_INFO("DynamixelDriverCore::motorCmdReport - Debug - Dynamixel Motor %d OK", motor_id);
+            ROS_INFO("CanInterfaceCore::motorCmdReport - Debug - Stepper Motor %d OK", motor_id);
             ret = niryo_robot_msgs::CommandStatus::SUCCESS;
         }
     }
@@ -295,6 +295,8 @@ int CanInterfaceCore::launchMotorsReport()
                     }
                 }
             }
+            if (nbFailure == 0)
+                response = niryo_robot_msgs::CommandStatus::SUCCESS;
         }
         else
         {
