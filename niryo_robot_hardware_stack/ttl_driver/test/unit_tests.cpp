@@ -34,6 +34,8 @@ class TtlInterfaceTestSuite : public ::testing::Test {
     static void SetUpTestCase()
     {
       ros::NodeHandle nh("ttl_driver");
+      ros::Duration(2.0).sleep();
+
       ttl_interface = std::make_shared<ttl_driver::TtlInterfaceCore>(nh);
       // check connections
       EXPECT_TRUE(ttl_interface->isConnectionOk());
@@ -69,6 +71,9 @@ class TtlManagerTestSuite : public ::testing::Test {
     static void SetUpTestCase()
     {
       ros::NodeHandle nh("ttl_driver");
+      ros::NodeHandle nh_private("~");
+      nh_private.getParam("hardware_version", hw_version);
+
       ttl_drv = std::make_shared<ttl_driver::TtlManager>(nh);
 
       // check connections
@@ -77,10 +82,12 @@ class TtlManagerTestSuite : public ::testing::Test {
       EXPECT_TRUE(ttl_drv->ping(6));
     }
 
+    static std::string hw_version;
     static std::shared_ptr<ttl_driver::TtlManager> ttl_drv;
 };
 
 std::shared_ptr<ttl_driver::TtlManager> TtlManagerTestSuite::ttl_drv;
+std::string TtlManagerTestSuite::hw_version;
 
 /******************************************************/
 /************** Tests of ttl manager ******************/
@@ -135,13 +142,17 @@ TEST_F(TtlManagerTestSuite, testSyncCmds)
   ros::Duration(0.5).sleep();
   
   // sync cmd with different motor types
-  std::shared_ptr<common::model::DxlSyncCmd> dynamixel_cmd_2 = std::make_shared<common::model::DxlSyncCmd>(
-                                                            common::model::EDxlCommandType::CMD_TYPE_TORQUE);
-  dynamixel_cmd_2->addMotorParam(common::model::EMotorType::XL430, 2, 1);
-  dynamixel_cmd_2->addMotorParam(common::model::EMotorType::XL320, 6, 1);
+  if (hw_version == "NED")
+  {
+    // sync cmd with different motor types
+    std::shared_ptr<common::model::DxlSyncCmd> dynamixel_cmd_2 = std::make_shared<common::model::DxlSyncCmd>(
+                                                              common::model::EDxlCommandType::CMD_TYPE_TORQUE);
+    dynamixel_cmd_2->addMotorParam(common::model::EMotorType::XL430, 2, 1);
+    dynamixel_cmd_2->addMotorParam(common::model::EMotorType::XL320, 6, 1);
 
-  EXPECT_EQ(ttl_drv->writeSynchronizeCommand(dynamixel_cmd_2), COMM_SUCCESS);
-  ros::Duration(0.5).sleep();
+    EXPECT_EQ(ttl_drv->writeSynchronizeCommand(dynamixel_cmd_2), COMM_SUCCESS);
+    ros::Duration(0.5).sleep();
+  }
 
   // redondant id
   std::shared_ptr<common::model::DxlSyncCmd> dynamixel_cmd_3 = std::make_shared<common::model::DxlSyncCmd>(
