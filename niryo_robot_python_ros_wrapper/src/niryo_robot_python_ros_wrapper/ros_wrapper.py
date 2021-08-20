@@ -34,7 +34,7 @@ from niryo_robot_tools_commander.msg import ToolCommand
 from conveyor_interface.srv import ControlConveyor, SetConveyor, SetConveyorRequest
 from niryo_robot_arm_commander.srv import GetFK, GetIK
 from niryo_robot_arm_commander.srv import JogShift, JogShiftRequest
-from niryo_robot_msgs.srv import GetNameDescriptionList, SetBool, SetInt, Trigger
+from niryo_robot_msgs.srv import GetNameDescriptionList, SetString, SetBool, SetInt, Trigger
 from niryo_robot_tools_commander.srv import SetTCP, SetTCPRequest
 from niryo_robot_vision.srv import SetImageParameter
 from niryo_robot_rpi.srv import GetDigitalIO, SetDigitalIO
