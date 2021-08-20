@@ -29,6 +29,6 @@ include_directories(
 )
 
 catkin_install_python(
-    PROGRAMS scripts/serial_number_node.py
+    PROGRAMS scripts/credentials_node.py
     DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
