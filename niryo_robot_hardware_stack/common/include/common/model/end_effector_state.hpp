@@ -37,13 +37,29 @@ namespace model
  */
 class EndEffectorState : public AbstractHardwareState
 {
+
     public:
+        enum class EButtonType
+        {
+            FREE_DRIVE_BUTTON,
+            SAVE_POS_BUTTON,
+            CUSTOM_BUTTON
+        };
+
         enum class EActionType
         {
-            HANDLE_HELD_ACTION,
-            LONG_PUSH_ACTION,
-            SINGLE_PUSH_ACTION,
-            DOUBLE_PUSH_ACTION
+            HANDLE_HELD_ACTION = 0,
+            LONG_PUSH_ACTION = 1,
+            SINGLE_PUSH_ACTION = 2,
+            DOUBLE_PUSH_ACTION = 3,
+            NO_ACTION = 100
+        };
+
+    private:
+        struct Button
+        {
+          std::string name;
+          EActionType action;
         };
 
     public:
@@ -58,7 +74,92 @@ class EndEffectorState : public AbstractHardwareState
         // IObject interface
     public:
         virtual bool isValid() const override;
+
+    public:
+
+        void setButtonStatus(EButtonType button, EActionType action);
+        std::map<EButtonType, Button> getButtonsStatus();
+        EActionType getButtonStatus(EButtonType button);
+
+        uint32_t getAccelerometerXValue() const;
+        uint32_t getAccelerometerYValue() const;
+        uint32_t getAccelerometerZValue() const;
+
+        void setAccelerometerXValue(const uint32_t& getAccelerometerXValue);
+        void setAccelerometerYValue(const uint32_t& getAccelerometerYValue);
+        void setAccelerometerZValue(const uint32_t& getAccelerometerZValue);
+
+        bool getCollisionStatus() const;
+        void setCollisionStatus(bool getCollisionStatus);
+
+private:
+        std::map<EButtonType, Button> _buttons;
+
+        uint32_t _accelerometer_x_value;
+        uint32_t _accelerometer_y_value;
+        uint32_t _accelerometer_z_value;
+
+        bool _collision_status;
 };
+
+
+/**
+ * @brief EndEffectorState::getAccelerometerXValue
+ * @return
+ */
+inline
+std::map<EndEffectorState::EButtonType, EndEffectorState::Button>
+EndEffectorState::getButtonsStatus()
+{
+    return _buttons;
+}
+
+/**
+ * @brief EndEffectorState::getAccelerometerXValue
+ * @return
+ */
+inline
+EndEffectorState::EActionType
+EndEffectorState::getButtonStatus(EndEffectorState::EButtonType button)
+{
+    return _buttons.at(button).action;
+}
+
+inline
+uint32_t EndEffectorState::getAccelerometerXValue() const
+{
+  return _accelerometer_x_value;
+}
+
+/**
+ * @brief EndEffectorState::getAccelerometerYValue
+ * @return
+ */
+inline
+uint32_t EndEffectorState::getAccelerometerYValue() const
+{
+  return _accelerometer_y_value;
+}
+
+/**
+ * @brief EndEffectorState::getAccelerometerZValue
+ * @return
+ */
+inline
+uint32_t EndEffectorState::getAccelerometerZValue() const
+{
+  return _accelerometer_z_value;
+}
+
+/**
+ * @brief EndEffectorState::getCollisionStatus
+ * @return
+ */
+inline
+bool EndEffectorState::getCollisionStatus() const
+{
+  return _collision_status;
+}
 
 } // namespace model
 } // namespace common

@@ -27,6 +27,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "abstract_motor_driver.hpp"
 
 #include "end_effector_reg.hpp"
+#include "common/model/end_effector_state.hpp"
 
 namespace ttl_driver
 {
@@ -81,6 +82,8 @@ class EndEffectorDriver : public AbstractTtlDriver
 
         int readDigitalInput(uint8_t id, bool& in);
         int setDigitalOutput(uint8_t id, bool out);
+
+        common::model::EndEffectorState::EActionType interpreteActionValue(uint32_t value);
 };
 
 // definition of methods
@@ -284,6 +287,33 @@ int EndEffectorDriver<reg_type>::setDigitalOutput(uint8_t id, bool out)
 {
     return read(reg_type::ADDR_DIGITAL_OUT, reg_type::SIZE_DIGITAL_OUT, id, (out > 0) ? 1 : 0);
 }
+
+template<typename reg_type>
+common::model::EndEffectorState::EActionType
+EndEffectorDriver<reg_type>::interpreteActionValue(uint32_t value)
+{
+  common::model::EndEffectorState::EActionType action = common::model::EndEffectorState::EActionType::NO_ACTION;
+
+  if (value & 1<<0)    // 0b00000001
+  {
+      action = common::model::EndEffectorState::EActionType::HANDLE_HELD_ACTION;
+  }
+  else if (value & 1<<2)    // 0b00000100
+  {
+    action = common::model::EndEffectorState::EActionType::SINGLE_PUSH_ACTION;
+  }
+  else if (value & 1<<3)    // 0b00001000
+  {
+    action = common::model::EndEffectorState::EActionType::DOUBLE_PUSH_ACTION;
+  }
+  else if (value & 1<<4)    // 0b00010000
+  {
+    action = common::model::EndEffectorState::EActionType::LONG_PUSH_ACTION;
+  }
+
+  return action;
+}
+
 
 } // ttl_driver
 

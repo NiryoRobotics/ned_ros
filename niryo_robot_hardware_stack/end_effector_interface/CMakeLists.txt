@@ -24,6 +24,7 @@ find_package(catkin REQUIRED
     COMPONENTS
       common
       message_generation
+      niryo_robot_msgs
       roscpp
       std_msgs
       ttl_driver
@@ -32,6 +33,17 @@ find_package(catkin REQUIRED
 ###############################################
 # Declare ROS messages, services and actions ##
 ###############################################
+
+add_message_files(
+  FILES
+    ButtonStatus.msg
+)
+
+generate_messages(
+  DEPENDENCIES
+    niryo_robot_msgs
+    std_msgs
+)
 
 ###################################
 ## catkin specific configuration ##
@@ -50,6 +62,7 @@ catkin_package(
         common
         message_runtime
         roscpp
+        niryo_robot_msgs
         std_msgs
         ttl_driver
 )
@@ -72,6 +85,12 @@ add_library(${PROJECT_NAME}
 
 add_executable(${PROJECT_NAME}_node
   src/${PROJECT_NAME}_node.cpp
+)
+
+## Add dependencies to exported targets, like ROS msgs or srvs
+add_dependencies(${PROJECT_NAME}
+    niryo_robot_msgs_generate_messages_cpp
+    ${PROJECT_NAME}_generate_messages_cpp
 )
 
 add_dependencies(${PROJECT_NAME}_node

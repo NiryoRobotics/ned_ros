@@ -91,7 +91,7 @@ class TtlManager : public common::model::IBusManager
 
         // commands
         void addHardwareComponent(common::model::EHardwareType type,
-                      uint8_t id, EType type_used);
+                                  uint8_t id, EType type_used);
         int changeId(common::model::EHardwareType motor_type, uint8_t old_id, uint8_t new_id);
 
         int writeSynchronizeCommand(std::shared_ptr<common::model::AbstractTtlSynchronizeMotorCmd >& cmd);
@@ -108,6 +108,7 @@ class TtlManager : public common::model::IBusManager
         int readCustomCommand(common::model::EHardwareType motor_type, uint8_t id, int32_t reg_address, int &value, int byte_number);
 
         void readPositionStatus();
+        void readEndEffectorStatus();
         void readHwStatus();
 
         int getAllIdsOnBus(std::vector<uint8_t> &id_list);
@@ -150,7 +151,7 @@ class TtlManager : public common::model::IBusManager
         std::shared_ptr<dynamixel::PacketHandler> _packetHandler;
 
         std::string _device_name;
-        int _uart_baudrate;
+        int _uart_baudrate{1000000};
 
         std::vector<uint8_t> _all_motor_connected; // with all dxl motors connected (including the tool)
         std::vector<uint8_t> _removed_motor_id_list;

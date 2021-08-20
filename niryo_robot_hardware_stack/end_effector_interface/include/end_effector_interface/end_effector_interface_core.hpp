@@ -60,12 +60,23 @@ class EndEffectorInterfaceCore : public common::model::IInterfaceCore
         virtual void startPublishers(ros::NodeHandle& nh) override;
         virtual void startSubscribers(ros::NodeHandle& nh) override;
 
+        void _publishButtonState();
+
     private:
+        std::mutex _buttons_status_mutex;
+
         std::shared_ptr<ttl_driver::TtlInterfaceCore> _ttl_interface;
 
-        common::model::EndEffectorState _end_effectorState;
+        ros::Publisher _free_drive_button_state_publisher;
+        ros::Publisher _save_pos_button_state_publisher;
+        ros::Publisher _custom_button_state_publisher;
 
+        std::thread _publish_buttons_state_thread;
+
+        common::model::EndEffectorState _end_effector_state;
         uint8_t _id;
+
+        double _check_end_effector_status_frequency{0.0};
 };
 } // EndEffectorInterface
 

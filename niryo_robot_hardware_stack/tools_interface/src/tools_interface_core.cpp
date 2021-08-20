@@ -123,6 +123,7 @@ void ToolsInterfaceCore::initParameters(ros::NodeHandle& nh)
     available_tools_list += "]";
 
     ROS_INFO("ToolsInterfaceCore::initParameters - List of tool ids : %s", available_tools_list.c_str());
+    ROS_DEBUG("EndEffectorInterfaceCore::initParameters - check tool connection frequency : %f", _check_tool_connection_frequency);
 
     // check that the two lists have the same size
     if (idList.size() != typeList.size())

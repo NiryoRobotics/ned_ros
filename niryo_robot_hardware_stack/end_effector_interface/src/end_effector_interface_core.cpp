@@ -27,7 +27,10 @@
 // niryo
 #include "end_effector_interface/end_effector_interface_core.hpp"
 #include "common/model/end_effector_state.hpp"
+#include "end_effector_interface/ButtonStatus.h"
 
+using ::std::lock_guard;
+using ::std::mutex;
 using ::common::model::EndEffectorState;
 
 namespace end_effector_interface
@@ -47,10 +50,10 @@ EndEffectorInterfaceCore::EndEffectorInterfaceCore(ros::NodeHandle& nh,
     init(nh);
 
     // init end effector state
-    _end_effectorState = EndEffectorState(_id);
+    _end_effector_state = EndEffectorState(_id);
 
     // init driver
-    int result = _ttl_interface->setEndEffector(_end_effectorState.getId());
+    int result = _ttl_interface->setEndEffector(_end_effector_state.getId());
 
     // on success, tool is set, we go out of loop
     if (niryo_robot_msgs::CommandStatus::SUCCESS == result)
@@ -105,7 +108,11 @@ void EndEffectorInterfaceCore::initParameters(ros::NodeHandle& nh)
     int id = -1;
     nh.getParam("tools_params/id_list", id);
     _id = static_cast<uint8_t>(id);
+
+    nh.getParam("check_end_effector_status_frequency", _check_end_effector_status_frequency);
+
     ROS_DEBUG("EndEffectorInterfaceCore::initParameters - end effector id : %d", _id);
+    ROS_DEBUG("EndEffectorInterfaceCore::initParameters - end effector status frequency : %f", _check_end_effector_status_frequency);
 }
 
 /**
@@ -123,7 +130,16 @@ void EndEffectorInterfaceCore::startServices(ros::NodeHandle& nh)
  */
 void EndEffectorInterfaceCore::startPublishers(ros::NodeHandle& nh)
 {
-    ROS_DEBUG("No publishers to start");
+  _free_drive_button_state_publisher = nh.advertise<end_effector_interface::ButtonStatus>(
+                                          "free_drive_button_status", 10);
+
+  _save_pos_button_state_publisher = nh.advertise<end_effector_interface::ButtonStatus>(
+                                          "save_pos_button_status", 10);
+
+  _custom_button_state_publisher = nh.advertise<end_effector_interface::ButtonStatus>(
+                                          "custom_button_status", 10);
+
+  _publish_buttons_state_thread = std::thread(&EndEffectorInterfaceCore::_publishButtonState, this);
 }
 
 /**
@@ -133,6 +149,32 @@ void EndEffectorInterfaceCore::startPublishers(ros::NodeHandle& nh)
 void EndEffectorInterfaceCore::startSubscribers(ros::NodeHandle& /*nh*/)
 {
   ROS_DEBUG("No subscribers to start");
+}
+
+void EndEffectorInterfaceCore::_publishButtonState()
+{
+    ros::Rate check_status_rate = ros::Rate(_check_end_effector_status_frequency);
+    ButtonStatus msg;
+
+    while (ros::ok())
+    {
+        {
+            lock_guard<mutex> lck(_buttons_status_mutex);
+
+            _end_effector_state = _ttl_interface->getEndEffectorState(_id);
+
+            msg.action = static_cast<int>(_end_effector_state.getButtonStatus(EndEffectorState::EButtonType::FREE_DRIVE_BUTTON));
+            _free_drive_button_state_publisher.publish(msg);
+
+            msg.action = static_cast<int>(_end_effector_state.getButtonStatus(EndEffectorState::EButtonType::SAVE_POS_BUTTON));
+            _save_pos_button_state_publisher.publish(msg);
+
+            msg.action = static_cast<int>(_end_effector_state.getButtonStatus(EndEffectorState::EButtonType::CUSTOM_BUTTON));
+            _custom_button_state_publisher.publish(msg);
+        }
+
+        check_status_rate.sleep();
+    }
 }
 
 }  // namespace end_effector_interface

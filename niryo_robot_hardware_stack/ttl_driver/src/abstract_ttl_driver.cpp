@@ -144,6 +144,8 @@ std::string AbstractTtlDriver::str() const
  */
 int AbstractTtlDriver::read(uint8_t address, uint8_t data_len, uint8_t id, uint32_t& data)
 {
+    // clean output data first
+    data = 0;
     uint8_t dxl_error = 0;
     int dxl_comm_result = COMM_TX_FAIL;
 

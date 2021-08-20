@@ -47,6 +47,8 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 
 #include "common/model/stepper_motor_state.hpp"
 #include "common/model/dxl_motor_state.hpp"
+#include "common/model/end_effector_state.hpp"
+
 #include "common/model/hardware_type_enum.hpp"
 
 #include "ttl_driver/abstract_motor_driver.hpp"
@@ -65,7 +67,6 @@ class TtlInterfaceCore : public common::model::IDriverCore, public common::model
         virtual ~TtlInterfaceCore() override;
 
         bool init(ros::NodeHandle& nh) override;
-
 
         void clearSingleCommandQueue();
         void clearConveyorCommandQueue();
@@ -106,6 +107,7 @@ class TtlInterfaceCore : public common::model::IDriverCore, public common::model
 
         std::vector<std::shared_ptr<common::model::JointState> > getJointStates() const override;
         common::model::JointState getJointState(uint8_t motor_id) const override;
+        common::model::EndEffectorState getEndEffectorState(uint8_t motor_id);
 
         // IDriverCore interface
         void startControlLoop() override;

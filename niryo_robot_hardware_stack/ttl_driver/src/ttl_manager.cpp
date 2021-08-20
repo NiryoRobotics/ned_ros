@@ -607,6 +607,91 @@ void TtlManager::readPositionStatus()
 }
 
 /**
+ * @brief TtlManager::readEndEffectorStatus
+ */
+void TtlManager::readEndEffectorStatus()
+{
+  if (hasMotors())
+  {
+      unsigned int hw_errors_increment = 0;
+
+      // syncread from all drivers for all motors
+      for (auto const& it : _driver_map)
+      {
+          EHardwareType type = it.first;
+          shared_ptr<EndEffectorDriver<EndEffectorReg> > driver = std::dynamic_pointer_cast<EndEffectorDriver<EndEffectorReg> >(it.second);
+
+          if (driver && _ids_map.count(type))
+          {
+              // we retrieve all the associated id for the type of the current driver
+              uint8_t id = _ids_map.at(type).front();
+              uint32_t value = 0;
+
+              if (_state_map.count(id))
+              {
+                  auto state = std::dynamic_pointer_cast<EndEffectorState>(_state_map.at(id));
+                  if (state)
+                  {
+                      // free drive button
+                      if (COMM_SUCCESS == driver->readFreeDriveButtonStatus(id, value))
+                      {
+                          EndEffectorState::EActionType action = driver->interpreteActionValue(value);
+                          state->setButtonStatus(common::model::EndEffectorState::EButtonType::FREE_DRIVE_BUTTON, action);
+                      }
+                      else
+                      {
+                          hw_errors_increment++;
+                      }
+
+                      // save pos button
+                      if (COMM_SUCCESS == driver->readSaveButtonStatus(id, value))
+                      {
+                          EndEffectorState::EActionType action = driver->interpreteActionValue(value);
+                          state->setButtonStatus(common::model::EndEffectorState::EButtonType::SAVE_POS_BUTTON, action);
+                      }
+                      else
+                      {
+                          hw_errors_increment++;
+                      }
+
+                      // custom button
+                      if (COMM_SUCCESS == driver->readCustomButtonStatus(id, value))
+                      {
+                          EndEffectorState::EActionType action = driver->interpreteActionValue(value);
+                          state->setButtonStatus(common::model::EndEffectorState::EButtonType::CUSTOM_BUTTON, action);
+                      }
+                      else
+                      {
+                          hw_errors_increment++;
+                      }
+                  }
+              }
+          }
+      }  // for driver_map
+
+      // we reset the global error variable only if no errors
+      if (0 == hw_errors_increment)
+          _hw_fail_counter_read = 0;
+      else
+          _hw_fail_counter_read += hw_errors_increment;
+
+      if (_hw_fail_counter_read > MAX_HW_FAILURE)
+      {
+          ROS_ERROR_THROTTLE(1, "TtlManager::readPositionStatus - motor connection problem - "
+                                "Failed to read from bus");
+          _hw_fail_counter_read = 0;
+          _is_connection_ok = false;
+          _debug_error_message = "TtlManager - Connection problem with physical Bus.";
+      }
+  }
+  else
+  {
+      ROS_ERROR_THROTTLE(1, "TtlManager::readPositionStatus - No motor");
+      _debug_error_message = "TtlManager::readPositionStatus -  No motor";
+  }
+}
+
+/**
  * @brief TtlManager::readHwStatus
  */
 void TtlManager::readHwStatus()
@@ -776,7 +861,7 @@ int TtlManager::getAllIdsOnBus(vector<uint8_t> &id_list)
 {
     int result = COMM_RX_FAIL;
 
-    // 1. Get all ids from dxl bus. We can use any driver for that
+    // 1. Get all ids from ttl bus. We can use any driver for that
     auto it = _driver_map.begin();
     if (it != _driver_map.end() && it->second)
     {
@@ -1015,7 +1100,7 @@ void TtlManager::checkRemovedMotors()
 
 /**
  * @brief TtlManager::getMotorsStates
- * @return
+ * @return only the joints states
  */
 std::vector<std::shared_ptr<JointState> >
 TtlManager::getMotorsStates() const

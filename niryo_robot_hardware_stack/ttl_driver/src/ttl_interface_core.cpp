@@ -36,6 +36,7 @@ using ::std::to_string;
 using ::common::model::EHardwareType;
 using ::common::model::HardwareTypeEnum;
 using ::common::model::StepperMotorState;
+using ::common::model::EndEffectorState;
 using ::common::model::DxlMotorState;
 using ::common::model::JointState;
 using ::common::model::EDxlCommandType;
@@ -585,7 +586,7 @@ void TtlInterfaceCore::controlLoop()
                 if (ros::Time::now().toSec() - _time_hw_data_last_read >= _delta_time_data_read)
                 {
                     _time_hw_data_last_read = ros::Time::now().toSec();
-                    _ttl_manager->readPositionStatus();
+                    _ttl_manager->readEndEffectorStatus();
                     needSleep = true;
                 }
                 if (!needSleep && ros::Time::now().toSec() - _time_hw_status_last_read >= _delta_time_status_read)
@@ -980,7 +981,18 @@ common::model::JointState
 TtlInterfaceCore::getJointState(uint8_t motor_id) const
 {
     // Check type of motor type
-    return _ttl_manager->getHardwareState<JointState>(motor_id);
+  return _ttl_manager->getHardwareState<JointState>(motor_id);
+}
+
+/**
+ * @brief TtlInterfaceCore::getEndEffectorState
+ * @param motor_id
+ * @return
+ * TODO(CC) to be refactorized
+ */
+common::model::EndEffectorState TtlInterfaceCore::getEndEffectorState(uint8_t motor_id)
+{
+  return _ttl_manager->getHardwareState<EndEffectorState>(motor_id);
 }
 
 /**
