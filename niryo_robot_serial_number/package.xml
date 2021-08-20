@@ -1,7 +1,7 @@
 <package>
     <name>niryo_robot_serial_number</name>
     <version>3.1.0</version>
-    <description>The niryo_robot_serial_number package</description>
+    <description>It handles the robot serial number</description>
 
     <author email="j.mottier@niryo.com">Justin Mottier</author>
     <maintainer email="j.mottier@niryo.com">Justin Mottier</maintainer>
@@ -10,6 +10,11 @@
 
     <buildtool_depend>catkin</buildtool_depend>
 
+    <build_depend>rospy</build_depend>
+    <build_depend>message_generation</build_depend>
+
     <run_depend>rospy</run_depend>
+    <run_depend>message_runtime</run_depend>
+
 
 </package>

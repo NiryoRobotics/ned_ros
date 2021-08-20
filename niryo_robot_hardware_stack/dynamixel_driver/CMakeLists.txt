@@ -1,15 +1,17 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(dynamixel_driver)
+message("\n## Reading ${PROJECT_NAME}/CMakeLists.txt...")
 
 ## Compile as C++11, supported in ROS Kinetic and newer
 add_compile_options(-std=c++11)
 
 find_package(catkin REQUIRED
     COMPONENTS
-        roscpp
-        dynamixel_sdk
-        niryo_robot_msgs
-        message_generation
+    dynamixel_sdk
+    message_generation
+    niryo_robot_msgs
+    roscpp
+    std_msgs
 )
 
 find_package(Boost REQUIRED COMPONENTS system)
@@ -30,8 +32,8 @@ add_service_files(
 
 generate_messages(
   DEPENDENCIES
-    std_msgs
     niryo_robot_msgs
+    std_msgs
 )
 
 catkin_package(
@@ -41,9 +43,11 @@ catkin_package(
         ${PROJECT_NAME}
         ${PROJECT_NAME}_core
     CATKIN_DEPENDS
-        roscpp
         dynamixel_sdk
+        message_runtime
         niryo_robot_msgs
+        roscpp
+        std_msgs
 )
 
 include_directories(
@@ -51,17 +55,24 @@ include_directories(
     ${catkin_INCLUDE_DIRS}
 )
 
+###########
+## Build ##
+###########
+
+## Specify additional locations of header files
+## Your package locations should be listed before other locations
+
 add_library(${PROJECT_NAME}
-    src/xl320_driver.cpp
-    src/xl430_driver.cpp
     src/dxl_motor_state.cpp
     src/single_motor_cmd.cpp
     src/synchronize_motor_cmd.cpp
+    src/xl320_driver.cpp
+    src/xl430_driver.cpp
 )
 
 add_library(${PROJECT_NAME}_core
-  src/dxl_driver_core.cpp
   src/dxl_driver.cpp
+  src/dxl_driver_core.cpp
 )
 
 add_executable(${PROJECT_NAME}_node
@@ -72,27 +83,47 @@ add_executable(${PROJECT_NAME}_test
   test/test_dynamixel_driver_node.cpp
 )
 
+## Add dependencies to exported targets, like ROS msgs or srvs
 add_dependencies(${PROJECT_NAME}_node
   ${catkin_EXPORTED_TARGETS}
 )
 
+add_dependencies(${PROJECT_NAME} 
+  niryo_robot_msgs_generate_messages_cpp
+)
+
+add_dependencies(${PROJECT_NAME} 
+  ${PROJECT_NAME}_generate_messages_cpp
+)
+
+## Specify libraries to link executable targets against
 target_link_libraries(${PROJECT_NAME}
   ${catkin_LIBRARIES}
 )
 
 target_link_libraries(${PROJECT_NAME}_core
   ${PROJECT_NAME}
-  ${catkin_LIBRARIES}
 )
 
 target_link_libraries(${PROJECT_NAME}_node
   ${PROJECT_NAME}_core
-  ${catkin_LIBRARIES}
 )
 
 target_link_libraries(${PROJECT_NAME}_test
   ${PROJECT_NAME}_core
-  ${catkin_LIBRARIES}
+)
+
+
+#############
+## Install ##
+#############
+
+
+install(
+  TARGETS ${PROJECT_NAME}
+  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+  RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
 )
 
 install(
@@ -103,9 +134,25 @@ install(
 )
 
 install(
+  TARGETS ${PROJECT_NAME}_node
+  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
+
+# Mark other files for installation
+install(
   DIRECTORY include/${PROJECT_NAME}/
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 )
 
-add_dependencies(${PROJECT_NAME} niryo_robot_msgs_generate_messages_cpp)
-add_dependencies(${PROJECT_NAME} dynamixel_driver_generate_messages_cpp)
+
+##########################
+## Static code analysis ##
+##########################
+find_package(roslint QUIET)
+
+if(roslint_FOUND)
+    roslint_cpp()
+else()
+    message(WARNING "roslint not found. Skipping roslint target building")
+endif()
