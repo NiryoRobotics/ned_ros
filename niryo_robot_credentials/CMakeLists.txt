@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8.3)
-project(niryo_robot_serial_number)
+project(niryo_robot_credentials)
 
 find_package(catkin REQUIRED COMPONENTS
   message_generation
@@ -9,7 +9,8 @@ find_package(catkin REQUIRED COMPONENTS
 add_service_files(
   DIRECTORY srv
   FILES
-  GetSerial.srv
+  GetCredential.srv
+  SetCredential.srv
 )
 
 catkin_python_setup()
@@ -28,6 +29,6 @@ include_directories(
 )
 
 catkin_install_python(
-    PROGRAMS scripts/serial_number_node.py
+    PROGRAMS scripts/credentials_node.py
     DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )

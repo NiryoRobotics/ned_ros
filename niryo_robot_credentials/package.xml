@@ -1,7 +1,7 @@
 <package>
-    <name>niryo_robot_serial_number</name>
+    <name>niryo_robot_credentials</name>
     <version>3.1.0</version>
-    <description>It handles the robot serial number</description>
+    <description>The niryo_robot_credentials package</description>
 
     <author email="j.mottier@niryo.com">Justin Mottier</author>
     <maintainer email="j.mottier@niryo.com">Justin Mottier</maintainer>
@@ -9,12 +9,7 @@
     <license>GPLv3</license>
 
     <buildtool_depend>catkin</buildtool_depend>
-
-    <build_depend>rospy</build_depend>
-    <build_depend>message_generation</build_depend>
-
-    <run_depend>rospy</run_depend>
     <run_depend>message_runtime</run_depend>
-
+    <run_depend>rospy</run_depend>
 
 </package>

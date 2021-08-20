@@ -34,13 +34,13 @@ from niryo_robot_tools_commander.msg import ToolCommand
 from conveyor_interface.srv import ControlConveyor, SetConveyor, SetConveyorRequest
 from niryo_robot_arm_commander.srv import GetFK, GetIK
 from niryo_robot_arm_commander.srv import JogShift, JogShiftRequest
-from niryo_robot_msgs.srv import GetNameDescriptionList, SetBool, SetInt, Trigger
+from niryo_robot_msgs.srv import GetNameDescriptionList, SetString, SetBool, SetInt, Trigger
 from niryo_robot_tools_commander.srv import SetTCP, SetTCPRequest
 from niryo_robot_vision.srv import SetImageParameter
 from niryo_robot_rpi.srv import GetDigitalIO, SetDigitalIO
 from niryo_robot_vision.srv import DebugMarkers, DebugMarkersRequest, DebugColorDetection, DebugColorDetectionRequest
 from niryo_robot_programs_manager.srv import SetProgramAutorun, SetProgramAutorunRequest, GetProgramAutorunInfos, GetProgramList, ManageProgram, ManageProgramRequest, GetProgram, GetProgramRequest, ExecuteProgram, ExecuteProgramRequest
-from niryo_robot_serial_number.srv import GetSerial
+from niryo_robot_credentials.srv import GetSerial, SetCredential
 from std_srvs.srv import Trigger as StdTrigger
 
 # Actions
@@ -1690,7 +1690,7 @@ class NiryoRosWrapper:
         :return: status, message
         :rtype: (int, str)
         """
-        result = self.__call_service('/niryo_robot_serial_number/get', GetSerial)
+        result = self.__call_service('/niryo_robot_credentials/get_serial', GetSerial)
         return self.__classic_return_w_check(result)
 
 

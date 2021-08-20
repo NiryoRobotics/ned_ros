@@ -37,7 +37,9 @@
         <arg name="simulation_mode" value="false"/>
     </include>
 
-    <include file="$(find niryo_robot_serial_number)/launch/serial_number.launch"/>
+    <include file="$(find niryo_robot_credentials)/launch/credentials.launch">
+        <arg name="credentials_path" value="$(arg conf_location)"/>
+    </include>
 
     <include file="$(find niryo_robot_system_api_client)/launch/system_api_client.launch">
         <arg name="simulation_mode" value="false"/>
