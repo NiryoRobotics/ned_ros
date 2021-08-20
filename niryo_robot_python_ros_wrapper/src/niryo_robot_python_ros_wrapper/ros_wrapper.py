@@ -1,11 +1,14 @@
 #!/usr/bin/env python
 
 # Lib
+import time
+import threading
+import rosgraph_msgs.msg
 import rospy
 import actionlib
 
 # Command Status
-from niryo_robot_msgs.msg import CommandStatus
+from niryo_robot_msgs.msg import CommandStatus, SoftwareVersion
 
 # Messages
 from actionlib_msgs.msg import GoalStatus
@@ -35,6 +38,9 @@ from niryo_robot_msgs.srv import GetNameDescriptionList, SetBool, SetInt, Trigge
 from niryo_robot_tools_commander.srv import SetTCP, SetTCPRequest
 from niryo_robot_vision.srv import SetImageParameter
 from niryo_robot_rpi.srv import GetDigitalIO, SetDigitalIO
+from niryo_robot_vision.srv import DebugMarkers, DebugMarkersRequest, DebugColorDetection, DebugColorDetectionRequest
+from niryo_robot_programs_manager.srv import SetProgramAutorun, SetProgramAutorunRequest, GetProgramAutorunInfos, GetProgramList, ManageProgram, ManageProgramRequest, GetProgram, GetProgramRequest, ExecuteProgram, ExecuteProgramRequest
+from niryo_robot_serial_number.srv import GetSerial
 from std_srvs.srv import Trigger as StdTrigger
 
 # Actions
@@ -51,12 +57,25 @@ class NiryoRosWrapperException(Exception):
 
 
 class NiryoRosWrapper:
+
+    LOGS_LEVELS = {
+        rospy.INFO: 'INFO',
+        rospy.WARN: 'WARNING',
+        rospy.ERROR: 'ERROR',
+        rospy.FATAL: 'FATAL',
+        rospy.DEBUG: 'DEBUG'
+    }
+
     def __init__(self):
         # - Getting ROS parameters
         self.__service_timeout = rospy.get_param("/niryo_robot/python_ros_wrapper/service_timeout")
         self.__action_connection_timeout = rospy.get_param("/niryo_robot/python_ros_wrapper/action_connection_timeout")
         self.__action_execute_timeout = rospy.get_param("/niryo_robot/python_ros_wrapper/action_execute_timeout")
         self.__action_preempt_timeout = rospy.get_param("/niryo_robot/python_ros_wrapper/action_preempt_timeout")
+        self.__simulation_mode = rospy.get_param("/niryo_robot/simulation_mode")
+        self.__hardware_version = rospy.get_param("/niryo_robot/hardware_version")
+        self.__can_enabled = rospy.get_param("/niryo_robot_hardware_interface/can_enabled")
+        self.__dxl_enabled = rospy.get_param("/niryo_robot_hardware_interface/dxl_enabled")
 
         # - Publishers
         # Highlight publisher (to highlight blocks in Blockly interface)
@@ -93,6 +112,16 @@ class NiryoRosWrapper:
         rospy.Subscriber('/niryo_robot_tools_commander/current_id', Int32,
                          self.__callback_sub_current_tool_id)
 
+        self.__max_velocity_scaling_factor = None
+        rospy.Subscriber('/niryo_robot/max_velocity_scaling_factor', Int32,
+                         self.__callback_sub_max_velocity_scaling_factor)
+
+        # - Software
+
+        self.__software_version = None
+        rospy.Subscriber('/niryo_robot_hardware_interface/software_version', SoftwareVersion,
+                         self.__callback_software_version)
+
         # - Vision
         self.__compressed_image_message = None
         rospy.Subscriber('/niryo_robot_vision/compressed_video_stream', CompressedImage,
@@ -107,6 +136,23 @@ class NiryoRosWrapper:
         self.__conveyors_feedback = None
         rospy.Subscriber('/niryo_robot/conveyor/feedback', ConveyorFeedbackArray,
                          self.__callback_sub_conveyors_feedback)
+
+        # - Logs
+
+        self.__logs = []
+        rospy.Subscriber(
+            '/rosout_agg', rosgraph_msgs.msg.Log, self.__callback_rosout_agg
+        )
+
+        # - Blockly
+
+        self.__highlighted_block = None
+        rospy.Subscriber(
+            '/niryo_robot_blockly/highlight_block', String, self.__callback_highlight_block
+        )
+
+        self.__save_current_position_event = threading.Event()
+        rospy.Subscriber('/niryo_robot/blockly/save_current_point', Int32, self.__callback_save_current_position)
 
         # - Action server
         # Robot action
@@ -164,6 +210,12 @@ class NiryoRosWrapper:
     def __callback_sub_current_tool_id(self, msg):
         self.__current_tool_id = msg.data
 
+    def __callback_sub_max_velocity_scaling_factor(self, msg):
+        self.__max_velocity_scaling_factor = msg.data
+
+    def __callback_software_version(self, msg):
+        self.__software_version = msg
+
     def __callback_sub_hardware_status(self, hw_status):
         self.__hw_status = hw_status
 
@@ -178,6 +230,22 @@ class NiryoRosWrapper:
 
     def __callback_sub_conveyors_feedback(self, conveyors_feedback):
         self.__conveyors_feedback = conveyors_feedback
+
+    def __callback_rosout_agg(self, log):
+        formatted_log = '[{}] [{}.{}]: {} - {}'.format(
+            NiryoRosWrapper.LOGS_LEVELS[log.level],
+            log.header.stamp.secs,
+            log.header.stamp.nsecs,
+            log.name,
+            log.msg,
+        )
+        self.__logs.append(formatted_log)
+
+    def __callback_highlight_block(self, block):
+        self.__highlighted_block = block.data
+
+    def __callback_save_current_position(self, _res):
+        self.__save_current_position_event.set()
 
     # -- Service & Action executors
     def __call_service(self, service_name, service_msg_type, *args):
@@ -396,6 +464,14 @@ class NiryoRosWrapper:
         rospy.sleep(0.1)
         return self.__classic_return_w_check(result)
 
+    def get_max_velocity_scaling_factor(self):
+        """
+        Get the max velocity scaling factor
+        :return: max velocity scaling factor
+        :rtype: float
+        """
+        return self.__max_velocity_scaling_factor
+
     def set_arm_max_velocity(self, percentage):
         """
         Set relative max velocity (in %)
@@ -462,15 +538,15 @@ class NiryoRosWrapper:
 
         :param j1:
         :type j1: float
-        :param j2: 
+        :param j2:
         :type j2: float
-        :param j3: 
+        :param j3:
         :type j3: float
-        :param j4: 
+        :param j4:
         :type j4: float
-        :param j5: 
+        :param j5:
         :type j5: float
-        :param j6: 
+        :param j6:
         :type j6: float
         :return: status, message
         :rtype: (int, str)
@@ -599,6 +675,16 @@ class NiryoRosWrapper:
         :rtype: (int, str)
         """
         return self.__move_pose_with_cmd(ArmMoveCommand.LINEAR_POSE, x, y, z, roll, pitch, yaw)
+
+    def stop_move(self):
+        """
+        Stop the robot movement
+
+        :return: list of joints value
+        :rtype: list[float]
+        """
+        result = self.__call_service('/niryo_robot_commander/stop_command', Trigger)
+        return self.__classic_return_w_check(result)
 
     def set_jog_use_state(self, state):
         """
@@ -762,15 +848,20 @@ class NiryoRosWrapper:
                                      ManagePose, req)
         return self.__classic_return_w_check(result)
 
-    def get_saved_pose_list(self):
+    def get_saved_pose_list(self, with_desc=False):
         """
         Ask the pose manager service which positions are available
 
+        :param with_desc: If it returns the poses descriptions
+        :type with_desc: bool
         :return: list of positions name
         :rtype: list[str]
         """
         result = self.__call_service('/niryo_robot_poses_handlers/get_pose_list',
                                      GetNameDescriptionList)
+        if with_desc:
+            return result.name_list, result.description_list
+
         return result.name_list
 
     # - Pick/Place
@@ -816,7 +907,7 @@ class NiryoRosWrapper:
         - going down until height = z
         - releasing the object with tool
         - going back over the place
-        
+
         :param x:
         :type x: float
         :param y:
@@ -844,10 +935,10 @@ class NiryoRosWrapper:
         Execute a pick and place. If an error happens during the movement, error will be raised.
         -> Args param is for development purposes
 
-        :param pick_pose: 
-        :type pick_pose: list[float] 
-        :param place_pose: 
-        :type place_pose: list[float] 
+        :param pick_pose:
+        :type pick_pose: list[float]
+        :param place_pose:
+        :type place_pose: list[float]
         :param dist_smoothing: Distance from waypoints before smoothing trajectory
         :type dist_smoothing: float
         :return: status, message
@@ -1351,6 +1442,12 @@ class NiryoRosWrapper:
 
     # - Hardware
 
+    def get_simulation_mode(self):
+        """
+        The simulation mode
+        """
+        return self.__simulation_mode
+
     def set_pin_mode(self, pin_id, pin_mode):
         """
         Set pin number pin_id to mode pin_mode
@@ -1399,6 +1496,24 @@ class NiryoRosWrapper:
         else:
             return PinState.HIGH
 
+    def get_hardware_version(self):
+        """
+        Get the robot hardware version
+        """
+        return self.__hardware_version
+
+    def get_can_enabled(self):
+        """
+        Get can_enabled
+        """
+        return self.__can_enabled
+
+    def get_dxl_enabled(self):
+        """
+        Get dxl_enabled
+        """
+        return self.__dxl_enabled
+
     def get_hardware_status(self):
         """
         Get hardware status : Temperature, Hardware version, motors names & types ...
@@ -1428,6 +1543,156 @@ class NiryoRosWrapper:
                 raise NiryoRosWrapperException(
                     'Timeout: could not get digital io state (/niryo_robot_rpi/digital_io_state topic)')
         return self.__digital_io_state
+
+    def get_axis_limits(self):
+        """
+        Return the joints and positions min and max values
+
+        :return: An object containing all the values
+        :rtype: dict
+        """
+        path_pattern = '/niryo_robot/robot_command_validation/{}/{}/{}'
+        axis_limits = {
+            'joint_limits': {
+                'joint_1': None,
+                'joint_2': None,
+                'joint_3': None,
+                'joint_4': None,
+                'joint_5': None,
+                'joint_6': None,
+            },
+            'position_limits': {
+                'x': None,
+                'y': None,
+                'z': None,
+            },
+            'rpy_limits': {
+                'roll': None,
+                'pitch': None,
+                'yaw': None,
+            }
+        }
+
+        for axis_group in axis_limits:
+            for axis in axis_limits[axis_group]:
+                try:
+                    limits = {
+                        'min': rospy.get_param(path_pattern.format(axis_group, axis, 'min')),
+                        'max': rospy.get_param(path_pattern.format(axis_group, axis, 'max')),
+                    }
+                except KeyError as e:
+                    return False, str(e)
+
+                axis_limits[axis_group][axis] = limits
+        return True, axis_limits
+
+    def reboot_motors(self):
+        """
+        Reboot the robots motors
+
+        :raises NiryoRosWrapperException:
+        :return: status, message
+        :rtype: (int, str)
+        """
+        result = self.__call_service('/niryo_robot_hardware_interface/reboot_motors', Trigger)
+        return self.__classic_return_w_check(result)
+
+    def debug_motors(self):
+        """
+        Debug the motors by going to each stop
+
+        :return: status, message
+        :rtype: (int, str)
+        """
+        result = self.__call_service('/niryo_robot_commander/motor_debug_start', SetInt, 0)
+        return self.__classic_return_w_check(result)
+
+
+    # - Button
+
+    def __change_button_mode(self, mode):
+        result = self.__call_service('/niryo_robot/rpi/change_button_mode', SetInt, mode)
+        return self.__classic_return_w_check(result)
+
+    def set_button_do_nothing(self):
+        """
+        Disable the button
+        :return: status, message
+        :rtype: (int, str)
+        """
+        return self.__change_button_mode(0)
+
+    def set_button_trigger_sequence_autorun(self):
+        """
+        Set the button in trigger sequence autorun mode
+        :return: status, message
+        :rtype: (int, str)
+        """
+        return self.__change_button_mode(1)
+
+    def set_button_blockly_save_point(self):
+        """
+        Set the button in blockly save point mode
+        :return: status, message
+        :rtype: (int, str)
+        """
+        return self.__change_button_mode(2)
+
+
+    # - Software
+
+    def get_software_version(self):
+        """
+        Get the robot software version
+
+        :return: rpi_image_version, ros_niryo_robot_version, motor_names, stepper_firmware_versions
+        :rtype: (str, str, list[str], list[str])
+        """
+        return self.__software_version
+
+    def set_robot_name(self, name):
+        """
+        Set the robot name
+
+        :param name: the new name of the robot
+        :type name: str
+        :return: status, message
+        :rtype: int, str
+        """
+        req = SetString()
+        req.data = name
+        result = self.__call_service('/niryo_robot/wifi/set_robot_name', SetString, req)
+        return self.__classic_return_w_check(result)
+
+    def __call_shutdown_rpi(self, value):
+        result = self.__call_service('/niryo_robot_rpi/shutdown_rpi', SetInt, value)
+        return self.__classic_return_w_check(result)
+
+    def shutdown_rpi(self):
+        """
+        Shutdown the rpi
+        :return: status, message
+        :rtype: (int, str)
+        """
+        return self.__call_shutdown_rpi(1)
+
+    def reboot_rpi(self):
+        """
+        Shutdown the rpi
+        :return: status, message
+        :rtype: (int, str)
+        """
+        return self.__call_shutdown_rpi(2)
+
+    def get_serial_number(self):
+        """
+        Get the serial number
+        :return: status, message
+        :rtype: (int, str)
+        """
+        result = self.__call_service('/niryo_robot_serial_number/get', GetSerial)
+        return self.__classic_return_w_check(result)
+
 
     # - Conveyor
 
@@ -1506,7 +1771,7 @@ class NiryoRosWrapper:
 
     # - Vision
 
-    def get_compressed_image(self):
+    def get_compressed_image(self, with_seq=False):
         """
         Get last stream image in a compressed format
 
@@ -1519,6 +1784,10 @@ class NiryoRosWrapper:
             if rospy.get_time() > timeout:
                 raise NiryoRosWrapperException(
                     'Timeout: could not video stream message (/niryo_robot_vision/compressed_video_stream topic)')
+
+        if with_seq:
+            return self.__compressed_image_message.data, self.__compressed_image_message.header.seq
+
         return self.__compressed_image_message.data
 
     def set_brightness(self, brightness_factor):
@@ -1750,6 +2019,17 @@ class NiryoRosWrapper:
                     'Timeout: could not video stream message (/niryo_robot_vision/camera_intrinsics topic)')
         return self.__camera_intrinsics_message.K, self.__camera_intrinsics_message.D
 
+    def get_debug_markers(self):
+        req = DebugMarkersRequest()
+        result = self.__call_service('/niryo_robot_vision/debug_markers', DebugMarkers, req)
+        return result
+
+    def get_debug_colors(self, color):
+        req = DebugColorDetectionRequest()
+        req.color = color
+        result = self.__call_service('/niryo_robot_vision/debug_colors', DebugColorDetection, req)
+        return result
+
     # - Workspace
     def save_workspace_from_poses(self, name, list_poses_raw):
         """
@@ -1855,7 +2135,7 @@ class NiryoRosWrapper:
         self.__check_result_status(result)
         return result.ratio
 
-    def get_workspace_list(self):
+    def get_workspace_list(self, with_desc=False):
         """
         Ask the workspace manager service names of the available workspace
 
@@ -1864,4 +2144,207 @@ class NiryoRosWrapper:
         """
         result = self.__call_service('/niryo_robot_poses_handlers/get_workspace_list',
                                      GetNameDescriptionList)
+        if with_desc:
+            return result.name_list, result.description_list
         return result.name_list
+
+    #- Logs
+
+    def get_logs(self):
+        """
+        Returns a generator iterating over all the logs published
+
+        :return: the last logs
+        :rtype: generator[str]
+        """
+        while len(self.__logs) > 0:
+            yield self.__logs.pop(0)
+
+    def purge_logs(self):
+        """
+        Purge the ros logs and discard the following
+        Restart the robot to have logs again
+
+        :return: status, message
+        :rtype: (int, str)
+        """
+        # The request data is ignored by the service
+        result = self.__call_service('/niryo_robot_rpi/purge_ros_logs', SetInt, 0)
+        return self.__classic_return_w_check(result)
+
+    def purge_logs_on_startup(self, value):
+        """
+        Purge the ros logs at rpi startup
+
+        :param value: If the rpi have to purge the logs at startup
+        :type value: bool
+        :return: status, message
+        :rtype: (int, str)
+        """
+        value = 1 if value is True else 0
+        result = self.__call_service('/niryo_robot_rpi/set_purge_ros_log_on_startup', SetInt, value)
+        return self.__classic_return_w_check(result)
+
+    # - Blockly
+
+    def get_highlighted_block(self):
+        """
+        Returns the blockly highlighted block
+
+        :return: the highlighted block id
+        :rtype: str
+        """
+        return self.__highlighted_block
+
+    def get_save_point_event(self):
+        """
+        Returns an event which is set when a pose must be saved
+
+        :return: the event
+        :rtype: Event
+        """
+        return self.__save_current_position_event
+
+    # - Programs
+
+    def get_programs_list(self):
+        """
+        Get all the programs stored in the robot
+
+        :return: names, descriptions
+        :rtype: list[str], list[str]
+        """
+        result = self.__call_service('/niryo_robot_programs_manager/get_program_list', GetProgramList)
+        return result.programs_names, result.programs_description
+
+    def add_program(self, name, language, description, code):
+        """
+        Create a program
+
+        :param name: the program's name
+        :type name: str
+        :param language: the program's language
+        :type language: ProgramLanguage
+        :param description: the program's description
+        :type description: str
+        :param code: the program's code
+        :type code: str
+
+        :return: status, message
+        :rtype: (int, str)
+        """
+        req = ManageProgramRequest()
+        req.cmd = 1
+        req.name = name
+        req.language.used = language
+        req.description = description
+        req.code = code
+        result = self.__call_service('/niryo_robot_programs_manager/manage_program', ManageProgram, req)
+        return self.__classic_return_w_check(result)
+
+    def get_program(self, name, language):
+        """
+        Get a program's code
+
+        :param name: the program's name
+        :type name: str
+        :param language: the program's language
+        :type language: ProgramLanguage
+        :return: the program's code
+        :rtype: str
+        """
+        req = GetProgramRequest()
+        req.name = name
+        req.language.used = language
+        result = self.__call_service('/niryo_robot_programs_manager/get_program', GetProgram, req)
+        self.__check_result_status(result)
+        return result.code
+
+    def set_autorun(self, name, language, mode):
+        """
+        Set a program as the autorun
+
+        :param name: the name of the program
+        :type name: str
+        :param language: the language of the program
+        :type language: ProgramLanguage
+        :param mode: the mode of the autorun
+        :type mode: AutorunMode
+        """
+        req = SetProgramAutorunRequest()
+        req.name = name
+        req.language.used = language
+        req.mode = mode
+        result = self.__call_service('/niryo_robot_programs_manager/set_program_autorun', SetProgramAutorun, req)
+        return self.__classic_return_w_check(result)
+
+    def start_program(self, name, language):
+        """
+        Start a program
+
+        :param name: The program's name
+        :type name: str
+        :param language: the program's language
+        :type language: ProgramLanguage
+        :return: status, message
+        :rtype: (int, str)
+        """
+        req = ExecuteProgramRequest()
+        req.name = name
+        req.language.used = language
+        result = self.__call_service('/niryo_robot_programs_manager/execute_program', ExecuteProgram, req)
+        return self.__classic_return_w_check(result)
+
+    def stop_program(self):
+        """
+        Stop the currently running program
+
+        :return: status, message
+        :rtype: (int, str)
+        """
+        result = self.__call_service('/niryo_robot_programs_manager/stop_program', Trigger)
+        return self.__classic_return_w_check(result)
+
+    def delete_program(self, name, language):
+        """
+        Delete a program
+
+        :param name: the program's name
+        :type name: str
+        :param language: the program's language
+        :type language: ProgramLanguage
+
+        :return: status, message
+        :rtype: (int, str)
+        """
+        req = ManageProgramRequest()
+        req.cmd = -1
+        req.name = name
+        req.language.used = language
+
+        result = self.__call_service('/niryo_robot_programs_manager/manage_program', ManageProgram, req)
+
+        return self.__classic_return_w_check(result)
+
+    # - Autorun
+
+    def start_autorun(self):
+        """
+        Start the program set as autorun
+
+        :return: status, message
+        :rtype: (int, str)
+        """
+        result = self.__call_service('/niryo_robot_programs_manager/execute_program_autorun', Trigger)
+        return self.__classic_return_w_check(result)
+
+    def get_autorun(self):
+        """
+        Get the autorun infos
+
+        :return: language, name, mode
+        :rtype: (int, str, int)
+        """
+        result = self.__call_service('/niryo_robot_programs_manager/get_program_autorun_infos', GetProgramAutorunInfos)
+        self.__check_result_status(result)
+        return result.language.used, result.name, result.mode
