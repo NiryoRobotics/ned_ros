@@ -1,5 +1,5 @@
 /*
-motor_type_enum.hpp
+hardware_type_enum.hpp
 Copyright (C) 2020 Niryo
 All rights reserved.
 
@@ -32,7 +32,7 @@ namespace model
 {
 
 /**
- * @brief The EMotorType enum
+ * @brief The EBusProtocol enum
  */
 enum class EBusProtocol {
                         TTL,

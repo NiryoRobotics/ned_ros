@@ -1,5 +1,5 @@
 /*
-motor_type_enum.hpp
+hardware_type_enum.hpp
 Copyright (C) 2020 Niryo
 All rights reserved.
 
@@ -32,9 +32,9 @@ namespace model
 {
 
 /**
- * @brief The EMotorType enum
+ * @brief The EHardwareType enum
  */
-enum class EMotorType {
+enum class EHardwareType {
                         STEPPER=1,
                         XL430=2,
                         XL320=3,
@@ -47,16 +47,16 @@ enum class EMotorType {
 /**
  * @brief Specialization of AbstractEnum for Acknowledge status enum
  */
-class MotorTypeEnum : public AbstractEnum<MotorTypeEnum, EMotorType>
+class HardwareTypeEnum : public AbstractEnum<HardwareTypeEnum, EHardwareType>
 {
 public:
-    MotorTypeEnum(EMotorType e=EMotorType::UNKNOWN);
-    MotorTypeEnum(const char* const str);
-    ~MotorTypeEnum() {}
+    HardwareTypeEnum(EHardwareType e=EHardwareType::UNKNOWN);
+    HardwareTypeEnum(const char* const str);
+    ~HardwareTypeEnum() {}
 
 private:
-    friend class AbstractEnum<MotorTypeEnum, EMotorType>;
-    static std::map<EMotorType, std::string> initialize();
+    friend class AbstractEnum<HardwareTypeEnum, EHardwareType>;
+    static std::map<EHardwareType, std::string> initialize();
 };
 
 } // model

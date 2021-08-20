@@ -47,7 +47,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 
 #include "common/model/stepper_motor_state.hpp"
 #include "common/model/dxl_motor_state.hpp"
-#include "common/model/motor_type_enum.hpp"
+#include "common/model/hardware_type_enum.hpp"
 
 #include "ttl_driver/abstract_motor_driver.hpp"
 
@@ -66,8 +66,6 @@ class TtlInterfaceCore : public common::model::IDriverCore, public common::model
 
         bool init(ros::NodeHandle& nh) override;
 
-        int setEndEffector(common::model::EMotorType type, uint8_t motor_id);
-        void unsetEndEffector(uint8_t motor_id);
 
         void clearSingleCommandQueue();
         void clearConveyorCommandQueue();
@@ -82,8 +80,12 @@ class TtlInterfaceCore : public common::model::IDriverCore, public common::model
         void addSingleCommandToQueue(const std::shared_ptr<common::model::ISingleMotorCmd>& cmd) override;
         void addSingleCommandToQueue(const std::vector<std::shared_ptr<common::model::ISingleMotorCmd> >& cmd) override;
 
-        void addEndEffectorCommandToQueue(const std::shared_ptr<common::model::DxlSingleCmd> &cmd);
-        void addEndEffectorCommandToQueue(const std::vector< std::shared_ptr<common::model::DxlSingleCmd> >& cmd);
+        // Tool control
+        int setTool(common::model::EHardwareType type, uint8_t motor_id);
+        void unsetTool(uint8_t motor_id);
+
+        // end effector panel control
+        int setEndEffector(uint8_t motor_id);
 
         // conveyor control
         int setConveyor(uint8_t motor_id, uint8_t default_conveyor_id = 6) override;
@@ -99,12 +101,11 @@ class TtlInterfaceCore : public common::model::IDriverCore, public common::model
 
         // getters
         std::vector<uint8_t> getRemovedMotorList() const;
-        double getEndEffectorState(uint8_t id) const;
-
         ttl_driver::ArrayMotorHardwareStatus getHwStatus() const;
+        double getPosition(uint8_t id) const;
 
-        std::vector<std::shared_ptr<common::model::JointState> > getStates() const override;
-        common::model::JointState getState(uint8_t motor_id) const override;
+        std::vector<std::shared_ptr<common::model::JointState> > getJointStates() const override;
+        common::model::JointState getJointState(uint8_t motor_id) const override;
 
         // IDriverCore interface
         void startControlLoop() override;
@@ -134,7 +135,7 @@ class TtlInterfaceCore : public common::model::IDriverCore, public common::model
         void _executeCommand() override;
 
         int motorScanReport(uint8_t motor_id);
-        int motorCmdReport(uint8_t motor_id, common::model::EMotorType motor_type);
+        int motorCmdReport(uint8_t motor_id, common::model::EHardwareType motor_type);
 
         // use other callbacks instead of executecommand
         bool _callbackActivateLeds(niryo_robot_msgs::SetInt::Request &req, niryo_robot_msgs::SetInt::Response &res);

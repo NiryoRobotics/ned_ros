@@ -38,7 +38,7 @@ class StepperMotorState : public JointState
     public:
         StepperMotorState();
         StepperMotorState(EBusProtocol bus_proto, uint8_t id, bool isConveyor = false);
-        StepperMotorState(std::string name, EMotorType type, EBusProtocol bus_proto, uint8_t id, bool isConveyor = false );
+        StepperMotorState(std::string name, EHardwareType type, EBusProtocol bus_proto, uint8_t id, bool isConveyor = false );
 
         virtual ~StepperMotorState() override;
 

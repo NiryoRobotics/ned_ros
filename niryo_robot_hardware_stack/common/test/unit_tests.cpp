@@ -28,19 +28,19 @@
 namespace {
 
 
-using ::common::model::EMotorType;
-using ::common::model::MotorTypeEnum;
+using ::common::model::EHardwareType;
+using ::common::model::HardwareTypeEnum;
 
 
 // For common features
-// EMotorType : type of the dxl motor
+// EHardwareType : type of the dxl motor
 // double : offset
 
-class DXLCommonTest : public testing::TestWithParam<std::tuple<EMotorType, double> >
+class DXLCommonTest : public testing::TestWithParam<std::tuple<EHardwareType, double> >
 {
     protected:
         void SetUp() override {
-            std::cout << "Test for MotorType " << MotorTypeEnum(std::get<0>(GetParam())).toString() << std::endl;
+            std::cout << "Test for MotorType " << HardwareTypeEnum(std::get<0>(GetParam())).toString() << std::endl;
 
             dxlState = common::model::DxlMotorState(std::get<0>(GetParam()),
                                                     common::model::EBusProtocol::TTL, 1);
@@ -60,11 +60,11 @@ class DXLCommonTest : public testing::TestWithParam<std::tuple<EMotorType, doubl
 // TODO(CC) find a better way to avoid redundancy of this setup method
 // For identity testing
 // double : rad_pos
-class DXLIdentityRadTest : public testing::TestWithParam<std::tuple<EMotorType, double, double> >
+class DXLIdentityRadTest : public testing::TestWithParam<std::tuple<EHardwareType, double, double> >
 {
     protected:
     void SetUp() override {
-        std::cout << "Test for MotorType " << MotorTypeEnum(std::get<0>(GetParam())).toString() << std::endl;
+        std::cout << "Test for MotorType " << HardwareTypeEnum(std::get<0>(GetParam())).toString() << std::endl;
 
         dxlState = common::model::DxlMotorState(std::get<0>(GetParam()),
                                                 common::model::EBusProtocol::TTL, 1);
@@ -82,11 +82,11 @@ class DXLIdentityRadTest : public testing::TestWithParam<std::tuple<EMotorType, 
 };
 
 // int : motor_pos
-class DXLIdentityMotorTest : public testing::TestWithParam<std::tuple<EMotorType, double, int> >
+class DXLIdentityMotorTest : public testing::TestWithParam<std::tuple<EHardwareType, double, int> >
 {
     protected:
     void SetUp() override {
-        std::cout << "Test for MotorType " << MotorTypeEnum(std::get<0>(GetParam())).toString() << std::endl;
+        std::cout << "Test for MotorType " << HardwareTypeEnum(std::get<0>(GetParam())).toString() << std::endl;
 
         dxlState = common::model::DxlMotorState(std::get<0>(GetParam()),
                                                 common::model::EBusProtocol::TTL, 1);
@@ -150,29 +150,29 @@ TEST_P(DXLIdentityMotorTest, identityFromMotorPos) {
 INSTANTIATE_TEST_CASE_P(CommonTests,
                          DXLCommonTest,
                          testing::Combine(
-                            testing::Values(EMotorType::XL320,
-                                            EMotorType::XL330,
-                                            EMotorType::XL430,
-                                            EMotorType::XC430),
+                            testing::Values(EHardwareType::XL320,
+                                            EHardwareType::XL330,
+                                            EHardwareType::XL430,
+                                            EHardwareType::XC430),
                             testing::Range(-2.0, 2.0, 0.6)));
 
 INSTANTIATE_TEST_CASE_P(IdentityRadTests,
                          DXLIdentityRadTest,
                          testing::Combine(
-                            testing::Values(EMotorType::XL320,
-                                            EMotorType::XL330,
-                                            EMotorType::XL430,
-                                            EMotorType::XC430),
+                            testing::Values(EHardwareType::XL320,
+                                            EHardwareType::XL330,
+                                            EHardwareType::XL430,
+                                            EHardwareType::XC430),
                             testing::Range(-2.0, 2.0, 0.6),
                             testing::Range(-M_PI, M_PI, 0.29)));
 
 INSTANTIATE_TEST_CASE_P(IdentityMotorTests,
                          DXLIdentityMotorTest,
                          testing::Combine(
-                            testing::Values(EMotorType::XL320,
-                                            EMotorType::XL330,
-                                            EMotorType::XL430,
-                                            EMotorType::XC430),
+                            testing::Values(EHardwareType::XL320,
+                                            EHardwareType::XL330,
+                                            EHardwareType::XL430,
+                                            EHardwareType::XC430),
                             testing::Range(-2.0, 2.0, 0.6),
                             testing::Range(0, 4000, 600)));
 
@@ -192,7 +192,7 @@ TEST(CommonTestSuite, testStepper)
     common::model::StepperMotorState stepperState = common::model::StepperMotorState(common::model::EBusProtocol::CAN, 1);
     stepperState.setGearRatio(800.0);
     stepperState.setDirection(-1);
-    std::string type_str = common::model::MotorTypeEnum(stepperState.getType()).toString();
+    std::string type_str = common::model::HardwareTypeEnum(stepperState.getType()).toString();
     ASSERT_TRUE(stepperState.isValid());
 
     // check to_rad_pos extreme values

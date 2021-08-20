@@ -23,7 +23,7 @@
 
 #include "niryo_robot_hardware_interface/hardware_interface.hpp"
 
-#include "common/model/motor_type_enum.hpp"
+#include "common/model/hardware_type_enum.hpp"
 
 #include "common/util/util_defs.hpp"
 
@@ -502,7 +502,7 @@ void HardwareInterface::_publishHardwareStatus()
             hw_errors.emplace_back(static_cast<int32_t>(hw_status.error));
             hw_errors_msg.emplace_back(hw_status.error_msg);
 
-            motor_types.emplace_back(common::model::MotorTypeEnum(static_cast<common::model::EMotorType>(hw_status.motor_identity.motor_type)).toString());
+            motor_types.emplace_back(common::model::HardwareTypeEnum(static_cast<common::model::EHardwareType>(hw_status.motor_identity.motor_type)).toString());
 
             std::string joint_name = "";
             if (_joints_interface)

@@ -80,7 +80,9 @@ class TtlManager : public common::model::IBusManager
             TOOL,
             CONVOYER,
             JOINT,
+            END_EFFECTOR
         };
+
     public:
         TtlManager(ros::NodeHandle& nh);
         virtual ~TtlManager() override;
@@ -88,9 +90,9 @@ class TtlManager : public common::model::IBusManager
         bool init(ros::NodeHandle& nh) override;
 
         // commands
-        void addMotor(common::model::EMotorType type,
+        void addHardwareComponent(common::model::EHardwareType type,
                       uint8_t id, EType type_used);
-        int changeId(common::model::EMotorType motor_type, uint8_t old_id, uint8_t new_id);
+        int changeId(common::model::EHardwareType motor_type, uint8_t old_id, uint8_t new_id);
 
         int writeSynchronizeCommand(std::shared_ptr<common::model::AbstractTtlSynchronizeMotorCmd >& cmd);
         int writeSingleCommand(std::shared_ptr<common::model::AbstractTtlSingleMotorCmd >& cmd);
@@ -102,8 +104,8 @@ class TtlManager : public common::model::IBusManager
 
         int setLeds(int led);
 
-        int sendCustomCommand(common::model::EMotorType motor_type, uint8_t id, int reg_address, int value, int byte_number);
-        int readCustomCommand(common::model::EMotorType motor_type, uint8_t id, int32_t reg_address, int &value, int byte_number);
+        int sendCustomCommand(common::model::EHardwareType motor_type, uint8_t id, int reg_address, int value, int byte_number);
+        int readCustomCommand(common::model::EHardwareType motor_type, uint8_t id, int32_t reg_address, int &value, int byte_number);
 
         void readPositionStatus();
         void readHwStatus();
@@ -122,7 +124,7 @@ class TtlManager : public common::model::IBusManager
 
         std::vector<std::shared_ptr<common::model::JointState> > getMotorsStates() const;
         template<class T>
-        T getMotorState(uint8_t motor_id) const;
+        T getHardwareState(uint8_t motor_id) const;
 
         std::vector<uint8_t> getRemovedMotorList() const;
 
@@ -153,9 +155,9 @@ class TtlManager : public common::model::IBusManager
         std::vector<uint8_t> _all_motor_connected; // with all dxl motors connected (including the tool)
         std::vector<uint8_t> _removed_motor_id_list;
 
-        std::map<uint8_t, std::shared_ptr<common::model::JointState> > _state_map;
-        std::map<common::model::EMotorType, std::vector<uint8_t> > _ids_map;
-        std::map<common::model::EMotorType, std::shared_ptr<AbstractMotorDriver> > _driver_map;
+        std::map<uint8_t, std::shared_ptr<common::model::AbstractHardwareState> > _state_map;
+        std::map<common::model::EHardwareType, std::vector<uint8_t> > _ids_map;
+        std::map<common::model::EHardwareType, std::shared_ptr<AbstractTtlDriver> > _driver_map;
 
         double _calibration_timeout{30.0};
         common::model::EStepperCalibrationStatus _calibration_status{common::model::EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED};
@@ -179,7 +181,7 @@ class TtlManager : public common::model::IBusManager
  * @return
  */
 template<class T>
-T TtlManager::getMotorState(uint8_t motor_id) const
+T TtlManager::getHardwareState(uint8_t motor_id) const
 {
     if (!_state_map.count(motor_id) && _state_map.at(motor_id))
         throw std::out_of_range("TtlManager::getMotorsState: Unknown motor id");
@@ -226,6 +228,7 @@ std::string TtlManager::getErrorMessage() const
 /**
  * @brief TtlManager::getLedState
  * @return
+ * TODO(CC) to be removed from TtlManager : not the purpose of the manager to register states
  */
 inline
 int TtlManager::getLedState() const
@@ -241,7 +244,7 @@ int TtlManager::getLedState() const
  */
 inline
 void TtlManager::getBusState(bool &connection_state, std::vector<uint8_t> &motor_id,
-                            std::string &debug_msg) const
+                             std::string &debug_msg) const
 {
     debug_msg = _debug_error_message;
     motor_id = _all_motor_connected;

@@ -18,13 +18,13 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #define XL430_REG_HPP
 
 #include <memory>
-#include "common/model/motor_type_enum.hpp"
+#include "common/model/hardware_type_enum.hpp"
 
 namespace ttl_driver
 {
 struct XL430Reg
 {
-    static constexpr common::model::EMotorType motor_type = common::model::EMotorType::XL430;
+    static constexpr common::model::EHardwareType motor_type = common::model::EHardwareType::XL430;
 
     static constexpr int PROTOCOL_VERSION                       = 2.0;
     static constexpr int MODEL_NUMBER                           = 1060;

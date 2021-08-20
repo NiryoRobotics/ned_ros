@@ -26,16 +26,21 @@
 #include <unordered_map>
 
 // niryo
-#include "common/model/motor_type_enum.hpp"
+#include "common/model/hardware_type_enum.hpp"
 #include "common/model/dxl_command_type_enum.hpp"
 #include "common/model/tool_state.hpp"
 #include "common/model/stepper_motor_state.hpp"
 #include "common/model/conveyor_state.hpp"
+#include "common/model/end_effector_state.hpp"
 
 #include "ttl_driver/dxl_driver.hpp"
 #include "ttl_driver/stepper_driver.hpp"
+#include "ttl_driver/end_effector_driver.hpp"
 
 #include "ttl_driver/stepper_reg.hpp"
+#include "ttl_driver/end_effector_reg.hpp"
+
+
 
 using ::std::shared_ptr;
 using ::std::vector;
@@ -47,15 +52,16 @@ using ::std::set;
 using ::common::model::EStepperCalibrationStatus;
 using ::common::model::StepperMotorState;
 using ::common::model::ConveyorState;
+using ::common::model::EndEffectorState;
 using ::common::model::JointState;
-using ::common::model::EMotorType;
+using ::common::model::EHardwareType;
 using ::common::model::DxlMotorState;
 using ::common::model::ToolState;
-using ::common::model::MotorTypeEnum;
+using ::common::model::HardwareTypeEnum;
 using ::common::model::SynchronizeMotorCmd;
 using ::common::model::SingleMotorCmd;
 using ::common::model::EDxlCommandType;
-using ::common::model::EMotorType;
+using ::common::model::EHardwareType;
 using ::common::model::EBusProtocol;
 
 namespace ttl_driver
@@ -125,7 +131,7 @@ bool TtlManager::init(ros::NodeHandle& nh)
     for (size_t i = 0; i < idList.size(); i++)
     {
         uint8_t id = static_cast<uint8_t>(idList.at(i));
-        EMotorType type = MotorTypeEnum(typeList.at(i).c_str());
+        EHardwareType type = HardwareTypeEnum(typeList.at(i).c_str());
 
         if (0 != _state_map.count(id))
         {
@@ -135,8 +141,8 @@ bool TtlManager::init(ros::NodeHandle& nh)
         }
         else
         {
-            if (EMotorType::UNKNOWN != type)
-                addMotor(type, id, EType::JOINT);
+            if (EHardwareType::UNKNOWN != type)
+                addHardwareComponent(type, id, EType::JOINT);
             else
                 ROS_ERROR("TtlManager::init - unknown type %s. Please check your configuration file "
                           "(niryo_robot_hardware_stack/ttl_driver/config/motors_config.yaml)",
@@ -153,13 +159,13 @@ bool TtlManager::init(ros::NodeHandle& nh)
         string listOfId;
         for (auto const &i : id.second) listOfId += to_string(i) + " ";
 
-        ROS_DEBUG("TtlManager::init - Id map: %s => %s", MotorTypeEnum(id.first).toString().c_str(), listOfId.c_str());
+        ROS_DEBUG("TtlManager::init - Id map: %s => %s", HardwareTypeEnum(id.first).toString().c_str(), listOfId.c_str());
     }
 
     for (auto const &d : _driver_map)
     {
         ROS_DEBUG("TtlManager::init - Driver map: %s => %s",
-                  MotorTypeEnum(d.first).toString().c_str(),
+                  HardwareTypeEnum(d.first).toString().c_str(),
                   d.second->str().c_str());
     }
 
@@ -167,60 +173,67 @@ bool TtlManager::init(ros::NodeHandle& nh)
 }
 
 /**
- * @brief TtlManager::addMotor
+ * @brief TtlManager::addHardwareComponent
  * @param type
  * @param id
  * @param type_used
  */
-void TtlManager::addMotor(EMotorType motor_type, uint8_t id, EType type_used)
+void TtlManager::addHardwareComponent(EHardwareType hardware_type, uint8_t id, EType type_used)
 {
     ROS_DEBUG("TtlManager::addMotor - Add motor id: %d", id);
 
     // add id to _state_map
-    if (EMotorType::STEPPER == motor_type)
+    if (EHardwareType::STEPPER == hardware_type)
     {
         if (EType::CONVOYER == type_used)
             _state_map.insert(make_pair(id, std::make_shared<ConveyorState>(EBusProtocol::TTL, id)));
         else
             _state_map.insert(make_pair(id, std::make_shared<StepperMotorState>(EBusProtocol::TTL, id)));
     }
-    else if (EMotorType::UNKNOWN != motor_type)
+    else if (EHardwareType::END_EFFECTOR == hardware_type)
+    {
+        _state_map.insert(make_pair(id, std::make_shared<EndEffectorState>(id)));
+    }
+    else if (EHardwareType::UNKNOWN != hardware_type)
     {
         if (type_used == EType::TOOL)
-            _state_map.insert(make_pair(id, std::make_shared<ToolState>("auto", motor_type, id)));
+            _state_map.insert(make_pair(id, std::make_shared<ToolState>("auto", hardware_type, id)));
         else
-            _state_map.insert(make_pair(id, std::make_shared<DxlMotorState>(motor_type, EBusProtocol::TTL, id)));
+            _state_map.insert(make_pair(id, std::make_shared<DxlMotorState>(hardware_type, EBusProtocol::TTL, id)));
     }
 
     // if not already instanciated
-    if (0 == _ids_map.count(motor_type))
+    if (0 == _ids_map.count(hardware_type))
     {
-        _ids_map.insert(make_pair(motor_type, vector<uint8_t>({id})));
+        _ids_map.insert(make_pair(hardware_type, vector<uint8_t>({id})));
     }
     else
     {
-        _ids_map.at(motor_type).push_back(id);
+        _ids_map.at(hardware_type).push_back(id);
     }
 
     // if not already instanciated
-    if (0 == _driver_map.count(motor_type))
+    if (0 == _driver_map.count(hardware_type))
     {
-        switch (motor_type)
+        switch (hardware_type)
         {
-            case EMotorType::STEPPER:
-                _driver_map.insert(make_pair(motor_type, std::make_shared<StepperDriver<StepperReg> >(_portHandler, _packetHandler)));
+            case EHardwareType::STEPPER:
+                _driver_map.insert(make_pair(hardware_type, std::make_shared<StepperDriver<StepperReg> >(_portHandler, _packetHandler)));
             break;
-            case EMotorType::XL430:
-                _driver_map.insert(make_pair(motor_type, std::make_shared<DxlDriver<XL430Reg> >(_portHandler, _packetHandler)));
+            case EHardwareType::XL430:
+                _driver_map.insert(make_pair(hardware_type, std::make_shared<DxlDriver<XL430Reg> >(_portHandler, _packetHandler)));
             break;
-            case EMotorType::XC430:
-                _driver_map.insert(make_pair(motor_type, std::make_shared<DxlDriver<XC430Reg> >(_portHandler, _packetHandler)));
+            case EHardwareType::XC430:
+                _driver_map.insert(make_pair(hardware_type, std::make_shared<DxlDriver<XC430Reg> >(_portHandler, _packetHandler)));
             break;
-            case EMotorType::XL320:
-                _driver_map.insert(make_pair(motor_type, std::make_shared<DxlDriver<XL320Reg> >(_portHandler, _packetHandler)));
+            case EHardwareType::XL320:
+                _driver_map.insert(make_pair(hardware_type, std::make_shared<DxlDriver<XL320Reg> >(_portHandler, _packetHandler)));
             break;
-            case EMotorType::XL330:
-                _driver_map.insert(make_pair(motor_type, std::make_shared<DxlDriver<XL330Reg> >(_portHandler, _packetHandler)));
+            case EHardwareType::XL330:
+                _driver_map.insert(make_pair(hardware_type, std::make_shared<DxlDriver<XL330Reg> >(_portHandler, _packetHandler)));
+            break;
+            case EHardwareType::END_EFFECTOR:
+                _driver_map.insert(make_pair(hardware_type, std::make_shared<EndEffectorDriver<EndEffectorReg> >(_portHandler, _packetHandler)));
             break;
             default:
                 ROS_ERROR("TtlManager - Unable to instanciate driver, unknown type");
@@ -236,9 +249,13 @@ void TtlManager::addMotor(EMotorType motor_type, uint8_t id, EType type_used)
  * @param new_id
  * @return
  */
-int TtlManager::changeId(common::model::EMotorType motor_type, uint8_t old_id, uint8_t new_id)
+int TtlManager::changeId(common::model::EHardwareType motor_type, uint8_t old_id, uint8_t new_id)
 {
-    return _driver_map.at(motor_type)->changeId(old_id, new_id);
+    auto driver = std::dynamic_pointer_cast<AbstractMotorDriver>(_driver_map.at(motor_type));
+    if (driver)
+      return driver->changeId(old_id, new_id);
+
+    return -1;
 }
 
 /**
@@ -251,7 +268,7 @@ void TtlManager::removeMotor(uint8_t id)
 
     if (_state_map.count(id) && _state_map.at(id))
     {
-        EMotorType type = _state_map.at(id)->getType();
+        EHardwareType type = _state_map.at(id)->getType();
 
         // std::remove to remove hypothetic duplicates too
         if (_ids_map.count(type))
@@ -409,7 +426,7 @@ int TtlManager::rebootMotors()
 
     for (auto const &it : _state_map)
     {
-        EMotorType type = it.second->getType();
+        EHardwareType type = it.second->getType();
         ROS_DEBUG("TtlManager::rebootMotors - Reboot Dxl motor with ID: %d", it.first);
         if (_driver_map.count(type))
         {
@@ -441,7 +458,7 @@ int TtlManager::rebootMotor(uint8_t motor_id)
 
     if (_state_map.count(motor_id) && _state_map.at(motor_id))
     {
-        EMotorType type = _state_map.at(motor_id)->getType();
+        EHardwareType type = _state_map.at(motor_id)->getType();
         ROS_DEBUG("TtlManager::rebootMotors - Reboot motor with ID: %d", motor_id);
         if (_driver_map.count(type))
         {
@@ -480,12 +497,14 @@ int TtlManager::rebootMotor(uint8_t motor_id)
 uint32_t TtlManager::getPosition(JointState &motor_state)
 {
     uint32_t position = 0;
-    EMotorType motor_type = motor_state.getType();
-    if (_driver_map.count(motor_type) && _driver_map.at(motor_type))
+    EHardwareType hardware_type = motor_state.getType();
+    if (_driver_map.count(hardware_type) && _driver_map.at(hardware_type))
     {
         for (_hw_fail_counter_read = 0; _hw_fail_counter_read < MAX_HW_FAILURE; ++_hw_fail_counter_read)
         {
-            if (COMM_SUCCESS == _driver_map.at(motor_type)->readPosition(motor_state.getId(), position))
+            auto driver = std::dynamic_pointer_cast<AbstractMotorDriver>(_driver_map.at(hardware_type));
+
+            if (driver && COMM_SUCCESS == driver->readPosition(motor_state.getId(), position))
             {
                 _hw_fail_counter_read = 0;
                 break;
@@ -520,8 +539,8 @@ void TtlManager::readPositionStatus()
         // syncread from all drivers for all motors
         for (auto const& it : _driver_map)
         {
-            EMotorType type = it.first;
-            shared_ptr<AbstractMotorDriver> driver = it.second;
+            EHardwareType type = it.first;
+            shared_ptr<AbstractMotorDriver> driver = std::dynamic_pointer_cast<AbstractMotorDriver>(it.second);
 
             if (driver && _ids_map.count(type))
             {
@@ -541,7 +560,11 @@ void TtlManager::readPositionStatus()
 
                             if (_state_map.count(id))
                             {
-                                _state_map.at(id)->setPositionState(position);
+                                auto state = std::dynamic_pointer_cast<common::model::AbstractMotorState>(_state_map.at(id));
+                                if (state)
+                                {
+                                  state->setPositionState(position);
+                                }
                             }
                         }
                     }
@@ -595,8 +618,8 @@ void TtlManager::readHwStatus()
         // syncread from all drivers for all motors
         for (auto const& it : _driver_map)
         {
-            EMotorType type = it.first;
-            shared_ptr<AbstractMotorDriver> driver = it.second;
+            EHardwareType type = it.first;
+            shared_ptr<AbstractTtlDriver> driver = it.second;
 
             if (driver && _ids_map.count(type))
             {
@@ -656,7 +679,7 @@ void TtlManager::readHwStatus()
                 }
 
                 // **********  conveyor state
-                if (type == EMotorType::STEPPER)
+                if (type == EHardwareType::STEPPER)
                 {
                     for (auto id : _ids_map.at(type))
                     {
@@ -679,7 +702,7 @@ void TtlManager::readHwStatus()
                                 hw_errors_increment++;
                             }
                             auto cState = std::dynamic_pointer_cast<ConveyorState>(_state_map.at(id));
-                            // TODO(thuc): handle datas before set in state of conveyor - type data in ttl conveyor is differrent with data in can conveyor
+                            // TODO(thuc): handle datas before set in state of conveyor - type data in ttl conveyor is different with data in can conveyor
                             cState->setDirection(direction);
                             cState->setSpeed(speed);
                             cState->setState(state);
@@ -765,7 +788,7 @@ int TtlManager::getAllIdsOnBus(vector<uint8_t> &id_list)
 
         ROS_DEBUG_THROTTLE(1, "TtlManager::getAllIdsOnDxlBus - Found ids (%s) on bus using first driver (type: %s)",
                               ids_str.c_str(),
-                              MotorTypeEnum(it->first).toString().c_str());
+                              HardwareTypeEnum(it->first).toString().c_str());
 
         if (COMM_SUCCESS != result)
         {
@@ -796,7 +819,7 @@ void TtlManager::startCalibration()
 
     for (auto const& s : _state_map)
     {
-        if (s.second && s.second->isStepper() && !std::dynamic_pointer_cast<StepperMotorState>(s.second)->isConveyor())
+        if (s.second && EHardwareType::STEPPER == s.second->getType() && !std::dynamic_pointer_cast<StepperMotorState>(s.second)->isConveyor())
             std::dynamic_pointer_cast<StepperMotorState>(s.second)->setCalibration(EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS, 0);
     }
 
@@ -856,7 +879,7 @@ int TtlManager::setLeds(int led)
     int ret = niryo_robot_msgs::CommandStatus::TTL_WRITE_ERROR;
     _led_state = led;
     // TODO(CC) retrieve type from register
-    EMotorType mType = common::model::EMotorType::XL320;
+    EHardwareType mType = common::model::EHardwareType::XL320;
 
     // get list of motors of the given type
     vector<uint8_t> id_list;
@@ -896,7 +919,7 @@ int TtlManager::setLeds(int led)
  * @param byte_number
  * @return
  */
-int TtlManager::sendCustomCommand(EMotorType motor_type, uint8_t id,
+int TtlManager::sendCustomCommand(EHardwareType motor_type, uint8_t id,
                                  int reg_address, int value,  int byte_number)
 {
     int result = COMM_TX_FAIL;
@@ -921,7 +944,7 @@ int TtlManager::sendCustomCommand(EMotorType motor_type, uint8_t id,
     else
     {
         ROS_ERROR_THROTTLE(1, "TtlManager::sendCustomCommand - driver for motor %s not available",
-                           MotorTypeEnum(motor_type).toString().c_str());
+                           HardwareTypeEnum(motor_type).toString().c_str());
         result = niryo_robot_msgs::CommandStatus::WRONG_MOTOR_TYPE;
     }
     ros::Duration(0.005).sleep();
@@ -937,7 +960,7 @@ int TtlManager::sendCustomCommand(EMotorType motor_type, uint8_t id,
  * @param byte_number
  * @return
  */
-int TtlManager::readCustomCommand(EMotorType motor_type, uint8_t id,
+int TtlManager::readCustomCommand(EHardwareType motor_type, uint8_t id,
                                  int32_t reg_address, int& value, int byte_number)
 {
     int result = COMM_RX_FAIL;
@@ -963,7 +986,7 @@ int TtlManager::readCustomCommand(EMotorType motor_type, uint8_t id,
     else
     {
         ROS_ERROR_THROTTLE(1, "TtlManager::readCustomCommand - driver for motor %s not available",
-                           MotorTypeEnum(motor_type).toString().c_str());
+                           HardwareTypeEnum(motor_type).toString().c_str());
         result = niryo_robot_msgs::CommandStatus::WRONG_MOTOR_TYPE;
     }
     ros::Duration(0.005).sleep();
@@ -997,9 +1020,14 @@ void TtlManager::checkRemovedMotors()
 std::vector<std::shared_ptr<JointState> >
 TtlManager::getMotorsStates() const
 {
-    std::vector<std::shared_ptr<common::model::JointState> > states;
+    std::vector<std::shared_ptr<JointState> > states;
     for (auto it : _state_map)
-        states.push_back(it.second);
+    {
+      if (EHardwareType::UNKNOWN != it.second->getType() && EHardwareType::END_EFFECTOR != it.second->getType())
+      {
+          states.push_back(std::dynamic_pointer_cast<JointState>(it.second));
+      }
+    }
 
     return states;
 }
@@ -1024,20 +1052,23 @@ void TtlManager::executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, uint32
             }
         }
 
-        if (it.second)
+        // syncwrite for this driver. The driver is responsible for sync write only to its associated motors
+        auto driver = std::dynamic_pointer_cast<AbstractMotorDriver>(it.second);
+
+        // if successful, don't process this driver in the next loop
+        if (!driver || COMM_SUCCESS == driver->syncWritePositionGoal(ids, params))
         {
-            // syncwrite for this driver. The driver is responsible for sync write only to its associated motors
-            int results = it.second->syncWritePositionGoal(ids, params);
-            // if successful, don't process this driver in the next loop
-            if (COMM_SUCCESS != results)
-            {
-                ROS_WARN("TtlManager - Failed to write position");
-                _debug_error_message = "TtlManager - Failed to write position";
-            }
+          ROS_WARN("TtlManager::executeJointTrajectoryCmd - Failed to write position");
+          _debug_error_message = "TtlManager - Failed to write position";
         }
     }
 }
 
+/**
+ * @brief TtlManager::writeSynchronizeCommand
+ * @param cmd
+ * @return
+ */
 int TtlManager::writeSynchronizeCommand(std::shared_ptr<common::model::AbstractTtlSynchronizeMotorCmd>& cmd)
 {
     int result = COMM_TX_ERROR;
@@ -1045,7 +1076,7 @@ int TtlManager::writeSynchronizeCommand(std::shared_ptr<common::model::AbstractT
 
     if (cmd->isValid())
     {
-        std::set<common::model::EMotorType> typesToProcess = cmd->getMotorTypes();
+        std::set<common::model::EHardwareType> typesToProcess = cmd->getMotorTypes();
 
         // process all the motors using each successive drivers
         for (int counter = 0; counter < MAX_HW_FAILURE; ++counter)
@@ -1054,14 +1085,21 @@ int TtlManager::writeSynchronizeCommand(std::shared_ptr<common::model::AbstractT
 
             for (auto const& it : _driver_map)
             {
-                if (it.second && typesToProcess.count(it.first) != 0)
+                if (typesToProcess.count(it.first) != 0)
                 {
-                    // syncwrite for this driver. The driver is responsible for sync write only to its associated motors
-                    result = it.second.get()->writeSyncCmd(cmd->getCmdType(),
-                                                           cmd->getMotorsId(it.first),
-                                                           cmd->getParams(it.first));
+                    result = COMM_TX_ERROR;
 
-                    ros::Duration(0.05).sleep();
+                    // syncwrite for this driver. The driver is responsible for sync write only to its associated motors
+                    auto driver = std::dynamic_pointer_cast<AbstractMotorDriver>(it.second);
+                    if (driver)
+                    {
+                      result = driver->writeSyncCmd(cmd->getCmdType(),
+                                                    cmd->getMotorsId(it.first),
+                                                    cmd->getParams(it.first));
+
+                      ros::Duration(0.05).sleep();
+                    }
+
                     // if successful, don't process this driver in the next loop
                     if (COMM_SUCCESS == result)
                     {
@@ -1099,6 +1137,11 @@ int TtlManager::writeSynchronizeCommand(std::shared_ptr<common::model::AbstractT
     return result;
 }
 
+/**
+ * @brief TtlManager::writeSingleCommand
+ * @param cmd
+ * @return
+ */
 int TtlManager::writeSingleCommand(std::shared_ptr<common::model::AbstractTtlSingleMotorCmd >& cmd)
 {
     int result = COMM_TX_ERROR;
@@ -1117,12 +1160,16 @@ int TtlManager::writeSingleCommand(std::shared_ptr<common::model::AbstractTtlSin
 
             while ((COMM_SUCCESS != result) && (counter < 50))
             {
-                common::model::EMotorType motor_type = state->getType();
+                common::model::EHardwareType hardware_type = state->getType();
                 result = COMM_TX_ERROR;
 
-                if (_driver_map.count(motor_type) != 0 && _driver_map.at(motor_type))
+                if (_driver_map.count(hardware_type))
                 {
-                    result = _driver_map.at(motor_type)->writeSingleCmd(cmd);
+                    auto driver = std::dynamic_pointer_cast<AbstractMotorDriver>(_driver_map.at(hardware_type));
+                    if (driver)
+                    {
+                      result = driver->writeSingleCmd(cmd);
+                    }
                 }
 
                 counter += 1;
@@ -1134,7 +1181,7 @@ int TtlManager::writeSingleCommand(std::shared_ptr<common::model::AbstractTtlSin
 
     if (result != COMM_SUCCESS)
     {
-        ROS_WARN("TtlManager::writeSingleCommand - Failed to write a single command on dxl motor id : %d", id);
+        ROS_WARN("TtlManager::writeSingleCommand - Failed to write a single command on motor id : %d", id);
         _debug_error_message = "TtlManager - Failed to write a single command";
     }
 

@@ -47,7 +47,7 @@ StepperMotorState::StepperMotorState() :
  * @param isConveyor
  */
 StepperMotorState::StepperMotorState(EBusProtocol bus_proto, uint8_t id, bool isConveyor) :
-    JointState("unknown", EMotorType::STEPPER, bus_proto, id),
+    JointState("unknown", EHardwareType::STEPPER, bus_proto, id),
     _isConveyor(isConveyor)
 {
 }
@@ -61,7 +61,7 @@ StepperMotorState::StepperMotorState(EBusProtocol bus_proto, uint8_t id, bool is
  * @param isConveyor
  */
 StepperMotorState::StepperMotorState(std::string name,
-                                     EMotorType type, EBusProtocol bus_proto,
+                                     EHardwareType type, EBusProtocol bus_proto,
                                      uint8_t id, bool isConveyor) :
     JointState(name, type, bus_proto, id),
     _isConveyor(isConveyor)

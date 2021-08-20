@@ -17,7 +17,7 @@
     along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
-#include "common/model/bus_protocol_enum.hpp"
+#include "common/model/hardware_type_enum.hpp"
 #include <map>
 #include <string>
 
@@ -27,33 +27,37 @@ namespace model
 {
 
 /**
- * @brief BusProtocolEnum::BusProtocolEnum
+ * @brief HardwareTypeEnum::HardwareTypeEnum
  * @param e
  */
-BusProtocolEnum::BusProtocolEnum(EBusProtocol e):
-    AbstractEnum<BusProtocolEnum, EBusProtocol>(e)
+HardwareTypeEnum::HardwareTypeEnum(EHardwareType e):
+    AbstractEnum<HardwareTypeEnum, EHardwareType>(e)
 {}
 
 /**
- * @brief BusProtocolEnum::BusProtocolEnum
+ * @brief HardwareTypeEnum::HardwareTypeEnum
  * @param str
  */
-BusProtocolEnum::BusProtocolEnum(const char* const str):
-    AbstractEnum<BusProtocolEnum, EBusProtocol>(str)
+HardwareTypeEnum::HardwareTypeEnum(const char* const str):
+    AbstractEnum<HardwareTypeEnum, EHardwareType>(str)
 {}
 
 /**
- * @brief BusProtocolEnum::initialize
+ * @brief HardwareTypeEnum::initialize
  * @return
  */
-std::map<EBusProtocol, std::string>
-BusProtocolEnum::initialize()
+std::map<EHardwareType, std::string>
+HardwareTypeEnum::initialize()
 {
-    std::map<EBusProtocol, std::string> m;
+    std::map<EHardwareType, std::string> m;
 
-    m[EBusProtocol::TTL]    = "ttl";
-    m[EBusProtocol::CAN]    = "can";
-    m[EBusProtocol::UNKNOWN]  = "unknown";
+    m[EHardwareType::STEPPER]          = "Niryo Stepper";
+    m[EHardwareType::XL430]            = "DXL XL430";
+    m[EHardwareType::XL320]            = "DXL XL-320";
+    m[EHardwareType::XL330]            = "DXL XL330";
+    m[EHardwareType::XC430]            = "DXL XC430";
+    m[EHardwareType::END_EFFECTOR]     = "End Effector";
+    m[EHardwareType::UNKNOWN]          = "DXL UNKOWN";
 
     return m;
 }

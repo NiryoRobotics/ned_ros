@@ -31,7 +31,7 @@
 #include "common/util/util_defs.hpp"
 #include "can_driver/can_interface_core.hpp"
 #include "common/model/conveyor_state.hpp"
-#include "common/model/motor_type_enum.hpp"
+#include "common/model/hardware_type_enum.hpp"
 #include "common/model/stepper_command_type_enum.hpp"
 #include "common/model/single_motor_cmd.hpp"
 
@@ -41,8 +41,8 @@ using ::std::thread;
 using ::std::string;
 using ::std::vector;
 
-using ::common::model::EMotorType;
-using ::common::model::MotorTypeEnum;
+using ::common::model::EHardwareType;
+using ::common::model::HardwareTypeEnum;
 using ::common::model::EStepperCommandType;
 
 namespace can_driver
@@ -259,7 +259,7 @@ int CanInterfaceCore::launchMotorsReport()
     unsigned int nbSuccess = 0;
     unsigned int nbFailure = 0;
 
-    std::vector<std::tuple<uint8_t, EMotorType, int> > results;
+    std::vector<std::tuple<uint8_t, EHardwareType, int> > results;
 
     if (_debug_flag)
     {
@@ -314,7 +314,7 @@ int CanInterfaceCore::launchMotorsReport()
         for (auto const& res : results)
         {
             ROS_INFO("%d \t| %s \t| %d", std::get<0>(res),
-                                          MotorTypeEnum(std::get<1>(res)).toString().c_str(),
+                                          HardwareTypeEnum(std::get<1>(res)).toString().c_str(),
                                           std::get<2>(res));
         }
     }
@@ -613,11 +613,11 @@ can_driver::StepperArrayMotorHardwareStatus CanInterfaceCore::getHwStatus() cons
 }
 
 /**
- * @brief CanInterfaceCore::getStates
+ * @brief CanInterfaceCore::getJointStates
  * @return
  */
 std::vector<std::shared_ptr<common::model::JointState> >
-CanInterfaceCore::getStates() const
+CanInterfaceCore::getJointStates() const
 {
     std::vector<std::shared_ptr<common::model::JointState> > jstates;
     for (size_t i = 0; i < _can_manager->getMotorsStates().size(); i++)

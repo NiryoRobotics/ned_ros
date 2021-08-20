@@ -24,7 +24,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 
 #include "dynamixel_sdk/dynamixel_sdk.h"
 #include "common/common_defs.hpp"
-#include "common/model/motor_type_enum.hpp"
+#include "common/model/hardware_type_enum.hpp"
 #include "common/model/single_motor_cmd.hpp"
 #include "common/model/abstract_synchronize_motor_cmd.hpp"
 

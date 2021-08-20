@@ -18,13 +18,13 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #define STEPPER_REG_HPP
 
 #include <memory>
-#include "common/model/motor_type_enum.hpp"
+#include "common/model/hardware_type_enum.hpp"
 
 namespace ttl_driver
 {
 struct StepperReg
 {
-    static constexpr common::model::EMotorType motor_type = common::model::EMotorType::STEPPER;
+    static constexpr common::model::EHardwareType motor_type = common::model::EHardwareType::STEPPER;
 
     static constexpr int PROTOCOL_VERSION                       = 2.0;
     static constexpr int MODEL_NUMBER                           = 2000;

@@ -120,7 +120,7 @@ StepperDriver<reg_type>::~StepperDriver()
 template<typename reg_type>
 std::string StepperDriver<reg_type>::str() const
 {
-    return common::model::MotorTypeEnum(reg_type::motor_type).toString() + " : " + AbstractStepperDriver::str();
+    return common::model::HardwareTypeEnum(reg_type::motor_type).toString() + " : " + AbstractStepperDriver::str();
 }
 
 template<typename reg_type>

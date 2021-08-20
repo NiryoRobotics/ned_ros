@@ -132,7 +132,7 @@ DxlDriver<reg_type>::~DxlDriver()
 template<typename reg_type>
 std::string DxlDriver<reg_type>::str() const
 {
-    return common::model::MotorTypeEnum(reg_type::motor_type).toString() + " : " + AbstractDxlDriver::str();
+    return common::model::HardwareTypeEnum(reg_type::motor_type).toString() + " : " + AbstractDxlDriver::str();
 }
 
 template<typename reg_type>

@@ -48,7 +48,7 @@ DxlMotorState::DxlMotorState()
  * @param isTool
  */
 DxlMotorState::DxlMotorState(std::string name,
-                             EMotorType type,
+                             EHardwareType type,
                              EBusProtocol bus_proto,
                              uint8_t id,
                              bool isTool) :
@@ -60,25 +60,25 @@ DxlMotorState::DxlMotorState(std::string name,
     // according to xl-320 datasheet : 1 speed ~ 0.111 rpm ~ 1.8944 dxl position per second
     switch (_type)
     {
-        case EMotorType::XL320:
+        case EHardwareType::XL320:
             _total_angle = 300;
             _total_range_position = 1024;
             _middle_position = 512;
             _steps_for_one_speed =  1.8944;  // 0.111 * 1024 / 60
         break;
-        case EMotorType::XC430:
+        case EHardwareType::XC430:
             _total_angle = 360;
             _total_range_position = 4096;
             _middle_position = 2048;
             _steps_for_one_speed = 15.6330667;  // 0.229 * 4096 / 60
         break;
-        case EMotorType::XL330:
+        case EHardwareType::XL330:
             _total_angle = 360;
             _total_range_position = 4096;
             _middle_position = 2048;
             _steps_for_one_speed = 15.6330667;  // 0.229 * 4096 / 60
         break;
-        case EMotorType::XL430:
+        case EHardwareType::XL430:
             _total_angle = 360;
             _total_range_position = 4096;
             _middle_position = 2048;
@@ -96,7 +96,7 @@ DxlMotorState::DxlMotorState(std::string name,
  * @param id
  * @param isTool
  */
-DxlMotorState::DxlMotorState(EMotorType type,
+DxlMotorState::DxlMotorState(EHardwareType type,
                              EBusProtocol bus_proto,
                              uint8_t id,
                              bool isTool) :
@@ -128,7 +128,7 @@ void DxlMotorState::reset()
  */
 bool DxlMotorState::isValid() const
 {
-    return (0 != getId() && EMotorType::UNKNOWN != getType());
+    return (0 != getId() && EHardwareType::UNKNOWN != getType());
 }
 
 /**
@@ -141,7 +141,7 @@ std::string DxlMotorState::str() const
 
     ss << "DxlMotorState : ";
     ss << "\n---\n";
-    ss << "type: " << MotorTypeEnum(_type).toString() << ", ";
+    ss << "type: " << HardwareTypeEnum(_type).toString() << ", ";
     ss << "isTool: " << (_isTool ? "true" : "false") << "\n";
     ss << "position p gain: " << _pos_p_gain << ", ";
     ss << "position i gain: " << _pos_i_gain << ", ";

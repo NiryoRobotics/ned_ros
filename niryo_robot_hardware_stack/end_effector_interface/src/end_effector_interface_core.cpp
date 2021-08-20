@@ -26,7 +26,9 @@
 
 // niryo
 #include "end_effector_interface/end_effector_interface_core.hpp"
-#include "ttl_driver/ttl_manager.hpp"
+#include "common/model/end_effector_state.hpp"
+
+using ::common::model::EndEffectorState;
 
 namespace end_effector_interface
 {
@@ -37,12 +39,32 @@ namespace end_effector_interface
  * @param ttl_interface
  */
 EndEffectorInterfaceCore::EndEffectorInterfaceCore(ros::NodeHandle& nh,
-                                                   std::shared_ptr<ttl_driver::EndEffectorDriver<ttl_driver::EndEffectorReg> > ee_driver):
-    _ee_driver(ee_driver)
+                                                   std::shared_ptr<ttl_driver::TtlInterfaceCore > ttl_interface):
+    _ttl_interface(ttl_interface)
 {
     ROS_DEBUG("EndEffectorInterfaceCore::ctor");
 
     init(nh);
+
+    // init end effector state
+    _end_effectorState = EndEffectorState(_id);
+
+    // init driver
+    int result = _ttl_interface->setEndEffector(_end_effectorState.getId());
+
+    // on success, tool is set, we go out of loop
+    if (niryo_robot_msgs::CommandStatus::SUCCESS == result)
+    {
+        // TODO(CC) : initialize end effector
+
+        ROS_INFO("ToolsInterfaceCore::ctor - Set end effector success");
+    }
+    else
+    {
+        ROS_WARN("ToolsInterfaceCore::ctor - "
+                 "Set end effector failure, return : %d. Aborted...",
+                 result);
+    }
 }
 
 /**
@@ -110,7 +132,7 @@ void EndEffectorInterfaceCore::startPublishers(ros::NodeHandle& nh)
  */
 void EndEffectorInterfaceCore::startSubscribers(ros::NodeHandle& /*nh*/)
 {
-    ROS_DEBUG("No subscribers to start");
+  ROS_DEBUG("No subscribers to start");
 }
 
 }  // namespace end_effector_interface

@@ -108,7 +108,7 @@ EndEffectorDriver<reg_type>::~EndEffectorDriver()
 template<typename reg_type>
 std::string EndEffectorDriver<reg_type>::str() const
 {
-    return common::model::MotorTypeEnum(reg_type::motor_type).toString() + " : " + AbstractTtlDriver::str();
+    return common::model::HardwareTypeEnum(reg_type::motor_type).toString() + " : " + AbstractTtlDriver::str();
 }
 
 template<typename reg_type>

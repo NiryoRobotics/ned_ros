@@ -1,5 +1,5 @@
 /*
-    hardware_type_enum.hpp
+    end_effector_state.cpp
     Copyright (C) 2020 Niryo
     All rights reserved.
 
@@ -16,9 +16,8 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
-
-#include "common/model/bus_protocol_enum.hpp"
-#include <map>
+#include "common/model/end_effector_state.hpp"
+#include <sstream>
 #include <string>
 
 namespace common
@@ -27,37 +26,50 @@ namespace model
 {
 
 /**
- * @brief BusProtocolEnum::BusProtocolEnum
- * @param e
+ * @brief EndEffectorState::EndEffectorState
  */
-BusProtocolEnum::BusProtocolEnum(EBusProtocol e):
-    AbstractEnum<BusProtocolEnum, EBusProtocol>(e)
-{}
+EndEffectorState::EndEffectorState() :
+  AbstractHardwareState()
+{
+}
+
+EndEffectorState::EndEffectorState(uint8_t id) :
+  AbstractHardwareState(EHardwareType::END_EFFECTOR, EBusProtocol::TTL, id)
+{
+}
 
 /**
- * @brief BusProtocolEnum::BusProtocolEnum
- * @param str
+ * @brief EndEffectorState::~EndEffectorState
  */
-BusProtocolEnum::BusProtocolEnum(const char* const str):
-    AbstractEnum<BusProtocolEnum, EBusProtocol>(str)
-{}
+EndEffectorState::~EndEffectorState()
+{
+}
+
+
+// ***********************
+//  AbstractHardwareInterface intf
+// ***********************
 
 /**
- * @brief BusProtocolEnum::initialize
+ * @brief EndEffectorState::str
  * @return
  */
-std::map<EBusProtocol, std::string>
-BusProtocolEnum::initialize()
+std::string EndEffectorState::str() const
 {
-    std::map<EBusProtocol, std::string> m;
+    std::ostringstream ss;
 
-    m[EBusProtocol::TTL]    = "ttl";
-    m[EBusProtocol::CAN]    = "can";
-    m[EBusProtocol::UNKNOWN]  = "unknown";
+    ss << "EndEffectorState : ";
+    ss << "\n";
+    ss << AbstractHardwareState::str();
 
-    return m;
+    return ss.str();
 }
+
+bool common::model::EndEffectorState::isValid() const
+{
+    return (0 != getId() && EHardwareType::END_EFFECTOR == getType());
+}
+
 
 }  // namespace model
 }  // namespace common
-

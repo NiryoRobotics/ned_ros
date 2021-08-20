@@ -39,7 +39,7 @@ ToolState::ToolState() :
  * @param type
  * @param id
  */
-ToolState::ToolState(std::string name, EMotorType type, uint8_t id) :
+ToolState::ToolState(std::string name, EHardwareType type, uint8_t id) :
     DxlMotorState(type, EBusProtocol::TTL, id, true),
     _tool_name(name),
     _connected(true),

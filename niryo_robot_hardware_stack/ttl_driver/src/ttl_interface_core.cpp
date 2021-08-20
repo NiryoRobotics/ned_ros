@@ -33,8 +33,8 @@ using ::std::ostringstream;
 using ::std::string;
 using ::std::to_string;
 
-using ::common::model::EMotorType;
-using ::common::model::MotorTypeEnum;
+using ::common::model::EHardwareType;
+using ::common::model::HardwareTypeEnum;
 using ::common::model::StepperMotorState;
 using ::common::model::DxlMotorState;
 using ::common::model::JointState;
@@ -263,13 +263,13 @@ int TtlInterfaceCore::motorScanReport(uint8_t motor_id)
  * @param motor_type
  * @return
  */
-int TtlInterfaceCore::motorCmdReport(uint8_t motor_id, EMotorType motor_type)
+int TtlInterfaceCore::motorCmdReport(uint8_t motor_id, EHardwareType motor_type)
 {
     int ret = niryo_robot_msgs::CommandStatus::ABORTED;
 
     if (_debug_flag)
     {
-        if (motor_type == EMotorType::UNKNOWN)
+        if (motor_type == EHardwareType::UNKNOWN)
             return 0;
 
         JointState tmp_state = JointState("unknown", motor_type, common::model::EBusProtocol::TTL, motor_id);
@@ -277,7 +277,7 @@ int TtlInterfaceCore::motorCmdReport(uint8_t motor_id, EMotorType motor_type)
         // torque on
         ros::Duration(0.5).sleep();
         ROS_INFO("TtlInterfaceCore::motorCmdReport - Debug - Send torque on command to motor %d", motor_id);
-        if (motor_type != EMotorType::STEPPER)
+        if (motor_type != EHardwareType::STEPPER)
             ROS_INFO("TtlInterfaceCore::motorCmdReport: Implement in case we have stepper");
         else
         {
@@ -351,7 +351,7 @@ int TtlInterfaceCore::launchMotorsReport()
     unsigned int nbSuccess = 0;
     unsigned int nbFailure = 0;
 
-    std::vector<std::tuple<uint8_t, EMotorType, int, int> > results;
+    std::vector<std::tuple<uint8_t, EHardwareType, int, int> > results;
 
     if (_debug_flag)
     {
@@ -397,7 +397,7 @@ int TtlInterfaceCore::launchMotorsReport()
         if (_ttl_manager->ping(1))
         {
             ROS_ERROR("TtlInterfaceCore::launchMotorsReport - Debug - Find an unflashed motor");
-            results.emplace_back(1, EMotorType::UNKNOWN, niryo_robot_msgs::CommandStatus::SUCCESS,
+            results.emplace_back(1, EHardwareType::UNKNOWN, niryo_robot_msgs::CommandStatus::SUCCESS,
                                  niryo_robot_msgs::CommandStatus::FAILURE);
             response = niryo_robot_msgs::CommandStatus::FAILURE;
             nbFailure++;
@@ -414,7 +414,7 @@ int TtlInterfaceCore::launchMotorsReport()
         for (auto const& res : results)
         {
             ROS_INFO("%d \t| %s \t| %d | %d", std::get<0>(res),
-                                              MotorTypeEnum(std::get<1>(res)).toString().c_str(),
+                                              HardwareTypeEnum(std::get<1>(res)).toString().c_str(),
                                               std::get<2>(res),
                                               std::get<3>(res));
         }
@@ -582,6 +582,12 @@ void TtlInterfaceCore::controlLoop()
                     _ttl_manager->readPositionStatus();
                     needSleep = true;
                 }
+                if (ros::Time::now().toSec() - _time_hw_data_last_read >= _delta_time_data_read)
+                {
+                    _time_hw_data_last_read = ros::Time::now().toSec();
+                    _ttl_manager->readPositionStatus();
+                    needSleep = true;
+                }
                 if (!needSleep && ros::Time::now().toSec() - _time_hw_status_last_read >= _delta_time_status_read)
                 {
                     _time_hw_status_last_read = ros::Time::now().toSec();
@@ -653,12 +659,12 @@ void TtlInterfaceCore::_executeCommand()
 // *************
 
 /**
- * @brief TtlInterfaceCore::setEndEffector
+ * @brief TtlInterfaceCore::setTool
  * @param type
  * @param motor_id
  * @return
  */
-int TtlInterfaceCore::setEndEffector(EMotorType type, uint8_t motor_id)
+int TtlInterfaceCore::setTool(EHardwareType type, uint8_t motor_id)
 {
     int result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
 
@@ -668,7 +674,7 @@ int TtlInterfaceCore::setEndEffector(EMotorType type, uint8_t motor_id)
     if (_ttl_manager->ping(motor_id))
     {
         // add dynamixel as a new tool
-        _ttl_manager->addMotor(type, motor_id, TtlManager::EType::TOOL);
+        _ttl_manager->addHardwareComponent(type, motor_id, TtlManager::EType::TOOL);
         // Enable torque
         std::shared_ptr<AbstractTtlSingleMotorCmd> cmd_torque = std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_TORQUE,
                                                             motor_id, std::initializer_list<uint32_t>{1});
@@ -679,22 +685,49 @@ int TtlInterfaceCore::setEndEffector(EMotorType type, uint8_t motor_id)
     }
     else
     {
-        ROS_WARN("TtlInterfaceCore::setEndEffector - No end effector found with motor id %d", motor_id);
+        ROS_WARN("TtlInterfaceCore::setTool - No end effector found with motor id %d", motor_id);
     }
 
     return result;
 }
 
 /**
- * @brief TtlInterfaceCore::unsetEndEffector
+ * @brief TtlInterfaceCore::unsetTool
  * @param motor_id
  */
-void TtlInterfaceCore::unsetEndEffector(uint8_t motor_id)
+void TtlInterfaceCore::unsetTool(uint8_t motor_id)
 {
     lock_guard<mutex> lck(_control_loop_mutex);
 
-    ROS_DEBUG("TtlInterfaceCore::unsetEndEffector - UnsetEndEffector: id %d", motor_id);
+    ROS_DEBUG("TtlInterfaceCore::unsetTool - UnsetTool: id %d", motor_id);
     _ttl_manager->removeMotor(motor_id);
+}
+
+/**
+ * @brief TtlInterfaceCore::setEndEffector
+ * @param end_effector_id
+ * @return
+ */
+int TtlInterfaceCore::setEndEffector(uint8_t end_effector_id)
+{
+  int result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
+
+  lock_guard<mutex> lck(_control_loop_mutex);
+
+  // try to find hw
+  if (_ttl_manager->ping(end_effector_id))
+  {
+      // add end effector
+      _ttl_manager->addHardwareComponent(EHardwareType::END_EFFECTOR, end_effector_id, TtlManager::EType::END_EFFECTOR);
+
+      result = niryo_robot_msgs::CommandStatus::SUCCESS;
+  }
+  else
+  {
+      ROS_WARN("TtlInterfaceCore::setTool - No end effector found with id %d", end_effector_id);
+  }
+
+  return result;
 }
 
 /**
@@ -712,10 +745,10 @@ int TtlInterfaceCore::setConveyor(uint8_t new_motor_id, uint8_t default_conveyor
     // try to find motor id 6 (default motor id for conveyor
     if (_ttl_manager->ping(default_conveyor_id))
     {
-        if (COMM_SUCCESS == _ttl_manager->changeId(EMotorType::STEPPER, default_conveyor_id, new_motor_id))
+        if (COMM_SUCCESS == _ttl_manager->changeId(EHardwareType::STEPPER, default_conveyor_id, new_motor_id))
         {
             // add stepper as a new conveyor
-            _ttl_manager->addMotor(EMotorType::STEPPER, new_motor_id, ttl_driver::TtlManager::EType::CONVOYER);
+            _ttl_manager->addHardwareComponent(EHardwareType::STEPPER, new_motor_id, ttl_driver::TtlManager::EType::CONVOYER);
             result = niryo_robot_msgs::CommandStatus::SUCCESS;
         }
         else
@@ -742,7 +775,7 @@ void TtlInterfaceCore::unsetConveyor(uint8_t motor_id)
 
     ROS_DEBUG("TtlInterfaceCore::unsetConveyor - unsetConveyor: id %d", motor_id);
 
-    if (COMM_SUCCESS == _ttl_manager->changeId(EMotorType::STEPPER, motor_id, 6))
+    if (COMM_SUCCESS == _ttl_manager->changeId(EHardwareType::STEPPER, motor_id, 6))
         _ttl_manager->removeMotor(motor_id);
     else
         ROS_ERROR("TtlInterfaceCore::unsetConveyor : unable to change conveyor ID");
@@ -765,16 +798,6 @@ void TtlInterfaceCore::clearConveyorCommandQueue()
     while (!_conveyor_cmds_queue.empty())
         _conveyor_cmds_queue.pop();
 }
-
-// /**
-//  * @brief TtlInterfaceCore::clearEndEffectorCommandQueue
-//  */
-// void TtlInterfaceCore::clearEndEffectorCommandQueue()
-// {
-
-    // while (!_end_effector_cmds_queue.empty())
-    //     _end_effector_cmds_queue.pop();
-// }
 
 /**
  * @brief TtlInterfaceCore::setTrajectoryControllerCommands
@@ -806,8 +829,6 @@ void TtlInterfaceCore::setSyncCommand(const std::shared_ptr<common::model::ISync
  * @brief TtlInterfaceCore::addSingleCommandToQueue
  * @param cmd
  *
- *  Not very good, nothing prevents the user from providing an end effector command here
- * and vice versa with addEndEffectorCmd. To be changed
  */
 void TtlInterfaceCore::addSingleCommandToQueue(const std::shared_ptr<common::model::ISingleMotorCmd>& cmd)
 {
@@ -847,38 +868,6 @@ void TtlInterfaceCore::addSingleCommandToQueue(const std::vector<std::shared_ptr
 {
     for (auto const& c : cmd)
         addSingleCommandToQueue(c);
-}
-
-/**
- * @brief TtlInterfaceCore::addEndEffectorCommandToQueue : TODO(CC) to be removed
- * @param cmd
- */
-void TtlInterfaceCore::addEndEffectorCommandToQueue(const std::shared_ptr<common::model::DxlSingleCmd>& cmd)
-{
-    ROS_DEBUG("TtlInterfaceCore::addEndEffectorCommandToQueue - %s", cmd->str().c_str());
-
-    if (cmd->isValid())
-    {
-        if (_single_cmds_queue.size() > QUEUE_OVERFLOW)
-            ROS_WARN_THROTTLE(0.5, "TtlInterfaceCore::addEndEffectorCommandToQueue: Cmd queue overflow ! %lu",
-                              _single_cmds_queue.size());
-        else
-            _single_cmds_queue.push(cmd);
-    }
-    else
-    {
-        ROS_WARN("TtlInterfaceCore::addEndEffectorCommandToQueue : Invalid command %s", cmd->str().c_str());
-    }
-}
-
-/**
- * @brief TtlInterfaceCore::addEndEffectorCommandToQueue
- * @param cmd
- */
-void TtlInterfaceCore::addEndEffectorCommandToQueue(const std::vector<std::shared_ptr<common::model::DxlSingleCmd> >& cmd)
-{
-    for (auto const& c : cmd)
-        addEndEffectorCommandToQueue(c);
 }
 
 /**
@@ -973,34 +962,35 @@ bool TtlInterfaceCore::setMotorPID(const std::shared_ptr<JointState> &motorState
 // ***************
 
 /**
- * @brief TtlInterfaceCore::getState
- * @param motor_id
- * @return
- */
-common::model::JointState TtlInterfaceCore::getState(uint8_t motor_id) const
-{
-    // Check type of motor type
-    return _ttl_manager->getMotorState<common::model::JointState>(motor_id);
-}
-
-/**
- * @brief TtlInterfaceCore::getStates
+ * @brief TtlInterfaceCore::getJointStates
  * @return
  */
 std::vector<std::shared_ptr<common::model::JointState> >
-TtlInterfaceCore::getStates() const
+TtlInterfaceCore::getJointStates() const
 {
     return _ttl_manager->getMotorsStates();
 }
 
 /**
- * @brief TtlInterfaceCore::getEndEffectorState
+ * @brief TtlInterfaceCore::getState
+ * @param motor_id
+ * @return
+ */
+common::model::JointState
+TtlInterfaceCore::getJointState(uint8_t motor_id) const
+{
+    // Check type of motor type
+    return _ttl_manager->getHardwareState<JointState>(motor_id);
+}
+
+/**
+ * @brief TtlInterfaceCore::getPosition
  * @param id
  * @return
  */
-double TtlInterfaceCore::getEndEffectorState(uint8_t id) const
+double TtlInterfaceCore::getPosition(uint8_t id) const
 {
-    DxlMotorState motor_state = _ttl_manager->getMotorState<DxlMotorState>(id);
+    JointState motor_state = getJointState(id);
     return static_cast<double>(motor_state.getPositionState());
 }
 
@@ -1069,10 +1059,10 @@ bool TtlInterfaceCore::_callbackSendCustomValue(ttl_driver::SendCustomValue::Req
 {
     int result;
 
-    EMotorType motor_type;
+    EHardwareType motor_type;
 
     if (1 <= req.motor_type  && 5 >= req.motor_type)
-        motor_type = static_cast<EMotorType>(req.motor_type);
+        motor_type = static_cast<EHardwareType>(req.motor_type);
     else
     {
         res.status = niryo_robot_msgs::CommandStatus::WRONG_MOTOR_TYPE;
@@ -1110,9 +1100,9 @@ bool TtlInterfaceCore::_callbackReadCustomValue(ttl_driver::ReadCustomValue::Req
                                                 ttl_driver::ReadCustomValue::Response &res)
 {
     int result;
-    EMotorType motor_type;
+    EHardwareType motor_type;
     if (1 <= req.motor_type  && 5 >= req.motor_type)
-        motor_type = static_cast<EMotorType>(req.motor_type);
+        motor_type = static_cast<EHardwareType>(req.motor_type);
     else
     {
         res.status = niryo_robot_msgs::CommandStatus::WRONG_MOTOR_TYPE;

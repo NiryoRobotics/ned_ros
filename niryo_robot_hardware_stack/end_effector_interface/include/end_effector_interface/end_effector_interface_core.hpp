@@ -29,8 +29,8 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 // niryo
 #include "common/model/i_interface_core.hpp"
 
-#include "common/model/tool_state.hpp"
-#include "ttl_driver/end_effector_driver.hpp"
+#include "common/model/end_effector_state.hpp"
+#include "ttl_driver/ttl_interface_core.hpp"
 
 namespace end_effector_interface
 {
@@ -40,13 +40,6 @@ namespace end_effector_interface
  */
 class EndEffectorInterfaceCore : public common::model::IInterfaceCore
 {
-    enum class EActionType
-    {
-        eHandHeldAction,
-        eLongPushAction,
-        eSinglePushAction,
-        eDoublePushAction
-    };
 
     public:
     // TODO(CC) What is the best param to give ?
@@ -56,7 +49,7 @@ class EndEffectorInterfaceCore : public common::model::IInterfaceCore
     // eeDriver ? -> then instanciate eeDriver in EEManager, can be usefull for HW status of all TTL components.
     // but it is yet another stuff in ttl driver
         EndEffectorInterfaceCore(ros::NodeHandle& nh,
-                                 std::shared_ptr<ttl_driver::EndEffectorDriver<ttl_driver::EndEffectorReg> > ee_driver);
+                                 std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface);
         virtual ~EndEffectorInterfaceCore() override;
 
         virtual bool init(ros::NodeHandle &nh) override;
@@ -68,7 +61,9 @@ class EndEffectorInterfaceCore : public common::model::IInterfaceCore
         virtual void startSubscribers(ros::NodeHandle& nh) override;
 
     private:
-        std::shared_ptr<ttl_driver::EndEffectorDriver<ttl_driver::EndEffectorReg> > _ee_driver;
+        std::shared_ptr<ttl_driver::TtlInterfaceCore> _ttl_interface;
+
+        common::model::EndEffectorState _end_effectorState;
 
         uint8_t _id;
 };
