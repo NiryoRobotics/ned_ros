@@ -141,15 +141,27 @@ TEST_F(ToolTestSuite, CloseTool)
 TEST_F(ToolTestSuite, PullAirVacuumPump)
 {
     if (id != 31) return;
+    tools_interface::PullAirVacuumPump srv;
+
+    XmlRpc::XmlRpcValue filters;
+    nh->getParam("tool_list", filters);
+
+    for (int i = 0; i < filters.size(); i++)
+    {
+        if (static_cast<int>(filters[i]["id"]) == id)
+        {
+            srv.request.id = id;
+            srv.request.pull_air_position = static_cast<int>(filters[i]["specs"]["pull_air_position"]);
+            srv.request.pull_air_hold_torque = static_cast<int>(filters[i]["specs"]["pull_air_hold_torque"]);
+            break;
+        }
+    }
 
     auto client = nh->serviceClient<tools_interface::PullAirVacuumPump>("/niryo_robot/tools/pull_air_vacuum_pump");
 
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);
 
-    tools_interface::PullAirVacuumPump srv;
-    srv.request.pull_air_position = 200;
-    srv.request.pull_air_hold_torque = 100;
     client.call(srv);
 
     int res = common::model::ToolState::VACUUM_PUMP_STATE_PULLED;
@@ -159,14 +171,26 @@ TEST_F(ToolTestSuite, PullAirVacuumPump)
 TEST_F(ToolTestSuite, PushAirVacuumPump)
 {
     if (id != 31) return;
+    tools_interface::PushAirVacuumPump srv;
+
+    XmlRpc::XmlRpcValue filters;
+    nh->getParam("tool_list", filters);
+
+    for (int i = 0; i < filters.size(); i++)
+    {
+        if (static_cast<int>(filters[i]["id"]) == id)
+        {
+            srv.request.id = id;
+            srv.request.push_air_position = static_cast<int>(filters[i]["specs"]["push_air_position"]);
+            break;
+        }
+    }
 
     auto client = nh->serviceClient<tools_interface::PushAirVacuumPump>("/niryo_robot/tools/push_air_vacuum_pump");
 
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);
 
-    tools_interface::PushAirVacuumPump srv;
-    srv.request.push_air_position = 100;
     client.call(srv);
 
     int res = common::model::ToolState::VACUUM_PUMP_STATE_PUSHED;
