@@ -38,16 +38,30 @@ generate_messages(
   niryo_robot_msgs
 )
 
-catkin_package()
+catkin_package(
+  CATKIN_DEPENDS
+  geometry_msgs
+  message_runtime
+  moveit_msgs
+  moveit_msgs
+  niryo_robot_msgs
+)
 
 include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
+catkin_install_python(
+    PROGRAMS scripts/poses_handlers_node.py
+    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
 #############
 ## Testing ##
 #############
-find_package(rostest REQUIRED)
 
-add_rostest(launch/rpi_poses_handlers.test)
-add_rostest(launch/simulation_poses_handlers.test)
+if (CATKIN_ENABLE_TESTING)
+  find_package(rostest REQUIRED)
+  add_rostest(launch/rpi_poses_handlers.test)
+  add_rostest(launch/simulation_poses_handlers.test)
+endif()
