@@ -289,7 +289,7 @@ bool JointsInterfaceCore::_callbackResetController(niryo_robot_msgs::Trigger::Re
     res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
     res.message = "Reset done";
 
-    return (niryo_robot_msgs::CommandStatus::SUCCESS == res.status);
+    return true;
 }
 
 /**
@@ -341,7 +341,7 @@ bool JointsInterfaceCore::_callbackRequestNewCalibration(niryo_robot_msgs::Trigg
     res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
     res.message = "Joints Interface Core - New calibration request has been made, you will be requested to confirm it.";
 
-    return (niryo_robot_msgs::CommandStatus::SUCCESS == res.status);
+    return true;
 }
 
 /**
@@ -359,7 +359,7 @@ bool JointsInterfaceCore::_callbackActivateLearningMode(niryo_robot_msgs::SetBoo
     ROS_DEBUG("JointsInterfaceCore::_callbackActivateLearningMode - activate learning mode");
 
     activateLearningMode(req.value, res.status, res.message);
-    return (niryo_robot_msgs::CommandStatus::SUCCESS == res.status);
+    return true;
 }
 
 /**

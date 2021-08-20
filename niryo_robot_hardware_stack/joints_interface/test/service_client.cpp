@@ -101,5 +101,6 @@ int main(int argc, char **argv)
 
     testing::InitGoogleTest(&argc, argv);
 
+    ros::Duration(10.0).sleep();
     return RUN_ALL_TESTS();
 }
