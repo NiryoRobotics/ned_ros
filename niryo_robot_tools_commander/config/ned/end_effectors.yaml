@@ -57,7 +57,7 @@ tool_list:
     specs:
       open_position: 600
       open_hold_torque: 128
-      close_position: 230
+      close_position: 220
       close_hold_torque: 128
       close_max_torque: 1023
       open_speed: 300

@@ -309,7 +309,7 @@ bool ToolsInterfaceCore::_callbackPingAndSetDxlTool(tools_interface::PingDxlTool
         res.id = 0;
     }
 
-    return (ToolState::TOOL_STATE_PING_OK == res.state);
+    return true;
 }
 
 /**
@@ -333,7 +333,7 @@ bool ToolsInterfaceCore::_callbackToolReboot(std_srvs::Trigger::Request &/*req*/
         res.message = "No Tool";
     }
 
-    return res.success;
+    return true;
 }
 
 /**
@@ -381,7 +381,7 @@ bool ToolsInterfaceCore::_callbackOpenGripper(tools_interface::OpenGripper::Requ
         ROS_DEBUG("Opened !");
     }
 
-    return (ToolState::GRIPPER_STATE_OPEN == res.state);
+    return true;
 }
 
 /**
@@ -433,7 +433,7 @@ bool ToolsInterfaceCore::_callbackCloseGripper(tools_interface::CloseGripper::Re
         ROS_DEBUG("Closed !");
     }
 
-    return (ToolState::GRIPPER_STATE_CLOSE == res.state);
+    return true;
 }
 
 /**
@@ -477,7 +477,7 @@ bool ToolsInterfaceCore::_callbackPullAirVacuumPump(tools_interface::PullAirVacu
         res.state = ToolState::VACUUM_PUMP_STATE_PULLED;
     }
 
-    return (ToolState::VACUUM_PUMP_STATE_PULLED == res.state);
+    return true;
 }
 
 /**
@@ -520,39 +520,9 @@ bool ToolsInterfaceCore:: _callbackPushAirVacuumPump(tools_interface::PushAirVac
         res.state = ToolState::VACUUM_PUMP_STATE_PUSHED;
     }
 
-    return (ToolState::VACUUM_PUMP_STATE_PUSHED == res.state);
-}
-/*
-std::vector<uint8_t> ToolsInterfaceCore::_findToolMotorListWithRetries(unsigned int max_retries)
-{
-    std::vector<uint8_t> motor_list;
-    while (max_retries > 0 && motor_list.empty())
-    {
-        motor_list = _dynamixel->scanTools();
-        max_retries--;
-        ros::Duration(0.05).sleep();
-    }
-    return motor_list;
+    return true;
 }
 
-bool ToolsInterfaceCore::_equipToolWithRetries(uint8_t tool_id, DynamixelDriver::DxlMotorType tool_type, unsigned max_retries)
-{
-    int result;
-    while (max_retries-- > 0)
-    {
-        result = _dynamixel->setEndEffector(tool_id, tool_type);
-        if (result == niryo_robot_msgs::CommandStatus::SUCCESS)
-        {
-            _tool.reset(new ToolState(tool_id, tool_type));
-            _dynamixel->update_leds();
-            break;
-        }
-        ros::Duration(0.05).sleep();
-    }
-    ROS_INFO("Tools Interface - Set End Effector return : %d", result);
-    return result == niryo_robot_msgs::CommandStatus::SUCCESS;
-}
-*/
 /**
  * @brief ToolsInterfaceCore::_publishToolConnection
  */
