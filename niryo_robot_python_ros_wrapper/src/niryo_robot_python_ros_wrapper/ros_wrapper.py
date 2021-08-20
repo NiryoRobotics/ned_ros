@@ -1693,6 +1693,16 @@ class NiryoRosWrapper:
         result = self.__call_service('/niryo_robot_credentials/get_serial', GetSerial)
         return self.__classic_return_w_check(result)
 
+    def set_api_key(self, key):
+        """
+        Set the cloud API key
+        :param key: the api key
+        :type key: str
+        :return: status, message
+        :rtype: (int, str)
+        """
+        result = self.__call_service('/niryo_robot_credentials/set_api_key', SetCredential, key)
+        return self.__classic_return_w_check(result)
 
     # - Conveyor
 
