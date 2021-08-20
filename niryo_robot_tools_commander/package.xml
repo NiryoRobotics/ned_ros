@@ -13,6 +13,8 @@
   <build_depend>actionlib_msgs</build_depend>
   <build_depend>geometry_msgs</build_depend>
   <build_depend>niryo_robot_msgs</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>message_generation</build_depend>
 
   <run_depend>actionlib</run_depend>
   <run_depend>actionlib_msgs</run_depend>

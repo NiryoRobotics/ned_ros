@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 2.8.3)
 project(niryo_robot_credentials)
 
 find_package(catkin REQUIRED COMPONENTS
-  rospy
   message_generation
+  rospy
 )
 
 add_service_files(
@@ -19,8 +19,16 @@ generate_messages(
   DEPENDENCIES
 )
 
-catkin_package()
+catkin_package(
+  CATKIN_DEPENDS
+  message_runtime
+)
 
 include_directories(
   ${catkin_INCLUDE_DIRS}
+)
+
+catkin_install_python(
+    PROGRAMS scripts/serial_number_node.py
+    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )

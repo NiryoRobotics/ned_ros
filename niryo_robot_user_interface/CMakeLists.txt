@@ -11,3 +11,13 @@ catkin_package()
 include_directories(
   ${catkin_INCLUDE_DIRS}
 )
+
+catkin_install_python(
+    PROGRAMS scripts/user_interface_node.py
+    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
+catkin_install_python(
+    PROGRAMS scripts/jog_interface/client_jog_interface_mouse.py
+    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
