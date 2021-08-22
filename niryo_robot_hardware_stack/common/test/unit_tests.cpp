@@ -21,6 +21,7 @@
 
 #include <string>
 #include <math.h>
+#include <tuple>
 
 // Bring in gtest
 #include <gtest/gtest.h>
@@ -32,7 +33,7 @@ using ::common::model::EMotorType;
 using ::common::model::MotorTypeEnum;
 
 
-// For common features 
+// For common features
 // EMotorType : type of the dxl motor
 // double : offset
 
@@ -46,8 +47,8 @@ class DXLCommonTest : public testing::TestWithParam<std::tuple<EMotorType, doubl
                                                     common::model::EBusProtocol::TTL, 1);
             dxlState.setOffsetPosition(std::get<1>(GetParam()));
 
-            //define precision according to smallest motor step in radian
-            //we divide by two because we are looking for the closest integer
+            // define precision according to smallest motor step in radian
+            // we divide by two because we are looking for the closest integer
             ASSERT_NE(dxlState.getTotalRangePosition(), 0);
             precision = (dxlState.getTotalAngle() / dxlState.getTotalRangePosition())/RADIAN_TO_DEGREE;
             precision /= 2;
@@ -70,8 +71,8 @@ class DXLIdentityRadTest : public testing::TestWithParam<std::tuple<EMotorType, 
                                                 common::model::EBusProtocol::TTL, 1);
         dxlState.setOffsetPosition(std::get<1>(GetParam()));
 
-        //define precision according to smallest motor step in radian
-        //we divide by two because we are looking for the closest integer
+        // define precision according to smallest motor step in radian
+        // we divide by two because we are looking for the closest integer
         ASSERT_NE(dxlState.getTotalRangePosition(), 0);
         precision = (dxlState.getTotalAngle() / dxlState.getTotalRangePosition())/RADIAN_TO_DEGREE;
         precision /= 2;
@@ -92,13 +93,13 @@ class DXLIdentityMotorTest : public testing::TestWithParam<std::tuple<EMotorType
                                                 common::model::EBusProtocol::TTL, 1);
         dxlState.setOffsetPosition(std::get<1>(GetParam()));
 
-        //define precision according to smallest motor step in radian
-        //we divide by two because we are looking for the closest integer
+        // define precision according to smallest motor step in radian
+        // we divide by two because we are looking for the closest integer
         ASSERT_NE(dxlState.getTotalRangePosition(), 0);
         precision = (dxlState.getTotalAngle() / dxlState.getTotalRangePosition())/RADIAN_TO_DEGREE;
         precision /= 2;
     }
-    
+
     common::model::DxlMotorState dxlState;
     double precision;
 };
@@ -142,7 +143,7 @@ TEST_P(DXLIdentityRadTest, identityFromRad) {
 TEST_P(DXLIdentityMotorTest, identityFromMotorPos) {
     // check combinations is identity
     int test_pos = std::get<2>(GetParam());
-    
+
     EXPECT_EQ(dxlState.to_motor_pos(dxlState.to_rad_pos(test_pos)), test_pos)
               << "to_motor_pos o to_rad_pos is not identity";
 }
@@ -211,8 +212,7 @@ INSTANTIATE_TEST_CASE_P(IdentityRadTest,
                         testing::Combine(
                             testing::Range(-M_PI, M_PI, M_PI/4),
                             testing::Range(5.0, 500.0, 50.0),
-                            testing::Values(-1, 1)
-                        ));
+                            testing::Values(-1, 1)));
 /**
  * @param pos
  * @param gear_ratio
@@ -248,8 +248,7 @@ INSTANTIATE_TEST_CASE_P(IdentityMotorTest,
                         testing::Combine(
                             testing::Range(0, 2000, 500),
                             testing::Range(5.0, 500.0, 50.0),
-                            testing::Values(-1, 1)
-                        ));
+                            testing::Values(-1, 1)));
 
 // Global Tests
 TEST(CommonTestSuite, testDefaultInvalid)
@@ -271,13 +270,13 @@ TEST(CommonTestSuite, testCreationDxlCmd)
     ASSERT_TRUE(dxlCmd.isValid());
     ASSERT_TRUE(dxlCmd.isDxlCmd());
 
-    ASSERT_TRUE(dxlCmd.getParam() == 5);
-    ASSERT_TRUE(dxlCmd.getId() == 1);
+    ASSERT_EQ(dxlCmd.getParam(), 5);
+    ASSERT_EQ(dxlCmd.getId(), 1);
 
     dxlCmd.reset();
     ASSERT_FALSE(dxlCmd.isValid());
-    ASSERT_FALSE(dxlCmd.getId() == 1);
-    ASSERT_FALSE(dxlCmd.getParam() != 5);
+    ASSERT_NE(dxlCmd.getId(), 1);
+    ASSERT_EQ(dxlCmd.getParam(), 5);
 }
 
 TEST(CommonTestSuite, testCreationStepperTtlCmd)
@@ -287,13 +286,13 @@ TEST(CommonTestSuite, testCreationStepperTtlCmd)
     ASSERT_TRUE(cmd.isValid());
     ASSERT_TRUE(cmd.isStepperCmd());
 
-    ASSERT_TRUE(cmd.getParam() == 5);
-    ASSERT_TRUE(cmd.getId() == 1);
-    
+    ASSERT_EQ(cmd.getParam(), 5);
+    ASSERT_EQ(cmd.getId(), 1);
+
     cmd.reset();
     ASSERT_FALSE(cmd.isValid());
-    ASSERT_FALSE(cmd.getId() == 1);
-    ASSERT_FALSE(cmd.getParam() != 5);
+    ASSERT_NE(cmd.getId(), 1);
+    ASSERT_EQ(cmd.getParam(), 5);
 }
 
 TEST(CommonTestSuite, testCreationStepperCmd)
@@ -303,15 +302,15 @@ TEST(CommonTestSuite, testCreationStepperCmd)
     ASSERT_TRUE(cmd.isValid());
     ASSERT_TRUE(cmd.isStepperCmd());
 
-    ASSERT_TRUE(cmd.getParam() == 5);
-    ASSERT_TRUE(cmd.getId() == 1);
-    
+    ASSERT_EQ(cmd.getParam(), 5);
+    ASSERT_EQ(cmd.getId(), 1);
+
     cmd.reset();
     ASSERT_FALSE(cmd.isValid());
-    ASSERT_FALSE(cmd.getId() == 1);
-    ASSERT_FALSE(cmd.getParam() != 5);
+    ASSERT_NE(cmd.getId(), 1);
+    ASSERT_EQ(cmd.getParam(), 5);
 }
-}
+}  // namespace
 
 // Run all the tests that were declared with TEST()
 int main(int argc, char **argv)

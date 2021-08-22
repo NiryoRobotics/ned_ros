@@ -21,6 +21,7 @@
 // Bring in gtest
 #include <gtest/gtest.h>
 #include <ros/console.h>
+#include <string>
 
 class CanInterfaceTestSuite : public ::testing::Test {
   protected:
@@ -120,7 +121,14 @@ int main(int argc, char **argv)
   testing::InitGoogleTest(&argc, argv);
   ros::init(argc, argv, "can_driver_unit_tests");
 
-  ros::NodeHandle nh;
+  ros::NodeHandle nh_private("~");
+  std::string hw_version;
+
+  nh_private.getParam("hardware_version", hw_version);
+  if (hw_version == "ned2")
+  {
+    testing::GTEST_FLAG(filter) = "-CanInterfaceTestSuite.*:CanManagerTestSuite.*";  // This test is applied only for NED, so skip it
+  }
 
   return RUN_ALL_TESTS();
 }

@@ -80,7 +80,7 @@ int AbstractDxlDriver::writeSingleCmd(const std::shared_ptr<common::model::Abstr
             std::cout << "Command not implemented" << std::endl;
         }
     }
-    
+
     std::cout << "Command not validated" << std::endl;
     return -1;
 }

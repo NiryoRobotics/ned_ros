@@ -198,7 +198,7 @@ TEST_F(ToolTestSuite, PushAirVacuumPump)
 }
 
 TEST_F(ToolTestSuite, ToolReboot)
-{   
+{
     if (id != 0) return;
 
     auto client = nh->serviceClient<std_srvs::Trigger>("/niryo_robot/tools/reboot");

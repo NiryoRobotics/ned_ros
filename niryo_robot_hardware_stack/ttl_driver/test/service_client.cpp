@@ -49,9 +49,9 @@ TEST(TESTSuite, sendCustomValue)
 
     ttl_driver::SendCustomValue srv;
 
-    srv.request.motor_type = 2; // xl430
+    srv.request.motor_type = 2;  // xl430
     srv.request.id = 2;
-    srv.request.reg_address = 64; // Torque enable for xl430
+    srv.request.reg_address = 64;  // Torque enable for xl430
     srv.request.value = 1;
     srv.request.byte_number = 1;
 
@@ -69,7 +69,7 @@ TEST(TESTSuite, readCustomValue)
 
     ttl_driver::ReadCustomValue srv;
     // to be defined
-    srv.request.motor_type = 2; // xl430
+    srv.request.motor_type = 2;  // xl430
     srv.request.id = 2;
     srv.request.reg_address = 6;
     srv.request.byte_number = 1;

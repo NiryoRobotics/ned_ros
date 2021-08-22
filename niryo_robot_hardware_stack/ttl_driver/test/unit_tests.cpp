@@ -23,6 +23,8 @@
 #include <gtest/gtest.h>
 #include <ros/console.h>
 
+#include <string>
+
 // Declare a test
 
 /******************************************************/
@@ -140,7 +142,7 @@ TEST_F(TtlManagerTestSuite, testSyncCmds)
 
   EXPECT_EQ(ttl_drv->writeSynchronizeCommand(dynamixel_cmd_1), COMM_SUCCESS);
   ros::Duration(0.5).sleep();
-  
+
   // sync cmd with different motor types
   if (hw_version == "NED")
   {
