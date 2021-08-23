@@ -45,9 +45,9 @@ AbstractDxlDriver::~AbstractDxlDriver()
  * @brief AbstractDxlDriver::writeSingleCmd
  * @param cmd
 */
-int AbstractDxlDriver::writeSingleCmd(std::shared_ptr<common::model::AbstractTtlSingleMotorCmd > &cmd)
+int AbstractDxlDriver::writeSingleCmd(const std::shared_ptr<common::model::AbstractTtlSingleMotorCmd > &cmd)
 {
-    if (cmd && cmd->isValid())
+    if (cmd && cmd->isValid() && cmd->isDxlCmd())
     {
         switch (EDxlCommandType(cmd->getCmdType()))
         {
@@ -81,7 +81,8 @@ int AbstractDxlDriver::writeSingleCmd(std::shared_ptr<common::model::AbstractTtl
         }
     }
 
-    return 0;
+    std::cout << "Command not validated" << std::endl;
+    return -1;
 }
 
 /**
@@ -108,7 +109,9 @@ int AbstractDxlDriver::writeSyncCmd(int type, const std::vector<uint8_t>& ids, c
     default:
         std::cout << "Command not implemented" << std::endl;
     }
-    return 0;
+
+    std::cout << "Command not validated" << std::endl;
+    return -1;
 }
 
 }  // namespace ttl_driver
