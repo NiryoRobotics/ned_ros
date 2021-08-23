@@ -198,6 +198,7 @@ TEST_F(ToolTestSuite, PushAirVacuumPump)
 
     client.call(srv);
 
+    int res = common::model::ToolState::VACUUM_PUMP_STATE_PUSHED;
     EXPECT_EQ(srv.response.state, res);
 }
 
