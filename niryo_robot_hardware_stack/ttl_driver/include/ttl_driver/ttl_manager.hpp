@@ -164,6 +164,8 @@ class TtlManager : public common::model::IBusManager
         
         int _led_state;
 
+        std::string _led_motor_type_cfg;
+
         static constexpr int MAX_HW_FAILURE = 25;
 };
 

@@ -143,7 +143,7 @@ TEST_P(DXLIdentityRadTest, identityFromRad) {
 TEST_P(DXLIdentityMotorTest, identityFromMotorPos) {
     // check combinations is identity
     int test_pos = std::get<2>(GetParam());
-    
+
     EXPECT_EQ(dxlState.to_motor_pos(dxlState.to_rad_pos(test_pos)), test_pos)
               << "to_motor_pos o to_rad_pos is not identity";
 }

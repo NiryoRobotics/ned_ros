@@ -144,15 +144,15 @@ int StepperDriver<reg_type>::getFirmwareVersion(uint8_t id, uint32_t &version)
 }
 
 template<typename reg_type>
-int StepperDriver<reg_type>::readMinPosition(uint8_t id, uint32_t &version)
+int StepperDriver<reg_type>::readMinPosition(uint8_t id, uint32_t &pos)
 {
-    return read(reg_type::ADDR_MIN_POSITION_LIMIT, reg_type::SIZE_MIN_POSITION_LIMIT, id, version);
+    return read(reg_type::ADDR_MIN_POSITION_LIMIT, reg_type::SIZE_MIN_POSITION_LIMIT, id, pos);
 }
 
 template<typename reg_type>
-int StepperDriver<reg_type>::readMaxPosition(uint8_t id, uint32_t &version)
+int StepperDriver<reg_type>::readMaxPosition(uint8_t id, uint32_t &pos)
 {
-    return read(reg_type::ADDR_MAX_POSITION_LIMIT, reg_type::SIZE_MAX_POSITION_LIMIT, id, version);
+    return read(reg_type::ADDR_MAX_POSITION_LIMIT, reg_type::SIZE_MAX_POSITION_LIMIT, id, pos);
 }
 
 // ram write

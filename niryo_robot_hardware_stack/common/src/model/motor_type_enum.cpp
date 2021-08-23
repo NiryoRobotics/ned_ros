@@ -56,6 +56,8 @@ MotorTypeEnum::initialize()
     m[EMotorType::XL320]    = "xl320";
     m[EMotorType::XL330]    = "xl330";
     m[EMotorType::XC430]    = "xc430";
+    m[EMotorType::FAKE_DXL_MOTOR] = "fakeDxl";
+    m[EMotorType::FAKE_STEPPER_MOTOR] = "fakeStepper";
     m[EMotorType::UNKNOWN]  = "unknown";
 
     return m;

@@ -19,6 +19,8 @@
 #include "common/model/dxl_command_type_enum.hpp"
 #include "ttl_driver/dxl_driver.hpp"
 #include "ttl_driver/stepper_driver.hpp"
+#include "ttl_driver/mock_dxl_driver.hpp"
+#include "ttl_driver/mock_stepper_driver.hpp"
 #include "common/model/tool_state.hpp"
 #include "common/model/stepper_motor_state.hpp"
 #include "common/model/conveyor_state.hpp"
@@ -89,8 +91,11 @@ bool TtlManager::init(ros::NodeHandle& nh)
     nh.getParam("bus_params/uart_device_name", _device_name);
     nh.getParam("bus_params/baudrate", _uart_baudrate);
 
-    _portHandler.reset(dynamixel::PortHandler::getPortHandler(_device_name.c_str()));
-    _packetHandler.reset(dynamixel::PacketHandler::getPacketHandler(TTL_BUS_PROTOCOL_VERSION));
+    if (_device_name != "fake")
+    {
+        _portHandler.reset(dynamixel::PortHandler::getPortHandler(_device_name.c_str()));
+        _packetHandler.reset(dynamixel::PacketHandler::getPacketHandler(TTL_BUS_PROTOCOL_VERSION));
+    }
 
     ROS_DEBUG("TtlManager::init - Dxl : set port name (%s), baudrate(%d)", _device_name.c_str(), _uart_baudrate);
 
@@ -160,6 +165,7 @@ bool TtlManager::init(ros::NodeHandle& nh)
                   d.second->str().c_str());
     }
 
+    nh.getParam("led_motor", _led_motor_type_cfg);
     return COMM_SUCCESS;
 }
 
@@ -218,6 +224,12 @@ void TtlManager::addMotor(EMotorType motor_type, uint8_t id, EType type_used)
             break;
             case EMotorType::XL330:
                 _driver_map.insert(make_pair(motor_type, std::make_shared<DxlDriver<XL330Reg> >(_portHandler, _packetHandler)));
+            break;
+            case EMotorType::FAKE_DXL_MOTOR:
+                _driver_map.insert(make_pair(motor_type, std::make_shared<MockDxlDriver>(_portHandler, _packetHandler)));
+            break;
+            case EMotorType::FAKE_STEPPER_MOTOR:
+                _driver_map.insert(make_pair(motor_type, std::make_shared<MockStepperDriver>(_portHandler, _packetHandler)));
             break;
             default:
                 ROS_ERROR("TtlManager - Unable to instanciate driver, unknown type");
@@ -852,8 +864,11 @@ int TtlManager::setLeds(int led)
 {
     int ret = niryo_robot_msgs::CommandStatus::TTL_WRITE_ERROR;
     _led_state = led;
-    // retrieve type from register
-    EMotorType mType = common::model::EMotorType::XL320;
+
+    EMotorType mType = MotorTypeEnum(_led_motor_type_cfg.c_str());
+
+    if (mType == EMotorType::FAKE_DXL_MOTOR)
+        return niryo_robot_msgs::CommandStatus::SUCCESS;
 
     // get list of motors of the given type
     vector<uint8_t> id_list;
@@ -861,7 +876,7 @@ int TtlManager::setLeds(int led)
     {
         id_list = _ids_map.at(mType);
 
-        auto driver = std::dynamic_pointer_cast<DxlDriver<XL320Reg> >(_driver_map.at(mType));
+        auto driver = std::dynamic_pointer_cast<AbstractDxlDriver>(_driver_map.at(mType));
 
         // sync write led state
         vector<uint32_t> command_led_id(id_list.size(), static_cast<uint32_t>(led));

@@ -132,7 +132,7 @@ TEST_F(TtlManagerTestSuite, testSingleCmds)
   EXPECT_NE(ttl_drv->writeSingleCommand(cmd_4), COMM_SUCCESS);
 }
 
-TEST_F(TtlManagerTestSuite, testSyncCmds)
+TEST_F(TtlManagerTestSuite, testSyncCmdsOnHW)
 {
   // sync cmd
   std::shared_ptr<common::model::DxlSyncCmd> dynamixel_cmd_1 = std::make_shared<common::model::DxlSyncCmd>(
@@ -173,6 +173,34 @@ TEST_F(TtlManagerTestSuite, testSyncCmds)
   EXPECT_NE(ttl_drv->writeSynchronizeCommand(dynamixel_cmd_4), COMM_SUCCESS);
 }
 
+TEST_F(TtlManagerTestSuite, testSyncCmdsOnFakeHW)
+{
+  // sync cmd
+  std::shared_ptr<common::model::DxlSyncCmd> dynamixel_cmd_1 = std::make_shared<common::model::DxlSyncCmd>(
+                                                            common::model::EDxlCommandType::CMD_TYPE_TORQUE);
+  dynamixel_cmd_1->addMotorParam(common::model::EMotorType::FAKE_DXL_MOTOR, 2, 1);
+  dynamixel_cmd_1->addMotorParam(common::model::EMotorType::FAKE_DXL_MOTOR, 3, 1);
+
+  EXPECT_EQ(ttl_drv->writeSynchronizeCommand(dynamixel_cmd_1), COMM_SUCCESS);
+  ros::Duration(0.5).sleep();
+
+  // redondant id
+  std::shared_ptr<common::model::DxlSyncCmd> dynamixel_cmd_3 = std::make_shared<common::model::DxlSyncCmd>(
+                                                            common::model::EDxlCommandType::CMD_TYPE_TORQUE);
+  dynamixel_cmd_3->addMotorParam(common::model::EMotorType::FAKE_DXL_MOTOR, 3, 1);
+  dynamixel_cmd_3->addMotorParam(common::model::EMotorType::FAKE_DXL_MOTOR, 3, 1);
+
+  EXPECT_NE(ttl_drv->writeSynchronizeCommand(dynamixel_cmd_3), COMM_SUCCESS);
+
+  // wrong cmd type
+  std::shared_ptr<common::model::DxlSyncCmd> dynamixel_cmd_4 = std::make_shared<common::model::DxlSyncCmd>(
+                                                            common::model::EDxlCommandType::CMD_TYPE_UNKNOWN);
+  dynamixel_cmd_4->addMotorParam(common::model::EMotorType::FAKE_DXL_MOTOR, 5, 1);
+  dynamixel_cmd_4->addMotorParam(common::model::EMotorType::FAKE_DXL_MOTOR, 3, 1);
+
+  EXPECT_NE(ttl_drv->writeSynchronizeCommand(dynamixel_cmd_4), COMM_SUCCESS);
+}
+
 // Test driver scan motors
 TEST_F(TtlManagerTestSuite, scanTest)
 {
@@ -185,5 +213,12 @@ int main(int argc, char **argv)
   testing::InitGoogleTest(&argc, argv);
   ros::init(argc, argv, "ttl_driver_unit_tests");
 
+  std::string hardware_version;
+  ros::NodeHandle nh_private("~");
+  nh_private.getParam("hardware_version", hardware_version);
+  if (hardware_version == "fake")
+    testing::GTEST_FLAG(filter) = "-TtlManagerTestSuite.testSyncCmdsOnHW";
+  else
+    testing::GTEST_FLAG(filter) = "-TtlManagerTestSuite.testSyncCmdsOnFakeHW";
   return RUN_ALL_TESTS();
 }

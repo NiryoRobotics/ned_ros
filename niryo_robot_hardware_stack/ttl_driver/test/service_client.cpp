@@ -42,6 +42,10 @@ TEST(TESTSuite, setLeds)
 
 TEST(TESTSuite, sendCustomValue)
 {
+    std::string hw_version;
+    ros::NodeHandle nh_private("~");
+    nh_private.getParam("hardware_version", hw_version);
+
     auto client = nh->serviceClient<ttl_driver::SendCustomValue>("/niryo_robot/ttl_driver/send_custom_value");
 
     bool exists(client.waitForExistence(ros::Duration(1)));
@@ -49,7 +53,10 @@ TEST(TESTSuite, sendCustomValue)
 
     ttl_driver::SendCustomValue srv;
 
-    srv.request.motor_type = 2;  // xl430
+    if (hw_version == "fake")
+        srv.request.motor_type = 6;  // fake dxl
+    else
+        srv.request.motor_type = 2;  // xl430
     srv.request.id = 2;
     srv.request.reg_address = 64;  // Torque enable for xl430
     srv.request.value = 1;
@@ -62,6 +69,10 @@ TEST(TESTSuite, sendCustomValue)
 
 TEST(TESTSuite, readCustomValue)
 {
+    std::string hw_version;
+    ros::NodeHandle nh_private("~");
+    nh_private.getParam("hardware_version", hw_version);
+
     auto client = nh->serviceClient<ttl_driver::ReadCustomValue>("/niryo_robot/ttl_driver/read_custom_value");
 
     bool exists(client.waitForExistence(ros::Duration(1)));
@@ -69,7 +80,10 @@ TEST(TESTSuite, readCustomValue)
 
     ttl_driver::ReadCustomValue srv;
     // to be defined
-    srv.request.motor_type = 2;  // xl430
+    if (hw_version == "fake")
+        srv.request.motor_type = 6;  // fake dxl
+    else
+        srv.request.motor_type = 2;  // xl430
     srv.request.id = 2;
     srv.request.reg_address = 6;
     srv.request.byte_number = 1;

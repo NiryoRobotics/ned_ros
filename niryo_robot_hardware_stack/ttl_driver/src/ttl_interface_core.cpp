@@ -1074,7 +1074,7 @@ bool TtlInterfaceCore::_callbackSendCustomValue(ttl_driver::SendCustomValue::Req
 
     EMotorType motor_type;
 
-    if (1 <= req.motor_type  && 5 >= req.motor_type)
+    if (1 <= req.motor_type  && 7 >= req.motor_type)
         motor_type = static_cast<EMotorType>(req.motor_type);
     else
     {
@@ -1114,7 +1114,7 @@ bool TtlInterfaceCore::_callbackReadCustomValue(ttl_driver::ReadCustomValue::Req
 {
     int result;
     EMotorType motor_type;
-    if (1 <= req.motor_type  && 5 >= req.motor_type)
+    if (1 <= req.motor_type  && 7 >= req.motor_type)
         motor_type = static_cast<EMotorType>(req.motor_type);
     else
     {

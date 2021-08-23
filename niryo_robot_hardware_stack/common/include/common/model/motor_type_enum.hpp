@@ -40,6 +40,8 @@ enum class EMotorType {
                         XL320=3,
                         XL330=4,
                         XC430=5,
+                        FAKE_DXL_MOTOR=6,
+                        FAKE_STEPPER_MOTOR=7,
                         UNKNOWN=100
                       };
 

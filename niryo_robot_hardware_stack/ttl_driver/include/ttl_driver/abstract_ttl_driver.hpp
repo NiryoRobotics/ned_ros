@@ -44,11 +44,11 @@ public:
                       std::shared_ptr<dynamixel::PacketHandler> packetHandler);
     virtual ~AbstractTtlDriver();
 
-    int ping(uint8_t id);
-    int getModelNumber(uint8_t id,
+    virtual int ping(uint8_t id);
+    virtual int getModelNumber(uint8_t id,
                        uint16_t& dxl_model_number);
-    int scan(std::vector<uint8_t>& id_list);
-    int reboot(uint8_t id);
+    virtual int scan(std::vector<uint8_t>& id_list);
+    virtual int reboot(uint8_t id);
 
     virtual std::string str() const;
 
@@ -89,8 +89,8 @@ public:
     virtual int syncReadHwErrorStatus(const std::vector<uint8_t>& id_list, std::vector<uint32_t>& hw_error_list) = 0;
 
     // we use those commands in the children classes to actually read and write values in registers
-    int read(uint8_t address, uint8_t data_len, uint8_t id, uint32_t& data);
-    int write(uint8_t address, uint8_t data_len, uint8_t id, uint32_t data);
+    virtual int read(uint8_t address, uint8_t data_len, uint8_t id, uint32_t& data);
+    virtual int write(uint8_t address, uint8_t data_len, uint8_t id, uint32_t data);
 
 protected:
     int syncRead(uint8_t address, uint8_t data_len, const std::vector<uint8_t>& id_list, std::vector<uint32_t>& data_list);
