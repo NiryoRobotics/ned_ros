@@ -248,7 +248,7 @@ void DxlMotorState::setPositionDGain(uint32_t d_gain)
 }
 
 /**
- * @brief DxlMotorState::setPositionPGain
+ * @brief DxlMotorState::setVelocityPGain
  * @param p_gain
  */
 void DxlMotorState::setVelocityPGain(uint32_t p_gain)

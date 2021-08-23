@@ -43,9 +43,9 @@ AbstractStepperDriver::~AbstractStepperDriver()
  * @brief AbstractStepperDriver::writeSingleCmd
  * @param cmd
 */
-int AbstractStepperDriver::writeSingleCmd(std::shared_ptr<common::model::AbstractTtlSingleMotorCmd>& cmd)
+int AbstractStepperDriver::writeSingleCmd(const std::shared_ptr<common::model::AbstractTtlSingleMotorCmd>& cmd)
 {
-    if (cmd->isValid())
+    if (cmd->isValid() && cmd->isStepperCmd())
     {
         switch (EStepperCommandType(cmd->getCmdType()))
         {
@@ -70,7 +70,8 @@ int AbstractStepperDriver::writeSingleCmd(std::shared_ptr<common::model::Abstrac
         }
     }
 
-    return COMM_TX_FAIL;
+    std::cout << "Command not validated" << std::endl;
+    return -1;
 }
 
 /**
@@ -98,7 +99,8 @@ int AbstractStepperDriver::writeSyncCmd(int type, const std::vector<uint8_t>& id
         std::cout << "Command not implemented" << std::endl;
     }
 
-    return 0;
+    std::cout << "Command not validated" << std::endl;
+    return -1;
 }
 
 }  // namespace ttl_driver

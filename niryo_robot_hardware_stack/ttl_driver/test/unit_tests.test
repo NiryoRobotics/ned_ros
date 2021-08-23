@@ -8,6 +8,8 @@
         <arg name="hardware_version" value="$(arg hardware_version)" />
     </include>
     
-    <test test-name="ttl_driver_unit_tests" pkg="ttl_driver" type="ttl_driver_unit_tests" />
+    <test test-name="ttl_driver_unit_tests" pkg="ttl_driver" type="ttl_driver_unit_tests">
+        <param name="hardware_version" value="$(arg hardware_version)" />
+    </test>
 
 </launch>
