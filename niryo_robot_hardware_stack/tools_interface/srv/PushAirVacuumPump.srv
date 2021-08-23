@@ -1,5 +1,7 @@
 uint8 id
 
+int16 push_air_velocity
 int16 push_air_position
+uint16 push_air_max_torque
 ---
 uint8 state

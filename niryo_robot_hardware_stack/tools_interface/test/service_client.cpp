@@ -91,6 +91,7 @@ TEST_F(ToolTestSuite, openTool)
             srv.request.open_position = static_cast<int>(filters[i]["specs"]["open_position"]);
             srv.request.open_speed = static_cast<int>(filters[i]["specs"]["open_speed"]);
             srv.request.open_hold_torque = static_cast<int>(filters[i]["specs"]["open_hold_torque"]);
+            srv.request.open_max_torque = static_cast<int>(filters[i]["specs"]["open_max_torque"]);
             break;
         }
     }
@@ -153,6 +154,8 @@ TEST_F(ToolTestSuite, PullAirVacuumPump)
             srv.request.id = id;
             srv.request.pull_air_position = static_cast<int>(filters[i]["specs"]["pull_air_position"]);
             srv.request.pull_air_hold_torque = static_cast<int>(filters[i]["specs"]["pull_air_hold_torque"]);
+            srv.request.pull_air_velocity = static_cast<int>(filters[i]["specs"]["pull_air_velocity"]);
+            srv.request.pull_air_max_torque = static_cast<int>(filters[i]["specs"]["pull_air_max_torque"]);
             break;
         }
     }
@@ -182,6 +185,8 @@ TEST_F(ToolTestSuite, PushAirVacuumPump)
         {
             srv.request.id = id;
             srv.request.push_air_position = static_cast<int>(filters[i]["specs"]["push_air_position"]);
+            srv.request.push_air_velocity = static_cast<int>(filters[i]["specs"]["push_air_velocity"]);
+            srv.request.push_air_max_torque = static_cast<int>(filters[i]["specs"]["push_air_max_torque"]);
             break;
         }
     }
@@ -193,7 +198,6 @@ TEST_F(ToolTestSuite, PushAirVacuumPump)
 
     client.call(srv);
 
-    int res = common::model::ToolState::VACUUM_PUMP_STATE_PUSHED;
     EXPECT_EQ(srv.response.state, res);
 }
 

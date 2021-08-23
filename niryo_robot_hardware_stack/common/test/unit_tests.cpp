@@ -143,7 +143,7 @@ TEST_P(DXLIdentityRadTest, identityFromRad) {
 TEST_P(DXLIdentityMotorTest, identityFromMotorPos) {
     // check combinations is identity
     int test_pos = std::get<2>(GetParam());
-
+    
     EXPECT_EQ(dxlState.to_motor_pos(dxlState.to_rad_pos(test_pos)), test_pos)
               << "to_motor_pos o to_rad_pos is not identity";
 }
@@ -270,13 +270,13 @@ TEST(CommonTestSuite, testCreationDxlCmd)
     ASSERT_TRUE(dxlCmd.isValid());
     ASSERT_TRUE(dxlCmd.isDxlCmd());
 
-    ASSERT_EQ(dxlCmd.getParam(), 5);
-    ASSERT_EQ(dxlCmd.getId(), 1);
+    ASSERT_EQ(dxlCmd.getParam(), static_cast<uint8_t>(5));
+    ASSERT_EQ(dxlCmd.getId(), static_cast<uint8_t>(1));
 
     dxlCmd.reset();
     ASSERT_FALSE(dxlCmd.isValid());
-    ASSERT_NE(dxlCmd.getId(), 1);
-    ASSERT_EQ(dxlCmd.getParam(), 5);
+    ASSERT_NE(dxlCmd.getId(), static_cast<uint8_t>(1));
+    ASSERT_EQ(dxlCmd.getParam(), static_cast<uint8_t>(5));
 }
 
 TEST(CommonTestSuite, testCreationStepperTtlCmd)
@@ -286,13 +286,13 @@ TEST(CommonTestSuite, testCreationStepperTtlCmd)
     ASSERT_TRUE(cmd.isValid());
     ASSERT_TRUE(cmd.isStepperCmd());
 
-    ASSERT_EQ(cmd.getParam(), 5);
-    ASSERT_EQ(cmd.getId(), 1);
+    ASSERT_EQ(cmd.getParam(), static_cast<uint8_t>(5));
+    ASSERT_EQ(cmd.getId(), static_cast<uint8_t>(1));
 
     cmd.reset();
     ASSERT_FALSE(cmd.isValid());
-    ASSERT_NE(cmd.getId(), 1);
-    ASSERT_EQ(cmd.getParam(), 5);
+    ASSERT_NE(cmd.getId(), static_cast<uint8_t>(1));
+    ASSERT_EQ(cmd.getParam(), static_cast<uint8_t>(5));
 }
 
 TEST(CommonTestSuite, testCreationStepperCmd)
@@ -302,13 +302,13 @@ TEST(CommonTestSuite, testCreationStepperCmd)
     ASSERT_TRUE(cmd.isValid());
     ASSERT_TRUE(cmd.isStepperCmd());
 
-    ASSERT_EQ(cmd.getParam(), 5);
-    ASSERT_EQ(cmd.getId(), 1);
+    ASSERT_EQ(cmd.getParam(), static_cast<uint8_t>(5));
+    ASSERT_EQ(cmd.getId(), static_cast<uint8_t>(1));
 
     cmd.reset();
     ASSERT_FALSE(cmd.isValid());
-    ASSERT_NE(cmd.getId(), 1);
-    ASSERT_EQ(cmd.getParam(), 5);
+    ASSERT_NE(cmd.getId(), static_cast<uint8_t>(1));
+    ASSERT_EQ(cmd.getParam(), static_cast<uint8_t>(5));
 }
 }  // namespace
 
@@ -319,3 +319,4 @@ int main(int argc, char **argv)
 
   return RUN_ALL_TESTS();
 }
+

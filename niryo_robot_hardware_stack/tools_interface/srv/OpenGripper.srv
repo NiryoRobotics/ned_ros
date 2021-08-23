@@ -4,5 +4,6 @@ uint8 id
 uint16 open_position
 uint16 open_speed
 uint16 open_hold_torque
+uint16 open_max_torque
 ---
 uint8 state

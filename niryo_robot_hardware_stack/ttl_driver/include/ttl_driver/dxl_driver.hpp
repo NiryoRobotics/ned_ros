@@ -188,7 +188,8 @@ int DxlDriver<reg_type>::setGoalPosition(uint8_t id, uint32_t position)
 template<typename reg_type>
 int DxlDriver<reg_type>::setGoalVelocity(uint8_t id, uint32_t velocity)
 {
-    return write(reg_type::ADDR_GOAL_VELOCITY, reg_type::SIZE_GOAL_VELOCITY, id, velocity);
+    // in mode control Position Control Mode, velocity profile in datasheet is used to set velocity (except xl320)
+    return write(reg_type::ADDR_PROFILE_VELOCITY, reg_type::SIZE_PROFILE_VELOCITY, id, velocity);
 }
 
 template<typename reg_type>
@@ -206,7 +207,8 @@ int DxlDriver<reg_type>::syncWritePositionGoal(const std::vector<uint8_t> &id_li
 template<typename reg_type>
 int DxlDriver<reg_type>::syncWriteVelocityGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &velocity_list)
 {
-    return syncWrite(reg_type::ADDR_GOAL_VELOCITY, reg_type::SIZE_GOAL_VELOCITY, id_list, velocity_list);
+    // in mode control Position Control Mode, velocity profile in datasheet is used to set velocity (except xl320)
+    return syncWrite(reg_type::ADDR_PROFILE_VELOCITY, reg_type::SIZE_PROFILE_VELOCITY, id_list, velocity_list);
 }
 
 // ram read
@@ -429,6 +431,17 @@ int DxlDriver<XL320Reg>::setff2Gain(uint8_t /*id*/, uint32_t /*gain*/)
     return COMM_TX_ERROR;
 }
 
+template<>
+int DxlDriver<XL320Reg>::setGoalVelocity(uint8_t id, uint32_t velocity)
+{
+    return write(XL320Reg::ADDR_GOAL_VELOCITY, XL320Reg::SIZE_GOAL_VELOCITY, id, velocity);
+}
+
+template<>
+int DxlDriver<XL320Reg>::syncWriteVelocityGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &velocity_list)
+{
+    return syncWrite(XL320Reg::ADDR_GOAL_VELOCITY, XL320Reg::SIZE_GOAL_VELOCITY, id_list, velocity_list);
+}
 
 // XL430
 
