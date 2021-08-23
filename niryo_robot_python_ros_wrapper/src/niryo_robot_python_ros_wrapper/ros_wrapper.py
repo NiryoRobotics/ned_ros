@@ -40,7 +40,7 @@ from niryo_robot_vision.srv import SetImageParameter
 from niryo_robot_rpi.srv import GetDigitalIO, SetDigitalIO
 from niryo_robot_vision.srv import DebugMarkers, DebugMarkersRequest, DebugColorDetection, DebugColorDetectionRequest
 from niryo_robot_programs_manager.srv import SetProgramAutorun, SetProgramAutorunRequest, GetProgramAutorunInfos, GetProgramList, ManageProgram, ManageProgramRequest, GetProgram, GetProgramRequest, ExecuteProgram, ExecuteProgramRequest
-from niryo_robot_credentials.srv import GetSerial, SetCredential
+from niryo_robot_credentials.srv import GetCredential, SetCredential
 from std_srvs.srv import Trigger as StdTrigger
 
 # Actions
@@ -1690,7 +1690,7 @@ class NiryoRosWrapper:
         :return: status, message
         :rtype: (int, str)
         """
-        result = self.__call_service('/niryo_robot_credentials/get_serial', GetSerial)
+        result = self.__call_service('/niryo_robot_credentials/get_serial', GetCredential)
         return self.__classic_return_w_check(result)
 
     def set_api_key(self, key):
