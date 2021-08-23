@@ -104,7 +104,6 @@ void HardwareInterface::initParameters(ros::NodeHandle &nh)
     _rpi_image_version.erase(_rpi_image_version.find_last_not_of(" \n\r\t") + 1);
     _ros_niryo_robot_version.erase(_ros_niryo_robot_version.find_last_not_of(" \n\r\t") + 1);
 
-    // TODO(CC) to be adapted with conf
     std::string conveyor_bus_str = "can";
     nh.getParam("conveyor/bus", conveyor_bus_str);
     if ("can" == conveyor_bus_str)
@@ -114,9 +113,11 @@ void HardwareInterface::initParameters(ros::NodeHandle &nh)
     else
         _conveyor_bus = EBusProtocol::UNKNOWN;
 
+    // end effector is enabled if an id is defined
+    _end_effector_enabled = nh.hasParam("end_effector/end_effector_id");
 
     ROS_DEBUG("HardwareInterface::initParameters - publish_hw_status_frequency : %f",
-                            _publish_hw_status_frequency);
+              _publish_hw_status_frequency);
     ROS_DEBUG("HardwareInterface::initParameters - publish_software_version_frequency : %f",
                             _publish_software_version_frequency);
 
@@ -154,10 +155,14 @@ void HardwareInterface::initNodes(ros::NodeHandle &nh)
                                                                                      _ttl_interface);
             ros::Duration(0.25).sleep();
 
-            ROS_DEBUG("HardwareInterface::initNodes - Start End Effector Interface Node");
-            ros::NodeHandle nh_ee(nh, "end_effector_interface");
-            _end_effector_interface = std::make_shared<end_effector_interface::EndEffectorInterfaceCore>(nh_ee,
-                                                                                                         _ttl_interface);
+            if (_end_effector_enabled)
+            {
+                ROS_DEBUG("HardwareInterface::initNodes - Start End Effector Interface Node");
+                ros::NodeHandle nh_ee(nh, "end_effector_interface");
+                _end_effector_interface = std::make_shared<
+                                            end_effector_interface::EndEffectorInterfaceCore>(nh_ee,
+                                                                                              _ttl_interface);
+            }
             ros::Duration(0.25).sleep();
 
             if (EBusProtocol::TTL == _conveyor_bus)

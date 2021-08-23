@@ -48,9 +48,13 @@ public:
     int scan(std::vector<uint8_t>& id_list);
     int reboot(uint8_t id);
 
-    virtual std::string str() const;
+    // we use those commands in the children classes to actually read and write values in registers
+    int read(uint8_t address, uint8_t data_len, uint8_t id, uint32_t& data);
+    int write(uint8_t address, uint8_t data_len, uint8_t id, uint32_t data);
 
 public:
+    virtual std::string str() const;
+
     // here are only common TTL commands found in both Steppers and DXl
     virtual std::string interpreteErrorState(uint32_t hw_state) = 0;
 
@@ -69,11 +73,10 @@ public:
     virtual int syncReadVoltage(const std::vector<uint8_t>& id_list, std::vector<uint32_t>& voltage_list) = 0;
     virtual int syncReadHwErrorStatus(const std::vector<uint8_t>& id_list, std::vector<uint32_t>& hw_error_list) = 0;
 
-    // we use those commands in the children classes to actually read and write values in registers
-    int read(uint8_t address, uint8_t data_len, uint8_t id, uint32_t& data);
-    int write(uint8_t address, uint8_t data_len, uint8_t id, uint32_t data);
-protected:
+    virtual int writeSingleCmd(std::shared_ptr<common::model::AbstractTtlSingleMotorCmd >& cmd) = 0;
+    virtual int writeSyncCmd(int type, const std::vector<uint8_t>& ids, const std::vector<uint32_t>& params) = 0;
 
+protected:
     int syncRead(uint8_t address, uint8_t data_len, const std::vector<uint8_t>& id_list, std::vector<uint32_t>& data_list);
     int syncWrite(uint8_t address, uint8_t data_len, const std::vector<uint8_t>& id_list, const std::vector<uint32_t>& data_list);
 

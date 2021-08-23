@@ -33,7 +33,7 @@ namespace ttl_driver
 /**
  * @brief The StepperDriver class
  */
-template<typename reg_type>
+template<typename reg_type = StepperReg>
 class StepperDriver : public AbstractStepperDriver
 {
     public:

@@ -58,6 +58,13 @@ namespace ttl_driver
 /**
  * @brief The TtlInterfaceCore class schedules and manager the communication in the TTL bus
  * its main purpose it to manage queues of commands for the TTL Motors
+ * TODO(CC) Do we need to use TtlInterfaceCore or TtlManager when used with another node ?
+ * This class is used for now by :
+ * - ToolsInterfaceCore
+ * - JointsInterfaceCore
+ * - JointsHardwareInterface
+ * - CalibrationManager
+ * - EndEffectorInterfaceCore
  */
 class TtlInterfaceCore : public common::model::IDriverCore, public common::model::IInterfaceCore
 {
@@ -84,19 +91,19 @@ class TtlInterfaceCore : public common::model::IDriverCore, public common::model
         // Tool control
         int setTool(common::model::EHardwareType type, uint8_t motor_id);
         void unsetTool(uint8_t motor_id);
+        std::vector<uint8_t> scanTools();
 
         // end effector panel control
-        int setEndEffector(uint8_t motor_id);
+        int setEndEffector(uint8_t end_effector_id,
+                           uint32_t button_1_config,
+                           uint32_t button_2_config,
+                           uint32_t button_3_config);
 
         // conveyor control
         int setConveyor(uint8_t motor_id, uint8_t default_conveyor_id = 6) override;
         void unsetConveyor(uint8_t motor_id) override;
 
         // direct commands
-        std::vector<uint8_t> scanTools();
-
-        int update_leds(void);
-
         int rebootMotors();
         bool rebootMotor(uint8_t motor_id);
 
@@ -107,7 +114,7 @@ class TtlInterfaceCore : public common::model::IDriverCore, public common::model
 
         std::vector<std::shared_ptr<common::model::JointState> > getJointStates() const override;
         common::model::JointState getJointState(uint8_t motor_id) const override;
-        common::model::EndEffectorState getEndEffectorState(uint8_t motor_id);
+        common::model::EndEffectorState getEndEffectorState(uint8_t id);
 
         // IDriverCore interface
         void startControlLoop() override;
@@ -125,6 +132,7 @@ class TtlInterfaceCore : public common::model::IDriverCore, public common::model
         bool isConnectionOk() const override;
         int launchMotorsReport() override;
         niryo_robot_msgs::BusState getBusState() const override;
+        common::model::EBusProtocol getBusProtocol() const override;
 
     private:
         virtual void initParameters(ros::NodeHandle& nh) override;
@@ -154,9 +162,11 @@ class TtlInterfaceCore : public common::model::IDriverCore, public common::model
         double _control_loop_frequency{0.0};
 
         double _delta_time_data_read{0.0};
+        double _delta_time_end_effector_read{0.0};
         double _delta_time_write{0.0};
 
         double _time_hw_data_last_read{0.0};
+        double _time_hw_end_effector_last_read{0.0};
         double _time_hw_data_last_write{0.0};
 
         double _time_check_connection_last_read{0.0};
@@ -182,10 +192,6 @@ class TtlInterfaceCore : public common::model::IDriverCore, public common::model
 
         static constexpr int QUEUE_OVERFLOW = 20;
         static constexpr double TTL_VOLTAGE_DIVISOR = 10.0;
-
-        // IDriverCore interface
-public:
-        virtual common::model::EBusProtocol getBusProtocol() const override;
 };
 
 /**

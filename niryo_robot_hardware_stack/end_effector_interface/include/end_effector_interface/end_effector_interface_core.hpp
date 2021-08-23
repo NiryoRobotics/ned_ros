@@ -36,18 +36,14 @@ namespace end_effector_interface
 {
 
 /**
- * @brief The EndEffectorInterfaceCore class
+ * @brief The EndEffectorInterfaceCore class manages the services and topics for the end effector.
+ * The TTL management is done in ttl_manager
+ * Every runtime critical operation is done in TtlManager
  */
 class EndEffectorInterfaceCore : public common::model::IInterfaceCore
 {
 
     public:
-    // TODO(CC) What is the best param to give ?
-    // TtlInterfaceCore ? -> used for single and sync cmd queues, not really the case here
-    // TtlManager ? -> used to manager motors, not really the case here
-    // packetHandler and portHandler ? -> then implement our own EEManager and our own eeDriver
-    // eeDriver ? -> then instanciate eeDriver in EEManager, can be usefull for HW status of all TTL components.
-    // but it is yet another stuff in ttl driver
         EndEffectorInterfaceCore(ros::NodeHandle& nh,
                                  std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface);
         virtual ~EndEffectorInterfaceCore() override;
@@ -60,6 +56,7 @@ class EndEffectorInterfaceCore : public common::model::IInterfaceCore
         virtual void startPublishers(ros::NodeHandle& nh) override;
         virtual void startSubscribers(ros::NodeHandle& nh) override;
 
+        void initEndEffectorHardware();
         void _publishButtonState();
 
     private:

@@ -43,23 +43,23 @@ struct EndEffectorReg
     static constexpr std::uint8_t ADDR_BAUDRATE                 = 8;
     static constexpr std::uint8_t SIZE_BAUDRATE                 = 1;
 
-    static constexpr std::uint8_t ADDR_FREE_DRIVE_CONFIG        = 9;
-    static constexpr std::uint8_t SIZE_FREE_DRIVE_CONFIG        = 1;
+    static constexpr std::uint8_t ADDR_BUTTON_1_CONFIG          = 9;
+    static constexpr std::uint8_t SIZE_BUTTON_1_CONFIG          = 1;
 
-    static constexpr std::uint8_t ADDR_SAVE_POSITION_CONFIG     = 10;
-    static constexpr std::uint8_t SIZE_SAVE_POSITION_CONFIG     = 1;
+    static constexpr std::uint8_t ADDR_BUTTON_2_CONFIG          = 10;
+    static constexpr std::uint8_t SIZE_BUTTON_2_CONFIG          = 1;
 
-    static constexpr std::uint8_t ADDR_CUSTOM_BUTTON_CONFIG     = 12;
-    static constexpr std::uint8_t SIZE_CUSTOM_BUTTON_CONFIG     = 1;
+    static constexpr std::uint8_t ADDR_BUTTON_3_CONFIG          = 12;
+    static constexpr std::uint8_t SIZE_BUTTON_3_CONFIG          = 1;
 
-    static constexpr std::uint8_t ADDR_FREE_DRIVE_STATUS        = 13;
-    static constexpr std::uint8_t SIZE_FREE_DRIVE_STATUS        = 1;
+    static constexpr std::uint8_t ADDR_BUTTON_1_STATUS          = 13;
+    static constexpr std::uint8_t SIZE_BUTTON_1_STATUS          = 1;
 
-    static constexpr std::uint8_t ADDR_SAVE_POSITION_STATUS     = 14;
-    static constexpr std::uint8_t SIZE_SAVE_POSITION_STATUS     = 1;
+    static constexpr std::uint8_t ADDR_BUTTON_2_STATUS          = 14;
+    static constexpr std::uint8_t SIZE_BUTTON_2_STATUS          = 1;
 
-    static constexpr std::uint8_t ADDR_CUSTOM_BUTTON_STATUS     = 15;
-    static constexpr std::uint8_t SIZE_CUSTOM_BUTTON_STATUS     = 1;
+    static constexpr std::uint8_t ADDR_BUTTON_3_STATUS          = 15;
+    static constexpr std::uint8_t SIZE_BUTTON_3_STATUS          = 1;
 
     static constexpr std::uint8_t ADDR_ACCELERO_VALUE_X         = 16;
     static constexpr std::uint8_t SIZE_ACCELERO_VALUE_X         = 4;
@@ -75,7 +75,6 @@ struct EndEffectorReg
 
     static constexpr std::uint8_t ADDR_DIGITAL_OUT              = 29;
     static constexpr std::uint8_t SIZE_DIGITAL_OUT              = 1;
-
 
     static constexpr std::uint8_t ADDR_PRESENT_VOLTAGE          = 144;
     static constexpr std::uint8_t SIZE_PRESENT_VOLTAGE          = 2;

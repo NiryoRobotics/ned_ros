@@ -113,6 +113,7 @@ class TtlManager : public common::model::IBusManager
 
         int getAllIdsOnBus(std::vector<uint8_t> &id_list);
 
+        //calibration
         void startCalibration();
         void resetCalibration();
         bool isCalibrationInProgress() const;
@@ -156,8 +157,11 @@ class TtlManager : public common::model::IBusManager
         std::vector<uint8_t> _all_motor_connected; // with all dxl motors connected (including the tool)
         std::vector<uint8_t> _removed_motor_id_list;
 
+        // state of a component for a given id
         std::map<uint8_t, std::shared_ptr<common::model::AbstractHardwareState> > _state_map;
+        // map of associated ids for a given hardware type
         std::map<common::model::EHardwareType, std::vector<uint8_t> > _ids_map;
+        // map of drivers for a given hardware type (xl, stepper, end effector)
         std::map<common::model::EHardwareType, std::shared_ptr<AbstractTtlDriver> > _driver_map;
 
         double _calibration_timeout{30.0};

@@ -24,8 +24,10 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 
 #include <stdint.h>
 #include <string>
+#include <cassert>
 
 #include "hardware_type_enum.hpp"
+#include "button_type_enum.hpp"
 
 namespace common
 {
@@ -37,15 +39,7 @@ namespace model
  */
 class EndEffectorState : public AbstractHardwareState
 {
-
     public:
-        enum class EButtonType
-        {
-            FREE_DRIVE_BUTTON,
-            SAVE_POS_BUTTON,
-            CUSTOM_BUTTON
-        };
-
         enum class EActionType
         {
             HANDLE_HELD_ACTION = 0,
@@ -55,11 +49,21 @@ class EndEffectorState : public AbstractHardwareState
             NO_ACTION = 100
         };
 
-    private:
+        /**
+         * @brief The Button struct describes the current state of a button (not its config)
+         */
         struct Button
         {
-          std::string name;
-          EActionType action;
+          EButtonType type{EButtonType::UNKNOWN};
+          uint32_t config{};
+          EActionType action{EActionType::NO_ACTION};
+        };
+
+        struct Vector3D
+        {
+          uint32_t x{};
+          uint32_t y{};
+          uint32_t z{};
         };
 
     public:
@@ -76,59 +80,61 @@ class EndEffectorState : public AbstractHardwareState
         virtual bool isValid() const override;
 
     public:
+        void setButtonConfig(uint8_t id, EButtonType button, uint32_t config);
+        uint32_t getButtonConfig(uint8_t id) const;
 
-        void setButtonStatus(EButtonType button, EActionType action);
-        std::map<EButtonType, Button> getButtonsStatus();
-        EActionType getButtonStatus(EButtonType button);
+        void setButtonStatus(uint8_t id, EActionType action);
+        std::array<Button, 3> getButtonsStatus() const;
 
         uint32_t getAccelerometerXValue() const;
         uint32_t getAccelerometerYValue() const;
         uint32_t getAccelerometerZValue() const;
 
-        void setAccelerometerXValue(const uint32_t& getAccelerometerXValue);
-        void setAccelerometerYValue(const uint32_t& getAccelerometerYValue);
-        void setAccelerometerZValue(const uint32_t& getAccelerometerZValue);
+        void setAccelerometerXValue(const uint32_t& xValue);
+        void setAccelerometerYValue(const uint32_t& yValue);
+        void setAccelerometerZValue(const uint32_t& zValue);
 
         bool getCollisionStatus() const;
         void setCollisionStatus(bool getCollisionStatus);
 
-private:
-        std::map<EButtonType, Button> _buttons;
-
-        uint32_t _accelerometer_x_value;
-        uint32_t _accelerometer_y_value;
-        uint32_t _accelerometer_z_value;
+    private:
+        std::array<Button, 3> _buttons_list;
+        Vector3D _accelerometer_values;
 
         bool _collision_status;
 };
 
-
 /**
- * @brief EndEffectorState::getAccelerometerXValue
+ * @brief EndEffectorState::getButtonsStatus
  * @return
  */
 inline
-std::map<EndEffectorState::EButtonType, EndEffectorState::Button>
-EndEffectorState::getButtonsStatus()
+std::array<EndEffectorState::Button, 3>
+EndEffectorState::getButtonsStatus() const
 {
-    return _buttons;
+  return _buttons_list;
+}
+
+/**
+ * @brief EndEffectorState::getButton1Config
+ * @return
+ */
+inline
+uint32_t EndEffectorState::getButtonConfig(uint8_t id) const
+{
+  assert(id <= 3);
+
+  return _buttons_list[id - 1].config;
 }
 
 /**
  * @brief EndEffectorState::getAccelerometerXValue
  * @return
  */
-inline
-EndEffectorState::EActionType
-EndEffectorState::getButtonStatus(EndEffectorState::EButtonType button)
-{
-    return _buttons.at(button).action;
-}
-
 inline
 uint32_t EndEffectorState::getAccelerometerXValue() const
 {
-  return _accelerometer_x_value;
+  return _accelerometer_values.x;
 }
 
 /**
@@ -138,7 +144,7 @@ uint32_t EndEffectorState::getAccelerometerXValue() const
 inline
 uint32_t EndEffectorState::getAccelerometerYValue() const
 {
-  return _accelerometer_y_value;
+  return _accelerometer_values.y;
 }
 
 /**
@@ -148,7 +154,7 @@ uint32_t EndEffectorState::getAccelerometerYValue() const
 inline
 uint32_t EndEffectorState::getAccelerometerZValue() const
 {
-  return _accelerometer_z_value;
+  return _accelerometer_values.z;
 }
 
 /**

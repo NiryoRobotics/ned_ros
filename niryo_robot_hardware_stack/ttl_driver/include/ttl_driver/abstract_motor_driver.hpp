@@ -37,37 +37,18 @@ namespace ttl_driver
  * @brief The XDriver class
  */
 // CC add list of associated motors ? this would remove the need for a map and for some params
-// generic driver -> write and write for a given address and lenght
 class AbstractMotorDriver : public AbstractTtlDriver
 {
 
 public:
     AbstractMotorDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
-                      std::shared_ptr<dynamixel::PacketHandler> packetHandler);
-    virtual ~AbstractMotorDriver();
+                        std::shared_ptr<dynamixel::PacketHandler> packetHandler);
+    virtual ~AbstractMotorDriver() override;
 
-
-    virtual int writeSingleCmd(std::shared_ptr<common::model::AbstractTtlSingleMotorCmd >& cmd) = 0;
-    virtual int writeSyncCmd(int type, const std::vector<uint8_t>& ids, const std::vector<uint32_t>& params) = 0;
 
 public:
     // AbstractTtlDriver interface
     virtual std::string str() const override;
-
-    virtual std::string interpreteErrorState(uint32_t hw_state) = 0;
-
-    // eeprom read
-    virtual int checkModelNumber(uint8_t id) = 0;
-    virtual int readFirmwareVersion(uint8_t id, uint32_t& version) = 0;
-
-    // ram read
-    virtual int readTemperature(uint8_t id, uint32_t& temperature) = 0;
-    virtual int readVoltage(uint8_t id, uint32_t& voltage) = 0;
-    virtual int readHwErrorStatus(uint8_t id, uint32_t& hardware_status) = 0;
-
-    virtual int syncReadTemperature(const std::vector<uint8_t>& id_list, std::vector<uint32_t>& temperature_list) = 0;
-    virtual int syncReadVoltage(const std::vector<uint8_t>& id_list, std::vector<uint32_t>& voltage_list) = 0;
-    virtual int syncReadHwErrorStatus(const std::vector<uint8_t>& id_list, std::vector<uint32_t>& hw_error_list) = 0;
 
 public:
     // here are only common TTL commands found in both Steppers and DXl

@@ -42,11 +42,13 @@ using ::common::model::JointState;
 using ::common::model::EDxlCommandType;
 using ::common::model::DxlCommandTypeEnum;
 using ::common::model::EStepperCommandType;
+using ::common::model::EEndEffectorCommandType;
 using ::common::model::StepperCommandTypeEnum;
 using ::common::model::SingleMotorCmd;
 using ::common::model::SynchronizeMotorCmd;
 using ::common::model::AbstractTtlSingleMotorCmd;
 using ::common::model::DxlSingleCmd;
+using ::common::model::EndEffectorSingleCmd;
 
 namespace ttl_driver
 {
@@ -101,6 +103,7 @@ void TtlInterfaceCore::initParameters(ros::NodeHandle& nh)
     _control_loop_frequency = 0.0;
     double write_frequency = 0.0;
     double read_data_frequency = 0.0;
+    double read_end_effector_frequency = 0.0;
     double read_status_frequency = 0.0;
 
     nh.getParam("ttl_hardware_control_loop_frequency",
@@ -112,15 +115,20 @@ void TtlInterfaceCore::initParameters(ros::NodeHandle& nh)
     nh.getParam("ttl_hardware_read_data_frequency",
                  read_data_frequency);
 
+    nh.getParam("ttl_hardware_read_data_frequency",
+                 read_end_effector_frequency);
+
     nh.getParam("ttl_hardware_read_status_frequency",
                  read_status_frequency);
 
     ROS_DEBUG("TtlInterfaceCore::initParameters - ttl_hardware_control_loop_frequency : %f", _control_loop_frequency);
     ROS_DEBUG("TtlInterfaceCore::initParameters - ttl_hardware_write_frequency : %f", write_frequency);
     ROS_DEBUG("TtlInterfaceCore::initParameters - ttl_hardware_read_data_frequency : %f", read_data_frequency);
+    ROS_DEBUG("TtlInterfaceCore::initParameters - ttl_hardware_read_end_effector_frequency : %f", read_end_effector_frequency);
     ROS_DEBUG("TtlInterfaceCore::initParameters - ttl_hardware_read_status_frequency : %f", read_status_frequency);
 
     _delta_time_data_read = 1.0 / read_data_frequency;
+    _delta_time_end_effector_read = 1.0 / read_end_effector_frequency;
     _delta_time_status_read = 1.0 / read_status_frequency;
     _delta_time_write = 1.0 / write_frequency;
 }
@@ -220,17 +228,6 @@ vector<uint8_t> TtlInterfaceCore::scanTools()
 
     ROS_DEBUG("TtlInterfaceCore::scanTools - All id on bus: [%s]", motor_id_list_string.c_str());
     return motor_list;
-}
-
-/**
- * @brief TtlInterfaceCore::update_leds
- * @return
- */
-int TtlInterfaceCore::update_leds(void)
-{
-    lock_guard<mutex> lck(_control_loop_mutex);
-    int result = _ttl_manager->setLeds(_ttl_manager->getLedState());
-    return result;
 }
 
 /**
@@ -583,9 +580,9 @@ void TtlInterfaceCore::controlLoop()
                     _ttl_manager->readPositionStatus();
                     needSleep = true;
                 }
-                if (ros::Time::now().toSec() - _time_hw_data_last_read >= _delta_time_data_read)
+                if (ros::Time::now().toSec() - _time_hw_end_effector_last_read >= _delta_time_end_effector_read)
                 {
-                    _time_hw_data_last_read = ros::Time::now().toSec();
+                    _time_hw_end_effector_last_read = ros::Time::now().toSec();
                     _ttl_manager->readEndEffectorStatus();
                     needSleep = true;
                 }
@@ -680,6 +677,10 @@ int TtlInterfaceCore::setTool(EHardwareType type, uint8_t motor_id)
         std::shared_ptr<AbstractTtlSingleMotorCmd> cmd_torque = std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_TORQUE,
                                                             motor_id, std::initializer_list<uint32_t>{1});
         _ttl_manager->writeSingleCommand(cmd_torque);
+        ros::Duration(0.05).sleep();
+
+        // update leds
+        _ttl_manager->setLeds(_ttl_manager->getLedState());
         ros::Duration(0.01).sleep();
 
         result = niryo_robot_msgs::CommandStatus::SUCCESS;
@@ -707,9 +708,15 @@ void TtlInterfaceCore::unsetTool(uint8_t motor_id)
 /**
  * @brief TtlInterfaceCore::setEndEffector
  * @param end_effector_id
+ * @param button_1_config
+ * @param button_2_config
+ * @param button_3_config
  * @return
  */
-int TtlInterfaceCore::setEndEffector(uint8_t end_effector_id)
+int TtlInterfaceCore::setEndEffector(uint8_t end_effector_id,
+                                     uint32_t button_1_config,
+                                     uint32_t button_2_config,
+                                     uint32_t button_3_config)
 {
   int result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
 
@@ -720,6 +727,30 @@ int TtlInterfaceCore::setEndEffector(uint8_t end_effector_id)
   {
       // add end effector
       _ttl_manager->addHardwareComponent(EHardwareType::END_EFFECTOR, end_effector_id, TtlManager::EType::END_EFFECTOR);
+
+      // Configure Button 1
+      std::shared_ptr<AbstractTtlSingleMotorCmd> cmd_button_1_config =
+                            std::make_shared<EndEffectorSingleCmd>(EEndEffectorCommandType::CMD_TYPE_BUTTON_1_CONFIG,
+                                                           end_effector_id,
+                                                           std::initializer_list<uint32_t>{button_1_config});
+      _ttl_manager->writeSingleCommand(cmd_button_1_config);
+      ros::Duration(0.01).sleep();
+
+      // Configure Button 2
+      std::shared_ptr<AbstractTtlSingleMotorCmd> cmd_button_2_config =
+                            std::make_shared<EndEffectorSingleCmd>(EEndEffectorCommandType::CMD_TYPE_BUTTON_2_CONFIG,
+                                                           end_effector_id,
+                                                           std::initializer_list<uint32_t>{button_2_config});
+      _ttl_manager->writeSingleCommand(cmd_button_2_config);
+      ros::Duration(0.01).sleep();
+
+      // Configure Button 3
+      std::shared_ptr<AbstractTtlSingleMotorCmd> cmd_button_3_config =
+                            std::make_shared<EndEffectorSingleCmd>(EEndEffectorCommandType::CMD_TYPE_BUTTON_3_CONFIG,
+                                                           end_effector_id,
+                                                           std::initializer_list<uint32_t>{button_3_config});
+      _ttl_manager->writeSingleCommand(cmd_button_3_config);
+      ros::Duration(0.01).sleep();
 
       result = niryo_robot_msgs::CommandStatus::SUCCESS;
   }
@@ -986,13 +1017,14 @@ TtlInterfaceCore::getJointState(uint8_t motor_id) const
 
 /**
  * @brief TtlInterfaceCore::getEndEffectorState
- * @param motor_id
+ * @param id
  * @return
  * TODO(CC) to be refactorized
  */
-common::model::EndEffectorState TtlInterfaceCore::getEndEffectorState(uint8_t motor_id)
+common::model::EndEffectorState
+TtlInterfaceCore::getEndEffectorState(uint8_t id)
 {
-  return _ttl_manager->getHardwareState<EndEffectorState>(motor_id);
+  return _ttl_manager->getHardwareState<EndEffectorState>(id);
 }
 
 /**

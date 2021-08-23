@@ -97,6 +97,7 @@ class HardwareInterface : common::model::IInterfaceCore
 
         bool _can_enabled{false};
         bool _ttl_enabled{false};
+        bool _end_effector_enabled{false};
 
         common::model::EBusProtocol _conveyor_bus{common::model::EBusProtocol::CAN};
 

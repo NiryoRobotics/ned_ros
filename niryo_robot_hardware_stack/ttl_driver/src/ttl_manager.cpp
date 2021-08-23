@@ -182,28 +182,37 @@ void TtlManager::addHardwareComponent(EHardwareType hardware_type, uint8_t id, E
 {
     ROS_DEBUG("TtlManager::addMotor - Add motor id: %d", id);
 
-    // add id to _state_map
-    if (EHardwareType::STEPPER == hardware_type)
+    // if not already instanciated
+    if (!_state_map.count(id))
     {
-        if (EType::CONVOYER == type_used)
-            _state_map.insert(make_pair(id, std::make_shared<ConveyorState>(EBusProtocol::TTL, id)));
-        else
-            _state_map.insert(make_pair(id, std::make_shared<StepperMotorState>(EBusProtocol::TTL, id)));
-    }
-    else if (EHardwareType::END_EFFECTOR == hardware_type)
-    {
-        _state_map.insert(make_pair(id, std::make_shared<EndEffectorState>(id)));
-    }
-    else if (EHardwareType::UNKNOWN != hardware_type)
-    {
-        if (type_used == EType::TOOL)
-            _state_map.insert(make_pair(id, std::make_shared<ToolState>("auto", hardware_type, id)));
-        else
-            _state_map.insert(make_pair(id, std::make_shared<DxlMotorState>(hardware_type, EBusProtocol::TTL, id)));
+      switch (hardware_type)
+      {
+        case EHardwareType::STEPPER:
+          if (EType::CONVOYER == type_used)
+              _state_map.insert(make_pair(id, std::make_shared<ConveyorState>(EBusProtocol::TTL, id)));
+          else
+              _state_map.insert(make_pair(id, std::make_shared<StepperMotorState>(EBusProtocol::TTL, id)));
+          break;
+        case EHardwareType::END_EFFECTOR:
+            _state_map.insert(make_pair(id, std::make_shared<EndEffectorState>(id)));
+          break;
+        case EHardwareType::XC430:
+        case EHardwareType::XL320:
+        case EHardwareType::XL330:
+        case EHardwareType::XL430:
+          if (type_used == EType::TOOL)
+              _state_map.insert(make_pair(id, std::make_shared<ToolState>("auto", hardware_type, id)));
+          else
+              _state_map.insert(make_pair(id, std::make_shared<DxlMotorState>(hardware_type, EBusProtocol::TTL, id)));
+        break;
+        default:
+          ROS_WARN("Unknown hardware type: %d", static_cast<int>(hardware_type));
+          break;
+      }
     }
 
     // if not already instanciated
-    if (0 == _ids_map.count(hardware_type))
+    if (!_ids_map.count(hardware_type))
     {
         _ids_map.insert(make_pair(hardware_type, vector<uint8_t>({id})));
     }
@@ -213,12 +222,12 @@ void TtlManager::addHardwareComponent(EHardwareType hardware_type, uint8_t id, E
     }
 
     // if not already instanciated
-    if (0 == _driver_map.count(hardware_type))
+    if (!_driver_map.count(hardware_type))
     {
         switch (hardware_type)
         {
             case EHardwareType::STEPPER:
-                _driver_map.insert(make_pair(hardware_type, std::make_shared<StepperDriver<StepperReg> >(_portHandler, _packetHandler)));
+                _driver_map.insert(make_pair(hardware_type, std::make_shared<StepperDriver<> >(_portHandler, _packetHandler)));
             break;
             case EHardwareType::XL430:
                 _driver_map.insert(make_pair(hardware_type, std::make_shared<DxlDriver<XL430Reg> >(_portHandler, _packetHandler)));
@@ -233,7 +242,7 @@ void TtlManager::addHardwareComponent(EHardwareType hardware_type, uint8_t id, E
                 _driver_map.insert(make_pair(hardware_type, std::make_shared<DxlDriver<XL330Reg> >(_portHandler, _packetHandler)));
             break;
             case EHardwareType::END_EFFECTOR:
-                _driver_map.insert(make_pair(hardware_type, std::make_shared<EndEffectorDriver<EndEffectorReg> >(_portHandler, _packetHandler)));
+                _driver_map.insert(make_pair(hardware_type, std::make_shared<EndEffectorDriver<> >(_portHandler, _packetHandler)));
             break;
             default:
                 ROS_ERROR("TtlManager - Unable to instanciate driver, unknown type");
@@ -611,84 +620,80 @@ void TtlManager::readPositionStatus()
  */
 void TtlManager::readEndEffectorStatus()
 {
-  if (hasMotors())
-  {
-      unsigned int hw_errors_increment = 0;
+  // if has end effector driver
+    if (_driver_map.count(EHardwareType::END_EFFECTOR))
+    {
+        unsigned int hw_errors_increment = 0;
 
-      // syncread from all drivers for all motors
-      for (auto const& it : _driver_map)
-      {
-          EHardwareType type = it.first;
-          shared_ptr<EndEffectorDriver<EndEffectorReg> > driver = std::dynamic_pointer_cast<EndEffectorDriver<EndEffectorReg> >(it.second);
+        shared_ptr<EndEffectorDriver<EndEffectorReg> > driver = std::dynamic_pointer_cast<EndEffectorDriver<EndEffectorReg> >(_driver_map.at(EHardwareType::END_EFFECTOR));
 
-          if (driver && _ids_map.count(type))
-          {
-              // we retrieve all the associated id for the type of the current driver
-              uint8_t id = _ids_map.at(type).front();
-              uint32_t value = 0;
+        if (driver && _ids_map.count(EHardwareType::END_EFFECTOR))
+        {
+            // we retrieve the associated id for the end effector
+            uint8_t id = _ids_map.at(EHardwareType::END_EFFECTOR).front();
+            uint32_t value = 0;
 
-              if (_state_map.count(id))
-              {
-                  auto state = std::dynamic_pointer_cast<EndEffectorState>(_state_map.at(id));
-                  if (state)
-                  {
-                      // free drive button
-                      if (COMM_SUCCESS == driver->readFreeDriveButtonStatus(id, value))
-                      {
-                          EndEffectorState::EActionType action = driver->interpreteActionValue(value);
-                          state->setButtonStatus(common::model::EndEffectorState::EButtonType::FREE_DRIVE_BUTTON, action);
-                      }
-                      else
-                      {
-                          hw_errors_increment++;
-                      }
+            if (_state_map.count(id))
+            {
+                auto state = std::dynamic_pointer_cast<EndEffectorState>(_state_map.at(id));
+                if (state)
+                {
+                    // free drive button
+                    if (COMM_SUCCESS == driver->readButton1Status(id, value))
+                    {
+                        EndEffectorState::EActionType action = driver->interpreteActionValue(value);
+                        state->setButtonStatus(1, action);
+                    }
+                    else
+                    {
+                        hw_errors_increment++;
+                    }
 
-                      // save pos button
-                      if (COMM_SUCCESS == driver->readSaveButtonStatus(id, value))
-                      {
-                          EndEffectorState::EActionType action = driver->interpreteActionValue(value);
-                          state->setButtonStatus(common::model::EndEffectorState::EButtonType::SAVE_POS_BUTTON, action);
-                      }
-                      else
-                      {
-                          hw_errors_increment++;
-                      }
+                    // save pos button
+                    if (COMM_SUCCESS == driver->readButton2Status(id, value))
+                    {
+                        EndEffectorState::EActionType action = driver->interpreteActionValue(value);
+                        state->setButtonStatus(2, action);
+                    }
+                    else
+                    {
+                        hw_errors_increment++;
+                    }
 
-                      // custom button
-                      if (COMM_SUCCESS == driver->readCustomButtonStatus(id, value))
-                      {
-                          EndEffectorState::EActionType action = driver->interpreteActionValue(value);
-                          state->setButtonStatus(common::model::EndEffectorState::EButtonType::CUSTOM_BUTTON, action);
-                      }
-                      else
-                      {
-                          hw_errors_increment++;
-                      }
-                  }
-              }
-          }
-      }  // for driver_map
+                    // custom button
+                    if (COMM_SUCCESS == driver->readButton3Status(id, value))
+                    {
+                        EndEffectorState::EActionType action = driver->interpreteActionValue(value);
+                        state->setButtonStatus(3, action);
+                    }
+                    else
+                    {
+                        hw_errors_increment++;
+                    }
+                }
+            }
+        }  // for driver_map
 
-      // we reset the global error variable only if no errors
-      if (0 == hw_errors_increment)
-          _hw_fail_counter_read = 0;
-      else
-          _hw_fail_counter_read += hw_errors_increment;
+        // we reset the global error variable only if no errors
+        if (0 == hw_errors_increment)
+            _hw_fail_counter_read = 0;
+        else
+            _hw_fail_counter_read += hw_errors_increment;
 
-      if (_hw_fail_counter_read > MAX_HW_FAILURE)
-      {
-          ROS_ERROR_THROTTLE(1, "TtlManager::readPositionStatus - motor connection problem - "
-                                "Failed to read from bus");
-          _hw_fail_counter_read = 0;
-          _is_connection_ok = false;
-          _debug_error_message = "TtlManager - Connection problem with physical Bus.";
-      }
-  }
-  else
-  {
-      ROS_ERROR_THROTTLE(1, "TtlManager::readPositionStatus - No motor");
-      _debug_error_message = "TtlManager::readPositionStatus -  No motor";
-  }
+        if (_hw_fail_counter_read > MAX_HW_FAILURE)
+        {
+            ROS_ERROR_THROTTLE(1, "TtlManager::readPositionStatus - motor connection problem - "
+                                  "Failed to read from bus");
+            _hw_fail_counter_read = 0;
+            _is_connection_ok = false;
+            _debug_error_message = "TtlManager - Connection problem with physical Bus.";
+        }
+    }
+    else
+    {
+        ROS_ERROR_THROTTLE(1, "TtlManager::readPositionStatus - No motor");
+        _debug_error_message = "TtlManager::readPositionStatus -  No motor";
+    }
 }
 
 /**
@@ -1248,13 +1253,9 @@ int TtlManager::writeSingleCommand(std::shared_ptr<common::model::AbstractTtlSin
                 common::model::EHardwareType hardware_type = state->getType();
                 result = COMM_TX_ERROR;
 
-                if (_driver_map.count(hardware_type))
+                if (_driver_map.count(hardware_type) && _driver_map.at(hardware_type))
                 {
-                    auto driver = std::dynamic_pointer_cast<AbstractMotorDriver>(_driver_map.at(hardware_type));
-                    if (driver)
-                    {
-                      result = driver->writeSingleCmd(cmd);
-                    }
+                      result = _driver_map.at(hardware_type)->writeSingleCmd(cmd);
                 }
 
                 counter += 1;

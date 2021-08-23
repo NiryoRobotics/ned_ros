@@ -27,7 +27,10 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "abstract_motor_driver.hpp"
 
 #include "end_effector_reg.hpp"
+#include "common/model/end_effector_command_type_enum.hpp"
 #include "common/model/end_effector_state.hpp"
+
+using ::common::model::EEndEffectorCommandType;
 
 namespace ttl_driver
 {
@@ -35,7 +38,7 @@ namespace ttl_driver
 /**
  * @brief The EndEffectorDriver class
  */
-template<typename reg_type>
+template<typename reg_type = EndEffectorReg>
 class EndEffectorDriver : public AbstractTtlDriver
 {
     public:
@@ -61,18 +64,21 @@ class EndEffectorDriver : public AbstractTtlDriver
         virtual int syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &voltage_list) override;
         virtual int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list) override;
 
+        virtual int writeSingleCmd(std::shared_ptr<common::model::AbstractTtlSingleMotorCmd> &cmd) override;
+        virtual int writeSyncCmd(int type, const std::vector<uint8_t>& ids, const std::vector<uint32_t>& params) override;
+
     public:
-        int setFreeDriveButtonConfiguration(uint8_t id, uint32_t configuration);
-        int setSaveButtonConfiguration(uint8_t id, uint32_t configuration);
-        int setCustomButtonConfiguration(uint8_t id, uint32_t configuration);
+        int setButton1Configuration(uint8_t id, uint32_t configuration);
+        int setButton2Configuration(uint8_t id, uint32_t configuration);
+        int setButton3Configuration(uint8_t id, uint32_t configuration);
 
-        int readFreeDriveButtonConfiguration(uint8_t id, uint32_t& configuration);
-        int readSaveButtonConfiguration(uint8_t id, uint32_t& configuration);
-        int readCustomButtonConfiguration(uint8_t id, uint32_t& configuration);
+        int readButton1Configuration(uint8_t id, uint32_t& configuration);
+        int readButton2Configuration(uint8_t id, uint32_t& configuration);
+        int readButton3Configuration(uint8_t id, uint32_t& configuration);
 
-        int readFreeDriveButtonStatus(uint8_t id, uint32_t& status);
-        int readSaveButtonStatus(uint8_t id, uint32_t& status);
-        int readCustomButtonStatus(uint8_t id, uint32_t& status);
+        int readButton1Status(uint8_t id, uint32_t& status);
+        int readButton2Status(uint8_t id, uint32_t& status);
+        int readButton3Status(uint8_t id, uint32_t& status);
 
         int readAccelerometerXValue(uint8_t id, uint32_t& x_value);
         int readAccelerometerYValue(uint8_t id, uint32_t& y_value);
@@ -98,6 +104,9 @@ EndEffectorDriver<reg_type>::EndEffectorDriver(std::shared_ptr<dynamixel::PortHa
 {
 }
 
+/**
+ * @brief EndEffectorDriver<reg_type>::~EndEffectorDriver
+ */
 template<typename reg_type>
 EndEffectorDriver<reg_type>::~EndEffectorDriver()
 {
@@ -108,18 +117,31 @@ EndEffectorDriver<reg_type>::~EndEffectorDriver()
 // AbstractTtlDriver interface
 //*****************************
 
+/**
+ * @brief EndEffectorDriver<reg_type>::str
+ * @return
+ */
 template<typename reg_type>
 std::string EndEffectorDriver<reg_type>::str() const
 {
     return common::model::HardwareTypeEnum(reg_type::motor_type).toString() + " : " + AbstractTtlDriver::str();
 }
 
+/**
+ * @brief EndEffectorDriver<reg_type>::interpreteErrorState
+ * @return
+ */
 template<typename reg_type>
 std::string EndEffectorDriver<reg_type>::interpreteErrorState(uint32_t /*hw_state*/)
 {
     return "no error table";
 }
 
+/**
+ * @brief EndEffectorDriver<reg_type>::checkModelNumber
+ * @param id
+ * @return
+ */
 template<typename reg_type>
 int EndEffectorDriver<reg_type>::checkModelNumber(uint8_t id)
 {
@@ -137,6 +159,12 @@ int EndEffectorDriver<reg_type>::checkModelNumber(uint8_t id)
     return ping_result;
 }
 
+/**
+ * @brief EndEffectorDriver<reg_type>::readFirmwareVersion
+ * @param id
+ * @param version
+ * @return
+ */
 template<typename reg_type>
 int EndEffectorDriver<reg_type>::readFirmwareVersion(uint8_t id, uint32_t &version)
 {
@@ -145,18 +173,36 @@ int EndEffectorDriver<reg_type>::readFirmwareVersion(uint8_t id, uint32_t &versi
 
 // ram read
 
+/**
+ * @brief EndEffectorDriver<reg_type>::readTemperature
+ * @param id
+ * @param temperature
+ * @return
+ */
 template<typename reg_type>
 int EndEffectorDriver<reg_type>::readTemperature(uint8_t id, uint32_t& temperature)
 {
     return read(reg_type::ADDR_PRESENT_TEMPERATURE, reg_type::SIZE_PRESENT_TEMPERATURE, id, temperature);
 }
 
+/**
+ * @brief EndEffectorDriver<reg_type>::readVoltage
+ * @param id
+ * @param voltage
+ * @return
+ */
 template<typename reg_type>
 int EndEffectorDriver<reg_type>::readVoltage(uint8_t id, uint32_t& voltage)
 {
     return read(reg_type::ADDR_PRESENT_VOLTAGE, reg_type::SIZE_PRESENT_VOLTAGE, id, voltage);
 }
 
+/**
+ * @brief EndEffectorDriver<reg_type>::readHwErrorStatus
+ * @param id
+ * @param hardware_status
+ * @return
+ */
 template<typename reg_type>
 int EndEffectorDriver<reg_type>::readHwErrorStatus(uint8_t id, uint32_t& hardware_status)
 {
@@ -166,18 +212,36 @@ int EndEffectorDriver<reg_type>::readHwErrorStatus(uint8_t id, uint32_t& hardwar
     return COMM_RX_FAIL;
 }
 
+/**
+ * @brief EndEffectorDriver<reg_type>::syncReadTemperature
+ * @param id_list
+ * @param temperature_list
+ * @return
+ */
 template<typename reg_type>
 int EndEffectorDriver<reg_type>::syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &temperature_list)
 {
     return syncRead(reg_type::ADDR_PRESENT_TEMPERATURE, reg_type::SIZE_PRESENT_TEMPERATURE, id_list, temperature_list);
 }
 
+/**
+ * @brief EndEffectorDriver<reg_type>::syncReadVoltage
+ * @param id_list
+ * @param voltage_list
+ * @return
+ */
 template<typename reg_type>
 int EndEffectorDriver<reg_type>::syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &voltage_list)
 {
     return syncRead(reg_type::ADDR_PRESENT_VOLTAGE, reg_type::SIZE_PRESENT_VOLTAGE, id_list, voltage_list);
 }
 
+/**
+ * @brief EndEffectorDriver<reg_type>::syncReadHwErrorStatus
+ * @param id_list
+ * @param hw_error_list
+ * @return
+ */
 template<typename reg_type>
 int EndEffectorDriver<reg_type>::syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list)
 {
@@ -189,90 +253,174 @@ int EndEffectorDriver<reg_type>::syncReadHwErrorStatus(const std::vector<uint8_t
 
 // buttons configuration
 
+/**
+ * @brief EndEffectorDriver<reg_type>::setButton1Configuration
+ * @param id
+ * @param configuration
+ * @return
+ */
 template<typename reg_type>
-int EndEffectorDriver<reg_type>::setFreeDriveButtonConfiguration(uint8_t id, uint32_t configuration)
+int EndEffectorDriver<reg_type>::setButton1Configuration(uint8_t id, uint32_t configuration)
 {
-    return write(reg_type::ADDR_FREE_DRIVE_CONFIG, reg_type::SIZE_FREE_DRIVE_CONFIG, id, configuration);
+    return write(reg_type::ADDR_BUTTON_1_CONFIG, reg_type::SIZE_BUTTON_1_CONFIG, id, configuration);
 }
 
+/**
+ * @brief EndEffectorDriver<reg_type>::setButton2Configuration
+ * @param id
+ * @param configuration
+ * @return
+ */
 template<typename reg_type>
-int EndEffectorDriver<reg_type>::setSaveButtonConfiguration(uint8_t id, uint32_t configuration)
+int EndEffectorDriver<reg_type>::setButton2Configuration(uint8_t id, uint32_t configuration)
 {
-    return write(reg_type::ADDR_SAVE_POSITION_CONFIG, reg_type::SIZE_SAVE_POSITION_CONFIG, id, configuration);
+    return write(reg_type::ADDR_BUTTON_2_CONFIG, reg_type::SIZE_BUTTON_2_CONFIG, id, configuration);
 }
 
+/**
+ * @brief EndEffectorDriver<reg_type>::setButton3Configuration
+ * @param id
+ * @param configuration
+ * @return
+ */
 template<typename reg_type>
-int EndEffectorDriver<reg_type>::setCustomButtonConfiguration(uint8_t id, uint32_t configuration)
+int EndEffectorDriver<reg_type>::setButton3Configuration(uint8_t id, uint32_t configuration)
 {
-    return write(reg_type::ADDR_CUSTOM_BUTTON_CONFIG, reg_type::SIZE_CUSTOM_BUTTON_CONFIG, id, configuration);
+    return write(reg_type::ADDR_BUTTON_3_CONFIG, reg_type::SIZE_BUTTON_3_CONFIG, id, configuration);
 }
 
+/**
+ * @brief EndEffectorDriver<reg_type>::readButton1Configuration
+ * @param id
+ * @param configuration
+ * @return
+ */
 template<typename reg_type>
-int EndEffectorDriver<reg_type>::readFreeDriveButtonConfiguration(uint8_t id, uint32_t& configuration)
+int EndEffectorDriver<reg_type>::readButton1Configuration(uint8_t id, uint32_t& configuration)
 {
-    return read(reg_type::ADDR_FREE_DRIVE_CONFIG, reg_type::SIZE_FREE_DRIVE_CONFIG, id, configuration);
+    return read(reg_type::ADDR_BUTTON_1_CONFIG, reg_type::SIZE_BUTTON_1_CONFIG, id, configuration);
 }
     
+/**
+ * @brief EndEffectorDriver<reg_type>::readButton2Configuration
+ * @param id
+ * @param configuration
+ * @return
+ */
 template<typename reg_type>
-int EndEffectorDriver<reg_type>::readSaveButtonConfiguration(uint8_t id, uint32_t& configuration)
+int EndEffectorDriver<reg_type>::readButton2Configuration(uint8_t id, uint32_t& configuration)
 {
-    return read(reg_type::ADDR_SAVE_POSITION_CONFIG, reg_type::SIZE_SAVE_POSITION_CONFIG, id, configuration);
+    return read(reg_type::ADDR_BUTTON_2_CONFIG, reg_type::SIZE_BUTTON_2_CONFIG, id, configuration);
 }
 
+/**
+ * @brief EndEffectorDriver<reg_type>::readButton3Configuration
+ * @param id
+ * @param configuration
+ * @return
+ */
 template<typename reg_type>
-int EndEffectorDriver<reg_type>::readCustomButtonConfiguration(uint8_t id, uint32_t& configuration)
+int EndEffectorDriver<reg_type>::readButton3Configuration(uint8_t id, uint32_t& configuration)
 {
-    return read(reg_type::ADDR_CUSTOM_BUTTON_CONFIG, reg_type::SIZE_CUSTOM_BUTTON_CONFIG, id, configuration);
+    return read(reg_type::ADDR_BUTTON_3_CONFIG, reg_type::SIZE_BUTTON_3_CONFIG, id, configuration);
 }
 
 // buttons status
 
+/**
+ * @brief EndEffectorDriver<reg_type>::readButton1Status
+ * @param id
+ * @param status
+ * @return
+ */
 template<typename reg_type>
-int EndEffectorDriver<reg_type>::readFreeDriveButtonStatus(uint8_t id, uint32_t& status)
+int EndEffectorDriver<reg_type>::readButton1Status(uint8_t id, uint32_t& status)
 {
-    return read(reg_type::ADDR_FREE_DRIVE_STATUS, reg_type::SIZE_FREE_DRIVE_STATUS, id, status);
+    return read(reg_type::ADDR_BUTTON_1_STATUS, reg_type::SIZE_BUTTON_1_STATUS, id, status);
 }
 
+/**
+ * @brief EndEffectorDriver<reg_type>::readButton2Status
+ * @param id
+ * @param status
+ * @return
+ */
 template<typename reg_type>
-int EndEffectorDriver<reg_type>::readSaveButtonStatus(uint8_t id, uint32_t& status)
+int EndEffectorDriver<reg_type>::readButton2Status(uint8_t id, uint32_t& status)
 {
-    return read(reg_type::ADDR_SAVE_POSITION_STATUS, reg_type::SIZE_SAVE_POSITION_STATUS, id, status);
+    return read(reg_type::ADDR_BUTTON_2_STATUS, reg_type::SIZE_BUTTON_2_STATUS, id, status);
 }
 
+/**
+ * @brief EndEffectorDriver<reg_type>::readButton3Status
+ * @param id
+ * @param status
+ * @return
+ */
 template<typename reg_type>
-int EndEffectorDriver<reg_type>::readCustomButtonStatus(uint8_t id, uint32_t& status)
+int EndEffectorDriver<reg_type>::readButton3Status(uint8_t id, uint32_t& status)
 {
-    return read(reg_type::ADDR_CUSTOM_BUTTON_STATUS, reg_type::SIZE_CUSTOM_BUTTON_STATUS, id, status);
+    return read(reg_type::ADDR_BUTTON_3_STATUS, reg_type::SIZE_BUTTON_3_STATUS, id, status);
 }
 
 // accelerometers and collision
 
+/**
+ * @brief EndEffectorDriver<reg_type>::readAccelerometerXValue
+ * @param id
+ * @param x_value
+ * @return
+ */
 template<typename reg_type>
 int EndEffectorDriver<reg_type>::readAccelerometerXValue(uint8_t id, uint32_t& x_value)
 {
     return read(reg_type::ADDR_ACCELERO_VALUE_X, reg_type::SIZE_ACCELERO_VALUE_X, id, x_value);
 }
 
+/**
+ * @brief EndEffectorDriver<reg_type>::readAccelerometerYValue
+ * @param id
+ * @param y_value
+ * @return
+ */
 template<typename reg_type>
 int EndEffectorDriver<reg_type>::readAccelerometerYValue(uint8_t id, uint32_t& y_value)
 {
     return read(reg_type::ADDR_ACCELERO_VALUE_Y, reg_type::SIZE_ACCELERO_VALUE_Y, id, y_value);
 }
 
+/**
+ * @brief EndEffectorDriver<reg_type>::readAccelerometerZValue
+ * @param id
+ * @param z_value
+ * @return
+ */
 template<typename reg_type>
 int EndEffectorDriver<reg_type>::readAccelerometerZValue(uint8_t id, uint32_t& z_value)
 {
     return read(reg_type::ADDR_ACCELERO_VALUE_Z, reg_type::SIZE_ACCELERO_VALUE_Z, id, z_value);
 }
 
+/**
+ * @brief EndEffectorDriver<reg_type>::readCollisionStatus
+ * @param id
+ * @param status
+ * @return
+ */
 template<typename reg_type>
 int EndEffectorDriver<reg_type>::readCollisionStatus(uint8_t id, bool& status)
 {
     status = false;
-    ROS_INFO("EndEffectorDriver<reg_type>::readCollisionStatus: need to be implemented!");
+    std::cout << "EndEffectorDriver<reg_type>::readCollisionStatus: need to be implemented!" << std::endl;
     return 0;
 }
 
+/**
+ * @brief EndEffectorDriver<reg_type>::readDigitalInput
+ * @param id
+ * @param in
+ * @return
+ */
 template<typename reg_type>
 int EndEffectorDriver<reg_type>::readDigitalInput(uint8_t id, bool& in)
 {
@@ -282,12 +430,23 @@ int EndEffectorDriver<reg_type>::readDigitalInput(uint8_t id, bool& in)
     return res;
 }
 
+/**
+ * @brief EndEffectorDriver<reg_type>::setDigitalOutput
+ * @param id
+ * @param out
+ * @return
+ */
 template<typename reg_type>
 int EndEffectorDriver<reg_type>::setDigitalOutput(uint8_t id, bool out)
 {
     return read(reg_type::ADDR_DIGITAL_OUT, reg_type::SIZE_DIGITAL_OUT, id, (out > 0) ? 1 : 0);
 }
 
+/**
+ * @brief EndEffectorDriver<reg_type>::interpreteActionValue
+ * @param value
+ * @return
+ */
 template<typename reg_type>
 common::model::EndEffectorState::EActionType
 EndEffectorDriver<reg_type>::interpreteActionValue(uint32_t value)
@@ -312,6 +471,44 @@ EndEffectorDriver<reg_type>::interpreteActionValue(uint32_t value)
   }
 
   return action;
+}
+
+/**
+ * @brief EndEffectorDriver<reg_type>::writeSingleCmd
+ * @param cmd
+ * @return
+ */
+template<typename reg_type>
+int EndEffectorDriver<reg_type>::writeSingleCmd(std::shared_ptr<common::model::AbstractTtlSingleMotorCmd> &cmd)
+{
+  if (cmd && cmd->isValid())
+  {
+      switch (EEndEffectorCommandType(cmd->getCmdType()))
+      {
+      case EEndEffectorCommandType::CMD_TYPE_BUTTON_1_CONFIG:
+          return setButton1Configuration(cmd->getId(), cmd->getParam());
+      case EEndEffectorCommandType::CMD_TYPE_BUTTON_2_CONFIG:
+          return setButton2Configuration(cmd->getId(), cmd->getParam());
+      case EEndEffectorCommandType::CMD_TYPE_BUTTON_3_CONFIG:
+          return setButton3Configuration(cmd->getId(), cmd->getParam());
+      default:
+          std::cout << "Command not implemented" << std::endl;
+      }
+  }
+
+  return 0;
+}
+
+/**
+ * @brief EndEffectorDriver<reg_type>::writeSyncCmd
+ * @return
+ */
+template<typename reg_type>
+int EndEffectorDriver<reg_type>::writeSyncCmd(int /*type*/, const std::vector<uint8_t>& /*ids*/, const std::vector<uint32_t>& /*params*/)
+{
+  std::cout << "Synchronized cmd not implemented for end effector" << std::endl;
+
+  return 0;
 }
 
 

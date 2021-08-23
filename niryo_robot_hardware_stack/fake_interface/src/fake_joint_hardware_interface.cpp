@@ -36,8 +36,8 @@ FakeJointHardwareInterface::FakeJointHardwareInterface(ros::NodeHandle& nh)
 
     for (int i = 0; i < 6; i++)
     {
-        nh.getParam("joint_" + std::to_string(i + 1) + "_id", _joints_id[i]);
-        nh.getParam("joint_" + std::to_string(i + 1) + "_name", _joints_name[i]);
+        nh.getParam("joint_" + std::to_string(i + 1) + "/id", _joints_id[i]);
+        nh.getParam("joint_" + std::to_string(i + 1) + "/name", _joints_name[i]);
     }
 
     ROS_INFO("Fake Joint Interface - Joints' Name : (1 : %s, 2 : %s, 3 : %s)",

@@ -36,9 +36,6 @@ EndEffectorState::EndEffectorState() :
 EndEffectorState::EndEffectorState(uint8_t id) :
   AbstractHardwareState(EHardwareType::END_EFFECTOR, EBusProtocol::TTL, id)
 {
-  _buttons.insert(std::make_pair(EButtonType::FREE_DRIVE_BUTTON, Button{"Free Driver Button", EActionType::NO_ACTION}));
-  _buttons.insert(std::make_pair(EButtonType::SAVE_POS_BUTTON, Button{"Save Position Button", EActionType::NO_ACTION}));
-  _buttons.insert(std::make_pair(EButtonType::CUSTOM_BUTTON, Button{"Custom Button", EActionType::NO_ACTION}));
 }
 
 /**
@@ -72,46 +69,66 @@ std::string EndEffectorState::str() const
  * @return
  */
 bool common::model::EndEffectorState::isValid() const
+  {
+  return (0 != getId()
+      && EHardwareType::END_EFFECTOR == getType()
+      && _buttons_list.size() == 3);
+}
+
+/**
+ * @brief EndEffectorState::setButtonConfig
+ * @param id
+ * @param button
+ * @param config
+ */
+void EndEffectorState::setButtonConfig(uint8_t id, EButtonType button, uint32_t config)
 {
-    return (0 != getId() && EHardwareType::END_EFFECTOR == getType() && _buttons.size() == 3);
+  assert(id <= 3);
+
+  _buttons_list[id - 1].type = button;
+  _buttons_list[id - 1].config = config;
 }
 
 /**
  * @brief EndEffectorState::setButtonStatus
- * @param button
+ * @param id
  * @param action
  */
-void EndEffectorState::setButtonStatus(EButtonType button, EActionType action)
+void EndEffectorState::setButtonStatus(uint8_t id, EndEffectorState::EActionType action)
 {
-    _buttons.at(button).action = action;
+  assert(id <= 3);
+
+  _buttons_list[id - 1].action = action;
 }
 
 /**
  * @brief EndEffectorState::setAccelerometerXValue
- * @param accelerometer_x_value
+ * @param xValue
  */
-void EndEffectorState::setAccelerometerXValue(const uint32_t &accelerometer_x_value)
+void EndEffectorState::setAccelerometerXValue(const uint32_t& xValue)
 {
-  _accelerometer_x_value = accelerometer_x_value;
+    _accelerometer_values.x = xValue;
 }
 
 /**
  * @brief EndEffectorState::setAccelerometerYValue
- * @param accelerometer_y_value
+ * @param yValue
  */
-void EndEffectorState::setAccelerometerYValue(const uint32_t &accelerometer_y_value)
+void EndEffectorState::setAccelerometerYValue(const uint32_t& yValue)
 {
-  _accelerometer_y_value = accelerometer_y_value;
+  _accelerometer_values.y = yValue;
 }
 
 /**
  * @brief EndEffectorState::setAccelerometerZValue
- * @param accelerometer_z_value
+ * @param zValue
  */
-void EndEffectorState::setAccelerometerZValue(const uint32_t &accelerometer_z_value)
+void EndEffectorState::setAccelerometerZValue(const uint32_t &zValue)
 {
-  _accelerometer_z_value = accelerometer_z_value;
+  _accelerometer_values.z = zValue;
 }
+
+// ***************** set collision status ******************* //
 
 /**
  * @brief EndEffectorState::setCollisionStatus

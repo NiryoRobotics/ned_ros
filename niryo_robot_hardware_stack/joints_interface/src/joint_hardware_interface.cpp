@@ -133,10 +133,10 @@ bool JointHardwareInterface::init(ros::NodeHandle& rootnh, ros::NodeHandle &robo
     size_t nb_joints = 0;
 
     // retrieve nb joints with checking that the config param exists for both name and id
-    while (robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "_id") &&
-          robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "_name") &&
-          robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "_type") &&
-          robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "_bus"))
+    while (robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "/id") &&
+          robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "/name") &&
+          robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "/type") &&
+          robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "/bus"))
         nb_joints++;
 
     // connect and register joint state interface
@@ -154,10 +154,10 @@ bool JointHardwareInterface::init(ros::NodeHandle& rootnh, ros::NodeHandle &robo
         string joint_type = "";
         string joint_bus = "";
 
-        robot_hwnh.getParam("joint_" + to_string(j + 1) + "_id", joint_id_config);
-        robot_hwnh.getParam("joint_" + to_string(j + 1) + "_name", joint_name);
-        robot_hwnh.getParam("joint_" + to_string(j + 1) + "_type", joint_type);
-        robot_hwnh.getParam("joint_" + to_string(j + 1) + "_bus", joint_bus);
+        robot_hwnh.getParam("joint_" + to_string(j + 1) + "/id", joint_id_config);
+        robot_hwnh.getParam("joint_" + to_string(j + 1) + "/name", joint_name);
+        robot_hwnh.getParam("joint_" + to_string(j + 1) + "/type", joint_type);
+        robot_hwnh.getParam("joint_" + to_string(j + 1) + "/bus", joint_bus);
         HardwareTypeEnum eType = HardwareTypeEnum(joint_type.c_str());
         BusProtocolEnum eBusProto = BusProtocolEnum(joint_bus.c_str());
 

@@ -263,7 +263,8 @@ bool ToolsInterfaceCore::_callbackPingAndSetDxlTool(tools_interface::PingDxlTool
         for (int tries = 0; tries < 3; tries++)
         {
             ros::Duration(0.05).sleep();
-            int result = _ttl_interface->setTool(_toolState.getType(), _toolState.getId());
+            int result = _ttl_interface->setTool(_toolState.getType(),
+                                                 _toolState.getId());
 
             // on success, tool is set, we go out of loop
             if (niryo_robot_msgs::CommandStatus::SUCCESS == result)
@@ -273,10 +274,6 @@ bool ToolsInterfaceCore::_callbackPingAndSetDxlTool(tools_interface::PingDxlTool
                 res.id = _toolState.getId();
 
                 ros::Duration(0.05).sleep();
-
-                // cc put it in setTool ? only used here
-                _ttl_interface->update_leds();
-
                 ROS_INFO("ToolsInterfaceCore::_callbackPingAndSetDxlTool - Set end effector success");
 
                 break;
@@ -284,7 +281,7 @@ bool ToolsInterfaceCore::_callbackPingAndSetDxlTool(tools_interface::PingDxlTool
             else
             {
                 ROS_WARN("ToolsInterfaceCore::_callbackPingAndSetDxlTool - "
-                         "Set end effector failure, return : %d. Retrying (%d)...",
+                         "Set tool failure, return : %d. Retrying (%d)...",
                          result, tries);
             }
         }

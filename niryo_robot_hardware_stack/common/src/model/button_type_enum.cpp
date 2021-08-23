@@ -1,5 +1,5 @@
 /*
-    but_protocol_enum.cpp
+    button_type_enum.cpp
     Copyright (C) 2020 Niryo
     All rights reserved.
 
@@ -17,7 +17,7 @@
     along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
-#include "common/model/bus_protocol_enum.hpp"
+#include "common/model/button_type_enum.hpp"
 #include <map>
 #include <string>
 
@@ -27,33 +27,34 @@ namespace model
 {
 
 /**
- * @brief BusProtocolEnum::BusProtocolEnum
+ * @brief ButtonTypeEnum::ButtonTypeEnum
  * @param e
  */
-BusProtocolEnum::BusProtocolEnum(EBusProtocol e):
-    AbstractEnum<BusProtocolEnum, EBusProtocol>(e)
+ButtonTypeEnum::ButtonTypeEnum(EButtonType e):
+    AbstractEnum<ButtonTypeEnum, EButtonType>(e)
 {}
 
 /**
- * @brief BusProtocolEnum::BusProtocolEnum
+ * @brief ButtonTypeEnum::ButtonTypeEnum
  * @param str
  */
-BusProtocolEnum::BusProtocolEnum(const char* const str):
-    AbstractEnum<BusProtocolEnum, EBusProtocol>(str)
+ButtonTypeEnum::ButtonTypeEnum(const char* const str):
+    AbstractEnum<ButtonTypeEnum, EButtonType>(str)
 {}
 
 /**
- * @brief BusProtocolEnum::initialize
+ * @brief ButtonTypeEnum::initialize
  * @return
  */
-std::map<EBusProtocol, std::string>
-BusProtocolEnum::initialize()
+std::map<EButtonType, std::string>
+ButtonTypeEnum::initialize()
 {
-    std::map<EBusProtocol, std::string> m;
+    std::map<EButtonType, std::string> m;
 
-    m[EBusProtocol::TTL]    = "ttl";
-    m[EBusProtocol::CAN]    = "can";
-    m[EBusProtocol::UNKNOWN]  = "unknown";
+    m[EButtonType::FREE_DRIVE_BUTTON]       = "free_drive";
+    m[EButtonType::SAVE_POSITION_BUTTON]    = "save_position";
+    m[EButtonType::CUSTOM_BUTTON]           = "custom";
+    m[EButtonType::UNKNOWN]                 = "unknown";
 
     return m;
 }
