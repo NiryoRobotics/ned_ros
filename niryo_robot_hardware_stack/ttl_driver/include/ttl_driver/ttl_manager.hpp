@@ -94,8 +94,8 @@ class TtlManager : public common::model::IBusManager
                                   uint8_t id, EType type_used);
         int changeId(common::model::EHardwareType motor_type, uint8_t old_id, uint8_t new_id);
 
-        int writeSynchronizeCommand(std::shared_ptr<common::model::AbstractTtlSynchronizeMotorCmd >& cmd);
-        int writeSingleCommand(std::shared_ptr<common::model::AbstractTtlSingleMotorCmd >& cmd);
+        int writeSynchronizeCommand(const std::shared_ptr<common::model::AbstractTtlSynchronizeMotorCmd >& cmd);
+        int writeSingleCommand(const std::shared_ptr<common::model::AbstractTtlSingleMotorCmd >& cmd);
 
         void executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, uint32_t> > cmd_vec);
 

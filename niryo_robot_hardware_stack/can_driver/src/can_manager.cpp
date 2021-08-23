@@ -280,7 +280,7 @@ int CanManager::readSingleCommand(std::shared_ptr<common::model::AbstractCanSing
     int result = CAN_INVALID_CMD;
     ROS_DEBUG("CanManager::readCommand - Received stepper cmd %s", cmd->str().c_str());
 
-    if (cmd->isValid())  // certifies that params is not empty
+    if (cmd->isValid() && _state_map.count(cmd->getId()) > 0)  // certifies that params is not empty
     {
         switch (EStepperCommandType(cmd->getCmdType()))
         {

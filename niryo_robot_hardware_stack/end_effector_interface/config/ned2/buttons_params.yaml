@@ -1,11 +1,11 @@
 button_1:
     type: "free_drive"
-    name: "Free Drive"
+    config: 0
 
 button_2:
     type: "save_position"
-    name: "Save Position"
+    config: 0
 
 button_3:
     type: "custom"
-    name: "Custom Action"
+    config: 0

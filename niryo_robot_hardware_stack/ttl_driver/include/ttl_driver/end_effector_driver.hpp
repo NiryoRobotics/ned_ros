@@ -64,7 +64,7 @@ class EndEffectorDriver : public AbstractTtlDriver
         virtual int syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &voltage_list) override;
         virtual int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list) override;
 
-        virtual int writeSingleCmd(std::shared_ptr<common::model::AbstractTtlSingleMotorCmd> &cmd) override;
+        virtual int writeSingleCmd(const std::shared_ptr<common::model::AbstractTtlSingleMotorCmd> &cmd) override;
         virtual int writeSyncCmd(int type, const std::vector<uint8_t>& ids, const std::vector<uint32_t>& params) override;
 
     public:
@@ -479,7 +479,7 @@ EndEffectorDriver<reg_type>::interpreteActionValue(uint32_t value)
  * @return
  */
 template<typename reg_type>
-int EndEffectorDriver<reg_type>::writeSingleCmd(std::shared_ptr<common::model::AbstractTtlSingleMotorCmd> &cmd)
+int EndEffectorDriver<reg_type>::writeSingleCmd(const std::shared_ptr<common::model::AbstractTtlSingleMotorCmd> &cmd)
 {
   if (cmd && cmd->isValid())
   {

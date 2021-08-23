@@ -307,7 +307,7 @@ bool ToolsInterfaceCore::_callbackPingAndSetDxlTool(tools_interface::PingDxlTool
         res.id = 0;
     }
 
-    return (ToolState::TOOL_STATE_PING_OK == res.state);
+    return true;
 }
 
 /**
@@ -331,7 +331,7 @@ bool ToolsInterfaceCore::_callbackToolReboot(std_srvs::Trigger::Request &/*req*/
         res.message = "No Tool";
     }
 
-    return res.success;
+    return true;
 }
 
 /**
@@ -377,7 +377,7 @@ bool ToolsInterfaceCore::_callbackOpenGripper(tools_interface::OpenGripper::Requ
         ROS_DEBUG("Opened !");
     }
 
-    return (ToolState::GRIPPER_STATE_OPEN == res.state);
+    return true;
 }
 
 /**
@@ -427,7 +427,7 @@ bool ToolsInterfaceCore::_callbackCloseGripper(tools_interface::CloseGripper::Re
         ROS_DEBUG("Closed !");
     }
 
-    return (ToolState::GRIPPER_STATE_CLOSE == res.state);
+    return true;
 }
 
 /**
@@ -484,7 +484,7 @@ bool ToolsInterfaceCore::_callbackPullAirVacuumPump(tools_interface::PullAirVacu
         res.state = ToolState::VACUUM_PUMP_STATE_PULLED;
     }
 
-    return (ToolState::VACUUM_PUMP_STATE_PULLED == res.state);
+    return true;
 }
 
 /**
@@ -539,7 +539,7 @@ bool ToolsInterfaceCore:: _callbackPushAirVacuumPump(tools_interface::PushAirVac
         res.state = ToolState::VACUUM_PUMP_STATE_PUSHED;
     }
 
-    return (ToolState::VACUUM_PUMP_STATE_PUSHED == res.state);
+    return true;
 }
 
 /**

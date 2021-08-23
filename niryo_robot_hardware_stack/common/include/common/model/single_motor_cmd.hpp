@@ -238,6 +238,50 @@ bool DxlSingleCmd::isValid() const
 }
 
 //********************************
+// specializations for steppers in TTL
+//********************************
+
+/**
+ * @brief SingleMotorCmd<EDxlCommandType, uint32_t>::str
+ * @return
+ */
+template<>
+inline
+std::string SingleMotorCmd<EStepperCommandType, uint32_t>::str() const
+{
+    std::ostringstream ss;
+    ss << "Stepper motor cmd - ";
+
+    ss << StepperCommandTypeEnum(_type).toString() << " ";
+
+    ss << "Motor id: ";
+        ss << std::to_string(_id) << " ";
+
+    if(!_param_list.empty())
+    {
+        ss << "; param: ";
+        ss << std::to_string(getParam());
+    }
+
+    return ss.str();
+}
+
+/**
+ * @brief SingleMotorCmd<EDxlCommandType, uint32_t>::isValid
+ * @return
+ */
+template<>
+inline
+bool SingleMotorCmd<EStepperCommandType, uint32_t>::isValid() const
+{
+    if ((EStepperCommandType::CMD_TYPE_NONE == getType()) ||
+       (EStepperCommandType::CMD_TYPE_UNKNOWN == getType()) ||
+       (getId() == 0) ||
+       (_param_list.empty()))
+            return false;
+    return true;
+}
+//********************************
 // specializations for steppers
 //********************************
 

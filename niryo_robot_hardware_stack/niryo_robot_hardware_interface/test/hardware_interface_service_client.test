@@ -4,6 +4,8 @@
 
     <include file="$(find niryo_robot_hardware_interface)/launch/niryo_robot_hardware_interface.launch" >
         <arg name="simulation_mode" value="false" />
+        <arg name="can_enabled" default="true"/>
+        <arg name="ttl_enabled" default="true"/>
     </include>
     
     <test test-name="niryo_robot_hardware_interface_integration_tests" pkg="niryo_robot_hardware_interface" type="niryo_robot_hardware_interface_integration_tests"  /> 

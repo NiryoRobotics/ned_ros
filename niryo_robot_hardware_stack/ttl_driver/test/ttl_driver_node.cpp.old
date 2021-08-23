@@ -42,9 +42,9 @@ class TtlDriverTest
         {
             ros::NodeHandle nodeHandle("~");
 
-            states.emplace_back(common::model::DxlMotorState(common::model::EMotorType::XL430, 2));
-            states.emplace_back(common::model::DxlMotorState(common::model::EMotorType::XL430, 3));
-            states.emplace_back(common::model::DxlMotorState(common::model::EMotorType::XL320, 6));
+            states.emplace_back(common::model::DxlMotorState(common::model::EHardwareType::XL430, 2));
+            states.emplace_back(common::model::DxlMotorState(common::model::EHardwareType::XL430, 3));
+            states.emplace_back(common::model::DxlMotorState(common::model::EHardwareType::XL320, 6));
 
             _ttl_interface.reset(new TtlDriver::TtlDriverCore());
 

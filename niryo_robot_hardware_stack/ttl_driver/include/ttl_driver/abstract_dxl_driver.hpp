@@ -42,7 +42,7 @@ class AbstractDxlDriver : public AbstractMotorDriver
         // AbstractMotorDriver interface
         virtual std::string str() const override;
 
-        virtual int writeSingleCmd(std::shared_ptr<common::model::AbstractTtlSingleMotorCmd> &cmd) override;
+        virtual int writeSingleCmd(const std::shared_ptr<common::model::AbstractTtlSingleMotorCmd> &cmd) override;
         virtual int writeSyncCmd(int type, const std::vector<uint8_t> &ids, const std::vector<uint32_t> &params) override;
 
     public:

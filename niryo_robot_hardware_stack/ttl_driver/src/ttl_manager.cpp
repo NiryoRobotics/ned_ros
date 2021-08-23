@@ -1159,7 +1159,7 @@ void TtlManager::executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, uint32
  * @param cmd
  * @return
  */
-int TtlManager::writeSynchronizeCommand(std::shared_ptr<common::model::AbstractTtlSynchronizeMotorCmd>& cmd)
+int TtlManager::writeSynchronizeCommand(const std::shared_ptr<common::model::AbstractTtlSynchronizeMotorCmd>& cmd)
 {
     int result = COMM_TX_ERROR;
     ROS_DEBUG_THROTTLE(0.5, "TtlManager::writeSynchronizeCommand:  %s", cmd->str().c_str());
@@ -1232,7 +1232,7 @@ int TtlManager::writeSynchronizeCommand(std::shared_ptr<common::model::AbstractT
  * @param cmd
  * @return
  */
-int TtlManager::writeSingleCommand(std::shared_ptr<common::model::AbstractTtlSingleMotorCmd >& cmd)
+int TtlManager::writeSingleCommand(const std::shared_ptr<common::model::AbstractTtlSingleMotorCmd >& cmd)
 {
     int result = COMM_TX_ERROR;
 

@@ -276,7 +276,10 @@ int TtlInterfaceCore::motorCmdReport(uint8_t motor_id, EHardwareType motor_type)
         ros::Duration(0.5).sleep();
         ROS_INFO("TtlInterfaceCore::motorCmdReport - Debug - Send torque on command to motor %d", motor_id);
         if (motor_type != EHardwareType::STEPPER)
+        {
+            ret = niryo_robot_msgs::CommandStatus::SUCCESS;
             ROS_INFO("TtlInterfaceCore::motorCmdReport: Implement in case we have stepper");
+        }
         else
         {
             std::shared_ptr<AbstractTtlSingleMotorCmd> cmd_torque = std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_TORQUE,

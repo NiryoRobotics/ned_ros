@@ -51,6 +51,9 @@ public:
     // we use those commands in the children classes to actually read and write values in registers
     int read(uint8_t address, uint8_t data_len, uint8_t id, uint32_t& data);
     int write(uint8_t address, uint8_t data_len, uint8_t id, uint32_t data);
+    
+    virtual int writeSingleCmd(const std::shared_ptr<common::model::AbstractTtlSingleMotorCmd >& cmd) = 0;
+    virtual int writeSyncCmd(int type, const std::vector<uint8_t>& ids, const std::vector<uint32_t>& params) = 0;
 
 public:
     virtual std::string str() const;
@@ -72,9 +75,6 @@ public:
     virtual int syncReadTemperature(const std::vector<uint8_t>& id_list, std::vector<uint32_t>& temperature_list) = 0;
     virtual int syncReadVoltage(const std::vector<uint8_t>& id_list, std::vector<uint32_t>& voltage_list) = 0;
     virtual int syncReadHwErrorStatus(const std::vector<uint8_t>& id_list, std::vector<uint32_t>& hw_error_list) = 0;
-
-    virtual int writeSingleCmd(std::shared_ptr<common::model::AbstractTtlSingleMotorCmd >& cmd) = 0;
-    virtual int writeSyncCmd(int type, const std::vector<uint8_t>& ids, const std::vector<uint32_t>& params) = 0;
 
 protected:
     int syncRead(uint8_t address, uint8_t data_len, const std::vector<uint8_t>& id_list, std::vector<uint32_t>& data_list);

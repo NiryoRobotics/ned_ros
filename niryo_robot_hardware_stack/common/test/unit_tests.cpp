@@ -17,6 +17,7 @@
 // Bring in my package's API, which is what I'm testing
 #include "common/model/dxl_motor_state.hpp"
 #include "common/model/stepper_motor_state.hpp"
+#include "common/model/single_motor_cmd.hpp"
 
 #include <tuple>
 #include <string>
@@ -176,6 +177,79 @@ INSTANTIATE_TEST_CASE_P(IdentityMotorTests,
                             testing::Range(-2.0, 2.0, 0.6),
                             testing::Range(0, 4000, 600)));
 
+/**
+ * @param rad
+ * @param gear_ratio
+ * @param direction
+*/
+class StepperIdentityRadTest : public testing::TestWithParam<std::tuple<double, double, int> >
+{
+    protected:
+        void SetUp() override
+        {
+            stepperState = common::model::StepperMotorState(common::model::EBusProtocol::CAN, 1);
+            stepperState.setGearRatio(std::get<1>(GetParam()));
+            stepperState.setDirection(std::get<2>(GetParam()));
+
+            ASSERT_TRUE(stepperState.isValid());
+            ASSERT_FALSE(stepperState.isConveyor());
+            ASSERT_FALSE(stepperState.isDynamixel());
+        }
+
+        common::model::StepperMotorState stepperState;
+        double precision = 0.0001;
+};
+
+TEST_P(StepperIdentityRadTest, identityFromRad)
+{
+    double pos_rad = std::get<0>(GetParam());
+    EXPECT_NEAR(stepperState.to_rad_pos(stepperState.to_motor_pos(pos_rad)),
+                pos_rad, precision) << "to_rad_pos o to_motor_pos is not identity";
+}
+
+INSTANTIATE_TEST_CASE_P(IdentityRadTest,
+                        StepperIdentityRadTest,
+                        testing::Combine(
+                            testing::Range(-M_PI, M_PI, M_PI/4),
+                            testing::Range(5.0, 500.0, 50.0),
+                            testing::Values(-1, 1)));
+/**
+ * @param pos
+ * @param gear_ratio
+ * @param direction
+*/
+class StepperIdentityMotorTest : public testing::TestWithParam<std::tuple<int, double, int> >
+{
+    protected:
+        void SetUp() override
+        {
+            stepperState = common::model::StepperMotorState(common::model::EBusProtocol::CAN, 1);
+            stepperState.setGearRatio(std::get<1>(GetParam()));
+            stepperState.setDirection(std::get<2>(GetParam()));
+
+            ASSERT_TRUE(stepperState.isValid());
+            ASSERT_FALSE(stepperState.isConveyor());
+            ASSERT_FALSE(stepperState.isDynamixel());
+        }
+
+        common::model::StepperMotorState stepperState;
+        double precision = 0.0001;
+};
+
+TEST_P(StepperIdentityMotorTest, identityFromRad)
+{
+    int pos = std::get<0>(GetParam());
+    EXPECT_NEAR(stepperState.to_motor_pos(stepperState.to_rad_pos(pos)),
+                pos, precision) << "to_motor_pos o to_rad_pos is not identity";
+}
+
+INSTANTIATE_TEST_CASE_P(IdentityMotorTest,
+                        StepperIdentityMotorTest,
+                        testing::Combine(
+                            testing::Range(0, 2000, 500),
+                            testing::Range(5.0, 500.0, 50.0),
+                            testing::Values(-1, 1)));
+
 // Global Tests
 TEST(CommonTestSuite, testDefaultInvalid)
 {
@@ -186,44 +260,58 @@ TEST(CommonTestSuite, testDefaultInvalid)
     EXPECT_FALSE(stepperState.isValid());
 }
 
-// Stepper Tests
-TEST(CommonTestSuite, testStepper)
+TEST(CommonTestSuite, testCreationDxlCmd)
 {
-    common::model::StepperMotorState stepperState = common::model::StepperMotorState(common::model::EBusProtocol::CAN, 1);
-    stepperState.setGearRatio(800.0);
-    stepperState.setDirection(-1);
-    std::string type_str = common::model::HardwareTypeEnum(stepperState.getType()).toString();
-    ASSERT_TRUE(stepperState.isValid());
+    // DxlSingleCmd valid param
+    common::model::DxlSingleCmd cmd;
+    ASSERT_FALSE(cmd.isValid());
 
-    // check to_rad_pos extreme values
-    /*EXPECT_EQ(stepperState.to_rad_pos(0), stepperState.getOffsetPosition())
-     * << "to_motor_pos failed for motor" << stepperState.str().c_str();
-    EXPECT_EQ(stepperState.to_rad_pos(stepperState.getTotalRangePosition()),
-        stepperState.getTotalAngle()) << "to_motor_pos failed for motor"
-        << stepperState.str().c_str();
+    common::model::DxlSingleCmd dxlCmd(common::model::EDxlCommandType::CMD_TYPE_POSITION, 1, std::initializer_list<uint32_t>{5});
+    ASSERT_TRUE(dxlCmd.isValid());
+    ASSERT_TRUE(dxlCmd.isDxlCmd());
 
-    // check to_motor_pos extreme values
-    EXPECT_EQ(stepperState.to_motor_pos(stepperState.getOffsetPosition()),
-              stepperState.getTotalRangePosition())
-              << "to_motor_pos failed for motor"
-              << stepperState.str().c_str();
+    ASSERT_EQ(dxlCmd.getParam(), static_cast<uint8_t>(5));
+    ASSERT_EQ(dxlCmd.getId(), static_cast<uint8_t>(1));
 
-    EXPECT_EQ(stepperState.to_motor_pos(stepperState.getTotalAngle()),
-              static_cast<int>(dxlState.getTotalRangePosition()))
-              << "to_motor_pos failed";
-*/
-    // check combinations is identity
-    double test_rad = M_PI/3;
-    int test_pos = 300;
-    double precision = 0.0001;
-    EXPECT_NEAR(stepperState.to_rad_pos(stepperState.to_motor_pos(test_rad)), test_rad, precision)
-        << "to_rad_pos o to_motor_pos is not identity for motor ";
-
-    EXPECT_EQ(stepperState.to_motor_pos(stepperState.to_rad_pos(test_pos)), test_pos)
-                    << "to_motor_pos o to_rad_pos is not identity for motor ";
+    dxlCmd.reset();
+    ASSERT_FALSE(dxlCmd.isValid());
+    ASSERT_NE(dxlCmd.getId(), static_cast<uint8_t>(1));
+    ASSERT_EQ(dxlCmd.getParam(), static_cast<uint8_t>(5));
 }
 
+TEST(CommonTestSuite, testCreationStepperTtlCmd)
+{
+    // DxlSingleCmd valid param
+    common::model::StepperTtlSingleCmd cmd(common::model::EStepperCommandType::CMD_TYPE_POSITION, 1, std::initializer_list<uint32_t>{5});
+    ASSERT_TRUE(cmd.isValid());
+    ASSERT_TRUE(cmd.isStepperCmd());
+
+    ASSERT_EQ(cmd.getParam(), static_cast<uint8_t>(5));
+    ASSERT_EQ(cmd.getId(), static_cast<uint8_t>(1));
+
+    cmd.reset();
+    ASSERT_FALSE(cmd.isValid());
+    ASSERT_NE(cmd.getId(), static_cast<uint8_t>(1));
+    ASSERT_EQ(cmd.getParam(), static_cast<uint8_t>(5));
+}
+
+TEST(CommonTestSuite, testCreationStepperCmd)
+{
+    // DxlSingleCmd valid param
+    common::model::StepperSingleCmd cmd(common::model::EStepperCommandType::CMD_TYPE_POSITION, 1, std::initializer_list<int32_t>{5});
+    ASSERT_TRUE(cmd.isValid());
+    ASSERT_TRUE(cmd.isStepperCmd());
+
+    ASSERT_EQ(cmd.getParam(), static_cast<uint8_t>(5));
+    ASSERT_EQ(cmd.getId(), static_cast<uint8_t>(1));
+
+    cmd.reset();
+    ASSERT_FALSE(cmd.isValid());
+    ASSERT_NE(cmd.getId(), static_cast<uint8_t>(1));
+    ASSERT_EQ(cmd.getParam(), static_cast<uint8_t>(5));
+}
 }  // namespace
+
 // Run all the tests that were declared with TEST()
 int main(int argc, char **argv)
 {
