@@ -583,22 +583,22 @@ void TtlInterfaceCore::controlLoop()
                     _ttl_manager->readPositionStatus();
                     needSleep = true;
                 }
-                if (!needSleep && 
+                if (!needSleep &&
                     ros::Time::now().toSec() - _time_hw_status_last_read >= _delta_time_status_read)
                 {
                     _time_hw_status_last_read = ros::Time::now().toSec();
                     _ttl_manager->readHwStatus();
                     needSleep = true;
                 }
-                if (_ttl_manager->hasEndEffector() && 
-                    !needSleep && 
+                if (_ttl_manager->hasEndEffector() &&
+                    !needSleep &&
                     ros::Time::now().toSec() - _time_hw_end_effector_last_read >= _delta_time_end_effector_read)
                 {
                     _time_hw_end_effector_last_read = ros::Time::now().toSec();
                     _ttl_manager->readEndEffectorStatus();
                     needSleep = true;
                 }
-                if (!needSleep && 
+                if (!needSleep &&
                     ros::Time::now().toSec() - _time_hw_data_last_write >= _delta_time_write)
                 {
                     _time_hw_data_last_write = ros::Time::now().toSec();

@@ -133,6 +133,7 @@ class TtlManager : public common::model::IBusManager
         // IBusManager Interface
         void removeMotor(uint8_t id) override;
         bool isConnectionOk() const override;
+        bool hasEndEffector() const;
 
         int scanAndCheck() override;
         bool ping(uint8_t id) override;
@@ -141,7 +142,6 @@ class TtlManager : public common::model::IBusManager
         void getBusState(bool& connection_state, std::vector<uint8_t>& motor_id, std::string& debug_msg) const override;
         std::string getErrorMessage() const override;
     private:
-        bool hasEndEffector() const;
 
         int setupCommunication();
 
@@ -263,7 +263,7 @@ void TtlManager::getBusState(bool &connection_state, std::vector<uint8_t> &motor
 inline
 bool TtlManager::hasEndEffector() const
 {
-    return _driver_map.count(EHardwareType::END_EFFECTOR);
+    return _driver_map.count(common::model::EHardwareType::END_EFFECTOR);
 }
 
 } // ttl_driver

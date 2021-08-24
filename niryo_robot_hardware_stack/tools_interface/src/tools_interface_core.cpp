@@ -366,7 +366,7 @@ bool ToolsInterfaceCore::_callbackOpenGripper(tools_interface::OpenGripper::Requ
         double dxl_steps_to_do = std::abs(static_cast<double>(req.open_position) - _ttl_interface->getPosition(tool_id));
 
         double seconds_to_wait =  dxl_steps_to_do /  dxl_speed + 0.25;  // sec
-        ROS_DEBUG("Waiting for %d seconds", static_cast<int>(seconds_to_wait));
+        ROS_DEBUG("Waiting for %f seconds", seconds_to_wait);
         ros::Duration(seconds_to_wait).sleep();
 
         // set hold torque
@@ -415,7 +415,7 @@ bool ToolsInterfaceCore::_callbackCloseGripper(tools_interface::CloseGripper::Re
         double dxl_steps_to_do = std::abs(static_cast<double>(req.close_position) -
                                           _ttl_interface->getPosition(tool_id));
         double seconds_to_wait =  dxl_steps_to_do /  dxl_speed + 0.25;  // sec
-        ROS_DEBUG("Waiting for %d seconds", static_cast<int>(seconds_to_wait));
+        ROS_DEBUG("Waiting for %f seconds", seconds_to_wait);
 
         ros::Duration(seconds_to_wait).sleep();
 
@@ -472,7 +472,7 @@ bool ToolsInterfaceCore::_callbackPullAirVacuumPump(tools_interface::PullAirVacu
             double dxl_steps_to_do = std::abs(static_cast<double>(req.pull_air_position) -
                                             _ttl_interface->getPosition(tool_id));
             double seconds_to_wait =  dxl_steps_to_do /  dxl_speed + 0.5;  // sec
-            ROS_DEBUG("Waiting for %d seconds", static_cast<int>(seconds_to_wait));
+            ROS_DEBUG("Waiting for %f seconds", seconds_to_wait);
 
             ros::Duration(seconds_to_wait).sleep();
 
@@ -528,7 +528,7 @@ bool ToolsInterfaceCore:: _callbackPushAirVacuumPump(tools_interface::PushAirVac
             double dxl_steps_to_do = std::abs(static_cast<double>(req.push_air_position) -
                                             _ttl_interface->getPosition(tool_id));
             double seconds_to_wait =  dxl_steps_to_do /  dxl_speed + 0.25;  // sec
-            ROS_DEBUG("Waiting for %d seconds", static_cast<int>(seconds_to_wait));
+            ROS_DEBUG("Waiting for %f seconds", seconds_to_wait);
 
             ros::Duration(seconds_to_wait).sleep();
 

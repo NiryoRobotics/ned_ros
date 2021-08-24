@@ -539,7 +539,7 @@ uint32_t TtlManager::getPosition(JointState &motor_state)
 /**
  * @brief TtlManager::readPositionState
  */
-void TtlManager::readPositionStatus()
+bool TtlManager::readPositionStatus()
 {
     bool res = false;
     unsigned int hw_errors_increment = 0;
@@ -697,7 +697,7 @@ bool TtlManager::readEndEffectorStatus()
     }
     else
     {
-        ROS_DEBUG_THROTTLE("TtlManager::readEndEffectorStatus - No end effector found")
+        ROS_DEBUG_THROTTLE(2, "TtlManager::readEndEffectorStatus - No end effector found");
     }
 
     return res;
