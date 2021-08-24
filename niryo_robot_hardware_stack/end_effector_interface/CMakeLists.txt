@@ -61,8 +61,8 @@ catkin_package(
     CATKIN_DEPENDS
         common
         message_runtime
-        roscpp
         niryo_robot_msgs
+        roscpp
         std_msgs
         ttl_driver
 )
