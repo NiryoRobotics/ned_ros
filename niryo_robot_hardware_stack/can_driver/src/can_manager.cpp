@@ -136,7 +136,7 @@ bool CanManager::init(ros::NodeHandle& nh)
             addMotor(id);
         else
             ROS_ERROR("CanManager::init - duplicate id %d. Please check your configuration file "
-                      "(niryo_robot_hardware_stack/can_driver/config/motors_config.yaml)", id);
+                      "(niryo_robot_hardware_stack/can_driver/config/motors_params.yaml)", id);
     }
 
     // display internal data for debug

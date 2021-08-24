@@ -136,7 +136,7 @@ bool TtlManager::init(ros::NodeHandle& nh)
         if (0 != _state_map.count(id))
         {
             ROS_ERROR("TtlManager::init - duplicate id %d. Please check your configuration file "
-                      "(niryo_robot_hardware_stack/ttl_driver/config/motors_config.yaml)",
+                      "(niryo_robot_hardware_stack/ttl_driver/config/motors_params.yaml)",
                       id);
         }
         else
@@ -145,7 +145,7 @@ bool TtlManager::init(ros::NodeHandle& nh)
                 addHardwareComponent(type, id, EType::JOINT);
             else
                 ROS_ERROR("TtlManager::init - unknown type %s. Please check your configuration file "
-                          "(niryo_robot_hardware_stack/ttl_driver/config/motors_config.yaml)",
+                          "(niryo_robot_hardware_stack/ttl_driver/config/motors_params.yaml)",
                           typeList.at(id).c_str());
         }
     }
