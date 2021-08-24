@@ -21,3 +21,5 @@ active_publish_rate_sec: 0.1
 command_still_active_max_tries : 3
 
 pause_timeout : 45.0
+
+error_tolerance: [0.7, 0.4, 0.35, 0.4, 0.3, 0.45]
