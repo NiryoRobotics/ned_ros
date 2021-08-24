@@ -107,9 +107,9 @@ class TtlManager : public common::model::IBusManager
         int sendCustomCommand(common::model::EHardwareType motor_type, uint8_t id, int reg_address, int value, int byte_number);
         int readCustomCommand(common::model::EHardwareType motor_type, uint8_t id, int32_t reg_address, int &value, int byte_number);
 
-        void readPositionStatus();
-        void readEndEffectorStatus();
-        void readHwStatus();
+        bool readPositionStatus();
+        bool readEndEffectorStatus();
+        bool readHwStatus();
 
         int getAllIdsOnBus(std::vector<uint8_t> &id_list);
 
@@ -141,7 +141,7 @@ class TtlManager : public common::model::IBusManager
         void getBusState(bool& connection_state, std::vector<uint8_t>& motor_id, std::string& debug_msg) const override;
         std::string getErrorMessage() const override;
     private:
-        bool hasMotors() override;
+        bool hasEndEffector() const;
 
         int setupCommunication();
 
@@ -257,13 +257,13 @@ void TtlManager::getBusState(bool &connection_state, std::vector<uint8_t> &motor
 }
 
 /**
- * @brief TtlManager::hasMotors
+ * @brief TtlManager::hasEndEffector
  * @return
  */
 inline
-bool TtlManager::hasMotors()
+bool TtlManager::hasEndEffector() const
 {
-    return _state_map.size() > 0;
+    return _driver_map.count(EHardwareType::END_EFFECTOR);
 }
 
 } // ttl_driver

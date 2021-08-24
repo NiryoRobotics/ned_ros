@@ -99,7 +99,6 @@ class CanManager : public common::model::IBusManager
 
 
     private:
-        bool hasMotors() override;
 
         int setupCAN(ros::NodeHandle& nh);
 
@@ -224,16 +223,6 @@ common::model::EStepperCalibrationStatus CanManager::getCalibrationStatus() cons
 inline
 bool CanManager::isCalibrationInProgress() const {
     return common::model::EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS == _calibration_status;
-}
-
-/**
- * @brief CanManager::hasMotors
- * @return
- */
-inline
-bool CanManager::hasMotors()
-{
-    return _state_map.size() > 0;
 }
 
 } // namespace can_driver
