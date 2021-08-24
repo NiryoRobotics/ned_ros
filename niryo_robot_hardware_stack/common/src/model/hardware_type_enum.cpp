@@ -51,13 +51,13 @@ HardwareTypeEnum::initialize()
 {
     std::map<EHardwareType, std::string> m;
 
-    m[EHardwareType::STEPPER]          = "Niryo Stepper";
-    m[EHardwareType::XL430]            = "DXL XL430";
-    m[EHardwareType::XL320]            = "DXL XL-320";
-    m[EHardwareType::XL330]            = "DXL XL330";
-    m[EHardwareType::XC430]            = "DXL XC430";
-    m[EHardwareType::END_EFFECTOR]     = "End Effector";
-    m[EHardwareType::UNKNOWN]          = "DXL UNKOWN";
+    m[EHardwareType::STEPPER]          = "stepper";
+    m[EHardwareType::XL430]            = "xl430";
+    m[EHardwareType::XL320]            = "xl320";
+    m[EHardwareType::XL330]            = "xl330";
+    m[EHardwareType::XC430]            = "xc430";
+    m[EHardwareType::END_EFFECTOR]     = "end_effector";
+    m[EHardwareType::UNKNOWN]          = "unknown";
 
     return m;
 }
