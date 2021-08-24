@@ -182,7 +182,6 @@ int CanManager::setupCAN(ros::NodeHandle& nh)
                 // messages with ids != motor_id will be sent to another ROS interface
                 // so we can use many CAN devices with this only driver
                 result = mcp_can->begin(MCP_ANY, CAN_1000KBPS, MCP_16MHZ);
-                ROS_DEBUG("CanManager::setupCAN - Result begin can : %d", result);
 
                 if (CAN_OK == result)
                 {
@@ -368,7 +367,7 @@ void CanManager::executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, int32_
 }
 
 /**
- * @brief CanManager::readMotorsState
+ * @brief CanManager::readStatus
  */
 void CanManager::readStatus()
 {
