@@ -123,6 +123,12 @@ Accepted Modbus functions:
       -  Last command result (status of the last command)
    *  -  152
       -  Contains data retrieved from last cmd (depends of the cmd)
+   *  -  153 - 158
+      -  Vision - Target pose result
+   *  -  159
+      -  Vision - Shape of the object found (-1: ANY, 1: CIRCLE, 2: SQUARE, 3: TRIANGLE, 0: NONE)
+   *  -  160
+      -  Vision - Color of the object found (-1: ANY, 1: BLUE, 2: RED, 3: GREEN, 0: NONE)
    *  -  200-299
       -  Can be used to store your own variables
    *  -  300
@@ -140,9 +146,11 @@ Accepted Modbus functions:
    *  -  402
       -  Gripper close speed (100-1000)
    *  -  500
-      -  Select tool from given id
+      -  Update the tool id according to the gripper plugged (gripper 1: 11, gripper 2: 12, gripper 3: 13, vaccum pump: 31)
+   *  -  501
+      -  Store the tool id 
    *  -  510
-      -  Open gripper with given id
+      -  Open gripper previously updated
    *  -  511
       -  Close gripper with given id
    *  -  512 
@@ -163,6 +171,35 @@ Accepted Modbus functions:
       -  Store the Conveyor Belt ID for all related command
    *  -  526 
       -  Stop Conveyor Belt with the Conveyor Belt ID given at 525
+   *  -  600
+      -  TCP - Enables or disables the TCP function (Tool Center Point). 
+   *  -  601
+      -  Activates the TCP function (Tool Center Point) and defines the transformation between the tool_link frame and the TCP frame.
+   *  -  610
+      -  Vision - Get target pose from relative pose, with stored relative pose and height_offset
+   *  -  611
+      -  Vision - Get target pose from camera, with stored workspace name, height offset, shape and color
+   *  -  612
+      -  Vision - Vision pick, with stored workspace name, height offset, shape and color
+   *  -  613
+      -  Vision - Move to object, with stored workspace name, height offset, shape and color
+   *  -  614
+      -  Vision - Detect object, with stored workspace name, shape and color
+   *  -  620
+      -  Vision - Store workspace's height offset
+   *  -  621
+      -  Vision - Store relative pose x_rel
+   *  -  622
+      -  Vision - Store relative pose y_rel
+   *  -  623
+      -  Vision - Store relative pose yaw_rel
+   *  -  624
+      -  Vision - Store requested shape (-1: ANY, 1: CIRCLE, 2: SQUARE, 3: TRIANGLE)
+   *  -  625
+      -  Vision - Store requested color (-1: ANY, 1: BLUE, 2: RED, 3: GREEN)
+   *  -  626 - max 641
+      -  Vision - Store workspace's name, as a string encoded in 16 bits hex (see examples on how to store a workspace name from a client)
+   
 
 Input Register
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
