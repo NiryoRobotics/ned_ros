@@ -11,14 +11,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-02 17:46+0200\n"
+"POT-Creation-Date: 2021-08-25 10:55+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.8.0\n"
+"Generated-By: Babel 2.9.1\n"
 
 #: ../../source/ros/niryo_robot_modbus.rst:2
 msgid "Use Modbus TCP server"
@@ -96,7 +96,7 @@ msgstr ""
 #: ../../source/ros/niryo_robot_modbus.rst:32
 #: ../../source/ros/niryo_robot_modbus.rst:65
 #: ../../source/ros/niryo_robot_modbus.rst:97
-#: ../../source/ros/niryo_robot_modbus.rst:175
+#: ../../source/ros/niryo_robot_modbus.rst:212
 msgid "Accepted Modbus functions:"
 msgstr ""
 
@@ -150,21 +150,21 @@ msgstr ""
 #: ../../source/ros/niryo_robot_modbus.rst:49
 #: ../../source/ros/niryo_robot_modbus.rst:80
 #: ../../source/ros/niryo_robot_modbus.rst:104
-#: ../../source/ros/niryo_robot_modbus.rst:182
+#: ../../source/ros/niryo_robot_modbus.rst:219
 msgid "Address"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:50
 #: ../../source/ros/niryo_robot_modbus.rst:81
 #: ../../source/ros/niryo_robot_modbus.rst:105
-#: ../../source/ros/niryo_robot_modbus.rst:183
+#: ../../source/ros/niryo_robot_modbus.rst:220
 msgid "Description"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:51
 #: ../../source/ros/niryo_robot_modbus.rst:82
 #: ../../source/ros/niryo_robot_modbus.rst:106
-#: ../../source/ros/niryo_robot_modbus.rst:184
+#: ../../source/ros/niryo_robot_modbus.rst:221
 msgid "0-5"
 msgstr ""
 
@@ -184,12 +184,12 @@ msgid "Digital I/O state (High = 1, Low = 0)"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:55
-#: ../../source/ros/niryo_robot_modbus.rst:126
+#: ../../source/ros/niryo_robot_modbus.rst:132
 msgid "200-299"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:56
-#: ../../source/ros/niryo_robot_modbus.rst:127
+#: ../../source/ros/niryo_robot_modbus.rst:133
 msgid "Can be used to store your own variables"
 msgstr ""
 
@@ -198,7 +198,7 @@ msgid "Discrete input"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:62
-#: ../../source/ros/niryo_robot_modbus.rst:172
+#: ../../source/ros/niryo_robot_modbus.rst:209
 msgid "READ-ONLY"
 msgstr ""
 
@@ -217,7 +217,7 @@ msgid "Holding register"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:91
-#: ../../source/ros/niryo_robot_modbus.rst:170
+#: ../../source/ros/niryo_robot_modbus.rst:207
 msgid "Each address contains a 16bits value."
 msgstr ""
 
@@ -236,27 +236,27 @@ msgid "0x06: WRITE_SINGLE_REGISTER"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:107
-#: ../../source/ros/niryo_robot_modbus.rst:185
+#: ../../source/ros/niryo_robot_modbus.rst:222
 msgid "Joints (mrad)"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:108
-#: ../../source/ros/niryo_robot_modbus.rst:186
+#: ../../source/ros/niryo_robot_modbus.rst:223
 msgid "10-12"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:109
-#: ../../source/ros/niryo_robot_modbus.rst:187
+#: ../../source/ros/niryo_robot_modbus.rst:224
 msgid "Position x,y,z (mm)"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:110
-#: ../../source/ros/niryo_robot_modbus.rst:188
+#: ../../source/ros/niryo_robot_modbus.rst:225
 msgid "13-15"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:111
-#: ../../source/ros/niryo_robot_modbus.rst:189
+#: ../../source/ros/niryo_robot_modbus.rst:226
 msgid "Orientation roll, pitch, yaw (mrad)"
 msgstr ""
 
@@ -316,330 +316,494 @@ msgstr ""
 msgid "Contains data retrieved from last cmd (depends of the cmd)"
 msgstr ""
 
+#: ../../source/ros/niryo_robot_modbus.rst:126
+msgid "153 - 158"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:127
+msgid "Vision - Target pose result"
+msgstr ""
+
 #: ../../source/ros/niryo_robot_modbus.rst:128
-#: ../../source/ros/niryo_robot_modbus.rst:192
-msgid "300"
+msgid "159"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:129
-msgid "Learning Mode (On = 1, Off = 0)"
+msgid ""
+"Vision - Shape of the object found (-1: ANY, 1: CIRCLE, 2: SQUARE, 3: "
+"TRIANGLE, 0: NONE)"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:130
-msgid "301"
+msgid "160"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:131
-msgid "Joystick Enabled (On = 1, Off = 0)"
-msgstr ""
-
-#: ../../source/ros/niryo_robot_modbus.rst:132
-msgid "310"
-msgstr ""
-
-#: ../../source/ros/niryo_robot_modbus.rst:133
-msgid "Request new calibration"
+msgid ""
+"Vision - Color of the object found (-1: ANY, 1: BLUE, 2: RED, 3: GREEN, "
+"0: NONE)"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:134
-msgid "311"
+#: ../../source/ros/niryo_robot_modbus.rst:229
+msgid "300"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:135
-msgid "Start auto calibration"
+msgid "Learning Mode (On = 1, Off = 0)"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:136
-msgid "312"
+msgid "301"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:137
-msgid "Start manual calibration"
+msgid "Joystick Enabled (On = 1, Off = 0)"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:138
-#: ../../source/ros/niryo_robot_modbus.rst:196
-msgid "401"
+msgid "310"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:139
-msgid "Gripper open speed (100-1000)"
+msgid "Request new calibration"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:140
-#: ../../source/ros/niryo_robot_modbus.rst:198
-msgid "402"
+msgid "311"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:141
-msgid "Gripper close speed (100-1000)"
+msgid "Start auto calibration"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:142
-msgid "500"
+msgid "312"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:143
-msgid "Select tool from given id"
+msgid "Start manual calibration"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:144
-msgid "510"
+#: ../../source/ros/niryo_robot_modbus.rst:233
+msgid "401"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:145
-msgid "Open gripper with given id"
+msgid "Gripper open speed (100-1000)"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:146
-msgid "511"
+#: ../../source/ros/niryo_robot_modbus.rst:235
+msgid "402"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:147
-msgid "Close gripper with given id"
+msgid "Gripper close speed (100-1000)"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:148
-msgid "512"
+msgid "500"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:149
-msgid "Pull air vacuum pump from given id"
+msgid ""
+"Update the tool id according to the gripper plugged (gripper 1: 11, "
+"gripper 2: 12, gripper 3: 13, vaccum pump: 31)"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:150
-msgid "513"
+msgid "501"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:151
-msgid "Push air vacuum pump from given id"
+msgid "Store the tool id"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:152
-msgid "520"
+msgid "510"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:153
-msgid "Enable a Conveyor Belt newly connected [on success: store it's ID at 152]"
+msgid "Open gripper previously updated"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:154
-msgid "521"
+msgid "511"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:155
-msgid "Detach / disable Conveyor Belt with the Conveyor Belt ID given at 525"
+msgid "Close gripper with given id"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:156
-msgid "522"
+msgid "512"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:157
-msgid "Control Conveyor Belt with the Conveyor Belt ID given at 525"
+msgid "Pull air vacuum pump from given id"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:158
-msgid "523 [related to 522]"
+msgid "513"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:159
-msgid "Conveyor Belt direction (backward = -1 , forward = 1)"
+msgid "Push air vacuum pump from given id"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:160
-msgid "524 [related to 522]"
+msgid "520"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:161
-msgid "Conveyor Belt speed (0-100)(%)"
+msgid "Enable a Conveyor Belt newly connected [on success: store it's ID at 152]"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:162
-msgid "525 [related to 520/521/522/526]"
+msgid "521"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:163
-msgid "Store the Conveyor Belt ID for all related command"
+msgid "Detach / disable Conveyor Belt with the Conveyor Belt ID given at 525"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:164
-msgid "526"
+msgid "522"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:165
-msgid "Stop Conveyor Belt with the Conveyor Belt ID given at 525"
+msgid "Control Conveyor Belt with the Conveyor Belt ID given at 525"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:166
+msgid "523 [related to 522]"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:167
+msgid "Conveyor Belt direction (backward = -1 , forward = 1)"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:168
-msgid "Input Register"
+msgid "524 [related to 522]"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:169
+msgid "Conveyor Belt speed (0-100)(%)"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:170
+msgid "525 [related to 520/521/522/526]"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:171
+msgid "Store the Conveyor Belt ID for all related command"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:172
+msgid "526"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:173
+msgid "Stop Conveyor Belt with the Conveyor Belt ID given at 525"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:174
+msgid "600"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:175
-msgid "0x04: READ_INPUT_REGISTERS"
+msgid "TCP - Enables or disables the TCP function (Tool Center Point)."
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:176
+msgid "601"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:177
+msgid ""
+"Activates the TCP function (Tool Center Point) and defines the "
+"transformation between the tool_link frame and the TCP frame."
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:178
+msgid "610"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:179
+msgid ""
+"Vision - Get target pose from relative pose, with stored relative pose "
+"and height_offset"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:180
+msgid "611"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:181
+msgid ""
+"Vision - Get target pose from camera, with stored workspace name, height "
+"offset, shape and color"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:182
+msgid "612"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:183
+msgid ""
+"Vision - Vision pick, with stored workspace name, height offset, shape "
+"and color"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:184
+msgid "613"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:185
+msgid ""
+"Vision - Move to object, with stored workspace name, height offset, shape"
+" and color"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:186
+msgid "614"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:187
+msgid "Vision - Detect object, with stored workspace name, shape and color"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:188
+msgid "620"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:189
+msgid "Vision - Store workspace's height offset"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:190
-msgid "200"
+msgid "621"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:191
-msgid "Selected tool ID (0 for no tool)"
+msgid "Vision - Store relative pose x_rel"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:192
+msgid "622"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:193
-msgid "Learning Mode activated"
+msgid "Vision - Store relative pose y_rel"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:194
-msgid "400"
+msgid "623"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:195
-msgid "Motors connection up (Ok = 1, Not ok = 0)"
+msgid "Vision - Store relative pose yaw_rel"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:196
+msgid "624"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:197
-msgid "Calibration needed flag"
+msgid ""
+"Vision - Store requested shape (-1: ANY, 1: CIRCLE, 2: SQUARE, 3: "
+"TRIANGLE)"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:198
+msgid "625"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:199
-msgid "Calibration in progress flag"
+msgid "Vision - Store requested color (-1: ANY, 1: BLUE, 2: RED, 3: GREEN)"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:200
-msgid "403"
+msgid "626 - max 641"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:201
-msgid "Raspberry Pi temperature"
-msgstr ""
-
-#: ../../source/ros/niryo_robot_modbus.rst:202
-msgid "404"
-msgstr ""
-
-#: ../../source/ros/niryo_robot_modbus.rst:203
-msgid "Raspberry Pi available disk size"
-msgstr ""
-
-#: ../../source/ros/niryo_robot_modbus.rst:204
-msgid "405"
+msgid ""
+"Vision - Store workspace's name, as a string encoded in 16 bits hex (see "
+"examples on how to store a workspace name from a client)"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:205
-msgid "Raspberry Pi ROS log size"
-msgstr ""
-
-#: ../../source/ros/niryo_robot_modbus.rst:206
-msgid "406"
-msgstr ""
-
-#: ../../source/ros/niryo_robot_modbus.rst:207
-msgid "RPI software version n.1"
-msgstr ""
-
-#: ../../source/ros/niryo_robot_modbus.rst:208
-msgid "407"
-msgstr ""
-
-#: ../../source/ros/niryo_robot_modbus.rst:209
-msgid "RPI software version n.2"
-msgstr ""
-
-#: ../../source/ros/niryo_robot_modbus.rst:210
-msgid "408"
-msgstr ""
-
-#: ../../source/ros/niryo_robot_modbus.rst:211
-msgid "RPI software version n.3"
+msgid "Input Register"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:212
-msgid "409"
-msgstr ""
-
-#: ../../source/ros/niryo_robot_modbus.rst:213
-msgid "Hardware version (1 or 2)"
-msgstr ""
-
-#: ../../source/ros/niryo_robot_modbus.rst:214
-msgid "530"
-msgstr ""
-
-#: ../../source/ros/niryo_robot_modbus.rst:215
-msgid "Conveyor 1 connection state (Connected = 1 , Not connected = 0)"
-msgstr ""
-
-#: ../../source/ros/niryo_robot_modbus.rst:216
-msgid "531"
-msgstr ""
-
-#: ../../source/ros/niryo_robot_modbus.rst:217
-msgid "Conveyor 1 control status ( On = 0, Off = 1)"
-msgstr ""
-
-#: ../../source/ros/niryo_robot_modbus.rst:218
-msgid "532"
-msgstr ""
-
-#: ../../source/ros/niryo_robot_modbus.rst:219
-msgid "Conveyor 1 Speed (0-100 (%))"
-msgstr ""
-
-#: ../../source/ros/niryo_robot_modbus.rst:220
-msgid "533"
-msgstr ""
-
-#: ../../source/ros/niryo_robot_modbus.rst:221
-msgid "Conveyor 1 direction (Backward = -1, Forward = 1)"
-msgstr ""
-
-#: ../../source/ros/niryo_robot_modbus.rst:222
-msgid "540"
-msgstr ""
-
-#: ../../source/ros/niryo_robot_modbus.rst:223
-msgid "Conveyor 2 connection state (Connected = 1 , Not connected = 0)"
-msgstr ""
-
-#: ../../source/ros/niryo_robot_modbus.rst:224
-msgid "541"
-msgstr ""
-
-#: ../../source/ros/niryo_robot_modbus.rst:225
-msgid "Conveyor 2 control status ( On = 0, Off = 1)"
-msgstr ""
-
-#: ../../source/ros/niryo_robot_modbus.rst:226
-msgid "542"
+msgid "0x04: READ_INPUT_REGISTERS"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:227
-msgid "Conveyor 2 Speed (0-100 (%))"
+msgid "200"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:228
-msgid "543"
+msgid "Selected tool ID (0 for no tool)"
 msgstr ""
 
-#: ../../source/ros/niryo_robot_modbus.rst:229
-msgid "Conveyor 2 direction (Backward = -1, Forward = 1)"
+#: ../../source/ros/niryo_robot_modbus.rst:230
+msgid "Learning Mode activated"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:231
+msgid "400"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:232
-msgid "Dependencies - Modbus TCP Server"
+msgid "Motors connection up (Ok = 1, Not ok = 0)"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:234
-msgid "`pymodbus library <https://pymodbus.readthedocs.io/en/latest/index.html>`_"
-msgstr ""
-
-#: ../../source/ros/niryo_robot_modbus.rst:235
-msgid ":ref:`niryo_robot_msgs <Niryo Robot Messages Package>`"
+msgid "Calibration needed flag"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:236
+msgid "Calibration in progress flag"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:237
+msgid "403"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:238
+msgid "Raspberry Pi temperature"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:239
+msgid "404"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:240
+msgid "Raspberry Pi available disk size"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:241
+msgid "405"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:242
+msgid "Raspberry Pi ROS log size"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:243
+msgid "406"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:244
+msgid "RPI software version n.1"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:245
+msgid "407"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:246
+msgid "RPI software version n.2"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:247
+msgid "408"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:248
+msgid "RPI software version n.3"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:249
+msgid "409"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:250
+msgid "Hardware version (1 or 2)"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:251
+msgid "530"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:252
+msgid "Conveyor 1 connection state (Connected = 1 , Not connected = 0)"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:253
+msgid "531"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:254
+msgid "Conveyor 1 control status ( On = 0, Off = 1)"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:255
+msgid "532"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:256
+msgid "Conveyor 1 Speed (0-100 (%))"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:257
+msgid "533"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:258
+msgid "Conveyor 1 direction (Backward = -1, Forward = 1)"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:259
+msgid "540"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:260
+msgid "Conveyor 2 connection state (Connected = 1 , Not connected = 0)"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:261
+msgid "541"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:262
+msgid "Conveyor 2 control status ( On = 0, Off = 1)"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:263
+msgid "542"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:264
+msgid "Conveyor 2 Speed (0-100 (%))"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:265
+msgid "543"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:266
+msgid "Conveyor 2 direction (Backward = -1, Forward = 1)"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:269
+msgid "Dependencies - Modbus TCP Server"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:271
+msgid "`pymodbus library <https://pymodbus.readthedocs.io/en/latest/index.html>`_"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:272
+msgid ":ref:`niryo_robot_msgs <Niryo Robot Messages Package>`"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:273
 msgid ":msgs_index:`std_msgs`"
 msgstr ""
 
@@ -689,5 +853,11 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "Each address contains a 16 bit value."
+#~ msgstr ""
+
+#~ msgid "Select tool from given id"
+#~ msgstr ""
+
+#~ msgid "Open gripper with given id"
 #~ msgstr ""
 

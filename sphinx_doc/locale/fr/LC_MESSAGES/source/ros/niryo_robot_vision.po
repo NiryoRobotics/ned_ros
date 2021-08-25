@@ -278,7 +278,7 @@ msgstr ""
 
 #: ../../source/ros/niryo_robot_vision.rst:102
 msgid "Set the saturation of the video stream"
-msgstr "Règle la luminosité du flux vidéo"
+msgstr "Règle la saturation du flux vidéo"
 
 #: ../../source/ros/niryo_robot_vision.rst:105
 msgid "All these services are available as soon as the node is started."
