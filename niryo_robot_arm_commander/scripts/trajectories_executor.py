@@ -69,6 +69,7 @@ class TrajectoriesExecutor:
         # Others params
         self.__trajectory_minimum_timeout = rospy.get_param("~trajectory_minimum_timeout")
         self.__compute_plan_max_tries = rospy.get_param("~compute_plan_max_tries")
+        self.__error_tolerance = rospy.get_param("~error_tolerance")
 
     def __set_position_hold_mode(self):
         """
@@ -99,9 +100,8 @@ class TrajectoriesExecutor:
 
     def __callback_current_feedback(self, msg):
         self.__current_feedback = msg
-        error_tolerance = [0.7, 0.4, 0.35, 0.4, 0.3, 0.45]
         self.__collision_detected = False
-        for error, tolerance in zip(self.__current_feedback.feedback.error.positions, error_tolerance):
+        for error, tolerance in zip(self.__current_feedback.feedback.error.positions, self.__error_tolerance):
             if abs(error) > tolerance:
                     self.__collision_detected = True
                     self.__set_learning_mode(True)

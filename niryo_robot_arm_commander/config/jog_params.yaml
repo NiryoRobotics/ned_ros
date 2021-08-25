@@ -10,3 +10,5 @@ jog_limits:
 time_without_jog_limit: 2.0
 time_without_jog_TCP_limit: 0.5
 check_disable_jog_rate: 1.0
+
+error_tolerance_joint: [0.2, 0.2, 0.2, 0.2, 0.2, 0.2]
