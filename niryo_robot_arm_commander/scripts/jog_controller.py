@@ -47,6 +47,8 @@ class JogController:
     def __init__(self, parameters_validator):
         # - Publisher which publishes if JogController is enabled
         self._enabled = False
+        self.__error_tolerance_joint = rospy.get_param("~error_tolerance_joint")
+
         self._jog_enabled_publisher = rospy.Publisher('/niryo_robot/jog_interface/is_enabled',
                                                       Bool, queue_size=1)
         rospy.Timer(rospy.Duration(1.0 / rospy.get_param("~jog_enable_publish_rate")),
@@ -134,7 +136,6 @@ class JogController:
 
         # jog disabled after one second for the jogTCP Niryo Studio
         self.__time_without_jog_limit = rospy.get_param("~time_without_jog_TCP_limit")
-        self.__error_tolerance_joint = rospy.get_param("~error_tolerance_joint")
 
     # - Callbacks
 

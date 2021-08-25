@@ -10,7 +10,7 @@
   <arg name="robot_description" default="robot_description"/>
 
   <!-- Load universal robot description format (URDF) -->
-  <param if="$(arg load_robot_description)" name="$(arg robot_description)" command="$(find xacro)/xacro --inorder $(find niryo_robot_description)/urdf/$(arg hardware_version)/niryo.urdf.xacro"/>
+  <param if="$(arg load_robot_description)" name="$(arg robot_description)" command="$(find xacro)/xacro $(find niryo_robot_description)/urdf/$(arg hardware_version)/niryo.urdf.xacro"/>
 
   <!-- The semantic description that corresponds to the URDF -->
   <param name="$(arg robot_description)_semantic" textfile="$(find niryo_moveit_config_standalone)/config/$(arg hardware_version)/niryo.srdf" />

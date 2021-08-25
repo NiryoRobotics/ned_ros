@@ -20,6 +20,5 @@
         <arg name="can_enabled" value="$(arg can_enabled)"/>
         <arg name="conf_location" value="$(arg conf_location)" />
         <arg name="debug" value="$(arg debug)"/>
-        <arg name="hardware_version" value="ned"/>
     </include>
 </launch>

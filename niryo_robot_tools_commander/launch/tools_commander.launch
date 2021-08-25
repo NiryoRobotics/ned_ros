@@ -6,7 +6,6 @@
     <arg name="hardware_version" default="ned"/>
     <arg name="simulation_mode" default="false"/>
     <arg name="simu_gripper" default="false"/>
-    <arg name="hardware_version" default="ned"/>
 
     <include file="$(find niryo_robot_tools_commander)/launch/tools_commander_base.launch.xml"> 
         <arg name="hardware_version" value="$(arg hardware_version)" />
