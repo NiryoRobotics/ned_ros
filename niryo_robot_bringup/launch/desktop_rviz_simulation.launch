@@ -15,10 +15,10 @@
     <arg name="urdf_path" value="urdf/$(arg hardware_version)/niryo.urdf.xacro"/>
 
     <param name="robot_description"
-           command="$(find xacro)/xacro --inorder $(find niryo_robot_description)/$(arg urdf_path)"/>
+           command="$(find xacro)/xacro $(find niryo_robot_description)/$(arg urdf_path)"/>
 
     <param name="robot_description_tf2"
-           command="$(find xacro)/xacro --inorder $(find niryo_robot_description)/$(arg urdf_path)"/>
+           command="$(find xacro)/xacro $(find niryo_robot_description)/$(arg urdf_path)"/>
 
     <!-- Define most of ROS parameters -->
     <include file="$(find niryo_robot_bringup)/launch/niryo_robot_base_simulation.launch.xml">

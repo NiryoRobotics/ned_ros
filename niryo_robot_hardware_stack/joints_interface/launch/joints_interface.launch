@@ -7,7 +7,7 @@
   <arg name="ttl_enabled" default="true" />
   <arg name="hardware_version" default="ned" />
 
-  <param name="robot_description" command="$(find xacro)/xacro  --inorder $(find niryo_robot_description)/urdf/$(arg hardware_version)/niryo.urdf.xacro" />
+  <param name="robot_description" command="$(find xacro)/xacro $(find niryo_robot_description)/urdf/$(arg hardware_version)/niryo.urdf.xacro" />
 
   <!-- Launch controllers -->
   <rosparam file="$(find niryo_moveit_config_standalone)/config/$(arg hardware_version)/ros_controllers.yaml" command="load"/>

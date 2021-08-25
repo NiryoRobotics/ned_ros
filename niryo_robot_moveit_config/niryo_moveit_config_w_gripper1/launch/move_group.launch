@@ -1,6 +1,7 @@
 <?xml version="1.0" ?>
 <launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+    <arg name="hardware_version" default="ned"/>
 
     <!-- GDB Debug Option -->
     <arg name="debug" default="false"/>
@@ -35,15 +36,17 @@
     <!-- Trajectory Execution Functionality -->
     <include ns="move_group" file="$(find niryo_moveit_config_w_gripper1)/launch/trajectory_execution.launch.xml"
              if="$(arg allow_trajectory_execution)">
+        <arg name="hardware_version" value="$(arg hardware_version)" />
         <arg name="moveit_manage_controllers" value="true"/>
-        <arg name="moveit_controller_manager" value="niryo_$(arg hardware_version)" unless="$(arg fake_execution)"/>
+        <arg name="moveit_controller_manager" value="niryo" unless="$(arg fake_execution)"/>
         <arg name="moveit_controller_manager" value="fake" if="$(arg fake_execution)"/>
     </include>
 
     <!-- Sensors Functionality -->
     <include ns="move_group" file="$(find niryo_moveit_config_w_gripper1)/launch/sensor_manager.launch.xml"
              if="$(arg allow_trajectory_execution)">
-        <arg name="moveit_sensor_manager" value="niryo_$(arg hardware_version)"/>
+        <arg name="hardware_version" value="$(arg hardware_version)" />
+        <arg name="moveit_sensor_manager" value="niryo"/>
     </include>
 
     <!-- Start the actual move_group node/action server -->

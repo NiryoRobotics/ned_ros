@@ -33,7 +33,5 @@
         <param name="log_level" type="string" value="$(arg log_level)" />
         <param name="simu_gripper" type="bool" value="$(arg simu_gripper)"/>
         <param name="hardware_version" value="$(arg hardware_version)"/>
-        <rosparam command="load" file="$(find niryo_robot_arm_commander)/config/commander_params.yaml"/>
-        <rosparam command="load" file="$(find niryo_robot_arm_commander)/config/jog_params.yaml"/>
     </node>
 </launch>
