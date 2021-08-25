@@ -1155,7 +1155,7 @@ void TtlManager::executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, uint32
         auto driver = std::dynamic_pointer_cast<AbstractMotorDriver>(it.second);
 
         // if successful, don't process this driver in the next loop
-        if (!driver || COMM_SUCCESS == driver->syncWritePositionGoal(ids, params))
+        if (!driver || COMM_SUCCESS != driver->syncWritePositionGoal(ids, params))
         {
           ROS_WARN("TtlManager::executeJointTrajectoryCmd - Failed to write position");
           _debug_error_message = "TtlManager - Failed to write position";
