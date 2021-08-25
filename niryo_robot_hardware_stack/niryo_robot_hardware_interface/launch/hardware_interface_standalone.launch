@@ -14,13 +14,13 @@
     <arg name="image_version" default="" />
 
     <!-- Launch controllers -->
-    <rosparam file="$(find niryo_ned_moveit_config_standalone)/config/$(arg hardware_version)/ros_controllers.yaml" command="load"/>
+    <rosparam file="$(find niryo_moveit_config_standalone)/config/$(arg hardware_version)/ros_controllers.yaml" command="load"/>
     <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="log"
             args="joint_state_controller niryo_robot_follow_joint_trajectory_controller"/>
 
     <!-- Load URDF -->
-    <arg name="urdf_path" value="$(find niryo_robot_description)/urdf/$(arg hardware_version)/niryo_ned.urdf.xacro"/>
-    <param name="robot_description" command="$(find xacro)/xacro $(arg urdf_path)"/>
+    <arg name="urdf_path" value="$(find niryo_robot_description)/urdf/$(arg hardware_version)/niryo.urdf.xacro"/>
+    <param name="robot_description" command="$(find xacro)/xacro  --inorder $(arg urdf_path)"/>
 
     <!-- Launch Robot state publisher -->
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" output="screen" />

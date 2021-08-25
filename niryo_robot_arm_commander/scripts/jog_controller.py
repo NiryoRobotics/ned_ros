@@ -133,7 +133,7 @@ class JogController:
         # - Others param
 
         # jog disabled after one second for the jogTCP Niryo Studio
-        self.__time_without_jog_limit = rospy.get_param("~time_without_jog_TCP_limit")  
+        self.__time_without_jog_limit = rospy.get_param("~time_without_jog_TCP_limit")
         self.__error_tolerance_joint = rospy.get_param("~error_tolerance_joint")
 
     # - Callbacks

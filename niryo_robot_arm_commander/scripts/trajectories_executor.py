@@ -32,6 +32,7 @@ class TrajectoriesExecutor:
     """
     Object which execute the Arm trajectories via MoveIt
     """
+
     def __init__(self, arm_move_group):
         self.__arm = arm_move_group
 
@@ -50,6 +51,7 @@ class TrajectoriesExecutor:
                                                FollowJointTrajectoryActionGoal, queue_size=1)
 
         self.__joints_name = rospy.get_param('~joint_names')
+        self.__hardware_version = rospy.get_param('~hardware_version')
 
         # - Direct topic to joint_trajectory_controller
         self.__current_goal_id = None
@@ -103,12 +105,12 @@ class TrajectoriesExecutor:
         self.__collision_detected = False
         for error, tolerance in zip(self.__current_feedback.feedback.error.positions, self.__error_tolerance):
             if abs(error) > tolerance:
-                    self.__collision_detected = True
-                    self.__set_learning_mode(True)
-                    abort_str = ("Command has been aborted due to a collision or "
-                                 "a motor not able to follow the given trajectory")
-                    rospy.logwarn(abort_str)
-                    return CommandStatus.CONTROLLER_PROBLEMS, abort_str
+                self.__collision_detected = True
+                self.__set_learning_mode(True)
+                abort_str = "Command has been aborted due to a collision or " \
+                            "a motor not able to follow the given trajectory"
+                rospy.logwarn(abort_str)
+                return CommandStatus.CONTROLLER_PROBLEMS, abort_str
 
     def __callback_goal_result(self, msg):
         """
@@ -271,17 +273,19 @@ class TrajectoriesExecutor:
         Take a plan and retime it
         """
         start_state = self.__get_plan_start_robot_state(plan)
-
-        if optimize:
-            algorithm = "time_optimal_trajectory_generation"
+        if self.__hardware_version == "one":
+            # for ros kinetic
+            plan_out = self.__arm.retime_trajectory(start_state, plan, velocity_scaling_factor=velocity_scaling_factor)
         else:
-            algorithm = "iterative_time_parameterization"
+            if optimize:
+                algorithm = "time_optimal_trajectory_generation"
+            else:
+                algorithm = "iterative_time_parameterization"
 
-        plan_out = self.__arm.retime_trajectory(start_state, plan,
-                                                velocity_scaling_factor=velocity_scaling_factor,
-                                                acceleration_scaling_factor=acceleration_scaling_factor,
-                                                algorithm=algorithm
-                                                )
+            plan_out = self.__arm.retime_trajectory(start_state, plan,
+                                                    velocity_scaling_factor=velocity_scaling_factor,
+                                                    acceleration_scaling_factor=acceleration_scaling_factor,
+                                                    algorithm=algorithm)
         return plan_out
 
     def __get_plan_start_robot_state(self, plan):

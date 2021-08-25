@@ -91,6 +91,7 @@ void HardwareInterface::initParameters(ros::NodeHandle &nh)
 
     nh.getParam("/niryo_robot/info/image_version", _rpi_image_version);
     nh.getParam("/niryo_robot/info/ros_version", _ros_niryo_robot_version);
+    nh.getParam("hardware_version", _hardware_version);
 
     nh.getParam("simulation_mode", _simulation_mode);
     nh.getParam("gazebo", _gazebo);
@@ -428,7 +429,7 @@ void HardwareInterface::_publishHardwareStatus()
         }
 
         msg.rpi_temperature = cpu_temperature;
-        msg.hardware_version = 1;
+        msg.hardware_version = _hardware_version;
 
         msg.connection_up = (ttl_bus_state.connection_status && can_bus_state.connection_status);
 
@@ -587,6 +588,7 @@ void HardwareInterface::_publishSoftwareVersion()
         msg.stepper_firmware_versions = firmware_versions;
         msg.rpi_image_version = _rpi_image_version;
         msg.ros_niryo_robot_version = _ros_niryo_robot_version;
+        msg.robot_version = _hardware_version;
 
         _software_version_publisher.publish(msg);
         publish_software_version_rate.sleep();

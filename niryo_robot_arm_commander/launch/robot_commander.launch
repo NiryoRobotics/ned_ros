@@ -13,12 +13,10 @@
     <env name="ROSCONSOLE_CONFIG_FILE" value="$(find niryo_robot_arm_commander)/config/rosconsole.config"/>
 
     <!-- Moveit move_group -->
-    <group if="$(eval hardware_version == 'ned' or hardware_version == 'ned2')">
-        <include file="$(find niryo_ned_moveit_config_w_gripper1)/launch/move_group.launch" if="$(arg simu_gripper)">
-            <arg name="load_robot_description" value="false"/>
-        </include>
-        <include file="$(find niryo_ned_moveit_config_standalone)/launch/move_group.launch" unless="$(arg simu_gripper)"/>
-    </group>
+    <include file="$(find niryo_moveit_config_w_gripper1)/launch/move_group.launch" if="$(arg simu_gripper)">
+        <arg name="load_robot_description" value="false"/>
+    </include>
+    <include file="$(find niryo_moveit_config_standalone)/launch/move_group.launch" unless="$(arg simu_gripper)"/>
 
     <!-- Moveit move_group params -->
     <group ns="/move_group">
@@ -33,5 +31,9 @@
     <node name="niryo_robot_arm_commander" pkg="niryo_robot_arm_commander" type="robot_commander_node.py" output="screen"
           respawn="false">
         <param name="log_level" type="string" value="$(arg log_level)" />
+        <param name="simu_gripper" type="bool" value="$(arg simu_gripper)"/>
+        <param name="hardware_version" value="$(arg hardware_version)"/>
+        <rosparam command="load" file="$(find niryo_robot_arm_commander)/config/commander_params.yaml"/>
+        <rosparam command="load" file="$(find niryo_robot_arm_commander)/config/jog_params.yaml"/>
     </node>
 </launch>

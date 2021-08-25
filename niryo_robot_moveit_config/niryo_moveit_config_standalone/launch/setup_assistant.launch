@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<!-- Re-launch the MoveIt Setup Assistant with this configuration package already loaded -->
+<launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+
+  <!-- Debug Info -->
+  <arg name="debug" default="false" />
+  <arg unless="$(arg debug)" name="launch_prefix" value="" />
+  <arg     if="$(arg debug)" name="launch_prefix" value="gdb --ex run --args" />
+
+  <!-- Run -->
+  <node pkg="moveit_setup_assistant" type="moveit_setup_assistant" name="moveit_setup_assistant" 
+	args="--config_pkg=niryo_moveit_config_standalone"
+	launch-prefix="$(arg launch_prefix)"
+        output="screen" />
+
+</launch>

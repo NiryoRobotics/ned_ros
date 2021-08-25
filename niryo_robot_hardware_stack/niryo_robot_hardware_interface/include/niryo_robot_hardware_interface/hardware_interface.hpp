@@ -98,6 +98,7 @@ class HardwareInterface : common::model::IInterfaceCore
 
         std::string _rpi_image_version;
         std::string _ros_niryo_robot_version;
+        std::string _hardware_version;
 };
 
 } // namespace niryo_robot_hardware_interface

@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+
+  <!-- This file makes it easy to include different planning pipelines;
+       It is assumed that all planning pipelines are named XXX_planning_pipeline.launch  -->
+
+  <arg name="pipeline" default="ompl" />
+
+  <include file="$(find niryo_moveit_config_w_gripper1)/launch/$(arg pipeline)_planning_pipeline.launch.xml" />
+
+</launch>

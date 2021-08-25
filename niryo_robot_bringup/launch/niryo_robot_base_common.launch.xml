@@ -44,18 +44,19 @@
 
     <include file="$(find niryo_robot_hardware_interface)/launch/controllers.launch">
         <arg name="gazebo" default="$(arg gazebo)"/>
+        <arg name="hardware_version" default="$(arg hardware_version)"/>
         <arg name="simu_gripper" default="$(arg simu_gripper)"/>
         <arg name="simulation_mode" default="$(arg simulation_mode)"/>
         <arg name="debug" value="$(arg debug)"/>
     </include>
 
     <include file="$(find niryo_robot_hardware_interface)/launch/niryo_robot_hardware_interface.launch">
+        <arg name="hardware_version" value="$(arg hardware_version)"/>
         <arg name="simulation_mode" value="$(arg simulation_mode)"/>
         <arg name="simu_gripper" value="$(arg simu_gripper)"/>
         <arg name="gazebo" value="$(arg gazebo)"/>
         <arg name="can_enabled" value="$(arg can_enabled)"/>
         <arg name="ttl_enabled" value="$(arg ttl_enabled)"/>
-        <arg name="hardware_version" value="$(arg hardware_version)"/>
         <arg name="debug" value="$(arg debug)"/>
     </include>
 
@@ -75,6 +76,7 @@
     <include file="$(find niryo_robot_poses_handlers)/launch/poses_handlers.launch">
         <arg name="log_level" value="$(arg log_level)" />
         <arg name="simulation_mode" value="$(arg simulation_mode)"/>
+        <arg name="hardware_version" value="$(arg hardware_version)"/>
     </include>
 
     <include file="$(find niryo_robot_programs_manager)/launch/programs_manager.launch">

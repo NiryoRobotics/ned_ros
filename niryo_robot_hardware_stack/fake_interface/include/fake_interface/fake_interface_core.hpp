@@ -127,6 +127,7 @@ class FakeInterfaceCore : common::model::IInterfaceCore
 
         bool _gazebo{false};
         bool _simu_gripper{true};
+        std::string _hardware_version{"ned"};
 
         bool _learning_mode{true};
 

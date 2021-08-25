@@ -85,7 +85,9 @@ void CalibrationManager::initParameters(ros::NodeHandle &nh)
 {
     nh.getParam("calibration_timeout", _calibration_timeout);
     nh.getParam("calibration_file", _calibration_file_name);
+    nh.getParam("/niryo_robot_hardware_interface/hardware_version", _hardware_version);
 
+    ROS_DEBUG("Calibration Interface - hardware_version %s", _hardware_version.c_str());
     ROS_DEBUG("Calibration Interface - Calibration timeout %d", _calibration_timeout);
     ROS_DEBUG("Calibration Interface - Calibration file name %s", _calibration_file_name.c_str());
 }
@@ -564,7 +566,17 @@ EStepperCalibrationStatus CalibrationManager::_manual_calibration()
         else if (motor_id_list.at(i) == _joint_list.at(1)->getId())
         {
             offset_to_send = sensor_offset_steps - _joint_list.at(1)->to_motor_pos(_joint_list.at(1)->getOffsetPosition());
-            absolute_steps_at_offset_position = sensor_offset_steps;
+            if (_hardware_version == "ned")
+            {
+                absolute_steps_at_offset_position = sensor_offset_steps;
+            }
+            else if (_hardware_version == "one")
+            {
+                offset_to_send %= steps_per_rev;
+                if (offset_to_send < 0)
+                    offset_to_send += steps_per_rev;
+                absolute_steps_at_offset_position = offset_to_send;
+            }
 
             _send_calibration_offset(_joint_list.at(1)->getId(), offset_to_send, absolute_steps_at_offset_position);
             sld.sleep();

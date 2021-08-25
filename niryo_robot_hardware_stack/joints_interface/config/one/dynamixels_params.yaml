@@ -1,0 +1,19 @@
+dynamixels:
+    dxl_1_offset_position: 0
+    dxl_2_offset_position: 0
+    dxl_3_offset_position: 0
+
+    xl430_middle_position: 2047
+    xl320_middle_position: 511
+
+    dxl_1_P_gain: 640
+    dxl_1_I_gain: 0
+    dxl_1_D_gain: 4000
+
+    dxl_2_P_gain: 640
+    dxl_2_I_gain: 0
+    dxl_2_D_gain: 4000
+
+    dxl_3_P_gain: 32
+    dxl_3_I_gain: 0
+    dxl_3_D_gain: 0

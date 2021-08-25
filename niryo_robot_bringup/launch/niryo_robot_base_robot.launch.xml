@@ -13,9 +13,9 @@
 
     <!-- Load URDF -->
     <param name="robot_description"
-           command="$(find xacro)/xacro $(find niryo_robot_description)/urdf/$(arg hardware_version)/without_mesh_niryo_ned.urdf.xacro"/>
+           command="$(find xacro)/xacro --inorder $(find niryo_robot_description)/urdf/$(arg hardware_version)/without_mesh_niryo.urdf.xacro"/>
     <param name="robot_description_tf2"
-           command="$(find xacro)/xacro $(find niryo_robot_description)/urdf/$(arg hardware_version)/niryo_ned.urdf.xacro"/>
+           command="$(find xacro)/xacro --inorder $(find niryo_robot_description)/urdf/$(arg hardware_version)/niryo.urdf.xacro"/>
 
     <!-- PARAMS -->
     <group ns="niryo_robot">
@@ -40,11 +40,10 @@
     </include>
 
     <!--   Rpi node (IO / fan / ...)   -->
-    <!-- Ned RPI 4 -->
-    <include file="$(find niryo_robot_rpi)/launch/rpi_4.launch">
+    <include file="$(find niryo_robot_rpi)/launch/rpi_$(arg rpi_model).launch">
         <arg name="log_level" value="$(arg log_level)" />
     </include>
-
+    
     <!-- Launching vision node -->
     <include file="$(find niryo_robot_vision)/launch/vision_node.launch">
         <arg name="log_level" value="$(arg log_level)" />

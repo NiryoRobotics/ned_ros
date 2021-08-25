@@ -11,5 +11,4 @@
     </include>
     
     <node pkg="fake_interface" type="fake_interface_node" name="fake_interface" output="screen" />
-
 </launch>

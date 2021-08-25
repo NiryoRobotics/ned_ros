@@ -109,6 +109,7 @@ void FakeInterfaceCore::initParameters(ros::NodeHandle& nh)
 
     // global params
     nh.getParam("/niryo_robot/info/ros_version", _ros_niryo_robot_version);
+    nh.getParam("/niryo_robot_hardware_interface/hardware_version", _hardware_version);
 
     ROS_DEBUG("FakeInterfaceCore::initParameters - gazebo ? %s", _gazebo ? "yes" : "no");
     ROS_DEBUG("FakeInterfaceCore::initParameters - simu_gripper ? %s", _simu_gripper ? "yes" : "no");
@@ -121,6 +122,7 @@ void FakeInterfaceCore::initParameters(ros::NodeHandle& nh)
 
     _ros_niryo_robot_version.erase(_ros_niryo_robot_version.find_last_not_of(" \n\r\t") + 1);
     ROS_DEBUG("FakeInterfaceCore::initParameters - ROS version : %s", _ros_niryo_robot_version.c_str());
+    ROS_DEBUG("FakeInterfaceCore::initParameters - Hardware version : %s", _hardware_version.c_str());
 }
 
 /**

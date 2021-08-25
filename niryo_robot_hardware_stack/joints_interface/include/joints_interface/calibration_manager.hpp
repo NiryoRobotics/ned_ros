@@ -83,6 +83,7 @@ private:
         bool _calibration_in_progress{false};
         int _calibration_timeout{0};
         std::string _calibration_file_name;
+        std::string _hardware_version;
 
         std::vector<int32_t> _motor_calibration_list;
 

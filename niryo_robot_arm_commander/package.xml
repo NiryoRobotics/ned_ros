@@ -43,8 +43,11 @@
   <exec_depend>niryo_robot_hardware_interface</exec_depend>
   <exec_depend>niryo_robot_msgs</exec_depend>
   <exec_depend>niryo_robot_tools_commander</exec_depend>
-  <exec_depend>niryo_ned_moveit_config_w_gripper1</exec_depend>
-  <exec_depend>niryo_ned_moveit_config_standalone</exec_depend>
+  <exec_depend>niryo_moveit_config_w_gripper1</exec_depend>
+  <exec_depend>niryo_moveit_config_standalone</exec_depend>
+  <!-- Niryo One Dependencies -->
+  <exec_depend>niryo_moveit_config_standalone</exec_depend>
+  <exec_depend>niryo_moveit_config_w_gripper1</exec_depend>
 
   <!-- Python Dependencies -->
   <exec_depend>python-numpy</exec_depend>
