@@ -114,6 +114,24 @@ class ObjectShape:
     ANY = "ANY"
 
 
+class ProgramLanguage:
+    def __init__(self):
+        pass
+
+    NONE = -1
+    ALL = 0
+    PYTHON2 = 1
+    PYTHON3 = 2
+    BLOCKLY = 66
+
+class AutorunMode:
+    def __init__(self):
+        pass
+
+    DISABLE = 0
+    ONE_SHOT = 1
+    LOOP = 2
+
 @unique
 class CommandEnum(Enum):
     """

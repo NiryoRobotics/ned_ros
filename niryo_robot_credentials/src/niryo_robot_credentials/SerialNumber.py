@@ -1,25 +1,24 @@
+import os
 from hashlib import sha256
 from uuid import getnode as get_mac_address
 
 
 class SerialNumber:
-    def __init__(self, serial_path):
-        self.__serial_path = serial_path
+    def __init__(self, serial_number_file_path):
+        self.__file_path = serial_number_file_path
+
+    def __file_exists(self):
+        return os.path.exists(self.__file_path)
 
     # - Callable functions
-    def read_serial(self, attempt=3):
-        try:
-            f = open(self.__serial_path, 'r')
-            content = f.read().rstrip()
-        except IOError:
-            content = None
-
-        if not content:
-            if attempt <= 0:
-                return False
+    def read_serial(self):
+        if not self.__file_exists():
             self.__create_serial()
-            return self.read_serial(attempt - 1)
-        return content
+        try:
+            with open(self.__file_path, 'r') as f:
+                return f.read().rstrip()
+        except IOError:
+            return None
 
     # -- Private
 
@@ -48,11 +47,11 @@ class SerialNumber:
 
     def __write_serial(self, serial):
         try:
-            f = open(self.__serial_path, 'w+')
+            with open(self.__file_path, 'w') as f:
+                f.write(serial)
+                return True
         except IOError:
-            return
-        f.write(serial)
-        f.close()
+            return False
 
     def __create_serial(self):
         raw_serial = self.__generate_raw_serial()

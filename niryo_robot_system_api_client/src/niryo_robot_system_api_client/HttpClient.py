@@ -5,9 +5,10 @@ import urllib2
 
 class HttpClient:
 
-    def __init__(self, host, port):
+    def __init__(self, host, port, prefix=None):
         self.host = host
         self.port = port
+        self.prefix = prefix
         self.last_error = ''
 
     def __url_builder(self, uri, params=None):
@@ -19,7 +20,10 @@ class HttpClient:
         :return: None
         :rtype: str
         """
-        url = 'http://{}:{}/{}'.format(self.host, self.port, uri)
+        url = 'http://{}:{}'.format(self.host, self.port)
+        if self.prefix is not None:
+            url += self.prefix
+        url += uri
 
         if params:
             url += '?{}'.format(urllib.urlencode(params))
@@ -52,7 +56,7 @@ class HttpClient:
         return executed.getcode(), json.loads(executed.read())
 
     def set_robot_name(self, name):
-        status_code, response = self.__post('setRobotName', {'name': name})
+        status_code, response = self.__post('/settings/name', {'value': name})
 
         if not status_code:
             return False, 'Unable to connect to the HTTP server'
@@ -63,7 +67,7 @@ class HttpClient:
         return True, response['detail']
 
     def hotspot_state(self):
-        status_code, response = self.__get('hotspotState')
+        status_code, response = self.__get('/hotspotState')
 
         if not status_code:
             return False, 'Unable to connect to the HTTP server'
@@ -71,7 +75,7 @@ class HttpClient:
         return True, response['state']
 
     def activate_hotspot(self):
-        status_code, response = self.__post('switchToHotspot')
+        status_code, response = self.__post('/switchToHotspot')
 
         if not status_code:
             return False, 'Unable to connect to the HTTP server'
