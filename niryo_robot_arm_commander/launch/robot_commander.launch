@@ -5,13 +5,10 @@
     <arg name="hardware_version" default="ned"/>
     <arg name="simu_gripper" default="true"/>
 
-    <!-- Command validation params -->
-    <group ns="niryo_robot">
-        <group ns="robot_command_validation">
-            <rosparam file="$(find niryo_robot_arm_commander)/config/$(arg hardware_version)/robot_command_validation.yaml"/>
-        </group>
-    </group>
-        
+    <include file="$(find niryo_robot_arm_commander)/launch/robot_commander_base.launch.xml"> 
+        <arg name="hardware_version" value="$(arg hardware_version)" />
+    </include>
+
     <!-- Override MoveIt default logging from INFO to WARn -->
     <env name="ROSCONSOLE_CONFIG_FILE" value="$(find niryo_robot_arm_commander)/config/rosconsole.config"/>
 
@@ -36,8 +33,5 @@
     <node name="niryo_robot_arm_commander" pkg="niryo_robot_arm_commander" type="robot_commander_node.py" output="screen"
           respawn="false">
         <param name="log_level" type="string" value="$(arg log_level)" />
-
-        <rosparam command="load" file="$(find niryo_robot_arm_commander)/config/commander_params.yaml"/>
-        <rosparam command="load" file="$(find niryo_robot_arm_commander)/config/jog_params.yaml"/>
     </node>
 </launch>

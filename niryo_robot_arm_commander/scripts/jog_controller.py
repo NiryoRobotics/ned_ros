@@ -131,8 +131,9 @@ class JogController:
         self.__joints_rotation_max = jog_limits["joints"]
 
         # - Others param
-        self.__time_without_jog_limit = rospy.get_param(
-            "~time_without_jog_TCP_limit")  # jog disabled after one second for the jogTCP Niryo Studio
+
+        # jog disabled after one second for the jogTCP Niryo Studio
+        self.__time_without_jog_limit = rospy.get_param("~time_without_jog_TCP_limit")  
         self.__error_tolerance_joint = rospy.get_param("~error_tolerance_joint")
 
     # - Callbacks
@@ -224,7 +225,7 @@ class JogController:
         # check if collision when jogging joints
         current_joints_error = msg.error.positions
 
-         # this error tolerance is lower than the one in arm_commander bc the jog is much slower
+        # this error tolerance is lower than the one in arm_commander bc the jog is much slower
         for error, tolerance in zip(current_joints_error, self.__error_tolerance_joint):
             if abs(error) > tolerance and self._enabled and self._shift_mode == JogShiftRequest.JOINTS_SHIFT:
                     self.__collision_detected = True

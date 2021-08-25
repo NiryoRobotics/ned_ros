@@ -4,18 +4,11 @@
     <!-- Arguments -->
     <arg name="log_level" default="INFO" />
 
-    <group ns="niryo_robot">
-        <group ns="python_ros_wrapper">
-            <param name="service_timeout" type="int" value="2"/>
-            <param name="action_connection_timeout" type="int" value="20"/>
-            <param name="action_execute_timeout" type="int" value="60"/>
-            <param name="action_preempt_timeout" type="int" value="60"/>
-        </group>
-    </group>
-
+    <include file="$(find niryo_robot_user_interface)/launch/user_interface_base.launch.xml"/>
+    
     <!--  Launch Main node  -->
     <node name="niryo_robot_user_interface" pkg="niryo_robot_user_interface" type="user_interface_node.py" output="screen" >
         <param name="log_level" type="string" value="$(arg log_level)" />
-        <rosparam file="$(find niryo_robot_user_interface)/config/default.yaml"/>
     </node>
+
 </launch>

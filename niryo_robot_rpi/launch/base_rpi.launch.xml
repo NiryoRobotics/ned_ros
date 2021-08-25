@@ -19,7 +19,7 @@
     </node>
     <node unless="$(arg simulation_mode)" name="niryo_robot_rpi" pkg="niryo_robot_rpi" type="rpi_node.py" output="screen">
         <param name="log_level" type="string" value="$(arg log_level)" />
-        <rosparam file="$(find niryo_robot_rpi)/config/rpi_config.yaml"/>
+        <rosparam file="$(find niryo_robot_rpi)/config/default.yaml"/>
         <param name="rpi_model" type="string" value="$(arg rpi_model)"/>
 
         <param name="publish_io_state_frequency" type="double" value="10.0"/>

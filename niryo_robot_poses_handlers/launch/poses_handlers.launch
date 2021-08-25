@@ -6,8 +6,8 @@
     <arg name="simulation_mode" default="false" />
     <arg name="hardware_version" default="ned"/>
 
-    <arg name="dir_desktop" value="~/.niryo/simulation/"/>
-    <arg name="dir_rpi" value="~/niryo_robot_saved_files/"/>
+    <arg name="dir_desktop" value="~/.niryo/simulation"/>
+    <arg name="dir_rpi" value="~/niryo_robot_saved_files"/>
 
     <arg name="saved_files_dir" value="$(arg dir_desktop)" if="$(arg simulation_mode)"/>
     <arg name="saved_files_dir" value="$(arg dir_rpi)" unless="$(arg simulation_mode)"/>
@@ -18,8 +18,8 @@
                   if="$(arg simulation_mode)"/>
 
         <param name="grip_dir" type="string" value="$(find niryo_robot_poses_handlers)/grips/$(arg hardware_version)/"/>
-        <param name="workspace_dir" type="string"  value="$(arg saved_files_dir)niryo_robot_workspaces/"  />
-        <param name="poses_dir" type="string"  value="$(arg saved_files_dir)niryo_robot_poses/"/>
-        <param name="trajectories_dir" type="string"  value="$(arg saved_files_dir)niryo_robot_trajectories/"/>
+        <param name="workspace_dir" type="string"  value="$(arg saved_files_dir)/niryo_robot_workspaces/"  />
+        <param name="poses_dir" type="string"  value="$(arg saved_files_dir)/niryo_robot_poses/"/>
+        <param name="trajectories_dir" type="string"  value="$(arg saved_files_dir)/niryo_robot_trajectories/"/>
     </node>
 </launch>

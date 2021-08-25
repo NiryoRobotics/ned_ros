@@ -128,10 +128,10 @@ if(CATKIN_ENABLE_TESTING)
     find_package(rostest REQUIRED)
 
     #if ("${ARCHITECTURE}" MATCHES "^(arm.*|aarch64.*|arm64.*)$")
-      add_rostest_gtest(${PROJECT_NAME}_unit_tests
-        test/unit_tests.test
-        test/unit_tests.cpp
-      )
+    add_rostest_gtest(${PROJECT_NAME}_unit_tests
+      test/unit_tests.test
+      test/unit_tests.cpp
+    )
     #endif()
     if(TARGET ${PROJECT_NAME}_unit_tests)
       target_link_libraries(${PROJECT_NAME}_unit_tests

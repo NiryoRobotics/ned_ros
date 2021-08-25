@@ -124,6 +124,7 @@ class ProgramLanguage:
     PYTHON3 = 2
     BLOCKLY = 66
 
+
 class AutorunMode:
     def __init__(self):
         pass
@@ -131,6 +132,7 @@ class AutorunMode:
     DISABLE = 0
     ONE_SHOT = 1
     LOOP = 2
+
 
 @unique
 class CommandEnum(Enum):

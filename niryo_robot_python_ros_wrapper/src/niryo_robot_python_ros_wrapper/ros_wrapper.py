@@ -39,7 +39,9 @@ from niryo_robot_tools_commander.srv import SetTCP, SetTCPRequest
 from niryo_robot_vision.srv import SetImageParameter
 from niryo_robot_rpi.srv import GetDigitalIO, SetDigitalIO
 from niryo_robot_vision.srv import DebugMarkers, DebugMarkersRequest, DebugColorDetection, DebugColorDetectionRequest
-from niryo_robot_programs_manager.srv import SetProgramAutorun, SetProgramAutorunRequest, GetProgramAutorunInfos, GetProgramList, ManageProgram, ManageProgramRequest, GetProgram, GetProgramRequest, ExecuteProgram, ExecuteProgramRequest
+from niryo_robot_programs_manager.srv import SetProgramAutorun, SetProgramAutorunRequest, GetProgramAutorunInfos, \
+    GetProgramList, ManageProgram, ManageProgramRequest, GetProgram, GetProgramRequest, ExecuteProgram, \
+    ExecuteProgramRequest
 from niryo_robot_credentials.srv import GetCredential, SetCredential
 from std_srvs.srv import Trigger as StdTrigger
 
@@ -57,7 +59,6 @@ class NiryoRosWrapperException(Exception):
 
 
 class NiryoRosWrapper:
-
     LOGS_LEVELS = {
         rospy.INFO: 'INFO',
         rospy.WARN: 'WARNING',
@@ -75,7 +76,7 @@ class NiryoRosWrapper:
         self.__simulation_mode = rospy.get_param("/niryo_robot/simulation_mode")
         self.__hardware_version = rospy.get_param("/niryo_robot/hardware_version")
         self.__can_enabled = rospy.get_param("/niryo_robot_hardware_interface/can_enabled")
-        self.__dxl_enabled = rospy.get_param("/niryo_robot_hardware_interface/dxl_enabled")
+        self.__ttl_enabled = rospy.get_param("/niryo_robot_hardware_interface/ttl_enabled")
 
         # - Publishers
         # Highlight publisher (to highlight blocks in Blockly interface)
@@ -1510,11 +1511,11 @@ class NiryoRosWrapper:
         """
         return self.__can_enabled
 
-    def get_dxl_enabled(self):
+    def get_ttl_enabled(self):
         """
-        Get dxl_enabled
+        Get ttl_enabled
         """
-        return self.__dxl_enabled
+        return self.__ttl_enabled
 
     def get_hardware_status(self):
         """
@@ -1609,7 +1610,6 @@ class NiryoRosWrapper:
         result = self.__call_service('/niryo_robot_commander/motor_debug_start', SetInt, 0)
         return self.__classic_return_w_check(result)
 
-
     # - Button
 
     def __change_button_mode(self, mode):
@@ -1639,7 +1639,6 @@ class NiryoRosWrapper:
         :rtype: (int, str)
         """
         return self.__change_button_mode(2)
-
 
     # - Software
 
@@ -2160,7 +2159,7 @@ class NiryoRosWrapper:
             return result.name_list, result.description_list
         return result.name_list
 
-    #- Logs
+    # - Logs
 
     def get_logs(self):
         """
