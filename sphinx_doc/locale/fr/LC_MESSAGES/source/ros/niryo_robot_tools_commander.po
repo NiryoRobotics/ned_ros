@@ -22,7 +22,7 @@ msgstr ""
 
 #: ../../source/ros/niryo_robot_tools_commander.rst:2
 msgid "Niryo robot tools commander package"
-msgstr "Package : niryo_robot_tools_commander"
+msgstr ""
 
 #: ../../source/ros/niryo_robot_tools_commander.rst:4
 msgid "Provides functionalities to control end-effectors and accessories for Ned."
