@@ -437,7 +437,7 @@ msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:153
 msgid "Open gripper previously updated"
-msgstr ""
+msgstr "Ouvrir le gripper précédemment équipé / scanné"
 
 #: ../../source/modbus_tcp_server.rst:154
 msgid "511"

@@ -71,7 +71,7 @@ msgstr ""
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:27
 msgid "Grips"
-msgstr ""
+msgstr "Outils"
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:29
 msgid ""
