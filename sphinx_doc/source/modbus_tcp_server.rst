@@ -84,7 +84,7 @@ Digital I/O numbers used for Modbus:
    *  -  100-105
       -  Digital I/O state (High = 1, Low = 0)
 
-This datastore can be used to read Digital I/O mode and state of the robot. See :ref:`Coil` above for digital I/O number mapping. 
+This datastore can be used to read Digital I/O mode and state of the robot. See :ref:`source/modbus_tcp_server:Coil` above for digital I/O number mapping. 
 
 Holding register
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
