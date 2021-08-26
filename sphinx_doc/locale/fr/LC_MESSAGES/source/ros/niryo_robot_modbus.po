@@ -41,7 +41,6 @@ msgid "The Modbus TCP server is running on port 5020 by default."
 msgstr "Le serveur Modbus TCP s'exécute par défaut sur le port 5020."
 
 #: ../../source/ros/niryo_robot_modbus.rst:11
-#, fuzzy
 msgid "Description -  Modbus TCP server"
 msgstr "Description - Serveur Modbus TCP"
 
@@ -237,7 +236,6 @@ msgid "Each address contains a 16bits value."
 msgstr "Chaque adresse contient une valeur de 16bits."
 
 #: ../../source/ros/niryo_robot_modbus.rst:93
-#, fuzzy
 msgid ""
 "READ/WRITE (the stored values correspond to the last given command, not "
 "the current robot state)"
@@ -301,7 +299,6 @@ msgid "102"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_modbus.rst:117
-#, fuzzy
 msgid "Send Pose Linear Move command with stored position and orientation"
 msgstr ""
 "Envoyer la commande Pose Move avec les positions et les orientations "
@@ -435,6 +432,10 @@ msgstr "Vitesse de fermeture du gripper (100-1000)"
 #: ../../source/ros/niryo_robot_modbus.rst:148
 msgid "500"
 msgstr ""
+
+#: ../../source/ros/niryo_robot_modbus.rst:143
+msgid "Select tool from given id"
+msgstr "Sélectionner l'outil à partir de l'identifiant donné **"
 
 #: ../../source/ros/niryo_robot_modbus.rst:149
 msgid ""
@@ -710,8 +711,12 @@ msgstr "Mode apprentissage activé"
 msgid "400"
 msgstr ""
 
+<<<<<<< sphinx_doc/locale/fr/LC_MESSAGES/source/ros/niryo_robot_modbus.po
+#: ../../source/ros/niryo_robot_modbus.rst:195
+=======
 #: ../../source/ros/niryo_robot_modbus.rst:232
 #, fuzzy
+>>>>>>> sphinx_doc/locale/fr/LC_MESSAGES/source/ros/niryo_robot_modbus.po
 msgid "Motors connection up (Ok = 1, Not ok = 0)"
 msgstr "Connexion des moteurs (Ok = 1, Pas OK = 0)"
 
@@ -799,8 +804,12 @@ msgstr "État de la commande du Convoyeur 1 (On = 0, Off = 1)"
 msgid "532"
 msgstr ""
 
+<<<<<<< sphinx_doc/locale/fr/LC_MESSAGES/source/ros/niryo_robot_modbus.po
+#: ../../source/ros/niryo_robot_modbus.rst:219
+=======
 #: ../../source/ros/niryo_robot_modbus.rst:256
 #, fuzzy
+>>>>>>> sphinx_doc/locale/fr/LC_MESSAGES/source/ros/niryo_robot_modbus.po
 msgid "Conveyor 1 Speed (0-100 (%))"
 msgstr "Vitesse du Convoyeur 1 (0-100)(%)"
 
@@ -832,8 +841,12 @@ msgstr "État de la commande du Convoyeur 1 (On = 0, Off = 1)"
 msgid "542"
 msgstr ""
 
+<<<<<<< sphinx_doc/locale/fr/LC_MESSAGES/source/ros/niryo_robot_modbus.po
+#: ../../source/ros/niryo_robot_modbus.rst:227
+=======
 #: ../../source/ros/niryo_robot_modbus.rst:264
 #, fuzzy
+>>>>>>> sphinx_doc/locale/fr/LC_MESSAGES/source/ros/niryo_robot_modbus.po
 msgid "Conveyor 2 Speed (0-100 (%))"
 msgstr "Vitesse du Convoyeur 2 (0-100)(%)"
 
@@ -849,8 +862,12 @@ msgstr "Direction du Convoyeur 2 (vers l'arrière = -1, vers l'avant = 1)"
 msgid "Dependencies - Modbus TCP Server"
 msgstr "Les dépendances - Serveur Modbus TCP"
 
+<<<<<<< sphinx_doc/locale/fr/LC_MESSAGES/source/ros/niryo_robot_modbus.po
+#: ../../source/ros/niryo_robot_modbus.rst:234
+=======
 #: ../../source/ros/niryo_robot_modbus.rst:271
 #, fuzzy
+>>>>>>> sphinx_doc/locale/fr/LC_MESSAGES/source/ros/niryo_robot_modbus.po
 msgid "`pymodbus library <https://pymodbus.readthedocs.io/en/latest/index.html>`_"
 msgstr ""
 "Il a été construit au-dessus de la `librairie Pymodbus "

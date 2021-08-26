@@ -14,12 +14,12 @@ Tool control
 Equip tool
 ^^^^^^^^^^^^
 
-In order to use a tool, it should be plugged mechanically to the robot but also
+In order to use a tool, it should be mechanically plugged to the robot but also
 connected software wise.
 
 To do that, we should use the function
 :meth:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.update_tool`
-which take no argument. It will scan motor connections and set the new tool!
+which takes no argument. It will scan motor connections and set the new tool!
 
 The line to equip a new tool is: ::
 
@@ -135,7 +135,7 @@ To release by specifying parameters: ::
 Pick & place with tools
 -------------------------
 
-There is a plenty of ways to realise a pick and place with the ROS Wrapper. Methods will
+There are a plenty of ways to realize a pick and place with the ROS Wrapper. Methods will
 be presented from the lowest to highest level.
 
 Code used will be: ::

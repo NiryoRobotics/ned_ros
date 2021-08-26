@@ -65,7 +65,7 @@ msgstr ""
 
 #: ../../source/tcp_server.rst:24
 msgid ""
-"The server answer only after the command is done, so it cannot deal with "
+"The server answers only after the command is done, so it can't deal with "
 "multiple commands at the same time."
 msgstr ""
 
@@ -110,7 +110,7 @@ msgid "Format - Request"
 msgstr ""
 
 #: ../../source/tcp_server.rst:48
-msgid "As no function request a payload in input, requests have the following."
+msgid "As no function requests a payload in input, requests have the following."
 msgstr ""
 
 #: ../../source/tcp_server.rst:50
@@ -276,5 +276,15 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "Enumeration of all commands used"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "The server answer only after the "
+#~ "command is done, so it cannot deal"
+#~ " with multiple commands at the same"
+#~ " time."
+#~ msgstr ""
+
+#~ msgid "As no function request a payload in input, requests have the following."
 #~ msgstr ""
 

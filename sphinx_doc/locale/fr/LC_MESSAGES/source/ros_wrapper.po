@@ -6,19 +6,18 @@
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-02 17:46+0200\n"
+"POT-Creation-Date: 2021-07-29 15:01+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.8.0\n"
+"Generated-By: Babel 2.9.1\n"
 
 #: ../../source/ros_wrapper.rst:2
 msgid "Control with Python ROS Wrapper"
@@ -46,12 +45,12 @@ msgstr ""
 "ressemblera à : ::"
 
 #: ../../source/ros_wrapper.rst:20
-msgid "What this code is doing in a hidden way:"
+msgid "What is this code doing, in a hidden way:"
 msgstr "Ce que fait ce code de manière cachée :"
 
 #: ../../source/ros_wrapper.rst:22
 msgid ""
-"It generates a :ref:`RobotMove Action Goal<RobotMove (Action)>` and set "
+"It generates a :ref:`RobotMove Action Goal<RobotMove (Action)>` and sets "
 "it as a joint command with the corresponding joints value."
 msgstr ""
 "Il génère un :ref:`RobotMove Action Goal<RobotMove (Action)>` et le "
@@ -59,23 +58,21 @@ msgstr ""
 "correspondante."
 
 #: ../../source/ros_wrapper.rst:24
-#, fuzzy
-msgid "Send goal to the Arm Commander Action Server."
+msgid "Sends goal to the Arm Commander Action Server."
 msgstr "Envoyer l'objectif au Commander Action Server."
 
 #: ../../source/ros_wrapper.rst:25
-#, fuzzy
-msgid "Wait for the Arm Commander Action Server to set Action as finished."
+msgid "Waits for the Arm Commander Action Server to set Action as finished."
 msgstr "Attendre que le Commander Action Server définisse l'action comme terminée."
 
 #: ../../source/ros_wrapper.rst:26
-msgid "Check if action finished with a success."
+msgid "Checks if action finished with a success."
 msgstr "Vérifier si l'action s'est terminée avec succès."
 
 #: ../../source/ros_wrapper.rst:29
 msgid ""
 "In this section, we will give some examples on how to use the Python ROS "
-"Wrapper to control the Ned, as well as a complete documentation of the "
+"Wrapper to control Ned, as well as a complete documentation of the "
 "functions available in the Ned Python ROS Wrapper."
 msgstr ""
 "Dans cette section, nous donnerons quelques exemples sur la façon "

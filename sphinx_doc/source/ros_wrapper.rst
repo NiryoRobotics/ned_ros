@@ -17,16 +17,16 @@ For instance, a script realizing a moveJ via Python ROS Wrapper will look like: 
     niryo_robot.move_joints(0.1, -0.2, 0.0, 1.1, -0.5, 0.2)
 
 
-What this code is doing in a hidden way:
+What is this code doing, in a hidden way:
 
- - It generates a :ref:`RobotMove Action Goal<RobotMove (Action)>` and set
+ - It generates a :ref:`RobotMove Action Goal<RobotMove (Action)>` and sets
    it as a joint command with the corresponding joints value.
- - Send goal to the Arm Commander Action Server.
- - Wait for the Arm Commander Action Server to set Action as finished.
- - Check if action finished with a success.
+ - Sends goal to the Arm Commander Action Server.
+ - Waits for the Arm Commander Action Server to set Action as finished.
+ - Checks if action finished with a success.
 
 
-In this section, we will give some examples on how to use the Python ROS Wrapper to control the
+In this section, we will give some examples on how to use the Python ROS Wrapper to control
 Ned, as well as a complete documentation of the functions available in the
 Ned Python ROS Wrapper.
 

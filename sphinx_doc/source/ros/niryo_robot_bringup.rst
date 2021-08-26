@@ -12,7 +12,7 @@ Launch files are placed in the *launch* folder. Only files with **.launch** exte
 
    Bring Up Launch Files' organization
 
-On RasberryPI
+On RaspberryPI
 -------------------------
 
 Ned

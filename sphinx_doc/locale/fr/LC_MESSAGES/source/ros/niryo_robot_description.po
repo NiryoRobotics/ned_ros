@@ -22,7 +22,7 @@ msgstr ""
 
 #: ../../source/ros/niryo_robot_description.rst:2
 msgid "Niryo robot description package"
-msgstr "Package de description du robot Niryo"
+msgstr "Package : niryo_robot_description"
 
 #: ../../source/ros/niryo_robot_description.rst:4
 msgid "This package contains URDF files and meshes (collada + stl) for Ned."

@@ -22,7 +22,7 @@ msgstr ""
 
 #: ../../source/ros/niryo_robot_msgs.rst:2
 msgid "Niryo robot messages package"
-msgstr "Le package des messages du robot Niryo"
+msgstr "Package : niryo_robot_msgs"
 
 #: ../../source/ros/niryo_robot_msgs.rst:4
 msgid ""
@@ -87,7 +87,6 @@ msgid ":ref:`HardwareStatus`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_msgs.rst:27
-#, fuzzy
 msgid "several hardware informations"
 msgstr "Plusieurs informations sur le matériel"
 
@@ -96,7 +95,6 @@ msgid ":ref:`SoftwareVersion`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_msgs.rst:29
-#, fuzzy
 msgid "several software version"
 msgstr "Plusieurs versions de logiciel"
 

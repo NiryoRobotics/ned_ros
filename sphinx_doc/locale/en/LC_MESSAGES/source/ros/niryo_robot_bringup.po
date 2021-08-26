@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-10 11:46+0000\n"
+"POT-Creation-Date: 2021-07-29 15:01+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -41,7 +41,7 @@ msgid "Bring Up Launch Files' organization"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_bringup.rst:16
-msgid "On RasberryPI"
+msgid "On RaspberryPI"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_bringup.rst:19
@@ -195,5 +195,8 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "Command to launch Ned's ROS Stack::"
+#~ msgstr ""
+
+#~ msgid "On RasberryPI"
 #~ msgstr ""
 
