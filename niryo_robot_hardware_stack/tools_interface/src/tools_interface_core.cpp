@@ -263,7 +263,6 @@ bool ToolsInterfaceCore::_callbackPingAndSetDxlTool(tools_interface::PingDxlTool
         {
             ros::Duration(0.05).sleep();
             int result = _ttl_interface->setEndEffector(_toolState.getType(), _toolState.getId());
-
             // on success, tool is set, we go out of loop
             if (niryo_robot_msgs::CommandStatus::SUCCESS == result)
             {

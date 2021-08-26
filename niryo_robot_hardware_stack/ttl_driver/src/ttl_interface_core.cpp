@@ -666,12 +666,11 @@ int TtlInterfaceCore::setEndEffector(EMotorType type, uint8_t motor_id)
     int result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
 
     lock_guard<mutex> lck(_control_loop_mutex);
-
+    // add dynamixel as a new tool
+    _ttl_manager->addMotor(type, motor_id, TtlManager::EType::TOOL);
     // try to find motor
     if (_ttl_manager->ping(motor_id))
     {
-        // add dynamixel as a new tool
-        _ttl_manager->addMotor(type, motor_id, TtlManager::EType::TOOL);
         // Enable torque
         std::shared_ptr<AbstractTtlSingleMotorCmd> cmd_torque = std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_TORQUE,
                                                             motor_id, std::initializer_list<uint32_t>{1});
@@ -682,6 +681,7 @@ int TtlInterfaceCore::setEndEffector(EMotorType type, uint8_t motor_id)
     }
     else
     {
+        _ttl_manager->removeMotor(motor_id);
         ROS_WARN("TtlInterfaceCore::setEndEffector - No end effector found with motor id %d", motor_id);
     }
 
