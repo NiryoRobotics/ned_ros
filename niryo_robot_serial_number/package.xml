@@ -1,5 +1,5 @@
 <package>
-    <name>niryo_robot_iot</name>
+    <name>niryo_robot_serial_number</name>
     <version>3.1.2</version>
     <description>It handles the robot serial number</description>
 
