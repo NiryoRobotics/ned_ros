@@ -31,7 +31,7 @@ Publisher - Raspberry Pi
       -  Message Type
       -  Description
    *  -  ``pause_state``
-      -  :ref:`PausePlanExecution<source/ros/niryo_robot_commander:PausePlanExecution (Message)>`
+      -  :ref:`PausePlanExecution<source/ros/niryo_robot_arm_commander:PausePlanExecution (Message)>`
       -  Publish the current execution state launched when button is pressed
    *  -  ``/niryo_robot/blockly/save_current_point``
       -  :std_msgs:`std_msgs/Int32<Int32>`
@@ -96,7 +96,7 @@ Dependencies - Raspberry Pi
 - :msgs_index:`actionlib_msgs`
 - :msgs_index:`sensor_msgs`
 - :doc:`niryo_robot_msgs`
-- :doc:`niryo_robot_commander`
+- :doc:`niryo_robot_arm_commander`
 
 Services & Messages files - Raspberry Pi
 ----------------------------------------------
