@@ -27,7 +27,7 @@ Action server - tools
       -  Message Type
       -  Description
    *  -  ``action_server``
-      -  :ref:`ToolAction<ToolAction (Action)>`
+      -  :ref:`ToolAction<source/ros/niryo_robot_tools_commander:ToolAction (Action)>`
       -  Command the tool through an action server
 
 Publisher - tools
@@ -46,7 +46,7 @@ Publisher - tools
       -  :std_msgs:`Int32`
       -  Publish the current tool ID
    *  -  ``tcp``
-      -  :ref:`TCP<TCP (Message)>`
+      -  :ref:`TCP<source/ros/niryo_robot_tools_commander:TCP (Message)>`
       -  Publish if the TCP (Tool Center Point) is enabled and transformation between the tool_link and the TCP
 
 Services - tools
@@ -62,26 +62,26 @@ Services - tools
       -  Message Type
       -  Description
    *  -  ``update_tool``
-      -  :ref:`Trigger`
+      -  :std_srvs:`Trigger`
       -  Ping/scan for a dxl motor flashed with an ID corresponding to a tool and equip it (if found)
    *  -  ``equip_electromagnet``
-      -  :ref:`SetInt`
+      -  :ref:`source/ros/niryo_robot_msgs:SetInt`
       -  Equip the electromagnet with the motor ID given as parameter
    *  -  ``enable_tcp``
-      -  :ref:`SetBool`
+      -  :ref:`source/ros/niryo_robot_msgs:SetBool`
       -  | Enable or disable the TCP (Tool Center Point) functionality.
          | When we activate it, the transformation will be the last one saved since the robot started.
          | By default it will be the one of the equipped tool.
    *  -  ``set_tcp``
-      -  :ref:`SetTCP<SetTCP (Service)>`
+      -  :ref:`SetTCP<source/ros/niryo_robot_tools_commander:SetTCP (Service)>`
       -  Activate the TCP (Tool Center Point) functionality and defines a new TCP transformation.
    *  -  ``reset_tcp``
-      -  :ref:`Trigger`
+      -  :std_srvs:`Trigger`
       -  Reset the TCP transformation. By default it will be the one of the equipped tool.
 
 Dependencies - tools
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-* :ref:`niryo_robot_msgs <Niryo Robot Messages Package>`
+* :doc:`niryo_robot_msgs`
 * :msgs_index:`std_msgs`
 * :msgs_index:`geometry_msgs`
 
