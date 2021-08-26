@@ -54,7 +54,7 @@ Action Server - Commander
       -  Message Type
       -  Description
    *  -  ``robot_action``
-      -  :ref:`RobotMove<source/ros/niryo_robot_commander:RobotMove (Action)>`
+      -  :ref:`RobotMove<source/ros/niryo_robot_arm_commander:RobotMove (Action)>`
       -  Command the arm and tools through an action server
 
 Services - Commander
@@ -79,10 +79,10 @@ Services - Commander
       -  :ref:`source/ros/niryo_robot_msgs:SetInt`
       -  Set a percentage of maximum speed
    *  -  ``/niryo_robot/kinematics/forward``
-      -  :ref:`GetFK<source/ros/niryo_robot_commander:GetFK (Service)>`
+      -  :ref:`GetFK<source/ros/niryo_robot_arm_commander:GetFK (Service)>`
       -  Compute a Forward Kinematic
    *  -  ``/niryo_robot/kinematics/inverse``
-      -  :ref:`GetIK<source/ros/niryo_robot_commander:GetIK (Service)>`
+      -  :ref:`GetIK<source/ros/niryo_robot_arm_commander:GetIK (Service)>`
       -  Compute a Inverse Kinematic
 
 Messages - Commander
@@ -96,13 +96,11 @@ Messages - Commander
 
    *  -  Name
       -  Description
-   *  -  :ref:`ArmMoveCommand<source/ros/niryo_robot_commander:ArmMoveCommand (Message)>`
+   *  -  :ref:`ArmMoveCommand<source/ros/niryo_robot_arm_commander:ArmMoveCommand (Message)>`
       -  Message to command the arm
-   *  -  :ref:`RobotCommand<source/ros/niryo_robot_commander:RobotCommand (Message)>`
-      -  Message to command the robot (arm + tool)
-   *  -  :ref:`ShiftPose<source/ros/niryo_robot_commander:ShiftPose (Message)>`
+   *  -  :ref:`ShiftPose<source/ros/niryo_robot_arm_commander:ShiftPose (Message)>`
       -  Message for shifting pose
-   *  -  :ref:`PausePlanExecution<source/ros/niryo_robot_commander:PausePlanExecution (Message)>`
+   *  -  :ref:`PausePlanExecution<source/ros/niryo_robot_arm_commander:PausePlanExecution (Message)>`
       -  Pause movement execution
 
 All these services are available as soon as the node is started.
@@ -117,7 +115,7 @@ Dependencies - Commander
 - `MoveIt! <https://moveit.ros.org/>`_
 - :msgs_index:`moveit_msgs`
 - :doc:`niryo_robot_msgs`
-- :doc:`niryo_robot_tools`
+- :doc:`niryo_robot_tools_commander`
 - `python-numpy <https://numpy.org/>`_
 - :wiki_ros:`ros_controllers`
 - :wiki_ros:`rosbridge_server`
