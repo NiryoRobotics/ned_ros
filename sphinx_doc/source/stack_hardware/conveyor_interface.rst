@@ -1,4 +1,4 @@
-Niryo robot Conveyor Belt interface package
+Conveyor_interface
 ===========================================
 
 | This package handles Niryo's Conveyor Belt.
@@ -41,7 +41,7 @@ Published topics - Conveyor Belt interface
       -  Message Type
       -  Description
    *  -  ``feedback``
-      -  :ref:`ConveyorFeedbackArray<ConveyorFeedbackArray (Message)>`
+      -  :ref:`ConveyorFeedbackArray<source/stack_hardware/conveyor_interface:ConveyorFeedbackArray (Message)>`
       -  Conveyors Belt states
 
 Services - Conveyor Belt interface
@@ -57,17 +57,17 @@ Services - Conveyor Belt interface
       -  Message Type
       -  Description
    *  -  ``control_conveyor``
-      -  :ref:`ControlConveyor<ControlConveyor (Service)>`
+      -  :ref:`ControlConveyor<source/stack_hardware/conveyor_interface:ControlConveyor (Service)>`
       -  Send a command to the desired Conveyor Belt
    *  -  ``ping_and_set_conveyor``
-      -  :ref:`SetConveyor<SetConveyor (Service)>`
+      -  :ref:`SetConveyor<source/stack_hardware/conveyor_interface:SetConveyor (Service)>`
       -  Scan and set a new Conveyor Belt
 
 Dependencies - Conveyor Belt interface
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 - :msgs_index:`std_msgs`
-- :ref:`stepper_driver <Niryo Robot Stepper Driver Package>`
+- :doc:`stepper_driver <stepper_driver>`
 
 Services & messages files - Conveyor Belt interface
 ------------------------------------------------------

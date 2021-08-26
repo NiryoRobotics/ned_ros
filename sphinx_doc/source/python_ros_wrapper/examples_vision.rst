@@ -2,14 +2,14 @@ Examples: Vision
 ========================
 This document shows how to use Ned's Vision Set.
 
-If you want see more about Ned's Vision functions, you can look at :ref:`API - Vision<Vision>`.
+If you want see more about Ned's Vision functions, you can look at :ref:`API - Vision<source/python_ros_wrapper/ros_wrapper_doc:Vision>`.
 
 Beforehand
 -------------------------------
-To realize the following examples, you need to previously
+To realize the following examples, you need to have
 create a workspace.
 
-As the examples start always the same way, here is the code you need to
+As the examples start always the same, there is the code you need to
 add at the beginning of all of them: ::
 
     #!/usr/bin/env python

@@ -1,4 +1,4 @@
-Niryo robot tools interface package
+Tools_interface
 ====================================
 
 | This package handles Niryo's tools.
@@ -59,19 +59,19 @@ Services - tools interface
       -  Message Type
       -  Description
    *  -  ``niryo_robot/tools/ping_and_set_dxl_tool``
-      -  :ref:`tools_interface/PingDxlTool<PingDxlTool (Service)>`
+      -  :ref:`tools_interface/PingDxlTool<source/stack_hardware/tools_interface:PingDxlTool (Service)>`
       -  Scan and set for a tool plugged
    *  -  ``niryo_robot/tools/open_gripper``
-      -  :ref:`tools_interface/OpenGripper<OpenGripper (Service)>`
+      -  :ref:`tools_interface/OpenGripper<source/stack_hardware/tools_interface:OpenGripper (Service)>`
       -  Open a gripper tool
    *  -  ``niryo_robot/tools/close_gripper``
-      -  :ref:`tools_interface/CloseGripper<CloseGripper (Service)>`
+      -  :ref:`tools_interface/CloseGripper<source/stack_hardware/tools_interface:CloseGripper (Service)>`
       -  Close a gripper tool
    *  -  ``niryo_robot/tools/pull_air_vacuum_pump``
-      -  :ref:`tools_interface/PullAirVacuumPump<PullAirVacuumPump (Service)>`
+      -  :ref:`tools_interface/PullAirVacuumPump<source/stack_hardware/tools_interface:PullAirVacuumPump (Service)>`
       -  Pull vacuum pump tool
    *  -  ``niryo_robot/tools/push_air_vacuum_pump``
-      -  :ref:`tools_interface/PushAirVacuumPump<PushAirVacuumPump (Service)>`
+      -  :ref:`tools_interface/PushAirVacuumPump<source/stack_hardware/tools_interface:PushAirVacuumPump (Service)>`
       -  Push vacuum pump tool
    *  -  ``niryo_robot/tools/reboot``
       -  :std_srvs:`Trigger`
@@ -82,7 +82,7 @@ Dependencies - tools interface
 
 - :msgs_index:`std_msgs`
 - :msgs_index:`std_srvs`
-- :ref:`dynamixel_driver <Niryo Robot Dynamixel Driver Package>`
+- :doc:`dynamixel_driver`
 
 Services & messages files - tools interface
 ----------------------------------------------

@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-25 10:56+0200\n"
+"POT-Creation-Date: 2021-08-12 16:06+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,7 +21,7 @@ msgstr ""
 "Generated-By: Babel 2.9.1\n"
 
 #: ../../source/tcp_server.rst:2
-msgid "Use Ned TCP server"
+msgid "Use Ned's TCP server"
 msgstr ""
 
 #: ../../source/tcp_server.rst:4
@@ -110,7 +110,7 @@ msgid "Format - Request"
 msgstr ""
 
 #: ../../source/tcp_server.rst:48
-msgid "As no function requests a payload in input, requests have the following."
+msgid "As no function request a payload in input, requests have the following."
 msgstr ""
 
 #: ../../source/tcp_server.rst:50
@@ -278,13 +278,6 @@ msgstr ""
 #~ msgid "Enumeration of all commands used"
 #~ msgstr ""
 
-#~ msgid ""
-#~ "The server answer only after the "
-#~ "command is done, so it cannot deal"
-#~ " with multiple commands at the same"
-#~ " time."
-#~ msgstr ""
-
-#~ msgid "As no function request a payload in input, requests have the following."
+#~ msgid "Use Ned TCP server"
 #~ msgstr ""
 

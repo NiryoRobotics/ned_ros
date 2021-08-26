@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-25 10:56+0200\n"
+"POT-Creation-Date: 2021-08-12 08:22+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -794,7 +794,7 @@ msgstr ""
 msgid "Infos contains in a DigitalIOState object (see niryo_robot_msgs)"
 msgstr ""
 
-#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:89
+#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:88
 msgid "Conveyor Belt"
 msgstr ""
 
@@ -1118,7 +1118,7 @@ msgstr ""
 #~ msgid "Conveyor"
 #~ msgstr ""
 
-#~ msgid "Python ROS wrapper documentation"
+#~ msgid "Python ROS wrapper cocumentation"
 #~ msgstr ""
 
 #~ msgid ""
@@ -1337,7 +1337,7 @@ msgstr ""
 #~ msgid "Tool Id"
 #~ msgstr ""
 
-#~ msgid "Call service niryo_robot_tools_commander/update_tool to update tool"
+#~ msgid "Call service niryo_robot_tools/update_tool to update tool"
 #~ msgstr ""
 
 #~ msgid ""
@@ -1558,9 +1558,7 @@ msgstr ""
 #~ msgid "list of workspaces name"
 #~ msgstr ""
 
-#~ msgid ""
-#~ "Tools IDs (need to match tools ids"
-#~ " in niryo_robot_tools_commander package)"
+#~ msgid "Tools IDs (need to match tools ids in niryo_robot_tools package)"
 #~ msgstr ""
 
 #~ msgid "Pin Mode is either OUTPUT or INPUT"
@@ -1570,74 +1568,5 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "Pins ID"
-#~ msgstr ""
-
-#~ msgid "None"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "list of [x, y, z, qx, qy, "
-#~ "qz, qw] or list of [x, y, z,"
-#~ " roll, pitch, yaw]"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Enables or disables the TCP function "
-#~ "(Tool Center Point). If activation is"
-#~ " requested, the last recorded TCP "
-#~ "value will be applied. The default "
-#~ "value depends on the gripper equipped."
-#~ " If deactivation is requested, the "
-#~ "TCP will be coincident with the "
-#~ "tool_link."
-#~ msgstr ""
-
-#~ msgid "True to enable, False otherwise."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Activates the TCP function (Tool Center"
-#~ " Point) and defines the transformation "
-#~ "between the tool_link frame and the "
-#~ "TCP frame."
-#~ msgstr ""
-
-#~ msgid ""
-#~ "Reset the TCP (Tool Center Point) "
-#~ "transformation. The PCO will be reset"
-#~ " according to the tool equipped."
-#~ msgstr ""
-
-#~ msgid "Modify image brightness"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "How much to adjust the brightness. "
-#~ "0.5 will give a darkened image, 1"
-#~ " will give the original image while"
-#~ " 2 will enhance the brightness by "
-#~ "a factor of 2."
-#~ msgstr ""
-
-#~ msgid "Modify image contrast"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "While a factor of 1 gives original"
-#~ " image. Making the factor towards 0"
-#~ " makes the image greyer, while "
-#~ "factor>1 increases the contrast of the"
-#~ " image."
-#~ msgstr ""
-
-#~ msgid "Modify image saturation"
-#~ msgstr ""
-
-#~ msgid ""
-#~ "How much to adjust the saturation. "
-#~ "0 will give a black and white "
-#~ "image, 1 will give the original "
-#~ "image while 2 will enhance the "
-#~ "saturation by a factor of 2."
 #~ msgstr ""
 

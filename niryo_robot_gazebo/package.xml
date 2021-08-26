@@ -1,6 +1,6 @@
 <package>
     <name>niryo_robot_gazebo</name>
-    <version>3.1.0</version>
+    <version>3.1.2</version>
     <description>Gazebo simulation for Ned</description>
     <author email="r.lux@niryo.com">Rémi Lux</author>
     <maintainer email="r.lux@niryo.com">Rémi Lux</maintainer>

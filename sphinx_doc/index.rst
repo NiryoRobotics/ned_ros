@@ -87,17 +87,18 @@ Learn more on this :doc:`section <source/more>`.
 .. toctree::
    :hidden:
    :maxdepth: 2
-   :caption: Documentation Sections
+   :caption: Packages
 
    source/ros
    source/stack_hardware
    source/ros_wrapper
 
-
 .. toctree::
    :hidden:
    :maxdepth: 2
-   :caption: Go Further
+   :caption: To go further...
 
    source/tcp_server
+   source/modbus_tcp_server
+   source/matlab_manager
    source/more

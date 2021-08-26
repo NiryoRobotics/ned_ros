@@ -1,4 +1,4 @@
-Niryo robot joints interface package
+Joints_interface
 ====================================
 
 | This package handles packages related to the robot's joints controller.
@@ -66,13 +66,13 @@ Services - joints interface
       -  Message Type
       -  Description
    *  -  ``/niryo_robot/joints_interface/calibrate_motors``
-      -  :ref:`SetInt`
+      -  :ref:`source/ros/niryo_robot_msgs:SetInt`
       -  Start motors calibration - value can be 1 for auto calibration, 2 for manual
    *  -  ``/niryo_robot/joints_interface/request_new_calibration``
-      -  :ref:`Trigger`
+      -  :ref:`source/ros/niryo_robot_msgs:Trigger`
       -  Unset motors calibration
    *  -  ``niryo_robot/learning_mode/activate``
-      -  :ref:`Trigger`
+      -  :ref:`source/ros/niryo_robot_msgs:Trigger`
       -  Either activate or deactivate learning mode
 
 Dependencies - joints interface
@@ -80,6 +80,6 @@ Dependencies - joints interface
 
 - :wiki_ros:`hardware_interface <hardware_interface>`
 - :wiki_ros:`controller_manager <controller_manager>`
-- :ref:`dynamixel_driver <Niryo Robot Dynamixel Driver Package>`
-- :ref:`stepper_driver <Niryo Robot Stepper Driver Package>`
-- :ref:`niryo_robot_msgs <Niryo Robot Messages Package>`
+- :doc:`dynamixel_driver`
+- :doc:`stepper_driver`
+- :doc:`../ros/niryo_robot_msgs`

@@ -1,4 +1,4 @@
-Niryo robot poses handlers package
+Niryo_robot_poses_handlers
 ======================================================
 
 This package is in charge of dealing with transforms, workspace, grips and
@@ -22,6 +22,17 @@ Workspaces
 A workspace is defined by 4 markers that form a rectangle. With the help of the robot's calibration
 tip, the marker positions are learned. The camera returns poses (x, y, yaw) relative to the workspace.
 We can then infer the absolute object pose in robot coordinates.
+
+Grips
+""""""""""""""""""""""""""""""
+
+When we know the object pose in robot coordinates, we can't directly send this pose to the robot because we specify the target pose of the 
+tool_link and not of the actual TCP (tool center point).
+Therefore we introduce the notion of grip. Each end effector has its own grip that specifies where to place the robot with respect to the object.
+Currently, the notion of grip is not part of the python/tcp/blockly interface 
+because it would add an extra layer of complexity that is not really necessary for the moment.
+Therefore we have a default grip for all tools that is selected automatically based on the current tool id. However, 
+everything is ready if you want to define custom grips, e.g. for custom tools or for custom grip positions.
 
 
 The vision pick loop
@@ -69,40 +80,40 @@ Services - Poses handlers
       -  Description
 
    *  -  ``manage_workspace``
-      -  :ref:`ManageWorkspace<ManageWorkspace (Service)>`
+      -  :ref:`ManageWorkspace<source/ros/niryo_robot_poses_handlers:ManageWorkspace (Service)>`
       -  Save/Delete a workspace
    *  -  ``get_workspace_ratio``
-      -  :ref:`GetWorkspaceRatio<GetWorkspaceRatio (Service)>`
+      -  :ref:`GetWorkspaceRatio<source/ros/niryo_robot_poses_handlers:GetWorkspaceRatio (Service)>`
       -  Get ratio of a workspace
    *  -  ``get_workspace_list``
-      -  :ref:`GetNameDescriptionList`
+      -  :ref:`source/ros/niryo_robot_msgs:GetNameDescriptionList`
       -  Get list of workspaces name & description
    *  -  ``get_workspace_poses``
-      -  :ref:`GetWorkspaceRobotPoses<GetWorkspaceRobotPoses (Service)>`
+      -  :ref:`GetWorkspaceRobotPoses<source/ros/niryo_robot_poses_handlers:GetWorkspaceRobotPoses (Service)>`
       -  Get workspace's robot poses
 
    *  -  ``get_target_pose``
-      -  :ref:`GetTargetPose<GetTargetPose (Service)>`
+      -  :ref:`GetTargetPose<source/ros/niryo_robot_poses_handlers:GetTargetPose (Service)>`
       -  Get saved programs name
 
    *  -  ``manage_pose``
-      -  :ref:`ManagePose<ManagePose (Service)>`
+      -  :ref:`ManagePose<source/ros/niryo_robot_poses_handlers:ManagePose (Service)>`
       -  Save/Delete a Pose
    *  -  ``get_pose``
-      -  :ref:`GetPose<GetPose (Service)>`
+      -  :ref:`GetPose<source/ros/niryo_robot_poses_handlers:GetPose (Service)>`
       -  Get Pose
    *  -  ``get_pose_list``
-      -  :ref:`GetNameDescriptionList`
+      -  :ref:`source/ros/niryo_robot_msgs:GetNameDescriptionList`
       -  Get list of poses name & description
 
    *  -  ``manage_trajectory``
-      -  :ref:`ManageTrajectory<ManageTrajectory (Service)>`
+      -  :ref:`ManageTrajectory<source/ros/niryo_robot_poses_handlers:ManageTrajectory (Service)>`
       -  Save/Delete a Trajectory
    *  -  ``get_trajectory``
-      -  :ref:`GetTrajectory<GetTrajectory (Service)>`
+      -  :ref:`GetTrajectory<source/ros/niryo_robot_poses_handlers:GetTrajectory (Service)>`
       -  Get Trajectory
    *  -  ``get_trajectory_list``
-      -  :ref:`GetNameDescriptionList`
+      -  :ref:`source/ros/niryo_robot_msgs:GetNameDescriptionList`
       -  Get list of trajectories name & description
 
 
@@ -113,7 +124,7 @@ Dependencies - Poses handlers
 
 - :msgs_index:`geometry_msgs`
 - :msgs_index:`moveit_msgs`
-- :ref:`niryo_robot_msgs <Niryo Robot Messages Package>`
+- :doc:`niryo_robot_msgs`
 - :wiki_ros:`tf`
 
 

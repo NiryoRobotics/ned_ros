@@ -6,11 +6,12 @@
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-25 10:56+0200\n"
+"POT-Creation-Date: 2021-08-12 16:06+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,7 +21,7 @@ msgstr ""
 "Generated-By: Babel 2.9.1\n"
 
 #: ../../source/tcp_server.rst:2
-msgid "Use Ned TCP server"
+msgid "Use Ned's TCP server"
 msgstr "Utilisation du serveur TCP Ned"
 
 #: ../../source/tcp_server.rst:4
@@ -220,7 +221,7 @@ msgstr "Commandes enum pour le serveur TCP"
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper_enums.CommandEnum:1 of
 msgid "Enumeration of all commands used"
-msgstr "Enumération de toutes les commandes utilisées"
+msgstr "Enumérations de toutes les commandes utilisées"
 
 #~ msgid "Use Ned TCP Server"
 #~ msgstr "Utilisation du serveur Ned TCP"
@@ -333,4 +334,5 @@ msgstr "Enumération de toutes les commandes utilisées"
 
 #~ msgid "Enumeration of all commands used"
 #~ msgstr ""
+#~ msgstr "Énumération de toutes les commandes utilisées"
 

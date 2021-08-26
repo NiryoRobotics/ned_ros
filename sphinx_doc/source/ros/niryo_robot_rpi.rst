@@ -1,4 +1,4 @@
-Niryo robot RPI package
+Niryo_robot_rpi
 ========================================
 
 This package deals with Raspberry Pi related stuff (Button, fans, I/O, leds, ...).
@@ -31,7 +31,7 @@ Publisher - Raspberry Pi
       -  Message Type
       -  Description
    *  -  ``pause_state``
-      -  :ref:`PausePlanExecution<PausePlanExecution (Message)>`
+      -  :ref:`PausePlanExecution<source/ros/niryo_robot_commander:PausePlanExecution (Message)>`
       -  Publish the current execution state launched when button is pressed
    *  -  ``/niryo_robot/blockly/save_current_point``
       -  :std_msgs:`std_msgs/Int32<Int32>`
@@ -40,13 +40,13 @@ Publisher - Raspberry Pi
       -  :std_msgs:`std_msgs/Bool<Bool>`
       -  Publish the button state (true if pressed)
    *  -  ``digital_io_state``
-      -  :ref:`DigitalIOState<DigitalIOState (Service)>`
+      -  :ref:`DigitalIOState<source/ros/niryo_robot_rpi:DigitalIOState (Service)>`
       -  Publish the I/Os state by giving for each it's pin / name / mode / state
    *  -  ``/niryo_robot/rpi/led_state``
       -  :std_msgs:`std_msgs/Int8<Int8>`
       -  Publish the current led color
    *  -  ``ros_log_status``
-      -  :ref:`LogStatus<LogStatus (Service)>`
+      -  :ref:`LogStatus<source/ros/niryo_robot_rpi:LogStatus (Service)>`
       -  Publish the current log status (log size / available disk / boolean if should delete ros log on startup)
 
 Services - Raspberry Pi
@@ -62,31 +62,31 @@ Services - Raspberry Pi
       -  Message Type
       -  Description
    *  -  ``shutdown_rpi``
-      -  :ref:`SetInt<SetInt>`
+      -  :ref:`SetInt<source/ros/niryo_robot_msgs:SetInt>`
       -  Shutdown the Raspberry Pi
    *  -  ``/niryo_robot/rpi/change_button_mode``
-      -  :ref:`SetInt<SetInt>`
+      -  :ref:`SetInt<source/ros/niryo_robot_msgs:SetInt>`
       -  Change top button mode (autorun program, blockly, nothing, ...)
    *  -  ``get_digital_io``
-      -  :ref:`GetDigitalIO<GetDigitalIO (Service)>`
+      -  :ref:`GetDigitalIO<source/ros/niryo_robot_rpi:GetDigitalIO (Service)>`
       -  Get digital IO state list
    *  -  ``set_digital_io_mode``
-      -  :ref:`SetDigitalIO<SetDigitalIO (Service)>`
+      -  :ref:`SetDigitalIO<source/ros/niryo_robot_rpi:SetDigitalIO (Service)>`
       -  Set a digital IO to the mode given
    *  -  ``set_digital_io_state``
-      -  :ref:`SetDigitalIO<SetDigitalIO (Service)>`
+      -  :ref:`SetDigitalIO<source/ros/niryo_robot_rpi:SetDigitalIO (Service)>`
       -  Set a digital IO to the state given
    *  -  ``set_led_state``
-      -  :ref:`SetInt<SetInt>`
+      -  :ref:`std_msgs/SetInt<source/ros/niryo_robot_msgs:SetInt>`
       -  Set led state
    *  -  ``set_led_custom_blinker``
-      -  :ref:`LedBlinker<LedBlinker (Service)>`
+      -  :ref:`LedBlinker<source/ros/niryo_robot_rpi:LedBlinker (Service)>`
       -  Set the led in blink mode with the color given
    *  -  ``purge_ros_logs``
-      -  :ref:`SetInt<SetInt>`
+      -  :ref:`SetInt<source/ros/niryo_robot_msgs:SetInt>`
       -  Purge ROS log
    *  -  ``set_purge_ros_log_on_startup``
-      -  :ref:`SetInt<SetInt>`
+      -  :ref:`SetInt<source/ros/niryo_robot_msgs:SetInt>`
       -  Modify the permanent settings that tells if robot should purge it's ROS log at each boot
 
 Dependencies - Raspberry Pi
@@ -95,8 +95,8 @@ Dependencies - Raspberry Pi
 - :msgs_index:`std_msgs`
 - :msgs_index:`actionlib_msgs`
 - :msgs_index:`sensor_msgs`
-- :ref:`niryo_robot_msgs <Niryo Robot Messages Package>`
-- :ref:`niryo_robot_arm_commander <Niryo Robot Arm Commander Package>`
+- :doc:`niryo_robot_msgs`
+- :doc:`niryo_robot_commander`
 
 Services & Messages files - Raspberry Pi
 ----------------------------------------------

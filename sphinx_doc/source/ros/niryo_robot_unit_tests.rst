@@ -1,10 +1,10 @@
-Niryo robot unit tests package
+Niryo_robot_unit_tests
 ========================================
 This package provides config and launch files to start Ned unit tests.
 
 Currently, tested packages are:
- - :ref:`Niryo Robot Poses Handlers Package`
- - :ref:`Niryo Robot Programs Manager Package`
+ - :doc:`niryo_robot_poses_handlers`
+ - :doc:`niryo_robot_programs_manager`
  - :doc:`Python ROS Wrapper <../ros_wrapper>`
 
 

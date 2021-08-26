@@ -1,6 +1,6 @@
 <package>
   <name>niryo_robot_system_api_client</name>
-  <version>3.1.0</version>
+  <version>3.1.2</version>
   <description>It provides a ROS interface to manage the robot wifi hotspot</description>
   <author email="j.mottier@niryo.com">Justin Mottier</author>
   <maintainer email="j.mottier@niryo.com">Justin Mottier</maintainer>

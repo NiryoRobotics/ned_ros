@@ -1,23 +1,25 @@
-import os
 import sys
 from sphinx.builders.html import StandaloneHTMLBuilder
 
-sys.path.insert(0, os.path.abspath('../niryo_robot_python_ros_wrapper/src/'))
+import os
+
+# Import ROS Wrapper
+sys.path.append(os.path.abspath('../niryo_robot_python_ros_wrapper/src/'))
+
+# Kindda hack the import to import shared config file
+sys.path.append(os.path.abspath('.'))
+from front_end.config import shared_conf
 
 # -- Project information -----------------------------------------------------
 
-project = 'Ned ROS Documentation'
-copyright = " ".join([
-    "2021, Niryo All rights reserved.",
-    "No part of this document may be reproduced or transmitted in any form or by any",
-    "means without prior written consent of Niryo SAS"
-])
-author = 'Niryo'
+project = u'Ned ROS Documentation'
+copyright = shared_conf.copyright
+author = shared_conf.author
 
 # The short X.Y version
-version = u'1.0'
+version = u'v3.1'
 # The full version, including alpha/beta/rc tags
-release = u'1.0.0a'
+release = u'v3.1.2'
 
 # -- General configuration ---------------------------------------------------
 
@@ -39,8 +41,10 @@ StandaloneHTMLBuilder.supported_image_types = [
     'image/jpeg'
 ]
 
-# SpinxContribROS
-extensions += ['sphinxcontrib.ros']
+# Avoid autosection label to trigger warning on low level titles
+autosectionlabel_maxdepth = 3
+# Avoid clash between same label in different document
+autosectionlabel_prefix_document = True
 
 # Todo_extension
 todo_include_todos = True
@@ -53,35 +57,6 @@ master_doc = 'index'
 # Toggle button text
 togglebutton_hint = ""
 
-
-def generate_dict_trad(lang):
-    import json
-
-    def update_dict_recursive(base_dict, new_dict):
-        # Iterate over keys
-        for key in base_dict:
-            if key not in new_dict:
-                continue
-            # If key is related to a dict, go deeper
-            if type(base_dict[key]) == dict:
-                update_dict_recursive(base_dict[key], new_dict[key])
-            # Update key
-            else:
-                base_dict[key] = new_dict[key]
-
-    # Use english dict as default dict !
-    with open("front_end/trad/en.json") as json_file:
-        dict_trad = json.load(json_file)
-
-    # If language selected, update the dict !
-    if lang is not None:
-        with open('front_end/trad/{}.json'.format(lang)) as json_file:
-            sub_dict_trad = json.load(json_file)
-            update_dict_recursive(dict_trad, sub_dict_trad)
-
-    return dict_trad
-
-
 for arg in sys.argv:
     if not arg.startswith("language="):
         continue
@@ -91,7 +66,20 @@ for arg in sys.argv:
 else:
     language = None
 
-html_context = generate_dict_trad(language)
+translation_object = {}
+translation_object["fr"] = {}
+translation_object["fr"]["PROJECT_NAME"] = "Documentation de ROS pour le Ned"
+
+translation_object["en"] = {}
+translation_object["en"]["PROJECT_NAME"] = "Ned ROS documentation"
+
+html_context = {}
+
+# Only for testing purpose
+html_context["BASE_FOLDER_URL"] = "https://docs.niryo.com/dev/ros"
+
+
+html_context["TRANSLATION"] = translation_object[language if language is not None else 'en']
 
 exclude_patterns = [u'_build', 'Thumbs.db', '.DS_Store']
 
@@ -99,32 +87,32 @@ pygments_style = None
 
 add_module_names = False
 
+
 # -- Options for HTML output -------------------------------------------------
-html_theme = 'sphinx_rtd_theme'
+html_theme = shared_conf.html_theme
 
-templates_path = ['front_end/templates/']
-html_static_path = ['front_end/static/']
+templates_path = shared_conf.templates_path
+html_static_path = shared_conf.html_static_path
 
-html_logo = html_static_path[0] + "logo.png"
-html_favicon = html_static_path[0] + "favicon32.ico"
+html_logo = shared_conf.html_logo
+html_favicon = shared_conf.html_favicon
 
-html_css_files = [
-    'override.css'
-]
+html_css_files = shared_conf.html_css_files
 
-html_js_files = [
-    'app.js',
-]
+html_js_files = shared_conf.html_js_files
 
-html_theme_options = {
-    'analytics_id': 'UA-85632199-1',  # Provided by Google in your dashboard
-}
+html_theme_options = shared_conf.html_theme_options
+
+html_show_sphinx = shared_conf.html_show_sphinx
 
 # -- Internationalization --
 locale_dirs = ['locale/']  # path is example but recommended.
 gettext_compact = False  # optional.
 
 # -- Options for intersphinx extension ---------------------------------------
+
+extensions += ['sphinxcontrib.ros']
+ros_base_path = ['../']
 
 # Example configuration for intersphinx: refer to the Python standard library.
 intersphinx_mapping = {'https://docs.python.org/': None}
@@ -144,3 +132,22 @@ extlinks = {
         'https://docs.niryo.com/product/ned/source/software/niryo_studio.html#connecting-simulation-to-niryo-studio/%s',
         None),
 }
+
+TRANSLATE_CAPTIONS_JS="""
+window.onload = function ()
+{
+    const matches = document.querySelectorAll(".wy-menu-vertical p span");
+    // Due to sphinx version problem (sphinxcontribros)
+    // Change dynamically titles in left menu
+    if (document.documentElement.lang == 'fr') {
+        matches[0].innerText = "Introduction"
+        matches[1].innerText = "Packages"
+        matches[2].innerText = "Pour aller plus loin..."
+    }
+}
+"""
+# Add custom JS that translate captions in left menu bar
+def setup(app):
+    # 3. Tell Sphinx to add your JS code. Sphinx will insert
+    #    the `body` into the html inside a <script> tag:
+    app.add_js_file(None, body=TRANSLATE_CAPTIONS_JS)

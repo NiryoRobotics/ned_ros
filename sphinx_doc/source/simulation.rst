@@ -142,7 +142,7 @@ Simulation utilization
 
 .. important::
     - If you haven't follow the step of
-      :ref:`Simulation Environment Installation <Simulation Environment Installation>`.
+      :ref:`Simulation Environment Installation <source/simulation:Simulation Environment Installation>`.
       you won't be able to use the simulation.
     - Hardware features won't be accessible.
 

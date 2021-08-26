@@ -6,11 +6,12 @@
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-26 13:08+0000\n"
+"POT-Creation-Date: 2021-08-13 09:53+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,8 +21,8 @@ msgstr ""
 "Generated-By: Babel 2.9.1\n"
 
 #: ../../source/stack_hardware/joints_interface.rst:2
-msgid "Niryo robot joints interface package"
-msgstr "Package de l’interface axes du robot Niryo"
+msgid "Joints_interface"
+msgstr ""
 
 #: ../../source/stack_hardware/joints_interface.rst:4
 msgid "This package handles packages related to the robot's joints controller."
@@ -33,7 +34,7 @@ msgstr "Il fournit une interface à :wiki_ros:`ros_control`."
 
 #: ../../source/stack_hardware/joints_interface.rst:8
 msgid "Joints interface node"
-msgstr "Nœud de l'interface axes"
+msgstr "Nœud de 'joints interface'"
 
 #: ../../source/stack_hardware/joints_interface.rst:14
 msgid "The ROS Node is made to:"
@@ -66,11 +67,11 @@ msgstr "Initialiser des paramètres moteurs"
 
 #: ../../source/stack_hardware/joints_interface.rst:17
 msgid "Parameters - joints interface"
-msgstr "Paramètres - Interface axes"
+msgstr "Paramètres - 'joints interface'"
 
 #: ../../source/stack_hardware/joints_interface.rst:19
 msgid "Joint Interface's Parameters"
-msgstr "Paramètres de l'interface axes"
+msgstr "Paramètres de 'joints interface'"
 
 #: ../../source/stack_hardware/joints_interface.rst:25
 #: ../../source/stack_hardware/joints_interface.rst:49
@@ -144,7 +145,7 @@ msgstr "Topics diffusés - Interface axes"
 
 #: ../../source/stack_hardware/joints_interface.rst:43
 msgid "Joint Interface's Published Topics"
-msgstr "Topics diffusés de l'interface axes"
+msgstr "Topics publiés par 'joints interface'"
 
 #: ../../source/stack_hardware/joints_interface.rst:50
 #: ../../source/stack_hardware/joints_interface.rst:66
@@ -169,14 +170,14 @@ msgstr "Services - Interface axes"
 
 #: ../../source/stack_hardware/joints_interface.rst:59
 msgid "Joint Interface Package Services"
-msgstr "Services du package de l'interface axes"
+msgstr "Services du package 'joints interface'"
 
 #: ../../source/stack_hardware/joints_interface.rst:68
 msgid "``/niryo_robot/joints_interface/calibrate_motors``"
 msgstr ""
 
 #: ../../source/stack_hardware/joints_interface.rst:69
-msgid ":ref:`SetInt`"
+msgid ":ref:`source/ros/niryo_robot_msgs:SetInt`"
 msgstr ""
 
 #: ../../source/stack_hardware/joints_interface.rst:70
@@ -193,7 +194,7 @@ msgstr ""
 
 #: ../../source/stack_hardware/joints_interface.rst:72
 #: ../../source/stack_hardware/joints_interface.rst:75
-msgid ":ref:`Trigger`"
+msgid ":ref:`source/ros/niryo_robot_msgs:Trigger`"
 msgstr ""
 
 #: ../../source/stack_hardware/joints_interface.rst:73
@@ -221,15 +222,15 @@ msgid ":wiki_ros:`controller_manager <controller_manager>`"
 msgstr ""
 
 #: ../../source/stack_hardware/joints_interface.rst:83
-msgid ":ref:`dynamixel_driver <Niryo Robot Dynamixel Driver Package>`"
+msgid ":doc:`dynamixel_driver`"
 msgstr ""
 
 #: ../../source/stack_hardware/joints_interface.rst:84
-msgid ":ref:`stepper_driver <Niryo Robot Stepper Driver Package>`"
+msgid ":doc:`stepper_driver`"
 msgstr ""
 
 #: ../../source/stack_hardware/joints_interface.rst:85
-msgid ":ref:`niryo_robot_msgs <Niryo Robot Messages Package>`"
+msgid ":doc:`../ros/niryo_robot_msgs`"
 msgstr ""
 
 #~ msgid "Niryo Robot Joints Interface Package"
@@ -270,4 +271,38 @@ msgstr ""
 
 #~ msgid "Dependencies - Joints Interface"
 #~ msgstr "Dépendances - Interface axes"
+
+#~ msgid ":ref:`SetInt`"
+#~ msgstr ""
+
+#~ msgid ":ref:`Trigger`"
+#~ msgstr ""
+
+#~ msgid ":ref:`dynamixel_driver <Niryo Robot Dynamixel Driver Package>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`stepper_driver <Niryo Robot Stepper Driver Package>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`niryo_robot_msgs <Niryo Robot Messages Package>`"
+#~ msgstr ""
+
+#~ msgid "Niryo robot joints interface package"
+#~ msgstr "Package de l’interface axes du robot Niryo"
+
+#~ msgid ""
+#~ ":ref:`dynamixel_driver "
+#~ "<source/stack_hardware/dynamixel_driver:Niryo Robot "
+#~ "Dynamixel Driver Package>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`stepper_driver <source/stack_hardware/stepper_driver:Niryo"
+#~ " Robot Stepper Driver Package>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`niryo_robot_msgs <source/ros/niryo_robot_msgs:Niryo "
+#~ "Robot Messages Package>`"
+#~ msgstr ""
 

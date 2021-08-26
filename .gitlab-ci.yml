@@ -1,43 +1,204 @@
 variables:
-  ROS_DISTRO: melodic
   ROS_LANG_DISABLE: genlisp:geneus:gennodejs
-  SKIPPED_KEYS: python-rpi.gpio python-flask
+
+  ########### Part that needs to be overwrite for each documentation ###########
+
+  # Documentation name
+  DOCUMENTATION_NAME: ros
+  # OVH's folder where the documentation will be stored
+  # TARGET_FOLDER_OVH: ~/docs/dev/
+
+  TARGET_FOLDER_OVH: ~/docs/dev/
+
+  BASE_FOLDER_DOC_URL: https://docs.niryo.com/dev
+
+  ##############################################################################
+
+  # Allow to pull the directory containing front-end files
+  GIT_SUBMODULE_STRATEGY: recursive
+  GIT_STRATEGY: fetch
+  GIT_DEPTH: 0
+  NIRYO_HOME_FOLDER: /home/niryo
 
 stages:
-  - build_n_test
-#  - build
-#  - test_pure_python
-#  - test_ros
+  - build
+  - documentation
+  - test
+  - upload
+  - release_gitlab
 
-catkin_make_n_rostest:
-  only:
-    refs:
-      - master
-      - develop
-      - tags
-      - schedules
-      - merge_requests
-
-  image: ros:${ROS_DISTRO}-ros-base-bionic
-  stage: build_n_test
+catkin_make_amd:
+  image: registry.gitlab.com/niryo/niryo-one-s/ned_ros_stack/v3.1.0:amd64
+  stage: build
+  retry:
+    max: 1
   script:
-    # updating apt cache
-    - apt-get update -y
-
+    # Create whole path folders
+    - mkdir -p ${NIRYO_HOME_FOLDER}/src
     # moving everything in src folder
     - shopt -s extglob # Allow to use regex
-    - mkdir src # Create src folder
-    - mv !(src) src/
-
-    # Installing Python
-    - apt-get install -y python-dev python-pip
-
-    # Installing package dependencies
-    - rosdep update
-    - rosdep install --from-paths src --ignore-src --default-yes --rosdistro $ROS_DISTRO --skip-keys "$SKIPPED_KEYS"
-
+    - mv !(src) ${NIRYO_HOME_FOLDER}/src/
+    ######################################
+    - cd ${NIRYO_HOME_FOLDER}
     - catkin_make
-    - source devel/setup.bash
+    - cd -
+    - mv ${NIRYO_HOME_FOLDER}/* .
 
+  artifacts:
+    paths:
+      - devel
+      - src
+      - build
+
+catkin_make_arm:
+  image: registry.gitlab.com/niryo/niryo-one-s/ned_ros_stack/v3.1.0:arm64
+  stage: build
+  retry:
+    max: 1
+  script:
+    # Create whole path folders
+    - mkdir -p ${NIRYO_HOME_FOLDER}/src
+    # moving everything in src folder
+    - shopt -s extglob # Allow to use regex
+    - mv !(src) ${NIRYO_HOME_FOLDER}/src/
+    ######################################
+    - cd ${NIRYO_HOME_FOLDER}
+    - catkin_make
+    - cd -
+    - mv ${NIRYO_HOME_FOLDER}/* .
+
+  artifacts:
+    paths:
+      - devel
+      - src
+      - build
+
+python_test:
+  image: registry.gitlab.com/niryo/niryo-one-s/ned_ros_stack/v3.1.0:amd64
+  stage: test
+  dependencies: 
+    - catkin_make_amd
+  script:
+    # Quick fix for changing "ROS folder "
+    - previous_path=`pwd`
+    - mkdir -p ${NIRYO_HOME_FOLDER}
+    - cd ${NIRYO_HOME_FOLDER}
+    - mv ${previous_path}/src .
+    - mv ${previous_path}/devel .
+    - mv ${previous_path}/build .
+    ################# Quickfix end ###############
+    - source devel/setup.bash
     # Tests
     - python src/niryo_robot_unit_tests/scripts/script_test_headless.py
+
+
+build_doc:
+  image: registry.gitlab.com/niryo/dockers/build_docs/ned_ros_stack:v1.0.4
+  rules:
+  #   ## Just in case we would restrict to master (https:// stackoverflow.com/a/64448994)
+  #   # If a it's a tag && protected tag
+    - if: $CI_COMMIT_TAG && $CI_COMMIT_REF_PROTECTED == "true"
+  dependencies: 
+    - catkin_make_amd
+  stage: documentation
+  retry:
+    max: 1
+  before_script:
+    - pip3 install -U -I pyyaml rospkg
+  script:
+    # Quick fix for changing "ROS folder "
+    - previous_path=`pwd`
+    - mkdir -p ${NIRYO_HOME_FOLDER}
+    - cd ${NIRYO_HOME_FOLDER}
+    - mv ${previous_path}/src .
+    - mv ${previous_path}/devel .
+    - mv ${previous_path}/build .
+    ################# Quickfix end ###############
+    - source devel/setup.bash
+    - cd src/sphinx_doc
+    # Build documentation without todo printing in final document
+    - scripts/build_docs.sh -D todo_include_todos=0 -o "${CI_COMMIT_TAG}"
+    - scripts/generate_pdf.sh -o ${CI_COMMIT_TAG}/generated_pdfs
+    - mv ${NIRYO_HOME_FOLDER}/* ${previous_path}
+  after_script:
+    - mv src/sphinx_doc/${CI_COMMIT_TAG} ${CI_COMMIT_TAG}
+  artifacts:
+    paths:
+      - ${CI_COMMIT_TAG}
+
+upload_doc:
+  image: registry.gitlab.com/niryo/dockers/build_docs/base:v1.0.2
+  rules:
+  #   ## Just in case we would restrict to master (https:// stackoverflow.com/a/64448994)
+  #   # If a it's a tag && protected tag
+    - if: $CI_COMMIT_TAG && $CI_COMMIT_REF_PROTECTED == "true"
+  stage: upload
+  retry:
+    max: 2
+  dependencies:
+    - build_doc
+  script:
+    - apt update
+    # Install jq (json CLI for bash) + LFTP
+    - apt install -y --no-install-recommends jq wget lftp
+    # Bash script that creates a versions.json file locally (it adds versions to existing file)
+    - ./.gitlab_resources/setup_versions_file.bash ${BASE_FOLDER_DOC_URL}/${DOCUMENTATION_NAME} $CI_COMMIT_TAG
+    # Create .htaccess that will redirects from "X/index.html" to "X/last_version/en/index.html"
+    - |
+      echo \
+      "RewriteEngine on
+      # Redirect index.html with lang fr to last version in fr
+      RewriteCond %{QUERY_STRING} ^lang=fr$
+      RewriteRule ^index.html$ ${BASE_FOLDER_DOC_URL}/${DOCUMENTATION_NAME}/$CI_COMMIT_TAG/fr/index.html [R=301,NC]
+
+      # Redirect index.html to last version
+      RewriteCond %{QUERY_STRING} ^$
+      RewriteRule ^index.html$ ${BASE_FOLDER_DOC_URL}/${DOCUMENTATION_NAME}/$CI_COMMIT_TAG/en/index.html [R=301,NC]
+
+      ErrorDocument 403 ${BASE_FOLDER_DOC_URL}/${DOCUMENTATION_NAME}/$CI_COMMIT_TAG/en/index.html
+
+      # Disable directory listing when accessing directy folder web address
+      Options -Indexes
+      " > .htaccess_last_version_default_language
+    - mkdir -p source
+    # Create .htaccess that will redirects from "X/source/*" to "X/last_version/en/source/*"
+    - |
+      echo \
+      "RewriteEngine on
+      # Redirect everything after the "source/" to the proper latest link
+      RewriteRule ^(.+)$ ${BASE_FOLDER_DOC_URL}/${DOCUMENTATION_NAME}/$CI_COMMIT_TAG/en/source/\$1 [R=301,NC]
+      # Disable directory listing when accessing directy folder web address
+      Options -Indexes
+      " > .htaccess_old_url_to_default_language
+    # Deploy new doc through LFPT
+    - lftp -u ${FTP_USERNAME},${FTP_PASSWORD} ${FTP_URL} << EOF
+    # Send to root folder for this documentation
+    - cd ${TARGET_FOLDER_OVH}/${DOCUMENTATION_NAME} || exit 1
+    # Send whole folder for this new version
+    - mirror -c -R $CI_COMMIT_TAG
+    # Send updated versions json file
+    - put versions.json
+    # Send the default redirecting to en language
+    - put .htaccess_last_version_default_language -o .htaccess
+    # Create source folder if it doesn't exists
+    - mkdir -f source
+    # Send "dummy" folder that redirects (htaccess) to new url with language
+    - put -O source .htaccess_old_url_to_default_language -o .htaccess
+    # Quit lftp
+    - quit
+    # EOF because it's in stdin 'input' mode
+    - EOF
+
+release_gitlab_job:
+  image: registry.gitlab.com/gitlab-org/release-cli:v0.8.0
+  rules:
+    ## Just in case we would restrict to master (https://stackoverflow.com/a/64448994)
+    # If a it's a tag && protected tag
+    - if: $CI_COMMIT_TAG && $CI_COMMIT_REF_PROTECTED == "true"
+
+  stage: release_gitlab
+  retry:
+    max: 2
+  script:
+    - release-cli create  --name="Release $CI_COMMIT_TAG" --description="Release created automatically by Gitlab pipeline at $CI_PIPELINE_URL" --tag-name=$CI_COMMIT_TAG
+

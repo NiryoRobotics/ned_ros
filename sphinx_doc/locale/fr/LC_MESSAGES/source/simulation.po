@@ -6,11 +6,12 @@
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-29 15:01+0000\n"
+"POT-Creation-Date: 2021-08-12 08:22+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -285,11 +286,11 @@ msgstr "Utilisation de la simulation"
 #: ../../source/simulation.rst:144
 msgid ""
 "If you haven't follow the step of :ref:`Simulation Environment "
-"Installation <Simulation Environment Installation>`. you won't be able to"
-" use the simulation."
+"Installation <source/simulation:Simulation Environment Installation>`. "
+"you won't be able to use the simulation."
 msgstr ""
 "Il est indispensable de suivre l’étape :ref:`d'installation de "
-"l’environnement <Simulation Environment Installation>` pour utiliser "
+"l’environnement <source/simulation:Simulation Environment Installation>` pour utiliser "
 "correctement la simulation."
 
 #: ../../source/simulation.rst:147

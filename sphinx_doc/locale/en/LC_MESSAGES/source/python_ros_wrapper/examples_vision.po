@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-29 15:01+0000\n"
+"POT-Creation-Date: 2021-08-12 08:22+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -31,7 +31,7 @@ msgstr ""
 #: ../../source/python_ros_wrapper/examples_vision.rst:5
 msgid ""
 "If you want see more about Ned's Vision functions, you can look at "
-":ref:`API - Vision<Vision>`."
+":ref:`API - Vision<source/python_ros_wrapper/ros_wrapper_doc:Vision>`."
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_vision.rst:8
@@ -39,23 +39,21 @@ msgid "Beforehand"
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_vision.rst:9
-msgid ""
-"To realize the following examples, you need to previously create a "
-"workspace."
+msgid "To realize the following examples, you need to have create a workspace."
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_vision.rst:12
 msgid ""
-"As the examples start always the same way, here is the code you need to "
-"add at the beginning of all of them: ::"
+"As the examples start always the same, there is the code you need to add "
+"at the beginning of all of them: ::"
 msgstr ""
 
-#: ../../source/python_ros_wrapper/examples_vision.rst:47
+#: ../../source/python_ros_wrapper/examples_vision.rst:42
 msgid "Simple Vision pick"
 msgstr ""
 
-#: ../../source/python_ros_wrapper/examples_vision.rst:48
-msgid "This short example shows how to do your first vision pick: ::"
+#: ../../source/python_ros_wrapper/examples_vision.rst:43
+msgid "This short example show how to do your first vision pick: ::"
 msgstr ""
 
 #~ msgid "This document shows how to use Ned's vision set"
@@ -95,16 +93,9 @@ msgstr ""
 #~ msgid "Conditioning with Conveyor Belt"
 #~ msgstr ""
 
-#~ msgid "To realize the following examples, you need to have create a workspace."
-#~ msgstr ""
-
 #~ msgid ""
-#~ "As the examples start always the "
-#~ "same, there is the code you need"
-#~ " to add at the beginning of all"
-#~ " of them: ::"
-#~ msgstr ""
-
-#~ msgid "This short example show how to do your first vision pick: ::"
+#~ "If you want see more about Ned's"
+#~ " Vision functions, you can look at"
+#~ " :ref:`API - Vision<Vision>`."
 #~ msgstr ""
 

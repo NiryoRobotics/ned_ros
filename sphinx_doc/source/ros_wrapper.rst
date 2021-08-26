@@ -17,13 +17,13 @@ For instance, a script realizing a moveJ via Python ROS Wrapper will look like: 
     niryo_robot.move_joints(0.1, -0.2, 0.0, 1.1, -0.5, 0.2)
 
 
-What is this code doing, in a hidden way:
+What this code is doing in a hidden way:
 
- - It generates a :ref:`RobotMove Action Goal<RobotMove (Action)>` and sets
+ - It generates a :ref:`RobotMove Action Goal<source/ros/niryo_robot_commander:RobotMove (Action)>` and set
    it as a joint command with the corresponding joints value.
- - Sends goal to the Arm Commander Action Server.
- - Waits for the Arm Commander Action Server to set Action as finished.
- - Checks if action finished with a success.
+ - Send goal to the Commander Action Server.
+ - Wait for the Commander Action Server to set Action as finished.
+ - Check if action finished with a success.
 
 
 In this section, we will give some examples on how to use the Python ROS Wrapper to control
@@ -34,7 +34,7 @@ Ned Python ROS Wrapper.
     The Python ROS Wrapper forces the user to write his code directly in the robot, or, at least,
     copy the code on the robot via a terminal command.
     If you do not want that, and run code directly from your computer
-    you can use the python Package :ref:`PyNiryo`.
+    you can use the python Package :ref:`source/more:PyNiryo`.
 
 
 .. toctree::

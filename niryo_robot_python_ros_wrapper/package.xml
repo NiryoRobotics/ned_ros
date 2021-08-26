@@ -1,7 +1,7 @@
 <package>
   <name>niryo_robot_python_ros_wrapper</name>
-  <version>3.1.0</version>
-  <description>Facilitates the Niryo Robot ROS functionalities, without knowing ROS</description>
+  <version>3.1.2</version>
+  <description>Python ROS Wrapper to get Niryo Robot ROS functionalities, without knowing ROS</description>
   <author email="r.lux@niryo.com">Remi Lux</author>
   <maintainer email="r.lux@niryo.com">Remi Lux</maintainer>
   <maintainer email="c.ducatez@niryo.com">Corentin Ducatez</maintainer>

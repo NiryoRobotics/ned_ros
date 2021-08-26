@@ -1,4 +1,4 @@
-Niryo robot programs manager package
+Niryo_robot_programs_manager
 ======================================================
 
 This package is in charge of interpreting/running/saving programs.
@@ -44,28 +44,28 @@ Services - Programs manager
       -  Message Type
       -  Description
    *  -  ``execute_program``
-      -  :ref:`ExecuteProgram<ExecuteProgram (Service)>`
+      -  :ref:`ExecuteProgram<source/ros/niryo_robot_programs_manager:ExecuteProgram (Service)>`
       -  Execute a program
    *  -  ``execute_program_autorun``
-      -  :ref:`Trigger`
+      -  :ref:`source/ros/niryo_robot_msgs:Trigger`
       -  Execute autorun program
    *  -  ``get_program``
-      -  :ref:`GetProgram<GetProgram (Service)>`
+      -  :ref:`GetProgram<source/ros/niryo_robot_programs_manager:GetProgram (Service)>`
       -  Retrieve saved program
    *  -  ``get_program_autorun_infos``
-      -  :ref:`GetProgramAutorunInfos<GetProgramAutorunInfos (Service)>`
+      -  :ref:`GetProgramAutorunInfos<source/ros/niryo_robot_programs_manager:GetProgramAutorunInfos (Service)>`
       -  Get autorun settings
    *  -  ``get_program_list``
-      -  :ref:`GetProgramList<GetProgramList (Service)>`
+      -  :ref:`GetProgramList<source/ros/niryo_robot_programs_manager:GetProgramList (Service)>`
       -  Get saved programs' name
    *  -  ``manage_program``
-      -  :ref:`ManageProgram<ManageProgram (Service)>`
+      -  :ref:`ManageProgram<source/ros/niryo_robot_programs_manager:ManageProgram (Service)>`
       -  Save and Delete programs
    *  -  ``set_program_autorun``
-      -  :ref:`SetProgramAutorun<SetProgramAutorun (Service)>`
+      -  :ref:`SetProgramAutorun<source/ros/niryo_robot_programs_manager:SetProgramAutorun (Service)>`
       -  Set autorun settings
    *  -  ``stop_program``
-      -  :ref:`Trigger`
+      -  :ref:`source/ros/niryo_robot_msgs:Trigger`
       -  Stop the current running program
 
 
@@ -75,8 +75,8 @@ whereas on standalone mode or not.
 Dependencies - Programs manager
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- :ref:`niryo_robot_arm_commander <Niryo Robot Arm Commander Package>`
-- :ref:`niryo_robot_msgs <Niryo Robot Messages Package>`
+- :doc:`niryo_robot_commander`
+- :doc:`niryo_robot_msgs`
 - `python-yaml <https://pyyaml.org/wiki/PyYAMLDocumentation>`_
 - :msgs_index:`std_msgs`
 

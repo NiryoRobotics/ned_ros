@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <package>
   <name>niryo_robot_debug</name>
-  <version>3.1.0</version>
+  <version>3.1.2</version>
   <description>Ned's debug tools</description>
   <author>Edouard Renard</author>
   <maintainer email="v.pitre@niryo.com">Valentin Pitre</maintainer>

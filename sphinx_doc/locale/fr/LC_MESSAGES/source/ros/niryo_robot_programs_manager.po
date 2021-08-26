@@ -11,7 +11,11 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
+<<<<<<< HEAD
 "POT-Creation-Date: 2021-07-30 08:41+0000\n"
+=======
+"POT-Creation-Date: 2021-08-13 09:48+0000\n"
+>>>>>>> develop
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,8 +25,13 @@ msgstr ""
 "Generated-By: Babel 2.9.1\n"
 
 #: ../../source/ros/niryo_robot_programs_manager.rst:2
+<<<<<<< HEAD
 msgid "Niryo robot programs manager package"
 msgstr "Package : niryo_robot_programs_manager"
+=======
+msgid "Niryo_robot_programs_manager"
+msgstr ""
+>>>>>>> develop
 
 #: ../../source/ros/niryo_robot_programs_manager.rst:4
 msgid ""
@@ -107,7 +116,13 @@ msgid "``execute_program``"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_programs_manager.rst:47
+<<<<<<< HEAD
 msgid ":ref:`ExecuteProgram<ExecuteProgram (Service)>`"
+=======
+msgid ""
+":ref:`ExecuteProgram<source/ros/niryo_robot_programs_manager:ExecuteProgram"
+" (Service)>`"
+>>>>>>> develop
 msgstr ""
 
 #: ../../source/ros/niryo_robot_programs_manager.rst:48
@@ -120,7 +135,11 @@ msgstr ""
 
 #: ../../source/ros/niryo_robot_programs_manager.rst:50
 #: ../../source/ros/niryo_robot_programs_manager.rst:68
+<<<<<<< HEAD
 msgid ":ref:`Trigger`"
+=======
+msgid ":ref:`source/ros/niryo_robot_msgs:Trigger`"
+>>>>>>> develop
 msgstr ""
 
 #: ../../source/ros/niryo_robot_programs_manager.rst:51
@@ -132,7 +151,13 @@ msgid "``get_program``"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_programs_manager.rst:53
+<<<<<<< HEAD
 msgid ":ref:`GetProgram<GetProgram (Service)>`"
+=======
+msgid ""
+":ref:`GetProgram<source/ros/niryo_robot_programs_manager:GetProgram "
+"(Service)>`"
+>>>>>>> develop
 msgstr ""
 
 #: ../../source/ros/niryo_robot_programs_manager.rst:54
@@ -144,7 +169,13 @@ msgid "``get_program_autorun_infos``"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_programs_manager.rst:56
+<<<<<<< HEAD
 msgid ":ref:`GetProgramAutorunInfos<GetProgramAutorunInfos (Service)>`"
+=======
+msgid ""
+":ref:`GetProgramAutorunInfos<source/ros/niryo_robot_programs_manager:GetProgramAutorunInfos"
+" (Service)>`"
+>>>>>>> develop
 msgstr ""
 
 #: ../../source/ros/niryo_robot_programs_manager.rst:57
@@ -156,7 +187,13 @@ msgid "``get_program_list``"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_programs_manager.rst:59
+<<<<<<< HEAD
 msgid ":ref:`GetProgramList<GetProgramList (Service)>`"
+=======
+msgid ""
+":ref:`GetProgramList<source/ros/niryo_robot_programs_manager:GetProgramList"
+" (Service)>`"
+>>>>>>> develop
 msgstr ""
 
 #: ../../source/ros/niryo_robot_programs_manager.rst:60
@@ -168,7 +205,13 @@ msgid "``manage_program``"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_programs_manager.rst:62
+<<<<<<< HEAD
 msgid ":ref:`ManageProgram<ManageProgram (Service)>`"
+=======
+msgid ""
+":ref:`ManageProgram<source/ros/niryo_robot_programs_manager:ManageProgram"
+" (Service)>`"
+>>>>>>> develop
 msgstr ""
 
 #: ../../source/ros/niryo_robot_programs_manager.rst:63
@@ -180,7 +223,13 @@ msgid "``set_program_autorun``"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_programs_manager.rst:65
+<<<<<<< HEAD
 msgid ":ref:`SetProgramAutorun<SetProgramAutorun (Service)>`"
+=======
+msgid ""
+":ref:`SetProgramAutorun<source/ros/niryo_robot_programs_manager:SetProgramAutorun"
+" (Service)>`"
+>>>>>>> develop
 msgstr ""
 
 #: ../../source/ros/niryo_robot_programs_manager.rst:66
@@ -208,11 +257,11 @@ msgid "Dependencies - Programs manager"
 msgstr "Dépendances - Programs manager"
 
 #: ../../source/ros/niryo_robot_programs_manager.rst:78
-msgid ":ref:`niryo_robot_arm_commander <Niryo Robot Arm Commander Package>`"
+msgid ":doc:`niryo_robot_commander`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_programs_manager.rst:79
-msgid ":ref:`niryo_robot_msgs <Niryo Robot Messages Package>`"
+msgid ":doc:`niryo_robot_msgs`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_programs_manager.rst:80
@@ -314,9 +363,57 @@ msgstr ""
 #~ msgid "Services & Messages files - Programs Manager"
 #~ msgstr "Fichiers services et messages - Programs manager"
 
+<<<<<<< HEAD
 #~ msgid ":ref:`niryo_robot_arm_commander <Niryo Robot Commander Package>`"
 #~ msgstr ""
 
 #~ msgid "`python-yaml <https://pyyaml.org/wiki/PyYAMLDocumentation/>`_"
+=======
+#~ msgid ":ref:`ExecuteProgram<ExecuteProgram (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`Trigger`"
+#~ msgstr ""
+
+#~ msgid ":ref:`GetProgram<GetProgram (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`GetProgramAutorunInfos<GetProgramAutorunInfos (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`GetProgramList<GetProgramList (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`ManageProgram<ManageProgram (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`SetProgramAutorun<SetProgramAutorun (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`niryo_robot_commander <Niryo Robot Commander Package>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`niryo_robot_msgs <Niryo Robot Messages Package>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`niryo_robot_commander "
+#~ "<source/ros/niryo_robot_commander:Niryo Robot Commander"
+#~ " Package>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`niryo_robot_msgs <source/ros/niryo_robot_msgs:Niryo "
+#~ "Robot Messages Package>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`niryo_robot_commander <niryo_robot_commander>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`niryo_robot_msgs <niryo_robot_msgs>`"
+#~ msgstr ""
+
+#~ msgid ":doc:`ros/niryo_robot_msgs`"
+>>>>>>> develop
 #~ msgstr ""
 

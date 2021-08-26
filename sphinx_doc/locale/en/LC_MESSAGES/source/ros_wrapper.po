@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-29 15:01+0000\n"
+"POT-Creation-Date: 2021-08-12 08:22+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -41,31 +41,32 @@ msgid ""
 msgstr ""
 
 #: ../../source/ros_wrapper.rst:20
-msgid "What is this code doing, in a hidden way:"
+msgid "What this code is doing in a hidden way:"
 msgstr ""
 
 #: ../../source/ros_wrapper.rst:22
 msgid ""
-"It generates a :ref:`RobotMove Action Goal<RobotMove (Action)>` and sets "
-"it as a joint command with the corresponding joints value."
+"It generates a :ref:`RobotMove Action "
+"Goal<source/ros/niryo_robot_commander:RobotMove (Action)>` and set it as "
+"a joint command with the corresponding joints value."
 msgstr ""
 
 #: ../../source/ros_wrapper.rst:24
-msgid "Sends goal to the Arm Commander Action Server."
+msgid "Send goal to the Commander Action Server."
 msgstr ""
 
 #: ../../source/ros_wrapper.rst:25
-msgid "Waits for the Arm Commander Action Server to set Action as finished."
+msgid "Wait for the Commander Action Server to set Action as finished."
 msgstr ""
 
 #: ../../source/ros_wrapper.rst:26
-msgid "Checks if action finished with a success."
+msgid "Check if action finished with a success."
 msgstr ""
 
 #: ../../source/ros_wrapper.rst:29
 msgid ""
 "In this section, we will give some examples on how to use the Python ROS "
-"Wrapper to control Ned, as well as a complete documentation of the "
+"Wrapper to control the Ned, as well as a complete documentation of the "
 "functions available in the Ned Python ROS Wrapper."
 msgstr ""
 
@@ -74,7 +75,7 @@ msgid ""
 "The Python ROS Wrapper forces the user to write his code directly in the "
 "robot, or, at least, copy the code on the robot via a terminal command. "
 "If you do not want that, and run code directly from your computer you can"
-" use the python Package :ref:`PyNiryo`."
+" use the python Package :ref:`source/more:PyNiryo`."
 msgstr ""
 
 #: ../../source/ros_wrapper.rst:40
@@ -126,15 +127,6 @@ msgstr ""
 #~ " python Package :ref:`PyNiryo`"
 #~ msgstr ""
 
-#~ msgid "Send goal to the Commander Action Server."
-#~ msgstr ""
-
-#~ msgid "Wait for the Commander Action Server to set Action as finished."
-#~ msgstr ""
-
-#~ msgid "What this code is doing in a hidden way:"
-#~ msgstr ""
-
 #~ msgid ""
 #~ "It generates a :ref:`RobotMove Action "
 #~ "Goal<RobotMove (Action)>` and set it as"
@@ -142,21 +134,14 @@ msgstr ""
 #~ "corresponding joints value."
 #~ msgstr ""
 
-#~ msgid "Send goal to the Arm Commander Action Server."
-#~ msgstr ""
-
-#~ msgid "Wait for the Arm Commander Action Server to set Action as finished."
-#~ msgstr ""
-
-#~ msgid "Check if action finished with a success."
-#~ msgstr ""
-
 #~ msgid ""
-#~ "In this section, we will give some"
-#~ " examples on how to use the "
-#~ "Python ROS Wrapper to control the "
-#~ "Ned, as well as a complete "
-#~ "documentation of the functions available "
-#~ "in the Ned Python ROS Wrapper."
+#~ "The Python ROS Wrapper forces the "
+#~ "user to write his code directly in"
+#~ " the robot, or, at least, copy "
+#~ "the code on the robot via a "
+#~ "terminal command. If you do not "
+#~ "want that, and run code directly "
+#~ "from your computer you can use the"
+#~ " python Package :ref:`PyNiryo`."
 #~ msgstr ""
 

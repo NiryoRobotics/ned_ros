@@ -1,0 +1,107 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2021, Niryo All rights reserved. No part of this document
+# may be reproduced or transmitted in any form or by any means without prior
+# written consent of Niryo SAS
+# This file is distributed under the same license as the Ned ROS
+# Documentation package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Ned ROS Documentation 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-08-13 09:47+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.9.1\n"
+
+#: ../../source/matlab_manager.rst:2
+msgid "Matlab manager"
+msgstr "Matlab manager"
+
+#: ../../source/matlab_manager.rst:4
+msgid ""
+"This package allow to receive "
+":ref:`RobotCommand<source/ros/niryo_robot_commander:RobotCommand "
+"(message)>` from Matlab and move the robot accordingly."
+msgstr ""
+"Ce package permet de recevoir :ref:`les commandes du "
+"robot<source/ros/niryo_robot_commander:RobotCommand (message)>` depuis "
+"Matlab et de déplacer le robot en conséquence."
+
+#: ../../source/matlab_manager.rst:7
+msgid "Matlab manager node"
+msgstr "Noeud Matlab manager"
+
+#: ../../source/matlab_manager.rst:8
+msgid ""
+"The ROS Node is made of one topic that enables to receive goals from "
+"Matlab."
+msgstr ""
+"Le nœud ROS est constitué d'un sujet qui permet de recevoir des objectifs"
+" depuis Matlab."
+
+#: ../../source/matlab_manager.rst:11
+msgid "Dependencies - Matlab manager"
+msgstr "Dépendances - Matlab manager"
+
+#: ../../source/matlab_manager.rst:12
+msgid ":doc:`ros/niryo_robot_commander`"
+msgstr ""
+
+#: ../../source/matlab_manager.rst:16
+msgid "Services files - Matlab manager"
+msgstr "Fichiers de services - Matlab Manager"
+
+#: ../../source/matlab_manager.rst:19
+msgid "MatlabMoveResult (Service)"
+msgstr ""
+
+#~ msgid "Matlab Manager"
+#~ msgstr "Matlab Manager"
+
+#~ msgid ""
+#~ "This package allow to receive "
+#~ ":ref:`RobotCommand<RobotCommand (message)>` from "
+#~ "matlab and move the robot accordingly."
+#~ msgstr ""
+#~ "Ce package permet de recevoir les "
+#~ ":ref:`les commandes du robot<RobotCommand "
+#~ "(message)>` depuis Matlab et de déplacer"
+#~ " le robot en conséquence."
+
+#~ msgid "Matlab Manager Node"
+#~ msgstr "Noeud Matlab manager"
+
+#~ msgid ""
+#~ "The ROS Node is made of one "
+#~ "topic that enables to receive goals "
+#~ "from Matlab."
+#~ msgstr ""
+#~ "Le nœud ROS est constitué d'un "
+#~ "sujet qui permet de recevoir des "
+#~ "objectifs depuis Matlab."
+
+#~ msgid "Dependencies - Matlab Manager"
+#~ msgstr "Dépendances - Matlab manager"
+
+#~ msgid "Services files - Matlab Manager"
+#~ msgstr "Fichiers de services - Matlab Manager"
+
+#~ msgid ":ref:`niryo_robot_commander <ros/niryo_robot_commander>`"
+#~ msgstr ""
+#~ ":ref:`commandes_robot_niryo "
+#~ "<source/ros/niryo_robot_commander:Niryo Robot Commander"
+#~ " Package>`"
+
+#~ msgid ":dpc:`niryo_robot_commander`"
+#~ msgstr ""
+
+#~ msgid ":doc:`niryo_robot_commander`"
+#~ msgstr ""
+

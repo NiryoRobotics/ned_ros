@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-10 11:46+0000\n"
+"POT-Creation-Date: 2021-08-13 09:42+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,8 +21,8 @@ msgstr ""
 "Generated-By: Babel 2.9.1\n"
 
 #: ../../source/ros/niryo_robot_msgs.rst:2
-msgid "Niryo robot messages package"
-msgstr "Package : niryo_robot_msgs"
+msgid "Niryo_robot_msgs"
+msgstr ""
 
 #: ../../source/ros/niryo_robot_msgs.rst:4
 msgid ""
@@ -51,7 +51,7 @@ msgid "Description"
 msgstr "Description"
 
 #: ../../source/ros/niryo_robot_msgs.rst:18
-msgid ":ref:`CommandStatus`"
+msgid ":ref:`source/ros/niryo_robot_msgs:CommandStatus`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_msgs.rst:19
@@ -59,7 +59,7 @@ msgid "Enum-wise message for status code"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_msgs.rst:20
-msgid ":ref:`ObjectPose`"
+msgid ":ref:`source/ros/niryo_robot_msgs:ObjectPose`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_msgs.rst:21
@@ -67,7 +67,7 @@ msgid "x, y, z, roll, pitch, yaw"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_msgs.rst:22
-msgid ":ref:`RobotState`"
+msgid ":ref:`source/ros/niryo_robot_msgs:RobotState`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_msgs.rst:23
@@ -75,7 +75,7 @@ msgid "position, rpy, quaternion"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_msgs.rst:24
-msgid ":ref:`RPY`"
+msgid ":ref:`source/ros/niryo_robot_msgs:RPY`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_msgs.rst:25
@@ -83,7 +83,7 @@ msgid "roll, pitch, yaw"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_msgs.rst:26
-msgid ":ref:`HardwareStatus`"
+msgid ":ref:`source/ros/niryo_robot_msgs:HardwareStatus`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_msgs.rst:27
@@ -91,7 +91,7 @@ msgid "several hardware informations"
 msgstr "Plusieurs informations sur le matériel"
 
 #: ../../source/ros/niryo_robot_msgs.rst:28
-msgid ":ref:`SoftwareVersion`"
+msgid ":ref:`source/ros/niryo_robot_msgs:SoftwareVersion`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_msgs.rst:29
@@ -107,7 +107,7 @@ msgid "Ned Services"
 msgstr "Les services Ned"
 
 #: ../../source/ros/niryo_robot_msgs.rst:42
-msgid ":ref:`GetBool`"
+msgid ":ref:`source/ros/niryo_robot_msgs:GetBool`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_msgs.rst:43
@@ -115,7 +115,7 @@ msgid "Return a bool"
 msgstr "Renvoie un booléen"
 
 #: ../../source/ros/niryo_robot_msgs.rst:44
-msgid ":ref:`GetInt`"
+msgid ":ref:`source/ros/niryo_robot_msgs:GetInt`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_msgs.rst:45
@@ -123,7 +123,7 @@ msgid "Return a integer"
 msgstr "Renvoie un entier"
 
 #: ../../source/ros/niryo_robot_msgs.rst:46
-msgid ":ref:`GetStringList`"
+msgid ":ref:`source/ros/niryo_robot_msgs:GetStringList`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_msgs.rst:47
@@ -131,7 +131,7 @@ msgid "Return a list of string"
 msgstr "Renvoie une liste de chaînes"
 
 #: ../../source/ros/niryo_robot_msgs.rst:48
-msgid ":ref:`SetBool`"
+msgid ":ref:`source/ros/niryo_robot_msgs:SetBool`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_msgs.rst:49
@@ -139,7 +139,7 @@ msgid "Set a bool and return status"
 msgstr "Définir une valeur booléenne et renvoyer le statut"
 
 #: ../../source/ros/niryo_robot_msgs.rst:50
-msgid ":ref:`SetInt`"
+msgid ":ref:`source/ros/niryo_robot_msgs:SetInt`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_msgs.rst:51
@@ -147,7 +147,7 @@ msgid "Set a integer and return status"
 msgstr "Définir un entier et renvoyer le statut"
 
 #: ../../source/ros/niryo_robot_msgs.rst:52
-msgid ":ref:`SetString`"
+msgid ":ref:`source/ros/niryo_robot_msgs:SetString`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_msgs.rst:53
@@ -155,7 +155,7 @@ msgid "Set a string and return status"
 msgstr "Définir une chaîne et renvoyer le statut"
 
 #: ../../source/ros/niryo_robot_msgs.rst:54
-msgid ":ref:`Trigger`"
+msgid ":ref:`source/ros/niryo_robot_msgs:Trigger`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_msgs.rst:55
@@ -248,4 +248,46 @@ msgstr ""
 
 #~ msgid "Niryo Message files"
 #~ msgstr ""
+
+#~ msgid ":ref:`CommandStatus`"
+#~ msgstr ""
+
+#~ msgid ":ref:`ObjectPose`"
+#~ msgstr ""
+
+#~ msgid ":ref:`RobotState`"
+#~ msgstr ""
+
+#~ msgid ":ref:`RPY`"
+#~ msgstr ""
+
+#~ msgid ":ref:`HardwareStatus`"
+#~ msgstr ""
+
+#~ msgid ":ref:`SoftwareVersion`"
+#~ msgstr ""
+
+#~ msgid ":ref:`GetBool`"
+#~ msgstr ""
+
+#~ msgid ":ref:`GetInt`"
+#~ msgstr ""
+
+#~ msgid ":ref:`GetStringList`"
+#~ msgstr ""
+
+#~ msgid ":ref:`SetBool`"
+#~ msgstr ""
+
+#~ msgid ":ref:`SetInt`"
+#~ msgstr ""
+
+#~ msgid ":ref:`SetString`"
+#~ msgstr ""
+
+#~ msgid ":ref:`Trigger`"
+#~ msgstr ""
+
+#~ msgid "Niryo robot messages package"
+#~ msgstr "Niryo_robot_msgs"
 

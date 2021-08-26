@@ -6,11 +6,12 @@
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-29 15:01+0000\n"
+"POT-Creation-Date: 2021-08-12 08:22+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -45,21 +46,22 @@ msgstr ""
 "ressemblera à : ::"
 
 #: ../../source/ros_wrapper.rst:20
-msgid "What is this code doing, in a hidden way:"
+msgid "What this code is doing in a hidden way:"
 msgstr "Ce que fait ce code de manière cachée :"
 
 #: ../../source/ros_wrapper.rst:22
 msgid ""
-"It generates a :ref:`RobotMove Action Goal<RobotMove (Action)>` and sets "
-"it as a joint command with the corresponding joints value."
+"It generates a :ref:`RobotMove Action "
+"Goal<source/ros/niryo_robot_commander:RobotMove (Action)>` and set it as "
+"a joint command with the corresponding joints value."
 msgstr ""
-"Il génère un :ref:`RobotMove Action Goal<RobotMove (Action)>` et le "
+"Il génère un :ref:`RobotMove Action Goal<source/ros/niryo_robot_commander:RobotMove (Action)>` et le "
 "définit comme une commande conjointe avec la valeur d'articulation "
 "correspondante."
 
 #: ../../source/ros_wrapper.rst:24
 msgid "Sends goal to the Arm Commander Action Server."
-msgstr "Envoyer l'objectif au Commander Action Server."
+msgstr "Envoyer l'objectif au Arm Commander Action Server."
 
 #: ../../source/ros_wrapper.rst:25
 msgid "Waits for the Arm Commander Action Server to set Action as finished."
@@ -85,13 +87,13 @@ msgid ""
 "The Python ROS Wrapper forces the user to write his code directly in the "
 "robot, or, at least, copy the code on the robot via a terminal command. "
 "If you do not want that, and run code directly from your computer you can"
-" use the python Package :ref:`PyNiryo`."
+" use the python Package :ref:`source/more:PyNiryo`."
 msgstr ""
 "Le Python ROS Wrapper oblige l'utilisateur à écrire son code directement "
 "dans le robot, ou, du moins, à copier le code sur le robot via une "
 "commande de terminal. Si vous ne le souhaitez pas et exécutez le code "
 "directement à partir de votre ordinateur, vous pouvez utiliser le package"
-" :ref:`PyNiryo`."
+" :ref:`source/more:PyNiryo`."
 
 #: ../../source/ros_wrapper.rst:40
 msgid "Section Contents:"

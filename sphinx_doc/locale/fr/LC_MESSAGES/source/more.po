@@ -6,11 +6,12 @@
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-30 07:54+0000\n"
+"POT-Creation-Date: 2021-08-12 16:14+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -29,44 +30,47 @@ msgstr "Il existe encore plus de moyens de contrôler Ned."
 
 #: ../../source/more.rst:6
 msgid ""
-"If you are a beginner, look at :ref:`Blockly <Blockly>` section to "
-"understand the programming fundamentals."
+"If you are a beginner, look at :ref:`Blockly <source/more:Blockly>` "
+"section to understand the programming fundamentals."
 msgstr ""
-"Si vous êtes un débutant, consultez la section :ref:`Blockly <Blockly>` "
-"pour comprendre les principes de base de la programmation."
+"Si vous êtes un débutant, consultez la section :ref:`Blockly "
+"<source/more:Blockly>` pour comprendre les principes de base de la "
+"programmation."
 
-#: ../../source/more.rst:8
+#: ../../source/more.rst:7
 msgid ""
 "If you want to go further, maybe experience your own image processing, "
-"multi_robot, AI ,... you can look at :ref:`PyNiryo`"
+"multi-robot, AI... You can go to :ref:`source/more:PyNiryo` for more "
+"information."
 msgstr ""
 "Si vous voulez aller plus loin, peut-être expérimenter votre propre "
-"traitement d'image, multi_robot, IA (Intelligence artificielle),... vous "
-"pouvez regarder :ref:`PyNiryo`"
+"traitement d'image, multi_robot, IA (Intelligence artificielle)... Vous "
+"pouvez regarder :ref:`source/more:PyNiryo` pour avoir plus d'informations."
 
-#: ../../source/more.rst:11
+#: ../../source/more.rst:10
 msgid "Blockly"
 msgstr "Blockly"
 
-#: ../../source/more.rst:13
-msgid "Check out Niryo Studio."
+#: ../../source/more.rst:12
+msgid "Check out Niryo Studio"
 msgstr "Découvrez Niryo Studio"
 
-#: ../../source/more.rst:16
+#: ../../source/more.rst:15
 msgid "PyNiryo"
 msgstr "PyNiryo"
 
-#: ../../source/more.rst:17
+#: ../../source/more.rst:16
 msgid ""
-"As explained in the page :ref:`Use Ned TCP Server`, a TCP Server is "
-"running on Ned, which allows it to receive commands from any external "
-"device."
+"As explained in the page :ref:`source/tcp_server:Use Ned's TCP server`, a "
+"TCP Server is running on Ned, which allows it to receive commands from "
+"any external device."
 msgstr ""
-"Comme expliqué dans la page :ref:`Utilisation du serveur Ned TCP <Use Ned"
-" TCP Server>`, un serveur TCP s'exécute sur Ned, ce qui lui permet de "
-"recevoir des commandes de n'importe quel périphérique externe."
+"Comme expliqué dans la page :ref:`Utilisation du serveur Ned TCP "
+"<source/tcp_server:Use Ned's TCP server>`, un serveur TCP s'exécute sur "
+"Ned, ce qui lui permet de recevoir des commandes de n'importe quel "
+"périphérique externe."
 
-#: ../../source/more.rst:20
+#: ../../source/more.rst:19
 msgid ""
 "PyNiryo is a Python package available on Pip which allows to command the "
 "Niryo Robots with easy Python Binding."

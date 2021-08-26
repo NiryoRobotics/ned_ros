@@ -6,11 +6,12 @@
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
+#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-29 15:01+0000\n"
+"POT-Creation-Date: 2021-08-13 09:50+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,11 +21,11 @@ msgstr ""
 "Generated-By: Babel 2.9.1\n"
 
 #: ../../source/ros/niryo_robot_unit_tests.rst:2
-msgid "Niryo robot unit tests package"
-msgstr "Package : niryo_robot_unit_tests"
+msgid "Niryo_robot_unit_tests"
+msgstr ""
 
 #: ../../source/ros/niryo_robot_unit_tests.rst:3
-msgid "This package provides config and launch files to start Ned unit tests."
+msgid "This packages provides config and launch files to start Ned unit tests."
 msgstr ""
 "Ce paquet fournit des fichiers de configuration et de lancement pour "
 "démarrer les tests unitaires Ned."
@@ -34,11 +35,11 @@ msgid "Currently, tested packages are:"
 msgstr "Actuellement, les packages testés sont :"
 
 #: ../../source/ros/niryo_robot_unit_tests.rst:6
-msgid ":ref:`Niryo Robot Poses Handlers Package`"
+msgid ":doc:`niryo_robot_poses_handlers`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_unit_tests.rst:7
-msgid ":ref:`Niryo Robot Programs Manager Package`"
+msgid ":doc:`niryo_robot_programs_manager`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_unit_tests.rst:8
@@ -213,4 +214,20 @@ msgstr "Fichier Python Headless"
 
 #~ msgid "Python File Headless"
 #~ msgstr "Fichier Python Headless"
+
+#~ msgid ":ref:`Niryo Robot Poses Handlers Package`"
+#~ msgstr ""
+
+#~ msgid ":ref:`Niryo Robot Programs Manager Package`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`source/ros/niryo_robot_poses_handlers:Niryo Robot "
+#~ "Poses Handlers Package`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`source/ros/niryo_robot_programs_manager:Niryo Robot "
+#~ "Programs Manager Package`"
+#~ msgstr ""
 

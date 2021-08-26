@@ -3,7 +3,7 @@ Examples: tool action
 
 This page shows how to control Ned's tools via the Python ROS Wrapper.
 
-If you want see more, you can look at :ref:`API - Tools<Tools>`.
+If you want see more, you can look at :ref:`API - Tools<source/python_ros_wrapper/ros_wrapper_doc:Tools>`.
 
 .. danger::
     If you are using the real robot, make sure the environment around it is clear.
