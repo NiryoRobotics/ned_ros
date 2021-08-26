@@ -61,7 +61,7 @@ Publisher - Vision
       -  :sensor_msgs:`CompressedImage`
       -  Publish the last image read as a compressed image
    *  -  ``video_stream_parameters``
-      -  :ref:`ImageParameters<ImageParameters (Topic)>`
+      -  :ref:`ImageParameters<source/ros/niryo_robot_vision:ImageParameters (Topic)>`
       -  Publish the brightness, contrast and saturation settings of the video stream
 
 Services - Vision
@@ -92,13 +92,13 @@ Services - Vision
       -  :ref:`TakePicture<source/ros/niryo_robot_vision:TakePicture (Service)>`
       -  Save a picture in the specified folder
    *  -  ``set_brightness``
-      -  :ref:`SetImageParameter<SetImageParameter (Service)>`
+      -  :ref:`SetImageParameter<source/ros/niryo_robot_vision:SetImageParameter (Service)>`
       -  Set the brightness of the video stream
    *  -  ``set_contrast``
-      -  :ref:`SetImageParameter<SetImageParameter (Service)>`
+      -  :ref:`SetImageParameter<source/ros/niryo_robot_vision:SetImageParameter (Service)>`
       -  Set the contrast of the video stream
    *  -  ``set_saturation``
-      -  :ref:`SetImageParameter<SetImageParameter (Service)>`
+      -  :ref:`SetImageParameter<source/ros/niryo_robot_vision:SetImageParameter (Service)>`
       -  Set the saturation of the video stream
 
 
