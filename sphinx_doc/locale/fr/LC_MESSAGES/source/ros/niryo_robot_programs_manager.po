@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-13 09:48+0000\n"
+"POT-Creation-Date: 2021-08-26 16:48+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -220,58 +220,54 @@ msgid "Dependencies - Programs manager"
 msgstr "Dépendances - Programs manager"
 
 #: ../../source/ros/niryo_robot_programs_manager.rst:78
-msgid ":doc:`niryo_robot_commander`"
-msgstr ""
-
-#: ../../source/ros/niryo_robot_programs_manager.rst:79
 msgid ":doc:`niryo_robot_msgs`"
 msgstr ""
 
-#: ../../source/ros/niryo_robot_programs_manager.rst:80
+#: ../../source/ros/niryo_robot_programs_manager.rst:79
 msgid "`python-yaml <https://pyyaml.org/wiki/PyYAMLDocumentation>`_"
 msgstr ""
 
-#: ../../source/ros/niryo_robot_programs_manager.rst:81
+#: ../../source/ros/niryo_robot_programs_manager.rst:80
 msgid ":msgs_index:`std_msgs`"
 msgstr ""
 
-#: ../../source/ros/niryo_robot_programs_manager.rst:85
+#: ../../source/ros/niryo_robot_programs_manager.rst:84
 msgid "Services & messages files - Programs manager"
 msgstr "Fichiers services et messages -  Programs manager"
 
-#: ../../source/ros/niryo_robot_programs_manager.rst:88
+#: ../../source/ros/niryo_robot_programs_manager.rst:87
 msgid "ExecuteProgram (Service)"
 msgstr ""
 
-#: ../../source/ros/niryo_robot_programs_manager.rst:95
+#: ../../source/ros/niryo_robot_programs_manager.rst:94
 msgid "GetProgram (Service)"
 msgstr ""
 
-#: ../../source/ros/niryo_robot_programs_manager.rst:102
+#: ../../source/ros/niryo_robot_programs_manager.rst:101
 msgid "GetProgramAutorunInfos (Service)"
 msgstr ""
 
-#: ../../source/ros/niryo_robot_programs_manager.rst:109
+#: ../../source/ros/niryo_robot_programs_manager.rst:108
 msgid "GetProgramList (Service)"
 msgstr ""
 
-#: ../../source/ros/niryo_robot_programs_manager.rst:116
+#: ../../source/ros/niryo_robot_programs_manager.rst:115
 msgid "ManageProgram (Service)"
 msgstr ""
 
-#: ../../source/ros/niryo_robot_programs_manager.rst:123
+#: ../../source/ros/niryo_robot_programs_manager.rst:122
 msgid "SetProgramAutorun (Service)"
 msgstr ""
 
-#: ../../source/ros/niryo_robot_programs_manager.rst:130
+#: ../../source/ros/niryo_robot_programs_manager.rst:129
 msgid "ProgramLanguage (Message)"
 msgstr ""
 
-#: ../../source/ros/niryo_robot_programs_manager.rst:137
+#: ../../source/ros/niryo_robot_programs_manager.rst:136
 msgid "ProgramLanguageList (Message)"
 msgstr ""
 
-#: ../../source/ros/niryo_robot_programs_manager.rst:144
+#: ../../source/ros/niryo_robot_programs_manager.rst:143
 msgid "ProgramList (Message)"
 msgstr ""
 
@@ -374,5 +370,8 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid ":doc:`ros/niryo_robot_msgs`"
+#~ msgstr ""
+
+#~ msgid ":doc:`niryo_robot_commander`"
 #~ msgstr ""
 

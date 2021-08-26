@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-13 09:50+0000\n"
+"POT-Creation-Date: 2021-08-26 16:48+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -69,6 +69,10 @@ msgstr ""
 "l'espace de travail. Nous pouvons alors déduire la pose absolue de "
 "l'objet en coordonnées du robot."
 
+#: ../../source/ros/niryo_robot_poses_handlers.rst:27
+msgid "Grips"
+msgstr ""
+
 #: ../../source/ros/niryo_robot_poses_handlers.rst:29
 msgid ""
 "When we know the object pose in robot coordinates, we can't directly send"
@@ -97,18 +101,19 @@ msgstr ""
 "personnalisés, par exemple pour des outils personnalisés ou pour des "
 "positions d'outils personnalisées."
 
-#: ../../source/ros/niryo_robot_poses_handlers.rst:28
+#: ../../source/ros/niryo_robot_poses_handlers.rst:39
 msgid "The vision pick loop"
 msgstr "La boucle de saisie par vision"
 
-#: ../../source/ros/niryo_robot_poses_handlers.rst:30
+#: ../../source/ros/niryo_robot_poses_handlers.rst:41
 msgid ""
 "Camera detects object relative to markers and sends   x\\ :sub:`rel`\\, "
 "y\\ :sub:`rel`\\, yaw\\ :sub:`rel`\\ ."
-msgstr "La caméra détecte l'objet par rapport aux marqueurs et envoie x\\ :sub:`rel`\\, "
-"y\\ :sub:`rel`\\, yaw\\ :sub:`rel`\\ ."
+msgstr ""
+"La caméra détecte l'objet par rapport aux marqueurs et envoie x\\ "
+":sub:`rel`\\, y\\ :sub:`rel`\\, yaw\\ :sub:`rel`\\ ."
 
-#: ../../source/ros/niryo_robot_poses_handlers.rst:31
+#: ../../source/ros/niryo_robot_poses_handlers.rst:42
 msgid ""
 "The object is placed on the workspace, revealing the object pose in robot"
 " coordinates x, y, z, roll, pitch, yaw."

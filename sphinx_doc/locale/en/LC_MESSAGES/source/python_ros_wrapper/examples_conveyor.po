@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-12 08:22+0000\n"
+"POT-Creation-Date: 2021-08-26 16:48+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -45,8 +45,8 @@ msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_conveyor.rst:13
 msgid ""
-"This short example show how to connect a Conveyor Belt, activating "
-"connection and launch his motor: ::"
+"This short example shows how to connect a Conveyor Belt, activating "
+"connection and launch its motor: ::"
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_conveyor.rst:32
@@ -99,5 +99,11 @@ msgstr ""
 #~ "If you want see more about Ned's"
 #~ " Conveyor Belt functions, you can "
 #~ "look at :ref:`API - Conveyor<Conveyor>`."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "This short example show how to "
+#~ "connect a Conveyor Belt, activating "
+#~ "connection and launch his motor: ::"
 #~ msgstr ""
 

@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-12 08:22+0000\n"
+"POT-Creation-Date: 2021-08-26 16:48+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -52,8 +52,8 @@ msgstr "Ce que fait ce code de manière cachée :"
 #: ../../source/ros_wrapper.rst:22
 msgid ""
 "It generates a :ref:`RobotMove Action "
-"Goal<source/ros/niryo_robot_arm_commander:RobotMove (Action)>` and set it as "
-"a joint command with the corresponding joints value."
+"Goal<source/ros/niryo_robot_arm_commander:RobotMove (Action)>` and set it"
+" as a joint command with the corresponding joints value."
 msgstr ""
 "Il génère un :ref:`RobotMove Action "
 "Goal<source/ros/niryo_robot_arm_commander:RobotMove (Action)>` et le "
@@ -61,15 +61,15 @@ msgstr ""
 "correspondante."
 
 #: ../../source/ros_wrapper.rst:24
-msgid "Sends goal to the Arm Commander Action Server."
+msgid "Send goal to the Commander Action Server."
 msgstr "Envoyer l'objectif au Arm Commander Action Server."
 
 #: ../../source/ros_wrapper.rst:25
-msgid "Waits for the Arm Commander Action Server to set Action as finished."
+msgid "Wait for the Commander Action Server to set Action as finished."
 msgstr "Attendre que le Commander Action Server définisse l'action comme terminée."
 
 #: ../../source/ros_wrapper.rst:26
-msgid "Checks if action finished with a success."
+msgid "Check if action finished with a success."
 msgstr "Vérifier si l'action s'est terminée avec succès."
 
 #: ../../source/ros_wrapper.rst:29

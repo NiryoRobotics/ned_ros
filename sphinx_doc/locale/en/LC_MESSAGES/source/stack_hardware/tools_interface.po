@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-13 09:53+0000\n"
+"POT-Creation-Date: 2021-08-26 16:48+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -203,39 +203,55 @@ msgstr ""
 msgid "Push vacuum pump tool"
 msgstr ""
 
-#: ../../source/stack_hardware/tools_interface.rst:78
-msgid "Dependencies - tools interface"
+#: ../../source/stack_hardware/tools_interface.rst:76
+msgid "``niryo_robot/tools/reboot``"
 msgstr ""
 
-#: ../../source/stack_hardware/tools_interface.rst:80
-msgid ":msgs_index:`std_msgs`"
+#: ../../source/stack_hardware/tools_interface.rst:77
+msgid ":std_srvs:`Trigger`"
+msgstr ""
+
+#: ../../source/stack_hardware/tools_interface.rst:78
+msgid "Reboot the motor of the eqquiped tool"
 msgstr ""
 
 #: ../../source/stack_hardware/tools_interface.rst:81
-msgid ":doc:`dynamixel_driver`"
+msgid "Dependencies - tools interface"
+msgstr ""
+
+#: ../../source/stack_hardware/tools_interface.rst:83
+msgid ":msgs_index:`std_msgs`"
 msgstr ""
 
 #: ../../source/stack_hardware/tools_interface.rst:84
+msgid ":msgs_index:`std_srvs`"
+msgstr ""
+
+#: ../../source/stack_hardware/tools_interface.rst:85
+msgid ":doc:`dynamixel_driver`"
+msgstr ""
+
+#: ../../source/stack_hardware/tools_interface.rst:88
 msgid "Services & messages files - tools interface"
 msgstr ""
 
-#: ../../source/stack_hardware/tools_interface.rst:87
+#: ../../source/stack_hardware/tools_interface.rst:91
 msgid "PingDxlTool (Service)"
 msgstr ""
 
-#: ../../source/stack_hardware/tools_interface.rst:93
+#: ../../source/stack_hardware/tools_interface.rst:97
 msgid "OpenGripper (Service)"
 msgstr ""
 
-#: ../../source/stack_hardware/tools_interface.rst:99
+#: ../../source/stack_hardware/tools_interface.rst:103
 msgid "CloseGripper (Service)"
 msgstr ""
 
-#: ../../source/stack_hardware/tools_interface.rst:105
+#: ../../source/stack_hardware/tools_interface.rst:109
 msgid "PullAirVacuumPump (Service)"
 msgstr ""
 
-#: ../../source/stack_hardware/tools_interface.rst:111
+#: ../../source/stack_hardware/tools_interface.rst:115
 msgid "PushAirVacuumPump (Service)"
 msgstr ""
 

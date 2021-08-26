@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-13 09:50+0000\n"
+"POT-Creation-Date: 2021-08-26 16:48+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -85,8 +85,8 @@ msgstr ""
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:41
 msgid ""
-"Camera detects object relative to markers and sends x<sub>rel</sub>, "
-"y<sub>rel</sub>, yaw<sub>rel</sub>."
+"Camera detects object relative to markers and sends   x\\ :sub:`rel`\\, "
+"y\\ :sub:`rel`\\, yaw\\ :sub:`rel`\\ ."
 msgstr ""
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:42
@@ -494,5 +494,11 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid ":doc:`ros/niryo_robot_msgs`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Camera detects object relative to "
+#~ "markers and sends x<sub>rel</sub>, "
+#~ "y<sub>rel</sub>, yaw<sub>rel</sub>."
 #~ msgstr ""
 

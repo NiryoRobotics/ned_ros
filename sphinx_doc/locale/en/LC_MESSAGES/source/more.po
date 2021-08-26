@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-12 16:14+0000\n"
+"POT-Creation-Date: 2021-08-26 16:48+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -46,7 +46,7 @@ msgid "Blockly"
 msgstr ""
 
 #: ../../source/more.rst:12
-msgid "Check out Niryo Studio"
+msgid "Check out Niryo Studio."
 msgstr ""
 
 #: ../../source/more.rst:15
@@ -130,5 +130,8 @@ msgstr ""
 #~ " experience your own image processing, "
 #~ "multi-robot, AI... You can go to"
 #~ " :ref:`source/more:PyNiryo`"
+#~ msgstr ""
+
+#~ msgid "Check out Niryo Studio"
 #~ msgstr ""
 

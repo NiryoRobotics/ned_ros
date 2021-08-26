@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-12 16:06+0000\n"
+"POT-Creation-Date: 2021-08-26 16:48+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -110,7 +110,7 @@ msgid "Format - Request"
 msgstr ""
 
 #: ../../source/tcp_server.rst:48
-msgid "As no function request a payload in input, requests have the following."
+msgid "As no function requests a payload in input, requests have the following."
 msgstr ""
 
 #: ../../source/tcp_server.rst:50
@@ -279,5 +279,8 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "Use Ned TCP server"
+#~ msgstr ""
+
+#~ msgid "As no function request a payload in input, requests have the following."
 #~ msgstr ""
 
