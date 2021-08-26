@@ -75,7 +75,6 @@ whereas on standalone mode or not.
 Dependencies - Programs manager
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- :doc:`niryo_robot_commander`
 - :doc:`niryo_robot_msgs`
 - `python-yaml <https://pyyaml.org/wiki/PyYAMLDocumentation>`_
 - :msgs_index:`std_msgs`
