@@ -1,4 +1,4 @@
-Niryo_robot_commander
+Niryo_robot_arm_commander
 ========================================
 
 | This package is the one dealing with all commander related stuff.
