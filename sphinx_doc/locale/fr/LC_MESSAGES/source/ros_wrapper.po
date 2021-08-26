@@ -52,10 +52,11 @@ msgstr "Ce que fait ce code de manière cachée :"
 #: ../../source/ros_wrapper.rst:22
 msgid ""
 "It generates a :ref:`RobotMove Action "
-"Goal<source/ros/niryo_robot_commander:RobotMove (Action)>` and set it as "
+"Goal<source/ros/niryo_robot_arm_commander:RobotMove (Action)>` and set it as "
 "a joint command with the corresponding joints value."
 msgstr ""
-"Il génère un :ref:`RobotMove Action Goal<source/ros/niryo_robot_commander:RobotMove (Action)>` et le "
+"Il génère un :ref:`RobotMove Action "
+"Goal<source/ros/niryo_robot_arm_commander:RobotMove (Action)>` et le "
 "définit comme une commande conjointe avec la valeur d'articulation "
 "correspondante."
 
