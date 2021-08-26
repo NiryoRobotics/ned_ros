@@ -6,10 +6,7 @@
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
-<<<<<<< HEAD
-=======
 #, fuzzy
->>>>>>> develop
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
