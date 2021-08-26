@@ -568,7 +568,6 @@ msgstr ""
 #~ msgid "x<sub>rel</sub>, y<sub>rel</sub>, yaw<sub>rel</sub>."
 #~ msgstr ""
 
-#~ msgid "</embed>"
 #~ msgid ":ref:`ManageWorkspace<ManageWorkspace (Service)>`"
 #~ msgstr ""
 

@@ -330,7 +330,6 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "`python-yaml <https://pyyaml.org/wiki/PyYAMLDocumentation/>`_"
-#~ msgid ":ref:`ExecuteProgram<ExecuteProgram (Service)>`"
 #~ msgstr ""
 
 #~ msgid ":ref:`Trigger`"

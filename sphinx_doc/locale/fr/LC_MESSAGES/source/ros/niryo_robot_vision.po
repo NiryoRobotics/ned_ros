@@ -42,7 +42,7 @@ msgstr ""
 "vidéo, la détection d'objets... Le nœud fonctionne exactement de la même "
 "manière si vous avez choisi de l'utiliser sur la simulation ou la "
 "réalité."
-
+""
 #: ../../source/ros/niryo_robot_vision.rst:12
 msgid "This node can be launched locally in a standalone mode via the command: ::"
 msgstr "Ce nœud peut être lancé localement en mode autonome via la commande : ::"
@@ -335,5 +335,5 @@ msgstr ""
 #~ msgid ""
 #~ ":ref:`niryo_robot_msgs <source/ros/niryo_robot_msgs:Niryo "
 #~ "Robot Messages Package>`"
-
+#~ msgstr ""
 
