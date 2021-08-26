@@ -7,6 +7,7 @@ This package deals with Raspberry Pi related stuff (Button, fans, I/O, leds, ...
 Raspberry Pi Node
 --------------------------
 The ROS Node manages the following components:
+
 - Physical top button: executes actions when the button is pressed.
 - Digital I/O panel: gets commands and sends the current state of digital I/Os. Also controls tools like the Electromagnet.
 - Robot fans.

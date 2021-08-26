@@ -22,7 +22,7 @@ msgstr ""
 
 #: ../../source/ros/niryo_robot_user_interface.rst:2
 msgid "Niryo robot user interface package"
-msgstr "Package d'interface utilisateur du robot Niryo"
+msgstr "Package : niryo_robot_user_interface"
 
 #: ../../source/ros/niryo_robot_user_interface.rst:4
 msgid ""

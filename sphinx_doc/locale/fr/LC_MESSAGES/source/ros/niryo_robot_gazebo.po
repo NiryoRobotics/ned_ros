@@ -22,7 +22,7 @@ msgstr ""
 
 #: ../../source/ros/niryo_robot_gazebo.rst:2
 msgid "Niryo robot Gazebo package"
-msgstr "Le package Gazebo du robot Niryo"
+msgstr "Package : niryo_robot_gazebo"
 
 #: ../../source/ros/niryo_robot_gazebo.rst:10
 msgid "Gazebo"

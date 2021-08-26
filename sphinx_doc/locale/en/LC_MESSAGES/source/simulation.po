@@ -11,14 +11,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-26 12:18+0200\n"
+"POT-Creation-Date: 2021-07-29 15:01+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.8.0\n"
+"Generated-By: Babel 2.9.1\n"
 
 #: ../../source/simulation.rst:3
 msgid "Use Niryo robot through simulation"
@@ -41,7 +41,7 @@ msgstr ""
 #: ../../source/simulation.rst:16
 msgid ""
 "You can use :niryo_studio_simulation:`Niryo Studio with the "
-"simulation<>`. For that, you just have to connect Niryo Studio to "
+"simulation<>`. To do so, you just have to connect Niryo Studio to "
 "\"Localhost\"."
 msgstr ""
 
@@ -114,7 +114,7 @@ msgid ""
 msgstr ""
 
 #: ../../source/simulation.rst:70
-msgid "Method 1 : Quick install via ROSDep"
+msgid "Method 1: Quick installation via ROSDep"
 msgstr ""
 
 #: ../../source/simulation.rst:71
@@ -125,7 +125,7 @@ msgid ""
 msgstr ""
 
 #: ../../source/simulation.rst:79
-msgid "Method 2 : Full install"
+msgid "Method 2: Full installation"
 msgstr ""
 
 #: ../../source/simulation.rst:81
@@ -331,12 +331,12 @@ msgid ""
 msgstr ""
 
 #: ../../source/simulation.rst:198
-msgid "collision."
+msgid "Collision."
 msgstr ""
 
 #: ../../source/simulation.rst:199
 msgid ""
-"world creation → An virtual environment in which the robot can deal with "
+"World creation → An virtual environment in which the robot can deal with "
 "objects."
 msgstr ""
 
@@ -370,7 +370,7 @@ msgstr ""
 
 #: ../../source/simulation.rst:222
 msgid ""
-"You can edit Gazebo world to do your own ! It's placed in the folder "
+"You can edit Gazebo world to do your own! It's placed in the folder "
 "*worlds* of the package niryo_robot_gazebo."
 msgstr ""
 
@@ -649,5 +649,34 @@ msgstr ""
 #~ " tests do not need gripper and "
 #~ "camera, consider using Rviz to alleviate"
 #~ " your CPU"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "You can use :niryo_studio_simulation:`Niryo "
+#~ "Studio with the simulation<>`. For that,"
+#~ " you just have to connect Niryo "
+#~ "Studio to \"Localhost\"."
+#~ msgstr ""
+
+#~ msgid "Method 1 : Quick install via ROSDep"
+#~ msgstr ""
+
+#~ msgid "Method 2 : Full install"
+#~ msgstr ""
+
+#~ msgid "collision."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "world creation → An virtual environment"
+#~ " in which the robot can deal "
+#~ "with objects."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "You can edit Gazebo world to do"
+#~ " your own ! It's placed in the"
+#~ " folder *worlds* of the package "
+#~ "niryo_robot_gazebo."
 #~ msgstr ""
 

@@ -6,10 +6,10 @@ If you want see more about Ned's Vision functions, you can look at :ref:`API - V
 
 Beforehand
 -------------------------------
-To realize the following examples, you need to have
+To realize the following examples, you need to previously
 create a workspace.
 
-As the examples start always the same, there is the code you need to
+As the examples start always the same way, here is the code you need to
 add at the beginning of all of them: ::
 
     #!/usr/bin/env python
@@ -45,7 +45,7 @@ add at the beginning of all of them: ::
 
 Simple Vision pick
 -------------------------------
-This short example show how to do your first vision pick: ::
+This short example shows how to do your first vision pick: ::
 
     niryo_robot.move_pose(*observation_pose)
     # Trying to pick target using camera

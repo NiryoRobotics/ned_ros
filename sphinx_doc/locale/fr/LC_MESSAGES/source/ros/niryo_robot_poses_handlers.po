@@ -22,7 +22,7 @@ msgstr ""
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:2
 msgid "Niryo robot poses handlers package"
-msgstr "Package poses handlers du robot Niryo"
+msgstr "Package : niryo_robot_poses_handlers"
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:4
 msgid ""

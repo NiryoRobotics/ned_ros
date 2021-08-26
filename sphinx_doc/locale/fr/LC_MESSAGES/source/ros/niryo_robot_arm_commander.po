@@ -22,7 +22,7 @@ msgstr ""
 
 #: ../../source/ros/niryo_robot_arm_commander.rst:2
 msgid "Niryo robot arm commander package"
-msgstr "Le package des commandes du bras robot Niryo"
+msgstr "Package : niryo_robot_arm_commander"
 
 #: ../../source/ros/niryo_robot_arm_commander.rst:4
 msgid "This package is the one dealing with all commander related stuff."
@@ -37,7 +37,6 @@ msgstr ""
 "bras et les commandes de l’outil."
 
 #: ../../source/ros/niryo_robot_arm_commander.rst:9
-#, fuzzy
 msgid "Arm commander node"
 msgstr "Les commandes du noeud"
 

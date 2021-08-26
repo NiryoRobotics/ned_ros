@@ -6,7 +6,6 @@
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
@@ -21,7 +20,6 @@ msgstr ""
 "Generated-By: Babel 2.9.1\n"
 
 #: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:2
-#, fuzzy
 msgid "Python ROS Wrapper documentation"
 msgstr "Documentation Python ROS Wrapper"
 

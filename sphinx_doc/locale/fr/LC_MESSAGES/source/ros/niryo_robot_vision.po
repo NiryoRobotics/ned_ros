@@ -22,7 +22,7 @@ msgstr ""
 
 #: ../../source/ros/niryo_robot_vision.rst:2
 msgid "Niryo robot vision package"
-msgstr "Package de vision du robot Niryo"
+msgstr "Package : niryo_robot_vision"
 
 #: ../../source/ros/niryo_robot_vision.rst:4
 msgid "This package is the one dealing with all vision related stuff."

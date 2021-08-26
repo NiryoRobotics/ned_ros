@@ -14,7 +14,7 @@ to do that, you need to have sourced your ROS environment:
 Required piece of code
 -------------------------------
 
-To run, your program will need some imports & initialisation. We give you below the piece
+To run, your program will need some imports & initialization. We give you below the piece
 of code you must use to make Python ROS Wrapper work: ::
 
     #!/usr/bin/env python

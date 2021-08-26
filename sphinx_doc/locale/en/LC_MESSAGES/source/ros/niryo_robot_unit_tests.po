@@ -11,21 +11,21 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-04-26 12:18+0200\n"
+"POT-Creation-Date: 2021-07-29 15:01+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.8.0\n"
+"Generated-By: Babel 2.9.1\n"
 
 #: ../../source/ros/niryo_robot_unit_tests.rst:2
 msgid "Niryo robot unit tests package"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_unit_tests.rst:3
-msgid "This packages provides config and launch files to start Ned unit tests."
+msgid "This package provides config and launch files to start Ned unit tests."
 msgstr ""
 
 #: ../../source/ros/niryo_robot_unit_tests.rst:9
@@ -172,5 +172,8 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "Python File Headless"
+#~ msgstr ""
+
+#~ msgid "This packages provides config and launch files to start Ned unit tests."
 #~ msgstr ""
 

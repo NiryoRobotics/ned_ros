@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-10 11:46+0000\n"
+"POT-Creation-Date: 2021-07-30 07:54+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -45,7 +45,7 @@ msgid "Blockly"
 msgstr ""
 
 #: ../../source/more.rst:13
-msgid "Check out Niryo Studio"
+msgid "Check out Niryo Studio."
 msgstr ""
 
 #: ../../source/more.rst:16
@@ -54,8 +54,9 @@ msgstr ""
 
 #: ../../source/more.rst:17
 msgid ""
-"As explain in the page :ref:`Use Ned TCP Server`, a TCP Server is running"
-" on Ned, which allows it to receive commands from any external device."
+"As explained in the page :ref:`Use Ned TCP Server`, a TCP Server is "
+"running on Ned, which allows it to receive commands from any external "
+"device."
 msgstr ""
 
 #: ../../source/more.rst:20
@@ -69,5 +70,19 @@ msgstr ""
 #~ " on Pip which allows to command "
 #~ "the Niryo Robots with easy Python "
 #~ "Binding"
+#~ msgstr ""
+
+#~ msgid "Check out Niryo Studio"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "As explain in the page :ref:`Use "
+#~ "Ned TCP Server`, a TCP Server is"
+#~ " running on Ned, which allows it "
+#~ "to receive commands from any external"
+#~ " device."
+#~ msgstr ""
+
+#~ msgid "Check out Niryo Studio :ref:`Niryo Studio <Niryo Studio>`"
 #~ msgstr ""
 

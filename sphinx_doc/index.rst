@@ -32,8 +32,7 @@ Preamble
 Before diving into the software documentation, you can learn more about the robot development
 in the :doc:`Overwiew <source/overview>` section.
 
-Also, if you want to use a simulated version of Ned
-, browse the :doc:`Simulation <source/simulation>` section.
+Also, if you want to use a simulated version of Ned, browse the :doc:`Simulation <source/simulation>` section.
 
 ****************************
 Ned Control via ROS
@@ -61,7 +60,7 @@ Python ROS Wrapper
    To use Python ROS Wrapper, you will need either to be connected in SSH
    to the physic robot, or to use the simulation.
 
-The Python ROS Wrapper is build on top of ROS to allow faster development than ROS.
+The Python ROS Wrapper is built on top of ROS to allow a faster development than ROS.
 Programs are run directly on the robot which allows to trigger them with the robot's button
 once a computer is no longer needed.
 
