@@ -8,6 +8,7 @@
     <arg name="log_level" default="INFO" />
     <arg name="ttl_enabled" default="true"/>
     <arg name="can_enabled" default="true"/>
+    <arg name="use_fake_driver" default="false"/>
     <arg name="debug" default="false"/>
     <arg name="conf_location" default="$(env HOME)/.config/niryo/version/version.txt"/>
 
@@ -20,5 +21,6 @@
         <arg name="can_enabled" value="$(arg can_enabled)"/>
         <arg name="conf_location" value="$(arg conf_location)" />
         <arg name="debug" value="$(arg debug)"/>
+        <arg name="use_fake_driver" value="$(arg use_fake_driver)"/>
     </include>
 </launch>

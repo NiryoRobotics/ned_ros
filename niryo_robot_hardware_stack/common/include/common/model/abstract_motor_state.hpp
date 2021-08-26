@@ -174,7 +174,8 @@ std::string AbstractMotorState::getHardwareErrorMessageState() const
 inline
 bool AbstractMotorState::isStepper() const
 {
-    return EMotorType::STEPPER == _type;
+    return (EMotorType::STEPPER == _type ||
+            EMotorType::FAKE_STEPPER_MOTOR == _type);
 }
 
 /**
@@ -187,7 +188,8 @@ bool AbstractMotorState::isDynamixel() const
     return (EMotorType::XC430 == _type) ||
            (EMotorType::XL320 == _type) ||
            (EMotorType::XL330 == _type) ||
-           (EMotorType::XL430 == _type);
+           (EMotorType::XL430 == _type) ||
+           (EMotorType::FAKE_DXL_MOTOR == _type);
 }
 
 } // model

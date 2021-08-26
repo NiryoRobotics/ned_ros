@@ -83,6 +83,16 @@ DxlMotorState::DxlMotorState(std::string name,
             _total_range_position = 4096;
             _middle_position = 2048;
             _steps_for_one_speed = 15.6330667;  // 0.229 * 4096 / 60
+        case EMotorType::FAKE_DXL_MOTOR:
+            _total_angle = 360;
+            _total_range_position = 4096;
+            _middle_position = 2048;
+            _steps_for_one_speed = 15.6330667;  // 0.229 * 4096 / 60
+        case EMotorType::FAKE_STEPPER_MOTOR:
+            _total_angle = 360;
+            _total_range_position = 4096;
+            _middle_position = 2048;
+            _steps_for_one_speed = 15.6330667;  // 0.229 * 4096 / 60
         break;
         default:
         break;

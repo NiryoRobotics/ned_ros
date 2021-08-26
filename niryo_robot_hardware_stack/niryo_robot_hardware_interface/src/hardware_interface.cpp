@@ -430,19 +430,7 @@ void HardwareInterface::_publishHardwareStatus()
         msg.rpi_temperature = cpu_temperature;
         msg.hardware_version = 1;
 
-        msg.connection_up = (ttl_bus_state.connection_status && can_bus_state.connection_status);
-
-        std::string error_message = can_bus_state.error;
-        if (!ttl_bus_state.error.empty())
-        {
-            error_message += "\n";
-            error_message += ttl_bus_state.error;
-        }
-
-        msg.error_message = error_message;
-
-        msg.calibration_needed = need_calibration;
-        msg.calibration_in_progress = calibration_in_progress;
+        std::string error_message;
 
         std::vector<int32_t> temperatures;
         std::vector<double> voltages;
@@ -451,29 +439,57 @@ void HardwareInterface::_publishHardwareStatus()
         std::vector<std::string> motor_types;
         std::vector<std::string> motor_names;
 
-        for (auto const& hw_status : can_motor_state.motors_hw_status)
+        if (!_can_interface)
         {
-            temperatures.emplace_back(hw_status.temperature);
-            voltages.emplace_back(hw_status.voltage);
-            hw_errors.emplace_back(hw_status.error);
-            hw_errors_msg.emplace_back("");
-            motor_types.emplace_back("Niryo Stepper");
-            std::string joint_name = "";
-            if (_joints_interface)
+            msg.connection_up = ttl_bus_state.connection_status;
+            if (!ttl_bus_state.error.empty())
             {
-                joint_name = _joints_interface->jointIdToJointName(hw_status.motor_identity.motor_id,
-                                                                   hw_status.motor_identity.motor_type);
+                error_message = ttl_bus_state.error;
+
+                msg.error_message = error_message;
+
+                msg.calibration_needed = need_calibration;
+                msg.calibration_in_progress = calibration_in_progress;
             }
-            else if (_fake_interface)
+        }
+        else
+        {
+            msg.connection_up = (ttl_bus_state.connection_status && can_bus_state.connection_status);
+            error_message = can_bus_state.error;
+            if (!ttl_bus_state.error.empty())
             {
-                joint_name = _fake_interface->jointIdToJointName(hw_status.motor_identity.motor_id,
-                                                                 hw_status.motor_identity.motor_type);
+                error_message += "\n";
+                error_message += ttl_bus_state.error;
             }
+                msg.error_message = error_message;
 
-            joint_name = joint_name == "" ? ("Stepper " + std::to_string(hw_status.motor_identity.motor_id))
-                                          : joint_name;
+                msg.calibration_needed = need_calibration;
+                msg.calibration_in_progress = calibration_in_progress;
 
-            motor_names.emplace_back(joint_name);
+            for (auto const& hw_status : can_motor_state.motors_hw_status)
+            {
+                temperatures.emplace_back(hw_status.temperature);
+                voltages.emplace_back(hw_status.voltage);
+                hw_errors.emplace_back(hw_status.error);
+                hw_errors_msg.emplace_back("");
+                motor_types.emplace_back("Niryo Stepper");
+                std::string joint_name = "";
+                if (_joints_interface)
+                {
+                    joint_name = _joints_interface->jointIdToJointName(hw_status.motor_identity.motor_id,
+                                                                    hw_status.motor_identity.motor_type);
+                }
+                else if (_fake_interface)
+                {
+                    joint_name = _fake_interface->jointIdToJointName(hw_status.motor_identity.motor_id,
+                                                                    hw_status.motor_identity.motor_type);
+                }
+
+                joint_name = joint_name == "" ? ("Stepper " + std::to_string(hw_status.motor_identity.motor_id))
+                                            : joint_name;
+
+                motor_names.emplace_back(joint_name);
+            }
         }
 
         // for each motor gather info in the dedicated vectors
@@ -500,6 +516,12 @@ void HardwareInterface::_publishHardwareStatus()
 
                 case static_cast<uint8_t>(common::model::EMotorType::XC430):
                     motor_types.emplace_back("DXL XC-430");
+                break;
+                case static_cast<uint8_t>(common::model::EMotorType::FAKE_DXL_MOTOR):
+                    motor_types.emplace_back("DXL FAKE");
+                break;
+                case static_cast<uint8_t>(common::model::EMotorType::FAKE_STEPPER_MOTOR):
+                    motor_types.emplace_back("STEPPER FAKE");
                 break;
                 default:
                     motor_types.emplace_back("DXL UNKOWN");

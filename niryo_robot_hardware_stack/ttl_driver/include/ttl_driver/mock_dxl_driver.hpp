@@ -45,11 +45,11 @@ class MockDxlDriver : public AbstractDxlDriver
         // as it is needed here for polymorphism (AbstractTtlDriver cannot be a template class and does not
         // have access to reg_type). So it seems like a duplicate of StepperDriver
     public:
-        virtual int ping(uint8_t id);
+        virtual int ping(uint8_t id) override;
         virtual int getModelNumber(uint8_t id,
-                            uint16_t& dxl_model_number);
-        virtual int scan(std::vector<uint8_t>& id_list);
-        virtual int reboot(uint8_t id);
+                            uint16_t& dxl_model_number) override;
+        virtual int scan(std::vector<uint8_t>& id_list) override;
+        virtual int reboot(uint8_t id) override;
 
         virtual std::string interpreteErrorState(uint32_t hw_state) override;
 
@@ -102,7 +102,8 @@ class MockDxlDriver : public AbstractDxlDriver
         virtual int readVelocity(uint8_t id, uint32_t &present_velocity) override;
         virtual int syncReadVelocity(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &velocity_list) override;
     private:
-        std::map<uint8_t, uint32_t> _map_fake_pos;
+        std::map<uint8_t, uint32_t> _map_fake_pos{ {7, 1000}, {8, 2000}, {9, 2000}, {2, 2000}, {3, 2000}, {6, 1000} };
+        std::vector<uint8_t> _id_list{7, 8, 9, 2, 3, 6};
 
         static constexpr int GROUP_SYNC_REDONDANT_ID = 10;
         static constexpr int LEN_ID_DATA_NOT_SAME    = 20;
@@ -140,12 +141,14 @@ int MockDxlDriver::getModelNumber(uint8_t id, uint16_t& dxl_model_number)
 
 int MockDxlDriver::scan(std::vector<uint8_t>& id_list)
 {
-    id_list = {2, 3, 6};
+    id_list = _id_list;
     return COMM_SUCCESS;
 }
 
 int MockDxlDriver::reboot(uint8_t id)
 {
+    if (std::find(_id_list.begin(), _id_list.end(), id) == _id_list.end())
+        return COMM_TX_FAIL;
     return COMM_SUCCESS;
 }
 
@@ -260,13 +263,13 @@ int MockDxlDriver::syncWriteVelocityGoal(const std::vector<uint8_t> &id_list, co
 
 int MockDxlDriver::readPosition(uint8_t id, uint32_t& present_position)
 {
-    present_position = 0;
+    present_position = _map_fake_pos.at(id);
     return COMM_SUCCESS;
 }
 
 int MockDxlDriver::readTemperature(uint8_t id, uint32_t& temperature)
 {
-    temperature = 0;
+    temperature = 25;
     return COMM_SUCCESS;
 }
 
@@ -285,23 +288,12 @@ int MockDxlDriver::readHwErrorStatus(uint8_t id, uint32_t& hardware_status)
 int MockDxlDriver::syncReadPosition(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &position_list)
 {
     std::map<uint8_t, uint8_t> countMap;
-    if (_map_fake_pos.empty())
-        for (size_t i = 0; i < id_list.size(); i++)
-        {
-            position_list.push_back(0);
-            auto result = countMap.insert(std::pair<uint8_t, uint8_t>(id_list[i], 1));
-            if (result.second == false)
-                return GROUP_SYNC_REDONDANT_ID;  // redondant id
-        }
-    else
+    for (size_t i = 0; i < id_list.size(); i++)
     {
-        for (size_t i = 0; i < id_list.size(); i++)
-        {
-            position_list.emplace_back(_map_fake_pos.at(id_list[i]));
-            auto result = countMap.insert(std::pair<uint8_t, uint8_t>(id_list[i], 1));
-            if (result.second == false)
-                return GROUP_SYNC_REDONDANT_ID;  // redondant id
-        }
+        position_list.emplace_back(_map_fake_pos.at(id_list[i]));
+        auto result = countMap.insert(std::pair<uint8_t, uint8_t>(id_list[i], 1));
+        if (result.second == false)
+            return GROUP_SYNC_REDONDANT_ID;  // redondant id
     }
     return COMM_SUCCESS;
 }

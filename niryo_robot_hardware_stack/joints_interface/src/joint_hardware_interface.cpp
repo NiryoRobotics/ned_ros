@@ -67,6 +67,7 @@ JointHardwareInterface::JointHardwareInterface(ros::NodeHandle& rootnh,
 
     init(rootnh, robot_hwnh);
 
+
     sendInitMotorsParams();
 
     activateLearningMode();
@@ -163,7 +164,7 @@ bool JointHardwareInterface::init(ros::NodeHandle& rootnh, ros::NodeHandle &robo
 
         // gather info in joint  states (polymorphic)
         // CC use factory in state directly ?
-        if (eType == EMotorType::STEPPER)
+        if (eType == EMotorType::STEPPER || eType == EMotorType::FAKE_STEPPER_MOTOR)
         {  // stepper
             auto stepperState = std::make_shared<StepperMotorState>(joint_name,
                                                                     eType,

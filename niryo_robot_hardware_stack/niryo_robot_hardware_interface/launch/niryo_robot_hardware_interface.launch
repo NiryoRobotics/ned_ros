@@ -11,19 +11,22 @@
     <arg name="hardware_version" default="ned"/>
     <arg name="debug" default="false"/>
     <arg name="image_version" default="" />
+    <arg name="use_fake_driver" default="false"/>
 
     <!--use base config -->
     <include file="$(find niryo_robot_hardware_interface)/launch/niryo_robot_hardware_interface_base.launch.xml" >
         <arg name="simulation_mode" value="$(arg simulation_mode)" />
         <arg name="can_enabled" value="$(arg can_enabled)" />
         <arg name="ttl_enabled" value="$(arg ttl_enabled)" />
-        <arg name="hardware_version" value="$(arg hardware_version)" />
+        <arg name="hardware_version" value="$(arg hardware_version)" unless="$(arg use_fake_driver)" />
+        <arg name="hardware_version" value="fake" if="$(arg use_fake_driver)" />
     </include>
 
     <node pkg="niryo_robot_hardware_interface" type="niryo_robot_hardware_interface_node" 
           name="niryo_robot_hardware_interface" output="screen">
           
-        <param name="hardware_version" type="string" value="$(arg hardware_version)"/>
+        <param name="hardware_version" type="string" value="$(arg hardware_version)" if="$(arg use_fake_driver)"/>
+        <param name="hardware_version" type="string" value="fake" unless="$(arg use_fake_driver)"/>
         <param name="simulation_mode" type="bool" value="$(arg simulation_mode)"/>
         <param name="simu_gripper" type="bool" value="$(arg simu_gripper)"/>
         <param name="gazebo" type="bool" value="$(arg gazebo)"/>

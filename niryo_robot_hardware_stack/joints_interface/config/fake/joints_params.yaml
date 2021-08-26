@@ -1,0 +1,27 @@
+joint_1_name: "joint_1"
+joint_2_name: "joint_2"
+joint_3_name: "joint_3"
+joint_4_name: "joint_4"
+joint_5_name: "joint_5"
+joint_6_name: "joint_6"
+
+joint_1_id: 7
+joint_2_id: 8
+joint_3_id: 9
+joint_4_id: 2
+joint_5_id: 3
+joint_6_id: 6
+
+joint_1_type: "fakeDxl"
+joint_2_type: "fakeDxl"
+joint_3_type: "fakeDxl"
+joint_4_type: "fakeDxl"
+joint_5_type: "fakeDxl"
+joint_6_type: "fakeDxl"
+
+joint_1_bus: "ttl"
+joint_2_bus: "ttl"
+joint_3_bus: "ttl"
+joint_4_bus: "ttl"
+joint_5_bus: "ttl"
+joint_6_bus: "ttl"

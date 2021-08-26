@@ -1,0 +1,31 @@
+#
+#  Stepper caracteristics for Ned2's hardware
+#
+steppers_ttl:
+    stepper_1:
+        id: 1
+        gear_ratio: 5.4375
+        offset_position: 2.96706
+        home_position: 0.0
+        direction: -1
+        max_effort: 110
+
+    stepper_2:
+        id: 2
+        gear_ratio: 8.5625
+        offset_position: 0.610865
+        home_position: 0.5
+        direction: -1
+        max_effort: 130
+        
+    stepper_3:
+        id: 3
+        gear_ratio: 7.6875
+        offset_position: -1.3439
+        home_position: -1.25
+        direction: -1
+        max_effort: 120
+
+
+
+

@@ -65,6 +65,9 @@ int AbstractStepperDriver::writeSingleCmd(const std::shared_ptr<common::model::A
             uint32_t speed = static_cast<int32_t>(cmd->getParams().at(1) * dir);
             return setGoalVelocity(cmd->getId(), speed);
         }
+        case EStepperCommandType::CMD_TYPE_CALIBRATION:
+            return startHoming(cmd->getId());
+
         default:
             std::cout << "Command not implemented" << std::endl;
         }

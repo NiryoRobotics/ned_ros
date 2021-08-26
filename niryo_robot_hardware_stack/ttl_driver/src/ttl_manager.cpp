@@ -180,12 +180,12 @@ void TtlManager::addMotor(EMotorType motor_type, uint8_t id, EType type_used)
     ROS_DEBUG("TtlManager::addMotor - Add motor id: %d", id);
 
     // add id to _state_map
-    if (EMotorType::STEPPER == motor_type)
+    if (EMotorType::STEPPER == motor_type || EMotorType::FAKE_STEPPER_MOTOR == motor_type)
     {
         if (EType::CONVOYER == type_used)
             _state_map.insert(make_pair(id, std::make_shared<ConveyorState>(EBusProtocol::TTL, id)));
         else
-            _state_map.insert(make_pair(id, std::make_shared<StepperMotorState>(EBusProtocol::TTL, id)));
+            _state_map.insert(make_pair(id, std::make_shared<StepperMotorState>("auto", motor_type, EBusProtocol::TTL, id)));
     }
     else if (EMotorType::UNKNOWN != motor_type)
     {
@@ -291,6 +291,8 @@ int TtlManager::setupCommunication()
 
     ROS_DEBUG("TtlManager::setupCommunication - initializing connection...");
 
+    if (_device_name == "fake")
+        return COMM_SUCCESS;
     // Dxl bus setup
     if (_portHandler)
     {
@@ -397,10 +399,10 @@ bool TtlManager::ping(uint8_t id)
 {
     int result = false;
 
-    auto it = _driver_map.begin();
-    if (it != _driver_map.end() && it->second)
+    auto it = _driver_map.at(_state_map.find(id)->second->getType()); 
+    if (it)
     {
-        result = (COMM_SUCCESS == it->second->ping(id));
+        result = (COMM_SUCCESS == it->ping(id));
     }
     else
         ROS_ERROR_THROTTLE(1, "TtlManager::ping - the dynamixel drivers seeems uninitialized");
@@ -419,7 +421,7 @@ int TtlManager::rebootMotors()
     for (auto const &it : _state_map)
     {
         EMotorType type = it.second->getType();
-        ROS_DEBUG("TtlManager::rebootMotors - Reboot Dxl motor with ID: %d", it.first);
+        ROS_DEBUG("TtlManager::rebootMotors - Reboot ttl motor with ID: %d", it.first);
         if (_driver_map.count(type))
         {
             int result = _driver_map.at(type)->reboot(it.first);
@@ -448,7 +450,7 @@ int TtlManager::rebootMotor(uint8_t motor_id)
 {
     int return_value = COMM_TX_FAIL;
 
-    if (_state_map.count(motor_id) && _state_map.at(motor_id))
+    if (_state_map.count(motor_id) != 0 && _state_map.at(motor_id))
     {
         EMotorType type = _state_map.at(motor_id)->getType();
         ROS_DEBUG("TtlManager::rebootMotors - Reboot motor with ID: %d", motor_id);
@@ -663,6 +665,17 @@ void TtlManager::readHwStatus()
 
                     hw_errors_increment++;
                 }
+                if (type == EMotorType::FAKE_STEPPER_MOTOR || type == EMotorType::STEPPER)
+                {
+                    for (auto id : _ids_map.at(type))
+                    {
+                        uint32_t status;
+                        shared_ptr<ttl_driver::AbstractStepperDriver> stepper_driver = std::dynamic_pointer_cast<ttl_driver::AbstractStepperDriver>(driver);
+                        stepper_driver->getHomingStatus(id, status);     // TODO(Thuc): verify real value of status
+                        std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(id))->setCalibration(static_cast<EStepperCalibrationStatus>(status), 0);
+                        updateCurrentCalibrationStatus();
+                    }
+                }
 
                 // **********  conveyor state
                 if (type == EMotorType::STEPPER)
@@ -762,34 +775,38 @@ int TtlManager::getAllIdsOnBus(vector<uint8_t> &id_list)
 {
     int result = COMM_RX_FAIL;
 
-    // 1. Get all ids from dxl bus. We can use any driver for that
-    auto it = _driver_map.begin();
-    if (it != _driver_map.end() && it->second)
+    // 1. Get all ids from ttl bus. We can use any driver for that
+    for (auto it : _driver_map)
     {
-        result = it->second->scan(id_list);
-
-        string ids_str;
-        for (auto const &id : id_list)
-            ids_str += to_string(id) + " ";
-
-        ROS_DEBUG_THROTTLE(1, "TtlManager::getAllIdsOnDxlBus - Found ids (%s) on bus using first driver (type: %s)",
-                              ids_str.c_str(),
-                              MotorTypeEnum(it->first).toString().c_str());
-
-        if (COMM_SUCCESS != result)
+        if (it.second)
         {
-            if (COMM_RX_TIMEOUT != result)
-            {  // -3001
-                _debug_error_message = "TtlManager - No motor found. "
-                                       "Make sure that motors are correctly connected and powered on.";
+            vector<uint8_t> l_idList;
+            result = it.second->scan(l_idList);
+            id_list.insert(id_list.end(), l_idList.begin(), l_idList.end());
+
+            string ids_str;
+            for (auto const &id : l_idList)
+                ids_str += to_string(id) + " ";
+
+            ROS_DEBUG_THROTTLE(1, "TtlManager::getAllIdsOnTtlBus - Found ids (%s) on bus using first driver (type: %s)",
+                                ids_str.c_str(),
+                                MotorTypeEnum(it.first).toString().c_str());
+
+            if (COMM_SUCCESS != result)
+            {
+                if (COMM_RX_TIMEOUT != result)
+                {  // -3001
+                    _debug_error_message = "TtlManager - No motor found. "
+                                        "Make sure that motors are correctly connected and powered on.";
+                }
+                else
+                {  // -3002 or other
+                    _debug_error_message = "TtlManager - Failed to scan bus.";
+                }
+                ROS_WARN_THROTTLE(1, "TtlManager::getAllIdsOnTtlBus - Broadcast ping failed, "
+                                "result : %d (-3001: timeout, -3002: corrupted packet)",
+                                result);
             }
-            else
-            {  // -3002 or other
-                _debug_error_message = "TtlManager - Failed to scan bus.";
-            }
-            ROS_WARN_THROTTLE(1, "TtlManager::getAllIdsOnDxlBus - Broadcast ping failed, "
-                              "result : %d (-3001: timeout, -3002: corrupted packet)",
-                              result);
         }
     }
 
@@ -851,6 +868,22 @@ common::model::EStepperCalibrationStatus TtlManager::getCalibrationStatus() cons
 {
     return _calibration_status;
 }
+
+/**
+ * @brief TtlManager::updateCurrentCalibrationStatus
+ */
+void TtlManager::updateCurrentCalibrationStatus()
+{
+    EStepperCalibrationStatus newStatus = EStepperCalibrationStatus::CALIBRATION_OK;
+    for (auto const& s : _state_map)
+    {
+        if (s.second && newStatus < std::dynamic_pointer_cast<StepperMotorState>(s.second)->getCalibrationState())
+            newStatus = std::dynamic_pointer_cast<StepperMotorState>(s.second)->getCalibrationState();
+    }
+
+    _calibration_status = newStatus;
+}
+
 // ******************
 //  Write operations
 // ******************

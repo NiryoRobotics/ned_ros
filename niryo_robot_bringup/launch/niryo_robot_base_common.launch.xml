@@ -10,6 +10,7 @@
     <arg name="debug" default="false"/>
     <arg name="can_enabled" default="$(eval simulation_mode == false)"/>
     <arg name="ttl_enabled" default="$(eval simulation_mode == false)"/>
+    <arg name="use_fake_driver" default="false"/>
 
     <!-- SHARED PARAMS -->
     <group ns="niryo_robot">
@@ -57,6 +58,7 @@
         <arg name="ttl_enabled" value="$(arg ttl_enabled)"/>
         <arg name="hardware_version" value="$(arg hardware_version)"/>
         <arg name="debug" value="$(arg debug)"/>
+        <arg name="use_fake_driver" value="$(arg use_fake_driver)"/>
     </include>
 
     <include file="$(find niryo_robot_arm_commander)/launch/robot_commander.launch">

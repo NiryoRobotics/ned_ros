@@ -42,11 +42,11 @@ class MockStepperDriver : public AbstractStepperDriver
         // as it is needed here for polymorphism (AbstractTtlDriver cannot be a template class and does not
         // have access to reg_type). So it seems like a duplicate of DxlDriver
     public:
-        virtual int ping(uint8_t id);
+        virtual int ping(uint8_t id) override;
         virtual int getModelNumber(uint8_t id,
-                            uint16_t& stepper_model_number);
-        virtual int scan(std::vector<uint8_t>& id_list);
-        virtual int reboot(uint8_t id);
+                            uint16_t& stepper_model_number) override;
+        virtual int scan(std::vector<uint8_t>& id_list) override;
+        virtual int reboot(uint8_t id) override;
 
         virtual std::string interpreteErrorState(uint32_t hw_state) override;
 
@@ -93,6 +93,8 @@ class MockStepperDriver : public AbstractStepperDriver
     private:
         std::map<uint8_t, uint32_t> _map_fake_pos;
 
+        std::vector<uint8_t> _id_list{7, 8, 9};
+
         static constexpr int GROUP_SYNC_REDONDANT_ID = 10;
         static constexpr int LEN_ID_DATA_NOT_SAME    = 20;
 };
@@ -131,11 +133,14 @@ int MockStepperDriver::getModelNumber(uint8_t id, uint16_t& dxl_model_number)
 
 int MockStepperDriver::scan(std::vector<uint8_t>& id_list)
 {
+    id_list = _id_list;
     return COMM_SUCCESS;
 }
 
 int MockStepperDriver::reboot(uint8_t id)
 {
+    if (std::find(_id_list.begin(), _id_list.end(), id) == _id_list.end())
+        return COMM_TX_FAIL;
     return COMM_SUCCESS;
 }
 
@@ -256,7 +261,7 @@ int MockStepperDriver::readPosition(uint8_t id, uint32_t& present_position)
 
 int MockStepperDriver::readTemperature(uint8_t id, uint32_t& temperature)
 {
-    temperature = 0;
+    temperature = 25;
     return COMM_SUCCESS;
 }
 
@@ -356,7 +361,7 @@ int MockStepperDriver::startHoming(uint8_t id)
 
 int MockStepperDriver::getHomingStatus(uint8_t id, uint32_t &status)
 {
-    status = 0;
+    status = static_cast<uint32_t>(common::model::EStepperCalibrationStatus::CALIBRATION_OK);
     return COMM_SUCCESS;
 }
 

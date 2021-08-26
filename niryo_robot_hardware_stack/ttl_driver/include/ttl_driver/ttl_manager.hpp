@@ -112,7 +112,8 @@ class TtlManager : public common::model::IBusManager
         bool isCalibrationInProgress() const;
         int32_t getCalibrationResult(uint8_t id) const;
         common::model::EStepperCalibrationStatus getCalibrationStatus() const;
-
+        void updateCurrentCalibrationStatus();
+        
         // getters
         uint32_t getPosition(common::model::JointState& motor_state);
         int getLedState() const;
