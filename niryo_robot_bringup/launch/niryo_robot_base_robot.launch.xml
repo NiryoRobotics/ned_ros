@@ -43,7 +43,11 @@
 
     <!--   Rpi node (IO / fan / ...)   -->
     <!-- Ned RPI 4 -->
-    <include file="$(find niryo_robot_rpi)/launch/rpi_4.launch">
+    <include file="$(find niryo_robot_rpi)/launch/rpi_4.launch" unless="$(arg use_fake_driver)">
+        <arg name="log_level" value="$(arg log_level)" />
+    </include>
+
+    <include file="$(find niryo_robot_rpi)/launch/rpi_simulation.launch" if="$(arg use_fake_driver)">
         <arg name="log_level" value="$(arg log_level)" />
     </include>
 

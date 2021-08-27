@@ -88,7 +88,7 @@
         <arg name="log_level" value="$(arg log_level)" />
     </include>
 
-    <include file="$(find niryo_robot_modbus)/launch/modbus_server.launch">
+    <include file="$(find niryo_robot_modbus)/launch/modbus_server.launch" unless="$(arg use_fake_driver)">
         <arg name="log_level" value="$(arg log_level)" />
     </include>
 </launch>
