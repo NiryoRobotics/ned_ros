@@ -40,6 +40,7 @@
 using ::common::model::JointState;
 using ::common::model::EStepperCommandType;
 using ::common::model::StepperSingleCmd;
+using ::common::model::StepperTtlSingleCmd;
 using ::common::model::StepperMotorState;
 using ::common::model::EStepperCalibrationStatus;
 using ::common::model::EDxlCommandType;

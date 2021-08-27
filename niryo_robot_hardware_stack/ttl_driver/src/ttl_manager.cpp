@@ -636,7 +636,6 @@ void TtlManager::readHwStatus()
 
                 // **********  voltage
                 vector<uint32_t> voltage_list;
-
                 if (COMM_SUCCESS != driver->syncReadVoltage(id_list, voltage_list))
                 {
                     hw_errors_increment++;
@@ -678,7 +677,7 @@ void TtlManager::readHwStatus()
                 }
 
                 // **********  conveyor state
-                if (type == EMotorType::STEPPER)
+                if (type == EMotorType::STEPPER || type == EMotorType::FAKE_STEPPER_MOTOR)
                 {
                     for (auto id : _ids_map.at(type))
                     {
@@ -877,7 +876,7 @@ void TtlManager::updateCurrentCalibrationStatus()
     EStepperCalibrationStatus newStatus = EStepperCalibrationStatus::CALIBRATION_OK;
     for (auto const& s : _state_map)
     {
-        if (s.second && newStatus < std::dynamic_pointer_cast<StepperMotorState>(s.second)->getCalibrationState())
+        if (s.second && s.second->isStepper() && newStatus < std::dynamic_pointer_cast<StepperMotorState>(s.second)->getCalibrationState())
             newStatus = std::dynamic_pointer_cast<StepperMotorState>(s.second)->getCalibrationState();
     }
 
@@ -1179,7 +1178,7 @@ int TtlManager::writeSingleCommand(const std::shared_ptr<common::model::Abstract
 
     if (result != COMM_SUCCESS)
     {
-        ROS_WARN("TtlManager::writeSingleCommand - Failed to write a single command on dxl motor id : %d", id);
+        ROS_WARN("TtlManager::writeSingleCommand - Failed to write a single command on ttl motor id : %d", id);
         _debug_error_message = "TtlManager - Failed to write a single command";
     }
 

@@ -5,16 +5,16 @@ joint_4_name: "joint_4"
 joint_5_name: "joint_5"
 joint_6_name: "joint_6"
 
-joint_1_id: 7
-joint_2_id: 8
-joint_3_id: 9
-joint_4_id: 2
-joint_5_id: 3
+joint_1_id: 1
+joint_2_id: 2
+joint_3_id: 3
+joint_4_id: 4
+joint_5_id: 5
 joint_6_id: 6
 
-joint_1_type: "fakeDxl"
-joint_2_type: "fakeDxl"
-joint_3_type: "fakeDxl"
+joint_1_type: "fakeStepper"
+joint_2_type: "fakeStepper"
+joint_3_type: "fakeStepper"
 joint_4_type: "fakeDxl"
 joint_5_type: "fakeDxl"
 joint_6_type: "fakeDxl"

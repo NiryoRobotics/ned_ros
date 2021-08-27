@@ -1,3 +1,4 @@
 motors_params:
-    motor_id_list: [7,8,9,2,3,6]
-    motor_type_list: ["fakeDxl","fakeDxl","fakeDxl","fakeDxl","fakeDxl","fakeDxl"]
+    motor_id_list: [1,2,3,4,5,6]
+    # motor_type_list: ["fakeDxl","fakeDxl","fakeDxl","fakeDxl","fakeDxl","fakeDxl"]
+    motor_type_list: ["fakeStepper","fakeStepper","fakeStepper","fakeDxl","fakeDxl","fakeDxl"]

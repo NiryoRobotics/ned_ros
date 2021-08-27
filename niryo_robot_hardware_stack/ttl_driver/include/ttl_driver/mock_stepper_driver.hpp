@@ -91,9 +91,8 @@ class MockStepperDriver : public AbstractStepperDriver
         virtual int getConveyorState(uint8_t id, bool &state) override;
     
     private:
-        std::map<uint8_t, uint32_t> _map_fake_pos;
-
-        std::vector<uint8_t> _id_list{7, 8, 9};
+        std::map<uint8_t, uint32_t> _map_fake_pos{ {1, 0}, {2, 1090}, {3, 2447} };
+        std::vector<uint8_t> _id_list{1, 2, 3};
 
         static constexpr int GROUP_SYNC_REDONDANT_ID = 10;
         static constexpr int LEN_ID_DATA_NOT_SAME    = 20;
@@ -280,23 +279,12 @@ int MockStepperDriver::readHwErrorStatus(uint8_t /*id*/, uint32_t& hardware_stat
 int MockStepperDriver::syncReadPosition(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &position_list)
 {
     std::map<uint8_t, uint8_t> countMap;
-    if (_map_fake_pos.empty())
-        for (size_t i = 0; i < id_list.size(); i++)
-        {
-            position_list.push_back(0);
-            auto result = countMap.insert(std::pair<uint8_t, uint8_t>(id_list[i], 1));
-            if (result.second == false)
-                return GROUP_SYNC_REDONDANT_ID;  // redondant id
-        }
-    else
+    for (size_t i = 0; i < id_list.size(); i++)
     {
-        for (size_t i = 0; i < id_list.size(); i++)
-        {
-            position_list.emplace_back(_map_fake_pos.at(id_list[i]));
-            auto result = countMap.insert(std::pair<uint8_t, uint8_t>(id_list[i], 1));
-            if (result.second == false)
-                return GROUP_SYNC_REDONDANT_ID;  // redondant id
-        }
+        position_list.emplace_back(_map_fake_pos.at(id_list[i]));
+        auto result = countMap.insert(std::pair<uint8_t, uint8_t>(id_list[i], 1));
+        if (result.second == false)
+            return GROUP_SYNC_REDONDANT_ID;  // redondant id
     }
     return COMM_SUCCESS;
 }

@@ -69,7 +69,7 @@ int AbstractStepperDriver::writeSingleCmd(const std::shared_ptr<common::model::A
             return startHoming(cmd->getId());
 
         default:
-            std::cout << "Command not implemented" << std::endl;
+            std::cout << "Command not implemented " << cmd->getCmdType() << std::endl;
         }
     }
 
@@ -99,7 +99,7 @@ int AbstractStepperDriver::writeSyncCmd(int type, const std::vector<uint8_t>& id
     case EStepperCommandType::CMD_TYPE_LEARNING_MODE:
         return syncWriteTorqueEnable(ids, params);
     default:
-        std::cout << "Command not implemented" << std::endl;
+        std::cout << "Command not implemented " << type << std::endl;
     }
 
     std::cout << "Command not validated" << std::endl;

@@ -77,7 +77,7 @@ int AbstractDxlDriver::writeSingleCmd(const std::shared_ptr<common::model::Abstr
         case EDxlCommandType::CMD_TYPE_FF2_GAIN:
             return setff2Gain(cmd->getId(), cmd->getParam());
         default:
-            std::cout << "Command not implemented" << std::endl;
+            std::cout << "Command not implemented " << cmd->getCmdType() << std::endl;
         }
     }
 
@@ -107,7 +107,7 @@ int AbstractDxlDriver::writeSyncCmd(int type, const std::vector<uint8_t>& ids, c
     case EDxlCommandType::CMD_TYPE_LEARNING_MODE:
         return syncWriteTorqueEnable(ids, params);
     default:
-        std::cout << "Command not implemented" << std::endl;
+        std::cout << "Command not implemented " << type << std::endl;
     }
 
     std::cout << "Command not validated" << std::endl;
