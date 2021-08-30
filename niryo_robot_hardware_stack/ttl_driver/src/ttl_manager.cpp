@@ -651,6 +651,18 @@ void TtlManager::readHwStatus()
 
                     hw_errors_increment++;
                 }
+                // **********  get calibration status
+                if (type == EMotorType::STEPPER)
+                {
+                    for (auto id : _ids_map.at(type))
+                    {
+                        uint32_t status;
+                        shared_ptr<ttl_driver::AbstractStepperDriver> stepper_driver = std::dynamic_pointer_cast<ttl_driver::AbstractStepperDriver>(driver);
+                        stepper_driver->getHomingStatus(id, status);
+                        std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(id))->setCalibration(static_cast<EStepperCalibrationStatus>(status), 0);
+                        updateCurrentCalibrationStatus();
+                    }
+                }
 
                 // **********  conveyor state
                 if (type == EMotorType::STEPPER)
@@ -839,6 +851,27 @@ common::model::EStepperCalibrationStatus TtlManager::getCalibrationStatus() cons
 {
     return _calibration_status;
 }
+
+/**
+ * @brief TtlManager::updateCurrentCalibrationStatus
+ */
+void TtlManager::updateCurrentCalibrationStatus()
+{
+    EStepperCalibrationStatus newStatus = EStepperCalibrationStatus::CALIBRATION_OK;
+    for (auto const& s : _state_map)
+    {
+        if (s.second && s.second->isStepper())
+        {   
+            newStatus = std::dynamic_pointer_cast<StepperMotorState>(s.second)->getCalibrationState();
+            if (static_cast<int>(newStatus) != CALIBRATION_SUCCESS)
+            {
+                _calibration_status = newStatus;
+                break;
+            }
+        }
+    }
+}
+
 // ******************
 //  Write operations
 // ******************

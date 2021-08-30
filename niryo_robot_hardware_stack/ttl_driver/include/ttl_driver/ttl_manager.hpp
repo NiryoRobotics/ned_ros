@@ -112,6 +112,7 @@ class TtlManager : public common::model::IBusManager
         bool isCalibrationInProgress() const;
         int32_t getCalibrationResult(uint8_t id) const;
         common::model::EStepperCalibrationStatus getCalibrationStatus() const;
+        void updateCurrentCalibrationStatus();
 
         // getters
         uint32_t getPosition(common::model::JointState& motor_state);
@@ -165,6 +166,10 @@ class TtlManager : public common::model::IBusManager
         int _led_state;
 
         static constexpr int MAX_HW_FAILURE = 25;
+        static constexpr int CALIBRATION_IDLE = 0;
+        static constexpr int CALIBRATION_IN_PROGRESS = 1;
+        static constexpr int CALIBRATION_SUCCESS = 2;
+        static constexpr int CALIBRATION_ERROR = 3;
 };
 
 // inline getters

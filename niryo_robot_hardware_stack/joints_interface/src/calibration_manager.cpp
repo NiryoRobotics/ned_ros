@@ -44,6 +44,7 @@ using ::common::model::StepperMotorState;
 using ::common::model::EStepperCalibrationStatus;
 using ::common::model::EDxlCommandType;
 using ::common::model::EBusProtocol;
+using ::common::model::StepperTtlSingleCmd;
 
 namespace joints_interface
 {
@@ -267,15 +268,17 @@ EStepperCalibrationStatus CalibrationManager::_auto_calibration()
     ros::Duration sld(0.2);
 
     // 0. Torque ON for motor 2
+    if (_joint_list.at(1)->getBusProtocol() == EBusProtocol::CAN && _joint_list.at(2)->getBusProtocol() == EBusProtocol::CAN)
+    {
+        StepperSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_TORQUE, _joint_list.at(1)->getId(), {true});
+        getProtocolOfMotor(_joint_list.at(1)->getBusProtocol())->addSingleCommandToQueue(
+                                    std::make_shared<StepperSingleCmd>(stepper_cmd));
+        sld.sleep();
 
-    StepperSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_TORQUE, _joint_list.at(1)->getId(), {true});
-    getProtocolOfMotor(_joint_list.at(1)->getBusProtocol())->addSingleCommandToQueue(
-                                std::make_shared<StepperSingleCmd>(stepper_cmd));
-    sld.sleep();
-
-    // 1. Relative Move Motor 3
-    _relativeMoveMotor(_joint_list.at(2), _joint_list.at(2)->to_motor_pos(0.25), 500, false);
-    ros::Duration(0.5).sleep();
+        // 1. Relative Move Motor 3
+        _relativeMoveMotor(_joint_list.at(2), _joint_list.at(2)->to_motor_pos(0.25), 500, false);
+        ros::Duration(0.5).sleep();
+    }
 
     // 2. Move All Dynamixel to Home Position
     if (_ttl_interface)
@@ -310,75 +313,105 @@ EStepperCalibrationStatus CalibrationManager::_auto_calibration()
     }
 
     // 3. Send calibration cmd 1 + 2 + 3
-
-    std::vector<int> sensor_offset_results;
-
-    std::shared_ptr<StepperMotorState> pStepperMotorState_1 =
-            std::dynamic_pointer_cast<StepperMotorState>(_joint_list.at(0));
-
-    std::shared_ptr<StepperMotorState> pStepperMotorState_2 =
-            std::dynamic_pointer_cast<StepperMotorState>(_joint_list.at(1));
-
-    std::shared_ptr<StepperMotorState> pStepperMotorState_3 =
-            std::dynamic_pointer_cast<StepperMotorState>(_joint_list.at(2));
-
-    if (pStepperMotorState_1 && pStepperMotorState_1->isValid() &&
-            pStepperMotorState_2 && pStepperMotorState_2->isValid() &&
-            pStepperMotorState_3 && pStepperMotorState_3->isValid())
+    if (_can_interface)
     {
-        if (_can_interface)
-            _can_interface->startCalibration();
-        else if (_ttl_interface)
-            _ttl_interface->startCalibration();
+        std::shared_ptr<StepperMotorState> pStepperMotorState_1 =
+                std::dynamic_pointer_cast<StepperMotorState>(_joint_list.at(0));
 
-        setStepperCalibrationCommand(pStepperMotorState_1, 200, 1, _calibration_timeout);
-        setStepperCalibrationCommand(pStepperMotorState_2, 1000, 1, _calibration_timeout);
-        setStepperCalibrationCommand(pStepperMotorState_3, 1000, -1, _calibration_timeout);
+        std::shared_ptr<StepperMotorState> pStepperMotorState_2 =
+                std::dynamic_pointer_cast<StepperMotorState>(_joint_list.at(1));
+
+        std::shared_ptr<StepperMotorState> pStepperMotorState_3 =
+                std::dynamic_pointer_cast<StepperMotorState>(_joint_list.at(2));
+
+        if (pStepperMotorState_1 && pStepperMotorState_1->isValid() &&
+                pStepperMotorState_2 && pStepperMotorState_2->isValid() &&
+                pStepperMotorState_3 && pStepperMotorState_3->isValid())
+        {
+            _can_interface->startCalibration();
+
+            setStepperCalibrationCommand(pStepperMotorState_1, 200, 1, _calibration_timeout);
+            setStepperCalibrationCommand(pStepperMotorState_2, 1000, 1, _calibration_timeout);
+            setStepperCalibrationCommand(pStepperMotorState_3, 1000, -1, _calibration_timeout);
+        }
+
+        // wait for calibration status done
+        sld.sleep();
+    }
+    else
+    {
+        // calibration of steppers Ttl
+        StepperTtlSingleCmd torque_cmd_1(EStepperCommandType::CMD_TYPE_TORQUE, 1, {0});
+        StepperTtlSingleCmd torque_cmd_2(EStepperCommandType::CMD_TYPE_TORQUE, 2, {0});
+        StepperTtlSingleCmd torque_cmd_3(EStepperCommandType::CMD_TYPE_TORQUE, 3, {0});
+
+        _ttl_interface->addSingleCommandToQueue(std::make_shared<StepperTtlSingleCmd>(torque_cmd_1));
+        _ttl_interface->addSingleCommandToQueue(std::make_shared<StepperTtlSingleCmd>(torque_cmd_2));
+        _ttl_interface->addSingleCommandToQueue(std::make_shared<StepperTtlSingleCmd>(torque_cmd_3));
+
+        StepperTtlSingleCmd stepper_cmd_1(EStepperCommandType::CMD_TYPE_CALIBRATION, 1);
+        StepperTtlSingleCmd stepper_cmd_2(EStepperCommandType::CMD_TYPE_CALIBRATION, 2);
+        StepperTtlSingleCmd stepper_cmd_3(EStepperCommandType::CMD_TYPE_CALIBRATION, 3);
+
+         _can_interface->startCalibration();
+         
+        _ttl_interface->addSingleCommandToQueue(std::make_shared<StepperTtlSingleCmd>(stepper_cmd_1));
+        _ttl_interface->addSingleCommandToQueue(std::make_shared<StepperTtlSingleCmd>(stepper_cmd_2));
+        _ttl_interface->addSingleCommandToQueue(std::make_shared<StepperTtlSingleCmd>(stepper_cmd_3));
+        
+        sld.sleep();
     }
 
-    // wait for calibration status done
-    sld.sleep();
     while ((_can_interface && _can_interface->isCalibrationInProgress()) || (_ttl_interface && _ttl_interface->isCalibrationInProgress()))
     {
         sld.sleep();
     }
 
-    for (size_t i = 0; i < 3; ++i)
+    if (_can_interface)
     {
-        uint8_t motor_id = _joint_list.at(i)->getId();
-        int calibration_result = getProtocolOfMotor(_joint_list.at(i)->getBusProtocol())->getCalibrationResult(motor_id);
-        sensor_offset_results.emplace_back(calibration_result);
-        ROS_INFO("Calibration Interface - Motor %d, calibration cmd result %d ", motor_id, calibration_result);
-    }
+        std::vector<int> sensor_offset_results;
+        for (size_t i = 0; i < 3; ++i)
+        {
+            uint8_t motor_id = _joint_list.at(i)->getId();
+            int calibration_result = getProtocolOfMotor(_joint_list.at(i)->getBusProtocol())->getCalibrationResult(motor_id);
+            sensor_offset_results.emplace_back(calibration_result);
+            ROS_INFO("Calibration Interface - Motor %d, calibration cmd result %d ", motor_id, calibration_result);
+        }
 
-    if (sensor_offset_results.at(0) && sensor_offset_results.at(1) && sensor_offset_results.at(2))
-    {
-        ROS_INFO("Calibration Interface -  New Calibration values : ");
+        if (sensor_offset_results.at(0) && sensor_offset_results.at(1) && sensor_offset_results.at(2))
+        {
+            ROS_INFO("Calibration Interface -  New Calibration values : ");
 
-        ROS_INFO("Calibration Interface -  motor id %d - calibration value %d",
-                 _joint_list.at(0)->getId(), sensor_offset_results.at(0));
+            ROS_INFO("Calibration Interface -  motor id %d - calibration value %d",
+                    _joint_list.at(0)->getId(), sensor_offset_results.at(0));
 
-        ROS_INFO("Calibration Interface -  motor id %d - calibration value %d",
-                 _joint_list.at(1)->getId(), sensor_offset_results.at(1));
+            ROS_INFO("Calibration Interface -  motor id %d - calibration value %d",
+                    _joint_list.at(1)->getId(), sensor_offset_results.at(1));
 
-        ROS_INFO("Calibration Interface -  motor id %d - calibration value %d",
-                 _joint_list.at(2)->getId(), sensor_offset_results.at(2));
+            ROS_INFO("Calibration Interface -  motor id %d - calibration value %d",
+                    _joint_list.at(2)->getId(), sensor_offset_results.at(2));
 
-        std::vector<int> sensor_offset_ids;
-        sensor_offset_ids.push_back(_joint_list.at(0)->getId());
-        sensor_offset_ids.push_back(_joint_list.at(1)->getId());
-        sensor_offset_ids.push_back(_joint_list.at(2)->getId());
+            std::vector<int> sensor_offset_ids;
+            sensor_offset_ids.push_back(_joint_list.at(0)->getId());
+            sensor_offset_ids.push_back(_joint_list.at(1)->getId());
+            sensor_offset_ids.push_back(_joint_list.at(2)->getId());
+            // 4. Move motor 1,2,3 to 0.0
+            // -0.01 to bypass error
+            sld.sleep();
+            _relativeMoveMotor(_joint_list.at(0),
+                            -_joint_list.at(0)->to_motor_pos(_joint_list.at(0)->getOffsetPosition()),
+                            550,
+                            false);
 
-        // 4. Move motor 1,2,3 to 0.0
-        // -0.01 to bypass error
-        sld.sleep();
-        _relativeMoveMotor(_joint_list.at(0),
-                           -_joint_list.at(0)->to_motor_pos(_joint_list.at(0)->getOffsetPosition()),
-                           550,
-                           false);
+            ros::Duration(2.5).sleep();
 
-        ros::Duration(2.5).sleep();
-
+            // 6. Write sensor_offset_steps to file
+            set_motors_calibration_offsets(sensor_offset_ids, sensor_offset_results);
+        }
+        else
+        {
+            ROS_ERROR("Calibration Interface -  An error occured while calibrating stepper motors");
+        }
         // forge stepper command
         for (auto const& jState : _joint_list)
         {
@@ -389,27 +422,33 @@ EStepperCalibrationStatus CalibrationManager::_auto_calibration()
                                             std::make_shared<StepperSingleCmd>(cmd));
             }
         }
-
-        // forge dxl command
-        if (_ttl_interface)
-        {
-            common::model::DxlSyncCmd dynamixel_cmd(EDxlCommandType::CMD_TYPE_TORQUE);
-            dynamixel_cmd.addMotorParam(_joint_list.at(3)->getType(), _joint_list.at(3)->getId(), 0);
-            dynamixel_cmd.addMotorParam(_joint_list.at(4)->getType(), _joint_list.at(4)->getId(), 0);
-            dynamixel_cmd.addMotorParam(_joint_list.at(5)->getType(), _joint_list.at(5)->getId(), 0);
-
-            // TODO(Thuc) only dxl use sync cmd
-            _ttl_interface->setSyncCommand(std::make_shared<common::model::DxlSyncCmd>(dynamixel_cmd));
-            sld.sleep();
-        }
-
-        // 6. Write sensor_offset_steps to file
-        set_motors_calibration_offsets(sensor_offset_ids, sensor_offset_results);
     }
     else
     {
-        ROS_ERROR("Calibration Interface -  An error occured while calibrating stepper motors");
+        // Forge stepper Ttl
+        for (auto const& jState : _joint_list)
+        {
+            if (jState && jState->isStepper())
+            {
+                StepperTtlSingleCmd cmd(EStepperCommandType::CMD_TYPE_TORQUE, jState->getId(), {0});
+                getProtocolOfMotor(jState->getBusProtocol())->addSingleCommandToQueue(
+                                            std::make_shared<StepperTtlSingleCmd>(cmd));
+            }
+        }
     }
+    // forge dxl command
+    if (_ttl_interface)
+    {
+        common::model::DxlSyncCmd dynamixel_cmd(EDxlCommandType::CMD_TYPE_TORQUE);
+        dynamixel_cmd.addMotorParam(_joint_list.at(3)->getType(), _joint_list.at(3)->getId(), 0);
+        dynamixel_cmd.addMotorParam(_joint_list.at(4)->getType(), _joint_list.at(4)->getId(), 0);
+        dynamixel_cmd.addMotorParam(_joint_list.at(5)->getType(), _joint_list.at(5)->getId(), 0);
+
+        // TODO(Thuc) only dxl use sync cmd
+        _ttl_interface->setSyncCommand(std::make_shared<common::model::DxlSyncCmd>(dynamixel_cmd));
+        sld.sleep();
+    }
+
     common::model::EStepperCalibrationStatus  calibration_status = common::model::EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED;
     if (_can_interface)
         calibration_status = _can_interface->getCalibrationStatus();
