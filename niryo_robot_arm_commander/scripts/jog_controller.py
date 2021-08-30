@@ -45,6 +45,11 @@ from moveit_msgs.srv import GetStateValidity
 
 class JogController:
     def __init__(self, parameters_validator):
+        # - Some params
+        self.__time_without_jog_limit = rospy.get_param(
+            "~time_without_jog_TCP_limit")  # jog disabled after one second for the jogTCP Niryo Studio
+        self.__error_tolerance_joint = rospy.get_param("~error_tolerance_joint")
+
         # - Publisher which publishes if JogController is enabled
         self._enabled = False
         self._jog_enabled_publisher = rospy.Publisher('/niryo_robot/jog_interface/is_enabled',
@@ -129,11 +134,6 @@ class JogController:
         self.__pose_translation_max = jog_limits["translation"]
         self.__pose_rotation_max = jog_limits["rotation"]
         self.__joints_rotation_max = jog_limits["joints"]
-
-        # - Others param
-        self.__time_without_jog_limit = rospy.get_param(
-            "~time_without_jog_TCP_limit")  # jog disabled after one second for the jogTCP Niryo Studio
-        self.__error_tolerance_joint = rospy.get_param("~error_tolerance_joint")
 
     # - Callbacks
 
