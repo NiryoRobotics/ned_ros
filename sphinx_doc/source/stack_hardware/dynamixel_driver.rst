@@ -1,4 +1,4 @@
-Niryo robot dynamixel driver package
+Dynamixel_driver
 =====================================
 
 | This package handles dynamixel motors communication through dynamixel sdk.
@@ -56,17 +56,17 @@ Services - Dynamixel Driver
       -  Message Type
       -  Description
    *  -  ``niryo_robot/ttl_driver/set_dxl_leds``
-      -  :ref:`SetInt`
+      -  :ref:`source/ros/niryo_robot_msgs:SetInt`
       -  Control dynmixel LED
    *  -  ``niryo_robot/ttl_driver/send_custom_dxl_value``
-      -  :ref:`ttl_driver/SendCustomValue<SendCustomValue (Service)>`
+      -  :ref:`ttl_driver/SendCustomDxlValue<source/stack_hardware/ttl_driver:SendCustomDxlValue (Service)>`
       -  Send a custom dynamixel command
 
 Dependencies - Dynamixel Driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 - :wiki_ros:`dynamixel_sdk` 
-- :ref:`niryo_robot_msgs <Niryo Robot Messages Package>`
+- :doc:`../ros/niryo_robot_msgs`
 
 Services & Messages files - Dynamixel Driver
 --------------------------------------------------

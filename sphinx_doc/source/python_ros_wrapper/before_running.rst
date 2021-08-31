@@ -8,13 +8,13 @@ to do that, you need to have sourced your ROS environment:
 
 - If you are coding directly on your robot, it is made directly in every terminal.
 - If your are using simulation, be sure to have followed the setup from
-  :ref:`Setup Ned ROS Environment`.
+  :ref:`source/simulation:Setup Ned ROS Environment`.
 
 
 Required piece of code
 -------------------------------
 
-To run, your program will need some imports & initialisation. We give you below the piece
+To run, your program will need some imports & initialization. We give you below the piece
 of code you must use to make Python ROS Wrapper work: ::
 
     #!/usr/bin/env python

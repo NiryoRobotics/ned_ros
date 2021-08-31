@@ -18,13 +18,13 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #define XC430_REG_HPP
 
 #include <memory>
-#include "common/model/motor_type_enum.hpp"
+#include "common/model/hardware_type_enum.hpp"
 
 namespace ttl_driver
 {
 struct XC430Reg
 {
-    static constexpr common::model::EMotorType motor_type = common::model::EMotorType::XC430;
+    static constexpr common::model::EHardwareType motor_type = common::model::EHardwareType::XC430;
 
     static constexpr int PROTOCOL_VERSION                       = 2.0;
     static constexpr int MODEL_NUMBER                           = 1080;
@@ -143,6 +143,6 @@ struct XC430Reg
     static constexpr std::uint8_t ADDR_PRESENT_TEMPERATURE      = 146;
     static constexpr std::uint8_t SIZE_PRESENT_TEMPERATURE      = 1;
 };
-} // DynamixelDriver
+} // ttl_driver
 
 #endif // XC430_REG_HPP

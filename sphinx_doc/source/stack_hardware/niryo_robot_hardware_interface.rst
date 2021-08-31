@@ -1,4 +1,4 @@
-Niryo robot hardware interface package
+Niryo_robot_hardware_interface
 =======================================
 
 | This package handles packages related to the robot's hardware.
@@ -54,10 +54,10 @@ Published topics - hardware interface
       -  Message Type
       -  Description
    *  -  ``hardware_status``
-      -  :ref:`niryo_robot_msgs/HardwareStatus<HardwareStatus>`
+      -  :ref:`niryo_robot_msgs/HardwareStatus<source/ros/niryo_robot_msgs:HardwareStatus>`
       -  Motors, bus, joints and CPU status
    *  -  ``software_version``
-      -  :ref:`niryo_robot_msgs/SoftwareVersion<SoftwareVersion>`
+      -  :ref:`niryo_robot_msgs/SoftwareVersion<source/ros/niryo_robot_msgs:SoftwareVersion>`
       -  Raspberry and stepper software version
 
 Services - hardware interface
@@ -73,23 +73,23 @@ Services - hardware interface
       -  Message Type
       -  Description
    *  -  ``launch_motors_report``
-      -  :ref:`Trigger`
+      -  :ref:`source/ros/niryo_robot_msgs:Trigger`
       -  Start motors report
    *  -  ``reboot_motors``
-      -  :ref:`Trigger`
+      -  :ref:`source/ros/niryo_robot_msgs:Trigger`
       -  Reboot motors
    *  -  ``stop_motors_report``
-      -  :ref:`Trigger`
+      -  :ref:`source/ros/niryo_robot_msgs:Trigger`
       -  Stop motors report
 
 Dependencies - hardware interface
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- :ref:`tools_interface <Niryo Robot Tools Interface Package>`
-- :ref:`joints_interface <Niryo Robot Joints Interface Package>`
-- :ref:`conveyor_interface <Niryo robot Conveyor Belt interface package>`
-- :ref:`cpu_interface <Niryo Robot CPU Interface Package>`   
-- :ref:`fake_interface <Niryo Robot Fake Interface Package>`     
-- :ref:`niryo_robot_msgs <Niryo Robot Messages Package>`
+- :doc:`tools_interface`
+- :doc:`joints_interface`
+- :doc:`conveyor_interface`
+- :doc:`cpu_interface`
+- :doc:`fake_interface`
+- :doc:`../ros/niryo_robot_msgs`
 
 .. |namespace_emphasize| replace:: ``/niryo_robot_hardware_interface/``

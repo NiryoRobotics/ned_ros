@@ -21,7 +21,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #define JOINT_STATE_HPP
 
 #include "abstract_motor_state.hpp"
-#include "motor_type_enum.hpp"
+#include "hardware_type_enum.hpp"
 
 #include <stdint.h>
 #include <string>
@@ -40,7 +40,7 @@ class JointState : public AbstractMotorState
     
     public:
         JointState();
-        JointState(std::string name, EMotorType type, EBusProtocol bus_proto, uint8_t id);
+        JointState(std::string name, EHardwareType type, EBusProtocol bus_proto, uint8_t id);
 
         virtual ~JointState() override;
 

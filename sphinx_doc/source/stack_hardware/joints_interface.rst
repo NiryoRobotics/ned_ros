@@ -1,4 +1,4 @@
-Niryo robot joints interface package
+Joints_interface
 ====================================
 
 | This package handles packages related to the robot's joints controller.
@@ -8,7 +8,7 @@ Joints interface node
 --------------------------
 The ROS Node is made to:
  - Interface robot's motors to joint trajectory controller, from :wiki_ros:`ros_control` package.
- - Create a controller manager, from :wiki_ros:`controller_manager` package, to provides the infrastructure to load, unload, start and stop controllers.
+ - Create a controller manager, from :wiki_ros:`controller_manager` package, provides the infrastructure to load, unload, start and stop controllers.
  - Interface with motors calibration.
  - Initialize motors parameters.
 
@@ -66,13 +66,13 @@ Services - joints interface
       -  Message Type
       -  Description
    *  -  ``/niryo_robot/joints_interface/calibrate_motors``
-      -  :ref:`SetInt`
+      -  :ref:`source/ros/niryo_robot_msgs:SetInt`
       -  Start motors calibration - value can be 1 for auto calibration, 2 for manual
    *  -  ``/niryo_robot/joints_interface/request_new_calibration``
-      -  :ref:`Trigger`
+      -  :ref:`source/ros/niryo_robot_msgs:Trigger`
       -  Unset motors calibration
    *  -  ``niryo_robot/learning_mode/activate``
-      -  :ref:`Trigger`
+      -  :ref:`source/ros/niryo_robot_msgs:Trigger`
       -  Either activate or deactivate learning mode
 
 Dependencies - joints interface

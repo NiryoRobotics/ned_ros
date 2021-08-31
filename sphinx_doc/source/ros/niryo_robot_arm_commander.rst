@@ -1,14 +1,15 @@
-Niryo robot arm commander package
+Niryo_robot_arm_commander
 ========================================
 
 | This package is the one dealing with all commander related stuff.
 | It is composed of only one node, which is running separately the arm commander and the tool commander.
 
 
-Arm commander node
+Commander node
 --------------------------
 The ROS Node is made to interact with:
  - The Arm through MoveIt!
+ - The tools through the tool controller.
 
 All commands are firstly received on the actionlib server which:
  * Handles concurrent requests.
@@ -53,7 +54,7 @@ Action Server - Commander
       -  Message Type
       -  Description
    *  -  ``robot_action``
-      -  :ref:`RobotMove<RobotMove (Action)>`
+      -  :ref:`RobotMove<source/ros/niryo_robot_arm_commander:RobotMove (Action)>`
       -  Command the arm and tools through an action server
 
 Services - Commander
@@ -69,19 +70,19 @@ Services - Commander
       -  Message Type
       -  Description
    *  -  ``is_active``
-      -  :ref:`GetBool`
+      -  :ref:`source/ros/niryo_robot_msgs:GetBool`
       -  Indicate whereas a command is actually running or not
    *  -  ``stop_command``
-      -  :ref:`Trigger`
+      -  :ref:`source/ros/niryo_robot_msgs:Trigger`
       -  Stop the actual command
    *  -  ``set_max_velocity_scaling_factor``
-      -  :ref:`SetInt`
+      -  :ref:`source/ros/niryo_robot_msgs:SetInt`
       -  Set a percentage of maximum speed
    *  -  ``/niryo_robot/kinematics/forward``
-      -  :ref:`GetFK<GetFK (Service)>`
+      -  :ref:`GetFK<source/ros/niryo_robot_arm_commander:GetFK (Service)>`
       -  Compute a Forward Kinematic
    *  -  ``/niryo_robot/kinematics/inverse``
-      -  :ref:`GetIK<GetIK (Service)>`
+      -  :ref:`GetIK<source/ros/niryo_robot_arm_commander:GetIK (Service)>`
       -  Compute a Inverse Kinematic
 
 Messages - Commander
@@ -95,11 +96,11 @@ Messages - Commander
 
    *  -  Name
       -  Description
-   *  -  :ref:`ArmMoveCommand<ArmMoveCommand (Message)>`
+   *  -  :ref:`ArmMoveCommand<source/ros/niryo_robot_arm_commander:ArmMoveCommand (Message)>`
       -  Message to command the arm
-   *  -  :ref:`ShiftPose<ShiftPose (Message)>`
+   *  -  :ref:`ShiftPose<source/ros/niryo_robot_arm_commander:ShiftPose (Message)>`
       -  Message for shifting pose
-   *  -  :ref:`PausePlanExecution<PausePlanExecution (Message)>`
+   *  -  :ref:`PausePlanExecution<source/ros/niryo_robot_arm_commander:PausePlanExecution (Message)>`
       -  Pause movement execution
 
 All these services are available as soon as the node is started.
@@ -113,8 +114,8 @@ Dependencies - Commander
 - :msgs_index:`geometry_msgs`
 - `MoveIt! <https://moveit.ros.org/>`_
 - :msgs_index:`moveit_msgs`
-- :ref:`niryo_robot_msgs <Niryo Robot Messages Package>`
-- :ref:`niryo_robot_tools_commander <Niryo Robot Tools Commander Package>`
+- :doc:`niryo_robot_msgs`
+- :doc:`niryo_robot_tools_commander`
 - `python-numpy <https://numpy.org/>`_
 - :wiki_ros:`ros_controllers`
 - :wiki_ros:`rosbridge_server`

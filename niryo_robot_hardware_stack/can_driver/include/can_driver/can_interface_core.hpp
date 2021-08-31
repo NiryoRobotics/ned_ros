@@ -76,8 +76,8 @@ class CanInterfaceCore : public common::model::IDriverCore, public common::model
 
         can_driver::StepperArrayMotorHardwareStatus getHwStatus() const;
 
-        std::vector<std::shared_ptr<common::model::JointState> > getStates() const override;
-        common::model::JointState getState(uint8_t motor_id) const override;
+        std::vector<std::shared_ptr<common::model::JointState> > getJointStates() const override;
+        common::model::JointState getJointState(uint8_t motor_id) const override;
 
         // IDriverCore interface
         void startControlLoop() override;
@@ -196,7 +196,7 @@ CanInterfaceCore::getCalibrationStatus() const
  */
 inline
 common::model::JointState
-CanInterfaceCore::getState(uint8_t motor_id) const
+CanInterfaceCore::getJointState(uint8_t motor_id) const
 {
     return static_cast<common::model::JointState>(_can_manager->getMotorState(motor_id));
 

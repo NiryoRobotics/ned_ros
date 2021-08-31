@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-10 11:46+0000\n"
+"POT-Creation-Date: 2021-08-26 16:48+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -31,10 +31,11 @@ msgstr "Ce document montre comment utiliser le Set Vision de Ned."
 #: ../../source/python_ros_wrapper/examples_vision.rst:5
 msgid ""
 "If you want see more about Ned's Vision functions, you can look at "
-":ref:`API - Vision<Vision>`."
+":ref:`API - Vision<source/python_ros_wrapper/ros_wrapper_doc:Vision>`."
 msgstr ""
 "Si vous voulez en savoir plus sur les fonctions vision de Ned, vous "
-"pouvez consulter l':ref:`API - Vision<Vision>`."
+"pouvez consulter l':ref:`API - "
+"Vision<source/python_ros_wrapper/ros_wrapper_doc:Vision>`."
 
 #: ../../source/python_ros_wrapper/examples_vision.rst:8
 msgid "Beforehand"
@@ -54,12 +55,12 @@ msgstr ""
 "Comme les exemples commencent toujours de la même manière, il est "
 "nécessaire d'ajouter le code au début de chacun d'entre eux : ::"
 
-#: ../../source/python_ros_wrapper/examples_vision.rst:42
+#: ../../source/python_ros_wrapper/examples_vision.rst:47
 msgid "Simple Vision pick"
 msgstr "Simple Vision pick"
 
-#: ../../source/python_ros_wrapper/examples_vision.rst:43
-msgid "This short example show how to do your first vision pick: ::"
+#: ../../source/python_ros_wrapper/examples_vision.rst:48
+msgid "This short example shows how to do your first vision pick: ::"
 msgstr "Ce court exemple montre comment faire votre premier vision pick : ::"
 
 #~ msgid "This document shows how to use Ned's vision set"

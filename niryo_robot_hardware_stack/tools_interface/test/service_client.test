@@ -8,7 +8,7 @@
     <include file="$(find tools_interface)/launch/tools_interface.launch" />
 
     <test test-name="tools_interface_integration_tests" pkg="tools_interface"  type="tools_interface_integration_tests">
-        <rosparam command="load" file="$(find niryo_robot_tools_commander)/config/$(arg hardware_version)/end_effectors.yaml" />
+        <rosparam command="load" file="$(find niryo_robot_tools_commander)/config/$(arg hardware_version)/tools_definition.yaml" />
     </test>
 
 </launch>

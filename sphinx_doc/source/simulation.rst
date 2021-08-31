@@ -14,7 +14,7 @@ In this tutorial, you will learn how to setup simulation on a computer.
 
 .. note::
     You can use :niryo_studio_simulation:`Niryo Studio with the simulation<>`.
-    For that, you just have to connect Niryo Studio to "Localhost".
+    To do so, you just have to connect Niryo Studio to "Localhost".
 
 Simulation environment installation
 =========================================
@@ -66,8 +66,8 @@ Install additional packages
 To ensure the functioning of all Ned's packages, you need to
 install several more packages:
 
-Method 1 : Quick install via ROSDep
-""""""""""""""""""""""""""""""""""""""
+Method 1: Quick installation via ROSDep
+"""""""""""""""""""""""""""""""""""""""""""""""""
 For each packages, we have referenced all the dependencies in their respective
 *package.xml* file, which allow to install each dependency via *rosdep* command: ::
 
@@ -75,8 +75,8 @@ For each packages, we have referenced all the dependencies in their respective
  rosdep install --from-paths src --ignore-src --default-yes --rosdistro melodic --skip-keys "python-rpi.gpio"
 
 
-Method 2 : Full install
-""""""""""""""""""""""""""""""""
+Method 2: Full installation
+"""""""""""""""""""""""""""""""""""""""""""""""""
 
 ROS packages needed are:
 
@@ -142,7 +142,7 @@ Simulation utilization
 
 .. important::
     - If you haven't follow the step of
-      :ref:`Simulation Environment Installation <Simulation Environment Installation>`.
+      :ref:`Simulation Environment Installation <source/simulation:Simulation Environment Installation>`.
       you won't be able to use the simulation.
     - Hardware features won't be accessible.
 
@@ -195,8 +195,8 @@ With physics - Simulation
 For the simulation, Ned use Gazebo, a well known tool among the ROS community.
 It allows:
 
-* collision.
-* world creation → An virtual environment in which the robot can deal with objects.
+* Collision.
+* World creation → An virtual environment in which the robot can deal with objects.
 * Gripper & Camera using.
 
 The Niryo Gripper 1 has been replicated in Gazebo.
@@ -219,7 +219,7 @@ To run it: ::
     Gazebo view, with the robot ready to be controlled with ROS!
 
 .. note::
-    You can edit Gazebo world to do your own ! It's placed in the folder *worlds* of the package
+    You can edit Gazebo world to do your own! It's placed in the folder *worlds* of the package
     niryo_robot_gazebo.
 
 Simulation option

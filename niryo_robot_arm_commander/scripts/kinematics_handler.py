@@ -114,7 +114,7 @@ class KinematicsHandler:
             rospy.logerr("Arm commander - Service call failed: {}".format(e))
             return False, []
         if response.error_code.val == MoveItErrorCodes.NO_IK_SOLUTION:
-            rospy.logerr("Arm commander - MoveIt didn't find an IK solution")
+            rospy.logerr_throttle(0.5, "Arm commander - MoveIt didn't find an IK solution")
             return False, []
         elif response.error_code.val != MoveItErrorCodes.SUCCESS:
             rospy.logerr("Arm commander - IK Failed : code error {}".format(response.error_code.val))

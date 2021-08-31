@@ -429,7 +429,7 @@ bool CalibrationManager::_can_process_manual_calibration(std::string &result_mes
 {
     if (_can_interface)
     {
-        auto stepper_motor_states = _can_interface->getStates();
+        auto stepper_motor_states = _can_interface->getJointStates();
 
         // 1. Check if motors firmware version is ok
         for (auto const& mState : stepper_motor_states)
@@ -437,7 +437,7 @@ bool CalibrationManager::_can_process_manual_calibration(std::string &result_mes
             if (mState)
             {
                 // TODO(Thuc) check firmware version only need for stepper, need verify
-                std::string firmware_version = std::dynamic_pointer_cast<StepperMotorState>(mState)->getFirmwareVersion();
+                std::string firmware_version = std::dynamic_pointer_cast<StepperMotorState>(mState)->readFirmwareVersion();
                 if (firmware_version.length() == 0)
                 {
                     result_message = "Calibration Interface - No firmware version available for motor " +

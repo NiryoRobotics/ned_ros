@@ -1,0 +1,11 @@
+button_1:
+    type: "free_drive"
+    config: 0
+
+button_2:
+    type: "save_position"
+    config: 0
+
+button_3:
+    type: "custom"
+    config: 0

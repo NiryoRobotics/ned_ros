@@ -3,7 +3,7 @@ Examples: Movement
 
 This document shows how to control Ned in order to make Move Joints & Move Pose.
 
-If you want see more, you can look at :ref:`API - Joints & Pose<Joints & Pose>`.
+If you want see more, you can look at :ref:`API - Joints & Pose<source/python_ros_wrapper/ros_wrapper_doc:Joints & Pose>`.
 
 .. danger::
     If you are using the real robot, make sure the environment around is clear.

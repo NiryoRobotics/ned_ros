@@ -1,4 +1,4 @@
-Niryo robot CPU interface package
+CPU_interface
 =================================
 
 | This package handles CPU states.

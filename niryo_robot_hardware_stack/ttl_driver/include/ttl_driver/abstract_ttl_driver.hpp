@@ -24,7 +24,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 
 #include "dynamixel_sdk/dynamixel_sdk.h"
 #include "common/common_defs.hpp"
-#include "common/model/motor_type_enum.hpp"
+#include "common/model/hardware_type_enum.hpp"
 #include "common/model/single_motor_cmd.hpp"
 #include "common/model/abstract_synchronize_motor_cmd.hpp"
 
@@ -34,8 +34,6 @@ namespace ttl_driver
 /**
  * @brief The XDriver class
  */
-// CC add list of associated motors ? this would remove the need for a map and for some params
-// generic driver -> write and write for a given address and lenght
 class AbstractTtlDriver
 {
 
@@ -50,47 +48,33 @@ public:
     int scan(std::vector<uint8_t>& id_list);
     int reboot(uint8_t id);
 
-    virtual std::string str() const;
-
+    // we use those commands in the children classes to actually read and write values in registers
+    int read(uint8_t address, uint8_t data_len, uint8_t id, uint32_t& data);
+    int write(uint8_t address, uint8_t data_len, uint8_t id, uint32_t data);
+    
     virtual int writeSingleCmd(const std::shared_ptr<common::model::AbstractTtlSingleMotorCmd >& cmd) = 0;
     virtual int writeSyncCmd(int type, const std::vector<uint8_t>& ids, const std::vector<uint32_t>& params) = 0;
 
 public:
+    virtual std::string str() const;
+
     // here are only common TTL commands found in both Steppers and DXl
     virtual std::string interpreteErrorState(uint32_t hw_state) = 0;
 
     // eeprom write
-    virtual int changeId(uint8_t id, uint8_t new_id) = 0;
 
     // eeprom read
     virtual int checkModelNumber(uint8_t id) = 0;
-    virtual int getFirmwareVersion(uint8_t id, uint32_t& version) = 0;
-    virtual int readMinPosition(uint8_t id, uint32_t& min_pos) = 0;
-    virtual int readMaxPosition(uint8_t id, uint32_t& max_pos) = 0;
-
-    // ram write
-    virtual int setTorqueEnable(uint8_t id, uint32_t torque_enable) = 0;
-    virtual int setGoalPosition(uint8_t id, uint32_t position) = 0;
-    virtual int setGoalVelocity(uint8_t id, uint32_t velocity) = 0;
-
-    virtual int syncWriteTorqueEnable(const std::vector<uint8_t>& id_list, const std::vector<uint32_t>& torque_enable_list) = 0;
-    virtual int syncWritePositionGoal(const std::vector<uint8_t>& id_list, const std::vector<uint32_t>& position_list) = 0;
-    virtual int syncWriteVelocityGoal(const std::vector<uint8_t>& id_list, const std::vector<uint32_t>& velocity_list) = 0;
+    virtual int readFirmwareVersion(uint8_t id, uint32_t& version) = 0;
 
     // ram read
-    virtual int readPosition(uint8_t id, uint32_t& present_position) = 0;
     virtual int readTemperature(uint8_t id, uint32_t& temperature) = 0;
     virtual int readVoltage(uint8_t id, uint32_t& voltage) = 0;
     virtual int readHwErrorStatus(uint8_t id, uint32_t& hardware_status) = 0;
 
-    virtual int syncReadPosition(const std::vector<uint8_t>& id_list, std::vector<uint32_t>& position_list) = 0;
     virtual int syncReadTemperature(const std::vector<uint8_t>& id_list, std::vector<uint32_t>& temperature_list) = 0;
     virtual int syncReadVoltage(const std::vector<uint8_t>& id_list, std::vector<uint32_t>& voltage_list) = 0;
     virtual int syncReadHwErrorStatus(const std::vector<uint8_t>& id_list, std::vector<uint32_t>& hw_error_list) = 0;
-
-    // we use those commands in the children classes to actually read and write values in registers
-    int read(uint8_t address, uint8_t data_len, uint8_t id, uint32_t& data);
-    int write(uint8_t address, uint8_t data_len, uint8_t id, uint32_t data);
 
 protected:
     int syncRead(uint8_t address, uint8_t data_len, const std::vector<uint8_t>& id_list, std::vector<uint32_t>& data_list);
@@ -111,8 +95,6 @@ private:
     static constexpr int LEN_ID_DATA_NOT_SAME    = 20;
 };
 
-
-
-} // DynamixelDriver
+} // ttl_driver
 
 #endif // ABSTRACT_TTL_DRIVER_HPP

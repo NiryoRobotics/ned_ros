@@ -11,18 +11,18 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-07-05 11:59+0200\n"
+"POT-Creation-Date: 2021-08-26 16:48+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Generated-By: Babel 2.8.0\n"
+"Generated-By: Babel 2.9.1\n"
 
 #: ../../source/stack_hardware/tools_interface.rst:2
-msgid "Niryo robot tools interface package"
-msgstr "Package de l'interface outils du robot Niryo"
+msgid "Tools_interface"
+msgstr ""
 
 #: ../../source/stack_hardware/tools_interface.rst:4
 msgid "This package handles Niryo's tools."
@@ -30,11 +30,11 @@ msgstr "Ce package gère les outils Niryo."
 
 #: ../../source/stack_hardware/tools_interface.rst:7
 msgid "Tools interface node"
-msgstr "Noeud de l'interface outils"
+msgstr "Noeud de tools_interface"
 
 #: ../../source/stack_hardware/tools_interface.rst:10
 msgid "The ROS Node is made to:"
-msgstr "Le noeud ROS est conçu pour :"
+msgstr "Le nœud ROS est conçu pour :"
 
 #: ../../source/stack_hardware/tools_interface.rst:9
 msgid "Set and control tools."
@@ -138,7 +138,9 @@ msgid "``niryo_robot/tools/ping_and_set_dxl_tool``"
 msgstr ""
 
 #: ../../source/stack_hardware/tools_interface.rst:62
-msgid ":ref:`tools_interface/PingDxlTool<PingDxlTool (Service)>`"
+msgid ""
+":ref:`tools_interface/PingDxlTool<source/stack_hardware/tools_interface:PingDxlTool"
+" (Service)>`"
 msgstr ""
 
 #: ../../source/stack_hardware/tools_interface.rst:63
@@ -150,7 +152,9 @@ msgid "``niryo_robot/tools/open_gripper``"
 msgstr ""
 
 #: ../../source/stack_hardware/tools_interface.rst:65
-msgid ":ref:`tools_interface/OpenGripper<OpenGripper (Service)>`"
+msgid ""
+":ref:`tools_interface/OpenGripper<source/stack_hardware/tools_interface:OpenGripper"
+" (Service)>`"
 msgstr ""
 
 #: ../../source/stack_hardware/tools_interface.rst:66
@@ -162,7 +166,9 @@ msgid "``niryo_robot/tools/close_gripper``"
 msgstr ""
 
 #: ../../source/stack_hardware/tools_interface.rst:68
-msgid ":ref:`tools_interface/CloseGripper<CloseGripper (Service)>`"
+msgid ""
+":ref:`tools_interface/CloseGripper<source/stack_hardware/tools_interface:CloseGripper"
+" (Service)>`"
 msgstr ""
 
 #: ../../source/stack_hardware/tools_interface.rst:69
@@ -174,7 +180,9 @@ msgid "``niryo_robot/tools/pull_air_vacuum_pump``"
 msgstr ""
 
 #: ../../source/stack_hardware/tools_interface.rst:71
-msgid ":ref:`tools_interface/PullAirVacuumPump<PullAirVacuumPump (Service)>`"
+msgid ""
+":ref:`tools_interface/PullAirVacuumPump<source/stack_hardware/tools_interface:PullAirVacuumPump"
+" (Service)>`"
 msgstr ""
 
 #: ../../source/stack_hardware/tools_interface.rst:72
@@ -186,7 +194,9 @@ msgid "``niryo_robot/tools/push_air_vacuum_pump``"
 msgstr ""
 
 #: ../../source/stack_hardware/tools_interface.rst:74
-msgid ":ref:`tools_interface/PushAirVacuumPump<PushAirVacuumPump (Service)>`"
+msgid ""
+":ref:`tools_interface/PushAirVacuumPump<source/stack_hardware/tools_interface:PushAirVacuumPump"
+" (Service)>`"
 msgstr ""
 
 #: ../../source/stack_hardware/tools_interface.rst:75
@@ -203,7 +213,7 @@ msgstr ""
 
 #: ../../source/stack_hardware/tools_interface.rst:78
 msgid "Reboot the motor of the eqquiped tool"
-msgstr "Redémarre le moteur de l'outil équipé (Utile en cas d'erreurs sur l'outil)"
+msgstr "Redémarre le moteur de l'outil actuellement équipé"
 
 #: ../../source/stack_hardware/tools_interface.rst:81
 msgid "Dependencies - tools interface"
@@ -218,12 +228,12 @@ msgid ":msgs_index:`std_srvs`"
 msgstr ""
 
 #: ../../source/stack_hardware/tools_interface.rst:85
-msgid ":ref:`dynamixel_driver <Niryo Robot Dynamixel Driver Package>`"
+msgid ":doc:`dynamixel_driver`"
 msgstr ""
 
 #: ../../source/stack_hardware/tools_interface.rst:88
 msgid "Services & messages files - tools interface"
-msgstr "Fichiers de services et de messages - interface des outils"
+msgstr "Fichiers de services et de messages - tools interface"
 
 #: ../../source/stack_hardware/tools_interface.rst:91
 msgid "PingDxlTool (Service)"
@@ -279,5 +289,32 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "Services & Messages files - Tools Interface"
+#~ msgstr ""
+
+#~ msgid ":ref:`tools_interface/PingDxlTool<PingDxlTool (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`tools_interface/OpenGripper<OpenGripper (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`tools_interface/CloseGripper<CloseGripper (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`tools_interface/PullAirVacuumPump<PullAirVacuumPump (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`tools_interface/PushAirVacuumPump<PushAirVacuumPump (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`dynamixel_driver <Niryo Robot Dynamixel Driver Package>`"
+#~ msgstr ""
+
+#~ msgid "Niryo robot tools interface package"
+#~ msgstr "Package de l'interface outils du robot Niryo"
+
+#~ msgid ""
+#~ ":ref:`dynamixel_driver "
+#~ "<source/stack_hardware/dynamixel_driver:Niryo Robot "
+#~ "Dynamixel Driver Package>`"
 #~ msgstr ""
 

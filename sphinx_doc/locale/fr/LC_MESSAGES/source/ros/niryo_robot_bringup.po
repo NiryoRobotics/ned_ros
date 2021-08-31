@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-10 11:46+0000\n"
+"POT-Creation-Date: 2021-08-13 09:42+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,8 +21,8 @@ msgstr ""
 "Generated-By: Babel 2.9.1\n"
 
 #: ../../source/ros/niryo_robot_bringup.rst:2
-msgid "Niryo robot Bringup package"
-msgstr "Le package Bringup robot Niryo"
+msgid "Niryo_robot_bringup"
+msgstr ""
 
 #: ../../source/ros/niryo_robot_bringup.rst:3
 msgid ""
@@ -41,12 +41,11 @@ msgstr ""
 "Seuls les fichiers avec **.lancement** peuvent être exécutés."
 
 #: ../../source/ros/niryo_robot_bringup.rst:13
-#, fuzzy
 msgid "Bring Up Launch Files' organization"
 msgstr "Organisation des fichiers de lancement Bring Up"
 
 #: ../../source/ros/niryo_robot_bringup.rst:16
-msgid "On RasberryPI"
+msgid "On RaspberryPI"
 msgstr "Sur RasberryPI"
 
 #: ../../source/ros/niryo_robot_bringup.rst:19
@@ -68,7 +67,6 @@ msgstr ""
 "RPi4B)."
 
 #: ../../source/ros/niryo_robot_bringup.rst:24
-#, fuzzy
 msgid "Command to launch Ned's ROS Stack:"
 msgstr "Commande pour lancer la stack ROS de Ned : ::"
 

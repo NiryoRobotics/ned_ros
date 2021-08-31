@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-10 11:46+0000\n"
+"POT-Creation-Date: 2021-08-13 09:51+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,7 +21,7 @@ msgstr ""
 "Generated-By: Babel 2.9.1\n"
 
 #: ../../source/stack_hardware/fake_interface.rst:2
-msgid "Niryo robot fake interface package"
+msgid "Fake_interface"
 msgstr ""
 
 #: ../../source/stack_hardware/fake_interface.rst:4
@@ -110,7 +110,7 @@ msgid "``/niryo_robot/joints_interface/calibrate_motors``"
 msgstr ""
 
 #: ../../source/stack_hardware/fake_interface.rst:45
-msgid ":ref:`SetInt`"
+msgid ":ref:`source/ros/niryo_robot_msgs:SetInt`"
 msgstr ""
 
 #: ../../source/stack_hardware/fake_interface.rst:46
@@ -125,7 +125,7 @@ msgstr ""
 
 #: ../../source/stack_hardware/fake_interface.rst:48
 #: ../../source/stack_hardware/fake_interface.rst:51
-msgid ":ref:`Trigger`"
+msgid ":ref:`source/ros/niryo_robot_msgs:Trigger`"
 msgstr ""
 
 #: ../../source/stack_hardware/fake_interface.rst:49
@@ -145,7 +145,9 @@ msgid "``niryo_robot/tools/ping_and_set_dxl_tool``"
 msgstr ""
 
 #: ../../source/stack_hardware/fake_interface.rst:54
-msgid ":ref:`tools_interface/PingDxlTool<PingDxlTool (Service)>`"
+msgid ""
+":ref:`tools_interface/PingDxlTool<source/stack_hardware/tools_interface:PingDxlTool"
+" (Service)>`"
 msgstr ""
 
 #: ../../source/stack_hardware/fake_interface.rst:55
@@ -157,7 +159,9 @@ msgid "``niryo_robot/tools/open_gripper``"
 msgstr ""
 
 #: ../../source/stack_hardware/fake_interface.rst:57
-msgid ":ref:`tools_interface/OpenGripper<OpenGripper (Service)>`"
+msgid ""
+":ref:`tools_interface/OpenGripper<source/stack_hardware/tools_interface:OpenGripper"
+" (Service)>`"
 msgstr ""
 
 #: ../../source/stack_hardware/fake_interface.rst:58
@@ -169,7 +173,9 @@ msgid "``niryo_robot/tools/close_gripper``"
 msgstr ""
 
 #: ../../source/stack_hardware/fake_interface.rst:60
-msgid ":ref:`tools_interface/CloseGripper<CloseGripper (Service)>`"
+msgid ""
+":ref:`tools_interface/CloseGripper<source/stack_hardware/tools_interface:CloseGripper"
+" (Service)>`"
 msgstr ""
 
 #: ../../source/stack_hardware/fake_interface.rst:61
@@ -181,7 +187,9 @@ msgid "``niryo_robot/tools/pull_air_vacuum_pump``"
 msgstr ""
 
 #: ../../source/stack_hardware/fake_interface.rst:63
-msgid ":ref:`tools_interface/PullAirVacuumPump<PullAirVacuumPump (Service)>`"
+msgid ""
+":ref:`tools_interface/PullAirVacuumPump<source/stack_hardware/tools_interface:PullAirVacuumPump"
+" (Service)>`"
 msgstr ""
 
 #: ../../source/stack_hardware/fake_interface.rst:64
@@ -193,7 +201,9 @@ msgid "``niryo_robot/tools/push_air_vacuum_pump``"
 msgstr ""
 
 #: ../../source/stack_hardware/fake_interface.rst:66
-msgid ":ref:`tools_interface/PushAirVacuumPump<PushAirVacuumPump (Service)>`"
+msgid ""
+":ref:`tools_interface/PushAirVacuumPump<source/stack_hardware/tools_interface:PushAirVacuumPump"
+" (Service)>`"
 msgstr ""
 
 #: ../../source/stack_hardware/fake_interface.rst:67
@@ -205,7 +215,9 @@ msgid "``/niryo_robot/conveyor/control_conveyor``"
 msgstr ""
 
 #: ../../source/stack_hardware/fake_interface.rst:69
-msgid ":ref:`ControlConveyor<ControlConveyor (Service)>`"
+msgid ""
+":ref:`ControlConveyor<source/stack_hardware/conveyor_interface:ControlConveyor"
+" (Service)>`"
 msgstr ""
 
 #: ../../source/stack_hardware/fake_interface.rst:70
@@ -217,7 +229,9 @@ msgid "``/niryo_robot/conveyor/ping_and_set_conveyor``"
 msgstr ""
 
 #: ../../source/stack_hardware/fake_interface.rst:72
-msgid ":ref:`SetConveyor<SetConveyor (Service)>`"
+msgid ""
+":ref:`SetConveyor<source/stack_hardware/conveyor_interface:SetConveyor "
+"(Service)>`"
 msgstr ""
 
 #: ../../source/stack_hardware/fake_interface.rst:73
@@ -241,19 +255,19 @@ msgid ":wiki_ros:`controller_manager <controller_manager>`"
 msgstr ""
 
 #: ../../source/stack_hardware/fake_interface.rst:80
-msgid ":ref:`niryo_robot_msgs <Niryo Robot Messages Package>`"
+msgid ":doc:`../ros/niryo_robot_msgs`"
 msgstr ""
 
 #: ../../source/stack_hardware/fake_interface.rst:81
-msgid ":ref:`tools_interface <Niryo Robot Tools Interface Package>`"
+msgid ":doc:`tools_interface`"
 msgstr ""
 
 #: ../../source/stack_hardware/fake_interface.rst:82
-msgid ":ref:`joints_interface <Niryo Robot Joints Interface Package>`"
+msgid ":doc:`joints_interface`"
 msgstr ""
 
 #: ../../source/stack_hardware/fake_interface.rst:83
-msgid ":ref:`conveyor_interface <Niryo robot Conveyor Belt interface package>`"
+msgid ":doc:`conveyor_interface`"
 msgstr ""
 
 #~ msgid "Niryo Robot Fake Interface Package"
@@ -305,5 +319,70 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "Push vacuum pump tool"
+#~ msgstr ""
+
+#~ msgid ":ref:`SetInt`"
+#~ msgstr ""
+
+#~ msgid ":ref:`Trigger`"
+#~ msgstr ""
+
+#~ msgid ":ref:`tools_interface/PingDxlTool<PingDxlTool (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`tools_interface/OpenGripper<OpenGripper (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`tools_interface/CloseGripper<CloseGripper (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`tools_interface/PullAirVacuumPump<PullAirVacuumPump (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`tools_interface/PushAirVacuumPump<PushAirVacuumPump (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`ControlConveyor<ControlConveyor (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`SetConveyor<SetConveyor (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`niryo_robot_msgs <Niryo Robot Messages Package>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`tools_interface <Niryo Robot Tools Interface Package>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`joints_interface <Niryo Robot Joints Interface Package>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`conveyor_interface <Niryo Robot Conveyor Interface Package>`"
+#~ msgstr ""
+
+#~ msgid "Niryo robot fake interface package"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`tools_interface "
+#~ "<source/stack_hardware/tools_interface:Niryo Robot Tools"
+#~ " Interface Package>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`joints_interface "
+#~ "<source/stack_hardware/joints_interface:Niryo Robot Joints"
+#~ " Interface Package>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`conveyor_interface "
+#~ "<source/stack_hardware/conveyor_interface:Niryo Robot "
+#~ "Conveyor Belt Interface Package>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`niryo_robot_msgs <source/ros/niryo_robot_msgs:Niryo "
+#~ "Robot Messages Package>`"
 #~ msgstr ""
 
