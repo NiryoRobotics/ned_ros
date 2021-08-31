@@ -32,8 +32,24 @@ class TrajectoriesExecutor:
     """
     Object which execute the Arm trajectories via MoveIt
     """
+
     def __init__(self, arm_move_group):
         self.__arm = arm_move_group
+        self.__joints_name = rospy.get_param('~joint_names')
+
+        # - Direct topic to joint_trajectory_controller
+        self.__current_goal_id = None
+        self.__current_feedback = None
+        self.__current_goal_result = GoalStatus.LOST
+        self.__collision_detected = False
+
+        # Event which allows to timeout if trajectory take too long
+        self.__traj_finished_event = threading.Event()
+
+        # Others params
+        self.__trajectory_minimum_timeout = rospy.get_param("~trajectory_minimum_timeout")
+        self.__compute_plan_max_tries = rospy.get_param("~compute_plan_max_tries")
+        self.__error_tolerance = rospy.get_param("~error_tolerance")
 
         # - Subscribers
         joint_controller_base_name = rospy.get_param("~joint_controller_name")
@@ -46,30 +62,14 @@ class TrajectoriesExecutor:
         rospy.Subscriber('{}/follow_joint_trajectory/feedback'.format(joint_controller_base_name),
                          FollowJointTrajectoryActionFeedback, self.__callback_current_feedback)
 
+        # - Publishers
         self.__traj_goal_pub = rospy.Publisher('{}/follow_joint_trajectory/goal'.format(joint_controller_base_name),
                                                FollowJointTrajectoryActionGoal, queue_size=1)
-
-        self.__joints_name = rospy.get_param('~joint_names')
-
-        # - Direct topic to joint_trajectory_controller
-        self.__current_goal_id = None
-        self.__current_feedback = None
-        self.__current_goal_result = GoalStatus.LOST
 
         self.__joint_trajectory_publisher = rospy.Publisher('{}/command'.format(joint_controller_base_name),
                                                             JointTrajectory, queue_size=10)
         self.__reset_controller_service = rospy.ServiceProxy('/niryo_robot/joints_interface/steppers_reset_controller',
                                                              Trigger)
-
-        self.__collision_detected = False
-
-        # Event which allows to timeout if trajectory take too long
-        self.__traj_finished_event = threading.Event()
-
-        # Others params
-        self.__trajectory_minimum_timeout = rospy.get_param("~trajectory_minimum_timeout")
-        self.__compute_plan_max_tries = rospy.get_param("~compute_plan_max_tries")
-        self.__error_tolerance = rospy.get_param("~error_tolerance")
 
     def __set_position_hold_mode(self):
         """
@@ -103,12 +103,12 @@ class TrajectoriesExecutor:
         self.__collision_detected = False
         for error, tolerance in zip(self.__current_feedback.feedback.error.positions, self.__error_tolerance):
             if abs(error) > tolerance:
-                    self.__collision_detected = True
-                    self.__set_learning_mode(True)
-                    abort_str = ("Command has been aborted due to a collision or "
-                                 "a motor not able to follow the given trajectory")
-                    rospy.logwarn(abort_str)
-                    return CommandStatus.CONTROLLER_PROBLEMS, abort_str
+                self.__collision_detected = True
+                self.__set_learning_mode(True)
+                abort_str = "Command has been aborted due to a collision or " \
+                            "a motor not able to follow the given trajectory"
+                rospy.logwarn(abort_str)
+                return CommandStatus.CONTROLLER_PROBLEMS, abort_str
 
     def __callback_goal_result(self, msg):
         """

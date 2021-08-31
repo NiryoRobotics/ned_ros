@@ -1,4 +1,4 @@
-Niryo robot fake interface package
+Fake_interface
 ===================================
 
 | This package provides fakes hardware interface when the robot is used in simulation.
@@ -42,34 +42,34 @@ Services - fake interface
       -  Message Type
       -  Description
    *  -  ``/niryo_robot/joints_interface/calibrate_motors``
-      -  :ref:`SetInt`
+      -  :ref:`source/ros/niryo_robot_msgs:SetInt`
       -  Start motors calibration - value can be 1 for auto calibration, 2 for manual
    *  -  ``/niryo_robot/joints_interface/request_new_calibration``
-      -  :ref:`Trigger`
+      -  :ref:`source/ros/niryo_robot_msgs:Trigger`
       -  Unset motors calibration
    *  -  ``niryo_robot/learning_mode/activate``
-      -  :ref:`Trigger`
+      -  :ref:`source/ros/niryo_robot_msgs:Trigger`
       -  Either activate or deactivate learning mode
    *  -  ``niryo_robot/tools/ping_and_set_dxl_tool``
-      -  :ref:`tools_interface/PingDxlTool<PingDxlTool (Service)>`
+      -  :ref:`tools_interface/PingDxlTool<source/stack_hardware/tools_interface:PingDxlTool (Service)>`
       -  Scan and set for a tool plugged
    *  -  ``niryo_robot/tools/open_gripper``
-      -  :ref:`tools_interface/OpenGripper<OpenGripper (Service)>`
+      -  :ref:`tools_interface/OpenGripper<source/stack_hardware/tools_interface:OpenGripper (Service)>`
       -  Open a Gripper tool
    *  -  ``niryo_robot/tools/close_gripper``
-      -  :ref:`tools_interface/CloseGripper<CloseGripper (Service)>`
+      -  :ref:`tools_interface/CloseGripper<source/stack_hardware/tools_interface:CloseGripper (Service)>`
       -  Close a Gripper tool
    *  -  ``niryo_robot/tools/pull_air_vacuum_pump``
-      -  :ref:`tools_interface/PullAirVacuumPump<PullAirVacuumPump (Service)>`
+      -  :ref:`tools_interface/PullAirVacuumPump<source/stack_hardware/tools_interface:PullAirVacuumPump (Service)>`
       -  Pull Vacuum Pump tool
    *  -  ``niryo_robot/tools/push_air_vacuum_pump``
-      -  :ref:`tools_interface/PushAirVacuumPump<PushAirVacuumPump (Service)>`
+      -  :ref:`tools_interface/PushAirVacuumPump<source/stack_hardware/tools_interface:PushAirVacuumPump (Service)>`
       -  Push Vacuum Pump tool
    *  -  ``/niryo_robot/conveyor/control_conveyor``
-      -  :ref:`ControlConveyor<ControlConveyor (Service)>`
+      -  :ref:`ControlConveyor<source/stack_hardware/conveyor_interface:ControlConveyor (Service)>`
       -  Send a command to the desired Conveyor Belt
    *  -  ``/niryo_robot/conveyor/ping_and_set_conveyor``
-      -  :ref:`SetConveyor<SetConveyor (Service)>`
+      -  :ref:`SetConveyor<source/stack_hardware/conveyor_interface:SetConveyor (Service)>`
       -  Scan and set a new Conveyor Belt
 
 Dependencies - fake interface
@@ -77,7 +77,7 @@ Dependencies - fake interface
 - :msgs_index:`std_msgs`
 - :wiki_ros:`hardware_interface <hardware_interface>`
 - :wiki_ros:`controller_manager <controller_manager>`
-- :ref:`niryo_robot_msgs <Niryo Robot Messages Package>`
-- :ref:`tools_interface <Niryo Robot Tools Interface Package>`
-- :ref:`joints_interface <Niryo Robot Joints Interface Package>`
-- :ref:`conveyor_interface <Niryo robot Conveyor Belt interface package>`
+- :doc:`../ros/niryo_robot_msgs`
+- :doc:`tools_interface`
+- :doc:`joints_interface`
+- :doc:`conveyor_interface` 

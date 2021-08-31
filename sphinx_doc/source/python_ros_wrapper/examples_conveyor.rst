@@ -3,15 +3,15 @@ Examples: Conveyor Belt
 
 This document shows how to use Ned's Conveyor Belt.
 
-| If you want see more about Ned's Conveyor Belt functions, you can look at :ref:`API - Conveyor<Conveyor Belt>`.
+| If you want see more about Ned's Conveyor Belt functions, you can look at :ref:`API - Conveyor<source/python_ros_wrapper/ros_wrapper_doc:Conveyor Belt>`.
 
 .. note::
     Imports & initialisation are not mentioned, but you should not forget it!
 
 Simple Conveyor Belt control
 -------------------------------
-This short example show how to connect a Conveyor Belt, activating connection and
-launch his motor: ::
+This short example shows how to connect a Conveyor Belt, activating connection and
+launch its motor: ::
 
     niryo_robot = NiryoRosWrapper()
 

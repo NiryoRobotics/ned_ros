@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-10 11:46+0000\n"
+"POT-Creation-Date: 2021-08-12 08:22+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -32,8 +32,8 @@ msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_movement.rst:6
 msgid ""
-"If you want see more, you can look at :ref:`API - Joints & Pose<Joints & "
-"Pose>`."
+"If you want see more, you can look at :ref:`API - Joints & "
+"Pose<source/python_ros_wrapper/ros_wrapper_doc:Joints & Pose>`."
 msgstr ""
 
 #: ../../source/python_ros_wrapper/examples_movement.rst:9
@@ -131,5 +131,11 @@ msgstr ""
 #~ "j5, j6) to the method "
 #~ ":meth:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_joints`:"
 #~ " ::"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "If you want see more, you can "
+#~ "look at :ref:`API - Joints & "
+#~ "Pose<Joints & Pose>`."
 #~ msgstr ""
 

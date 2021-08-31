@@ -1,7 +1,7 @@
-Niryo robot debug package
+Dxl_debug_tools
 ====================================
 
-This package offer scripts to change ping/scan DXL motors and changes register values of these motors.
+This package offers scripts to change ping/scan DXL motors and changes register values of these motors.
 
 Niryo robot - Send DXL custom value
 ------------------------------------

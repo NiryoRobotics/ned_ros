@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-10 11:46+0000\n"
+"POT-Creation-Date: 2021-08-13 09:53+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,7 +21,7 @@ msgstr ""
 "Generated-By: Babel 2.9.1\n"
 
 #: ../../source/stack_hardware/niryo_robot_hardware_interface.rst:2
-msgid "Niryo robot hardware interface package"
+msgid "Niryo_robot_hardware_interface"
 msgstr ""
 
 #: ../../source/stack_hardware/niryo_robot_hardware_interface.rst:4
@@ -130,7 +130,7 @@ msgid "``hardware_status``"
 msgstr ""
 
 #: ../../source/stack_hardware/niryo_robot_hardware_interface.rst:57
-msgid ":ref:`niryo_robot_msgs/HardwareStatus<HardwareStatus>`"
+msgid ":ref:`niryo_robot_msgs/HardwareStatus<source/ros/niryo_robot_msgs:HardwareStatus>`"
 msgstr ""
 
 #: ../../source/stack_hardware/niryo_robot_hardware_interface.rst:58
@@ -142,7 +142,7 @@ msgid "``software_version``"
 msgstr ""
 
 #: ../../source/stack_hardware/niryo_robot_hardware_interface.rst:60
-msgid ":ref:`niryo_robot_msgs/SoftwareVersion<SoftwareVersion>`"
+msgid ":ref:`niryo_robot_msgs/SoftwareVersion<source/ros/niryo_robot_msgs:SoftwareVersion>`"
 msgstr ""
 
 #: ../../source/stack_hardware/niryo_robot_hardware_interface.rst:61
@@ -164,7 +164,7 @@ msgstr ""
 #: ../../source/stack_hardware/niryo_robot_hardware_interface.rst:76
 #: ../../source/stack_hardware/niryo_robot_hardware_interface.rst:79
 #: ../../source/stack_hardware/niryo_robot_hardware_interface.rst:82
-msgid ":ref:`Trigger`"
+msgid ":ref:`source/ros/niryo_robot_msgs:Trigger`"
 msgstr ""
 
 #: ../../source/stack_hardware/niryo_robot_hardware_interface.rst:77
@@ -192,27 +192,27 @@ msgid "Dependencies - hardware interface"
 msgstr ""
 
 #: ../../source/stack_hardware/niryo_robot_hardware_interface.rst:88
-msgid ":ref:`tools_interface <Niryo Robot Tools Interface Package>`"
+msgid ":doc:`tools_interface`"
 msgstr ""
 
 #: ../../source/stack_hardware/niryo_robot_hardware_interface.rst:89
-msgid ":ref:`joints_interface <Niryo Robot Joints Interface Package>`"
+msgid ":doc:`joints_interface`"
 msgstr ""
 
 #: ../../source/stack_hardware/niryo_robot_hardware_interface.rst:90
-msgid ":ref:`conveyor_interface <Niryo robot Conveyor Belt interface package>`"
+msgid ":doc:`conveyor_interface`"
 msgstr ""
 
 #: ../../source/stack_hardware/niryo_robot_hardware_interface.rst:91
-msgid ":ref:`cpu_interface <Niryo Robot CPU Interface Package>`"
+msgid ":doc:`cpu_interface`"
 msgstr ""
 
 #: ../../source/stack_hardware/niryo_robot_hardware_interface.rst:92
-msgid ":ref:`fake_interface <Niryo Robot Fake Interface Package>`"
+msgid ":doc:`fake_interface`"
 msgstr ""
 
 #: ../../source/stack_hardware/niryo_robot_hardware_interface.rst:93
-msgid ":ref:`niryo_robot_msgs <Niryo Robot Messages Package>`"
+msgid ":doc:`../ros/niryo_robot_msgs`"
 msgstr ""
 
 #~ msgid "Niryo Robot Hardware Interface Package"
@@ -243,5 +243,71 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "Conveyor interface"
+#~ msgstr ""
+
+#~ msgid ":ref:`niryo_robot_msgs/HardwareStatus<HardwareStatus>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`niryo_robot_msgs/SoftwareVersion<SoftwareVersion>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`Trigger`"
+#~ msgstr ""
+
+#~ msgid ":ref:`tools_interface <Niryo Robot Tools Interface Package>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`joints_interface <Niryo Robot Joints Interface Package>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`conveyor_interface <Niryo Robot Conveyor Interface Package>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`cpu_interface <Niryo Robot CPU Interface Package>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`fake_interface <Niryo Robot Fake Interface Package>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`niryo_robot_msgs <Niryo Robot Messages Package>`"
+#~ msgstr ""
+
+#~ msgid "Niryo robot hardware interface package"
+#~ msgstr ""
+
+#~ msgid "Hardware_interface"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`tools_interface "
+#~ "<source/stack_hardware/tools_interface:Niryo Robot Tools"
+#~ " Interface Package>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`joints_interface "
+#~ "<source/stack_hardware/joints_interface:Niryo Robot Joints"
+#~ " Interface Package>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`conveyor_interface "
+#~ "<source/stack_hardware/conveyor_interface:Niryo robot "
+#~ "Conveyor Belt interface package>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`cpu_interface <source/stack_hardware/cpu_interface:Niryo"
+#~ " Robot CPU Interface Package>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`fake_interface <source/stack_hardware/fake_interface:Niryo"
+#~ " Robot Fake Interface Package>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`niryo_robot_msgs <source/ros/niryo_robot_msgs:Niryo "
+#~ "Robot Messages Package>`"
 #~ msgstr ""
 

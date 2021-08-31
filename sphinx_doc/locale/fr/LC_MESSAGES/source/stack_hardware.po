@@ -22,7 +22,7 @@ msgstr ""
 
 #: ../../source/stack_hardware.rst:2
 msgid "Hardware ROS Stack documentation"
-msgstr "Documentation matériel de la stack ROS"
+msgstr "Documentation de la stack Hardware ROS"
 
 #: ../../source/stack_hardware.rst:9
 msgid "ROS Logo"

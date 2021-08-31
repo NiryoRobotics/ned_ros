@@ -4,9 +4,12 @@
   schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>niryo_robot_programs_manager</name>
-  <version>3.1.0</version>
-  <description>Deals with programs loaded in the robot</description>
-
+  <version>3.1.2</version>
+  <description>
+    - Save programs
+    - Launch saved python programs
+    - Get Saved programs
+  </description>
   <maintainer email="r.lux@niryo.com">Remi Lux</maintainer>
   <maintainer email="v.pitre@niryo.com">Valentin Pitre</maintainer>
   <maintainer email="e.rey-coquais@niryo.com">Etienne Rey-Coquais</maintainer>
@@ -18,6 +21,7 @@
 
   <build_depend>niryo_robot_msgs</build_depend>
   <build_depend>message_generation</build_depend>
+  <build_depend>message_runtime</build_depend>
 
   <exec_depend>niryo_robot_msgs</exec_depend>
   <exec_depend>rosbridge_server</exec_depend>

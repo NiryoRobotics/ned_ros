@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-10 11:46+0000\n"
+"POT-Creation-Date: 2021-08-13 09:50+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,7 +21,7 @@ msgstr ""
 "Generated-By: Babel 2.9.1\n"
 
 #: ../../source/stack_hardware/dynamixel_driver.rst:2
-msgid "Niryo robot dynamixel driver package"
+msgid "Dynamixel_driver"
 msgstr ""
 
 #: ../../source/stack_hardware/dynamixel_driver.rst:4
@@ -167,7 +167,7 @@ msgid "``niryo_robot/dynamixel_driver/set_dxl_leds``"
 msgstr ""
 
 #: ../../source/stack_hardware/dynamixel_driver.rst:59
-msgid ":ref:`SetInt`"
+msgid ":ref:`source/ros/niryo_robot_msgs:SetInt`"
 msgstr ""
 
 #: ../../source/stack_hardware/dynamixel_driver.rst:60
@@ -179,7 +179,9 @@ msgid "``niryo_robot/dynamixel_driver/send_custom_dxl_value``"
 msgstr ""
 
 #: ../../source/stack_hardware/dynamixel_driver.rst:62
-msgid ":ref:`dynamixel_driver/SendCustomDxlValue<SendCustomDxlValue (Service)>`"
+msgid ""
+":ref:`dynamixel_driver/SendCustomDxlValue<source/stack_hardware/dynamixel_driver:SendCustomDxlValue"
+" (Service)>`"
 msgstr ""
 
 #: ../../source/stack_hardware/dynamixel_driver.rst:63
@@ -195,7 +197,7 @@ msgid ":wiki_ros:`dynamixel_sdk`"
 msgstr ""
 
 #: ../../source/stack_hardware/dynamixel_driver.rst:69
-msgid ":ref:`niryo_robot_msgs <Niryo Robot Messages Package>`"
+msgid ":doc:`../ros/niryo_robot_msgs`"
 msgstr ""
 
 #: ../../source/stack_hardware/dynamixel_driver.rst:72
@@ -272,5 +274,24 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "Control dynmixel LED"
+#~ msgstr ""
+
+#~ msgid ":ref:`SetInt`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`dynamixel_driver/SendCustomDxlValue<SendCustomDxlValue "
+#~ "(Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`niryo_robot_msgs <Niryo Robot Messages Package>`"
+#~ msgstr ""
+
+#~ msgid "Niryo robot dynamixel driver package"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`niryo_robot_msgs <source/ros/niryo_robot_msgs:Niryo "
+#~ "Robot Messages Package>`"
 #~ msgstr ""
 
