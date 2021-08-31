@@ -14,9 +14,8 @@ import moveit_commander
 from ArmParametersValidator import ArmParametersValidator
 from motor_debug import MotorDebug
 
-from jog_controller import JogController
 from transform_handler import ArmTCPTransformHandler
-from niryo_robot_arm_commander.command_enums import *
+from niryo_robot_arm_commander.command_enums import RobotCommanderException, ArmCommanderException
 
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus
@@ -155,9 +154,6 @@ class RobotCommanderNode:
 
         self.__linear_trajectory_state_publisher = rospy.Publisher('~linear_trajectory/state', Bool, queue_size=1)
 
-        # Jog
-        self.__jog_controller = JogController(arm_param_validator)
-
         # Publish robot state (position, orientation, tool)
         self.__state_publisher = StatePublisher(self.__transform_handler)
 
@@ -275,7 +271,7 @@ class RobotCommanderNode:
             return
 
         # Check if jog controller enabled
-        if self.__jog_controller.is_enabled():
+        if self.__arm_commander.jog_controller.is_enabled():
             result = self.create_result(CommandStatus.JOG_CONTROLLER_ENABLED,
                                         "You need to deactivate jog controller to execute a new command")
             goal_handle.set_rejected(result)

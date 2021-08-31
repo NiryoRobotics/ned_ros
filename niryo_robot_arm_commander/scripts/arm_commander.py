@@ -11,6 +11,7 @@ import numpy as np
 
 from trajectories_executor import TrajectoriesExecutor
 from kinematics_handler import KinematicsHandler
+from jog_controller import JogController
 from niryo_robot_arm_commander.utils import list_to_pose, pose_to_list, dist_2_poses, poses_too_close
 
 # Command Status
@@ -52,12 +53,15 @@ class ArmCommander:
         self.__init_move_group_commander()
         self.__traj_executor = TrajectoriesExecutor(self.__arm)
 
+        # Validation
+        self.__parameters_validator = parameters_validator
+
         # - Frames managers
         self.__transform_handler = transform_handler
         self.__kinematics_handler = KinematicsHandler(self.__arm, self.__transform_handler)
 
-        # Validation
-        self.__parameters_validator = parameters_validator
+        # Jog Controller
+        self.__jog_controller = JogController(self.__arm, self.__kinematics_handler, self.__parameters_validator)
 
         # Arm velocity
         self.__max_velocity_scaling_factor = 100  # Start robot with max velocity
@@ -540,3 +544,7 @@ class ArmCommander:
 
         except rospy.ServiceException as e:
             rospy.logwarn("Arm commander - Failed to check state validity : " + str(e))
+
+    @property
+    def jog_controller(self):
+        return self.__jog_controller
