@@ -24,6 +24,7 @@ find_package(catkin REQUIRED
     COMPONENTS
       conveyor_interface
       cpu_interface
+      end_effector_interface
       fake_interface
       joints_interface
       message_generation
@@ -52,6 +53,7 @@ catkin_package(
     CATKIN_DEPENDS
         conveyor_interface
         cpu_interface
+        end_effector_interface
         fake_interface
         joints_interface
         message_runtime

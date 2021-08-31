@@ -33,8 +33,7 @@ namespace model
  * @brief AbstractMotorState::AbstractMotorState
  */
 AbstractMotorState::AbstractMotorState() :
-    _type(EMotorType::UNKNOWN),
-    _bus_proto(EBusProtocol::UNKNOWN)
+    AbstractHardwareState()
 {
     reset();
 }
@@ -45,15 +44,9 @@ AbstractMotorState::AbstractMotorState() :
  * @param bus_proto
  * @param id
  */
-AbstractMotorState::AbstractMotorState(EMotorType type, EBusProtocol bus_proto, uint8_t id) :
-      _type(type),
-      _bus_proto(bus_proto),
-      _id(id),
-      _position_state(0),
-      _temperature_state(0),
-      _voltage_state(0),
-      _hw_error_state(0),
-      _hw_error_message_state("")
+AbstractMotorState::AbstractMotorState(EHardwareType type, EBusProtocol bus_proto, uint8_t id) :
+      AbstractHardwareState(type, bus_proto, id),
+      _position_state(0)
 {
 }
 
@@ -69,22 +62,8 @@ AbstractMotorState::~AbstractMotorState()
  */
 void AbstractMotorState::reset()
 {
-    _id = 0;
+    AbstractHardwareState::reset();
     _position_state = 0;
-    _temperature_state = 0;
-    _voltage_state = 0;
-    _hw_error_state = 0;
-    _hw_error_message_state.clear();
-}
-
-/**
- * @brief AbstractMotorState::operator ==
- * @param m
- * @return
- */
-bool AbstractMotorState::operator==(const AbstractMotorState &m)
-{
-    return (this->_id == m._id);
 }
 
 /**
@@ -114,42 +93,6 @@ string AbstractMotorState::str() const
 void AbstractMotorState::setPositionState(int pos)
 {
     _position_state = pos;
-}
-
-/**
- * @brief AbstractMotorState::setTemperatureState
- * @param temp
- */
-void AbstractMotorState::setTemperatureState(int temp)
-{
-    _temperature_state = temp;
-}
-
-/**
- * @brief AbstractMotorState::setVoltageState
- * @param volt
- */
-void AbstractMotorState::setVoltageState(int volt)
-{
-    _voltage_state = volt;
-}
-
-/**
- * @brief AbstractMotorState::setHardwareError
- * @param hw_error
- */
-void AbstractMotorState::setHardwareError(int hw_error)
-{
-    _hw_error_state = hw_error;
-}
-
-/**
- * @brief AbstractMotorState::setHardwareError
- * @param hw_error_msg
- */
-void AbstractMotorState::setHardwareError(std::string hw_error_msg)
-{
-    _hw_error_message_state = hw_error_msg;
 }
 
 }  // namespace model

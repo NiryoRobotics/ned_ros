@@ -30,7 +30,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "common/model/i_object.hpp"
 #include "common/model/dxl_command_type_enum.hpp"
 #include "common/model/stepper_command_type_enum.hpp"
-#include "common/model/motor_type_enum.hpp"
+#include "common/model/hardware_type_enum.hpp"
 #include "common/model/joint_state.hpp"
 
 namespace common
@@ -77,16 +77,16 @@ class AbstractSynchronizeMotorCmd : public ISynchronizeMotorCmd
 
         // setters
         void clear();
-        void addMotorParam(EMotorType type, uint8_t id, ParamType param);
+        void addMotorParam(EHardwareType type, uint8_t id, ParamType param);
 
         // getters
-        std::vector<uint8_t> getMotorsId(EMotorType type) const;
-        std::vector<ParamType> getParams(EMotorType type) const;
-        std::set<EMotorType> getMotorTypes() const;
+        std::vector<uint8_t> getMotorsId(EHardwareType type) const;
+        std::vector<ParamType> getParams(EHardwareType type) const;
+        std::set<EHardwareType> getMotorTypes() const;
 
     protected:
-        std::set<EMotorType> _motor_types;
-        std::map<EMotorType, MotorParam > _motor_params_map;
+        std::set<EHardwareType> _motor_types;
+        std::map<EHardwareType, MotorParam > _motor_params_map;
 
 };
 
@@ -130,7 +130,7 @@ void AbstractSynchronizeMotorCmd<ParamType>::clear()
  * @param param
  */
 template<typename ParamType>
-void AbstractSynchronizeMotorCmd<ParamType>::addMotorParam(EMotorType type, uint8_t id, ParamType param)
+void AbstractSynchronizeMotorCmd<ParamType>::addMotorParam(EHardwareType type, uint8_t id, ParamType param)
 {
     // not yet in map
     if (!_motor_params_map.count(type))
@@ -152,7 +152,7 @@ void AbstractSynchronizeMotorCmd<ParamType>::addMotorParam(EMotorType type, uint
  */
 template<typename ParamType>
 std::vector<uint8_t> 
-AbstractSynchronizeMotorCmd<ParamType>::getMotorsId(EMotorType type) const
+AbstractSynchronizeMotorCmd<ParamType>::getMotorsId(EHardwareType type) const
 {
     if (!_motor_params_map.count(type))
         throw std::out_of_range("type not known of synchonized command");
@@ -167,7 +167,7 @@ AbstractSynchronizeMotorCmd<ParamType>::getMotorsId(EMotorType type) const
  */
 template<typename ParamType>
 std::vector<ParamType>
-AbstractSynchronizeMotorCmd<ParamType>::getParams(EMotorType type) const
+AbstractSynchronizeMotorCmd<ParamType>::getParams(EHardwareType type) const
 {
     if (!_motor_params_map.count(type))
         throw std::out_of_range("type not known of synchonized command");
@@ -180,7 +180,7 @@ AbstractSynchronizeMotorCmd<ParamType>::getParams(EMotorType type) const
  * @return
  */
 template<typename ParamType>
-std::set<EMotorType> 
+std::set<EHardwareType> 
 AbstractSynchronizeMotorCmd<ParamType>::getMotorTypes() const
 {
     return _motor_types;

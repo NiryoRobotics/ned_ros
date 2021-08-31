@@ -23,9 +23,12 @@
 
 #include "niryo_robot_hardware_interface/hardware_interface.hpp"
 
-#include "common/model/motor_type_enum.hpp"
+#include "common/model/hardware_type_enum.hpp"
 
 #include "common/util/util_defs.hpp"
+
+
+using ::common::model::EBusProtocol;
 
 namespace niryo_robot_hardware_interface
 {
@@ -102,8 +105,20 @@ void HardwareInterface::initParameters(ros::NodeHandle &nh)
     _rpi_image_version.erase(_rpi_image_version.find_last_not_of(" \n\r\t") + 1);
     _ros_niryo_robot_version.erase(_ros_niryo_robot_version.find_last_not_of(" \n\r\t") + 1);
 
+    std::string conveyor_bus_str = "can";
+    nh.getParam("conveyor/bus", conveyor_bus_str);
+    if ("can" == conveyor_bus_str)
+        _conveyor_bus = EBusProtocol::CAN;
+    else if ("ttl" == conveyor_bus_str)
+        _conveyor_bus = EBusProtocol::TTL;
+    else
+        _conveyor_bus = EBusProtocol::UNKNOWN;
+
+    // end effector is enabled if an id is defined
+    _end_effector_enabled = nh.hasParam("end_effector/end_effector_id");
+
     ROS_DEBUG("HardwareInterface::initParameters - publish_hw_status_frequency : %f",
-                            _publish_hw_status_frequency);
+              _publish_hw_status_frequency);
     ROS_DEBUG("HardwareInterface::initParameters - publish_software_version_frequency : %f",
                             _publish_software_version_frequency);
 
@@ -125,8 +140,6 @@ void HardwareInterface::initParameters(ros::NodeHandle &nh)
  */
 void HardwareInterface::initNodes(ros::NodeHandle &nh)
 {
-    // TODO(CC) to be adapted with conf
-    std::string conveyor_bus = "can";
     ROS_DEBUG("HardwareInterface::initNodes - Init Nodes");
     if (!_simulation_mode)
     {
@@ -137,13 +150,23 @@ void HardwareInterface::initNodes(ros::NodeHandle &nh)
             _ttl_interface = std::make_shared<ttl_driver::TtlInterfaceCore>(nh_ttl);
             ros::Duration(0.25).sleep();
 
-            ROS_DEBUG("HardwareInterface::initNodes - Start End Effector Interface Node");
+            ROS_DEBUG("HardwareInterface::initNodes - Start Tools Interface Node");
             ros::NodeHandle nh_tool(nh, "tools_interface");
             _tools_interface = std::make_shared<tools_interface::ToolsInterfaceCore>(nh_tool,
                                                                                      _ttl_interface);
             ros::Duration(0.25).sleep();
 
-            if (conveyor_bus == "ttl")
+            if (_end_effector_enabled)
+            {
+                ROS_DEBUG("HardwareInterface::initNodes - Start End Effector Interface Node");
+                ros::NodeHandle nh_ee(nh, "end_effector_interface");
+                _end_effector_interface = std::make_shared<
+                                            end_effector_interface::EndEffectorInterfaceCore>(nh_ee,
+                                                                                              _ttl_interface);
+            }
+            ros::Duration(0.25).sleep();
+
+            if (EBusProtocol::TTL == _conveyor_bus)
             {
                 ROS_DEBUG("HardwareInterface::initNodes - Start Tools Interface Node");
                 ros::NodeHandle nh_conveyor(nh, "conveyor");
@@ -164,7 +187,7 @@ void HardwareInterface::initNodes(ros::NodeHandle &nh)
             _can_interface = std::make_shared<can_driver::CanInterfaceCore>(nh_can);
             ros::Duration(0.25).sleep();
 
-            if (conveyor_bus == "can")
+            if (EBusProtocol::CAN == _conveyor_bus)
             {
                 ROS_DEBUG("HardwareInterface::initNodes - Start Tools Interface Node");
                 ros::NodeHandle nh_conveyor(nh, "conveyor");
@@ -485,27 +508,7 @@ void HardwareInterface::_publishHardwareStatus()
             hw_errors.emplace_back(static_cast<int32_t>(hw_status.error));
             hw_errors_msg.emplace_back(hw_status.error_msg);
 
-            switch (hw_status.motor_identity.motor_type)
-            {
-                case static_cast<uint8_t>(common::model::EMotorType::XL320):
-                    motor_types.emplace_back("DXL XL-320");
-                break;
-
-                case static_cast<uint8_t>(common::model::EMotorType::XL330):
-                    motor_types.emplace_back("DXL XL-330");
-                break;
-
-                case static_cast<uint8_t>(common::model::EMotorType::XL430):
-                    motor_types.emplace_back("DXL XL-430");
-                break;
-
-                case static_cast<uint8_t>(common::model::EMotorType::XC430):
-                    motor_types.emplace_back("DXL XC-430");
-                break;
-                default:
-                    motor_types.emplace_back("DXL UNKOWN");
-                break;
-            }
+            motor_types.emplace_back(common::model::HardwareTypeEnum(static_cast<common::model::EHardwareType>(hw_status.motor_identity.motor_type)).toString());
 
             std::string joint_name = "";
             if (_joints_interface)

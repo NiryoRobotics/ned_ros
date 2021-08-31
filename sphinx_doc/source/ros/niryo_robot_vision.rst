@@ -1,4 +1,4 @@
-Niryo robot vision package
+Niryo_robot_vision
 ======================================
 
 This package is the one dealing with all vision related stuff.
@@ -61,7 +61,7 @@ Publisher - Vision
       -  :sensor_msgs:`CompressedImage`
       -  Publish the last image read as a compressed image
    *  -  ``video_stream_parameters``
-      -  :ref:`ImageParameters<ImageParameters (Topic)>`
+      -  :ref:`ImageParameters<source/ros/niryo_robot_vision:ImageParameters (Topic)>`
       -  Publish the brightness, contrast and saturation settings of the video stream
 
 Services - Vision
@@ -77,28 +77,28 @@ Services - Vision
       -  Message Type
       -  Description
    *  -  ``debug_colors``
-      -  :ref:`DebugColorDetection<DebugColorDetection (Service)>`
+      -  :ref:`DebugColorDetection<source/ros/niryo_robot_vision:DebugColorDetection (Service)>`
       -  Return an annotated image to emphasize what happened with color detection
    *  -  ``debug_markers``
-      -  :ref:`DebugMarkers<DebugMarkers (Service)>`
+      -  :ref:`DebugMarkers<source/ros/niryo_robot_vision:DebugMarkers (Service)>`
       -  Return an annotated image to emphasize what happened with markers detection
    *  -  ``obj_detection_rel``
-      -  :ref:`ObjDetection<ObjDetection (Service)>`
+      -  :ref:`ObjDetection<source/ros/niryo_robot_vision:ObjDetection (Service)>`
       -  Object detection service
    *  -  ``start_stop_video_streaming``
-      -  :ref:`SetBool`
+      -  :ref:`source/ros/niryo_robot_msgs:SetBool`
       -  Start or Stop video streaming
    *  -  ``take_picture``
-      -  :ref:`TakePicture<TakePicture (Service)>`
+      -  :ref:`TakePicture<source/ros/niryo_robot_vision:TakePicture (Service)>`
       -  Save a picture in the specified folder
    *  -  ``set_brightness``
-      -  :ref:`SetImageParameter<SetImageParameter (Service)>`
+      -  :ref:`SetImageParameter<source/ros/niryo_robot_vision:SetImageParameter (Service)>`
       -  Set the brightness of the video stream
    *  -  ``set_contrast``
-      -  :ref:`SetImageParameter<SetImageParameter (Service)>`
+      -  :ref:`SetImageParameter<source/ros/niryo_robot_vision:SetImageParameter (Service)>`
       -  Set the contrast of the video stream
    *  -  ``set_saturation``
-      -  :ref:`SetImageParameter<SetImageParameter (Service)>`
+      -  :ref:`SetImageParameter<source/ros/niryo_robot_vision:SetImageParameter (Service)>`
       -  Set the saturation of the video stream
 
 
@@ -107,7 +107,7 @@ All these services are available as soon as the node is started.
 
 Dependencies - Vision
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
-* :ref:`niryo_robot_msgs <Niryo Robot Messages Package>`
+* :doc:`niryo_robot_msgs`
 * :msgs_index:`sensor_msgs`
 
 

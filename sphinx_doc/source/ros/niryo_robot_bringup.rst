@@ -1,4 +1,4 @@
-Niryo robot Bringup package
+Niryo_robot_bringup
 ==============================
 This packages provides config and launch files to start Ned and ROS packages with various parameters.
 
@@ -12,7 +12,7 @@ Launch files are placed in the *launch* folder. Only files with **.launch** exte
 
    Bring Up Launch Files' organization
 
-On RasberryPI
+On RaspberryPI
 -------------------------
 
 Ned

@@ -25,6 +25,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <sstream>
 
 #include "common/model/dxl_command_type_enum.hpp"
+#include "common/model/end_effector_command_type_enum.hpp"
 #include "common/model/stepper_command_type_enum.hpp"
 #include "common/model/abstract_single_motor_cmd.hpp"
 
@@ -74,6 +75,16 @@ class SingleMotorCmd : public AbstractSingleMotorCmd<ParamType>
         E _type{E::CMD_TYPE_UNKNOWN};
 
 };
+
+// using for simplified usage
+
+using DxlSingleCmd = SingleMotorCmd<EDxlCommandType, uint32_t>;
+using StepperTtlSingleCmd = SingleMotorCmd<EStepperCommandType, uint32_t>;
+using EndEffectorSingleCmd = SingleMotorCmd<EEndEffectorCommandType, uint32_t>;
+
+using StepperSingleCmd = SingleMotorCmd<EStepperCommandType, int32_t>;
+
+//**********************************************
 
 /**
  * @brief SingleMotorCmd<E, ParamType>::SingleMotorCmd
@@ -190,12 +201,12 @@ void SingleMotorCmd<E, ParamType>::reset()
 //********************************
 
 /**
- * @brief SingleMotorCmd<EDxlCommandType, uint32_t>::str
+ * @brief DxlSingleCmd::str
  * @return
  */
 template<>
 inline
-std::string SingleMotorCmd<EDxlCommandType, uint32_t>::str() const
+std::string DxlSingleCmd::str() const
 {
     std::ostringstream ss;
     ss << "Dynamixel motor cmd - ";
@@ -215,15 +226,15 @@ std::string SingleMotorCmd<EDxlCommandType, uint32_t>::str() const
 }
 
 /**
- * @brief SingleMotorCmd<EDxlCommandType, uint32_t>::isValid
+ * @brief DxlSingleCmd::isValid
  * @return
  */
 template<>
 inline
-bool SingleMotorCmd<EDxlCommandType, uint32_t>::isValid() const
+bool DxlSingleCmd::isValid() const
 {
     return (EDxlCommandType::CMD_TYPE_UNKNOWN != _type) &&
-           (0 != _id);
+           (1 != _id);
 }
 
 //********************************
@@ -275,12 +286,12 @@ bool SingleMotorCmd<EStepperCommandType, uint32_t>::isValid() const
 //********************************
 
 /**
- * @brief SingleMotorCmd<EStepperCommandType, int32_t>::str
+ * @brief StepperSingleCmd::str
  * @return
  */
 template<>
 inline
-std::string SingleMotorCmd<EStepperCommandType, int32_t>::str() const
+std::string StepperSingleCmd::str() const
 {
     std::ostringstream ss;
     ss << "Stepper motor cmd - ";
@@ -298,12 +309,12 @@ std::string SingleMotorCmd<EStepperCommandType, int32_t>::str() const
 }
 
 /**
- * @brief SingleMotorCmd<EStepperCommandType, int32_t>::isValid
+ * @brief StepperSingleCmd::isValid
  * @return
  */
 template<>
 inline
-bool SingleMotorCmd<EStepperCommandType, int32_t>::isValid() const
+bool StepperSingleCmd::isValid() const
 {
     if ((EStepperCommandType::CMD_TYPE_NONE == getType()) ||
        (EStepperCommandType::CMD_TYPE_UNKNOWN == getType()) ||
@@ -326,11 +337,46 @@ bool SingleMotorCmd<EStepperCommandType, int32_t>::isValid() const
     }
 }
 
-// using for simplified usage
+//********************************
+// specializations for end effector
+//********************************
 
-using DxlSingleCmd = SingleMotorCmd<EDxlCommandType, uint32_t>;
-using StepperTtlSingleCmd = SingleMotorCmd<EStepperCommandType, uint32_t>;
-using StepperSingleCmd = SingleMotorCmd<EStepperCommandType, int32_t>;
+/**
+ * @brief EndEffectorSingleCmd::str
+ * @return
+ */
+template<>
+inline
+std::string EndEffectorSingleCmd::str() const
+{
+    std::ostringstream ss;
+    ss << "End Effector cmd - ";
+
+    ss << EndEffectorCommandTypeEnum(_type).toString() << " ";
+
+    ss << "End Effector id: ";
+        ss << std::to_string(_id) << " ";
+
+    if(!_param_list.empty())
+    {
+        ss << "; param: ";
+        ss << std::to_string(getParam());
+    }
+
+    return ss.str();
+}
+
+/**
+ * @brief EndEffectorSingleCmd::isValid
+ * @return
+ */
+template<>
+inline
+bool EndEffectorSingleCmd::isValid() const
+{
+    return (EEndEffectorCommandType::CMD_TYPE_UNKNOWN != _type) &&
+           (1 != _id);
+}
 
 } // namespace model
 } // namespace common

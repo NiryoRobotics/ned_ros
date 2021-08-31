@@ -47,14 +47,24 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 
 #include "common/model/stepper_motor_state.hpp"
 #include "common/model/dxl_motor_state.hpp"
-#include "common/model/motor_type_enum.hpp"
+#include "common/model/end_effector_state.hpp"
 
-#include "ttl_driver/abstract_ttl_driver.hpp"
+#include "common/model/hardware_type_enum.hpp"
+
+#include "ttl_driver/abstract_motor_driver.hpp"
 
 namespace ttl_driver
 {
 /**
  * @brief The TtlInterfaceCore class schedules and manager the communication in the TTL bus
+ * its main purpose it to manage queues of commands for the TTL Motors
+ * TODO(CC) Do we need to use TtlInterfaceCore or TtlManager when used with another node ?
+ * This class is used for now by :
+ * - ToolsInterfaceCore
+ * - JointsInterfaceCore
+ * - JointsHardwareInterface
+ * - CalibrationManager
+ * - EndEffectorInterfaceCore
  */
 class TtlInterfaceCore : public common::model::IDriverCore, public common::model::IInterfaceCore
 {
@@ -64,9 +74,6 @@ class TtlInterfaceCore : public common::model::IDriverCore, public common::model
         virtual ~TtlInterfaceCore() override;
 
         bool init(ros::NodeHandle& nh) override;
-
-        int setEndEffector(common::model::EMotorType type, uint8_t motor_id);
-        void unsetEndEffector(uint8_t motor_id);
 
         void clearSingleCommandQueue();
         void clearConveyorCommandQueue();
@@ -81,29 +88,33 @@ class TtlInterfaceCore : public common::model::IDriverCore, public common::model
         void addSingleCommandToQueue(const std::shared_ptr<common::model::ISingleMotorCmd>& cmd) override;
         void addSingleCommandToQueue(const std::vector<std::shared_ptr<common::model::ISingleMotorCmd> >& cmd) override;
 
-        void addEndEffectorCommandToQueue(const std::shared_ptr<common::model::DxlSingleCmd> &cmd);
-        void addEndEffectorCommandToQueue(const std::vector< std::shared_ptr<common::model::DxlSingleCmd> >& cmd);
+        // Tool control
+        int setTool(common::model::EHardwareType type, uint8_t motor_id);
+        void unsetTool(uint8_t motor_id);
+        std::vector<uint8_t> scanTools();
+
+        // end effector panel control
+        int setEndEffector(uint8_t end_effector_id,
+                           uint32_t button_1_config,
+                           uint32_t button_2_config,
+                           uint32_t button_3_config);
 
         // conveyor control
         int setConveyor(uint8_t motor_id, uint8_t default_conveyor_id = 6) override;
         void unsetConveyor(uint8_t motor_id) override;
 
         // direct commands
-        std::vector<uint8_t> scanTools();
-
-        int update_leds(void);
-
         int rebootMotors();
         bool rebootMotor(uint8_t motor_id);
 
         // getters
         std::vector<uint8_t> getRemovedMotorList() const;
-        double getEndEffectorState(uint8_t id) const;
-
         ttl_driver::ArrayMotorHardwareStatus getHwStatus() const;
+        double getPosition(uint8_t id) const;
 
-        std::vector<std::shared_ptr<common::model::JointState> > getStates() const override;
-        common::model::JointState getState(uint8_t motor_id) const override;
+        std::vector<std::shared_ptr<common::model::JointState> > getJointStates() const override;
+        common::model::JointState getJointState(uint8_t motor_id) const override;
+        common::model::EndEffectorState getEndEffectorState(uint8_t id);
 
         // IDriverCore interface
         void startControlLoop() override;
@@ -121,6 +132,7 @@ class TtlInterfaceCore : public common::model::IDriverCore, public common::model
         bool isConnectionOk() const override;
         int launchMotorsReport() override;
         niryo_robot_msgs::BusState getBusState() const override;
+        common::model::EBusProtocol getBusProtocol() const override;
 
     private:
         virtual void initParameters(ros::NodeHandle& nh) override;
@@ -133,7 +145,7 @@ class TtlInterfaceCore : public common::model::IDriverCore, public common::model
         void _executeCommand() override;
 
         int motorScanReport(uint8_t motor_id);
-        int motorCmdReport(uint8_t motor_id, common::model::EMotorType motor_type);
+        int motorCmdReport(uint8_t motor_id, common::model::EHardwareType motor_type);
 
         // use other callbacks instead of executecommand
         bool _callbackActivateLeds(niryo_robot_msgs::SetInt::Request &req, niryo_robot_msgs::SetInt::Response &res);
@@ -150,9 +162,11 @@ class TtlInterfaceCore : public common::model::IDriverCore, public common::model
         double _control_loop_frequency{0.0};
 
         double _delta_time_data_read{0.0};
+        double _delta_time_end_effector_read{0.0};
         double _delta_time_write{0.0};
 
         double _time_hw_data_last_read{0.0};
+        double _time_hw_end_effector_last_read{0.0};
         double _time_hw_data_last_write{0.0};
 
         double _time_check_connection_last_read{0.0};
@@ -178,10 +192,6 @@ class TtlInterfaceCore : public common::model::IDriverCore, public common::model
 
         static constexpr int QUEUE_OVERFLOW = 20;
         static constexpr double TTL_VOLTAGE_DIVISOR = 10.0;
-
-        // IDriverCore interface
-public:
-        virtual common::model::EBusProtocol getBusProtocol() const override;
 };
 
 /**
@@ -215,6 +225,6 @@ std::vector<uint8_t> TtlInterfaceCore::getRemovedMotorList() const
     return _ttl_manager->getRemovedMotorList();
 }
 
-} // TtlManager
+} // ttl_driver
 
 #endif // TTL_INTERFACE_CORE_HPP

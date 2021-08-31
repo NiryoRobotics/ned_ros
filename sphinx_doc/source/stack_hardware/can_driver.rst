@@ -38,7 +38,7 @@ Dependencies - CAN Driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 - `mcp_can_rpi <https://github.com/coryjfowler/MCP_CAN_lib>`_
-- :ref:`niryo_robot_msgs <Niryo Robot Messages Package>`
+- :doc:`../ros/niryo_robot_msgs`
 
 Services & Messages files - CAN Driver
 -------------------------------------------------

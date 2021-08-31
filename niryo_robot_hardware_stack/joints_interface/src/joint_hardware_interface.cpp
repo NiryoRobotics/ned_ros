@@ -26,7 +26,7 @@
 #include <typeinfo>
 
 // niryo
-#include "common/model/motor_type_enum.hpp"
+#include "common/model/hardware_type_enum.hpp"
 #include "common/model/bus_protocol_enum.hpp"
 #include "common/util/util_defs.hpp"
 
@@ -35,8 +35,8 @@ using ::std::string;
 using ::std::to_string;
 using ::std::dynamic_pointer_cast;
 
-using ::common::model::MotorTypeEnum;
-using ::common::model::EMotorType;
+using ::common::model::HardwareTypeEnum;
+using ::common::model::EHardwareType;
 using ::common::model::EBusProtocol;
 using ::common::model::BusProtocolEnum;
 using ::common::model::StepperMotorState;
@@ -86,9 +86,9 @@ void JointHardwareInterface::read(const ros::Time &/*time*/, const ros::Duration
         if (jState && jState->isValid())
         {
             if (jState->getBusProtocol() == EBusProtocol::CAN)
-                newPositionState = _can_interface->getState(jState->getId()).getPositionState();
+                newPositionState = _can_interface->getJointState(jState->getId()).getPositionState();
             if (jState->getBusProtocol() == EBusProtocol::TTL)
-                newPositionState = _ttl_interface->getState(jState->getId()).getPositionState();
+                newPositionState = _ttl_interface->getJointState(jState->getId()).getPositionState();
 
             jState->pos = jState->to_rad_pos(newPositionState);
         }
@@ -133,10 +133,10 @@ bool JointHardwareInterface::init(ros::NodeHandle& rootnh, ros::NodeHandle &robo
     size_t nb_joints = 0;
 
     // retrieve nb joints with checking that the config param exists for both name and id
-    while (robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "_id") &&
-          robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "_name") &&
-          robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "_type") &&
-          robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "_bus"))
+    while (robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "/id") &&
+          robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "/name") &&
+          robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "/type") &&
+          robot_hwnh.hasParam("joint_" + to_string(nb_joints + 1) + "/bus"))
         nb_joints++;
 
     // connect and register joint state interface
@@ -154,16 +154,16 @@ bool JointHardwareInterface::init(ros::NodeHandle& rootnh, ros::NodeHandle &robo
         string joint_type = "";
         string joint_bus = "";
 
-        robot_hwnh.getParam("joint_" + to_string(j + 1) + "_id", joint_id_config);
-        robot_hwnh.getParam("joint_" + to_string(j + 1) + "_name", joint_name);
-        robot_hwnh.getParam("joint_" + to_string(j + 1) + "_type", joint_type);
-        robot_hwnh.getParam("joint_" + to_string(j + 1) + "_bus", joint_bus);
-        MotorTypeEnum eType = MotorTypeEnum(joint_type.c_str());
+        robot_hwnh.getParam("joint_" + to_string(j + 1) + "/id", joint_id_config);
+        robot_hwnh.getParam("joint_" + to_string(j + 1) + "/name", joint_name);
+        robot_hwnh.getParam("joint_" + to_string(j + 1) + "/type", joint_type);
+        robot_hwnh.getParam("joint_" + to_string(j + 1) + "/bus", joint_bus);
+        HardwareTypeEnum eType = HardwareTypeEnum(joint_type.c_str());
         BusProtocolEnum eBusProto = BusProtocolEnum(joint_bus.c_str());
 
         // gather info in joint  states (polymorphic)
         // CC use factory in state directly ?
-        if (eType == EMotorType::STEPPER)
+        if (eType == EHardwareType::STEPPER)
         {  // stepper
             auto stepperState = std::make_shared<StepperMotorState>(joint_name,
                                                                     eType,
@@ -195,7 +195,7 @@ bool JointHardwareInterface::init(ros::NodeHandle& rootnh, ros::NodeHandle &robo
                 currentIdStepper++;
             }
         }
-        else if (eType != EMotorType::UNKNOWN)
+        else if (eType != EHardwareType::UNKNOWN)
         {  // dynamixel
             auto dxlState = std::make_shared<DxlMotorState>(joint_name,
                                                             eType,
@@ -545,9 +545,9 @@ void JointHardwareInterface::synchronizeMotors(bool synchronize)
  * @param motor_type
  * @return
  */
-string JointHardwareInterface::jointIdToJointName(uint8_t id, EMotorType motor_type) const
+string JointHardwareInterface::jointIdToJointName(uint8_t id, EHardwareType motor_type) const
 {
-    if (EMotorType::STEPPER == motor_type && _map_stepper_name.count(id))
+    if (EHardwareType::STEPPER == motor_type && _map_stepper_name.count(id))
         return _map_stepper_name.at(id);
     else if (_map_dxl_name.count(id))
         return _map_dxl_name.at(id);

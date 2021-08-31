@@ -70,6 +70,7 @@ endif()
 #############
 
 if(CATKIN_ENABLE_TESTING)
+
   ##########################
   ## Static code analysis ##
   ##########################

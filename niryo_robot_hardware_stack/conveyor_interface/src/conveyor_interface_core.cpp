@@ -368,7 +368,7 @@ void ConveyorInterfaceCore::_publishConveyorsFeedback()
         conveyor_interface::ConveyorFeedback data;
 
         // CC to be checked
-        for (auto sState : _conveyor_driver->getStates())
+        for (auto sState : _conveyor_driver->getJointStates())
         {
             if (sState->isStepper())
             {

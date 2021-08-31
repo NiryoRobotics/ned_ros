@@ -19,4 +19,3 @@ for dir in "$lang_path"/*/; do
   # Build documentation
   python3 -m sphinx -D language="$language" -b html . "${build_path}"/"$language"
 done
-

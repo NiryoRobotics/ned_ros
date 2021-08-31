@@ -169,10 +169,6 @@ endif()
 ## Install ##
 #############
 
-#############
-## Install ##
-#############
-
 install(
   TARGETS ${PROJECT_NAME} ${PROJECT_NAME}_core
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}

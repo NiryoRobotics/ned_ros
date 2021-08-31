@@ -2,13 +2,29 @@
 
 # Folder in which paragraphs are translated
 lang_path="locale"
+build_output="_build"
+build_type="html"
 
-# Set Build folder
-if [ $# -eq 0 ]; then # If no build folder given, use default
-  build_path="_build"
-else
-  build_path=$1
-fi
+additional_parameters=()
+while [[ $# -gt 0 ]]; do
+  key="$1"
+  case $key in
+    -o|--output)
+      build_output="$2"
+      shift # past argument
+      shift # past value
+      ;;
+    -b|--build-type)
+      build_type="$2"
+      shift # past argument
+      shift # past value
+      ;;
+    *)    # unknown option
+      additional_parameters+=("$1") # save it in an array for later
+      shift # past argument
+      ;;
+  esac
+done
 
 # Change current directory
 script_path=$(realpath "$0") # Get script path
@@ -21,6 +37,5 @@ for dir in "$lang_path"/*/; do
   dir=${dir%*/}         # remove the trailing "/"
   language="${dir##*/}" # remove everything before the last "/"
 
-  # Build documentation
-  sphinx-build -D language="$language" -b html . "${build_path}"/"$language"
+  sphinx-build -D language="$language" -b ${build_type} . "${build_output}"/"$language" "${additional_parameters[@]}"
 done

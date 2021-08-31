@@ -11,6 +11,9 @@ tmp_code_to_execute/
 *__pycache__
 .idea/*
 venv
+docker/
+docs_build/
+docker_ros_folder_dependencies/
 
 _build/
 .pytest_cache/
@@ -25,3 +28,5 @@ _build/
 *.mo
 docs_build/
 docker/
+_singlehtml/
+generated_pdfs/

@@ -1,4 +1,4 @@
-Use Ned TCP server
+Use Ned's TCP server
 ========================================
 
 Ned is permanently running a TCP Server to acquire requests.
@@ -21,7 +21,7 @@ Communication
 -----------------
 Only one client can communicate with the server (reconnection effective but no multi clients).
 
-The server answer only after the command is done, so it cannot deal with multiple commands at the same time.
+The server answers only after the command is done, so it can't deal with multiple commands at the same time.
 
 Packet convention
 -----------------------
@@ -45,7 +45,7 @@ Request
 Format - Request
 """"""""""""""""""""""""""""
 
-As no function request a payload in input, requests have the following.
+As no function requests a payload in input, requests have the following.
 
 Format: ``<json_packet_size>{'param_list': [<param_1>, <param_2>, ....], 'command': <command_str>}``
 

@@ -22,7 +22,7 @@
 #include <string>
 #include <vector>
 
-#include "common/model/motor_type_enum.hpp"
+#include "common/model/hardware_type_enum.hpp"
 
 namespace fake_interface
 {
@@ -36,8 +36,8 @@ FakeJointHardwareInterface::FakeJointHardwareInterface(ros::NodeHandle& nh)
 
     for (int i = 0; i < 6; i++)
     {
-        nh.getParam("joint_" + std::to_string(i + 1) + "_id", _joints_id[i]);
-        nh.getParam("joint_" + std::to_string(i + 1) + "_name", _joints_name[i]);
+        nh.getParam("joint_" + std::to_string(i + 1) + "/id", _joints_id[i]);
+        nh.getParam("joint_" + std::to_string(i + 1) + "/name", _joints_name[i]);
     }
 
     ROS_INFO("Fake Joint Interface - Joints' Name : (1 : %s, 2 : %s, 3 : %s)",
@@ -127,9 +127,9 @@ void FakeJointHardwareInterface::write(const ros::Time &/*time*/, const ros::Dur
  * @param motor_type
  * @return
  */
-std::string FakeJointHardwareInterface::jointIdToJointName(uint8_t id, common::model::EMotorType motor_type) const
+std::string FakeJointHardwareInterface::jointIdToJointName(uint8_t id, common::model::EHardwareType motor_type) const
 {
-    if (common::model::EMotorType::STEPPER == motor_type && _map_stepper_name.count(id))
+    if (common::model::EHardwareType::STEPPER == motor_type && _map_stepper_name.count(id))
         return _map_stepper_name.at(id);
     else if (_map_dxl_name.count(id))
         return _map_dxl_name.at(id);

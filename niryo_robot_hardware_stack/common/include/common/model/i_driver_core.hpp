@@ -27,7 +27,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 
 // niryo
 #include "niryo_robot_msgs/BusState.h"
-#include "motor_type_enum.hpp"
+#include "hardware_type_enum.hpp"
 #include "common/model/joint_state.hpp"
 #include "common/model/abstract_single_motor_cmd.hpp"
 #include "common/model/abstract_synchronize_motor_cmd.hpp"
@@ -71,8 +71,8 @@ class IDriverCore
         virtual int launchMotorsReport() = 0;
         virtual niryo_robot_msgs::BusState getBusState() const = 0;
 
-        virtual std::vector<std::shared_ptr<common::model::JointState> > getStates() const = 0;
-        virtual common::model::JointState getState(uint8_t motor_id) const = 0;
+        virtual std::vector<std::shared_ptr<common::model::JointState> > getJointStates() const = 0;
+        virtual common::model::JointState getJointState(uint8_t motor_id) const = 0;
         
     private:
         virtual void resetHardwareControlLoopRates() = 0;

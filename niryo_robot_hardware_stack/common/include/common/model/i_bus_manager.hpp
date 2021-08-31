@@ -50,8 +50,6 @@ class IBusManager
         virtual void getBusState(bool& connection_state, std::vector<uint8_t>& motor_id, std::string& debug_msg) const = 0;
         virtual std::string getErrorMessage() const = 0;
 
-    private:
-        virtual bool hasMotors() = 0;
 };
 
 /**

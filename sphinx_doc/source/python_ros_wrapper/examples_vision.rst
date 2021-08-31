@@ -2,7 +2,7 @@ Examples: Vision
 ========================
 This document shows how to use Ned's Vision Set.
 
-If you want see more about Ned's Vision functions, you can look at :ref:`API - Vision<Vision>`.
+If you want see more about Ned's Vision functions, you can look at :ref:`API - Vision<source/python_ros_wrapper/ros_wrapper_doc:Vision>`.
 
 Beforehand
 -------------------------------
@@ -45,7 +45,7 @@ add at the beginning of all of them: ::
 
 Simple Vision pick
 -------------------------------
-This short example show how to do your first vision pick: ::
+This short example shows how to do your first vision pick: ::
 
     niryo_robot.move_pose(*observation_pose)
     # Trying to pick target using camera
