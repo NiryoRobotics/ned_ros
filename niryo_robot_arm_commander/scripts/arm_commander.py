@@ -11,6 +11,7 @@ import numpy as np
 
 from trajectories_executor import TrajectoriesExecutor
 from kinematics_handler import KinematicsHandler
+from jog_controller import JogController
 from niryo_robot_arm_commander.utils import list_to_pose, pose_to_list, dist_2_poses, poses_too_close
 
 # Command Status
@@ -49,12 +50,15 @@ class ArmCommander:
         self.__init_move_group_commander()
         self.__traj_executor = TrajectoriesExecutor(self.__arm)
 
+        # Validation
+        self.__parameters_validator = parameters_validator
+
         # - Frames managers
         self.__transform_handler = transform_handler
         self.__kinematics_handler = KinematicsHandler(self.__arm, self.__transform_handler)
 
-        # Validation
-        self.__parameters_validator = parameters_validator
+        # Jog Controller
+        self.__jog_controller = JogController(self.__arm, self.__kinematics_handler, self.__parameters_validator)
 
         # Arm velocity
         self.__max_velocity_scaling_factor = 100  # Start robot with max velocity
@@ -248,7 +252,7 @@ class ArmCommander:
     def set_shift_linear_pose_target(self, arm_cmd):
         """
         Set MoveIt target to a shifted target from actual position
-        Then execute the cartesian trajectory to the target 
+        Then execute the cartesian trajectory to the target
         :param arm_cmd: ArmMoveCommand message containing target values
         :type : ArmMoveCommand
         :return: status, message
@@ -264,10 +268,10 @@ class ArmCommander:
         # Get list [x, y, z, roll, pitch, yaw] from pose stamped
         pose_list = pose_to_list(actual_pose)
 
-        # Apply shift on pose 
+        # Apply shift on pose
         pose_list[axis_number] += shift_value
 
-        # Get pose stamped from target pose 
+        # Get pose stamped from target pose
         msg_pose = list_to_pose(pose_list)
 
         # Check if command is really close to the current position
@@ -297,7 +301,7 @@ class ArmCommander:
 
         current_pose = self.__arm.get_current_pose().pose
 
-        # If the goal is really close to the current pose, 
+        # If the goal is really close to the current pose,
         # avoid useless calculations and return immediately
         if poses_too_close(ee_pose, current_pose):
             return CommandStatus.SUCCESS, "Command was already satisfied"
@@ -523,3 +527,7 @@ class ArmCommander:
 
         except rospy.ServiceException as e:
             rospy.logwarn("Arm commander - Failed to check state validity : " + str(e))
+
+    @property
+    def jog_controller(self):
+        return self.__jog_controller
