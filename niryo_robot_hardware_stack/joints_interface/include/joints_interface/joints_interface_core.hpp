@@ -43,7 +43,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "niryo_robot_msgs/SetBool.h"
 #include "niryo_robot_msgs/CommandStatus.h"
 #include "niryo_robot_msgs/Trigger.h"
-#include "common/model/motor_type_enum.hpp"
+#include "common/model/hardware_type_enum.hpp"
 
 #include "common/model/i_interface_core.hpp"
 
@@ -128,7 +128,7 @@ class JointsInterfaceCore : common::model::IInterfaceCore
 inline
 std::string JointsInterfaceCore::jointIdToJointName(uint8_t id, uint8_t motor_type) const
 {
-    return _robot->jointIdToJointName(id, static_cast<common::model::EMotorType>(motor_type));
+    return _robot->jointIdToJointName(id, static_cast<common::model::EHardwareType>(motor_type));
 }
 
 /**

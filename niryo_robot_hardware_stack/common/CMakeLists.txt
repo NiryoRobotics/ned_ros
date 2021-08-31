@@ -54,13 +54,17 @@ include_directories(
 
 ## Declare libs and execs
 add_library(${PROJECT_NAME}
+    src/model/abstract_hardware_state.cpp
     src/model/abstract_motor_state.cpp
     src/model/bus_protocol_enum.cpp
+    src/model/button_type_enum.cpp
     src/model/conveyor_state.cpp
     src/model/dxl_command_type_enum.cpp
     src/model/dxl_motor_state.cpp
+    src/model/end_effector_command_type_enum.cpp
+    src/model/end_effector_state.cpp
+    src/model/hardware_type_enum.cpp
     src/model/joint_state.cpp
-    src/model/motor_type_enum.cpp
     src/model/stepper_calibration_status_enum.cpp
     src/model/stepper_command_type_enum.cpp
     src/model/stepper_motor_state.cpp

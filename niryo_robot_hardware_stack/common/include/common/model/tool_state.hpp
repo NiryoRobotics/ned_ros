@@ -23,7 +23,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <stdint.h>
 #include <string>
 
-#include "motor_type_enum.hpp"
+#include "hardware_type_enum.hpp"
 #include "dxl_motor_state.hpp"
 
 namespace common
@@ -38,10 +38,9 @@ class ToolState : public DxlMotorState
 {
     public:
         ToolState();
-        ToolState(std::string name, EMotorType type, uint8_t id);
+        ToolState(std::string name, EHardwareType type, uint8_t id);
 
         virtual ~ToolState() override;
-
 
         void setName(std::string name);
         void setPosition(double position);

@@ -39,7 +39,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "common/model/i_bus_manager.hpp"
 
 // drivers
-#include "ttl_driver/abstract_ttl_driver.hpp"
+#include "ttl_driver/abstract_motor_driver.hpp"
 #include "common/model/dxl_motor_state.hpp"
 #include "common/model/synchronize_motor_cmd.hpp"
 #include "common/model/single_motor_cmd.hpp"
@@ -67,7 +67,10 @@ constexpr int TTL_WRONG_TYPE             = -52;
 */
 
 /**
- * @brief The TtlManager class
+ * @brief The TtlManager class manages the different motor drivers connected on the TTL bus
+ * it is used by ttl_interface_core to send or receive data to the ttl bus
+ * it also manages the lifecycle of all motors driver (do we need to add also the end effector driver in it ?)
+ *
  */
 class TtlManager : public common::model::IBusManager
 {
@@ -77,7 +80,9 @@ class TtlManager : public common::model::IBusManager
             TOOL,
             CONVOYER,
             JOINT,
+            END_EFFECTOR
         };
+
     public:
         TtlManager(ros::NodeHandle& nh);
         virtual ~TtlManager() override;
@@ -85,9 +90,9 @@ class TtlManager : public common::model::IBusManager
         bool init(ros::NodeHandle& nh) override;
 
         // commands
-        void addMotor(common::model::EMotorType type,
-                      uint8_t id, EType type_used);
-        int changeId(common::model::EMotorType motor_type, uint8_t old_id, uint8_t new_id);
+        void addHardwareComponent(common::model::EHardwareType type,
+                                  uint8_t id, EType type_used);
+        int changeId(common::model::EHardwareType motor_type, uint8_t old_id, uint8_t new_id);
 
         int writeSynchronizeCommand(const std::shared_ptr<common::model::AbstractTtlSynchronizeMotorCmd >& cmd);
         int writeSingleCommand(const std::shared_ptr<common::model::AbstractTtlSingleMotorCmd >& cmd);
@@ -99,14 +104,16 @@ class TtlManager : public common::model::IBusManager
 
         int setLeds(int led);
 
-        int sendCustomCommand(common::model::EMotorType motor_type, uint8_t id, int reg_address, int value, int byte_number);
-        int readCustomCommand(common::model::EMotorType motor_type, uint8_t id, int32_t reg_address, int &value, int byte_number);
+        int sendCustomCommand(common::model::EHardwareType motor_type, uint8_t id, int reg_address, int value, int byte_number);
+        int readCustomCommand(common::model::EHardwareType motor_type, uint8_t id, int32_t reg_address, int &value, int byte_number);
 
-        void readPositionStatus();
-        void readHwStatus();
+        bool readPositionStatus();
+        bool readEndEffectorStatus();
+        bool readHwStatus();
 
         int getAllIdsOnBus(std::vector<uint8_t> &id_list);
 
+        //calibration
         void startCalibration();
         void resetCalibration();
         bool isCalibrationInProgress() const;
@@ -119,13 +126,14 @@ class TtlManager : public common::model::IBusManager
 
         std::vector<std::shared_ptr<common::model::JointState> > getMotorsStates() const;
         template<class T>
-        T getMotorState(uint8_t motor_id) const;
+        T getHardwareState(uint8_t motor_id) const;
 
         std::vector<uint8_t> getRemovedMotorList() const;
 
         // IBusManager Interface
         void removeMotor(uint8_t id) override;
         bool isConnectionOk() const override;
+        bool hasEndEffector() const;
 
         int scanAndCheck() override;
         bool ping(uint8_t id) override;
@@ -134,7 +142,6 @@ class TtlManager : public common::model::IBusManager
         void getBusState(bool& connection_state, std::vector<uint8_t>& motor_id, std::string& debug_msg) const override;
         std::string getErrorMessage() const override;
     private:
-        bool hasMotors() override;
 
         int setupCommunication();
 
@@ -145,24 +152,28 @@ class TtlManager : public common::model::IBusManager
         std::shared_ptr<dynamixel::PacketHandler> _packetHandler;
 
         std::string _device_name;
-        int _uart_baudrate;
+        int _uart_baudrate{1000000};
 
         std::vector<uint8_t> _all_motor_connected; // with all dxl motors connected (including the tool)
         std::vector<uint8_t> _removed_motor_id_list;
 
-        std::map<uint8_t, std::shared_ptr<common::model::JointState> > _state_map;
-        std::map<common::model::EMotorType, std::vector<uint8_t> > _ids_map;
-        std::map<common::model::EMotorType, std::shared_ptr<AbstractTtlDriver> > _driver_map;
+        // state of a component for a given id
+        std::map<uint8_t, std::shared_ptr<common::model::AbstractHardwareState> > _state_map;
+        // map of associated ids for a given hardware type
+        std::map<common::model::EHardwareType, std::vector<uint8_t> > _ids_map;
+        // map of drivers for a given hardware type (xl, stepper, end effector)
+        std::map<common::model::EHardwareType, std::shared_ptr<AbstractTtlDriver> > _driver_map;
 
         double _calibration_timeout{30.0};
-        common::model::EStepperCalibrationStatus _calibration_status;
+        common::model::EStepperCalibrationStatus _calibration_status{common::model::EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED};
+
         // for hardware control
-        bool _is_connection_ok;
+        bool _is_connection_ok{false};
         std::string _debug_error_message;
 
-        int _hw_fail_counter_read;
+        int _hw_fail_counter_read{0};
         
-        int _led_state;
+        int _led_state{-1};
 
         static constexpr int MAX_HW_FAILURE = 25;
 };
@@ -175,7 +186,7 @@ class TtlManager : public common::model::IBusManager
  * @return
  */
 template<class T>
-T TtlManager::getMotorState(uint8_t motor_id) const
+T TtlManager::getHardwareState(uint8_t motor_id) const
 {
     if (!_state_map.count(motor_id) && _state_map.at(motor_id))
         throw std::out_of_range("TtlManager::getMotorsState: Unknown motor id");
@@ -222,6 +233,7 @@ std::string TtlManager::getErrorMessage() const
 /**
  * @brief TtlManager::getLedState
  * @return
+ * TODO(CC) to be removed from TtlManager : not the purpose of the manager to register states
  */
 inline
 int TtlManager::getLedState() const
@@ -237,7 +249,7 @@ int TtlManager::getLedState() const
  */
 inline
 void TtlManager::getBusState(bool &connection_state, std::vector<uint8_t> &motor_id,
-                            std::string &debug_msg) const
+                             std::string &debug_msg) const
 {
     debug_msg = _debug_error_message;
     motor_id = _all_motor_connected;
@@ -245,15 +257,15 @@ void TtlManager::getBusState(bool &connection_state, std::vector<uint8_t> &motor
 }
 
 /**
- * @brief TtlManager::hasMotors
+ * @brief TtlManager::hasEndEffector
  * @return
  */
 inline
-bool TtlManager::hasMotors()
+bool TtlManager::hasEndEffector() const
 {
-    return _state_map.size() > 0;
+    return _driver_map.count(common::model::EHardwareType::END_EFFECTOR);
 }
 
-}
+} // ttl_driver
 
 #endif // TTLDRIVER_HPP

@@ -137,8 +137,8 @@ TEST_F(TtlManagerTestSuite, testSyncCmds)
   // sync cmd
   std::shared_ptr<common::model::DxlSyncCmd> dynamixel_cmd_1 = std::make_shared<common::model::DxlSyncCmd>(
                                                             common::model::EDxlCommandType::CMD_TYPE_TORQUE);
-  dynamixel_cmd_1->addMotorParam(common::model::EMotorType::XL430, 2, 1);
-  dynamixel_cmd_1->addMotorParam(common::model::EMotorType::XL430, 3, 1);
+  dynamixel_cmd_1->addMotorParam(common::model::EHardwareType::XL430, 2, 1);
+  dynamixel_cmd_1->addMotorParam(common::model::EHardwareType::XL430, 3, 1);
 
   EXPECT_EQ(ttl_drv->writeSynchronizeCommand(dynamixel_cmd_1), COMM_SUCCESS);
   ros::Duration(0.5).sleep();
@@ -149,8 +149,8 @@ TEST_F(TtlManagerTestSuite, testSyncCmds)
     // sync cmd with different motor types
     std::shared_ptr<common::model::DxlSyncCmd> dynamixel_cmd_2 = std::make_shared<common::model::DxlSyncCmd>(
                                                               common::model::EDxlCommandType::CMD_TYPE_TORQUE);
-    dynamixel_cmd_2->addMotorParam(common::model::EMotorType::XL430, 2, 1);
-    dynamixel_cmd_2->addMotorParam(common::model::EMotorType::XL320, 6, 1);
+    dynamixel_cmd_2->addMotorParam(common::model::EHardwareType::XL430, 2, 1);
+    dynamixel_cmd_2->addMotorParam(common::model::EHardwareType::XL320, 6, 1);
 
     EXPECT_EQ(ttl_drv->writeSynchronizeCommand(dynamixel_cmd_2), COMM_SUCCESS);
     ros::Duration(0.5).sleep();
@@ -159,16 +159,16 @@ TEST_F(TtlManagerTestSuite, testSyncCmds)
   // redondant id
   std::shared_ptr<common::model::DxlSyncCmd> dynamixel_cmd_3 = std::make_shared<common::model::DxlSyncCmd>(
                                                             common::model::EDxlCommandType::CMD_TYPE_TORQUE);
-  dynamixel_cmd_3->addMotorParam(common::model::EMotorType::XL430, 3, 1);
-  dynamixel_cmd_3->addMotorParam(common::model::EMotorType::XL430, 3, 1);
+  dynamixel_cmd_3->addMotorParam(common::model::EHardwareType::XL430, 3, 1);
+  dynamixel_cmd_3->addMotorParam(common::model::EHardwareType::XL430, 3, 1);
 
   EXPECT_NE(ttl_drv->writeSynchronizeCommand(dynamixel_cmd_3), COMM_SUCCESS);
 
   // wrong cmd type
   std::shared_ptr<common::model::DxlSyncCmd> dynamixel_cmd_4 = std::make_shared<common::model::DxlSyncCmd>(
                                                             common::model::EDxlCommandType::CMD_TYPE_UNKNOWN);
-  dynamixel_cmd_4->addMotorParam(common::model::EMotorType::XL320, 5, 1);
-  dynamixel_cmd_4->addMotorParam(common::model::EMotorType::XL320, 3, 1);
+  dynamixel_cmd_4->addMotorParam(common::model::EHardwareType::XL320, 5, 1);
+  dynamixel_cmd_4->addMotorParam(common::model::EHardwareType::XL320, 3, 1);
 
   EXPECT_NE(ttl_drv->writeSynchronizeCommand(dynamixel_cmd_4), COMM_SUCCESS);
 }

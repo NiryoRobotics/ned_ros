@@ -91,6 +91,7 @@ include_directories(
 ## Declare libs and execs
 add_library(${PROJECT_NAME}
   src/abstract_dxl_driver.cpp
+  src/abstract_motor_driver.cpp
   src/abstract_stepper_driver.cpp
   src/abstract_ttl_driver.cpp
   src/ttl_interface_core.cpp

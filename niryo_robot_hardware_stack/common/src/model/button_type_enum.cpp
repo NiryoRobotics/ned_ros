@@ -1,5 +1,5 @@
 /*
-    motor_type_enum.hpp
+    button_type_enum.cpp
     Copyright (C) 2020 Niryo
     All rights reserved.
 
@@ -17,7 +17,7 @@
     along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
-#include "common/model/motor_type_enum.hpp"
+#include "common/model/button_type_enum.hpp"
 #include <map>
 #include <string>
 
@@ -27,36 +27,34 @@ namespace model
 {
 
 /**
- * @brief MotorTypeEnum::MotorTypeEnum
+ * @brief ButtonTypeEnum::ButtonTypeEnum
  * @param e
  */
-MotorTypeEnum::MotorTypeEnum(EMotorType e):
-    AbstractEnum<MotorTypeEnum, EMotorType>(e)
+ButtonTypeEnum::ButtonTypeEnum(EButtonType e):
+    AbstractEnum<ButtonTypeEnum, EButtonType>(e)
 {}
 
 /**
- * @brief MotorTypeEnum::MotorTypeEnum
+ * @brief ButtonTypeEnum::ButtonTypeEnum
  * @param str
  */
-MotorTypeEnum::MotorTypeEnum(const char* const str):
-    AbstractEnum<MotorTypeEnum, EMotorType>(str)
+ButtonTypeEnum::ButtonTypeEnum(const char* const str):
+    AbstractEnum<ButtonTypeEnum, EButtonType>(str)
 {}
 
 /**
- * @brief MotorTypeEnum::initialize
+ * @brief ButtonTypeEnum::initialize
  * @return
  */
-std::map<EMotorType, std::string>
-MotorTypeEnum::initialize()
+std::map<EButtonType, std::string>
+ButtonTypeEnum::initialize()
 {
-    std::map<EMotorType, std::string> m;
+    std::map<EButtonType, std::string> m;
 
-    m[EMotorType::STEPPER]    = "stepper";
-    m[EMotorType::XL430]    = "xl430";
-    m[EMotorType::XL320]    = "xl320";
-    m[EMotorType::XL330]    = "xl330";
-    m[EMotorType::XC430]    = "xc430";
-    m[EMotorType::UNKNOWN]  = "unknown";
+    m[EButtonType::FREE_DRIVE_BUTTON]       = "free_drive";
+    m[EButtonType::SAVE_POSITION_BUTTON]    = "save_position";
+    m[EButtonType::CUSTOM_BUTTON]           = "custom";
+    m[EButtonType::UNKNOWN]                 = "unknown";
 
     return m;
 }

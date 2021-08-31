@@ -35,8 +35,8 @@ class DxlMotorState : public JointState
 {
     public:
         DxlMotorState();
-        DxlMotorState(EMotorType type, EBusProtocol bus_proto, uint8_t id, bool isTool = false);
-        DxlMotorState(std::string name, EMotorType type, EBusProtocol bus_proto, uint8_t id , bool isTool = false);
+        DxlMotorState(EHardwareType type, EBusProtocol bus_proto, uint8_t id, bool isTool = false);
+        DxlMotorState(std::string name, EHardwareType type, EBusProtocol bus_proto, uint8_t id , bool isTool = false);
 
         virtual ~DxlMotorState() override;
 

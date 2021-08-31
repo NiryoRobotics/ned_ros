@@ -95,10 +95,6 @@ add_dependencies(${PROJECT_NAME}
     ${PROJECT_NAME}_generate_messages_cpp
 )
 
-add_dependencies(${PROJECT_NAME}
-    ttl_driver_generate_messages_cpp
-)
-
 add_dependencies(${PROJECT_NAME}_node
   ${catkin_EXPORTED_TARGETS}
 )

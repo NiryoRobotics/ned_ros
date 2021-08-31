@@ -1,0 +1,12 @@
+<?xml version="1.0" ?>
+<launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+    <arg name="hardware_version" default="ned"/>
+
+
+    <group ns="end_effector_interface" >  
+        <rosparam file="$(find end_effector_interface)/config/$(arg hardware_version)/buttons_params.yaml" command="load"/>
+        <rosparam file="$(find end_effector_interface)/config/default.yaml" command="load"/>
+    </group>
+
+</launch>

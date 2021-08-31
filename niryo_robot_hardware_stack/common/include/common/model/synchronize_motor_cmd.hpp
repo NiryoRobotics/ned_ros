@@ -29,7 +29,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 
 #include "common/model/dxl_command_type_enum.hpp"
 #include "common/model/stepper_command_type_enum.hpp"
-#include "common/model/motor_type_enum.hpp"
+#include "common/model/hardware_type_enum.hpp"
 #include "common/model/joint_state.hpp"
 #include "common/model/abstract_synchronize_motor_cmd.hpp"
 
@@ -203,7 +203,7 @@ std::string SynchronizeMotorCmd<common::model::EDxlCommandType, uint32_t>::str()
 
         for (auto const& param : _motor_params_map)
         {
-            ss << MotorTypeEnum(param.first).toString() << " => ";
+            ss << HardwareTypeEnum(param.first).toString() << " => ";
             MotorParam p = param.second;
             for (size_t i = 0; i < p.motors_id.size() && i < p.params.size(); ++i)
                 ss << "(" << static_cast<int>(p.motors_id.at(i)) << ", " << p.params.at(i) << ")" << ",";
@@ -248,7 +248,7 @@ std::string SynchronizeMotorCmd<common::model::EStepperCommandType, int32_t>::st
 
         for (auto const& param : _motor_params_map)
         {
-            ss << MotorTypeEnum(param.first).toString() << " => ";
+            ss << HardwareTypeEnum(param.first).toString() << " => ";
             MotorParam p = param.second;
             for (size_t i = 0; i < p.motors_id.size() && i < p.params.size(); ++i)
                 ss << "(" << static_cast<int>(p.motors_id.at(i)) << ", " << p.params.at(i) << ")" << ",";

@@ -16,6 +16,7 @@
 
   <build_depend>roscpp</build_depend>
   <build_depend>tools_interface</build_depend>
+  <build_depend>end_effector_interface</build_depend>
   <build_depend>joints_interface</build_depend>
   <build_depend>conveyor_interface</build_depend>
   <build_depend>cpu_interface</build_depend>
@@ -25,6 +26,7 @@
 
   <build_export_depend>roscpp</build_export_depend>
   <build_export_depend>tools_interface</build_export_depend>
+  <build_export_depend>end_effector_interface</build_export_depend>
   <build_export_depend>fake_interface</build_export_depend>
   <build_export_depend>niryo_robot_msgs</build_export_depend>
   <build_export_depend>cpu_interface</build_export_depend>
@@ -33,6 +35,7 @@
 
   <exec_depend>roscpp</exec_depend>
   <exec_depend>tools_interface</exec_depend>
+  <exec_depend>end_effector_interface</exec_depend>
   <exec_depend>joints_interface</exec_depend>
   <exec_depend>conveyor_interface</exec_depend>
   <exec_depend>cpu_interface</exec_depend>

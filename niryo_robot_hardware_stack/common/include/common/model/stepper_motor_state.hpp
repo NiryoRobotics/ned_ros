@@ -38,7 +38,7 @@ class StepperMotorState : public JointState
     public:
         StepperMotorState();
         StepperMotorState(EBusProtocol bus_proto, uint8_t id, bool isConveyor = false);
-        StepperMotorState(std::string name, EMotorType type, EBusProtocol bus_proto, uint8_t id, bool isConveyor = false );
+        StepperMotorState(std::string name, EHardwareType type, EBusProtocol bus_proto, uint8_t id, bool isConveyor = false );
 
         virtual ~StepperMotorState() override;
 
@@ -57,7 +57,7 @@ class StepperMotorState : public JointState
         // getters
         double getLastTimeRead() const;
         double getHwFailCounter() const;
-        std::string getFirmwareVersion() const;
+        std::string readFirmwareVersion() const;
 
         double getGearRatio() const;
         double getMaxEffort() const;
@@ -173,11 +173,11 @@ double StepperMotorState::getHwFailCounter() const
 }
 
 /**
- * @brief StepperMotorState::getFirmwareVersion
+ * @brief StepperMotorState::readFirmwareVersion
  * @return
  */
 inline
-std::string StepperMotorState::getFirmwareVersion() const
+std::string StepperMotorState::readFirmwareVersion() const
 {
     return _firmware_version;
 }

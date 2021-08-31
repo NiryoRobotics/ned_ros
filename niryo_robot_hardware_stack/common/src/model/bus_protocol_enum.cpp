@@ -1,5 +1,5 @@
 /*
-    motor_type_enum.hpp
+    but_protocol_enum.cpp
     Copyright (C) 2020 Niryo
     All rights reserved.
 

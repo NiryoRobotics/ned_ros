@@ -12,7 +12,7 @@
         <param name="log_level" type="string" value="$(arg log_level)" />
         <param name="simulation_mode" type="bool" value="$(arg simulation_mode)"/>
         <param name="simu_gripper" type="bool" value="$(arg simu_gripper)"/>
-        <rosparam file="$(find niryo_robot_tools_commander)/config/$(arg hardware_version)/end_effectors.yaml"/>
+        <rosparam file="$(find niryo_robot_tools_commander)/config/$(arg hardware_version)/tools_definition.yaml"/>
     </node>
 
 </launch>

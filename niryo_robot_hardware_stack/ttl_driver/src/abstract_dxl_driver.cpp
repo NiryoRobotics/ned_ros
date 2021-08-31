@@ -21,6 +21,7 @@
 
 #include <cassert>
 #include <vector>
+#include <string>
 
 using ::common::model::EDxlCommandType;
 
@@ -32,7 +33,7 @@ namespace ttl_driver
 */
 AbstractDxlDriver::AbstractDxlDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
                                      std::shared_ptr<dynamixel::PacketHandler> packetHandler) :
-    AbstractTtlDriver(portHandler, packetHandler)
+    AbstractMotorDriver(portHandler, packetHandler)
 {}
 
 /**
@@ -40,6 +41,11 @@ AbstractDxlDriver::AbstractDxlDriver(std::shared_ptr<dynamixel::PortHandler> por
 */
 AbstractDxlDriver::~AbstractDxlDriver()
 {}
+
+std::string AbstractDxlDriver::str() const
+{
+    return "Dynamixel Driver (" + AbstractMotorDriver::str() + ")";
+}
 
 /**
  * @brief AbstractDxlDriver::writeSingleCmd
@@ -95,6 +101,7 @@ int AbstractDxlDriver::writeSyncCmd(int type, const std::vector<uint8_t>& ids, c
 {
     assert(!ids.empty() && "AbstractDxlDriver::writeSyncCmd: ids is empty");
     assert(!params.empty() && "AbstractDxlDriver::writeSyncCmd: params is empty");
+
     switch (EDxlCommandType(type))
     {
     case EDxlCommandType::CMD_TYPE_POSITION:

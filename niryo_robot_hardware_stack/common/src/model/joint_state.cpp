@@ -43,7 +43,7 @@ JointState::JointState() :
  * @param bus_proto
  * @param id
  */
-JointState::JointState(std::string name, EMotorType type,
+JointState::JointState(std::string name, EHardwareType type,
                        EBusProtocol bus_proto, uint8_t id) :
     AbstractMotorState(type, bus_proto, id),
     _name(name)
@@ -130,7 +130,7 @@ void JointState::reset()
  */
 bool common::model::JointState::isValid() const
 {
-    return (0 != getId() && EMotorType::UNKNOWN != getType());
+    return (0 != getId() && EHardwareType::UNKNOWN != getType());
 }
 
 /**
@@ -143,7 +143,7 @@ std::string JointState::str() const
 
     ss << "JointState : ";
     ss << "\n---\n";
-    ss << "type: " << MotorTypeEnum(_type).toString() << ", ";
+    ss << "type: " << HardwareTypeEnum(_type).toString() << ", ";
     ss << "name: " << "\"" << _name << "\"" << ", ";
     ss << "position: " << pos << ", ";
     ss << "need calibration: " << (_need_calibration ? "true" : "false") << ", ";

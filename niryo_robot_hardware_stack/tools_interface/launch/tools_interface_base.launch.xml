@@ -5,7 +5,7 @@
 
     <group ns="tools_interface" >  
         <rosparam file="$(find tools_interface)/config/default.yaml" command="load"/>
-        <rosparam file="$(find tools_interface)/config/$(arg hardware_version)/tools_config.yaml" command="load"/>
+        <rosparam file="$(find tools_interface)/config/$(arg hardware_version)/tools_params.yaml" command="load"/>
     </group>
 
 </launch>
