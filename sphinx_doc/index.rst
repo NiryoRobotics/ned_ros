@@ -100,5 +100,4 @@ Learn more on this :doc:`section <source/more>`.
 
    source/tcp_server
    source/modbus_tcp_server
-   source/matlab_manager
    source/more
