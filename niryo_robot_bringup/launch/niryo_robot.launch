@@ -1,18 +1,26 @@
 <?xml version="1.0" ?>
 <launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+    <env name="ROSCONSOLE_CONFIG_FILE"
+        value="$(find niryo_robot_bringup)/config/niryo_robot_trace.conf" />
     <!-- Arguments definition -->
+    <arg name="hardware_version" default="ned"/>
     <arg name="log_level" default="INFO" />
     <arg name="ttl_enabled" default="true"/>
     <arg name="can_enabled" default="true"/>
     <arg name="debug" default="false"/>
+    <arg name="conf_location" default="$(env HOME)/.config/niryo/version/version.txt"/>
 
-    <include file="$(find niryo_robot_bringup)/launch/niryo_robot.launch">
-        <arg name="hardware_version" value="ned" />
+    <param name="image_version" textfile="$(arg conf_location)"/>
+
+    <include file="$(find niryo_robot_bringup)/launch/niryo_robot_base_robot.launch.xml">
+        <arg name="hardware_version" value="$(arg hardware_version)" />
         <arg name="log_level" value="$(arg log_level)" />
         <arg name="ttl_enabled" value="$(arg ttl_enabled)"/>
         <arg name="can_enabled" value="$(arg can_enabled)"/>
+        <arg name="conf_location" value="$(arg conf_location)" />
         <arg name="debug" value="$(arg debug)"/>
+        <arg name="rpi_model" value="3" if="$(eval hardware_version=='one')" />
     </include>
 </launch>
  

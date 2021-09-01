@@ -15,8 +15,11 @@
     <!-- Moveit move_group -->
     <include file="$(find niryo_moveit_config_w_gripper1)/launch/move_group.launch" if="$(arg simu_gripper)">
         <arg name="load_robot_description" value="false"/>
+        <arg name="hardware_version" value="$(arg hardware_version)" />
     </include>
-    <include file="$(find niryo_moveit_config_standalone)/launch/move_group.launch" unless="$(arg simu_gripper)"/>
+    <include file="$(find niryo_moveit_config_standalone)/launch/move_group.launch" unless="$(arg simu_gripper)">
+        <arg name="hardware_version" value="$(arg hardware_version)" />
+    </include>
 
     <!-- Moveit move_group params -->
     <group ns="/move_group">

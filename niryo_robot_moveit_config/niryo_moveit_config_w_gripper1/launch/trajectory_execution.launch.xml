@@ -17,7 +17,8 @@
   <param name="trajectory_execution/allowed_start_tolerance" value="0.01"/> <!-- default 0.01 -->
 
   <!-- Load the robot specific controller manager; this sets the moveit_controller_manager ROS parameter -->
-  <arg name="moveit_controller_manager" default="niryo" />
-  <include file="$(find niryo_moveit_config_w_gripper1)/launch/$(arg moveit_controller_manager)_moveit_controller_manager.launch.xml" />
+  <include file="$(find niryo_moveit_config_w_gripper1)/launch/niryo_moveit_controller_manager.launch.xml" >
+      <arg name="hardware_version" value="$(arg hardware_version)" />
+  </include>
 
 </launch>

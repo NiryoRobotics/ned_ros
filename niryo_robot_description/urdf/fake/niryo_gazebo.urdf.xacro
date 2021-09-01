@@ -1,4 +1,4 @@
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="niryo_ned_2">
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="niryo_ned">
     <!-- Enable Gazebo control-->
     <gazebo>
         <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
@@ -7,9 +7,9 @@
     </gazebo>
 
     <!-- Import Robot -->
-    <xacro:include filename="$(find niryo_robot_description)/urdf/ned2/niryo.urdf.xacro"/>
+    <xacro:include filename="$(find niryo_robot_description)/urdf/ned/niryo.urdf.xacro"/>
 
     <!-- Import Transmission -->
-    <xacro:include filename="$(find niryo_robot_description)/urdf/ned2/niryo.transmission.xacro"/>
+    <xacro:include filename="$(find niryo_robot_description)/urdf/ned/niryo.transmission.xacro"/>
 
 </robot>

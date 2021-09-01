@@ -546,7 +546,7 @@ void CanInterfaceCore::addSingleCommandToQueue(const std::shared_ptr<common::mod
             // keep position cmd apart
             if (_conveyor_cmds.size() > QUEUE_OVERFLOW)
             {
-                ROS_WARN("CanInterfaceCore::addCommandToQueue: Cmd queue overflow ! %lu", _conveyor_cmds.size());
+                ROS_WARN("CanInterfaceCore::addCommandToQueue: Cmd queue overflow ! %d", static_cast<int>(_conveyor_cmds.size()));
             }
             else
             {
@@ -557,7 +557,7 @@ void CanInterfaceCore::addSingleCommandToQueue(const std::shared_ptr<common::mod
         {
             if (_stepper_single_cmds.size() > QUEUE_OVERFLOW)
             {
-                ROS_WARN("CanInterfaceCore::addCommandToQueue: Cmd queue overflow ! %lu", _stepper_single_cmds.size());
+                ROS_WARN("CanInterfaceCore::addCommandToQueue: Cmd queue overflow ! %d", static_cast<int>(_stepper_single_cmds.size()));
             }
             else
             {

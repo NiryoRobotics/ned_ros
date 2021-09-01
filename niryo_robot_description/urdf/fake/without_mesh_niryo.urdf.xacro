@@ -1,6 +1,6 @@
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="niryo_ned_2">
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="niryo_ned">
     <!-- Import Properties -->
-    <xacro:include filename="$(find niryo_robot_description)/urdf/ned2/niryo_param.urdf.xacro"/>
+    <xacro:include filename="$(find niryo_robot_description)/urdf/ned/niryo_param.urdf.xacro"/>
 
     <!-- Links -->
 
@@ -17,7 +17,7 @@
             <origin xyz="0 0 0"
                     rpy="0 0 0"/>
             <geometry>
-                <mesh filename="package://niryo_robot_description/meshes/ned2/stl/base_link.stl"/>
+                <mesh filename="package://niryo_robot_description/meshes/ned/stl/base_link.stl"/>
             </geometry>
         </collision>
     </link>
@@ -38,7 +38,7 @@
             <origin xyz="0 0 0"
                     rpy="0 0 0"/>
             <geometry>
-                <mesh filename="package://niryo_robot_description/meshes/ned2/stl/shoulder_link.stl"/>
+                <mesh filename="package://niryo_robot_description/meshes/ned/stl/shoulder_link.stl"/>
             </geometry>
         </collision>
     </link>
@@ -60,7 +60,7 @@
             <origin xyz="0 0 0"
                     rpy="0 0 0"/>
             <geometry>
-                <mesh filename="package://niryo_robot_description/meshes/ned2/stl/arm_link.stl"/>
+                <mesh filename="package://niryo_robot_description/meshes/ned/stl/arm_link.stl"/>
             </geometry>
         </collision>
     </link>
@@ -82,7 +82,7 @@
             <origin xyz="0 0 0"
                     rpy="0 0 0"/>
             <geometry>
-                <mesh filename="package://niryo_robot_description/meshes/ned2/stl/elbow_link.stl"/>
+                <mesh filename="package://niryo_robot_description/meshes/ned/stl/elbow_link.stl"/>
             </geometry>
         </collision>
     </link>
@@ -103,7 +103,7 @@
             <origin xyz="0 0 0"
                     rpy="0 0 0"/>
             <geometry>
-                <mesh filename="package://niryo_robot_description/meshes/ned2/stl/forearm_link.stl"/>
+                <mesh filename="package://niryo_robot_description/meshes/ned/stl/forearm_link.stl"/>
             </geometry>
         </collision>
     </link>
@@ -147,7 +147,7 @@
             <origin xyz="0 0 0"
                     rpy="0 0 0"/>
             <geometry>
-                <mesh filename="package://niryo_robot_description/meshes/ned2/stl/wrist_link.stl"/>
+                <mesh filename="package://niryo_robot_description/meshes/ned/stl/wrist_link.stl"/>
             </geometry>
         </collision>
     </link>
@@ -168,7 +168,7 @@
             <origin xyz="0 0 0"
                     rpy="0 0 0"/>
             <geometry>
-                <mesh filename="package://niryo_robot_description/meshes/ned2/stl/hand_link.stl"/>
+                <mesh filename="package://niryo_robot_description/meshes/ned/stl/hand_link.stl"/>
             </geometry>
         </collision>
     </link>

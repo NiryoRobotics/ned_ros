@@ -1,4 +1,4 @@
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="niryo_ned_2">
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="niryo_ned">
     <xacro:include filename="$(find niryo_robot_description)/urdf/ned/niryo_camera.urdf.xacro"/>
 
     <!-- gazebo joint state publisher for all joints. Necessary to control mors -->
