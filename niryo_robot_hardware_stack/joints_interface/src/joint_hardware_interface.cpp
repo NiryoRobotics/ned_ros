@@ -172,7 +172,7 @@ bool JointHardwareInterface::init(ros::NodeHandle& rootnh, ros::NodeHandle &robo
             if (stepperState)
             {
                 double offsetPos = 0.0;
-                double gear_ratio = 0.0;
+                double gear_ratio = 1.0;
                 int direction = 1;
                 double max_effort = 0.0;
 

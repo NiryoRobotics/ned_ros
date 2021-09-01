@@ -83,7 +83,7 @@ protected:
         double _last_time_read{-1.0};
         double _hw_fail_counter{0.0};
 
-        double _gear_ratio{0.0};
+        double _gear_ratio{1.0};
         double _max_effort{0.0};
 
         std::string _firmware_version;

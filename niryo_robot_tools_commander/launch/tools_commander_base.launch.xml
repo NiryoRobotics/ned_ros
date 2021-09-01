@@ -6,7 +6,7 @@
 
     <group ns="niryo_robot_tools_commander">
         <rosparam file="$(find niryo_robot_tools_commander)/config/default.yaml"/>
-        <rosparam file="$(find niryo_robot_tools_commander)/config/$(arg hardware_version)/end_effectors.yaml"/>
+        <rosparam file="$(find niryo_robot_tools_commander)/config/$(arg hardware_version)/tools_definition.yaml"/>
     </group>
 
 </launch>

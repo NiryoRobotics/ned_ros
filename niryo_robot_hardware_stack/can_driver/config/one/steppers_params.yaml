@@ -1,27 +1,27 @@
 #
-#  Stepper caracteristics for hardware Niryo One
+#  Stepper caracteristics for Ned's hardware
 #
 steppers:
-    stepper_1_id: 1
-    stepper_2_id: 2
-    stepper_3_id: 3
+    stepper_1:
+        id: 1
+        gear_ratio: 6.0625
+        offset_position: 3.05433
+        home_position: 0.0
+        direction: -1
+        max_effort: 90
 
-    stepper_1_gear_ratio: 6.0625
-    stepper_2_gear_ratio: 8.3125
-    stepper_3_gear_ratio: 7.875
-
-    stepper_1_offset_position: 3.05433
-    stepper_2_offset_position: 0.640187
-    stepper_3_offset_position: -1.397485
-
-    stepper_1_home_position: 0.0
-    stepper_2_home_position: 0.640187
-    stepper_3_home_position: -1.397485
-
-    stepper_1_direction: -1.0
-    stepper_2_direction: -1.0
-    stepper_3_direction: 1.0
-
-    stepper_1_max_effort: 90
-    stepper_2_max_effort: 130
-    stepper_3_max_effort: 120
+    stepper_2:
+        id: 2
+        gear_ratio: 8.3125
+        offset_position: 0.640187
+        home_position: 0.640187
+        direction: -1
+        max_effort: 130
+        
+    stepper_3:
+        id: 3
+        gear_ratio: 7.875
+        offset_position: -1.397485
+        home_position: -1.397485
+        direction: 1
+        max_effort: 120

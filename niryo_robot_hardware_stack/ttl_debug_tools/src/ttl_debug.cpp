@@ -41,7 +41,7 @@
 
 namespace po = boost::program_options;
 
-#ifdef __arm
+#ifdef __arm__
     #define DEFAULT_PORT "/dev/serial0"
 #elif __aarch64__
     #define DEFAULT_PORT "/dev/ttyAMA0"
@@ -86,7 +86,6 @@ int main(int argc, char **argv)
         int id = vars["id"].as<int>();
 
         std::cout << "Using baudrate: " << baudrate << ", port: " << serial_port << "\n";
-        std::cout << "Motor ID: " << id << "\n";
 
         // Setup TTL communication
         std::shared_ptr<dynamixel::PortHandler> portHandler(
@@ -107,61 +106,64 @@ int main(int argc, char **argv)
                 printf("--> SCAN TTL bus\n");
                 ttlTools.broadcastPing();
             }
-            else if (vars.count("ping"))  // ping
+            else 
             {
-                if (0 == id)
-                {
-                    printf("Ping: you need to give an ID! (--id)\n");
-                }
-                else
-                {
-                    printf("--> PING Motor (ID: %d)\n", id);
-                    ttlTools.ping(id);
-                }
-            }
-            else if (vars.count("set-register"))  // set-register
-            {
-                std::vector<int> params = vars["set-register"].as<std::vector<int>>();
-                if (params.size() != 3)
-                {
-                    printf("ERROR: set-register needs 3 arguments (reg_addr, value, size)\n");
-                }
-                else
-                {
-                    uint8_t addr = static_cast<uint8_t>(params.at(0));
-                    uint32_t value = static_cast<uint32_t>(params.at(1));
-                    uint8_t size = static_cast<uint8_t>(params.at(2));
+                std::cout << "Motor ID: " << id << "\n";
 
-                    printf("--> SET REGISTER for Motor (ID:%d)\n", id);
-                    printf("Register address: %d, Value: %d, Size (bytes): %d\n", addr, value, size);
+                if (vars.count("ping"))  // ping
+                {
+                    if (0 == id)
+                    {
+                        printf("Ping: you need to give an ID! (--id)\n");
+                    }
+                    else
+                    {
+                        printf("--> PING Motor (ID: %d)\n", id);
+                        ttlTools.ping(id);
+                    }
+                }
+                else if (vars.count("set-register"))  // set-register
+                {
+                    std::vector<int> params = vars["set-register"].as<std::vector<int>>();
+                    if (params.size() != 3)
+                    {
+                        printf("ERROR: set-register needs 3 arguments (reg_addr, value, size)\n");
+                    }
+                    else
+                    {
+                        uint8_t addr = static_cast<uint8_t>(params.at(0));
+                        uint32_t value = static_cast<uint32_t>(params.at(1));
+                        uint8_t size = static_cast<uint8_t>(params.at(2));
 
-                    comm_result = ttlTools.setRegister(static_cast<uint8_t>(id), addr, value, size);
+                        printf("Register address: %d, Value: %d, Size (bytes): %d\n", addr, value, size);
+
+                        comm_result = ttlTools.setRegister(static_cast<uint8_t>(id), addr, value, size);
+
+                        if (comm_result != COMM_SUCCESS)
+                            printf("Failed to set register: %d\n", comm_result);
+                        else
+                            printf("Successfully sent register command\n");
+                    }
+                }
+                else if (vars.count("get-register"))  // get-register
+                {
+                    uint8_t addr = static_cast<uint8_t>(vars["get-register"].as<int>());
+                    uint32_t value = 0;
+                    uint8_t size = static_cast<uint8_t>(vars["size"].as<int>());
+
+                    printf("Register address: %d, Size (bytes): %d\n", addr, size);
+
+                    comm_result = ttlTools.getRegister(static_cast<uint8_t>(id), addr, value, size);
 
                     if (comm_result != COMM_SUCCESS)
-                        printf("Failed to set register: %d\n", comm_result);
+                        printf("Failed to get register: %d\n", comm_result);
                     else
-                        printf("Successfully sent register command\n");
+                        printf("Retrieved value at address %d : %d\n", addr, value);
                 }
-            }
-            else if (vars.count("get-register"))  // get-register
-            {
-                uint8_t addr = static_cast<uint8_t>(vars["get-register"].as<int>());
-                uint32_t value = 0;
-                uint8_t size = static_cast<uint8_t>(vars["size"].as<int>());
-
-                printf("--> GET REGISTER for Motor (ID:%d)\n", id);
-                printf("Register address: %d, Size (bytes): %d\n", addr, size);
-
-                comm_result = ttlTools.getRegister(static_cast<uint8_t>(id), addr, value, size);
-
-                if (comm_result != COMM_SUCCESS)
-                    printf("Failed to get register: %d\n", comm_result);
-                else
-                    printf("Retrieved value at address %d : %d\n", addr, value);
-            }
-            else  // unknown command
-            {
-                std::cout << description << "\n";
+                else  // unknown command
+                {
+                    std::cout << description << "\n";
+                }
             }
 
             // close port before exit

@@ -1,5 +1,4 @@
 <?xml version="1.0"?>
-
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="niryo_one">
     <!-- Including base robot -->
     <xacro:include filename="$(find niryo_robot_description)/urdf/one/niryo_gazebo.urdf.xacro"/>

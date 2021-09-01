@@ -1,4 +1,5 @@
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="niryo_ned_2">
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="niryo_ned2">
     <!-- Import Properties -->
     <xacro:include filename="$(find niryo_robot_description)/urdf/ned2/niryo_param.urdf.xacro"/>
 

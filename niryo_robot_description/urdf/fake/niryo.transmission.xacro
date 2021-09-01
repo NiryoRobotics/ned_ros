@@ -1,4 +1,5 @@
-<robot xmlns:xacro="http://ros.org/wiki/xacro">
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://ros.org/wiki/xacro" name="niryo_fake">
 
   <!-- Transmission macro -->
   <xacro:macro name="SimpleTransmissionPosition" params="joint n">

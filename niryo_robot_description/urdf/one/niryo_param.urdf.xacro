@@ -1,3 +1,4 @@
+<?xml version="1.0"?>
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="niryo_one">
     <xacro:property name="PI" value="3.14159265359"/>
     <xacro:property name="deg_to_rad" value="${PI/180}"/>
