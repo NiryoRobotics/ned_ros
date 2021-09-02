@@ -127,74 +127,66 @@ void HardwareInterface::initNodes(ros::NodeHandle &nh)
     // TODO(CC) to be adapted with conf
     std::string conveyor_bus = "can";
     ROS_DEBUG("HardwareInterface::initNodes - Init Nodes");
-    if (!_simulation_mode)
+
+    if (_ttl_enabled)
     {
-        if (_ttl_enabled)
-        {
-            ROS_DEBUG("HardwareInterface::initNodes - Start Dynamixel Driver Node");
-            ros::NodeHandle nh_ttl(nh, "ttl_driver");
-            _ttl_interface = std::make_shared<ttl_driver::TtlInterfaceCore>(nh_ttl);
-            ros::Duration(0.25).sleep();
-
-            ROS_DEBUG("HardwareInterface::initNodes - Start End Effector Interface Node");
-            ros::NodeHandle nh_tool(nh, "tools_interface");
-            _tools_interface = std::make_shared<tools_interface::ToolsInterfaceCore>(nh_tool,
-                                                                                     _ttl_interface);
-            ros::Duration(0.25).sleep();
-
-            if (conveyor_bus == "ttl")
-            {
-                ROS_DEBUG("HardwareInterface::initNodes - Start Tools Interface Node");
-                ros::NodeHandle nh_conveyor(nh, "conveyor");
-                _conveyor_interface = std::make_shared<conveyor_interface::ConveyorInterfaceCore>(nh_conveyor,
-                                                                                                  _ttl_interface);
-                ros::Duration(0.25).sleep();
-            }
-        }
-        else
-        {
-            ROS_WARN("HardwareInterface::initNodes - DXL communication is disabled for debug purposes");
-        }
-
-        if (_can_enabled)
-        {
-            ROS_DEBUG("HardwareInterface::initNodes - Start CAN Driver Node");
-            ros::NodeHandle nh_can(nh, "can_driver");
-            _can_interface = std::make_shared<can_driver::CanInterfaceCore>(nh_can);
-            ros::Duration(0.25).sleep();
-
-            if (conveyor_bus == "can")
-            {
-                ROS_DEBUG("HardwareInterface::initNodes - Start Tools Interface Node");
-                ros::NodeHandle nh_conveyor(nh, "conveyor");
-                _conveyor_interface = std::make_shared<conveyor_interface::ConveyorInterfaceCore>(nh_conveyor,
-                                                                                                  _can_interface);
-                ros::Duration(0.25).sleep();
-            }
-        }
-        else
-        {
-            ROS_DEBUG("HardwareInterface::initNodes - CAN communication is disabled for debug purposes");
-        }
-
-        ROS_DEBUG("HardwareInterface::initNodes - Start Joints Interface Node");
-        ros::NodeHandle nh_joints(nh, "joints_interface");
-        _joints_interface = std::make_shared<joints_interface::JointsInterfaceCore>(nh,
-                                                                                    nh_joints,
-                                                                                    _ttl_interface,
-                                                                                    _can_interface);
+        ROS_DEBUG("HardwareInterface::initNodes - Start Dynamixel Driver Node");
+        ros::NodeHandle nh_ttl(nh, "ttl_driver");
+        _ttl_interface = std::make_shared<ttl_driver::TtlInterfaceCore>(nh_ttl);
         ros::Duration(0.25).sleep();
 
-        ROS_DEBUG("HardwareInterface::initNodes - Start CPU Interface Node");
-        _cpu_interface = std::make_shared<cpu_interface::CpuInterfaceCore>(nh);
+        ROS_DEBUG("HardwareInterface::initNodes - Start End Effector Interface Node");
+        ros::NodeHandle nh_tool(nh, "tools_interface");
+        _tools_interface = std::make_shared<tools_interface::ToolsInterfaceCore>(nh_tool,
+                                                                                    _ttl_interface);
         ros::Duration(0.25).sleep();
+
+        if (conveyor_bus == "ttl")
+        {
+            ROS_DEBUG("HardwareInterface::initNodes - Start Tools Interface Node");
+            ros::NodeHandle nh_conveyor(nh, "conveyor");
+            _conveyor_interface = std::make_shared<conveyor_interface::ConveyorInterfaceCore>(nh_conveyor,
+                                                                                                _ttl_interface);
+            ros::Duration(0.25).sleep();
+        }
     }
     else
     {
-        ROS_DEBUG("HardwareInterface::initNodes - Start Fake Interface Node");
-        ros::NodeHandle nh_joints(nh, "joints_interface");
-        _fake_interface = std::make_shared<fake_interface::FakeInterfaceCore>(nh, nh_joints);
+        ROS_WARN("HardwareInterface::initNodes - DXL communication is disabled for debug purposes");
     }
+
+    if (_can_enabled)
+    {
+        ROS_DEBUG("HardwareInterface::initNodes - Start CAN Driver Node");
+        ros::NodeHandle nh_can(nh, "can_driver");
+        _can_interface = std::make_shared<can_driver::CanInterfaceCore>(nh_can);
+        ros::Duration(0.25).sleep();
+
+        if (conveyor_bus == "can")
+        {
+            ROS_DEBUG("HardwareInterface::initNodes - Start Tools Interface Node");
+            ros::NodeHandle nh_conveyor(nh, "conveyor");
+            _conveyor_interface = std::make_shared<conveyor_interface::ConveyorInterfaceCore>(nh_conveyor,
+                                                                                                _can_interface);
+            ros::Duration(0.25).sleep();
+        }
+    }
+    else
+    {
+        ROS_DEBUG("HardwareInterface::initNodes - CAN communication is disabled for debug purposes");
+    }
+
+    ROS_DEBUG("HardwareInterface::initNodes - Start Joints Interface Node");
+    ros::NodeHandle nh_joints(nh, "joints_interface");
+    _joints_interface = std::make_shared<joints_interface::JointsInterfaceCore>(nh,
+                                                                                nh_joints,
+                                                                                _ttl_interface,
+                                                                                _can_interface);
+    ros::Duration(0.25).sleep();
+
+    ROS_DEBUG("HardwareInterface::initNodes - Start CPU Interface Node");
+    _cpu_interface = std::make_shared<cpu_interface::CpuInterfaceCore>(nh);
+    ros::Duration(0.25).sleep();
 }
 
 /**
@@ -395,37 +387,23 @@ void HardwareInterface::_publishHardwareStatus()
         niryo_robot_msgs::HardwareStatus msg;
         msg.header.stamp = ros::Time::now();
 
-        if (!_simulation_mode)
+        if (_ttl_interface)
         {
-            if (_ttl_interface)
-            {
-                ttl_motor_state = _ttl_interface->getHwStatus();
-                ttl_bus_state = _ttl_interface->getBusState();
-            }
-            if (_can_interface)
-            {
-                can_motor_state = _can_interface->getHwStatus();
-                can_bus_state = _can_interface->getBusState();
-            }
-            if (_joints_interface)
-            {
-                _joints_interface->getCalibrationState(need_calibration, calibration_in_progress);
-            }
-
-            cpu_temperature = _cpu_interface->getCpuTemperature();
+            ttl_motor_state = _ttl_interface->getHwStatus();
+            ttl_bus_state = _ttl_interface->getBusState();
         }
-        else
+        if (_can_interface)
         {
-            ttl_motor_state = _fake_interface->getTtlHwStatus();
-            can_motor_state = _fake_interface->getCanHwStatus();
-
-            ttl_bus_state = _fake_interface->getTtlBusState();
-            can_bus_state = _fake_interface->getCanBusState();
-
-            cpu_temperature = _fake_interface->getCpuTemperature();
-
-            _fake_interface->getCalibrationState(need_calibration, calibration_in_progress);
+            can_motor_state = _can_interface->getHwStatus();
+            can_bus_state = _can_interface->getBusState();
         }
+        if (_joints_interface)
+        {
+            _joints_interface->getCalibrationState(need_calibration, calibration_in_progress);
+        }
+
+        cpu_temperature = _cpu_interface->getCpuTemperature();
+
 
         msg.rpi_temperature = cpu_temperature;
         msg.hardware_version = 1;
@@ -466,82 +444,74 @@ void HardwareInterface::_publishHardwareStatus()
                 msg.calibration_needed = need_calibration;
                 msg.calibration_in_progress = calibration_in_progress;
 
-            for (auto const& hw_status : can_motor_state.motors_hw_status)
+            if (_joints_interface)
             {
-                temperatures.emplace_back(hw_status.temperature);
-                voltages.emplace_back(hw_status.voltage);
-                hw_errors.emplace_back(hw_status.error);
-                hw_errors_msg.emplace_back("");
-                motor_types.emplace_back("Niryo Stepper");
-                std::string joint_name = "";
-                if (_joints_interface)
+                for (auto const& hw_status : can_motor_state.motors_hw_status)
                 {
+                    temperatures.emplace_back(hw_status.temperature);
+                    voltages.emplace_back(hw_status.voltage);
+                    hw_errors.emplace_back(hw_status.error);
+                    hw_errors_msg.emplace_back("");
+                    motor_types.emplace_back("Niryo Stepper");
+                    std::string joint_name = "";
+
                     joint_name = _joints_interface->jointIdToJointName(hw_status.motor_identity.motor_id,
                                                                     hw_status.motor_identity.motor_type);
-                }
-                else if (_fake_interface)
-                {
-                    joint_name = _fake_interface->jointIdToJointName(hw_status.motor_identity.motor_id,
-                                                                    hw_status.motor_identity.motor_type);
-                }
+                    
+                    joint_name = joint_name == "" ? ("Stepper " + std::to_string(hw_status.motor_identity.motor_id))
+                                                : joint_name;
 
-                joint_name = joint_name == "" ? ("Stepper " + std::to_string(hw_status.motor_identity.motor_id))
-                                            : joint_name;
-
-                motor_names.emplace_back(joint_name);
+                    motor_names.emplace_back(joint_name);
+                }
             }
         }
 
         // for each motor gather info in the dedicated vectors
-        for (auto const& hw_status : ttl_motor_state.motors_hw_status)
+        if (_joints_interface)
         {
-            temperatures.emplace_back(static_cast<int32_t>(hw_status.temperature));
-            voltages.emplace_back(hw_status.voltage);
-            hw_errors.emplace_back(static_cast<int32_t>(hw_status.error));
-            hw_errors_msg.emplace_back(hw_status.error_msg);
-
-            switch (hw_status.motor_identity.motor_type)
+            for (auto const& hw_status : ttl_motor_state.motors_hw_status)
             {
-                case static_cast<uint8_t>(common::model::EMotorType::XL320):
-                    motor_types.emplace_back("DXL XL-320");
-                break;
+                temperatures.emplace_back(static_cast<int32_t>(hw_status.temperature));
+                voltages.emplace_back(hw_status.voltage);
+                hw_errors.emplace_back(static_cast<int32_t>(hw_status.error));
+                hw_errors_msg.emplace_back(hw_status.error_msg);
 
-                case static_cast<uint8_t>(common::model::EMotorType::XL330):
-                    motor_types.emplace_back("DXL XL-330");
-                break;
+                switch (hw_status.motor_identity.motor_type)
+                {
+                    case static_cast<uint8_t>(common::model::EMotorType::XL320):
+                        motor_types.emplace_back("DXL XL-320");
+                    break;
 
-                case static_cast<uint8_t>(common::model::EMotorType::XL430):
-                    motor_types.emplace_back("DXL XL-430");
-                break;
+                    case static_cast<uint8_t>(common::model::EMotorType::XL330):
+                        motor_types.emplace_back("DXL XL-330");
+                    break;
 
-                case static_cast<uint8_t>(common::model::EMotorType::XC430):
-                    motor_types.emplace_back("DXL XC-430");
-                break;
-                case static_cast<uint8_t>(common::model::EMotorType::FAKE_DXL_MOTOR):
-                    motor_types.emplace_back("DXL FAKE");
-                break;
-                case static_cast<uint8_t>(common::model::EMotorType::FAKE_STEPPER_MOTOR):
-                    motor_types.emplace_back("STEPPER FAKE");
-                break;
-                default:
-                    motor_types.emplace_back("DXL UNKOWN");
-                break;
-            }
+                    case static_cast<uint8_t>(common::model::EMotorType::XL430):
+                        motor_types.emplace_back("DXL XL-430");
+                    break;
 
-            std::string joint_name = "";
-            if (_joints_interface)
-            {
+                    case static_cast<uint8_t>(common::model::EMotorType::XC430):
+                        motor_types.emplace_back("DXL XC-430");
+                    break;
+                    case static_cast<uint8_t>(common::model::EMotorType::FAKE_DXL_MOTOR):
+                        motor_types.emplace_back("DXL FAKE");
+                    break;
+                    case static_cast<uint8_t>(common::model::EMotorType::FAKE_STEPPER_MOTOR):
+                        motor_types.emplace_back("STEPPER FAKE");
+                    break;
+                    default:
+                        motor_types.emplace_back("DXL UNKOWN");
+                    break;
+                }
+
+                std::string joint_name = "";
+                
                 joint_name = _joints_interface->jointIdToJointName(hw_status.motor_identity.motor_id,
-                                                                   hw_status.motor_identity.motor_type);
-            }
-            else if (_fake_interface)
-            {
-                joint_name = _fake_interface->jointIdToJointName(hw_status.motor_identity.motor_id,
-                                                                 hw_status.motor_identity.motor_type);
-            }
+                                                                    hw_status.motor_identity.motor_type);
 
-            joint_name = (joint_name == "") ? "Tool" : joint_name;
-            motor_names.emplace_back(joint_name);
+                joint_name = (joint_name == "") ? "Tool" : joint_name;
+                motor_names.emplace_back(joint_name);
+            }
         }
 
         msg.motor_names = motor_names;
@@ -571,34 +541,20 @@ void HardwareInterface::_publishSoftwareVersion()
         std::vector<std::string> firmware_versions;
         std::vector<std::shared_ptr<common::model::JointState> > joints_state;
 
-        if (!_simulation_mode)
+        if (_can_interface)
         {
-            if (_can_interface)
-            {
-                stepper_motor_state = _can_interface->getHwStatus();
-            }
-            if (_joints_interface)
-            {
-                joints_state = _joints_interface->getJointsState();
-            }
-
-            for (std::shared_ptr<common::model::JointState> jState : joints_state)
-            {
-                motor_names.push_back(jState->getName());
-            }
+            stepper_motor_state = _can_interface->getHwStatus();
         }
-        else
+        if (_joints_interface)
         {
-            stepper_motor_state = _fake_interface->getCanHwStatus();
-
-            motor_names.push_back("joint_1");
-            motor_names.push_back("joint_2");
-            motor_names.push_back("joint_3");
-            motor_names.push_back("joint_4");
-            motor_names.push_back("joint_5");
-            motor_names.push_back("joint_6");
+            joints_state = _joints_interface->getJointsState();
         }
 
+        for (std::shared_ptr<common::model::JointState> jState : joints_state)
+        {
+            motor_names.push_back(jState->getName());
+        }
+        
         for (auto const& hw_status : stepper_motor_state.motors_hw_status)
         {
             firmware_versions.push_back(hw_status.firmware_version);

@@ -17,7 +17,7 @@
   <exec_depend>niryo_robot_arm_commander</exec_depend>
   <exec_depend>niryo_robot_description</exec_depend>
   <exec_depend>niryo_robot_gazebo</exec_depend>
-  <exec_depend>niryo_ned_moveit_config_standalone</exec_depend>
+  <exec_depend>niryo_moveit_config_standalone</exec_depend>
   <exec_depend>niryo_robot_vision</exec_depend>
   <exec_depend>rviz</exec_depend>
   <exec_depend>xacro</exec_depend>
