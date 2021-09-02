@@ -5,7 +5,6 @@
     <!-- set to true if you want to launch ROS on your computer 
         - controller will just echo position command
         - all hardware relative stuff is deactivated            -->
-    <arg name="simulation_mode" default="false"/>
     <arg name="gazebo" default="false"/>
     <arg name="simu_gripper" default="false"/>
     <arg name="hardware_version" default="ned"/>

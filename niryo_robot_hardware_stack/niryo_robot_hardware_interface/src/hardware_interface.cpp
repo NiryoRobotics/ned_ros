@@ -92,7 +92,6 @@ void HardwareInterface::initParameters(ros::NodeHandle &nh)
     nh.getParam("/niryo_robot/info/image_version", _rpi_image_version);
     nh.getParam("/niryo_robot/info/ros_version", _ros_niryo_robot_version);
 
-    nh.getParam("simulation_mode", _simulation_mode);
     nh.getParam("gazebo", _gazebo);
 
     nh.getParam("can_enabled", _can_enabled);
@@ -111,7 +110,6 @@ void HardwareInterface::initParameters(ros::NodeHandle &nh)
     ROS_DEBUG("HardwareInterface::initParameters - ros_version : %s",
                             _ros_niryo_robot_version.c_str());
 
-    ROS_DEBUG("HardwareInterface::initParameters - simulation_mode : %s", _simulation_mode ? "true" : "false");
     ROS_DEBUG("HardwareInterface::initParameters - gazebo : %s", _gazebo ? "true" : "false");
 
     ROS_DEBUG("HardwareInterface::initParameters - can_enabled : %s", _can_enabled ? "true" : "false");
@@ -243,24 +241,17 @@ bool HardwareInterface::_callbackStopMotorsReport(niryo_robot_msgs::Trigger::Req
 {
     res.status = niryo_robot_msgs::CommandStatus::FAILURE;
 
-    if (!_simulation_mode)
-    {
-        ROS_WARN("Hardware Interface - Stop Motor Report");
+    ROS_WARN("Hardware Interface - Stop Motor Report");
 
-        if (_can_interface)
-            _can_interface->activeDebugMode(false);
+    if (_can_interface)
+        _can_interface->activeDebugMode(false);
 
-        if (_ttl_interface)
-            _ttl_interface->activeDebugMode(false);
+    if (_ttl_interface)
+        _ttl_interface->activeDebugMode(false);
 
-        res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
-        res.message = "";
-    }
-    else
-    {
-        res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
-        res.message = "Simulation mode : fake stop motor report";
-    }
+    res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
+    res.message = "";
+
 
     return (niryo_robot_msgs::CommandStatus::SUCCESS == res.status);
 }
@@ -276,48 +267,40 @@ bool HardwareInterface::_callbackLaunchMotorsReport(niryo_robot_msgs::Trigger::R
 {
     res.status = niryo_robot_msgs::CommandStatus::FAILURE;
 
-    if (!_simulation_mode)
+    ROS_WARN("Hardware Interface - Start Motors Report");
+
+    int can_status = niryo_robot_msgs::CommandStatus::FAILURE;
+    int ttl_status = niryo_robot_msgs::CommandStatus::FAILURE;
+
+    if (_can_interface)
     {
-        ROS_WARN("Hardware Interface - Start Motors Report");
+        _can_interface->activeDebugMode(true);
+        can_status = _can_interface->launchMotorsReport();
+        _can_interface->activeDebugMode(false);
+    }
 
-        int can_status = niryo_robot_msgs::CommandStatus::FAILURE;
-        int ttl_status = niryo_robot_msgs::CommandStatus::FAILURE;
+    if (_ttl_interface)
+    {
+        _ttl_interface->activeDebugMode(true);
+        ttl_status = _ttl_interface->launchMotorsReport();
+        _ttl_interface->activeDebugMode(false);
+    }
 
-        if (_can_interface)
-        {
-            _can_interface->activeDebugMode(true);
-            can_status = _can_interface->launchMotorsReport();
-            _can_interface->activeDebugMode(false);
-        }
+    ROS_WARN("Hardware Interface - Motors report ended");
 
-        if (_ttl_interface)
-        {
-            _ttl_interface->activeDebugMode(true);
-            ttl_status = _ttl_interface->launchMotorsReport();
-            _ttl_interface->activeDebugMode(false);
-        }
-
-        ROS_WARN("Hardware Interface - Motors report ended");
-
-        if ((niryo_robot_msgs::CommandStatus::SUCCESS == can_status) &&
-            (niryo_robot_msgs::CommandStatus::SUCCESS == ttl_status))
-        {
-            res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
-            res.message = "Hardware interface seems working properly";
-        }
-        else
-        {
-            res.status = niryo_robot_msgs::CommandStatus::FAILURE;
-            res.message = "Steppers status: ";
-            res.message += (can_status == niryo_robot_msgs::CommandStatus::SUCCESS) ? "Ok" : "Error";
-            res.message += ", Dxl status: ";
-            res.message += (ttl_status == niryo_robot_msgs::CommandStatus::SUCCESS) ? "Ok" : "Error";
-        }
+    if ((niryo_robot_msgs::CommandStatus::SUCCESS == can_status) &&
+        (niryo_robot_msgs::CommandStatus::SUCCESS == ttl_status))
+    {
+        res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
+        res.message = "Hardware interface seems working properly";
     }
     else
     {
-        res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
-        res.message = "Simulation mode : fake launch motor report";
+        res.status = niryo_robot_msgs::CommandStatus::FAILURE;
+        res.message = "Steppers status: ";
+        res.message += (can_status == niryo_robot_msgs::CommandStatus::SUCCESS) ? "Ok" : "Error";
+        res.message += ", Dxl status: ";
+        res.message += (ttl_status == niryo_robot_msgs::CommandStatus::SUCCESS) ? "Ok" : "Error";
     }
 
     return (niryo_robot_msgs::CommandStatus::SUCCESS == res.status);
@@ -334,31 +317,23 @@ bool HardwareInterface::_callbackRebootMotors(niryo_robot_msgs::Trigger::Request
 {
     res.status = niryo_robot_msgs::CommandStatus::FAILURE;
 
-    if (!_simulation_mode)
+    if (_ttl_interface)
+        res.status = _ttl_interface->rebootMotors();
+
+    if (niryo_robot_msgs::CommandStatus::SUCCESS == res.status)
     {
-        if (_ttl_interface)
-            res.status = _ttl_interface->rebootMotors();
+        res.message = "Reboot motors done";
 
-        if (niryo_robot_msgs::CommandStatus::SUCCESS == res.status)
-        {
-            res.message = "Reboot motors done";
+        _joints_interface->sendMotorsParams();
 
-            _joints_interface->sendMotorsParams();
-
-            int resp_learning_mode_status = 0;
-            std::string resp_learning_mode_message = "";
-            _joints_interface->activateLearningMode(false, resp_learning_mode_status, resp_learning_mode_message);
-            _joints_interface->activateLearningMode(true, resp_learning_mode_status, resp_learning_mode_message);
-        }
-        else
-        {
-            res.message = "Reboot motors Problems";
-        }
+        int resp_learning_mode_status = 0;
+        std::string resp_learning_mode_message = "";
+        _joints_interface->activateLearningMode(false, resp_learning_mode_status, resp_learning_mode_message);
+        _joints_interface->activateLearningMode(true, resp_learning_mode_status, resp_learning_mode_message);
     }
     else
     {
-        res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
-        res.message = "Simulation mode : fake reboot motor service";
+        res.message = "Reboot motors Problems";
     }
 
     return (niryo_robot_msgs::CommandStatus::SUCCESS == res.status);

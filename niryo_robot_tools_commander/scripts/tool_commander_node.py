@@ -46,13 +46,11 @@ class ToolsState:
 class ToolCommander:
     def __init__(self):
         self.__tools_state = ToolsState(rospy.get_param("~state_dict"))
-        self.__is_simulation = rospy.get_param("~simulation_mode")
         self.__is_gripper_simulated = rospy.get_param("~simu_gripper")
         move_group_tool_commander_name = rospy.get_param("~move_group_tool_commander_name")
         reference_frame = rospy.get_param("~reference_frame")
 
         rospy.logdebug("ToolCommander.init - state_dict: {}".format(str(self.__tools_state)))
-        rospy.logdebug("ToolCommander.init - simulation_mode: {}".format(self.__is_simulation))
         rospy.logdebug("ToolCommander.init - simu_gripper: {}".format(self.__is_gripper_simulated))
         rospy.logdebug("ToolCommander.init - move_group_tool_commander_name: {}".format(move_group_tool_commander_name))
         rospy.logdebug("ToolCommander.init - reference_frame: {}".format(reference_frame))

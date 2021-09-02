@@ -88,7 +88,6 @@ class HardwareInterface : common::model::IInterfaceCore
         double _publish_hw_status_frequency{0.0};
         double _publish_software_version_frequency{0.0};
 
-        bool _simulation_mode{true};
         bool _gazebo{false};
 
         bool _can_enabled{false};

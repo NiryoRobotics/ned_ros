@@ -43,7 +43,6 @@ This will reduce the amount of time spent waiting during program shutdown
     <!-- Launching vision if the user didn't swap camera arg to false -->
     <include file="$(find niryo_robot_vision)/launch/vision_node.launch" if="$(arg gripper_n_camera)">
         <arg name="log_level" value="$(arg log_level)" />
-        <arg name="simulation_mode" value="true"/>
     </include>
 
     <param name="/niryo_robot_vision/initialized" type="bool" value="true" unless="$(arg gripper_n_camera)"/>

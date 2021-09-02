@@ -40,11 +40,9 @@ class VisionNode:
         # -- ROS
         self.__path_package = rospkg.RosPack().get_path('niryo_robot_vision')
 
-        self.__simulation_mode = rospy.get_param('~simulation_mode')
         self.__debug_compression_quality = rospy.get_param("~debug_compression_quality")
 
         rospy.logdebug("VisionNode.init - debug_compression_quality: {}".format(self.__debug_compression_quality))
-        rospy.logdebug("VisionNode.init - simulation mode: {}".format(self.__simulation_mode))
 
         # PUBLISHERS
         self.__publisher_compressed_stream = rospy.Publisher('~compressed_video_stream',

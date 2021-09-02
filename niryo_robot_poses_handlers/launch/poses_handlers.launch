@@ -3,23 +3,19 @@
         xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
     <!-- Arguments -->
     <arg name="log_level" default="INFO" />
-    <arg name="simulation_mode" default="false" />
     <arg name="hardware_version" default="ned"/>
 
-    <arg name="dir_desktop" value="~/.niryo/simulation/"/>
-    <arg name="dir_rpi" value="~/niryo_robot_saved_files/"/>
-
-    <arg name="saved_files_dir" value="$(arg dir_desktop)" if="$(arg simulation_mode)"/>
-    <arg name="saved_files_dir" value="$(arg dir_rpi)" unless="$(arg simulation_mode)"/>
+    <arg name="saved_files_dir" value="~/.niryo/simulation" if="$(eval hardware_version =='fake')"/>
+    <arg name="saved_files_dir" value="~/niryo_robot_saved_files" unless="$(eval hardware_version =='fake')"/>
 
     <node name="niryo_robot_poses_handlers" pkg="niryo_robot_poses_handlers" type="poses_handlers_node.py" output="screen">
         <param name="log_level" type="string" value="$(arg log_level)" />
         <rosparam file="$(find niryo_robot_poses_handlers)/config/gazebo_workspaces.yaml" command="load"
-                  if="$(arg simulation_mode)"/>
+                  if="$(eval hardware_version =='fake')"/>
 
         <param name="grip_dir" type="string" value="$(find niryo_robot_poses_handlers)/grips/$(arg hardware_version)/"/>
-        <param name="workspace_dir" type="string"  value="$(arg saved_files_dir)niryo_robot_workspaces/"  />
-        <param name="poses_dir" type="string"  value="$(arg saved_files_dir)niryo_robot_poses/"/>
-        <param name="trajectories_dir" type="string"  value="$(arg saved_files_dir)niryo_robot_trajectories/"/>
+        <param name="workspace_dir" type="string"  value="$(arg saved_files_dir)/niryo_robot_workspaces/"  />
+        <param name="poses_dir" type="string"  value="$(arg saved_files_dir)/niryo_robot_poses/"/>
+        <param name="trajectories_dir" type="string"  value="$(arg saved_files_dir)/niryo_robot_trajectories/"/>
     </node>
 </launch>

@@ -3,7 +3,7 @@
         xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
     <!-- Arguments -->
     <arg name="log_level" default="INFO" />
-    <arg name="hardware_version" default="ned"/>
+    <arg name="hardware_version" default="fake"/>
     <arg name="simu_gripper" default="false"/>
     <arg name="gazebo" default="false"/>
 
@@ -19,7 +19,6 @@
         <arg name="log_level" value="$(arg log_level)" />
         <arg name="gazebo" value="$(arg gazebo)"/>
         <arg name="hardware_version" value="$(arg hardware_version)"/>
-        <arg name="simulation_mode" value="true"/>
         <arg name="simu_gripper" value="$(arg simu_gripper)"/>
     </include>
 
