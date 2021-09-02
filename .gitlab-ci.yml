@@ -165,7 +165,12 @@ upload_doc:
     - |
       echo \
       "RewriteEngine on
+      RewriteCond %{QUERY_STRING} ^lang=fr$
+      # Redirect everything after the "source/" to the proper latest link (fr language)
+      RewriteRule ^(.+)$ ${BASE_FOLDER_DOC_URL}/${DOCUMENTATION_NAME}/$CI_COMMIT_TAG/fr/source/\$1 [R=301,NC]
+
       # Redirect everything after the "source/" to the proper latest link
+      RewriteCond %{QUERY_STRING} ^$
       RewriteRule ^(.+)$ ${BASE_FOLDER_DOC_URL}/${DOCUMENTATION_NAME}/$CI_COMMIT_TAG/en/source/\$1 [R=301,NC]
       # Disable directory listing when accessing directy folder web address
       Options -Indexes
