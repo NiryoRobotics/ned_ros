@@ -664,7 +664,7 @@ void TtlManager::readHwStatus()
 
                     hw_errors_increment++;
                 }
-                if (type == EMotorType::FAKE_STEPPER_MOTOR || type == EMotorType::STEPPER)
+                if ((type == EMotorType::FAKE_STEPPER_MOTOR || type == EMotorType::STEPPER) && _calibration_status != EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED)
                 {
                     for (auto id : _ids_map.at(type))
                     {

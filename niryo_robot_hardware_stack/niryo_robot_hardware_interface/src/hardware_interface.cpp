@@ -445,12 +445,12 @@ void HardwareInterface::_publishHardwareStatus()
             if (!ttl_bus_state.error.empty())
             {
                 error_message = ttl_bus_state.error;
-
+            }
                 msg.error_message = error_message;
 
                 msg.calibration_needed = need_calibration;
                 msg.calibration_in_progress = calibration_in_progress;
-            }
+
         }
         else
         {
