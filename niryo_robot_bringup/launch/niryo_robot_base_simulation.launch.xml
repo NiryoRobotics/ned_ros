@@ -23,8 +23,9 @@
     </include>
 
     <!-- Ghost node for enabling RPI simulation -->
-    <include file="$(find niryo_robot_rpi)/launch/rpi_simulation.launch">
+    <include file="$(find niryo_robot_rpi)/launch/rpi.launch">
         <arg name="log_level" value="$(arg log_level)" />
+        <arg name="rpi_model" value="simulation" />
     </include>
 
 </launch>

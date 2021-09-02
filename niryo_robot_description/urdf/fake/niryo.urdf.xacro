@@ -24,19 +24,17 @@
             <origin xyz="0 0 0"
                     rpy="0 0 0"/>
             <geometry>
-                <mesh filename="package://niryo_robot_description/meshes/ned/collada/base_link.dae"/>
+                <mesh filename="package://niryo_robot_description/meshes/fake/collada/base_link.dae"/>
             </geometry>
         </visual>
         <collision>
             <origin xyz="0 0 0"
                     rpy="0 0 0"/>
             <geometry>
-                <mesh filename="package://niryo_robot_description/meshes/ned/stl/base_link.stl"/>
+                <mesh filename="package://niryo_robot_description/meshes/fake/stl/base_link.stl"/>
             </geometry>
         </collision>
     </link>
-
-
 
     <joint name="joint_1"
            type="revolute">
@@ -60,14 +58,14 @@
             <origin xyz="0 0 0"
                     rpy="0 0 0"/>
             <geometry>
-                <mesh filename="package://niryo_robot_description/meshes/ned/collada/shoulder_link.dae"/>
+                <mesh filename="package://niryo_robot_description/meshes/fake/collada/shoulder_link.dae"/>
             </geometry>
         </visual>
         <collision>
             <origin xyz="0 0 0"
                     rpy="0 0 0"/>
             <geometry>
-                <mesh filename="package://niryo_robot_description/meshes/ned/stl/shoulder_link.stl"/>
+                <mesh filename="package://niryo_robot_description/meshes/fake/stl/shoulder_link.stl"/>
             </geometry>
         </collision>
     </link>
@@ -95,14 +93,14 @@
             <origin xyz="0 0 0"
                     rpy="0 0 0"/>
             <geometry>
-                <mesh filename="package://niryo_robot_description/meshes/ned/collada/arm_link.dae"/>
+                <mesh filename="package://niryo_robot_description/meshes/fake/collada/arm_link.dae"/>
             </geometry>
         </visual>
         <collision>
             <origin xyz="0 0 0"
                     rpy="0 0 0"/>
             <geometry>
-                <mesh filename="package://niryo_robot_description/meshes/ned/stl/arm_link.stl"/>
+                <mesh filename="package://niryo_robot_description/meshes/fake/stl/arm_link.stl"/>
             </geometry>
         </collision>
     </link>
@@ -131,14 +129,14 @@
             <origin xyz="0 0 0"
                     rpy="0 0 0"/>
             <geometry>
-                <mesh filename="package://niryo_robot_description/meshes/ned/collada/elbow_link.dae"/>
+                <mesh filename="package://niryo_robot_description/meshes/fake/collada/elbow_link.dae"/>
             </geometry>
         </visual>
         <collision>
             <origin xyz="0 0 0"
                     rpy="0 0 0"/>
             <geometry>
-                <mesh filename="package://niryo_robot_description/meshes/ned/stl/elbow_link.stl"/>
+                <mesh filename="package://niryo_robot_description/meshes/fake/stl/elbow_link.stl"/>
             </geometry>
         </collision>
     </link>
@@ -165,14 +163,14 @@
             <origin xyz="0 0 0"
                     rpy="0 0 0"/>
             <geometry>
-                <mesh filename="package://niryo_robot_description/meshes/ned/collada/forearm_link.dae"/>
+                <mesh filename="package://niryo_robot_description/meshes/fake/collada/forearm_link.dae"/>
             </geometry>
         </visual>
         <collision>
             <origin xyz="0 0 0"
                     rpy="0 0 0"/>
             <geometry>
-                <mesh filename="package://niryo_robot_description/meshes/ned/stl/forearm_link.stl"/>
+                <mesh filename="package://niryo_robot_description/meshes/fake/stl/forearm_link.stl"/>
             </geometry>
         </collision>
     </link>
@@ -228,14 +226,14 @@
             <origin xyz="0 0 0"
                     rpy="0 0 0"/>
             <geometry>
-                <mesh filename="package://niryo_robot_description/meshes/ned/collada/wrist_link.dae"/>
+                <mesh filename="package://niryo_robot_description/meshes/fake/collada/wrist_link.dae"/>
             </geometry>
         </visual>
         <collision>
             <origin xyz="0 0 0"
                     rpy="0 0 0"/>
             <geometry>
-                <mesh filename="package://niryo_robot_description/meshes/ned/stl/wrist_link.stl"/>
+                <mesh filename="package://niryo_robot_description/meshes/fake/stl/wrist_link.stl"/>
             </geometry>
         </collision>
     </link>
@@ -262,14 +260,14 @@
             <origin xyz="0 0 0"
                     rpy="0 0 0"/>
             <geometry>
-                <mesh filename="package://niryo_robot_description/meshes/ned/collada/hand_link.dae"/>
+                <mesh filename="package://niryo_robot_description/meshes/fake/collada/hand_link.dae"/>
             </geometry>
         </visual>
         <collision>
             <origin xyz="0 0 0"
                     rpy="0 0 0"/>
             <geometry>
-                <mesh filename="package://niryo_robot_description/meshes/ned/stl/hand_link.stl"/>
+                <mesh filename="package://niryo_robot_description/meshes/fake/stl/hand_link.stl"/>
             </geometry>
         </collision>
     </link>

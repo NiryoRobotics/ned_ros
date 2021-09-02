@@ -16,19 +16,14 @@
         </group>
     </group>
 
-    <group ns="niryo_robot_hardware_interface">
+    <rosparam file="$(find joints_interface)/config/$(arg hardware_version)/niryo_controllers.yaml" command="load" />
 
-        <include file="$(find joints_interface)/launch/joints_interface_base.launch.xml" >
-            <arg name="hardware_version" value="$(arg hardware_version)" />
-        </include>
-        
+    <group ns="niryo_robot_hardware_interface">
         <!-- use can_driver config -->
         <group if="$(arg can_enabled)" >
             <include file="$(find can_driver)/launch/can_driver_base.launch.xml" >
                 <arg name="hardware_version" value="$(arg hardware_version)" />
             </include>
-            
-            <rosparam file="$(find conveyor_interface)/config/default.yaml" command="load" ns="conveyor"/>
         </group>
         
         <!--use ttl_driver config -->
@@ -36,12 +31,25 @@
             <include file="$(find ttl_driver)/launch/ttl_driver_base.launch.xml" >
                 <arg name="hardware_version" value="$(arg hardware_version)" />
             </include>
-            
-            <include file="$(find tools_interface)/launch/tools_interface_base.launch.xml" >
-                <arg name="hardware_version" value="$(arg hardware_version)" />
-            </include>
         </group>
-        
+
+        <include file="$(find joints_interface)/launch/joints_interface_base.launch.xml" >
+            <arg name="hardware_version" value="$(arg hardware_version)" />
+        </include>
+
+        <include file="$(find conveyor_interface)/launch/conveyor_interface_base.launch.xml" >
+            <arg name="hardware_version" value="$(arg hardware_version)" />
+        </include>
+
+        <include file="$(find tools_interface)/launch/tools_interface_base.launch.xml" >
+            <arg name="hardware_version" value="$(arg hardware_version)" />
+        </include>
+
+        <!-- end effector only in ned2 -->
+        <group if="$(eval hardware_version == 'ned2')" >
+            <include file="$(find end_effector_interface)/launch/end_effector_interface_base.launch.xml" />
+        </group>
+
         <rosparam file="$(find cpu_interface)/config/default.yaml" command="load"/>
     
     </group>

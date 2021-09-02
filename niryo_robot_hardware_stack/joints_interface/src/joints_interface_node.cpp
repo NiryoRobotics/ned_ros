@@ -1,5 +1,5 @@
 /*
-    joint_interface_node.cpp
+    joints_interface_node.cpp
     Copyright (C) 2020 Niryo
     All rights reserved.
 

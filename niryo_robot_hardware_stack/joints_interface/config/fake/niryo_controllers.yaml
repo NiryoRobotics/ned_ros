@@ -8,7 +8,7 @@ joint_state_controller:
     publish_rate: 50
     
 # Joint Trajectory Controller - position based -----------------------
-niryo_robot_follow_joint_trajectory_controller:
+fake_niryo_robot_follow_joint_trajectory_controller:
     type: "position_controllers/JointTrajectoryController"
     joints: 
         - joint_1  

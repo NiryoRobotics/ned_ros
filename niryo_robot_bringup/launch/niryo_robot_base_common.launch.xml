@@ -35,7 +35,7 @@
     <node name="tf2_web_republisher" pkg="tf2_web_republisher" type="tf2_web_republisher"/>
     <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch">
         <arg name="port" value="9090"/>
-        <arg name="output" value="log" unless="$(eval 'kinetic' == arg('ros_version'))"/>
+        <arg name="output" value="log" unless="$(eval 'ros_version' == 'kinetic')"/>
     </include>
 
     <!-- Including launch files -->

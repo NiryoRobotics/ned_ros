@@ -38,7 +38,7 @@ JointsInterfaceCore::JointsInterfaceCore(ros::NodeHandle& rootnh,
                                          ros::NodeHandle& robot_hwnh,
                                          std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface,
                                          std::shared_ptr<can_driver::CanInterfaceCore> can_interface) :
-    _joint_controller_name("/niryo_robot_follow_joint_trajectory_controller"),
+    _joint_controller_name("/fake_niryo_robot_follow_joint_trajectory_controller"),
     _ttl_interface(ttl_interface),
     _can_interface(can_interface)
 {
@@ -54,7 +54,7 @@ JointsInterfaceCore::JointsInterfaceCore(ros::NodeHandle& rootnh,
     _control_loop_thread = std::thread(&JointsInterfaceCore::rosControlLoop, this);
 
     ROS_INFO("JointsInterfaceCore::init - Started");
-    rootnh.setParam("/niryo_robot_joint_interface/initialized", true);
+    rootnh.setParam("/niryo_robot_joints_interface/initialized", true);
 }
 
 /**

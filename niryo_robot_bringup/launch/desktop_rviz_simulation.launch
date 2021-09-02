@@ -9,10 +9,9 @@
     <arg name="log_level" default="INFO" />
 
     <arg name="gui" default="true"/>
-    <arg name="hardware_version" default="ned"/>
 
     <!-- Load URDF -->
-    <arg name="urdf_path" value="urdf/$(arg hardware_version)/niryo.urdf.xacro"/>
+    <arg name="urdf_path" value="urdf/fake/niryo.urdf.xacro"/>
 
     <param name="robot_description"
            command="$(find xacro)/xacro $(find niryo_robot_description)/$(arg urdf_path)"/>
@@ -25,7 +24,6 @@
         <arg name="log_level" value="$(arg log_level)" />
         <arg name="simu_gripper" value="false"/>
         <arg name="gazebo" value="false"/>
-        <arg name="hardware_version" value="$(arg hardware_version)"/>
     </include>
 
     <group if="$(arg gui)">

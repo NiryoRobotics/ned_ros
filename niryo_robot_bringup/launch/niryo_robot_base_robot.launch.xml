@@ -40,8 +40,9 @@
 
     <!--   Rpi node (IO / fan / ...)   -->
     <!-- Raspberry pi -->
-    <include file="$(find niryo_robot_rpi)/launch/rpi_$(arg rpi_model).launch">
+    <include file="$(find niryo_robot_rpi)/launch/rpi.launch">
         <arg name="log_level" value="$(arg log_level)" />
+        <arg name="rpi_model" value="$(arg rpi_model)" />
     </include>
 
     <!-- Launching vision node -->

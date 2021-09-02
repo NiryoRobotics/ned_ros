@@ -7,6 +7,7 @@
 
     <node name="niryo_robot_vision" pkg="niryo_robot_vision" type="camera_publisher_and_services.py" output="screen">
         <param name="log_level" type="string" value="$(arg log_level)" />
+        <param name="hardware_version" value="$(arg hardware_version)" />
         <!-- Settings will give more FPS if the user is using simulation-->
         <rosparam file="$(find niryo_robot_vision)/config/$(arg hardware_version)/video_server_setup.yaml" />
     </node>

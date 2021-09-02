@@ -15,11 +15,10 @@ This will reduce the amount of time spent waiting during program shutdown
 
     <arg name="gripper_n_camera" default="true"/>
     <arg name="gui" default="true"/>
-    <arg name="hardware_version" default="ned"/>
 
     <!-- Load URDF -->
-    <arg name="urdf_path" value="urdf/$(arg hardware_version)/niryo_gripper1_n_camera.urdf.xacro" if="$(arg gripper_n_camera)"/>
-    <arg name="urdf_path" value="urdf/$(arg hardware_version)/niryo_gazebo.urdf.xacro" unless="$(arg gripper_n_camera)"/>
+    <arg name="urdf_path" value="urdf/fake/niryo_gripper1_n_camera.urdf.xacro" if="$(arg gripper_n_camera)"/>
+    <arg name="urdf_path" value="urdf/fake/niryo_gazebo.urdf.xacro" unless="$(arg gripper_n_camera)"/>
 
     <param name="robot_description"
         command="$(find xacro)/xacro $(find niryo_robot_description)/$(arg urdf_path)"/>
@@ -30,7 +29,6 @@ This will reduce the amount of time spent waiting during program shutdown
     <!-- Define most of ROS parameters -->
     <include file="$(find niryo_robot_bringup)/launch/niryo_robot_base_simulation.launch.xml">
         <arg name="log_level" value="$(arg log_level)" />
-        <arg name="hardware_version" value="$(arg hardware_version)"/>
         <arg name="simu_gripper" value="$(arg gripper_n_camera)"/>
         <arg name="gazebo" value="true"/>
     </include>

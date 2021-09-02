@@ -46,6 +46,7 @@
   <exec_depend>niryo_robot_description</exec_depend>
   <exec_depend>robot_state_publisher</exec_depend>
   <exec_depend>common</exec_depend>
+  <exec_depend>niryo_moveit_config_standalone</exec_depend>
 
   <test_depend>rostest</test_depend>
   <test_depend>python-catkin-lint</test_depend>
