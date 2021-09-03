@@ -54,8 +54,8 @@ class JointState : public AbstractMotorState
 
         virtual bool operator==(const JointState &other) const;
 
-        virtual int to_motor_pos(double pos_rad);
-        virtual double to_rad_pos(int position_dxl);
+        virtual int to_motor_pos(double pos_rad, common::model::EBusProtocol protocol);
+        virtual double to_rad_pos(int position_dxl, common::model::EBusProtocol protocol);
 
         // AbstractMotorState interface
         virtual void reset() override;

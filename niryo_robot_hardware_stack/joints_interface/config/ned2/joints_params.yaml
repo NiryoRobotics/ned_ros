@@ -5,12 +5,12 @@ joint_4_name: "joint_4"
 joint_5_name: "joint_5"
 joint_6_name: "joint_6"
 
-joint_1_id: 1
-joint_2_id: 2
-joint_3_id: 3
-joint_4_id: 2
-joint_5_id: 3
-joint_6_id: 6
+joint_1_id: 2
+joint_2_id: 3
+joint_3_id: 4
+joint_4_id: 5
+joint_5_id: 6
+joint_6_id: 7
 
 joint_1_type: "stepper"
 joint_2_type: "stepper"
@@ -19,9 +19,9 @@ joint_4_type: "xl430"
 joint_5_type: "xl430"
 joint_6_type: "xl330"
 
-joint_1_bus: "can"
-joint_2_bus: "can"
-joint_3_bus: "can"
+joint_1_bus: "ttl"
+joint_2_bus: "ttl"
+joint_3_bus: "ttl"
 joint_4_bus: "ttl"
 joint_5_bus: "ttl"
 joint_6_bus: "ttl"

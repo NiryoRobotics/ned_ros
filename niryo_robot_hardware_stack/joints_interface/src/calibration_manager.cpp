@@ -230,7 +230,7 @@ void CalibrationManager::setStepperCalibrationCommand(const std::shared_ptr<Step
                                                         int32_t delay, int32_t calibration_direction, int32_t timeout)
 {
     uint8_t motor_id = pState->getId();
-    int32_t offset = pState->to_motor_pos(pState->getOffsetPosition());
+    int32_t offset = pState->to_motor_pos(pState->getOffsetPosition(), pState->getBusProtocol());
     int32_t motor_direction = static_cast<int32_t>(pState->getDirection());
 
     // TODO(Thuc) need implement ttl driver for EStepperCommandType::CMD_TYPE_CALIBRATION cmd
@@ -276,7 +276,7 @@ EStepperCalibrationStatus CalibrationManager::_auto_calibration()
         sld.sleep();
 
         // 1. Relative Move Motor 3
-        _relativeMoveMotor(_joint_list.at(2), _joint_list.at(2)->to_motor_pos(0.25), 500, false);
+        _relativeMoveMotor(_joint_list.at(2), _joint_list.at(2)->to_motor_pos(0.25, EBusProtocol::CAN), 500, false);
         ros::Duration(0.5).sleep();
     }
 
@@ -297,15 +297,15 @@ EStepperCalibrationStatus CalibrationManager::_auto_calibration()
 
         dynamixel_cmd.addMotorParam(_joint_list.at(3)->getType(),
                                     _joint_list.at(3)->getId(),
-                                    static_cast<uint32_t>(_joint_list.at(3)->to_motor_pos(0)));
+                                    static_cast<uint32_t>(_joint_list.at(3)->to_motor_pos(0, EBusProtocol::TTL)));
 
         dynamixel_cmd.addMotorParam(_joint_list.at(4)->getType(),
                                     _joint_list.at(4)->getId(),
-                                    static_cast<uint32_t>(_joint_list.at(4)->to_motor_pos(0)));
+                                    static_cast<uint32_t>(_joint_list.at(4)->to_motor_pos(0, EBusProtocol::TTL)));
 
         dynamixel_cmd.addMotorParam(_joint_list.at(5)->getType(),
                                     _joint_list.at(5)->getId(),
-                                    static_cast<uint32_t>(_joint_list.at(5)->to_motor_pos(0)));
+                                    static_cast<uint32_t>(_joint_list.at(5)->to_motor_pos(0, EBusProtocol::TTL)));
 
         // TODO(Thuc): only dxl use sync cmd
         _ttl_interface->setSyncCommand(std::make_shared<common::model::DxlSyncCmd>(dynamixel_cmd));
@@ -341,19 +341,19 @@ EStepperCalibrationStatus CalibrationManager::_auto_calibration()
     else
     {
         // calibration of steppers Ttl
-        StepperTtlSingleCmd torque_cmd_1(EStepperCommandType::CMD_TYPE_TORQUE, 1, {0});
-        StepperTtlSingleCmd torque_cmd_2(EStepperCommandType::CMD_TYPE_TORQUE, 2, {0});
-        StepperTtlSingleCmd torque_cmd_3(EStepperCommandType::CMD_TYPE_TORQUE, 3, {0});
+        StepperTtlSingleCmd torque_cmd_1(EStepperCommandType::CMD_TYPE_TORQUE, 2, {0});
+        StepperTtlSingleCmd torque_cmd_2(EStepperCommandType::CMD_TYPE_TORQUE, 3, {0});
+        StepperTtlSingleCmd torque_cmd_3(EStepperCommandType::CMD_TYPE_TORQUE, 4, {0});
 
         _ttl_interface->addSingleCommandToQueue(std::make_shared<StepperTtlSingleCmd>(torque_cmd_1));
         _ttl_interface->addSingleCommandToQueue(std::make_shared<StepperTtlSingleCmd>(torque_cmd_2));
         _ttl_interface->addSingleCommandToQueue(std::make_shared<StepperTtlSingleCmd>(torque_cmd_3));
 
-        StepperTtlSingleCmd stepper_cmd_1(EStepperCommandType::CMD_TYPE_CALIBRATION, 1);
-        StepperTtlSingleCmd stepper_cmd_2(EStepperCommandType::CMD_TYPE_CALIBRATION, 2);
-        StepperTtlSingleCmd stepper_cmd_3(EStepperCommandType::CMD_TYPE_CALIBRATION, 3);
+        StepperTtlSingleCmd stepper_cmd_1(EStepperCommandType::CMD_TYPE_CALIBRATION, 2, {0});
+        StepperTtlSingleCmd stepper_cmd_2(EStepperCommandType::CMD_TYPE_CALIBRATION, 3, {1});
+        StepperTtlSingleCmd stepper_cmd_3(EStepperCommandType::CMD_TYPE_CALIBRATION, 4, {0});
 
-         _can_interface->startCalibration();
+        _ttl_interface->startCalibration();
          
         _ttl_interface->addSingleCommandToQueue(std::make_shared<StepperTtlSingleCmd>(stepper_cmd_1));
         _ttl_interface->addSingleCommandToQueue(std::make_shared<StepperTtlSingleCmd>(stepper_cmd_2));
@@ -399,7 +399,7 @@ EStepperCalibrationStatus CalibrationManager::_auto_calibration()
             // -0.01 to bypass error
             sld.sleep();
             _relativeMoveMotor(_joint_list.at(0),
-                            -_joint_list.at(0)->to_motor_pos(_joint_list.at(0)->getOffsetPosition()),
+                            -_joint_list.at(0)->to_motor_pos(_joint_list.at(0)->getOffsetPosition(), EBusProtocol::CAN),
                             550,
                             false);
 
@@ -592,7 +592,7 @@ EStepperCalibrationStatus CalibrationManager::_manual_calibration()
 
         if (motor_id_list.at(i) == _joint_list.at(0)->getId())
         {
-            offset_to_send = sensor_offset_steps - _joint_list.at(0)->to_motor_pos(_joint_list.at(0)->getOffsetPosition()) % steps_per_rev;
+            offset_to_send = sensor_offset_steps - _joint_list.at(0)->to_motor_pos(_joint_list.at(0)->getOffsetPosition(), _joint_list.at(0)->getBusProtocol()) % steps_per_rev;
             if (offset_to_send < 0)
                 offset_to_send += steps_per_rev;
             absolute_steps_at_offset_position = offset_to_send;
@@ -602,7 +602,7 @@ EStepperCalibrationStatus CalibrationManager::_manual_calibration()
         }
         else if (motor_id_list.at(i) == _joint_list.at(1)->getId())
         {
-            offset_to_send = sensor_offset_steps - _joint_list.at(1)->to_motor_pos(_joint_list.at(1)->getOffsetPosition());
+            offset_to_send = sensor_offset_steps - _joint_list.at(1)->to_motor_pos(_joint_list.at(1)->getOffsetPosition(), _joint_list.at(1)->getBusProtocol());
             absolute_steps_at_offset_position = sensor_offset_steps;
 
             _send_calibration_offset(_joint_list.at(1)->getId(), offset_to_send, absolute_steps_at_offset_position);
@@ -610,7 +610,7 @@ EStepperCalibrationStatus CalibrationManager::_manual_calibration()
         }
         else if (motor_id_list.at(i) == _joint_list.at(2)->getId())
         {
-            offset_to_send = sensor_offset_steps - _joint_list.at(2)->to_motor_pos(_joint_list.at(2)->getOffsetPosition());
+            offset_to_send = sensor_offset_steps - _joint_list.at(2)->to_motor_pos(_joint_list.at(2)->getOffsetPosition(), _joint_list.at(2)->getBusProtocol());
             absolute_steps_at_offset_position = sensor_offset_steps;
 
             _send_calibration_offset(_joint_list.at(2)->getId(), offset_to_send, absolute_steps_at_offset_position);

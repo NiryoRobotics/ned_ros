@@ -74,7 +74,7 @@ class StepperDriver : public AbstractStepperDriver
 
         // AbstractStepperDriver interface
     public:
-        virtual int startHoming(uint8_t id) override;
+        virtual int startHoming(uint8_t id, uint32_t direction) override;
         virtual int getHomingStatus(uint8_t id, uint32_t &status) override;
         // conveyor control
         virtual int setGoalConveyorDirection(uint8_t id, int8_t direction) override;
@@ -215,12 +215,9 @@ int StepperDriver<reg_type>::readVoltage(uint8_t id, uint32_t& voltage)
 }
 
 template<typename reg_type>
-int StepperDriver<reg_type>::readHwErrorStatus(uint8_t /*id*/, uint32_t& hardware_status)
+int StepperDriver<reg_type>::readHwErrorStatus(uint8_t id, uint32_t& hardware_status)
 {
-    hardware_status = 0;
-    std::cout << "readHwErrorStatus not yet implemented" << std::endl;
-    //return read(reg_type::ADDR_HW_ERROR_STATUS, reg_type::SIZE_HW_ERROR_STATUS, id, hardware_status);
-    return COMM_RX_FAIL;
+    return read(reg_type::ADDR_HW_ERROR_STATUS, reg_type::SIZE_HW_ERROR_STATUS, id, hardware_status);
 }
 
 template<typename reg_type>
@@ -244,11 +241,7 @@ int StepperDriver<reg_type>::syncReadVoltage(const std::vector<uint8_t> &id_list
 template<typename reg_type>
 int StepperDriver<reg_type>::syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list)
 {
-    std::cout << "readHwErrorStatus not yet implemented" << std::endl;
-
-   // return syncRead(reg_type::ADDR_HW_ERROR_STATUS, reg_type::SIZE_HW_ERROR_STATUS, id_list, hw_error_list);
-    return COMM_RX_FAIL;
-
+   return syncRead(reg_type::ADDR_HW_ERROR_STATUS, reg_type::SIZE_HW_ERROR_STATUS, id_list, hw_error_list);
 }
 
 //*****************************
@@ -256,8 +249,11 @@ int StepperDriver<reg_type>::syncReadHwErrorStatus(const std::vector<uint8_t> &i
 //*****************************
 
 template<typename reg_type>
-int StepperDriver<reg_type>::startHoming(uint8_t id)
+int StepperDriver<reg_type>::startHoming(uint8_t id, uint32_t direction)
 {
+    int err = write(reg_type::ADDR_HOMING_DIRECTION, reg_type::SIZE_HOMING_DIRECTION, id, direction);
+    if (err != COMM_SUCCESS)
+        return err;
     return write(reg_type::ADDR_COMMAND, reg_type::SIZE_COMMAND, id, 0);
 }
 

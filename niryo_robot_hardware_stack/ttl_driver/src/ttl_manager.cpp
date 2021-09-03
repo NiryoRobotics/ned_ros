@@ -318,7 +318,6 @@ int TtlManager::setupCommunication()
     else
         ROS_ERROR("TtlManager::setupCommunication - Invalid port handler");
 
-    // TODO(Thuc): set up for stepper bus
     return ret;
 }
 
@@ -553,7 +552,7 @@ void TtlManager::readPositionStatus()
                 }
                 else
                 {
-                    hw_errors_increment++;
+                    // hw_errors_increment++;
                 }
             }
         }  // for driver_map
@@ -607,7 +606,7 @@ void TtlManager::readHwStatus()
                 if (COMM_SUCCESS != driver->syncReadTemperature(id_list, temperature_list))
                 {
                     // this operation can fail, it is normal, so no error message
-                    hw_errors_increment++;
+                    // hw_errors_increment++;
                 }
                 else if (id_list_size != temperature_list.size())
                 {
@@ -625,7 +624,7 @@ void TtlManager::readHwStatus()
 
                 if (COMM_SUCCESS != driver->syncReadVoltage(id_list, voltage_list))
                 {
-                    hw_errors_increment++;
+                    // hw_errors_increment++;
                 }
                 else if (id_list_size != voltage_list.size())
                 {
@@ -641,7 +640,7 @@ void TtlManager::readHwStatus()
 
                 if (COMM_SUCCESS != driver->syncReadHwErrorStatus(id_list, hw_status_list))
                 {
-                    hw_errors_increment++;
+                    // hw_errors_increment++;
                 }
                 else if (id_list_size != hw_status_list.size())
                 {
@@ -656,11 +655,13 @@ void TtlManager::readHwStatus()
                 {
                     for (auto id : _ids_map.at(type))
                     {
-                        uint32_t status;
+                        uint32_t status; // not in calibration status table
                         shared_ptr<ttl_driver::AbstractStepperDriver> stepper_driver = std::dynamic_pointer_cast<ttl_driver::AbstractStepperDriver>(driver);
-                        stepper_driver->getHomingStatus(id, status);
-                        std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(id))->setCalibration(static_cast<EStepperCalibrationStatus>(status), 0);
-                        updateCurrentCalibrationStatus();
+                        if (_calibration_status != EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED && COMM_SUCCESS == stepper_driver->getHomingStatus(id, status))
+                        {
+                            std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(id))->setCalibration(_map_calibration_status.at(status), 0);
+                            updateCurrentCalibrationStatus();
+                        }
                     }
                 }
 
@@ -677,15 +678,15 @@ void TtlManager::readHwStatus()
                             int8_t direction;
                             if (COMM_SUCCESS != stepper_driver->getConveyorSpeed(id, speed))
                             {
-                                hw_errors_increment++;
+                                // hw_errors_increment++;
                             }
                             if (COMM_SUCCESS != stepper_driver->getConveyorDirection(id, direction))
                             {
-                                hw_errors_increment++;
+                                // hw_errors_increment++;
                             }
                             if (COMM_SUCCESS != stepper_driver->getConveyorState(id, state))
                             {
-                                hw_errors_increment++;
+                                // hw_errors_increment++;
                             }
                             auto cState = std::dynamic_pointer_cast<ConveyorState>(_state_map.at(id));
                             // TODO(thuc): handle datas before set in state of conveyor - type data in ttl conveyor is differrent with data in can conveyor
@@ -857,19 +858,13 @@ common::model::EStepperCalibrationStatus TtlManager::getCalibrationStatus() cons
  */
 void TtlManager::updateCurrentCalibrationStatus()
 {
-    EStepperCalibrationStatus newStatus = EStepperCalibrationStatus::CALIBRATION_OK;
+    EStepperCalibrationStatus newStatus = EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED;
     for (auto const& s : _state_map)
     {
-        if (s.second && s.second->isStepper())
-        {   
+        if (s.second && s.second->isStepper() && newStatus < std::dynamic_pointer_cast<StepperMotorState>(s.second)->getCalibrationState())
             newStatus = std::dynamic_pointer_cast<StepperMotorState>(s.second)->getCalibrationState();
-            if (static_cast<int>(newStatus) != CALIBRATION_SUCCESS)
-            {
-                _calibration_status = newStatus;
-                break;
-            }
-        }
     }
+    _calibration_status = newStatus;
 }
 
 // ******************

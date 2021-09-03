@@ -161,7 +161,7 @@ std::string DxlMotorState::str() const
  * @param pos_rad
  * @return
  */
-int DxlMotorState::to_motor_pos(double pos_rad)
+int DxlMotorState::to_motor_pos(double pos_rad, common::model::EBusProtocol protocol)
 {
     double denominator = _total_angle;
     assert(0.0 != denominator);
@@ -175,7 +175,7 @@ int DxlMotorState::to_motor_pos(double pos_rad)
  * @param position_dxl
  * @return
  */
-double DxlMotorState::to_rad_pos(int position_dxl)
+double DxlMotorState::to_rad_pos(int position_dxl, common::model::EBusProtocol protocol)
 {
     double denominator = RADIAN_TO_DEGREE * _total_range_position;
     assert(0.0 != denominator);

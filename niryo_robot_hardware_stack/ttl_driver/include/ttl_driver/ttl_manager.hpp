@@ -170,6 +170,11 @@ class TtlManager : public common::model::IBusManager
         static constexpr int CALIBRATION_IN_PROGRESS = 1;
         static constexpr int CALIBRATION_SUCCESS = 2;
         static constexpr int CALIBRATION_ERROR = 3;
+        std::map<int, common::model::EStepperCalibrationStatus> _map_calibration_status {
+                                        {CALIBRATION_SUCCESS, common::model::EStepperCalibrationStatus::CALIBRATION_OK},
+                                        {CALIBRATION_IN_PROGRESS, common::model::EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS},
+                                        {CALIBRATION_ERROR, common::model::EStepperCalibrationStatus::CALIBRATION_FAIL},
+                                        {CALIBRATION_IDLE, common::model::EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED}};
 };
 
 // inline getters

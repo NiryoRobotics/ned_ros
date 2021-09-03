@@ -47,7 +47,7 @@ class AbstractStepperDriver : public AbstractTtlDriver
         virtual std::string interpreteErrorState(uint32_t hw_state) override = 0;
 
         // ram write
-        virtual int startHoming(uint8_t id) = 0;
+        virtual int startHoming(uint8_t id, uint32_t direction) = 0;
         virtual int getHomingStatus(uint8_t id, uint32_t& status) = 0;
         
         // conveyor control

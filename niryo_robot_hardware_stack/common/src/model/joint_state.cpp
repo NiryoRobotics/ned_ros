@@ -70,7 +70,7 @@ bool JointState::operator==(const JointState& m) const
 /**
  * @brief JointState::to_motor_pos
 */
-int JointState::to_motor_pos(double pos_rad)
+int JointState::to_motor_pos(double pos_rad, common::model::EBusProtocol protocol)
 {
     return 0;
 }
@@ -78,7 +78,7 @@ int JointState::to_motor_pos(double pos_rad)
 /**
  * @brief JointState::to_rad_pos
 */
-double JointState::to_rad_pos(int position_dxl)
+double JointState::to_rad_pos(int position_dxl, common::model::EBusProtocol protocol)
 {
     return 0;
 }
