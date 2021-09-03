@@ -13,9 +13,9 @@
 
     <!-- Load URDF -->
     <param name="robot_description"
-           command="$(find xacro)/xacro $(find niryo_robot_description)/urdf/$(arg hardware_version)/without_mesh_niryo.urdf.xacro"/>
+           command="$(find xacro)/xacro $(find niryo_robot_description)/urdf/$(arg hardware_version)/without_mesh_niryo_$(arg hardware_version).urdf.xacro"/>
     <param name="robot_description_tf2"
-           command="$(find xacro)/xacro $(find niryo_robot_description)/urdf/$(arg hardware_version)/niryo.urdf.xacro"/>
+           command="$(find xacro)/xacro $(find niryo_robot_description)/urdf/$(arg hardware_version)/niryo_$(arg hardware_version).urdf.xacro"/>
 
     <!-- PARAMS -->
     <group ns="niryo_robot">
@@ -33,7 +33,6 @@
     <include file="$(find niryo_robot_bringup)/launch/niryo_robot_base_common.launch.xml">
         <arg name="hardware_version" value="$(arg hardware_version)" />
         <arg name="log_level" value="$(arg log_level)" />
-        <arg name="simulation_mode" value="false"/>
         <arg name="can_enabled" value="$(arg can_enabled)"/>
         <arg name="ttl_enabled" value="$(arg ttl_enabled)"/>
         <arg name="debug" value="$(arg debug)"/>
@@ -41,14 +40,15 @@
 
     <!--   Rpi node (IO / fan / ...)   -->
     <!-- Raspberry pi -->
-    <include file="$(find niryo_robot_rpi)/launch/rpi_$(arg rpi_model).launch">
+    <include file="$(find niryo_robot_rpi)/launch/rpi.launch">
         <arg name="log_level" value="$(arg log_level)" />
+        <arg name="rpi_model" value="$(arg rpi_model)" />
     </include>
 
     <!-- Launching vision node -->
     <include file="$(find niryo_robot_vision)/launch/vision_node.launch">
         <arg name="log_level" value="$(arg log_level)" />
-        <arg name="simulation_mode" value="false"/>
+        <arg name="hardware_version" value="$(arg hardware_version)" />
     </include>
 
     <include file="$(find niryo_robot_credentials)/launch/credentials.launch">
@@ -58,7 +58,6 @@
 
     <include file="$(find niryo_robot_system_api_client)/launch/system_api_client.launch">
         <arg name="log_level" value="$(arg log_level)" />
-        <arg name="simulation_mode" value="false"/>
     </include>
 
 </launch>

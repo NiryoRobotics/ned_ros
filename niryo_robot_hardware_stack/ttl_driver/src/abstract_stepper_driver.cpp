@@ -71,8 +71,11 @@ int AbstractStepperDriver::writeSingleCmd(const std::shared_ptr<common::model::A
             uint32_t speed = static_cast<int32_t>(cmd->getParams().at(1) * dir);
             return setGoalVelocity(cmd->getId(), speed);
         }
+        case EStepperCommandType::CMD_TYPE_CALIBRATION:
+            return startHoming(cmd->getId());
+
         default:
-            std::cout << "Command not implemented" << std::endl;
+            std::cout << "Command not implemented " << cmd->getCmdType() << std::endl;
         }
     }
 
@@ -102,7 +105,7 @@ int AbstractStepperDriver::writeSyncCmd(int type, const std::vector<uint8_t>& id
     case EStepperCommandType::CMD_TYPE_LEARNING_MODE:
         return syncWriteTorqueEnable(ids, params);
     default:
-        std::cout << "Command not implemented" << std::endl;
+        std::cout << "Command not implemented " << type << std::endl;
     }
 
     std::cout << "Command not validated" << std::endl;

@@ -32,7 +32,6 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "cpu_interface/cpu_interface_core.hpp"
 #include "ttl_driver/ttl_interface_core.hpp"
 #include "can_driver/can_interface_core.hpp"
-#include "fake_interface/fake_interface_core.hpp"
 
 #include "niryo_robot_msgs/Trigger.h"
 #include "niryo_robot_msgs/SetBool.h"
@@ -87,12 +86,10 @@ class HardwareInterface : common::model::IInterfaceCore
         std::shared_ptr<tools_interface::ToolsInterfaceCore> _tools_interface;
         std::shared_ptr<end_effector_interface::EndEffectorInterfaceCore> _end_effector_interface;
         std::shared_ptr<joints_interface::JointsInterfaceCore> _joints_interface;
-        std::shared_ptr<fake_interface::FakeInterfaceCore> _fake_interface;
 
         double _publish_hw_status_frequency{0.0};
         double _publish_software_version_frequency{0.0};
 
-        bool _simulation_mode{true};
         bool _gazebo{false};
 
         bool _can_enabled{false};

@@ -275,7 +275,7 @@ int TtlInterfaceCore::motorCmdReport(uint8_t motor_id, EHardwareType motor_type)
         // torque on
         ros::Duration(0.5).sleep();
         ROS_INFO("TtlInterfaceCore::motorCmdReport - Debug - Send torque on command to motor %d", motor_id);
-        if (motor_type != EHardwareType::STEPPER)
+        if (motor_type != EHardwareType::STEPPER && motor_type != EHardwareType::FAKE_STEPPER_MOTOR)
         {
             ret = niryo_robot_msgs::CommandStatus::SUCCESS;
             ROS_INFO("TtlInterfaceCore::motorCmdReport: Implement in case we have stepper");
@@ -674,7 +674,8 @@ int TtlInterfaceCore::setTool(EHardwareType type, uint8_t motor_id)
     int result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
 
     lock_guard<mutex> lck(_control_loop_mutex);
-
+    // add dynamixel as a new tool
+    _ttl_manager->addMotor(type, motor_id, TtlManager::EType::TOOL);
     // try to find motor
     if (_ttl_manager->ping(motor_id))
     {
@@ -694,7 +695,7 @@ int TtlInterfaceCore::setTool(EHardwareType type, uint8_t motor_id)
     }
     else
     {
-        ROS_WARN("TtlInterfaceCore::setTool - No end effector found with motor id %d", motor_id);
+        ROS_WARN("TtlInterfaceCore::setTool - No tool found with motor id %d", motor_id);
     }
 
     return result;
@@ -1112,12 +1113,14 @@ bool TtlInterfaceCore::_callbackSendCustomValue(ttl_driver::SendCustomValue::Req
 
     EHardwareType motor_type;
 
-    if (1 <= req.motor_type  && 5 >= req.motor_type)
+    if (1 <= req.motor_type  && 7 >= req.motor_type || 10 == req.motor_type)
         motor_type = static_cast<EHardwareType>(req.motor_type);
     else
     {
         res.status = niryo_robot_msgs::CommandStatus::WRONG_MOTOR_TYPE;
-        res.message = "TtlInterfaceCore - Invalid motor type: should be 1 (Stepper) 2 (XL-430) or 3 (XL-320) or 4 (XL-330) or 5 (XC-430)";
+        res.message = "TtlInterfaceCore - Invalid motor type: should be "
+                      "1 (Stepper) or 2 (XL-430) or 3 (XL-320) or 4 (XL-330) or 5 (XC-430) or "
+                      "6 (Fake Dynamixel) or 7 (Fake Stepper) or 10 (End Effector)";
         return true;
     }
 
@@ -1152,12 +1155,14 @@ bool TtlInterfaceCore::_callbackReadCustomValue(ttl_driver::ReadCustomValue::Req
 {
     int result;
     EHardwareType motor_type;
-    if (1 <= req.motor_type  && 5 >= req.motor_type)
+    if (1 <= req.motor_type  && 7 >= req.motor_type || 10 == req.motor_type)
         motor_type = static_cast<EHardwareType>(req.motor_type);
     else
     {
         res.status = niryo_robot_msgs::CommandStatus::WRONG_MOTOR_TYPE;
-        res.message = "TtlInterfaceCore - Invalid motor type: should be 1 (Stepper) 2 (XL-430) or 3 (XL-320) or 4 (XL-330) or 5 (XC-430)";
+        res.message = "TtlInterfaceCore - Invalid motor type: should be "
+                      "1 (Stepper) or 2 (XL-430) or 3 (XL-320) or 4 (XL-330) or 5 (XC-430) or "
+                      "6 (Fake Dynamixel) or 7 (Fake Stepper) or 10 (End Effector)";
         return true;
     }
 

@@ -41,6 +41,7 @@
 using ::common::model::JointState;
 using ::common::model::EStepperCommandType;
 using ::common::model::StepperSingleCmd;
+using ::common::model::StepperTtlSingleCmd;
 using ::common::model::StepperMotorState;
 using ::common::model::EStepperCalibrationStatus;
 using ::common::model::EDxlCommandType;
@@ -270,16 +271,17 @@ EStepperCalibrationStatus CalibrationManager::_auto_calibration()
     ros::Duration sld(0.2);
 
     // 0. Torque ON for motor 2
+    if (_joint_list.at(1)->getBusProtocol() == EBusProtocol::CAN)
+    {
+        StepperSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_TORQUE, _joint_list.at(1)->getId(), {true});
+        getProtocolOfMotor(_joint_list.at(1)->getBusProtocol())->addSingleCommandToQueue(
+                                    std::make_shared<StepperSingleCmd>(stepper_cmd));
+        sld.sleep();
 
-    StepperSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_TORQUE, _joint_list.at(1)->getId(), {true});
-    getProtocolOfMotor(_joint_list.at(1)->getBusProtocol())->addSingleCommandToQueue(
-                                std::make_shared<StepperSingleCmd>(stepper_cmd));
-    sld.sleep();
-
-    // 1. Relative Move Motor 3
-    _relativeMoveMotor(_joint_list.at(2), _joint_list.at(2)->to_motor_pos(0.25), 500, false);
-    ros::Duration(0.5).sleep();
-
+        // 1. Relative Move Motor 3
+        _relativeMoveMotor(_joint_list.at(2), _joint_list.at(2)->to_motor_pos(0.25), 500, false);
+        ros::Duration(0.5).sleep();
+    }
     // 2. Move All Dynamixel to Home Position
     if (_ttl_interface)
     {
@@ -313,30 +315,33 @@ EStepperCalibrationStatus CalibrationManager::_auto_calibration()
     }
 
     // 3. Send calibration cmd 1 + 2 + 3
-
-    std::vector<int> sensor_offset_results;
-
-    std::shared_ptr<StepperMotorState> pStepperMotorState_1 =
-            std::dynamic_pointer_cast<StepperMotorState>(_joint_list.at(0));
-
-    std::shared_ptr<StepperMotorState> pStepperMotorState_2 =
-            std::dynamic_pointer_cast<StepperMotorState>(_joint_list.at(1));
-
-    std::shared_ptr<StepperMotorState> pStepperMotorState_3 =
-            std::dynamic_pointer_cast<StepperMotorState>(_joint_list.at(2));
-
-    if (pStepperMotorState_1 && pStepperMotorState_1->isValid() &&
-            pStepperMotorState_2 && pStepperMotorState_2->isValid() &&
-            pStepperMotorState_3 && pStepperMotorState_3->isValid())
+    if (_can_interface)
     {
-        if (_can_interface)
-            _can_interface->startCalibration();
-        else if (_ttl_interface)
-            _ttl_interface->startCalibration();
+        std::shared_ptr<StepperMotorState> pStepperMotorState_1 =
+                std::dynamic_pointer_cast<StepperMotorState>(_joint_list.at(0));
 
-        setStepperCalibrationCommand(pStepperMotorState_1, 200, 1, _calibration_timeout);
-        setStepperCalibrationCommand(pStepperMotorState_2, 1000, 1, _calibration_timeout);
-        setStepperCalibrationCommand(pStepperMotorState_3, 1000, -1, _calibration_timeout);
+        std::shared_ptr<StepperMotorState> pStepperMotorState_2 =
+                std::dynamic_pointer_cast<StepperMotorState>(_joint_list.at(1));
+
+        std::shared_ptr<StepperMotorState> pStepperMotorState_3 =
+                std::dynamic_pointer_cast<StepperMotorState>(_joint_list.at(2));
+
+        if (pStepperMotorState_1 && pStepperMotorState_1->isValid() &&
+                pStepperMotorState_2 && pStepperMotorState_2->isValid() &&
+                pStepperMotorState_3 && pStepperMotorState_3->isValid())
+        {
+            if (_can_interface)
+                _can_interface->startCalibration();
+
+            setStepperCalibrationCommand(pStepperMotorState_1, 200, 1, _calibration_timeout);
+            setStepperCalibrationCommand(pStepperMotorState_2, 1000, 1, _calibration_timeout);
+            setStepperCalibrationCommand(pStepperMotorState_3, 1000, -1, _calibration_timeout);
+        }
+    }
+    else
+    {
+        ROS_INFO("CalibrationManager::_auto_calibration: calibration for steppers ttl need to be implemented!");
+        _ttl_interface->startCalibration();
     }
 
     // wait for calibration status done
@@ -346,6 +351,7 @@ EStepperCalibrationStatus CalibrationManager::_auto_calibration()
         sld.sleep();
     }
 
+    std::vector<int> sensor_offset_results;
     for (size_t i = 0; i < 3; ++i)
     {
         uint8_t motor_id = _joint_list.at(i)->getId();
@@ -374,22 +380,25 @@ EStepperCalibrationStatus CalibrationManager::_auto_calibration()
 
         // 4. Move motor 1,2,3 to 0.0
         // -0.01 to bypass error
-        sld.sleep();
-        _relativeMoveMotor(_joint_list.at(0),
-                           -_joint_list.at(0)->to_motor_pos(_joint_list.at(0)->getOffsetPosition()),
-                           550,
-                           false);
-
-        ros::Duration(2.5).sleep();
-
-        // forge stepper command
-        for (auto const& jState : _joint_list)
+        if (_can_interface)
         {
-            if (jState && jState->isStepper())
+            sld.sleep();
+            _relativeMoveMotor(_joint_list.at(0),
+                            -_joint_list.at(0)->to_motor_pos(_joint_list.at(0)->getOffsetPosition()),
+                            550,
+                            false);
+
+            ros::Duration(2.5).sleep();
+
+            // forge stepper command
+            for (auto const& jState : _joint_list)
             {
-                StepperSingleCmd cmd(EStepperCommandType::CMD_TYPE_TORQUE, jState->getId(), {false});
-                getProtocolOfMotor(jState->getBusProtocol())->addSingleCommandToQueue(
-                                            std::make_shared<StepperSingleCmd>(cmd));
+                if (jState && jState->isStepper())
+                {
+                    StepperSingleCmd cmd(EStepperCommandType::CMD_TYPE_TORQUE, jState->getId(), {false});
+                    getProtocolOfMotor(jState->getBusProtocol())->addSingleCommandToQueue(
+                                                std::make_shared<StepperSingleCmd>(cmd));
+                }
             }
         }
 

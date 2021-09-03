@@ -6,16 +6,14 @@
     <arg name="gazebo" default="false"/>
     <arg name="hardware_version" default="ned"/>
     <arg name="simu_gripper" default="false"/>
-    <arg name="simulation_mode" default="false"/>
     <arg name="debug" default="false"/>
-    <arg name="can_enabled" default="$(eval simulation_mode == false)"/>
-    <arg name="ttl_enabled" default="$(eval simulation_mode == false)"/>
+    <arg name="can_enabled" default="true"/>
+    <arg name="ttl_enabled" default="true"/>
 
     <!-- SHARED PARAMS -->
     <group ns="niryo_robot">
         <param name="hardware_version" type="string" value="$(arg hardware_version)"/>
         <param name="reboot_when_auto_change_version" type="bool" value="true"/>
-        <param name="simulation_mode" type="bool" value="$(arg simulation_mode)"/>
 
         <group ns="info">
             <param name="robot_type" type="string" value="niryo_$(arg hardware_version)" />
@@ -37,7 +35,7 @@
     <node name="tf2_web_republisher" pkg="tf2_web_republisher" type="tf2_web_republisher"/>
     <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch">
         <arg name="port" value="9090"/>
-        <arg name="output" value="log" unless="$(eval 'kinetic' == arg('ros_version'))"/>
+        <arg name="output" value="log" unless="$(eval 'ros_version' == 'kinetic')"/>
     </include>
 
     <!-- Including launch files -->
@@ -46,13 +44,11 @@
         <arg name="gazebo" default="$(arg gazebo)"/>
         <arg name="hardware_version" default="$(arg hardware_version)"/>
         <arg name="simu_gripper" default="$(arg simu_gripper)"/>
-        <arg name="simulation_mode" default="$(arg simulation_mode)"/>
         <arg name="debug" value="$(arg debug)"/>
     </include>
 
     <include file="$(find niryo_robot_hardware_interface)/launch/niryo_robot_hardware_interface.launch">
         <arg name="hardware_version" value="$(arg hardware_version)"/>
-        <arg name="simulation_mode" value="$(arg simulation_mode)"/>
         <arg name="simu_gripper" value="$(arg simu_gripper)"/>
         <arg name="gazebo" value="$(arg gazebo)"/>
         <arg name="can_enabled" value="$(arg can_enabled)"/>
@@ -68,20 +64,17 @@
 
     <include file="$(find niryo_robot_tools_commander)/launch/tools_commander.launch">
         <arg name="log_level" value="$(arg log_level)" />
-        <arg name="simulation_mode" value="$(arg simulation_mode)"/>
         <arg name="simu_gripper" value="$(arg simu_gripper)"/>
         <arg name="hardware_version" value="$(arg hardware_version)"/>
     </include>
 
     <include file="$(find niryo_robot_poses_handlers)/launch/poses_handlers.launch">
         <arg name="log_level" value="$(arg log_level)" />
-        <arg name="simulation_mode" value="$(arg simulation_mode)"/>
         <arg name="hardware_version" value="$(arg hardware_version)"/>
     </include>
 
     <include file="$(find niryo_robot_programs_manager)/launch/programs_manager.launch">
         <arg name="log_level" value="$(arg log_level)" />
-        <arg name="simulation_mode" value="$(arg simulation_mode)"/>
     </include>
 
     <include file="$(find niryo_robot_user_interface)/launch/user_interface.launch">

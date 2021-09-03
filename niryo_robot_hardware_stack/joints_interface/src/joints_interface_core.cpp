@@ -54,7 +54,7 @@ JointsInterfaceCore::JointsInterfaceCore(ros::NodeHandle& rootnh,
     _control_loop_thread = std::thread(&JointsInterfaceCore::rosControlLoop, this);
 
     ROS_INFO("JointsInterfaceCore::init - Started");
-    rootnh.setParam("/niryo_robot_joint_interface/initialized", true);
+    rootnh.setParam("/niryo_robot_joints_interface/initialized", true);
 }
 
 /**
@@ -301,7 +301,7 @@ bool JointsInterfaceCore::_callbackResetController(niryo_robot_msgs::Trigger::Re
 bool JointsInterfaceCore::_callbackCalibrateMotors(niryo_robot_msgs::SetInt::Request &req,
                                                    niryo_robot_msgs::SetInt::Response &res)
 {
-    ROS_DEBUG("JointsInterfaceCore::_callbackTrajectoryResult - Received a calibration request");
+    ROS_DEBUG("JointsInterfaceCore::_callbackCalibrateMotors - Received a calibration request");
     int calibration_mode = req.value;
     std::string result_message = "";
     _enable_control_loop = false;

@@ -3,14 +3,12 @@
         xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
     <!-- Arguments -->
     <arg name="log_level" default="INFO" />
-    <arg name="simulation_mode" default="false"/>
+    <arg name="hardware_version" default="ned" />
 
     <node name="niryo_robot_vision" pkg="niryo_robot_vision" type="camera_publisher_and_services.py" output="screen">
         <param name="log_level" type="string" value="$(arg log_level)" />
-        <param name="simulation_mode" type="bool" value="$(arg simulation_mode)"/>
-
+        <param name="hardware_version" value="$(arg hardware_version)" />
         <!-- Settings will give more FPS if the user is using simulation-->
-        <rosparam file="$(find niryo_robot_vision)/config/video_server_setup_local.yaml" if="$(arg simulation_mode)"/>
-        <rosparam file="$(find niryo_robot_vision)/config/video_server_setup.yaml" unless="$(arg simulation_mode)"/>
+        <rosparam file="$(find niryo_robot_vision)/config/$(arg hardware_version)/video_server_setup.yaml" />
     </node>
 </launch>

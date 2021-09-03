@@ -42,6 +42,7 @@ using ::common::model::BusProtocolEnum;
 using ::common::model::StepperMotorState;
 using ::common::model::DxlMotorState;
 using ::common::model::StepperSingleCmd;
+using ::common::model::StepperTtlSingleCmd;
 using ::common::model::EStepperCalibrationStatus;
 using ::common::model::EStepperCommandType;
 using ::common::model::EDxlCommandType;
@@ -66,6 +67,7 @@ JointHardwareInterface::JointHardwareInterface(ros::NodeHandle& rootnh,
     ROS_DEBUG("JointHardwareInterface::ctor");
 
     init(rootnh, robot_hwnh);
+
 
     sendInitMotorsParams();
 
@@ -94,7 +96,7 @@ void JointHardwareInterface::read(const ros::Time &/*time*/, const ros::Duration
         }
     }
 
-    if (_can_interface && !_can_interface->isConnectionOk())
+    if ((_can_interface && !_can_interface->isConnectionOk()) || (_ttl_interface && !_ttl_interface->isConnectionOk()))
         this->setNeedCalibration();
 }
 
@@ -163,7 +165,7 @@ bool JointHardwareInterface::init(ros::NodeHandle& rootnh, ros::NodeHandle &robo
 
         // gather info in joint  states (polymorphic)
         // CC use factory in state directly ?
-        if (eType == EHardwareType::STEPPER)
+        if (eType == EHardwareType::STEPPER || eType == EHardwareType::FAKE_STEPPER_MOTOR)
         {  // stepper
             auto stepperState = std::make_shared<StepperMotorState>(joint_name,
                                                                     eType,
@@ -176,7 +178,11 @@ bool JointHardwareInterface::init(ros::NodeHandle& rootnh, ros::NodeHandle &robo
                 int direction = 1;
                 double max_effort = 0.0;
 
-                std::string currentStepperNamespace = "steppers/stepper_" + to_string(currentIdStepper);
+                std::string currentStepperNamespace;
+                if (stepperState->getBusProtocol() == EBusProtocol::CAN)
+                    currentStepperNamespace = "steppers/stepper_" + to_string(currentIdStepper);
+                else if ((stepperState->getBusProtocol() == EBusProtocol::TTL))
+                    currentStepperNamespace = "steppersTtl/stepper_" + to_string(currentIdStepper);
 
                 rootnh.getParam(currentStepperNamespace + "/offset_position", offsetPos);
                 rootnh.getParam(currentStepperNamespace + "/gear_ratio", gear_ratio);
@@ -290,20 +296,14 @@ void JointHardwareInterface::sendInitMotorsParams()
     // CMD_TYPE_MICRO_STEPS cmd
     for (auto const& jState : _joint_list)
     {
-        if (jState && jState->isStepper())
+        if (jState && jState->isStepper() && jState->getBusProtocol() == EBusProtocol::CAN)
         {
             StepperSingleCmd cmd(
                         EStepperCommandType::CMD_TYPE_MICRO_STEPS,
                         jState->getId(),
                         {8});
-            if (jState->getBusProtocol() == EBusProtocol::CAN)
-            {
-                if (_can_interface)
-                    _can_interface->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(cmd));
-            }
-            // TODO(Thuc) implement addSingleCommandToQueue with the same form for ttl_interface_core
-            // else
-            //     _ttl_interface->addSingleCommandToQueue(cmd);
+
+            _can_interface->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(cmd));
         }
     }
     ros::Duration(0.05).sleep();
@@ -311,25 +311,13 @@ void JointHardwareInterface::sendInitMotorsParams()
     // CMD_TYPE_MAX_EFFORT cmd
     for (auto const& jState : _joint_list)
     {
-        if (jState && jState->isStepper())
+        if (jState && jState->isStepper() && jState->getBusProtocol() == EBusProtocol::CAN)
         {
             StepperSingleCmd cmd(EStepperCommandType::CMD_TYPE_MAX_EFFORT, jState->getId(),
                                 {
                                     static_cast<int32_t>(dynamic_pointer_cast<StepperMotorState>(jState)->getMaxEffort())
                                 });
-            if (jState->getBusProtocol() == EBusProtocol::CAN)
-            {
-                if (_can_interface)
-                    _can_interface->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(cmd));
-            }
-            else
-            {
-                if (_ttl_interface)
-                {
-                    // TODO(Thuc) implement addSingleCommandToQueue with the same form for ttl_interface_core
-                    _ttl_interface->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(cmd));
-                }
-            }
+            _can_interface->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(cmd));
         }
     }
     ros::Duration(0.05).sleep();
@@ -374,6 +362,8 @@ bool JointHardwareInterface::needCalibration() const
     bool result = false;
     if (_can_interface)
         result = (EStepperCalibrationStatus::CALIBRATION_OK != _can_interface->getCalibrationStatus());
+    else
+        result = (EStepperCalibrationStatus::CALIBRATION_OK != _ttl_interface->getCalibrationStatus());
 
     ROS_DEBUG_THROTTLE(2, "JointHardwareInterface::needCalibration - Need calibration returned: %d",
                        static_cast<int>(result));
@@ -416,6 +406,8 @@ void JointHardwareInterface::setNeedCalibration()
 {
     if (_can_interface)
         _can_interface->resetCalibration();
+    else
+        _ttl_interface->resetCalibration();
     // TODO(Thuc) implement if calibration with ttl
 }
 
@@ -428,6 +420,7 @@ void JointHardwareInterface::activateLearningMode()
 
     common::model::DxlSyncCmd dxl_cmd(EDxlCommandType::CMD_TYPE_LEARNING_MODE);
     StepperSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_TORQUE);
+    StepperTtlSingleCmd stepper_ttl_cmd(EStepperCommandType::CMD_TYPE_TORQUE);
 
     for (auto const& jState : _joint_list)
     {
@@ -437,23 +430,17 @@ void JointHardwareInterface::activateLearningMode()
             {
                 dxl_cmd.addMotorParam(jState->getType(), jState->getId(), 0);
             }
-            else if (jState->isStepper())
+            else if (jState->isStepper() && jState->getBusProtocol() == EBusProtocol::CAN)
             {
                 stepper_cmd.setId(jState->getId());
                 stepper_cmd.setParams({0});
-                if (jState->getBusProtocol() == EBusProtocol::CAN)
-                {
-                    if (_can_interface)
-                        _can_interface->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(stepper_cmd));
-                }
-                else
-                {
-                    if (_ttl_interface)
-                    {
-                        // TODO(Thuc): verify it. stepper use 0 torque in learning mode
-                        _ttl_interface->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(stepper_cmd));
-                    }
-                }
+                _can_interface->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(stepper_cmd));
+            }
+            else
+            {
+                stepper_ttl_cmd.setId(jState->getId());
+                stepper_ttl_cmd.setParams({0});
+                _ttl_interface->addSingleCommandToQueue(std::make_shared<StepperTtlSingleCmd>(stepper_ttl_cmd));
             }
         }
     }
@@ -473,6 +460,7 @@ void JointHardwareInterface::deactivateLearningMode()
     ROS_DEBUG("JointHardwareInterface::deactivateLearningMode - deactivate learning mode");
 
     common::model::DxlSyncCmd dxl_cmd(EDxlCommandType::CMD_TYPE_LEARNING_MODE);
+    StepperTtlSingleCmd stepper_ttl_cmd(EStepperCommandType::CMD_TYPE_TORQUE);
     StepperSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_TORQUE);
 
     for (auto const& jState : _joint_list)
@@ -483,23 +471,21 @@ void JointHardwareInterface::deactivateLearningMode()
             {
                 dxl_cmd.addMotorParam(jState->getType(), jState->getId(), 1);
             }
-            else if (jState->isStepper())
+            else if (jState->isStepper() && jState->getBusProtocol() == EBusProtocol::CAN)
             {
                 stepper_cmd.setId(jState->getId());
                 stepper_cmd.setParams({1});
 
-                if (jState->getBusProtocol() == EBusProtocol::CAN)
+                if (_can_interface)
+                    _can_interface->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(stepper_cmd));
+            }
+            else
+            {
+                stepper_ttl_cmd.setId(jState->getId());
+                stepper_ttl_cmd.setParams({1});
+                if (_ttl_interface)
                 {
-                    if (_can_interface)
-                        _can_interface->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(stepper_cmd));
-                }
-                else
-                {
-                    if (_ttl_interface)
-                    {
-                        // TODO(Thuc): verify it. stepper use 0 torque in learning mode
-                        _ttl_interface->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(stepper_cmd));
-                    }
+                    _ttl_interface->addSingleCommandToQueue(std::make_shared<StepperTtlSingleCmd>(stepper_ttl_cmd));
                 }
             }
         }
@@ -523,18 +509,18 @@ void JointHardwareInterface::synchronizeMotors(bool synchronize)
     {
         if (jState && jState->isValid() && jState->isStepper())
         {
-            StepperSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_SYNCHRONIZE, jState->getId(), {synchronize});
             if (jState->getBusProtocol() == EBusProtocol::CAN)
             {
+                StepperSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_SYNCHRONIZE, jState->getId(), {synchronize});
                 if (_can_interface)
                     _can_interface->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(stepper_cmd));
             }
-            else
-            {
-                 // (Thuc) only steppers are called when synchronizeMotors ?
-                if (_ttl_interface)
-                    _ttl_interface->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(stepper_cmd));
-            }
+            // else
+            // {
+                // StepperTtlSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_SYNCHRONIZE, jState->getId(), {synchronize});
+                // if (_ttl_interface)
+                //     _ttl_interface->addSingleCommandToQueue(std::make_shared<StepperTtlSingleCmd>(stepper_cmd));
+            // }
         }
     }
 }

@@ -20,14 +20,12 @@
   <build_depend>joints_interface</build_depend>
   <build_depend>conveyor_interface</build_depend>
   <build_depend>cpu_interface</build_depend>
-  <build_depend>fake_interface</build_depend>
   <build_depend>message_generation</build_depend>
   <build_depend>niryo_robot_msgs</build_depend>
 
   <build_export_depend>roscpp</build_export_depend>
   <build_export_depend>tools_interface</build_export_depend>
   <build_export_depend>end_effector_interface</build_export_depend>
-  <build_export_depend>fake_interface</build_export_depend>
   <build_export_depend>niryo_robot_msgs</build_export_depend>
   <build_export_depend>cpu_interface</build_export_depend>
   <build_export_depend>conveyor_interface</build_export_depend>
@@ -39,15 +37,12 @@
   <exec_depend>joints_interface</exec_depend>
   <exec_depend>conveyor_interface</exec_depend>
   <exec_depend>cpu_interface</exec_depend>
-  <exec_depend>fake_interface</exec_depend>
   <exec_depend>message_runtime</exec_depend>
   <exec_depend>niryo_robot_msgs</exec_depend>
   <exec_depend>controller_manager</exec_depend>
   <exec_depend>niryo_robot_description</exec_depend>
   <exec_depend>robot_state_publisher</exec_depend>
   <exec_depend>xacro</exec_depend>
-  <exec_depend>niryo_moveit_config_standalone</exec_depend>
-  <exec_depend>niryo_moveit_config_w_gripper1</exec_depend>
   <exec_depend>niryo_moveit_config_standalone</exec_depend>
   <exec_depend>niryo_moveit_config_w_gripper1</exec_depend>
 

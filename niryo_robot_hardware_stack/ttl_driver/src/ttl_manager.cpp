@@ -34,7 +34,9 @@
 #include "common/model/end_effector_state.hpp"
 
 #include "ttl_driver/dxl_driver.hpp"
+#include "ttl_driver/mock_dxl_driver.hpp"
 #include "ttl_driver/stepper_driver.hpp"
+#include "ttl_driver/mock_stepper_driver.hpp"
 #include "ttl_driver/end_effector_driver.hpp"
 
 #include "ttl_driver/stepper_reg.hpp"
@@ -98,8 +100,11 @@ bool TtlManager::init(ros::NodeHandle& nh)
     nh.getParam("bus_params/uart_device_name", _device_name);
     nh.getParam("bus_params/baudrate", _uart_baudrate);
 
-    _portHandler.reset(dynamixel::PortHandler::getPortHandler(_device_name.c_str()));
-    _packetHandler.reset(dynamixel::PacketHandler::getPacketHandler(TTL_BUS_PROTOCOL_VERSION));
+    if (_device_name != "fake")
+    {
+        _portHandler.reset(dynamixel::PortHandler::getPortHandler(_device_name.c_str()));
+        _packetHandler.reset(dynamixel::PacketHandler::getPacketHandler(TTL_BUS_PROTOCOL_VERSION));
+    }
 
     ROS_DEBUG("TtlManager::init - Dxl : set port name (%s), baudrate(%d)", _device_name.c_str(), _uart_baudrate);
 
@@ -169,6 +174,7 @@ bool TtlManager::init(ros::NodeHandle& nh)
                   d.second->str().c_str());
     }
 
+    nh.getParam("led_motor", _led_motor_type_cfg);
     return COMM_SUCCESS;
 }
 
@@ -188,6 +194,7 @@ void TtlManager::addHardwareComponent(EHardwareType hardware_type, uint8_t id, E
       switch (hardware_type)
       {
         case EHardwareType::STEPPER:
+        case EHardwareType::FAKE_STEPPER_MOTOR:
           if (EType::CONVOYER == type_used)
               _state_map.insert(make_pair(id, std::make_shared<ConveyorState>(EBusProtocol::TTL, id)));
           else
@@ -240,6 +247,12 @@ void TtlManager::addHardwareComponent(EHardwareType hardware_type, uint8_t id, E
             break;
             case EHardwareType::XL330:
                 _driver_map.insert(make_pair(hardware_type, std::make_shared<DxlDriver<XL330Reg> >(_portHandler, _packetHandler)));
+            break;
+            case EHardwareType::FAKE_DXL_MOTOR:
+                _driver_map.insert(make_pair(motor_type, std::make_shared<MockDxlDriver>(_portHandler, _packetHandler)));
+            break;
+            case EHardwareType::FAKE_STEPPER_MOTOR:
+                _driver_map.insert(make_pair(motor_type, std::make_shared<MockStepperDriver>(_portHandler, _packetHandler)));
             break;
             case EHardwareType::END_EFFECTOR:
                 _driver_map.insert(make_pair(hardware_type, std::make_shared<EndEffectorDriver<> >(_portHandler, _packetHandler)));
@@ -308,6 +321,8 @@ int TtlManager::setupCommunication()
 
     ROS_DEBUG("TtlManager::setupCommunication - initializing connection...");
 
+    if (_device_name == "fake")
+        return COMM_SUCCESS;
     // Dxl bus setup
     if (_portHandler)
     {
@@ -414,10 +429,10 @@ bool TtlManager::ping(uint8_t id)
 {
     int result = false;
 
-    auto it = _driver_map.begin();
-    if (it != _driver_map.end() && it->second)
+    auto it = _driver_map.at(_state_map.find(id)->second->getType()); 
+    if (it)
     {
-        result = (COMM_SUCCESS == it->second->ping(id));
+        result = (COMM_SUCCESS == it->ping(id));
     }
     else
         ROS_ERROR_THROTTLE(1, "TtlManager::ping - the dynamixel drivers seeems uninitialized");
@@ -436,7 +451,7 @@ int TtlManager::rebootMotors()
     for (auto const &it : _state_map)
     {
         EHardwareType type = it.second->getType();
-        ROS_DEBUG("TtlManager::rebootMotors - Reboot Dxl motor with ID: %d", it.first);
+        ROS_DEBUG("TtlManager::rebootMotors - Reboot TTL motor with ID: %d", it.first);
         if (_driver_map.count(type))
         {
             int result = _driver_map.at(type)->reboot(it.first);
@@ -465,7 +480,7 @@ int TtlManager::rebootMotor(uint8_t motor_id)
 {
     int return_value = COMM_TX_FAIL;
 
-    if (_state_map.count(motor_id) && _state_map.at(motor_id))
+    if (_state_map.count(motor_id) != 0 && _state_map.at(motor_id))
     {
         EHardwareType type = _state_map.at(motor_id)->getType();
         ROS_DEBUG("TtlManager::rebootMotors - Reboot motor with ID: %d", motor_id);
@@ -775,8 +790,23 @@ bool TtlManager::readHwStatus()
                 hw_errors_increment++;
             }
 
+            // ***********  calibration status
+            if ( (EHardwareType::FAKE_STEPPER_MOTOR == type || EHardwareType::STEPPER == type) &&
+                 _calibration_status != EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED)
+            {
+                for (auto id : _ids_map.at(type))
+                {
+                    uint32_t status;
+                    shared_ptr<ttl_driver::AbstractStepperDriver> stepper_driver = std::dynamic_pointer_cast<ttl_driver::AbstractStepperDriver>(driver);
+                    stepper_driver->getHomingStatus(id, status);     // TODO(Thuc): verify real value of status
+                    std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(id))->setCalibration(static_cast<EStepperCalibrationStatus>(status), 0);
+                    updateCurrentCalibrationStatus();
+                }
+            }
+
+
             // **********  conveyor state
-            if (type == EHardwareType::STEPPER)
+            if (EHardwareType::FAKE_STEPPER_MOTOR == type || EHardwareType::STEPPER == type)
             {
                 for (auto id : _ids_map.at(type))
                 {
@@ -879,10 +909,13 @@ int TtlManager::getAllIdsOnBus(vector<uint8_t> &id_list)
     auto it = _driver_map.begin();
     if (it != _driver_map.end() && it->second)
     {
-        result = it->second->scan(id_list);
+        
+        vector<uint8_t> l_idList;
+        result = it->second->scan(l_idList);
+        id_list.insert(id_list.end(), l_idList.begin(), l_idList.end());
 
         string ids_str;
-        for (auto const &id : id_list)
+        for (auto const &id : l_idList)
             ids_str += to_string(id) + " ";
 
         ROS_DEBUG_THROTTLE(1, "TtlManager::getAllIdsOnDxlBus - Found ids (%s) on bus using first driver (type: %s)",
@@ -894,15 +927,15 @@ int TtlManager::getAllIdsOnBus(vector<uint8_t> &id_list)
             if (COMM_RX_TIMEOUT != result)
             {  // -3001
                 _debug_error_message = "TtlManager - No motor found. "
-                                       "Make sure that motors are correctly connected and powered on.";
+                                    "Make sure that motors are correctly connected and powered on.";
             }
             else
             {  // -3002 or other
                 _debug_error_message = "TtlManager - Failed to scan bus.";
             }
-            ROS_WARN_THROTTLE(1, "TtlManager::getAllIdsOnDxlBus - Broadcast ping failed, "
-                              "result : %d (-3001: timeout, -3002: corrupted packet)",
-                              result);
+            ROS_WARN_THROTTLE(1, "TtlManager::getAllIdsOnTtlBus - Broadcast ping failed, "
+                            "result : %d (-3001: timeout, -3002: corrupted packet)",
+                            result);
         }
     }
 
@@ -964,6 +997,22 @@ common::model::EStepperCalibrationStatus TtlManager::getCalibrationStatus() cons
 {
     return _calibration_status;
 }
+
+/**
+ * @brief TtlManager::updateCurrentCalibrationStatus
+ */
+void TtlManager::updateCurrentCalibrationStatus()
+{
+    EStepperCalibrationStatus newStatus = EStepperCalibrationStatus::CALIBRATION_OK;
+    for (auto const& s : _state_map)
+    {
+        if (s.second && s.second->isStepper() && newStatus < std::dynamic_pointer_cast<StepperMotorState>(s.second)->getCalibrationState())
+            newStatus = std::dynamic_pointer_cast<StepperMotorState>(s.second)->getCalibrationState();
+    }
+
+    _calibration_status = newStatus;
+}
+
 // ******************
 //  Write operations
 // ******************
@@ -977,8 +1026,11 @@ int TtlManager::setLeds(int led)
 {
     int ret = niryo_robot_msgs::CommandStatus::TTL_WRITE_ERROR;
     _led_state = led;
-    // TODO(CC) retrieve type from register
-    EHardwareType mType = common::model::EHardwareType::XL320;
+
+    EHardwareType mType = HardwareTypeEnum(_led_motor_type_cfg.c_str());
+
+    if (mType == EHardwareType::FAKE_DXL_MOTOR)
+        return niryo_robot_msgs::CommandStatus::SUCCESS;
 
     // get list of motors of the given type
     vector<uint8_t> id_list;

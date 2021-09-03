@@ -1,0 +1,16 @@
+<?xml version="1.0" ?>
+<launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+    <!-- Arguments -->
+    <arg name="log_level" default="INFO" />
+    <arg name="rpi_model" default="4"/>
+    
+    <include file="$(find niryo_robot_rpi)/launch/rpi_base.launch.xml">
+        <arg name="log_level" value="$(arg log_level)" />
+        <arg name="rpi_model" value="$(arg rpi_model)"/>
+    </include>
+
+    <node name="niryo_robot_rpi" pkg="niryo_robot_rpi" type="fake_rpi_node.py" output="screen" if="$(eval rpi_model == 'simulation')"/>
+    <node name="niryo_robot_rpi" pkg="niryo_robot_rpi" type="rpi_node.py" output="screen" unless="$(eval rpi_model == 'simulation')"/>    
+
+</launch>

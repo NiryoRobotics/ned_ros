@@ -4,13 +4,12 @@
     <!-- Arguments -->
     <arg name="log_level" default="INFO" />
     <arg name="standalone" default="false"/>
-    <arg name="simulation_mode" default="true"/>
+    <arg name="hardware_version" default="ned"/>
 
-    <arg name="dir_desktop" value="~/.niryo/simulation"/>
-    <arg name="dir_rpi" value="~/niryo_robot_saved_files"/>
+    <arg name="saved_files_dir" value="~/.niryo/simulation" if="$(eval hardware_version =='fake')"/>
+    <arg name="saved_files_dir" value="~/niryo_robot_saved_files" unless="$(eval hardware_version =='fake')"/>
 
-    <arg name="programs_dir" value="$(arg dir_desktop)/niryo_robot_programs/" if="$(arg simulation_mode)"/>
-    <arg name="programs_dir" value="$(arg dir_rpi)/niryo_robot_programs/" unless="$(arg simulation_mode)"/>
+    <arg name="programs_dir" value="$(arg saved_files_dir)/niryo_robot_programs" />
 
     <node name="niryo_robot_programs_manager" pkg="niryo_robot_programs_manager" type="programs_manager_node.py"
           output="screen">

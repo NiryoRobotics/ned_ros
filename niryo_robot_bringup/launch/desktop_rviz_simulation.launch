@@ -7,12 +7,11 @@
         value="$(find niryo_robot_bringup)/config/desktop_rviz_simulation_trace.conf" />
     <!-- Arguments definition -->
     <arg name="log_level" default="INFO" />
-
+    <arg name="hardware_version" default="fake"/>
     <arg name="gui" default="true"/>
-    <arg name="hardware_version" default="ned"/>
 
     <!-- Load URDF -->
-    <arg name="urdf_path" value="urdf/$(arg hardware_version)/niryo.urdf.xacro"/>
+    <arg name="urdf_path" value="urdf/$(arg hardware_version)/niryo_$(arg hardware_version).urdf.xacro"/>
 
     <param name="robot_description"
            command="$(find xacro)/xacro $(find niryo_robot_description)/$(arg urdf_path)"/>

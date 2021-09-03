@@ -25,7 +25,7 @@
     <arg name="gazebo_gui" default="true"/>
     <arg name="paused" default="false"/>
     <!-- By default, use the urdf location provided from the package -->
-    <arg name="urdf_path" default="$(find niryo_robot_description)/urdf/$(arg hardware_version)/niryo_gripper1_n_camera.urdf.xacro"/>
+    <arg name="urdf_path" default="$(find niryo_robot_description)/urdf/$(arg hardware_version)/niryo_$(arg hardware_version)_gripper1_n_camera.urdf.xacro"/>
 
     <!-- launch the gazebo simulator and spawn the robot -->
     <include file="$(find niryo_moveit_config_w_gripper1)/launch/gazebo.launch">
@@ -37,6 +37,7 @@
     <!-- Load the URDF, SRDF and other .yaml configuration files on the param server -->
     <include file="$(find niryo_moveit_config_w_gripper1)/launch/planning_context.launch">
         <arg name="load_robot_description" value="false"/>
+        <arg name="hardware_version" value="$(arg hardware_version)" />
     </include>
 
     <!-- If needed, broadcast static tf for robot root -->

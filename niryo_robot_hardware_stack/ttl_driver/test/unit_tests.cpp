@@ -36,7 +36,7 @@ class TtlInterfaceTestSuite : public ::testing::Test {
     static void SetUpTestCase()
     {
       ros::NodeHandle nh("ttl_driver");
-      ros::Duration(2.0).sleep();
+      ros::Duration(5.0).sleep();
 
       ttl_interface = std::make_shared<ttl_driver::TtlInterfaceCore>(nh);
       // check connections
@@ -59,13 +59,16 @@ std::shared_ptr<ttl_driver::TtlInterfaceCore> TtlInterfaceTestSuite::ttl_interfa
 // Test reboot motors
 TEST_F(TtlInterfaceTestSuite, testRebootMotors)
 {
-  EXPECT_EQ(ttl_interface->rebootMotors(), niryo_robot_msgs::CommandStatus::SUCCESS);
+  int resutl = ttl_interface->rebootMotors();
+  EXPECT_EQ(resutl, static_cast<int>(niryo_robot_msgs::CommandStatus::SUCCESS));
 }
 
 // Test reboot motor with wrong id
 TEST_F(TtlInterfaceTestSuite, testRebootMotorsWrongID)
 {
-  EXPECT_NE(ttl_interface->rebootMotor(7), niryo_robot_msgs::CommandStatus::SUCCESS);
+  bool result;
+  result = ttl_interface->rebootMotor(20);
+  EXPECT_FALSE(result);
 }
 
 class TtlManagerTestSuite : public ::testing::Test {
@@ -111,9 +114,9 @@ TEST_F(TtlManagerTestSuite, testSingleCmds)
   // wrong id
   std::shared_ptr<common::model::AbstractTtlSingleMotorCmd> cmd_2 = std::make_shared<common::model::DxlSingleCmd>(
                                                                           common::model::EDxlCommandType::CMD_TYPE_TORQUE,
-                                                                          7,
+                                                                          20,
                                                                           std::initializer_list<uint32_t>{1});
-  EXPECT_EQ(ttl_drv->writeSingleCommand(cmd_2), COMM_TX_ERROR);
+  EXPECT_NE(ttl_drv->writeSingleCommand(cmd_2), COMM_SUCCESS);
   ros::Duration(0.01).sleep();
 
   // wrong type cmd
@@ -132,7 +135,7 @@ TEST_F(TtlManagerTestSuite, testSingleCmds)
   EXPECT_NE(ttl_drv->writeSingleCommand(cmd_4), COMM_SUCCESS);
 }
 
-TEST_F(TtlManagerTestSuite, testSyncCmds)
+TEST_F(TtlManagerTestSuite, testSyncCmdsOnHW)
 {
   // sync cmd
   std::shared_ptr<common::model::DxlSyncCmd> dynamixel_cmd_1 = std::make_shared<common::model::DxlSyncCmd>(
@@ -173,6 +176,34 @@ TEST_F(TtlManagerTestSuite, testSyncCmds)
   EXPECT_NE(ttl_drv->writeSynchronizeCommand(dynamixel_cmd_4), COMM_SUCCESS);
 }
 
+TEST_F(TtlManagerTestSuite, testSyncCmdsOnFakeHW)
+{
+  // sync cmd
+  std::shared_ptr<common::model::DxlSyncCmd> dynamixel_cmd_1 = std::make_shared<common::model::DxlSyncCmd>(
+                                                            common::model::EDxlCommandType::CMD_TYPE_TORQUE);
+  dynamixel_cmd_1->addMotorParam(common::model::EHardwareType::FAKE_DXL_MOTOR, 2, 1);
+  dynamixel_cmd_1->addMotorParam(common::model::EHardwareType::FAKE_DXL_MOTOR, 3, 1);
+
+  EXPECT_EQ(ttl_drv->writeSynchronizeCommand(dynamixel_cmd_1), COMM_SUCCESS);
+  ros::Duration(0.5).sleep();
+
+  // redondant id
+  std::shared_ptr<common::model::DxlSyncCmd> dynamixel_cmd_3 = std::make_shared<common::model::DxlSyncCmd>(
+                                                            common::model::EDxlCommandType::CMD_TYPE_TORQUE);
+  dynamixel_cmd_3->addMotorParam(common::model::EHardwareType::FAKE_DXL_MOTOR, 3, 1);
+  dynamixel_cmd_3->addMotorParam(common::model::EHardwareType::FAKE_DXL_MOTOR, 3, 1);
+
+  EXPECT_NE(ttl_drv->writeSynchronizeCommand(dynamixel_cmd_3), COMM_SUCCESS);
+
+  // wrong cmd type
+  std::shared_ptr<common::model::DxlSyncCmd> dynamixel_cmd_4 = std::make_shared<common::model::DxlSyncCmd>(
+                                                            common::model::EDxlCommandType::CMD_TYPE_UNKNOWN);
+  dynamixel_cmd_4->addMotorParam(common::model::EHardwareType::FAKE_DXL_MOTOR, 5, 1);
+  dynamixel_cmd_4->addMotorParam(common::model::EHardwareType::FAKE_DXL_MOTOR, 3, 1);
+
+  EXPECT_NE(ttl_drv->writeSynchronizeCommand(dynamixel_cmd_4), COMM_SUCCESS);
+}
+
 // Test driver scan motors
 TEST_F(TtlManagerTestSuite, scanTest)
 {
@@ -185,5 +216,12 @@ int main(int argc, char **argv)
   testing::InitGoogleTest(&argc, argv);
   ros::init(argc, argv, "ttl_driver_unit_tests");
 
+  std::string hardware_version;
+  ros::NodeHandle nh_private("~");
+  nh_private.getParam("hardware_version", hardware_version);
+  if (hardware_version == "fake")
+    testing::GTEST_FLAG(filter) = "-TtlManagerTestSuite.testSyncCmdsOnHW";
+  else
+    testing::GTEST_FLAG(filter) = "-TtlManagerTestSuite.testSyncCmdsOnFakeHW";
   return RUN_ALL_TESTS();
 }

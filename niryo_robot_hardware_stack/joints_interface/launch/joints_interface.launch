@@ -7,10 +7,10 @@
   <arg name="ttl_enabled" default="true" />
   <arg name="hardware_version" default="ned" />
 
-  <param name="robot_description" command="$(find xacro)/xacro $(find niryo_robot_description)/urdf/$(arg hardware_version)/niryo.urdf.xacro" />
+  <param name="robot_description" command="$(find xacro)/xacro $(find niryo_robot_description)/urdf/$(arg hardware_version)/niryo_$(arg hardware_version).urdf.xacro" />
 
   <!-- Launch controllers -->
-  <rosparam file="$(find niryo_moveit_config_standalone)/config/$(arg hardware_version)/ros_controllers.yaml" command="load"/>
+  <rosparam file="$(find niryo_moveit_config_standalone)/config/ros_controllers.yaml" command="load"/>
   <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="log"
           args="joint_state_controller niryo_robot_follow_joint_trajectory_controller"/>
 
@@ -36,10 +36,13 @@
     <arg name="hardware_version" value="$(arg hardware_version)" />
   </include>
 
+  <rosparam file="$(find joints_interface)/config/niryo_controllers.yaml" command="load" />
+
   <node pkg="joints_interface" type="joints_interface_node" name="joints_interface" output="screen" />
 
   <!-- spawn controllers -->
-  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="log" args="joint_state_controller niryo_robot_follow_joint_trajectory_controller" />
+  <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="log" 
+          args="joint_state_controller niryo_robot_follow_joint_trajectory_controller" />
 
   <!-- robot state publisher -->
   <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" output="screen" />

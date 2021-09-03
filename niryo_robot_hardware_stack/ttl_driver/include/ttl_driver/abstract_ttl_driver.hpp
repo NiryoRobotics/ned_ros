@@ -42,11 +42,11 @@ public:
                       std::shared_ptr<dynamixel::PacketHandler> packetHandler);
     virtual ~AbstractTtlDriver();
 
-    int ping(uint8_t id);
-    int getModelNumber(uint8_t id,
+    virtual int ping(uint8_t id);
+    virtual int getModelNumber(uint8_t id,
                        uint16_t& dxl_model_number);
-    int scan(std::vector<uint8_t>& id_list);
-    int reboot(uint8_t id);
+    virtual int scan(std::vector<uint8_t>& id_list);
+    virtual int reboot(uint8_t id);
 
     // we use those commands in the children classes to actually read and write values in registers
     int read(uint8_t address, uint8_t data_len, uint8_t id, uint32_t& data);

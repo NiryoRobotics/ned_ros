@@ -6,12 +6,12 @@
     <!-- Command validation params -->
     <group ns="niryo_robot">
         <group ns="robot_command_validation">
-            <rosparam file="$(find niryo_robot_arm_commander)/config/$(arg hardware_version)/robot_command_validation.yaml"/>
+            <rosparam file="$(find niryo_robot_arm_commander)/config/$(arg hardware_version)/robot_command_validation.yaml" command="load"/>
         </group>
     </group>
 
     <group ns="niryo_robot_arm_commander">
-        <rosparam command="load" file="$(find niryo_robot_arm_commander)/config/default.yaml"/>
-        <rosparam command="load" file="$(find niryo_robot_arm_commander)/config/jog_params.yaml"/>
+        <rosparam file="$(find niryo_robot_arm_commander)/config/default.yaml" command="load"/>
+        <rosparam file="$(find niryo_robot_arm_commander)/config/jog_params.yaml" command="load"/>
     </group>
 </launch>

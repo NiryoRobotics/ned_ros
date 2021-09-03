@@ -5,10 +5,8 @@
     <!-- set to true if you want to launch ROS on your computer 
         - controller will just echo position command
         - all hardware relative stuff is deactivated            -->
-    <arg name="simulation_mode" default="false"/>
     <arg name="gazebo" default="false"/>
     <arg name="simu_gripper" default="false"/>
-    <arg name="hardware_version" default="ned"/>
     <arg name="debug" default="false"/>
     <!-- set to true to disable hardware communication for CAN bus (Niryo Steppers)
      or DXl bus (DEBUG PURPOSES) -->
@@ -18,7 +16,7 @@
     <!-- Load controller settings -->
 
     <group unless="$(arg simu_gripper)">
-        <rosparam file="$(find niryo_moveit_config_standalone)/config/$(arg hardware_version)/ros_controllers.yaml" command="load"/>
+        <rosparam file="$(find niryo_moveit_config_standalone)/config/ros_controllers.yaml" command="load"/>
 
         <!-- spawn controllers -->
         <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="log"
@@ -26,7 +24,7 @@
     </group>
 
     <group if="$(arg simu_gripper)">
-        <rosparam file="$(find niryo_moveit_config_w_gripper1)/config/$(arg hardware_version)/ros_controllers.yaml" command="load"/>
+        <rosparam file="$(find niryo_moveit_config_w_gripper1)/config/ros_controllers.yaml" command="load"/>
 
         <!-- spawn controllers -->
         <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="log"

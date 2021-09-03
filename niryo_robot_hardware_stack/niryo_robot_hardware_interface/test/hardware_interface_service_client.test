@@ -3,7 +3,6 @@
         xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
 
     <include file="$(find niryo_robot_hardware_interface)/launch/niryo_robot_hardware_interface.launch" >
-        <arg name="simulation_mode" value="false" />
         <arg name="can_enabled" default="true"/>
         <arg name="ttl_enabled" default="true"/>
     </include>

@@ -3,7 +3,6 @@
         xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
     <!-- Arguments -->
     <arg name="execute_on_niryo_robot_raspberry_pi_image" default="true" />
-    <arg name="simulation_mode" default="true"/>
     <arg name="simu_gripper" default="false"/>
     <arg name="gazebo" default="false"/>
     <arg name="can_enabled" default="false"/>
@@ -14,7 +13,6 @@
 
     <!--use niryo_robot_hardware_interface config -->
     <include file="$(find niryo_robot_hardware_interface)/launch/niryo_robot_hardware_interface_base.launch.xml" >
-        <arg name="simulation_mode" value="$(arg simulation_mode)" />
         <arg name="can_enabled" value="$(arg can_enabled)" />
         <arg name="ttl_enabled" value="$(arg ttl_enabled)" />
         <arg name="hardware_version" value="$(arg hardware_version)" />
@@ -23,7 +21,6 @@
     <node pkg="niryo_robot_hardware_interface" type="niryo_robot_hardware_interface_node" 
             name="niryo_robot_hardware_interface" output="screen">
         <param name="hardware_version" type="string" value="$(arg hardware_version)"/>
-        <param name="simulation_mode" type="bool" value="$(arg simulation_mode)"/>
         <param name="simu_gripper" type="bool" value="$(arg simu_gripper)"/>
         <param name="gazebo" type="bool" value="$(arg gazebo)"/>
         <param name="can_enabled" type="bool" value="$(arg can_enabled)"/>

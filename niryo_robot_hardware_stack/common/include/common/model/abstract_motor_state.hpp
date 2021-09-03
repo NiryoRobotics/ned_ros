@@ -79,7 +79,8 @@ int AbstractMotorState::getPositionState() const
 inline
 bool AbstractMotorState::isStepper() const
 {
-    return EHardwareType::STEPPER == _type;
+    return (EHardwareType::STEPPER == _type ||
+            EHardwareType::FAKE_STEPPER_MOTOR == _type);
 }
 
 /**
@@ -92,7 +93,8 @@ bool AbstractMotorState::isDynamixel() const
     return (EHardwareType::XC430 == _type) ||
            (EHardwareType::XL320 == _type) ||
            (EHardwareType::XL330 == _type) ||
-           (EHardwareType::XL430 == _type);
+           (EHardwareType::XL430 == _type) ||
+           (EHardwareType::FAKE_DXL_MOTOR == _type);
 }
 
 } // model
