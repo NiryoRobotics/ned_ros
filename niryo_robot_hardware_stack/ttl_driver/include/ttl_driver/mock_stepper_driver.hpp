@@ -96,6 +96,9 @@ class MockStepperDriver : public AbstractStepperDriver
 
         static constexpr int GROUP_SYNC_REDONDANT_ID = 10;
         static constexpr int LEN_ID_DATA_NOT_SAME    = 20;
+
+        common::model::EStepperCalibrationStatus _calibration_status = common::model::EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED;
+        uint8_t fake_time = 0;
 };
 
 // definition of methods
@@ -344,12 +347,21 @@ int MockStepperDriver::write(uint8_t address, uint8_t data_len, uint8_t id, uint
 
 int MockStepperDriver::startHoming(uint8_t id)
 {
+    _calibration_status = common::model::EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS;
+    fake_time = 5;
     return COMM_SUCCESS;
 }
 
 int MockStepperDriver::getHomingStatus(uint8_t id, uint32_t &status)
 {
-    status = static_cast<uint32_t>(common::model::EStepperCalibrationStatus::CALIBRATION_OK);
+    if (fake_time)
+    {
+        fake_time--;
+    }
+    else
+        _calibration_status = common::model::EStepperCalibrationStatus::CALIBRATION_OK;
+
+    status = static_cast<uint32_t>(_calibration_status);
     return COMM_SUCCESS;
 }
 

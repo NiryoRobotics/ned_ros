@@ -115,9 +115,7 @@ void JointHardwareInterface::write(const ros::Time &/*time*/, const ros::Duratio
             if (jState->getBusProtocol() == EBusProtocol::CAN)
                 can_cmd.emplace_back(jState->getId(), jState->to_motor_pos(jState->cmd));
             if (jState->getBusProtocol() == EBusProtocol::TTL)
-            {
                 ttl_cmd.emplace_back(jState->getId(), jState->to_motor_pos(jState->cmd));
-            }
         }
     }
 
@@ -364,6 +362,8 @@ bool JointHardwareInterface::needCalibration() const
     bool result = false;
     if (_can_interface)
         result = (EStepperCalibrationStatus::CALIBRATION_OK != _can_interface->getCalibrationStatus());
+    else
+        result = (EStepperCalibrationStatus::CALIBRATION_OK != _ttl_interface->getCalibrationStatus());
 
     ROS_DEBUG_THROTTLE(2, "JointHardwareInterface::needCalibration - Need calibration returned: %d",
                        static_cast<int>(result));
@@ -406,6 +406,8 @@ void JointHardwareInterface::setNeedCalibration()
 {
     if (_can_interface)
         _can_interface->resetCalibration();
+    else
+        _ttl_interface->resetCalibration();
     // TODO(Thuc) implement if calibration with ttl
 }
 
