@@ -10,9 +10,14 @@ allow_replanning: true
 goal_joint_tolerance: 0.0001
 goal_position_tolerance: 0.0001
 goal_orientation_tolerance: 0.001
+display_trajectories: False
 
 trajectory_minimum_timeout : 3.0
 compute_plan_max_tries : 3
+
+# Linear trajectories computation
+eef_step: 0.02
+jump_threshold: 0.0
 
 # - Other params
 # "Is Active" topic's publish rate
