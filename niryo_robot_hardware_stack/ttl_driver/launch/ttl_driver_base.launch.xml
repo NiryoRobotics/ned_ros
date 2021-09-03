@@ -5,7 +5,7 @@
   <arg name="hardware_version" default="ned"/>
 
   <rosparam file="$(find ttl_driver)/config/$(arg hardware_version)/dynamixels_params.yaml" command="load"/>
-  <rosparam file="$(find ttl_driver)/config/$(arg hardware_version)/steppers_params.yaml" command="load"/>
+  <rosparam file="$(find ttl_driver)/config/$(arg hardware_version)/steppers_params.yaml" command="load" if="$(eval hardware_version == 'ned2')"/>
 
   <group ns="ttl_driver">  
     <rosparam file="$(find ttl_driver)/config/$(arg hardware_version)/bus_config.yaml" command="load"/>
