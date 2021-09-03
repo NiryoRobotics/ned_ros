@@ -46,11 +46,13 @@ class ToolsState:
 class ToolCommander:
     def __init__(self):
         self.__tools_state = ToolsState(rospy.get_param("~state_dict"))
+        self.__is_simulation = rospy.get_param("~simulation_mode")
         self.__is_gripper_simulated = rospy.get_param("~simu_gripper")
         move_group_tool_commander_name = rospy.get_param("~move_group_tool_commander_name")
         reference_frame = rospy.get_param("~reference_frame")
 
         rospy.logdebug("ToolCommander.init - state_dict: {}".format(str(self.__tools_state)))
+        rospy.logdebug("ToolCommander.init - simulation_mode: {}".format(self.__is_simulation))
         rospy.logdebug("ToolCommander.init - simu_gripper: {}".format(self.__is_gripper_simulated))
         rospy.logdebug("ToolCommander.init - move_group_tool_commander_name: {}".format(move_group_tool_commander_name))
         rospy.logdebug("ToolCommander.init - reference_frame: {}".format(reference_frame))
@@ -124,24 +126,23 @@ class ToolCommander:
             self.__action_server.set_aborted(self.create_action_result(CommandStatus.TOOL_FAILURE, "No tool selected"))
             return
 
-        if not self.__is_simulation:
-            # 1. Check tool id
-            if cmd.tool_id != self.__current_tool.get_id():
-                msg = "Tools ID do not match -> Given : {} Expected : {}".format(cmd.tool_id,
-                                                                                 self.__current_tool.get_id())
-                rospy.logwarn("Tool Commander - {}".format(msg))
-                self.__action_server.set_aborted(self.create_action_result(CommandStatus.TOOL_FAILURE, msg))
-                return
+        # 1. Check tool id
+        if cmd.tool_id != self.__current_tool.get_id():
+            msg = "Tools ID do not match -> Given : {} Expected : {}".format(cmd.tool_id,
+                                                                                self.__current_tool.get_id())
+            rospy.logwarn("Tool Commander - {}".format(msg))
+            self.__action_server.set_aborted(self.create_action_result(CommandStatus.TOOL_FAILURE, msg))
+            return
 
-            # 2. Check if current tool is active
-            if self.__current_tool.is_active():
-                self.__action_server.set_aborted(
-                    self.create_action_result(CommandStatus.TOOL_FAILURE, "Tool still active, retry later"))
-                return
+        # 2. Check if current tool is active
+        if self.__current_tool.is_active():
+            self.__action_server.set_aborted(
+                self.create_action_result(CommandStatus.TOOL_FAILURE, "Tool still active, retry later"))
+            return
 
         # 3. Check cmd_type (if exists, and is available for selected tool)
         # Skip in case of simulation
-        if not self.__is_simulation and cmd.cmd_type not in self.__current_tool.get_available_commands():
+        if cmd.cmd_type not in self.__current_tool.get_available_commands():
             msg = "Command '{}' is not available for {}".format(self.__dict_id_commands_to_string[cmd.cmd_type],
                                                                 self.__current_tool.name)
             rospy.logwarn("Tool Commander - {}".format(msg))
@@ -155,40 +156,40 @@ class ToolCommander:
             self.__action_server.set_aborted(self.create_action_result(CommandStatus.TOOL_FAILURE, str(e)))
             return
 
-        if not self.__is_simulation:
-            # 4. Execute cmd -> retrieve cmd name in command list and execute on current tool
-            self.__current_tool.set_as_active()
+        # 4. Execute cmd -> retrieve cmd name in command list and execute on current tool
+        self.__current_tool.set_as_active()
 
-            function_name = self.__dict_id_commands_to_string[cmd.cmd_type]
-            success, message = self.__current_tool(function_name, cmd)  # Execute function from name
+        function_name = self.__dict_id_commands_to_string[cmd.cmd_type]
+        success, message = self.__current_tool(function_name, cmd)  # Execute function from name
 
-            self.__current_tool.set_as_non_active()
+        self.__current_tool.set_as_non_active()
 
-            # 5. Return success or error
-            if success:
-                self.__action_server.set_succeeded(
-                    self.create_action_result(CommandStatus.SUCCESS, "Tool action successfully finished"))
-            else:
-                rospy.loginfo("Tool Commander - error : {}".format(message))
-                self.__action_server.set_aborted(self.create_action_result(CommandStatus.TOOL_FAILURE, message))
-
-        # Gripper simulated
-        elif self.__is_gripper_simulated:
-            if cmd.cmd_type == ToolCommand.OPEN_GRIPPER:
-                self.__tool_simu.set_named_target("open")
-                self.__tool_simu.go()
-            elif cmd.cmd_type == ToolCommand.CLOSE_GRIPPER:
-                self.__tool_simu.set_named_target("close")
-                self.__tool_simu.go()
-
-            self.__action_server.set_succeeded(
-                self.create_action_result(CommandStatus.SUCCESS, "Simulated tool action successfully finished"))
-            return
-
-        # Simulation mode without gripper
-        else:
+        # 5. Return success or error
+        if success:
             self.__action_server.set_succeeded(
                 self.create_action_result(CommandStatus.SUCCESS, "Tool action successfully finished"))
+        else:
+            rospy.loginfo("Tool Commander - error : {}".format(message))
+            self.__action_server.set_aborted(self.create_action_result(CommandStatus.TOOL_FAILURE, message))
+
+        # Gripper simulated
+        if self.__is_simulation:
+            if self.__is_gripper_simulated:
+                if cmd.cmd_type == ToolCommand.OPEN_GRIPPER:
+                    self.__tool_simu.set_named_target("open")
+                    self.__tool_simu.go()
+                elif cmd.cmd_type == ToolCommand.CLOSE_GRIPPER:
+                    self.__tool_simu.set_named_target("close")
+                    self.__tool_simu.go()
+
+                self.__action_server.set_succeeded(
+                    self.create_action_result(CommandStatus.SUCCESS, "Simulated tool action successfully finished"))
+                return
+
+            # Simulation mode without gripper
+            else:
+                self.__action_server.set_succeeded(
+                    self.create_action_result(CommandStatus.SUCCESS, "Tool action successfully finished"))
 
     def __callback_update_tool(self, _req):
         state, id_ = self.update_tool()

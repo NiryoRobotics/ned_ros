@@ -2,6 +2,8 @@
 <launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
 
+    <arg name="hardware_version" default="ned"/>
+    
     <!-- specify the planning pipeline -->
     <arg name="pipeline" default="ompl"/>
 
@@ -26,6 +28,7 @@
     <!-- Load the URDF, SRDF and other .yaml configuration files on the param server -->
     <include file="$(find niryo_moveit_config_w_gripper1)/launch/planning_context.launch">
         <arg name="load_robot_description" value="true"/>
+        <arg name="hardware_version" value="$(arg hardware_version)" />
     </include>
 
     <!-- If needed, broadcast static tf for robot root -->

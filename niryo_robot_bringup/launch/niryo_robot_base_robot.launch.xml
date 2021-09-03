@@ -48,6 +48,7 @@
     <!-- Launching vision node -->
     <include file="$(find niryo_robot_vision)/launch/vision_node.launch">
         <arg name="log_level" value="$(arg log_level)" />
+        <arg name="hardware_version" value="$(arg hardware_version)" />
     </include>
 
     <include file="$(find niryo_robot_credentials)/launch/credentials.launch">

@@ -18,8 +18,8 @@ This will reduce the amount of time spent waiting during program shutdown
     <arg name="gui" default="true"/>
 
     <!-- Load URDF -->
-    <arg name="urdf_path" value="urdf/$(arg hardware_version)/niryo_$(hardware_version)_gripper1_n_camera.urdf.xacro" if="$(arg gripper_n_camera)"/>
-    <arg name="urdf_path" value="urdf/$(arg hardware_version)/niryo_$(hardware_version)_gazebo.urdf.xacro" unless="$(arg gripper_n_camera)"/>
+    <arg name="urdf_path" value="urdf/$(arg hardware_version)/niryo_$(arg hardware_version)_gripper1_n_camera.urdf.xacro" if="$(arg gripper_n_camera)"/>
+    <arg name="urdf_path" value="urdf/$(arg hardware_version)/niryo_$(arg hardware_version)_gazebo.urdf.xacro" unless="$(arg gripper_n_camera)"/>
 
     <param name="robot_description"
         command="$(find xacro)/xacro $(find niryo_robot_description)/$(arg urdf_path)"/>
@@ -42,6 +42,7 @@ This will reduce the amount of time spent waiting during program shutdown
     <!-- Launching vision if the user didn't swap camera arg to false -->
     <include file="$(find niryo_robot_vision)/launch/vision_node.launch" if="$(arg gripper_n_camera)">
         <arg name="log_level" value="$(arg log_level)" />
+        <arg name="hardware_version" value="$(arg hardware_version)" />
     </include>
 
     <param name="/niryo_robot_vision/initialized" type="bool" value="true" unless="$(arg gripper_n_camera)"/>

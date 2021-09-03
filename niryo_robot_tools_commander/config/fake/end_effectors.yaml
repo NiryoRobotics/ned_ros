@@ -55,12 +55,12 @@ tool_list:
       - open_gripper
       - close_gripper
     specs:
-      open_position: 1500
-      open_hold_torque: 500
+      open_position: 600
+      open_hold_torque: 128
       open_max_torque: 1023
-      close_position: 370
-      close_hold_torque: 65000
-      close_max_torque: 64000
+      close_position: 220
+      close_hold_torque: 128
+      close_max_torque: 1023
       open_speed: 300
       close_speed: 300
       limit_open_speed:
@@ -79,12 +79,12 @@ tool_list:
       - open_gripper
       - close_gripper
     specs:
-      open_position: 2380
-      open_hold_torque: 500
+      open_position: 640
+      open_hold_torque: 128
       open_max_torque: 1023
-      close_position: 1580
-      close_hold_torque: 65000
-      close_max_torque: 64000
+      close_position: 400
+      close_hold_torque: 128
+      close_max_torque: 1023
       open_speed: 300
       close_speed: 300
       limit_open_speed:
@@ -103,12 +103,12 @@ tool_list:
       - open_gripper
       - close_gripper
     specs:
-      open_position: 1980
-      open_hold_torque: 500
+      open_position: 450
+      open_hold_torque: 128
       open_max_torque: 1023
-      close_position: 970
-      close_hold_torque: 65000
-      close_max_torque: 64000
+      close_position: 220
+      close_hold_torque: 160
+      close_max_torque: 1023
       open_speed: 300
       close_speed: 300
       limit_open_speed:
@@ -128,11 +128,11 @@ tool_list:
       - close_gripper
     specs:
       open_position: 518
-      open_hold_torque: 500
+      open_hold_torque: 128
       open_max_torque: 1023
       close_position: 157
-      close_hold_torque: 65000
-      close_max_torque: 64000
+      close_hold_torque: 160
+      close_max_torque: 1023
       open_speed: 300
       close_speed: 300
       limit_open_speed:
@@ -165,13 +165,12 @@ tool_list:
     specs:
       pull_air_velocity: 1023
       pull_air_position: 250
-      pull_air_max_torque: 500
+      pull_air_max_torque: 1023
       pull_air_hold_torque: 128
       push_air_velocity: 1023
       push_air_position: 760
-      push_air_max_torque: 64000
+      push_air_max_torque: 1023
     transformation:
       translation: [0.047, 0.0, 0.0]
       quaternion: [0.0, 0.0, 0.0, 1.0]
-
 

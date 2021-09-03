@@ -42,7 +42,7 @@
                     rpy="0 0 0"/>
             <geometry>
                 <mesh
-                        filename="package://niryo_robot_description/meshes/fake/gripper_1/base_gripper_1.STL"/>
+                        filename="package://niryo_robot_description/meshes/gripper_1/base_gripper_1.STL"/>
             </geometry>
         </visual>
         <collision>
@@ -50,7 +50,7 @@
                     rpy="0 0 0"/>
             <geometry>
                 <mesh
-                        filename="package://niryo_robot_description/meshes/fake/gripper_1/base_gripper_1.STL"/>
+                        filename="package://niryo_robot_description/meshes/gripper_1/base_gripper_1.STL"/>
             </geometry>
         </collision>
     </link>
@@ -75,7 +75,7 @@
                     rpy="0 0 0"/>
             <geometry>
                 <mesh
-                        filename="package://niryo_robot_description/meshes/fake/gripper_1/mors_1.STL"/>
+                        filename="package://niryo_robot_description/meshes/gripper_1/mors_1.STL"/>
             </geometry>
             <material name="">
                 <color rgba="0.49804 0.49804 0.49804 1"/>
@@ -86,7 +86,7 @@
                     rpy="0 0 0"/>
             <geometry>
                 <mesh
-                        filename="package://niryo_robot_description/meshes/fake/gripper_1/mors_1.STL"/>
+                        filename="package://niryo_robot_description/meshes/gripper_1/mors_1.STL"/>
             </geometry>
         </collision>
     </link>
@@ -124,7 +124,7 @@
                     rpy="0 0 0"/>
             <geometry>
                 <mesh
-                        filename="package://niryo_robot_description/meshes/fake/gripper_1/mors_2.STL"/>
+                        filename="package://niryo_robot_description/meshes/gripper_1/mors_2.STL"/>
             </geometry>
         </visual>
         <collision>
@@ -132,7 +132,7 @@
                     rpy="0 0 0"/>
             <geometry>
                 <mesh
-                        filename="package://niryo_robot_description/meshes/fake/gripper_1/mors_2.STL"/>
+                        filename="package://niryo_robot_description/meshes/gripper_1/mors_2.STL"/>
             </geometry>
         </collision>
     </link>

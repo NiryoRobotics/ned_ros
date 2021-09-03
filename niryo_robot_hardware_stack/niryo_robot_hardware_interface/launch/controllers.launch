@@ -20,7 +20,7 @@
 
         <!-- spawn controllers -->
         <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="log"
-              args="niryo_robot_follow_joint_trajectory_controller"/>
+              args="joint_state_controller niryo_robot_follow_joint_trajectory_controller"/>
     </group>
 
     <group if="$(arg simu_gripper)">
@@ -28,7 +28,7 @@
 
         <!-- spawn controllers -->
         <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="log"
-              args="niryo_robot_follow_joint_trajectory_controller gazebo_tool_commander"/>
+              args="joint_state_controller niryo_robot_follow_joint_trajectory_controller gazebo_tool_commander"/>
     </group>
 
     <!-- robot state publisher -->

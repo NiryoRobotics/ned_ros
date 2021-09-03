@@ -9,7 +9,8 @@
     <node name="niryo_robot_tools_commander" pkg="niryo_robot_tools_commander" type="tool_commander_node.py" output="screen"
           respawn="false">
         <param name="log_level" type="string" value="$(arg log_level)" />
-        <param name="simu_gripper" type="bool" value="$(arg simu_gripper)"/>
+        <param name="simulation_mode" type="bool" value="$(eval hardware_version == 'fake')"/>
+        <param name="simu_gripper" type="bool" value="true"/>
         <rosparam file="$(find niryo_robot_tools_commander)/config/$(arg hardware_version)/end_effectors.yaml"/>
     </node>
 
