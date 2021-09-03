@@ -2,11 +2,11 @@
 <launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
     <arg name="hardware_version" default="ned"/>
+    <arg name="moveit_controller_manager" default="moveit_simple_controller_manager/MoveItSimpleControllerManager" />
 
     <!-- loads moveit_controller_manager on the parameter server which is taken as argument 
         if no argument is passed, moveit_simple_controller_manager will be set -->
-    <arg name="moveit_controller_manager" default="moveit_simple_controller_manager/MoveItSimpleControllerManager" unless="$(eval hardware_version == 'fake')" />
-    <arg name="moveit_controller_manager" default="moveit_fake_controller_manager/MoveItFakeControllerManager" if="$(eval hardware_version == 'fake')" />
+    <param name="moveit_controller_manager" value="$(arg moveit_controller_manager)" />
 
-    <rosparam file="$(find niryo_moveit_config_standalone)/config/$(arg hardware_version)/ros_controllers.yaml" />
+    <rosparam file="$(find niryo_moveit_config_standalone)/config/ros_controllers.yaml" />
 </launch>

@@ -20,6 +20,7 @@
         <arg name="gazebo" value="$(arg gazebo)"/>
         <arg name="hardware_version" value="$(arg hardware_version)"/>
         <arg name="simu_gripper" value="$(arg simu_gripper)"/>
+        <arg name="can_enabled" value="false" />
     </include>
 
     <!-- Ghost node for enabling RPI simulation -->

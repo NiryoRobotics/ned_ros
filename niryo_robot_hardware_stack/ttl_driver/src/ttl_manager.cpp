@@ -628,7 +628,7 @@ void TtlManager::readHwStatus()
                     // however, if we have a mismatch here, it is not normal
 
                     ROS_ERROR("TtlManager::readHwStatus : syncReadTemperature failed - "
-                              "vector mistmatch (id_list size %d, temperature_list size %d)",
+                              "vector mismatch (id_list size %d, temperature_list size %d)",
                               static_cast<int>(id_list_size), static_cast<int>(temperature_list.size()));
 
                     hw_errors_increment++;
@@ -643,7 +643,7 @@ void TtlManager::readHwStatus()
                 else if (id_list_size != voltage_list.size())
                 {
                     ROS_ERROR("TtlManager::readHwStatus : syncReadTemperature failed - "
-                              "vector mistmatch (id_list size %d, voltage_list size %d)",
+                              "vector mismatch (id_list size %d, voltage_list size %d)",
                               static_cast<int>(id_list_size), static_cast<int>(voltage_list.size()));
 
                     hw_errors_increment++;
@@ -659,7 +659,7 @@ void TtlManager::readHwStatus()
                 else if (id_list_size != hw_status_list.size())
                 {
                     ROS_ERROR("TtlManager::readHwStatus : syncReadTemperature failed - "
-                              "vector mistmatch (id_list size %d, hw_status_list size %d)",
+                              "vector mismatch (id_list size %d, hw_status_list size %d)",
                               static_cast<int>(id_list_size), static_cast<int>(hw_status_list.size()));
 
                     hw_errors_increment++;

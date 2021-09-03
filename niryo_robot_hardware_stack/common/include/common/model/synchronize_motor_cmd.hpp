@@ -194,7 +194,7 @@ std::string SynchronizeMotorCmd<common::model::EDxlCommandType, uint32_t>::str()
 
     if (!isValid())
     {
-        ss << "Corrupted command : motors id list and params list size mismatch ";
+        ss << "Corrupted command : invalid sync command ";
         string_info = ss.str();
     }
     else
@@ -239,7 +239,7 @@ std::string SynchronizeMotorCmd<common::model::EStepperCommandType, int32_t>::st
 
     if (!isValid())
     {
-        ss << "Corrupted command : motors id list and params list size mismatch ";
+        ss << "Corrupted command : invalid sync command ";
         string_info = ss.str();
     }
     else
