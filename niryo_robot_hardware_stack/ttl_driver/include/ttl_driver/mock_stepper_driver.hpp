@@ -55,7 +55,7 @@ class MockStepperDriver : public AbstractStepperDriver
 
         // eeprom read
         virtual int checkModelNumber(uint8_t id) override;
-        virtual int getFirmwareVersion(uint8_t id, uint32_t &version) override;
+        virtual int readFirmwareVersion(uint8_t id, uint32_t &version) override;
         virtual int readMinPosition(uint8_t id, uint32_t &min_pos) override;
         virtual int readMaxPosition(uint8_t id, uint32_t &max_pos) override;
 
@@ -77,18 +77,16 @@ class MockStepperDriver : public AbstractStepperDriver
         virtual int syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &voltage_list) override;
         virtual int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list) override;
 
-        virtual int read(uint8_t address, uint8_t data_len, uint8_t id, uint32_t& data) override;
-        virtual int write(uint8_t address, uint8_t data_len, uint8_t id, uint32_t data) override;
         // AbstractStepperDriver interface
     public:
         virtual int startHoming(uint8_t id) override;
-        virtual int getHomingStatus(uint8_t id, uint32_t &status) override;
+        virtual int readHomingStatus(uint8_t id, uint32_t &status) override;
         // conveyor control
         virtual int setGoalConveyorDirection(uint8_t id, int8_t direction) override;
         virtual int setConveyorState(uint8_t id, bool state) override;
-        virtual int getConveyorSpeed(uint8_t id, uint32_t &velocity) override;
-        virtual int getConveyorDirection(uint8_t id, int8_t &direction) override;
-        virtual int getConveyorState(uint8_t id, bool &state) override;
+        virtual int readConveyorSpeed(uint8_t id, uint32_t &velocity) override;
+        virtual int readConveyorDirection(uint8_t id, int8_t &direction) override;
+        virtual int readConveyorState(uint8_t id, bool &state) override;
     
     private:
         std::map<uint8_t, uint32_t> _map_fake_pos{ {1, 0}, {2, 1090}, {3, 2447} };
@@ -172,7 +170,7 @@ int MockStepperDriver::checkModelNumber(uint8_t id)
     return ping_result;
 }
 
-int MockStepperDriver::getFirmwareVersion(uint8_t id, uint32_t &version)
+int MockStepperDriver::readFirmwareVersion(uint8_t id, uint32_t &version)
 {
     version = 0;
     return COMM_SUCCESS;
@@ -331,16 +329,6 @@ int MockStepperDriver::syncReadHwErrorStatus(const std::vector<uint8_t> &id_list
     return COMM_SUCCESS;
 }
 
-int MockStepperDriver::read(uint8_t address, uint8_t data_len, uint8_t id, uint32_t& data)
-{
-    data = 0;
-    return COMM_SUCCESS;
-}
-
-int MockStepperDriver::write(uint8_t address, uint8_t data_len, uint8_t id, uint32_t data)
-{
-    return COMM_SUCCESS;
-}
 //*****************************
 // AbstractStepperDriver interface
 //*****************************
@@ -352,7 +340,7 @@ int MockStepperDriver::startHoming(uint8_t id)
     return COMM_SUCCESS;
 }
 
-int MockStepperDriver::getHomingStatus(uint8_t id, uint32_t &status)
+int MockStepperDriver::readHomingStatus(uint8_t id, uint32_t &status)
 {
     if (fake_time)
     {
@@ -375,19 +363,19 @@ int MockStepperDriver::setConveyorState(uint8_t id, bool state)
     return COMM_SUCCESS;
 }
 
-int MockStepperDriver::getConveyorSpeed(uint8_t id, uint32_t &velocity)
+int MockStepperDriver::readConveyorSpeed(uint8_t id, uint32_t &velocity)
 {
     velocity = 0;
     return COMM_SUCCESS;
 }
 
-int MockStepperDriver::getConveyorDirection(uint8_t id, int8_t &direction)
+int MockStepperDriver::readConveyorDirection(uint8_t id, int8_t &direction)
 {
     direction = 0;
     return COMM_SUCCESS;
 }
 
-int MockStepperDriver::getConveyorState(uint8_t id, bool &state)
+int MockStepperDriver::readConveyorState(uint8_t id, bool &state)
 {
     state = 0;
     return COMM_SUCCESS;

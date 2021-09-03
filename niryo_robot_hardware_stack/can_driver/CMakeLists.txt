@@ -4,15 +4,6 @@ message("\n## Reading ${PROJECT_NAME}/CMakeLists.txt...")
 
 ## c++ options
 ## Compile as C++14, supported in ROS Melodic and newer
-if($ENV{ROS_DISTRO} STREQUAL "melodic")
-  message("Using ROS Melodic")
-elseif($ENV{ROS_DISTRO} STREQUAL "kinetic")
-  message("Using ROS Kinetic")
-else()
-  message("Unknown ROS distro:")
-  message($ENV{ROS_DISTRO})
-endif()
-
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 

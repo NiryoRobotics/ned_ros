@@ -312,7 +312,7 @@ int StepperDriver<reg_type>::readConveyorDirection(uint8_t id, int8_t &direction
 template<typename reg_type>
 int StepperDriver<reg_type>::readConveyorState(uint8_t id, bool &state)
 {
-    ROS_INFO("StepperDriver<reg_type>::getConveyorStatus: need to be implemented!");
+    ROS_INFO("StepperDriver<reg_type>::readConveyorState: need to be implemented!");
     return 0;
 }
 

@@ -565,9 +565,9 @@ class ArmCommander:
                     rospy.logwarn('Arm commander - Joints target unreachable because of collision between %s and %s',
                                   response.contacts[0].contact_body_1, response.contacts[0].contact_body_2)
                     raise ArmCommanderException(CommandStatus.INVALID_PARAMETERS,
-                                                "Target joints would lead to a collision between links {} and {} ".format(
-                                                    response.contacts[0].contact_body_1,
-                                                    response.contacts[0].contact_body_2))
+                                                "Target joints would lead to a collision between links {} and {} "
+                                                .format(response.contacts[0].contact_body_1,
+                                                        response.contacts[0].contact_body_2))
                 else:  # didn't succeed to get the contacts on the real robot
                     rospy.logwarn(
                         'Arm commander - Joints target unreachable because of collision between two parts of Ned')

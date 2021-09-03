@@ -469,7 +469,7 @@ int CanInterfaceCore::setConveyor(uint8_t new_motor_id, uint8_t default_conveyor
         if (CAN_OK == _can_manager->sendUpdateConveyorId(default_conveyor_id, new_motor_id))
         {
             // add stepper as a new conveyor
-            _can_manager->addMotor(new_motor_id, true);
+            _can_manager->addHardwareComponent(new_motor_id, true);
             result = niryo_robot_msgs::CommandStatus::SUCCESS;
         }
         else

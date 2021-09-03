@@ -106,7 +106,7 @@ int main(int argc, char **argv)
                 printf("--> SCAN TTL bus\n");
                 ttlTools.broadcastPing();
             }
-            else 
+            else
             {
                 std::cout << "Motor ID: " << id << "\n";
 

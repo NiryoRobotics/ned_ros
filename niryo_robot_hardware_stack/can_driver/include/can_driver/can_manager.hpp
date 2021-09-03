@@ -61,7 +61,7 @@ class CanManager : public common::model::IBusManager
         bool init(ros::NodeHandle& nh) override;
 
         // commands
-        void addMotor(uint8_t id, bool isConveyor = false);
+        void addHardwareComponent(uint8_t id, bool isConveyor = false);
 
         int readSingleCommand(std::shared_ptr<common::model::AbstractCanSingleMotorCmd> cmd);
         void executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, int32_t> > cmd_vec);

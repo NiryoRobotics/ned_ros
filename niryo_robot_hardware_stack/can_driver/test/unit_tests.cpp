@@ -74,7 +74,7 @@ std::shared_ptr<can_driver::CanManager> CanManagerTestSuite::can_manager;
 TEST_F(CanManagerTestSuite, addAndRemoveMotor)
 {
     EXPECT_THROW(can_manager->getPosition(10), std::out_of_range);
-    can_manager->addMotor(10);
+    can_manager->addHardwareComponent(10);
     EXPECT_EQ(can_manager->getPosition(10), 0);
 
     can_manager->removeMotor(10);

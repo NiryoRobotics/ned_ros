@@ -30,7 +30,6 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 namespace ttl_driver
 {
 
-
 /**
  * @brief The DxlDriver class
  */
@@ -58,7 +57,7 @@ class MockDxlDriver : public AbstractDxlDriver
 
         // eeprom read
         virtual int checkModelNumber(uint8_t id) override;
-        virtual int getFirmwareVersion(uint8_t id, uint32_t &version) override;
+        virtual int readFirmwareVersion(uint8_t id, uint32_t &version) override;
         virtual int readMinPosition(uint8_t id, uint32_t &min_pos) override;
         virtual int readMaxPosition(uint8_t id, uint32_t &max_pos) override;
 
@@ -82,8 +81,6 @@ class MockDxlDriver : public AbstractDxlDriver
         virtual int syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &voltage_list) override;
         virtual int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list) override;
 
-        virtual int read(uint8_t address, uint8_t data_len, uint8_t id, uint32_t& data) override;
-        virtual int write(uint8_t address, uint8_t data_len, uint8_t id, uint32_t data) override;
         // AbstractDxlDriver interface
     public:
         virtual int setLed(uint8_t id, uint32_t led_value) override;
@@ -180,7 +177,7 @@ int MockDxlDriver::checkModelNumber(uint8_t id)
     return ping_result;
 }
 
-int MockDxlDriver::getFirmwareVersion(uint8_t id, uint32_t &version)
+int MockDxlDriver::readFirmwareVersion(uint8_t id, uint32_t &version)
 {
     version = 0;
     return COMM_SUCCESS;
@@ -339,22 +336,9 @@ int MockDxlDriver::syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, st
     return COMM_SUCCESS;
 }
 
-int MockDxlDriver::read(uint8_t address, uint8_t data_len, uint8_t id, uint32_t& data)
-{
-    data = 0;
-    return COMM_SUCCESS;
-}
-
-int MockDxlDriver::write(uint8_t address, uint8_t data_len, uint8_t id, uint32_t data)
-{
-    return COMM_SUCCESS;
-}
-
 //*****************************
 // AbstractDxlDriver interface
 //*****************************
-
-
 int MockDxlDriver::setLed(uint8_t id, uint32_t led_value)
 {
     return COMM_SUCCESS;

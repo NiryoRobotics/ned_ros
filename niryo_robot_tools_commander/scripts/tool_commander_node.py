@@ -129,7 +129,7 @@ class ToolCommander:
         # 1. Check tool id
         if cmd.tool_id != self.__current_tool.get_id():
             msg = "Tools ID do not match -> Given : {} Expected : {}".format(cmd.tool_id,
-                                                                                self.__current_tool.get_id())
+                                                                             self.__current_tool.get_id())
             rospy.logwarn("Tool Commander - {}".format(msg))
             self.__action_server.set_aborted(self.create_action_result(CommandStatus.TOOL_FAILURE, msg))
             return

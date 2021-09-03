@@ -675,7 +675,7 @@ int TtlInterfaceCore::setTool(EHardwareType type, uint8_t motor_id)
 
     lock_guard<mutex> lck(_control_loop_mutex);
     // add dynamixel as a new tool
-    _ttl_manager->addMotor(type, motor_id, TtlManager::EType::TOOL);
+    _ttl_manager->addHardwareComponent(type, motor_id, TtlManager::EType::TOOL);
     // try to find motor
     if (_ttl_manager->ping(motor_id))
     {
@@ -1113,7 +1113,7 @@ bool TtlInterfaceCore::_callbackSendCustomValue(ttl_driver::SendCustomValue::Req
 
     EHardwareType motor_type;
 
-    if (1 <= req.motor_type  && 7 >= req.motor_type || 10 == req.motor_type)
+    if ((1 <= req.motor_type  && 7 >= req.motor_type) || 10 == req.motor_type)
         motor_type = static_cast<EHardwareType>(req.motor_type);
     else
     {
@@ -1155,7 +1155,7 @@ bool TtlInterfaceCore::_callbackReadCustomValue(ttl_driver::ReadCustomValue::Req
 {
     int result;
     EHardwareType motor_type;
-    if (1 <= req.motor_type  && 7 >= req.motor_type || 10 == req.motor_type)
+    if ((1 <= req.motor_type  && 7 >= req.motor_type) || 10 == req.motor_type)
         motor_type = static_cast<EHardwareType>(req.motor_type);
     else
     {

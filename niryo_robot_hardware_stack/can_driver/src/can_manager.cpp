@@ -133,7 +133,7 @@ bool CanManager::init(ros::NodeHandle& nh)
         uint8_t id = static_cast<uint8_t>(idList.at(i));
 
         if (!_state_map.count(id))
-            addMotor(id);
+            addHardwareComponent(id);
         else
             ROS_ERROR("CanManager::init - duplicate id %d. Please check your configuration file "
                       "(niryo_robot_hardware_stack/can_driver/config/motors_params.yaml)", id);
@@ -228,9 +228,9 @@ bool CanManager::isConnectionOk() const
  * @param id
  * @param isConveyor
  */
-void CanManager::addMotor(uint8_t id, bool isConveyor)
+void CanManager::addHardwareComponent(uint8_t id, bool isConveyor)
 {
-    ROS_DEBUG("CanManager::addMotor - Add motor id: %d", id);
+    ROS_DEBUG("CanManager::addHardwareComponent - Add motor id: %d", id);
 
     // add id to _state_map
     if (isConveyor)
@@ -333,7 +333,7 @@ int CanManager::readSingleCommand(std::shared_ptr<common::model::AbstractCanSing
                     if (result == CAN_OK)
                     {
                         removeMotor(cmd->getId());
-                        addMotor(static_cast<uint8_t>(cmd->getParams().front()));
+                        addHardwareComponent(static_cast<uint8_t>(cmd->getParams().front()));
                     }
             break;
             default:

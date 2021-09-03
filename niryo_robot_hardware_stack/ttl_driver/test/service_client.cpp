@@ -24,6 +24,8 @@
 
 #include "ttl_driver/ttl_interface_core.hpp"
 
+#include <string>
+
 static std::unique_ptr<ros::NodeHandle> nh;
 
 TEST(TESTSuite, setLeds)

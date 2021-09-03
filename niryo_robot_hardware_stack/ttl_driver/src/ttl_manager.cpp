@@ -249,10 +249,10 @@ void TtlManager::addHardwareComponent(EHardwareType hardware_type, uint8_t id, E
                 _driver_map.insert(make_pair(hardware_type, std::make_shared<DxlDriver<XL330Reg> >(_portHandler, _packetHandler)));
             break;
             case EHardwareType::FAKE_DXL_MOTOR:
-                _driver_map.insert(make_pair(motor_type, std::make_shared<MockDxlDriver>(_portHandler, _packetHandler)));
+                _driver_map.insert(make_pair(hardware_type, std::make_shared<MockDxlDriver>(_portHandler, _packetHandler)));
             break;
             case EHardwareType::FAKE_STEPPER_MOTOR:
-                _driver_map.insert(make_pair(motor_type, std::make_shared<MockStepperDriver>(_portHandler, _packetHandler)));
+                _driver_map.insert(make_pair(hardware_type, std::make_shared<MockStepperDriver>(_portHandler, _packetHandler)));
             break;
             case EHardwareType::END_EFFECTOR:
                 _driver_map.insert(make_pair(hardware_type, std::make_shared<EndEffectorDriver<> >(_portHandler, _packetHandler)));
@@ -429,7 +429,7 @@ bool TtlManager::ping(uint8_t id)
 {
     int result = false;
 
-    auto it = _driver_map.at(_state_map.find(id)->second->getType()); 
+    auto it = _driver_map.at(_state_map.find(id)->second->getType());
     if (it)
     {
         result = (COMM_SUCCESS == it->ping(id));
@@ -798,7 +798,7 @@ bool TtlManager::readHwStatus()
                 {
                     uint32_t status;
                     shared_ptr<ttl_driver::AbstractStepperDriver> stepper_driver = std::dynamic_pointer_cast<ttl_driver::AbstractStepperDriver>(driver);
-                    stepper_driver->getHomingStatus(id, status);     // TODO(Thuc): verify real value of status
+                    stepper_driver->readHomingStatus(id, status);     // TODO(Thuc): verify real value of status
                     std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(id))->setCalibration(static_cast<EStepperCalibrationStatus>(status), 0);
                     updateCurrentCalibrationStatus();
                 }
@@ -909,7 +909,6 @@ int TtlManager::getAllIdsOnBus(vector<uint8_t> &id_list)
     auto it = _driver_map.begin();
     if (it != _driver_map.end() && it->second)
     {
-        
         vector<uint8_t> l_idList;
         result = it->second->scan(l_idList);
         id_list.insert(id_list.end(), l_idList.begin(), l_idList.end());
@@ -1006,8 +1005,12 @@ void TtlManager::updateCurrentCalibrationStatus()
     EStepperCalibrationStatus newStatus = EStepperCalibrationStatus::CALIBRATION_OK;
     for (auto const& s : _state_map)
     {
-        if (s.second && s.second->isStepper() && newStatus < std::dynamic_pointer_cast<StepperMotorState>(s.second)->getCalibrationState())
-            newStatus = std::dynamic_pointer_cast<StepperMotorState>(s.second)->getCalibrationState();
+      if (s.second)
+      {
+        std::shared_ptr<StepperMotorState> stepperState = std::dynamic_pointer_cast<StepperMotorState>(s.second);
+        if (stepperState)
+            newStatus = stepperState->getCalibrationState();
+      }
     }
 
     _calibration_status = newStatus;

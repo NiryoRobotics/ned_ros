@@ -139,7 +139,7 @@ void HardwareInterface::initParameters(ros::NodeHandle &nh)
 void HardwareInterface::initNodes(ros::NodeHandle &nh)
 {
     ROS_DEBUG("HardwareInterface::initNodes - Init Nodes");
-    
+
     if (_ttl_enabled)
     {
         ROS_DEBUG("HardwareInterface::initNodes - Start Dynamixel Driver Node");
@@ -358,7 +358,7 @@ bool HardwareInterface::_callbackRebootMotors(niryo_robot_msgs::Trigger::Request
     {
         res.message = "Reboot motors Problems";
     }
-    
+
     return (niryo_robot_msgs::CommandStatus::SUCCESS == res.status);
 }
 
@@ -404,7 +404,7 @@ void HardwareInterface::_publishHardwareStatus()
         }
 
         cpu_temperature = _cpu_interface->getCpuTemperature();
-    
+
         msg.rpi_temperature = cpu_temperature;
         msg.hardware_version = _hardware_version;
 
@@ -440,7 +440,7 @@ void HardwareInterface::_publishHardwareStatus()
 
                 joint_name = _joints_interface->jointIdToJointName(hw_status.motor_identity.motor_id,
                                                                     hw_status.motor_identity.motor_type);
-            
+
                 joint_name = joint_name == "" ? ("Stepper " + std::to_string(hw_status.motor_identity.motor_id))
                                             : joint_name;
 
@@ -461,7 +461,7 @@ void HardwareInterface::_publishHardwareStatus()
 
                 joint_name = _joints_interface->jointIdToJointName(hw_status.motor_identity.motor_id,
                                                                 hw_status.motor_identity.motor_type);
-            
+
                 joint_name = (joint_name == "") ? "Tool" : joint_name;
                 motor_names.emplace_back(joint_name);
             }
@@ -498,6 +498,7 @@ void HardwareInterface::_publishSoftwareVersion()
         {
             stepper_motor_state = _can_interface->getHwStatus();
         }
+
         if (_joints_interface)
         {
             joints_state = _joints_interface->getJointsState();
@@ -507,7 +508,6 @@ void HardwareInterface::_publishSoftwareVersion()
         {
             motor_names.push_back(jState->getName());
         }
-       
 
         for (auto const& hw_status : stepper_motor_state.motors_hw_status)
         {
