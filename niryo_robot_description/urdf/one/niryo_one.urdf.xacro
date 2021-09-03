@@ -3,7 +3,7 @@
 
     <!-- Properties -->
 
-    <xacro:include filename="$(find niryo_robot_description)/urdf/one/niryo_param.urdf.xacro"/>
+    <xacro:include filename="$(find niryo_robot_description)/urdf/one/niryo_one_param.urdf.xacro"/>
 
     <!-- Links -->
 

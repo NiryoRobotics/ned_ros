@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 
 <!--
-    without_mesh_niryo.urdf.xacro
-    Copyright (C) 2017 Niryo
+    without_mesh_niryo_one.urdf.xacro
+    Copyright (C) 2020 Niryo
     All rights reserved.
 
     This program is free software: you can redistribute it and/or modify
@@ -21,7 +21,7 @@
 
 <robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="niryo_one">
 
-    <xacro:include filename="$(find niryo_robot_description)/urdf/one/niryo_param.urdf.xacro"/>
+    <xacro:include filename="$(find niryo_robot_description)/urdf/one/niryo_one_param.urdf.xacro"/>
 
 	<!-- Links -->
 

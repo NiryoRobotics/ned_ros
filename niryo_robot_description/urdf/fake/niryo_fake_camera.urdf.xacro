@@ -1,17 +1,17 @@
 <?xml version="1.0"?>
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="niryo_one">
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="niryo_fake">
     <!-- Including base robot -->
-    <xacro:include filename="$(find niryo_robot_description)/urdf/one/niryo_gazebo.urdf.xacro"/>
+    <xacro:include filename="$(find niryo_robot_description)/urdf/fake/niryo_fake_gazebo.urdf.xacro"/>
 
     <!-- Properties -->
-    <xacro:property name="cameraWidth" value="0.03"/>
-    <xacro:property name="cameraHeight" value="0.02"/>
+    <xacro:property name="cameraWidth" value="0.01"/>
+    <xacro:property name="cameraHeight" value="0.037"/>
     <xacro:property name="cameraMass" value="0.05"/>
 
     <!-- Joint for camera -->
     <joint name="camera_joint" type="fixed">
         <axis xyz="0 0 1"/>
-        <origin xyz="0 0.025 0" rpy="-${PI/2} 0 0"/>
+        <origin xyz="0 ${cameraHeight/2 + 0.02} 0" rpy="-${PI/2} 0 0"/>
         <parent link="wrist_link"/>
         <child link="camera_link"/>
     </joint>
@@ -19,26 +19,13 @@
     <!-- Camera link -->
 
     <link name="camera_link">
-        <collision>
-            <origin xyz="0 0 0" rpy="0 0 0"/>
-            <geometry>
-                <box size="${cameraWidth} ${cameraWidth} ${cameraHeight}"/>
-            </geometry>
-        </collision>
-
         <visual>
             <origin xyz="0 0 0" rpy="0 0 0"/>
             <geometry>
-                <box size="${cameraWidth} ${cameraWidth} ${cameraHeight}"/>
+                <box size="${cameraWidth} ${cameraHeight} ${cameraHeight}"/>
             </geometry>
             <material name="DarkGrey"/>
         </visual>
-
-        <inertial>
-            <mass value="${cameraMass}"/>
-            <origin xyz="0 0 0" rpy="0 0 0"/>
-            <inertia ixx="5.4e-6" ixy="0" ixz="0" iyy="5.4e-6" iyz="0" izz="7.5e-6"/>
-        </inertial>
     </link>
 
     <!-- Add gazebo settings to make the link an camera ! -->

@@ -13,9 +13,9 @@
 
     <!-- Load URDF -->
     <param name="robot_description"
-           command="$(find xacro)/xacro $(find niryo_robot_description)/urdf/$(arg hardware_version)/without_mesh_niryo.urdf.xacro"/>
+           command="$(find xacro)/xacro $(find niryo_robot_description)/urdf/$(arg hardware_version)/without_mesh_niryo_$(arg hardware_version).urdf.xacro"/>
     <param name="robot_description_tf2"
-           command="$(find xacro)/xacro $(find niryo_robot_description)/urdf/$(arg hardware_version)/niryo.urdf.xacro"/>
+           command="$(find xacro)/xacro $(find niryo_robot_description)/urdf/$(arg hardware_version)/niryo_$(arg hardware_version).urdf.xacro"/>
 
     <!-- PARAMS -->
     <group ns="niryo_robot">

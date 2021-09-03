@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
-<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="niryo_ned">
-    <xacro:include filename="$(find niryo_robot_description)/urdf/ned/niryo_camera.urdf.xacro"/>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="niryo_one">
+    <xacro:include filename="$(find niryo_robot_description)/urdf/one/niryo_one_camera.urdf.xacro"/>
 
     <!-- gazebo joint state publisher for all joints. Necessary to control mors -->
     <gazebo>
@@ -19,7 +19,7 @@
         <parent link="tool_link"/>
         <child link="base_gripper_1"/>
         <origin
-                xyz="0 0 0.005"
+                xyz="0 0 0"
                 rpy="0 ${PI/2} ${PI/2}"/>
     </joint>
 
@@ -42,7 +42,7 @@
                     rpy="0 0 0"/>
             <geometry>
                 <mesh
-                        filename="package://niryo_robot_description/meshes/gripper_1/base_gripper_1.STL"/>
+                        filename="package://niryo_robot_description/meshes/one/gripper_1/base_gripper_1.STL"/>
             </geometry>
         </visual>
         <collision>
@@ -50,7 +50,7 @@
                     rpy="0 0 0"/>
             <geometry>
                 <mesh
-                        filename="package://niryo_robot_description/meshes/gripper_1/base_gripper_1.STL"/>
+                        filename="package://niryo_robot_description/meshes/one/gripper_1/base_gripper_1.STL"/>
             </geometry>
         </collision>
     </link>
@@ -75,7 +75,7 @@
                     rpy="0 0 0"/>
             <geometry>
                 <mesh
-                        filename="package://niryo_robot_description/meshes/gripper_1/mors_1.STL"/>
+                        filename="package://niryo_robot_description/meshes/one/gripper_1/mors_1.STL"/>
             </geometry>
             <material name="">
                 <color rgba="0.49804 0.49804 0.49804 1"/>
@@ -86,7 +86,7 @@
                     rpy="0 0 0"/>
             <geometry>
                 <mesh
-                        filename="package://niryo_robot_description/meshes/gripper_1/mors_1.STL"/>
+                        filename="package://niryo_robot_description/meshes/one/gripper_1/mors_1.STL"/>
             </geometry>
         </collision>
     </link>
@@ -124,7 +124,7 @@
                     rpy="0 0 0"/>
             <geometry>
                 <mesh
-                        filename="package://niryo_robot_description/meshes/gripper_1/mors_2.STL"/>
+                        filename="package://niryo_robot_description/meshes/one/gripper_1/mors_2.STL"/>
             </geometry>
         </visual>
         <collision>
@@ -132,7 +132,7 @@
                     rpy="0 0 0"/>
             <geometry>
                 <mesh
-                        filename="package://niryo_robot_description/meshes/gripper_1/mors_2.STL"/>
+                        filename="package://niryo_robot_description/meshes/one/gripper_1/mors_2.STL"/>
             </geometry>
         </collision>
     </link>
