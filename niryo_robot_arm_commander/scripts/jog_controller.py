@@ -22,7 +22,7 @@ from tf.transformations import quaternion_from_euler, quaternion_multiply, euler
 from niryo_robot_msgs.msg import CommandStatus
 
 # Messages
-from std_msgs.msg import Bool
+from std_msgs.msg import Bool, String
 from sensor_msgs.msg import JointState
 from trajectory_msgs.msg import JointTrajectory
 from trajectory_msgs.msg import JointTrajectoryPoint
@@ -50,6 +50,7 @@ class JogController:
         self._shift_mode = None
         self.__collision_detected = False
         self._last_target_values = [0.0 for _ in range(6)]
+        self._last_shift_values_cmd = None
         self._target_lock = Lock()
         self._target_values = None
         self.__joints_name = rospy.get_param("~joint_names")
@@ -75,9 +76,12 @@ class JogController:
 
         # - Publisher which publishes if JogController is enabled
         self._enabled = False
+        self.__jog_errors_cpt = 0
 
         self._jog_enabled_publisher = rospy.Publisher('/niryo_robot/jog_interface/is_enabled',
-                                                      Bool, queue_size=1)
+                                                      Bool, queue_size=3)
+        self._jog_errors_publisher = rospy.Publisher('/niryo_robot/jog_interface/errors',
+                                                     String, queue_size=3)
 
         rospy.Timer(rospy.Duration(1.0 / rospy.get_param("~jog_enable_publish_rate")),
                     self._publish_jog_enabled)
@@ -170,14 +174,29 @@ class JogController:
         shift_command[3:] = [min([v, math.copysign(self.__pose_rotation_max, v)], key=abs) for v in
                              shift_command[3:]]
 
+        if self._last_shift_values_cmd != msg.shift_values:
+            self._last_shift_values_cmd = msg.shift_values
+            self.__jog_errors_cpt = 0
+
         try:
             success, potential_target_values = self._get_new_joints_w_ik(shift_command)
         except ArmCommanderException as e:
-            return e.status, "Error while validating pose : {}".format(e.message)
+            return self.__publish_jog_error(e.status, "Error while validating pose : {}".format(e.message))
         if not success:
-            return CommandStatus.NO_PLAN_AVAILABLE, "Unable to find on invert kinematics for the target position"
+            return self.__publish_jog_error(CommandStatus.NO_PLAN_AVAILABLE,
+                                            "Unable to find an invert kinematics for the target position")
+
+        success, message = self.__validate_ik_joints(potential_target_values)
+        return self.__publish_jog_error(CommandStatus.SUCCESS if success else CommandStatus.JOG_CONTROLLER_FAILURE,
+                                        message)
+
+    def __publish_jog_error(self, status, message):
+        if status < CommandStatus.SUCCESS:
+            self.__jog_errors_cpt += 1
+            if self.__jog_errors_cpt == 3:
+                self._jog_errors_publisher.publish(message)
         else:
-            self.__validate_ik_joints(potential_target_values)
+            self.__jog_errors_cpt = 0
 
     def __callback_send_jog_joints_command(self, msg):
         # check if the learning mode is false and the robot is calibrated
@@ -187,6 +206,10 @@ class JogController:
         if shift_mode != self._shift_mode:
             self._reset_last_pub()
             self._shift_mode = shift_mode
+
+        if self._last_shift_values_cmd != msg.shift_values:
+            self._last_shift_values_cmd = msg.shift_values
+            self.__jog_errors_cpt = 0
 
         shift_command = list(msg.shift_values)
         if shift_mode == JogShiftRequest.JOINTS_SHIFT:
@@ -203,22 +226,30 @@ class JogController:
             try:
                 self.__validate_params_joints(target_values)  # validate joints according to joints limits
             except ArmCommanderException as e:
-                rospy.logwarn_throttle(1, "Jog Controller - Error while validating joint : {}".format(e.message))
+                message = "Jog Controller - Error while validating joint : {}".format(e.message)
+                rospy.logwarn_throttle(1, message)
+                return self.__publish_jog_error(CommandStatus.JOG_CONTROLLER_FAILURE, message)
 
             # validate target joints validity, based on collisions checking
             try:
                 valid, link_colliding1, link_colliding2 = self.__check_joint_validity_moveit(target_values)
                 if not valid:
-                    return
+                    return self.__publish_jog_error(
+                        CommandStatus.JOG_CONTROLLER_FAILURE,
+                        "Joints target unreachable because of collision between {} and {}".format(
+                            link_colliding1, link_colliding2))
             except rospy.ServiceException as e:
-                rospy.logwarn_throttle(1, "Jog Controller - Error while validating joint : {}".format(e.message))
+                message = "Jog Controller - Error while validating joint : {}".format(e.message)
+                rospy.logwarn_throttle(1, message)
+                return self.__publish_jog_error(CommandStatus.JOG_CONTROLLER_FAILURE, message)
 
             if self.__collision_detected:
-                return
+                return self.__publish_jog_error(CommandStatus.JOG_CONTROLLER_FAILURE, "Collision detected")
 
             self.set_target_values(target_values)
             self._current_jogged_joints = joints_to_jog
             self._new_robot_state = RobotState()
+            return self.__publish_jog_error(CommandStatus.SUCCESS, "Success")
 
     def __callback_joint_controller_state(self, msg):
         # check if collision when jogging joints
@@ -246,6 +277,7 @@ class JogController:
         if shift_mode != self._shift_mode:
             self._reset_last_pub()
             self._shift_mode = shift_mode
+            rospy.logwarn("new")
 
         shift_command = list(msg.shift_values)
         if shift_mode == JogShiftRequest.POSE_SHIFT:
@@ -417,6 +449,7 @@ class JogController:
 
         self._enabled = False
         self._shift_mode = None
+        self.__jog_errors_cpt = 0
         self.set_target_values(None)
         self._current_jogged_joints = None
         # Shutdown timer (Only launched when jog enabled)
@@ -449,6 +482,7 @@ class JogController:
     def _reset_last_pub(self):
         self._last_target_values = self._joint_states
         self._last_robot_state_published = self._robot_state
+        self.__jog_errors_cpt = 0
 
     def _get_new_joints_w_ik(self, shift_command):
         quat_jog = quaternion_from_euler(shift_command[3], shift_command[4], shift_command[5])
@@ -524,14 +558,16 @@ class JogController:
         actual_joints = list(self._joint_states)
         for i in range(len(joints)):
             if abs(actual_joints[i] - joints[i]) > 0.5:
-                rospy.logwarn_throttle(0.5, "Jog Controller can't execute this command: {}".format(
-                    [round(joint, 3) for joint in joints]))
+                error_str = "Jog Controller can't execute this command: {}".format(
+                    [round(joint, 3) for joint in joints])
+                rospy.logwarn_throttle(0.5, error_str)
                 self.set_target_values(None)
                 self._current_jogged_joints = None
-                break
+                return False, "Unable to find an invert kinematics for the target position " \
+                              "close enough to the current position"
         else:
             self.set_target_values(joints)
-        return joints
+        return True, "Success"
 
     def __check_before_use_jog(self):
         """
