@@ -19,6 +19,7 @@ from control_msgs.msg import FollowJointTrajectoryActionFeedback
 from moveit_msgs.msg import RobotState as RobotStateMoveIt
 from trajectory_msgs.msg import JointTrajectory
 from visualization_msgs.msg import Marker, MarkerArray
+from geometry_msgs.msg import Quaternion
 
 # Services
 from niryo_robot_msgs.srv import Trigger
@@ -51,6 +52,8 @@ class TrajectoriesExecutor:
         self.__trajectory_minimum_timeout = rospy.get_param("~trajectory_minimum_timeout")
         self.__compute_plan_max_tries = rospy.get_param("~compute_plan_max_tries")
         self.__error_tolerance = rospy.get_param("~error_tolerance")
+        self.__cartesian_path_eef_steps = rospy.get_param("~eef_step")
+        self.__cartesian_path_jump_threshold = rospy.get_param("~jump_threshold")
 
         # - Subscribers
         joint_controller_base_name = rospy.get_param("~joint_controller_name")
@@ -163,48 +166,63 @@ class TrajectoriesExecutor:
         plan = self.__arm.plan()
         return None if not plan.joint_trajectory.points else plan
 
-    def compute_and_execute_cartesian_plan(self, list_poses):
+    def compute_and_execute_cartesian_plan(self, list_poses, velocity_factor=1.0, acceleration_factor=1.0):
         """
         Compute a cartesian plan according to list_poses and then, execute it
         The robot will follow a straight line between each points
         If the plan is not validate, raise ArmCommanderException
         :param list_poses:
+        :param velocity_factor:
+        :param acceleration_factor:
         :return: status, message
         """
+        if len(list_poses) == 0:
+            return GoalStatus.REJECTED, "No Waypoints"
+
         try:
-            plan = self.__compute_cartesian_plan(list_poses)
+            plan = self.compute_cartesian_plan(list_poses)
         except Exception:
             raise ArmCommanderException(CommandStatus.ARM_COMMANDER_FAILURE, "IK Fail")
 
-        if plan is not None:
-            return self.execute_plan(plan)
-        elif plan is None:  #
+        # Apply robot speeds
+        plan = self.retime_plan(plan, velocity_scaling_factor=velocity_factor,
+                                acceleration_scaling_factor=acceleration_factor, optimize=False)
+        if plan is None:
             raise ArmCommanderException(CommandStatus.NO_PLAN_AVAILABLE,
                                         "The goal cannot be reached with a linear trajectory")
 
-    def __compute_cartesian_plan(self, list_poses):
+        return self.execute_plan(plan)
+
+    def compute_cartesian_plan(self, list_poses, compute_max_tries=None):
         """
         Compute cartesian plan from a list of poses
         As 2 poses cannot be the same, the first operation is to filter list_poses to be sure this condition is met
         :param list_poses: list of Pose Object
+        :param compute_max_tries: number of tries to compute the path, if None the default value will be taken
         :return: Computed plan : RobotTrajectory object
         """
         if len(list_poses) == 0:
-            return GoalStatus.REJECTED, "No Waypoints"
+            return None
+
         for i in reversed(range(len(list_poses) - 1)):
             if poses_too_close(list_poses[i + 1], list_poses[i]):
                 list_poses.pop(i)
 
-        trajectory_plan, fraction = self.__arm.compute_cartesian_path(list_poses, eef_step=0.05, jump_threshold=0.0)
+        fraction = 0.0
+        for _ in range(compute_max_tries if compute_max_tries else self.__compute_plan_max_tries):  # some tries
+            trajectory_plan, fraction = \
+                self.__arm.compute_cartesian_path(list_poses, eef_step=self.__cartesian_path_eef_steps,
+                                                  jump_threshold=self.__cartesian_path_jump_threshold)
 
-        # Check the fraction value : if 1.0, the trajectory can be linear;
-        # else, the trajectory followed won't be linear.
-        if fraction == 1.0:
-            # delete the very first joints position which is the starting position (current),
-            # to avoid an error related to increasing time
-            del trajectory_plan.joint_trajectory.points[0]
-            return trajectory_plan
-        elif fraction < 1.0:
+            # Check the fraction value : if 1.0, the trajectory can be linear;
+            # else, the trajectory followed won't be linear.
+            if fraction == 1.0:
+                # delete the very first joints position which is the starting position (current),
+                # to avoid an error related to increasing time
+                # del trajectory_plan.joint_trajectory.points[0]
+                return trajectory_plan
+        else:
+            rospy.logwarn("Linear trajectory not found, only {}% was successfully computed.".format(fraction * 100))
             return None
 
     def execute_plan(self, plan):
@@ -234,8 +252,8 @@ class TrajectoriesExecutor:
             elif self.__current_goal_result == GoalStatus.PREEMPTED:
                 if self.__collision_detected:
                     self.__collision_detected = False
-                    return CommandStatus.STOPPED, ("Command has been aborted due to a collision"
-                                                   " or a motor not able to follow the given trajectory")
+                    return CommandStatus.STOPPED, "Command has been aborted due to a collision or " \
+                                                  "a motor not able to follow the given trajectory"
                 else:
                     return CommandStatus.STOPPED, "Command has been successfully stopped"
             elif self.__current_goal_result == GoalStatus.ABORTED:
@@ -256,6 +274,14 @@ class TrajectoriesExecutor:
             # It is not related to a trajectory failure
             self.__current_goal_id = None
             return CommandStatus.SHOULD_RESTART, ""
+
+    def plan(self):
+        for _ in range(self.__compute_plan_max_tries):
+            partial_plan = self.__arm.plan()
+            if len(partial_plan.joint_trajectory.points) != 0:
+                return partial_plan
+        else:
+            raise ArmCommanderException(CommandStatus.NO_PLAN_AVAILABLE, "No trajectory found.")
 
     # --- Callable functions
     def stop_arm(self):
@@ -327,14 +353,15 @@ class TrajectoriesExecutor:
         except (rospy.ServiceException, rospy.ROSException):
             return False
 
-    def display_traj(self, point_list, id_=1):
+    @staticmethod
+    def display_traj(point_list, id_=1):
         topic_display = 'visualization_marker_array'
         if topic_display in rospy.get_published_topics():
             markers_array = rospy.wait_for_message(topic_display, MarkerArray).markers
         else:
             markers_array = []
-        marker_pub = rospy.Publisher(topic_display, MarkerArray,
-                                     queue_size=10, latch=True)
+
+        marker_pub = rospy.Publisher(topic_display, MarkerArray, queue_size=10, latch=True)
 
         cardboard_marker = Marker()
         cardboard_marker.header.frame_id = "world"
@@ -351,6 +378,7 @@ class TrajectoriesExecutor:
         cardboard_marker.color.b = random.random()
         cardboard_marker.color.a = 0.8
 
+        cardboard_marker.pose.orientation = Quaternion(0, 0, 0, 1)
         cardboard_marker.points = point_list
         cardboard_marker.lifetime = rospy.Duration(0)
         markers_array.append(cardboard_marker)
