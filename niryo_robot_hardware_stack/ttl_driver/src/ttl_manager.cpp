@@ -194,28 +194,33 @@ void TtlManager::addHardwareComponent(EHardwareType hardware_type, uint8_t id, E
       switch (hardware_type)
       {
         case EHardwareType::STEPPER:
+            if (EType::CONVOYER == type_used)
+                _state_map.insert(make_pair(id, std::make_shared<ConveyorState>(EBusProtocol::TTL, id)));
+            else
+                _state_map.insert(make_pair(id, std::make_shared<StepperMotorState>(EBusProtocol::TTL, id)));
+            break;
         case EHardwareType::FAKE_STEPPER_MOTOR:
-          if (EType::CONVOYER == type_used)
-              _state_map.insert(make_pair(id, std::make_shared<ConveyorState>(EBusProtocol::TTL, id)));
-          else
-              _state_map.insert(make_pair(id, std::make_shared<StepperMotorState>(EBusProtocol::TTL, id)));
-          break;
+            if (EType::CONVOYER == type_used)
+                _state_map.insert(make_pair(id, std::make_shared<ConveyorState>(EBusProtocol::TTL, id)));
+            else
+                _state_map.insert(make_pair(id, std::make_shared<StepperMotorState>("fakeMotor", EHardwareType::FAKE_STEPPER_MOTOR, EBusProtocol::TTL, id)));
+            break;
         case EHardwareType::END_EFFECTOR:
             _state_map.insert(make_pair(id, std::make_shared<EndEffectorState>(id)));
-          break;
+            break;
         case EHardwareType::XC430:
         case EHardwareType::XL320:
         case EHardwareType::XL330:
         case EHardwareType::XL430:
         case EHardwareType::FAKE_DXL_MOTOR:
-          if (type_used == EType::TOOL)
-              _state_map.insert(make_pair(id, std::make_shared<ToolState>("auto", hardware_type, id)));
-          else
-              _state_map.insert(make_pair(id, std::make_shared<DxlMotorState>(hardware_type, EBusProtocol::TTL, id)));
-        break;
+            if (type_used == EType::TOOL)
+                _state_map.insert(make_pair(id, std::make_shared<ToolState>("auto", hardware_type, id)));
+            else
+                  _state_map.insert(make_pair(id, std::make_shared<DxlMotorState>(hardware_type, EBusProtocol::TTL, id)));
+            break;
         default:
-          ROS_WARN("Unknown hardware type: %d", static_cast<int>(hardware_type));
-          break;
+            ROS_WARN("Unknown hardware type: %d", static_cast<int>(hardware_type));
+            break;
       }
     }
 
@@ -800,7 +805,7 @@ bool TtlManager::readHwStatus()
                     uint32_t status;
                     shared_ptr<ttl_driver::AbstractStepperDriver> stepper_driver = std::dynamic_pointer_cast<ttl_driver::AbstractStepperDriver>(driver);
                     stepper_driver->readHomingStatus(id, status);     // TODO(Thuc): verify real value of status
-                    std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(id))->setCalibration(static_cast<EStepperCalibrationStatus>(status), 0);
+                    std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(id))->setCalibration(static_cast<EStepperCalibrationStatus>(status), 1);
                     updateCurrentCalibrationStatus();
                 }
             }
@@ -1314,15 +1319,13 @@ int TtlManager::writeSingleCommand(const std::shared_ptr<common::model::Abstract
         if (_state_map.count(id) != 0)
         {
             auto state = _state_map.at(id);
-
             while ((COMM_SUCCESS != result) && (counter < 50))
             {
                 common::model::EHardwareType hardware_type = state->getType();
                 result = COMM_TX_ERROR;
-
                 if (_driver_map.count(hardware_type) && _driver_map.at(hardware_type))
                 {
-                      result = _driver_map.at(hardware_type)->writeSingleCmd(cmd);
+                    result = _driver_map.at(hardware_type)->writeSingleCmd(cmd);
                 }
 
                 counter += 1;

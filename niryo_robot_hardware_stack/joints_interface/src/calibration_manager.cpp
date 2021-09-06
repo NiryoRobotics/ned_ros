@@ -522,6 +522,7 @@ bool CalibrationManager::_can_process_manual_calibration(std::string &result_mes
  */
 void CalibrationManager::_send_calibration_offset(uint8_t id, int offset_to_send, int absolute_steps_at_offset_position)
 {
+    // TODO(THUC) not StepperSingleCmd for ttl stepper
     StepperSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_POSITION_OFFSET, id, {offset_to_send, absolute_steps_at_offset_position});
     if (_can_interface)
         _can_interface->addSingleCommandToQueue(
@@ -529,9 +530,9 @@ void CalibrationManager::_send_calibration_offset(uint8_t id, int offset_to_send
     else if (_ttl_interface)
         _ttl_interface->addSingleCommandToQueue(
                         std::make_shared<StepperSingleCmd>(stepper_cmd));
-                        // (Thuc) call add single command to Queue by if else but not
-                        // by polymorphism make the program will work for the case all stepper use can or ttl,
-                        // not 2 protocol in the same time
+    // (Thuc) call add single command to Queue by if else but not
+    // by polymorphism make the program will work for the case all stepper use can or ttl,
+    // not 2 protocol in the same time
 }
 
 /**
