@@ -679,8 +679,6 @@ int TtlInterfaceCore::setTool(EHardwareType type, uint8_t motor_id)
     // try to find motor
     if (_ttl_manager->ping(motor_id))
     {
-        // add dynamixel as a new tool
-        _ttl_manager->addHardwareComponent(type, motor_id, TtlManager::EType::TOOL);
         // Enable torque
         std::shared_ptr<AbstractTtlSingleMotorCmd> cmd_torque = std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_TORQUE,
                                                             motor_id, std::initializer_list<uint32_t>{1});
