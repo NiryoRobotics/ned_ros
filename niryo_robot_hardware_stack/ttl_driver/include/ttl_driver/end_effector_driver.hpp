@@ -52,14 +52,14 @@ class EndEffectorDriver : public AbstractTtlDriver
         // have access to reg_type). So it seems like a duplicate of StepperDriver
         virtual std::string str() const override;
 
-        virtual std::string interpreteErrorState(uint32_t hw_state) override;
         virtual int checkModelNumber(uint8_t id) override;
-        virtual int readFirmwareVersion(uint8_t id, uint32_t &version) override;
+        virtual int readFirmwareVersion(uint8_t id, std::string &version) override;
         
         virtual int readTemperature(uint8_t id, uint32_t &temperature) override;
         virtual int readVoltage(uint8_t id, uint32_t &voltage) override;
         virtual int readHwErrorStatus(uint8_t id, uint32_t &hardware_status) override;
-        
+
+        virtual int syncReadFirmwareVersion(const std::vector<uint8_t> &id_list, std::vector<std::string> &firmware_list) override;
         virtual int syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &temperature_list) override;
         virtual int syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &voltage_list) override;
         virtual int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list) override;
@@ -68,14 +68,6 @@ class EndEffectorDriver : public AbstractTtlDriver
         virtual int writeSyncCmd(int type, const std::vector<uint8_t>& ids, const std::vector<uint32_t>& params) override;
 
     public:
-        int setButton1Configuration(uint8_t id, uint32_t configuration);
-        int setButton2Configuration(uint8_t id, uint32_t configuration);
-        int setButton3Configuration(uint8_t id, uint32_t configuration);
-
-        int readButton1Configuration(uint8_t id, uint32_t& configuration);
-        int readButton2Configuration(uint8_t id, uint32_t& configuration);
-        int readButton3Configuration(uint8_t id, uint32_t& configuration);
-
         int readButton1Status(uint8_t id, uint32_t& status);
         int readButton2Status(uint8_t id, uint32_t& status);
         int readButton3Status(uint8_t id, uint32_t& status);
@@ -90,6 +82,10 @@ class EndEffectorDriver : public AbstractTtlDriver
         int setDigitalOutput(uint8_t id, bool out);
 
         common::model::EndEffectorState::EActionType interpreteActionValue(uint32_t value);
+        virtual std::string interpreteErrorState(uint32_t hw_state) const override;
+
+    protected:
+        virtual std::string interpreteFirmwareVersion(uint32_t fw_version) const override;
 };
 
 // definition of methods
@@ -132,9 +128,27 @@ std::string EndEffectorDriver<reg_type>::str() const
  * @return
  */
 template<typename reg_type>
-std::string EndEffectorDriver<reg_type>::interpreteErrorState(uint32_t /*hw_state*/)
+std::string EndEffectorDriver<reg_type>::interpreteErrorState(uint32_t /*hw_state*/) const
 {
     return "no error table";
+}
+
+/**
+ * @brief EndEffectorDriver<reg_type>::interpreteFirwmareVersion
+ * @return
+ */
+template<typename reg_type>
+std::string EndEffectorDriver<reg_type>::interpreteFirmwareVersion(uint32_t fw_version) const
+{
+    uint8_t v_major = static_cast<uint8_t>(fw_version >> 24);
+    uint16_t v_minor = static_cast<uint16_t>(fw_version >> 8);
+    uint8_t v_patch = static_cast<uint8_t>(fw_version >> 0);
+
+    std::ostringstream ss;
+    ss << v_major << "." << v_minor << "." << v_patch;
+    std::string version = ss.str();
+
+    return version;
 }
 
 /**
@@ -166,9 +180,13 @@ int EndEffectorDriver<reg_type>::checkModelNumber(uint8_t id)
  * @return
  */
 template<typename reg_type>
-int EndEffectorDriver<reg_type>::readFirmwareVersion(uint8_t id, uint32_t &version)
+int EndEffectorDriver<reg_type>::readFirmwareVersion(uint8_t id, std::string &version)
 {
-    return read(reg_type::ADDR_FIRMWARE_VERSION, reg_type::SIZE_FIRMWARE_VERSION, id, version);
+    int res = COMM_RX_FAIL;
+    uint32_t data{};
+    res = read(reg_type::ADDR_FIRMWARE_VERSION, reg_type::SIZE_FIRMWARE_VERSION, id, data);
+    version = interpreteFirmwareVersion(data);
+    return res;
 }
 
 // ram read
@@ -213,6 +231,24 @@ int EndEffectorDriver<reg_type>::readHwErrorStatus(uint8_t id, uint32_t& hardwar
 }
 
 /**
+ * @brief EndEffectorDriver<reg_type>::syncReadFirmwareVersion
+ * @param id_list
+ * @param firmware_list
+ * @return
+ */
+template<typename reg_type>
+int EndEffectorDriver<reg_type>::syncReadFirmwareVersion(const std::vector<uint8_t> &id_list, std::vector<std::string> &firmware_list)
+{
+    int res = 0;
+    firmware_list.clear();
+    std::vector<uint32_t> data_list{};
+    res = syncRead(reg_type::ADDR_FIRMWARE_VERSION, reg_type::SIZE_FIRMWARE_VERSION, id_list, data_list);
+    for(auto const& data : data_list)
+      firmware_list.emplace_back(interpreteFirmwareVersion(data));
+    return res;
+}
+
+/**
  * @brief EndEffectorDriver<reg_type>::syncReadTemperature
  * @param id_list
  * @param temperature_list
@@ -249,80 +285,6 @@ int EndEffectorDriver<reg_type>::syncReadHwErrorStatus(const std::vector<uint8_t
 
    // return syncRead(reg_type::ADDR_HW_ERROR_STATUS, reg_type::SIZE_HW_ERROR_STATUS, id_list, hw_error_list);
     return COMM_RX_FAIL;
-}
-
-// buttons configuration
-
-/**
- * @brief EndEffectorDriver<reg_type>::setButton1Configuration
- * @param id
- * @param configuration
- * @return
- */
-template<typename reg_type>
-int EndEffectorDriver<reg_type>::setButton1Configuration(uint8_t id, uint32_t configuration)
-{
-    return write(reg_type::ADDR_BUTTON_1_CONFIG, reg_type::SIZE_BUTTON_1_CONFIG, id, configuration);
-}
-
-/**
- * @brief EndEffectorDriver<reg_type>::setButton2Configuration
- * @param id
- * @param configuration
- * @return
- */
-template<typename reg_type>
-int EndEffectorDriver<reg_type>::setButton2Configuration(uint8_t id, uint32_t configuration)
-{
-    return write(reg_type::ADDR_BUTTON_2_CONFIG, reg_type::SIZE_BUTTON_2_CONFIG, id, configuration);
-}
-
-/**
- * @brief EndEffectorDriver<reg_type>::setButton3Configuration
- * @param id
- * @param configuration
- * @return
- */
-template<typename reg_type>
-int EndEffectorDriver<reg_type>::setButton3Configuration(uint8_t id, uint32_t configuration)
-{
-    return write(reg_type::ADDR_BUTTON_3_CONFIG, reg_type::SIZE_BUTTON_3_CONFIG, id, configuration);
-}
-
-/**
- * @brief EndEffectorDriver<reg_type>::readButton1Configuration
- * @param id
- * @param configuration
- * @return
- */
-template<typename reg_type>
-int EndEffectorDriver<reg_type>::readButton1Configuration(uint8_t id, uint32_t& configuration)
-{
-    return read(reg_type::ADDR_BUTTON_1_CONFIG, reg_type::SIZE_BUTTON_1_CONFIG, id, configuration);
-}
-    
-/**
- * @brief EndEffectorDriver<reg_type>::readButton2Configuration
- * @param id
- * @param configuration
- * @return
- */
-template<typename reg_type>
-int EndEffectorDriver<reg_type>::readButton2Configuration(uint8_t id, uint32_t& configuration)
-{
-    return read(reg_type::ADDR_BUTTON_2_CONFIG, reg_type::SIZE_BUTTON_2_CONFIG, id, configuration);
-}
-
-/**
- * @brief EndEffectorDriver<reg_type>::readButton3Configuration
- * @param id
- * @param configuration
- * @return
- */
-template<typename reg_type>
-int EndEffectorDriver<reg_type>::readButton3Configuration(uint8_t id, uint32_t& configuration)
-{
-    return read(reg_type::ADDR_BUTTON_3_CONFIG, reg_type::SIZE_BUTTON_3_CONFIG, id, configuration);
 }
 
 // buttons status
@@ -485,12 +447,6 @@ int EndEffectorDriver<reg_type>::writeSingleCmd(const std::shared_ptr<common::mo
   {
       switch (EEndEffectorCommandType(cmd->getCmdType()))
       {
-      case EEndEffectorCommandType::CMD_TYPE_BUTTON_1_CONFIG:
-          return setButton1Configuration(cmd->getId(), cmd->getParam());
-      case EEndEffectorCommandType::CMD_TYPE_BUTTON_2_CONFIG:
-          return setButton2Configuration(cmd->getId(), cmd->getParam());
-      case EEndEffectorCommandType::CMD_TYPE_BUTTON_3_CONFIG:
-          return setButton3Configuration(cmd->getId(), cmd->getParam());
       default:
           std::cout << "Command not implemented" << std::endl;
       }

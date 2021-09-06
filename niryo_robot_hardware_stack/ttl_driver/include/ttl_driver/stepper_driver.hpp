@@ -46,14 +46,16 @@ class StepperDriver : public AbstractStepperDriver
         // AbstractTtlDriver interface
         virtual std::string str() const override;
 
-        virtual std::string interpreteErrorState(uint32_t hw_state) override;
+        virtual std::string interpreteErrorState(uint32_t hw_state) const override;
+
         virtual int checkModelNumber(uint8_t id) override;
-        virtual int readFirmwareVersion(uint8_t id, uint32_t &version) override;
+        virtual int readFirmwareVersion(uint8_t id, std::string &version) override;
 
         virtual int readTemperature(uint8_t id, uint32_t &temperature) override;
         virtual int readVoltage(uint8_t id, uint32_t &voltage) override;
         virtual int readHwErrorStatus(uint8_t id, uint32_t &hardware_status) override;
 
+        virtual int syncReadFirmwareVersion(const std::vector<uint8_t> &id_list, std::vector<std::string> &firmware_list) override;
         virtual int syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &temperature_list) override;
         virtual int syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &voltage_list) override;
         virtual int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list) override;
@@ -124,7 +126,7 @@ std::string StepperDriver<reg_type>::str() const
 }
 
 template<typename reg_type>
-std::string StepperDriver<reg_type>::interpreteErrorState(uint32_t /*hw_state*/)
+std::string StepperDriver<reg_type>::interpreteErrorState(uint32_t /*hw_state*/) const
 {
     return "no error table";
 }
@@ -153,9 +155,13 @@ int StepperDriver<reg_type>::checkModelNumber(uint8_t id)
 }
 
 template<typename reg_type>
-int StepperDriver<reg_type>::readFirmwareVersion(uint8_t id, uint32_t &version)
+int StepperDriver<reg_type>::readFirmwareVersion(uint8_t id, std::string &version)
 {
-    return read(reg_type::ADDR_FIRMWARE_VERSION, reg_type::SIZE_FIRMWARE_VERSION, id, version);
+    int res = 0;
+    uint32_t data{};
+    res = read(reg_type::ADDR_FIRMWARE_VERSION, reg_type::SIZE_FIRMWARE_VERSION, id, data);
+    version = interpreteFirmwareVersion(data);
+    return res;
 }
 
 template<typename reg_type>
@@ -242,6 +248,18 @@ template<typename reg_type>
 int StepperDriver<reg_type>::syncReadPosition(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &position_list)
 {
     return syncRead(reg_type::ADDR_PRESENT_POSITION, reg_type::SIZE_PRESENT_POSITION, id_list, position_list);
+}
+
+template<typename reg_type>
+int StepperDriver<reg_type>::syncReadFirmwareVersion(const std::vector<uint8_t> &id_list, std::vector<std::string> &firmware_version)
+{
+    int res = 0;
+    firmware_version.clear();
+    std::vector<uint32_t> data_list{};
+    res = syncRead(reg_type::ADDR_FIRMWARE_VERSION, reg_type::SIZE_FIRMWARE_VERSION, id_list, data_list);
+    for(auto const& data : data_list)
+      firmware_version.emplace_back(interpreteFirmwareVersion(data));
+    return res;
 }
 
 template<typename reg_type>

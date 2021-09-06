@@ -97,15 +97,6 @@ void StepperMotorState::setHwFailCounter(double fail_counter)
 }
 
 /**
- * @brief StepperMotorState::setFirmwareVersion
- * @param firmware_version
- */
-void StepperMotorState::setFirmwareVersion(std::string& firmware_version)
-{
-    _firmware_version = firmware_version;
-}
-
-/**
  * @brief StepperMotorState::setGearRatio
  * @param gear_ratio
  */

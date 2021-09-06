@@ -721,6 +721,7 @@ bool TtlManager::readEndEffectorStatus()
 
 /**
  * @brief TtlManager::readHwStatus
+ * TODO(CC) refacto
  */
 bool TtlManager::readHwStatus()
 {
@@ -739,6 +740,25 @@ bool TtlManager::readHwStatus()
             // we retrieve all the associated id for the type of the current driver
             vector<uint8_t> id_list = _ids_map.at(type);
             size_t id_list_size = id_list.size();
+
+            // **************  firmware version
+            vector<std::string> firmware_version_list;
+
+            if (COMM_SUCCESS != driver->syncReadFirmwareVersion(id_list, firmware_version_list))
+            {
+                // this operation can fail, it is normal, so no error message
+                hw_errors_increment++;
+            }
+            else if (id_list_size != firmware_version_list.size())
+            {
+                // however, if we have a mismatch here, it is not normal
+
+                ROS_ERROR("TtlManager::readHwStatus : syncReadFirmwareVersion failed - "
+                            "vector mistmatch (id_list size %d, temperature_list size %d)",
+                            static_cast<int>(id_list_size), static_cast<int>(firmware_version_list.size()));
+
+                hw_errors_increment++;
+            }
 
             // **************  temperature
             vector<uint32_t> temperature_list;
@@ -844,26 +864,32 @@ bool TtlManager::readHwStatus()
 
                 if (_state_map.count(id))
                 {
-                    auto State = _state_map.at(id);
+                    auto state = _state_map.at(id);
+
+                    // **************  firmware versions
+                    if (firmware_version_list.size() > i)
+                    {
+                        state->setFirmwareVersion(firmware_version_list.at(i));
+                    }
 
                     // **************  temperature
                     if (temperature_list.size() > i)
                     {
-                        State->setTemperatureState(static_cast<int>(temperature_list.at(i)));
+                        state->setTemperatureState(static_cast<int>(temperature_list.at(i)));
                     }
 
                     // **********  voltage
                     if (voltage_list.size() > i)
                     {
-                        State->setVoltageState(static_cast<int>(voltage_list.at(i)));
+                        state->setVoltageState(static_cast<int>(voltage_list.at(i)));
                     }
 
                     // **********  error state
                     if (hw_status_list.size() > i)
                     {
-                        State->setHardwareError(static_cast<int>(hw_status_list.at(i)));
+                        state->setHardwareError(static_cast<int>(hw_status_list.at(i)));
                         string hardware_message = driver->interpreteErrorState(hw_status_list.at(i));
-                        State->setHardwareError(hardware_message);
+                        state->setHardwareError(hardware_message);
                     }
                 }
             }  // for id_list

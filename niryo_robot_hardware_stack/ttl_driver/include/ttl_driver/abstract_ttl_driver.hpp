@@ -44,7 +44,7 @@ public:
 
     virtual int ping(uint8_t id);
     virtual int getModelNumber(uint8_t id,
-                       uint16_t& dxl_model_number);
+                       uint16_t& model_number);
     virtual int scan(std::vector<uint8_t>& id_list);
     virtual int reboot(uint8_t id);
 
@@ -59,19 +59,20 @@ public:
     virtual std::string str() const;
 
     // here are only common TTL commands found in both Steppers and DXl
-    virtual std::string interpreteErrorState(uint32_t hw_state) = 0;
+    virtual std::string interpreteErrorState(uint32_t hw_state) const = 0;
 
     // eeprom write
 
     // eeprom read
     virtual int checkModelNumber(uint8_t id) = 0;
-    virtual int readFirmwareVersion(uint8_t id, uint32_t& version) = 0;
+    virtual int readFirmwareVersion(uint8_t id, std::string& version) = 0;
 
     // ram read
     virtual int readTemperature(uint8_t id, uint32_t& temperature) = 0;
     virtual int readVoltage(uint8_t id, uint32_t& voltage) = 0;
     virtual int readHwErrorStatus(uint8_t id, uint32_t& hardware_status) = 0;
 
+    virtual int syncReadFirmwareVersion(const std::vector<uint8_t>& id_list, std::vector<std::string>& firmware_version) = 0;
     virtual int syncReadTemperature(const std::vector<uint8_t>& id_list, std::vector<uint32_t>& temperature_list) = 0;
     virtual int syncReadVoltage(const std::vector<uint8_t>& id_list, std::vector<uint32_t>& voltage_list) = 0;
     virtual int syncReadHwErrorStatus(const std::vector<uint8_t>& id_list, std::vector<uint32_t>& hw_error_list) = 0;
@@ -81,6 +82,8 @@ protected:
     int syncWrite(uint8_t address, uint8_t data_len, const std::vector<uint8_t>& id_list, const std::vector<uint32_t>& data_list);
 
     static constexpr int PING_WRONG_MODEL_NUMBER = 30;
+
+    virtual std::string interpreteFirmwareVersion(uint32_t fw_version) const = 0;
 
 private:
     std::shared_ptr<dynamixel::PortHandler> _dxlPortHandler;

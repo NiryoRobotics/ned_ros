@@ -37,6 +37,10 @@ class AbstractStepperDriver : public AbstractMotorDriver
                               std::shared_ptr<dynamixel::PacketHandler> packetHandler);
         virtual ~AbstractStepperDriver() override;
 
+    protected:
+        // AbstractTtlDriver interface
+        virtual std::string interpreteFirmwareVersion(uint32_t data) const override;
+
     public:
         // AbstractMotorDriver interface
         virtual std::string str() const override;
@@ -59,6 +63,7 @@ class AbstractStepperDriver : public AbstractMotorDriver
         virtual int readConveyorState(uint8_t id, bool &state) = 0;
     private:
         AbstractStepperDriver() = delete;
+
 };
 
 } // ttl_driver
