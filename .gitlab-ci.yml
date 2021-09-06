@@ -88,7 +88,7 @@ python_test:
     - python src/niryo_robot_unit_tests/scripts/script_test_headless.py
 
 
-build_doc:
+build_doc_job:
   image: registry.gitlab.com/niryo/dockers/build_docs/ned_ros_stack:v1.0.4
   rules:
   #   ## Just in case we would restrict to master (https:// stackoverflow.com/a/64448994)
