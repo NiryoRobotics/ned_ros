@@ -719,10 +719,7 @@ void TtlInterfaceCore::unsetTool(uint8_t motor_id)
  * @param button_3_config
  * @return
  */
-int TtlInterfaceCore::setEndEffector(uint8_t end_effector_id,
-                                     uint32_t button_1_config,
-                                     uint32_t button_2_config,
-                                     uint32_t button_3_config)
+int TtlInterfaceCore::setEndEffector(uint8_t end_effector_id)
 {
   int result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
 
@@ -734,29 +731,6 @@ int TtlInterfaceCore::setEndEffector(uint8_t end_effector_id,
       // add end effector
       _ttl_manager->addHardwareComponent(EHardwareType::END_EFFECTOR, end_effector_id, TtlManager::EType::END_EFFECTOR);
 
-      // Configure Button 1
-      std::shared_ptr<AbstractTtlSingleMotorCmd> cmd_button_1_config =
-                            std::make_shared<EndEffectorSingleCmd>(EEndEffectorCommandType::CMD_TYPE_BUTTON_1_CONFIG,
-                                                           end_effector_id,
-                                                           std::initializer_list<uint32_t>{button_1_config});
-      _ttl_manager->writeSingleCommand(cmd_button_1_config);
-      ros::Duration(0.01).sleep();
-
-      // Configure Button 2
-      std::shared_ptr<AbstractTtlSingleMotorCmd> cmd_button_2_config =
-                            std::make_shared<EndEffectorSingleCmd>(EEndEffectorCommandType::CMD_TYPE_BUTTON_2_CONFIG,
-                                                           end_effector_id,
-                                                           std::initializer_list<uint32_t>{button_2_config});
-      _ttl_manager->writeSingleCommand(cmd_button_2_config);
-      ros::Duration(0.01).sleep();
-
-      // Configure Button 3
-      std::shared_ptr<AbstractTtlSingleMotorCmd> cmd_button_3_config =
-                            std::make_shared<EndEffectorSingleCmd>(EEndEffectorCommandType::CMD_TYPE_BUTTON_3_CONFIG,
-                                                           end_effector_id,
-                                                           std::initializer_list<uint32_t>{button_3_config});
-      _ttl_manager->writeSingleCommand(cmd_button_3_config);
-      ros::Duration(0.01).sleep();
 
       result = niryo_robot_msgs::CommandStatus::SUCCESS;
   }

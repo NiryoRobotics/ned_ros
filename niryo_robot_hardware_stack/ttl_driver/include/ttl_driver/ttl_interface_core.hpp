@@ -94,10 +94,7 @@ class TtlInterfaceCore : public common::model::IDriverCore, public common::model
         std::vector<uint8_t> scanTools();
 
         // end effector panel control
-        int setEndEffector(uint8_t end_effector_id,
-                           uint32_t button_1_config,
-                           uint32_t button_2_config,
-                           uint32_t button_3_config);
+        int setEndEffector(uint8_t end_effector_id);
 
         // conveyor control
         int setConveyor(uint8_t motor_id, uint8_t default_conveyor_id = 6) override;

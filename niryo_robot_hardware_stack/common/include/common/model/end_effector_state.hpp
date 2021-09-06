@@ -55,7 +55,6 @@ class EndEffectorState : public AbstractHardwareState
         struct Button
         {
           EButtonType type{EButtonType::UNKNOWN};
-          uint32_t config{};
           EActionType action{EActionType::NO_ACTION};
         };
 
@@ -80,9 +79,6 @@ class EndEffectorState : public AbstractHardwareState
         virtual bool isValid() const override;
 
     public:
-        void setButtonConfig(uint8_t id, EButtonType button, uint32_t config);
-        uint32_t getButtonConfig(uint8_t id) const;
-
         void setButtonStatus(uint8_t id, EActionType action);
         std::array<Button, 3> getButtonsStatus() const;
 
@@ -113,18 +109,6 @@ std::array<EndEffectorState::Button, 3>
 EndEffectorState::getButtonsStatus() const
 {
   return _buttons_list;
-}
-
-/**
- * @brief EndEffectorState::getButton1Config
- * @return
- */
-inline
-uint32_t EndEffectorState::getButtonConfig(uint8_t id) const
-{
-  assert(id <= 3);
-
-  return _buttons_list[id - 1].config;
 }
 
 /**

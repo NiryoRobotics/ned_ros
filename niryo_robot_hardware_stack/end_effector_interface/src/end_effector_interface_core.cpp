@@ -111,14 +111,11 @@ void EndEffectorInterfaceCore::initParameters(ros::NodeHandle& nh)
     {
       std::string button_type = "";
       std::string button_name = "";
-      int button_config{0};
       nh.getParam("button_" + std::to_string(button_id) + "/type", button_type);
       auto eType = ButtonTypeEnum(button_type.c_str());
 
       nh.getParam("button_" + std::to_string(button_id) + "/name", button_name);
-      nh.getParam("button_" + std::to_string(button_id) + "/config", button_config);
 
-      _end_effector_state.setButtonConfig(button_id, eType, static_cast<uint32_t>(button_config));
       button_id++;
     }
 }
@@ -167,10 +164,7 @@ void EndEffectorInterfaceCore::initEndEffectorHardware()
   // init driver
   if (_end_effector_state.isValid())
   {
-      int result = _ttl_interface->setEndEffector(_end_effector_state.getId(),
-                                                  _end_effector_state.getButtonConfig(1),
-                                                  _end_effector_state.getButtonConfig(2),
-                                                  _end_effector_state.getButtonConfig(3));
+      int result = _ttl_interface->setEndEffector(_end_effector_state.getId());
 
       if (niryo_robot_msgs::CommandStatus::SUCCESS == result)
       {

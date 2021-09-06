@@ -76,20 +76,6 @@ bool common::model::EndEffectorState::isValid() const
 }
 
 /**
- * @brief EndEffectorState::setButtonConfig
- * @param id
- * @param button
- * @param config
- */
-void EndEffectorState::setButtonConfig(uint8_t id, EButtonType button, uint32_t config)
-{
-  assert(id <= 3);
-
-  _buttons_list[id - 1].type = button;
-  _buttons_list[id - 1].config = config;
-}
-
-/**
  * @brief EndEffectorState::setButtonStatus
  * @param id
  * @param action
