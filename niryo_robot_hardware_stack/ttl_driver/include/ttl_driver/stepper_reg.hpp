@@ -53,6 +53,9 @@ struct StepperReg
     static constexpr std::uint8_t ADDR_TORQUE_ENABLE            = 64;
     static constexpr std::uint8_t SIZE_TORQUE_ENABLE            = 1;
 
+    static constexpr std::uint8_t ADDR_HW_ERROR_STATUS          = 70;
+    static constexpr std::uint8_t SIZE_HW_ERROR_STATUS          = 1;
+
     static constexpr std::uint8_t ADDR_GOAL_VELOCITY            = 104;
     static constexpr std::uint8_t SIZE_GOAL_VELOCITY            = 4;
 
@@ -74,6 +77,8 @@ struct StepperReg
     static constexpr std::uint8_t ADDR_HOMING_STATUS            = 148;
     static constexpr std::uint8_t SIZE_HOMING_STATUS            = 1;
 
+    static constexpr std::uint8_t ADDR_HOMING_DIRECTION         = 149;
+    static constexpr std::uint8_t SIZE_HOMING_DIRECTION         = 1;
 };
 } // ttl_driver
 

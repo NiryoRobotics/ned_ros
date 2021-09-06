@@ -368,7 +368,6 @@ int TtlManager::setupCommunication()
     else
         ROS_ERROR("TtlManager::setupCommunication - Invalid port handler");
 
-    // TODO(Thuc): set up for stepper bus
     return ret;
 }
 
@@ -602,6 +601,7 @@ bool TtlManager::readPositionStatus()
                 }
                 else
                 {
+                    // TODO(CC) need to
                     ROS_ERROR("TtlManager::readPositionStatus : Fail to sync read position - "
                                 "vector mismatch (id_list size %d, position_list size %d)",
                                 static_cast<int>(id_list.size()),

@@ -22,6 +22,9 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <stdlib.h>     //for using the function sleep
+#include <chrono>
+#include <thread>
 
 // niryo
 #include "dynamixel_sdk/dynamixel_sdk.h"
@@ -64,6 +67,7 @@ int main(int argc, char **argv)
             ("ping", "ping specific ID")
             ("get-register", po::value<int>()->default_value(-1), "Get a value from a register (arg: reg_addr)")
             ("size", po::value<int>()->default_value(1), "Size (for get-register only)")
+            ("calibrate", "calibrate joints")
             ("set-register", po::value<std::vector<int>>(), "Set a value to a register (args: reg_addr, value, size)");
 
         po::positional_options_description p;
@@ -106,7 +110,15 @@ int main(int argc, char **argv)
                 printf("--> SCAN TTL bus\n");
                 ttlTools.broadcastPing();
             }
-            else
+            else if (vars.count("calibrate"))  // calibrate
+            {
+                printf("--> calibrate joints\n");
+                ttlTools.setRegister(3, 149, 1, 1);
+                ttlTools.setRegister(2, 147, 0, 1);
+                ttlTools.setRegister(3, 147, 0, 1);
+                ttlTools.setRegister(2, 147, 0, 1);
+            }
+            else if (vars.count("ping"))  // ping
             {
                 std::cout << "Motor ID: " << id << "\n";
 
@@ -153,7 +165,7 @@ int main(int argc, char **argv)
 
                     printf("Register address: %d, Size (bytes): %d\n", addr, size);
 
-                    comm_result = ttlTools.getRegister(static_cast<uint8_t>(id), addr, value, size);
+                    comm_result = ttlTools.setRegister(static_cast<uint8_t>(id), addr, value, size);
 
                     if (comm_result != COMM_SUCCESS)
                         printf("Failed to get register: %d\n", comm_result);

@@ -72,8 +72,8 @@ class StepperMotorState : public JointState
         virtual bool isValid() const override;
         virtual std::string str() const override;
 
-        virtual int to_motor_pos(double pos_rad) override;
-        virtual double to_rad_pos(int pos) override;
+        virtual int to_motor_pos(double pos_rad, common::model::EBusProtocol protocol) override;
+        virtual double to_rad_pos(int pos, common::model::EBusProtocol protocol) override;
 
 protected:
         bool _isConveyor{false};

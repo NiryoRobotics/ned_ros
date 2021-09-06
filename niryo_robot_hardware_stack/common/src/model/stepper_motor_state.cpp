@@ -171,19 +171,37 @@ std::string StepperMotorState::str() const
     return ss.str();
 }
 
-int StepperMotorState::to_motor_pos(double pos_rad)
+int StepperMotorState::to_motor_pos(double pos_rad, common::model::EBusProtocol protocol)
 {
-    double numerator = (STEPPERS_MOTOR_STEPS_PER_REVOLUTION * STEPPERS_MICROSTEPS * _gear_ratio * pos_rad / (2*M_PI));
-    return std::round( numerator * _direction);
+    if (protocol == common::model::EBusProtocol::CAN)
+    {
+        double numerator = (STEPPERS_MOTOR_STEPS_PER_REVOLUTION * STEPPERS_MICROSTEPS * _gear_ratio * pos_rad / (2*M_PI));
+        return std::round( numerator * _direction);
+    }
+    else
+    {
+        int pos = std::round((pos_rad*180) / (M_PI * 0.088));
+        // int pos = std::round((pos_rad*180) / (M_PI * 0.088) + _offset_position);
+        return pos;
+    }
 }
 
-double StepperMotorState::to_rad_pos(int pos)
+double StepperMotorState::to_rad_pos(int pos, common::model::EBusProtocol protocol)
 {
-    assert(0.0 != (STEPPERS_MOTOR_STEPS_PER_REVOLUTION * STEPPERS_MICROSTEPS * _gear_ratio * RADIAN_TO_DEGREE));
-    return static_cast<double>(
-                (pos * 2*M_PI) /
-                (STEPPERS_MOTOR_STEPS_PER_REVOLUTION * STEPPERS_MICROSTEPS * _gear_ratio) *
-                _direction);
+    if (protocol == common::model::EBusProtocol::CAN)
+    {
+        assert(0.0 != (STEPPERS_MOTOR_STEPS_PER_REVOLUTION * STEPPERS_MICROSTEPS * _gear_ratio * RADIAN_TO_DEGREE));
+        return static_cast<double>(
+                    (pos * 2*M_PI) /
+                    (STEPPERS_MOTOR_STEPS_PER_REVOLUTION * STEPPERS_MICROSTEPS * _gear_ratio) *
+                    _direction);
+    }
+    else
+    {
+        // double pos_rad = static_cast<double>((pos - _offset_position) * 0.088 * (M_PI / 180));
+        double pos_rad = static_cast<double>(pos * 0.088 * (M_PI / 180));
+        return pos_rad;
+    }
 }
 
 

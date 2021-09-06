@@ -48,8 +48,8 @@ class DxlMotorState : public JointState
         virtual void reset() override;
         virtual bool isValid() const override;
 
-        virtual int to_motor_pos(double pos_rad) override;
-        virtual double to_rad_pos(int position_dxl) override;
+        virtual int to_motor_pos(double pos_rad, common::model::EBusProtocol protocol) override;
+        virtual double to_rad_pos(int position_dxl, common::model::EBusProtocol protocol) override;
 
         uint32_t getPositionPGain() const;
         uint32_t getPositionIGain() const;
