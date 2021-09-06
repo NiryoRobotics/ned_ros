@@ -54,6 +54,7 @@ catkin_make_arm:
   rules:
     - if: $CI_COMMIT_BRANCH
       when: manual
+      allow_failure: true
   script:
     # Create whole path folders
     - mkdir -p ${NIRYO_HOME_FOLDER}/src
