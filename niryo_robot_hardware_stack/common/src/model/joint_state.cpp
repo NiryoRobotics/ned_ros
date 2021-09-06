@@ -145,7 +145,8 @@ std::string JointState::str() const
     ss << "\n---\n";
     ss << "type: " << HardwareTypeEnum(_type).toString() << ", ";
     ss << "name: " << "\"" << _name << "\"" << ", ";
-    ss << "position: " << pos << ", ";
+    ss << "offset position: " << _offset_position << ", ";
+    ss << "direction : " << _direction << ", ";
     ss << "need calibration: " << (_need_calibration ? "true" : "false") << ", ";
     ss << "pos(" << pos << "), ";
     ss << "cmd(" << cmd << "), ";

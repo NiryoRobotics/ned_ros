@@ -327,8 +327,11 @@ int TtlManager::setupCommunication()
 
     ROS_DEBUG("TtlManager::setupCommunication - initializing connection...");
 
+    // fake drivers will always succeed for the communication
     if (_device_name == "fake")
         return COMM_SUCCESS;
+
+
     // Dxl bus setup
     if (_portHandler)
     {
