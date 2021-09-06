@@ -2,11 +2,12 @@
 <launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
 
-    <include file="$(find niryo_robot_hardware_interface)/launch/niryo_robot_hardware_interface.launch" >
+    <include file="$(find joints_interface)/launch/joints_interface.launch" >
         <arg name="hardware_version" value="fake" />
+        <arg name="can_enabled" value="false" />
         <arg name="ttl_enabled" value="true" />
     </include>
-    
-    <test test-name="niryo_robot_hardware_interface_integration_tests" pkg="niryo_robot_hardware_interface" type="niryo_robot_hardware_interface_integration_tests"  /> 
+
+    <test test-name="joints_interface_integration_tests" pkg="joints_interface" type="joints_interface_integration_tests"  /> 
 
 </launch>

@@ -99,10 +99,8 @@ class MockDxlDriver : public AbstractDxlDriver
         virtual int readVelocity(uint8_t id, uint32_t &present_velocity) override;
         virtual int syncReadVelocity(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &velocity_list) override;
     private:
-        // std::map<uint8_t, uint32_t> _map_fake_pos{ {1, 1000}, {2, 2000}, {3, 2000}, {4, 2000}, {5, 2000}, {6, 1000}, {11, 370} };
-        // std::vector<uint8_t> _id_list{1, 2, 3, 4, 5, 6, 11};
-        std::map<uint8_t, uint32_t> _map_fake_pos{ {4, 2048}, {5, 2048}, {6, 2048}, {11, 370} };
-        std::vector<uint8_t> _id_list{4, 5, 6, 11};
+        std::map<uint8_t, uint32_t> _map_fake_pos{ {5, 2048}, {6, 2048}, {7, 2048}, {11, 370} };
+        std::vector<uint8_t> _id_list{5, 6, 7, 11};
 
         static constexpr int GROUP_SYNC_REDONDANT_ID = 10;
         static constexpr int LEN_ID_DATA_NOT_SAME    = 20;
@@ -204,6 +202,7 @@ int MockDxlDriver::setTorqueEnable(uint8_t id, uint32_t torque_enable)
 
 int MockDxlDriver::setGoalPosition(uint8_t id, uint32_t position)
 {
+    _map_fake_pos.at(id) = position;
     return COMM_SUCCESS;
 }
 

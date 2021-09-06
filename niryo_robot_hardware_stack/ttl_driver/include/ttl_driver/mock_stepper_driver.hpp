@@ -89,8 +89,8 @@ class MockStepperDriver : public AbstractStepperDriver
         virtual int readConveyorState(uint8_t id, bool &state) override;
     
     private:
-        std::map<uint8_t, uint32_t> _map_fake_pos{ {1, 0}, {2, 1090}, {3, 2447} };
-        std::vector<uint8_t> _id_list{1, 2, 3};
+        std::map<uint8_t, uint32_t> _map_fake_pos{ {2, 0}, {3, 1090}, {4, 2447} };
+        std::vector<uint8_t> _id_list{2, 3, 4};
 
         static constexpr int GROUP_SYNC_REDONDANT_ID = 10;
         static constexpr int LEN_ID_DATA_NOT_SAME    = 20;
@@ -197,6 +197,7 @@ int MockStepperDriver::setTorqueEnable(uint8_t id, uint32_t torque_enable)
 
 int MockStepperDriver::setGoalPosition(uint8_t id, uint32_t position)
 {
+    _map_fake_pos.at(id) = position;
     return COMM_SUCCESS;
 }
 

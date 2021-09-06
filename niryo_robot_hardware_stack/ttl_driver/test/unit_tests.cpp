@@ -106,7 +106,7 @@ TEST_F(TtlManagerTestSuite, testSingleCmds)
 {
   std::shared_ptr<common::model::AbstractTtlSingleMotorCmd> cmd_1 = std::make_shared<common::model::DxlSingleCmd>(
                                                                           common::model::EDxlCommandType::CMD_TYPE_TORQUE,
-                                                                          2,
+                                                                          5,
                                                                           std::initializer_list<uint32_t>{1});
   EXPECT_EQ(ttl_drv->writeSingleCommand(cmd_1), COMM_SUCCESS);
   ros::Duration(0.01).sleep();
@@ -130,7 +130,7 @@ TEST_F(TtlManagerTestSuite, testSingleCmds)
   // wrong type of cmd object
   std::shared_ptr<common::model::AbstractTtlSingleMotorCmd> cmd_4 = std::make_shared<common::model::StepperTtlSingleCmd>(
                                                                           common::model::EStepperCommandType::CMD_TYPE_TORQUE,
-                                                                          2,
+                                                                          5,
                                                                           std::initializer_list<uint32_t>{1});
   EXPECT_NE(ttl_drv->writeSingleCommand(cmd_4), COMM_SUCCESS);
 }

@@ -144,6 +144,11 @@ if(CATKIN_ENABLE_TESTING)
       test/service_client.test
       test/service_client.cpp
     )
+  else()
+    add_rostest_gtest(${PROJECT_NAME}_integration_tests
+    test/service_client_fake.test
+    test/service_client.cpp
+    )
   endif()
   
   if(TARGET ${PROJECT_NAME}_integration_tests)

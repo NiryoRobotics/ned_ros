@@ -55,11 +55,16 @@ TEST(TESTSuite, sendCustomValue)
 
     ttl_driver::SendCustomValue srv;
 
-    if (hw_version == "fake")
-        srv.request.motor_type = 6;  // fake dxl
-    else
+    if (hw_version == "ned2")
+    {
         srv.request.motor_type = 2;  // xl430
-    srv.request.id = 2;
+        srv.request.id = 5;
+    }
+    else
+    {
+        srv.request.motor_type = 2;  // xl430
+        srv.request.id = 2;
+    }
     srv.request.reg_address = 64;  // Torque enable for xl430
     srv.request.value = 1;
     srv.request.byte_number = 1;
@@ -81,12 +86,16 @@ TEST(TESTSuite, readCustomValue)
     EXPECT_TRUE(exists);
 
     ttl_driver::ReadCustomValue srv;
-    // to be defined
-    if (hw_version == "fake")
-        srv.request.motor_type = 6;  // fake dxl
-    else
+    if (hw_version == "ned2")
+    {
         srv.request.motor_type = 2;  // xl430
-    srv.request.id = 2;
+        srv.request.id = 5;
+    }
+    else
+    {
+        srv.request.motor_type = 2;  // xl430
+        srv.request.id = 2;
+    }
     srv.request.reg_address = 6;
     srv.request.byte_number = 1;
 
@@ -103,6 +112,12 @@ int main(int argc, char **argv)
     testing::InitGoogleTest(&argc, argv);
 
     nh = std::make_unique<ros::NodeHandle>();
+    
+    std::string hardware_version;
+    ros::NodeHandle nh_private("~");
+    nh_private.getParam("hardware_version", hardware_version);
+    if (hardware_version == "fake")
+        testing::GTEST_FLAG(filter) = "-TESTSuite.sendCustomValue:TESTSuite.readCustomValue";
 
     return RUN_ALL_TESTS();
 }

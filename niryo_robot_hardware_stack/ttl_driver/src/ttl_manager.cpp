@@ -435,6 +435,9 @@ bool TtlManager::ping(uint8_t id)
 {
     int result = false;
 
+    if (_state_map.find(id) == _state_map.end())
+        return result;
+
     auto it = _driver_map.at(_state_map.find(id)->second->getType());
     if (it)
     {
