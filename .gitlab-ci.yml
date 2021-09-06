@@ -51,6 +51,9 @@ catkin_make_arm:
   stage: build
   retry:
     max: 1
+  rules:
+    - if: $CI_COMMIT_BRANCH
+      when: manual
   script:
     # Create whole path folders
     - mkdir -p ${NIRYO_HOME_FOLDER}/src
