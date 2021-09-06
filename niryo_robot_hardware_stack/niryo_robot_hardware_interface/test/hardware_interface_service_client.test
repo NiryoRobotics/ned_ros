@@ -7,6 +7,6 @@
         <arg name="ttl_enabled" default="true"/>
     </include>
     
-    <test test-name="niryo_robot_hardware_interface_integration_tests" pkg="niryo_robot_hardware_interface" type="niryo_robot_hardware_interface_integration_tests"  /> 
+    <test test-name="niryo_robot_hardware_interface_integration_tests" pkg="niryo_robot_hardware_interface" type="niryo_robot_hardware_interface_integration_tests"  time-limit="120.0"/> 
 
 </launch>
