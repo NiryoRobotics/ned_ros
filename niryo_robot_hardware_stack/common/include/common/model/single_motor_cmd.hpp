@@ -234,7 +234,7 @@ inline
 bool DxlSingleCmd::isValid() const
 {
     return (EDxlCommandType::CMD_TYPE_UNKNOWN != _type) &&
-           (1 != _id);
+           (1 != _id) && (0 != _id);
 }
 
 //********************************

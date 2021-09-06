@@ -265,7 +265,7 @@ bool HardwareInterface::_callbackStopMotorsReport(niryo_robot_msgs::Trigger::Req
 {
     res.status = niryo_robot_msgs::CommandStatus::FAILURE;
 
-    ROS_WARN("Hardware Interface - Stop Motor Report");
+    ROS_INFO("Hardware Interface - Stop Motor Report");
 
     if (_can_interface)
         _can_interface->activeDebugMode(false);
@@ -276,7 +276,7 @@ bool HardwareInterface::_callbackStopMotorsReport(niryo_robot_msgs::Trigger::Req
     res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
     res.message = "";
 
-    return (niryo_robot_msgs::CommandStatus::SUCCESS == res.status);
+    return true;
 }
 
 /**
@@ -290,17 +290,10 @@ bool HardwareInterface::_callbackLaunchMotorsReport(niryo_robot_msgs::Trigger::R
 {
     res.status = niryo_robot_msgs::CommandStatus::FAILURE;
 
-    ROS_WARN("Hardware Interface - Start Motors Report");
+    ROS_INFO("Hardware Interface - Start Motors Report");
 
     int can_status = niryo_robot_msgs::CommandStatus::FAILURE;
     int ttl_status = niryo_robot_msgs::CommandStatus::FAILURE;
-
-    if (_can_interface)
-    {
-        _can_interface->activeDebugMode(true);
-        can_status = _can_interface->launchMotorsReport();
-        _can_interface->activeDebugMode(false);
-    }
 
     if (_ttl_interface)
     {
@@ -309,24 +302,41 @@ bool HardwareInterface::_callbackLaunchMotorsReport(niryo_robot_msgs::Trigger::R
         _ttl_interface->activeDebugMode(false);
     }
 
-    ROS_WARN("Hardware Interface - Motors report ended");
-
-    if ((niryo_robot_msgs::CommandStatus::SUCCESS == can_status) &&
-        (niryo_robot_msgs::CommandStatus::SUCCESS == ttl_status))
+    if (_can_interface)
     {
-        res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
-        res.message = "Hardware interface seems working properly";
+        _can_interface->activeDebugMode(true);
+        can_status = _can_interface->launchMotorsReport();
+        _can_interface->activeDebugMode(false);
+        ROS_WARN("Hardware Interface - Motors report ended");
+        
+        if ((niryo_robot_msgs::CommandStatus::SUCCESS == can_status) &&
+            (niryo_robot_msgs::CommandStatus::SUCCESS == ttl_status))
+        {
+            res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
+            res.message = "Hardware interface seems working properly";
+            ROS_INFO("Hardware Interface - Motors report ended");
+            return true;
+        }
     }
-    else
-    {
-        res.status = niryo_robot_msgs::CommandStatus::FAILURE;
-        res.message = "Steppers status: ";
-        res.message += (can_status == niryo_robot_msgs::CommandStatus::SUCCESS) ? "Ok" : "Error";
-        res.message += ", Dxl status: ";
-        res.message += (ttl_status == niryo_robot_msgs::CommandStatus::SUCCESS) ? "Ok" : "Error";
+    else {
+        if (niryo_robot_msgs::CommandStatus::SUCCESS == ttl_status)
+        {
+            res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
+            res.message = "Hardware interface seems working properly";
+            ROS_INFO("Hardware Interface - Motors report ended");
+            return true;
+        }
     }
 
-    return (niryo_robot_msgs::CommandStatus::SUCCESS == res.status);
+    res.status = niryo_robot_msgs::CommandStatus::FAILURE;
+    res.message = "Steppers status: ";
+    res.message += (can_status == niryo_robot_msgs::CommandStatus::SUCCESS) ? "Ok" : "Error";
+    res.message += ", Dxl status: ";
+    res.message += (ttl_status == niryo_robot_msgs::CommandStatus::SUCCESS) ? "Ok" : "Error";
+
+    ROS_INFO("Hardware Interface - Motors report ended");
+
+    return true;
 }
 
 /**
@@ -359,7 +369,7 @@ bool HardwareInterface::_callbackRebootMotors(niryo_robot_msgs::Trigger::Request
         res.message = "Reboot motors Problems";
     }
 
-    return (niryo_robot_msgs::CommandStatus::SUCCESS == res.status);
+    return true;
 }
 
 /**

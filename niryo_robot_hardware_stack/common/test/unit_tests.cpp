@@ -266,17 +266,16 @@ TEST(CommonTestSuite, testCreationDxlCmd)
     common::model::DxlSingleCmd cmd;
     ASSERT_FALSE(cmd.isValid());
 
-    common::model::DxlSingleCmd dxlCmd(common::model::EDxlCommandType::CMD_TYPE_POSITION, 1, std::initializer_list<uint32_t>{5});
+    common::model::DxlSingleCmd dxlCmd(common::model::EDxlCommandType::CMD_TYPE_POSITION, 5, std::initializer_list<uint32_t>{5});
     ASSERT_TRUE(dxlCmd.isValid());
     ASSERT_TRUE(dxlCmd.isDxlCmd());
 
     ASSERT_EQ(dxlCmd.getParam(), static_cast<uint8_t>(5));
-    ASSERT_EQ(dxlCmd.getId(), static_cast<uint8_t>(1));
+    ASSERT_EQ(dxlCmd.getId(), static_cast<uint8_t>(5));
 
     dxlCmd.reset();
     ASSERT_FALSE(dxlCmd.isValid());
-    ASSERT_NE(dxlCmd.getId(), static_cast<uint8_t>(1));
-    ASSERT_EQ(dxlCmd.getParam(), static_cast<uint8_t>(5));
+    ASSERT_NE(dxlCmd.getId(), static_cast<uint8_t>(5));
 }
 
 TEST(CommonTestSuite, testCreationStepperTtlCmd)

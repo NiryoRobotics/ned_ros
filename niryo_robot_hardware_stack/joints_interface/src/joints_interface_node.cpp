@@ -38,14 +38,20 @@ int main(int argc, char **argv)
     ros::NodeHandle nh;
 
     ros::NodeHandle nh_private("~");
+    std::string hw_version;
+    nh_private.getParam("hardware_version", hw_version);
 
     ros::NodeHandle nh_ttl("ttl_driver");
     auto ttl_driver = std::make_shared<ttl_driver::TtlInterfaceCore>(nh_ttl);
     ros::Duration(1).sleep();
 
-    ros::NodeHandle nh_can("can_driver");
-    auto can_driver = std::make_shared<can_driver::CanInterfaceCore>(nh_can);
-    ros::Duration(1).sleep();
+    std::shared_ptr<can_driver::CanInterfaceCore> can_driver;
+    if (hw_version == "ned")
+    {
+        ros::NodeHandle nh_can("can_driver");
+        can_driver = std::make_shared<can_driver::CanInterfaceCore>(nh_can);
+        ros::Duration(1).sleep();
+    }
 
     auto joints = std::make_shared<joints_interface::JointsInterfaceCore>(nh, nh_private, ttl_driver, can_driver);
     ros::waitForShutdown();

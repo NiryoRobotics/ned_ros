@@ -275,7 +275,7 @@ int TtlInterfaceCore::motorCmdReport(uint8_t motor_id, EHardwareType motor_type)
         // torque on
         ros::Duration(0.5).sleep();
         ROS_INFO("TtlInterfaceCore::motorCmdReport - Debug - Send torque on command to motor %d", motor_id);
-        if (motor_type != EHardwareType::STEPPER && motor_type != EHardwareType::FAKE_STEPPER_MOTOR)
+        if (motor_type == EHardwareType::STEPPER || motor_type == EHardwareType::FAKE_STEPPER_MOTOR)
         {
             ret = niryo_robot_msgs::CommandStatus::SUCCESS;
             ROS_INFO("TtlInterfaceCore::motorCmdReport: Implement in case we have stepper");
@@ -451,8 +451,7 @@ void TtlInterfaceCore::startControlLoop()
 */
 bool TtlInterfaceCore::scanMotorId(uint8_t motor_to_find)
 {
-    ROS_INFO("TtlInterfaceCore::scanMotorId need to be implemented used in calibration manager");
-    return true;
+    return _ttl_manager->ping(motor_to_find);
 }
 
 /**

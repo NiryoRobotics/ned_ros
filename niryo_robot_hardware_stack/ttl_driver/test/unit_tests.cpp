@@ -102,7 +102,7 @@ std::string TtlManagerTestSuite::hw_version;
 * Theses tests is used to test NED v1
 */
 // Test driver received cmd
-TEST_F(TtlManagerTestSuite, testSingleCmds)
+TEST_F(TtlManagerTestSuite, testSingleCmdsNed1)
 {
   std::shared_ptr<common::model::AbstractTtlSingleMotorCmd> cmd_1 = std::make_shared<common::model::DxlSingleCmd>(
                                                                           common::model::EDxlCommandType::CMD_TYPE_TORQUE,
@@ -135,7 +135,41 @@ TEST_F(TtlManagerTestSuite, testSingleCmds)
   EXPECT_NE(ttl_drv->writeSingleCommand(cmd_4), COMM_SUCCESS);
 }
 
-TEST_F(TtlManagerTestSuite, testSyncCmdsOnHW)
+// Test driver received cmd
+TEST_F(TtlManagerTestSuite, testSingleCmdsNed2AndFakeHW)
+{
+  std::shared_ptr<common::model::AbstractTtlSingleMotorCmd> cmd_1 = std::make_shared<common::model::DxlSingleCmd>(
+                                                                          common::model::EDxlCommandType::CMD_TYPE_TORQUE,
+                                                                          5,
+                                                                          std::initializer_list<uint32_t>{1});
+  EXPECT_EQ(ttl_drv->writeSingleCommand(cmd_1), COMM_SUCCESS);
+  ros::Duration(0.01).sleep();
+
+  // wrong id
+  std::shared_ptr<common::model::AbstractTtlSingleMotorCmd> cmd_2 = std::make_shared<common::model::DxlSingleCmd>(
+                                                                          common::model::EDxlCommandType::CMD_TYPE_TORQUE,
+                                                                          20,
+                                                                          std::initializer_list<uint32_t>{1});
+  EXPECT_NE(ttl_drv->writeSingleCommand(cmd_2), COMM_SUCCESS);
+  ros::Duration(0.01).sleep();
+
+  // wrong type cmd
+  std::shared_ptr<common::model::AbstractTtlSingleMotorCmd> cmd_3 = std::make_shared<common::model::DxlSingleCmd>(
+                                                                          common::model::EDxlCommandType::CMD_TYPE_UNKNOWN,
+                                                                          2,
+                                                                          std::initializer_list<uint32_t>{1});
+  EXPECT_NE(ttl_drv->writeSingleCommand(cmd_3), COMM_SUCCESS);
+  ros::Duration(0.01).sleep();
+
+  // wrong type of cmd object
+  std::shared_ptr<common::model::AbstractTtlSingleMotorCmd> cmd_4 = std::make_shared<common::model::StepperTtlSingleCmd>(
+                                                                          common::model::EStepperCommandType::CMD_TYPE_TORQUE,
+                                                                          5,
+                                                                          std::initializer_list<uint32_t>{1});
+  EXPECT_NE(ttl_drv->writeSingleCommand(cmd_4), COMM_SUCCESS);
+}
+
+TEST_F(TtlManagerTestSuite, testSyncCmdsOnNed1)
 {
   // sync cmd
   std::shared_ptr<common::model::DxlSyncCmd> dynamixel_cmd_1 = std::make_shared<common::model::DxlSyncCmd>(
@@ -176,13 +210,13 @@ TEST_F(TtlManagerTestSuite, testSyncCmdsOnHW)
   EXPECT_NE(ttl_drv->writeSynchronizeCommand(dynamixel_cmd_4), COMM_SUCCESS);
 }
 
-TEST_F(TtlManagerTestSuite, testSyncCmdsOnFakeHW)
+TEST_F(TtlManagerTestSuite, testSyncCmdsOnNed2AndFakeHW)
 {
   // sync cmd
   std::shared_ptr<common::model::DxlSyncCmd> dynamixel_cmd_1 = std::make_shared<common::model::DxlSyncCmd>(
                                                             common::model::EDxlCommandType::CMD_TYPE_TORQUE);
-  dynamixel_cmd_1->addMotorParam(common::model::EHardwareType::FAKE_DXL_MOTOR, 2, 1);
-  dynamixel_cmd_1->addMotorParam(common::model::EHardwareType::FAKE_DXL_MOTOR, 3, 1);
+  dynamixel_cmd_1->addMotorParam(common::model::EHardwareType::FAKE_DXL_MOTOR, 5, 1);
+  dynamixel_cmd_1->addMotorParam(common::model::EHardwareType::FAKE_DXL_MOTOR, 6, 1);
 
   EXPECT_EQ(ttl_drv->writeSynchronizeCommand(dynamixel_cmd_1), COMM_SUCCESS);
   ros::Duration(0.5).sleep();
@@ -190,8 +224,8 @@ TEST_F(TtlManagerTestSuite, testSyncCmdsOnFakeHW)
   // redondant id
   std::shared_ptr<common::model::DxlSyncCmd> dynamixel_cmd_3 = std::make_shared<common::model::DxlSyncCmd>(
                                                             common::model::EDxlCommandType::CMD_TYPE_TORQUE);
-  dynamixel_cmd_3->addMotorParam(common::model::EHardwareType::FAKE_DXL_MOTOR, 3, 1);
-  dynamixel_cmd_3->addMotorParam(common::model::EHardwareType::FAKE_DXL_MOTOR, 3, 1);
+  dynamixel_cmd_3->addMotorParam(common::model::EHardwareType::FAKE_DXL_MOTOR, 5, 1);
+  dynamixel_cmd_3->addMotorParam(common::model::EHardwareType::FAKE_DXL_MOTOR, 5, 1);
 
   EXPECT_NE(ttl_drv->writeSynchronizeCommand(dynamixel_cmd_3), COMM_SUCCESS);
 
@@ -199,7 +233,7 @@ TEST_F(TtlManagerTestSuite, testSyncCmdsOnFakeHW)
   std::shared_ptr<common::model::DxlSyncCmd> dynamixel_cmd_4 = std::make_shared<common::model::DxlSyncCmd>(
                                                             common::model::EDxlCommandType::CMD_TYPE_UNKNOWN);
   dynamixel_cmd_4->addMotorParam(common::model::EHardwareType::FAKE_DXL_MOTOR, 5, 1);
-  dynamixel_cmd_4->addMotorParam(common::model::EHardwareType::FAKE_DXL_MOTOR, 3, 1);
+  dynamixel_cmd_4->addMotorParam(common::model::EHardwareType::FAKE_DXL_MOTOR, 6, 1);
 
   EXPECT_NE(ttl_drv->writeSynchronizeCommand(dynamixel_cmd_4), COMM_SUCCESS);
 }
@@ -219,9 +253,9 @@ int main(int argc, char **argv)
   std::string hardware_version;
   ros::NodeHandle nh_private("~");
   nh_private.getParam("hardware_version", hardware_version);
-  if (hardware_version == "fake")
-    testing::GTEST_FLAG(filter) = "-TtlManagerTestSuite.testSyncCmdsOnHW";
+  if (hardware_version == "fake" || hardware_version == "ned2")
+    testing::GTEST_FLAG(filter) = "-TtlManagerTestSuite.testSyncCmdsOnNed1:TtlManagerTestSuite.testSingleCmdsNed1";
   else
-    testing::GTEST_FLAG(filter) = "-TtlManagerTestSuite.testSyncCmdsOnFakeHW";
+    testing::GTEST_FLAG(filter) = "-TtlManagerTestSuite.testSyncCmdsOnNed2AndFakeHW:TtlManagerTestSuite.testSingleCmdsNed2AndFakeHW";
   return RUN_ALL_TESTS();
 }

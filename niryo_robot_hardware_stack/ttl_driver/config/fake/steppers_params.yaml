@@ -3,7 +3,7 @@
 #
 steppersTtl:
     stepper_1:
-        id: 1
+        id: 2
         gear_ratio: 5.4375
         offset_position: 2.96706
         home_position: 0.0
@@ -11,7 +11,7 @@ steppersTtl:
         max_effort: 110
 
     stepper_2:
-        id: 2
+        id: 3
         gear_ratio: 8.5625
         offset_position: 0.610865
         home_position: 0.5
@@ -19,7 +19,7 @@ steppersTtl:
         max_effort: 130
         
     stepper_3:
-        id: 3
+        id: 4
         gear_ratio: 7.6875
         offset_position: -1.3439
         home_position: -1.25
