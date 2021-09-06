@@ -48,20 +48,24 @@ class DxlDriver : public AbstractDxlDriver
         virtual ~DxlDriver() override;
 
         virtual std::string str() const override;
+        virtual std::string interpreteErrorState(uint32_t hw_state) const override;
 
     public:
-        // AbstractTtlDriver interface
-        virtual std::string interpreteErrorState(uint32_t hw_state) override;
         virtual int checkModelNumber(uint8_t id) override;
-        virtual int readFirmwareVersion(uint8_t id, uint32_t &version) override;
+        virtual int readFirmwareVersion(uint8_t id, std::string &version) override;
 
         virtual int readTemperature(uint8_t id, uint32_t &temperature) override;
         virtual int readVoltage(uint8_t id, uint32_t &voltage) override;
         virtual int readHwErrorStatus(uint8_t id, uint32_t &hardware_status) override;
 
+        virtual int syncReadFirmwareVersion(const std::vector<uint8_t> &id_list, std::vector<std::string> &firmware_list) override;
         virtual int syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &temperature_list) override;
         virtual int syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &voltage_list) override;
         virtual int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list) override;
+
+    protected:
+        // AbstractTtlDriver interface
+        virtual std::string interpreteFirmwareVersion(uint32_t fw_version) const override;
 
     public:
         // AbstractMotorDriver interface : we cannot define them globally in AbstractMotorDriver
@@ -136,9 +140,17 @@ std::string DxlDriver<reg_type>::str() const
 }
 
 template<typename reg_type>
-std::string DxlDriver<reg_type>::interpreteErrorState(uint32_t /*hw_state*/)
+std::string DxlDriver<reg_type>::interpreteErrorState(uint32_t /*hw_state*/) const
 {
     return "no error table";
+}
+
+template<typename reg_type>
+std::string DxlDriver<reg_type>::interpreteFirmwareVersion(uint32_t fw_version) const
+{
+    std::string version = std::to_string(static_cast<uint8_t>(fw_version));
+
+    return version;
 }
 
 template<typename reg_type>
@@ -165,9 +177,13 @@ int DxlDriver<reg_type>::checkModelNumber(uint8_t id)
 }
 
 template<typename reg_type>
-int DxlDriver<reg_type>::readFirmwareVersion(uint8_t id, uint32_t &version)
+int DxlDriver<reg_type>::readFirmwareVersion(uint8_t id, std::string &version)
 {
-    return read(reg_type::ADDR_FIRMWARE_VERSION, reg_type::SIZE_FIRMWARE_VERSION, id, version);
+    int res = COMM_RX_FAIL;
+    uint32_t data{};
+    res = read(reg_type::ADDR_FIRMWARE_VERSION, reg_type::SIZE_FIRMWARE_VERSION, id, data);
+    version = interpreteFirmwareVersion(data);
+    return res;
 }
 
 template<typename reg_type>
@@ -252,6 +268,17 @@ template<typename reg_type>
 int DxlDriver<reg_type>::syncReadPosition(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &position_list)
 {
     return syncRead(reg_type::ADDR_PRESENT_POSITION, reg_type::SIZE_PRESENT_POSITION, id_list, position_list);
+}
+
+template<typename reg_type>
+int DxlDriver<reg_type>::syncReadFirmwareVersion(const std::vector<uint8_t> &id_list, std::vector<std::string> &firmware_list)
+{
+    int res = COMM_RX_FAIL;
+    std::vector<uint32_t> data_list;
+    res = syncRead(reg_type::ADDR_FIRMWARE_VERSION, reg_type::SIZE_FIRMWARE_VERSION, id_list, data_list);
+    for(auto const& data : data_list)
+      firmware_list.emplace_back(interpreteFirmwareVersion(data));
+    return res;
 }
 
 template<typename reg_type>
@@ -390,7 +417,7 @@ int DxlDriver<XL320Reg>::readMaxPosition(uint8_t /*id*/, uint32_t &pos)
 }
 
 template<>
-std::string DxlDriver<XL320Reg>::interpreteErrorState(uint32_t hw_state)
+std::string DxlDriver<XL320Reg>::interpreteErrorState(uint32_t hw_state) const
 {
     std::string hardware_message;
 
@@ -457,7 +484,7 @@ int DxlDriver<XL320Reg>::syncWriteVelocityGoal(const std::vector<uint8_t> &id_li
 // XL430
 
 template<>
-std::string DxlDriver<XL430Reg>::interpreteErrorState(uint32_t hw_state)
+std::string DxlDriver<XL430Reg>::interpreteErrorState(uint32_t hw_state) const
 {
     std::string hardware_message;
 
@@ -512,7 +539,7 @@ int DxlDriver<XL430Reg>::syncWriteTorqueGoal(const std::vector<uint8_t> &/*id_li
 // XC430
 
 template<>
-std::string DxlDriver<XC430Reg>::interpreteErrorState(uint32_t hw_state)
+std::string DxlDriver<XC430Reg>::interpreteErrorState(uint32_t hw_state) const
 {
     std::string hardware_message;
 
@@ -567,7 +594,7 @@ int DxlDriver<XC430Reg>::syncWriteTorqueGoal(const std::vector<uint8_t> &/*id_li
 // XL330
 
 template<>
-std::string DxlDriver<XL330Reg>::interpreteErrorState(uint32_t hw_state)
+std::string DxlDriver<XL330Reg>::interpreteErrorState(uint32_t hw_state) const
 {
     std::string hardware_message;
 

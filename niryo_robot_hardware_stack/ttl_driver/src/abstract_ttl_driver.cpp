@@ -69,16 +69,16 @@ int AbstractTtlDriver::ping(uint8_t id)
 /**
  * @brief AbstractTtlDriver::getModelNumber
  * @param id
- * @param dxl_model_number
+ * @param model_number
  * @return
  */
-int AbstractTtlDriver::getModelNumber(uint8_t id, uint16_t& dxl_model_number)
+int AbstractTtlDriver::getModelNumber(uint8_t id, uint16_t& model_number)
 {
     uint8_t dxl_error = 0;
 
     int result = _dxlPacketHandler->ping(_dxlPortHandler.get(),
                                          id,
-                                         &dxl_model_number,
+                                         &model_number,
                                          &dxl_error);
 
     if (0 != dxl_error)

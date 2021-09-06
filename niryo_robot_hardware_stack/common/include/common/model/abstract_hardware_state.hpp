@@ -47,12 +47,14 @@ class AbstractHardwareState : public IObject
         EBusProtocol getBusProtocol() const;
         uint8_t getId() const;
 
+        std::string getFirmwareVersion() const;
         int getTemperatureState() const;
         int getVoltageState() const;
         int getHardwareErrorState() const;
         std::string getHardwareErrorMessageState() const;
 
         // setters
+        void setFirmwareVersion(std::string& firmware_version);
         void setTemperatureState(int temp);
         void setVoltageState(int volt);
         void setHardwareError(int hw_error);
@@ -73,6 +75,8 @@ class AbstractHardwareState : public IObject
         uint8_t _id;
 
         // read variables
+        std::string _firmware_version;
+
         int _temperature_state;
         int _voltage_state;
         int _hw_error_state;
@@ -107,6 +111,17 @@ inline
 uint8_t AbstractHardwareState::getId() const
 {
     return _id;
+}
+
+
+/**
+ * @brief StepperMotorState::getFirmwareVersion
+ * @return
+ */
+inline
+std::string AbstractHardwareState::getFirmwareVersion() const
+{
+    return _firmware_version;
 }
 
 /**

@@ -112,4 +112,22 @@ int AbstractStepperDriver::writeSyncCmd(int type, const std::vector<uint8_t>& id
     return -1;
 }
 
+/**
+ * @brief AbstractStepperDriver::interpreteFirmwareVersion
+ * @param data
+ * @return
+ */
+std::string AbstractStepperDriver::interpreteFirmwareVersion(uint32_t fw_version) const
+{
+    uint8_t v_major = static_cast<uint8_t>(fw_version >> 24);
+    uint16_t v_minor = static_cast<uint16_t>(fw_version >> 8);
+    uint8_t v_patch = static_cast<uint8_t>(fw_version >> 0);
+
+    std::ostringstream ss;
+    ss << v_major << "." << v_minor << "." << v_patch;
+    std::string version = ss.str();
+
+    return version;
+}
+
 }  // namespace ttl_driver
