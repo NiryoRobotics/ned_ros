@@ -85,7 +85,8 @@ class StepperDriver : public AbstractStepperDriver
        
         // AbstractStepperDriver interface
     public:
-        virtual int startHoming(uint8_t id, uint32_t direction) override;
+        virtual int startHoming(uint8_t id) override;
+        virtual int setHomingDirection(uint8_t id, uint8_t direction) override;
         virtual int readHomingStatus(uint8_t id, uint32_t &status) override;
         // conveyor control
         virtual int setGoalConveyorDirection(uint8_t id, int8_t direction) override;
@@ -282,12 +283,15 @@ int StepperDriver<reg_type>::syncReadHwErrorStatus(const std::vector<uint8_t> &i
 //*****************************
 
 template<typename reg_type>
-int StepperDriver<reg_type>::startHoming(uint8_t id, uint32_t direction)
+int StepperDriver<reg_type>::startHoming(uint8_t id)
 {
-    int err = write(reg_type::ADDR_HOMING_DIRECTION, reg_type::SIZE_HOMING_DIRECTION, id, direction);
-    if (err != COMM_SUCCESS)
-        return err;
     return write(reg_type::ADDR_COMMAND, reg_type::SIZE_COMMAND, id, 0);
+}
+
+template<typename reg_type>
+int StepperDriver<reg_type>::setHomingDirection(uint8_t id, uint8_t direction)
+{
+    return write(reg_type::ADDR_HOMING_DIRECTION, reg_type::SIZE_HOMING_DIRECTION, id, direction);
 }
 
 template<typename reg_type>

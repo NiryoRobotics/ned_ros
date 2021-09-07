@@ -52,9 +52,10 @@ class AbstractStepperDriver : public AbstractMotorDriver
         // specific Stepper commands
 
         // ram write
-        virtual int startHoming(uint8_t id, uint32_t direction) = 0;
+        virtual int startHoming(uint8_t id) = 0;
         virtual int readHomingStatus(uint8_t id, uint32_t& status) = 0;
-        
+        virtual int setHomingDirection(uint8_t id, uint8_t direction) = 0;
+
         // conveyor control
         virtual int setGoalConveyorDirection(uint8_t id, int8_t direction) = 0;
         virtual int setConveyorState(uint8_t, bool state) = 0;

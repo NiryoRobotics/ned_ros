@@ -353,12 +353,15 @@ EStepperCalibrationStatus CalibrationManager::_auto_calibration()
         _ttl_interface->addSingleCommandToQueue(std::make_shared<StepperTtlSingleCmd>(torque_cmd_2));
         _ttl_interface->addSingleCommandToQueue(std::make_shared<StepperTtlSingleCmd>(torque_cmd_3));
 
-        StepperTtlSingleCmd stepper_cmd_1(EStepperCommandType::CMD_TYPE_CALIBRATION, 2, {0});
-        StepperTtlSingleCmd stepper_cmd_2(EStepperCommandType::CMD_TYPE_CALIBRATION, 3, {1});
-        StepperTtlSingleCmd stepper_cmd_3(EStepperCommandType::CMD_TYPE_CALIBRATION, 4, {0});
+        StepperTtlSingleCmd stepper_dir_cmd(EStepperCommandType::CMD_TYPE_CALIBRATION_DIRECTION, 3, {1});
+
+        StepperTtlSingleCmd stepper_cmd_1(EStepperCommandType::CMD_TYPE_CALIBRATION, 2);
+        StepperTtlSingleCmd stepper_cmd_2(EStepperCommandType::CMD_TYPE_CALIBRATION, 3);
+        StepperTtlSingleCmd stepper_cmd_3(EStepperCommandType::CMD_TYPE_CALIBRATION, 4);
 
         _ttl_interface->startCalibration();
          
+        _ttl_interface->addSingleCommandToQueue(std::make_shared<StepperTtlSingleCmd>(stepper_dir_cmd));
         _ttl_interface->addSingleCommandToQueue(std::make_shared<StepperTtlSingleCmd>(stepper_cmd_1));
         _ttl_interface->addSingleCommandToQueue(std::make_shared<StepperTtlSingleCmd>(stepper_cmd_2));
         _ttl_interface->addSingleCommandToQueue(std::make_shared<StepperTtlSingleCmd>(stepper_cmd_3));

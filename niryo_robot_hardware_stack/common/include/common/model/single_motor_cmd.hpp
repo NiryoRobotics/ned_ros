@@ -276,8 +276,7 @@ bool SingleMotorCmd<EStepperCommandType, uint32_t>::isValid() const
 {
     if ((EStepperCommandType::CMD_TYPE_NONE == getType()) ||
        (EStepperCommandType::CMD_TYPE_UNKNOWN == getType()) ||
-       (getId() == 0) ||
-       (_param_list.empty()))
+       (getId() == 0))
             return false;
     return true;
 }

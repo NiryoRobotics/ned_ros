@@ -67,6 +67,7 @@ StepperCommandTypeEnum::initialize()
     m[EStepperCommandType::CMD_TYPE_UPDATE_CONVEYOR]  = "update conveyor";
     m[EStepperCommandType::CMD_TYPE_LEARNING_MODE]  = "learning mode";
     m[EStepperCommandType::CMD_TYPE_PING] = "ping";
+    m[EStepperCommandType::CMD_TYPE_CALIBRATION_DIRECTION] = "calibration direction";
     m[EStepperCommandType::CMD_TYPE_UNKNOWN]  = "unknown type";
 
     return m;
