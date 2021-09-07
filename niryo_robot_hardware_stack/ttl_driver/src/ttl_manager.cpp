@@ -951,37 +951,36 @@ int TtlManager::getAllIdsOnBus(vector<uint8_t> &id_list)
     int result = COMM_RX_FAIL;
 
     // 1. Get all ids from ttl bus. We can use any driver for that
-    for (auto it : _driver_map)
+    auto it = _driver_map.begin();
+
+    if (it->second)
     {
-        if (it.second)
+        vector<uint8_t> l_idList;
+        result = it->second->scan(l_idList);
+        id_list.insert(id_list.end(), l_idList.begin(), l_idList.end());
+
+        string ids_str;
+        for (auto const &id : l_idList)
+            ids_str += to_string(id) + " ";
+
+        ROS_DEBUG_THROTTLE(1, "TtlManager::getAllIdsOnTtlBus - Found ids (%s) on bus using first driver (type: %s)",
+                            ids_str.c_str(),
+                            HardwareTypeEnum(it->first).toString().c_str());
+
+        if (COMM_SUCCESS != result)
         {
-            vector<uint8_t> l_idList;
-            result = it.second->scan(l_idList);
-            id_list.insert(id_list.end(), l_idList.begin(), l_idList.end());
-
-            string ids_str;
-            for (auto const &id : l_idList)
-                ids_str += to_string(id) + " ";
-
-            ROS_DEBUG_THROTTLE(1, "TtlManager::getAllIdsOnTtlBus - Found ids (%s) on bus using first driver (type: %s)",
-                                ids_str.c_str(),
-                                HardwareTypeEnum(it.first).toString().c_str());
-
-            if (COMM_SUCCESS != result)
-            {
-                if (COMM_RX_TIMEOUT != result)
-                {  // -3001
-                    _debug_error_message = "TtlManager - No motor found. "
-                                        "Make sure that motors are correctly connected and powered on.";
-                }
-                else
-                {  // -3002 or other
-                    _debug_error_message = "TtlManager - Failed to scan bus.";
-                }
-                ROS_WARN_THROTTLE(1, "TtlManager::getAllIdsOnTtlBus - Broadcast ping failed, "
-                                "result : %d (-3001: timeout, -3002: corrupted packet)",
-                                result);
+            if (COMM_RX_TIMEOUT != result)
+            {  // -3001
+                _debug_error_message = "TtlManager - No motor found. "
+                                    "Make sure that motors are correctly connected and powered on.";
             }
+            else
+            {  // -3002 or other
+                _debug_error_message = "TtlManager - Failed to scan bus.";
+            }
+            ROS_WARN_THROTTLE(1, "TtlManager::getAllIdsOnTtlBus - Broadcast ping failed, "
+                            "result : %d (-3001: timeout, -3002: corrupted packet)",
+                            result);
         }
     }
 

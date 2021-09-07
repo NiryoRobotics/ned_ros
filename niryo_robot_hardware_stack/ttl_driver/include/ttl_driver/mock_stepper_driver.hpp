@@ -110,6 +110,7 @@ class MockStepperDriver : public AbstractStepperDriver
                                                              {3, {0, 52, 12, 0, 4096, 1, "0.0.1"}},
                                                              {4, {0, 54, 12, 0, 4096, 1, "0.0.1"}}};
 
+        std::vector<uint8_t> _full_id_list{2,3,4,5,6,7,11};
         std::vector<uint8_t> _id_list;
 
         static constexpr int GROUP_SYNC_REDONDANT_ID = 10;
@@ -156,7 +157,7 @@ int MockStepperDriver::getModelNumber(uint8_t id, uint16_t& model_number)
 
 int MockStepperDriver::scan(std::vector<uint8_t>& id_list)
 {
-    id_list = _id_list;
+    id_list = _full_id_list;
     return COMM_SUCCESS;
 }
 

@@ -119,6 +119,7 @@ class MockDxlDriver : public AbstractDxlDriver
                                                              {6,  {2048, 52, 50, 0, 4096, 1, "0.0.2"}},
                                                              {7,  {2048, 54, 50, 0, 4096, 1, "0.0.2"}},
                                                              {11, { 370, 56, 50, 0, 4096, 1, "0.0.2"}} };
+        std::vector<uint8_t> _full_id_list{2,3,4,5,6,7,11};
         std::vector<uint8_t> _id_list;
 
         static constexpr int GROUP_SYNC_REDONDANT_ID = 10;
@@ -164,7 +165,7 @@ int MockDxlDriver::getModelNumber(uint8_t id, uint16_t& model_number)
 
 int MockDxlDriver::scan(std::vector<uint8_t>& id_list)
 {
-    id_list = _id_list;
+    id_list = _full_id_list;
     return COMM_SUCCESS;
 }
 
