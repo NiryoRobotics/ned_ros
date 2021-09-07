@@ -180,8 +180,7 @@ int StepperMotorState::to_motor_pos(double pos_rad, common::model::EBusProtocol 
     }
     else
     {
-        int pos = std::round((pos_rad*180) / (M_PI * 0.088));
-        // int pos = std::round((pos_rad*180) / (M_PI * 0.088) + _offset_position);
+        int pos = std::round((pos_rad*180) / (M_PI * 0.088) * _direction + _offset_position);
         return pos;
     }
 }
@@ -198,8 +197,7 @@ double StepperMotorState::to_rad_pos(int pos, common::model::EBusProtocol protoc
     }
     else
     {
-        // double pos_rad = static_cast<double>((pos - _offset_position) * 0.088 * (M_PI / 180));
-        double pos_rad = static_cast<double>(pos * 0.088 * (M_PI / 180));
+        double pos_rad = static_cast<double>((pos - _offset_position) * 0.088 * (M_PI / 180) * _direction);
         return pos_rad;
     }
 }

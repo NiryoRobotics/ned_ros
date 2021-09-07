@@ -524,8 +524,10 @@ void JointHardwareInterface::synchronizeMotors(bool synchronize)
  */
 string JointHardwareInterface::jointIdToJointName(uint8_t id, EHardwareType motor_type) const
 {
-    if (EHardwareType::STEPPER == motor_type && _map_stepper_name.count(id))
+    if ((EHardwareType::STEPPER == motor_type || EHardwareType::FAKE_STEPPER_MOTOR == motor_type) && _map_stepper_name.count(id))
+    {
         return _map_stepper_name.at(id);
+    }
     else if (_map_dxl_name.count(id))
         return _map_dxl_name.at(id);
 
