@@ -1,6 +1,6 @@
 <package>
     <name>niryo_robot_poses_handlers</name>
-    <version>3.1.2</version>
+    <version>3.2.0</version>
     <description>
         - Handles the conversion of workspace-relative poses to robot poses
         - Handles Poses

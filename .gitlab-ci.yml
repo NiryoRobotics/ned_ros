@@ -23,8 +23,9 @@ stages:
   - upload
   - release_gitlab
 
+image: registry.gitlab.com/niryo/niryo-one-s/ned_ros_stack/v3.2.0:amd64
+
 catkin_make_amd:
-  image: registry.gitlab.com/niryo/niryo-one-s/ned_ros_stack/v3.1.0:amd64
   stage: build
   retry:
     max: 1
@@ -47,7 +48,7 @@ catkin_make_amd:
       - build
 
 catkin_make_arm:
-  image: registry.gitlab.com/niryo/niryo-one-s/ned_ros_stack/v3.1.0:arm64
+  image: registry.gitlab.com/niryo/niryo-one-s/ned_ros_stack/v3.2.0:arm64
   stage: build
   retry:
     max: 1
@@ -74,7 +75,6 @@ catkin_make_arm:
       - build
 
 python_test:
-  image: registry.gitlab.com/niryo/niryo-one-s/ned_ros_stack/v3.1.0:amd64
   stage: test
   dependencies: 
     - catkin_make_amd

@@ -1,6 +1,6 @@
 <package>
     <name>niryo_robot_serial_number</name>
-    <version>3.1.2</version>
+    <version>3.2.0</version>
     <description>It handles the robot serial number</description>
 
     <author email="j.mottier@niryo.com">Justin Mottier</author>
