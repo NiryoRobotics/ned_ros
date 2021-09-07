@@ -79,7 +79,7 @@ bool EndEffectorInterfaceCore::init(ros::NodeHandle &nh)
     startServices(nh);
 
     ROS_DEBUG("EndEffectorInterfaceCore::init - Starting publishers...");
-    //startPublishers(nh);
+    startPublishers(nh);
 
     ROS_DEBUG("EndEffectorInterfaceCore::init - Starting subscribers...");
     startSubscribers(nh);
