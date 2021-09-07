@@ -7,6 +7,7 @@
     <arg name="hardware_version" default="ned"/>
     <arg name="niryo_robot_type" default="NIRYO_NED" />
     <arg name="image_version" default="" />
+    <arg name="simu_gripper" default="true"/>
 
     <group ns="niryo_robot">
         <group ns="info">
@@ -29,6 +30,7 @@
         <!--use ttl_driver config -->
         <group if="$(arg ttl_enabled)" >
             <include file="$(find ttl_driver)/launch/ttl_driver_base.launch.xml" >
+                <arg name="simu_gripper" value="$(arg simu_gripper)"/>
                 <arg name="hardware_version" value="$(arg hardware_version)" />
             </include>
         </group>

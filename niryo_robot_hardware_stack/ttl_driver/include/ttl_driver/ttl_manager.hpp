@@ -187,6 +187,8 @@ class TtlManager : public common::model::IBusManager
                                         {CALIBRATION_IN_PROGRESS, common::model::EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS},
                                         {CALIBRATION_ERROR, common::model::EStepperCalibrationStatus::CALIBRATION_FAIL},
                                         {CALIBRATION_IDLE, common::model::EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED}};
+
+        bool _use_simu_gripper = true;
 };
 
 // inline getters

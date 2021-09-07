@@ -100,6 +100,8 @@ class MockDxlDriver : public AbstractDxlDriver
         virtual int syncReadLoad(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &load_list) override;
         virtual int readVelocity(uint8_t id, uint32_t &present_velocity) override;
         virtual int syncReadVelocity(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &velocity_list) override;
+    
+        void removeGripper();
     private:
 
         struct FakeRegister
@@ -462,6 +464,10 @@ std::string MockDxlDriver::interpreteFirmwareVersion(uint32_t fw_version) const
     return "";
 }
 
+void MockDxlDriver::removeGripper()
+{
+    _id_list.erase(std::remove(_id_list.begin(), _id_list.end(), 11), _id_list.end());
+}
 } // DynamixelDriver
 
 #endif // MOCK_DXL_DRIVER

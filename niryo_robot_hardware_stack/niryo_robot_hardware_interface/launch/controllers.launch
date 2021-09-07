@@ -6,7 +6,6 @@
         - controller will just echo position command
         - all hardware relative stuff is deactivated            -->
     <arg name="gazebo" default="false"/>
-    <arg name="simu_gripper" default="false"/>
     <arg name="debug" default="false"/>
     <!-- set to true to disable hardware communication for CAN bus (Niryo Steppers)
      or DXl bus (DEBUG PURPOSES) -->
@@ -15,20 +14,12 @@
 
     <!-- Load controller settings -->
 
-    <group unless="$(arg simu_gripper)">
+    <group>
         <rosparam file="$(find niryo_moveit_config_standalone)/config/ros_controllers.yaml" command="load"/>
 
         <!-- spawn controllers -->
         <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="log"
               args="joint_state_controller niryo_robot_follow_joint_trajectory_controller"/>
-    </group>
-
-    <group if="$(arg simu_gripper)">
-        <rosparam file="$(find niryo_moveit_config_w_gripper1)/config/ros_controllers.yaml" command="load"/>
-
-        <!-- spawn controllers -->
-        <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="log"
-              args="niryo_robot_follow_joint_trajectory_controller gazebo_tool_commander"/>
     </group>
 
     <!-- robot state publisher -->
