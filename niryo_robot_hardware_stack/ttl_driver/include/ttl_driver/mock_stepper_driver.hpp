@@ -105,9 +105,9 @@ class MockStepperDriver : public AbstractStepperDriver
           std::string    firmware{};
         };
 
-        std::map<uint8_t, FakeRegister> _map_fake_registers{ {2, {0,    50, 12, 0, 4096, 1, "0.0.1"}},
-                                                             {3, {545, 52, 12, 0, 4096, 1, "0.0.1"}},
-                                                             {4, {2447, 54, 12, 0, 4096, 1, "0.0.1"}}};
+        std::map<uint8_t, FakeRegister> _map_fake_registers{ {2, {1900, 50, 12, 0, 4096, 1, "0.0.1"}},
+                                                             {3, {0, 52, 12, 0, 4096, 1, "0.0.1"}},
+                                                             {4, {0, 54, 12, 0, 4096, 1, "0.0.1"}}};
 
         std::vector<uint8_t> _id_list;
 

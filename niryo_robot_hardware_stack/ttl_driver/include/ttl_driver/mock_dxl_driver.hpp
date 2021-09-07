@@ -113,10 +113,10 @@ class MockDxlDriver : public AbstractDxlDriver
           std::string    firmware{};
         };
 
-        std::map<uint8_t, FakeRegister> _map_fake_registers{ {5,  {2048, 50, 5, 0, 4096, 1, "0.0.2"}},
-                                                             {6,  {2048, 52, 5, 0, 4096, 1, "0.0.2"}},
-                                                             {7,  {2048, 54, 5, 0, 4096, 1, "0.0.2"}},
-                                                             {11, { 370, 56, 5, 0, 4096, 1, "0.0.2"}} };
+        std::map<uint8_t, FakeRegister> _map_fake_registers{ {5,  {2048, 50, 50, 0, 4096, 1, "0.0.2"}},
+                                                             {6,  {2048, 52, 50, 0, 4096, 1, "0.0.2"}},
+                                                             {7,  {2048, 54, 50, 0, 4096, 1, "0.0.2"}},
+                                                             {11, { 370, 56, 50, 0, 4096, 1, "0.0.2"}} };
         std::vector<uint8_t> _id_list;
 
         static constexpr int GROUP_SYNC_REDONDANT_ID = 10;
