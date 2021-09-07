@@ -177,7 +177,8 @@ class TtlManager : public common::model::IBusManager
 
         std::string _led_motor_type_cfg;
 
-        static constexpr int MAX_HW_FAILURE = 500;
+        // TODO(cc) To be changed back to 50 when connection pb with new steppers and end effector will be corrected
+        static constexpr int MAX_HW_FAILURE = 2500;
         static constexpr int CALIBRATION_IDLE = 0;
         static constexpr int CALIBRATION_IN_PROGRESS = 1;
         static constexpr int CALIBRATION_SUCCESS = 2;

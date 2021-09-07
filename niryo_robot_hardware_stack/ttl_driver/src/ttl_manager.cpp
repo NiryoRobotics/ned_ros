@@ -828,16 +828,17 @@ bool TtlManager::readHwStatus()
             }
 
             // ***********  calibration status
-            if ( (EHardwareType::FAKE_STEPPER_MOTOR == type || EHardwareType::STEPPER == type) &&
-                 _calibration_status != EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED)
+            if ( (EHardwareType::FAKE_STEPPER_MOTOR == type || EHardwareType::STEPPER == type))
             {
                 for (auto id : _ids_map.at(type))
                 {
-                    uint32_t status;
+                    uint32_t status; // not in calibration status table
                     shared_ptr<ttl_driver::AbstractStepperDriver> stepper_driver = std::dynamic_pointer_cast<ttl_driver::AbstractStepperDriver>(driver);
-                    stepper_driver->readHomingStatus(id, status);     // TODO(Thuc): verify real value of status
-                    std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(id))->setCalibration(static_cast<EStepperCalibrationStatus>(status), 1);
-                    updateCurrentCalibrationStatus();
+                    if (_calibration_status != EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED && COMM_SUCCESS == stepper_driver->readHomingStatus(id, status))
+                    {
+                        std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(id))->setCalibration(_map_calibration_status.at(status), 0);
+                        updateCurrentCalibrationStatus();
+                    }
                 }
             }
 
@@ -1048,17 +1049,16 @@ common::model::EStepperCalibrationStatus TtlManager::getCalibrationStatus() cons
  */
 void TtlManager::updateCurrentCalibrationStatus()
 {
-    EStepperCalibrationStatus newStatus = EStepperCalibrationStatus::CALIBRATION_OK;
+    EStepperCalibrationStatus newStatus = EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED;
     for (auto const& s : _state_map)
     {
-      if (s.second)
-      {
-        std::shared_ptr<StepperMotorState> stepperState = std::dynamic_pointer_cast<StepperMotorState>(s.second);
-        if (stepperState)
-            newStatus = stepperState->getCalibrationState();
-      }
+        if (s.second && (s.second->getType() == EHardwareType::STEPPER || s.second->getType() == EHardwareType::FAKE_STEPPER_MOTOR))
+        {
+            EStepperCalibrationStatus status = std::dynamic_pointer_cast<StepperMotorState>(s.second)->getCalibrationState();
+            if (newStatus < status)
+                newStatus = status;
+        }
     }
-
     _calibration_status = newStatus;
 }
 

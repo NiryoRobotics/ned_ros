@@ -84,7 +84,8 @@ class MockStepperDriver : public AbstractStepperDriver
 
         // AbstractStepperDriver interface
     public:
-        virtual int startHoming(uint8_t id, uint32_t direction) override;
+        virtual int startHoming(uint8_t id) override;
+        virtual int setHomingDirection(uint8_t id, uint8_t direction) override;
         virtual int readHomingStatus(uint8_t id, uint32_t &status) override;
         // conveyor control
         virtual int setGoalConveyorDirection(uint8_t id, int8_t direction) override;
@@ -374,10 +375,15 @@ int MockStepperDriver::syncReadHwErrorStatus(const std::vector<uint8_t> &id_list
 // AbstractStepperDriver interface
 //*****************************
 
-int MockStepperDriver::startHoming(uint8_t id, uint32_t direction)
+int MockStepperDriver::startHoming(uint8_t id)
 {
     _calibration_status = common::model::EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS;
     fake_time = 5;
+    return COMM_SUCCESS;
+}
+
+int MockStepperDriver::setHomingDirection(uint8_t id, uint8_t direction)
+{
     return COMM_SUCCESS;
 }
 
