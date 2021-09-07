@@ -15,14 +15,13 @@
 *******************************************************************************/
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @file The file for port control in Windows
+/// @file The file for port control in Mac OS
 /// @author Leon (RyuWoon Jung)
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef DYNAMIXEL_SDK_INCLUDE_DYNAMIXEL_SDK_WINDOWS_PORTHANDLERWINDOWS_H_
-#define DYNAMIXEL_SDK_INCLUDE_DYNAMIXEL_SDK_WINDOWS_PORTHANDLERWINDOWS_H_
+#ifndef DYNAMIXEL_SDK_INCLUDE_DYNAMIXEL_SDK_MAC_PORTHANDLERMAC_H_
+#define DYNAMIXEL_SDK_INCLUDE_DYNAMIXEL_SDK_MAC_PORTHANDLERMAC_H_
 
-#include <Windows.h>
 
 #include "port_handler.h"
 
@@ -30,22 +29,22 @@ namespace dynamixel
 {
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @brief The class for control port in Windows
+/// @brief The class for control port in Mac OS
 ////////////////////////////////////////////////////////////////////////////////
-class WINDECLSPEC PortHandlerWindows : public PortHandler
+class PortHandlerMac : public PortHandler
 {
  private:
-  HANDLE  serial_handle_;
-  LARGE_INTEGER freq_, counter_;
-
+  int     socket_fd_;
   int     baudrate_;
   char    port_name_[100];
 
   double  packet_start_time_;
   double  packet_timeout_;
-  double  tx_time_per_byte_;
+  double  tx_time_per_byte;
 
-  bool    setupPort(const int baudrate);
+  bool    setupPort(const int cflag_baud);
+  bool    setCustomBaudrate(int speed);
+  int     getCFlagBaud(const int baudrate);
 
   double  getCurrentTime();
   double  getTimeSinceStart();
@@ -55,18 +54,18 @@ class WINDECLSPEC PortHandlerWindows : public PortHandler
   /// @brief The function that initializes instance of PortHandler and gets port_name
   /// @description The function initializes instance of PortHandler and gets port_name.
   ////////////////////////////////////////////////////////////////////////////////
-  PortHandlerWindows(const char *port_name);
+  PortHandlerMac(const char *port_name);
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that closes the port
-  /// @description The function calls PortHandlerWindows::closePort() to close the port.
+  /// @description The function calls PortHandlerMac::closePort() to close the port.
   ////////////////////////////////////////////////////////////////////////////////
-  virtual ~PortHandlerWindows() { closePort(); }
+  virtual ~PortHandlerMac() { closePort(); }
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that opens the port
-  /// @description The function calls PortHandlerWindows::setBaudRate() to open the port.
-  /// @return communication results which come from PortHandlerWindows::setBaudRate()
+  /// @description The function calls PortHandlerMac::setBaudRate() to open the port.
+  /// @return communication results which come from PortHandlerMac::setBaudRate()
   ////////////////////////////////////////////////////////////////////////////////
   bool    openPort();
 
@@ -109,6 +108,7 @@ class WINDECLSPEC PortHandlerWindows : public PortHandler
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that returns current baudrate set into the port handler
   /// @description The function returns current baudrate set into the port handler.
+  /// @warning Mac OS doesn't support over 230400 bps
   /// @return Baudrate
   ////////////////////////////////////////////////////////////////////////////////
   int     getBaudRate();
@@ -161,7 +161,7 @@ class WINDECLSPEC PortHandlerWindows : public PortHandler
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that checks whether packet timeout is occurred
-  /// @description The function checks whether current time is passed by the time of packet timeout from the time set by PortHandlerWindows::setPacketTimeout().
+  /// @description The function checks whether current time is passed by the time of packet timeout from the time set by PortHandlerMac::setPacketTimeout().
   ////////////////////////////////////////////////////////////////////////////////
   bool    isPacketTimeout();
 };
@@ -169,4 +169,4 @@ class WINDECLSPEC PortHandlerWindows : public PortHandler
 }
 
 
-#endif /* DYNAMIXEL_SDK_INCLUDE_DYNAMIXEL_SDK_WINDOWS_PORTHANDLERWINDOWS_H_ */
+#endif /* DYNAMIXEL_SDK_INCLUDE_DYNAMIXEL_SDK_MAC_PORTHANDLERMAC_H_ */

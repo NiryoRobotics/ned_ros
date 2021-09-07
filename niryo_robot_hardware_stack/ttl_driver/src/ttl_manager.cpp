@@ -633,7 +633,7 @@ bool TtlManager::readPositionStatus()
     if (_hw_fail_counter_read > MAX_HW_FAILURE)
     {
         ROS_ERROR_THROTTLE(1, "TtlManager::readPositionStatus - motor connection problem - "
-                                "Failed to read from bus");
+                                "Failed to read from bus (hw_fail_counter_read : %d)", _hw_fail_counter_read);
         _hw_fail_counter_read = 0;
         _is_connection_ok = false;
         _debug_error_message = "TtlManager - Connection problem with physical Bus.";
@@ -717,7 +717,7 @@ bool TtlManager::readEndEffectorStatus()
         if (_hw_fail_counter_read > MAX_HW_FAILURE)
         {
             ROS_ERROR_THROTTLE(1, "TtlManager::readEndEffectorStatus - motor connection problem - "
-                                  "Failed to read from bus");
+                                  "Failed to read from bus (hw_fail_counter_read : %d)", _hw_fail_counter_read);
             _hw_fail_counter_read = 0;
             _debug_error_message = "TtlManager - Connection problem with physical Bus.";
         }
@@ -921,7 +921,8 @@ bool TtlManager::readHwStatus()
     // if too much errors, disconnect
     if (_hw_fail_counter_read > MAX_HW_FAILURE )
     {
-        ROS_ERROR_THROTTLE(1, "TtlManager::readHwStatus - motor connection problem - Failed to read from physical bus");
+        ROS_ERROR_THROTTLE(1, "TtlManager::readHwStatus - motor connection problem - "
+                              "Failed to read from bus (hw_fail_counter_read : %d)", _hw_fail_counter_read);
         _hw_fail_counter_read = 0;
         res = false;
         _is_connection_ok = false;

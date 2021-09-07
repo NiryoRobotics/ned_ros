@@ -114,7 +114,7 @@ int AbstractStepperDriver::writeSyncCmd(int type, const std::vector<uint8_t>& id
 
 /**
  * @brief AbstractStepperDriver::interpreteFirmwareVersion
- * @param data
+ * @param fw_version
  * @return
  */
 std::string AbstractStepperDriver::interpreteFirmwareVersion(uint32_t fw_version) const

@@ -39,6 +39,11 @@ namespace niryo_robot_hardware_interface
 HardwareInterface::HardwareInterface(ros::NodeHandle &nh) :
     _nh(nh)
 {
+    /*for(int i = 0; i < 30; ++i)
+    {
+      ROS_WARN("Sleeping for %d", i);
+      ros::Duration(1).sleep();
+    }*/
     init(nh);
 }
 
@@ -114,7 +119,7 @@ void HardwareInterface::initParameters(ros::NodeHandle &nh)
         _conveyor_bus = EBusProtocol::UNKNOWN;
 
     // end effector is enabled if an id is defined
-    _end_effector_enabled = nh.hasParam("end_effector/end_effector_id");
+    _end_effector_enabled = nh.hasParam("end_effector_interface/end_effector_id");
 
     ROS_DEBUG("HardwareInterface::initParameters - publish_hw_status_frequency : %f",
               _publish_hw_status_frequency);
@@ -130,6 +135,7 @@ void HardwareInterface::initParameters(ros::NodeHandle &nh)
 
     ROS_DEBUG("HardwareInterface::initParameters - can_enabled : %s", _can_enabled ? "true" : "false");
     ROS_DEBUG("HardwareInterface::initParameters - ttl_enabled : %s", _ttl_enabled ? "true" : "false");
+    ROS_DEBUG("HardwareInterface::initParameters - end_effector_enabled : %s", _end_effector_enabled ? "true" : "false");
 }
 
 /**

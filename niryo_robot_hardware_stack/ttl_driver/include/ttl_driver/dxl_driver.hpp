@@ -142,7 +142,7 @@ std::string DxlDriver<reg_type>::str() const
 template<typename reg_type>
 std::string DxlDriver<reg_type>::interpreteErrorState(uint32_t /*hw_state*/) const
 {
-    return "no error table";
+    return "";
 }
 
 template<typename reg_type>

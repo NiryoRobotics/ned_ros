@@ -126,9 +126,42 @@ std::string StepperDriver<reg_type>::str() const
 }
 
 template<typename reg_type>
-std::string StepperDriver<reg_type>::interpreteErrorState(uint32_t /*hw_state*/) const
+std::string StepperDriver<reg_type>::interpreteErrorState(uint32_t hw_state) const
 {
-    return "no error table";
+    std::string hardware_message;
+
+    if (hw_state & 1<<0)    // 0b00000001
+    {
+        hardware_message += "Input Voltage";
+    }
+    if (hw_state & 1<<2)    // 0b00000100
+    {
+        if (hardware_message != "")
+            hardware_message += ", ";
+        hardware_message += "OverHeating";
+    }
+    if (hw_state & 1<<3)    // 0b00001000
+    {
+        if (hardware_message != "")
+            hardware_message += ", ";
+        hardware_message += "Motor Encoder";
+    }
+    if (hw_state & 1<<4)    // 0b00010000
+    {
+        if (hardware_message != "")
+            hardware_message += ", ";
+        hardware_message += "Electrical Shock";
+    }
+    if (hw_state & 1<<5)    // 0b00100000
+    {
+        if (hardware_message != "")
+            hardware_message += ", ";
+        hardware_message += "Overload";
+    }
+    if (hardware_message != "")
+        hardware_message += " Error";
+
+    return hardware_message;
 }
 
 template<typename reg_type>
@@ -232,7 +265,10 @@ int StepperDriver<reg_type>::readTemperature(uint8_t id, uint32_t& temperature)
 template<typename reg_type>
 int StepperDriver<reg_type>::readVoltage(uint8_t id, uint32_t& voltage)
 {
-    return read(reg_type::ADDR_PRESENT_VOLTAGE, reg_type::SIZE_PRESENT_VOLTAGE, id, voltage);
+    uint32_t voltage_mV = 0;
+    int res = read(reg_type::ADDR_PRESENT_VOLTAGE, reg_type::SIZE_PRESENT_VOLTAGE, id, voltage_mV);
+    voltage = voltage_mV / 1000;
+    return res;
 }
 
 template<typename reg_type>
@@ -268,7 +304,10 @@ int StepperDriver<reg_type>::syncReadTemperature(const std::vector<uint8_t> &id_
 template<typename reg_type>
 int StepperDriver<reg_type>::syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &voltage_list)
 {
-    return syncRead(reg_type::ADDR_PRESENT_VOLTAGE, reg_type::SIZE_PRESENT_VOLTAGE, id_list, voltage_list);
+    int res = syncRead(reg_type::ADDR_PRESENT_VOLTAGE, reg_type::SIZE_PRESENT_VOLTAGE, id_list, voltage_list);
+    for(auto& v : voltage_list)
+        v = v / 1000;
+    return res;
 }
 
 template<typename reg_type>

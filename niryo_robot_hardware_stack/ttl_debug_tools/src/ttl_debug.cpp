@@ -62,7 +62,7 @@ int main(int argc, char **argv)
             ("help,h", "Print help message")
             ("baudrate,b", po::value<int>()->default_value(1000000), "Baud rate")
             ("port,p", po::value<std::string>()->default_value(DEFAULT_PORT), "Set port")
-            ("id,i", po::value<int>()->default_value(0), "Motor ID")
+            ("id,i", po::value<int>()->default_value(-1), "Motor ID")
             ("scan", "Scan all motors on the TTL bus")
             ("ping", "ping specific ID")
             ("get-register", po::value<int>()->default_value(-1), "Get a value from a register (arg: reg_addr)")
@@ -118,21 +118,16 @@ int main(int argc, char **argv)
                 ttlTools.setRegister(3, 147, 0, 1);
                 ttlTools.setRegister(2, 147, 0, 1);
             }
-            else if (vars.count("ping"))  // ping
+            else if (-1 == id)
             {
-                std::cout << "Motor ID: " << id << "\n";
-
+                printf("Ping: you need to give an ID! (--id)\n");
+            }
+            else
+            {
                 if (vars.count("ping"))  // ping
                 {
-                    if (0 == id)
-                    {
-                        printf("Ping: you need to give an ID! (--id)\n");
-                    }
-                    else
-                    {
-                        printf("--> PING Motor (ID: %d)\n", id);
-                        ttlTools.ping(id);
-                    }
+                    printf("--> PING Motor (ID: %d)\n", id);
+                    ttlTools.ping(id);
                 }
                 else if (vars.count("set-register"))  // set-register
                 {
@@ -165,7 +160,7 @@ int main(int argc, char **argv)
 
                     printf("Register address: %d, Size (bytes): %d\n", addr, size);
 
-                    comm_result = ttlTools.setRegister(static_cast<uint8_t>(id), addr, value, size);
+                    comm_result = ttlTools.getRegister(static_cast<uint8_t>(id), addr, value, size);
 
                     if (comm_result != COMM_SUCCESS)
                         printf("Failed to get register: %d\n", comm_result);
