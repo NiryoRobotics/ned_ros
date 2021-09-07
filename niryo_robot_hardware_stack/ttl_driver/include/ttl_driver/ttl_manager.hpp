@@ -177,7 +177,7 @@ class TtlManager : public common::model::IBusManager
 
         std::string _led_motor_type_cfg;
 
-        static constexpr int MAX_HW_FAILURE = 25;
+        static constexpr int MAX_HW_FAILURE = 2500;
         static constexpr int CALIBRATION_IDLE = 0;
         static constexpr int CALIBRATION_IN_PROGRESS = 1;
         static constexpr int CALIBRATION_SUCCESS = 2;
