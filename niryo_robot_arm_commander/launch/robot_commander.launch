@@ -3,7 +3,6 @@
         xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
     <arg name="log_level" default="INFO" />
     <arg name="hardware_version" default="ned"/>
-    <arg name="simu_gripper" default="true"/>
 
     <include file="$(find niryo_robot_arm_commander)/launch/robot_commander_base.launch.xml"> 
         <arg name="hardware_version" value="$(arg hardware_version)" />
@@ -13,11 +12,7 @@
     <env name="ROSCONSOLE_CONFIG_FILE" value="$(find niryo_robot_arm_commander)/config/rosconsole.config"/>
 
     <!-- Moveit move_group -->
-    <include file="$(find niryo_moveit_config_w_gripper1)/launch/move_group.launch" if="$(arg simu_gripper)">
-        <arg name="load_robot_description" value="false"/>
-        <arg name="hardware_version" value="$(arg hardware_version)" />
-    </include>
-    <include file="$(find niryo_moveit_config_standalone)/launch/move_group.launch" unless="$(arg simu_gripper)">
+    <include file="$(find niryo_moveit_config_standalone)/launch/move_group.launch">
         <arg name="hardware_version" value="$(arg hardware_version)" />
     </include>
 
@@ -34,7 +29,6 @@
     <node name="niryo_robot_arm_commander" pkg="niryo_robot_arm_commander" type="robot_commander_node.py" output="screen"
           respawn="false">
         <param name="log_level" type="string" value="$(arg log_level)" />
-        <param name="simu_gripper" type="bool" value="$(arg simu_gripper)"/>
         <param name="hardware_version" value="$(arg hardware_version)"/>
     </node>
 </launch>

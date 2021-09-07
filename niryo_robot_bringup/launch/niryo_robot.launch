@@ -10,6 +10,7 @@
     <arg name="can_enabled" default="true"/>
     <arg name="debug" default="false"/>
     <arg name="conf_location" default="$(env HOME)/.config/niryo/version/version.txt"/>
+    <arg name="simu_gripper" default="true" />
 
     <param name="image_version" textfile="$(arg conf_location)"/>
 
@@ -22,6 +23,6 @@
         <arg name="debug" value="$(arg debug)"/>
         <arg name="rpi_model" value="3" if="$(eval hardware_version=='one')" />
         <arg name="rpi_model" value="simulation" if="$(eval hardware_version=='fake')" />
+        <arg name="simu_gripper" value="$(arg simu_gripper)" />
     </include>
 </launch>
- 

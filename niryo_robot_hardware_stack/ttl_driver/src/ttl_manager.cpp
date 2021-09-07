@@ -175,6 +175,11 @@ bool TtlManager::init(ros::NodeHandle& nh)
     }
 
     nh.getParam("led_motor", _led_motor_type_cfg);
+    nh.getParam("simu_gripper", _use_simu_gripper);
+    if (!_use_simu_gripper)
+    {
+        std::dynamic_pointer_cast<MockDxlDriver>(_driver_map.at(EHardwareType::FAKE_DXL_MOTOR))->removeGripper();
+    }
     return COMM_SUCCESS;
 }
 
@@ -216,7 +221,7 @@ void TtlManager::addHardwareComponent(EHardwareType hardware_type, uint8_t id, E
             if (type_used == EType::TOOL)
                 _state_map.insert(make_pair(id, std::make_shared<ToolState>("auto", hardware_type, id)));
             else
-                  _state_map.insert(make_pair(id, std::make_shared<DxlMotorState>(hardware_type, EBusProtocol::TTL, id)));
+                _state_map.insert(make_pair(id, std::make_shared<DxlMotorState>(hardware_type, EBusProtocol::TTL, id)));
             break;
         default:
             ROS_WARN("Unknown hardware type: %d", static_cast<int>(hardware_type));

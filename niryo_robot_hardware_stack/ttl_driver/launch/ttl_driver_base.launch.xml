@@ -3,6 +3,7 @@
         xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
   <!-- Arguments -->
   <arg name="hardware_version" default="ned"/>
+  <arg name="simu_gripper" default="false"/>
 
   <rosparam file="$(find ttl_driver)/config/$(arg hardware_version)/dynamixels_params.yaml" command="load"/>
   <rosparam file="$(find ttl_driver)/config/$(arg hardware_version)/steppers_params.yaml" command="load" if="$(eval hardware_version == 'ned2' or hardware_version == 'fake' )"/>
@@ -12,6 +13,7 @@
     <rosparam file="$(find ttl_driver)/config/$(arg hardware_version)/motors_params.yaml" command="load"/>
     <rosparam file="$(find ttl_driver)/config/$(arg hardware_version)/led.yaml" command="load"/>
     <rosparam file="$(find ttl_driver)/config/default.yaml" command="load"/>
+    <param name="simu_gripper" type="bool"  value="$(arg simu_gripper)" />
   </group>
 
 </launch>

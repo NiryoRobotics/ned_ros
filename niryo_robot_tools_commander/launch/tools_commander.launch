@@ -4,7 +4,6 @@
     <!-- Arguments -->
     <arg name="log_level" default="INFO" />
     <arg name="hardware_version" default="ned"/>
-    <arg name="simu_gripper" default="false"/>
 
     <include file="$(find niryo_robot_tools_commander)/launch/tools_commander_base.launch.xml"> 
         <arg name="hardware_version" value="$(arg hardware_version)" />
@@ -13,8 +12,6 @@
     <node name="niryo_robot_tools_commander" pkg="niryo_robot_tools_commander" 
           type="tool_commander_node.py" output="screen" respawn="false">
         <param name="log_level" type="string" value="$(arg log_level)" />
-        <param name="simulation_mode" type="bool" value="$(eval hardware_version == 'fake')"/>
-        <param name="simu_gripper" type="bool" value="$(arg simu_gripper)"/>
     </node>
 
 </launch>

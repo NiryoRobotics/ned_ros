@@ -6,6 +6,7 @@
     <arg name="ttl_enabled" default="true"/>
     <arg name="debug" default="false"/>
     <arg name="conf_location" default="version.txt"/>
+    <arg name="simu_gripper" default="true" />
 
     <include file="$(find niryo_robot_bringup)/launch/niryo_robot.launch">
         <arg name="hardware_version" value="fake" />
@@ -14,6 +15,6 @@
         <arg name="can_enabled" value="false"/>
         <arg name="debug" value="$(arg debug)"/>
         <arg name="conf_location" value="$(arg conf_location)" />
+        <arg name="simu_gripper" value="$(arg simu_gripper)" />
     </include>
 </launch>
- 
