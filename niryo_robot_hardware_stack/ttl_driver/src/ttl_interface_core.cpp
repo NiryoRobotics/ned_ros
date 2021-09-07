@@ -713,9 +713,6 @@ void TtlInterfaceCore::unsetTool(uint8_t motor_id)
 /**
  * @brief TtlInterfaceCore::setEndEffector
  * @param end_effector_id
- * @param button_1_config
- * @param button_2_config
- * @param button_3_config
  * @return
  */
 int TtlInterfaceCore::setEndEffector(uint8_t end_effector_id)
@@ -724,13 +721,12 @@ int TtlInterfaceCore::setEndEffector(uint8_t end_effector_id)
 
   lock_guard<mutex> lck(_control_loop_mutex);
 
+  // add end effector
+  _ttl_manager->addHardwareComponent(EHardwareType::END_EFFECTOR, end_effector_id, TtlManager::EType::END_EFFECTOR);
+
   // try to find hw
   if (_ttl_manager->ping(end_effector_id))
   {
-      // add end effector
-      _ttl_manager->addHardwareComponent(EHardwareType::END_EFFECTOR, end_effector_id, TtlManager::EType::END_EFFECTOR);
-
-
       result = niryo_robot_msgs::CommandStatus::SUCCESS;
   }
   else

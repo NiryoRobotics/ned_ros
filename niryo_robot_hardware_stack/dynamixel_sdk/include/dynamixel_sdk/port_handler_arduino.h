@@ -15,14 +15,16 @@
 *******************************************************************************/
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @file The file for port control in Windows
-/// @author Leon (RyuWoon Jung)
+/// @file The file for port control in Arduino
+/// @author Cho (Hancheol Cho), Leon (RyuWoon Jung)
 ////////////////////////////////////////////////////////////////////////////////
 
-#ifndef DYNAMIXEL_SDK_INCLUDE_DYNAMIXEL_SDK_WINDOWS_PORTHANDLERWINDOWS_H_
-#define DYNAMIXEL_SDK_INCLUDE_DYNAMIXEL_SDK_WINDOWS_PORTHANDLERWINDOWS_H_
+#ifndef DYNAMIXEL_SDK_INCLUDE_DYNAMIXEL_SDK_ARDUINO_PORTHANDLERARDUINO_H_
+#define DYNAMIXEL_SDK_INCLUDE_DYNAMIXEL_SDK_ARDUINO_PORTHANDLERARDUINO_H_
 
-#include <Windows.h>
+#if defined(ARDUINO) || defined(__OPENCR__) || defined (__OPENCM904__)
+#include <Arduino.h>
+#endif
 
 #include "port_handler.h"
 
@@ -30,43 +32,52 @@ namespace dynamixel
 {
 
 ////////////////////////////////////////////////////////////////////////////////
-/// @brief The class for control port in Windows
+/// @brief The class for control port in Arduino
 ////////////////////////////////////////////////////////////////////////////////
-class WINDECLSPEC PortHandlerWindows : public PortHandler
+class PortHandlerArduino : public PortHandler
 {
  private:
-  HANDLE  serial_handle_;
-  LARGE_INTEGER freq_, counter_;
-
+  int     socket_fd_;
   int     baudrate_;
   char    port_name_[100];
 
   double  packet_start_time_;
   double  packet_timeout_;
-  double  tx_time_per_byte_;
+  double  tx_time_per_byte;
 
-  bool    setupPort(const int baudrate);
+#if defined(__OPENCM904__)
+  UARTClass *p_dxl_serial;
+#endif
+
+  bool    setupPort(const int cflag_baud);
 
   double  getCurrentTime();
   double  getTimeSinceStart();
+
+  int     checkBaudrateAvailable(int baudrate);
+
+  void    setPowerOn();
+  void    setPowerOff();
+  void    setTxEnable();
+  void    setTxDisable();
 
  public:
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that initializes instance of PortHandler and gets port_name
   /// @description The function initializes instance of PortHandler and gets port_name.
   ////////////////////////////////////////////////////////////////////////////////
-  PortHandlerWindows(const char *port_name);
+  PortHandlerArduino(const char *port_name);
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that closes the port
-  /// @description The function calls PortHandlerWindows::closePort() to close the port.
+  /// @description The function calls PortHandlerArduino::closePort() to close the port.
   ////////////////////////////////////////////////////////////////////////////////
-  virtual ~PortHandlerWindows() { closePort(); }
+  virtual ~PortHandlerArduino() { closePort(); }
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that opens the port
-  /// @description The function calls PortHandlerWindows::setBaudRate() to open the port.
-  /// @return communication results which come from PortHandlerWindows::setBaudRate()
+  /// @description The function calls PortHandlerArduino::setBaudRate() to open the port.
+  /// @return communication results which come from PortHandlerArduino::setBaudRate()
   ////////////////////////////////////////////////////////////////////////////////
   bool    openPort();
 
@@ -161,7 +172,7 @@ class WINDECLSPEC PortHandlerWindows : public PortHandler
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that checks whether packet timeout is occurred
-  /// @description The function checks whether current time is passed by the time of packet timeout from the time set by PortHandlerWindows::setPacketTimeout().
+  /// @description The function checks whether current time is passed by the time of packet timeout from the time set by PortHandlerArduino::setPacketTimeout().
   ////////////////////////////////////////////////////////////////////////////////
   bool    isPacketTimeout();
 };
@@ -169,4 +180,4 @@ class WINDECLSPEC PortHandlerWindows : public PortHandler
 }
 
 
-#endif /* DYNAMIXEL_SDK_INCLUDE_DYNAMIXEL_SDK_WINDOWS_PORTHANDLERWINDOWS_H_ */
+#endif /* DYNAMIXEL_SDK_INCLUDE_DYNAMIXEL_SDK_ARDUINO_PORTHANDLERARDUINO_H_ */

@@ -79,7 +79,7 @@ bool EndEffectorInterfaceCore::init(ros::NodeHandle &nh)
     startServices(nh);
 
     ROS_DEBUG("EndEffectorInterfaceCore::init - Starting publishers...");
-    startPublishers(nh);
+    //startPublishers(nh);
 
     ROS_DEBUG("EndEffectorInterfaceCore::init - Starting subscribers...");
     startSubscribers(nh);
@@ -102,20 +102,18 @@ void EndEffectorInterfaceCore::initParameters(ros::NodeHandle& nh)
     ROS_DEBUG("EndEffectorInterfaceCore::initParameters - end effector id : %d", _id);
     ROS_DEBUG("EndEffectorInterfaceCore::initParameters - end effector status frequency : %f", _check_end_effector_status_frequency);
 
-    // get buttons config
+    //initiliaze end effector state
+    _end_effector_state = EndEffectorState(_id);
 
     uint8_t button_id = 1;
-    while (nh.hasParam("button_"  + std::to_string(button_id) + "/type") &&
-           nh.hasParam("button_"  + std::to_string(button_id) + "/name") &&
-           nh.hasParam("button_"  + std::to_string(button_id) + "/config"))
+    while (nh.hasParam("button_"  + std::to_string(button_id) + "/type"))
     {
       std::string button_type = "";
-      std::string button_name = "";
       nh.getParam("button_" + std::to_string(button_id) + "/type", button_type);
       auto eType = ButtonTypeEnum(button_type.c_str());
 
-      nh.getParam("button_" + std::to_string(button_id) + "/name", button_name);
-
+      ROS_INFO("EndEffectorInterfaceCore::initParameters : configure button %d of type %s", button_id, eType.toString().c_str());
+      _end_effector_state.configureButton(button_id, eType);
       button_id++;
     }
 }

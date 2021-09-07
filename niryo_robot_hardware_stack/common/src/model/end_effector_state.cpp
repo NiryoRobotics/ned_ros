@@ -45,6 +45,19 @@ EndEffectorState::~EndEffectorState()
 {
 }
 
+/**
+ * @brief EndEffectorState::configureButton
+ * @param id
+ * @param button_type
+ * @return
+ */
+void EndEffectorState::configureButton(uint8_t id, EButtonType button_type)
+{
+   assert(id <= 3);
+
+  _buttons_list[id - 1].type = button_type;
+}
+
 // ***********************
 //  AbstractHardwareInterface intf
 // ***********************
@@ -70,9 +83,10 @@ std::string EndEffectorState::str() const
  */
 bool common::model::EndEffectorState::isValid() const
   {
-  return (0 != getId()
-      && EHardwareType::END_EFFECTOR == getType()
-      && _buttons_list.size() == 3);
+  return (EHardwareType::END_EFFECTOR == getType() &&
+          EButtonType::UNKNOWN != _buttons_list.at(0).type &&
+          EButtonType::UNKNOWN != _buttons_list.at(1).type &&
+          EButtonType::UNKNOWN != _buttons_list.at(2).type);
 }
 
 /**

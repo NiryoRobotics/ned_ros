@@ -71,6 +71,8 @@ class EndEffectorState : public AbstractHardwareState
 
         virtual ~EndEffectorState() override;
 
+        void configureButton(uint8_t id, EButtonType button_type);
+
         // AbstractHardwareState interface
         virtual std::string str() const override;
 

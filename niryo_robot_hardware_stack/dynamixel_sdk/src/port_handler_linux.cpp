@@ -8,36 +8,24 @@
  */
 
 /*******************************************************************************
-* Copyright (c) 2016, ROBOTIS CO., LTD.
-* All rights reserved.
+* Copyright 2017 ROBOTIS CO., LTD.
 *
-* Redistribution and use in source and binary forms, with or without
-* modification, are permitted provided that the following conditions are met:
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
 *
-* * Redistributions of source code must retain the above copyright notice, this
-*   list of conditions and the following disclaimer.
+*     http://www.apache.org/licenses/LICENSE-2.0
 *
-* * Redistributions in binary form must reproduce the above copyright notice,
-*   this list of conditions and the following disclaimer in the documentation
-*   and/or other materials provided with the distribution.
-*
-* * Neither the name of ROBOTIS nor the names of its
-*   contributors may be used to endorse or promote products derived from
-*   this software without specific prior written permission.
-*
-* THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
-* AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
-* IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-* DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE
-* FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
-* DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
-* SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER
-* CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
-* OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-* OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
 *******************************************************************************/
 
 /* Author: zerom, Ryu Woon Jung (Leon) */
+
+#if defined(__linux__)
 
 #include <stdio.h>
 #include <fcntl.h>
@@ -51,7 +39,59 @@
 
 #include "dynamixel_sdk/port_handler_linux.h"
 
-#define LATENCY_TIMER   8  // msec (USB latency timer) [was changed from 4 due to the Ubuntu update 16.04.2]
+#include <fcntl.h>
+#if defined __arm__ || defined __aarch64__
+#include <wiringPi.h>
+#endif
+#include <time.h>
+
+#define GPIO_HALF_DUPLEX_DIRECTION 17
+
+#define LATENCY_TIMER  16  // msec (USB latency timer)
+                           // You should adjust the latency timer value. From the version Ubuntu 16.04.2, the default latency timer of the usb serial is '16 msec'.
+                           // When you are going to use sync / bulk read, the latency timer should be loosen.
+                           // the lower latency timer value, the faster communication speed.
+
+                           // Note:
+                           // You can check its value by:
+                           // $ cat /sys/bus/usb-serial/devices/ttyUSB0/latency_timer
+                           //
+                           // If you think that the communication is too slow, type following after plugging the usb in to change the latency timer
+                           //
+                           // Method 1. Type following (you should do this everytime when the usb once was plugged out or the connection was dropped)
+                           // $ echo 1 | sudo tee /sys/bus/usb-serial/devices/ttyUSB0/latency_timer
+                           // $ cat /sys/bus/usb-serial/devices/ttyUSB0/latency_timer
+                           //
+                           // Method 2. If you want to set it as be done automatically, and don't want to do above everytime, make rules file in /etc/udev/rules.d/. For example,
+                           // $ echo ACTION==\"add\", SUBSYSTEM==\"usb-serial\", DRIVER==\"ftdi_sio\", ATTR{latency_timer}=\"1\" > 99-dynamixelsdk-usb.rules
+                           // $ sudo cp ./99-dynamixelsdk-usb.rules /etc/udev/rules.d/
+                           // $ sudo udevadm control --reload-rules
+                           // $ sudo udevadm trigger --action=add
+                           // $ cat /sys/bus/usb-serial/devices/ttyUSB0/latency_timer
+                           //
+                           // or if you have another good idea that can be an alternatives,
+                           // please give us advice via github issue https://github.com/ROBOTIS-GIT/DynamixelSDK/issues
+
+struct termios2 {
+  tcflag_t c_iflag;       /* input mode flags */
+  tcflag_t c_oflag;       /* output mode flags */
+  tcflag_t c_cflag;       /* control mode flags */
+  tcflag_t c_lflag;       /* local mode flags */
+  cc_t c_line;            /* line discipline */
+  cc_t c_cc[19];          /* control characters */
+  speed_t c_ispeed;       /* input speed */
+  speed_t c_ospeed;       /* output speed */
+};
+
+#ifndef TCGETS2
+#define TCGETS2     _IOR('T', 0x2A, struct termios2)
+#endif
+#ifndef TCSETS2
+#define TCSETS2     _IOW('T', 0x2B, struct termios2)
+#endif
+#ifndef BOTHER
+#define BOTHER      0010000
+#endif
 
 using namespace dynamixel;
 
@@ -65,14 +105,6 @@ PortHandlerLinux::PortHandlerLinux(const char *port_name)
   is_using_ = false;
   setPortName(port_name);
 }
-
-#include <fcntl.h>
-#if defined __arm__ || defined __aarch64__
-#include <wiringPi.h>
-#endif
-#include <time.h>
-
-#define GPIO_HALF_DUPLEX_DIRECTION 17
 
 bool PortHandlerLinux::setupGpio()
 {
@@ -124,7 +156,7 @@ void PortHandlerLinux::closePort()
 
 void PortHandlerLinux::clearPort()
 {
-  tcflush(socket_fd_, TCIOFLUSH);
+  tcflush(socket_fd_, TCIFLUSH);
 }
 
 void PortHandlerLinux::setPortName(const char *port_name)
@@ -137,6 +169,7 @@ char *PortHandlerLinux::getPortName()
   return port_name_;
 }
 
+// TODO: baud number ??
 bool PortHandlerLinux::setBaudRate(const int baudrate)
 {
   int baud = getCFlagBaud(baudrate);
@@ -175,7 +208,7 @@ int PortHandlerLinux::readPort(uint8_t *packet, int length)
 
 int PortHandlerLinux::writePort(uint8_t *packet, int length)
 {
-  gpioHigh();
+    gpioHigh();
 
   int write_result = write(socket_fd_, packet, length);
 
@@ -214,9 +247,9 @@ bool PortHandlerLinux::isPacketTimeout()
 
 double PortHandlerLinux::getCurrentTime()
 {
-  struct timespec tv;
-  clock_gettime( CLOCK_REALTIME, &tv);
-  return ((double)tv.tv_sec*1000.0 + (double)tv.tv_nsec*0.001*0.001);
+	struct timespec tv;
+	clock_gettime(CLOCK_REALTIME, &tv);
+	return ((double)tv.tv_sec * 1000.0 + (double)tv.tv_nsec * 0.001 * 0.001);
 }
 
 double PortHandlerLinux::getTimeSinceStart()
@@ -260,6 +293,19 @@ bool PortHandlerLinux::setupPort(int cflag_baud)
 
 bool PortHandlerLinux::setCustomBaudrate(int speed)
 {
+  struct termios2 options;
+
+  if (ioctl(socket_fd_, TCGETS2, &options) != 01)
+  {
+    options.c_cflag &= ~CBAUD;
+    options.c_cflag |= BOTHER;
+    options.c_ispeed = speed;
+    options.c_ospeed = speed;
+
+    if (ioctl(socket_fd_, TCSETS2, &options) != -1)
+      return true;
+  }
+
   // try to set a custom divisor
   struct serial_struct ss;
   if(ioctl(socket_fd_, TIOCGSERIAL, &ss) != 0)
@@ -332,3 +378,5 @@ int PortHandlerLinux::getCFlagBaud(int baudrate)
       return -1;
   }
 }
+
+#endif
