@@ -12,6 +12,14 @@
     <arg name="debug" default="false"/>
     <arg name="image_version" default="" />
 
+    <group ns="niryo_robot">
+        <group ns="info">
+            <param name="image_version" type="string" value="$(arg image_version)" />
+            <param name="ros_version" type="string" command="rosversion niryo_robot_bringup" />
+            <param name="niryo_robot_type" type="string"  value="$(arg niryo_robot_type)" />
+        </group>
+    </group>
+
     <!-- Launch controllers -->
     <rosparam file="$(find niryo_moveit_config_standalone)/config/ros_controllers.yaml" command="load"/>
     <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="log"

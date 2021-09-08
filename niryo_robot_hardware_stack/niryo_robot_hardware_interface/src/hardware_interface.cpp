@@ -512,31 +512,13 @@ void HardwareInterface::_publishSoftwareVersion()
         std::vector<std::string> motor_names;
         std::vector<std::string> firmware_versions;
 
-        if (_can_interface)
-        {
-            auto stepper_motor_state = _can_interface->getHwStatus();
-
-            for (auto const& hw_status : stepper_motor_state.motors_hw_status)
-            {
-                firmware_versions.push_back(hw_status.firmware_version);
-            }
-        }
-
-        if (_ttl_interface)
-        {
-          auto stepper_motor_state = _ttl_interface->getHwStatus();
-          for (auto const& hw_status : stepper_motor_state.motors_hw_status)
-          {
-              firmware_versions.push_back(hw_status.firmware_version);
-          }
-        }
-
         if (_joints_interface)
         {
             auto joints_state = _joints_interface->getJointsState();
             for (std::shared_ptr<common::model::JointState> jState : joints_state)
             {
                 motor_names.push_back(jState->getName());
+                motor_names.push_back(jState->getFirmwareVersion());
                 // TODO(CC) : be carefull, we don't have a completely updated state here
                 // It has only the values from the config file (don't integrate changing hw status, voltage, temperature, etc...)
                 // this should be changed
