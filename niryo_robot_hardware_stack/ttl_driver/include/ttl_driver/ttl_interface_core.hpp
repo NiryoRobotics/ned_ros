@@ -188,7 +188,6 @@ class TtlInterfaceCore : public common::model::IDriverCore, public common::model
         ros::ServiceServer _custom_cmd_getter;
 
         static constexpr int QUEUE_OVERFLOW = 20;
-        static constexpr double TTL_VOLTAGE_DIVISOR = 10.0;
 };
 
 /**

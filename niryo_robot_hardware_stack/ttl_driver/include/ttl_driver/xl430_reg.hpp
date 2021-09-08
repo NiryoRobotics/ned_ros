@@ -28,6 +28,7 @@ struct XL430Reg
 
     static constexpr int PROTOCOL_VERSION                       = 2.0;
     static constexpr int MODEL_NUMBER                           = 1060;
+    static constexpr double VOLTAGE_UNIT                        = 0.1;
 
     // see table here : http:// support.robotis.com/en/product/actuator/dynamixel_x/xl_series/xl-320.htm
     // EEPROM

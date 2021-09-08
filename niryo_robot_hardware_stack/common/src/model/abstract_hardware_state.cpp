@@ -49,10 +49,10 @@ AbstractHardwareState::AbstractHardwareState(EHardwareType type, EBusProtocol bu
       _type(type),
       _bus_proto(bus_proto),
       _id(id),
-      _temperature_state(0),
-      _voltage_state(0),
-      _hw_error_state(0),
-      _hw_error_message_state("")
+      _temperature(0),
+      _voltage(0.0),
+      _hw_error(0),
+      _hw_error_message("")
 {
 }
 
@@ -69,10 +69,10 @@ AbstractHardwareState::~AbstractHardwareState()
 void AbstractHardwareState::reset()
 {
     _id = 0;
-    _temperature_state = 0;
-    _voltage_state = 0;
-    _hw_error_state = 0;
-    _hw_error_message_state.clear();
+    _temperature = 0;
+    _voltage = 0.0;
+    _hw_error = 0;
+    _hw_error_message.clear();
 }
 
 /**
@@ -95,10 +95,10 @@ string AbstractHardwareState::str() const
 
     ss << "AbstractHardwareState (" << static_cast<int>(_id) << ")" << "\n";
 
-    ss << "temperature " << _temperature_state << "\n"
-       << "voltage " << _voltage_state << "\n"
-       << "hw_error " << _hw_error_state << "\n"
-       << "hw_error_message \"" << _hw_error_message_state << "\"";
+    ss << "temperature " << _temperature << "\n"
+       << "voltage " << _voltage << "\n"
+       << "hw_error " << _hw_error << "\n"
+       << "hw_error_message \"" << _hw_error_message << "\"";
     ss << "\n";
 
     return ss.str();
@@ -114,30 +114,30 @@ void AbstractHardwareState::setFirmwareVersion(std::string& firmware_version)
 }
 
 /**
- * @brief AbstractHardwareState::setTemperatureState
+ * @brief AbstractHardwareState::setTemperature
  * @param temp
  */
-void AbstractHardwareState::setTemperatureState(int temp)
+void AbstractHardwareState::setTemperature(uint32_t temp)
 {
-    _temperature_state = temp;
+    _temperature = temp;
 }
 
 /**
- * @brief AbstractHardwareState::setVoltageState
+ * @brief AbstractHardwareState::setVoltage
  * @param volt
  */
-void AbstractHardwareState::setVoltageState(int volt)
+void AbstractHardwareState::setVoltage(double volt)
 {
-    _voltage_state = volt;
+    _voltage = volt;
 }
 
 /**
  * @brief AbstractHardwareState::setHardwareError
  * @param hw_error
  */
-void AbstractHardwareState::setHardwareError(int hw_error)
+void AbstractHardwareState::setHardwareError(uint32_t hw_error)
 {
-    _hw_error_state = hw_error;
+    _hw_error = hw_error;
 }
 
 /**
@@ -146,7 +146,7 @@ void AbstractHardwareState::setHardwareError(int hw_error)
  */
 void AbstractHardwareState::setHardwareError(std::string hw_error_msg)
 {
-  _hw_error_message_state = hw_error_msg;
+  _hw_error_message = hw_error_msg;
 }
 
 }  // namespace model

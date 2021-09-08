@@ -604,8 +604,8 @@ can_driver::StepperArrayMotorHardwareStatus CanInterfaceCore::getHwStatus() cons
         {
             data.motor_identity.motor_id = stepperState->getId();
             data.motor_identity.motor_type = static_cast<uint8_t>(stepperState->getType());
-            data.temperature = static_cast<int32_t>(stepperState->getTemperatureState());
-            data.error = static_cast<int32_t>(stepperState->getHardwareErrorState());
+            data.temperature = static_cast<int32_t>(stepperState->getTemperature());
+            data.error = static_cast<int32_t>(stepperState->getHardwareError());
             data.firmware_version = stepperState->getFirmwareVersion();
             hw_state.motors_hw_status.push_back(data);
         }

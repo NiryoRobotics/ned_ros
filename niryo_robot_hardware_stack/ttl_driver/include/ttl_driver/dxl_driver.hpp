@@ -55,12 +55,12 @@ class DxlDriver : public AbstractDxlDriver
         virtual int readFirmwareVersion(uint8_t id, std::string &version) override;
 
         virtual int readTemperature(uint8_t id, uint32_t &temperature) override;
-        virtual int readVoltage(uint8_t id, uint32_t &voltage) override;
+        virtual int readVoltage(uint8_t id, double &voltage) override;
         virtual int readHwErrorStatus(uint8_t id, uint32_t &hardware_status) override;
 
         virtual int syncReadFirmwareVersion(const std::vector<uint8_t> &id_list, std::vector<std::string> &firmware_list) override;
         virtual int syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &temperature_list) override;
-        virtual int syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &voltage_list) override;
+        virtual int syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list) override;
         virtual int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list) override;
 
     protected:
@@ -253,9 +253,12 @@ int DxlDriver<reg_type>::readTemperature(uint8_t id, uint32_t& temperature)
 }
 
 template<typename reg_type>
-int DxlDriver<reg_type>::readVoltage(uint8_t id, uint32_t& voltage)
+int DxlDriver<reg_type>::readVoltage(uint8_t id, double& voltage)
 {
-    return read(reg_type::ADDR_PRESENT_VOLTAGE, reg_type::SIZE_PRESENT_VOLTAGE, id, voltage);
+  uint32_t voltage_mV = 0;
+  int res = read(reg_type::ADDR_PRESENT_VOLTAGE, reg_type::SIZE_PRESENT_VOLTAGE, id, voltage_mV);
+  voltage = static_cast<double>(voltage_mV) * reg_type::VOLTAGE_UNIT;
+  return res;
 }
 
 template<typename reg_type>
@@ -288,9 +291,14 @@ int DxlDriver<reg_type>::syncReadTemperature(const std::vector<uint8_t> &id_list
 }
 
 template<typename reg_type>
-int DxlDriver<reg_type>::syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &voltage_list)
+int DxlDriver<reg_type>::syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list)
 {
-    return syncRead(reg_type::ADDR_PRESENT_VOLTAGE, reg_type::SIZE_PRESENT_VOLTAGE, id_list, voltage_list);
+  voltage_list.clear();
+  std::vector<uint32_t> v_read;
+  int res = syncRead(reg_type::ADDR_PRESENT_VOLTAGE, reg_type::SIZE_PRESENT_VOLTAGE, id_list, v_read);
+  for(auto const& v : v_read)
+      voltage_list.emplace_back(static_cast<double>(v) * reg_type::VOLTAGE_UNIT);
+  return res;
 }
 
 template<typename reg_type>

@@ -69,12 +69,12 @@ public:
 
     // ram read
     virtual int readTemperature(uint8_t id, uint32_t& temperature) = 0;
-    virtual int readVoltage(uint8_t id, uint32_t& voltage) = 0;
+    virtual int readVoltage(uint8_t id, double& voltage) = 0;
     virtual int readHwErrorStatus(uint8_t id, uint32_t& hardware_status) = 0;
 
     virtual int syncReadFirmwareVersion(const std::vector<uint8_t>& id_list, std::vector<std::string>& firmware_version) = 0;
     virtual int syncReadTemperature(const std::vector<uint8_t>& id_list, std::vector<uint32_t>& temperature_list) = 0;
-    virtual int syncReadVoltage(const std::vector<uint8_t>& id_list, std::vector<uint32_t>& voltage_list) = 0;
+    virtual int syncReadVoltage(const std::vector<uint8_t>& id_list, std::vector<double>& voltage_list) = 0;
     virtual int syncReadHwErrorStatus(const std::vector<uint8_t>& id_list, std::vector<uint32_t>& hw_error_list) = 0;
 
 protected:

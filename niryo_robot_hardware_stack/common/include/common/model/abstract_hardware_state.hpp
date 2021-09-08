@@ -48,16 +48,16 @@ class AbstractHardwareState : public IObject
         uint8_t getId() const;
 
         std::string getFirmwareVersion() const;
-        int getTemperatureState() const;
-        int getVoltageState() const;
-        int getHardwareErrorState() const;
-        std::string getHardwareErrorMessageState() const;
+        uint32_t getTemperature() const;
+        double getVoltage() const;
+        uint32_t getHardwareError() const;
+        std::string getHardwareErrorMessage() const;
 
         // setters
         void setFirmwareVersion(std::string& firmware_version);
-        void setTemperatureState(int temp);
-        void setVoltageState(int volt);
-        void setHardwareError(int hw_error);
+        void setTemperature(uint32_t temp);
+        void setVoltage(double volt);
+        void setHardwareError(uint32_t hw_error);
         void setHardwareError(std::string hw_error_msg);
 
         // operators
@@ -77,10 +77,10 @@ class AbstractHardwareState : public IObject
         // read variables
         std::string _firmware_version;
 
-        int _temperature_state;
-        int _voltage_state;
-        int _hw_error_state;
-        std::string _hw_error_message_state;
+        uint32_t _temperature;
+        double _voltage;
+        uint32_t _hw_error;
+        std::string _hw_error_message;
 };
 
 /**
@@ -129,9 +129,9 @@ std::string AbstractHardwareState::getFirmwareVersion() const
  * @return
  */
 inline
-int AbstractHardwareState::getTemperatureState() const
+uint32_t AbstractHardwareState::getTemperature() const
 {
-    return _temperature_state;
+    return _temperature;
 }
 
 /**
@@ -139,9 +139,9 @@ int AbstractHardwareState::getTemperatureState() const
  * @return
  */
 inline
-int AbstractHardwareState::getVoltageState() const
+double AbstractHardwareState::getVoltage() const
 {
-    return _voltage_state;
+    return _voltage;
 }
 
 /**
@@ -149,9 +149,9 @@ int AbstractHardwareState::getVoltageState() const
  * @return
  */
 inline
-int AbstractHardwareState::getHardwareErrorState() const
+uint32_t AbstractHardwareState::getHardwareError() const
 {
-    return _hw_error_state;
+    return _hw_error;
 }
 
 /**
@@ -159,9 +159,9 @@ int AbstractHardwareState::getHardwareErrorState() const
  * @return
  */
 inline
-std::string AbstractHardwareState::getHardwareErrorMessageState() const
+std::string AbstractHardwareState::getHardwareErrorMessage() const
 {
-    return _hw_error_message_state;
+    return _hw_error_message;
 }
 
 } // model

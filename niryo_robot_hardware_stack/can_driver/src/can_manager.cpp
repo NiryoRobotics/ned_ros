@@ -564,7 +564,7 @@ void CanManager::fillTemperatureStatus(uint8_t motor_id, const uint8_t &len, con
             int driver_temp = static_cast<int>((-b - std::sqrt(b * b - 4 * a * (c - v_temp))) / (2 * a) + 30);
 
             // fill data
-            _state_map.at(motor_id)->setTemperatureState(driver_temp);
+            _state_map.at(motor_id)->setTemperature(driver_temp);
         }
         else
         {

@@ -1022,22 +1022,16 @@ ttl_driver::ArrayMotorHardwareStatus TtlInterfaceCore::getHwStatus() const
     ttl_driver::MotorHardwareStatus data;
     ttl_driver::ArrayMotorHardwareStatus hw_state;
 
-    for (auto const& State : _ttl_manager->getMotorsStates())
+    for (auto const& state : _ttl_manager->getMotorsStates())
     {
-        if (State)
+        if (state)
         {
-            data.motor_identity.motor_id = State->getId();
-            data.motor_identity.motor_type = static_cast<uint8_t>(State->getType());
-            data.temperature = static_cast<uint32_t>(State->getTemperatureState());
-            if (State->isDynamixel())
-                data.voltage = static_cast<double>(State->getVoltageState()) / TTL_VOLTAGE_DIVISOR;
-            else if (State->isStepper())
-            {
-                 // TODO(Thuc): Get correctly voltage of stepper
-                data.voltage = static_cast<double>(State->getVoltageState());
-            }
-            data.error = static_cast<uint32_t>(State->getHardwareErrorState());
-            data.error_msg = State->getHardwareErrorMessageState();
+            data.motor_identity.motor_id = state->getId();
+            data.motor_identity.motor_type = static_cast<uint8_t>(state->getType());
+            data.temperature = state->getTemperature();
+            data.voltage = state->getVoltage();
+            data.error = state->getHardwareError();
+            data.error_msg = state->getHardwareErrorMessage();
             hw_state.motors_hw_status.push_back(data);
         }
     }

@@ -52,12 +52,12 @@ class StepperDriver : public AbstractStepperDriver
         virtual int readFirmwareVersion(uint8_t id, std::string &version) override;
 
         virtual int readTemperature(uint8_t id, uint32_t &temperature) override;
-        virtual int readVoltage(uint8_t id, uint32_t &voltage) override;
+        virtual int readVoltage(uint8_t id, double &voltage) override;
         virtual int readHwErrorStatus(uint8_t id, uint32_t &hardware_status) override;
 
         virtual int syncReadFirmwareVersion(const std::vector<uint8_t> &id_list, std::vector<std::string> &firmware_list) override;
         virtual int syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &temperature_list) override;
-        virtual int syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &voltage_list) override;
+        virtual int syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list) override;
         virtual int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list) override;
 
     public:
@@ -80,20 +80,14 @@ class StepperDriver : public AbstractStepperDriver
 
         // ram read
         virtual int readPosition(uint8_t id, uint32_t &present_position) override;
-       
+
         virtual int syncReadPosition(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &position_list) override;
-       
+
         // AbstractStepperDriver interface
     public:
         virtual int startHoming(uint8_t id) override;
         virtual int setHomingDirection(uint8_t id, uint8_t direction) override;
         virtual int readHomingStatus(uint8_t id, uint32_t &status) override;
-        // conveyor control
-        virtual int setGoalConveyorDirection(uint8_t id, int8_t direction) override;
-        virtual int setConveyorState(uint8_t id, bool state) override;
-        virtual int readConveyorSpeed(uint8_t id, uint32_t &velocity) override;
-        virtual int readConveyorDirection(uint8_t id, int8_t &direction) override;
-        virtual int readConveyorState(uint8_t id, bool &state) override;
 };
 
 // definition of methods
@@ -147,18 +141,7 @@ std::string StepperDriver<reg_type>::interpreteErrorState(uint32_t hw_state) con
             hardware_message += ", ";
         hardware_message += "Motor Encoder";
     }
-    if (hw_state & 1<<4)    // 0b00010000
-    {
-        if (hardware_message != "")
-            hardware_message += ", ";
-        hardware_message += "Electrical Shock";
-    }
-    if (hw_state & 1<<5)    // 0b00100000
-    {
-        if (hardware_message != "")
-            hardware_message += ", ";
-        hardware_message += "Overload";
-    }
+
     if (hardware_message != "")
         hardware_message += " Error";
 
@@ -264,11 +247,11 @@ int StepperDriver<reg_type>::readTemperature(uint8_t id, uint32_t& temperature)
 }
 
 template<typename reg_type>
-int StepperDriver<reg_type>::readVoltage(uint8_t id, uint32_t& voltage)
+int StepperDriver<reg_type>::readVoltage(uint8_t id, double& voltage)
 {
     uint32_t voltage_mV = 0;
     int res = read(reg_type::ADDR_PRESENT_VOLTAGE, reg_type::SIZE_PRESENT_VOLTAGE, id, voltage_mV);
-    voltage = voltage_mV / 1000;
+    voltage = static_cast<double>(voltage_mV)  * reg_type::VOLTAGE_UNIT;
     return res;
 }
 
@@ -303,11 +286,13 @@ int StepperDriver<reg_type>::syncReadTemperature(const std::vector<uint8_t> &id_
 }
 
 template<typename reg_type>
-int StepperDriver<reg_type>::syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &voltage_list)
+int StepperDriver<reg_type>::syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list)
 {
-    int res = syncRead(reg_type::ADDR_PRESENT_VOLTAGE, reg_type::SIZE_PRESENT_VOLTAGE, id_list, voltage_list);
-    for(auto& v : voltage_list)
-        v = v / 1000;
+    voltage_list.clear();
+    std::vector<uint32_t> v_read;
+    int res = syncRead(reg_type::ADDR_PRESENT_VOLTAGE, reg_type::SIZE_PRESENT_VOLTAGE, id_list, v_read);
+    for(auto const& v : v_read)
+        voltage_list.emplace_back(static_cast<double>(v)  * reg_type::VOLTAGE_UNIT);
     return res;
 }
 
@@ -337,41 +322,6 @@ template<typename reg_type>
 int StepperDriver<reg_type>::readHomingStatus(uint8_t id, uint32_t &status)
 {
     return read(reg_type::ADDR_HOMING_STATUS, reg_type::SIZE_HOMING_STATUS, id, status);
-}
-
-template<typename reg_type>
-int StepperDriver<reg_type>::setGoalConveyorDirection(uint8_t id, int8_t direction)
-{
-    ROS_INFO("StepperDriver<reg_type>::setGoalConveyorDirection: need to be implemented!");
-    return 0;
-}
-
-template<typename reg_type>
-int StepperDriver<reg_type>::setConveyorState(uint8_t id, bool state)
-{
-    ROS_INFO("StepperDriver<reg_type>::setConveyorState: need to be implemented!");
-    return 0;
-}
-
-template<typename reg_type>
-int StepperDriver<reg_type>::readConveyorSpeed(uint8_t id, uint32_t &velocity)
-{
-    ROS_INFO("StepperDriver<reg_type>::readConveyorSpeed: need to be implemented!");
-    return 0;
-}
-
-template<typename reg_type>
-int StepperDriver<reg_type>::readConveyorDirection(uint8_t id, int8_t &direction)
-{
-    ROS_INFO("StepperDriver<reg_type>::readConveyorDirection: need to be implemented!");
-    return 0;
-}
-
-template<typename reg_type>
-int StepperDriver<reg_type>::readConveyorState(uint8_t id, bool &state)
-{
-    ROS_INFO("StepperDriver<reg_type>::readConveyorState: need to be implemented!");
-    return 0;
 }
 
 } // ttl_driver

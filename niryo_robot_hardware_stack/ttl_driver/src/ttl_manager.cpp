@@ -665,7 +665,7 @@ bool TtlManager::readEndEffectorStatus()
         {
             // we retrieve the associated id for the end effector
             uint8_t id = _ids_map.at(EHardwareType::END_EFFECTOR).front();
-            uint32_t value = 0;
+            common::model::EndEffectorState::EActionType action;
 
             if (_state_map.count(id))
             {
@@ -673,9 +673,8 @@ bool TtlManager::readEndEffectorStatus()
                 if (state)
                 {
                     // free drive button
-                    if (COMM_SUCCESS == driver->readButton1Status(id, value))
+                    if (COMM_SUCCESS == driver->readButton1Status(id, action))
                     {
-                        EndEffectorState::EActionType action = driver->interpreteActionValue(value);
                         state->setButtonStatus(1, action);
                     }
                     else
@@ -684,9 +683,8 @@ bool TtlManager::readEndEffectorStatus()
                     }
 
                     // save pos button
-                    if (COMM_SUCCESS == driver->readButton2Status(id, value))
+                    if (COMM_SUCCESS == driver->readButton2Status(id, action))
                     {
-                        EndEffectorState::EActionType action = driver->interpreteActionValue(value);
                         state->setButtonStatus(2, action);
                     }
                     else
@@ -695,9 +693,8 @@ bool TtlManager::readEndEffectorStatus()
                     }
 
                     // custom button
-                    if (COMM_SUCCESS == driver->readButton3Status(id, value))
+                    if (COMM_SUCCESS == driver->readButton3Status(id, action))
                     {
-                        EndEffectorState::EActionType action = driver->interpreteActionValue(value);
                         state->setButtonStatus(3, action);
                     }
                     else
@@ -796,7 +793,7 @@ bool TtlManager::readHwStatus()
             }
 
             // **********  voltage
-            vector<uint32_t> voltage_list;
+            vector<double> voltage_list;
 
             if (COMM_SUCCESS != driver->syncReadVoltage(id_list, voltage_list))
             {
@@ -851,26 +848,17 @@ bool TtlManager::readHwStatus()
                     if (std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(id))->isConveyor())
                     {
                         shared_ptr<ttl_driver::AbstractStepperDriver> stepper_driver = std::dynamic_pointer_cast<ttl_driver::AbstractStepperDriver>(driver);
-                        bool state;
-                        uint32_t speed;
-                        int8_t direction;
-                        if (COMM_SUCCESS != stepper_driver->readConveyorSpeed(id, speed))
+                        /*if (COMM_SUCCESS != stepper_driver->readVelocity(id, speed))
                         {
                             hw_errors_increment++;
                         }
-                        if (COMM_SUCCESS != stepper_driver->readConveyorDirection(id, direction))
-                        {
-                            hw_errors_increment++;
-                        }
-                        if (COMM_SUCCESS != stepper_driver->readConveyorState(id, state))
-                        {
-                            hw_errors_increment++;
-                        }
+                        int speed = velocity;
+
                         auto cState = std::dynamic_pointer_cast<ConveyorState>(_state_map.at(id));
                         // TODO(thuc): handle datas before set in state of conveyor - type data in ttl conveyor is different with data in can conveyor
-                        cState->setDirection(direction);
+                        cState->setDirection(speed > 0 ? 1 : -1);
                         cState->setSpeed(speed);
-                        cState->setState(state);
+                        cState->setState(speed != 0);*/
                     }
                 }
             }
@@ -892,19 +880,19 @@ bool TtlManager::readHwStatus()
                     // **************  temperature
                     if (temperature_list.size() > i)
                     {
-                        state->setTemperatureState(static_cast<int>(temperature_list.at(i)));
+                        state->setTemperature(temperature_list.at(i));
                     }
 
                     // **********  voltage
                     if (voltage_list.size() > i)
                     {
-                        state->setVoltageState(static_cast<int>(voltage_list.at(i)));
+                        state->setVoltage(voltage_list.at(i));
                     }
 
                     // **********  error state
                     if (hw_status_list.size() > i)
                     {
-                        state->setHardwareError(static_cast<int>(hw_status_list.at(i)));
+                        state->setHardwareError(hw_status_list.at(i));
                         string hardware_message = driver->interpreteErrorState(hw_status_list.at(i));
                         state->setHardwareError(hardware_message);
                     }

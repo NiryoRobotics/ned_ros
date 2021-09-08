@@ -77,10 +77,10 @@ string AbstractMotorState::str() const
     ss << "AbstractMotorState (" << static_cast<int>(_id) << ")" << "\n";
 
     ss << "position " << _position_state << "\n"
-       << "temperature " << _temperature_state << "\n"
-       << "voltage " << _voltage_state << "\n"
-       << "hw_error " << _hw_error_state << "\n"
-       << "hw_error_message \"" << _hw_error_message_state << "\"";
+       << "temperature " << _temperature << "\n"
+       << "voltage " << _voltage << "\n"
+       << "hw_error " << _hw_error << "\n"
+       << "hw_error_message \"" << _hw_error_message << "\"";
     ss << "\n";
 
     return ss.str();
