@@ -715,23 +715,25 @@ void TtlInterfaceCore::unsetTool(uint8_t motor_id)
  * @param end_effector_id
  * @return
  */
-int TtlInterfaceCore::setEndEffector(uint8_t end_effector_id)
+int TtlInterfaceCore::setEndEffector(const common::model::EndEffectorState& end_effector_state)
 {
   int result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
 
   lock_guard<mutex> lck(_control_loop_mutex);
 
   // add end effector
-  _ttl_manager->addHardwareComponent(EHardwareType::END_EFFECTOR, end_effector_id, TtlManager::EType::END_EFFECTOR);
+  _ttl_manager->addHardwareComponent(EHardwareType::END_EFFECTOR, end_effector_state.getId(), TtlManager::EType::END_EFFECTOR);
 
   // try to find hw
-  if (_ttl_manager->ping(end_effector_id))
+  if (_ttl_manager->ping(end_effector_state.getId()))
   {
+      //TODO(cc) config end effector
+
       result = niryo_robot_msgs::CommandStatus::SUCCESS;
   }
   else
   {
-      ROS_WARN("TtlInterfaceCore::setTool - No end effector found with id %d", end_effector_id);
+      ROS_WARN("TtlInterfaceCore::setTool - No end effector found with id %d", end_effector_state.getId());
   }
 
   return result;
@@ -1011,32 +1013,6 @@ double TtlInterfaceCore::getPosition(uint8_t id) const
 {
     JointState motor_state = getJointState(id);
     return static_cast<double>(motor_state.getPositionState());
-}
-
-/**
- * @brief TtlInterfaceCore::getHwStatus
- * @return
- */
-ttl_driver::ArrayMotorHardwareStatus TtlInterfaceCore::getHwStatus() const
-{
-    ttl_driver::MotorHardwareStatus data;
-    ttl_driver::ArrayMotorHardwareStatus hw_state;
-
-    for (auto const& state : _ttl_manager->getMotorsStates())
-    {
-        if (state)
-        {
-            data.motor_identity.motor_id = state->getId();
-            data.motor_identity.motor_type = static_cast<uint8_t>(state->getType());
-            data.firmware_version = state->getFirmwareVersion();
-            data.temperature = state->getTemperature();
-            data.voltage = state->getVoltage();
-            data.error = state->getHardwareError();
-            data.error_msg = state->getHardwareErrorMessage();
-            hw_state.motors_hw_status.push_back(data);
-        }
-    }
-    return hw_state;
 }
 
 /**

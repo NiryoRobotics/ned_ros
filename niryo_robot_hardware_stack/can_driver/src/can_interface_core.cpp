@@ -590,31 +590,6 @@ void CanInterfaceCore::setSyncCommand(const std::shared_ptr<common::model::ISync
 // ********************
 
 /**
- * @brief CanInterfaceCore::getHwStatus
- * @return
- */
-can_driver::StepperArrayMotorHardwareStatus CanInterfaceCore::getHwStatus() const
-{
-    can_driver::StepperMotorHardwareStatus data;
-    can_driver::StepperArrayMotorHardwareStatus hw_state;
-
-    for (auto const& stepperState : _can_manager->getMotorsStates())
-    {
-        if (stepperState)
-        {
-            data.motor_identity.motor_id = stepperState->getId();
-            data.motor_identity.motor_type = static_cast<uint8_t>(stepperState->getType());
-            data.temperature = static_cast<int32_t>(stepperState->getTemperature());
-            data.error = static_cast<int32_t>(stepperState->getHardwareError());
-            data.firmware_version = stepperState->getFirmwareVersion();
-            hw_state.motors_hw_status.push_back(data);
-        }
-    }
-
-    return hw_state;
-}
-
-/**
  * @brief CanInterfaceCore::getJointStates
  * @return
  */

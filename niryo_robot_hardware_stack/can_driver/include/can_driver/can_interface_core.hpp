@@ -74,8 +74,6 @@ class CanInterfaceCore : public common::model::IDriverCore, public common::model
         int32_t getCalibrationResult(uint8_t id) const override;
         common::model::EStepperCalibrationStatus getCalibrationStatus() const override;
 
-        can_driver::StepperArrayMotorHardwareStatus getHwStatus() const;
-
         std::vector<std::shared_ptr<common::model::JointState> > getJointStates() const override;
         common::model::JointState getJointState(uint8_t motor_id) const override;
 

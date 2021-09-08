@@ -100,7 +100,12 @@ void JointHardwareInterface::read(const ros::Time &/*time*/, const ros::Duration
             }
 
             jState->pos = jState->to_rad_pos(newPositionState, jState->getBusProtocol());
+
+            //TODO(CC) to be refactorized
             jState->setFirmwareVersion(state.getFirmwareVersion());
+            jState->setVoltage(state.getVoltage());
+            jState->setTemperature(state.getTemperature());
+            jState->setHardwareError(state.getHardwareError());
         }
     }
 
@@ -522,24 +527,6 @@ void JointHardwareInterface::synchronizeMotors(bool synchronize)
                 _can_interface->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(stepper_cmd));
         }
     }
-}
-
-/**
- * @brief JointHardwareInterface::jointIdToJointName
- * @param id
- * @param motor_type
- * @return
- */
-string JointHardwareInterface::jointIdToJointName(uint8_t id, EHardwareType motor_type) const
-{
-    if ((EHardwareType::STEPPER == motor_type || EHardwareType::FAKE_STEPPER_MOTOR == motor_type) && _map_stepper_name.count(id))
-    {
-        return _map_stepper_name.at(id);
-    }
-    else if (_map_dxl_name.count(id))
-        return _map_dxl_name.at(id);
-
-    return "";
 }
 
 }  // namespace joints_interface

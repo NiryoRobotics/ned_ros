@@ -94,7 +94,7 @@ class TtlInterfaceCore : public common::model::IDriverCore, public common::model
         std::vector<uint8_t> scanTools();
 
         // end effector panel control
-        int setEndEffector(uint8_t end_effector_id);
+        int setEndEffector(const common::model::EndEffectorState& end_effector_state);
 
         // conveyor control
         int setConveyor(uint8_t motor_id, uint8_t default_conveyor_id = 6) override;
@@ -106,7 +106,6 @@ class TtlInterfaceCore : public common::model::IDriverCore, public common::model
 
         // getters
         std::vector<uint8_t> getRemovedMotorList() const;
-        ttl_driver::ArrayMotorHardwareStatus getHwStatus() const;
         double getPosition(uint8_t id) const;
 
         std::vector<std::shared_ptr<common::model::JointState> > getJointStates() const override;
