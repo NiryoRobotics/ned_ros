@@ -54,7 +54,7 @@ class AbstractHardwareState : public IObject
         std::string getHardwareErrorMessage() const;
 
         // setters
-        void setFirmwareVersion(std::string& firmware_version);
+        void setFirmwareVersion(const std::string &firmware_version);
         void setTemperature(uint32_t temp);
         void setVoltage(double volt);
         void setHardwareError(uint32_t hw_error);

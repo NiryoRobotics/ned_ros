@@ -28,7 +28,7 @@ struct EndEffectorReg
 
     static constexpr int PROTOCOL_VERSION                       = 2.0;
     static constexpr int MODEL_NUMBER                           = 3000;
-    static constexpr double VOLTAGE_UNIT                        = 0.001;
+    static constexpr int VOLTAGE_CONVERSION                     = 1000;
 
     // see table here : http:// support.robotis.com/en/product/actuator/dynamixel_x/xl_series/xl-320.htm
     // EEPROM

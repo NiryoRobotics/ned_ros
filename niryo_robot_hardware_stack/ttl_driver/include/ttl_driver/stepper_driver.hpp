@@ -251,7 +251,7 @@ int StepperDriver<reg_type>::readVoltage(uint8_t id, double& voltage)
 {
     uint32_t voltage_mV = 0;
     int res = read(reg_type::ADDR_PRESENT_VOLTAGE, reg_type::SIZE_PRESENT_VOLTAGE, id, voltage_mV);
-    voltage = static_cast<double>(voltage_mV)  * reg_type::VOLTAGE_UNIT;
+    voltage = static_cast<double>(voltage_mV)  / reg_type::VOLTAGE_CONVERSION;
     return res;
 }
 
@@ -292,7 +292,7 @@ int StepperDriver<reg_type>::syncReadVoltage(const std::vector<uint8_t> &id_list
     std::vector<uint32_t> v_read;
     int res = syncRead(reg_type::ADDR_PRESENT_VOLTAGE, reg_type::SIZE_PRESENT_VOLTAGE, id_list, v_read);
     for(auto const& v : v_read)
-        voltage_list.emplace_back(static_cast<double>(v)  * reg_type::VOLTAGE_UNIT);
+        voltage_list.emplace_back(static_cast<double>(v)  / reg_type::VOLTAGE_CONVERSION);
     return res;
 }
 

@@ -1028,6 +1028,7 @@ ttl_driver::ArrayMotorHardwareStatus TtlInterfaceCore::getHwStatus() const
         {
             data.motor_identity.motor_id = state->getId();
             data.motor_identity.motor_type = static_cast<uint8_t>(state->getType());
+            data.firmware_version = state->getFirmwareVersion();
             data.temperature = state->getTemperature();
             data.voltage = state->getVoltage();
             data.error = state->getHardwareError();

@@ -402,18 +402,22 @@ void HardwareInterface::_publishHardwareStatus()
         msg.header.stamp = ros::Time::now();
         msg.connection_up = true;
 
-        if (_ttl_interface)
-        {
-            ttl_motor_state = _ttl_interface->getHwStatus();
-            ttl_bus_state = _ttl_interface->getBusState();
-            msg.connection_up = msg.connection_up && ttl_bus_state.connection_status;
-        }
+        // TODO(CC) retrieve all states from joints states only
+        // This means we should update joints states with data from getHwStatus()
         if (_can_interface)
         {
             can_motor_state = _can_interface->getHwStatus();
             can_bus_state = _can_interface->getBusState();
             msg.connection_up = msg.connection_up && can_bus_state.connection_status;
         }
+
+        if (_ttl_interface)
+        {
+            ttl_motor_state = _ttl_interface->getHwStatus();
+            ttl_bus_state = _ttl_interface->getBusState();
+            msg.connection_up = msg.connection_up && ttl_bus_state.connection_status;
+        }
+
         if (_joints_interface)
         {
             _joints_interface->getCalibrationState(need_calibration, calibration_in_progress);
@@ -505,29 +509,38 @@ void HardwareInterface::_publishSoftwareVersion()
     ros::Rate publish_software_version_rate = ros::Rate(_publish_software_version_frequency);
     while (ros::ok())
     {
-        can_driver::StepperArrayMotorHardwareStatus stepper_motor_state;
         std::vector<std::string> motor_names;
         std::vector<std::string> firmware_versions;
-        std::vector<std::shared_ptr<common::model::JointState> > joints_state;
 
         if (_can_interface)
         {
-            stepper_motor_state = _can_interface->getHwStatus();
+            auto stepper_motor_state = _can_interface->getHwStatus();
+
+            for (auto const& hw_status : stepper_motor_state.motors_hw_status)
+            {
+                firmware_versions.push_back(hw_status.firmware_version);
+            }
+        }
+
+        if (_ttl_interface)
+        {
+          auto stepper_motor_state = _ttl_interface->getHwStatus();
+          for (auto const& hw_status : stepper_motor_state.motors_hw_status)
+          {
+              firmware_versions.push_back(hw_status.firmware_version);
+          }
         }
 
         if (_joints_interface)
         {
-            joints_state = _joints_interface->getJointsState();
-        }
-
-        for (std::shared_ptr<common::model::JointState> jState : joints_state)
-        {
-            motor_names.push_back(jState->getName());
-        }
-
-        for (auto const& hw_status : stepper_motor_state.motors_hw_status)
-        {
-            firmware_versions.push_back(hw_status.firmware_version);
+            auto joints_state = _joints_interface->getJointsState();
+            for (std::shared_ptr<common::model::JointState> jState : joints_state)
+            {
+                motor_names.push_back(jState->getName());
+                // TODO(CC) : be carefull, we don't have a completely updated state here
+                // It has only the values from the config file (don't integrate changing hw status, voltage, temperature, etc...)
+                // this should be changed
+            }
         }
 
         niryo_robot_msgs::SoftwareVersion msg;

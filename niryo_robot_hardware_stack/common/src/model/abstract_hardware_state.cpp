@@ -108,7 +108,7 @@ string AbstractHardwareState::str() const
  * @brief StepperMotorState::setFirmwareVersion
  * @param firmware_version
  */
-void AbstractHardwareState::setFirmwareVersion(std::string& firmware_version)
+void AbstractHardwareState::setFirmwareVersion(const std::string& firmware_version)
 {
     _firmware_version = firmware_version;
 }
