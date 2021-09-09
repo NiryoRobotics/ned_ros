@@ -106,81 +106,6 @@ bool TtlManager::init(ros::NodeHandle& nh)
 
     ROS_DEBUG("TtlManager::init - Dxl : set port name (%s), baudrate(%d)", _device_name.c_str(), _uart_baudrate);
 
-    // retrieve motor config
-    vector<int> idList;
-    vector<string> typeList;
-
-    nh.getParam("motors_params/motor_id_list", idList);
-    nh.getParam("motors_params/motor_type_list", typeList);
-
-    // check that the two lists have the same size
-    if (idList.size() != typeList.size())
-        ROS_ERROR("TtlManager::init - wrong motors configuration. "
-                  "Please check your configuration file motor_id_list, motor_type_list");
-
-    // debug - display info
-    ostringstream ss;
-    ss << "[";
-    for (size_t i = 0; i < idList.size() ; i++)
-        ss << " id " << idList.at(i) << ": " << typeList.at(i) << ",";
-
-    string motor_string_list = ss.str();
-    motor_string_list.pop_back();  // remove last ","
-    motor_string_list += "]";
-
-    ROS_INFO("TtlManager::init - motor list: %s ", motor_string_list.c_str());
-
-    // put everything in maps
-    for (size_t i = 0; i < idList.size(); i++)
-    {
-        uint8_t id = static_cast<uint8_t>(idList.at(i));
-        EHardwareType type = HardwareTypeEnum(typeList.at(i).c_str());
-
-        if (_state_map.count(id))
-        {
-            ROS_ERROR("TtlManager::init - duplicate id %d. Please check your configuration file "
-                      "(niryo_robot_hardware_stack/ttl_driver/config/motors_params.yaml)",
-                      id);
-        }
-        else
-        {
-            if (EHardwareType::UNKNOWN != type)
-            {
-                JointState state("", type, common::model::EComponentType::JOINT, EBusProtocol::TTL, id);
-                addHardwareComponent(state);
-            }
-            else
-                ROS_ERROR("TtlManager::init - unknown type %s. Please check your configuration file "
-                          "(niryo_robot_hardware_stack/ttl_driver/config/motors_params.yaml)",
-                          typeList.at(id).c_str());
-        }
-    }
-
-    // display internal data for debug
-    for (auto const &s : _state_map)
-        ROS_DEBUG("TtlManager::init - State map: %d => %s", s.first, s.second->str().c_str());
-
-    for (auto const &id : _ids_map)
-    {
-        string listOfId;
-        for (auto const &i : id.second) listOfId += to_string(i) + " ";
-
-        ROS_DEBUG("TtlManager::init - Id map: %s => %s", HardwareTypeEnum(id.first).toString().c_str(), listOfId.c_str());
-    }
-
-    for (auto const &d : _driver_map)
-    {
-        ROS_DEBUG("TtlManager::init - Driver map: %s => %s",
-                  HardwareTypeEnum(d.first).toString().c_str(),
-                  d.second->str().c_str());
-    }
-
-    nh.getParam("led_motor", _led_motor_type_cfg);
-    nh.getParam("simu_gripper", _use_simu_gripper);
-    if (!_use_simu_gripper)
-    {
-        std::dynamic_pointer_cast<MockDxlDriver>(_driver_map.at(EHardwareType::FAKE_DXL_MOTOR))->removeGripper();
-    }
     return COMM_SUCCESS;
 }
 
@@ -738,9 +663,10 @@ bool TtlManager::readHwStatus()
             {
                 for (auto id : _ids_map.at(type))
                 {
-                    uint32_t status; // not in calibration status table
+                    uint32_t status{0}; // not in calibration status table
                     shared_ptr<ttl_driver::AbstractStepperDriver> stepper_driver = std::dynamic_pointer_cast<ttl_driver::AbstractStepperDriver>(driver);
-                    if (_calibration_status != EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED && COMM_SUCCESS == stepper_driver->readHomingStatus(id, status))
+                    if (_calibration_status != EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED &&
+                        COMM_SUCCESS == stepper_driver->readHomingStatus(id, status))
                     {
                         std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(id))->setCalibration(_map_calibration_status.at(status), 0);
                         updateCurrentCalibrationStatus();
@@ -754,7 +680,9 @@ bool TtlManager::readHwStatus()
             {
                 for (auto id : _ids_map.at(type))
                 {
-                    if (std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(id))->isConveyor())
+                    auto state = std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(id));
+
+                    if (state && state->isConveyor())
                     {
                         shared_ptr<ttl_driver::AbstractStepperDriver> stepper_driver = std::dynamic_pointer_cast<ttl_driver::AbstractStepperDriver>(driver);
                         /*if (COMM_SUCCESS != stepper_driver->readVelocity(id, speed))
@@ -850,7 +778,7 @@ int TtlManager::getAllIdsOnBus(vector<uint8_t> &id_list)
     // 1. Get all ids from ttl bus. We can use any driver for that
     auto it = _driver_map.begin();
 
-    if (it->second)
+    if (it != _driver_map.end() && it->second)
     {
         vector<uint8_t> l_idList;
         result = it->second->scan(l_idList);

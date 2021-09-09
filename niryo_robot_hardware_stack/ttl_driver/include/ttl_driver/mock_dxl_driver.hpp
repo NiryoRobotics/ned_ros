@@ -40,6 +40,8 @@ class MockDxlDriver : public AbstractDxlDriver
                   std::shared_ptr<dynamixel::PacketHandler> packetHandler);
         virtual ~MockDxlDriver() override;
 
+        virtual std::string str() const override;
+
         // AbstractTtlDriver interface : we cannot define them globally in AbstractTtlDriver
         // as it is needed here for polymorphism (AbstractTtlDriver cannot be a template class and does not
         // have access to reg_type). So it seems like a duplicate of StepperDriver
@@ -146,6 +148,11 @@ MockDxlDriver::MockDxlDriver(std::shared_ptr<dynamixel::PortHandler> portHandler
 
 MockDxlDriver::~MockDxlDriver()
 {
+}
+
+std::string MockDxlDriver::str() const
+{
+  return "Mock Dynamixel Driver (OK)";
 }
 
 //*****************************

@@ -39,6 +39,8 @@ class MockStepperDriver : public AbstractStepperDriver
                       std::shared_ptr<dynamixel::PacketHandler> packetHandler);
         virtual ~MockStepperDriver() override;
 
+        virtual std::string str() const override;
+
         // AbstractTtlDriver interface : we cannot define them globally in AbstractTtlDriver
         // as it is needed here for polymorphism (AbstractTtlDriver cannot be a template class and does not
         // have access to reg_type). So it seems like a duplicate of DxlDriver
@@ -111,6 +113,7 @@ class MockStepperDriver : public AbstractStepperDriver
         static constexpr int LEN_ID_DATA_NOT_SAME    = 20;
 
         common::model::EStepperCalibrationStatus _calibration_status = common::model::EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED;
+        static constexpr int CALIBRATION_SUCCESS = 2;
         uint8_t fake_time = 0;
 };
 
@@ -133,6 +136,11 @@ MockStepperDriver::MockStepperDriver(std::shared_ptr<dynamixel::PortHandler> por
  */
 MockStepperDriver::~MockStepperDriver()
 {
+}
+
+std::string MockStepperDriver::str() const
+{
+  return "Mock Stepper Driver (OK)";
 }
 
 //*****************************
@@ -389,10 +397,11 @@ int MockStepperDriver::readHomingStatus(uint8_t id, uint32_t &status)
         fake_time--;
     }
     else
-        _calibration_status = common::model::EStepperCalibrationStatus::CALIBRATION_OK;
+        _calibration_status = CALIBRATION_SUCCESS;
 
     status = static_cast<uint32_t>(_calibration_status);
-    return COMM_SUCCESS;
+
+    return (common::model::EStepperCalibrationStatus::CALIBRATION_OK == _calibration_status) ? COMM_SUCCESS : COMM_PORT_BUSY;
 }
 
 }

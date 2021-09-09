@@ -89,6 +89,10 @@ class TtlInterfaceCore : public common::model::IDriverCore, public common::model
         void addSingleCommandToQueue(const std::shared_ptr<common::model::ISingleMotorCmd>& cmd) override;
         void addSingleCommandToQueue(const std::vector<std::shared_ptr<common::model::ISingleMotorCmd> >& cmd) override;
 
+        // joints control
+        template<typename T>
+        int addJoint(const T& jointState);
+
         // Tool control
         int setTool(const common::model::ToolState& toolState);
         void unsetTool(uint8_t motor_id);
@@ -189,6 +193,31 @@ class TtlInterfaceCore : public common::model::IDriverCore, public common::model
 
         static constexpr int QUEUE_OVERFLOW = 20;
 };
+
+template<typename T>
+int TtlInterfaceCore::addJoint(const T& jointState)
+{
+  int result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
+
+  std::lock_guard<std::mutex> lck(_control_loop_mutex);
+
+  // add dynamixel as a new tool
+  _ttl_manager->addHardwareComponent(jointState);
+
+  // try to find motor
+  if (_ttl_manager->ping(jointState.getId()))
+  {
+      // no init commands
+
+      result = niryo_robot_msgs::CommandStatus::SUCCESS;
+  }
+  else
+  {
+      ROS_WARN("TtlInterfaceCore::addJoint - No joint found with motor id %d", jointState.getId());
+  }
+
+  return result;
+}
 
 /**
  * @brief TtlInterfaceCore::isConnectionOk

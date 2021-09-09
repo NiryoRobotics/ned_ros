@@ -666,8 +666,7 @@ void TtlInterfaceCore::_executeCommand()
 
 /**
  * @brief TtlInterfaceCore::setTool
- * @param type
- * @param motor_id
+ * @param toolState
  * @return
  */
 int TtlInterfaceCore::setTool(const common::model::ToolState& toolState)
@@ -715,7 +714,7 @@ void TtlInterfaceCore::unsetTool(uint8_t motor_id)
 
 /**
  * @brief TtlInterfaceCore::setEndEffector
- * @param end_effector_id
+ * @param end_effector_state
  * @return
  */
 int TtlInterfaceCore::setEndEffector(const common::model::EndEffectorState& end_effector_state)

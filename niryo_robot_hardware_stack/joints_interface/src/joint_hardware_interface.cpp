@@ -77,69 +77,6 @@ JointHardwareInterface::JointHardwareInterface(ros::NodeHandle& rootnh,
 }
 
 /**
- * @brief JointHardwareInterface::read
- */
-void JointHardwareInterface::read(const ros::Time &/*time*/, const ros::Duration &/*period*/)
-{
-    int newPositionState = 0.0;
-
-    for (auto& jState : _joint_list)
-    {
-        if (jState && jState->isValid())
-        {
-            common::model::JointState state;
-            if (jState->getBusProtocol() == EBusProtocol::CAN)
-            {
-                state = _can_interface->getJointState(jState->getId());
-                newPositionState = _can_interface->getJointState(jState->getId()).getPositionState();
-            }
-            if (jState->getBusProtocol() == EBusProtocol::TTL)
-            {
-                state = _ttl_interface->getJointState(jState->getId());
-                newPositionState = _ttl_interface->getJointState(jState->getId()).getPositionState();
-            }
-
-            jState->pos = jState->to_rad_pos(newPositionState);
-
-            //TODO(CC) to be refactorized
-            jState->setFirmwareVersion(state.getFirmwareVersion());
-            jState->setVoltage(state.getVoltage());
-            jState->setTemperature(state.getTemperature());
-            jState->setHardwareError(state.getHardwareError());
-        }
-    }
-
-    if ((_can_interface && !_can_interface->isConnectionOk()) || (_ttl_interface && !_ttl_interface->isConnectionOk()))
-        this->setNeedCalibration();
-}
-
-/**
- * @brief JointHardwareInterface::write: update the position of each joint using the received command from the joint handle
- */
-void JointHardwareInterface::write(const ros::Time &/*time*/, const ros::Duration &/*period*/)
-{
-    std::vector<std::pair<uint8_t, int32_t> > can_cmd;
-    std::vector<std::pair<uint8_t, uint32_t> > ttl_cmd;
-
-    for (auto const& jState : _joint_list)
-    {
-        if (jState && jState->isValid())
-        {
-            if (jState->getBusProtocol() == EBusProtocol::CAN)
-                can_cmd.emplace_back(jState->getId(), jState->to_motor_pos(jState->cmd));
-            if (jState->getBusProtocol() == EBusProtocol::TTL)
-                ttl_cmd.emplace_back(jState->getId(), jState->to_motor_pos(jState->cmd));
-        }
-    }
-
-    if (_can_interface)
-        _can_interface->setTrajectoryControllerCommands(can_cmd);
-
-    if (_ttl_interface)
-        _ttl_interface->setTrajectoryControllerCommands(ttl_cmd);
-}
-
-/**
  * @brief JointHardwareInterface::initJoints : build the joints by gathering information in config files and instanciating
  * correct state (dxl or stepper)
  */
@@ -210,6 +147,7 @@ bool JointHardwareInterface::init(ros::NodeHandle& rootnh, ros::NodeHandle &robo
 
                 _joint_list.emplace_back(stepperState);
                 _map_stepper_name[stepperState->getId()] = stepperState->getName();
+                _ttl_interface->addJoint(*stepperState.get());
 
                 currentIdStepper++;
             }
@@ -264,6 +202,7 @@ bool JointHardwareInterface::init(ros::NodeHandle& rootnh, ros::NodeHandle &robo
                 _joint_list.emplace_back(dxlState);
 
                 _map_dxl_name[dxlState->getId()] = dxlState->getName();
+                _ttl_interface->addJoint(*dxlState.get());
 
                 currentIdDxl++;
             }
@@ -349,6 +288,69 @@ void JointHardwareInterface::sendInitMotorsParams()
             }
         }
     }
+}
+
+/**
+ * @brief JointHardwareInterface::read
+ */
+void JointHardwareInterface::read(const ros::Time &/*time*/, const ros::Duration &/*period*/)
+{
+    int newPositionState = 0.0;
+
+    for (auto& jState : _joint_list)
+    {
+        if (jState && jState->isValid())
+        {
+            common::model::JointState state;
+            if (jState->getBusProtocol() == EBusProtocol::CAN)
+            {
+                state = _can_interface->getJointState(jState->getId());
+                newPositionState = _can_interface->getJointState(jState->getId()).getPositionState();
+            }
+            if (jState->getBusProtocol() == EBusProtocol::TTL)
+            {
+                state = _ttl_interface->getJointState(jState->getId());
+                newPositionState = _ttl_interface->getJointState(jState->getId()).getPositionState();
+            }
+
+            jState->pos = jState->to_rad_pos(newPositionState);
+
+            //TODO(CC) to be refactorized
+            jState->setFirmwareVersion(state.getFirmwareVersion());
+            jState->setVoltage(state.getVoltage());
+            jState->setTemperature(state.getTemperature());
+            jState->setHardwareError(state.getHardwareError());
+        }
+    }
+
+    if ((_can_interface && !_can_interface->isConnectionOk()) || (_ttl_interface && !_ttl_interface->isConnectionOk()))
+        this->setNeedCalibration();
+}
+
+/**
+ * @brief JointHardwareInterface::write: update the position of each joint using the received command from the joint handle
+ */
+void JointHardwareInterface::write(const ros::Time &/*time*/, const ros::Duration &/*period*/)
+{
+    std::vector<std::pair<uint8_t, int32_t> > can_cmd;
+    std::vector<std::pair<uint8_t, uint32_t> > ttl_cmd;
+
+    for (auto const& jState : _joint_list)
+    {
+        if (jState && jState->isValid())
+        {
+            if (jState->getBusProtocol() == EBusProtocol::CAN)
+                can_cmd.emplace_back(jState->getId(), jState->to_motor_pos(jState->cmd));
+            if (jState->getBusProtocol() == EBusProtocol::TTL)
+                ttl_cmd.emplace_back(jState->getId(), jState->to_motor_pos(jState->cmd));
+        }
+    }
+
+    if (_can_interface)
+        _can_interface->setTrajectoryControllerCommands(can_cmd);
+
+    if (_ttl_interface)
+        _ttl_interface->setTrajectoryControllerCommands(ttl_cmd);
 }
 
 /**
