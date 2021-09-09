@@ -651,4 +651,15 @@ niryo_robot_msgs::BusState CanInterfaceCore::getBusState() const
     return can_bus_state;
 }
 
+/**
+ * @brief can_driver::CanInterfaceCore::getJointState
+ * @param motor_id
+ * @return
+ */
+common::model::JointState
+can_driver::CanInterfaceCore::getJointState(uint8_t motor_id) const
+{
+  return _can_manager->getHardwareState<common::model::JointState>(motor_id);
+}
+
 }  // namespace can_driver

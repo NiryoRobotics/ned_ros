@@ -170,7 +170,7 @@ void StepperMotorState::reset()
  */
 bool StepperMotorState::isValid() const
 {
-    return (1 != _id);
+    return (0 != _id);
 }
 
 /**

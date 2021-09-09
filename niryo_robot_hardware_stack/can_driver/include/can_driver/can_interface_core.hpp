@@ -229,18 +229,6 @@ CanInterfaceCore::getCalibrationStatus() const
     return _can_manager->getCalibrationStatus();
 }
 
-/**
- * @brief CanInterfaceCore::getStepperState
- * @param motor_id
- * @return
- */
-inline
-common::model::JointState
-CanInterfaceCore::getJointState(uint8_t motor_id) const
-{
-    return _can_manager->getHardwareState<common::model::JointState>(motor_id);
-}
-
 } // CanManager
 
 #endif

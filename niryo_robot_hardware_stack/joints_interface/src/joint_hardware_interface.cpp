@@ -315,13 +315,13 @@ void JointHardwareInterface::read(const ros::Time &/*time*/, const ros::Duration
             if (jState->getBusProtocol() == EBusProtocol::CAN)
             {
                 state = _can_interface->getJointState(jState->getId());
-                newPositionState = _can_interface->getJointState(jState->getId()).getPositionState();
             }
             if (jState->getBusProtocol() == EBusProtocol::TTL)
             {
                 state = _ttl_interface->getJointState(jState->getId());
-                newPositionState = _ttl_interface->getJointState(jState->getId()).getPositionState();
             }
+
+            newPositionState = state.getPositionState();
 
             jState->pos = jState->to_rad_pos(newPositionState);
 

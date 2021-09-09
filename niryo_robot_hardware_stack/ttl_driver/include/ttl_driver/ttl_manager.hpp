@@ -200,7 +200,8 @@ T TtlManager::getHardwareState(uint8_t motor_id) const
     if (!_state_map.count(motor_id) && _state_map.at(motor_id))
         throw std::out_of_range("TtlManager::getMotorsState: Unknown motor id");
 
-    return *(dynamic_cast<T*>(_state_map.at(motor_id).get()));
+    T state = *(dynamic_cast<T*>(_state_map.at(motor_id).get()));
+    return state;
 }
 
 inline
