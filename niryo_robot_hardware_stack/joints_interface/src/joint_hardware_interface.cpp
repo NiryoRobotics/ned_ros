@@ -187,6 +187,7 @@ bool JointHardwareInterface::init(ros::NodeHandle& rootnh, ros::NodeHandle &robo
                 currentStepperNamespace = "steppersTtl/stepper_" + to_string(currentIdStepper);
             auto stepperState = std::make_shared<StepperMotorState>(joint_name,
                                                                     eType,
+                                                                    common::model::EComponentType::JOINT,
                                                                     eBusProto,
                                                                     static_cast<uint8_t>(joint_id_config));
             if (stepperState)
@@ -217,6 +218,7 @@ bool JointHardwareInterface::init(ros::NodeHandle& rootnh, ros::NodeHandle &robo
         {  // dynamixel
             auto dxlState = std::make_shared<DxlMotorState>(joint_name,
                                                             eType,
+                                                            common::model::EComponentType::JOINT,
                                                             eBusProto,
                                                             static_cast<uint8_t>(joint_id_config));
             if (dxlState)
