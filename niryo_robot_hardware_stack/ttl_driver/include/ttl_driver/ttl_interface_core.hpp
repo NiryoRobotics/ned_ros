@@ -194,6 +194,11 @@ class TtlInterfaceCore : public common::model::IDriverCore, public common::model
         static constexpr int QUEUE_OVERFLOW = 20;
 };
 
+/**
+ * @brief TtlInterfaceCore::addJoint
+ * @param jointState
+ * @return
+ */
 template<typename T>
 int TtlInterfaceCore::addJoint(const T& jointState)
 {

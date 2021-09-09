@@ -104,45 +104,6 @@ bool CanManager::init(ros::NodeHandle& nh)
     nh.getParam("/niryo_robot_hardware_interface/joints_interface/calibration_timeout", _calibration_timeout);
     ROS_DEBUG("CanManager::init - Calibration timeout %f", _calibration_timeout);
 
-    std::vector<int> idList;
-    std::vector<std::string> typeList;
-
-    nh.getParam("motors_params/motor_id_list", idList);
-    nh.getParam("motors_params/motor_type_list", typeList);
-
-    // check that the two lists have the same size
-    if (idList.size() != typeList.size())
-        ROS_ERROR("CanManager::init - wrong motors configuration. "
-                  "Please check your configuration file motor_id_list, motor_type_list");
-
-    // debug - display info
-    std::ostringstream ss;
-    ss << "[";
-    for (size_t i = 0; i < idList.size(); ++i)
-        ss << " id " << idList.at(i) << ": " << typeList.at(i) << ",";
-
-    std::string motor_string_list = ss.str();
-    motor_string_list.pop_back();  // remove last ","
-    motor_string_list += "]";
-
-    ROS_INFO("CanManager::init - Stepper motor list: %s ", motor_string_list.c_str());
-
-    // put everything in maps
-    for (size_t i = 0; i < idList.size(); ++i)
-    {
-        uint8_t id = static_cast<uint8_t>(idList.at(i));
-
-        if (!_state_map.count(id))
-            addHardwareComponent(*_state_map.at(id));
-        else
-            ROS_ERROR("CanManager::init - duplicate id %d. Please check your configuration file "
-                      "(niryo_robot_hardware_stack/can_driver/config/motors_params.yaml)", id);
-    }
-
-    // display internal data for debug
-    for (auto const &s : _state_map)
-        ROS_DEBUG("CanManager::init - State map: %d => %s", s.first, s.second->str().c_str());
-
     return true;
 }
 
@@ -536,7 +497,7 @@ void CanManager::fillTemperatureStatus(uint8_t motor_id, const uint8_t &len, con
             double b = -12.924;
             double c = 2367.7;
             double v_temp = driver_temp_raw * 3.3 / 1024.0 * 1000.0;
-            int driver_temp = static_cast<int>((-b - std::sqrt(b * b - 4 * a * (c - v_temp))) / (2 * a) + 30);
+            uint32_t driver_temp = static_cast<uint32_t>((-b - std::sqrt(b * b - 4 * a * (c - v_temp))) / (2 * a) + 30);
 
             // fill data
             _state_map.at(motor_id)->setTemperature(driver_temp);

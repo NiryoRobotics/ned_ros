@@ -50,6 +50,17 @@ class CanInterfaceCore : public common::model::IDriverCore, public common::model
 
         bool init(ros::NodeHandle& nh) override;
 
+        // joints control
+        template<typename T>
+        int addJoint(const T& jointState);
+
+        // Tool control
+        // N.A.
+
+        // end effector panel control
+        // N.A.
+
+        // conveyor control
         int setConveyor(const common::model::ConveyorState& state) override;
         void unsetConveyor(uint8_t motor_id) override;
 
@@ -133,6 +144,36 @@ class CanInterfaceCore : public common::model::IDriverCore, public common::model
 public:
         virtual common::model::EBusProtocol getBusProtocol() const override;
 };
+
+/**
+ * @brief TtlInterfaceCore::addJoint
+ * @param jointState
+ * @return
+ */
+template<typename T>
+int CanInterfaceCore::addJoint(const T& jointState)
+{
+  int result = niryo_robot_msgs::CommandStatus::CAN_READ_ERROR;
+
+  std::lock_guard<std::mutex> lck(_control_loop_mutex);
+
+  // add dynamixel as a new tool
+  _can_manager->addHardwareComponent(jointState);
+
+  // try to find motor
+  if (_can_manager->ping(jointState.getId()))
+  {
+      // no init commands
+
+      result = niryo_robot_msgs::CommandStatus::SUCCESS;
+  }
+  else
+  {
+      ROS_WARN("TtlInterfaceCore::addJoint - No joint found with motor id %d", jointState.getId());
+  }
+
+  return result;
+}
 
 /**
  * @brief CanInterfaceCore::isConnectionOk
