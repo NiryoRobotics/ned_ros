@@ -97,6 +97,7 @@ bool TtlManager::init(ros::NodeHandle& nh)
     // get params from rosparams
     nh.getParam("bus_params/uart_device_name", _device_name);
     nh.getParam("bus_params/baudrate", _uart_baudrate);
+    nh.getParam("led_motor", _led_motor_type_cfg);
 
     if (_device_name != "fake")
     {
@@ -105,6 +106,7 @@ bool TtlManager::init(ros::NodeHandle& nh)
     }
 
     ROS_DEBUG("TtlManager::init - Dxl : set port name (%s), baudrate(%d)", _device_name.c_str(), _uart_baudrate);
+    ROS_DEBUG("TtlManager::init - led motor type config : %s", _led_motor_type_cfg.c_str());
 
     return COMM_SUCCESS;
 }
