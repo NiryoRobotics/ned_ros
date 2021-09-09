@@ -68,6 +68,7 @@ AbstractHardwareState::AbstractHardwareState(const AbstractHardwareState &state)
   _component_type = state._component_type;
   _bus_proto = state._bus_proto;
   _id = state._id;
+  _firmware_version = state._firmware_version;
   _temperature = state._temperature;
   _voltage = state._voltage;
   _hw_error = state._hw_error;
