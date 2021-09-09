@@ -453,7 +453,7 @@ void TtlInterfaceCore::startControlLoop()
 */
 bool TtlInterfaceCore::scanMotorId(uint8_t motor_to_find)
 {
-    return _ttl_manager->ping(motor_to_find);
+    return true;
 }
 
 /**
@@ -576,40 +576,28 @@ void TtlInterfaceCore::controlLoop()
 
             if (_control_loop_flag)
             {
-                bool needSleep = false;
                 lock_guard<mutex> lck(_control_loop_mutex);
                 if (ros::Time::now().toSec() - _time_hw_data_last_read >= _delta_time_data_read)
                 {
-                    _time_hw_data_last_read = ros::Time::now().toSec();
                     _ttl_manager->readPositionStatus();
-                    needSleep = true;
+                    _time_hw_data_last_read = ros::Time::now().toSec();
                 }
-                if (!needSleep &&
-                    ros::Time::now().toSec() - _time_hw_status_last_read >= _delta_time_status_read)
+                if (ros::Time::now().toSec() - _time_hw_status_last_read >= _delta_time_status_read)
                 {
-                    _time_hw_status_last_read = ros::Time::now().toSec();
                     _ttl_manager->readHwStatus();
-                    needSleep = true;
+                    _time_hw_status_last_read = ros::Time::now().toSec();
                 }
                 if (_ttl_manager->hasEndEffector() &&
-                    !needSleep &&
                     ros::Time::now().toSec() - _time_hw_end_effector_last_read >= _delta_time_end_effector_read)
                 {
-                    _time_hw_end_effector_last_read = ros::Time::now().toSec();
                     _ttl_manager->readEndEffectorStatus();
-                    needSleep = true;
+                    _time_hw_end_effector_last_read = ros::Time::now().toSec();
                 }
-                if (!needSleep &&
-                    ros::Time::now().toSec() - _time_hw_data_last_write >= _delta_time_write)
+                if (ros::Time::now().toSec() - _time_hw_data_last_write >= _delta_time_write)
                 {
-                    _time_hw_data_last_write = ros::Time::now().toSec();
                     _executeCommand();
+                    _time_hw_data_last_write = ros::Time::now().toSec();
                 }
-                bool isFreqMet = control_loop_rate.sleep();
-                ROS_DEBUG_COND(!isFreqMet,
-                               "TtlInterfaceCore::ControlLoop : freq not met : expected (%f s) vs actual (%f s)",
-                               control_loop_rate.expectedCycleTime().toSec(),
-                               control_loop_rate.cycleTime().toSec());
             }
             else
             {
