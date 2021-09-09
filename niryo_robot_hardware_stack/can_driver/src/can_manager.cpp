@@ -928,19 +928,6 @@ int32_t CanManager::getCalibrationResult(uint8_t motor_id) const
 }
 
 /**
- * @brief CanManager::getMotorsState
- * @param motor_id
- * @return
- */
-StepperMotorState CanManager::getMotorState(uint8_t motor_id) const
-{
-    if (!_state_map.count(motor_id) && _state_map.at(motor_id))
-        throw std::out_of_range("CanManager::getMotorsState: Unknown motor id");
-
-    return *_state_map.at(motor_id).get();
-}
-
-/**
  * @brief CanManager::getMotorsStates
  * @return
  */

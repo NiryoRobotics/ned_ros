@@ -190,7 +190,7 @@ class TtlManager : public common::model::IBusManager
 // inline getters
 
 /**
- * @brief TtlManager::getMotorState
+ * @brief TtlManager::getHardwareState
  * @param motor_id
  * @return
  */

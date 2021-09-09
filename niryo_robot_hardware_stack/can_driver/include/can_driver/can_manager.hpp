@@ -79,8 +79,9 @@ class CanManager : public common::model::IBusManager
         // getters
         int32_t getPosition(uint8_t motor_id) const;
 
-        common::model::StepperMotorState getMotorState(uint8_t motor_id) const;
         std::vector<std::shared_ptr<common::model::StepperMotorState> > getMotorsStates() const;
+        template<class T>
+        T getHardwareState(uint8_t motor_id) const;
 
         int32_t getCalibrationResult(uint8_t id) const;
         common::model::EStepperCalibrationStatus getCalibrationStatus() const;
@@ -223,6 +224,20 @@ common::model::EStepperCalibrationStatus CanManager::getCalibrationStatus() cons
 inline
 bool CanManager::isCalibrationInProgress() const {
     return common::model::EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS == _calibration_status;
+}
+
+/**
+ * @brief TtlManager::getHardwareState
+ * @param motor_id
+ * @return
+ */
+template<class T>
+T CanManager::getHardwareState(uint8_t motor_id) const
+{
+    if (!_state_map.count(motor_id) && _state_map.at(motor_id))
+        throw std::out_of_range("TtlManager::getMotorsState: Unknown motor id");
+
+    return *(dynamic_cast<T*>(_state_map.at(motor_id).get()));
 }
 
 /**

@@ -35,6 +35,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "niryo_robot_msgs/BusState.h"
 #include "niryo_robot_msgs/CommandStatus.h"
 #include "common/model/abstract_single_motor_cmd.hpp"
+#include "common/model/stepper_motor_state.hpp"
 
 namespace can_driver
 {
@@ -237,8 +238,7 @@ inline
 common::model::JointState
 CanInterfaceCore::getJointState(uint8_t motor_id) const
 {
-    return static_cast<common::model::JointState>(_can_manager->getMotorState(motor_id));
-
+    return _can_manager->getHardwareState<common::model::JointState>(motor_id);
 }
 
 } // CanManager

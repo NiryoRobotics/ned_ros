@@ -977,8 +977,7 @@ TtlInterfaceCore::getJointStates() const
 common::model::JointState
 TtlInterfaceCore::getJointState(uint8_t motor_id) const
 {
-    // Check type of motor type
-  return _ttl_manager->getHardwareState<JointState>(motor_id);
+    return _ttl_manager->getHardwareState<JointState>(motor_id);
 }
 
 /**
