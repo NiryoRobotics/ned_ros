@@ -202,7 +202,7 @@ int StepperMotorState::to_motor_pos(double pos_rad)
     else
     {
         int pos = std::round((pos_rad*180) / (M_PI * 0.088) * _direction + _offset_position);
-        return pos;
+        return pos > 0 ? pos : 0;
     }
 }
 
