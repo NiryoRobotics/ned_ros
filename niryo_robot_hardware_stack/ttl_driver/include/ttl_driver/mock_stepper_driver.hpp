@@ -116,7 +116,11 @@ class MockStepperDriver : public AbstractStepperDriver
         static constexpr int GROUP_SYNC_REDONDANT_ID = 10;
         static constexpr int LEN_ID_DATA_NOT_SAME    = 20;
 
-        common::model::EStepperCalibrationStatus _calibration_status = common::model::EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED;
+        static constexpr int CALIBRATION_IDLE = 0;
+        static constexpr int CALIBRATION_IN_PROGRESS = 1;
+        static constexpr int CALIBRATION_SUCCESS = 2;
+        static constexpr int CALIBRATION_ERROR = 3;
+        uint32_t _calibration_status = CALIBRATION_IDLE;
         uint8_t fake_time = 0;
 };
 
@@ -378,7 +382,7 @@ int MockStepperDriver::syncReadHwErrorStatus(const std::vector<uint8_t> &id_list
 
 int MockStepperDriver::startHoming(uint8_t id)
 {
-    _calibration_status = common::model::EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS;
+    _calibration_status = CALIBRATION_IN_PROGRESS;
     fake_time = 5;
     return COMM_SUCCESS;
 }
@@ -395,9 +399,9 @@ int MockStepperDriver::readHomingStatus(uint8_t id, uint32_t &status)
         fake_time--;
     }
     else
-        _calibration_status = common::model::EStepperCalibrationStatus::CALIBRATION_OK;
+        _calibration_status = CALIBRATION_SUCCESS;
 
-    status = static_cast<uint32_t>(_calibration_status);
+    status = _calibration_status;
     return COMM_SUCCESS;
 }
 

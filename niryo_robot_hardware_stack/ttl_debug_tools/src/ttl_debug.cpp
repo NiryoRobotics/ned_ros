@@ -22,7 +22,6 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <stdlib.h>     //for using the function sleep
 #include <chrono>
 #include <thread>
 
@@ -159,13 +158,14 @@ int main(int argc, char **argv)
                     uint8_t size = static_cast<uint8_t>(vars["size"].as<int>());
 
                     printf("Register address: %d, Size (bytes): %d\n", addr, size);
-
                     comm_result = ttlTools.getRegister(static_cast<uint8_t>(id), addr, value, size);
 
                     if (comm_result != COMM_SUCCESS)
                         printf("Failed to get register: %d\n", comm_result);
                     else
+                    {
                         printf("Retrieved value at address %d : %d\n", addr, value);
+                    }
                 }
                 else  // unknown command
                 {
