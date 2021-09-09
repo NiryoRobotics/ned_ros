@@ -431,7 +431,7 @@ void HardwareInterface::_publishHardwareStatus()
               temperatures.emplace_back(jState->getTemperature());
               hw_errors.emplace_back(jState->getHardwareError());
               hw_errors_msg.emplace_back(jState->getHardwareErrorMessage());
-              motor_types.emplace_back(common::model::HardwareTypeEnum(jState->getType()).toString());
+              motor_types.emplace_back(common::model::HardwareTypeEnum(jState->getHardwareType()).toString());
             }
         }
 

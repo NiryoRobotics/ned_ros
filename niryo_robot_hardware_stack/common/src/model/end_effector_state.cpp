@@ -33,9 +33,27 @@ EndEffectorState::EndEffectorState() :
 {
 }
 
+/**
+ * @brief EndEffectorState::EndEffectorState
+ * @param id
+ */
 EndEffectorState::EndEffectorState(uint8_t id) :
-  AbstractHardwareState(EHardwareType::END_EFFECTOR, EBusProtocol::TTL, id)
+  AbstractHardwareState(EHardwareType::END_EFFECTOR,
+                        EComponentType::END_EFFECTOR,
+                        EBusProtocol::TTL, id)
 {
+}
+
+/**
+ * @brief EndEffectorState::EndEffectorState : copy constructor
+ * @param state
+ */
+EndEffectorState::EndEffectorState(const EndEffectorState &state) :
+  AbstractHardwareState(state)
+{
+    _buttons_list = state._buttons_list;
+    _accelerometer_values = state._accelerometer_values;
+    _collision_status = state._collision_status;
 }
 
 /**
@@ -83,7 +101,7 @@ std::string EndEffectorState::str() const
  */
 bool common::model::EndEffectorState::isValid() const
   {
-  return (EHardwareType::END_EFFECTOR == getType() &&
+  return (EHardwareType::END_EFFECTOR == getHardwareType() &&
           EButtonType::UNKNOWN != _buttons_list.at(0).type &&
           EButtonType::UNKNOWN != _buttons_list.at(1).type &&
           EButtonType::UNKNOWN != _buttons_list.at(2).type);

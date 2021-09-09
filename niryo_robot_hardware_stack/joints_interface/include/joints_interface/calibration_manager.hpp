@@ -78,7 +78,7 @@ private:
         std::shared_ptr<ttl_driver::TtlInterfaceCore> _ttl_interface;
         std::shared_ptr<can_driver::CanInterfaceCore> _can_interface;
         
-        std::vector<std::shared_ptr<common::model::JointState> > _joint_list;
+        std::vector<std::shared_ptr<common::model::JointState> > _joint_states_list;
 
         bool _calibration_in_progress{false};
         int _calibration_timeout{0};

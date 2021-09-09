@@ -26,6 +26,8 @@
 #include <string>
 #include <tuple>
 
+#include <common/model/conveyor_state.hpp>
+
 using ::std::lock_guard;
 using ::std::mutex;
 using ::std::vector;
@@ -270,7 +272,7 @@ int TtlInterfaceCore::motorCmdReport(uint8_t motor_id, EHardwareType motor_type)
         if (motor_type == EHardwareType::UNKNOWN)
             return 0;
 
-        JointState tmp_state = JointState("unknown", motor_type, common::model::EBusProtocol::TTL, motor_id);
+        JointState tmp_state = JointState("unknown", motor_type, common::model::EComponentType::JOINT, common::model::EBusProtocol::TTL, motor_id);
 
         // torque on
         ros::Duration(0.5).sleep();
@@ -367,7 +369,7 @@ int TtlInterfaceCore::launchMotorsReport()
                          static_cast<int>(state->getId()));
 
                 int scan_res = motorScanReport(state->getId());
-                int cmd_res = motorCmdReport(state->getId(), state->getType());
+                int cmd_res = motorCmdReport(state->getId(), state->getHardwareType());
 
                 if (niryo_robot_msgs::CommandStatus::SUCCESS == scan_res
                         && niryo_robot_msgs::CommandStatus::SUCCESS == cmd_res)
@@ -380,7 +382,7 @@ int TtlInterfaceCore::launchMotorsReport()
                     response = niryo_robot_msgs::CommandStatus::FAILURE;
                 }
 
-                results.emplace_back(state->getId(), state->getType(), scan_res, cmd_res);
+                results.emplace_back(state->getId(), state->getHardwareType(), scan_res, cmd_res);
 
                 if (niryo_robot_msgs::CommandStatus::ABORTED == scan_res ||
                         niryo_robot_msgs::CommandStatus::ABORTED == cmd_res)
@@ -668,19 +670,20 @@ void TtlInterfaceCore::_executeCommand()
  * @param motor_id
  * @return
  */
-int TtlInterfaceCore::setTool(EHardwareType type, uint8_t motor_id)
+int TtlInterfaceCore::setTool(const common::model::ToolState& toolState)
 {
     int result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
 
     lock_guard<mutex> lck(_control_loop_mutex);
     // add dynamixel as a new tool
-    _ttl_manager->addHardwareComponent(type, motor_id, TtlManager::EType::TOOL);
+    _ttl_manager->addHardwareComponent(toolState);
+
     // try to find motor
-    if (_ttl_manager->ping(motor_id))
+    if (_ttl_manager->ping(toolState.getId()))
     {
         // Enable torque
         std::shared_ptr<AbstractTtlSingleMotorCmd> cmd_torque = std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_TORQUE,
-                                                            motor_id, std::initializer_list<uint32_t>{1});
+                                                            toolState.getId(), std::initializer_list<uint32_t>{1});
         _ttl_manager->writeSingleCommand(cmd_torque);
         ros::Duration(0.05).sleep();
 
@@ -692,7 +695,7 @@ int TtlInterfaceCore::setTool(EHardwareType type, uint8_t motor_id)
     }
     else
     {
-        ROS_WARN("TtlInterfaceCore::setTool - No tool found with motor id %d", motor_id);
+        ROS_WARN("TtlInterfaceCore::setTool - No tool found with motor id %d", toolState.getId());
     }
 
     return result;
@@ -722,12 +725,12 @@ int TtlInterfaceCore::setEndEffector(const common::model::EndEffectorState& end_
   lock_guard<mutex> lck(_control_loop_mutex);
 
   // add end effector
-  _ttl_manager->addHardwareComponent(EHardwareType::END_EFFECTOR, end_effector_state.getId(), TtlManager::EType::END_EFFECTOR);
+  _ttl_manager->addHardwareComponent(end_effector_state);
 
   // try to find hw
   if (_ttl_manager->ping(end_effector_state.getId()))
   {
-      //TODO(cc) config end effector
+      //no config for end effector
 
       result = niryo_robot_msgs::CommandStatus::SUCCESS;
   }
@@ -741,23 +744,22 @@ int TtlInterfaceCore::setEndEffector(const common::model::EndEffectorState& end_
 
 /**
  * @brief TtlInterfaceCore::setConveyor
- * @param new_motor_id
- * @param default_conveyor_id
+ * @param state
  * @return
  */
-int TtlInterfaceCore::setConveyor(uint8_t new_motor_id, uint8_t default_conveyor_id)
+int TtlInterfaceCore::setConveyor(const common::model::ConveyorState& state)
 {
     int result = niryo_robot_msgs::CommandStatus::NO_CONVEYOR_FOUND;
 
     lock_guard<mutex> lck(_control_loop_mutex);
 
     // try to find motor id 6 (default motor id for conveyor
-    if (_ttl_manager->ping(default_conveyor_id))
+    if (_ttl_manager->ping(state.getDefaultId()))
     {
-        if (COMM_SUCCESS == _ttl_manager->changeId(EHardwareType::STEPPER, default_conveyor_id, new_motor_id))
+        if (COMM_SUCCESS == _ttl_manager->changeId(EHardwareType::STEPPER, state.getDefaultId(), state.getId()))
         {
             // add stepper as a new conveyor
-            _ttl_manager->addHardwareComponent(EHardwareType::STEPPER, new_motor_id, ttl_driver::TtlManager::EType::CONVOYER);
+            _ttl_manager->addHardwareComponent(state);
             result = niryo_robot_msgs::CommandStatus::SUCCESS;
         }
         else

@@ -44,10 +44,21 @@ AbstractMotorState::AbstractMotorState() :
  * @param bus_proto
  * @param id
  */
-AbstractMotorState::AbstractMotorState(EHardwareType type, EBusProtocol bus_proto, uint8_t id) :
-      AbstractHardwareState(type, bus_proto, id),
+AbstractMotorState::AbstractMotorState(EHardwareType type, EComponentType component_type,
+                                       EBusProtocol bus_proto, uint8_t id) :
+      AbstractHardwareState(type, component_type, bus_proto, id),
       _position_state(0)
 {
+}
+
+/**
+ * @brief AbstractMotorState::AbstractMotorState
+ * @param state
+ */
+AbstractMotorState::AbstractMotorState(const AbstractMotorState &state) :
+  AbstractHardwareState(state)
+{
+  _position_state = state._position_state;
 }
 
 /**

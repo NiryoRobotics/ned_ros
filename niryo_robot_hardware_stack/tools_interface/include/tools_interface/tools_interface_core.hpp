@@ -68,7 +68,7 @@ class ToolsInterfaceCore : public common::model::IInterfaceCore
 
         void _publishToolConnection();
 
-        bool _callbackPingAndSetDxlTool(tools_interface::PingDxlTool::Request &, tools_interface::PingDxlTool::Response &res);
+        bool _callbackPingAndSetTool(tools_interface::PingDxlTool::Request &, tools_interface::PingDxlTool::Response &res);
 
         bool _callbackOpenGripper(tools_interface::OpenGripper::Request &req, tools_interface::OpenGripper::Response &res);
         bool _callbackCloseGripper(tools_interface::CloseGripper::Request &req, tools_interface::CloseGripper::Response &res);

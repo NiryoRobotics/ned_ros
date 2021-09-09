@@ -50,7 +50,7 @@ class CanInterfaceCore : public common::model::IDriverCore, public common::model
 
         bool init(ros::NodeHandle& nh) override;
 
-        int setConveyor(uint8_t motor_id, uint8_t default_conveyor_id = 6) override;
+        int setConveyor(const common::model::ConveyorState& state) override;
         void unsetConveyor(uint8_t motor_id) override;
 
         void clearSingleCommandQueue();

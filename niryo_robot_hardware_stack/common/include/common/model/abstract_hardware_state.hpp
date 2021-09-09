@@ -37,14 +37,20 @@ namespace model
 class AbstractHardwareState : public IObject
 {
     public:
-
         AbstractHardwareState();
-        AbstractHardwareState(EHardwareType type, EBusProtocol bus_proto, uint8_t id);
+        AbstractHardwareState(EHardwareType type,
+                              EComponentType component_type,
+                              EBusProtocol bus_proto,
+                              uint8_t id);
+        AbstractHardwareState(const AbstractHardwareState& state);
+
         virtual ~AbstractHardwareState() override;
 
         // getters
-        EHardwareType getType() const;
+        EHardwareType getHardwareType() const;
+        EComponentType getComponentType() const;
         EBusProtocol getBusProtocol() const;
+
         uint8_t getId() const;
 
         std::string getFirmwareVersion() const;
@@ -68,29 +74,41 @@ class AbstractHardwareState : public IObject
         virtual std::string str() const override;
         virtual bool isValid() const override = 0; // not reimplemented to keep this class abstract
 
-    protected:
-        EHardwareType _type;
+
+protected:
+        EHardwareType _hw_type;
+        EComponentType _component_type;
         EBusProtocol _bus_proto;
 
-        uint8_t _id;
+        uint8_t _id{0};
 
         // read variables
-        std::string _firmware_version;
+        std::string _firmware_version{};
 
-        uint32_t _temperature;
-        double _voltage;
-        uint32_t _hw_error;
-        std::string _hw_error_message;
+        uint32_t _temperature{0};
+        double _voltage{0.0};
+        uint32_t _hw_error{0};
+        std::string _hw_error_message{};
 };
 
 /**
- * @brief AbstractHardwareState::getType
+ * @brief AbstractHardwareState::getHardwareType
  * @return
  */
 inline
-EHardwareType AbstractHardwareState::getType() const
+EHardwareType AbstractHardwareState::getHardwareType() const
 {
-    return _type;
+    return _hw_type;
+}
+
+/**
+ * @brief AbstractHardwareState::getComponentType
+ * @return
+ */
+inline
+EComponentType AbstractHardwareState::getComponentType() const
+{
+  return _component_type;
 }
 
 /**

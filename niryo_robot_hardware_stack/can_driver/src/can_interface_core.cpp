@@ -286,7 +286,7 @@ int CanInterfaceCore::launchMotorsReport()
                         response = niryo_robot_msgs::CommandStatus::FAILURE;
                     }
 
-                    results.emplace_back(state->getId(), state->getType(), cmd_res);
+                    results.emplace_back(state->getId(), state->getHardwareType(), cmd_res);
 
                     if (niryo_robot_msgs::CommandStatus::ABORTED == cmd_res)
                     {
@@ -433,7 +433,7 @@ void CanInterfaceCore::_executeCommand()
         // as we use a queue, we don't need a mutex
         if (need_sleep)
             ros::Duration(0.01).sleep();
-        _can_manager->readSingleCommand(_stepper_single_cmds.front());
+        _can_manager->writeSingleCommand(_stepper_single_cmds.front());
         _stepper_single_cmds.pop();
         need_sleep = true;
     }
@@ -442,7 +442,7 @@ void CanInterfaceCore::_executeCommand()
         // as we use a queue, we don't need a mutex
         if (need_sleep)
             ros::Duration(0.01).sleep();
-        _can_manager->readSingleCommand(_conveyor_cmds.front());
+        _can_manager->writeSingleCommand(_conveyor_cmds.front());
         _conveyor_cmds.pop();
     }
 }
@@ -453,23 +453,51 @@ void CanInterfaceCore::_executeCommand()
 
 /**
  * @brief CanInterfaceCore::setConveyor
- * @param new_motor_id
- * @param default_conveyor_id
+ * @param state
  * @return
  */
-int CanInterfaceCore::setConveyor(uint8_t new_motor_id, uint8_t default_conveyor_id)
+int CanInterfaceCore::setConveyor(const common::model::ConveyorState& state)
 {
     int result = niryo_robot_msgs::CommandStatus::NO_CONVEYOR_FOUND;
 
     lock_guard<mutex> lck(_control_loop_mutex);
 
     // try to find motor id 6 (default motor id for conveyor
-    if (_can_manager->ping(default_conveyor_id))
+    if (_can_manager->ping(state.getDefaultId()))
     {
-        if (CAN_OK == _can_manager->sendUpdateConveyorId(default_conveyor_id, new_motor_id))
+        if (CAN_OK == _can_manager->sendUpdateConveyorId(state.getDefaultId(),
+                                                         state.getId()))
         {
             // add stepper as a new conveyor
-            _can_manager->addHardwareComponent(new_motor_id, true);
+            _can_manager->addHardwareComponent(state);
+
+            // try to find motor
+            if (_can_manager->ping(state.getId()))
+            {
+                // send commands to init
+                ROS_DEBUG("ConveyorInterfaceCore::addConveyor : Initializing for CAN bus");
+
+                _can_manager->writeSingleCommand(std::make_shared<common::model::StepperSingleCmd>(EStepperCommandType::CMD_TYPE_MICRO_STEPS,
+                                                                                        state.getId(), std::initializer_list<int32_t>{state.getMicroSteps()}));
+
+                _can_manager->writeSingleCommand(std::make_shared<common::model::StepperSingleCmd>(EStepperCommandType::CMD_TYPE_MAX_EFFORT,
+                                                                                        state.getId(), std::initializer_list<int32_t>{state.getMaxEffort()}));
+
+                _can_manager->writeSingleCommand(std::make_shared<common::model::StepperSingleCmd>(EStepperCommandType::CMD_TYPE_CONVEYOR,
+                                                                                        state.getId(), std::initializer_list<int32_t>{false, 0, -1}));
+
+                // CC why two times in a row ?
+                _can_manager->writeSingleCommand(std::make_shared<common::model::StepperSingleCmd>(EStepperCommandType::CMD_TYPE_CONVEYOR,
+                                                                                       state.getId(), std::initializer_list<int32_t>{false, 0, -1}));
+
+
+                result = niryo_robot_msgs::CommandStatus::SUCCESS;
+            }
+            else
+            {
+                ROS_WARN("TtlInterfaceCore::setTool - No tool found with motor id %d", state.getId());
+            }
+
             result = niryo_robot_msgs::CommandStatus::SUCCESS;
         }
         else

@@ -15,10 +15,6 @@ execute_process( COMMAND
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-## By adding -Wall and -Werror, the compiler does not ignore warnings anymore,
-## enforcing cleaner code.
-add_definitions(-Wall  -Werror)
-
 ## Find catkin macros and libraries
 find_package(catkin REQUIRED)
 

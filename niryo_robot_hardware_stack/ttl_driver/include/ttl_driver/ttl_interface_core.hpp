@@ -48,6 +48,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "common/model/stepper_motor_state.hpp"
 #include "common/model/dxl_motor_state.hpp"
 #include "common/model/end_effector_state.hpp"
+#include "common/model/tool_state.hpp"
 
 #include "common/model/hardware_type_enum.hpp"
 
@@ -89,7 +90,7 @@ class TtlInterfaceCore : public common::model::IDriverCore, public common::model
         void addSingleCommandToQueue(const std::vector<std::shared_ptr<common::model::ISingleMotorCmd> >& cmd) override;
 
         // Tool control
-        int setTool(common::model::EHardwareType type, uint8_t motor_id);
+        int setTool(const common::model::ToolState& toolState);
         void unsetTool(uint8_t motor_id);
         std::vector<uint8_t> scanTools();
 
@@ -97,7 +98,7 @@ class TtlInterfaceCore : public common::model::IDriverCore, public common::model
         int setEndEffector(const common::model::EndEffectorState& end_effector_state);
 
         // conveyor control
-        int setConveyor(uint8_t motor_id, uint8_t default_conveyor_id = 6) override;
+        int setConveyor(const common::model::ConveyorState &state) override;
         void unsetConveyor(uint8_t motor_id) override;
 
         // direct commands

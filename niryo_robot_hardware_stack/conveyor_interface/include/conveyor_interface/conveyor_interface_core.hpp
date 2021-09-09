@@ -46,7 +46,8 @@ namespace conveyor_interface
 class ConveyorInterfaceCore : public common::model::IInterfaceCore
 {
     public:
-        ConveyorInterfaceCore(ros::NodeHandle& nh, std::shared_ptr<common::model::IDriverCore> conveyor_driver);
+        ConveyorInterfaceCore(ros::NodeHandle& nh,
+                              std::shared_ptr<common::model::IDriverCore> conveyor_driver);
         virtual ~ConveyorInterfaceCore() override;
         virtual bool init(ros::NodeHandle& nh) override;
 
@@ -77,8 +78,7 @@ class ConveyorInterfaceCore : public common::model::IInterfaceCore
         ros::Publisher _conveyors_feedback_publisher;
         ros::Publisher _conveyor_status_publisher;
 
-        // default id to look for to know if we have a stepper
-        int _default_conveyor_id{6};
+        common::model::ConveyorState _conveyor_state;
 
         // pool of possible id we can set for a newly connected conveyor
         std::set<uint8_t> _conveyor_pool_id_list;
@@ -86,8 +86,6 @@ class ConveyorInterfaceCore : public common::model::IInterfaceCore
         // list of currently connected conveyors
         std::vector<uint8_t> _current_conveyor_id_list;
 
-        int _conveyor_max_effort{0};
-        int _conveyor_micro_steps{8};
         double _publish_feedback_frequency{0.0};
 
         common::model::EBusProtocol _bus_protocol;

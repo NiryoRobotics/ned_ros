@@ -41,24 +41,37 @@ DxlMotorState::DxlMotorState()
 
 /**
  * @brief DxlMotorState::DxlMotorState
- * @param name
  * @param type
+ * @param component_type
  * @param bus_proto
  * @param id
- * @param isTool
+ */
+DxlMotorState::DxlMotorState(EHardwareType type,
+                             EComponentType component_type,
+                             EBusProtocol bus_proto,
+                             uint8_t id) :
+    DxlMotorState("unknown", type, component_type, bus_proto, id)
+{}
+
+/**
+ * @brief DxlMotorState::DxlMotorState
+ * @param name
+ * @param type
+ * @param component_type
+ * @param bus_proto
+ * @param id
  */
 DxlMotorState::DxlMotorState(std::string name,
                              EHardwareType type,
+                             EComponentType component_type,
                              EBusProtocol bus_proto,
-                             uint8_t id,
-                             bool isTool) :
-    JointState(name, type, bus_proto, id),
-    _isTool(isTool)
+                             uint8_t id) :
+    JointState(name, type, component_type, bus_proto, id)
 {
     // to put in config ?
 
     // according to xl-320 datasheet : 1 speed ~ 0.111 rpm ~ 1.8944 dxl position per second
-    switch (_type)
+    switch (_hw_type)
     {
         case EHardwareType::XL320:
             _total_angle = 300;
@@ -83,11 +96,13 @@ DxlMotorState::DxlMotorState(std::string name,
             _total_range_position = 4096;
             _middle_position = 2048;
             _steps_for_one_speed = 15.6330667;  // 0.229 * 4096 / 60
+        break;
         case EHardwareType::FAKE_DXL_MOTOR:
             _total_angle = 360;
             _total_range_position = 4096;
             _middle_position = 2048;
             _steps_for_one_speed = 15.6330667;  // 0.229 * 4096 / 60
+        break;
         case EHardwareType::FAKE_STEPPER_MOTOR:
             _total_angle = 360;
             _total_range_position = 4096;
@@ -101,17 +116,27 @@ DxlMotorState::DxlMotorState(std::string name,
 
 /**
  * @brief DxlMotorState::DxlMotorState
- * @param type
- * @param bus_proto
- * @param id
- * @param isTool
+ * @param state
  */
-DxlMotorState::DxlMotorState(EHardwareType type,
-                             EBusProtocol bus_proto,
-                             uint8_t id,
-                             bool isTool) :
-    DxlMotorState("unknown", type, bus_proto, id, isTool)
-{}
+DxlMotorState::DxlMotorState(const DxlMotorState &state) :
+    JointState(state)
+{
+  _pos_p_gain = state._pos_p_gain;
+  _pos_i_gain = state._pos_i_gain;
+  _pos_d_gain = state._pos_d_gain;
+
+  _vel_p_gain = state._vel_p_gain;
+  _vel_i_gain = state._vel_i_gain;
+
+  _ff1_gain = state._ff1_gain;
+  _ff2_gain = state._ff2_gain;
+
+  _total_range_position = state._total_range_position;
+  _middle_position = state._middle_position;
+  _total_angle = state._total_angle;
+  _steps_for_one_speed = state._steps_for_one_speed;
+
+}
 
 /**
  * @brief DxlMotorState::~DxlMotorState
@@ -129,7 +154,6 @@ DxlMotorState::~DxlMotorState()
 void DxlMotorState::reset()
 {
     AbstractMotorState::reset();
-    _isTool = false;
 }
 
 /**
@@ -138,7 +162,7 @@ void DxlMotorState::reset()
  */
 bool DxlMotorState::isValid() const
 {
-    return (0 != getId() && EHardwareType::UNKNOWN != getType());
+    return (0 != getId() && EHardwareType::UNKNOWN != getHardwareType());
 }
 
 /**
@@ -151,8 +175,8 @@ std::string DxlMotorState::str() const
 
     ss << "DxlMotorState : ";
     ss << "\n---\n";
-    ss << "type: " << HardwareTypeEnum(_type).toString() << ", ";
-    ss << "isTool: " << (_isTool ? "true" : "false") << "\n";
+    ss << "type: " << HardwareTypeEnum(_hw_type).toString() << ", ";
+    ss << "isTool: " << (isTool() ? "true" : "false") << "\n";
     ss << "position p gain: " << _pos_p_gain << ", ";
     ss << "position i gain: " << _pos_i_gain << ", ";
     ss << "position d gain: " << _pos_d_gain << ", ";
@@ -169,10 +193,9 @@ std::string DxlMotorState::str() const
 /**
  * @brief DxlMotorState::to_motor_pos
  * @param pos_rad
- * @param protocol
  * @return
  */
-int DxlMotorState::to_motor_pos(double pos_rad, common::model::EBusProtocol /*protocol*/)
+int DxlMotorState::to_motor_pos(double pos_rad)
 {
     double denominator = _total_angle;
     assert(0.0 != denominator);
@@ -184,10 +207,9 @@ int DxlMotorState::to_motor_pos(double pos_rad, common::model::EBusProtocol /*pr
 /**
  * @brief DxlMotorState::to_rad_pos
  * @param position_dxl
- * @param protocol
  * @return
  */
-double DxlMotorState::to_rad_pos(int position_dxl, common::model::EBusProtocol /*protocol*/)
+double DxlMotorState::to_rad_pos(int position_dxl)
 {
     double denominator = RADIAN_TO_DEGREE * _total_range_position;
     assert(0.0 != denominator);

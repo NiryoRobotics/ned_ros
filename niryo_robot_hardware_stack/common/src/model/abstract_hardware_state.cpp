@@ -33,7 +33,8 @@ namespace model
  * @brief AbstractHardwareState::AbstractHardwareState
  */
 AbstractHardwareState::AbstractHardwareState() :
-    _type(EHardwareType::UNKNOWN),
+    _hw_type(EHardwareType::UNKNOWN),
+    _component_type(EComponentType::UNKNOWN),
     _bus_proto(EBusProtocol::UNKNOWN)
 {
     reset();
@@ -42,18 +43,35 @@ AbstractHardwareState::AbstractHardwareState() :
 /**
  * @brief AbstractHardwareState::AbstractHardwareState
  * @param type
+ * @param component_type
  * @param bus_proto
  * @param id
  */
-AbstractHardwareState::AbstractHardwareState(EHardwareType type, EBusProtocol bus_proto, uint8_t id) :
-      _type(type),
+AbstractHardwareState::AbstractHardwareState(EHardwareType type,
+                                             EComponentType component_type,
+                                             EBusProtocol bus_proto,
+                                             uint8_t id) :
+      _hw_type(type),
+      _component_type(component_type),
       _bus_proto(bus_proto),
-      _id(id),
-      _temperature(0),
-      _voltage(0.0),
-      _hw_error(0),
-      _hw_error_message("")
+      _id(id)
 {
+}
+
+/**
+ * @brief AbstractHardwareState::AbstractHardwareState : copy ctor
+ * @param state
+ */
+AbstractHardwareState::AbstractHardwareState(const AbstractHardwareState &state)
+{
+  _hw_type = state._hw_type;
+  _component_type = state._component_type;
+  _bus_proto = state._bus_proto;
+  _id = state._id;
+  _temperature = state._temperature;
+  _voltage = state._voltage;
+  _hw_error = state._hw_error;
+  _hw_error_message = state._hw_error_message;
 }
 
 /**

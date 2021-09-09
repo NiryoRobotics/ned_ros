@@ -61,9 +61,10 @@ class CanManager : public common::model::IBusManager
         bool init(ros::NodeHandle& nh) override;
 
         // commands
-        void addHardwareComponent(uint8_t id, bool isConveyor = false);
+        template<typename T>
+        void addHardwareComponent(const T& state);
 
-        int readSingleCommand(std::shared_ptr<common::model::AbstractCanSingleMotorCmd> cmd);
+        int writeSingleCommand(std::shared_ptr<common::model::AbstractCanSingleMotorCmd> cmd);
         void executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, int32_t> > cmd_vec);
 
         void startCalibration();
@@ -96,7 +97,6 @@ class CanManager : public common::model::IBusManager
         size_t getNbMotors() const override;
         void getBusState(bool& connection_status, std::vector<uint8_t>& motor_list, std::string& error) const override;
         std::string getErrorMessage() const override;
-
 
     private:
 
@@ -223,6 +223,18 @@ common::model::EStepperCalibrationStatus CanManager::getCalibrationStatus() cons
 inline
 bool CanManager::isCalibrationInProgress() const {
     return common::model::EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS == _calibration_status;
+}
+
+/**
+ * @brief CanManager::addHardwareComponent
+ * @param state
+ */
+template<typename T>
+void CanManager::addHardwareComponent(const T& state)
+{
+    ROS_DEBUG("CanManager::addHardwareComponent - Add motor id: %d", state.getId());
+
+    _state_map.insert(std::make_pair(state.getId(), std::make_shared<T>(state)));
 }
 
 } // namespace can_driver

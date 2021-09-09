@@ -68,6 +68,7 @@ class EndEffectorState : public AbstractHardwareState
     public:
         EndEffectorState();
         EndEffectorState(uint8_t id);
+        EndEffectorState(const EndEffectorState& state);
 
         virtual ~EndEffectorState() override;
 
@@ -97,9 +98,9 @@ class EndEffectorState : public AbstractHardwareState
 
     private:
         std::array<Button, 3> _buttons_list;
-        Vector3D _accelerometer_values;
+        Vector3D _accelerometer_values{};
 
-        bool _collision_status;
+        bool _collision_status{false};
 };
 
 /**

@@ -29,6 +29,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "niryo_robot_msgs/BusState.h"
 #include "hardware_type_enum.hpp"
 #include "common/model/joint_state.hpp"
+#include "common/model/conveyor_state.hpp"
 #include "common/model/abstract_single_motor_cmd.hpp"
 #include "common/model/abstract_synchronize_motor_cmd.hpp"
 #include "common/model/stepper_calibration_status_enum.hpp"
@@ -56,8 +57,8 @@ class IDriverCore
         virtual void setSyncCommand(const std::shared_ptr<common::model::ISynchronizeMotorCmd>& cmd) = 0;
 
         // driver for conveyor
-        virtual int setConveyor(uint8_t motor_id, uint8_t default_conveyor_id = 6) = 0;
-        virtual void unsetConveyor(uint8_t motor_id) =0;
+        virtual int setConveyor(const common::model::ConveyorState& state) = 0;
+        virtual void unsetConveyor(uint8_t motor_id) = 0;
 
         // calibration
         virtual void startCalibration() = 0;

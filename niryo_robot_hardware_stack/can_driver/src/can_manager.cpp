@@ -133,7 +133,7 @@ bool CanManager::init(ros::NodeHandle& nh)
         uint8_t id = static_cast<uint8_t>(idList.at(i));
 
         if (!_state_map.count(id))
-            addHardwareComponent(id);
+            addHardwareComponent(*_state_map.at(id));
         else
             ROS_ERROR("CanManager::init - duplicate id %d. Please check your configuration file "
                       "(niryo_robot_hardware_stack/can_driver/config/motors_params.yaml)", id);
@@ -224,22 +224,6 @@ bool CanManager::isConnectionOk() const
 }
 
 /**
- * @brief CanManager::addMotor
- * @param id
- * @param isConveyor
- */
-void CanManager::addHardwareComponent(uint8_t id, bool isConveyor)
-{
-    ROS_DEBUG("CanManager::addHardwareComponent - Add motor id: %d", id);
-
-    // add id to _state_map
-    if (isConveyor)
-        _state_map.insert(std::make_pair(id, std::make_shared<ConveyorState>(EBusProtocol::CAN, id)));
-    else
-        _state_map.insert(std::make_pair(id, std::make_shared<StepperMotorState>(EBusProtocol::CAN, id)));
-}
-
-/**
  * @brief CanManager::removeMotor
  * @param id
  */
@@ -274,7 +258,7 @@ int32_t CanManager::getPosition(uint8_t motor_id) const
  * @param cmd
  * @return
  */
-int CanManager::readSingleCommand(std::shared_ptr<common::model::AbstractCanSingleMotorCmd> cmd)
+int CanManager::writeSingleCommand(std::shared_ptr<common::model::AbstractCanSingleMotorCmd> cmd)
 {
     int result = CAN_INVALID_CMD;
     ROS_DEBUG("CanManager::readCommand - Received stepper cmd %s", cmd->str().c_str());
@@ -327,15 +311,6 @@ int CanManager::readSingleCommand(std::shared_ptr<common::model::AbstractCanSing
                                                   static_cast<uint8_t>(cmd->getParams().at(1)),
                                                   static_cast<uint8_t>(cmd->getParams().at(2)));
                 break;
-            case EStepperCommandType::CMD_TYPE_UPDATE_CONVEYOR:
-                    result = sendUpdateConveyorId(cmd->getId(),
-                                                  static_cast<uint8_t>(cmd->getParams().front()));
-                    if (result == CAN_OK)
-                    {
-                        removeMotor(cmd->getId());
-                        addHardwareComponent(static_cast<uint8_t>(cmd->getParams().front()));
-                    }
-            break;
             default:
                 break;
         }

@@ -99,7 +99,7 @@ void JointHardwareInterface::read(const ros::Time &/*time*/, const ros::Duration
                 newPositionState = _ttl_interface->getJointState(jState->getId()).getPositionState();
             }
 
-            jState->pos = jState->to_rad_pos(newPositionState, jState->getBusProtocol());
+            jState->pos = jState->to_rad_pos(newPositionState);
 
             //TODO(CC) to be refactorized
             jState->setFirmwareVersion(state.getFirmwareVersion());
@@ -126,9 +126,9 @@ void JointHardwareInterface::write(const ros::Time &/*time*/, const ros::Duratio
         if (jState && jState->isValid())
         {
             if (jState->getBusProtocol() == EBusProtocol::CAN)
-                can_cmd.emplace_back(jState->getId(), jState->to_motor_pos(jState->cmd, EBusProtocol::CAN));
+                can_cmd.emplace_back(jState->getId(), jState->to_motor_pos(jState->cmd));
             if (jState->getBusProtocol() == EBusProtocol::TTL)
-                ttl_cmd.emplace_back(jState->getId(), jState->to_motor_pos(jState->cmd, EBusProtocol::TTL));
+                ttl_cmd.emplace_back(jState->getId(), jState->to_motor_pos(jState->cmd));
         }
     }
 
@@ -436,7 +436,7 @@ void JointHardwareInterface::activateLearningMode()
         {
             if (jState->isDynamixel())
             {
-                dxl_cmd.addMotorParam(jState->getType(), jState->getId(), 0);
+                dxl_cmd.addMotorParam(jState->getHardwareType(), jState->getId(), 0);
             }
             else if ((jState->isStepper() && jState->getBusProtocol() == EBusProtocol::TTL))
             {
@@ -478,7 +478,7 @@ void JointHardwareInterface::deactivateLearningMode()
         {
             if (jState->isDynamixel())
             {
-                dxl_cmd.addMotorParam(jState->getType(), jState->getId(), 1);
+                dxl_cmd.addMotorParam(jState->getHardwareType(), jState->getId(), 1);
             }
             else if (jState->isStepper() && jState->getBusProtocol() == EBusProtocol::CAN)
             {

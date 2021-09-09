@@ -74,14 +74,6 @@ constexpr int TTL_WRONG_TYPE             = -52;
  */
 class TtlManager : public common::model::IBusManager
 {
-    public:
-        enum class EType
-        {
-            TOOL,
-            CONVOYER,
-            JOINT,
-            END_EFFECTOR
-        };
 
     public:
         TtlManager(ros::NodeHandle& nh);
@@ -90,8 +82,9 @@ class TtlManager : public common::model::IBusManager
         bool init(ros::NodeHandle& nh) override;
 
         // commands
-        void addHardwareComponent(common::model::EHardwareType type,
-                                  uint8_t id, EType type_used);
+        template<typename T>
+        void addHardwareComponent(const T& state);
+
         int changeId(common::model::EHardwareType motor_type, uint8_t old_id, uint8_t new_id);
 
         int writeSynchronizeCommand(const std::shared_ptr<common::model::AbstractTtlSynchronizeMotorCmd >& cmd);
@@ -146,6 +139,8 @@ class TtlManager : public common::model::IBusManager
         int setupCommunication();
 
         void checkRemovedMotors();
+
+        void addHardwareDriver(common::model::EHardwareType hardware_type);
 
     private:
         std::shared_ptr<dynamixel::PortHandler> _portHandler;
@@ -278,6 +273,38 @@ inline
 bool TtlManager::hasEndEffector() const
 {
     return _driver_map.count(common::model::EHardwareType::END_EFFECTOR);
+}
+
+
+/**
+ * @brief TtlManager::addHardwareComponent
+ * @param state
+ */
+template<typename T>
+void TtlManager::addHardwareComponent(const T& state)
+{
+    common::model::EHardwareType hardware_type = state.getHardwareType();
+    uint8_t id = state.getId();
+
+    ROS_DEBUG("TtlManager::addHardwareComponent : %s", state.str().c_str());
+
+    // if not already instanciated
+    if (!_state_map.count(id))
+    {
+      _state_map.insert(make_pair(id, std::make_shared<T>(state)));
+    }
+
+    // if not already instanciated
+    if (!_ids_map.count(hardware_type))
+    {
+        _ids_map.insert(std::make_pair(hardware_type, std::vector<uint8_t>({id})));
+    }
+    else
+    {
+        _ids_map.at(hardware_type).push_back(id);
+    }
+
+    addHardwareDriver(hardware_type);
 }
 
 } // ttl_driver
