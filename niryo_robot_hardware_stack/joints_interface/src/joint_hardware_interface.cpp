@@ -70,9 +70,7 @@ JointHardwareInterface::JointHardwareInterface(ros::NodeHandle& rootnh,
 
 
     sendInitMotorsParams();
-
     activateLearningMode();
-
     _calibration_manager = std::make_unique<CalibrationManager>(robot_hwnh, _joint_list, _ttl_interface, _can_interface);
 }
 
@@ -266,8 +264,8 @@ void JointHardwareInterface::sendInitMotorsParams()
                         jState->getId(),
                         {8});
             _can_interface->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(cmd));
+            ros::Duration(0.05).sleep();
         }
-        ros::Duration(0.05).sleep();
     }
     // CMD_TYPE_MAX_EFFORT cmd
     for (auto const& jState : _joint_list)
@@ -279,8 +277,8 @@ void JointHardwareInterface::sendInitMotorsParams()
                                     static_cast<int32_t>(dynamic_pointer_cast<StepperMotorState>(jState)->getMaxEffort())
                                 });
             _can_interface->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(cmd));
+            ros::Duration(0.05).sleep();
         }
-        ros::Duration(0.05).sleep();
     }
     //  dynamixels joints PID
     for (auto const& jState : _joint_list)
