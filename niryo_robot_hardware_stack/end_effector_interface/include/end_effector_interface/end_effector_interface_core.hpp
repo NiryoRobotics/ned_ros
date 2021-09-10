@@ -50,6 +50,9 @@ class EndEffectorInterfaceCore : public common::model::IInterfaceCore
 
         virtual bool init(ros::NodeHandle &nh) override;
 
+        // getters
+        common::model::EndEffectorState getEndEffectorState() const;
+
     private:
         virtual void initParameters(ros::NodeHandle& nh) override;
         virtual void startServices(ros::NodeHandle& nh) override;
@@ -75,6 +78,14 @@ class EndEffectorInterfaceCore : public common::model::IInterfaceCore
 
         double _check_end_effector_status_frequency{0.0};
 };
+
+common::model::EndEffectorState
+EndEffectorInterfaceCore::getEndEffectorState() const
+{
+    return _end_effector_state;
+}
+
+
 } // EndEffectorInterface
 
 #endif // END_EFFECTOR_INTERFACE_CORE_HPP

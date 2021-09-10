@@ -435,6 +435,17 @@ void HardwareInterface::_publishHardwareStatus()
             }
         }
 
+        if (_end_effector_interface)
+        {
+            auto state = _end_effector_interface->getEndEffectorState();
+            motor_names.emplace_back("End Effector");
+            voltages.emplace_back(state.getVoltage());
+            temperatures.emplace_back(state.getTemperature());
+            hw_errors.emplace_back(state.getHardwareError());
+            hw_errors_msg.emplace_back(state.getHardwareErrorMessage());
+            motor_types.emplace_back(common::model::HardwareTypeEnum(state.getHardwareType()).toString());
+        }
+
         cpu_temperature = _cpu_interface->getCpuTemperature();
 
         msg.rpi_temperature = cpu_temperature;
@@ -485,6 +496,13 @@ void HardwareInterface::_publishSoftwareVersion()
                 motor_names.emplace_back(jState->getName());
                 firmware_versions.emplace_back(jState->getFirmwareVersion());
             }
+        }
+
+        if (_end_effector_interface)
+        {
+            auto state = _end_effector_interface->getEndEffectorState();
+            motor_names.emplace_back("End Effector");
+            firmware_versions.emplace_back(state.getFirmwareVersion());
         }
 
         niryo_robot_msgs::SoftwareVersion msg;
