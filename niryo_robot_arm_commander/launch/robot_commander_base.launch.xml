@@ -13,5 +13,6 @@
     <group ns="niryo_robot_arm_commander">
         <rosparam file="$(find niryo_robot_arm_commander)/config/default.yaml" command="load"/>
         <rosparam file="$(find niryo_robot_arm_commander)/config/jog_params.yaml" command="load"/>
+        <rosparam file="$(find niryo_robot_arm_commander)/config/$(arg hardware_version)/error_tolerances.yaml" command="load"/>
     </group>
 </launch>
