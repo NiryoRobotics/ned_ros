@@ -60,7 +60,7 @@ ToolsInterfaceCore::ToolsInterfaceCore(ros::NodeHandle& nh,
 
     init(nh);
 
-    pubToolId(0);
+    pubToolId(-1);
 }
 
 /**
@@ -290,7 +290,7 @@ bool ToolsInterfaceCore::_callbackPingAndSetTool(tools_interface::PingDxlTool::R
             ROS_ERROR("ToolsInterfaceCore::_callbackPingAndSetDxlTool - Fail to set end effector, return : %d",
                       res.state);
 
-            pubToolId(0);
+            pubToolId(-1);
 
             ros::Duration(0.05).sleep();
             res.id = 0;
@@ -298,9 +298,7 @@ bool ToolsInterfaceCore::_callbackPingAndSetTool(tools_interface::PingDxlTool::R
     }
     else  // no tool found, no tool set (it is not an error, the tool does not exists)
     {
-        ROS_INFO("ToolsInterfaceCore::_callbackPingAndSetDxlTool - No new conveyor found");
-
-        pubToolId(0);
+        pubToolId(-1);
 
         ros::Duration(0.05).sleep();
         res.state = ToolState::TOOL_STATE_PING_OK;
@@ -556,17 +554,22 @@ void ToolsInterfaceCore::_publishToolConnection()
             lock_guard<mutex> lck(_tool_mutex);
             std::vector<uint8_t> motor_list = _ttl_interface->getRemovedMotorList();
 
-            for (auto const& motor : motor_list)
+            if (_toolState.isValid())
             {
-                if (_toolState.getId() == motor)
+                for (auto const& motor : motor_list)
                 {
-                    ROS_INFO("Tools Interface - Unset Current Tools");
-                    _ttl_interface->unsetTool(_toolState.getId());
-                    _toolState.reset();
-                    msg.data = 0;
-                    _tool_connection_publisher.publish(msg);
+                    if (_toolState.getId() == motor)
+                    {
+                        ROS_INFO("Tools Interface - Unset Current Tools");
+                        _ttl_interface->unsetTool(_toolState.getId());
+                        _toolState.reset();
+                        msg.data = -1;
+                        _tool_connection_publisher.publish(msg);
+                    }
                 }
             }
+            else
+                msg.data = -1;
         }
         check_connection_rate.sleep();
     }
