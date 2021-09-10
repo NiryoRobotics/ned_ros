@@ -23,6 +23,7 @@
 #include <vector>
 
 // ros
+#include "niryo_robot_msgs/SetBool.h"
 
 // niryo
 #include "end_effector_interface/end_effector_interface_core.hpp"
@@ -122,9 +123,9 @@ void EndEffectorInterfaceCore::initParameters(ros::NodeHandle& nh)
  * @brief EndEffectorInterfaceCore::startServices
  * @param nh
  */
-void EndEffectorInterfaceCore::startServices(ros::NodeHandle& /*nh*/)
+void EndEffectorInterfaceCore::startServices(ros::NodeHandle& nh)
 {
-    ROS_DEBUG("No services to start");
+    _learning_mode_client = nh.serviceClient<niryo_robot_msgs::SetBool>("/niryo_robot/learning_mode/activate");
 }
 
 /**
@@ -198,6 +199,18 @@ void EndEffectorInterfaceCore::_publishButtonState()
             {
                 case EButtonType::FREE_DRIVE_BUTTON:
                     _free_drive_button_state_publisher.publish(msg);
+                    if(common::model::EndEffectorState::EActionType::HANDLE_HELD_ACTION == button.action)
+                    {
+                      niryo_robot_msgs::SetBool srv;
+                      srv.request.value = true;
+                      _learning_mode_client.call(srv);
+                    }
+                    else {
+                      niryo_robot_msgs::SetBool srv;
+                      srv.request.value = false;
+                      _learning_mode_client.call(srv);
+                    }
+
                   break;
                 case EButtonType::SAVE_POSITION_BUTTON:
                     _save_pos_button_state_publisher.publish(msg);
