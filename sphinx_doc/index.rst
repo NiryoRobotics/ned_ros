@@ -47,7 +47,7 @@ ROS Direct control
    To control the robot directly with ROS, you will need either to be connected in SSH
    to the physic robot, or to use the simulation.
 
-ROS is the more direct way to control the robot. It allows:
+ROS is the most direct way to control the robot. It allows:
 
 - to send command via the terminal in order to call services, trigger action, ...
 - to write a entire Python/C++ node in a script to realize a full process.

@@ -1,6 +1,6 @@
 Niryo_robot_unit_tests
 ========================================
-This package provides config and launch files to start Ned unit tests.
+This package provides config and launches files to start Ned unit tests.
 
 Currently, tested packages are:
  - :doc:`niryo_robot_poses_handlers`

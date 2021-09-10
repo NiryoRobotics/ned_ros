@@ -192,7 +192,7 @@ To run it: ::
 With physics - Simulation
 --------------------------------------
 
-For the simulation, Ned use Gazebo, a well known tool among the ROS community.
+For the simulation, Ned uses Gazebo, a well known tool among the ROS community.
 It allows:
 
 * Collision.
