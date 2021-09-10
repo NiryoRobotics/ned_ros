@@ -11,6 +11,7 @@ import numpy as np
 
 from trajectories_executor import TrajectoriesExecutor
 from kinematics_handler import KinematicsHandler
+from jog_controller import JogController
 from niryo_robot_arm_commander.utils import list_to_pose, pose_to_list, dist_2_poses, poses_too_close
 
 # Command Status
@@ -46,15 +47,20 @@ class ArmCommander:
         # -- Commanders
         # - Move It Commander
         self.__arm = None
+        self.__velocity_scaling_factor = 1.0
+        self.__acceleration_scaling_factor = 1.0
         self.__init_move_group_commander()
         self.__traj_executor = TrajectoriesExecutor(self.__arm)
+
+        # Validation
+        self.__parameters_validator = parameters_validator
 
         # - Frames managers
         self.__transform_handler = transform_handler
         self.__kinematics_handler = KinematicsHandler(self.__arm, self.__transform_handler)
 
-        # Validation
-        self.__parameters_validator = parameters_validator
+        # Jog Controller
+        self.__jog_controller = JogController(self.__arm, self.__kinematics_handler, self.__parameters_validator)
 
         # Arm velocity
         self.__max_velocity_scaling_factor = 100  # Start robot with max velocity
@@ -75,8 +81,8 @@ class ArmCommander:
 
         # Set pose reference frame
         self.__arm.set_pose_reference_frame(self.__reference_frame)
-        self.__arm.set_max_velocity_scaling_factor(1)
-        self.__arm.set_max_acceleration_scaling_factor(1)
+        self.__arm.set_max_velocity_scaling_factor(self.__velocity_scaling_factor)
+        self.__arm.set_max_acceleration_scaling_factor(self.__acceleration_scaling_factor)
 
         # Set planning parameters
         self.__arm.allow_replanning(rospy.get_param("~allow_replanning"))
@@ -122,6 +128,7 @@ class ArmCommander:
         :param percentage:
         :return: None
         """
+        self.__velocity_scaling_factor = percentage
         self.__arm.set_max_velocity_scaling_factor(percentage)
 
     # - PTP Trajectory
@@ -248,7 +255,7 @@ class ArmCommander:
     def set_shift_linear_pose_target(self, arm_cmd):
         """
         Set MoveIt target to a shifted target from actual position
-        Then execute the cartesian trajectory to the target 
+        Then execute the cartesian trajectory to the target
         :param arm_cmd: ArmMoveCommand message containing target values
         :type : ArmMoveCommand
         :return: status, message
@@ -264,10 +271,10 @@ class ArmCommander:
         # Get list [x, y, z, roll, pitch, yaw] from pose stamped
         pose_list = pose_to_list(actual_pose)
 
-        # Apply shift on pose 
+        # Apply shift on pose
         pose_list[axis_number] += shift_value
 
-        # Get pose stamped from target pose 
+        # Get pose stamped from target pose
         msg_pose = list_to_pose(pose_list)
 
         # Check if command is really close to the current position
@@ -276,8 +283,8 @@ class ArmCommander:
 
         # set arm pose target
         self.__arm.set_pose_target(pose_list, self.__end_effector_link)
-
-        return self.__traj_executor.compute_and_execute_cartesian_plan([msg_pose])
+        return self.__traj_executor.compute_and_execute_cartesian_plan([msg_pose], self.__velocity_scaling_factor,
+                                                                       self.__acceleration_scaling_factor)
 
     # - Linear Trajectory
     def set_linear_trajectory(self, arm_cmd):
@@ -297,13 +304,14 @@ class ArmCommander:
 
         current_pose = self.__arm.get_current_pose().pose
 
-        # If the goal is really close to the current pose, 
+        # If the goal is really close to the current pose,
         # avoid useless calculations and return immediately
         if poses_too_close(ee_pose, current_pose):
             return CommandStatus.SUCCESS, "Command was already satisfied"
 
         else:
-            return self.__traj_executor.compute_and_execute_cartesian_plan([ee_pose])
+            return self.__traj_executor.compute_and_execute_cartesian_plan([ee_pose], self.__velocity_scaling_factor,
+                                                                           self.__acceleration_scaling_factor)
 
     # - Spiral Trajectory
     def draw_spiral_trajectory(self, arm_cmd):
@@ -335,7 +343,8 @@ class ArmCommander:
                 target_pose.position.z = center_position.z + z_offset
                 waypoints.append(copy.deepcopy(target_pose))
                 angle += angle_step_rad
-        return self.__traj_executor.compute_and_execute_cartesian_plan(waypoints)
+        return self.__traj_executor.compute_and_execute_cartesian_plan(waypoints, self.__velocity_scaling_factor,
+                                                                       self.__acceleration_scaling_factor)
 
     # - Waypointed Trajectory
     def execute_trajectory(self, arm_cmd):
@@ -348,7 +357,8 @@ class ArmCommander:
         list_tcp_poses = arm_cmd.list_poses
         if len(list_tcp_poses) == 0:
             return CommandStatus.NO_PLAN_AVAILABLE, "Can't generate plan from a list of length 0"
-        list_ee_poses = [self.__transform_handler.tcp_to_ee_link_pose_target(tcp_pose, self.__end_effector_link) for tcp_pose in list_tcp_poses]
+        list_ee_poses = [self.__transform_handler.tcp_to_ee_link_pose_target(tcp_pose, self.__end_effector_link) for
+                         tcp_pose in list_tcp_poses]
 
         dist_smoothing = arm_cmd.dist_smoothing
 
@@ -361,9 +371,16 @@ class ArmCommander:
                 return CommandStatus.SUCCESS, "Trajectory is Good!"
             else:  # Linear path
                 # We are going to the initial pose using "classical" method
-                pose_init = list_ee_poses.pop(0)
-                self.set_pose_quat_from_pose(pose_init)
-                return self.__traj_executor.compute_and_execute_cartesian_plan(list_ee_poses)
+                try:
+                    return self.__traj_executor.compute_and_execute_cartesian_plan(list_ee_poses,
+                                                                                   self.__velocity_scaling_factor,
+                                                                                   self.__acceleration_scaling_factor)
+                except ArmCommanderException as e:
+                    if e.status == CommandStatus.NO_PLAN_AVAILABLE:
+                        rospy.loginfo("Cartesian path computation failed, let's try another way!")
+                        return self.__compute_and_execute_trajectory(list_ee_poses, dist_smoothing=dist_smoothing)
+                    else:
+                        raise e
 
         else:
             return self.__compute_and_execute_trajectory(list_ee_poses, dist_smoothing=dist_smoothing)
@@ -375,30 +392,53 @@ class ArmCommander:
         :param dist_smoothing: smoothing distance
         :return: None
         """
-        # rospy.logerr(list_poses)
+        self.__arm.set_start_state_to_current_state()
+
         list_plans = []
         new_state = RobotStateMoveIt()
         new_state.joint_state.header.stamp = rospy.Time.now()
         new_state.joint_state.name = self.__joints_name
-        # rospy.logerr(list_poses)
+        new_state.joint_state.position = self.__arm.get_current_joint_values()
+
         for i, pose_target in enumerate(list_poses):
             # Getting plan to target
-            self.__arm.set_pose_target(pose_target, self.__end_effector_link)
-            list_plans.append(self.__arm.plan())
+            # Try a linear path first
+            partial_plan = self.__traj_executor.compute_cartesian_plan([pose_target])
+            if not partial_plan:  # Try a PTP path if linear path failed
+                rospy.loginfo("Linear path not found between {} joints and {} pose".format(
+                    new_state.joint_state.position, pose_to_list(pose_target)))
+                self.__arm.set_pose_target(pose_target, self.__end_effector_link)
+                try:
+                    partial_plan = self.__traj_executor.plan()
+                except ArmCommanderException as e:
+                    self.__arm.set_start_state_to_current_state()
+                    raise e
+
+            list_plans.append(copy.deepcopy(partial_plan))
 
             # Generating new start state for future iteration
-            success, new_state.joint_state.position = self.__kinematics_handler.get_inverse_kinematics(pose=pose_target)
-            if not success:
-                self.__arm.set_start_state_to_current_state()
-                raise ArmCommanderException(CommandStatus.INVERT_KINEMATICS_FAILURE, "IK Fail")
+            new_state.joint_state.position = list_plans[-1].joint_trajectory.points[-1].positions
             self.__arm.set_start_state(new_state)
 
         self.__arm.set_start_state_to_current_state()
-        plan = self.__link_plans(dist_smoothing, *list_plans)
+        if dist_smoothing > 0:
+            plan = self.__link_plans_with_smoothing(dist_smoothing, *list_plans)
+        else:
+            plan = self.__link_plans(*list_plans)
         self.display_traj(plan, id_=int(1000 * dist_smoothing))
         return self.__traj_executor.execute_plan(plan)
 
-    def __link_plans(self, dist_smoothing=0.0, *plans):
+    def __link_plans(self, *plans):
+        # Link plans
+        final_plan = plans[0]
+
+        for plan in plans[1:]:
+            final_plan.joint_trajectory.points.extend(plan.joint_trajectory.points)
+
+        # Retime plan et recompute velocities
+        return self.__traj_executor.retime_plan(final_plan, optimize=True)
+
+    def __link_plans_with_smoothing(self, dist_smoothing=0.0, *plans):
         """
         Link plans together with a smooth transition between each of them
         """
@@ -415,6 +455,7 @@ class ArmCommander:
                     ind = raw_ind
                 pose_i = self.__kinematics_handler.get_forward_kinematics(plan_.joint_trajectory.points[ind].positions)
                 dist_pose_to_target = dist_2_poses(reference_pos, pose_i)
+
                 if dist_pose_to_target > dist_smooth:
                     return ind
             else:
@@ -427,21 +468,14 @@ class ArmCommander:
         offset = 0
         for plan_in, plan_out in zip(plans[:-1], plans[1:]):
             begin_index = offset + find_limit_point(plan_in, dist_smoothing, reverse=True)
-            offset += len(plan_in.joint_trajectory.points) - 1
+            offset += len(plan_in.joint_trajectory.points)
             mid_index = offset
             end_index = mid_index + find_limit_point(plan_out, dist_smoothing, reverse=False)
             smooth_zones.append((begin_index, mid_index, end_index))
 
         big_plan = plans[0]
-        time_offset = big_plan.joint_trajectory.points[-1].time_from_start
-
         for plan in plans[1:]:
-            for i in range(1, len(plan.joint_trajectory.points)):
-                plan.joint_trajectory.points[i].time_from_start += time_offset
-
-            big_plan.joint_trajectory.points += plan.joint_trajectory.points[1:]
-
-            time_offset += plan.joint_trajectory.points[-1].time_from_start
+            big_plan.joint_trajectory.points.extend(plan.joint_trajectory.points[:])
 
         def ind_to_pos(ind):
             return np.array(big_plan.joint_trajectory.points[ind].positions)
@@ -457,14 +491,17 @@ class ArmCommander:
                 bezier_result = bezier(begin_positions, mid_positions, end_positions, ratio)
                 big_plan.joint_trajectory.points[point_index].positions = bezier_result
 
-        final_plan = self.__traj_executor.retime_plan(big_plan, optimize=True)
+        final_plan = self.__traj_executor.retime_plan(big_plan, optimize=True,
+                                                      velocity_scaling_factor=self.__velocity_scaling_factor,
+                                                      acceleration_scaling_factor=self.__acceleration_scaling_factor)
         return final_plan
 
     # - General Purposes
     def display_traj(self, plan, id_=1):
-        points = [self.__kinematics_handler.get_forward_kinematics(joints.positions).position for joints in
-                  plan.joint_trajectory.points]
-        self.__traj_executor.display_traj(points, id_)
+        if rospy.get_param("~display_trajectories"):
+            points = [self.__kinematics_handler.get_forward_kinematics(joints.positions).position for joints in
+                      plan.joint_trajectory.points]
+            self.__traj_executor.display_traj(points, id_)
 
     def __validate_params_move(self, command_type, *args):
         """
@@ -511,15 +548,20 @@ class ArmCommander:
             if not response.valid:
                 if len(response.contacts) > 0:
                     rospy.logwarn('Arm commander - Joints target unreachable because of collision between %s and %s',
-                                response.contacts[0].contact_body_1, response.contacts[0].contact_body_2)
+                                  response.contacts[0].contact_body_1, response.contacts[0].contact_body_2)
                     raise ArmCommanderException(CommandStatus.INVALID_PARAMETERS,
                                                 "Target joints would lead to a collision between links {} and {} ".format(
                                                     response.contacts[0].contact_body_1,
                                                     response.contacts[0].contact_body_2))
-                else: # didn't succeed to get the contacts on the real robot
-                    rospy.logwarn('Arm commander - Joints target unreachable because of collision between two parts of Ned')
+                else:  # didn't succeed to get the contacts on the real robot
+                    rospy.logwarn(
+                        'Arm commander - Joints target unreachable because of collision between two parts of Ned')
                     raise ArmCommanderException(CommandStatus.INVALID_PARAMETERS,
                                                 "Target joints would lead to a collision between two parts of Ned")
 
         except rospy.ServiceException as e:
             rospy.logwarn("Arm commander - Failed to check state validity : " + str(e))
+
+    @property
+    def jog_controller(self):
+        return self.__jog_controller

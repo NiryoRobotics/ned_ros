@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-13 09:42+0000\n"
+"POT-Creation-Date: 2021-09-01 12:55+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,20 +26,16 @@ msgstr ""
 
 #: ../../source/ros/niryo_robot_user_interface.rst:4
 msgid ""
-"This packages handles high-level user interface commands coming from "
-"MATLAB and TCP requests."
+"This packages handles high-level user interface commands coming TCP "
+"requests and also system-related features like I/Os, LED and fans."
 msgstr ""
 
-#: ../../source/ros/niryo_robot_user_interface.rst:9
+#: ../../source/ros/niryo_robot_user_interface.rst:7
 msgid "You can find their documentations here:"
 msgstr ""
 
-#: ../../source/ros/niryo_robot_user_interface.rst:8
+#: ../../source/ros/niryo_robot_user_interface.rst:7
 msgid ":ref:`TCP Server<source/tcp_server:Use Ned's TCP server>`"
-msgstr ""
-
-#: ../../source/ros/niryo_robot_user_interface.rst:9
-msgid ":ref:`Matlab Manager<source/matlab_manager:Matlab Manager>`"
 msgstr ""
 
 #~ msgid "Niryo Robot User Interface Package"
@@ -55,5 +51,21 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "Niryo robot user interface package"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "This packages handles high-level user"
+#~ " interface commands coming from MATLAB "
+#~ "and TCP requests."
+#~ msgstr ""
+
+#~ msgid ":ref:`Matlab Manager<source/matlab_manager:Matlab Manager>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "This packages handles high-level user"
+#~ " interface commands coming TCP requests "
+#~ "and system control like I/Os, LED "
+#~ "and fans."
 #~ msgstr ""
 
