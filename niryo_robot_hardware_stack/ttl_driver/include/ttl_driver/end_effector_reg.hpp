@@ -36,7 +36,7 @@ struct EndEffectorReg
     static constexpr std::uint8_t SIZE_MODEL_NUMBER             = 2;
 
     static constexpr std::uint8_t ADDR_FIRMWARE_VERSION         = 59;
-    static constexpr std::uint8_t SIZE_FIRMWARE_VERSION         = 1;
+    static constexpr std::uint8_t SIZE_FIRMWARE_VERSION         = 4;
 
     static constexpr std::uint8_t ADDR_ID                       = 7;
     static constexpr std::uint8_t SIZE_ID                       = 1;
