@@ -44,10 +44,21 @@ AbstractMotorState::AbstractMotorState() :
  * @param bus_proto
  * @param id
  */
-AbstractMotorState::AbstractMotorState(EHardwareType type, EBusProtocol bus_proto, uint8_t id) :
-      AbstractHardwareState(type, bus_proto, id),
+AbstractMotorState::AbstractMotorState(EHardwareType type, EComponentType component_type,
+                                       EBusProtocol bus_proto, uint8_t id) :
+      AbstractHardwareState(type, component_type, bus_proto, id),
       _position_state(0)
 {
+}
+
+/**
+ * @brief AbstractMotorState::AbstractMotorState
+ * @param state
+ */
+AbstractMotorState::AbstractMotorState(const AbstractMotorState &state) :
+  AbstractHardwareState(state)
+{
+  _position_state = state._position_state;
 }
 
 /**
@@ -77,10 +88,10 @@ string AbstractMotorState::str() const
     ss << "AbstractMotorState (" << static_cast<int>(_id) << ")" << "\n";
 
     ss << "position " << _position_state << "\n"
-       << "temperature " << _temperature_state << "\n"
-       << "voltage " << _voltage_state << "\n"
-       << "hw_error " << _hw_error_state << "\n"
-       << "hw_error_message \"" << _hw_error_message_state << "\"";
+       << "temperature " << _temperature << "\n"
+       << "voltage " << _voltage << "\n"
+       << "hw_error " << _hw_error << "\n"
+       << "hw_error_message \"" << _hw_error_message << "\"";
     ss << "\n";
 
     return ss.str();

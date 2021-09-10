@@ -165,7 +165,7 @@ void ToolsInterfaceCore::initParameters(ros::NodeHandle& nh)
 void ToolsInterfaceCore::startServices(ros::NodeHandle& nh)
 {
     _ping_and_set_dxl_tool_server = nh.advertiseService("/niryo_robot/tools/ping_and_set_dxl_tool",
-                                                         &ToolsInterfaceCore::_callbackPingAndSetDxlTool, this);
+                                                         &ToolsInterfaceCore::_callbackPingAndSetTool, this);
 
     _open_gripper_server = nh.advertiseService("/niryo_robot/tools/open_gripper",
                                                 &ToolsInterfaceCore::_callbackOpenGripper, this);
@@ -227,8 +227,8 @@ void ToolsInterfaceCore::pubToolId(int id)
  * @param res
  * @return
  */
-bool ToolsInterfaceCore::_callbackPingAndSetDxlTool(tools_interface::PingDxlTool::Request &/*req*/,
-                                                    tools_interface::PingDxlTool::Response &res)
+bool ToolsInterfaceCore::_callbackPingAndSetTool(tools_interface::PingDxlTool::Request &/*req*/,
+                                                 tools_interface::PingDxlTool::Response &res)
 {
     lock_guard<mutex> lck(_tool_mutex);
     res.state = ToolState::TOOL_STATE_PING_ERROR;
@@ -244,7 +244,6 @@ bool ToolsInterfaceCore::_callbackPingAndSetDxlTool(tools_interface::PingDxlTool
     }
 
     // Search new tool
-    // CC add retries ?
     std::vector<uint8_t> motor_list = _ttl_interface->scanTools();
 
     for (auto const& m_id : motor_list)
@@ -263,8 +262,7 @@ bool ToolsInterfaceCore::_callbackPingAndSetDxlTool(tools_interface::PingDxlTool
         for (int tries = 0; tries < 3; tries++)
         {
             ros::Duration(0.05).sleep();
-            int result = _ttl_interface->setTool(_toolState.getType(),
-                                                 _toolState.getId());
+            int result = _ttl_interface->setTool(_toolState);
 
             // on success, tool is set, we go out of loop
             if (niryo_robot_msgs::CommandStatus::SUCCESS == result)
@@ -300,6 +298,8 @@ bool ToolsInterfaceCore::_callbackPingAndSetDxlTool(tools_interface::PingDxlTool
     }
     else  // no tool found, no tool set (it is not an error, the tool does not exists)
     {
+        ROS_INFO("ToolsInterfaceCore::_callbackPingAndSetDxlTool - No new conveyor found");
+
         pubToolId(0);
 
         ros::Duration(0.05).sleep();

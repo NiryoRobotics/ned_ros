@@ -31,6 +31,15 @@ namespace common
 namespace model
 {
 
+enum class EComponentType
+{
+    TOOL,
+    CONVEYOR,
+    JOINT,
+    END_EFFECTOR,
+    UNKNOWN
+};
+
 /**
  * @brief The EHardwareType enum
  */

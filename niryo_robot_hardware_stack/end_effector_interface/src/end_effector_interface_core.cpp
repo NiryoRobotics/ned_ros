@@ -162,7 +162,7 @@ void EndEffectorInterfaceCore::initEndEffectorHardware()
   // init driver
   if (_end_effector_state.isValid())
   {
-      int result = _ttl_interface->setEndEffector(_end_effector_state.getId());
+      int result = _ttl_interface->setEndEffector(_end_effector_state);
 
       if (niryo_robot_msgs::CommandStatus::SUCCESS == result)
       {

@@ -35,6 +35,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "niryo_robot_msgs/BusState.h"
 #include "niryo_robot_msgs/CommandStatus.h"
 #include "common/model/abstract_single_motor_cmd.hpp"
+#include "common/model/stepper_motor_state.hpp"
 
 namespace can_driver
 {
@@ -50,7 +51,18 @@ class CanInterfaceCore : public common::model::IDriverCore, public common::model
 
         bool init(ros::NodeHandle& nh) override;
 
-        int setConveyor(uint8_t motor_id, uint8_t default_conveyor_id = 6) override;
+        // joints control
+        template<typename T>
+        int addJoint(const T& jointState);
+
+        // Tool control
+        // N.A.
+
+        // end effector panel control
+        // N.A.
+
+        // conveyor control
+        int setConveyor(const common::model::ConveyorState& state) override;
         void unsetConveyor(uint8_t motor_id) override;
 
         void clearSingleCommandQueue();
@@ -73,8 +85,6 @@ class CanInterfaceCore : public common::model::IDriverCore, public common::model
         bool isCalibrationInProgress() const override ;
         int32_t getCalibrationResult(uint8_t id) const override;
         common::model::EStepperCalibrationStatus getCalibrationStatus() const override;
-
-        can_driver::StepperArrayMotorHardwareStatus getHwStatus() const;
 
         std::vector<std::shared_ptr<common::model::JointState> > getJointStates() const override;
         common::model::JointState getJointState(uint8_t motor_id) const override;
@@ -137,6 +147,36 @@ public:
 };
 
 /**
+ * @brief TtlInterfaceCore::addJoint
+ * @param jointState
+ * @return
+ */
+template<typename T>
+int CanInterfaceCore::addJoint(const T& jointState)
+{
+  int result = niryo_robot_msgs::CommandStatus::CAN_READ_ERROR;
+
+  std::lock_guard<std::mutex> lck(_control_loop_mutex);
+
+  // add dynamixel as a new tool
+  _can_manager->addHardwareComponent(jointState);
+
+  // try to find motor
+  if (_can_manager->ping(jointState.getId()))
+  {
+      // no init commands
+
+      result = niryo_robot_msgs::CommandStatus::SUCCESS;
+  }
+  else
+  {
+      ROS_WARN("TtlInterfaceCore::addJoint - No joint found with motor id %d", jointState.getId());
+  }
+
+  return result;
+}
+
+/**
  * @brief CanInterfaceCore::isConnectionOk
  * @return
  */
@@ -187,19 +227,6 @@ common::model::EStepperCalibrationStatus
 CanInterfaceCore::getCalibrationStatus() const
 {
     return _can_manager->getCalibrationStatus();
-}
-
-/**
- * @brief CanInterfaceCore::getStepperState
- * @param motor_id
- * @return
- */
-inline
-common::model::JointState
-CanInterfaceCore::getJointState(uint8_t motor_id) const
-{
-    return static_cast<common::model::JointState>(_can_manager->getMotorState(motor_id));
-
 }
 
 } // CanManager

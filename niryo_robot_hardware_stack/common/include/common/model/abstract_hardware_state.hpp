@@ -37,27 +37,33 @@ namespace model
 class AbstractHardwareState : public IObject
 {
     public:
-
         AbstractHardwareState();
-        AbstractHardwareState(EHardwareType type, EBusProtocol bus_proto, uint8_t id);
+        AbstractHardwareState(EHardwareType type,
+                              EComponentType component_type,
+                              EBusProtocol bus_proto,
+                              uint8_t id);
+        AbstractHardwareState(const AbstractHardwareState& state);
+
         virtual ~AbstractHardwareState() override;
 
         // getters
-        EHardwareType getType() const;
+        EHardwareType getHardwareType() const;
+        EComponentType getComponentType() const;
         EBusProtocol getBusProtocol() const;
+
         uint8_t getId() const;
 
         std::string getFirmwareVersion() const;
-        int getTemperatureState() const;
-        int getVoltageState() const;
-        int getHardwareErrorState() const;
-        std::string getHardwareErrorMessageState() const;
+        uint32_t getTemperature() const;
+        double getVoltage() const;
+        uint32_t getHardwareError() const;
+        std::string getHardwareErrorMessage() const;
 
         // setters
-        void setFirmwareVersion(std::string& firmware_version);
-        void setTemperatureState(int temp);
-        void setVoltageState(int volt);
-        void setHardwareError(int hw_error);
+        void setFirmwareVersion(const std::string &firmware_version);
+        void setTemperature(uint32_t temp);
+        void setVoltage(double volt);
+        void setHardwareError(uint32_t hw_error);
         void setHardwareError(std::string hw_error_msg);
 
         // operators
@@ -68,29 +74,41 @@ class AbstractHardwareState : public IObject
         virtual std::string str() const override;
         virtual bool isValid() const override = 0; // not reimplemented to keep this class abstract
 
-    protected:
-        EHardwareType _type;
+
+protected:
+        EHardwareType _hw_type;
+        EComponentType _component_type;
         EBusProtocol _bus_proto;
 
-        uint8_t _id;
+        uint8_t _id{0};
 
         // read variables
-        std::string _firmware_version;
+        std::string _firmware_version{};
 
-        int _temperature_state;
-        int _voltage_state;
-        int _hw_error_state;
-        std::string _hw_error_message_state;
+        uint32_t _temperature{0};
+        double _voltage{0.0};
+        uint32_t _hw_error{0};
+        std::string _hw_error_message{};
 };
 
 /**
- * @brief AbstractHardwareState::getType
+ * @brief AbstractHardwareState::getHardwareType
  * @return
  */
 inline
-EHardwareType AbstractHardwareState::getType() const
+EHardwareType AbstractHardwareState::getHardwareType() const
 {
-    return _type;
+    return _hw_type;
+}
+
+/**
+ * @brief AbstractHardwareState::getComponentType
+ * @return
+ */
+inline
+EComponentType AbstractHardwareState::getComponentType() const
+{
+  return _component_type;
 }
 
 /**
@@ -129,9 +147,9 @@ std::string AbstractHardwareState::getFirmwareVersion() const
  * @return
  */
 inline
-int AbstractHardwareState::getTemperatureState() const
+uint32_t AbstractHardwareState::getTemperature() const
 {
-    return _temperature_state;
+    return _temperature;
 }
 
 /**
@@ -139,9 +157,9 @@ int AbstractHardwareState::getTemperatureState() const
  * @return
  */
 inline
-int AbstractHardwareState::getVoltageState() const
+double AbstractHardwareState::getVoltage() const
 {
-    return _voltage_state;
+    return _voltage;
 }
 
 /**
@@ -149,9 +167,9 @@ int AbstractHardwareState::getVoltageState() const
  * @return
  */
 inline
-int AbstractHardwareState::getHardwareErrorState() const
+uint32_t AbstractHardwareState::getHardwareError() const
 {
-    return _hw_error_state;
+    return _hw_error;
 }
 
 /**
@@ -159,9 +177,9 @@ int AbstractHardwareState::getHardwareErrorState() const
  * @return
  */
 inline
-std::string AbstractHardwareState::getHardwareErrorMessageState() const
+std::string AbstractHardwareState::getHardwareErrorMessage() const
 {
-    return _hw_error_message_state;
+    return _hw_error_message;
 }
 
 } // model

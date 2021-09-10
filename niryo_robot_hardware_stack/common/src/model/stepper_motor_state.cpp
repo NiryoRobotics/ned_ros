@@ -35,20 +35,22 @@ namespace model
  * @brief StepperMotorState::StepperMotorState
  */
 StepperMotorState::StepperMotorState() :
-    JointState(),
-    _isConveyor(false)
+    JointState()
 {
 }
 
 /**
  * @brief StepperMotorState::StepperMotorState
+ * @param type
+ * @param component_type
  * @param bus_proto
  * @param id
- * @param isConveyor
  */
-StepperMotorState::StepperMotorState(EBusProtocol bus_proto, uint8_t id, bool isConveyor) :
-    JointState("unknown", EHardwareType::STEPPER, bus_proto, id),
-    _isConveyor(isConveyor)
+StepperMotorState::StepperMotorState(EHardwareType type,
+                                     EComponentType component_type,
+                                     EBusProtocol bus_proto,
+                                     uint8_t id) :
+    StepperMotorState("unknown", type, component_type, bus_proto, id)
 {
 }
 
@@ -56,16 +58,35 @@ StepperMotorState::StepperMotorState(EBusProtocol bus_proto, uint8_t id, bool is
  * @brief StepperMotorState::StepperMotorState
  * @param name
  * @param type
+ * @param component_type
  * @param bus_proto
  * @param id
- * @param isConveyor
  */
 StepperMotorState::StepperMotorState(std::string name,
-                                     EHardwareType type, EBusProtocol bus_proto,
-                                     uint8_t id, bool isConveyor) :
-    JointState(name, type, bus_proto, id),
-    _isConveyor(isConveyor)
+                                     EHardwareType type,
+                                     EComponentType component_type,
+                                     EBusProtocol bus_proto,
+                                     uint8_t id) :
+    JointState(name, type, component_type, bus_proto, id)
 {
+}
+
+/**
+ * @brief StepperMotorState::StepperMotorState : copy ctor
+ * @param state
+ */
+StepperMotorState::StepperMotorState(const StepperMotorState &state) :
+  JointState(state)
+{
+  _last_time_read = state._last_time_read;
+  _hw_fail_counter = state._hw_fail_counter;
+
+  _gear_ratio = state._gear_ratio;
+  _max_effort = state._max_effort;
+  _micro_steps = state._micro_steps;
+
+  _calibration_state = state._calibration_state;
+  _calibration_value = state._calibration_value;
 }
 
 /**
@@ -171,11 +192,11 @@ std::string StepperMotorState::str() const
     return ss.str();
 }
 
-int StepperMotorState::to_motor_pos(double pos_rad, common::model::EBusProtocol protocol)
+int StepperMotorState::to_motor_pos(double pos_rad)
 {
-    if (protocol == common::model::EBusProtocol::CAN)
+    if (getBusProtocol() == common::model::EBusProtocol::CAN)
     {
-        double numerator = (STEPPERS_MOTOR_STEPS_PER_REVOLUTION * STEPPERS_MICROSTEPS * _gear_ratio * pos_rad / (2*M_PI));
+        double numerator = (STEPPERS_MOTOR_STEPS_PER_REVOLUTION * _micro_steps * _gear_ratio * pos_rad / (2*M_PI));
         return std::round( numerator * _direction);
     }
     else
@@ -185,14 +206,14 @@ int StepperMotorState::to_motor_pos(double pos_rad, common::model::EBusProtocol 
     }
 }
 
-double StepperMotorState::to_rad_pos(int pos, common::model::EBusProtocol protocol)
+double StepperMotorState::to_rad_pos(int pos)
 {
-    if (protocol == common::model::EBusProtocol::CAN)
+    if (getBusProtocol() == common::model::EBusProtocol::CAN)
     {
-        assert(0.0 != (STEPPERS_MOTOR_STEPS_PER_REVOLUTION * STEPPERS_MICROSTEPS * _gear_ratio * RADIAN_TO_DEGREE));
+        assert(0.0 != (STEPPERS_MOTOR_STEPS_PER_REVOLUTION * _micro_steps * _gear_ratio * RADIAN_TO_DEGREE));
         return static_cast<double>(
                     (pos * 2*M_PI) /
-                    (STEPPERS_MOTOR_STEPS_PER_REVOLUTION * STEPPERS_MICROSTEPS * _gear_ratio) *
+                    (STEPPERS_MOTOR_STEPS_PER_REVOLUTION * _micro_steps * _gear_ratio) *
                     _direction);
     }
     else

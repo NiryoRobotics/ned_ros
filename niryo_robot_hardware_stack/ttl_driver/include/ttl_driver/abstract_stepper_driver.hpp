@@ -56,12 +56,6 @@ class AbstractStepperDriver : public AbstractMotorDriver
         virtual int readHomingStatus(uint8_t id, uint32_t& status) = 0;
         virtual int setHomingDirection(uint8_t id, uint8_t direction) = 0;
 
-        // conveyor control
-        virtual int setGoalConveyorDirection(uint8_t id, int8_t direction) = 0;
-        virtual int setConveyorState(uint8_t, bool state) = 0;
-        virtual int readConveyorSpeed(uint8_t id, uint32_t &velocity) = 0;
-        virtual int readConveyorDirection(uint8_t id, int8_t &direction) = 0;
-        virtual int readConveyorState(uint8_t id, bool &state) = 0;
     private:
         AbstractStepperDriver() = delete;
 

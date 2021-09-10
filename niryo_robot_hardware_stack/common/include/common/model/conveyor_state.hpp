@@ -34,15 +34,32 @@ namespace model
 class ConveyorState : public StepperMotorState {
 
     public:
+        ConveyorState();
+        ConveyorState(EBusProtocol bus_proto);
+        ConveyorState(EHardwareType type,
+                      EBusProtocol bus_proto);
+        ConveyorState(EHardwareType type,
+                      EBusProtocol bus_proto, uint8_t id);
 
-        ConveyorState(EBusProtocol bus_proto, uint8_t id);
+        ConveyorState(const ConveyorState& state);
         virtual ~ConveyorState() override;
+
+        void initialize(uint8_t default_id,
+                        double max_effort,
+                        double micro_steps);
+
+        void updateId(uint8_t id);
 
         void setState(bool state);
         void setSpeed(int16_t speed);
 
         bool getState() const;
         int16_t getSpeed() const;
+
+        // other getters
+        uint8_t getDefaultId() const;
+        int getMaxEffort() const;
+        int getMicroSteps() const;
 
         virtual bool operator==(const ConveyorState& other);
 
@@ -51,9 +68,10 @@ class ConveyorState : public StepperMotorState {
         virtual void reset() override;
         virtual bool isValid() const override;
 
-    private:
-        bool _state;
-        int16_t _speed;
+private:
+        bool _state{false};
+        int16_t _speed{0};
+        uint8_t _default_id{6};
 };
 
 /**
@@ -84,6 +102,36 @@ inline
 bool ConveyorState::isValid() const
 {
     return (0 != getId());
+}
+
+/**
+ * @brief ConveyorState::getDefaultId
+ * @return
+ */
+inline
+uint8_t ConveyorState::getDefaultId() const
+{
+  return _default_id;
+}
+
+/**
+ * @brief ConveyorState::getMaxEffort
+ * @return
+ */
+inline
+int ConveyorState::getMaxEffort() const
+{
+  return _max_effort;
+}
+
+/**
+ * @brief ConveyorState::getMicroSteps
+ * @return
+ */
+inline
+int ConveyorState::getMicroSteps() const
+{
+  return _micro_steps;
 }
 
 } // namespace model

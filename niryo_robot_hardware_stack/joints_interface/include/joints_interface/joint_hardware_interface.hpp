@@ -61,7 +61,6 @@ class JointHardwareInterface : public hardware_interface::RobotHW
         bool needCalibration() const;
         bool isCalibrationInProgress() const;
 
-        std::string jointIdToJointName(uint8_t id, common::model::EHardwareType motor_type) const;
         const std::vector<std::shared_ptr<common::model::JointState> >& getJointsState() const;
 
         // RobotHW interface

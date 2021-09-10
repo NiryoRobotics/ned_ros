@@ -65,8 +65,6 @@ class JointsInterfaceCore : common::model::IInterfaceCore
         void sendMotorsParams();
         void activateLearningMode(bool activate, int &ostatus, std::string &omessage);
 
-        std::string jointIdToJointName(uint8_t id, uint8_t motor_type) const;
-
         bool getFreeDriveMode() const;
         void getCalibrationState(bool &need_calibration, bool &calibration_in_progress) const;
 
@@ -91,6 +89,8 @@ class JointsInterfaceCore : common::model::IInterfaceCore
 
     private:
         ros::NodeHandle _nh;
+
+        // TODO(CC) create a thread to update hw status from can and ttl into joint_states
 
         bool _enable_control_loop{true};
         bool _previous_state_learning_mode{true};
@@ -118,18 +118,6 @@ class JointsInterfaceCore : common::model::IInterfaceCore
         ros::ServiceServer _activate_learning_mode_server;
 
 };
-
-/**
- * @brief JointsInterfaceCore::jointIdToJointName
- * @param id
- * @param motor_type
- * @return
- */
-inline
-std::string JointsInterfaceCore::jointIdToJointName(uint8_t id, uint8_t motor_type) const
-{
-    return _robot->jointIdToJointName(id, static_cast<common::model::EHardwareType>(motor_type));
-}
 
 /**
  * @brief JointsInterfaceCore::getFreeDriveMode

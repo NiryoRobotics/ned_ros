@@ -39,6 +39,7 @@ class ToolState : public DxlMotorState
     public:
         ToolState();
         ToolState(std::string name, EHardwareType type, uint8_t id);
+        ToolState(const ToolState& state);
 
         virtual ~ToolState() override;
 
@@ -70,8 +71,8 @@ class ToolState : public DxlMotorState
         // use joint _name ?
         std::string _tool_name;
 
-        bool _connected;
-        double _position;
+        bool _connected{true};
+        double _position{0.0};
 };
 
 /**

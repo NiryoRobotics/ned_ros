@@ -33,7 +33,8 @@ namespace model
  * @brief AbstractHardwareState::AbstractHardwareState
  */
 AbstractHardwareState::AbstractHardwareState() :
-    _type(EHardwareType::UNKNOWN),
+    _hw_type(EHardwareType::UNKNOWN),
+    _component_type(EComponentType::UNKNOWN),
     _bus_proto(EBusProtocol::UNKNOWN)
 {
     reset();
@@ -42,18 +43,36 @@ AbstractHardwareState::AbstractHardwareState() :
 /**
  * @brief AbstractHardwareState::AbstractHardwareState
  * @param type
+ * @param component_type
  * @param bus_proto
  * @param id
  */
-AbstractHardwareState::AbstractHardwareState(EHardwareType type, EBusProtocol bus_proto, uint8_t id) :
-      _type(type),
+AbstractHardwareState::AbstractHardwareState(EHardwareType type,
+                                             EComponentType component_type,
+                                             EBusProtocol bus_proto,
+                                             uint8_t id) :
+      _hw_type(type),
+      _component_type(component_type),
       _bus_proto(bus_proto),
-      _id(id),
-      _temperature_state(0),
-      _voltage_state(0),
-      _hw_error_state(0),
-      _hw_error_message_state("")
+      _id(id)
 {
+}
+
+/**
+ * @brief AbstractHardwareState::AbstractHardwareState : copy ctor
+ * @param state
+ */
+AbstractHardwareState::AbstractHardwareState(const AbstractHardwareState &state)
+{
+  _hw_type = state._hw_type;
+  _component_type = state._component_type;
+  _bus_proto = state._bus_proto;
+  _id = state._id;
+  _firmware_version = state._firmware_version;
+  _temperature = state._temperature;
+  _voltage = state._voltage;
+  _hw_error = state._hw_error;
+  _hw_error_message = state._hw_error_message;
 }
 
 /**
@@ -69,10 +88,10 @@ AbstractHardwareState::~AbstractHardwareState()
 void AbstractHardwareState::reset()
 {
     _id = 0;
-    _temperature_state = 0;
-    _voltage_state = 0;
-    _hw_error_state = 0;
-    _hw_error_message_state.clear();
+    _temperature = 0;
+    _voltage = 0.0;
+    _hw_error = 0;
+    _hw_error_message.clear();
 }
 
 /**
@@ -95,10 +114,10 @@ string AbstractHardwareState::str() const
 
     ss << "AbstractHardwareState (" << static_cast<int>(_id) << ")" << "\n";
 
-    ss << "temperature " << _temperature_state << "\n"
-       << "voltage " << _voltage_state << "\n"
-       << "hw_error " << _hw_error_state << "\n"
-       << "hw_error_message \"" << _hw_error_message_state << "\"";
+    ss << "temperature " << _temperature << "\n"
+       << "voltage " << _voltage << "\n"
+       << "hw_error " << _hw_error << "\n"
+       << "hw_error_message \"" << _hw_error_message << "\"";
     ss << "\n";
 
     return ss.str();
@@ -108,36 +127,36 @@ string AbstractHardwareState::str() const
  * @brief StepperMotorState::setFirmwareVersion
  * @param firmware_version
  */
-void AbstractHardwareState::setFirmwareVersion(std::string& firmware_version)
+void AbstractHardwareState::setFirmwareVersion(const std::string& firmware_version)
 {
     _firmware_version = firmware_version;
 }
 
 /**
- * @brief AbstractHardwareState::setTemperatureState
+ * @brief AbstractHardwareState::setTemperature
  * @param temp
  */
-void AbstractHardwareState::setTemperatureState(int temp)
+void AbstractHardwareState::setTemperature(uint32_t temp)
 {
-    _temperature_state = temp;
+    _temperature = temp;
 }
 
 /**
- * @brief AbstractHardwareState::setVoltageState
+ * @brief AbstractHardwareState::setVoltage
  * @param volt
  */
-void AbstractHardwareState::setVoltageState(int volt)
+void AbstractHardwareState::setVoltage(double volt)
 {
-    _voltage_state = volt;
+    _voltage = volt;
 }
 
 /**
  * @brief AbstractHardwareState::setHardwareError
  * @param hw_error
  */
-void AbstractHardwareState::setHardwareError(int hw_error)
+void AbstractHardwareState::setHardwareError(uint32_t hw_error)
 {
-    _hw_error_state = hw_error;
+    _hw_error = hw_error;
 }
 
 /**
@@ -146,7 +165,7 @@ void AbstractHardwareState::setHardwareError(int hw_error)
  */
 void AbstractHardwareState::setHardwareError(std::string hw_error_msg)
 {
-  _hw_error_message_state = hw_error_msg;
+  _hw_error_message = hw_error_msg;
 }
 
 }  // namespace model

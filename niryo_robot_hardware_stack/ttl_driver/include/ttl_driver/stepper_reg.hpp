@@ -28,6 +28,7 @@ struct StepperReg
 
     static constexpr int PROTOCOL_VERSION                       = 2.0;
     static constexpr int MODEL_NUMBER                           = 2000;
+    static constexpr int VOLTAGE_CONVERSION                     = 1000;
 
     // EEPROM
     static constexpr std::uint8_t ADDR_MODEL_NUMBER             = 0;

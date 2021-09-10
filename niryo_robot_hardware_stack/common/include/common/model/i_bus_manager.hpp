@@ -37,6 +37,7 @@ namespace model
  */
 class IBusManager
 {
+
     public:
         virtual ~IBusManager() = 0;
         virtual bool init(ros::NodeHandle& nh) = 0;

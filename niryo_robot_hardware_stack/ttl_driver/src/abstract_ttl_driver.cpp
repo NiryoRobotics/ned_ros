@@ -230,7 +230,7 @@ int AbstractTtlDriver::write(uint8_t address, uint8_t data_len, uint8_t id, uint
  * @return
  */
 int AbstractTtlDriver::syncRead(uint8_t address, uint8_t data_len,
-                                  const vector<uint8_t> &id_list, vector<uint32_t> &data_list)
+                                const vector<uint8_t> &id_list, vector<uint32_t> &data_list)
 {
     data_list.clear();
 

@@ -29,20 +29,79 @@ namespace model
 
 /**
  * @brief ConveyorState::ConveyorState
+ */
+ConveyorState::ConveyorState() :
+  StepperMotorState ()
+{
+
+}
+
+/**
+ * @brief ConveyorState::ConveyorState
+ * @param bus_proto
+ */
+ConveyorState::ConveyorState(EBusProtocol bus_proto)
+    : StepperMotorState(EHardwareType::STEPPER, EComponentType::CONVEYOR, bus_proto, 1)
+{}
+
+/**
+ * @brief ConveyorState::ConveyorState
+ * @param type
+ * @param bus_proto
+ */
+ConveyorState::ConveyorState(EHardwareType type, EBusProtocol bus_proto)
+    : StepperMotorState(type, EComponentType::CONVEYOR, bus_proto, 1)
+{}
+
+/**
+ * @brief ConveyorState::ConveyorState
+ * @param type
  * @param bus_proto
  * @param id
  */
-ConveyorState::ConveyorState(EBusProtocol bus_proto, uint8_t id)
-    : StepperMotorState(bus_proto, id, true),
-      _state(false),
-      _speed(0)
+ConveyorState::ConveyorState(EHardwareType type, EBusProtocol bus_proto, uint8_t id)
+    : StepperMotorState(type, EComponentType::CONVEYOR, bus_proto, id)
 {}
+
+/**
+ * @brief ConveyorState::ConveyorState
+ * @param state
+ */
+ConveyorState::ConveyorState(const ConveyorState &state) :
+  StepperMotorState(state)
+{
+  _state = state._state;
+  _speed = state._speed;
+  _default_id = state._default_id;
+}
 
 /**
  * @brief ConveyorState::~ConveyorState
  */
 ConveyorState::~ConveyorState()
 {}
+
+/**
+ * @brief ConveyorState::initialize
+ * @param default_id
+ * @param max_effort
+ * @param micro_steps
+ */
+void ConveyorState::initialize(uint8_t default_id, double max_effort, double micro_steps)
+{
+  _default_id = default_id;
+  _max_effort = max_effort;
+  _micro_steps = micro_steps;
+}
+
+/**
+ * @brief ConveyorState::updateId
+ * @param id
+ */
+void ConveyorState::updateId(uint8_t id)
+{
+  _id = id;
+}
 
 /**
  * @brief ConveyorState::reset

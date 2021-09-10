@@ -35,8 +35,12 @@ class DxlMotorState : public JointState
 {
     public:
         DxlMotorState();
-        DxlMotorState(EHardwareType type, EBusProtocol bus_proto, uint8_t id, bool isTool = false);
-        DxlMotorState(std::string name, EHardwareType type, EBusProtocol bus_proto, uint8_t id , bool isTool = false);
+        DxlMotorState(EHardwareType type, EComponentType component_type,
+                      EBusProtocol bus_proto, uint8_t id);
+
+        DxlMotorState(std::string name, EHardwareType type, EComponentType component_type,
+                      EBusProtocol bus_proto, uint8_t id);
+        DxlMotorState(const DxlMotorState& state);
 
         virtual ~DxlMotorState() override;
 
@@ -48,8 +52,8 @@ class DxlMotorState : public JointState
         virtual void reset() override;
         virtual bool isValid() const override;
 
-        virtual int to_motor_pos(double pos_rad, common::model::EBusProtocol protocol) override;
-        virtual double to_rad_pos(int position_dxl, common::model::EBusProtocol protocol) override;
+        virtual int to_motor_pos(double pos_rad) override;
+        virtual double to_rad_pos(int position_dxl) override;
 
         uint32_t getPositionPGain() const;
         uint32_t getPositionIGain() const;
@@ -77,8 +81,6 @@ class DxlMotorState : public JointState
         void setFF2Gain(uint32_t value);
 
 protected:
-        bool _isTool;
-
         uint32_t _pos_p_gain{0};
         uint32_t _pos_i_gain{0};
         uint32_t _pos_d_gain{0};
@@ -102,7 +104,7 @@ protected:
 inline
 bool DxlMotorState::isTool() const
 {
-    return _isTool;
+    return (getComponentType() == common::model::EComponentType::TOOL);
 }
 
 /**

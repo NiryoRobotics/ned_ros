@@ -37,12 +37,15 @@ class StepperMotorState : public JointState
 
     public:
         StepperMotorState();
-        StepperMotorState(EBusProtocol bus_proto, uint8_t id, bool isConveyor = false);
-        StepperMotorState(std::string name, EHardwareType type, EBusProtocol bus_proto, uint8_t id, bool isConveyor = false );
+        StepperMotorState(EHardwareType type, EComponentType component_type,
+                          EBusProtocol bus_proto, uint8_t id);
+        StepperMotorState(std::string name, EHardwareType type, EComponentType component_type,
+                          EBusProtocol bus_proto, uint8_t id);
+        StepperMotorState(const StepperMotorState& state);
 
         virtual ~StepperMotorState() override;
 
-        static constexpr int stepsPerRev();
+        int stepsPerRev();
 
         // setters
         void updateLastTimeRead();
@@ -72,26 +75,22 @@ class StepperMotorState : public JointState
         virtual bool isValid() const override;
         virtual std::string str() const override;
 
-        virtual int to_motor_pos(double pos_rad, common::model::EBusProtocol protocol) override;
-        virtual double to_rad_pos(int pos, common::model::EBusProtocol protocol) override;
+        virtual int to_motor_pos(double pos_rad) override;
+        virtual double to_rad_pos(int pos) override;
 
 protected:
-        bool _isConveyor{false};
-
         double _last_time_read{-1.0};
         double _hw_fail_counter{0.0};
 
         double _gear_ratio{1.0};
         double _max_effort{0.0};
+        double _micro_steps{8.0};
 
         common::model::EStepperCalibrationStatus _calibration_state{common::model::EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED};
         int32_t _calibration_value{0};
 
     private:
-
-        static constexpr double STEPPERS_MICROSTEPS                 = 8.0;
         static constexpr double STEPPERS_MOTOR_STEPS_PER_REVOLUTION = 200.0;
-
 };
 
 /**
@@ -131,7 +130,7 @@ int32_t StepperMotorState::getCalibrationValue() const
 inline
 bool StepperMotorState::isConveyor() const
 {
-    return _isConveyor;
+    return (getComponentType() == common::model::EComponentType::CONVEYOR);
 }
 
 /**
@@ -148,8 +147,9 @@ double StepperMotorState::getGearRatio() const
  * @brief StepperMotorState::getLastTimeRead
  * @return
  */
-constexpr int StepperMotorState::stepsPerRev() {
-    return int(STEPPERS_MICROSTEPS * STEPPERS_MOTOR_STEPS_PER_REVOLUTION);
+inline
+int StepperMotorState::stepsPerRev() {
+    return int(_micro_steps * STEPPERS_MOTOR_STEPS_PER_REVOLUTION);
 }
 
 inline

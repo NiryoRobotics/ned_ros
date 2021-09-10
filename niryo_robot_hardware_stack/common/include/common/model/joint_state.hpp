@@ -40,7 +40,10 @@ class JointState : public AbstractMotorState
     
     public:
         JointState();
-        JointState(std::string name, EHardwareType type, EBusProtocol bus_proto, uint8_t id);
+        JointState(std::string name, EHardwareType type,
+                   EComponentType component_type,
+                   EBusProtocol bus_proto, uint8_t id);
+        JointState(const JointState& state);
 
         virtual ~JointState() override;
 
@@ -54,8 +57,8 @@ class JointState : public AbstractMotorState
 
         virtual bool operator==(const JointState &other) const;
 
-        virtual int to_motor_pos(double pos_rad, common::model::EBusProtocol protocol);
-        virtual double to_rad_pos(int position_dxl, common::model::EBusProtocol protocol);
+        virtual int to_motor_pos(double pos_rad) { return 0; }
+        virtual double to_rad_pos(int position_dxl) { return 0; }
 
         // AbstractMotorState interface
         virtual void reset() override;

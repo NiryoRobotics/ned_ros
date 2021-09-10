@@ -40,14 +40,34 @@ JointState::JointState() :
  * @brief JointState::JointState
  * @param name
  * @param type
+ * @param component_type
  * @param bus_proto
  * @param id
  */
 JointState::JointState(std::string name, EHardwareType type,
+                       EComponentType component_type,
                        EBusProtocol bus_proto, uint8_t id) :
-    AbstractMotorState(type, bus_proto, id),
+    AbstractMotorState(type, component_type, bus_proto, id),
     _name(name)
 {
+}
+
+/**
+ * @brief JointState::JointState
+ * @param state
+ */
+JointState::JointState(const JointState &state) :
+  AbstractMotorState(state)
+{
+  _name = state._name;
+  _offset_position = state._offset_position;
+  _need_calibration = state._need_calibration;
+  _direction = state._direction;
+
+  pos = state.pos;
+  cmd = state.cmd;
+  vel = state.vel;
+  eff = state.eff;
 }
 
 /**
@@ -64,23 +84,7 @@ JointState::~JointState()
  */
 bool JointState::operator==(const JointState& m) const
 {
-    return((this->_type == m._type) && (this->_id == m._id));
-}
-
-/**
- * @brief JointState::to_motor_pos
-*/
-int JointState::to_motor_pos(double pos_rad, common::model::EBusProtocol protocol)
-{
-    return 0;
-}
-
-/**
- * @brief JointState::to_rad_pos
-*/
-double JointState::to_rad_pos(int position_dxl, common::model::EBusProtocol protocol)
-{
-    return 0;
+    return((this->_hw_type == m._hw_type) && (this->_id == m._id));
 }
 
 /**
@@ -130,7 +134,7 @@ void JointState::reset()
  */
 bool common::model::JointState::isValid() const
 {
-    return (0 != getId() && EHardwareType::UNKNOWN != getType());
+    return (0 != getId() && EHardwareType::UNKNOWN != getHardwareType());
 }
 
 /**
@@ -143,7 +147,7 @@ std::string JointState::str() const
 
     ss << "JointState : ";
     ss << "\n---\n";
-    ss << "type: " << HardwareTypeEnum(_type).toString() << ", ";
+    ss << "type: " << HardwareTypeEnum(_hw_type).toString() << ", ";
     ss << "name: " << "\"" << _name << "\"" << ", ";
     ss << "offset position: " << _offset_position << ", ";
     ss << "direction : " << _direction << ", ";

@@ -39,6 +39,8 @@ class MockStepperDriver : public AbstractStepperDriver
                       std::shared_ptr<dynamixel::PacketHandler> packetHandler);
         virtual ~MockStepperDriver() override;
 
+        virtual std::string str() const override;
+
         // AbstractTtlDriver interface : we cannot define them globally in AbstractTtlDriver
         // as it is needed here for polymorphism (AbstractTtlDriver cannot be a template class and does not
         // have access to reg_type). So it seems like a duplicate of DxlDriver
@@ -71,7 +73,7 @@ class MockStepperDriver : public AbstractStepperDriver
         // ram read
         virtual int readPosition(uint8_t id, uint32_t &present_position) override;
         virtual int readTemperature(uint8_t id, uint32_t &temperature) override;
-        virtual int readVoltage(uint8_t id, uint32_t &voltage) override;
+        virtual int readVoltage(uint8_t id, double &voltage) override;
         virtual int readHwErrorStatus(uint8_t id, uint32_t &hardware_status) override;
 
 
@@ -79,7 +81,7 @@ class MockStepperDriver : public AbstractStepperDriver
 
         virtual int syncReadFirmwareVersion(const std::vector<uint8_t> &id_list, std::vector<std::string> &firmware_list) override;
         virtual int syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &temperature_list) override;
-        virtual int syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &voltage_list) override;
+        virtual int syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list) override;
         virtual int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list) override;
 
         // AbstractStepperDriver interface
@@ -87,28 +89,22 @@ class MockStepperDriver : public AbstractStepperDriver
         virtual int startHoming(uint8_t id) override;
         virtual int setHomingDirection(uint8_t id, uint8_t direction) override;
         virtual int readHomingStatus(uint8_t id, uint32_t &status) override;
-        // conveyor control
-        virtual int setGoalConveyorDirection(uint8_t id, int8_t direction) override;
-        virtual int setConveyorState(uint8_t id, bool state) override;
-        virtual int readConveyorSpeed(uint8_t id, uint32_t &velocity) override;
-        virtual int readConveyorDirection(uint8_t id, int8_t &direction) override;
-        virtual int readConveyorState(uint8_t id, bool &state) override;
     
     private:
         struct FakeRegister
         {
           uint32_t       position{};
           uint32_t       temperature{};
-          uint32_t       voltage{};
+          double       voltage{};
           uint32_t       min_position{};
           uint32_t       max_position{};
           uint16_t       model_number{};
           std::string    firmware{};
         };
 
-        std::map<uint8_t, FakeRegister> _map_fake_registers{ {2, {1900, 50, 12, 0, 4096, 1, "0.0.1"}},
-                                                             {3, {0, 52, 12, 0, 4096, 1, "0.0.1"}},
-                                                             {4, {0, 54, 12, 0, 4096, 1, "0.0.1"}}};
+        std::map<uint8_t, FakeRegister> _map_fake_registers{ {2, {1900, 50, 12.1, 0, 4096, 1, "0.0.1"}},
+                                                             {3, {0, 52, 12.2, 0, 4096, 1, "0.0.1"}},
+                                                             {4, {0, 54, 12.3, 0, 4096, 1, "0.0.1"}}};
 
         std::vector<uint8_t> _full_id_list{2,3,4,5,6,7,11};
         std::vector<uint8_t> _id_list;
@@ -143,6 +139,11 @@ MockStepperDriver::MockStepperDriver(std::shared_ptr<dynamixel::PortHandler> por
  */
 MockStepperDriver::~MockStepperDriver()
 {
+}
+
+std::string MockStepperDriver::str() const
+{
+  return "Mock Stepper Driver (OK)";
 }
 
 //*****************************
@@ -294,7 +295,7 @@ int MockStepperDriver::readTemperature(uint8_t id, uint32_t& temperature)
     return COMM_SUCCESS;
 }
 
-int MockStepperDriver::readVoltage(uint8_t id, uint32_t& voltage)
+int MockStepperDriver::readVoltage(uint8_t id, double &voltage)
 {
     voltage = _map_fake_registers.at(id).voltage;
     return COMM_SUCCESS;
@@ -348,7 +349,7 @@ int MockStepperDriver::syncReadTemperature(const std::vector<uint8_t> &id_list, 
     return COMM_SUCCESS;
 }
 
-int MockStepperDriver::syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &voltage_list)
+int MockStepperDriver::syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list)
 {
     std::map<uint8_t, uint8_t> countMap;
     voltage_list.clear();
@@ -402,34 +403,6 @@ int MockStepperDriver::readHomingStatus(uint8_t id, uint32_t &status)
         _calibration_status = CALIBRATION_SUCCESS;
 
     status = _calibration_status;
-    return COMM_SUCCESS;
-}
-
-int MockStepperDriver::setGoalConveyorDirection(uint8_t id, int8_t direction)
-{
-    return COMM_SUCCESS;
-}
-
-int MockStepperDriver::setConveyorState(uint8_t id, bool state)
-{
-    return COMM_SUCCESS;
-}
-
-int MockStepperDriver::readConveyorSpeed(uint8_t id, uint32_t &velocity)
-{
-    velocity = 0;
-    return COMM_SUCCESS;
-}
-
-int MockStepperDriver::readConveyorDirection(uint8_t id, int8_t &direction)
-{
-    direction = 0;
-    return COMM_SUCCESS;
-}
-
-int MockStepperDriver::readConveyorState(uint8_t id, bool &state)
-{
-    state = 0;
     return COMM_SUCCESS;
 }
 

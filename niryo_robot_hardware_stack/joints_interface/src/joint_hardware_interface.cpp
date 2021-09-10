@@ -77,56 +77,6 @@ JointHardwareInterface::JointHardwareInterface(ros::NodeHandle& rootnh,
 }
 
 /**
- * @brief JointHardwareInterface::read
- */
-void JointHardwareInterface::read(const ros::Time &/*time*/, const ros::Duration &/*period*/)
-{
-    int newPositionState = 0.0;
-
-    for (auto const& jState : _joint_list)
-    {
-        if (jState && jState->isValid())
-        {
-            if (jState->getBusProtocol() == EBusProtocol::CAN)
-                newPositionState = _can_interface->getJointState(jState->getId()).getPositionState();
-            if (jState->getBusProtocol() == EBusProtocol::TTL)
-                newPositionState = _ttl_interface->getJointState(jState->getId()).getPositionState();
-
-            jState->pos = jState->to_rad_pos(newPositionState, jState->getBusProtocol());
-        }
-    }
-
-    if ((_can_interface && !_can_interface->isConnectionOk()) || (_ttl_interface && !_ttl_interface->isConnectionOk()))
-        this->setNeedCalibration();
-}
-
-/**
- * @brief JointHardwareInterface::write: update the position of each joint using the received command from the joint handle
- */
-void JointHardwareInterface::write(const ros::Time &/*time*/, const ros::Duration &/*period*/)
-{
-    std::vector<std::pair<uint8_t, int32_t> > can_cmd;
-    std::vector<std::pair<uint8_t, uint32_t> > ttl_cmd;
-
-    for (auto const& jState : _joint_list)
-    {
-        if (jState && jState->isValid())
-        {
-            if (jState->getBusProtocol() == EBusProtocol::CAN)
-                can_cmd.emplace_back(jState->getId(), jState->to_motor_pos(jState->cmd, EBusProtocol::CAN));
-            if (jState->getBusProtocol() == EBusProtocol::TTL)
-                ttl_cmd.emplace_back(jState->getId(), jState->to_motor_pos(jState->cmd, EBusProtocol::TTL));
-        }
-    }
-
-    if (_can_interface)
-        _can_interface->setTrajectoryControllerCommands(can_cmd);
-
-    if (_ttl_interface)
-        _ttl_interface->setTrajectoryControllerCommands(ttl_cmd);
-}
-
-/**
  * @brief JointHardwareInterface::initJoints : build the joints by gathering information in config files and instanciating
  * correct state (dxl or stepper)
  */
@@ -174,6 +124,7 @@ bool JointHardwareInterface::init(ros::NodeHandle& rootnh, ros::NodeHandle &robo
                 currentStepperNamespace = "steppersTtl/stepper_" + to_string(currentIdStepper);
             auto stepperState = std::make_shared<StepperMotorState>(joint_name,
                                                                     eType,
+                                                                    common::model::EComponentType::JOINT,
                                                                     eBusProto,
                                                                     static_cast<uint8_t>(joint_id_config));
             if (stepperState)
@@ -197,6 +148,11 @@ bool JointHardwareInterface::init(ros::NodeHandle& rootnh, ros::NodeHandle &robo
                 _joint_list.emplace_back(stepperState);
                 _map_stepper_name[stepperState->getId()] = stepperState->getName();
 
+                if (eBusProto == EBusProtocol::CAN)
+                    _can_interface->addJoint(*stepperState.get());
+                else if (eBusProto == EBusProtocol::TTL)
+                    _ttl_interface->addJoint(*stepperState.get());
+
                 currentIdStepper++;
             }
         }
@@ -204,6 +160,7 @@ bool JointHardwareInterface::init(ros::NodeHandle& rootnh, ros::NodeHandle &robo
         {  // dynamixel
             auto dxlState = std::make_shared<DxlMotorState>(joint_name,
                                                             eType,
+                                                            common::model::EComponentType::JOINT,
                                                             eBusProto,
                                                             static_cast<uint8_t>(joint_id_config));
             if (dxlState)
@@ -249,6 +206,13 @@ bool JointHardwareInterface::init(ros::NodeHandle& rootnh, ros::NodeHandle &robo
                 _joint_list.emplace_back(dxlState);
 
                 _map_dxl_name[dxlState->getId()] = dxlState->getName();
+
+                if (eBusProto == EBusProtocol::CAN)
+                {
+                  ROS_ERROR("JointHardwareInterface::init : Dynamixel motors are not available on CAN Bus");
+                }
+                else if (eBusProto == EBusProtocol::TTL)
+                    _ttl_interface->addJoint(*dxlState.get());
 
                 currentIdDxl++;
             }
@@ -334,6 +298,69 @@ void JointHardwareInterface::sendInitMotorsParams()
             }
         }
     }
+}
+
+/**
+ * @brief JointHardwareInterface::read
+ */
+void JointHardwareInterface::read(const ros::Time &/*time*/, const ros::Duration &/*period*/)
+{
+    int newPositionState = 0.0;
+
+    for (auto& jState : _joint_list)
+    {
+        if (jState && jState->isValid())
+        {
+            common::model::JointState state;
+            if (jState->getBusProtocol() == EBusProtocol::CAN)
+            {
+                state = _can_interface->getJointState(jState->getId());
+            }
+            if (jState->getBusProtocol() == EBusProtocol::TTL)
+            {
+                state = _ttl_interface->getJointState(jState->getId());
+            }
+
+            newPositionState = state.getPositionState();
+
+            jState->pos = jState->to_rad_pos(newPositionState);
+
+            //TODO(CC) to be refactorized
+            jState->setFirmwareVersion(state.getFirmwareVersion());
+            jState->setVoltage(state.getVoltage());
+            jState->setTemperature(state.getTemperature());
+            jState->setHardwareError(state.getHardwareError());
+        }
+    }
+
+    if ((_can_interface && !_can_interface->isConnectionOk()) || (_ttl_interface && !_ttl_interface->isConnectionOk()))
+        this->setNeedCalibration();
+}
+
+/**
+ * @brief JointHardwareInterface::write: update the position of each joint using the received command from the joint handle
+ */
+void JointHardwareInterface::write(const ros::Time &/*time*/, const ros::Duration &/*period*/)
+{
+    std::vector<std::pair<uint8_t, int32_t> > can_cmd;
+    std::vector<std::pair<uint8_t, uint32_t> > ttl_cmd;
+
+    for (auto const& jState : _joint_list)
+    {
+        if (jState && jState->isValid())
+        {
+            if (jState->getBusProtocol() == EBusProtocol::CAN)
+                can_cmd.emplace_back(jState->getId(), jState->to_motor_pos(jState->cmd));
+            if (jState->getBusProtocol() == EBusProtocol::TTL)
+                ttl_cmd.emplace_back(jState->getId(), jState->to_motor_pos(jState->cmd));
+        }
+    }
+
+    if (_can_interface)
+        _can_interface->setTrajectoryControllerCommands(can_cmd);
+
+    if (_ttl_interface)
+        _ttl_interface->setTrajectoryControllerCommands(ttl_cmd);
 }
 
 /**
@@ -423,7 +450,7 @@ void JointHardwareInterface::activateLearningMode()
         {
             if (jState->isDynamixel())
             {
-                dxl_cmd.addMotorParam(jState->getType(), jState->getId(), 0);
+                dxl_cmd.addMotorParam(jState->getHardwareType(), jState->getId(), 0);
             }
             else if ((jState->isStepper() && jState->getBusProtocol() == EBusProtocol::TTL))
             {
@@ -465,7 +492,7 @@ void JointHardwareInterface::deactivateLearningMode()
         {
             if (jState->isDynamixel())
             {
-                dxl_cmd.addMotorParam(jState->getType(), jState->getId(), 1);
+                dxl_cmd.addMotorParam(jState->getHardwareType(), jState->getId(), 1);
             }
             else if (jState->isStepper() && jState->getBusProtocol() == EBusProtocol::CAN)
             {
@@ -514,24 +541,6 @@ void JointHardwareInterface::synchronizeMotors(bool synchronize)
                 _can_interface->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(stepper_cmd));
         }
     }
-}
-
-/**
- * @brief JointHardwareInterface::jointIdToJointName
- * @param id
- * @param motor_type
- * @return
- */
-string JointHardwareInterface::jointIdToJointName(uint8_t id, EHardwareType motor_type) const
-{
-    if ((EHardwareType::STEPPER == motor_type || EHardwareType::FAKE_STEPPER_MOTOR == motor_type) && _map_stepper_name.count(id))
-    {
-        return _map_stepper_name.at(id);
-    }
-    else if (_map_dxl_name.count(id))
-        return _map_dxl_name.at(id);
-
-    return "";
 }
 
 }  // namespace joints_interface

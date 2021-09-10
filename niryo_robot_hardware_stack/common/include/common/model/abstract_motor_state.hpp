@@ -39,7 +39,10 @@ class AbstractMotorState : public AbstractHardwareState
     public:
 
         AbstractMotorState();
-        AbstractMotorState(EHardwareType type, EBusProtocol bus_proto, uint8_t id);
+        AbstractMotorState(EHardwareType type, EComponentType component_type,
+                           EBusProtocol bus_proto, uint8_t id);
+        AbstractMotorState(const AbstractMotorState& state);
+
         virtual ~AbstractMotorState() override;
 
         // getters
@@ -59,7 +62,7 @@ class AbstractMotorState : public AbstractHardwareState
 
     protected:
         // read variables
-        int _position_state;
+        int _position_state{0};
 };
 
 /**
@@ -79,8 +82,8 @@ int AbstractMotorState::getPositionState() const
 inline
 bool AbstractMotorState::isStepper() const
 {
-    return (EHardwareType::STEPPER == _type ||
-            EHardwareType::FAKE_STEPPER_MOTOR == _type);
+    return (EHardwareType::STEPPER == _hw_type ||
+            EHardwareType::FAKE_STEPPER_MOTOR == _hw_type);
 }
 
 /**
@@ -90,11 +93,11 @@ bool AbstractMotorState::isStepper() const
 inline
 bool AbstractMotorState::isDynamixel() const
 {
-    return (EHardwareType::XC430 == _type) ||
-           (EHardwareType::XL320 == _type) ||
-           (EHardwareType::XL330 == _type) ||
-           (EHardwareType::XL430 == _type) ||
-           (EHardwareType::FAKE_DXL_MOTOR == _type);
+    return (EHardwareType::XC430 == _hw_type) ||
+           (EHardwareType::XL320 == _hw_type) ||
+           (EHardwareType::XL330 == _hw_type) ||
+           (EHardwareType::XL430 == _hw_type) ||
+           (EHardwareType::FAKE_DXL_MOTOR == _hw_type);
 }
 
 } // model

@@ -39,7 +39,7 @@ namespace niryo_robot_hardware_interface
 HardwareInterface::HardwareInterface(ros::NodeHandle &nh) :
     _nh(nh)
 {
-    /*for(int i = 0; i < 30; ++i)
+    /*for(int i = 0; i < 10; ++i)
     {
       ROS_WARN("Sleeping for %d", i);
       ros::Duration(1).sleep();
@@ -387,9 +387,6 @@ void HardwareInterface::_publishHardwareStatus()
 
     while (ros::ok())
     {
-        ttl_driver::ArrayMotorHardwareStatus ttl_motor_state;
-        can_driver::StepperArrayMotorHardwareStatus can_motor_state;
-
         niryo_robot_msgs::BusState ttl_bus_state;
         niryo_robot_msgs::BusState can_bus_state;
 
@@ -402,21 +399,40 @@ void HardwareInterface::_publishHardwareStatus()
         msg.header.stamp = ros::Time::now();
         msg.connection_up = true;
 
-        if (_ttl_interface)
-        {
-            ttl_motor_state = _ttl_interface->getHwStatus();
-            ttl_bus_state = _ttl_interface->getBusState();
-            msg.connection_up = msg.connection_up && ttl_bus_state.connection_status;
-        }
+        std::vector<std::string> motor_names;
+        std::vector<int32_t> temperatures;
+        std::vector<double> voltages;
+        std::vector<std::string> motor_types;
+
+        std::vector<int32_t> hw_errors;
+        std::vector<std::string> hw_errors_msg;
+
         if (_can_interface)
         {
-            can_motor_state = _can_interface->getHwStatus();
             can_bus_state = _can_interface->getBusState();
             msg.connection_up = msg.connection_up && can_bus_state.connection_status;
         }
+
+        if (_ttl_interface)
+        {
+            ttl_bus_state = _ttl_interface->getBusState();
+            msg.connection_up = msg.connection_up && ttl_bus_state.connection_status;
+        }
+
         if (_joints_interface)
         {
             _joints_interface->getCalibrationState(need_calibration, calibration_in_progress);
+
+            auto joints_states = _joints_interface->getJointsState();
+            for (std::shared_ptr<common::model::JointState> jState : joints_states)
+            {
+              motor_names.emplace_back(jState->getName());
+              voltages.emplace_back(jState->getVoltage());
+              temperatures.emplace_back(jState->getTemperature());
+              hw_errors.emplace_back(jState->getHardwareError());
+              hw_errors_msg.emplace_back(jState->getHardwareErrorMessage());
+              motor_types.emplace_back(common::model::HardwareTypeEnum(jState->getHardwareType()).toString());
+            }
         }
 
         cpu_temperature = _cpu_interface->getCpuTemperature();
@@ -435,53 +451,6 @@ void HardwareInterface::_publishHardwareStatus()
 
         msg.calibration_needed = need_calibration;
         msg.calibration_in_progress = calibration_in_progress;
-
-        std::vector<int32_t> temperatures;
-        std::vector<double> voltages;
-        std::vector<int32_t> hw_errors;
-        std::vector<std::string> hw_errors_msg;
-        std::vector<std::string> motor_types;
-        std::vector<std::string> motor_names;
-
-        if (_joints_interface)
-        {
-            for (auto const& hw_status : can_motor_state.motors_hw_status)
-            {
-                temperatures.emplace_back(hw_status.temperature);
-                voltages.emplace_back(hw_status.voltage);
-                hw_errors.emplace_back(hw_status.error);
-                hw_errors_msg.emplace_back("");
-                motor_types.emplace_back("Niryo Stepper");
-                std::string joint_name = "";
-
-                joint_name = _joints_interface->jointIdToJointName(hw_status.motor_identity.motor_id,
-                                                                    hw_status.motor_identity.motor_type);
-
-                joint_name = joint_name == "" ? ("Stepper " + std::to_string(hw_status.motor_identity.motor_id))
-                                            : joint_name;
-
-                motor_names.emplace_back(joint_name);
-            }
-
-            // for each motor gather info in the dedicated vectors
-            for (auto const& hw_status : ttl_motor_state.motors_hw_status)
-            {
-                temperatures.emplace_back(static_cast<int32_t>(hw_status.temperature));
-                voltages.emplace_back(hw_status.voltage);
-                hw_errors.emplace_back(static_cast<int32_t>(hw_status.error));
-                hw_errors_msg.emplace_back(hw_status.error_msg);
-
-                motor_types.emplace_back(common::model::HardwareTypeEnum(static_cast<common::model::EHardwareType>(hw_status.motor_identity.motor_type)).toString());
-
-                std::string joint_name = "";
-
-                joint_name = _joints_interface->jointIdToJointName(hw_status.motor_identity.motor_id,
-                                                                hw_status.motor_identity.motor_type);
-
-                joint_name = (joint_name == "") ? "Tool" : joint_name;
-                motor_names.emplace_back(joint_name);
-            }
-        }
 
         msg.motor_names = motor_names;
         msg.motor_types = motor_types;
@@ -505,29 +474,17 @@ void HardwareInterface::_publishSoftwareVersion()
     ros::Rate publish_software_version_rate = ros::Rate(_publish_software_version_frequency);
     while (ros::ok())
     {
-        can_driver::StepperArrayMotorHardwareStatus stepper_motor_state;
         std::vector<std::string> motor_names;
         std::vector<std::string> firmware_versions;
-        std::vector<std::shared_ptr<common::model::JointState> > joints_state;
-
-        if (_can_interface)
-        {
-            stepper_motor_state = _can_interface->getHwStatus();
-        }
 
         if (_joints_interface)
         {
-            joints_state = _joints_interface->getJointsState();
-        }
-
-        for (std::shared_ptr<common::model::JointState> jState : joints_state)
-        {
-            motor_names.push_back(jState->getName());
-        }
-
-        for (auto const& hw_status : stepper_motor_state.motors_hw_status)
-        {
-            firmware_versions.push_back(hw_status.firmware_version);
+            auto joints_states = _joints_interface->getJointsState();
+            for (std::shared_ptr<common::model::JointState> jState : joints_states)
+            {
+                motor_names.emplace_back(jState->getName());
+                firmware_versions.emplace_back(jState->getFirmwareVersion());
+            }
         }
 
         niryo_robot_msgs::SoftwareVersion msg;
