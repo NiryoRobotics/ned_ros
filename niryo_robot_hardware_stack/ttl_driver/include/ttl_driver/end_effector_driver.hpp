@@ -146,7 +146,9 @@ std::string EndEffectorDriver<reg_type>::interpreteFirmwareVersion(uint32_t fw_v
     uint8_t v_patch = static_cast<uint8_t>(fw_version >> 0);
 
     std::ostringstream ss;
-    ss << v_major << "." << v_minor << "." << v_patch;
+    ss << std::to_string(v_major) << "."
+       << std::to_string(v_minor) << "."
+       << std::to_string(v_patch);
     std::string version = ss.str();
 
     return version;
