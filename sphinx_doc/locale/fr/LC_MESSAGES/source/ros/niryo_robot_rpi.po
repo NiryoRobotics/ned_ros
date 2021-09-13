@@ -6,7 +6,8 @@
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
-#, fuzzy
+
+
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
@@ -42,7 +43,7 @@ msgstr "Ce noeud ROS gère les composants suivants :"
 
 #: ../../source/ros/niryo_robot_rpi.rst:11
 msgid "Physical top button: executes actions when the button is pressed."
-msgstr "Bouton supérieur physique : executes actions when the button is pressed."
+msgstr "Bouton supérieur physique : exécute une action quand un appui sur le bouton est réalisé."
 
 #: ../../source/ros/niryo_robot_rpi.rst:12
 msgid ""
@@ -66,7 +67,7 @@ msgid ""
 "ROS log: can remove all previous logs on startup to prevent a lack of "
 "disk space in the long run (SD cards do not have infinite storage)."
 msgstr ""
-"ROS Log: permet de supprimer tous les états précédents au redémarrage "
+"ROS Log : permet de supprimer tous les états précédents au redémarrage "
 "pour éviter le manque d'espace disque à long terme (les cartes SD n'ont "
 "pas un stockage infini)."
 
@@ -81,7 +82,7 @@ msgid ""
 "button is pressed.**"
 msgstr ""
 "**Noter que ce package ne doit pas être utilisé lorsque vous utilisez la "
-"stack ROS Ned sur votre ordinateur, en mode simulation. Il faut éxécuter "
+"stack ROS Ned sur votre ordinateur, en mode simulation. Il faut exécuter "
 "des actions lorsque le bouton est pressé.**"
 
 #: ../../source/ros/niryo_robot_rpi.rst:22
@@ -212,7 +213,7 @@ msgstr ""
 
 #: ../../source/ros/niryo_robot_rpi.rst:66
 msgid "Shutdown the Raspberry Pi"
-msgstr "Arrêtez le Raspberry Pi"
+msgstr "Arrêter le Raspberry Pi"
 
 #: ../../source/ros/niryo_robot_rpi.rst:67
 msgid "``/niryo_robot/rpi/change_button_mode``"

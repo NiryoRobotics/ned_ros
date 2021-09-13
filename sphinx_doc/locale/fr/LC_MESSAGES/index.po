@@ -6,12 +6,13 @@
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
-#, fuzzy
+
+
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-10 11:46+0000\n"
+"POT-Creation-Date: 2021-09-13 09:16+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -82,7 +83,7 @@ msgstr ""
 "connecté en SSH au robot physique, ou d’utiliser la simulation."
 
 #: ../../index.rst:50
-msgid "ROS is the more direct way to control the robot. It allows:"
+msgid "ROS is the most direct way to control the robot. It allows:"
 msgstr "ROS est le moyen le plus direct de contrôler le robot. Il permet :"
 
 #: ../../index.rst:52
@@ -134,7 +135,7 @@ msgid ""
 "See :doc:`Python ROS Wrapper <source/ros_wrapper>` to see which functions"
 " are accessible and examples on how to use them."
 msgstr ""
-"Se diriger vers :doc:`Python ROS Wrapper <source/ros_wrapper>` pour voir "
+"Rendez vous sur la documentation :doc:`Python ROS Wrapper <source/ros_wrapper>` pour voir "
 "les fonctions accessibles et des exemples d’utilisation."
 
 #: ../../index.rst:71

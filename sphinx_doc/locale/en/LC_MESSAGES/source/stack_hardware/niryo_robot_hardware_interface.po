@@ -6,12 +6,13 @@
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
-#, fuzzy
+
+
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-13 09:53+0000\n"
+"POT-Creation-Date: 2021-09-13 09:16+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -97,7 +98,7 @@ msgid "``publish_hw_status_frequency``"
 msgstr ""
 
 #: ../../source/stack_hardware/niryo_robot_hardware_interface.rst
-msgid "Publish rate for hardware status."
+msgid "Publishes rate for hardware status."
 msgstr ""
 
 #: ../../source/stack_hardware/niryo_robot_hardware_interface.rst
@@ -109,7 +110,7 @@ msgid "``publish_software_version_frequency``"
 msgstr ""
 
 #: ../../source/stack_hardware/niryo_robot_hardware_interface.rst
-msgid "Publish rate for software status."
+msgid "Publishes rate for software status."
 msgstr ""
 
 #: ../../source/stack_hardware/niryo_robot_hardware_interface.rst:45
@@ -168,7 +169,7 @@ msgid ":ref:`source/ros/niryo_robot_msgs:Trigger`"
 msgstr ""
 
 #: ../../source/stack_hardware/niryo_robot_hardware_interface.rst:77
-msgid "Start motors report"
+msgid "Starts motors report"
 msgstr ""
 
 #: ../../source/stack_hardware/niryo_robot_hardware_interface.rst:78
@@ -176,7 +177,7 @@ msgid "``reboot_motors``"
 msgstr ""
 
 #: ../../source/stack_hardware/niryo_robot_hardware_interface.rst:80
-msgid "Reboot motors"
+msgid "Reboots motors"
 msgstr ""
 
 #: ../../source/stack_hardware/niryo_robot_hardware_interface.rst:81
@@ -184,7 +185,7 @@ msgid "``stop_motors_report``"
 msgstr ""
 
 #: ../../source/stack_hardware/niryo_robot_hardware_interface.rst:83
-msgid "Stop motors report"
+msgid "Stops motors report"
 msgstr ""
 
 #: ../../source/stack_hardware/niryo_robot_hardware_interface.rst:86
@@ -309,5 +310,20 @@ msgstr ""
 #~ msgid ""
 #~ ":ref:`niryo_robot_msgs <source/ros/niryo_robot_msgs:Niryo "
 #~ "Robot Messages Package>`"
+#~ msgstr ""
+
+#~ msgid "Publish rate for hardware status."
+#~ msgstr ""
+
+#~ msgid "Publish rate for software status."
+#~ msgstr ""
+
+#~ msgid "Start motors report"
+#~ msgstr ""
+
+#~ msgid "Reboot motors"
+#~ msgstr ""
+
+#~ msgid "Stop motors report"
 #~ msgstr ""
 

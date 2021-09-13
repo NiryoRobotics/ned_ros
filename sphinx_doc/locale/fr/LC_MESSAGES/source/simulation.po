@@ -6,12 +6,13 @@
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
-#, fuzzy
+
+
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-12 08:22+0000\n"
+"POT-Creation-Date: 2021-09-13 09:16+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -38,7 +39,7 @@ msgstr "Ned dans la simulation de Gazebo"
 
 #: ../../source/simulation.rst:13
 msgid "In this tutorial, you will learn how to setup simulation on a computer."
-msgstr "Ce tutoriel apprend à configurer une simulation sur un ordinateur."
+msgstr "Avec ce tutoriel, apprenez à configurer une simulation sur un ordinateur."
 
 #: ../../source/simulation.rst:16
 msgid ""
@@ -290,8 +291,8 @@ msgid ""
 "you won't be able to use the simulation."
 msgstr ""
 "Il est indispensable de suivre l’étape :ref:`d'installation de "
-"l’environnement <source/simulation:Simulation Environment Installation>` pour utiliser "
-"correctement la simulation."
+"l’environnement <source/simulation:Simulation Environment Installation>` "
+"pour utiliser correctement la simulation."
 
 #: ../../source/simulation.rst:147
 msgid "Hardware features won't be accessible."
@@ -374,7 +375,7 @@ msgstr ""
 
 #: ../../source/simulation.rst:183 ../../source/simulation.rst:212
 msgid "To run it: ::"
-msgstr "Pour l'éxécuter : ::"
+msgstr "Pour l'exécuter : ::"
 
 #: ../../source/simulation.rst:190
 msgid "Rviz opening, with the robot ready to be controlled with ROS!"
@@ -386,7 +387,7 @@ msgstr "Sans physique - Simulation"
 
 #: ../../source/simulation.rst:195
 msgid ""
-"For the simulation, Ned use Gazebo, a well known tool among the ROS "
+"For the simulation, Ned uses Gazebo, a well known tool among the ROS "
 "community. It allows:"
 msgstr ""
 "Pour la simulation, Ned utilise Gazebo, un outil bien connu de la "

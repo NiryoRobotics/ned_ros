@@ -6,12 +6,13 @@
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
-#, fuzzy
+
+
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-12 08:22+0000\n"
+"POT-Creation-Date: 2021-09-13 09:16+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -35,8 +36,8 @@ msgid ""
 "Belt>`."
 msgstr ""
 "Si vous voulez en savoir plus sur les fonctions du Convoyeur Ned, vous "
-"pouvez consulter l':ref:`API - Conveyor<source/python_ros_wrapper/ros_wrapper_doc:Conveyor "
-"Belt>`."
+"pouvez consulter l':ref:`API - "
+"Conveyor<source/python_ros_wrapper/ros_wrapper_doc:Conveyor Belt>`."
 
 #: ../../source/python_ros_wrapper/examples_conveyor.rst:9
 msgid "Imports & initialisation are not mentioned, but you should not forget it!"
@@ -49,8 +50,10 @@ msgid "Simple Conveyor Belt control"
 msgstr "Contrôle simple du Convoyeur"
 
 #: ../../source/python_ros_wrapper/examples_conveyor.rst:13
+
+
 msgid ""
-"This short example shows how to connect a Conveyor Belt, activating "
+"This short example shows how to connect a Conveyor Belt, activate the "
 "connection and launch its motor: ::"
 msgstr ""
 "Ce court exemple montre comment connecter un Convoyeur, activer la "

@@ -31,7 +31,7 @@ Grasping
 ^^^^^^^^^^^^
 
 To grasp with any tool, you can use the function:
-:meth:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.grasp_with_tool`. This action correspond to:
+:meth:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.grasp_with_tool`. This action corresponds to:
 
  - Close gripper for Grippers.
  - Pull Air for Vacuum pump.

@@ -6,12 +6,13 @@
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
-#, fuzzy
+
+
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-13 09:53+0000\n"
+"POT-Creation-Date: 2021-09-13 09:16+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -59,11 +60,11 @@ msgstr ""
 
 #: ../../source/stack_hardware/joints_interface.rst:12
 msgid "Interface with motors calibration."
-msgstr "Interfacer avec calibration des moteurs"
+msgstr "Interfacer avec calibration des moteurs."
 
 #: ../../source/stack_hardware/joints_interface.rst:13
 msgid "Initialize motors parameters."
-msgstr "Initialiser des paramètres moteurs"
+msgstr "Initialiser des paramètres moteurs."
 
 #: ../../source/stack_hardware/joints_interface.rst:17
 msgid "Parameters - joints interface"
@@ -90,7 +91,9 @@ msgid "``ros_control_loop_frequency``"
 msgstr ""
 
 #: ../../source/stack_hardware/joints_interface.rst
-msgid "control loop frequency."
+
+
+msgid "Controls loop frequency."
 msgstr "Fréquence de la boucle de contrôle"
 
 #: ../../source/stack_hardware/joints_interface.rst
@@ -102,7 +105,9 @@ msgid "``publish_learning_mode_frequency``"
 msgstr ""
 
 #: ../../source/stack_hardware/joints_interface.rst
-msgid "Publish rate for learning mode state."
+
+
+msgid "Publishes rate for learning mode state."
 msgstr "Taux de diffusion pour l'état du mode d'apprentissage"
 
 #: ../../source/stack_hardware/joints_interface.rst
@@ -181,8 +186,10 @@ msgid ":ref:`source/ros/niryo_robot_msgs:SetInt`"
 msgstr ""
 
 #: ../../source/stack_hardware/joints_interface.rst:70
+
+
 msgid ""
-"Start motors calibration - value can be 1 for auto calibration, 2 for "
+"Starst motors calibration - value can be 1 for auto calibration, 2 for "
 "manual"
 msgstr ""
 "Démarrer la calibration des moteurs - la valeur peut être 1 pour la "
@@ -198,7 +205,9 @@ msgid ":ref:`source/ros/niryo_robot_msgs:Trigger`"
 msgstr ""
 
 #: ../../source/stack_hardware/joints_interface.rst:73
-msgid "Unset motors calibration"
+
+
+msgid "Unsets motors calibration"
 msgstr "Désactiver la calibration des moteurs"
 
 #: ../../source/stack_hardware/joints_interface.rst:74
@@ -206,7 +215,9 @@ msgid "``niryo_robot/learning_mode/activate``"
 msgstr ""
 
 #: ../../source/stack_hardware/joints_interface.rst:76
-msgid "Either activate or deactivate learning mode"
+
+
+msgid "Either activates or deactivates learning mode"
 msgstr "Activer ou désactiver le mode d'apprentissage"
 
 #: ../../source/stack_hardware/joints_interface.rst:79

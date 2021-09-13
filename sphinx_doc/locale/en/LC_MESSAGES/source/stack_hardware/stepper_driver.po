@@ -6,12 +6,13 @@
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
-#, fuzzy
+
+
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-13 09:53+0000\n"
+"POT-Creation-Date: 2021-09-13 09:16+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -65,7 +66,7 @@ msgid "``can_hardware_control_loop_frequency``"
 msgstr ""
 
 #: ../../source/stack_hardware/stepper_driver.rst
-msgid "control loop frequency."
+msgid "Controls loop frequency."
 msgstr ""
 
 #: ../../source/stack_hardware/stepper_driver.rst
@@ -77,7 +78,7 @@ msgid "``can_hw_write_frequency``"
 msgstr ""
 
 #: ../../source/stack_hardware/stepper_driver.rst
-msgid "Write frequency."
+msgid "Writes frequency."
 msgstr ""
 
 #: ../../source/stack_hardware/stepper_driver.rst
@@ -89,7 +90,7 @@ msgid "``can_hw_check_connection_frequency``"
 msgstr ""
 
 #: ../../source/stack_hardware/stepper_driver.rst
-msgid "Check steppers connection frequency."
+msgid "Checks steppers connection frequency."
 msgstr ""
 
 #: ../../source/stack_hardware/stepper_driver.rst
@@ -101,7 +102,7 @@ msgid "``stepper_motor_id_list``"
 msgstr ""
 
 #: ../../source/stack_hardware/stepper_driver.rst
-msgid "list of steppers ID"
+msgid "List of steppers ID"
 msgstr ""
 
 #: ../../source/stack_hardware/stepper_driver.rst
@@ -190,5 +191,17 @@ msgstr ""
 #~ msgid ""
 #~ ":ref:`niryo_robot_msgs <source/ros/niryo_robot_msgs:Niryo "
 #~ "Robot Messages Package>`"
+#~ msgstr ""
+
+#~ msgid "control loop frequency."
+#~ msgstr ""
+
+#~ msgid "Write frequency."
+#~ msgstr ""
+
+#~ msgid "Check steppers connection frequency."
+#~ msgstr ""
+
+#~ msgid "list of steppers ID"
 #~ msgstr ""
 

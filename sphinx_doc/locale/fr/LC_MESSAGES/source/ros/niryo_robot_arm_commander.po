@@ -6,7 +6,8 @@
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
-#, fuzzy
+
+
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
@@ -66,17 +67,17 @@ msgid ""
 "learning mode)."
 msgstr ""
 "Vérifie si la commande ne peut pas être traitée en raison d'autres "
-"facteurs (ex: mode d'apprentissage)"
+"facteurs (ex: mode d'apprentissage)."
 
 #: ../../source/ros/niryo_robot_arm_commander.rst:17
 msgid "Validates parameters."
-msgstr "Valide les paramètres"
+msgstr "Valide les paramètres."
 
 #: ../../source/ros/niryo_robot_arm_commander.rst:18
 msgid "Calls required controllers and returns appropriate status and message."
 msgstr ""
 "Appelle les contrôleurs requis et renvoie le statut et le message "
-"appropriés"
+"appropriés."
 
 #: ../../source/ros/niryo_robot_arm_commander.rst:20
 msgid "The namespace used is: |namespace_emphasize|"
@@ -110,7 +111,7 @@ msgstr ""
 
 #: ../../source/ros/niryo_robot_arm_commander.rst
 msgid "Reference frame used by MoveIt! for moveP."
-msgstr "Cadre de référence utilisée par Movelt! pour moveP."
+msgstr "Cadre de référence utilisé par Movelt! pour moveP."
 
 #: ../../source/ros/niryo_robot_arm_commander.rst
 msgid "Default : 'world'"

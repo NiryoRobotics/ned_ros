@@ -6,7 +6,8 @@
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
-#, fuzzy
+
+
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
@@ -29,8 +30,8 @@ msgid ""
 "This package is in charge of dealing with transforms, workspace, grips "
 "and trajectories."
 msgstr ""
-"Ce package est en charge de traiter les transformations, l'espace de "
-"travail, les outils et les trajectoires."
+"Ce package est en charge du traitement des transformations, de l'espace de "
+"travail, des outils et des trajectoires."
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:9
 msgid "Poses handlers node"
@@ -64,7 +65,7 @@ msgid ""
 "infer the absolute object pose in robot coordinates."
 msgstr ""
 "Un espace de travail est défini par 4 marqueurs qui forment un rectangle."
-" À l’aide du pointeur de calibration du robot, les positions sont "
+" À l’aide de la pointe de calibration du robot, les positions sont "
 "enregistrées. La caméra renvoie des poses (x, y, yaw) par rapport à "
 "l'espace de travail. Nous pouvons alors déduire la pose absolue de "
 "l'objet en coordonnées du robot."
@@ -98,7 +99,7 @@ msgstr ""
 "moment. Par conséquent, nous avons un outil par défaut pour tous les "
 "outils qui est sélectionné automatiquement en fonction de l'ID de l'outil"
 " actuel. Cependant, tout est prêt si vous souhaitez définir des outils "
-"personnalisés, par exemple pour des outils personnalisés ou pour des "
+"personnalisés, par exemple pour des mors personnalisés ou pour des "
 "positions d'outils personnalisées."
 
 #: ../../source/ros/niryo_robot_poses_handlers.rst:39

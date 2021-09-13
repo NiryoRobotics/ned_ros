@@ -6,12 +6,13 @@
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
-#, fuzzy
+
+
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-26 16:48+0000\n"
+"POT-Creation-Date: 2021-09-13 09:16+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -246,7 +247,7 @@ msgid "100"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:113
-msgid "Send Joint Move command with stored joints"
+msgid "Sends Joint Move command with stored joints"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:114
@@ -254,7 +255,7 @@ msgid "101"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:115
-msgid "Send Pose Move command with stored position and orientation"
+msgid "Sends Pose Move command with stored position and orientation"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:116
@@ -262,7 +263,7 @@ msgid "102"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:117
-msgid "Send Pose Linear Move command with stored position and orientation"
+msgid "Sends Pose Linear Move command with stored position and orientation"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:118
@@ -270,7 +271,7 @@ msgid "110"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:119
-msgid "Stop current command execution"
+msgid "Stops current command execution"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:120
@@ -347,7 +348,7 @@ msgid "310"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:139
-msgid "Request new calibration"
+msgid "Requests new calibration"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:140
@@ -355,7 +356,7 @@ msgid "311"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:141
-msgid "Start auto calibration"
+msgid "Starts auto calibration"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:142
@@ -363,7 +364,7 @@ msgid "312"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:143
-msgid "Start manual calibration"
+msgid "Starts manual calibration"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:144
@@ -390,7 +391,7 @@ msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:149
 msgid ""
-"Update the tool id according to the gripper plugged (gripper 1: 11, "
+"Updates the tool id according to the gripper plugged (gripper 1: 11, "
 "gripper 2: 12, gripper 3: 13, vaccum pump: 31)"
 msgstr ""
 
@@ -399,7 +400,7 @@ msgid "501"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:151
-msgid "Store the tool id"
+msgid "Stores the tool id"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:152
@@ -407,7 +408,7 @@ msgid "510"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:153
-msgid "Open gripper previously updated"
+msgid "Opens gripper previously updated"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:154
@@ -415,7 +416,7 @@ msgid "511"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:155
-msgid "Close gripper with given id"
+msgid "Closes gripper with given id"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:156
@@ -423,7 +424,7 @@ msgid "512"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:157
-msgid "Pull air vacuum pump from given id"
+msgid "Pulls air vacuum pump from given id"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:158
@@ -431,7 +432,7 @@ msgid "513"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:159
-msgid "Push air vacuum pump from given id"
+msgid "Pushes air vacuum pump from given id"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:160
@@ -439,7 +440,7 @@ msgid "520"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:161
-msgid "Enable a Conveyor Belt newly connected [on success: store it's ID at 152]"
+msgid "Enables a Conveyor Belt newly connected [on success: store it's ID at 152]"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:162
@@ -447,7 +448,7 @@ msgid "521"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:163
-msgid "Detach / disable Conveyor Belt with the Conveyor Belt ID given at 525"
+msgid "Detaches / disables Conveyor Belt with the Conveyor Belt ID given at 525"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:164
@@ -479,7 +480,7 @@ msgid "525 [related to 520/521/522/526]"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:171
-msgid "Store the Conveyor Belt ID for all related command"
+msgid "Stores the Conveyor Belt ID for all related command"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:172
@@ -487,7 +488,7 @@ msgid "526"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:173
-msgid "Stop Conveyor Belt with the Conveyor Belt ID given at 525"
+msgid "Stops Conveyor Belt with the Conveyor Belt ID given at 525"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:174
@@ -514,7 +515,7 @@ msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:179
 msgid ""
-"Vision - Get target pose from relative pose, with stored relative pose "
+"Vision - Gets target pose from relative pose, with stored relative pose "
 "and height_offset"
 msgstr ""
 
@@ -524,8 +525,8 @@ msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:181
 msgid ""
-"Vision - Get target pose from camera, with stored workspace name, height "
-"offset, shape and color"
+"Vision - Gets target pose from camera, with stored workspace name, height"
+" offset, shape and color"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:182
@@ -544,8 +545,8 @@ msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:185
 msgid ""
-"Vision - Move to object, with stored workspace name, height offset, shape"
-" and color"
+"Vision - Moves to object, with stored workspace name, height offset, "
+"shape and color"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:186
@@ -553,7 +554,7 @@ msgid "614"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:187
-msgid "Vision - Detect object, with stored workspace name, shape and color"
+msgid "Vision - Detects object, with stored workspace name, shape and color"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:188
@@ -561,7 +562,7 @@ msgid "620"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:189
-msgid "Vision - Store workspace's height offset"
+msgid "Vision - Stores workspace's height offset"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:190
@@ -569,7 +570,7 @@ msgid "621"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:191
-msgid "Vision - Store relative pose x_rel"
+msgid "Vision - Stores relative pose x_rel"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:192
@@ -577,7 +578,7 @@ msgid "622"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:193
-msgid "Vision - Store relative pose y_rel"
+msgid "Vision - Stores relative pose y_rel"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:194
@@ -585,7 +586,7 @@ msgid "623"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:195
-msgid "Vision - Store relative pose yaw_rel"
+msgid "Vision - Stores relative pose yaw_rel"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:196
@@ -594,7 +595,7 @@ msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:197
 msgid ""
-"Vision - Store requested shape (-1: ANY, 1: CIRCLE, 2: SQUARE, 3: "
+"Vision - Stores requested shape (-1: ANY, 1: CIRCLE, 2: SQUARE, 3: "
 "TRIANGLE)"
 msgstr ""
 
@@ -603,7 +604,7 @@ msgid "625"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:199
-msgid "Vision - Store requested color (-1: ANY, 1: BLUE, 2: RED, 3: GREEN)"
+msgid "Vision - Stores requested color (-1: ANY, 1: BLUE, 2: RED, 3: GREEN)"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:200
@@ -612,8 +613,8 @@ msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:201
 msgid ""
-"Vision - Store workspace's name, as a string encoded in 16 bits hex (see "
-"examples on how to store a workspace name from a client)"
+"Vision - Stores workspace's name, as a string encoded in 16 bits hex (see"
+" examples on how to store a workspace name from a client)"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:204
@@ -864,5 +865,112 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "Open gripper with given id"
+#~ msgstr ""
+
+#~ msgid "Send Joint Move command with stored joints"
+#~ msgstr ""
+
+#~ msgid "Send Pose Move command with stored position and orientation"
+#~ msgstr ""
+
+#~ msgid "Send Pose Linear Move command with stored position and orientation"
+#~ msgstr ""
+
+#~ msgid "Stop current command execution"
+#~ msgstr ""
+
+#~ msgid "Request new calibration"
+#~ msgstr ""
+
+#~ msgid "Start auto calibration"
+#~ msgstr ""
+
+#~ msgid "Start manual calibration"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Update the tool id according to "
+#~ "the gripper plugged (gripper 1: 11, "
+#~ "gripper 2: 12, gripper 3: 13, "
+#~ "vaccum pump: 31)"
+#~ msgstr ""
+
+#~ msgid "Store the tool id"
+#~ msgstr ""
+
+#~ msgid "Open gripper previously updated"
+#~ msgstr ""
+
+#~ msgid "Close gripper with given id"
+#~ msgstr ""
+
+#~ msgid "Pull air vacuum pump from given id"
+#~ msgstr ""
+
+#~ msgid "Push air vacuum pump from given id"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Enable a Conveyor Belt newly connected"
+#~ " [on success: store it's ID at "
+#~ "152]"
+#~ msgstr ""
+
+#~ msgid "Detach / disable Conveyor Belt with the Conveyor Belt ID given at 525"
+#~ msgstr ""
+
+#~ msgid "Store the Conveyor Belt ID for all related command"
+#~ msgstr ""
+
+#~ msgid "Stop Conveyor Belt with the Conveyor Belt ID given at 525"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Vision - Get target pose from "
+#~ "relative pose, with stored relative pose"
+#~ " and height_offset"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Vision - Get target pose from "
+#~ "camera, with stored workspace name, "
+#~ "height offset, shape and color"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Vision - Move to object, with "
+#~ "stored workspace name, height offset, "
+#~ "shape and color"
+#~ msgstr ""
+
+#~ msgid "Vision - Detect object, with stored workspace name, shape and color"
+#~ msgstr ""
+
+#~ msgid "Vision - Store workspace's height offset"
+#~ msgstr ""
+
+#~ msgid "Vision - Store relative pose x_rel"
+#~ msgstr ""
+
+#~ msgid "Vision - Store relative pose y_rel"
+#~ msgstr ""
+
+#~ msgid "Vision - Store relative pose yaw_rel"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Vision - Store requested shape (-1: "
+#~ "ANY, 1: CIRCLE, 2: SQUARE, 3: "
+#~ "TRIANGLE)"
+#~ msgstr ""
+
+#~ msgid "Vision - Store requested color (-1: ANY, 1: BLUE, 2: RED, 3: GREEN)"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Vision - Store workspace's name, as "
+#~ "a string encoded in 16 bits hex"
+#~ " (see examples on how to store "
+#~ "a workspace name from a client)"
 #~ msgstr ""
 

@@ -10,7 +10,7 @@ This document shows how to use Ned's Conveyor Belt.
 
 Simple Conveyor Belt control
 -------------------------------
-This short example shows how to connect a Conveyor Belt, activating connection and
+This short example shows how to connect a Conveyor Belt, activate the connection and
 launch its motor: ::
 
     niryo_robot = NiryoRosWrapper()
