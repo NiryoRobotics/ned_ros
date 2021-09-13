@@ -357,12 +357,9 @@ bool ToolsInterfaceCore::_callbackOpenGripper(tools_interface::OpenGripper::Requ
         _ttl_interface->addSingleCommandToQueue(std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_EFFORT,
                                                                                     tool_id,  std::initializer_list<uint32_t>{req.open_max_torque}));
 
-        ROS_DEBUG("TEST30");
         double dxl_speed = static_cast<double>(req.open_speed * _toolState->getStepsForOneSpeed());  // position . sec-1
         assert(dxl_speed != 0.00);
-        ROS_DEBUG("TEST31");
         double dxl_steps_to_do = std::abs(static_cast<double>(req.open_position) - _toolState->getPositionState());
-        ROS_DEBUG("TEST32");
         double seconds_to_wait =  dxl_steps_to_do /  dxl_speed + 0.25;  // sec
         ROS_DEBUG("Waiting for %f seconds", seconds_to_wait);
         ros::Duration(seconds_to_wait).sleep();
