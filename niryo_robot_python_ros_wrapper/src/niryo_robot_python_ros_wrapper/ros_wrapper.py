@@ -627,7 +627,7 @@ class NiryoRosWrapper:
         """
         Make a Jog on end-effector position
 
-        :param shift_values: list corresponding to the shift to be applied to each joint
+        :param shift_values: list corresponding to the shift to be applied to the position
         :type shift_values: list[float]
         :return: status, message
         :rtype: (int, str)
@@ -1328,7 +1328,7 @@ class NiryoRosWrapper:
     def reset_tcp(self):
         """
         Reset the TCP (Tool Center Point) transformation.
-        The PCO will be reset according to the tool equipped.
+        The TCP will be reset according to the tool equipped.
 
         :return: status, message
         :rtype: (int, str)
