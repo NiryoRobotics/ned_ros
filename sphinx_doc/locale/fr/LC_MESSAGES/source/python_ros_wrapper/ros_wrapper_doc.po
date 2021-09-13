@@ -76,6 +76,8 @@ msgid ""
 "Call service to calibrate motors then wait for its end. If failed, raise "
 "NiryoRosWrapperException"
 msgstr ""
+"Appelle le service pour calibrer les moteurs, puis attend que la calibration soit "
+"terminée. Si ce n'est pas réussi, soulève ? NiryoRosWrapperException"
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.activate_electromagnet
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.calibrate_auto
@@ -150,7 +152,7 @@ msgstr ""
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.update_tool
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.vision_pick of
 msgid "Returns"
-msgstr ""
+msgstr "Renvoie"
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.activate_electromagnet:5
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.calibrate_auto:3
@@ -200,7 +202,7 @@ msgstr ""
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.unset_conveyor:6
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.update_tool:3 of
 msgid "status, message"
-msgstr ""
+msgstr "Statut, message"
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.activate_electromagnet
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.calibrate_auto
@@ -275,7 +277,7 @@ msgstr ""
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.update_tool
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.vision_pick of
 msgid "Return type"
-msgstr ""
+msgstr "Type renvoyé"
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_learning_mode:1
 #: of
@@ -283,11 +285,13 @@ msgid ""
 "Use /niryo_robot/learning_mode/state topic subscriber to get learning "
 "mode status"
 msgstr ""
+"Utilise /niryo_robot/learning_mode/state topic subscriber pour obtenir le statut "
+"du mode apprentissage"
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_learning_mode:3
 #: of
 msgid "``True`` if activate else ``False``"
-msgstr ""
+msgstr "``True`` si activé, sinon ``False`"
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_learning_mode:1
 #: of
@@ -295,6 +299,8 @@ msgid ""
 "Call service to set_learning_mode according to set_bool. If failed, raise"
 " NiryoRosWrapperException"
 msgstr ""
+"Appelle le service pour set_learning_mode en fonction de set_book. Si échec, "
+"soulève un NiryoRosWrapperException"
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.activate_electromagnet
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.close_gripper
@@ -349,22 +355,22 @@ msgstr ""
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.unset_conveyor
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.vision_pick of
 msgid "Parameters"
-msgstr ""
+msgstr "Paramètre"
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_learning_mode:3
 #: of
 msgid "``True`` to activate, ``False`` to deactivate"
-msgstr ""
+msgstr "``True`` pour activer, ``False`` pour désactiver"
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_arm_max_velocity:1
 #: of
 msgid "Set relative max velocity (in %)"
-msgstr ""
+msgstr "Définir la vitesse relative maximum (en %) "
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_arm_max_velocity:3
 #: of
 msgid "Percentage of max velocity"
-msgstr ""
+msgstr "Pourcentage de la vitesse maximum"
 
 #: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:39
 msgid "Joints & Pose"
