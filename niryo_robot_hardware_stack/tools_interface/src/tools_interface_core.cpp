@@ -41,7 +41,6 @@ using ::common::model::EHardwareType;
 using ::common::model::HardwareTypeEnum;
 using ::common::model::ToolState;
 using ::common::model::EDxlCommandType;
-using ::common::model::DxlCommandTypeEnum;
 using ::common::model::DxlSingleCmd;
 
 namespace tools_interface
@@ -58,9 +57,9 @@ ToolsInterfaceCore::ToolsInterfaceCore(ros::NodeHandle& nh,
 {
     ROS_DEBUG("ToolsInterfaceCore::ctor");
 
-    init(nh);
- 
-    pubToolId(-1);
+    //init(nh);
+
+    //pubToolId(-1);
 }
 
 /**
@@ -123,7 +122,7 @@ void ToolsInterfaceCore::initParameters(ros::NodeHandle& nh)
     available_tools_list += "]";
 
     ROS_INFO("ToolsInterfaceCore::initParameters - List of tool ids : %s", available_tools_list.c_str());
-    ROS_DEBUG("EndEffectorInterfaceCore::initParameters - check tool connection frequency : %f", _check_tool_connection_frequency);
+    ROS_DEBUG("ToolsInterfaceCore::initParameters - check tool connection frequency : %f", _check_tool_connection_frequency);
 
     // check that the two lists have the same size
     if (idList.size() != typeList.size())
@@ -234,7 +233,7 @@ bool ToolsInterfaceCore::_callbackPingAndSetTool(tools_interface::PingDxlTool::R
     res.state = ToolState::TOOL_STATE_PING_ERROR;
 
     // Unequip tool
-    if (_toolState->isValid())
+    if (_toolState && _toolState->isValid())
     {
         _ttl_interface->unsetTool(_toolState->getId());
         res.id = 0;
@@ -256,7 +255,7 @@ bool ToolsInterfaceCore::_callbackPingAndSetTool(tools_interface::PingDxlTool::R
     }
 
     // if new tool has been found
-    if (_toolState->isValid())
+    if (_toolState && _toolState->isValid())
     {
         // Try 3 times
         for (int tries = 0; tries < 3; tries++)
@@ -554,7 +553,7 @@ void ToolsInterfaceCore::_publishToolConnection()
             lock_guard<mutex> lck(_tool_mutex);
             std::vector<uint8_t> motor_list = _ttl_interface->getRemovedMotorList();
 
-            if (_toolState->isValid())
+            if (_toolState && _toolState->isValid())
             {
                 for (auto const& motor : motor_list)
                 {
@@ -569,7 +568,9 @@ void ToolsInterfaceCore::_publishToolConnection()
                 }
             }
             else
+            {
                 msg.data = -1;
+            }
         }
         check_connection_rate.sleep();
     }
