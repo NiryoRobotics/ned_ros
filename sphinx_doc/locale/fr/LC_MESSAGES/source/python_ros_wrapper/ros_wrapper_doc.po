@@ -714,7 +714,7 @@ msgstr ""
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.release_with_tool:7
 #: of
 msgid "[Only required for electromagnet] Pin ID of the electromagnet"
-msgstr "[Seulement pour l'électroaimant] L'ID de la pin de l'électroaimant"
+msgstr "[Seulement pour l'électroaimant] L'ID de la broche de l'électroaimant"
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.release_with_tool:1
 #: of
@@ -757,7 +757,7 @@ msgstr "Installation de l'électroaimant sur la pin"
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.setup_electromagnet:3
 #: of
 msgid "Pin ID"
-msgstr "Id de la pin"
+msgstr "Id de la broche"
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.activate_electromagnet:1
 #: of
@@ -798,7 +798,7 @@ msgid ""
 "Reset the TCP (Tool Center Point) transformation. The TCP will be reset "
 "according to the tool equipped."
 msgstr ""
-"Réinitialise la transformation du PCO (Point Central Objet. Le PCO est "
+"Réinitialise la transformation du PCO (Point Central Objet). Le PCO est "
 "réinitialisé selon l'outil équipé."
 
 #: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:81
@@ -807,7 +807,7 @@ msgstr "Matériel"
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_pin_mode:1 of
 msgid "Set pin number pin_id to mode pin_mode"
-msgstr "Initialise le numéro de broche pin_id dans le mose pin_mode"
+msgstr "Initialise le numéro de broche pin_id dans le mode pin_mode"
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.digital_write:1
 #: of
