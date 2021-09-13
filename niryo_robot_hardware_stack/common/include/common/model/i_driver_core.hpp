@@ -57,7 +57,7 @@ class IDriverCore
         virtual void setSyncCommand(const std::shared_ptr<common::model::ISynchronizeMotorCmd>& cmd) = 0;
 
         // driver for conveyor
-        virtual int setConveyor(const common::model::ConveyorState& state) = 0;
+        virtual int setConveyor(const std::shared_ptr<common::model::ConveyorState> state) = 0;
         virtual void unsetConveyor(uint8_t motor_id) = 0;
 
         // calibration
@@ -73,7 +73,7 @@ class IDriverCore
         virtual niryo_robot_msgs::BusState getBusState() const = 0;
 
         virtual std::vector<std::shared_ptr<common::model::JointState> > getJointStates() const = 0;
-        virtual common::model::JointState getJointState(uint8_t motor_id) const = 0;
+        virtual std::shared_ptr<common::model::JointState> getJointState(uint8_t motor_id) const = 0;
         
     private:
         virtual void resetHardwareControlLoopRates() = 0;

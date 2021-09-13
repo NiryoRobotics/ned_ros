@@ -51,18 +51,11 @@ using ::std::set;
 
 using ::common::model::EStepperCalibrationStatus;
 using ::common::model::StepperMotorState;
-using ::common::model::ConveyorState;
 using ::common::model::EndEffectorState;
 using ::common::model::JointState;
 using ::common::model::EHardwareType;
-using ::common::model::DxlMotorState;
-using ::common::model::ToolState;
 using ::common::model::HardwareTypeEnum;
-using ::common::model::SynchronizeMotorCmd;
-using ::common::model::SingleMotorCmd;
-using ::common::model::EDxlCommandType;
 using ::common::model::EHardwareType;
-using ::common::model::EBusProtocol;
 
 namespace ttl_driver
 {
@@ -218,6 +211,36 @@ int TtlManager::setupCommunication()
 // ****************
 //  commands
 // ****************
+
+/**
+ * @brief TtlManager::addHardwareComponent
+ * @param state
+ */
+void TtlManager::addHardwareComponent(const std::shared_ptr<common::model::AbstractHardwareState> state)
+{
+    common::model::EHardwareType hardware_type = state->getHardwareType();
+    uint8_t id = state->getId();
+
+    ROS_DEBUG("TtlManager::addHardwareComponent : %s", state->str().c_str());
+
+    // if not already instanciated
+    if (!_state_map.count(id))
+    {
+      _state_map.insert(std::make_pair(id, state));
+    }
+
+    // if not already instanciated
+    if (!_ids_map.count(hardware_type))
+    {
+        _ids_map.insert(std::make_pair(hardware_type, std::vector<uint8_t>({id})));
+    }
+    else
+    {
+        _ids_map.at(hardware_type).push_back(id);
+    }
+
+    addHardwareDriver(hardware_type);
+}
 
 /**
  * @brief TtlManager::scanAndCheck

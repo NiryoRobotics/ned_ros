@@ -59,7 +59,7 @@ ToolsInterfaceCore::ToolsInterfaceCore(ros::NodeHandle& nh,
     ROS_DEBUG("ToolsInterfaceCore::ctor");
 
     init(nh);
-
+ 
     pubToolId(-1);
 }
 
@@ -234,13 +234,13 @@ bool ToolsInterfaceCore::_callbackPingAndSetTool(tools_interface::PingDxlTool::R
     res.state = ToolState::TOOL_STATE_PING_ERROR;
 
     // Unequip tool
-    if (_toolState.isValid())
+    if (_toolState->isValid())
     {
-        _ttl_interface->unsetTool(_toolState.getId());
+        _ttl_interface->unsetTool(_toolState->getId());
         res.id = 0;
 
         // reset tool as default = no tool
-        _toolState.reset();
+        _toolState->reset();
     }
 
     // Search new tool
@@ -250,13 +250,13 @@ bool ToolsInterfaceCore::_callbackPingAndSetTool(tools_interface::PingDxlTool::R
     {
         if (_available_tools_map.count(m_id))
         {
-            _toolState = ToolState("auto", _available_tools_map.at(m_id), m_id);
+            _toolState = std::make_shared<ToolState>("auto", _available_tools_map.at(m_id), m_id);
             break;
         }
     }
 
     // if new tool has been found
-    if (_toolState.isValid())
+    if (_toolState->isValid())
     {
         // Try 3 times
         for (int tries = 0; tries < 3; tries++)
@@ -267,9 +267,9 @@ bool ToolsInterfaceCore::_callbackPingAndSetTool(tools_interface::PingDxlTool::R
             // on success, tool is set, we go out of loop
             if (niryo_robot_msgs::CommandStatus::SUCCESS == result)
             {
-                pubToolId(_toolState.getId());
+                pubToolId(_toolState->getId());
                 res.state = ToolState::TOOL_STATE_PING_OK;
-                res.id = _toolState.getId();
+                res.id = _toolState->getId();
 
                 ros::Duration(0.05).sleep();
                 ROS_INFO("ToolsInterfaceCore::_callbackPingAndSetDxlTool - Set end effector success");
@@ -317,10 +317,10 @@ bool ToolsInterfaceCore::_callbackToolReboot(std_srvs::Trigger::Request &/*req*/
 {
     res.success = false;
 
-    if (_toolState.isValid())
+    if (_toolState->isValid())
     {
         std::lock_guard<std::mutex> lck(_tool_mutex);
-        res.success = _ttl_interface->rebootMotor(_toolState.getId());
+        res.success = _ttl_interface->rebootMotor(_toolState->getId());
         res.message = (res.success) ? "Tool reboot succeeded" : "Tool reboot failed";
     }
     else
@@ -343,9 +343,9 @@ bool ToolsInterfaceCore::_callbackOpenGripper(tools_interface::OpenGripper::Requ
 {
     lock_guard<mutex> lck(_tool_mutex);
     res.state = ToolState::TOOL_STATE_WRONG_ID;
-    uint8_t tool_id = _toolState.getId();
+    uint8_t tool_id = _toolState->getId();
 
-    if (_toolState.isValid() && req.id == tool_id)
+    if (_toolState->isValid() && req.id == tool_id)
     {
         _ttl_interface->addSingleCommandToQueue(std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_VELOCITY,
                                                                                    tool_id, std::initializer_list<uint32_t>{req.open_speed}));
@@ -358,7 +358,7 @@ bool ToolsInterfaceCore::_callbackOpenGripper(tools_interface::OpenGripper::Requ
         _ttl_interface->addSingleCommandToQueue(std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_EFFORT,
                                                                                     tool_id,  std::initializer_list<uint32_t>{req.open_max_torque}));
 
-        double dxl_speed = static_cast<double>(req.open_speed * _toolState.getStepsForOneSpeed());  // position . sec-1
+        double dxl_speed = static_cast<double>(req.open_speed * _toolState->getStepsForOneSpeed());  // position . sec-1
         assert(dxl_speed != 0.00);
 
         double dxl_steps_to_do = std::abs(static_cast<double>(req.open_position) - _ttl_interface->getPosition(tool_id));
@@ -389,9 +389,9 @@ bool ToolsInterfaceCore::_callbackCloseGripper(tools_interface::CloseGripper::Re
 {
     lock_guard<mutex> lck(_tool_mutex);
     res.state = ToolState::TOOL_STATE_WRONG_ID;
-    uint8_t tool_id = _toolState.getId();
+    uint8_t tool_id = _toolState->getId();
 
-    if (_toolState.isValid() && req.id == tool_id)
+    if (_toolState->isValid() && req.id == tool_id)
     {
         uint32_t position_command = (req.close_position < 50) ? 0 : req.close_position - 50;
 
@@ -406,7 +406,7 @@ bool ToolsInterfaceCore::_callbackCloseGripper(tools_interface::CloseGripper::Re
 
         // calculate close duration
         // cc to be removed => acknoledge instead
-        double dxl_speed = static_cast<double>(req.close_speed * _toolState.getStepsForOneSpeed());  // position . sec-1
+        double dxl_speed = static_cast<double>(req.close_speed * _toolState->getStepsForOneSpeed());  // position . sec-1
         assert(dxl_speed != 0.0);
 
         // position
@@ -439,10 +439,10 @@ bool ToolsInterfaceCore::_callbackPullAirVacuumPump(tools_interface::PullAirVacu
 {
     lock_guard<mutex> lck(_tool_mutex);
     res.state = ToolState::TOOL_STATE_WRONG_ID;
-    uint8_t tool_id = _toolState.getId();
+    uint8_t tool_id = _toolState->getId();
 
     // check gripper id, in case no ping has been done before, or wrong id given
-    if (_toolState.isValid() && req.id == _toolState.getId())
+    if (_toolState->isValid() && req.id == _toolState->getId())
     {
         // to be put in tool state
         uint32_t pull_air_velocity = static_cast<uint32_t>(req.pull_air_velocity);
@@ -463,7 +463,7 @@ bool ToolsInterfaceCore::_callbackPullAirVacuumPump(tools_interface::PullAirVacu
 
             // calculate close duration
             // cc to be removed => acknoledge instead
-            double dxl_speed = static_cast<double>(req.pull_air_velocity * _toolState.getStepsForOneSpeed());  // position . sec-1
+            double dxl_speed = static_cast<double>(req.pull_air_velocity * _toolState->getStepsForOneSpeed());  // position . sec-1
             assert(dxl_speed != 0.0);
 
             // position
@@ -496,10 +496,10 @@ bool ToolsInterfaceCore:: _callbackPushAirVacuumPump(tools_interface::PushAirVac
 {
     lock_guard<mutex> lck(_tool_mutex);
     res.state = ToolState::TOOL_STATE_WRONG_ID;
-    uint8_t tool_id = _toolState.getId();
+    uint8_t tool_id = _toolState->getId();
 
     // check gripper id, in case no ping has been done before, or wrong id given
-    if (_toolState.isValid() && req.id == _toolState.getId())
+    if (_toolState->isValid() && req.id == _toolState->getId())
     {
         // to be defined in the toolstate
         uint32_t push_air_velocity = static_cast<uint32_t>(req.push_air_velocity);
@@ -519,7 +519,7 @@ bool ToolsInterfaceCore:: _callbackPushAirVacuumPump(tools_interface::PushAirVac
                                                                                         tool_id, std::initializer_list<uint32_t>{push_air_max_torque}));
 
             // cc to be removed => acknoledge instead
-            double dxl_speed = static_cast<double>(req.push_air_velocity * _toolState.getStepsForOneSpeed());  // position . sec-1
+            double dxl_speed = static_cast<double>(req.push_air_velocity * _toolState->getStepsForOneSpeed());  // position . sec-1
             assert(dxl_speed != 0.0);
 
             // position
@@ -554,15 +554,15 @@ void ToolsInterfaceCore::_publishToolConnection()
             lock_guard<mutex> lck(_tool_mutex);
             std::vector<uint8_t> motor_list = _ttl_interface->getRemovedMotorList();
 
-            if (_toolState.isValid())
+            if (_toolState->isValid())
             {
                 for (auto const& motor : motor_list)
                 {
-                    if (_toolState.getId() == motor)
+                    if (_toolState->getId() == motor)
                     {
                         ROS_INFO("Tools Interface - Unset Current Tools");
-                        _ttl_interface->unsetTool(_toolState.getId());
-                        _toolState.reset();
+                        _ttl_interface->unsetTool(_toolState->getId());
+                        _toolState->reset();
                         msg.data = -1;
                         _tool_connection_publisher.publish(msg);
                     }

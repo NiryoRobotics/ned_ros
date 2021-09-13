@@ -147,9 +147,9 @@ bool JointHardwareInterface::init(ros::NodeHandle& rootnh, ros::NodeHandle &robo
                 _map_stepper_name[stepperState->getId()] = stepperState->getName();
 
                 if (eBusProto == EBusProtocol::CAN)
-                    _can_interface->addJoint(*stepperState.get());
+                    _can_interface->addJoint(stepperState);
                 else if (eBusProto == EBusProtocol::TTL)
-                    _ttl_interface->addJoint(*stepperState.get());
+                    _ttl_interface->addJoint(stepperState);
 
                 currentIdStepper++;
             }
@@ -210,7 +210,7 @@ bool JointHardwareInterface::init(ros::NodeHandle& rootnh, ros::NodeHandle &robo
                   ROS_ERROR("JointHardwareInterface::init : Dynamixel motors are not available on CAN Bus");
                 }
                 else if (eBusProto == EBusProtocol::TTL)
-                    _ttl_interface->addJoint(*dxlState.get());
+                    _ttl_interface->addJoint(dxlState);
 
                 currentIdDxl++;
             }
@@ -309,25 +309,9 @@ void JointHardwareInterface::read(const ros::Time &/*time*/, const ros::Duration
     {
         if (jState && jState->isValid())
         {
-            common::model::JointState state;
-            if (jState->getBusProtocol() == EBusProtocol::CAN)
-            {
-                state = _can_interface->getJointState(jState->getId());
-            }
-            if (jState->getBusProtocol() == EBusProtocol::TTL)
-            {
-                state = _ttl_interface->getJointState(jState->getId());
-            }
-
-            newPositionState = state.getPositionState();
+            newPositionState = jState->getPositionState();
 
             jState->pos = jState->to_rad_pos(newPositionState);
-
-            //TODO(CC) to be refactorized
-            jState->setFirmwareVersion(state.getFirmwareVersion());
-            jState->setVoltage(state.getVoltage());
-            jState->setTemperature(state.getTemperature());
-            jState->setHardwareError(state.getHardwareError());
         }
     }
 

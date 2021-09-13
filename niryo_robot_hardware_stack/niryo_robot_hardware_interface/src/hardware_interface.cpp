@@ -163,8 +163,7 @@ void HardwareInterface::initNodes(ros::NodeHandle &nh)
         {
             ROS_DEBUG("HardwareInterface::initNodes - Start End Effector Interface Node");
             ros::NodeHandle nh_ee(nh, "end_effector_interface");
-            _end_effector_interface = std::make_shared<
-                                        end_effector_interface::EndEffectorInterfaceCore>(nh_ee,
+            _end_effector_interface = std::make_shared<end_effector_interface::EndEffectorInterfaceCore>(nh_ee,
                                                                                             _ttl_interface);
         }
         ros::Duration(0.25).sleep();
@@ -439,11 +438,11 @@ void HardwareInterface::_publishHardwareStatus()
         {
             auto state = _end_effector_interface->getEndEffectorState();
             motor_names.emplace_back("End Effector");
-            voltages.emplace_back(state.getVoltage());
-            temperatures.emplace_back(state.getTemperature());
-            hw_errors.emplace_back(state.getHardwareError());
-            hw_errors_msg.emplace_back(state.getHardwareErrorMessage());
-            motor_types.emplace_back(common::model::HardwareTypeEnum(state.getHardwareType()).toString());
+            voltages.emplace_back(state->getVoltage());
+            temperatures.emplace_back(state->getTemperature());
+            hw_errors.emplace_back(state->getHardwareError());
+            hw_errors_msg.emplace_back(state->getHardwareErrorMessage());
+            motor_types.emplace_back(common::model::HardwareTypeEnum(state->getHardwareType()).toString());
         }
 
         cpu_temperature = _cpu_interface->getCpuTemperature();
@@ -502,7 +501,7 @@ void HardwareInterface::_publishSoftwareVersion()
         {
             auto state = _end_effector_interface->getEndEffectorState();
             motor_names.emplace_back("End Effector");
-            firmware_versions.emplace_back(state.getFirmwareVersion());
+            firmware_versions.emplace_back(state->getFirmwareVersion());
         }
 
         niryo_robot_msgs::SoftwareVersion msg;

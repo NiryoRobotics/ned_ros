@@ -49,9 +49,9 @@ namespace conveyor_interface
  */
 ConveyorInterfaceCore::ConveyorInterfaceCore(ros::NodeHandle& nh,
                                              shared_ptr<common::model::IDriverCore> conveyor_driver):
-    _conveyor_driver(conveyor_driver),
-    _conveyor_state(conveyor_driver->getBusProtocol())
+    _conveyor_driver(conveyor_driver)
 {
+    _conveyor_state = std::make_shared<ConveyorState>(conveyor_driver->getBusProtocol());
     ROS_DEBUG("ConveyorInterfaceCore::ConveyorInterfaceCore - ctor");
     init(nh);
 }
@@ -111,7 +111,7 @@ void ConveyorInterfaceCore::initParameters(ros::NodeHandle& nh)
     ROS_DEBUG("ConveyorInterfaceCore::initParameters - default conveyor id : %d", default_conveyor_id);
 
     // update conveyor state with information
-    _conveyor_state.initialize(static_cast<uint8_t>(default_conveyor_id),
+    _conveyor_state->initialize(static_cast<uint8_t>(default_conveyor_id),
                               max_effort,
                               micro_steps);
 
@@ -180,10 +180,10 @@ ConveyorInterfaceCore::addConveyor()
     {
         // take last
         uint8_t conveyor_id = *_conveyor_pool_id_list.begin();
-        _conveyor_state.updateId(conveyor_id);
+        _conveyor_state->updateId(conveyor_id);
 
         // if new tool has been found
-        if (_conveyor_state.isValid())
+        if (_conveyor_state->isValid())
         {
           // Try 3 times
           for (int tries = 0; tries < 3; tries++)
@@ -383,26 +383,16 @@ void ConveyorInterfaceCore::_publishConveyorsFeedback()
         conveyor_interface::ConveyorFeedbackArray msg;
         conveyor_interface::ConveyorFeedback data;
 
-        // CC to be checked
-        for (auto sState : _conveyor_driver->getJointStates())
-        {
-            if (sState->isStepper())
-            {
-                if (sState && dynamic_pointer_cast<common::model::StepperMotorState>(sState)->isConveyor())
-                {
-                    auto cState = dynamic_pointer_cast<ConveyorState>(sState);
-                    data.conveyor_id = cState->getId();
-                    data.running = cState->getState();
+        data.conveyor_id = _conveyor_state->getId();
+        data.running = _conveyor_state->getState();
 
-                    // TODO(CC) implicit conversion loses integer precision
-                    data.direction = static_cast<int8_t>(cState->getDirection());
-                    data.speed = cState->getSpeed();
-                    msg.conveyors.push_back(data);
+        // TODO(CC) implicit conversion loses integer precision
+        data.direction = static_cast<int8_t>(_conveyor_state->getDirection());
+        data.speed = _conveyor_state->getSpeed();
+        msg.conveyors.push_back(data);
 
-                    ROS_DEBUG("ConveyorInterfaceCore::_publishConveyorsFeedback - Found a conveyor, publishing data : %s", cState->str().c_str());
-                }
-            }
-        }
+        ROS_DEBUG("ConveyorInterfaceCore::_publishConveyorsFeedback - Found a conveyor, publishing data : %s", _conveyor_state->str().c_str());
+
         _conveyors_feedback_publisher.publish(msg);
         publish_conveyor_feedback_rate.sleep();
     }

@@ -90,19 +90,18 @@ class TtlInterfaceCore : public common::model::IDriverCore, public common::model
         void addSingleCommandToQueue(const std::vector<std::shared_ptr<common::model::ISingleMotorCmd> >& cmd) override;
 
         // joints control
-        template<typename T>
-        int addJoint(const T& jointState);
+        int addJoint(const std::shared_ptr<common::model::JointState> jointState);
 
         // Tool control
-        int setTool(const common::model::ToolState& toolState);
+        int setTool(const std::shared_ptr<common::model::ToolState> toolState);
         void unsetTool(uint8_t motor_id);
         std::vector<uint8_t> scanTools();
 
         // end effector panel control
-        int setEndEffector(const common::model::EndEffectorState& end_effector_state);
+        int setEndEffector(const std::shared_ptr<common::model::EndEffectorState> end_effector_state);
 
         // conveyor control
-        int setConveyor(const common::model::ConveyorState &state) override;
+        int setConveyor(const std::shared_ptr<common::model::ConveyorState> state) override;
         void unsetConveyor(uint8_t motor_id) override;
 
         // direct commands
@@ -114,7 +113,7 @@ class TtlInterfaceCore : public common::model::IDriverCore, public common::model
         double getPosition(uint8_t id) const;
 
         std::vector<std::shared_ptr<common::model::JointState> > getJointStates() const override;
-        common::model::JointState getJointState(uint8_t motor_id) const override;
+        std::shared_ptr<common::model::JointState> getJointState(uint8_t motor_id) const override;
         common::model::EndEffectorState getEndEffectorState(uint8_t id);
 
         // IDriverCore interface
@@ -193,36 +192,6 @@ class TtlInterfaceCore : public common::model::IDriverCore, public common::model
 
         static constexpr int QUEUE_OVERFLOW = 20;
 };
-
-/**
- * @brief TtlInterfaceCore::addJoint
- * @param jointState
- * @return
- */
-template<typename T>
-int TtlInterfaceCore::addJoint(const T& jointState)
-{
-  int result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
-
-  std::lock_guard<std::mutex> lck(_control_loop_mutex);
-
-  // add dynamixel as a new tool
-  _ttl_manager->addHardwareComponent(jointState);
-
-  // try to find motor
-  if (_ttl_manager->ping(jointState.getId()))
-  {
-      // no init commands
-
-      result = niryo_robot_msgs::CommandStatus::SUCCESS;
-  }
-  else
-  {
-      ROS_WARN("TtlInterfaceCore::addJoint - No joint found with motor id %d", jointState.getId());
-  }
-
-  return result;
-}
 
 /**
  * @brief TtlInterfaceCore::isConnectionOk
