@@ -114,7 +114,7 @@ class TtlInterfaceCore : public common::model::IDriverCore, public common::model
 
         std::vector<std::shared_ptr<common::model::JointState> > getJointStates() const override;
         std::shared_ptr<common::model::JointState> getJointState(uint8_t motor_id) const override;
-        common::model::EndEffectorState getEndEffectorState(uint8_t id);
+        std::shared_ptr<common::model::EndEffectorState> getEndEffectorState(uint8_t id);
 
         // IDriverCore interface
         void startControlLoop() override;

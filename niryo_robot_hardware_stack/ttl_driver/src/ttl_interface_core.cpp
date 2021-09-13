@@ -37,17 +37,11 @@ using ::std::to_string;
 
 using ::common::model::EHardwareType;
 using ::common::model::HardwareTypeEnum;
-using ::common::model::StepperMotorState;
 using ::common::model::EndEffectorState;
 using ::common::model::DxlMotorState;
 using ::common::model::JointState;
 using ::common::model::EDxlCommandType;
-using ::common::model::DxlCommandTypeEnum;
 using ::common::model::EStepperCommandType;
-using ::common::model::EEndEffectorCommandType;
-using ::common::model::StepperCommandTypeEnum;
-using ::common::model::SingleMotorCmd;
-using ::common::model::SynchronizeMotorCmd;
 using ::common::model::AbstractTtlSingleMotorCmd;
 using ::common::model::DxlSingleCmd;
 using ::common::model::EndEffectorSingleCmd;
@@ -1006,7 +1000,7 @@ TtlInterfaceCore::getJointStates() const
 std::shared_ptr<common::model::JointState>
 TtlInterfaceCore::getJointState(uint8_t motor_id) const
 {
-    return _ttl_manager->getHardwareState<std::shared_ptr<JointState> >(motor_id);
+    return std::dynamic_pointer_cast<common::model::JointState>(_ttl_manager->getHardwareState(motor_id));
 }
 
 /**
@@ -1015,10 +1009,10 @@ TtlInterfaceCore::getJointState(uint8_t motor_id) const
  * @return
  * TODO(CC) to be refactorized
  */
-common::model::EndEffectorState
+std::shared_ptr<common::model::EndEffectorState>
 TtlInterfaceCore::getEndEffectorState(uint8_t id)
 {
-  return _ttl_manager->getHardwareState<EndEffectorState>(id);
+  return std::dynamic_pointer_cast<common::model::EndEffectorState>(_ttl_manager->getHardwareState(id));
 }
 
 /**

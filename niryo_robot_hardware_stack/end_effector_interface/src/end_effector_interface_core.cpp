@@ -164,7 +164,7 @@ void EndEffectorInterfaceCore::startSubscribers(ros::NodeHandle& /*nh*/)
 void EndEffectorInterfaceCore::initEndEffectorHardware()
 {
   // init driver
-  if (_end_effector_state->isValid())
+  if (_end_effector_state && _end_effector_state->isValid())
   {
       int result = _ttl_interface->setEndEffector(_end_effector_state);
 
@@ -191,6 +191,8 @@ void EndEffectorInterfaceCore::_publishButtonState()
 
     while (ros::ok())
     {
+        if (!_end_effector_state)
+          continue;
         lock_guard<mutex> lck(_buttons_status_mutex);
 
         for (auto const& button : _end_effector_state->getButtonsStatus())

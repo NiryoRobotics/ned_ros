@@ -117,8 +117,8 @@ class TtlManager : public common::model::IBusManager
         int getLedState() const;
 
         std::vector<std::shared_ptr<common::model::JointState> > getMotorsStates() const;
-        template<class T>
-        T getHardwareState(uint8_t motor_id) const;
+        
+        std::shared_ptr<common::model::AbstractHardwareState> getHardwareState(uint8_t motor_id) const;
 
         std::vector<uint8_t> getRemovedMotorList() const;
 
@@ -187,21 +187,6 @@ class TtlManager : public common::model::IBusManager
 };
 
 // inline getters
-
-/**
- * @brief TtlManager::getHardwareState
- * @param motor_id
- * @return
- */
-template<class T>
-T TtlManager::getHardwareState(uint8_t motor_id) const
-{
-    if (!_state_map.count(motor_id) && _state_map.at(motor_id))
-        throw std::out_of_range("TtlManager::getMotorsState: Unknown motor id");
-
-    T state = *(std::dynamic_pointer_cast<T>(_state_map.at(motor_id)));
-    return state;
-}
 
 inline
 bool TtlManager::isConnectionOk() const

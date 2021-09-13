@@ -1135,6 +1135,19 @@ TtlManager::getMotorsStates() const
 }
 
 /**
+ * @brief TtlManager::getHardwareState
+ * @param motor_id
+ * @return
+ */
+std::shared_ptr<common::model::AbstractHardwareState> TtlManager::getHardwareState(uint8_t motor_id) const
+{
+    if (!_state_map.count(motor_id) && _state_map.at(motor_id))
+        throw std::out_of_range("TtlManager::getMotorsState: Unknown motor id");
+
+    return _state_map.at(motor_id);
+}
+
+/**
  * @brief TtlManager::executeJointTrajectoryCmd
  * @param cmd_vec
  */

@@ -57,9 +57,9 @@ ToolsInterfaceCore::ToolsInterfaceCore(ros::NodeHandle& nh,
 {
     ROS_DEBUG("ToolsInterfaceCore::ctor");
 
-    //init(nh);
+    init(nh);
 
-    //pubToolId(-1);
+    pubToolId(-1);
 }
 
 /**
@@ -342,10 +342,10 @@ bool ToolsInterfaceCore::_callbackOpenGripper(tools_interface::OpenGripper::Requ
 {
     lock_guard<mutex> lck(_tool_mutex);
     res.state = ToolState::TOOL_STATE_WRONG_ID;
-    uint8_t tool_id = _toolState->getId();
 
-    if (_toolState->isValid() && req.id == tool_id)
+    if (_toolState && _toolState->isValid() && req.id == _toolState->getId())
     {
+        uint8_t tool_id = _toolState->getId();
         _ttl_interface->addSingleCommandToQueue(std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_VELOCITY,
                                                                                    tool_id, std::initializer_list<uint32_t>{req.open_speed}));
 
@@ -357,11 +357,12 @@ bool ToolsInterfaceCore::_callbackOpenGripper(tools_interface::OpenGripper::Requ
         _ttl_interface->addSingleCommandToQueue(std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_EFFORT,
                                                                                     tool_id,  std::initializer_list<uint32_t>{req.open_max_torque}));
 
+        ROS_DEBUG("TEST30");
         double dxl_speed = static_cast<double>(req.open_speed * _toolState->getStepsForOneSpeed());  // position . sec-1
         assert(dxl_speed != 0.00);
-
-        double dxl_steps_to_do = std::abs(static_cast<double>(req.open_position) - _ttl_interface->getPosition(tool_id));
-
+        ROS_DEBUG("TEST31");
+        double dxl_steps_to_do = std::abs(static_cast<double>(req.open_position) - _toolState->getPositionState());
+        ROS_DEBUG("TEST32");
         double seconds_to_wait =  dxl_steps_to_do /  dxl_speed + 0.25;  // sec
         ROS_DEBUG("Waiting for %f seconds", seconds_to_wait);
         ros::Duration(seconds_to_wait).sleep();
@@ -388,10 +389,11 @@ bool ToolsInterfaceCore::_callbackCloseGripper(tools_interface::CloseGripper::Re
 {
     lock_guard<mutex> lck(_tool_mutex);
     res.state = ToolState::TOOL_STATE_WRONG_ID;
-    uint8_t tool_id = _toolState->getId();
 
-    if (_toolState->isValid() && req.id == tool_id)
+    if (_toolState && _toolState->isValid() && req.id == _toolState->getId())
     {
+        uint8_t tool_id = _toolState->getId();
+
         uint32_t position_command = (req.close_position < 50) ? 0 : req.close_position - 50;
 
         _ttl_interface->addSingleCommandToQueue(std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_VELOCITY,
@@ -409,8 +411,7 @@ bool ToolsInterfaceCore::_callbackCloseGripper(tools_interface::CloseGripper::Re
         assert(dxl_speed != 0.0);
 
         // position
-        double dxl_steps_to_do = std::abs(static_cast<double>(req.close_position) -
-                                          _ttl_interface->getPosition(tool_id));
+        double dxl_steps_to_do = std::abs(static_cast<double>(req.close_position) - _toolState->getPositionState());
         double seconds_to_wait =  dxl_steps_to_do /  dxl_speed + 0.25;  // sec
         ROS_DEBUG("Waiting for %f seconds", seconds_to_wait);
 
@@ -438,11 +439,11 @@ bool ToolsInterfaceCore::_callbackPullAirVacuumPump(tools_interface::PullAirVacu
 {
     lock_guard<mutex> lck(_tool_mutex);
     res.state = ToolState::TOOL_STATE_WRONG_ID;
-    uint8_t tool_id = _toolState->getId();
 
     // check gripper id, in case no ping has been done before, or wrong id given
-    if (_toolState->isValid() && req.id == _toolState->getId())
+    if (_toolState && _toolState->isValid() && req.id == _toolState->getId())
     {
+        uint8_t tool_id = _toolState->getId();
         // to be put in tool state
         uint32_t pull_air_velocity = static_cast<uint32_t>(req.pull_air_velocity);
         uint32_t pull_air_position = static_cast<uint32_t>(req.pull_air_position);
@@ -466,8 +467,7 @@ bool ToolsInterfaceCore::_callbackPullAirVacuumPump(tools_interface::PullAirVacu
             assert(dxl_speed != 0.0);
 
             // position
-            double dxl_steps_to_do = std::abs(static_cast<double>(req.pull_air_position) -
-                                            _ttl_interface->getPosition(tool_id));
+            double dxl_steps_to_do = std::abs(static_cast<double>(req.pull_air_position) - _toolState->getPositionState());
             double seconds_to_wait =  dxl_steps_to_do /  dxl_speed + 0.5;  // sec
             ROS_DEBUG("Waiting for %f seconds", seconds_to_wait);
 
@@ -495,11 +495,11 @@ bool ToolsInterfaceCore:: _callbackPushAirVacuumPump(tools_interface::PushAirVac
 {
     lock_guard<mutex> lck(_tool_mutex);
     res.state = ToolState::TOOL_STATE_WRONG_ID;
-    uint8_t tool_id = _toolState->getId();
 
     // check gripper id, in case no ping has been done before, or wrong id given
-    if (_toolState->isValid() && req.id == _toolState->getId())
+    if (_toolState && _toolState->isValid() && req.id == _toolState->getId())
     {
+        uint8_t tool_id = _toolState->getId();
         // to be defined in the toolstate
         uint32_t push_air_velocity = static_cast<uint32_t>(req.push_air_velocity);
         uint32_t push_air_position = static_cast<uint32_t>(req.push_air_position);
@@ -522,8 +522,7 @@ bool ToolsInterfaceCore:: _callbackPushAirVacuumPump(tools_interface::PushAirVac
             assert(dxl_speed != 0.0);
 
             // position
-            double dxl_steps_to_do = std::abs(static_cast<double>(req.push_air_position) -
-                                            _ttl_interface->getPosition(tool_id));
+            double dxl_steps_to_do = std::abs(static_cast<double>(req.push_air_position) - _toolState->getPositionState());
             double seconds_to_wait =  dxl_steps_to_do /  dxl_speed + 0.25;  // sec
             ROS_DEBUG("Waiting for %f seconds", seconds_to_wait);
 
