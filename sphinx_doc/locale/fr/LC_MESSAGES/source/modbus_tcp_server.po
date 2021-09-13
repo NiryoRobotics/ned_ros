@@ -6,13 +6,11 @@
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
-
-
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-13 09:16+0000\n"
+"POT-Creation-Date: 2021-09-13 17:20+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,7 +23,17 @@ msgstr ""
 msgid "Use the Modbus TCP server"
 msgstr "Découvrez le serveur Modbus TCP"
 
+#: ../../source/modbus_tcp_server.rst
+msgid "todo"
+msgstr ""
+
 #: ../../source/modbus_tcp_server.rst:4
+msgid ""
+"vu avec Etienne, supprimer la partie Modbus d'ici et mettre en place une "
+"redirection vers doc Modbus."
+msgstr ""
+
+#: ../../source/modbus_tcp_server.rst:6
 msgid ""
 "Ned is permanently running a Modbus TCP Server that enables Ned to "
 "communicate with a PLC, or another computer in the same network."
@@ -33,19 +41,19 @@ msgstr ""
 "Ned exécute en permanence un serveur Modbus TCP qui permet à Ned de "
 "communiquer avec une API ou un autre ordinateur du même réseau. "
 
-#: ../../source/modbus_tcp_server.rst:7
+#: ../../source/modbus_tcp_server.rst:9
 msgid "Connection - Modbus TCP server"
 msgstr "Connexion - Serveur Modbus TCP"
 
-#: ../../source/modbus_tcp_server.rst:8
+#: ../../source/modbus_tcp_server.rst:10
 msgid "The Modbus TCP server is running on port 5020 by default."
 msgstr "Le serveur Modbus TCP s'exécute par défaut sur le port 5020."
 
-#: ../../source/modbus_tcp_server.rst:11
+#: ../../source/modbus_tcp_server.rst:13
 msgid "Description -  Modbus TCP server"
 msgstr "Description - Serveur Modbus TCP"
 
-#: ../../source/modbus_tcp_server.rst:12
+#: ../../source/modbus_tcp_server.rst:14
 msgid ""
 "It has been built on top of the `pymodbus library "
 "<https://pymodbus.readthedocs.io/en/latest/index.html>`_."
@@ -53,27 +61,27 @@ msgstr ""
 "Il a été construit au-dessus de la `librairie Pymodbus "
 "<https://pymodbus.readthedocs.io/en/latest/index.html>`_."
 
-#: ../../source/modbus_tcp_server.rst:18
+#: ../../source/modbus_tcp_server.rst:20
 msgid "All 4 Modbus datastores are implemented:"
 msgstr "Les 4 types de données suivants sont implémentés :"
 
-#: ../../source/modbus_tcp_server.rst:15
+#: ../../source/modbus_tcp_server.rst:17
 msgid "Coil."
 msgstr "Coil (bobine)."
 
-#: ../../source/modbus_tcp_server.rst:16
+#: ../../source/modbus_tcp_server.rst:18
 msgid "Discrete Input."
 msgstr "Entrée discrète."
 
-#: ../../source/modbus_tcp_server.rst:17
+#: ../../source/modbus_tcp_server.rst:19
 msgid "Holding Register."
 msgstr "Registre de détention."
 
-#: ../../source/modbus_tcp_server.rst:18
+#: ../../source/modbus_tcp_server.rst:20
 msgid "Input Register."
 msgstr "Registre d'entrée."
 
-#: ../../source/modbus_tcp_server.rst:20
+#: ../../source/modbus_tcp_server.rst:22
 msgid ""
 "Each datastore has a different set of functionalities. Note that each "
 "datastore contains a completely different set of data."
@@ -82,19 +90,19 @@ msgstr ""
 " important de noter que chaque type de données contient un ensemble de "
 "données complètement différent."
 
-#: ../../source/modbus_tcp_server.rst:22
+#: ../../source/modbus_tcp_server.rst:24
 msgid "Address tables start at 0."
 msgstr "Les tables d'adresses commencent à 0."
 
-#: ../../source/modbus_tcp_server.rst:25
+#: ../../source/modbus_tcp_server.rst:27
 msgid "Coil"
 msgstr "Coil (Bobine)"
 
-#: ../../source/modbus_tcp_server.rst:26 ../../source/modbus_tcp_server.rst:60
+#: ../../source/modbus_tcp_server.rst:28 ../../source/modbus_tcp_server.rst:62
 msgid "Each address contains a 1bit value."
 msgstr "Chaque adresse contient une valeur de 1bit."
 
-#: ../../source/modbus_tcp_server.rst:28
+#: ../../source/modbus_tcp_server.rst:30
 msgid ""
 "READ/WRITE (the stored values correspond to the last given command, not "
 "the current robot state)."
@@ -102,123 +110,123 @@ msgstr ""
 "READ/WRITE (les valeurs stockées correspondent à la dernière commande "
 "donnée, non pas à l'état actuel du robot)."
 
-#: ../../source/modbus_tcp_server.rst:32 ../../source/modbus_tcp_server.rst:65
-#: ../../source/modbus_tcp_server.rst:97 ../../source/modbus_tcp_server.rst:211
+#: ../../source/modbus_tcp_server.rst:34 ../../source/modbus_tcp_server.rst:67
+#: ../../source/modbus_tcp_server.rst:99 ../../source/modbus_tcp_server.rst:213
 msgid "Accepted Modbus functions:"
 msgstr "Les fonctions Modbus acceptées :"
 
-#: ../../source/modbus_tcp_server.rst:31
+#: ../../source/modbus_tcp_server.rst:33
 msgid "0x01: READ_COILS"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:32
+#: ../../source/modbus_tcp_server.rst:34
 msgid "0x05: WRITE_SINGLE_COIL"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:34
+#: ../../source/modbus_tcp_server.rst:36
 msgid "This datastore can be used to set Digital I/O mode and state."
 msgstr ""
-"Ce type de données peut être utilisé pour définir le mode et l'état "
-"des entrées et sorties numériques."
+"Ce type de données peut être utilisé pour définir le mode et l'état des "
+"entrées et sorties numériques."
 
-#: ../../source/modbus_tcp_server.rst:42 ../../source/modbus_tcp_server.rst:73
+#: ../../source/modbus_tcp_server.rst:44 ../../source/modbus_tcp_server.rst:75
 msgid "Digital I/O numbers used for Modbus:"
 msgstr "Nombre d'entrées et sorties numériques utilisées pour Modbus :"
 
-#: ../../source/modbus_tcp_server.rst:37 ../../source/modbus_tcp_server.rst:68
+#: ../../source/modbus_tcp_server.rst:39 ../../source/modbus_tcp_server.rst:70
 msgid "0/100: 1A"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:38 ../../source/modbus_tcp_server.rst:69
+#: ../../source/modbus_tcp_server.rst:40 ../../source/modbus_tcp_server.rst:71
 msgid "1/101: 1B"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:39 ../../source/modbus_tcp_server.rst:70
+#: ../../source/modbus_tcp_server.rst:41 ../../source/modbus_tcp_server.rst:72
 msgid "2/102: 1C"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:40 ../../source/modbus_tcp_server.rst:71
+#: ../../source/modbus_tcp_server.rst:42 ../../source/modbus_tcp_server.rst:73
 msgid "3/103: 2A"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:41 ../../source/modbus_tcp_server.rst:72
+#: ../../source/modbus_tcp_server.rst:43 ../../source/modbus_tcp_server.rst:74
 msgid "4/104: 2B"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:42 ../../source/modbus_tcp_server.rst:73
+#: ../../source/modbus_tcp_server.rst:44 ../../source/modbus_tcp_server.rst:75
 msgid "5/105: 2C"
 msgstr ""
-
-#: ../../source/modbus_tcp_server.rst:49 ../../source/modbus_tcp_server.rst:80
-#: ../../source/modbus_tcp_server.rst:104
-#: ../../source/modbus_tcp_server.rst:218
-msgid "Address"
-msgstr "Adresses"
-
-#: ../../source/modbus_tcp_server.rst:50 ../../source/modbus_tcp_server.rst:81
-#: ../../source/modbus_tcp_server.rst:105
-#: ../../source/modbus_tcp_server.rst:219
-msgid "Description"
-msgstr "Description"
 
 #: ../../source/modbus_tcp_server.rst:51 ../../source/modbus_tcp_server.rst:82
 #: ../../source/modbus_tcp_server.rst:106
 #: ../../source/modbus_tcp_server.rst:220
+msgid "Address"
+msgstr "Adresses"
+
+#: ../../source/modbus_tcp_server.rst:52 ../../source/modbus_tcp_server.rst:83
+#: ../../source/modbus_tcp_server.rst:107
+#: ../../source/modbus_tcp_server.rst:221
+msgid "Description"
+msgstr "Description"
+
+#: ../../source/modbus_tcp_server.rst:53 ../../source/modbus_tcp_server.rst:84
+#: ../../source/modbus_tcp_server.rst:108
+#: ../../source/modbus_tcp_server.rst:222
 msgid "0-5"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:52 ../../source/modbus_tcp_server.rst:83
+#: ../../source/modbus_tcp_server.rst:54 ../../source/modbus_tcp_server.rst:85
 msgid "Digital I/O mode (Input = 1, Output = 0)"
 msgstr "Mode Entrée/Sortie numérique (entrée = 1, sortie = 0)"
 
-#: ../../source/modbus_tcp_server.rst:53 ../../source/modbus_tcp_server.rst:84
+#: ../../source/modbus_tcp_server.rst:55 ../../source/modbus_tcp_server.rst:86
 msgid "100-105"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:54 ../../source/modbus_tcp_server.rst:85
+#: ../../source/modbus_tcp_server.rst:56 ../../source/modbus_tcp_server.rst:87
 msgid "Digital I/O state (High = 1, Low = 0)"
 msgstr "État Entrée/Sortie numérique (élevé = 1, faible = 0)"
 
-#: ../../source/modbus_tcp_server.rst:55 ../../source/modbus_tcp_server.rst:132
+#: ../../source/modbus_tcp_server.rst:57 ../../source/modbus_tcp_server.rst:134
 msgid "200-299"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:56 ../../source/modbus_tcp_server.rst:133
+#: ../../source/modbus_tcp_server.rst:58 ../../source/modbus_tcp_server.rst:135
 msgid "Can be used to store your own variables"
 msgstr "Peut être utilisé pour stocker vos propres variables"
 
-#: ../../source/modbus_tcp_server.rst:59
+#: ../../source/modbus_tcp_server.rst:61
 msgid "Discrete input"
 msgstr "Entrée discrète"
 
-#: ../../source/modbus_tcp_server.rst:62 ../../source/modbus_tcp_server.rst:208
+#: ../../source/modbus_tcp_server.rst:64 ../../source/modbus_tcp_server.rst:210
 msgid "READ-ONLY"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:65
+#: ../../source/modbus_tcp_server.rst:67
 msgid "0x02: READ_DISCRETE_INPUTS"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:87
+#: ../../source/modbus_tcp_server.rst:89
 msgid ""
 "This datastore can be used to read Digital I/O mode and state of the "
 "robot. See :ref:`source/modbus_tcp_server:Coil` above for digital I/O "
 "number mapping."
 msgstr ""
-"Ce type de données peut être utilisé pour lire le mode d'E/S "
-"numériques et l'état du robot. Se référer à la section "
+"Ce type de données peut être utilisé pour lire le mode d'E/S numériques "
+"et l'état du robot. Se référer à la section "
 ":ref:`source/modbus_tcp_server:Coil` ci-dessus pour le mappage des "
 "numéros d'E/S numériques."
 
-#: ../../source/modbus_tcp_server.rst:90
+#: ../../source/modbus_tcp_server.rst:92
 msgid "Holding register"
 msgstr "Registre de détention"
 
-#: ../../source/modbus_tcp_server.rst:91 ../../source/modbus_tcp_server.rst:206
+#: ../../source/modbus_tcp_server.rst:93 ../../source/modbus_tcp_server.rst:208
 msgid "Each address contains a 16bits value."
 msgstr "Chaque adresse contient une valeur de 16bits."
 
-#: ../../source/modbus_tcp_server.rst:93
+#: ../../source/modbus_tcp_server.rst:95
 msgid ""
 "READ/WRITE (the stored values correspond to the last given command, not "
 "the current robot state)"
@@ -226,122 +234,114 @@ msgstr ""
 "READ/WRITE (les valeurs stockées correspondent à la dernière commande "
 "donnée, non pas à l'état actuel du robot)."
 
-#: ../../source/modbus_tcp_server.rst:96
+#: ../../source/modbus_tcp_server.rst:98
 msgid "0x03: READ_HOLDING_REGISTERS"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:97
+#: ../../source/modbus_tcp_server.rst:99
 msgid "0x06: WRITE_SINGLE_REGISTER"
-msgstr ""
-
-#: ../../source/modbus_tcp_server.rst:107
-#: ../../source/modbus_tcp_server.rst:221
-msgid "Joints (mrad)"
-msgstr ""
-
-#: ../../source/modbus_tcp_server.rst:108
-#: ../../source/modbus_tcp_server.rst:222
-msgid "10-12"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:109
 #: ../../source/modbus_tcp_server.rst:223
-msgid "Position x,y,z (mm)"
+msgid "Joints (mrad)"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:110
 #: ../../source/modbus_tcp_server.rst:224
-msgid "13-15"
+msgid "10-12"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:111
 #: ../../source/modbus_tcp_server.rst:225
-msgid "Orientation roll, pitch, yaw (mrad)"
+msgid "Position x,y,z (mm)"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:112
-msgid "100"
+#: ../../source/modbus_tcp_server.rst:226
+msgid "13-15"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:113
-
-
-msgid "Sends Joint Move command with stored joints"
-msgstr "Envoyer la commande de déplacement d'axe avec les axes stockés"
+#: ../../source/modbus_tcp_server.rst:227
+msgid "Orientation roll, pitch, yaw (mrad)"
+msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:114
-msgid "101"
+msgid "100"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:115
+msgid "Sends Joint Move command with stored joints"
+msgstr "Envoyer la commande de déplacement d'axe avec les axes stockés"
 
+#: ../../source/modbus_tcp_server.rst:116
+msgid "101"
+msgstr ""
 
+#: ../../source/modbus_tcp_server.rst:117
 msgid "Sends Pose Move command with stored position and orientation"
 msgstr ""
 "Envoyer la commande Pose Move avec les positions et les orientations "
 "enregistrées"
 
-#: ../../source/modbus_tcp_server.rst:116
+#: ../../source/modbus_tcp_server.rst:118
 msgid "102"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:117
-
-
+#: ../../source/modbus_tcp_server.rst:119
 msgid "Sends Pose Linear Move command with stored position and orientation"
 msgstr ""
 "Envoyer la commande Pose Move avec les positions et les orientations "
 "enregistrées"
 
-#: ../../source/modbus_tcp_server.rst:118
+#: ../../source/modbus_tcp_server.rst:120
 msgid "110"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:119
-
-
+#: ../../source/modbus_tcp_server.rst:121
 msgid "Stops current command execution"
 msgstr "Arrêter l'exécution de la commande en cours"
 
-#: ../../source/modbus_tcp_server.rst:120
+#: ../../source/modbus_tcp_server.rst:122
 msgid "150"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:121
+#: ../../source/modbus_tcp_server.rst:123
 msgid "Is executing command flag"
 msgstr "Exécute l'indicateur de commande"
 
-#: ../../source/modbus_tcp_server.rst:122
+#: ../../source/modbus_tcp_server.rst:124
 msgid "151"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:123
+#: ../../source/modbus_tcp_server.rst:125
 msgid "Last command result (status of the last command)"
 msgstr "Résultat de la dernière commande (état de la dernière commande)"
 
-#: ../../source/modbus_tcp_server.rst:124
+#: ../../source/modbus_tcp_server.rst:126
 msgid "152"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:125
+#: ../../source/modbus_tcp_server.rst:127
 msgid "Contains data retrieved from last cmd (depends of the cmd)"
 msgstr ""
 "Contient les données extraites de la dernière commande (dépend de la "
 "commande)"
 
-#: ../../source/modbus_tcp_server.rst:126
+#: ../../source/modbus_tcp_server.rst:128
 msgid "153 - 158"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:127
+#: ../../source/modbus_tcp_server.rst:129
 msgid "Vision - Target pose result"
 msgstr "Vision - Résultat de la Pose cible"
 
-#: ../../source/modbus_tcp_server.rst:128
+#: ../../source/modbus_tcp_server.rst:130
 msgid "159"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:129
+#: ../../source/modbus_tcp_server.rst:131
 msgid ""
 "Vision - Shape of the object found (-1: ANY, 1: CIRCLE, 2: SQUARE, 3: "
 "TRIANGLE, 0: NONE)"
@@ -349,11 +349,11 @@ msgstr ""
 "Vision - Forme de l'objet trouvé (-1: ANY, 1: CIRCLE, 2: SQUARE, 3: "
 "TRIANGLE, 0: NONE)"
 
-#: ../../source/modbus_tcp_server.rst:130
+#: ../../source/modbus_tcp_server.rst:132
 msgid "160"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:131
+#: ../../source/modbus_tcp_server.rst:133
 msgid ""
 "Vision - Color of the object found (-1: ANY, 1: BLUE, 2: RED, 3: GREEN, "
 "0: NONE)"
@@ -361,78 +361,70 @@ msgstr ""
 "Vision - Couleur de l'objet trouvé (-1: ANY, 1: BLUE, 2: RED, 3: GREEN, "
 "0: NONE)"
 
-#: ../../source/modbus_tcp_server.rst:134
-#: ../../source/modbus_tcp_server.rst:228
+#: ../../source/modbus_tcp_server.rst:136
+#: ../../source/modbus_tcp_server.rst:230
 msgid "300"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:135
+#: ../../source/modbus_tcp_server.rst:137
 msgid "Learning Mode (On = 1, Off = 0)"
 msgstr "Mode apprentissage (On = 1, Off = 0)"
 
-#: ../../source/modbus_tcp_server.rst:136
+#: ../../source/modbus_tcp_server.rst:138
 msgid "301"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:137
+#: ../../source/modbus_tcp_server.rst:139
 msgid "Joystick Enabled (On = 1, Off = 0)"
 msgstr "Joystick activé (On = 1, Off = 0)"
 
-#: ../../source/modbus_tcp_server.rst:138
+#: ../../source/modbus_tcp_server.rst:140
 msgid "310"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:139
-
-
+#: ../../source/modbus_tcp_server.rst:141
 msgid "Requests new calibration"
 msgstr "Demander une nouvelle calibration"
 
-#: ../../source/modbus_tcp_server.rst:140
+#: ../../source/modbus_tcp_server.rst:142
 msgid "311"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:141
-
-
+#: ../../source/modbus_tcp_server.rst:143
 msgid "Starts auto calibration"
 msgstr "Démarrer une calibration automatique"
 
-#: ../../source/modbus_tcp_server.rst:142
+#: ../../source/modbus_tcp_server.rst:144
 msgid "312"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:143
-
-
+#: ../../source/modbus_tcp_server.rst:145
 msgid "Starts manual calibration"
 msgstr "Démarrer une calibration manuelle"
 
-#: ../../source/modbus_tcp_server.rst:144
-#: ../../source/modbus_tcp_server.rst:232
+#: ../../source/modbus_tcp_server.rst:146
+#: ../../source/modbus_tcp_server.rst:234
 msgid "401"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:145
+#: ../../source/modbus_tcp_server.rst:147
 msgid "Gripper open speed (100-1000)"
 msgstr "Vitesse d'ouverture du gripper (100-1000)"
 
-#: ../../source/modbus_tcp_server.rst:146
-#: ../../source/modbus_tcp_server.rst:234
+#: ../../source/modbus_tcp_server.rst:148
+#: ../../source/modbus_tcp_server.rst:236
 msgid "402"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:147
+#: ../../source/modbus_tcp_server.rst:149
 msgid "Gripper close speed (100-1000)"
 msgstr "Vitesse de fermeture du gripper (100-1000)"
 
-#: ../../source/modbus_tcp_server.rst:148
+#: ../../source/modbus_tcp_server.rst:150
 msgid "500"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:149
-
-
+#: ../../source/modbus_tcp_server.rst:151
 msgid ""
 "Updates the tool id according to the gripper plugged (gripper 1: 11, "
 "gripper 2: 12, gripper 3: 13, vaccum pump: 31)"
@@ -440,135 +432,117 @@ msgstr ""
 "Met à jour l'ID du tool équipé en fonction de l'outil branché au robot "
 "(gripper 1: 11, gripper 2: 12, gripper 3: 13, vaccum pump: 31)"
 
-#: ../../source/modbus_tcp_server.rst:150
+#: ../../source/modbus_tcp_server.rst:152
 msgid "501"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:151
-
-
+#: ../../source/modbus_tcp_server.rst:153
 msgid "Stores the tool id"
 msgstr "Enregistre l'ID de l'outil"
 
-#: ../../source/modbus_tcp_server.rst:152
+#: ../../source/modbus_tcp_server.rst:154
 msgid "510"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:153
-
-
+#: ../../source/modbus_tcp_server.rst:155
 msgid "Opens gripper previously updated"
 msgstr "Ouvrir le gripper précédemment équipé / scanné"
 
-#: ../../source/modbus_tcp_server.rst:154
+#: ../../source/modbus_tcp_server.rst:156
 msgid "511"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:155
-
-
+#: ../../source/modbus_tcp_server.rst:157
 msgid "Closes gripper with given id"
 msgstr "Fermer le gripper avec un identifiant donné"
 
-#: ../../source/modbus_tcp_server.rst:156
+#: ../../source/modbus_tcp_server.rst:158
 msgid "512"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:157
-
-
+#: ../../source/modbus_tcp_server.rst:159
 msgid "Pulls air vacuum pump from given id"
 msgstr "Activer la pompe à vide d'air avec un identifiant donné"
 
-#: ../../source/modbus_tcp_server.rst:158
+#: ../../source/modbus_tcp_server.rst:160
 msgid "513"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:159
-
-
+#: ../../source/modbus_tcp_server.rst:161
 msgid "Pushes air vacuum pump from given id"
 msgstr "Vider la pompe à vide de son air avec un identifiant donné"
 
-#: ../../source/modbus_tcp_server.rst:160
+#: ../../source/modbus_tcp_server.rst:162
 msgid "520"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:161
-
-
+#: ../../source/modbus_tcp_server.rst:163
 msgid "Enables a Conveyor Belt newly connected [on success: store it's ID at 152]"
 msgstr ""
 "Activer un Convoyeur récemment connecté [en cas de succès : enregistrer "
 "son ID à 152]"
 
-#: ../../source/modbus_tcp_server.rst:162
+#: ../../source/modbus_tcp_server.rst:164
 msgid "521"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:163
-
-
+#: ../../source/modbus_tcp_server.rst:165
 msgid "Detaches / disables Conveyor Belt with the Conveyor Belt ID given at 525"
 msgstr "Détacher / désactiver le Convoyeur avec l'ID du Convoyeur donné à 525"
 
-#: ../../source/modbus_tcp_server.rst:164
+#: ../../source/modbus_tcp_server.rst:166
 msgid "522"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:165
+#: ../../source/modbus_tcp_server.rst:167
 msgid "Control Conveyor Belt with the Conveyor Belt ID given at 525"
 msgstr "Contrôler le Convoyeur avec l'ID du Convoyeur donné à 525"
 
-#: ../../source/modbus_tcp_server.rst:166
+#: ../../source/modbus_tcp_server.rst:168
 msgid "523 [related to 522]"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:167
+#: ../../source/modbus_tcp_server.rst:169
 msgid "Conveyor Belt direction (backward = -1 , forward = 1)"
 msgstr "Direction du Convoyeur (vers l'arrière = -1, vers l'avant = 1)"
 
-#: ../../source/modbus_tcp_server.rst:168
+#: ../../source/modbus_tcp_server.rst:170
 msgid "524 [related to 522]"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:169
+#: ../../source/modbus_tcp_server.rst:171
 msgid "Conveyor Belt speed (0-100)(%)"
 msgstr "Vitesse du Convoyeur (0-100)(%)"
 
-#: ../../source/modbus_tcp_server.rst:170
+#: ../../source/modbus_tcp_server.rst:172
 msgid "525 [related to 520/521/522/526]"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:171
-
-
+#: ../../source/modbus_tcp_server.rst:173
 msgid "Stores the Conveyor Belt ID for all related command"
 msgstr "Stocker l'ID du Convoyeur pour toutes les commandes associées"
 
-#: ../../source/modbus_tcp_server.rst:172
+#: ../../source/modbus_tcp_server.rst:174
 msgid "526"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:173
-
-
+#: ../../source/modbus_tcp_server.rst:175
 msgid "Stops Conveyor Belt with the Conveyor Belt ID given at 525"
 msgstr "Arrêter le Convoyeur avec l'ID du Convoyeur donné à 525"
 
-#: ../../source/modbus_tcp_server.rst:174
+#: ../../source/modbus_tcp_server.rst:176
 msgid "600"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:175
+#: ../../source/modbus_tcp_server.rst:177
 msgid "TCP - Enables or disables the TCP function (Tool Center Point)."
 msgstr "PCO - Active ou désactive la fonction de PCO (Point Central de l'Outil)"
 
-#: ../../source/modbus_tcp_server.rst:176
+#: ../../source/modbus_tcp_server.rst:178
 msgid "601"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:177
+#: ../../source/modbus_tcp_server.rst:179
 msgid ""
 "Activates the TCP function (Tool Center Point) and defines the "
 "transformation between the tool_link frame and the TCP frame."
@@ -576,13 +550,11 @@ msgstr ""
 "Activé la fonction du PCO (Point Central de l'Outil) et définit la "
 "transformation entre le repère 'tool_link' et le repère du PCO."
 
-#: ../../source/modbus_tcp_server.rst:178
+#: ../../source/modbus_tcp_server.rst:180
 msgid "610"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:179
-
-
+#: ../../source/modbus_tcp_server.rst:181
 msgid ""
 "Vision - Gets target pose from relative pose, with stored relative pose "
 "and height_offset"
@@ -590,13 +562,11 @@ msgstr ""
 "Vision - Récupère la 'target_pose' en fonction de la 'relative_pose'', "
 "avec la 'relative_pose'' et le 'height_offset'"
 
-#: ../../source/modbus_tcp_server.rst:180
+#: ../../source/modbus_tcp_server.rst:182
 msgid "611"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:181
-
-
+#: ../../source/modbus_tcp_server.rst:183
 msgid ""
 "Vision - Gets target pose from camera, with stored workspace name, height"
 " offset, shape and color"
@@ -604,23 +574,21 @@ msgstr ""
 "Recupère 'target_pose' en fonction de la caméra, avec le 'workspace name'"
 " enregistré, le 'height_offset', 'shape' et 'color'"
 
-#: ../../source/modbus_tcp_server.rst:182
+#: ../../source/modbus_tcp_server.rst:184
 msgid "612"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:183
+#: ../../source/modbus_tcp_server.rst:185
 msgid ""
 "Vision - Vision pick, with stored workspace name, height offset, shape "
 "and color"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:184
+#: ../../source/modbus_tcp_server.rst:186
 msgid "613"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:185
-
-
+#: ../../source/modbus_tcp_server.rst:187
 msgid ""
 "Vision - Moves to object, with stored workspace name, height offset, "
 "shape and color"
@@ -628,253 +596,247 @@ msgstr ""
 "Recupère 'target_pose' en fonction de la caméra, avec le 'workspace name'"
 " enregistré, le 'height_offset', 'shape' et 'color'"
 
-#: ../../source/modbus_tcp_server.rst:186
+#: ../../source/modbus_tcp_server.rst:188
 msgid "614"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:187
-
-
+#: ../../source/modbus_tcp_server.rst:189
 msgid "Vision - Detects object, with stored workspace name, shape and color"
 msgstr ""
 "Recupère 'target_pose' en fonction de la caméra, avec le 'workspace name'"
 " enregistré, le 'height_offset', 'shape' et 'color'"
 
-#: ../../source/modbus_tcp_server.rst:188
+#: ../../source/modbus_tcp_server.rst:190
 msgid "620"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:189
+#: ../../source/modbus_tcp_server.rst:191
 msgid "Vision - Stores workspace's height offset"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:190
+#: ../../source/modbus_tcp_server.rst:192
 msgid "621"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:191
-
-
+#: ../../source/modbus_tcp_server.rst:193
 msgid "Vision - Stores relative pose x_rel"
 msgstr "Vision - Résultat de la Pose cible"
 
-#: ../../source/modbus_tcp_server.rst:192
+#: ../../source/modbus_tcp_server.rst:194
 msgid "622"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:193
-
-
+#: ../../source/modbus_tcp_server.rst:195
 msgid "Vision - Stores relative pose y_rel"
 msgstr "Vision - Résultat de la Pose cible"
 
-#: ../../source/modbus_tcp_server.rst:194
+#: ../../source/modbus_tcp_server.rst:196
 msgid "623"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:195
+#: ../../source/modbus_tcp_server.rst:197
 msgid "Vision - Stores relative pose yaw_rel"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:196
+#: ../../source/modbus_tcp_server.rst:198
 msgid "624"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:197
+#: ../../source/modbus_tcp_server.rst:199
 msgid ""
 "Vision - Stores requested shape (-1: ANY, 1: CIRCLE, 2: SQUARE, 3: "
 "TRIANGLE)"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:198
+#: ../../source/modbus_tcp_server.rst:200
 msgid "625"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:199
+#: ../../source/modbus_tcp_server.rst:201
 msgid "Vision - Stores requested color (-1: ANY, 1: BLUE, 2: RED, 3: GREEN)"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:200
+#: ../../source/modbus_tcp_server.rst:202
 msgid "626 - max 641"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:201
+#: ../../source/modbus_tcp_server.rst:203
 msgid ""
 "Vision - Stores workspace's name, as a string encoded in 16 bits hex (see"
 " examples on how to store a workspace name from a client)"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:204
+#: ../../source/modbus_tcp_server.rst:206
 msgid "Input Register"
 msgstr "Registre d'entrée"
 
-#: ../../source/modbus_tcp_server.rst:211
+#: ../../source/modbus_tcp_server.rst:213
 msgid "0x04: READ_INPUT_REGISTERS"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:226
+#: ../../source/modbus_tcp_server.rst:228
 msgid "200"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:227
+#: ../../source/modbus_tcp_server.rst:229
 msgid "Selected tool ID (0 for no tool)"
 msgstr "ID de l'outil sélectionné (0 pour aucun outil)"
 
-#: ../../source/modbus_tcp_server.rst:229
+#: ../../source/modbus_tcp_server.rst:231
 msgid "Learning Mode activated"
 msgstr "Mode apprentissage activé"
 
-#: ../../source/modbus_tcp_server.rst:230
+#: ../../source/modbus_tcp_server.rst:232
 msgid "400"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:231
+#: ../../source/modbus_tcp_server.rst:233
 msgid "Motors connection up (Ok = 1, Not ok = 0)"
 msgstr "Connexion des moteurs (Ok = 1, Pas OK = 0)"
 
-#: ../../source/modbus_tcp_server.rst:233
+#: ../../source/modbus_tcp_server.rst:235
 msgid "Calibration needed flag"
 msgstr "Indicateur calibration nécessaire"
 
-#: ../../source/modbus_tcp_server.rst:235
+#: ../../source/modbus_tcp_server.rst:237
 msgid "Calibration in progress flag"
 msgstr "Indicateur calibration en cours"
 
-#: ../../source/modbus_tcp_server.rst:236
+#: ../../source/modbus_tcp_server.rst:238
 msgid "403"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:237
+#: ../../source/modbus_tcp_server.rst:239
 msgid "Raspberry Pi temperature"
 msgstr "Température de la Raspberry Pi"
 
-#: ../../source/modbus_tcp_server.rst:238
+#: ../../source/modbus_tcp_server.rst:240
 msgid "404"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:239
+#: ../../source/modbus_tcp_server.rst:241
 msgid "Raspberry Pi available disk size"
 msgstr "Taille de disque disponible pour Raspberry Pi"
 
-#: ../../source/modbus_tcp_server.rst:240
+#: ../../source/modbus_tcp_server.rst:242
 msgid "405"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:241
+#: ../../source/modbus_tcp_server.rst:243
 msgid "Raspberry Pi ROS log size"
 msgstr "Taille du log Raspberry Pi ROS"
 
-#: ../../source/modbus_tcp_server.rst:242
+#: ../../source/modbus_tcp_server.rst:244
 msgid "406"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:243
+#: ../../source/modbus_tcp_server.rst:245
 msgid "RPI software version n.1"
 msgstr "Version n.1 du logiciel RPI"
 
-#: ../../source/modbus_tcp_server.rst:244
+#: ../../source/modbus_tcp_server.rst:246
 msgid "407"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:245
+#: ../../source/modbus_tcp_server.rst:247
 msgid "RPI software version n.2"
 msgstr "Version n.2 du logiciel RPI"
 
-#: ../../source/modbus_tcp_server.rst:246
+#: ../../source/modbus_tcp_server.rst:248
 msgid "408"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:247
+#: ../../source/modbus_tcp_server.rst:249
 msgid "RPI software version n.3"
 msgstr "Version n.3 du logiciel RPI"
 
-#: ../../source/modbus_tcp_server.rst:248
+#: ../../source/modbus_tcp_server.rst:250
 msgid "409"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:249
+#: ../../source/modbus_tcp_server.rst:251
 msgid "Hardware version (1 or 2)"
 msgstr "Version matériel (1 ou 2)"
 
-#: ../../source/modbus_tcp_server.rst:250
+#: ../../source/modbus_tcp_server.rst:252
 msgid "530"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:251
+#: ../../source/modbus_tcp_server.rst:253
 msgid "Conveyor 1 connection state (Connected = 1 , Not connected = 0)"
 msgstr "État de la connexion du Convoyeur 1 (Connecté = 1, Pas connecté = 0)"
 
-#: ../../source/modbus_tcp_server.rst:252
+#: ../../source/modbus_tcp_server.rst:254
 msgid "531"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:253
+#: ../../source/modbus_tcp_server.rst:255
 msgid "Conveyor 1 control status ( On = 0, Off = 1)"
 msgstr "État de la commande du Convoyeur 1 (On = 0, Off = 1)"
 
-#: ../../source/modbus_tcp_server.rst:254
+#: ../../source/modbus_tcp_server.rst:256
 msgid "532"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:255
+#: ../../source/modbus_tcp_server.rst:257
 msgid "Conveyor 1 Speed (0-100 (%))"
 msgstr "Vitesse du Convoyeur 1 (0-100)(%)"
 
-#: ../../source/modbus_tcp_server.rst:256
+#: ../../source/modbus_tcp_server.rst:258
 msgid "533"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:257
+#: ../../source/modbus_tcp_server.rst:259
 msgid "Conveyor 1 direction (Backward = -1, Forward = 1)"
 msgstr "Direction du Convoyeur 1 (vers l'arrière = -1, vers l'avant = 1)"
 
-#: ../../source/modbus_tcp_server.rst:258
+#: ../../source/modbus_tcp_server.rst:260
 msgid "540"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:259
+#: ../../source/modbus_tcp_server.rst:261
 msgid "Conveyor 2 connection state (Connected = 1 , Not connected = 0)"
 msgstr "État de la connexion du Convoyeur 1 (Connecté = 1, Pas connecté = 0)"
 
-#: ../../source/modbus_tcp_server.rst:260
+#: ../../source/modbus_tcp_server.rst:262
 msgid "541"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:261
+#: ../../source/modbus_tcp_server.rst:263
 msgid "Conveyor 2 control status ( On = 0, Off = 1)"
 msgstr "État de la commande du Convoyeur 1 (On = 0, Off = 1)"
 
-#: ../../source/modbus_tcp_server.rst:262
+#: ../../source/modbus_tcp_server.rst:264
 msgid "542"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:263
+#: ../../source/modbus_tcp_server.rst:265
 msgid "Conveyor 2 Speed (0-100 (%))"
 msgstr "Vitesse du Convoyeur 2 (0-100)(%)"
 
-#: ../../source/modbus_tcp_server.rst:264
+#: ../../source/modbus_tcp_server.rst:266
 msgid "543"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:265
+#: ../../source/modbus_tcp_server.rst:267
 msgid "Conveyor 2 direction (Backward = -1, Forward = 1)"
 msgstr "Direction du Convoyeur 2 (vers l'arrière = -1, vers l'avant = 1)"
 
-#: ../../source/modbus_tcp_server.rst:268
+#: ../../source/modbus_tcp_server.rst:270
 msgid "Dependencies - Modbus TCP Server"
 msgstr "Les dépendances - Serveur Modbus TCP"
 
-#: ../../source/modbus_tcp_server.rst:270
+#: ../../source/modbus_tcp_server.rst:272
 msgid "`pymodbus library <https://pymodbus.readthedocs.io/en/latest/index.html>`_"
 msgstr ""
 "Il a été construit au-dessus de la `librairie Pymodbus "
 "<https://pymodbus.readthedocs.io/en/latest/index.html>`_."
 
-#: ../../source/modbus_tcp_server.rst:271
+#: ../../source/modbus_tcp_server.rst:273
 msgid ":doc:`ros/niryo_robot_msgs`"
 msgstr ""
 
-#: ../../source/modbus_tcp_server.rst:272
+#: ../../source/modbus_tcp_server.rst:274
 msgid ":msgs_index:`std_msgs`"
 msgstr ""
 
