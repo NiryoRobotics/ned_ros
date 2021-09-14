@@ -415,7 +415,7 @@ void JointHardwareInterface::setNeedCalibration()
 /**
  * @brief JointHardwareInterface::activateLearningMode
  */
-void JointHardwareInterface::activateLearningMode()
+void JointHardwareInterface::activateLearningMode(bool activated)
 {
     ROS_DEBUG("JointHardwareInterface::activateLearningMode - activate learning mode");
 
@@ -429,79 +429,29 @@ void JointHardwareInterface::activateLearningMode()
         {
             if (jState->isDynamixel())
             {
-                dxl_cmd.addMotorParam(jState->getHardwareType(), jState->getId(), 0);
+                dxl_cmd.addMotorParam(jState->getHardwareType(), jState->getId(), !activated);
             }
             else if ((jState->isStepper() && jState->getBusProtocol() == EBusProtocol::TTL))
             {
                 stepper_ttl_cmd.setId(jState->getId());
-                stepper_ttl_cmd.setParams({0});
+                stepper_ttl_cmd.setParams({!activated});
                 _ttl_interface->addSingleCommandToQueue(std::make_shared<StepperTtlSingleCmd>(stepper_ttl_cmd));
             }
             else
             {
                 stepper_cmd.setId(jState->getId());
-                stepper_cmd.setParams({0});
+                stepper_cmd.setParams({!activated});
                 _can_interface->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(stepper_cmd));
             }
         }
     }
 
-    // TODO(Thuc): only dxl use sync cmd
+    // TODO(cc) add sync cmd for can too
     if (_ttl_interface)
     {
         _ttl_interface->setSyncCommand(std::make_shared<common::model::DxlSyncCmd>(dxl_cmd));
     }
-    _learning_mode = true;
-}
-
-/**
- * @brief JointHardwareInterface::deactivateLearningMode
- */
-void JointHardwareInterface::deactivateLearningMode()
-{
-    ROS_DEBUG("JointHardwareInterface::deactivateLearningMode - deactivate learning mode");
-
-    common::model::DxlSyncCmd dxl_cmd(EDxlCommandType::CMD_TYPE_LEARNING_MODE);
-    common::model::StepperTtlSingleCmd stepper_ttl_cmd(EStepperCommandType::CMD_TYPE_LEARNING_MODE);
-    StepperSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_TORQUE);
-
-    for (auto const& jState : _joint_list)
-    {
-        if (jState && jState->isValid())
-        {
-            if (jState->isDynamixel())
-            {
-                dxl_cmd.addMotorParam(jState->getHardwareType(), jState->getId(), 1);
-            }
-            else if (jState->isStepper() && jState->getBusProtocol() == EBusProtocol::CAN)
-            {
-                if (jState->getBusProtocol() == EBusProtocol::CAN)
-                {
-                    if (_can_interface)
-                    {
-                        stepper_cmd.setId(jState->getId());
-                        stepper_cmd.setParams({1});
-                        _can_interface->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(stepper_cmd));
-                    }
-                }
-                else
-                {
-                    if (_ttl_interface)
-                    {
-                        stepper_ttl_cmd.setId(jState->getId());
-                        stepper_ttl_cmd.setParams({1});
-                        _ttl_interface->addSingleCommandToQueue(std::make_shared<StepperTtlSingleCmd>(stepper_ttl_cmd));
-                    }
-                }
-            }
-        }
-    }
-
-    if (_ttl_interface)
-    {
-        _ttl_interface->setSyncCommand(std::make_shared<common::model::DxlSyncCmd>(dxl_cmd));
-    }
-    _learning_mode = false;
+    _learning_mode = activated;
 }
 
 /**

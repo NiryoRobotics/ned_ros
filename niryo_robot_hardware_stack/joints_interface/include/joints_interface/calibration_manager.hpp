@@ -55,22 +55,30 @@ public:
     private:
         void initParameters(ros::NodeHandle& nh);
 
+        common::model::EStepperCalibrationStatus autoCalibration();
+        common::model::EStepperCalibrationStatus manualCalibration();
+
+        // tests
+        bool canProcessManualCalibration(std::string &result_message);
+        bool steppersConnected();
+
+        // commands
         void setStepperCalibrationCommand(const std::shared_ptr<common::model::StepperMotorState>& pState,
                                           int32_t delay, int32_t calibration_direction, int32_t timeout);
 
-        bool _check_steppers_connected();
+        void sendCalibrationOffset(const std::shared_ptr<common::model::StepperMotorState>& pState,
+                                   int offset_to_send, int absolute_steps_at_offset_position);
 
-        common::model::EStepperCalibrationStatus _auto_calibration();
-        void _send_calibration_offset(uint8_t id, int offset_to_send, int absolute_steps_at_offset_position);
-        bool _can_process_manual_calibration(std::string &result_message);
-        common::model::EStepperCalibrationStatus _manual_calibration();
+        void setTorqueStepperMotor(const std::shared_ptr<common::model::JointState>& pState, bool status);
+        void relativeMoveStepperMotor(const std::shared_ptr<common::model::JointState>& pState, int steps, int delay, bool wait);
 
-        void _motorTorque(const std::shared_ptr<common::model::JointState>& motor, bool status);
-        void _moveMotor(const std::shared_ptr<common::model::JointState>& motor, int steps, double delay);
-        int _relativeMoveMotor(const std::shared_ptr<common::model::JointState>& motor, int steps, int delay, bool wait);
+        bool setMotorsCalibrationOffsets(const std::vector<int>& motor_id_list, const std::vector<int> &steps_list);
+        bool getMotorsCalibrationOffsets(std::vector<int> &motor_id_list, std::vector<int>& steps_list);
 
-        bool set_motors_calibration_offsets(const std::vector<int>& motor_id_list, const std::vector<int> &steps_list);
-        bool get_motors_calibration_offsets(std::vector<int> &motor_id_list, std::vector<int>& steps_list);
+        void moveDxlToHome();
+        void moveSteppersToHome();
+        void sendCalibrationToSteppers();
+        void activateLearningMode(bool activated);
 
 private:
         std::map<common::model::EBusProtocol, std::shared_ptr<common::model::IDriverCore> > _driver_interfaces_map;
@@ -88,6 +96,16 @@ private:
         static constexpr int MANUAL_CALIBRATION = 2;
 
 };
+
+/**
+ * @brief CalibrationManager::CalibrationInprogress
+ * @return
+ */
+inline
+bool CalibrationManager::CalibrationInprogress() const
+{
+  return _calibration_in_progress;
+}
 
 } // JointsInterface
 #endif

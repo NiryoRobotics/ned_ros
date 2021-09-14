@@ -51,9 +51,8 @@ class JointHardwareInterface : public hardware_interface::RobotHW
 
         void sendInitMotorsParams();
         int calibrateJoints(int mode, std::string &result_message);
-        void deactivateLearningMode();
         void setNeedCalibration();
-        void activateLearningMode();
+        void activateLearningMode(bool activated);
         void synchronizeMotors(bool synchronize);
 
         void setCommandToCurrentPosition();

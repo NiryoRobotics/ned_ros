@@ -65,8 +65,9 @@ int AbstractDxlDriver::writeSingleCmd(const std::shared_ptr<common::model::Abstr
             return setGoalTorque(cmd->getId(), cmd->getParam());
         case EDxlCommandType::CMD_TYPE_TORQUE:
             return setTorqueEnable(cmd->getId(), cmd->getParam());
-        case EDxlCommandType::CMD_TYPE_PING:
         case EDxlCommandType::CMD_TYPE_LEARNING_MODE:
+            return setTorqueEnable(cmd->getId(), !cmd->getParam());
+        case EDxlCommandType::CMD_TYPE_PING:
             return ping(cmd->getId());
         case EDxlCommandType::CMD_TYPE_POSITION_P_GAIN:
             return setPositionPGain(cmd->getId(), cmd->getParam());
@@ -111,8 +112,14 @@ int AbstractDxlDriver::writeSyncCmd(int type, const std::vector<uint8_t>& ids, c
     case EDxlCommandType::CMD_TYPE_EFFORT:
         return syncWriteTorqueGoal(ids, params);
     case EDxlCommandType::CMD_TYPE_TORQUE:
-    case EDxlCommandType::CMD_TYPE_LEARNING_MODE:
         return syncWriteTorqueEnable(ids, params);
+    case EDxlCommandType::CMD_TYPE_LEARNING_MODE:
+    {
+        std::vector<uint32_t> params_inv;
+        for(auto const& p : params)
+          params_inv.emplace_back(!p);
+        return syncWriteTorqueEnable(ids, params_inv);
+    }
     default:
         std::cout << "Command not implemented " << type << std::endl;
     }

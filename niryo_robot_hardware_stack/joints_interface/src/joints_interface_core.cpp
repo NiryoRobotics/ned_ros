@@ -163,15 +163,15 @@ void JointsInterfaceCore::activateLearningMode(bool activate, int &ostatus, std:
     {
         if (_previous_state_learning_mode != activate)  // if state different
         {
+            _robot->activateLearningMode(activate);
+
             if (!activate)
             {
                 _reset_controller = true;
-                _robot->deactivateLearningMode();
                 omessage = "Deactivating learning mode";
             }
             else
             {
-                _robot->activateLearningMode();
                 omessage = "Activating learning mode";
             }
 
