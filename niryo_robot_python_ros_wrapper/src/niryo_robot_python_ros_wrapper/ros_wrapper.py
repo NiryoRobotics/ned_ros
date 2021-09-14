@@ -73,7 +73,7 @@ class NiryoRosWrapper:
         self.__action_connection_timeout = rospy.get_param("/niryo_robot/python_ros_wrapper/action_connection_timeout")
         self.__action_execute_timeout = rospy.get_param("/niryo_robot/python_ros_wrapper/action_execute_timeout")
         self.__action_preempt_timeout = rospy.get_param("/niryo_robot/python_ros_wrapper/action_preempt_timeout")
-        self.__simulation_mode = (rospy.get_param("/niryo_robot/hardware_version") == 'fake')
+        self.__simulation_mode = (rospy.get_param("/niryo_robot/hardware_version") == "fake_ned" or rospy.get_param("/niryo_robot/hardware_version") == "fake_ned2")
         self.__hardware_version = rospy.get_param("/niryo_robot/hardware_version")
         self.__can_enabled = rospy.get_param("/niryo_robot_hardware_interface/can_enabled")
         self.__ttl_enabled = rospy.get_param("/niryo_robot_hardware_interface/ttl_enabled")

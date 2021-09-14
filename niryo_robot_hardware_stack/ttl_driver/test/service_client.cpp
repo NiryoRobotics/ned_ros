@@ -116,7 +116,7 @@ int main(int argc, char **argv)
     std::string hardware_version;
     ros::NodeHandle nh_private("~");
     nh_private.getParam("hardware_version", hardware_version);
-    if (hardware_version == "fake")
+    if (hardware_version == "fake_ned" || (hardware_version == "fake_ned2"))
         testing::GTEST_FLAG(filter) = "-TESTSuite.sendCustomValue:TESTSuite.readCustomValue";
 
     return RUN_ALL_TESTS();

@@ -22,7 +22,7 @@
         <arg name="conf_location" value="$(arg conf_location)" />
         <arg name="debug" value="$(arg debug)"/>
         <arg name="rpi_model" value="3" if="$(eval hardware_version=='one')" />
-        <arg name="rpi_model" value="simulation" if="$(eval hardware_version=='fake')" />
+        <arg name="rpi_model" value="simulation" if="$(eval hardware_version=='fake_ned' or hardware_version=='fake_ned2')" />
         <arg name="simu_gripper" value="$(arg simu_gripper)" />
     </include>
 </launch>

@@ -3,7 +3,7 @@
         xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
     <!-- Launching Node -->
     <include file="$(find niryo_robot_poses_handlers)/launch/poses_handlers.launch">
-        <arg name="hardwsare_version" value="fake"/>
+        <arg name="hardwsare_version" value="fake_ned"/>
     </include>
     <!-- Launching Test -->
     <test test-name="poses_handlers" pkg="niryo_robot_poses_handlers" type="test_poses_handlers.py"/>

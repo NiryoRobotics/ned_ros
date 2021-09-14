@@ -253,7 +253,7 @@ int main(int argc, char **argv)
   std::string hardware_version;
   ros::NodeHandle nh_private("~");
   nh_private.getParam("hardware_version", hardware_version);
-  if (hardware_version == "fake" || hardware_version == "ned2")
+  if (hardware_version == "fake_ned" || hardware_version == "fake_ned2" || hardware_version == "ned2")
     testing::GTEST_FLAG(filter) = "-TtlManagerTestSuite.testSyncCmdsOnNed1:TtlManagerTestSuite.testSingleCmdsNed1";
   else
     testing::GTEST_FLAG(filter) = "-TtlManagerTestSuite.testSyncCmdsOnNed2AndFakeHW:TtlManagerTestSuite.testSingleCmdsNed2AndFakeHW";
