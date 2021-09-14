@@ -1,0 +1,7 @@
+<launch>
+    <arg name="cloud_domain" default="api.niryo.io"/>
+
+    <node name="niryo_robot_metrics" pkg="niryo_robot_metrics" type="metrics_node.py" output="screen">
+        <param name="cloud_domain" value="$(arg cloud_domain)"/>
+    </node>
+</launch>

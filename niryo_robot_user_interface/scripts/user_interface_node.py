@@ -5,6 +5,8 @@ import logging
 
 from niryo_robot_user_interface.tcp_server import TcpServer
 
+from std_msgs.msg import Bool
+
 
 class UserInterface:
 
@@ -14,7 +16,15 @@ class UserInterface:
         ip_address = rospy.get_param("~ip_address", '')
         port = rospy.get_param("~tcp_port", 40001)
 
-        self.__tcp_server = TcpServer(ip_address, port).start()
+        self.__is_debug_motor_active_pub = rospy.Publisher('~is_client_connected', Bool, latch=True, queue_size=10)
+        self.__is_debug_motor_active_pub.publish(False)
+
+        self.__tcp_server = TcpServer(ip_address=ip_address,
+                                      port=port,
+                                      on_client_connection_cb=self.on_client_connection,
+                                      on_client_disconnection_cb=self.on_client_disconnection
+                                      ).start()
+
         if self.__tcp_server is not None:
             # Set a bool to mentioned this node is initialized
             rospy.set_param('~initialized', True)
@@ -26,6 +36,12 @@ class UserInterface:
     def shutdown(self):
         if self.__tcp_server is not None:
             self.__tcp_server.quit()
+
+    def on_client_connection(self):
+        self.__is_debug_motor_active_pub.publish(True)
+
+    def on_client_disconnection(self):
+        self.__is_debug_motor_active_pub.publish(False)
 
 
 if __name__ == '__main__':

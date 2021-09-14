@@ -18,6 +18,7 @@ from geometry_msgs.msg import Pose, Point, Quaternion
 from std_msgs.msg import Bool
 from std_msgs.msg import Int32
 from std_msgs.msg import String
+from std_msgs.msg import ColorRGBA
 
 from sensor_msgs.msg import CameraInfo
 from sensor_msgs.msg import CompressedImage
@@ -29,6 +30,7 @@ from niryo_robot_msgs.msg import RobotState
 from niryo_robot_msgs.msg import RPY
 from niryo_robot_rpi.msg import DigitalIOState
 from niryo_robot_tools_commander.msg import ToolCommand
+from niryo_robot_led_ring.msg import LedRingAnimation, LedRingStatus
 
 # Services
 from conveyor_interface.srv import ControlConveyor, SetConveyor, SetConveyorRequest
@@ -44,6 +46,7 @@ from niryo_robot_programs_manager.srv import SetProgramAutorun, SetProgramAutoru
     ExecuteProgramRequest
 from niryo_robot_credentials.srv import GetCredential, SetCredential
 from std_srvs.srv import Trigger as StdTrigger
+from niryo_robot_led_ring.srv import LedUser, LedUserRequest
 
 # Actions
 from niryo_robot_arm_commander.msg import RobotMoveAction, RobotMoveGoal
@@ -315,7 +318,6 @@ class NiryoRosWrapper:
 
         return goal_state, response
 
-    # test pour separer tool package de arm package
     def __execute_tool_action(self, goal):
         # Connect to server
         if not self.__tool_action_server_client.wait_for_server(rospy.Duration(self.__action_connection_timeout)):
@@ -345,7 +347,6 @@ class NiryoRosWrapper:
 
         return response.status, response.message
 
-    # test send goal to tool action server
     def __send_tool_goal_and_wait_for_completed(self, goal):
         self.__tool_action_server_client.send_goal(goal)
         if not self.__tool_action_server_client.wait_for_result(timeout=rospy.Duration(self.__action_execute_timeout)):
@@ -2159,6 +2160,268 @@ class NiryoRosWrapper:
             return result.name_list, result.description_list
         return result.name_list
 
+    # - Led Ring
+
+    def led_ring_solid(self, color, wait=False):
+        """
+        Set the whole Led Ring to a fixed color.
+
+        :param color: Led ring color, in a list of size 3 (r, g, b: 0.0-255.0)
+        :type color: list[float]
+        :param wait: The service wait for the animation to finish or not to answer.
+                For this method, the action is quickly done, so waiting doesn't take a lot of time.
+        :type wait: bool
+        :return: status, message
+        :rtype: (int, str)
+        """
+        user_led_request = LedUserRequest()
+        user_led_request.animation_mode.animation = LedRingAnimation.SOLID
+        user_led_request.colors = [ColorRGBA(color[0], color[1], color[2], 0)]
+        user_led_request.wait_end = wait
+        result = self.__call_service('/niryo_robot_led_ring/user_service', LedUser, user_led_request)
+        return result.status, result.message
+
+    def led_ring_turn_off(self, wait=False):
+        """
+        Turn off all Leds
+
+        :param wait: the service wait for the animation to finish or not to answer.
+                For this method, the action is quickly done, so waiting doesn't take a lot of time.
+        :type wait: bool
+        :return: status, message
+        :rtype: (int, str)
+        """
+        user_led_request = LedUserRequest()
+        user_led_request.animation_mode.animation = LedRingAnimation.NONE
+        user_led_request.wait_end = wait
+
+        result = self.__call_service('/niryo_robot_led_ring/user_service', LedUser, user_led_request)
+        return result.status, result.message
+
+    def led_ring_flash(self, color, period=0, iterations=0, wait=False):
+        """
+        Flashes a color according to a frequency.
+
+        :param color: Led ring color, in a list of size 3 (r, g, b: 0.0-255.0)
+        :type color: list[float]
+        :param period: execution time for a pattern
+        :type period: float
+        :param iterations: Number of consecutives flashes. If 0, the Led Ring flashes endlessly.
+        :type iterations: int
+        :param wait: The service wait for the animation to finish all iterations or not to answer. If iterations
+                is 0, the service answers immediatly.
+        :type wait: bool
+        :return: status, message
+        :rtype: (int, str)
+        """
+        user_led_request = LedUserRequest()
+        user_led_request.animation_mode.animation = LedRingAnimation.FLASHING
+        user_led_request.colors = [ColorRGBA(color[0], color[1], color[2], 0)]
+        user_led_request.period = period
+        user_led_request.iterations = iterations
+        user_led_request.wait_end = wait
+
+        result = self.__call_service('/niryo_robot_led_ring/user_service', LedUser, user_led_request)
+        return result.status, result.message
+
+    def led_ring_alternate(self, color_list, period=0, iterations=0, wait=False):
+        """
+        Several colors are alternated one after the other.
+
+        :param color_list: Led ring color, in a list of size 3 (r, g, b: 0.0-255.0)
+        :type color_list: list[float]
+        :param period: execution time for a pattern
+        :type period: float
+        :param iterations: Number of consecutives alternations. If 0, the Led Ring alternates endlessly.
+        :type iterations: int
+        :param wait: The service wait for the animation to finish all iterations or not to answer. If iterations
+                is 0, the service answers immediatly.
+        :type wait: bool
+        :return: status, message
+        :rtype: (int, str)
+        """
+        user_led_request = LedUserRequest()
+        user_led_request.animation_mode.animation = LedRingAnimation.ALTERNATE
+        user_led_request.colors = [ColorRGBA(color[0], color[1], color[2], 0) for color in color_list]
+        user_led_request.period = period
+        user_led_request.iterations = iterations
+        user_led_request.wait_end = wait
+
+        result = self.__call_service('/niryo_robot_led_ring/user_service', LedUser, user_led_request)
+        return result.status, result.message
+
+    def led_ring_chase(self, color, period=0, iterations=0, wait=False):
+        """
+        Movie theater light style chaser animation.
+
+        :param color: Led ring color, in a list of size 3 (r, g, b: 0.0-255.0)
+        :type color: list[float]
+        :param period: execution time for a pattern
+        :type period: float
+        :param iterations: Number of consecutives chase. If 0, the animation continues endlessly.
+            One chase just lights one Led every 3 Leds.
+        :type iterations: int
+        :param wait: The service wait for the animation to finish all iterations or not to answer. If iterations
+                is 0, the service answers immediatly.
+        :type wait: bool
+        :return: status, message
+        :rtype: (int, str)
+        """
+        user_led_request = LedUserRequest()
+        user_led_request.animation_mode.animation = LedRingAnimation.CHASE
+        user_led_request.colors = [ColorRGBA(color[0], color[1], color[2], 0)]
+        user_led_request.period = period
+        user_led_request.iterations = iterations
+        user_led_request.wait_end = wait
+
+        result = self.__call_service('/niryo_robot_led_ring/user_service', LedUser, user_led_request)
+        return result.status, result.message
+
+    def led_ring_wipe(self, color, period=0, wait=False):
+        """
+        Wipe a color across the Led Ring, light a Led at a time.
+
+        :param color: Led ring color, in a list of size 3 (r, g, b: 0.0-255.0)
+        :type color: list[float]
+        :param period: execution time for a pattern
+        :type period: float
+        :param wait: The service wait for the animation to finish or not to answer.
+        :type wait: bool
+        :return: status, message
+        :rtype: (int, str)
+        """
+        user_led_request = LedUserRequest()
+        user_led_request.animation_mode.animation = LedRingAnimation.COLOR_WIPE
+        user_led_request.colors = [ColorRGBA(color[0], color[1], color[2], 0)]
+        user_led_request.period = period
+        user_led_request.wait_end = wait
+
+        result = self.__call_service('/niryo_robot_led_ring/user_service', LedUser, user_led_request)
+        return result.status, result.message
+
+    def led_ring_rainbow(self, period=0, iterations=0, wait=False):
+        """
+        Draw rainbow that fades across all Leds at once.
+
+        :param period: execution time for a pattern
+        :type period: float
+        :param iterations: Number of consecutives rainbows. If 0, the animation continues endlessly.
+        :type iterations: int
+        :param wait: The service wait for the animation to finish or not to answer. If iterations
+                is 0, the service answers immediatly.
+        :type wait: bool
+        :return: status, message
+        :rtype: (int, str)
+        """
+        user_led_request = LedUserRequest()
+        user_led_request.animation_mode.animation = LedRingAnimation.RAINBOW
+        user_led_request.period = period
+        user_led_request.iterations = iterations
+        user_led_request.wait_end = wait
+
+        result = self.__call_service('/niryo_robot_led_ring/user_service', LedUser, user_led_request)
+        return result.status, result.message
+
+    def led_ring_rainbow_cycle(self, period=0, iterations=0, wait=False):
+        """
+        Draw rainbow that uniformly distributes itself across all Leds.
+
+        :param period: execution time for a pattern
+        :type period: float
+        :param iterations: Number of consecutives rainbow cycles. If 0, the animation continues endlessly.
+        :type iterations: int
+        :param wait: The service wait for the animation to finish or not to answer. If iterations
+                is 0, the service answers immediatly.
+        :type wait: bool
+        :return: status, message
+        :rtype: (int, str)
+        """
+        user_led_request = LedUserRequest()
+        user_led_request.animation_mode.animation = LedRingAnimation.RAINBOW_CYLE
+        user_led_request.period = period
+        user_led_request.iterations = iterations
+        user_led_request.wait_end = wait
+
+        result = self.__call_service('/niryo_robot_led_ring/user_service', LedUser, user_led_request)
+        return result.status, result.message
+
+    def led_ring_rainbow_chase(self, period=0, iterations=0, wait=False):
+        """
+        Rainbow chase animation, like the led_ring_chase method.
+
+        :param period: execution time for a pattern
+        :type period: float
+        :param iterations: Number of consecutives rainbow cycles. If 0, the animation continues endlessly.
+        :type iterations: int
+        :param wait: The service wait for the animation to finish or not to answer. If iterations
+                is 0, the service answers immediatly.
+        :type wait: bool
+        :return: status, message
+        :rtype: (int, str)
+        """
+        user_led_request = LedUserRequest()
+        user_led_request.animation_mode.animation = LedRingAnimation.RAINBOW_CHASE
+        user_led_request.period = period
+        user_led_request.iterations = iterations
+        user_led_request.wait_end = wait
+
+        result = self.__call_service('/niryo_robot_led_ring/user_service', LedUser, user_led_request)
+        return result.status, result.message
+
+    def led_ring_go_up(self, color, period=0, iterations=0, wait=False):
+        """
+        Leds turn on like a loading circle, and are then all turned off at once.
+
+        :param color: Led ring color, in a list of size 3 (r, g, b: 0.0-255.0)
+        :type color: list[float]
+        :param period: execution time for a pattern
+        :type period: float
+        :param iterations: Number of consecutives turns around the Led Ring. If 0, the animation
+            continues endlessly.
+        :type iterations: int
+        :param wait: The service wait for the animation to finish or not to answer. If iterations
+                is 0, the service answers immediatly.
+        :type wait: bool
+        :return: status, message
+        :rtype: (int, str)
+        """
+        user_led_request = LedUserRequest()
+        user_led_request.animation_mode.animation = LedRingAnimation.GO_UP
+        user_led_request.colors = [ColorRGBA(color[0], color[1], color[2], 0)]
+        user_led_request.period = period
+        user_led_request.iterations = iterations
+        user_led_request.wait_end = wait
+
+        result = self.__call_service('/niryo_robot_led_ring/user_service', LedUser, user_led_request)
+        return result.status, result.message
+
+    def led_ring_go_up_down(self, color, period=0, iterations=0, wait=False):
+        """
+        Leds turn on like a loading circle, and are turned off the same way.
+
+        :param color: Led ring color, in a list of size 3 (r, g, b: 0.0-255.0)
+        :type color: list[float]
+        :param period: execution time for a pattern
+        :type period: float
+        :param iterations: Number of consecutives turns around the Led Ring. If 0, the animation
+            continues endlessly.
+        :type iterations: int
+        :param wait: The service wait for the animation to finish or not to answer. If iterations
+                is 0, the service answers immediatly.
+        :type wait: bool
+        :return: status, message
+        :rtype: (int, str)
+        """
+        user_led_request = LedUserRequest()
+        user_led_request.animation_mode.animation = LedRingAnimation.GO_UP_AND_DOWN
+        user_led_request.colors = [ColorRGBA(color[0], color[1], color[2], 0)]
+        user_led_request.period = period
+        user_led_request.iterations = iterations
+        user_led_request.wait_end = wait
+
+        result = self.__call_service('/niryo_robot_led_ring/user_service', LedUser, user_led_request)
+        return result.status, result.message
+
     # - Logs
 
     def get_logs(self):
@@ -2338,7 +2601,6 @@ class NiryoRosWrapper:
         return self.__classic_return_w_check(result)
 
     # - Autorun
-
     def start_autorun(self):
         """
         Start the program set as autorun

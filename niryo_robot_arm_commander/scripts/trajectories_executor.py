@@ -19,6 +19,7 @@ from control_msgs.msg import FollowJointTrajectoryActionFeedback
 from moveit_msgs.msg import RobotState as RobotStateMoveIt
 from trajectory_msgs.msg import JointTrajectory
 from visualization_msgs.msg import Marker, MarkerArray
+from std_msgs.msg import Bool
 from geometry_msgs.msg import Quaternion
 
 # Services
@@ -72,8 +73,11 @@ class TrajectoriesExecutor:
 
         self.__joint_trajectory_publisher = rospy.Publisher('{}/command'.format(joint_controller_base_name),
                                                             JointTrajectory, queue_size=10)
+
         self.__reset_controller_service = rospy.ServiceProxy('/niryo_robot/joints_interface/steppers_reset_controller',
                                                              Trigger)
+
+        self.__collision_detected_publisher = rospy.Publisher('~collision_detected', Bool, queue_size=10)
 
     def __set_position_hold_mode(self):
         """
@@ -104,7 +108,6 @@ class TrajectoriesExecutor:
 
     def __callback_current_feedback(self, msg):
         self.__current_feedback = msg
-        self.__collision_detected = False
         for error, tolerance in zip(self.__current_feedback.feedback.error.positions, self.__error_tolerance):
             if abs(error) > tolerance:
                 self.__collision_detected = True
@@ -245,6 +248,7 @@ class TrajectoriesExecutor:
         trajectory_time_out = max(1.5 * self.__get_plan_time(plan), self.__trajectory_minimum_timeout)
 
         # Send trajectory and wait
+        self.__collision_detected = False
         self.__arm.execute(plan, wait=False)
         if self.__traj_finished_event.wait(trajectory_time_out):
             if self.__current_goal_result == GoalStatus.SUCCEEDED:
@@ -252,8 +256,9 @@ class TrajectoriesExecutor:
             elif self.__current_goal_result == GoalStatus.PREEMPTED:
                 if self.__collision_detected:
                     self.__collision_detected = False
-                    return CommandStatus.STOPPED, "Command has been aborted due to a collision or " \
-                                                  "a motor not able to follow the given trajectory"
+                    self.__collision_detected_publisher.publish(True)
+                    self.__set_learning_mode(True)
+                    return CommandStatus.STOPPED, "Command has been aborted due to a collision or a motor not able to follow the given trajectory"
                 else:
                     return CommandStatus.STOPPED, "Command has been successfully stopped"
             elif self.__current_goal_result == GoalStatus.ABORTED:
@@ -264,6 +269,8 @@ class TrajectoriesExecutor:
                 self.__set_position_hold_mode()
                 abort_str = "Command has been aborted due to a collision or " \
                             "a motor not able to follow the given trajectory"
+                self.__set_learning_mode(True)
+                self.__collision_detected_publisher.publish(True)
                 return CommandStatus.CONTROLLER_PROBLEMS, abort_str
 
             else:  # problem from ros_control itself
@@ -360,8 +367,8 @@ class TrajectoriesExecutor:
             markers_array = rospy.wait_for_message(topic_display, MarkerArray).markers
         else:
             markers_array = []
-
-        marker_pub = rospy.Publisher(topic_display, MarkerArray, queue_size=10, latch=True)
+        marker_pub = rospy.Publisher(topic_display, MarkerArray,
+                                     queue_size=10)
 
         cardboard_marker = Marker()
         cardboard_marker.header.frame_id = "world"

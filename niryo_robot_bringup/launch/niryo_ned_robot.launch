@@ -14,5 +14,5 @@
         <arg name="can_enabled" value="$(arg can_enabled)"/>
         <arg name="debug" value="$(arg debug)"/>
     </include>
+
 </launch>
- 

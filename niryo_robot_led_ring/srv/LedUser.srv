@@ -1,0 +1,15 @@
+niryo_robot_led_ring/LedRingAnimation animation_mode
+
+std_msgs/ColorRGBA[] colors
+float64 period         # Time of 1 iteration in seconds
+int16 iterations
+
+# The service either wait for the iterations to finish to answer, 
+# or answer immediatly a Success after launching the function of Led Ring control. 
+# if iterations is 0, answer immediatly in any case, because the function never
+# stops.
+bool wait_end
+
+---
+int32 status
+string message

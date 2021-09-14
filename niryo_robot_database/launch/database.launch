@@ -1,0 +1,8 @@
+<launch>
+    <arg name="database_path" default="~/.config/niryo"/>
+    <arg name="hardware_version" value="ned"/>
+
+    <node name="niryo_robot_database" pkg="niryo_robot_database" type="database_node.py" output="screen">
+        <param name="sqlite_db_file_path" value="$(arg database_path)/$(arg hardware_version).db"/>
+    </node>
+</launch>

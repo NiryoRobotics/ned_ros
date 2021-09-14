@@ -1,0 +1,13 @@
+default_flashing_period: 0.25
+default_alternate_period: 1
+default_chase_period: 4
+default_colorwipe_period: 5
+default_rainbow_period: 5
+default_rainbowcycle_period: 5
+default_rainbowchase_period: 5
+default_goup_period: 5
+default_goupanddown_period: 5
+default_breath_period: 4
+default_snake_period: 1.5
+
+simulation_led_mesh_path: "package://niryo_robot_description/meshes/led_ring/led.dae"

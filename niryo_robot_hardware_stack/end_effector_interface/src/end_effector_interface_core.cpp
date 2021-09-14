@@ -113,7 +113,7 @@ void EndEffectorInterfaceCore::initParameters(ros::NodeHandle& nh)
       nh.getParam("button_" + std::to_string(button_id) + "/type", button_type);
       auto eType = ButtonTypeEnum(button_type.c_str());
 
-      ROS_INFO("EndEffectorInterfaceCore::initParameters : configure button %d of type %s", button_id, eType.toString().c_str());
+      ROS_DEBUG("EndEffectorInterfaceCore::initParameters : configure button %d of type %s", button_id, eType.toString().c_str());
       _end_effector_state->configureButton(button_id, eType);
       button_id++;
     }

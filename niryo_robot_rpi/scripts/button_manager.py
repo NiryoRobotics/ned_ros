@@ -13,6 +13,7 @@ from niryo_robot_msgs.msg import CommandStatus
 # Messages
 from std_msgs.msg import Int32, Bool, Int8
 from niryo_robot_arm_commander.msg import PausePlanExecution
+from niryo_robot_programs_manager.msg import ProgramIsRunning
 
 # Services
 from std_srvs.srv import Empty
@@ -50,7 +51,7 @@ class NiryoButton:
 
         self.__program_manager_is_running = False
         rospy.Subscriber('/niryo_robot_programs_manager/program_is_running',
-                         Bool, self.__callback_program_is_running)
+                         ProgramIsRunning, self.__callback_program_is_running)
 
         rospy.Subscriber('/niryo_robot/rpi/led_state',
                          Int8, self.__callback_led_state)
@@ -113,7 +114,7 @@ class NiryoButton:
         return not self.__button_state
 
     def __callback_program_is_running(self, msg):
-        self.__program_manager_is_running = msg.data
+        self.__program_manager_is_running = msg.program_is_running
 
     def __callback_led_state(self, msg):
         self.__led_state = msg.data
@@ -127,7 +128,7 @@ class NiryoButton:
 
         # Deal with new state
         if not python_prog_is_running:
-            # if the state is paused, it means that the pause timout has appeared.
+            # if the state is paused, it means that the pause timeout has appeared.
             # Otherwise it's a program that has ended.
             if self._pause_state == PausePlanExecution.PAUSE:
                 activate_learning_mode(True)

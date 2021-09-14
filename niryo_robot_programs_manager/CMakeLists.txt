@@ -15,6 +15,7 @@ find_package(catkin REQUIRED COMPONENTS
 
 add_message_files(
   FILES
+  ProgramIsRunning.msg
   ProgramLanguage.msg
   ProgramLanguageList.msg
   ProgramList.msg

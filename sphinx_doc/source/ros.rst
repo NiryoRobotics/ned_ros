@@ -37,3 +37,4 @@ In this section, you will have access to all information about each Niryo Robot'
    ros/niryo_robot_unit_tests
    ros/niryo_robot_user_interface
    ros/niryo_robot_vision
+   ros/niryo_robot_led_ring

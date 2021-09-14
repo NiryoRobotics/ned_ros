@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
 add_message_files(
   FILES
   ArmMoveCommand.msg
+  JointLimits.msg
   PausePlanExecution.msg
   ShiftPose.msg
 )
@@ -21,6 +22,7 @@ add_service_files(
   FILES
   GetFK.srv
   GetIK.srv
+  GetJointLimits.srv
   JogShift.srv
 )
 
