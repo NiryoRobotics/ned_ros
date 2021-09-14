@@ -1,0 +1,7 @@
+<launch>
+    <!-- Launch Arm commander node -->
+    <node name="niryo_robot_status" pkg="niryo_robot_status" type="robot_status_node.py" output="screen"
+          respawn="false">
+        <rosparam command="load" file="$(find niryo_robot_status)/config/log_config.yaml"/>z
+    </node>
+</launch>

@@ -15,16 +15,19 @@ import Queue
 
 
 class TcpServer:
-    def __init__(self, ip_address='', port=40001):
+    def __init__(self, ip_address='', port=40001, on_client_connection_cb=None, on_client_disconnection_cb=None):
         # Server TCP
         self.__ip_address = ip_address
         self.__port = port
 
         try:
-            self.__server = create_socket_server(ip_address=self.__ip_address, port=self.__port)
+            self.__server = create_socket_server(ip_address='', port=self.__port)
             self.__server.listen(1)
             self.__client = None
             self.__is_client_connected = False
+            self.__on_client_connection_cb = on_client_connection_cb
+            self.__on_client_disconnection_cb = on_client_disconnection_cb
+
             # Thread
             self.__loop_thread = Thread(target=self.__loop, name="TCP Server Loop thread")
             self.__command_executor_thread = Thread(target=self.__command_executor_loop,
@@ -79,6 +82,8 @@ class TcpServer:
         self.__client, address = self.__server.accept()
         self.__is_client_connected = True
         rospy.loginfo("TCP Server - Client connected from IP address: {}/{}".format(address[0], address[1]))
+        if self.__on_client_connection_cb is not None:
+            self.__on_client_connection_cb()
 
     def __client_socket_event(self, inputs):
         dict_command_received = self.__read_command()
@@ -90,6 +95,8 @@ class TcpServer:
             self.__is_client_connected = False
             self.__shutdown_client()
             inputs.remove(self.__client)
+            if self.__on_client_disconnection_cb is not None:
+                self.__on_client_disconnection_cb()
 
     def __shutdown_client(self):
         if self.__client is not None:

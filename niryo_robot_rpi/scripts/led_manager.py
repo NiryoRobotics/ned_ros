@@ -33,7 +33,8 @@ from niryo_robot_rpi.srv import LedBlinker
 
 from niryo_robot_rpi.rpi_ros_utils import LedState
 
-LED_GPIO_R = 18
+# TODO LED_GPIO_R = 18 sur le vrai NED, change ici pour ne pas faire de concurrence au ledring
+LED_GPIO_R = 24
 LED_GPIO_G = 24
 LED_GPIO_B = 22
 

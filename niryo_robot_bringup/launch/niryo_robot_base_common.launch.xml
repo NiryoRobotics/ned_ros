@@ -37,6 +37,9 @@
     </include>
 
     <!-- Including launch files -->
+    <include file="$(find niryo_robot_led_ring)/launch/led_ring_commander.launch">
+        <arg name="hardware_version" value="$(arg hardware_version)"/>
+    </include>
 
     <include file="$(find niryo_robot_hardware_interface)/launch/controllers.launch">
         <arg name="gazebo" default="$(arg gazebo)"/>
@@ -73,6 +76,9 @@
 
     <include file="$(find niryo_robot_user_interface)/launch/user_interface.launch">
         <arg name="log_level" value="$(arg log_level)" />
+    </include>
+
+    <include file="$(find niryo_robot_status)/launch/robot_status.launch">
     </include>
 
     <include file="$(find niryo_robot_modbus)/launch/modbus_server.launch">

@@ -219,7 +219,7 @@ bool JointHardwareInterface::init(ros::NodeHandle& rootnh, ros::NodeHandle &robo
             auto jState = _joint_list.at(j);
             if (jState)
             {
-                ROS_INFO("JointHardwareInterface::initJoints - New Joints config found : %s", jState->str().c_str());
+                ROS_DEBUG("JointHardwareInterface::initJoints - New Joints config found : %s", jState->str().c_str());
 
                 hardware_interface::JointStateHandle jStateHandle(jState->getName(),
                                                                   &_joint_list.at(j)->pos,
