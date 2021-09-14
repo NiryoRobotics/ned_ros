@@ -72,11 +72,8 @@ public:
         bool set_motors_calibration_offsets(const std::vector<int>& motor_id_list, const std::vector<int> &steps_list);
         bool get_motors_calibration_offsets(std::vector<int> &motor_id_list, std::vector<int>& steps_list);
 
-        std::shared_ptr<common::model::IDriverCore> getProtocolOfMotor(common::model::EBusProtocol bus_proto) const;
-
 private:
-        std::shared_ptr<ttl_driver::TtlInterfaceCore> _ttl_interface;
-        std::shared_ptr<can_driver::CanInterfaceCore> _can_interface;
+        std::map<common::model::EBusProtocol, std::shared_ptr<common::model::IDriverCore> > _driver_interfaces_map;
         
         std::vector<std::shared_ptr<common::model::JointState> > _joint_states_list;
 

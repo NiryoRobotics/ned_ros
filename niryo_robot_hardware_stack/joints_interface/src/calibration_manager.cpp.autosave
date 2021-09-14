@@ -431,31 +431,16 @@ EStepperCalibrationStatus CalibrationManager::_auto_calibration()
         ROS_ERROR("Calibration Interface -  An error occured while calibrating stepper motors");
     }
 
-    if (_driver_interfaces_map.count(EBusProtocol::CAN))
+    
+    // 7 - stop torques
+    for (auto const& jState : _joint_states_list)
     {
-        // forge stepper command
-        for (auto const& jState : _joint_states_list)
+        if (jState && jState->isStepper())
         {
-            if (jState && jState->isStepper())
-            {
-                _motorTorque(jState, false);
-            }
+            _motorTorque(jState, false);
         }
     }
-    else
-    {
-        // Forge stepper Ttl
-        for (auto const& jState : _joint_states_list)
-        {
-            if (jState && jState->isStepper())
-            {
-                StepperTtlSingleCmd cmd(EStepperCommandType::CMD_TYPE_TORQUE, jState->getId(), {0});
-                if(_driver_interfaces_map.count(jState->getBusProtocol()))
-                    _driver_interfaces_map.at(jState->getBusProtocol())->addSingleCommandToQueue(
-                                            std::make_shared<StepperTtlSingleCmd>(cmd));
-            }
-        }
-    }
+    
     // forge dxl command
     if (_driver_interfaces_map.count(EBusProtocol::TTL))
     {
