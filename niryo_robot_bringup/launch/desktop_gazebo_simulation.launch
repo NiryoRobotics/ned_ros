@@ -12,7 +12,7 @@ This will reduce the amount of time spent waiting during program shutdown
         value="$(find niryo_robot_bringup)/config/desktop_gazebo_simulation_trace.conf" />
     <!-- Arguments definition -->
     <arg name="log_level" default="INFO" />
-    <arg name="hardware_version" default="fake" />
+    <arg name="hardware_version" default="fake_ned" />
 
     <arg name="gripper_n_camera" default="true"/>
     <arg name="gui" default="true"/>

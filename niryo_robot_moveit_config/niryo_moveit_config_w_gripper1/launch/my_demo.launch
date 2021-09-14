@@ -47,7 +47,7 @@
     <!-- Run the main MoveIt! executable without trajectory execution (we do not have controllers configured by default) -->
     <include file="$(find niryo_moveit_config_w_gripper1)/launch/move_group.launch">
         <arg name="allow_trajectory_execution" value="true"/>
-        <arg name="hardware_version" value="fake"/>
+        <arg name="hardware_version" value="fake_ned"/>
         <arg name="info" value="true"/>
         <arg name="debug" value="$(arg debug)"/>
         <arg name="pipeline" value="$(arg pipeline)"/>

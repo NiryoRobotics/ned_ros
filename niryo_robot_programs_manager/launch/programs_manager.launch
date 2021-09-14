@@ -6,8 +6,8 @@
     <arg name="standalone" default="false"/>
     <arg name="hardware_version" default="ned"/>
 
-    <arg name="saved_files_dir" value="~/.niryo/simulation" if="$(eval hardware_version =='fake')"/>
-    <arg name="saved_files_dir" value="~/niryo_robot_saved_files" unless="$(eval hardware_version =='fake')"/>
+    <arg name="saved_files_dir" value="~/.niryo/simulation" if="$(eval hardware_version =='fake_ned' or hardware_version =='fake_ned2')"/>
+    <arg name="saved_files_dir" value="~/niryo_robot_saved_files" unless="$(eval hardware_version =='fake_ned' or hardware_version =='fake_ned2')"/>
 
     <arg name="programs_dir" value="$(arg saved_files_dir)/niryo_robot_programs" />
 
