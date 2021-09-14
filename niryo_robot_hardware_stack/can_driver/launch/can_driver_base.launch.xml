@@ -5,7 +5,6 @@ xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d
     
     <group ns="can_driver">
         <rosparam file="$(find can_driver)/config/$(arg hardware_version)/bus_params.yaml" command="load"/>
-        <rosparam file="$(find can_driver)/config/$(arg hardware_version)/motors_params.yaml" command="load"/>
         <rosparam file="$(find can_driver)/config/default.yaml" command="load"/>  
     </group>  
 </launch>
