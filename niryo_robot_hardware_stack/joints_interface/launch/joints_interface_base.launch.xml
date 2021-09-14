@@ -6,8 +6,8 @@
   <arg name="hardware_version" default="ned" />
 
   <group ns="joints_interface">
-    <rosparam file="$(find ttl_driver)/config/$(arg hardware_version)/dynamixels_params.yaml" command="load" />
-    <rosparam file="$(find ttl_driver)/config/$(arg hardware_version)/steppers_params.yaml" command="load" />  
+    <rosparam file="$(find joints_interface)/config/$(arg hardware_version)/dynamixels_params.yaml" command="load" />
+    <rosparam file="$(find joints_interface)/config/$(arg hardware_version)/steppers_params.yaml" command="load" />  
     <rosparam file="$(find joints_interface)/config/$(arg hardware_version)/joints_params.yaml" command="load" />
     <rosparam file="$(find joints_interface)/config/$(arg hardware_version)/calibration_params.yaml" command="load" />
     <rosparam file="$(find joints_interface)/config/default.yaml" command="load" />
