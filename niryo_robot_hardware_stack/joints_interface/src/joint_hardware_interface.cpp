@@ -115,11 +115,8 @@ bool JointHardwareInterface::init(ros::NodeHandle& rootnh, ros::NodeHandle &robo
         // CC use factory in state directly ?
         if (eType == EHardwareType::STEPPER || eType == EHardwareType::FAKE_STEPPER_MOTOR)
         {  // stepper
-            std::string currentStepperNamespace;
-            if (eBusProto == EBusProtocol::CAN)
-                currentStepperNamespace = "steppers/stepper_" + to_string(currentIdStepper);
-            else if (eBusProto == EBusProtocol::TTL)
-                currentStepperNamespace = "steppersTtl/stepper_" + to_string(currentIdStepper);
+            std::string currentStepperNamespace = "steppers/stepper_" + to_string(currentIdStepper);
+
             auto stepperState = std::make_shared<StepperMotorState>(joint_name,
                                                                     eType,
                                                                     common::model::EComponentType::JOINT,
@@ -132,10 +129,10 @@ bool JointHardwareInterface::init(ros::NodeHandle& rootnh, ros::NodeHandle &robo
                 int direction = 1;
                 double max_effort = 0.0;
 
-                rootnh.getParam(currentStepperNamespace + "/offset_position", offsetPos);
-                rootnh.getParam(currentStepperNamespace + "/gear_ratio", gear_ratio);
-                rootnh.getParam(currentStepperNamespace + "/direction", direction);
-                rootnh.getParam(currentStepperNamespace + "/max_effort", max_effort);
+                robot_hwnh.getParam(currentStepperNamespace + "/offset_position", offsetPos);
+                robot_hwnh.getParam(currentStepperNamespace + "/gear_ratio", gear_ratio);
+                robot_hwnh.getParam(currentStepperNamespace + "/direction", direction);
+                robot_hwnh.getParam(currentStepperNamespace + "/max_effort", max_effort);
 
                 // add parameters
                 stepperState->setOffsetPosition(offsetPos);
@@ -175,18 +172,18 @@ bool JointHardwareInterface::init(ros::NodeHandle& rootnh, ros::NodeHandle &robo
 
                 std::string currentDxlNamespace = "dynamixels/dxl_" + to_string(currentIdDxl);
 
-                rootnh.getParam(currentDxlNamespace + "/offset_position", offsetPos);
-                rootnh.getParam(currentDxlNamespace + "/direction", direction);
+                robot_hwnh.getParam(currentDxlNamespace + "/offset_position", offsetPos);
+                robot_hwnh.getParam(currentDxlNamespace + "/direction", direction);
 
-                rootnh.getParam(currentDxlNamespace + "/position_P_gain", positionPGain);
-                rootnh.getParam(currentDxlNamespace + "/position_I_gain", positionIGain);
-                rootnh.getParam(currentDxlNamespace + "/position_D_gain", positionDGain);
+                robot_hwnh.getParam(currentDxlNamespace + "/position_P_gain", positionPGain);
+                robot_hwnh.getParam(currentDxlNamespace + "/position_I_gain", positionIGain);
+                robot_hwnh.getParam(currentDxlNamespace + "/position_D_gain", positionDGain);
 
-                rootnh.getParam(currentDxlNamespace + "/velocity_P_gain", velocityPGain);
-                rootnh.getParam(currentDxlNamespace + "/velocity_I_gain", velocityIGain);
+                robot_hwnh.getParam(currentDxlNamespace + "/velocity_P_gain", velocityPGain);
+                robot_hwnh.getParam(currentDxlNamespace + "/velocity_I_gain", velocityIGain);
 
-                rootnh.getParam(currentDxlNamespace + "/FF1_gain", FF1Gain);
-                rootnh.getParam(currentDxlNamespace + "/FF2_gain", FF2Gain);
+                robot_hwnh.getParam(currentDxlNamespace + "/FF1_gain", FF1Gain);
+                robot_hwnh.getParam(currentDxlNamespace + "/FF2_gain", FF2Gain);
 
                 dxlState->setOffsetPosition(offsetPos);
                 dxlState->setDirection(direction);
