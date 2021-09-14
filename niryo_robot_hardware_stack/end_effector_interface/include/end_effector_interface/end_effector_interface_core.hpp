@@ -51,7 +51,7 @@ class EndEffectorInterfaceCore : public common::model::IInterfaceCore
         virtual bool init(ros::NodeHandle &nh) override;
 
         // getters
-        common::model::EndEffectorState getEndEffectorState() const;
+        std::shared_ptr<common::model::EndEffectorState> getEndEffectorState() const;
 
     private:
         virtual void initParameters(ros::NodeHandle& nh) override;
@@ -75,14 +75,14 @@ class EndEffectorInterfaceCore : public common::model::IInterfaceCore
 
         std::thread _publish_buttons_state_thread;
 
-        common::model::EndEffectorState _end_effector_state;
+        std::shared_ptr<common::model::EndEffectorState> _end_effector_state;
         uint8_t _id;
         bool _is_learning_mode{false};
 
         double _check_end_effector_status_frequency{0.0};
 };
 
-common::model::EndEffectorState
+std::shared_ptr<common::model::EndEffectorState>
 EndEffectorInterfaceCore::getEndEffectorState() const
 {
     return _end_effector_state;

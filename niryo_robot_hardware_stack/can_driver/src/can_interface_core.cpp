@@ -138,6 +138,35 @@ void CanInterfaceCore::startSubscribers(ros::NodeHandle &/*nh*/)
     ROS_DEBUG("CanInterfaceCore::startServices - no subscribers to start");
 }
 
+/**
+ * @brief TtlInterfaceCore::addJoint
+ * @param jointState
+ * @return
+ */
+int CanInterfaceCore::addJoint(const std::shared_ptr<common::model::StepperMotorState> jointState)
+{
+  int result = niryo_robot_msgs::CommandStatus::CAN_READ_ERROR;
+
+  std::lock_guard<std::mutex> lck(_control_loop_mutex);
+
+  // add dynamixel as a new tool
+  _can_manager->addHardwareComponent(jointState);
+
+  // try to find motor
+  if (_can_manager->ping(jointState->getId()))
+  {
+      // no init commands
+
+      result = niryo_robot_msgs::CommandStatus::SUCCESS;
+  }
+  else
+  {
+      ROS_WARN("TtlInterfaceCore::addJoint - No joint found with motor id %d", jointState->getId());
+  }
+
+  return result;
+}
+
 // ***************
 //  Commands
 // ***************
@@ -456,46 +485,46 @@ void CanInterfaceCore::_executeCommand()
  * @param state
  * @return
  */
-int CanInterfaceCore::setConveyor(const common::model::ConveyorState& state)
+int CanInterfaceCore::setConveyor(const std::shared_ptr<common::model::ConveyorState> state)
 {
     int result = niryo_robot_msgs::CommandStatus::NO_CONVEYOR_FOUND;
 
     lock_guard<mutex> lck(_control_loop_mutex);
 
     // try to find motor id 6 (default motor id for conveyor
-    if (_can_manager->ping(state.getDefaultId()))
+    if (_can_manager->ping(state->getDefaultId()))
     {
-        if (CAN_OK == _can_manager->sendUpdateConveyorId(state.getDefaultId(),
-                                                         state.getId()))
+        if (CAN_OK == _can_manager->sendUpdateConveyorId(state->getDefaultId(),
+                                                         state->getId()))
         {
             // add stepper as a new conveyor
             _can_manager->addHardwareComponent(state);
 
             // try to find motor
-            if (_can_manager->ping(state.getId()))
+            if (_can_manager->ping(state->getId()))
             {
                 // send commands to init
                 ROS_DEBUG("ConveyorInterfaceCore::addConveyor : Initializing for CAN bus");
 
                 _can_manager->writeSingleCommand(std::make_shared<common::model::StepperSingleCmd>(EStepperCommandType::CMD_TYPE_MICRO_STEPS,
-                                                                                        state.getId(), std::initializer_list<int32_t>{state.getMicroSteps()}));
+                                                                                        state->getId(), std::initializer_list<int32_t>{state->getMicroSteps()}));
 
                 _can_manager->writeSingleCommand(std::make_shared<common::model::StepperSingleCmd>(EStepperCommandType::CMD_TYPE_MAX_EFFORT,
-                                                                                        state.getId(), std::initializer_list<int32_t>{state.getMaxEffort()}));
+                                                                                        state->getId(), std::initializer_list<int32_t>{state->getMaxEffort()}));
 
                 _can_manager->writeSingleCommand(std::make_shared<common::model::StepperSingleCmd>(EStepperCommandType::CMD_TYPE_CONVEYOR,
-                                                                                        state.getId(), std::initializer_list<int32_t>{false, 0, -1}));
+                                                                                        state->getId(), std::initializer_list<int32_t>{false, 0, -1}));
 
                 // CC why two times in a row ?
                 _can_manager->writeSingleCommand(std::make_shared<common::model::StepperSingleCmd>(EStepperCommandType::CMD_TYPE_CONVEYOR,
-                                                                                       state.getId(), std::initializer_list<int32_t>{false, 0, -1}));
+                                                                                       state->getId(), std::initializer_list<int32_t>{false, 0, -1}));
 
 
                 result = niryo_robot_msgs::CommandStatus::SUCCESS;
             }
             else
             {
-                ROS_WARN("TtlInterfaceCore::setTool - No tool found with motor id %d", state.getId());
+                ROS_WARN("TtlInterfaceCore::setTool - No tool found with motor id %d", state->getId());
             }
 
             result = niryo_robot_msgs::CommandStatus::SUCCESS;
@@ -656,10 +685,10 @@ niryo_robot_msgs::BusState CanInterfaceCore::getBusState() const
  * @param motor_id
  * @return
  */
-common::model::JointState
+std::shared_ptr<common::model::JointState>
 can_driver::CanInterfaceCore::getJointState(uint8_t motor_id) const
 {
-  return _can_manager->getHardwareState<common::model::JointState>(motor_id);
+  return _can_manager->getHardwareState(motor_id);
 }
 
 }  // namespace can_driver

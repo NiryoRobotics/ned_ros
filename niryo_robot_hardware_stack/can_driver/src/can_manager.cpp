@@ -887,6 +887,16 @@ uint8_t CanManager::sendUpdateConveyorId(uint8_t old_id, uint8_t new_id)
     return sendCanMsgBuf(old_id, 0, 3, data);
 }
 
+/**
+ * @brief CanManager::addHardwareComponent
+ * @param state
+ */
+void CanManager::addHardwareComponent(const std::shared_ptr<common::model::StepperMotorState> state)
+{
+    ROS_DEBUG("CanManager::addHardwareComponent - Add motor id: %d", state->getId());
+
+    _state_map.insert(std::make_pair(state->getId(), state));
+}
 
 // ******************
 //  Getters
@@ -925,6 +935,20 @@ int32_t CanManager::getCalibrationResult(uint8_t motor_id) const
         throw std::out_of_range("CanManager::getMotorsState: Unknown motor id");
 
     return _state_map.at(motor_id)->getCalibrationValue();
+}
+
+/**
+ * @brief TtlManager::getHardwareState
+ * @param motor_id
+ * @return
+ */
+std::shared_ptr<common::model::StepperMotorState> CanManager::getHardwareState(uint8_t motor_id) const
+{
+    if (!_state_map.count(motor_id) && _state_map.at(motor_id))
+        throw std::out_of_range("TtlManager::getMotorsState: Unknown motor id");
+
+    auto state = *(std::dynamic_pointer_cast<std::shared_ptr<common::model::StepperMotorState>>(_state_map.at(motor_id)));
+    return state;
 }
 
 /**
