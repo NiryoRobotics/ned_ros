@@ -6,12 +6,11 @@
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-12 08:22+0000\n"
+"POT-Creation-Date: 2021-09-13 17:20+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -452,7 +451,6 @@ msgid "Make a Jog on joints position"
 msgstr ""
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.jog_joints_shift:3
-#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.jog_pose_shift:3
 #: of
 msgid "list corresponding to the shift to be applied to each joint"
 msgstr ""
@@ -460,6 +458,11 @@ msgstr ""
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.jog_pose_shift:1
 #: of
 msgid "Make a Jog on end-effector position"
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.jog_pose_shift:3
+#: of
+msgid "list corresponding to the shift to be applied to the position"
 msgstr ""
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.forward_kinematics:1
@@ -747,7 +750,7 @@ msgstr ""
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.reset_tcp:1 of
 msgid ""
-"Reset the TCP (Tool Center Point) transformation. The PCO will be reset "
+"Reset the TCP (Tool Center Point) transformation. The TCP will be reset "
 "according to the tool equipped."
 msgstr ""
 
@@ -794,7 +797,7 @@ msgstr ""
 msgid "Infos contains in a DigitalIOState object (see niryo_robot_msgs)"
 msgstr ""
 
-#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:88
+#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:89
 msgid "Conveyor Belt"
 msgstr ""
 
@@ -1568,5 +1571,11 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "Pins ID"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Reset the TCP (Tool Center Point) "
+#~ "transformation. The PCO will be reset"
+#~ " according to the tool equipped."
 #~ msgstr ""
 

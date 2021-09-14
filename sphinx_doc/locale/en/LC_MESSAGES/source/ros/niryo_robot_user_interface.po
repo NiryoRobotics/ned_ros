@@ -6,12 +6,13 @@
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
-#, fuzzy
+
+
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-01 12:55+0000\n"
+"POT-Creation-Date: 2021-09-13 09:16+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,7 +27,7 @@ msgstr ""
 
 #: ../../source/ros/niryo_robot_user_interface.rst:4
 msgid ""
-"This packages handles high-level user interface commands coming TCP "
+"This packages handle high-level user interface commands coming TCP "
 "requests and also system-related features like I/Os, LED and fans."
 msgstr ""
 
@@ -67,5 +68,12 @@ msgstr ""
 #~ " interface commands coming TCP requests "
 #~ "and system control like I/Os, LED "
 #~ "and fans."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "This packages handles high-level user"
+#~ " interface commands coming TCP requests "
+#~ "and also system-related features like"
+#~ " I/Os, LED and fans."
 #~ msgstr ""
 

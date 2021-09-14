@@ -6,7 +6,8 @@
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
-#, fuzzy
+
+
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
@@ -64,7 +65,7 @@ msgid ""
 " below the piece of code you must use to make Python ROS Wrapper work: ::"
 msgstr ""
 "Pour fonctionner, votre programme aura besoin d'importations et "
-"d'initialisation. Nous vous donnons ci-dessous le code qu'il faut "
+"d'initialisations. Nous vous donnons ci-dessous le code qu'il faut "
 "utiliser pour faire fonctionner Python ROS Wrapper : ::"
 
 #: ../../source/python_ros_wrapper/before_running.rst:34

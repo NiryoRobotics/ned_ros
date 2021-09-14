@@ -4,7 +4,7 @@
   schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>dynamixel_sdk</name>
-  <version>3.4.7</version>
+  <version>3.7.51</version>
   <description>
       (This package has been adapted to be used on the Ned custom RPI shield.)
 

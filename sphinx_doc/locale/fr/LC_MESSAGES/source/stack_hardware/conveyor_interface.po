@@ -6,12 +6,13 @@
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
-#, fuzzy
+
+
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-12 16:24+0000\n"
+"POT-Creation-Date: 2021-09-13 09:16+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -50,7 +51,7 @@ msgstr "Régler et contrôler le Convoyeur."
 
 #: ../../source/stack_hardware/conveyor_interface.rst:12
 msgid "Publish Conveyors Belt state."
-msgstr "Diffuser l'état du Convoyeur"
+msgstr "Diffuser l'état du Convoyeur."
 
 #: ../../source/stack_hardware/conveyor_interface.rst:14
 msgid "The namespace used is: |namespace_emphasize|"
@@ -81,7 +82,9 @@ msgid "``publish_frequency``"
 msgstr ""
 
 #: ../../source/stack_hardware/conveyor_interface.rst
-msgid "Publish rate for conveyors state."
+
+
+msgid "Publishes rate for conveyors state."
 msgstr "Diffuser le taux pour l'état des convoyeurs"
 
 #: ../../source/stack_hardware/conveyor_interface.rst
@@ -134,7 +137,9 @@ msgid ""
 msgstr ""
 
 #: ../../source/stack_hardware/conveyor_interface.rst:61
-msgid "Send a command to the desired Conveyor Belt"
+
+
+msgid "Sends a command to the desired Conveyor Belt"
 msgstr "Envoyer une commande au Convoyeur souhaité"
 
 #: ../../source/stack_hardware/conveyor_interface.rst:62
@@ -148,7 +153,9 @@ msgid ""
 msgstr ""
 
 #: ../../source/stack_hardware/conveyor_interface.rst:64
-msgid "Scan and set a new Conveyor Belt"
+
+
+msgid "Scans and sets a new Conveyor Belt"
 msgstr "Scanner et définir un nouveau Convoyeur"
 
 #: ../../source/stack_hardware/conveyor_interface.rst:67

@@ -4,7 +4,7 @@
   schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>niryo_robot_bringup</name>
-  <version>3.1.2</version>
+  <version>3.2.0</version>
   <description>Provides roslaunch scripts to start Ned packages and initialize ROS params</description>
   <maintainer email="r.lux@niryo.com">Rémi Lux</maintainer>
   <maintainer email="v.pitre@niryo.com">Valentin Pitre</maintainer>

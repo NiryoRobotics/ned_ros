@@ -6,12 +6,13 @@
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
-#, fuzzy
+
+
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-26 16:48+0000\n"
+"POT-Creation-Date: 2021-09-13 09:16+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -86,7 +87,7 @@ msgid "``frame_rate``"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_vision.rst:36
-msgid "Stream frame rate"
+msgid "Streams frame rate"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_vision.rst:37
@@ -94,7 +95,7 @@ msgid "``simulation_mode``"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_vision.rst
-msgid "Set to true if you are using the gazebo simulation."
+msgid "Sets to true if you are using the gazebo simulation."
 msgstr ""
 
 #: ../../source/ros/niryo_robot_vision.rst
@@ -106,7 +107,7 @@ msgid "``debug_compression_quality``"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_vision.rst:41
-msgid "Debug Stream compression quality"
+msgid "Debugs Stream compression quality"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_vision.rst:42
@@ -114,7 +115,7 @@ msgid "``stream_compression_quality``"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_vision.rst:43
-msgid "Stream compression quality"
+msgid "Streams compression quality"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_vision.rst:44
@@ -122,7 +123,7 @@ msgid "``subsampling``"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_vision.rst:45
-msgid "Stream subsampling factor"
+msgid "Streams subsampling factor"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_vision.rst:49
@@ -147,7 +148,7 @@ msgid ":sensor_msgs:`CompressedImage`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_vision.rst:62
-msgid "Publish the last image read as a compressed image"
+msgid "Publishes the last image read as a compressed image"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_vision.rst:63
@@ -162,7 +163,7 @@ msgstr ""
 
 #: ../../source/ros/niryo_robot_vision.rst:65
 msgid ""
-"Publish the brightness, contrast and saturation settings of the video "
+"Publishes the brightness, contrast and saturation settings of the video "
 "stream"
 msgstr ""
 
@@ -185,7 +186,7 @@ msgid ""
 msgstr ""
 
 #: ../../source/ros/niryo_robot_vision.rst:81
-msgid "Return an annotated image to emphasize what happened with color detection"
+msgid "Returns an annotated image to emphasize what happened with color detection"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_vision.rst:82
@@ -198,7 +199,7 @@ msgstr ""
 
 #: ../../source/ros/niryo_robot_vision.rst:84
 msgid ""
-"Return an annotated image to emphasize what happened with markers "
+"Returns an annotated image to emphasize what happened with markers "
 "detection"
 msgstr ""
 
@@ -223,7 +224,7 @@ msgid ":ref:`source/ros/niryo_robot_msgs:SetBool`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_vision.rst:90
-msgid "Start or Stop video streaming"
+msgid "Starts or stops video streaming"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_vision.rst:91
@@ -235,7 +236,7 @@ msgid ":ref:`TakePicture<source/ros/niryo_robot_vision:TakePicture (Service)>`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_vision.rst:93
-msgid "Save a picture in the specified folder"
+msgid "Saves a picture in the specified folder"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_vision.rst:94
@@ -251,7 +252,7 @@ msgid ""
 msgstr ""
 
 #: ../../source/ros/niryo_robot_vision.rst:96
-msgid "Set the brightness of the video stream"
+msgid "Sets the brightness of the video stream"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_vision.rst:97
@@ -259,7 +260,7 @@ msgid "``set_contrast``"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_vision.rst:99
-msgid "Set the contrast of the video stream"
+msgid "Sets the contrast of the video stream"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_vision.rst:100
@@ -267,7 +268,7 @@ msgid "``set_saturation``"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_vision.rst:102
-msgid "Set the saturation of the video stream"
+msgid "Sets the saturation of the video stream"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_vision.rst:105
@@ -388,5 +389,53 @@ msgstr ""
 #~ msgid ""
 #~ ":ref:`niryo_robot_msgs <source/ros/niryo_robot_msgs:Niryo "
 #~ "Robot Messages Package>`"
+#~ msgstr ""
+
+#~ msgid "Stream frame rate"
+#~ msgstr ""
+
+#~ msgid "Set to true if you are using the gazebo simulation."
+#~ msgstr ""
+
+#~ msgid "Debug Stream compression quality"
+#~ msgstr ""
+
+#~ msgid "Stream compression quality"
+#~ msgstr ""
+
+#~ msgid "Stream subsampling factor"
+#~ msgstr ""
+
+#~ msgid "Publish the last image read as a compressed image"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Publish the brightness, contrast and "
+#~ "saturation settings of the video stream"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Return an annotated image to emphasize"
+#~ " what happened with color detection"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Return an annotated image to emphasize"
+#~ " what happened with markers detection"
+#~ msgstr ""
+
+#~ msgid "Start or Stop video streaming"
+#~ msgstr ""
+
+#~ msgid "Save a picture in the specified folder"
+#~ msgstr ""
+
+#~ msgid "Set the brightness of the video stream"
+#~ msgstr ""
+
+#~ msgid "Set the contrast of the video stream"
+#~ msgstr ""
+
+#~ msgid "Set the saturation of the video stream"
 #~ msgstr ""
 

@@ -6,12 +6,13 @@
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
-#, fuzzy
+
+
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-26 16:48+0000\n"
+"POT-Creation-Date: 2021-09-13 09:16+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -52,15 +53,15 @@ msgid ""
 msgstr ""
 
 #: ../../source/ros_wrapper.rst:24
-msgid "Send goal to the Commander Action Server."
+msgid "Sends goal to the Commander Action Server."
 msgstr ""
 
 #: ../../source/ros_wrapper.rst:25
-msgid "Wait for the Commander Action Server to set Action as finished."
+msgid "Waits for the Commander Action Server to set Action as finished."
 msgstr ""
 
 #: ../../source/ros_wrapper.rst:26
-msgid "Check if action finished with a success."
+msgid "Checks if action finished with a success."
 msgstr ""
 
 #: ../../source/ros_wrapper.rst:29
@@ -159,5 +160,14 @@ msgstr ""
 #~ "Ned, as well as a complete "
 #~ "documentation of the functions available "
 #~ "in the Ned Python ROS Wrapper."
+#~ msgstr ""
+
+#~ msgid "Send goal to the Commander Action Server."
+#~ msgstr ""
+
+#~ msgid "Wait for the Commander Action Server to set Action as finished."
+#~ msgstr ""
+
+#~ msgid "Check if action finished with a success."
 #~ msgstr ""
 

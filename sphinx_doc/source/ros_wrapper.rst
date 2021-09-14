@@ -21,9 +21,9 @@ What this code is doing in a hidden way:
 
  - It generates a :ref:`RobotMove Action Goal<source/ros/niryo_robot_arm_commander:RobotMove (Action)>` and set
    it as a joint command with the corresponding joints value.
- - Send goal to the Commander Action Server.
- - Wait for the Commander Action Server to set Action as finished.
- - Check if action finished with a success.
+ - Sends goal to the Commander Action Server.
+ - Waits for the Commander Action Server to set Action as finished.
+ - Checks if action finished with a success.
 
 
 In this section, we will give some examples on how to use the Python ROS Wrapper to control

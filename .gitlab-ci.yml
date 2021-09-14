@@ -74,7 +74,10 @@ catkin_make_arm:
       - src
       - build
 
-.abstract_move_source_tricks_job:
+python_test:
+  stage: test
+  dependencies: 
+    - catkin_make_amd
   script:
     # Quick fix for changing "ROS folder "
     - previous_path=`pwd`
@@ -111,26 +114,6 @@ test_job:
     # Note: Without -j1, multiple jobs was running and problems occured for xml results output files
     # (sometimes a part of file was duplicated and unreadable by scripts then)
     - catkin_make run_tests -j1
-
-roslint_job:
-  stage: test
-  dependencies: 
-    - catkin_make_amd
-  script:
-    # Do stuff to move source properly for catkin_make
-    - !reference [.abstract_move_source_tricks_job, script]
-    # Check code linting
-    - catkin_make roslint -j1
-
-catkin_lint_job:
-  stage: test
-  dependencies: 
-    - catkin_make_amd
-  script:
-    # Do stuff to move source properly for catkin_make
-    - !reference [.abstract_move_source_tricks_job, script]
-    # Check code linting
-    - catkin_lint -W2 --rosdistro melodic --ignore missing_directory --explain src
 
 build_doc_job:
   image: registry.gitlab.com/niryo/dockers/build_docs/ned_ros_stack:v1.0.4

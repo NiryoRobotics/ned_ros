@@ -20,7 +20,7 @@ Parameters - CPU interface
    *  -  Name
       -  Description
    *  -  ``read_rpi_diagnostics_frequency``
-      -  | Publish rate for CPU temperature
+      -  | Publishes rate for CPU temperature
          | Default: '0.25'
    *  -  ``temperature_warn_threshold``
       -  | CPU temperature [celsius] threshold before a warn message

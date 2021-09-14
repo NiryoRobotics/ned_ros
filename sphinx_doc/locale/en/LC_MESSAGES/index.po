@@ -6,12 +6,13 @@
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
-#, fuzzy
+
+
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-26 16:48+0000\n"
+"POT-Creation-Date: 2021-09-13 09:16+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -71,7 +72,7 @@ msgid ""
 msgstr ""
 
 #: ../../index.rst:50
-msgid "ROS is the more direct way to control the robot. It allows:"
+msgid "ROS is the most direct way to control the robot. It allows:"
 msgstr ""
 
 #: ../../index.rst:52
@@ -207,5 +208,8 @@ msgstr ""
 #~ " to trigger them with the robot's "
 #~ "button once a computer is no "
 #~ "longer needed."
+#~ msgstr ""
+
+#~ msgid "ROS is the more direct way to control the robot. It allows:"
 #~ msgstr ""
 
