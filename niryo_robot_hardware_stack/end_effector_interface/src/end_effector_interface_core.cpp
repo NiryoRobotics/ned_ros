@@ -104,7 +104,7 @@ void EndEffectorInterfaceCore::initParameters(ros::NodeHandle& nh)
     ROS_DEBUG("EndEffectorInterfaceCore::initParameters - end effector status frequency : %f", _check_end_effector_status_frequency);
 
     //initiliaze end effector state
-    _end_effector_state = EndEffectorState(_id);
+    _end_effector_state = std::make_shared<EndEffectorState>(_id);
 
     uint8_t button_id = 1;
     while (nh.hasParam("button_"  + std::to_string(button_id) + "/type"))
@@ -114,7 +114,7 @@ void EndEffectorInterfaceCore::initParameters(ros::NodeHandle& nh)
       auto eType = ButtonTypeEnum(button_type.c_str());
 
       ROS_INFO("EndEffectorInterfaceCore::initParameters : configure button %d of type %s", button_id, eType.toString().c_str());
-      _end_effector_state.configureButton(button_id, eType);
+      _end_effector_state->configureButton(button_id, eType);
       button_id++;
     }
 }
@@ -164,7 +164,7 @@ void EndEffectorInterfaceCore::startSubscribers(ros::NodeHandle& /*nh*/)
 void EndEffectorInterfaceCore::initEndEffectorHardware()
 {
   // init driver
-  if (_end_effector_state.isValid())
+  if (_end_effector_state && _end_effector_state->isValid())
   {
       int result = _ttl_interface->setEndEffector(_end_effector_state);
 
@@ -191,11 +191,11 @@ void EndEffectorInterfaceCore::_publishButtonState()
 
     while (ros::ok())
     {
+        if (!_end_effector_state)
+          continue;
         lock_guard<mutex> lck(_buttons_status_mutex);
 
-        _end_effector_state = _ttl_interface->getEndEffectorState(_id);
-
-        for (auto const& button : _end_effector_state.getButtonsStatus())
+        for (auto const& button : _end_effector_state->getButtonsStatus())
         {
             msg.action = static_cast<int>(button.action);
             switch (button.type)

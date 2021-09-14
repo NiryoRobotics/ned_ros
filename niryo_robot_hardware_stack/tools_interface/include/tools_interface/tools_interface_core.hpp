@@ -93,7 +93,7 @@ class ToolsInterfaceCore : public common::model::IInterfaceCore
         ros::ServiceServer _pull_air_vacuum_pump_server;
         ros::ServiceServer _push_air_vacuum_pump_server;
 
-        common::model::ToolState _toolState;
+        std::shared_ptr<common::model::ToolState> _toolState;
         std::map<uint8_t, common::model::EHardwareType> _available_tools_map;
 
         double _check_tool_connection_frequency{0.0};

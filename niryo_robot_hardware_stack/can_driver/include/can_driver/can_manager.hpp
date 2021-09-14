@@ -61,8 +61,7 @@ class CanManager : public common::model::IBusManager
         bool init(ros::NodeHandle& nh) override;
 
         // commands
-        template<typename T>
-        void addHardwareComponent(const T& state);
+        void addHardwareComponent(const std::shared_ptr<common::model::StepperMotorState> state);
 
         int writeSingleCommand(std::shared_ptr<common::model::AbstractCanSingleMotorCmd> cmd);
         void executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, int32_t> > cmd_vec);
@@ -80,8 +79,7 @@ class CanManager : public common::model::IBusManager
         int32_t getPosition(uint8_t motor_id) const;
 
         std::vector<std::shared_ptr<common::model::StepperMotorState> > getMotorsStates() const;
-        template<class T>
-        T getHardwareState(uint8_t motor_id) const;
+        std::shared_ptr<common::model::StepperMotorState> getHardwareState(uint8_t motor_id) const;
 
         int32_t getCalibrationResult(uint8_t id) const;
         common::model::EStepperCalibrationStatus getCalibrationStatus() const;
@@ -224,33 +222,6 @@ common::model::EStepperCalibrationStatus CanManager::getCalibrationStatus() cons
 inline
 bool CanManager::isCalibrationInProgress() const {
     return common::model::EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS == _calibration_status;
-}
-
-/**
- * @brief TtlManager::getHardwareState
- * @param motor_id
- * @return
- */
-template<class T>
-T CanManager::getHardwareState(uint8_t motor_id) const
-{
-    if (!_state_map.count(motor_id) && _state_map.at(motor_id))
-        throw std::out_of_range("TtlManager::getMotorsState: Unknown motor id");
-
-    T state = *(std::dynamic_pointer_cast<T>(_state_map.at(motor_id)));
-    return state;
-}
-
-/**
- * @brief CanManager::addHardwareComponent
- * @param state
- */
-template<typename T>
-void CanManager::addHardwareComponent(const T& state)
-{
-    ROS_DEBUG("CanManager::addHardwareComponent - Add motor id: %d", state.getId());
-
-    _state_map.insert(std::make_pair(state.getId(), std::make_shared<T>(state)));
 }
 
 } // namespace can_driver

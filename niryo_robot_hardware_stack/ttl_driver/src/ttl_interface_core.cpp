@@ -37,17 +37,11 @@ using ::std::to_string;
 
 using ::common::model::EHardwareType;
 using ::common::model::HardwareTypeEnum;
-using ::common::model::StepperMotorState;
 using ::common::model::EndEffectorState;
 using ::common::model::DxlMotorState;
 using ::common::model::JointState;
 using ::common::model::EDxlCommandType;
-using ::common::model::DxlCommandTypeEnum;
 using ::common::model::EStepperCommandType;
-using ::common::model::EEndEffectorCommandType;
-using ::common::model::StepperCommandTypeEnum;
-using ::common::model::SingleMotorCmd;
-using ::common::model::SynchronizeMotorCmd;
 using ::common::model::AbstractTtlSingleMotorCmd;
 using ::common::model::DxlSingleCmd;
 using ::common::model::EndEffectorSingleCmd;
@@ -583,7 +577,7 @@ void TtlInterfaceCore::controlLoop()
                     _time_hw_data_last_read = ros::Time::now().toSec();
                 }
                 if (ros::Time::now().toSec() - _time_hw_status_last_read >= _delta_time_status_read)
-                {
+                { 
                     _ttl_manager->readHwStatus();
                     _time_hw_status_last_read = ros::Time::now().toSec();
                 }
@@ -653,11 +647,40 @@ void TtlInterfaceCore::_executeCommand()
 // *************
 
 /**
+ * @brief TtlInterfaceCore::addJoint
+ * @param jointState
+ * @return
+ */
+int TtlInterfaceCore::addJoint(const std::shared_ptr<common::model::JointState> jointState)
+{
+  int result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
+
+  std::lock_guard<std::mutex> lck(_control_loop_mutex);
+
+  // add dynamixel as a new tool
+  _ttl_manager->addHardwareComponent(jointState);
+
+  // try to find motor
+  if (_ttl_manager->ping(jointState->getId()))
+  {
+      // no init commands
+
+      result = niryo_robot_msgs::CommandStatus::SUCCESS;
+  }
+  else
+  {
+      ROS_WARN("TtlInterfaceCore::addJoint - No joint found with motor id %d", jointState->getId());
+  }
+
+  return result;
+}
+
+/**
  * @brief TtlInterfaceCore::setTool
  * @param toolState
  * @return
  */
-int TtlInterfaceCore::setTool(const common::model::ToolState& toolState)
+int TtlInterfaceCore::setTool(const std::shared_ptr<common::model::ToolState> toolState)
 {
     int result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
 
@@ -666,11 +689,11 @@ int TtlInterfaceCore::setTool(const common::model::ToolState& toolState)
     _ttl_manager->addHardwareComponent(toolState);
 
     // try to find motor
-    if (_ttl_manager->ping(toolState.getId()))
+    if (_ttl_manager->ping(toolState->getId()))
     {
         // Enable torque
         std::shared_ptr<AbstractTtlSingleMotorCmd> cmd_torque = std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_TORQUE,
-                                                            toolState.getId(), std::initializer_list<uint32_t>{1});
+                                                            toolState->getId(), std::initializer_list<uint32_t>{1});
         _ttl_manager->writeSingleCommand(cmd_torque);
         ros::Duration(0.05).sleep();
 
@@ -682,7 +705,7 @@ int TtlInterfaceCore::setTool(const common::model::ToolState& toolState)
     }
     else
     {
-        ROS_WARN("TtlInterfaceCore::setTool - No tool found with motor id %d", toolState.getId());
+        ROS_WARN("TtlInterfaceCore::setTool - No tool found with motor id %d", toolState->getId());
     }
 
     return result;
@@ -705,7 +728,7 @@ void TtlInterfaceCore::unsetTool(uint8_t motor_id)
  * @param end_effector_state
  * @return
  */
-int TtlInterfaceCore::setEndEffector(const common::model::EndEffectorState& end_effector_state)
+int TtlInterfaceCore::setEndEffector(const std::shared_ptr<common::model::EndEffectorState> end_effector_state)
 {
   int result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
 
@@ -715,7 +738,7 @@ int TtlInterfaceCore::setEndEffector(const common::model::EndEffectorState& end_
   _ttl_manager->addHardwareComponent(end_effector_state);
 
   // try to find hw
-  if (_ttl_manager->ping(end_effector_state.getId()))
+  if (_ttl_manager->ping(end_effector_state->getId()))
   {
       //no config for end effector
 
@@ -723,7 +746,7 @@ int TtlInterfaceCore::setEndEffector(const common::model::EndEffectorState& end_
   }
   else
   {
-      ROS_WARN("TtlInterfaceCore::setTool - No end effector found with id %d", end_effector_state.getId());
+      ROS_WARN("TtlInterfaceCore::setTool - No end effector found with id %d", end_effector_state->getId());
   }
 
   return result;
@@ -734,16 +757,16 @@ int TtlInterfaceCore::setEndEffector(const common::model::EndEffectorState& end_
  * @param state
  * @return
  */
-int TtlInterfaceCore::setConveyor(const common::model::ConveyorState& state)
+int TtlInterfaceCore::setConveyor(const std::shared_ptr<common::model::ConveyorState> state)
 {
     int result = niryo_robot_msgs::CommandStatus::NO_CONVEYOR_FOUND;
 
     lock_guard<mutex> lck(_control_loop_mutex);
 
     // try to find motor id 6 (default motor id for conveyor
-    if (_ttl_manager->ping(state.getDefaultId()))
+    if (_ttl_manager->ping(state->getDefaultId()))
     {
-        if (COMM_SUCCESS == _ttl_manager->changeId(EHardwareType::STEPPER, state.getDefaultId(), state.getId()))
+        if (COMM_SUCCESS == _ttl_manager->changeId(EHardwareType::STEPPER, state->getDefaultId(), state->getId()))
         {
             // add stepper as a new conveyor
             _ttl_manager->addHardwareComponent(state);
@@ -974,10 +997,10 @@ TtlInterfaceCore::getJointStates() const
  * @param motor_id
  * @return
  */
-common::model::JointState
+std::shared_ptr<common::model::JointState>
 TtlInterfaceCore::getJointState(uint8_t motor_id) const
 {
-    return _ttl_manager->getHardwareState<JointState>(motor_id);
+    return std::dynamic_pointer_cast<common::model::JointState>(_ttl_manager->getHardwareState(motor_id));
 }
 
 /**
@@ -986,10 +1009,10 @@ TtlInterfaceCore::getJointState(uint8_t motor_id) const
  * @return
  * TODO(CC) to be refactorized
  */
-common::model::EndEffectorState
+std::shared_ptr<common::model::EndEffectorState>
 TtlInterfaceCore::getEndEffectorState(uint8_t id)
 {
-  return _ttl_manager->getHardwareState<EndEffectorState>(id);
+  return std::dynamic_pointer_cast<common::model::EndEffectorState>(_ttl_manager->getHardwareState(id));
 }
 
 /**
@@ -999,8 +1022,7 @@ TtlInterfaceCore::getEndEffectorState(uint8_t id)
  */
 double TtlInterfaceCore::getPosition(uint8_t id) const
 {
-    JointState motor_state = getJointState(id);
-    return static_cast<double>(motor_state.getPositionState());
+    return static_cast<double>(getJointState(id)->getPositionState());
 }
 
 /**

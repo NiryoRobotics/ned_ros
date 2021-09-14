@@ -82,8 +82,7 @@ class TtlManager : public common::model::IBusManager
         bool init(ros::NodeHandle& nh) override;
 
         // commands
-        template<typename T>
-        void addHardwareComponent(const T& state);
+        void addHardwareComponent(const std::shared_ptr<common::model::AbstractHardwareState> state);
 
         int changeId(common::model::EHardwareType motor_type, uint8_t old_id, uint8_t new_id);
 
@@ -118,8 +117,8 @@ class TtlManager : public common::model::IBusManager
         int getLedState() const;
 
         std::vector<std::shared_ptr<common::model::JointState> > getMotorsStates() const;
-        template<class T>
-        T getHardwareState(uint8_t motor_id) const;
+        
+        std::shared_ptr<common::model::AbstractHardwareState> getHardwareState(uint8_t motor_id) const;
 
         std::vector<uint8_t> getRemovedMotorList() const;
 
@@ -188,21 +187,6 @@ class TtlManager : public common::model::IBusManager
 };
 
 // inline getters
-
-/**
- * @brief TtlManager::getHardwareState
- * @param motor_id
- * @return
- */
-template<class T>
-T TtlManager::getHardwareState(uint8_t motor_id) const
-{
-    if (!_state_map.count(motor_id) && _state_map.at(motor_id))
-        throw std::out_of_range("TtlManager::getMotorsState: Unknown motor id");
-
-    T state = *(std::dynamic_pointer_cast<T>(_state_map.at(motor_id)));
-    return state;
-}
 
 inline
 bool TtlManager::isConnectionOk() const
@@ -274,38 +258,6 @@ inline
 bool TtlManager::hasEndEffector() const
 {
     return _driver_map.count(common::model::EHardwareType::END_EFFECTOR);
-}
-
-
-/**
- * @brief TtlManager::addHardwareComponent
- * @param state
- */
-template<typename T>
-void TtlManager::addHardwareComponent(const T& state)
-{
-    common::model::EHardwareType hardware_type = state.getHardwareType();
-    uint8_t id = state.getId();
-
-    ROS_DEBUG("TtlManager::addHardwareComponent : %s", state.str().c_str());
-
-    // if not already instanciated
-    if (!_state_map.count(id))
-    {
-      _state_map.insert(make_pair(id, std::make_shared<T>(state)));
-    }
-
-    // if not already instanciated
-    if (!_ids_map.count(hardware_type))
-    {
-        _ids_map.insert(std::make_pair(hardware_type, std::vector<uint8_t>({id})));
-    }
-    else
-    {
-        _ids_map.at(hardware_type).push_back(id);
-    }
-
-    addHardwareDriver(hardware_type);
 }
 
 } // ttl_driver
