@@ -317,7 +317,7 @@ bool JointsInterfaceCore::_callbackCalibrateMotors(niryo_robot_msgs::SetInt::Req
     if (niryo_robot_msgs::CommandStatus::SUCCESS == result)
     {
         _previous_state_learning_mode = true;
-        _robot->activateLearningMode();
+        _robot->activateLearningMode(true);
         _enable_control_loop = true;
     }
 
@@ -335,7 +335,7 @@ bool JointsInterfaceCore::_callbackRequestNewCalibration(niryo_robot_msgs::Trigg
 {
     ROS_DEBUG("JointsInterfaceCore::_callbackRequestNewCalibration - New calibration requested");
     _previous_state_learning_mode = true;
-    _robot->activateLearningMode();
+    _robot->activateLearningMode(true);
     _robot->setNeedCalibration();
 
     res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
