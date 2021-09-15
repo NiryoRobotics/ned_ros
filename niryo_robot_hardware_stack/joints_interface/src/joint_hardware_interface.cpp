@@ -454,8 +454,10 @@ void JointHardwareInterface::activateLearningMode(bool activated)
 
     if (_ttl_interface)
     {
-        _ttl_interface->setSyncCommand(std::make_shared<DxlSyncCmd>(dxl_cmd));
-        _ttl_interface->setSyncCommand(std::make_shared<StepperTtlSyncCmd>(stepper_ttl_sync_cmd));
+        if(dxl_cmd.isValid())
+            _ttl_interface->setSyncCommand(std::make_shared<DxlSyncCmd>(dxl_cmd));
+        if(stepper_ttl_sync_cmd.isValid())
+            _ttl_interface->setSyncCommand(std::make_shared<StepperTtlSyncCmd>(stepper_ttl_sync_cmd));
     }
 
     _learning_mode = activated;
