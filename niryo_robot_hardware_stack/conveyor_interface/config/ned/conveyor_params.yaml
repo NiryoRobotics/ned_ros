@@ -1,5 +1,5 @@
 bus : "can"
-type: "Stepper"
+type: "stepper"
 ttl:
   id: 10
   id_list: [20,21]

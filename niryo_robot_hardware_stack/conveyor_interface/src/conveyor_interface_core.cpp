@@ -209,10 +209,13 @@ ConveyorInterfaceCore::addConveyor()
                 int result = _conveyor_driver->setConveyor(_conveyor_state);
                 
                 // change Id
-                if (result == niryo_robot_msgs::CommandStatus::SUCCESS && _conveyor_driver->getBusProtocol() == EBusProtocol::TTL)
+                if (result == niryo_robot_msgs::CommandStatus::SUCCESS)
                 {
+                    if (_conveyor_driver->getBusProtocol() == EBusProtocol::TTL)
+                    {
+                        result = _conveyor_driver->changeId(_conveyor_state->getHardwareType(), _conveyor_state->getDefaultId(), _conveyor_state->getId());
+                    }
                     _conveyor_state->updateId(conveyor_id);
-                    result = _conveyor_driver->changeId(_conveyor_state->getHardwareType(), _conveyor_state->getDefaultId(), _conveyor_state->getId());
                 }
                 
                 // on success, conveyor is set, we go out of loop
