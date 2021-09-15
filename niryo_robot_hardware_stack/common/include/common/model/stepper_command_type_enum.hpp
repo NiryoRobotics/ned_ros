@@ -17,8 +17,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
-#ifndef STEPPER_COMMAND_TYPE_ENUM
-#define STEPPER_COMMAND_TYPE_ENUM
+#ifndef STEPPER_COMMAND_TYPE_ENUM_H
+#define STEPPER_COMMAND_TYPE_ENUM_H
 
 #include <map>
 #include <string>
@@ -71,4 +71,4 @@ private:
 } // model
 } // common
 
-#endif // STEPPER_COMMAND_TYPE_ENUM
+#endif // STEPPER_COMMAND_TYPE_ENUM_H

@@ -1,5 +1,5 @@
 /*
-hardware_type_enum.hpp
+component_type_enum.hpp
 Copyright (C) 2020 Niryo
 All rights reserved.
 
@@ -17,8 +17,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
-#ifndef HARDWARE_TYPE_ENUM_H
-#define HARDWARE_TYPE_ENUM_H
+#ifndef COMPONENT_TYPE_ENUM_H
+#define COMPONENT_TYPE_ENUM_H
 
 #include <map>
 #include <string>
@@ -32,36 +32,32 @@ namespace model
 {
 
 /**
- * @brief The EHardwareType enum
+ * @brief The EComponentType enum
  */
-enum class EHardwareType {
-                            STEPPER=1,
-                            XL430=2,
-                            XL320=3,
-                            XL330=4,
-                            XC430=5,
-                            FAKE_DXL_MOTOR=6,
-                            FAKE_STEPPER_MOTOR=7,
-                            END_EFFECTOR=10,
-                            UNKNOWN=100
-                          };
+enum class EComponentType {
+                        TOOL,
+                        CONVEYOR,
+                        JOINT,
+                        END_EFFECTOR,
+                        UNKNOWN
+                      };
 
 /**
  * @brief Specialization of AbstractEnum for Acknowledge status enum
  */
-class HardwareTypeEnum : public AbstractEnum<HardwareTypeEnum, EHardwareType>
+class ComponentTypeEnum : public AbstractEnum<ComponentTypeEnum, EComponentType>
 {
 public:
-    HardwareTypeEnum(EHardwareType e=EHardwareType::UNKNOWN);
-    HardwareTypeEnum(const char* const str);
-    ~HardwareTypeEnum() {}
+    ComponentTypeEnum(EComponentType e=EComponentType::UNKNOWN);
+    ComponentTypeEnum(const char* const str);
+    ~ComponentTypeEnum() {}
 
 private:
-    friend class AbstractEnum<HardwareTypeEnum, EHardwareType>;
-    static std::map<EHardwareType, std::string> initialize();
+    friend class AbstractEnum<ComponentTypeEnum, EComponentType>;
+    static std::map<EComponentType, std::string> initialize();
 };
 
 } // model
 } // common
 
-#endif // HARDWARE_TYPE_ENUM_H
+#endif // COMPONENT_TYPE_ENUM_H

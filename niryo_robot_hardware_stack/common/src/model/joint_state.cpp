@@ -59,15 +59,15 @@ JointState::JointState(std::string name, EHardwareType type,
 JointState::JointState(const JointState &state) :
   AbstractMotorState(state)
 {
-  _name = state._name;
-  _offset_position = state._offset_position;
-  _need_calibration = state._need_calibration;
-  _direction = state._direction;
+    _name = state._name;
+    _offset_position = state._offset_position;
+    _need_calibration = state._need_calibration;
+    _direction = state._direction;
 
-  pos = state.pos;
-  cmd = state.cmd;
-  vel = state.vel;
-  eff = state.eff;
+    pos = state.pos;
+    cmd = state.cmd;
+    vel = state.vel;
+    eff = state.eff;
 }
 
 /**
@@ -146,16 +146,15 @@ std::string JointState::str() const
     std::ostringstream ss;
 
     ss << "JointState : ";
-    ss << "\n---\n";
-    ss << "type: " << HardwareTypeEnum(_hw_type).toString() << ", ";
-    ss << "name: " << "\"" << _name << "\"" << ", ";
+    ss << "name: " << "\"" << _name << "\"" << ",\n";
     ss << "offset position: " << _offset_position << ", ";
-    ss << "direction : " << _direction << ", ";
     ss << "need calibration: " << (_need_calibration ? "true" : "false") << ", ";
+    ss << "direction : " << _direction << ",\n";
     ss << "pos(" << pos << "), ";
     ss << "cmd(" << cmd << "), ";
     ss << "vel(" << vel << "), ";
     ss << "eff(" << eff << ")";
+    ss << "\n---\n";
     ss << "\n";
     ss << AbstractMotorState::str();
 

@@ -29,6 +29,7 @@
 #include "common/model/single_motor_cmd.hpp"
 #include "common/model/synchronize_motor_cmd.hpp"
 #include "common/model/hardware_type_enum.hpp"
+#include "common/model/component_type_enum.hpp"
 #include "common/model/bus_protocol_enum.hpp"
 #include "common/util/util_defs.hpp"
 

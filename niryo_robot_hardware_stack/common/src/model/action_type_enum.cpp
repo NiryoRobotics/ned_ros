@@ -1,5 +1,5 @@
 /*
-    but_protocol_enum.cpp
+    action_type_enum.cpp
     Copyright (C) 2020 Niryo
     All rights reserved.
 
@@ -17,7 +17,7 @@
     along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
-#include "common/model/bus_protocol_enum.hpp"
+#include "common/model/action_type_enum.hpp"
 #include <map>
 #include <string>
 
@@ -27,33 +27,35 @@ namespace model
 {
 
 /**
- * @brief BusProtocolEnum::BusProtocolEnum
+ * @brief ActionTypeEnum::ActionTypeEnum
  * @param e
  */
-BusProtocolEnum::BusProtocolEnum(EBusProtocol e):
-    AbstractEnum<BusProtocolEnum, EBusProtocol>(e)
+ActionTypeEnum::ActionTypeEnum(EActionType e):
+    AbstractEnum<ActionTypeEnum, EActionType>(e)
 {}
 
 /**
- * @brief BusProtocolEnum::BusProtocolEnum
+ * @brief ActionTypeEnum::ActionTypeEnum
  * @param str
  */
-BusProtocolEnum::BusProtocolEnum(const char* const str):
-    AbstractEnum<BusProtocolEnum, EBusProtocol>(str)
+ActionTypeEnum::ActionTypeEnum(const char* const str):
+    AbstractEnum<ActionTypeEnum, EActionType>(str)
 {}
 
 /**
- * @brief BusProtocolEnum::initialize
+ * @brief ActionTypeEnum::initialize
  * @return
  */
-std::map<EBusProtocol, std::string>
-BusProtocolEnum::initialize()
+std::map<EActionType, std::string>
+ActionTypeEnum::initialize()
 {
-    std::map<EBusProtocol, std::string> m;
+    std::map<EActionType, std::string> m;
 
-    m[EBusProtocol::TTL]      = "ttl";
-    m[EBusProtocol::CAN]      = "can";
-    m[EBusProtocol::UNKNOWN]  = "unknown";
+    m[EActionType::HANDLE_HELD_ACTION]    = "handle held action";
+    m[EActionType::LONG_PUSH_ACTION]      = "long push action";
+    m[EActionType::SINGLE_PUSH_ACTION]    = "single push action";
+    m[EActionType::DOUBLE_PUSH_ACTION]    = "double push action";
+    m[EActionType::NO_ACTION]             = "no action";
 
     return m;
 }

@@ -78,15 +78,15 @@ StepperMotorState::StepperMotorState(std::string name,
 StepperMotorState::StepperMotorState(const StepperMotorState &state) :
   JointState(state)
 {
-  _last_time_read = state._last_time_read;
-  _hw_fail_counter = state._hw_fail_counter;
+    _last_time_read = state._last_time_read;
+    _hw_fail_counter = state._hw_fail_counter;
 
-  _gear_ratio = state._gear_ratio;
-  _max_effort = state._max_effort;
-  _micro_steps = state._micro_steps;
+    _gear_ratio = state._gear_ratio;
+    _max_effort = state._max_effort;
+    _micro_steps = state._micro_steps;
 
-  _calibration_state = state._calibration_state;
-  _calibration_value = state._calibration_value;
+    _calibration_state = state._calibration_state;
+    _calibration_value = state._calibration_value;
 }
 
 /**
@@ -181,17 +181,28 @@ std::string StepperMotorState::str() const
 {
     std::ostringstream ss;
 
-    ss << "StepperMotorState : ";
-    ss << "\n---\n";
-    ss << "last time read: " << _last_time_read << ", ";
-    ss << "hw fail counter: " << _hw_fail_counter << ", ";
+    ss << "StepperMotorState :\n";
     ss << "firmware version: " << "\"" << _firmware_version << "\"";
+    ss << "last time read: " << _last_time_read << ", "
+       << "hw fail counter: " << _hw_fail_counter << "\n"
+       << "gear ratio: " << _gear_ratio << ", "
+       << "max effort: " << _max_effort << ", "
+       << "micro steps: " << _micro_steps << "\n"
+       << "calibration state: " << StepperCalibrationStatusEnum(_calibration_state).toString() << ", "
+       << "calibration value: " << _calibration_value;
+    ss << "\n---\n";
     ss << "\n";
     ss << JointState::str();
 
     return ss.str();
 }
 
+/**
+ * @brief StepperMotorState::to_motor_pos
+ * @param pos_rad
+ * @return
+ * TODO(CC) find a similar formula for both
+ */
 int StepperMotorState::to_motor_pos(double pos_rad)
 {
     if (getBusProtocol() == common::model::EBusProtocol::CAN)
@@ -206,6 +217,12 @@ int StepperMotorState::to_motor_pos(double pos_rad)
     }
 }
 
+/**
+ * @brief StepperMotorState::to_rad_pos
+ * @param pos
+ * @return
+ * TODO(CC) find a similar formula for both
+ */
 double StepperMotorState::to_rad_pos(int pos)
 {
     if (getBusProtocol() == common::model::EBusProtocol::CAN)
@@ -222,7 +239,6 @@ double StepperMotorState::to_rad_pos(int pos)
         return pos_rad;
     }
 }
-
 
 }  // namespace model
 }  // namespace common

@@ -52,23 +52,23 @@ StepperCommandTypeEnum::initialize()
 {
     std::map<EStepperCommandType, std::string> m;
 
-    m[EStepperCommandType::CMD_TYPE_NONE] = "none";
-    m[EStepperCommandType::CMD_TYPE_POSITION]    = "position";
-    m[EStepperCommandType::CMD_TYPE_VELOCITY]     = "velocity";
-    m[EStepperCommandType::CMD_TYPE_EFFORT]    = "effort";
-    m[EStepperCommandType::CMD_TYPE_TORQUE] = "torque";
-    m[EStepperCommandType::CMD_TYPE_SYNCHRONIZE]  = "synchronize";
-    m[EStepperCommandType::CMD_TYPE_RELATIVE_MOVE]  = "relative move";
-    m[EStepperCommandType::CMD_TYPE_MAX_EFFORT]  = "max effort";
-    m[EStepperCommandType::CMD_TYPE_MICRO_STEPS]  = "micro steps";
-    m[EStepperCommandType::CMD_TYPE_POSITION_OFFSET]  = "position offset";
-    m[EStepperCommandType::CMD_TYPE_CALIBRATION]  = "calibration";
-    m[EStepperCommandType::CMD_TYPE_CONVEYOR]  = "conveyor";
-    m[EStepperCommandType::CMD_TYPE_UPDATE_CONVEYOR]  = "update conveyor";
-    m[EStepperCommandType::CMD_TYPE_LEARNING_MODE]  = "learning mode";
-    m[EStepperCommandType::CMD_TYPE_PING] = "ping";
-    m[EStepperCommandType::CMD_TYPE_CALIBRATION_DIRECTION] = "calibration direction";
-    m[EStepperCommandType::CMD_TYPE_UNKNOWN]  = "unknown type";
+    m[EStepperCommandType::CMD_TYPE_NONE]                   = "none";
+    m[EStepperCommandType::CMD_TYPE_POSITION]               = "position";
+    m[EStepperCommandType::CMD_TYPE_VELOCITY]               = "velocity";
+    m[EStepperCommandType::CMD_TYPE_EFFORT]                 = "effort";
+    m[EStepperCommandType::CMD_TYPE_TORQUE]                 = "torque";
+    m[EStepperCommandType::CMD_TYPE_SYNCHRONIZE]            = "synchronize";
+    m[EStepperCommandType::CMD_TYPE_RELATIVE_MOVE]          = "relative move";
+    m[EStepperCommandType::CMD_TYPE_MAX_EFFORT]             = "max effort";
+    m[EStepperCommandType::CMD_TYPE_MICRO_STEPS]            = "micro steps";
+    m[EStepperCommandType::CMD_TYPE_POSITION_OFFSET]        = "position offset";
+    m[EStepperCommandType::CMD_TYPE_CALIBRATION]            = "calibration";
+    m[EStepperCommandType::CMD_TYPE_CONVEYOR]               = "conveyor";
+    m[EStepperCommandType::CMD_TYPE_UPDATE_CONVEYOR]        = "update conveyor";
+    m[EStepperCommandType::CMD_TYPE_LEARNING_MODE]          = "learning mode";
+    m[EStepperCommandType::CMD_TYPE_PING]                   = "ping";
+    m[EStepperCommandType::CMD_TYPE_CALIBRATION_DIRECTION]  = "calibration direction";
+    m[EStepperCommandType::CMD_TYPE_UNKNOWN]                = "unknown type";
 
     return m;
 }

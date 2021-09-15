@@ -48,10 +48,10 @@ ToolState::ToolState(std::string name, EHardwareType type, uint8_t id) :
 ToolState::ToolState(const ToolState &state) :
   DxlMotorState (state)
 {
-  _tool_name = state._tool_name;
+    _tool_name = state._tool_name;
 
-  _connected = state._connected;
-  _position = state._position;
+    _connected = state._connected;
+    _position = state._position;
 }
 
 /**
@@ -103,14 +103,14 @@ std::string ToolState::str() const
 
     ss << "ToolState : ";
     ss << "name: " << "\"" << _tool_name << "\"" << ", ";
-    ss << "position: " << _position << ", ";
-    ss << "connected: " << (_connected ? "true" : "false");
+    ss << "connected: " << (_connected ? "true" : "false") << ", ";
+    ss << "position: " << _position;
+    ss << "\n---\n";
     ss << "\n";
     ss << DxlMotorState::str();
 
     return ss.str();
 }
-
 
 }  // namespace model
 }  // namespace common

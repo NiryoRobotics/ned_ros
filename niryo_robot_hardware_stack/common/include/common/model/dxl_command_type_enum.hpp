@@ -17,8 +17,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
-#ifndef DXL_COMMAND_TYPE_ENUM
-#define DXL_COMMAND_TYPE_ENUM
+#ifndef DXL_COMMAND_TYPE_ENUM_H
+#define DXL_COMMAND_TYPE_ENUM_H
 
 #include <map>
 #include <string>
@@ -68,4 +68,4 @@ private:
 } // model
 } // common
 
-#endif // DXL_COMMAND_TYPE_ENUM
+#endif // DXL_COMMAND_TYPE_ENUM_H

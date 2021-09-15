@@ -202,7 +202,7 @@ void EndEffectorInterfaceCore::_publishButtonState()
             {
                 case EButtonType::FREE_DRIVE_BUTTON:
                     _free_drive_button_state_publisher.publish(msg);
-                    if(common::model::EndEffectorState::EActionType::HANDLE_HELD_ACTION == button.action && 
+                    if(common::model::EActionType::HANDLE_HELD_ACTION == button.action && 
                         !_is_learning_mode)
                     {
                       niryo_robot_msgs::SetBool srv;
@@ -210,7 +210,7 @@ void EndEffectorInterfaceCore::_publishButtonState()
                       _learning_mode_client.call(srv);
                       _is_learning_mode = true;
                     }
-                    else if(common::model::EndEffectorState::EActionType::NO_ACTION == button.action && 
+                    else if(common::model::EActionType::NO_ACTION == button.action && 
                             _is_learning_mode) {
                       niryo_robot_msgs::SetBool srv;
                       srv.request.value = false;

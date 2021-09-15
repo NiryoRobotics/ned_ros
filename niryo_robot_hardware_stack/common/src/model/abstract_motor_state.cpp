@@ -85,14 +85,12 @@ string AbstractMotorState::str() const
 {
     ostringstream ss;
 
-    ss << "AbstractMotorState (" << static_cast<int>(_id) << ")" << "\n";
+    ss << "AbstractMotorState:\n";
 
-    ss << "position " << _position_state << "\n"
-       << "temperature " << _temperature << "\n"
-       << "voltage " << _voltage << "\n"
-       << "hw_error " << _hw_error << "\n"
-       << "hw_error_message \"" << _hw_error_message << "\"";
+    ss << "position " << _position_state;
+    ss << "\n---\n";
     ss << "\n";
+    ss << AbstractHardwareState::str();
 
     return ss.str();
 }

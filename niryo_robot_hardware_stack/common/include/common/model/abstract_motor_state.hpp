@@ -1,5 +1,5 @@
 /*
-motor_state.h
+abstract_motor_state.h
 Copyright (C) 2020 Niryo
 All rights reserved.
 
@@ -24,6 +24,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <string>
 
 #include "common/model/hardware_type_enum.hpp"
+#include "common/model/component_type_enum.hpp"
 #include "common/model/bus_protocol_enum.hpp"
 
 namespace common
