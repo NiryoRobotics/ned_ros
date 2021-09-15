@@ -581,7 +581,7 @@ void TtlInterfaceCore::controlLoop()
                     _time_hw_data_last_read = ros::Time::now().toSec();
                 }
                 if (ros::Time::now().toSec() - _time_hw_status_last_read >= _delta_time_status_read)
-                { 
+                {
                     _ttl_manager->readHwStatus();
                     _time_hw_status_last_read = ros::Time::now().toSec();
                 }
@@ -744,7 +744,7 @@ int TtlInterfaceCore::setEndEffector(const std::shared_ptr<common::model::EndEff
   // try to find hw
   if (_ttl_manager->ping(end_effector_state->getId()))
   {
-      //no config for end effector
+      //  no config for end effector
 
       result = niryo_robot_msgs::CommandStatus::SUCCESS;
   }
@@ -774,7 +774,7 @@ int TtlInterfaceCore::setConveyor(const std::shared_ptr<common::model::ConveyorS
 
     if (_ttl_manager->ping(_default_conveyor_id))
     {
-        result = niryo_robot_msgs::CommandStatus::SUCCESS; 
+        result = niryo_robot_msgs::CommandStatus::SUCCESS;
     }
     else
     {

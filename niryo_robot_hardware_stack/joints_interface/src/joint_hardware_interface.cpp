@@ -369,7 +369,7 @@ bool JointHardwareInterface::needCalibration() const
         result = (EStepperCalibrationStatus::CALIBRATION_OK != _can_interface->getCalibrationStatus());
     else
         result = (EStepperCalibrationStatus::CALIBRATION_OK != _ttl_interface->getCalibrationStatus());
-        
+
     ROS_DEBUG_THROTTLE(2, "JointHardwareInterface::needCalibration - Need calibration returned: %d",
                        static_cast<int>(result));
     return result;
@@ -411,7 +411,7 @@ void JointHardwareInterface::setNeedCalibration()
 {
     if (_can_interface)
         _can_interface->resetCalibration();
-    else    
+    else
         _ttl_interface->resetCalibration();
 }
 

@@ -313,7 +313,7 @@ bool HardwareInterface::_callbackLaunchMotorsReport(niryo_robot_msgs::Trigger::R
         can_status = _can_interface->launchMotorsReport();
         _can_interface->activeDebugMode(false);
         ROS_WARN("Hardware Interface - Motors report ended");
-        
+
         if ((niryo_robot_msgs::CommandStatus::SUCCESS == can_status) &&
             (niryo_robot_msgs::CommandStatus::SUCCESS == ttl_status))
         {

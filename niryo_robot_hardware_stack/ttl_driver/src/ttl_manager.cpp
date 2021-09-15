@@ -132,7 +132,7 @@ int TtlManager::changeId(common::model::EHardwareType motor_type, uint8_t old_id
         // update all maps
         _ids_map.at(motor_type).erase(std::remove(_ids_map.at(motor_type).begin(), _ids_map.at(motor_type).end(), old_id),
                                     _ids_map.at(motor_type).end());
-        
+
         // update all maps
         _ids_map.at(motor_type).push_back(new_id);
     }
@@ -711,7 +711,7 @@ bool TtlManager::readHwStatus()
             {
                 for (auto id : _ids_map.at(type))
                 {
-                    uint32_t status{0}; // not in calibration status table
+                    uint32_t status{0};     // not in calibration status table
                     shared_ptr<ttl_driver::AbstractStepperDriver> stepper_driver = std::dynamic_pointer_cast<ttl_driver::AbstractStepperDriver>(driver);
                     if (_calibration_status != EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED &&
                         COMM_SUCCESS == stepper_driver->readHomingStatus(id, status))
@@ -830,7 +830,7 @@ int TtlManager::getAllIdsOnBus(vector<uint8_t> &id_list)
     // 1. Get all ids from ttl bus. We can use any driver for that
     auto it = _driver_map.begin();
 
-    if(it != _driver_map.end())
+    if  (it != _driver_map.end())
     {
       if (it->second)
       {

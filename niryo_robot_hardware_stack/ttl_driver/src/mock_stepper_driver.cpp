@@ -18,6 +18,10 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <cstdio>
 #include <ttl_driver/mock_stepper_driver.hpp>
 #include <type_traits>
+#include <utility>
+#include <map>
+#include <string>
+#include <vector>
 
 namespace ttl_driver
 {
@@ -31,7 +35,7 @@ MockStepperDriver::MockStepperDriver(std::shared_ptr<dynamixel::PortHandler> por
     AbstractStepperDriver(portHandler, packetHandler)
 {
     // retrieve list of ids
-    for(auto const& imap: _map_fake_registers)
+    for (auto const& imap : _map_fake_registers)
         _id_list.emplace_back(imap.first);
     _id_list.push_back(_fake_conveyor.id);
 }
@@ -146,7 +150,7 @@ int MockStepperDriver::setGoalVelocity(uint8_t id, uint32_t velocity)
         {
             _fake_conveyor.speed = static_cast<int16_t>(velocity);
             _fake_conveyor.direction = velocity > 0 ? 1 : -1;
-            _fake_conveyor.state = velocity == 0 ? false : true; 
+            _fake_conveyor.state = velocity == 0 ? false : true;
         }
     }
     return COMM_SUCCESS;
@@ -172,7 +176,7 @@ int MockStepperDriver::syncWritePositionGoal(const std::vector<uint8_t> &id_list
         return LEN_ID_DATA_NOT_SAME;
 
     // Create a map to store the frequency of each element in vector
-    std::map<uint8_t, uint8_t> countMap;    
+    std::map<uint8_t, uint8_t> countMap;
     for (size_t i = 0; i < id_list.size(); ++i)
     {
         _map_fake_registers.at(id_list.at(i)).position = position_list.at(i);
@@ -341,7 +345,7 @@ int MockStepperDriver::readGoalVelocity(uint8_t id, uint32_t& present_velocity)
     return COMM_SUCCESS;
 }
 
-}
+}  // namespace ttl_driver
 
 
 

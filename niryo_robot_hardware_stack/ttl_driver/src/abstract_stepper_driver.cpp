@@ -73,7 +73,7 @@ int AbstractStepperDriver::writeSingleCmd(const std::shared_ptr<common::model::A
             std::vector<uint32_t> params = cmd->getParams();
             if (!params[0])
             {
-                return setGoalVelocity(cmd->getId(), 0);                
+                return setGoalVelocity(cmd->getId(), 0);
             }
             else
             {

@@ -46,7 +46,7 @@ ToolState::ToolState(std::string name, EHardwareType type, uint8_t id) :
 }
 
 ToolState::ToolState(const ToolState &state) :
-  DxlMotorState (state)
+  DxlMotorState(state)
 {
   _tool_name = state._tool_name;
 

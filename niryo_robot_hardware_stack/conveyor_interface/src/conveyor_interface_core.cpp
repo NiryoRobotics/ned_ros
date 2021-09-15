@@ -324,7 +324,7 @@ ConveyorInterfaceCore::removeConveyor(uint8_t id)
         // remove conveyor
         _conveyor_driver->unsetConveyor(id);
         // get back init state of conveyor
-        auto state = std::find_if(_conveyor_states.begin(), _conveyor_states.end(), [&](const std::shared_ptr<ConveyorState> state){
+        auto state = std::find_if(_conveyor_states.begin(), _conveyor_states.end(), [id](const std::shared_ptr<ConveyorState> state){
                                                                                             if (state->getId() == id)
                                                                                                 return true;
                                                                                             return false;
@@ -404,7 +404,7 @@ bool ConveyorInterfaceCore::_callbackControlConveyor(conveyor_interface::Control
     if (find(_current_conveyor_id_list.begin(), _current_conveyor_id_list.end() , req.id)
             != _current_conveyor_id_list.end())
     {
-        auto state = std::find_if(_conveyor_states.begin(), _conveyor_states.end(), [&](const std::shared_ptr<ConveyorState> state){
+        auto state = std::find_if(_conveyor_states.begin(), _conveyor_states.end(), [req](const std::shared_ptr<ConveyorState> state){
                                                                                             if (state->getId() == req.id)
                                                                                                 return true;
                                                                                             return false;

@@ -112,7 +112,7 @@ int main(int argc, char **argv)
     testing::InitGoogleTest(&argc, argv);
 
     nh = std::make_unique<ros::NodeHandle>();
-    
+
     std::string hardware_version;
     ros::NodeHandle nh_private("~");
     nh_private.getParam("hardware_version", hardware_version);
