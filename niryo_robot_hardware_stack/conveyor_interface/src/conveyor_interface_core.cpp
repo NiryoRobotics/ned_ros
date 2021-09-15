@@ -125,7 +125,7 @@ void ConveyorInterfaceCore::initParameters(ros::NodeHandle& nh)
         nh.getParam("ttl/id_list", id_pool_list);
 
         ROS_DEBUG("ConveyorInterfaceCore::initParameters - default conveyor id : %d", default_conveyor_id);
-    } 
+    }
 
     nh.getParam("publish_frequency", _publish_feedback_frequency);
 
@@ -214,7 +214,7 @@ ConveyorInterfaceCore::addConveyor()
         if (state != _conveyor_states.end() && *state)
         {
             auto conveyor_state = *state;
-            //TODO(Thuc) only accept 1 conveyor in this moment
+            // TODO(Thuc) only accept 1 conveyor in this moment
             if (_conveyor_driver->getBusProtocol() == EBusProtocol::CAN)
             {
                 conveyor_state->updateId(conveyor_id);
@@ -228,14 +228,14 @@ ConveyorInterfaceCore::addConveyor()
                     // set and init conveyor
                     ros::Duration(0.05).sleep();
                     int result = _conveyor_driver->setConveyor(conveyor_state);
-                    
+
                     // change Id
                     if (result == niryo_robot_msgs::CommandStatus::SUCCESS && _conveyor_driver->getBusProtocol() == EBusProtocol::TTL)
                     {
                         conveyor_state->updateId(conveyor_id);
                         result = _conveyor_driver->changeId(conveyor_state->getHardwareType(), conveyor_state->getDefaultId(), conveyor_state->getId());
                     }
-                
+
                     // on success, conveyor is set, we go out of loop
                     if (niryo_robot_msgs::CommandStatus::SUCCESS == result)
                     {
@@ -272,14 +272,13 @@ ConveyorInterfaceCore::addConveyor()
                     res.id = 0;
                 }
             }
-            else // no conveyor found, no conveyor set (it is not an error, the conveyor does not exists)
+            else  // no conveyor found, no conveyor set (it is not an error, the conveyor does not exists)
             {
                 ROS_INFO("ConveyorInterfaceCore::addConveyor - No new conveyor state for new conveyor");
 
                 res.id = 0;
                 res.message = "No new conveyor state found";
             }
-
         }
         else
         {
@@ -290,7 +289,7 @@ ConveyorInterfaceCore::addConveyor()
             res.status = niryo_robot_msgs::CommandStatus::NO_CONVEYOR_LEFT;
         }
     }
-    else // no conveyor available
+    else  // no conveyor available
     {
         ROS_INFO("ConveyorInterfaceCore::addConveyor - No conveyor available");
 
@@ -413,12 +412,14 @@ bool ConveyorInterfaceCore::_callbackControlConveyor(conveyor_interface::Control
         if (*state && (*state)->getBusProtocol() == EBusProtocol::CAN)
         {
             _conveyor_driver->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_CONVEYOR,
-                                                                            req.id, std::initializer_list<int32_t>{req.control_on, req.speed, req.direction}));
+                                                                            req.id, std::initializer_list<int32_t>{req.control_on,
+                                                                            req.speed, req.direction}));
         }
         else if (*state && (*state)->getBusProtocol() == EBusProtocol::TTL)
         {
             _conveyor_driver->addSingleCommandToQueue(std::make_shared<StepperTtlSingleCmd>(EStepperCommandType::CMD_TYPE_CONVEYOR,
-                                                                            req.id, std::initializer_list<uint32_t>{req.control_on, static_cast<uint32_t>(req.speed), static_cast<uint32_t>(req.direction)}));
+                                                                            req.id, std::initializer_list<uint32_t>{req.control_on,
+                                                                            static_cast<uint32_t>(req.speed), static_cast<uint32_t>(req.direction)}));
         }
         res.message = "Set command on conveyor id ";
         res.message += to_string(req.id);

@@ -71,7 +71,7 @@ EndEffectorState::~EndEffectorState()
  */
 void EndEffectorState::configureButton(uint8_t id, EButtonType button_type)
 {
-   assert(id <= 3);
+  assert(id <= 3);
 
   _buttons_list[id - 1].type = button_type;
 }
