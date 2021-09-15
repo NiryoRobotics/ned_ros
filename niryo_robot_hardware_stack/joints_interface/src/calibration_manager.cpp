@@ -570,7 +570,9 @@ void CalibrationManager::moveSteppersToHome()
         }
         else if (EBusProtocol::TTL == pState->getBusProtocol())
         {
-            StepperTtlSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_POSITION, motor_id, {0});
+            uint32_t steps = static_cast<uint32_t>(pState->to_motor_pos(0));
+
+            StepperTtlSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_POSITION, motor_id, {steps});
             getJointInterface(pState->getBusProtocol())->addSingleCommandToQueue(
                                     std::make_shared<StepperTtlSingleCmd>(stepper_cmd));
         }
