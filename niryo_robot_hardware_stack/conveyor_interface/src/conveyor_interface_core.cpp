@@ -18,6 +18,9 @@
 */
 
 // c++
+#include <cstddef>
+#include <cstdint>
+#include <memory>
 #include <vector>
 #include <string>
 #include <functional>
@@ -126,11 +129,16 @@ void ConveyorInterfaceCore::initParameters(ros::NodeHandle& nh)
 
     nh.getParam("publish_frequency", _publish_feedback_frequency);
 
-    _conveyor_state = std::make_shared<ConveyorState>(etype, _conveyor_driver->getBusProtocol(), default_conveyor_id);
-    // update conveyor state with information
-    _conveyor_state->initialize(static_cast<uint8_t>(default_conveyor_id),
-                              max_effort,
-                              micro_steps);
+    for (size_t i = 0; i < id_pool_list.size(); i++)
+    {
+        auto _conveyor_state = std::make_shared<ConveyorState>(etype, _conveyor_driver->getBusProtocol(),
+                                                                default_conveyor_id);
+        // update conveyor state with information
+        _conveyor_state->initialize(static_cast<uint8_t>(default_conveyor_id),
+                                                        max_effort,
+                                                        micro_steps);
+        _conveyor_states.push_back(_conveyor_state);
+    }
 
     // debug - display info
     std::ostringstream ss;
@@ -198,73 +206,89 @@ ConveyorInterfaceCore::addConveyor()
         // take last
         uint8_t conveyor_id = *_conveyor_pool_id_list.begin();
 
-        //TODO(Thuc) only accept 1 conveyor in this moment
-        if (_conveyor_driver->getBusProtocol() == EBusProtocol::CAN && _conveyor_state->getDefaultId() == _conveyor_state->getId())
+        auto state = std::find_if(_conveyor_states.begin(), _conveyor_states.end(), [](const std::shared_ptr<ConveyorState> state){
+                                                                                            if (state->getDefaultId() == state->getId())
+                                                                                                return true;
+                                                                                            return false;
+                                                                                            });
+        if (state != _conveyor_states.end() && *state)
         {
-            _conveyor_state->updateId(conveyor_id);
-        }
-        // if new tool has been found
-        if (_conveyor_state->isValid())
-        {
-            // Try 3 times
-            for (int tries = 0; tries < 3; tries++)
+            auto conveyor_state = *state;
+            //TODO(Thuc) only accept 1 conveyor in this moment
+            if (_conveyor_driver->getBusProtocol() == EBusProtocol::CAN)
             {
-                // set and init conveyor
-                ros::Duration(0.05).sleep();
-                int result = _conveyor_driver->setConveyor(_conveyor_state);
-                
-                // change Id
-                if (result == niryo_robot_msgs::CommandStatus::SUCCESS && _conveyor_driver->getBusProtocol() == EBusProtocol::TTL)
+                conveyor_state->updateId(conveyor_id);
+            }
+            // if new tool has been found
+            if (conveyor_state->isValid())
+            {
+                // Try 3 times
+                for (int tries = 0; tries < 3; tries++)
                 {
-                    result = _conveyor_driver->changeId(_conveyor_state->getHardwareType(), _conveyor_state->getDefaultId(), _conveyor_state->getId());
-                    _conveyor_state->updateId(conveyor_id);
+                    // set and init conveyor
+                    ros::Duration(0.05).sleep();
+                    int result = _conveyor_driver->setConveyor(conveyor_state);
+                    
+                    // change Id
+                    if (result == niryo_robot_msgs::CommandStatus::SUCCESS && _conveyor_driver->getBusProtocol() == EBusProtocol::TTL)
+                    {
+                        conveyor_state->updateId(conveyor_id);
+                        result = _conveyor_driver->changeId(conveyor_state->getHardwareType(), conveyor_state->getDefaultId(), conveyor_state->getId());
+                    }
+                
+                    // on success, conveyor is set, we go out of loop
+                    if (niryo_robot_msgs::CommandStatus::SUCCESS == result)
+                    {
+                        // add id to list of current connected ids
+                        _current_conveyor_id_list.push_back(conveyor_id);
+                        // remove from pool
+                        _conveyor_pool_id_list.erase(_conveyor_pool_id_list.begin());
+                        res.message = "Set new conveyor on id ";
+                        res.message += to_string(conveyor_id);
+                        res.message += " OK";
+                        res.id = conveyor_id;
+                        res.status = static_cast<int16_t>(result);
+
+                        ros::Duration(0.05).sleep();
+                        ROS_INFO("ConveyorInterfaceCore::addConveyor - Set conveyor success");
+
+                        break;
+                    }
+                    else
+                    {
+                        ROS_WARN("ConveyorInterfaceCore::addConveyor - "
+                                "Set conveyor failure, return : %d. Retrying (%d)...",
+                                result, tries);
+                    }
                 }
-                
-                // on success, conveyor is set, we go out of loop
-                if (niryo_robot_msgs::CommandStatus::SUCCESS == result)
+
+                // on failure after three tries
+                if (niryo_robot_msgs::CommandStatus::SUCCESS != res.status)
                 {
-                    // add id to list of current connected ids
-                    _current_conveyor_id_list.push_back(conveyor_id);
-                    // remove from pool
-                    _conveyor_pool_id_list.erase(_conveyor_pool_id_list.begin());
-                    res.message = "Set new conveyor on id ";
-                    res.message += to_string(conveyor_id);
-                    res.message += " OK";
-                    res.id = conveyor_id;
-                    res.status = static_cast<int16_t>(result);
+                    ROS_ERROR("ConveyorInterfaceCore::addConveyor - Fail to set conveyor, return : %d",
+                                res.status);
 
                     ros::Duration(0.05).sleep();
-                    ROS_INFO("ConveyorInterfaceCore::addConveyor - Set conveyor success");
-
-                    break;
-                }
-                else
-                {
-                    ROS_WARN("ConveyorInterfaceCore::addConveyor - "
-                            "Set conveyor failure, return : %d. Retrying (%d)...",
-                            result, tries);
+                    res.id = 0;
                 }
             }
-
-            // on failure after three tries
-            if (niryo_robot_msgs::CommandStatus::SUCCESS != res.status)
+            else // no conveyor found, no conveyor set (it is not an error, the conveyor does not exists)
             {
-                ROS_ERROR("ConveyorInterfaceCore::addConveyor - Fail to set conveyor, return : %d",
-                            res.status);
+                ROS_INFO("ConveyorInterfaceCore::addConveyor - No new conveyor state for new conveyor");
 
-                ros::Duration(0.05).sleep();
                 res.id = 0;
+                res.message = "No new conveyor state found";
             }
 
         }
-        else // no conveyor found, no conveyor set (it is not an error, the conveyor does not exists)
+        else
         {
-            ROS_INFO("ConveyorInterfaceCore::addConveyor - No new conveyor found");
+            ROS_INFO("ConveyorInterfaceCore::addConveyor - No conveyor available");
 
+            res.message = "no conveyor available";
             res.id = 0;
-            res.message = "No new conveyor found";
+            res.status = niryo_robot_msgs::CommandStatus::NO_CONVEYOR_LEFT;
         }
-
     }
     else // no conveyor available
     {
@@ -301,7 +325,12 @@ ConveyorInterfaceCore::removeConveyor(uint8_t id)
         // remove conveyor
         _conveyor_driver->unsetConveyor(id);
         // get back init state of conveyor
-        _conveyor_state->updateId(_conveyor_state->getDefaultId());
+        auto state = std::find_if(_conveyor_states.begin(), _conveyor_states.end(), [&](const std::shared_ptr<ConveyorState> state){
+                                                                                            if (state->getId() == id)
+                                                                                                return true;
+                                                                                            return false;
+                                                                                            });
+        (*state)->updateId((*state)->getDefaultId());
 
         res.message = "Remove conveyor id " + to_string(id);
         res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
@@ -376,12 +405,17 @@ bool ConveyorInterfaceCore::_callbackControlConveyor(conveyor_interface::Control
     if (find(_current_conveyor_id_list.begin(), _current_conveyor_id_list.end() , req.id)
             != _current_conveyor_id_list.end())
     {
-        if (_conveyor_state && _conveyor_state->getBusProtocol() == EBusProtocol::CAN)
+        auto state = std::find_if(_conveyor_states.begin(), _conveyor_states.end(), [&](const std::shared_ptr<ConveyorState> state){
+                                                                                            if (state->getId() == req.id)
+                                                                                                return true;
+                                                                                            return false;
+                                                                                            });
+        if (*state && (*state)->getBusProtocol() == EBusProtocol::CAN)
         {
             _conveyor_driver->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_CONVEYOR,
                                                                             req.id, std::initializer_list<int32_t>{req.control_on, req.speed, req.direction}));
         }
-        else if (_conveyor_state && _conveyor_state->getBusProtocol() == EBusProtocol::TTL)
+        else if (*state && (*state)->getBusProtocol() == EBusProtocol::TTL)
         {
             _conveyor_driver->addSingleCommandToQueue(std::make_shared<StepperTtlSingleCmd>(EStepperCommandType::CMD_TYPE_CONVEYOR,
                                                                             req.id, std::initializer_list<uint32_t>{req.control_on, static_cast<uint32_t>(req.speed), static_cast<uint32_t>(req.direction)}));
@@ -416,16 +450,21 @@ void ConveyorInterfaceCore::_publishConveyorsFeedback()
         conveyor_interface::ConveyorFeedbackArray msg;
         conveyor_interface::ConveyorFeedback data;
 
-        data.conveyor_id = _conveyor_state->getId();
-        data.running = _conveyor_state->getState();
+        for (auto conveyor_state : _conveyor_states)
+        {
+            if (conveyor_state->getDefaultId() != conveyor_state->getId())
+            {
+                data.conveyor_id = conveyor_state->getId();
+                data.running = conveyor_state->getState();
 
-        // TODO(CC) implicit conversion loses integer precision
-        data.direction = static_cast<int8_t>(_conveyor_state->getDirection());
-        data.speed = _conveyor_state->getSpeed();
-        msg.conveyors.push_back(data);
+                // TODO(CC) implicit conversion loses integer precision
+                data.direction = static_cast<int8_t>(conveyor_state->getDirection());
+                data.speed = conveyor_state->getSpeed();
+                msg.conveyors.push_back(data);
 
-        ROS_DEBUG("ConveyorInterfaceCore::_publishConveyorsFeedback - Found a conveyor, publishing data : %s", _conveyor_state->str().c_str());
-
+                ROS_DEBUG("ConveyorInterfaceCore::_publishConveyorsFeedback - Found a conveyor, publishing data : %s", conveyor_state->str().c_str());
+            }
+        }
         _conveyors_feedback_publisher.publish(msg);
         publish_conveyor_feedback_rate.sleep();
     }

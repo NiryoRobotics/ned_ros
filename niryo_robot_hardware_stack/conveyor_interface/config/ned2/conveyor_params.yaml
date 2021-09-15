@@ -1,8 +1,8 @@
 bus : "ttl"
 type: "stepper"
 ttl:
-  id: 10
-  id_list: [20,21]
+  id: 8
+  id_list: [9,10]
 
 can:
   max_effort: 90

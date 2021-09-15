@@ -105,7 +105,7 @@ class MockStepperDriver : public AbstractStepperDriver
 
         struct FakeConveyor
         {
-            uint8_t         id = 10;  
+            uint8_t         id = 8;  
             int8_t          direction = 1;
             int16_t         speed = 0;
             bool            state = false;
