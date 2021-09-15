@@ -6,7 +6,6 @@ steppers:
         id: 1
         gear_ratio: 6.0625
         offset_position: 3.05433
-        home_position: 0.0
         direction: -1
         max_effort: 90
 
@@ -14,7 +13,6 @@ steppers:
         id: 2
         gear_ratio: 8.3125
         offset_position: 0.640187
-        home_position: 0.640187
         direction: -1
         max_effort: 130
         
@@ -22,6 +20,5 @@ steppers:
         id: 3
         gear_ratio: 7.875
         offset_position: -1.397485
-        home_position: -1.397485
         direction: 1
         max_effort: 120

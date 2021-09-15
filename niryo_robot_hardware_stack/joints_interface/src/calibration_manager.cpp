@@ -305,7 +305,7 @@ EStepperCalibrationStatus CalibrationManager::autoCalibration()
 
     if (sensor_offset_results.at(0) && sensor_offset_results.at(1) && sensor_offset_results.at(2))
     {
-        ROS_INFO("Calibration Interface -  New Calibration values : ");
+        ROS_INFO("Calibration Interface -  Calibration successfull, going back home");
 
         // 5. Move Motor 1 to 0.0 (back to home)
         moveSteppersToHome();
