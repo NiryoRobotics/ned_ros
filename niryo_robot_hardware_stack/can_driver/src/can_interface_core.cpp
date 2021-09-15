@@ -494,8 +494,7 @@ int CanInterfaceCore::setConveyor(const std::shared_ptr<common::model::ConveyorS
     // try to find motor id 6 (default motor id for conveyor
     if (_can_manager->ping(state->getDefaultId()))
     {
-        if (CAN_OK == _can_manager->sendUpdateConveyorId(state->getDefaultId(),
-                                                         state->getId()))
+        if (CAN_OK == changeId(state->getHardwareType(), state->getDefaultId(), state->getId()))
         {
             // add stepper as a new conveyor
             _can_manager->addHardwareComponent(state);
@@ -557,6 +556,11 @@ void CanInterfaceCore::unsetConveyor(uint8_t motor_id)
         _can_manager->removeMotor(motor_id);
     else
         ROS_ERROR("CanInterfaceCore::unsetConveyor : unable to change conveyor ID");
+}
+
+int CanInterfaceCore::changeId(common::model::EHardwareType motor_type, uint8_t old_id, uint8_t new_id)
+{
+    return _can_manager->sendUpdateConveyorId(old_id, new_id);
 }
 
 /**

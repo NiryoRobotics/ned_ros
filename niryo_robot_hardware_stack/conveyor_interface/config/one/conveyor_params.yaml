@@ -1,0 +1,7 @@
+bus : "can"
+type: "Stepper"
+can:
+  max_effort: 90
+  micro_steps: 8
+  id: 6
+  id_list: [12,13]

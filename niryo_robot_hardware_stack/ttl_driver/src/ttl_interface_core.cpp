@@ -15,8 +15,12 @@
 */
 
 #include "ttl_driver/ttl_interface_core.hpp"
+#include "common/model/hardware_type_enum.hpp"
+#include "common/model/joint_state.hpp"
+#include "niryo_robot_msgs/CommandStatus.h"
 
 // c++
+#include <cstdint>
 #include <cstdlib>
 #include <algorithm>
 #include <cmath>
@@ -761,22 +765,16 @@ int TtlInterfaceCore::setConveyor(const std::shared_ptr<common::model::ConveyorS
 {
     int result = niryo_robot_msgs::CommandStatus::NO_CONVEYOR_FOUND;
 
+    _default_conveyor_id = state->getDefaultId();
+
     lock_guard<mutex> lck(_control_loop_mutex);
 
-    // try to find motor id 6 (default motor id for conveyor
-    if (_ttl_manager->ping(state->getDefaultId()))
+    // add hw component before to get driver
+    _ttl_manager->addHardwareComponent(state);
+
+    if (_ttl_manager->ping(_default_conveyor_id))
     {
-        if (COMM_SUCCESS == _ttl_manager->changeId(EHardwareType::STEPPER, state->getDefaultId(), state->getId()))
-        {
-            // add stepper as a new conveyor
-            _ttl_manager->addHardwareComponent(state);
-            result = niryo_robot_msgs::CommandStatus::SUCCESS;
-        }
-        else
-        {
-            ROS_ERROR("TtlInterfaceCore::setConveyor : unable to change conveyor ID");
-            result = niryo_robot_msgs::CommandStatus::TTL_WRITE_ERROR;
-        }
+        result = niryo_robot_msgs::CommandStatus::SUCCESS; 
     }
     else
     {
@@ -796,10 +794,29 @@ void TtlInterfaceCore::unsetConveyor(uint8_t motor_id)
 
     ROS_DEBUG("TtlInterfaceCore::unsetConveyor - unsetConveyor: id %d", motor_id);
 
-    if (COMM_SUCCESS == _ttl_manager->changeId(EHardwareType::STEPPER, motor_id, 6))
-        _ttl_manager->removeMotor(motor_id);
+    auto state = getJointState(motor_id);
+    if (COMM_SUCCESS == _ttl_manager->changeId(state->getHardwareType(), motor_id, _default_conveyor_id))
+    {
+        _ttl_manager->removeMotor(_default_conveyor_id);
+    }
     else
         ROS_ERROR("TtlInterfaceCore::unsetConveyor : unable to change conveyor ID");
+}
+
+/**
+ * @brief TtlInterfaceCore::changeId
+ * @param old_id
+ * @param new_id
+ */
+int TtlInterfaceCore::changeId(common::model::EHardwareType motor_type, uint8_t old_id, uint8_t new_id)
+{
+    if (COMM_SUCCESS == _ttl_manager->changeId(motor_type, old_id, new_id))
+        return niryo_robot_msgs::CommandStatus::SUCCESS;
+    else
+    {
+        ROS_ERROR("TtlInterfaceCore::setConveyor : unable to change conveyor ID");
+        return niryo_robot_msgs::CommandStatus::TTL_WRITE_ERROR;
+    }
 }
 
 /**
