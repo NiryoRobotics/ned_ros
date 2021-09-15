@@ -198,7 +198,8 @@ ConveyorInterfaceCore::addConveyor()
         // take last
         uint8_t conveyor_id = *_conveyor_pool_id_list.begin();
 
-        if (_conveyor_driver->getBusProtocol() == EBusProtocol::CAN)
+        //TODO(Thuc) only accept 1 conveyor in this moment
+        if (_conveyor_driver->getBusProtocol() == EBusProtocol::CAN && _conveyor_state->getDefaultId() == _conveyor_state->getId())
         {
             _conveyor_state->updateId(conveyor_id);
         }
