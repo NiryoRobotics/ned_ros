@@ -88,6 +88,7 @@ class StepperDriver : public AbstractStepperDriver
         virtual int startHoming(uint8_t id) override;
         virtual int setHomingDirection(uint8_t id, uint8_t direction) override;
         virtual int readHomingStatus(uint8_t id, uint32_t &status) override;
+        virtual int readGoalVelocity(uint8_t id, uint32_t& present_velocity) override;
 };
 
 // definition of methods
@@ -322,6 +323,12 @@ template<typename reg_type>
 int StepperDriver<reg_type>::readHomingStatus(uint8_t id, uint32_t &status)
 {
     return read(reg_type::ADDR_HOMING_STATUS, reg_type::SIZE_HOMING_STATUS, id, status);
+}
+
+template<typename reg_type>
+int StepperDriver<reg_type>::readGoalVelocity(uint8_t id, uint32_t& present_velocity)
+{
+    return read(reg_type::ADDR_GOAL_VELOCITY, reg_type::SIZE_GOAL_VELOCITY, id, present_velocity);
 }
 
 } // ttl_driver

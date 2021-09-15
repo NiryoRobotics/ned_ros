@@ -20,6 +20,7 @@
 // ros
 #include <ros/ros.h>
 #include <ros/console.h>
+#include <string>
 
 // niryo
 #include "joints_interface/joints_interface_core.hpp"

@@ -103,7 +103,7 @@ void EndEffectorInterfaceCore::initParameters(ros::NodeHandle& nh)
     ROS_DEBUG("EndEffectorInterfaceCore::initParameters - end effector id : %d", _id);
     ROS_DEBUG("EndEffectorInterfaceCore::initParameters - end effector status frequency : %f", _check_end_effector_status_frequency);
 
-    //initiliaze end effector state
+    //  initiliaze end effector state
     _end_effector_state = std::make_shared<EndEffectorState>(_id);
 
     uint8_t button_id = 1;
@@ -113,7 +113,7 @@ void EndEffectorInterfaceCore::initParameters(ros::NodeHandle& nh)
       nh.getParam("button_" + std::to_string(button_id) + "/type", button_type);
       auto eType = ButtonTypeEnum(button_type.c_str());
 
-      ROS_DEBUG("EndEffectorInterfaceCore::initParameters : configure button %d of type %s", button_id, eType.toString().c_str());
+      ROS_INFO("EndEffectorInterfaceCore::initParameters : configure button %d of type %s", button_id, eType.toString().c_str());
       _end_effector_state->configureButton(button_id, eType);
       button_id++;
     }
@@ -202,7 +202,7 @@ void EndEffectorInterfaceCore::_publishButtonState()
             {
                 case EButtonType::FREE_DRIVE_BUTTON:
                     _free_drive_button_state_publisher.publish(msg);
-                    if(common::model::EndEffectorState::EActionType::HANDLE_HELD_ACTION == button.action && 
+                    if (common::model::EndEffectorState::EActionType::HANDLE_HELD_ACTION == button.action &&
                         !_is_learning_mode)
                     {
                       niryo_robot_msgs::SetBool srv;
@@ -210,7 +210,7 @@ void EndEffectorInterfaceCore::_publishButtonState()
                       _learning_mode_client.call(srv);
                       _is_learning_mode = true;
                     }
-                    else if(common::model::EndEffectorState::EActionType::NO_ACTION == button.action && 
+                    else if (common::model::EndEffectorState::EActionType::NO_ACTION == button.action &&
                             _is_learning_mode) {
                       niryo_robot_msgs::SetBool srv;
                       srv.request.value = false;

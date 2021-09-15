@@ -78,7 +78,7 @@ class ConveyorInterfaceCore : public common::model::IInterfaceCore
         ros::Publisher _conveyors_feedback_publisher;
         ros::Publisher _conveyor_status_publisher;
 
-        std::shared_ptr<common::model::ConveyorState> _conveyor_state;
+        std::vector<std::shared_ptr<common::model::ConveyorState> > _conveyor_states;
 
         // pool of possible id we can set for a newly connected conveyor
         std::set<uint8_t> _conveyor_pool_id_list;

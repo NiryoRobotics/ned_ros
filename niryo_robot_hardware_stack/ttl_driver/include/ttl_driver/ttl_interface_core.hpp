@@ -21,6 +21,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #define TTL_INTERFACE_CORE_HPP
 
 // std
+#include <cstdint>
 #include <memory>
 #include <string>
 #include <thread>
@@ -103,6 +104,7 @@ class TtlInterfaceCore : public common::model::IDriverCore, public common::model
         // conveyor control
         int setConveyor(const std::shared_ptr<common::model::ConveyorState> state) override;
         void unsetConveyor(uint8_t motor_id) override;
+        int changeId(common::model::EHardwareType motor_type, uint8_t old_id, uint8_t new_id) override;
 
         // direct commands
         int rebootMotors();
@@ -191,6 +193,9 @@ class TtlInterfaceCore : public common::model::IDriverCore, public common::model
         ros::ServiceServer _custom_cmd_getter;
 
         static constexpr int QUEUE_OVERFLOW = 20;
+        
+        // conveyor default id, avoid hardcore value
+        uint8_t _default_conveyor_id = 0;
 };
 
 /**

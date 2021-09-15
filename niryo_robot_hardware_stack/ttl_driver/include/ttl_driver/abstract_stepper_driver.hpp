@@ -56,6 +56,9 @@ class AbstractStepperDriver : public AbstractMotorDriver
         virtual int readHomingStatus(uint8_t id, uint32_t& status) = 0;
         virtual int setHomingDirection(uint8_t id, uint8_t direction) = 0;
 
+        // read
+        virtual int readGoalVelocity(uint8_t id, uint32_t& present_velocity) = 0;
+
     private:
         AbstractStepperDriver() = delete;
 

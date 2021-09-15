@@ -279,7 +279,7 @@ int CanManager::writeSingleCommand(std::shared_ptr<common::model::AbstractCanSin
 
     if (CAN_OK != result)
     {
-        ROS_ERROR_THROTTLE(0.5, "CanManager::readCommand - Failed to read stepper cmd");
+        ROS_ERROR_THROTTLE(0.5, "CanManager::readCommand - Failed to read stepper cmd with error %d", result);
         _debug_error_message = "CanManager - Failed to read stepper cmd";
     }
 

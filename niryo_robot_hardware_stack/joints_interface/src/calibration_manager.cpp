@@ -360,12 +360,12 @@ EStepperCalibrationStatus CalibrationManager::_auto_calibration()
         StepperTtlSingleCmd stepper_cmd_3(EStepperCommandType::CMD_TYPE_CALIBRATION, 4);
 
         _ttl_interface->startCalibration();
-         
+
         _ttl_interface->addSingleCommandToQueue(std::make_shared<StepperTtlSingleCmd>(stepper_dir_cmd));
         _ttl_interface->addSingleCommandToQueue(std::make_shared<StepperTtlSingleCmd>(stepper_cmd_1));
         _ttl_interface->addSingleCommandToQueue(std::make_shared<StepperTtlSingleCmd>(stepper_cmd_2));
         _ttl_interface->addSingleCommandToQueue(std::make_shared<StepperTtlSingleCmd>(stepper_cmd_3));
-        
+
         sld.sleep();
     }
 
@@ -594,7 +594,7 @@ EStepperCalibrationStatus CalibrationManager::_manual_calibration()
 
     // 0. Torque ON for motor 2
     auto state = std::dynamic_pointer_cast<common::model::StepperMotorState>(_joint_states_list.at(1));
-    if(state)
+    if (state)
     {
       int steps_per_rev = state->stepsPerRev();
 
@@ -643,7 +643,6 @@ EStepperCalibrationStatus CalibrationManager::_manual_calibration()
           return _can_interface->getCalibrationStatus();
       else if (_ttl_interface)
           return _ttl_interface->getCalibrationStatus();
-
     }
 
     return EStepperCalibrationStatus::CALIBRATION_FAIL;

@@ -22,8 +22,6 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <chrono>
-#include <thread>
 
 // niryo
 #include "dynamixel_sdk/dynamixel_sdk.h"

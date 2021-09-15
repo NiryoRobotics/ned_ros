@@ -31,10 +31,8 @@ namespace model
  * @brief ConveyorState::ConveyorState
  */
 ConveyorState::ConveyorState() :
-  StepperMotorState ()
-{
-
-}
+  StepperMotorState()
+{}
 
 /**
  * @brief ConveyorState::ConveyorState

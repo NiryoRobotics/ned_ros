@@ -96,6 +96,7 @@ add_library(${PROJECT_NAME}
   src/abstract_ttl_driver.cpp
   src/ttl_interface_core.cpp
   src/ttl_manager.cpp
+  src/mock_stepper_driver.cpp
 )
 
 add_executable(${PROJECT_NAME}_node

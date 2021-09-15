@@ -21,6 +21,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #define I_DriverCore_H
 
 // C++
+#include <cstdint>
 #include <string>
 #include <thread>
 #include <mutex>
@@ -59,6 +60,7 @@ class IDriverCore
         // driver for conveyor
         virtual int setConveyor(const std::shared_ptr<common::model::ConveyorState> state) = 0;
         virtual void unsetConveyor(uint8_t motor_id) = 0;
+        virtual int changeId(common::model::EHardwareType motor_type, uint8_t old_id, uint8_t new_id) = 0;
 
         // calibration
         virtual void startCalibration() = 0;
