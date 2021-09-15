@@ -17,6 +17,7 @@
 #include "ttl_driver/ttl_manager.hpp"
 
 // cpp
+#include <cmath>
 #include <utility>
 #include <vector>
 #include <set>
@@ -24,6 +25,7 @@
 #include <algorithm>
 #include <sstream>
 #include <unordered_map>
+#include <cstdlib>
 
 // niryo
 #include "common/model/hardware_type_enum.hpp"
@@ -33,6 +35,7 @@
 #include "common/model/conveyor_state.hpp"
 #include "common/model/end_effector_state.hpp"
 
+#include "ros/serialization.h"
 #include "ttl_driver/stepper_reg.hpp"
 #include "ttl_driver/end_effector_reg.hpp"
 
@@ -113,6 +116,26 @@ bool TtlManager::init(ros::NodeHandle& nh)
 int TtlManager::changeId(common::model::EHardwareType motor_type, uint8_t old_id, uint8_t new_id)
 {
     auto driver = std::dynamic_pointer_cast<AbstractMotorDriver>(_driver_map.at(motor_type));
+    // update all maps
+    auto i_state  = _state_map.find(old_id);
+    // update all maps
+    if (i_state != _state_map.end())
+    {
+        // update all maps
+        std::swap(_state_map[new_id], i_state->second);
+        // update all maps
+        _state_map.erase(i_state);
+    }
+    if (_ids_map.count(motor_type))
+    {
+        // update all maps
+        _ids_map.at(motor_type).erase(std::remove(_ids_map.at(motor_type).begin(), _ids_map.at(motor_type).end(), old_id),
+                                    _ids_map.at(motor_type).end());
+
+        // update all maps
+        _ids_map.at(motor_type).push_back(new_id);
+    }
+
     if (driver)
       return driver->changeId(old_id, new_id);
 
@@ -225,7 +248,7 @@ void TtlManager::addHardwareComponent(const std::shared_ptr<common::model::Abstr
     // if not already instanciated
     if (!_state_map.count(id))
     {
-      _state_map.insert(std::make_pair(id, state));
+        _state_map.insert(std::make_pair(id, state));
     }
 
     // if not already instanciated
@@ -687,7 +710,7 @@ bool TtlManager::readHwStatus()
             {
                 for (auto id : _ids_map.at(type))
                 {
-                    uint32_t status{0}; // not in calibration status table
+                    uint32_t status{0};     // not in calibration status table
                     shared_ptr<ttl_driver::AbstractStepperDriver> stepper_driver = std::dynamic_pointer_cast<ttl_driver::AbstractStepperDriver>(driver);
                     if (_calibration_status != EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED &&
                         COMM_SUCCESS == stepper_driver->readHomingStatus(id, status))
@@ -706,22 +729,24 @@ bool TtlManager::readHwStatus()
             {
                 for (auto id : _ids_map.at(type))
                 {
-                    auto state = std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(id));
-
-                    if (state && state->isConveyor())
+                    if (_state_map.find(id) != _state_map.end())
                     {
-                        shared_ptr<ttl_driver::AbstractStepperDriver> stepper_driver = std::dynamic_pointer_cast<ttl_driver::AbstractStepperDriver>(driver);
-                        /*if (COMM_SUCCESS != stepper_driver->readVelocity(id, speed))
+                        auto state = std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(id));
+                        if (state && state->isConveyor())
                         {
-                            hw_errors_increment++;
-                        }
-                        int speed = velocity;
+                            auto stepper_driver = std::dynamic_pointer_cast<ttl_driver::AbstractStepperDriver>(driver);
+                            uint32_t velocity;
+                            if (COMM_SUCCESS != stepper_driver->readGoalVelocity(id, velocity))
+                            {
+                                hw_errors_increment++;
+                            }
 
-                        auto cState = std::dynamic_pointer_cast<ConveyorState>(_state_map.at(id));
-                        // TODO(thuc): handle datas before set in state of conveyor - type data in ttl conveyor is different with data in can conveyor
-                        cState->setDirection(speed > 0 ? 1 : -1);
-                        cState->setSpeed(speed);
-                        cState->setState(speed != 0);*/
+                            int16_t speed = static_cast<int16_t>(velocity);
+                            auto cState = std::dynamic_pointer_cast<common::model::ConveyorState>(state);
+                            cState->setDirection(speed > 0 ? 1 : -1);
+                            cState->setSpeed(std::abs(speed));
+                            cState->setState(speed != 0);
+                        }
                     }
                 }
             }
@@ -804,7 +829,7 @@ int TtlManager::getAllIdsOnBus(vector<uint8_t> &id_list)
     // 1. Get all ids from ttl bus. We can use any driver for that
     auto it = _driver_map.begin();
 
-    if(it != _driver_map.end())
+    if  (it != _driver_map.end())
     {
       if (it->second)
       {

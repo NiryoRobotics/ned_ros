@@ -20,7 +20,7 @@
 #include <cassert>
 #include <string>
 #include <vector>
-
+#include <ros/ros.h>
 using ::common::model::EStepperCommandType;
 
 namespace ttl_driver
@@ -71,11 +71,19 @@ int AbstractStepperDriver::writeSingleCmd(const std::shared_ptr<common::model::A
             return ping(cmd->getId());
         case EStepperCommandType::CMD_TYPE_CONVEYOR:
         {
-            // convert direction and speed into signed speed
-            int dir = cmd->getParams().at(2) > 0 ? 1 : -1;
-            // normal warning : we need to put an int32 inside an uint32_t
-            uint32_t speed = static_cast<int32_t>(cmd->getParams().at(1) * dir);
-            return setGoalVelocity(cmd->getId(), speed);
+            std::vector<uint32_t> params = cmd->getParams();
+            if (!params[0])
+            {
+                return setGoalVelocity(cmd->getId(), 0);
+            }
+            else
+            {
+                // convert direction and speed into signed speed
+                int8_t dir = static_cast<int8_t>(cmd->getParams().at(2));
+                // normal warning : we need to put an int32 inside an uint32_t
+                uint32_t speed = static_cast<uint32_t>(cmd->getParams().at(1) * dir);
+                return setGoalVelocity(cmd->getId(), speed);
+            }
         }
         default:
             std::cout << "Command not implemented " << cmd->getCmdType() << std::endl;

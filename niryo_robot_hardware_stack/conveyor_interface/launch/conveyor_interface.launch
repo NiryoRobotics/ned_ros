@@ -9,7 +9,9 @@
     </include>
 
     <!-- use conveyor config -->
-    <include file="$(find conveyor_interface)/launch/conveyor_interface_base.launch.xml" />
+    <include file="$(find conveyor_interface)/launch/conveyor_interface_base.launch.xml" >
+        <arg name="hardware_version" value="$(arg hardware_version)" />
+    </include>
 
     <node pkg="conveyor_interface" type="conveyor_interface_node" name="conveyor_interface" output="screen" />
 

@@ -33,12 +33,14 @@ class MotorDebug:
         self.__traj_client = actionlib.SimpleActionClient(self.__action_server_name, FollowJointTrajectoryAction)
         self.__traj_client.wait_for_server()
 
+        # - Publishers
+        self.__is_debug_motor_active_pub = rospy.Publisher('~is_debug_motor_active', Bool, latch=True, queue_size=10)
+
         # - Log services
         self.__hardware_log_level_service_name = "/niryo_robot_hardware_interface/set_logger_level"
         self.__hardware_log_level_service = rospy.ServiceProxy(self.__hardware_log_level_service_name, SetLoggerLevel)
         self.__get_hardware_loggers_service_name = "/niryo_robot_hardware_interface/get_loggers"
         self.__get_hardware_loggers_service = rospy.ServiceProxy(self.__get_hardware_loggers_service_name, GetLoggers)
-
         self.__commander_log_level_service_name = "/niryo_robot_arm_commander/set_logger_level"
         self.__commander_log_level_service = rospy.ServiceProxy(self.__commander_log_level_service_name, SetLoggerLevel)
 
@@ -47,6 +49,7 @@ class MotorDebug:
                                                          self.__callback_motor_debug_start)
         self.__motor_debug_service_stop = rospy.Service('~motor_debug_stop', Empty, self.__callback_motor_debug_stop)
 
+
         self.__motor_report_service_name = "/niryo_robot_hardware_interface/launch_motors_report"
         self.__motor_report_service = rospy.ServiceProxy(self.__motor_report_service_name, Trigger)
         self.__stop_motor_report_service_name = "/niryo_robot_hardware_interface/stop_motors_report"
@@ -54,7 +57,6 @@ class MotorDebug:
 
         self.__set_led_state_service = rospy.ServiceProxy('/niryo_robot_rpi/set_led_custom_blinker',
                                                           LedBlinker)
-
         self.__reset_controller_service = rospy.ServiceProxy('/niryo_robot/joints_interface/steppers_reset_controller',
                                                              Trigger)
 
@@ -72,9 +74,11 @@ class MotorDebug:
         # if commander is active, stop motor debug
         if msg.data:
             self.__is_running = False
+            self.__is_debug_motor_active_pub.publish(self.__is_running)
 
     def __callback_motor_debug_stop(self, _):
         self.__is_running = False
+        self.__is_debug_motor_active_pub.publish(self.__is_running)
         self.__stop_motor_report_service()
         self.__cancel()
         # self._set_log_debug(False)
@@ -103,6 +107,7 @@ class MotorDebug:
         try:
             error_counter = 0
             self.__is_running = True
+            self.__is_debug_motor_active_pub.publish(self.__is_running)
             self.__set_led_state_service(False, 0, 0, 0)
             if nb_loops < 1:
                 # self._set_log_debug(True)
@@ -151,11 +156,13 @@ class MotorDebug:
             self.__robot.set_learning_mode(True)
             # self._set_log_debug(False)
             self.__is_running = False
+            self.__is_debug_motor_active_pub.publish(self.__is_running)
 
             self.__set_led_state_service(error_counter > 0, 5, LedBlinkerRequest.LED_WHITE, 360)
 
         except:
             self.__is_running = False
+            self.__is_debug_motor_active_pub.publish(self.__is_running)
             self.__robot.set_learning_mode(True)
 
     def __play_fun_poses(self):

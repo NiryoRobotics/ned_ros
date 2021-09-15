@@ -135,7 +135,6 @@ DxlMotorState::DxlMotorState(const DxlMotorState &state) :
   _middle_position = state._middle_position;
   _total_angle = state._total_angle;
   _steps_for_one_speed = state._steps_for_one_speed;
-
 }
 
 /**

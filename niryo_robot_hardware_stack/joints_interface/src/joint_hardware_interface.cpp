@@ -223,7 +223,7 @@ bool JointHardwareInterface::init(ros::NodeHandle& rootnh, ros::NodeHandle &robo
             auto jState = _joint_list.at(j);
             if (jState)
             {
-                ROS_INFO("JointHardwareInterface::initJoints - New Joints config found : %s", jState->str().c_str());
+                ROS_DEBUG("JointHardwareInterface::initJoints - New Joints config found : %s", jState->str().c_str());
 
                 hardware_interface::JointStateHandle jStateHandle(jState->getName(),
                                                                   &_joint_list.at(j)->pos,
@@ -370,7 +370,7 @@ bool JointHardwareInterface::needCalibration() const
         result = (EStepperCalibrationStatus::CALIBRATION_OK != _can_interface->getCalibrationStatus());
     else
         result = (EStepperCalibrationStatus::CALIBRATION_OK != _ttl_interface->getCalibrationStatus());
-        
+
     ROS_DEBUG_THROTTLE(2, "JointHardwareInterface::needCalibration - Need calibration returned: %d",
                        static_cast<int>(result));
     return result;
@@ -415,7 +415,7 @@ void JointHardwareInterface::setNeedCalibration()
 {
     if (_can_interface)
         _can_interface->resetCalibration();
-    else    
+    else
         _ttl_interface->resetCalibration();
 }
 

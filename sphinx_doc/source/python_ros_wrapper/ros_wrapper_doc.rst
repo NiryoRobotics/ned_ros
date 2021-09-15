@@ -103,6 +103,14 @@ Vision
               set_brightness, set_contrast, set_saturation
     :member-order: bysource
 
+Led Ring
+^^^^^^^^^^^^^
+
+.. autoclass:: NiryoRosWrapper
+    :members: led_ring_solid, led_ring_turn_off, led_ring_flash, led_ring_alternate, 
+                led_ring_chase, led_ring_wipe, led_ring_rainbow, led_ring_rainbow_cycle,
+                led_ring_rainbow_chase, led_ring_go_up, led_ring_go_up_down
+    :member-order: bysource
 
 Enums
 ------------------------------------

@@ -103,7 +103,7 @@ void EndEffectorInterfaceCore::initParameters(ros::NodeHandle& nh)
     ROS_DEBUG("EndEffectorInterfaceCore::initParameters - end effector id : %d", _id);
     ROS_DEBUG("EndEffectorInterfaceCore::initParameters - end effector status frequency : %f", _check_end_effector_status_frequency);
 
-    //initiliaze end effector state
+    //  initiliaze end effector state
     _end_effector_state = std::make_shared<EndEffectorState>(_id);
 
     uint8_t button_id = 1;
