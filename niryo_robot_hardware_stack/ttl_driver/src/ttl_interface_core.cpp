@@ -832,6 +832,7 @@ void TtlInterfaceCore::setTrajectoryControllerCommands(const std::vector<std::pa
 /**
  * @brief TtlInterfaceCore::setSyncCommand
  * @param cmd
+ * TODO(CC) : templatize
  */
 void TtlInterfaceCore::setSyncCommand(const std::shared_ptr<common::model::ISynchronizeMotorCmd>& cmd)
 {

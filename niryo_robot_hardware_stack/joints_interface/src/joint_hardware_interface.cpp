@@ -26,6 +26,8 @@
 #include <typeinfo>
 
 // niryo
+#include "common/model/single_motor_cmd.hpp"
+#include "common/model/synchronize_motor_cmd.hpp"
 #include "common/model/hardware_type_enum.hpp"
 #include "common/model/bus_protocol_enum.hpp"
 #include "common/util/util_defs.hpp"
@@ -41,8 +43,9 @@ using ::common::model::EBusProtocol;
 using ::common::model::BusProtocolEnum;
 using ::common::model::StepperMotorState;
 using ::common::model::DxlMotorState;
+using ::common::model::DxlSyncCmd;
 using ::common::model::StepperSingleCmd;
-using ::common::model::StepperTtlSingleCmd;
+using ::common::model::StepperTtlSyncCmd;
 using ::common::model::EStepperCalibrationStatus;
 using ::common::model::EStepperCommandType;
 using ::common::model::EDxlCommandType;
@@ -422,9 +425,9 @@ void JointHardwareInterface::activateLearningMode(bool activated)
 {
     ROS_DEBUG("JointHardwareInterface::activateLearningMode - activate learning mode");
 
-    common::model::DxlSyncCmd dxl_cmd(EDxlCommandType::CMD_TYPE_LEARNING_MODE);
-    common::model::StepperTtlSyncCmd stepper_ttl_sync_cmd(EStepperCommandType::CMD_TYPE_LEARNING_MODE);
-    common::model::StepperSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_LEARNING_MODE);
+    DxlSyncCmd dxl_cmd(EDxlCommandType::CMD_TYPE_LEARNING_MODE);
+    StepperTtlSyncCmd stepper_ttl_sync_cmd(EStepperCommandType::CMD_TYPE_LEARNING_MODE);
+    StepperSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_LEARNING_MODE);
 
     for (auto const& jState : _joint_list)
     {
@@ -450,8 +453,8 @@ void JointHardwareInterface::activateLearningMode(bool activated)
 
     if (_ttl_interface)
     {
-        _ttl_interface->setSyncCommand(std::make_shared<common::model::DxlSyncCmd>(dxl_cmd));
-        _ttl_interface->setSyncCommand(std::make_shared<common::model::StepperTtlSyncCmd>(stepper_ttl_sync_cmd));
+        _ttl_interface->setSyncCommand(std::make_shared<DxlSyncCmd>(dxl_cmd));
+        _ttl_interface->setSyncCommand(std::make_shared<StepperTtlSyncCmd>(stepper_ttl_sync_cmd));
     }
 
     _learning_mode = activated;

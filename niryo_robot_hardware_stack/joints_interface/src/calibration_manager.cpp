@@ -30,6 +30,8 @@
 #include <ros/console.h>
 
 // niryo
+#include "common/model/single_motor_cmd.hpp"
+#include "common/model/synchronize_motor_cmd.hpp"
 #include "common/model/stepper_command_type_enum.hpp"
 #include "common/model/dxl_command_type_enum.hpp"
 #include "common/model/stepper_calibration_status_enum.hpp"
@@ -40,8 +42,9 @@
 
 using ::common::model::JointState;
 using ::common::model::EStepperCommandType;
+using ::common::model::DxlSyncCmd;
 using ::common::model::StepperSingleCmd;
-using ::common::model::StepperTtlSingleCmd;
+using ::common::model::StepperTtlSyncCmd;
 using ::common::model::StepperMotorState;
 using ::common::model::EStepperCalibrationStatus;
 using ::common::model::EDxlCommandType;
@@ -515,12 +518,12 @@ void CalibrationManager::moveRobotBeforeCalibration()
     if (_ttl_interface)
     {
         // set torque on
-        common::model::DxlSyncCmd dynamixel_cmd(EDxlCommandType::CMD_TYPE_TORQUE);
+        DxlSyncCmd dynamixel_cmd(EDxlCommandType::CMD_TYPE_TORQUE);
         dynamixel_cmd.addMotorParam(_joint_states_list.at(3)->getHardwareType(), _joint_states_list.at(3)->getId(), 1);
         dynamixel_cmd.addMotorParam(_joint_states_list.at(4)->getHardwareType(), _joint_states_list.at(4)->getId(), 1);
         dynamixel_cmd.addMotorParam(_joint_states_list.at(5)->getHardwareType(), _joint_states_list.at(5)->getId(), 1);
 
-        _ttl_interface->setSyncCommand(std::make_shared<common::model::DxlSyncCmd>(dynamixel_cmd));
+        _ttl_interface->setSyncCommand(std::make_shared<DxlSyncCmd>(dynamixel_cmd));
         ros::Duration(0.2).sleep();
 
         // move dxls
@@ -536,7 +539,7 @@ void CalibrationManager::moveRobotBeforeCalibration()
         dynamixel_cmd.addMotorParam(_joint_states_list.at(5)->getHardwareType(), _joint_states_list.at(5)->getId(),
                                     static_cast<uint32_t>(_joint_states_list.at(5)->to_motor_pos(0)));
 
-        _ttl_interface->setSyncCommand(std::make_shared<common::model::DxlSyncCmd>(dynamixel_cmd));
+        _ttl_interface->setSyncCommand(std::make_shared<DxlSyncCmd>(dynamixel_cmd));
         ros::Duration(0.2).sleep();
     }
 }
@@ -632,9 +635,9 @@ void CalibrationManager::activateLearningMode(bool activated)
 {
     ROS_DEBUG("CalibrationManager::activateLearningMode - activate learning mode");
 
-    common::model::DxlSyncCmd dxl_cmd(EDxlCommandType::CMD_TYPE_LEARNING_MODE);
-    common::model::StepperTtlSyncCmd stepper_ttl_sync_cmd(EStepperCommandType::CMD_TYPE_LEARNING_MODE);
-    common::model::StepperSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_LEARNING_MODE);
+    DxlSyncCmd dxl_cmd(EDxlCommandType::CMD_TYPE_LEARNING_MODE);
+    StepperTtlSyncCmd stepper_ttl_sync_cmd(EStepperCommandType::CMD_TYPE_LEARNING_MODE);
+    StepperSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_LEARNING_MODE);
 
     for (auto const& jState : _joint_states_list)
     {
@@ -659,8 +662,8 @@ void CalibrationManager::activateLearningMode(bool activated)
 
     if (_ttl_interface)
     {
-        _ttl_interface->setSyncCommand(std::make_shared<common::model::DxlSyncCmd>(dxl_cmd));
-        _ttl_interface->setSyncCommand(std::make_shared<common::model::StepperTtlSyncCmd>(stepper_ttl_sync_cmd));
+        _ttl_interface->setSyncCommand(std::make_shared<DxlSyncCmd>(dxl_cmd));
+        _ttl_interface->setSyncCommand(std::make_shared<StepperTtlSyncCmd>(stepper_ttl_sync_cmd));
     }
 }
 
