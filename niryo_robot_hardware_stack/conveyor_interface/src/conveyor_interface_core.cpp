@@ -59,7 +59,6 @@ ConveyorInterfaceCore::ConveyorInterfaceCore(ros::NodeHandle& nh,
                                              shared_ptr<common::model::IDriverCore> conveyor_driver):
     _conveyor_driver(conveyor_driver)
 {
-    _conveyor_state = std::make_shared<ConveyorState>(conveyor_driver->getBusProtocol());
     ROS_DEBUG("ConveyorInterfaceCore::ConveyorInterfaceCore - ctor");
     init(nh);
 }
