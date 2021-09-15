@@ -198,6 +198,10 @@ ConveyorInterfaceCore::addConveyor()
         // take last
         uint8_t conveyor_id = *_conveyor_pool_id_list.begin();
 
+        if (_conveyor_driver->getBusProtocol() == EBusProtocol::CAN)
+        {
+            _conveyor_state->updateId(conveyor_id);
+        }
         // if new tool has been found
         if (_conveyor_state->isValid())
         {
@@ -209,12 +213,9 @@ ConveyorInterfaceCore::addConveyor()
                 int result = _conveyor_driver->setConveyor(_conveyor_state);
                 
                 // change Id
-                if (result == niryo_robot_msgs::CommandStatus::SUCCESS)
+                if (result == niryo_robot_msgs::CommandStatus::SUCCESS && _conveyor_driver->getBusProtocol() == EBusProtocol::TTL)
                 {
-                    if (_conveyor_driver->getBusProtocol() == EBusProtocol::TTL)
-                    {
-                        result = _conveyor_driver->changeId(_conveyor_state->getHardwareType(), _conveyor_state->getDefaultId(), _conveyor_state->getId());
-                    }
+                    result = _conveyor_driver->changeId(_conveyor_state->getHardwareType(), _conveyor_state->getDefaultId(), _conveyor_state->getId());
                     _conveyor_state->updateId(conveyor_id);
                 }
                 
