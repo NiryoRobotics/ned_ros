@@ -10,15 +10,13 @@
         </group>
     </group>
 
-    <!-- Override MoveIt default logging from INFO to WARn -->
-    <env name="ROSCONSOLE_CONFIG_FILE" value="$(find niryo_robot_arm_commander)/config/rosconsole.config"/>
-
     <!-- Moveit move_group -->
     <group if="$(eval hardware_version == 'ned' or hardware_version == 'ned2')">
         <include file="$(find niryo_moveit_config_standalone)/launch/move_group.launch">
             <arg name="hardware_version" value="$(arg hardware_version)" />
         </include>
     </group>
+    
     <!-- Moveit move_group params -->
     <group ns="move_group">
         <!-- Disable Moveit! controller timeout -->

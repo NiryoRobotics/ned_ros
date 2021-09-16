@@ -3,20 +3,31 @@
         xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
     <!-- Arguments -->
     <arg name="log_level" default="INFO" />
-
-    <arg name="debug" default="false"/>
-    <arg name="ttl_enabled" default="true"/>
-    <arg name="can_enabled" default="true"/>
     <arg name="hardware_version" default="ned"/>
+    <arg name="debug" default="false"/>
+    <arg name="can_enabled" default="true"/>
+    <arg name="ttl_enabled" default="true"/>
+    <arg name="vision_enabled" default="true" />
+    <arg name="gazebo" default="false" />
+    <arg name="simu_gripper" default="true" />
     <arg name="rpi_model" default="4"/>
     <arg name="conf_location" default="$(env HOME)/.config/niryo/version/version.txt"/>
-    <arg name="simu_gripper" default="true" />
 
+    <!-- For conveniency only . We cannot use groups because it does not detect the urdf_path arg otherwise -->
+    <arg name="simulation_mode" value="$(eval hardware_version == 'fake_ned' or hardware_version == 'fake_ned2')" />
+ 
+    <arg name="urdf_path" value="urdf/$(arg hardware_version)/without_mesh_niryo_$(arg hardware_version).urdf.xacro" unless="$(arg simulation_mode)" />
+    <arg name="urdf_path" value="urdf/$(arg hardware_version)/niryo_$(arg hardware_version).urdf.xacro" if="$(eval simulation_mode and not gazebo)"/>
+
+    <arg name="urdf_path" value="urdf/$(arg hardware_version)/niryo_$(arg hardware_version)_gripper1_n_camera.urdf.xacro" if="$(eval simulation_mode and gazebo and simu_gripper)"/>
+    <arg name="urdf_path" value="urdf/$(arg hardware_version)/niryo_$(arg hardware_version)_gazebo.urdf.xacro" if="$(eval simulation_mode and gazebo and not simu_gripper)"/>
+ 
     <!-- Load URDF -->
     <param name="robot_description"
-           command="$(find xacro)/xacro $(find niryo_robot_description)/urdf/$(arg hardware_version)/without_mesh_niryo_$(arg hardware_version).urdf.xacro"/>
+           command="$(find xacro)/xacro $(find niryo_robot_description)/$(arg urdf_path)" />
+
     <param name="robot_description_tf2"
-           command="$(find xacro)/xacro $(find niryo_robot_description)/urdf/$(arg hardware_version)/niryo_$(arg hardware_version).urdf.xacro"/>
+           command="$(find xacro)/xacro $(find niryo_robot_description)/$(arg urdf_path)"/>
 
     <!-- PARAMS -->
     <group ns="niryo_robot">
@@ -32,11 +43,12 @@
     <!-- Including shared params & nodes -->
 
     <include file="$(find niryo_robot_bringup)/launch/niryo_robot_base_common.launch.xml">
-        <arg name="hardware_version" value="$(arg hardware_version)" />
         <arg name="log_level" value="$(arg log_level)" />
+        <arg name="hardware_version" value="$(arg hardware_version)" />
+        <arg name="debug" value="$(arg debug)"/>
         <arg name="can_enabled" value="$(arg can_enabled)"/>
         <arg name="ttl_enabled" value="$(arg ttl_enabled)"/>
-        <arg name="debug" value="$(arg debug)"/>
+        <arg name="gazebo" value="$(arg gazebo)" />
         <arg name="simu_gripper" value="$(arg simu_gripper)" />
     </include>
 
@@ -48,7 +60,7 @@
     </include>
 
     <!-- Launching vision node -->
-    <include file="$(find niryo_robot_vision)/launch/vision_node.launch">
+    <include file="$(find niryo_robot_vision)/launch/vision_node.launch" if="$(arg vision_enabled)">
         <arg name="log_level" value="$(arg log_level)" />
         <arg name="hardware_version" value="$(arg hardware_version)" />
     </include>
