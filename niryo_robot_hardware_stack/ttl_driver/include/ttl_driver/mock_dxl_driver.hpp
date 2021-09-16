@@ -474,7 +474,8 @@ std::string MockDxlDriver::interpreteFirmwareVersion(uint32_t fw_version) const
 
 void MockDxlDriver::removeGripper()
 {
-    _id_list.erase(std::remove(_id_list.begin(), _id_list.end(), 11), _id_list.end());
+    _full_id_list.erase(std::remove(_full_id_list.begin(), _full_id_list.end(), 11), _full_id_list.end());
+    _map_fake_registers.erase(11);
 }
 } // DynamixelDriver
 
