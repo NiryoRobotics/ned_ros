@@ -6,7 +6,7 @@
 tool_list:
   - name: "No Tool Selected"
     type: "no_tool"
-    id: 0
+    id: -1
     specs:
       [ ]
     available_commands:

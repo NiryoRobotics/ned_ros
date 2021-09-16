@@ -49,7 +49,6 @@ class MotorDebug:
                                                          self.__callback_motor_debug_start)
         self.__motor_debug_service_stop = rospy.Service('~motor_debug_stop', Empty, self.__callback_motor_debug_stop)
 
-
         self.__motor_report_service_name = "/niryo_robot_hardware_interface/launch_motors_report"
         self.__motor_report_service = rospy.ServiceProxy(self.__motor_report_service_name, Trigger)
         self.__stop_motor_report_service_name = "/niryo_robot_hardware_interface/stop_motors_report"

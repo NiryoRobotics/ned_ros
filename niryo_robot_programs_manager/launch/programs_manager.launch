@@ -11,14 +11,14 @@
 
     <arg name="programs_dir" value="$(arg saved_files_dir)/niryo_robot_programs" />
 
+    <include file="$(find niryo_robot_programs_manager)/launch/programs_manager_base.launch.xml" />
+
     <node name="niryo_robot_programs_manager" pkg="niryo_robot_programs_manager" type="programs_manager_node.py"
           output="screen">
         <param name="log_level" type="string" value="$(arg log_level)" />
 
         <param name="standalone" type="bool" value="$(arg standalone)"/>
         <param name="programs_dir" type="string" value="$(arg programs_dir)"/>
-
-        <rosparam file="$(find niryo_robot_programs_manager)/config/default.yaml" command="load"/>
     </node>
     
 </launch>

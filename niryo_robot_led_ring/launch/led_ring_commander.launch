@@ -4,18 +4,18 @@
     <arg name="log_level" default="INFO" />
     <arg name="hardware_version" default="ned2"/>
 
+    <include file="$(find niryo_robot_led_ring)/launch/led_ring_commander_base.launch.xml" />
+
     <node if="$(eval hardware_version =='ned2')" pkg="niryo_robot_led_ring" type="led_ring_node.py"
           name="niryo_robot_led_ring" output="screen" launch-prefix="sudo">
         <param name="simulation_mode" type="bool" value="False"/>
-        <rosparam command="load" file="$(find niryo_robot_led_ring)/config/led_control_library/led_strip_params.yaml"/>
-        <rosparam command="load" file="$(find niryo_robot_led_ring)/config/led_ring_params.yaml"/>
+        <param name="log_level" value="$(arg log_level)" />
     </node>
 
     <node if="$(eval hardware_version =='fake_ned2')" pkg="niryo_robot_led_ring" type="led_ring_node.py"
           name="niryo_robot_led_ring" output="screen">
         <param name="simulation_mode" type="bool" value="True"/>
-        <rosparam command="load" file="$(find niryo_robot_led_ring)/config/led_control_library/led_strip_params.yaml"/>
-        <rosparam command="load" file="$(find niryo_robot_led_ring)/config/led_ring_params.yaml"/>
+        <param name="log_level" value="$(arg log_level)" />
     </node>
 
 </launch>

@@ -2,6 +2,7 @@
 
 # Libs
 import rospy
+import logging
 
 from niryo_robot_metrics.TuptimeWrapper import TuptimeWrapper
 from niryo_robot_metrics.DataSender import DataSender
@@ -97,9 +98,13 @@ class MetricsNode:
 
 
 if __name__ == "__main__":
-    rospy.init_node(
-        'niryo_robot_metrics', anonymous=False, log_level=rospy.INFO
-    )
+    rospy.init_node('niryo_robot_metrics', anonymous=False, log_level=rospy.INFO)
+
+    # change logger level according to node parameter
+    log_level = rospy.get_param("~log_level")
+    logger = logging.getLogger("rosout")
+    logger.setLevel(log_level)
+
     try:
         node = MetricsNode()
         rospy.Timer(rospy.Duration(600), node.fetch_and_save_metrics)

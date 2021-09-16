@@ -3,6 +3,7 @@
 # Libs
 import os
 import rospy
+import logging
 from sqlite3 import OperationalError
 
 from niryo_robot_database.SQLiteDAO import SQLiteDAO
@@ -15,7 +16,8 @@ from niryo_robot_msgs.msg import CommandStatus
 from niryo_robot_database.msg import Log, Metric
 
 # srv
-from niryo_robot_database.srv import AddLog, GetAllLogs, GetAllMetrics, RmLogSinceDate, SetMetric, SetSettings, GetSettings
+from niryo_robot_database.srv import (AddLog, GetAllLogs, GetAllMetrics,
+                                      RmLogSinceDate, SetMetric, SetSettings, GetSettings)
 
 
 class DatabaseNode:
@@ -121,9 +123,13 @@ class DatabaseNode:
 
 
 if __name__ == "__main__":
-    rospy.init_node(
-        'niryo_robot_database', anonymous=False, log_level=rospy.INFO
-    )
+    rospy.init_node('niryo_robot_database', anonymous=False, log_level=rospy.INFO)
+
+    # change logger level according to node parameter
+    log_level = rospy.get_param("~log_level")
+    logger = logging.getLogger("rosout")
+    logger.setLevel(log_level)
+
     try:
         node = DatabaseNode()
         rospy.spin()

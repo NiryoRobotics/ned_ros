@@ -2,6 +2,7 @@
 
 # Lib
 import rospy
+import logging
 import rosnode
 
 from threading import Thread
@@ -27,9 +28,14 @@ class LedRingNode:
 if __name__ == '__main__':
     rospy.init_node('niryo_robot_led_ring_commander', anonymous=False, log_level=rospy.INFO, disable_signals=True)
     node = None
+
+    # change logger level according to node parameter
+    log_level = rospy.get_param("~log_level")
+    logger = logging.getLogger("rosout")
+    logger.setLevel(log_level)
+
     try:
         node = LedRingNode()
         rospy.spin()
     except rospy.ROSInterruptException:
         pass
-

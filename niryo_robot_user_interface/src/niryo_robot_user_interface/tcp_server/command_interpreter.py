@@ -771,15 +771,13 @@ class CommandInterpreter:
         mat_k, mat_d = self.__niryo_robot.get_camera_intrinsics()
         return self.__send_answer(mat_k, mat_d)
 
-
     # - Led ring
-
     @check_nb_args(2)
     def __led_ring_solid(self, color, wait):
         wait = self.__check_and_get_from_dict(wait, self.__boolean_string_dict_converter)
         color = self.__check_color_led_ring(color)
         self.__niryo_robot.led_ring_solid(color, wait)
-        return self.__send_answer() # TODO : should we return something ?
+        return self.__send_answer()  # TODO : should we return something ?
 
     @check_nb_args(1)
     def __led_ring_turn_off(self, wait):
@@ -865,11 +863,10 @@ class CommandInterpreter:
         self.__niryo_robot.led_ring_go_up_down(color, speed, iterations, wait)
         return self.__send_answer()
 
-
     # Usefull method Led Ring
     def __check_color_led_ring(self, color):
         self.__check_type(color, list)
-        if len(color) != 3: 
+        if len(color) != 3:
             self.__raise_exception("Color must be a list of size 3: [r, g, b]")
         for index, color_elem in enumerate(color):
             if color_elem < 0 or color_elem > 255:

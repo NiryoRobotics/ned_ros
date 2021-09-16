@@ -1,20 +1,32 @@
-<package>
+<?xml version="1.0"?>
+<?xml-model
+  href="http://download.ros.org/schema/package_format3.xsd"
+  schematypens="http://www.w3.org/2001/XMLSchema"?>
+  <package format="3">
   <name>niryo_robot_status</name>
-  <version>3.1.0</version>
-  <description>Handle robot status</description>
-  <author email="v.pitre@niryo.com">Valentin Pitre</author>
+  <version>3.2.0</version>
+  <description>
+    Handle robot status
+  </description>
   <maintainer email="v.pitre@niryo.com">Valentin Pitre</maintainer>
   <license>GPLv3</license>
+  <author email="v.pitre@niryo.com">Valentin Pitre</author>
   
   <buildtool_depend>catkin</buildtool_depend>
 
+  <build_depend>message_generation</build_depend>
+  <build_depend>niryo_robot_msgs</build_depend>
   <build_depend>rospy</build_depend>
   <build_depend>std_msgs</build_depend>
-  <build_depend>niryo_robot_msgs</build_depend>
 
-  <run_depend>rospy</run_depend>
-  <run_depend>std_msgs</run_depend>
-  <run_depend>niryo_robot_msgs</run_depend>
-  <run_depend>niryo_robot_arm_commander</run_depend>
-  <run_depend>niryo_robot_hardware_interface</run_depend>
+  <build_export_depend>message_generation</build_export_depend>
+  <build_export_depend>niryo_robot_msgs</build_export_depend>
+  <build_export_depend>std_msgs</build_export_depend>
+
+  <exec_depend>message_runtime</exec_depend>
+  <exec_depend>niryo_robot_arm_commander</exec_depend>
+  <exec_depend>niryo_robot_hardware_interface</exec_depend>
+  <exec_depend>niryo_robot_msgs</exec_depend>
+  <exec_depend>rospy</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
 </package>

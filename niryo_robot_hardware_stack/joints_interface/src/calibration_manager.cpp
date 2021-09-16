@@ -113,7 +113,7 @@ int CalibrationManager::startCalibration(int mode, std::string &result_message)
     {
         if (AUTO_CALIBRATION == mode)  // auto
         {
-            if(EStepperCalibrationStatus::CALIBRATION_OK == autoCalibration())
+            if (EStepperCalibrationStatus::CALIBRATION_OK == autoCalibration())
             {
                 result_message = "Calibration Interface - Calibration done";
                 res = niryo_robot_msgs::CommandStatus::SUCCESS;
@@ -123,7 +123,7 @@ int CalibrationManager::startCalibration(int mode, std::string &result_message)
         {
             if (canProcessManualCalibration(result_message))
             {
-                if(EStepperCalibrationStatus::CALIBRATION_OK == manualCalibration())
+                if (EStepperCalibrationStatus::CALIBRATION_OK == manualCalibration())
                 {
                     result_message = "Calibration Interface - Calibration done";
                     res = niryo_robot_msgs::CommandStatus::SUCCESS;
@@ -173,7 +173,7 @@ bool CalibrationManager::canProcessManualCalibration(std::string &result_message
 {
     bool res = true;
     result_message.clear();
-    if("one" == _hardware_version)
+    if ("one" == _hardware_version)
     {
         if (_can_interface)
         {
@@ -242,8 +242,8 @@ bool CalibrationManager::canProcessManualCalibration(std::string &result_message
 
                         res = false;
                     }
-                } // if (mState)
-            } // for (auto const& mState : stepper_motor_states)
+                }  // if (mState)
+            }  // for (auto const& mState : stepper_motor_states)
         }
         else
         {
@@ -292,7 +292,7 @@ EStepperCalibrationStatus CalibrationManager::autoCalibration()
     {
         auto jState = _joint_states_list.at(i);
         uint8_t motor_id = jState->getId();
-        if(getJointInterface(jState->getBusProtocol()))
+        if (getJointInterface(jState->getBusProtocol()))
         {
           int calibration_result = getJointInterface(jState->getBusProtocol())->getCalibrationResult(motor_id);
 
@@ -404,8 +404,8 @@ CalibrationManager::manualCalibration()
 
                     status = _can_interface->getCalibrationStatus();
                 }
-            } // if (state)
-        } // if (getMotorsCalibrationOffsets(motor_id_list, steps_list))
+            }  // if (state)
+        }  // if (getMotorsCalibrationOffsets(motor_id_list, steps_list))
     }
     else
     {
@@ -419,32 +419,32 @@ CalibrationManager::manualCalibration()
 
 //**********************
 //  Commands to the robot
-//  TODO(cc) : maybe use JointHardwareInterface instead ?
 //*********************
 
 /**
  * @brief CalibrationManager::setTorqueStepperMotor
  * @param pState
  * @param status
+ * TODO(cc) : maybe use JointHardwareInterface instead ?
  */
 void CalibrationManager::setTorqueStepperMotor(const std::shared_ptr<JointState>& pState,
                                                bool status)
 {
-    if(pState->isStepper())
+    if (pState->isStepper())
     {
         uint8_t motor_id = pState->getId();
 
         if (EBusProtocol::CAN == pState->getBusProtocol())
         {
             StepperSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_TORQUE, motor_id, {status});
-            if(getJointInterface(pState->getBusProtocol()))
+            if (getJointInterface(pState->getBusProtocol()))
                 getJointInterface(pState->getBusProtocol())->addSingleCommandToQueue(
                                         std::make_shared<StepperSingleCmd>(stepper_cmd));
         }
         else if (EBusProtocol::TTL == pState->getBusProtocol())
         {
             StepperTtlSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_TORQUE, motor_id, {status});
-            if(getJointInterface(pState->getBusProtocol()))
+            if (getJointInterface(pState->getBusProtocol()))
                 getJointInterface(pState->getBusProtocol())->addSingleCommandToQueue(
                                         std::make_shared<StepperTtlSingleCmd>(stepper_cmd));
         }
@@ -461,7 +461,7 @@ void CalibrationManager::setTorqueStepperMotor(const std::shared_ptr<JointState>
 void CalibrationManager::setStepperCalibrationCommand(const std::shared_ptr<StepperMotorState>& pState,
                                                         int32_t delay, int32_t calibration_direction, int32_t timeout)
 {
-    if(pState->isStepper() && getJointInterface(pState->getBusProtocol()))
+    if (pState->isStepper() && getJointInterface(pState->getBusProtocol()))
     {
         uint8_t motor_id = pState->getId();
         int32_t offset = pState->to_motor_pos(pState->getOffsetPosition());
@@ -488,7 +488,6 @@ void CalibrationManager::setStepperCalibrationCommand(const std::shared_ptr<Step
  */
 void CalibrationManager::moveRobotBeforeCalibration()
 {
-
     // 1 - for can only, first move motor 3 a bit up
     if (EBusProtocol::CAN == _joint_states_list.at(1)->getBusProtocol() &&
         EBusProtocol::CAN == _joint_states_list.at(2)->getBusProtocol())
@@ -499,7 +498,7 @@ void CalibrationManager::moveRobotBeforeCalibration()
         ros::Duration(0.2).sleep();
 
         // Relative Move Motor 3
-        if(_joint_states_list.at(2)->isStepper())
+        if (_joint_states_list.at(2)->isStepper())
         {
           uint8_t motor_id = _joint_states_list.at(2)->getId();
           int steps = _joint_states_list.at(2)->to_motor_pos(0.25);
@@ -551,7 +550,7 @@ void CalibrationManager::moveSteppersToHome()
 {
     auto pState = _joint_states_list.at(0);
 
-    if(pState->isStepper() && getJointInterface(pState->getBusProtocol()))
+    if (pState->isStepper() && getJointInterface(pState->getBusProtocol()))
     {
         uint8_t motor_id = pState->getId();
 
@@ -664,9 +663,9 @@ void CalibrationManager::activateLearningMode(bool activated)
 
     if (_ttl_interface)
     {
-        if(dxl_cmd.isValid())
+        if (dxl_cmd.isValid())
             _ttl_interface->setSyncCommand(std::make_shared<DxlSyncCmd>(dxl_cmd));
-        if(stepper_ttl_sync_cmd.isValid())
+        if (stepper_ttl_sync_cmd.isValid())
             _ttl_interface->setSyncCommand(std::make_shared<StepperTtlSyncCmd>(stepper_ttl_sync_cmd));
     }
 }

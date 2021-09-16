@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from niryo_robot_status.msg import RobotStatus
 from rosgraph_msgs.msg import Log
 

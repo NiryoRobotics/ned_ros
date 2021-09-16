@@ -446,7 +446,7 @@ void JointHardwareInterface::activateLearningMode(bool activated)
             {
                 stepper_cmd.setId(jState->getId());
                 stepper_cmd.setParams({activated});
-                if(_can_interface)
+                if (_can_interface)
                     _can_interface->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(stepper_cmd));
             }
         }
@@ -454,9 +454,9 @@ void JointHardwareInterface::activateLearningMode(bool activated)
 
     if (_ttl_interface)
     {
-        if(dxl_cmd.isValid())
+        if (dxl_cmd.isValid())
             _ttl_interface->setSyncCommand(std::make_shared<DxlSyncCmd>(dxl_cmd));
-        if(stepper_ttl_sync_cmd.isValid())
+        if (stepper_ttl_sync_cmd.isValid())
             _ttl_interface->setSyncCommand(std::make_shared<StepperTtlSyncCmd>(stepper_ttl_sync_cmd));
     }
 
