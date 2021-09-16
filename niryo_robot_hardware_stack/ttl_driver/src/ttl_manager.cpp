@@ -35,6 +35,7 @@
 #include "common/model/conveyor_state.hpp"
 #include "common/model/end_effector_state.hpp"
 
+#include "dynamixel_sdk/packet_handler.h"
 #include "ros/serialization.h"
 #include "ttl_driver/stepper_reg.hpp"
 #include "ttl_driver/end_effector_reg.hpp"
@@ -116,6 +117,8 @@ bool TtlManager::init(ros::NodeHandle& nh)
  */
 int TtlManager::changeId(common::model::EHardwareType motor_type, uint8_t old_id, uint8_t new_id)
 {
+    if (old_id == new_id)
+        return COMM_SUCCESS;
     auto driver = std::dynamic_pointer_cast<AbstractMotorDriver>(_driver_map.at(motor_type));
     // update all maps
     auto i_state  = _state_map.find(old_id);
