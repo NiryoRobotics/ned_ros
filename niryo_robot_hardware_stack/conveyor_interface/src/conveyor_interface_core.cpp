@@ -59,7 +59,6 @@ ConveyorInterfaceCore::ConveyorInterfaceCore(ros::NodeHandle& nh,
                                              shared_ptr<common::model::IDriverCore> conveyor_driver):
     _conveyor_driver(conveyor_driver)
 {
-    _conveyor_state = std::make_shared<ConveyorState>(conveyor_driver->getBusProtocol());
     ROS_DEBUG("ConveyorInterfaceCore::ConveyorInterfaceCore - ctor");
     init(nh);
 }
@@ -215,19 +214,18 @@ ConveyorInterfaceCore::addConveyor()
         if (state != _conveyor_states.end() && *state)
         {
             auto conveyor_state = *state;
-            // TODO(Thuc) only accept 1 conveyor in this moment
-            if (_conveyor_driver->getBusProtocol() == EBusProtocol::CAN)
-            {
-                conveyor_state->updateId(conveyor_id);
-            }
+     
             // if new tool has been found
             if (conveyor_state->isValid())
             {
+                // set and init conveyor
+                if (_conveyor_driver->getBusProtocol() == EBusProtocol::CAN)
+                {
+                    conveyor_state->updateId(conveyor_id);
+                }
                 // Try 3 times
                 for (int tries = 0; tries < 3; tries++)
                 {
-                    // set and init conveyor
-                    ros::Duration(0.05).sleep();
                     int result = _conveyor_driver->setConveyor(conveyor_state);
 
                     // change Id
@@ -260,16 +258,18 @@ ConveyorInterfaceCore::addConveyor()
                         ROS_WARN("ConveyorInterfaceCore::addConveyor - "
                                 "Set conveyor failure, return : %d. Retrying (%d)...",
                                 result, tries);
+                        _conveyor_driver->unsetConveyor(conveyor_state->getId());
                     }
+                    ros::Duration(0.01).sleep();
                 }
 
                 // on failure after three tries
                 if (niryo_robot_msgs::CommandStatus::SUCCESS != res.status)
                 {
+                    conveyor_state->updateId(conveyor_state->getDefaultId());
                     ROS_ERROR("ConveyorInterfaceCore::addConveyor - Fail to set conveyor, return : %d",
                                 res.status);
 
-                    ros::Duration(0.05).sleep();
                     res.id = 0;
                 }
             }
@@ -454,7 +454,7 @@ void ConveyorInterfaceCore::_publishConveyorsFeedback()
 
         for (auto conveyor_state : _conveyor_states)
         {
-            if (conveyor_state->getDefaultId() != conveyor_state->getId())
+            if (std::find(_current_conveyor_id_list.begin(), _current_conveyor_id_list.end(), conveyor_state->getId()) != _current_conveyor_id_list.end())
             {
                 data.conveyor_id = conveyor_state->getId();
                 data.running = conveyor_state->getState();
