@@ -309,7 +309,7 @@ EStepperCalibrationStatus CalibrationManager::autoCalibration()
 
         // 5. Move Motor 1 to 0.0 (back to home)
         moveSteppersToHome();
-        ros::Duration(2.5).sleep();
+        ros::Duration(3.5).sleep();
 
         // 6. Write sensor_offset_steps to file
         setMotorsCalibrationOffsets(sensor_offset_ids, sensor_offset_results);
