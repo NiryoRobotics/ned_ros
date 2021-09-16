@@ -131,7 +131,8 @@ class RobotStatusObserver(object):
         current_out_of_bounds_state = False
         if not self.hardware_status.calibration_in_progress and not self.hardware_status.calibration_needed:
             for joint_name, joint_pose in zip(msg.name, msg.position):
-                if not (self.joint_limits[joint_name].min <= joint_pose <= self.joint_limits[joint_name].max):
+                if (joint_name in self.joint_limits and
+                   not (self.joint_limits[joint_name].min <= joint_pose <= self.joint_limits[joint_name].max)):
                     current_out_of_bounds_state = True
                     break
 

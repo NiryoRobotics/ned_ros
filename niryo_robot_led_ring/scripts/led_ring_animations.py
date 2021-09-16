@@ -74,7 +74,8 @@ class LedRingAnimations:
         self.off_color = GREY if self.__is_simulation else BLACK
 
         # for real mode
-        self.current_real_led_ring_state = []  # list used to store the current state of the real led ring, as a list of ColorRGBA objects
+        # list used to store the current state of the real led ring, as a list of ColorRGBA objects
+        self.current_real_led_ring_state = []
 
         self.led_ring_makers = LedRingSimulation(self.led_count)
 
@@ -502,7 +503,8 @@ class LedRingAnimations:
         real_leds_state = []
         if not self.__is_simulation:
             for i in range(self.led_count):
-                # read back the state from the library memory buffer (can't read directly Led state, they are Write-only)
+                # read back the state from the library memory buffer
+                # (can't read directly Led state, they are Write-only)
                 color_i = self.strip.getPixelColorRGB(i)
                 real_leds_state.append([color_i.r, color_i.g, color_i.b])
         return real_leds_state
@@ -528,7 +530,8 @@ class LedRingAnimations:
             # update value of current led state
             current_rgb_array_led_state = self.get_state_list_from_pixel_strip()
             current_color_rgba_led_state = []
-            for elem in current_rgb_array_led_state:  # transform a list like [[r, g, b], [r, g, b], ...] to a list like [ColorRGBA, ColorRGBA, ...]
+            # transform a list like [[r, g, b], [r, g, b], ...] to a list like [ColorRGBA, ColorRGBA, ...]
+            for elem in current_rgb_array_led_state:
                 current_color_rgba_led_state.append(get_rgba_color_from_list(elem))
             self.set_current_real_leds_state(current_color_rgba_led_state)
         self.led_ring_makers.show_led_ring_markers()

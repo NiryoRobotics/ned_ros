@@ -64,8 +64,10 @@ class LedRingCommander:
         self._publish_led_ring_status()  # publish the status at the beginning
         self.display_user_mode()  # Turn on the leds with the right animation
 
-        # Define this object as an observer of led_ring_anim, so when an observable variable change, this node is informed.
-        # This is usefull for the current animation and the current color, which are managed by the led ring commander class.
+        # Define this object as an observer of led_ring_anim, so when an observable
+        # variable change, this node is informed.
+        # This is usefull for the current animation and the current color, which are
+        #  managed by the led ring commander class.
         self.led_ring_anim.register_observer(self)
 
         # - Services
@@ -100,7 +102,8 @@ class LedRingCommander:
             self.robot_out_of_bounds = msg.out_of_bounds
 
             self.set_user_mode(
-                self.robot_status == RobotStatus.RUNNING_AUTONOMOUS or self.robot_status == RobotStatus.LEARNING_MODE_AUTONOMOUS)
+                (self.robot_status == RobotStatus.RUNNING_AUTONOMOUS or
+                 self.robot_status == RobotStatus.LEARNING_MODE_AUTONOMOUS))
             self.display_user_mode()
 
     def __callback_set_led_ring_user(self, req):
@@ -142,8 +145,8 @@ class LedRingCommander:
 
     def start_led_ring_thread(self, command):
         """
-        Start a thread to allow the user to control the led. 
-        We use a thread to avoid the blocking effect of the Led ring 
+        Start a thread to allow the user to control the led.
+        We use a thread to avoid the blocking effect of the Led ring
         control methods.
         """
         self.stop_led_ring_thread()
@@ -217,7 +220,7 @@ class LedRingCommander:
                 return CommandStatus.SUCCESS, "Led Ring set by user: {} iterations done - ".format(
                     iterations) + anim_name + " mode"
             else:
-                # iteration is 0 for color wipe and solid mode. 
+                # iteration is 0 for color wipe and solid mode.
                 return CommandStatus.SUCCESS, "Led Ring set by user: done - " + anim_name + " mode"
         else:
             return CommandStatus.STOPPED, "Led Ring set by user: interrupted - " + anim_name + " mode"

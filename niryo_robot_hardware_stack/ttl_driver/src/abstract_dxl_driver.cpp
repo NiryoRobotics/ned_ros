@@ -116,7 +116,7 @@ int AbstractDxlDriver::writeSyncCmd(int type, const std::vector<uint8_t>& ids, c
     case EDxlCommandType::CMD_TYPE_LEARNING_MODE:
     {
         std::vector<uint32_t> params_inv;
-        for(auto const& p : params)
+        for (auto const& p : params)
           params_inv.emplace_back(!p);
         return syncWriteTorqueEnable(ids, params_inv);
     }

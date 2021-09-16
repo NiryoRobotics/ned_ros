@@ -55,7 +55,7 @@ class LedRingSimulation:
         """
         led_ring_marker = Marker()
         led_ring_marker.header.frame_id = "shoulder_link"
-        #led_ring_marker.header.stamp = rospy.Time.now()
+        # led_ring_marker.header.stamp = rospy.Time.now()
         led_ring_marker.ns = "led ring"
         led_ring_marker.id = position
         led_ring_marker.type = led_ring_marker.MESH_RESOURCE
@@ -81,7 +81,8 @@ class LedRingSimulation:
     @staticmethod
     def get_rgba_color_for_markers(color_255):
         """
-        color_255 is a ColorRGBA object with values between 0 and 255. Return a ColorRGBA object with values between 0 and 1
+        color_255 is a ColorRGBA object with values between 0 and 255.
+        Return a ColorRGBA object with values between 0 and 1
         """
         ratio = 1.0 / 255.0
         color = ColorRGBA()

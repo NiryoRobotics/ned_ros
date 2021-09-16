@@ -214,7 +214,7 @@ ConveyorInterfaceCore::addConveyor()
         if (state != _conveyor_states.end() && *state)
         {
             auto conveyor_state = *state;
-     
+
             // if new tool has been found
             if (conveyor_state->isValid())
             {

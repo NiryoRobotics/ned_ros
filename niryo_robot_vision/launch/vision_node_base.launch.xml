@@ -2,11 +2,10 @@
 <launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
     <!-- Arguments -->
-    <arg name="log_level" default="INFO" />
-    <arg name="rpi_model" value="3"/>
+    <arg name="hardware_version" default="ned" />
 
-    <include file="$(find niryo_robot_rpi)/launch/base_rpi.launch.xml">
-        <arg name="log_level" value="$(arg log_level)" />
-        <arg name="rpi_model" value="$(arg rpi_model)"/>
-    </include>
+    <group ns="niryo_robot_vision" >
+        <!-- Settings will give more FPS if the user is using simulation-->
+        <rosparam file="$(find niryo_robot_vision)/config/$(arg hardware_version)/video_server_setup.yaml" />
+    </group>
 </launch>

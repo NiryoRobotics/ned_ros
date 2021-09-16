@@ -258,7 +258,8 @@ class TrajectoriesExecutor:
                     self.__collision_detected = False
                     self.__collision_detected_publisher.publish(True)
                     self.__set_learning_mode(True)
-                    return CommandStatus.STOPPED, "Command has been aborted due to a collision or a motor not able to follow the given trajectory"
+                    return (CommandStatus.STOPPED, "Command has been aborted due to a collision "
+                            "or a motor not able to follow the given trajectory")
                 else:
                     return CommandStatus.STOPPED, "Command has been successfully stopped"
             elif self.__current_goal_result == GoalStatus.ABORTED:

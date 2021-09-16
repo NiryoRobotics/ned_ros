@@ -29,10 +29,11 @@
 
   <exec_depend>message_runtime</exec_depend>
   <exec_depend>moveit_msgs</exec_depend>
+  <exec_depend>niryo_robot_arm_commander</exec_depend>
   <exec_depend>niryo_robot_msgs</exec_depend>
   <exec_depend>niryo_robot_tools_commander</exec_depend>
   <exec_depend>tf</exec_depend>
-
+  
   <!-- Python Dependencies -->
   <exec_depend>python-numpy</exec_depend>
 

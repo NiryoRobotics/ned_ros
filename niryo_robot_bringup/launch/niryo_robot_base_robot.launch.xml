@@ -14,8 +14,9 @@
     <arg name="conf_location" default="$(env HOME)/.config/niryo/version/version.txt"/>
 
     <!-- For conveniency only . We cannot use groups because it does not detect the urdf_path arg otherwise -->
-    <arg name="simulation_mode" value="$(eval hardware_version == 'fake_ned' or hardware_version == 'fake_ned2')" />
- 
+    <arg name="simulation_mode" value="True" if="$(eval hardware_version == 'fake_ned' or hardware_version == 'fake_ned2')" />
+    <arg name="simulation_mode" value="False" unless="$(eval hardware_version == 'fake_ned' or hardware_version == 'fake_ned2')" />
+
     <arg name="urdf_path" value="urdf/$(arg hardware_version)/without_mesh_niryo_$(arg hardware_version).urdf.xacro" unless="$(arg simulation_mode)" />
     <arg name="urdf_path" value="urdf/$(arg hardware_version)/niryo_$(arg hardware_version).urdf.xacro" if="$(eval simulation_mode and not gazebo)"/>
 
@@ -27,7 +28,7 @@
            command="$(find xacro)/xacro $(find niryo_robot_description)/$(arg urdf_path)" />
 
     <param name="robot_description_tf2"
-           command="$(find xacro)/xacro $(find niryo_robot_description)/$(arg urdf_path)"/>
+           command="$(find xacro)/xacro $(find niryo_robot_description)/urdf/$(arg hardware_version)/niryo_$(arg hardware_version).urdf.xacro" />
 
     <!-- PARAMS -->
     <group ns="niryo_robot">

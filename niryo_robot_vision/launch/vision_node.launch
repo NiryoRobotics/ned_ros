@@ -5,10 +5,14 @@
     <arg name="log_level" default="INFO" />
     <arg name="hardware_version" default="ned" />
 
+    <include file="$(find niryo_robot_vision)/launch/vision_node_base.launch.xml"> 
+        <arg name="hardware_version" value="$(arg hardware_version)" />
+    </include>
+
     <node name="niryo_robot_vision" pkg="niryo_robot_vision" type="camera_publisher_and_services.py" output="screen">
         <param name="log_level" type="string" value="$(arg log_level)" />
         <param name="hardware_version" value="$(arg hardware_version)" />
-        <!-- Settings will give more FPS if the user is using simulation-->
-        <rosparam file="$(find niryo_robot_vision)/config/$(arg hardware_version)/video_server_setup.yaml" />
+        <param name="simulation_mode" value="True" if="$(eval hardware_version == 'fake_ned' or hardware_version == 'fake_ned2')" />
+        <param name="simulation_mode" value="False" unless="$(eval hardware_version == 'fake_ned' or hardware_version == 'fake_ned2')" />
     </node>
 </launch>
