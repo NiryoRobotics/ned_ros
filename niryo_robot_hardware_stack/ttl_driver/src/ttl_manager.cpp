@@ -94,6 +94,7 @@ bool TtlManager::init(ros::NodeHandle& nh)
     nh.getParam("bus_params/uart_device_name", _device_name);
     nh.getParam("bus_params/baudrate", _uart_baudrate);
     nh.getParam("led_motor", _led_motor_type_cfg);
+    nh.getParam("simu_gripper", _use_simu_gripper);
 
     if (_device_name != "fake")
     {
@@ -828,6 +829,12 @@ bool TtlManager::readHwStatus()
 int TtlManager::getAllIdsOnBus(vector<uint8_t> &id_list)
 {
     int result = COMM_RX_FAIL;
+
+    // remove tool in fake driver
+    if (!_use_simu_gripper && _driver_map.count(EHardwareType::FAKE_DXL_MOTOR) && _driver_map.at(EHardwareType::FAKE_DXL_MOTOR))
+    {
+        std::dynamic_pointer_cast<MockDxlDriver>(_driver_map.at(EHardwareType::FAKE_DXL_MOTOR))->removeGripper();
+    }
 
     // 1. Get all ids from ttl bus. We can use any driver for that
     auto it = _driver_map.begin();
