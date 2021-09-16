@@ -236,7 +236,7 @@ bool ToolsInterfaceCore::_callbackPingAndSetTool(tools_interface::PingDxlTool::R
     if (_toolState && _toolState->isValid())
     {
         _ttl_interface->unsetTool(_toolState->getId());
-        res.id = 0;
+        res.id = -1;
 
         // reset tool as default = no tool
         _toolState->reset();
@@ -292,7 +292,7 @@ bool ToolsInterfaceCore::_callbackPingAndSetTool(tools_interface::PingDxlTool::R
             pubToolId(-1);
 
             ros::Duration(0.05).sleep();
-            res.id = 0;
+            res.id = -1;
         }
     }
     else  // no tool found, no tool set (it is not an error, the tool does not exists)
@@ -301,7 +301,7 @@ bool ToolsInterfaceCore::_callbackPingAndSetTool(tools_interface::PingDxlTool::R
 
         ros::Duration(0.05).sleep();
         res.state = ToolState::TOOL_STATE_PING_OK;
-        res.id = 0;
+        res.id = -1;
     }
 
     return true;
@@ -566,6 +566,7 @@ void ToolsInterfaceCore::_publishToolConnection()
             else
             {
                 msg.data = -1;
+                _tool_connection_publisher.publish(msg);
             }
         }
         check_connection_rate.sleep();
