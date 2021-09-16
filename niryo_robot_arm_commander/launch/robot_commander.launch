@@ -8,9 +8,6 @@
         <arg name="hardware_version" value="$(arg hardware_version)" />
     </include>
 
-    <!-- Override MoveIt default logging from INFO to WARn -->
-    <env name="ROSCONSOLE_CONFIG_FILE" value="$(find niryo_robot_arm_commander)/config/rosconsole.config"/>
-
     <!-- Moveit move_group -->
     <include file="$(find niryo_moveit_config_standalone)/launch/move_group.launch">
         <arg name="hardware_version" value="$(arg hardware_version)" />
