@@ -4,7 +4,7 @@
 # If you increase those values you may destroy (burn) the motor after a few minutes.
 
 tool_list:
-  - name: "No Tool"
+  - name: "No Tool Selected"
     type: "no_tool"
     id: -1
     specs:
