@@ -70,7 +70,6 @@ namespace ttl_driver
  */
 class TtlInterfaceCore : public common::model::IDriverCore, public common::model::IInterfaceCore
 {
-
     public:
         TtlInterfaceCore(ros::NodeHandle& nh);
         virtual ~TtlInterfaceCore() override;

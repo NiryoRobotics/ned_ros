@@ -17,17 +17,19 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
-#ifndef END_EFFECTOR_STATE_HPP
-#define END_EFFECTOR_STATE_HPP
+#ifndef END_EFFECTOR_STATE_H
+#define END_EFFECTOR_STATE_H
 
 #include "abstract_hardware_state.hpp"
 
 #include <stdint.h>
 #include <string>
 #include <cassert>
+#include <sstream>
 
 #include "hardware_type_enum.hpp"
 #include "button_type_enum.hpp"
+#include "action_type_enum.hpp"
 
 namespace common
 {
@@ -40,15 +42,6 @@ namespace model
 class EndEffectorState : public AbstractHardwareState
 {
     public:
-        enum class EActionType
-        {
-            HANDLE_HELD_ACTION = 0,
-            LONG_PUSH_ACTION = 1,
-            SINGLE_PUSH_ACTION = 2,
-            DOUBLE_PUSH_ACTION = 3,
-            NO_ACTION = 100
-        };
-
         /**
          * @brief The Button struct describes the current state of a button (not its config)
          */
@@ -56,6 +49,14 @@ class EndEffectorState : public AbstractHardwareState
         {
           EButtonType type{EButtonType::UNKNOWN};
           EActionType action{EActionType::NO_ACTION};
+
+          std::string str() const
+          {
+            std::ostringstream ss;
+            ss << "Button (" << ButtonTypeEnum(type).toString() << ") : "
+               << ActionTypeEnum(action).toString();
+            return ss.str();
+          }
         };
 
         struct Vector3D
@@ -63,6 +64,13 @@ class EndEffectorState : public AbstractHardwareState
           uint32_t x{};
           uint32_t y{};
           uint32_t z{};
+
+          std::string str() const
+          {
+            std::ostringstream ss;
+            ss << "(" << x << "," << y << "," << z << ")";
+            return ss.str();
+          }
         };
 
     public:
@@ -157,4 +165,4 @@ bool EndEffectorState::getCollisionStatus() const
 } // namespace model
 } // namespace common
 
-#endif // END_EFFECTOR_STATE_HPP
+#endif // END_EFFECTOR_STATE_H

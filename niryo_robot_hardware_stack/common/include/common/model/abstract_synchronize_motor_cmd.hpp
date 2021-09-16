@@ -1,5 +1,5 @@
 /*
-synchronize_motor_cmd.hpp
+abstract_synchronize_motor_cmd.hpp
 Copyright (C) 2020 Niryo
 All rights reserved.
 
@@ -27,7 +27,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <sstream>
 #include <typeinfo>
 
-#include "common/model/i_object.hpp"
+#include "common/model/i_synchronize_motor_cmd.hpp"
 #include "common/model/dxl_command_type_enum.hpp"
 #include "common/model/stepper_command_type_enum.hpp"
 #include "common/model/hardware_type_enum.hpp"
@@ -37,15 +37,6 @@ namespace common
 {
 namespace model
 {
-
-class ISynchronizeMotorCmd : public IObject
-{
-public:
-    virtual int getCmdType() const = 0;
-
-    virtual bool isStepperCmd() const = 0;
-    virtual bool isDxlCmd() const = 0;
-};
 
 /**
  * @brief The AbstractSynchronizeMotorCmd class
@@ -192,4 +183,4 @@ using AbstractCanSynchronizeMotorCmd = AbstractSynchronizeMotorCmd<int32_t>;
 } // namespace model
 } // namespace common
 
-#endif
+#endif // ABSTRACT_SYNCHRONIZE_MOTOR_CMD_H

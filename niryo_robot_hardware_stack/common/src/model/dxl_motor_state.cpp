@@ -173,16 +173,22 @@ std::string DxlMotorState::str() const
     std::ostringstream ss;
 
     ss << "DxlMotorState : ";
-    ss << "\n---\n";
-    ss << "type: " << HardwareTypeEnum(_hw_type).toString() << ", ";
     ss << "isTool: " << (isTool() ? "true" : "false") << "\n";
-    ss << "position p gain: " << _pos_p_gain << ", ";
-    ss << "position i gain: " << _pos_i_gain << ", ";
-    ss << "position d gain: " << _pos_d_gain << ", ";
-    ss << "velocity p gain: " << _vel_p_gain << ", ";
-    ss << "velocity i gain: " << _vel_i_gain << ", ";
-    ss << "ff1 gain: " << _ff1_gain << ", ";
-    ss << "ff2 gain: " << _ff2_gain << ", ";
+
+    ss << "position p gain: " << _pos_p_gain << ", "
+       << "position i gain: " << _pos_i_gain << ", "
+       << "position d gain: " << _pos_d_gain << ",\n"
+       << "velocity p gain: " << _vel_p_gain << ", "
+       << "velocity i gain: " << _vel_i_gain << ",\n"
+       << "ff1 gain: " << _ff1_gain << ", "
+       << "ff2 gain: " << _ff2_gain << ",\n";
+
+    ss << "total range position: " << _total_range_position << ", "
+       << "middle position: " << _middle_position << ", "
+       << "total angle: " << _total_angle << ", "
+       << "steps for one speed: " << _steps_for_one_speed;
+
+    ss << "\n---\n";
     ss << "\n";
     ss << JointState::str();
 

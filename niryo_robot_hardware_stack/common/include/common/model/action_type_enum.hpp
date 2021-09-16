@@ -1,5 +1,5 @@
-/*
-    bus_protocol_enum.hpp
+﻿/*
+    action_type_enum.hpp
     Copyright (C) 2020 Niryo
     All rights reserved.
 
@@ -17,8 +17,8 @@
     along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
-#ifndef BUS_PROTOCOL_ENUM_H
-#define BUS_PROTOCOL_ENUM_H
+#ifndef ACTION_TYPE_ENUM_H
+#define ACTION_TYPE_ENUM_H
 
 #include <map>
 #include <string>
@@ -32,30 +32,32 @@ namespace model
 {
 
 /**
- * @brief The EBusProtocol enum
+ * @brief The EActionType enum
  */
-enum class EBusProtocol {
-                        TTL,
-                        CAN,
-                        UNKNOWN
-                      };
+enum class EActionType {
+                          HANDLE_HELD_ACTION = 0,
+                          LONG_PUSH_ACTION = 1,
+                          SINGLE_PUSH_ACTION = 2,
+                          DOUBLE_PUSH_ACTION = 3,
+                          NO_ACTION = 100
+                       };
 
 /**
  * @brief Specialization of AbstractEnum for Acknowledge status enum
  */
-class BusProtocolEnum : public AbstractEnum<BusProtocolEnum, EBusProtocol>
+class ActionTypeEnum : public AbstractEnum<ActionTypeEnum, EActionType>
 {
 public:
-    BusProtocolEnum(EBusProtocol e=EBusProtocol::UNKNOWN);
-    BusProtocolEnum(const char* const str);
-    ~BusProtocolEnum() {}
+    ActionTypeEnum(EActionType e=EActionType::NO_ACTION);
+    ActionTypeEnum(const char* const str);
+    ~ActionTypeEnum() {}
 
 private:
-    friend class AbstractEnum<BusProtocolEnum, EBusProtocol>;
-    static std::map<EBusProtocol, std::string> initialize();
+    friend class AbstractEnum<ActionTypeEnum, EActionType>;
+    static std::map<EActionType, std::string> initialize();
 };
 
 } // model
 } // common
 
-#endif // BUS_PROTOCOL_ENUM_H
+#endif // ACTION_TYPE_ENUM_H

@@ -271,7 +271,7 @@ bool ToolsInterfaceCore::_callbackPingAndSetTool(tools_interface::PingDxlTool::R
                 res.id = _toolState->getId();
 
                 ros::Duration(0.05).sleep();
-                ROS_INFO("ToolsInterfaceCore::_callbackPingAndSetDxlTool - Set end effector success");
+                ROS_INFO("ToolsInterfaceCore::_callbackPingAndSetDxlTool - Set tool success");
 
                 break;
             }
@@ -286,7 +286,7 @@ bool ToolsInterfaceCore::_callbackPingAndSetTool(tools_interface::PingDxlTool::R
         // on failure after three tries
         if (ToolState::TOOL_STATE_PING_OK != res.state)
         {
-            ROS_ERROR("ToolsInterfaceCore::_callbackPingAndSetDxlTool - Fail to set end effector, return : %d",
+            ROS_ERROR("ToolsInterfaceCore::_callbackPingAndSetDxlTool - Fail to set tool, return : %d",
                       res.state);
 
             pubToolId(-1);

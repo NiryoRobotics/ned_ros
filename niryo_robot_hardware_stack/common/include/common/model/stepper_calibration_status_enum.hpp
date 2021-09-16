@@ -17,8 +17,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
-#ifndef STEPPER_CALIBRATION_STATUS_ENUM
-#define STEPPER_CALIBRATION_STATUS_ENUM
+#ifndef STEPPER_CALIBRATION_STATUS_ENUM_H
+#define STEPPER_CALIBRATION_STATUS_ENUM_H
 
 #include <map>
 #include <string>
@@ -62,4 +62,4 @@ private:
 } // model
 } // common
 
-#endif // STEPPER_CALIBRATION_STATUS_ENUM
+#endif // STEPPER_CALIBRATION_STATUS_ENUM_H

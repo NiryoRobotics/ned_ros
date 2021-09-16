@@ -17,8 +17,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
-#ifndef BUTTON_TYPE_ENUM
-#define BUTTON_TYPE_ENUM
+#ifndef BUTTON_TYPE_ENUM_H
+#define BUTTON_TYPE_ENUM_H
 
 #include <map>
 #include <string>
@@ -58,4 +58,4 @@ private:
 } // model
 } // common
 
-#endif // BUTTON_TYPE_ENUM
+#endif // BUTTON_TYPE_ENUM_H

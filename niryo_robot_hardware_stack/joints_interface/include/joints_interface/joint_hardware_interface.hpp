@@ -27,11 +27,11 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 // ros
 #include <ros/ros.h>
 
-// niryo
 #include <hardware_interface/joint_state_interface.h>
 #include <hardware_interface/joint_command_interface.h>
 #include <hardware_interface/robot_hw.h>
 
+// niryo
 #include "joints_interface/calibration_manager.hpp"
 #include "can_driver/can_interface_core.hpp"
 #include "ttl_driver/ttl_interface_core.hpp"
@@ -51,9 +51,8 @@ class JointHardwareInterface : public hardware_interface::RobotHW
 
         void sendInitMotorsParams();
         int calibrateJoints(int mode, std::string &result_message);
-        void deactivateLearningMode();
         void setNeedCalibration();
-        void activateLearningMode();
+        void activateLearningMode(bool activated);
         void synchronizeMotors(bool synchronize);
 
         void setCommandToCurrentPosition();

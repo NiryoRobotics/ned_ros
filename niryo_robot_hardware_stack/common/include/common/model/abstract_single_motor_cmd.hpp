@@ -1,5 +1,5 @@
 /*
-isingle_motor_cmd.hpp
+abstract_single_motor_cmd.hpp
 Copyright (C) 2020 Niryo
 All rights reserved.
 
@@ -23,22 +23,12 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <string>
 #include <vector>
 
-#include "common/model/i_object.hpp"
+#include "common/model/i_single_motor_cmd.hpp"
 
 namespace common
 {
 namespace model
 {
-
-class ISingleMotorCmd : public IObject
-{
-public:
-    virtual int getCmdType() const = 0;
-
-    //tests
-    virtual bool isStepperCmd() const = 0;
-    virtual bool isDxlCmd() const = 0;
-};
 
 /**
  * @brief The AbstractSingleMotorCmd class

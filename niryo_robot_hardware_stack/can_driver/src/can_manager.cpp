@@ -236,6 +236,10 @@ int CanManager::writeSingleCommand(std::shared_ptr<common::model::AbstractCanSin
                 result = sendTorqueOnCommand(cmd->getId(),
                                              cmd->getParams().front());
             break;
+            case EStepperCommandType::CMD_TYPE_LEARNING_MODE:
+                result = sendTorqueOnCommand(cmd->getId(),
+                                             !cmd->getParams().front());
+            break;
             case EStepperCommandType::CMD_TYPE_SYNCHRONIZE:
                 result = sendSynchronizePositionCommand(cmd->getId(),
                                                         cmd->getParams().front());

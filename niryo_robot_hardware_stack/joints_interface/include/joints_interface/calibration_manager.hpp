@@ -46,51 +46,77 @@ public:
                        std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface,
                        std::shared_ptr<can_driver::CanInterfaceCore> can_interface);
 
-        virtual ~CalibrationManager();
+    virtual ~CalibrationManager();
 
-        int startCalibration(int mode, std::string &result_message);
+    int startCalibration(int mode, std::string &result_message);
 
-        bool CalibrationInprogress() const;
-
-    private:
-        void initParameters(ros::NodeHandle& nh);
-
-        void setStepperCalibrationCommand(const std::shared_ptr<common::model::StepperMotorState>& pState,
-                                          int32_t delay, int32_t calibration_direction, int32_t timeout);
-
-        bool _check_steppers_connected();
-
-        common::model::EStepperCalibrationStatus _auto_calibration();
-        void _send_calibration_offset(uint8_t id, int offset_to_send, int absolute_steps_at_offset_position);
-        bool _can_process_manual_calibration(std::string &result_message);
-        common::model::EStepperCalibrationStatus _manual_calibration();
-
-        void _motorTorque(const std::shared_ptr<common::model::JointState>& motor, bool status);
-        void _moveMotor(const std::shared_ptr<common::model::JointState>& motor, int steps, double delay);
-        int _relativeMoveMotor(const std::shared_ptr<common::model::JointState>& motor, int steps, int delay, bool wait);
-
-        bool set_motors_calibration_offsets(const std::vector<int>& motor_id_list, const std::vector<int> &steps_list);
-        bool get_motors_calibration_offsets(std::vector<int> &motor_id_list, std::vector<int>& steps_list);
-
-        std::shared_ptr<common::model::IDriverCore> getProtocolOfMotor(common::model::EBusProtocol bus_proto) const;
+    bool CalibrationInprogress() const;
 
 private:
-        std::shared_ptr<ttl_driver::TtlInterfaceCore> _ttl_interface;
-        std::shared_ptr<can_driver::CanInterfaceCore> _can_interface;
-        
-        std::vector<std::shared_ptr<common::model::JointState> > _joint_states_list;
+    void initParameters(ros::NodeHandle& nh);
 
-        bool _calibration_in_progress{false};
-        int _calibration_timeout{0};
-        std::string _calibration_file_name;
-        std::string _hardware_version;
+    common::model::EStepperCalibrationStatus autoCalibration();
+    common::model::EStepperCalibrationStatus manualCalibration();
 
-        std::vector<int32_t> _motor_calibration_list;
+    std::shared_ptr<common::model::IDriverCore> getJointInterface(common::model::EBusProtocol proto);
+    // tests
+    bool canProcessManualCalibration(std::string &result_message);
+    bool steppersConnected();
 
-        static constexpr int AUTO_CALIBRATION = 1;
-        static constexpr int MANUAL_CALIBRATION = 2;
+    // commands
+    void setStepperCalibrationCommand(const std::shared_ptr<common::model::StepperMotorState>& pState,
+                                      int32_t delay, int32_t calibration_direction, int32_t timeout);
+
+    void setTorqueStepperMotor(const std::shared_ptr<common::model::JointState>& pState, bool status);
+
+    void moveRobotBeforeCalibration();
+    void moveSteppersToHome();
+    void sendCalibrationToSteppers();
+    void activateLearningMode(bool activated);
+
+    // file operations
+    bool setMotorsCalibrationOffsets(const std::vector<int>& motor_id_list, const std::vector<int> &steps_list);
+    bool getMotorsCalibrationOffsets(std::vector<int> &motor_id_list, std::vector<int>& steps_list);
+
+private:
+    std::shared_ptr<ttl_driver::TtlInterfaceCore> _ttl_interface;
+    std::shared_ptr<can_driver::CanInterfaceCore> _can_interface;
+
+    std::vector<std::shared_ptr<common::model::JointState> > _joint_states_list;
+
+    bool _calibration_in_progress{false};
+    int _calibration_timeout{0};
+    std::string _calibration_file_name;
+    std::string _hardware_version;
+
+    std::vector<int32_t> _motor_calibration_list;
+
+    static constexpr int AUTO_CALIBRATION = 1;
+    static constexpr int MANUAL_CALIBRATION = 2;
 
 };
+
+/**
+ * @brief CalibrationManager::CalibrationInprogress
+ * @return
+ */
+inline
+bool CalibrationManager::CalibrationInprogress() const
+{
+  return _calibration_in_progress;
+}
+
+inline
+std::shared_ptr<common::model::IDriverCore>
+CalibrationManager::getJointInterface(common::model::EBusProtocol proto)
+{
+  if(common::model::EBusProtocol::CAN == proto)
+    return _can_interface;
+  else if(common::model::EBusProtocol::TTL == proto)
+    return _ttl_interface;
+
+  return nullptr;
+}
 
 } // JointsInterface
 #endif

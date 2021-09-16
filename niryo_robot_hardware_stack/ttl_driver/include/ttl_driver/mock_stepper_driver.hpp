@@ -110,7 +110,8 @@ class MockStepperDriver : public AbstractStepperDriver
             int16_t         speed = 0;
             bool            state = false;
         };
-        std::map<uint8_t, FakeRegister> _map_fake_registers{ {2, {1900, 50, 12.1, 0, 4096, 1, "0.0.1"}},
+        
+        std::map<uint8_t, FakeRegister> _map_fake_registers{ {2, {0, 50, 12.1, 0, 4096, 1, "0.0.1"}},
                                                              {3, {0, 52, 12.2, 0, 4096, 1, "0.0.1"}},
                                                              {4, {0, 54, 12.3, 0, 4096, 1, "0.0.1"}}};
 

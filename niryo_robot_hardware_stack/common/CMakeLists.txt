@@ -56,8 +56,10 @@ include_directories(
 add_library(${PROJECT_NAME}
     src/model/abstract_hardware_state.cpp
     src/model/abstract_motor_state.cpp
+    src/model/action_type_enum.cpp
     src/model/bus_protocol_enum.cpp
     src/model/button_type_enum.cpp
+    src/model/component_type_enum.cpp
     src/model/conveyor_state.cpp
     src/model/dxl_command_type_enum.cpp
     src/model/dxl_motor_state.cpp

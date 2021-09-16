@@ -1,5 +1,5 @@
 /*
-    but_protocol_enum.cpp
+    component_type_enum.hpp
     Copyright (C) 2020 Niryo
     All rights reserved.
 
@@ -17,7 +17,7 @@
     along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
-#include "common/model/bus_protocol_enum.hpp"
+#include "common/model/component_type_enum.hpp"
 #include <map>
 #include <string>
 
@@ -27,33 +27,35 @@ namespace model
 {
 
 /**
- * @brief BusProtocolEnum::BusProtocolEnum
+ * @brief ComponentTypeEnum::ComponentTypeEnum
  * @param e
  */
-BusProtocolEnum::BusProtocolEnum(EBusProtocol e):
-    AbstractEnum<BusProtocolEnum, EBusProtocol>(e)
+ComponentTypeEnum::ComponentTypeEnum(EComponentType e):
+    AbstractEnum<ComponentTypeEnum, EComponentType>(e)
 {}
 
 /**
- * @brief BusProtocolEnum::BusProtocolEnum
+ * @brief ComponentTypeEnum::ComponentTypeEnum
  * @param str
  */
-BusProtocolEnum::BusProtocolEnum(const char* const str):
-    AbstractEnum<BusProtocolEnum, EBusProtocol>(str)
+ComponentTypeEnum::ComponentTypeEnum(const char* const str):
+    AbstractEnum<ComponentTypeEnum, EComponentType>(str)
 {}
 
 /**
- * @brief BusProtocolEnum::initialize
+ * @brief ComponentTypeEnum::initialize
  * @return
  */
-std::map<EBusProtocol, std::string>
-BusProtocolEnum::initialize()
+std::map<EComponentType, std::string>
+ComponentTypeEnum::initialize()
 {
-    std::map<EBusProtocol, std::string> m;
+    std::map<EComponentType, std::string> m;
 
-    m[EBusProtocol::TTL]      = "ttl";
-    m[EBusProtocol::CAN]      = "can";
-    m[EBusProtocol::UNKNOWN]  = "unknown";
+    m[EComponentType::TOOL]                 = "tool";
+    m[EComponentType::CONVEYOR]             = "conveyor";
+    m[EComponentType::JOINT]                = "joint";
+    m[EComponentType::END_EFFECTOR]         = "end effector";
+    m[EComponentType::UNKNOWN]              = "unknown";
 
     return m;
 }

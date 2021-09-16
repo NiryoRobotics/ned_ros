@@ -59,7 +59,6 @@ using ::common::model::EndEffectorState;
 using ::common::model::JointState;
 using ::common::model::EHardwareType;
 using ::common::model::HardwareTypeEnum;
-using ::common::model::EHardwareType;
 
 namespace ttl_driver
 {
@@ -550,7 +549,7 @@ bool TtlManager::readEndEffectorStatus()
         {
             // we retrieve the associated id for the end effector
             uint8_t id = _ids_map.at(EHardwareType::END_EFFECTOR).front();
-            common::model::EndEffectorState::EActionType action;
+            common::model::EActionType action;
 
             if (_state_map.count(id))
             {

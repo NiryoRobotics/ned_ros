@@ -17,11 +17,12 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
-#ifndef JOINT_STATE_HPP
-#define JOINT_STATE_HPP
+#ifndef JOINT_STATE_H
+#define JOINT_STATE_H
 
 #include "abstract_motor_state.hpp"
 #include "hardware_type_enum.hpp"
+#include "component_type_enum.hpp"
 
 #include <stdint.h>
 #include <string>
@@ -38,44 +39,45 @@ namespace model
 class JointState : public AbstractMotorState
 {
     
-    public:
-        JointState();
-        JointState(std::string name, EHardwareType type,
-                   EComponentType component_type,
-                   EBusProtocol bus_proto, uint8_t id);
-        JointState(const JointState& state);
+public:
+    JointState();
+    JointState(std::string name, EHardwareType type,
+               EComponentType component_type,
+               EBusProtocol bus_proto, uint8_t id);
+    JointState(const JointState& state);
 
-        virtual ~JointState() override;
+    virtual ~JointState() override;
 
-        void setName(std::string &name);
-        void setOffsetPosition(double offset_position);
-        void setDirection(int direction);
+    void setName(std::string &name);
+    void setOffsetPosition(double offset_position);
+    void setDirection(int direction);
 
-        std::string getName() const;
-        double getOffsetPosition() const;
-        int getDirection() const;
+    std::string getName() const;
+    double getOffsetPosition() const;
+    int getDirection() const;
 
-        virtual bool operator==(const JointState &other) const;
+    virtual bool operator==(const JointState &other) const;
 
-        virtual int to_motor_pos(double pos_rad) { return 0; }
-        virtual double to_rad_pos(int position_dxl) { return 0; }
+    virtual int to_motor_pos(double pos_rad) { return 0; }
+    virtual double to_rad_pos(int position_dxl) { return 0; }
 
-        // AbstractMotorState interface
-        virtual void reset() override;
-        virtual bool isValid() const override;
-        virtual std::string str() const override;
-
-protected:
-        std::string _name;
-        double _offset_position{0.0};
-        bool _need_calibration{false};
-        int _direction{1};
+    // AbstractMotorState interface
+    virtual void reset() override;
+    virtual bool isValid() const override;
+    virtual std::string str() const override;
 
 public:
-        double pos{0.0};
-        double cmd{0.0};
-        double vel{0.0};
-        double eff{0.0};
+    double pos{0.0};
+    double cmd{0.0};
+    double vel{0.0};
+    double eff{0.0};
+
+protected:
+    std::string _name;
+    double _offset_position{0.0};
+    bool _need_calibration{false};
+    int _direction{1};
+
 };
 
 /**
@@ -111,4 +113,5 @@ int JointState::getDirection() const
 
 } // namespace model
 } // namespace common
-#endif
+
+#endif // JOINT_STATE_H

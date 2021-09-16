@@ -1,5 +1,7 @@
-<launch>
-    <!-- Arguments definition -->
+<?xml version="1.0" ?>
+<launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+    <arg name="log_level" default="INFO" />
     <arg name="hardware_version" default="ned2"/>
 
     <node if="$(eval hardware_version =='ned2')" pkg="niryo_robot_led_ring" type="led_ring_node.py"
@@ -9,7 +11,7 @@
         <rosparam command="load" file="$(find niryo_robot_led_ring)/config/led_ring_params.yaml"/>
     </node>
 
-    <node if="$(eval hardware_version =='fake')" pkg="niryo_robot_led_ring" type="led_ring_node.py"
+    <node if="$(eval hardware_version =='fake_ned2')" pkg="niryo_robot_led_ring" type="led_ring_node.py"
           name="niryo_robot_led_ring" output="screen">
         <param name="simulation_mode" type="bool" value="True"/>
         <rosparam command="load" file="$(find niryo_robot_led_ring)/config/led_control_library/led_strip_params.yaml"/>

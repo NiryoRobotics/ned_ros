@@ -26,7 +26,10 @@
 #include <typeinfo>
 
 // niryo
+#include "common/model/single_motor_cmd.hpp"
+#include "common/model/synchronize_motor_cmd.hpp"
 #include "common/model/hardware_type_enum.hpp"
+#include "common/model/component_type_enum.hpp"
 #include "common/model/bus_protocol_enum.hpp"
 #include "common/util/util_defs.hpp"
 
@@ -41,8 +44,9 @@ using ::common::model::EBusProtocol;
 using ::common::model::BusProtocolEnum;
 using ::common::model::StepperMotorState;
 using ::common::model::DxlMotorState;
+using ::common::model::DxlSyncCmd;
 using ::common::model::StepperSingleCmd;
-using ::common::model::StepperTtlSingleCmd;
+using ::common::model::StepperTtlSyncCmd;
 using ::common::model::EStepperCalibrationStatus;
 using ::common::model::EStepperCommandType;
 using ::common::model::EDxlCommandType;
@@ -70,7 +74,7 @@ JointHardwareInterface::JointHardwareInterface(ros::NodeHandle& rootnh,
 
 
     sendInitMotorsParams();
-    activateLearningMode();
+    activateLearningMode(true);
     _calibration_manager = std::make_unique<CalibrationManager>(robot_hwnh, _joint_list, _ttl_interface, _can_interface);
 }
 
@@ -380,23 +384,26 @@ bool JointHardwareInterface::needCalibration() const
  */
 int JointHardwareInterface::calibrateJoints(int mode, string &result_message)
 {
-    result_message = "";
+    result_message.clear();
     int calib_res = niryo_robot_msgs::CommandStatus::ABORTED;
 
-    if (isCalibrationInProgress())
+    if (!isCalibrationInProgress())
     {
-        result_message = "JointHardwareInterface::calibrateJoints - Calibration already in process";
-        calib_res = niryo_robot_msgs::CommandStatus::ABORTED;
-    }
-    else if (needCalibration())
-    {
-        calib_res = _calibration_manager->startCalibration(mode, result_message);
+        if (needCalibration())
+        {
+          calib_res = _calibration_manager->startCalibration(mode, result_message);
+        }
+        else
+        {
+            result_message = "JointHardwareInterface::calibrateJoints - Calibration already done";
+            calib_res = niryo_robot_msgs::CommandStatus::SUCCESS;
+        }
     }
     else
     {
-        result_message = "JointHardwareInterface::calibrateJoints - Calibration already done";
-        calib_res = niryo_robot_msgs::CommandStatus::SUCCESS;
+        result_message = "JointHardwareInterface::calibrateJoints - Calibration already in process";
     }
+
 
     return calib_res;
 }
@@ -415,13 +422,13 @@ void JointHardwareInterface::setNeedCalibration()
 /**
  * @brief JointHardwareInterface::activateLearningMode
  */
-void JointHardwareInterface::activateLearningMode()
+void JointHardwareInterface::activateLearningMode(bool activated)
 {
     ROS_DEBUG("JointHardwareInterface::activateLearningMode - activate learning mode");
 
-    common::model::DxlSyncCmd dxl_cmd(EDxlCommandType::CMD_TYPE_LEARNING_MODE);
-    common::model::StepperTtlSingleCmd stepper_ttl_cmd(EStepperCommandType::CMD_TYPE_LEARNING_MODE);
-    common::model::StepperSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_TORQUE);
+    DxlSyncCmd dxl_cmd(EDxlCommandType::CMD_TYPE_LEARNING_MODE);
+    StepperTtlSyncCmd stepper_ttl_sync_cmd(EStepperCommandType::CMD_TYPE_LEARNING_MODE);
+    StepperSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_LEARNING_MODE);
 
     for (auto const& jState : _joint_list)
     {
@@ -429,79 +436,31 @@ void JointHardwareInterface::activateLearningMode()
         {
             if (jState->isDynamixel())
             {
-                dxl_cmd.addMotorParam(jState->getHardwareType(), jState->getId(), 0);
+                dxl_cmd.addMotorParam(jState->getHardwareType(), jState->getId(), activated);
             }
             else if ((jState->isStepper() && jState->getBusProtocol() == EBusProtocol::TTL))
             {
-                stepper_ttl_cmd.setId(jState->getId());
-                stepper_ttl_cmd.setParams({0});
-                _ttl_interface->addSingleCommandToQueue(std::make_shared<StepperTtlSingleCmd>(stepper_ttl_cmd));
+                stepper_ttl_sync_cmd.addMotorParam(jState->getHardwareType(), jState->getId(), activated);
             }
             else
             {
                 stepper_cmd.setId(jState->getId());
-                stepper_cmd.setParams({0});
-                _can_interface->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(stepper_cmd));
-            }
-        }
-    }
-
-    // TODO(Thuc): only dxl use sync cmd
-    if (_ttl_interface)
-    {
-        _ttl_interface->setSyncCommand(std::make_shared<common::model::DxlSyncCmd>(dxl_cmd));
-    }
-    _learning_mode = true;
-}
-
-/**
- * @brief JointHardwareInterface::deactivateLearningMode
- */
-void JointHardwareInterface::deactivateLearningMode()
-{
-    ROS_DEBUG("JointHardwareInterface::deactivateLearningMode - deactivate learning mode");
-
-    common::model::DxlSyncCmd dxl_cmd(EDxlCommandType::CMD_TYPE_LEARNING_MODE);
-    common::model::StepperTtlSingleCmd stepper_ttl_cmd(EStepperCommandType::CMD_TYPE_LEARNING_MODE);
-    StepperSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_TORQUE);
-
-    for (auto const& jState : _joint_list)
-    {
-        if (jState && jState->isValid())
-        {
-            if (jState->isDynamixel())
-            {
-                dxl_cmd.addMotorParam(jState->getHardwareType(), jState->getId(), 1);
-            }
-            else if (jState->isStepper() && jState->getBusProtocol() == EBusProtocol::CAN)
-            {
-                if (jState->getBusProtocol() == EBusProtocol::CAN)
-                {
-                    if (_can_interface)
-                    {
-                        stepper_cmd.setId(jState->getId());
-                        stepper_cmd.setParams({1});
-                        _can_interface->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(stepper_cmd));
-                    }
-                }
-                else
-                {
-                    if (_ttl_interface)
-                    {
-                        stepper_ttl_cmd.setId(jState->getId());
-                        stepper_ttl_cmd.setParams({1});
-                        _ttl_interface->addSingleCommandToQueue(std::make_shared<StepperTtlSingleCmd>(stepper_ttl_cmd));
-                    }
-                }
+                stepper_cmd.setParams({activated});
+                if(_can_interface)
+                    _can_interface->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(stepper_cmd));
             }
         }
     }
 
     if (_ttl_interface)
     {
-        _ttl_interface->setSyncCommand(std::make_shared<common::model::DxlSyncCmd>(dxl_cmd));
+        if(dxl_cmd.isValid())
+            _ttl_interface->setSyncCommand(std::make_shared<DxlSyncCmd>(dxl_cmd));
+        if(stepper_ttl_sync_cmd.isValid())
+            _ttl_interface->setSyncCommand(std::make_shared<StepperTtlSyncCmd>(stepper_ttl_sync_cmd));
     }
-    _learning_mode = false;
+
+    _learning_mode = activated;
 }
 
 /**

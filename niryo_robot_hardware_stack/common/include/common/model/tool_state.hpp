@@ -17,8 +17,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
-#ifndef TOOL_STATE_HPP
-#define TOOL_STATE_HPP
+#ifndef TOOL_STATE_H
+#define TOOL_STATE_H
 
 #include <stdint.h>
 #include <string>
@@ -68,7 +68,7 @@ class ToolState : public DxlMotorState
         static constexpr int VACUUM_PUMP_STATE_PUSHED = 0x21;
 
     protected:
-        // use joint _name ?
+        // TODO(CC) use joint _name ?
         std::string _tool_name;
 
         bool _connected{true};
@@ -108,4 +108,4 @@ bool ToolState::isConnected() const
 } // namespace model
 } // namespace common
 
-#endif // TOOL_STATE_HPP
+#endif // TOOL_STATE_H

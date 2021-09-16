@@ -112,12 +112,18 @@ string AbstractHardwareState::str() const
 {
     ostringstream ss;
 
-    ss << "AbstractHardwareState (" << static_cast<int>(_id) << ")" << "\n";
+    ss << "AbstractHardwareState :\n"
+       << "id: " << static_cast<int>(_id) << "\n";
+
+    ss << "Hardware Type " << HardwareTypeEnum(_hw_type).toString() << "\n"
+       << "Component Type " << ComponentTypeEnum(_component_type).toString() << "\n"
+       << "Bus Protocol " << BusProtocolEnum(_bus_proto).toString() << "\n";
 
     ss << "temperature " << _temperature << "\n"
        << "voltage " << _voltage << "\n"
        << "hw_error " << _hw_error << "\n"
        << "hw_error_message \"" << _hw_error_message << "\"";
+    ss << "\n---\n";
     ss << "\n";
 
     return ss.str();

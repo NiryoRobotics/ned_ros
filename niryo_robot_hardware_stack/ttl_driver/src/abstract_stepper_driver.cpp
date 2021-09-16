@@ -60,8 +60,9 @@ int AbstractStepperDriver::writeSingleCmd(const std::shared_ptr<common::model::A
         case EStepperCommandType::CMD_TYPE_POSITION:
             return setGoalPosition(cmd->getId(), cmd->getParam());
         case EStepperCommandType::CMD_TYPE_TORQUE:
-        case EStepperCommandType::CMD_TYPE_LEARNING_MODE:
             return setTorqueEnable(cmd->getId(), cmd->getParam());
+        case EStepperCommandType::CMD_TYPE_LEARNING_MODE:
+            return setTorqueEnable(cmd->getId(), !cmd->getParam());
         case EStepperCommandType::CMD_TYPE_CALIBRATION:
             return startHoming(cmd->getId());
         case EStepperCommandType::CMD_TYPE_CALIBRATION_DIRECTION:

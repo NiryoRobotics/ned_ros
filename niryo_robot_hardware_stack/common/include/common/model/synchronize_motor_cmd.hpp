@@ -27,11 +27,11 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <sstream>
 #include <typeinfo>
 
+#include "common/model/abstract_synchronize_motor_cmd.hpp"
+
 #include "common/model/dxl_command_type_enum.hpp"
 #include "common/model/stepper_command_type_enum.hpp"
 #include "common/model/hardware_type_enum.hpp"
-#include "common/model/joint_state.hpp"
-#include "common/model/abstract_synchronize_motor_cmd.hpp"
 
 namespace common
 {
@@ -173,22 +173,28 @@ bool SynchronizeMotorCmd<E, ParamType>::isValid() const
     return true;
 }
 
+// aliases for all kind of motors
+using DxlSyncCmd = SynchronizeMotorCmd<EDxlCommandType, uint32_t>;
+using StepperTtlSyncCmd = SynchronizeMotorCmd<EStepperCommandType, uint32_t>;
+using StepperSyncCmd = SynchronizeMotorCmd<EStepperCommandType, int32_t>;
+
+
 //********************************
 // specializations for dynamixel
 //********************************
 
 /**
- * @brief SynchronizeMotorCmd<common::model::EDxlCommandType, uint32_t>::str
+ * @brief DxlSyncCmd::str
  * @return
  */
 template<>
 inline
-std::string SynchronizeMotorCmd<common::model::EDxlCommandType, uint32_t>::str() const
+std::string DxlSyncCmd::str() const
 {
     std::string string_info;
 
     std::ostringstream ss;
-    ss << "Sync motor cmd - ";
+    ss << "Dynamixel Sync motor cmd - ";
     ss << DxlCommandTypeEnum(_type).toString();
     ss << ": ";
 
@@ -219,21 +225,21 @@ std::string SynchronizeMotorCmd<common::model::EDxlCommandType, uint32_t>::str()
 }
 
 //********************************
-// specializations for steppers
+// specializations for steppers TTL
 //********************************
 
 /**
- * @brief SynchronizeMotorCmd<common::model::EStepperCommandType, int32_t>::str
+ * @brief StepperTtlSyncCmd::str
  * @return
  */
 template<>
 inline
-std::string SynchronizeMotorCmd<common::model::EStepperCommandType, int32_t>::str() const
+std::string StepperTtlSyncCmd::str() const
 {
     std::string string_info;
 
     std::ostringstream ss;
-    ss << "Sync motor cmd - ";
+    ss << "Stepper TTL Sync motor cmd - ";
     ss << StepperCommandTypeEnum(_type).toString();
     ss << ": ";
 
@@ -264,9 +270,53 @@ std::string SynchronizeMotorCmd<common::model::EStepperCommandType, int32_t>::st
 }
 
 
-using DxlSyncCmd = SynchronizeMotorCmd<EDxlCommandType, uint32_t>;
-using StepperTtlSyncCmd = SynchronizeMotorCmd<EStepperCommandType, uint32_t>;
-using StepperSyncCmd = SynchronizeMotorCmd<EStepperCommandType, int32_t>;
+
+//********************************
+// specializations for steppers CAN
+//********************************
+
+/**
+ * @brief StepperSyncCmd::str
+ * @return
+ */
+template<>
+inline
+std::string StepperSyncCmd::str() const
+{
+    std::string string_info;
+
+    std::ostringstream ss;
+    ss << "Stepper CAN Sync motor cmd - ";
+    ss << StepperCommandTypeEnum(_type).toString();
+    ss << ": ";
+
+    if (!isValid())
+    {
+        ss << "Corrupted command : invalid sync command ";
+        string_info = ss.str();
+    }
+    else
+    {
+        ss << "[";
+
+        for (auto const& param : _motor_params_map)
+        {
+            ss << HardwareTypeEnum(param.first).toString() << " => ";
+            MotorParam p = param.second;
+            for (size_t i = 0; i < p.motors_id.size() && i < p.params.size(); ++i)
+                ss << "(" << static_cast<int>(p.motors_id.at(i)) << ", " << p.params.at(i) << ")" << ",";
+        }
+
+        string_info = ss.str();
+        string_info.pop_back();
+
+        string_info += "]";
+    }
+
+    return string_info;
+}
+
+
 
 } // namespace model
 } // namespace common

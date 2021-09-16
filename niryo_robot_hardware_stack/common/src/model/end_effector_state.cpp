@@ -88,7 +88,16 @@ std::string EndEffectorState::str() const
 {
     std::ostringstream ss;
 
-    ss << "EndEffectorState : ";
+    ss << "EndEffectorState : \n";
+
+    ss << "Buttons : \n";
+    for(size_t i = 0; i < _buttons_list.size(); ++i)
+      ss << i << " " << _buttons_list.at(i).str();
+
+    ss << "Acceleration: \n";
+    ss << _accelerometer_values.str();
+
+    ss << "\n---\n";
     ss << "\n";
     ss << AbstractHardwareState::str();
 
@@ -112,7 +121,7 @@ bool common::model::EndEffectorState::isValid() const
  * @param id
  * @param action
  */
-void EndEffectorState::setButtonStatus(uint8_t id, EndEffectorState::EActionType action)
+void EndEffectorState::setButtonStatus(uint8_t id, EActionType action)
 {
   assert(id <= 3);
 

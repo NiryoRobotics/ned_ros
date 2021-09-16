@@ -68,9 +68,9 @@ class EndEffectorDriver : public AbstractTtlDriver
         virtual int writeSyncCmd(int type, const std::vector<uint8_t>& ids, const std::vector<uint32_t>& params) override;
 
     public:
-        int readButton1Status(uint8_t id, common::model::EndEffectorState::EActionType& action);
-        int readButton2Status(uint8_t id, common::model::EndEffectorState::EActionType& action);
-        int readButton3Status(uint8_t id, common::model::EndEffectorState::EActionType& action);
+        int readButton1Status(uint8_t id, common::model::EActionType& action);
+        int readButton2Status(uint8_t id, common::model::EActionType& action);
+        int readButton3Status(uint8_t id, common::model::EActionType& action);
 
         int readAccelerometerXValue(uint8_t id, uint32_t& x_value);
         int readAccelerometerYValue(uint8_t id, uint32_t& y_value);
@@ -81,7 +81,7 @@ class EndEffectorDriver : public AbstractTtlDriver
         int readDigitalInput(uint8_t id, bool& in);
         int setDigitalOutput(uint8_t id, bool out);
 
-        common::model::EndEffectorState::EActionType interpreteActionValue(uint32_t value);
+        common::model::EActionType interpreteActionValue(uint32_t value);
         virtual std::string interpreteErrorState(uint32_t hw_state) const override;
 
     protected:
@@ -307,7 +307,7 @@ int EndEffectorDriver<reg_type>::syncReadHwErrorStatus(const std::vector<uint8_t
  */
 template<typename reg_type>
 int EndEffectorDriver<reg_type>::readButton1Status(uint8_t id,
-                                                   common::model::EndEffectorState::EActionType& action)
+                                                   common::model::EActionType& action)
 {
     uint32_t status;
     int res = read(reg_type::ADDR_BUTTON_1_STATUS, reg_type::SIZE_BUTTON_1_STATUS, id, status);
@@ -322,7 +322,7 @@ int EndEffectorDriver<reg_type>::readButton1Status(uint8_t id,
  * @return
  */
 template<typename reg_type>
-int EndEffectorDriver<reg_type>::readButton2Status(uint8_t id, common::model::EndEffectorState::EActionType& action)
+int EndEffectorDriver<reg_type>::readButton2Status(uint8_t id, common::model::EActionType& action)
 {
     uint32_t status;
     int res = read(reg_type::ADDR_BUTTON_2_STATUS, reg_type::SIZE_BUTTON_2_STATUS, id, status);
@@ -337,7 +337,7 @@ int EndEffectorDriver<reg_type>::readButton2Status(uint8_t id, common::model::En
  * @return
  */
 template<typename reg_type>
-int EndEffectorDriver<reg_type>::readButton3Status(uint8_t id, common::model::EndEffectorState::EActionType& action)
+int EndEffectorDriver<reg_type>::readButton3Status(uint8_t id, common::model::EActionType& action)
 {
     uint32_t status;
     int res = read(reg_type::ADDR_BUTTON_3_STATUS, reg_type::SIZE_BUTTON_3_STATUS, id, status);
@@ -430,27 +430,27 @@ int EndEffectorDriver<reg_type>::setDigitalOutput(uint8_t id, bool out)
  * @return
  */
 template<typename reg_type>
-common::model::EndEffectorState::EActionType
+common::model::EActionType
 EndEffectorDriver<reg_type>::interpreteActionValue(uint32_t value)
 {
-  common::model::EndEffectorState::EActionType action = common::model::EndEffectorState::EActionType::NO_ACTION;
+  common::model::EActionType action = common::model::EActionType::NO_ACTION;
 
   // HANDLE HELD en premier car c'est le seul cas ou il peut etre actif en meme temps qu'une autre action (long push)
   if (value & 1<<3)    // 0b00001000
   {
-      action = common::model::EndEffectorState::EActionType::HANDLE_HELD_ACTION;
+      action = common::model::EActionType::HANDLE_HELD_ACTION;
   }
   else if (value & 1<<0)    // 0b00000001
   {
-    action = common::model::EndEffectorState::EActionType::SINGLE_PUSH_ACTION;
+    action = common::model::EActionType::SINGLE_PUSH_ACTION;
   }
   else if (value & 1<<1)    // 0b00000010
   {
-    action = common::model::EndEffectorState::EActionType::DOUBLE_PUSH_ACTION;
+    action = common::model::EActionType::DOUBLE_PUSH_ACTION;
   }
   else if (value & 1<<2)    // 0b0000100
   {
-    action = common::model::EndEffectorState::EActionType::LONG_PUSH_ACTION;
+    action = common::model::EActionType::LONG_PUSH_ACTION;
   }
 
   return action;

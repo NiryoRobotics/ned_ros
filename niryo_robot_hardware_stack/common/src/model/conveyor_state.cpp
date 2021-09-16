@@ -148,11 +148,13 @@ std::string ConveyorState::str() const
 {
     std::ostringstream ss;
 
-    ss << "DxlMotorState : ";
+    ss << "ConveyorState : ";
+
+    ss << "state: " << (_state ? "true" : "false")
+       << "speed: " << _speed
+       << "direction: " << _direction;
+
     ss << "\n---\n";
-    ss << "state: " << (_state ? "true" : "false");
-    ss << "speed: " << static_cast<int>(_speed);
-    ss << "direction: " << static_cast<int>(_direction);
     ss << "\n";
     ss << StepperMotorState::str();
 
