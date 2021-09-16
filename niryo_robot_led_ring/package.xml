@@ -1,14 +1,16 @@
 <?xml version="1.0"?>
-<package format="2">
+<?xml-model
+  href="http://download.ros.org/schema/package_format3.xsd"
+  schematypens="http://www.w3.org/2001/XMLSchema"?>
+  <package format="3">
   <name>niryo_robot_led_ring</name>
-  <version>0.0.0</version>
-  <description>The niryo_robot_led_ring package</description>
-
-
-  <maintainer email="podet@todo.todo">podet</maintainer>
-
-
-  <license>TODO</license>
+  <version>3.2.0</version>
+  <description>
+    Manages the led ring on the robot
+  </description>
+  <maintainer email="v.pitre@niryo.com">podet</maintainer>
+  <license>GPLv3</license>
+  <author email="p.odet@niryo.com">Rémi Lux</author>
 
   <buildtool_depend>catkin</buildtool_depend>
 
@@ -21,16 +23,17 @@
   <build_export_depend>rospy</build_export_depend>
   <build_export_depend>std_msgs</build_export_depend>
   <build_export_depend>visualization_msgs</build_export_depend>
+  <build_export_depend>niryo_robot_msgs</build_export_depend>
+
+  <!-- Niryo Dependencies -->
 
   <exec_depend>rospy</exec_depend>
   <exec_depend>std_msgs</exec_depend>
   <exec_depend>message_runtime</exec_depend>
   <exec_depend>niryo_robot_msgs</exec_depend>
 
+  <!-- Python Dependencies -->
 
-
-  <export>
-
-
-  </export>
+  <test_depend>python-catkin-lint</test_depend>
+  <test_depend>roslint</test_depend>
 </package>
