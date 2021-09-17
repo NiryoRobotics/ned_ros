@@ -264,7 +264,7 @@ int TtlManager::changeId(common::model::EHardwareType motor_type, uint8_t old_id
         if (driver)
         {
             ret = driver->changeId(old_id, new_id);
-            if(COMM_SUCCESS == ret)
+            if (COMM_SUCCESS == ret)
             {
                 // update all maps
                 auto i_state  = _state_map.find(old_id);

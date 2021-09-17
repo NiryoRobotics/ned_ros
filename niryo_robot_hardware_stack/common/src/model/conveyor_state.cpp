@@ -21,6 +21,7 @@
 
 #include <sstream>
 #include <string>
+#include <tuple>
 
 namespace common
 {

@@ -19,6 +19,7 @@
 #include <sstream>
 #include <vector>
 #include <string>
+#include <set>
 
 using ::std::shared_ptr;
 using ::std::vector;
@@ -113,7 +114,7 @@ int AbstractCanDriver::scan(const std::set<uint8_t>& motors_to_find, std::vector
   }
 
   // if found everything
-  if(motors_unfound.empty())
+  if (motors_unfound.empty())
       result = CAN_OK;
 
   return result;

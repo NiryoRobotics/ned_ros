@@ -23,6 +23,7 @@
 #include <sstream>
 #include <cassert>
 #include <string>
+#include <tuple>
 
 #include "ros/time.h"
 

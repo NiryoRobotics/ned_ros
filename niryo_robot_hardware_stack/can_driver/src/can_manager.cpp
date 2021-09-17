@@ -197,7 +197,7 @@ void CanManager::removeHardwareComponent(uint8_t id)
 
 int CanManager::changeId(common::model::EHardwareType motor_type, uint8_t old_id, uint8_t new_id)
 {
-  if(_driver_map.at(motor_type))
+  if (_driver_map.at(motor_type))
     return _driver_map.at(motor_type)->sendUpdateConveyorId(old_id, new_id);
   else
     return CAN_FAIL;
@@ -216,7 +216,7 @@ void CanManager::readStatus()
         std::array<uint8_t, StepperDriver::MAX_MESSAGE_LENGTH> rxBuf{};
         std::string error_message;
 
-        if(CAN_OK == stepper_driver->readData(motor_id, control_byte, rxBuf, error_message))
+        if (CAN_OK == stepper_driver->readData(motor_id, control_byte, rxBuf, error_message))
         {
             if (_state_map.count(motor_id) && _state_map.at(motor_id))
             {
@@ -279,7 +279,7 @@ int CanManager::scanAndCheck()
     _all_motor_connected.clear();
     _is_connection_ok = false;
 
-    if(_driver_map.at(EHardwareType::STEPPER))
+    if (_driver_map.at(EHardwareType::STEPPER))
     {
         // only for non conveyor motors
         std::set<uint8_t> motors_unfound;
@@ -308,8 +308,8 @@ int CanManager::scanAndCheck()
         }
 
         // update last time read on found motors
-        // TODO(cc) move updateLastTimeRead in hardwareState
-        for(auto& motor_id : _all_motor_connected)
+        // TODO(cc) move updateLastTimeRead in hardwareState ?
+        for (auto& motor_id : _all_motor_connected)
             std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(motor_id))->updateLastTimeRead();
     }
 
@@ -632,7 +632,7 @@ void CanManager::addHardwareDriver(common::model::EHardwareType hardware_type)
               _driver_map.insert(std::make_pair(hardware_type, std::make_shared<StepperDriver>(_mcp_can)));
           break;
           case common::model::EHardwareType::FAKE_STEPPER_MOTOR:
-              //_driver_map.insert(std::make_pair(hardware_type, std::make_shared<MockStepperDriver>(_mcp_can)));
+              // _driver_map.insert(std::make_pair(hardware_type, std::make_shared<MockStepperDriver>(_mcp_can)));
           break;
           default:
               ROS_ERROR("CanManager - Unable to instanciate driver, unknown type");

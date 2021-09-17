@@ -22,6 +22,7 @@
 #include <sstream>
 #include <vector>
 #include <string>
+#include <tuple>
 
 #include "ros/ros.h"
 
@@ -45,7 +46,6 @@ namespace can_driver
 StepperDriver::StepperDriver(std::shared_ptr<mcp_can_rpi::MCP_CAN> mcp_can) :
     AbstractCanDriver(mcp_can)
 {
-
 }
 
 /**
@@ -53,7 +53,6 @@ StepperDriver::StepperDriver(std::shared_ptr<mcp_can_rpi::MCP_CAN> mcp_can) :
  */
 StepperDriver::~StepperDriver()
 {
-
 }
 
 /**
