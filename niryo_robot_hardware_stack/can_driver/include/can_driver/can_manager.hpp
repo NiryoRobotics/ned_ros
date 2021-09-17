@@ -42,7 +42,6 @@
 #include "can_driver/StepperMotorCommand.h"
 #include "can_driver/StepperCmd.h"
 
-#include "mcp_can_rpi/mcp_can_rpi.h"
 #include "abstract_can_driver.hpp"
 
 

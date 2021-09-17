@@ -197,7 +197,7 @@ void CanManager::removeHardwareComponent(uint8_t id)
 
 int CanManager::changeId(common::model::EHardwareType motor_type, uint8_t old_id, uint8_t new_id)
 {
-  if (_driver_map.at(motor_type))
+  if (_driver_map.count(motor_type) && _driver_map.at(motor_type))
     return _driver_map.at(motor_type)->sendUpdateConveyorId(old_id, new_id);
   else
     return CAN_FAIL;
@@ -208,59 +208,62 @@ int CanManager::changeId(common::model::EHardwareType motor_type, uint8_t old_id
  */
 void CanManager::readStatus()
 {
-    auto stepper_driver = _driver_map.at(EHardwareType::STEPPER);
-    if (stepper_driver && stepper_driver->canReadData())
+    if(_driver_map.count(EHardwareType::STEPPER))
     {
-        uint8_t motor_id{};
-        int control_byte{};
-        std::array<uint8_t, StepperDriver::MAX_MESSAGE_LENGTH> rxBuf{};
-        std::string error_message;
-
-        if (CAN_OK == stepper_driver->readData(motor_id, control_byte, rxBuf, error_message))
+        auto stepper_driver = _driver_map.at(EHardwareType::STEPPER);
+        if (stepper_driver && stepper_driver->canReadData())
         {
-            if (_state_map.count(motor_id) && _state_map.at(motor_id))
-            {
-                auto stepperState = std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(motor_id));
-                // update last time read
-                stepperState->updateLastTimeRead();
+            uint8_t motor_id{};
+            int control_byte{};
+            std::array<uint8_t, StepperDriver::MAX_MESSAGE_LENGTH> rxBuf{};
+            std::string error_message;
 
-                switch (control_byte)
+            if (CAN_OK == stepper_driver->readData(motor_id, control_byte, rxBuf, error_message))
+            {
+                if (_state_map.count(motor_id) && _state_map.at(motor_id))
                 {
-                    case StepperDriver::CAN_DATA_POSITION:
-                        stepperState->setPositionState(StepperDriver::interpretePositionStatus(rxBuf));
-                        break;
-                    case StepperDriver::CAN_DATA_DIAGNOSTICS:
-                        stepperState->setTemperature(StepperDriver::interpreteTemperatureStatus(rxBuf));
-                        break;
-                    case StepperDriver::CAN_DATA_FIRMWARE_VERSION:
-                        stepperState->setFirmwareVersion(StepperDriver::interpreteFirmwareVersion(rxBuf));
-                        break;
-                    case StepperDriver::CAN_DATA_CONVEYOR_STATE:
+                    auto stepperState = std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(motor_id));
+                    // update last time read
+                    stepperState->updateLastTimeRead();
+
+                    switch (control_byte)
                     {
-                        auto cState = std::dynamic_pointer_cast<ConveyorState>(stepperState);
-                        if (cState)
+                        case StepperDriver::CAN_DATA_POSITION:
+                            stepperState->setPositionState(StepperDriver::interpretePositionStatus(rxBuf));
+                            break;
+                        case StepperDriver::CAN_DATA_DIAGNOSTICS:
+                            stepperState->setTemperature(StepperDriver::interpreteTemperatureStatus(rxBuf));
+                            break;
+                        case StepperDriver::CAN_DATA_FIRMWARE_VERSION:
+                            stepperState->setFirmwareVersion(StepperDriver::interpreteFirmwareVersion(rxBuf));
+                            break;
+                        case StepperDriver::CAN_DATA_CONVEYOR_STATE:
                         {
-                            cState->updateData(StepperDriver::interpreteConveyorData(rxBuf));
+                            auto cState = std::dynamic_pointer_cast<ConveyorState>(stepperState);
+                            if (cState)
+                            {
+                                cState->updateData(StepperDriver::interpreteConveyorData(rxBuf));
+                            }
+                            break;
                         }
+                        case StepperDriver::CAN_DATA_CALIBRATION_RESULT:
+                            stepperState->setCalibration(StepperDriver::interpreteCalibrationData(rxBuf));
+                            break;
+                        default:
+                            ROS_ERROR("CanManager::readMotorsState : unknown control byte value");
                         break;
                     }
-                    case StepperDriver::CAN_DATA_CALIBRATION_RESULT:
-                        stepperState->setCalibration(StepperDriver::interpreteCalibrationData(rxBuf));
-                        break;
-                    default:
-                        ROS_ERROR("CanManager::readMotorsState : unknown control byte value");
-                    break;
+                }
+                else
+                {
+                    _debug_error_message = "Unknow connected motor : ";
+                    _debug_error_message += std::to_string(motor_id);
                 }
             }
             else
             {
-                _debug_error_message = "Unknow connected motor : ";
-                _debug_error_message += std::to_string(motor_id);
+                ROS_ERROR("CanManager::readStatus - %s", error_message.c_str());
             }
-        }
-        else
-        {
-            ROS_ERROR("CanManager::readStatus - %s", error_message.c_str());
         }
     }
 }
@@ -279,7 +282,8 @@ int CanManager::scanAndCheck()
     _all_motor_connected.clear();
     _is_connection_ok = false;
 
-    if (_driver_map.at(EHardwareType::STEPPER))
+    // only stepper for now
+    if (_driver_map.count(EHardwareType::STEPPER) && _driver_map.at(EHardwareType::STEPPER))
     {
         // only for non conveyor motors
         std::set<uint8_t> motors_unfound;
@@ -326,16 +330,21 @@ bool CanManager::ping(uint8_t id)
 {
     int result = false;
 
-    if (_state_map.find(id) == _state_map.end())
-        return result;
-
-    auto it = _driver_map.at(_state_map.find(id)->second->getHardwareType());
-    if (it)
+    if (_state_map.find(id) != _state_map.end())
     {
-        result = (CAN_OK == it->ping(id));
+        if(_driver_map.count(_state_map.find(id)->second->getHardwareType()))
+        {
+            auto it = _driver_map.at(_state_map.find(id)->second->getHardwareType());
+            if (it)
+            {
+                result = (CAN_OK == it->ping(id));
+            }
+            else
+            {
+                ROS_ERROR_THROTTLE(1, "TtlManager::ping - the can drivers seeems uninitialized");
+            }
+        }
     }
-    else
-        ROS_ERROR_THROTTLE(1, "TtlManager::ping - the dynamixel drivers seeems uninitialized");
 
     return result;
 }
