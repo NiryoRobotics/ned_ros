@@ -309,7 +309,7 @@ msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:123
 msgid "Is executing command flag"
-msgstr "Exécute l'indicateur de commande"
+msgstr "Exécuter l'indicateur de commande"
 
 #: ../../source/modbus_tcp_server.rst:124
 msgid "151"
@@ -429,7 +429,7 @@ msgid ""
 "Updates the tool id according to the gripper plugged (gripper 1: 11, "
 "gripper 2: 12, gripper 3: 13, vaccum pump: 31)"
 msgstr ""
-"Met à jour l'ID du tool équipé en fonction de l'outil branché au robot "
+"Mettre à jour l'ID du tool équipé en fonction de l'outil branché au robot "
 "(gripper 1: 11, gripper 2: 12, gripper 3: 13, vaccum pump: 31)"
 
 #: ../../source/modbus_tcp_server.rst:152
@@ -438,7 +438,7 @@ msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:153
 msgid "Stores the tool id"
-msgstr "Enregistre l'ID de l'outil"
+msgstr "Enregistrer l'ID de l'outil"
 
 #: ../../source/modbus_tcp_server.rst:154
 msgid "510"
@@ -536,7 +536,7 @@ msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:177
 msgid "TCP - Enables or disables the TCP function (Tool Center Point)."
-msgstr "PCO - Active ou désactive la fonction de PCO (Point Central de l'Outil)"
+msgstr "PCO - Activer ou désactiver la fonction de PCO (Point Central de l'Outil)"
 
 #: ../../source/modbus_tcp_server.rst:178
 msgid "601"
@@ -547,7 +547,7 @@ msgid ""
 "Activates the TCP function (Tool Center Point) and defines the "
 "transformation between the tool_link frame and the TCP frame."
 msgstr ""
-"Activé la fonction du PCO (Point Central de l'Outil) et définit la "
+"Activer la fonction du PCO (Point Central de l'Outil) et définir la "
 "transformation entre le repère 'tool_link' et le repère du PCO."
 
 #: ../../source/modbus_tcp_server.rst:180
@@ -559,8 +559,7 @@ msgid ""
 "Vision - Gets target pose from relative pose, with stored relative pose "
 "and height_offset"
 msgstr ""
-"Vision - Récupère la 'target_pose' en fonction de la 'relative_pose'', "
-"avec la 'relative_pose'' et le 'height_offset'"
+"Vision - Récupérer la 'target_pose' avec le nom du workspace enregistré, sa hauteur, la forme et la couleur enregistrées.
 
 #: ../../source/modbus_tcp_server.rst:182
 msgid "611"
@@ -571,8 +570,7 @@ msgid ""
 "Vision - Gets target pose from camera, with stored workspace name, height"
 " offset, shape and color"
 msgstr ""
-"Recupère 'target_pose' en fonction de la caméra, avec le 'workspace name'"
-" enregistré, le 'height_offset', 'shape' et 'color'"
+"Vision - Obtenir la pose  avec le nom du workspace enregistré, sa hauteur, la forme et la couleur enregistrées.
 
 #: ../../source/modbus_tcp_server.rst:184
 msgid "612"
@@ -583,6 +581,7 @@ msgid ""
 "Vision - Vision pick, with stored workspace name, height offset, shape "
 "and color"
 msgstr ""
+"Vision - Vision pick avec le nom du workspace enregistré, sa hauteur, la forme et la couleur enregistrées.
 
 #: ../../source/modbus_tcp_server.rst:186
 msgid "613"
@@ -593,8 +592,7 @@ msgid ""
 "Vision - Moves to object, with stored workspace name, height offset, "
 "shape and color"
 msgstr ""
-"Recupère 'target_pose' en fonction de la caméra, avec le 'workspace name'"
-" enregistré, le 'height_offset', 'shape' et 'color'"
+"Vision - Déplacement jusque l'objet avec le nom du workspace enregistré, sa hauteur, la forme et la couleur enregistrées.
 
 #: ../../source/modbus_tcp_server.rst:188
 msgid "614"
@@ -603,7 +601,7 @@ msgstr ""
 #: ../../source/modbus_tcp_server.rst:189
 msgid "Vision - Detects object, with stored workspace name, shape and color"
 msgstr ""
-"Recupère 'target_pose' en fonction de la caméra, avec le 'workspace name'"
+"Recupérer 'target_pose' en fonction de la caméra, avec le 'workspace name'"
 " enregistré, le 'height_offset', 'shape' et 'color'"
 
 #: ../../source/modbus_tcp_server.rst:190
@@ -612,7 +610,7 @@ msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:191
 msgid "Vision - Stores workspace's height offset"
-msgstr ""
+msgstr "Vision - Enregistrer la hauteur de l'offset du workspace"
 
 #: ../../source/modbus_tcp_server.rst:192
 msgid "621"
@@ -620,7 +618,7 @@ msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:193
 msgid "Vision - Stores relative pose x_rel"
-msgstr "Vision - Résultat de la Pose cible"
+msgstr "Vision - Enregistrer la position relative x_rel"
 
 #: ../../source/modbus_tcp_server.rst:194
 msgid "622"
@@ -628,7 +626,7 @@ msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:195
 msgid "Vision - Stores relative pose y_rel"
-msgstr "Vision - Résultat de la Pose cible"
+msgstr "Vision - Enregistrer la position relative y_rel"
 
 #: ../../source/modbus_tcp_server.rst:196
 msgid "623"
@@ -636,7 +634,7 @@ msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:197
 msgid "Vision - Stores relative pose yaw_rel"
-msgstr ""
+msgstr "Vision - Enregistrer la position relative yaw_rel"
 
 #: ../../source/modbus_tcp_server.rst:198
 msgid "624"
@@ -647,6 +645,8 @@ msgid ""
 "Vision - Stores requested shape (-1: ANY, 1: CIRCLE, 2: SQUARE, 3: "
 "TRIANGLE)"
 msgstr ""
+"Vision - Enregistrer la forme demandée (-1: TOUTES, 1: CERCLE, 2: CARRÉ 3: "
+"TRIANGLE)"
 
 #: ../../source/modbus_tcp_server.rst:200
 msgid "625"
@@ -655,6 +655,8 @@ msgstr ""
 #: ../../source/modbus_tcp_server.rst:201
 msgid "Vision - Stores requested color (-1: ANY, 1: BLUE, 2: RED, 3: GREEN)"
 msgstr ""
+"Vision - Enregistrer la couleur demandée (-1: TOUTES, 1: BLEU, 2: ROUGE 3: "
+"VERT)"
 
 #: ../../source/modbus_tcp_server.rst:202
 msgid "626 - max 641"
@@ -665,6 +667,8 @@ msgid ""
 "Vision - Stores workspace's name, as a string encoded in 16 bits hex (see"
 " examples on how to store a workspace name from a client)"
 msgstr ""
+" Vision - Enregistrer le nom du worspace, comme une string encodée en 16 bits hex (voir"
+" l'exemple sur comment stocker le nom du workspace depuis un client)"
 
 #: ../../source/modbus_tcp_server.rst:206
 msgid "Input Register"
