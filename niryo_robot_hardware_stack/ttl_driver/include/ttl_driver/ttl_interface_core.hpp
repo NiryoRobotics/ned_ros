@@ -110,7 +110,7 @@ class TtlInterfaceCore : public common::model::IDriverCore, public common::model
         bool rebootMotor(uint8_t motor_id);
 
         // getters
-        std::vector<uint8_t> getRemovedMotorList() const;
+        std::vector<uint8_t> getRemovedMotorList() const override;
         double getPosition(uint8_t id) const;
 
         std::vector<std::shared_ptr<common::model::JointState> > getJointStates() const override;

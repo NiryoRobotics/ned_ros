@@ -46,10 +46,13 @@ class ToolsState:
 class ToolCommander:
     def __init__(self):
         self.__tools_state = ToolsState(rospy.get_param("~state_dict"))
+        self.__is_gripper_simulated = rospy.get_param("~simu_gripper")
+        self.__is_use_gazebo = rospy.get_param("~gazebo")
         move_group_tool_commander_name = rospy.get_param("~move_group_tool_commander_name")
         reference_frame = rospy.get_param("~reference_frame")
 
         rospy.logdebug("ToolCommander.init - state_dict: {}".format(str(self.__tools_state)))
+        rospy.logdebug("ToolCommander.init - simu_gripper: {}".format(self.__is_gripper_simulated))
         rospy.logdebug("ToolCommander.init - move_group_tool_commander_name: {}".format(move_group_tool_commander_name))
         rospy.logdebug("ToolCommander.init - reference_frame: {}".format(reference_frame))
 
@@ -66,6 +69,12 @@ class ToolCommander:
                                              in self.__dict_commands_string_to_id.iteritems()}
 
         # if gripper simulated, setup variables to control it through moveit
+        # if self.__is_use_gazebo:
+        if self.__is_gripper_simulated:
+            # Get Tool MoveGroupCommander
+            self.__tool_simu = moveit_commander.MoveGroupCommander(move_group_tool_commander_name)
+            # Set pose reference frame
+            self.__tool_simu.set_pose_reference_frame(reference_frame)
 
         # Subscriber
         rospy.Subscriber('/niryo_robot_hardware/tools/current_id', Int32,
@@ -161,6 +170,24 @@ class ToolCommander:
         else:
             rospy.loginfo("Tool Commander - error : {}".format(message))
             self.__action_server.set_aborted(self.create_action_result(CommandStatus.TOOL_FAILURE, message))
+
+        # Gripper simulated
+        if self.__is_use_gazebo:
+            if self.__is_gripper_simulated:
+                if cmd.cmd_type == ToolCommand.OPEN_GRIPPER:
+                    self.__tool_simu.set_named_target("open")
+                    self.__tool_simu.go()
+                elif cmd.cmd_type == ToolCommand.CLOSE_GRIPPER:
+                    self.__tool_simu.set_named_target("close")
+                    self.__tool_simu.go()
+
+                self.__action_server.set_succeeded(
+                    self.create_action_result(CommandStatus.SUCCESS, "Simulated tool action successfully finished"))
+                return
+            # Simulation mode without gripper
+            else:
+                self.__action_server.set_succeeded(
+                    self.create_action_result(CommandStatus.SUCCESS, "Tool action successfully finished"))
 
     def __callback_update_tool(self, _req):
         state, id_ = self.update_tool()
