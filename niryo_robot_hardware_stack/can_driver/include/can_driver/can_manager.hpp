@@ -21,6 +21,7 @@
 #define CAN_DRIVER_HPP
 
 // std
+#include <cstdint>
 #include <memory>
 #include <functional>
 #include <string>
@@ -30,6 +31,7 @@
 
 // ros
 #include <ros/ros.h>
+#include <vector>
 
 
 // niryo
@@ -97,6 +99,7 @@ class CanManager : public common::model::IBusManager
         void getBusState(bool& connection_status, std::vector<uint8_t>& motor_list, std::string& error) const override;
         std::string getErrorMessage() const override;
 
+        std::vector<uint8_t> getRemovedMotorList();
     private:
 
         int setupCAN(ros::NodeHandle& nh);

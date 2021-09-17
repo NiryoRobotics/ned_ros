@@ -23,6 +23,7 @@
 #include "common/model/bus_protocol_enum.hpp"
 
 // c++
+#include <cstdint>
 #include <functional>
 #include <string>
 #include <vector>
@@ -33,7 +34,6 @@ using ::common::model::EStepperCalibrationStatus;
 using ::common::model::ConveyorState;
 using ::common::model::StepperMotorState;
 using ::common::model::EStepperCommandType;
-using ::common::model::EBusProtocol;
 
 namespace can_driver
 {
@@ -451,8 +451,7 @@ bool CanManager::ping(uint8_t motor_to_find)
         }
     }
 
-
-    ROS_ERROR("CanManager::scanMotorId - Motor with id %d not found", static_cast<int>(motor_to_find));
+    ROS_DEBUG("CanManager::scanMotorId - Motor with id %d not found", static_cast<int>(motor_to_find));
     return false;
 }
 
@@ -942,7 +941,7 @@ int32_t CanManager::getCalibrationResult(uint8_t motor_id) const
 }
 
 /**
- * @brief TtlManager::getHardwareState
+ * @brief CanManager::getHardwareState
  * @param motor_id
  * @return
  */
@@ -968,4 +967,19 @@ std::vector<std::shared_ptr<StepperMotorState> > CanManager::getMotorsStates() c
     return states;
 }
 
+/**
+ *  @brief CanManager::getRemovedMotorList 
+ */
+std::vector<uint8_t> CanManager::getRemovedMotorList()
+{
+    std::vector<uint8_t> removed_motors;
+    for (auto state : _state_map)
+    {
+        if (!ping(state.first))
+        {
+            removed_motors.push_back(state.first);
+        }
+    }
+    return removed_motors;
+}
 }  // namespace can_driver

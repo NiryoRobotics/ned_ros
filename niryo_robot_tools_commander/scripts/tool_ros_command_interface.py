@@ -83,7 +83,10 @@ class ToolRosCommandInterface:
     def ping_dxl_tool(self):
         try:
             resp = self.__service_ping_dxl_tool()
-            return resp.state, resp.id
+            if (resp is not None):
+                return resp.state, resp.id
+            else:
+                return CommandStatus.TOOL_ROS_INTERFACE_ERROR, "Cannot ping dxl tool"
         except rospy.ServiceException:
             rospy.logerr("ROS Tool Interface - Failed to Ping Dynamixel Tool - "
                          "An error has occurred or another ping was running")

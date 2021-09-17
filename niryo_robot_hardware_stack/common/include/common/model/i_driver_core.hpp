@@ -76,7 +76,7 @@ class IDriverCore
 
         virtual std::vector<std::shared_ptr<common::model::JointState> > getJointStates() const = 0;
         virtual std::shared_ptr<common::model::JointState> getJointState(uint8_t motor_id) const = 0;
-        
+        virtual std::vector<uint8_t> getRemovedMotorList() const = 0;  
     private:
         virtual void resetHardwareControlLoopRates() = 0;
         virtual void controlLoop() = 0;

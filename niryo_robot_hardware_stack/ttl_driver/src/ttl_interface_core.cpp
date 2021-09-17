@@ -451,7 +451,10 @@ void TtlInterfaceCore::startControlLoop()
 */
 bool TtlInterfaceCore::scanMotorId(uint8_t motor_to_find)
 {
-    return true;
+    lock_guard<mutex> lck(_control_loop_mutex);
+    if (_ttl_manager->ping(motor_to_find))
+        return true;
+    return false;
 }
 
 /**
