@@ -17,8 +17,8 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
-#ifndef CAN_DRIVER_CORE_HPP
-#define CAN_DRIVER_CORE_HPP
+#ifndef CAN_DRIVER_CORE_H
+#define CAN_DRIVER_CORE_H
 
 #include <cstdint>
 #include <memory>
@@ -98,8 +98,8 @@ class CanInterfaceCore : public common::model::IDriverCore, public common::model
 
         bool isConnectionOk() const override;
         int launchMotorsReport() override;
-
         niryo_robot_msgs::BusState getBusState() const override;
+        virtual common::model::EBusProtocol getBusProtocol() const override;
 
     private:
         virtual void initParameters(ros::NodeHandle &nh) override;
@@ -111,7 +111,7 @@ class CanInterfaceCore : public common::model::IDriverCore, public common::model
         void controlLoop() override;
         void _executeCommand() override;
 
-        int motorCmdReport(uint8_t motor_id);
+        int motorCmdReport(const common::model::JointState &jState, common::model::EHardwareType motor_type);
 
     private:
         bool _control_loop_flag{false};
@@ -138,14 +138,15 @@ class CanInterfaceCore : public common::model::IDriverCore, public common::model
         std::unique_ptr<CanManager> _can_manager;
 
         std::vector<std::pair<uint8_t, int32_t> > _joint_trajectory_cmd;
+
+        // can cmds
         std::queue<std::shared_ptr<common::model::AbstractCanSingleMotorCmd>> _stepper_single_cmds;
         std::queue<std::shared_ptr<common::model::AbstractCanSingleMotorCmd>> _conveyor_cmds;
 
         static constexpr int QUEUE_OVERFLOW = 20;
 
-        // IDriverCore interface
-public:
-        virtual common::model::EBusProtocol getBusProtocol() const override;
+        // conveyor default id, avoid hardcore value
+        uint8_t _default_conveyor_id = 0;
 };
 
 /**
@@ -203,4 +204,4 @@ CanInterfaceCore::getCalibrationStatus() const
 
 } // CanManager
 
-#endif
+#endif // CAN_INTERFACE_CORE_H

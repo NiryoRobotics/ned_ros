@@ -1,5 +1,5 @@
 /*
-    abstract_motor_driver.cpp
+    abstract_ttl_driver.cpp
     Copyright (C) 2020 Niryo
     All rights reserved.
     This program is free software: you can redistribute it and/or modify

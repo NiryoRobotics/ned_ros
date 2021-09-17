@@ -147,6 +147,16 @@ void StepperMotorState::setCalibration(const EStepperCalibrationStatus &calibrat
     _calibration_value = calibration_value;
 }
 
+/**
+ * @brief StepperMotorState::setCalibration
+ * @param data
+ */
+void StepperMotorState::setCalibration(const std::tuple<EStepperCalibrationStatus, int32_t> &data)
+{
+    _calibration_state = std::get<0>(data);
+    _calibration_value = std::get<1>(data);
+}
+
 // *********************
 //  JointState Interface
 // ********************
