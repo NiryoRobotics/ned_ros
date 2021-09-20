@@ -247,8 +247,11 @@ void CanManager::readStatus()
                             break;
                         }
                         case StepperDriver::CAN_DATA_CALIBRATION_RESULT:
+                        {
                             stepperState->setCalibration(StepperDriver::interpreteCalibrationData(rxBuf));
+                            updateCurrentCalibrationStatus();
                             break;
+                        }
                         default:
                             ROS_ERROR("CanManager::readMotorsState : unknown control byte value");
                         break;
