@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-13 17:20+0200\n"
+"POT-Creation-Date: 2021-09-20 08:22+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -448,7 +448,7 @@ msgid "520"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:163
-msgid "Enables a Conveyor Belt newly connected [on success: store it's ID at 152]"
+msgid "Enables a Conveyor Belt newly connected [on success: store its ID at 152]"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:164
@@ -980,5 +980,11 @@ msgstr ""
 #~ "a string encoded in 16 bits hex"
 #~ " (see examples on how to store "
 #~ "a workspace name from a client)"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Enables a Conveyor Belt newly connected"
+#~ " [on success: store it's ID at "
+#~ "152]"
 #~ msgstr ""
 
