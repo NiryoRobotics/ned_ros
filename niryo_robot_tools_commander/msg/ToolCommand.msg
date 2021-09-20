@@ -26,5 +26,4 @@ uint16 gripper_open_speed
 bool activate
 
 # if tool is set by digital outputs (electromagnet)
-# if gpio<0 get value in memory
-int8 gpio
+string gpio

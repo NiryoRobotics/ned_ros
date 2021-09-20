@@ -1,0 +1,69 @@
+publish_io_state_frequency: 10
+check_interrupt_flag_security_frequency: 4
+
+button:
+  gpio: 4
+
+mcp:
+ address: 32
+ num_gpios: 16
+ i2c_bus: 0
+ interrupt_bcm: 26
+
+ads:
+  i2c_bus: 0
+  reading_factor: 0.6
+
+fans:
+  - pin: 11
+    temperature_on_threshold: 45
+    temperature_off_threshold: 40
+  - pin: 12
+    temperature_on_threshold: 50
+    temperature_off_threshold: 45
+
+wifi:
+  led_pin: 4
+  button_pin: 5
+
+digital_inputs:
+  - name: DI1
+    pin: 0
+  - name: DI2
+    pin: 1
+  - name: DI3
+    pin: 2
+
+digital_outputs:
+  - name: DO1
+    pin: 15
+    reverse: True
+  - name: DO2
+    pin: 14
+    reverse: True
+  - name: DO3
+    pin: 13
+    reverse: True
+  - name: Electromagnet
+    pin: 3
+    reverse: False
+
+analog_outputs:
+  - name: AO0
+    pin: 0
+    address: 73
+    i2c_bus: 0
+    v_ref: 5.0
+    resolution: 12
+  - name: AO1
+    pin: 0
+    address: 75
+    i2c_bus: 0
+    v_ref: 5.0
+    resolution: 12
+
+analog_inputs:
+  - name: AI0
+    pin: 0
+  - name: AI1
+    pin: 2

@@ -1,8 +1,10 @@
 #!/usr/bin/env python
 
 from data_block import DataBlock
+from collections import OrderedDict
 
-from niryo_robot_rpi.srv import SetDigitalIO
+from niryo_robot_rpi.srv import SetDigitalIO, SetAnalogIO
+from niryo_robot_rpi.srv import SetPullup, SetIOMode, SetIOModeRequest
 
 """
  - Each address contains a 1 bit value
@@ -13,18 +15,23 @@ from niryo_robot_rpi.srv import SetDigitalIO
  not the current robot state !)
 """
 
-CO_DIGITAL_IO_MODE = 0
-CO_DIGITAL_IO_STATE = 100
-
-GPIO_1_A = 2
-GPIO_1_B = 3
-GPIO_1_C = 16
-GPIO_2_A = 26
-GPIO_2_B = 19
-GPIO_2_C = 6
-
 
 class CoilDataBlock(DataBlock):
+    CO_IO_MODE = 0
+    CO_IO_STATE = 100
+    CO_IO_ENABLE_PULLUP = 200
+
+    DIO_ADDRESS = OrderedDict({0: "1A",
+                   1: "1B",
+                   2: "1C",
+                   3: "2A",
+                   4: "2B",
+                   5: "2C",
+                   6: "SW1",
+                   7: "SW2", })
+
+    DIO_MODE_OUTPUT = SetIOModeRequest.OUTPUT
+    DIO_MODE_INPUT = SetIOModeRequest.INPUT
 
     def __init__(self):
         super(CoilDataBlock, self).__init__()
@@ -39,28 +46,68 @@ class CoilDataBlock(DataBlock):
         if len(values) == 0:
             return
         value = values[0]
-        pin = 0
 
-        if address == 0 or address == 100:
-            pin = GPIO_1_A
-        elif address == 1 or address == 101:
-            pin = GPIO_1_B
-        elif address == 2 or address == 102:
-            pin = GPIO_1_C
-        elif address == 3 or address == 103:
-            pin = GPIO_2_A
-        elif address == 4 or address == 104:
-            pin = GPIO_2_B
-        elif address == 5 or address == 105:
-            pin = GPIO_2_C
+        try:
+            if address >= self.CO_IO_ENABLE_PULLUP:
+                pin_id = self.DIO_ADDRESS[address % 100]
+                self.set_pullup_mode(pin_id, value)
+            elif address >= self.CO_IO_STATE:
+                if address % 100 in self.DIO_ADDRESS:
+                    self.digital_write(self.DIO_ADDRESS[address % 100], value)
+            elif address >= self.CO_IO_MODE:
+                pin_id = self.DIO_ADDRESS[address % 100]
+                self.set_pin_mode(pin_id, value)
+        except KeyError:
+            pass
 
-        if 0 <= address < 100:
-            self.set_pin_mode(pin, value)
-        elif 100 <= address < 200:
-            self.set_pin_state(pin, value)
+    def set_pin_mode(self, pin_id, pin_mode):
+        """
+        Set pin number pin_id to mode pin_mode
 
-    def set_pin_mode(self, pin, mode):
-        response = self.call_ros_service('/niryo_robot_rpi/set_digital_io_mode', SetDigitalIO, pin, mode)
+        :param pin_id:
+        :type pin_id: PinID
+        :param pin_mode:
+        :type pin_mode: PinMode
+        :return: status, message
+        :rtype: None
+        """
+        _result = self.call_ros_service('/niryo_robot_rpi/set_digital_io_mode', SetIOMode, pin_id, pin_mode)
 
-    def set_pin_state(self, pin, state):
-        response = self.call_ros_service('/niryo_robot_rpi/set_digital_io_state', SetDigitalIO, pin, state)
+    def digital_write(self, pin_id, digital_state):
+        """
+        Set pin_id state to pin_state
+
+        :param pin_id: The name of the pin
+        :type pin_id: Union[ PinID, str]
+        :param digital_state:
+        :type digital_state: Union[ PinState, bool]
+        :rtype: None
+        """
+        _result = self.call_ros_service('/niryo_robot_rpi/set_digital_io', SetDigitalIO, pin_id,
+                                        bool(digital_state))
+
+    def set_pullup_mode(self, pin_id, enable):
+        """
+        Enable or disable digital intput pullup resistor.
+
+        :param pin_id: The name of the pin
+        :type pin_id: Union[ PinID, str]
+        :param enable: True to enable the input pullup resistor, false otherwise.
+        :type enable: bool
+        :rtype: None
+        """
+        _result = self.call_ros_service('/niryo_robot_rpi/set_digital_io_state', SetPullup, pin_id, bool(enable))
+
+
+class CoilDataBlockNed2(CoilDataBlock):
+    DIO_ADDRESS = OrderedDict({1: "DI1",
+                   2: "DI2",
+                   3: "DI3",
+                   4: "DO1",
+                   5: "DO2",
+                   6: "DO3",
+                   7: "Electromagnet", })
+
+    def __init__(self):
+        super(CoilDataBlockNed2, self).__init__()
+

@@ -11,7 +11,7 @@
   <maintainer email="v.pitre@niryo.com">Valentin Pitre</maintainer>
   <license>GPLv3</license>
   <author email="v.pitre@niryo.com">Valentin Pitre</author>
-  
+
   <buildtool_depend>catkin</buildtool_depend>
 
   <build_depend>message_generation</build_depend>

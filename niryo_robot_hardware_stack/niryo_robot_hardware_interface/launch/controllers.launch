@@ -13,7 +13,6 @@
     <arg name="ttl_enabled" default="true"/>
 
     <!-- Load controller settings -->
-
     <group unless="$(arg gazebo)">
         <rosparam file="$(find niryo_moveit_config_standalone)/config/ros_controllers.yaml" command="load"/>
 

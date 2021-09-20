@@ -1,0 +1,6 @@
+ros_log_size_threshold: 1024
+
+should_purge_ros_log_on_startup_file: /home/niryo/niryo_robot_saved_files/purge_ros_log_at_startup.txt
+
+# don't change that unless you manually change ros log location
+ros_log_location: /home/niryo/.ros/log

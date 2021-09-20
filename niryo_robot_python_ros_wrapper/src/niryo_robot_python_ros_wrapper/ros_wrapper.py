@@ -28,7 +28,7 @@ from conveyor_interface.msg import ConveyorFeedbackArray
 from niryo_robot_msgs.msg import HardwareStatus
 from niryo_robot_msgs.msg import RobotState
 from niryo_robot_msgs.msg import RPY
-from niryo_robot_rpi.msg import DigitalIOState
+from niryo_robot_rpi.msg import DigitalIO, DigitalIOState, AnalogIO, AnalogIOState
 from niryo_robot_tools_commander.msg import ToolCommand
 from niryo_robot_led_ring.msg import LedRingAnimation, LedRingStatus
 
@@ -36,10 +36,11 @@ from niryo_robot_led_ring.msg import LedRingAnimation, LedRingStatus
 from conveyor_interface.srv import ControlConveyor, SetConveyor, SetConveyorRequest
 from niryo_robot_arm_commander.srv import GetFK, GetIK
 from niryo_robot_arm_commander.srv import JogShift, JogShiftRequest
-from niryo_robot_msgs.srv import GetNameDescriptionList, SetString, SetBool, SetInt, Trigger
+from niryo_robot_msgs.srv import GetNameDescriptionList, SetBool, SetInt, Trigger, SetString
 from niryo_robot_tools_commander.srv import SetTCP, SetTCPRequest
 from niryo_robot_vision.srv import SetImageParameter
-from niryo_robot_rpi.srv import GetDigitalIO, SetDigitalIO
+from niryo_robot_rpi.srv import GetDigitalIO, GetAnalogIO
+from niryo_robot_rpi.srv import SetDigitalIO, SetAnalogIO
 from niryo_robot_vision.srv import DebugMarkers, DebugMarkersRequest, DebugColorDetection, DebugColorDetectionRequest
 from niryo_robot_programs_manager.srv import SetProgramAutorun, SetProgramAutorunRequest, GetProgramAutorunInfos, \
     GetProgramList, ManageProgram, ManageProgramRequest, GetProgram, GetProgramRequest, ExecuteProgram, \
@@ -47,6 +48,7 @@ from niryo_robot_programs_manager.srv import SetProgramAutorun, SetProgramAutoru
 from niryo_robot_credentials.srv import GetCredential, SetCredential
 from std_srvs.srv import Trigger as StdTrigger
 from niryo_robot_led_ring.srv import LedUser, LedUserRequest
+from niryo_robot_rpi.srv import SetPullup, SetIOMode
 
 # Actions
 from niryo_robot_arm_commander.msg import RobotMoveAction, RobotMoveGoal
@@ -113,6 +115,10 @@ class NiryoRosWrapper:
         rospy.Subscriber('/niryo_robot_rpi/digital_io_state', DigitalIOState,
                          self.__callback_sub_digital_io_state)
 
+        self.__analog_io_state = None
+        rospy.Subscriber('/niryo_robot_rpi/analog_io_state', AnalogIOState,
+                         self.__callback_sub_analog_io_state)
+
         self.__current_tool_id = None
         rospy.Subscriber('/niryo_robot_tools_commander/current_id', Int32,
                          self.__callback_sub_current_tool_id)
@@ -137,7 +143,6 @@ class NiryoRosWrapper:
                          self.__callback_camera_intrinsics, queue_size=1)
 
         # - Conveyor
-
         self.__conveyors_feedback = None
         rospy.Subscriber('/niryo_robot/conveyor/feedback', ConveyorFeedbackArray,
                          self.__callback_sub_conveyors_feedback)
@@ -226,6 +231,9 @@ class NiryoRosWrapper:
 
     def __callback_sub_digital_io_state(self, digital_io_state):
         self.__digital_io_state = digital_io_state
+
+    def __callback_sub_analog_io_state(self, analog_io_state):
+        self.__analog_io_state = analog_io_state
 
     def __callback_sub_stream_video(self, compressed_image_message):
         self.__compressed_image_message = compressed_image_message
@@ -1465,17 +1473,17 @@ class NiryoRosWrapper:
         :rtype: (int, str)
         """
         result = self.__call_service('/niryo_robot_rpi/set_digital_io_mode',
-                                     SetDigitalIO, pin_id, pin_mode)
+                                     SetIOMode, pin_id, pin_mode)
         return self.__classic_return_w_check(result)
 
     def digital_write(self, pin_id, digital_state):
         """
         Set pin_id state to pin_state
 
-        :param pin_id:
-        :type pin_id: PinID
+        :param pin_id: The name of the pin
+        :type pin_id: Union[ PinID, str]
         :param digital_state:
-        :type digital_state: PinState
+        :type digital_state: Union[ PinState, bool]
         :return: status, message
         :rtype: (int, str)
         """
@@ -1483,12 +1491,27 @@ class NiryoRosWrapper:
                                      SetDigitalIO, pin_id, digital_state)
         return self.__classic_return_w_check(result)
 
+    def analog_write(self, pin_id, analog_state):
+        """
+        Set pin_id state to pin_state
+
+        :param pin_id: The name of the pin
+        :type pin_id: Union[ PinID, str]
+        :param analog_state:
+        :type analog_state: float
+        :return: status, message
+        :rtype: (int, str)
+        """
+        result = self.__call_service('/niryo_robot_rpi/set_analog_io',
+                                     SetDigitalIO, pin_id, analog_state)
+        return self.__classic_return_w_check(result)
+
     def digital_read(self, pin_id):
         """
         Read pin number pin_id and return its state
 
-        :param pin_id:
-        :type pin_id: PinID
+        :param pin_id: The name of the pin
+        :type pin_id: Union[ PinID, str]
         :return: state
         :rtype: PinState
         """
@@ -1496,10 +1519,54 @@ class NiryoRosWrapper:
                                      GetDigitalIO, pin_id)
         self.__check_result_status(result)
 
-        if result.state == 0:
+        if result.value == 0:
             return PinState.LOW
         else:
             return PinState.HIGH
+
+    def analog_read(self, pin_id):
+        """
+        Read pin number pin_id and return its state
+
+        :param pin_id: The name of the pin
+        :type pin_id: Union[ PinID, str]
+        :return: state
+        :rtype: PinState
+        """
+        result = self.__call_service('/niryo_robot_rpi/get_analog_io',
+                                     GetDigitalIO, pin_id)
+        self.__check_result_status(result)
+        return result.value
+
+    def set_pullup_mode(self, pin_id, enable):
+        """
+        Enable or disable digital intput pullup resistor.
+
+        :param pin_id: The name of the pin
+        :type pin_id: Union[ PinID, str]
+        :param enable: True to enable the input pullup resistor, false otherwise.
+        :type enable: bool
+        :return: status, message
+        :rtype: (int, str)
+        """
+        result = self.__call_service('/niryo_robot_rpi/set_digital_input_pullup',
+                                     SetPullup, pin_id, enable)
+        return self.__classic_return_w_check(result)
+
+    def get_digital_io_state(self):
+        """
+        Get Digital IO state : Names, modes, states
+
+        :return: Infos contains in a IOsState object (see niryo_robot_msgs)
+        :rtype: IOsState
+        """
+        timeout = rospy.get_time() + 2.0
+        while self.__digital_io_state is None:
+            rospy.sleep(0.05)
+            if rospy.get_time() > timeout:
+                raise NiryoRosWrapperException(
+                    'Timeout: could not get digital io state (/niryo_robot_rpi/digital_io_state topic)')
+        return self.__digital_io_state
 
     def get_hardware_version(self):
         """
@@ -1533,21 +1600,6 @@ class NiryoRosWrapper:
                 raise NiryoRosWrapperException(
                     'Timeout: could not get hardware status (/niryo_robot_hardware_interface/hardware_status topic)')
         return self.__hw_status
-
-    def get_digital_io_state(self):
-        """
-        Get Digital IO state : Names, modes, states
-
-        :return: Infos contains in a DigitalIOState object (see niryo_robot_msgs)
-        :rtype: DigitalIOState
-        """
-        timeout = rospy.get_time() + 2.0
-        while self.__digital_io_state is None:
-            rospy.sleep(0.05)
-            if rospy.get_time() > timeout:
-                raise NiryoRosWrapperException(
-                    'Timeout: could not get digital io state (/niryo_robot_rpi/digital_io_state topic)')
-        return self.__digital_io_state
 
     def get_axis_limits(self):
         """

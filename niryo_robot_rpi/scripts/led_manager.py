@@ -18,25 +18,16 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import rospy
-import RPi.GPIO as GPIO
-from threading import Thread
+from threading import Thread, Lock
+from niryo_robot_rpi.rpi_ros_utils import LedState
 
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus
-
-from std_msgs.msg import Bool, Int8
-
+from std_msgs.msg import Int8
 from niryo_robot_msgs.msg import HardwareStatus
 from niryo_robot_msgs.srv import SetInt
-
 from niryo_robot_rpi.srv import LedBlinker
-
-from niryo_robot_rpi.rpi_ros_utils import LedState
-
-# TODO LED_GPIO_R = 18 sur le vrai NED, change ici pour ne pas faire de concurrence au ledring
-LED_GPIO_R = 24
-LED_GPIO_G = 24
-LED_GPIO_B = 22
+from niryo_robot_system_api_client.msg import WifiStatus
 
 LED_OFF = 0
 LED_BLUE = 1
@@ -48,43 +39,48 @@ LED_RED_GREEN = 6
 LED_WHITE = 7
 
 
-class LEDManager:
-    def __init__(self):
-        rospy.logdebug("LEDManager - Entering in Init")
+class LEDManager(object):
+    def __init__(self, lock=None):
+        from niryo_robot_rpi.rpi_io_objects import Led
 
-        # Set warning false, and don't cleanup LED GPIO after exit
-        # So the LED will be red only after the Rpi is shutdown
-        GPIO.setwarnings(False)
-        GPIO.setmode(GPIO.BCM)
-
-        GPIO.setup(rospy.get_param("~led/gpio_r"), GPIO.OUT)
-        GPIO.setup(rospy.get_param("~led/gpio_g"), GPIO.OUT)
-        GPIO.setup(rospy.get_param("~led/gpio_b"), GPIO.OUT)
+        self._red_led = None
+        self._green_led = None
+        self._blue_led = None
 
         rospy.sleep(0.1)
         self.state = LedState.OK
-        self.__led_state_topic = rospy.Publisher('/niryo_robot/rpi/led_state', Int8, latch=True, queue_size=10)
-        self.set_led_from_state(dxl_leds=True)
+        self._led_state_topic = rospy.Publisher('/niryo_robot/rpi/led_state', Int8, latch=True, queue_size=10)
 
-        self.__blinker_thread = None
-        self.__activate_blinker = None
-        self.__blinker_frequency = None
-        self.__blinker_color = None
-        self.__blinker_stop_time = None
+        self._blinker_thread = None
+        self._activate_blinker = None
+        self._blinker_frequency = None
+        self._blinker_color = None
+        self._blinker_stop_time = None
 
-        self.__set_led_state_server = rospy.Service('/niryo_robot/rpi/set_led_state',
-                                                    SetInt, self.__callback_set_led_state)
+        self._set_led_state_server = rospy.Service('/niryo_robot/rpi/set_led_state',
+                                                   SetInt, self._callback_set_led_state)
 
-        self.__set_led_custom_blinker_server = rospy.Service('/niryo_robot_rpi/set_led_custom_blinker',
-                                                             LedBlinker, self.__callback_set_led_custom_blinker)
-
-        # Subscribe to hotspot and hardware status. Those values will override standard states
-        self.hotspot_state_subscriber = rospy.Subscriber('/niryo_robot/wifi/hotspot',
-                                                         Bool, self.__callback_hotspot_state)
+        self._set_led_custom_blinker_server = rospy.Service('/niryo_robot_rpi/set_led_custom_blinker',
+                                                            LedBlinker, self._callback_set_led_custom_blinker)
 
         self.hardware_status_subscriber = rospy.Subscriber('/niryo_robot_hardware_interface/hardware_status',
-                                                           HardwareStatus, self.__callback_hardware_status)
+                                                           HardwareStatus, self._callback_hardware_status)
 
+        # Subscribe to hotspot and hardware status. Those values will override standard states
+        self.wifi_state_subscriber = rospy.Subscriber('/niryo_robot/wifi/status',
+                                                         WifiStatus, self.__callback_wifi_state)
+
+
+        self.set_led_from_state(dxl_leds=True)
+
+        if lock is None:
+            lock = Lock()
+
+        self._red_led = Led(lock, rospy.get_param("~led/r_pin"), "Led Red")
+        self._green_led = Led(lock, rospy.get_param("~led/g_pin"), "Led Green")
+        self._blue_led = Led(lock, rospy.get_param("~led/b_pin"), "Led Blue")
+
+        self.set_led_from_state(dxl_leds=True)
         rospy.loginfo('LED manager has been started.')
 
     @staticmethod
@@ -117,20 +113,12 @@ class LEDManager:
             rospy.logwarn("Could not call niryo_robot/ttl_driver/set_dxl_leds service")
 
     def set_led(self, color, dxl_leds=False):
-        r = GPIO.LOW
-        g = GPIO.LOW
-        b = GPIO.LOW
-
-        if color & 0b100:
-            r = GPIO.HIGH
-        if color & 0b010:
-            g = GPIO.HIGH
-        if color & 0b001:
-            b = GPIO.HIGH
-
-        GPIO.output(rospy.get_param("~led/gpio_r"), r)
-        GPIO.output(rospy.get_param("~led/gpio_g"), g)
-        GPIO.output(rospy.get_param("~led/gpio_b"), b)
+        if self._red_led is not None:
+            self._red_led.value = color & 0b100
+        if self._green_led is not None:
+            self._green_led.value = color & 0b010
+        if self._blue_led is not None:
+            self._blue_led.value = color & 0b001
 
         if dxl_leds:
             self.set_dxl_leds(color)
@@ -149,13 +137,13 @@ class LEDManager:
         else:
             self.set_led(LED_OFF, dxl_leds)
 
-        self.__led_state_topic.publish(self.state)
+        self._led_state_topic.publish(self.state)
 
-    def __callback_hotspot_state(self, msg):
+    def __callback_wifi_state(self, msg):
         if self.state == LedState.SHUTDOWN:
             return
 
-        if msg.data:
+        if msg.status == msg.HOTSPOT:
             if self.state != LedState.HOTSPOT:
                 self.state = LedState.HOTSPOT
                 self.set_led_from_state(dxl_leds=True)
@@ -163,14 +151,14 @@ class LEDManager:
             self.state = LedState.OK
             self.set_led_from_state(dxl_leds=True)
 
-    def __callback_hardware_status(self, msg):
+    def _callback_hardware_status(self, msg):
         # filter error 1 = input voltage
-        if not msg.connection_up or list(msg.hardware_errors) > len(msg.hardware_errors)*[1]:
+        if not msg.connection_up or list(msg.hardware_errors) > len(msg.hardware_errors) * [1]:
             self.set_led(LED_RED, dxl_leds=True)  # blink red
             rospy.sleep(0.05)
             self.set_led_from_state(dxl_leds=True)
 
-    def __callback_set_led_state(self, req):
+    def _callback_set_led_state(self, req):
         state = req.value
         if state == LedState.SHUTDOWN:
             self.state = LedState.SHUTDOWN
@@ -188,27 +176,27 @@ class LEDManager:
             return {'status': CommandStatus.LED_MANAGER_ERROR, 'message': 'Not yet implemented'}
         return {'status': CommandStatus.SUCCESS, 'message': 'Set LED OK'}
 
-    def __callback_set_led_custom_blinker(self, req):
-        self.__activate_blinker = req.activate
-        if self.__activate_blinker:
-            self.__blinker_frequency = rospy.Rate(max(min(100, req.frequency), 1))
-            self.__blinker_color = req.color
+    def _callback_set_led_custom_blinker(self, req):
+        self._activate_blinker = req.activate
+        if self._activate_blinker:
+            self._blinker_frequency = rospy.Rate(max(min(100, req.frequency), 1))
+            self._blinker_color = req.color
             if req.blinker_duration > 0:
-                self.__blinker_stop_time = rospy.Time.now() + rospy.Duration.from_sec(req.blinker_duration)
+                self._blinker_stop_time = rospy.Time.now() + rospy.Duration.from_sec(req.blinker_duration)
             else:
-                self.__blinker_stop_time = None
-            if not self.__blinker_thread or not self.__blinker_thread.is_alive():
-                self.__blinker_thread = Thread(target=self.blinker, name="led_blinker_thread")
-                self.__blinker_thread.start()
+                self._blinker_stop_time = None
+            if not self._blinker_thread or not self._blinker_thread.is_alive():
+                self._blinker_thread = Thread(target=self.blinker, name="led_blinker_thread")
+                self._blinker_thread.start()
 
         return CommandStatus.SUCCESS, "Success"
 
     def blinker(self):
-        while not rospy.is_shutdown() and self.__activate_blinker:
-            self.set_led(self.__blinker_color)
-            self.__blinker_frequency.sleep()
+        while not rospy.is_shutdown() and self._activate_blinker:
+            self.set_led(self._blinker_color)
+            self._blinker_frequency.sleep()
             self.set_led_from_state()
-            self.__blinker_frequency.sleep()
+            self._blinker_frequency.sleep()
 
-            if self.__blinker_stop_time and rospy.Time.now() >= self.__blinker_stop_time:
+            if self._blinker_stop_time and rospy.Time.now() >= self._blinker_stop_time:
                 return

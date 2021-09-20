@@ -5,7 +5,7 @@
     <arg name="hardware_version" default="ned"/>
     <arg name="gazebo" default="false"/>
 
-    <include file="$(find niryo_robot_arm_commander)/launch/robot_commander_base.launch.xml"> 
+    <include file="$(find niryo_robot_arm_commander)/launch/robot_commander_base.launch.xml">
         <arg name="hardware_version" value="$(arg hardware_version)" />
     </include>
 

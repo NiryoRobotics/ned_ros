@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
 import rospy
-import rospkg
 import subprocess
-import re
 
-from niryo_robot_msgs.srv import SetBool, SetInt, Trigger
+from niryo_robot_msgs.srv import SetBool, Trigger
+from niryo_robot_msgs.srv import SetInt
+from niryo_robot_system_api_client.srv import ManageWifi, ManageWifiRequest
 from niryo_robot_msgs.msg import CommandStatus
 
 ENABLE_BUS_MOTORS_SUCCESS = 1
@@ -32,13 +32,33 @@ class LedState:
 
 def send_hotspot_command():
     rospy.loginfo("HOTSPOT")
-    send_led_state(LedState.WAIT_HOTSPOT)
-    rospy.wait_for_service('/niryo_robot/wifi/set_hotspot', timeout=0.5)
+    # send_led_state(LedState.WAIT_HOTSPOT)
+    rospy.wait_for_service('/niryo_robot/wifi/manage', timeout=0.5)
     try:
-        set_hotspot = rospy.ServiceProxy('/niryo_robot/wifi/set_hotspot', SetInt)
-        set_hotspot()
+        set_hotspot = rospy.ServiceProxy('/niryo_robot/wifi/manage', ManageWifi)
+        set_hotspot(ManageWifiRequest.HOTSPOT)
     except rospy.ServiceException:
-        rospy.logwarn("Could not call set_hotspot service")
+        rospy.logwarn("Could not call /niryo_robot/wifi/manage service")
+
+
+def send_restart_wifi_command():
+    rospy.loginfo("RESTART_WIFI")
+    rospy.wait_for_service('/niryo_robot/wifi/manage', timeout=0.5)
+    try:
+        set_hotspot = rospy.ServiceProxy('/niryo_robot/wifi/manage', ManageWifi)
+        set_hotspot(ManageWifiRequest.RESTART)
+    except rospy.ServiceException:
+        rospy.logwarn("Could not call /niryo_robot/wifi/manage service")
+
+
+def send_deactivate_wifi_command():
+    rospy.loginfo("DEACTIVATE_WIFI")
+    rospy.wait_for_service('/niryo_robot/wifi/manage', timeout=0.5)
+    try:
+        set_hotspot = rospy.ServiceProxy('/niryo_robot/wifi/manage', ManageWifi)
+        set_hotspot(ManageWifiRequest.DEACTIVATE)
+    except rospy.ServiceException:
+        rospy.logwarn("Could not call /niryo_robot/wifi/manage service")
 
 
 def send_trigger_program_autorun():
@@ -123,6 +143,16 @@ def activate_learning_mode(activate):
     try:
         rospy.wait_for_service('/niryo_robot/learning_mode/activate', timeout=0.5)
         rospy.ServiceProxy('/niryo_robot/learning_mode/activate', SetBool)(activate)
+
+    except (rospy.ServiceException, rospy.ROSException) as e:
+        return False
+    return True
+
+
+def auto_calibration():
+    try:
+        rospy.wait_for_service('/niryo_robot/joints_interface/calibrate_motors', timeout=0.5)
+        rospy.ServiceProxy('/niryo_robot/joints_interface/calibrate_motors', SetInt)(1)
 
     except (rospy.ServiceException, rospy.ROSException) as e:
         return False

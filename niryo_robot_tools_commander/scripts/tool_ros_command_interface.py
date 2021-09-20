@@ -6,12 +6,11 @@ import rospy
 from niryo_robot_msgs.msg import CommandStatus
 
 # Services
-from niryo_robot_rpi.srv import SetDigitalIO
-
 from tools_interface.srv import PingDxlTool
 from tools_interface.srv import OpenGripper, CloseGripper
 from tools_interface.srv import PullAirVacuumPump, PushAirVacuumPump
-
+from niryo_robot_rpi.srv import SetDigitalIO
+from niryo_robot_rpi.srv import SetIOMode
 
 class ToolRosCommandInterface:
 
@@ -29,10 +28,8 @@ class ToolRosCommandInterface:
 
         self.__service_ping_dxl_tool = rospy.ServiceProxy(namespace + 'ping_and_set_dxl_tool', PingDxlTool)
 
-        self.__service_setup_digital_output_tool = rospy.ServiceProxy('/niryo_robot_rpi/set_digital_io_mode',
-                                                                      SetDigitalIO)
-        self.__service_activate_digital_output_tool = rospy.ServiceProxy('/niryo_robot_rpi/set_digital_io_state',
-                                                                         SetDigitalIO)
+        self.__service_setup_digital_output_tool = rospy.ServiceProxy('~set_digital_io', SetDigitalIO)
+        self.__service_activate_digital_output_tool = rospy.ServiceProxy('~set_digital_io_mode', SetIOMode)
 
         self.__state_ros_communication_problem = state_ros_communication_problem
         rospy.logdebug("Interface between Tools Commander and ROS Control has been started.")
@@ -94,7 +91,7 @@ class ToolRosCommandInterface:
 
     def digital_output_tool_setup(self, gpio_pin):
         try:
-            resp = self.__service_setup_digital_output_tool(gpio_pin, 0)  # set output
+            resp = self.__service_setup_digital_output_tool(gpio_pin, SetDigitalIO.Request.OUTPUT)  # set output
             return resp.status, resp.message
         except rospy.ServiceException:
             rospy.logerr("ROS Tool Interface - Failed to get digital output setup")

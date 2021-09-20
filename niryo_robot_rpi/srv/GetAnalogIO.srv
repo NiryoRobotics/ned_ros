@@ -1,0 +1,6 @@
+string name
+---
+int32 status
+string message
+
+float64 value
