@@ -51,6 +51,7 @@ class IBusManager
         virtual bool ping(uint8_t id) = 0;
 
         virtual size_t getNbMotors() const = 0;
+        virtual std::vector<uint8_t> getRemovedMotorList() const = 0;
         virtual void getBusState(bool& connection_state, std::vector<uint8_t>& motor_id, std::string& debug_msg) const = 0;
         virtual std::string getErrorMessage() const = 0;
 

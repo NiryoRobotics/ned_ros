@@ -21,6 +21,7 @@
 #define CAN_DRIVER_H
 
 // std
+#include <cstdint>
 #include <memory>
 #include <functional>
 #include <string>
@@ -30,6 +31,7 @@
 
 // ros
 #include <ros/ros.h>
+#include <vector>
 
 
 // niryo
@@ -95,6 +97,7 @@ class CanManager : public common::model::IBusManager
         std::vector<std::shared_ptr<common::model::JointState> > getMotorsStates() const;
         std::shared_ptr<common::model::AbstractHardwareState> getHardwareState(uint8_t motor_id) const;
 
+        std::vector<uint8_t> getRemovedMotorList() const override;
     private:
         int setupCommunication() override;
         void addHardwareDriver(common::model::EHardwareType hardware_type) override;
@@ -108,6 +111,7 @@ class CanManager : public common::model::IBusManager
         std::shared_ptr<mcp_can_rpi::MCP_CAN> _mcp_can;
 
         std::vector<uint8_t> _all_motor_connected; // with all can motors connected (including the conveyor)
+        std::vector<uint8_t> _removed_motor_id_list;
 
         // state of a component for a given id
         std::map<uint8_t, std::shared_ptr<common::model::AbstractHardwareState> > _state_map;
@@ -145,6 +149,16 @@ inline
 size_t CanManager::getNbMotors() const
 {
     return _state_map.size();
+}
+
+/**
+ * @brief TtlManager::getRemovedMotorList
+ * @return
+ */
+inline
+std::vector<uint8_t> CanManager::getRemovedMotorList() const
+{
+    return _removed_motor_id_list;
 }
 
 /**

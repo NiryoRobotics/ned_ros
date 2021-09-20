@@ -451,20 +451,26 @@ void ConveyorInterfaceCore::_publishConveyorsFeedback()
     {
         conveyor_interface::ConveyorFeedbackArray msg;
         conveyor_interface::ConveyorFeedback data;
-
         for (auto conveyor_state : _conveyor_states)
         {
             if (std::find(_current_conveyor_id_list.begin(), _current_conveyor_id_list.end(), conveyor_state->getId()) != _current_conveyor_id_list.end())
             {
-                data.conveyor_id = conveyor_state->getId();
-                data.running = conveyor_state->getState();
+                if (!_conveyor_driver->scanMotorId(conveyor_state->getId()))
+                {
+                    removeConveyor(conveyor_state->getId());
+                }
+                else
+                {
+                    data.conveyor_id = conveyor_state->getId();
+                    data.running = conveyor_state->getState();
 
-                // TODO(CC) implicit conversion loses integer precision
-                data.direction = static_cast<int8_t>(conveyor_state->getDirection());
-                data.speed = conveyor_state->getSpeed();
-                msg.conveyors.push_back(data);
+                    // TODO(CC) implicit conversion loses integer precision
+                    data.direction = static_cast<int8_t>(conveyor_state->getDirection());
+                    data.speed = conveyor_state->getSpeed();
+                    msg.conveyors.push_back(data);
 
-                ROS_DEBUG("ConveyorInterfaceCore::_publishConveyorsFeedback - Found a conveyor, publishing data : %s", conveyor_state->str().c_str());
+                    ROS_DEBUG("ConveyorInterfaceCore::_publishConveyorsFeedback - Found a conveyor, publishing data : %s", conveyor_state->str().c_str());
+                }
             }
         }
         _conveyors_feedback_publisher.publish(msg);

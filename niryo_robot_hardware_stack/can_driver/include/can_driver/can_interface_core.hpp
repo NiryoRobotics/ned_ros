@@ -28,6 +28,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <mutex>
 #include <functional>
 #include <queue>
+#include <vector>
 
 #include "common/model/hardware_type_enum.hpp"
 #include "common/model/i_driver_core.hpp"
@@ -101,6 +102,7 @@ class CanInterfaceCore : public common::model::IDriverCore, public common::model
         niryo_robot_msgs::BusState getBusState() const override;
         virtual common::model::EBusProtocol getBusProtocol() const override;
 
+        std::vector<uint8_t> getRemovedMotorList() const override;
     private:
         virtual void initParameters(ros::NodeHandle &nh) override;
         virtual void startServices(ros::NodeHandle &nh) override;

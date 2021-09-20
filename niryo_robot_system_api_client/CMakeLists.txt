@@ -2,17 +2,37 @@ cmake_minimum_required(VERSION 3.0.2)
 project(niryo_robot_system_api_client)
 message("\n## Reading ${PROJECT_NAME}/CMakeLists.txt...")
 
-find_package(catkin REQUIRED
+find_package(catkin REQUIRED COMPONENTS
+  message_generation
 )
 
 # enable python module support
 catkin_python_setup()
 
-catkin_package()
+add_message_files(
+  FILES
+  WifiStatus.msg
+)
+
+add_service_files(
+  DIRECTORY srv
+  FILES
+  ManageWifi.srv
+)
+
+generate_messages(
+  DEPENDENCIES
+)
+
+catkin_package(
+  CATKIN_DEPENDS
+  message_runtime
+)
 
 include_directories(
   ${catkin_INCLUDE_DIRS}
 )
+
 
 #############
 ##   Doc   ##

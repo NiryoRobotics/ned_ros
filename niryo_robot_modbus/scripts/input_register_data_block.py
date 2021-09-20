@@ -2,6 +2,7 @@
 
 import rospy
 from data_block import DataBlock
+from collections import OrderedDict
 
 # Messages
 from sensor_msgs.msg import JointState
@@ -10,6 +11,8 @@ from std_msgs.msg import Bool, Int32
 from conveyor_interface.msg import ConveyorFeedbackArray
 from niryo_robot_msgs.msg import HardwareStatus, RobotState, SoftwareVersion
 from niryo_robot_rpi.msg import LogStatus
+from niryo_robot_rpi.msg import AnalogIOState
+from niryo_robot_rpi.srv import SetIOModeRequest
 
 """
  - Each address contains a 16 bits value
@@ -17,6 +20,7 @@ from niryo_robot_rpi.msg import LogStatus
 
  --> State of the robot
 """
+MULT = 1000
 
 IR_JOINTS = 0
 IR_POSITION_X = 10
@@ -50,6 +54,18 @@ IR_CONVEYOR_2_CONTROL_STATUS = 541
 IR_CONVEYOR_2_SPEED = 542
 IR_CONVEYOR_2_DIRECTION = 543
 
+IR_AIO_MODE = 600
+IR_AIO_STATE = 610
+
+AIO_MODE_OUTPUT = SetIOModeRequest.OUTPUT
+AIO_MODE_INPUT = SetIOModeRequest.INPUT
+
+AIO_NAME_TO_ADDRESS = OrderedDict({"AI0": 0,
+                           "AI1": 1,
+                           "AI2": 2,
+                           "AO0": 3,
+                           "AO1": 4, })
+
 
 def handle_negative(val):
     """
@@ -73,6 +89,7 @@ class InputRegisterDataBlock(DataBlock):
         self.ros_log_status_sub = None
         self.software_version_sub = None
         self.conveyor_feedback_sub = None
+        self.analog_io_state_sub = None
 
     def start_ros_subscribers(self):
         self.joint_state_sub = rospy.Subscriber('/joint_states', JointState, self.sub_joint_states)
@@ -86,9 +103,10 @@ class InputRegisterDataBlock(DataBlock):
                                                    self.sub_ros_log_status)
         self.software_version_sub = rospy.Subscriber('/niryo_robot_hardware_interface/software_version',
                                                      SoftwareVersion, self.sub_software_version)
-
         self.conveyor_feedback_sub = rospy.Subscriber('/niryo_robot/conveyor/feedback', ConveyorFeedbackArray,
                                                       self.sub_conveyor_feedback)
+        self.analog_io_state_sub = rospy.Subscriber('/niryo_robot_rpi/analog_io_state', AnalogIOState,
+                                                    self.sub_analog_io_state)
 
     def stop_ros_subscribers(self):
         self.joint_state_sub.unregister()
@@ -99,23 +117,24 @@ class InputRegisterDataBlock(DataBlock):
         self.ros_log_status_sub.unregister()
         self.software_version_sub.unregister()
         self.conveyor_feedback_sub.unregister()
+        self.analog_io_state_sub.unregister()
 
     def sub_joint_states(self, msg):
         joints = []
         for i, joint in enumerate(msg.position):
-            joints.append(handle_negative(int(joint * 1000)))
+            joints.append(handle_negative(int(joint * MULT)))
 
         self.setValuesOffset(IR_JOINTS, joints)
 
     def sub_robot_state(self, msg):
         pos = msg.position
         rpy = msg.rpy
-        self.setValuesOffset(IR_POSITION_X, handle_negative(int(pos.x * 1000)))
-        self.setValuesOffset(IR_POSITION_Y, handle_negative(int(pos.y * 1000)))
-        self.setValuesOffset(IR_POSITION_Z, handle_negative(int(pos.z * 1000)))
-        self.setValuesOffset(IR_ORIENTATION_X, handle_negative(int(rpy.roll * 1000)))
-        self.setValuesOffset(IR_ORIENTATION_Y, handle_negative(int(rpy.pitch * 1000)))
-        self.setValuesOffset(IR_ORIENTATION_Z, handle_negative(int(rpy.yaw * 1000)))
+        self.setValuesOffset(IR_POSITION_X, handle_negative(int(pos.x * MULT)))
+        self.setValuesOffset(IR_POSITION_Y, handle_negative(int(pos.y * MULT)))
+        self.setValuesOffset(IR_POSITION_Z, handle_negative(int(pos.z * MULT)))
+        self.setValuesOffset(IR_ORIENTATION_X, handle_negative(int(rpy.roll * MULT)))
+        self.setValuesOffset(IR_ORIENTATION_Y, handle_negative(int(rpy.pitch * MULT)))
+        self.setValuesOffset(IR_ORIENTATION_Z, handle_negative(int(rpy.yaw * MULT)))
 
     def sub_selected_tool_id(self, msg):
         value = int(msg.data)
@@ -156,3 +175,12 @@ class InputRegisterDataBlock(DataBlock):
             self.setValuesOffset(IR_CONVEYOR_2_CONTROL_STATUS, int(conveyor_2.running))
             self.setValuesOffset(IR_CONVEYOR_2_SPEED, int(conveyor_2.speed))
             self.setValuesOffset(IR_CONVEYOR_2_DIRECTION, handle_negative(int(conveyor_2.direction)))
+
+    def sub_analog_io_state(self, msg):
+        for ain in msg.analog_inputs:
+            self.setValuesOffset(IR_AIO_MODE + AIO_NAME_TO_ADDRESS[ain.name], AIO_MODE_INPUT)
+            self.setValuesOffset(IR_AIO_STATE + AIO_NAME_TO_ADDRESS[ain.name], int(ain.value * MULT))
+
+        for aout in msg.analog_outputs:
+            self.setValuesOffset(IR_AIO_MODE + AIO_NAME_TO_ADDRESS[aout.name], AIO_MODE_OUTPUT)
+            self.setValuesOffset(IR_AIO_STATE + AIO_NAME_TO_ADDRESS[aout.name], int(aout.value * MULT))

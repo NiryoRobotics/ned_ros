@@ -351,16 +351,18 @@ bool TtlManager::ping(uint8_t id)
 {
     int result = false;
 
-    if (_state_map.find(id) == _state_map.end())
-        return result;
-
-    auto it = _driver_map.at(_state_map.find(id)->second->getHardwareType());
-    if (it)
+    auto state = _state_map.find(id);
+    if (state != _state_map.end() && state->second && _driver_map.find(state->second->getHardwareType()) != _driver_map.end())
     {
-        result = (COMM_SUCCESS == it->ping(id));
+        auto it = _driver_map.at(state->second->getHardwareType());
+        if (it)
+        {
+            if (COMM_SUCCESS == it->ping(id))
+                result = true;
+        }
     }
-    else
-        ROS_ERROR_THROTTLE(1, "TtlManager::ping - the dynamixel drivers seeems uninitialized");
+
+    ROS_DEBUG_THROTTLE(1, "TtlManager::ping with result %d", result);
 
     return result;
 }

@@ -3,7 +3,7 @@
 import rospy
 import actionlib
 import threading
-
+from collections import OrderedDict
 from data_block import DataBlock
 
 import pymodbus
@@ -45,6 +45,7 @@ from niryo_robot_arm_commander.msg import RobotMoveActionGoal
  ( ! the stored values correspond to the last given command,
  not the current robot state !)
 """
+MULT = 1000.0
 
 HR_JOINTS = 0
 HR_POSITION_X = 10
@@ -125,6 +126,13 @@ HR_WORKSPACE_NAME = 626
 
 # Use next registers at address 641.
 
+HR_SET_ANALOG_IO = 700
+
+AIO_ADDRESS_TO_NAME = OrderedDict({0: "AI0",
+                                   1: "AI1",
+                                   2: "AI2",
+                                   3: "AO0",
+                                   4: "AO1", })
 
 # Positive number : 0 - 32767
 # Negative number : 32768 - 65535
@@ -292,6 +300,9 @@ class HoldingRegisterDataBlock(DataBlock):
         elif address == HR_YAW_REL:
             self.update_yaw_rel(values[0])
 
+        elif address == HR_SET_ANALOG_IO:
+            self.analog_write(values)
+
     # - Methods definition
 
     def request_new_calibration(self):
@@ -313,6 +324,15 @@ class HoldingRegisterDataBlock(DataBlock):
         if self.is_action_client_running:
             self.cmd_action_client.cancel_goal()
 
+    def analog_write(self, values):
+        from niryo_robot_rpi.srv import SetAnalogIO
+
+        if len(values) >= 2:
+            pin_id, analog_state = values[0], values[1] / MULT
+            if pin_id in AIO_ADDRESS_TO_NAME:
+                _result = self.call_ros_service('/niryo_robot_rpi/set_analog_io', SetAnalogIO,
+                                                AIO_ADDRESS_TO_NAME[pin_id], analog_state)
+
     def update_tool(self):
         response = self.call_ros_service('/niryo_robot_tools_commander/update_tool', Trigger)
         response_list = response.message.split(" : ")
@@ -333,21 +353,21 @@ class HoldingRegisterDataBlock(DataBlock):
         joints_raw_values = self.getValuesOffset(HR_JOINTS, 6)
         joints = []
         for j in joints_raw_values:
-            joints.append(handle_negative_hr(j) / 1000.0)
+            joints.append(handle_negative_hr(j) / MULT)
         self.move_joints(joints)
 
     def move_pose_command(self):
         pose_raw_values = self.getValuesOffset(HR_POSITION_X, 6)
         pose = []
         for p in pose_raw_values:
-            pose.append(handle_negative_hr(p) / 1000.0)
+            pose.append(handle_negative_hr(p) / MULT)
         self.move_pose(pose)
 
     def move_linear_pose_command(self):
         pose_raw_values = self.getValuesOffset(HR_POSITION_X, 6)
         pose = []
         for p in pose_raw_values:
-            pose.append(handle_negative_hr(p) / 1000.0)
+            pose.append(handle_negative_hr(p) / MULT)
         self.move_linear_pose(pose)
 
     def open_gripper(self, gripper_id, speed):
@@ -566,7 +586,7 @@ class HoldingRegisterDataBlock(DataBlock):
         from niryo_robot_tools_commander.srv import SetTCP, SetTCPRequest
         from geometry_msgs.msg import Point
 
-        tcp = [handle_negative_hr(axis) / 1000.0 for axis in tcp_rpy_raw_values]
+        tcp = [handle_negative_hr(axis) / MULT for axis in tcp_rpy_raw_values]
 
         req = SetTCPRequest()
         req.position = Point(*tcp[:3])
@@ -931,16 +951,16 @@ class HoldingRegisterDataBlock(DataBlock):
         self.vision_color = ColorRequest(color_nb).name
 
     def update_height_offset(self, value):
-        self.height_offset = handle_negative_hr(value) / 1000.0
+        self.height_offset = handle_negative_hr(value) / MULT
 
     def update_x_rel(self, value):
-        self.x_rel = handle_negative_hr(value) / 1000.0
+        self.x_rel = handle_negative_hr(value) / MULT
 
     def update_y_rel(self, value):
-        self.y_rel = handle_negative_hr(value) / 1000.0
+        self.y_rel = handle_negative_hr(value) / MULT
 
     def update_yaw_rel(self, value):
-        self.yaw_rel = handle_negative_hr(value) / 1000.0
+        self.yaw_rel = handle_negative_hr(value) / MULT
 
     @staticmethod
     def update_pose(pose_obj, pose_value):
@@ -952,12 +972,12 @@ class HoldingRegisterDataBlock(DataBlock):
         :type pose_value: list[int]
         """
         if len(pose_value) == 6:
-            pose_obj.position.x = handle_negative_hr(pose_value[0]) / 1000.0
-            pose_obj.position.y = handle_negative_hr(pose_value[1]) / 1000.0
-            pose_obj.position.z = handle_negative_hr(pose_value[2]) / 1000.0
-            pose_obj.rpy.roll = handle_negative_hr(pose_value[3]) / 1000.0
-            pose_obj.rpy.pitch = handle_negative_hr(pose_value[4]) / 1000.0
-            pose_obj.rpy.yaw = handle_negative_hr(pose_value[5]) / 1000.0
+            pose_obj.position.x = handle_negative_hr(pose_value[0]) / MULT
+            pose_obj.position.y = handle_negative_hr(pose_value[1]) / MULT
+            pose_obj.position.z = handle_negative_hr(pose_value[2]) / MULT
+            pose_obj.rpy.roll = handle_negative_hr(pose_value[3]) / MULT
+            pose_obj.rpy.pitch = handle_negative_hr(pose_value[4]) / MULT
+            pose_obj.rpy.yaw = handle_negative_hr(pose_value[5]) / MULT
 
     @staticmethod
     def update_point(point_obj, point_value):
@@ -969,9 +989,9 @@ class HoldingRegisterDataBlock(DataBlock):
         :type point_value: list[int]
         """
         if len(point_value) == 3:
-            point_obj.x = handle_negative_hr(point_value[0]) / 1000.0
-            point_obj.y = handle_negative_hr(point_value[1]) / 1000.0
-            point_obj.z = handle_negative_hr(point_value[2]) / 1000.0
+            point_obj.x = handle_negative_hr(point_value[0]) / MULT
+            point_obj.y = handle_negative_hr(point_value[1]) / MULT
+            point_obj.z = handle_negative_hr(point_value[2]) / MULT
 
     # - usefull methods
 

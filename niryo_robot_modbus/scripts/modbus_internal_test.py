@@ -5,8 +5,8 @@
 from pymodbus.client.sync import ModbusTcpClient
 
 from input_register_data_block import *
-from discrete_input_data_block import *
-from coil_data_block import *
+from coil_data_block import CoilDataBlock
+from discrete_input_data_block import DiscreteInputDataBlock
 from holding_register_data_block import *
 
 import time
@@ -31,40 +31,48 @@ def wait_end_of_execution(client):
 
 
 def test_coil_data(client):
+    dios = DiscreteInputDataBlock.DIO_ADDRESS.items()
+    nb_dios = len(dios)
     print("---- COIL DATA BLOCK TEST BEGINS ----")
+    digital_IO_modes = client.read_discrete_inputs(DiscreteInputDataBlock.DI_IO_MODE, nb_dios)
+    print("BEFORE MODIFICATION DIGITAL IO MODES: {}".format(digital_IO_modes.bits[:nb_dios]))
 
-    digital_IO_modes = client.read_discrete_inputs(DI_DIGITAL_IO_MODE, 8)
-    print("BEFORE MODIFICATION DIGITAL IO MODES: {}".format(digital_IO_modes.bits))
-
-    digital_IO_states = client.read_discrete_inputs(DI_DIGITAL_IO_STATE, 8)
-    print("BEFORE MODIFICATION DIGITAL IO STATES: {}".format(digital_IO_states.bits))
+    digital_IO_states = client.read_discrete_inputs(DiscreteInputDataBlock.DI_IO_STATE, nb_dios)
+    print("BEFORE MODIFICATION DIGITAL IO STATES: {}".format(digital_IO_states.bits[:nb_dios]))
 
     # Set digital IO mode - output
-    client.write_coil(0, False)
-    client.write_coil(3, False)
+    client.write_coil(CoilDataBlock.CO_IO_MODE + dios[0][1], CoilDataBlock.DIO_MODE_OUTPUT)
+    client.write_coil(CoilDataBlock.CO_IO_MODE + dios[1][1], CoilDataBlock.DIO_MODE_OUTPUT)
 
     # Set digital IO state
-    client.write_coil(100, False)
-    client.write_coil(103, True)
+    client.write_coil(CoilDataBlock.CO_IO_STATE + dios[0][1], False)
+    client.write_coil(CoilDataBlock.CO_IO_STATE + dios[1][1], True)
 
     time.sleep(0.2)
+    a1_mode = client.read_discrete_inputs(DiscreteInputDataBlock.DI_IO_MODE + dios[1][1], count=1)
+    print("{} IO MODES: {}".format(dios[1][0], a1_mode.bits[0]))
 
-    digital_IO_modes = client.read_discrete_inputs(DI_DIGITAL_IO_MODE, 8)
-    print("AFTER MODIFICATION DIGITAL IO MODES: {}".format(digital_IO_modes.bits))
+    a1_state = client.read_discrete_inputs(DiscreteInputDataBlock.DI_IO_STATE + dios[1][1], count=1)
+    print("{} IO STATES: {}".format(dios[1][0], a1_state.bits[0]))
 
-    digital_IO_states = client.read_discrete_inputs(DI_DIGITAL_IO_STATE, 8)
-    print("AFTER MODIFICATION DIGITAL IO STATES: {}".format(digital_IO_states.bits))
+    digital_IO_modes = client.read_discrete_inputs(DiscreteInputDataBlock.DI_IO_MODE, nb_dios)
+    print("AFTER MODIFICATION DIGITAL IO MODES: {}".format(digital_IO_modes.bits[:nb_dios]))
+
+    digital_IO_states = client.read_discrete_inputs(DiscreteInputDataBlock.DI_IO_STATE, nb_dios)
+    print("AFTER MODIFICATION DIGITAL IO STATES: {}".format(digital_IO_states.bits[:nb_dios]))
 
     print("---- COIL DATA BLOCK TEST ENDS ----")
 
 
 def test_discrete_input(client):
+    dios = DiscreteInputDataBlock.DIO_ADDRESS.items()
+    nb_dios = len(dios)
     print("---- DISCRETE INPUT TEST BEGINS ----")
 
-    digital_IO_modes = client.read_discrete_inputs(DI_DIGITAL_IO_MODE, 8)
+    digital_IO_modes = client.read_discrete_inputs(DiscreteInputDataBlock.DI_IO_MODE, nb_dios)
     print("DIGITAL IO MODES: {}".format(digital_IO_modes.bits))
 
-    digital_IO_states = client.read_discrete_inputs(DI_DIGITAL_IO_STATE, 8)
+    digital_IO_states = client.read_discrete_inputs(DiscreteInputDataBlock.DI_IO_STATE, nb_dios)
     print("DIGITAL IO STATES: {}".format(digital_IO_states.bits))
 
     print("---- DISCRETE INPUT TEST ENDS ----")
@@ -108,6 +116,12 @@ def test_input_register(client):
     print("CONVEYOR 1 CONTROL STATUS: {}".format(conveyor_2_registers.registers[1]))
     print("CONVEYOR 1 SPEED: {}".format(conveyor_2_registers.registers[2]))
     print("CONVEYOR 1 DIRECTION: {}".format(conveyor_2_registers.registers[3]))
+
+    nb_aio = len(AIO_ADDRESS_TO_NAME)
+    aio_mode_registers = client.read_input_registers(IR_AIO_MODE, nb_aio)
+    print("ANALOG IOs MODE: {}".format(aio_mode_registers.registers[:nb_aio]))
+    aio_state_registers = client.read_input_registers(IR_AIO_STATE, nb_aio)
+    print("ANALOG IOs STATE: {}".format(aio_state_registers.registers[:nb_aio]))
 
     print("---- INPUT REGISTERS TEST ENDS ----")
 
@@ -205,6 +219,24 @@ def test_holding_register(client):
     else:
         print("No conveyor scanned :'(")
     print("---- CONVEYOR HOLDING REGISTER TEST ENDS ----")
+
+    print("---- ANALOG IO HOLDING REGISTER TEST BEGINS ----")
+    nb_aio = len(AIO_NAME_TO_ADDRESS)
+    aio_mode_registers = client.read_input_registers(IR_AIO_MODE, nb_aio)
+    print("ANALOG IOs MODE: {}".format(aio_mode_registers.registers))
+    old_aio_state_registers = client.read_input_registers(IR_AIO_STATE, nb_aio)
+    print("ANALOG IOs STATE: {}".format(old_aio_state_registers.registers))
+    print AIO_NAME_TO_ADDRESS.items()[0]
+    client.write_registers(HR_SET_ANALOG_IO, [AIO_NAME_TO_ADDRESS.items()[0][1], 5000])
+
+    print("ANALOG IOs MODE: {}".format(aio_mode_registers.registers))
+    aio_state_registers = client.read_input_registers(IR_AIO_STATE, nb_aio)
+    print("ANALOG IOs STATE: {}".format(aio_state_registers.registers))
+
+    client.write_registers(HR_SET_ANALOG_IO, [ AIO_NAME_TO_ADDRESS.items()[0][1], old_aio_state_registers.registers[-1]])
+
+    print("---- ANALOG IO HOLDING REGISTER TEST ENDS ----")
+
     print("---- HOLDING REGISTER TEST ENDS ----")
 
 

@@ -229,9 +229,10 @@ void ToolsInterfaceCore::pubToolId(int id)
 bool ToolsInterfaceCore::_callbackPingAndSetTool(tools_interface::PingDxlTool::Request &/*req*/,
                                                  tools_interface::PingDxlTool::Response &res)
 {
-    lock_guard<mutex> lck(_tool_mutex);
+    res.id = -1;
     res.state = ToolState::TOOL_STATE_PING_ERROR;
 
+    std::lock_guard<mutex> lck(_tool_mutex);
     // Unequip tool
     if (_toolState && _toolState->isValid())
     {
@@ -543,24 +544,33 @@ void ToolsInterfaceCore::_publishToolConnection()
     ros::Rate check_connection_rate = ros::Rate(_check_tool_connection_frequency);
     std_msgs::Int32 msg;
 
+    int tool_ping_failed_cnt = 0;
+
     while (ros::ok())
     {
         {
             lock_guard<mutex> lck(_tool_mutex);
-            std::vector<uint8_t> motor_list = _ttl_interface->getRemovedMotorList();
 
             if (_toolState && _toolState->isValid())
             {
-                for (auto const& motor : motor_list)
+                if (_ttl_interface && !_ttl_interface->scanMotorId(_toolState->getId()))
                 {
-                    if (_toolState->getId() == motor)
+                    // try 3 times to ping tool, ttl failed to ping tool sometimes
+                    if (tool_ping_failed_cnt == 3)
                     {
                         ROS_INFO("Tools Interface - Unset Current Tools");
                         _ttl_interface->unsetTool(_toolState->getId());
                         _toolState->reset();
                         msg.data = -1;
                         _tool_connection_publisher.publish(msg);
+                        tool_ping_failed_cnt = 0;
                     }
+                    else
+                        tool_ping_failed_cnt++;
+                }
+                else
+                {
+                    tool_ping_failed_cnt = 0;
                 }
             }
             else

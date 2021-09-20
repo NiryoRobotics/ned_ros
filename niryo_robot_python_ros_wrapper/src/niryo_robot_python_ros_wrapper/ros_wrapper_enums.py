@@ -51,8 +51,8 @@ class PinState:
     def __init__(self):
         pass
 
-    LOW = 0
-    HIGH = 1
+    LOW = False
+    HIGH = True
 
 
 class PinID:
@@ -210,6 +210,8 @@ class CommandEnum(Enum):
     DIGITAL_READ = 152
     GET_DIGITAL_IO_STATE = 153
     GET_HARDWARE_STATUS = 154
+    ANALOG_WRITE = 155
+    ANALOG_READ = 156
 
     # - Conveyor
     SET_CONVEYOR = 180

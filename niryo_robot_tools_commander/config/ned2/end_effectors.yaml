@@ -1,0 +1,168 @@
+# Config for all the end-effectors
+
+command_list:
+  # Gripper
+  open_gripper: 1
+  close_gripper: 2
+  # Vacuump pump
+  pull_air_vacuum_pump: 10
+  push_air_vacuum_pump: 11
+  # Tools controlled by digital I/Os
+  setup_digital_io: 20
+  activate_digital_io: 21
+  deactivate_digital_io: 22
+
+state_dict:
+  ping_ok: 0x01
+  ping_error: 0x02
+  wrong_id: 0x03
+  timeout: 0x04
+
+  gripper_open: 0x10
+  gripper_close: 0x11
+
+  vacuum_pump_pulled: 0x20
+  vacuum_pump_pushed: 0x21
+
+  ros_communication_problem: 0xA0
+
+namespace_topics: "/niryo_robot/tools/"
+
+# - MoveIt! simulation params
+reference_frame: world
+move_group_tool_commander_name: tool
+
+# Important note:
+# All the values finishing with "_hold_torque" have been computed so the
+# DXL-320 motor won't become too hot.
+# If you increase those values you may destroy (burn) the motor after a few minutes.
+
+tool_list:
+  - name: "No Tool"
+    type: "no_tool"
+    id: 0
+    specs:
+      [ ]
+    available_commands:
+      [ ]
+    transformation:
+      translation: [0.0, 0.0, 0.0]
+      quaternion: [0.0, 0.0, 0.0, 1.0]
+  - name: "Gripper 1"
+    type: "gripper"
+    id: 11
+    available_commands:
+      - open_gripper
+      - close_gripper
+    specs:
+      open_position: 600
+      open_hold_torque: 128
+      close_position: 230
+      close_hold_torque: 128
+      close_max_torque: 1023
+      open_speed: 300
+      close_speed: 300
+      limit_open_speed:
+        min: 0
+        max: 1023
+      limit_close_speed:
+        min: 0
+        max: 1023
+    transformation:
+      translation: [0.085, 0.0, 0.0]
+      quaternion: [0.0, 0.0, 0.0, 1.0]
+  - name: "Gripper 2"
+    type: "gripper"
+    id: 12
+    available_commands:
+      - open_gripper
+      - close_gripper
+    specs:
+      open_position: 640
+      open_hold_torque: 128
+      close_position: 400
+      close_hold_torque: 128
+      close_max_torque: 1023
+      open_speed: 300
+      close_speed: 300
+      limit_open_speed:
+        min: 0
+        max: 1023
+      limit_close_speed:
+        min: 0
+        max: 1023
+    transformation:
+      translation: [0.113, 0.0, 0.0]
+      quaternion: [0.0, 0.0, 0.0, 1.0]
+  - name: "Gripper 3"
+    type: "gripper"
+    id: 13
+    available_commands:
+      - open_gripper
+      - close_gripper
+    specs:
+      open_position: 450
+      open_hold_torque: 128
+      close_position: 220
+      close_hold_torque: 160
+      close_max_torque: 1023
+      open_speed: 300
+      close_speed: 300
+      limit_open_speed:
+        min: 0
+        max: 1023
+      limit_close_speed:
+        min: 0
+        max: 1023
+    transformation:
+      translation: [0.1215, 0.0, 0.0]
+      quaternion: [0.0, 0.0, 0.0, 1.0]
+  - name: "Gripper 4"
+    type: "gripper"
+    id: 14
+    available_commands:
+      - open_gripper
+      - close_gripper
+    specs:
+      open_position: 518
+      open_hold_torque: 128
+      close_position: 157
+      close_hold_torque: 160
+      close_max_torque: 1023
+      open_speed: 300
+      close_speed: 300
+      limit_open_speed:
+        min: 0
+        max: 1023
+      limit_close_speed:
+        min: 0
+        max: 1023
+    transformation:
+      translation: [0.1215, 0.0, 0.0]
+      quaternion: [0.0, 0.0, 0.0, 1.0]
+  - name: "Electromagnet 1"
+    type: "electromagnet"
+    id: 30
+    available_commands:
+      - activate_digital_io
+      - deactivate_digital_io
+      - setup_digital_io
+    specs:
+      [ ]
+    transformation:
+      translation: [0.0225, 0.0, 0.0]
+      quaternion: [0.0, 0.0, 0.0, 1.0]
+  - name: "Vacuum Pump 1"
+    type: "vacuum_pump"
+    id: 31
+    available_commands:
+      - pull_air_vacuum_pump
+      - push_air_vacuum_pump
+    specs:
+      pull_air_position: 250
+      pull_air_hold_torque: 128
+      push_air_position: 760
+    transformation:
+      translation: [0.047, 0.0, 0.0]
+      quaternion: [0.0, 0.0, 0.0, 1.0]
+

@@ -13,13 +13,20 @@
     <arg name="ttl_enabled" default="true"/>
 
     <!-- Load controller settings -->
-
-    <group>
+    <group unless="$(arg gazebo)">
         <rosparam file="$(find niryo_moveit_config_standalone)/config/ros_controllers.yaml" command="load"/>
 
         <!-- spawn controllers -->
         <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="log"
               args="joint_state_controller niryo_robot_follow_joint_trajectory_controller"/>
+    </group>
+
+    <group if="$(arg gazebo)">
+        <rosparam file="$(find niryo_moveit_config_w_gripper1)/config/ros_controllers.yaml" command="load"/>
+
+        <!-- spawn controllers -->
+        <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="log"
+              args="niryo_robot_follow_joint_trajectory_controller gazebo_tool_commander"/>
     </group>
 
     <!-- robot state publisher -->

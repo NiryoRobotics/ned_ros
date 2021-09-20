@@ -74,8 +74,32 @@ class HttpClient:
 
         return True, response['state']
 
+    def wifi_state(self):
+        status_code, response = self.__get('/wifiState')
+
+        if not status_code:
+            return False, 'Unable to connect to the HTTP server'
+
+        return True, response
+
     def activate_hotspot(self):
         status_code, response = self.__post('/switchToHotspot')
+
+        if not status_code:
+            return False, 'Unable to connect to the HTTP server'
+
+        return True, status_code == 200
+
+    def restart_wifi(self):
+        status_code, response = self.__post('/restartWifi')
+
+        if not status_code:
+            return False, 'Unable to connect to the HTTP server'
+
+        return True, status_code == 200
+
+    def deactivate_wifi(self):
+        status_code, response = self.__post('/deactivateWifi')
 
         if not status_code:
             return False, 'Unable to connect to the HTTP server'

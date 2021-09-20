@@ -25,6 +25,7 @@
 #include "can_driver/stepper_driver.hpp"
 
 // c++
+#include <cstdint>
 #include <functional>
 #include <string>
 #include <vector>
@@ -183,13 +184,18 @@ void CanManager::addHardwareComponent(const std::shared_ptr<common::model::Abstr
  */
 void CanManager::removeHardwareComponent(uint8_t id)
 {
-    ROS_DEBUG("CanManager::removeMotor - Remove motor id: %d", id);
+  ROS_DEBUG("CanManager::removeMotor - Remove motor id: %d", id);
 
-    if (_state_map.count(id))
-    {
-        _state_map.erase(id);
-    }
+  if (_state_map.count(id) && _state_map.at(id))
+  {
+      _state_map.erase(id);
+  }
+
+  _removed_motor_id_list.erase(std::remove(_removed_motor_id_list.begin(),
+                                           _removed_motor_id_list.end(), id),
+                                           _removed_motor_id_list.end());
 }
+
 
 // ****************
 //  commands
@@ -301,13 +307,18 @@ int CanManager::scanAndCheck()
             ROS_DEBUG("CanManager::scanAndCheck successful");
             _is_connection_ok = true;
             result = CAN_OK;
+            _removed_motor_id_list.clear();
         }
         else
         {
             ROS_ERROR_THROTTLE(2, "CanManager::scanAndCheck - CAN scan Timeout");
             _debug_error_message = "CAN bus scan failed : motors ";
+            _removed_motor_id_list.clear();
             for (uint8_t m_id : motors_unfound)
+            {
+                _removed_motor_id_list.emplace_back(m_id);
                 _debug_error_message += " " + std::to_string(m_id) + ",";
+            }
             _debug_error_message.pop_back();  // remove trailing ","
             _debug_error_message += "are not connected";
 
@@ -612,7 +623,7 @@ CanManager::getMotorsStates() const
 }
 
 /**
- * @brief TtlManager::getHardwareState
+ * @brief CanManager::getHardwareState
  * @param motor_id
  * @return
  */

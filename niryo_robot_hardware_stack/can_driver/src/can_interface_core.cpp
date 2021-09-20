@@ -17,6 +17,7 @@
     along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
+#include <cstdint>
 #include <functional>
 
 #include <std_msgs/Int64MultiArray.h>
@@ -704,14 +705,23 @@ niryo_robot_msgs::BusState CanInterfaceCore::getBusState() const
 }
 
 /**
- * @brief can_driver::CanInterfaceCore::getJointState
+ * @brief CanInterfaceCore::getJointState
  * @param motor_id
  * @return
  */
 std::shared_ptr<common::model::JointState>
-can_driver::CanInterfaceCore::getJointState(uint8_t motor_id) const
+CanInterfaceCore::getJointState(uint8_t motor_id) const
 {
   return std::dynamic_pointer_cast<common::model::JointState>(_can_manager->getHardwareState(motor_id));
+}
+
+/**
+ * @brief can_driver::CanInterfaceCore::getRemovedMotorList
+ */
+std::vector<uint8_t>
+CanInterfaceCore::getRemovedMotorList() const
+{
+    return _can_manager->getRemovedMotorList();
 }
 
 }  // namespace can_driver

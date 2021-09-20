@@ -23,6 +23,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 // c++
 #include <memory>
 #include <vector>
+#include <mutex>
 
 #include <ros/ros.h>
 

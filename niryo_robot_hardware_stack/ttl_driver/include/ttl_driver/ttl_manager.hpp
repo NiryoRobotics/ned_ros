@@ -133,7 +133,7 @@ class TtlManager : public common::model::IBusManager
         std::vector<std::shared_ptr<common::model::JointState> > getMotorsStates() const;
         std::shared_ptr<common::model::AbstractHardwareState> getHardwareState(uint8_t motor_id) const;
 
-        std::vector<uint8_t> getRemovedMotorList() const;
+        std::vector<uint8_t> getRemovedMotorList() const override;
 
         bool hasEndEffector() const;
 

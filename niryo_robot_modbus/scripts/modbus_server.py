@@ -9,8 +9,8 @@ from pymodbus.server.sync import ModbusTcpServer
 from pymodbus.device import ModbusDeviceIdentification
 from pymodbus.datastore import ModbusSlaveContext, ModbusServerContext
 
-from coil_data_block import CoilDataBlock
-from discrete_input_data_block import DiscreteInputDataBlock
+from coil_data_block import CoilDataBlock, CoilDataBlockNed2
+from discrete_input_data_block import DiscreteInputDataBlock, DiscreteInputDataBlockNed2
 from input_register_data_block import InputRegisterDataBlock
 from holding_register_data_block import HoldingRegisterDataBlock
 
@@ -18,8 +18,14 @@ from holding_register_data_block import HoldingRegisterDataBlock
 class ModbusServer:
 
     def __init__(self, address, port):
-        self.coil = CoilDataBlock()
-        self.discrete_input = DiscreteInputDataBlock()
+
+        if rospy.get_param("~hardware_version") == "ned2":
+            self.coil = CoilDataBlockNed2()
+            self.discrete_input = DiscreteInputDataBlockNed2()
+        else:
+            self.coil = CoilDataBlock()
+            self.discrete_input = DiscreteInputDataBlock()
+
         self.input_register = InputRegisterDataBlock()
         self.holding_register = HoldingRegisterDataBlock()
         self.store = ModbusSlaveContext(di=self.discrete_input,

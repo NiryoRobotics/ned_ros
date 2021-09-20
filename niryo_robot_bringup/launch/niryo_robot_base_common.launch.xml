@@ -59,12 +59,15 @@
 
     <include file="$(find niryo_robot_arm_commander)/launch/robot_commander.launch">
         <arg name="log_level" value="$(arg log_level)" />
+        <arg name="gazebo" value="$(arg gazebo)"/>
         <arg name="hardware_version" value="$(arg hardware_version)"/>
     </include>
 
     <include file="$(find niryo_robot_tools_commander)/launch/tools_commander.launch">
         <arg name="log_level" value="$(arg log_level)" />
         <arg name="hardware_version" value="$(arg hardware_version)"/>
+        <arg name="simu_gripper" value="$(arg simu_gripper)"/>
+        <arg name="gazebo" value="$(arg gazebo)"/>
     </include>
 
     <include file="$(find niryo_robot_poses_handlers)/launch/poses_handlers.launch">
@@ -85,5 +88,6 @@
 
     <include file="$(find niryo_robot_modbus)/launch/modbus_server.launch">
         <arg name="log_level" value="$(arg log_level)" />
+        <arg name="hardware_version" value="$(arg hardware_version)"/>
     </include>
 </launch>

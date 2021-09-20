@@ -68,13 +68,8 @@ endif()
 ## Install ##
 #############
 
-catkin_install_python(PROGRAMS 
-    scripts/robot_logs_observer.py
-    scripts/robot_nodes_observer.py
-    scripts/robot_status_enums.py
-    scripts/robot_status_handler.py
+catkin_install_python(PROGRAMS
     scripts/robot_status_node.py
-    scripts/robot_status_observer.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 # Mark other files for installation
