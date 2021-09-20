@@ -16,8 +16,8 @@ class UserInterface:
         ip_address = rospy.get_param("~ip_address", '')
         port = rospy.get_param("~tcp_port", 40001)
 
-        self.__is_debug_motor_active_pub = rospy.Publisher('~is_client_connected', Bool, latch=True, queue_size=10)
-        self.__is_debug_motor_active_pub.publish(False)
+        self.__is_client_connected_pub = rospy.Publisher('~is_client_connected', Bool, latch=True, queue_size=10)
+        self.__is_client_connected_pub.publish(False)
 
         self.__tcp_server = TcpServer(ip_address=ip_address,
                                       port=port,
@@ -38,10 +38,10 @@ class UserInterface:
             self.__tcp_server.quit()
 
     def on_client_connection(self):
-        self.__is_debug_motor_active_pub.publish(True)
+        self.__is_client_connected_pub.publish(True)
 
     def on_client_disconnection(self):
-        self.__is_debug_motor_active_pub.publish(False)
+        self.__is_client_connected_pub.publish(False)
 
 
 if __name__ == '__main__':

@@ -10,6 +10,7 @@ from niryo_robot_led_ring.msg import LedRingStatus, LedRingAnimation, LedRingCur
 
 # Message
 from niryo_robot_status.msg import RobotStatus
+from std_msgs.msg import Int32
 
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus
@@ -26,6 +27,8 @@ class LedRingCommander:
 
     def __init__(self):
         rospy.loginfo("Led Ring Commander - Initialisation")
+        self.led_ring_anim = LedRingAnimations()
+
         self.__is_simulation = rospy.get_param("~simulation_mode")
 
         self.robot_status = RobotStatus.BOOTING
@@ -36,7 +39,6 @@ class LedRingCommander:
         self.user_animation_lock = threading.Lock()
         self.led_ring_animation_thread = threading.Thread()
 
-        self.led_ring_anim = LedRingAnimations()
         self.error_animation_lock = threading.Lock()
         self.led_ring_state = LedRingStatus()
 
@@ -76,6 +78,8 @@ class LedRingCommander:
         # - Subscribers
         self.robot_status_subscriber = rospy.Subscriber('/niryo_robot_status/robot_status',
                                                         RobotStatus, self.__callback_robot_status, queue_size=1)
+        self.save_point_publisher = rospy.Subscriber(
+            "/niryo_robot/blockly/save_current_point", Int32, self.__callback_save_current_point)
 
         rospy.loginfo("Led Ring Commander - Started")
 
@@ -130,6 +134,10 @@ class LedRingCommander:
         else:
             return CommandStatus.FAILURE, "Led Ring set by user: command request doesn't exist"
 
+    def __callback_save_current_point(self, _msg):
+        if not self.user_mode:
+            self.blink_over_status(WHITE, 1, 0.5)
+
     def notify_current_anim_and_color(self, _observer):
         """
         called by the led_ring_anim when the current animation played or the color on the Led Ring is updated,
@@ -156,20 +164,27 @@ class LedRingCommander:
         self.led_ring_animation_thread.start()
 
     def stop_led_ring_thread(self):
-        if self.led_ring_anim.is_animation_running():
-            self.led_ring_anim.stop_animation()
+        try:
+            if self.led_ring_anim.is_animation_running():
+                self.led_ring_anim.stop_animation()
 
-        if self.led_ring_animation_thread.is_alive():
-            self.led_ring_animation_thread.join()
+            if self.led_ring_animation_thread.is_alive():
+                self.led_ring_animation_thread.join()
+        except AttributeError:
+            pass
 
     def error_animation(self):
+        self.blink_over_status(RED, 5, 2)
+
+    def blink_over_status(self, color, iterations, period):
         with self.error_animation_lock:
             command = LedUserRequest()
             command.animation_mode.animation = LedRingAnimation.FLASHING
-            command.colors = [RED]
-            command.iterations = 5
-            command.period = 2
+            command.colors = [color]
+            command.iterations = iterations
+            command.period = period
             self.start_led_ring_thread(command)
+            self.led_ring_animation_thread.join()
 
         command = self.get_robot_status_led_ring_cmd()
         self.start_led_ring_thread(command)

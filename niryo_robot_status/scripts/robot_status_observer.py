@@ -42,7 +42,6 @@ class RobotStatusObserver(object):
         self.hardware_status_sub = rospy.Subscriber('/niryo_robot_hardware_interface/hardware_status',
                                                     HardwareStatus, self.__callback_hardware_status)
 
-        self.__pause_state = PausePlanExecution.STANDBY
         self.__pause_state_sub = rospy.Subscriber('/niryo_robot_rpi/pause_state',
                                                   PausePlanExecution, self.__callback_pause)
 
@@ -70,8 +69,8 @@ class RobotStatusObserver(object):
         self.__joint_state_sub = rospy.Subscriber('/joint_states', JointState, self.__callback_joint_states)
 
     def __callback_pause(self, msg):
-        if self.__pause_state != msg.state:
-            self.__pause_state = msg.state
+        if self.pause_state != msg.state:
+            self.pause_state = msg.state
             self.__robot_status_handler.advertise_new_state()
 
     def __callback_motion_goal_is_active(self, msg):

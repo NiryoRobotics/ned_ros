@@ -51,15 +51,6 @@ class CommandInterpreter:
             "YAW": ShiftPose.ROT_YAW,
         }
 
-        self.__pin_nbr_string_dict_convertor = {
-            "GPIO_1A": PinID.GPIO_1A,
-            "GPIO_1B": PinID.GPIO_1B,
-            "GPIO_1C": PinID.GPIO_1C,
-            "GPIO_2A": PinID.GPIO_2A,
-            "GPIO_2B": PinID.GPIO_2B,
-            "GPIO_2C": PinID.GPIO_2C,
-        }
-
         self.__pin_mode_string_dict_convertor = {
             "OUTPUT": PinMode.OUTPUT,
             "INPUT": PinMode.INPUT,
@@ -218,6 +209,12 @@ class CommandInterpreter:
     def __check_type(self, value, type_):
         if type(value) is not type_:
             self.__raise_exception_expected_type(type_.__name__, value)
+
+    def __check_instance(self, value, type_):
+        if not isinstance(value, type_):
+            self.__raise_exception_expected_type(
+                type_.__name__ if not isinstance(type_, tuple) else " or ".join([type__.__name__ for type__ in type_]),
+                value)
 
     def __check_list_type(self, list_, type_):
         for value in list_:
@@ -542,23 +539,17 @@ class CommandInterpreter:
     # - Electromagnet
     @check_nb_args(1)
     def __setup_electromagnet(self, pin_string):
-        pin = self.__check_and_get_from_dict(pin_string, self.__pin_nbr_string_dict_convertor)
-
-        self.__niryo_robot.setup_electromagnet(pin)
+        self.__niryo_robot.setup_electromagnet(pin_string)
         return self.__send_answer()
 
     @check_nb_args(1)
     def __activate_electromagnet(self, pin_string):
-        pin = self.__check_and_get_from_dict(pin_string, self.__pin_nbr_string_dict_convertor)
-
-        self.__niryo_robot.activate_electromagnet(pin)
+        self.__niryo_robot.activate_electromagnet(pin_string)
         return self.__send_answer()
 
     @check_nb_args(1)
     def __deactivate_electromagnet(self, pin_string):
-        pin = self.__check_and_get_from_dict(pin_string, self.__pin_nbr_string_dict_convertor)
-
-        self.__niryo_robot.deactivate_electromagnet(pin)
+        self.__niryo_robot.deactivate_electromagnet(pin_string)
         return self.__send_answer()
 
     # TCP
@@ -588,25 +579,33 @@ class CommandInterpreter:
 
     @check_nb_args(2)
     def __set_pin_mode(self, pin_string, pin_mode_string):
-        pin = self.__check_and_get_from_dict(pin_string, self.__pin_nbr_string_dict_convertor)
         pin_mode = self.__check_and_get_from_dict(pin_mode_string, self.__pin_mode_string_dict_convertor)
-
-        self.__niryo_robot.set_pin_mode(pin, pin_mode)
+        self.__niryo_robot.set_pin_mode(pin_string, pin_mode)
         return self.__send_answer()
 
     @check_nb_args(2)
-    def __digital_write(self, pin_string, state_string):
-        pin = self.__check_and_get_from_dict(pin_string, self.__pin_nbr_string_dict_convertor)
-        state = self.__check_and_get_from_dict(state_string, self.__digital_state_string_dict_convertor)
+    def __analog_write(self, pin_string, voltage):
+        self.__check_instance(voltage, (float, int))
 
-        self.__niryo_robot.digital_write(pin, state)
+        self.__niryo_robot.analog_write(pin_string, voltage)
+        return self.__send_answer()
+
+    @check_nb_args(1)
+    def __analog_read(self, pin_string):
+        digital_state = self.__niryo_robot.analog_read(pin_string)
+        return self.__send_answer(self.__digital_state_string_dict_convertor_inv[digital_state])
+
+    @check_nb_args(2)
+    def __digital_write(self, pin_string, state_string):
+        state = self.__check_and_get_from_dict(state_string, self.__digital_state_string_dict_convertor)
+        self.__niryo_robot.digital_write(pin_string, state)
         return self.__send_answer()
 
     @check_nb_args(1)
     def __digital_read(self, pin_string):
-        pin = self.__check_and_get_from_dict(pin_string, self.__pin_nbr_string_dict_convertor)
-        digital_state = self.__niryo_robot.digital_read(pin)
+        digital_state = self.__niryo_robot.digital_read(pin_string)
         return self.__send_answer(self.__digital_state_string_dict_convertor_inv[digital_state])
+
 
     @check_nb_args(0)
     def __get_hardware_status(self):

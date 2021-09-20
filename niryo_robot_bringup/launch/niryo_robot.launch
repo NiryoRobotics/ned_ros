@@ -14,8 +14,6 @@
     <arg name="simu_gripper" default="true" />
     <arg name="conf_location" default="$(env HOME)/.config/niryo/version/version.txt"/>
 
-    <param name="image_version" textfile="$(arg conf_location)"/>
-
     <include file="$(find niryo_robot_bringup)/launch/niryo_robot_base_robot.launch.xml">
         <arg name="log_level" value="$(arg log_level)" />
         <arg name="hardware_version" value="$(arg hardware_version)" />
@@ -25,8 +23,6 @@
         <arg name="vision_enabled" default="$(arg vision_enabled)"/>
         <arg name="gazebo" value="$(arg gazebo)" />
         <arg name="simu_gripper" value="$(arg simu_gripper)" />
-        <arg name="rpi_model" value="3" if="$(eval hardware_version == 'one')" />
-        <arg name="rpi_model" value="simulation" if="$(eval hardware_version == 'fake_ned' or hardware_version == 'fake_ned2')" />
         <arg name="conf_location" value="$(arg conf_location)" />
     </include>
 </launch>

@@ -67,8 +67,6 @@ class EndEffectorInterfaceCore : public common::model::IInterfaceCore
 
         std::shared_ptr<ttl_driver::TtlInterfaceCore> _ttl_interface;
 
-        ros::ServiceClient _learning_mode_client;
-
         ros::Publisher _free_drive_button_state_publisher;
         ros::Publisher _save_pos_button_state_publisher;
         ros::Publisher _custom_button_state_publisher;
@@ -77,7 +75,6 @@ class EndEffectorInterfaceCore : public common::model::IInterfaceCore
 
         std::shared_ptr<common::model::EndEffectorState> _end_effector_state;
         uint8_t _id;
-        bool _is_learning_mode{false};
 
         double _check_end_effector_status_frequency{0.0};
 };

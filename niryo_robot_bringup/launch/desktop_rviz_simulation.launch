@@ -22,7 +22,6 @@
         <arg name="vision_enabled" value="false" />
         <arg name="gazebo" value="false" />
         <arg name="simu_gripper" value="false" />
-        <arg name="conf_location" value="$(arg conf_location)" />
     </include>
 
     <group if="$(arg gui)">

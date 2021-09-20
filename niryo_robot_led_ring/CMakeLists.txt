@@ -80,12 +80,8 @@ endif()
 ## Install ##
 #############
 
-catkin_install_python(PROGRAMS 
-    scripts/led_ring_animations.py
-    scripts/led_ring_commander.py
-    scripts/led_ring_enums.py
+catkin_install_python(PROGRAMS
     scripts/led_ring_node.py
-    scripts/led_ring_simulation.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 # Mark other files for installation
@@ -106,3 +102,11 @@ if (rosdoc_lite_FOUND)
     DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/doc
   )
 endif()
+
+#############
+## Install ##
+#############
+
+catkin_install_python(PROGRAMS
+    scripts/led_ring_node.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})

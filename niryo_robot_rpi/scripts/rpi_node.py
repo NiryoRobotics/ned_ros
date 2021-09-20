@@ -3,23 +3,40 @@
 import rospy
 import logging
 
-from button_manager import NiryoButton
-from digital_io_panel import DigitalIOPanel
-from led_manager import LEDManager
 from ros_log_manager import RosLogManager
 from shutdown_manager import ShutdownManager
-from niryo_robot_rpi.fans_manager import FansManager
 
 
 class NiryoRobotRpi:
-
     def __init__(self):
         rospy.logdebug("NiryoRobotRpi - Entering in Init")
 
-        self.__digital_io_panel = DigitalIOPanel()
-        self.__fans_manager = FansManager()
-        self.__led_manager = LEDManager()
-        self.__niryo_robot_button = NiryoButton()
+        if rospy.get_param("~hardware_version") == "ned2":
+            from niryo_robot_rpi.MCP23017 import MCP23017
+            from button_manager import NiryoButtonNed2
+            from io_panel import McpIOPanel
+            from fans_manager import FansManagerNed2
+            from end_effector_panel import NiryoEndEffectorPanel
+
+            self.__mcp = MCP23017(address=rospy.get_param("~mcp/address"),
+                                  busnum=rospy.get_param("~mcp/i2c_bus"))
+
+            self.__io_panel = McpIOPanel(mcp=self.__mcp)
+            self.__fans_manager = FansManagerNed2(mcp=self.__mcp)
+            self.__niryo_robot_button = NiryoButtonNed2()
+            self.__end_effector_panel = NiryoEndEffectorPanel()
+
+        else:
+            from button_manager import NiryoButton
+            from io_panel import DigitalRpiIOPanel
+            from led_manager import LEDManager
+            from fans_manager import FansManagerNedOne
+
+            self.__io_panel = DigitalRpiIOPanel()
+            self.__fans_manager = FansManagerNedOne()
+            self.__led_manager = LEDManager()
+            self.__niryo_robot_button = NiryoButton()
+
         self.__ros_log_manager = RosLogManager()
         self.__shutdown_manager = ShutdownManager()
 

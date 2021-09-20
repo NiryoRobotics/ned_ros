@@ -1,0 +1,24 @@
+dynamixels:
+    dxl_1:
+        offset_position: 0
+        direction: 1
+        position_P_gain: 640
+        position_I_gain: 0
+        position_D_gain: 4000
+
+    dxl_2:
+        offset_position: 0
+        direction: 1
+        position_P_gain: 640
+        position_I_gain: 0
+        position_D_gain: 4000
+
+    dxl_3:
+        offset_position: 0
+        direction: 1
+        position_P_gain: 32
+        position_I_gain: 0
+        position_D_gain: 0
+
+
+

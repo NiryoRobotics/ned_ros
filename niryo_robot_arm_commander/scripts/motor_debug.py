@@ -82,7 +82,7 @@ class MotorDebug:
         self.__cancel()
         # self._set_log_debug(False)
         self.__robot.set_learning_mode(True)
-        self.__set_led_state_service(False, 0, 0, 0)
+        self.set_led_state(False, 0, 0, 0)
         return EmptyResponse()
 
     def __callback_motor_debug_start(self, req):
@@ -107,7 +107,7 @@ class MotorDebug:
             error_counter = 0
             self.__is_running = True
             self.__is_debug_motor_active_pub.publish(self.__is_running)
-            self.__set_led_state_service(False, 0, 0, 0)
+            self.set_led_state(False, 0, 0, 0)
             if nb_loops < 1:
                 # self._set_log_debug(True)
                 self._display_hardware_params()
@@ -142,7 +142,7 @@ class MotorDebug:
                             error_counter += 0 if self._play_trajectory(self._create_goal(default_joint_pose),
                                                                         wait=2 if joint_index == 5 else 1) else 1
 
-                            self.__set_led_state_service(error_counter > 0, 5, LedBlinkerRequest.LED_WHITE, 60)
+                            self.set_led_state(error_counter > 0, 5, LedBlinkerRequest.LED_WHITE, 60)
                     if error_counter > 0:
                         break
                 else:
@@ -157,9 +157,10 @@ class MotorDebug:
             self.__is_running = False
             self.__is_debug_motor_active_pub.publish(self.__is_running)
 
-            self.__set_led_state_service(error_counter > 0, 5, LedBlinkerRequest.LED_WHITE, 360)
+            self.set_led_state(error_counter > 0, 5, LedBlinkerRequest.LED_WHITE, 360)
 
-        except:
+        except Exception as e:
+            rospy.logwarn("Motor report error: " + str(e))
             self.__is_running = False
             self.__is_debug_motor_active_pub.publish(self.__is_running)
             self.__robot.set_learning_mode(True)
@@ -258,3 +259,11 @@ class MotorDebug:
                 string_to_display += "{}{}: {}\n".format(prefix, key, dict_to_display[key])
 
         return string_to_display
+
+    def set_led_state(self,  activate, frequency, color, blinker_duration):
+        try:
+            rospy.wait_for_service('/niryo_robot_rpi/set_led_custom_blinker', timeout=0.1)
+            self.__set_led_state_service(activate, frequency, color, blinker_duration)
+        except (rospy.ServiceException, rospy.ROSException) as _e:
+            print _e
+            pass

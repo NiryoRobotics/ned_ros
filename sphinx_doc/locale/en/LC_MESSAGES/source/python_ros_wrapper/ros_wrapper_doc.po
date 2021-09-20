@@ -794,7 +794,7 @@ msgstr ""
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_digital_io_state:3
 #: of
-msgid "Infos contains in a DigitalIOState object (see niryo_robot_msgs)"
+msgid "Infos contains in a IOsState object (see niryo_robot_msgs)"
 msgstr ""
 
 #: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:89
@@ -1410,7 +1410,7 @@ msgstr ""
 #~ msgid "Get Digital IO state : Names, modes, states"
 #~ msgstr ""
 
-#~ msgid "Infos contains in a DigitalIOState object (see niryo_robot_msgs)"
+#~ msgid "Infos contains in a IOsState object (see niryo_robot_msgs)"
 #~ msgstr ""
 
 #~ msgid ""
