@@ -34,10 +34,7 @@ namespace model
 /**
  * @brief The EEndEffectorCommandType enum
  */
-enum class EEndEffectorCommandType { CMD_TYPE_BUTTON_1_CONFIG = 1,
-                                     CMD_TYPE_BUTTON_2_CONFIG = 2,
-                                     CMD_TYPE_BUTTON_3_CONFIG = 3,
-                                     CMD_TYPE_DIGITAL_OUTPUT = 4,
+enum class EEndEffectorCommandType { CMD_TYPE_DIGITAL_OUTPUT = 4,
                                      CMD_TYPE_PING=5,
                                      CMD_TYPE_UNKNOWN=100
                                    };

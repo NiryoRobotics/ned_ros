@@ -36,7 +36,14 @@ find_package(catkin REQUIRED
 
 add_message_files(
   FILES
-    ButtonStatus.msg
+    EEButtonStatus.msg
+    EEIOState.msg
+)
+
+add_service_files(
+  DIRECTORY srv
+  FILES
+    SetEEDigitalOut.srv
 )
 
 generate_messages(
