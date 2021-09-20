@@ -667,8 +667,8 @@ msgid ""
 "Vision - Stores workspace's name, as a string encoded in 16 bits hex (see"
 " examples on how to store a workspace name from a client)"
 msgstr ""
-" Vision - Enregistrer le nom du worspace, comme une string encodée en 16 bits hex (voir"
-" l'exemple sur comment stocker le nom du workspace depuis un client)"
+"Vision - Enregistrer le nom du worspace, comme une string encodée en 16 bits hex (voir "
+"l'exemple sur comment stocker le nom du workspace depuis un client)"
 
 #: ../../source/modbus_tcp_server.rst:206
 msgid "Input Register"
