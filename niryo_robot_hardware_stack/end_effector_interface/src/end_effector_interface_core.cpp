@@ -28,7 +28,7 @@
 // niryo
 #include "end_effector_interface/end_effector_interface_core.hpp"
 #include "common/model/end_effector_state.hpp"
-#include "end_effector_interface/ButtonStatus.h"
+
 
 using ::std::lock_guard;
 using ::std::mutex;
@@ -38,6 +38,8 @@ using ::std::to_string;
 using ::common::model::EndEffectorState;
 using ::common::model::ButtonTypeEnum;
 using ::common::model::EButtonType;
+using ::common::model::EndEffectorSingleCmd;
+using ::common::model::EEndEffectorCommandType;
 
 namespace end_effector_interface
 {
@@ -125,6 +127,9 @@ void EndEffectorInterfaceCore::initParameters(ros::NodeHandle& nh)
  */
 void EndEffectorInterfaceCore::startServices(ros::NodeHandle& nh)
 {
+
+    _digital_in_server = nh.advertiseService("set_ee_io_state",
+                                             &EndEffectorInterfaceCore::_callbackSetIOState, this);
 }
 
 /**
@@ -133,25 +138,31 @@ void EndEffectorInterfaceCore::startServices(ros::NodeHandle& nh)
  */
 void EndEffectorInterfaceCore::startPublishers(ros::NodeHandle& nh)
 {
-  _free_drive_button_state_publisher = nh.advertise<end_effector_interface::ButtonStatus>(
+  _free_drive_button_state_publisher = nh.advertise<end_effector_interface::EEButtonStatus>(
                                           "free_drive_button_status", 10);
 
-  _save_pos_button_state_publisher = nh.advertise<end_effector_interface::ButtonStatus>(
+  _save_pos_button_state_publisher = nh.advertise<end_effector_interface::EEButtonStatus>(
                                           "save_pos_button_status", 10);
 
-  _custom_button_state_publisher = nh.advertise<end_effector_interface::ButtonStatus>(
+  _custom_button_state_publisher = nh.advertise<end_effector_interface::EEButtonStatus>(
                                           "custom_button_status", 10);
 
-  _publish_buttons_state_thread = std::thread(&EndEffectorInterfaceCore::_publishButtonState, this);
+  _digital_out_publisher = nh.advertise<end_effector_interface::EEIOState>(
+                                          "io_state", 10);
+
+  _publish_states_thread = std::thread(&EndEffectorInterfaceCore::_publishButtonState, this);
 }
 
 /**
  * @brief EndEffectorInterfaceCore::startSubscribers
  * @param nh
  */
-void EndEffectorInterfaceCore::startSubscribers(ros::NodeHandle& /*nh*/)
+void EndEffectorInterfaceCore::startSubscribers(ros::NodeHandle& nh)
 {
-  ROS_DEBUG("No subscribers to start");
+    _learning_mode_client = nh.serviceClient<niryo_robot_msgs::SetBool>("/niryo_robot/learning_mode/activate");
+    bool exists(_learning_mode_client.waitForExistence(ros::Duration(5)));
+    ROS_INFO_COND(exists, "EndEffectorInterfaceCore::startServices : - Learning mode service connected successfully");
+    ROS_ERROR_COND(!exists, "EndEffectorInterfaceCore::startServices : - unable to connect to Learning mode service");
 }
 
 /**
@@ -175,15 +186,17 @@ void EndEffectorInterfaceCore::initEndEffectorHardware()
                    result);
       }
   }
-}
+}_is_learning_mode
 
 /**
  * @brief EndEffectorInterfaceCore::_publishButtonState
+ * TODO(CC) : latch and timer
  */
 void EndEffectorInterfaceCore::_publishButtonState()
 {
     ros::Rate check_status_rate = ros::Rate(_check_end_effector_status_frequency);
-    ButtonStatus msg;
+    EEButtonStatus button_msg;
+    EEIOState io_msg;
 
     while (ros::ok())
     {
@@ -193,25 +206,63 @@ void EndEffectorInterfaceCore::_publishButtonState()
 
         for (auto const& button : _end_effector_state->getButtonsStatus())
         {
-            msg.action = static_cast<int>(button.action);
+            button_msg.action = static_cast<int>(button.action);
             switch (button.type)
             {
                 case EButtonType::FREE_DRIVE_BUTTON:
-                    _free_drive_button_state_publisher.publish(msg);
+                    _free_drive_button_state_publisher.publish(button_msg);
+                    if (common::model::EActionType::HANDLE_HELD_ACTION == button.action &&
+                        !_is_learning_mode)
+                    {
+                      niryo_robot_msgs::SetBool srv;
+                      srv.request.value = true;
+                      _learning_mode_client.call(srv);
+                      _is_learning_mode = true;
+                    }
+                    else if (common::model::EActionType::NO_ACTION == button.action &&
+                            _is_learning_mode) {
+                      niryo_robot_msgs::SetBool srv;
+                      srv.request.value = false;
+                      _learning_mode_client.call(srv);
+                      _is_learning_mode = false;
+                    }
+
                   break;
                 case EButtonType::SAVE_POSITION_BUTTON:
-                    _save_pos_button_state_publisher.publish(msg);
+                    _save_pos_button_state_publisher.publish(button_msg);
                   break;
                 case EButtonType::CUSTOM_BUTTON:
-                    _custom_button_state_publisher.publish(msg);
+                    _custom_button_state_publisher.publish(button_msg);
                   break;
                 default:
                   break;
             }
         }
 
+        // digital io state
+        io_msg.in = _end_effector_state->getDigitalIn();
+        io_msg.out = _end_effector_state->getDigitalOut();
+        _digital_out_publisher.publish(io_msg);
+
         check_status_rate.sleep();
     }
+}
+
+bool EndEffectorInterfaceCore::_callbackSetIOState(end_effector_interface::SetEEDigitalOut::Request &req,
+                                                   end_effector_interface::SetEEDigitalOut::Response &res)
+{
+    lock_guard<mutex> lck(_io_mutex);
+    res.state = false;
+
+    if (_end_effector_state && _end_effector_state->isValid())
+    {
+        _ttl_interface->addSingleCommandToQueue(std::make_shared<EndEffectorSingleCmd>(EEndEffectorCommandType::CMD_TYPE_DIGITAL_OUTPUT,
+                                                                                       _end_effector_state->getId(), std::initializer_list<uint32_t>{req.data}));
+        // TODO(cc) find a way to check if ok
+        res.state = true;
+    }
+
+    return res.state;
 }
 
 }  // namespace end_effector_interface

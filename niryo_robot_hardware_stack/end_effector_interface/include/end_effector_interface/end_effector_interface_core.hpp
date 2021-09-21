@@ -32,6 +32,10 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "common/model/end_effector_state.hpp"
 #include "ttl_driver/ttl_interface_core.hpp"
 
+#include "end_effector_interface/EEButtonStatus.h"
+#include "end_effector_interface/EEIOState.h"
+#include "end_effector_interface/SetEEDigitalOut.h"
+
 namespace end_effector_interface
 {
 
@@ -62,19 +66,30 @@ class EndEffectorInterfaceCore : public common::model::IInterfaceCore
         void initEndEffectorHardware();
         void _publishButtonState();
 
+        bool _callbackSetIOState(end_effector_interface::SetEEDigitalOut::Request &req,
+                                 end_effector_interface::SetEEDigitalOut::Response &res);
+
     private:
         std::mutex _buttons_status_mutex;
+        std::mutex _io_mutex;
 
         std::shared_ptr<ttl_driver::TtlInterfaceCore> _ttl_interface;
+
+        ros::ServiceClient _learning_mode_client;
 
         ros::Publisher _free_drive_button_state_publisher;
         ros::Publisher _save_pos_button_state_publisher;
         ros::Publisher _custom_button_state_publisher;
 
-        std::thread _publish_buttons_state_thread;
+        ros::Publisher _digital_out_publisher;
+
+        std::thread _publish_states_thread;
+
+        ros::ServiceServer _digital_in_server;
 
         std::shared_ptr<common::model::EndEffectorState> _end_effector_state;
         uint8_t _id;
+        bool _is_learning_mode{false};
 
         double _check_end_effector_status_frequency{0.0};
 };

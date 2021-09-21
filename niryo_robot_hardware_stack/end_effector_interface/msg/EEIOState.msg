@@ -1,0 +1,2 @@
+bool in
+bool out

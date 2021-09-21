@@ -79,7 +79,7 @@ class EndEffectorDriver : public AbstractTtlDriver
         int readCollisionStatus(uint8_t id, bool& status);
 
         int readDigitalInput(uint8_t id, bool& in);
-        int setDigitalOutput(uint8_t id, bool out);
+        int writeDigitalOutput(uint8_t id, bool out);
 
         common::model::EActionType interpreteActionValue(uint32_t value);
         virtual std::string interpreteErrorState(uint32_t hw_state) const override;
@@ -419,9 +419,9 @@ int EndEffectorDriver<reg_type>::readDigitalInput(uint8_t id, bool& in)
  * @return
  */
 template<typename reg_type>
-int EndEffectorDriver<reg_type>::setDigitalOutput(uint8_t id, bool out)
+int EndEffectorDriver<reg_type>::writeDigitalOutput(uint8_t id, bool out)
 {
-    return read(reg_type::ADDR_DIGITAL_OUT, reg_type::SIZE_DIGITAL_OUT, id, (out > 0) ? 1 : 0);
+    return write(reg_type::ADDR_DIGITAL_OUT, reg_type::SIZE_DIGITAL_OUT, id, (out > 0) ? 1 : 0);
 }
 
 /**
@@ -468,6 +468,12 @@ int EndEffectorDriver<reg_type>::writeSingleCmd(const std::shared_ptr<common::mo
   {
       switch (EEndEffectorCommandType(cmd->getCmdType()))
       {
+      case EEndEffectorCommandType::CMD_TYPE_DIGITAL_OUTPUT:
+        writeDigitalOutput(cmd->getId(), cmd->getParam());
+        break;
+      case EEndEffectorCommandType::CMD_TYPE_PING:
+        ping(cmd->getId());
+        break;
       default:
           std::cout << "Command not implemented" << std::endl;
       }
