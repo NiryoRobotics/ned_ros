@@ -118,8 +118,13 @@ int CanManager::setupCommunication()
 
         if (_mcp_can->setupInterruptGpio())
         {
+            ROS_DEBUG("CanManager::setupCommunication - Setup Interrupt GPIO successfull");
+            ros::Duration(0.05).sleep();
+
             if (_mcp_can->setupSpi())
             {
+                ROS_DEBUG("CanManager::setupCommunication - Setup SPI successfull");
+                ros::Duration(0.05).sleep();
                 // no mask or filter used, receive all messages from CAN bus
                 // messages with ids != motor_id will be sent to another ROS interface
                 // so we can use many CAN devices with this only driver
@@ -127,6 +132,8 @@ int CanManager::setupCommunication()
 
                 if (CAN_OK == ret)
                 {
+                    ROS_DEBUG("CanManager::setupCommunication - MCP can initialized");
+
                     // set mode to normal
                     _mcp_can->setMode(MCP_NORMAL);
                     _is_connection_ok = false;
