@@ -22,6 +22,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 
 #include "abstract_hardware_state.hpp"
 
+#include <array>
 #include <stdint.h>
 #include <string>
 #include <cassert>
@@ -49,6 +50,7 @@ class EndEffectorState : public AbstractHardwareState
         {
           EButtonType type{EButtonType::UNKNOWN};
           EActionType action{EActionType::NO_ACTION};
+          EActionType prev_action{EActionType::NO_ACTION};
 
           std::string str() const
           {
@@ -91,6 +93,8 @@ class EndEffectorState : public AbstractHardwareState
 
     public:
         void setButtonStatus(uint8_t id, EActionType action);
+        void setPrevButtonStatus(uint8_t id, EActionType action);
+
         std::array<Button, 3> getButtonsStatus() const;
 
         uint32_t getAccelerometerXValue() const;
@@ -132,6 +136,7 @@ EndEffectorState::getButtonsStatus() const
 }
 
 /**
+ *
  * @brief EndEffectorState::getAccelerometerXValue
  * @return
  */

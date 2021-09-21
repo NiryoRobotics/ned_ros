@@ -125,7 +125,31 @@ void EndEffectorState::setButtonStatus(uint8_t id, EActionType action)
 {
   assert(id <= 3);
 
-  _buttons_list[id - 1].action = action;
+  if (action != EActionType::NO_ACTION)
+  {
+      _buttons_list[id - 1].action = action;
+      _buttons_list[id - 1].prev_action = _buttons_list[id - 1].action;
+  }
+  else if (_buttons_list[id - 1].prev_action != EActionType::NO_ACTION)
+  {
+      _buttons_list[id - 1].prev_action = EActionType::NO_ACTION; 
+  }
+  else
+  {
+      _buttons_list[id - 1].action = EActionType::NO_ACTION; 
+  }
+}
+
+/**
+ * @brief EndEffectorState::setButtonStatus
+ * @param id
+ * @param action
+ */
+void EndEffectorState::setPrevButtonStatus(uint8_t id, EActionType action)
+{
+  assert(id <= 3);
+
+  _buttons_list[id - 1].prev_action = action;
 }
 
 /**
