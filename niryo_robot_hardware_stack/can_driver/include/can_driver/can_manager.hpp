@@ -17,8 +17,8 @@
     along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
-#ifndef CAN_DRIVER_HPP
-#define CAN_DRIVER_HPP
+#ifndef CAN_DRIVER_H
+#define CAN_DRIVER_H
 
 // std
 #include <cstdint>
@@ -44,7 +44,7 @@
 #include "can_driver/StepperMotorCommand.h"
 #include "can_driver/StepperCmd.h"
 
-#include "mcp_can_rpi/mcp_can_rpi.h"
+#include "abstract_can_driver.hpp"
 
 
 namespace can_driver
@@ -60,85 +60,63 @@ class CanManager : public common::model::IBusManager
         CanManager(ros::NodeHandle& nh);
         virtual ~CanManager() override;
 
+        // IBusManager Interface
         bool init(ros::NodeHandle& nh) override;
 
+        void addHardwareComponent(const std::shared_ptr<common::model::AbstractHardwareState> &state) override;
+
+        void removeHardwareComponent(uint8_t id) override;
+        bool isConnectionOk() const override;
+
+        int scanAndCheck() override;
+        bool ping(uint8_t id) override;
+
+        size_t getNbMotors() const override;
+        void getBusState(bool& connection_state, std::vector<uint8_t>& motor_id, std::string& debug_msg) const override;
+        std::string getErrorMessage() const override;
+
         // commands
-        void addHardwareComponent(const std::shared_ptr<common::model::StepperMotorState> state);
+        int changeId(common::model::EHardwareType motor_type, uint8_t old_id, uint8_t new_id);
 
         int writeSingleCommand(std::shared_ptr<common::model::AbstractCanSingleMotorCmd> cmd);
         void executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, int32_t> > cmd_vec);
 
-        void startCalibration();
-        void resetCalibration();
-
-        uint8_t sendTorqueOnCommand(uint8_t id, int torque_on);
-        uint8_t sendRelativeMoveCommand(uint8_t id, int steps, int delay);
-        uint8_t sendUpdateConveyorId(uint8_t old_id, uint8_t new_id);
-
+        // read status
         void readStatus();
 
+        //calibration
+        void startCalibration() override;
+        void resetCalibration() override;
+        bool isCalibrationInProgress() const override;
+        int32_t getCalibrationResult(uint8_t id) const override;
+        common::model::EStepperCalibrationStatus getCalibrationStatus() const override;
+
         // getters
-        int32_t getPosition(uint8_t motor_id) const;
+        int32_t getPosition(const common::model::JointState &motor_state) const;
 
-        std::vector<std::shared_ptr<common::model::StepperMotorState> > getMotorsStates() const;
-        std::shared_ptr<common::model::StepperMotorState> getHardwareState(uint8_t motor_id) const;
+        std::vector<std::shared_ptr<common::model::JointState> > getMotorsStates() const;
+        std::shared_ptr<common::model::AbstractHardwareState> getHardwareState(uint8_t motor_id) const;
 
-        int32_t getCalibrationResult(uint8_t id) const;
-        common::model::EStepperCalibrationStatus getCalibrationStatus() const;
-
-        bool isCalibrationInProgress() const;
-
-        // IBusManager Interface
-        void removeMotor(uint8_t id) override;
-        bool isConnectionOk() const override;
-
-        int scanAndCheck() override;
-        bool ping(uint8_t motor_to_find) override;
-
-        size_t getNbMotors() const override;
-        void getBusState(bool& connection_status, std::vector<uint8_t>& motor_list, std::string& error) const override;
-        std::string getErrorMessage() const override;
-
-        std::vector<uint8_t> getRemovedMotorList();
+        std::vector<uint8_t> getRemovedMotorList() const override;
     private:
+        int setupCommunication() override;
+        void addHardwareDriver(common::model::EHardwareType hardware_type) override;
 
-        int setupCAN(ros::NodeHandle& nh);
-
-        bool canReadData() const;
-
-        uint8_t readMsgBuf(INT32U *id, uint8_t *len, std::array<uint8_t, 8> &buf);
-        uint8_t sendCanMsgBuf(uint32_t id, uint8_t ext, uint8_t len, uint8_t *buf);
-
-        uint8_t sendPositionCommand(uint8_t id, int cmd);
-        uint8_t sendPositionOffsetCommand(uint8_t id, int cmd, int absolute_steps_at_offset_position);
-        uint8_t sendCalibrationCommand(uint8_t id, int offset, int delay, int direction, int timeout);
-        uint8_t sendSynchronizePositionCommand(uint8_t id, bool begin_traj);
-        uint8_t sendMicroStepsCommand(uint8_t id, int micro_steps);
-        uint8_t sendMaxEffortCommand(uint8_t id, int effort);
-        uint8_t sendConveyorOnCommand(uint8_t id, bool conveyor_on, uint8_t conveyor_speed, uint8_t direction);
-
-        void fillPositionStatus(uint8_t motor_id, const uint8_t &len, const std::array<uint8_t, 8> &data);
-        void fillTemperatureStatus(uint8_t motor_id, const uint8_t &len, const std::array<uint8_t, 8> &data);
-        void fillFirmwareVersion(uint8_t motor_id, const uint8_t &len, const std::array<uint8_t, 8> &data);
-        void fillConveyorState(uint8_t motor_id, const std::array<uint8_t, 8> &data);
-        void fillCalibrationState(uint8_t motor_id, const uint8_t &len, const std::array<uint8_t, 8> &data);
+        void updateCurrentCalibrationStatus() override;
 
         void _verifyMotorTimeoutLoop();
-        void _refreshLastTimeRead();
-
-        void updateCurrentCalibrationStatus();
         double getCurrentTimeout() const;
 
     private:
-        std::unique_ptr<mcp_can_rpi::MCP_CAN> mcp_can;
+        std::shared_ptr<mcp_can_rpi::MCP_CAN> _mcp_can;
 
-        std::mutex _stepper_timeout_mutex;
-        std::thread _stepper_timeout_thread;
+        std::vector<uint8_t> _all_motor_connected; // with all can motors connected (including the conveyor)
+        std::vector<uint8_t> _removed_motor_id_list;
 
-        // cc use a set ?? -> pb with publish
-        std::vector<uint8_t> _all_motor_connected;
-
-        std::map<uint8_t, std::shared_ptr<common::model::StepperMotorState> > _state_map;
+        // state of a component for a given id
+        std::map<uint8_t, std::shared_ptr<common::model::AbstractHardwareState> > _state_map;
+        // map of drivers for a given hardware type (xl, stepper, end effector)
+        std::map<common::model::EHardwareType, std::shared_ptr<can_driver::AbstractCanDriver> > _driver_map;
 
         double _calibration_timeout{30.0};
         common::model::EStepperCalibrationStatus _calibration_status;
@@ -147,46 +125,21 @@ class CanManager : public common::model::IBusManager
         bool _is_connection_ok{false};
         std::string _debug_error_message;
 
-private:
-        static constexpr int CAN_CMD_POSITION                       = 0x03;
-        static constexpr int CAN_CMD_TORQUE                         = 0x04;
-        static constexpr int CAN_CMD_MODE                           = 0x07;
-        static constexpr int CAN_CMD_MICRO_STEPS                    = 0x13;
-        static constexpr int CAN_CMD_OFFSET                         = 0x14;
-        static constexpr int CAN_CMD_CALIBRATE                      = 0x15;
-        static constexpr int CAN_CMD_SYNCHRONIZE                    = 0x16;
-        static constexpr int CAN_CMD_MAX_EFFORT                     = 0x17;
-        static constexpr int CAN_CMD_MOVE_REL                       = 0x18;
-        static constexpr int CAN_CMD_RESET                          = 0x19; // not yet implemented
-
-        static constexpr int CAN_STEPPERS_CALIBRATION_MODE_AUTO     = 1;
-        static constexpr int CAN_STEPPERS_CALIBRATION_MODE_MANUAL   = 2;
-
-        static constexpr int CAN_STEPPERS_WRITE_OFFSET_FAIL         = -3;
-
-        static constexpr int CAN_DATA_POSITION                      = 0x03;
-        static constexpr int CAN_DATA_DIAGNOSTICS                   = 0x08;
-        static constexpr int CAN_DATA_FIRMWARE_VERSION              = 0x10;
-        static constexpr int CAN_DATA_CONVEYOR_STATE                = 0x07;
-        static constexpr int CAN_DATA_CALIBRATION_RESULT            = 0x09;
-
-        static constexpr int STEPPER_CONTROL_MODE_RELAX             = 0;
-        static constexpr int STEPPER_CONTROL_MODE_STANDARD          = 1;
-        static constexpr int STEPPER_CONTROL_MODE_PID_POS           = 2;
-        static constexpr int STEPPER_CONTROL_MODE_TORQUE            = 3;
-
-        static constexpr int STEPPER_CONVEYOR_OFF                   = 20;
-        static constexpr int STEPPER_CONVEYOR_ON                    = 21;
-        static constexpr int CAN_UPDATE_CONVEYOR_ID                 = 23;
-
-        static constexpr uint8_t MESSAGE_POSITION_LENGTH            = 4;
-        static constexpr uint8_t MESSAGE_DIAGNOSTICS_LENGTH         = 4;
-        static constexpr uint8_t MESSAGE_FIRMWARE_LENGTH            = 4;
-
-        static constexpr int CAN_MODEL_NUMBER                       = 10000;
-
-        static constexpr double STEPPER_MOTOR_TIMEOUT_VALUE         = 1.0;
+        std::mutex _stepper_timeout_mutex;
+        std::thread _stepper_timeout_thread;
 };
+
+// inline getters
+
+/**
+ * @brief CanManager::isConnectionOk
+ * @return
+ */
+inline
+bool CanManager::isConnectionOk() const
+{
+  return _is_connection_ok;
+}
 
 /**
  * @brief CanManager::getNbMotors
@@ -199,13 +152,23 @@ size_t CanManager::getNbMotors() const
 }
 
 /**
- * @brief CanManager::canReadData
+ * @brief TtlManager::getRemovedMotorList
  * @return
  */
 inline
-bool CanManager::canReadData() const
+std::vector<uint8_t> CanManager::getRemovedMotorList() const
 {
-    return mcp_can->canReadData();
+    return _removed_motor_id_list;
+}
+
+/**
+ * @brief CanManager::getErrorMessage
+ * @return
+ */
+inline
+std::string CanManager::getErrorMessage() const
+{
+  return _debug_error_message;
 }
 
 /**
@@ -213,7 +176,8 @@ bool CanManager::canReadData() const
  * @return
  */
 inline
-common::model::EStepperCalibrationStatus CanManager::getCalibrationStatus() const
+common::model::EStepperCalibrationStatus
+CanManager::getCalibrationStatus() const
 {
     return _calibration_status;
 }
@@ -229,4 +193,4 @@ bool CanManager::isCalibrationInProgress() const {
 
 } // namespace can_driver
 
-#endif
+#endif // CAN_MANAGER_H

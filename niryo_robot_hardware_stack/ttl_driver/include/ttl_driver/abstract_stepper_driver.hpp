@@ -39,7 +39,7 @@ class AbstractStepperDriver : public AbstractMotorDriver
 
     protected:
         // AbstractTtlDriver interface
-        virtual std::string interpreteFirmwareVersion(uint32_t data) const override;
+        virtual std::string interpreteFirmwareVersion(uint32_t fw_version) const override;
 
     public:
         // AbstractMotorDriver interface

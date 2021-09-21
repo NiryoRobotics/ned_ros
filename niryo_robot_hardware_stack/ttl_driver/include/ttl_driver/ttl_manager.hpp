@@ -79,10 +79,22 @@ class TtlManager : public common::model::IBusManager
         TtlManager(ros::NodeHandle& nh);
         virtual ~TtlManager() override;
 
+        // IBusManager Interface
         bool init(ros::NodeHandle& nh) override;
 
+        void addHardwareComponent(const std::shared_ptr<common::model::AbstractHardwareState> &state) override;
+
+        void removeHardwareComponent(uint8_t id) override;
+        bool isConnectionOk() const override;
+
+        int scanAndCheck() override;
+        bool ping(uint8_t id) override;
+
+        size_t getNbMotors() const override;
+        void getBusState(bool& connection_state, std::vector<uint8_t>& motor_id, std::string& debug_msg) const override;
+        std::string getErrorMessage() const override;
+
         // commands
-        void addHardwareComponent(const std::shared_ptr<common::model::AbstractHardwareState> state);
 
         int changeId(common::model::EHardwareType motor_type, uint8_t old_id, uint8_t new_id);
 
@@ -99,56 +111,49 @@ class TtlManager : public common::model::IBusManager
         int sendCustomCommand(common::model::EHardwareType motor_type, uint8_t id, int reg_address, int value, int byte_number);
         int readCustomCommand(common::model::EHardwareType motor_type, uint8_t id, int32_t reg_address, int &value, int byte_number);
 
+        // read status
         bool readPositionStatus();
         bool readEndEffectorStatus();
         bool readHwStatus();
 
-        int getAllIdsOnBus(std::vector<uint8_t> &id_list);
 
         //calibration
-        void startCalibration();
-        void resetCalibration();
-        bool isCalibrationInProgress() const;
-        int32_t getCalibrationResult(uint8_t id) const;
-        common::model::EStepperCalibrationStatus getCalibrationStatus() const;
-        void updateCurrentCalibrationStatus();
+        void startCalibration() override;
+        void resetCalibration() override;
+        bool isCalibrationInProgress() const override;
+        int32_t getCalibrationResult(uint8_t id) const override;
+        common::model::EStepperCalibrationStatus getCalibrationStatus() const override;
+
         // getters
-        uint32_t getPosition(common::model::JointState& motor_state);
+        int getAllIdsOnBus(std::vector<uint8_t> &id_list);
+
+        uint32_t getPosition(const common::model::JointState &motor_state);
         int getLedState() const;
 
         std::vector<std::shared_ptr<common::model::JointState> > getMotorsStates() const;
-        
         std::shared_ptr<common::model::AbstractHardwareState> getHardwareState(uint8_t motor_id) const;
 
-        std::vector<uint8_t> getRemovedMotorList() const;
+        std::vector<uint8_t> getRemovedMotorList() const override;
 
-        // IBusManager Interface
-        void removeMotor(uint8_t id) override;
-        bool isConnectionOk() const override;
         bool hasEndEffector() const;
 
-        int scanAndCheck() override;
-        bool ping(uint8_t id) override;
-
-        size_t getNbMotors() const override;
-        void getBusState(bool& connection_state, std::vector<uint8_t>& motor_id, std::string& debug_msg) const override;
-        std::string getErrorMessage() const override;
     private:
+        // IBusManager Interface
+        int setupCommunication() override;
+        void addHardwareDriver(common::model::EHardwareType hardware_type) override;
 
-        int setupCommunication();
+        void updateCurrentCalibrationStatus() override;
 
         void checkRemovedMotors();
-
-        void addHardwareDriver(common::model::EHardwareType hardware_type);
 
     private:
         std::shared_ptr<dynamixel::PortHandler> _portHandler;
         std::shared_ptr<dynamixel::PacketHandler> _packetHandler;
 
         std::string _device_name;
-        int _uart_baudrate{1000000};
+        int _baudrate{1000000};
 
-        std::vector<uint8_t> _all_motor_connected; // with all dxl motors connected (including the tool)
+        std::vector<uint8_t> _all_motor_connected; // with all ttl motors connected (including the tool)
         std::vector<uint8_t> _removed_motor_id_list;
 
         // state of a component for a given id
@@ -156,7 +161,7 @@ class TtlManager : public common::model::IBusManager
         // map of associated ids for a given hardware type
         std::map<common::model::EHardwareType, std::vector<uint8_t> > _ids_map;
         // map of drivers for a given hardware type (xl, stepper, end effector)
-        std::map<common::model::EHardwareType, std::shared_ptr<AbstractTtlDriver> > _driver_map;
+        std::map<common::model::EHardwareType, std::shared_ptr<ttl_driver::AbstractTtlDriver> > _driver_map;
 
         double _calibration_timeout{30.0};
         common::model::EStepperCalibrationStatus _calibration_status{common::model::EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED};
@@ -188,6 +193,10 @@ class TtlManager : public common::model::IBusManager
 
 // inline getters
 
+/**
+ * @brief TtlManager::isConnectionOk
+ * @return
+ */
 inline
 bool TtlManager::isConnectionOk() const
 {
@@ -225,6 +234,27 @@ std::string TtlManager::getErrorMessage() const
 }
 
 /**
+ * @brief TtlManager::isCalibrationInProgress
+ * @return
+ */
+inline
+bool TtlManager::isCalibrationInProgress() const
+{
+  return (common::model::EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS == _calibration_status);
+}
+
+/**
+ * @brief TtlManager::getCalibrationStatus
+ * @return
+ */
+inline
+common::model::EStepperCalibrationStatus
+TtlManager::getCalibrationStatus() const
+{
+  return _calibration_status;
+}
+
+/**
  * @brief TtlManager::getLedState
  * @return
  * TODO(CC) to be removed from TtlManager : not the purpose of the manager to register states
@@ -233,21 +263,6 @@ inline
 int TtlManager::getLedState() const
 {
     return _led_state;
-}
-
-/**
- * @brief TtlManager::getBusState
- * @param connection_state
- * @param motor_id
- * @param debug_msg
- */
-inline
-void TtlManager::getBusState(bool &connection_state, std::vector<uint8_t> &motor_id,
-                             std::string &debug_msg) const
-{
-    debug_msg = _debug_error_message;
-    motor_id = _all_motor_connected;
-    connection_state = isConnectionOk();
 }
 
 /**

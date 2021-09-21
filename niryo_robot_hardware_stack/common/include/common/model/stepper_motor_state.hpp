@@ -55,6 +55,7 @@ class StepperMotorState : public JointState
 
         void setCalibration(const common::model::EStepperCalibrationStatus &calibration_state,
                             const int32_t &calibration_value);
+        void setCalibration(const std::tuple<EStepperCalibrationStatus, int32_t> &data);
 
         // getters
         double getLastTimeRead() const;

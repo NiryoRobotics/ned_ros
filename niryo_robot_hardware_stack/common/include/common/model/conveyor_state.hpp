@@ -50,6 +50,8 @@ class ConveyorState : public StepperMotorState {
 
         void updateId(uint8_t id);
 
+        void updateData(const std::tuple<bool, uint8_t, uint16_t> &data);
+
         void setState(bool state);
         void setSpeed(int16_t speed);
 

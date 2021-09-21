@@ -258,87 +258,90 @@ int TtlInterfaceCore::motorScanReport(uint8_t motor_id)
 
 /**
  * @brief TtlInterfaceCore::motorCmdReport
- * @param motor_id
+ * @param jState
  * @param motor_type
  * @return
  */
-int TtlInterfaceCore::motorCmdReport(uint8_t motor_id, EHardwareType motor_type)
+int TtlInterfaceCore::motorCmdReport(const JointState& jState, EHardwareType motor_type)
 {
     int ret = niryo_robot_msgs::CommandStatus::ABORTED;
 
-    if (_debug_flag)
+    if (motor_type != EHardwareType::UNKNOWN)
     {
-        if (motor_type == EHardwareType::UNKNOWN)
-            return 0;
-
-        JointState tmp_state = JointState("unknown", motor_type, common::model::EComponentType::JOINT, common::model::EBusProtocol::TTL, motor_id);
-
-        // torque on
-        ros::Duration(0.5).sleep();
-        ROS_INFO("TtlInterfaceCore::motorCmdReport - Debug - Send torque on command to motor %d", motor_id);
-        if (motor_type == EHardwareType::STEPPER || motor_type == EHardwareType::FAKE_STEPPER_MOTOR)
+        if (_debug_flag)
         {
-            ret = niryo_robot_msgs::CommandStatus::SUCCESS;
-            ROS_INFO("TtlInterfaceCore::motorCmdReport: Implement in case we have stepper");
-        }
-        else
-        {
-            std::shared_ptr<AbstractTtlSingleMotorCmd> cmd_torque = std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_TORQUE,
-                                                                                                   motor_id,
-                                                                                                   std::initializer_list<uint32_t>{1});
-            _ttl_manager->writeSingleCommand(cmd_torque);
+            uint8_t motor_id = jState.getId();
+
+            // torque on
             ros::Duration(0.5).sleep();
-
-            // set position to old position + 200
-            uint32_t old_position = _ttl_manager->getPosition(tmp_state);
-            ROS_INFO("TtlInterfaceCore::motorCmdReport - Debug - get dxl %d pose: %d ", motor_id, old_position);
-            ros::Duration(0.5).sleep();
-            ROS_INFO("TtlInterfaceCore::motorCmdReport - Debug - Send dxl %d pose: %d ", motor_id, old_position + 200);
-            std::shared_ptr<AbstractTtlSingleMotorCmd> cmd_pos = std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_POSITION,
-                                                                                                motor_id,
-                                                                                                std::initializer_list<uint32_t>{old_position + 200});
-            _ttl_manager->writeSingleCommand(cmd_pos);
-
-            // set position back to old position
-            ros::Duration(2).sleep();
-            uint32_t new_position = _ttl_manager->getPosition(tmp_state);
-            ROS_INFO("TtlInterfaceCore::motorCmdReport - Debug - get dxl %d pose: %d ", motor_id, new_position);
-            int rest = static_cast<int>(new_position - old_position);
-
-            ROS_INFO("TtlInterfaceCore - Debug - Send dxl %d pose: %d ", motor_id, old_position);
-            std::shared_ptr<AbstractTtlSingleMotorCmd> cmd_pos_2 = std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_POSITION,
-                                                                                                  motor_id,
-                                                                                                  std::initializer_list<uint32_t>{old_position});
-            _ttl_manager->writeSingleCommand(cmd_pos_2);
-
-            ros::Duration(2).sleep();
-            uint32_t new_position2 = _ttl_manager->getPosition(tmp_state);
-            ROS_INFO("TtlInterfaceCore::motorCmdReport - Debug - get dxl %d pose: %d ", motor_id, new_position2);
-            int rest2 = static_cast<int>(new_position2 - new_position);
-
-            // torque off
-            ROS_INFO("TtlInterfaceCore::motorCmdReport - Debug - Send torque off command on dxl %d", motor_id);
-            std::shared_ptr<AbstractTtlSingleMotorCmd> cmd_torque_2 = std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_TORQUE,
-                                                                                                     motor_id,
-                                                                                                     std::initializer_list<uint32_t>{0});
-            _ttl_manager->writeSingleCommand(cmd_torque_2);
-
-            if (abs(rest) < 50 || abs(rest2) < 50)
+            ROS_INFO("TtlInterfaceCore::motorCmdReport - Debug - Send torque on command to motor %d", motor_id);
+            if (motor_type == EHardwareType::STEPPER || motor_type == EHardwareType::FAKE_STEPPER_MOTOR)
             {
-                ROS_WARN("TtlInterfaceCore::motorCmdReport - Debug - Dynamixel Motor %d problem", motor_id);
-                ret = niryo_robot_msgs::CommandStatus::FAILURE;
+                ret = niryo_robot_msgs::CommandStatus::SUCCESS;
+                ROS_INFO("TtlInterfaceCore::motorCmdReport: Implement in case we have stepper");
             }
             else
             {
-                ROS_INFO("TtlInterfaceCore::motorCmdReport - Debug - Dynamixel Motor %d OK", motor_id);
-                ret = niryo_robot_msgs::CommandStatus::SUCCESS;
+                std::shared_ptr<AbstractTtlSingleMotorCmd> cmd_torque = std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_TORQUE,
+                                                                                                       motor_id,
+                                                                                                       std::initializer_list<uint32_t>{1});
+                _ttl_manager->writeSingleCommand(cmd_torque);
+                ros::Duration(0.5).sleep();
+
+                // set position to old position + 200
+                uint32_t old_position = _ttl_manager->getPosition(jState);
+                ROS_INFO("TtlInterfaceCore::motorCmdReport - Debug - get dxl %d pose: %d ", motor_id, old_position);
+                ros::Duration(0.5).sleep();
+
+                ROS_INFO("TtlInterfaceCore::motorCmdReport - Debug - Send dxl %d pose: %d ", motor_id, old_position + 200);
+                std::shared_ptr<AbstractTtlSingleMotorCmd> cmd_pos = std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_POSITION,
+                                                                                                    motor_id,
+                                                                                                    std::initializer_list<uint32_t>{old_position + 200});
+                _ttl_manager->writeSingleCommand(cmd_pos);
+                ros::Duration(2).sleep();
+
+                // set position back to old position
+                uint32_t new_position = _ttl_manager->getPosition(jState);
+                ROS_INFO("TtlInterfaceCore::motorCmdReport - Debug - get dxl %d pose: %d ", motor_id, new_position);
+                int rest = static_cast<int>(new_position - old_position);
+                ros::Duration(0.5).sleep();
+
+                ROS_INFO("TtlInterfaceCore - Debug - Send dxl %d pose: %d ", motor_id, old_position);
+                std::shared_ptr<AbstractTtlSingleMotorCmd> cmd_pos_2 = std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_POSITION,
+                                                                                                      motor_id,
+                                                                                                      std::initializer_list<uint32_t>{old_position});
+                _ttl_manager->writeSingleCommand(cmd_pos_2);
+                ros::Duration(2).sleep();
+                uint32_t new_position2 = _ttl_manager->getPosition(jState);
+                ROS_INFO("TtlInterfaceCore::motorCmdReport - Debug - get ttl motor %d pose: %d ", motor_id, new_position2);
+                int rest2 = static_cast<int>(new_position2 - new_position);
+                ros::Duration(0.5).sleep();
+
+                // torque off
+                ROS_INFO("TtlInterfaceCore::motorCmdReport - Debug - Send torque off command on ttl motor %d", motor_id);
+                std::shared_ptr<AbstractTtlSingleMotorCmd> cmd_torque_2 = std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_TORQUE,
+                                                                                                         motor_id,
+                                                                                                         std::initializer_list<uint32_t>{0});
+                _ttl_manager->writeSingleCommand(cmd_torque_2);
+
+                if (abs(rest) < 50 || abs(rest2) < 50)
+                {
+                    ROS_WARN("TtlInterfaceCore::motorCmdReport - Debug - Dynamixel Motor %d problem", motor_id);
+                    ret = niryo_robot_msgs::CommandStatus::FAILURE;
+                }
+                else
+                {
+                    ROS_INFO("TtlInterfaceCore::motorCmdReport - Debug - Dynamixel Motor %d OK", motor_id);
+                    ret = niryo_robot_msgs::CommandStatus::SUCCESS;
+                }
             }
         }
+        else
+        {
+            ROS_ERROR("TtlInterfaceCore::motorCmdReport - Debug - Debug mode not enabled");
+        }
     }
-    else
-    {
-        ROS_ERROR("TtlInterfaceCore::motorCmdReport - Debug - Debug mode not enabled");
-    }
+
 
     return ret;
 }
@@ -368,7 +371,7 @@ int TtlInterfaceCore::launchMotorsReport()
                          static_cast<int>(state->getId()));
 
                 int scan_res = motorScanReport(state->getId());
-                int cmd_res = motorCmdReport(state->getId(), state->getHardwareType());
+                int cmd_res = motorCmdReport(*state, state->getHardwareType());
 
                 if (niryo_robot_msgs::CommandStatus::SUCCESS == scan_res
                         && niryo_robot_msgs::CommandStatus::SUCCESS == cmd_res)
@@ -728,7 +731,7 @@ void TtlInterfaceCore::unsetTool(uint8_t motor_id)
     lock_guard<mutex> lck(_control_loop_mutex);
 
     ROS_DEBUG("TtlInterfaceCore::unsetTool - UnsetTool: id %d", motor_id);
-    _ttl_manager->removeMotor(motor_id);
+    _ttl_manager->removeHardwareComponent(motor_id);
 }
 
 /**
@@ -767,17 +770,18 @@ int TtlInterfaceCore::setEndEffector(const std::shared_ptr<common::model::EndEff
  */
 int TtlInterfaceCore::setConveyor(const std::shared_ptr<common::model::ConveyorState> state)
 {
+    lock_guard<mutex> lck(_control_loop_mutex);
+
     int result = niryo_robot_msgs::CommandStatus::NO_CONVEYOR_FOUND;
 
     _default_conveyor_id = state->getDefaultId();
-
-    lock_guard<mutex> lck(_control_loop_mutex);
 
     // add hw component before to get driver
     _ttl_manager->addHardwareComponent(state);
 
     if (_ttl_manager->ping(_default_conveyor_id))
     {
+        // no init needed
         result = niryo_robot_msgs::CommandStatus::SUCCESS;
     }
     else
@@ -801,7 +805,7 @@ void TtlInterfaceCore::unsetConveyor(uint8_t motor_id)
     auto state = getJointState(motor_id);
     if (COMM_SUCCESS == _ttl_manager->changeId(state->getHardwareType(), motor_id, _default_conveyor_id))
     {
-        _ttl_manager->removeMotor(_default_conveyor_id);
+        _ttl_manager->removeHardwareComponent(_default_conveyor_id);
     }
     else
         ROS_ERROR("TtlInterfaceCore::unsetConveyor : unable to change conveyor ID");
@@ -809,8 +813,10 @@ void TtlInterfaceCore::unsetConveyor(uint8_t motor_id)
 
 /**
  * @brief TtlInterfaceCore::changeId
+ * @param motor_type
  * @param old_id
  * @param new_id
+ * @return
  */
 int TtlInterfaceCore::changeId(common::model::EHardwareType motor_type, uint8_t old_id, uint8_t new_id)
 {

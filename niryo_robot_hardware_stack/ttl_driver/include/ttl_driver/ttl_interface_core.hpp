@@ -146,7 +146,7 @@ class TtlInterfaceCore : public common::model::IDriverCore, public common::model
         void _executeCommand() override;
 
         int motorScanReport(uint8_t motor_id);
-        int motorCmdReport(uint8_t motor_id, common::model::EHardwareType motor_type);
+        int motorCmdReport(const common::model::JointState &jState, common::model::EHardwareType motor_type);
 
         // use other callbacks instead of executecommand
         bool _callbackActivateLeds(niryo_robot_msgs::SetInt::Request &req, niryo_robot_msgs::SetInt::Response &res);

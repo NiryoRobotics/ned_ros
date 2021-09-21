@@ -21,6 +21,7 @@
 
 #include <sstream>
 #include <string>
+#include <tuple>
 
 namespace common
 {
@@ -99,6 +100,16 @@ void ConveyorState::initialize(uint8_t default_id, double max_effort, double mic
 void ConveyorState::updateId(uint8_t id)
 {
   _id = id;
+}
+
+/**
+ * @brief ConveyorState::updateData : for conveniency
+ */
+void ConveyorState::updateData(const std::tuple<bool, uint8_t, uint16_t>& data)
+{
+    setState(std::get<0>(data));
+    setSpeed(std::get<1>(data));
+    setDirection(std::get<2>(data));
 }
 
 /**

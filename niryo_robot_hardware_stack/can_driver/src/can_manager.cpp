@@ -22,6 +22,8 @@
 #include "common/model/stepper_command_type_enum.hpp"
 #include "common/model/bus_protocol_enum.hpp"
 
+#include "can_driver/stepper_driver.hpp"
+
 // c++
 #include <cstdint>
 #include <functional>
@@ -33,7 +35,10 @@
 using ::common::model::EStepperCalibrationStatus;
 using ::common::model::ConveyorState;
 using ::common::model::StepperMotorState;
+using ::common::model::JointState;
 using ::common::model::EStepperCommandType;
+using ::common::model::EBusProtocol;
+using ::common::model::EHardwareType;
 
 namespace can_driver
 {
@@ -42,13 +47,14 @@ namespace can_driver
  * @brief CanManager::CanManager
  */
 CanManager::CanManager(ros::NodeHandle& nh) :
-    _calibration_status(EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED)
+    _calibration_status(EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED),
+    _debug_error_message("CanManager - No connection with CAN motors has been made yet")
 {
     ROS_DEBUG("CanManager - ctor");
 
     init(nh);
 
-    if (CAN_OK == setupCAN(nh))
+    if (CAN_OK == setupCommunication())
     {
         scanAndCheck();
 
@@ -70,39 +76,28 @@ CanManager::~CanManager()
 }
 
 /**
- * @brief CanManager::startCalibration
- */
-void CanManager::startCalibration()
-{
-    ROS_DEBUG("CanManager::startCalibration: starting...");
-
-    for (auto const& s : _state_map)
-    {
-        if (s.second && !s.second->isConveyor())
-            s.second->setCalibration(EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS, 0);
-    }
-
-    _calibration_status = EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS;
-}
-
-/**
- * @brief CanManager::resetCalibration
- */
-void CanManager::resetCalibration()
-{
-    ROS_DEBUG("CanManager::resetCalibration: reseting...");
-
-    _calibration_status = EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED;
-}
-
-/**
  * @brief CanManager::init : initialize the internal data (map, vectors) based on conf
+ * @param nh
  * @return
  */
 bool CanManager::init(ros::NodeHandle& nh)
 {
+    int spi_channel = 0;
+    int spi_baudrate = 0;
+    int gpio_can_interrupt = 0;
+
+    nh.getParam("bus_params/spi_channel", spi_channel);
+    nh.getParam("bus_params/spi_baudrate", spi_baudrate);
+    nh.getParam("bus_params/gpio_can_interrupt", gpio_can_interrupt);
     nh.getParam("/niryo_robot_hardware_interface/joints_interface/calibration_timeout", _calibration_timeout);
+
+    ROS_DEBUG("CanManager::init - Can bus parameters: spi_channel : %d", spi_channel);
+    ROS_DEBUG("CanManager::init - Can bus parameters: spi_baudrate : %d", spi_baudrate);
+    ROS_DEBUG("CanManager::CanManager - Can bus parameters: gpio_can_interrupt : %d", gpio_can_interrupt);
     ROS_DEBUG("CanManager::init - Calibration timeout %f", _calibration_timeout);
+
+    _mcp_can = std::make_shared<mcp_can_rpi::MCP_CAN>(spi_channel, spi_baudrate,
+                                                      static_cast<uint8_t>(gpio_can_interrupt));
 
     return true;
 }
@@ -111,199 +106,114 @@ bool CanManager::init(ros::NodeHandle& nh)
  * @brief CanManager::setupCAN
  * @return
  */
-int CanManager::setupCAN(ros::NodeHandle& nh)
+int CanManager::setupCommunication()
 {
-    int result = CAN_FAILINIT;
-    int spi_channel = 0;
-    int spi_baudrate = 0;
-    int gpio_can_interrupt = 0;
+    int ret = CAN_FAILINIT;
+    ROS_DEBUG("CanManager::setupCommunication - initializing connection...");
 
-    ros::NodeHandle nh_private("~");
-    nh.getParam("bus_params/spi_channel", spi_channel);
-    nh.getParam("bus_params/spi_baudrate", spi_baudrate);
-    nh.getParam("bus_params/gpio_can_interrupt", gpio_can_interrupt);
-
-    ROS_DEBUG("CanManager::CanManager - Can bus parameters: spi_channel : %d", spi_channel);
-    ROS_DEBUG("CanManager::CanManager - Can bus parameters: spi_baudrate : %d", spi_baudrate);
-    ROS_DEBUG("CanManager::CanManager - Can bus parameters: gpio_can_interrupt : %d", gpio_can_interrupt);
-
-    mcp_can = std::make_unique<mcp_can_rpi::MCP_CAN>(spi_channel, spi_baudrate,
-                                                     static_cast<uint8_t>(gpio_can_interrupt));
-
-    if (mcp_can)
+    // Can bus setup
+    if (_mcp_can)
     {
-        if (mcp_can->setupInterruptGpio())
-        {
-            ROS_DEBUG("CanManager::setupCAN - setup interrupt GPIO successfull");
-            if (mcp_can->setupSpi())
-            {
-                ROS_DEBUG("CanManager::setupCAN - setup spi successfull");
+        _debug_error_message.clear();
 
+        if (_mcp_can->setupInterruptGpio())
+        {
+            ROS_DEBUG("CanManager::setupCommunication - Setup Interrupt GPIO successfull");
+            ros::Duration(0.05).sleep();
+
+            if (_mcp_can->setupSpi())
+            {
+                ROS_DEBUG("CanManager::setupCommunication - Setup SPI successfull");
+                ros::Duration(0.05).sleep();
                 // no mask or filter used, receive all messages from CAN bus
                 // messages with ids != motor_id will be sent to another ROS interface
                 // so we can use many CAN devices with this only driver
-                result = mcp_can->begin(MCP_ANY, CAN_1000KBPS, MCP_16MHZ);
+                ret = _mcp_can->begin(MCP_ANY, CAN_1000KBPS, MCP_16MHZ);
 
-                if (CAN_OK == result)
+                if (CAN_OK == ret)
                 {
+                    ROS_DEBUG("CanManager::setupCommunication - MCP can initialized");
+
                     // set mode to normal
-                    mcp_can->setMode(MCP_NORMAL);
+                    _mcp_can->setMode(MCP_NORMAL);
                     _is_connection_ok = false;
                     ros::Duration(0.05).sleep();
                 }
                 else
                 {
-                    ROS_ERROR("CanManager::setupCAN - Failed to init MCP2515 (CAN bus)");
+                    ROS_ERROR("CanManager::setupCommunication - Failed to init MCP2515 (CAN bus)");
                     _debug_error_message = "Failed to init MCP2515 (CAN bus)";
                 }
             }
             else
             {
-                ROS_WARN("CanManager::setupCAN - Failed to start spi");
+                ROS_WARN("CanManager::setupCommunication - Failed to start spi");
                 _debug_error_message = "Failed to start spi";
-                result = CAN_SPI_FAILINIT;
+                ret = CAN_SPI_FAILINIT;
             }
         }
         else
         {
-            ROS_WARN("CanManager::setupCAN - Failed to start gpio");
+            ROS_WARN("CanManager::setupCommunication - Failed to start gpio");
             _debug_error_message = "Failed to start gpio";
-            result = CAN_GPIO_FAILINIT;
+            ret = CAN_GPIO_FAILINIT;
         }
     }
+    else
+        ROS_ERROR("CanManager::setupCommunication - Invalid CAN handler");
 
-    return result;
+    return ret;
 }
 
 /**
- * @brief CanManager::isConnectionOk
- * @return
+ * @brief CanManager::addHardwareComponent
+ * @param state
  */
-bool CanManager::isConnectionOk() const
+void CanManager::addHardwareComponent(const std::shared_ptr<common::model::AbstractHardwareState>& state)
 {
-    return _is_connection_ok;
+    common::model::EHardwareType hardware_type = state->getHardwareType();
+    uint8_t id = state->getId();
+
+    ROS_DEBUG("CanManager::addHardwareComponent : %s", state->str().c_str());
+
+    // if not already instanciated
+    if (!_state_map.count(id))
+    {
+        _state_map.insert(std::make_pair(id, state));
+    }
+
+    addHardwareDriver(hardware_type);
 }
 
 /**
- * @brief CanManager::removeMotor
+ * @brief CanManager::removeHardwareComponent
  * @param id
  */
-void CanManager::removeMotor(uint8_t id)
+void CanManager::removeHardwareComponent(uint8_t id)
 {
-    ROS_DEBUG("CanManager::removeMotor - Remove motor id: %d", id);
+  ROS_DEBUG("CanManager::removeMotor - Remove motor id: %d", id);
 
-    if (_state_map.count(id))
-    {
-        _state_map.erase(id);
-    }
-}
+  if (_state_map.count(id) && _state_map.at(id))
+  {
+      _state_map.erase(id);
+  }
 
-/**
- * @brief CanManager::getPosition
- * @param motor_id
- * @return
- */
-int32_t CanManager::getPosition(uint8_t motor_id) const
-{
-    if (!_state_map.count(motor_id) || !_state_map.at(motor_id))
-    {
-        throw std::out_of_range("CanManager::getPosition: Unknown motor id");
-    }
-
-    return _state_map.at(motor_id)->getPositionState();
+  _removed_motor_id_list.erase(std::remove(_removed_motor_id_list.begin(),
+                                           _removed_motor_id_list.end(), id),
+                                           _removed_motor_id_list.end());
 }
 
 
-/**
- * @brief CanManager::readCommand
- * @param cmd
- * @return
- */
-int CanManager::writeSingleCommand(std::shared_ptr<common::model::AbstractCanSingleMotorCmd> cmd)
+// ****************
+//  commands
+// ****************
+
+int CanManager::changeId(common::model::EHardwareType motor_type, uint8_t old_id, uint8_t new_id)
 {
-    int result = CAN_INVALID_CMD;
-    ROS_DEBUG("CanManager::readCommand - Received stepper cmd %s", cmd->str().c_str());
-
-    if (cmd->isValid() && _state_map.count(cmd->getId()) > 0)  // certifies that params is not empty
-    {
-        switch (EStepperCommandType(cmd->getCmdType()))
-        {
-            case EStepperCommandType::CMD_TYPE_POSITION:
-                result = sendPositionCommand(cmd->getId(),
-                                             cmd->getParams().front());
-            break;
-            case EStepperCommandType::CMD_TYPE_TORQUE:
-                result = sendTorqueOnCommand(cmd->getId(),
-                                             cmd->getParams().front());
-            break;
-            case EStepperCommandType::CMD_TYPE_LEARNING_MODE:
-                result = sendTorqueOnCommand(cmd->getId(),
-                                             !cmd->getParams().front());
-            break;
-            case EStepperCommandType::CMD_TYPE_SYNCHRONIZE:
-                result = sendSynchronizePositionCommand(cmd->getId(),
-                                                        cmd->getParams().front());
-            break;
-            case EStepperCommandType::CMD_TYPE_RELATIVE_MOVE:
-                result = sendRelativeMoveCommand(cmd->getId(),
-                                                 cmd->getParams().at(0),
-                                                 cmd->getParams().at(1));
-            break;
-            case EStepperCommandType::CMD_TYPE_MAX_EFFORT:
-                result = sendMaxEffortCommand(cmd->getId(),
-                                              cmd->getParams().front());
-            break;
-            case EStepperCommandType::CMD_TYPE_MICRO_STEPS:
-                result = sendMicroStepsCommand(cmd->getId(),
-                                               cmd->getParams().front());
-            break;
-            case EStepperCommandType::CMD_TYPE_CALIBRATION:
-                result = sendCalibrationCommand(cmd->getId(),
-                                                cmd->getParams().at(0),
-                                                cmd->getParams().at(1),
-                                                cmd->getParams().at(2),
-                                                cmd->getParams().at(3));
-
-            break;
-            case EStepperCommandType::CMD_TYPE_POSITION_OFFSET:
-                    result = sendPositionOffsetCommand(cmd->getId(),
-                                                       cmd->getParams().at(0),
-                                                       cmd->getParams().at(1));
-                break;
-            case EStepperCommandType::CMD_TYPE_CONVEYOR:
-                    result = sendConveyorOnCommand(cmd->getId(),
-                                                  cmd->getParams().at(0),
-                                                  static_cast<uint8_t>(cmd->getParams().at(1)),
-                                                  static_cast<uint8_t>(cmd->getParams().at(2)));
-                break;
-            default:
-                break;
-        }
-    }
-
-    if (CAN_OK != result)
-    {
-        ROS_ERROR_THROTTLE(0.5, "CanManager::readCommand - Failed to read stepper cmd with error %d", result);
-        _debug_error_message = "CanManager - Failed to read stepper cmd";
-    }
-
-    ROS_DEBUG_THROTTLE(0.5, "CanManager::readCommand - Received stepper cmd finished");
-    return result;
-}
-
-/**
- * @brief CanManager::executeJointTrajectoryCmd
- * @param cmd_vec : need to be passed by copy, so that we ensure the data will not change in this method
- */
-void CanManager::executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, int32_t> > cmd_vec)
-{
-    for (auto const& cmd : cmd_vec)
-    {
-        if (sendPositionCommand(cmd.first, cmd.second) != CAN_OK)
-        {
-            ROS_WARN("Stepper Driver - send positions to motor id %d failed", cmd.first);
-        }
-    }
+  if (_driver_map.count(motor_type) && _driver_map.at(motor_type))
+    return _driver_map.at(motor_type)->sendUpdateConveyorId(old_id, new_id);
+  else
+    return CAN_FAIL;
 }
 
 /**
@@ -311,46 +221,65 @@ void CanManager::executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, int32_
  */
 void CanManager::readStatus()
 {
-    if (canReadData())
+    if(_driver_map.count(EHardwareType::STEPPER))
     {
-        INT32U rxId;
-        uint8_t len;
-        std::array<uint8_t, 8> rxBuf;
-        readMsgBuf(&rxId, &len, rxBuf);
-        uint8_t motor_id = rxId & 0x0F;
-
-        if (_state_map.count(motor_id) && _state_map.at(motor_id))
+        auto stepper_driver = _driver_map.at(EHardwareType::STEPPER);
+        if (stepper_driver && stepper_driver->canReadData())
         {
-            // update last time read
-            _state_map.at(motor_id)->updateLastTimeRead();
+            uint8_t motor_id{};
+            int control_byte{};
+            std::array<uint8_t, StepperDriver::MAX_MESSAGE_LENGTH> rxBuf{};
+            std::string error_message;
 
-            int control_byte = rxBuf[0];
-            switch (control_byte)
+            if (CAN_OK == stepper_driver->readData(motor_id, control_byte, rxBuf, error_message))
             {
-                case CAN_DATA_POSITION:
-                    fillPositionStatus(motor_id, len, rxBuf);
-                    break;
-                case CAN_DATA_DIAGNOSTICS:
-                    fillTemperatureStatus(motor_id, len, rxBuf);
-                    break;
-                case CAN_DATA_FIRMWARE_VERSION:
-                    fillFirmwareVersion(motor_id, len, rxBuf);
-                    break;
-                case CAN_DATA_CONVEYOR_STATE:
-                    fillConveyorState(motor_id, rxBuf);
-                    break;
-                case CAN_DATA_CALIBRATION_RESULT:
-                    fillCalibrationState(motor_id, len, rxBuf);
-                    break;
-                default:
-                    ROS_ERROR("CanManager::readMotorsState : unknown control byte value");
-                break;
+                if (_state_map.count(motor_id) && _state_map.at(motor_id))
+                {
+                    auto stepperState = std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(motor_id));
+                    // update last time read
+                    stepperState->updateLastTimeRead();
+
+                    switch (control_byte)
+                    {
+                        case StepperDriver::CAN_DATA_POSITION:
+                            stepperState->setPositionState(StepperDriver::interpretePositionStatus(rxBuf));
+                            break;
+                        case StepperDriver::CAN_DATA_DIAGNOSTICS:
+                            stepperState->setTemperature(StepperDriver::interpreteTemperatureStatus(rxBuf));
+                            break;
+                        case StepperDriver::CAN_DATA_FIRMWARE_VERSION:
+                            stepperState->setFirmwareVersion(StepperDriver::interpreteFirmwareVersion(rxBuf));
+                            break;
+                        case StepperDriver::CAN_DATA_CONVEYOR_STATE:
+                        {
+                            auto cState = std::dynamic_pointer_cast<ConveyorState>(stepperState);
+                            if (cState)
+                            {
+                                cState->updateData(StepperDriver::interpreteConveyorData(rxBuf));
+                            }
+                            break;
+                        }
+                        case StepperDriver::CAN_DATA_CALIBRATION_RESULT:
+                        {
+                            stepperState->setCalibration(StepperDriver::interpreteCalibrationData(rxBuf));
+                            updateCurrentCalibrationStatus();
+                            break;
+                        }
+                        default:
+                            ROS_ERROR("CanManager::readMotorsState : unknown control byte value");
+                        break;
+                    }
+                }
+                else
+                {
+                    _debug_error_message = "Unknow connected motor : ";
+                    _debug_error_message += std::to_string(motor_id);
+                }
             }
-        }
-        else
-        {
-            _debug_error_message = "Unknow connected motor : ";
-            _debug_error_message += std::to_string(motor_id);
+            else
+            {
+                ROS_ERROR("CanManager::readStatus - %s", error_message.c_str());
+            }
         }
     }
 }
@@ -364,62 +293,49 @@ int CanManager::scanAndCheck()
     std::lock_guard<std::mutex> lck(_stepper_timeout_mutex);
 
     ROS_DEBUG("CanManager::scanAndCheck");
-    int result = CAN_OK;
+    int result = CAN_FAIL;
 
     _all_motor_connected.clear();
+    _is_connection_ok = false;
 
-    _debug_error_message = "";
-
-    double time_begin_scan = ros::Time::now().toSec();
-    double timeout = 0.5;
-
-    // only for non conveyor motors
-    std::set<uint8_t> motors_unfound;
-    for (auto const& it : _state_map)
+    // only stepper for now
+    if (_driver_map.count(EHardwareType::STEPPER) && _driver_map.at(EHardwareType::STEPPER))
     {
-        if (it.second)
-            motors_unfound.insert(it.first);
-    }
-
-    while ((!motors_unfound.empty()) && (ros::Time::now().toSec() - time_begin_scan < timeout))
-    {
-        ros::Duration(0.001).sleep();  // check at 1000 Hz
-        if (canReadData())
+        // only for non conveyor motors
+        std::set<uint8_t> motors_unfound;
+        for (auto const& it : _state_map)
         {
-            INT32U rxId;
-            uint8_t len;
-            std::array<uint8_t, 8> rxBuf;
-            readMsgBuf(&rxId, &len, rxBuf);
-            uint8_t motor_id = rxId & 0x0F;
-
-            if (motors_unfound.count(motor_id))
-            {
-                motors_unfound.erase(motor_id);
-                _all_motor_connected.emplace_back(motor_id);
-                _state_map.at(motor_id)->updateLastTimeRead();
-            }
+            if (it.second)
+                motors_unfound.insert(it.first);
         }
-    }
 
-    // if timeout
-    if (!motors_unfound.empty())
-    {
-        ROS_ERROR_THROTTLE(2, "CanManager::scanAndCheck - CAN scan Timeout");
-        _debug_error_message = "CAN bus scan failed : motors ";
-        for (uint8_t m_id : motors_unfound)
-            _debug_error_message += " " + std::to_string(m_id) + ",";
-        _debug_error_message.pop_back();  // remove trailing ","
-        _debug_error_message += "are not connected";
+        if (CAN_OK == _driver_map.at(EHardwareType::STEPPER)->scan(motors_unfound, _all_motor_connected))
+        {
+            ROS_DEBUG("CanManager::scanAndCheck successful");
+            _is_connection_ok = true;
+            result = CAN_OK;
+            _removed_motor_id_list.clear();
+        }
+        else
+        {
+            ROS_ERROR_THROTTLE(2, "CanManager::scanAndCheck - CAN scan Timeout");
+            _debug_error_message = "CAN bus scan failed : motors ";
+            _removed_motor_id_list.clear();
+            for (uint8_t m_id : motors_unfound)
+            {
+                _removed_motor_id_list.emplace_back(m_id);
+                _debug_error_message += " " + std::to_string(m_id) + ",";
+            }
+            _debug_error_message.pop_back();  // remove trailing ","
+            _debug_error_message += "are not connected";
 
-        _is_connection_ok = false;
-        ROS_ERROR_THROTTLE(2, "CanManager::scanAndCheck - %s", _debug_error_message.c_str());
+            ROS_ERROR_THROTTLE(2, "CanManager::scanAndCheck - %s", _debug_error_message.c_str());
+        }
 
-        result = CAN_FAIL;
-    }
-    else
-    {
-        ROS_DEBUG("CanManager::scanAndCheck successful");
-        _is_connection_ok = true;
+        // update last time read on found motors
+        // TODO(cc) move updateLastTimeRead in hardwareState ?
+        for (auto& motor_id : _all_motor_connected)
+            std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(motor_id))->updateLastTimeRead();
     }
 
     return result;
@@ -428,175 +344,30 @@ int CanManager::scanAndCheck()
 /**
  * @brief CanManager::ping : scan the bus for any motor id. It is used mainly to add an unknown
  * id to the current list of id (using addMotor, for a conveyor for example)
- * @param motor_to_find
+ * @param id
  * @return
  */
-bool CanManager::ping(uint8_t motor_to_find)
+bool CanManager::ping(uint8_t id)
 {
-    double time_begin_scan = ros::Time::now().toSec();
+    int result = false;
 
-    while (ros::Time::now().toSec() - time_begin_scan < STEPPER_MOTOR_TIMEOUT_VALUE)
+    if (_state_map.find(id) != _state_map.end())
     {
-        ros::Duration(0.001).sleep();  // check at 1000 Hz
-        if (canReadData())
+        if(_driver_map.count(_state_map.find(id)->second->getHardwareType()))
         {
-            INT32U rxId;
-            uint8_t len;
-            std::array<uint8_t, 8> rxBuf;
-            readMsgBuf(&rxId, &len, rxBuf);
-            uint8_t motor_id = rxId & 0x0F;
-
-            if (motor_id == motor_to_find)
-                return true;
+            auto it = _driver_map.at(_state_map.find(id)->second->getHardwareType());
+            if (it)
+            {
+                result = (CAN_OK == it->ping(id));
+            }
+            else
+            {
+                ROS_ERROR_THROTTLE(1, "TtlManager::ping - the can drivers seeems uninitialized");
+            }
         }
     }
 
-    ROS_DEBUG("CanManager::scanMotorId - Motor with id %d not found", static_cast<int>(motor_to_find));
-    return false;
-}
-
-/**
- * @brief CanManager::fillPositionStatus
- * @param motor_id
- * @param len
- * @param data
- */
-void CanManager::fillPositionStatus(uint8_t motor_id, const uint8_t &len, const std::array<uint8_t, 8> &data)
-{
-    if (MESSAGE_DIAGNOSTICS_LENGTH == len)
-    {
-        if (_state_map.count(motor_id) && _state_map.at(motor_id))
-        {
-            int32_t pos = (data[1] << 16) + (data[2] << 8) + data[3];
-            pos = (pos & (1 << 15)) ? -1 * ((~pos + 1) & 0xFFFF) : pos;
-
-            _state_map.at(motor_id)->setPositionState(pos);
-        }
-        else
-        {
-            ROS_ERROR("CanManager::fillPositionStatus - unknown motor id %d", static_cast<int>(motor_id));
-        }
-    }
-    else
-    {
-        ROS_ERROR("CanManager::fillPositionStatus - frame should contain 4 data bytes");
-    }
-}
-
-/**
- * @brief CanManager::fillTemperatureStatus
- * @param motor_id
- * @param len
- * @param data
- */
-void CanManager::fillTemperatureStatus(uint8_t motor_id, const uint8_t &len, const std::array<uint8_t, 8> &data)
-{
-    if (MESSAGE_DIAGNOSTICS_LENGTH == len)
-    {
-        if (_state_map.count(motor_id) && _state_map.at(motor_id))
-        {
-            int driver_temp_raw = (data[2] << 8) + data[3];
-            double a = -0.00316;
-            double b = -12.924;
-            double c = 2367.7;
-            double v_temp = driver_temp_raw * 3.3 / 1024.0 * 1000.0;
-            uint32_t driver_temp = static_cast<uint32_t>((-b - std::sqrt(b * b - 4 * a * (c - v_temp))) / (2 * a) + 30);
-
-            // fill data
-            _state_map.at(motor_id)->setTemperature(driver_temp);
-        }
-        else
-        {
-            ROS_ERROR("CanManager::fillTemperatureStatus - unknown motor id %d", static_cast<int>(motor_id));
-        }
-    }
-    else
-    {
-        ROS_ERROR("CanManager::fillTemperatureStatus - frame should contain 4 data bytes");
-    }
-}
-
-/**
- * @brief CanManager::fillFirmwareVersion
- * @param motor_id
- * @param len
- * @param data
- */
-void CanManager::fillFirmwareVersion(uint8_t motor_id, const uint8_t &len, const std::array<uint8_t, 8> &data)
-{
-    if (MESSAGE_DIAGNOSTICS_LENGTH == len)
-    {
-        if (_state_map.count(motor_id) && _state_map.at(motor_id))
-        {
-            int v_major = data[1];
-            int v_minor = data[2];
-            int v_patch = data[3];
-            std::ostringstream ss;
-            ss << v_major << "." << v_minor << "." << v_patch;
-            std::string version = ss.str();
-
-            // fill data
-            _state_map.at(motor_id)->setFirmwareVersion(version);
-        }
-        else
-        {
-            ROS_ERROR("CanManager::fillFirmwareVersion - unknown motor id %d", static_cast<int>(motor_id));
-        }
-    }
-    else
-{
-        ROS_ERROR("CanManager::fillFirmwareVersion - frame should contain 4 data bytes");
-    }
-}
-
-/**
- * @brief CanManager::fillCalibrationState
- * @param motor_id
- * @param len
- * @param data
- */
-void CanManager::fillCalibrationState(uint8_t motor_id, const uint8_t &len, const std::array<uint8_t, 8> &data)
-{
-    if (MESSAGE_DIAGNOSTICS_LENGTH == len)
-    {
-        if (_state_map.count(motor_id) && _state_map.at(motor_id))
-        {
-            // fill data
-            EStepperCalibrationStatus status = static_cast<EStepperCalibrationStatus>(data[1]);
-            int32_t value = (data[2] << 8) + data[3];
-            _state_map.at(motor_id)->setCalibration(status, value);
-
-            updateCurrentCalibrationStatus();
-        }
-        else
-        {
-            ROS_ERROR("CanManager::fillCalibrationState - unknown motor id %d", static_cast<int>(motor_id));
-        }
-    }
-    else
-    {
-        ROS_ERROR("CanManager::fillCalibrationState - frame should contain 4 data bytes");
-    }
-}
-
-/**
- * @brief CanManager::fillConveyorState
- * @param motor_id
- * @param data
- */
-void CanManager::fillConveyorState(uint8_t motor_id, const std::array<uint8_t, 8> &data)
-{
-    if (_state_map.count(motor_id) && _state_map.at(motor_id))
-    {
-        bool state = data[1];
-        int16_t speed = data[2];
-        int8_t direction = static_cast<int8_t>(data[3]);
-
-        auto cState = std::dynamic_pointer_cast<ConveyorState>(_state_map.at(motor_id));
-        cState->setDirection(direction);
-        cState->setSpeed(speed);
-        cState->setState(state);
-    }
+    return result;
 }
 
 /**
@@ -610,21 +381,22 @@ void CanManager::_verifyMotorTimeoutLoop()
         std::lock_guard<std::mutex> lck(_stepper_timeout_mutex);
         std::vector<uint8_t> timeout_motors;
 
-        for (auto const &mState : _state_map)
+        for (auto const &map_it : _state_map)
         {
             // we locate the motor for the current id in _all_motor_connected
-            auto position = std::find(_all_motor_connected.begin(), _all_motor_connected.end(), mState.first);
+            auto position = std::find(_all_motor_connected.begin(), _all_motor_connected.end(), map_it.first);
+            auto state = std::dynamic_pointer_cast<StepperMotorState>(map_it.second);
 
             // if it has timeout, we remove it from the vector
-            if (mState.second && ros::Time::now().toSec() - mState.second->getLastTimeRead() > getCurrentTimeout())
+            if (state && ros::Time::now().toSec() - state->getLastTimeRead() > getCurrentTimeout())
             {
-                timeout_motors.emplace_back(mState.first);
+                timeout_motors.emplace_back(map_it.first);
                 if (position != _all_motor_connected.end())
                     _all_motor_connected.erase(position);
             }  // else, if it is not in the list of connected motors, we add it
             else if (position == _all_motor_connected.end())
             {
-                _all_motor_connected.push_back(mState.first);
+                _all_motor_connected.push_back(map_it.first);
             }
         }
 
@@ -648,23 +420,6 @@ void CanManager::_verifyMotorTimeoutLoop()
     }
 }
 
-/**
- * @brief CanManager::updateCurrentCalibrationStatus
- */
-void CanManager::updateCurrentCalibrationStatus()
-{
-    // update current state of the calibrationtimeout_motors
-    // rule is : if a status in a motor is worse than one previously found, we take it
-    // we are not taking "uninitialized" into account as it means a calibration as not been started for this motor
-    EStepperCalibrationStatus newStatus = EStepperCalibrationStatus::CALIBRATION_OK;
-    for (auto const& s : _state_map)
-    {
-        if (s.second && newStatus < s.second->getCalibrationState())
-            newStatus = s.second->getCalibrationState();
-    }
-
-    _calibration_status = newStatus;
-}
 
 /**
  * @brief CanManager::getCurrentTimeout
@@ -676,229 +431,164 @@ double CanManager::getCurrentTimeout() const
     if (isCalibrationInProgress())
         return _calibration_timeout;
     else
-        return STEPPER_MOTOR_TIMEOUT_VALUE;
-}
-
-// ***************
-//  Private
-// ***************
-
-/**
- * @brief CanManager::readMsgBuf
- * @param id
- * @param len
- * @param buf
- * @return
- */
-uint8_t CanManager::readMsgBuf(INT32U *id, uint8_t *len, std::array<uint8_t, 8> &buf)
-{
-    uint8_t status = CAN_FAIL;
-
-    for (auto i = 0; i < 10 && CAN_OK != status; ++i)
-    {
-        status = mcp_can->readMsgBuf(id, len, buf.data());
-        ROS_WARN_COND(CAN_OK != status, "CanManager::readMsgBuf - Reading Stepper message on CAN Bus failed");
-    }
-
-    return status;
-}
-
-/**
- * @brief CanManager::sendCanMsgBuf
- * @param id
- * @param ext
- * @param len
- * @param buf
- * @return
- */
-uint8_t CanManager::sendCanMsgBuf(uint32_t id, uint8_t ext, uint8_t len, uint8_t *buf)
-{
-    uint8_t status = CAN_FAIL;
-
-    for (auto i = 0; i < 10 && CAN_OK != status; ++i)
-    {
-        status = mcp_can->sendMsgBuf(id, ext, len, buf);
-        ROS_WARN_COND(CAN_OK != status, "CanManager::sendCanMsgBuf - Sending Stepper message on CAN Bus failed");
-    }
-
-    return status;
+        return StepperDriver::STEPPER_MOTOR_TIMEOUT_VALUE;
 }
 
 // ******************
-//      Senders
-// *****************
+//  Read operations
+// ******************
 
 /**
- * @brief CanManager::sendConveyorOnCommand
- * @param id
- * @param conveyor_on
- * @param conveyor_speed
- * @param direction
+ * @brief CanManager::getPosition
+ * @param motor_state
  * @return
  */
-uint8_t CanManager::sendConveyorOnCommand(uint8_t id, bool conveyor_on, uint8_t conveyor_speed, uint8_t direction)
+int32_t CanManager::getPosition(const JointState &motor_state) const
 {
-    ROS_DEBUG("CanManager::scanMotorId - Send conveyor id %d enabled (%d) at speed %d on direction %d",
-              id, static_cast<int>(conveyor_on), conveyor_speed, direction);
-    uint8_t data[4] = {0};
-    data[0] = CAN_CMD_MODE;
-    if (conveyor_on)
+    uint8_t motor_id = motor_state.getId();
+
+    if (!_state_map.count(motor_id) || !_state_map.at(motor_id))
     {
-        data[1] = STEPPER_CONVEYOR_ON;
+        throw std::out_of_range("CanManager::getPosition: Unknown motor id");
     }
+    auto jState = std::dynamic_pointer_cast<JointState>(_state_map.at(motor_id));
+    if (jState)
+      return jState->getPositionState();
     else
+      return 0;
+}
+
+// ******************
+//  Write operations
+// ******************
+
+/**
+ * @brief CanManager::writeSingleCommand
+ * @param cmd
+ * @return
+ */
+int CanManager::writeSingleCommand(std::shared_ptr<common::model::AbstractCanSingleMotorCmd> cmd)
+{
+    int result = CAN_INVALID_CMD;
+    ROS_DEBUG("CanManager::readCommand - Received stepper cmd %s", cmd->str().c_str());
+
+    uint8_t id = cmd->getId();
+
+    if (cmd->isValid())
     {
-        data[1] = STEPPER_CONVEYOR_OFF;
+        if (_state_map.count(id) != 0)
+        {
+            auto state = _state_map.at(id);
+
+            common::model::EHardwareType hardware_type = state->getHardwareType();
+            result = CAN_FAIL;
+            if (_driver_map.count(hardware_type) && _driver_map.at(hardware_type))
+            {
+                result = _driver_map.at(hardware_type)->writeSingleCmd(cmd);
+            }
+
+            ros::Duration(TIME_TO_WAIT_IF_BUSY).sleep();
+        }
     }
-    data[2] = conveyor_speed;
-    data[3] = direction;
 
-    return sendCanMsgBuf(id, 0, 4, data);
+    if (result != CAN_OK)
+    {
+        ROS_WARN("TtlManager::writeSingleCommand - Failed to write a single command on motor id : %d", id);
+        _debug_error_message = "TtlManager - Failed to write a single command";
+    }
+
+    return result;
 }
 
 /**
- * @brief CanManager::sendPositionCommand
- * @param id
- * @param cmd
+ * @brief CanManager::executeJointTrajectoryCmd
+ * @param cmd_vec : need to be passed by copy, so that we ensure the data will not change in this method
+ */
+void CanManager::executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, int32_t> > cmd_vec)
+{
+    for (auto const& it : _driver_map)
+    {
+        auto driver = it.second;
+
+        for (auto const& cmd : cmd_vec)
+        {
+            if (_state_map.count(cmd.first) && it.first == _state_map.at(cmd.first)->getHardwareType())
+            {
+                int err = driver->sendPositionCommand(cmd.first, cmd.second);
+                if (err != CAN_OK)
+                {
+                    ROS_WARN("CanManager::executeJointTrajectoryCmd - Failed to write position");
+                    _debug_error_message = "TtlManager - Failed to write position";
+                }
+            }
+        }
+    }
+}
+
+// ******************
+//  Calibration
+// ******************
+
+/**
+ * @brief CanManager::startCalibration
+ */
+void CanManager::startCalibration()
+{
+    ROS_DEBUG("CanManager::startCalibration: starting...");
+
+    for (auto const& s : _state_map)
+    {
+      if (s.second && EHardwareType::STEPPER == s.second->getHardwareType() && !std::dynamic_pointer_cast<StepperMotorState>(s.second)->isConveyor())
+          std::dynamic_pointer_cast<StepperMotorState>(s.second)->setCalibration(EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS, 0);
+    }
+
+    _calibration_status = EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS;
+}
+
+/**
+ * @brief CanManager::resetCalibration
+ */
+void CanManager::resetCalibration()
+{
+    ROS_DEBUG("CanManager::resetCalibration: reseting...");
+
+    _calibration_status = EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED;
+}
+
+/**
+ * @brief TtlManager::getCalibrationResult
+ * @param motor_id
  * @return
  */
-uint8_t CanManager::sendPositionCommand(uint8_t id, int cmd)
+int32_t CanManager::getCalibrationResult(uint8_t motor_id) const
 {
-    uint8_t data[4] = {CAN_CMD_POSITION, static_cast<uint8_t>((cmd >> 16) & 0xFF),
-                       static_cast<uint8_t>((cmd >> 8) & 0xFF), static_cast<uint8_t>(cmd & 0XFF)};
-    return sendCanMsgBuf(id, 0, 4, data);
+    if (!_state_map.count(motor_id) && _state_map.at(motor_id))
+        throw std::out_of_range("TtlManager::getMotorsState: Unknown motor id");
+
+    return std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(motor_id))->getCalibrationValue();
 }
 
 /**
- * @brief CanManager::sendRelativeMoveCommand
- * @param id
- * @param steps
- * @param delay
- * @return
+ * @brief CanManager::updateCurrentCalibrationStatus
  */
-uint8_t CanManager::sendRelativeMoveCommand(uint8_t id, int steps, int delay)
+void CanManager::updateCurrentCalibrationStatus()
 {
-    uint8_t data[7] = {CAN_CMD_MOVE_REL,
-                       static_cast<uint8_t>((steps >> 16) & 0xFF),
-                       static_cast<uint8_t>((steps >> 8) & 0xFF),
-                       static_cast<uint8_t>(steps & 0XFF),
-                       static_cast<uint8_t>((delay >> 16) & 0xFF),
-                       static_cast<uint8_t>((delay >> 8) & 0xFF),
-                       static_cast<uint8_t>(delay & 0XFF)};
-    return sendCanMsgBuf(id, 0, 7, data);
-}
+    EStepperCalibrationStatus newStatus = EStepperCalibrationStatus::CALIBRATION_OK;
+    // update current state of the calibrationtimeout_motors
+    // rule is : if a status in a motor is worse than one previously found, we take it
+    // we are not taking "uninitialized" into account as it means a calibration as not been started for this motor
+    for (auto const& s : _state_map)
+    {
+        if (s.second && (s.second->getHardwareType() == EHardwareType::STEPPER
+                         || s.second->getHardwareType() == EHardwareType::FAKE_STEPPER_MOTOR))
+        {
+            EStepperCalibrationStatus status = std::dynamic_pointer_cast<StepperMotorState>(s.second)->getCalibrationState();
+            if (newStatus < status)
+                newStatus = status;
+        }
+    }
 
-/**
- * @brief CanManager::sendTorqueOnCommand
- * @param id
- * @param torque_on
- * @return
- */
-uint8_t CanManager::sendTorqueOnCommand(uint8_t id, int torque_on)
-{
-    uint8_t data[2] = {0};
-    data[0] = CAN_CMD_MODE;
-    data[1] = (torque_on) ? STEPPER_CONTROL_MODE_STANDARD : STEPPER_CONTROL_MODE_RELAX;
-    return sendCanMsgBuf(id, 0, 2, data);
-}
-
-/**
- * @brief CanManager::sendPositionOffsetCommand
- * @param id
- * @param cmd
- * @param absolute_steps_at_offset_position
- * @return
- */
-uint8_t CanManager::sendPositionOffsetCommand(uint8_t id, int cmd, int absolute_steps_at_offset_position)
-{
-    uint8_t data[6] = {CAN_CMD_OFFSET, static_cast<uint8_t>((cmd >> 16) & 0xFF),
-                       static_cast<uint8_t>((cmd >> 8) & 0xFF), static_cast<uint8_t>(cmd & 0XFF),
-                       static_cast<uint8_t>((absolute_steps_at_offset_position >> 8) & 0xFF),
-                       static_cast<uint8_t>(absolute_steps_at_offset_position & 0xFF)};
-    return sendCanMsgBuf(id, 0, 6, data);
-}
-
-/**
- * @brief CanManager::sendSynchronizePositionCommand
- * @param id
- * @param begin_traj
- * @return
- */
-uint8_t CanManager::sendSynchronizePositionCommand(uint8_t id, bool begin_traj)
-{
-    uint8_t data[2] = {CAN_CMD_SYNCHRONIZE, static_cast<uint8_t>(begin_traj)};
-    return sendCanMsgBuf(id, 0, 2, data);
-}
-
-/**
- * @brief CanManager::sendMicroStepsCommand
- * @param id
- * @param micro_steps
- * @return
- */
-uint8_t CanManager::sendMicroStepsCommand(uint8_t id, int micro_steps)
-{
-    uint8_t data[2] = {CAN_CMD_MICRO_STEPS, static_cast<uint8_t>(micro_steps)};
-    return sendCanMsgBuf(id, 0, 2, data);
-}
-
-/**
- * @brief CanManager::sendMaxEffortCommand
- * @param id
- * @param effort
- * @return
- */
-uint8_t CanManager::sendMaxEffortCommand(uint8_t id, int effort)
-{
-    uint8_t data[2] = {CAN_CMD_MAX_EFFORT, static_cast<uint8_t>(effort)};
-    return sendCanMsgBuf(id, 0, 2, data);
-}
-
-/**
- * @brief CanManager::sendCalibrationCommand
- * @param id
- * @param offset
- * @param delay
- * @param direction
- * @param timeout
- * @return
- */
-uint8_t CanManager::sendCalibrationCommand(uint8_t id, int offset, int delay, int direction, int timeout)
-{
-    direction = (direction > 0) ? 1 : 0;
-
-    uint8_t data[8] = {CAN_CMD_CALIBRATE, static_cast<uint8_t>((offset >> 16) & 0xFF),
-                       static_cast<uint8_t>((offset >> 8) & 0xFF), static_cast<uint8_t>(offset & 0XFF),
-                       static_cast<uint8_t>((delay >> 8) & 0xFF), static_cast<uint8_t>(delay & 0xFF),
-                       static_cast<uint8_t>(direction), static_cast<uint8_t>(timeout)};
-    return sendCanMsgBuf(id, 0, 8, data);
-}
-
-/**
- * @brief CanManager::sendUpdateConveyorId
- * @param old_id
- * @param new_id
- * @return
- */
-uint8_t CanManager::sendUpdateConveyorId(uint8_t old_id, uint8_t new_id)
-{
-    ROS_DEBUG("CanManager::sendUpdateConveyorId - Send update conveyor id from %d to %d", old_id, new_id);
-    uint8_t data[3] = {0};
-    data[0] = CAN_CMD_MODE;
-    data[1] = CAN_UPDATE_CONVEYOR_ID;
-    data[2] = new_id;
-    return sendCanMsgBuf(old_id, 0, 3, data);
-}
-
-/**
- * @brief CanManager::addHardwareComponent
- * @param state
- */
-void CanManager::addHardwareComponent(const std::shared_ptr<common::model::StepperMotorState> state)
-{
-    ROS_DEBUG("CanManager::addHardwareComponent - Add motor id: %d", state->getId());
-
-    _state_map.insert(std::make_pair(state->getId(), state));
+    _calibration_status = newStatus;
 }
 
 // ******************
@@ -906,21 +596,14 @@ void CanManager::addHardwareComponent(const std::shared_ptr<common::model::Stepp
 // ******************
 
 /**
- * @brief CanManager::getErrorMessage
- * @return
- */
-std::string CanManager::getErrorMessage() const
-{
-    return _debug_error_message;
-}
-
-/**
  * @brief CanManager::getBusState
  * @param connection_status
  * @param motor_list
  * @param error
  */
-void CanManager::getBusState(bool &connection_status, std::vector<uint8_t> &motor_list, std::string &error) const
+void CanManager::getBusState(bool &connection_status,
+                             std::vector<uint8_t> &motor_list,
+                             std::string &error) const
 {
     error = _debug_error_message;
     motor_list = _all_motor_connected;
@@ -928,16 +611,22 @@ void CanManager::getBusState(bool &connection_status, std::vector<uint8_t> &moto
 }
 
 /**
- * @brief CanManager::getCalibrationResult
- * @param motor_id
- * @return
+ * @brief TtlManager::getMotorsStates
+ * @return only the joints states
  */
-int32_t CanManager::getCalibrationResult(uint8_t motor_id) const
+std::vector<std::shared_ptr<JointState> >
+CanManager::getMotorsStates() const
 {
-    if (!_state_map.count(motor_id) && _state_map.at(motor_id))
-        throw std::out_of_range("CanManager::getMotorsState: Unknown motor id");
+    std::vector<std::shared_ptr<JointState> > states;
+    for (auto it : _state_map)
+    {
+        if (EHardwareType::UNKNOWN != it.second->getHardwareType())
+        {
+            states.push_back(std::dynamic_pointer_cast<JointState>(it.second));
+        }
+    }
 
-    return _state_map.at(motor_id)->getCalibrationValue();
+    return states;
 }
 
 /**
@@ -945,41 +634,41 @@ int32_t CanManager::getCalibrationResult(uint8_t motor_id) const
  * @param motor_id
  * @return
  */
-std::shared_ptr<common::model::StepperMotorState> CanManager::getHardwareState(uint8_t motor_id) const
+std::shared_ptr<common::model::AbstractHardwareState>
+CanManager::getHardwareState(uint8_t motor_id) const
 {
     if (!_state_map.count(motor_id) && _state_map.at(motor_id))
-        throw std::out_of_range("TtlManager::getMotorsState: Unknown motor id");
+        throw std::out_of_range("CanManager::getMotorsState: Unknown motor id");
 
-    auto state = *(std::dynamic_pointer_cast<std::shared_ptr<common::model::StepperMotorState>>(_state_map.at(motor_id)));
-    return state;
+    return _state_map.at(motor_id);
 }
+
+// ********************
+//  Private
+// ********************
 
 /**
- * @brief CanManager::getMotorsStates
- * @return
+ * @brief TtlManager::addHardwareDriver
+ * @param hardware_type
  */
-std::vector<std::shared_ptr<StepperMotorState> > CanManager::getMotorsStates() const
+void CanManager::addHardwareDriver(common::model::EHardwareType hardware_type)
 {
-    std::vector<std::shared_ptr<StepperMotorState> > states;
-    for (auto const& it : _state_map)
-        states.push_back(it.second);
-
-    return states;
+  // if not already instanciated
+  if (!_driver_map.count(hardware_type))
+  {
+      switch (hardware_type)
+      {
+          case common::model::EHardwareType::STEPPER:
+              _driver_map.insert(std::make_pair(hardware_type, std::make_shared<StepperDriver>(_mcp_can)));
+          break;
+          case common::model::EHardwareType::FAKE_STEPPER_MOTOR:
+              // _driver_map.insert(std::make_pair(hardware_type, std::make_shared<MockStepperDriver>(_mcp_can)));
+          break;
+          default:
+              ROS_ERROR("CanManager - Unable to instanciate driver, unknown type");
+          break;
+      }
+  }
 }
 
-/**
- *  @brief CanManager::getRemovedMotorList 
- */
-std::vector<uint8_t> CanManager::getRemovedMotorList()
-{
-    std::vector<uint8_t> removed_motors;
-    for (auto state : _state_map)
-    {
-        if (!ping(state.first))
-        {
-            removed_motors.push_back(state.first);
-        }
-    }
-    return removed_motors;
-}
 }  // namespace can_driver
