@@ -75,7 +75,7 @@ int ToolTestSuite::id;
 
 TEST_F(ToolTestSuite, openTool)
 {
-    if (id == 0) return;
+    if (id == -1) return;
 
     tools_interface::OpenGripper srv;
 
@@ -108,7 +108,7 @@ TEST_F(ToolTestSuite, openTool)
 
 TEST_F(ToolTestSuite, CloseTool)
 {
-    if (id == 0) return;
+    if (id == -1) return;
 
     tools_interface::CloseGripper srv;
 

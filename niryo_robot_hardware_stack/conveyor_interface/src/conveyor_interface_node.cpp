@@ -18,11 +18,16 @@
 */
 
 // ros
+#include <memory>
 #include <ros/ros.h>
+#include <string>
 
 // niryo
 #include "conveyor_interface/conveyor_interface_core.hpp"
 #include "can_driver/can_interface_core.hpp"
+#include "ros/duration.h"
+#include "ros/node_handle.h"
+#include "ttl_driver/ttl_interface_core.hpp"
 
 int main(int argc, char **argv)
 {
@@ -33,14 +38,30 @@ int main(int argc, char **argv)
     ros::AsyncSpinner spinner(4);
     spinner.start();
 
-    ros::NodeHandle nh_can("can_driver");
     ros::NodeHandle nh("~");
+    ros::NodeHandle nh_conveyor("conveyor");
 
-    auto can_driver = std::make_shared<can_driver::CanInterfaceCore>(nh_can);
-    ros::Duration(0.25).sleep();
+    std::string hardware_version;
+    nh.getParam("hardware_version", hardware_version);
 
-    auto conveyor_interface = std::make_shared<conveyor_interface::ConveyorInterfaceCore>(nh, can_driver);
-    ros::Duration(0.25).sleep();
+    if (hardware_version == "fake_ned" || hardware_version == "fake_ned2" || hardware_version == "ned2")
+    {
+        ros::NodeHandle nh_ttl("ttl_driver");
+        auto ttl_driver = std::make_shared<ttl_driver::TtlInterfaceCore>(nh_ttl);
+        ros::Duration(0.25).sleep();
+
+        auto conveyor_interface = std::make_shared<conveyor_interface::ConveyorInterfaceCore>(nh_conveyor, ttl_driver);
+        ros::Duration(0.25).sleep();
+    }
+    else
+    {
+        ros::NodeHandle nh_can("can_driver");
+        auto can_driver = std::make_shared<can_driver::CanInterfaceCore>(nh_can);
+        ros::Duration(0.25).sleep();
+
+        auto conveyor_interface = std::make_shared<conveyor_interface::ConveyorInterfaceCore>(nh_conveyor, can_driver);
+        ros::Duration(0.25).sleep();
+    }
 
     ros::waitForShutdown();
     return 0;

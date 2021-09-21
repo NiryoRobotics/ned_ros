@@ -22,6 +22,7 @@
 #include <ros/ros.h>
 #include <gtest/gtest.h>
 
+#include "ros/duration.h"
 #include "ttl_driver/ttl_interface_core.hpp"
 
 #include <string>
@@ -55,15 +56,15 @@ TEST(TESTSuite, sendCustomValue)
 
     ttl_driver::SendCustomValue srv;
 
-    if (hw_version == "ned2")
+    if (hw_version == "ned" || hw_version == "one")
     {
         srv.request.motor_type = 2;  // xl430
-        srv.request.id = 5;
+        srv.request.id = 2;
     }
     else
     {
         srv.request.motor_type = 2;  // xl430
-        srv.request.id = 2;
+        srv.request.id = 5;
     }
     srv.request.reg_address = 64;  // Torque enable for xl430
     srv.request.value = 1;
@@ -86,17 +87,17 @@ TEST(TESTSuite, readCustomValue)
     EXPECT_TRUE(exists);
 
     ttl_driver::ReadCustomValue srv;
-    if (hw_version == "ned2")
-    {
-        srv.request.motor_type = 2;  // xl430
-        srv.request.id = 5;
-    }
-    else
+    if (hw_version == "ned" || hw_version == "one")
     {
         srv.request.motor_type = 2;  // xl430
         srv.request.id = 2;
     }
-    srv.request.reg_address = 6;
+    else
+    {
+        srv.request.motor_type = 2;  // xl430
+        srv.request.id =  5;
+    }
+    srv.request.reg_address = 64;
     srv.request.byte_number = 1;
 
     client.call(srv);
@@ -116,6 +117,7 @@ int main(int argc, char **argv)
     std::string hardware_version;
     ros::NodeHandle nh_private("~");
     nh_private.getParam("hardware_version", hardware_version);
+
     if (hardware_version == "fake_ned" || (hardware_version == "fake_ned2"))
         testing::GTEST_FLAG(filter) = "-TESTSuite.sendCustomValue:TESTSuite.readCustomValue";
 

@@ -2,6 +2,13 @@ cmake_minimum_required(VERSION 3.0.2)
 project(can_driver)
 message("\n## Reading ${PROJECT_NAME}/CMakeLists.txt...")
 
+#retrieve architecture
+execute_process( COMMAND
+            uname -m COMMAND tr -d '\n'
+        OUTPUT_VARIABLE
+            ARCHITECTURE
+    )
+
 ## c++ options
 ## Compile as C++14, supported in ROS Melodic and newer
 set(CMAKE_CXX_STANDARD 14)
@@ -125,31 +132,31 @@ endif()
 #############
 
 if(CATKIN_ENABLE_TESTING)
-    find_package(rostest REQUIRED)
+  find_package(rostest REQUIRED)
 
-    #if ("${ARCHITECTURE}" MATCHES "^(arm.*|aarch64.*|arm64.*)$")
+  if ("${ARCHITECTURE}" MATCHES "^(arm.*|aarch64.*|arm64.*)$")
     add_rostest_gtest(${PROJECT_NAME}_unit_tests
       test/unit_tests.test
       test/unit_tests.cpp
     )
-    #endif()
-    if(TARGET ${PROJECT_NAME}_unit_tests)
-      target_link_libraries(${PROJECT_NAME}_unit_tests
-        ${PROJECT_NAME}
-        ${catkin_LIBRARIES}
-      )
-    endif()
+  endif()
+  if(TARGET ${PROJECT_NAME}_unit_tests)
+    target_link_libraries(${PROJECT_NAME}_unit_tests
+      ${PROJECT_NAME}
+      ${catkin_LIBRARIES}
+    )
+  endif()
 
-    ##########################
-    ## Static code analysis ##
-    ##########################
-    find_package(roslint QUIET)
+  ##########################
+  ## Static code analysis ##
+  ##########################
+  find_package(roslint QUIET)
 
-    if(roslint_FOUND)
-        roslint_cpp()
-    else()
-        message(WARNING "roslint not found. Skipping roslint target building")
-    endif()
+  if(roslint_FOUND)
+      roslint_cpp()
+  else()
+      message(WARNING "roslint not found. Skipping roslint target building")
+  endif()
 
 endif()
 

@@ -18,6 +18,7 @@
 #include "common/model/hardware_type_enum.hpp"
 #include "common/model/joint_state.hpp"
 #include "niryo_robot_msgs/CommandStatus.h"
+#include "ros/serialization.h"
 
 // c++
 #include <cstdint>

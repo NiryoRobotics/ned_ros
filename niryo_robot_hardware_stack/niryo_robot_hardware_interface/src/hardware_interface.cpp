@@ -39,11 +39,6 @@ namespace niryo_robot_hardware_interface
 HardwareInterface::HardwareInterface(ros::NodeHandle &nh) :
     _nh(nh)
 {
-    /*for(int i = 0; i < 10; ++i)
-    {
-      ROS_WARN("Sleeping for %d", i);
-      ros::Duration(1).sleep();
-    }*/
     init(nh);
 }
 

@@ -19,7 +19,7 @@
 #include <sstream>
 #include <vector>
 #include <string>
-
+#include <ros/ros.h>
 using ::std::shared_ptr;
 using ::std::vector;
 using ::std::string;
