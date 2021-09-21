@@ -25,29 +25,13 @@
 
 #include "end_effector_interface/end_effector_interface_core.hpp"
 
-#include "ttl_driver/ttl_driver_core.hpp"
+#include "ttl_driver/ttl_interface_core.hpp"
 
 static std::unique_ptr<ros::NodeHandle> nh;
 
 TEST(TESTSuite, serviceTest)
 {
-    /*
-    auto client = nh->serviceClient<end_effector_interface::PushAirVacuumPump>("/niryo_robot/tools/push_air_vacuum_pump");
-
-    bool exists(client.waitForExistence(ros::Duration(1)));
-    EXPECT_TRUE(exists);
-
-    end_effector_interface::PushAirVacuumPump srv;
-    srv.request.push_air_velocity = 1023;
-    srv.request.push_air_position = 100;
-    srv.request.push_air_max_torque = 64000;
-    client.call(srv);
-
-    int res = common::model::ToolState::VACUUM_PUMP_STATE_PUSHED;
-    EXPECT_EQ(srv.response.state, res);
-    */
-
-    ASSERT(true);
+    EXPECT_TRUE(true);
 }
 
 int main(int argc, char **argv)

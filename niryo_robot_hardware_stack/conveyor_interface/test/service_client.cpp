@@ -190,6 +190,137 @@ TEST(TESTSuite, RemoveConveyorWrongId)
     EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::NO_CONVEYOR_FOUND);
 }
 
+TEST(TESTSuiteFakeDriver, setConveyor)
+{
+    auto client = nh->serviceClient<conveyor_interface::SetConveyor>("/niryo_robot/conveyor/ping_and_set_conveyor");
+
+    bool exists(client.waitForExistence(ros::Duration(1)));
+    EXPECT_TRUE(exists);
+
+    conveyor_interface::SetConveyor srv;
+    srv.request.id = 8;
+    srv.request.cmd = conveyor_interface::SetConveyor::Request::ADD;
+    client.call(srv);
+
+    EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
+    EXPECT_NE(srv.response.id, srv.request.id);
+}
+
+TEST(TESTSuiteFakeDriver, controlConveyor1)
+{
+    auto client = nh->serviceClient<conveyor_interface::ControlConveyor>("/niryo_robot/conveyor/control_conveyor");
+
+    bool exists(client.waitForExistence(ros::Duration(1)));
+    EXPECT_TRUE(exists);
+
+    conveyor_interface::ControlConveyor srv;
+    srv.request.id = 9;
+    srv.request.control_on = true;
+    srv.request.speed = 75;
+    srv.request.direction = 1;
+    client.call(srv);
+
+    EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
+}
+
+TEST(TESTSuiteFakeDriver, controlConveyor2)
+{
+    auto client = nh->serviceClient<conveyor_interface::ControlConveyor>("/niryo_robot/conveyor/control_conveyor");
+
+    bool exists(client.waitForExistence(ros::Duration(1)));
+    EXPECT_TRUE(exists);
+
+    conveyor_interface::ControlConveyor srv;
+    srv.request.id = 9;
+    srv.request.control_on = true;
+    srv.request.speed = 75;
+    srv.request.direction = -1;
+    client.call(srv);
+
+    EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
+}
+
+
+TEST(TESTSuiteFakeDriver, controlConveyor3)
+{
+    auto client = nh->serviceClient<conveyor_interface::ControlConveyor>("/niryo_robot/conveyor/control_conveyor");
+
+    bool exists(client.waitForExistence(ros::Duration(1)));
+    EXPECT_TRUE(exists);
+
+    conveyor_interface::ControlConveyor srv;
+    srv.request.id = 9;
+    srv.request.control_on = false;
+    srv.request.speed = 75;
+    srv.request.direction = -1;
+    client.call(srv);
+
+    EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
+}
+
+TEST(TESTSuiteFakeDriver, controlConveyorWrongId)
+{
+    auto client = nh->serviceClient<conveyor_interface::ControlConveyor>("/niryo_robot/conveyor/control_conveyor");
+
+    bool exists(client.waitForExistence(ros::Duration(1)));
+    EXPECT_TRUE(exists);
+
+    conveyor_interface::ControlConveyor srv;
+    srv.request.id = 7;
+    srv.request.control_on = true;
+    srv.request.speed = 75;
+    srv.request.direction = -1;
+    client.call(srv);
+
+    EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::CONVEYOR_ID_INVALID);
+}
+
+TEST(TESTSuiteFakeDriver, removeConveyor)
+{
+    auto client = nh->serviceClient<conveyor_interface::SetConveyor>("/niryo_robot/conveyor/ping_and_set_conveyor");
+
+    bool exists(client.waitForExistence(ros::Duration(1)));
+    EXPECT_TRUE(exists);
+
+    conveyor_interface::SetConveyor srv;
+    srv.request.id = 9;
+    srv.request.cmd = conveyor_interface::SetConveyor::Request::REMOVE;
+    client.call(srv);
+
+    EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
+}
+
+TEST(TESTSuiteFakeDriver, duplicatteRemovingConveyor)
+{
+    auto client = nh->serviceClient<conveyor_interface::SetConveyor>("/niryo_robot/conveyor/ping_and_set_conveyor");
+
+    bool exists(client.waitForExistence(ros::Duration(1)));
+    EXPECT_TRUE(exists);
+
+    conveyor_interface::SetConveyor srv;
+    srv.request.id = 9;
+    srv.request.cmd = conveyor_interface::SetConveyor::Request::REMOVE;
+    client.call(srv);
+
+    EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::NO_CONVEYOR_FOUND);
+}
+
+TEST(TESTSuiteFakeDriver, RemoveConveyorWrongId)
+{
+    auto client = nh->serviceClient<conveyor_interface::SetConveyor>("/niryo_robot/conveyor/ping_and_set_conveyor");
+
+    bool exists(client.waitForExistence(ros::Duration(1)));
+    EXPECT_TRUE(exists);
+
+    conveyor_interface::SetConveyor srv;
+    srv.request.id = 7;
+    srv.request.cmd = conveyor_interface::SetConveyor::Request::REMOVE;
+    client.call(srv);
+
+    EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::NO_CONVEYOR_FOUND);
+}
+
+
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "conveyor_interface_service_client");
@@ -197,6 +328,15 @@ int main(int argc, char **argv)
     nh = std::make_unique<ros::NodeHandle>();
 
     testing::InitGoogleTest(&argc, argv);
+    
+    std::string hardware_version;
+    ros::NodeHandle nh_private("~");
+    nh_private.getParam("hardware_version", hardware_version);
+
+    if (hardware_version == "fake_ned" || hardware_version == "fake_ned2" || hardware_version == "ned2")
+        testing::GTEST_FLAG(filter) = "-TESTSuite.*";
+    else
+        testing::GTEST_FLAG(filter) = "-TESTSuiteFakeDriver.*";
 
     return RUN_ALL_TESTS();
 }

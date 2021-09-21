@@ -5,6 +5,10 @@
   <arg name="hardware_version" default="ned"/>
   <arg name="simu_gripper" default="false"/>
 
+  <include file="$(find joints_interface)/launch/joints_interface_base.launch.xml" >
+            <arg name="hardware_version" value="$(arg hardware_version)" />
+  </include>
+
   <!-- use ttl_driver config -->
   <include file="$(find ttl_driver)/launch/ttl_driver_base.launch.xml" >
       <arg name="hardware_version" value="$(arg hardware_version)" />

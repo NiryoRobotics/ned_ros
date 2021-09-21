@@ -1,10 +1,15 @@
 <?xml version="1.0" ?>
 <launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+    
     <arg name="hardware_version" default="ned"/>
 
     <!-- use can_driver config -->
-    <include file="$(find can_driver)/launch/can_driver_base.launch.xml" >
+    <include file="$(find can_driver)/launch/can_driver_base.launch.xml" if="$(eval hardware_version == 'one' or hardware_version == 'ned')">
+        <arg name="hardware_version" value="$(arg hardware_version)" />
+    </include>
+
+    <include file="$(find ttl_driver)/launch/ttl_driver_base.launch.xml" unless="$(eval hardware_version == 'one' or hardware_version == 'ned')">
         <arg name="hardware_version" value="$(arg hardware_version)" />
     </include>
 
@@ -13,6 +18,8 @@
         <arg name="hardware_version" value="$(arg hardware_version)" />
     </include>
 
-    <node pkg="conveyor_interface" type="conveyor_interface_node" name="conveyor_interface" output="screen" />
+    <node pkg="conveyor_interface" type="conveyor_interface_node" name="conveyor_interface" output="screen" >
+        <param name="hardware_version" value="$(arg hardware_version)" />
+    </node>
 
 </launch>

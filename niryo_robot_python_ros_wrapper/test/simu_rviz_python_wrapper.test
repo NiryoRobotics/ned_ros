@@ -13,5 +13,6 @@
         <param name="conveyor" value="$(arg conveyor)"/>
         <param name="gripper_n_camera" value="$(arg gripper_n_camera)"/>
         <param name="hardware_version" value="fake_ned"/>
+        <param name="simulation_mode" type="bool" value="true"/>
     </test>
 </launch>

@@ -248,7 +248,6 @@ void TtlManager::addHardwareComponent(const std::shared_ptr<common::model::Abstr
     uint8_t id = state->getId();
 
     ROS_DEBUG("TtlManager::addHardwareComponent : %s", state->str().c_str());
-
     // if not already instanciated
     if (!_state_map.count(id))
     {
@@ -716,15 +715,18 @@ bool TtlManager::readHwStatus()
             {
                 for (auto id : _ids_map.at(type))
                 {
-                    uint32_t status{0};     // not in calibration status table
-                    shared_ptr<ttl_driver::AbstractStepperDriver> stepper_driver = std::dynamic_pointer_cast<ttl_driver::AbstractStepperDriver>(driver);
-                    if (_calibration_status != EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED &&
-                        COMM_SUCCESS == stepper_driver->readHomingStatus(id, status))
+                    if (_state_map.find(id) != _state_map.end())
                     {
-                        if (_map_calibration_status.count(status))
+                        uint32_t status{0};     // not in calibration status table
+                        shared_ptr<ttl_driver::AbstractStepperDriver> stepper_driver = std::dynamic_pointer_cast<ttl_driver::AbstractStepperDriver>(driver);
+                        if (_calibration_status != EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED &&
+                            COMM_SUCCESS == stepper_driver->readHomingStatus(id, status))
                         {
-                            std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(id))->setCalibration(_map_calibration_status.at(status), 1);
-                            updateCurrentCalibrationStatus();
+                            if (_map_calibration_status.count(status))
+                            {
+                                std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(id))->setCalibration(_map_calibration_status.at(status), 1);
+                                updateCurrentCalibrationStatus();
+                            }
                         }
                     }
                 }
