@@ -77,3 +77,18 @@ msgstr ""
 #~ " I/Os, LED and fans."
 #~ msgstr ""
 
+#~ msgid "Niryo Robot User Interface Package"
+#~ msgstr ""
+
+#~ msgid ":ref:`TCP Server<Use Ned TCP Server>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`Matlab Manager<Matlab Manager>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`TCP Server<source/tcp_server:Use Ned TCP server>`"
+#~ msgstr ""
+
+#~ msgid "Niryo robot user interface package"
+#~ msgstr ""
+

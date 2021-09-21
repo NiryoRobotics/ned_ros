@@ -160,7 +160,7 @@ Accepted Modbus functions:
    *  -  513 
       -  Pushes air vacuum pump from given id
    *  -  520 
-      -  Enables a Conveyor Belt newly connected [on success: store it's ID at 152]
+      -  Enables a Conveyor Belt newly connected [on success: store its ID at 152]
    *  -  521 
       -  Detaches / disables Conveyor Belt with the Conveyor Belt ID given at 525
    *  -  522 
