@@ -93,6 +93,14 @@ namespace DynamixelDriver
         return result;
     }
 
+    bool DynamixelDriverCore::rebootMotor(uint8_t motor_id, DxlMotorType motor_type)
+    {
+        ROS_INFO("Dynamixel Driver Core - Reboot motor %d", motor_id);
+        std::lock_guard<std::mutex> lck(_control_loop_mutex);
+        int result = _dynamixel->rebootMotor(motor_id, motor_type);
+        return (result==COMM_SUCCESS) ? true : false;
+    }
+
     int DynamixelDriverCore::motorScanReport(uint8_t motor_id, DxlMotorType motor_type)
     {
         if (_debug_flag)

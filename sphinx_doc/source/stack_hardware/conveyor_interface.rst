@@ -25,7 +25,7 @@ Parameters - Conveyor Belt interface
    *  -  Name
       -  Description
    *  -  ``publish_frequency``
-      -  | Publish rate for conveyors state.
+      -  | Publishes rate for conveyors state.
          | Default: '2.0'
 
 Published topics - Conveyor Belt interface
@@ -58,10 +58,10 @@ Services - Conveyor Belt interface
       -  Description
    *  -  ``control_conveyor``
       -  :ref:`ControlConveyor<source/stack_hardware/conveyor_interface:ControlConveyor (Service)>`
-      -  Send a command to the desired Conveyor Belt
+      -  Sends a command to the desired Conveyor Belt
    *  -  ``ping_and_set_conveyor``
       -  :ref:`SetConveyor<source/stack_hardware/conveyor_interface:SetConveyor (Service)>`
-      -  Scan and set a new Conveyor Belt
+      -  Scans and sets a new Conveyor Belt
 
 Dependencies - Conveyor Belt interface
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

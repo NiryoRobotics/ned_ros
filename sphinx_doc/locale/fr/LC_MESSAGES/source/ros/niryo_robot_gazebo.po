@@ -6,12 +6,13 @@
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
-#, fuzzy
+
+
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-13 09:42+0000\n"
+"POT-Creation-Date: 2021-09-13 09:16+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -52,8 +53,8 @@ msgstr "Créer son propre monde"
 
 #: ../../source/ros/niryo_robot_gazebo.rst:23
 msgid ""
-"Create your world's file and put it on the folder *worlds*. Once it done,"
-" you have to change the parameter **world_name** in the file "
+"Create your world's file and put it on the folder *worlds*. Once it is "
+"done, you have to change the parameter **world_name** in the file "
 "**niryo_robot_gazebo_world.launch.xml**."
 msgstr ""
 "Pour créer le fichier de votre monde et il faut le placer dans le dossier"
@@ -80,7 +81,11 @@ msgstr ""
 #~ "Lors du lancement de la version "
 #~ "Gazebo de la stack ROS, le fichier"
 #~ " **niryo_robot_gazebo_world.launch.xml** sera appelé"
-#~ " pour générer le monde Gazebo."
+#~ " pour générer le monde Gazebo.Lors du"
+#~ " lancement de la version Gazebo de"
+#~ " la stack ROS, le fichier "
+#~ "**niryo_robot_gazebo_world.launch.xml** sera appelé "
+#~ "pour générer le monde Gazebo."
 
 #~ msgid "Create your own World"
 #~ msgstr "Créer son propre monde"
@@ -91,8 +96,10 @@ msgstr ""
 #~ "robot by precising the world name "
 #~ "in the arg *world_name*: ::"
 #~ msgstr ""
-#~ "Vous pouvez jeter un œil au monde"
-#~ " Gazebo en le lançant sans robot "
-#~ "en précisant le nom du monde dans"
-#~ " l'arg *world_name* : ::"
+#~ "monde Gazebo en le lançant sans "
+#~ "robot en précisant le nom du monde"
+#~ " dans l'arg *world_name* : ::Vous "
+#~ "pouvez jeter un œil au mondeen "
+#~ "précisant le nom du monde dans "
+#~ "l'arg *world_name* : ::"
 

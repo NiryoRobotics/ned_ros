@@ -1,0 +1,7 @@
+<launch>
+    <arg name="serial_path" default="~/.config/niryo/robot_serial_do_not_touch"/>
+
+    <node name="niryo_robot_serial_number" pkg="niryo_robot_serial_number" type="serial_number_node.py" output="screen">
+        <param name="serial_path" value="$(arg serial_path)"/>
+    </node>
+</launch>

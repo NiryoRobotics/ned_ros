@@ -21,16 +21,16 @@ Parameters - stepper driver
    *  -  Name
       -  Description
    *  -  ``can_hardware_control_loop_frequency``
-      -  | control loop frequency.
+      -  | Controls loop frequency.
          | Default: '1500.0'
    *  -  ``can_hw_write_frequency``
-      -  | Write frequency.
+      -  | Writes frequency.
          | Default: '50.0'
    *  -  ``can_hw_check_connection_frequency``
-      -  | Check steppers connection frequency.
+      -  | Checks steppers connection frequency.
          | Default: '2.0'
    *  -  ``stepper_motor_id_list``
-      -  | list of steppers ID
+      -  | List of steppers ID
          | Default: '[1,2,3]'
 
 

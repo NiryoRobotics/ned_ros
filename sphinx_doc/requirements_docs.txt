@@ -1,4 +1,5 @@
 sphinxcontrib-ros
 Sphinx==1.8.5
 sphinx_rtd_theme
+sphinx-togglebutton==0.2.3
 sphinx-intl

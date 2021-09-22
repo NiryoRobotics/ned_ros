@@ -2,7 +2,7 @@
 <package format="2">
   <name>fake_interface</name>
   <version>0.0.0</version>
-  <description>The fake_interface package</description>
+  <description>Handles a fake hardware interface for simulations</description>
   <author>Etienne Rey-Coquais</author>
   <maintainer email="e.rey-coquais@niryo.com">Etienne Rey-Coquais</maintainer>
 
@@ -29,4 +29,17 @@
   <exec_depend>joints_interface</exec_depend>
   <exec_depend>conveyor_interface</exec_depend>
   <exec_depend>actionlib</exec_depend>
+  <exec_depend>cpu_interface</exec_depend>
+  <exec_depend>dynamixel_driver</exec_depend>
+  <exec_depend>stepper_driver</exec_depend>
+
+  <build_export_depend>roscpp</build_export_depend>
+  <build_export_depend>actionlib</build_export_depend>
+  <build_export_depend>controller_manager</build_export_depend>
+  <build_export_depend>std_msgs</build_export_depend>
+  <build_export_depend>niryo_robot_msgs</build_export_depend>
+  <build_export_depend>joints_interface</build_export_depend>
+  <build_export_depend>conveyor_interface</build_export_depend>
+  <build_export_depend>tools_interface</build_export_depend>
+  <build_export_depend>hardware_interface</build_export_depend>
 </package>

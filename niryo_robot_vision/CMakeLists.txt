@@ -7,12 +7,18 @@ find_package(catkin REQUIRED COMPONENTS
   sensor_msgs
 )
 
+add_message_files(
+  FILES
+  ImageParameters.msg
+)
+
 add_service_files(
   DIRECTORY srv
   FILES
   DebugColorDetection.srv
   DebugMarkers.srv
   ObjDetection.srv
+  SetImageParameter.srv
   TakePicture.srv
 )
 
@@ -26,10 +32,16 @@ generate_messages(
 
 catkin_package(
   CATKIN_DEPENDS
+  message_runtime
   niryo_robot_msgs
   sensor_msgs
 )
 
 include_directories(
   ${catkin_INCLUDE_DIRS}
+)
+
+catkin_install_python(
+    PROGRAMS scripts/camera_publisher_and_services.py
+    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )

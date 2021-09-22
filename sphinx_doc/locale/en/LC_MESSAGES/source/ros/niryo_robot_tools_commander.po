@@ -1,0 +1,323 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2021, Niryo All rights reserved. No part of this document
+# may be reproduced or transmitted in any form or by any means without prior
+# written consent of Niryo SAS
+# This file is distributed under the same license as the Ned ROS
+# Documentation package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+#
+
+
+msgid ""
+msgstr ""
+"Project-Id-Version: Ned ROS Documentation 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-08-26 16:48+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.9.1\n"
+
+#: ../../source/ros/niryo_robot_tools_commander.rst:2
+msgid "Niryo robot tools commander package"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_tools_commander.rst:4
+msgid "Provides functionalities to control end-effectors and accessories for Ned."
+msgstr ""
+
+#: ../../source/ros/niryo_robot_tools_commander.rst:6
+msgid ""
+"This package allows to manage the TCP (Tool Center Point) of the robot. "
+"If the functionality is activated, all the movements (in Cartesian "
+"coordinates [x, y, z, roll, pitch, yaw]) of the robot will be performed "
+"according to this TCP. The same program can then work with several tools "
+"by adapting the TCP transformation to them. By default this feature is "
+"disabled, but can be enabled through the robot services."
+msgstr ""
+
+#: ../../source/ros/niryo_robot_tools_commander.rst:12
+msgid "Tools Commander node"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_tools_commander.rst:13
+msgid ""
+"The ROS Node is made of services to equip tool, an action server for tool"
+" command and topics for the current tool or the tool state."
+msgstr ""
+
+#: ../../source/ros/niryo_robot_tools_commander.rst:15
+msgid "The namespace used is: |namespace_emphasize|"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_tools_commander.rst:18
+msgid "Action server - tools"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_tools_commander.rst:20
+msgid "Tools Package Action Server"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_tools_commander.rst:26
+#: ../../source/ros/niryo_robot_tools_commander.rst:42
+#: ../../source/ros/niryo_robot_tools_commander.rst:61
+msgid "Name"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_tools_commander.rst:27
+#: ../../source/ros/niryo_robot_tools_commander.rst:43
+#: ../../source/ros/niryo_robot_tools_commander.rst:62
+msgid "Message Type"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_tools_commander.rst:28
+#: ../../source/ros/niryo_robot_tools_commander.rst:44
+#: ../../source/ros/niryo_robot_tools_commander.rst:63
+msgid "Description"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_tools_commander.rst:29
+msgid "``action_server``"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_tools_commander.rst:30
+msgid ""
+":ref:`ToolAction<source/ros/niryo_robot_tools_commander:ToolAction "
+"(Action)>`"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_tools_commander.rst:31
+msgid "Command the tool through an action server"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_tools_commander.rst:34
+msgid "Publisher - tools"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_tools_commander.rst:36
+msgid "Tools Package Publishers"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_tools_commander.rst:45
+msgid "``current_id``"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_tools_commander.rst:46
+msgid ":std_msgs:`Int32`"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_tools_commander.rst:47
+msgid "Publish the current tool ID"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_tools_commander.rst:48
+msgid "``tcp``"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_tools_commander.rst:49
+msgid ":ref:`TCP<source/ros/niryo_robot_tools_commander:TCP (Message)>`"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_tools_commander.rst:50
+msgid ""
+"Publish if the TCP (Tool Center Point) is enabled and transformation "
+"between the tool_link and the TCP"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_tools_commander.rst:53
+msgid "Services - tools"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_tools_commander.rst:55
+msgid "Tools Package Services"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_tools_commander.rst:64
+msgid "``update_tool``"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_tools_commander.rst:65
+#: ../../source/ros/niryo_robot_tools_commander.rst:79
+msgid ":std_srvs:`Trigger`"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_tools_commander.rst:66
+msgid ""
+"Ping/scan for a dxl motor flashed with an ID corresponding to a tool and "
+"equip it (if found)"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_tools_commander.rst:67
+msgid "``equip_electromagnet``"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_tools_commander.rst:68
+msgid ":ref:`source/ros/niryo_robot_msgs:SetInt`"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_tools_commander.rst:69
+msgid "Equip the electromagnet with the motor ID given as parameter"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_tools_commander.rst:70
+msgid "``enable_tcp``"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_tools_commander.rst:71
+msgid ":ref:`source/ros/niryo_robot_msgs:SetBool`"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_tools_commander.rst
+msgid "Enable or disable the TCP (Tool Center Point) functionality."
+msgstr ""
+
+#: ../../source/ros/niryo_robot_tools_commander.rst
+msgid ""
+"When we activate it, the transformation will be the last one saved since "
+"the robot started."
+msgstr ""
+
+#: ../../source/ros/niryo_robot_tools_commander.rst
+msgid "By default it will be the one of the equipped tool."
+msgstr ""
+
+#: ../../source/ros/niryo_robot_tools_commander.rst:75
+msgid "``set_tcp``"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_tools_commander.rst:76
+msgid ":ref:`SetTCP<source/ros/niryo_robot_tools_commander:SetTCP (Service)>`"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_tools_commander.rst:77
+msgid ""
+"Activate the TCP (Tool Center Point) functionality and defines a new TCP "
+"transformation."
+msgstr ""
+
+#: ../../source/ros/niryo_robot_tools_commander.rst:78
+msgid "``reset_tcp``"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_tools_commander.rst:80
+msgid ""
+"Reset the TCP transformation. By default it will be the one of the "
+"equipped tool."
+msgstr ""
+
+#: ../../source/ros/niryo_robot_tools_commander.rst:83
+msgid "Dependencies - tools"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_tools_commander.rst:84
+msgid ":doc:`niryo_robot_msgs`"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_tools_commander.rst:85
+msgid ":msgs_index:`std_msgs`"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_tools_commander.rst:86
+msgid ":msgs_index:`geometry_msgs`"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_tools_commander.rst:89
+msgid "Action files - tools"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_tools_commander.rst:92
+msgid "ToolAction (Action)"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_tools_commander.rst:98
+msgid "Messages files - tools"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_tools_commander.rst:101
+msgid "ToolCommand (Message)"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_tools_commander.rst:107
+msgid "TCP (Message)"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_tools_commander.rst:113
+msgid "Services files - tools"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_tools_commander.rst:116
+msgid "SetTCP (Service)"
+msgstr ""
+
+#~ msgid "Niryo Robot Tools Commander Package"
+#~ msgstr ""
+
+#~ msgid "Tools Commander Node"
+#~ msgstr ""
+
+#~ msgid "The namespace used is : |namespace_emphasize|"
+#~ msgstr ""
+
+#~ msgid "Action Server - Tools"
+#~ msgstr ""
+
+#~ msgid "Publisher - Tools"
+#~ msgstr ""
+
+#~ msgid "Services - Tools"
+#~ msgstr ""
+
+#~ msgid "Dependencies - Tools"
+#~ msgstr ""
+
+#~ msgid "Action, Services & Messages files - Tools"
+#~ msgstr ""
+
+#~ msgid "Action, services & messages files - tools"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "This package allows to manage the "
+#~ "TCP (Tool Center Point) of the "
+#~ "robot. If the functionality is "
+#~ "activated, all the movements (move to"
+#~ " pose [x, y, z, roll, pitch, "
+#~ "yaw]) of the robot will be "
+#~ "performed according to this TCP. The "
+#~ "same program can then work with "
+#~ "several tools by adapting the TCP "
+#~ "transformation to them. By default this"
+#~ " feature is disabled, but can be "
+#~ "enabled through the robot services."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Publish if the TCP (Tool Center "
+#~ "Point) is enabled and the TCP "
+#~ "transformation"
+#~ msgstr ""
+
+#~ msgid ":ref:`ToolAction<ToolAction (Action)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`TCP<TCP (Message)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`Trigger`"
+#~ msgstr ""
+
+#~ msgid ":ref:`SetInt`"
+#~ msgstr ""
+
+#~ msgid ":ref:`SetBool`"
+#~ msgstr ""
+
+#~ msgid ":ref:`SetTCP<SetTCP (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`niryo_robot_msgs <Niryo Robot Messages Package>`"
+#~ msgstr ""
+

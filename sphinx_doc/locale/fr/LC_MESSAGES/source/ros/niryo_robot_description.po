@@ -6,7 +6,8 @@
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
-#, fuzzy
+
+
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
@@ -42,7 +43,7 @@ msgid ""
 msgstr ""
 "**Note** : la visualisation 3D n'est pas disponible sur l'image Ned "
 "Raspberry Pi4. Pour l’utilisation des commandes suivantes, il est "
-"nécessaire de configurer la stack ROS pour  Ned sur votre ordinateur."
+"nécessaire de configurer la stack ROS pour Ned sur votre ordinateur."
 
 #~ msgid "Niryo Robot Description Package"
 #~ msgstr "Le package description du robot Niryo"

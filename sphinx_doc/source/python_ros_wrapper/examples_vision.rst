@@ -38,9 +38,14 @@ add at the beginning of all of them: ::
     niryo_robot.update_tool()
 
 
+.. toggle::
+
+    .. image:: ../../images/ros/vision_example.*
+       :align: center
+
 Simple Vision pick
 -------------------------------
-This short example show how to do your first vision pick: ::
+This short example shows how to do your first vision pick: ::
 
     niryo_robot.move_pose(*observation_pose)
     # Trying to pick target using camera

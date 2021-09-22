@@ -4,7 +4,7 @@ import rospy
 
 from client_jog_interface_example import JogClient
 
-from niryo_robot_commander.srv import JogShiftRequest
+from niryo_robot_arm_commander.srv import JogShiftRequest
 
 from pynput.mouse import Button, Listener, Controller
 
