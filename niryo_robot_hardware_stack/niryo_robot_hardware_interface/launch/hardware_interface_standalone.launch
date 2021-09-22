@@ -1,0 +1,67 @@
+<!-- Launch file used to launch the hardware interface (which publish the joint state), with drivers, controllers, robot_description, and robot_state -->
+<launch>
+    <arg name="execute_on_niryo_robot_raspberry_pi_image" default="true" />
+    <arg name="simulation_mode" default="false"/>
+    <arg name="simu_gripper" default="false"/>
+    <arg name="gazebo" default="false"/>
+    <arg name="can_enabled" default="true"/>
+    <arg name="dxl_enabled" default="true"/>
+    <arg name="hardware_version" value="ned"/>
+    <arg name="debug" default="false"/>
+
+
+    <!-- Launch controllers -->
+    <rosparam file="$(find niryo_ned_moveit_config_standalone)/config/ros_controllers.yaml" command="load"/>
+    <node name="controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="log"
+            args="joint_state_controller niryo_robot_follow_joint_trajectory_controller"/>
+
+    <!-- Load URDF -->
+    <arg name="urdf_path" value="$(find niryo_robot_description)/urdf/$(arg hardware_version)/niryo_$(arg hardware_version).urdf.xacro"/>
+    <param name="robot_description" command="$(find xacro)/xacro $(arg urdf_path)"/>
+
+    <!-- Launch Robot state publisher -->
+    <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" output="screen">
+    </node>
+    <!-- <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher"/> -->
+
+    <!-- Set global parameters -->
+    <group ns="niryo_robot/info">
+        <param name="ros_version"               type="string" command="rosversion niryo_robot_bringup" />
+        <param name="niryo_robot_type"  type="string" value="NIRYO_NED" />
+    </group>
+
+    <!-- Launch hardware interface  -->
+    <node pkg="niryo_robot_hardware_interface" type="niryo_robot_hardware_interface_node"
+          name="niryo_robot_hardware_interface" output="screen">
+
+        <!-- Rosparam definition  -->
+        <param name="hardware_version" type="string" value="$(arg hardware_version)"/>
+
+        <rosparam file="$(find niryo_robot_hardware_interface)/config/default.yaml" command="load"/>
+        <rosparam file="$(find cpu_interface)/config/default.yaml" command="load"/>
+
+        <rosparam file="$(find dynamixel_driver)/config/$(arg hardware_version)/dxl_bus_config.yaml" command="load" ns="dynamixel_driver"/>
+        <rosparam file="$(find dynamixel_driver)/config/default.yaml" command="load"  ns="dynamixel_driver"/>
+
+        <rosparam file="$(find stepper_driver)/config/can_bus.yaml" command="load" ns="stepper_driver"/>
+        <rosparam file="$(find stepper_driver)/config/default.yaml" command="load" ns="stepper_driver"/>
+
+        <rosparam file="$(find joints_interface)/config/default.yaml" command="load" />
+        <rosparam file="$(find joints_interface)/config/motors_param.yaml" command="load"/>
+        <rosparam file="$(find joints_interface)/config/joints_params.yaml" command="load" />
+        <rosparam file="$(find joints_interface)/config/$(arg hardware_version)/dynamixels_params.yaml" command="load" />
+        <rosparam file="$(find joints_interface)/config/$(arg hardware_version)/steppers_params.yaml" command="load" />
+
+        <rosparam file="$(find tools_interface)/config/default.yaml" command="load" ns="tools_interface"/>
+        <rosparam file="$(find conveyor_interface)/config/default.yaml" command="load"/>
+
+        <param name="simulation_mode" type="bool" value="$(arg simulation_mode)"/>
+        <param name="gazebo" type="bool" value="$(arg gazebo)"/>
+        <param name="simu_gripper" type="bool" value="$(arg simu_gripper)"/>
+        <param name="can_enabled" type="bool" value="$(arg can_enabled)"/>
+        <param name="dxl_enabled" type="bool" value="$(arg dxl_enabled)"/>
+        <param name="debug" type="bool" value="$(arg debug)"/>
+
+    </node>
+
+</launch>

@@ -35,10 +35,10 @@ Parameters - hardware interface
    *  -  Name
       -  Description
    *  -  ``publish_hw_status_frequency``
-      -  | Publish rate for hardware status.
+      -  | Publishes rate for hardware status.
          | Default : '2.0'
    *  -  ``publish_software_version_frequency``
-      -  | Publish rate for software status.
+      -  | Publishes rate for software status.
          | Default : '2.0'
 
 Published topics - hardware interface
@@ -74,13 +74,13 @@ Services - hardware interface
       -  Description
    *  -  ``launch_motors_report``
       -  :ref:`source/ros/niryo_robot_msgs:Trigger`
-      -  Start motors report
+      -  Starts motors report
    *  -  ``reboot_motors``
       -  :ref:`source/ros/niryo_robot_msgs:Trigger`
-      -  Reboot motors
+      -  Reboots motors
    *  -  ``stop_motors_report``
       -  :ref:`source/ros/niryo_robot_msgs:Trigger`
-      -  Stop motors report
+      -  Stops motors report
 
 Dependencies - hardware interface
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

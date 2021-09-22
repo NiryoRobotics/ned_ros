@@ -6,7 +6,8 @@
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
-#, fuzzy
+
+
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
@@ -85,7 +86,7 @@ msgid ""
 ":meth:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_pose`."
 msgstr ""
 "Pour effectuer un moveP, Il est nécessaire de passer 6 floats : (x, y, z,"
-" roll, pitch, yaw) vers la méthode "
+" roll, pitch, yaw) à la méthode "
 ":meth:`~.niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.move_pose`."
 
 #: ../../source/python_ros_wrapper/examples_movement.rst:40

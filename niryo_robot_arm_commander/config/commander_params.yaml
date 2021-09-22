@@ -1,0 +1,30 @@
+joint_names: ['joint_1', 'joint_2', 'joint_3', 'joint_4', 'joint_5', 'joint_6']
+
+# - MoveIt! params
+reference_frame: world
+move_group_commander_name: arm
+joint_controller_name: "/niryo_robot_follow_joint_trajectory_controller"
+
+# Planning settings
+allow_replanning: true
+goal_joint_tolerance: 0.0001
+goal_position_tolerance: 0.0001
+goal_orientation_tolerance: 0.001
+display_trajectories: False
+
+trajectory_minimum_timeout : 3.0
+compute_plan_max_tries : 3
+
+# Linear trajectories computation
+eef_step: 0.02
+jump_threshold: 0.0
+
+# - Other params
+# "Is Active" topic's publish rate
+active_publish_rate_sec: 0.1
+
+command_still_active_max_tries : 3
+
+pause_timeout : 45.0
+
+error_tolerance: [0.7, 0.4, 0.35, 1.57, 1.57, 1.57]

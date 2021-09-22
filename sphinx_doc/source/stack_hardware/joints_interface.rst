@@ -8,7 +8,7 @@ Joints interface node
 --------------------------
 The ROS Node is made to:
  - Interface robot's motors to joint trajectory controller, from :wiki_ros:`ros_control` package.
- - Create a controller manager, from :wiki_ros:`controller_manager` package, to provides the infrastructure to load, unload, start and stop controllers.
+ - Create a controller manager, from :wiki_ros:`controller_manager` package, provides the infrastructure to load, unload, start and stop controllers.
  - Interface with motors calibration.
  - Initialize motors parameters.
 
@@ -25,10 +25,10 @@ Parameters - joints interface
    *  -  Name
       -  Description
    *  -  ``ros_control_loop_frequency``
-      -  | control loop frequency.
+      -  | Controls loop frequency.
          | Default: '100.0'
    *  -  ``publish_learning_mode_frequency``
-      -  | Publish rate for learning mode state.
+      -  | Publishes rate for learning mode state.
          | Default: '2.0'
    *  -  ``calibration_timeout``
       -  | Waiting time between 2 commands during the calibration process.
@@ -67,13 +67,13 @@ Services - joints interface
       -  Description
    *  -  ``/niryo_robot/joints_interface/calibrate_motors``
       -  :ref:`source/ros/niryo_robot_msgs:SetInt`
-      -  Start motors calibration - value can be 1 for auto calibration, 2 for manual
+      -  Starst motors calibration - value can be 1 for auto calibration, 2 for manual
    *  -  ``/niryo_robot/joints_interface/request_new_calibration``
       -  :ref:`source/ros/niryo_robot_msgs:Trigger`
-      -  Unset motors calibration
+      -  Unsets motors calibration
    *  -  ``niryo_robot/learning_mode/activate``
       -  :ref:`source/ros/niryo_robot_msgs:Trigger`
-      -  Either activate or deactivate learning mode
+      -  Either activates or deactivates learning mode
 
 Dependencies - joints interface
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

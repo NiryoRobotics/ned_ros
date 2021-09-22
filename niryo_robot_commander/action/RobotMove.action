@@ -1,9 +1,0 @@
-# goal
-niryo_robot_commander/RobotCommand cmd
----
-# result
-int32 status
-string message
----
-# feedback
-niryo_robot_msgs/RobotState state

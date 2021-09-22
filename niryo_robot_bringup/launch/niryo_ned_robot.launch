@@ -1,10 +1,8 @@
 <launch>
     <!-- Arguments definition -->
-    <arg name="iot_enabled" default="false"/>
     <arg name="debug" default="false"/>
 
     <include file="$(find niryo_robot_bringup)/launch/niryo_robot_base_robot.launch.xml">>
-        <arg name="iot_enabled" value="$(arg iot_enabled)"/>
         <arg name="debug" value="$(arg debug)"/>
     </include>
 </launch>

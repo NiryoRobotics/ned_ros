@@ -6,7 +6,8 @@
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
-#, fuzzy
+
+
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
@@ -35,7 +36,7 @@ msgid ""
 "almost each part of Ned software."
 msgstr ""
 "ROS (Robot Operating System) est un système robotique Open-Source qui "
-"permet de faciliter le développement de logiciels robotisurd. ROS est utilisé dans "
+"permet de faciliter le développement de logiciels robotiques. ROS est utilisé dans "
 "presque chaque partie du logiciel Ned."
 
 #: ../../source/ros.rst:15
@@ -61,7 +62,7 @@ msgid ""
 "In this section, you will have access to all information about each Niryo"
 " Robot's ROS packages."
 msgstr ""
-"Dans cette section, vous aurez accès à toutes les informations sur chaque packages ROS"
+"Dans cette section, vous aurez accès à toutes les informations sur chaque packages ROS "
 "du robot Niryo."
 
 #: ../../source/ros.rst:23

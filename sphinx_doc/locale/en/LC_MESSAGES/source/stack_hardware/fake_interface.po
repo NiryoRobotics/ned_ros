@@ -6,12 +6,13 @@
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
-#, fuzzy
+
+
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-13 09:51+0000\n"
+"POT-Creation-Date: 2021-09-13 09:16+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -26,8 +27,8 @@ msgstr ""
 
 #: ../../source/stack_hardware/fake_interface.rst:4
 msgid ""
-"This package provides fakes hardware interface when the robot is used in "
-"simulation."
+"This package provides fakes hardware interfaces when the robot is used in"
+" simulation."
 msgstr ""
 
 #: ../../source/stack_hardware/fake_interface.rst:7
@@ -115,7 +116,7 @@ msgstr ""
 
 #: ../../source/stack_hardware/fake_interface.rst:46
 msgid ""
-"Start motors calibration - value can be 1 for auto calibration, 2 for "
+"Starts motors calibration - value can be 1 for auto calibration, 2 for "
 "manual"
 msgstr ""
 
@@ -129,7 +130,7 @@ msgid ":ref:`source/ros/niryo_robot_msgs:Trigger`"
 msgstr ""
 
 #: ../../source/stack_hardware/fake_interface.rst:49
-msgid "Unset motors calibration"
+msgid "Unsets motors calibration"
 msgstr ""
 
 #: ../../source/stack_hardware/fake_interface.rst:50
@@ -137,7 +138,7 @@ msgid "``niryo_robot/learning_mode/activate``"
 msgstr ""
 
 #: ../../source/stack_hardware/fake_interface.rst:52
-msgid "Either activate or deactivate learning mode"
+msgid "Either activates or deactivates learning mode"
 msgstr ""
 
 #: ../../source/stack_hardware/fake_interface.rst:53
@@ -151,7 +152,7 @@ msgid ""
 msgstr ""
 
 #: ../../source/stack_hardware/fake_interface.rst:55
-msgid "Scan and set for a tool plugged"
+msgid "Scans and sets for a tool plugged"
 msgstr ""
 
 #: ../../source/stack_hardware/fake_interface.rst:56
@@ -165,7 +166,7 @@ msgid ""
 msgstr ""
 
 #: ../../source/stack_hardware/fake_interface.rst:58
-msgid "Open a Gripper tool"
+msgid "Opens a Gripper tool"
 msgstr ""
 
 #: ../../source/stack_hardware/fake_interface.rst:59
@@ -179,7 +180,7 @@ msgid ""
 msgstr ""
 
 #: ../../source/stack_hardware/fake_interface.rst:61
-msgid "Close a Gripper tool"
+msgid "Closes a Gripper tool"
 msgstr ""
 
 #: ../../source/stack_hardware/fake_interface.rst:62
@@ -193,7 +194,7 @@ msgid ""
 msgstr ""
 
 #: ../../source/stack_hardware/fake_interface.rst:64
-msgid "Pull Vacuum Pump tool"
+msgid "Pulls Vacuum Pump tool"
 msgstr ""
 
 #: ../../source/stack_hardware/fake_interface.rst:65
@@ -207,7 +208,7 @@ msgid ""
 msgstr ""
 
 #: ../../source/stack_hardware/fake_interface.rst:67
-msgid "Push Vacuum Pump tool"
+msgid "Pushes Vacuum Pump tool"
 msgstr ""
 
 #: ../../source/stack_hardware/fake_interface.rst:68
@@ -221,7 +222,7 @@ msgid ""
 msgstr ""
 
 #: ../../source/stack_hardware/fake_interface.rst:70
-msgid "Send a command to the desired Conveyor Belt"
+msgid "Sends a command to the desired Conveyor Belt"
 msgstr ""
 
 #: ../../source/stack_hardware/fake_interface.rst:71
@@ -235,7 +236,7 @@ msgid ""
 msgstr ""
 
 #: ../../source/stack_hardware/fake_interface.rst:73
-msgid "Scan and set a new Conveyor Belt"
+msgid "Scans and sets a new Conveyor Belt"
 msgstr ""
 
 #: ../../source/stack_hardware/fake_interface.rst:76
@@ -384,5 +385,44 @@ msgstr ""
 #~ msgid ""
 #~ ":ref:`niryo_robot_msgs <source/ros/niryo_robot_msgs:Niryo "
 #~ "Robot Messages Package>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "This package provides fakes hardware "
+#~ "interface when the robot is used "
+#~ "in simulation."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Start motors calibration - value can "
+#~ "be 1 for auto calibration, 2 for"
+#~ " manual"
+#~ msgstr ""
+
+#~ msgid "Unset motors calibration"
+#~ msgstr ""
+
+#~ msgid "Either activate or deactivate learning mode"
+#~ msgstr ""
+
+#~ msgid "Scan and set for a tool plugged"
+#~ msgstr ""
+
+#~ msgid "Open a Gripper tool"
+#~ msgstr ""
+
+#~ msgid "Close a Gripper tool"
+#~ msgstr ""
+
+#~ msgid "Pull Vacuum Pump tool"
+#~ msgstr ""
+
+#~ msgid "Push Vacuum Pump tool"
+#~ msgstr ""
+
+#~ msgid "Send a command to the desired Conveyor Belt"
+#~ msgstr ""
+
+#~ msgid "Scan and set a new Conveyor Belt"
 #~ msgstr ""
 
