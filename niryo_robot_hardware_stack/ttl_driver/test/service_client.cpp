@@ -114,11 +114,11 @@ int main(int argc, char **argv)
 
     nh = std::make_unique<ros::NodeHandle>();
 
-    std::string hardware_version;
+    bool simulation_mode;
     ros::NodeHandle nh_private("~");
-    nh_private.getParam("hardware_version", hardware_version);
+    nh_private.getParam("simulation_mode", simulation_mode);
 
-    if (hardware_version == "fake_ned" || (hardware_version == "fake_ned2"))
+    if (simulation_mode)
         testing::GTEST_FLAG(filter) = "-TESTSuite.sendCustomValue:TESTSuite.readCustomValue";
 
     return RUN_ALL_TESTS();

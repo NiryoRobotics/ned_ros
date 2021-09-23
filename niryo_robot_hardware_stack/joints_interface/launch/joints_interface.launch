@@ -5,7 +5,8 @@
   <!-- Arguments -->
   <arg name="can_enabled" default="true" />
   <arg name="ttl_enabled" default="true" />
-  <arg name="hardware_version" default="ned" />
+  <arg name="hardware_version" default="ned"/>
+  <arg name="simulation_mode" default="false"/>
 
   <param name="robot_description" command="$(find xacro)/xacro $(find niryo_robot_description)/urdf/$(arg hardware_version)/niryo_$(arg hardware_version).urdf.xacro" />
 
@@ -28,12 +29,14 @@
   <group if="$(arg ttl_enabled)" >
       <include file="$(find ttl_driver)/launch/ttl_driver_base.launch.xml" >
           <arg name="hardware_version" value="$(arg hardware_version)" />
+          <arg name="simulation_mode" value="$(arg simulation_mode)" />
       </include>
   </group>
 
   <!--use joints_interface config -->
   <include file="$(find joints_interface)/launch/joints_interface_base.launch.xml" >
     <arg name="hardware_version" value="$(arg hardware_version)" />
+    <arg name="simulation_mode" value="$(arg simulation_mode)" />
   </include>
 
   <rosparam file="$(find joints_interface)/config/niryo_controllers.yaml" command="load" />

@@ -1,0 +1,19 @@
+<?xml version="1.0" ?>
+<launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+    <!-- Arguments definition -->
+    <arg name="log_level" default="INFO" />
+    <arg name="debug" default="false"/>
+    <arg name="conf_location" default="version.txt"/>
+    <arg name="simu_gripper" default="true" />
+
+    <include file="$(find niryo_robot_bringup)/launch/niryo_robot.launch">
+        <arg name="hardware_version" value="ned" />
+        <arg name="simulation_mode" value="true" />
+        <arg name="simu_gripper" value="$(arg simu_gripper)" />
+        <arg name="log_level" value="$(arg log_level)" />
+        <arg name="ttl_enabled" value="true"/>
+        <arg name="can_enabled" value="false"/>
+        <arg name="debug" value="$(arg debug)"/>
+    </include>
+</launch>

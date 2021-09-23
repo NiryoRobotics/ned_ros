@@ -279,10 +279,10 @@ int main(int argc, char **argv)
   ros::init(argc, argv, "can_driver_unit_tests");
 
   ros::NodeHandle nh_private("~");
-  std::string hw_version;
+  bool can_enabled;
 
-  nh_private.getParam("hardware_version", hw_version);
-  if (hw_version != "ned" && hw_version != "one")
+  nh_private.getParam("can_enabled", can_enabled);
+  if (!can_enabled)
   {
     testing::GTEST_FLAG(filter) = "-CanInterfaceTestSuite.*:CanManagerTestSuite.*";  // This test is applied only for NED, so skip it
   }

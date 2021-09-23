@@ -25,12 +25,6 @@
     -->
     <arg name="use_gui" default="false"/>
 
-    <!-- Load the URDF, SRDF and other .yaml configuration files on the param server -->
-    <include file="$(find niryo_moveit_config_w_gripper1)/launch/planning_context.launch">
-        <arg name="load_robot_description" value="true"/>
-        <arg name="hardware_version" value="$(arg hardware_version)" />
-    </include>
-
     <!-- If needed, broadcast static tf for robot root -->
 
 
@@ -44,21 +38,21 @@
     <!-- Given the published joint states, publish tf for the robot links -->
     <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher" respawn="true"
           output="screen">
-
     </node>
 
     <!-- Run the main MoveIt! executable without trajectory execution (we do not have controllers configured by default) -->
     <include file="$(find niryo_moveit_config_w_gripper1)/launch/move_group.launch">
-        <arg name="allow_trajectory_execution" value="true"/>
-        <arg name="hardware_version" value="fake_ned"/>
-        <arg name="info" value="true"/>
+        <arg name="hardware_version" value="$(arg hardware_version)"/>
+        <arg name="load_robot_description" value="true"/>
         <arg name="debug" value="$(arg debug)"/>
+        <arg name="info" value="true"/>
         <arg name="pipeline" value="$(arg pipeline)"/>
+        <arg name="allow_trajectory_execution" value="true"/>
     </include>
 
     <!-- Run Rviz and load the default config to see the state of the move_group node -->
     <include file="$(find niryo_moveit_config_w_gripper1)/launch/moveit_rviz.launch">
-        <arg name="rviz_config" value="$(find niryo_moveit_config_w_gripper1)/launch/moveit.rviz"/>
+        <arg name="config" value="true"/>
         <arg name="debug" value="$(arg debug)"/>
     </include>
 

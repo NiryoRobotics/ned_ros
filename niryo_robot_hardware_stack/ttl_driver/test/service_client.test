@@ -10,6 +10,7 @@
         
     <test test-name="ttl_driver_integration_tests" pkg="ttl_driver"  type="ttl_driver_integration_tests" >
         <param name="hardware_version" value="$(arg hardware_version)" />
+        <param name="simulation_mode" value="false" />
     </test>
 
 </launch>
