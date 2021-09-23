@@ -5,6 +5,7 @@
   <arg name="debug" default="false" />
   <arg unless="$(arg debug)" name="launch_prefix" value="" />
   <arg     if="$(arg debug)" name="launch_prefix" value="gdb --ex run --args" />
+  
   <arg name="config" default="false" />
   <arg unless="$(arg config)" name="command_args" value="" />
   <arg     if="$(arg config)" name="command_args" value="-d $(find niryo_moveit_config_standalone)/launch/moveit.rviz" />

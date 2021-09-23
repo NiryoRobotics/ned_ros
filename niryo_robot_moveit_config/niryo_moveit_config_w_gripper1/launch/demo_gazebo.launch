@@ -1,6 +1,7 @@
 <?xml version="1.0" ?>
 <launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+    
     <arg name="hardware_version" default="ned"/>
 
     <!-- By default, we do not start a database (it can be large) -->
@@ -34,12 +35,6 @@
         <arg name="urdf_path" value="$(arg urdf_path)"/>
     </include>
 
-    <!-- Load the URDF, SRDF and other .yaml configuration files on the param server -->
-    <include file="$(find niryo_moveit_config_w_gripper1)/launch/planning_context.launch">
-        <arg name="load_robot_description" value="false"/>
-        <arg name="hardware_version" value="$(arg hardware_version)" />
-    </include>
-
     <!-- If needed, broadcast static tf for robot root -->
 
 
@@ -57,10 +52,11 @@
 
     <!-- Run the main MoveIt! executable without trajectory execution (we do not have controllers configured by default) -->
     <include file="$(find niryo_moveit_config_w_gripper1)/launch/move_group.launch">
-        <arg name="allow_trajectory_execution" value="true"/>
+        <arg name="load_robot_description" value="false"/>
         <arg name="hardware_version" value="$(arg hardware_version)" />
-        <arg name="info" value="true"/>
         <arg name="debug" value="$(arg debug)"/>
+        <arg name="info" value="true"/>
+        <arg name="allow_trajectory_execution" value="true"/>
     </include>
 
     <!-- Run Rviz and load the default config to see the state of the move_group node -->

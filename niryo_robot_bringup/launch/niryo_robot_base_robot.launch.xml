@@ -9,31 +9,26 @@
     <arg name="ttl_enabled" default="true"/>
     <arg name="vision_enabled" default="true" />
     <arg name="gazebo" default="false" />
+    <arg name="simulation_mode" default="false" />
     <arg name="simu_gripper" default="true" />
     <arg name="conf_location" default="$(env HOME)/.config/niryo/version/version.txt"/>
 
-    <!-- For conveniency only . We cannot use groups because it does not detect the urdf_path arg otherwise -->
-    <arg name="simulation_mode" value="True" if="$(eval 'fake' in hardware_version)" />
-    <arg name="simulation_mode" value="False" unless="$(eval 'fake' in hardware_version)" />
+    <arg name="urdf_path" value="urdf/$(arg hardware_version)/without_mesh_niryo_$(arg hardware_version).urdf.xacro" unless="$(eval simulation_mode)" />
+    <arg name="urdf_path" value="urdf/$(arg hardware_version)/niryo_$(arg hardware_version).urdf.xacro" if="$(eval simulation_mode and not gazebo)"/>
 
-    <arg name="robot" value="$(eval hardware_version.replace('fake_',''))" />
-
-    <arg name="urdf_path" value="urdf/$(arg robot)/without_mesh_niryo_$(arg robot).urdf.xacro" unless="$(arg simulation_mode)" />
-    <arg name="urdf_path" value="urdf/$(arg robot)/niryo_$(arg robot).urdf.xacro" if="$(eval simulation_mode and not gazebo)"/>
-
-    <arg name="urdf_path" value="urdf/$(arg robot)/niryo_$(arg robot)_gripper1_n_camera.urdf.xacro" if="$(eval simulation_mode and gazebo and simu_gripper)"/>
-    <arg name="urdf_path" value="urdf/$(arg robot)/niryo_$(arg robot)_gazebo.urdf.xacro" if="$(eval simulation_mode and gazebo and not simu_gripper)"/>
+    <arg name="urdf_path" value="urdf/$(arg hardware_version)/niryo_$(arg hardware_version)_gripper1_n_camera.urdf.xacro" if="$(eval simulation_mode and gazebo and simu_gripper)"/>
+    <arg name="urdf_path" value="urdf/$(arg hardware_version)/niryo_$(arg hardware_version)_gazebo.urdf.xacro" if="$(eval simulation_mode and gazebo and not simu_gripper)"/>
 
     <!-- Load URDF -->
     <param name="robot_description"
            command="$(find xacro)/xacro $(find niryo_robot_description)/$(arg urdf_path)" />
 
     <param name="robot_description_tf2"
-           command="$(find xacro)/xacro $(find niryo_robot_description)/urdf/$(arg robot)/niryo_$(arg robot).urdf.xacro" />
+           command="$(find xacro)/xacro $(find niryo_robot_description)/urdf/$(arg hardware_version)/niryo_$(arg hardware_version).urdf.xacro" />
 
     <!-- PARAMS -->
     <group ns="niryo_robot">
-        <group ns="info" if="$(eval hardware_version in ['one', 'ned', 'ned2'])">
+        <group ns="info" if="$(arg simulation_mode)">
             <param name="image_version" type="string" textfile="$(arg conf_location)"/>
         </group>
 
@@ -45,19 +40,21 @@
     <!-- Including shared params & nodes -->
 
     <include file="$(find niryo_robot_bringup)/launch/niryo_robot_base_common.launch.xml">
-        <arg name="log_level" value="$(arg log_level)" />
         <arg name="hardware_version" value="$(arg hardware_version)" />
+        <arg name="simulation_mode" value="$(arg simulation_mode)" />
+        <arg name="simu_gripper" value="$(arg simu_gripper)" />
+        <arg name="log_level" value="$(arg log_level)" />
         <arg name="debug" value="$(arg debug)"/>
         <arg name="can_enabled" value="$(arg can_enabled)"/>
         <arg name="ttl_enabled" value="$(arg ttl_enabled)"/>
         <arg name="gazebo" value="$(arg gazebo)" />
-        <arg name="simu_gripper" value="$(arg simu_gripper)" />
     </include>
 
     <!--   Rpi node (IO / fan / ...)   -->
     <!-- Raspberry pi -->
     <include file="$(find niryo_robot_rpi)/launch/rpi.launch">
         <arg name="hardware_version" value="$(arg hardware_version)"/>
+        <arg name="simulation_mode" value="$(arg simulation_mode)"/>
         <arg name="log_level" value="$(arg log_level)" />
     </include>
 
@@ -65,6 +62,7 @@
     <include file="$(find niryo_robot_vision)/launch/vision_node.launch" if="$(arg vision_enabled)">
         <arg name="log_level" value="$(arg log_level)" />
         <arg name="hardware_version" value="$(arg hardware_version)" />
+        <arg name="simulation_mode" value="$(arg simulation_mode)"/>
     </include>
 
     <include file="$(find niryo_robot_credentials)/launch/credentials.launch">

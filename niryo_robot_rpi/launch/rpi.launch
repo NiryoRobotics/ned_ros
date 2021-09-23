@@ -3,27 +3,17 @@
         xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
     <!-- Arguments -->
     <arg name="log_level" default="INFO" />
-    <arg name="hardware_version" default="ned2"/>
+    <arg name="hardware_version" default="ned"/>
+    <arg name="simulation_mode" default="false" />
 
+    <arg name="script_name" value="fake_rpi_node.py" if="$(arg simulation_mode)" />
+    <arg name="script_name" value="rpi_node.py" unless="$(arg simulation_mode)" />
+    
+    <include file="$(find niryo_robot_rpi)/launch/rpi_base.launch.xml" >
+        <arg name="hardware_version" value="$(arg hardware_version)" />
+    </include>
 
-    <node if="$(eval 'fake' in hardware_version)" name="niryo_robot_rpi" pkg="niryo_robot_rpi" type="fake_rpi_node.py" output="screen">
-        <rosparam file="$(find niryo_robot_rpi)/config/ned/io_config.yaml"/>
-        <param name="hardware_version" type="string" value="$(eval hardware_version.replace('fake_', ''))"/>
-        <param name="log_level" type="string" value="$(arg log_level)"/>
-    </node>
-
-    <node if="$(eval hardware_version in ['one', 'ned'])"
-          name="niryo_robot_rpi" pkg="niryo_robot_rpi" type="rpi_node.py" output="screen">
-        <rosparam file="$(find niryo_robot_rpi)/config/$(arg hardware_version)/io_config.yaml"/>
-        <rosparam file="$(find niryo_robot_rpi)/config/log_config.yaml"/>
-        <param name="hardware_version" type="string" value="$(arg hardware_version)"/>
-        <param name="log_level" type="string" value="$(arg log_level)"/>
-    </node>
-
-    <node if="$(eval hardware_version =='ned2')"
-          name="niryo_robot_rpi" pkg="niryo_robot_rpi" type="rpi_node.py" output="screen" launch-prefix="">
-        <rosparam file="$(find niryo_robot_rpi)/config/$(arg hardware_version)/io_config.yaml"/>
-        <rosparam file="$(find niryo_robot_rpi)/config/log_config.yaml"/>
+    <node name="niryo_robot_rpi" pkg="niryo_robot_rpi" type="$(arg script_name)" output="screen">
         <param name="hardware_version" type="string" value="$(arg hardware_version)"/>
         <param name="log_level" type="string" value="$(arg log_level)"/>
     </node>

@@ -92,7 +92,7 @@ std::string EndEffectorState::str() const
 
     ss << "Buttons : \n";
     for (size_t i = 0; i < _buttons_list.size(); ++i)
-      ss << i << " " << _buttons_list.at(i).str();
+      ss << i << " " << _buttons_list.at(i).str() << "\n";
 
     ss << "Acceleration: \n";
     ss << _accelerometer_values.str();

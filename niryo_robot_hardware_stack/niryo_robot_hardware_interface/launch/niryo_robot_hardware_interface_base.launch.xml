@@ -6,7 +6,8 @@
     <arg name="ttl_enabled" default="false"/>
     <arg name="hardware_version" default="ned"/>
     <arg name="niryo_robot_type" default="NIRYO_NED" />
-    <arg name="simu_gripper" default="true"/>
+    <arg name="simulation_mode" default="false" />
+    <arg name="simu_gripper" default="false"/>
 
     <rosparam file="$(find joints_interface)/config/niryo_controllers.yaml" command="load" />
 
@@ -21,25 +22,29 @@
         <!--use ttl_driver config -->
         <group if="$(arg ttl_enabled)" >
             <include file="$(find ttl_driver)/launch/ttl_driver_base.launch.xml" >
-                <arg name="simu_gripper" value="$(arg simu_gripper)"/>
                 <arg name="hardware_version" value="$(arg hardware_version)" />
+                <arg name="simulation_mode" value="$(arg simulation_mode)" />
+                <arg name="simu_gripper" value="$(arg simu_gripper)"/>
             </include>
         </group>
 
         <include file="$(find joints_interface)/launch/joints_interface_base.launch.xml" >
             <arg name="hardware_version" value="$(arg hardware_version)" />
+            <arg name="simulation_mode" value="$(arg simulation_mode)" />
         </include>
 
         <include file="$(find conveyor_interface)/launch/conveyor_interface_base.launch.xml" >
             <arg name="hardware_version" value="$(arg hardware_version)" />
+            <arg name="simulation_mode" value="$(arg simulation_mode)" />
         </include>
 
         <include file="$(find tools_interface)/launch/tools_interface_base.launch.xml" >
             <arg name="hardware_version" value="$(arg hardware_version)" />
+            <arg name="simulation_mode" value="$(arg simulation_mode)" />
         </include>
 
-        <!-- end effector only in ned2, TODO(cc) add for fake_ned2 too -->
-        <group if="$(eval hardware_version == 'ned2')" >
+        <!-- end effector only in ned2 todo(cc) add fake_end_effector and relmove simulation_mode case -->
+        <group if="$(eval hardware_version == 'ned2' and not simulation_mode)" >
             <include file="$(find end_effector_interface)/launch/end_effector_interface_base.launch.xml" />
         </group>
 

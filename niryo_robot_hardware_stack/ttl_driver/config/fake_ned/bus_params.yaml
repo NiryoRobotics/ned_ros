@@ -1,3 +1,0 @@
-bus_params:
-    baudrate: 1000000
-    uart_device_name: "fake"
