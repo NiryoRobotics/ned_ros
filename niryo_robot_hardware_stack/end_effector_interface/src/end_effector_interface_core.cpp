@@ -186,7 +186,7 @@ void EndEffectorInterfaceCore::initEndEffectorHardware()
                    result);
       }
   }
-}_is_learning_mode
+}
 
 /**
  * @brief EndEffectorInterfaceCore::_publishButtonState
