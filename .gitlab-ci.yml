@@ -5,12 +5,8 @@ variables:
 
   # Documentation name
   DOCUMENTATION_NAME: ros
-  # OVH's folder where the documentation will be stored
-  # TARGET_FOLDER_OVH: ~/docs/dev/
-
-  TARGET_FOLDER_OVH: ~/docs/dev/
-
-  BASE_FOLDER_DOC_URL: https://docs.niryo.com/dev
+  
+  DOCUMENTATION_OUTPUT_FOLDER: "output_build"
 
   ##############################################################################
 
@@ -27,8 +23,9 @@ stages:
   - upload
   - release_gitlab
 
+image: registry.gitlab.com/niryo/niryo-one-s/ned_ros_stack/v3.2.0:amd64
+
 catkin_make_amd:
-  image: registry.gitlab.com/niryo/niryo-one-s/ned_ros_stack/v3.1.0:amd64
   stage: build
   retry:
     max: 1
@@ -51,10 +48,14 @@ catkin_make_amd:
       - build
 
 catkin_make_arm:
-  image: registry.gitlab.com/niryo/niryo-one-s/ned_ros_stack/v3.1.0:arm64
+  image: registry.gitlab.com/niryo/niryo-one-s/ned_ros_stack/v3.2.0:arm64
   stage: build
   retry:
     max: 1
+  rules:
+    - if: $CI_COMMIT_BRANCH
+      when: manual
+      allow_failure: true
   script:
     # Create whole path folders
     - mkdir -p ${NIRYO_HOME_FOLDER}/src
@@ -74,7 +75,6 @@ catkin_make_arm:
       - build
 
 python_test:
-  image: registry.gitlab.com/niryo/niryo-one-s/ned_ros_stack/v3.1.0:amd64
   stage: test
   dependencies: 
     - catkin_make_amd
@@ -92,12 +92,8 @@ python_test:
     - python src/niryo_robot_unit_tests/scripts/script_test_headless.py
 
 
-build_doc:
-  image: registry.gitlab.com/niryo/dockers/build_docs/ned_ros_stack:v1.0.2
-  rules:
-  #   ## Just in case we would restrict to master (https:// stackoverflow.com/a/64448994)
-  #   # If a it's a tag && protected tag
-    - if: $CI_COMMIT_TAG && $CI_COMMIT_REF_PROTECTED == "true"
+build_doc_job:
+  image: registry.gitlab.com/niryo/dockers/build_docs/ned_ros_stack:v1.0.4
   dependencies: 
     - catkin_make_amd
   stage: documentation
@@ -117,28 +113,18 @@ build_doc:
     - source devel/setup.bash
     - cd src/sphinx_doc
     # Build documentation without todo printing in final document
-    - scripts/build_docs.sh -D todo_include_todos=0 -o "${CI_COMMIT_TAG}"
-    - scripts/generate_pdf.sh -o ${CI_COMMIT_TAG}/generated_pdfs
+    - scripts/build_docs.sh -D todo_include_todos=0 -o ${DOCUMENTATION_OUTPUT_FOLDER}
+    - scripts/generate_pdf.sh -o ${DOCUMENTATION_OUTPUT_FOLDER}/generated_pdfs
     - mv ${NIRYO_HOME_FOLDER}/* ${previous_path}
   after_script:
-    - ls
-    - pwd
-    - mv src/sphinx_doc/${CI_COMMIT_TAG} ${CI_COMMIT_TAG}
+    - mv src/sphinx_doc/${DOCUMENTATION_OUTPUT_FOLDER} ${DOCUMENTATION_OUTPUT_FOLDER}
   artifacts:
     paths:
-      - ${CI_COMMIT_TAG}
+      - ${DOCUMENTATION_OUTPUT_FOLDER}
 
-upload_doc:
-  image: registry.gitlab.com/niryo/dockers/build_docs/base:v1.0.2
-  rules:
-  #   ## Just in case we would restrict to master (https:// stackoverflow.com/a/64448994)
-  #   # If a it's a tag && protected tag
-    - if: $CI_COMMIT_TAG && $CI_COMMIT_REF_PROTECTED == "true"
-  stage: upload
-  retry:
-    max: 2
-  dependencies:
-    - build_doc
+.abstract_upload:
+  before_script:
+    - mv ${DOCUMENTATION_OUTPUT_FOLDER} ${CI_COMMIT_TAG}
   script:
     - apt update
     # Install jq (json CLI for bash) + LFTP
@@ -149,6 +135,7 @@ upload_doc:
     - |
       echo \
       "RewriteEngine on
+
       # Redirect index.html with lang fr to last version in fr
       RewriteCond %{QUERY_STRING} ^lang=fr$
       RewriteRule ^index.html$ ${BASE_FOLDER_DOC_URL}/${DOCUMENTATION_NAME}/$CI_COMMIT_TAG/fr/index.html [R=301,NC]
@@ -163,12 +150,19 @@ upload_doc:
       Options -Indexes
       " > .htaccess_last_version_default_language
     - mkdir -p source
-    # Create .htaccess that will redirects from "X/source/*" to "X/last_version/en/source/*"
+      # Create .htaccess that will redirects from "X/source/index.html" to "X/last_version/en/index.html"
     - |
       echo \
       "RewriteEngine on
+
+      # Redirect everything after the "source/" to the proper latest link (fr language)
+      RewriteCond %{QUERY_STRING} ^lang=fr$
+      RewriteRule ^(.+)$ ${BASE_FOLDER_DOC_URL}/${DOCUMENTATION_NAME}/$CI_COMMIT_TAG/fr/source/\$1 [R=301,NC]
+
       # Redirect everything after the "source/" to the proper latest link
+      RewriteCond %{QUERY_STRING} ^$
       RewriteRule ^(.+)$ ${BASE_FOLDER_DOC_URL}/${DOCUMENTATION_NAME}/$CI_COMMIT_TAG/en/source/\$1 [R=301,NC]
+
       # Disable directory listing when accessing directy folder web address
       Options -Indexes
       " > .htaccess_old_url_to_default_language
@@ -191,13 +185,54 @@ upload_doc:
     # EOF because it's in stdin 'input' mode
     - EOF
 
+upload_staging_job:
+  image: registry.gitlab.com/niryo/dockers/build_docs/base:v1.0.4
+  stage: upload
+  environment:
+    name: staging
+    deployment_tier: staging
+  variables:
+    BASE_FOLDER_DOC_URL: https://staging.docs.niryo.com/dev
+    TARGET_FOLDER_OVH: ~/docs_staging/dev
+    CI_COMMIT_TAG: v0.0.1
+  rules:
+    - if: $CI_COMMIT_BRANCH
+      when: manual
+  dependencies:
+    - build_doc_job
+  needs:
+    - build_doc_job
+  extends: .abstract_upload
+
+upload_production_job:
+  rules:
+    ## Just in case we would restrict to master (https://stackoverflow.com/a/64448994)
+    # If a it's a tag && protected tag
+    - if: $CI_COMMIT_TAG && $CI_COMMIT_REF_PROTECTED == "true"
+
+  image: registry.gitlab.com/niryo/dockers/build_docs/base:v1.0.4
+  stage: upload
+  environment:
+    name: production
+    deployment_tier: production
+  variables:
+    BASE_FOLDER_DOC_URL: https://docs.niryo.com/dev
+    TARGET_FOLDER_OVH: ~/docs/dev
+  dependencies:
+    - build_doc_job
+  needs:
+    - build_doc_job
+  extends: .abstract_upload
+
 release_gitlab_job:
   image: registry.gitlab.com/gitlab-org/release-cli:v0.8.0
   rules:
     ## Just in case we would restrict to master (https://stackoverflow.com/a/64448994)
     # If a it's a tag && protected tag
     - if: $CI_COMMIT_TAG && $CI_COMMIT_REF_PROTECTED == "true"
-
+  environment:
+    name: production
+    deployment_tier: production
   stage: release_gitlab
   retry:
     max: 2

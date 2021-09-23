@@ -6,12 +6,13 @@
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
-#, fuzzy
+
+
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-12 08:22+0000\n"
+"POT-Creation-Date: 2021-09-13 09:16+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -38,12 +39,12 @@ msgstr "Ned dans la simulation de Gazebo"
 
 #: ../../source/simulation.rst:13
 msgid "In this tutorial, you will learn how to setup simulation on a computer."
-msgstr "Ce tutoriel apprend à configurer une simulation sur un ordinateur."
+msgstr "Avec ce tutoriel, apprenez à configurer une simulation sur un ordinateur."
 
 #: ../../source/simulation.rst:16
 msgid ""
 "You can use :niryo_studio_simulation:`Niryo Studio with the "
-"simulation<>`. For that, you just have to connect Niryo Studio to "
+"simulation<>`. To do so, you just have to connect Niryo Studio to "
 "\"Localhost\"."
 msgstr ""
 "Il est possible d'utiliser :niryo_studio_simulation:`Niryo Studio avec la"
@@ -139,7 +140,7 @@ msgstr ""
 "nécessaire d’installer plusieurs autres packages :"
 
 #: ../../source/simulation.rst:70
-msgid "Method 1 : Quick install via ROSDep"
+msgid "Method 1: Quick installation via ROSDep"
 msgstr "Méthode 1 : installation rapide via ROSDep"
 
 #: ../../source/simulation.rst:71
@@ -153,7 +154,7 @@ msgstr ""
 "dépendance via la commande *rosdep* :"
 
 #: ../../source/simulation.rst:79
-msgid "Method 2 : Full install"
+msgid "Method 2: Full installation"
 msgstr "Méthode 2 : installation complète"
 
 #: ../../source/simulation.rst:81
@@ -290,8 +291,8 @@ msgid ""
 "you won't be able to use the simulation."
 msgstr ""
 "Il est indispensable de suivre l’étape :ref:`d'installation de "
-"l’environnement <source/simulation:Simulation Environment Installation>` pour utiliser "
-"correctement la simulation."
+"l’environnement <source/simulation:Simulation Environment Installation>` "
+"pour utiliser correctement la simulation."
 
 #: ../../source/simulation.rst:147
 msgid "Hardware features won't be accessible."
@@ -374,7 +375,7 @@ msgstr ""
 
 #: ../../source/simulation.rst:183 ../../source/simulation.rst:212
 msgid "To run it: ::"
-msgstr "Pour l'éxécuter : ::"
+msgstr "Pour l'exécuter : ::"
 
 #: ../../source/simulation.rst:190
 msgid "Rviz opening, with the robot ready to be controlled with ROS!"
@@ -386,19 +387,19 @@ msgstr "Sans physique - Simulation"
 
 #: ../../source/simulation.rst:195
 msgid ""
-"For the simulation, Ned use Gazebo, a well known tool among the ROS "
+"For the simulation, Ned uses Gazebo, a well known tool among the ROS "
 "community. It allows:"
 msgstr ""
 "Pour la simulation, Ned utilise Gazebo, un outil bien connu de la "
 "communauté ROS. Il permet :"
 
 #: ../../source/simulation.rst:198
-msgid "collision."
+msgid "Collision."
 msgstr "La collision."
 
 #: ../../source/simulation.rst:199
 msgid ""
-"world creation → An virtual environment in which the robot can deal with "
+"World creation → An virtual environment in which the robot can deal with "
 "objects."
 msgstr ""
 "La création d’un monde → Un environnement virtuel dans lequel le robot "
@@ -440,7 +441,7 @@ msgstr "Aperçu de Gazebo avec le robot prêt à être contrôlé avec ROS !"
 
 #: ../../source/simulation.rst:222
 msgid ""
-"You can edit Gazebo world to do your own ! It's placed in the folder "
+"You can edit Gazebo world to do your own! It's placed in the folder "
 "*worlds* of the package niryo_robot_gazebo."
 msgstr ""
 "Il est possible de modifier le monde Gazebo pour faire le vôtre ! Il est "

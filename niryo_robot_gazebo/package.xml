@@ -1,9 +1,10 @@
 <package>
     <name>niryo_robot_gazebo</name>
-    <version>3.1.2</version>
+    <version>3.2.0</version>
     <description>Gazebo simulation for Ned</description>
     <author email="r.lux@niryo.com">Rémi Lux</author>
     <maintainer email="r.lux@niryo.com">Rémi Lux</maintainer>
+    <maintainer email="v.pitre@niryo.com">Valentin Pitre</maintainer>
     <license>GPLv3</license>
 
     <buildtool_depend>catkin</buildtool_depend>
@@ -14,7 +15,7 @@
     <run_depend>robot_state_publisher</run_depend>
     <run_depend>effort_controllers</run_depend>
     <run_depend>niryo_robot_description</run_depend>
-    <run_depend>niryo_robot_commander</run_depend>
+    <run_depend>niryo_robot_arm_commander</run_depend>
     <run_depend>niryo_robot_hardware_interface</run_depend>
     <run_depend>gazebo_ros_control</run_depend>
     <run_depend>gazebo_ros</run_depend>

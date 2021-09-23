@@ -1,17 +1,26 @@
 <package>
   <name>niryo_robot_python_ros_wrapper</name>
-  <version>3.1.2</version>
+  <version>3.2.0</version>
   <description>Python ROS Wrapper to get Niryo Robot ROS functionalities, without knowing ROS</description>
   <author email="r.lux@niryo.com">Remi Lux</author>
   <maintainer email="r.lux@niryo.com">Remi Lux</maintainer>
   <maintainer email="c.ducatez@niryo.com">Corentin Ducatez</maintainer>
+  <maintainer email="v.pitre@niryo.com">Valentin Pitre</maintainer>
   <license>GPLv3</license>
   
   <buildtool_depend>catkin</buildtool_depend>
 
+  <build_depend>actionlib_msgs</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>niryo_robot_msgs</build_depend>
+  <build_depend>niryo_robot_arm_commander</build_depend>
+  <build_depend>niryo_robot_tools_commander</build_depend>
+  <build_depend>rostest</build_depend>
+
   <run_depend>actionlib_msgs</run_depend>
   <run_depend>geometry_msgs</run_depend>
-  <run_depend>niryo_robot_commander</run_depend>
+  <run_depend>niryo_robot_arm_commander</run_depend>
+  <run_depend>niryo_robot_tools_commander</run_depend>
   <run_depend>niryo_robot_msgs</run_depend>
   <run_depend>sensor_msgs</run_depend>
   <run_depend>std_msgs</run_depend>

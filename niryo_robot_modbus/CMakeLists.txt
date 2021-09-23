@@ -7,8 +7,18 @@ find_package(catkin REQUIRED COMPONENTS
   std_msgs
 )
 
-catkin_package()
+catkin_python_setup()
 
+catkin_package(
+  CATKIN_DEPENDS
+  niryo_robot_msgs
+  std_msgs
+)
 include_directories(
   ${catkin_INCLUDE_DIRS}
+)
+
+catkin_install_python(
+    PROGRAMS scripts/modbus_server_node.py
+    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )

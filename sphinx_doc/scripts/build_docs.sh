@@ -37,5 +37,5 @@ for dir in "$lang_path"/*/; do
   dir=${dir%*/}         # remove the trailing "/"
   language="${dir##*/}" # remove everything before the last "/"
 
-  python3 -m sphinx -D language="$language" -b ${build_type} . "${build_output}"/"$language" "${additional_parameters[@]}"
+  sphinx-build -D language="$language" -b ${build_type} . "${build_output}"/"$language" "${additional_parameters[@]}"
 done

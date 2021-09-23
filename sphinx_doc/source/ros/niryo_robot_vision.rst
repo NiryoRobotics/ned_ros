@@ -23,6 +23,7 @@ The namespace used is: |namespace_emphasize|
 
 Parameters - Vision
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
 .. list-table:: Vision Package's Parameters
    :header-rows: 1
    :widths: auto
@@ -32,16 +33,16 @@ Parameters - Vision
    *  -  Name
       -  Description
    *  -  ``frame_rate``
-      -  Stream frame rate
+      -  Streams frame rate
    *  -  ``simulation_mode``
-      -  | Set to true if you are using the gazebo simulation.
+      -  | Sets to true if you are using the gazebo simulation.
          | It will adapt how the node get its video stream
    *  -  ``debug_compression_quality``
-      -  Debug Stream compression quality
+      -  Debugs Stream compression quality
    *  -  ``stream_compression_quality``
-      -  Stream compression quality
+      -  Streams compression quality
    *  -  ``subsampling``
-      -  Stream subsampling factor
+      -  Streams subsampling factor
 
 
 Publisher - Vision
@@ -58,7 +59,10 @@ Publisher - Vision
       -  Description
    *  -  ``compressed_video_stream``
       -  :sensor_msgs:`CompressedImage`
-      -  Publish the last image read as a compressed image
+      -  Publishes the last image read as a compressed image
+   *  -  ``video_stream_parameters``
+      -  :ref:`ImageParameters<source/ros/niryo_robot_vision:ImageParameters (Topic)>`
+      -  Publishes the brightness, contrast and saturation settings of the video stream
 
 Services - Vision
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -74,19 +78,28 @@ Services - Vision
       -  Description
    *  -  ``debug_colors``
       -  :ref:`DebugColorDetection<source/ros/niryo_robot_vision:DebugColorDetection (Service)>`
-      -  Return an annotated image to emphasize what happened with color detection
+      -  Returns an annotated image to emphasize what happened with color detection
    *  -  ``debug_markers``
       -  :ref:`DebugMarkers<source/ros/niryo_robot_vision:DebugMarkers (Service)>`
-      -  Return an annotated image to emphasize what happened with markers detection
+      -  Returns an annotated image to emphasize what happened with markers detection
    *  -  ``obj_detection_rel``
       -  :ref:`ObjDetection<source/ros/niryo_robot_vision:ObjDetection (Service)>`
       -  Object detection service
    *  -  ``start_stop_video_streaming``
       -  :ref:`source/ros/niryo_robot_msgs:SetBool`
-      -  Start or Stop video streaming
+      -  Starts or stops video streaming
    *  -  ``take_picture``
       -  :ref:`TakePicture<source/ros/niryo_robot_vision:TakePicture (Service)>`
-      -  Save a picture in the specified folder
+      -  Saves a picture in the specified folder
+   *  -  ``set_brightness``
+      -  :ref:`SetImageParameter<source/ros/niryo_robot_vision:SetImageParameter (Service)>`
+      -  Sets the brightness of the video stream
+   *  -  ``set_contrast``
+      -  :ref:`SetImageParameter<source/ros/niryo_robot_vision:SetImageParameter (Service)>`
+      -  Sets the contrast of the video stream
+   *  -  ``set_saturation``
+      -  :ref:`SetImageParameter<source/ros/niryo_robot_vision:SetImageParameter (Service)>`
+      -  Sets the saturation of the video stream
 
 
 All these services are available as soon as the node is started.
@@ -96,6 +109,17 @@ Dependencies - Vision
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^
 * :doc:`niryo_robot_msgs`
 * :msgs_index:`sensor_msgs`
+
+
+Topics files - Vision
+--------------------------
+
+ImageParameters (Topic)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. literalinclude:: ../../../niryo_robot_vision/msg/ImageParameters.msg
+   :language: rostype
+
 
 
 Services files - Vision
@@ -128,6 +152,11 @@ TakePicture (Service)
 .. literalinclude:: ../../../niryo_robot_vision/srv/TakePicture.srv
    :language: rostype
 
+SetImageParameter (Service)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. literalinclude:: ../../../niryo_robot_vision/srv/SetImageParameter.srv
+   :language: rostype
 
 
 .. |namespace| replace:: /niryo_robot_vision/

@@ -12,7 +12,7 @@ from geometry_msgs.msg import TransformStamped
 from visualization_msgs.msg import Marker
 
 
-class TransformHandler:
+class PosesTransformHandler:
     """
     This class uses a tfBuffer to handle transforms related to the vision kit.
     """
@@ -82,11 +82,11 @@ class TransformHandler:
 
         """
         if grip.transform.header.frame_id != "object_base":
-            rospy.logerr("TransformHandler - Grip transform need to have header frame 'object_base'")
+            rospy.logerr("Poses Transform Handler - Grip transform need to have header frame 'object_base'")
             return False
 
         if grip.transform.child_frame_id != "tool_link_target":
-            rospy.logerr("Transform Handler - Grip transform need to have child frame 'tool_link_target'")
+            rospy.logerr("Poses Transform Handler - Grip transform need to have child frame 'tool_link_target'")
             return False
 
         self.__tf_buffer.set_transform(grip.transform, "default_authority")
@@ -109,6 +109,17 @@ class TransformHandler:
         """
         return self.__tf_buffer.lookup_transform(
             "base_link", "tool_link_target", rospy.Time(0))
+
+    def get_object_transform(self, x_off=0.0, y_off=0.0, z_off=0.0, roll_off=0.0, pitch_off=1.5708, yaw_off=0.0):
+        """
+        Reads the transform base_link -> object_base from local tfBuffer
+
+        :returns: transform base_link -> object_base
+        """
+        t = self.transform_from_euler(x_off, y_off, z_off, roll_off, pitch_off, yaw_off, "object_base", "pick_target")
+        self.__tf_buffer.set_transform(t, "default_authority")
+
+        return self.__tf_buffer.lookup_transform("base_link", "pick_target", rospy.Time(0))
 
     def get_calibration_tip_position(self, robot_pose):
         """
@@ -142,32 +153,6 @@ class TransformHandler:
         # rospy.loginfo("Base Link -> Tool Link : {}".format(base_link_to_tool_link.transform.translation))
         # rospy.loginfo("Base Link -> Calib Tip : {}".format(base_link_to_calib_tip.transform.translation))
         return calib_tip_position
-
-    def get_grip_transform(self, ws_name, robot_pose):
-        """
-        Retrieves the transform needed to create a grip supposing the object
-        is placed on the origin of the given workspace.
-
-        :param ws_name: name of the workspace the object is placed on
-        :param robot_pose: pose of the robot's tool_link
-        """
-        # First apply transform for robot pose
-        base_link_to_tool_link = self.transform_from_euler(
-            robot_pose.position.x, robot_pose.position.y, robot_pose.position.z,
-            robot_pose.rpy.roll, robot_pose.rpy.pitch, robot_pose.rpy.yaw,
-            "base_link", "tool_link"
-        )
-        self.__tf_buffer.set_transform(base_link_to_tool_link,
-                                       "default_authority")
-
-        # Manually place object on origin
-        self.set_relative_pose_object(ws_name, 0, 0, 0)
-
-        # Lookup the grip
-        t = self.__tf_buffer.lookup_transform("object_base", "tool_link",
-                                              rospy.Time(0))
-        t.child_frame_id = "tool_link_target"
-        return t
 
     @staticmethod
     def transform_from_euler(x, y, z, roll, pitch, yaw, header_frame_id,
@@ -208,7 +193,7 @@ class TransformHandler:
         debugging using rviz. This will happen in a separate thread.
         """
         self.__debug_thread = threading.Thread(target=self.__debug_loop,
-                                               name="Transform Handler Debug Thread")
+                                               name="Poses Transform Handler Debug Thread")
         self.__debug_thread.start()
 
     def disable_debug(self):
@@ -230,7 +215,7 @@ class TransformHandler:
         rate = rospy.Rate(5)
         while not self.__debug_stop_event.is_set() and not rospy.is_shutdown():
             if self.__debug_current_ws is None:
-                rospy.logerr("Transform Handler - Could not publish debug tf, no workspace set.")
+                rospy.logerr("Poses Transform Handler - Could not publish debug tf, no workspace set.")
                 rate.sleep()
                 continue
 
@@ -250,7 +235,7 @@ class TransformHandler:
                         "object_base", "tool_link_target", rospy.Time(0))
                 )
             except tf2_ros.LookupException as e:
-                rospy.logerr("Transform Handler - Could not publish debug tf: {}".format(e))
+                rospy.logerr("Poses Transform Handler - Could not publish debug tf: {}".format(e))
 
             for i in range(4):  # Iterate over the 4 markers defining the workspace
                 msg = Marker()

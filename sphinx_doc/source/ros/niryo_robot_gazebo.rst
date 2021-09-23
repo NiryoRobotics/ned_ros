@@ -20,7 +20,7 @@ When launching the Gazebo version of the ROS Stack, the file
 Create your own world
 ---------------------------------
 
-Create your world's file and put it on the folder *worlds*. Once it done,
+Create your world's file and put it on the folder *worlds*. Once it is done,
 you have to change the parameter **world_name** in the file
 **niryo_robot_gazebo_world.launch.xml**.
 

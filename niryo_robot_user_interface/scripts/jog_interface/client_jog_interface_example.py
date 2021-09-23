@@ -5,7 +5,7 @@ import rospy
 from niryo_robot_msgs.msg import CommandStatus
 from std_msgs.msg import Bool
 
-from niryo_robot_commander.srv import JogShift, JogShiftRequest
+from niryo_robot_arm_commander.srv import JogShift, JogShiftRequest
 from niryo_robot_msgs.srv import SetBool
 
 
@@ -65,3 +65,13 @@ if __name__ == "__main__":
         for i in range(20):
             jc.ask_for_jog_shift(cmd=JogShiftRequest.POSE_SHIFT,
                                  shift_values=[sign * 0.005, 0.0, 0.0, 0.0, 0.0, 0.0])
+
+    for sign in [1, -1]:
+        for i in range(15):
+            jc.ask_for_jog_shift(cmd=JogShiftRequest.POSE_SHIFT,
+                                 shift_values=[0.0, 0.0, 0.0, 0.0, sign * 0.05, 0.0])
+
+    for sign in [1, -1]:
+        for i in range(15):
+            jc.ask_for_jog_shift(cmd=JogShiftRequest.POSE_SHIFT,
+                                 shift_values=[0.0, 0.0, 0.0, 0.0, 0.0, sign * 0.05])

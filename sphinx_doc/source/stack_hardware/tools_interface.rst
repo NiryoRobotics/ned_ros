@@ -21,7 +21,7 @@ Parameters - tools interface
    *  -  Name
       -  Description
    *  -  ``check_tool_connection_frequency``
-      -  | Publish and control rate for tools connection state.
+      -  | Publishes and controls rate for tools connection state.
          | Default: '2.0'
    *  -  ``id_list``
       -  | List of tools id
@@ -60,24 +60,28 @@ Services - tools interface
       -  Description
    *  -  ``niryo_robot/tools/ping_and_set_dxl_tool``
       -  :ref:`tools_interface/PingDxlTool<source/stack_hardware/tools_interface:PingDxlTool (Service)>`
-      -  Scan and set for a tool plugged
+      -  Scans and sets for a tool plugged
    *  -  ``niryo_robot/tools/open_gripper``
       -  :ref:`tools_interface/OpenGripper<source/stack_hardware/tools_interface:OpenGripper (Service)>`
-      -  Open a gripper tool
+      -  Opens a gripper tool
    *  -  ``niryo_robot/tools/close_gripper``
       -  :ref:`tools_interface/CloseGripper<source/stack_hardware/tools_interface:CloseGripper (Service)>`
-      -  Close a gripper tool
+      -  Closes a gripper tool
    *  -  ``niryo_robot/tools/pull_air_vacuum_pump``
       -  :ref:`tools_interface/PullAirVacuumPump<source/stack_hardware/tools_interface:PullAirVacuumPump (Service)>`
-      -  Pull vacuum pump tool
+      -  Pulls vacuum pump tool
    *  -  ``niryo_robot/tools/push_air_vacuum_pump``
       -  :ref:`tools_interface/PushAirVacuumPump<source/stack_hardware/tools_interface:PushAirVacuumPump (Service)>`
-      -  Push vacuum pump tool
+      -  Pushes vacuum pump tool
+   *  -  ``niryo_robot/tools/reboot``
+      -  :std_srvs:`Trigger`
+      -  Reboots the motor of the equipped tool
 
 Dependencies - tools interface
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 - :msgs_index:`std_msgs`
+- :msgs_index:`std_srvs`
 - :doc:`dynamixel_driver`
 
 Services & messages files - tools interface

@@ -2,7 +2,7 @@
 <package format="2">
   <name>conveyor_interface</name>
   <version>0.0.0</version>
-  <description>The conveyor_interface package</description>
+  <description>Control and manage the Niryo conveyors</description>
   <author>Etienne Rey-Coquais</author>
   <author>Edouard Renard</author>
   <maintainer email="e.rey-coquais@niryo.com">Etienne Rey-Coquais</maintainer>
@@ -22,4 +22,8 @@
   <exec_depend>std_msgs</exec_depend>
   <exec_depend>stepper_driver</exec_depend>
   <exec_depend>message_runtime</exec_depend>
+
+  <build_export_depend>std_msgs</build_export_depend>
+  <build_export_depend>stepper_driver</build_export_depend>
+  <build_export_depend>roscpp</build_export_depend>
 </package>

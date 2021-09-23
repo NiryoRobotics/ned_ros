@@ -10,12 +10,13 @@ find_package(catkin REQUIRED COMPONENTS
 add_message_files(
   FILES
   BusState.msg
+  CommandJog.msg
   CommandStatus.msg
   HardwareStatus.msg
   MotorHeader.msg
   ObjectPose.msg
-  RobotState.msg
   RPY.msg
+  RobotState.msg
   SoftwareVersion.msg
 )
 
