@@ -49,8 +49,8 @@ public:
     virtual int reboot(uint8_t id);
 
     // we use those commands in the children classes to actually read and write values in registers
-    int read(uint8_t address, uint8_t data_len, uint8_t id, uint32_t& data);
-    int write(uint8_t address, uint8_t data_len, uint8_t id, uint32_t data);
+    int read(uint16_t address, uint8_t data_len, uint8_t id, uint32_t& data);
+    int write(uint16_t address, uint8_t data_len, uint8_t id, uint32_t data);
     
     virtual int writeSingleCmd(const std::shared_ptr<common::model::AbstractTtlSingleMotorCmd >& cmd) = 0;
     virtual int writeSyncCmd(int type, const std::vector<uint8_t>& ids, const std::vector<uint32_t>& params) = 0;

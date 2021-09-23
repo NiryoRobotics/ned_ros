@@ -54,10 +54,13 @@ class AbstractStepperDriver : public AbstractMotorDriver
         // ram write
         virtual int startHoming(uint8_t id) = 0;
         virtual int readHomingStatus(uint8_t id, uint32_t& status) = 0;
-        virtual int setHomingDirection(uint8_t id, uint8_t direction) = 0;
+        virtual int writeHomingDirection(uint8_t id, uint8_t direction) = 0;
+
+        virtual int writeVelocityProfile(uint8_t id, const std::vector<uint32_t>& data) = 0;
 
         // read
         virtual int readGoalVelocity(uint8_t id, uint32_t& present_velocity) = 0;
+        virtual int readFirmwareRunning(uint8_t id, bool &is_running) = 0;
 
     private:
         AbstractStepperDriver() = delete;

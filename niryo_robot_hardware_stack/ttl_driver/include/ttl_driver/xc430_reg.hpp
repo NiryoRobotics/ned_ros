@@ -32,117 +32,117 @@ struct XC430Reg
 
     // see table here : http:// support.robotis.com/en/product/actuator/dynamixel_x/xl_series/xl-320.htm
     // EEPROM
-    static constexpr std::uint8_t ADDR_MODEL_NUMBER             = 0;
-    static constexpr std::uint8_t SIZE_MODEL_NUMBER             = 2;
+    static constexpr uint16_t ADDR_MODEL_NUMBER             = 0;
+    static constexpr uint8_t SIZE_MODEL_NUMBER             = 2;
 
-    static constexpr std::uint8_t ADDR_MODEL_INFORMATION        = 2;
-    static constexpr std::uint8_t SIZE_MODEL_INFORMATION        = 4;
+    static constexpr uint16_t ADDR_MODEL_INFORMATION        = 2;
+    static constexpr uint8_t SIZE_MODEL_INFORMATION        = 4;
 
-    static constexpr std::uint8_t ADDR_FIRMWARE_VERSION         = 6;
-    static constexpr std::uint8_t SIZE_FIRMWARE_VERSION         = 1;
+    static constexpr uint16_t ADDR_FIRMWARE_VERSION         = 6;
+    static constexpr uint8_t SIZE_FIRMWARE_VERSION         = 1;
 
-    static constexpr std::uint8_t ADDR_ID                       = 7;
-    static constexpr std::uint8_t SIZE_ID                       = 1;
+    static constexpr uint16_t ADDR_ID                       = 7;
+    static constexpr uint8_t SIZE_ID                       = 1;
 
-    static constexpr std::uint8_t ADDR_BAUDRATE                 = 8;
-    static constexpr std::uint8_t SIZE_BAUDRATE                 = 1;
+    static constexpr uint16_t ADDR_BAUDRATE                 = 8;
+    static constexpr uint8_t SIZE_BAUDRATE                 = 1;
 
-    static constexpr std::uint8_t ADDR_DRIVE_MODE               = 10;
-    static constexpr std::uint8_t SIZE_DRIVE_MODE               = 1;
+    static constexpr uint16_t ADDR_DRIVE_MODE               = 10;
+    static constexpr uint8_t SIZE_DRIVE_MODE               = 1;
 
-    static constexpr std::uint8_t ADDR_OPERATING_MODE           = 11;
-    static constexpr std::uint8_t SIZE_OPERATING_MODE           = 1;
+    static constexpr uint16_t ADDR_OPERATING_MODE           = 11;
+    static constexpr uint8_t SIZE_OPERATING_MODE           = 1;
 
-    static constexpr std::uint8_t ADDR_HOMING_OFFSET            = 20;
-    static constexpr std::uint8_t SIZE_HOMING_OFFSET            = 4;
+    static constexpr uint16_t ADDR_HOMING_OFFSET            = 20;
+    static constexpr uint8_t SIZE_HOMING_OFFSET            = 4;
 
-    static constexpr std::uint8_t ADDR_MAX_POSITION_LIMIT       = 48;
-    static constexpr std::uint8_t SIZE_MAX_POSITION_LIMIT       = 4;
+    static constexpr uint16_t ADDR_MAX_POSITION_LIMIT       = 48;
+    static constexpr uint8_t SIZE_MAX_POSITION_LIMIT       = 4;
 
-    static constexpr std::uint8_t ADDR_MIN_POSITION_LIMIT       = 52;
-    static constexpr std::uint8_t SIZE_MIN_POSITION_LIMIT       = 4;
+    static constexpr uint16_t ADDR_MIN_POSITION_LIMIT       = 52;
+    static constexpr uint8_t SIZE_MIN_POSITION_LIMIT       = 4;
 
     // RAM
-    static constexpr std::uint8_t ADDR_TORQUE_ENABLE            = 64;
-    static constexpr std::uint8_t SIZE_TORQUE_ENABLE            = 1;
+    static constexpr uint16_t ADDR_TORQUE_ENABLE            = 64;
+    static constexpr uint8_t SIZE_TORQUE_ENABLE            = 1;
 
-    static constexpr std::uint8_t ADDR_LED                      = 65;
-    static constexpr std::uint8_t SIZE_LED                      = 1;
+    static constexpr uint16_t ADDR_LED                      = 65;
+    static constexpr uint8_t SIZE_LED                      = 1;
 
-    static constexpr std::uint8_t ADDR_REGISTERED_INSTRUCTION   = 69;
-    static constexpr std::uint8_t SIZE_REGISTERED_INSTRUCTION   = 1;
+    static constexpr uint16_t ADDR_REGISTERED_INSTRUCTION   = 69;
+    static constexpr uint8_t SIZE_REGISTERED_INSTRUCTION   = 1;
 
-    static constexpr std::uint8_t ADDR_HW_ERROR_STATUS          = 70;
-    static constexpr std::uint8_t SIZE_HW_ERROR_STATUS          = 1;
+    static constexpr uint16_t ADDR_HW_ERROR_STATUS          = 70;
+    static constexpr uint8_t SIZE_HW_ERROR_STATUS          = 1;
 
-    static constexpr std::uint8_t ADDR_VELOCITY_I_GAIN          = 76;
-    static constexpr std::uint8_t SIZE_VELOCITY_I_GAIN          = 2;
+    static constexpr uint16_t ADDR_VELOCITY_I_GAIN          = 76;
+    static constexpr uint8_t SIZE_VELOCITY_I_GAIN          = 2;
 
-    static constexpr std::uint8_t ADDR_VELOCITY_P_GAIN          = 78;
-    static constexpr std::uint8_t SIZE_VELOCITY_P_GAIN          = 2;
+    static constexpr uint16_t ADDR_VELOCITY_P_GAIN          = 78;
+    static constexpr uint8_t SIZE_VELOCITY_P_GAIN          = 2;
 
-    static constexpr std::uint8_t ADDR_POSITION_D_GAIN          = 80;
-    static constexpr std::uint8_t SIZE_POSITION_D_GAIN          = 2;
+    static constexpr uint16_t ADDR_POSITION_D_GAIN          = 80;
+    static constexpr uint8_t SIZE_POSITION_D_GAIN          = 2;
 
-    static constexpr std::uint8_t ADDR_POSITION_I_GAIN          = 82;
-    static constexpr std::uint8_t SIZE_POSITION_I_GAIN          = 2;
+    static constexpr uint16_t ADDR_POSITION_I_GAIN          = 82;
+    static constexpr uint8_t SIZE_POSITION_I_GAIN          = 2;
 
-    static constexpr std::uint8_t ADDR_POSITION_P_GAIN          = 84;
-    static constexpr std::uint8_t SIZE_POSITION_P_GAIN          = 2;
+    static constexpr uint16_t ADDR_POSITION_P_GAIN          = 84;
+    static constexpr uint8_t SIZE_POSITION_P_GAIN          = 2;
 
-    static constexpr std::uint8_t ADDR_FF2_GAIN                 = 88;
-    static constexpr std::uint8_t SIZE_FF2_GAIN                 = 2;
+    static constexpr uint16_t ADDR_FF2_GAIN                 = 88;
+    static constexpr uint8_t SIZE_FF2_GAIN                 = 2;
 
-    static constexpr std::uint8_t ADDR_FF1_GAIN                 = 90;
-    static constexpr std::uint8_t SIZE_FF1_GAIN                 = 2;
+    static constexpr uint16_t ADDR_FF1_GAIN                 = 90;
+    static constexpr uint8_t SIZE_FF1_GAIN                 = 2;
 
-    static constexpr std::uint8_t ADDR_BUS_WATCHDOG             = 98;
-    static constexpr std::uint8_t SIZE_BUS_WATCHDOG             = 1;
+    static constexpr uint16_t ADDR_BUS_WATCHDOG             = 98;
+    static constexpr uint8_t SIZE_BUS_WATCHDOG             = 1;
 
-    static constexpr std::uint8_t ADDR_GOAL_PWM                 = 100;
-    static constexpr std::uint8_t SIZE_GOAL_PWM                 = 2;
+    static constexpr uint16_t ADDR_GOAL_PWM                 = 100;
+    static constexpr uint8_t SIZE_GOAL_PWM                 = 2;
 
-    static constexpr std::uint8_t ADDR_GOAL_VELOCITY            = 104;
-    static constexpr std::uint8_t SIZE_GOAL_VELOCITY            = 4;
+    static constexpr uint16_t ADDR_GOAL_VELOCITY            = 104;
+    static constexpr uint8_t SIZE_GOAL_VELOCITY            = 4;
 
-    static constexpr std::uint8_t ADDR_PROFILE_ACCELERATION     = 108;
-    static constexpr std::uint8_t SIZE_PROFILE_ACCELERATION     = 4;
+    static constexpr uint16_t ADDR_PROFILE_ACCELERATION     = 108;
+    static constexpr uint8_t SIZE_PROFILE_ACCELERATION     = 4;
 
-    static constexpr std::uint8_t ADDR_PROFILE_VELOCITY         = 112;
-    static constexpr std::uint8_t SIZE_PROFILE_VELOCITY         = 4;
+    static constexpr uint16_t ADDR_PROFILE_VELOCITY         = 112;
+    static constexpr uint8_t SIZE_PROFILE_VELOCITY         = 4;
 
-    static constexpr std::uint8_t ADDR_GOAL_POSITION            = 116;
-    static constexpr std::uint8_t SIZE_GOAL_POSITION            = 4;
+    static constexpr uint16_t ADDR_GOAL_POSITION            = 116;
+    static constexpr uint8_t SIZE_GOAL_POSITION            = 4;
 
-    static constexpr std::uint8_t ADDR_MOVING                   = 122;
-    static constexpr std::uint8_t SIZE_MOVING                   = 1;
+    static constexpr uint16_t ADDR_MOVING                   = 122;
+    static constexpr uint8_t SIZE_MOVING                   = 1;
 
-    static constexpr std::uint8_t ADDR_MOVING_STATUS            = 123;
-    static constexpr std::uint8_t SIZE_MOVING_STATUS            = 1;
+    static constexpr uint16_t ADDR_MOVING_STATUS            = 123;
+    static constexpr uint8_t SIZE_MOVING_STATUS            = 1;
 
-    static constexpr std::uint8_t ADDR_PRESENT_PWM              = 124;
-    static constexpr std::uint8_t SIZE_PRESENT_PWM              = 2;
+    static constexpr uint16_t ADDR_PRESENT_PWM              = 124;
+    static constexpr uint8_t SIZE_PRESENT_PWM              = 2;
 
-    static constexpr std::uint8_t ADDR_PRESENT_LOAD             = 126;
-    static constexpr std::uint8_t SIZE_PRESENT_LOAD             = 2;
+    static constexpr uint16_t ADDR_PRESENT_LOAD             = 126;
+    static constexpr uint8_t SIZE_PRESENT_LOAD             = 2;
 
-    static constexpr std::uint8_t ADDR_PRESENT_VELOCITY         = 128;
-    static constexpr std::uint8_t SIZE_PRESENT_VELOCITY         = 4;
+    static constexpr uint16_t ADDR_PRESENT_VELOCITY         = 128;
+    static constexpr uint8_t SIZE_PRESENT_VELOCITY         = 4;
 
-    static constexpr std::uint8_t ADDR_PRESENT_POSITION         = 132;
-    static constexpr std::uint8_t SIZE_PRESENT_POSITION         = 4;
+    static constexpr uint16_t ADDR_PRESENT_POSITION         = 132;
+    static constexpr uint8_t SIZE_PRESENT_POSITION         = 4;
 
-    static constexpr std::uint8_t ADDR_VELOCITY_TRAJECTORY      = 136;
-    static constexpr std::uint8_t SIZE_VELOCITY_TRAJECTORY      = 4;
+    static constexpr uint16_t ADDR_VELOCITY_TRAJECTORY      = 136;
+    static constexpr uint8_t SIZE_VELOCITY_TRAJECTORY      = 4;
 
-    static constexpr std::uint8_t ADDR_POSITION_TRAJECTORY      = 140;
-    static constexpr std::uint8_t SIZE_POSITION_TRAJECTORY      = 4;
+    static constexpr uint16_t ADDR_POSITION_TRAJECTORY      = 140;
+    static constexpr uint8_t SIZE_POSITION_TRAJECTORY      = 4;
 
-    static constexpr std::uint8_t ADDR_PRESENT_VOLTAGE          = 144;
-    static constexpr std::uint8_t SIZE_PRESENT_VOLTAGE          = 2;
+    static constexpr uint16_t ADDR_PRESENT_VOLTAGE          = 144;
+    static constexpr uint8_t SIZE_PRESENT_VOLTAGE          = 2;
 
-    static constexpr std::uint8_t ADDR_PRESENT_TEMPERATURE      = 146;
-    static constexpr std::uint8_t SIZE_PRESENT_TEMPERATURE      = 1;
+    static constexpr uint16_t ADDR_PRESENT_TEMPERATURE      = 146;
+    static constexpr uint8_t SIZE_PRESENT_TEMPERATURE      = 1;
 };
 } // ttl_driver
 

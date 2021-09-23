@@ -86,10 +86,14 @@ class MockStepperDriver : public AbstractStepperDriver
 
         // AbstractStepperDriver interface
     public:
+        virtual int writeVelocityProfile(uint8_t id, const std::vector<uint32_t>& data) override;
+
         virtual int startHoming(uint8_t id) override;
-        virtual int setHomingDirection(uint8_t id, uint8_t direction) override;
+        virtual int writeHomingDirection(uint8_t id, uint8_t direction) override;
         virtual int readHomingStatus(uint8_t id, uint32_t &status) override;
         virtual int readGoalVelocity(uint8_t id, uint32_t& present_velocity) override;
+
+        virtual int readFirmwareRunning(uint8_t id, bool &is_running) override;
 
     private:
         struct FakeRegister
@@ -128,6 +132,7 @@ class MockStepperDriver : public AbstractStepperDriver
         static constexpr int CALIBRATION_ERROR = 3;
         uint32_t _calibration_status = CALIBRATION_IDLE;
         uint8_t fake_time = 0;
+
 };
 
 }

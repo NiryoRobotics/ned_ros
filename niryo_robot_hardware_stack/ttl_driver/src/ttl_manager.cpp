@@ -1128,7 +1128,7 @@ int TtlManager::writeSingleCommand(const std::shared_ptr<common::model::Abstract
     {
         int counter = 0;
 
-        ROS_DEBUG_THROTTLE(0.5, "TtlManager::writeSingleCommand:  %s", cmd->str().c_str());
+        ROS_DEBUG("TtlManager::writeSingleCommand:  %s", cmd->str().c_str());
 
         if (_state_map.count(id) != 0)
         {

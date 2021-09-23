@@ -32,47 +32,47 @@ struct EndEffectorReg
 
     // see table here : http:// support.robotis.com/en/product/actuator/dynamixel_x/xl_series/xl-320.htm
     // EEPROM
-    static constexpr std::uint8_t ADDR_MODEL_NUMBER             = 0;
-    static constexpr std::uint8_t SIZE_MODEL_NUMBER             = 2;
+    static constexpr uint16_t ADDR_MODEL_NUMBER             = 0;
+    static constexpr uint8_t SIZE_MODEL_NUMBER             = 2;
 
-    static constexpr std::uint8_t ADDR_FIRMWARE_VERSION         = 59;
-    static constexpr std::uint8_t SIZE_FIRMWARE_VERSION         = 4;
+    static constexpr uint16_t ADDR_FIRMWARE_VERSION         = 59;
+    static constexpr uint8_t SIZE_FIRMWARE_VERSION         = 4;
 
-    static constexpr std::uint8_t ADDR_ID                       = 7;
-    static constexpr std::uint8_t SIZE_ID                       = 1;
+    static constexpr uint16_t ADDR_ID                       = 7;
+    static constexpr uint8_t SIZE_ID                       = 1;
 
-    static constexpr std::uint8_t ADDR_BAUDRATE                 = 8;
-    static constexpr std::uint8_t SIZE_BAUDRATE                 = 1;
+    static constexpr uint16_t ADDR_BAUDRATE                 = 8;
+    static constexpr uint8_t SIZE_BAUDRATE                 = 1;
 
-    static constexpr std::uint8_t ADDR_BUTTON_1_STATUS          = 64;
-    static constexpr std::uint8_t SIZE_BUTTON_1_STATUS          = 1;
+    static constexpr uint16_t ADDR_BUTTON_1_STATUS          = 64;
+    static constexpr uint8_t SIZE_BUTTON_1_STATUS          = 1;
 
-    static constexpr std::uint8_t ADDR_BUTTON_2_STATUS          = 65;
-    static constexpr std::uint8_t SIZE_BUTTON_2_STATUS          = 1;
+    static constexpr uint16_t ADDR_BUTTON_2_STATUS          = 65;
+    static constexpr uint8_t SIZE_BUTTON_2_STATUS          = 1;
 
-    static constexpr std::uint8_t ADDR_BUTTON_3_STATUS          = 66;
-    static constexpr std::uint8_t SIZE_BUTTON_3_STATUS          = 1;
+    static constexpr uint16_t ADDR_BUTTON_3_STATUS          = 66;
+    static constexpr uint8_t SIZE_BUTTON_3_STATUS          = 1;
 
-    static constexpr std::uint8_t ADDR_DIGITAL_IN               = 70;
-    static constexpr std::uint8_t SIZE_DIGITAL_IN               = 1;
+    static constexpr uint16_t ADDR_DIGITAL_IN               = 70;
+    static constexpr uint8_t SIZE_DIGITAL_IN               = 1;
 
-    static constexpr std::uint8_t ADDR_DIGITAL_OUT              = 71;
-    static constexpr std::uint8_t SIZE_DIGITAL_OUT              = 1;
+    static constexpr uint16_t ADDR_DIGITAL_OUT              = 71;
+    static constexpr uint8_t SIZE_DIGITAL_OUT              = 1;
 
-    static constexpr std::uint8_t ADDR_ACCELERO_VALUE_X         = 80;
-    static constexpr std::uint8_t SIZE_ACCELERO_VALUE_X         = 4;
+    static constexpr uint16_t ADDR_ACCELERO_VALUE_X         = 80;
+    static constexpr uint8_t SIZE_ACCELERO_VALUE_X         = 4;
 
-    static constexpr std::uint8_t ADDR_ACCELERO_VALUE_Y         = 84;
-    static constexpr std::uint8_t SIZE_ACCELERO_VALUE_Y         = 4;
+    static constexpr uint16_t ADDR_ACCELERO_VALUE_Y         = 84;
+    static constexpr uint8_t SIZE_ACCELERO_VALUE_Y         = 4;
 
-    static constexpr std::uint8_t ADDR_ACCELERO_VALUE_Z         = 88;
-    static constexpr std::uint8_t SIZE_ACCELERO_VALUE_Z         = 4;
+    static constexpr uint16_t ADDR_ACCELERO_VALUE_Z         = 88;
+    static constexpr uint8_t SIZE_ACCELERO_VALUE_Z         = 4;
 
-    static constexpr std::uint8_t ADDR_PRESENT_VOLTAGE          = 144;
-    static constexpr std::uint8_t SIZE_PRESENT_VOLTAGE          = 2;
+    static constexpr uint16_t ADDR_PRESENT_VOLTAGE          = 144;
+    static constexpr uint8_t SIZE_PRESENT_VOLTAGE          = 2;
 
-    static constexpr std::uint8_t ADDR_PRESENT_TEMPERATURE      = 146;
-    static constexpr std::uint8_t SIZE_PRESENT_TEMPERATURE      = 1;
+    static constexpr uint16_t ADDR_PRESENT_TEMPERATURE      = 146;
+    static constexpr uint8_t SIZE_PRESENT_TEMPERATURE      = 1;
 };
 } // ttl_driver
 

@@ -142,7 +142,7 @@ std::string AbstractTtlDriver::str() const
  * @param data
  * @return
  */
-int AbstractTtlDriver::read(uint8_t address, uint8_t data_len, uint8_t id, uint32_t& data)
+int AbstractTtlDriver::read(uint16_t address, uint8_t data_len, uint8_t id, uint32_t& data)
 {
     // clean output data first
     data = 0;
@@ -195,7 +195,7 @@ int AbstractTtlDriver::read(uint8_t address, uint8_t data_len, uint8_t id, uint3
  * @param data
  * @return
  */
-int AbstractTtlDriver::write(uint8_t address, uint8_t data_len, uint8_t id, uint32_t data)
+int AbstractTtlDriver::write(uint16_t address, uint8_t data_len, uint8_t id, uint32_t data)
 {
     int dxl_comm_result = COMM_TX_FAIL;
 

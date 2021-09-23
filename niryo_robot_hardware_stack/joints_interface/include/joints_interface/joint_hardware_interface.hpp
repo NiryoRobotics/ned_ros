@@ -70,6 +70,14 @@ class JointHardwareInterface : public hardware_interface::RobotHW
         virtual void write(const ros::Time &/*time*/, const ros::Duration &/*period*/) override;
 
     private:
+        bool initStepper(ros::NodeHandle &robot_hwnh,
+                         const std::shared_ptr<common::model::StepperMotorState>& stepperState,
+                         const std::string& currentNamespace) const;
+        bool initDxl(ros::NodeHandle &robot_hwnh,
+                     const std::shared_ptr<common::model::DxlMotorState>& dxlState,
+                     const std::string& currentNamespace) const;
+
+    private:
         hardware_interface::JointStateInterface _joint_state_interface;
         hardware_interface::PositionJointInterface _joint_position_interface;
 

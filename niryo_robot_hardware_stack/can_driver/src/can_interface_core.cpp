@@ -157,7 +157,6 @@ int CanInterfaceCore::addJoint(const std::shared_ptr<common::model::StepperMotor
   // add dynamixel as a new tool
   _can_manager->addHardwareComponent(jointState);
 
-  // try to find motor
   if (_can_manager->ping(jointState->getId()))
   {
       // no init commands
