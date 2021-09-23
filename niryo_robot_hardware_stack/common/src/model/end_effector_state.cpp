@@ -17,6 +17,7 @@
     along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 #include "common/model/end_effector_state.hpp"
+#include "common/model/action_type_enum.hpp"
 #include <sstream>
 #include <string>
 
@@ -73,6 +74,7 @@ void EndEffectorState::configureButton(uint8_t id, EButtonType button_type)
 {
   assert(id <= 3);
 
+  _buttons_list[id - 1].actions.push(EActionType::NO_ACTION);
   _buttons_list[id - 1].type = button_type;
 }
 
@@ -125,31 +127,22 @@ void EndEffectorState::setButtonStatus(uint8_t id, EActionType action)
 {
   assert(id <= 3);
 
-  if (action != EActionType::NO_ACTION)
+  common::model::Button button = _buttons_list[id - 1];
+  // do not add 2 no action states consecutive
+  if (button.actions.back() == EActionType::NO_ACTION &&
+          action == EActionType::NO_ACTION)
+      return;
+  if (button.actions.back() == EActionType::SINGLE_PUSH_ACTION ||
+        button.actions.back() == EActionType::DOUBLE_PUSH_ACTION ||
+        button.actions.back() == EActionType::LONG_PUSH_ACTION)
   {
-      _buttons_list[id - 1].action = action;
-      _buttons_list[id - 1].prev_action = _buttons_list[id - 1].action;
+      button.actions.push(action);
+      button.setDelay();
   }
-  else if (_buttons_list[id - 1].prev_action != EActionType::NO_ACTION)
+  else if (!button.isNeedToSkip())
   {
-      _buttons_list[id - 1].prev_action = EActionType::NO_ACTION; 
+      button.actions.push(action);
   }
-  else
-  {
-      _buttons_list[id - 1].action = EActionType::NO_ACTION; 
-  }
-}
-
-/**
- * @brief EndEffectorState::setButtonStatus
- * @param id
- * @param action
- */
-void EndEffectorState::setPrevButtonStatus(uint8_t id, EActionType action)
-{
-  assert(id <= 3);
-
-  _buttons_list[id - 1].prev_action = action;
 }
 
 /**

@@ -201,47 +201,53 @@ void EndEffectorInterfaceCore::_publishButtonState()
           continue;
         lock_guard<mutex> lck(_buttons_status_mutex);
 
-        for (auto const& button : _end_effector_state->getButtonsStatus())
+        for (auto button : _end_effector_state->getButtonsStatus())
         {
-            button_msg.action = static_cast<int>(button.action);
-            switch (button.type)
+            if (button.actions.empty())
+                break;
+            else
             {
-                case EButtonType::FREE_DRIVE_BUTTON:
-                    _free_drive_button_state_publisher.publish(button_msg);
-                    if (common::model::EActionType::HANDLE_HELD_ACTION == button.action &&
-                        !_is_learning_mode)
-                    {
-                        bool exists(_learning_mode_client.waitForExistence(ros::Duration(1.0)));
-                        ROS_DEBUG_COND(exists, "EndEffectorInterfaceCore::startServices : - Learning mode service connected successfully");
-                        ROS_ERROR_COND(!exists, "EndEffectorInterfaceCore::startServices : - unable to connect to Learning mode service");
+                button_msg.action = static_cast<int>(button.actions.front());
+                switch (button.type)
+                {
+                    case EButtonType::FREE_DRIVE_BUTTON:
+                        _free_drive_button_state_publisher.publish(button_msg);
+                        if (common::model::EActionType::HANDLE_HELD_ACTION == button.actions.front() &&
+                            !_is_learning_mode)
+                        {
+                            bool exists(_learning_mode_client.waitForExistence(ros::Duration(1.0)));
+                            ROS_DEBUG_COND(exists, "EndEffectorInterfaceCore::startServices : - Learning mode service connected successfully");
+                            ROS_ERROR_COND(!exists, "EndEffectorInterfaceCore::startServices : - unable to connect to Learning mode service");
 
-                        niryo_robot_msgs::SetBool srv;
-                        srv.request.value = true;
-                        _learning_mode_client.call(srv);
-                        _is_learning_mode = true;
-                    }
-                    else if (common::model::EActionType::NO_ACTION == button.action &&
-                            _is_learning_mode)
-                    {
-                        bool exists(_learning_mode_client.waitForExistence(ros::Duration(1.0)));
-                        ROS_DEBUG_COND(exists, "EndEffectorInterfaceCore::startServices : - Learning mode service connected successfully");
-                        ROS_ERROR_COND(!exists, "EndEffectorInterfaceCore::startServices : - unable to connect to Learning mode service");
+                            niryo_robot_msgs::SetBool srv;
+                            srv.request.value = true;
+                            _learning_mode_client.call(srv);
+                            _is_learning_mode = true;
+                        }
+                        else if (common::model::EActionType::NO_ACTION == button.actions.front() &&
+                                _is_learning_mode)
+                        {
+                            bool exists(_learning_mode_client.waitForExistence(ros::Duration(1.0)));
+                            ROS_DEBUG_COND(exists, "EndEffectorInterfaceCore::startServices : - Learning mode service connected successfully");
+                            ROS_ERROR_COND(!exists, "EndEffectorInterfaceCore::startServices : - unable to connect to Learning mode service");
 
-                        niryo_robot_msgs::SetBool srv;
-                        srv.request.value = false;
-                        _learning_mode_client.call(srv);
-                        _is_learning_mode = false;
-                    }
+                            niryo_robot_msgs::SetBool srv;
+                            srv.request.value = false;
+                            _learning_mode_client.call(srv);
+                            _is_learning_mode = false;
+                        }
 
-                  break;
-                case EButtonType::SAVE_POSITION_BUTTON:
-                    _save_pos_button_state_publisher.publish(button_msg);
-                  break;
-                case EButtonType::CUSTOM_BUTTON:
-                    _custom_button_state_publisher.publish(button_msg);
-                  break;
-                default:
-                  break;
+                      break;
+                    case EButtonType::SAVE_POSITION_BUTTON:
+                        _save_pos_button_state_publisher.publish(button_msg);
+                      break;
+                    case EButtonType::CUSTOM_BUTTON:
+                        _custom_button_state_publisher.publish(button_msg);
+                      break;
+                    default:
+                      break;
+                }
+                button.actions.pop();
             }
         }
 

@@ -27,10 +27,13 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <string>
 #include <cassert>
 #include <sstream>
+#include <queue>
 
+#include "common/model/dxl_command_type_enum.hpp"
 #include "hardware_type_enum.hpp"
 #include "button_type_enum.hpp"
 #include "action_type_enum.hpp"
+#include "ros/time.h"
 
 namespace common
 {
@@ -38,29 +41,68 @@ namespace model
 {
 
 /**
+ * @brief The Button class
+ */
+
+class Button : public IObject
+{
+    public:
+        Button()
+        {
+            actions.push(EActionType::NO_ACTION);
+        }
+
+        virtual ~Button() {}
+
+         /**
+         * @brief The Button struct describes the current state of a button (not its config)
+         */
+        virtual std::string str() const override
+        {
+            std::ostringstream ss;
+            ss << "Button (" << ButtonTypeEnum(type).toString() << ") : "
+               << ActionTypeEnum(actions.front()).toString();
+            return ss.str();
+        }
+
+        virtual bool isValid() const override
+        {
+            return (EButtonType::UNKNOWN != type);
+        }
+
+        virtual void reset() override
+        {
+            type = EButtonType::UNKNOWN;
+            std::queue<EActionType> empty_queue;
+            actions.swap(empty_queue);
+        }
+
+        // need a delay to avoid state hand hold called when other states come
+        void setDelay()
+        {
+            _time_last_read_state = ros::Time::now().toSec(); 
+        }
+
+        // check if hand hold state came is needed to skip
+        bool isNeedToSkip()
+        {
+            return (ros::Time::now().toSec() - _time_last_read_state) >= _time_avoid_duplicate_state;
+        }
+    public:
+        EButtonType type{EButtonType::UNKNOWN};
+        std::queue<EActionType> actions;
+    
+    private:
+        static constexpr double _time_avoid_duplicate_state = 0.5;
+        double _time_last_read_state;
+};
+
+/**
  * @brief The EndEffectorState class
  */
 class EndEffectorState : public AbstractHardwareState
 {
     public:
-        /**
-         * @brief The Button struct describes the current state of a button (not its config)
-         */
-        struct Button
-        {
-          EButtonType type{EButtonType::UNKNOWN};
-          EActionType action{EActionType::NO_ACTION};
-          EActionType prev_action{EActionType::NO_ACTION};
-
-          std::string str() const
-          {
-            std::ostringstream ss;
-            ss << "Button (" << ButtonTypeEnum(type).toString() << ") : "
-               << ActionTypeEnum(action).toString();
-            return ss.str();
-          }
-        };
-
         struct Vector3D
         {
           uint32_t x{};
@@ -93,7 +135,6 @@ class EndEffectorState : public AbstractHardwareState
 
     public:
         void setButtonStatus(uint8_t id, EActionType action);
-        void setPrevButtonStatus(uint8_t id, EActionType action);
 
         std::array<Button, 3> getButtonsStatus() const;
 
@@ -129,7 +170,7 @@ private:
  * @return
  */
 inline
-std::array<EndEffectorState::Button, 3>
+std::array<Button, 3>
 EndEffectorState::getButtonsStatus() const
 {
   return _buttons_list;

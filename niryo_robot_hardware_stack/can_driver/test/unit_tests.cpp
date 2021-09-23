@@ -119,10 +119,8 @@ void addJointToCanManager(std::shared_ptr<can_driver::CanManager> can_drv)
 
     int currentIdStepper = 1;
 
-    ROS_ERROR("TEST2");
     for (size_t j = 0; j < nb_joints; j++)
     {
-      ROS_ERROR("TEST1");
         int joint_id_config = 0;
         string joint_name = "";
         string joint_type = "";
