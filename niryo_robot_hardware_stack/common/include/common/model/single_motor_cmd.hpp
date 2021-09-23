@@ -242,12 +242,12 @@ bool DxlSingleCmd::isValid() const
 //********************************
 
 /**
- * @brief SingleMotorCmd<EDxlCommandType, uint32_t>::str
+ * @brief StepperTtlSingleCmd::str
  * @return
  */
 template<>
 inline
-std::string SingleMotorCmd<EStepperCommandType, uint32_t>::str() const
+std::string StepperTtlSingleCmd::str() const
 {
     std::ostringstream ss;
     ss << "Stepper motor cmd - ";
@@ -257,22 +257,20 @@ std::string SingleMotorCmd<EStepperCommandType, uint32_t>::str() const
     ss << "Motor id: ";
         ss << std::to_string(_id) << " ";
 
-    if(!_param_list.empty())
-    {
-        ss << "; param: ";
-        ss << std::to_string(getParam());
-    }
+    ss << "Params: ";
+    for (int32_t param : getParams())
+        ss << std::to_string(static_cast<uint32_t>(param)) << " ";
 
     return ss.str();
 }
 
 /**
- * @brief SingleMotorCmd<EDxlCommandType, uint32_t>::isValid
+ * @brief StepperTtlSingleCmd::isValid
  * @return
  */
 template<>
 inline
-bool SingleMotorCmd<EStepperCommandType, uint32_t>::isValid() const
+bool StepperTtlSingleCmd::isValid() const
 {
     if ((EStepperCommandType::CMD_TYPE_NONE == getType()) ||
        (EStepperCommandType::CMD_TYPE_UNKNOWN == getType()) ||

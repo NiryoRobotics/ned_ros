@@ -47,6 +47,7 @@ using ::common::model::DxlMotorState;
 using ::common::model::JointState;
 using ::common::model::EDxlCommandType;
 using ::common::model::EStepperCommandType;
+using ::common::model::StepperTtlSingleCmd;
 using ::common::model::AbstractTtlSingleMotorCmd;
 using ::common::model::DxlSingleCmd;
 using ::common::model::EndEffectorSingleCmd;
@@ -670,18 +671,10 @@ int TtlInterfaceCore::addJoint(const std::shared_ptr<common::model::JointState> 
 
   // add dynamixel as a new tool
   _ttl_manager->addHardwareComponent(jointState);
+  ros::Duration(0.2).sleep();
 
-  // try to find motor
-  if (_ttl_manager->ping(jointState->getId()))
-  {
-      // no init commands
-
-      result = niryo_robot_msgs::CommandStatus::SUCCESS;
-  }
-  else
-  {
-      ROS_WARN("TtlInterfaceCore::addJoint - No joint found with motor id %d", jointState->getId());
-  }
+  // nothin here (done in sendInitMotorsParams for now)
+  result = niryo_robot_msgs::CommandStatus::SUCCESS;
 
   return result;
 }
@@ -696,7 +689,7 @@ int TtlInterfaceCore::setTool(const std::shared_ptr<common::model::ToolState> to
     int result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
 
     lock_guard<mutex> lck(_control_loop_mutex);
-    // add dynamixel as a new tool
+    // add motor as a new tool
     _ttl_manager->addHardwareComponent(toolState);
 
     // try to find motor

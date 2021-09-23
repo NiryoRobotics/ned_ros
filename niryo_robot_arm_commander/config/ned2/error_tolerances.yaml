@@ -1,2 +1,2 @@
-error_tolerance: [2.7, 2.4, 2.35, 1.57, 1.57, 1.57]
-error_tolerance_joint: [2.2, 2.2, 2.2, 0.2, 0.2, 0.2]
+error_tolerance: [7, 4, 35, 1.57, 1.57, 1.57]
+error_tolerance_joint: [2, 2, 2, 0.2, 0.2, 0.2]

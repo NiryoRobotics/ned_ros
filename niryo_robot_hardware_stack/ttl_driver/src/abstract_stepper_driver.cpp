@@ -66,7 +66,7 @@ int AbstractStepperDriver::writeSingleCmd(const std::shared_ptr<common::model::A
         case EStepperCommandType::CMD_TYPE_CALIBRATION:
             return startHoming(cmd->getId());
         case EStepperCommandType::CMD_TYPE_CALIBRATION_DIRECTION:
-            return setHomingDirection(cmd->getId(), cmd->getParam());
+            return writeHomingDirection(cmd->getId(), cmd->getParam());
         case EStepperCommandType::CMD_TYPE_PING:
             return ping(cmd->getId());
         case EStepperCommandType::CMD_TYPE_CONVEYOR:
@@ -85,6 +85,8 @@ int AbstractStepperDriver::writeSingleCmd(const std::shared_ptr<common::model::A
                 return setGoalVelocity(cmd->getId(), speed);
             }
         }
+        case EStepperCommandType::CMD_TYPE_VELOCITY_PROFILE:
+            return writeVelocityProfile(cmd->getId(), cmd->getParams());
         default:
             std::cout << "Command not implemented " << cmd->getCmdType() << std::endl;
         }

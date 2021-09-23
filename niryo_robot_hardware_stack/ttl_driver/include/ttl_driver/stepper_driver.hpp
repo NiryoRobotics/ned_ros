@@ -22,6 +22,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <string>
 #include <iostream>
 #include <sstream>
+#include "ros/duration.h"
 
 #include "abstract_stepper_driver.hpp"
 
@@ -85,10 +86,14 @@ class StepperDriver : public AbstractStepperDriver
 
         // AbstractStepperDriver interface
     public:
+        virtual int writeVelocityProfile(uint8_t id, const std::vector<uint32_t>& data) override;
+
         virtual int startHoming(uint8_t id) override;
-        virtual int setHomingDirection(uint8_t id, uint8_t direction) override;
+        virtual int writeHomingDirection(uint8_t id, uint8_t direction) override;
         virtual int readHomingStatus(uint8_t id, uint32_t &status) override;
         virtual int readGoalVelocity(uint8_t id, uint32_t& present_velocity) override;
+
+        virtual int readFirmwareRunning(uint8_t id, bool &is_running) override;
 };
 
 // definition of methods
@@ -265,7 +270,7 @@ int StepperDriver<reg_type>::readHwErrorStatus(uint8_t id, uint32_t& hardware_st
 template<typename reg_type>
 int StepperDriver<reg_type>::syncReadPosition(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &position_list)
 {
-    return syncRead(reg_type::ADDR_PRESENT_POSITION, reg_type::SIZE_PRESENT_POSITION, id_list, position_list);
+  return syncRead(reg_type::ADDR_PRESENT_POSITION, reg_type::SIZE_PRESENT_POSITION, id_list, position_list);
 }
 
 template<typename reg_type>
@@ -308,13 +313,62 @@ int StepperDriver<reg_type>::syncReadHwErrorStatus(const std::vector<uint8_t> &i
 //*****************************
 
 template<typename reg_type>
+int StepperDriver<reg_type>::writeVelocityProfile(uint8_t id, const std::vector<uint32_t>& data)
+{
+  int res = 0;
+  double wait_duration = 0.5;
+
+  if (COMM_SUCCESS != write(reg_type::ADDR_VSTART, reg_type::SIZE_VSTART, id, data.at(0)))
+    res++;
+  ros::Duration(wait_duration).sleep();
+
+  if (COMM_SUCCESS != write(reg_type::ADDR_A1, reg_type::SIZE_A1, id, data.at(1)))
+    res++;
+  ros::Duration(wait_duration).sleep();
+
+  if (COMM_SUCCESS != write(reg_type::ADDR_V1, reg_type::SIZE_V1, id, data.at(2)))
+    res++;
+  ros::Duration(wait_duration).sleep();
+
+  if (COMM_SUCCESS != write(reg_type::ADDR_AMAX, reg_type::SIZE_AMAX, id, data.at(3)))
+    res++;
+  ros::Duration(wait_duration).sleep();
+
+  if (COMM_SUCCESS != write(reg_type::ADDR_VMAX, reg_type::SIZE_VMAX, id, data.at(4)))
+    res++;
+  ros::Duration(wait_duration).sleep();
+
+  if (COMM_SUCCESS != write(reg_type::ADDR_DMAX, reg_type::SIZE_DMAX, id, data.at(5)))
+    res++;
+  ros::Duration(wait_duration).sleep();
+
+  if (COMM_SUCCESS != write(reg_type::ADDR_D1, reg_type::SIZE_D1, id, data.at(6)))
+    res++;
+  ros::Duration(wait_duration).sleep();
+
+  if (COMM_SUCCESS != write(reg_type::ADDR_VSTOP, reg_type::SIZE_VSTOP, id, data.at(7)))
+    res++;
+  ros::Duration(wait_duration).sleep();
+
+  if(res > 0)
+  {
+      std::cout << "Failures during writeVelocityProfile : " << res << std::endl;
+      return COMM_TX_FAIL;
+  }
+  else {
+    return COMM_SUCCESS;
+  }
+
+}
+
+template<typename reg_type>
 int StepperDriver<reg_type>::startHoming(uint8_t id)
 {
     return write(reg_type::ADDR_COMMAND, reg_type::SIZE_COMMAND, id, 0);
 }
 
 template<typename reg_type>
-int StepperDriver<reg_type>::setHomingDirection(uint8_t id, uint8_t direction)
+int StepperDriver<reg_type>::writeHomingDirection(uint8_t id, uint8_t direction)
 {
     return write(reg_type::ADDR_HOMING_DIRECTION, reg_type::SIZE_HOMING_DIRECTION, id, direction);
 }
@@ -329,6 +383,15 @@ template<typename reg_type>
 int StepperDriver<reg_type>::readGoalVelocity(uint8_t id, uint32_t& present_velocity)
 {
     return read(reg_type::ADDR_GOAL_VELOCITY, reg_type::SIZE_GOAL_VELOCITY, id, present_velocity);
+}
+
+template<typename reg_type>
+int StepperDriver<reg_type>::readFirmwareRunning(uint8_t id, bool &is_running)
+{
+  uint32_t data{};
+  int res = read(reg_type::ADDR_FIRMWARE_RUNNING, reg_type::SIZE_FIRMWARE_RUNNING, id, data);
+  is_running = data;
+  return res;
 }
 
 } // ttl_driver

@@ -28,7 +28,9 @@ namespace ttl_driver
 // definition of methods
 
 /**
- * @brief DxlDriver<reg_type>::DxlDriver
+ * @brief MockStepperDriver::MockStepperDriver
+ * @param portHandler
+ * @param packetHandler
  */
 MockStepperDriver::MockStepperDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
                                        std::shared_ptr<dynamixel::PacketHandler> packetHandler) :
@@ -43,10 +45,17 @@ MockStepperDriver::MockStepperDriver(std::shared_ptr<dynamixel::PortHandler> por
 /**
  * @brief DxlDriver<reg_type>::~DxlDriver
  */
+/**
+ * @brief MockStepperDriver::~MockStepperDriver
+ */
 MockStepperDriver::~MockStepperDriver()
 {
 }
 
+/**
+ * @brief MockStepperDriver::str
+ * @return
+ */
 std::string MockStepperDriver::str() const
 {
   return "Mock Stepper Driver (OK)";
@@ -55,6 +64,11 @@ std::string MockStepperDriver::str() const
 //*****************************
 // AbstractTtlDriver interface
 //*****************************
+/**
+ * @brief MockStepperDriver::ping
+ * @param id
+ * @return
+ */
 int MockStepperDriver::ping(uint8_t id)
 {
     if (_map_fake_registers.count(id) || _fake_conveyor.id == id)
@@ -62,18 +76,34 @@ int MockStepperDriver::ping(uint8_t id)
     return COMM_TX_FAIL;
 }
 
+/**
+ * @brief MockStepperDriver::getModelNumber
+ * @param id
+ * @param model_number
+ * @return
+ */
 int MockStepperDriver::getModelNumber(uint8_t id, uint16_t& model_number)
 {
     model_number = _map_fake_registers.at(id).model_number;
     return COMM_SUCCESS;
 }
 
+/**
+ * @brief MockStepperDriver::scan
+ * @param id_list
+ * @return
+ */
 int MockStepperDriver::scan(std::vector<uint8_t>& id_list)
 {
     id_list = _full_id_list;
     return COMM_SUCCESS;
 }
 
+/**
+ * @brief MockStepperDriver::reboot
+ * @param id
+ * @return
+ */
 int MockStepperDriver::reboot(uint8_t id)
 {
     if (std::find(_id_list.begin(), _id_list.end(), id) == _id_list.end())
@@ -81,11 +111,21 @@ int MockStepperDriver::reboot(uint8_t id)
     return COMM_SUCCESS;
 }
 
+/**
+ * @brief MockStepperDriver::interpreteErrorState
+ * @return
+ */
 std::string MockStepperDriver::interpreteErrorState(uint32_t /*hw_state*/) const
 {
     return "";
 }
 
+/**
+ * @brief MockStepperDriver::changeId
+ * @param id
+ * @param new_id
+ * @return
+ */
 int MockStepperDriver::changeId(uint8_t id, uint8_t new_id)
 {
     _id_list.erase(std::remove(_id_list.begin(), _id_list.end(), id));
@@ -94,6 +134,11 @@ int MockStepperDriver::changeId(uint8_t id, uint8_t new_id)
     return COMM_SUCCESS;
 }
 
+/**
+ * @brief MockStepperDriver::checkModelNumber
+ * @param id
+ * @return
+ */
 int MockStepperDriver::checkModelNumber(uint8_t id)
 {
     uint16_t model_number = 0;
@@ -110,18 +155,36 @@ int MockStepperDriver::checkModelNumber(uint8_t id)
     return ping_result;
 }
 
+/**
+ * @brief MockStepperDriver::readFirmwareVersion
+ * @param id
+ * @param version
+ * @return
+ */
 int MockStepperDriver::readFirmwareVersion(uint8_t id, std::string &version)
 {
     version = _map_fake_registers.at(id).firmware;
     return COMM_SUCCESS;
 }
 
+/**
+ * @brief MockStepperDriver::readMinPosition
+ * @param id
+ * @param pos
+ * @return
+ */
 int MockStepperDriver::readMinPosition(uint8_t id, uint32_t &pos)
 {
     pos = _map_fake_registers.at(id).min_position;
     return COMM_SUCCESS;
 }
 
+/**
+ * @brief MockStepperDriver::readMaxPosition
+ * @param id
+ * @param pos
+ * @return
+ */
 int MockStepperDriver::readMaxPosition(uint8_t id, uint32_t &pos)
 {
     pos = _map_fake_registers.at(id).max_position;
@@ -130,11 +193,23 @@ int MockStepperDriver::readMaxPosition(uint8_t id, uint32_t &pos)
 
 // ram write
 
+/**
+ * @brief MockStepperDriver::setTorqueEnable
+ * @param id
+ * @param torque_enable
+ * @return
+ */
 int MockStepperDriver::setTorqueEnable(uint8_t id, uint32_t torque_enable)
 {
     return COMM_SUCCESS;
 }
 
+/**
+ * @brief MockStepperDriver::setGoalPosition
+ * @param id
+ * @param position
+ * @return
+ */
 int MockStepperDriver::setGoalPosition(uint8_t id, uint32_t position)
 {
     _map_fake_registers.at(id).position = position;
@@ -142,6 +217,12 @@ int MockStepperDriver::setGoalPosition(uint8_t id, uint32_t position)
 }
 
 // according to the registers, the data should be an int32_t ?
+/**
+ * @brief MockStepperDriver::setGoalVelocity
+ * @param id
+ * @param velocity
+ * @return
+ */
 int MockStepperDriver::setGoalVelocity(uint8_t id, uint32_t velocity)
 {
     if (std::find(_id_list.begin(), _id_list.end(), id) != _id_list.end())
@@ -156,6 +237,12 @@ int MockStepperDriver::setGoalVelocity(uint8_t id, uint32_t velocity)
     return COMM_SUCCESS;
 }
 
+/**
+ * @brief MockStepperDriver::syncWriteTorqueEnable
+ * @param id_list
+ * @param torque_enable_list
+ * @return
+ */
 int MockStepperDriver::syncWriteTorqueEnable(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &torque_enable_list)
 {
     // Create a map to store the frequency of each element in vector
@@ -170,6 +257,12 @@ int MockStepperDriver::syncWriteTorqueEnable(const std::vector<uint8_t> &id_list
     return COMM_SUCCESS;
 }
 
+/**
+ * @brief MockStepperDriver::syncWritePositionGoal
+ * @param id_list
+ * @param position_list
+ * @return
+ */
 int MockStepperDriver::syncWritePositionGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &position_list)
 {
     if (id_list.size() != position_list.size())
@@ -187,6 +280,12 @@ int MockStepperDriver::syncWritePositionGoal(const std::vector<uint8_t> &id_list
     return COMM_SUCCESS;
 }
 
+/**
+ * @brief MockStepperDriver::syncWriteVelocityGoal
+ * @param id_list
+ * @param velocity_list
+ * @return
+ */
 int MockStepperDriver::syncWriteVelocityGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &velocity_list)
 {
     // Create a map to store the frequency of each element in vector
@@ -203,30 +302,59 @@ int MockStepperDriver::syncWriteVelocityGoal(const std::vector<uint8_t> &id_list
 
 // ram read
 
+/**
+ * @brief MockStepperDriver::readPosition
+ * @param id
+ * @param present_position
+ * @return
+ */
 int MockStepperDriver::readPosition(uint8_t id, uint32_t& present_position)
 {
     present_position = _map_fake_registers.at(id).position;
     return COMM_SUCCESS;
 }
 
+/**
+ * @brief MockStepperDriver::readTemperature
+ * @param id
+ * @param temperature
+ * @return
+ */
 int MockStepperDriver::readTemperature(uint8_t id, uint32_t& temperature)
 {
     temperature = _map_fake_registers.at(id).temperature;
     return COMM_SUCCESS;
 }
 
+/**
+ * @brief MockStepperDriver::readVoltage
+ * @param id
+ * @param voltage
+ * @return
+ */
 int MockStepperDriver::readVoltage(uint8_t id, double &voltage)
 {
     voltage = _map_fake_registers.at(id).voltage;
     return COMM_SUCCESS;
 }
 
+/**
+ * @brief MockStepperDriver::readHwErrorStatus
+ * @param hardware_status
+ * @return
+ */
 int MockStepperDriver::readHwErrorStatus(uint8_t /*id*/, uint32_t& hardware_status)
 {
     hardware_status = 0;
     return COMM_SUCCESS;
 }
 
+/**
+ * @brief MockStepperDriver::syncReadPosition
+ * @param id_list
+ * @param position_list
+ * @return
+ */
 int MockStepperDriver::syncReadPosition(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &position_list)
 {
     std::map<uint8_t, uint8_t> countMap;
@@ -244,6 +372,12 @@ int MockStepperDriver::syncReadPosition(const std::vector<uint8_t> &id_list, std
     return COMM_SUCCESS;
 }
 
+/**
+ * @brief MockStepperDriver::syncReadFirmwareVersion
+ * @param id_list
+ * @param firmware_list
+ * @return
+ */
 int MockStepperDriver::syncReadFirmwareVersion(const std::vector<uint8_t> &id_list, std::vector<std::string> &firmware_list)
 {
     std::map<uint8_t, uint8_t> countMap;
@@ -261,6 +395,12 @@ int MockStepperDriver::syncReadFirmwareVersion(const std::vector<uint8_t> &id_li
     return COMM_SUCCESS;
 }
 
+/**
+ * @brief MockStepperDriver::syncReadTemperature
+ * @param id_list
+ * @param temperature_list
+ * @return
+ */
 int MockStepperDriver::syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &temperature_list)
 {
     std::map<uint8_t, uint8_t> countMap;
@@ -278,6 +418,12 @@ int MockStepperDriver::syncReadTemperature(const std::vector<uint8_t> &id_list, 
     return COMM_SUCCESS;
 }
 
+/**
+ * @brief MockStepperDriver::syncReadVoltage
+ * @param id_list
+ * @param voltage_list
+ * @return
+ */
 int MockStepperDriver::syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list)
 {
     std::map<uint8_t, uint8_t> countMap;
@@ -295,6 +441,12 @@ int MockStepperDriver::syncReadVoltage(const std::vector<uint8_t> &id_list, std:
     return COMM_SUCCESS;
 }
 
+/**
+ * @brief MockStepperDriver::syncReadHwErrorStatus
+ * @param id_list
+ * @param hw_error_list
+ * @return
+ */
 int MockStepperDriver::syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list)
 {
     std::map<uint8_t, uint8_t> countMap;
@@ -313,6 +465,22 @@ int MockStepperDriver::syncReadHwErrorStatus(const std::vector<uint8_t> &id_list
 // AbstractStepperDriver interface
 //*****************************
 
+/**
+ * @brief MockStepperDriver::writeVelocityProfile
+ * @param id
+ * @param data
+ * @return
+ */
+int MockStepperDriver::writeVelocityProfile(uint8_t id, const std::vector<uint32_t>& data)
+{
+  return COMM_SUCCESS;
+}
+
+/**
+ * @brief MockStepperDriver::startHoming
+ * @param id
+ * @return
+ */
 int MockStepperDriver::startHoming(uint8_t id)
 {
     _calibration_status = CALIBRATION_IN_PROGRESS;
@@ -320,11 +488,23 @@ int MockStepperDriver::startHoming(uint8_t id)
     return COMM_SUCCESS;
 }
 
-int MockStepperDriver::setHomingDirection(uint8_t id, uint8_t direction)
+/**
+ * @brief MockStepperDriver::writeHomingDirection
+ * @param id
+ * @param direction
+ * @return
+ */
+int MockStepperDriver::writeHomingDirection(uint8_t id, uint8_t direction)
 {
     return COMM_SUCCESS;
 }
 
+/**
+ * @brief MockStepperDriver::readHomingStatus
+ * @param id
+ * @param status
+ * @return
+ */
 int MockStepperDriver::readHomingStatus(uint8_t id, uint32_t &status)
 {
     if (fake_time)
@@ -338,6 +518,12 @@ int MockStepperDriver::readHomingStatus(uint8_t id, uint32_t &status)
     return COMM_SUCCESS;
 }
 
+/**
+ * @brief MockStepperDriver::readGoalVelocity
+ * @param id
+ * @param present_velocity
+ * @return
+ */
 int MockStepperDriver::readGoalVelocity(uint8_t id, uint32_t& present_velocity)
 {
     if (id == _fake_conveyor.id)
@@ -345,5 +531,16 @@ int MockStepperDriver::readGoalVelocity(uint8_t id, uint32_t& present_velocity)
     return COMM_SUCCESS;
 }
 
-}  // namespace ttl_driver
+/**
+ * @brief MockStepperDriver::readFirmwareRunning
+ * @param id
+ * @param is_running
+ * @return
+ */
+int MockStepperDriver::readFirmwareRunning(uint8_t id, bool &is_running)
+{
+  is_running = true;
+  return COMM_SUCCESS;
+}
 
+}  // namespace ttl_driver

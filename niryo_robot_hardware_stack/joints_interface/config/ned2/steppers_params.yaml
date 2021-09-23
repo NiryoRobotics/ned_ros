@@ -8,6 +8,14 @@ steppers:
         offset_position: 1900
         direction: 1
         max_effort: 0
+        v_start: 1
+        a_1: 400
+        v_1: 5
+        a_max: 4000
+        v_max: 10
+        d_max: 5000
+        d_1: 2000
+        v_stop: 2
 
     stepper_2:
         id: 3
@@ -15,6 +23,14 @@ steppers:
         offset_position: 371
         direction: -1
         max_effort: 0
+        v_start: 1
+        a_1: 1000
+        v_1: 4
+        a_max: 4000
+        v_max: 8
+        d_max: 5000
+        d_1: 2000
+        v_stop: 2
         
     stepper_3:
         id: 4
@@ -22,3 +38,11 @@ steppers:
         offset_position: 855
         direction: 1
         max_effort: 0
+        v_start: 1
+        a_1: 1000
+        v_1: 4
+        a_max: 4000
+        v_max: 8
+        d_max: 5000
+        d_1: 2000
+        v_stop: 2

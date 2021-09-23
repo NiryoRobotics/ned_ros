@@ -88,6 +88,16 @@ StepperMotorState::StepperMotorState(const StepperMotorState &state) :
 
     _calibration_state = state._calibration_state;
     _calibration_value = state._calibration_value;
+
+    _profile_v_start = state._profile_v_start;
+    _profile_a_1 = state._profile_a_1;
+    _profile_v_1 = state._profile_v_1;
+    _profile_a_max = state._profile_a_max;
+    _profile_v_max = state._profile_v_max;
+    _profile_d_max = state._profile_d_max;
+    _profile_d_1 = state._profile_d_1;
+    _profile_v_stop = state._profile_v_stop;
+
 }
 
 /**
@@ -198,8 +208,14 @@ std::string StepperMotorState::str() const
        << "hw fail counter: " << _hw_fail_counter << "\n"
        << "gear ratio: " << _gear_ratio << ", "
        << "max effort: " << _max_effort << ", "
-       << "micro steps: " << _micro_steps << "\n"
-       << "calibration state: " << StepperCalibrationStatusEnum(_calibration_state).toString() << ", "
+       << "micro steps: " << _micro_steps << "\n";
+
+    ss << "velocity profile : ";
+    for(auto const& d : getVelocityProfile())
+      ss << d << ",";
+    ss << "\n";
+
+    ss << "calibration state: " << StepperCalibrationStatusEnum(_calibration_state).toString() << ", "
        << "calibration value: " << _calibration_value;
     ss << "\n---\n";
     ss << "\n";
@@ -249,6 +265,87 @@ double StepperMotorState::to_rad_pos(int pos)
         double pos_rad = static_cast<double>((pos - _offset_position) * 0.088 * (M_PI / 180) * _direction);
         return pos_rad;
     }
+}
+
+/**
+ * @brief StepperMotorState::setMicroSteps
+ * @param micro_steps
+ */
+void StepperMotorState::setMicroSteps(double micro_steps)
+{
+    _micro_steps = micro_steps;
+}
+
+/**
+ * @brief StepperMotorState::setProfileVStart
+ * @param profile_v_start
+ */
+void StepperMotorState::setProfileVStart(const uint32_t &profile_v_start)
+{
+  _profile_v_start = profile_v_start;
+}
+
+/**
+ * @brief StepperMotorState::setProfileA1
+ * @param profile_a_1
+ */
+void StepperMotorState::setProfileA1(const uint32_t &profile_a_1)
+{
+  _profile_a_1 = profile_a_1;
+}
+
+/**
+ * @brief StepperMotorState::setProfileV1
+ * @param profile_v_1
+ */
+void StepperMotorState::setProfileV1(const uint32_t &profile_v_1)
+{
+  _profile_v_1 = profile_v_1;
+}
+
+/**
+ * @brief StepperMotorState::setProfileAMax
+ * @param profile_a_max
+ */
+void StepperMotorState::setProfileAMax(const uint32_t &profile_a_max)
+{
+  _profile_a_max = profile_a_max;
+}
+
+/**
+ * @brief StepperMotorState::setProfileVMax
+ * @param profile_v_max
+ */
+void StepperMotorState::setProfileVMax(const uint32_t &profile_v_max)
+{
+  _profile_v_max = profile_v_max;
+}
+
+/**
+ * @brief StepperMotorState::setProfileDMax
+ * @param profile_d_max
+ */
+void StepperMotorState::setProfileDMax(const uint32_t &profile_d_max)
+{
+  _profile_d_max = profile_d_max;
+}
+
+/**
+ * @brief StepperMotorState::setProfileD1
+ * @param profile_d_1
+ */
+void StepperMotorState::setProfileD1(const uint32_t &profile_d_1)
+{
+  _profile_d_1 = profile_d_1;
+}
+
+/**
+ * @brief StepperMotorState::setProfileVStop
+ * @param profile_v_stop
+ */
+void StepperMotorState::setProfileVStop(const uint32_t &profile_v_stop)
+{
+  _profile_v_stop = profile_v_stop;
 }
 
 }  // namespace model
