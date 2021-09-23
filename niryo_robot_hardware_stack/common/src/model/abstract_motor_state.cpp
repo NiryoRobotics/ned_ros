@@ -41,6 +41,7 @@ AbstractMotorState::AbstractMotorState() :
 /**
  * @brief AbstractMotorState::AbstractMotorState
  * @param type
+ * @param component_type
  * @param bus_proto
  * @param id
  */

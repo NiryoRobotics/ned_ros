@@ -1,5 +1,5 @@
 /*
-ttl_motor_driver.hpp
+abstract_ttl_driver.hpp
 Copyright (C) 2020 Niryo
 All rights reserved.
 This program is free software: you can redistribute it and/or modify
@@ -32,7 +32,7 @@ namespace ttl_driver
 {
 
 /**
- * @brief The XDriver class
+ * @brief The AbstractTtlDriver class
  */
 class AbstractTtlDriver
 {

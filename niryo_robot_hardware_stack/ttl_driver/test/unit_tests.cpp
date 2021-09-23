@@ -728,14 +728,13 @@ TEST_F(TtlManagerTestSuiteRobotWithoutCan, testSingleControlCmds)
 
 TEST_F(TtlManagerTestSuiteRobotWithoutCan, testSyncCmds)
 {
-  std::string hardware_version;
+  bool simulation_mode;
   ros::NodeHandle nh_private("~");
-  nh_private.getParam("hardware_version", hardware_version);
+  nh_private.getParam("simulation_mode", simulation_mode);
 
   common::model::EHardwareType dxl_type;
   
-  std::string substr = "fake";
-  if (hardware_version.find(substr) != std::string::npos)
+  if (simulation_mode)
   {
       dxl_type = common::model::EHardwareType::FAKE_DXL_MOTOR;
   }
@@ -771,15 +770,14 @@ TEST_F(TtlManagerTestSuiteRobotWithoutCan, testSyncCmds)
 
 TEST_F(TtlManagerTestSuiteRobotWithoutCan, testSyncControlCmds)
 {
-  std::string hardware_version;
+  bool simulation_mode{false};
   ros::NodeHandle nh_private("~");
-  nh_private.getParam("hardware_version", hardware_version);
+  nh_private.getParam("simulation_mode", simulation_mode);
 
   common::model::EHardwareType dxl_type;
   common::model::EHardwareType stepper_type;
   
-  std::string substr = "fake";
-  if (hardware_version.find(substr) != std::string::npos)
+  if (simulation_mode)
   {
       dxl_type = common::model::EHardwareType::FAKE_DXL_MOTOR;
       stepper_type = common::model::EHardwareType::FAKE_STEPPER_MOTOR;
@@ -866,10 +864,11 @@ int main(int argc, char **argv)
   testing::InitGoogleTest(&argc, argv);
   ros::init(argc, argv, "ttl_driver_unit_tests");
 
-  std::string hardware_version;
+  bool can_enabled;
+
   ros::NodeHandle nh_private("~");
-  nh_private.getParam("hardware_version", hardware_version);
-  if (hardware_version == "fake_ned" || hardware_version == "fake_ned2" || hardware_version == "ned2")
+  nh_private.getParam("can_enabled", can_enabled);
+  if (!can_enabled)
     testing::GTEST_FLAG(filter) = "-TtlManagerTestSuiteRobotWithCan.*:TtlInterfaceTestSuiteRobotWithCan.*";
   else
     testing::GTEST_FLAG(filter) = "-TtlManagerTestSuiteRobotWithoutCan.*:TtlInterfaceTestSuiteRotbotWithoutCan.*";

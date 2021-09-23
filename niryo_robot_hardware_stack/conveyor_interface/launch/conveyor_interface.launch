@@ -3,6 +3,7 @@
         xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
     
     <arg name="hardware_version" default="ned"/>
+    <arg name="simulation_mode" default="false"/>
 
     <!-- use can_driver config -->
     <include file="$(find can_driver)/launch/can_driver_base.launch.xml" if="$(eval hardware_version == 'one' or hardware_version == 'ned')">
@@ -11,11 +12,13 @@
 
     <include file="$(find ttl_driver)/launch/ttl_driver_base.launch.xml" unless="$(eval hardware_version == 'one' or hardware_version == 'ned')">
         <arg name="hardware_version" value="$(arg hardware_version)" />
+        <arg name="simulation_mode" value="$(arg simulation_mode)" />
     </include>
 
     <!-- use conveyor config -->
     <include file="$(find conveyor_interface)/launch/conveyor_interface_base.launch.xml" >
         <arg name="hardware_version" value="$(arg hardware_version)" />
+        <arg name="simulation_mode" value="$(arg simulation_mode)" />
     </include>
 
     <node pkg="conveyor_interface" type="conveyor_interface_node" name="conveyor_interface" output="screen" >

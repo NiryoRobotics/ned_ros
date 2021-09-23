@@ -34,6 +34,7 @@
 #include "common/model/stepper_motor_state.hpp"
 #include "common/model/conveyor_state.hpp"
 #include "common/model/end_effector_state.hpp"
+#include "common/model/stepper_calibration_status_enum.hpp"
 
 #include "dynamixel_sdk/packet_handler.h"
 #include "ros/serialization.h"
@@ -66,7 +67,7 @@ namespace ttl_driver
  * @brief TtlManager::TtlManager
  */
 TtlManager::TtlManager(ros::NodeHandle& nh) :
-    _debug_error_message("TtlManager - No connection with Dynamixel motors has been made yet")
+    _debug_error_message("TtlManager - No connection with TTL motors has been made yet")
 {
     ROS_DEBUG("TtlManager - ctor");
 
@@ -86,13 +87,14 @@ TtlManager::~TtlManager()
 
 /**
  * @brief TtlManager::init
+ * @param nh
  * @return
  */
 bool TtlManager::init(ros::NodeHandle& nh)
 {
     // get params from rosparams
     nh.getParam("bus_params/uart_device_name", _device_name);
-    nh.getParam("bus_params/baudrate", _uart_baudrate);
+    nh.getParam("bus_params/baudrate", _baudrate);
     nh.getParam("led_motor", _led_motor_type_cfg);
     nh.getParam("simu_gripper", _use_simu_gripper);
 
@@ -102,55 +104,114 @@ bool TtlManager::init(ros::NodeHandle& nh)
         _packetHandler.reset(dynamixel::PacketHandler::getPacketHandler(TTL_BUS_PROTOCOL_VERSION));
     }
 
-    ROS_DEBUG("TtlManager::init - Dxl : set port name (%s), baudrate(%d)", _device_name.c_str(), _uart_baudrate);
+    ROS_DEBUG("TtlManager::init - Dxl : set port name (%s), baudrate(%d)", _device_name.c_str(), _baudrate);
     ROS_DEBUG("TtlManager::init - led motor type config : %s", _led_motor_type_cfg.c_str());
 
-    return COMM_SUCCESS;
+    return true;
 }
 
 /**
- * @brief TtlManager::changeId
- * @param motor_type
- * @param old_id
- * @param new_id
+ * @brief TtlManager::setupCommunication
  * @return
  */
-int TtlManager::changeId(common::model::EHardwareType motor_type, uint8_t old_id, uint8_t new_id)
+int TtlManager::setupCommunication()
 {
-    if (old_id == new_id)
-        return COMM_SUCCESS;
-    auto driver = std::dynamic_pointer_cast<AbstractMotorDriver>(_driver_map.at(motor_type));
-    // update all maps
-    auto i_state  = _state_map.find(old_id);
-    // update all maps
-    if (i_state != _state_map.end())
+    int ret = COMM_NOT_AVAILABLE;
+
+    ROS_DEBUG("TtlManager::setupCommunication - initializing connection...");
+
+    // fake drivers will always succeed for the communication
+    if ("fake" == _device_name)
     {
-        // update all maps
-        std::swap(_state_map[new_id], i_state->second);
-        // update all maps
-        _state_map.erase(i_state);
+        ret = COMM_SUCCESS;
     }
-    if (_ids_map.count(motor_type))
+    else
     {
-        // update all maps
-        _ids_map.at(motor_type).erase(std::remove(_ids_map.at(motor_type).begin(), _ids_map.at(motor_type).end(), old_id),
-                                    _ids_map.at(motor_type).end());
+        // Ttl bus setup
+        if (_portHandler)
+        {
+            _debug_error_message.clear();
 
-        // update all maps
-        _ids_map.at(motor_type).push_back(new_id);
+            // setup half-duplex direction GPIO
+            // see schema http:// support.robotis.com/en/product/actuator/dynamixel_x/xl-series_main.htm
+            if (_portHandler->setupGpio())
+            {
+                // Open port
+                if (_portHandler->openPort())
+                {
+                    // Set baudrate
+                    if (_portHandler->setBaudRate(_baudrate))
+                    {
+                        // wait a bit to be sure the connection is established
+                        ros::Duration(0.1).sleep();
+                        ret = COMM_SUCCESS;
+                    }
+                    else
+                    {
+                        ROS_ERROR("TtlManager::setupCommunication - Failed to set baudrate for Dynamixel bus");
+                        _debug_error_message = "TtlManager - Failed to set baudrate for Dynamixel bus";
+                        ret = TTL_FAIL_PORT_SET_BAUDRATE;
+                    }
+                }
+                else
+                {
+                    ROS_ERROR("TtlManager::setupCommunication - Failed to open Uart port for Dynamixel bus");
+                    _debug_error_message = "TtlManager - Failed to open Uart port for Dynamixel bus";
+                    ret = TTL_FAIL_OPEN_PORT;
+                }
+            }
+            else
+            {
+                ROS_ERROR("TtlManager::setupCommunication - Failed to setup direction GPIO pin "
+                          "for Dynamixel half-duplex serial");
+                _debug_error_message = "TtlManager -  Failed to setup direction GPIO pin "
+                                       "for Dynamixel half-duplex serial";
+                ret = TTL_FAIL_SETUP_GPIO;
+            }
+        }
+        else
+            ROS_ERROR("TtlManager::setupCommunication - Invalid port handler");
     }
 
-    if (driver)
-      return driver->changeId(old_id, new_id);
+    return ret;
+}
 
-    return -1;
+
+/**
+ * @brief TtlManager::addHardwareComponent
+ * @param state
+ */
+void TtlManager::addHardwareComponent(const std::shared_ptr<common::model::AbstractHardwareState>& state)
+{
+    common::model::EHardwareType hardware_type = state->getHardwareType();
+    uint8_t id = state->getId();
+
+    ROS_DEBUG("TtlManager::addHardwareComponent : %s", state->str().c_str());
+
+    // if not already instanciated
+    if (!_state_map.count(id))
+    {
+        _state_map.insert(std::make_pair(id, state));
+    }
+
+    // if not already instanciated
+    if (!_ids_map.count(hardware_type))
+    {
+        _ids_map.insert(std::make_pair(hardware_type, std::vector<uint8_t>({id})));
+    }
+    else
+    {
+        _ids_map.at(hardware_type).push_back(id);
+    }
+
+    addHardwareDriver(hardware_type);
 }
 
 /**
- * @brief TtlManager::removeMotor
+ * @brief TtlManager::removeHardwareComponent
  * @param id
  */
-void TtlManager::removeMotor(uint8_t id)
+void TtlManager::removeHardwareComponent(uint8_t id)
 {
     ROS_DEBUG("TtlManager::removeMotor - Remove motor id: %d", id);
 
@@ -177,94 +238,58 @@ void TtlManager::removeMotor(uint8_t id)
                                              _removed_motor_id_list.end());
 }
 
-/**
- * @brief TtlManager::setupCommunication
- * @return
- */
-int TtlManager::setupCommunication()
-{
-    int ret = COMM_NOT_AVAILABLE;
-
-    ROS_DEBUG("TtlManager::setupCommunication - initializing connection...");
-
-    // fake drivers will always succeed for the communication
-    if (_device_name == "fake")
-        return COMM_SUCCESS;
-
-
-    // Dxl bus setup
-    if (_portHandler)
-    {
-        _debug_error_message.clear();
-
-        // setup half-duplex direction GPIO
-        // see schema http:// support.robotis.com/en/product/actuator/dynamixel_x/xl-series_main.htm
-        if (!_portHandler->setupGpio())
-        {
-            ROS_ERROR("TtlManager::setupCommunication - Failed to setup direction GPIO pin "
-                      "for Dynamixel half-duplex serial");
-            _debug_error_message = "TtlManager -  Failed to setup direction GPIO pin "
-                                   "for Dynamixel half-duplex serial";
-            return TTL_FAIL_SETUP_GPIO;
-        }
-
-        // Open port
-        if (!_portHandler->openPort())
-        {
-            ROS_ERROR("TtlManager::setupCommunication - Failed to open Uart port for Dynamixel bus");
-            _debug_error_message = "TtlManager - Failed to open Uart port for Dynamixel bus";
-            return TTL_FAIL_OPEN_PORT;
-        }
-
-        // Set baudrate
-        if (!_portHandler->setBaudRate(_uart_baudrate))
-        {
-            ROS_ERROR("TtlManager::setupCommunication - Failed to set baudrate for Dynamixel bus");
-            _debug_error_message = "TtlManager - Failed to set baudrate for Dynamixel bus";
-            return TTL_FAIL_PORT_SET_BAUDRATE;
-        }
-
-        // wait a bit to be sure the connection is established
-        ros::Duration(0.1).sleep();
-        ret = COMM_SUCCESS;
-    }
-    else
-        ROS_ERROR("TtlManager::setupCommunication - Invalid port handler");
-
-    return ret;
-}
-
 // ****************
 //  commands
 // ****************
 
 /**
- * @brief TtlManager::addHardwareComponent
- * @param state
+ * @brief TtlManager::changeId
+ * @param motor_type
+ * @param old_id
+ * @param new_id
+ * @return
  */
-void TtlManager::addHardwareComponent(const std::shared_ptr<common::model::AbstractHardwareState> state)
+int TtlManager::changeId(common::model::EHardwareType motor_type, uint8_t old_id, uint8_t new_id)
 {
-    common::model::EHardwareType hardware_type = state->getHardwareType();
-    uint8_t id = state->getId();
+    int ret = COMM_TX_FAIL;
 
-    ROS_DEBUG("TtlManager::addHardwareComponent : %s", state->str().c_str());
-    // if not already instanciated
-    if (!_state_map.count(id))
+    if (old_id != new_id)
     {
-        _state_map.insert(std::make_pair(id, state));
-    }
-
-    // if not already instanciated
-    if (!_ids_map.count(hardware_type))
-    {
-        _ids_map.insert(std::make_pair(hardware_type, std::vector<uint8_t>({id})));
+        ret = COMM_SUCCESS;
     }
     else
     {
-        _ids_map.at(hardware_type).push_back(id);
+        auto driver = std::dynamic_pointer_cast<AbstractMotorDriver>(_driver_map.at(motor_type));
+
+        if (driver)
+        {
+            ret = driver->changeId(old_id, new_id);
+            if (COMM_SUCCESS == ret)
+            {
+                // update all maps
+                auto i_state  = _state_map.find(old_id);
+                // update all maps
+                if (i_state != _state_map.end())
+                {
+                    // update all maps
+                    std::swap(_state_map[new_id], i_state->second);
+                    // update all maps
+                    _state_map.erase(i_state);
+                }
+                if (_ids_map.count(motor_type))
+                {
+                    // update all maps
+                    _ids_map.at(motor_type).erase(std::remove(_ids_map.at(motor_type).begin(), _ids_map.at(motor_type).end(), old_id),
+                                                _ids_map.at(motor_type).end());
+
+                    // update all maps
+                    _ids_map.at(motor_type).push_back(new_id);
+                }
+            }
+        }
     }
 
-    addHardwareDriver(hardware_type);
+    return ret;
 }
 
 /**
@@ -293,7 +318,7 @@ int TtlManager::scanAndCheck()
         if (_removed_motor_id_list.empty())
         {
             _is_connection_ok = true;
-            _debug_error_message = "";
+            _debug_error_message.clear();
             result = TTL_SCAN_OK;
         }
         else
@@ -420,7 +445,7 @@ int TtlManager::rebootMotor(uint8_t motor_id)
  * @param motor_state
  * @return
  */
-uint32_t TtlManager::getPosition(JointState &motor_state)
+uint32_t TtlManager::getPosition(const JointState &motor_state)
 {
     uint32_t position = 0;
     EHardwareType hardware_type = motor_state.getHardwareType();
@@ -878,81 +903,6 @@ int TtlManager::getAllIdsOnBus(vector<uint8_t> &id_list)
     return result;
 }
 
-/**
- * @brief TtlManager::startCalibration
- */
-void TtlManager::startCalibration()
-{
-    ROS_DEBUG("TtlManager::startCalibration: starting...");
-
-    for (auto const& s : _state_map)
-    {
-        if (s.second && EHardwareType::STEPPER == s.second->getHardwareType() && !std::dynamic_pointer_cast<StepperMotorState>(s.second)->isConveyor())
-            std::dynamic_pointer_cast<StepperMotorState>(s.second)->setCalibration(EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS, 0);
-    }
-
-    _calibration_status = EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS;
-}
-
-/**
- * @brief TtlManager::resetCalibration
- */
-void TtlManager::resetCalibration()
-{
-    ROS_DEBUG("TtlManager::resetCalibration: reseting...");
-
-    _calibration_status = EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED;
-}
-
-/**
- * @brief TtlManager::isCalibrationInProgress
- * @return
- */
-bool TtlManager::isCalibrationInProgress() const {
-    return common::model::EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS == _calibration_status;
-}
-
-/**
- * @brief TtlManager::getCalibrationResult
- * @param motor_id
- * @return
- */
-int32_t TtlManager::getCalibrationResult(uint8_t motor_id) const
-{
-    if (!_state_map.count(motor_id) && _state_map.at(motor_id))
-        throw std::out_of_range("TtlManager::getMotorsState: Unknown motor id");
-
-    return std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(motor_id))->getCalibrationValue();
-}
-
-/**
- * @brief TtlManager::getCalibrationStatus
- * @return
- */
-common::model::EStepperCalibrationStatus TtlManager::getCalibrationStatus() const
-{
-    return _calibration_status;
-}
-
-/**
- * @brief TtlManager::updateCurrentCalibrationStatus
- */
-void TtlManager::updateCurrentCalibrationStatus()
-{
-    EStepperCalibrationStatus newStatus = EStepperCalibrationStatus::CALIBRATION_OK;
-    for (auto const& s : _state_map)
-    {
-        if (s.second && (s.second->getHardwareType() == EHardwareType::STEPPER
-                         || s.second->getHardwareType() == EHardwareType::FAKE_STEPPER_MOTOR))
-        {
-            EStepperCalibrationStatus status = std::dynamic_pointer_cast<StepperMotorState>(s.second)->getCalibrationState();
-            if (newStatus < status)
-                newStatus = status;
-        }
-    }
-    _calibration_status = newStatus;
-}
-
 // ******************
 //  Write operations
 // ******************
@@ -1084,137 +1034,6 @@ int TtlManager::readCustomCommand(EHardwareType motor_type, uint8_t id,
     return result;
 }
 
-// ********************
-//  Private
-// ********************
-
-/**
- * @brief TtlManager::checkRemovedMotors
- */
-void TtlManager::checkRemovedMotors()
-{
-    // get list of ids
-    std::vector<uint8_t> motor_list;
-    for (auto const& istate : _state_map)
-    {
-        auto it = find(_all_motor_connected.begin(), _all_motor_connected.end(), istate.first);
-        if (it == _all_motor_connected.end())
-            motor_list.emplace_back(istate.first);
-    }
-    _removed_motor_id_list = motor_list;
-}
-
-/**
- * @brief TtlManager::addHardwareDriver
- * @param hardware_type
- */
-void TtlManager::addHardwareDriver(common::model::EHardwareType hardware_type)
-{
-  // if not already instanciated
-  if (!_driver_map.count(hardware_type))
-  {
-      switch (hardware_type)
-      {
-          case common::model::EHardwareType::STEPPER:
-              _driver_map.insert(std::make_pair(hardware_type, std::make_shared<StepperDriver<> >(_portHandler, _packetHandler)));
-          break;
-          case common::model::EHardwareType::XL430:
-              _driver_map.insert(std::make_pair(hardware_type, std::make_shared<DxlDriver<XL430Reg> >(_portHandler, _packetHandler)));
-          break;
-          case common::model::EHardwareType::XC430:
-              _driver_map.insert(std::make_pair(hardware_type, std::make_shared<DxlDriver<XC430Reg> >(_portHandler, _packetHandler)));
-          break;
-          case common::model::EHardwareType::XL320:
-              _driver_map.insert(make_pair(hardware_type, std::make_shared<DxlDriver<XL320Reg> >(_portHandler, _packetHandler)));
-          break;
-          case common::model::EHardwareType::XL330:
-              _driver_map.insert(std::make_pair(hardware_type, std::make_shared<DxlDriver<XL330Reg> >(_portHandler, _packetHandler)));
-          break;
-          case common::model::EHardwareType::FAKE_DXL_MOTOR:
-              _driver_map.insert(std::make_pair(hardware_type, std::make_shared<MockDxlDriver>(_portHandler, _packetHandler)));
-          break;
-          case common::model::EHardwareType::FAKE_STEPPER_MOTOR:
-              _driver_map.insert(std::make_pair(hardware_type, std::make_shared<MockStepperDriver>(_portHandler, _packetHandler)));
-          break;
-          case common::model::EHardwareType::END_EFFECTOR:
-              _driver_map.insert(std::make_pair(hardware_type, std::make_shared<EndEffectorDriver<> >(_portHandler, _packetHandler)));
-          break;
-          default:
-              ROS_ERROR("TtlManager - Unable to instanciate driver, unknown type");
-          break;
-      }
-  }
-}
-
-/**
- * @brief TtlManager::getMotorsStates
- * @return only the joints states
- */
-std::vector<std::shared_ptr<JointState> >
-TtlManager::getMotorsStates() const
-{
-    std::vector<std::shared_ptr<JointState> > states;
-    for (auto it : _state_map)
-    {
-      if (EHardwareType::UNKNOWN != it.second->getHardwareType()
-          && EHardwareType::END_EFFECTOR != it.second->getHardwareType())
-      {
-          states.push_back(std::dynamic_pointer_cast<JointState>(it.second));
-      }
-    }
-
-    return states;
-}
-
-/**
- * @brief TtlManager::getHardwareState
- * @param motor_id
- * @return
- */
-std::shared_ptr<common::model::AbstractHardwareState> TtlManager::getHardwareState(uint8_t motor_id) const
-{
-    if (!_state_map.count(motor_id) && _state_map.at(motor_id))
-        throw std::out_of_range("TtlManager::getMotorsState: Unknown motor id");
-
-    return _state_map.at(motor_id);
-}
-
-/**
- * @brief TtlManager::executeJointTrajectoryCmd
- * @param cmd_vec
- */
-void TtlManager::executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, uint32_t> > cmd_vec)
-{
-    for (auto const& it : _driver_map)
-    {
-        // build list of ids and params for this motor
-        std::vector<uint8_t> ids;
-        std::vector<uint32_t> params;
-        for (auto const& cmd : cmd_vec)
-        {
-            if (_state_map.count(cmd.first) && it.first == _state_map.at(cmd.first)->getHardwareType())
-            {
-                ids.emplace_back(cmd.first);
-                params.emplace_back(cmd.second);
-            }
-        }
-
-        // syncwrite for this driver. The driver is responsible for sync write only to its associated motors
-        auto driver = std::dynamic_pointer_cast<AbstractMotorDriver>(it.second);
-
-        if (driver)
-        {
-            int err = driver->syncWritePositionGoal(ids, params);
-            if (err != COMM_SUCCESS)
-            {
-                ROS_WARN("TtlManager::executeJointTrajectoryCmd - Failed to write position");
-                _debug_error_message = "TtlManager - Failed to write position";
-            }
-        }
-        // ros::Duration(0.01).sleep();
-    }
-}
-
 /**
  * @brief TtlManager::writeSynchronizeCommand
  * @param cmd
@@ -1331,6 +1150,222 @@ int TtlManager::writeSingleCommand(const std::shared_ptr<common::model::Abstract
     }
 
     return result;
+}
+
+/**
+ * @brief TtlManager::executeJointTrajectoryCmd
+ * @param cmd_vec
+ */
+void TtlManager::executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, uint32_t> > cmd_vec)
+{
+    for (auto const& it : _driver_map)
+    {
+        // build list of ids and params for this motor
+        std::vector<uint8_t> ids;
+        std::vector<uint32_t> params;
+        for (auto const& cmd : cmd_vec)
+        {
+            if (_state_map.count(cmd.first) && it.first == _state_map.at(cmd.first)->getHardwareType())
+            {
+                ids.emplace_back(cmd.first);
+                params.emplace_back(cmd.second);
+            }
+        }
+
+        // syncwrite for this driver. The driver is responsible for sync write only to its associated motors
+        auto driver = std::dynamic_pointer_cast<AbstractMotorDriver>(it.second);
+
+        if (driver)
+        {
+            int err = driver->syncWritePositionGoal(ids, params);
+            if (err != COMM_SUCCESS)
+            {
+                ROS_WARN("TtlManager::executeJointTrajectoryCmd - Failed to write position");
+                _debug_error_message = "TtlManager - Failed to write position";
+            }
+        }
+        // ros::Duration(0.01).sleep();
+    }
+}
+
+// ******************
+//  Calibration
+// ******************
+
+/**
+ * @brief TtlManager::startCalibration
+ */
+void TtlManager::startCalibration()
+{
+    ROS_DEBUG("TtlManager::startCalibration: starting...");
+
+    for (auto const& s : _state_map)
+    {
+        if (s.second && EHardwareType::STEPPER == s.second->getHardwareType() && !std::dynamic_pointer_cast<StepperMotorState>(s.second)->isConveyor())
+            std::dynamic_pointer_cast<StepperMotorState>(s.second)->setCalibration(EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS, 0);
+    }
+
+    _calibration_status = EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS;
+}
+
+/**
+ * @brief TtlManager::resetCalibration
+ */
+void TtlManager::resetCalibration()
+{
+    ROS_DEBUG("TtlManager::resetCalibration: reseting...");
+
+    _calibration_status = EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED;
+}
+
+/**
+ * @brief TtlManager::getCalibrationResult
+ * @param motor_id
+ * @return
+ */
+int32_t TtlManager::getCalibrationResult(uint8_t motor_id) const
+{
+    if (!_state_map.count(motor_id) && _state_map.at(motor_id))
+        throw std::out_of_range("TtlManager::getMotorsState: Unknown motor id");
+
+    return std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(motor_id))->getCalibrationValue();
+}
+
+/**
+ * @brief TtlManager::updateCurrentCalibrationStatus
+ */
+void TtlManager::updateCurrentCalibrationStatus()
+{
+    EStepperCalibrationStatus newStatus = EStepperCalibrationStatus::CALIBRATION_OK;
+    // update current state of the calibrationtimeout_motors
+    // rule is : if a status in a motor is worse than one previously found, we take it
+    // we are not taking "uninitialized" into account as it means a calibration as not been started for this motor
+    for (auto const& s : _state_map)
+    {
+        if (s.second && (s.second->getHardwareType() == EHardwareType::STEPPER
+                         || s.second->getHardwareType() == EHardwareType::FAKE_STEPPER_MOTOR))
+        {
+            EStepperCalibrationStatus status = std::dynamic_pointer_cast<StepperMotorState>(s.second)->getCalibrationState();
+            if (newStatus < status)
+                newStatus = status;
+        }
+    }
+    _calibration_status = newStatus;
+}
+
+// ******************
+//  Getters
+// ******************
+
+/**
+ * @brief TtlManager::getBusState
+ * @param connection_state
+ * @param motor_id
+ * @param debug_msg
+ */
+void TtlManager::getBusState(bool &connection_state,
+                             std::vector<uint8_t> &motor_id,
+                             std::string &debug_msg) const
+{
+  debug_msg = _debug_error_message;
+  motor_id = _all_motor_connected;
+  connection_state = isConnectionOk();
+}
+
+/**
+ * @brief TtlManager::getMotorsStates
+ * @return only the joints states
+ */
+std::vector<std::shared_ptr<JointState> >
+TtlManager::getMotorsStates() const
+{
+    std::vector<std::shared_ptr<JointState> > states;
+    for (auto it : _state_map)
+    {
+        if (EHardwareType::UNKNOWN != it.second->getHardwareType()
+            && EHardwareType::END_EFFECTOR != it.second->getHardwareType())
+        {
+            states.push_back(std::dynamic_pointer_cast<JointState>(it.second));
+        }
+    }
+
+    return states;
+}
+
+/**
+ * @brief TtlManager::getHardwareState
+ * @param motor_id
+ * @return
+ */
+std::shared_ptr<common::model::AbstractHardwareState>
+TtlManager::getHardwareState(uint8_t motor_id) const
+{
+    if (!_state_map.count(motor_id) && _state_map.at(motor_id))
+        throw std::out_of_range("TtlManager::getMotorsState: Unknown motor id");
+
+    return _state_map.at(motor_id);
+}
+
+// ********************
+//  Private
+// ********************
+
+/**
+ * @brief TtlManager::addHardwareDriver
+ * @param hardware_type
+ */
+void TtlManager::addHardwareDriver(common::model::EHardwareType hardware_type)
+{
+  // if not already instanciated
+  if (!_driver_map.count(hardware_type))
+  {
+      switch (hardware_type)
+      {
+          case common::model::EHardwareType::STEPPER:
+              _driver_map.insert(std::make_pair(hardware_type, std::make_shared<StepperDriver<> >(_portHandler, _packetHandler)));
+          break;
+          case common::model::EHardwareType::XL430:
+              _driver_map.insert(std::make_pair(hardware_type, std::make_shared<DxlDriver<XL430Reg> >(_portHandler, _packetHandler)));
+          break;
+          case common::model::EHardwareType::XC430:
+              _driver_map.insert(std::make_pair(hardware_type, std::make_shared<DxlDriver<XC430Reg> >(_portHandler, _packetHandler)));
+          break;
+          case common::model::EHardwareType::XL320:
+              _driver_map.insert(make_pair(hardware_type, std::make_shared<DxlDriver<XL320Reg> >(_portHandler, _packetHandler)));
+          break;
+          case common::model::EHardwareType::XL330:
+              _driver_map.insert(std::make_pair(hardware_type, std::make_shared<DxlDriver<XL330Reg> >(_portHandler, _packetHandler)));
+          break;
+          case common::model::EHardwareType::FAKE_DXL_MOTOR:
+              _driver_map.insert(std::make_pair(hardware_type, std::make_shared<MockDxlDriver>(_portHandler, _packetHandler)));
+          break;
+          case common::model::EHardwareType::FAKE_STEPPER_MOTOR:
+              _driver_map.insert(std::make_pair(hardware_type, std::make_shared<MockStepperDriver>(_portHandler, _packetHandler)));
+          break;
+          case common::model::EHardwareType::END_EFFECTOR:
+              _driver_map.insert(std::make_pair(hardware_type, std::make_shared<EndEffectorDriver<> >(_portHandler, _packetHandler)));
+          break;
+          default:
+              ROS_ERROR("TtlManager - Unable to instanciate driver, unknown type");
+          break;
+      }
+  }
+}
+
+/**
+ * @brief TtlManager::checkRemovedMotors
+ */
+void TtlManager::checkRemovedMotors()
+{
+    // get list of ids
+    std::vector<uint8_t> motor_list;
+    for (auto const& istate : _state_map)
+    {
+        auto it = find(_all_motor_connected.begin(), _all_motor_connected.end(), istate.first);
+        if (it == _all_motor_connected.end())
+            motor_list.emplace_back(istate.first);
+    }
+    _removed_motor_id_list = motor_list;
 }
 
 }  // namespace ttl_driver

@@ -329,11 +329,11 @@ int main(int argc, char **argv)
 
     testing::InitGoogleTest(&argc, argv);
     
-    std::string hardware_version;
+    bool simulation_mode;
     ros::NodeHandle nh_private("~");
-    nh_private.getParam("hardware_version", hardware_version);
+    nh_private.getParam("simulation_mode", simulation_mode);
 
-    if (hardware_version == "fake_ned" || hardware_version == "fake_ned2" || hardware_version == "ned2")
+    if (simulation_mode)
         testing::GTEST_FLAG(filter) = "-TESTSuite.*";
     else
         testing::GTEST_FLAG(filter) = "-TESTSuiteFakeDriver.*";

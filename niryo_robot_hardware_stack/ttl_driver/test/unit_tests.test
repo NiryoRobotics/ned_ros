@@ -14,6 +14,7 @@
     
     <test test-name="ttl_driver_unit_tests" pkg="ttl_driver" type="ttl_driver_unit_tests" time-limit="1000.0">
         <param name="hardware_version" value="$(arg hardware_version)" />
+        <param name="simulation_mode" value="false" />
     </test>
 
 </launch>

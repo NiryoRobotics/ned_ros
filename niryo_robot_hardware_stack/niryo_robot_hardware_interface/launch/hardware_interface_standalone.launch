@@ -9,6 +9,7 @@
     <arg name="can_enabled" default="true"/>
     <arg name="ttl_enabled" default="true"/>
     <arg name="hardware_version" default="ned"/>
+    <arg name="simulation_mode" default="false"/>
     <arg name="debug" default="false"/>
     <arg name="image_version" default="" />
 
@@ -35,10 +36,11 @@
 
     <!--use base config -->
     <include file="$(find niryo_robot_hardware_interface)/launch/niryo_robot_hardware_interface_base.launch.xml" >
+        <arg name="hardware_version" value="$(arg hardware_version)" />
+        <arg name="simulation_mode" value="$(arg simulation_mode)"/>
+        <arg name="simu_gripper" value="$(arg simu_gripper)"/>
         <arg name="can_enabled" value="$(arg can_enabled)" />
         <arg name="ttl_enabled" value="$(arg ttl_enabled)" />
-        <arg name="hardware_version" value="$(arg hardware_version)" />
-        <arg name="simu_gripper" value="$(arg simu_gripper)"/>
         <arg name="image_version" value="$(arg image_version)"/>
     </include>
 

@@ -5,18 +5,18 @@ button:
   gpio: 4
 
 fans:
-  - pin: 11
+  - pin: 27
     temperature_on_threshold: 45
     temperature_off_threshold: 40
-  - pin: 12
+  - pin: 23
     temperature_on_threshold: 50
     temperature_off_threshold: 45
 
 led:
-  b_pin: 8
-  r_pin: 9
-  g_pin: 10
-
+  b_pin: 18
+  r_pin: 24
+  g_pin: 22
+  
 wifi:
   button_pin: 5
 
