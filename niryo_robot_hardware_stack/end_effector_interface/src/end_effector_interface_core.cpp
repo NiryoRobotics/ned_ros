@@ -23,6 +23,7 @@
 #include <vector>
 
 // ros
+#include "common/model/hardware_type_enum.hpp"
 #include "niryo_robot_msgs/SetBool.h"
 
 // niryo
@@ -105,8 +106,12 @@ void EndEffectorInterfaceCore::initParameters(ros::NodeHandle& nh)
     ROS_DEBUG("EndEffectorInterfaceCore::initParameters - end effector id : %d", _id);
     ROS_DEBUG("EndEffectorInterfaceCore::initParameters - end effector status frequency : %f", _check_end_effector_status_frequency);
 
+    std::string hw_type;
+    nh.getParam("hardware_type", hw_type);
+    auto ee_type = common::model::HardwareTypeEnum(hw_type.c_str());
+    
     //  initiliaze end effector state
-    _end_effector_state = std::make_shared<EndEffectorState>(_id);
+    _end_effector_state = std::make_shared<EndEffectorState>(_id, ee_type);
 
     uint8_t button_id = 1;
     while (nh.hasParam("button_"  + std::to_string(button_id) + "/type"))

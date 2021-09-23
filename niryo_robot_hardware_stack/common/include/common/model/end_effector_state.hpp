@@ -23,6 +23,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "abstract_hardware_state.hpp"
 
 #include <array>
+#include <cstdint>
 #include <stdint.h>
 #include <string>
 #include <cassert>
@@ -120,6 +121,7 @@ class EndEffectorState : public AbstractHardwareState
     public:
         EndEffectorState();
         EndEffectorState(uint8_t id);
+        EndEffectorState(uint8_t id, common::model::EHardwareType type);
         EndEffectorState(const EndEffectorState& state);
 
         virtual ~EndEffectorState() override;

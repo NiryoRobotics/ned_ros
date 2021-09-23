@@ -17,7 +17,10 @@
     along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 #include "common/model/end_effector_state.hpp"
+#include "common/model/abstract_hardware_state.hpp"
 #include "common/model/action_type_enum.hpp"
+#include "common/model/bus_protocol_enum.hpp"
+#include "common/model/component_type_enum.hpp"
 #include <sstream>
 #include <string>
 
@@ -42,6 +45,16 @@ EndEffectorState::EndEffectorState(uint8_t id) :
   AbstractHardwareState(EHardwareType::END_EFFECTOR,
                         EComponentType::END_EFFECTOR,
                         EBusProtocol::TTL, id)
+{
+}
+
+/**
+ * @brief EndEffectorState::EndEffectorState
+ */
+EndEffectorState::EndEffectorState(uint8_t id, common::model::EHardwareType type) :
+    AbstractHardwareState(type,
+                          EComponentType::END_EFFECTOR,
+                          EBusProtocol::TTL, id)
 {
 }
 

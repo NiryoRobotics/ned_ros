@@ -59,6 +59,7 @@ HardwareTypeEnum::initialize()
     m[EHardwareType::FAKE_DXL_MOTOR]     = "fakeDxl";
     m[EHardwareType::FAKE_STEPPER_MOTOR] = "fakeStepper";
     m[EHardwareType::END_EFFECTOR]       = "end_effector";
+    m[EHardwareType::FAKE_END_EFFECTOR]  = "fake_end_effector";
     m[EHardwareType::UNKNOWN]            = "unknown";
 
     return m;

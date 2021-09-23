@@ -45,6 +45,7 @@
 #include "ttl_driver/stepper_driver.hpp"
 #include "ttl_driver/mock_stepper_driver.hpp"
 #include "ttl_driver/end_effector_driver.hpp"
+#include "ttl_driver/mock_end_effector_driver.hpp"
 
 using ::std::shared_ptr;
 using ::std::vector;
@@ -1138,6 +1139,9 @@ void TtlManager::addHardwareDriver(common::model::EHardwareType hardware_type)
           break;
           case common::model::EHardwareType::END_EFFECTOR:
               _driver_map.insert(std::make_pair(hardware_type, std::make_shared<EndEffectorDriver<> >(_portHandler, _packetHandler)));
+          break;
+          case common::model::EHardwareType::FAKE_END_EFFECTOR:
+              _driver_map.insert(std::make_pair(hardware_type, std::make_shared<MockEndEffectorDriver>(_portHandler, _packetHandler)));
           break;
           default:
               ROS_ERROR("TtlManager - Unable to instanciate driver, unknown type");
