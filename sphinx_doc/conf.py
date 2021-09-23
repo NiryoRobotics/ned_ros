@@ -1,4 +1,5 @@
 import sys
+from sphinx.builders.html import StandaloneHTMLBuilder
 
 import os
 
@@ -16,9 +17,9 @@ copyright = shared_conf.copyright
 author = shared_conf.author
 
 # The short X.Y version
-version = u'v3.1'
+version = u'v3.2'
 # The full version, including alpha/beta/rc tags
-release = u'v3.1.2'
+release = u'v3.2.0'
 
 # -- General configuration ---------------------------------------------------
 
@@ -30,6 +31,14 @@ extensions = [
     'sphinx.ext.githubpages',
     'sphinx.ext.extlinks',
     'sphinx.ext.todo',
+    'sphinx_togglebutton'
+]
+
+StandaloneHTMLBuilder.supported_image_types = [
+    'image/svg+xml',
+    'image/gif',
+    'image/png',
+    'image/jpeg'
 ]
 
 # Avoid autosection label to trigger warning on low level titles
@@ -44,6 +53,9 @@ todo_emit_warnings = True
 # Documentation infos
 source_suffix = '.rst'
 master_doc = 'index'
+
+# Toggle button text
+togglebutton_hint = ""
 
 for arg in sys.argv:
     if not arg.startswith("language="):
@@ -114,6 +126,7 @@ extlinks = {
     'moveit_msgs': ('http://docs.ros.org/' + ros_distro + '/api/moveit_msgs/html/msg/%s.html', 'moveit_msgs/'),
     'sensor_msgs': ('http://docs.ros.org/' + ros_distro + '/api/sensor_msgs/html/msg/%s.html', 'sensor_msgs/'),
     'std_msgs': ('http://docs.ros.org/' + ros_distro + '/api/std_msgs/html/msg/%s.html', 'std_msgs/'),
+    'std_srvs': ('http://docs.ros.org/' + ros_distro + '/api/std_srvs/html/srv/%s.html', 'std_srvs/'),
     'wiki_ros': ('http://wiki.ros.org/%s', ''),
     'niryo_studio_simulation': (
         'https://docs.niryo.com/product/ned/source/software/niryo_studio.html#connecting-simulation-to-niryo-studio/%s',

@@ -37,7 +37,7 @@ First of all, we indicate to the shell that we are running a Python Script: ::
 
     #!/usr/bin/env python
 
-Then, We import the API package to be able to access functions: ::
+Then, we import the API package to be able to access functions: ::
 
     from niryo_robot_python_ros_wrapper import *
 

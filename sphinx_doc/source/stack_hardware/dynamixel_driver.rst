@@ -22,25 +22,25 @@ Parameters - Dynamixel Driver
    *  -  Name
       -  Description
    *  -  ``dxl_hardware_control_loop_frequency``
-      -  | control loop frequency.
+      -  | Controls loop frequency.
          | Default: '100.0'
    *  -  ``dxl_hardware_write_frequency``
-      -  | Write frequency.
+      -  | Writes frequency.
          | Default: '50.0'
    *  -  ``dxl_hardware_read_data_frequency``
-      -  | Read frequency.
+      -  | Reads frequency.
          | Default: '15.0'
    *  -  ``dxl_hardware_read_status_frequency``
-      -  | Read dynamixels status frequency.
+      -  | Reads dynamixels status frequency.
          | Default: '0.5'
    *  -  ``dxl_hardware_check_connection_frequency``
-      -  | Check dynamixels connection frequency.
+      -  | Checks dynamixels connection frequency.
          | Default: '2.0'
    *  -  ``dxl_motor_id_list``
-      -  | list of dynamixels ID
+      -  | List of dynamixels ID
          | Default: '[2,3,6]'
    *  -  ``dxl_motor_type_list``
-      -  | list of dynamixels type
+      -  | List of dynamixels type
          | Default: '["xl430","xl430","xl320"]'
 
 Services - Dynamixel Driver
@@ -57,10 +57,10 @@ Services - Dynamixel Driver
       -  Description
    *  -  ``niryo_robot/dynamixel_driver/set_dxl_leds``
       -  :ref:`source/ros/niryo_robot_msgs:SetInt`
-      -  Control dynamixel LED
+      -  Controls dynamixel LED
    *  -  ``niryo_robot/dynamixel_driver/send_custom_dxl_value``
       -  :ref:`dynamixel_driver/SendCustomDxlValue<source/stack_hardware/dynamixel_driver:SendCustomDxlValue (Service)>`
-      -  Send a custom dynamixel command
+      -  Sends a custom dynamixel command
 
 Dependencies - Dynamixel Driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

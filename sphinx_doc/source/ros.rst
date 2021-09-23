@@ -25,7 +25,7 @@ In this section, you will have access to all information about each Niryo Robot'
    :caption: ROS Documentation Sections
 
    ros/niryo_robot_bringup
-   ros/niryo_robot_commander
+   ros/niryo_robot_arm_commander
    ros/niryo_robot_description
    ros/niryo_robot_gazebo
    ros/niryo_robot_msgs
@@ -33,7 +33,7 @@ In this section, you will have access to all information about each Niryo Robot'
    ros/niryo_robot_poses_handlers
    ros/niryo_robot_programs_manager
    ros/niryo_robot_rpi
-   ros/niryo_robot_tools
+   ros/niryo_robot_tools_commander
    ros/niryo_robot_unit_tests
    ros/niryo_robot_user_interface
    ros/niryo_robot_vision

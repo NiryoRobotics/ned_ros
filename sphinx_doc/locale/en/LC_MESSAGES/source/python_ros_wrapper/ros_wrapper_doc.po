@@ -6,12 +6,11 @@
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
-#, fuzzy
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-12 08:22+0000\n"
+"POT-Creation-Date: 2021-09-13 17:20+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -86,7 +85,9 @@ msgstr ""
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.detect_object
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.digital_read
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.digital_write
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.enable_tcp
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_from_poses
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_from_poses_and_joints
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_saved
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.forward_kinematics
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_camera_intrinsics
@@ -124,15 +125,20 @@ msgstr ""
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.pull_air_vacuum_pump
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.push_air_vacuum_pump
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.release_with_tool
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.reset_tcp
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_pose
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_trajectory
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_workspace_from_points
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_workspace_from_poses
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_arm_max_velocity
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_brightness
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_contrast
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_conveyor
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_jog_use_state
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_learning_mode
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_pin_mode
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_saturation
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_tcp
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.setup_electromagnet
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.shift_linear_pose
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.shift_pose
@@ -152,7 +158,9 @@ msgstr ""
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.delete_trajectory:5
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.delete_workspace:5
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.digital_write:7
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.enable_tcp:8
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_from_poses:7
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_from_poses_and_joints:10
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_saved:5
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.grasp_with_tool:9
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.jog_joints_shift:5
@@ -169,14 +177,19 @@ msgstr ""
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.pull_air_vacuum_pump:3
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.push_air_vacuum_pump:3
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.release_with_tool:9
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.reset_tcp:4
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_pose:17
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_trajectory:7
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_workspace_from_points:7
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_workspace_from_poses:8
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_arm_max_velocity:5
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_brightness:7
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_contrast:6
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_jog_use_state:5
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_learning_mode:5
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_pin_mode:7
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_saturation:7
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_tcp:16
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.setup_electromagnet:5
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.shift_linear_pose:7
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.shift_pose:7
@@ -197,7 +210,9 @@ msgstr ""
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.detect_object
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.digital_read
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.digital_write
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.enable_tcp
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_from_poses
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_from_poses_and_joints
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_saved
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.forward_kinematics
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_camera_intrinsics
@@ -235,15 +250,20 @@ msgstr ""
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.pull_air_vacuum_pump
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.push_air_vacuum_pump
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.release_with_tool
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.reset_tcp
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_pose
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_trajectory
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_workspace_from_points
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_workspace_from_poses
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_arm_max_velocity
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_brightness
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_contrast
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_conveyor
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_jog_use_state
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_learning_mode
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_pin_mode
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_saturation
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_tcp
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.setup_electromagnet
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.shift_linear_pose
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.shift_pose
@@ -282,7 +302,9 @@ msgstr ""
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.detect_object
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.digital_read
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.digital_write
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.enable_tcp
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_from_poses
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_from_poses_and_joints
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_saved
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.forward_kinematics
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_pose_saved
@@ -310,9 +332,13 @@ msgstr ""
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_workspace_from_points
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_workspace_from_poses
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_arm_max_velocity
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_brightness
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_contrast
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_jog_use_state
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_learning_mode
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_pin_mode
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_saturation
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_tcp
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.setup_electromagnet
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.shift_linear_pose
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.shift_pose
@@ -425,7 +451,6 @@ msgid "Make a Jog on joints position"
 msgstr ""
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.jog_joints_shift:3
-#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.jog_pose_shift:3
 #: of
 msgid "list corresponding to the shift to be applied to each joint"
 msgstr ""
@@ -433,6 +458,11 @@ msgstr ""
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.jog_pose_shift:1
 #: of
 msgid "Make a Jog on end-effector position"
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.jog_pose_shift:3
+#: of
+msgid "list corresponding to the shift to be applied to the position"
 msgstr ""
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.forward_kinematics:1
@@ -519,6 +549,7 @@ msgid ""
 msgstr ""
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_from_poses:5
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_from_poses_and_joints:8
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.pick_and_place:8
 #: of
 msgid "Distance from waypoints before smoothing trajectory"
@@ -546,9 +577,7 @@ msgstr ""
 msgid "If trajectory file doesn't exist"
 msgstr ""
 
-#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_from_poses:3
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_trajectory_saved:7
-#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_trajectory:5
 #: of
 msgid "list of [x, y, z, qx, qy, qz, qw]"
 msgstr ""
@@ -561,6 +590,32 @@ msgstr ""
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_from_poses:1
 #: of
 msgid "Execute trajectory from a list of pose"
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_from_poses:3
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_trajectory:5
+#: of
+msgid "list of [x, y, z, qx, qy, qz, qw] or list of [x, y, z, roll, pitch, yaw]"
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_from_poses_and_joints:1
+#: of
+msgid "Execute trajectory from list of poses and joints"
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_from_poses_and_joints:3
+#: of
+msgid ""
+"List of [x,y,z,qx,qy,qz,qw] or list of [x,y,z,roll,pitch,yaw] or a list "
+"of [j1,j2,j3,j4,j5,j6]"
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.execute_trajectory_from_poses_and_joints:5
+#: of
+msgid ""
+"List of string 'pose' or 'joint', or ['pose'] (if poses only) or "
+"['joint'] (if joints only). If None, it is assumed there are only poses "
+"in the list."
 msgstr ""
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_trajectory:1
@@ -608,7 +663,7 @@ msgid "Tool Id"
 msgstr ""
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.update_tool:1 of
-msgid "Call service niryo_robot_tools/update_tool to update tool"
+msgid "Call service niryo_robot_tools_commander/update_tool to update tool"
 msgstr ""
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.grasp_with_tool:1
@@ -675,7 +730,31 @@ msgstr ""
 msgid "Deactivate electromagnet associated to electromagnet_id on pin_id"
 msgstr ""
 
-#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:80
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.enable_tcp:1 of
+msgid ""
+"Enables or disables the TCP function (Tool Center Point). If activation "
+"is requested, the last recorded TCP value will be applied. The default "
+"value depends on the gripper equipped. If deactivation is requested, the "
+"TCP will be coincident with the tool_link."
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.enable_tcp:6 of
+msgid "True to enable, False otherwise."
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_tcp:1 of
+msgid ""
+"Activates the TCP function (Tool Center Point) and defines the "
+"transformation between the tool_link frame and the TCP frame."
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.reset_tcp:1 of
+msgid ""
+"Reset the TCP (Tool Center Point) transformation. The TCP will be reset "
+"according to the tool equipped."
+msgstr ""
+
+#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:81
 msgid "Hardware"
 msgstr ""
 
@@ -718,7 +797,7 @@ msgstr ""
 msgid "Infos contains in a DigitalIOState object (see niryo_robot_msgs)"
 msgstr ""
 
-#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:88
+#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:89
 msgid "Conveyor Belt"
 msgstr ""
 
@@ -767,7 +846,7 @@ msgstr ""
 msgid "Target direction"
 msgstr ""
 
-#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:95
+#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:96
 msgid "Vision"
 msgstr ""
 
@@ -779,6 +858,43 @@ msgstr ""
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_compressed_image:3
 #: of
 msgid "string containing a JPEG compressed image"
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_brightness:1
+#: of
+msgid "Modify image brightness"
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_brightness:3
+#: of
+msgid ""
+"How much to adjust the brightness. 0.5 will give a darkened image, 1 will"
+" give the original image while 2 will enhance the brightness by a factor "
+"of 2."
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_contrast:1 of
+msgid "Modify image contrast"
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_contrast:3 of
+msgid ""
+"While a factor of 1 gives original image. Making the factor towards 0 "
+"makes the image greyer, while factor>1 increases the contrast of the "
+"image."
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_saturation:1
+#: of
+msgid "Modify image saturation"
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.set_saturation:3
+#: of
+msgid ""
+"How much to adjust the saturation. 0 will give a black and white image, 1"
+" will give the original image while 2 will enhance the saturation by a "
+"factor of 2."
 msgstr ""
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_target_pose_from_rel:1
@@ -883,13 +999,10 @@ msgid ""
 "with the calibration Tip. Corners should be in the good order"
 msgstr ""
 
-#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.delete_workspace:3
-#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_workspace_poses:3
-#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_workspace_ratio:3
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_workspace_from_points:3
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_workspace_from_poses:4
 #: of
-msgid "workspace name"
+msgid "workspace name, max 30 char."
 msgstr ""
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.save_workspace_from_poses:6
@@ -910,6 +1023,13 @@ msgstr ""
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.delete_workspace:1
 #: of
 msgid "Call workspace manager to delete a certain workspace"
+msgstr ""
+
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.delete_workspace:3
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_workspace_poses:3
+#: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_workspace_ratio:3
+#: of
+msgid "workspace name"
 msgstr ""
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper.NiryoRosWrapper.get_workspace_poses:1
@@ -942,12 +1062,12 @@ msgstr ""
 msgid "list of workspaces name"
 msgstr ""
 
-#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:106
+#: ../../source/python_ros_wrapper/ros_wrapper_doc.rst:108
 msgid "Enums"
 msgstr ""
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper_enums.ToolID:1 of
-msgid "Tools IDs (need to match tools ids in niryo_robot_tools package)"
+msgid "Tools IDs (need to match tools ids in niryo_robot_tools_commander package)"
 msgstr ""
 
 #: niryo_robot_python_ros_wrapper.ros_wrapper_enums.PinMode:1 of
@@ -1451,5 +1571,11 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "Pins ID"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Reset the TCP (Tool Center Point) "
+#~ "transformation. The PCO will be reset"
+#~ " according to the tool equipped."
 #~ msgstr ""
 

@@ -6,12 +6,13 @@
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
-#, fuzzy
+
+
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-12 16:23+0000\n"
+"POT-Creation-Date: 2021-09-13 09:16+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -61,7 +62,7 @@ msgid "``read_rpi_diagnostics_frequency``"
 msgstr ""
 
 #: ../../source/stack_hardware/cpu_interface.rst
-msgid "Publish rate for CPU temperature"
+msgid "Publishes rate for CPU temperature"
 msgstr ""
 
 #: ../../source/stack_hardware/cpu_interface.rst
@@ -120,5 +121,8 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "Niryo robot CPU interface package"
+#~ msgstr ""
+
+#~ msgid "Publish rate for CPU temperature"
 #~ msgstr ""
 

@@ -6,12 +6,13 @@
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
-#, fuzzy
+
+
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-13 09:48+0000\n"
+"POT-Creation-Date: 2021-09-13 09:16+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -45,9 +46,11 @@ msgstr ""
 "l'exécution des programmes."
 
 #: ../../source/ros/niryo_robot_programs_manager.rst:14
+
+
 msgid ""
-"Call are not available from the Python ROS Wrapper, as it made to run its"
-" programs with the Python ROS Wrapper."
+"Calls are not available from the Python ROS Wrapper, as it made to run "
+"its programs with the Python ROS Wrapper."
 msgstr ""
 "Les appels ne sont pas disponibles à partir du Python ROS Wrapper, car il"
 " a été conçu pour exécuter ses programmes avec le Python ROS Wrapper."
@@ -113,7 +116,9 @@ msgid ""
 msgstr ""
 
 #: ../../source/ros/niryo_robot_programs_manager.rst:48
-msgid "Execute a program"
+
+
+msgid "Executes a program"
 msgstr "Exécuter un programme"
 
 #: ../../source/ros/niryo_robot_programs_manager.rst:49
@@ -126,7 +131,9 @@ msgid ":ref:`source/ros/niryo_robot_msgs:Trigger`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_programs_manager.rst:51
-msgid "Execute autorun program"
+
+
+msgid "Executes autorun program"
 msgstr "Exécuter le programme d'exécution automatique"
 
 #: ../../source/ros/niryo_robot_programs_manager.rst:52
@@ -140,7 +147,9 @@ msgid ""
 msgstr ""
 
 #: ../../source/ros/niryo_robot_programs_manager.rst:54
-msgid "Retrieve saved program"
+
+
+msgid "Retrieves saved program"
 msgstr "Récupérer le programme enregistré"
 
 #: ../../source/ros/niryo_robot_programs_manager.rst:55
@@ -154,8 +163,10 @@ msgid ""
 msgstr ""
 
 #: ../../source/ros/niryo_robot_programs_manager.rst:57
-msgid "Get autorun settings"
-msgstr "Obtenir les paramètres d'exécution automatique"
+
+
+msgid "Gets autorun settings"
+msgstr "Définir les paramètres d'exécution automatique"
 
 #: ../../source/ros/niryo_robot_programs_manager.rst:58
 msgid "``get_program_list``"
@@ -168,7 +179,9 @@ msgid ""
 msgstr ""
 
 #: ../../source/ros/niryo_robot_programs_manager.rst:60
-msgid "Get saved programs' name"
+
+
+msgid "Gets saved programs' name"
 msgstr "Obtenir le nom des programmes enregistrés"
 
 #: ../../source/ros/niryo_robot_programs_manager.rst:61
@@ -182,7 +195,9 @@ msgid ""
 msgstr ""
 
 #: ../../source/ros/niryo_robot_programs_manager.rst:63
-msgid "Save and Delete programs"
+
+
+msgid "Saves and Deletes programs"
 msgstr "Enregistrer et supprimer des programmes"
 
 #: ../../source/ros/niryo_robot_programs_manager.rst:64
@@ -196,7 +211,9 @@ msgid ""
 msgstr ""
 
 #: ../../source/ros/niryo_robot_programs_manager.rst:66
-msgid "Set autorun settings"
+
+
+msgid "Sets autorun settings"
 msgstr "Définir les paramètres d'exécution automatique"
 
 #: ../../source/ros/niryo_robot_programs_manager.rst:67
@@ -204,7 +221,9 @@ msgid "``stop_program``"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_programs_manager.rst:69
-msgid "Stop the current running program"
+
+
+msgid "Stops the current running program"
 msgstr "Arrêter le programme en cours d’exécution"
 
 #: ../../source/ros/niryo_robot_programs_manager.rst:72
@@ -220,58 +239,54 @@ msgid "Dependencies - Programs manager"
 msgstr "Dépendances - Programs manager"
 
 #: ../../source/ros/niryo_robot_programs_manager.rst:78
-msgid ":doc:`niryo_robot_commander`"
-msgstr ""
-
-#: ../../source/ros/niryo_robot_programs_manager.rst:79
 msgid ":doc:`niryo_robot_msgs`"
 msgstr ""
 
-#: ../../source/ros/niryo_robot_programs_manager.rst:80
-msgid "`python-yaml <https://pyyaml.org/wiki/PyYAMLDocumentation/>`_"
+#: ../../source/ros/niryo_robot_programs_manager.rst:79
+msgid "`python-yaml <https://pyyaml.org/wiki/PyYAMLDocumentation>`_"
 msgstr ""
 
-#: ../../source/ros/niryo_robot_programs_manager.rst:81
+#: ../../source/ros/niryo_robot_programs_manager.rst:80
 msgid ":msgs_index:`std_msgs`"
 msgstr ""
 
-#: ../../source/ros/niryo_robot_programs_manager.rst:85
+#: ../../source/ros/niryo_robot_programs_manager.rst:84
 msgid "Services & messages files - Programs manager"
 msgstr "Fichiers services et messages -  Programs manager"
 
-#: ../../source/ros/niryo_robot_programs_manager.rst:88
+#: ../../source/ros/niryo_robot_programs_manager.rst:87
 msgid "ExecuteProgram (Service)"
 msgstr ""
 
-#: ../../source/ros/niryo_robot_programs_manager.rst:95
+#: ../../source/ros/niryo_robot_programs_manager.rst:94
 msgid "GetProgram (Service)"
 msgstr ""
 
-#: ../../source/ros/niryo_robot_programs_manager.rst:102
+#: ../../source/ros/niryo_robot_programs_manager.rst:101
 msgid "GetProgramAutorunInfos (Service)"
 msgstr ""
 
-#: ../../source/ros/niryo_robot_programs_manager.rst:109
+#: ../../source/ros/niryo_robot_programs_manager.rst:108
 msgid "GetProgramList (Service)"
 msgstr ""
 
-#: ../../source/ros/niryo_robot_programs_manager.rst:116
+#: ../../source/ros/niryo_robot_programs_manager.rst:115
 msgid "ManageProgram (Service)"
 msgstr ""
 
-#: ../../source/ros/niryo_robot_programs_manager.rst:123
+#: ../../source/ros/niryo_robot_programs_manager.rst:122
 msgid "SetProgramAutorun (Service)"
 msgstr ""
 
-#: ../../source/ros/niryo_robot_programs_manager.rst:130
+#: ../../source/ros/niryo_robot_programs_manager.rst:129
 msgid "ProgramLanguage (Message)"
 msgstr ""
 
-#: ../../source/ros/niryo_robot_programs_manager.rst:137
+#: ../../source/ros/niryo_robot_programs_manager.rst:136
 msgid "ProgramLanguageList (Message)"
 msgstr ""
 
-#: ../../source/ros/niryo_robot_programs_manager.rst:144
+#: ../../source/ros/niryo_robot_programs_manager.rst:143
 msgid "ProgramList (Message)"
 msgstr ""
 
@@ -326,7 +341,10 @@ msgstr ""
 #~ msgid "Services & Messages files - Programs Manager"
 #~ msgstr "Fichiers services et messages - Programs manager"
 
-#~ msgid ":ref:`ExecuteProgram<ExecuteProgram (Service)>`"
+#~ msgid ":ref:`niryo_robot_arm_commander <Niryo Robot Commander Package>`"
+#~ msgstr ""
+
+#~ msgid "`python-yaml <https://pyyaml.org/wiki/PyYAMLDocumentation/>`_"
 #~ msgstr ""
 
 #~ msgid ":ref:`Trigger`"
@@ -372,4 +390,10 @@ msgstr ""
 
 #~ msgid ":doc:`ros/niryo_robot_msgs`"
 #~ msgstr ""
+
+#~ msgid ":doc:`niryo_robot_commander`"
+#~ msgstr ""
+
+#~ msgid "Get autorun settings"
+#~ msgstr "Obtenir les paramètres d'exécution automatique"
 

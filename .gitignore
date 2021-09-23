@@ -26,3 +26,5 @@ _build/
 *.mo
 docs_build/
 docker/
+_singlehtml/
+generated_pdfs/

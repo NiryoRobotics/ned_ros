@@ -1,7 +1,9 @@
 # Can be changed, choices are: amd64 or arm64
 ARCHITECTURE=amd64
+VERSION=v3.2.0
 
-DOCKER_IMAGE_NAME=registry.gitlab.com/niryo/niryo-one-s/ned_ros_stack
+DOCKER_IMAGE_NAME=registry.gitlab.com/niryo/niryo-one-s/ned_ros_stack/${VERSION}
+
 ## Tag to push image on gitlab
 DOCKER_TAG=${ARCHITECTURE}
 

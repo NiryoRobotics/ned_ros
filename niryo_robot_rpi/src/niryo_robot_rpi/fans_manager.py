@@ -44,10 +44,10 @@ class FansManager:
 
     @staticmethod
     def set_fans(activate, gpio):
-        if activate:
-            GPIO.output(gpio, GPIO.HIGH)
-        else:
-            GPIO.output(gpio, GPIO.LOW)
+        try:
+            GPIO.output(gpio, GPIO.HIGH if activate else GPIO.LOW)
+        except RuntimeError:
+            pass
 
     def callback_hardware_status(self, msg):
         for fan in self._fans_list:

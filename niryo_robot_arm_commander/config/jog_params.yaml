@@ -1,0 +1,14 @@
+jog_enable_publish_rate: 1.0
+
+jog_timer_rate_sec: 0.15
+
+jog_limits:
+  translation: 0.05 # Not more than 5 cm
+  rotation: 0.5 # Not more that 0.5 radians
+  joints: 0.2 # Not more than 0.2 radians
+
+time_without_jog_limit: 2.0
+time_without_jog_TCP_limit: 0.5
+check_disable_jog_rate: 1.0
+
+error_tolerance_joint: [0.2, 0.2, 0.2, 0.2, 0.2, 0.2]

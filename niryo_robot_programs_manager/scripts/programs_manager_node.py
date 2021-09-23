@@ -399,8 +399,8 @@ class ProgramManagerNode:
     def __stop_robot_action():
         # Stop current move command
         try:
-            rospy.wait_for_service('/niryo_robot_commander/stop_command', 1)
-            stop_cmd = rospy.ServiceProxy('/niryo_robot_commander/stop_command', Trigger)
+            rospy.wait_for_service('/niryo_robot_arm_commander/stop_command', 1)
+            stop_cmd = rospy.ServiceProxy('/niryo_robot_arm_commander/stop_command', Trigger)
             stop_cmd()
         except (rospy.ServiceException, rospy.ROSException):
             pass

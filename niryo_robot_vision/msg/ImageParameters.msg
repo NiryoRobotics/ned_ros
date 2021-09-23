@@ -1,0 +1,3 @@
+float64 brightness_factor
+float64 contrast_factor
+float64 saturation_factor

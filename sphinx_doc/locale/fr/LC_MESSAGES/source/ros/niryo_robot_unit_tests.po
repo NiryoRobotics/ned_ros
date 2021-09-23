@@ -6,12 +6,13 @@
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
-#, fuzzy
+
+
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-13 09:50+0000\n"
+"POT-Creation-Date: 2021-09-13 09:16+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,7 +26,9 @@ msgid "Niryo_robot_unit_tests"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_unit_tests.rst:3
-msgid "This packages provides config and launch files to start Ned unit tests."
+
+
+msgid "This package provides config and launches files to start Ned unit tests."
 msgstr ""
 "Ce paquet fournit des fichiers de configuration et de lancement pour "
 "démarrer les tests unitaires Ned."

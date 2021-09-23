@@ -11,7 +11,7 @@ Programs manager node
 The ROS Node is made of several services to deal with the storage and running of
 programs.
 
-Call are not available from the Python ROS Wrapper, as it made to run its programs
+Calls are not available from the Python ROS Wrapper, as it made to run its programs
 with the Python ROS Wrapper.
 
 The namespace used is: |namespace_emphasize|
@@ -45,28 +45,28 @@ Services - Programs manager
       -  Description
    *  -  ``execute_program``
       -  :ref:`ExecuteProgram<source/ros/niryo_robot_programs_manager:ExecuteProgram (Service)>`
-      -  Execute a program
+      -  Executes a program
    *  -  ``execute_program_autorun``
       -  :ref:`source/ros/niryo_robot_msgs:Trigger`
-      -  Execute autorun program
+      -  Executes autorun program
    *  -  ``get_program``
       -  :ref:`GetProgram<source/ros/niryo_robot_programs_manager:GetProgram (Service)>`
-      -  Retrieve saved program
+      -  Retrieves saved program
    *  -  ``get_program_autorun_infos``
       -  :ref:`GetProgramAutorunInfos<source/ros/niryo_robot_programs_manager:GetProgramAutorunInfos (Service)>`
-      -  Get autorun settings
+      -  Gets autorun settings
    *  -  ``get_program_list``
       -  :ref:`GetProgramList<source/ros/niryo_robot_programs_manager:GetProgramList (Service)>`
-      -  Get saved programs' name
+      -  Gets saved programs' name
    *  -  ``manage_program``
       -  :ref:`ManageProgram<source/ros/niryo_robot_programs_manager:ManageProgram (Service)>`
-      -  Save and Delete programs
+      -  Saves and Deletes programs
    *  -  ``set_program_autorun``
       -  :ref:`SetProgramAutorun<source/ros/niryo_robot_programs_manager:SetProgramAutorun (Service)>`
-      -  Set autorun settings
+      -  Sets autorun settings
    *  -  ``stop_program``
       -  :ref:`source/ros/niryo_robot_msgs:Trigger`
-      -  Stop the current running program
+      -  Stops the current running program
 
 
 All these services are available as soon as the node is started
@@ -75,9 +75,8 @@ whereas on standalone mode or not.
 Dependencies - Programs manager
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-- :doc:`niryo_robot_commander`
 - :doc:`niryo_robot_msgs`
-- `python-yaml <https://pyyaml.org/wiki/PyYAMLDocumentation/>`_
+- `python-yaml <https://pyyaml.org/wiki/PyYAMLDocumentation>`_
 - :msgs_index:`std_msgs`
 
 
