@@ -509,33 +509,25 @@ int CanInterfaceCore::setConveyor(const std::shared_ptr<common::model::ConveyorS
 
     _default_conveyor_id = state->getDefaultId();
 
+    // add stepper as a new conveyor
+    _can_manager->addHardwareComponent(state);
+
     // try to find motor id 6 (default motor id for conveyor
     if (_can_manager->ping(state->getDefaultId()))
     {
-        if (CAN_OK == changeId(state->getHardwareType(), state->getDefaultId(), state->getId()))
-        {
-            // add stepper as a new conveyor
-            _can_manager->addHardwareComponent(state);
+        // send commands to init
+        ROS_DEBUG("ConveyorInterfaceCore::addConveyor : Initializing for CAN bus");
 
-            // send commands to init
-            ROS_DEBUG("ConveyorInterfaceCore::addConveyor : Initializing for CAN bus");
+        _can_manager->writeSingleCommand(std::make_shared<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_MICRO_STEPS,
+                                                                                state->getId(), std::initializer_list<int32_t>{state->getMicroSteps()}));
 
-            _can_manager->writeSingleCommand(std::make_shared<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_MICRO_STEPS,
-                                                                                    state->getId(), std::initializer_list<int32_t>{state->getMicroSteps()}));
+        _can_manager->writeSingleCommand(std::make_shared<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_MAX_EFFORT,
+                                                                                state->getId(), std::initializer_list<int32_t>{state->getMaxEffort()}));
 
-            _can_manager->writeSingleCommand(std::make_shared<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_MAX_EFFORT,
-                                                                                    state->getId(), std::initializer_list<int32_t>{state->getMaxEffort()}));
-
-            _can_manager->writeSingleCommand(std::make_shared<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_CONVEYOR,
-                                                                                    state->getId(), std::initializer_list<int32_t>{false, 0, -1}));
-
-            result = niryo_robot_msgs::CommandStatus::SUCCESS;
-        }
-        else
-        {
-            ROS_ERROR("CanInterfaceCore::setConveyor : unable to change conveyor ID");
-            result = niryo_robot_msgs::CommandStatus::CAN_WRITE_ERROR;
-        }
+        _can_manager->writeSingleCommand(std::make_shared<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_CONVEYOR,
+                                                                                state->getId(), std::initializer_list<int32_t>{false, 0, -1}));
+        
+        result = niryo_robot_msgs::CommandStatus::SUCCESS;
     }
     else
     {
