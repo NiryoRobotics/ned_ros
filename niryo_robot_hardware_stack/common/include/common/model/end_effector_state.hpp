@@ -88,13 +88,20 @@ class EndEffectorState : public AbstractHardwareState
                 // need a delay to avoid state hand hold called when other states come
                 void setDelay()
                 {
-                    _time_last_read_state = ros::Time::now().toSec(); 
+                    _time_last_read_state = ros::Time::now().toSec();
+                    _need_delay = true;
                 }
 
                 // check if hand hold state came is needed to skip
                 bool isNeedToSkip()
                 {
-                    return (ros::Time::now().toSec() - _time_last_read_state) >= _time_avoid_duplicate_state;
+                    if (_need_delay && (ros::Time::now().toSec() - _time_last_read_state) <= _time_avoid_duplicate_state)
+                        return true;
+                    else
+                    {
+                      _need_delay = false;
+                      return false;
+                    }
                 }
             public:
                 EButtonType type{EButtonType::UNKNOWN};
@@ -103,6 +110,7 @@ class EndEffectorState : public AbstractHardwareState
             private:
                 static constexpr double _time_avoid_duplicate_state = 0.5;
                 double _time_last_read_state;
+                bool _need_delay{false};
         };
     
     public:
