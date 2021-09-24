@@ -108,6 +108,7 @@ class TrajectoriesExecutor:
 
     def __callback_current_feedback(self, msg):
         self.__current_feedback = msg
+        self.__collision_detected = False
         for error, tolerance in zip(self.__current_feedback.feedback.error.positions, self.__error_tolerance):
             if abs(error) > tolerance:
                 self.__collision_detected = True
@@ -368,8 +369,8 @@ class TrajectoriesExecutor:
             markers_array = rospy.wait_for_message(topic_display, MarkerArray).markers
         else:
             markers_array = []
-        marker_pub = rospy.Publisher(topic_display, MarkerArray,
-                                     queue_size=10)
+
+        marker_pub = rospy.Publisher(topic_display, MarkerArray, queue_size=10, latch=True)
 
         cardboard_marker = Marker()
         cardboard_marker.header.frame_id = "world"

@@ -81,6 +81,8 @@ Dependencies - tools interface
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 - :msgs_index:`std_srvs`
+- :msgs_index:`std_msgs`
+- :msgs_index:`std_srvs`
 - :doc:`ttl_driver <Niryo Robot TTL Driver Package>`
 
 Services & messages files - tools interface

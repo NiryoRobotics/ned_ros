@@ -55,8 +55,6 @@ class PoseHandlerNode:
 
         # Workspaces
         ws_dir = rospy.get_param("~workspace_dir")
-        tool_config_dict = rospy.get_param("niryo_robot_tools_commander/tool_list", dict())
-        grip_dir = rospy.get_param("~grip_dir")
 
         self.__ws_manager = WorkspaceManager(ws_dir)
         rospy.Service('~manage_workspace', ManageWorkspace,
@@ -75,10 +73,12 @@ class PoseHandlerNode:
                     self.create_workspace_from_points(ws_name, "", [Point(*point) for point in ws_poses])
 
         # Grips
+        tool_config_dict = rospy.get_param("niryo_robot_tools_commander/tool_list", dict())
         self.__tool_id_gripname_dict = {tool["id"]: "default_" + tool["name"].replace(" ", "_")
                                         for tool in tool_config_dict}
         self.__tool_id_gripname_dict[-1] = "default_Calibration_Tip"
 
+        grip_dir = rospy.get_param("~grip_dir")
         self.__grip_manager = GripManager(grip_dir, self.__tool_id_gripname_dict.values())
         rospy.Service('~get_target_pose', GetTargetPose,
                       self.__callback_target_pose)

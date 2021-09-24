@@ -76,7 +76,7 @@ msgstr "Valide les paramètres."
 #: ../../source/ros/niryo_robot_arm_commander.rst:18
 msgid "Calls required controllers and returns appropriate status and message."
 msgstr ""
-"Appelle les contrôleurs requis et renvoie le st/controller_spawneratut et le message "
+"Appelle les contrôleurs requis et renvoie le statut et le message "
 "appropriés."
 
 #: ../../source/ros/niryo_robot_arm_commander.rst:20

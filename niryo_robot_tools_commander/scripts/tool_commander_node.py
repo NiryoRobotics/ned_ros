@@ -42,7 +42,6 @@ class ToolsState:
     def __str__(self):
         return str(self.__class__) + ": " + str(self.__dict__)
 
-
 class ToolCommander:
     def __init__(self):
         self.__tools_state = ToolsState(rospy.get_param("~state_dict"))
@@ -75,6 +74,16 @@ class ToolCommander:
             self.__tool_simu = moveit_commander.MoveGroupCommander(move_group_tool_commander_name)
             # Set pose reference frame
             self.__tool_simu.set_pose_reference_frame(reference_frame)
+
+        # if gripper simulated, setup variables to control it through moveit
+        self.__is_gripper_simulated = rospy.get_param("~simu_gripper")
+
+        if self.__is_gripper_simulated:
+            # Get Tool MoveGroupCommander
+            self.__tool_simu = moveit_commander.MoveGroupCommander(rospy.get_param("~move_group_tool_commander_name"))
+            # Set pose reference frame
+            self.__tool_simu.set_pose_reference_frame(rospy.get_param("~reference_frame"))
+            
 
         # Subscriber
         rospy.Subscriber('/niryo_robot_hardware/tools/current_id', Int32,
@@ -125,13 +134,14 @@ class ToolCommander:
             self.__action_server.set_aborted(self.create_action_result(CommandStatus.TOOL_FAILURE, "No tool selected"))
             return
 
-        # 1. Check tool id
-        if cmd.tool_id != self.__current_tool.get_id():
-            msg = "Tools ID do not match -> Given : {} Expected : {}".format(cmd.tool_id,
-                                                                             self.__current_tool.get_id())
-            rospy.logwarn("Tool Commander - {}".format(msg))
-            self.__action_server.set_aborted(self.create_action_result(CommandStatus.TOOL_FAILURE, msg))
-            return
+        if not self.__is_gripper_simulated:
+            # 1. Check tool id
+            if cmd.tool_id != self.__current_tool.get_id():
+                msg = "Tools ID do not match -> Given : {} Expected : {}".format(cmd.tool_id,
+                                                                                 self.__current_tool.get_id())
+                rospy.logwarn("Tool Commander - {}".format(msg))
+                self.__action_server.set_aborted(self.create_action_result(CommandStatus.TOOL_FAILURE, msg))
+                return
 
         # 2. Check if current tool is active
         if self.__current_tool.is_active():
@@ -253,7 +263,7 @@ class ToolCommander:
                 except KeyError:
                     rospy.logwarn("Tool Commander - Unknown command : {}".format(cmd))
                     continue
-
+                
             new_tool.set_available_commands(tool_command_list)
 
             dict_tools[tool_id] = new_tool

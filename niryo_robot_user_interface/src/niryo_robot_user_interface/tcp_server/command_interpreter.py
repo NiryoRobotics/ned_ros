@@ -575,6 +575,29 @@ class CommandInterpreter:
         self.__niryo_robot.tool_reboot()
         return self.__send_answer()
 
+    # TCP
+    @check_nb_args(1)
+    def __enable_tcp(self, enable):
+        boolean_enable = self.__check_and_get_from_dict(enable, self.__boolean_string_dict_converter)
+        self.__niryo_robot.enable_tcp(boolean_enable)
+        return self.__send_answer()
+
+    @check_nb_args(6)
+    def __set_tcp(self, *param_list):
+        parameters_value_array = self.__map_list(param_list, float)
+        self.__niryo_robot.set_tcp(*parameters_value_array)
+        return self.__send_answer()
+
+    @check_nb_args(0)
+    def __reset_tcp(self):
+        self.__niryo_robot.reset_tcp()
+        return self.__send_answer()
+
+    @check_nb_args(0)
+    def __tool_reboot(self):
+        self.__niryo_robot.tool_reboot()
+        return self.__send_answer()
+
     # - Hardware
 
     @check_nb_args(2)

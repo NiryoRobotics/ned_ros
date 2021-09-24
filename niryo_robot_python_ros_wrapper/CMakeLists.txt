@@ -33,6 +33,11 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
+catkin_install_python(
+    PROGRAMS src/${PROJECT_NAME}/ros_wrapper.py
+    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+)
+
 #############
 ##   Doc   ##
 #############

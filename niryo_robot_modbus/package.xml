@@ -27,8 +27,6 @@
   <!-- Python Dependencies -->
   <exec_depend>python-pymodbus</exec_depend>
 
-  <export>
-  </export>
   <test_depend>python-catkin-lint</test_depend>
   <test_depend>roslint</test_depend>
 </package>

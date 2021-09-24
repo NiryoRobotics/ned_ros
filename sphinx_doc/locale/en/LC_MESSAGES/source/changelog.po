@@ -1,0 +1,160 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2021, Niryo All rights reserved. No part of this document
+# may be reproduced or transmitted in any form or by any means without prior
+# written consent of Niryo SAS
+# This file is distributed under the same license as the Ned ROS
+# Documentation package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Ned ROS Documentation v3.2\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-09-22 14:07+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.9.1\n"
+
+#: ../../source/changelog.rst:2
+msgid "September release - New features batch"
+msgstr ""
+
+#: ../../source/changelog.rst:5
+msgid "Features"
+msgstr ""
+
+#: ../../source/changelog.rst:8
+msgid "Tool commander package"
+msgstr ""
+
+#: ../../source/changelog.rst:10
+msgid "TCP service settings"
+msgstr ""
+
+#: ../../source/changelog.rst:12
+msgid "TCP.msg"
+msgstr ""
+
+#: ../../source/changelog.rst:14
+msgid "SetTCP.srv"
+msgstr ""
+
+#: ../../source/changelog.rst:18
+msgid "Arm commander package"
+msgstr ""
+
+#: ../../source/changelog.rst:20
+msgid "New movements available in ArmMoveCommand.msg"
+msgstr ""
+
+#: ../../source/changelog.rst:22 ../../source/changelog.rst:36
+msgid "linear pose"
+msgstr ""
+
+#: ../../source/changelog.rst:24 ../../source/changelog.rst:42
+msgid "shift linear pose"
+msgstr ""
+
+#: ../../source/changelog.rst:26
+msgid "trajectory"
+msgstr ""
+
+#: ../../source/changelog.rst:30
+msgid "Python ROS Wrapper package"
+msgstr ""
+
+#: ../../source/changelog.rst:32
+msgid "New movement functions available"
+msgstr ""
+
+#: ../../source/changelog.rst:34
+msgid "move linear pose"
+msgstr ""
+
+#: ../../source/changelog.rst:38
+msgid "jog pose shift"
+msgstr ""
+
+#: ../../source/changelog.rst:40
+msgid "jog joints shift"
+msgstr ""
+
+#: ../../source/changelog.rst:44
+msgid "execute trajectory from pose"
+msgstr ""
+
+#: ../../source/changelog.rst:46
+msgid "New TCP functions available"
+msgstr ""
+
+#: ../../source/changelog.rst:48
+msgid "set_tcp"
+msgstr ""
+
+#: ../../source/changelog.rst:50
+msgid "enable_tcp"
+msgstr ""
+
+#: ../../source/changelog.rst:52
+msgid "reset_tcp"
+msgstr ""
+
+#: ../../source/changelog.rst:54
+msgid "New camera settings functions available"
+msgstr ""
+
+#: ../../source/changelog.rst:56
+msgid "set_brightness"
+msgstr ""
+
+#: ../../source/changelog.rst:58
+msgid "set_contrast"
+msgstr ""
+
+#: ../../source/changelog.rst:60
+msgid "set_saturation"
+msgstr ""
+
+#: ../../source/changelog.rst:63
+msgid "Improvements"
+msgstr ""
+
+#: ../../source/changelog.rst:65
+msgid "Refactoring Tool Commander and Robot Commander packages."
+msgstr ""
+
+#: ../../source/changelog.rst:67
+msgid "Remove Robot Commander package"
+msgstr ""
+
+#: ../../source/changelog.rst:69
+msgid ""
+"Reorder Robot Commander package between Tool Commander and Arm Commander "
+"packages."
+msgstr ""
+
+#: ../../source/changelog.rst:71
+msgid "Self collision detection"
+msgstr ""
+
+#: ../../source/changelog.rst:73
+msgid "Add self-collision detection via MoveIt."
+msgstr ""
+
+#: ../../source/changelog.rst:75
+msgid "Collision detection"
+msgstr ""
+
+#: ../../source/changelog.rst:77
+msgid "Collision detection improvement on each joints."
+msgstr ""
+
+#: ../../source/changelog.rst:79
+msgid "Learning mode activation in case of a collision."
+msgstr ""
+

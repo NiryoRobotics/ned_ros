@@ -13,10 +13,8 @@ __all__ = [
     "ToolValidationException",
 ]
 
-
 class ToolValidationException(Exception):
     pass
-
 
 #
 # Base class for any tool

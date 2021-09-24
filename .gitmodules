@@ -1,3 +1,0 @@
-[submodule "sphinx_doc/front_end"]
-	path = sphinx_doc/front_end
-	url = ../../documentations/documentation-front-end.git
