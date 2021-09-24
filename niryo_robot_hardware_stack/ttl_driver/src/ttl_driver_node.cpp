@@ -17,6 +17,7 @@
 // ros
 #include <memory>
 #include <ros/ros.h>
+#include <string>
 
 #include <string>
 
