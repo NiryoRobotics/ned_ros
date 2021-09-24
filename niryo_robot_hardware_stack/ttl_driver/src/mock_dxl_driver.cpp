@@ -618,5 +618,4 @@ void MockDxlDriver::removeGripper()
     _full_id_list.erase(std::remove(_full_id_list.begin(), _full_id_list.end(), 11), _full_id_list.end());
     _map_fake_registers.erase(11);
 }
-
 }  // namespace ttl_driver

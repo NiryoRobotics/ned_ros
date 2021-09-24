@@ -22,14 +22,20 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 
 #include "abstract_hardware_state.hpp"
 
+#include <array>
+#include <cstdint>
+#include <memory>
 #include <stdint.h>
 #include <string>
 #include <cassert>
 #include <sstream>
+#include <queue>
 
+#include "common/model/dxl_command_type_enum.hpp"
 #include "hardware_type_enum.hpp"
 #include "button_type_enum.hpp"
 #include "action_type_enum.hpp"
+#include "ros/time.h"
 
 namespace common
 {
@@ -41,24 +47,73 @@ namespace model
  */
 class EndEffectorState : public AbstractHardwareState
 {
-    public:
+    private:
         /**
-         * @brief The Button struct describes the current state of a button (not its config)
+         * @brief The Button class
          */
-        struct Button
+
+        class Button : public IObject
         {
-          EButtonType type{EButtonType::UNKNOWN};
-          EActionType action{EActionType::NO_ACTION};
+            public:
+                Button()
+                {
+                    actions.push(EActionType::NO_ACTION);
+                }
 
-          std::string str() const
-          {
-            std::ostringstream ss;
-            ss << "Button (" << ButtonTypeEnum(type).toString() << ") : "
-               << ActionTypeEnum(action).toString();
-            return ss.str();
-          }
+                virtual ~Button() {}
+
+                 /**
+                 * @brief The Button struct describes the current state of a button (not its config)
+                 */
+                virtual std::string str() const override
+                {
+                    std::ostringstream ss;
+                    ss << "Button (" << ButtonTypeEnum(type).toString() << ") : "
+                       << ActionTypeEnum(actions.front()).toString();
+                    return ss.str();
+                }
+
+                virtual bool isValid() const override
+                {
+                    return (EButtonType::UNKNOWN != type);
+                }
+
+                virtual void reset() override
+                {
+                    type = EButtonType::UNKNOWN;
+                    std::queue<EActionType> empty_queue;
+                    actions.swap(empty_queue);
+                }
+
+                // need a delay to avoid state hand hold called when other states come
+                void setDelay()
+                {
+                    _time_last_read_state = ros::Time::now().toSec();
+                    _need_delay = true;
+                }
+
+                // check if hand hold state came is needed to skip
+                bool isNeedToSkip()
+                {
+                    if (_need_delay && (ros::Time::now().toSec() - _time_last_read_state) <= _time_avoid_duplicate_state)
+                        return true;
+                    else
+                    {
+                      _need_delay = false;
+                      return false;
+                    }
+                }
+            public:
+                EButtonType type{EButtonType::UNKNOWN};
+                std::queue<EActionType> actions;
+            
+            private:
+                static constexpr double _time_avoid_duplicate_state = 0.5;
+                double _time_last_read_state;
+                bool _need_delay{false};
         };
-
+    
+    public:
         struct Vector3D
         {
           uint32_t x{};
@@ -76,6 +131,7 @@ class EndEffectorState : public AbstractHardwareState
     public:
         EndEffectorState();
         EndEffectorState(uint8_t id);
+        EndEffectorState(uint8_t id, common::model::EHardwareType type);
         EndEffectorState(const EndEffectorState& state);
 
         virtual ~EndEffectorState() override;
@@ -91,7 +147,8 @@ class EndEffectorState : public AbstractHardwareState
 
     public:
         void setButtonStatus(uint8_t id, EActionType action);
-        std::array<Button, 3> getButtonsStatus() const;
+
+        std::array<std::shared_ptr<Button>, 3> getButtonsStatus() const;
 
         uint32_t getAccelerometerXValue() const;
         uint32_t getAccelerometerYValue() const;
@@ -110,8 +167,10 @@ class EndEffectorState : public AbstractHardwareState
         bool getDigitalOut() const;
         void setDigitalOut(bool digital_out);
 
-private:
-        std::array<Button, 3> _buttons_list;
+    private:
+        std::array<std::shared_ptr<Button>, 3> _buttons_list {std::make_shared<Button>(),
+                                                              std::make_shared<Button>(),
+                                                              std::make_shared<Button>()};
         Vector3D _accelerometer_values{};
 
         bool _collision_status{false};
@@ -125,13 +184,14 @@ private:
  * @return
  */
 inline
-std::array<EndEffectorState::Button, 3>
+std::array<std::shared_ptr<EndEffectorState::Button>, 3>
 EndEffectorState::getButtonsStatus() const
 {
   return _buttons_list;
 }
 
 /**
+ *
  * @brief EndEffectorState::getAccelerometerXValue
  * @return
  */
