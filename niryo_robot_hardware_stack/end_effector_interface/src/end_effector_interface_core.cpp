@@ -109,7 +109,7 @@ void EndEffectorInterfaceCore::initParameters(ros::NodeHandle& nh)
     std::string hw_type;
     nh.getParam("hardware_type", hw_type);
     auto ee_type = common::model::HardwareTypeEnum(hw_type.c_str());
-    
+
     //  initiliaze end effector state
     _end_effector_state = std::make_shared<EndEffectorState>(_id, ee_type);
 
@@ -209,7 +209,7 @@ void EndEffectorInterfaceCore::_publishButtonState()
         {
             if (button->actions.empty())
                 button->actions.push(common::model::EActionType::NO_ACTION);
-            
+
             button_msg.action = static_cast<int>(button->actions.front());
             switch (button->type)
             {

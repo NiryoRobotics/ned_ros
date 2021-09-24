@@ -199,8 +199,11 @@ int MockStepperDriver::readMaxPosition(uint8_t id, uint32_t &pos)
  * @param torque_enable
  * @return
  */
-int MockStepperDriver::setTorqueEnable(uint8_t id, uint32_t torque_enable)
+int MockStepperDriver::setTorqueEnable(uint8_t id, uint32_t /*torque_enable*/)
 {
+    if (COMM_SUCCESS != ping(id))
+        return COMM_RX_FAIL;
+
     return COMM_SUCCESS;
 }
 
@@ -243,7 +246,7 @@ int MockStepperDriver::setGoalVelocity(uint8_t id, uint32_t velocity)
  * @param torque_enable_list
  * @return
  */
-int MockStepperDriver::syncWriteTorqueEnable(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &torque_enable_list)
+int MockStepperDriver::syncWriteTorqueEnable(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &/*torque_enable_list*/)
 {
     // Create a map to store the frequency of each element in vector
     std::map<uint8_t, uint8_t> countMap;
@@ -286,7 +289,7 @@ int MockStepperDriver::syncWritePositionGoal(const std::vector<uint8_t> &id_list
  * @param velocity_list
  * @return
  */
-int MockStepperDriver::syncWriteVelocityGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &velocity_list)
+int MockStepperDriver::syncWriteVelocityGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &/*velocity_list*/)
 {
     // Create a map to store the frequency of each element in vector
     std::map<uint8_t, uint8_t> countMap;
@@ -472,9 +475,12 @@ int MockStepperDriver::syncReadHwErrorStatus(const std::vector<uint8_t> &id_list
  * @param data
  * @return
  */
-int MockStepperDriver::writeVelocityProfile(uint8_t id, const std::vector<uint32_t>& data)
+int MockStepperDriver::writeVelocityProfile(uint8_t id, const std::vector<uint32_t>& /*data*/)
 {
-  return COMM_SUCCESS;
+    if (COMM_SUCCESS != ping(id))
+        return COMM_RX_FAIL;
+
+    return COMM_SUCCESS;
 }
 
 /**
@@ -484,6 +490,9 @@ int MockStepperDriver::writeVelocityProfile(uint8_t id, const std::vector<uint32
  */
 int MockStepperDriver::startHoming(uint8_t id)
 {
+    if (COMM_SUCCESS != ping(id))
+        return COMM_RX_FAIL;
+
     _calibration_status = CALIBRATION_IN_PROGRESS;
     fake_time = 5;
     return COMM_SUCCESS;
@@ -495,8 +504,11 @@ int MockStepperDriver::startHoming(uint8_t id)
  * @param direction
  * @return
  */
-int MockStepperDriver::writeHomingDirection(uint8_t id, uint8_t direction)
+int MockStepperDriver::writeHomingDirection(uint8_t id, uint8_t /*direction*/)
 {
+    if (COMM_SUCCESS != ping(id))
+        return COMM_RX_FAIL;
+
     return COMM_SUCCESS;
 }
 
@@ -508,6 +520,9 @@ int MockStepperDriver::writeHomingDirection(uint8_t id, uint8_t direction)
  */
 int MockStepperDriver::readHomingStatus(uint8_t id, uint32_t &status)
 {
+    if (COMM_SUCCESS != ping(id))
+        return COMM_RX_FAIL;
+
     if (fake_time)
     {
         fake_time--;
@@ -540,6 +555,9 @@ int MockStepperDriver::readGoalVelocity(uint8_t id, uint32_t& present_velocity)
  */
 int MockStepperDriver::readFirmwareRunning(uint8_t id, bool &is_running)
 {
+  if (COMM_SUCCESS != ping(id))
+      return COMM_RX_FAIL;
+
   is_running = true;
   return COMM_SUCCESS;
 }

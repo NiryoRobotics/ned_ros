@@ -54,8 +54,8 @@ class MockEndEffectorDriver : public AbstractTtlDriver
         virtual int checkModelNumber(uint8_t id) override;
         virtual int readFirmwareVersion(uint8_t id, std::string &version) override;
         
-        virtual int readTemperature(uint8_t id, uint32_t &temperature) override;
-        virtual int readVoltage(uint8_t id, double &voltage) override;
+        virtual int readTemperature(uint8_t id, uint32_t &_temperature) override;
+        virtual int readVoltage(uint8_t id, double &_voltage) override;
         virtual int readHwErrorStatus(uint8_t id, uint32_t &hardware_status) override;
 
         virtual int syncReadFirmwareVersion(const std::vector<uint8_t> &id_list, std::vector<std::string> &firmware_list) override;
@@ -102,9 +102,11 @@ class MockEndEffectorDriver : public AbstractTtlDriver
         };
 
         SEndEffectorInfo _ee_info;
-        uint32_t temperature{32};
-        uint32_t voltage{5000};
-        std::string firmware_version{"v1.0.0"};
+
+        uint8_t _id{0};
+        uint32_t _temperature{32};
+        uint32_t _voltage{5000};
+        std::string _firmware_version{"v1.0.0"};
 
 };
 

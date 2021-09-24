@@ -19,8 +19,6 @@
 #include <ros/ros.h>
 #include <string>
 
-#include <string>
-
 // niryo
 #include "ros/serialization.h"
 #include "ttl_driver/ttl_interface_core.hpp"
