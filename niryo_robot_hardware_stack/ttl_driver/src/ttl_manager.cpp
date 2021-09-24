@@ -46,6 +46,7 @@
 #include "ttl_driver/stepper_driver.hpp"
 #include "ttl_driver/mock_stepper_driver.hpp"
 #include "ttl_driver/end_effector_driver.hpp"
+#include "ttl_driver/mock_end_effector_driver.hpp"
 
 using ::std::shared_ptr;
 using ::std::vector;

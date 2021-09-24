@@ -23,6 +23,7 @@
 #include <vector>
 
 // ros
+#include "common/model/hardware_type_enum.hpp"
 #include "niryo_robot_msgs/SetBool.h"
 
 // niryo
@@ -105,8 +106,12 @@ void EndEffectorInterfaceCore::initParameters(ros::NodeHandle& nh)
     ROS_DEBUG("EndEffectorInterfaceCore::initParameters - end effector id : %d", _id);
     ROS_DEBUG("EndEffectorInterfaceCore::initParameters - end effector status frequency : %f", _check_end_effector_status_frequency);
 
+    std::string hw_type;
+    nh.getParam("hardware_type", hw_type);
+    auto ee_type = common::model::HardwareTypeEnum(hw_type.c_str());
+    
     //  initiliaze end effector state
-    _end_effector_state = std::make_shared<EndEffectorState>(_id);
+    _end_effector_state = std::make_shared<EndEffectorState>(_id, ee_type);
 
     uint8_t button_id = 1;
     while (nh.hasParam("button_"  + std::to_string(button_id) + "/type"))
@@ -138,13 +143,13 @@ void EndEffectorInterfaceCore::startServices(ros::NodeHandle& nh)
 void EndEffectorInterfaceCore::startPublishers(ros::NodeHandle& nh)
 {
   _free_drive_button_state_publisher = nh.advertise<end_effector_interface::EEButtonStatus>(
-                                          "free_drive_button_status", 10);
+                                          "free_drive_button_status", 10, true);
 
   _save_pos_button_state_publisher = nh.advertise<end_effector_interface::EEButtonStatus>(
-                                          "save_pos_button_status", 10);
+                                          "save_pos_button_status", 10, true);
 
   _custom_button_state_publisher = nh.advertise<end_effector_interface::EEButtonStatus>(
-                                          "custom_button_status", 10);
+                                          "custom_button_status", 10, true);
 
   _digital_out_publisher = nh.advertise<end_effector_interface::EEIOState>(
                                           "io_state", 10);
@@ -159,9 +164,6 @@ void EndEffectorInterfaceCore::startPublishers(ros::NodeHandle& nh)
 void EndEffectorInterfaceCore::startSubscribers(ros::NodeHandle& nh)
 {
     _learning_mode_client = nh.serviceClient<niryo_robot_msgs::SetBool>("/niryo_robot/learning_mode/activate");
-    bool exists(_learning_mode_client.waitForExistence(ros::Duration(5)));
-    ROS_INFO_COND(exists, "EndEffectorInterfaceCore::startServices : - Learning mode service connected successfully");
-    ROS_ERROR_COND(!exists, "EndEffectorInterfaceCore::startServices : - unable to connect to Learning mode service");
 }
 
 /**
@@ -203,39 +205,52 @@ void EndEffectorInterfaceCore::_publishButtonState()
           continue;
         lock_guard<mutex> lck(_buttons_status_mutex);
 
-        for (auto const& button : _end_effector_state->getButtonsStatus())
+        for (auto button : _end_effector_state->getButtonsStatus())
         {
-            button_msg.action = static_cast<int>(button.action);
-            switch (button.type)
+            if (button->actions.empty())
+                button->actions.push(common::model::EActionType::NO_ACTION);
+            
+            button_msg.action = static_cast<int>(button->actions.front());
+            switch (button->type)
             {
                 case EButtonType::FREE_DRIVE_BUTTON:
                     _free_drive_button_state_publisher.publish(button_msg);
-                    if (common::model::EActionType::HANDLE_HELD_ACTION == button.action &&
+                    if (common::model::EActionType::HANDLE_HELD_ACTION == button->actions.front() &&
                         !_is_learning_mode)
                     {
-                      niryo_robot_msgs::SetBool srv;
-                      srv.request.value = true;
-                      _learning_mode_client.call(srv);
-                      _is_learning_mode = true;
+                        bool exists(_learning_mode_client.waitForExistence(ros::Duration(1.0)));
+                        ROS_DEBUG_COND(exists, "EndEffectorInterfaceCore::startServices : - Learning mode service connected successfully");
+                        ROS_ERROR_COND(!exists, "EndEffectorInterfaceCore::startServices : - unable to connect to Learning mode service");
+
+                        niryo_robot_msgs::SetBool srv;
+                        srv.request.value = true;
+                        _learning_mode_client.call(srv);
+                        _is_learning_mode = true;
                     }
-                    else if (common::model::EActionType::NO_ACTION == button.action &&
-                            _is_learning_mode) {
-                      niryo_robot_msgs::SetBool srv;
-                      srv.request.value = false;
-                      _learning_mode_client.call(srv);
-                      _is_learning_mode = false;
+                    else if (common::model::EActionType::NO_ACTION == button->actions.front() &&
+                            _is_learning_mode)
+                    {
+                        bool exists(_learning_mode_client.waitForExistence(ros::Duration(1.0)));
+                        ROS_DEBUG_COND(exists, "EndEffectorInterfaceCore::startServices : - Learning mode service connected successfully");
+                        ROS_ERROR_COND(!exists, "EndEffectorInterfaceCore::startServices : - unable to connect to Learning mode service");
+
+                        niryo_robot_msgs::SetBool srv;
+                        srv.request.value = false;
+                        _learning_mode_client.call(srv);
+                        _is_learning_mode = false;
                     }
 
-                  break;
+                    break;
                 case EButtonType::SAVE_POSITION_BUTTON:
                     _save_pos_button_state_publisher.publish(button_msg);
-                  break;
+                    break;
                 case EButtonType::CUSTOM_BUTTON:
                     _custom_button_state_publisher.publish(button_msg);
-                  break;
+                    break;
                 default:
-                  break;
+                    break;
             }
+            button->actions.pop();
         }
 
         // digital io state

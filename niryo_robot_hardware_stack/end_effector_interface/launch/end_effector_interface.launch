@@ -11,7 +11,9 @@
     </include>
 
     <!-- use end_effector_interface config -->
-    <include file="$(find end_effector_interface)/launch/end_effector_interface_base.launch.xml" />
+    <include file="$(find end_effector_interface)/launch/end_effector_interface_base.launch.xml" >
+        <arg name="hardware_version" value="ned2"
+    </include>
 
     <node pkg="end_effector_interface" type="end_effector_interface_node" name="end_effector_interface" output="screen" />
 

@@ -17,9 +17,13 @@
     along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 #include "common/model/end_effector_state.hpp"
+#include "common/model/abstract_hardware_state.hpp"
+#include "common/model/action_type_enum.hpp"
+#include "common/model/bus_protocol_enum.hpp"
+#include "common/model/component_type_enum.hpp"
 #include <sstream>
 #include <string>
-
+#include <ros/ros.h>
 namespace common
 {
 namespace model
@@ -41,6 +45,16 @@ EndEffectorState::EndEffectorState(uint8_t id) :
   AbstractHardwareState(EHardwareType::END_EFFECTOR,
                         EComponentType::END_EFFECTOR,
                         EBusProtocol::TTL, id)
+{
+}
+
+/**
+ * @brief EndEffectorState::EndEffectorState
+ */
+EndEffectorState::EndEffectorState(uint8_t id, common::model::EHardwareType type) :
+    AbstractHardwareState(type,
+                          EComponentType::END_EFFECTOR,
+                          EBusProtocol::TTL, id)
 {
 }
 
@@ -73,7 +87,8 @@ void EndEffectorState::configureButton(uint8_t id, EButtonType button_type)
 {
   assert(id <= 3);
 
-  _buttons_list[id - 1].type = button_type;
+  _buttons_list[id - 1]->actions.push(EActionType::NO_ACTION);
+  _buttons_list[id - 1]->type = button_type;
 }
 
 // ***********************
@@ -92,7 +107,7 @@ std::string EndEffectorState::str() const
 
     ss << "Buttons : \n";
     for (size_t i = 0; i < _buttons_list.size(); ++i)
-      ss << i << " " << _buttons_list.at(i).str() << "\n";
+      ss << i << " " << _buttons_list.at(i)->str();
 
     ss << "Acceleration: \n";
     ss << _accelerometer_values.str();
@@ -111,9 +126,9 @@ std::string EndEffectorState::str() const
 bool common::model::EndEffectorState::isValid() const
   {
   return (EHardwareType::END_EFFECTOR == getHardwareType() &&
-          EButtonType::UNKNOWN != _buttons_list.at(0).type &&
-          EButtonType::UNKNOWN != _buttons_list.at(1).type &&
-          EButtonType::UNKNOWN != _buttons_list.at(2).type);
+          EButtonType::UNKNOWN != _buttons_list.at(0)->type &&
+          EButtonType::UNKNOWN != _buttons_list.at(1)->type &&
+          EButtonType::UNKNOWN != _buttons_list.at(2)->type);
 }
 
 /**
@@ -125,7 +140,23 @@ void EndEffectorState::setButtonStatus(uint8_t id, EActionType action)
 {
   assert(id <= 3);
 
-  _buttons_list[id - 1].action = action;
+  auto button = _buttons_list[id - 1];
+  // do not add 2 no action states consecutive
+  if (button->actions.back() == EActionType::NO_ACTION &&
+          action == EActionType::NO_ACTION)
+      return;
+
+  if (action == EActionType::SINGLE_PUSH_ACTION ||
+        action == EActionType::DOUBLE_PUSH_ACTION ||
+        action == EActionType::LONG_PUSH_ACTION)
+  {
+      button->actions.push(action);
+      button->setDelay();
+  }
+  else if (action == EActionType::HANDLE_HELD_ACTION && !button->isNeedToSkip())
+  {
+      button->actions.push(action);
+  }
 }
 
 /**

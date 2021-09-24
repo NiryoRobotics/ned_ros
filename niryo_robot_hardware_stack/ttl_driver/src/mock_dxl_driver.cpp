@@ -1,5 +1,5 @@
 /*
-mock_stepper_driver.cpp
+mock_dxl_driver.cpp
 Copyright (C) 2020 Niryo
 All rights reserved.
 This program is free software: you can redistribute it and/or modify
@@ -618,5 +618,4 @@ void MockDxlDriver::removeGripper()
     _full_id_list.erase(std::remove(_full_id_list.begin(), _full_id_list.end(), 11), _full_id_list.end());
     _map_fake_registers.erase(11);
 }
-
 }  // namespace ttl_driver

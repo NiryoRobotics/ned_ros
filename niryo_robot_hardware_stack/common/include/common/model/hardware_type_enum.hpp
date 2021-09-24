@@ -43,6 +43,7 @@ enum class EHardwareType {
                             FAKE_DXL_MOTOR=6,
                             FAKE_STEPPER_MOTOR=7,
                             END_EFFECTOR=10,
+                            FAKE_END_EFFECTOR=11,
                             UNKNOWN=100
                           };
 

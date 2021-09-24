@@ -436,11 +436,8 @@ EndEffectorDriver<reg_type>::interpreteActionValue(uint32_t value)
   common::model::EActionType action = common::model::EActionType::NO_ACTION;
 
   // HANDLE HELD en premier car c'est le seul cas ou il peut etre actif en meme temps qu'une autre action (long push)
-  if (value & 1<<3)    // 0b00001000
-  {
-      action = common::model::EActionType::HANDLE_HELD_ACTION;
-  }
-  else if (value & 1<<0)    // 0b00000001
+  
+  if (value & 1<<0)    // 0b00000001
   {
     action = common::model::EActionType::SINGLE_PUSH_ACTION;
   }
@@ -452,7 +449,10 @@ EndEffectorDriver<reg_type>::interpreteActionValue(uint32_t value)
   {
     action = common::model::EActionType::LONG_PUSH_ACTION;
   }
-
+  else if (value & 1<<3)    // 0b00001000
+  {
+    action = common::model::EActionType::HANDLE_HELD_ACTION;
+  }
   return action;
 }
 

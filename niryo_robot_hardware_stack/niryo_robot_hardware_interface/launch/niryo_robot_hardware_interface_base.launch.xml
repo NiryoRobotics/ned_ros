@@ -43,9 +43,11 @@
             <arg name="simulation_mode" value="$(arg simulation_mode)" />
         </include>
 
-        <!-- end effector only in ned2 todo(cc) add fake_end_effector and relmove simulation_mode case -->
-        <group if="$(eval hardware_version == 'ned2' and not simulation_mode)" >
-            <include file="$(find end_effector_interface)/launch/end_effector_interface_base.launch.xml" />
+        <!-- end effector only in ned2, TODO(cc) add for fake_ned2 too -->
+        <group if="$(eval hardware_version == 'ned2' or hardware_version == 'fake_ned2')" >
+            <include file="$(find end_effector_interface)/launch/end_effector_interface_base.launch.xml" >
+                <arg name="hardware_version" value="$(arg hardware_version)" />
+            </include>
         </group>
 
         <rosparam file="$(find cpu_interface)/config/default.yaml" command="load"/>
