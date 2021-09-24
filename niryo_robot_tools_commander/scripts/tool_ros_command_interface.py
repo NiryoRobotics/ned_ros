@@ -15,6 +15,8 @@ from niryo_robot_rpi.srv import SetIOMode
 class ToolRosCommandInterface:
 
     def __init__(self, state_ros_communication_problem):
+        self._digital_outputs = rospy.get_param("/niryo_robot_rpi/digital_outputs")
+
         namespace = rospy.get_param("~namespace_topics")
         self.__service_open_gripper = rospy.ServiceProxy(namespace + 'open_gripper',
                                                          OpenGripper)
@@ -28,8 +30,8 @@ class ToolRosCommandInterface:
 
         self.__service_ping_dxl_tool = rospy.ServiceProxy(namespace + 'ping_and_set_dxl_tool', PingDxlTool)
 
-        self.__service_setup_digital_output_tool = rospy.ServiceProxy('~set_digital_io', SetDigitalIO)
-        self.__service_activate_digital_output_tool = rospy.ServiceProxy('~set_digital_io_mode', SetIOMode)
+        self.__service_setup_digital_output_tool = rospy.ServiceProxy('/niryo_robot_rpi/set_digital_io', SetDigitalIO)
+        self.__service_activate_digital_output_tool = rospy.ServiceProxy('/niryo_robot_rpi/set_digital_io_mode', SetIOMode)
 
         self.__state_ros_communication_problem = state_ros_communication_problem
         rospy.logdebug("Interface between Tools Commander and ROS Control has been started.")
@@ -91,7 +93,8 @@ class ToolRosCommandInterface:
 
     def digital_output_tool_setup(self, gpio_pin):
         try:
-            resp = self.__service_setup_digital_output_tool(gpio_pin, SetDigitalIO.Request.OUTPUT)  # set output
+            gpio_name = digital_outputs[gpio_pin % 100]
+            resp = self.__service_setup_digital_output_tool(gpio_name, SetDigitalIO.Request.OUTPUT)  # set output
             return resp.status, resp.message
         except rospy.ServiceException:
             rospy.logerr("ROS Tool Interface - Failed to get digital output setup")
@@ -99,7 +102,8 @@ class ToolRosCommandInterface:
 
     def digital_output_tool_activate(self, gpio_pin, activate):
         try:
-            resp = self.__service_activate_digital_output_tool(gpio_pin, activate)
+            gpio_name = digital_outputs[gpio_pin % 100]
+            resp = self.__service_activate_digital_output_tool(gpio_name, activate)
             return resp.status, resp.message
         except rospy.ServiceException:
             rospy.logerr("ROS Tool Interface - Failed to activate digital output")

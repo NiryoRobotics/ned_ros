@@ -253,7 +253,7 @@ int TtlManager::changeId(common::model::EHardwareType motor_type, uint8_t old_id
 {
     int ret = COMM_TX_FAIL;
 
-    if (old_id != new_id)
+    if (old_id == new_id)
     {
         ret = COMM_SUCCESS;
     }
