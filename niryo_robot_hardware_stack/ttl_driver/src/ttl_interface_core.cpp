@@ -644,13 +644,13 @@ void TtlInterfaceCore::_executeCommand()
         _ttl_manager->writeSingleCommand(_conveyor_cmds_queue.front());
         _conveyor_cmds_queue.pop();
     }
-    if (_sync_cmds && _sync_cmds->isValid())
+    if (!_sync_cmds.empty())
     {
         // as we use a queue, we don't need a mutex
         if (_need_sleep)
             ros::Duration(0.01).sleep();
-        _ttl_manager->writeSynchronizeCommand(_sync_cmds);
-        _sync_cmds->reset();
+        _ttl_manager->writeSynchronizeCommand(_sync_cmds.front());
+        _sync_cmds.pop();
     }
 }
 
@@ -859,9 +859,9 @@ void TtlInterfaceCore::setSyncCommand(const std::shared_ptr<common::model::ISync
     if (cmd->isValid())
     {
         if (cmd->isStepperCmd())
-            _sync_cmds = std::dynamic_pointer_cast<common::model::StepperTtlSyncCmd>(cmd);
+            _sync_cmds.push(std::dynamic_pointer_cast<common::model::StepperTtlSyncCmd>(cmd));
         else if (cmd->isDxlCmd())
-            _sync_cmds = std::dynamic_pointer_cast<common::model::DxlSyncCmd>(cmd);
+            _sync_cmds.push(std::dynamic_pointer_cast<common::model::DxlSyncCmd>(cmd));
     }
     else
         ROS_WARN("TtlInterfaceCore::setSyncCommand : Invalid command %s", cmd->str().c_str());

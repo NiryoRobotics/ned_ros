@@ -183,7 +183,7 @@ class TtlInterfaceCore : public common::model::IDriverCore, public common::model
         std::vector<std::pair<uint8_t, uint32_t> > _joint_trajectory_cmd;
 
         // ttl cmds
-        std::shared_ptr<common::model::AbstractTtlSynchronizeMotorCmd> _sync_cmds;
+        std::queue<std::shared_ptr<common::model::AbstractTtlSynchronizeMotorCmd> > _sync_cmds;
         std::queue<std::shared_ptr<common::model::AbstractTtlSingleMotorCmd> > _single_cmds_queue;
         std::queue<std::shared_ptr<common::model::AbstractTtlSingleMotorCmd> > _conveyor_cmds_queue;
 
