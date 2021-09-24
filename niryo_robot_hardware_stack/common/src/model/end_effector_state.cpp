@@ -87,8 +87,8 @@ void EndEffectorState::configureButton(uint8_t id, EButtonType button_type)
 {
   assert(id <= 3);
 
-  _buttons_list[id - 1].actions.push(EActionType::NO_ACTION);
-  _buttons_list[id - 1].type = button_type;
+  _buttons_list[id - 1]->actions.push(EActionType::NO_ACTION);
+  _buttons_list[id - 1]->type = button_type;
 }
 
 // ***********************
@@ -107,7 +107,7 @@ std::string EndEffectorState::str() const
 
     ss << "Buttons : \n";
     for (size_t i = 0; i < _buttons_list.size(); ++i)
-      ss << i << " " << _buttons_list.at(i).str();
+      ss << i << " " << _buttons_list.at(i)->str();
 
     ss << "Acceleration: \n";
     ss << _accelerometer_values.str();
@@ -126,9 +126,9 @@ std::string EndEffectorState::str() const
 bool common::model::EndEffectorState::isValid() const
   {
   return (EHardwareType::END_EFFECTOR == getHardwareType() &&
-          EButtonType::UNKNOWN != _buttons_list.at(0).type &&
-          EButtonType::UNKNOWN != _buttons_list.at(1).type &&
-          EButtonType::UNKNOWN != _buttons_list.at(2).type);
+          EButtonType::UNKNOWN != _buttons_list.at(0)->type &&
+          EButtonType::UNKNOWN != _buttons_list.at(1)->type &&
+          EButtonType::UNKNOWN != _buttons_list.at(2)->type);
 }
 
 /**
@@ -140,21 +140,21 @@ void EndEffectorState::setButtonStatus(uint8_t id, EActionType action)
 {
   assert(id <= 3);
 
-  common::model::Button button = _buttons_list[id - 1];
+  auto button = _buttons_list[id - 1];
   // do not add 2 no action states consecutive
-  if (button.actions.back() == EActionType::NO_ACTION &&
+  if (button->actions.back() == EActionType::NO_ACTION &&
           action == EActionType::NO_ACTION)
       return;
-  if (button.actions.back() == EActionType::SINGLE_PUSH_ACTION ||
-        button.actions.back() == EActionType::DOUBLE_PUSH_ACTION ||
-        button.actions.back() == EActionType::LONG_PUSH_ACTION)
+  if (button->actions.back() == EActionType::SINGLE_PUSH_ACTION ||
+        button->actions.back() == EActionType::DOUBLE_PUSH_ACTION ||
+        button->actions.back() == EActionType::LONG_PUSH_ACTION)
   {
-      button.actions.push(action);
-      button.setDelay();
+      button->actions.push(action);
+      button->setDelay();
   }
-  else if (!button.isNeedToSkip())
+  else if (!button->isNeedToSkip())
   {
-      button.actions.push(action);
+      button->actions.push(action);
   }
 }
 

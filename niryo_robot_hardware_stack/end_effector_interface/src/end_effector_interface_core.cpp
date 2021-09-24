@@ -208,16 +208,16 @@ void EndEffectorInterfaceCore::_publishButtonState()
 
         for (auto button : _end_effector_state->getButtonsStatus())
         {
-            if (button.actions.empty())
+            if (button->actions.empty())
                 break;
             else
             {
-                button_msg.action = static_cast<int>(button.actions.front());
-                switch (button.type)
+                button_msg.action = static_cast<int>(button->actions.front());
+                switch (button->type)
                 {
                     case EButtonType::FREE_DRIVE_BUTTON:
                         _free_drive_button_state_publisher.publish(button_msg);
-                        if (common::model::EActionType::HANDLE_HELD_ACTION == button.actions.front() &&
+                        if (common::model::EActionType::HANDLE_HELD_ACTION == button->actions.front() &&
                             !_is_learning_mode)
                         {
                             bool exists(_learning_mode_client.waitForExistence(ros::Duration(1.0)));
@@ -229,7 +229,7 @@ void EndEffectorInterfaceCore::_publishButtonState()
                             _learning_mode_client.call(srv);
                             _is_learning_mode = true;
                         }
-                        else if (common::model::EActionType::NO_ACTION == button.actions.front() &&
+                        else if (common::model::EActionType::NO_ACTION == button->actions.front() &&
                                 _is_learning_mode)
                         {
                             bool exists(_learning_mode_client.waitForExistence(ros::Duration(1.0)));
@@ -252,7 +252,7 @@ void EndEffectorInterfaceCore::_publishButtonState()
                     default:
                       break;
                 }
-                button.actions.pop();
+                button->actions.pop();
             }
         }
 
