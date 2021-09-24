@@ -340,6 +340,7 @@ int MockStepperDriver::readVoltage(uint8_t id, double &voltage)
 
 /**
  * @brief MockStepperDriver::readHwErrorStatus
+ * @param id
  * @param hardware_status
  * @return
  */

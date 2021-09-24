@@ -199,8 +199,9 @@ bool JointHardwareInterface::init(ros::NodeHandle& /*rootnh*/, ros::NodeHandle &
 
 /**
  * @brief JointHardwareInterface::initStepper
- * @param stepperState
  * @param robot_hwnh
+ * @param stepperState
+ * @param currentNamespace
  * @return
  */
 bool JointHardwareInterface::initStepper(ros::NodeHandle &robot_hwnh,
