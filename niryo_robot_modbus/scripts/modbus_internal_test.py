@@ -233,7 +233,9 @@ def test_holding_register(client):
     aio_state_registers = client.read_input_registers(IR_AIO_STATE, nb_aio)
     print("ANALOG IOs STATE: {}".format(aio_state_registers.registers))
 
-    client.write_registers(HR_SET_ANALOG_IO, [AIO_NAME_TO_ADDRESS.items()[0][1], old_aio_state_registers.registers[-1]])
+    client.write_registers(HR_SET_ANALOG_IO,
+                           [AIO_NAME_TO_ADDRESS.items()[0][1],
+                            old_aio_state_registers.registers[-1]])
 
     print("---- ANALOG IO HOLDING REGISTER TEST ENDS ----")
 
