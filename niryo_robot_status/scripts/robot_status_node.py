@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import rospy
 import logging
-from robot_status_handler import RobotStatusHandler
+from niryo_robot_status.robot_status_handler import RobotStatusHandler
 
 
 class RobotStatus:
