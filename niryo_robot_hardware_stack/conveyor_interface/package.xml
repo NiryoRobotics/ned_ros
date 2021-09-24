@@ -21,7 +21,6 @@
   <build_depend>can_driver</build_depend>
   <build_depend>ttl_driver</build_depend>
   
-  
   <build_export_depend>std_msgs</build_export_depend>
   <build_export_depend>roscpp</build_export_depend>
   <build_export_depend>can_driver</build_export_depend>

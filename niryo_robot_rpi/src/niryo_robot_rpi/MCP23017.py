@@ -125,7 +125,7 @@ class MCP23017(object):
     @staticmethod
     def _change_bit(bitmap, bit, value):
         assert value == 1 or value == 0, "Value is %s must be 1 or 0" % value
-        if value==1:
+        if value == 1:
             return bitmap | (1 << bit)
         else:
             return bitmap & ~(1 << bit)

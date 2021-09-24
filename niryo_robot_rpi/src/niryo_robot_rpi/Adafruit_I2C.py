@@ -76,7 +76,7 @@ class Adafruit_I2C(object):
         self.address = address
         # By default, the correct I2C bus is auto-detected using /proc/cpuinfo
         # Alternatively, you can hard-code the bus version below:
-        self.bus = smbus.SMBus(0);  # Force I2C0 (early 256MB Pi's)
+        self.bus = smbus.SMBus(0)  # Force I2C0 (early 256MB Pi's)
         # self.bus = smbus.SMBus(1); # Force I2C1 (512MB Pi's)
         # self.bus = smbus.SMBus(busnum if busnum >= 0 else Adafruit_I2C.getPiI2CBusNumber())
         self.debug = debug
@@ -160,7 +160,8 @@ class Adafruit_I2C(object):
         "Reads a signed byte from the I2C device"
         try:
             result = self.bus.read_byte_data(self.address, reg)
-            if result > 127: result -= 256
+            if result > 127:
+                result -= 256
             if self.debug:
                 print ("I2C: Device 0x%02X returned 0x%02X from reg 0x%02X" %
                        (self.address, result & 0xFF, reg))
@@ -186,7 +187,8 @@ class Adafruit_I2C(object):
         "Reads a signed 16-bit value from the I2C device"
         try:
             result = self.readU16(reg, little_endian)
-            if result > 32767: result -= 65536
+            if result > 32767:
+                result -= 65536
             return result
         except IOError, err:
             return self.errMsg()

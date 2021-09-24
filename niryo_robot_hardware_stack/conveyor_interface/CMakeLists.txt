@@ -21,12 +21,12 @@ add_definitions(-Wall  -Werror)
 ## Find catkin macros and libraries
 find_package(catkin REQUIRED
     COMPONENTS
-      ttl_driver
       can_driver
       message_generation
       niryo_robot_msgs
       roscpp
       std_msgs
+      ttl_driver
 )
 
 ###############################################
@@ -70,6 +70,7 @@ catkin_package(
       message_runtime
       roscpp
       std_msgs
+      ttl_driver
 )
 
 ###########

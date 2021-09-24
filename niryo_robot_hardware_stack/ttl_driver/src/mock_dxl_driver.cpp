@@ -34,7 +34,7 @@ MockDxlDriver::MockDxlDriver(std::shared_ptr<dynamixel::PortHandler> portHandler
     AbstractDxlDriver(portHandler, packetHandler)
 {
     // retrieve list of ids
-    for(auto const& imap: _map_fake_registers)
+    for (auto const& imap : _map_fake_registers)
         _id_list.emplace_back(imap.first);
 }
 

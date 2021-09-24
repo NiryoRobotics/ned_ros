@@ -9,12 +9,13 @@ __all__ = [
     "Gripper",
     "Electromagnet",
     "VacuumPump",
-
     "ToolValidationException",
 ]
 
+
 class ToolValidationException(Exception):
     pass
+
 
 #
 # Base class for any tool

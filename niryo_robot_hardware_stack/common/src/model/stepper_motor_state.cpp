@@ -97,7 +97,6 @@ StepperMotorState::StepperMotorState(const StepperMotorState &state) :
     _profile_d_max = state._profile_d_max;
     _profile_d_1 = state._profile_d_1;
     _profile_v_stop = state._profile_v_stop;
-
 }
 
 /**
@@ -211,7 +210,7 @@ std::string StepperMotorState::str() const
        << "micro steps: " << _micro_steps << "\n";
 
     ss << "velocity profile : ";
-    for(auto const& d : getVelocityProfile())
+    for (auto const& d : getVelocityProfile())
       ss << d << ",";
     ss << "\n";
 

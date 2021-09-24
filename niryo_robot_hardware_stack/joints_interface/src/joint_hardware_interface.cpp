@@ -143,7 +143,6 @@ bool JointHardwareInterface::init(ros::NodeHandle& /*rootnh*/, ros::NodeHandle &
         }
         else if (eType != EHardwareType::UNKNOWN)
         {  // dynamixel
-
             std::string currentNamespace = "dynamixels/dxl_" + to_string(currentIdDxl);
 
             auto dxlState = std::make_shared<DxlMotorState>(joint_name,
@@ -347,7 +346,7 @@ void JointHardwareInterface::sendInitMotorsParams()
             if (jState->isStepper())
             {
                 auto stepperState = std::dynamic_pointer_cast<StepperMotorState>(jState);
-                if(stepperState)
+                if (stepperState)
                 {
                     if (jState->getBusProtocol() == EBusProtocol::CAN)
                     {

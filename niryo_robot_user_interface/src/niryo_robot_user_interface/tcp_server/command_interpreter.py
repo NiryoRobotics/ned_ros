@@ -629,7 +629,6 @@ class CommandInterpreter:
         digital_state = self.__niryo_robot.digital_read(pin_string)
         return self.__send_answer(self.__digital_state_string_dict_convertor_inv[digital_state])
 
-
     @check_nb_args(0)
     def __get_hardware_status(self):
         hw_status = self.__niryo_robot.get_hardware_status()

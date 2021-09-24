@@ -42,6 +42,7 @@ class ToolsState:
     def __str__(self):
         return str(self.__class__) + ": " + str(self.__dict__)
 
+
 class ToolCommander:
     def __init__(self):
         self.__tools_state = ToolsState(rospy.get_param("~state_dict"))
@@ -83,7 +84,6 @@ class ToolCommander:
             self.__tool_simu = moveit_commander.MoveGroupCommander(rospy.get_param("~move_group_tool_commander_name"))
             # Set pose reference frame
             self.__tool_simu.set_pose_reference_frame(rospy.get_param("~reference_frame"))
-            
 
         # Subscriber
         rospy.Subscriber('/niryo_robot_hardware/tools/current_id', Int32,
@@ -263,7 +263,7 @@ class ToolCommander:
                 except KeyError:
                     rospy.logwarn("Tool Commander - Unknown command : {}".format(cmd))
                     continue
-                
+
             new_tool.set_available_commands(tool_command_list)
 
             dict_tools[tool_id] = new_tool

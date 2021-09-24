@@ -21,13 +21,13 @@ class DiscreteInputDataBlock(DataBlock):
     DI_IO_STATE = 100
 
     DIO_ADDRESS = OrderedDict({"1A": 0,
-                   "1B": 1,
-                   "1C": 2,
-                   "2A": 3,
-                   "2B": 4,
-                   "2C": 5,
-                   "SW1": 6,
-                   "SW2": 7, })
+                               "1B": 1,
+                               "1C": 2,
+                               "2A": 3,
+                               "2B": 4,
+                               "2C": 5,
+                               "SW1": 6,
+                               "SW2": 7, })
 
     DIO_MODE_OUTPUT = SetIOModeRequest.OUTPUT
     DIO_MODE_INPUT = SetIOModeRequest.INPUT
@@ -55,15 +55,12 @@ class DiscreteInputDataBlock(DataBlock):
 class DiscreteInputDataBlockNed2(DiscreteInputDataBlock):
 
     DIO_ADDRESS = OrderedDict({"DI1": 0,
-                   "DI2": 1,
-                   "DI3": 2,
-                   "DO1": 3,
-                   "DO2": 4,
-                   "DO3": 5,
-                   "Electromagnet": 6, })
+                               "DI2": 1,
+                               "DI3": 2,
+                               "DO1": 3,
+                               "DO2": 4,
+                               "DO3": 5,
+                               "Electromagnet": 6, })
 
     def __init__(self):
         super(DiscreteInputDataBlockNed2, self).__init__()
-
-
-

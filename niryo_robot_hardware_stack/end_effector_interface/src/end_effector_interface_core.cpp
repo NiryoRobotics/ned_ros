@@ -127,7 +127,6 @@ void EndEffectorInterfaceCore::initParameters(ros::NodeHandle& nh)
  */
 void EndEffectorInterfaceCore::startServices(ros::NodeHandle& nh)
 {
-
     _digital_in_server = nh.advertiseService("set_ee_io_state",
                                              &EndEffectorInterfaceCore::_callbackSetIOState, this);
 }

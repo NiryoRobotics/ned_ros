@@ -12,6 +12,7 @@ from niryo_robot_msgs.srv import SetString
 from niryo_robot_system_api_client.srv import ManageWifi
 from niryo_robot_system_api_client.msg import WifiStatus
 
+
 class SystemApiClientNode:
     def __init__(self):
         rospy.logdebug("System Api Client - Entering in Init")
@@ -20,7 +21,7 @@ class SystemApiClientNode:
         port = rospy.get_param('~server_port')
 
         # TODO remettre prefix
-        prefix = None #rospy.get_param('~api_prefix')
+        prefix = None  # rospy.get_param('~api_prefix')
 
         rospy.logdebug("SystemApiClientNode.init - server_domain: {}".format(domain))
         rospy.logdebug("SystemApiClientNode.init - server_port: {}".format(port))

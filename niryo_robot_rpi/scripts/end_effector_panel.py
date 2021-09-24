@@ -62,7 +62,8 @@ class NiryoEndEffectorPanel:
 
             if msg.action == ButtonStatus.HANDLE_HELD_ACTION:
                 activate_learning_mode(True)
-            elif msg.action == ButtonStatus.NO_ACTION and self.__learning_mode_button_state == ButtonStatus.HANDLE_HELD_ACTION:
+            elif (msg.action == ButtonStatus.NO_ACTION and
+                  self.__learning_mode_button_state == ButtonStatus.HANDLE_HELD_ACTION):
                 activate_learning_mode(False)
             elif msg.action == ButtonStatus.SINGLE_PUSH_ACTION:
                 activate_learning_mode(not self.__learning_mode_on)
@@ -81,7 +82,9 @@ class NiryoEndEffectorPanel:
                 self.blockly_save_current_point()
 
     def __callback_custom_pos_button_status(self, msg):
-        if self.__custom_button_state == ButtonStatus.HANDLE_HELD_ACTION and msg.action == ButtonStatus.NO_ACTION and self.__robot_status == RobotStatus.CALIBRATION_NEEDED:
+        if (self.__custom_button_state == ButtonStatus.HANDLE_HELD_ACTION and
+                msg.action == ButtonStatus.NO_ACTION and
+                self.__robot_status == RobotStatus.CALIBRATION_NEEDED):
             self.__custom_button_state = msg.action
             auto_calibration()
         else:

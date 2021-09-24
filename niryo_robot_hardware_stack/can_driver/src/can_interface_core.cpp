@@ -525,7 +525,7 @@ int CanInterfaceCore::setConveyor(const std::shared_ptr<common::model::ConveyorS
 
         _can_manager->writeSingleCommand(std::make_shared<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_CONVEYOR,
                                                                                 state->getId(), std::initializer_list<int32_t>{false, 0, -1}));
-        
+
         result = niryo_robot_msgs::CommandStatus::SUCCESS;
     }
     else

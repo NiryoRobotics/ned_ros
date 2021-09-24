@@ -22,13 +22,13 @@ class CoilDataBlock(DataBlock):
     CO_IO_ENABLE_PULLUP = 200
 
     DIO_ADDRESS = OrderedDict({0: "1A",
-                   1: "1B",
-                   2: "1C",
-                   3: "2A",
-                   4: "2B",
-                   5: "2C",
-                   6: "SW1",
-                   7: "SW2", })
+                               1: "1B",
+                               2: "1C",
+                               3: "2A",
+                               4: "2B",
+                               5: "2C",
+                               6: "SW1",
+                               7: "SW2", })
 
     DIO_MODE_OUTPUT = SetIOModeRequest.OUTPUT
     DIO_MODE_INPUT = SetIOModeRequest.INPUT
@@ -101,13 +101,12 @@ class CoilDataBlock(DataBlock):
 
 class CoilDataBlockNed2(CoilDataBlock):
     DIO_ADDRESS = OrderedDict({1: "DI1",
-                   2: "DI2",
-                   3: "DI3",
-                   4: "DO1",
-                   5: "DO2",
-                   6: "DO3",
-                   7: "Electromagnet", })
+                               2: "DI2",
+                               3: "DI3",
+                               4: "DO1",
+                               5: "DO2",
+                               6: "DO3",
+                               7: "Electromagnet", })
 
     def __init__(self):
         super(CoilDataBlockNed2, self).__init__()
-

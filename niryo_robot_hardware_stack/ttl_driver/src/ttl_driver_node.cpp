@@ -18,6 +18,8 @@
 #include <memory>
 #include <ros/ros.h>
 
+#include <string>
+
 // niryo
 #include "ros/serialization.h"
 #include "ttl_driver/ttl_interface_core.hpp"
@@ -63,7 +65,7 @@ void addJointToTtlInterface(std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_in
         robot_hwnh.getParam("joint_" + to_string(j + 1) + "/bus", joint_bus);
         HardwareTypeEnum eType = HardwareTypeEnum(joint_type.c_str());
         BusProtocolEnum eBusProto = BusProtocolEnum(joint_bus.c_str());
-        
+
         if (eType == EHardwareType::STEPPER || eType == EHardwareType::FAKE_STEPPER_MOTOR)
         {  // stepper
             std::string currentStepperNamespace = "steppers/stepper_" + to_string(currentIdStepper);
@@ -149,8 +151,8 @@ void addJointToTtlInterface(std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_in
                     ttl_interface->addJoint(dxlState);
 
                 currentIdDxl++;
-            } 
-        }       
+            }
+        }
     }  // end for (size_t j = 0; j < nb_joints; j++)
 }
 

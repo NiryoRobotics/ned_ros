@@ -31,6 +31,7 @@
 #include <vector>
 #include <set>
 #include <utility>
+#include <algorithm>
 
 using ::common::model::EStepperCalibrationStatus;
 using ::common::model::ConveyorState;
@@ -247,7 +248,7 @@ int CanManager::changeId(common::model::EHardwareType motor_type, uint8_t old_id
  */
 void CanManager::readStatus()
 {
-    if(_driver_map.count(EHardwareType::STEPPER))
+    if (_driver_map.count(EHardwareType::STEPPER))
     {
         auto stepper_driver = _driver_map.at(EHardwareType::STEPPER);
         if (stepper_driver && stepper_driver->canReadData())
@@ -379,7 +380,7 @@ bool CanManager::ping(uint8_t id)
 
     if (_state_map.find(id) != _state_map.end())
     {
-        if(_driver_map.count(_state_map.find(id)->second->getHardwareType()))
+        if (_driver_map.count(_state_map.find(id)->second->getHardwareType()))
         {
             auto it = _driver_map.at(_state_map.find(id)->second->getHardwareType());
             if (it)

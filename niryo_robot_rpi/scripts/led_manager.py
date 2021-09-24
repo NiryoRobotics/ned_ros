@@ -68,8 +68,7 @@ class LEDManager(object):
 
         # Subscribe to hotspot and hardware status. Those values will override standard states
         self.wifi_state_subscriber = rospy.Subscriber('/niryo_robot/wifi/status',
-                                                         WifiStatus, self.__callback_wifi_state)
-
+                                                      WifiStatus, self.__callback_wifi_state)
 
         self.set_led_from_state(dxl_leds=True)
 

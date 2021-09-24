@@ -58,7 +58,6 @@ class DigitalPin(NiryoIO):
             self._read()
 
 
-
 class Fan(DigitalPin):
     def __init__(self, lock, pin, name, temperature_on_threshold, temperature_off_threshold):
         super(Fan, self).__init__(lock, pin, name, PinMode.DIGITAL_OUTPUT, False)

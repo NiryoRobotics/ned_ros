@@ -66,7 +66,7 @@ void addJointToCanInterface(std::shared_ptr<can_driver::CanInterfaceCore> can_in
         robot_hwnh.getParam("joint_" + to_string(j + 1) + "/bus", joint_bus);
         HardwareTypeEnum eType = HardwareTypeEnum(joint_type.c_str());
         BusProtocolEnum eBusProto = BusProtocolEnum(joint_bus.c_str());
-        
+
         if (eType == EHardwareType::STEPPER || eType == EHardwareType::FAKE_STEPPER_MOTOR)
         {  // stepper
             std::string currentStepperNamespace = "steppers/stepper_" + to_string(currentIdStepper);
@@ -99,7 +99,7 @@ void addJointToCanInterface(std::shared_ptr<can_driver::CanInterfaceCore> can_in
 
                 currentIdStepper++;
             }
-        }  
+        }
     }  // end for (size_t j = 0; j < nb_joints; j++)
 }
 
@@ -132,7 +132,7 @@ void addJointToCanManager(std::shared_ptr<can_driver::CanManager> can_drv)
         robot_hwnh.getParam("joint_" + to_string(j + 1) + "/bus", joint_bus);
         HardwareTypeEnum eType = HardwareTypeEnum(joint_type.c_str());
         BusProtocolEnum eBusProto = BusProtocolEnum(joint_bus.c_str());
-        
+
         if (eType == EHardwareType::STEPPER || eType == EHardwareType::FAKE_STEPPER_MOTOR)
         {  // stepper
             std::string currentStepperNamespace = "steppers/stepper_" + to_string(currentIdStepper);
@@ -226,7 +226,7 @@ std::shared_ptr<can_driver::CanManager> CanManagerTestSuite::can_manager;
 TEST_F(CanManagerTestSuite, addAndRemoveMotor)
 {
     EXPECT_THROW(can_manager->getPosition(10), std::out_of_range);
-    
+
     can_manager->addHardwareComponent(std::make_shared<common::model::StepperMotorState>(common::model::EHardwareType::STEPPER,
                                                                                         common::model::EComponentType::JOINT,
                                                                                         common::model::EBusProtocol::CAN, 10));

@@ -328,7 +328,7 @@ int main(int argc, char **argv)
     nh = std::make_unique<ros::NodeHandle>();
 
     testing::InitGoogleTest(&argc, argv);
-    
+
     bool simulation_mode;
     ros::NodeHandle nh_private("~");
     nh_private.getParam("simulation_mode", simulation_mode);

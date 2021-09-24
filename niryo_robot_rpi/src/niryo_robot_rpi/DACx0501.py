@@ -28,7 +28,8 @@ _DAC = 0x08
 """
     DAC80501 is 16-bit digital to analog converter.
     :param int bus: The channel number if it's different to 1.
-    :param int address: The address of the device if set differently from the default( see address in p.28 of datasheet ).
+    :param int address: The address of the device if set differently
+                        from the default( see address in p.28 of datasheet ).
     :param float v_ref: External or internal voltage reference 2.5V, 3.3V or 5V
     :param int resolution: Resolution bits DAC80501 -> 16bits, DAC60501 -> 12 bits
 """

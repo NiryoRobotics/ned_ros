@@ -22,6 +22,7 @@ from threading import Lock
 
 from niryo_robot_msgs.msg import HardwareStatus
 
+
 class FansManager(object):
     def __init__(self):
         self._fans_list = []
@@ -64,7 +65,8 @@ class FansManagerNedOne(FansManager):
 
         lock = Lock()
         self._fans_list = [Fan(lock, fan["pin"], "FAN_{}".format(fan["pin"]),
-                                     fan["temperature_on_threshold"], fan["temperature_off_threshold"])
+                               fan["temperature_on_threshold"],
+                               fan["temperature_off_threshold"])
                            for fan in rospy.get_param("/niryo_robot_rpi/fans")]
 
         rospy.loginfo("Fan Manager - Started")

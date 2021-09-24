@@ -12,6 +12,7 @@ from tools_interface.srv import PullAirVacuumPump, PushAirVacuumPump
 from niryo_robot_rpi.srv import SetDigitalIO
 from niryo_robot_rpi.srv import SetIOMode
 
+
 class ToolRosCommandInterface:
 
     def __init__(self, state_ros_communication_problem):
@@ -30,8 +31,10 @@ class ToolRosCommandInterface:
 
         self.__service_ping_dxl_tool = rospy.ServiceProxy(namespace + 'ping_and_set_dxl_tool', PingDxlTool)
 
-        self.__service_setup_digital_output_tool = rospy.ServiceProxy('/niryo_robot_rpi/set_digital_io', SetDigitalIO)
-        self.__service_activate_digital_output_tool = rospy.ServiceProxy('/niryo_robot_rpi/set_digital_io_mode', SetIOMode)
+        self.__service_setup_digital_output_tool = rospy.ServiceProxy('/niryo_robot_rpi/set_digital_io',
+                                                                      SetDigitalIO)
+        self.__service_activate_digital_output_tool = rospy.ServiceProxy('/niryo_robot_rpi/set_digital_io_mode',
+                                                                         SetIOMode)
 
         self.__state_ros_communication_problem = state_ros_communication_problem
         rospy.logdebug("Interface between Tools Commander and ROS Control has been started.")
