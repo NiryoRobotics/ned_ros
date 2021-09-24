@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 from niryo_robot_led_ring.msg import LedRingStatus, LedRingAnimation, LedRingCurrentState
 

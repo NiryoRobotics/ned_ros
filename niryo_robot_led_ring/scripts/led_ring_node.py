@@ -6,7 +6,7 @@ import logging
 import rosnode
 
 from threading import Thread
-from led_ring_commander import LedRingCommander
+from niryo_robot_led_ring.led_ring_commander import LedRingCommander
 
 
 class LedRingNode:
