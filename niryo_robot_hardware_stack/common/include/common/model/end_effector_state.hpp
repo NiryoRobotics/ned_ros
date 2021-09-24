@@ -104,11 +104,20 @@ class EndEffectorState : public AbstractHardwareState
         bool getCollisionStatus() const;
         void setCollisionStatus(bool getCollisionStatus);
 
-    private:
+        bool getDigitalIn() const;
+        void setDigitalIn(bool digital_in);
+
+        bool getDigitalOut() const;
+        void setDigitalOut(bool digital_out);
+
+private:
         std::array<Button, 3> _buttons_list;
         Vector3D _accelerometer_values{};
 
         bool _collision_status{false};
+
+        bool _digital_in{false};
+        bool _digital_out{false};
 };
 
 /**
@@ -160,6 +169,26 @@ inline
 bool EndEffectorState::getCollisionStatus() const
 {
   return _collision_status;
+}
+
+/**
+ * @brief EndEffectorState::getDigitalIn
+ * @return
+ */
+inline
+bool EndEffectorState::getDigitalIn() const
+{
+  return _digital_in;
+}
+
+/**
+ * @brief EndEffectorState::getDigitalOut
+ * @return
+ */
+inline
+bool EndEffectorState::getDigitalOut() const
+{
+  return _digital_out;
 }
 
 } // namespace model

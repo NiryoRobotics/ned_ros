@@ -52,10 +52,7 @@ EndEffectorCommandTypeEnum::initialize()
 {
     std::map<EEndEffectorCommandType, std::string> m;
 
-    m[EEndEffectorCommandType::CMD_TYPE_BUTTON_1_CONFIG] = "configure free drive button cmd";
-    m[EEndEffectorCommandType::CMD_TYPE_BUTTON_2_CONFIG] = "configure save pos button cmd";
-    m[EEndEffectorCommandType::CMD_TYPE_BUTTON_3_CONFIG] = "configure custom button cmd";
-    m[EEndEffectorCommandType::CMD_TYPE_DIGITAL_OUTPUT] = "digit output cmd";
+    m[EEndEffectorCommandType::CMD_TYPE_DIGITAL_OUTPUT] = "digit input cmd";
     m[EEndEffectorCommandType::CMD_TYPE_PING] = "ping";
     m[EEndEffectorCommandType::CMD_TYPE_UNKNOWN]  = "unknown type";
 

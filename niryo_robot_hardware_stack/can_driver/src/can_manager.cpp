@@ -210,10 +210,36 @@ void CanManager::removeHardwareComponent(uint8_t id)
 
 int CanManager::changeId(common::model::EHardwareType motor_type, uint8_t old_id, uint8_t new_id)
 {
-  if (_driver_map.count(motor_type) && _driver_map.at(motor_type))
-    return _driver_map.at(motor_type)->sendUpdateConveyorId(old_id, new_id);
-  else
-    return CAN_FAIL;
+    int ret = CAN_FAIL;
+    if (old_id == new_id)
+    {
+        ret = CAN_OK;
+    }
+    else
+    {
+        if (_driver_map.count(motor_type))
+        {
+            auto driver = _driver_map.at(motor_type);
+            if (driver)
+            {
+                ret = driver->sendUpdateConveyorId(old_id, new_id);
+                if (CAN_OK == ret)
+                {
+                    // update all maps
+                    auto i_state  = _state_map.find(old_id);
+                    // update all maps
+                    if (i_state != _state_map.end())
+                    {
+                        // update all maps
+                        std::swap(_state_map[new_id], i_state->second);
+                        // update all maps
+                        _state_map.erase(i_state);
+                    }
+                }
+            }
+        }
+    }
+    return ret;
 }
 
 /**

@@ -166,5 +166,23 @@ void EndEffectorState::setCollisionStatus(bool collision_satus)
   _collision_status = collision_satus;
 }
 
+/**
+ * @brief EndEffectorState::setDigitalIn
+ * @param digital_in
+ */
+void EndEffectorState::setDigitalIn(bool digital_in)
+{
+  _digital_in = digital_in;
+}
+
+/**
+ * @brief EndEffectorState::setDigitalOut
+ * @param digital_out
+ */
+void EndEffectorState::setDigitalOut(bool digital_out)
+{
+  _digital_out = digital_out;
+}
+
 }  // namespace model
 }  // namespace common
