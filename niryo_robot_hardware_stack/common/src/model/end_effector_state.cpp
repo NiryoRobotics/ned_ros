@@ -147,13 +147,12 @@ void EndEffectorState::setButtonStatus(uint8_t id, EActionType action)
       return;
 
   if (action == EActionType::SINGLE_PUSH_ACTION ||
-        action == EActionType::DOUBLE_PUSH_ACTION ||
-        action == EActionType::LONG_PUSH_ACTION)
+        action == EActionType::DOUBLE_PUSH_ACTION)
   {
       button->actions.push(action);
       button->setDelay();
   }
-  else if (action == EActionType::HANDLE_HELD_ACTION && !button->isNeedToSkip())
+  else if (action == EActionType::LONG_PUSH_ACTION || (action == EActionType::HANDLE_HELD_ACTION && !button->isNeedToSkip()))
   {
       button->actions.push(action);
   }
