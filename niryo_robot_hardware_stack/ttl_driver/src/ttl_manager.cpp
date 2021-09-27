@@ -1323,7 +1323,7 @@ void TtlManager::addHardwareDriver(common::model::EHardwareType hardware_type)
       switch (hardware_type)
       {
           case common::model::EHardwareType::STEPPER:
-              _driver_map.insert(std::make_pair(hardware_type, std::make_shared<StepperDriver<> >(_portHandler, _packetHandler)));
+              _driver_map.insert(std::make_pair(hardware_type, std::make_shared<StepperDriver<StepperReg> >(_portHandler, _packetHandler)));
           break;
           case common::model::EHardwareType::XL430:
               _driver_map.insert(std::make_pair(hardware_type, std::make_shared<DxlDriver<XL430Reg> >(_portHandler, _packetHandler)));
@@ -1344,7 +1344,7 @@ void TtlManager::addHardwareDriver(common::model::EHardwareType hardware_type)
               _driver_map.insert(std::make_pair(hardware_type, std::make_shared<MockStepperDriver>(_portHandler, _packetHandler)));
           break;
           case common::model::EHardwareType::END_EFFECTOR:
-              _driver_map.insert(std::make_pair(hardware_type, std::make_shared<EndEffectorDriver<> >(_portHandler, _packetHandler)));
+              _driver_map.insert(std::make_pair(hardware_type, std::make_shared<EndEffectorDriver<EndEffectorReg> >(_portHandler, _packetHandler)));
           break;
           case common::model::EHardwareType::FAKE_END_EFFECTOR:
               _driver_map.insert(std::make_pair(hardware_type, std::make_shared<MockEndEffectorDriver>(_portHandler, _packetHandler)));

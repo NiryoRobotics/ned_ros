@@ -117,7 +117,9 @@ int AbstractDxlDriver::writeSyncCmd(int type, const std::vector<uint8_t>& ids, c
     {
         std::vector<uint32_t> params_inv;
         for (auto const& p : params)
-          params_inv.emplace_back(!p);
+        {
+            params_inv.emplace_back(!p);
+        }
         return syncWriteTorqueEnable(ids, params_inv);
     }
     default:

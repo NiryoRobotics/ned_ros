@@ -524,7 +524,7 @@ void JointHardwareInterface::activateLearningMode(bool activated)
     ROS_DEBUG("JointHardwareInterface::activateLearningMode - activate learning mode");
 
     DxlSyncCmd dxl_cmd(EDxlCommandType::CMD_TYPE_LEARNING_MODE);
-    StepperTtlSyncCmd stepper_ttl_sync_cmd(EStepperCommandType::CMD_TYPE_LEARNING_MODE);
+    StepperTtlSingleCmd stepper_ttl_cmd(EStepperCommandType::CMD_TYPE_LEARNING_MODE);
     StepperSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_LEARNING_MODE);
 
     for (auto const& jState : _joint_list)
@@ -537,7 +537,10 @@ void JointHardwareInterface::activateLearningMode(bool activated)
             }
             else if ((jState->isStepper() && jState->getBusProtocol() == EBusProtocol::TTL))
             {
-                stepper_ttl_sync_cmd.addMotorParam(jState->getHardwareType(), jState->getId(), activated);
+                stepper_ttl_cmd.setId(jState->getId());
+                stepper_ttl_cmd.setParams({activated});
+                if (_ttl_interface)
+                    _ttl_interface->addSingleCommandToQueue(std::make_shared<StepperTtlSingleCmd>(stepper_ttl_cmd));
             }
             else
             {
@@ -551,10 +554,7 @@ void JointHardwareInterface::activateLearningMode(bool activated)
 
     if (_ttl_interface)
     {
-        if (dxl_cmd.isValid())
-            _ttl_interface->setSyncCommand(std::make_shared<DxlSyncCmd>(dxl_cmd));
-        if (stepper_ttl_sync_cmd.isValid())
-            _ttl_interface->setSyncCommand(std::make_shared<StepperTtlSyncCmd>(stepper_ttl_sync_cmd));
+        _ttl_interface->setSyncCommand(std::make_shared<DxlSyncCmd>(dxl_cmd));
     }
 
     _learning_mode = activated;

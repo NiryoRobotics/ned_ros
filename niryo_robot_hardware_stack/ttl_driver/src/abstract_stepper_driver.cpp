@@ -20,7 +20,7 @@
 #include <cassert>
 #include <string>
 #include <vector>
-#include <ros/ros.h>
+
 using ::common::model::EStepperCommandType;
 
 namespace ttl_driver
@@ -116,7 +116,14 @@ int AbstractStepperDriver::writeSyncCmd(int type, const std::vector<uint8_t>& id
     case EStepperCommandType::CMD_TYPE_TORQUE:
         return syncWriteTorqueEnable(ids, params);
     case EStepperCommandType::CMD_TYPE_LEARNING_MODE:
-        return syncWriteTorqueEnable(ids, params);
+    {
+        std::vector<uint32_t> params_inv;
+        for (auto const& p : params)
+        {
+            params_inv.emplace_back(!p);
+        }
+        return syncWriteTorqueEnable(ids, params_inv);
+    }
     default:
         std::cout << "Command not implemented " << type << std::endl;
     }
