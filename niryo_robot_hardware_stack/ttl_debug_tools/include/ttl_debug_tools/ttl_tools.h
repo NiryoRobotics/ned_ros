@@ -20,8 +20,10 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #ifndef TTL_DEBUG_TOOLS_TTL_TOOLS_H
 #define TTL_DEBUG_TOOLS_TTL_TOOLS_H
 
+#include <cstdint>
 #include <string>
 #include <memory>
+#include <vector>
 
 #include "dynamixel_sdk/dynamixel_sdk.h"
 
@@ -45,6 +47,11 @@ class TtlTools
                          uint32_t value, uint8_t byte_number);
         int getRegister(uint8_t id, uint8_t reg_address,
                         uint32_t &value, uint8_t byte_number);
+
+        int setRegisters(std::vector<uint8_t> ids, uint8_t reg_address,
+                        std::vector<uint32_t> values, uint8_t byte_number);
+        int getRegisters(std::vector<uint8_t> ids, uint8_t reg_address,
+                        std::vector<uint32_t> &values, uint8_t byte_number);
 
         void closePort();
 

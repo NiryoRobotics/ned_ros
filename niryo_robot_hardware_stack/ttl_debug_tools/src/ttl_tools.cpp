@@ -19,6 +19,7 @@
 
 #include <vector>
 
+#include "dynamixel_sdk/packet_handler.h"
 #include "ttl_debug_tools/ttl_tools.h"
 
 namespace ttl_debug_tools
@@ -198,6 +199,139 @@ int TtlTools::getRegister(uint8_t id, uint8_t reg_address, uint32_t &value, uint
         comm_result = error;
 
     return comm_result;
+}
+
+/**
+ * @brief TtlTools::setRegisters
+ */
+int TtlTools::setRegisters(std::vector<uint8_t> ids, uint8_t reg_address,
+                        std::vector<uint32_t> values, uint8_t byte_number)
+{
+    int dxl_comm_result = COMM_SUCCESS;
+
+    if (!ids.empty())
+    {
+        if (ids.size() == values.size())
+        {
+            dynamixel::GroupSyncWrite groupSyncWrite(_portHandler.get(),
+                                                     _packetHandler.get(),
+                                                     reg_address,
+                                                     byte_number);
+
+            bool dxl_senddata_result = false;
+
+            for (size_t i = 0; i < ids.size(); ++i)
+            {
+                uint8_t id = ids.at(i);
+                uint32_t data = values.at(i);
+
+                switch (byte_number)
+                {
+                    case 1:
+                    {
+                        uint8_t params[1] = {static_cast<uint8_t>(data)};
+                        dxl_senddata_result = groupSyncWrite.addParam(id, params);
+                    }
+                    break;
+                    case 2:
+                    {
+                        uint8_t params[2] =
+                                            {DXL_LOBYTE(static_cast<uint16_t>(data)),
+                                             DXL_HIBYTE(static_cast<uint16_t>(data))};
+                        dxl_senddata_result = groupSyncWrite.addParam(id, params);
+                    }
+                    break;
+                    case 4:
+                    {
+                        uint8_t params[4] =
+                                            {DXL_LOBYTE(DXL_LOWORD(data)),
+                                             DXL_HIBYTE(DXL_LOWORD(data)),
+                                             DXL_LOBYTE(DXL_HIWORD(data)),
+                                             DXL_HIBYTE(DXL_HIWORD(data))};
+                        dxl_senddata_result = groupSyncWrite.addParam(id, params);
+                    }
+                    break;
+                    default:
+                        printf("AbstractTtlDriver::syncWrite ERROR: Size param must be 1, 2 or 4 bytes\n");
+                    break;
+                }
+
+                if (!dxl_senddata_result)
+                {
+                    dxl_comm_result = COMM_TX_ERROR;
+                    break;
+                }
+            }
+
+            // send group if no error
+            if (COMM_TX_ERROR != dxl_comm_result)
+                dxl_comm_result = groupSyncWrite.txPacket();
+
+            groupSyncWrite.clearParam();
+        }
+        else
+        {
+            dxl_comm_result = COMM_TX_ERROR;
+        }
+    }
+
+    return dxl_comm_result;
+}
+
+/**
+ * @brief TtlTools::getRegisters
+ */
+int TtlTools::getRegisters(std::vector<uint8_t> ids, uint8_t reg_address, std::vector<uint32_t> &values, uint8_t byte_number)
+{
+    values.clear();
+
+    dynamixel::GroupSyncRead groupSyncRead(_portHandler.get(), _packetHandler.get(), reg_address, byte_number);
+    int dxl_comm_result = COMM_TX_FAIL;
+
+    for (auto const& id : ids)
+    {
+    if (!groupSyncRead.addParam(id))
+    {
+        groupSyncRead.clearParam();
+        return COMM_RX_FAIL;
+    }
+    }
+
+    dxl_comm_result = groupSyncRead.txRxPacket();
+
+    if (COMM_SUCCESS == dxl_comm_result)
+    {
+    for (auto const& id : ids)
+    {
+        if (groupSyncRead.isAvailable(id, reg_address, byte_number))
+        {
+            switch (byte_number)
+            {
+                case 1:
+                    values.emplace_back(static_cast<uint8_t>(groupSyncRead.getData(id, reg_address, byte_number)));
+                break;
+                case 2:
+                    values.emplace_back(static_cast<uint16_t>(groupSyncRead.getData(id, reg_address, byte_number)));
+                break;
+                case 4:
+                    values.emplace_back(groupSyncRead.getData(id, reg_address, byte_number));
+                break;
+                default:
+                    printf("AbstractTtlDriver::syncRead ERROR: Size param must be 1, 2 or 4 bytes\n");
+                break;
+            }
+        }
+        else
+        {
+            dxl_comm_result = COMM_RX_FAIL;
+            break;
+        }
+    }
+    }
+
+    groupSyncRead.clearParam();
+
+    return dxl_comm_result;
 }
 
 /**
