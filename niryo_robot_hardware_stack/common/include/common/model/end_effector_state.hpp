@@ -106,7 +106,7 @@ class EndEffectorState : public AbstractHardwareState
             public:
                 EButtonType type{EButtonType::UNKNOWN};
                 std::queue<EActionType> actions;
-            
+
             private:
                 static constexpr double _time_avoid_duplicate_state = 0.5;
                 double _time_last_read_state;

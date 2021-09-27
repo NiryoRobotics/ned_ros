@@ -145,8 +145,12 @@ void EndEffectorState::setButtonStatus(uint8_t id, EActionType action)
   if (button->actions.back() == EActionType::NO_ACTION &&
           action == EActionType::NO_ACTION)
       return;
-
-  if (action == EActionType::SINGLE_PUSH_ACTION ||
+  else if (button->actions.back() !=EActionType::NO_ACTION &&
+          action == EActionType::NO_ACTION)
+  {
+      button->actions.push(action);
+  }
+  else if (action == EActionType::SINGLE_PUSH_ACTION ||
         action == EActionType::DOUBLE_PUSH_ACTION)
   {
       button->actions.push(action);

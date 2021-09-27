@@ -163,7 +163,6 @@ void EndEffectorInterfaceCore::startPublishers(ros::NodeHandle& nh)
  */
 void EndEffectorInterfaceCore::startSubscribers(ros::NodeHandle& nh)
 {
-    _learning_mode_client = nh.serviceClient<niryo_robot_msgs::SetBool>("/niryo_robot/learning_mode/activate");
 }
 
 /**
@@ -208,38 +207,13 @@ void EndEffectorInterfaceCore::_publishButtonState()
         for (auto button : _end_effector_state->getButtonsStatus())
         {
             if (button->actions.empty())
-                button->actions.push(common::model::EActionType::NO_ACTION);
+                continue;
             
             button_msg.action = static_cast<int>(button->actions.front());
             switch (button->type)
             {
                 case EButtonType::FREE_DRIVE_BUTTON:
                     _free_drive_button_state_publisher.publish(button_msg);
-                    if (common::model::EActionType::HANDLE_HELD_ACTION == button->actions.front() &&
-                        !_is_learning_mode)
-                    {
-                        bool exists(_learning_mode_client.waitForExistence(ros::Duration(1.0)));
-                        ROS_DEBUG_COND(exists, "EndEffectorInterfaceCore::startServices : - Learning mode service connected successfully");
-                        ROS_ERROR_COND(!exists, "EndEffectorInterfaceCore::startServices : - unable to connect to Learning mode service");
-
-                        niryo_robot_msgs::SetBool srv;
-                        srv.request.value = true;
-                        _learning_mode_client.call(srv);
-                        _is_learning_mode = true;
-                    }
-                    else if (common::model::EActionType::NO_ACTION == button->actions.front() &&
-                            _is_learning_mode)
-                    {
-                        bool exists(_learning_mode_client.waitForExistence(ros::Duration(1.0)));
-                        ROS_DEBUG_COND(exists, "EndEffectorInterfaceCore::startServices : - Learning mode service connected successfully");
-                        ROS_ERROR_COND(!exists, "EndEffectorInterfaceCore::startServices : - unable to connect to Learning mode service");
-
-                        niryo_robot_msgs::SetBool srv;
-                        srv.request.value = false;
-                        _learning_mode_client.call(srv);
-                        _is_learning_mode = false;
-                    }
-
                     break;
                 case EButtonType::SAVE_POSITION_BUTTON:
                     _save_pos_button_state_publisher.publish(button_msg);
