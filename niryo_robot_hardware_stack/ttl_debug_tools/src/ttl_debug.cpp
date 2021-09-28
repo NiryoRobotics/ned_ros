@@ -110,7 +110,7 @@ int main(int argc, char **argv)
         // Setup TTL communication
         std::shared_ptr<dynamixel::PortHandler> portHandler(
                     dynamixel::PortHandler::getPortHandler(serial_port.c_str()));
-        std::cout << "TEST10" << std::endl;
+
         std::shared_ptr<dynamixel::PacketHandler> packetHandler(
                     dynamixel::PacketHandler::getPacketHandler(PROTOCOL_VERSION));
 
@@ -118,7 +118,6 @@ int main(int argc, char **argv)
 
         if (-1 != ttlTools.setupBus(baudrate))
         {
-            std::cout << "TEST11" << std::endl;
             int comm_result = COMM_TX_FAIL;
 
             // Execute action from args
@@ -187,19 +186,15 @@ int main(int argc, char **argv)
                 }
                 else if (vars.count("set-registers"))
                 {
-                    std::cout << "TEST1" << std::endl;
                     std::vector<int> params = vars["set-registers"].as<std::vector<int>>();
-                    std::cout << "TEST20" << "size" << params.size() << std::endl;
                     uint8_t addr = static_cast<uint8_t>(params.at(0));
                     uint8_t size = static_cast<uint8_t>(params.at(1));
 
                     std::stringstream ss;
-                    ss << "register address : " << int(addr) << " size : " << int(size) << " values";
+                    ss << "register address : " << static_cast<int>(addr) << " size : " << static_cast<int>(size) << " values";
                     std::vector<uint32_t> values;
-                    std::cout << "TEST2" << std::endl;
                     for (size_t i = 2; i < params.size(); i++)
                     {
-                        std::cout << "TEST3" << std::endl;
                         values.push_back(static_cast<uint32_t>(params.at(i)));
                         ss << " " << params.at(static_cast<int>(i));
                     }
@@ -231,7 +226,7 @@ int main(int argc, char **argv)
                         {
                             ss << " " << values.at(i);
                         }
-                        std::cout << "Retrieved values at address " << addr << ":" << ss.str() << std::endl;
+                        std::cout << "Retrieved values at address " << static_cast<int>(addr) << ":" << ss.str() << std::endl;
                     }
                 }
                 else  // unknown command
