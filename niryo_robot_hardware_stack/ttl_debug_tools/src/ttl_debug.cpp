@@ -101,7 +101,7 @@ int main(int argc, char **argv)
             std::vector<int> id_list = vars["ids"].as<std::vector<int>>();
             for (auto l_id : id_list)
             {
-               ids.push_back(static_cast<uint8_t>(l_id)); 
+               ids.push_back(static_cast<uint8_t>(l_id));
             }
         }
 

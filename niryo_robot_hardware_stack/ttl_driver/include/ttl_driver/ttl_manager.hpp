@@ -151,6 +151,7 @@ class TtlManager : public common::model::IBusManager
         std::shared_ptr<dynamixel::PacketHandler> _packetHandler;
 
         std::string _device_name;
+        bool _simulation_mode;
         int _baudrate{1000000};
 
         std::vector<uint8_t> _all_motor_connected; // with all ttl motors connected (including the tool)

@@ -49,7 +49,7 @@ using ::common::model::EBusProtocol;
 // Method add joints
 void addJointToTtlInterface(std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface)
 {
-      size_t nb_joints = 0;
+    size_t nb_joints = 0;
 
     ros::NodeHandle robot_hwnh("joints_interface");
     // retrieve nb joints with checking that the config param exists for both name and id
@@ -169,7 +169,7 @@ void addJointToTtlInterface(std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_in
 
 void addJointToTtlManager(std::shared_ptr<ttl_driver::TtlManager> ttl_drv)
 {
-      size_t nb_joints = 0;
+    size_t nb_joints = 0;
 
     ros::NodeHandle robot_hwnh("joints_interface");
     // retrieve nb joints with checking that the config param exists for both name and id
@@ -728,25 +728,9 @@ TEST_F(TtlManagerTestSuiteRobotWithoutCan, testSingleControlCmds)
 
 TEST_F(TtlManagerTestSuiteRobotWithoutCan, testSyncCmds)
 {
-  bool simulation_mode;
-  ros::NodeHandle nh_private("~");
-  nh_private.getParam("simulation_mode", simulation_mode);
-
-  common::model::EHardwareType dxl_type;
-
-  if (simulation_mode)
-  {
-      dxl_type = common::model::EHardwareType::FAKE_DXL_MOTOR;
-  }
-  else
-  {
-      dxl_type = common::model::EHardwareType::XL430;
-  }
-  // sync cmd
-  std::shared_ptr<common::model::DxlSyncCmd> dynamixel_cmd_1 = std::make_shared<common::model::DxlSyncCmd>(
-                                                            common::model::EDxlCommandType::CMD_TYPE_TORQUE);
-  dynamixel_cmd_1->addMotorParam(dxl_type, 5, 1);
-  dynamixel_cmd_1->addMotorParam(dxl_type, 6, 1);
+    bool simulation_mode;
+    ros::NodeHandle nh_private("~");
+    nh_private.getParam("simulation_mode", simulation_mode);
 
     common::model::EHardwareType dxl_type;
 
@@ -786,23 +770,9 @@ TEST_F(TtlManagerTestSuiteRobotWithoutCan, testSyncCmds)
 
 TEST_F(TtlManagerTestSuiteRobotWithoutCan, testSyncControlCmds)
 {
-  bool simulation_mode{false};
-  ros::NodeHandle nh_private("~");
-  nh_private.getParam("simulation_mode", simulation_mode);
-
-  common::model::EHardwareType dxl_type;
-  common::model::EHardwareType stepper_type;
-
-  if (simulation_mode)
-  {
-      dxl_type = common::model::EHardwareType::FAKE_DXL_MOTOR;
-      stepper_type = common::model::EHardwareType::FAKE_STEPPER_MOTOR;
-  }
-  else
-  {
-      dxl_type = common::model::EHardwareType::XL430;
-      stepper_type = common::model::EHardwareType::STEPPER;
-  }
+    bool simulation_mode{false};
+    ros::NodeHandle nh_private("~");
+    nh_private.getParam("simulation_mode", simulation_mode);
 
     common::model::EHardwareType dxl_type;
     common::model::EHardwareType stepper_type;
@@ -850,8 +820,10 @@ TEST_F(TtlManagerTestSuiteRobotWithoutCan, testSyncControlCmds)
     uint32_t pos_5 = state_motor_5->getPositionState();
     uint32_t pos_6 = state_motor_6->getPositionState();
 
-  EXPECT_EQ(ttl_drv->writeSynchronizeCommand(cmd_2), COMM_SUCCESS);
-  ros::Duration(0.5).sleep();
+    uint32_t new_pos_2 = (pos_2 > 2048) ? pos_2 - 100 : pos_2 + 100;
+    uint32_t new_pos_3 = (pos_3 > 2048) ? pos_3 - 100 : pos_3 + 100;
+    uint32_t new_pos_5 = (pos_5 > 1000) ? pos_5 - 100 : pos_5 + 100;
+    uint32_t new_pos_6 = (pos_6 > 1000) ? pos_6 - 100 : pos_6 + 100;
 
     std::shared_ptr<common::model::DxlSyncCmd> cmd_1 = std::make_shared<common::model::DxlSyncCmd>(
                                                               common::model::EDxlCommandType::CMD_TYPE_POSITION);

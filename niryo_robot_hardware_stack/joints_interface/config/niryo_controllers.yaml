@@ -30,7 +30,7 @@ niryo_robot_follow_joint_trajectory_controller:
     constraints:
         goal_time: 1.0 
         stopped_velocity_tolerance: 0.05
-        joint_1: {trajectory: 0.5, goal: 0.2}
+        joint_1: {trajectory: 0.5, goal: 0.3}
         joint_2: {trajectory: 0.5, goal: 0.2}
         joint_3: {trajectory: 0.5, goal: 0.2}
         joint_4: {trajectory: 0.5, goal: 0.2}
