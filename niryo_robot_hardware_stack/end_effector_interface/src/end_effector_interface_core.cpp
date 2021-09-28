@@ -208,7 +208,7 @@ void EndEffectorInterfaceCore::_publishButtonState()
         {
             if (button->actions.empty())
                 continue;
-            
+
             button_msg.action = static_cast<int>(button->actions.front());
             switch (button->type)
             {
