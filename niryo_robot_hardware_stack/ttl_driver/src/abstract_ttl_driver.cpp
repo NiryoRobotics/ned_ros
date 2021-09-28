@@ -19,7 +19,7 @@
 #include <sstream>
 #include <vector>
 #include <string>
-#include <ros/ros.h>
+
 using ::std::shared_ptr;
 using ::std::vector;
 using ::std::string;
@@ -357,7 +357,7 @@ int AbstractTtlDriver::syncWrite(uint8_t address, uint8_t data_len,
             groupSyncWrite.clearParam();
         }
         else
-{
+        {
             dxl_comm_result = LEN_ID_DATA_NOT_SAME;
         }
     }
