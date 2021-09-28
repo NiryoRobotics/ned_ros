@@ -19,7 +19,12 @@
 
 // c++
 #include <boost/program_options.hpp>
+#include <boost/program_options/parsers.hpp>
+#include <boost/program_options/value_semantic.hpp>
+#include <cstddef>
+#include <cstdint>
 #include <iostream>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -60,17 +65,23 @@ int main(int argc, char **argv)
             ("baudrate,b", po::value<int>()->default_value(1000000), "Baud rate")
             ("port,p", po::value<std::string>()->default_value(DEFAULT_PORT), "Set port")
             ("id,i", po::value<int>()->default_value(-1), "Motor ID")
+            ("ids", po::value<std::vector<int>>()->multitoken(), "list of id for sync read or write")
             ("scan", "Scan all motors on the TTL bus")
             ("ping", "ping specific ID")
-            ("get-register", po::value<int>()->default_value(-1), "Get a value from a register (arg: reg_addr)")
+            ("get-register", po::value<int>(), "Get a value from a register (arg: reg_addr)")
             ("size", po::value<int>()->default_value(1), "Size (for get-register only)")
             ("calibrate", "calibrate joints")
-            ("set-register", po::value<std::vector<int>>(), "Set a value to a register (args: reg_addr, value, size)");
+            ("set-register", po::value<std::vector<int>>()->multitoken(), "Set a value to a register (args: reg_addr, value, size)")
+            ("set-registers", po::value<std::vector<int>>()->multitoken(), "Set the values to a register for multiples devices (args: reg_addr, size, values)")
+            ("get-registers", po::value<int>()->multitoken(), "get the values of a register for multiples devices (arg: reg_addr)");
 
-        po::positional_options_description p;
-        p.add("set-register", -1);
+        // po::positional_options_description p;
+        // p.add("set-register", 3);
+        // p.add("set_registers", -1);
+        // p.add("ids", -1);
+
         po::variables_map vars;
-        po::store(po::command_line_parser(argc, argv).options(description).positional(p).run(), vars);
+        po::store(po::parse_command_line(argc, argv, description), vars);
         po::notify(vars);
 
         // Display usage if no args or --help
@@ -81,10 +92,18 @@ int main(int argc, char **argv)
         }
 
         // --------   other commands
-
         int baudrate = vars["baudrate"].as<int>();
         std::string serial_port = vars["port"].as<std::string>();
         int id = vars["id"].as<int>();
+        std::vector<uint8_t> ids;
+        if (vars.count("ids"))
+        {
+            std::vector<int> id_list = vars["ids"].as<std::vector<int>>();
+            for (auto l_id : id_list)
+            {
+               ids.push_back(static_cast<uint8_t>(l_id)); 
+            }
+        }
 
         std::cout << "Using baudrate: " << baudrate << ", port: " << serial_port << "\n";
 
@@ -115,9 +134,9 @@ int main(int argc, char **argv)
                 ttlTools.setRegister(3, 147, 0, 1);
                 ttlTools.setRegister(2, 147, 0, 1);
             }
-            else if (-1 == id)
+            else if (-1 == id && ids.empty())
             {
-                printf("Ping: you need to give an ID! (--id)\n");
+                printf("Ping: you need to give an ID! (--id or --ids)\n");
             }
             else
             {
@@ -163,6 +182,51 @@ int main(int argc, char **argv)
                     else
                     {
                         printf("Retrieved value at address %d : %d\n", addr, value);
+                    }
+                }
+                else if (vars.count("set-registers"))
+                {
+                    std::vector<int> params = vars["set-registers"].as<std::vector<int>>();
+                    uint8_t addr = static_cast<uint8_t>(params.at(0));
+                    uint8_t size = static_cast<uint8_t>(params.at(1));
+
+                    std::stringstream ss;
+                    ss << "register address : " << static_cast<int>(addr) << " size : " << static_cast<int>(size) << " values";
+                    std::vector<uint32_t> values;
+                    for (size_t i = 2; i < params.size(); i++)
+                    {
+                        values.push_back(static_cast<uint32_t>(params.at(i)));
+                        ss << " " << params.at(static_cast<int>(i));
+                    }
+
+                    std::cout << ss.str() << std::endl;
+
+                    comm_result = ttlTools.setRegisters(ids, addr, values, size);
+
+                    if (comm_result != COMM_SUCCESS)
+                        printf("Failed to set registers: %d\n", comm_result);
+                    else
+                        printf("Successfully sent registers command\n");
+                }
+                else if (vars.count("get-registers"))
+                {
+                    uint8_t addr = static_cast<uint8_t>(vars["get-registers"].as<int>());
+                    std::vector<uint32_t> values;
+                    uint8_t size = static_cast<uint8_t>(vars["size"].as<int>());
+
+                    printf("Register address: %d, Size (bytes): %d\n", addr, size);
+                    comm_result = ttlTools.getRegisters(ids, addr, values, size);
+
+                    if (comm_result != COMM_SUCCESS)
+                        printf("Failed to get registers: %d\n", comm_result);
+                    else
+                    {
+                        std::stringstream ss;
+                        for (size_t i = 0; i < values.size(); i++)
+                        {
+                            ss << " " << values.at(i);
+                        }
+                        std::cout << "Retrieved values at address " << static_cast<int>(addr) << ":" << ss.str() << std::endl;
                     }
                 }
                 else  // unknown command
