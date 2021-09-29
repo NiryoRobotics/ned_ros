@@ -5,7 +5,7 @@ steppers:
     stepper_1:
         id: 2
         gear_ratio: 1
-        offset_position: 0
+        offset_position: 1900
         direction: 1
         max_effort: 0
 
