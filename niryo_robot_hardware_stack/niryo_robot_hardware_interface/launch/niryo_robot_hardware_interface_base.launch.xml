@@ -43,6 +43,10 @@
             <arg name="simulation_mode" value="$(arg simulation_mode)" />
         </include>
 
+        <include file="$(find tools_interface)/launch/cpu_interface_base.launch.xml" >
+            <arg name="simulation_mode" value="$(arg simulation_mode)" />
+        </include>
+            
         <!-- end effector only in ned2 -->
         <group if="$(eval hardware_version == 'ned2')" >
             <include file="$(find end_effector_interface)/launch/end_effector_interface_base.launch.xml" >
@@ -50,9 +54,6 @@
                 <arg name="simulation_mode" value="$(arg simulation_mode)"/>
             </include>
         </group>
-
-        <rosparam file="$(find cpu_interface)/config/default.yaml" command="load"/>
-    
     </group>
     
 </launch>

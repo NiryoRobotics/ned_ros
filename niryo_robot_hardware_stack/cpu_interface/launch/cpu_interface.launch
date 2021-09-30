@@ -1,9 +1,12 @@
 <?xml version="1.0" ?>
 <launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+    <arg name="simulation_mode" default="false"/>
 
     <!-- use cpu_interface config -->
-    <include file="$(find cpu_interface)/launch/cpu_interface_base.launch.xml" />
+    <include file="$(find cpu_interface)/launch/cpu_interface_base.launch.xml" >
+        <arg name="simulation_mode" value="$(arg simulation_mode)"/>
+    </include>
 
     <node pkg="cpu_interface" type="cpu_interface_node" name="cpu_interface" output="screen" />
 

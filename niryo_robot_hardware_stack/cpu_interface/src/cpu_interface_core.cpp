@@ -73,14 +73,15 @@ bool CpuInterfaceCore::init(ros::NodeHandle &nh)
  */
 void CpuInterfaceCore::initParameters(ros::NodeHandle &nh)
 {
-    ROS_INFO("CpuInterfaceCore::initParameters - No params found. Init with default value");
     nh.getParam("read_rpi_diagnostics_frequency", _read_cpu_frequency);
     nh.getParam("temperature_warn_threshold", _temperature_warn_threshold);
     nh.getParam("temperature_shutdown_threshold", _temperature_shutdown_threshold);
+    nh.getParam("simulation_mode", _simulation_mode);
 
     ROS_DEBUG("CPU Interface::initParameters - Read temperature frequency %f", _read_cpu_frequency);
     ROS_DEBUG("CPU Interface::initParameters - Temperature warn threshold %d", _temperature_warn_threshold);
     ROS_DEBUG("CPU Interface::initParameters - Temperature shutdown threshold %d", _temperature_shutdown_threshold);
+    ROS_DEBUG("CPU Interface::initParameters - Simulation mode : %s", _simulation_mode ? "True" : "False");
 }
 
 /**
@@ -145,17 +146,32 @@ void CpuInterfaceCore::_readHardwareDataLoop()
     {
         _readCpuTemperature();
 
-        // check if Rpi is too hot
-        if (_cpu_temperature > _temperature_warn_threshold)
+        if(!_simulation_mode)
         {
-            ROS_WARN("CPU Interface - Rpi temperature is really high !");
+            // check if Rpi is too hot
+            if (_cpu_temperature > _temperature_warn_threshold)
+            {
+                ROS_WARN("CPU Interface - Rpi temperature is really high !");
+            }
+            if (_cpu_temperature > _temperature_shutdown_threshold)
+            {
+                ROS_ERROR("CPU Interface - Rpi is too hot, shutdown to avoid any damage");
+                int ret = std::system("sudo shutdown now");
+                ROS_INFO("Shutdown now: %d", ret);
+            }
         }
-        if (_cpu_temperature > _temperature_shutdown_threshold)
+        else
         {
-            ROS_ERROR("CPU Interface - Rpi is too hot, shutdown to avoid any damage");
-            int ret = std::system("sudo shutdown now");
-            ROS_INFO("Shutdown now: %d", ret);
+            if (_cpu_temperature > _temperature_warn_threshold)
+            {
+                ROS_WARN("CPU Interface - Computer temperature is really high !");
+            }
+            if (_cpu_temperature > _temperature_shutdown_threshold)
+            {
+                ROS_ERROR("CPU Interface - Computer is too hot");
+            }
         }
+        
 
         read_rpi_diagnostics_rate.sleep();
     }
