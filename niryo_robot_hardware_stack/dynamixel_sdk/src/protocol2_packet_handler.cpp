@@ -420,7 +420,7 @@ int Protocol2PacketHandler::rxPacket(PortHandler *port, uint8_t *rxpacket)
 }
 
 // NOT for BulkRead / SyncRead instruction
-int Protocol2PacketHandler::txRxPacket(PortHandler *port, uint8_t *txpacket, uint8_t *rxpacket, uint8_t *error)
+int Protocol2PacketHandler::txRxPacket(PortHandler *port, uint8_t *txpacket, uint8_t *rxpacket, uint8_t *error, double timeout_ms)
 {
   int result = COMM_TX_FAIL;
 
@@ -442,7 +442,11 @@ int Protocol2PacketHandler::txRxPacket(PortHandler *port, uint8_t *txpacket, uin
   }
 
   // set packet timeout
-  if (txpacket[PKT_INSTRUCTION] == INST_READ)
+  if (timeout_ms != 0.0)
+  {
+    port->setPacketTimeout(timeout_ms);
+  }
+  else if (txpacket[PKT_INSTRUCTION] == INST_READ)
   {
     port->setPacketTimeout((uint16_t)(DXL_MAKEWORD(txpacket[PKT_PARAMETER0+2], txpacket[PKT_PARAMETER0+3]) + 11));
   }
@@ -840,7 +844,7 @@ int Protocol2PacketHandler::writeTxOnly(PortHandler *port, uint8_t id, uint16_t 
   return result;
 }
 
-int Protocol2PacketHandler::writeTxRx(PortHandler *port, uint8_t id, uint16_t address, uint16_t length, uint8_t *data, uint8_t *error)
+int Protocol2PacketHandler::writeTxRx(PortHandler *port, uint8_t id, uint16_t address, uint16_t length, uint8_t *data, uint8_t *error, double timeout_ms)
 {
   int result                  = COMM_TX_FAIL;
 
@@ -861,7 +865,7 @@ int Protocol2PacketHandler::writeTxRx(PortHandler *port, uint8_t id, uint16_t ad
     txpacket[PKT_PARAMETER0+2+s] = data[s];
   //memcpy(&txpacket[PKT_PARAMETER0+2], data, length);
 
-  result = txRxPacket(port, txpacket, rxpacket, error);
+  result = txRxPacket(port, txpacket, rxpacket, error, timeout_ms);
 
   free(txpacket);
   //delete[] txpacket;
@@ -873,10 +877,10 @@ int Protocol2PacketHandler::write1ByteTxOnly(PortHandler *port, uint8_t id, uint
   uint8_t data_write[1] = { data };
   return writeTxOnly(port, id, address, 1, data_write);
 }
-int Protocol2PacketHandler::write1ByteTxRx(PortHandler *port, uint8_t id, uint16_t address, uint8_t data, uint8_t *error)
+int Protocol2PacketHandler::write1ByteTxRx(PortHandler *port, uint8_t id, uint16_t address, uint8_t data, uint8_t *error, double timeout_ms)
 {
   uint8_t data_write[1] = { data };
-  return writeTxRx(port, id, address, 1, data_write, error);
+  return writeTxRx(port, id, address, 1, data_write, error, timeout_ms);
 }
 
 int Protocol2PacketHandler::write2ByteTxOnly(PortHandler *port, uint8_t id, uint16_t address, uint16_t data)
@@ -895,10 +899,10 @@ int Protocol2PacketHandler::write4ByteTxOnly(PortHandler *port, uint8_t id, uint
   uint8_t data_write[4] = { DXL_LOBYTE(DXL_LOWORD(data)), DXL_HIBYTE(DXL_LOWORD(data)), DXL_LOBYTE(DXL_HIWORD(data)), DXL_HIBYTE(DXL_HIWORD(data)) };
   return writeTxOnly(port, id, address, 4, data_write);
 }
-int Protocol2PacketHandler::write4ByteTxRx(PortHandler *port, uint8_t id, uint16_t address, uint32_t data, uint8_t *error)
+int Protocol2PacketHandler::write4ByteTxRx(PortHandler *port, uint8_t id, uint16_t address, uint32_t data, uint8_t *error, double timeout_ms)
 {
   uint8_t data_write[4] = { DXL_LOBYTE(DXL_LOWORD(data)), DXL_HIBYTE(DXL_LOWORD(data)), DXL_LOBYTE(DXL_HIWORD(data)), DXL_HIBYTE(DXL_HIWORD(data)) };
-  return writeTxRx(port, id, address, 4, data_write, error);
+  return writeTxRx(port, id, address, 4, data_write, error, timeout_ms);
 }
 
 int Protocol2PacketHandler::regWriteTxOnly(PortHandler *port, uint8_t id, uint16_t address, uint16_t length, uint8_t *data)

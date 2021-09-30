@@ -62,8 +62,6 @@ class PortHandlerLinux : public PortHandler
   ////////////////////////////////////////////////////////////////////////////////
   virtual ~PortHandlerLinux() { closePort(); }
 
-
-  bool    setupGpio();
   void    gpioHigh();
   void    gpioLow();
   

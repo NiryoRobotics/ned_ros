@@ -133,42 +133,30 @@ int TtlManager::setupCommunication()
         {
             _debug_error_message.clear();
 
-            // setup half-duplex direction GPIO
-            // see schema http:// support.robotis.com/en/product/actuator/dynamixel_x/xl-series_main.htm
-            if (_portHandler->setupGpio())
+            // Open port
+            if (_portHandler->openPort())
             {
-                // Open port
-                if (_portHandler->openPort())
+                // Set baudrate
+                if (_portHandler->setBaudRate(_baudrate))
                 {
-                    // Set baudrate
-                    if (_portHandler->setBaudRate(_baudrate))
-                    {
-                        // wait a bit to be sure the connection is established
-                        ros::Duration(0.1).sleep();
-                        ret = COMM_SUCCESS;
-                    }
-                    else
-                    {
-                        ROS_ERROR("TtlManager::setupCommunication - Failed to set baudrate for Dynamixel bus");
-                        _debug_error_message = "TtlManager - Failed to set baudrate for Dynamixel bus";
-                        ret = TTL_FAIL_PORT_SET_BAUDRATE;
-                    }
+                    // wait a bit to be sure the connection is established
+                    ros::Duration(0.1).sleep();
+                    ret = COMM_SUCCESS;
                 }
                 else
                 {
-                    ROS_ERROR("TtlManager::setupCommunication - Failed to open Uart port for Dynamixel bus");
-                    _debug_error_message = "TtlManager - Failed to open Uart port for Dynamixel bus";
-                    ret = TTL_FAIL_OPEN_PORT;
+                    ROS_ERROR("TtlManager::setupCommunication - Failed to set baudrate for Dynamixel bus");
+                    _debug_error_message = "TtlManager - Failed to set baudrate for Dynamixel bus";
+                    ret = TTL_FAIL_PORT_SET_BAUDRATE;
                 }
             }
             else
             {
-                ROS_ERROR("TtlManager::setupCommunication - Failed to setup direction GPIO pin "
-                          "for Dynamixel half-duplex serial");
-                _debug_error_message = "TtlManager -  Failed to setup direction GPIO pin "
-                                       "for Dynamixel half-duplex serial";
-                ret = TTL_FAIL_SETUP_GPIO;
+                ROS_ERROR("TtlManager::setupCommunication - Failed to open Uart port for Dynamixel bus");
+                _debug_error_message = "TtlManager - Failed to open Uart port for Dynamixel bus";
+                ret = TTL_FAIL_OPEN_PORT;
             }
+
         }
         else
             ROS_ERROR("TtlManager::setupCommunication - Invalid port handler");

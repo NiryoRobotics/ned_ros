@@ -50,11 +50,6 @@ TtlTools::TtlTools(std::shared_ptr<dynamixel::PortHandler> portHandler,
  */
 int TtlTools::setupBus(int baudrate)
 {
-    if (!_portHandler->setupGpio())
-    {
-        printf("ERROR: Failed to setup direction GPIO pin for Dynamixel half-duplex serial\n");
-        return -1;
-    }
     if (!_portHandler->openPort())
     {
         printf("Error: Failed to open Uart port for Dynamixel bus\n");
@@ -124,7 +119,7 @@ void TtlTools::ping(int id)
  * @param value
  * @param byte_number
  */
-int TtlTools::setRegister(uint8_t id, uint8_t reg_address,
+int TtlTools::setRegister(uint8_t id, uint16_t reg_address,
                            uint32_t value, uint8_t byte_number)
 {
     int comm_result = COMM_TX_FAIL;
@@ -159,7 +154,7 @@ int TtlTools::setRegister(uint8_t id, uint8_t reg_address,
  * @param byte_number
  * @return
  */
-int TtlTools::getRegister(uint8_t id, uint8_t reg_address, uint32_t &value, uint8_t byte_number)
+int TtlTools::getRegister(uint8_t id, uint16_t reg_address, uint32_t &value, uint8_t byte_number)
 {
     int comm_result = COMM_TX_FAIL;
     uint8_t error = 0;
@@ -204,7 +199,7 @@ int TtlTools::getRegister(uint8_t id, uint8_t reg_address, uint32_t &value, uint
 /**
  * @brief TtlTools::setRegisters
  */
-int TtlTools::setRegisters(std::vector<uint8_t> ids, uint8_t reg_address,
+int TtlTools::setRegisters(std::vector<uint8_t> ids, uint16_t reg_address,
                         std::vector<uint32_t> values, uint8_t byte_number)
 {
     int dxl_comm_result = COMM_SUCCESS;
@@ -281,7 +276,7 @@ int TtlTools::setRegisters(std::vector<uint8_t> ids, uint8_t reg_address,
 /**
  * @brief TtlTools::getRegisters
  */
-int TtlTools::getRegisters(std::vector<uint8_t> ids, uint8_t reg_address, std::vector<uint32_t> &values, uint8_t byte_number)
+int TtlTools::getRegisters(std::vector<uint8_t> ids, uint16_t reg_address, std::vector<uint32_t> &values, uint8_t byte_number)
 {
     values.clear();
 

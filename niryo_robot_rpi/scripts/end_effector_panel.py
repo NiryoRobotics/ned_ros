@@ -6,7 +6,7 @@ from niryo_robot_rpi.rpi_ros_utils import activate_learning_mode, auto_calibrati
 
 # Messages
 from std_msgs.msg import Int32, Bool
-from end_effector_interface.msg import ButtonStatus
+from end_effector_interface.msg import EEButtonStatus
 from niryo_robot_status.msg import RobotStatus
 
 
@@ -17,20 +17,20 @@ class NiryoEndEffectorPanel:
         self._robot_status = RobotStatus()
         rospy.Subscriber('/niryo_robot_status/robot_status', RobotStatus, self._callback_robot_status)
 
-        self.__learning_mode_button_state = ButtonStatus.NO_ACTION
+        self.__learning_mode_button_state = EEButtonStatus.NO_ACTION
         self.__learning_mode_button_topic = rospy.Subscriber(
             '/niryo_robot_hardware_interface/end_effector_interface/free_drive_button_status',
-            ButtonStatus, self.__callback_learning_mode_button)
+            EEButtonStatus, self.__callback_learning_mode_button)
 
         self.__save_pos_button_state = False
         self.__save_pos_button_topic = rospy.Subscriber(
             '/niryo_robot_hardware_interface/end_effector_interface/save_pos_button_status',
-            ButtonStatus, self.__callback_save_pos_button_status)
+            EEButtonStatus, self.__callback_save_pos_button_status)
 
-        self.__custom_button_state = ButtonStatus.NO_ACTION
+        self.__custom_button_state = EEButtonStatus.NO_ACTION
         self.__custom_button_topic = rospy.Subscriber(
             '/niryo_robot_hardware_interface/end_effector_interface/custom_button_status',
-            ButtonStatus, self.__callback_custom_pos_button_status)
+            EEButtonStatus, self.__callback_custom_pos_button_status)
 
         self.__learning_mode_on = False
         self.__learning_mode_topic = rospy.Subscriber('/niryo_robot/learning_mode/state', Bool,
@@ -60,18 +60,18 @@ class NiryoEndEffectorPanel:
     def __callback_learning_mode_button(self, msg):
         if self.__learning_mode_button_state != msg:
 
-            if msg.action == ButtonStatus.HANDLE_HELD_ACTION:
+            if msg.action == EEButtonStatus.HANDLE_HELD_ACTION:
                 activate_learning_mode(True)
-            elif (msg.action == ButtonStatus.NO_ACTION and
-                  self.__learning_mode_button_state == ButtonStatus.HANDLE_HELD_ACTION):
+            elif (msg.action == EEButtonStatus.NO_ACTION and
+                  self.__learning_mode_button_state == EEButtonStatus.HANDLE_HELD_ACTION):
                 activate_learning_mode(False)
-            elif msg.action == ButtonStatus.SINGLE_PUSH_ACTION:
+            elif msg.action == EEButtonStatus.SINGLE_PUSH_ACTION:
                 activate_learning_mode(not self.__learning_mode_on)
 
             self.__learning_mode_button_state = msg.action
 
     def __callback_save_pos_button_status(self, msg):
-        if msg.action == ButtonStatus.NO_ACTION:
+        if msg.action == EEButtonStatus.NO_ACTION:
             pressed = False
         else:
             pressed = True
@@ -82,8 +82,8 @@ class NiryoEndEffectorPanel:
                 self.blockly_save_current_point()
 
     def __callback_custom_pos_button_status(self, msg):
-        if (self.__custom_button_state == ButtonStatus.HANDLE_HELD_ACTION and
-                msg.action == ButtonStatus.NO_ACTION and
+        if (self.__custom_button_state == EEButtonStatus.HANDLE_HELD_ACTION and
+                msg.action == EEButtonStatus.NO_ACTION and
                 self.__robot_status == RobotStatus.CALIBRATION_NEEDED):
             self.__custom_button_state = msg.action
             auto_calibration()
