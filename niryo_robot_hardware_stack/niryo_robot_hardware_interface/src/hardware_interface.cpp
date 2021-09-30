@@ -156,7 +156,7 @@ void HardwareInterface::initNodes(ros::NodeHandle &nh)
         ROS_DEBUG("HardwareInterface::initNodes - Start Tools Interface Node");
         ros::NodeHandle nh_tool(nh, "tools_interface");
         _tools_interface = std::make_shared<tools_interface::ToolsInterfaceCore>(nh_tool,
-                                                                                    _ttl_interface);
+                                                                                 _ttl_interface);
         ros::Duration(0.25).sleep();
 
         if (_end_effector_enabled)
@@ -164,7 +164,7 @@ void HardwareInterface::initNodes(ros::NodeHandle &nh)
             ROS_DEBUG("HardwareInterface::initNodes - Start End Effector Interface Node");
             ros::NodeHandle nh_ee(nh, "end_effector_interface");
             _end_effector_interface = std::make_shared<end_effector_interface::EndEffectorInterfaceCore>(nh_ee,
-                                                                                            _ttl_interface);
+                                                                                                         _ttl_interface);
         }
         ros::Duration(0.25).sleep();
 
@@ -173,7 +173,7 @@ void HardwareInterface::initNodes(ros::NodeHandle &nh)
             ROS_DEBUG("HardwareInterface::initNodes - Start Tools Interface Node");
             ros::NodeHandle nh_conveyor(nh, "conveyor");
             _conveyor_interface = std::make_shared<conveyor_interface::ConveyorInterfaceCore>(nh_conveyor,
-                                                                                                _ttl_interface);
+                                                                                              _ttl_interface);
             ros::Duration(0.25).sleep();
         }
     }
@@ -194,7 +194,7 @@ void HardwareInterface::initNodes(ros::NodeHandle &nh)
             ROS_DEBUG("HardwareInterface::initNodes - Start Tools Interface Node");
             ros::NodeHandle nh_conveyor(nh, "conveyor");
             _conveyor_interface = std::make_shared<conveyor_interface::ConveyorInterfaceCore>(nh_conveyor,
-                                                                                                _can_interface);
+                                                                                              _can_interface);
             ros::Duration(0.25).sleep();
         }
     }
@@ -212,7 +212,8 @@ void HardwareInterface::initNodes(ros::NodeHandle &nh)
     ros::Duration(0.25).sleep();
 
     ROS_DEBUG("HardwareInterface::initNodes - Start CPU Interface Node");
-    _cpu_interface = std::make_shared<cpu_interface::CpuInterfaceCore>(nh);
+    ros::NodeHandle nh_cpu(nh, "cpu_interface");
+    _cpu_interface = std::make_shared<cpu_interface::CpuInterfaceCore>(nh_cpu);
     ros::Duration(0.25).sleep();
 }
 

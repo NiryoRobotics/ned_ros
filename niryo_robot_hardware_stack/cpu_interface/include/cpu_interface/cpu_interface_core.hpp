@@ -58,6 +58,7 @@ class CpuInterfaceCore : public common::model::IInterfaceCore
     private:
         std::thread _read_hardware_data_thread;
 
+        bool _simulation_mode{false};
         int _cpu_temperature{0};
 
         double _read_cpu_frequency{0.0};
