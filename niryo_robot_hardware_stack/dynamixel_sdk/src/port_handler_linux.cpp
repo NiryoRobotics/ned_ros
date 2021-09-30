@@ -106,28 +106,6 @@ PortHandlerLinux::PortHandlerLinux(const char *port_name)
   setPortName(port_name);
 }
 
-bool PortHandlerLinux::setupGpio()
-{
-#if defined __arm__ || defined __aarch64__
-  int result = wiringPiSetupGpio();
-  if (!result) {
-      //printf("Gpio started\n");
-  }
-  else {
-      //printf("Gpio startup fail\n");
-      return false;
-  }
-  
-  pinMode(GPIO_HALF_DUPLEX_DIRECTION, OUTPUT);
-
-  nanosleep((const struct timespec[]){{0, 500000L}}, NULL);
-
-  gpioLow();
-#endif
-
-    return true;
-}
-
 void PortHandlerLinux::gpioHigh()
 {
 #if defined __arm__ || defined __aarch64__
@@ -142,8 +120,28 @@ void PortHandlerLinux::gpioLow()
 #endif
 }
 
+/**
+ * @brief PortHandlerLinux::openPort
+ * @return
+ *
+ * setup half-duplex direction GPIO
+ * see schema http:// support.robotis.com/en/product/actuator/dynamixel_x/xl-series_main.htm
+ */
 bool PortHandlerLinux::openPort()
 {
+#if defined __arm__ || defined __aarch64__
+  int res = wiringPiSetupGpio();
+
+  if (res != 0)
+  {
+      return false;
+  }
+
+  pinMode(GPIO_HALF_DUPLEX_DIRECTION, OUTPUT);
+  nanosleep((const struct timespec[]){{0, 500000L}}, NULL); // FIXME
+  gpioLow();
+#endif
+
   return setBaudRate(baudrate_);
 }
 
@@ -210,17 +208,17 @@ int PortHandlerLinux::writePort(uint8_t *packet, int length)
 {
     gpioHigh();
 
-  int write_result = write(socket_fd_, packet, length);
+    int write_result = write(socket_fd_, packet, length);
 
-  double time_to_wait_secs = (double)length / ((double)baudrate_ / 10.0);
-  struct timespec tim;
-  tim.tv_sec = 0;
-  tim.tv_nsec = (long) (time_to_wait_secs * 1000000000.0);
-  nanosleep(&tim, NULL);
+    double time_to_wait_ms = (double)length * (tx_time_per_byte);// / ((double)baudrate_ / 10.0);
+    struct timespec tim;
+    tim.tv_sec = 0;
+    tim.tv_nsec = (long) (time_to_wait_ms * 1000000.0);
+    nanosleep(&tim, NULL);
 
-  gpioLow();
+    gpioLow();
 
-  return write_result;
+    return write_result;
 }
 
 void PortHandlerLinux::setPacketTimeout(uint16_t packet_length)
@@ -287,7 +285,7 @@ bool PortHandlerLinux::setupPort(int cflag_baud)
   tcflush(socket_fd_, TCIFLUSH);
   tcsetattr(socket_fd_, TCSANOW, &newtio);
 
-  tx_time_per_byte = (1000.0 / (double)baudrate_) * 10.0;
+  tx_time_per_byte = (1000.0 / (double)baudrate_) * 10.5;
   return true;
 }
 
@@ -330,7 +328,7 @@ bool PortHandlerLinux::setCustomBaudrate(int speed)
     return false;
   }
 
-  tx_time_per_byte = (1000.0 / (double)speed) * 10.0;
+  tx_time_per_byte = (1000.0 / (double)speed) * 10.5;
   return true;
 }
 

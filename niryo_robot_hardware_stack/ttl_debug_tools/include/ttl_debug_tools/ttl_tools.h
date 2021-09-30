@@ -43,14 +43,14 @@ class TtlTools
         int setupBus(int baudrate);
         void broadcastPing();
         void ping(int id);
-        int setRegister(uint8_t id, uint8_t reg_address,
+        int setRegister(uint8_t id, uint16_t reg_address,
                          uint32_t value, uint8_t byte_number);
-        int getRegister(uint8_t id, uint8_t reg_address,
+        int getRegister(uint8_t id, uint16_t reg_address,
                         uint32_t &value, uint8_t byte_number);
 
-        int setRegisters(std::vector<uint8_t> ids, uint8_t reg_address,
+        int setRegisters(std::vector<uint8_t> ids, uint16_t reg_address,
                         std::vector<uint32_t> values, uint8_t byte_number);
-        int getRegisters(std::vector<uint8_t> ids, uint8_t reg_address,
+        int getRegisters(std::vector<uint8_t> ids, uint16_t reg_address,
                         std::vector<uint32_t> &values, uint8_t byte_number);
 
         void closePort();

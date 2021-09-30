@@ -154,7 +154,7 @@ int main(int argc, char **argv)
                     }
                     else
                     {
-                        uint8_t addr = static_cast<uint8_t>(params.at(0));
+                        uint16_t addr = static_cast<uint16_t>(params.at(0));
                         uint32_t value = static_cast<uint32_t>(params.at(1));
                         uint8_t size = static_cast<uint8_t>(params.at(2));
 
@@ -170,7 +170,7 @@ int main(int argc, char **argv)
                 }
                 else if (vars.count("get-register"))  // get-register
                 {
-                    uint8_t addr = static_cast<uint8_t>(vars["get-register"].as<int>());
+                    uint16_t addr = static_cast<uint16_t>(vars["get-register"].as<int>());
                     uint32_t value = 0;
                     uint8_t size = static_cast<uint8_t>(vars["size"].as<int>());
 

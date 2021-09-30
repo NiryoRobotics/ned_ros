@@ -165,7 +165,7 @@ class WINDECLSPEC PacketHandler
   /// @return   when it succeeds PacketHandler::txPacket() and PacketHandler::rxPacket()
   /// @return or the other communication results which come from PacketHandler::txPacket() and PacketHandler::rxPacket()
   ////////////////////////////////////////////////////////////////////////////////
-  virtual int txRxPacket      (PortHandler *port, uint8_t *txpacket, uint8_t *rxpacket, uint8_t *error = 0) = 0;
+  virtual int txRxPacket      (PortHandler *port, uint8_t *txpacket, uint8_t *rxpacket, uint8_t *error = 0, double timeout_ms = 0.0) = 0;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that pings Dynamixel but doesn't take its model number
@@ -432,7 +432,7 @@ class WINDECLSPEC PacketHandler
   /// @param error Dynamixel hardware error
   /// @return communication results which come from PacketHandler::txRxPacket()
   ////////////////////////////////////////////////////////////////////////////////
-  virtual int writeTxRx       (PortHandler *port, uint8_t id, uint16_t address, uint16_t length, uint8_t *data, uint8_t *error = 0) = 0;
+  virtual int writeTxRx       (PortHandler *port, uint8_t id, uint16_t address, uint16_t length, uint8_t *data, uint8_t *error = 0, double timeout_ms = 0.0) = 0;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that calls PacketHandler::writeTxOnly() for writing 1 byte data
@@ -456,7 +456,7 @@ class WINDECLSPEC PacketHandler
   /// @param error Dynamixel hardware error
   /// @return communication results which come from PacketHandler::writeTxRx()
   ////////////////////////////////////////////////////////////////////////////////
-  virtual int write1ByteTxRx  (PortHandler *port, uint8_t id, uint16_t address, uint8_t data, uint8_t *error = 0) = 0;
+  virtual int write1ByteTxRx  (PortHandler *port, uint8_t id, uint16_t address, uint8_t data, uint8_t *error = 0, double timeout_ms = 0.0) = 0;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that calls PacketHandler::writeTxOnly() for writing 2 byte data
@@ -504,7 +504,7 @@ class WINDECLSPEC PacketHandler
   /// @param error Dynamixel hardware error
   /// @return communication results which come from PacketHandler::writeTxRx()
   ////////////////////////////////////////////////////////////////////////////////
-  virtual int write4ByteTxRx  (PortHandler *port, uint8_t id, uint16_t address, uint32_t data, uint8_t *error = 0) = 0;
+  virtual int write4ByteTxRx  (PortHandler *port, uint8_t id, uint16_t address, uint32_t data, uint8_t *error = 0, double timeout_ms = 0.0) = 0;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that transmits INST_REG_WRITE instruction packet with the data for writing on the Dynamixel register

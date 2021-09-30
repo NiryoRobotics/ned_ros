@@ -123,7 +123,7 @@ class WINDECLSPEC Protocol2PacketHandler : public PacketHandler
   /// @return   when it succeeds Protocol2PacketHandler::txPacket() and Protocol2PacketHandler::rxPacket()
   /// @return or the other communication results which come from Protocol2PacketHandler::txPacket() and Protocol2PacketHandler::rxPacket()
   ////////////////////////////////////////////////////////////////////////////////
-  int txRxPacket      (PortHandler *port, uint8_t *txpacket, uint8_t *rxpacket, uint8_t *error = 0);
+  int txRxPacket      (PortHandler *port, uint8_t *txpacket, uint8_t *rxpacket, uint8_t *error = 0, double timeout_ms = 0.0);
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that pings Dynamixel but doesn't take its model number
@@ -390,7 +390,7 @@ class WINDECLSPEC Protocol2PacketHandler : public PacketHandler
   /// @param error Dynamixel hardware error
   /// @return communication results which come from Protocol2PacketHandler::txRxPacket()
   ////////////////////////////////////////////////////////////////////////////////
-  int writeTxRx           (PortHandler *port, uint8_t id, uint16_t address, uint16_t length, uint8_t *data, uint8_t *error = 0);
+  int writeTxRx           (PortHandler *port, uint8_t id, uint16_t address, uint16_t length, uint8_t *data, uint8_t *error = 0, double timeout_ms = 0.0);
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that calls Protocol2PacketHandler::writeTxOnly() for writing 1 byte data
@@ -414,7 +414,7 @@ class WINDECLSPEC Protocol2PacketHandler : public PacketHandler
   /// @param error Dynamixel hardware error
   /// @return communication results which come from Protocol2PacketHandler::writeTxRx()
   ////////////////////////////////////////////////////////////////////////////////
-  int write1ByteTxRx      (PortHandler *port, uint8_t id, uint16_t address, uint8_t data, uint8_t *error = 0);
+  int write1ByteTxRx      (PortHandler *port, uint8_t id, uint16_t address, uint8_t data, uint8_t *error = 0, double timeout_ms = 0.0);
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that calls Protocol2PacketHandler::writeTxOnly() for writing 2 byte data
@@ -462,7 +462,7 @@ class WINDECLSPEC Protocol2PacketHandler : public PacketHandler
   /// @param error Dynamixel hardware error
   /// @return communication results which come from Protocol2PacketHandler::writeTxRx()
   ////////////////////////////////////////////////////////////////////////////////
-  int write4ByteTxRx      (PortHandler *port, uint8_t id, uint16_t address, uint32_t data, uint8_t *error = 0);
+  int write4ByteTxRx      (PortHandler *port, uint8_t id, uint16_t address, uint32_t data, uint8_t *error = 0, double timeout_ms = 0);
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that transmits INST_REG_WRITE instruction packet with the data for writing on the Dynamixel register

@@ -15,7 +15,7 @@
 */
 #define PROTOCOL_VERSION 2.0
 
-#ifdef __arm
+#ifdef __arm__
     #define DEFAULT_PORT "/dev/serial0"
 #elifdef __aarch64__
     #define DEFAULT_PORT "/dev/ttyAMA0"

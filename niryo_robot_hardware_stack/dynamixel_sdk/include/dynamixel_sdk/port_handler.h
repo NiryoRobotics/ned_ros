@@ -68,7 +68,6 @@ class WINDECLSPEC PortHandler
 
   virtual ~PortHandler() { }
 
-  virtual bool setupGpio() = 0;
   virtual void gpioHigh() = 0;
   virtual void gpioLow() = 0;
   ////////////////////////////////////////////////////////////////////////////////
