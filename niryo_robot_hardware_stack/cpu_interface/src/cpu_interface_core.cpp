@@ -146,7 +146,7 @@ void CpuInterfaceCore::_readHardwareDataLoop()
     {
         _readCpuTemperature();
 
-        if(!_simulation_mode)
+        if (!_simulation_mode)
         {
             // check if Rpi is too hot
             if (_cpu_temperature > _temperature_warn_threshold)
@@ -171,7 +171,6 @@ void CpuInterfaceCore::_readHardwareDataLoop()
                 ROS_ERROR("CPU Interface - Computer is too hot");
             }
         }
-        
 
         read_rpi_diagnostics_rate.sleep();
     }

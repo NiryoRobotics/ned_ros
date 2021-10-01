@@ -43,7 +43,7 @@
             <arg name="simulation_mode" value="$(arg simulation_mode)" />
         </include>
 
-        <include file="$(find tools_interface)/launch/cpu_interface_base.launch.xml" >
+        <include file="$(find cpu_interface)/launch/cpu_interface_base.launch.xml" >
             <arg name="simulation_mode" value="$(arg simulation_mode)" />
         </include>
             
