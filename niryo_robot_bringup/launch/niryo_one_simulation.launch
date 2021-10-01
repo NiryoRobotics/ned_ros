@@ -4,6 +4,7 @@
     <!-- Arguments definition -->
     <arg name="log_level" default="INFO" />
     <arg name="ttl_enabled" default="true"/>
+    <arg name="can_enabled" default="true"/>
     <arg name="debug" default="false"/>
     <arg name="conf_location" default="version.txt"/>
     <arg name="simu_gripper" default="true" />
@@ -14,7 +15,7 @@
         <arg name="simu_gripper" value="$(arg simu_gripper)" />
         <arg name="log_level" value="$(arg log_level)" />
         <arg name="ttl_enabled" value="$(arg ttl_enabled)"/>
-        <arg name="can_enabled" value="false"/>
+        <arg name="can_enabled" value="$(arg can_enabled)"/>
         <arg name="debug" value="$(arg debug)"/>
     </include>
 </launch>

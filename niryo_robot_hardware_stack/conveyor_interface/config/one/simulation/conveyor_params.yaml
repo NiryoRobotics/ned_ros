@@ -1,4 +1,4 @@
-bus : "ttl"
+bus : "can"
 type: "fakeStepper"
 ttl:
   id: 8

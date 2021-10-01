@@ -1,5 +1,5 @@
 /*
-    stepper_driver.hpp
+    mock_stepper_driver.hpp
     Copyright (C) 2020 Niryo
     All rights reserved.
 
@@ -17,16 +17,16 @@
     along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
-#ifndef STEPPER_DRIVER_H
-#define STEPPER_DRIVER_H
+#ifndef MOCK_STEPPER_DRIVER_H
+#define MOCK_STEPPER_DRIVER_H
 
+#include <cstdint>
+#include <map>
 #include <memory>
-#include <set>
 #include <vector>
+#include <thread>
 
-#include "abstract_can_driver.hpp"
-
-#include "mcp_can_rpi/mcp_can_rpi.h"
+#include "can_driver/abstract_can_driver.hpp"
 #include "common/model/stepper_calibration_status_enum.hpp"
 #include "common/model/abstract_single_motor_cmd.hpp"
 #include "common/model/conveyor_state.hpp"
@@ -34,22 +34,23 @@
 namespace can_driver
 {
 
-class StepperDriver : public AbstractCanDriver
+class MockStepperDriver : public AbstractCanDriver
 {
+public:
+    static constexpr int CAN_DATA_POSITION                      = 0x03;
+    static constexpr int CAN_DATA_DIAGNOSTICS                   = 0x08;
+    static constexpr int CAN_DATA_FIRMWARE_VERSION              = 0x10;
+    static constexpr int CAN_DATA_CONVEYOR_STATE                = 0x07;
+    static constexpr int CAN_DATA_CALIBRATION_RESULT            = 0x09;
 
 public:
-  static constexpr int CAN_DATA_POSITION                      = 0x03;
-  static constexpr int CAN_DATA_DIAGNOSTICS                   = 0x08;
-  static constexpr int CAN_DATA_FIRMWARE_VERSION              = 0x10;
-  static constexpr int CAN_DATA_CONVEYOR_STATE                = 0x07;
-  static constexpr int CAN_DATA_CALIBRATION_RESULT            = 0x09;
+    MockStepperDriver();
+    virtual ~MockStepperDriver() override;
+    
+    virtual int ping(uint8_t id) override;
+    virtual int scan(const std::set<uint8_t>& motors_to_find, std::vector<uint8_t> &id_list) override;
 
-public:
-    StepperDriver(std::shared_ptr<mcp_can_rpi::MCP_CAN> mcp_can);
-    virtual ~StepperDriver() override;
-
-    int writeSingleCmd(const std::shared_ptr<common::model::AbstractCanSingleMotorCmd >& cmd) override;
-
+    int writeSingleCmd(const std::shared_ptr<common::model::AbstractCanSingleMotorCmd>& cmd) override;
 public:
     std::string str() const override;
 
@@ -66,6 +67,12 @@ public:
     uint8_t sendMicroStepsCommand(uint8_t id, int micro_steps) override;
     uint8_t sendMaxEffortCommand(uint8_t id, int effort) override;
     uint8_t sendConveyorOnCommand(uint8_t id, bool conveyor_on, uint8_t conveyor_speed, uint8_t direction) override;
+
+    // read
+    virtual uint8_t readData(uint8_t& id, int& control_byte,
+                     std::array<uint8_t, MAX_MESSAGE_LENGTH>& rxBuf,
+                     std::string& error_message) override;
+    virtual bool canReadData() const override;
 
     virtual int32_t interpretePositionStatus(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) override;
     virtual uint32_t interpreteTemperatureStatus(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) override;
@@ -102,8 +109,38 @@ private:
 
     static constexpr int CAN_MODEL_NUMBER                       = 10000;
 
-};
+    struct FakeRegister
+    {
+      int32_t       position{};
+      uint32_t       temperature{};
+      double         voltage{};
+      uint16_t       model_number{};
+      std::string    firmware{};
+    };
 
-} // namespace can_driver
+    struct conveyor_data
+    {
+        uint8_t id {6};
+        bool active{false};
+        uint8_t conveyor_speed{0};
+        uint8_t direction{1};
+    };
 
-#endif // STEPPER_DRIVER_H
+    std::map<uint8_t, FakeRegister> _map_fake_registers{{1, {0, 50, 12.1, 1, "0.0.1"}},
+                                                        {2, {-1090, 52, 12.2, 1, "0.0.1"}},
+                                                        {3, {2447, 54, 12.3, 1, "0.0.1"}}};
+
+    std::vector<uint8_t> _id_list = {1, 2, 3};
+    conveyor_data _fake_conveyor;
+    
+    // using for fake event can
+    static constexpr uint8_t MAX_IDX = 2; // index for joints in _id_list
+    static constexpr uint8_t MAX_ID_JOINT = 3;
+    uint8_t _current_id;
+    uint8_t _next_index = 0;
+    uint8_t _next_control_byte = CAN_DATA_POSITION;
+    std::map<uint8_t, std::tuple<common::model::EStepperCalibrationStatus, int32_t>> _calibration_status;
+};  // class MockStepperDriver
+}  // namespace can_driver
+#endif  // MOCK_STEPPER_DRIVER_H
+

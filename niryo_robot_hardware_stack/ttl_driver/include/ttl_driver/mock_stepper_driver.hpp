@@ -120,7 +120,7 @@ class MockStepperDriver : public AbstractStepperDriver
                                                              {4, {0, 54, 12.3, 0, 4096, 1, "0.0.1"}}};
 
         FakeConveyor _fake_conveyor;
-        std::vector<uint8_t> _full_id_list{2,3,4,5,6,7,10,11};
+        std::vector<uint8_t> _full_id_list{2,3,4,5,6,7,11};
         std::vector<uint8_t> _id_list;
 
         static constexpr int GROUP_SYNC_REDONDANT_ID = 10;

@@ -19,12 +19,14 @@
 
 #include "can_driver/can_manager.hpp"
 #include "common/model/conveyor_state.hpp"
+#include "common/model/hardware_type_enum.hpp"
 #include "common/model/stepper_command_type_enum.hpp"
 #include "common/model/bus_protocol_enum.hpp"
-
+#include "can_driver/mock_stepper_driver.hpp"
 #include "can_driver/stepper_driver.hpp"
 
 // c++
+#include <asm-generic/errno.h>
 #include <cstdint>
 #include <functional>
 #include <string>
@@ -37,8 +39,6 @@ using ::common::model::EStepperCalibrationStatus;
 using ::common::model::ConveyorState;
 using ::common::model::StepperMotorState;
 using ::common::model::JointState;
-using ::common::model::EStepperCommandType;
-using ::common::model::EBusProtocol;
 using ::common::model::EHardwareType;
 
 namespace can_driver
@@ -87,6 +87,7 @@ bool CanManager::init(ros::NodeHandle& nh)
     int spi_baudrate = 0;
     int gpio_can_interrupt = 0;
 
+    nh.getParam("simulation_mode", _simulation_mode);
     nh.getParam("bus_params/spi_channel", spi_channel);
     nh.getParam("bus_params/spi_baudrate", spi_baudrate);
     nh.getParam("bus_params/gpio_can_interrupt", gpio_can_interrupt);
@@ -97,7 +98,8 @@ bool CanManager::init(ros::NodeHandle& nh)
     ROS_DEBUG("CanManager::CanManager - Can bus parameters: gpio_can_interrupt : %d", gpio_can_interrupt);
     ROS_DEBUG("CanManager::init - Calibration timeout %f", _calibration_timeout);
 
-    _mcp_can = std::make_shared<mcp_can_rpi::MCP_CAN>(spi_channel, spi_baudrate,
+    if (!_simulation_mode)
+        _mcp_can = std::make_shared<mcp_can_rpi::MCP_CAN>(spi_channel, spi_baudrate,
                                                       static_cast<uint8_t>(gpio_can_interrupt));
 
     return true;
@@ -112,6 +114,12 @@ int CanManager::setupCommunication()
     int ret = CAN_FAILINIT;
     ROS_DEBUG("CanManager::setupCommunication - initializing connection...");
 
+    // if _simulation mode, not setup can
+    if (_simulation_mode)
+    {
+        _debug_error_message.clear();
+        return CAN_OK;
+    }
     // Can bus setup
     if (_mcp_can)
     {
@@ -248,65 +256,65 @@ int CanManager::changeId(common::model::EHardwareType motor_type, uint8_t old_id
  */
 void CanManager::readStatus()
 {
+    std::shared_ptr<can_driver::AbstractCanDriver> stepper_driver;
     if (_driver_map.count(EHardwareType::STEPPER))
+        stepper_driver = _driver_map.at(EHardwareType::STEPPER);
+    else if (_driver_map.count(EHardwareType::FAKE_STEPPER_MOTOR))
+        stepper_driver = _driver_map.at(EHardwareType::FAKE_STEPPER_MOTOR);
+    if (stepper_driver && stepper_driver->canReadData())
     {
-        auto stepper_driver = _driver_map.at(EHardwareType::STEPPER);
-        if (stepper_driver && stepper_driver->canReadData())
+        uint8_t motor_id{};
+        int control_byte{};
+        std::array<uint8_t, StepperDriver::MAX_MESSAGE_LENGTH> rxBuf{};
+        std::string error_message;
+
+        if (CAN_OK == stepper_driver->readData(motor_id, control_byte, rxBuf, error_message))
         {
-            uint8_t motor_id{};
-            int control_byte{};
-            std::array<uint8_t, StepperDriver::MAX_MESSAGE_LENGTH> rxBuf{};
-            std::string error_message;
-
-            if (CAN_OK == stepper_driver->readData(motor_id, control_byte, rxBuf, error_message))
+            if (_state_map.count(motor_id) && _state_map.at(motor_id))
             {
-                if (_state_map.count(motor_id) && _state_map.at(motor_id))
+                auto stepperState = std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(motor_id));
+                // update last time read
+                stepperState->updateLastTimeRead();
+                switch (control_byte)
                 {
-                    auto stepperState = std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(motor_id));
-                    // update last time read
-                    stepperState->updateLastTimeRead();
-
-                    switch (control_byte)
+                    case StepperDriver::CAN_DATA_POSITION:
+                        stepperState->setPositionState(stepper_driver->interpretePositionStatus(rxBuf));
+                        break;
+                    case StepperDriver::CAN_DATA_DIAGNOSTICS:
+                        stepperState->setTemperature(stepper_driver->interpreteTemperatureStatus(rxBuf));
+                        break;
+                    case StepperDriver::CAN_DATA_FIRMWARE_VERSION:
+                        stepperState->setFirmwareVersion(stepper_driver->interpreteFirmwareVersion(rxBuf));
+                        break;
+                    case StepperDriver::CAN_DATA_CONVEYOR_STATE:
                     {
-                        case StepperDriver::CAN_DATA_POSITION:
-                            stepperState->setPositionState(StepperDriver::interpretePositionStatus(rxBuf));
-                            break;
-                        case StepperDriver::CAN_DATA_DIAGNOSTICS:
-                            stepperState->setTemperature(StepperDriver::interpreteTemperatureStatus(rxBuf));
-                            break;
-                        case StepperDriver::CAN_DATA_FIRMWARE_VERSION:
-                            stepperState->setFirmwareVersion(StepperDriver::interpreteFirmwareVersion(rxBuf));
-                            break;
-                        case StepperDriver::CAN_DATA_CONVEYOR_STATE:
+                        auto cState = std::dynamic_pointer_cast<ConveyorState>(stepperState);
+                        if (cState)
                         {
-                            auto cState = std::dynamic_pointer_cast<ConveyorState>(stepperState);
-                            if (cState)
-                            {
-                                cState->updateData(StepperDriver::interpreteConveyorData(rxBuf));
-                            }
-                            break;
+                            cState->updateData(stepper_driver->interpreteConveyorData(rxBuf));
                         }
-                        case StepperDriver::CAN_DATA_CALIBRATION_RESULT:
-                        {
-                            stepperState->setCalibration(StepperDriver::interpreteCalibrationData(rxBuf));
-                            updateCurrentCalibrationStatus();
-                            break;
-                        }
-                        default:
-                            ROS_ERROR("CanManager::readMotorsState : unknown control byte value");
                         break;
                     }
-                }
-                else
-                {
-                    _debug_error_message = "Unknow connected motor : ";
-                    _debug_error_message += std::to_string(motor_id);
+                    case StepperDriver::CAN_DATA_CALIBRATION_RESULT:
+                    {
+                        stepperState->setCalibration(stepper_driver->interpreteCalibrationData(rxBuf));
+                        updateCurrentCalibrationStatus();
+                        break;
+                    }
+                    default:
+                        ROS_ERROR("CanManager::readMotorsState : unknown control byte value");
+                    break;
                 }
             }
             else
             {
-                ROS_ERROR("CanManager::readStatus - %s", error_message.c_str());
+                _debug_error_message = "Unknow connected motor : ";
+                _debug_error_message += std::to_string(motor_id);
             }
+        }
+        else
+        {
+            ROS_ERROR("CanManager::readStatus - %s", error_message.c_str());
         }
     }
 }
@@ -325,8 +333,15 @@ int CanManager::scanAndCheck()
     _all_motor_connected.clear();
     _is_connection_ok = false;
 
+    EHardwareType type;
+    if (_driver_map.count(EHardwareType::STEPPER))
+        type = EHardwareType::STEPPER;
+    else if (_driver_map.count(EHardwareType::FAKE_STEPPER_MOTOR))
+        type = EHardwareType::FAKE_STEPPER_MOTOR;
+    else
+        return result;
     // only stepper for now
-    if (_driver_map.count(EHardwareType::STEPPER) && _driver_map.at(EHardwareType::STEPPER))
+    if (_driver_map.at(type))
     {
         // only for non conveyor motors
         std::set<uint8_t> motors_unfound;
@@ -336,7 +351,7 @@ int CanManager::scanAndCheck()
                 motors_unfound.insert(it.first);
         }
 
-        if (CAN_OK == _driver_map.at(EHardwareType::STEPPER)->scan(motors_unfound, _all_motor_connected))
+        if (CAN_OK == _driver_map.at(type)->scan(motors_unfound, _all_motor_connected))
         {
             ROS_DEBUG("CanManager::scanAndCheck successful");
             _is_connection_ok = true;
@@ -565,8 +580,9 @@ void CanManager::startCalibration()
 
     for (auto const& s : _state_map)
     {
-      if (s.second && EHardwareType::STEPPER == s.second->getHardwareType() && !std::dynamic_pointer_cast<StepperMotorState>(s.second)->isConveyor())
-          std::dynamic_pointer_cast<StepperMotorState>(s.second)->setCalibration(EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS, 0);
+        if (s.second && (EHardwareType::STEPPER == s.second->getHardwareType() || EHardwareType::FAKE_STEPPER_MOTOR == s.second->getHardwareType()) &&
+            !std::dynamic_pointer_cast<StepperMotorState>(s.second)->isConveyor())
+            std::dynamic_pointer_cast<StepperMotorState>(s.second)->setCalibration(EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS, 0);
     }
 
     _calibration_status = EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS;
@@ -689,7 +705,7 @@ void CanManager::addHardwareDriver(common::model::EHardwareType hardware_type)
               _driver_map.insert(std::make_pair(hardware_type, std::make_shared<StepperDriver>(_mcp_can)));
           break;
           case common::model::EHardwareType::FAKE_STEPPER_MOTOR:
-              // _driver_map.insert(std::make_pair(hardware_type, std::make_shared<MockStepperDriver>(_mcp_can)));
+              _driver_map.insert(std::make_pair(hardware_type, std::make_shared<MockStepperDriver>()));
           break;
           default:
               ROS_ERROR("CanManager - Unable to instanciate driver, unknown type");

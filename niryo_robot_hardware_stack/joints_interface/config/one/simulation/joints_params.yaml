@@ -1,20 +1,20 @@
 joint_1:
     name: "joint_1"
-    id: 2
+    id: 1
     type: "fakeStepper"
-    bus: "ttl"
+    bus: "can"
 
 joint_2:
     name: "joint_2"
-    id: 3
+    id: 2
     type: "fakeStepper"
-    bus: "ttl"
+    bus: "can"
 
 joint_3:
     name: "joint_3"
-    id: 4
+    id: 3
     type: "fakeStepper"
-    bus: "ttl"
+    bus: "can"
 
 joint_4:
     name: "joint_4"

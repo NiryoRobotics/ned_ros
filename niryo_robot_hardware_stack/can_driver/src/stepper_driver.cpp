@@ -1,5 +1,5 @@
 /*
-    can_manager.cpp
+    stepper_driver.cpp
     Copyright (C) 2020 Niryo
     All rights reserved.
 

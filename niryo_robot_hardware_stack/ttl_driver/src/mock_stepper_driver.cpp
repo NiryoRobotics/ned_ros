@@ -543,7 +543,7 @@ int MockStepperDriver::readHomingStatus(uint8_t id, uint32_t &status)
 int MockStepperDriver::readGoalVelocity(uint8_t id, uint32_t& present_velocity)
 {
     if (id == _fake_conveyor.id)
-    present_velocity = static_cast<uint32_t>(_fake_conveyor.speed * _fake_conveyor.direction);
+        present_velocity = static_cast<uint32_t>(_fake_conveyor.speed * _fake_conveyor.direction);
     return COMM_SUCCESS;
 }
 
