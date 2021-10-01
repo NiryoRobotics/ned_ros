@@ -62,6 +62,7 @@ target_link_libraries(${PROJECT_NAME}
     ${PROJECT_NAME}_core
     ${catkin_LIBRARIES}
     ${Boost_LIBRARIES}
+    pthread
 )
 
 #############

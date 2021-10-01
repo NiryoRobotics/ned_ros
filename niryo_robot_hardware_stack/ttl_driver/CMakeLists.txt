@@ -118,6 +118,7 @@ add_dependencies(${PROJECT_NAME}_node
 ## Specify libraries to link executable targets against
 target_link_libraries(${PROJECT_NAME}
   ${catkin_LIBRARIES}
+  pthread
 )
 
 target_link_libraries(${PROJECT_NAME}_node
