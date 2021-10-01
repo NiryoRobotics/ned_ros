@@ -19,6 +19,7 @@ _build/
 .pytest_cache/
 
 /dev/
+/dist/
 
 # Mac Stuff
 .DS_Store
