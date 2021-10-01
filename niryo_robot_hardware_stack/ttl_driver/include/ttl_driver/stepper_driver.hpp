@@ -316,7 +316,6 @@ template<typename reg_type>
 int StepperDriver<reg_type>::writeVelocityProfile(uint8_t id, const std::vector<uint32_t>& data)
 {
   int res = 0;
-  double wait_duration = 0.5;
 
   if (COMM_SUCCESS != write(reg_type::ADDR_VSTART, reg_type::SIZE_VSTART, id, data.at(0)))
     res++;
