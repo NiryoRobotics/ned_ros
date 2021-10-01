@@ -430,19 +430,21 @@ void CanInterfaceCore::controlLoop()
     resetHardwareControlLoopRates();
     while (ros::ok())
     {
-        if (_control_loop_flag)
+        // Do not readStatus if connection is down or not be established yet
+        if (!_can_manager->isConnectionOk())
+        {
+            _can_manager->scanAndCheck();
+            control_loop_rate.sleep();
+        }
+        else if (_control_loop_flag)
         {
             lock_guard<mutex> lck(_control_loop_mutex);
-
             _can_manager->readStatus();
 
-            if (_can_manager->isConnectionOk())
+            if (ros::Time::now().toSec() - _time_hw_data_last_write >= _delta_time_write)
             {
-                if (ros::Time::now().toSec() - _time_hw_data_last_write >= _delta_time_write)
-                {
-                    _time_hw_data_last_write = ros::Time::now().toSec();
-                    _executeCommand();
-                }
+                _time_hw_data_last_write = ros::Time::now().toSec();
+                _executeCommand();
             }
 
             bool isFreqMet = control_loop_rate.sleep();

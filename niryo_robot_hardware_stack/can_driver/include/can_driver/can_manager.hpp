@@ -108,6 +108,7 @@ class CanManager : public common::model::IBusManager
         double getCurrentTimeout() const;
 
     private:
+        bool _simulation_mode{false};
         std::shared_ptr<mcp_can_rpi::MCP_CAN> _mcp_can;
 
         std::vector<uint8_t> _all_motor_connected; // with all can motors connected (including the conveyor)

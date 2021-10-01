@@ -28,6 +28,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "common/common_defs.hpp"
 #include "common/model/hardware_type_enum.hpp"
 #include "common/model/single_motor_cmd.hpp"
+#include "common/model/stepper_calibration_status_enum.hpp"
 
 namespace can_driver
 {
@@ -45,10 +46,11 @@ public:
     static constexpr double STEPPER_MOTOR_TIMEOUT_VALUE         = 1.0;
 
 public:
+    AbstractCanDriver() {}
     AbstractCanDriver(std::shared_ptr<mcp_can_rpi::MCP_CAN> mcp_can);
     virtual ~AbstractCanDriver();
 
-    bool canReadData() const;
+    virtual bool canReadData() const;
 
     virtual int ping(uint8_t id);
     virtual int scan(const std::set<uint8_t>& motors_to_find, std::vector<uint8_t> &id_list);
@@ -73,13 +75,20 @@ public:
     virtual uint8_t sendConveyorOnCommand(uint8_t id, bool conveyor_on, uint8_t conveyor_speed, uint8_t direction) = 0;
 
     // read
-    uint8_t readData(uint8_t& id, int& control_byte,
+    virtual uint8_t readData(uint8_t& id, int& control_byte,
                      std::array<uint8_t, MAX_MESSAGE_LENGTH>& rxBuf,
                      std::string& error_message);
+
+    // Interprete data received
+    virtual int32_t interpretePositionStatus(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) = 0;
+    virtual uint32_t interpreteTemperatureStatus(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) = 0;
+    virtual std::string interpreteFirmwareVersion(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) = 0;
+    virtual std::tuple<common::model::EStepperCalibrationStatus, int32_t> interpreteCalibrationData(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) = 0;
+    virtual std::tuple<bool, uint8_t, uint16_t> interpreteConveyorData(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) = 0;
+
 protected:
     uint8_t read(INT32U *id, uint8_t *len, std::array<uint8_t, MAX_MESSAGE_LENGTH> &buf);
     uint8_t write(uint32_t id, uint8_t ext, uint8_t len, uint8_t *buf);
-
 private:
     std::shared_ptr<mcp_can_rpi::MCP_CAN> _mcp_can;
 
