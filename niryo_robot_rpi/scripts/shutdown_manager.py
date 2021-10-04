@@ -6,7 +6,6 @@ import threading
 from niryo_robot_rpi.rpi_ros_utils import send_reboot_command, send_shutdown_command
 
 from niryo_robot_msgs.msg import CommandStatus
-
 from niryo_robot_msgs.srv import SetInt
 from niryo_robot_msgs.srv import Trigger
 

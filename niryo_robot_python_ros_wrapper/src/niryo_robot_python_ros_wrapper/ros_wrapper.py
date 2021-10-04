@@ -49,6 +49,7 @@ from niryo_robot_credentials.srv import GetCredential, SetCredential
 from std_srvs.srv import Trigger as StdTrigger
 from niryo_robot_led_ring.srv import LedUser, LedUserRequest
 from niryo_robot_rpi.srv import SetPullup, SetIOMode
+#from niryo_robot_sound.srv import SoundUserCommand, StopSound, DeleteSound, SendUserSound
 
 # Actions
 from niryo_robot_arm_commander.msg import RobotMoveAction, RobotMoveGoal
@@ -2211,6 +2212,90 @@ class NiryoRosWrapper:
         if with_desc:
             return result.name_list, result.description_list
         return result.name_list
+
+
+    # - Sound
+
+    # def play_sound(self, sound_name):
+    #     """
+    #     Call service to play_sound according to SoundStateCommand.
+    #     If failed, raise NiryoRosWrapperException
+    #
+    #     :param sound_name: Name of the sound to play
+    #     :type string: string
+    #     :return: status, message
+    #     :rtype: (int, str)
+    #     """
+    #     result = self.__call_service('/niryo_robot_sound/play_sound_user',
+    #                                  SoundUserCommand, sound_name)
+    #     rospy.sleep(0.1)
+    #     return self.__classic_return_w_check(result)
+    #
+    # def set_volume(self, sound_volume):
+    #     """
+    #     Call service to set_volume to set the volume of Ned'sound accrding to sound_volume.
+    #     If failed, raise NiryoRosWrapperException
+    #
+    #     :param sound_volume: volume of the sound
+    #     :type int: int (0: no sound, 100: max sound)
+    #     :return: status, message
+    #     :rtype: (int, str)
+    #     """
+    #     print 'hereeeee'
+    #     result = self.__call_service('/niryo_robot_sound/set_volume',
+    #                                  SetInt, sound_volume)
+    #     rospy.sleep(0.1)
+    #     return self.__classic_return_w_check(result)
+    #
+    # def stop_sound(self):
+    #     """
+    #     Call service stop_sound to stop a sound being played.
+    #     If failed, raise NiryoRosWrapperException
+    #
+    #     :param None: take the sound being played
+    #     :type None: None
+    #     :return: status, message
+    #     :rtype: (int, str)
+    #     """
+    #     result = self.__call_service('/niryo_robot_sound/stop_sound',
+    #                                  StopSound)
+    #     rospy.sleep(0.1)
+    #     return self.__classic_return_w_check(result)
+    #
+    # def delete_sound(self, sound_name):
+    #     """
+    #     Call service delete_sound to delete a sound on the RaspberryPi of the robot.
+    #     If failed, raise NiryoRosWrapperException
+    #
+    #     :param sound_name: name of the sound which needs to be deleted
+    #     :type string: String
+    #     :return: status, message
+    #     :rtype: (int, str)
+    #     """
+    #     result = self.__call_service('/niryo_robot_sound/delete_sound_user',
+    #                                  DeleteSound, sound_name)
+    #     rospy.sleep(0.1)
+    #     return self.__classic_return_w_check(result)
+    #
+    #
+    # def import_sound(self, sound_name, sound_data):
+    #     """
+    #     Call service import_sound to delete a sound on the RaspberryPi of the robot.
+    #     If failed, raise NiryoRosWrapperException
+    #
+    #     :param sound_name, sound_data: name of the sound which needs to be deleted, encoded data from the sound (wav or mp3), encoded data from the sound file (wav or mp3)
+    #     :type string, string: String, String containing the encoded data of the sound file
+    #     :return: status, message
+    #     :rtype: (int, str)
+    #     """
+    #     req = SendUserSound()
+    #     req.sound_name = sound_name
+    #     req.sound_data = sound_data
+    #     result = self.__call_service('/niryo_robot_sound/send_sound',
+    #                                  SendUserSound, req)
+    #     rospy.sleep(0.1)
+    #     print(result)
+    #     return self.__classic_return_w_check(result)
 
     # - Led Ring
 

@@ -25,6 +25,7 @@ class LedRingNode:
             self.led_ring_commander.shutdown()
             rospy.signal_shutdown("shutdown")
 
+
 if __name__ == '__main__':
     rospy.init_node('niryo_robot_led_ring_commander', anonymous=False, log_level=rospy.INFO, disable_signals=True)
     node = None

@@ -1,0 +1,12 @@
+string sound_name
+
+int8 ADD = 1
+int8 DELETE = 2
+int8 action
+
+# Data to add a new sound
+string sound_data
+
+---
+int32 status
+string message
