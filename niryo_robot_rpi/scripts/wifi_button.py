@@ -22,7 +22,8 @@ from threading import Lock
 
 from niryo_robot_rpi.MCP23017 import MCP23017
 from niryo_robot_rpi.mcp_io_objects import Button, Led
-from niryo_robot_rpi.rpi_ros_utils import send_hotspot_command, send_restart_wifi_command, send_deactivate_wifi_command
+from niryo_robot_rpi.rpi_ros_utils import send_hotspot_command, send_restart_wifi_command, \
+    send_deactivate_wifi_command, send_reconnect_wifi_command
 
 from niryo_robot_system_api_client.msg import WifiStatus
 
@@ -91,13 +92,16 @@ class WifiButton:
 
     def on_release(self):
         self.__released_time = rospy.Time.now()
-        if (self.__released_time - self.__pressed_time).to_sec() < 2:
+        if (self.__released_time - self.__pressed_time).to_sec() < 2 and not self.__set_hotspot_lock.locked():
             with self.__set_hotspot_lock:
+                self.stop_blink()
+                self.__timer = rospy.Timer(rospy.Duration.from_sec(0.25), self.__bink_wifi_led)
                 if self.__wifi_status != WifiStatus.HOTSPOT:
-                    self.stop_blink()
-                    self.__timer = rospy.Timer(rospy.Duration.from_sec(0.25), self.__bink_wifi_led)
                     send_hotspot_command()
-                    self.set_led_behaviour()
+                else:
+                    send_reconnect_wifi_command()
+                self.stop_blink()
+                self.set_led_behaviour()
 
     def set(self, value):
         self.__wifi_button.value = int(bool(value))

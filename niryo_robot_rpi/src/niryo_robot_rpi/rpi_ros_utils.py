@@ -61,6 +61,16 @@ def send_deactivate_wifi_command():
         rospy.logwarn("Could not call /niryo_robot/wifi/manage service")
 
 
+def send_reconnect_wifi_command():
+    rospy.loginfo("RECONNECT_WIFI")
+    rospy.wait_for_service('/niryo_robot/wifi/manage', timeout=0.5)
+    try:
+        set_hotspot = rospy.ServiceProxy('/niryo_robot/wifi/manage', ManageWifi)
+        set_hotspot(ManageWifiRequest.RECONNECT)
+    except rospy.ServiceException:
+        rospy.logwarn("Could not call /niryo_robot/wifi/manage service")
+
+
 def send_trigger_program_autorun():
     rospy.loginfo("Trigger program autorun from button")
     topic_name = "/niryo_robot_programs_manager/execute_program_autorun"
