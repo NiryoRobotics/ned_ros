@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 # Lib
 import os
@@ -76,7 +75,8 @@ class Sound(object):
         return self.__playing_instance is not None and self.__playing_instance.poll() is None
 
     def wait_end(self):
-        while not rospy.is_shutdown() and self.__playing_instance is not None and self.__playing_instance.poll() is None:
+        while (not rospy.is_shutdown() and
+               self.__playing_instance is not None and self.__playing_instance.poll() is None):
             rospy.sleep(0.1)
 
     def __get_sound_duration(self):

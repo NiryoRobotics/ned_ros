@@ -12,5 +12,5 @@
       <arg name="simulation_mode" value="$(arg simulation_mode)" />
   </include>
 
-  <node pkg="ttl_driver" type="ttl_driver_node" name="ttl_driver" output="screen" />
+  <node pkg="ttl_driver" type="ttl_driver_node" name="ttl_driver" output="screen"/>
 </launch>
