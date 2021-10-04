@@ -168,9 +168,7 @@ class EndEffectorState : public AbstractHardwareState
         void setDigitalOut(bool digital_out);
 
     private:
-        std::array<std::shared_ptr<Button>, 3> _buttons_list {std::make_shared<Button>(),
-                                                              std::make_shared<Button>(),
-                                                              std::make_shared<Button>()};
+        std::array<std::shared_ptr<Button>, 3> _buttons_list;
         Vector3D _accelerometer_values{};
 
         bool _collision_status{false};

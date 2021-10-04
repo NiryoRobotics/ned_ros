@@ -916,4 +916,3 @@ class CommandInterpreter:
     @check_nb_args(2)
     def __import_sound(self, sound_name, sound_data):
         return self.__send_answer(self.__niryo_robot.import_sound(sound_name, sound_data))
-
