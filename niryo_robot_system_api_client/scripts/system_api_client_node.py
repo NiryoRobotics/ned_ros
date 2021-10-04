@@ -94,7 +94,6 @@ class SystemApiClientNode:
         status, message = CommandStatus.SUCCESS, "Success"
         if msg.cmd == msg.HOTSPOT:
             conn_success, result = self.client.activate_hotspot()
-            message = result["detail"]
         elif msg.cmd == msg.RESTART:
             conn_success, result = self.client.restart_wifi()
             message = result["detail"]
