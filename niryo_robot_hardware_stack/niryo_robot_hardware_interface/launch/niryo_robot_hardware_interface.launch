@@ -22,7 +22,7 @@
     </include>
 
     <node pkg="niryo_robot_hardware_interface" type="niryo_robot_hardware_interface_node" 
-            name="niryo_robot_hardware_interface" output="screen">
+            name="niryo_robot_hardware_interface" output="screen"  >
         <param name="hardware_version" type="string" value="$(arg hardware_version)"/>
         <param name="gazebo" type="bool" value="$(arg gazebo)"/>
         <param name="can_enabled" type="bool" value="$(arg can_enabled)"/>
