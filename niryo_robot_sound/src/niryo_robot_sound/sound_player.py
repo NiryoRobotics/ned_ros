@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 
 # Lib
 import rospy
@@ -66,7 +65,9 @@ class SoundPlayer:
     def play_sound(self, sound, start_time_sec=0, end_time_sec=0):
         self.__actual_sound = sound
 
-        duration = 0 if end_time_sec == 0 or end_time_sec > sound.duration or start_time_sec > end_time_sec else end_time_sec - start_time_sec
+        duration = 0 if (end_time_sec == 0 or
+                         end_time_sec > sound.duration or
+                         start_time_sec > end_time_sec) else end_time_sec - start_time_sec
         self.__sound_publisher.publish(sound.name)
         self.__actual_sound.play(volume=self.__volume_percentage, start_sec=start_time_sec, duration=duration)
         self.__actual_sound.wait_end()

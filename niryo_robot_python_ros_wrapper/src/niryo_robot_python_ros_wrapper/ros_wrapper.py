@@ -49,7 +49,7 @@ from niryo_robot_credentials.srv import GetCredential, SetCredential
 from std_srvs.srv import Trigger as StdTrigger
 from niryo_robot_led_ring.srv import LedUser, LedUserRequest
 from niryo_robot_rpi.srv import SetPullup, SetIOMode
-#from niryo_robot_sound.srv import SoundUserCommand, StopSound, DeleteSound, SendUserSound
+# from niryo_robot_sound.srv import SoundUserCommand, StopSound, DeleteSound, SendUserSound
 
 # Actions
 from niryo_robot_arm_commander.msg import RobotMoveAction, RobotMoveGoal
@@ -2213,7 +2213,6 @@ class NiryoRosWrapper:
             return result.name_list, result.description_list
         return result.name_list
 
-
     # - Sound
 
     # def play_sound(self, sound_name):
@@ -2283,7 +2282,8 @@ class NiryoRosWrapper:
     #     Call service import_sound to delete a sound on the RaspberryPi of the robot.
     #     If failed, raise NiryoRosWrapperException
     #
-    #     :param sound_name, sound_data: name of the sound which needs to be deleted, encoded data from the sound (wav or mp3), encoded data from the sound file (wav or mp3)
+    #     :param sound_name, sound_data: name of the sound which needs to be deleted,
+    #            encoded data from the sound (wav or mp3), encoded data from the sound file (wav or mp3)
     #     :type string, string: String, String containing the encoded data of the sound file
     #     :return: status, message
     #     :rtype: (int, str)

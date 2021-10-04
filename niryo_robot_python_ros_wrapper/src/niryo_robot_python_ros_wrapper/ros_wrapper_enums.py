@@ -260,4 +260,3 @@ class CommandEnum(Enum):
     LED_RING_RAINBOW_CHASE = 258
     LED_RING_GO_UP = 259
     LED_RING_GO_UP_DOWN = 260
-

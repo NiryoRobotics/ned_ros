@@ -3,7 +3,7 @@
         xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
 
     <group ns="niryo_robot_sound">
-        <rosparam command="load" file="$(find niryo_robot_sound)/config/sound_params.yaml"/>
+        <rosparam command="load" file="$(find niryo_robot_sound)/config/default.yaml"/>
     </group>
 
 </launch>

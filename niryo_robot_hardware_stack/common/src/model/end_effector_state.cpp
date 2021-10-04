@@ -35,6 +35,9 @@ namespace model
 EndEffectorState::EndEffectorState() :
   AbstractHardwareState()
 {
+  _buttons_list.at(0) = std::make_shared<Button>();
+  _buttons_list.at(1) = std::make_shared<Button>();
+  _buttons_list.at(2) = std::make_shared<Button>();
 }
 
 /**
@@ -46,6 +49,9 @@ EndEffectorState::EndEffectorState(uint8_t id) :
                         EComponentType::END_EFFECTOR,
                         EBusProtocol::TTL, id)
 {
+  _buttons_list.at(0) = std::make_shared<Button>();
+  _buttons_list.at(1) = std::make_shared<Button>();
+  _buttons_list.at(2) = std::make_shared<Button>();
 }
 
 /**
@@ -56,6 +62,9 @@ EndEffectorState::EndEffectorState(uint8_t id, common::model::EHardwareType type
                           EComponentType::END_EFFECTOR,
                           EBusProtocol::TTL, id)
 {
+  _buttons_list.at(0) = std::make_shared<Button>();
+  _buttons_list.at(1) = std::make_shared<Button>();
+  _buttons_list.at(2) = std::make_shared<Button>();
 }
 
 /**

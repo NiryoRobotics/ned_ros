@@ -45,7 +45,6 @@ namespace can_driver
 
 /**
  * @brief MockStepperDriver::MockStepperDriver
- * @param mcp_can
  */
 MockStepperDriver::MockStepperDriver()
 {
