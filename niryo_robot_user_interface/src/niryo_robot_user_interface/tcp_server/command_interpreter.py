@@ -894,3 +894,26 @@ class CommandInterpreter:
                 self.__raise_exception_expected_choice("[0 => 255]", color_elem)
             color[index] = self.__transform_to_type(color_elem, float)
         return color
+
+    # - Sound
+
+    @check_nb_args(1)
+    def __play_sound(self, sound_name):
+        return self.__send_answer(self.__niryo_robot.play_sound(sound_name))
+
+    @check_nb_args(1)
+    def __set_volume(self, sound_volume):
+        return self.__send_answer(self.__niryo_robot.set_volume(sound_volume))
+
+    @check_nb_args(0)
+    def __stop_sound(self):
+        return self.__send_answer(self.__niryo_robot.stop_sound())
+
+    @check_nb_args(1)
+    def __delete_sound(self, sound_name):
+        return self.__send_answer(self.__niryo_robot.delete_sound(sound_name))
+
+    @check_nb_args(2)
+    def __import_sound(self, sound_name, sound_data):
+        return self.__send_answer(self.__niryo_robot.import_sound(sound_name, sound_data))
+

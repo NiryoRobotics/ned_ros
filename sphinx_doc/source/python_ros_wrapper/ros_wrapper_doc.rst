@@ -103,6 +103,14 @@ Vision
               set_brightness, set_contrast, set_saturation
     :member-order: bysource
 
+Sound
+^^^^^^^^^^^^^
+
+.. autoclass:: NiryoRosWrapper
+    :members: play_sound, stop_sound, set_volume,
+              import_sound, delete_sound
+    :member-order: bysource
+
 Led Ring
 ^^^^^^^^^^^^^
 

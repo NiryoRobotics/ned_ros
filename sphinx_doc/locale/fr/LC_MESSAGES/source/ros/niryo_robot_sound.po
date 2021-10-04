@@ -1,0 +1,240 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2021, Niryo All rights reserved. No part of this document
+# may be reproduced or transmitted in any form or by any means without prior
+# written consent of Niryo SAS
+# This file is distributed under the same license as the Ned ROS
+# Documentation package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Ned ROS Documentation 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-08-05 16:45+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.9.1\n"
+
+#: ../../source/ros/niryo_robot_sound.rst:2
+msgid "Niryo robot Sound package"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_sound.rst:4
+msgid "This package deals with the sound of the robot."
+msgstr ""
+
+#: ../../source/ros/niryo_robot_sound.rst:8
+msgid "Sound Node"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_sound.rst:9
+msgid ""
+"The ROS Node is made of services to play, stop, import and delete a sound"
+" on the robot. It is also possible to set the volume of the robot."
+msgstr ""
+
+#: ../../source/ros/niryo_robot_sound.rst:11
+msgid "The namespace used is: |namespace_emphasize|"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_sound.rst:14
+msgid "Publisher - Sound"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_sound.rst:16
+msgid "Sound Package's Publishers"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_sound.rst:22
+#: ../../source/ros/niryo_robot_sound.rst:44
+msgid "Name"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_sound.rst:23
+#: ../../source/ros/niryo_robot_sound.rst:45
+msgid "Message Type"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_sound.rst:24
+#: ../../source/ros/niryo_robot_sound.rst:46
+msgid "Description"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_sound.rst:25
+msgid "``/niryo_robot_sound/sound_user_state``"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_sound.rst:26
+msgid ":ref:`std_msgs/Bool<Bool>`"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_sound.rst:27
+msgid ""
+"Publish the state of a user sound (True: being played, False: no sound "
+"played)"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_sound.rst:28
+msgid "``/niryo_robot_sound/volume_state``"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_sound.rst:29
+msgid ":ref:`std_msgs/Int8<Int8>`"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_sound.rst:30
+msgid "Publish the volume of the robot"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_sound.rst:31
+msgid "``/niryo_robot_sound/get_user_sounds``"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_sound.rst:32
+msgid ":ref:`SoundUser<SoundUser (Message)>`"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_sound.rst:33
+msgid "Publish the sound (and their duration) on the robot"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_sound.rst:36
+msgid "Services - Sound"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_sound.rst:38
+msgid "Sound Services"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_sound.rst:47
+msgid "``/niryo_robot_sound/play_sound_state``"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_sound.rst:48
+msgid ":ref:`SoundStateCommand<SoundStateCommand (Service)>`"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_sound.rst:49
+msgid "Play a sound corresponding to a state of the robot"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_sound.rst:50
+msgid "``/niryo_robot_sound/play_sound_user``"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_sound.rst:51
+msgid ":ref:`SoundUserCommand<SoundUserCommand (Service)>`"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_sound.rst:52
+msgid "Play a sound imported on the robot from the user"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_sound.rst:53
+msgid "``/niryo_robot_sound/stop_sound``"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_sound.rst:54
+msgid ":ref:`StopSound<StopSound (Service)>`"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_sound.rst:55
+msgid "Stop a sound being played"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_sound.rst:56
+msgid "``/niryo_robot_sound/delete_sound_user``"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_sound.rst:57
+msgid ":ref:`DeleteSound<DeleteSound (Service)>`"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_sound.rst:58
+msgid "Delete a sound imported by the user on the robot"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_sound.rst:59
+msgid "``/niryo_robot_sound/set_volume``"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_sound.rst:60
+msgid ":ref:`SetInt<SetInt>`"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_sound.rst:61
+msgid "Set the volume of the robot"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_sound.rst:62
+msgid "``/niryo_robot_sound/send_sound``"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_sound.rst:63
+msgid ":ref:`SendUserSound<SendUserSound (Service)>`"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_sound.rst:64
+msgid "Import a sound on the robot"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_sound.rst:67
+msgid "Dependencies - Sound"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_sound.rst:69
+msgid ":msgs_index:`std_msgs`"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_sound.rst:70
+msgid ":ref:`niryo_robot_msgs <Niryo Robot Messages Package>`"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_sound.rst:71
+msgid ":ref:`niryo_robot_status <Niryo Robot Status Package>`"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_sound.rst:74
+msgid "Services & Messages files - Sound"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_sound.rst:77
+msgid "SoundName (Message)"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_sound.rst:83
+msgid "SoundObject (Message)"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_sound.rst:89
+msgid "SoundUser (Message)"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_sound.rst:95
+msgid "DeleteSound (Service)"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_sound.rst:101
+msgid "SendUserSound (Service)"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_sound.rst:107
+msgid "SoundStateCommand (Service)"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_sound.rst:113
+msgid "SoundUserCommand (Service)"
+msgstr ""
+
+#: ../../source/ros/niryo_robot_sound.rst:119
+msgid "StopSound (Service)"
+msgstr ""
+
+#~ msgid ":ref:`std_msgs`"
+#~ msgstr ""
+

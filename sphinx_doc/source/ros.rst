@@ -33,6 +33,7 @@ In this section, you will have access to all information about each Niryo Robot'
    ros/niryo_robot_poses_handlers
    ros/niryo_robot_programs_manager
    ros/niryo_robot_rpi
+   ros/niryo_robot_sound
    ros/niryo_robot_tools_commander
    ros/niryo_robot_unit_tests
    ros/niryo_robot_user_interface

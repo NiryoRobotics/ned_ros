@@ -30,6 +30,7 @@ add_service_files(
   GetStringList.srv
   SetBool.srv
   SetInt.srv
+  SetFloat.srv
   SetString.srv
   Trigger.srv
 )
