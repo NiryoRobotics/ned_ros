@@ -30,7 +30,7 @@ class SoundManager:
         self.__sound_thread = Thread()
 
         self.__error_loop = None
-        self.__error_sound_frequency = rospy.get_param("~error_sound_frequency")
+        self.__error_sound_delay = rospy.get_param("~error_sound_delay")
 
         # - Subscribers
         self.__robot_status = RobotStatus.BOOTING
@@ -61,7 +61,7 @@ class SoundManager:
             elif self.__robot_status in [RobotStatus.FATAL_ERROR, RobotStatus.MOTOR_ERROR]:
                 sound = self.__sound_database.error_sound
                 self.play_sound(sound)
-                self.__error_loop = rospy.Timer(rospy.Duration(1 / self.__error_sound_frequency),
+                self.__error_loop = rospy.Timer(rospy.Duration(self.__error_sound_delay),
                                                 self.__error_sound_callback)
 
         elif self.__logs_status != msg.logs_status:
