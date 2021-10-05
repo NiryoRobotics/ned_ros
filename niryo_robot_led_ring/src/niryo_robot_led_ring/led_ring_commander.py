@@ -1,4 +1,3 @@
-
 # Lib
 import rospy
 import threading
@@ -26,10 +25,10 @@ class LedRingCommander:
 
     def __init__(self):
         rospy.loginfo("Led Ring Commander - Initialisation")
-        self.led_ring_anim = LedRingAnimations()
-
+        self.__is_shutdown = False
         self.__is_simulation = rospy.get_param("~simulation_mode")
 
+        self.led_ring_anim = LedRingAnimations()
         self.robot_status = RobotStatus.BOOTING
         self.robot_status_str = ""
         self.logs_status = RobotStatus.NONE
@@ -83,9 +82,18 @@ class LedRingCommander:
         rospy.loginfo("Led Ring Commander - Started")
 
     def shutdown(self):
-        self.robot_status_subscriber.unregister()
-        self.stop_led_ring_thread()
-        del self.led_ring_anim
+        if not self.__is_shutdown:
+            self.__is_shutdown = True
+            self.robot_status_subscriber.unregister()
+            self.stop_led_ring_thread()
+            self.blink(WHITE, 2, 0.5)
+            self.user_animation_lock.acquire()
+            self.error_animation_lock.acquire()
+            del self.led_ring_anim
+
+    @property
+    def is_shutdown(self):
+        return self.__is_shutdown
 
     # - Callbacks
     def __callback_robot_status(self, msg):
@@ -176,15 +184,7 @@ class LedRingCommander:
         self.blink_over_status(RED, 5, 2)
 
     def blink_over_status(self, color, iterations, period):
-        with self.error_animation_lock:
-            command = LedUserRequest()
-            command.animation_mode.animation = LedRingAnimation.FLASHING
-            command.colors = [color]
-            command.iterations = iterations
-            command.period = period
-            self.start_led_ring_thread(command)
-            self.led_ring_animation_thread.join()
-
+        self.blink(color, iterations, period)
         command = self.get_robot_status_led_ring_cmd()
         self.start_led_ring_thread(command)
 
@@ -323,3 +323,13 @@ class LedRingCommander:
 
     def snake_animation(self, cmd):
         self.led_ring_anim.snake(cmd.colors[0], cmd.period, cmd.iterations)
+
+    def blink(self, color, iterations, period):
+        with self.error_animation_lock:
+            command = LedUserRequest()
+            command.animation_mode.animation = LedRingAnimation.FLASHING
+            command.colors = [color]
+            command.iterations = iterations
+            command.period = period
+            self.start_led_ring_thread(command)
+            self.led_ring_animation_thread.join()
