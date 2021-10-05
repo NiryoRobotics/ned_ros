@@ -110,27 +110,7 @@ private:
 
     static constexpr int CAN_MODEL_NUMBER                       = 10000;
 
-    /*struct FakeRegister
-    {
-      int32_t       position{};
-      uint32_t       temperature{};
-      double         voltage{};
-      uint16_t       model_number{};
-      std::string    firmware{};
-    };
-
-    struct conveyor_data
-    {
-        uint8_t id {6};
-        bool active{false};
-        uint8_t conveyor_speed{0};
-        uint8_t direction{1};
-    };*/
-
-    std::map<uint8_t, FakeCanData::FakeRegister> _map_fake_registers; /*{{1, {0, 50, 12.1, 1, "0.0.1"}},
-                                                        {2, {-1090, 52, 12.2, 1, "0.0.1"}},
-                                                        {3, {2447, 54, 12.3, 1, "0.0.1"}}};*/
-
+    std::map<uint8_t, FakeCanData::FakeRegister> _map_fake_registers;
     std::vector<uint8_t> _id_list;
     FakeCanData::FakeConveyor _fake_conveyor;
     

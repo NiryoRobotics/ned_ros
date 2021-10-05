@@ -101,7 +101,7 @@ bool TtlManager::init(ros::NodeHandle& nh)
     nh.getParam("bus_params/baudrate", _baudrate);
     nh.getParam("led_motor", _led_motor_type_cfg);
     nh.getParam("simu_gripper", _use_simu_gripper);
-    
+
     if (_device_name != "fake")
     {
         _portHandler.reset(dynamixel::PortHandler::getPortHandler(_device_name.c_str()));
@@ -1405,7 +1405,7 @@ void TtlManager::readFakeConfig()
         _fake_data.end_effector.temperature = temperature;
         _nh.getParam(current_ns + "voltage", voltage);
         _fake_data.end_effector.voltage = voltage;
-        
+
         std::string firmware;
         _nh.getParam(current_ns + "firmware", firmware);
         _fake_data.end_effector.firmware = firmware;

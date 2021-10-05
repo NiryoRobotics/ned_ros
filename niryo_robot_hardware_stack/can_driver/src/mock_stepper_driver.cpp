@@ -467,7 +467,7 @@ MockStepperDriver::interpreteCalibrationData(const std::array<uint8_t, MockStepp
     if (_map_fake_registers.count(_current_id) && _calibration_status.count(_current_id))
     {
         // need to try send calibration status more than 1 time to make sure the "ok" calibration status is got
-        if (_fake_time <= 0 && _fake_time >= -3) 
+        if (_fake_time <= 0 && _fake_time >= -3)
         {
             _fake_time--;
             std::get<0>(_calibration_status.at(_current_id))  = common::model::EStepperCalibrationStatus::CALIBRATION_OK;

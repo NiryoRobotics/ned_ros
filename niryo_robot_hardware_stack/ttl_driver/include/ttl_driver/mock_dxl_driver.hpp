@@ -107,24 +107,8 @@ class MockDxlDriver : public AbstractDxlDriver
     private:
         void initializeFakeData(FakeTtlData data);
     private:
-
-        /*struct FakeRegister
-        {
-          uint32_t       position{};
-          uint32_t       temperature{};
-          double         voltage{};
-          uint32_t       min_position{};
-          uint32_t       max_position{};
-          uint16_t       model_number{};
-          std::string    firmware{};
-        };*/
-
         std::map<uint8_t, FakeTtlData::FakeRegister> _map_fake_registers;
-                                                             /*{ {5,  {2048, 50, 50, 0, 4096, 1, "0.0.2"}},
-                                                             {6,  {2048, 52, 50, 0, 4096, 1, "0.0.2"}},
-                                                             {7,  {2048, 54, 50, 0, 4096, 1, "0.0.2"}},
-                                                             {11, { 370, 56, 50, 0, 4096, 1, "0.0.2"}} };*/
-        std::vector<uint8_t> _full_id_list; //{2,3,4,5,6,7,11};
+        std::vector<uint8_t> _full_id_list;
         std::vector<uint8_t> _id_list;
 
         static constexpr int GROUP_SYNC_REDONDANT_ID = 10;

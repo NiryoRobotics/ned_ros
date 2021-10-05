@@ -96,32 +96,10 @@ class MockStepperDriver : public AbstractStepperDriver
         virtual int readFirmwareRunning(uint8_t id, bool &is_running) override;
 
     private:
-/*        struct FakeRegister
-        {
-          uint32_t       position{};
-          uint32_t       temperature{};
-          double       voltage{};
-          uint32_t       min_position{};
-          uint32_t       max_position{};
-          uint16_t       model_number{};
-          std::string    firmware{};
-        };
-
-        struct FakeConveyor
-        {
-            uint8_t         id = 8;  
-            int8_t          direction = 1;
-            int16_t         speed = 0;
-            bool            state = false;
-        };*/
-        
         std::map<uint8_t, FakeTtlData::FakeRegister> _map_fake_registers;
-                                                             /*{ {2, {0, 50, 12.1, 0, 4096, 1, "0.0.1"}},
-                                                             {3, {0, 52, 12.2, 0, 4096, 1, "0.0.1"}},
-                                                             {4, {0, 54, 12.3, 0, 4096, 1, "0.0.1"}}};*/
 
         FakeTtlData::FakeConveyor _fake_conveyor;
-        std::vector<uint8_t> _full_id_list; //{2,3,4,5,6,7,11};
+        std::vector<uint8_t> _full_id_list;
         std::vector<uint8_t> _id_list;
 
         static constexpr int GROUP_SYNC_REDONDANT_ID = 10;

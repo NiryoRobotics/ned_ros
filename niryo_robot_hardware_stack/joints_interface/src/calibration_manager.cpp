@@ -132,7 +132,6 @@ int CalibrationManager::startCalibration(int mode, std::string &result_message)
                 }
                 else
                     result_message = "Calibration Interface - manual calibration failed";
-
             }
         }
         else                          // unknown
@@ -328,7 +327,7 @@ EStepperCalibrationStatus CalibrationManager::autoCalibration()
     activateLearningMode(true);
 
     auto calibration_status = common::model::EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED;
-    
+
     if (_can_interface)
         calibration_status = _can_interface->getCalibrationStatus();
     else if (_ttl_interface)
