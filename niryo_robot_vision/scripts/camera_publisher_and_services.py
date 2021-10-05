@@ -94,7 +94,7 @@ class VisionNode:
             rospy.logwarn("Vision Node - Intrinsics file '{}' does not exist".format(calibration_object_name))
             return CalibrationObject.set_empty()
         with open(path_yaml, "r") as input_file:
-            yaml_file = yaml.load(input_file)
+            yaml_file = yaml.safe_load(input_file)
         return CalibrationObject.set_from_yaml(yaml_file)
 
     @staticmethod

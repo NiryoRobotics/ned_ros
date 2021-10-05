@@ -324,7 +324,7 @@ class ProgramManagerNode:
         if not os.path.isfile(self.__autorun_file_path):
             return None, None, None
         with open(self.__autorun_file_path, "r") as input_file:
-            yaml_file = yaml.load(input_file)
+            yaml_file = yaml.safe_load(input_file)
 
         mode = self._str_to_autorun_mode[yaml_file["mode"]]
 
