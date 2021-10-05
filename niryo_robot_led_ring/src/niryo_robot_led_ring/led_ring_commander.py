@@ -107,7 +107,9 @@ class LedRingCommander:
         if msg.robot_status == RobotStatus.SHUTDOWN:
             self.shutdown()
 
-        if self.robot_status != msg.robot_status or self.robot_out_of_bounds != msg.out_of_bounds or self.rpi_overheating != msg.rpi_overheating:
+        if (self.robot_status != msg.robot_status or
+                self.robot_out_of_bounds != msg.out_of_bounds or
+                self.rpi_overheating != msg.rpi_overheating):
             self.robot_status = msg.robot_status
             self.robot_status_str = msg.robot_status_str
             self.logs_status = msg.logs_status

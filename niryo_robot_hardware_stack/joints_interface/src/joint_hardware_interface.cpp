@@ -491,7 +491,6 @@ int JointHardwareInterface::calibrateJoints(int mode, string &result_message)
     {
         if (needCalibration())
         {
-          //setSteppersProfiles();
           calib_res = _calibration_manager->startCalibration(mode, result_message);
         }
         else

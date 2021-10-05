@@ -91,8 +91,8 @@ add_library(${PROJECT_NAME}
   src/abstract_can_driver.cpp
   src/can_interface_core.cpp
   src/can_manager.cpp
-  src/stepper_driver.cpp
   src/mock_stepper_driver.cpp
+  src/stepper_driver.cpp
 )
 
 add_executable(${PROJECT_NAME}_node

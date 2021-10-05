@@ -448,7 +448,6 @@ void HardwareInterface::_publishHardwareStatus()
 
         if (_conveyor_interface)
         {
-
             auto conveyor_states = _conveyor_interface->getConveyorStates();
             for (std::shared_ptr<common::model::ConveyorState> cState : conveyor_states)
             {
