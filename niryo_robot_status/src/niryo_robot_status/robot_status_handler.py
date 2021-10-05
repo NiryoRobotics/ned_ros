@@ -92,7 +92,7 @@ class RobotStatusHandler(object):
         if self.__robot_status_pub is not None and self.__robot_status != RobotStatus.SHUTDOWN:
             self.__publish()
 
-    def advertise_out_of_bounds(self):
+    def advertise_warning(self):
         if self.__robot_status_pub is not None:
             self.__publish()
 
@@ -170,6 +170,7 @@ class RobotStatusHandler(object):
         robot_status_msg.logs_message = self.__robot_logs_observer.log_message
 
         robot_status_msg.out_of_bounds = self.__robot_status_observer.out_of_bounds
+        robot_status_msg.rpi_overheating = self.__robot_status_observer.rpi_overheating
 
         self.__robot_status_pub.publish(robot_status_msg)
 

@@ -88,7 +88,7 @@ class HttpClient:
         if not status_code:
             return False, 'Unable to connect to the HTTP server'
 
-        return True, status_code == 200
+        return True, response
 
     def restart_wifi(self):
         status_code, response = self.__post('/restartWifi')
@@ -96,7 +96,7 @@ class HttpClient:
         if not status_code:
             return False, 'Unable to connect to the HTTP server'
 
-        return True, status_code == 200
+        return True, response
 
     def deactivate_wifi(self):
         status_code, response = self.__post('/deactivateWifi')
@@ -104,4 +104,12 @@ class HttpClient:
         if not status_code:
             return False, 'Unable to connect to the HTTP server'
 
-        return True, status_code == 200
+        return True, response
+
+    def reconnect_last_wifi(self):
+        status_code, response = self.__post('/reconnectLastWifi')
+
+        if not status_code:
+            return False, 'Unable to connect to the HTTP server'
+
+        return True, response

@@ -1,0 +1,21 @@
+<?xml version="1.0" ?>
+<launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+    <arg name="log_level" default="INFO"/>
+    <arg name="hardware_version" default="ned2"/>
+    <arg name="simulation_mode" default="false"/>
+
+    <arg name="sounds_dir" value="~/.niryo/simulation" if="$(arg simulation_mode)"/>
+    <arg name="sounds_dir" value="~/" unless="$(arg simulation_mode)"/>
+
+    <group if="$(eval hardware_version =='ned2')">
+        <include file="$(find niryo_robot_sound)/launch/sound_interface_base.launch.xml"/>
+
+        <node pkg="niryo_robot_sound" type="sound_interface_node.py"
+              name="niryo_robot_sound" output="screen">
+            <param name="simulation_mode" type="bool" value="$(arg simulation_mode)"/>
+            <param name="log_level" value="$(arg log_level)"/>
+            <param name="sounds_dir" type="string" value="$(arg sounds_dir)"/>
+        </node>
+    </group>
+</launch>

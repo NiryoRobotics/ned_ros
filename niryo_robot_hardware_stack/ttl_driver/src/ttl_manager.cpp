@@ -162,7 +162,6 @@ int TtlManager::setupCommunication()
                 _debug_error_message = "TtlManager - Failed to open Uart port for Dynamixel bus";
                 ret = TTL_FAIL_OPEN_PORT;
             }
-
         }
         else
             ROS_ERROR("TtlManager::setupCommunication - Invalid port handler");

@@ -241,6 +241,13 @@ class CommandEnum(Enum):
     SET_IMAGE_SATURATION = 232
     GET_IMAGE_PARAMETERS = 235
 
+    # - Sound
+    PLAY_SOUND = 240
+    SET_VOLUME = 241
+    STOP_SOUND = 242
+    DELETE_SOUND = 243
+    IMPORT_SOUND = 244
+
     # Led Ring
     LED_RING_SOLID = 250
     LED_RING_TURN_OFF = 251

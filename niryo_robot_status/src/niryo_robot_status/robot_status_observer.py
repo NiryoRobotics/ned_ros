@@ -1,4 +1,3 @@
-
 import rospy
 
 # - Messages
@@ -36,6 +35,10 @@ class RobotStatusObserver(object):
         self.joint_limits = None
         self.pause_state = PausePlanExecution.STANDBY
         self.collision_detected = False
+        self.rpi_overheating = False
+
+        self.rpi_overheating_temperature = rospy.get_param(
+            "niryo_robot_hardware_interface/cpu_interface/temperature_warn_threshold", 75)
 
         # - Subscribers
         self.hardware_status_sub = rospy.Subscriber('/niryo_robot_hardware_interface/hardware_status',
@@ -100,6 +103,7 @@ class RobotStatusObserver(object):
             self.__robot_status_handler.advertise_new_state()
 
     def __callback_hardware_status(self, msg):
+        rpi_overheating = msg.rpi_temperature >= self.rpi_overheating_temperature
         # Clean up unused attributes to avoid unwanted callbacks due to their fluctuation.
         msg.header = Header()
         msg.rpi_temperature = 0
@@ -107,7 +111,11 @@ class RobotStatusObserver(object):
         msg.voltages = []
         if self.hardware_status != msg:
             self.hardware_status = msg
+            self.rpi_overheating = rpi_overheating
             self.__robot_status_handler.advertise_new_state()
+        elif rpi_overheating != self.rpi_overheating:
+            self.rpi_overheating = rpi_overheating
+            self.__robot_status_handler.advertise_warning()
 
     def __callback_learning_mode_state(self, msg):
         if self.learning_mode_state != msg.data:
@@ -130,13 +138,13 @@ class RobotStatusObserver(object):
         if not self.hardware_status.calibration_in_progress and not self.hardware_status.calibration_needed:
             for joint_name, joint_pose in zip(msg.name, msg.position):
                 if (joint_name in self.joint_limits and
-                   not (self.joint_limits[joint_name].min <= joint_pose <= self.joint_limits[joint_name].max)):
+                        not (self.joint_limits[joint_name].min <= joint_pose <= self.joint_limits[joint_name].max)):
                     current_out_of_bounds_state = True
                     break
 
         if self.out_of_bounds != current_out_of_bounds_state:
             self.out_of_bounds = current_out_of_bounds_state
-            self.__robot_status_handler.advertise_out_of_bounds()
+            self.__robot_status_handler.advertise_warning()
 
     def read_joint_limits(self):
         tries = 0

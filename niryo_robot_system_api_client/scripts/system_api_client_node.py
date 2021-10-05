@@ -91,26 +91,31 @@ class SystemApiClientNode:
             return
 
     def __callback_manage_wifi(self, msg):
+        status, message = CommandStatus.SUCCESS, "Success"
         if msg.cmd == msg.HOTSPOT:
             conn_success, result = self.client.activate_hotspot()
         elif msg.cmd == msg.RESTART:
             conn_success, result = self.client.restart_wifi()
+            message = result["detail"]
         elif msg.cmd == msg.DEACTIVATE:
             conn_success, result = self.client.deactivate_wifi()
+            message = result["detail"]
+        elif msg.cmd == msg.RECONNECT:
+            conn_success, result = self.client.reconnect_last_wifi()
+            status = CommandStatus.SUCCESS if result["success"] else CommandStatus.SYSTEM_API_CLIENT_COMMAND_FAILED
+            message = result["detail"]
         else:
             return CommandStatus.SYSTEM_API_CLIENT_UNKNOWN_COMMAND, "Command {} not found".format(msg.cmd)
-
-        print conn_success, result
 
         if not conn_success:
             return CommandStatus.SYSTEM_API_CLIENT_REQUEST_FAILED, result
         if not result:
             return CommandStatus.SYSTEM_API_CLIENT_UNKNOWN_ERROR, "Failed to activate hotspot mode"
 
-        conn_success, status = self.client.wifi_state()
-        self.__publish_hotspot_state(conn_success, status)
+        conn_success, result = self.client.wifi_state()
+        self.__publish_hotspot_state(conn_success, result)
 
-        return CommandStatus.SUCCESS, "Success"
+        return status, message
 
 
 if __name__ == "__main__":

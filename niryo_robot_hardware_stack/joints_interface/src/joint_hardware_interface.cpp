@@ -71,11 +71,13 @@ JointHardwareInterface::JointHardwareInterface(ros::NodeHandle& rootnh,
 {
     ROS_DEBUG("JointHardwareInterface::ctor");
 
-    init(rootnh, robot_hwnh);
+    // hack to have the profile velocity correctly set
 
+    init(rootnh, robot_hwnh);
 
     sendInitMotorsParams();
     activateLearningMode(true);
+
     _calibration_manager = std::make_unique<CalibrationManager>(robot_hwnh, _joint_list, _ttl_interface, _can_interface);
 }
 
@@ -370,6 +372,7 @@ void JointHardwareInterface::sendInitMotorsParams()
                     else if (jState->getBusProtocol() == EBusProtocol::TTL)
                     {
                       // CMD_TYPE_VELOCITY_PROFILE cmd
+                      // TODO(CC) : Carefull, this command does not work if the torque is on
                       StepperTtlSingleCmd cmd_profile(
                                   EStepperCommandType::CMD_TYPE_VELOCITY_PROFILE,
                                   stepperState->getId(),
@@ -488,6 +491,7 @@ int JointHardwareInterface::calibrateJoints(int mode, string &result_message)
     {
         if (needCalibration())
         {
+          //setSteppersProfiles();
           calib_res = _calibration_manager->startCalibration(mode, result_message);
         }
         else
@@ -576,6 +580,33 @@ void JointHardwareInterface::synchronizeMotors(bool synchronize)
                 _can_interface->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(stepper_cmd));
         }
     }
+}
+
+void JointHardwareInterface::setSteppersProfiles()
+{
+  for (auto const& jState : _joint_list)
+  {
+      if (jState)
+      {
+          if (jState->isStepper())
+          {
+              auto stepperState = std::dynamic_pointer_cast<StepperMotorState>(jState);
+              if (stepperState)
+              {
+                  if (jState->getBusProtocol() == EBusProtocol::TTL)
+                  {
+                    // CMD_TYPE_VELOCITY_PROFILE cmd
+                    StepperTtlSingleCmd cmd_profile(
+                                EStepperCommandType::CMD_TYPE_VELOCITY_PROFILE,
+                                stepperState->getId(),
+                                stepperState->getVelocityProfile());
+                    _ttl_interface->addSingleCommandToQueue(std::make_shared<StepperTtlSingleCmd>(cmd_profile));
+                    ros::Duration(0.05).sleep();
+                  }
+              }
+          }
+      }
+  }
 }
 
 }  // namespace joints_interface

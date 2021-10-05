@@ -29,6 +29,7 @@ add_service_files(
   GetNameDescriptionList.srv
   GetStringList.srv
   SetBool.srv
+  SetFloat.srv
   SetInt.srv
   SetString.srv
   Trigger.srv
