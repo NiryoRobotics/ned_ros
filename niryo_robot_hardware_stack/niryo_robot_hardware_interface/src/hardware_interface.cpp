@@ -446,6 +446,21 @@ void HardwareInterface::_publishHardwareStatus()
             motor_types.emplace_back(common::model::HardwareTypeEnum(state->getHardwareType()).toString());
         }
 
+        if (_conveyor_interface)
+        {
+
+            auto conveyor_states = _conveyor_interface->getConveyorStates();
+            for (std::shared_ptr<common::model::ConveyorState> cState : conveyor_states)
+            {
+                motor_names.emplace_back("Conveyor");
+                voltages.emplace_back(cState->getVoltage());
+                temperatures.emplace_back(cState->getTemperature());
+                hw_errors.emplace_back(cState->getHardwareError());
+                hw_errors_msg.emplace_back(cState->getHardwareErrorMessage());
+                motor_types.emplace_back(common::model::HardwareTypeEnum(cState->getHardwareType()).toString());
+            }
+        }
+
         cpu_temperature = _cpu_interface->getCpuTemperature();
 
         msg.rpi_temperature = cpu_temperature;
