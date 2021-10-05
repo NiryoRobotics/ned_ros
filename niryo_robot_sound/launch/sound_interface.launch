@@ -5,6 +5,9 @@
     <arg name="hardware_version" default="ned2"/>
     <arg name="simulation_mode" default="false"/>
 
+    <arg name="sounds_dir" value="~/.niryo/simulation" if="$(arg simulation_mode)"/>
+    <arg name="sounds_dir" value="~/" unless="$(arg simulation_mode)"/>
+
     <group if="$(eval hardware_version =='ned2')">
         <include file="$(find niryo_robot_sound)/launch/sound_interface_base.launch.xml"/>
 
@@ -12,6 +15,7 @@
               name="niryo_robot_sound" output="screen">
             <param name="simulation_mode" type="bool" value="$(arg simulation_mode)"/>
             <param name="log_level" value="$(arg log_level)"/>
+            <param name="sounds_dir" type="string" value="$(arg sounds_dir)"/>
         </node>
     </group>
 </launch>
