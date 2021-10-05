@@ -323,31 +323,31 @@ int StepperDriver<reg_type>::writeVelocityProfile(uint8_t id, const std::vector<
 
   if (COMM_SUCCESS != write(reg_type::ADDR_VSTART, reg_type::SIZE_VSTART, id, data.at(0)))
     res++;
-  //ros::Duration(wait_duration).sleep();
+  ros::Duration(wait_duration).sleep();
 
   if (COMM_SUCCESS != write(reg_type::ADDR_A1, reg_type::SIZE_A1, id, data.at(1)))
     res++;
-  //ros::Duration(wait_duration).sleep();
+  ros::Duration(wait_duration).sleep();
 
   if (COMM_SUCCESS != write(reg_type::ADDR_V1, reg_type::SIZE_V1, id, data.at(2)))
     res++;
-  //ros::Duration(wait_duration).sleep();
+  ros::Duration(wait_duration).sleep();
 
   if (COMM_SUCCESS != write(reg_type::ADDR_AMAX, reg_type::SIZE_AMAX, id, data.at(3)))
     res++;
-  //ros::Duration(wait_duration).sleep();
+  ros::Duration(wait_duration).sleep();
 
   if (COMM_SUCCESS != write(reg_type::ADDR_VMAX, reg_type::SIZE_VMAX, id, data.at(4)))
     res++;
-  //ros::Duration(wait_duration).sleep();
+  ros::Duration(wait_duration).sleep();
 
   if (COMM_SUCCESS != write(reg_type::ADDR_DMAX, reg_type::SIZE_DMAX, id, data.at(5)))
     res++;
-  //ros::Duration(wait_duration).sleep();
+  ros::Duration(wait_duration).sleep();
 
   if (COMM_SUCCESS != write(reg_type::ADDR_D1, reg_type::SIZE_D1, id, data.at(6)))
     res++;
-  //ros::Duration(wait_duration).sleep();
+  ros::Duration(wait_duration).sleep();
 
   if (COMM_SUCCESS != write(reg_type::ADDR_VSTOP, reg_type::SIZE_VSTOP, id, data.at(7)))
     res++;
