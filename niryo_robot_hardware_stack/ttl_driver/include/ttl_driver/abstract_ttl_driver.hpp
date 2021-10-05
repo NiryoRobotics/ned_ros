@@ -38,6 +38,7 @@ class AbstractTtlDriver
 {
 
 public:
+    AbstractTtlDriver() {}
     AbstractTtlDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
                       std::shared_ptr<dynamixel::PacketHandler> packetHandler);
     virtual ~AbstractTtlDriver();

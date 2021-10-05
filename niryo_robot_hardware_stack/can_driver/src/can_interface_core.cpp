@@ -165,7 +165,7 @@ int CanInterfaceCore::addJoint(const std::shared_ptr<common::model::StepperMotor
   }
   else
   {
-      ROS_WARN("TtlInterfaceCore::addJoint - No joint found with motor id %d", jointState->getId());
+      ROS_WARN("CanInterfaceCore::addJoint - No joint found with motor id %d", jointState->getId());
   }
 
   return result;

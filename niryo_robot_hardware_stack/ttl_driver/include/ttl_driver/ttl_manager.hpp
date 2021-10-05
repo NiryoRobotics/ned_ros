@@ -31,6 +31,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 
 #include "dynamixel_sdk/dynamixel_sdk.h"
 
+#include "ros/node_handle.h"
 #include "ttl_driver/MotorCommand.h"
 #include "niryo_robot_msgs/MotorHeader.h"
 #include "niryo_robot_msgs/SetInt.h"
@@ -40,6 +41,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 
 // drivers
 #include "ttl_driver/abstract_motor_driver.hpp"
+#include "ttl_driver/fake_ttl_data.hpp"
 #include "common/model/dxl_motor_state.hpp"
 #include "common/model/synchronize_motor_cmd.hpp"
 #include "common/model/single_motor_cmd.hpp"
@@ -146,7 +148,11 @@ class TtlManager : public common::model::IBusManager
 
         void checkRemovedMotors();
 
+        // Config params using in fake driver
+        void readFakeConfig();
+        void retrieveFakeMotorData(std::string current_ns, std::vector<FakeTtlData::FakeRegister> &fake_params);
     private:
+        ros::NodeHandle _nh;
         std::shared_ptr<dynamixel::PortHandler> _portHandler;
         std::shared_ptr<dynamixel::PacketHandler> _packetHandler;
 
@@ -190,6 +196,7 @@ class TtlManager : public common::model::IBusManager
                                         {CALIBRATION_IDLE, common::model::EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED}};
 
         bool _use_simu_gripper = true;
+        FakeTtlData _fake_data;
 };
 
 // inline getters

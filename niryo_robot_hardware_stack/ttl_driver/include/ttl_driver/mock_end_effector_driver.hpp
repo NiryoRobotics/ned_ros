@@ -26,6 +26,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <cassert>
 
 #include "abstract_motor_driver.hpp"
+#include "fake_ttl_data.hpp"
 
 #include "common/model/action_type_enum.hpp"
 #include "end_effector_reg.hpp"
@@ -41,8 +42,7 @@ namespace ttl_driver
 class MockEndEffectorDriver : public AbstractTtlDriver
 {
     public:
-        MockEndEffectorDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
-                          std::shared_ptr<dynamixel::PacketHandler> packetHandler);
+        MockEndEffectorDriver(FakeTtlData data);
         virtual ~MockEndEffectorDriver() override;
 
     public:
@@ -88,7 +88,9 @@ class MockEndEffectorDriver : public AbstractTtlDriver
         virtual std::string interpreteFirmwareVersion(uint32_t fw_version) const override;
 
     private:
-        struct SEndEffectorInfo {
+        void initializeFakeData(FakeTtlData);
+    private:
+        /*struct SEndEffectorInfo {
             uint32_t button1_action{0};
             uint32_t button2_action{0};
             uint32_t button3_action{0};
@@ -99,14 +101,14 @@ class MockEndEffectorDriver : public AbstractTtlDriver
             
             bool digitalInput = true;
             bool DigitalOutput = true;
-        };
+        };*/
 
-        SEndEffectorInfo _ee_info;
+        FakeTtlData::FakeEndEffector _ee_info;
 
-        uint8_t _id{0};
+        /*uint8_t _id{0};
         uint32_t _temperature{32};
         uint32_t _voltage{5000};
-        std::string _firmware_version{"v1.0.0"};
+        std::string _firmware_version{"v1.0.0"}*/;
 
 };
 
