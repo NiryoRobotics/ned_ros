@@ -39,8 +39,8 @@ namespace ttl_driver
 // CC add list of associated motors ? this would remove the need for a map and for some params
 class AbstractMotorDriver : public AbstractTtlDriver
 {
-
 public:
+    AbstractMotorDriver() {}
     AbstractMotorDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
                         std::shared_ptr<dynamixel::PacketHandler> packetHandler);
     virtual ~AbstractMotorDriver() override;

@@ -25,6 +25,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 
 #include "abstract_stepper_driver.hpp"
 #include "common/model/stepper_calibration_status_enum.hpp"
+#include "ttl_driver/fake_ttl_data.hpp"
 
 namespace ttl_driver
 {
@@ -35,8 +36,7 @@ namespace ttl_driver
 class MockStepperDriver : public AbstractStepperDriver
 {
     public:
-        MockStepperDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
-                      std::shared_ptr<dynamixel::PacketHandler> packetHandler);
+        MockStepperDriver(FakeTtlData data);
         virtual ~MockStepperDriver() override;
 
         virtual std::string str() const override;
@@ -96,7 +96,7 @@ class MockStepperDriver : public AbstractStepperDriver
         virtual int readFirmwareRunning(uint8_t id, bool &is_running) override;
 
     private:
-        struct FakeRegister
+/*        struct FakeRegister
         {
           uint32_t       position{};
           uint32_t       temperature{};
@@ -113,14 +113,15 @@ class MockStepperDriver : public AbstractStepperDriver
             int8_t          direction = 1;
             int16_t         speed = 0;
             bool            state = false;
-        };
+        };*/
         
-        std::map<uint8_t, FakeRegister> _map_fake_registers{ {2, {0, 50, 12.1, 0, 4096, 1, "0.0.1"}},
+        std::map<uint8_t, FakeTtlData::FakeRegister> _map_fake_registers;
+                                                             /*{ {2, {0, 50, 12.1, 0, 4096, 1, "0.0.1"}},
                                                              {3, {0, 52, 12.2, 0, 4096, 1, "0.0.1"}},
-                                                             {4, {0, 54, 12.3, 0, 4096, 1, "0.0.1"}}};
+                                                             {4, {0, 54, 12.3, 0, 4096, 1, "0.0.1"}}};*/
 
-        FakeConveyor _fake_conveyor;
-        std::vector<uint8_t> _full_id_list{2,3,4,5,6,7,11};
+        FakeTtlData::FakeConveyor _fake_conveyor;
+        std::vector<uint8_t> _full_id_list; //{2,3,4,5,6,7,11};
         std::vector<uint8_t> _id_list;
 
         static constexpr int GROUP_SYNC_REDONDANT_ID = 10;
@@ -132,7 +133,8 @@ class MockStepperDriver : public AbstractStepperDriver
         static constexpr int CALIBRATION_ERROR = 3;
         uint32_t _calibration_status = CALIBRATION_IDLE;
         uint8_t fake_time = 0;
-
+    private:
+        void initializeFakeData(FakeTtlData data);
 };
 
 }

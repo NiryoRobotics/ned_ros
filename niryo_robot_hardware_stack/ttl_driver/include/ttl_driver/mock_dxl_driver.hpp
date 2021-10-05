@@ -26,6 +26,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 
 #include "abstract_dxl_driver.hpp"
 #include "common/common_defs.hpp"
+#include "ttl_driver/fake_ttl_data.hpp"
 
 namespace ttl_driver
 {
@@ -36,8 +37,7 @@ namespace ttl_driver
 class MockDxlDriver : public AbstractDxlDriver
 {
     public:
-        MockDxlDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
-                  std::shared_ptr<dynamixel::PacketHandler> packetHandler);
+        MockDxlDriver(FakeTtlData data);
         virtual ~MockDxlDriver() override;
 
         virtual std::string str() const override;
@@ -105,8 +105,10 @@ class MockDxlDriver : public AbstractDxlDriver
     
         void removeGripper();
     private:
+        void initializeFakeData(FakeTtlData data);
+    private:
 
-        struct FakeRegister
+        /*struct FakeRegister
         {
           uint32_t       position{};
           uint32_t       temperature{};
@@ -115,13 +117,14 @@ class MockDxlDriver : public AbstractDxlDriver
           uint32_t       max_position{};
           uint16_t       model_number{};
           std::string    firmware{};
-        };
+        };*/
 
-        std::map<uint8_t, FakeRegister> _map_fake_registers{ {5,  {2048, 50, 50, 0, 4096, 1, "0.0.2"}},
+        std::map<uint8_t, FakeTtlData::FakeRegister> _map_fake_registers;
+                                                             /*{ {5,  {2048, 50, 50, 0, 4096, 1, "0.0.2"}},
                                                              {6,  {2048, 52, 50, 0, 4096, 1, "0.0.2"}},
                                                              {7,  {2048, 54, 50, 0, 4096, 1, "0.0.2"}},
-                                                             {11, { 370, 56, 50, 0, 4096, 1, "0.0.2"}} };
-        std::vector<uint8_t> _full_id_list{2,3,4,5,6,7,11};
+                                                             {11, { 370, 56, 50, 0, 4096, 1, "0.0.2"}} };*/
+        std::vector<uint8_t> _full_id_list; //{2,3,4,5,6,7,11};
         std::vector<uint8_t> _id_list;
 
         static constexpr int GROUP_SYNC_REDONDANT_ID = 10;

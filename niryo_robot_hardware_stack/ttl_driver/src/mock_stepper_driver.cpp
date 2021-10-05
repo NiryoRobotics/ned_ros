@@ -32,10 +32,9 @@ namespace ttl_driver
  * @param portHandler
  * @param packetHandler
  */
-MockStepperDriver::MockStepperDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
-                                       std::shared_ptr<dynamixel::PacketHandler> packetHandler) :
-    AbstractStepperDriver(portHandler, packetHandler)
+MockStepperDriver::MockStepperDriver(FakeTtlData data)
 {
+    initializeFakeData(data);
     // retrieve list of ids
     for (auto const& imap : _map_fake_registers)
         _id_list.emplace_back(imap.first);
@@ -555,11 +554,30 @@ int MockStepperDriver::readGoalVelocity(uint8_t id, uint32_t& present_velocity)
  */
 int MockStepperDriver::readFirmwareRunning(uint8_t id, bool &is_running)
 {
-  if (COMM_SUCCESS != ping(id))
-      return COMM_RX_FAIL;
+    if (COMM_SUCCESS != ping(id))
+        return COMM_RX_FAIL;
 
-  is_running = true;
-  return COMM_SUCCESS;
+    is_running = true;
+    return COMM_SUCCESS;
+}
+
+/**
+ * @brief MockStepperDriver::initializeFakeData()
+ * @param data
+ */
+void MockStepperDriver::initializeFakeData(FakeTtlData data)
+{
+    _full_id_list = data.full_id_list;
+    for (auto fdata : data.stepper_registers)
+    {
+        if (!_map_fake_registers.count(fdata.id))
+        {
+           _map_fake_registers.insert(std::pair<uint8_t, FakeTtlData::FakeRegister>(fdata.id, fdata)); 
+        }
+    }
+
+    // conveyor
+    _fake_conveyor = data.conveyor;
 }
 
 }  // namespace ttl_driver

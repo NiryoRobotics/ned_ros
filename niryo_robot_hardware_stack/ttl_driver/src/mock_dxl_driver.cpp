@@ -22,17 +22,16 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <map>
 #include <string>
 #include <vector>
-
+#include <ros/ros.h>
 namespace ttl_driver
 {
 
 /**
  * @brief MockDxlDriver::MockDxlDriver
  */
-MockDxlDriver::MockDxlDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
-                               std::shared_ptr<dynamixel::PacketHandler> packetHandler) :
-    AbstractDxlDriver(portHandler, packetHandler)
+MockDxlDriver::MockDxlDriver(FakeTtlData data)
 {
+    initializeFakeData(data);
     // retrieve list of ids
     for (auto const& imap : _map_fake_registers)
         _id_list.emplace_back(imap.first);
@@ -617,5 +616,21 @@ void MockDxlDriver::removeGripper()
 {
     _full_id_list.erase(std::remove(_full_id_list.begin(), _full_id_list.end(), 11), _full_id_list.end());
     _map_fake_registers.erase(11);
+}
+
+/**
+ * @brief MockDxlDriver::initializeFakeData
+ * @param data
+ */
+void MockDxlDriver::initializeFakeData(FakeTtlData data)
+{
+    _full_id_list = data.full_id_list;
+    for (auto fdata : data.dxl_registers)
+    {
+        if (!_map_fake_registers.count(fdata.id))
+        {
+            _map_fake_registers.insert(std::pair<uint8_t, FakeTtlData::FakeRegister>(fdata.id, fdata));
+        }
+    }
 }
 }  // namespace ttl_driver
