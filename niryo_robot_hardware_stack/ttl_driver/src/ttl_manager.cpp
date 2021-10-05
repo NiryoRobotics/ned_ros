@@ -26,6 +26,7 @@
 #include <sstream>
 #include <unordered_map>
 #include <cstdlib>
+#include <cassert>
 
 // niryo
 #include "common/model/hardware_type_enum.hpp"
@@ -47,6 +48,7 @@
 #include "ttl_driver/mock_stepper_driver.hpp"
 #include "ttl_driver/end_effector_driver.hpp"
 #include "ttl_driver/mock_end_effector_driver.hpp"
+#include "ttl_driver/fake_ttl_data.hpp"
 
 using ::std::shared_ptr;
 using ::std::vector;
@@ -68,6 +70,7 @@ namespace ttl_driver
  * @brief TtlManager::TtlManager
  */
 TtlManager::TtlManager(ros::NodeHandle& nh) :
+    _nh(nh),
     _debug_error_message("TtlManager - No connection with TTL motors has been made yet")
 {
     ROS_DEBUG("TtlManager - ctor");
@@ -103,6 +106,9 @@ bool TtlManager::init(ros::NodeHandle& nh)
     {
         _portHandler.reset(dynamixel::PortHandler::getPortHandler(_device_name.c_str()));
         _packetHandler.reset(dynamixel::PacketHandler::getPacketHandler(TTL_BUS_PROTOCOL_VERSION));
+    }
+    else {
+        readFakeConfig();
     }
 
     ROS_DEBUG("TtlManager::init - Dxl : set port name (%s), baudrate(%d)", _device_name.c_str(), _baudrate);
@@ -1325,16 +1331,16 @@ void TtlManager::addHardwareDriver(common::model::EHardwareType hardware_type)
               _driver_map.insert(std::make_pair(hardware_type, std::make_shared<DxlDriver<XL330Reg> >(_portHandler, _packetHandler)));
           break;
           case common::model::EHardwareType::FAKE_DXL_MOTOR:
-              _driver_map.insert(std::make_pair(hardware_type, std::make_shared<MockDxlDriver>(_portHandler, _packetHandler)));
+              _driver_map.insert(std::make_pair(hardware_type, std::make_shared<MockDxlDriver>(_fake_data)));
           break;
           case common::model::EHardwareType::FAKE_STEPPER_MOTOR:
-              _driver_map.insert(std::make_pair(hardware_type, std::make_shared<MockStepperDriver>(_portHandler, _packetHandler)));
+              _driver_map.insert(std::make_pair(hardware_type, std::make_shared<MockStepperDriver>(_fake_data)));
           break;
           case common::model::EHardwareType::END_EFFECTOR:
               _driver_map.insert(std::make_pair(hardware_type, std::make_shared<EndEffectorDriver<EndEffectorReg> >(_portHandler, _packetHandler)));
           break;
           case common::model::EHardwareType::FAKE_END_EFFECTOR:
-              _driver_map.insert(std::make_pair(hardware_type, std::make_shared<MockEndEffectorDriver>(_portHandler, _packetHandler)));
+              _driver_map.insert(std::make_pair(hardware_type, std::make_shared<MockEndEffectorDriver>(_fake_data)));
           break;
           default:
               ROS_ERROR("TtlManager - Unable to instanciate driver, unknown type");
@@ -1356,6 +1362,107 @@ void TtlManager::checkRemovedMotors()
             motor_list.emplace_back(istate.first);
     }
     _removed_motor_id_list = motor_list;
+}
+
+ /**
+ * @brief TtlManager::readFakeConfig
+ */
+void TtlManager::readFakeConfig()
+{
+    std::string hardware_version;
+    _nh.getParam("hardware_version", hardware_version);
+    assert(_nh.hasParam(hardware_version));
+
+    std::vector<int> full_id_list;
+    if (_nh.hasParam(hardware_version + "/id_list"))
+        _nh.getParam(hardware_version + "/id_list", full_id_list);
+    for (auto id : full_id_list)
+        _fake_data.full_id_list.push_back(id);
+
+    if (_nh.hasParam(hardware_version + "/steppers"))
+    {
+        std::string current_ns = hardware_version + "/steppers/";
+        retrieveFakeMotorData(current_ns, _fake_data.stepper_registers);
+    }
+    if (_nh.hasParam(hardware_version + "/dynamixels/"))
+    {
+        std::string current_ns = hardware_version + "/dynamixels/";
+        retrieveFakeMotorData(current_ns, _fake_data.dxl_registers);
+    }
+    if (_nh.hasParam(hardware_version + "/conveyor"))
+    {
+        int id;
+        _nh.getParam(hardware_version + "/conveyor/id", id);
+        _fake_data.conveyor.id = id;
+    }
+    if (_nh.hasParam(hardware_version + "/end_effector"))
+    {
+        std::string current_ns = hardware_version + "/end_effector/";
+        int id, temperature, voltage;
+        _nh.getParam(current_ns + "id", id);
+        _fake_data.end_effector.id = id;
+        _nh.getParam(current_ns + "temperature", temperature);
+        _fake_data.end_effector.temperature = temperature;
+        _nh.getParam(current_ns + "voltage", voltage);
+        _fake_data.end_effector.voltage = voltage;
+
+        std::string firmware;
+        _nh.getParam(current_ns + "firmware", firmware);
+        _fake_data.end_effector.firmware = firmware;
+    }
+}
+
+/**
+ * @brief TtlManager::retrieveFakeMotorData
+ * @param current_ns
+ * @param fake_params
+ */
+void TtlManager::retrieveFakeMotorData(std::string current_ns, std::vector<FakeTtlData::FakeRegister> &fake_params)
+{
+    std::vector<int> stepper_ids;
+    _nh.getParam(current_ns + "id", stepper_ids);
+
+    std::vector<int> stepper_positions;
+    _nh.getParam(current_ns + "position", stepper_positions);
+    assert(stepper_ids.size() == stepper_positions.size());
+
+    std::vector<int> stepper_temperatures;
+    _nh.getParam(current_ns + "temperature", stepper_temperatures);
+    assert(stepper_positions.size() == stepper_temperatures.size());
+
+     std::vector<double> stepper_voltages;
+    _nh.getParam(current_ns + "voltage", stepper_voltages);
+    assert(stepper_temperatures.size() == stepper_voltages.size());
+
+    std::vector<int> stepper_min_positions;
+    _nh.getParam(current_ns + "min_position", stepper_min_positions);
+    assert(stepper_voltages.size() == stepper_min_positions.size());
+
+    std::vector<int> stepper_max_positions;
+    _nh.getParam(current_ns + "max_position", stepper_max_positions);
+    assert(stepper_min_positions.size() == stepper_max_positions.size());
+
+    std::vector<int> stepper_model_numbers;
+    _nh.getParam(current_ns + "model_number", stepper_model_numbers);
+    assert(stepper_max_positions.size() == stepper_model_numbers.size());
+
+     std::vector<std::string> stepper_firmwares;
+    _nh.getParam(current_ns + "firmware", stepper_firmwares);
+    assert(stepper_firmwares.size() == stepper_firmwares.size());
+
+    for (size_t i = 0; i < stepper_ids.size(); i++)
+    {
+        FakeTtlData::FakeRegister tmp;
+        tmp.id = stepper_ids.at(i);
+        tmp.position = stepper_positions.at(i);
+        tmp.temperature = stepper_temperatures.at(i);
+        tmp.voltage = stepper_voltages.at(i);
+        tmp.min_position = stepper_min_positions.at(i);
+        tmp.max_position = stepper_max_positions.at(i);
+        tmp.model_number = stepper_model_numbers.at(i);
+        tmp.firmware = stepper_firmwares.at(i);
+        fake_params.push_back(tmp);
+    }
 }
 
 }  // namespace ttl_driver

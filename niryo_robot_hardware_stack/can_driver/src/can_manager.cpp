@@ -48,6 +48,7 @@ namespace can_driver
  * @brief CanManager::CanManager
  */
 CanManager::CanManager(ros::NodeHandle& nh) :
+    _nh(nh),
     _calibration_status(EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED),
     _debug_error_message("CanManager - No connection with CAN motors has been made yet")
 {
@@ -101,7 +102,10 @@ bool CanManager::init(ros::NodeHandle& nh)
     if (!_simulation_mode)
         _mcp_can = std::make_shared<mcp_can_rpi::MCP_CAN>(spi_channel, spi_baudrate,
                                                       static_cast<uint8_t>(gpio_can_interrupt));
-
+    else
+    {
+        readFakeConfig();
+    }
     return true;
 }
 
@@ -616,7 +620,7 @@ int32_t CanManager::getCalibrationResult(uint8_t motor_id) const
  */
 void CanManager::updateCurrentCalibrationStatus()
 {
-    EStepperCalibrationStatus newStatus = EStepperCalibrationStatus::CALIBRATION_OK;
+    EStepperCalibrationStatus newStatus = _calibration_status > EStepperCalibrationStatus::CALIBRATION_OK ? EStepperCalibrationStatus::CALIBRATION_OK : _calibration_status;
     // update current state of the calibrationtimeout_motors
     // rule is : if a status in a motor is worse than one previously found, we take it
     // we are not taking "uninitialized" into account as it means a calibration as not been started for this motor
@@ -705,7 +709,7 @@ void CanManager::addHardwareDriver(common::model::EHardwareType hardware_type)
               _driver_map.insert(std::make_pair(hardware_type, std::make_shared<StepperDriver>(_mcp_can)));
           break;
           case common::model::EHardwareType::FAKE_STEPPER_MOTOR:
-              _driver_map.insert(std::make_pair(hardware_type, std::make_shared<MockStepperDriver>()));
+              _driver_map.insert(std::make_pair(hardware_type, std::make_shared<MockStepperDriver>(_fake_data)));
           break;
           default:
               ROS_ERROR("CanManager - Unable to instanciate driver, unknown type");
@@ -714,4 +718,68 @@ void CanManager::addHardwareDriver(common::model::EHardwareType hardware_type)
   }
 }
 
+/**
+* @brief CanManager::readFakeConfig
+*/
+void CanManager::readFakeConfig()
+{
+    std::string hardware_version;
+    _nh.getParam("hardware_version", hardware_version);
+    assert(_nh.hasParam(hardware_version));
+
+    if (_nh.hasParam(hardware_version + "/steppers"))
+    {
+        std::string current_ns = hardware_version + "/steppers/";
+        retrieveFakeMotorData(current_ns, _fake_data.stepper_registers);
+    }
+    if (_nh.hasParam(hardware_version + "/conveyor"))
+    {
+        int id;
+        _nh.getParam(hardware_version + "/conveyor/id", id);
+        _fake_data.conveyor.id = id;
+    }
+}
+
+/**
+ * @brief CanManager::retrieveFakeMotorData
+ * @param current_ns
+ * @param fake_params
+ */
+void CanManager::retrieveFakeMotorData(std::string current_ns, std::vector<FakeCanData::FakeRegister> &fake_params)
+{
+    std::vector<int> stepper_ids;
+    _nh.getParam(current_ns + "id", stepper_ids);
+
+    std::vector<int> stepper_positions;
+    _nh.getParam(current_ns + "position", stepper_positions);
+    assert(stepper_ids.size() == stepper_positions.size());
+
+    std::vector<int> stepper_temperatures;
+    _nh.getParam(current_ns + "temperature", stepper_temperatures);
+    assert(stepper_positions.size() == stepper_temperatures.size());
+
+     std::vector<double> stepper_voltages;
+    _nh.getParam(current_ns + "voltage", stepper_voltages);
+    assert(stepper_temperatures.size() == stepper_voltages.size());
+
+    std::vector<int> stepper_model_numbers;
+    _nh.getParam(current_ns + "model_number", stepper_model_numbers);
+    assert(stepper_voltages.size() == stepper_model_numbers.size());
+
+     std::vector<std::string> stepper_firmwares;
+    _nh.getParam(current_ns + "firmware", stepper_firmwares);
+    assert(stepper_firmwares.size() == stepper_firmwares.size());
+
+    for (size_t i = 0; i < stepper_ids.size(); i++)
+    {
+        FakeCanData::FakeRegister tmp;
+        tmp.id = stepper_ids.at(i);
+        tmp.position = stepper_positions.at(i);
+        tmp.temperature = stepper_temperatures.at(i);
+        tmp.voltage = stepper_voltages.at(i);
+        tmp.model_number = stepper_model_numbers.at(i);
+        tmp.firmware = stepper_firmwares.at(i);
+        fake_params.push_back(tmp);
+    }
+}
 }  // namespace can_driver

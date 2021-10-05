@@ -190,7 +190,7 @@ void EndEffectorInterfaceCore::initEndEffectorHardware()
 
 /**
  * @brief EndEffectorInterfaceCore::_publishButtonState
- * TODO(CC) : latch and timer
+ * TODO(CC) : timer
  */
 void EndEffectorInterfaceCore::_publishButtonState()
 {

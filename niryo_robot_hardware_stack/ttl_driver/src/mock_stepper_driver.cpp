@@ -16,6 +16,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 
 #include <cstdint>
 #include <cstdio>
+#include "dynamixel_sdk/packet_handler.h"
 #include "ttl_driver/mock_stepper_driver.hpp"
 #include <type_traits>
 #include <utility>
@@ -32,10 +33,9 @@ namespace ttl_driver
  * @param portHandler
  * @param packetHandler
  */
-MockStepperDriver::MockStepperDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
-                                       std::shared_ptr<dynamixel::PacketHandler> packetHandler) :
-    AbstractStepperDriver(portHandler, packetHandler)
+MockStepperDriver::MockStepperDriver(FakeTtlData data)
 {
+    initializeFakeData(data);
     // retrieve list of ids
     for (auto const& imap : _map_fake_registers)
         _id_list.emplace_back(imap.first);
@@ -84,7 +84,8 @@ int MockStepperDriver::ping(uint8_t id)
  */
 int MockStepperDriver::getModelNumber(uint8_t id, uint16_t& model_number)
 {
-    model_number = _map_fake_registers.at(id).model_number;
+    if (_map_fake_registers.count(id))
+        model_number = _map_fake_registers.at(id).model_number;
     return COMM_SUCCESS;
 }
 
@@ -163,7 +164,8 @@ int MockStepperDriver::checkModelNumber(uint8_t id)
  */
 int MockStepperDriver::readFirmwareVersion(uint8_t id, std::string &version)
 {
-    version = _map_fake_registers.at(id).firmware;
+    if (_map_fake_registers.count(id))
+        version = _map_fake_registers.at(id).firmware;
     return COMM_SUCCESS;
 }
 
@@ -175,7 +177,8 @@ int MockStepperDriver::readFirmwareVersion(uint8_t id, std::string &version)
  */
 int MockStepperDriver::readMinPosition(uint8_t id, uint32_t &pos)
 {
-    pos = _map_fake_registers.at(id).min_position;
+    if (_map_fake_registers.count(id))
+        pos = _map_fake_registers.at(id).min_position;
     return COMM_SUCCESS;
 }
 
@@ -187,7 +190,8 @@ int MockStepperDriver::readMinPosition(uint8_t id, uint32_t &pos)
  */
 int MockStepperDriver::readMaxPosition(uint8_t id, uint32_t &pos)
 {
-    pos = _map_fake_registers.at(id).max_position;
+    if (_map_fake_registers.count(id))
+        pos = _map_fake_registers.at(id).max_position;
     return COMM_SUCCESS;
 }
 
@@ -215,7 +219,8 @@ int MockStepperDriver::setTorqueEnable(uint8_t id, uint32_t /*torque_enable*/)
  */
 int MockStepperDriver::setGoalPosition(uint8_t id, uint32_t position)
 {
-    _map_fake_registers.at(id).position = position;
+    if (_map_fake_registers.count(id))
+        _map_fake_registers.at(id).position = position;
     return COMM_SUCCESS;
 }
 
@@ -275,6 +280,8 @@ int MockStepperDriver::syncWritePositionGoal(const std::vector<uint8_t> &id_list
     std::map<uint8_t, uint8_t> countMap;
     for (size_t i = 0; i < id_list.size(); ++i)
     {
+        if (!_map_fake_registers.count(id_list.at(i)))
+            return COMM_TX_FAIL;
         _map_fake_registers.at(id_list.at(i)).position = position_list.at(i);
         auto result = countMap.insert(std::pair<uint8_t, uint8_t>(id_list.at(i), 1));
         if (result.second == false)
@@ -313,7 +320,8 @@ int MockStepperDriver::syncWriteVelocityGoal(const std::vector<uint8_t> &id_list
  */
 int MockStepperDriver::readPosition(uint8_t id, uint32_t& present_position)
 {
-    present_position = _map_fake_registers.at(id).position;
+    if (_map_fake_registers.count(id))
+        present_position = _map_fake_registers.at(id).position;
     return COMM_SUCCESS;
 }
 
@@ -325,7 +333,8 @@ int MockStepperDriver::readPosition(uint8_t id, uint32_t& present_position)
  */
 int MockStepperDriver::readTemperature(uint8_t id, uint32_t& temperature)
 {
-    temperature = _map_fake_registers.at(id).temperature;
+    if (_map_fake_registers.count(id))
+        temperature = _map_fake_registers.at(id).temperature;
     return COMM_SUCCESS;
 }
 
@@ -337,7 +346,8 @@ int MockStepperDriver::readTemperature(uint8_t id, uint32_t& temperature)
  */
 int MockStepperDriver::readVoltage(uint8_t id, double &voltage)
 {
-    voltage = _map_fake_registers.at(id).voltage;
+    if (_map_fake_registers.count(id))
+        voltage = _map_fake_registers.at(id).voltage;
     return COMM_SUCCESS;
 }
 
@@ -367,8 +377,12 @@ int MockStepperDriver::syncReadPosition(const std::vector<uint8_t> &id_list, std
     {
         if (id == _fake_conveyor.id)
             position_list.emplace_back(0);
-        else
+        else if (_map_fake_registers.count(id))
+        {
             position_list.emplace_back(_map_fake_registers.at(id).position);
+        }
+        else
+            return COMM_RX_FAIL;
         auto result = countMap.insert(std::pair<uint8_t, uint8_t>(id, 1));
         if (result.second == false)
             return GROUP_SYNC_REDONDANT_ID;  // redondant id
@@ -390,8 +404,10 @@ int MockStepperDriver::syncReadFirmwareVersion(const std::vector<uint8_t> &id_li
     {
         if (id == _fake_conveyor.id)
             firmware_list.emplace_back("0.0.1");
-        else
+        else if (_map_fake_registers.count(id))
             firmware_list.emplace_back(_map_fake_registers.at(id).firmware);
+        else
+            return COMM_RX_FAIL;
         auto result = countMap.insert(std::pair<uint8_t, uint8_t>(id, 1));
         if (result.second == false)
             return GROUP_SYNC_REDONDANT_ID;  // redondant id
@@ -413,8 +429,10 @@ int MockStepperDriver::syncReadTemperature(const std::vector<uint8_t> &id_list, 
     {
         if (id == _fake_conveyor.id)
             temperature_list.emplace_back(35);
-        else
+        else if (_map_fake_registers.count(id))
             temperature_list.emplace_back(_map_fake_registers.at(id).temperature);
+        else
+            return COMM_RX_FAIL;
         auto result = countMap.insert(std::pair<uint8_t, uint8_t>(id, 1));
         if (result.second == false)
             return GROUP_SYNC_REDONDANT_ID;  // redondant id
@@ -436,8 +454,10 @@ int MockStepperDriver::syncReadVoltage(const std::vector<uint8_t> &id_list, std:
     {
         if (id == _fake_conveyor.id)
             voltage_list.emplace_back(12);
-        else
+        else if (_map_fake_registers.count(id))
             voltage_list.emplace_back(_map_fake_registers.at(id).voltage);
+        else
+            return COMM_RX_FAIL;
         auto result = countMap.insert(std::pair<uint8_t, uint8_t>(id, 1));
         if (result.second == false)
             return GROUP_SYNC_REDONDANT_ID;  // redondant id
@@ -555,11 +575,31 @@ int MockStepperDriver::readGoalVelocity(uint8_t id, uint32_t& present_velocity)
  */
 int MockStepperDriver::readFirmwareRunning(uint8_t id, bool &is_running)
 {
-  if (COMM_SUCCESS != ping(id))
-      return COMM_RX_FAIL;
+    if (COMM_SUCCESS != ping(id))
+        return COMM_RX_FAIL;
 
-  is_running = true;
-  return COMM_SUCCESS;
+    is_running = true;
+    return COMM_SUCCESS;
+}
+
+/**
+ * @brief MockStepperDriver::in:w
+ * intializeFakeData()
+ * @param data
+ */
+void MockStepperDriver::initializeFakeData(FakeTtlData data)
+{
+    _full_id_list = data.full_id_list;
+    for (auto fdata : data.stepper_registers)
+    {
+        if (!_map_fake_registers.count(fdata.id))
+        {
+           _map_fake_registers.insert(std::pair<uint8_t, FakeTtlData::FakeRegister>(fdata.id, fdata));
+        }
+    }
+
+    // conveyor
+    _fake_conveyor = data.conveyor;
 }
 
 }  // namespace ttl_driver

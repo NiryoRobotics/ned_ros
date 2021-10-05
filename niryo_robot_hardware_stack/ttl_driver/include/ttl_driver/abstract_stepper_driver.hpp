@@ -33,6 +33,7 @@ namespace ttl_driver
 class AbstractStepperDriver : public AbstractMotorDriver
 {
     public:
+        AbstractStepperDriver() {}
         AbstractStepperDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
                               std::shared_ptr<dynamixel::PacketHandler> packetHandler);
         virtual ~AbstractStepperDriver() override;
@@ -61,10 +62,6 @@ class AbstractStepperDriver : public AbstractMotorDriver
         // read
         virtual int readGoalVelocity(uint8_t id, uint32_t& present_velocity) = 0;
         virtual int readFirmwareRunning(uint8_t id, bool &is_running) = 0;
-
-    private:
-        AbstractStepperDriver() = delete;
-
 };
 
 } // ttl_driver

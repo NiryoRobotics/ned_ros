@@ -28,10 +28,9 @@ namespace ttl_driver
 /**
  * @brief MockEndEffectorDriver::EndEffectorDriver
  */
-MockEndEffectorDriver::MockEndEffectorDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
-                               std::shared_ptr<dynamixel::PacketHandler> packetHandler) :
-    AbstractTtlDriver(portHandler, packetHandler)
+MockEndEffectorDriver::MockEndEffectorDriver(FakeTtlData data)
 {
+    initializeFakeData(data);
 }
 
 /**
@@ -91,7 +90,7 @@ std::string MockEndEffectorDriver::interpreteFirmwareVersion(uint32_t fw_version
  */
 int MockEndEffectorDriver::ping(uint8_t id)
 {
-    return (id == _id) ? COMM_SUCCESS : COMM_RX_FAIL;
+    return (id == _ee_info.id) ? COMM_SUCCESS : COMM_RX_FAIL;
 }
 
 /**
@@ -118,7 +117,7 @@ int MockEndEffectorDriver::readFirmwareVersion(uint8_t id, std::string &version)
     if (COMM_SUCCESS != ping(id))
         return COMM_RX_FAIL;
 
-    version = _firmware_version;
+    version = _ee_info.firmware;
     return COMM_SUCCESS;
 }
 
@@ -135,7 +134,7 @@ int MockEndEffectorDriver::readTemperature(uint8_t id, uint32_t& temperature)
     if (COMM_SUCCESS != ping(id))
         return COMM_RX_FAIL;
 
-    temperature = this->_temperature;
+    temperature = _ee_info.temperature;
     return COMM_SUCCESS;
 }
 
@@ -180,7 +179,7 @@ int MockEndEffectorDriver::syncReadFirmwareVersion(const std::vector<uint8_t> &i
     int res = 0;
     firmware_list.clear();
     for (size_t i = 0; i < id_list.size(); i++)
-        firmware_list.emplace_back(_firmware_version);
+        firmware_list.emplace_back(_ee_info.firmware);
     return res;
 }
 
@@ -194,7 +193,7 @@ int MockEndEffectorDriver::syncReadTemperature(const std::vector<uint8_t> &id_li
 {
     temperature_list.clear();
     for (size_t i = 0; i < id_list.size(); i++)
-        temperature_list.emplace_back(_temperature);
+        temperature_list.emplace_back(_ee_info.temperature);
     return COMM_SUCCESS;
 }
 
@@ -208,7 +207,7 @@ int MockEndEffectorDriver::syncReadVoltage(const std::vector<uint8_t> &id_list, 
 {
     voltage_list.clear();
     for (size_t i = 0; i < id_list.size(); i++)
-        voltage_list.emplace_back(static_cast<double>(_voltage) / EndEffectorReg::VOLTAGE_CONVERSION);
+        voltage_list.emplace_back(static_cast<double>(_ee_info.voltage) / EndEffectorReg::VOLTAGE_CONVERSION);
     return COMM_SUCCESS;
 }
 
@@ -431,6 +430,15 @@ int MockEndEffectorDriver::writeSyncCmd(int /*type*/, const std::vector<uint8_t>
   std::cout << "Synchronized cmd not implemented for end effector" << std::endl;
 
   return 0;
+}
+
+/**
+ * @brief MockEndEffectorDriver::initializeFakeData
+ * @param data
+ */
+void MockEndEffectorDriver::initializeFakeData(FakeTtlData data)
+{
+    _ee_info = data.end_effector;
 }
 
 }  // namespace ttl_driver

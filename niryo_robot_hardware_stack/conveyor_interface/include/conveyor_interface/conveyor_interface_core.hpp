@@ -53,7 +53,10 @@ class ConveyorInterfaceCore : public common::model::IInterfaceCore
 
         bool isInitialized();
 
-    private:
+        const std::vector<std::shared_ptr<common::model::ConveyorState> >&
+        getConveyorStates() const;
+
+private:
         virtual void initParameters(ros::NodeHandle& nh) override;
         virtual void startServices(ros::NodeHandle& nh) override;
         virtual void startPublishers(ros::NodeHandle& nh) override;
@@ -90,6 +93,18 @@ class ConveyorInterfaceCore : public common::model::IInterfaceCore
 
         common::model::EBusProtocol _bus_protocol;
 };
+
+/**
+ * @brief JointsInterfaceCore::getJointsState
+ * @return
+ */
+inline
+const std::vector<std::shared_ptr<common::model::ConveyorState> >&
+ConveyorInterfaceCore::getConveyorStates() const
+{
+    return _conveyor_states;
+}
+
 } // ConveyorInterface
 
 #endif

@@ -43,8 +43,10 @@
 
 #include "can_driver/StepperMotorCommand.h"
 #include "can_driver/StepperCmd.h"
+#include "can_driver/fake_can_data.hpp"
 
 #include "abstract_can_driver.hpp"
+#include "ros/node_handle.h"
 
 
 namespace can_driver
@@ -107,9 +109,14 @@ class CanManager : public common::model::IBusManager
         void _verifyMotorTimeoutLoop();
         double getCurrentTimeout() const;
 
+        // config params using in fake driver
+        void readFakeConfig();
+        void retrieveFakeMotorData(std::string current_ns, std::vector<FakeCanData::FakeRegister> &fake_params);
     private:
+        ros::NodeHandle _nh;
         bool _simulation_mode{false};
         std::shared_ptr<mcp_can_rpi::MCP_CAN> _mcp_can;
+        FakeCanData _fake_data;
 
         std::vector<uint8_t> _all_motor_connected; // with all can motors connected (including the conveyor)
         std::vector<uint8_t> _removed_motor_id_list;
