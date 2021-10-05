@@ -30,6 +30,8 @@ ROBOT_STATUS_TO_ANIM = {
     RobotStatus.RUNNING_DEBUG: [LedRingAnimation.SOLID, GREEN],
     RobotStatus.PAUSE: [LedRingAnimation.CHASE, GREEN],
     RobotStatus.LEARNING_MODE_AUTONOMOUS: [LedRingAnimation.SOLID, GREEN],
+    "overheating": [LedRingAnimation.FLASHING, RED],
+    "out_of_bound": [LedRingAnimation.SOLID, ORANGE]
 }
 
 ROBOT_ANIM_TO_STRING = {

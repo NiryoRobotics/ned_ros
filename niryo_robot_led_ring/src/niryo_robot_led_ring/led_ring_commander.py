@@ -33,6 +33,7 @@ class LedRingCommander:
         self.robot_status_str = ""
         self.logs_status = RobotStatus.NONE
         self.robot_out_of_bounds = False
+        self.rpi_overheating = False
 
         self.user_animation_lock = threading.Lock()
         self.led_ring_animation_thread = threading.Thread()
@@ -106,11 +107,12 @@ class LedRingCommander:
         if msg.robot_status == RobotStatus.SHUTDOWN:
             self.shutdown()
 
-        if self.robot_status != msg.robot_status or self.robot_out_of_bounds != msg.out_of_bounds:
+        if self.robot_status != msg.robot_status or self.robot_out_of_bounds != msg.out_of_bounds or self.rpi_overheating != msg.rpi_overheating:
             self.robot_status = msg.robot_status
             self.robot_status_str = msg.robot_status_str
             self.logs_status = msg.logs_status
             self.robot_out_of_bounds = msg.out_of_bounds
+            self.rpi_overheating = msg.rpi_overheating
 
             self.set_user_mode(
                 (self.robot_status == RobotStatus.RUNNING_AUTONOMOUS or
@@ -256,7 +258,9 @@ class LedRingCommander:
 
     def get_robot_status_led_ring_cmd(self):
         if self.robot_out_of_bounds:
-            animation, colors = LedRingAnimation.FLASHING, ORANGE
+            animation, colors = ROBOT_STATUS_TO_ANIM["out_of_bound"]
+        elif self.rpi_overheating:
+            animation, colors = ROBOT_STATUS_TO_ANIM["overheating"]
         elif self.robot_status in ROBOT_STATUS_TO_ANIM:
             animation, colors = ROBOT_STATUS_TO_ANIM[self.robot_status]
         else:
@@ -332,4 +336,8 @@ class LedRingCommander:
             command.iterations = iterations
             command.period = period
             self.start_led_ring_thread(command)
-            self.led_ring_animation_thread.join()
+            try:
+                if self.led_ring_animation_thread.is_alive():
+                    self.led_ring_animation_thread.join()
+            except RuntimeError:
+                pass
