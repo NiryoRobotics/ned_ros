@@ -1,0 +1,21 @@
+# fake params using in fake driver
+ned:
+    steppers:
+      id: [1, 2, 3]
+      position: [0, -1090, 2447]
+      temperature: [50, 52, 54]
+      voltage: [12.1, 12.2, 12.3]
+      model_number: [1, 1, 1]
+      firmware: ["0.0.1", "0.0.01", "0.0.1", "0.0.1"]
+    conveyor:
+      id: 6
+one:
+    steppers:
+      id: [1, 2, 3]
+      position: [0, -1090, 2447]
+      temperature: [50, 52, 54]
+      voltage: [12.1, 12.2, 12.3]
+      model_number: [1, 1, 1]
+      firmware: ["0.0.1", "0.0.01", "0.0.1", "0.0.1"]
+    conveyor:
+      id: 6

@@ -30,6 +30,7 @@
 #include "common/model/stepper_calibration_status_enum.hpp"
 #include "common/model/abstract_single_motor_cmd.hpp"
 #include "common/model/conveyor_state.hpp"
+#include "can_driver/fake_can_data.hpp"
 
 namespace can_driver
 {
@@ -44,7 +45,7 @@ public:
     static constexpr int CAN_DATA_CALIBRATION_RESULT            = 0x09;
 
 public:
-    MockStepperDriver();
+    MockStepperDriver(FakeCanData data);
     virtual ~MockStepperDriver() override;
     
     virtual int ping(uint8_t id) override;
@@ -109,7 +110,7 @@ private:
 
     static constexpr int CAN_MODEL_NUMBER                       = 10000;
 
-    struct FakeRegister
+    /*struct FakeRegister
     {
       int32_t       position{};
       uint32_t       temperature{};
@@ -124,14 +125,14 @@ private:
         bool active{false};
         uint8_t conveyor_speed{0};
         uint8_t direction{1};
-    };
+    };*/
 
-    std::map<uint8_t, FakeRegister> _map_fake_registers{{1, {0, 50, 12.1, 1, "0.0.1"}},
+    std::map<uint8_t, FakeCanData::FakeRegister> _map_fake_registers; /*{{1, {0, 50, 12.1, 1, "0.0.1"}},
                                                         {2, {-1090, 52, 12.2, 1, "0.0.1"}},
-                                                        {3, {2447, 54, 12.3, 1, "0.0.1"}}};
+                                                        {3, {2447, 54, 12.3, 1, "0.0.1"}}};*/
 
-    std::vector<uint8_t> _id_list = {1, 2, 3};
-    conveyor_data _fake_conveyor;
+    std::vector<uint8_t> _id_list;
+    FakeCanData::FakeConveyor _fake_conveyor;
     
     // using for fake event can
     static constexpr uint8_t MAX_IDX = 2; // index for joints in _id_list
@@ -140,6 +141,8 @@ private:
     uint8_t _next_index = 0;
     uint8_t _next_control_byte = CAN_DATA_POSITION;
     std::map<uint8_t, std::tuple<common::model::EStepperCalibrationStatus, int32_t>> _calibration_status;
+    // fake time for calibration
+    int _fake_time = 0;
 };  // class MockStepperDriver
 }  // namespace can_driver
 #endif  // MOCK_STEPPER_DRIVER_H

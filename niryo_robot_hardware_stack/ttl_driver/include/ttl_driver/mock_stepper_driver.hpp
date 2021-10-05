@@ -132,7 +132,7 @@ class MockStepperDriver : public AbstractStepperDriver
         static constexpr int CALIBRATION_SUCCESS = 2;
         static constexpr int CALIBRATION_ERROR = 3;
         uint32_t _calibration_status = CALIBRATION_IDLE;
-        uint8_t fake_time = 0;
+        int fake_time = 0;
     private:
         void initializeFakeData(FakeTtlData data);
 };

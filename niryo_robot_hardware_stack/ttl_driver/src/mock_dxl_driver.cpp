@@ -16,6 +16,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 
 #include <cstdint>
 #include <cstdio>
+#include "dynamixel_sdk/packet_handler.h"
 #include "ttl_driver/mock_dxl_driver.hpp"
 #include <type_traits>
 #include <utility>
@@ -75,7 +76,8 @@ int MockDxlDriver::ping(uint8_t id)
  */
 int MockDxlDriver::getModelNumber(uint8_t id, uint16_t& model_number)
 {
-    model_number = _map_fake_registers.at(id).model_number;
+    if (_map_fake_registers.count(id))
+        model_number = _map_fake_registers.at(id).model_number;
     return COMM_SUCCESS;
 }
 
@@ -151,7 +153,8 @@ int MockDxlDriver::checkModelNumber(uint8_t id)
  */
 int MockDxlDriver::readFirmwareVersion(uint8_t id, std::string &version)
 {
-    version = _map_fake_registers.at(id).firmware;
+    if (_map_fake_registers.count(id))
+        version = _map_fake_registers.at(id).firmware;
     return COMM_SUCCESS;
 }
 
@@ -163,7 +166,8 @@ int MockDxlDriver::readFirmwareVersion(uint8_t id, std::string &version)
  */
 int MockDxlDriver::readMinPosition(uint8_t id, uint32_t &pos)
 {
-    pos = _map_fake_registers.at(id).min_position;
+    if (_map_fake_registers.count(id))
+        pos = _map_fake_registers.at(id).min_position;
     return COMM_SUCCESS;
 }
 
@@ -175,7 +179,8 @@ int MockDxlDriver::readMinPosition(uint8_t id, uint32_t &pos)
  */
 int MockDxlDriver::readMaxPosition(uint8_t id, uint32_t &pos)
 {
-    pos = _map_fake_registers.at(id).max_position;
+    if (_map_fake_registers.count(id))
+        pos = _map_fake_registers.at(id).max_position;
     return COMM_SUCCESS;
 }
 
@@ -200,7 +205,8 @@ int MockDxlDriver::setTorqueEnable(uint8_t id, uint32_t torque_enable)
  */
 int MockDxlDriver::setGoalPosition(uint8_t id, uint32_t position)
 {
-    _map_fake_registers.at(id).position = position;
+    if (_map_fake_registers.count(id))
+        _map_fake_registers.at(id).position = position;
     return COMM_SUCCESS;
 }
 
@@ -251,6 +257,8 @@ int MockDxlDriver::syncWritePositionGoal(const std::vector<uint8_t> &id_list, co
     std::map<uint8_t, uint8_t> countMap;
     for (size_t i = 0; i < id_list.size(); i++)
     {
+        if (!_map_fake_registers.count(id_list.at(i)))
+            return COMM_TX_ERROR;
         _map_fake_registers.at(id_list.at(i)).position = position_list.at(i);
         auto result = countMap.insert(std::pair<uint8_t, uint8_t>(id_list[i], 1));
         if (result.second == false)
@@ -289,7 +297,8 @@ int MockDxlDriver::syncWriteVelocityGoal(const std::vector<uint8_t> &id_list, co
  */
 int MockDxlDriver::readPosition(uint8_t id, uint32_t& present_position)
 {
-    present_position = _map_fake_registers.at(id).position;
+    if (!_map_fake_registers.count(id))
+        present_position = _map_fake_registers.at(id).position;
     return COMM_SUCCESS;
 }
 
@@ -301,7 +310,8 @@ int MockDxlDriver::readPosition(uint8_t id, uint32_t& present_position)
  */
 int MockDxlDriver::readTemperature(uint8_t id, uint32_t& temperature)
 {
-    temperature = _map_fake_registers.at(id).temperature;
+    if (_map_fake_registers.count(id))
+        temperature = _map_fake_registers.at(id).temperature;
     return COMM_SUCCESS;
 }
 
@@ -313,7 +323,8 @@ int MockDxlDriver::readTemperature(uint8_t id, uint32_t& temperature)
  */
 int MockDxlDriver::readVoltage(uint8_t id, double& voltage)
 {
-    voltage = _map_fake_registers.at(id).voltage;
+    if (_map_fake_registers.count(id))
+        voltage = _map_fake_registers.at(id).voltage;
     return COMM_SUCCESS;
 }
 
@@ -340,6 +351,8 @@ int MockDxlDriver::syncReadPosition(const std::vector<uint8_t> &id_list, std::ve
     std::map<uint8_t, uint8_t> countMap;
     for (auto & id : id_list)
     {
+        if (!_map_fake_registers.count(id))
+            return COMM_TX_ERROR;
         position_list.emplace_back(_map_fake_registers.at(id).position);
         auto result = countMap.insert(std::pair<uint8_t, uint8_t>(id, 1));
         if (result.second == false)
@@ -359,6 +372,8 @@ int MockDxlDriver::syncReadFirmwareVersion(const std::vector<uint8_t> &id_list, 
     std::map<uint8_t, uint8_t> countMap;
     for (auto & id : id_list)
     {
+        if (!_map_fake_registers.count(id))
+            return COMM_TX_ERROR;
         firmware_list.emplace_back(_map_fake_registers.at(id).firmware);
         auto result = countMap.insert(std::pair<uint8_t, uint8_t>(id, 1));
         if (result.second == false)
@@ -378,6 +393,8 @@ int MockDxlDriver::syncReadTemperature(const std::vector<uint8_t> &id_list, std:
     std::map<uint8_t, uint8_t> countMap;
     for (auto & id : id_list)
     {
+        if (!_map_fake_registers.count(id))
+            return COMM_TX_ERROR;
         temperature_list.emplace_back(_map_fake_registers.at(id).temperature);
         auto result = countMap.insert(std::pair<uint8_t, uint8_t>(id, 1));
         if (result.second == false)
@@ -397,6 +414,8 @@ int MockDxlDriver::syncReadVoltage(const std::vector<uint8_t> &id_list, std::vec
     std::map<uint8_t, uint8_t> countMap;
     for (auto & id : id_list)
     {
+        if (!_map_fake_registers.count(id))
+            return COMM_TX_ERROR;
         voltage_list.emplace_back(_map_fake_registers.at(id).voltage);
         auto result = countMap.insert(std::pair<uint8_t, uint8_t>(id, 1));
         if (result.second == false)
