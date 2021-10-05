@@ -29,11 +29,14 @@ class SoundPlayer:
         self.__sound_publisher = rospy.Publisher('/niryo_robot_sound/sound', String, latch=True, queue_size=10)
         self.__sound_publisher.publish("")
 
+        self.__simulation_mode = rospy.get_param("~simulation_mode")
         self.__volume_percentage = None
         self.__max_volume = rospy.get_param("~max_volume")
         self.__min_volume = rospy.get_param("~min_volume")
-
-        self.set_volume(rospy.get_param("~default_volume"))
+        if self.__simulation_mode:
+            self.set_volume(rospy.get_param("~default_volume_simulation"))
+        else:
+            self.set_volume(rospy.get_param("~default_volume"))
 
         # - Services
         rospy.Service('/niryo_robot_sound/set_volume', SetInt, self.__callback_set_volume)

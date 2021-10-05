@@ -1,4 +1,3 @@
-
 # Lib
 import rospy
 import threading
@@ -26,14 +25,15 @@ class LedRingCommander:
 
     def __init__(self):
         rospy.loginfo("Led Ring Commander - Initialisation")
-        self.led_ring_anim = LedRingAnimations()
-
+        self.__is_shutdown = False
         self.__is_simulation = rospy.get_param("~simulation_mode")
 
+        self.led_ring_anim = LedRingAnimations()
         self.robot_status = RobotStatus.BOOTING
         self.robot_status_str = ""
         self.logs_status = RobotStatus.NONE
         self.robot_out_of_bounds = False
+        self.rpi_overheating = False
 
         self.user_animation_lock = threading.Lock()
         self.led_ring_animation_thread = threading.Thread()
@@ -83,9 +83,18 @@ class LedRingCommander:
         rospy.loginfo("Led Ring Commander - Started")
 
     def shutdown(self):
-        self.robot_status_subscriber.unregister()
-        self.stop_led_ring_thread()
-        del self.led_ring_anim
+        if not self.__is_shutdown:
+            self.__is_shutdown = True
+            self.robot_status_subscriber.unregister()
+            self.stop_led_ring_thread()
+            self.blink(WHITE, 2, 0.5)
+            self.user_animation_lock.acquire()
+            self.error_animation_lock.acquire()
+            del self.led_ring_anim
+
+    @property
+    def is_shutdown(self):
+        return self.__is_shutdown
 
     # - Callbacks
     def __callback_robot_status(self, msg):
@@ -98,11 +107,12 @@ class LedRingCommander:
         if msg.robot_status == RobotStatus.SHUTDOWN:
             self.shutdown()
 
-        if self.robot_status != msg.robot_status or self.robot_out_of_bounds != msg.out_of_bounds:
+        if self.robot_status != msg.robot_status or self.robot_out_of_bounds != msg.out_of_bounds or self.rpi_overheating != msg.rpi_overheating:
             self.robot_status = msg.robot_status
             self.robot_status_str = msg.robot_status_str
             self.logs_status = msg.logs_status
             self.robot_out_of_bounds = msg.out_of_bounds
+            self.rpi_overheating = msg.rpi_overheating
 
             self.set_user_mode(
                 (self.robot_status == RobotStatus.RUNNING_AUTONOMOUS or
@@ -176,15 +186,7 @@ class LedRingCommander:
         self.blink_over_status(RED, 5, 2)
 
     def blink_over_status(self, color, iterations, period):
-        with self.error_animation_lock:
-            command = LedUserRequest()
-            command.animation_mode.animation = LedRingAnimation.FLASHING
-            command.colors = [color]
-            command.iterations = iterations
-            command.period = period
-            self.start_led_ring_thread(command)
-            self.led_ring_animation_thread.join()
-
+        self.blink(color, iterations, period)
         command = self.get_robot_status_led_ring_cmd()
         self.start_led_ring_thread(command)
 
@@ -256,7 +258,9 @@ class LedRingCommander:
 
     def get_robot_status_led_ring_cmd(self):
         if self.robot_out_of_bounds:
-            animation, colors = LedRingAnimation.FLASHING, ORANGE
+            animation, colors = ROBOT_STATUS_TO_ANIM["out_of_bound"]
+        elif self.rpi_overheating:
+            animation, colors = ROBOT_STATUS_TO_ANIM["overheating"]
         elif self.robot_status in ROBOT_STATUS_TO_ANIM:
             animation, colors = ROBOT_STATUS_TO_ANIM[self.robot_status]
         else:
@@ -323,3 +327,17 @@ class LedRingCommander:
 
     def snake_animation(self, cmd):
         self.led_ring_anim.snake(cmd.colors[0], cmd.period, cmd.iterations)
+
+    def blink(self, color, iterations, period):
+        with self.error_animation_lock:
+            command = LedUserRequest()
+            command.animation_mode.animation = LedRingAnimation.FLASHING
+            command.colors = [color]
+            command.iterations = iterations
+            command.period = period
+            self.start_led_ring_thread(command)
+            try:
+                if self.led_ring_animation_thread.is_alive():
+                    self.led_ring_animation_thread.join()
+            except RuntimeError:
+                pass

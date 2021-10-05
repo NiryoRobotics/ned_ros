@@ -30,3 +30,4 @@ string logs_status_str
 string logs_message
 
 bool out_of_bounds
+bool rpi_overheating
