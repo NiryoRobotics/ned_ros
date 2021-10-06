@@ -8,6 +8,9 @@ default_volume: 50
 default_volume_simulation: 10
 min_volume: 0
 max_volume: 100
+volume_file_path: "~/niryo_robot_saved_files/robot_sound_volume.txt"
+volume_file_path_simulation: "~/.niryo/simulation/robot_sound_volume.txt"
+
 
 path_user_sound: "niryo_robot_user_sounds"
 path_robot_sound: "niryo_robot_state_sounds"
