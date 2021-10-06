@@ -44,7 +44,7 @@ class SoundDatabase:
         self.__publish_sounds()
 
         # - Services
-        rospy.Service('/niryo_robot_sound/manage_sound', ManageSound, self.__callback_manage_sound)
+        rospy.Service('/niryo_robot_sound/manage', ManageSound, self.__callback_manage_sound)
 
     def __call__(self, *args, **kwargs):
         if len(args) >= 1:

@@ -38,7 +38,7 @@ class SoundManager:
                          self.__callback_sub_robot_status)
 
         # - Services
-        rospy.Service('/niryo_robot_sound/play_sound', PlaySound, self.__callback_play_sound_user)
+        rospy.Service('/niryo_robot_sound/play', PlaySound, self.__callback_play_sound_user)
 
         # Set a bool to mention this node is initialized
         rospy.set_param('~initialized', True)
