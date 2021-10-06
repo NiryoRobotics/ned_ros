@@ -1,7 +1,6 @@
-bus : "can"
 type: "stepper"
 can:
   max_effort: 90
   micro_steps: 8
-  id: 6
-  id_list: [12,13]
+  default_id: 6
+  pool_id_list: [12,13]

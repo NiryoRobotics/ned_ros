@@ -20,15 +20,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #ifndef UTIL_DEFS_H
 #define UTIL_DEFS_H
 // C++
-#include <ios>
-#include <cerrno>
-#include <cstring>
-#include <iostream>
-#include <sstream>
 
-// #include <fstream>
-#include <functional>
-#include <algorithm>
 /*
 common_defs.h
 Copyright (C) 2020 Niryo

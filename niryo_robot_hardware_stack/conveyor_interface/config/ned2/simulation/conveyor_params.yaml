@@ -1,5 +1,4 @@
-bus : "ttl"
 type: "fakeStepper"
 ttl:
-  id: 8
-  id_list: [9,10]
+  default_id: 8
+  pool_id_list: [9,10]

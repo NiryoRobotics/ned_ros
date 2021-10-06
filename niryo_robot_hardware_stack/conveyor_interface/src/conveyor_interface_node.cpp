@@ -44,24 +44,24 @@ int main(int argc, char **argv)
     bool can_enabled{false};
     nh.getParam("can_enabled", can_enabled);
 
+    std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_driver;
+    std::shared_ptr<can_driver::CanInterfaceCore> can_driver;
+
     if (!can_enabled)
     {
         ros::NodeHandle nh_ttl("ttl_driver");
-        auto ttl_driver = std::make_shared<ttl_driver::TtlInterfaceCore>(nh_ttl);
-        ros::Duration(0.25).sleep();
-
-        auto conveyor_interface = std::make_shared<conveyor_interface::ConveyorInterfaceCore>(nh_conveyor, ttl_driver);
+        ttl_driver = std::make_shared<ttl_driver::TtlInterfaceCore>(nh_ttl);
         ros::Duration(0.25).sleep();
     }
     else
     {
         ros::NodeHandle nh_can("can_driver");
-        auto can_driver = std::make_shared<can_driver::CanInterfaceCore>(nh_can);
-        ros::Duration(0.25).sleep();
-
-        auto conveyor_interface = std::make_shared<conveyor_interface::ConveyorInterfaceCore>(nh_conveyor, can_driver);
+        can_driver = std::make_shared<can_driver::CanInterfaceCore>(nh_can);
         ros::Duration(0.25).sleep();
     }
+
+    auto conveyor_interface = std::make_shared<conveyor_interface::ConveyorInterfaceCore>(nh_conveyor, ttl_driver, can_driver);
+    ros::Duration(0.25).sleep();
 
     ros::waitForShutdown();
     return 0;

@@ -22,7 +22,6 @@
 #include <boost/exception/exception.hpp>
 #include <cstdint>
 #include <random>
-#include <sstream>
 #include <vector>
 #include <string>
 #include <tuple>
@@ -37,7 +36,6 @@
 
 using ::std::shared_ptr;
 using ::std::string;
-using ::std::ostringstream;
 using ::common::model::EStepperCommandType;
 
 namespace can_driver

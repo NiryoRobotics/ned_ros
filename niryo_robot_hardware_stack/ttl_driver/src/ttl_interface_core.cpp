@@ -763,16 +763,14 @@ int TtlInterfaceCore::setEndEffector(const std::shared_ptr<common::model::EndEff
  */
 int TtlInterfaceCore::setConveyor(const std::shared_ptr<common::model::ConveyorState> state)
 {
-    lock_guard<mutex> lck(_control_loop_mutex);
-
     int result = niryo_robot_msgs::CommandStatus::NO_CONVEYOR_FOUND;
 
-    _default_conveyor_id = state->getDefaultId();
+    lock_guard<mutex> lck(_control_loop_mutex);
 
     // add hw component before to get driver
     _ttl_manager->addHardwareComponent(state);
 
-    if (_ttl_manager->ping(_default_conveyor_id))
+    if (_ttl_manager->ping(state->getId()))
     {
         // no init needed
         result = niryo_robot_msgs::CommandStatus::SUCCESS;

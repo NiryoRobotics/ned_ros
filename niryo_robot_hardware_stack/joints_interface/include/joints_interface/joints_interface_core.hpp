@@ -91,8 +91,6 @@ class JointsInterfaceCore : common::model::IInterfaceCore
     private:
         ros::NodeHandle _nh;
 
-        // TODO(CC) create a thread to update hw status from can and ttl into joint_states
-
         bool _enable_control_loop{true};
         bool _previous_state_learning_mode{true};
         bool _reset_controller{false};
