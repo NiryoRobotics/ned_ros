@@ -1,9 +1,5 @@
 bus : "can"
 type: "fakeStepper"
-ttl:
-  id: 8
-  id_list: [9,10]
-
 can:
   max_effort: 90
   micro_steps: 8
