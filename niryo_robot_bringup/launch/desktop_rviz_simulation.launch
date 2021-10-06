@@ -19,8 +19,9 @@
         <arg name="simu_gripper" value="false" />
         <arg name="log_level" value="$(arg log_level)" />
         <arg name="debug" value="$(arg debug)"/>
-        <arg name="can_enabled" value="false"/>
-        <arg name="ttl_enabled" value="true"/>
+        <arg name="can_enabled" value="false" unless="$(eval hardware_version =='one' or hardware_version =='ned')"/>
+        <arg name="can_enabled" value="true" if="$(eval hardware_version =='one' or hardware_version =='ned')"/>
+        <arg name="ttl_enabled" value="true" />
         <arg name="vision_enabled" value="false" />
         <arg name="gazebo" value="false" />
     </include>
