@@ -14,7 +14,7 @@ variables:
   GIT_SUBMODULE_STRATEGY: recursive
   GIT_STRATEGY: fetch
   GIT_DEPTH: 0
-  NIRYO_HOME_FOLDER: /home/niryo
+  NIRYO_HOME_FOLDER: /home/niryo/catkin_ws
 
 stages:
   - build
