@@ -179,7 +179,8 @@ int CanManager::setupCommunication()
 }
 
 /**
- * @brief CanManager::addHardwareComponent
+ * @brief CanManager::addHardwareComponent add the state of a hardware component to can manager
+ * It can be a joint, conveyor...
  * @param state
  */
 void CanManager::addHardwareComponent(const std::shared_ptr<common::model::AbstractHardwareState>& state)
@@ -221,6 +222,10 @@ void CanManager::removeHardwareComponent(uint8_t id)
 //  commands
 // ****************
 
+/**
+ * @brief CanManager::changeId changeId of a hw component. Ex: Using when more than 1 conveyor,
+ * we need to change id of conveyor to accept the next one.
+ */
 int CanManager::changeId(common::model::EHardwareType motor_type, uint8_t old_id, uint8_t new_id)
 {
     int ret = CAN_FAIL;
@@ -704,7 +709,7 @@ CanManager::getHardwareState(uint8_t motor_id) const
 // ********************
 
 /**
- * @brief TtlManager::addHardwareDriver
+ * @brief TtlManager::addHardwareDriver add driver corresponding to a type of hardware
  * @param hardware_type
  */
 void CanManager::addHardwareDriver(common::model::EHardwareType hardware_type)
@@ -728,7 +733,7 @@ void CanManager::addHardwareDriver(common::model::EHardwareType hardware_type)
 }
 
 /**
-* @brief CanManager::readFakeConfig
+* @brief CanManager::readFakeConfig read the config for fake driver.
 */
 void CanManager::readFakeConfig()
 {
@@ -750,7 +755,7 @@ void CanManager::readFakeConfig()
 }
 
 /**
- * @brief CanManager::retrieveFakeMotorData
+ * @brief CanManager::retrieveFakeMotorData get config for motors
  * @param current_ns
  * @param fake_params
  */

@@ -76,7 +76,7 @@ CanInterfaceCore::~CanInterfaceCore()
 }
 
 /**
- * @brief CanInterfaceCore::init
+ * @brief CanInterfaceCore::init Initialize ros things
  */
 bool CanInterfaceCore::init(ros::NodeHandle& nh)
 {
@@ -144,7 +144,7 @@ void CanInterfaceCore::startSubscribers(ros::NodeHandle &/*nh*/)
 }
 
 /**
- * @brief TtlInterfaceCore::addJoint
+ * @brief TtlInterfaceCore::addJoint add joints from joints_interface
  * @param jointState
  * @return
  */
@@ -497,7 +497,7 @@ void CanInterfaceCore::_executeCommand()
 // *************
 
 /**
- * @brief CanInterfaceCore::setConveyor
+ * @brief CanInterfaceCore::setConveyor add conveyor from conveyor_interface
  * @param state
  * @return
  */
