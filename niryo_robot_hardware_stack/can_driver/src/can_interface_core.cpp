@@ -152,11 +152,10 @@ int CanInterfaceCore::addJoint(const std::shared_ptr<common::model::StepperMotor
 {
   int result = niryo_robot_msgs::CommandStatus::CAN_READ_ERROR;
 
-  std::lock_guard<std::mutex> lck(_control_loop_mutex);
-
   // add dynamixel as a new tool
   _can_manager->addHardwareComponent(jointState);
 
+  std::lock_guard<std::mutex> lck(_control_loop_mutex);
   if (_can_manager->ping(jointState->getId()))
   {
       // no init commands
@@ -504,8 +503,6 @@ void CanInterfaceCore::_executeCommand()
  */
 int CanInterfaceCore::setConveyor(const std::shared_ptr<common::model::ConveyorState> state)
 {
-    lock_guard<mutex> lck(_control_loop_mutex);
-
     int result = niryo_robot_msgs::CommandStatus::NO_CONVEYOR_FOUND;
 
     _default_conveyor_id = state->getDefaultId();
@@ -513,6 +510,7 @@ int CanInterfaceCore::setConveyor(const std::shared_ptr<common::model::ConveyorS
     // add stepper as a new conveyor
     _can_manager->addHardwareComponent(state);
 
+    lock_guard<mutex> lck(_control_loop_mutex);
     // try to find motor id 6 (default motor id for conveyor
     if (_can_manager->ping(state->getDefaultId()))
     {
