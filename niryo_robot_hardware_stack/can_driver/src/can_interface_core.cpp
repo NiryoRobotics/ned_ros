@@ -505,23 +505,21 @@ int CanInterfaceCore::setConveyor(const std::shared_ptr<common::model::ConveyorS
 {
     int result = niryo_robot_msgs::CommandStatus::NO_CONVEYOR_FOUND;
 
-    _default_conveyor_id = state->getDefaultId();
-
     // add stepper as a new conveyor
     _can_manager->addHardwareComponent(state);
 
     lock_guard<mutex> lck(_control_loop_mutex);
     // try to find motor id 6 (default motor id for conveyor
-    if (_can_manager->ping(state->getDefaultId()))
+    if (_can_manager->ping(state->getId()))
     {
         // send commands to init
         ROS_DEBUG("ConveyorInterfaceCore::addConveyor : Initializing for CAN bus");
 
         _can_manager->writeSingleCommand(std::make_shared<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_MICRO_STEPS,
-                                                                                state->getId(), std::initializer_list<int32_t>{state->getMicroSteps()}));
+                                                                                state->getId(), std::initializer_list<int32_t>{static_cast<int32_t>(state->getMicroSteps())}));
 
         _can_manager->writeSingleCommand(std::make_shared<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_MAX_EFFORT,
-                                                                                state->getId(), std::initializer_list<int32_t>{state->getMaxEffort()}));
+                                                                                state->getId(), std::initializer_list<int32_t>{static_cast<int32_t>(state->getMaxEffort())}));
 
         _can_manager->writeSingleCommand(std::make_shared<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_CONVEYOR,
                                                                                 state->getId(), std::initializer_list<int32_t>{false, 0, -1}));
@@ -540,16 +538,16 @@ int CanInterfaceCore::setConveyor(const std::shared_ptr<common::model::ConveyorS
  * @brief CanInterfaceCore::unsetConveyor
  * @param motor_id
  */
-void CanInterfaceCore::unsetConveyor(uint8_t motor_id)
+void CanInterfaceCore::unsetConveyor(uint8_t motor_id, uint8_t default_conveyor_id)
 {
     lock_guard<mutex> lck(_control_loop_mutex);
 
     ROS_DEBUG("TtlInterfaceCore::unsetConveyor - unsetConveyor: id %d", motor_id);
 
     auto state = getJointState(motor_id);
-    if (CAN_OK == _can_manager->changeId(state->getHardwareType(), motor_id, _default_conveyor_id))
+    if (CAN_OK == _can_manager->changeId(state->getHardwareType(), motor_id, default_conveyor_id))
     {
-        _can_manager->removeHardwareComponent(_default_conveyor_id);
+        _can_manager->removeHardwareComponent(default_conveyor_id);
     }
     else
         ROS_ERROR("TtlInterfaceCore::unsetConveyor : unable to change conveyor ID");

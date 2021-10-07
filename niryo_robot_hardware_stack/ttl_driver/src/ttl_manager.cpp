@@ -251,7 +251,7 @@ int TtlManager::changeId(common::model::EHardwareType motor_type, uint8_t old_id
     {
         ret = COMM_SUCCESS;
     }
-    else
+    else if (_driver_map.count(motor_type))
     {
         auto driver = std::dynamic_pointer_cast<AbstractMotorDriver>(_driver_map.at(motor_type));
 
@@ -484,7 +484,7 @@ bool TtlManager::readPositionStatus()
     for (auto const& it : _driver_map)
     {
         EHardwareType type = it.first;
-        shared_ptr<AbstractMotorDriver> driver = std::dynamic_pointer_cast<AbstractMotorDriver>(it.second);
+        auto driver = std::dynamic_pointer_cast<AbstractMotorDriver>(it.second);
 
         if (driver && _ids_map.count(type))
         {
@@ -514,7 +514,6 @@ bool TtlManager::readPositionStatus()
                 }
                 else
                 {
-                    // TODO(CC) need to
                     ROS_ERROR("TtlManager::readPositionStatus : Fail to sync read position - "
                                 "vector mismatch (id_list size %d, position_list size %d)",
                                 static_cast<int>(id_list.size()),
@@ -948,7 +947,6 @@ int TtlManager::setLeds(int led)
 
 /**
  * @brief TtlManager::sendCustomCommand
- * @param motor_type
  * @param id
  * @param reg_address
  * @param value
@@ -1528,17 +1526,13 @@ void TtlManager::readFakeConfig()
         std::string current_ns = hardware_version + "/steppers/";
         retrieveFakeMotorData(current_ns, _fake_data.stepper_registers);
     }
+
     if (_nh.hasParam(hardware_version + "/dynamixels/"))
     {
         std::string current_ns = hardware_version + "/dynamixels/";
         retrieveFakeMotorData(current_ns, _fake_data.dxl_registers);
     }
-    if (_nh.hasParam(hardware_version + "/conveyor"))
-    {
-        int id;
-        _nh.getParam(hardware_version + "/conveyor/id", id);
-        _fake_data.conveyor.id = id;
-    }
+
     if (_nh.hasParam(hardware_version + "/end_effector"))
     {
         std::string current_ns = hardware_version + "/end_effector/";
@@ -1553,59 +1547,6 @@ void TtlManager::readFakeConfig()
         std::string firmware;
         _nh.getParam(current_ns + "firmware", firmware);
         _fake_data.end_effector.firmware = firmware;
-    }
-}
-
-/**
- * @brief TtlManager::retrieveFakeMotorData
- * @param current_ns
- * @param fake_params
- */
-void TtlManager::retrieveFakeMotorData(std::string current_ns, std::vector<FakeTtlData::FakeRegister> &fake_params)
-{
-    std::vector<int> stepper_ids;
-    _nh.getParam(current_ns + "id", stepper_ids);
-
-    std::vector<int> stepper_positions;
-    _nh.getParam(current_ns + "position", stepper_positions);
-    assert(stepper_ids.size() == stepper_positions.size());
-
-    std::vector<int> stepper_temperatures;
-    _nh.getParam(current_ns + "temperature", stepper_temperatures);
-    assert(stepper_positions.size() == stepper_temperatures.size());
-
-     std::vector<double> stepper_voltages;
-    _nh.getParam(current_ns + "voltage", stepper_voltages);
-    assert(stepper_temperatures.size() == stepper_voltages.size());
-
-    std::vector<int> stepper_min_positions;
-    _nh.getParam(current_ns + "min_position", stepper_min_positions);
-    assert(stepper_voltages.size() == stepper_min_positions.size());
-
-    std::vector<int> stepper_max_positions;
-    _nh.getParam(current_ns + "max_position", stepper_max_positions);
-    assert(stepper_min_positions.size() == stepper_max_positions.size());
-
-    std::vector<int> stepper_model_numbers;
-    _nh.getParam(current_ns + "model_number", stepper_model_numbers);
-    assert(stepper_max_positions.size() == stepper_model_numbers.size());
-
-     std::vector<std::string> stepper_firmwares;
-    _nh.getParam(current_ns + "firmware", stepper_firmwares);
-    assert(stepper_firmwares.size() == stepper_firmwares.size());
-
-    for (size_t i = 0; i < stepper_ids.size(); i++)
-    {
-        FakeTtlData::FakeRegister tmp;
-        tmp.id = stepper_ids.at(i);
-        tmp.position = stepper_positions.at(i);
-        tmp.temperature = stepper_temperatures.at(i);
-        tmp.voltage = stepper_voltages.at(i);
-        tmp.min_position = stepper_min_positions.at(i);
-        tmp.max_position = stepper_max_positions.at(i);
-        tmp.model_number = stepper_model_numbers.at(i);
-        tmp.firmware = stepper_firmwares.at(i);
-        fake_params.push_back(tmp);
     }
 }
 

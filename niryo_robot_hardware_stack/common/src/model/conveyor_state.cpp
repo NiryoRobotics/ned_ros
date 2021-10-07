@@ -71,7 +71,6 @@ ConveyorState::ConveyorState(const ConveyorState &state) :
 {
   _state = state._state;
   _speed = state._speed;
-  _default_id = state._default_id;
 }
 
 /**
@@ -80,18 +79,6 @@ ConveyorState::ConveyorState(const ConveyorState &state) :
 ConveyorState::~ConveyorState()
 {}
 
-/**
- * @brief ConveyorState::initialize
- * @param default_id
- * @param max_effort
- * @param micro_steps
- */
-void ConveyorState::initialize(uint8_t default_id, double max_effort, double micro_steps)
-{
-  _default_id = default_id;
-  _max_effort = max_effort;
-  _micro_steps = micro_steps;
-}
 
 /**
  * @brief ConveyorState::updateId

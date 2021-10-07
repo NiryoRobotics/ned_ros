@@ -29,7 +29,7 @@ class FakeCanData
         FakeCanData() {}
         ~FakeCanData() {}
     public:
-        struct FakeRegister
+        struct FakeStepperRegister
         {
             uint8_t        id{0};
             uint32_t       position{0};
@@ -37,19 +37,14 @@ class FakeCanData
             double         voltage{0};
             uint16_t       model_number{0};
             std::string    firmware{};
-        };
-        
-        struct FakeConveyor
-        {
-            uint8_t         id{0};  
-            uint8_t         direction{1};
-            int16_t         speed{0};
-            bool            state{false};
+
+            uint8_t       speed{0};
+            uint8_t       direction{0};
+            bool          state{false};
         };
 
         // stepper
-        std::vector<FakeRegister> stepper_registers;
-        FakeConveyor conveyor;
+        std::vector<FakeStepperRegister> stepper_registers;
 };
 }
 #endif //FAKE_TTL_DATA_HPP

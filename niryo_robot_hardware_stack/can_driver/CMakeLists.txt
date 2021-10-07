@@ -89,10 +89,10 @@ include_directories(
 ## Declare libs and execs
 add_library(${PROJECT_NAME}
   src/abstract_can_driver.cpp
+  src/abstract_stepper_driver.cpp
   src/can_interface_core.cpp
   src/can_manager.cpp
   src/mock_stepper_driver.cpp
-  src/stepper_driver.cpp
 )
 
 add_executable(${PROJECT_NAME}_node

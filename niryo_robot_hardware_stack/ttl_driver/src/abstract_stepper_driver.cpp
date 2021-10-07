@@ -49,7 +49,7 @@ AbstractStepperDriver::~AbstractStepperDriver()
 
 std::string AbstractStepperDriver::str() const
 {
-    return "Stepper Driver (" + AbstractMotorDriver::str() + ")";
+    return "Abstract Stepper Driver  (" + AbstractMotorDriver::str() + ")";
 }
 
 /**

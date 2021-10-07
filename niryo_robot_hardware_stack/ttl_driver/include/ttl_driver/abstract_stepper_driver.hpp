@@ -32,36 +32,36 @@ namespace ttl_driver
 
 class AbstractStepperDriver : public AbstractMotorDriver
 {
-    public:
-        AbstractStepperDriver();
-        AbstractStepperDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
-                              std::shared_ptr<dynamixel::PacketHandler> packetHandler);
-        virtual ~AbstractStepperDriver() override;
+public:
+    AbstractStepperDriver();
+    AbstractStepperDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
+                          std::shared_ptr<dynamixel::PacketHandler> packetHandler);
+    virtual ~AbstractStepperDriver() override;
 
-    protected:
-        // AbstractTtlDriver interface
-        virtual std::string interpreteFirmwareVersion(uint32_t fw_version) const override;
+public:
+    // AbstractMotorDriver interface
+    virtual std::string str() const override;
 
-    public:
-        // AbstractMotorDriver interface
-        virtual std::string str() const override;
+    virtual int writeSingleCmd(const std::shared_ptr<common::model::AbstractTtlSingleMotorCmd> &cmd) override;
+    virtual int writeSyncCmd(int type, const std::vector<uint8_t>& ids, const std::vector<uint32_t>& params) override;
 
-        virtual int writeSingleCmd(const std::shared_ptr<common::model::AbstractTtlSingleMotorCmd> &cmd) override;
-        virtual int writeSyncCmd(int type, const std::vector<uint8_t>& ids, const std::vector<uint32_t>& params) override;
+protected:
+    // AbstractTtlDriver interface
+    virtual std::string interpreteFirmwareVersion(uint32_t fw_version) const override;
 
-    public:
-        // specific Stepper commands
+public:
+    // specific Stepper commands
 
-        // ram write
-        virtual int startHoming(uint8_t id) = 0;
-        virtual int readHomingStatus(uint8_t id, uint32_t& status) = 0;
-        virtual int writeHomingDirection(uint8_t id, uint8_t direction) = 0;
+    // ram write
+    virtual int startHoming(uint8_t id) = 0;
+    virtual int readHomingStatus(uint8_t id, uint32_t& status) = 0;
+    virtual int writeHomingDirection(uint8_t id, uint8_t direction) = 0;
 
-        virtual int writeVelocityProfile(uint8_t id, const std::vector<uint32_t>& data) = 0;
+    virtual int writeVelocityProfile(uint8_t id, const std::vector<uint32_t>& data) = 0;
 
-        // read
-        virtual int readGoalVelocity(uint8_t id, uint32_t& present_velocity) = 0;
-        virtual int readFirmwareRunning(uint8_t id, bool &is_running) = 0;
+    // read
+    virtual int readGoalVelocity(uint8_t id, uint32_t& present_velocity) = 0;
+    virtual int readFirmwareRunning(uint8_t id, bool &is_running) = 0;
 };
 
 } // ttl_driver

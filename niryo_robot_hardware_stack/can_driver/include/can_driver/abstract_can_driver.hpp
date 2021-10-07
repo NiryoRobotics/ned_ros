@@ -59,24 +59,10 @@ public:
 public:
     virtual std::string str() const;
 
-    // here are only common TTL commands found in both Steppers and DXl
-    // write
-    virtual uint8_t sendUpdateConveyorId(uint8_t old_id, uint8_t new_id) = 0;
-    virtual uint8_t sendTorqueOnCommand(uint8_t id, int torque_on) = 0;
-    virtual uint8_t sendRelativeMoveCommand(uint8_t id, int steps, int delay) = 0;
-
-    virtual uint8_t sendPositionCommand(uint8_t id, int cmd) = 0;
-    virtual uint8_t sendPositionOffsetCommand(uint8_t id, int cmd, int absolute_steps_at_offset_position) = 0;
-    virtual uint8_t sendCalibrationCommand(uint8_t id, int offset, int delay, int direction, int timeout) = 0;
-    virtual uint8_t sendSynchronizePositionCommand(uint8_t id, bool begin_traj) = 0;
-    virtual uint8_t sendMicroStepsCommand(uint8_t id, int micro_steps) = 0;
-    virtual uint8_t sendMaxEffortCommand(uint8_t id, int effort) = 0;
-    virtual uint8_t sendConveyorOnCommand(uint8_t id, bool conveyor_on, uint8_t conveyor_speed, uint8_t direction) = 0;
-
     // read
     virtual uint8_t readData(uint8_t& id, int& control_byte,
-                     std::array<uint8_t, MAX_MESSAGE_LENGTH>& rxBuf,
-                     std::string& error_message);
+                             std::array<uint8_t, MAX_MESSAGE_LENGTH>& rxBuf,
+                             std::string& error_message);
 
     // Interprete data received
     virtual int32_t interpretePositionStatus(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) = 0;
@@ -88,6 +74,7 @@ public:
 protected:
     uint8_t read(INT32U *id, uint8_t *len, std::array<uint8_t, MAX_MESSAGE_LENGTH> &buf);
     uint8_t write(uint32_t id, uint8_t ext, uint8_t len, uint8_t *buf);
+
 private:
     std::shared_ptr<mcp_can_rpi::MCP_CAN> _mcp_can;
 

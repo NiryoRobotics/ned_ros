@@ -13,7 +13,7 @@
     <rosparam file="$(find ttl_driver)/config/$(arg config_dir)/bus_params.yaml" command="load"/>
     <rosparam file="$(find ttl_driver)/config/$(arg config_dir)/led.yaml" command="load"/>
     <rosparam file="$(find ttl_driver)/config/default.yaml" command="load"/>
-    <rosparam file="$(find ttl_driver)/config/fake_params.yaml" command="load" />
+    <rosparam file="$(find ttl_driver)/config/fake_params.yaml" command="load" if="$(arg simulation_mode)" />
     <param name="hardware_version" value="$(arg hardware_version)"/>  
   </group>
 

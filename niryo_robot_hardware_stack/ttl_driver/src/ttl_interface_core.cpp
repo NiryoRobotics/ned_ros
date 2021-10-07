@@ -794,16 +794,16 @@ int TtlInterfaceCore::setConveyor(const std::shared_ptr<common::model::ConveyorS
  * @brief TtlInterfaceCore::unsetConveyor
  * @param motor_id
  */
-void TtlInterfaceCore::unsetConveyor(uint8_t motor_id)
+void TtlInterfaceCore::unsetConveyor(uint8_t motor_id, uint8_t default_conveyor_id)
 {
     lock_guard<mutex> lck(_control_loop_mutex);
 
     ROS_DEBUG("TtlInterfaceCore::unsetConveyor - unsetConveyor: id %d", motor_id);
 
     auto state = getJointState(motor_id);
-    if (COMM_SUCCESS == _ttl_manager->changeId(state->getHardwareType(), motor_id, _default_conveyor_id))
+    if (COMM_SUCCESS == _ttl_manager->changeId(state->getHardwareType(), motor_id, default_conveyor_id))
     {
-        _ttl_manager->removeHardwareComponent(_default_conveyor_id);
+        _ttl_manager->removeHardwareComponent(default_conveyor_id);
     }
     else
         ROS_ERROR("TtlInterfaceCore::unsetConveyor : unable to change conveyor ID");

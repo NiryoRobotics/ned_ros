@@ -783,7 +783,7 @@ void MockDxlDriver::initializeFakeData(FakeTtlData data)
     {
         if (!_map_fake_registers.count(fdata.id))
         {
-            _map_fake_registers.insert(std::pair<uint8_t, FakeTtlData::FakeRegister>(fdata.id, fdata));
+            _map_fake_registers.insert(std::pair<uint8_t, FakeTtlData::FakeDxlRegister>(fdata.id, fdata));
         }
     }
 }

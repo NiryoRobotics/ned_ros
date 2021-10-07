@@ -44,10 +44,6 @@ class ConveyorState : public StepperMotorState {
         ConveyorState(const ConveyorState& state);
         virtual ~ConveyorState() override;
 
-        void initialize(uint8_t default_id,
-                        double max_effort,
-                        double micro_steps);
-
         void updateId(uint8_t id);
 
         void updateData(const std::tuple<bool, uint8_t, uint16_t> &data);
@@ -59,9 +55,6 @@ class ConveyorState : public StepperMotorState {
         int16_t getSpeed() const;
 
         // other getters
-        uint8_t getDefaultId() const;
-        int getMaxEffort() const;
-        int getMicroSteps() const;
 
         virtual bool operator==(const ConveyorState& other);
 
@@ -73,7 +66,6 @@ class ConveyorState : public StepperMotorState {
 private:
         bool _state{false};
         int16_t _speed{0};
-        uint8_t _default_id{6};
 };
 
 /**
@@ -104,36 +96,6 @@ inline
 bool ConveyorState::isValid() const
 {
     return (0 != getId());
-}
-
-/**
- * @brief ConveyorState::getDefaultId
- * @return
- */
-inline
-uint8_t ConveyorState::getDefaultId() const
-{
-  return _default_id;
-}
-
-/**
- * @brief ConveyorState::getMaxEffort
- * @return
- */
-inline
-int ConveyorState::getMaxEffort() const
-{
-  return _max_effort;
-}
-
-/**
- * @brief ConveyorState::getMicroSteps
- * @return
- */
-inline
-int ConveyorState::getMicroSteps() const
-{
-  return _micro_steps;
 }
 
 } // namespace model

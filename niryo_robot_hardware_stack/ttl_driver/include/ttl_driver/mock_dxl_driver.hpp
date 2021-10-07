@@ -116,10 +116,9 @@ class MockDxlDriver : public AbstractDxlDriver
         virtual int syncReadVelocity(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &velocity_list) override;
     
         void removeGripper();
+
     private:
-        void initializeFakeData(FakeTtlData data);
-    private:
-        std::map<uint8_t, FakeTtlData::FakeRegister> _map_fake_registers;
+        std::map<uint8_t, FakeTtlData::FakeDxlRegister> _map_fake_registers;
         std::vector<uint8_t> _full_id_list;
         std::vector<uint8_t> _id_list;
 
@@ -129,6 +128,9 @@ class MockDxlDriver : public AbstractDxlDriver
         // AbstractTtlDriver interface
     protected:
         virtual std::string interpreteFirmwareVersion(uint32_t fw_version) const override;
+
+    private:
+        void initializeFakeData(FakeTtlData data);
 
 };
 

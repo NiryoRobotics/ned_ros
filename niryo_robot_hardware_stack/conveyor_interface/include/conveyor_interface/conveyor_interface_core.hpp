@@ -82,6 +82,8 @@ private:
 
             bool isValid() { return !pool_id_list.empty() && type != common::model::EHardwareType::UNKNOWN; }
 
+            std::shared_ptr<common::model::IDriverCore> interface;
+
             common::model::EHardwareType type{common::model::EHardwareType::UNKNOWN};
             uint8_t default_id{1};
             std::set<uint8_t> pool_id_list;

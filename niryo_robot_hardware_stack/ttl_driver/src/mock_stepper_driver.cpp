@@ -38,7 +38,6 @@ MockStepperDriver::MockStepperDriver(FakeTtlData data)
     // retrieve list of ids
     for (auto const& imap : _map_fake_registers)
         _id_list.emplace_back(imap.first);
-    _id_list.push_back(_fake_conveyor.id);
 }
 
 /**
@@ -70,7 +69,7 @@ std::string MockStepperDriver::str() const
  */
 int MockStepperDriver::ping(uint8_t id)
 {
-    if (_map_fake_registers.count(id) || _fake_conveyor.id == id)
+    if (_map_fake_registers.count(id))
         return COMM_SUCCESS;
     return COMM_TX_FAIL;
 }
@@ -129,8 +128,10 @@ std::string MockStepperDriver::interpreteErrorState(uint32_t /*hw_state*/) const
 int MockStepperDriver::changeId(uint8_t id, uint8_t new_id)
 {
     _id_list.erase(std::remove(_id_list.begin(), _id_list.end(), id));
+    _full_id_list.erase(std::remove(_full_id_list.begin(), _full_id_list.end(), id));
     _id_list.push_back(new_id);
-    _fake_conveyor.id = new_id;
+    _full_id_list.push_back(new_id);
+
     return COMM_SUCCESS;
 }
 
@@ -232,15 +233,8 @@ int MockStepperDriver::setGoalPosition(uint8_t id, uint32_t position)
  */
 int MockStepperDriver::setGoalVelocity(uint8_t id, uint32_t velocity)
 {
-    if (std::find(_id_list.begin(), _id_list.end(), id) != _id_list.end())
-    {
-        if (id == _fake_conveyor.id)
-        {
-            _fake_conveyor.speed = static_cast<int16_t>(velocity);
-            _fake_conveyor.direction = velocity > 0 ? 1 : -1;
-            _fake_conveyor.state = velocity == 0 ? false : true;
-        }
-    }
+    if (_map_fake_registers.count(id))
+        _map_fake_registers.at(id).velocity = velocity;
     return COMM_SUCCESS;
 }
 
@@ -374,9 +368,7 @@ int MockStepperDriver::syncReadPosition(const std::vector<uint8_t> &id_list, std
     position_list.clear();
     for (auto & id : id_list)
     {
-        if (id == _fake_conveyor.id)
-            position_list.emplace_back(0);
-        else if (_map_fake_registers.count(id))
+        if (_map_fake_registers.count(id))
         {
             position_list.emplace_back(_map_fake_registers.at(id).position);
         }
@@ -401,9 +393,7 @@ int MockStepperDriver::syncReadFirmwareVersion(const std::vector<uint8_t> &id_li
     firmware_list.clear();
     for (auto & id : id_list)
     {
-        if (id == _fake_conveyor.id)
-            firmware_list.emplace_back("0.0.1");
-        else if (_map_fake_registers.count(id))
+        if (_map_fake_registers.count(id))
             firmware_list.emplace_back(_map_fake_registers.at(id).firmware);
         else
             return COMM_RX_FAIL;
@@ -426,9 +416,7 @@ int MockStepperDriver::syncReadTemperature(const std::vector<uint8_t> &id_list, 
     temperature_list.clear();
     for (auto & id : id_list)
     {
-        if (id == _fake_conveyor.id)
-            temperature_list.emplace_back(35);
-        else if (_map_fake_registers.count(id))
+        if (_map_fake_registers.count(id))
             temperature_list.emplace_back(_map_fake_registers.at(id).temperature);
         else
             return COMM_RX_FAIL;
@@ -451,9 +439,7 @@ int MockStepperDriver::syncReadVoltage(const std::vector<uint8_t> &id_list, std:
     voltage_list.clear();
     for (auto & id : id_list)
     {
-        if (id == _fake_conveyor.id)
-            voltage_list.emplace_back(12);
-        else if (_map_fake_registers.count(id))
+        if (_map_fake_registers.count(id))
             voltage_list.emplace_back(_map_fake_registers.at(id).voltage);
         else
             return COMM_RX_FAIL;
@@ -513,7 +499,7 @@ int MockStepperDriver::startHoming(uint8_t id)
         return COMM_RX_FAIL;
 
     _calibration_status = CALIBRATION_IN_PROGRESS;
-    fake_time = 5;
+    fake_time = 3;
     return COMM_SUCCESS;
 }
 
@@ -561,8 +547,8 @@ int MockStepperDriver::readHomingStatus(uint8_t id, uint32_t &status)
  */
 int MockStepperDriver::readGoalVelocity(uint8_t id, uint32_t& present_velocity)
 {
-    if (id == _fake_conveyor.id)
-        present_velocity = static_cast<uint32_t>(_fake_conveyor.speed * _fake_conveyor.direction);
+    if (_map_fake_registers.count(id))
+        present_velocity = _map_fake_registers.at(id).velocity;
     return COMM_SUCCESS;
 }
 
@@ -582,8 +568,7 @@ int MockStepperDriver::readFirmwareRunning(uint8_t id, bool &is_running)
 }
 
 /**
- * @brief MockStepperDriver::in:w
- * intializeFakeData()
+ * @brief MockStepperDriver::initializeFakeData
  * @param data
  */
 void MockStepperDriver::initializeFakeData(FakeTtlData data)
@@ -593,12 +578,9 @@ void MockStepperDriver::initializeFakeData(FakeTtlData data)
     {
         if (!_map_fake_registers.count(fdata.id))
         {
-           _map_fake_registers.insert(std::pair<uint8_t, FakeTtlData::FakeRegister>(fdata.id, fdata));
+           _map_fake_registers.insert(std::make_pair(fdata.id, fdata));
         }
     }
-
-    // conveyor
-    _fake_conveyor = data.conveyor;
 }
 
 }  // namespace ttl_driver

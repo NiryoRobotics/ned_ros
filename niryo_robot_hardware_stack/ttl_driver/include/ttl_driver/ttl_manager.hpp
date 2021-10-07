@@ -153,7 +153,8 @@ class TtlManager : public common::model::IBusManager
 
         // Config params using in fake driver
         void readFakeConfig();
-        void retrieveFakeMotorData(std::string current_ns, std::vector<FakeTtlData::FakeRegister> &fake_params);
+        template<typename Reg>
+        void retrieveFakeMotorData(std::string current_ns, std::vector<Reg> &fake_params);
     private:
         ros::NodeHandle _nh;
         std::shared_ptr<dynamixel::PortHandler> _portHandler;
@@ -284,6 +285,60 @@ inline
 bool TtlManager::hasEndEffector() const
 {
     return _driver_map.count(common::model::EHardwareType::END_EFFECTOR);
+}
+
+/**
+ * @brief TtlManager::retrieveFakeMotorData
+ * @param current_ns
+ * @param fake_params
+ */
+template<typename Reg>
+void TtlManager::retrieveFakeMotorData(std::string current_ns, std::vector<Reg> &fake_params)
+{
+    std::vector<int> stepper_ids;
+    _nh.getParam(current_ns + "id", stepper_ids);
+
+    std::vector<int> stepper_positions;
+    _nh.getParam(current_ns + "position", stepper_positions);
+    assert(stepper_ids.size() == stepper_positions.size());
+
+    std::vector<int> stepper_temperatures;
+    _nh.getParam(current_ns + "temperature", stepper_temperatures);
+    assert(stepper_positions.size() == stepper_temperatures.size());
+
+     std::vector<double> stepper_voltages;
+    _nh.getParam(current_ns + "voltage", stepper_voltages);
+    assert(stepper_temperatures.size() == stepper_voltages.size());
+
+    std::vector<int> stepper_min_positions;
+    _nh.getParam(current_ns + "min_position", stepper_min_positions);
+    assert(stepper_voltages.size() == stepper_min_positions.size());
+
+    std::vector<int> stepper_max_positions;
+    _nh.getParam(current_ns + "max_position", stepper_max_positions);
+    assert(stepper_min_positions.size() == stepper_max_positions.size());
+
+    std::vector<int> stepper_model_numbers;
+    _nh.getParam(current_ns + "model_number", stepper_model_numbers);
+    assert(stepper_max_positions.size() == stepper_model_numbers.size());
+
+     std::vector<std::string> stepper_firmwares;
+    _nh.getParam(current_ns + "firmware", stepper_firmwares);
+    assert(stepper_firmwares.size() == stepper_firmwares.size());
+
+    for (size_t i = 0; i < stepper_ids.size(); i++)
+    {
+        Reg tmp;
+        tmp.id = stepper_ids.at(i);
+        tmp.position = stepper_positions.at(i);
+        tmp.temperature = stepper_temperatures.at(i);
+        tmp.voltage = stepper_voltages.at(i);
+        tmp.min_position = stepper_min_positions.at(i);
+        tmp.max_position = stepper_max_positions.at(i);
+        tmp.model_number = stepper_model_numbers.at(i);
+        tmp.firmware = stepper_firmwares.at(i);
+        fake_params.push_back(tmp);
+    }
 }
 
 } // ttl_driver

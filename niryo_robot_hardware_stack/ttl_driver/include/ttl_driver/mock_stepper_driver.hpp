@@ -96,9 +96,8 @@ class MockStepperDriver : public AbstractStepperDriver
         virtual int readFirmwareRunning(uint8_t id, bool &is_running) override;
 
     private:
-        std::map<uint8_t, FakeTtlData::FakeRegister> _map_fake_registers;
+        std::map<uint8_t, FakeTtlData::FakeStepperRegister> _map_fake_registers;
 
-        FakeTtlData::FakeConveyor _fake_conveyor;
         std::vector<uint8_t> _full_id_list;
         std::vector<uint8_t> _id_list;
 
