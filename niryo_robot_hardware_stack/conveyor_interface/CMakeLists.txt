@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0.2)
 project(conveyor_interface)
-message("\n## Reading ${PROJECT_NAME}/CMakeLists.txt...")
+message( STATUS "\n## Reading ${PROJECT_NAME}/CMakeLists.txt...")
 
 #retrieve architecture
 execute_process( COMMAND

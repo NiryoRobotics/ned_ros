@@ -117,11 +117,11 @@ bool JointHardwareInterface::init(ros::NodeHandle& /*rootnh*/, ros::NodeHandle &
         robot_hwnh.getParam("joint_" + to_string(j + 1) + "/bus", joint_bus);
         HardwareTypeEnum eType = HardwareTypeEnum(joint_type.c_str());
         BusProtocolEnum eBusProto = BusProtocolEnum(joint_bus.c_str());
-
         // gather info in joint  states (polymorphic)
         // CC use factory in state directly ?
         if (eType == EHardwareType::STEPPER || eType == EHardwareType::FAKE_STEPPER_MOTOR)
-        {  // stepper
+        {
+            // stepper
             std::string currentNamespace = "steppers/stepper_" + to_string(currentIdStepper);
 
             auto stepperState = std::make_shared<StepperMotorState>(joint_name,
@@ -144,13 +144,13 @@ bool JointHardwareInterface::init(ros::NodeHandle& /*rootnh*/, ros::NodeHandle &
             currentIdStepper++;
         }
         else if (eType != EHardwareType::UNKNOWN)
-        {  // dynamixel
+        {
+            // dynamixel
             std::string currentNamespace = "dynamixels/dxl_" + to_string(currentIdDxl);
 
             auto dxlState = std::make_shared<DxlMotorState>(joint_name,
                                                             eType,
                                                             common::model::EComponentType::JOINT,
-                                                            eBusProto,
                                                             static_cast<uint8_t>(joint_id_config));
 
             if (initDxl(robot_hwnh, dxlState, currentNamespace))
@@ -388,7 +388,7 @@ void JointHardwareInterface::sendInitMotorsParams()
                 auto dxlState = dynamic_pointer_cast<DxlMotorState>(jState);
                 if (dxlState && jState->getBusProtocol() == EBusProtocol::TTL)
                 {
-                    if (!_ttl_interface->setMotorPID(dxlState))
+                    if (!_ttl_interface->setMotorPID(*dxlState))
                     {
                         ROS_ERROR("JointHardwareInterface::sendInitMotorsParams - Error setting motor PID for dynamixel id %d",
                                 static_cast<int>(dxlState->getId()));

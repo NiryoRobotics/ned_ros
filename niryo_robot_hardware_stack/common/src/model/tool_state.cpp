@@ -40,7 +40,7 @@ ToolState::ToolState() :
  * @param id
  */
 ToolState::ToolState(std::string name, EHardwareType type, uint8_t id) :
-    DxlMotorState(type, EComponentType::TOOL, EBusProtocol::TTL, id),
+    DxlMotorState(type, EComponentType::TOOL, id),
     _tool_name(name)
 {
 }

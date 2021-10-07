@@ -172,7 +172,8 @@ int MockStepperDriver::writeSingleCmd(const std::shared_ptr<common::model::Abstr
 }
 
 /**
- * @brief MockStepperDriver::readData
+ * @brief MockStepperDriver::readData a fake can driver have to make fake events.
+ * This function generate generate control byte and id for each loop to send all type of events
  * @param id
  * @param control_byte
  * @param rxBuf
@@ -183,6 +184,7 @@ uint8_t MockStepperDriver::readData(uint8_t& id, int& control_byte,
                                     std::array<uint8_t, MAX_MESSAGE_LENGTH>& rxBuf,
                                     std::string& error_message)
 {
+    // change ID to generate event on the next id
     _current_id = _id_list[_next_index];
     id = _current_id;
     _next_index++;
@@ -190,6 +192,8 @@ uint8_t MockStepperDriver::readData(uint8_t& id, int& control_byte,
     {
         _next_index = 0;
     }
+
+    // change control byte to all type of data can be read
     if (id == _fake_conveyor.id && _next_control_byte != CAN_DATA_CONVEYOR_STATE)
     {
         control_byte = CAN_DATA_CONVEYOR_STATE;
@@ -420,6 +424,8 @@ uint8_t MockStepperDriver::sendUpdateConveyorId(uint8_t old_id, uint8_t new_id)
 
 /**
  * @brief MockStepperDriver::interpretePositionStatus
+ * The mission of readData in fake driver is no longer getting datat. It will generate only event.
+ * So interpretePositionStatus or interprete* send final value corresponding to the event
  * @param data
  * @return
  */

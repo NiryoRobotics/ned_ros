@@ -23,7 +23,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <map>
 #include <string>
 #include <vector>
-#include <ros/ros.h>
+
 namespace ttl_driver
 {
 
@@ -110,7 +110,33 @@ int MockDxlDriver::reboot(uint8_t id)
  */
 std::string MockDxlDriver::interpreteErrorState(uint32_t /*hw_state*/) const
 {
-    return "";
+  return "";
+}
+
+/**
+ * @brief MockDxlDriver::readCustom
+ * @param address
+ * @param data_len
+ * @param id
+ * @param data
+ * @return
+ */
+int MockDxlDriver::readCustom(uint16_t address, uint8_t data_len, uint8_t id, uint32_t &data)
+{
+  return COMM_SUCCESS;
+}
+
+/**
+ * @brief MockDxlDriver::writeCustom
+ * @param address
+ * @param data_len
+ * @param id
+ * @param data
+ * @return
+ */
+int MockDxlDriver::writeCustom(uint16_t address, uint8_t data_len, uint8_t id, uint32_t data)
+{
+  return COMM_SUCCESS;
 }
 
 /**
@@ -243,7 +269,7 @@ int MockDxlDriver::syncWriteTorqueEnable(const std::vector<uint8_t> &id_list, co
 }
 
 /**
- * @brief MockDxlDriver::syncWritePositionGoal
+ * @brief MockDxlDriver::syncWritePositionGoal get position goal and set it as the current position of each joint
  * @param id_list
  * @param position_list
  * @return
@@ -253,12 +279,13 @@ int MockDxlDriver::syncWritePositionGoal(const std::vector<uint8_t> &id_list, co
     if (id_list.size() != position_list.size())
         return LEN_ID_DATA_NOT_SAME;
 
-    // Create a map to store the frequency of each element in vector
+    // Create a map to store the frequency of each element in id_list. It helps find out which ID is redondant
     std::map<uint8_t, uint8_t> countMap;
     for (size_t i = 0; i < id_list.size(); i++)
     {
         if (!_map_fake_registers.count(id_list.at(i)))
             return COMM_TX_ERROR;
+        // set goal position as the current position
         _map_fake_registers.at(id_list.at(i)).position = position_list.at(i);
         auto result = countMap.insert(std::pair<uint8_t, uint8_t>(id_list[i], 1));
         if (result.second == false)
@@ -430,7 +457,8 @@ int MockDxlDriver::syncReadVoltage(const std::vector<uint8_t> &id_list, std::vec
  * @param hw_error_list
  * @return
  */
-int MockDxlDriver::syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list)
+int MockDxlDriver::syncReadHwErrorStatus(const std::vector<uint8_t> &id_list,
+                                         std::vector<uint32_t> &hw_error_list)
 {
     std::map<uint8_t, uint8_t> countMap;
     for (auto & id : id_list)
@@ -463,7 +491,8 @@ int MockDxlDriver::setLed(uint8_t id, uint32_t led_value)
  * @param led_list
  * @return
  */
-int MockDxlDriver::syncWriteLed(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &led_list)
+int MockDxlDriver::syncWriteLed(const std::vector<uint8_t> &id_list,
+                                const std::vector<uint32_t> &led_list)
 {
     return COMM_SUCCESS;
 }
@@ -485,7 +514,8 @@ int MockDxlDriver::setGoalTorque(uint8_t id, uint32_t torque)
  * @param torque_list
  * @return
  */
-int MockDxlDriver::syncWriteTorqueGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &torque_list)
+int MockDxlDriver::syncWriteTorqueGoal(const std::vector<uint8_t> &id_list,
+                                       const std::vector<uint32_t> &torque_list)
 {
     return COMM_SUCCESS;
 }
@@ -498,7 +528,9 @@ int MockDxlDriver::syncWriteTorqueGoal(const std::vector<uint8_t> &id_list, cons
  */
 int MockDxlDriver::setPositionPGain(uint8_t id, uint32_t gain)
 {
-    return COMM_SUCCESS;
+  if (_map_fake_registers.count(id))
+      _map_fake_registers.at(id).position_p_gain = gain;
+  return COMM_SUCCESS;
 }
 
 /**
@@ -509,7 +541,9 @@ int MockDxlDriver::setPositionPGain(uint8_t id, uint32_t gain)
  */
 int MockDxlDriver::setPositionIGain(uint8_t id, uint32_t gain)
 {
-    return COMM_SUCCESS;
+  if (_map_fake_registers.count(id))
+      _map_fake_registers.at(id).position_i_gain = gain;
+  return COMM_SUCCESS;
 }
 
 /**
@@ -520,7 +554,9 @@ int MockDxlDriver::setPositionIGain(uint8_t id, uint32_t gain)
  */
 int MockDxlDriver::setPositionDGain(uint8_t id, uint32_t gain)
 {
-    return COMM_SUCCESS;
+  if (_map_fake_registers.count(id))
+      _map_fake_registers.at(id).position_d_gain = gain;
+  return COMM_SUCCESS;
 }
 
 /**
@@ -531,7 +567,9 @@ int MockDxlDriver::setPositionDGain(uint8_t id, uint32_t gain)
  */
 int MockDxlDriver::setVelocityPGain(uint8_t id, uint32_t gain)
 {
-    return COMM_SUCCESS;
+  if (_map_fake_registers.count(id))
+      _map_fake_registers.at(id).velocity_p_gain = gain;
+  return COMM_SUCCESS;
 }
 
 /**
@@ -542,7 +580,9 @@ int MockDxlDriver::setVelocityPGain(uint8_t id, uint32_t gain)
  */
 int MockDxlDriver::setVelocityIGain(uint8_t id, uint32_t gain)
 {
-    return COMM_SUCCESS;
+  if (_map_fake_registers.count(id))
+      _map_fake_registers.at(id).velocity_i_gain = gain;
+  return COMM_SUCCESS;
 }
 
 /**
@@ -553,7 +593,9 @@ int MockDxlDriver::setVelocityIGain(uint8_t id, uint32_t gain)
  */
 int MockDxlDriver::setff1Gain(uint8_t id, uint32_t gain)
 {
-    return COMM_SUCCESS;
+  if (_map_fake_registers.count(id))
+      _map_fake_registers.at(id).ff1_gain = gain;
+  return COMM_SUCCESS;
 }
 
 /**
@@ -564,7 +606,100 @@ int MockDxlDriver::setff1Gain(uint8_t id, uint32_t gain)
  */
 int MockDxlDriver::setff2Gain(uint8_t id, uint32_t gain)
 {
-    return COMM_SUCCESS;
+  if (_map_fake_registers.count(id))
+      _map_fake_registers.at(id).ff2_gain = gain;
+  return COMM_SUCCESS;
+}
+
+/**
+ * @brief MockDxlDriver::readPositionPGain
+ * @param id
+ * @param gain
+ * @return
+ */
+int MockDxlDriver::readPositionPGain(uint8_t id, uint32_t& gain)
+{
+  if (_map_fake_registers.count(id))
+      gain = _map_fake_registers.at(id).position_p_gain;
+  return COMM_SUCCESS;
+}
+
+/**
+ * @brief MockDxlDriver::readPositionIGain
+ * @param id
+ * @param gain
+ * @return
+ */
+int MockDxlDriver::readPositionIGain(uint8_t id, uint32_t& gain)
+{
+  if (_map_fake_registers.count(id))
+      gain = _map_fake_registers.at(id).position_i_gain;
+  return COMM_SUCCESS;
+}
+
+/**
+ * @brief MockDxlDriver::readPositionDGain
+ * @param id
+ * @param gain
+ * @return
+ */
+int MockDxlDriver::readPositionDGain(uint8_t id, uint32_t& gain)
+{
+  if (_map_fake_registers.count(id))
+      gain = _map_fake_registers.at(id).position_d_gain;
+  return COMM_SUCCESS;
+}
+
+/**
+ * @brief MockDxlDriver::readVelocityPGain
+ * @param id
+ * @param gain
+ * @return
+ */
+int MockDxlDriver::readVelocityPGain(uint8_t id, uint32_t& gain)
+{
+  if (_map_fake_registers.count(id))
+      gain = _map_fake_registers.at(id).velocity_p_gain;
+  return COMM_SUCCESS;
+}
+
+/**
+ * @brief MockDxlDriver::readVelocityIGain
+ * @param id
+ * @param gain
+ * @return
+ */
+int MockDxlDriver::readVelocityIGain(uint8_t id, uint32_t& gain)
+{
+  if (_map_fake_registers.count(id))
+      gain = _map_fake_registers.at(id).velocity_i_gain;
+  return COMM_SUCCESS;
+}
+
+/**
+ * @brief MockDxlDriver::readFF1Gain
+ * @param id
+ * @param gain
+ * @return
+ */
+int MockDxlDriver::readFF1Gain(uint8_t id, uint32_t& gain)
+{
+  if (_map_fake_registers.count(id))
+      gain = _map_fake_registers.at(id).ff1_gain;
+  return COMM_SUCCESS;
+}
+
+/**
+ * @brief MockDxlDriver::readff2Gain
+ * @param id
+ * @param gain
+ * @return
+ */
+int MockDxlDriver::readFF2Gain(uint8_t id, uint32_t& gain)
+{
+  if (_map_fake_registers.count(id))
+      gain = _map_fake_registers.at(id).ff2_gain;
+  return COMM_SUCCESS;
 }
 
 /**

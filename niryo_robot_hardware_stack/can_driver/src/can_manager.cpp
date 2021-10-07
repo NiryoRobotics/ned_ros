@@ -179,7 +179,8 @@ int CanManager::setupCommunication()
 }
 
 /**
- * @brief CanManager::addHardwareComponent
+ * @brief CanManager::addHardwareComponent add the state of a hardware component to can manager
+ * It can be a joint, conveyor...
  * @param state
  */
 void CanManager::addHardwareComponent(const std::shared_ptr<common::model::AbstractHardwareState>& state)
@@ -221,6 +222,10 @@ void CanManager::removeHardwareComponent(uint8_t id)
 //  commands
 // ****************
 
+/**
+ * @brief CanManager::changeId changeId of a hw component. Ex: Using when more than 1 conveyor,
+ * we need to change id of conveyor to accept the next one.
+ */
 int CanManager::changeId(common::model::EHardwareType motor_type, uint8_t old_id, uint8_t new_id)
 {
     int ret = CAN_FAIL;
@@ -424,37 +429,46 @@ void CanManager::_verifyMotorTimeoutLoop()
 {
     while (ros::ok())
     {
-        std::lock_guard<std::mutex> lck(_stepper_timeout_mutex);
         std::vector<uint8_t> timeout_motors;
 
-        for (auto const &map_it : _state_map)
-        {
-            // we locate the motor for the current id in _all_motor_connected
-            auto position = std::find(_all_motor_connected.begin(), _all_motor_connected.end(), map_it.first);
-            auto state = std::dynamic_pointer_cast<StepperMotorState>(map_it.second);
+        // using have_motor to notify that the connection is down when no motors recognize yet
+        bool have_motor = false;
 
-            // if it has timeout, we remove it from the vector
-            if (state && ros::Time::now().toSec() - state->getLastTimeRead() > getCurrentTimeout())
+        if (_state_map.size() == _all_motor_connected.size())
+        {
+            for (auto const &map_it : _state_map)
             {
-                timeout_motors.emplace_back(map_it.first);
-                if (position != _all_motor_connected.end())
-                    _all_motor_connected.erase(position);
-            }  // else, if it is not in the list of connected motors, we add it
-            else if (position == _all_motor_connected.end())
-            {
-                _all_motor_connected.push_back(map_it.first);
+                // using mutex in for to protect only state_map if needed
+                std::lock_guard<std::mutex> lck(_stepper_timeout_mutex);
+                have_motor = true;
+                // we locate the motor for the current id in _all_motor_connected
+                auto position = std::find(_all_motor_connected.begin(), _all_motor_connected.end(), map_it.first);
+                auto state = std::dynamic_pointer_cast<StepperMotorState>(map_it.second);
+
+                // if it has timeout, we remove it from the vector
+                if (state && ros::Time::now().toSec() - state->getLastTimeRead() > getCurrentTimeout())
+                {
+                    timeout_motors.emplace_back(map_it.first);
+                    if (position != _all_motor_connected.end())
+                        _all_motor_connected.erase(position);
+                }  // else, if it is not in the list of connected motors, we add it (? _all_motor_connected got from scan, why add if id of state not found)
+                else if (position == _all_motor_connected.end())
+                {
+                    _all_motor_connected.push_back(map_it.first);
+                }
             }
         }
 
         // if we detected motors in timeout, we change the state and display error message
-        if (!timeout_motors.empty())
+        if (!timeout_motors.empty() || !have_motor)
         {
             _is_connection_ok = false;
 
             std::ostringstream ss;
-            ss <<  "Disconnected stepper motor(s):";
+            ss <<  "No motor found or Disconnected stepper motor(s)(";
             for (auto const& m : timeout_motors)
                 ss << " " << static_cast<int>(m) << ",";
+            ss << ")";
             _debug_error_message = ss.str();
             _debug_error_message.pop_back();
         }
@@ -462,7 +476,7 @@ void CanManager::_verifyMotorTimeoutLoop()
         {
             _is_connection_ok = true;
         }
-        ros::Duration(0.1).sleep();
+        ros::Duration(0.5).sleep();
     }
 }
 
@@ -597,7 +611,7 @@ void CanManager::startCalibration()
  */
 void CanManager::resetCalibration()
 {
-    ROS_DEBUG("CanManager::resetCalibration: reseting...");
+    ROS_DEBUG_THROTTLE(0.5, "CanManager::resetCalibration: reseting...");
 
     _calibration_status = EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED;
 }
@@ -695,7 +709,7 @@ CanManager::getHardwareState(uint8_t motor_id) const
 // ********************
 
 /**
- * @brief TtlManager::addHardwareDriver
+ * @brief TtlManager::addHardwareDriver add driver corresponding to a type of hardware
  * @param hardware_type
  */
 void CanManager::addHardwareDriver(common::model::EHardwareType hardware_type)
@@ -719,7 +733,7 @@ void CanManager::addHardwareDriver(common::model::EHardwareType hardware_type)
 }
 
 /**
-* @brief CanManager::readFakeConfig
+* @brief CanManager::readFakeConfig read the config for fake driver.
 */
 void CanManager::readFakeConfig()
 {
@@ -741,7 +755,7 @@ void CanManager::readFakeConfig()
 }
 
 /**
- * @brief CanManager::retrieveFakeMotorData
+ * @brief CanManager::retrieveFakeMotorData get config for motors
  * @param current_ns
  * @param fake_params
  */

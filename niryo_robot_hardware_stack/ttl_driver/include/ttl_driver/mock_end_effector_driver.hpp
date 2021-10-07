@@ -25,7 +25,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <sstream>
 #include <cassert>
 
-#include "abstract_motor_driver.hpp"
+#include "abstract_end_effector_driver.hpp"
 #include "fake_ttl_data.hpp"
 
 #include "common/model/action_type_enum.hpp"
@@ -37,9 +37,9 @@ namespace ttl_driver
 {
 
 /**
- * @brief The EndEffectorDriver class
+ * @brief The MockEndEffectorDriver class
  */
-class MockEndEffectorDriver : public AbstractTtlDriver
+class MockEndEffectorDriver : public AbstractEndEffectorDriver
 {
     public:
         MockEndEffectorDriver(FakeTtlData data);
@@ -67,48 +67,35 @@ class MockEndEffectorDriver : public AbstractTtlDriver
         virtual int writeSyncCmd(int type, const std::vector<uint8_t>& ids, const std::vector<uint32_t>& params) override;
 
     public:
-        int readButton1Status(uint8_t id, common::model::EActionType& action);
-        int readButton2Status(uint8_t id, common::model::EActionType& action);
-        int readButton3Status(uint8_t id, common::model::EActionType& action);
-
-        int readAccelerometerXValue(uint8_t id, uint32_t& x_value);
-        int readAccelerometerYValue(uint8_t id, uint32_t& y_value);
-        int readAccelerometerZValue(uint8_t id, uint32_t& z_value);
-
-        int readCollisionStatus(uint8_t id, bool& status);
-
-        int readDigitalInput(uint8_t id, bool& in);
-        int writeDigitalOutput(uint8_t id, bool out);
-
-        common::model::EActionType interpreteActionValue(uint32_t value);
         virtual std::string interpreteErrorState(uint32_t hw_state) const override;
 
         virtual int ping(uint8_t id) override;
+
+        // AbstractEndEffectorDriver
+        int readButton1Status(uint8_t id, common::model::EActionType& action) override;
+        int readButton2Status(uint8_t id, common::model::EActionType& action) override;
+        int readButton3Status(uint8_t id, common::model::EActionType& action) override;
+
+        int readAccelerometerXValue(uint8_t id, uint32_t& x_value) override;
+        int readAccelerometerYValue(uint8_t id, uint32_t& y_value) override;
+        int readAccelerometerZValue(uint8_t id, uint32_t& z_value) override;
+
+        int readCollisionStatus(uint8_t id, bool& status) override;
+
+        int readDigitalInput(uint8_t id, bool& in) override;
+        int writeDigitalOutput(uint8_t id, bool out) override;
+
+        common::model::EActionType interpreteActionValue(uint32_t value) override;
+
     protected:
         virtual std::string interpreteFirmwareVersion(uint32_t fw_version) const override;
 
     private:
         void initializeFakeData(FakeTtlData);
+
     private:
-        /*struct SEndEffectorInfo {
-            uint32_t button1_action{0};
-            uint32_t button2_action{0};
-            uint32_t button3_action{0};
-            
-            uint32_t x_value{1};
-            uint32_t y_value{1};
-            uint32_t z_value{1};
-            
-            bool digitalInput = true;
-            bool DigitalOutput = true;
-        };*/
 
         FakeTtlData::FakeEndEffector _ee_info;
-
-        /*uint8_t _id{0};
-        uint32_t _temperature{32};
-        uint32_t _voltage{5000};
-        std::string _firmware_version{"v1.0.0"}*/;
 
 };
 

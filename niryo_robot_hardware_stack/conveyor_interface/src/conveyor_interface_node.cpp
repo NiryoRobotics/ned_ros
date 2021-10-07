@@ -41,19 +41,20 @@ int main(int argc, char **argv)
     ros::NodeHandle nh("~");
     ros::NodeHandle nh_conveyor("conveyor");
 
-    bool can_enabled{false};
-    nh.getParam("can_enabled", can_enabled);
+    std::string hardware_version;
+    nh.getParam("hardware_version", hardware_version);
 
     std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_driver;
     std::shared_ptr<can_driver::CanInterfaceCore> can_driver;
 
-    if (!can_enabled)
+    if (can_enabled)
     {
         ros::NodeHandle nh_ttl("ttl_driver");
         ttl_driver = std::make_shared<ttl_driver::TtlInterfaceCore>(nh_ttl);
         ros::Duration(0.25).sleep();
     }
-    else
+
+    if (ttl_enabled)
     {
         ros::NodeHandle nh_can("can_driver");
         can_driver = std::make_shared<can_driver::CanInterfaceCore>(nh_can);

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0.2)
 project(ttl_debug_tools)
-message("\n## Reading ${PROJECT_NAME}/CMakeLists.txt...")
+message( STATUS "\n## Reading ${PROJECT_NAME}/CMakeLists.txt...")
 
 ## c++ options
 ## Compile as C++14, supported in ROS Melodic and newer
