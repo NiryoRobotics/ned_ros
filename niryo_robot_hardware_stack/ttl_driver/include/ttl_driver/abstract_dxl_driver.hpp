@@ -33,7 +33,7 @@ namespace ttl_driver
 class AbstractDxlDriver : public AbstractMotorDriver
 {
     public:
-        AbstractDxlDriver() {}
+        AbstractDxlDriver();
         AbstractDxlDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
                           std::shared_ptr<dynamixel::PacketHandler> packetHandler);
         virtual ~AbstractDxlDriver() override;
@@ -63,6 +63,14 @@ class AbstractDxlDriver : public AbstractMotorDriver
         virtual int setVelocityIGain(uint8_t id, uint32_t gain ) = 0;
         virtual int setff1Gain(uint8_t id, uint32_t gain ) = 0;
         virtual int setff2Gain(uint8_t id, uint32_t gain ) = 0;
+
+        virtual int readPositionPGain(uint8_t id, uint32_t& gain) = 0;
+        virtual int readPositionIGain(uint8_t id, uint32_t& gain) = 0;
+        virtual int readPositionDGain(uint8_t id, uint32_t& gain) = 0;
+        virtual int readVelocityPGain(uint8_t id, uint32_t& gain) = 0;
+        virtual int readVelocityIGain(uint8_t id, uint32_t& gain) = 0;
+        virtual int readFF1Gain(uint8_t id, uint32_t& gain) = 0;
+        virtual int readFF2Gain(uint8_t id, uint32_t& gain) = 0;
 
         // ram read
         virtual int readLoad(uint8_t id, uint32_t& present_load ) = 0;

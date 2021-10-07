@@ -110,14 +110,17 @@ class TtlManager : public common::model::IBusManager
 
         int setLeds(int led);
 
-        int sendCustomCommand(common::model::EHardwareType motor_type, uint8_t id, int reg_address, int value, int byte_number);
-        int readCustomCommand(common::model::EHardwareType motor_type, uint8_t id, int32_t reg_address, int &value, int byte_number);
+        int sendCustomCommand(uint8_t id, int reg_address, int value, int byte_number);
+        int readCustomCommand(uint8_t id, int32_t reg_address, int &value, int byte_number);
 
         // read status
         bool readPositionStatus();
         bool readEndEffectorStatus();
         bool readHwStatus();
-
+        int readMotorPID(uint8_t id,
+                         uint32_t& pos_p_gain, uint32_t& pos_i_gain, uint32_t& pos_d_gain,
+                         uint32_t& vel_p_gain, uint32_t& vel_i_gain,
+                         uint32_t& ff1_gain, uint32_t& ff2_gain);
 
         //calibration
         void startCalibration() override;

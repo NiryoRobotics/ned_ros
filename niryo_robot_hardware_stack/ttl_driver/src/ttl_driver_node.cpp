@@ -104,7 +104,6 @@ void addJointToTtlInterface(std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_in
             auto dxlState = std::make_shared<DxlMotorState>(joint_name,
                                                             eType,
                                                             common::model::EComponentType::JOINT,
-                                                            eBusProto,
                                                             static_cast<uint8_t>(joint_id_config));
             if (dxlState)
             {

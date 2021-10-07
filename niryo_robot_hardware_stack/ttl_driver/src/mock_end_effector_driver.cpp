@@ -28,7 +28,8 @@ namespace ttl_driver
 /**
  * @brief MockEndEffectorDriver::EndEffectorDriver
  */
-MockEndEffectorDriver::MockEndEffectorDriver(FakeTtlData data)
+MockEndEffectorDriver::MockEndEffectorDriver(FakeTtlData data) :
+  AbstractEndEffectorDriver()
 {
     initializeFakeData(data);
 }

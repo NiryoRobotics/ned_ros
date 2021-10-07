@@ -30,6 +30,12 @@ namespace ttl_driver
 
 /**
  * @brief AbstractTtlDriver::AbstractTtlDriver
+ */
+AbstractTtlDriver::AbstractTtlDriver()
+{}
+
+/**
+ * @brief AbstractTtlDriver::AbstractTtlDriver
  * @param portHandler
  * @param packetHandler
  */
@@ -113,6 +119,32 @@ int AbstractTtlDriver::reboot(uint8_t id)
         result = dxl_error;
 
     return result;
+}
+
+/**
+ * @brief AbstractTtlDriver::readCustom
+ * @param address
+ * @param data_len
+ * @param id
+ * @param data
+ * @return
+ */
+int AbstractTtlDriver::readCustom(uint16_t address, uint8_t data_len, uint8_t id, uint32_t &data)
+{
+    return read(address, data_len, id, data);
+}
+
+/**
+ * @brief AbstractTtlDriver::writeCustom
+ * @param address
+ * @param data_len
+ * @param id
+ * @param data
+ * @return
+ */
+int AbstractTtlDriver::writeCustom(uint16_t address, uint8_t data_len, uint8_t id, uint32_t data)
+{
+    return write(address, data_len, id, data);
 }
 
 /**

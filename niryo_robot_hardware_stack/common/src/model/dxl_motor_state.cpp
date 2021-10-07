@@ -41,6 +41,14 @@ DxlMotorState::DxlMotorState()
 
 /**
  * @brief DxlMotorState::DxlMotorState
+ */
+DxlMotorState::DxlMotorState(uint8_t id) :
+    DxlMotorState("unknown", EHardwareType::UNKNOWN, EComponentType::JOINT, id)
+{}
+
+
+/**
+ * @brief DxlMotorState::DxlMotorState
  * @param type
  * @param component_type
  * @param bus_proto
@@ -48,9 +56,8 @@ DxlMotorState::DxlMotorState()
  */
 DxlMotorState::DxlMotorState(EHardwareType type,
                              EComponentType component_type,
-                             EBusProtocol bus_proto,
                              uint8_t id) :
-    DxlMotorState("unknown", type, component_type, bus_proto, id)
+    DxlMotorState("unknown", type, component_type, id)
 {}
 
 /**
@@ -64,9 +71,8 @@ DxlMotorState::DxlMotorState(EHardwareType type,
 DxlMotorState::DxlMotorState(std::string name,
                              EHardwareType type,
                              EComponentType component_type,
-                             EBusProtocol bus_proto,
                              uint8_t id) :
-    JointState(name, type, component_type, bus_proto, id)
+    JointState(name, type, component_type, EBusProtocol::TTL, id)
 {
     // to put in config ?
 

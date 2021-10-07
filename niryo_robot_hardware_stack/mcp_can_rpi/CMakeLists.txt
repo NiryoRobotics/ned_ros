@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0.2)
 project(mcp_can_rpi)
-message("\n## Reading ${PROJECT_NAME}/CMakeLists.txt...")
+message( STATUS "\n## Reading ${PROJECT_NAME}/CMakeLists.txt...")
 
 
 #retrieve architecture
