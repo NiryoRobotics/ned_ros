@@ -35,11 +35,12 @@ class DxlMotorState : public JointState
 {
     public:
         DxlMotorState();
+        DxlMotorState(uint8_t id);
         DxlMotorState(EHardwareType type, EComponentType component_type,
-                      EBusProtocol bus_proto, uint8_t id);
+                      uint8_t id);
 
         DxlMotorState(std::string name, EHardwareType type, EComponentType component_type,
-                      EBusProtocol bus_proto, uint8_t id);
+                      uint8_t id);
         DxlMotorState(const DxlMotorState& state);
 
         virtual ~DxlMotorState() override;

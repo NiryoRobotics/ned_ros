@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.0.2)
 project(ttl_driver)
-message("\n## Reading ${PROJECT_NAME}/CMakeLists.txt...")
+message( STATUS "\n## Reading ${PROJECT_NAME}/CMakeLists.txt...")
 
 
 #retrieve architecture
@@ -47,6 +47,8 @@ add_service_files(
   FILES
     ReadCustomValue.srv
     SendCustomValue.srv
+    WritePIDValue.srv
+    ReadPIDValue.srv
 )
 
 generate_messages(
@@ -91,6 +93,7 @@ include_directories(
 ## Declare libs and execs
 add_library(${PROJECT_NAME}
   src/abstract_dxl_driver.cpp
+  src/abstract_end_effector_driver.cpp
   src/abstract_motor_driver.cpp
   src/abstract_stepper_driver.cpp
   src/abstract_ttl_driver.cpp

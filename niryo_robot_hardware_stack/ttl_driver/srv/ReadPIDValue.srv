@@ -1,0 +1,16 @@
+# Check XL-320 and XL-430 reference doc for
+# the complete register table
+
+uint8 id
+---
+uint32 pos_p_gain
+uint32 pos_i_gain
+uint32 pos_d_gain
+
+uint32 vel_p_gain
+uint32 vel_i_gain
+
+uint32 ff1_gain
+uint32 ff2_gain
+int32 status
+string message

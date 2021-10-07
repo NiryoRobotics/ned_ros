@@ -1,5 +1,5 @@
 /*
-    abstract_motor_driver.cpp
+    abstract_end_effector_driver.cpp
     Copyright (C) 2020 Niryo
     All rights reserved.
     This program is free software: you can redistribute it and/or modify
@@ -14,50 +14,53 @@
     along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
-#include "ttl_driver/abstract_motor_driver.hpp"
+#include "ttl_driver/abstract_end_effector_driver.hpp"
 
 #include <sstream>
 #include <vector>
 #include <string>
 
 using ::std::shared_ptr;
+using ::std::vector;
+using ::std::string;
+using ::std::ostringstream;
 
 namespace ttl_driver
 {
 
 /**
- * @brief AbstractMotorDriver::AbstractMotorDriver
+ * @brief AbstractEndEffectorDriver::AbstractEndEffectorDriver
  */
-AbstractMotorDriver::AbstractMotorDriver() :
+AbstractEndEffectorDriver::AbstractEndEffectorDriver() :
   AbstractTtlDriver ()
 {
 }
 
 /**
- * @brief AbstractMotorDriver::AbstractMotorDriver
+ * @brief AbstractEndEffectorDriver::AbstractEndEffectorDriver
  * @param portHandler
  * @param packetHandler
  */
-AbstractMotorDriver::AbstractMotorDriver(shared_ptr<dynamixel::PortHandler> portHandler,
-                                         shared_ptr<dynamixel::PacketHandler> packetHandler) :
-    AbstractTtlDriver(portHandler, packetHandler)
+AbstractEndEffectorDriver::AbstractEndEffectorDriver(shared_ptr<dynamixel::PortHandler> portHandler,
+                                                     shared_ptr<dynamixel::PacketHandler> packetHandler) :
+  AbstractTtlDriver (portHandler, packetHandler)
 {
 }
 
 /**
- * @brief AbstractMotorDriver::~AbstractMotorDriver
+ * @brief AbstractEndEffectorDriver::~AbstractEndEffectorDriver
  */
-AbstractMotorDriver::~AbstractMotorDriver()
+AbstractEndEffectorDriver::~AbstractEndEffectorDriver()
 {
 }
 
 /**
- * @brief AbstractMotorDriver::str
+ * @brief AbstractEndEffectorDriver::str : build a string describing the object. For debug purpose only
  * @return
  */
-std::string AbstractMotorDriver::str() const
+std::string AbstractEndEffectorDriver::str() const
 {
-    return "Motor Driver (" + AbstractTtlDriver::str() + ")";
+  return "AbstractEndEffectorDriver (" + AbstractTtlDriver::str() + ")";
 }
 
 }  // namespace ttl_driver

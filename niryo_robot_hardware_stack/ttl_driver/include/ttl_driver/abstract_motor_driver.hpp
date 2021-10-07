@@ -40,7 +40,7 @@ namespace ttl_driver
 class AbstractMotorDriver : public AbstractTtlDriver
 {
 public:
-    AbstractMotorDriver() {}
+    AbstractMotorDriver();
     AbstractMotorDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
                         std::shared_ptr<dynamixel::PacketHandler> packetHandler);
     virtual ~AbstractMotorDriver() override;

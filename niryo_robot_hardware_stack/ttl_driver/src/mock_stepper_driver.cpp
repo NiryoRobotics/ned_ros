@@ -30,8 +30,7 @@ namespace ttl_driver
 
 /**
  * @brief MockStepperDriver::MockStepperDriver
- * @param portHandler
- * @param packetHandler
+ * @param data
  */
 MockStepperDriver::MockStepperDriver(FakeTtlData data)
 {

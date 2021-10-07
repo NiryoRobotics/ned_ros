@@ -38,7 +38,7 @@ class AbstractTtlDriver
 {
 
 public:
-    AbstractTtlDriver() {}
+    AbstractTtlDriver();
     AbstractTtlDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
                       std::shared_ptr<dynamixel::PacketHandler> packetHandler);
     virtual ~AbstractTtlDriver();
@@ -49,9 +49,8 @@ public:
     virtual int scan(std::vector<uint8_t>& id_list);
     virtual int reboot(uint8_t id);
 
-    // we use those commands in the children classes to actually read and write values in registers
-    int read(uint16_t address, uint8_t data_len, uint8_t id, uint32_t& data);
-    int write(uint16_t address, uint8_t data_len, uint8_t id, uint32_t data);
+    virtual int readCustom(uint16_t address, uint8_t data_len, uint8_t id, uint32_t& data);
+    virtual int writeCustom(uint16_t address, uint8_t data_len, uint8_t id, uint32_t data);
     
     virtual int writeSingleCmd(const std::shared_ptr<common::model::AbstractTtlSingleMotorCmd >& cmd) = 0;
     virtual int writeSyncCmd(int type, const std::vector<uint8_t>& ids, const std::vector<uint32_t>& params) = 0;
@@ -81,6 +80,10 @@ public:
 protected:
     int syncRead(uint8_t address, uint8_t data_len, const std::vector<uint8_t>& id_list, std::vector<uint32_t>& data_list);
     int syncWrite(uint8_t address, uint8_t data_len, const std::vector<uint8_t>& id_list, const std::vector<uint32_t>& data_list);
+
+    // we use those commands in the children classes to actually read and write values in registers
+    int read(uint16_t address, uint8_t data_len, uint8_t id, uint32_t& data);
+    int write(uint16_t address, uint8_t data_len, uint8_t id, uint32_t data);
 
     static constexpr int PING_WRONG_MODEL_NUMBER = 30;
 

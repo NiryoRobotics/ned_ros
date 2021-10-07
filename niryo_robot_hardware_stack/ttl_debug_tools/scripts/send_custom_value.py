@@ -48,7 +48,7 @@ if __name__ == '__main__':
 
     try:
         send_cmd = rospy.ServiceProxy(service_name, SendCustomValue)
-        response = send_cmd(args.type, args.id, args.value, args.address, args.size)
+        response = send_cmd(args.id, args.value, args.address, args.size)
         rospy.loginfo(response.message)
     except rospy.ServiceException as e:
         rospy.logwarn(e)

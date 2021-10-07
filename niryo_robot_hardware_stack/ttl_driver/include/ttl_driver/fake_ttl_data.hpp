@@ -38,6 +38,17 @@ class FakeTtlData
             uint32_t       min_position{0};
             uint32_t       max_position{0};
             uint16_t       model_number{0};
+
+            uint32_t       position_p_gain{0};
+            uint32_t       position_i_gain{0};
+            uint32_t       position_d_gain{0};
+
+            uint32_t       velocity_p_gain{0};
+            uint32_t       velocity_i_gain{0};
+
+            uint32_t       ff1_gain{0};
+            uint32_t       ff2_gain{0};
+
             std::string    firmware{};
         };
         

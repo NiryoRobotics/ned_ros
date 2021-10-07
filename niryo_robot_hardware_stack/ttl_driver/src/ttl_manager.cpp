@@ -836,6 +836,7 @@ bool TtlManager::readHwStatus()
     return res;
 }
 
+
 /**
  * @brief TtlManager::getAllIdsOnDxlBus
  * @param id_list
@@ -954,76 +955,219 @@ int TtlManager::setLeds(int led)
  * @param byte_number
  * @return
  */
-int TtlManager::sendCustomCommand(EHardwareType motor_type, uint8_t id,
-                                 int reg_address, int value,  int byte_number)
+int TtlManager::sendCustomCommand(uint8_t id, int reg_address, int value,  int byte_number)
 {
     int result = COMM_TX_FAIL;
     ROS_DEBUG("TtlManager::sendCustomCommand:\n"
-              "\t\t Motor type: %d, ID: %d, Value: %d, Address: %d, Size: %d",
-              static_cast<int>(motor_type), static_cast<int>(id), value,
+              "\t\t ID: %d, Value: %d, Address: %d, Size: %d",
+              static_cast<int>(id), value,
               reg_address, byte_number);
 
-    if (_driver_map.count(motor_type) && _driver_map.at(motor_type))
+    if (_state_map.count(id) != 0 && _state_map.at(id))
     {
-        result = _driver_map.at(motor_type)->write(static_cast<uint8_t>(reg_address),
-                                                   static_cast<uint8_t>(byte_number),
-                                                   id,
-                                                   static_cast<uint32_t>(value));
-        if (result != COMM_SUCCESS)
+        EHardwareType motor_type = _state_map.at(id)->getHardwareType();
+
+        if (_driver_map.count(motor_type) && _driver_map.at(motor_type))
         {
-            ROS_WARN("TtlManager::sendCustomCommand - Failed to write custom command: %d", result);
-            // TODO(Thuc): change TTL_WRITE_ERROR -> WRITE_ERROR
-            result = niryo_robot_msgs::CommandStatus::TTL_WRITE_ERROR;
+            result = _driver_map.at(motor_type)->writeCustom(static_cast<uint8_t>(reg_address),
+                                                             static_cast<uint8_t>(byte_number),
+                                                             id,
+                                                             static_cast<uint32_t>(value));
+            if (result != COMM_SUCCESS)
+            {
+                ROS_WARN("TtlManager::sendCustomCommand - Failed to write custom command: %d", result);
+                // TODO(Thuc): change TTL_WRITE_ERROR -> WRITE_ERROR
+                result = niryo_robot_msgs::CommandStatus::TTL_WRITE_ERROR;
+            }
+        }
+        else
+        {
+            ROS_ERROR_THROTTLE(1, "TtlManager::sendCustomCommand - driver for motor %s not available",
+                               HardwareTypeEnum(motor_type).toString().c_str());
+            result = niryo_robot_msgs::CommandStatus::WRONG_MOTOR_TYPE;
         }
     }
     else
     {
-        ROS_ERROR_THROTTLE(1, "TtlManager::sendCustomCommand - driver for motor %s not available",
-                           HardwareTypeEnum(motor_type).toString().c_str());
-        result = niryo_robot_msgs::CommandStatus::WRONG_MOTOR_TYPE;
+      ROS_ERROR_THROTTLE(1, "TtlManager::sendCustomCommand - driver for motor id %d unknown",
+                         static_cast<int>(id));
+      result = niryo_robot_msgs::CommandStatus::WRONG_MOTOR_TYPE;
     }
+
     ros::Duration(0.005).sleep();
     return result;
 }
 
 /**
  * @brief TtlManager::readCustomCommand
- * @param motor_type
  * @param id
  * @param reg_address
  * @param value
  * @param byte_number
  * @return
  */
-int TtlManager::readCustomCommand(EHardwareType motor_type, uint8_t id,
-                                 int32_t reg_address, int& value, int byte_number)
+int TtlManager::readCustomCommand(uint8_t id, int32_t reg_address, int& value, int byte_number)
 {
     int result = COMM_RX_FAIL;
-    ROS_DEBUG("TtlManager::readCustomCommand: Motor type: %d, ID: %d, Address: %d, Size: %d",
-              static_cast<int>(motor_type), static_cast<int>(id),
+    ROS_DEBUG("TtlManager::readCustomCommand: ID: %d, Address: %d, Size: %d",
+              static_cast<int>(id),
               static_cast<int>(reg_address), byte_number);
 
-    if (_driver_map.count(motor_type) && _driver_map.at(motor_type))
+    if (_state_map.count(id) != 0 && _state_map.at(id))
     {
-        uint32_t data = 0;
-        result = _driver_map.at(motor_type)->read(static_cast<uint8_t>(reg_address),
-                                                  static_cast<uint8_t>(byte_number),
-                                                  id,
-                                                  data);
-        value = static_cast<int>(data);
+        EHardwareType motor_type = _state_map.at(id)->getHardwareType();
 
-        if (result != COMM_SUCCESS)
+        if (_driver_map.count(motor_type) && _driver_map.at(motor_type))
         {
-            ROS_WARN("TtlManager::readCustomCommand - Failed to read custom command: %d", result);
-            result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
+            uint32_t data = 0;
+            result = _driver_map.at(motor_type)->readCustom(static_cast<uint8_t>(reg_address),
+                                                            static_cast<uint8_t>(byte_number),
+                                                            id,
+                                                            data);
+            value = static_cast<int>(data);
+
+            if (result != COMM_SUCCESS)
+            {
+                ROS_WARN("TtlManager::readCustomCommand - Failed to read custom command: %d", result);
+                result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
+            }
+        }
+        else
+        {
+            ROS_ERROR_THROTTLE(1, "TtlManager::readCustomCommand - driver for motor %s not available",
+                               HardwareTypeEnum(motor_type).toString().c_str());
+            result = niryo_robot_msgs::CommandStatus::WRONG_MOTOR_TYPE;
         }
     }
     else
     {
-        ROS_ERROR_THROTTLE(1, "TtlManager::readCustomCommand - driver for motor %s not available",
-                           HardwareTypeEnum(motor_type).toString().c_str());
-        result = niryo_robot_msgs::CommandStatus::WRONG_MOTOR_TYPE;
+      ROS_ERROR_THROTTLE(1, "TtlManager::readCustomCommand - driver for motor id %d unknown",
+                         static_cast<int>(id));
+      result = niryo_robot_msgs::CommandStatus::WRONG_MOTOR_TYPE;
     }
+
+    ros::Duration(0.005).sleep();
+    return result;
+}
+
+/**
+ * @brief TtlManager::readMotorPID
+ * @param id
+ * @param pos_p_gain
+ * @param pos_i_gain
+ * @param pos_d_gain
+ * @param vel_p_gain
+ * @param vel_i_gain
+ * @param ff1_gain
+ * @param ff2_gain
+ * @return
+ */
+int TtlManager::readMotorPID(uint8_t id,
+                             uint32_t& pos_p_gain, uint32_t& pos_i_gain, uint32_t& pos_d_gain,
+                             uint32_t& vel_p_gain, uint32_t& vel_i_gain,
+                             uint32_t& ff1_gain, uint32_t& ff2_gain)
+{
+    int result = COMM_RX_FAIL;
+
+    if (_state_map.count(id) != 0 && _state_map.at(id))
+    {
+        EHardwareType motor_type = _state_map.at(id)->getHardwareType();
+
+        if (_driver_map.count(motor_type) && _driver_map.at(motor_type))
+        {
+            auto driver = std::dynamic_pointer_cast<AbstractDxlDriver>(_driver_map.at(motor_type));
+
+            // position p gain
+            pos_p_gain = 0;
+            result = driver->readPositionPGain(id, pos_p_gain);
+
+            if (result != COMM_SUCCESS)
+            {
+                ROS_WARN("TtlManager::readMotorPID - Failed to read position p gain: %d", result);
+                result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
+                return result;
+            }
+
+            // position i gain
+            pos_i_gain = 0;
+            result = driver->readPositionIGain(id, pos_i_gain);
+
+            if (result != COMM_SUCCESS)
+            {
+                ROS_WARN("TtlManager::readMotorPID - Failed to read position i gain: %d", result);
+                result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
+                return result;
+            }
+
+            // position d gain
+            pos_d_gain = 0;
+            result = driver->readPositionDGain(id, pos_d_gain);
+
+            if (result != COMM_SUCCESS)
+            {
+                ROS_WARN("TtlManager::readMotorPID - Failed to read position d gain: %d", result);
+                result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
+                return result;
+            }
+
+            // velocity p gain
+            vel_p_gain = 0;
+            result = driver->readVelocityPGain(id, vel_p_gain);
+
+            if (result != COMM_SUCCESS)
+            {
+                ROS_WARN("TtlManager::readMotorPID - Failed to read velocity p gain: %d", result);
+                result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
+                return result;
+            }
+
+            // velocity i gain
+            vel_i_gain = 0;
+            result = driver->readVelocityIGain(id, vel_i_gain);
+
+            if (result != COMM_SUCCESS)
+            {
+                ROS_WARN("TtlManager::readMotorPID - Failed to read velocity i gain: %d", result);
+                result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
+                return result;
+            }
+
+            // ff1 gain
+            ff1_gain = 0;
+            result = driver->readFF1Gain(id, ff1_gain);
+
+            if (result != COMM_SUCCESS)
+            {
+                ROS_WARN("TtlManager::readMotorPID - Failed to read FF1 gain: %d", result);
+                result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
+                return result;
+            }
+
+            // ff2 gain
+            ff2_gain = 0;
+            result = driver->readFF2Gain(id, ff2_gain);
+
+            if (result != COMM_SUCCESS)
+            {
+                ROS_WARN("TtlManager::readMotorPID - Failed to read FF2 gain: %d", result);
+                result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
+                return result;
+            }
+        }
+        else
+        {
+            ROS_ERROR_THROTTLE(1, "TtlManager::readMotorPID - driver for motor %s not available",
+                               HardwareTypeEnum(motor_type).toString().c_str());
+            result = niryo_robot_msgs::CommandStatus::WRONG_MOTOR_TYPE;
+        }
+    }
+    else
+    {
+      ROS_ERROR_THROTTLE(1, "TtlManager::readMotorPID - driver for motor id %d unknown",
+                         static_cast<int>(id));
+      result = niryo_robot_msgs::CommandStatus::WRONG_MOTOR_TYPE;
+    }
+
     ros::Duration(0.005).sleep();
     return result;
 }

@@ -33,7 +33,7 @@ namespace ttl_driver
 class AbstractStepperDriver : public AbstractMotorDriver
 {
     public:
-        AbstractStepperDriver() {}
+        AbstractStepperDriver();
         AbstractStepperDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
                               std::shared_ptr<dynamixel::PacketHandler> packetHandler);
         virtual ~AbstractStepperDriver() override;
