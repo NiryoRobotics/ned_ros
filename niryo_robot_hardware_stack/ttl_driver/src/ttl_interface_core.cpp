@@ -146,10 +146,17 @@ void TtlInterfaceCore::startServices(ros::NodeHandle& nh)
                                                  &TtlInterfaceCore::_callbackActivateLeds, this);
 
     _custom_cmd_server = nh.advertiseService("/niryo_robot/ttl_driver/send_custom_value",
-                                              &TtlInterfaceCore::_callbackSendCustomValue, this);
+                                              &TtlInterfaceCore::_callbackWriteCustomValue, this);
 
     _custom_cmd_getter = nh.advertiseService("/niryo_robot/ttl_driver/read_custom_value",
                                               &TtlInterfaceCore::_callbackReadCustomValue, this);
+
+    _pid_server = nh.advertiseService("/niryo_robot/ttl_driver/read_pid_value",
+                                              &TtlInterfaceCore::_callbackReadPIDValue, this);
+
+
+    _pid_getter = nh.advertiseService("/niryo_robot/ttl_driver/write_pid_value",
+                                              &TtlInterfaceCore::_callbackWritePIDValue, this);
 }
 
 /**
@@ -914,86 +921,78 @@ void TtlInterfaceCore::addSingleCommandToQueue(const std::vector<std::shared_ptr
 
 /**
  * @brief TtlInterfaceCore::setMotorPID
- * @param motorState
+ * @param dxlState
  * @return
  */
-bool TtlInterfaceCore::setMotorPID(const std::shared_ptr<JointState> &motorState)
+bool TtlInterfaceCore::setMotorPID(const DxlMotorState& dxlState)
 {
-    if (motorState->isDynamixel())
+    uint8_t motor_id = dxlState.getId();
+
+    ROS_DEBUG("TtlInterfaceCore::setMotorPID - Setting PID for motor id: %d", static_cast<int>(motor_id));
+
+    // ** DXL PID configuration **
+
+    // Position Gain
+    if (dxlState.getPositionPGain() > 0)
     {
-        std::shared_ptr<DxlMotorState> dxlState = std::dynamic_pointer_cast<DxlMotorState>(motorState);
-        uint8_t motor_id = motorState->getId();
+        auto dxl_cmd_pos_p = std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_POSITION_P_GAIN,
+                                                            motor_id, std::initializer_list<uint32_t>{dxlState.getPositionPGain()});
 
-        ROS_DEBUG("TtlInterfaceCore::setMotorPID - Setting PID for motor id: %d", static_cast<int>(motor_id));
-
-        // ** DXL PID configuration **
-
-        // Position Gain
-        if (dxlState->getPositionPGain() > 0)
-        {
-            auto dxl_cmd_pos_p = std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_POSITION_P_GAIN,
-                                                                motor_id, std::initializer_list<uint32_t>{dxlState->getPositionPGain()});
-
-            if (dxl_cmd_pos_p->isValid())
-                addSingleCommandToQueue(dxl_cmd_pos_p);
-        }
-        if (dxlState->getPositionIGain() > 0)
-        {
-            auto dxl_cmd_pos_i = std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_POSITION_I_GAIN,
-                                                                motor_id, std::initializer_list<uint32_t>{dxlState->getPositionIGain()});
-
-            if (dxl_cmd_pos_i->isValid())
-                addSingleCommandToQueue(dxl_cmd_pos_i);
-        }
-
-        if (dxlState->getPositionDGain() > 0)
-        {
-            auto dxl_cmd_pos_d = std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_POSITION_D_GAIN,
-                                                                motor_id, std::initializer_list<uint32_t>{dxlState->getPositionDGain()});
-
-            if (dxl_cmd_pos_d->isValid())
-                addSingleCommandToQueue(dxl_cmd_pos_d);
-        }
-
-        // Velocity Gain
-        if (dxlState->getVelocityPGain() > 0)
-        {
-            auto dxl_cmd_vel_p = std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_VELOCITY_P_GAIN,
-                                                                motor_id, std::initializer_list<uint32_t>{dxlState->getVelocityPGain()});
-
-            if (dxl_cmd_vel_p->isValid())
-                addSingleCommandToQueue(dxl_cmd_vel_p);
-        }
-
-        if (dxlState->getVelocityIGain() > 0)
-        {
-            auto dxl_cmd_vel_i = std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_VELOCITY_I_GAIN,
-                                                                motor_id, std::initializer_list<uint32_t>{dxlState->getVelocityIGain()});
-
-            if (dxl_cmd_vel_i->isValid())
-                addSingleCommandToQueue(dxl_cmd_vel_i);
-        }
-        if (dxlState->getFF1Gain() > 0)
-        {
-            auto dxl_cmd_ff1 = std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_FF1_GAIN,
-                                                              motor_id, std::initializer_list<uint32_t>{dxlState->getFF1Gain()});
-
-            if (dxl_cmd_ff1->isValid())
-                addSingleCommandToQueue(dxl_cmd_ff1);
-        }
-
-        if (dxlState->getFF2Gain() > 0)
-        {
-            auto dxl_cmd_ff2 = std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_FF2_GAIN,
-                                                              motor_id, std::initializer_list<uint32_t>{dxlState->getFF2Gain()});
-
-            if (dxl_cmd_ff2->isValid())
-                addSingleCommandToQueue(dxl_cmd_ff2);
-        }
+        if (dxl_cmd_pos_p->isValid())
+            addSingleCommandToQueue(dxl_cmd_pos_p);
     }
-    else if (motorState->isStepper())
+    if (dxlState.getPositionIGain() > 0)
     {
-        ROS_INFO("A stepper motor does not have PID");
+        auto dxl_cmd_pos_i = std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_POSITION_I_GAIN,
+                                                            motor_id, std::initializer_list<uint32_t>{dxlState.getPositionIGain()});
+
+        if (dxl_cmd_pos_i->isValid())
+            addSingleCommandToQueue(dxl_cmd_pos_i);
+    }
+
+    if (dxlState.getPositionDGain() > 0)
+    {
+        auto dxl_cmd_pos_d = std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_POSITION_D_GAIN,
+                                                            motor_id, std::initializer_list<uint32_t>{dxlState.getPositionDGain()});
+
+        if (dxl_cmd_pos_d->isValid())
+            addSingleCommandToQueue(dxl_cmd_pos_d);
+    }
+
+    // Velocity Gain
+    if (dxlState.getVelocityPGain() > 0)
+    {
+        auto dxl_cmd_vel_p = std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_VELOCITY_P_GAIN,
+                                                            motor_id, std::initializer_list<uint32_t>{dxlState.getVelocityPGain()});
+
+        if (dxl_cmd_vel_p->isValid())
+            addSingleCommandToQueue(dxl_cmd_vel_p);
+    }
+
+    if (dxlState.getVelocityIGain() > 0)
+    {
+        auto dxl_cmd_vel_i = std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_VELOCITY_I_GAIN,
+                                                            motor_id, std::initializer_list<uint32_t>{dxlState.getVelocityIGain()});
+
+        if (dxl_cmd_vel_i->isValid())
+            addSingleCommandToQueue(dxl_cmd_vel_i);
+    }
+    if (dxlState.getFF1Gain() > 0)
+    {
+        auto dxl_cmd_ff1 = std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_FF1_GAIN,
+                                                          motor_id, std::initializer_list<uint32_t>{dxlState.getFF1Gain()});
+
+        if (dxl_cmd_ff1->isValid())
+            addSingleCommandToQueue(dxl_cmd_ff1);
+    }
+
+    if (dxlState.getFF2Gain() > 0)
+    {
+        auto dxl_cmd_ff2 = std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_FF2_GAIN,
+                                                          motor_id, std::initializer_list<uint32_t>{dxlState.getFF2Gain()});
+
+        if (dxl_cmd_ff2->isValid())
+            addSingleCommandToQueue(dxl_cmd_ff2);
     }
 
     return true;
@@ -1075,30 +1074,16 @@ niryo_robot_msgs::BusState TtlInterfaceCore::getBusState() const
  * @param res
  * @return
  */
-bool TtlInterfaceCore::_callbackSendCustomValue(ttl_driver::SendCustomValue::Request &req,
+bool TtlInterfaceCore::_callbackWriteCustomValue(ttl_driver::SendCustomValue::Request &req,
                                                ttl_driver::SendCustomValue::Response &res)
 {
-    int result;
-
-    EHardwareType motor_type;
-
-    if ((1 <= req.motor_type  && 7 >= req.motor_type) || 10 == req.motor_type)
-        motor_type = static_cast<EHardwareType>(req.motor_type);
-    else
-    {
-        res.status = niryo_robot_msgs::CommandStatus::WRONG_MOTOR_TYPE;
-        res.message = "TtlInterfaceCore - Invalid motor type: should be "
-                      "1 (Stepper) or 2 (XL-430) or 3 (XL-320) or 4 (XL-330) or 5 (XC-430) or "
-                      "6 (Fake Dynamixel) or 7 (Fake Stepper) or 10 (End Effector)";
-        return true;
-    }
+    int result = niryo_robot_msgs::CommandStatus::FAILURE;
 
     lock_guard<mutex> lck(_control_loop_mutex);
-    result = _ttl_manager->sendCustomCommand(motor_type,
-                                              req.id,
-                                              req.reg_address,
-                                              req.value,
-                                              req.byte_number);
+    result = _ttl_manager->sendCustomCommand(req.id,
+                                             req.reg_address,
+                                             req.value,
+                                             req.byte_number);
 
     if (result != COMM_SUCCESS)
     {
@@ -1122,38 +1107,114 @@ bool TtlInterfaceCore::_callbackSendCustomValue(ttl_driver::SendCustomValue::Req
 bool TtlInterfaceCore::_callbackReadCustomValue(ttl_driver::ReadCustomValue::Request &req,
                                                 ttl_driver::ReadCustomValue::Response &res)
 {
-    int result;
-    EHardwareType motor_type;
-    if ((1 <= req.motor_type  && 7 >= req.motor_type) || 10 == req.motor_type)
-        motor_type = static_cast<EHardwareType>(req.motor_type);
-    else
-    {
-        res.status = niryo_robot_msgs::CommandStatus::WRONG_MOTOR_TYPE;
-        res.message = "TtlInterfaceCore - Invalid motor type: should be "
-                      "1 (Stepper) or 2 (XL-430) or 3 (XL-320) or 4 (XL-330) or 5 (XC-430) or "
-                      "6 (Fake Dynamixel) or 7 (Fake Stepper) or 10 (End Effector)";
-        return true;
-    }
+    int result = niryo_robot_msgs::CommandStatus::FAILURE;
 
     lock_guard<mutex> lck(_control_loop_mutex);
     int value = 0;
-    result = _ttl_manager->readCustomCommand(motor_type,
-                                              req.id,
-                                              req.reg_address,
-                                              value,
-                                              req.byte_number);
+    result = _ttl_manager->readCustomCommand(req.id,
+                                             req.reg_address,
+                                             value,
+                                             req.byte_number);
 
-    if (result != COMM_SUCCESS)
+    if (COMM_SUCCESS == result)
     {
-        res.message = "TtlInterfaceCore - Reading custom registry failed";
+        res.value = value;
+        res.message = "TtlInterfaceCore - Reading successful";
+        result = niryo_robot_msgs::CommandStatus::SUCCESS;
     }
     else
     {
-        res.message = "TtlInterfaceCore - Reading successful. Registry value : " + to_string(value);
-        result = niryo_robot_msgs::CommandStatus::SUCCESS;
+        res.message = "TtlInterfaceCore - Reading custom registry failed";
     }
+
     res.status = result;
     return true;
+}
+
+/**
+ * @brief TtlInterfaceCore::_callbackWritePIDValue
+ * @param req
+ * @param res
+ * @return
+ */
+bool TtlInterfaceCore::_callbackWritePIDValue(ttl_driver::WritePIDValue::Request &req,
+                                              ttl_driver::WritePIDValue::Response &res)
+{
+
+  int result = niryo_robot_msgs::CommandStatus::FAILURE;
+
+  DxlMotorState state(req.id);
+
+  state.setPositionPGain(req.pos_p_gain);
+  state.setPositionIGain(req.pos_i_gain);
+  state.setPositionDGain(req.pos_d_gain);
+
+  state.setVelocityPGain(req.vel_p_gain);
+  state.setVelocityIGain(req.vel_i_gain);
+
+  state.setFF1Gain(req.ff1_gain);
+  state.setFF2Gain(req.ff2_gain);
+
+  if (setMotorPID(state))
+  {
+      res.message = "TtlInterfaceCore - Writing PID successful";
+      result = niryo_robot_msgs::CommandStatus::SUCCESS;
+  }
+  else
+  {
+      res.message = "TtlInterfaceCore - Writing PID failed";
+  }
+
+  res.status = result;
+
+  return true;
+}
+
+/**
+ * @brief TtlInterfaceCore::_callbackReadPIDValue
+ * @param req
+ * @param res
+ * @return
+ */
+bool TtlInterfaceCore::_callbackReadPIDValue(ttl_driver::ReadPIDValue::Request &req,
+                                             ttl_driver::ReadPIDValue::Response &res)
+{
+  int result = niryo_robot_msgs::CommandStatus::FAILURE;
+
+  uint8_t id = req.id;
+  uint32_t pos_p_gain{0};
+  uint32_t pos_i_gain{0};
+  uint32_t pos_d_gain{0};
+
+  uint32_t vel_p_gain{0};
+  uint32_t vel_i_gain{0};
+
+  uint32_t ff1_gain{0};
+  uint32_t ff2_gain{0};
+
+
+  if (COMM_SUCCESS == _ttl_manager->readMotorPID(id, pos_p_gain, pos_i_gain, pos_d_gain,
+                                                 vel_p_gain, vel_i_gain, ff1_gain, ff2_gain))
+  {
+      res.pos_p_gain = pos_p_gain;
+      res.pos_i_gain = pos_i_gain;
+      res.pos_d_gain = pos_d_gain;
+      res.vel_p_gain = vel_p_gain;
+      res.vel_i_gain = vel_i_gain;
+      res.ff1_gain = ff1_gain;
+      res.ff2_gain = ff2_gain;
+
+      res.message = "TtlInterfaceCore - Reading PID successful";
+      result = niryo_robot_msgs::CommandStatus::SUCCESS;
+  }
+  else
+  {
+      res.message = "TtlInterfaceCore - Reading PID failed";
+  }
+
+  res.status = result;
+
+  return true;
 }
 
 /**

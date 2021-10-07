@@ -1,6 +1,6 @@
 # Can be changed, choices are: amd64 or arm64
 ARCHITECTURE=amd64
-VERSION=v3.2.0
+VERSION=ned2
 
 DOCKER_IMAGE_NAME=registry.gitlab.com/niryo/niryo-one-s/ned_ros_stack/${VERSION}
 
@@ -24,6 +24,7 @@ fi
 if [ -d ${PATH_TO_SOURCE_FOLDER}/niryo_robot_bringup ]; then
     docker run --rm --platform linux/${ARCHITECTURE} -it \
     -v ${PATH_TO_SOURCE_FOLDER}:/${HOME_FOLDER}/catkin_ws/src \
+    -v ${PATH_TO_SOURCE_FOLDER}/../${DOCKER_OUTPUT_HOST_FOLDER_NAME}/${ARCHITECTURE}/install:/${HOME_FOLDER}/catkin_ws/install \
     -v ${PATH_TO_SOURCE_FOLDER}/../${DOCKER_OUTPUT_HOST_FOLDER_NAME}/${ARCHITECTURE}/build:/${HOME_FOLDER}/catkin_ws/build \
     -v ${PATH_TO_SOURCE_FOLDER}/../${DOCKER_OUTPUT_HOST_FOLDER_NAME}/${ARCHITECTURE}/devel:/${HOME_FOLDER}/catkin_ws/devel \
     -p 9090:9090 \
@@ -33,6 +34,7 @@ if [ -d ${PATH_TO_SOURCE_FOLDER}/niryo_robot_bringup ]; then
 elif [ -d ${PATH_TO_SOURCE_FOLDER}/src ]; then
     docker run --rm --platform linux/${ARCHITECTURE} -it \
     -v ${PATH_TO_SOURCE_FOLDER}/src:/${HOME_FOLDER}/catkin_ws/src \
+    -v ${PATH_TO_SOURCE_FOLDER}/${DOCKER_OUTPUT_HOST_FOLDER_NAME}/${ARCHITECTURE}/install:/${HOME_FOLDER}/catkin_ws/install \
     -v ${PATH_TO_SOURCE_FOLDER}/${DOCKER_OUTPUT_HOST_FOLDER_NAME}/${ARCHITECTURE}/build:/${HOME_FOLDER}/catkin_ws/build \
     -v ${PATH_TO_SOURCE_FOLDER}/${DOCKER_OUTPUT_HOST_FOLDER_NAME}/${ARCHITECTURE}/devel:/${HOME_FOLDER}/catkin_ws/devel \
     -p 9090:9090 \

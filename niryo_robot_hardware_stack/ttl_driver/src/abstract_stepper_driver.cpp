@@ -28,6 +28,13 @@ namespace ttl_driver
 
 /**
  * @brief AbstractStepperDriver::AbstractStepperDriver
+ */
+AbstractStepperDriver::AbstractStepperDriver() :
+  AbstractMotorDriver ()
+{}
+
+/**
+ * @brief AbstractStepperDriver::AbstractStepperDriver
 */
 AbstractStepperDriver::AbstractStepperDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
                                              std::shared_ptr<dynamixel::PacketHandler> packetHandler) :

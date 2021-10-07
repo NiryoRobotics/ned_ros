@@ -54,6 +54,9 @@ class MockDxlDriver : public AbstractDxlDriver
 
         virtual std::string interpreteErrorState(uint32_t hw_state) const override;
 
+        virtual int readCustom(uint16_t address, uint8_t data_len, uint8_t id, uint32_t& data) override;
+        virtual int writeCustom(uint16_t address, uint8_t data_len, uint8_t id, uint32_t data) override;
+
         // eeprom write
         virtual int changeId(uint8_t id, uint8_t new_id) override;
 
@@ -98,6 +101,15 @@ class MockDxlDriver : public AbstractDxlDriver
         virtual int setVelocityIGain(uint8_t id, uint32_t gain) override;
         virtual int setff1Gain(uint8_t id, uint32_t gain) override;
         virtual int setff2Gain(uint8_t id, uint32_t gain) override;
+
+        virtual int readPositionPGain(uint8_t id, uint32_t& gain) override;
+        virtual int readPositionIGain(uint8_t id, uint32_t& gain) override;
+        virtual int readPositionDGain(uint8_t id, uint32_t& gain) override;
+        virtual int readVelocityPGain(uint8_t id, uint32_t& gain) override;
+        virtual int readVelocityIGain(uint8_t id, uint32_t& gain) override;
+        virtual int readFF1Gain(uint8_t id, uint32_t& gain) override;
+        virtual int readFF2Gain(uint8_t id, uint32_t& gain) override;
+
         virtual int readLoad(uint8_t id, uint32_t &present_load) override;
         virtual int syncReadLoad(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &load_list) override;
         virtual int readVelocity(uint8_t id, uint32_t &present_velocity) override;
@@ -117,6 +129,7 @@ class MockDxlDriver : public AbstractDxlDriver
         // AbstractTtlDriver interface
     protected:
         virtual std::string interpreteFirmwareVersion(uint32_t fw_version) const override;
+
 };
 
 } // DynamixelDriver

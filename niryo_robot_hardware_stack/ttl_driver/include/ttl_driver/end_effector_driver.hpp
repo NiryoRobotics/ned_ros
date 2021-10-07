@@ -24,7 +24,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <sstream>
 #include <cassert>
 
-#include "abstract_motor_driver.hpp"
+#include "abstract_end_effector_driver.hpp"
 
 #include "end_effector_reg.hpp"
 #include "common/model/end_effector_command_type_enum.hpp"
@@ -39,7 +39,7 @@ namespace ttl_driver
  * @brief The EndEffectorDriver class
  */
 template<typename reg_type = EndEffectorReg>
-class EndEffectorDriver : public AbstractTtlDriver
+class EndEffectorDriver : public AbstractEndEffectorDriver
 {
     public:
         EndEffectorDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
@@ -68,21 +68,24 @@ class EndEffectorDriver : public AbstractTtlDriver
         virtual int writeSyncCmd(int type, const std::vector<uint8_t>& ids, const std::vector<uint32_t>& params) override;
 
     public:
-        int readButton1Status(uint8_t id, common::model::EActionType& action);
-        int readButton2Status(uint8_t id, common::model::EActionType& action);
-        int readButton3Status(uint8_t id, common::model::EActionType& action);
-
-        int readAccelerometerXValue(uint8_t id, uint32_t& x_value);
-        int readAccelerometerYValue(uint8_t id, uint32_t& y_value);
-        int readAccelerometerZValue(uint8_t id, uint32_t& z_value);
-
-        int readCollisionStatus(uint8_t id, bool& status);
-
-        int readDigitalInput(uint8_t id, bool& in);
-        int writeDigitalOutput(uint8_t id, bool out);
-
-        common::model::EActionType interpreteActionValue(uint32_t value);
         virtual std::string interpreteErrorState(uint32_t hw_state) const override;
+
+        // AbstractEndEffectorDriver
+
+        int readButton1Status(uint8_t id, common::model::EActionType& action) override;
+        int readButton2Status(uint8_t id, common::model::EActionType& action) override;
+        int readButton3Status(uint8_t id, common::model::EActionType& action) override;
+
+        int readAccelerometerXValue(uint8_t id, uint32_t& x_value) override;
+        int readAccelerometerYValue(uint8_t id, uint32_t& y_value) override;
+        int readAccelerometerZValue(uint8_t id, uint32_t& z_value) override;
+
+        int readCollisionStatus(uint8_t id, bool& status) override;
+
+        int readDigitalInput(uint8_t id, bool& in) override;
+        int writeDigitalOutput(uint8_t id, bool out) override;
+
+        common::model::EActionType interpreteActionValue(uint32_t value) override;
 
     protected:
         virtual std::string interpreteFirmwareVersion(uint32_t fw_version) const override;        
@@ -96,7 +99,7 @@ class EndEffectorDriver : public AbstractTtlDriver
 template<typename reg_type>
 EndEffectorDriver<reg_type>::EndEffectorDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
                                std::shared_ptr<dynamixel::PacketHandler> packetHandler) :
-    AbstractTtlDriver(portHandler, packetHandler)
+    AbstractEndEffectorDriver(portHandler, packetHandler)
 {
 }
 

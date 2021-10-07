@@ -41,6 +41,8 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "ttl_driver/ArrayMotorHardwareStatus.h"
 #include "ttl_driver/SendCustomValue.h"
 #include "ttl_driver/ReadCustomValue.h"
+#include "ttl_driver/WritePIDValue.h"
+#include "ttl_driver/ReadPIDValue.h"
 
 #include "niryo_robot_msgs/BusState.h"
 #include "niryo_robot_msgs/SetInt.h"
@@ -79,7 +81,8 @@ class TtlInterfaceCore : public common::model::IDriverCore, public common::model
         void clearSingleCommandQueue();
         void clearConveyorCommandQueue();
 
-        bool setMotorPID(const std::shared_ptr<common::model::JointState>& motorState);
+        bool setMotorPID(const common::model::DxlMotorState& dxlState);
+
         void setTrajectoryControllerCommands(const std::vector<std::pair<uint8_t, uint32_t> > &cmd);
 
         void setSyncCommand(const std::shared_ptr<common::model::ISynchronizeMotorCmd>& cmd) override;
@@ -150,8 +153,10 @@ class TtlInterfaceCore : public common::model::IDriverCore, public common::model
 
         // use other callbacks instead of executecommand
         bool _callbackActivateLeds(niryo_robot_msgs::SetInt::Request &req, niryo_robot_msgs::SetInt::Response &res);
-        bool _callbackSendCustomValue(ttl_driver::SendCustomValue::Request &req, ttl_driver::SendCustomValue::Response &res);
+        bool _callbackWriteCustomValue(ttl_driver::SendCustomValue::Request &req, ttl_driver::SendCustomValue::Response &res);
         bool _callbackReadCustomValue(ttl_driver::ReadCustomValue::Request &req, ttl_driver::ReadCustomValue::Response &res);
+        bool _callbackWritePIDValue(ttl_driver::WritePIDValue::Request &req, ttl_driver::WritePIDValue::Response &res);
+        bool _callbackReadPIDValue(ttl_driver::ReadPIDValue::Request &req, ttl_driver::ReadPIDValue::Response &res);
 
     private:
         bool _control_loop_flag{false};
@@ -190,6 +195,8 @@ class TtlInterfaceCore : public common::model::IDriverCore, public common::model
         ros::ServiceServer _activate_leds_server;
         ros::ServiceServer _custom_cmd_server;
         ros::ServiceServer _custom_cmd_getter;
+        ros::ServiceServer _pid_server;
+        ros::ServiceServer _pid_getter;
 
         static constexpr int QUEUE_OVERFLOW = 20;
         

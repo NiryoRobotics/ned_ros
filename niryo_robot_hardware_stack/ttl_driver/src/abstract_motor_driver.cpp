@@ -27,6 +27,14 @@ namespace ttl_driver
 
 /**
  * @brief AbstractMotorDriver::AbstractMotorDriver
+ */
+AbstractMotorDriver::AbstractMotorDriver() :
+  AbstractTtlDriver ()
+{
+}
+
+/**
+ * @brief AbstractMotorDriver::AbstractMotorDriver
  * @param portHandler
  * @param packetHandler
  */
@@ -43,6 +51,10 @@ AbstractMotorDriver::~AbstractMotorDriver()
 {
 }
 
+/**
+ * @brief AbstractMotorDriver::str
+ * @return
+ */
 std::string AbstractMotorDriver::str() const
 {
     return "Motor Driver (" + AbstractTtlDriver::str() + ")";

@@ -106,6 +106,14 @@ class DxlDriver : public AbstractDxlDriver
         
         virtual int readLoad(uint8_t id, uint32_t &present_load) override;
         virtual int readVelocity(uint8_t id, uint32_t &present_velocity) override;
+
+        virtual int readPositionPGain(uint8_t id, uint32_t& gain) override;
+        virtual int readPositionIGain(uint8_t id, uint32_t& gain) override;
+        virtual int readPositionDGain(uint8_t id, uint32_t& gain) override;
+        virtual int readVelocityPGain(uint8_t id, uint32_t& gain) override;
+        virtual int readVelocityIGain(uint8_t id, uint32_t& gain) override;
+        virtual int readFF1Gain(uint8_t id, uint32_t& gain) override;
+        virtual int readFF2Gain(uint8_t id, uint32_t& gain) override;
         
         virtual int syncReadLoad(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &load_list) override;
         virtual int syncReadVelocity(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &velocity_list) override;
@@ -336,6 +344,8 @@ int DxlDriver<reg_type>::syncWriteTorqueGoal(const std::vector<uint8_t> &id_list
     return syncWrite(reg_type::ADDR_GOAL_TORQUE, reg_type::SIZE_GOAL_TORQUE, id_list, torque_list);
 }
 
+//PID
+
 template<typename reg_type>
 int DxlDriver<reg_type>::setPositionPGain(uint8_t id, uint32_t gain)
 {
@@ -377,6 +387,51 @@ int DxlDriver<reg_type>::setff2Gain(uint8_t id, uint32_t gain)
 {
     return write(reg_type::ADDR_FF2_GAIN, reg_type::SIZE_FF2_GAIN, id, gain);
 }
+
+// read
+template<typename reg_type>
+int DxlDriver<reg_type>::readPositionPGain(uint8_t id, uint32_t& gain)
+{
+    return read(reg_type::ADDR_POSITION_P_GAIN, reg_type::SIZE_POSITION_P_GAIN, id, gain);
+}
+
+template<typename reg_type>
+int DxlDriver<reg_type>::readPositionIGain(uint8_t id, uint32_t& gain)
+{
+    return read(reg_type::ADDR_POSITION_I_GAIN, reg_type::SIZE_POSITION_I_GAIN, id, gain);
+}
+
+template<typename reg_type>
+int DxlDriver<reg_type>::readPositionDGain(uint8_t id, uint32_t& gain)
+{
+    return read(reg_type::ADDR_POSITION_D_GAIN, reg_type::SIZE_POSITION_D_GAIN, id, gain);
+}
+
+template<typename reg_type>
+int DxlDriver<reg_type>::readVelocityPGain(uint8_t id, uint32_t& gain)
+{
+    return read(reg_type::ADDR_VELOCITY_P_GAIN, reg_type::SIZE_VELOCITY_P_GAIN, id, gain);
+}
+
+template<typename reg_type>
+int DxlDriver<reg_type>::readVelocityIGain(uint8_t id, uint32_t& gain)
+{
+    return read(reg_type::ADDR_VELOCITY_I_GAIN, reg_type::SIZE_VELOCITY_I_GAIN, id, gain);
+}
+
+template<typename reg_type>
+int DxlDriver<reg_type>::readFF1Gain(uint8_t id, uint32_t& gain)
+{
+    return read(reg_type::ADDR_FF1_GAIN, reg_type::SIZE_FF1_GAIN, id, gain);
+}
+
+template<typename reg_type>
+int DxlDriver<reg_type>::readFF2Gain(uint8_t id, uint32_t& gain)
+{
+    return read(reg_type::ADDR_FF2_GAIN, reg_type::SIZE_FF2_GAIN, id, gain);
+}
+
+//other
 
 template<typename reg_type>
 int DxlDriver<reg_type>::readLoad(uint8_t id, uint32_t& present_load)
@@ -453,28 +508,57 @@ template<>
 int DxlDriver<XL320Reg>::setVelocityPGain(uint8_t /*id*/, uint32_t /*gain*/)
 {
     std::cout << "setVelocityPGain not available for motor XL320" << std::endl;
-    return COMM_TX_ERROR;
+    return COMM_SUCCESS;
 }
 
 template<>
 int DxlDriver<XL320Reg>::setVelocityIGain(uint8_t /*id*/, uint32_t /*gain*/)
 {
     std::cout << "setVelocityIGain not available for motor XL320" << std::endl;
-    return COMM_TX_ERROR;
+    return COMM_SUCCESS;
 }
 
 template<>
 int DxlDriver<XL320Reg>::setff1Gain(uint8_t /*id*/, uint32_t /*gain*/)
 {
     std::cout << "setff1Gain not available for motor XL320" << std::endl;
-    return COMM_TX_ERROR;
+    return COMM_SUCCESS;
 }
 
 template<>
 int DxlDriver<XL320Reg>::setff2Gain(uint8_t /*id*/, uint32_t /*gain*/)
 {
     std::cout << "setff2Gain not available for motor XL320" << std::endl;
-    return COMM_TX_ERROR;
+    return COMM_SUCCESS;
+}
+
+// read PID
+template<>
+int DxlDriver<XL320Reg>::readVelocityPGain(uint8_t /*id*/, uint32_t& /*gain*/)
+{
+    std::cout << "readVelocityPGain not available for motor XL320" << std::endl;
+    return COMM_SUCCESS;
+}
+
+template<>
+int DxlDriver<XL320Reg>::readVelocityIGain(uint8_t /*id*/, uint32_t& /*gain*/)
+{
+    std::cout << "readVelocityIGain not available for motor XL320" << std::endl;
+    return COMM_SUCCESS;
+}
+
+template<>
+int DxlDriver<XL320Reg>::readFF1Gain(uint8_t /*id*/, uint32_t& /*gain*/)
+{
+    std::cout << "readFF1Gain not available for motor XL320" << std::endl;
+    return COMM_SUCCESS;
+}
+
+template<>
+int DxlDriver<XL320Reg>::readFF2Gain(uint8_t /*id*/, uint32_t& /*gain*/)
+{
+    std::cout << "readFF2Gain not available for motor XL320" << std::endl;
+    return COMM_SUCCESS;
 }
 
 template<>
