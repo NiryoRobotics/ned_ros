@@ -219,6 +219,7 @@ ConveyorInterfaceCore::addConveyor()
 {
     conveyor_interface::SetConveyor::Response res;
     res.status = niryo_robot_msgs::CommandStatus::FAILURE;
+    res.id = 0;
 
     for(auto& bus : _bus_config_map)
     {
@@ -242,7 +243,7 @@ ConveyorInterfaceCore::addConveyor()
                 // add conveyor to interface management
                 int result = bus.second.interface->setConveyor(conveyor_state);
 
-                if (result == niryo_robot_msgs::CommandStatus::SUCCESS)
+                if (niryo_robot_msgs::CommandStatus::SUCCESS == result)
                 {
                     // change Id
                     result = bus.second.interface->changeId(conveyor_state->getHardwareType(), conveyor_state->getId(), conveyor_id);
@@ -266,35 +267,39 @@ ConveyorInterfaceCore::addConveyor()
 
                         break;
                     }
-                    else
-                    {
-                        ROS_WARN("ConveyorInterfaceCore::addConveyor - "
-                                "Set conveyor failure, return : %d. Retrying (%d)...",
-                                result, tries);
-                        bus.second.interface->unsetConveyor(conveyor_state->getId(), bus.second.default_id);
-                    }
                     ros::Duration(0.01).sleep();
                 }
+
+                ROS_DEBUG_COND(niryo_robot_msgs::CommandStatus::SUCCESS != result, "ConveyorInterfaceCore::addConveyor - "
+                        "Set conveyor failure, return : %d. Retrying (%d)...",
+                        result, tries);
+
+                bus.second.interface->unsetConveyor(conveyor_state->getId(), bus.second.default_id);
             }
 
-            // on failure after three tries
-            if (niryo_robot_msgs::CommandStatus::SUCCESS != res.status)
+            // on success we leave
+            if (niryo_robot_msgs::CommandStatus::SUCCESS == res.status)
             {
-                ROS_ERROR("ConveyorInterfaceCore::addConveyor - Fail to set conveyor, return : %d",
-                            res.status);
-
-                res.id = 0;
+                return res;
             }
 
+            res.message = "no conveyor found";
         }
         else
         {
-            ROS_INFO("ConveyorInterfaceCore::addConveyor - No conveyor available");
-
             res.message = "no conveyor available";
-            res.id = 0;
             res.status = niryo_robot_msgs::CommandStatus::NO_CONVEYOR_LEFT;
         }
+    }
+
+    // on failure after three tries for both buses
+    if (niryo_robot_msgs::CommandStatus::SUCCESS != res.status)
+    {
+        ROS_ERROR("ConveyorInterfaceCore::addConveyor - Fail to set conveyor, message : %s, return : %d",
+                    res.message.c_str(),
+                    res.status);
+
+        res.id = 0;
     }
 
     return res;

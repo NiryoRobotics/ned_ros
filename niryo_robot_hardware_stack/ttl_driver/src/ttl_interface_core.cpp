@@ -782,10 +782,6 @@ int TtlInterfaceCore::setConveyor(const std::shared_ptr<common::model::ConveyorS
         // no init needed
         result = niryo_robot_msgs::CommandStatus::SUCCESS;
     }
-    else
-    {
-        ROS_WARN("TtlInterfaceCore::setConveyor - No conveyor found");
-    }
 
     return result;
 }

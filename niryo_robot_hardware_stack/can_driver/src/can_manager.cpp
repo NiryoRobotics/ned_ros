@@ -282,6 +282,7 @@ void CanManager::readStatus()
                     auto stepperState = std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(motor_id));
                     // update last time read
                     stepperState->updateLastTimeRead();
+                    _debug_error_message.clear();
                     switch (control_byte)
                     {
                         case AbstractStepperDriver::CAN_DATA_POSITION:
@@ -310,12 +311,13 @@ void CanManager::readStatus()
                         }
                         default:
                             ROS_ERROR("CanManager::readMotorsState : unknown control byte value");
+                            _debug_error_message = "unknown control byte value";
                         break;
                     }
                 }
                 else
                 {
-                    _debug_error_message = "Unknow connected motor : ";
+                    _debug_error_message = "Unknown connected motor : ";
                     _debug_error_message += std::to_string(motor_id);
                 }
             }
@@ -385,7 +387,10 @@ int CanManager::scanAndCheck()
         // update last time read on found motors
         // TODO(cc) move updateLastTimeRead in hardwareState ?
         for (auto& motor_id : _all_motor_connected)
-            std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(motor_id))->updateLastTimeRead();
+        {
+            if(_state_map.count(motor_id) && _state_map.at(motor_id))
+                std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(motor_id))->updateLastTimeRead();
+        }
     }
 
     return result;
@@ -433,7 +438,7 @@ void CanManager::_verifyMotorTimeoutLoop()
         // using have_motor to notify that the connection is down when no motors recognize yet
         bool have_motor = false;
 
-        if (_state_map.size() == _all_motor_connected.size())
+        if (!_all_motor_connected.empty())
         {
             for (auto const &map_it : _state_map)
             {
