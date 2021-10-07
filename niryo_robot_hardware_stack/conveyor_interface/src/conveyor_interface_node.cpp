@@ -41,10 +41,10 @@ int main(int argc, char **argv)
     ros::NodeHandle nh("~");
     ros::NodeHandle nh_conveyor("conveyor");
 
-    bool can_enabled{false};
-    nh.getParam("can_enabled", can_enabled);
+    std::string hardware_version;
+    nh.getParam("hardware_version", hardware_version);
 
-    if (!can_enabled)
+    if (hardware_version != "ned" && hardware_version != "one")
     {
         ros::NodeHandle nh_ttl("ttl_driver");
         auto ttl_driver = std::make_shared<ttl_driver::TtlInterfaceCore>(nh_ttl);

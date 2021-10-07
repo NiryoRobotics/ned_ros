@@ -172,7 +172,7 @@ int TtlManager::setupCommunication()
 
 
 /**
- * @brief TtlManager::addHardwareComponent
+ * @brief TtlManager::addHardwareComponent add hardware component like joint, ee, tool... to ttl manager
  * @param state
  */
 void TtlManager::addHardwareComponent(const std::shared_ptr<common::model::AbstractHardwareState>& state)

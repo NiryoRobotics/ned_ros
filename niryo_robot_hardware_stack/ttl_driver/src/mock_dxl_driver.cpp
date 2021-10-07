@@ -243,7 +243,7 @@ int MockDxlDriver::syncWriteTorqueEnable(const std::vector<uint8_t> &id_list, co
 }
 
 /**
- * @brief MockDxlDriver::syncWritePositionGoal
+ * @brief MockDxlDriver::syncWritePositionGoal get position goal and set it as the current position of each joint
  * @param id_list
  * @param position_list
  * @return
@@ -253,12 +253,13 @@ int MockDxlDriver::syncWritePositionGoal(const std::vector<uint8_t> &id_list, co
     if (id_list.size() != position_list.size())
         return LEN_ID_DATA_NOT_SAME;
 
-    // Create a map to store the frequency of each element in vector
+    // Create a map to store the frequency of each element in id_list. It helps find out which ID is redondant
     std::map<uint8_t, uint8_t> countMap;
     for (size_t i = 0; i < id_list.size(); i++)
     {
         if (!_map_fake_registers.count(id_list.at(i)))
             return COMM_TX_ERROR;
+        // set goal position as the current position
         _map_fake_registers.at(id_list.at(i)).position = position_list.at(i);
         auto result = countMap.insert(std::pair<uint8_t, uint8_t>(id_list[i], 1));
         if (result.second == false)

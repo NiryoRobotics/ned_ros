@@ -3,7 +3,7 @@
         xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
     
     <arg name="hardware_version" default="ned"/>
-    <arg name="simulation_mode" default="false"/>
+    <arg name="simulation_mode" default="true"/>
 
     <!-- use can_driver config -->
     <include file="$(find can_driver)/launch/can_driver_base.launch.xml" if="$(eval hardware_version == 'one' or hardware_version == 'ned')">
