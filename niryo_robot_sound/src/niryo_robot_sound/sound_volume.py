@@ -1,9 +1,11 @@
 # Lib
+import math
+import subprocess
 import rospy
 import os
 
 # Messages
-from std_msgs.msg import Int8
+from std_msgs.msg import UInt8
 
 # Services
 from niryo_robot_msgs.srv import SetInt
@@ -24,7 +26,7 @@ class VolumeManager:
         self.__min_volume = rospy.get_param("~min_volume")
 
         # - Publisher
-        self.__volume_state_publisher = rospy.Publisher('/niryo_robot_sound/volume', Int8, latch=True, queue_size=10)
+        self.__volume_state_publisher = rospy.Publisher('/niryo_robot_sound/volume', UInt8, latch=True, queue_size=10)
 
         # - Init volume
         success, volume = self.__read_volume_file()
@@ -45,13 +47,33 @@ class VolumeManager:
     # - Main class usage
     @property
     def volume(self):
+        # Out oft simulation the volume is managed by the rpi
+        if not self.__simulation_mode:
+            return 100
+
+        # In simulation the volume is managed by ffplay
         return self.__volume_percentage
 
     def set_volume(self, percentage):
         if percentage != self.__volume_percentage:
             self.__volume_percentage = self.__check_before_set_volume(percentage)
+            self.__set_robot_volume()
             self.__volume_state_publisher.publish(self.__volume_percentage)
             self.__write_volume_file()
+
+    def __set_robot_volume(self):
+        if not self.__simulation_mode:
+            volume_decibels = self.__volume_to_decibels(self.__volume_percentage)
+            # args = ("amixer", "-q", "set", "Speaker", "--", str(volume_decibels) + "dB")
+            args = ("amixer", "set", "Speaker", "--", str(volume_decibels) + "dB")
+            p = subprocess.check_output(args)
+
+    @staticmethod
+    def __volume_to_decibels(volume_percentage):
+        if volume_percentage <= 0:
+            return -100000
+        else:
+            return round(20 * math.log10(volume_percentage / 100.), 2)
 
     def __check_before_set_volume(self, volume):
         """

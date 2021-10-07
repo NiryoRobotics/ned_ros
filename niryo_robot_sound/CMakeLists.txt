@@ -90,11 +90,6 @@ install(
 )
 
 install(
-  DIRECTORY niryo_robot_user_sounds/
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/niryo_robot_user_sounds
-)
-
-install(
   DIRECTORY config/
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/config
 )

@@ -90,7 +90,6 @@ class LedRingCommander:
             self.blink(WHITE, 2, 0.5)
             self.user_animation_lock.acquire()
             self.error_animation_lock.acquire()
-            del self.led_ring_anim
 
     @property
     def is_shutdown(self):
@@ -292,7 +291,10 @@ class LedRingCommander:
                 self.dict_led_ring_methods[robot_status_command.animation_mode.animation](robot_status_command)
 
     def none_animation(self, _cmd):
-        self.led_ring_anim.none()
+        try:
+            self.led_ring_anim.none()
+        except AttributeError:
+            pass
 
     def solid_animation(self, cmd):
         self.led_ring_anim.solid(cmd.colors[0])

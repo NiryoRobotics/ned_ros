@@ -61,6 +61,11 @@ class SoundManager:
             last_status = self.__robot_status
             self.__robot_status = msg.robot_status
 
+            if last_status in [RobotStatus.RUNNING_AUTONOMOUS, RobotStatus.LEARNING_MODE_AUTONOMOUS] \
+                    and self.__robot_status not in [RobotStatus.RUNNING_AUTONOMOUS,
+                                                    RobotStatus.LEARNING_MODE_AUTONOMOUS]:
+                self.__sound_player.stop()
+
             if last_status == RobotStatus.BOOTING and self.__robot_status != RobotStatus.BOOTING:
                 sound = self.__sound_database.wake_up_sound
                 self.play_sound(sound)

@@ -1,4 +1,3 @@
-
 # Lib
 import rospy
 import rospkg
@@ -14,7 +13,7 @@ from niryo_robot_sound.srv import ManageSound
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus
 
-from niryo_robot_sound.sound_object import Sound
+from niryo_robot_sound.sound_object import Sound, SoundFormatException
 
 
 class SoundDatabase:
@@ -23,8 +22,13 @@ class SoundDatabase:
     """
 
     def __init__(self):
-        self.__user_sound_directory_path = os.path.join(rospkg.RosPack().get_path('niryo_robot_sound'),
-                                                        rospy.get_param("~path_user_sound"))
+        self.__simulation_mode = rospy.get_param("~simulation_mode")
+
+        self.__user_sound_directory_path = os.path.expanduser(rospy.get_param(
+            "~path_user_sound_simulation" if self.__simulation_mode else "~path_user_sound"))
+        if not os.path.isdir(self.__user_sound_directory_path):
+            os.makedirs(self.__user_sound_directory_path)
+
         self.__robot_sound_directory_path = os.path.join(rospkg.RosPack().get_path('niryo_robot_sound'),
                                                          rospy.get_param("~path_robot_sound"))
 
@@ -82,7 +86,7 @@ class SoundDatabase:
     # - Callbacks
     def __callback_manage_sound(self, req):
         if req.action == req.ADD:
-            return self.add_sound(req.sound_data, req.sound_name)
+            return self.add_sound(req.sound_name, req.sound_data)
         elif req.action == req.DELETE:
             return self.delete_sound(req.sound_name)
         else:
@@ -107,12 +111,17 @@ class SoundDatabase:
         return CommandStatus.SUCCESS, "{} Sound successfully deleted".format(sound_name)
 
     def add_sound(self, sound_name, sound_data):
+        if not (sound_name.endswith('.mp3') or sound_name.endswith('.wav')):
+            return CommandStatus.INVALID_SOUND_FORMAT, "The {}file must be in .mp3 or .wav format".format(
+                sound_name)
+
         if sound_name in self.__user_sounds:
             return CommandStatus.FAILURE, "Failure to write the {} sound, this name already exists".format(sound_name)
         elif sound_name in self.__robot_sounds:
             return CommandStatus.FAILURE, "Failure to write the {} sound, this name is protected".format(sound_name)
 
         # Split the sound_data to keep just the encoded data that we need
+
         sound_data_list = sound_data.split("base64,")[1]
         # delete the padding to be able to decode the sound_data properly
         missing_padding = len(sound_data_list) % 4
@@ -125,10 +134,16 @@ class SoundDatabase:
         sound_file_path = os.path.join(self.__user_sound_directory_path, sound_name)
         try:
             with open(sound_file_path, 'w') as sound_file:
-                self.__user_sounds[sound_name] = sound_file.write(str(sound_data_decoded))
-                self.__publish_sounds()
+                sound_file.write(str(sound_data_decoded))
         except IOError:
             return CommandStatus.FAILURE, "Failure to write the {} sound".format(sound_name)
+        try:
+            self.__user_sounds[sound_name] = Sound(sound_name, sound_file_path)
+            self.__publish_sounds()
+        except SoundFormatException:
+            os.remove(sound_file_path)
+            return CommandStatus.INVALID_SOUND_FORMAT, "The {} file does not appear to be an audio file".format(
+                sound_name)
 
         return CommandStatus.SUCCESS, "{} sound successfully deleted".format(sound_name)
 
@@ -138,9 +153,12 @@ class SoundDatabase:
         # Get a list with the names of the user's sounds
         sound_names = os.listdir(self.__user_sound_directory_path)
         for sound_name in sound_names:
-            if sound_name not in self.__user_sounds:
-                self.__user_sounds[sound_name] = Sound(sound_name,
-                                                       os.path.join(self.__user_sound_directory_path, sound_name))
+            if (sound_name.endswith('.mp3') or sound_name.endswith('.wav')) and sound_name not in self.__user_sounds:
+                try:
+                    self.__user_sounds[sound_name] = Sound(sound_name,
+                                                           os.path.join(self.__user_sound_directory_path, sound_name))
+                except SoundFormatException:
+                    pass
 
     def __load_robot_sounds(self):
         self.__robot_sounds = {

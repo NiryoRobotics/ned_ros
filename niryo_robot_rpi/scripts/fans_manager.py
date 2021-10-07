@@ -30,6 +30,18 @@ class FansManager(object):
         self._hardware_status_subscriber = rospy.Subscriber(
             '/niryo_robot_hardware_interface/hardware_status', HardwareStatus, self._callback_hardware_status)
 
+        rospy.on_shutdown(self.shutdown)
+
+    def __del__(self):
+        pass
+
+    def shutdown(self):
+        rospy.loginfo("Fan Manager - Stop fans")
+        rospy.sleep(0.5)
+        self._hardware_status_subscriber.unregister()
+        for fan in self._fans_list:
+            fan.value = False
+
     def _callback_hardware_status(self, msg):
         for fan in self._fans_list:
             fan.update(msg.rpi_temperature)
