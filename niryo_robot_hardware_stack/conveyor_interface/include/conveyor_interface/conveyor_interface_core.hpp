@@ -71,16 +71,15 @@ private:
         bool _callbackPingAndSetConveyor(conveyor_interface::SetConveyor::Request &req, conveyor_interface::SetConveyor::Response &res);
         bool _callbackControlConveyor(conveyor_interface::ControlConveyor::Request &req, conveyor_interface::ControlConveyor::Response &res);
 
-        void _publishConveyorsFeedback();
+        void _publishConveyorsFeedback(const ros::TimerEvent&);
 
     private:
         struct BusConfig
         {
             BusConfig(common::model::EHardwareType t) :
               type(t)
-            {
+            {}
 
-            }
             bool isValid() { return !pool_id_list.empty() && type != common::model::EHardwareType::UNKNOWN; }
 
             common::model::EHardwareType type{common::model::EHardwareType::UNKNOWN};
@@ -93,7 +92,7 @@ private:
 
         std::map<common::model::EBusProtocol, BusConfig> _bus_config_map;
 
-        std::thread _publish_conveyors_feedback_thread;
+        ros::Timer _publish_conveyors_feedback_timer;
 
         ros::ServiceServer _ping_and_set_stepper_server;
         ros::ServiceServer _control_conveyor_server;
@@ -111,7 +110,7 @@ private:
         static constexpr int TTL_DEFAULT_ID{8};
         static constexpr int CAN_DEFAULT_ID{6};
 
-        double _publish_feedback_frequency{0.0};
+        double _publish_feedback_duration{0.0};
 };
 
 } // ConveyorInterface

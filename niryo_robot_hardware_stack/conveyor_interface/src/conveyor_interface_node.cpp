@@ -42,7 +42,13 @@ int main(int argc, char **argv)
     ros::NodeHandle nh_conveyor("conveyor");
 
     std::string hardware_version;
+
+    bool can_enabled{false};
+    bool ttl_enabled{false};
+
     nh.getParam("hardware_version", hardware_version);
+    nh.getParam("can_enabled", can_enabled);
+    nh.getParam("ttl_enabled", ttl_enabled);
 
     std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_driver;
     std::shared_ptr<can_driver::CanInterfaceCore> can_driver;
