@@ -123,10 +123,10 @@ std::string MockDxlDriver::interpreteErrorState(uint32_t /*hw_state*/) const
  */
 int MockDxlDriver::readCustom(uint16_t address, uint8_t data_len, uint8_t id, uint32_t &data)
 {
-    (void)address; // unused
-    (void)data_len; // unused
-    (void)id; // unused
-    (void)data; // unused
+    (void)address;  // unused
+    (void)data_len;  // unused
+    (void)id;  // unused
+    (void)data;  // unused
 
     return COMM_SUCCESS;
 }
@@ -141,10 +141,10 @@ int MockDxlDriver::readCustom(uint16_t address, uint8_t data_len, uint8_t id, ui
  */
 int MockDxlDriver::writeCustom(uint16_t address, uint8_t data_len, uint8_t id, uint32_t data)
 {
-    (void)address; // unused
-    (void)data_len; // unused
-    (void)id; // unused
-    (void)data; // unused
+    (void)address;  // unused
+    (void)data_len;  // unused
+    (void)id;  // unused
+    (void)data;  // unused
 
     return COMM_SUCCESS;
 }
@@ -157,8 +157,8 @@ int MockDxlDriver::writeCustom(uint16_t address, uint8_t data_len, uint8_t id, u
  */
 int MockDxlDriver::changeId(uint8_t id, uint8_t new_id)
 {
-    (void)id; // unused
-    (void)new_id; // unused
+    (void)id;  // unused
+    (void)new_id;  // unused
 
     return COMM_TX_FAIL;
 }
@@ -233,8 +233,8 @@ int MockDxlDriver::readMaxPosition(uint8_t id, uint32_t &pos)
  */
 int MockDxlDriver::setTorqueEnable(uint8_t id, uint32_t torque_enable)
 {
-    (void)id; // unused
-    (void)torque_enable; // unused
+    (void)id;  // unused
+    (void)torque_enable;  // unused
 
     return COMM_SUCCESS;
 }
@@ -275,7 +275,7 @@ int MockDxlDriver::setGoalVelocity(uint8_t id, uint32_t velocity)
  */
 int MockDxlDriver::syncWriteTorqueEnable(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &torque_enable_list)
 {
-    (void)torque_enable_list; // unused
+    (void)torque_enable_list;  // unused
 
     // Create a map to store the frequency of each element in vector
     std::map<uint8_t, uint8_t> countMap;
@@ -512,7 +512,7 @@ int MockDxlDriver::syncReadHwErrorStatus(const std::vector<uint8_t> &id_list,
  */
 int MockDxlDriver::setLed(uint8_t id, uint32_t led_value)
 {
-    (void)led_value; // unused
+    (void)led_value;  // unused
 
     if (_map_fake_registers.count(id))
       return COMM_RX_FAIL;
@@ -529,7 +529,7 @@ int MockDxlDriver::setLed(uint8_t id, uint32_t led_value)
 int MockDxlDriver::syncWriteLed(const std::vector<uint8_t> &id_list,
                                 const std::vector<uint32_t> &led_list)
 {
-    (void)led_list; // unused
+    (void)led_list;  // unused
 
     std::map<uint8_t, uint8_t> countMap;
     for (auto & id : id_list)
@@ -551,7 +551,7 @@ int MockDxlDriver::syncWriteLed(const std::vector<uint8_t> &id_list,
  */
 int MockDxlDriver::setGoalTorque(uint8_t id, uint32_t torque)
 {
-    (void)torque; // unused
+    (void)torque;  // unused
 
     if (_map_fake_registers.count(id))
       return COMM_RX_FAIL;
@@ -568,7 +568,7 @@ int MockDxlDriver::setGoalTorque(uint8_t id, uint32_t torque)
 int MockDxlDriver::syncWriteTorqueGoal(const std::vector<uint8_t> &id_list,
                                        const std::vector<uint32_t> &torque_list)
 {
-    (void)torque_list; // unused
+    (void)torque_list;  // unused
 
     std::map<uint8_t, uint8_t> countMap;
     for (auto & id : id_list)
