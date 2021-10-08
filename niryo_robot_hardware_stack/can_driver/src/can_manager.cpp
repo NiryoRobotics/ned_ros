@@ -228,6 +228,8 @@ void CanManager::removeHardwareComponent(uint8_t id)
  */
 int CanManager::changeId(common::model::EHardwareType motor_type, uint8_t old_id, uint8_t new_id)
 {
+    std::lock_guard<std::mutex> lck(_stepper_timeout_mutex);
+
     int ret = CAN_FAIL;
     if (old_id == new_id)
     {
