@@ -29,7 +29,7 @@ namespace ttl_driver
 {
 
 AbstractDxlDriver::AbstractDxlDriver() :
-  AbstractMotorDriver ()
+  AbstractMotorDriver()
 {
 }
 

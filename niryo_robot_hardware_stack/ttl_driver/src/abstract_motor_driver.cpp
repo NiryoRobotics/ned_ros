@@ -29,7 +29,7 @@ namespace ttl_driver
  * @brief AbstractMotorDriver::AbstractMotorDriver
  */
 AbstractMotorDriver::AbstractMotorDriver() :
-  AbstractTtlDriver ()
+  AbstractTtlDriver()
 {
 }
 
