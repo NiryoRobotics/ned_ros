@@ -771,7 +771,11 @@ int MockDxlDriver::readFF2Gain(uint8_t id, uint32_t& gain)
  */
 int MockDxlDriver::readLoad(uint8_t id, uint32_t& present_load)
 {
-    return COMM_SUCCESS;
+    (void)present_load;  // unused
+
+    if (_map_fake_registers.count(id))
+        return COMM_SUCCESS;
+    return COMM_RX_FAIL;
 }
 
 /**
@@ -796,8 +800,9 @@ int MockDxlDriver::syncReadLoad(const std::vector<uint8_t> &id_list, std::vector
  */
 int MockDxlDriver::readVelocity(uint8_t id, uint32_t& present_velocity)
 {
-    present_velocity = 0;
-    return COMM_SUCCESS;
+  if (_map_fake_registers.count(id))
+      present_velocity = _map_fake_registers.at(id).velocity;
+  return COMM_SUCCESS;
 }
 
 /**
@@ -821,7 +826,7 @@ int MockDxlDriver::syncReadVelocity(const std::vector<uint8_t> &id_list, std::ve
  */
 std::string MockDxlDriver::interpreteFirmwareVersion(uint32_t fw_version) const
 {
-    return "";
+    return std::to_string(fw_version);
 }
 
 /**
