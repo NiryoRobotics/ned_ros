@@ -34,12 +34,12 @@ namespace model
 class ConveyorState : public StepperMotorState {
 
     public:
-        ConveyorState();
-        ConveyorState(EBusProtocol bus_proto);
+        ConveyorState(uint8_t default_id);
+        ConveyorState(EBusProtocol bus_proto, uint8_t default_id);
         ConveyorState(EHardwareType type,
-                      EBusProtocol bus_proto);
+                      EBusProtocol bus_proto, uint8_t default_id);
         ConveyorState(EHardwareType type,
-                      EBusProtocol bus_proto, uint8_t id);
+                      EBusProtocol bus_proto, uint8_t id, uint8_t default_id);
 
         ConveyorState(const ConveyorState& state);
         virtual ~ConveyorState() override;
@@ -66,6 +66,7 @@ class ConveyorState : public StepperMotorState {
 private:
         bool _state{false};
         int16_t _speed{0};
+        uint8_t _default_id{0};
 };
 
 /**
@@ -95,7 +96,7 @@ int16_t ConveyorState::getSpeed() const
 inline
 bool ConveyorState::isValid() const
 {
-    return (0 != getId());
+    return (0 != getId() && _default_id != getId());
 }
 
 } // namespace model

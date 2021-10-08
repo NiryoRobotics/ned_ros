@@ -31,16 +31,17 @@ namespace model
 /**
  * @brief ConveyorState::ConveyorState
  */
-ConveyorState::ConveyorState() :
-  StepperMotorState()
+ConveyorState::ConveyorState(uint8_t default_id) :
+  StepperMotorState(),
+  _default_id(default_id)
 {}
 
 /**
  * @brief ConveyorState::ConveyorState
  * @param bus_proto
  */
-ConveyorState::ConveyorState(EBusProtocol bus_proto)
-    : StepperMotorState(EHardwareType::STEPPER, EComponentType::CONVEYOR, bus_proto, 1)
+ConveyorState::ConveyorState(EBusProtocol bus_proto, uint8_t default_id)
+    : ConveyorState(EHardwareType::STEPPER, bus_proto, 1, default_id)
 {}
 
 /**
@@ -48,8 +49,8 @@ ConveyorState::ConveyorState(EBusProtocol bus_proto)
  * @param type
  * @param bus_proto
  */
-ConveyorState::ConveyorState(EHardwareType type, EBusProtocol bus_proto)
-    : StepperMotorState(type, EComponentType::CONVEYOR, bus_proto, 1)
+ConveyorState::ConveyorState(EHardwareType type, EBusProtocol bus_proto, uint8_t default_id)
+    : ConveyorState(type, bus_proto, 1, default_id)
 {}
 
 /**
@@ -58,8 +59,9 @@ ConveyorState::ConveyorState(EHardwareType type, EBusProtocol bus_proto)
  * @param bus_proto
  * @param id
  */
-ConveyorState::ConveyorState(EHardwareType type, EBusProtocol bus_proto, uint8_t id)
-    : StepperMotorState(type, EComponentType::CONVEYOR, bus_proto, id)
+ConveyorState::ConveyorState(EHardwareType type, EBusProtocol bus_proto, uint8_t id, uint8_t default_id)
+    : StepperMotorState(type, EComponentType::CONVEYOR, bus_proto, id),
+      _default_id(default_id)
 {}
 
 /**
@@ -71,6 +73,7 @@ ConveyorState::ConveyorState(const ConveyorState &state) :
 {
   _state = state._state;
   _speed = state._speed;
+  _default_id = state._default_id;
 }
 
 /**

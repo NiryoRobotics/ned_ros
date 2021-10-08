@@ -449,18 +449,24 @@ void CanManager::_verifyMotorTimeoutLoop()
                 have_motor = true;
                 // we locate the motor for the current id in _all_motor_connected
                 auto position = std::find(_all_motor_connected.begin(), _all_motor_connected.end(), map_it.first);
-                auto state = std::dynamic_pointer_cast<StepperMotorState>(map_it.second);
 
-                // if it has timeout, we remove it from the vector
-                if (state && ros::Time::now().toSec() - state->getLastTimeRead() > getCurrentTimeout())
+                // only if valid state (invalid if default id of conveyor for example)
+                if(map_it.second && map_it.second->isValid())
                 {
-                    timeout_motors.emplace_back(map_it.first);
-                    if (position != _all_motor_connected.end())
-                        _all_motor_connected.erase(position);
-                }  // else, if it is not in the list of connected motors, we add it (? _all_motor_connected got from scan, why add if id of state not found)
-                else if (position == _all_motor_connected.end())
-                {
-                    _all_motor_connected.push_back(map_it.first);
+                    auto state = std::dynamic_pointer_cast<StepperMotorState>(map_it.second);
+
+                    // if it has timeout, we remove it from the vector
+                    if (state &&
+                        ros::Time::now().toSec() - state->getLastTimeRead() > getCurrentTimeout())
+                    {
+                        timeout_motors.emplace_back(map_it.first);
+                        if (position != _all_motor_connected.end())
+                            _all_motor_connected.erase(position);
+                    }  // else, if it is not in the list of connected motors, we add it (? _all_motor_connected got from scan, why add if id of state not found)
+                    else if (position == _all_motor_connected.end())
+                    {
+                        _all_motor_connected.push_back(map_it.first);
+                    }
                 }
             }
         }
@@ -481,6 +487,7 @@ void CanManager::_verifyMotorTimeoutLoop()
         else
         {
             _is_connection_ok = true;
+            _debug_error_message.clear();
         }
         ros::Duration(0.5).sleep();
     }

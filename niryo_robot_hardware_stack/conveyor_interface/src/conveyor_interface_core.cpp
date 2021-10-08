@@ -229,7 +229,7 @@ ConveyorInterfaceCore::addConveyor()
             // take last
             uint8_t conveyor_id = *bus.second.pool_id_list.begin();
 
-            auto conveyor_state = std::make_shared<ConveyorState>(bus.second.type, bus.first, bus.second.default_id);
+            auto conveyor_state = std::make_shared<ConveyorState>(bus.second.type, bus.first, bus.second.default_id, bus.second.default_id);
 
             if (EBusProtocol::CAN == bus.first)
             {
