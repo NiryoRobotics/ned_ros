@@ -1381,9 +1381,13 @@ void TtlManager::updateCurrentCalibrationStatus()
         if (s.second && (s.second->getHardwareType() == EHardwareType::STEPPER
                          || s.second->getHardwareType() == EHardwareType::FAKE_STEPPER_MOTOR))
         {
-            EStepperCalibrationStatus status = std::dynamic_pointer_cast<StepperMotorState>(s.second)->getCalibrationState();
-            if (newStatus < status)
-                newStatus = status;
+            auto sState = std::dynamic_pointer_cast<StepperMotorState>(s.second);
+            if (sState && !sState->isConveyor())
+            {
+              EStepperCalibrationStatus status = std::dynamic_pointer_cast<StepperMotorState>(s.second)->getCalibrationState();
+              if (newStatus < status)
+                  newStatus = status;
+            }
         }
     }
     _calibration_status = newStatus;
