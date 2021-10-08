@@ -233,6 +233,8 @@ int EndEffectorDriver<reg_type>::readVoltage(uint8_t id, double& voltage)
 template<typename reg_type>
 int EndEffectorDriver<reg_type>::readHwErrorStatus(uint8_t id, uint32_t& hardware_status)
 {
+    (void)id;  // unused
+
     hardware_status = 0;
     //return read(reg_type::ADDR_HW_ERROR_STATUS, reg_type::SIZE_HW_ERROR_STATUS, id, hardware_status);
     return COMM_SUCCESS;
@@ -294,7 +296,8 @@ int EndEffectorDriver<reg_type>::syncReadVoltage(const std::vector<uint8_t> &id_
 template<typename reg_type>
 int EndEffectorDriver<reg_type>::syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list)
 {
-   // return syncRead(reg_type::ADDR_HW_ERROR_STATUS, reg_type::SIZE_HW_ERROR_STATUS, id_list, hw_error_list);
+    (void)id_list;  // unused
+    // return syncRead(reg_type::ADDR_HW_ERROR_STATUS, reg_type::SIZE_HW_ERROR_STATUS, id_list, hw_error_list);
     hw_error_list.clear();
     hw_error_list.emplace_back(0);
     return COMM_SUCCESS;
@@ -395,6 +398,8 @@ int EndEffectorDriver<reg_type>::readAccelerometerZValue(uint8_t id, uint32_t& z
 template<typename reg_type>
 int EndEffectorDriver<reg_type>::readCollisionStatus(uint8_t id, bool& status)
 {
+    (void)id;  // unused
+
     status = false;
     std::cout << "EndEffectorDriver<reg_type>::readCollisionStatus: need to be implemented!" << std::endl;
     return 0;

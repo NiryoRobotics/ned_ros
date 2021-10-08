@@ -537,6 +537,7 @@ int CanInterfaceCore::setConveyor(const std::shared_ptr<common::model::ConveyorS
 /**
  * @brief CanInterfaceCore::unsetConveyor
  * @param motor_id
+ * @param default_conveyor_id
  */
 void CanInterfaceCore::unsetConveyor(uint8_t motor_id, uint8_t default_conveyor_id)
 {

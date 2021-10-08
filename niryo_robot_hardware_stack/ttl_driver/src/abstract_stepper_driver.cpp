@@ -30,7 +30,7 @@ namespace ttl_driver
  * @brief AbstractStepperDriver::AbstractStepperDriver
  */
 AbstractStepperDriver::AbstractStepperDriver() :
-  AbstractMotorDriver ()
+  AbstractMotorDriver()
 {}
 
 /**

@@ -120,7 +120,7 @@ void ConveyorInterfaceCore::initParameters(ros::NodeHandle& nh)
 
         std::string pool_str{"["};
 
-        for(auto const& id : id_pool_list)
+        for (auto const& id : id_pool_list)
         {
             canConfig.pool_id_list.insert(static_cast<uint8_t>(id));
             pool_str += to_string(id) + ",";
@@ -151,7 +151,7 @@ void ConveyorInterfaceCore::initParameters(ros::NodeHandle& nh)
 
         std::string pool_str{"["};
 
-        for(auto const& id : id_pool_list)
+        for (auto const& id : id_pool_list)
         {
             ttlConfig.pool_id_list.insert(static_cast<uint8_t>(id));
             pool_str += to_string(id) + ",";
@@ -221,7 +221,7 @@ ConveyorInterfaceCore::addConveyor()
     res.status = niryo_robot_msgs::CommandStatus::FAILURE;
     res.id = 0;
 
-    for(auto& bus : _bus_config_map)
+    for (auto& bus : _bus_config_map)
     {
         // if we still have available ids in the pool of ids
         if (bus.second.isValid())
@@ -231,7 +231,7 @@ ConveyorInterfaceCore::addConveyor()
 
             auto conveyor_state = std::make_shared<ConveyorState>(bus.second.type, bus.first, bus.second.default_id);
 
-            if(EBusProtocol::CAN == bus.first)
+            if (EBusProtocol::CAN == bus.first)
             {
                 conveyor_state->setMaxEffort(bus.second.max_effort);
                 conveyor_state->setMicroSteps(bus.second.micro_steps);
@@ -319,7 +319,7 @@ ConveyorInterfaceCore::removeConveyor(uint8_t id)
     {
         EBusProtocol bus_proto = _state_map.at(id)->getBusProtocol();
 
-        if(_bus_config_map.count(bus_proto))
+        if (_bus_config_map.count(bus_proto))
         {
             _bus_config_map.at(bus_proto).pool_id_list.insert(id);
 
@@ -406,13 +406,13 @@ bool ConveyorInterfaceCore::_callbackControlConveyor(conveyor_interface::Control
         auto state = _state_map.at(req.id);
         EBusProtocol bus_proto = state->getBusProtocol();
 
-        if(EBusProtocol::CAN == bus_proto)
+        if (EBusProtocol::CAN == bus_proto)
         {
             _can_interface->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_CONVEYOR,
                                                                                        req.id, std::initializer_list<int32_t>{req.control_on,
                                                                                        req.speed, req.direction}));
         }
-        else if(EBusProtocol::TTL == bus_proto)
+        else if (EBusProtocol::TTL == bus_proto)
         {
             _ttl_interface->addSingleCommandToQueue(std::make_shared<StepperTtlSingleCmd>(EStepperCommandType::CMD_TYPE_CONVEYOR,
                                                                                           req.id, std::initializer_list<uint32_t>{req.control_on,
@@ -446,7 +446,7 @@ void ConveyorInterfaceCore::_publishConveyorsFeedback(const ros::TimerEvent&)
 
     for (auto const& conveyor_state : _state_map)
     {
-        // TODO put in ttl_manager
+        // TODO(CC) put in ttl_manager
         /*if (!_conveyor_driver->scanMotorId(conveyor_state->getId()))
         {
             removeConveyor(conveyor_state->getId());
@@ -454,7 +454,7 @@ void ConveyorInterfaceCore::_publishConveyorsFeedback(const ros::TimerEvent&)
         else
         {*/
 
-        if(conveyor_state.second)
+        if (conveyor_state.second)
         {
             data.conveyor_id = conveyor_state.second->getId();
             data.running = conveyor_state.second->getState();
@@ -466,7 +466,6 @@ void ConveyorInterfaceCore::_publishConveyorsFeedback(const ros::TimerEvent&)
         }
     }
     _conveyors_feedback_publisher.publish(msg);
-
 }
 
 /**

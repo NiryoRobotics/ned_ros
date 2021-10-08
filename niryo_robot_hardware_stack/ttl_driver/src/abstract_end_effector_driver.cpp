@@ -32,9 +32,8 @@ namespace ttl_driver
  * @brief AbstractEndEffectorDriver::AbstractEndEffectorDriver
  */
 AbstractEndEffectorDriver::AbstractEndEffectorDriver() :
-  AbstractTtlDriver ()
-{
-}
+  AbstractTtlDriver()
+{}
 
 /**
  * @brief AbstractEndEffectorDriver::AbstractEndEffectorDriver
@@ -43,16 +42,14 @@ AbstractEndEffectorDriver::AbstractEndEffectorDriver() :
  */
 AbstractEndEffectorDriver::AbstractEndEffectorDriver(shared_ptr<dynamixel::PortHandler> portHandler,
                                                      shared_ptr<dynamixel::PacketHandler> packetHandler) :
-  AbstractTtlDriver (portHandler, packetHandler)
-{
-}
+  AbstractTtlDriver(portHandler, packetHandler)
+{}
 
 /**
  * @brief AbstractEndEffectorDriver::~AbstractEndEffectorDriver
  */
 AbstractEndEffectorDriver::~AbstractEndEffectorDriver()
-{
-}
+{}
 
 /**
  * @brief AbstractEndEffectorDriver::str : build a string describing the object. For debug purpose only

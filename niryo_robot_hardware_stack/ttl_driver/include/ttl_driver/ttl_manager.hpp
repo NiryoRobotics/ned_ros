@@ -161,7 +161,6 @@ class TtlManager : public common::model::IBusManager
         std::shared_ptr<dynamixel::PacketHandler> _packetHandler;
 
         std::string _device_name;
-        bool _simulation_mode;
         int _baudrate{1000000};
 
         std::vector<uint8_t> _all_motor_connected; // with all ttl motors connected (including the tool)
@@ -174,7 +173,6 @@ class TtlManager : public common::model::IBusManager
         // map of drivers for a given hardware type (xl, stepper, end effector)
         std::map<common::model::EHardwareType, std::shared_ptr<ttl_driver::AbstractTtlDriver> > _driver_map;
 
-        double _calibration_timeout{30.0};
         common::model::EStepperCalibrationStatus _calibration_status{common::model::EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED};
 
         // for hardware control

@@ -134,8 +134,6 @@ class CanInterfaceCore : public common::model::IDriverCore, public common::model
         double _time_check_connection_last_read{0.0};
 
         // specific to stepper
-        double _delta_time_calib_read{0.0};
-        double _time_hw_calib_last_read{0.0};
 
         std::unique_ptr<CanManager> _can_manager;
 
