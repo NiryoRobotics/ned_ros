@@ -42,7 +42,7 @@ class MCP23017(object):
         self.init_config()
 
     def init_config(self):
-        self.write8(RegistersMCP23017.IODIRA, 0x00)  # all outputs on port A
+        self.write8(RegistersMCP23017.IODIRA, 0b00000010)  # all outputs on port A
         self.write8(RegistersMCP23017.IODIRB, 0x00)  # all outputs on port B
         self.__direction = self.readU8(RegistersMCP23017.IODIRA)
         self.__direction |= self.readU8(RegistersMCP23017.IODIRB) << 8

@@ -192,7 +192,7 @@ class McpIOPanel(IOPanel):
         GPIO.setwarnings(False)
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(interrupt_BCM, GPIO.IN)
-        GPIO.add_event_detect(interrupt_BCM, GPIO.FALLING, callback=self.interrupt_callback)
+        GPIO.add_event_detect(interrupt_BCM, GPIO.RISING, callback=self.interrupt_callback)
 
         self.read_digital_inputs()
 
