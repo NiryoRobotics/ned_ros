@@ -40,12 +40,12 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 namespace joints_interface
 {
 
-    class JointHardwareInterface : public hardware_interface::RobotHW
-    {
+class JointHardwareInterface : public hardware_interface::RobotHW
+{
 
     public:
-        JointHardwareInterface(ros::NodeHandle &rootnh,
-                               ros::NodeHandle &robot_hwnh,
+        JointHardwareInterface(ros::NodeHandle& rootnh,
+                               ros::NodeHandle& robot_hwnh,
                                std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface,
                                std::shared_ptr<can_driver::CanInterfaceCore> can_interface);
 
@@ -63,23 +63,23 @@ namespace joints_interface
         bool getLearningMode() const;
         std::string getHardwareVersion() const;
 
-        const std::vector<std::shared_ptr<common::model::JointState>> &getJointsState() const;
+        const std::vector<std::shared_ptr<common::model::JointState> >& getJointsState() const;
 
         // RobotHW interface
     public:
-        bool init(ros::NodeHandle &rootnh, ros::NodeHandle &robot_hwnh) override;
+        bool init(ros::NodeHandle& rootnh, ros::NodeHandle &robot_hwnh) override;
 
-        virtual void read(const ros::Time & /*time*/, const ros::Duration & /*period*/) override;
-        virtual void write(const ros::Time & /*time*/, const ros::Duration & /*period*/) override;
+        virtual void read(const ros::Time &/*time*/, const ros::Duration &/*period*/) override;
+        virtual void write(const ros::Time &/*time*/, const ros::Duration &/*period*/) override;
 
     private:
         void initParameters(ros::NodeHandle &nh);
         bool initStepper(ros::NodeHandle &robot_hwnh,
-                         const std::shared_ptr<common::model::StepperMotorState> &stepperState,
-                         const std::string &currentNamespace) const;
+                         const std::shared_ptr<common::model::StepperMotorState>& stepperState,
+                         const std::string& currentNamespace) const;
         bool initDxl(ros::NodeHandle &robot_hwnh,
-                     const std::shared_ptr<common::model::DxlMotorState> &dxlState,
-                     const std::string &currentNamespace) const;
+                     const std::shared_ptr<common::model::DxlMotorState>& dxlState,
+                     const std::string& currentNamespace) const;
 
     private:
         std::string _hardware_version;
@@ -95,47 +95,51 @@ namespace joints_interface
         std::map<uint8_t, std::string> _map_stepper_name;
         std::map<uint8_t, std::string> _map_dxl_name;
 
-        std::vector<std::shared_ptr<common::model::JointState>> _joint_list;
+        std::vector<std::shared_ptr<common::model::JointState> > _joint_list;
 
         bool _learning_mode{true};
-    };
+};
 
-    /**
+/**
  * @brief JointHardwareInterface::getJointsState
  * @return
  */
-    inline bool JointHardwareInterface::isCalibrationInProgress() const
-    {
-        return _calibration_manager->CalibrationInprogress();
-    }
+inline
+bool JointHardwareInterface::isCalibrationInProgress() const
+{
+    return _calibration_manager->CalibrationInprogress();
+}
 
-    /**
+/**
  * @brief JointHardwareInterface::getHardwareVersion
  * @return
  */
-    inline std::string JointHardwareInterface::getHardwareVersion() const
-    {
-        return _hardware_version;
-    }
+inline
+std::string JointHardwareInterface::getHardwareVersion() const
+{
+    return _hardware_version;
+}
 
-    /**
+/**
  * @brief JointHardwareInterface::getLearningMode
  * @return
  */
-    inline bool JointHardwareInterface::getLearningMode() const
-    {
-        return _learning_mode;
-    }
+inline
+bool JointHardwareInterface::getLearningMode() const
+{
+    return _learning_mode;
+}
 
-    /**
+/**
  * @brief JointHardwareInterface::getJointsState
  * @return
  */
-    inline const std::vector<std::shared_ptr<common::model::JointState>> &
-    JointHardwareInterface::getJointsState() const
-    {
-        return _joint_list;
-    }
+inline
+const std::vector<std::shared_ptr<common::model::JointState>> &
+JointHardwareInterface::getJointsState() const
+{
+    return _joint_list;
+}
 
 } // JointsInterface
 
