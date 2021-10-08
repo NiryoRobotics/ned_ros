@@ -1,4 +1,3 @@
-
 # Lib
 import os
 import subprocess
@@ -13,6 +12,7 @@ class Sound(object):
         self.__name = name
         self.__path = path
 
+        rospy.logdebug(self.__name, self.__path)
         if not self.exists():
             raise IOError("File {} doesn't exists".format(self.__path))
 
