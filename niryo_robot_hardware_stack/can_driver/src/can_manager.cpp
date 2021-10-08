@@ -268,7 +268,7 @@ void CanManager::readStatus()
     {
         auto driver = std::dynamic_pointer_cast<AbstractStepperDriver>(it.second);
 
-        if (driver)
+        if (driver && driver->canReadData())
         {
             uint8_t motor_id{};
             int control_byte{};
