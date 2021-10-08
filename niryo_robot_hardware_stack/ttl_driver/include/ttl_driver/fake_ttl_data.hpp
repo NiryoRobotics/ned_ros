@@ -35,6 +35,8 @@ class FakeTtlData
             uint16_t model_number{0};
 
             uint32_t position{0};
+            uint32_t velocity{0};
+
             uint32_t min_position{0};
             uint32_t max_position{0};
 
@@ -45,7 +47,6 @@ class FakeTtlData
 
         struct FakeStepperRegister : public AbstractFakeRegister
         {
-            uint32_t       velocity{0};
         };
 
         struct FakeDxlRegister : public AbstractFakeRegister

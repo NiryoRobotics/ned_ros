@@ -20,6 +20,7 @@
 #include <cassert>
 #include <string>
 #include <vector>
+#include <tuple>
 
 using ::common::model::EStepperCommandType;
 
@@ -30,7 +31,7 @@ namespace can_driver
  * @brief AbstractStepperDriver::AbstractStepperDriver
  */
 AbstractStepperDriver::AbstractStepperDriver() :
-  AbstractCanDriver ()
+  AbstractCanDriver()
 {}
 
 /**
@@ -39,9 +40,7 @@ AbstractStepperDriver::AbstractStepperDriver() :
  */
 AbstractStepperDriver::AbstractStepperDriver(std::shared_ptr<mcp_can_rpi::MCP_CAN> mcp_can) :
   AbstractCanDriver(mcp_can)
-{
-
-}
+{}
 
 /**
  * @brief AbstractStepperDriver::~AbstractStepperDriver
