@@ -355,11 +355,11 @@ int CanManager::scanAndCheck()
     // only stepper for now
     if (_driver_map.at(type))
     {
-        // only for non conveyor motors
+        // only for valid states (conveyor with default id is not valid)
         std::set<uint8_t> motors_unfound;
         for (auto const& it : _state_map)
         {
-            if (it.second)
+            if (it.second && it.second->isValid())
                 motors_unfound.insert(it.first);
         }
 
@@ -381,7 +381,7 @@ int CanManager::scanAndCheck()
                 _debug_error_message += " " + std::to_string(m_id) + ",";
             }
             _debug_error_message.pop_back();  // remove trailing ","
-            _debug_error_message += "are not connected";
+            _debug_error_message += " are not connected";
 
             ROS_ERROR_THROTTLE(2, "CanManager::scanAndCheck - %s", _debug_error_message.c_str());
         }

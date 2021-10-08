@@ -91,11 +91,11 @@ int MockStepperDriver::ping(uint8_t id)
  * @param id_list
  * @return
  */
-int MockStepperDriver::scan(const std::set<uint8_t>& motors_to_find, std::vector<uint8_t> &id_list)
+int MockStepperDriver::scan(std::set<uint8_t> &motors_unfound, std::vector<uint8_t> &id_list)
 {
     int result = CAN_FAIL;
 
-    std::set<uint8_t> motors_unfound = motors_to_find;
+    std::set<uint8_t> motors_to_find = motors_unfound;
     id_list.clear();
 
     for (auto id : motors_to_find)

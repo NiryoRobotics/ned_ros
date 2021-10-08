@@ -52,7 +52,7 @@ public:
     virtual bool canReadData() const;
 
     virtual int ping(uint8_t id);
-    virtual int scan(const std::set<uint8_t>& motors_to_find, std::vector<uint8_t> &id_list);
+    virtual int scan(std::set<uint8_t>& motors_unfound, std::vector<uint8_t> &id_list);
 
     virtual int writeSingleCmd(const std::shared_ptr<common::model::AbstractCanSingleMotorCmd >& cmd) = 0;
 

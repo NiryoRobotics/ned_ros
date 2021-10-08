@@ -48,7 +48,7 @@ public:
     virtual bool canReadData() const override;
 
     virtual int ping(uint8_t id) override;
-    virtual int scan(const std::set<uint8_t> &motors_to_find, std::vector<uint8_t> &id_list) override;
+    virtual int scan(std::set<uint8_t> &motors_unfound, std::vector<uint8_t> &id_list) override;
     virtual uint8_t sendUpdateConveyorId(uint8_t old_id, uint8_t new_id) override;
     virtual uint8_t sendTorqueOnCommand(uint8_t id, int torque_on) override;
     virtual uint8_t sendRelativeMoveCommand(uint8_t id, int steps, int delay) override;
