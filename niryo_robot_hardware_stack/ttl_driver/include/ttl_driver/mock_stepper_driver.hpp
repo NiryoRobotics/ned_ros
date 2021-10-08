@@ -36,7 +36,7 @@ namespace ttl_driver
 class MockStepperDriver : public AbstractStepperDriver
 {
     public:
-        MockStepperDriver(FakeTtlData data);
+        MockStepperDriver(const std::shared_ptr<FakeTtlData>&  data);
         virtual ~MockStepperDriver() override;
 
         virtual std::string str() const override;
@@ -96,10 +96,10 @@ class MockStepperDriver : public AbstractStepperDriver
         virtual int readFirmwareRunning(uint8_t id, bool &is_running) override;
 
     private:
-        std::map<uint8_t, FakeTtlData::FakeStepperRegister> _map_fake_registers;
-
-        std::vector<uint8_t> _full_id_list;
+        std::shared_ptr<FakeTtlData>  _fake_data;
         std::vector<uint8_t> _id_list;
+
+        int fake_time = 0;
 
         static constexpr int GROUP_SYNC_REDONDANT_ID = 10;
         static constexpr int LEN_ID_DATA_NOT_SAME    = 20;
@@ -109,9 +109,6 @@ class MockStepperDriver : public AbstractStepperDriver
         static constexpr int CALIBRATION_SUCCESS = 2;
         static constexpr int CALIBRATION_ERROR = 3;
         uint32_t _calibration_status = CALIBRATION_IDLE;
-        int fake_time = 0;
-    private:
-        void initializeFakeData(FakeTtlData data);
 };
 
 }

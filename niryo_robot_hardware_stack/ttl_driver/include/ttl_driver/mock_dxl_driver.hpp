@@ -37,7 +37,7 @@ namespace ttl_driver
 class MockDxlDriver : public AbstractDxlDriver
 {
     public:
-        MockDxlDriver(FakeTtlData data);
+        MockDxlDriver(const std::shared_ptr<FakeTtlData>&  data);
         virtual ~MockDxlDriver() override;
 
         virtual std::string str() const override;
@@ -115,11 +115,10 @@ class MockDxlDriver : public AbstractDxlDriver
         virtual int readVelocity(uint8_t id, uint32_t &present_velocity) override;
         virtual int syncReadVelocity(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &velocity_list) override;
     
-        void removeGripper();
+        int removeGripper(uint8_t id = 11);
 
     private:
-        std::map<uint8_t, FakeTtlData::FakeDxlRegister> _map_fake_registers;
-        std::vector<uint8_t> _full_id_list;
+        std::shared_ptr<FakeTtlData> _fake_data;
         std::vector<uint8_t> _id_list;
 
         static constexpr int GROUP_SYNC_REDONDANT_ID = 10;
@@ -128,10 +127,6 @@ class MockDxlDriver : public AbstractDxlDriver
         // AbstractTtlDriver interface
     protected:
         virtual std::string interpreteFirmwareVersion(uint32_t fw_version) const override;
-
-    private:
-        void initializeFakeData(FakeTtlData data);
-
 };
 
 } // DynamixelDriver

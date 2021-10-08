@@ -19,7 +19,9 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 
 #include <cstdint>
 #include <string>
+#include <map>
 #include <vector>
+
 namespace ttl_driver
 {
 
@@ -77,10 +79,10 @@ class FakeTtlData
         };
 
         // dxl
-        std::vector<FakeDxlRegister> dxl_registers;
+        std::map<uint8_t, FakeDxlRegister> dxl_registers;
 
         // stepper
-        std::vector<FakeStepperRegister> stepper_registers;
+        std::map<uint8_t, FakeDxlRegister> stepper_registers;
 
         // common
         std::vector<uint8_t> full_id_list;

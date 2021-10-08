@@ -195,7 +195,7 @@ void TtlManager::addHardwareComponent(const std::shared_ptr<common::model::Abstr
     }
     else
     {
-        _ids_map.at(hardware_type).push_back(id);
+        _ids_map.at(hardware_type).emplace_back(id);
     }
 
     addHardwareDriver(hardware_type);
@@ -277,7 +277,7 @@ int TtlManager::changeId(common::model::EHardwareType motor_type, uint8_t old_id
                                                 _ids_map.at(motor_type).end());
 
                     // update all maps
-                    _ids_map.at(motor_type).push_back(new_id);
+                    _ids_map.at(motor_type).emplace_back(new_id);
                 }
             }
         }
@@ -1421,7 +1421,7 @@ TtlManager::getMotorsStates() const
         if (EHardwareType::UNKNOWN != it.second->getHardwareType()
             && EHardwareType::END_EFFECTOR != it.second->getHardwareType())
         {
-            states.push_back(std::dynamic_pointer_cast<JointState>(it.second));
+            states.emplace_back(std::dynamic_pointer_cast<JointState>(it.second));
         }
     }
 
@@ -1472,14 +1472,14 @@ void TtlManager::addHardwareDriver(common::model::EHardwareType hardware_type)
           case common::model::EHardwareType::XL330:
               _driver_map.insert(std::make_pair(hardware_type, std::make_shared<DxlDriver<XL330Reg> >(_portHandler, _packetHandler)));
           break;
+          case common::model::EHardwareType::END_EFFECTOR:
+              _driver_map.insert(std::make_pair(hardware_type, std::make_shared<EndEffectorDriver<EndEffectorReg> >(_portHandler, _packetHandler)));
+          break;
           case common::model::EHardwareType::FAKE_DXL_MOTOR:
               _driver_map.insert(std::make_pair(hardware_type, std::make_shared<MockDxlDriver>(_fake_data)));
           break;
           case common::model::EHardwareType::FAKE_STEPPER_MOTOR:
               _driver_map.insert(std::make_pair(hardware_type, std::make_shared<MockStepperDriver>(_fake_data)));
-          break;
-          case common::model::EHardwareType::END_EFFECTOR:
-              _driver_map.insert(std::make_pair(hardware_type, std::make_shared<EndEffectorDriver<EndEffectorReg> >(_portHandler, _packetHandler)));
           break;
           case common::model::EHardwareType::FAKE_END_EFFECTOR:
               _driver_map.insert(std::make_pair(hardware_type, std::make_shared<MockEndEffectorDriver>(_fake_data)));
@@ -1511,6 +1511,7 @@ void TtlManager::checkRemovedMotors()
  */
 void TtlManager::readFakeConfig()
 {
+    _fake_data = std::make_shared<FakeTtlData>();
     std::string hardware_version;
     _nh.getParam("hardware_version", hardware_version);
     assert(_nh.hasParam(hardware_version));
@@ -1519,18 +1520,18 @@ void TtlManager::readFakeConfig()
     if (_nh.hasParam(hardware_version + "/id_list"))
         _nh.getParam(hardware_version + "/id_list", full_id_list);
     for (auto id : full_id_list)
-        _fake_data.full_id_list.push_back(id);
+        _fake_data->full_id_list.emplace_back(static_cast<uint8_t>(id));
 
     if (_nh.hasParam(hardware_version + "/steppers"))
     {
         std::string current_ns = hardware_version + "/steppers/";
-        retrieveFakeMotorData(current_ns, _fake_data.stepper_registers);
+        retrieveFakeMotorData(current_ns, _fake_data->stepper_registers);
     }
 
     if (_nh.hasParam(hardware_version + "/dynamixels/"))
     {
         std::string current_ns = hardware_version + "/dynamixels/";
-        retrieveFakeMotorData(current_ns, _fake_data.dxl_registers);
+        retrieveFakeMotorData(current_ns, _fake_data->dxl_registers);
     }
 
     if (_nh.hasParam(hardware_version + "/end_effector"))
@@ -1538,15 +1539,15 @@ void TtlManager::readFakeConfig()
         std::string current_ns = hardware_version + "/end_effector/";
         int id, temperature, voltage;
         _nh.getParam(current_ns + "id", id);
-        _fake_data.end_effector.id = id;
+        _fake_data->end_effector.id = static_cast<uint8_t>(id);
         _nh.getParam(current_ns + "temperature", temperature);
-        _fake_data.end_effector.temperature = temperature;
+        _fake_data->end_effector.temperature = static_cast<uint32_t>(temperature);
         _nh.getParam(current_ns + "voltage", voltage);
-        _fake_data.end_effector.voltage = voltage;
+        _fake_data->end_effector.voltage = static_cast<uint32_t>(voltage);
 
         std::string firmware;
         _nh.getParam(current_ns + "firmware", firmware);
-        _fake_data.end_effector.firmware = firmware;
+        _fake_data->end_effector.firmware = firmware;
     }
 }
 

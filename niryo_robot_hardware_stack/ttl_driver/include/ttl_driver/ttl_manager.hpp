@@ -154,7 +154,7 @@ class TtlManager : public common::model::IBusManager
         // Config params using in fake driver
         void readFakeConfig();
         template<typename Reg>
-        void retrieveFakeMotorData(std::string current_ns, std::vector<Reg> &fake_params);
+        void retrieveFakeMotorData(std::string current_ns, std::map<uint8_t, Reg> &fake_params);
     private:
         ros::NodeHandle _nh;
         std::shared_ptr<dynamixel::PortHandler> _portHandler;
@@ -198,7 +198,7 @@ class TtlManager : public common::model::IBusManager
                                         {CALIBRATION_IDLE, common::model::EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED}};
 
         bool _use_simu_gripper = true;
-        FakeTtlData _fake_data;
+        std::shared_ptr<FakeTtlData> _fake_data;
 };
 
 // inline getters
@@ -291,7 +291,7 @@ bool TtlManager::hasEndEffector() const
  * @param fake_params
  */
 template<typename Reg>
-void TtlManager::retrieveFakeMotorData(std::string current_ns, std::vector<Reg> &fake_params)
+void TtlManager::retrieveFakeMotorData(std::string current_ns, std::map<uint8_t, Reg> &fake_params)
 {
     std::vector<int> stepper_ids;
     _nh.getParam(current_ns + "id", stepper_ids);
@@ -335,7 +335,7 @@ void TtlManager::retrieveFakeMotorData(std::string current_ns, std::vector<Reg> 
         tmp.max_position = stepper_max_positions.at(i);
         tmp.model_number = stepper_model_numbers.at(i);
         tmp.firmware = stepper_firmwares.at(i);
-        fake_params.push_back(tmp);
+        fake_params.insert(std::make_pair(tmp.id, tmp));
     }
 }
 

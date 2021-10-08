@@ -61,11 +61,19 @@ public:
     virtual int readDigitalInput(uint8_t id, bool& in) = 0;
     virtual int writeDigitalOutput(uint8_t id, bool out) = 0;
 
-    virtual common::model::EActionType interpreteActionValue(uint32_t value) = 0;
+    virtual std::string interpreteErrorState(uint32_t hw_state) const override;
+
+    common::model::EActionType interpreteActionValue(uint32_t value) const;
 
     // AbstractTtlDriver interface
 protected:
     virtual std::string str() const override;
+    virtual std::string interpreteFirmwareVersion(uint32_t fw_version) const override;
+
+    // AbstractTtlDriver interface
+public:
+    virtual int writeSingleCmd(const std::shared_ptr<common::model::AbstractTtlSingleMotorCmd> &cmd) override;
+    virtual int writeSyncCmd(int type, const std::vector<uint8_t> &ids, const std::vector<uint32_t> &params) override;
 };
 
 } // ttl_driver

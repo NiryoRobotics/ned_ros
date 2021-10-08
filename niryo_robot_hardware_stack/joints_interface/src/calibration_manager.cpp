@@ -774,8 +774,8 @@ bool CalibrationManager::getMotorsCalibrationOffsets(std::vector<int> &motor_id_
             try
             {
                 size_t index = current_line.find(":");
-                motor_id_list.push_back(stoi(current_line.substr(0, index)));
-                steps_list.push_back(stoi(current_line.erase(0, index + 1)));
+                motor_id_list.emplace_back(stoi(current_line.substr(0, index)));
+                steps_list.emplace_back(stoi(current_line.erase(0, index + 1)));
             }
             catch (...)
             {
