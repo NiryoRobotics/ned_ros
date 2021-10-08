@@ -34,6 +34,7 @@ class LedRingAnimations:
         self.LED_INVERT = rospy.get_param(
             '~led_invert')  # True to invert the signal (when using NPN transistor level shift)
         self.LED_CHANNEL = rospy.get_param('~led_channel')
+        self.__led_offset = rospy.get_param("~led_offset")
 
         if not self.__is_simulation:
             self.LED_STRIP = ws.WS2811_STRIP_GRB
@@ -237,7 +238,7 @@ class LedRingAnimations:
         for led_id in range(self.led_count):
             if self.__stop_func:
                 break
-            self.set_led(led_id, color_rgba)
+            self.set_led((led_id + self.__led_offset)%self.led_count, color_rgba)
             self.show_leds()
 
             next_loop += period

@@ -1,4 +1,3 @@
-
 import rospy
 import time
 import rospkg
@@ -19,6 +18,8 @@ class LedRingSimulation:
 
     def __init__(self, led_count):
         self.led_count = led_count  # Number of leds
+
+        self.use_mesh = rospy.get_param("~use_mesh")
         self.led_marker_collada_path = rospy.get_param("~simulation_led_mesh_path")
 
         # for simulation mode
@@ -57,23 +58,36 @@ class LedRingSimulation:
         # led_ring_marker.header.stamp = rospy.Time.now()
         led_ring_marker.ns = "led ring"
         led_ring_marker.id = position
-        led_ring_marker.type = led_ring_marker.MESH_RESOURCE
         led_ring_marker.action = led_ring_marker.ADD
 
-        led_ring_marker.scale.x = 1
-        led_ring_marker.scale.y = 1
-        led_ring_marker.scale.z = 1
-
         led_ring_marker.color = ColorRGBA(51, 51, 51, 0)
-
-        led_ring_marker.mesh_use_embedded_materials = False
-        led_ring_marker.mesh_resource = self.led_marker_collada_path
-
-        led_ring_marker.pose.position.z = -0.012
-        led_ring_marker.pose.orientation = Quaternion(
-            *quaternion_from_euler(0, 0, position * 2 * math.pi / self.led_count))
-
         led_ring_marker.lifetime = rospy.Duration(0)
+
+        angle = position * 2 * math.pi / self.led_count
+        if self.use_mesh:
+            led_ring_marker.type = led_ring_marker.MESH_RESOURCE
+            led_ring_marker.scale.x = 1
+            led_ring_marker.scale.y = 1
+            led_ring_marker.scale.z = 1
+
+            led_ring_marker.pose.position.z = -0.012
+            led_ring_marker.pose.orientation = Quaternion(
+                *quaternion_from_euler(0, 0, angle))
+
+            led_ring_marker.mesh_use_embedded_materials = False
+            led_ring_marker.mesh_resource = self.led_marker_collada_path
+
+        else:
+            led_ring_marker.type = led_ring_marker.CUBE
+            led_ring_marker.scale.x = 0.0152
+            led_ring_marker.scale.y = 0.004023
+            led_ring_marker.scale.z = 0.005
+
+            led_ring_marker.pose.position.z = -0.012
+            led_ring_marker.pose.position.x = 0.072 * math.cos(angle)
+            led_ring_marker.pose.position.y = 0.072 * math.sin(angle)
+            led_ring_marker.pose.orientation = Quaternion(
+                *quaternion_from_euler(0, 0, angle + math.pi / 2))
 
         return led_ring_marker
 
@@ -88,6 +102,6 @@ class LedRingSimulation:
         color.r = color_255.r * ratio
         color.g = color_255.g * ratio
         color.b = color_255.b * ratio
-        color.a = 0.8  # a little bit translucid
+        color.a = 0.8  # a little bit translucent
 
         return color
