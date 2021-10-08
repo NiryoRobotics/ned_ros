@@ -451,12 +451,15 @@ void HardwareInterface::_publishHardwareStatus()
             auto conveyor_states = _conveyor_interface->getConveyorStates();
             for (std::shared_ptr<common::model::ConveyorState> cState : conveyor_states)
             {
-                motor_names.emplace_back("Conveyor");
-                voltages.emplace_back(cState->getVoltage());
-                temperatures.emplace_back(cState->getTemperature());
-                hw_errors.emplace_back(cState->getHardwareError());
-                hw_errors_msg.emplace_back(cState->getHardwareErrorMessage());
-                motor_types.emplace_back(common::model::HardwareTypeEnum(cState->getHardwareType()).toString());
+                if (cState->getId() != cState->getDefaultId())
+                {
+                    motor_names.emplace_back("Conveyor");
+                    voltages.emplace_back(cState->getVoltage());
+                    temperatures.emplace_back(cState->getTemperature());
+                    hw_errors.emplace_back(cState->getHardwareError());
+                    hw_errors_msg.emplace_back(cState->getHardwareErrorMessage());
+                    motor_types.emplace_back(common::model::HardwareTypeEnum(cState->getHardwareType()).toString());
+                }
             }
         }
 

@@ -281,11 +281,19 @@ EStepperCalibrationStatus CalibrationManager::autoCalibration()
     // 2. Send calibration cmd 1 + 2 + 3 (from can or ttl depending of which interface is instanciated)
     sendCalibrationToSteppers();
 
+    double timeout = 0.0;
     // 3. wait for calibration status to change
     while ((_can_interface && _can_interface->isCalibrationInProgress()) ||
            (_ttl_interface && _ttl_interface->isCalibrationInProgress()))
     {
         ros::Duration(0.2).sleep();
+        timeout += 0.2;
+        if (timeout >= 30.0)
+        {
+            ROS_ERROR("Calibration Interface - calibration timeout, please try again");
+            _calibration_in_progress = false;
+            return common::model::EStepperCalibrationStatus::CALIBRATION_TIMEOUT;
+        }
     }
 
     // 4. retrieve values for the calibration
@@ -493,9 +501,24 @@ void CalibrationManager::setStepperCalibrationCommand(const std::shared_ptr<Step
 void CalibrationManager::moveRobotBeforeCalibration()
 {
     // 1 - for can only, first move motor 3 a bit up
-    if (EBusProtocol::CAN == _joint_states_list.at(1)->getBusProtocol() &&
-        EBusProtocol::CAN == _joint_states_list.at(2)->getBusProtocol())
+    if (_can_interface)
     {
+        // move motor 1 back a little bit
+        // set Torque motor 1
+        setTorqueStepperMotor(_joint_states_list.at(0), true);
+        // Relative Move Motor 1
+        if (_joint_states_list.at(0)->isStepper() && _joint_states_list.at(0)->getBusProtocol() == common::model::EBusProtocol::CAN)
+        {
+          uint8_t motor_id = _joint_states_list.at(0)->getId();
+          int steps = -500 * _joint_states_list.at(0)->getDirection();
+          int delay = 200;
+
+          StepperSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_RELATIVE_MOVE, motor_id, {steps, delay});
+          getJointInterface(_joint_states_list.at(0)->getBusProtocol())->addSingleCommandToQueue(
+                                  std::make_shared<StepperSingleCmd>(stepper_cmd));
+        }
+        ros::Duration(0.3).sleep();
+
         // Torque ON for motor 2
         setTorqueStepperMotor(_joint_states_list.at(1), true);
 

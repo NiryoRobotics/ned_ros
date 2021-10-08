@@ -1140,7 +1140,6 @@ bool TtlInterfaceCore::_callbackReadCustomValue(ttl_driver::ReadCustomValue::Req
 bool TtlInterfaceCore::_callbackWritePIDValue(ttl_driver::WritePIDValue::Request &req,
                                               ttl_driver::WritePIDValue::Response &res)
 {
-
   int result = niryo_robot_msgs::CommandStatus::FAILURE;
 
   DxlMotorState state(req.id);
