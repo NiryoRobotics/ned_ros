@@ -29,6 +29,7 @@
 #include <asm-generic/errno.h>
 #include <cstdint>
 #include <functional>
+#include <mutex>
 #include <string>
 #include <vector>
 #include <set>
@@ -205,16 +206,16 @@ void CanManager::addHardwareComponent(const std::shared_ptr<common::model::Abstr
  */
 void CanManager::removeHardwareComponent(uint8_t id)
 {
-  ROS_DEBUG("CanManager::removeMotor - Remove motor id: %d", id);
+    ROS_DEBUG("CanManager::removeMotor - Remove motor id: %d", id);
 
-  if (_state_map.count(id) && _state_map.at(id))
-  {
-      _state_map.erase(id);
-  }
+    if (_state_map.count(id) && _state_map.at(id))
+    {
+        _state_map.erase(id);
+    }
 
-  _removed_motor_id_list.erase(std::remove(_removed_motor_id_list.begin(),
-                                           _removed_motor_id_list.end(), id),
-                                           _removed_motor_id_list.end());
+    _removed_motor_id_list.erase(std::remove(_removed_motor_id_list.begin(),
+                                             _removed_motor_id_list.end(), id),
+                                             _removed_motor_id_list.end());
 }
 
 
@@ -444,29 +445,32 @@ void CanManager::_verifyMotorTimeoutLoop()
         {
             for (auto const &map_it : _state_map)
             {
-                // using mutex in for to protect only state_map if needed
-                std::lock_guard<std::mutex> lck(_stepper_timeout_mutex);
-                have_motor = true;
-                // we locate the motor for the current id in _all_motor_connected
-                auto position = std::find(_all_motor_connected.begin(), _all_motor_connected.end(), map_it.first);
-
-                // only if valid state (invalid if default id of conveyor for example)
-                if(map_it.second && map_it.second->isValid())
+                if (map_it.second && map_it.second->getComponentType() != common::model::EComponentType::CONVEYOR)
                 {
-                    auto state = std::dynamic_pointer_cast<StepperMotorState>(map_it.second);
+                    // using mutex in for to protect only state_map if needed
+                    std::lock_guard<std::mutex> lck(_stepper_timeout_mutex);
+                    have_motor = true;
+                    // we locate the motor for the current id in _all_motor_connected
+                    auto position = std::find(_all_motor_connected.begin(), _all_motor_connected.end(), map_it.first);
 
-                    // if it has timeout, we remove it from the vector
-                    if (state &&
-                        ros::Time::now().toSec() - state->getLastTimeRead() > getCurrentTimeout())
+                    // only if valid state (invalid if default id of conveyor for example)
+                    if(map_it.second && map_it.second->isValid())
                     {
-                        timeout_motors.emplace_back(map_it.first);
-                        if (position != _all_motor_connected.end())
-                            _all_motor_connected.erase(position);
-                    }  // else, if it is not in the list of connected motors, we add it (? _all_motor_connected got from scan, why add if id of state not found)
-                    else if (position == _all_motor_connected.end())
-                    {
-                        _all_motor_connected.push_back(map_it.first);
-                    }
+                        auto state = std::dynamic_pointer_cast<StepperMotorState>(map_it.second);
+
+                        // if it has timeout, we remove it from the vector
+                        if (state &&
+                            ros::Time::now().toSec() - state->getLastTimeRead() > getCurrentTimeout())
+                        {
+                            timeout_motors.emplace_back(map_it.first);
+                            if (position != _all_motor_connected.end())
+                                _all_motor_connected.erase(position);
+                        }  // else, if it is not in the list of connected motors, we add it (? _all_motor_connected got from scan, why add if id of state not found)
+                        else if (position == _all_motor_connected.end())
+                        {
+                            _all_motor_connected.push_back(map_it.first);
+                        }
+                    }    
                 }
             }
         }

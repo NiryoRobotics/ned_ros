@@ -91,6 +91,7 @@ private:
             double max_effort{0.0};
             double micro_steps{8.0};
         };
+        std::mutex _state_map_mutex;
 
         std::map<common::model::EBusProtocol, BusConfig> _bus_config_map;
 

@@ -543,7 +543,7 @@ void CanInterfaceCore::unsetConveyor(uint8_t motor_id, uint8_t default_conveyor_
 {
     lock_guard<mutex> lck(_control_loop_mutex);
 
-    ROS_DEBUG("TtlInterfaceCore::unsetConveyor - unsetConveyor: id %d", motor_id);
+    ROS_DEBUG("CanInterfaceCore::unsetConveyor - unsetConveyor: id %d", motor_id);
 
     auto state = getJointState(motor_id);
     if (CAN_OK == _can_manager->changeId(state->getHardwareType(), motor_id, default_conveyor_id))
@@ -551,7 +551,7 @@ void CanInterfaceCore::unsetConveyor(uint8_t motor_id, uint8_t default_conveyor_
         _can_manager->removeHardwareComponent(default_conveyor_id);
     }
     else
-        ROS_ERROR("TtlInterfaceCore::unsetConveyor : unable to change conveyor ID");
+        ROS_ERROR("CanInterfaceCore::unsetConveyor : unable to change conveyor ID");
 }
 
 

@@ -21,6 +21,7 @@
 #include <cstddef>
 #include <cstdint>
 #include <memory>
+#include <mutex>
 #include <vector>
 #include <string>
 #include <functional>
@@ -327,7 +328,7 @@ ConveyorInterfaceCore::removeConveyor(uint8_t id)
             _state_map.erase(id);
 
             // remove conveyor
-              _bus_config_map.at(bus_proto).interface->unsetConveyor(id, _bus_config_map.at(bus_proto).default_id);
+            _bus_config_map.at(bus_proto).interface->unsetConveyor(id, _bus_config_map.at(bus_proto).default_id);
 
             res.message = "Remove conveyor id " + to_string(id);
             res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
@@ -375,9 +376,11 @@ bool ConveyorInterfaceCore::_callbackPingAndSetConveyor(conveyor_interface::SetC
                 break;
 
             case conveyor_interface::SetConveyor::Request::REMOVE:
-                res = removeConveyor(req.id);
-                break;
-
+                {
+                    std::lock_guard<std::mutex> lck(_state_map_mutex);
+                    res = removeConveyor(req.id);
+                    break;
+                }
             default:
             break;
         }
@@ -400,6 +403,7 @@ bool ConveyorInterfaceCore::_callbackPingAndSetConveyor(conveyor_interface::SetC
 bool ConveyorInterfaceCore::_callbackControlConveyor(conveyor_interface::ControlConveyor::Request &req,
                                                      conveyor_interface::ControlConveyor::Response &res)
 {
+    std::lock_guard<std::mutex> lck(_state_map_mutex);
     // if id found in list
     if (_state_map.count(req.id) && _state_map.at(req.id))
     {
@@ -444,25 +448,35 @@ void ConveyorInterfaceCore::_publishConveyorsFeedback(const ros::TimerEvent&)
     conveyor_interface::ConveyorFeedbackArray msg;
     conveyor_interface::ConveyorFeedback data;
 
+    std::lock_guard<std::mutex> lck(_state_map_mutex);
+
     for (auto const& conveyor_state : _state_map)
     {
-        // TODO(CC) put in ttl_manager
-        /*if (!_conveyor_driver->scanMotorId(conveyor_state->getId()))
-        {
-            removeConveyor(conveyor_state->getId());
-        }
-        else
-        {*/
-
         if (conveyor_state.second)
         {
-            data.conveyor_id = conveyor_state.second->getId();
-            data.running = conveyor_state.second->getState();
-            data.direction = static_cast<int8_t>(conveyor_state.second->getDirection());
-            data.speed = conveyor_state.second->getSpeed();
-            msg.conveyors.push_back(data);
+            std::shared_ptr<common::model::IDriverCore> interface;
+            if (conveyor_state.second->getBusProtocol() == EBusProtocol::CAN)
+                interface = _can_interface;
+            else
+                interface = _ttl_interface;
+            // TODO(CC) put in ttl_manager
+            if (interface)
+            {
+                if (!interface->scanMotorId(conveyor_state.second->getId()))
+                {
+                    removeConveyor(conveyor_state.second->getId());
+                } 
+                else
+                {
+                    data.conveyor_id = conveyor_state.second->getId();
+                    data.running = conveyor_state.second->getState();
+                    data.direction = static_cast<int8_t>(conveyor_state.second->getDirection());
+                    data.speed = conveyor_state.second->getSpeed();
+                    msg.conveyors.push_back(data);
 
-            ROS_DEBUG_THROTTLE(2.0, "ConveyorInterfaceCore::_publishConveyorsFeedback - Found a conveyor, publishing data : %s", conveyor_state.second->str().c_str());
+                    ROS_DEBUG_THROTTLE(2.0, "ConveyorInterfaceCore::_publishConveyorsFeedback - Found a conveyor, publishing data : %s", conveyor_state.second->str().c_str());
+                }
+            } 
         }
     }
     _conveyors_feedback_publisher.publish(msg);
@@ -484,4 +498,4 @@ conveyor_interface::ConveyorInterfaceCore::getConveyorStates() const
   return states;
 }
 
-}  // namespace conveyor_interface
+}
