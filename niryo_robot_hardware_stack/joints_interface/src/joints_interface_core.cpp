@@ -107,7 +107,7 @@ void JointsInterfaceCore::initParameters(ros::NodeHandle& nh)
               _control_loop_frequency);
     ROS_DEBUG("JointsInterfaceCore::initParams - Publish learning mode frequency : %f",
               _publish_learning_mode_frequency);
-    ROS_DEBUG("Joint Hardware Interface - hardware_version %s", 
+    ROS_DEBUG("Joint Hardware Interface - hardware_version %s",
               _hardware_version.c_str());
 }
 

@@ -32,7 +32,7 @@ namespace ttl_driver
  * @brief AbstractEndEffectorDriver::AbstractEndEffectorDriver
  */
 AbstractEndEffectorDriver::AbstractEndEffectorDriver() :
-  AbstractTtlDriver ()
+  AbstractTtlDriver()
 {
 }
 
@@ -43,7 +43,7 @@ AbstractEndEffectorDriver::AbstractEndEffectorDriver() :
  */
 AbstractEndEffectorDriver::AbstractEndEffectorDriver(shared_ptr<dynamixel::PortHandler> portHandler,
                                                      shared_ptr<dynamixel::PacketHandler> packetHandler) :
-  AbstractTtlDriver (portHandler, packetHandler)
+  AbstractTtlDriver(portHandler, packetHandler)
 {
 }
 

@@ -238,7 +238,7 @@ class LedRingAnimations:
         for led_id in range(self.led_count):
             if self.__stop_func:
                 break
-            self.set_led((led_id + self.__led_offset)%self.led_count, color_rgba)
+            self.set_led((led_id + self.__led_offset) % self.led_count, color_rgba)
             self.show_leds()
 
             next_loop += period

@@ -46,9 +46,9 @@ add_service_files(
     srv
   FILES
     ReadCustomValue.srv
+    ReadPIDValue.srv
     SendCustomValue.srv
     WritePIDValue.srv
-    ReadPIDValue.srv
 )
 
 generate_messages(

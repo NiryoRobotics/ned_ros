@@ -58,4 +58,3 @@ class SoundPlayer:
         self.__actual_sound = None
         self.__sound_publisher.publish("")
         return CommandStatus.SUCCESS, "{} sound played".format(sound)
-

@@ -14,7 +14,7 @@ class LedRingNode:
         self.led_ring_commander = LedRingCommander()
 
         self.__shutdown_watcher_thread = Thread(target=self.shutdown_thread)
-        #self.__shutdown_watcher_thread.start()
+        # self.__shutdown_watcher_thread.start()
 
     def shutdown_thread(self):
         try:
