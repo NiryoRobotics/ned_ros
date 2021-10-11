@@ -32,7 +32,6 @@
 
 
 using ::std::lock_guard;
-using ::std::mutex;
 using ::std::string;
 using ::std::to_string;
 
@@ -63,8 +62,7 @@ EndEffectorInterfaceCore::EndEffectorInterfaceCore(ros::NodeHandle& nh,
  * @brief EndEffectorInterfaceCore::~EndEffectorInterfaceCore
  */
 EndEffectorInterfaceCore::~EndEffectorInterfaceCore()
-{
-}
+{}
 
 /**
  * @brief EndEffectorInterfaceCore::init
@@ -101,10 +99,15 @@ void EndEffectorInterfaceCore::initParameters(ros::NodeHandle& nh)
     nh.getParam("end_effector_id", id);
     _id = static_cast<uint8_t>(id);
 
-    nh.getParam("check_end_effector_status_frequency", _check_end_effector_status_frequency);
+    double check_end_effector_status_frequency{1.0};
+    nh.getParam("check_end_effector_status_frequency", check_end_effector_status_frequency);
+    assert(check_end_effector_status_frequency);
 
     ROS_DEBUG("EndEffectorInterfaceCore::initParameters - end effector id : %d", _id);
-    ROS_DEBUG("EndEffectorInterfaceCore::initParameters - end effector status frequency : %f", _check_end_effector_status_frequency);
+    ROS_DEBUG("EndEffectorInterfaceCore::initParameters - end effector status frequency : %f", check_end_effector_status_frequency);
+
+    // init ros duration according to given frequency
+    _states_publisher_duration = ros::Duration(1.0 / check_end_effector_status_frequency);
 
     std::string hw_type;
     nh.getParam("hardware_type", hw_type);
@@ -152,9 +155,11 @@ void EndEffectorInterfaceCore::startPublishers(ros::NodeHandle& nh)
                                           "custom_button_status", 10, true);
 
   _digital_out_publisher = nh.advertise<end_effector_interface::EEIOState>(
-                                          "io_state", 10);
+                                          "io_state", 10, true);
 
-  _publish_states_thread = std::thread(&EndEffectorInterfaceCore::_publishButtonState, this);
+  _states_publisher_timer = nh.createTimer(_states_publisher_duration,
+                                         &EndEffectorInterfaceCore::_publishButtonState,
+                                         this);
 }
 
 /**
@@ -190,20 +195,15 @@ void EndEffectorInterfaceCore::initEndEffectorHardware()
 
 /**
  * @brief EndEffectorInterfaceCore::_publishButtonState
- * TODO(CC) : timer
+ * Called every _states_publisher_duration via the _states_publisher_timer
  */
-void EndEffectorInterfaceCore::_publishButtonState()
+void EndEffectorInterfaceCore::_publishButtonState(const ros::TimerEvent&)
 {
-    ros::Rate check_status_rate = ros::Rate(_check_end_effector_status_frequency);
     EEButtonStatus button_msg;
     EEIOState io_msg;
 
-    while (ros::ok())
+    if (_end_effector_state)
     {
-        if (!_end_effector_state)
-          continue;
-        lock_guard<mutex> lck(_buttons_status_mutex);
-
         for (auto button : _end_effector_state->getButtonsStatus())
         {
             if (button->actions.empty())
@@ -230,16 +230,21 @@ void EndEffectorInterfaceCore::_publishButtonState()
         // digital io state
         io_msg.in = _end_effector_state->getDigitalIn();
         io_msg.out = _end_effector_state->getDigitalOut();
-        _digital_out_publisher.publish(io_msg);
 
-        check_status_rate.sleep();
+        // publish message
+        _digital_out_publisher.publish(io_msg);
     }
 }
 
+/**
+ * @brief EndEffectorInterfaceCore::_callbackSetIOState
+ * @param req
+ * @param res
+ * @return
+ */
 bool EndEffectorInterfaceCore::_callbackSetIOState(end_effector_interface::SetEEDigitalOut::Request &req,
                                                    end_effector_interface::SetEEDigitalOut::Response &res)
 {
-    lock_guard<mutex> lck(_io_mutex);
     res.state = false;
 
     if (_end_effector_state && _end_effector_state->isValid())

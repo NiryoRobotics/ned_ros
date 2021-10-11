@@ -62,9 +62,6 @@ JointsInterfaceCore::JointsInterfaceCore(ros::NodeHandle& rootnh,
  */
 JointsInterfaceCore::~JointsInterfaceCore()
 {
-    if (_publish_learning_mode_thread.joinable())
-        _publish_learning_mode_thread.join();
-
     if (_control_loop_thread.joinable())
         _control_loop_thread.join();
 }
@@ -97,13 +94,21 @@ bool JointsInterfaceCore::init(ros::NodeHandle& nh)
  */
 void JointsInterfaceCore::initParameters(ros::NodeHandle& nh)
 {
-    nh.getParam("ros_control_loop_frequency", _control_loop_frequency);
-    nh.getParam("publish_learning_mode_frequency", _publish_learning_mode_frequency);
+    double control_loop_frequency{1.0};
+    double learning_mode_frequency{1.0};
+
+    nh.getParam("ros_control_loop_frequency", control_loop_frequency);
+    nh.getParam("publish_learning_mode_frequency", learning_mode_frequency);
 
     ROS_DEBUG("JointsInterfaceCore::initParams - Ros control loop frequency %f",
-              _control_loop_frequency);
+              control_loop_frequency);
     ROS_DEBUG("JointsInterfaceCore::initParams - Publish learning mode frequency : %f",
-              _publish_learning_mode_frequency);
+              learning_mode_frequency);
+
+    assert(learning_mode_frequency);
+
+    _learning_mode_publisher_duration = ros::Duration(1.0 / learning_mode_frequency);
+    _control_loop_rate = ros::Rate(control_loop_frequency);
 }
 
 /**
@@ -131,8 +136,11 @@ void JointsInterfaceCore::startServices(ros::NodeHandle& nh)
  */
 void JointsInterfaceCore::startPublishers(ros::NodeHandle& nh)
 {
-    _learning_mode_publisher = nh.advertise<std_msgs::Bool>("/niryo_robot/learning_mode/state", 10);
-    _publish_learning_mode_thread = std::thread(&JointsInterfaceCore::_publishLearningMode, this);
+    _learning_mode_publisher = nh.advertise<std_msgs::Bool>("/niryo_robot/learning_mode/state", 10, true);
+
+    _learning_mode_publisher_timer = nh.createTimer(_learning_mode_publisher_duration,
+                                                    &JointsInterfaceCore::_publishLearningMode,
+                                                    this);
 }
 
 /**
@@ -215,7 +223,6 @@ void JointsInterfaceCore::rosControlLoop()
     ros::Time last_time = ros::Time::now();
     ros::Time current_time = ros::Time::now();
     ros::Duration elapsed_time;
-    ros::Rate control_loop_rate = ros::Rate(_control_loop_frequency);
 
     while (ros::ok())
     {
@@ -243,11 +250,11 @@ void JointsInterfaceCore::rosControlLoop()
                 _robot->write(current_time, elapsed_time);
             }
 
-            bool isFreqMet = control_loop_rate.sleep();
+            bool isFreqMet = _control_loop_rate.sleep();
             ROS_DEBUG_COND(!isFreqMet,
                            "JointsInterfaceCore::rosControlLoop : freq not met : expected (%f s) vs actual (%f s)",
-                           control_loop_rate.expectedCycleTime().toSec(),
-                           control_loop_rate.cycleTime().toSec());
+                           _control_loop_rate.expectedCycleTime().toSec(),
+                           _control_loop_rate.cycleTime().toSec());
         }
     }
 }
@@ -374,21 +381,14 @@ void JointsInterfaceCore::_callbackTrajectoryResult(const control_msgs::FollowJo
 
 /**
  * @brief JointsInterfaceCore::_publishLearningMode
- *  // cc maybe put this in ros control loop ?
- *
  */
-void JointsInterfaceCore::_publishLearningMode()
+void JointsInterfaceCore::_publishLearningMode(const ros::TimerEvent&)
 {
     ROS_DEBUG("JointsInterfaceCore::_publishLearningMode");
 
-    ros::Rate publish_learning_mode_rate = ros::Rate(_publish_learning_mode_frequency);
-    while (ros::ok())
-    {
-        std_msgs::Bool msg;
-        msg.data = _previous_state_learning_mode;
-        _learning_mode_publisher.publish(msg);
-        publish_learning_mode_rate.sleep();
-    }
+    std_msgs::Bool msg;
+    msg.data = _previous_state_learning_mode;
+    _learning_mode_publisher.publish(msg);
 }
 
 }  // namespace joints_interface
