@@ -343,8 +343,7 @@ class TrajectoriesExecutor:
             raise ArmCommanderException(CommandStatus.NO_PLAN_AVAILABLE,
                                         "No current plan found")
 
-    @staticmethod
-    def __set_learning_mode(set_bool):
+    def __set_learning_mode(self, set_bool):
         """
         Activate or deactivate the learning mode using the ros service /niryo_robot/learning_mode/activate
 
@@ -354,6 +353,9 @@ class TrajectoriesExecutor:
         :return: Success if the learning mode was properly activate or deactivate, False if not
         :rtype: bool
         """
+        if set_bool and self.__hardware_version == 'ned2':
+            return True
+
         try:
             rospy.wait_for_service('/niryo_robot/learning_mode/activate', timeout=1)
             srv = rospy.ServiceProxy('/niryo_robot/learning_mode/activate', SetBool)

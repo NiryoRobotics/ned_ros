@@ -91,7 +91,7 @@ void CalibrationManager::initParameters(ros::NodeHandle &nh)
 {
     nh.getParam("calibration_timeout", _calibration_timeout);
     nh.getParam("calibration_file", _calibration_file_name);
-    nh.getParam("/niryo_robot_hardware_interface/hardware_version", _hardware_version);
+    nh.getParam("hardware_version", _hardware_version);
 
     ROS_DEBUG("Calibration Interface - hardware_version %s", _hardware_version.c_str());
     ROS_DEBUG("Calibration Interface - Calibration timeout %d", _calibration_timeout);
@@ -324,7 +324,7 @@ EStepperCalibrationStatus CalibrationManager::autoCalibration()
     }
 
     // 7 - stop torques
-    activateLearningMode(true);
+    activateLearningMode("ned2" != _hardware_version);
 
     auto calibration_status = common::model::EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED;
 
@@ -350,7 +350,7 @@ CalibrationManager::manualCalibration()
     EStepperCalibrationStatus status = EStepperCalibrationStatus::CALIBRATION_FAIL;
     _calibration_in_progress = true;
 
-    if  ("one" == _hardware_version)
+    if  ("ned2" != _hardware_version)
     {
         if (_can_interface)
         {
@@ -413,7 +413,8 @@ CalibrationManager::manualCalibration()
     }
     else
     {
-      ROS_ERROR("CalibrationManager::manualCalibration : manual calibration not available for %s robot. Only supported for Niryo One", _hardware_version.c_str());
+      ROS_ERROR("CalibrationManager::manualCalibration : manual calibration not available for %s robot."
+                "Only supported for Niryo One and Niryo Ned", _hardware_version.c_str());
     }
 
     _calibration_in_progress = false;
