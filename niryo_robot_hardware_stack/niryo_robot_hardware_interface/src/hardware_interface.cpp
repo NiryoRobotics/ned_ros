@@ -51,17 +51,7 @@ HardwareInterface::HardwareInterface(ros::NodeHandle &nh) :
  * @brief HardwareInterface::~HardwareInterface
  */
 HardwareInterface::~HardwareInterface()
-{
-    if (_publish_software_version_thread.joinable())
-    {
-        _publish_software_version_thread.join();
-    }
-
-    if (_publish_hw_status_thread.joinable())
-    {
-        _publish_hw_status_thread.join();
-    }
-}
+{}
 
 /**
  * @brief HardwareInterface::init
@@ -94,8 +84,21 @@ bool HardwareInterface::init(ros::NodeHandle &nh)
  */
 void HardwareInterface::initParameters(ros::NodeHandle &nh)
 {
-    nh.getParam("publish_hw_status_frequency", _publish_hw_status_frequency);
-    nh.getParam("publish_software_version_frequency", _publish_software_version_frequency);
+    double hw_status_frequency{1.0};
+    double sw_version_frequency{1.0};
+    nh.getParam("publish_hw_status_frequency", hw_status_frequency);
+    nh.getParam("publish_software_version_frequency", sw_version_frequency);
+
+    ROS_DEBUG("HardwareInterface::initParameters - publish_hw_status_frequency : %f",
+              hw_status_frequency);
+    ROS_DEBUG("HardwareInterface::initParameters - publish_software_version_frequency : %f",
+                            sw_version_frequency);
+
+    assert(hw_status_frequency);
+    assert(sw_version_frequency);
+
+    _hw_status_publisher_duration = ros::Duration(1.0 / hw_status_frequency);
+    _sw_version_publisher_duration = ros::Duration(1.0 / sw_version_frequency);
 
     nh.getParam("/niryo_robot/info/image_version", _rpi_image_version);
     nh.getParam("/niryo_robot/info/ros_version", _ros_niryo_robot_version);
@@ -120,11 +123,6 @@ void HardwareInterface::initParameters(ros::NodeHandle &nh)
 
     // end effector is enabled if an id is defined
     _end_effector_enabled = nh.hasParam("end_effector_interface/end_effector_id");
-
-    ROS_DEBUG("HardwareInterface::initParameters - publish_hw_status_frequency : %f",
-              _publish_hw_status_frequency);
-    ROS_DEBUG("HardwareInterface::initParameters - publish_software_version_frequency : %f",
-                            _publish_software_version_frequency);
 
     ROS_DEBUG("HardwareInterface::initParameters - image_version : %s",
                             _rpi_image_version.c_str());
@@ -238,13 +236,19 @@ void HardwareInterface::startServices(ros::NodeHandle& nh)
  */
 void HardwareInterface::startPublishers(ros::NodeHandle &nh)
 {
-    _hardware_status_publisher = nh.advertise<niryo_robot_msgs::HardwareStatus>(
+    _hw_status_publisher = nh.advertise<niryo_robot_msgs::HardwareStatus>(
                                             "/niryo_robot_hardware_interface/hardware_status", 10);
-    _publish_hw_status_thread = std::thread(&HardwareInterface::_publishHardwareStatus, this);
 
-    _software_version_publisher = nh.advertise<niryo_robot_msgs::SoftwareVersion>(
-                                            "/niryo_robot_hardware_interface/software_version", 10);
-    _publish_software_version_thread = std::thread(&HardwareInterface::_publishSoftwareVersion, this);
+    _hw_status_publisher_timer = nh.createTimer(_hw_status_publisher_duration,
+                                                &HardwareInterface::_publishHardwareStatus,
+                                                this);
+
+    _sw_version_publisher = nh.advertise<niryo_robot_msgs::SoftwareVersion>(
+                                            "/niryo_robot_hardware_inHardwareInterfaceterface/software_version", 10);
+
+    _sw_version_publisher_timer = nh.createTimer(_sw_version_publisher_duration,
+                                                 &HardwareInterface::_publishSoftwareVersion,
+                                                 this);
 }
 
 /**
@@ -380,158 +384,148 @@ bool HardwareInterface::_callbackRebootMotors(niryo_robot_msgs::Trigger::Request
 
 /**
  * @brief HardwareInterface::_publishHardwareStatus
+ * Called every _hw_status_publisher_duration via the _hw_status_publisher_timer
  */
-void HardwareInterface::_publishHardwareStatus()
+void HardwareInterface::_publishHardwareStatus(const ros::TimerEvent&)
 {
-    ros::Rate publish_hardware_status_rate = ros::Rate(_publish_hw_status_frequency);
+    niryo_robot_msgs::BusState ttl_bus_state;
+    niryo_robot_msgs::BusState can_bus_state;
 
-    while (ros::ok())
+    bool need_calibration = false;
+    bool calibration_in_progress = false;
+
+    int cpu_temperature = 0;
+
+    niryo_robot_msgs::HardwareStatus msg;
+    msg.header.stamp = ros::Time::now();
+    msg.connection_up = true;
+
+    std::vector<std::string> motor_names;
+    std::vector<int32_t> temperatures;
+    std::vector<double> voltages;
+    std::vector<std::string> motor_types;
+
+    std::vector<int32_t> hw_errors;
+    std::vector<std::string> hw_errors_msg;
+
+    if (_can_interface)
     {
-        niryo_robot_msgs::BusState ttl_bus_state;
-        niryo_robot_msgs::BusState can_bus_state;
-
-        bool need_calibration = false;
-        bool calibration_in_progress = false;
-
-        int cpu_temperature = 0;
-
-        niryo_robot_msgs::HardwareStatus msg;
-        msg.header.stamp = ros::Time::now();
-        msg.connection_up = true;
-
-        std::vector<std::string> motor_names;
-        std::vector<int32_t> temperatures;
-        std::vector<double> voltages;
-        std::vector<std::string> motor_types;
-
-        std::vector<int32_t> hw_errors;
-        std::vector<std::string> hw_errors_msg;
-
-        if (_can_interface)
-        {
-            can_bus_state = _can_interface->getBusState();
-            msg.connection_up = msg.connection_up && can_bus_state.connection_status;
-        }
-
-        if (_ttl_interface)
-        {
-            ttl_bus_state = _ttl_interface->getBusState();
-            msg.connection_up = msg.connection_up && ttl_bus_state.connection_status;
-        }
-
-        if (_joints_interface)
-        {
-            _joints_interface->getCalibrationState(need_calibration, calibration_in_progress);
-
-            auto joints_states = _joints_interface->getJointsState();
-            for (std::shared_ptr<common::model::JointState> jState : joints_states)
-            {
-              motor_names.emplace_back(jState->getName());
-              voltages.emplace_back(jState->getVoltage());
-              temperatures.emplace_back(jState->getTemperature());
-              hw_errors.emplace_back(jState->getHardwareError());
-              hw_errors_msg.emplace_back(jState->getHardwareErrorMessage());
-              motor_types.emplace_back(common::model::HardwareTypeEnum(jState->getHardwareType()).toString());
-            }
-        }
-
-        if (_end_effector_interface)
-        {
-            auto state = _end_effector_interface->getEndEffectorState();
-            motor_names.emplace_back("End Effector");
-            voltages.emplace_back(state->getVoltage());
-            temperatures.emplace_back(state->getTemperature());
-            hw_errors.emplace_back(state->getHardwareError());
-            hw_errors_msg.emplace_back(state->getHardwareErrorMessage());
-            motor_types.emplace_back(common::model::HardwareTypeEnum(state->getHardwareType()).toString());
-        }
-
-        if (_conveyor_interface)
-        {
-            auto conveyor_states = _conveyor_interface->getConveyorStates();
-            for (std::shared_ptr<common::model::ConveyorState> cState : conveyor_states)
-            {
-                if (cState->getId() != cState->getDefaultId())
-                {
-                    motor_names.emplace_back("Conveyor");
-                    voltages.emplace_back(cState->getVoltage());
-                    temperatures.emplace_back(cState->getTemperature());
-                    hw_errors.emplace_back(cState->getHardwareError());
-                    hw_errors_msg.emplace_back(cState->getHardwareErrorMessage());
-                    motor_types.emplace_back(common::model::HardwareTypeEnum(cState->getHardwareType()).toString());
-                }
-            }
-        }
-
-        cpu_temperature = _cpu_interface->getCpuTemperature();
-
-        msg.rpi_temperature = cpu_temperature;
-        msg.hardware_version = _hardware_version;
-
-        std::string error_message = can_bus_state.error;
-        if (!ttl_bus_state.error.empty())
-        {
-            error_message += "\n";
-            error_message += ttl_bus_state.error;
-        }
-
-        msg.error_message = error_message;
-
-        msg.calibration_needed = need_calibration;
-        msg.calibration_in_progress = calibration_in_progress;
-
-        msg.motor_names = motor_names;
-        msg.motor_types = motor_types;
-
-        msg.temperatures = temperatures;
-        msg.voltages = voltages;
-        msg.hardware_errors = hw_errors;
-        msg.hardware_errors_message = hw_errors_msg;
-
-        _hardware_status_publisher.publish(msg);
-
-        publish_hardware_status_rate.sleep();
+        can_bus_state = _can_interface->getBusState();
+        msg.connection_up = msg.connection_up && can_bus_state.connection_status;
     }
+
+    if (_ttl_interface)
+    {
+        ttl_bus_state = _ttl_interface->getBusState();
+        msg.connection_up = msg.connection_up && ttl_bus_state.connection_status;
+    }
+
+    if (_joints_interface)
+    {
+        _joints_interface->getCalibrationState(need_calibration, calibration_in_progress);
+
+        auto joints_states = _joints_interface->getJointsState();
+        for (std::shared_ptr<common::model::JointState> jState : joints_states)
+        {
+          motor_names.emplace_back(jState->getName());
+          voltages.emplace_back(jState->getVoltage());
+          temperatures.emplace_back(jState->getTemperature());
+          hw_errors.emplace_back(jState->getHardwareError());
+          hw_errors_msg.emplace_back(jState->getHardwareErrorMessage());
+          motor_types.emplace_back(common::model::HardwareTypeEnum(jState->getHardwareType()).toString());
+        }
+    }
+
+    if (_end_effector_interface)
+    {
+        auto state = _end_effector_interface->getEndEffectorState();
+        motor_names.emplace_back("End Effector");
+        voltages.emplace_back(state->getVoltage());
+        temperatures.emplace_back(state->getTemperature());
+        hw_errors.emplace_back(state->getHardwareError());
+        hw_errors_msg.emplace_back(state->getHardwareErrorMessage());
+        motor_types.emplace_back(common::model::HardwareTypeEnum(state->getHardwareType()).toString());
+    }
+
+    if (_conveyor_interface)
+    {
+        auto conveyor_states = _conveyor_interface->getConveyorStates();
+        for (std::shared_ptr<common::model::ConveyorState> cState : conveyor_states)
+        {
+            if (cState->getId() != cState->getDefaultId())
+            {
+                motor_names.emplace_back("Conveyor");
+                voltages.emplace_back(cState->getVoltage());
+                temperatures.emplace_back(cState->getTemperature());
+                hw_errors.emplace_back(cState->getHardwareError());
+                hw_errors_msg.emplace_back(cState->getHardwareErrorMessage());
+                motor_types.emplace_back(common::model::HardwareTypeEnum(cState->getHardwareType()).toString());
+            }
+        }
+    }
+
+    cpu_temperature = _cpu_interface->getCpuTemperature();
+
+    msg.rpi_temperature = cpu_temperature;
+    msg.hardware_version = _hardware_version;
+
+    std::string error_message = can_bus_state.error;
+    if (!ttl_bus_state.error.empty())
+    {
+        error_message += "\n";
+        error_message += ttl_bus_state.error;
+    }
+
+    msg.error_message = error_message;
+
+    msg.calibration_needed = need_calibration;
+    msg.calibration_in_progress = calibration_in_progress;
+
+    msg.motor_names = motor_names;
+    msg.motor_types = motor_types;
+
+    msg.temperatures = temperatures;
+    msg.voltages = voltages;
+    msg.hardware_errors = hw_errors;
+    msg.hardware_errors_message = hw_errors_msg;
+
+    _hw_status_publisher.publish(msg);
 }
 
 /**
  * @brief HardwareInterface::_publishSoftwareVersion
+ * Called every _sw_version_publisher_duration via the _sw_version_publisher_timer
  */
-void HardwareInterface::_publishSoftwareVersion()
+void HardwareInterface::_publishSoftwareVersion(const ros::TimerEvent&)
 {
-    ros::Rate publish_software_version_rate = ros::Rate(_publish_software_version_frequency);
-    while (ros::ok())
+    std::vector<std::string> motor_names;
+    std::vector<std::string> firmware_versions;
+
+    if (_joints_interface)
     {
-        std::vector<std::string> motor_names;
-        std::vector<std::string> firmware_versions;
-
-        if (_joints_interface)
+        auto joints_states = _joints_interface->getJointsState();
+        for (std::shared_ptr<common::model::JointState> jState : joints_states)
         {
-            auto joints_states = _joints_interface->getJointsState();
-            for (std::shared_ptr<common::model::JointState> jState : joints_states)
-            {
-                motor_names.emplace_back(jState->getName());
-                firmware_versions.emplace_back(jState->getFirmwareVersion());
-            }
+            motor_names.emplace_back(jState->getName());
+            firmware_versions.emplace_back(jState->getFirmwareVersion());
         }
-
-        if (_end_effector_interface)
-        {
-            auto state = _end_effector_interface->getEndEffectorState();
-            motor_names.emplace_back("End Effector");
-            firmware_versions.emplace_back(state->getFirmwareVersion());
-        }
-
-        niryo_robot_msgs::SoftwareVersion msg;
-        msg.motor_names = motor_names;
-        msg.stepper_firmware_versions = firmware_versions;
-        msg.rpi_image_version = _rpi_image_version;
-        msg.ros_niryo_robot_version = _ros_niryo_robot_version;
-        msg.robot_version = _hardware_version;
-
-        _software_version_publisher.publish(msg);
-        publish_software_version_rate.sleep();
     }
+
+    if (_end_effector_interface)
+    {
+        auto state = _end_effector_interface->getEndEffectorState();
+        motor_names.emplace_back("End Effector");
+        firmware_versions.emplace_back(state->getFirmwareVersion());
+    }
+
+    niryo_robot_msgs::SoftwareVersion msg;
+    msg.motor_names = motor_names;
+    msg.stepper_firmware_versions = firmware_versions;
+    msg.rpi_image_version = _rpi_image_version;
+    msg.ros_niryo_robot_version = _ros_niryo_robot_version;
+    msg.robot_version = _hardware_version;
+
+    _sw_version_publisher.publish(msg);
 }
 
 }  // namespace niryo_robot_hardware_interface

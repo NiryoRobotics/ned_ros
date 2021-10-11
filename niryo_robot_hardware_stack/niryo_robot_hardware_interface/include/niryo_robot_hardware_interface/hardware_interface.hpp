@@ -64,16 +64,19 @@ class HardwareInterface : common::model::IInterfaceCore
         bool _callbackStopMotorsReport(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
         bool _callbackRebootMotors(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
 
-        void _publishHardwareStatus();
-        void _publishSoftwareVersion();
+        void _publishHardwareStatus(const ros::TimerEvent&);
+        void _publishSoftwareVersion(const ros::TimerEvent&);
 
     private:
         ros::NodeHandle _nh;
-        ros::Publisher _hardware_status_publisher;
-        ros::Publisher _software_version_publisher;
 
-        std::thread _publish_software_version_thread;
-        std::thread _publish_hw_status_thread;
+        ros::Publisher _hw_status_publisher;
+        ros::Timer _hw_status_publisher_timer;
+        ros::Duration _hw_status_publisher_duration{1.0};
+
+        ros::Publisher _sw_version_publisher;
+        ros::Timer _sw_version_publisher_timer;
+        ros::Duration _sw_version_publisher_duration{1.0};
 
         ros::ServiceServer _motors_report_service;
         ros::ServiceServer _stop_motors_report_service;
@@ -86,9 +89,6 @@ class HardwareInterface : common::model::IInterfaceCore
         std::shared_ptr<tools_interface::ToolsInterfaceCore> _tools_interface;
         std::shared_ptr<end_effector_interface::EndEffectorInterfaceCore> _end_effector_interface;
         std::shared_ptr<joints_interface::JointsInterfaceCore> _joints_interface;
-
-        double _publish_hw_status_frequency{0.0};
-        double _publish_software_version_frequency{0.0};
 
         bool _gazebo{false};
 

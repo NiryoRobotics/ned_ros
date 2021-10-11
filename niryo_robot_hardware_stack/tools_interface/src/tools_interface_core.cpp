@@ -66,10 +66,7 @@ ToolsInterfaceCore::ToolsInterfaceCore(ros::NodeHandle& nh,
  * @brief ToolsInterfaceCore::~ToolsInterfaceCore
  */
 ToolsInterfaceCore::~ToolsInterfaceCore()
-{
-    if (_publish_tool_connection_thread.joinable())
-        _publish_tool_connection_thread.join();
-}
+{}
 
 /**
  * @brief ToolsInterfaceCore::init
@@ -99,15 +96,21 @@ bool ToolsInterfaceCore::init(ros::NodeHandle &nh)
  */
 void ToolsInterfaceCore::initParameters(ros::NodeHandle& nh)
 {
+    double tool_connection_frequency{1.0};
+    nh.getParam("check_tool_connection_frequency",
+                 tool_connection_frequency);
+
+    ROS_DEBUG("ToolsInterfaceCore::initParameters - check tool connection frequency : %f", tool_connection_frequency);
+
+    assert(tool_connection_frequency);
+    _tool_connection_publisher_duration = ros::Duration(1.0 / tool_connection_frequency);
+
     std::vector<int> idList;
     std::vector<string> typeList;
 
     _available_tools_map.clear();
     nh.getParam("tools_params/id_list", idList);
     nh.getParam("tools_params/type_list", typeList);
-
-    nh.getParam("check_tool_connection_frequency",
-                 _check_tool_connection_frequency);
 
     // debug - display info
     ostringstream ss;
@@ -122,7 +125,6 @@ void ToolsInterfaceCore::initParameters(ros::NodeHandle& nh)
     available_tools_list += "]";
 
     ROS_INFO("ToolsInterfaceCore::initParameters - List of tool ids : %s", available_tools_list.c_str());
-    ROS_DEBUG("ToolsInterfaceCore::initParameters - check tool connection frequency : %f", _check_tool_connection_frequency);
 
     // check that the two lists have the same size
     if (idList.size() != typeList.size())
@@ -189,7 +191,10 @@ void ToolsInterfaceCore::startServices(ros::NodeHandle& nh)
 void ToolsInterfaceCore::startPublishers(ros::NodeHandle& nh)
 {
     _tool_connection_publisher = nh.advertise<std_msgs::Int32>("/niryo_robot_hardware/tools/current_id", 1, true);
-    _publish_tool_connection_thread = std::thread(&ToolsInterfaceCore::_publishToolConnection, this);
+
+    _tool_connection_publisher_timer = nh.createTimer(_tool_connection_publisher_duration,
+                                                      &ToolsInterfaceCore::_publishToolConnection,
+                                                      this);
 }
 
 /**
@@ -542,47 +547,41 @@ bool ToolsInterfaceCore:: _callbackPushAirVacuumPump(tools_interface::PushAirVac
 /**
  * @brief ToolsInterfaceCore::_publishToolConnection
  */
-void ToolsInterfaceCore::_publishToolConnection()
+void ToolsInterfaceCore::_publishToolConnection(const ros::TimerEvent&)
 {
-    ros::Rate check_connection_rate = ros::Rate(_check_tool_connection_frequency);
     std_msgs::Int32 msg;
 
-    int tool_ping_failed_cnt = 0;
+    lock_guard<mutex> lck(_tool_mutex);
 
-    while (ros::ok())
+    if (_toolState && _toolState->isValid())
     {
+        if (_ttl_interface && !_ttl_interface->scanMotorId(_toolState->getId()))
         {
-            lock_guard<mutex> lck(_tool_mutex);
-
-            if (_toolState && _toolState->isValid())
+            // try 3 times to ping tool, ttl failed to ping tool sometimes
+            if (3 == _tool_ping_failed_cnt)
             {
-                if (_ttl_interface && !_ttl_interface->scanMotorId(_toolState->getId()))
-                {
-                    // try 3 times to ping tool, ttl failed to ping tool sometimes
-                    if (tool_ping_failed_cnt == 3)
-                    {
-                        ROS_INFO("Tools Interface - Unset Current Tools");
-                        _ttl_interface->unsetTool(_toolState->getId());
-                        _toolState->reset();
-                        msg.data = -1;
-                        _tool_connection_publisher.publish(msg);
-                        tool_ping_failed_cnt = 0;
-                    }
-                    else
-                        tool_ping_failed_cnt++;
-                }
-                else
-                {
-                    tool_ping_failed_cnt = 0;
-                }
-            }
-            else
-            {
+                ROS_INFO("Tools Interface - Unset Current Tools");
+                _ttl_interface->unsetTool(_toolState->getId());
+                _toolState->reset();
                 msg.data = -1;
+                _tool_ping_failed_cnt = 0;
+
+                // publish message
                 _tool_connection_publisher.publish(msg);
             }
+            else
+                _tool_ping_failed_cnt++;
         }
-        check_connection_rate.sleep();
+        else
+        {
+            _tool_ping_failed_cnt = 0;
+        }
+    }
+    else
+    {
+        msg.data = -1;
+        _tool_connection_publisher.publish(msg);
     }
 }
+
 }  // namespace tools_interface

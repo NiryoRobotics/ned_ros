@@ -86,19 +86,15 @@ class JointsInterfaceCore : common::model::IInterfaceCore
 
         void _callbackTrajectoryResult(const control_msgs::FollowJointTrajectoryActionResult& msg);
 
-        void _publishLearningMode();
+        void _publishLearningMode(const ros::TimerEvent&);
 
     private:
         ros::NodeHandle _nh;
-
-        // TODO(CC) create a thread to update hw status from can and ttl into joint_states
 
         bool _enable_control_loop{true};
         bool _previous_state_learning_mode{true};
         bool _reset_controller{false};
 
-        double _control_loop_frequency{0.0};
-        double _publish_learning_mode_frequency{0.0};
         std::string _joint_controller_name;
 
         std::shared_ptr<JointHardwareInterface> _robot;
@@ -107,11 +103,14 @@ class JointsInterfaceCore : common::model::IInterfaceCore
         std::shared_ptr<ttl_driver::TtlInterfaceCore> _ttl_interface;
         std::shared_ptr<can_driver::CanInterfaceCore> _can_interface;
 
-        std::thread _publish_learning_mode_thread;
         std::thread _control_loop_thread;
+        ros::Rate _control_loop_rate{1.0};
+
+        ros::Publisher _learning_mode_publisher;
+        ros::Timer _learning_mode_publisher_timer;
+        ros::Duration _learning_mode_publisher_duration{1.0};
 
         ros::Subscriber _trajectory_result_subscriber;
-        ros::Publisher _learning_mode_publisher;
 
         ros::ServiceServer _reset_controller_server; // workaround to compensate missed steps
         ros::ServiceServer _calibrate_motors_server;
