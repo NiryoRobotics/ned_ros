@@ -244,7 +244,7 @@ void HardwareInterface::startPublishers(ros::NodeHandle &nh)
                                                 this);
 
     _sw_version_publisher = nh.advertise<niryo_robot_msgs::SoftwareVersion>(
-                                            "/niryo_robot_hardware_inHardwareInterfaceterface/software_version", 10);
+                                            "/niryo_robot_hardware_interface/software_version", 10);
 
     _sw_version_publisher_timer = nh.createTimer(_sw_version_publisher_duration,
                                                  &HardwareInterface::_publishSoftwareVersion,
