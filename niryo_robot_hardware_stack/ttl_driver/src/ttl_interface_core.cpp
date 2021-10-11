@@ -676,11 +676,11 @@ int TtlInterfaceCore::addJoint(const std::shared_ptr<common::model::JointState> 
 
   std::lock_guard<std::mutex> lck(_control_loop_mutex);
 
-  // add dynamixel as a new tool
+  // add motor as a new Joint
   _ttl_manager->addHardwareComponent(jointState);
   ros::Duration(0.2).sleep();
 
-  // nothin here (done in sendInitMotorsParams for now)
+  // nothing here (done in sendInitMotorsParams for now)
   result = niryo_robot_msgs::CommandStatus::SUCCESS;
 
   return result;

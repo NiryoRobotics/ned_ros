@@ -46,7 +46,8 @@ JointsInterfaceCore::JointsInterfaceCore(ros::NodeHandle& rootnh,
 
     ROS_DEBUG("JointsInterfaceCore::init - Start joint hardware interface");
     _robot.reset(new JointHardwareInterface(rootnh, robot_hwnh, _ttl_interface, _can_interface));
-    _previous_state_learning_mode = _robot->getLearningMode();
+
+    _robot->sendInitMotorsParams("ned2" != _hardware_version);
 
     ROS_DEBUG("JointsInterfaceCore::init - Create controller manager");
     _cm.reset(new controller_manager::ControllerManager(_robot.get(), _nh));
@@ -100,11 +101,14 @@ void JointsInterfaceCore::initParameters(ros::NodeHandle& nh)
 {
     nh.getParam("ros_control_loop_frequency", _control_loop_frequency);
     nh.getParam("publish_learning_mode_frequency", _publish_learning_mode_frequency);
+    nh.getParam("hardware_version", _hardware_version);
 
     ROS_DEBUG("JointsInterfaceCore::initParams - Ros control loop frequency %f",
               _control_loop_frequency);
     ROS_DEBUG("JointsInterfaceCore::initParams - Publish learning mode frequency : %f",
               _publish_learning_mode_frequency);
+    ROS_DEBUG("Joint Hardware Interface - hardware_version %s", 
+              _hardware_version.c_str());
 }
 
 /**
@@ -162,7 +166,7 @@ void JointsInterfaceCore::activateLearningMode(bool activate, int &ostatus, std:
 
     if (!_robot->isCalibrationInProgress())  // if not in calibration
     {
-        if (_previous_state_learning_mode != activate)  // if state different
+        if (activate != _previous_state_learning_mode)  // if state different
         {
             _robot->activateLearningMode(activate);
 
@@ -179,7 +183,7 @@ void JointsInterfaceCore::activateLearningMode(bool activate, int &ostatus, std:
             _previous_state_learning_mode = activate;
             // publish new state
             std_msgs::Bool msg;
-            msg.data = _previous_state_learning_mode;
+            msg.data = activate;
             _learning_mode_publisher.publish(msg);
         }
         else
@@ -197,11 +201,12 @@ void JointsInterfaceCore::activateLearningMode(bool activate, int &ostatus, std:
 }
 
 /**
- * @brief JointsInterfaceCore::sendMotorsParams
+ * @brief JointsInterfaceCore::sendInitMotorsParams
+ * @param learningMode
  */
-void JointsInterfaceCore::sendMotorsParams()
+void JointsInterfaceCore::sendInitMotorsParams(bool learningMode)
 {
-    _robot->sendInitMotorsParams();
+    _robot->sendInitMotorsParams(learningMode);
 }
 
 // *********************
@@ -317,20 +322,12 @@ bool JointsInterfaceCore::_callbackCalibrateMotors(niryo_robot_msgs::SetInt::Req
     // --> this fixes an issue where motors will jump back to a previous cmd after being calibrated
     if (niryo_robot_msgs::CommandStatus::SUCCESS == result)
     {
-        if (_robot->getHardwareVersion() == "ned2")
-        {
-            _previous_state_learning_mode = false;
-            _robot->activateLearningMode(false);
-        }
-        else
-        {
-            _previous_state_learning_mode = true;
-            _robot->activateLearningMode(true);
-        }
+        activateLearningMode("ned2" != _hardware_version, result, result_message);
+
         _enable_control_loop = true;
     }
 
-    return true;
+    return (niryo_robot_msgs::CommandStatus::SUCCESS == result);
 }
 
 /**
@@ -343,16 +340,10 @@ bool JointsInterfaceCore::_callbackRequestNewCalibration(niryo_robot_msgs::Trigg
                                                          niryo_robot_msgs::Trigger::Response &res)
 {
     ROS_DEBUG("JointsInterfaceCore::_callbackRequestNewCalibration - New calibration requested");
-    if (_robot->getHardwareVersion() == "ned2")
-    {
-        _previous_state_learning_mode = false;
-        _robot->activateLearningMode(false);
-    }
-    else
-    {
-        _previous_state_learning_mode = true;
-        _robot->activateLearningMode(true);
-    }
+    std::string result_message = "";
+    int result = niryo_robot_msgs::CommandStatus::FAILURE;
+    activateLearningMode("ned2" != _hardware_version, result, result_message);
+
     _robot->setNeedCalibration();
 
     res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
@@ -391,7 +382,7 @@ void JointsInterfaceCore::_callbackTrajectoryResult(const control_msgs::FollowJo
 
 /**
  * @brief JointsInterfaceCore::_publishLearningMode
- *  // cc maybe put this in ros control loop ?
+ *  // TODO(CC) use a timer
  *
  */
 void JointsInterfaceCore::_publishLearningMode()
