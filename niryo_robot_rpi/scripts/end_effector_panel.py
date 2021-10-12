@@ -82,9 +82,8 @@ class NiryoEndEffectorPanel:
                 self.blockly_save_current_point()
 
     def __callback_custom_pos_button_status(self, msg):
-        if (self.__custom_button_state == EEButtonStatus.HANDLE_HELD_ACTION and
-                msg.action == EEButtonStatus.NO_ACTION and
-                self.__robot_status == RobotStatus.CALIBRATION_NEEDED):
+        if (self.__custom_button_state != EEButtonStatus.NO_ACTION and
+                msg.action == EEButtonStatus.NO_ACTION and self.__robot_status == RobotStatus.CALIBRATION_NEEDED):
             self.__custom_button_state = msg.action
             auto_calibration()
         else:

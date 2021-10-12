@@ -59,6 +59,8 @@ from niryo_robot_tools_commander.msg import ToolActionGoal, ToolResult, ToolActi
 # Enums
 from niryo_robot_python_ros_wrapper.ros_wrapper_enums import *
 
+from niryo_robot_python_ros_wrapper.ros_wrapper_objects import CustomButtonObject
+
 
 class NiryoRosWrapperException(Exception):
     pass
@@ -147,8 +149,10 @@ class NiryoRosWrapper:
         rospy.Subscriber('/niryo_robot/conveyor/feedback', ConveyorFeedbackArray,
                          self.__callback_sub_conveyors_feedback)
 
-        # - Logs
+        # - Custom button
+        self.__custom_button = CustomButtonObject()
 
+        # - Logs
         self.__logs = []
         rospy.Subscriber(
             '/rosout_agg', rosgraph_msgs.msg.Log, self.__callback_rosout_agg
@@ -2563,6 +2567,25 @@ class NiryoRosWrapper:
 
         result = self.__call_service('/niryo_robot_led_ring/user_service', LedUser, user_led_request)
         return result.status, result.message
+
+    # - EndEffector Button
+
+    def is_custom_button_pressed(self):
+        return self.__custom_button.is_pressed
+
+    def get_custom_button_state(self):
+        return self.__custom_button.button_state
+
+    def wait_for_button_action(self, action, timeout=0):
+        return self.__custom_button.wait(action, timeout)
+
+    def wait_for_any_action(self, timeout=0):
+        return self.__custom_button.wait_any(timeout)
+
+    def get_and_wait_press_duration(self, timeout=0):
+        return self.__custom_button.get_press_time(timeout)
+
+    #wait_and_get_press_duration
 
     # - Logs
 

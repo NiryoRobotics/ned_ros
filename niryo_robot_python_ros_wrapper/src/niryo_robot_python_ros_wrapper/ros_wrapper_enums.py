@@ -134,6 +134,17 @@ class AutorunMode:
     LOOP = 2
 
 
+class ButtonAction:
+    def __init__(self):
+        pass
+
+    HANDLE_HELD_ACTION = 0
+    LONG_PUSH_ACTION = 1
+    SINGLE_PUSH_ACTION = 2
+    DOUBLE_PUSH_ACTION = 3
+    NO_ACTION = 100
+
+
 @unique
 class CommandEnum(Enum):
     """
