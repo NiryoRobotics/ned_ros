@@ -10,6 +10,7 @@ from niryo_robot_sound.srv import PlaySound
 
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus
+from std_msgs.msg import Empty
 
 from niryo_robot_sound.sound_database import SoundDatabase
 from niryo_robot_sound.sound_player import SoundPlayer
@@ -36,6 +37,9 @@ class SoundManager:
         self.__logs_status = RobotStatus.NONE
         rospy.Subscriber('/niryo_robot_status/robot_status', RobotStatus,
                          self.__callback_sub_robot_status)
+
+        rospy.Subscriber('/niryo_studio_connection', Empty,
+                         self.__callback_niryo_studio)
 
         # - Services
         rospy.Service('/niryo_robot_sound/play', PlaySound, self.__callback_play_sound_user)
@@ -97,6 +101,10 @@ class SoundManager:
         elif self.__overheat_timer is not None:
             self.__overheat_timer.shutdown()
             self.__overheat_timer = None
+
+    def __callback_niryo_studio(self, _):
+        sound = self.__sound_database.connection_sound
+        self.play_sound(sound)
 
     def play_sound(self, sound, start_time=0, end_time=0, wait=False):
         if self.__sound_thread.is_alive():

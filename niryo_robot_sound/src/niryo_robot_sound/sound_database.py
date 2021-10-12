@@ -35,6 +35,7 @@ class SoundDatabase:
         self.__error_sound_name = rospy.get_param("~robot_sounds/error_sound")
         self.__turn_on_sound_name = rospy.get_param("~robot_sounds/turn_on_sound")
         self.__turn_off_sound_name = rospy.get_param("~robot_sounds/turn_off_sound")
+        self.__connection_sound = rospy.get_param("~robot_sounds/connection_sound")
 
         self.__robot_sounds = {}
         self.__user_sounds = {}
@@ -75,6 +76,10 @@ class SoundDatabase:
     @property
     def sleep_sound(self):
         return self.__robot_sounds[self.__turn_off_sound_name]
+
+    @property
+    def connection_sound(self):
+        return self.__robot_sounds[self.__connection_sound]
 
     def get_sound(self, sound_name):
         if sound_name in self.__user_sounds:
@@ -161,17 +166,12 @@ class SoundDatabase:
                     pass
 
     def __load_robot_sounds(self):
+        sounds = [self.__turn_on_sound_name, self.__turn_on_sound_name, self.__error_sound_name,
+                  self.__connection_sound]
+
         self.__robot_sounds = {
-            self.__turn_on_sound_name:
-                Sound(self.__turn_on_sound_name,
-                      os.path.join(self.__robot_sound_directory_path, self.__turn_on_sound_name)),
-            self.__turn_off_sound_name:
-                Sound(self.__turn_off_sound_name,
-                      os.path.join(self.__robot_sound_directory_path, self.__turn_off_sound_name)),
-            self.__error_sound_name:
-                Sound(self.__error_sound_name,
-                      os.path.join(self.__robot_sound_directory_path, self.__error_sound_name)),
-        }
+            sound_name: Sound(sound_name, os.path.join(self.__robot_sound_directory_path, sound_name)) for sound_name in
+            sounds}
 
     def __publish_sounds(self):
         msg = SoundList()

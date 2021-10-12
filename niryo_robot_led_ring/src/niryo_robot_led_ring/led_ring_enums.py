@@ -11,6 +11,7 @@ BLUE = ColorRGBA(15, 50, 255, 0)
 WHITE = ColorRGBA(255, 255, 255, 0)
 NONE = ColorRGBA(0, 0, 0, 0)
 ORANGE = ColorRGBA(255, 50, 0, 0)
+PURPLE = ColorRGBA(153, 51, 153, 0)
 
 ROBOT_STATUS_TO_ANIM = {
     RobotStatus.SHUTDOWN: [LedRingAnimation.NONE, NONE],

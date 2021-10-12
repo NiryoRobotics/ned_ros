@@ -17,6 +17,7 @@ path_user_sound_simulation: "~/.niryo/simulation/niryo_robot_user_sounds"
 path_robot_sound: "niryo_robot_state_sounds"
 
 robot_sounds:
-  error_sound: "error4.wav"
+  error_sound: "error4.2.wav"
   turn_on_sound: "start.wav"
   turn_off_sound: "stop.wav"
+  connection_sound: "start2b.wav"

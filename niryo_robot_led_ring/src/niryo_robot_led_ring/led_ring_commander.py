@@ -9,6 +9,7 @@ from niryo_robot_led_ring.msg import LedRingStatus, LedRingAnimation, LedRingCur
 # Message
 from niryo_robot_status.msg import RobotStatus
 from std_msgs.msg import Int32
+from std_msgs.msg import Empty
 
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus
@@ -80,6 +81,9 @@ class LedRingCommander:
         self.save_point_publisher = rospy.Subscriber(
             "/niryo_robot/blockly/save_current_point", Int32, self.__callback_save_current_point)
 
+        rospy.Subscriber('/niryo_studio_connection', Empty,
+                         self.__callback_niryo_studio)
+
         rospy.loginfo("Led Ring Commander - Started")
 
     def shutdown(self):
@@ -147,6 +151,10 @@ class LedRingCommander:
     def __callback_save_current_point(self, _msg):
         if not self.user_mode:
             self.blink_over_status(WHITE, 1, 0.5)
+
+    def __callback_niryo_studio(self, _):
+        if not self.user_mode:
+            self.blink_over_status(PURPLE, 2, 0.5)
 
     def notify_current_anim_and_color(self, _observer):
         """
