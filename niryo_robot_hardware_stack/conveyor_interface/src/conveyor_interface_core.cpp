@@ -449,8 +449,8 @@ void ConveyorInterfaceCore::_publishConveyorsFeedback(const ros::TimerEvent&)
     conveyor_interface::ConveyorFeedback data;
 
     std::lock_guard<std::mutex> lck(_state_map_mutex);
-
-    for (auto const& conveyor_state : _state_map)
+    std::map<uint8_t, std::shared_ptr<common::model::ConveyorState>> temp_state_map = _state_map;
+    for (auto const& conveyor_state : temp_state_map)
     {
         if (conveyor_state.second)
         {
