@@ -65,7 +65,7 @@ class CanInterfaceCore : public common::model::IDriverCore, public common::model
 
         // conveyor control
         int setConveyor(const std::shared_ptr<common::model::ConveyorState> state) override;
-        void unsetConveyor(uint8_t motor_id) override;
+        void unsetConveyor(uint8_t motor_id, uint8_t default_conveyor_id) override;
         int changeId(common::model::EHardwareType motor_type, uint8_t old_id, uint8_t new_id) override;
         
         void clearSingleCommandQueue();
@@ -134,8 +134,6 @@ class CanInterfaceCore : public common::model::IDriverCore, public common::model
         double _time_check_connection_last_read{0.0};
 
         // specific to stepper
-        double _delta_time_calib_read{0.0};
-        double _time_hw_calib_last_read{0.0};
 
         std::unique_ptr<CanManager> _can_manager;
 
@@ -146,9 +144,6 @@ class CanInterfaceCore : public common::model::IDriverCore, public common::model
         std::queue<std::shared_ptr<common::model::AbstractCanSingleMotorCmd>> _conveyor_cmds;
 
         static constexpr int QUEUE_OVERFLOW = 20;
-
-        // conveyor default id, avoid hardcore value
-        uint8_t _default_conveyor_id = 0;
 };
 
 /**

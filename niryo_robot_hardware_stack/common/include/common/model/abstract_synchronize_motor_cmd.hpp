@@ -24,7 +24,6 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <vector>
 #include <set>
 #include <memory>
-#include <sstream>
 #include <typeinfo>
 
 #include "common/model/i_synchronize_motor_cmd.hpp"

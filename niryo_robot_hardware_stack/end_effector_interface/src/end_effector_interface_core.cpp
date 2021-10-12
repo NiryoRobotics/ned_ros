@@ -168,6 +168,9 @@ void EndEffectorInterfaceCore::startPublishers(ros::NodeHandle& nh)
  */
 void EndEffectorInterfaceCore::startSubscribers(ros::NodeHandle& nh)
 {
+    (void)nh;  // unused
+
+    ROS_DEBUG("EndEffectorInterfaceCore::startSubscribers - no subscribers to start");
 }
 
 /**

@@ -101,7 +101,7 @@ int main(int argc, char **argv)
             std::vector<int> id_list = vars["ids"].as<std::vector<int>>();
             for (auto l_id : id_list)
             {
-               ids.push_back(static_cast<uint8_t>(l_id));
+               ids.emplace_back(static_cast<uint8_t>(l_id));
             }
         }
 
@@ -195,7 +195,7 @@ int main(int argc, char **argv)
                     std::vector<uint32_t> values;
                     for (size_t i = 2; i < params.size(); i++)
                     {
-                        values.push_back(static_cast<uint32_t>(params.at(i)));
+                        values.emplace_back(static_cast<uint32_t>(params.at(i)));
                         ss << " " << params.at(static_cast<int>(i));
                     }
 

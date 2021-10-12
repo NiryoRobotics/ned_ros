@@ -42,7 +42,7 @@ namespace ttl_driver
 class MockEndEffectorDriver : public AbstractEndEffectorDriver
 {
     public:
-        MockEndEffectorDriver(FakeTtlData data);
+        MockEndEffectorDriver(const std::shared_ptr<FakeTtlData>& data);
         virtual ~MockEndEffectorDriver() override;
 
     public:
@@ -63,12 +63,7 @@ class MockEndEffectorDriver : public AbstractEndEffectorDriver
         virtual int syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list) override;
         virtual int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list) override;
 
-        virtual int writeSingleCmd(const std::shared_ptr<common::model::AbstractTtlSingleMotorCmd> &cmd) override;
-        virtual int writeSyncCmd(int type, const std::vector<uint8_t>& ids, const std::vector<uint32_t>& params) override;
-
     public:
-        virtual std::string interpreteErrorState(uint32_t hw_state) const override;
-
         virtual int ping(uint8_t id) override;
 
         // AbstractEndEffectorDriver
@@ -85,18 +80,8 @@ class MockEndEffectorDriver : public AbstractEndEffectorDriver
         int readDigitalInput(uint8_t id, bool& in) override;
         int writeDigitalOutput(uint8_t id, bool out) override;
 
-        common::model::EActionType interpreteActionValue(uint32_t value) override;
-
-    protected:
-        virtual std::string interpreteFirmwareVersion(uint32_t fw_version) const override;
-
     private:
-        void initializeFakeData(FakeTtlData);
-
-    private:
-
-        FakeTtlData::FakeEndEffector _ee_info;
-
+        std::shared_ptr<FakeTtlData> _fake_data;
 };
 
 } // ttl_driver

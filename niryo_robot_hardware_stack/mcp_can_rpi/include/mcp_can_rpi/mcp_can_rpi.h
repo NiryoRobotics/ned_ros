@@ -85,7 +85,7 @@ namespace mcp_can_rpi
        // private:
        private:
 
-        struct timespec delay_spi_can = {0};
+        struct timespec delay_spi_can = {0, 0};
 
         void spiTransfer(uint8_t byte_number, unsigned char *buf);
 

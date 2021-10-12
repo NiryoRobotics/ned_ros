@@ -770,23 +770,17 @@ int TtlInterfaceCore::setEndEffector(const std::shared_ptr<common::model::EndEff
  */
 int TtlInterfaceCore::setConveyor(const std::shared_ptr<common::model::ConveyorState> state)
 {
-    lock_guard<mutex> lck(_control_loop_mutex);
-
     int result = niryo_robot_msgs::CommandStatus::NO_CONVEYOR_FOUND;
 
-    _default_conveyor_id = state->getDefaultId();
+    lock_guard<mutex> lck(_control_loop_mutex);
 
     // add hw component before to get driver
     _ttl_manager->addHardwareComponent(state);
 
-    if (_ttl_manager->ping(_default_conveyor_id))
+    if (_ttl_manager->ping(state->getId()))
     {
         // no init needed
         result = niryo_robot_msgs::CommandStatus::SUCCESS;
-    }
-    else
-    {
-        ROS_WARN("TtlInterfaceCore::setConveyor - No conveyor found");
     }
 
     return result;
@@ -795,17 +789,18 @@ int TtlInterfaceCore::setConveyor(const std::shared_ptr<common::model::ConveyorS
 /**
  * @brief TtlInterfaceCore::unsetConveyor
  * @param motor_id
+ * @param default_conveyor_id
  */
-void TtlInterfaceCore::unsetConveyor(uint8_t motor_id)
+void TtlInterfaceCore::unsetConveyor(uint8_t motor_id, uint8_t default_conveyor_id)
 {
     lock_guard<mutex> lck(_control_loop_mutex);
 
     ROS_DEBUG("TtlInterfaceCore::unsetConveyor - unsetConveyor: id %d", motor_id);
 
     auto state = getJointState(motor_id);
-    if (COMM_SUCCESS == _ttl_manager->changeId(state->getHardwareType(), motor_id, _default_conveyor_id))
+    if (COMM_SUCCESS == _ttl_manager->changeId(state->getHardwareType(), motor_id, default_conveyor_id))
     {
-        _ttl_manager->removeHardwareComponent(_default_conveyor_id);
+        _ttl_manager->removeHardwareComponent(default_conveyor_id);
     }
     else
         ROS_ERROR("TtlInterfaceCore::unsetConveyor : unable to change conveyor ID");
@@ -1140,33 +1135,33 @@ bool TtlInterfaceCore::_callbackReadCustomValue(ttl_driver::ReadCustomValue::Req
 bool TtlInterfaceCore::_callbackWritePIDValue(ttl_driver::WritePIDValue::Request &req,
                                               ttl_driver::WritePIDValue::Response &res)
 {
-  int result = niryo_robot_msgs::CommandStatus::FAILURE;
+    int result = niryo_robot_msgs::CommandStatus::FAILURE;
 
-  DxlMotorState state(req.id);
+    DxlMotorState state(req.id);
 
-  state.setPositionPGain(req.pos_p_gain);
-  state.setPositionIGain(req.pos_i_gain);
-  state.setPositionDGain(req.pos_d_gain);
+    state.setPositionPGain(req.pos_p_gain);
+    state.setPositionIGain(req.pos_i_gain);
+    state.setPositionDGain(req.pos_d_gain);
 
-  state.setVelocityPGain(req.vel_p_gain);
-  state.setVelocityIGain(req.vel_i_gain);
+    state.setVelocityPGain(req.vel_p_gain);
+    state.setVelocityIGain(req.vel_i_gain);
 
-  state.setFF1Gain(req.ff1_gain);
-  state.setFF2Gain(req.ff2_gain);
+    state.setFF1Gain(req.ff1_gain);
+    state.setFF2Gain(req.ff2_gain);
 
-  if (setMotorPID(state))
-  {
-      res.message = "TtlInterfaceCore - Writing PID successful";
-      result = niryo_robot_msgs::CommandStatus::SUCCESS;
-  }
-  else
-  {
-      res.message = "TtlInterfaceCore - Writing PID failed";
-  }
+    if (setMotorPID(state))
+    {
+        res.message = "TtlInterfaceCore - Writing PID successful";
+        result = niryo_robot_msgs::CommandStatus::SUCCESS;
+    }
+    else
+    {
+        res.message = "TtlInterfaceCore - Writing PID failed";
+    }
 
-  res.status = result;
+    res.status = result;
 
-  return true;
+    return true;
 }
 
 /**

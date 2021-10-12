@@ -19,7 +19,9 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 
 #include <cstdint>
 #include <string>
+#include <map>
 #include <vector>
+
 namespace ttl_driver
 {
 
@@ -29,16 +31,28 @@ class FakeTtlData
         FakeTtlData() {}
         ~FakeTtlData() {}
     public:
-        struct FakeRegister
+        struct AbstractFakeRegister
         {
-            uint8_t        id{0};
-            uint32_t       position{0};
-            uint32_t       temperature{0};
-            double         voltage{0};
-            uint32_t       min_position{0};
-            uint32_t       max_position{0};
-            uint16_t       model_number{0};
+            uint8_t id{0};
+            uint16_t model_number{0};
 
+            uint32_t position{0};
+            uint32_t velocity{0};
+
+            uint32_t min_position{0};
+            uint32_t max_position{0};
+
+            uint32_t temperature{0};
+            uint32_t voltage{0};
+            std::string  firmware{};
+        };
+
+        struct FakeStepperRegister : public AbstractFakeRegister
+        {
+        };
+
+        struct FakeDxlRegister : public AbstractFakeRegister
+        {
             uint32_t       position_p_gain{0};
             uint32_t       position_i_gain{0};
             uint32_t       position_d_gain{0};
@@ -48,25 +62,10 @@ class FakeTtlData
 
             uint32_t       ff1_gain{0};
             uint32_t       ff2_gain{0};
-
-            std::string    firmware{};
         };
         
-        struct FakeConveyor
+        struct FakeEndEffector : public AbstractFakeRegister
         {
-            uint8_t         id = 0;  
-            int8_t          direction = 1;
-            int16_t         speed = 0;
-            bool            state = false;
-        };
-        
-        struct FakeEndEffector
-        {
-            uint8_t id{0};
-            uint32_t temperature{0};
-            uint32_t voltage{0};
-            std::string  firmware{};
-
             uint32_t button1_action{0};
             uint32_t button2_action{0};
             uint32_t button3_action{0};
@@ -80,11 +79,10 @@ class FakeTtlData
         };
 
         // dxl
-        std::vector<FakeRegister> dxl_registers;
+        std::map<uint8_t, FakeDxlRegister> dxl_registers;
 
         // stepper
-        std::vector<FakeRegister> stepper_registers;
-        FakeConveyor conveyor;
+        std::map<uint8_t, FakeDxlRegister> stepper_registers;
 
         // common
         std::vector<uint8_t> full_id_list;

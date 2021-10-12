@@ -165,15 +165,6 @@ void HardwareInterface::initNodes(ros::NodeHandle &nh)
                                                                                                          _ttl_interface);
         }
         ros::Duration(0.25).sleep();
-
-        if (EBusProtocol::TTL == _conveyor_bus)
-        {
-            ROS_DEBUG("HardwareInterface::initNodes - Start Tools Interface Node");
-            ros::NodeHandle nh_conveyor(nh, "conveyor");
-            _conveyor_interface = std::make_shared<conveyor_interface::ConveyorInterfaceCore>(nh_conveyor,
-                                                                                              _ttl_interface);
-            ros::Duration(0.25).sleep();
-        }
     }
     else
     {
@@ -186,20 +177,17 @@ void HardwareInterface::initNodes(ros::NodeHandle &nh)
         ros::NodeHandle nh_can(nh, "can_driver");
         _can_interface = std::make_shared<can_driver::CanInterfaceCore>(nh_can);
         ros::Duration(0.25).sleep();
-
-        if (EBusProtocol::CAN == _conveyor_bus)
-        {
-            ROS_DEBUG("HardwareInterface::initNodes - Start Tools Interface Node");
-            ros::NodeHandle nh_conveyor(nh, "conveyor");
-            _conveyor_interface = std::make_shared<conveyor_interface::ConveyorInterfaceCore>(nh_conveyor,
-                                                                                              _can_interface);
-            ros::Duration(0.25).sleep();
-        }
     }
     else
     {
         ROS_DEBUG("HardwareInterface::initNodes - CAN communication is disabled for debug purposes");
     }
+
+    ROS_DEBUG("HardwareInterface::initNodes - Start Conveyor Interface Node");
+    ros::NodeHandle nh_conveyor(nh, "conveyor");
+    _conveyor_interface = std::make_shared<conveyor_interface::ConveyorInterfaceCore>(nh_conveyor,
+                                                                                      _ttl_interface, _can_interface);
+    ros::Duration(0.25).sleep();
 
     ROS_DEBUG("HardwareInterface::initNodes - Start Joints Interface Node");
     ros::NodeHandle nh_joints(nh, "joints_interface");
@@ -452,7 +440,6 @@ void HardwareInterface::_publishHardwareStatus(const ros::TimerEvent&)
         auto conveyor_states = _conveyor_interface->getConveyorStates();
         for (std::shared_ptr<common::model::ConveyorState> cState : conveyor_states)
         {
-            if (cState->getId() != cState->getDefaultId())
             {
                 motor_names.emplace_back("Conveyor");
                 voltages.emplace_back(cState->getVoltage());

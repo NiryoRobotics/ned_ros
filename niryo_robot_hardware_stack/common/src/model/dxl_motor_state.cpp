@@ -46,12 +46,10 @@ DxlMotorState::DxlMotorState(uint8_t id) :
     DxlMotorState("unknown", EHardwareType::UNKNOWN, EComponentType::JOINT, id)
 {}
 
-
 /**
  * @brief DxlMotorState::DxlMotorState
  * @param type
  * @param component_type
- * @param bus_proto
  * @param id
  */
 DxlMotorState::DxlMotorState(EHardwareType type,
@@ -65,7 +63,6 @@ DxlMotorState::DxlMotorState(EHardwareType type,
  * @param name
  * @param type
  * @param component_type
- * @param bus_proto
  * @param id
  */
 DxlMotorState::DxlMotorState(std::string name,

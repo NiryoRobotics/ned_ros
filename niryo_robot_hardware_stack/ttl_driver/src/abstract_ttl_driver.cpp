@@ -40,7 +40,7 @@ AbstractTtlDriver::AbstractTtlDriver()
  * @param packetHandler
  */
 AbstractTtlDriver::AbstractTtlDriver(shared_ptr<dynamixel::PortHandler> portHandler,
-                 shared_ptr<dynamixel::PacketHandler> packetHandler) :
+                                     shared_ptr<dynamixel::PacketHandler> packetHandler) :
     _dxlPortHandler(portHandler),
     _dxlPacketHandler(packetHandler)
 {

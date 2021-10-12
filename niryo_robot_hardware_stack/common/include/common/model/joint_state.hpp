@@ -58,8 +58,8 @@ public:
 
     virtual bool operator==(const JointState &other) const;
 
-    virtual int to_motor_pos(double pos_rad) { return 0; }
-    virtual double to_rad_pos(int position_dxl) { return 0; }
+    virtual int to_motor_pos(double pos_rad) = 0;
+    virtual double to_rad_pos(int position_dxl) = 0;
 
     // AbstractMotorState interface
     virtual void reset() override;
