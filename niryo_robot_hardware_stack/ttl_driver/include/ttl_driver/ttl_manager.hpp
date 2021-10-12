@@ -76,129 +76,130 @@ constexpr int TTL_WRONG_TYPE             = -52;
  */
 class TtlManager : public common::util::IBusManager
 {
+public:
+    TtlManager(ros::NodeHandle& nh);
+    virtual ~TtlManager() override;
 
-    public:
-        TtlManager(ros::NodeHandle& nh);
-        virtual ~TtlManager() override;
+    // IBusManager Interface
+    bool init(ros::NodeHandle& nh) override;
 
-        // IBusManager Interface
-        bool init(ros::NodeHandle& nh) override;
+    void addHardwareComponent(const std::shared_ptr<common::model::AbstractHardwareState> &state) override;
 
-        void addHardwareComponent(const std::shared_ptr<common::model::AbstractHardwareState> &state) override;
+    void removeHardwareComponent(uint8_t id) override;
+    bool isConnectionOk() const override;
 
-        void removeHardwareComponent(uint8_t id) override;
-        bool isConnectionOk() const override;
+    int scanAndCheck() override;
+    bool ping(uint8_t id) override;
 
-        int scanAndCheck() override;
-        bool ping(uint8_t id) override;
+    size_t getNbMotors() const override;
+    void getBusState(bool& connection_state, std::vector<uint8_t>& motor_id, std::string& debug_msg) const override;
+    std::string getErrorMessage() const override;
 
-        size_t getNbMotors() const override;
-        void getBusState(bool& connection_state, std::vector<uint8_t>& motor_id, std::string& debug_msg) const override;
-        std::string getErrorMessage() const override;
+    // commands
 
-        // commands
+    int changeId(common::model::EHardwareType motor_type, uint8_t old_id, uint8_t new_id);
 
-        int changeId(common::model::EHardwareType motor_type, uint8_t old_id, uint8_t new_id);
+    int writeSynchronizeCommand(const std::shared_ptr<common::model::AbstractTtlSynchronizeMotorCmd >& cmd);
+    int writeSingleCommand(const std::shared_ptr<common::model::AbstractTtlSingleMotorCmd >& cmd);
 
-        int writeSynchronizeCommand(const std::shared_ptr<common::model::AbstractTtlSynchronizeMotorCmd >& cmd);
-        int writeSingleCommand(const std::shared_ptr<common::model::AbstractTtlSingleMotorCmd >& cmd);
+    void executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, uint32_t> > cmd_vec);
 
-        void executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, uint32_t> > cmd_vec);
+    int rebootMotors();
+    int rebootMotor(uint8_t motor_id);
 
-        int rebootMotors();
-        int rebootMotor(uint8_t motor_id);
+    int setLeds(int led);
 
-        int setLeds(int led);
+    int sendCustomCommand(uint8_t id, int reg_address, int value, int byte_number);
+    int readCustomCommand(uint8_t id, int32_t reg_address, int &value, int byte_number);
 
-        int sendCustomCommand(uint8_t id, int reg_address, int value, int byte_number);
-        int readCustomCommand(uint8_t id, int32_t reg_address, int &value, int byte_number);
+    // read status
+    bool readPositionStatus();
+    bool readEndEffectorStatus();
+    bool readHwStatus();
+    int readMotorPID(uint8_t id,
+                     uint32_t& pos_p_gain, uint32_t& pos_i_gain, uint32_t& pos_d_gain,
+                     uint32_t& vel_p_gain, uint32_t& vel_i_gain,
+                     uint32_t& ff1_gain, uint32_t& ff2_gain);
 
-        // read status
-        bool readPositionStatus();
-        bool readEndEffectorStatus();
-        bool readHwStatus();
-        int readMotorPID(uint8_t id,
-                         uint32_t& pos_p_gain, uint32_t& pos_i_gain, uint32_t& pos_d_gain,
-                         uint32_t& vel_p_gain, uint32_t& vel_i_gain,
-                         uint32_t& ff1_gain, uint32_t& ff2_gain);
+    //calibration
+    void startCalibration() override;
+    void resetCalibration() override;
+    bool isCalibrationInProgress() const override;
+    int32_t getCalibrationResult(uint8_t id) const override;
+    common::model::EStepperCalibrationStatus getCalibrationStatus() const override;
 
-        //calibration
-        void startCalibration() override;
-        void resetCalibration() override;
-        bool isCalibrationInProgress() const override;
-        int32_t getCalibrationResult(uint8_t id) const override;
-        common::model::EStepperCalibrationStatus getCalibrationStatus() const override;
+    // getters
+    int getAllIdsOnBus(std::vector<uint8_t> &id_list);
 
-        // getters
-        int getAllIdsOnBus(std::vector<uint8_t> &id_list);
+    uint32_t getPosition(const common::model::JointState &motor_state);
+    int getLedState() const;
 
-        uint32_t getPosition(const common::model::JointState &motor_state);
-        int getLedState() const;
+    std::vector<std::shared_ptr<common::model::JointState> > getMotorsStates() const;
+    std::shared_ptr<common::model::AbstractHardwareState> getHardwareState(uint8_t motor_id) const;
 
-        std::vector<std::shared_ptr<common::model::JointState> > getMotorsStates() const;
-        std::shared_ptr<common::model::AbstractHardwareState> getHardwareState(uint8_t motor_id) const;
+    std::vector<uint8_t> getRemovedMotorList() const override;
 
-        std::vector<uint8_t> getRemovedMotorList() const override;
+    bool hasEndEffector() const;
 
-        bool hasEndEffector() const;
+private:
+    // IBusManager Interface
+    int setupCommunication() override;
+    void addHardwareDriver(common::model::EHardwareType hardware_type) override;
 
-    private:
-        // IBusManager Interface
-        int setupCommunication() override;
-        void addHardwareDriver(common::model::EHardwareType hardware_type) override;
+    void updateCurrentCalibrationStatus() override;
 
-        void updateCurrentCalibrationStatus() override;
+    void checkRemovedMotors();
 
-        void checkRemovedMotors();
+    // Config params using in fake driver
+    void readFakeConfig();
+    template<typename Reg>
+    void retrieveFakeMotorData(std::string current_ns, std::map<uint8_t, Reg>& fake_params);
 
-        // Config params using in fake driver
-        void readFakeConfig();
-        template<typename Reg>
-        void retrieveFakeMotorData(std::string current_ns, std::map<uint8_t, Reg> &fake_params);
-    private:
-        ros::NodeHandle _nh;
-        std::shared_ptr<dynamixel::PortHandler> _portHandler;
-        std::shared_ptr<dynamixel::PacketHandler> _packetHandler;
+private:
+    ros::NodeHandle _nh;
+    std::shared_ptr<dynamixel::PortHandler> _portHandler;
+    std::shared_ptr<dynamixel::PacketHandler> _packetHandler;
 
-        std::string _device_name;
-        int _baudrate{1000000};
+    std::string _device_name;
+    int _baudrate{1000000};
 
-        std::vector<uint8_t> _all_motor_connected; // with all ttl motors connected (including the tool)
-        std::vector<uint8_t> _removed_motor_id_list;
+    std::vector<uint8_t> _all_motor_connected; // with all ttl motors connected (including the tool)
+    std::vector<uint8_t> _removed_motor_id_list;
 
-        // state of a component for a given id
-        std::map<uint8_t, std::shared_ptr<common::model::AbstractHardwareState> > _state_map;
-        // map of associated ids for a given hardware type
-        std::map<common::model::EHardwareType, std::vector<uint8_t> > _ids_map;
-        // map of drivers for a given hardware type (xl, stepper, end effector)
-        std::map<common::model::EHardwareType, std::shared_ptr<ttl_driver::AbstractTtlDriver> > _driver_map;
+    // state of a component for a given id
+    std::map<uint8_t, std::shared_ptr<common::model::AbstractHardwareState> > _state_map;
+    // map of associated ids for a given hardware type
+    std::map<common::model::EHardwareType, std::vector<uint8_t> > _ids_map;
+    // map of drivers for a given hardware type (xl, stepper, end effector)
+    std::map<common::model::EHardwareType, std::shared_ptr<ttl_driver::AbstractTtlDriver> > _driver_map;
 
-        common::model::EStepperCalibrationStatus _calibration_status{common::model::EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED};
+    common::model::EStepperCalibrationStatus _calibration_status{common::model::EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED};
 
-        // for hardware control
-        bool _is_connection_ok{false};
-        std::string _debug_error_message;
+    // for hardware control
+    bool _is_connection_ok{false};
+    std::string _debug_error_message;
 
-        int _hw_fail_counter_read{0};
-        
-        int _led_state{-1};
+    uint32_t _hw_fail_counter_read{0};
 
-        std::string _led_motor_type_cfg;
+    int _led_state{-1};
 
-        // TODO(cc) To be changed back to 50 when connection pb with new steppers and end effector will be corrected
-        static constexpr int MAX_HW_FAILURE = 2500;
-        static constexpr int CALIBRATION_IDLE = 0;
-        static constexpr int CALIBRATION_IN_PROGRESS = 1;
-        static constexpr int CALIBRATION_SUCCESS = 2;
-        static constexpr int CALIBRATION_ERROR = 3;
-        std::map<int, common::model::EStepperCalibrationStatus> _map_calibration_status {
-                                        {CALIBRATION_SUCCESS, common::model::EStepperCalibrationStatus::CALIBRATION_OK},
-                                        {CALIBRATION_IN_PROGRESS, common::model::EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS},
-                                        {CALIBRATION_ERROR, common::model::EStepperCalibrationStatus::CALIBRATION_FAIL},
-                                        {CALIBRATION_IDLE, common::model::EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED}};
+    std::string _led_motor_type_cfg;
 
-        bool _use_simu_gripper = true;
-        std::shared_ptr<FakeTtlData> _fake_data;
+    // TODO(cc) To be changed back to 50 when connection pb with new steppers and end effector will be corrected
+    static constexpr uint32_t MAX_HW_FAILURE = 2500;
+    static constexpr uint32_t CALIBRATION_IDLE = 0;
+    static constexpr uint32_t CALIBRATION_IN_PROGRESS = 1;
+    static constexpr uint32_t CALIBRATION_SUCCESS = 2;
+    static constexpr uint32_t CALIBRATION_ERROR = 3;
+    std::map<uint32_t, common::model::EStepperCalibrationStatus> _map_calibration_status {
+                                    {CALIBRATION_SUCCESS, common::model::EStepperCalibrationStatus::CALIBRATION_OK},
+                                    {CALIBRATION_IN_PROGRESS, common::model::EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS},
+                                    {CALIBRATION_ERROR, common::model::EStepperCalibrationStatus::CALIBRATION_FAIL},
+                                    {CALIBRATION_IDLE, common::model::EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED}};
+
+    bool _use_simu_gripper = true;
+    std::shared_ptr<FakeTtlData> _fake_data;
+
 };
 
 // inline getters
@@ -327,13 +328,11 @@ void TtlManager::retrieveFakeMotorData(std::string current_ns, std::map<uint8_t,
     for (size_t i = 0; i < stepper_ids.size(); i++)
     {
         Reg tmp;
-        tmp.id = stepper_ids.at(i);
-        tmp.position = stepper_positions.at(i);
-        tmp.temperature = stepper_temperatures.at(i);
+        tmp.id = static_cast<uint8_t>(stepper_ids.at(i));
+        tmp.position = static_cast<uint32_t>(stepper_positions.at(i));
+        tmp.temperature = static_cast<uint32_t>(stepper_temperatures.at(i));
         tmp.voltage = stepper_voltages.at(i);
-        tmp.min_position = stepper_min_positions.at(i);
-        tmp.max_position = stepper_max_positions.at(i);
-        tmp.model_number = stepper_model_numbers.at(i);
+        tmp.model_number = static_cast<uint16_t>(stepper_model_numbers.at(i));
         tmp.firmware = stepper_firmwares.at(i);
         fake_params.insert(std::make_pair(tmp.id, tmp));
     }

@@ -33,7 +33,6 @@ namespace ttl_driver
  * @param data
  */
 MockStepperDriver::MockStepperDriver(const std::shared_ptr<FakeTtlData>& data) :
-  AbstractStepperDriver(),
   _fake_data(data)
 {
   // retrieve list of ids

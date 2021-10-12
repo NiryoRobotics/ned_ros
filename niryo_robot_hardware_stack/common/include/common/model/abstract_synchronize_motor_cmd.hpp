@@ -60,7 +60,6 @@ class AbstractSynchronizeMotorCmd : public ISynchronizeMotorCmd
 
     public:
         AbstractSynchronizeMotorCmd();
-        virtual ~AbstractSynchronizeMotorCmd() = 0;
 
         // test
         bool isValid() const;
@@ -87,10 +86,10 @@ template<typename ParamType>
 AbstractSynchronizeMotorCmd<ParamType>::AbstractSynchronizeMotorCmd()
 {}
 
-template<typename ParamType>
-AbstractSynchronizeMotorCmd<ParamType>::~AbstractSynchronizeMotorCmd()
-{}
-
+/**
+ * @brief AbstractSynchronizeMotorCmd<ParamType>::isValid
+ * @return
+ */
 template<typename ParamType>
 bool AbstractSynchronizeMotorCmd<ParamType>::isValid() const
 {
@@ -106,6 +105,9 @@ bool AbstractSynchronizeMotorCmd<ParamType>::isValid() const
     return true;
 }
 
+/**
+ * @brief AbstractSynchronizeMotorCmd<ParamType>::clear
+ */
 template<typename ParamType>
 void AbstractSynchronizeMotorCmd<ParamType>::clear()
 {

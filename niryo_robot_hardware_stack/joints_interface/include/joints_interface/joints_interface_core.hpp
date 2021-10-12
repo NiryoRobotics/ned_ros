@@ -31,6 +31,8 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 
 #include <ros/ros.h>
 
+#include "common/util/i_interface_core.hpp"
+
 #include <controller_manager/controller_manager.h>
 #include <control_msgs/FollowJointTrajectoryActionResult.h>
 #include <control_msgs/FollowJointTrajectoryActionGoal.h>
@@ -45,12 +47,11 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "niryo_robot_msgs/Trigger.h"
 #include "common/model/hardware_type_enum.hpp"
 
-#include "common/model/i_interface_core.hpp"
 
 namespace joints_interface
 {
 
-class JointsInterfaceCore : common::model::IInterfaceCore
+class JointsInterfaceCore : common::util::IInterfaceCore
 {
     public:
 

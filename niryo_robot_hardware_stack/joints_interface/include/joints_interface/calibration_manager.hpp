@@ -58,7 +58,7 @@ private:
     common::model::EStepperCalibrationStatus autoCalibration();
     common::model::EStepperCalibrationStatus manualCalibration();
 
-    std::shared_ptr<common::model::IDriverCore> getJointInterface(common::model::EBusProtocol proto);
+    std::shared_ptr<common::util::IDriverCore> getJointInterface(common::model::EBusProtocol proto);
     // tests
     bool canProcessManualCalibration(std::string &result_message);
     bool steppersConnected();
@@ -107,7 +107,7 @@ bool CalibrationManager::CalibrationInprogress() const
 }
 
 inline
-std::shared_ptr<common::model::IDriverCore>
+std::shared_ptr<common::util::IDriverCore>
 CalibrationManager::getJointInterface(common::model::EBusProtocol proto)
 {
   if(common::model::EBusProtocol::CAN == proto)

@@ -34,8 +34,8 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 // ros
 #include <ros/ros.h>
 
-#include "common/model/i_driver_core.hpp"
-#include "common/model/i_interface_core.hpp"
+#include "common/util/i_driver_core.hpp"
+#include "common/util/i_interface_core.hpp"
 
 #include "ttl_driver/ttl_manager.hpp"
 #include "ttl_driver/ArrayMotorHardwareStatus.h"
@@ -70,7 +70,7 @@ namespace ttl_driver
  * - CalibrationManager
  * - EndEffectorInterfaceCore
  */
-class TtlInterfaceCore : public common::model::IDriverCore, public common::model::IInterfaceCore
+class TtlInterfaceCore : public common::util::IDriverCore, public common::util::IInterfaceCore
 {
     public:
         TtlInterfaceCore(ros::NodeHandle& nh);

@@ -212,7 +212,7 @@ void EndEffectorInterfaceCore::_publishButtonState(const ros::TimerEvent&)
             if (button->actions.empty())
                 continue;
 
-            button_msg.action = static_cast<int>(button->actions.front());
+            button_msg.action = static_cast<uint8_t>(button->actions.front());
             switch (button->type)
             {
                 case EButtonType::FREE_DRIVE_BUTTON:

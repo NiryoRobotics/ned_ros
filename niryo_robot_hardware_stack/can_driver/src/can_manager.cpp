@@ -49,11 +49,11 @@ namespace can_driver
  * @brief CanManager::CanManager
  */
 CanManager::CanManager(ros::NodeHandle& nh) :
-    _nh(nh),
-    _calibration_status(EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED),
-    _debug_error_message("CanManager - No connection with CAN motors has been made yet")
+    _nh(nh)
 {
     ROS_DEBUG("CanManager - ctor");
+
+    _debug_error_message = "CanManager - No connection with CAN motors has been made yet";
 
     init(nh);
 
@@ -765,7 +765,7 @@ void CanManager::readFakeConfig()
     if (_nh.hasParam(hardware_version + "/steppers"))
     {
         std::string current_ns = hardware_version + "/steppers/";
-        retrieveFakeMotorData(current_ns, _fake_data.stepper_registers);
+        retrieveFakeMotorData(current_ns, _fake_data->stepper_registers);
     }
 }
 

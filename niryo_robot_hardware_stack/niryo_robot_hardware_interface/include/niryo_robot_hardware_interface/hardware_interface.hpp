@@ -23,7 +23,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <ros/ros.h>
 #include <memory>
 
-#include "common/model/i_interface_core.hpp"
+#include "common/util/i_interface_core.hpp"
 
 #include "joints_interface/joints_interface_core.hpp"
 #include "tools_interface/tools_interface_core.hpp"
@@ -45,7 +45,7 @@ namespace niryo_robot_hardware_interface
 /**
  * @brief The HardwareInterface class
  */
-class HardwareInterface : common::model::IInterfaceCore
+class HardwareInterface : common::util::IInterfaceCore
 {
     public:
         HardwareInterface(ros::NodeHandle &nh);

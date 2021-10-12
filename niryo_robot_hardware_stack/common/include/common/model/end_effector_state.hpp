@@ -47,60 +47,25 @@ namespace model
  */
 class EndEffectorState : public AbstractHardwareState
 {
-    private:
+    public:
         /**
          * @brief The Button class
          */
-
         class Button : public IObject
         {
             public:
-                Button()
-                {
-                    actions.push(EActionType::NO_ACTION);
-                }
+                Button();
 
-                 /**
-                 * @brief The Button struct describes the current state of a button (not its config)
-                 */
-                virtual std::string str() const override
-                {
-                    std::ostringstream ss;
-                    ss << "Button (" << ButtonTypeEnum(type).toString() << ") : "
-                       << ActionTypeEnum(actions.front()).toString();
-                    return ss.str();
-                }
-
-                virtual bool isValid() const override
-                {
-                    return (EButtonType::UNKNOWN != type);
-                }
-
-                virtual void reset() override
-                {
-                    type = EButtonType::UNKNOWN;
-                    std::queue<EActionType> empty_queue;
-                    actions.swap(empty_queue);
-                }
+                std::string str() const override;
+                bool isValid() const override;
+                void reset() override;
 
                 // need a delay to avoid state hand hold called when other states come
-                void setDelay()
-                {
-                    _time_last_read_state = ros::Time::now().toSec();
-                    _need_delay = true;
-                }
+                void setDelay();
 
                 // check if hand hold state came is needed to skip
-                bool isNeedToSkip()
-                {
-                    if (_need_delay && (ros::Time::now().toSec() - _time_last_read_state) <= _time_avoid_duplicate_state)
-                        return true;
-                    else
-                    {
-                      _need_delay = false;
-                      return false;
-                    }
-                }
+                bool needsToSkip();
+
             public:
                 EButtonType type{EButtonType::UNKNOWN};
                 std::queue<EActionType> actions;
@@ -110,8 +75,7 @@ class EndEffectorState : public AbstractHardwareState
                 double _time_last_read_state;
                 bool _need_delay{false};
         };
-    
-    public:
+
         struct Vector3D
         {
           uint32_t x{};

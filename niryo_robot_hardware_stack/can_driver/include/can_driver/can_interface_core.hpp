@@ -31,8 +31,8 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <vector>
 
 #include "common/model/hardware_type_enum.hpp"
-#include "common/model/i_driver_core.hpp"
-#include "common/model/i_interface_core.hpp"
+#include "common/util/i_driver_core.hpp"
+#include "common/util/i_interface_core.hpp"
 #include "can_driver/can_manager.hpp"
 #include "can_driver/StepperArrayMotorHardwareStatus.h"
 #include "niryo_robot_msgs/BusState.h"
@@ -45,7 +45,7 @@ namespace can_driver
 /**
  * @brief The CanInterfaceCore class
  */
-class CanInterfaceCore : public common::model::IDriverCore, public common::model::IInterfaceCore
+class CanInterfaceCore : public common::util::IDriverCore, public common::util::IInterfaceCore
 {
     public:
 

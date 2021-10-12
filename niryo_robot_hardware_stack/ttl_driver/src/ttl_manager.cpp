@@ -28,6 +28,10 @@
 #include <cstdlib>
 #include <cassert>
 
+// ros
+#include "ros/serialization.h"
+#include "ros/time.h"
+
 // niryo
 #include "common/model/hardware_type_enum.hpp"
 #include "common/model/dxl_command_type_enum.hpp"
@@ -38,7 +42,6 @@
 #include "common/model/stepper_calibration_status_enum.hpp"
 
 #include "dynamixel_sdk/packet_handler.h"
-#include "ros/serialization.h"
 #include "ttl_driver/stepper_reg.hpp"
 #include "ttl_driver/end_effector_reg.hpp"
 
@@ -764,7 +767,7 @@ bool TtlManager::readHwStatus()
                             int16_t speed = static_cast<int16_t>(velocity);
                             auto cState = std::dynamic_pointer_cast<common::model::ConveyorState>(state);
                             cState->setDirection(speed > 0 ? 1 : -1);
-                            cState->setSpeed(std::abs(speed));
+                            cState->setSpeed(static_cast<int16_t>(std::abs(speed)));
                             cState->setState(speed != 0);
                         }
                     }
@@ -1185,7 +1188,7 @@ int TtlManager::writeSynchronizeCommand(const std::shared_ptr<common::model::Abs
         std::set<common::model::EHardwareType> typesToProcess = cmd->getMotorTypes();
 
         // process all the motors using each successive drivers
-        for (int counter = 0; counter < MAX_HW_FAILURE; ++counter)
+        for (uint32_t counter = 0; counter < MAX_HW_FAILURE; ++counter)
         {
             ROS_DEBUG_THROTTLE(0.5, "TtlManager::writeSynchronizeCommand: try to sync write (counter %d)", counter);
 

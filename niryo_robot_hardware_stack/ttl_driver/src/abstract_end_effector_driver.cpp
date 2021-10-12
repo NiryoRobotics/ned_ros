@@ -30,10 +30,8 @@ namespace ttl_driver
 /**
  * @brief AbstractEndEffectorDriver::AbstractEndEffectorDriver
  */
-AbstractEndEffectorDriver::AbstractEndEffectorDriver() :
-  AbstractTtlDriver()
-{
-}
+AbstractEndEffectorDriver::AbstractEndEffectorDriver()
+{}
 
 /**
  * @brief AbstractEndEffectorDriver::AbstractEndEffectorDriver

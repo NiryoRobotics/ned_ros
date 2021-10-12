@@ -48,7 +48,7 @@ namespace po = boost::program_options;
 
 #ifdef __arm__
     #define DEFAULT_PORT "/dev/serial0"
-#elif __aarch64__
+#elifdef __aarch64__
     #define DEFAULT_PORT "/dev/ttyAMA0"
 #else
     #define DEFAULT_PORT ""
@@ -196,7 +196,7 @@ int main(int argc, char **argv)
                     for (size_t i = 2; i < params.size(); i++)
                     {
                         values.emplace_back(static_cast<uint32_t>(params.at(i)));
-                        ss << " " << params.at(static_cast<int>(i));
+                        ss << " " << params.at(i);
                     }
 
                     std::cout << ss.str() << std::endl;

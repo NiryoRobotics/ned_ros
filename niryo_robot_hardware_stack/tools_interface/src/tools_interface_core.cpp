@@ -274,7 +274,7 @@ bool ToolsInterfaceCore::_callbackPingAndSetTool(tools_interface::PingDxlTool::R
             {
                 pubToolId(_toolState->getId());
                 res.state = ToolState::TOOL_STATE_PING_OK;
-                res.id = _toolState->getId();
+                res.id = static_cast<int8_t>(_toolState->getId());
 
                 ros::Duration(0.05).sleep();
                 ROS_INFO("ToolsInterfaceCore::_callbackPingAndSetDxlTool - Set tool success");

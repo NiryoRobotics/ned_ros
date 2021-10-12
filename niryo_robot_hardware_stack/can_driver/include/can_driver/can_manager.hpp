@@ -112,12 +112,12 @@ private:
     // config params using in fake driver
     void readFakeConfig();
     template<typename Reg>
-    void retrieveFakeMotorData(std::string current_ns, std::vector<Reg> &fake_params);
+    void retrieveFakeMotorData(std::string current_ns, std::map<uint8_t, Reg>& fake_params);
+
 private:
     ros::NodeHandle _nh;
-    bool _simulation_mode{false};
     std::shared_ptr<mcp_can_rpi::MCP_CAN> _mcp_can;
-    FakeCanData _fake_data;
+    std::shared_ptr<FakeCanData> _fake_data;
 
     std::vector<uint8_t> _all_motor_connected; // with all can motors connected (including the conveyor)
     std::vector<uint8_t> _removed_motor_id_list;
@@ -127,15 +127,19 @@ private:
     // map of drivers for a given hardware type (xl, stepper, end effector)
     std::map<common::model::EHardwareType, std::shared_ptr<can_driver::AbstractCanDriver> > _driver_map;
 
-    double _calibration_timeout{30.0};
-    common::model::EStepperCalibrationStatus _calibration_status;
+    std::string _debug_error_message;
 
     // for hardware control
-    bool _is_connection_ok{false};
-    std::string _debug_error_message;
 
     std::mutex  _stepper_timeout_mutex;
     std::thread _stepper_timeout_thread;
+
+    double _calibration_timeout{30.0};
+
+    common::model::EStepperCalibrationStatus _calibration_status{common::model::EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED};
+
+    bool _simulation_mode{false};
+    bool _is_connection_ok{false};
 };
 
 // inline getters
@@ -207,7 +211,7 @@ bool CanManager::isCalibrationInProgress() const {
  * @param fake_params
  */
 template<typename Reg>
-void CanManager::retrieveFakeMotorData(std::string current_ns, std::vector<Reg> &fake_params)
+void CanManager::retrieveFakeMotorData(std::string current_ns, std::map<uint8_t, Reg> &fake_params)
 {
     std::vector<int> stepper_ids;
     _nh.getParam(current_ns + "id", stepper_ids);
@@ -236,12 +240,12 @@ void CanManager::retrieveFakeMotorData(std::string current_ns, std::vector<Reg> 
     {
         Reg tmp;
         tmp.id = static_cast<uint8_t>(stepper_ids.at(i));
-        tmp.position = static_cast<uint32_t>(stepper_positions.at(i));
+        tmp.position = static_cast<int32_t>(stepper_positions.at(i));
         tmp.temperature = static_cast<uint32_t>(stepper_temperatures.at(i));
         tmp.voltage = stepper_voltages.at(i);
         tmp.model_number = static_cast<uint16_t>(stepper_model_numbers.at(i));
         tmp.firmware = stepper_firmwares.at(i);
-        fake_params.push_back(tmp);
+        fake_params.insert(std::make_pair(tmp.id, tmp));
     }
 }
 

@@ -27,7 +27,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <ros/ros.h>
 
 // niryo
-#include "common/model/i_interface_core.hpp"
+#include "common/util/i_interface_core.hpp"
 
 #include "common/model/end_effector_state.hpp"
 #include "ttl_driver/ttl_interface_core.hpp"
@@ -44,7 +44,7 @@ namespace end_effector_interface
  * The TTL management is done in ttl_manager
  * Every runtime critical operation is done in TtlManager
  */
-class EndEffectorInterfaceCore : public common::model::IInterfaceCore
+class EndEffectorInterfaceCore : public common::util::IInterfaceCore
 {
 
     public:

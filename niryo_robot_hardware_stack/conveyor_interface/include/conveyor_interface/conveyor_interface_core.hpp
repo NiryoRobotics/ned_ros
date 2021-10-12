@@ -28,6 +28,8 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <ros/ros.h>
 
 // niryo
+#include "common/util/i_interface_core.hpp"
+
 #include "can_driver/can_interface_core.hpp"
 #include "ttl_driver/ttl_interface_core.hpp"
 
@@ -36,7 +38,6 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "conveyor_interface/ConveyorFeedbackArray.h"
 #include "niryo_robot_msgs/CommandStatus.h"
 
-#include "common/model/i_interface_core.hpp"
 
 namespace conveyor_interface
 {
@@ -44,7 +45,7 @@ namespace conveyor_interface
 /**
  * @brief The ConveyorInterfaceCore class
  */
-class ConveyorInterfaceCore : public common::model::IInterfaceCore
+class ConveyorInterfaceCore : public common::util::IInterfaceCore
 {
     public:
         ConveyorInterfaceCore(ros::NodeHandle& nh,
@@ -82,7 +83,7 @@ private:
 
             bool isValid() { return !pool_id_list.empty() && type != common::model::EHardwareType::UNKNOWN; }
 
-            std::shared_ptr<common::model::IDriverCore> interface;
+            std::shared_ptr<common::util::IDriverCore> interface;
 
             common::model::EHardwareType type{common::model::EHardwareType::UNKNOWN};
             uint8_t default_id{1};

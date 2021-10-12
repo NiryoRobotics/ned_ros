@@ -38,7 +38,7 @@ namespace can_driver
 class MockStepperDriver : public AbstractStepperDriver
 {
 public:
-    MockStepperDriver(FakeCanData data);
+    MockStepperDriver(const std::shared_ptr<FakeCanData>&  data);
     virtual ~MockStepperDriver() override;
 
     virtual std::string str() const override;
@@ -64,28 +64,26 @@ public:
     virtual int32_t interpretePositionStatus(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) override;
     virtual uint32_t interpreteTemperatureStatus(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) override;
     virtual std::string interpreteFirmwareVersion(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) override;
-    virtual std::tuple<common::model::EStepperCalibrationStatus, int32_t> interpreteCalibrationData(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) override;
+    virtual std::pair<common::model::EStepperCalibrationStatus, int32_t> interpreteCalibrationData(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) override;
     virtual std::tuple<bool, uint8_t, uint16_t> interpreteConveyorData(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) override;
 
 private:
-
-    std::map<uint8_t, FakeCanData::FakeStepperRegister> _map_fake_registers;
-    uint8_t _fake_conveyor_id{6};
+    std::shared_ptr<FakeCanData>  _fake_data;
     std::vector<uint8_t> _id_list;
     
+    std::map<uint8_t, std::pair<common::model::EStepperCalibrationStatus, int32_t> > _calibration_status;
+
+    uint8_t _fake_conveyor_id{6};
+    uint8_t _current_id{1};
+    uint8_t _next_index{0};
+    uint8_t _next_control_byte{CAN_DATA_POSITION};
+
+    // fake time for calibration
+    int _fake_time{0};
+
     // using for fake event can
     static constexpr uint8_t MAX_IDX = 2; // index for joints in _id_list
     static constexpr uint8_t MAX_ID_JOINT = 3;
-    uint8_t _current_id;
-    uint8_t _next_index = 0;
-    uint8_t _next_control_byte = CAN_DATA_POSITION;
-    std::map<uint8_t, std::tuple<common::model::EStepperCalibrationStatus, int32_t>> _calibration_status;
-    // fake time for calibration
-    int _fake_time = 0;
-
-private:
-    void initializeFakeData(FakeCanData data);
-
 
 };  // class MockStepperDriver
 

@@ -23,13 +23,12 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <stdint.h>
 #include <string>
 #include <vector>
-#include "joint_state.hpp"
 
 #include "ros/node_handle.h"
 
 namespace common
 {
-namespace model
+namespace util
 {
 
 /**
@@ -55,7 +54,7 @@ inline
 IInterfaceCore::~IInterfaceCore()
 {}
 
-} // namespace model
+} // namespace util
 } // namespace common
 
 #endif // I_INTERFACE_CORE

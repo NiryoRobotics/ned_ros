@@ -28,7 +28,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <ros/ros.h>
 
 // niryo
-#include "common/model/i_interface_core.hpp"
+#include "common/util/i_interface_core.hpp"
 
 #include "common/model/tool_state.hpp"
 #include "ttl_driver/ttl_interface_core.hpp"
@@ -49,7 +49,7 @@ namespace tools_interface
 /**
  * @brief The ToolsInterfaceCore class
  */
-class ToolsInterfaceCore : public common::model::IInterfaceCore
+class ToolsInterfaceCore : public common::util::IInterfaceCore
 {
     public:
         ToolsInterfaceCore(ros::NodeHandle& nh,

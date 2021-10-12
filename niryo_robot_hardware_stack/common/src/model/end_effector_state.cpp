@@ -16,14 +16,22 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
+
+// std
+#include <sstream>
+#include <string>
+#include <queue>
+
+// ros
+#include <ros/ros.h>
+
+// niryo
 #include "common/model/end_effector_state.hpp"
 #include "common/model/abstract_hardware_state.hpp"
 #include "common/model/action_type_enum.hpp"
 #include "common/model/bus_protocol_enum.hpp"
 #include "common/model/component_type_enum.hpp"
-#include <sstream>
-#include <string>
-#include <ros/ros.h>
+
 namespace common
 {
 namespace model
@@ -165,7 +173,7 @@ void EndEffectorState::setButtonStatus(uint8_t id, EActionType action)
       button->actions.push(action);
       button->setDelay();
   }
-  else if (action == EActionType::LONG_PUSH_ACTION || (action == EActionType::HANDLE_HELD_ACTION && !button->isNeedToSkip()))
+  else if (action == EActionType::LONG_PUSH_ACTION || (action == EActionType::HANDLE_HELD_ACTION && !button->needsToSkip()))
   {
       button->actions.push(action);
   }
@@ -225,6 +233,74 @@ void EndEffectorState::setDigitalIn(bool digital_in)
 void EndEffectorState::setDigitalOut(bool digital_out)
 {
   _digital_out = digital_out;
+}
+
+//************************
+//    Button subclass
+//************************
+
+
+/**
+ * @brief EndEffectorState::Button::Button
+ */
+EndEffectorState::Button::Button()
+{
+  actions.push(EActionType::NO_ACTION);
+}
+
+/**
+ * @brief EndEffectorState::Button::str
+ * @return
+ */
+std::string EndEffectorState::Button::str() const
+{
+  std::ostringstream ss;
+  ss << "Button (" << ButtonTypeEnum(type).toString() << ") : "
+     << ActionTypeEnum(actions.front()).toString();
+  return ss.str();
+}
+
+/**
+ * @brief EndEffectorState::Button::isValid
+ * @return
+ */
+bool EndEffectorState::Button::isValid() const
+{
+  return (EButtonType::UNKNOWN != type);
+}
+
+/**
+ * @brief EndEffectorState::Button::reset
+ */
+void EndEffectorState::Button::reset()
+{
+  type = EButtonType::UNKNOWN;
+  std::queue<EActionType> empty_queue;
+  actions.swap(empty_queue);
+}
+
+/**
+ * @brief EndEffectorState::Button::setDelay
+ */
+void EndEffectorState::Button::setDelay()
+{
+  _time_last_read_state = ros::Time::now().toSec();
+  _need_delay = true;
+}
+
+/**
+ * @brief EndEffectorState::Button::needsToSkip
+ * @return
+ */
+bool EndEffectorState::Button::needsToSkip()
+{
+  if (_need_delay && (ros::Time::now().toSec() - _time_last_read_state) <= _time_avoid_duplicate_state)
+    return true;
+  else
+  {
+    _need_delay = false;
+    return false;
+  }
 }
 
 }  // namespace model

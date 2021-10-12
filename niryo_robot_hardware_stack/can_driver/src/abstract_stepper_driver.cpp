@@ -21,6 +21,7 @@
 #include <string>
 #include <vector>
 #include <tuple>
+#include <utility>
 
 using ::common::model::EStepperCommandType;
 
@@ -163,13 +164,13 @@ std::string AbstractStepperDriver::interpreteFirmwareVersion(const std::array<ui
  * @param data
  * @return
  */
-std::tuple<common::model::EStepperCalibrationStatus, int32_t>
+std::pair<common::model::EStepperCalibrationStatus, int32_t>
 AbstractStepperDriver::interpreteCalibrationData(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data)
 {
     common::model::EStepperCalibrationStatus status = static_cast<common::model::EStepperCalibrationStatus>(data[1]);
     int32_t value = (data[2] << 8) + data[3];
 
-    return std::make_tuple(status, value);
+    return std::make_pair(status, value);
 }
 
 /**

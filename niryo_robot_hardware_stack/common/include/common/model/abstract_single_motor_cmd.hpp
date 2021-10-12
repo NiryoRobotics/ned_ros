@@ -38,7 +38,6 @@ class AbstractSingleMotorCmd : public ISingleMotorCmd
 {
     public:
         AbstractSingleMotorCmd(uint8_t id);
-        virtual ~AbstractSingleMotorCmd() = 0;
 
         // setters
         void clear();
@@ -53,8 +52,8 @@ class AbstractSingleMotorCmd : public ISingleMotorCmd
         std::vector<ParamType> getParams() const;
 
     protected:
-        uint8_t _id;
         std::vector<ParamType> _param_list;
+        uint8_t _id;
 
         AbstractSingleMotorCmd() = delete;
 };
@@ -67,13 +66,6 @@ class AbstractSingleMotorCmd : public ISingleMotorCmd
 template<typename ParamType>
 AbstractSingleMotorCmd<ParamType>::AbstractSingleMotorCmd(uint8_t id) :
     _id(id)
-{}
-
-/**
- * @brief AbstractSingleMotorCmd<ParamType>::~AbstractSingleMotorCmd
- */
-template<typename ParamType>
-AbstractSingleMotorCmd<ParamType>::~AbstractSingleMotorCmd()
 {}
 
 /**

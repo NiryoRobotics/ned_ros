@@ -50,8 +50,6 @@ class SingleMotorCmd : public AbstractSingleMotorCmd<ParamType>
                        uint8_t motor_id,
                        std::vector<ParamType> params);
 
-        virtual ~SingleMotorCmd() override;
-
         // setters
         void setType(E type);
 
@@ -141,10 +139,6 @@ SingleMotorCmd<E, ParamType>::SingleMotorCmd(E type,
     this->setType(type);
     this->setParams(params);
 }
-
-template<typename E, typename ParamType>
-SingleMotorCmd<E, ParamType>::~SingleMotorCmd()
-{}
 
 /**
  * @brief SingleMotorCmd<E, ParamType>::setType
@@ -258,7 +252,7 @@ std::string StepperTtlSingleCmd::str() const
         ss << std::to_string(_id) << " ";
 
     ss << "Params: ";
-    for (int32_t param : getParams())
+    for (auto param : getParams())
         ss << std::to_string(static_cast<uint32_t>(param)) << " ";
 
     return ss.str();

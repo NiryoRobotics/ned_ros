@@ -454,7 +454,7 @@ void ConveyorInterfaceCore::_publishConveyorsFeedback(const ros::TimerEvent&)
     {
         if (conveyor_state.second)
         {
-            std::shared_ptr<common::model::IDriverCore> interface;
+            std::shared_ptr<common::util::IDriverCore> interface;
             if (conveyor_state.second->getBusProtocol() == EBusProtocol::CAN)
                 interface = _can_interface;
             else

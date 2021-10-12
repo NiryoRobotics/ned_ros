@@ -28,16 +28,19 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 
 // niryo
 #include "niryo_robot_msgs/BusState.h"
-#include "hardware_type_enum.hpp"
+
 #include "common/model/joint_state.hpp"
 #include "common/model/conveyor_state.hpp"
+
 #include "common/model/abstract_single_motor_cmd.hpp"
 #include "common/model/abstract_synchronize_motor_cmd.hpp"
+
 #include "common/model/stepper_calibration_status_enum.hpp"
+#include "common/model/hardware_type_enum.hpp"
 
 namespace common
 {
-namespace model
+namespace util
 {
 
 /**
@@ -91,7 +94,7 @@ IDriverCore::~IDriverCore()
 {
 }
 
-} // namespace model
+} // namespace util
 } // namespace common
 
 #endif // I_DRIVER_CORE_H

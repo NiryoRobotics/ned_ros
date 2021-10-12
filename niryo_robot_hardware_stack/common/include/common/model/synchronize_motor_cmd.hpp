@@ -48,8 +48,6 @@ class SynchronizeMotorCmd : public AbstractSynchronizeMotorCmd<ParamType>
         SynchronizeMotorCmd();
         SynchronizeMotorCmd(E type);
 
-        virtual ~SynchronizeMotorCmd() override;
-
         // setters
         void setType(E type);
 
@@ -94,13 +92,6 @@ SynchronizeMotorCmd<E, ParamType>::SynchronizeMotorCmd(E type) :
 
     this->clear();
 }
-
-/**
- * @brief SynchronizeMotorCmd<E, ParamType>::SynchronizeMotorCmd
- */
-template<typename E, typename ParamType>
-SynchronizeMotorCmd<E, ParamType>::~SynchronizeMotorCmd()
-{}
 
 /**
  * @brief SynchronizeMotorCmd<E, ParamType>::setType

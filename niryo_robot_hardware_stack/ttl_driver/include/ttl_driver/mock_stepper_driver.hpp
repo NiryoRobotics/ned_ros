@@ -99,7 +99,9 @@ class MockStepperDriver : public AbstractStepperDriver
         std::shared_ptr<FakeTtlData>  _fake_data;
         std::vector<uint8_t> _id_list;
 
-        int fake_time = 0;
+        uint32_t _calibration_status{CALIBRATION_IDLE};
+        // fake time for calibration
+        int fake_time{0};
 
         static constexpr int GROUP_SYNC_REDONDANT_ID = 10;
         static constexpr int LEN_ID_DATA_NOT_SAME    = 20;
@@ -108,7 +110,6 @@ class MockStepperDriver : public AbstractStepperDriver
         static constexpr int CALIBRATION_IN_PROGRESS = 1;
         static constexpr int CALIBRATION_SUCCESS = 2;
         static constexpr int CALIBRATION_ERROR = 3;
-        uint32_t _calibration_status = CALIBRATION_IDLE;
 };
 
 }
