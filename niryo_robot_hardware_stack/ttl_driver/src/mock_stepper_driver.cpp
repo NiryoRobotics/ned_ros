@@ -32,8 +32,8 @@ namespace ttl_driver
  * @brief MockStepperDriver::MockStepperDriver
  * @param data
  */
-MockStepperDriver::MockStepperDriver(const std::shared_ptr<FakeTtlData>& data) :
-  _fake_data(data)
+MockStepperDriver::MockStepperDriver(std::shared_ptr<FakeTtlData>  data) :
+  _fake_data(std::move(data))
 {
   // retrieve list of ids
   for (auto const& imap : _fake_data->stepper_registers)
@@ -47,8 +47,7 @@ MockStepperDriver::MockStepperDriver(const std::shared_ptr<FakeTtlData>& data) :
  * @brief MockStepperDriver::~MockStepperDriver
  */
 MockStepperDriver::~MockStepperDriver()
-{
-}
+= default;
 
 /**
  * @brief MockStepperDriver::str
@@ -130,8 +129,8 @@ int MockStepperDriver::changeId(uint8_t id, uint8_t new_id)
     if (std::find(_id_list.begin(), _id_list.end(), id) != _id_list.end() &&
         std::find(_fake_data->full_id_list.begin(), _fake_data->full_id_list.end(), id) != _fake_data->full_id_list.end())
     {
-        _id_list.erase(std::remove(_id_list.begin(), _id_list.end(), id));
-        _fake_data->full_id_list.erase(std::remove(_fake_data->full_id_list.begin(), _fake_data->full_id_list.end(), id));
+        _id_list.erase(std::remove(_id_list.begin(), _id_list.end(), id), _id_list.end());
+        _fake_data->full_id_list.erase(std::remove(_fake_data->full_id_list.begin(), _fake_data->full_id_list.end(), id), _fake_data->full_id_list.end());
         _id_list.emplace_back(new_id);
         _fake_data->full_id_list.emplace_back(new_id);
 
@@ -153,7 +152,7 @@ int MockStepperDriver::checkModelNumber(uint8_t id)
 
     if (ping_result == COMM_SUCCESS)
     {
-        if (model_number && model_number != 0)
+        if (model_number)
         {
             return PING_WRONG_MODEL_NUMBER;
         }
@@ -258,7 +257,7 @@ int MockStepperDriver::syncWriteTorqueEnable(const std::vector<uint8_t> &id_list
     for (auto & id : id_list)
     {
         auto result = countMap.insert(std::pair<uint8_t, uint8_t>(id, 1));
-        if (result.second == false)
+        if (!result.second)
             return GROUP_SYNC_REDONDANT_ID;  // redondant id
     }
     return COMM_SUCCESS;
@@ -283,7 +282,7 @@ int MockStepperDriver::syncWritePositionGoal(const std::vector<uint8_t> &id_list
             return COMM_TX_FAIL;
         _fake_data->stepper_registers.at(id_list.at(i)).position = position_list.at(i);
         auto result = countMap.insert(std::pair<uint8_t, uint8_t>(id_list.at(i), 1));
-        if (result.second == false)
+        if (!result.second)
             return GROUP_SYNC_REDONDANT_ID;  // redondant id
     }
     return COMM_SUCCESS;
@@ -303,7 +302,7 @@ int MockStepperDriver::syncWriteVelocityGoal(const std::vector<uint8_t> &id_list
     for (auto & id : id_list)
     {
         auto result = countMap.insert(std::pair<uint8_t, uint8_t>(id, 1));
-        if (result.second == false)
+        if (!result.second)
             return GROUP_SYNC_REDONDANT_ID;  // redondant id
     }
     return COMM_SUCCESS;
@@ -381,7 +380,7 @@ int MockStepperDriver::syncReadPosition(const std::vector<uint8_t> &id_list, std
         else
             return COMM_RX_FAIL;
         auto result = countMap.insert(std::pair<uint8_t, uint8_t>(id, 1));
-        if (result.second == false)
+        if (!result.second)
             return GROUP_SYNC_REDONDANT_ID;  // redondant id
     }
     return COMM_SUCCESS;
@@ -404,7 +403,7 @@ int MockStepperDriver::syncReadFirmwareVersion(const std::vector<uint8_t> &id_li
         else
             return COMM_RX_FAIL;
         auto result = countMap.insert(std::pair<uint8_t, uint8_t>(id, 1));
-        if (result.second == false)
+        if (!result.second)
             return GROUP_SYNC_REDONDANT_ID;  // redondant id
     }
     return COMM_SUCCESS;
@@ -427,7 +426,7 @@ int MockStepperDriver::syncReadTemperature(const std::vector<uint8_t> &id_list, 
         else
             return COMM_RX_FAIL;
         auto result = countMap.insert(std::pair<uint8_t, uint8_t>(id, 1));
-        if (result.second == false)
+        if (!result.second)
             return GROUP_SYNC_REDONDANT_ID;  // redondant id
     }
     return COMM_SUCCESS;
@@ -450,7 +449,7 @@ int MockStepperDriver::syncReadVoltage(const std::vector<uint8_t> &id_list, std:
         else
             return COMM_RX_FAIL;
         auto result = countMap.insert(std::pair<uint8_t, uint8_t>(id, 1));
-        if (result.second == false)
+        if (!result.second)
             return GROUP_SYNC_REDONDANT_ID;  // redondant id
     }
     return COMM_SUCCESS;
@@ -470,7 +469,7 @@ int MockStepperDriver::syncReadHwErrorStatus(const std::vector<uint8_t> &id_list
     {
         hw_error_list.emplace_back(0);
         auto result = countMap.insert(std::pair<uint8_t, uint8_t>(id, 1));
-        if (result.second == false)
+        if (!result.second)
             return GROUP_SYNC_REDONDANT_ID;  // redondant id
     }
     return COMM_SUCCESS;

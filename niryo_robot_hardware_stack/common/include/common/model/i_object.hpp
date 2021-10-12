@@ -45,9 +45,7 @@ class IObject
  */
 inline
 IObject::~IObject()
-{
-
-}
+= default;
 
 } // namespace model
 } // namespace common

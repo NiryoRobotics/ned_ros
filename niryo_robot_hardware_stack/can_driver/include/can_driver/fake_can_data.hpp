@@ -28,7 +28,7 @@ namespace can_driver
 class FakeCanData
 {
 public:
-    FakeCanData() {}
+    FakeCanData() = default;
 
     struct FakeStepperRegister
     {

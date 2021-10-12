@@ -19,6 +19,7 @@
 
 #include <cassert>
 #include <string>
+#include <utility>
 #include <vector>
 #include <tuple>
 #include <utility>
@@ -31,8 +32,7 @@ namespace can_driver
 /**
  * @brief AbstractStepperDriver::AbstractStepperDriver
  */
-AbstractStepperDriver::AbstractStepperDriver() :
-  AbstractCanDriver()
+AbstractStepperDriver::AbstractStepperDriver()
 {}
 
 /**
@@ -40,14 +40,14 @@ AbstractStepperDriver::AbstractStepperDriver() :
  * @param mcp_can
  */
 AbstractStepperDriver::AbstractStepperDriver(std::shared_ptr<mcp_can_rpi::MCP_CAN> mcp_can) :
-  AbstractCanDriver(mcp_can)
+  AbstractCanDriver(std::move(mcp_can))
 {}
 
 /**
  * @brief AbstractStepperDriver::~AbstractStepperDriver
 */
 AbstractStepperDriver::~AbstractStepperDriver()
-{}
+= default;
 
 std::string AbstractStepperDriver::str() const
 {
@@ -137,7 +137,7 @@ uint32_t AbstractStepperDriver::interpreteTemperatureStatus(const std::array<uin
     double b = -12.924;
     double c = 2367.7;
     double v_temp = driver_temp_raw * 3.3 / 1024.0 * 1000.0;
-    uint32_t driver_temp = static_cast<uint32_t>((-b - std::sqrt(b * b - 4 * a * (c - v_temp))) / (2 * a) + 30);
+    auto driver_temp = static_cast<uint32_t>((-b - std::sqrt(b * b - 4 * a * (c - v_temp))) / (2 * a) + 30);
 
     return driver_temp;
 }
@@ -167,7 +167,7 @@ std::string AbstractStepperDriver::interpreteFirmwareVersion(const std::array<ui
 std::pair<common::model::EStepperCalibrationStatus, int32_t>
 AbstractStepperDriver::interpreteCalibrationData(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data)
 {
-    common::model::EStepperCalibrationStatus status = static_cast<common::model::EStepperCalibrationStatus>(data[1]);
+    auto status = static_cast<common::model::EStepperCalibrationStatus>(data[1]);
     int32_t value = (data[2] << 8) + data[3];
 
     return std::make_pair(status, value);
@@ -183,7 +183,7 @@ AbstractStepperDriver::interpreteConveyorData(const std::array<uint8_t, MAX_MESS
 {
     bool state = data[1];
     int16_t speed = data[2];
-    int8_t direction = static_cast<int8_t>(data[3]);
+    auto direction = static_cast<int8_t>(data[3]);
 
     return std::make_tuple(state, speed, direction);
 }

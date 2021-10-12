@@ -25,7 +25,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <array>
 #include <cstdint>
 #include <memory>
-#include <stdint.h>
+#include <cstdint>
 #include <string>
 #include <cassert>
 #include <sstream>
@@ -72,7 +72,7 @@ class EndEffectorState : public AbstractHardwareState
 
             private:
                 static constexpr double _time_avoid_duplicate_state = 0.5;
-                double _time_last_read_state;
+                double _time_last_read_state{};
                 bool _need_delay{false};
         };
 
@@ -96,16 +96,16 @@ class EndEffectorState : public AbstractHardwareState
         EndEffectorState(uint8_t id, common::model::EHardwareType type);
         EndEffectorState(const EndEffectorState& state);
 
-        virtual ~EndEffectorState() override;
+        ~EndEffectorState() override;
 
         void configureButton(uint8_t id, EButtonType button_type);
 
         // AbstractHardwareState interface
-        virtual std::string str() const override;
+        std::string str() const override;
 
         // IObject interface
     public:
-        virtual bool isValid() const override;
+        bool isValid() const override;
 
     public:
         void setButtonStatus(uint8_t id, EActionType action);

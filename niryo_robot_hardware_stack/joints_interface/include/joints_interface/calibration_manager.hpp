@@ -21,7 +21,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #define CALIBRATION_INTERFACE_HPP
 
 #include <ros/ros.h>
-#include <stdint.h>
+#include <cstdint>
 #include <string>
 #include <vector>
 #include <thread>
@@ -112,7 +112,7 @@ CalibrationManager::getJointInterface(common::model::EBusProtocol proto)
 {
   if(common::model::EBusProtocol::CAN == proto)
     return _can_interface;
-  else if(common::model::EBusProtocol::TTL == proto)
+  if(common::model::EBusProtocol::TTL == proto)
     return _ttl_interface;
 
   return nullptr;

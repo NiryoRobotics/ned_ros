@@ -35,19 +35,19 @@ public:
     AbstractStepperDriver();
     AbstractStepperDriver(std::shared_ptr<mcp_can_rpi::MCP_CAN> mcp_can);
 
-    virtual ~AbstractStepperDriver() override;
+    ~AbstractStepperDriver() override;
 
 public:
     // AbstractCanDriver interface
-    virtual std::string str() const override;
+    std::string str() const override;
 
-    virtual int writeSingleCmd(const std::shared_ptr<common::model::AbstractCanSingleMotorCmd> &cmd) override;
+    int writeSingleCmd(const std::shared_ptr<common::model::AbstractCanSingleMotorCmd> &cmd) override;
 
-    virtual int32_t interpretePositionStatus(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) override;
-    virtual uint32_t interpreteTemperatureStatus(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) override;
-    virtual std::string interpreteFirmwareVersion(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) override;
-    virtual std::pair<common::model::EStepperCalibrationStatus, int32_t> interpreteCalibrationData(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) override;
-    virtual std::tuple<bool, uint8_t, uint16_t> interpreteConveyorData(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) override;
+    int32_t interpretePositionStatus(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) override;
+    uint32_t interpreteTemperatureStatus(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) override;
+    std::string interpreteFirmwareVersion(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) override;
+    std::pair<common::model::EStepperCalibrationStatus, int32_t> interpreteCalibrationData(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) override;
+    std::tuple<bool, uint8_t, uint16_t> interpreteConveyorData(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) override;
 
 public:
 

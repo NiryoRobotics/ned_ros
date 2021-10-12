@@ -22,6 +22,7 @@
 // C++
 #include <sstream>
 #include <string>
+#include <utility>
 
 namespace common
 {
@@ -31,10 +32,8 @@ namespace model
 /**
  * @brief JointState::JointState
  */
-JointState::JointState() :
-    AbstractMotorState()
-{
-}
+JointState::JointState()
+{}
 
 /**
  * @brief JointState::JointState
@@ -48,7 +47,7 @@ JointState::JointState(std::string name, EHardwareType type,
                        EComponentType component_type,
                        EBusProtocol bus_proto, uint8_t id) :
     AbstractMotorState(type, component_type, bus_proto, id),
-    _name(name)
+    _name(std::move(name))
 {
 }
 
@@ -74,17 +73,16 @@ JointState::JointState(const JointState &state) :
  * @brief JointState::~JointState
  */
 JointState::~JointState()
-{
-}
+= default;
 
 /**
  * @brief JointState::operator ==
  * @param m
  * @return
  */
-bool JointState::operator==(const JointState& m) const
+bool JointState::operator==(const JointState& other) const
 {
-    return((this->_hw_type == m._hw_type) && (this->_id == m._id));
+    return((this->_hw_type == other._hw_type) && (this->_id == other._id));
 }
 
 /**

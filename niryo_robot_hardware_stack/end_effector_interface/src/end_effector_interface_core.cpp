@@ -20,6 +20,7 @@
 // c++
 #include <functional>
 #include <string>
+#include <utility>
 #include <vector>
 
 // ros
@@ -31,7 +32,6 @@
 #include "common/model/end_effector_state.hpp"
 
 
-using ::std::lock_guard;
 using ::std::string;
 using ::std::to_string;
 
@@ -51,7 +51,7 @@ namespace end_effector_interface
  */
 EndEffectorInterfaceCore::EndEffectorInterfaceCore(ros::NodeHandle& nh,
                                                    std::shared_ptr<ttl_driver::TtlInterfaceCore > ttl_interface):
-    _ttl_interface(ttl_interface)
+    _ttl_interface(std::move(ttl_interface))
 {
     ROS_DEBUG("EndEffectorInterfaceCore::ctor");
 
@@ -62,7 +62,7 @@ EndEffectorInterfaceCore::EndEffectorInterfaceCore(ros::NodeHandle& nh,
  * @brief EndEffectorInterfaceCore::~EndEffectorInterfaceCore
  */
 EndEffectorInterfaceCore::~EndEffectorInterfaceCore()
-{}
+= default;
 
 /**
  * @brief EndEffectorInterfaceCore::init
@@ -119,7 +119,7 @@ void EndEffectorInterfaceCore::initParameters(ros::NodeHandle& nh)
     uint8_t button_id = 1;
     while (nh.hasParam("button_"  + std::to_string(button_id) + "/type"))
     {
-      std::string button_type = "";
+      std::string button_type;
       nh.getParam("button_" + std::to_string(button_id) + "/type", button_type);
       auto eType = ButtonTypeEnum(button_type.c_str());
 

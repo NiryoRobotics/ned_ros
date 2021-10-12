@@ -60,10 +60,10 @@ template <typename T>
 class CNonCopyable
 {
     protected:
-        CNonCopyable () {}
-        ~CNonCopyable () {} // / Protected non-virtual destructor
+        CNonCopyable () = default;
+        ~CNonCopyable () = default; // / Protected non-virtual destructor
     private:
-        CNonCopyable (const CNonCopyable &);
+        CNonCopyable (const CNonCopyable &) = default;
         T & operator = (const T &);
 };
 

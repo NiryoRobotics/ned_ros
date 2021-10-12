@@ -17,6 +17,7 @@
 #include "ttl_driver/abstract_end_effector_driver.hpp"
 
 #include <sstream>
+#include <utility>
 #include <vector>
 #include <string>
 
@@ -31,7 +32,7 @@ namespace ttl_driver
  * @brief AbstractEndEffectorDriver::AbstractEndEffectorDriver
  */
 AbstractEndEffectorDriver::AbstractEndEffectorDriver()
-{}
+= default;
 
 /**
  * @brief AbstractEndEffectorDriver::AbstractEndEffectorDriver
@@ -40,12 +41,12 @@ AbstractEndEffectorDriver::AbstractEndEffectorDriver()
  */
 AbstractEndEffectorDriver::AbstractEndEffectorDriver(shared_ptr<dynamixel::PortHandler> portHandler,
                                                      shared_ptr<dynamixel::PacketHandler> packetHandler) :
-  AbstractTtlDriver(portHandler, packetHandler)
+  AbstractTtlDriver(std::move(portHandler), std::move(packetHandler))
 {
 }
 
 AbstractEndEffectorDriver::~AbstractEndEffectorDriver()
-{}
+= default;
 
 /**
  * @brief AbstractEndEffectorDriver::str : build a string describing the object. For debug purpose only
@@ -72,9 +73,9 @@ std::string AbstractEndEffectorDriver::interpreteErrorState(uint32_t /*hw_state*
  */
 std::string AbstractEndEffectorDriver::interpreteFirmwareVersion(uint32_t fw_version) const
 {
-    uint8_t v_major = static_cast<uint8_t>(fw_version >> 24);
-    uint16_t v_minor = static_cast<uint16_t>(fw_version >> 8);
-    uint8_t v_patch = static_cast<uint8_t>(fw_version >> 0);
+    auto v_major = static_cast<uint8_t>(fw_version >> 24);
+    auto v_minor = static_cast<uint16_t>(fw_version >> 8);
+    auto v_patch = static_cast<uint8_t>(fw_version >> 0);
 
     std::ostringstream ss;
     ss << std::to_string(v_major) << "."

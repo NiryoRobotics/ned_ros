@@ -50,12 +50,12 @@ class CanInterfaceCore : public common::util::IDriverCore, public common::util::
     public:
 
         CanInterfaceCore(ros::NodeHandle& nh);
-        virtual ~CanInterfaceCore() override;
+        ~CanInterfaceCore() override;
 
         bool init(ros::NodeHandle& nh) override;
 
         // joints control
-        int addJoint(const std::shared_ptr<common::model::StepperMotorState> jointState);
+        int addJoint(const std::shared_ptr<common::model::StepperMotorState>& jointState);
 
         // Tool control
         // N.A.
@@ -64,7 +64,7 @@ class CanInterfaceCore : public common::util::IDriverCore, public common::util::
         // N.A.
 
         // conveyor control
-        int setConveyor(const std::shared_ptr<common::model::ConveyorState> state) override;
+        int setConveyor(std::shared_ptr<common::model::ConveyorState> state) override;
         void unsetConveyor(uint8_t motor_id, uint8_t default_conveyor_id) override;
         int changeId(common::model::EHardwareType motor_type, uint8_t old_id, uint8_t new_id) override;
         
@@ -100,14 +100,14 @@ class CanInterfaceCore : public common::util::IDriverCore, public common::util::
         bool isConnectionOk() const override;
         int launchMotorsReport() override;
         niryo_robot_msgs::BusState getBusState() const override;
-        virtual common::model::EBusProtocol getBusProtocol() const override;
+        common::model::EBusProtocol getBusProtocol() const override;
 
         std::vector<uint8_t> getRemovedMotorList() const override;
     private:
-        virtual void initParameters(ros::NodeHandle &nh) override;
-        virtual void startServices(ros::NodeHandle &nh) override;
-        virtual void startPublishers(ros::NodeHandle &nh) override;
-        virtual void startSubscribers(ros::NodeHandle &nh) override;
+        void initParameters(ros::NodeHandle &nh) override;
+        void startServices(ros::NodeHandle &nh) override;
+        void startPublishers(ros::NodeHandle &nh) override;
+        void startSubscribers(ros::NodeHandle &nh) override;
 
         void resetHardwareControlLoopRates() override;
         void controlLoop() override;

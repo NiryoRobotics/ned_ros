@@ -20,6 +20,7 @@
 #include "joints_interface/joint_hardware_interface.hpp"
 
 // c++
+#include <utility>
 #include <vector>
 #include <string>
 #include <utility>
@@ -66,8 +67,8 @@ JointHardwareInterface::JointHardwareInterface(ros::NodeHandle& rootnh,
                                                ros::NodeHandle& robot_hwnh,
                                                std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface,
                                                std::shared_ptr<can_driver::CanInterfaceCore> can_interface) :
-    _ttl_interface(ttl_interface),
-    _can_interface(can_interface)
+    _ttl_interface(std::move(ttl_interface)),
+    _can_interface(std::move(can_interface))
 {
     ROS_DEBUG("JointHardwareInterface::ctor");
 
@@ -107,9 +108,9 @@ bool JointHardwareInterface::init(ros::NodeHandle& /*rootnh*/, ros::NodeHandle &
     for (size_t j = 0; j < nb_joints; j++)
     {
         int joint_id_config = 0;
-        string joint_name = "";
-        string joint_type = "";
-        string joint_bus = "";
+        string joint_name;
+        string joint_type;
+        string joint_bus;
 
         robot_hwnh.getParam("joint_" + to_string(j + 1) + "/id", joint_id_config);
         robot_hwnh.getParam("joint_" + to_string(j + 1) + "/name", joint_name);

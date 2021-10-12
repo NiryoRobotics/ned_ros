@@ -38,7 +38,6 @@ using ::std::mutex;
 using ::std::vector;
 using ::std::ostringstream;
 using ::std::string;
-using ::std::to_string;
 
 using ::common::model::EHardwareType;
 using ::common::model::HardwareTypeEnum;
@@ -464,9 +463,7 @@ void TtlInterfaceCore::startControlLoop()
 bool TtlInterfaceCore::scanMotorId(uint8_t motor_to_find)
 {
     lock_guard<mutex> lck(_control_loop_mutex);
-    if (_ttl_manager->ping(motor_to_find))
-        return true;
-    return false;
+    return _ttl_manager->ping(motor_to_find);
 }
 
 /**
@@ -670,7 +667,7 @@ void TtlInterfaceCore::_executeCommand()
  * @param jointState
  * @return
  */
-int TtlInterfaceCore::addJoint(const std::shared_ptr<common::model::JointState> jointState)
+int TtlInterfaceCore::addJoint(const std::shared_ptr<common::model::JointState>& jointState)
 {
   int result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
 
@@ -691,7 +688,7 @@ int TtlInterfaceCore::addJoint(const std::shared_ptr<common::model::JointState> 
  * @param toolState
  * @return
  */
-int TtlInterfaceCore::setTool(const std::shared_ptr<common::model::ToolState> toolState)
+int TtlInterfaceCore::setTool(const std::shared_ptr<common::model::ToolState>& toolState)
 {
     int result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
 
@@ -739,7 +736,7 @@ void TtlInterfaceCore::unsetTool(uint8_t motor_id)
  * @param end_effector_state
  * @return
  */
-int TtlInterfaceCore::setEndEffector(const std::shared_ptr<common::model::EndEffectorState> end_effector_state)
+int TtlInterfaceCore::setEndEffector(const std::shared_ptr<common::model::EndEffectorState>& end_effector_state)
 {
   int result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
 
@@ -817,11 +814,11 @@ int TtlInterfaceCore::changeId(common::model::EHardwareType motor_type, uint8_t 
 {
     if (COMM_SUCCESS == _ttl_manager->changeId(motor_type, old_id, new_id))
         return niryo_robot_msgs::CommandStatus::SUCCESS;
-    else
-    {
+    
+    
         ROS_ERROR("TtlInterfaceCore::setConveyor : unable to change conveyor ID");
         return niryo_robot_msgs::CommandStatus::TTL_WRITE_ERROR;
-    }
+    
 }
 
 /**
@@ -1221,7 +1218,7 @@ bool TtlInterfaceCore::_callbackActivateLeds(niryo_robot_msgs::SetInt::Request &
                                           niryo_robot_msgs::SetInt::Response &res)
 {
     int led = req.value;
-    string message = "";
+    string message;
 
     lock_guard<mutex> lck(_control_loop_mutex);
     int result = _ttl_manager->setLeds(led);

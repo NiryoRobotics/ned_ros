@@ -62,7 +62,7 @@ class AbstractSynchronizeMotorCmd : public ISynchronizeMotorCmd
         AbstractSynchronizeMotorCmd();
 
         // test
-        bool isValid() const;
+        bool isValid() const override;
 
         // setters
         void clear();
@@ -84,7 +84,7 @@ class AbstractSynchronizeMotorCmd : public ISynchronizeMotorCmd
  */
 template<typename ParamType>
 AbstractSynchronizeMotorCmd<ParamType>::AbstractSynchronizeMotorCmd()
-{}
+= default;
 
 /**
  * @brief AbstractSynchronizeMotorCmd<ParamType>::isValid
@@ -93,14 +93,14 @@ AbstractSynchronizeMotorCmd<ParamType>::AbstractSynchronizeMotorCmd()
 template<typename ParamType>
 bool AbstractSynchronizeMotorCmd<ParamType>::isValid() const
 {
-    if (_motor_params_map.size() == 0)
+    if (_motor_params_map.empty())
         return false;
-    for (auto it : _motor_params_map)
+    for (const auto& it : _motor_params_map)
     {
         if (it.second.isValid())
             continue;
-        else
-            return false;
+        
+        return false;
     }
     return true;
 }

@@ -32,8 +32,7 @@ namespace model
 /**
  * @brief AbstractMotorState::AbstractMotorState
  */
-AbstractMotorState::AbstractMotorState() :
-    AbstractHardwareState()
+AbstractMotorState::AbstractMotorState()
 {
     reset();
 }
@@ -47,8 +46,7 @@ AbstractMotorState::AbstractMotorState() :
  */
 AbstractMotorState::AbstractMotorState(EHardwareType type, EComponentType component_type,
                                        EBusProtocol bus_proto, uint8_t id) :
-      AbstractHardwareState(type, component_type, bus_proto, id),
-      _position_state(0)
+      AbstractHardwareState(type, component_type, bus_proto, id)
 {
 }
 

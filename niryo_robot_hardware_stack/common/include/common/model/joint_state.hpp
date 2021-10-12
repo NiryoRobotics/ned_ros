@@ -24,7 +24,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "hardware_type_enum.hpp"
 #include "component_type_enum.hpp"
 
-#include <stdint.h>
+#include <cstdint>
 #include <string>
 
 
@@ -46,7 +46,7 @@ public:
                EBusProtocol bus_proto, uint8_t id);
     JointState(const JointState& state);
 
-    virtual ~JointState() override;
+    ~JointState() override;
 
     void setName(std::string &name);
     void setOffsetPosition(double offset_position);
@@ -62,9 +62,9 @@ public:
     virtual double to_rad_pos(int position_dxl) = 0;
 
     // AbstractMotorState interface
-    virtual void reset() override;
-    virtual bool isValid() const override;
-    virtual std::string str() const override;
+    void reset() override;
+    bool isValid() const override;
+    std::string str() const override;
 
 public:
     double pos{0.0};

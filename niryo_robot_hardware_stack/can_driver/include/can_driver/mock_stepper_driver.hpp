@@ -38,34 +38,34 @@ namespace can_driver
 class MockStepperDriver : public AbstractStepperDriver
 {
 public:
-    MockStepperDriver(const std::shared_ptr<FakeCanData>&  data);
-    virtual ~MockStepperDriver() override;
+    MockStepperDriver(std::shared_ptr<FakeCanData>   data);
+    ~MockStepperDriver() override;
 
-    virtual std::string str() const override;
+    std::string str() const override;
 
     // AbstractCanDriver interface
 public:
-    virtual bool canReadData() const override;
+    bool canReadData() const override;
 
-    virtual int ping(uint8_t id) override;
+    int ping(uint8_t id) override;
     virtual int scan(std::set<uint8_t> &motors_unfound, std::vector<uint8_t> &id_list) override;
-    virtual uint8_t sendUpdateConveyorId(uint8_t old_id, uint8_t new_id) override;
-    virtual uint8_t sendTorqueOnCommand(uint8_t id, int torque_on) override;
+    uint8_t sendUpdateConveyorId(uint8_t old_id, uint8_t new_id) override;
+    uint8_t sendTorqueOnCommand(uint8_t id, int torque_on) override;
     virtual uint8_t sendRelativeMoveCommand(uint8_t id, int steps, int delay) override;
     virtual uint8_t sendPositionCommand(uint8_t id, int cmd) override;
-    virtual uint8_t sendPositionOffsetCommand(uint8_t id, int cmd, int absolute_steps_at_offset_position) override;
-    virtual uint8_t sendCalibrationCommand(uint8_t id, int offset, int delay, int direction, int timeout) override;
-    virtual uint8_t sendSynchronizePositionCommand(uint8_t id, bool begin_traj) override;
-    virtual uint8_t sendMicroStepsCommand(uint8_t id, int micro_steps) override;
-    virtual uint8_t sendMaxEffortCommand(uint8_t id, int effort) override;
-    virtual uint8_t sendConveyorOnCommand(uint8_t id, bool conveyor_on, uint8_t conveyor_speed, uint8_t direction) override;
-    virtual uint8_t readData(uint8_t &id, int &control_byte, std::array<uint8_t, MAX_MESSAGE_LENGTH> &rxBuf, std::string &error_message) override;
+    uint8_t sendPositionOffsetCommand(uint8_t id, int cmd, int absolute_steps_at_offset_position) override;
+    uint8_t sendCalibrationCommand(uint8_t id, int offset, int delay, int direction, int timeout) override;
+    uint8_t sendSynchronizePositionCommand(uint8_t id, bool begin_traj) override;
+    uint8_t sendMicroStepsCommand(uint8_t id, int micro_steps) override;
+    uint8_t sendMaxEffortCommand(uint8_t id, int effort) override;
+    uint8_t sendConveyorOnCommand(uint8_t id, bool conveyor_on, uint8_t conveyor_speed, uint8_t direction) override;
+    uint8_t readData(uint8_t &id, int &control_byte, std::array<uint8_t, MAX_MESSAGE_LENGTH> &rxBuf, std::string &error_message) override;
 
-    virtual int32_t interpretePositionStatus(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) override;
-    virtual uint32_t interpreteTemperatureStatus(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) override;
-    virtual std::string interpreteFirmwareVersion(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) override;
-    virtual std::pair<common::model::EStepperCalibrationStatus, int32_t> interpreteCalibrationData(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) override;
-    virtual std::tuple<bool, uint8_t, uint16_t> interpreteConveyorData(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) override;
+    int32_t interpretePositionStatus(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) override;
+    uint32_t interpreteTemperatureStatus(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) override;
+    std::string interpreteFirmwareVersion(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) override;
+    std::pair<common::model::EStepperCalibrationStatus, int32_t> interpreteCalibrationData(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) override;
+    std::tuple<bool, uint8_t, uint16_t> interpreteConveyorData(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) override;
 
 private:
     std::shared_ptr<FakeCanData>  _fake_data;

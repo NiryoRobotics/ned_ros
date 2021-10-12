@@ -54,18 +54,18 @@ class ToolsInterfaceCore : public common::util::IInterfaceCore
     public:
         ToolsInterfaceCore(ros::NodeHandle& nh,
                            std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface);
-        virtual ~ToolsInterfaceCore() override;
+        ~ToolsInterfaceCore() override;
 
-        virtual bool init(ros::NodeHandle &nh) override;
+        bool init(ros::NodeHandle &nh) override;
 
         bool isInitialized();
         void pubToolId(int id);
 
     private:
-        virtual void initParameters(ros::NodeHandle& nh) override;
-        virtual void startServices(ros::NodeHandle& nh) override;
-        virtual void startPublishers(ros::NodeHandle& nh) override;
-        virtual void startSubscribers(ros::NodeHandle& nh) override;
+        void initParameters(ros::NodeHandle& nh) override;
+        void startServices(ros::NodeHandle& nh) override;
+        void startPublishers(ros::NodeHandle& nh) override;
+        void startSubscribers(ros::NodeHandle& nh) override;
 
         bool _callbackPingAndSetTool(tools_interface::PingDxlTool::Request &, tools_interface::PingDxlTool::Response &res);
 

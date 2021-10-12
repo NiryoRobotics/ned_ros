@@ -21,6 +21,7 @@
 
 #include <string>
 #include <sstream>
+#include <utility>
 
 using ::std::string;
 using ::std::ostringstream;
@@ -32,10 +33,7 @@ namespace model
 /**
  * @brief AbstractHardwareState::AbstractHardwareState
  */
-AbstractHardwareState::AbstractHardwareState() :
-    _hw_type(EHardwareType::UNKNOWN),
-    _component_type(EComponentType::UNKNOWN),
-    _bus_proto(EBusProtocol::UNKNOWN)
+AbstractHardwareState::AbstractHardwareState()
 {
     reset();
 }
@@ -92,9 +90,9 @@ void AbstractHardwareState::reset()
  * @param m
  * @return
  */
-bool AbstractHardwareState::operator==(const AbstractHardwareState &m)
+bool AbstractHardwareState::operator==(const AbstractHardwareState &other)
 {
-    return (this->_id == m._id);
+    return (this->_id == other._id);
 }
 
 /**
@@ -164,7 +162,7 @@ void AbstractHardwareState::setHardwareError(uint32_t hw_error)
  */
 void AbstractHardwareState::setHardwareError(std::string hw_error_msg)
 {
-  _hw_error_message = hw_error_msg;
+  _hw_error_message = std::move(hw_error_msg);
 }
 
 }  // namespace model

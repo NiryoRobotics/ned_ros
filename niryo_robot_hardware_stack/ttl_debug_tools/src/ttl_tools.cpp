@@ -17,6 +17,7 @@
     along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
+#include <utility>
 #include <vector>
 
 #include "dynamixel_sdk/packet_handler.h"
@@ -29,7 +30,7 @@ namespace ttl_debug_tools
  * @brief TtlTools::TtlTools
  */
 TtlTools::TtlTools()
-{}
+= default;
 
 /**
  * @brief TtlTools::TtlTools
@@ -38,8 +39,8 @@ TtlTools::TtlTools()
  */
 TtlTools::TtlTools(std::shared_ptr<dynamixel::PortHandler> portHandler,
                    std::shared_ptr<dynamixel::PacketHandler> packetHandler) :
-    _portHandler(portHandler),
-    _packetHandler(packetHandler)
+    _portHandler(std::move(portHandler)),
+    _packetHandler(std::move(packetHandler))
 {
 }
 

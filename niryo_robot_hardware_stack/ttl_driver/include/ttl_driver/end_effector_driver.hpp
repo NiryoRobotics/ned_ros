@@ -44,25 +44,25 @@ class EndEffectorDriver : public AbstractEndEffectorDriver
     public:
         EndEffectorDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
                           std::shared_ptr<dynamixel::PacketHandler> packetHandler);
-        virtual ~EndEffectorDriver() override;
+        ~EndEffectorDriver() override;
 
     public:
         // AbstractTtlDriver interface : we cannot define them globally in AbstractTtlDriver
         // as it is needed here for polymorphism (AbstractTtlDriver cannot be a template class and does not
         // have access to reg_type). So it seems like a duplicate of StepperDriver
-        virtual std::string str() const override;
+        std::string str() const override;
 
-        virtual int checkModelNumber(uint8_t id) override;
-        virtual int readFirmwareVersion(uint8_t id, std::string &version) override;
+        int checkModelNumber(uint8_t id) override;
+        int readFirmwareVersion(uint8_t id, std::string &version) override;
         
-        virtual int readTemperature(uint8_t id, uint32_t &temperature) override;
-        virtual int readVoltage(uint8_t id, double &voltage) override;
-        virtual int readHwErrorStatus(uint8_t id, uint32_t &hardware_status) override;
+        int readTemperature(uint8_t id, uint32_t &temperature) override;
+        int readVoltage(uint8_t id, double &voltage) override;
+        int readHwErrorStatus(uint8_t id, uint32_t &hardware_status) override;
 
-        virtual int syncReadFirmwareVersion(const std::vector<uint8_t> &id_list, std::vector<std::string> &firmware_list) override;
-        virtual int syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &temperature_list) override;
-        virtual int syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list) override;
-        virtual int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list) override;
+        int syncReadFirmwareVersion(const std::vector<uint8_t> &id_list, std::vector<std::string> &firmware_list) override;
+        int syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &temperature_list) override;
+        int syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list) override;
+        int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list) override;
 
     public:
         // AbstractEndEffectorDriver
@@ -98,8 +98,7 @@ EndEffectorDriver<reg_type>::EndEffectorDriver(std::shared_ptr<dynamixel::PortHa
  */
 template<typename reg_type>
 EndEffectorDriver<reg_type>::~EndEffectorDriver()
-{
-}
+= default;
 
 
 //*****************************
@@ -113,7 +112,7 @@ EndEffectorDriver<reg_type>::~EndEffectorDriver()
 template<typename reg_type>
 std::string EndEffectorDriver<reg_type>::str() const
 {
-    return common::model::HardwareTypeEnum(reg_type::motor_type).toString() + " : " + AbstractTtlDriver::str();
+    return common::model::HardwareTypeEnum(reg_type::motor_type).toString() + " : " + ttl_driver::AbstractEndEffectorDriver::str();
 }
 
 /**

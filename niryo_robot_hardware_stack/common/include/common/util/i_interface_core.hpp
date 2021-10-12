@@ -20,7 +20,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #ifndef I_INTERFACE_CORE_H
 #define I_INTERFACE_CORE_H
 
-#include <stdint.h>
+#include <cstdint>
 #include <string>
 #include <vector>
 
@@ -52,7 +52,7 @@ class IInterfaceCore
  */
 inline
 IInterfaceCore::~IInterfaceCore()
-{}
+= default;
 
 } // namespace util
 } // namespace common

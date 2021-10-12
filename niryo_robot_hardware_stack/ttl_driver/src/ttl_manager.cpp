@@ -764,7 +764,7 @@ bool TtlManager::readHwStatus()
                                 hw_errors_increment++;
                             }
 
-                            int16_t speed = static_cast<int16_t>(velocity);
+                            auto speed = static_cast<int16_t>(velocity);
                             auto cState = std::dynamic_pointer_cast<common::model::ConveyorState>(state);
                             cState->setDirection(speed > 0 ? 1 : -1);
                             cState->setSpeed(static_cast<int16_t>(std::abs(speed)));
@@ -1423,7 +1423,7 @@ std::vector<std::shared_ptr<JointState> >
 TtlManager::getMotorsStates() const
 {
     std::vector<std::shared_ptr<JointState> > states;
-    for (auto it : _state_map)
+    for (const auto& it : _state_map)
     {
         if (EHardwareType::UNKNOWN != it.second->getHardwareType()
             && EHardwareType::END_EFFECTOR != it.second->getHardwareType())

@@ -32,7 +32,6 @@ namespace model
  * @brief ConveyorState::ConveyorState
  */
 ConveyorState::ConveyorState(uint8_t default_id) :
-  StepperMotorState(),
   _default_id(default_id)
 {}
 
@@ -80,7 +79,7 @@ ConveyorState::ConveyorState(const ConveyorState &state) :
  * @brief ConveyorState::~ConveyorState
  */
 ConveyorState::~ConveyorState()
-{}
+= default;
 
 
 /**
@@ -136,9 +135,9 @@ void ConveyorState::setSpeed(int16_t speed)
  * @param m
  * @return
  */
-bool ConveyorState::operator==(const ConveyorState& m)
+bool ConveyorState::operator==(const ConveyorState& other)
 {
-    return (this->_id == m._id);
+    return (this->_id == other._id);
 }
 
 /**

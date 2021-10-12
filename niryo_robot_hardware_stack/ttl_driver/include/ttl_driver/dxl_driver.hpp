@@ -45,78 +45,78 @@ class DxlDriver : public AbstractDxlDriver
     public:
         DxlDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
                   std::shared_ptr<dynamixel::PacketHandler> packetHandler);
-        virtual ~DxlDriver() override;
+        ~DxlDriver() override;
 
-        virtual std::string str() const override;
-        virtual std::string interpreteErrorState(uint32_t hw_state) const override;
+        std::string str() const override;
+        std::string interpreteErrorState(uint32_t hw_state) const override;
 
     public:
-        virtual int checkModelNumber(uint8_t id) override;
-        virtual int readFirmwareVersion(uint8_t id, std::string &version) override;
+        int checkModelNumber(uint8_t id) override;
+        int readFirmwareVersion(uint8_t id, std::string &version) override;
 
-        virtual int readTemperature(uint8_t id, uint32_t &temperature) override;
-        virtual int readVoltage(uint8_t id, double &voltage) override;
-        virtual int readHwErrorStatus(uint8_t id, uint32_t &hardware_status) override;
+        int readTemperature(uint8_t id, uint32_t &temperature) override;
+        int readVoltage(uint8_t id, double &voltage) override;
+        int readHwErrorStatus(uint8_t id, uint32_t &hardware_status) override;
 
-        virtual int syncReadFirmwareVersion(const std::vector<uint8_t> &id_list, std::vector<std::string> &firmware_list) override;
-        virtual int syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &temperature_list) override;
-        virtual int syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list) override;
-        virtual int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list) override;
+        int syncReadFirmwareVersion(const std::vector<uint8_t> &id_list, std::vector<std::string> &firmware_list) override;
+        int syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &temperature_list) override;
+        int syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list) override;
+        int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list) override;
 
     protected:
         // AbstractTtlDriver interface
-        virtual std::string interpreteFirmwareVersion(uint32_t fw_version) const override;
+        std::string interpreteFirmwareVersion(uint32_t fw_version) const override;
 
     public:
         // AbstractMotorDriver interface : we cannot define them globally in AbstractMotorDriver
         // as it is needed here for polymorphism (AbstractMotorDriver cannot be a template class and does not
         // have access to reg_type). So it seems like a duplicate of StepperDriver
 
-        virtual int changeId(uint8_t id, uint8_t new_id) override;
+        int changeId(uint8_t id, uint8_t new_id) override;
 
-        virtual int readMinPosition(uint8_t id, uint32_t &min_pos) override;
-        virtual int readMaxPosition(uint8_t id, uint32_t &max_pos) override;
+        int readMinPosition(uint8_t id, uint32_t &min_pos) override;
+        int readMaxPosition(uint8_t id, uint32_t &max_pos) override;
 
-        virtual int setTorqueEnable(uint8_t id, uint32_t torque_enable) override;
-        virtual int setGoalPosition(uint8_t id, uint32_t position) override;
-        virtual int setGoalVelocity(uint8_t id, uint32_t velocity) override;
+        int setTorqueEnable(uint8_t id, uint32_t torque_enable) override;
+        int setGoalPosition(uint8_t id, uint32_t position) override;
+        int setGoalVelocity(uint8_t id, uint32_t velocity) override;
 
-        virtual int syncWriteTorqueEnable(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &torque_enable_list) override;
-        virtual int syncWritePositionGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &position_list) override;
-        virtual int syncWriteVelocityGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &velocity_list) override;
+        int syncWriteTorqueEnable(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &torque_enable_list) override;
+        int syncWritePositionGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &position_list) override;
+        int syncWriteVelocityGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &velocity_list) override;
 
-        virtual int readPosition(uint8_t id, uint32_t &present_position) override;
+        int readPosition(uint8_t id, uint32_t &present_position) override;
         
-        virtual int syncReadPosition(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &position_list) override;
+        int syncReadPosition(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &position_list) override;
         
     public:
         // AbstractDxlDriver interface
-        virtual int setLed(uint8_t id, uint32_t led_value) override;
-        virtual int setGoalTorque(uint8_t id, uint32_t torque) override;
-        virtual int setPositionPGain(uint8_t id, uint32_t gain) override;
-        virtual int setPositionIGain(uint8_t id, uint32_t gain) override;
-        virtual int setPositionDGain(uint8_t id, uint32_t gain) override;
-        virtual int setVelocityPGain(uint8_t id, uint32_t gain) override;
-        virtual int setVelocityIGain(uint8_t id, uint32_t gain) override;
-        virtual int setff1Gain(uint8_t id, uint32_t gain) override;
-        virtual int setff2Gain(uint8_t id, uint32_t gain) override;
+        int setLed(uint8_t id, uint32_t led_value) override;
+        int setGoalTorque(uint8_t id, uint32_t torque) override;
+        int setPositionPGain(uint8_t id, uint32_t gain) override;
+        int setPositionIGain(uint8_t id, uint32_t gain) override;
+        int setPositionDGain(uint8_t id, uint32_t gain) override;
+        int setVelocityPGain(uint8_t id, uint32_t gain) override;
+        int setVelocityIGain(uint8_t id, uint32_t gain) override;
+        int setff1Gain(uint8_t id, uint32_t gain) override;
+        int setff2Gain(uint8_t id, uint32_t gain) override;
         
-        virtual int syncWriteLed(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &led_list) override;
-        virtual int syncWriteTorqueGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &torque_list) override;
+        int syncWriteLed(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &led_list) override;
+        int syncWriteTorqueGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &torque_list) override;
         
-        virtual int readLoad(uint8_t id, uint32_t &present_load) override;
-        virtual int readVelocity(uint8_t id, uint32_t &present_velocity) override;
+        int readLoad(uint8_t id, uint32_t &present_load) override;
+        int readVelocity(uint8_t id, uint32_t &present_velocity) override;
 
-        virtual int readPositionPGain(uint8_t id, uint32_t& gain) override;
-        virtual int readPositionIGain(uint8_t id, uint32_t& gain) override;
-        virtual int readPositionDGain(uint8_t id, uint32_t& gain) override;
-        virtual int readVelocityPGain(uint8_t id, uint32_t& gain) override;
-        virtual int readVelocityIGain(uint8_t id, uint32_t& gain) override;
-        virtual int readFF1Gain(uint8_t id, uint32_t& gain) override;
-        virtual int readFF2Gain(uint8_t id, uint32_t& gain) override;
+        int readPositionPGain(uint8_t id, uint32_t& gain) override;
+        int readPositionIGain(uint8_t id, uint32_t& gain) override;
+        int readPositionDGain(uint8_t id, uint32_t& gain) override;
+        int readVelocityPGain(uint8_t id, uint32_t& gain) override;
+        int readVelocityIGain(uint8_t id, uint32_t& gain) override;
+        int readFF1Gain(uint8_t id, uint32_t& gain) override;
+        int readFF2Gain(uint8_t id, uint32_t& gain) override;
         
-        virtual int syncReadLoad(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &load_list) override;
-        virtual int syncReadVelocity(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &velocity_list) override;
+        int syncReadLoad(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &load_list) override;
+        int syncReadVelocity(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &velocity_list) override;
 };
 
 // definition of methods
@@ -134,8 +134,7 @@ DxlDriver<reg_type>::DxlDriver(std::shared_ptr<dynamixel::PortHandler> portHandl
 
 template<typename reg_type>
 DxlDriver<reg_type>::~DxlDriver()
-{
-}
+= default;
 
 //*****************************
 // AbstractMotorDriver interface
@@ -464,7 +463,7 @@ int DxlDriver<reg_type>::syncReadVelocity(const std::vector<uint8_t> &id_list, s
 // XL320
 
 template<>
-int DxlDriver<XL320Reg>::readMinPosition(uint8_t /*id*/, uint32_t &pos)
+inline int DxlDriver<XL320Reg>::readMinPosition(uint8_t /*id*/, uint32_t &pos)
 {
     pos = 0;
     std::cout << "min position hardcoded for motor XL320" << std::endl;
@@ -472,7 +471,7 @@ int DxlDriver<XL320Reg>::readMinPosition(uint8_t /*id*/, uint32_t &pos)
 }
 
 template<>
-int DxlDriver<XL320Reg>::readMaxPosition(uint8_t /*id*/, uint32_t &pos)
+inline int DxlDriver<XL320Reg>::readMaxPosition(uint8_t /*id*/, uint32_t &pos)
 {
     pos = 1023;
     std::cout << "max position hardcoded for motor XL320" << std::endl;
@@ -480,7 +479,7 @@ int DxlDriver<XL320Reg>::readMaxPosition(uint8_t /*id*/, uint32_t &pos)
 }
 
 template<>
-std::string DxlDriver<XL320Reg>::interpreteErrorState(uint32_t hw_state) const
+inline std::string DxlDriver<XL320Reg>::interpreteErrorState(uint32_t hw_state) const
 {
     std::string hardware_message;
 
@@ -490,13 +489,13 @@ std::string DxlDriver<XL320Reg>::interpreteErrorState(uint32_t hw_state) const
     }
     if (hw_state & 1<<1)    // 0b00000010
     {
-        if (hardware_message != "")
+        if (!hardware_message.empty())
             hardware_message += ", ";
         hardware_message += "OverHeating";
     }
     if (hw_state & 1<<2)    // 0b00000100
     {
-        if (hardware_message != "")
+        if (!hardware_message.empty())
             hardware_message += ", ";
         hardware_message += "Input voltage out of range";
     }
@@ -505,28 +504,28 @@ std::string DxlDriver<XL320Reg>::interpreteErrorState(uint32_t hw_state) const
 }
 
 template<>
-int DxlDriver<XL320Reg>::setVelocityPGain(uint8_t /*id*/, uint32_t /*gain*/)
+inline int DxlDriver<XL320Reg>::setVelocityPGain(uint8_t /*id*/, uint32_t /*gain*/)
 {
     std::cout << "setVelocityPGain not available for motor XL320" << std::endl;
     return COMM_SUCCESS;
 }
 
 template<>
-int DxlDriver<XL320Reg>::setVelocityIGain(uint8_t /*id*/, uint32_t /*gain*/)
+inline int DxlDriver<XL320Reg>::setVelocityIGain(uint8_t /*id*/, uint32_t /*gain*/)
 {
     std::cout << "setVelocityIGain not available for motor XL320" << std::endl;
     return COMM_SUCCESS;
 }
 
 template<>
-int DxlDriver<XL320Reg>::setff1Gain(uint8_t /*id*/, uint32_t /*gain*/)
+inline int DxlDriver<XL320Reg>::setff1Gain(uint8_t /*id*/, uint32_t /*gain*/)
 {
     std::cout << "setff1Gain not available for motor XL320" << std::endl;
     return COMM_SUCCESS;
 }
 
 template<>
-int DxlDriver<XL320Reg>::setff2Gain(uint8_t /*id*/, uint32_t /*gain*/)
+inline int DxlDriver<XL320Reg>::setff2Gain(uint8_t /*id*/, uint32_t /*gain*/)
 {
     std::cout << "setff2Gain not available for motor XL320" << std::endl;
     return COMM_SUCCESS;
@@ -534,41 +533,41 @@ int DxlDriver<XL320Reg>::setff2Gain(uint8_t /*id*/, uint32_t /*gain*/)
 
 // read PID
 template<>
-int DxlDriver<XL320Reg>::readVelocityPGain(uint8_t /*id*/, uint32_t& /*gain*/)
+inline int DxlDriver<XL320Reg>::readVelocityPGain(uint8_t /*id*/, uint32_t& /*gain*/)
 {
     std::cout << "readVelocityPGain not available for motor XL320" << std::endl;
     return COMM_SUCCESS;
 }
 
 template<>
-int DxlDriver<XL320Reg>::readVelocityIGain(uint8_t /*id*/, uint32_t& /*gain*/)
+inline int DxlDriver<XL320Reg>::readVelocityIGain(uint8_t /*id*/, uint32_t& /*gain*/)
 {
     std::cout << "readVelocityIGain not available for motor XL320" << std::endl;
     return COMM_SUCCESS;
 }
 
 template<>
-int DxlDriver<XL320Reg>::readFF1Gain(uint8_t /*id*/, uint32_t& /*gain*/)
+inline int DxlDriver<XL320Reg>::readFF1Gain(uint8_t /*id*/, uint32_t& /*gain*/)
 {
     std::cout << "readFF1Gain not available for motor XL320" << std::endl;
     return COMM_SUCCESS;
 }
 
 template<>
-int DxlDriver<XL320Reg>::readFF2Gain(uint8_t /*id*/, uint32_t& /*gain*/)
+inline int DxlDriver<XL320Reg>::readFF2Gain(uint8_t /*id*/, uint32_t& /*gain*/)
 {
     std::cout << "readFF2Gain not available for motor XL320" << std::endl;
     return COMM_SUCCESS;
 }
 
 template<>
-int DxlDriver<XL320Reg>::setGoalVelocity(uint8_t id, uint32_t velocity)
+inline int DxlDriver<XL320Reg>::setGoalVelocity(uint8_t id, uint32_t velocity)
 {
     return write(XL320Reg::ADDR_GOAL_VELOCITY, XL320Reg::SIZE_GOAL_VELOCITY, id, velocity);
 }
 
 template<>
-int DxlDriver<XL320Reg>::syncWriteVelocityGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &velocity_list)
+inline int DxlDriver<XL320Reg>::syncWriteVelocityGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &velocity_list)
 {
     return syncWrite(XL320Reg::ADDR_GOAL_VELOCITY, XL320Reg::SIZE_GOAL_VELOCITY, id_list, velocity_list);
 }
@@ -576,7 +575,7 @@ int DxlDriver<XL320Reg>::syncWriteVelocityGoal(const std::vector<uint8_t> &id_li
 // XL430
 
 template<>
-std::string DxlDriver<XL430Reg>::interpreteErrorState(uint32_t hw_state) const
+inline std::string DxlDriver<XL430Reg>::interpreteErrorState(uint32_t hw_state) const
 {
     std::string hardware_message;
 
@@ -586,43 +585,43 @@ std::string DxlDriver<XL430Reg>::interpreteErrorState(uint32_t hw_state) const
     }
     if (hw_state & 1<<2)    // 0b00000100
     {
-        if (hardware_message != "")
+        if (!hardware_message.empty())
             hardware_message += ", ";
         hardware_message += "OverHeating";
     }
     if (hw_state & 1<<3)    // 0b00001000
     {
-        if (hardware_message != "")
+        if (!hardware_message.empty())
             hardware_message += ", ";
         hardware_message += "Motor Encoder";
     }
     if (hw_state & 1<<4)    // 0b00010000
     {
-        if (hardware_message != "")
+        if (!hardware_message.empty())
             hardware_message += ", ";
         hardware_message += "Electrical Shock";
     }
     if (hw_state & 1<<5)    // 0b00100000
     {
-        if (hardware_message != "")
+        if (!hardware_message.empty())
             hardware_message += ", ";
         hardware_message += "Overload";
     }
-    if (hardware_message != "")
+    if (!hardware_message.empty())
         hardware_message += " Error";
 
     return hardware_message;
 }
 
 template<>
-int DxlDriver<XL430Reg>::setGoalTorque(uint8_t /*id*/, uint32_t /*torque*/)
+inline int DxlDriver<XL430Reg>::setGoalTorque(uint8_t /*id*/, uint32_t /*torque*/)
 {
     std::cout << "setGoalTorque not available for motor XL430" << std::endl;
     return COMM_TX_ERROR;
 }
 
 template<>
-int DxlDriver<XL430Reg>::syncWriteTorqueGoal(const std::vector<uint8_t> &/*id_list*/, const std::vector<uint32_t> &/*torque_list*/)
+inline int DxlDriver<XL430Reg>::syncWriteTorqueGoal(const std::vector<uint8_t> &/*id_list*/, const std::vector<uint32_t> &/*torque_list*/)
 {
     std::cout << "syncWriteTorqueGoal not available for motor XL430" << std::endl;
     return COMM_TX_ERROR;
@@ -631,7 +630,7 @@ int DxlDriver<XL430Reg>::syncWriteTorqueGoal(const std::vector<uint8_t> &/*id_li
 // XC430
 
 template<>
-std::string DxlDriver<XC430Reg>::interpreteErrorState(uint32_t hw_state) const
+inline std::string DxlDriver<XC430Reg>::interpreteErrorState(uint32_t hw_state) const
 {
     std::string hardware_message;
 
@@ -641,43 +640,43 @@ std::string DxlDriver<XC430Reg>::interpreteErrorState(uint32_t hw_state) const
     }
     if (hw_state & 1<<2)    // 0b00000100
     {
-        if (hardware_message != "")
+        if (!hardware_message.empty())
             hardware_message += ", ";
         hardware_message += "OverHeating";
     }
     if (hw_state & 1<<3)    // 0b00001000
     {
-        if (hardware_message != "")
+        if (!hardware_message.empty())
             hardware_message += ", ";
         hardware_message += "Motor Encoder";
     }
     if (hw_state & 1<<4)    // 0b00010000
     {
-        if (hardware_message != "")
+        if (!hardware_message.empty())
             hardware_message += ", ";
         hardware_message += "Electrical Shock";
     }
     if (hw_state & 1<<5)    // 0b00100000
     {
-        if (hardware_message != "")
+        if (!hardware_message.empty())
             hardware_message += ", ";
         hardware_message += "Overload";
     }
-    if (hardware_message != "")
+    if (!hardware_message.empty())
         hardware_message += " Error";
 
     return hardware_message;
 }
 
 template<>
-int DxlDriver<XC430Reg>::setGoalTorque(uint8_t /*id*/, uint32_t /*torque*/)
+inline int DxlDriver<XC430Reg>::setGoalTorque(uint8_t /*id*/, uint32_t /*torque*/)
 {
     std::cout << "setGoalTorque not available for motor XC430" << std::endl;
     return COMM_TX_ERROR;
 }
 
 template<>
-int DxlDriver<XC430Reg>::syncWriteTorqueGoal(const std::vector<uint8_t> &/*id_list*/, const std::vector<uint32_t> &/*torque_list*/)
+inline int DxlDriver<XC430Reg>::syncWriteTorqueGoal(const std::vector<uint8_t> &/*id_list*/, const std::vector<uint32_t> &/*torque_list*/)
 {
     std::cout << "syncWriteTorqueGoal not available for motor XC430" << std::endl;
     return COMM_TX_ERROR;
@@ -686,7 +685,7 @@ int DxlDriver<XC430Reg>::syncWriteTorqueGoal(const std::vector<uint8_t> &/*id_li
 // XL330
 
 template<>
-std::string DxlDriver<XL330Reg>::interpreteErrorState(uint32_t hw_state) const
+inline std::string DxlDriver<XL330Reg>::interpreteErrorState(uint32_t hw_state) const
 {
     std::string hardware_message;
 
@@ -696,29 +695,29 @@ std::string DxlDriver<XL330Reg>::interpreteErrorState(uint32_t hw_state) const
     }
     if (hw_state & 1<<2)    // 0b00000100
     {
-        if (hardware_message != "")
+        if (!hardware_message.empty())
             hardware_message += ", ";
         hardware_message += "OverHeating";
     }
     if (hw_state & 1<<3)    // 0b00001000
     {
-        if (hardware_message != "")
+        if (!hardware_message.empty())
             hardware_message += ", ";
         hardware_message += "Motor Encoder";
     }
     if (hw_state & 1<<4)    // 0b00010000
     {
-        if (hardware_message != "")
+        if (!hardware_message.empty())
             hardware_message += ", ";
         hardware_message += "Electrical Shock";
     }
     if (hw_state & 1<<5)    // 0b00100000
     {
-        if (hardware_message != "")
+        if (!hardware_message.empty())
             hardware_message += ", ";
         hardware_message += "Overload";
     }
-    if (hardware_message != "")
+    if (!hardware_message.empty())
         hardware_message += " Error";
 
     return hardware_message;
@@ -727,25 +726,25 @@ std::string DxlDriver<XL330Reg>::interpreteErrorState(uint32_t hw_state) const
 // works with current instead of load
 
 template<>
-int DxlDriver<XL330Reg>::setGoalTorque(uint8_t id, uint32_t torque)
+inline int DxlDriver<XL330Reg>::setGoalTorque(uint8_t id, uint32_t torque)
 {
     return write(XL330Reg::ADDR_GOAL_CURRENT, XL330Reg::SIZE_GOAL_CURRENT, id, torque);
 }
 
 template<>
-int DxlDriver<XL330Reg>::syncWriteTorqueGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &torque_list)
+inline int DxlDriver<XL330Reg>::syncWriteTorqueGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &torque_list)
 {
     return syncWrite(XL330Reg::ADDR_GOAL_CURRENT, XL330Reg::SIZE_GOAL_CURRENT, id_list, torque_list);
 }
 
 template<>
-int DxlDriver<XL330Reg>::readLoad(uint8_t id, uint32_t& present_load)
+inline int DxlDriver<XL330Reg>::readLoad(uint8_t id, uint32_t& present_load)
 {
     return read(XL330Reg::ADDR_PRESENT_CURRENT, XL330Reg::SIZE_PRESENT_CURRENT, id, present_load);
 }
 
 template<>
-int DxlDriver<XL330Reg>::syncReadLoad(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &load_list)
+inline int DxlDriver<XL330Reg>::syncReadLoad(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &load_list)
 {
     return syncRead(XL330Reg::ADDR_PRESENT_CURRENT, XL330Reg::SIZE_PRESENT_CURRENT, id_list, load_list);
 }

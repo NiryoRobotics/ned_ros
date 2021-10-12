@@ -57,7 +57,7 @@ protected:
     { fromString(str); }
 
 private:
-    void fromString(const char* const str);
+    void fromString(const char* str);
 
     // use curiously recurring template pattern  (CRTP)
     static std::map<E, std::string> initialize()

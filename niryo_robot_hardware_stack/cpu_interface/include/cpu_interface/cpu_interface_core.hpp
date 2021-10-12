@@ -40,17 +40,17 @@ class CpuInterfaceCore : public common::util::IInterfaceCore
     public:
 
         CpuInterfaceCore(ros::NodeHandle& nh);
-        virtual ~CpuInterfaceCore() override;
+        ~CpuInterfaceCore() override;
         virtual bool init(ros::NodeHandle& nh) override;
 
         void startReadingData();
         int getCpuTemperature() const;
 
     private:
-        virtual void initParameters(ros::NodeHandle& nh) override;
-        virtual void startServices(ros::NodeHandle& nh) override;
-        virtual void startPublishers(ros::NodeHandle& nh) override;
-        virtual void startSubscribers(ros::NodeHandle& nh) override;
+        void initParameters(ros::NodeHandle& nh) override;
+        void startServices(ros::NodeHandle& nh) override;
+        void startPublishers(ros::NodeHandle& nh) override;
+        void startSubscribers(ros::NodeHandle& nh) override;
 
         void _readCpuTemperature();
         void _readHardwareDataLoop();

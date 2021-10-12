@@ -49,14 +49,14 @@ class HardwareInterface : common::util::IInterfaceCore
 {
     public:
         HardwareInterface(ros::NodeHandle &nh);
-        virtual ~HardwareInterface() override;
-        virtual bool init(ros::NodeHandle &nh) override;
+        ~HardwareInterface() override;
+        bool init(ros::NodeHandle &nh) override;
 
     private:
-        virtual void initParameters(ros::NodeHandle &nh) override;
-        virtual void startServices(ros::NodeHandle &nh) override;
-        virtual void startPublishers(ros::NodeHandle &nh) override;
-        virtual void startSubscribers(ros::NodeHandle &nh) override;
+        void initParameters(ros::NodeHandle &nh) override;
+        void startServices(ros::NodeHandle &nh) override;
+        void startPublishers(ros::NodeHandle &nh) override;
+        void startSubscribers(ros::NodeHandle &nh) override;
 
         void initNodes(ros::NodeHandle &nh);
 

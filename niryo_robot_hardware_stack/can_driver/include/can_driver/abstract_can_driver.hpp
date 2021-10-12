@@ -45,7 +45,7 @@ public:
     static constexpr double STEPPER_MOTOR_TIMEOUT_VALUE         = 1.0;
 
 public:
-    AbstractCanDriver() {}
+    AbstractCanDriver() = default;
     AbstractCanDriver(std::shared_ptr<mcp_can_rpi::MCP_CAN> mcp_can);
     virtual ~AbstractCanDriver();
 

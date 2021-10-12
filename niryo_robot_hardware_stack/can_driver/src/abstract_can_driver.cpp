@@ -17,6 +17,7 @@
 #include "can_driver/abstract_can_driver.hpp"
 
 #include <sstream>
+#include <utility>
 #include <vector>
 #include <string>
 #include <set>
@@ -34,7 +35,7 @@ namespace can_driver
  * @param mcp_can
  */
 AbstractCanDriver::AbstractCanDriver(std::shared_ptr<mcp_can_rpi::MCP_CAN> mcp_can) :
-  _mcp_can(mcp_can)
+  _mcp_can(std::move(mcp_can))
 {
 }
 
@@ -42,8 +43,7 @@ AbstractCanDriver::AbstractCanDriver(std::shared_ptr<mcp_can_rpi::MCP_CAN> mcp_c
  * @brief AbstractCanDriver::~AbstractCanDriver
  */
 AbstractCanDriver::~AbstractCanDriver()
-{
-}
+= default;
 
 /**
  * @brief StepperDriver::ping
@@ -63,7 +63,7 @@ int AbstractCanDriver::ping(uint8_t id)
       {
           INT32U rxId;
           uint8_t len;
-          std::array<uint8_t, 8> rxBuf;
+          std::array<uint8_t, 8> rxBuf{};
           read(&rxId, &len, rxBuf);
           uint8_t motor_id = rxId & 0x0F;
 
@@ -100,7 +100,7 @@ int AbstractCanDriver::scan(std::set<uint8_t>& motors_unfound, std::vector<uint8
       {
           INT32U rxId;
           uint8_t len;
-          std::array<uint8_t, 8> rxBuf;
+          std::array<uint8_t, 8> rxBuf{};
           read(&rxId, &len, rxBuf);
           uint8_t motor_id = rxId & 0x0F;
 

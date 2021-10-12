@@ -61,13 +61,13 @@ class SingleMotorCmd : public AbstractSingleMotorCmd<ParamType>
         }
 
         // AbstractSingleMotorCmd interface
-        virtual bool isStepperCmd() const override;
-        virtual bool isDxlCmd() const override;
+        bool isStepperCmd() const override;
+        bool isDxlCmd() const override;
 
         // IObject interface
-        virtual void reset() override;
-        virtual std::string str() const override;
-        virtual bool isValid() const override;
+        void reset() override;
+        std::string str() const override;
+        bool isValid() const override;
 
     private:
         E _type{E::CMD_TYPE_UNKNOWN};
@@ -266,11 +266,9 @@ template<>
 inline
 bool StepperTtlSingleCmd::isValid() const
 {
-    if ((EStepperCommandType::CMD_TYPE_NONE == getType()) ||
+    return !((EStepperCommandType::CMD_TYPE_NONE == getType()) ||
        (EStepperCommandType::CMD_TYPE_UNKNOWN == getType()) ||
-       (getId() == 0))
-            return false;
-    return true;
+       (getId() == 0));
 }
 //********************************
 // specializations for steppers

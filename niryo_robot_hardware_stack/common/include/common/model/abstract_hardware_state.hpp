@@ -69,15 +69,15 @@ class AbstractHardwareState : public IObject
         virtual bool operator==(const AbstractHardwareState& other);
 
         // IObject interface
-        virtual void reset() override;
-        virtual std::string str() const override;
-        virtual bool isValid() const override = 0; // not reimplemented to keep this class abstract
+        void reset() override;
+        std::string str() const override;
+        bool isValid() const override = 0; // not reimplemented to keep this class abstract
 
 
 protected:
-        EHardwareType _hw_type;
-        EComponentType _component_type;
-        EBusProtocol _bus_proto;
+        EHardwareType _hw_type{EHardwareType::UNKNOWN};
+        EComponentType _component_type{EComponentType::UNKNOWN};
+        EBusProtocol _bus_proto{EBusProtocol::UNKNOWN};
 
         uint8_t _id{0};
 

@@ -44,7 +44,7 @@ class StepperMotorState : public JointState
                           EBusProtocol bus_proto, uint8_t id);
         StepperMotorState(const StepperMotorState& state);
 
-        virtual ~StepperMotorState() override;
+        ~StepperMotorState() override;
 
         int stepsPerRev();
 
@@ -73,12 +73,12 @@ class StepperMotorState : public JointState
         bool isTimeout() const;
 
         // JointState interface
-        virtual void reset() override;
-        virtual bool isValid() const override;
-        virtual std::string str() const override;
+        void reset() override;
+        bool isValid() const override;
+        std::string str() const override;
 
-        virtual int to_motor_pos(double pos_rad) override;
-        virtual double to_rad_pos(int pos) override;
+        int to_motor_pos(double pos_rad) override;
+        double to_rad_pos(int pos) override;
 
         std::vector<uint32_t> getVelocityProfile() const;
 

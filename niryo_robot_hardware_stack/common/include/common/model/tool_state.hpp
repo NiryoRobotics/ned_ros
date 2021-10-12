@@ -20,7 +20,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #ifndef TOOL_STATE_H
 #define TOOL_STATE_H
 
-#include <stdint.h>
+#include <cstdint>
 #include <string>
 
 #include "hardware_type_enum.hpp"
@@ -41,7 +41,7 @@ class ToolState : public DxlMotorState
         ToolState(std::string name, EHardwareType type, uint8_t id);
         ToolState(const ToolState& state);
 
-        virtual ~ToolState() override;
+        ~ToolState() override;
 
         void setName(std::string name);
         void setPosition(double position);
@@ -52,8 +52,8 @@ class ToolState : public DxlMotorState
         bool isConnected() const;
 
         // DxlMotorState interface
-        virtual void reset() override;
-        virtual std::string str() const override;
+        void reset() override;
+        std::string str() const override;
 
     public:
         static constexpr int TOOL_STATE_PING_OK       = 0x01;

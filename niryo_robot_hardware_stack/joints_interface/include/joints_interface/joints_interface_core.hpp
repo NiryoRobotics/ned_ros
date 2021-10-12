@@ -59,9 +59,9 @@ class JointsInterfaceCore : common::util::IInterfaceCore
                             ros::NodeHandle& robot_hwnh,
                             std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface,
                             std::shared_ptr<can_driver::CanInterfaceCore> can_interface);
-        virtual ~JointsInterfaceCore() override;
+        ~JointsInterfaceCore() override;
 
-        virtual bool init(ros::NodeHandle& nh) override;
+        bool init(ros::NodeHandle& nh) override;
 
         void sendMotorsParams();
         void activateLearningMode(bool activate, int &ostatus, std::string &omessage);
@@ -73,10 +73,10 @@ class JointsInterfaceCore : common::util::IInterfaceCore
         getJointsState() const;
 
     private:
-        virtual void initParameters(ros::NodeHandle& nh) override;
-        virtual void startServices(ros::NodeHandle& nh) override;
-        virtual void startPublishers(ros::NodeHandle& nh) override;
-        virtual void startSubscribers(ros::NodeHandle& nh) override;
+        void initParameters(ros::NodeHandle& nh) override;
+        void startServices(ros::NodeHandle& nh) override;
+        void startPublishers(ros::NodeHandle& nh) override;
+        void startSubscribers(ros::NodeHandle& nh) override;
 
         void rosControlLoop();
 

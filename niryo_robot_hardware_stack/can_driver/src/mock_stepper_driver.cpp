@@ -22,6 +22,7 @@
 #include <boost/exception/exception.hpp>
 #include <cstdint>
 #include <random>
+#include <utility>
 #include <vector>
 #include <string>
 #include <tuple>
@@ -36,7 +37,6 @@
 
 using ::std::shared_ptr;
 using ::std::string;
-using ::common::model::EStepperCommandType;
 using ::common::model::EStepperCalibrationStatus;
 
 namespace can_driver
@@ -45,8 +45,8 @@ namespace can_driver
 /**
  * @brief MockStepperDriver::MockStepperDriver
  */
-MockStepperDriver::MockStepperDriver(const std::shared_ptr<FakeCanData>& data) :
-  _fake_data(data)
+MockStepperDriver::MockStepperDriver(std::shared_ptr<FakeCanData>  data) :
+  _fake_data(std::move(data))
 {
     // retrieve list of ids
     for (auto const& imap : _fake_data->stepper_registers)
@@ -57,8 +57,7 @@ MockStepperDriver::MockStepperDriver(const std::shared_ptr<FakeCanData>& data) :
  * @brief MockStepperDriver::~StepperDriver
  */
 MockStepperDriver::~MockStepperDriver()
-{
-}
+= default;
 
 /**
  * @brief MockStepperDriver::str
@@ -145,7 +144,7 @@ uint8_t MockStepperDriver::readData(uint8_t& id, int& control_byte,
         control_byte = CAN_DATA_CONVEYOR_STATE;
         return CAN_OK;
     }
-    else if (id != _fake_conveyor_id && _next_control_byte == CAN_DATA_CONVEYOR_STATE)
+    if (id != _fake_conveyor_id && _next_control_byte == CAN_DATA_CONVEYOR_STATE)
     {
         control_byte = CAN_DATA_POSITION;
     }
@@ -327,12 +326,10 @@ uint8_t MockStepperDriver::sendMaxEffortCommand(uint8_t id, int effort)
  * @param timeout
  * @return
  */
-uint8_t MockStepperDriver::sendCalibrationCommand(uint8_t id, int offset, int delay, int direction, int timeout)
+uint8_t MockStepperDriver::sendCalibrationCommand(uint8_t id, int offset, int delay, int  /*direction*/, int timeout)
 {
     (void)delay;  // unused
     (void)timeout;  // unused
-
-    direction = (direction > 0) ? 1 : 0;
 
     if (_fake_data->stepper_registers.count(id))
     {
@@ -436,11 +433,11 @@ MockStepperDriver::interpreteCalibrationData(const std::array<uint8_t, MAX_MESSA
             _calibration_status.at(_current_id).first = EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED;
             return current_calib_status;
         }
-        else
-        {
+        
+        
             _fake_time--;
             return _calibration_status.at(_current_id);
-        }
+        
      }
 
     return std::make_pair(EStepperCalibrationStatus::CALIBRATION_BAD_PARAM, 0);

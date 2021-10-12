@@ -58,13 +58,13 @@ class SynchronizeMotorCmd : public AbstractSynchronizeMotorCmd<ParamType>
             return static_cast<int>(_type);
         }
         // AbstractSingleMotorCmd interface
-        virtual bool isStepperCmd() const override;
-        virtual bool isDxlCmd() const override;
+        bool isStepperCmd() const override;
+        bool isDxlCmd() const override;
 
         // IObject interface
-        virtual void reset() override;
-        virtual std::string str() const override;
-        virtual bool isValid() const override;
+        void reset() override;
+        std::string str() const override;
+        bool isValid() const override;
 
     private:
         E _type{E::CMD_TYPE_UNKNOWN};

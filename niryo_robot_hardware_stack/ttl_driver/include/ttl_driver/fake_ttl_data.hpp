@@ -28,8 +28,8 @@ namespace ttl_driver
 class FakeTtlData
 {
     public:
-        FakeTtlData() {}
-        ~FakeTtlData() {}
+        FakeTtlData() = default;
+        ~FakeTtlData() = default;
     public:
         struct AbstractFakeRegister
         {

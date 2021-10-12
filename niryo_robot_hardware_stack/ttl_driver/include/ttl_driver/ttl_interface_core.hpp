@@ -74,7 +74,7 @@ class TtlInterfaceCore : public common::util::IDriverCore, public common::util::
 {
     public:
         TtlInterfaceCore(ros::NodeHandle& nh);
-        virtual ~TtlInterfaceCore() override;
+        ~TtlInterfaceCore() override;
 
         bool init(ros::NodeHandle& nh) override;
 
@@ -93,18 +93,18 @@ class TtlInterfaceCore : public common::util::IDriverCore, public common::util::
         void addSingleCommandToQueue(const std::vector<std::shared_ptr<common::model::ISingleMotorCmd> >& cmd) override;
 
         // joints control
-        int addJoint(const std::shared_ptr<common::model::JointState> jointState);
+        int addJoint(const std::shared_ptr<common::model::JointState>& jointState);
 
         // Tool control
-        int setTool(const std::shared_ptr<common::model::ToolState> toolState);
+        int setTool(const std::shared_ptr<common::model::ToolState>& toolState);
         void unsetTool(uint8_t motor_id);
         std::vector<uint8_t> scanTools();
 
         // end effector panel control
-        int setEndEffector(const std::shared_ptr<common::model::EndEffectorState> end_effector_state);
+        int setEndEffector(const std::shared_ptr<common::model::EndEffectorState>& end_effector_state);
 
         // conveyor control
-        int setConveyor(const std::shared_ptr<common::model::ConveyorState> state) override;
+        int setConveyor(std::shared_ptr<common::model::ConveyorState> state) override;
         void unsetConveyor(uint8_t motor_id, uint8_t default_conveyor_id) override;
         int changeId(common::model::EHardwareType motor_type, uint8_t old_id, uint8_t new_id) override;
 
@@ -139,10 +139,10 @@ class TtlInterfaceCore : public common::util::IDriverCore, public common::util::
         common::model::EBusProtocol getBusProtocol() const override;
 
     private:
-        virtual void initParameters(ros::NodeHandle& nh) override;
-        virtual void startServices(ros::NodeHandle& nh) override;
-        virtual void startPublishers(ros::NodeHandle &nh) override;
-        virtual void startSubscribers(ros::NodeHandle &nh) override;
+        void initParameters(ros::NodeHandle& nh) override;
+        void startServices(ros::NodeHandle& nh) override;
+        void startPublishers(ros::NodeHandle &nh) override;
+        void startSubscribers(ros::NodeHandle &nh) override;
 
         void resetHardwareControlLoopRates() override;
         void controlLoop() override;

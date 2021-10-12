@@ -37,6 +37,7 @@ template<typename ParamType>
 class AbstractSingleMotorCmd : public ISingleMotorCmd
 {
     public:
+        AbstractSingleMotorCmd() = delete;
         AbstractSingleMotorCmd(uint8_t id);
 
         // setters
@@ -55,7 +56,6 @@ class AbstractSingleMotorCmd : public ISingleMotorCmd
         std::vector<ParamType> _param_list;
         uint8_t _id;
 
-        AbstractSingleMotorCmd() = delete;
 };
 
 

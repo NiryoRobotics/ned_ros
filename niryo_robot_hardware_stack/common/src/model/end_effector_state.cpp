@@ -1,4 +1,4 @@
-/*
+﻿/*
     end_effector_state.cpp
     Copyright (C) 2020 Niryo
     All rights reserved.
@@ -40,8 +40,7 @@ namespace model
 /**
  * @brief EndEffectorState::EndEffectorState
  */
-EndEffectorState::EndEffectorState() :
-  AbstractHardwareState()
+EndEffectorState::EndEffectorState()
 {
   _buttons_list.at(0) = std::make_shared<Button>();
   _buttons_list.at(1) = std::make_shared<Button>();
@@ -91,8 +90,7 @@ EndEffectorState::EndEffectorState(const EndEffectorState &state) :
  * @brief EndEffectorState::~EndEffectorState
  */
 EndEffectorState::~EndEffectorState()
-{
-}
+= default;
 
 /**
  * @brief EndEffectorState::configureButton
@@ -162,7 +160,7 @@ void EndEffectorState::setButtonStatus(uint8_t id, EActionType action)
   if (button->actions.back() == EActionType::NO_ACTION &&
           action == EActionType::NO_ACTION)
       return;
-  else if (button->actions.back() !=EActionType::NO_ACTION &&
+  if (button->actions.back() !=EActionType::NO_ACTION &&
           action == EActionType::NO_ACTION)
   {
       button->actions.push(action);
@@ -294,13 +292,11 @@ void EndEffectorState::Button::setDelay()
  */
 bool EndEffectorState::Button::needsToSkip()
 {
-  if (_need_delay && (ros::Time::now().toSec() - _time_last_read_state) <= _time_avoid_duplicate_state)
-    return true;
-  else
-  {
+    if (_need_delay && (ros::Time::now().toSec() - _time_last_read_state) <= _time_avoid_duplicate_state)
+        return true;
+
     _need_delay = false;
     return false;
-  }
 }
 
 }  // namespace model

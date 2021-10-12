@@ -20,7 +20,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #ifndef I_BUS_MANAGER_H
 #define I_BUS_MANAGER_H
 
-#include <stdint.h>
+#include <cstdint>
 #include <string>
 #include <vector>
 
@@ -74,9 +74,7 @@ class IBusManager
  */
 inline
 IBusManager::~IBusManager()
-{
-
-}
+= default;
 
 } // namespace util
 } // namespace common

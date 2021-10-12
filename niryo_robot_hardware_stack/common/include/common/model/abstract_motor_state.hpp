@@ -55,9 +55,9 @@ class AbstractMotorState : public AbstractHardwareState
         bool isDynamixel() const;
 
         // IObject interface
-        virtual void reset() override;
-        virtual std::string str() const override;
-        virtual bool isValid() const override = 0; // not reimplemented to keep this class abstract
+        void reset() override;
+        std::string str() const override;
+        bool isValid() const override = 0; // not reimplemented to keep this class abstract
 
     protected:
         // read variables

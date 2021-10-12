@@ -60,7 +60,7 @@ class CanManager : public common::util::IBusManager
 public:
 
     CanManager(ros::NodeHandle& nh);
-    virtual ~CanManager() override;
+    ~CanManager() override;
 
     // IBusManager Interface
     bool init(ros::NodeHandle& nh) override;
@@ -74,13 +74,13 @@ public:
     bool ping(uint8_t id) override;
 
     size_t getNbMotors() const override;
-    void getBusState(bool& connection_state, std::vector<uint8_t>& motor_id, std::string& debug_msg) const override;
+    void getBusState(bool& connection_status, std::vector<uint8_t>& motor_list, std::string& error) const override;
     std::string getErrorMessage() const override;
 
     // commands
     int changeId(common::model::EHardwareType motor_type, uint8_t old_id, uint8_t new_id);
 
-    int writeSingleCommand(std::shared_ptr<common::model::AbstractCanSingleMotorCmd> cmd);
+    int writeSingleCommand(const std::shared_ptr<common::model::AbstractCanSingleMotorCmd>& cmd);
     void executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, int32_t> > cmd_vec);
 
     // read status
@@ -112,7 +112,7 @@ private:
     // config params using in fake driver
     void readFakeConfig();
     template<typename Reg>
-    void retrieveFakeMotorData(std::string current_ns, std::map<uint8_t, Reg>& fake_params);
+    void retrieveFakeMotorData(const std::string& current_ns, std::map<uint8_t, Reg>& fake_params);
 
 private:
     ros::NodeHandle _nh;
@@ -211,7 +211,7 @@ bool CanManager::isCalibrationInProgress() const {
  * @param fake_params
  */
 template<typename Reg>
-void CanManager::retrieveFakeMotorData(std::string current_ns, std::map<uint8_t, Reg> &fake_params)
+void CanManager::retrieveFakeMotorData(const std::string& current_ns, std::map<uint8_t, Reg> &fake_params)
 {
     std::vector<int> stepper_ids;
     _nh.getParam(current_ns + "id", stepper_ids);

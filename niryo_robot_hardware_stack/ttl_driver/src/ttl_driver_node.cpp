@@ -33,7 +33,7 @@ using ::common::model::StepperMotorState;
 using ::common::model::EBusProtocol;
 
 // Method add joints
-void addJointToTtlInterface(std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface)
+void addJointToTtlInterface(const std::shared_ptr<ttl_driver::TtlInterfaceCore>& ttl_interface)
 {
     size_t nb_joints = 0;
 
@@ -54,9 +54,9 @@ void addJointToTtlInterface(std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_in
     {
         ROS_DEBUG("Initialize stepper motors");
         int joint_id_config = 0;
-        string joint_name = "";
-        string joint_type = "";
-        string joint_bus = "";
+        string joint_name;
+        string joint_type;
+        string joint_bus;
 
         robot_hwnh.getParam("joint_" + to_string(j + 1) + "/id", joint_id_config);
         robot_hwnh.getParam("joint_" + to_string(j + 1) + "/name", joint_name);

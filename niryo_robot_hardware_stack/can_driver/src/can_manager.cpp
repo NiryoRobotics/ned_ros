@@ -507,8 +507,8 @@ double CanManager::getCurrentTimeout() const
 {
     if (isCalibrationInProgress())
         return _calibration_timeout;
-    else
-        return AbstractStepperDriver::STEPPER_MOTOR_TIMEOUT_VALUE;
+    
+    return AbstractStepperDriver::STEPPER_MOTOR_TIMEOUT_VALUE;
 }
 
 // ******************
@@ -530,9 +530,9 @@ int32_t CanManager::getPosition(const JointState &motor_state) const
     }
     auto jState = std::dynamic_pointer_cast<JointState>(_state_map.at(motor_id));
     if (jState)
-      return jState->getPositionState();
-    else
-      return 0;
+        return jState->getPositionState();
+    
+    return 0;
 }
 
 // ******************
@@ -544,7 +544,7 @@ int32_t CanManager::getPosition(const JointState &motor_state) const
  * @param cmd
  * @return
  */
-int CanManager::writeSingleCommand(std::shared_ptr<common::model::AbstractCanSingleMotorCmd> cmd)
+int CanManager::writeSingleCommand(const std::shared_ptr<common::model::AbstractCanSingleMotorCmd>& cmd)
 {
     int result = CAN_INVALID_CMD;
     ROS_DEBUG("CanManager::readCommand - Received stepper cmd %s", cmd->str().c_str());
@@ -683,9 +683,9 @@ void CanManager::updateCurrentCalibrationStatus()
  * @param motor_list
  * @param error
  */
-void CanManager::getBusState(bool &connection_status,
-                             std::vector<uint8_t> &motor_list,
-                             std::string &error) const
+void CanManager::getBusState(bool& connection_status,
+                             std::vector<uint8_t>& motor_list,
+                             std::string& error) const
 {
     error = _debug_error_message;
     motor_list = _all_motor_connected;
@@ -700,7 +700,7 @@ std::vector<std::shared_ptr<JointState> >
 CanManager::getMotorsStates() const
 {
     std::vector<std::shared_ptr<JointState> > states;
-    for (auto it : _state_map)
+    for (const auto& it : _state_map)
     {
         if (EHardwareType::UNKNOWN != it.second->getHardwareType())
         {

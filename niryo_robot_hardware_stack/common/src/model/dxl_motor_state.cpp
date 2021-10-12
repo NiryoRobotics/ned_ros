@@ -20,10 +20,11 @@
 #include "common/model/dxl_motor_state.hpp"
 
 #include <sstream>
-#include <math.h>
+#include <cmath>
 #include <cassert>
 #include <cmath>
 #include <string>
+#include <utility>
 
 namespace common
 {
@@ -34,7 +35,6 @@ namespace model
  * @brief DxlMotorState::DxlMotorState
  */
 DxlMotorState::DxlMotorState()
-    : JointState()
 {
     reset();
 }
@@ -69,7 +69,7 @@ DxlMotorState::DxlMotorState(std::string name,
                              EHardwareType type,
                              EComponentType component_type,
                              uint8_t id) :
-    JointState(name, type, component_type, EBusProtocol::TTL, id)
+    JointState(std::move(name), type, component_type, EBusProtocol::TTL, id)
 {
     // to put in config ?
 
@@ -144,7 +144,7 @@ DxlMotorState::DxlMotorState(const DxlMotorState &state) :
  * @brief DxlMotorState::~DxlMotorState
  */
 DxlMotorState::~DxlMotorState()
-{}
+= default;
 
 // *********************
 //  JointState Interface
@@ -155,7 +155,7 @@ DxlMotorState::~DxlMotorState()
  */
 void DxlMotorState::reset()
 {
-    AbstractMotorState::reset();
+    common::model::JointState::reset();
 }
 
 /**
@@ -320,9 +320,9 @@ void DxlMotorState::setFF1Gain(uint32_t ff1_gain)
  * @brief DxlMotorState::setFF2Gain
  * @param value
  */
-void DxlMotorState::setFF2Gain(uint32_t value)
+void DxlMotorState::setFF2Gain(uint32_t ff2_gain)
 {
-    _ff2_gain = value;
+    _ff2_gain = ff2_gain;
 }
 
 }  // namespace model

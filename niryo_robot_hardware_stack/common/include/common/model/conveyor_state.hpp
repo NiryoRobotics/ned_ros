@@ -42,7 +42,7 @@ class ConveyorState : public StepperMotorState {
                       EBusProtocol bus_proto, uint8_t id, uint8_t default_id);
 
         ConveyorState(const ConveyorState& state);
-        virtual ~ConveyorState() override;
+        ~ConveyorState() override;
 
         void updateId(uint8_t id);
 
@@ -59,9 +59,9 @@ class ConveyorState : public StepperMotorState {
         virtual bool operator==(const ConveyorState& other);
 
         // StepperMotorState interface
-        virtual std::string str() const override;
-        virtual void reset() override;
-        virtual bool isValid() const override;
+        std::string str() const override;
+        void reset() override;
+        bool isValid() const override;
 
 private:
         bool _state{false};

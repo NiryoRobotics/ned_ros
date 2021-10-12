@@ -78,7 +78,7 @@ class TtlManager : public common::util::IBusManager
 {
 public:
     TtlManager(ros::NodeHandle& nh);
-    virtual ~TtlManager() override;
+    ~TtlManager() override;
 
     // IBusManager Interface
     bool init(ros::NodeHandle& nh) override;
@@ -153,7 +153,7 @@ private:
     // Config params using in fake driver
     void readFakeConfig();
     template<typename Reg>
-    void retrieveFakeMotorData(std::string current_ns, std::map<uint8_t, Reg>& fake_params);
+    void retrieveFakeMotorData(const std::string& current_ns, std::map<uint8_t, Reg>& fake_params);
 
 private:
     ros::NodeHandle _nh;
@@ -292,7 +292,7 @@ bool TtlManager::hasEndEffector() const
  * @param fake_params
  */
 template<typename Reg>
-void TtlManager::retrieveFakeMotorData(std::string current_ns, std::map<uint8_t, Reg> &fake_params)
+void TtlManager::retrieveFakeMotorData(const std::string& current_ns, std::map<uint8_t, Reg> &fake_params)
 {
     std::vector<int> stepper_ids;
     _nh.getParam(current_ns + "id", stepper_ids);

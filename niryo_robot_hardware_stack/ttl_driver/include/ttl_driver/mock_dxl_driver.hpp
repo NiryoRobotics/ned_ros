@@ -37,83 +37,83 @@ namespace ttl_driver
 class MockDxlDriver : public AbstractDxlDriver
 {
     public:
-        MockDxlDriver(const std::shared_ptr<FakeTtlData>&  data);
-        virtual ~MockDxlDriver() override;
+        MockDxlDriver(std::shared_ptr<FakeTtlData>   data);
+        ~MockDxlDriver() override;
 
-        virtual std::string str() const override;
+        std::string str() const override;
 
         // AbstractTtlDriver interface : we cannot define them globally in AbstractTtlDriver
         // as it is needed here for polymorphism (AbstractTtlDriver cannot be a template class and does not
         // have access to reg_type). So it seems like a duplicate of StepperDriver
     public:
-        virtual int ping(uint8_t id) override;
-        virtual int getModelNumber(uint8_t id,
+        int ping(uint8_t id) override;
+        int getModelNumber(uint8_t id,
                             uint16_t& model_number) override;
-        virtual int scan(std::vector<uint8_t>& id_list) override;
-        virtual int reboot(uint8_t id) override;
+        int scan(std::vector<uint8_t>& id_list) override;
+        int reboot(uint8_t id) override;
 
-        virtual std::string interpreteErrorState(uint32_t hw_state) const override;
+        std::string interpreteErrorState(uint32_t hw_state) const override;
 
-        virtual int readCustom(uint16_t address, uint8_t data_len, uint8_t id, uint32_t& data) override;
-        virtual int writeCustom(uint16_t address, uint8_t data_len, uint8_t id, uint32_t data) override;
+        int readCustom(uint16_t address, uint8_t data_len, uint8_t id, uint32_t& data) override;
+        int writeCustom(uint16_t address, uint8_t data_len, uint8_t id, uint32_t data) override;
 
         // eeprom write
-        virtual int changeId(uint8_t id, uint8_t new_id) override;
+        int changeId(uint8_t id, uint8_t new_id) override;
 
         // eeprom read
-        virtual int checkModelNumber(uint8_t id) override;
-        virtual int readFirmwareVersion(uint8_t id, std::string &version) override;
-        virtual int readMinPosition(uint8_t id, uint32_t &min_pos) override;
-        virtual int readMaxPosition(uint8_t id, uint32_t &max_pos) override;
+        int checkModelNumber(uint8_t id) override;
+        int readFirmwareVersion(uint8_t id, std::string &version) override;
+        int readMinPosition(uint8_t id, uint32_t &min_pos) override;
+        int readMaxPosition(uint8_t id, uint32_t &max_pos) override;
 
         // ram write
-        virtual int setTorqueEnable(uint8_t id, uint32_t torque_enable) override;
-        virtual int setGoalPosition(uint8_t id, uint32_t position) override;
-        virtual int setGoalVelocity(uint8_t id, uint32_t velocity) override;
+        int setTorqueEnable(uint8_t id, uint32_t torque_enable) override;
+        int setGoalPosition(uint8_t id, uint32_t position) override;
+        int setGoalVelocity(uint8_t id, uint32_t velocity) override;
 
-        virtual int syncWriteTorqueEnable(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &torque_enable_list) override;
-        virtual int syncWritePositionGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &position_list) override;
-        virtual int syncWriteVelocityGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &velocity_list) override;
+        int syncWriteTorqueEnable(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &torque_enable_list) override;
+        int syncWritePositionGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &position_list) override;
+        int syncWriteVelocityGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &velocity_list) override;
 
         // ram read
-        virtual int readPosition(uint8_t id, uint32_t &present_position) override;
-        virtual int readTemperature(uint8_t id, uint32_t &temperature) override;
-        virtual int readVoltage(uint8_t id, double &voltage) override;
-        virtual int readHwErrorStatus(uint8_t id, uint32_t &hardware_status) override;
+        int readPosition(uint8_t id, uint32_t &present_position) override;
+        int readTemperature(uint8_t id, uint32_t &temperature) override;
+        int readVoltage(uint8_t id, double &voltage) override;
+        int readHwErrorStatus(uint8_t id, uint32_t &hardware_status) override;
 
-        virtual int syncReadPosition(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &position_list) override;
+        int syncReadPosition(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &position_list) override;
 
-        virtual int syncReadFirmwareVersion(const std::vector<uint8_t> &id_list, std::vector<std::string> &firmware_list) override;
-        virtual int syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &temperature_list) override;
-        virtual int syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list) override;
-        virtual int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list) override;
+        int syncReadFirmwareVersion(const std::vector<uint8_t> &id_list, std::vector<std::string> &firmware_list) override;
+        int syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &temperature_list) override;
+        int syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list) override;
+        int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list) override;
 
         // AbstractDxlDriver interface
     public:
-        virtual int setLed(uint8_t id, uint32_t led_value) override;
-        virtual int syncWriteLed(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &led_list) override;
-        virtual int setGoalTorque(uint8_t id, uint32_t torque) override;
-        virtual int syncWriteTorqueGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &torque_list) override;
-        virtual int setPositionPGain(uint8_t id, uint32_t gain) override;
-        virtual int setPositionIGain(uint8_t id, uint32_t gain) override;
-        virtual int setPositionDGain(uint8_t id, uint32_t gain) override;
-        virtual int setVelocityPGain(uint8_t id, uint32_t gain) override;
-        virtual int setVelocityIGain(uint8_t id, uint32_t gain) override;
-        virtual int setff1Gain(uint8_t id, uint32_t gain) override;
-        virtual int setff2Gain(uint8_t id, uint32_t gain) override;
+        int setLed(uint8_t id, uint32_t led_value) override;
+        int syncWriteLed(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &led_list) override;
+        int setGoalTorque(uint8_t id, uint32_t torque) override;
+        int syncWriteTorqueGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &torque_list) override;
+        int setPositionPGain(uint8_t id, uint32_t gain) override;
+        int setPositionIGain(uint8_t id, uint32_t gain) override;
+        int setPositionDGain(uint8_t id, uint32_t gain) override;
+        int setVelocityPGain(uint8_t id, uint32_t gain) override;
+        int setVelocityIGain(uint8_t id, uint32_t gain) override;
+        int setff1Gain(uint8_t id, uint32_t gain) override;
+        int setff2Gain(uint8_t id, uint32_t gain) override;
 
-        virtual int readPositionPGain(uint8_t id, uint32_t& gain) override;
-        virtual int readPositionIGain(uint8_t id, uint32_t& gain) override;
-        virtual int readPositionDGain(uint8_t id, uint32_t& gain) override;
-        virtual int readVelocityPGain(uint8_t id, uint32_t& gain) override;
-        virtual int readVelocityIGain(uint8_t id, uint32_t& gain) override;
-        virtual int readFF1Gain(uint8_t id, uint32_t& gain) override;
-        virtual int readFF2Gain(uint8_t id, uint32_t& gain) override;
+        int readPositionPGain(uint8_t id, uint32_t& gain) override;
+        int readPositionIGain(uint8_t id, uint32_t& gain) override;
+        int readPositionDGain(uint8_t id, uint32_t& gain) override;
+        int readVelocityPGain(uint8_t id, uint32_t& gain) override;
+        int readVelocityIGain(uint8_t id, uint32_t& gain) override;
+        int readFF1Gain(uint8_t id, uint32_t& gain) override;
+        int readFF2Gain(uint8_t id, uint32_t& gain) override;
 
-        virtual int readLoad(uint8_t id, uint32_t &present_load) override;
-        virtual int syncReadLoad(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &load_list) override;
-        virtual int readVelocity(uint8_t id, uint32_t &present_velocity) override;
-        virtual int syncReadVelocity(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &velocity_list) override;
+        int readLoad(uint8_t id, uint32_t &present_load) override;
+        int syncReadLoad(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &load_list) override;
+        int readVelocity(uint8_t id, uint32_t &present_velocity) override;
+        int syncReadVelocity(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &velocity_list) override;
     
         int removeGripper(uint8_t id = 11);
 
@@ -126,7 +126,7 @@ class MockDxlDriver : public AbstractDxlDriver
 
         // AbstractTtlDriver interface
     protected:
-        virtual std::string interpreteFirmwareVersion(uint32_t fw_version) const override;
+        std::string interpreteFirmwareVersion(uint32_t fw_version) const override;
 };
 
 } // DynamixelDriver
