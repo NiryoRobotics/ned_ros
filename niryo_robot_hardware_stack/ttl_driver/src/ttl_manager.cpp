@@ -1550,7 +1550,7 @@ void TtlManager::readFakeConfig()
         _nh.getParam(current_ns + "temperature", temperature);
         _fake_data->end_effector.temperature = static_cast<uint32_t>(temperature);
         _nh.getParam(current_ns + "voltage", voltage);
-        _fake_data->end_effector.voltage = static_cast<uint32_t>(voltage);
+        _fake_data->end_effector.voltage = static_cast<double>(voltage);
 
         std::string firmware;
         _nh.getParam(current_ns + "firmware", firmware);

@@ -758,6 +758,8 @@ void CanManager::addHardwareDriver(common::model::EHardwareType hardware_type)
 */
 void CanManager::readFakeConfig()
 {
+    _fake_data = std::make_shared<FakeCanData>();
+
     std::string hardware_version;
     _nh.getParam("hardware_version", hardware_version);
     assert(_nh.hasParam(hardware_version));

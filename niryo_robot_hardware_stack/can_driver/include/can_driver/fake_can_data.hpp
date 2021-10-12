@@ -47,9 +47,6 @@ public:
 
     // stepper
     std::map<uint8_t, FakeStepperRegister> stepper_registers;
-
-    // common
-    std::vector<uint8_t> full_id_list;
 };
 }
 #endif //FAKE_TTL_DATA_HPP
