@@ -37,7 +37,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "niryo_robot_msgs/SetInt.h"
 #include "niryo_robot_msgs/CommandStatus.h"
 
-#include "common/model/i_bus_manager.hpp"
+#include "common/util/i_bus_manager.hpp"
 
 // drivers
 #include "ttl_driver/abstract_motor_driver.hpp"
@@ -74,7 +74,7 @@ constexpr int TTL_WRONG_TYPE             = -52;
  * it also manages the lifecycle of all motors driver (do we need to add also the end effector driver in it ?)
  *
  */
-class TtlManager : public common::model::IBusManager
+class TtlManager : public common::util::IBusManager
 {
 
     public:

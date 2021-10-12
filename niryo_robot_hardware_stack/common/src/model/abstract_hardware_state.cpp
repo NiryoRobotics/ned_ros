@@ -76,13 +76,6 @@ AbstractHardwareState::AbstractHardwareState(const AbstractHardwareState &state)
 }
 
 /**
- * @brief AbstractHardwareState::~AbstractHardwareState
- */
-AbstractHardwareState::~AbstractHardwareState()
-{
-}
-
-/**
  * @brief AbstractHardwareState::reset
  */
 void AbstractHardwareState::reset()

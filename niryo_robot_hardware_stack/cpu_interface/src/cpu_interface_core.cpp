@@ -29,12 +29,12 @@ namespace cpu_interface
  */
 CpuInterfaceCore::CpuInterfaceCore(ros::NodeHandle& nh)
 {
-    ROS_DEBUG("CPU Interface Core - ctor");
+    ROS_DEBUG("CpuInterfaceCore::ctor - ctor");
 
     init(nh);
     startReadingData();
 
-    ROS_INFO("CPU Interface - Started");
+    ROS_INFO("CpuInterfaceCore::ctor - Started");
 }
 
 /**
@@ -151,24 +151,24 @@ void CpuInterfaceCore::_readHardwareDataLoop()
             // check if Rpi is too hot
             if (_cpu_temperature > _temperature_warn_threshold)
             {
-                ROS_WARN("CPU Interface - Rpi temperature is really high !");
+                ROS_WARN("CpuInterfaceCore::_readHardwareDataLoop - Rpi temperature is really high !");
             }
             if (_cpu_temperature > _temperature_shutdown_threshold)
             {
-                ROS_ERROR("CPU Interface - Rpi is too hot, shutdown to avoid any damage");
+                ROS_ERROR("CpuInterfaceCore::_readHardwareDataLoop - Rpi is too hot, shutdown to avoid any damage");
                 int ret = std::system("sudo shutdown now");
-                ROS_INFO("Shutdown now: %d", ret);
+                ROS_INFO("CpuInterfaceCore::_readHardwareDataLoop - Shutdown now: %d", ret);
             }
         }
         else
         {
             if (_cpu_temperature > _temperature_warn_threshold)
             {
-                ROS_WARN("CPU Interface - Computer temperature is really high !");
+                ROS_WARN("CpuInterfaceCore::_readHardwareDataLoop - Computer temperature is really high !");
             }
             if (_cpu_temperature > _temperature_shutdown_threshold)
             {
-                ROS_ERROR("CPU Interface - Computer is too hot");
+                ROS_ERROR("CpuInterfaceCore::_readHardwareDataLoop - Computer is too hot");
             }
         }
 

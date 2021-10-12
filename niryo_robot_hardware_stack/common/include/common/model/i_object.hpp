@@ -32,7 +32,6 @@ namespace model
  */
 class IObject
 {
-
     public:
         virtual ~IObject() = 0;
 

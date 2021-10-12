@@ -44,8 +44,6 @@ class AbstractMotorState : public AbstractHardwareState
                            EBusProtocol bus_proto, uint8_t id);
         AbstractMotorState(const AbstractMotorState& state);
 
-        virtual ~AbstractMotorState() override;
-
         // getters
         int getPositionState() const;
 

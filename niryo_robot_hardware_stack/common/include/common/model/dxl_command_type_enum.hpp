@@ -58,7 +58,6 @@ class DxlCommandTypeEnum : public AbstractEnum<DxlCommandTypeEnum, EDxlCommandTy
 public:
     DxlCommandTypeEnum(EDxlCommandType e=EDxlCommandType::CMD_TYPE_UNKNOWN);
     DxlCommandTypeEnum(const char* const str);
-    ~DxlCommandTypeEnum() {}
 
 private:
     friend class AbstractEnum<DxlCommandTypeEnum, EDxlCommandType>;

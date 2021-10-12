@@ -63,13 +63,6 @@ AbstractMotorState::AbstractMotorState(const AbstractMotorState &state) :
 }
 
 /**
- * @brief AbstractMotorState::~AbstractMotorState
- */
-AbstractMotorState::~AbstractMotorState()
-{
-}
-
-/**
  * @brief AbstractMotorState::reset
  */
 void AbstractMotorState::reset()

@@ -53,9 +53,7 @@ class IInterfaceCore
  */
 inline
 IInterfaceCore::~IInterfaceCore()
-{
-
-}
+{}
 
 } // namespace model
 } // namespace common

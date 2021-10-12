@@ -45,8 +45,6 @@ class AbstractHardwareState : public IObject
                               uint8_t id);
         AbstractHardwareState(const AbstractHardwareState& state);
 
-        virtual ~AbstractHardwareState() override;
-
         // getters
         EHardwareType getHardwareType() const;
         EComponentType getComponentType() const;

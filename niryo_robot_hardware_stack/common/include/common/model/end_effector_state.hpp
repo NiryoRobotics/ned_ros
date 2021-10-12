@@ -60,8 +60,6 @@ class EndEffectorState : public AbstractHardwareState
                     actions.push(EActionType::NO_ACTION);
                 }
 
-                virtual ~Button() {}
-
                  /**
                  * @brief The Button struct describes the current state of a button (not its config)
                  */

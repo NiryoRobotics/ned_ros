@@ -234,11 +234,11 @@ int StepperMotorState::to_motor_pos(double pos_rad)
     if (getBusProtocol() == common::model::EBusProtocol::CAN)
     {
         double numerator = (STEPPERS_MOTOR_STEPS_PER_REVOLUTION * _micro_steps * _gear_ratio * pos_rad / (2*M_PI));
-        return std::round( numerator * _direction);
+        return static_cast<int>(std::round( numerator * _direction));
     }
     else
     {
-        int pos = std::round((pos_rad*180) / (M_PI * 0.088) * _direction + _offset_position);
+        int pos = static_cast<int>(std::round((pos_rad*180) / (M_PI * 0.088) * _direction + _offset_position));
         return pos > 0 ? pos : 0;
     }
 }

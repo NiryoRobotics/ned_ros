@@ -55,7 +55,6 @@ class HardwareTypeEnum : public AbstractEnum<HardwareTypeEnum, EHardwareType>
 public:
     HardwareTypeEnum(EHardwareType e=EHardwareType::UNKNOWN);
     HardwareTypeEnum(const char* const str);
-    ~HardwareTypeEnum() {}
 
 private:
     friend class AbstractEnum<HardwareTypeEnum, EHardwareType>;

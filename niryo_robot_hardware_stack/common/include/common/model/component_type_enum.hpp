@@ -50,7 +50,6 @@ class ComponentTypeEnum : public AbstractEnum<ComponentTypeEnum, EComponentType>
 public:
     ComponentTypeEnum(EComponentType e=EComponentType::UNKNOWN);
     ComponentTypeEnum(const char* const str);
-    ~ComponentTypeEnum() {}
 
 private:
     friend class AbstractEnum<ComponentTypeEnum, EComponentType>;

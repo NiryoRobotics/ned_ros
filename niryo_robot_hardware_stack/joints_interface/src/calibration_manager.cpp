@@ -290,7 +290,7 @@ EStepperCalibrationStatus CalibrationManager::autoCalibration()
         timeout += 0.2;
         if (timeout >= 30.0)
         {
-            ROS_ERROR("Calibration Interface - calibration timeout, please try again");
+            ROS_ERROR("CalibrationManager::autoCalibration - calibration timeout, please try again");
             _calibration_in_progress = false;
             return common::model::EStepperCalibrationStatus::CALIBRATION_TIMEOUT;
         }
@@ -311,13 +311,13 @@ EStepperCalibrationStatus CalibrationManager::autoCalibration()
           sensor_offset_results.emplace_back(calibration_result);
           sensor_offset_ids.emplace_back(motor_id);
 
-          ROS_INFO("Calibration Interface - Motor %d, calibration cmd result %d ", motor_id, calibration_result);
+          ROS_INFO("CalibrationManager::autoCalibration - Motor %d, calibration cmd result %d ", motor_id, calibration_result);
         }
     }
 
     if (sensor_offset_results.at(0) && sensor_offset_results.at(1) && sensor_offset_results.at(2))
     {
-        ROS_INFO("Calibration Interface -  Calibration successfull, going back home");
+        ROS_INFO("CalibrationManager::autoCalibration -  Calibration successfull, going back home");
 
         // 5. Move Motor 1 to 0.0 (back to home)
         moveSteppersToHome();
@@ -328,7 +328,7 @@ EStepperCalibrationStatus CalibrationManager::autoCalibration()
     }
     else
     {
-        ROS_ERROR("Calibration Interface -  An error occured while calibrating stepper motors");
+        ROS_ERROR("CalibrationManager::autoCalibration -  An error occured while calibrating stepper motors");
     }
 
     // 7 - stop torques

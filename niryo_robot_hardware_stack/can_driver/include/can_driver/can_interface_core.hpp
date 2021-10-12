@@ -119,8 +119,8 @@ class CanInterfaceCore : public common::model::IDriverCore, public common::model
         bool _control_loop_flag{false};
         bool _debug_flag{false};
 
-        std::mutex _control_loop_mutex;
-        std::mutex _joint_trajectory_mutex;
+        std::mutex  _control_loop_mutex;
+        std::mutex  _joint_trajectory_mutex;
 
         std::thread _control_loop_thread;
 

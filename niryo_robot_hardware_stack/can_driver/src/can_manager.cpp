@@ -454,7 +454,7 @@ void CanManager::_verifyMotorTimeoutLoop()
                     auto position = std::find(_all_motor_connected.begin(), _all_motor_connected.end(), map_it.first);
 
                     // only if valid state (invalid if default id of conveyor for example)
-                    if(map_it.second && map_it.second->isValid())
+                    if (map_it.second && map_it.second->isValid())
                     {
                         auto state = std::dynamic_pointer_cast<StepperMotorState>(map_it.second);
 
@@ -470,7 +470,7 @@ void CanManager::_verifyMotorTimeoutLoop()
                         {
                             _all_motor_connected.push_back(map_it.first);
                         }
-                    }    
+                    }
                 }
             }
         }

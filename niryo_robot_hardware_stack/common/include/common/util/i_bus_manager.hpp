@@ -24,14 +24,16 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <string>
 #include <vector>
 
-#include "joint_state.hpp"
-#include "stepper_calibration_status_enum.hpp"
+#include "common/model/abstract_hardware_state.hpp"
+
+#include "common/model/hardware_type_enum.hpp"
+#include "common/model/stepper_calibration_status_enum.hpp"
 
 #include "ros/node_handle.h"
 
 namespace common
 {
-namespace model
+namespace util
 {
 
 /**
@@ -39,7 +41,6 @@ namespace model
  */
 class IBusManager
 {
-
     public:
         virtual ~IBusManager() = 0;
         virtual bool init(ros::NodeHandle& nh) = 0;
@@ -77,7 +78,7 @@ IBusManager::~IBusManager()
 
 }
 
-} // namespace model
+} // namespace util
 } // namespace common
 
 #endif // I_BUS_MANAGER

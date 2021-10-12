@@ -48,7 +48,6 @@ class ButtonTypeEnum : public AbstractEnum<ButtonTypeEnum, EButtonType>
 public:
     ButtonTypeEnum(EButtonType e=EButtonType::UNKNOWN);
     ButtonTypeEnum(const char* const str);
-    ~ButtonTypeEnum() {}
 
 private:
     friend class AbstractEnum<ButtonTypeEnum, EButtonType>;

@@ -52,7 +52,6 @@ class StepperCalibrationStatusEnum : public AbstractEnum<StepperCalibrationStatu
 public:
     StepperCalibrationStatusEnum(EStepperCalibrationStatus e=EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED);
     StepperCalibrationStatusEnum(const char* const str);
-    ~StepperCalibrationStatusEnum() {}
 
 private:
     friend class AbstractEnum<StepperCalibrationStatusEnum, EStepperCalibrationStatus>;

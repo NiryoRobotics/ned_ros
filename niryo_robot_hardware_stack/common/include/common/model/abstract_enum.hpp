@@ -38,8 +38,6 @@ class AbstractEnum
 {
 public:
 
-    virtual ~AbstractEnum () {}
-
     operator E () const { return _enum; }
 
     const std::string& toString() const;

@@ -44,8 +44,7 @@ namespace can_driver
 /**
  * @brief MockStepperDriver::MockStepperDriver
  */
-MockStepperDriver::MockStepperDriver(FakeCanData data) :
-  AbstractStepperDriver()
+MockStepperDriver::MockStepperDriver(FakeCanData data)
 {
     initializeFakeData(data);
     // retrieve list of ids
@@ -87,7 +86,7 @@ int MockStepperDriver::ping(uint8_t id)
 
 /**
  * @brief MockStepperDriver::scan : try to find "motors_to_find" list of motors for a given time
- * @param motors_to_find
+ * @param motors_unfound
  * @param id_list
  * @return
  */

@@ -50,7 +50,6 @@ class ActionTypeEnum : public AbstractEnum<ActionTypeEnum, EActionType>
 public:
     ActionTypeEnum(EActionType e=EActionType::NO_ACTION);
     ActionTypeEnum(const char* const str);
-    ~ActionTypeEnum() {}
 
 private:
     friend class AbstractEnum<ActionTypeEnum, EActionType>;

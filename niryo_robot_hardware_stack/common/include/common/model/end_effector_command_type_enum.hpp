@@ -47,7 +47,6 @@ class EndEffectorCommandTypeEnum : public AbstractEnum<EndEffectorCommandTypeEnu
 public:
     EndEffectorCommandTypeEnum(EEndEffectorCommandType e=EEndEffectorCommandType::CMD_TYPE_UNKNOWN);
     EndEffectorCommandTypeEnum(const char* const str);
-    ~EndEffectorCommandTypeEnum() {}
 
 private:
     friend class AbstractEnum<EndEffectorCommandTypeEnum, EEndEffectorCommandType>;
