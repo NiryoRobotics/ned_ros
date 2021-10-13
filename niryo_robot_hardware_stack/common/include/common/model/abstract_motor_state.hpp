@@ -42,8 +42,6 @@ public:
     AbstractMotorState(EHardwareType type, EComponentType component_type,
                        EBusProtocol bus_proto, uint8_t id);
 
-    AbstractMotorState& operator= ( AbstractMotorState && ) = delete;
-    AbstractMotorState& operator= ( const AbstractMotorState& ) = delete;
 
     ~AbstractMotorState() override = default;
 
@@ -70,6 +68,9 @@ protected:
     // see https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c67-a-polymorphic-class-should-suppress-public-copymove
     AbstractMotorState( const AbstractMotorState& ) = default;
     AbstractMotorState( AbstractMotorState&& ) = default;
+
+    AbstractMotorState& operator= ( AbstractMotorState && ) = default;
+    AbstractMotorState& operator= ( const AbstractMotorState& ) = default;
 };
 
 /**

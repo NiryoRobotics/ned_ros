@@ -506,12 +506,14 @@ void CanManager::_verifyMotorTimeoutLoop()
  */
 double CanManager::getCurrentTimeout() const
 {
-    if (isCalibrationInProgress())
-        return _calibration_timeout;
-    else if (_isPing)
-        return _ping_timeout;
+    double res = AbstractStepperDriver::STEPPER_MOTOR_TIMEOUT_VALUE;
 
-    return AbstractStepperDriver::STEPPER_MOTOR_TIMEOUT_VALUE;
+    if (isCalibrationInProgress())
+        res = _calibration_timeout;
+    else if (_isPing)
+        res = _ping_timeout;
+
+    return res;
 }
 
 // ******************

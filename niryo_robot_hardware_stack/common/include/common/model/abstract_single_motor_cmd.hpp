@@ -42,9 +42,6 @@ public:
 
     ~AbstractSingleMotorCmd() override = default;
 
-    AbstractSingleMotorCmd& operator= ( AbstractSingleMotorCmd && ) = delete;
-    AbstractSingleMotorCmd& operator= ( const AbstractSingleMotorCmd& ) = delete;
-
     // setters
     void clear();
 
@@ -65,6 +62,9 @@ protected:
     // see https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c67-a-polymorphic-class-should-suppress-public-copymove
     AbstractSingleMotorCmd( const AbstractSingleMotorCmd& ) = default;
     AbstractSingleMotorCmd( AbstractSingleMotorCmd&& ) noexcept = default;
+
+    AbstractSingleMotorCmd& operator= ( AbstractSingleMotorCmd && ) noexcept = default;
+    AbstractSingleMotorCmd& operator= ( const AbstractSingleMotorCmd& ) = default;
 };
 
 

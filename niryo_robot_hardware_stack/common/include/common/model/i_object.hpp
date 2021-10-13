@@ -33,19 +33,20 @@ namespace model
 class IObject
 {
 public:
-    // see https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c21-if-you-define-or-delete-any-copy-move-or-destructor-function-define-or-delete-them-all
     IObject() = default;
     virtual ~IObject() = default;
-
-    IObject( const IObject& ) = default;
-    IObject( IObject&& ) = default;
-
-    IObject& operator= ( IObject && ) = delete;
-    IObject& operator= ( const IObject& ) = delete;
 
     virtual void reset() = 0;
     virtual std::string str() const = 0;
     virtual bool isValid() const = 0;
+
+protected:
+    // see https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c21-if-you-define-or-delete-any-copy-move-or-destructor-function-define-or-delete-them-all
+    IObject( const IObject& ) = default;
+    IObject( IObject&& ) = default;
+
+    IObject& operator= ( IObject && ) = default;
+    IObject& operator= ( const IObject& ) = default;
 };
 
 } // namespace model

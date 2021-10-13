@@ -43,11 +43,6 @@ public:
     StepperMotorState(std::string name, EHardwareType type, EComponentType component_type,
                       EBusProtocol bus_proto, uint8_t id);
 
-    StepperMotorState& operator= ( StepperMotorState && ) = delete;
-    StepperMotorState& operator= ( const StepperMotorState& ) = delete;
-
-    ~StepperMotorState() override = default;
-
     int stepsPerRev();
 
     // setters
@@ -135,10 +130,6 @@ protected:
 private:
     static constexpr double STEPPERS_MOTOR_STEPS_PER_REVOLUTION = 200.0;
 
-protected:
-    // see https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c67-a-polymorphic-class-should-suppress-public-copymove
-    StepperMotorState( const StepperMotorState& ) = default;
-    StepperMotorState( StepperMotorState&& ) = default;
 };
 
 /**

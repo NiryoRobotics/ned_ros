@@ -46,8 +46,6 @@ public:
 
     ~AbstractHardwareState() override = default;
 
-    AbstractHardwareState& operator= ( AbstractHardwareState && ) = delete;
-    AbstractHardwareState& operator= ( const AbstractHardwareState& ) = delete;
 
     // getters
     EHardwareType getHardwareType() const;
@@ -96,6 +94,9 @@ protected:
     // see https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c67-a-polymorphic-class-should-suppress-public-copymove
     AbstractHardwareState( const AbstractHardwareState& ) = default;
     AbstractHardwareState( AbstractHardwareState&& ) = default;
+
+    AbstractHardwareState& operator= ( AbstractHardwareState && ) = default;
+    AbstractHardwareState& operator= ( const AbstractHardwareState& ) = default;
 };
 
 /**
