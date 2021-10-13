@@ -166,7 +166,7 @@ class SoundDatabase:
                     pass
 
     def __load_robot_sounds(self):
-        sounds = [self.__turn_on_sound_name, self.__turn_on_sound_name, self.__error_sound_name,
+        sounds = [self.__turn_on_sound_name, self.__turn_off_sound_name, self.__error_sound_name,
                   self.__connection_sound]
 
         self.__robot_sounds = {

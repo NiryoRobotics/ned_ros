@@ -11,7 +11,8 @@ class SoundInterfaceNode:
         self.__sound_interface_core = SoundManager()
 
     def on_shutdown(self):
-        self.__sound_interface_core.play_shutdown_sound()
+        self.__sound_interface_core.sound_end_event.wait(10)
+        pass
 
 
 if __name__ == '__main__':

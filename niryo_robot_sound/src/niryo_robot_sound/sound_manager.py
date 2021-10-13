@@ -1,6 +1,6 @@
 # Lib
 import rospy
-from threading import Thread
+from threading import Thread, Event
 
 # Messages
 from niryo_robot_status.msg import RobotStatus
@@ -27,6 +27,8 @@ class SoundManager:
         self.__sound_database = SoundDatabase()
 
         self.__sound_thread = Thread()
+        self.sound_end_event = Event()
+        self.sound_end_event.clear()
 
         self.__rpi_overheating = False
         self.__overheat_timer = None
@@ -50,6 +52,15 @@ class SoundManager:
 
     # - Callbacks
     def __callback_sub_robot_status(self, msg):
+        if self.__robot_status == RobotStatus.SHUTDOWN:
+            return
+        elif msg.robot_status == RobotStatus.SHUTDOWN:
+            self.__robot_status = msg.robot_status
+            rospy.sleep(1) # avoid ctrl+c
+            self.play_shutdown_sound()
+            self.sound_end_event.set()
+            return
+
         if msg.rpi_overheating != self.__rpi_overheating:
             self.__rpi_overheating = msg.rpi_overheating
             if self.__rpi_overheating:
@@ -126,6 +137,6 @@ class SoundManager:
         if self.__sound_thread.is_alive():
             self.__sound_player.stop()
             self.__sound_thread.join()
-
+        print "start"
         sound = self.__sound_database.sleep_sound
         self.__sound_player.play_sound(sound)
