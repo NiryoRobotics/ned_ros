@@ -155,11 +155,14 @@ int CanInterfaceCore::addJoint(const std::shared_ptr<common::model::StepperMotor
   // add dynamixel as a new tool
   _can_manager->addHardwareComponent(jointState);
 
-  std::lock_guard<std::mutex> lck(_control_loop_mutex);
-  if (_can_manager->ping(jointState->getId()))
+  bool res;
+  {
+    std::lock_guard<std::mutex> lck(_control_loop_mutex);
+    res = _can_manager->ping(jointState->getId());
+  }
+  if (res)
   {
       // no init commands
-
       result = niryo_robot_msgs::CommandStatus::SUCCESS;
   }
   else
@@ -508,9 +511,13 @@ int CanInterfaceCore::setConveyor(const std::shared_ptr<common::model::ConveyorS
     // add stepper as a new conveyor
     _can_manager->addHardwareComponent(state);
 
-    lock_guard<mutex> lck(_control_loop_mutex);
+    bool res;
+    {
+        lock_guard<mutex> lck(_control_loop_mutex);
+        res = _can_manager->ping(state->getId());
+    }
     // try to find motor id 6 (default motor id for conveyor
-    if (_can_manager->ping(state->getId()))
+    if (res)
     {
         // send commands to init
         ROS_DEBUG("ConveyorInterfaceCore::addConveyor : Initializing for CAN bus");
@@ -528,7 +535,7 @@ int CanInterfaceCore::setConveyor(const std::shared_ptr<common::model::ConveyorS
     }
     else
     {
-        ROS_WARN("CanInterfaceCore::setConveyor - No conveyor found");
+        ROS_DEBUG("CanInterfaceCore::setConveyor - No conveyor found");
     }
 
     return result;
@@ -541,12 +548,16 @@ int CanInterfaceCore::setConveyor(const std::shared_ptr<common::model::ConveyorS
  */
 void CanInterfaceCore::unsetConveyor(uint8_t motor_id, uint8_t default_conveyor_id)
 {
-    lock_guard<mutex> lck(_control_loop_mutex);
-
     ROS_DEBUG("CanInterfaceCore::unsetConveyor - unsetConveyor: id %d", motor_id);
-
     auto state = getJointState(motor_id);
-    if (CAN_OK == _can_manager->changeId(state->getHardwareType(), motor_id, default_conveyor_id))
+
+    int res;
+    {
+        lock_guard<mutex> lck(_control_loop_mutex);
+        res =  _can_manager->changeId(state->getHardwareType(), motor_id, default_conveyor_id);
+    }
+
+    if (CAN_OK == res)
     {
         _can_manager->removeHardwareComponent(default_conveyor_id);
     }

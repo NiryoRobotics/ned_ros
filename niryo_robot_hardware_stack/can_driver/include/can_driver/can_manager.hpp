@@ -128,6 +128,9 @@ class CanManager : public common::model::IBusManager
         std::map<common::model::EHardwareType, std::shared_ptr<can_driver::AbstractCanDriver> > _driver_map;
 
         double _calibration_timeout{30.0};
+        static double constexpr _ping_timeout{5.0}; // prevent timeout check on motors when a ping failed
+        bool _isPing{false};
+
         common::model::EStepperCalibrationStatus _calibration_status;
 
         // for hardware control

@@ -763,7 +763,7 @@ bool TtlManager::readHwStatus()
 
                             int16_t speed = static_cast<int16_t>(velocity);
                             auto cState = std::dynamic_pointer_cast<common::model::ConveyorState>(state);
-                            cState->setDirection(speed > 0 ? 1 : -1);
+                            cState->setDirection(speed > 0 ? -1 : 1);
                             cState->setSpeed(std::abs(speed));
                             cState->setState(speed != 0);
                         }
