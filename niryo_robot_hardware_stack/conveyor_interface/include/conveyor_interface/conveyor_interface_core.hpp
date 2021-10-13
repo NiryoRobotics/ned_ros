@@ -21,6 +21,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #define CONVEYOR_INTERFACE_CORE_HPP
 
 // c++
+#include <cstdint>
 #include <memory>
 #include <vector>
 
@@ -108,7 +109,9 @@ private:
         std::shared_ptr<ttl_driver::TtlInterfaceCore> _ttl_interface;
         std::shared_ptr<can_driver::CanInterfaceCore> _can_interface;
 
-        std::map<uint8_t, std::shared_ptr<common::model::ConveyorState> > _state_map;
+        std::map<uint8_t, std::shared_ptr<common::model::ConveyorState>> _state_map;
+        // vector keep track order of insertion in state_map
+        std::vector<uint8_t> _order_insertion;
 
         static constexpr int TTL_DEFAULT_ID{8};
         static constexpr int CAN_DEFAULT_ID{6};

@@ -21,7 +21,6 @@
 #include <cstddef>
 #include <cstdint>
 #include <memory>
-#include <mutex>
 #include <vector>
 #include <string>
 #include <functional>
@@ -44,7 +43,6 @@ using ::common::model::ConveyorState;
 using ::common::model::EStepperCommandType;
 using ::common::model::StepperSingleCmd;
 using ::common::model::EBusProtocol;
-using ::common::model::EHardwareType;
 using ::common::model::HardwareTypeEnum;
 using ::common::model::StepperTtlSingleCmd;
 
@@ -255,6 +253,8 @@ ConveyorInterfaceCore::addConveyor()
                         // add state to list of current connected ids
                         conveyor_state->updateId(conveyor_id);
                         _state_map.insert(std::make_pair(conveyor_id, conveyor_state));
+                        _order_insertion.push_back(conveyor_id);
+
                         // remove from pool
                         bus.second.pool_id_list.erase(bus.second.pool_id_list.begin());
                         res.message = "Set new conveyor on id ";
@@ -326,6 +326,7 @@ ConveyorInterfaceCore::removeConveyor(uint8_t id)
 
             // remove from states
             _state_map.erase(id);
+            _order_insertion.erase(std::remove(_order_insertion.begin(), _order_insertion.end(), id), _order_insertion.end());
 
             // remove conveyor
             _bus_config_map.at(bus_proto).interface->unsetConveyor(id, _bus_config_map.at(bus_proto).default_id);
@@ -449,34 +450,44 @@ void ConveyorInterfaceCore::_publishConveyorsFeedback(const ros::TimerEvent&)
     conveyor_interface::ConveyorFeedback data;
 
     std::lock_guard<std::mutex> lck(_state_map_mutex);
-    std::map<uint8_t, std::shared_ptr<common::model::ConveyorState>> temp_state_map = _state_map;
-    for (auto const& conveyor_state : temp_state_map)
+
+    std::vector<uint8_t> tmp_ids = _order_insertion;
+    for (auto id : tmp_ids)
     {
-        if (conveyor_state.second)
+        auto conveyor_state = _state_map.at(id);
+        if (conveyor_state)
         {
             std::shared_ptr<common::model::IDriverCore> interface;
-            if (conveyor_state.second->getBusProtocol() == EBusProtocol::CAN)
+            if (conveyor_state->getBusProtocol() == EBusProtocol::CAN)
                 interface = _can_interface;
             else
                 interface = _ttl_interface;
             // TODO(CC) put in ttl_manager
             if (interface)
             {
-                if (!interface->scanMotorId(conveyor_state.second->getId()))
+                int cnt_scan_failed = 0;
+                while (cnt_scan_failed < 2)
                 {
-                    removeConveyor(conveyor_state.second->getId());
-                } 
+                    if (!interface->scanMotorId(conveyor_state->getId()))
+                    {
+                        cnt_scan_failed++;
+                    }
+                    else
+                        break;
+                }
+                if (cnt_scan_failed == 2)
+                    removeConveyor(conveyor_state->getId());
                 else
                 {
-                    data.conveyor_id = conveyor_state.second->getId();
-                    data.running = conveyor_state.second->getState();
-                    data.direction = static_cast<int8_t>(conveyor_state.second->getDirection());
-                    data.speed = conveyor_state.second->getSpeed();
+                    data.conveyor_id = conveyor_state->getId();
+                    data.running = conveyor_state->getState();
+                    data.direction = static_cast<int8_t>(conveyor_state->getDirection());
+                    data.speed = conveyor_state->getSpeed();
                     msg.conveyors.push_back(data);
 
-                    ROS_DEBUG_THROTTLE(2.0, "ConveyorInterfaceCore::_publishConveyorsFeedback - Found a conveyor, publishing data : %s", conveyor_state.second->str().c_str());
+                    ROS_DEBUG_THROTTLE(2.0, "ConveyorInterfaceCore::_publishConveyorsFeedback - Found a conveyor, publishing data : %s", conveyor_state->str().c_str());
                 }
-            } 
+            }
         }
     }
     _conveyors_feedback_publisher.publish(msg);
@@ -498,4 +509,4 @@ conveyor_interface::ConveyorInterfaceCore::getConveyorStates() const
   return states;
 }
 
-}
+}  // namespace conveyor_interface
