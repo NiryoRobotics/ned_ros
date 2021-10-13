@@ -1491,7 +1491,7 @@ class NiryoRosWrapper:
         :return: status, message
         :rtype: (int, str)
         """
-        result = self.__call_service('/niryo_robot_rpi/set_digital_io_state',
+        result = self.__call_service('/niryo_robot_rpi/set_digital_io',
                                      SetDigitalIO, pin_id, digital_state)
         return self.__classic_return_w_check(result)
 
@@ -1507,7 +1507,7 @@ class NiryoRosWrapper:
         :rtype: (int, str)
         """
         result = self.__call_service('/niryo_robot_rpi/set_analog_io',
-                                     SetDigitalIO, pin_id, analog_state)
+                                     SetAnalogIO, pin_id, analog_state)
         return self.__classic_return_w_check(result)
 
     def digital_read(self, pin_id):
@@ -1538,7 +1538,7 @@ class NiryoRosWrapper:
         :rtype: PinState
         """
         result = self.__call_service('/niryo_robot_rpi/get_analog_io',
-                                     GetDigitalIO, pin_id)
+                                     GetAnalogIO, pin_id)
         self.__check_result_status(result)
         return result.value
 
