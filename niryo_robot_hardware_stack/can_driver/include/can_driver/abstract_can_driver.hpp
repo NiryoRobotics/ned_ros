@@ -41,8 +41,8 @@ class AbstractCanDriver
 public:
     static constexpr int MAX_MESSAGE_LENGTH                     = 8;
     static constexpr int MESSAGE_LENGTH                         = 4;
-
-    static constexpr double STEPPER_MOTOR_TIMEOUT_VALUE         = 1.0;
+    static constexpr double PING_TIME_OUT                       = 0.5;  // timeout using if ping fail
+    static constexpr double STEPPER_MOTOR_TIMEOUT_VALUE         = 2.0;
 
 public:
     AbstractCanDriver() = default;

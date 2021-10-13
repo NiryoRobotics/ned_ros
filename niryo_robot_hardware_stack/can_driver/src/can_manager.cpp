@@ -29,7 +29,6 @@
 #include <asm-generic/errno.h>
 #include <cstdint>
 #include <functional>
-#include <mutex>
 #include <string>
 #include <vector>
 #include <set>
@@ -416,7 +415,9 @@ bool CanManager::ping(uint8_t id)
             auto it = _driver_map.at(_state_map.find(id)->second->getHardwareType());
             if (it)
             {
+                _isPing = true;
                 result = (CAN_OK == it->ping(id));
+                _isPing = false;
             }
             else
             {
@@ -507,7 +508,9 @@ double CanManager::getCurrentTimeout() const
 {
     if (isCalibrationInProgress())
         return _calibration_timeout;
-    
+    else if (_isPing)
+        return _ping_timeout;
+
     return AbstractStepperDriver::STEPPER_MOTOR_TIMEOUT_VALUE;
 }
 

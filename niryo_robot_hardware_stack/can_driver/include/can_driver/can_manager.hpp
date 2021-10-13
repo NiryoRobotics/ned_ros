@@ -136,11 +136,12 @@ private:
     std::string _debug_error_message;
 
     // for hardware control
-
     std::mutex  _stepper_timeout_mutex;
     std::thread _stepper_timeout_thread;
 
     double _calibration_timeout{30.0};
+    bool _isPing{false};
+    static double constexpr _ping_timeout{5.0}; // prevent timeout check on motors when a ping failed
 
     common::model::EStepperCalibrationStatus _calibration_status{common::model::EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED};
 

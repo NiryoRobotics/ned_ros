@@ -49,7 +49,7 @@ int AbstractCanDriver::ping(uint8_t id)
 
   double time_begin_scan = ros::Time::now().toSec();
 
-  while (ros::Time::now().toSec() - time_begin_scan < STEPPER_MOTOR_TIMEOUT_VALUE)
+  while (ros::Time::now().toSec() - time_begin_scan < PING_TIME_OUT)
   {
       ros::Duration(0.001).sleep();  // check at 1000 Hz
       if (canReadData())
