@@ -33,10 +33,9 @@ namespace ttl_driver
 class AbstractStepperDriver : public AbstractMotorDriver
 {
 public:
-    AbstractStepperDriver();
+    AbstractStepperDriver() = default;
     AbstractStepperDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
                           std::shared_ptr<dynamixel::PacketHandler> packetHandler);
-    ~AbstractStepperDriver() override;
 
 public:
     // AbstractMotorDriver interface

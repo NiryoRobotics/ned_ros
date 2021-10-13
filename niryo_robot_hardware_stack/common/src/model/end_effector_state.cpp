@@ -21,6 +21,7 @@
 #include <sstream>
 #include <string>
 #include <queue>
+#include <utility>
 
 // ros
 #include <ros/ros.h>
@@ -40,26 +41,17 @@ namespace model
 /**
  * @brief EndEffectorState::EndEffectorState
  */
-EndEffectorState::EndEffectorState()
-{
-  _buttons_list.at(0) = std::make_shared<Button>();
-  _buttons_list.at(1) = std::make_shared<Button>();
-  _buttons_list.at(2) = std::make_shared<Button>();
-}
+EndEffectorState::EndEffectorState() :
+  EndEffectorState(1)
+{}
 
 /**
  * @brief EndEffectorState::EndEffectorState
  * @param id
  */
 EndEffectorState::EndEffectorState(uint8_t id) :
-  AbstractHardwareState(EHardwareType::END_EFFECTOR,
-                        EComponentType::END_EFFECTOR,
-                        EBusProtocol::TTL, id)
-{
-  _buttons_list.at(0) = std::make_shared<Button>();
-  _buttons_list.at(1) = std::make_shared<Button>();
-  _buttons_list.at(2) = std::make_shared<Button>();
-}
+  EndEffectorState(id, EHardwareType::END_EFFECTOR)
+{}
 
 /**
  * @brief EndEffectorState::EndEffectorState
@@ -75,24 +67,6 @@ EndEffectorState::EndEffectorState(uint8_t id, common::model::EHardwareType type
 }
 
 /**
- * @brief EndEffectorState::EndEffectorState : copy constructor
- * @param state
- */
-EndEffectorState::EndEffectorState(const EndEffectorState &state) :
-  AbstractHardwareState(state)
-{
-    _buttons_list = state._buttons_list;
-    _accelerometer_values = state._accelerometer_values;
-    _collision_status = state._collision_status;
-}
-
-/**
- * @brief EndEffectorState::~EndEffectorState
- */
-EndEffectorState::~EndEffectorState()
-= default;
-
-/**
  * @brief EndEffectorState::configureButton
  * @param id
  * @param button_type
@@ -102,8 +76,8 @@ void EndEffectorState::configureButton(uint8_t id, EButtonType button_type)
 {
   assert(id <= 3);
 
-  _buttons_list[id - 1]->actions.push(EActionType::NO_ACTION);
-  _buttons_list[id - 1]->type = button_type;
+  _buttons_list.at(id - 1)->actions.push(EActionType::NO_ACTION);
+  _buttons_list.at(id - 1)->type = button_type;
 }
 
 // ***********************
@@ -155,7 +129,7 @@ void EndEffectorState::setButtonStatus(uint8_t id, EActionType action)
 {
   assert(id <= 3);
 
-  auto button = _buttons_list[id - 1];
+  auto button = _buttons_list.at(id - 1);
   // do not add 2 no action states consecutive
   if (button->actions.back() == EActionType::NO_ACTION &&
           action == EActionType::NO_ACTION)
@@ -208,11 +182,11 @@ void EndEffectorState::setAccelerometerZValue(const uint32_t &zValue)
 
 /**
  * @brief EndEffectorState::setCollisionStatus
- * @param collision_satus
+ * @param status
  */
-void EndEffectorState::setCollisionStatus(bool collision_satus)
+void EndEffectorState::setCollisionStatus(bool status)
 {
-  _collision_status = collision_satus;
+  _collision_status = status;
 }
 
 /**

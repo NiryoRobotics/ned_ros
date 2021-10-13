@@ -53,25 +53,7 @@ AbstractHardwareState::AbstractHardwareState(EHardwareType type,
       _component_type(component_type),
       _bus_proto(bus_proto),
       _id(id)
-{
-}
-
-/**
- * @brief AbstractHardwareState::AbstractHardwareState : copy ctor
- * @param state
- */
-AbstractHardwareState::AbstractHardwareState(const AbstractHardwareState &state)
-{
-  _hw_type = state._hw_type;
-  _component_type = state._component_type;
-  _bus_proto = state._bus_proto;
-  _id = state._id;
-  _firmware_version = state._firmware_version;
-  _temperature = state._temperature;
-  _voltage = state._voltage;
-  _hw_error = state._hw_error;
-  _hw_error_message = state._hw_error_message;
-}
+{}
 
 /**
  * @brief AbstractHardwareState::reset
@@ -87,7 +69,7 @@ void AbstractHardwareState::reset()
 
 /**
  * @brief AbstractHardwareState::operator ==
- * @param m
+ * @param other
  * @return
  */
 bool AbstractHardwareState::operator==(const AbstractHardwareState &other)

@@ -30,23 +30,15 @@ namespace ttl_driver
 
 /**
  * @brief AbstractEndEffectorDriver::AbstractEndEffectorDriver
- */
-AbstractEndEffectorDriver::AbstractEndEffectorDriver()
-= default;
-
-/**
- * @brief AbstractEndEffectorDriver::AbstractEndEffectorDriver
  * @param portHandler
  * @param packetHandler
  */
 AbstractEndEffectorDriver::AbstractEndEffectorDriver(shared_ptr<dynamixel::PortHandler> portHandler,
                                                      shared_ptr<dynamixel::PacketHandler> packetHandler) :
-  AbstractTtlDriver(std::move(portHandler), std::move(packetHandler))
+  AbstractTtlDriver(std::move(portHandler),
+                    std::move(packetHandler))
 {
 }
-
-AbstractEndEffectorDriver::~AbstractEndEffectorDriver()
-= default;
 
 /**
  * @brief AbstractEndEffectorDriver::str : build a string describing the object. For debug purpose only

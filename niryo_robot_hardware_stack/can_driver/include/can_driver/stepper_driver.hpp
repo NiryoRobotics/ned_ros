@@ -42,7 +42,6 @@ class StepperDriver : public AbstractStepperDriver
 
 public:
     StepperDriver(std::shared_ptr<mcp_can_rpi::MCP_CAN> mcp_can);
-    ~StepperDriver() override;
 
 public:
     std::string str() const override;
@@ -50,7 +49,7 @@ public:
 
     // AbstractStepperDriver interface
 public:
-    virtual uint8_t sendUpdateConveyorId(uint8_t old_id, uint8_t new_id) override;
+    uint8_t sendUpdateConveyorId(uint8_t old_id, uint8_t new_id) override;
     uint8_t sendTorqueOnCommand(uint8_t id, int torque_on) override;
     uint8_t sendRelativeMoveCommand(uint8_t id, int steps, int delay) override;
     uint8_t sendPositionCommand(uint8_t id, int cmd) override;
@@ -71,14 +70,6 @@ StepperDriver<reg_type>::StepperDriver(std::shared_ptr<mcp_can_rpi::MCP_CAN> mcp
     AbstractStepperDriver(mcp_can)
 {
 }
-
-/**
- * @brief StepperDriver::~StepperDriver
- */
-template<typename reg_type>
-StepperDriver<reg_type>::~StepperDriver()
-= default;
-
 
 /**
  * @brief StepperDriver::str

@@ -36,14 +36,7 @@ namespace can_driver
  */
 AbstractCanDriver::AbstractCanDriver(std::shared_ptr<mcp_can_rpi::MCP_CAN> mcp_can) :
   _mcp_can(std::move(mcp_can))
-{
-}
-
-/**
- * @brief AbstractCanDriver::~AbstractCanDriver
- */
-AbstractCanDriver::~AbstractCanDriver()
-= default;
+{}
 
 /**
  * @brief StepperDriver::ping

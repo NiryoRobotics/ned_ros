@@ -420,7 +420,7 @@ bool CanManager::ping(uint8_t id)
             }
             else
             {
-                ROS_ERROR_THROTTLE(1, "TtlManager::ping - the can drivers seeems uninitialized");
+                ROS_ERROR_THROTTLE(1, "CanManager::ping - the can drivers seeems uninitialized");
             }
         }
     }
@@ -570,8 +570,8 @@ int CanManager::writeSingleCommand(const std::shared_ptr<common::model::Abstract
 
     if (result != CAN_OK)
     {
-        ROS_WARN("TtlManager::writeSingleCommand - Failed to write a single command on motor id : %d", id);
-        _debug_error_message = "TtlManager - Failed to write a single command";
+        ROS_WARN("CanManager::writeSingleCommand - Failed to write a single command on motor id : %d", id);
+        _debug_error_message = "CanManager - Failed to write a single command";
     }
 
     return result;
@@ -595,7 +595,7 @@ void CanManager::executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, int32_
                 if (err != CAN_OK)
                 {
                     ROS_WARN("CanManager::executeJointTrajectoryCmd - Failed to write position");
-                    _debug_error_message = "TtlManager - Failed to write position";
+                    _debug_error_message = "CanManager - Failed to write position";
                 }
             }
         }
@@ -634,14 +634,14 @@ void CanManager::resetCalibration()
 }
 
 /**
- * @brief TtlManager::getCalibrationResult
+ * @brief CanManager::getCalibrationResult
  * @param motor_id
  * @return
  */
 int32_t CanManager::getCalibrationResult(uint8_t motor_id) const
 {
     if (!_state_map.count(motor_id) && _state_map.at(motor_id))
-        throw std::out_of_range("TtlManager::getMotorsState: Unknown motor id");
+        throw std::out_of_range("CanManager::getMotorsState: Unknown motor id");
 
     return std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(motor_id))->getCalibrationValue();
 }
@@ -693,7 +693,7 @@ void CanManager::getBusState(bool& connection_status,
 }
 
 /**
- * @brief TtlManager::getMotorsStates
+ * @brief CanManager::getMotorsStates
  * @return only the joints states
  */
 std::vector<std::shared_ptr<JointState> >
@@ -730,7 +730,7 @@ CanManager::getHardwareState(uint8_t motor_id) const
 // ********************
 
 /**
- * @brief TtlManager::addHardwareDriver add driver corresponding to a type of hardware
+ * @brief CanManager::addHardwareDriver add driver corresponding to a type of hardware
  * @param hardware_type
  */
 void CanManager::addHardwareDriver(common::model::EHardwareType hardware_type)

@@ -54,12 +54,6 @@ MockStepperDriver::MockStepperDriver(std::shared_ptr<FakeCanData>  data) :
 }
 
 /**
- * @brief MockStepperDriver::~StepperDriver
- */
-MockStepperDriver::~MockStepperDriver()
-= default;
-
-/**
  * @brief MockStepperDriver::str
  * @return
  */

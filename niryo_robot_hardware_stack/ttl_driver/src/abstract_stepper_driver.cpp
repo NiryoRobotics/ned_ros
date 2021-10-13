@@ -29,23 +29,11 @@ namespace ttl_driver
 
 /**
  * @brief AbstractStepperDriver::AbstractStepperDriver
- */
-AbstractStepperDriver::AbstractStepperDriver()
-= default;
-
-/**
- * @brief AbstractStepperDriver::AbstractStepperDriver
 */
 AbstractStepperDriver::AbstractStepperDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
                                              std::shared_ptr<dynamixel::PacketHandler> packetHandler) :
     AbstractMotorDriver(std::move(portHandler), std::move(packetHandler))
 {}
-
-/**
- * @brief AbstractStepperDriver::~AbstractStepperDriver
-*/
-AbstractStepperDriver::~AbstractStepperDriver()
-= default;
 
 std::string AbstractStepperDriver::str() const
 {

@@ -37,11 +37,8 @@ namespace model
 class ToolState : public DxlMotorState
 {
     public:
-        ToolState();
+        ToolState() = default;
         ToolState(std::string name, EHardwareType type, uint8_t id);
-        ToolState(const ToolState& state);
-
-        ~ToolState() override;
 
         void setName(std::string name);
         void setPosition(double position);

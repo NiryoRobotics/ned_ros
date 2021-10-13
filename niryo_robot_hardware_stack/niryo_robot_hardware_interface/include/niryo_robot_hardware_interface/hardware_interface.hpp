@@ -49,7 +49,15 @@ class HardwareInterface : common::util::IInterfaceCore
 {
     public:
         HardwareInterface(ros::NodeHandle &nh);
-        ~HardwareInterface() override;
+        ~HardwareInterface() override = default;
+
+        // non copyable class
+        HardwareInterface( const HardwareInterface& ) = delete;
+        HardwareInterface( HardwareInterface&& ) = delete;
+
+        HardwareInterface& operator= ( HardwareInterface && ) = delete;
+        HardwareInterface& operator= ( const HardwareInterface& ) = delete;
+
         bool init(ros::NodeHandle &nh) override;
 
     private:

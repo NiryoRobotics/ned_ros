@@ -36,8 +36,7 @@ namespace ttl_driver
 class MockStepperDriver : public AbstractStepperDriver
 {
     public:
-        MockStepperDriver(std::shared_ptr<FakeTtlData>   data);
-        ~MockStepperDriver() override;
+        MockStepperDriver(std::shared_ptr<FakeTtlData> data);
 
         std::string str() const override;
 

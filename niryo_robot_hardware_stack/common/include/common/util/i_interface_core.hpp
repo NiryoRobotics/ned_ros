@@ -32,27 +32,28 @@ namespace util
 {
 
 /**
- * @brief The IInterfaceCore class
+ * @brief The IInterfaceCore class is an interface intended to be used as a polymorphic base class
  */
 class IInterfaceCore
 {
-    public:
-        virtual ~IInterfaceCore() = 0;
-        virtual bool init(ros::NodeHandle& nh) = 0;
+public:
+    IInterfaceCore() = default;
+    virtual ~IInterfaceCore() = default;
 
-    private:
-        virtual void initParameters(ros::NodeHandle& nh) = 0;
-        virtual void startServices(ros::NodeHandle& nh) = 0;
-        virtual void startPublishers(ros::NodeHandle& nh) = 0;
-        virtual void startSubscribers(ros::NodeHandle& nh) = 0;
+    // see https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c67-a-polymorphic-class-should-suppress-public-copymove
+    IInterfaceCore( const IInterfaceCore& ) = delete;
+    IInterfaceCore( IInterfaceCore&& ) = delete;
+    IInterfaceCore& operator= ( IInterfaceCore && ) = delete;
+    IInterfaceCore& operator= ( const IInterfaceCore& ) = delete;
+
+    virtual bool init(ros::NodeHandle& nh) = 0;
+
+private:
+    virtual void initParameters(ros::NodeHandle& nh) = 0;
+    virtual void startServices(ros::NodeHandle& nh) = 0;
+    virtual void startPublishers(ros::NodeHandle& nh) = 0;
+    virtual void startSubscribers(ros::NodeHandle& nh) = 0;
 };
-
-/**
- * @brief IInterfaceCore::~IInterfaceCore
- */
-inline
-IInterfaceCore::~IInterfaceCore()
-= default;
 
 } // namespace util
 } // namespace common

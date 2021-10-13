@@ -53,10 +53,8 @@ class SynchronizeMotorCmd : public AbstractSynchronizeMotorCmd<ParamType>
 
         // getters
         E getType() const;
-        int getCmdType() const override
-        {
-            return static_cast<int>(_type);
-        }
+        int getCmdType() const override;
+
         // AbstractSingleMotorCmd interface
         bool isStepperCmd() const override;
         bool isDxlCmd() const override;
@@ -71,13 +69,12 @@ class SynchronizeMotorCmd : public AbstractSynchronizeMotorCmd<ParamType>
 };
 
 /**
- * @brief SynchronizeMotorCmd<E, ParamType>::SynchronizeMotorCmd
+ * @brief SingleMotorCmd<E, ParamType>::SingleMotorCmd
  */
 template<typename E, typename ParamType>
 SynchronizeMotorCmd<E, ParamType>::SynchronizeMotorCmd() :
-    AbstractSynchronizeMotorCmd<ParamType>()
-{
-}
+    SynchronizeMotorCmd<E, ParamType>(E::CMD_TYPE_UNKNOWN)
+{}
 
 /**
  * @brief SynchronizeMotorCmd<E, ParamType>::SynchronizeMotorCmd
@@ -85,11 +82,11 @@ SynchronizeMotorCmd<E, ParamType>::SynchronizeMotorCmd() :
  */
 template<typename E, typename ParamType>
 SynchronizeMotorCmd<E, ParamType>::SynchronizeMotorCmd(E type) :
-    SynchronizeMotorCmd()
+    AbstractSynchronizeMotorCmd<ParamType>()
 {
     static_assert(std::is_enum<E>::value, "E must be an enum");
-    setType(type);
 
+    this->setType(type);
     this->clear();
 }
 
@@ -111,6 +108,16 @@ template<typename E, typename ParamType>
 E SynchronizeMotorCmd<E, ParamType>::getType() const
 {
     return _type;
+}
+
+/**
+ * @brief SynchronizeMotorCmd<E, ParamType>::getCmdType
+ * @return
+ */
+template<typename E, typename ParamType>
+int SynchronizeMotorCmd<E, ParamType>::getCmdType() const
+{
+  return static_cast<int>(_type);
 }
 
 /**

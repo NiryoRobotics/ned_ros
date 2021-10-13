@@ -51,6 +51,10 @@ class CanInterfaceCore : public common::util::IDriverCore, public common::util::
 
         CanInterfaceCore(ros::NodeHandle& nh);
         ~CanInterfaceCore() override;
+        CanInterfaceCore( const CanInterfaceCore& ) = delete;
+        CanInterfaceCore( CanInterfaceCore&& ) = delete;
+        CanInterfaceCore& operator= ( CanInterfaceCore && ) = delete;
+        CanInterfaceCore& operator= ( const CanInterfaceCore& ) = delete;
 
         bool init(ros::NodeHandle& nh) override;
 

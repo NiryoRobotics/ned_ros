@@ -58,9 +58,15 @@ namespace can_driver
 class CanManager : public common::util::IBusManager
 {
 public:
-
+    CanManager() = delete;
     CanManager(ros::NodeHandle& nh);
     ~CanManager() override;
+
+    // see https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c21-if-you-define-or-delete-any-copy-move-or-destructor-function-define-or-delete-them-all
+    CanManager( const CanManager& ) = delete;
+    CanManager( CanManager&& ) = delete;
+    CanManager& operator= ( CanManager && ) = delete;
+    CanManager& operator= ( const CanManager& ) = delete;
 
     // IBusManager Interface
     bool init(ros::NodeHandle& nh) override;
@@ -140,6 +146,7 @@ private:
 
     bool _simulation_mode{false};
     bool _is_connection_ok{false};
+
 };
 
 // inline getters
@@ -165,7 +172,7 @@ size_t CanManager::getNbMotors() const
 }
 
 /**
- * @brief TtlManager::getRemovedMotorList
+ * @brief CanManager::getRemovedMotorList
  * @return
  */
 inline

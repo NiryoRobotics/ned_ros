@@ -51,16 +51,6 @@ AbstractMotorState::AbstractMotorState(EHardwareType type, EComponentType compon
 }
 
 /**
- * @brief AbstractMotorState::AbstractMotorState
- * @param state
- */
-AbstractMotorState::AbstractMotorState(const AbstractMotorState &state) :
-  AbstractHardwareState(state)
-{
-  _position_state = state._position_state;
-}
-
-/**
  * @brief AbstractMotorState::reset
  */
 void AbstractMotorState::reset()

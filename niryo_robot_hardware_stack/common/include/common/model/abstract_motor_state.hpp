@@ -37,31 +37,39 @@ namespace model
  */
 class AbstractMotorState : public AbstractHardwareState
 {
-    public:
+public:
+    AbstractMotorState();
+    AbstractMotorState(EHardwareType type, EComponentType component_type,
+                       EBusProtocol bus_proto, uint8_t id);
 
-        AbstractMotorState();
-        AbstractMotorState(EHardwareType type, EComponentType component_type,
-                           EBusProtocol bus_proto, uint8_t id);
-        AbstractMotorState(const AbstractMotorState& state);
+    AbstractMotorState& operator= ( AbstractMotorState && ) = delete;
+    AbstractMotorState& operator= ( const AbstractMotorState& ) = delete;
 
-        // getters
-        int getPositionState() const;
+    ~AbstractMotorState() override = default;
 
-        // setters
-        void setPositionState(int pos);
+    // getters
+    int getPositionState() const;
 
-        // tests
-        bool isStepper() const;
-        bool isDynamixel() const;
+    // setters
+    void setPositionState(int pos);
 
-        // IObject interface
-        void reset() override;
-        std::string str() const override;
-        bool isValid() const override = 0; // not reimplemented to keep this class abstract
+    // tests
+    bool isStepper() const;
+    bool isDynamixel() const;
 
-    protected:
-        // read variables
-        int _position_state{0};
+    // IObject interface
+    void reset() override;
+    std::string str() const override;
+    bool isValid() const override = 0; // not reimplemented to keep this class abstract
+
+protected:
+    // read variables
+    int _position_state{0};
+
+protected:
+    // see https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c67-a-polymorphic-class-should-suppress-public-copymove
+    AbstractMotorState( const AbstractMotorState& ) = default;
+    AbstractMotorState( AbstractMotorState&& ) = default;
 };
 
 /**

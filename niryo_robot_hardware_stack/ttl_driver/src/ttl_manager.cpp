@@ -85,14 +85,6 @@ TtlManager::TtlManager(ros::NodeHandle& nh) :
 }
 
 /**
- * @brief TtlManager::~TtlManager
- */
-TtlManager::~TtlManager()
-{
-    // we use an "init()" in the ctor. Thus there should be some kind of "uninit" in the dtor
-}
-
-/**
  * @brief TtlManager::init
  * @param nh
  * @return

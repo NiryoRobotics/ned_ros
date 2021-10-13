@@ -39,15 +39,10 @@ AbstractMotorDriver::AbstractMotorDriver()
  */
 AbstractMotorDriver::AbstractMotorDriver(shared_ptr<dynamixel::PortHandler> portHandler,
                                          shared_ptr<dynamixel::PacketHandler> packetHandler) :
-    AbstractTtlDriver(std::move(portHandler), std::move(packetHandler))
+    AbstractTtlDriver(std::move(portHandler),
+                      std::move(packetHandler))
 {
 }
-
-/**
- * @brief AbstractMotorDriver::~AbstractMotorDriver
- */
-AbstractMotorDriver::~AbstractMotorDriver()
-= default;
 
 /**
  * @brief AbstractMotorDriver::str

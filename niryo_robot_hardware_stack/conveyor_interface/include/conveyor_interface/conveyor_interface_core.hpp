@@ -51,18 +51,26 @@ class ConveyorInterfaceCore : public common::util::IInterfaceCore
         ConveyorInterfaceCore(ros::NodeHandle& nh,
                               std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface,
                               std::shared_ptr<can_driver::CanInterfaceCore> can_interface);
-        virtual ~ConveyorInterfaceCore() override;
-        virtual bool init(ros::NodeHandle& nh) override;
+        ~ConveyorInterfaceCore() override = default;
+
+        // non copyable class
+        ConveyorInterfaceCore( const ConveyorInterfaceCore& ) = delete;
+        ConveyorInterfaceCore( ConveyorInterfaceCore&& ) = delete;
+
+        ConveyorInterfaceCore& operator= ( ConveyorInterfaceCore && ) = delete;
+        ConveyorInterfaceCore& operator= ( const ConveyorInterfaceCore& ) = delete;
+
+        bool init(ros::NodeHandle& nh) override;
 
         bool isInitialized();
 
         std::vector<std::shared_ptr<common::model::ConveyorState> > getConveyorStates() const;
 
 private:
-        virtual void initParameters(ros::NodeHandle& nh) override;
-        virtual void startServices(ros::NodeHandle& nh) override;
-        virtual void startPublishers(ros::NodeHandle& nh) override;
-        virtual void startSubscribers(ros::NodeHandle& nh) override;
+        void initParameters(ros::NodeHandle& nh) override;
+        void startServices(ros::NodeHandle& nh) override;
+        void startPublishers(ros::NodeHandle& nh) override;
+        void startSubscribers(ros::NodeHandle& nh) override;
 
         conveyor_interface::SetConveyor::Response addConveyor();
         conveyor_interface::SetConveyor::Response initTTLConveyor(const std::shared_ptr<common::model::ConveyorState>& conveyor_state);

@@ -42,10 +42,9 @@ class AbstractEndEffectorDriver : public AbstractTtlDriver
 {
 
 public:
-    AbstractEndEffectorDriver();
+    AbstractEndEffectorDriver() = default;
     AbstractEndEffectorDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
                               std::shared_ptr<dynamixel::PacketHandler> packetHandler);
-    ~AbstractEndEffectorDriver() override;
 
 public:
     virtual int readButton1Status(uint8_t id, common::model::EActionType& action) = 0;

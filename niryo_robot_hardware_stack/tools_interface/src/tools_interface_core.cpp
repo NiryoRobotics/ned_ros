@@ -64,12 +64,6 @@ ToolsInterfaceCore::ToolsInterfaceCore(ros::NodeHandle& nh,
 }
 
 /**
- * @brief ToolsInterfaceCore::~ToolsInterfaceCore
- */
-ToolsInterfaceCore::~ToolsInterfaceCore()
-= default;
-
-/**
  * @brief ToolsInterfaceCore::init
  * @param nh
  * @return

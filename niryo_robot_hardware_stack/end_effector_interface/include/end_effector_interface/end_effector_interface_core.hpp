@@ -50,7 +50,14 @@ class EndEffectorInterfaceCore : public common::util::IInterfaceCore
     public:
         EndEffectorInterfaceCore(ros::NodeHandle& nh,
                                  std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface);
-        ~EndEffectorInterfaceCore() override;
+        ~EndEffectorInterfaceCore() override = default;
+
+        // non copyable class
+        EndEffectorInterfaceCore( const EndEffectorInterfaceCore& ) = delete;
+        EndEffectorInterfaceCore( EndEffectorInterfaceCore&& ) = delete;
+
+        EndEffectorInterfaceCore& operator= ( EndEffectorInterfaceCore && ) = delete;
+        EndEffectorInterfaceCore& operator= ( const EndEffectorInterfaceCore& ) = delete;
 
         bool init(ros::NodeHandle &nh) override;
 

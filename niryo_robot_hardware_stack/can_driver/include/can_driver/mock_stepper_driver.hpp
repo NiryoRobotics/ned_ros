@@ -39,7 +39,6 @@ class MockStepperDriver : public AbstractStepperDriver
 {
 public:
     MockStepperDriver(std::shared_ptr<FakeCanData>   data);
-    ~MockStepperDriver() override;
 
     std::string str() const override;
 
@@ -48,11 +47,11 @@ public:
     bool canReadData() const override;
 
     int ping(uint8_t id) override;
-    virtual int scan(std::set<uint8_t> &motors_unfound, std::vector<uint8_t> &id_list) override;
+    int scan(std::set<uint8_t> &motors_unfound, std::vector<uint8_t> &id_list) override;
     uint8_t sendUpdateConveyorId(uint8_t old_id, uint8_t new_id) override;
     uint8_t sendTorqueOnCommand(uint8_t id, int torque_on) override;
-    virtual uint8_t sendRelativeMoveCommand(uint8_t id, int steps, int delay) override;
-    virtual uint8_t sendPositionCommand(uint8_t id, int cmd) override;
+    uint8_t sendRelativeMoveCommand(uint8_t id, int steps, int delay) override;
+    uint8_t sendPositionCommand(uint8_t id, int cmd) override;
     uint8_t sendPositionOffsetCommand(uint8_t id, int cmd, int absolute_steps_at_offset_position) override;
     uint8_t sendCalibrationCommand(uint8_t id, int offset, int delay, int direction, int timeout) override;
     uint8_t sendSynchronizePositionCommand(uint8_t id, bool begin_traj) override;

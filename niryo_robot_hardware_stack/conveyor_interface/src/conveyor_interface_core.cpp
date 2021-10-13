@@ -22,6 +22,7 @@
 #include <cstdint>
 #include <memory>
 #include <mutex>
+#include <utility>
 #include <vector>
 #include <string>
 #include <functional>
@@ -44,7 +45,6 @@ using ::common::model::ConveyorState;
 using ::common::model::EStepperCommandType;
 using ::common::model::StepperSingleCmd;
 using ::common::model::EBusProtocol;
-using ::common::model::EHardwareType;
 using ::common::model::HardwareTypeEnum;
 using ::common::model::StepperTtlSingleCmd;
 
@@ -60,20 +60,14 @@ namespace conveyor_interface
 ConveyorInterfaceCore::ConveyorInterfaceCore(ros::NodeHandle& nh,
                                              std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface,
                                              std::shared_ptr<can_driver::CanInterfaceCore> can_interface) :
-  _ttl_interface(ttl_interface),
-  _can_interface(can_interface)
+  _ttl_interface(std::move(ttl_interface)),
+  _can_interface(std::move(can_interface))
 
 {
     ROS_DEBUG("ConveyorInterfaceCore::ConveyorInterfaceCore - ctor");
 
     init(nh);
 }
-
-/**
- * @brief ConveyorInterfaceCore::~ConveyorInterfaceCore
- */
-ConveyorInterfaceCore::~ConveyorInterfaceCore()
-{}
 
 /**
  * @brief ConveyorInterfaceCore::init
@@ -490,7 +484,7 @@ std::vector<std::shared_ptr<common::model::ConveyorState> >
 conveyor_interface::ConveyorInterfaceCore::getConveyorStates() const
 {
   std::vector<std::shared_ptr<ConveyorState> > states;
-  for (auto it : _state_map)
+  for (const auto& it : _state_map)
   {
       states.push_back(it.second);
   }

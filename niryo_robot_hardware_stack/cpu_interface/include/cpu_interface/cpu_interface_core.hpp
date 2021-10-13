@@ -38,10 +38,17 @@ namespace cpu_interface
 class CpuInterfaceCore : public common::util::IInterfaceCore
 {
     public:
-
         CpuInterfaceCore(ros::NodeHandle& nh);
         ~CpuInterfaceCore() override;
-        virtual bool init(ros::NodeHandle& nh) override;
+
+        // non copyable class
+        CpuInterfaceCore( const CpuInterfaceCore& ) = delete;
+        CpuInterfaceCore( CpuInterfaceCore&& ) = delete;
+
+        CpuInterfaceCore& operator= ( CpuInterfaceCore && ) = delete;
+        CpuInterfaceCore& operator= ( const CpuInterfaceCore& ) = delete;
+
+        bool init(ros::NodeHandle& nh) override;
 
         void startReadingData();
         int getCpuTemperature() const;

@@ -37,57 +37,65 @@ namespace model
  */
 class AbstractHardwareState : public IObject
 {
-    public:
-        AbstractHardwareState();
-        AbstractHardwareState(EHardwareType type,
-                              EComponentType component_type,
-                              EBusProtocol bus_proto,
-                              uint8_t id);
-        AbstractHardwareState(const AbstractHardwareState& state);
+public:
+    AbstractHardwareState();
+    AbstractHardwareState(EHardwareType type,
+                          EComponentType component_type,
+                          EBusProtocol bus_proto,
+                          uint8_t id);
 
-        // getters
-        EHardwareType getHardwareType() const;
-        EComponentType getComponentType() const;
-        EBusProtocol getBusProtocol() const;
+    ~AbstractHardwareState() override = default;
 
-        uint8_t getId() const;
+    AbstractHardwareState& operator= ( AbstractHardwareState && ) = delete;
+    AbstractHardwareState& operator= ( const AbstractHardwareState& ) = delete;
 
-        std::string getFirmwareVersion() const;
-        uint32_t getTemperature() const;
-        double getVoltage() const;
-        uint32_t getHardwareError() const;
-        std::string getHardwareErrorMessage() const;
+    // getters
+    EHardwareType getHardwareType() const;
+    EComponentType getComponentType() const;
+    EBusProtocol getBusProtocol() const;
 
-        // setters
-        void setFirmwareVersion(const std::string &firmware_version);
-        void setTemperature(uint32_t temp);
-        void setVoltage(double volt);
-        void setHardwareError(uint32_t hw_error);
-        void setHardwareError(std::string hw_error_msg);
+    uint8_t getId() const;
 
-        // operators
-        virtual bool operator==(const AbstractHardwareState& other);
+    std::string getFirmwareVersion() const;
+    uint32_t getTemperature() const;
+    double getVoltage() const;
+    uint32_t getHardwareError() const;
+    std::string getHardwareErrorMessage() const;
 
-        // IObject interface
-        void reset() override;
-        std::string str() const override;
-        bool isValid() const override = 0; // not reimplemented to keep this class abstract
+    // setters
+    void setFirmwareVersion(const std::string &firmware_version);
+    void setTemperature(uint32_t temp);
+    void setVoltage(double volt);
+    void setHardwareError(uint32_t hw_error);
+    void setHardwareError(std::string hw_error_msg);
+
+    // operators
+    virtual bool operator==(const AbstractHardwareState& other);
+
+    // IObject interface
+    void reset() override;
+    std::string str() const override;
+    bool isValid() const override = 0; // not reimplemented to keep this class abstract
 
 
 protected:
-        EHardwareType _hw_type{EHardwareType::UNKNOWN};
-        EComponentType _component_type{EComponentType::UNKNOWN};
-        EBusProtocol _bus_proto{EBusProtocol::UNKNOWN};
+    EHardwareType _hw_type{EHardwareType::UNKNOWN};
+    EComponentType _component_type{EComponentType::UNKNOWN};
+    EBusProtocol _bus_proto{EBusProtocol::UNKNOWN};
 
-        uint8_t _id{0};
+    // read variables
+    std::string _firmware_version{};
 
-        // read variables
-        std::string _firmware_version{};
+    uint32_t _temperature{0};
+    double _voltage{0.0};
+    uint32_t _hw_error{0};
+    std::string _hw_error_message{};
 
-        uint32_t _temperature{0};
-        double _voltage{0.0};
-        uint32_t _hw_error{0};
-        std::string _hw_error_message{};
+    uint8_t _id{0};
+protected:
+    // see https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c67-a-polymorphic-class-should-suppress-public-copymove
+    AbstractHardwareState( const AbstractHardwareState& ) = default;
+    AbstractHardwareState( AbstractHardwareState&& ) = default;
 };
 
 /**

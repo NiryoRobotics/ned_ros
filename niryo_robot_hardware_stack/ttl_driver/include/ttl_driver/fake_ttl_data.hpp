@@ -29,7 +29,7 @@ class FakeTtlData
 {
     public:
         FakeTtlData() = default;
-        ~FakeTtlData() = default;
+
     public:
         struct AbstractFakeRegister
         {

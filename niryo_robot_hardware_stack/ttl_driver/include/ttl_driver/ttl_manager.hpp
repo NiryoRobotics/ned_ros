@@ -20,6 +20,10 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #ifndef TTL_DRIVER_HPP
 #define TTL_DRIVER_HPP
 
+#include "common/util/util_defs.hpp"
+#include "common/util/i_bus_manager.hpp"
+
+// cpp
 #include <memory>
 #include <ros/ros.h>
 #include <string>
@@ -29,19 +33,19 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <algorithm>
 #include <set>
 
-#include "dynamixel_sdk/dynamixel_sdk.h"
-
+// ros
 #include "ros/node_handle.h"
-#include "ttl_driver/MotorCommand.h"
+
+// niryo
+#include "dynamixel_sdk/dynamixel_sdk.h"
 #include "niryo_robot_msgs/MotorHeader.h"
 #include "niryo_robot_msgs/SetInt.h"
 #include "niryo_robot_msgs/CommandStatus.h"
 
-#include "common/util/i_bus_manager.hpp"
-
-// drivers
 #include "ttl_driver/abstract_motor_driver.hpp"
 #include "ttl_driver/fake_ttl_data.hpp"
+#include "ttl_driver/MotorCommand.h"
+
 #include "common/model/dxl_motor_state.hpp"
 #include "common/model/synchronize_motor_cmd.hpp"
 #include "common/model/single_motor_cmd.hpp"
@@ -77,8 +81,15 @@ constexpr int TTL_WRONG_TYPE             = -52;
 class TtlManager : public common::util::IBusManager
 {
 public:
-    TtlManager(ros::NodeHandle& nh);
-    ~TtlManager() override;
+    TtlManager() = delete;
+    TtlManager( ros::NodeHandle& nh );
+    ~TtlManager() override = default;
+
+    // see https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c21-if-you-define-or-delete-any-copy-move-or-destructor-function-define-or-delete-them-all
+    TtlManager( const TtlManager& ) = delete;
+    TtlManager( TtlManager&& ) = delete;
+    TtlManager& operator= ( TtlManager && ) = delete;
+    TtlManager& operator= ( const TtlManager& ) = delete;
 
     // IBusManager Interface
     bool init(ros::NodeHandle& nh) override;

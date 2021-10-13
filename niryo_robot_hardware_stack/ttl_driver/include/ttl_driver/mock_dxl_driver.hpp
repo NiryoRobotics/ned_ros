@@ -37,8 +37,7 @@ namespace ttl_driver
 class MockDxlDriver : public AbstractDxlDriver
 {
     public:
-        MockDxlDriver(std::shared_ptr<FakeTtlData>   data);
-        ~MockDxlDriver() override;
+        MockDxlDriver(std::shared_ptr<FakeTtlData> data);
 
         std::string str() const override;
 

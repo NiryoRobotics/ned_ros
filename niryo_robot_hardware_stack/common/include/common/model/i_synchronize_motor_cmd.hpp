@@ -27,13 +27,28 @@ namespace common
 namespace model
 {
 
+/**
+ * @brief The ISynchronizeMotorCmd class
+ */
 class ISynchronizeMotorCmd : public IObject
 {
 public:
+    ISynchronizeMotorCmd() = default;
+
+    ISynchronizeMotorCmd& operator= ( ISynchronizeMotorCmd && ) = delete;
+    ISynchronizeMotorCmd& operator= ( const ISynchronizeMotorCmd& ) = delete;
+
+    ~ISynchronizeMotorCmd() override = default;
+
     virtual int getCmdType() const = 0;
 
     virtual bool isStepperCmd() const = 0;
     virtual bool isDxlCmd() const = 0;
+
+protected:
+    // see https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c67-a-polymorphic-class-should-suppress-public-copymove
+    ISynchronizeMotorCmd( const ISynchronizeMotorCmd& ) = default;
+    ISynchronizeMotorCmd( ISynchronizeMotorCmd&& ) = default;
 };
 
 } // namespace model

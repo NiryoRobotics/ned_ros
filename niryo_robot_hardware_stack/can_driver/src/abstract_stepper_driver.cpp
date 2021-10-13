@@ -31,12 +31,6 @@ namespace can_driver
 
 /**
  * @brief AbstractStepperDriver::AbstractStepperDriver
- */
-AbstractStepperDriver::AbstractStepperDriver()
-{}
-
-/**
- * @brief AbstractStepperDriver::AbstractStepperDriver
  * @param mcp_can
  */
 AbstractStepperDriver::AbstractStepperDriver(std::shared_ptr<mcp_can_rpi::MCP_CAN> mcp_can) :
@@ -44,11 +38,9 @@ AbstractStepperDriver::AbstractStepperDriver(std::shared_ptr<mcp_can_rpi::MCP_CA
 {}
 
 /**
- * @brief AbstractStepperDriver::~AbstractStepperDriver
-*/
-AbstractStepperDriver::~AbstractStepperDriver()
-= default;
-
+ * @brief AbstractStepperDriver::str
+ * @return
+ */
 std::string AbstractStepperDriver::str() const
 {
     return "Abstract Stepper Driver (" + AbstractCanDriver::str() + ")";

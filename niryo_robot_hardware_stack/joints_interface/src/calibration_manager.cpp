@@ -67,9 +67,9 @@ CalibrationManager::CalibrationManager(ros::NodeHandle& nh,
                                        std::vector<std::shared_ptr<JointState> > joint_list,
                                        std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface,
                                        std::shared_ptr<can_driver::CanInterfaceCore> can_interface) :
-    _ttl_interface(std::move(std::move(ttl_interface))),
+    _ttl_interface(std::move(ttl_interface)),
     _can_interface(std::move(can_interface)),
-    _joint_states_list(std::move(std::move(joint_list)))
+    _joint_states_list(std::move(joint_list))
 {
     ROS_DEBUG("CalibrationManager::ctor");
 
@@ -77,12 +77,6 @@ CalibrationManager::CalibrationManager(ros::NodeHandle& nh,
 
     ROS_INFO("Calibration Interface - Calibration interface started");
 }
-
-/**
- * @brief CalibrationManager::~CalibrationManager
- */
-CalibrationManager::~CalibrationManager()
-= default;
 
 /**
  * @brief CalibrationManager::initParameters
@@ -398,7 +392,7 @@ CalibrationManager::manualCalibration()
 
                             offset_to_send %= steps_per_rev;
                             if (offset_to_send < 0)
-                            offset_to_send += steps_per_rev;
+                                offset_to_send += steps_per_rev;
 
                             StepperSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_POSITION_OFFSET, _joint_states_list.at(1)->getId(),
                                                          {offset_to_send, offset_to_send});

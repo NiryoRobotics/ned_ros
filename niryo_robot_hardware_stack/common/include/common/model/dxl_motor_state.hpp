@@ -41,9 +41,11 @@ class DxlMotorState : public JointState
 
         DxlMotorState(std::string name, EHardwareType type, EComponentType component_type,
                       uint8_t id);
-        DxlMotorState(const DxlMotorState& state);
 
-        ~DxlMotorState() override;
+        DxlMotorState& operator= ( DxlMotorState && ) = delete;
+        DxlMotorState& operator= ( const DxlMotorState& ) = delete;
+
+        ~DxlMotorState() override = default;
 
         // getters
         bool isTool() const;
@@ -96,6 +98,11 @@ protected:
         int _middle_position{0};
         double _total_angle{0.0};
         double _steps_for_one_speed{0.0};
+
+protected:
+    // see https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c67-a-polymorphic-class-should-suppress-public-copymove
+    DxlMotorState( const DxlMotorState& ) = default;
+    DxlMotorState( DxlMotorState&& ) = default;
 };
 
 /**

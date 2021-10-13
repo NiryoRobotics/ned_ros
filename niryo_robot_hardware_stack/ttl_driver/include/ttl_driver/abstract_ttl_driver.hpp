@@ -38,10 +38,10 @@ class AbstractTtlDriver
 {
 
 public:
-    AbstractTtlDriver();
+    AbstractTtlDriver() = default;
     AbstractTtlDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
                       std::shared_ptr<dynamixel::PacketHandler> packetHandler);
-    virtual ~AbstractTtlDriver();
+    virtual ~AbstractTtlDriver() = default;
 
     virtual int ping(uint8_t id);
     virtual int getModelNumber(uint8_t id,
@@ -100,6 +100,13 @@ private:
     static constexpr int GROUP_SYNC_REDONDANT_ID = 10;
     static constexpr int GROUP_SYNC_READ_RX_FAIL = 11;
     static constexpr int LEN_ID_DATA_NOT_SAME    = 20;
+
+protected:
+    // see https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c67-a-polymorphic-class-should-suppress-public-copymove
+    AbstractTtlDriver( const AbstractTtlDriver& ) = default;
+    AbstractTtlDriver( AbstractTtlDriver&& ) = default;
+    AbstractTtlDriver& operator= ( AbstractTtlDriver && ) = default;
+    AbstractTtlDriver& operator= ( const AbstractTtlDriver& ) = default;
 };
 
 } // ttl_driver

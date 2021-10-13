@@ -45,7 +45,6 @@ class DxlDriver : public AbstractDxlDriver
     public:
         DxlDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
                   std::shared_ptr<dynamixel::PacketHandler> packetHandler);
-        ~DxlDriver() override;
 
         std::string str() const override;
         std::string interpreteErrorState(uint32_t hw_state) const override;
@@ -127,14 +126,8 @@ class DxlDriver : public AbstractDxlDriver
 template<typename reg_type>
 DxlDriver<reg_type>::DxlDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
                                std::shared_ptr<dynamixel::PacketHandler> packetHandler) :
-    AbstractDxlDriver(portHandler, packetHandler)
-{
-
-}
-
-template<typename reg_type>
-DxlDriver<reg_type>::~DxlDriver()
-= default;
+    AbstractDxlDriver(std::move(portHandler), std::move(packetHandler))
+{}
 
 //*****************************
 // AbstractMotorDriver interface

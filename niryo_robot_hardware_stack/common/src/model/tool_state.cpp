@@ -28,13 +28,6 @@ namespace model
 
 /**
  * @brief ToolState::ToolState
- */
-ToolState::ToolState()
-{
-}
-
-/**
- * @brief ToolState::ToolState
  * @param name
  * @param type
  * @param id
@@ -42,23 +35,7 @@ ToolState::ToolState()
 ToolState::ToolState(std::string name, EHardwareType type, uint8_t id) :
     DxlMotorState(type, EComponentType::TOOL, id),
     _tool_name(std::move(name))
-{
-}
-
-ToolState::ToolState(const ToolState &state) :
-  DxlMotorState(state)
-{
-    _tool_name = state._tool_name;
-
-    _connected = state._connected;
-    _position = state._position;
-}
-
-/**
- * @brief ToolState::~ToolState
- */
-ToolState::~ToolState()
-= default;
+{}
 
 /**
  * @brief ToolState::setName

@@ -117,35 +117,6 @@ DxlMotorState::DxlMotorState(std::string name,
     }
 }
 
-/**
- * @brief DxlMotorState::DxlMotorState
- * @param state
- */
-DxlMotorState::DxlMotorState(const DxlMotorState &state) :
-    JointState(state)
-{
-  _pos_p_gain = state._pos_p_gain;
-  _pos_i_gain = state._pos_i_gain;
-  _pos_d_gain = state._pos_d_gain;
-
-  _vel_p_gain = state._vel_p_gain;
-  _vel_i_gain = state._vel_i_gain;
-
-  _ff1_gain = state._ff1_gain;
-  _ff2_gain = state._ff2_gain;
-
-  _total_range_position = state._total_range_position;
-  _middle_position = state._middle_position;
-  _total_angle = state._total_angle;
-  _steps_for_one_speed = state._steps_for_one_speed;
-}
-
-/**
- * @brief DxlMotorState::~DxlMotorState
- */
-DxlMotorState::~DxlMotorState()
-= default;
-
 // *********************
 //  JointState Interface
 // ********************
@@ -318,7 +289,7 @@ void DxlMotorState::setFF1Gain(uint32_t ff1_gain)
 
 /**
  * @brief DxlMotorState::setFF2Gain
- * @param value
+ * @param ff2_gain
  */
 void DxlMotorState::setFF2Gain(uint32_t ff2_gain)
 {

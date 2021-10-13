@@ -405,7 +405,7 @@ void JointHardwareInterface::sendInitMotorsParams()
  */
 void JointHardwareInterface::read(const ros::Time &/*time*/, const ros::Duration &/*period*/)
 {
-    int newPositionState = 0.0;
+    int newPositionState = 0;
 
     for (auto& jState : _joint_list)
     {

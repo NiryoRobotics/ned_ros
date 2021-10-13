@@ -54,7 +54,14 @@ class ToolsInterfaceCore : public common::util::IInterfaceCore
     public:
         ToolsInterfaceCore(ros::NodeHandle& nh,
                            std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface);
-        ~ToolsInterfaceCore() override;
+        ~ToolsInterfaceCore() override = default;
+
+        // non copyable class
+        ToolsInterfaceCore( const ToolsInterfaceCore& ) = delete;
+        ToolsInterfaceCore( ToolsInterfaceCore&& ) = delete;
+
+        ToolsInterfaceCore& operator= ( ToolsInterfaceCore && ) = delete;
+        ToolsInterfaceCore& operator= ( const ToolsInterfaceCore& ) = delete;
 
         bool init(ros::NodeHandle &nh) override;
 

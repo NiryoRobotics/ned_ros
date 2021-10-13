@@ -40,13 +40,15 @@ class JointState : public AbstractMotorState
 {
     
 public:
-    JointState();
+    JointState() = default;
     JointState(std::string name, EHardwareType type,
                EComponentType component_type,
                EBusProtocol bus_proto, uint8_t id);
-    JointState(const JointState& state);
 
-    ~JointState() override;
+    JointState& operator= ( JointState && ) = delete;
+    JointState& operator= ( const JointState& ) = delete;
+
+    ~JointState() override = default;
 
     void setName(std::string &name);
     void setOffsetPosition(double offset_position);
@@ -78,6 +80,10 @@ protected:
     bool _need_calibration{false};
     int _direction{1};
 
+protected:
+    // see https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c67-a-polymorphic-class-should-suppress-public-copymove
+    JointState( const JointState& ) = default;
+    JointState( JointState&& ) = default;
 };
 
 /**

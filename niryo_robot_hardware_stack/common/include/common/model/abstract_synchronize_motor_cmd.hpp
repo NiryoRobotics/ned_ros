@@ -43,48 +43,49 @@ namespace model
 template<typename ParamType>
 class AbstractSynchronizeMotorCmd : public ISynchronizeMotorCmd
 {
-    protected:
-        struct MotorParam {
-            MotorParam(uint8_t id, ParamType param) {
-                motors_id.emplace_back(id);
-                params.emplace_back(param);
-            }
+protected:
+    struct MotorParam {
+        MotorParam(uint8_t id, ParamType param) {
+            motors_id.emplace_back(id);
+            params.emplace_back(param);
+        }
 
-            bool isValid() const {
-                return !motors_id.empty() && motors_id.size() == params.size();
-            }
+        bool isValid() const {
+            return !motors_id.empty() && motors_id.size() == params.size();
+        }
 
-            std::vector<uint8_t> motors_id;
-            std::vector<ParamType> params;
-        };
+        std::vector<uint8_t> motors_id;
+        std::vector<ParamType> params;
+    };
 
-    public:
-        AbstractSynchronizeMotorCmd();
+public:
+    AbstractSynchronizeMotorCmd() = default;
+    ~AbstractSynchronizeMotorCmd() override = default;
 
-        // test
-        bool isValid() const override;
+    AbstractSynchronizeMotorCmd& operator= ( AbstractSynchronizeMotorCmd && ) = delete;
+    AbstractSynchronizeMotorCmd& operator= ( const AbstractSynchronizeMotorCmd& ) = delete;
 
-        // setters
-        void clear();
-        void addMotorParam(EHardwareType type, uint8_t id, ParamType param);
+    // test
+    bool isValid() const override;
 
-        // getters
-        std::vector<uint8_t> getMotorsId(EHardwareType type) const;
-        std::vector<ParamType> getParams(EHardwareType type) const;
-        std::set<EHardwareType> getMotorTypes() const;
+    // setters
+    void clear();
+    void addMotorParam(EHardwareType type, uint8_t id, ParamType param);
 
-    protected:
-        std::set<EHardwareType> _motor_types;
-        std::map<EHardwareType, MotorParam > _motor_params_map;
+    // getters
+    std::vector<uint8_t> getMotorsId(EHardwareType type) const;
+    std::vector<ParamType> getParams(EHardwareType type) const;
+    std::set<EHardwareType> getMotorTypes() const;
 
+protected:
+    std::set<EHardwareType> _motor_types;
+    std::map<EHardwareType, MotorParam > _motor_params_map;
+
+protected:
+    // see https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c67-a-polymorphic-class-should-suppress-public-copymove
+    AbstractSynchronizeMotorCmd( const AbstractSynchronizeMotorCmd& ) = default;
+    AbstractSynchronizeMotorCmd( AbstractSynchronizeMotorCmd&& ) noexcept = default;
 };
-
-/**
- * @brief AbstractSynchronizeMotorCmd::clear
- */
-template<typename ParamType>
-AbstractSynchronizeMotorCmd<ParamType>::AbstractSynchronizeMotorCmd()
-= default;
 
 /**
  * @brief AbstractSynchronizeMotorCmd<ParamType>::isValid

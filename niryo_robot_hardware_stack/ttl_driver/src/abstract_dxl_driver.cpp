@@ -29,9 +29,6 @@ using ::common::model::EDxlCommandType;
 namespace ttl_driver
 {
 
-AbstractDxlDriver::AbstractDxlDriver()
-{}
-
 /**
  * @brief AbstractDxlDriver::AbstractDxlDriver
 */
@@ -39,12 +36,6 @@ AbstractDxlDriver::AbstractDxlDriver(std::shared_ptr<dynamixel::PortHandler> por
                                      std::shared_ptr<dynamixel::PacketHandler> packetHandler) :
     AbstractMotorDriver(std::move(portHandler), std::move(packetHandler))
 {}
-
-/**
- * @brief AbstractDxlDriver::~AbstractDxlDriver
-*/
-AbstractDxlDriver::~AbstractDxlDriver()
-= default;
 
 std::string AbstractDxlDriver::str() const
 {

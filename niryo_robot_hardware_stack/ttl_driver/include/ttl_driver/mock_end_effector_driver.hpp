@@ -42,8 +42,7 @@ namespace ttl_driver
 class MockEndEffectorDriver : public AbstractEndEffectorDriver
 {
     public:
-        MockEndEffectorDriver(std::shared_ptr<FakeTtlData>  data);
-        ~MockEndEffectorDriver() override;
+        MockEndEffectorDriver(std::shared_ptr<FakeTtlData> data);
 
     public:
         // AbstractTtlDriver interface : we cannot define them globally in AbstractTtlDriver

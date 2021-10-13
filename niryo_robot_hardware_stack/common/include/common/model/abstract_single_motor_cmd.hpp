@@ -36,26 +36,35 @@ namespace model
 template<typename ParamType>
 class AbstractSingleMotorCmd : public ISingleMotorCmd
 {
-    public:
-        AbstractSingleMotorCmd() = delete;
-        AbstractSingleMotorCmd(uint8_t id);
+public:
+    AbstractSingleMotorCmd() = delete;
+    AbstractSingleMotorCmd(uint8_t id);
 
-        // setters
-        void clear();
+    ~AbstractSingleMotorCmd() override = default;
 
-        void setId(uint8_t id);
-        void setParam(ParamType param);
-        void setParams(std::vector<ParamType> params);
+    AbstractSingleMotorCmd& operator= ( AbstractSingleMotorCmd && ) = delete;
+    AbstractSingleMotorCmd& operator= ( const AbstractSingleMotorCmd& ) = delete;
 
-        // getters
-        uint8_t getId() const;
-        ParamType getParam() const;
-        std::vector<ParamType> getParams() const;
+    // setters
+    void clear();
 
-    protected:
-        std::vector<ParamType> _param_list;
-        uint8_t _id;
+    void setId(uint8_t id);
+    void setParam(ParamType param);
+    void setParams(std::vector<ParamType> params);
 
+    // getters
+    uint8_t getId() const;
+    ParamType getParam() const;
+    std::vector<ParamType> getParams() const;
+
+protected:
+    std::vector<ParamType> _param_list;
+    uint8_t _id{};
+
+protected:
+    // see https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c67-a-polymorphic-class-should-suppress-public-copymove
+    AbstractSingleMotorCmd( const AbstractSingleMotorCmd& ) = default;
+    AbstractSingleMotorCmd( AbstractSingleMotorCmd&& ) noexcept = default;
 };
 
 

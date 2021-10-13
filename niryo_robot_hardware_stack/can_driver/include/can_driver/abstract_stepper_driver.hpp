@@ -32,10 +32,8 @@ namespace can_driver
 class AbstractStepperDriver : public AbstractCanDriver
 {
 public:
-    AbstractStepperDriver();
+    AbstractStepperDriver() = default;
     AbstractStepperDriver(std::shared_ptr<mcp_can_rpi::MCP_CAN> mcp_can);
-
-    ~AbstractStepperDriver() override;
 
 public:
     // AbstractCanDriver interface

@@ -40,8 +40,6 @@ class StepperDriver : public AbstractStepperDriver
     public:
         StepperDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
                       std::shared_ptr<dynamixel::PacketHandler> packetHandler);
-        ~StepperDriver() override;
-
 
     public:
         // AbstractTtlDriver interface
@@ -104,16 +102,9 @@ class StepperDriver : public AbstractStepperDriver
 template<typename reg_type>
 StepperDriver<reg_type>::StepperDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
                                        std::shared_ptr<dynamixel::PacketHandler> packetHandler) :
-    AbstractStepperDriver(portHandler, packetHandler)
-{
-}
-
-/**
- * @brief DxlDriver<reg_type>::~DxlDriver
- */
-template<typename reg_type>
-StepperDriver<reg_type>::~StepperDriver()
-= default;
+    AbstractStepperDriver(std::move(portHandler),
+                          std::move(packetHandler))
+{}
 
 //*****************************
 // AbstractMotorDriver interface

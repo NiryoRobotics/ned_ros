@@ -41,15 +41,6 @@ MockStepperDriver::MockStepperDriver(std::shared_ptr<FakeTtlData>  data) :
 }
 
 /**
- * @brief DxlDriver<reg_type>::~DxlDriver
- */
-/**
- * @brief MockStepperDriver::~MockStepperDriver
- */
-MockStepperDriver::~MockStepperDriver()
-= default;
-
-/**
  * @brief MockStepperDriver::str
  * @return
  */

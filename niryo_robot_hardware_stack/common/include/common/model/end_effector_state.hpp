@@ -94,9 +94,6 @@ class EndEffectorState : public AbstractHardwareState
         EndEffectorState();
         EndEffectorState(uint8_t id);
         EndEffectorState(uint8_t id, common::model::EHardwareType type);
-        EndEffectorState(const EndEffectorState& state);
-
-        ~EndEffectorState() override;
 
         void configureButton(uint8_t id, EButtonType button_type);
 
@@ -121,7 +118,7 @@ class EndEffectorState : public AbstractHardwareState
         void setAccelerometerZValue(const uint32_t& zValue);
 
         bool getCollisionStatus() const;
-        void setCollisionStatus(bool getCollisionStatus);
+        void setCollisionStatus(bool status);
 
         bool getDigitalIn() const;
         void setDigitalIn(bool digital_in);

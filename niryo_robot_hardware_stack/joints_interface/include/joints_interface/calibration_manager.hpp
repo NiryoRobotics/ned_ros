@@ -46,7 +46,14 @@ public:
                        std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface,
                        std::shared_ptr<can_driver::CanInterfaceCore> can_interface);
 
-    virtual ~CalibrationManager();
+    ~CalibrationManager() = default;
+
+    // non copyable class
+    CalibrationManager( const CalibrationManager& ) = delete;
+    CalibrationManager( CalibrationManager&& ) = delete;
+
+    CalibrationManager& operator= ( CalibrationManager && ) = delete;
+    CalibrationManager& operator= ( const CalibrationManager& ) = delete;
 
     int startCalibration(int mode, std::string &result_message);
 

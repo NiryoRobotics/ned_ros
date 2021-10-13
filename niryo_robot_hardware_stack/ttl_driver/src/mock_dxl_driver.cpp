@@ -39,12 +39,6 @@ MockDxlDriver::MockDxlDriver(std::shared_ptr<FakeTtlData>  data) :
 }
 
 /**
- * @brief MockDxlDriver::~MockDxlDriver
- */
-MockDxlDriver::~MockDxlDriver()
-= default;
-
-/**
  * @brief MockDxlDriver::str
  * @return
  */

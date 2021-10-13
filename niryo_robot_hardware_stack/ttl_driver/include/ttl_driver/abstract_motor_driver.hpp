@@ -43,8 +43,6 @@ public:
     AbstractMotorDriver();
     AbstractMotorDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
                         std::shared_ptr<dynamixel::PacketHandler> packetHandler);
-    ~AbstractMotorDriver() override;
-
 
 public:
     // AbstractTtlDriver interface

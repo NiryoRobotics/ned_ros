@@ -33,13 +33,6 @@ MockEndEffectorDriver::MockEndEffectorDriver(std::shared_ptr<FakeTtlData> data) 
   _fake_data(std::move(data))
 {}
 
-/**
- * @brief MockEndEffectorDriver::~EndEffectorDriver
- */
-MockEndEffectorDriver::~MockEndEffectorDriver()
-= default;
-
-
 //*****************************
 // AbstractTtlDriver interface
 //*****************************

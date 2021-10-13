@@ -34,15 +34,13 @@ namespace model
 class ConveyorState : public StepperMotorState {
 
     public:
+        ConveyorState() = default;
         ConveyorState(uint8_t default_id);
         ConveyorState(EBusProtocol bus_proto, uint8_t default_id);
         ConveyorState(EHardwareType type,
                       EBusProtocol bus_proto, uint8_t default_id);
         ConveyorState(EHardwareType type,
                       EBusProtocol bus_proto, uint8_t id, uint8_t default_id);
-
-        ConveyorState(const ConveyorState& state);
-        ~ConveyorState() override;
 
         void updateId(uint8_t id);
 
@@ -56,7 +54,7 @@ class ConveyorState : public StepperMotorState {
 
         // other getters
 
-        virtual bool operator==(const ConveyorState& other);
+        bool operator==(const ConveyorState& other);
 
         // StepperMotorState interface
         std::string str() const override;

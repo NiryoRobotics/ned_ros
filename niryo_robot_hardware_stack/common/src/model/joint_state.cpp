@@ -31,12 +31,6 @@ namespace model
 
 /**
  * @brief JointState::JointState
- */
-JointState::JointState()
-{}
-
-/**
- * @brief JointState::JointState
  * @param name
  * @param type
  * @param component_type
@@ -52,32 +46,8 @@ JointState::JointState(std::string name, EHardwareType type,
 }
 
 /**
- * @brief JointState::JointState
- * @param state
- */
-JointState::JointState(const JointState &state) :
-  AbstractMotorState(state)
-{
-    _name = state._name;
-    _offset_position = state._offset_position;
-    _need_calibration = state._need_calibration;
-    _direction = state._direction;
-
-    pos = state.pos;
-    cmd = state.cmd;
-    vel = state.vel;
-    eff = state.eff;
-}
-
-/**
- * @brief JointState::~JointState
- */
-JointState::~JointState()
-= default;
-
-/**
  * @brief JointState::operator ==
- * @param m
+ * @param other
  * @return
  */
 bool JointState::operator==(const JointState& other) const

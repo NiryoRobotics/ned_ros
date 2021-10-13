@@ -61,6 +61,13 @@ class JointsInterfaceCore : common::util::IInterfaceCore
                             std::shared_ptr<can_driver::CanInterfaceCore> can_interface);
         ~JointsInterfaceCore() override;
 
+        // non copyable class
+        JointsInterfaceCore( const JointsInterfaceCore& ) = delete;
+        JointsInterfaceCore( JointsInterfaceCore&& ) = delete;
+
+        JointsInterfaceCore& operator= ( JointsInterfaceCore && ) = delete;
+        JointsInterfaceCore& operator= ( const JointsInterfaceCore& ) = delete;
+
         bool init(ros::NodeHandle& nh) override;
 
         void sendMotorsParams();

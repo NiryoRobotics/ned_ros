@@ -33,11 +33,9 @@ namespace ttl_driver
 class AbstractDxlDriver : public AbstractMotorDriver
 {
     public:
-        AbstractDxlDriver();
+        AbstractDxlDriver() = default;
         AbstractDxlDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
                           std::shared_ptr<dynamixel::PacketHandler> packetHandler);
-        ~AbstractDxlDriver() override;
-
 
     public:
         // AbstractMotorDriver interface

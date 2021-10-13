@@ -44,7 +44,6 @@ class EndEffectorDriver : public AbstractEndEffectorDriver
     public:
         EndEffectorDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
                           std::shared_ptr<dynamixel::PacketHandler> packetHandler);
-        ~EndEffectorDriver() override;
 
     public:
         // AbstractTtlDriver interface : we cannot define them globally in AbstractTtlDriver
@@ -88,18 +87,10 @@ class EndEffectorDriver : public AbstractEndEffectorDriver
  */
 template<typename reg_type>
 EndEffectorDriver<reg_type>::EndEffectorDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
-                               std::shared_ptr<dynamixel::PacketHandler> packetHandler) :
-    AbstractEndEffectorDriver(portHandler, packetHandler)
-{
-}
-
-/**
- * @brief EndEffectorDriver<reg_type>::~EndEffectorDriver
- */
-template<typename reg_type>
-EndEffectorDriver<reg_type>::~EndEffectorDriver()
-= default;
-
+                                               std::shared_ptr<dynamixel::PacketHandler> packetHandler) :
+    AbstractEndEffectorDriver(std::move(portHandler),
+                              std::move(packetHandler))
+{}
 
 //*****************************
 // AbstractTtlDriver interface

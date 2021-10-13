@@ -59,12 +59,6 @@ EndEffectorInterfaceCore::EndEffectorInterfaceCore(ros::NodeHandle& nh,
 }
 
 /**
- * @brief EndEffectorInterfaceCore::~EndEffectorInterfaceCore
- */
-EndEffectorInterfaceCore::~EndEffectorInterfaceCore()
-= default;
-
-/**
  * @brief EndEffectorInterfaceCore::init
  * @param nh
  * @return
@@ -207,7 +201,7 @@ void EndEffectorInterfaceCore::_publishButtonState(const ros::TimerEvent&)
 
     if (_end_effector_state)
     {
-        for (auto button : _end_effector_state->getButtonsStatus())
+        for (const auto& button : _end_effector_state->getButtonsStatus())
         {
             if (button->actions.empty())
                 continue;

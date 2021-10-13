@@ -35,13 +35,6 @@ namespace model
 
 /**
  * @brief StepperMotorState::StepperMotorState
- */
-StepperMotorState::StepperMotorState()
-{
-}
-
-/**
- * @brief StepperMotorState::StepperMotorState
  * @param type
  * @param component_type
  * @param bus_proto
@@ -69,41 +62,7 @@ StepperMotorState::StepperMotorState(std::string name,
                                      EBusProtocol bus_proto,
                                      uint8_t id) :
     JointState(std::move(name), type, component_type, bus_proto, id)
-{
-}
-
-/**
- * @brief StepperMotorState::StepperMotorState : copy ctor
- * @param state
- */
-StepperMotorState::StepperMotorState(const StepperMotorState &state) :
-  JointState(state)
-{
-    _last_time_read = state._last_time_read;
-    _hw_fail_counter = state._hw_fail_counter;
-
-    _gear_ratio = state._gear_ratio;
-    _max_effort = state._max_effort;
-    _micro_steps = state._micro_steps;
-
-    _calibration_state = state._calibration_state;
-    _calibration_value = state._calibration_value;
-
-    _profile_v_start = state._profile_v_start;
-    _profile_a_1 = state._profile_a_1;
-    _profile_v_1 = state._profile_v_1;
-    _profile_a_max = state._profile_a_max;
-    _profile_v_max = state._profile_v_max;
-    _profile_d_max = state._profile_d_max;
-    _profile_d_1 = state._profile_d_1;
-    _profile_v_stop = state._profile_v_stop;
-}
-
-/**
- * @brief StepperMotorState::~StepperMotorState
- */
-StepperMotorState::~StepperMotorState()
-= default;
+{}
 
 // ****************
 //  Setters
