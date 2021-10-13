@@ -20,4 +20,4 @@ robot_sounds:
   error_sound: "error4.2.wav"
   turn_on_sound: "start.wav"
   turn_off_sound: "stop.wav"
-  connection_sound: "start2b.wav"
+  connection_sound: "connected2.wav"
