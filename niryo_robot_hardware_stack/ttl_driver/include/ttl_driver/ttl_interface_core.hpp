@@ -34,8 +34,8 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 // ros
 #include <ros/ros.h>
 
-#include "common/model/i_driver_core.hpp"
-#include "common/model/i_interface_core.hpp"
+#include "common/util/i_driver_core.hpp"
+#include "common/util/i_interface_core.hpp"
 
 #include "ttl_driver/ttl_manager.hpp"
 #include "ttl_driver/ArrayMotorHardwareStatus.h"
@@ -70,135 +70,142 @@ namespace ttl_driver
  * - CalibrationManager
  * - EndEffectorInterfaceCore
  */
-class TtlInterfaceCore : public common::model::IDriverCore, public common::model::IInterfaceCore
+class TtlInterfaceCore : public common::util::IDriverCore, public common::util::IInterfaceCore
 {
-    public:
-        TtlInterfaceCore(ros::NodeHandle& nh);
-        virtual ~TtlInterfaceCore() override;
+public:
+    TtlInterfaceCore(ros::NodeHandle& nh);
+    ~TtlInterfaceCore() override;
 
-        bool init(ros::NodeHandle& nh) override;
+    // non copyable class
+    TtlInterfaceCore( const TtlInterfaceCore& ) = delete;
+    TtlInterfaceCore( TtlInterfaceCore&& ) = delete;
 
-        void clearSingleCommandQueue();
-        void clearConveyorCommandQueue();
+    TtlInterfaceCore& operator= ( TtlInterfaceCore && ) = delete;
+    TtlInterfaceCore& operator= ( const TtlInterfaceCore& ) = delete;
 
-        bool setMotorPID(const common::model::DxlMotorState& dxlState);
+    bool init(ros::NodeHandle& nh) override;
 
-        void setTrajectoryControllerCommands(const std::vector<std::pair<uint8_t, uint32_t> > &cmd);
+    void clearSingleCommandQueue();
+    void clearConveyorCommandQueue();
 
-        void setSyncCommand(const std::shared_ptr<common::model::ISynchronizeMotorCmd>& cmd) override;
+    bool setMotorPID(const common::model::DxlMotorState& dxlState);
 
-        // we have to use ISingleMotorCmd instead of AbstractTtlMotorCmd because this is pure virtual method in IDriverCore
-        // IDriverCore used by Can and Ttl so AbstractTtlMotorCmd or AbstractCanMotorCmd can't be used in this case
-        void addSingleCommandToQueue(const std::shared_ptr<common::model::ISingleMotorCmd>& cmd) override;
-        void addSingleCommandToQueue(const std::vector<std::shared_ptr<common::model::ISingleMotorCmd> >& cmd) override;
+    void setTrajectoryControllerCommands(const std::vector<std::pair<uint8_t, uint32_t> > &cmd);
 
-        // joints control
-        int addJoint(const std::shared_ptr<common::model::JointState> jointState);
+    void setSyncCommand(const std::shared_ptr<common::model::ISynchronizeMotorCmd>& cmd) override;
 
-        // Tool control
-        int setTool(const std::shared_ptr<common::model::ToolState> toolState);
-        void unsetTool(uint8_t motor_id);
-        std::vector<uint8_t> scanTools();
+    // we have to use ISingleMotorCmd instead of AbstractTtlMotorCmd because this is pure virtual method in IDriverCore
+    // IDriverCore used by Can and Ttl so AbstractTtlMotorCmd or AbstractCanMotorCmd can't be used in this case
+    void addSingleCommandToQueue(const std::shared_ptr<common::model::ISingleMotorCmd>& cmd) override;
+    void addSingleCommandToQueue(const std::vector<std::shared_ptr<common::model::ISingleMotorCmd> >& cmd) override;
 
-        // end effector panel control
-        int setEndEffector(const std::shared_ptr<common::model::EndEffectorState> end_effector_state);
+    // joints control
+    int addJoint(const std::shared_ptr<common::model::JointState>& jointState);
 
-        // conveyor control
-        int setConveyor(const std::shared_ptr<common::model::ConveyorState> state) override;
-        void unsetConveyor(uint8_t motor_id, uint8_t default_conveyor_id) override;
-        int changeId(common::model::EHardwareType motor_type, uint8_t old_id, uint8_t new_id) override;
+    // Tool control
+    int setTool(const std::shared_ptr<common::model::ToolState>& toolState);
+    void unsetTool(uint8_t motor_id);
+    std::vector<uint8_t> scanTools();
 
-        // direct commands
-        int rebootMotors();
-        bool rebootMotor(uint8_t motor_id);
+    // end effector panel control
+    int setEndEffector(const std::shared_ptr<common::model::EndEffectorState>& end_effector_state);
 
-        // getters
-        std::vector<uint8_t> getRemovedMotorList() const override;
-        double getPosition(uint8_t id) const;
+    // conveyor control
+    int setConveyor(std::shared_ptr<common::model::ConveyorState> state) override;
+    void unsetConveyor(uint8_t motor_id, uint8_t default_conveyor_id) override;
+    int changeId(common::model::EHardwareType motor_type, uint8_t old_id, uint8_t new_id) override;
 
-        std::vector<std::shared_ptr<common::model::JointState> > getJointStates() const override;
-        std::shared_ptr<common::model::JointState> getJointState(uint8_t motor_id) const override;
-        std::shared_ptr<common::model::EndEffectorState> getEndEffectorState(uint8_t id);
+    // direct commands
+    int rebootMotors();
+    bool rebootMotor(uint8_t motor_id);
 
-        // IDriverCore interface
-        void startControlLoop() override;
+    // getters
+    std::vector<uint8_t> getRemovedMotorList() const override;
+    double getPosition(uint8_t id) const;
 
-        bool scanMotorId(uint8_t motor_to_find) override;
+    std::vector<std::shared_ptr<common::model::JointState> > getJointStates() const override;
+    std::shared_ptr<common::model::JointState> getJointState(uint8_t motor_id) const override;
+    std::shared_ptr<common::model::EndEffectorState> getEndEffectorState(uint8_t id);
 
-        void startCalibration() override;
-        void resetCalibration() override ;
-        bool isCalibrationInProgress() const override ;
-        int32_t getCalibrationResult(uint8_t id) const override ;
-        common::model::EStepperCalibrationStatus getCalibrationStatus() const override;
+    // IDriverCore interface
+    void startControlLoop() override;
 
-        void activeDebugMode(bool mode) override;
+    bool scanMotorId(uint8_t motor_to_find) override;
 
-        bool isConnectionOk() const override;
-        int launchMotorsReport() override;
-        niryo_robot_msgs::BusState getBusState() const override;
-        common::model::EBusProtocol getBusProtocol() const override;
+    void startCalibration() override;
+    void resetCalibration() override ;
+    bool isCalibrationInProgress() const override ;
+    int32_t getCalibrationResult(uint8_t id) const override ;
+    common::model::EStepperCalibrationStatus getCalibrationStatus() const override;
 
-    private:
-        virtual void initParameters(ros::NodeHandle& nh) override;
-        virtual void startServices(ros::NodeHandle& nh) override;
-        virtual void startPublishers(ros::NodeHandle &nh) override;
-        virtual void startSubscribers(ros::NodeHandle &nh) override;
+    void activeDebugMode(bool mode) override;
 
-        void resetHardwareControlLoopRates() override;
-        void controlLoop() override;
-        void _executeCommand() override;
+    bool isConnectionOk() const override;
+    int launchMotorsReport() override;
+    niryo_robot_msgs::BusState getBusState() const override;
+    common::model::EBusProtocol getBusProtocol() const override;
 
-        int motorScanReport(uint8_t motor_id);
-        int motorCmdReport(const common::model::JointState &jState, common::model::EHardwareType motor_type);
+private:
+    void initParameters(ros::NodeHandle& nh) override;
+    void startServices(ros::NodeHandle& nh) override;
+    void startPublishers(ros::NodeHandle &nh) override;
+    void startSubscribers(ros::NodeHandle &nh) override;
 
-        // use other callbacks instead of executecommand
-        bool _callbackActivateLeds(niryo_robot_msgs::SetInt::Request &req, niryo_robot_msgs::SetInt::Response &res);
-        bool _callbackWriteCustomValue(ttl_driver::SendCustomValue::Request &req, ttl_driver::SendCustomValue::Response &res);
-        bool _callbackReadCustomValue(ttl_driver::ReadCustomValue::Request &req, ttl_driver::ReadCustomValue::Response &res);
-        bool _callbackWritePIDValue(ttl_driver::WritePIDValue::Request &req, ttl_driver::WritePIDValue::Response &res);
-        bool _callbackReadPIDValue(ttl_driver::ReadPIDValue::Request &req, ttl_driver::ReadPIDValue::Response &res);
+    void resetHardwareControlLoopRates() override;
+    void controlLoop() override;
+    void _executeCommand() override;
 
-    private:
-        bool _control_loop_flag{false};
-        bool _debug_flag{false};
+    int motorScanReport(uint8_t motor_id);
+    int motorCmdReport(const common::model::JointState &jState, common::model::EHardwareType motor_type);
 
-        std::mutex _control_loop_mutex;
-        std::thread _control_loop_thread;
+    // use other callbacks instead of executecommand
+    bool _callbackActivateLeds(niryo_robot_msgs::SetInt::Request &req, niryo_robot_msgs::SetInt::Response &res);
+    bool _callbackWriteCustomValue(ttl_driver::SendCustomValue::Request &req, ttl_driver::SendCustomValue::Response &res);
+    bool _callbackReadCustomValue(ttl_driver::ReadCustomValue::Request &req, ttl_driver::ReadCustomValue::Response &res);
+    bool _callbackWritePIDValue(ttl_driver::WritePIDValue::Request &req, ttl_driver::WritePIDValue::Response &res);
+    bool _callbackReadPIDValue(ttl_driver::ReadPIDValue::Request &req, ttl_driver::ReadPIDValue::Response &res);
 
-        double _control_loop_frequency{0.0};
+private:
+    bool _control_loop_flag{false};
+    bool _debug_flag{false};
 
-        double _delta_time_data_read{0.0};
-        double _delta_time_end_effector_read{0.0};
-        double _delta_time_write{0.0};
+    std::mutex _control_loop_mutex;
+    std::thread _control_loop_thread;
 
-        double _time_hw_data_last_read{0.0};
-        double _time_hw_end_effector_last_read{0.0};
-        double _time_hw_data_last_write{0.0};
+    double _control_loop_frequency{0.0};
 
-        double _time_check_connection_last_read{0.0};
+    double _delta_time_data_read{0.0};
+    double _delta_time_end_effector_read{0.0};
+    double _delta_time_write{0.0};
 
-        // specific to dxl
-        double _delta_time_status_read{0.0};
-        double _time_hw_status_last_read{0.0};
+    double _time_hw_data_last_read{0.0};
+    double _time_hw_end_effector_last_read{0.0};
+    double _time_hw_data_last_write{0.0};
 
-        double _time_check_end_effector_last_read{0.0};
+    double _time_check_connection_last_read{0.0};
 
-        std::unique_ptr<TtlManager> _ttl_manager;
+    // specific to dxl
+    double _delta_time_status_read{0.0};
+    double _time_hw_status_last_read{0.0};
 
-        std::vector<std::pair<uint8_t, uint32_t> > _joint_trajectory_cmd;
+    double _time_check_end_effector_last_read{0.0};
 
-        // ttl cmds
-        std::queue<std::shared_ptr<common::model::AbstractTtlSynchronizeMotorCmd> > _sync_cmds;
-        std::queue<std::shared_ptr<common::model::AbstractTtlSingleMotorCmd> > _single_cmds_queue;
-        std::queue<std::shared_ptr<common::model::AbstractTtlSingleMotorCmd> > _conveyor_cmds_queue;
+    std::unique_ptr<TtlManager> _ttl_manager;
 
-        ros::ServiceServer _activate_leds_server;
-        ros::ServiceServer _custom_cmd_server;
-        ros::ServiceServer _custom_cmd_getter;
-        ros::ServiceServer _pid_server;
-        ros::ServiceServer _pid_getter;
+    std::vector<std::pair<uint8_t, uint32_t> > _joint_trajectory_cmd;
 
-        static constexpr int QUEUE_OVERFLOW = 20;
+    // ttl cmds
+    std::queue<std::shared_ptr<common::model::AbstractTtlSynchronizeMotorCmd> > _sync_cmds;
+    std::queue<std::shared_ptr<common::model::AbstractTtlSingleMotorCmd> > _single_cmds_queue;
+    std::queue<std::shared_ptr<common::model::AbstractTtlSingleMotorCmd> > _conveyor_cmds_queue;
+
+    ros::ServiceServer _activate_leds_server;
+    ros::ServiceServer _custom_cmd_server;
+    ros::ServiceServer _custom_cmd_getter;
+    ros::ServiceServer _pid_server;
+    ros::ServiceServer _pid_getter;
+
+    static constexpr int QUEUE_OVERFLOW = 20;
 };
 
 /**

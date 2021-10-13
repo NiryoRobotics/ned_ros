@@ -23,7 +23,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <ros/ros.h>
 #include <memory>
 
-#include "common/model/i_interface_core.hpp"
+#include "common/util/i_interface_core.hpp"
 
 #include "joints_interface/joints_interface_core.hpp"
 #include "tools_interface/tools_interface_core.hpp"
@@ -45,18 +45,26 @@ namespace niryo_robot_hardware_interface
 /**
  * @brief The HardwareInterface class
  */
-class HardwareInterface : common::model::IInterfaceCore
+class HardwareInterface : common::util::IInterfaceCore
 {
     public:
         HardwareInterface(ros::NodeHandle &nh);
-        virtual ~HardwareInterface() override;
-        virtual bool init(ros::NodeHandle &nh) override;
+        ~HardwareInterface() override = default;
+
+        // non copyable class
+        HardwareInterface( const HardwareInterface& ) = delete;
+        HardwareInterface( HardwareInterface&& ) = delete;
+
+        HardwareInterface& operator= ( HardwareInterface && ) = delete;
+        HardwareInterface& operator= ( const HardwareInterface& ) = delete;
+
+        bool init(ros::NodeHandle &nh) override;
 
     private:
-        virtual void initParameters(ros::NodeHandle &nh) override;
-        virtual void startServices(ros::NodeHandle &nh) override;
-        virtual void startPublishers(ros::NodeHandle &nh) override;
-        virtual void startSubscribers(ros::NodeHandle &nh) override;
+        void initParameters(ros::NodeHandle &nh) override;
+        void startServices(ros::NodeHandle &nh) override;
+        void startPublishers(ros::NodeHandle &nh) override;
+        void startSubscribers(ros::NodeHandle &nh) override;
 
         void initNodes(ros::NodeHandle &nh);
 

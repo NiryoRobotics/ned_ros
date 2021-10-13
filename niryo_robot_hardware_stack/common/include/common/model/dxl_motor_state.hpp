@@ -41,20 +41,17 @@ class DxlMotorState : public JointState
 
         DxlMotorState(std::string name, EHardwareType type, EComponentType component_type,
                       uint8_t id);
-        DxlMotorState(const DxlMotorState& state);
-
-        virtual ~DxlMotorState() override;
 
         // getters
         bool isTool() const;
 
         // JointState interface
-        virtual std::string str() const override;
-        virtual void reset() override;
-        virtual bool isValid() const override;
+        std::string str() const override;
+        void reset() override;
+        bool isValid() const override;
 
-        virtual int to_motor_pos(double pos_rad) override;
-        virtual double to_rad_pos(int position_dxl) override;
+        int to_motor_pos(double pos_rad) override;
+        double to_rad_pos(int position_dxl) override;
 
         uint32_t getPositionPGain() const;
         uint32_t getPositionIGain() const;
@@ -78,8 +75,8 @@ class DxlMotorState : public JointState
         void setVelocityPGain(uint32_t p_gain);
         void setVelocityIGain(uint32_t i_gain);
 
-        void setFF1Gain(uint32_t getFF1Gain);
-        void setFF2Gain(uint32_t value);
+        void setFF1Gain(uint32_t ff1_gain);
+        void setFF2Gain(uint32_t ff2_gain);
 
 protected:
         uint32_t _pos_p_gain{0};

@@ -20,6 +20,7 @@
 // c++
 #include <functional>
 #include <string>
+#include <utility>
 #include <vector>
 
 // ros
@@ -53,7 +54,7 @@ namespace tools_interface
  */
 ToolsInterfaceCore::ToolsInterfaceCore(ros::NodeHandle& nh,
                                        std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface):
-    _ttl_interface(ttl_interface)
+    _ttl_interface(std::move(ttl_interface))
 {
     ROS_DEBUG("ToolsInterfaceCore::ctor");
 
@@ -61,12 +62,6 @@ ToolsInterfaceCore::ToolsInterfaceCore(ros::NodeHandle& nh,
 
     pubToolId(-1);
 }
-
-/**
- * @brief ToolsInterfaceCore::~ToolsInterfaceCore
- */
-ToolsInterfaceCore::~ToolsInterfaceCore()
-{}
 
 /**
  * @brief ToolsInterfaceCore::init
@@ -134,7 +129,7 @@ void ToolsInterfaceCore::initParameters(ros::NodeHandle& nh)
     // put everything in maps
     for (size_t i = 0; i < idList.size(); ++i)
     {
-        uint8_t id = static_cast<uint8_t>(idList.at(i));
+        auto id = static_cast<uint8_t>(idList.at(i));
         EHardwareType type = HardwareTypeEnum(typeList.at(i).c_str());
 
         if (!_available_tools_map.count(id))
@@ -274,19 +269,17 @@ bool ToolsInterfaceCore::_callbackPingAndSetTool(tools_interface::PingDxlTool::R
             {
                 pubToolId(_toolState->getId());
                 res.state = ToolState::TOOL_STATE_PING_OK;
-                res.id = _toolState->getId();
+                res.id = static_cast<int8_t>(_toolState->getId());
 
                 ros::Duration(0.05).sleep();
                 ROS_INFO("ToolsInterfaceCore::_callbackPingAndSetDxlTool - Set tool success");
 
                 break;
             }
-            else
-            {
-                ROS_WARN("ToolsInterfaceCore::_callbackPingAndSetDxlTool - "
-                         "Set tool failure, return : %d. Retrying (%d)...",
-                         result, tries);
-            }
+
+            ROS_WARN("ToolsInterfaceCore::_callbackPingAndSetDxlTool - "
+                     "Set tool failure, return : %d. Retrying (%d)...",
+                     result, tries);
         }
 
         // on failure after three tries
@@ -363,7 +356,7 @@ bool ToolsInterfaceCore::_callbackOpenGripper(tools_interface::OpenGripper::Requ
         _ttl_interface->addSingleCommandToQueue(std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_EFFORT,
                                                                                     tool_id,  std::initializer_list<uint32_t>{req.open_max_torque}));
 
-        double dxl_speed = static_cast<double>(req.open_speed * _toolState->getStepsForOneSpeed());  // position . sec-1
+        auto dxl_speed = static_cast<double>(req.open_speed * _toolState->getStepsForOneSpeed());  // position . sec-1
         assert(dxl_speed != 0.00);
         double dxl_steps_to_do = std::abs(static_cast<double>(req.open_position) - _toolState->getPositionState());
         double seconds_to_wait =  dxl_steps_to_do /  dxl_speed + 0.25;  // sec
@@ -413,7 +406,7 @@ bool ToolsInterfaceCore::_callbackCloseGripper(tools_interface::CloseGripper::Re
 
         // calculate close duration
         // cc to be removed => acknoledge instead
-        double dxl_speed = static_cast<double>(req.close_speed * _toolState->getStepsForOneSpeed());  // position . sec-1
+        auto dxl_speed = static_cast<double>(req.close_speed * _toolState->getStepsForOneSpeed());  // position . sec-1
         assert(dxl_speed != 0.0);
 
         // position
@@ -451,10 +444,10 @@ bool ToolsInterfaceCore::_callbackPullAirVacuumPump(tools_interface::PullAirVacu
     {
         uint8_t tool_id = _toolState->getId();
         // to be put in tool state
-        uint32_t pull_air_velocity = static_cast<uint32_t>(req.pull_air_velocity);
-        uint32_t pull_air_position = static_cast<uint32_t>(req.pull_air_position);
-        uint32_t pull_air_hold_torque = static_cast<uint32_t>(req.pull_air_hold_torque);
-        uint32_t pull_air_max_torque = static_cast<uint32_t>(req.pull_air_max_torque);
+        auto pull_air_velocity = static_cast<uint32_t>(req.pull_air_velocity);
+        auto pull_air_position = static_cast<uint32_t>(req.pull_air_position);
+        auto pull_air_hold_torque = static_cast<uint32_t>(req.pull_air_hold_torque);
+        auto pull_air_max_torque = static_cast<uint32_t>(req.pull_air_max_torque);
         // set vacuum pump pos, vel and torque
         if (_ttl_interface)
         {
@@ -469,7 +462,7 @@ bool ToolsInterfaceCore::_callbackPullAirVacuumPump(tools_interface::PullAirVacu
 
             // calculate close duration
             // cc to be removed => acknoledge instead
-            double dxl_speed = static_cast<double>(req.pull_air_velocity * _toolState->getStepsForOneSpeed());  // position . sec-1
+            auto dxl_speed = static_cast<double>(req.pull_air_velocity * _toolState->getStepsForOneSpeed());  // position . sec-1
             assert(dxl_speed != 0.0);
 
             // position
@@ -507,9 +500,9 @@ bool ToolsInterfaceCore:: _callbackPushAirVacuumPump(tools_interface::PushAirVac
     {
         uint8_t tool_id = _toolState->getId();
         // to be defined in the toolstate
-        uint32_t push_air_velocity = static_cast<uint32_t>(req.push_air_velocity);
-        uint32_t push_air_position = static_cast<uint32_t>(req.push_air_position);
-        uint32_t push_air_max_torque = static_cast<uint32_t>(req.push_air_max_torque);
+        auto push_air_velocity = static_cast<uint32_t>(req.push_air_velocity);
+        auto push_air_position = static_cast<uint32_t>(req.push_air_position);
+        auto push_air_max_torque = static_cast<uint32_t>(req.push_air_max_torque);
 
         // set vacuum pump pos, vel and torque
         if (_ttl_interface)
@@ -524,7 +517,7 @@ bool ToolsInterfaceCore:: _callbackPushAirVacuumPump(tools_interface::PushAirVac
                                                                                         tool_id, std::initializer_list<uint32_t>{push_air_max_torque}));
 
             // cc to be removed => acknoledge instead
-            double dxl_speed = static_cast<double>(req.push_air_velocity * _toolState->getStepsForOneSpeed());  // position . sec-1
+            auto dxl_speed = static_cast<double>(req.push_air_velocity * _toolState->getStepsForOneSpeed());  // position . sec-1
             assert(dxl_speed != 0.0);
 
             // position

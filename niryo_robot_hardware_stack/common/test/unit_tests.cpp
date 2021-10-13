@@ -26,8 +26,8 @@
 // Bring in gtest
 #include <gtest/gtest.h>
 
-namespace {
-
+namespace
+{
 
 using ::common::model::EHardwareType;
 using ::common::model::HardwareTypeEnum;
@@ -40,7 +40,8 @@ using ::common::model::EComponentType;
 class DXLCommonTest : public testing::TestWithParam<std::tuple<EHardwareType, EComponentType, double> >
 {
     protected:
-        void SetUp() override {
+        void SetUp() override
+        {
             std::cout << "Test for MotorType " << HardwareTypeEnum(std::get<0>(GetParam())).toString() << std::endl;
 
             dxlState = common::model::DxlMotorState(std::get<0>(GetParam()),
@@ -65,7 +66,8 @@ class DXLCommonTest : public testing::TestWithParam<std::tuple<EHardwareType, EC
 class DXLIdentityRadTest : public testing::TestWithParam<std::tuple<EHardwareType, EComponentType, double, double> >
 {
     protected:
-    void SetUp() override {
+    void SetUp() override
+    {
         std::cout << "Test for MotorType " << HardwareTypeEnum(std::get<0>(GetParam())).toString() << std::endl;
 
         dxlState = common::model::DxlMotorState(std::get<0>(GetParam()),
@@ -88,7 +90,8 @@ class DXLIdentityRadTest : public testing::TestWithParam<std::tuple<EHardwareTyp
 class DXLIdentityMotorTest : public testing::TestWithParam<std::tuple<EHardwareType, EComponentType, double, int> >
 {
     protected:
-    void SetUp() override {
+    void SetUp() override
+    {
         std::cout << "Test for MotorType " << HardwareTypeEnum(std::get<0>(GetParam())).toString() << std::endl;
 
         dxlState = common::model::DxlMotorState(std::get<0>(GetParam()),
@@ -107,11 +110,13 @@ class DXLIdentityMotorTest : public testing::TestWithParam<std::tuple<EHardwareT
     double precision;
 };
 
-TEST_P(DXLCommonTest, validity) {
+TEST_P(DXLCommonTest, validity)
+{
     ASSERT_TRUE(dxlState.isValid());
 }
 
-TEST_P(DXLCommonTest, zero) {
+TEST_P(DXLCommonTest, zero)
+{
     // check 0 (middle pos)
     EXPECT_NEAR(dxlState.to_rad_pos(dxlState.getMiddlePosition()),
                 dxlState.getOffsetPosition(), precision) << "to_motor_pos failed";
@@ -120,14 +125,16 @@ TEST_P(DXLCommonTest, zero) {
                 dxlState.getMiddlePosition(), precision) << "to_motor_pos failed";
 }
 
-TEST_P(DXLCommonTest, extremeLow) {
+TEST_P(DXLCommonTest, extremeLow)
+{
     // check to_rad_pos extreme values
     double totalAngle_rad = dxlState.getTotalAngle() / RADIAN_TO_DEGREE;
     EXPECT_NEAR(dxlState.to_rad_pos(0), dxlState.getOffsetPosition() - totalAngle_rad/2, precision)
                  << "to_motor_pos failed";
 }
 
-TEST_P(DXLCommonTest, extremeHigh) {
+TEST_P(DXLCommonTest, extremeHigh)
+{
     double totalAngle_rad = dxlState.getTotalAngle() / RADIAN_TO_DEGREE;
 
     EXPECT_NEAR(dxlState.to_rad_pos(dxlState.getTotalRangePosition()),
@@ -135,7 +142,8 @@ TEST_P(DXLCommonTest, extremeHigh) {
                 << "to_motor_pos failed";
 }
 
-TEST_P(DXLIdentityRadTest, identityFromRad) {
+TEST_P(DXLIdentityRadTest, identityFromRad)
+{
     // check combinations is identity
     double test_rad = std::get<3>(GetParam());
     EXPECT_NEAR(dxlState.to_rad_pos(dxlState.to_motor_pos(test_rad)),
@@ -143,7 +151,8 @@ TEST_P(DXLIdentityRadTest, identityFromRad) {
         << "to_rad_pos o to_motor_pos is not identity";
 }
 
-TEST_P(DXLIdentityMotorTest, identityFromMotorPos) {
+TEST_P(DXLIdentityMotorTest, identityFromMotorPos)
+{
     // check combinations is identity
     int test_pos = std::get<3>(GetParam());
 

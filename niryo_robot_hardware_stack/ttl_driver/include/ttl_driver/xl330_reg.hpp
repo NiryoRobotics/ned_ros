@@ -26,7 +26,7 @@ struct XL330Reg
 {
     static constexpr common::model::EHardwareType motor_type = common::model::EHardwareType::XL330;
 
-    static constexpr int PROTOCOL_VERSION                       = 2.0;
+    static constexpr float PROTOCOL_VERSION                     = 2.0;
     static constexpr int MODEL_NUMBER                           = 1200;
     static constexpr int VOLTAGE_CONVERSION                     = 10;
 

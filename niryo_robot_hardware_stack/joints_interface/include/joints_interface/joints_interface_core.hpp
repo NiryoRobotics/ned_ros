@@ -31,6 +31,8 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 
 #include <ros/ros.h>
 
+#include "common/util/i_interface_core.hpp"
+
 #include <controller_manager/controller_manager.h>
 #include <control_msgs/FollowJointTrajectoryActionResult.h>
 #include <control_msgs/FollowJointTrajectoryActionGoal.h>
@@ -45,12 +47,11 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "niryo_robot_msgs/Trigger.h"
 #include "common/model/hardware_type_enum.hpp"
 
-#include "common/model/i_interface_core.hpp"
 
 namespace joints_interface
 {
 
-class JointsInterfaceCore : common::model::IInterfaceCore
+class JointsInterfaceCore : common::util::IInterfaceCore
 {
     public:
 
@@ -58,9 +59,16 @@ class JointsInterfaceCore : common::model::IInterfaceCore
                             ros::NodeHandle& robot_hwnh,
                             std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface,
                             std::shared_ptr<can_driver::CanInterfaceCore> can_interface);
-        virtual ~JointsInterfaceCore() override;
+        ~JointsInterfaceCore() override;
 
-        virtual bool init(ros::NodeHandle& nh) override;
+        // non copyable class
+        JointsInterfaceCore( const JointsInterfaceCore& ) = delete;
+        JointsInterfaceCore( JointsInterfaceCore&& ) = delete;
+
+        JointsInterfaceCore& operator= ( JointsInterfaceCore && ) = delete;
+        JointsInterfaceCore& operator= ( const JointsInterfaceCore& ) = delete;
+
+        bool init(ros::NodeHandle& nh) override;
 
         void sendMotorsParams();
         void activateLearningMode(bool activate, int &ostatus, std::string &omessage);
@@ -72,10 +80,10 @@ class JointsInterfaceCore : common::model::IInterfaceCore
         getJointsState() const;
 
     private:
-        virtual void initParameters(ros::NodeHandle& nh) override;
-        virtual void startServices(ros::NodeHandle& nh) override;
-        virtual void startPublishers(ros::NodeHandle& nh) override;
-        virtual void startSubscribers(ros::NodeHandle& nh) override;
+        void initParameters(ros::NodeHandle& nh) override;
+        void startServices(ros::NodeHandle& nh) override;
+        void startPublishers(ros::NodeHandle& nh) override;
+        void startSubscribers(ros::NodeHandle& nh) override;
 
         void rosControlLoop();
 

@@ -61,8 +61,7 @@ class StepperCommandTypeEnum : public AbstractEnum<StepperCommandTypeEnum, EStep
 {
 public:
     StepperCommandTypeEnum(EStepperCommandType e=EStepperCommandType::CMD_TYPE_UNKNOWN);
-    StepperCommandTypeEnum(const char* const str);
-    ~StepperCommandTypeEnum() {}
+    StepperCommandTypeEnum(const char* str);
 
 private:
     friend class AbstractEnum<StepperCommandTypeEnum, EStepperCommandType>;

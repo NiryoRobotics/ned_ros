@@ -24,7 +24,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "hardware_type_enum.hpp"
 #include "component_type_enum.hpp"
 
-#include <stdint.h>
+#include <cstdint>
 #include <string>
 
 
@@ -40,13 +40,12 @@ class JointState : public AbstractMotorState
 {
     
 public:
-    JointState();
+    JointState() = default;
     JointState(std::string name, EHardwareType type,
                EComponentType component_type,
                EBusProtocol bus_proto, uint8_t id);
-    JointState(const JointState& state);
 
-    virtual ~JointState() override;
+    ~JointState() override = default;
 
     void setName(std::string &name);
     void setOffsetPosition(double offset_position);
@@ -62,9 +61,9 @@ public:
     virtual double to_rad_pos(int position_dxl) = 0;
 
     // AbstractMotorState interface
-    virtual void reset() override;
-    virtual bool isValid() const override;
-    virtual std::string str() const override;
+    void reset() override;
+    bool isValid() const override;
+    std::string str() const override;
 
 public:
     double pos{0.0};
@@ -77,6 +76,14 @@ protected:
     double _offset_position{0.0};
     bool _need_calibration{false};
     int _direction{1};
+
+protected:
+    // see https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c67-a-polymorphic-class-should-suppress-public-copymove
+    JointState( const JointState& ) = default;
+    JointState( JointState&& ) = default;
+
+    JointState& operator= ( JointState && ) = default;
+    JointState& operator= ( const JointState& ) = default;
 
 };
 

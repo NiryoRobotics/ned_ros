@@ -87,12 +87,11 @@ TEST_F(ToolTestSuite, openTool)
     {
         if (static_cast<int>(filters[i]["id"]) == id)
         {
-            srv.request.id = id;
-            srv.request.open_position = static_cast<int>(filters[i]["specs"]["open_position"]);
-            srv.request.open_speed = static_cast<int>(filters[i]["specs"]["open_speed"]);
-            srv.request.open_hold_torque = static_cast<int>(filters[i]["specs"]["open_hold_torque"]);
-            srv.request.open_max_torque = static_cast<int>(filters[i]["specs"]["open_max_torque"]);
-            break;
+            srv.request.id = static_cast<uint8_t>(id);
+            srv.request.open_position = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["open_position"]));
+            srv.request.open_speed = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["open_speed"]));
+            srv.request.open_hold_torque = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["open_hold_torque"]));
+            srv.request.open_max_torque = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["open_max_torque"]));
         }
     }
 
@@ -119,11 +118,11 @@ TEST_F(ToolTestSuite, CloseTool)
     {
         if (static_cast<int>(filters[i]["id"]) == id)
         {
-            srv.request.id = id;
-            srv.request.close_position = static_cast<int>(filters[i]["specs"]["close_position"]);
-            srv.request.close_hold_torque = static_cast<int>(filters[i]["specs"]["close_hold_torque"]);
-            srv.request.close_max_torque = static_cast<int>(filters[i]["specs"]["close_max_torque"]);
-            srv.request.close_speed = static_cast<int>(filters[i]["specs"]["close_speed"]);
+            srv.request.id = static_cast<uint8_t>(id);
+            srv.request.close_position = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["close_position"]));
+            srv.request.close_speed = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["close_speed"]));
+            srv.request.close_hold_torque = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["close_hold_torque"]));
+            srv.request.close_max_torque = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["close_max_torque"]));
             break;
         }
     }
@@ -151,11 +150,11 @@ TEST_F(ToolTestSuite, PullAirVacuumPump)
     {
         if (static_cast<int>(filters[i]["id"]) == id)
         {
-            srv.request.id = id;
-            srv.request.pull_air_position = static_cast<int>(filters[i]["specs"]["pull_air_position"]);
-            srv.request.pull_air_hold_torque = static_cast<int>(filters[i]["specs"]["pull_air_hold_torque"]);
-            srv.request.pull_air_velocity = static_cast<int>(filters[i]["specs"]["pull_air_velocity"]);
-            srv.request.pull_air_max_torque = static_cast<int>(filters[i]["specs"]["pull_air_max_torque"]);
+            srv.request.id = static_cast<uint8_t>(id);
+            srv.request.pull_air_position = static_cast<int16_t>(static_cast<int>(filters[i]["specs"]["pull_air_position"]));
+            srv.request.pull_air_hold_torque = static_cast<int16_t>(static_cast<int>(filters[i]["specs"]["pull_air_hold_torque"]));
+            srv.request.pull_air_velocity = static_cast<int16_t>(static_cast<int>(filters[i]["specs"]["pull_air_velocity"]));
+            srv.request.pull_air_max_torque = static_cast<int16_t>(static_cast<int>(filters[i]["specs"]["pull_air_max_torque"]));
             break;
         }
     }
@@ -183,10 +182,10 @@ TEST_F(ToolTestSuite, PushAirVacuumPump)
     {
         if (static_cast<int>(filters[i]["id"]) == id)
         {
-            srv.request.id = id;
-            srv.request.push_air_position = static_cast<int>(filters[i]["specs"]["push_air_position"]);
-            srv.request.push_air_velocity = static_cast<int>(filters[i]["specs"]["push_air_velocity"]);
-            srv.request.push_air_max_torque = static_cast<int>(filters[i]["specs"]["push_air_max_torque"]);
+            srv.request.id = static_cast<uint8_t>(id);
+            srv.request.push_air_position = static_cast<int16_t>(static_cast<int>(filters[i]["specs"]["push_air_position"]));
+            srv.request.push_air_velocity = static_cast<int16_t>(static_cast<int>(filters[i]["specs"]["push_air_velocity"]));
+            srv.request.push_air_max_torque = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["push_air_max_torque"]));
             break;
         }
     }

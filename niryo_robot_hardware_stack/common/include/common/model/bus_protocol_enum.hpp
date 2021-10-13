@@ -47,8 +47,7 @@ class BusProtocolEnum : public AbstractEnum<BusProtocolEnum, EBusProtocol>
 {
 public:
     BusProtocolEnum(EBusProtocol e=EBusProtocol::UNKNOWN);
-    BusProtocolEnum(const char* const str);
-    ~BusProtocolEnum() {}
+    BusProtocolEnum(const char* str);
 
 private:
     friend class AbstractEnum<BusProtocolEnum, EBusProtocol>;

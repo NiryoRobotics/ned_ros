@@ -26,7 +26,7 @@ struct StepperReg
 {
     static constexpr common::model::EHardwareType motor_type = common::model::EHardwareType::STEPPER;
 
-    static constexpr int PROTOCOL_VERSION                       = 2.0;
+    static constexpr float PROTOCOL_VERSION                     = 2.0;
     static constexpr int MODEL_NUMBER                           = 2000;
     static constexpr int VOLTAGE_CONVERSION                     = 1000;
 

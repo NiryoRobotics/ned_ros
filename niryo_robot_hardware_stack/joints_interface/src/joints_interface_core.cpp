@@ -20,6 +20,7 @@
 // C++
 #include <functional>
 #include <string>
+#include <utility>
 
 #include "joints_interface/joints_interface_core.hpp"
 #include "common/util/util_defs.hpp"
@@ -39,8 +40,8 @@ JointsInterfaceCore::JointsInterfaceCore(ros::NodeHandle& rootnh,
                                          std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface,
                                          std::shared_ptr<can_driver::CanInterfaceCore> can_interface) :
     _joint_controller_name("/niryo_robot_follow_joint_trajectory_controller"),
-    _ttl_interface(ttl_interface),
-    _can_interface(can_interface)
+    _ttl_interface(std::move(ttl_interface)),
+    _can_interface(std::move(can_interface))
 {
     init(robot_hwnh);
 
@@ -310,7 +311,7 @@ bool JointsInterfaceCore::_callbackCalibrateMotors(niryo_robot_msgs::SetInt::Req
 {
     ROS_DEBUG("JointsInterfaceCore::_callbackCalibrateMotors - Received a calibration request");
     int calibration_mode = req.value;
-    std::string result_message = "";
+    std::string result_message;
     _enable_control_loop = false;
 
     int result = _robot->calibrateJoints(calibration_mode, result_message);
@@ -373,7 +374,7 @@ bool JointsInterfaceCore::_callbackActivateLearningMode(niryo_robot_msgs::SetBoo
  * @brief JointsInterfaceCore::_callbackTrajectoryResult
  * @param msg
  */
-void JointsInterfaceCore::_callbackTrajectoryResult(const control_msgs::FollowJointTrajectoryActionResult &msg)
+void JointsInterfaceCore::_callbackTrajectoryResult(const control_msgs::FollowJointTrajectoryActionResult & /*msg*/)
 {
     ROS_DEBUG("JointsInterfaceCore::_callbackTrajectoryResult - Received trajectory RESULT");
     _robot->synchronizeMotors(false);

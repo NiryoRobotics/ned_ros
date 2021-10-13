@@ -27,7 +27,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <ros/ros.h>
 
 // niryo
-#include "common/model/i_interface_core.hpp"
+#include "common/util/i_interface_core.hpp"
 
 #include "common/model/end_effector_state.hpp"
 #include "ttl_driver/ttl_interface_core.hpp"
@@ -44,24 +44,31 @@ namespace end_effector_interface
  * The TTL management is done in ttl_manager
  * Every runtime critical operation is done in TtlManager
  */
-class EndEffectorInterfaceCore : public common::model::IInterfaceCore
+class EndEffectorInterfaceCore : public common::util::IInterfaceCore
 {
 
     public:
         EndEffectorInterfaceCore(ros::NodeHandle& nh,
                                  std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface);
-        virtual ~EndEffectorInterfaceCore() override;
+        ~EndEffectorInterfaceCore() override = default;
 
-        virtual bool init(ros::NodeHandle &nh) override;
+        // non copyable class
+        EndEffectorInterfaceCore( const EndEffectorInterfaceCore& ) = delete;
+        EndEffectorInterfaceCore( EndEffectorInterfaceCore&& ) = delete;
+
+        EndEffectorInterfaceCore& operator= ( EndEffectorInterfaceCore && ) = delete;
+        EndEffectorInterfaceCore& operator= ( const EndEffectorInterfaceCore& ) = delete;
+
+        bool init(ros::NodeHandle &nh) override;
 
         // getters
         std::shared_ptr<common::model::EndEffectorState> getEndEffectorState() const;
 
     private:
-        virtual void initParameters(ros::NodeHandle& nh) override;
-        virtual void startServices(ros::NodeHandle& nh) override;
-        virtual void startPublishers(ros::NodeHandle& nh) override;
-        virtual void startSubscribers(ros::NodeHandle& nh) override;
+        void initParameters(ros::NodeHandle& nh) override;
+        void startServices(ros::NodeHandle& nh) override;
+        void startPublishers(ros::NodeHandle& nh) override;
+        void startSubscribers(ros::NodeHandle& nh) override;
 
         void initEndEffectorHardware();
         void _publishButtonState(const ros::TimerEvent&);
@@ -87,7 +94,7 @@ class EndEffectorInterfaceCore : public common::model::IInterfaceCore
         uint8_t _id{1};
 };
 
-std::shared_ptr<common::model::EndEffectorState>
+inline std::shared_ptr<common::model::EndEffectorState>
 EndEffectorInterfaceCore::getEndEffectorState() const
 {
     return _end_effector_state;

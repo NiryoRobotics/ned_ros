@@ -33,21 +33,20 @@ namespace ttl_driver
 class AbstractStepperDriver : public AbstractMotorDriver
 {
 public:
-    AbstractStepperDriver();
+    AbstractStepperDriver() = default;
     AbstractStepperDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
                           std::shared_ptr<dynamixel::PacketHandler> packetHandler);
-    virtual ~AbstractStepperDriver() override;
 
 public:
     // AbstractMotorDriver interface
-    virtual std::string str() const override;
+    std::string str() const override;
 
-    virtual int writeSingleCmd(const std::shared_ptr<common::model::AbstractTtlSingleMotorCmd> &cmd) override;
-    virtual int writeSyncCmd(int type, const std::vector<uint8_t>& ids, const std::vector<uint32_t>& params) override;
+    int writeSingleCmd(const std::shared_ptr<common::model::AbstractTtlSingleMotorCmd> &cmd) override;
+    int writeSyncCmd(int type, const std::vector<uint8_t>& ids, const std::vector<uint32_t>& params) override;
 
 protected:
     // AbstractTtlDriver interface
-    virtual std::string interpreteFirmwareVersion(uint32_t fw_version) const override;
+    std::string interpreteFirmwareVersion(uint32_t fw_version) const override;
 
 public:
     // specific Stepper commands

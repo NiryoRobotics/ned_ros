@@ -19,19 +19,12 @@
 #include "common/model/tool_state.hpp"
 #include <sstream>
 #include <string>
+#include <utility>
 
 namespace common
 {
 namespace model
 {
-
-/**
- * @brief ToolState::ToolState
- */
-ToolState::ToolState() :
-    DxlMotorState()
-{
-}
 
 /**
  * @brief ToolState::ToolState
@@ -41,25 +34,8 @@ ToolState::ToolState() :
  */
 ToolState::ToolState(std::string name, EHardwareType type, uint8_t id) :
     DxlMotorState(type, EComponentType::TOOL, id),
-    _tool_name(name)
-{
-}
-
-ToolState::ToolState(const ToolState &state) :
-  DxlMotorState(state)
-{
-    _tool_name = state._tool_name;
-
-    _connected = state._connected;
-    _position = state._position;
-}
-
-/**
- * @brief ToolState::~ToolState
- */
-ToolState::~ToolState()
-{
-}
+    _tool_name(std::move(name))
+{}
 
 /**
  * @brief ToolState::setName
@@ -67,7 +43,7 @@ ToolState::~ToolState()
  */
 void ToolState::setName(std::string name)
 {
-    _tool_name = name;
+    _tool_name = std::move(name);
 }
 
 /**

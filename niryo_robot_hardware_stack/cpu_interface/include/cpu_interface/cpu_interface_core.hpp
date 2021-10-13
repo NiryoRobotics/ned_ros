@@ -27,7 +27,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <thread>
 #include <string>
 
-#include "common/model/i_interface_core.hpp"
+#include "common/util/i_interface_core.hpp"
 
 namespace cpu_interface
 {
@@ -35,22 +35,29 @@ namespace cpu_interface
 /**
  * @brief The CpuInterfaceCore class
  */
-class CpuInterfaceCore : public common::model::IInterfaceCore
+class CpuInterfaceCore : public common::util::IInterfaceCore
 {
     public:
-
         CpuInterfaceCore(ros::NodeHandle& nh);
-        virtual ~CpuInterfaceCore() override;
-        virtual bool init(ros::NodeHandle& nh) override;
+        ~CpuInterfaceCore() override;
+
+        // non copyable class
+        CpuInterfaceCore( const CpuInterfaceCore& ) = delete;
+        CpuInterfaceCore( CpuInterfaceCore&& ) = delete;
+
+        CpuInterfaceCore& operator= ( CpuInterfaceCore && ) = delete;
+        CpuInterfaceCore& operator= ( const CpuInterfaceCore& ) = delete;
+
+        bool init(ros::NodeHandle& nh) override;
 
         void startReadingData();
         int getCpuTemperature() const;
 
     private:
-        virtual void initParameters(ros::NodeHandle& nh) override;
-        virtual void startServices(ros::NodeHandle& nh) override;
-        virtual void startPublishers(ros::NodeHandle& nh) override;
-        virtual void startSubscribers(ros::NodeHandle& nh) override;
+        void initParameters(ros::NodeHandle& nh) override;
+        void startServices(ros::NodeHandle& nh) override;
+        void startPublishers(ros::NodeHandle& nh) override;
+        void startSubscribers(ros::NodeHandle& nh) override;
 
         void _readCpuTemperature();
         void _readHardwareDataLoop();

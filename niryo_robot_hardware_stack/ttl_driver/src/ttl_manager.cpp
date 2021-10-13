@@ -28,6 +28,10 @@
 #include <cstdlib>
 #include <cassert>
 
+// ros
+#include "ros/serialization.h"
+#include "ros/time.h"
+
 // niryo
 #include "common/model/hardware_type_enum.hpp"
 #include "common/model/dxl_command_type_enum.hpp"
@@ -38,7 +42,6 @@
 #include "common/model/stepper_calibration_status_enum.hpp"
 
 #include "dynamixel_sdk/packet_handler.h"
-#include "ros/serialization.h"
 #include "ttl_driver/stepper_reg.hpp"
 #include "ttl_driver/end_effector_reg.hpp"
 
@@ -79,14 +82,6 @@ TtlManager::TtlManager(ros::NodeHandle& nh) :
 
     if (COMM_SUCCESS != setupCommunication())
         ROS_WARN("TtlManager - TTL Communication Failed");
-}
-
-/**
- * @brief TtlManager::~TtlManager
- */
-TtlManager::~TtlManager()
-{
-    // we use an "init()" in the ctor. Thus there should be some kind of "uninit" in the dtor
 }
 
 /**
@@ -762,11 +757,11 @@ bool TtlManager::readHwStatus()
                                 hw_errors_increment++;
                             }
 
-                            int16_t speed = static_cast<int16_t>(velocity);
+                            auto speed = static_cast<int16_t>(velocity);
                             auto cState = std::dynamic_pointer_cast<common::model::ConveyorState>(state);
                             cState->setDirection(cState->getAssenblyDirection() * (speed > 0 ? 1 : -1));
-                            cState->setSpeed(std::abs(speed));
-                            cState->setState(speed != 0);
+                            cState->setSpeed(static_cast<int16_t>(std::abs(speed)));
+                            cState->setState(speed);
                         }
                     }
                 }
@@ -1186,7 +1181,7 @@ int TtlManager::writeSynchronizeCommand(const std::shared_ptr<common::model::Abs
         std::set<common::model::EHardwareType> typesToProcess = cmd->getMotorTypes();
 
         // process all the motors using each successive drivers
-        for (int counter = 0; counter < MAX_HW_FAILURE; ++counter)
+        for (uint32_t counter = 0; counter < MAX_HW_FAILURE; ++counter)
         {
             ROS_DEBUG_THROTTLE(0.5, "TtlManager::writeSynchronizeCommand: try to sync write (counter %d)", counter);
 
@@ -1421,7 +1416,7 @@ std::vector<std::shared_ptr<JointState> >
 TtlManager::getMotorsStates() const
 {
     std::vector<std::shared_ptr<JointState> > states;
-    for (auto it : _state_map)
+    for (const auto& it : _state_map)
     {
         if (EHardwareType::UNKNOWN != it.second->getHardwareType()
             && EHardwareType::END_EFFECTOR != it.second->getHardwareType())
@@ -1548,7 +1543,7 @@ void TtlManager::readFakeConfig()
         _nh.getParam(current_ns + "temperature", temperature);
         _fake_data->end_effector.temperature = static_cast<uint32_t>(temperature);
         _nh.getParam(current_ns + "voltage", voltage);
-        _fake_data->end_effector.voltage = static_cast<uint32_t>(voltage);
+        _fake_data->end_effector.voltage = static_cast<double>(voltage);
 
         std::string firmware;
         _nh.getParam(current_ns + "firmware", firmware);

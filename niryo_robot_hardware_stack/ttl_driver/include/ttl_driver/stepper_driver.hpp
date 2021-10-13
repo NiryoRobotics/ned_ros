@@ -40,60 +40,58 @@ class StepperDriver : public AbstractStepperDriver
     public:
         StepperDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
                       std::shared_ptr<dynamixel::PacketHandler> packetHandler);
-        virtual ~StepperDriver() override;
-
 
     public:
         // AbstractTtlDriver interface
-        virtual std::string str() const override;
+        std::string str() const override;
 
-        virtual std::string interpreteErrorState(uint32_t hw_state) const override;
+        std::string interpreteErrorState(uint32_t hw_state) const override;
 
-        virtual int checkModelNumber(uint8_t id) override;
-        virtual int readFirmwareVersion(uint8_t id, std::string &version) override;
+        int checkModelNumber(uint8_t id) override;
+        int readFirmwareVersion(uint8_t id, std::string &version) override;
 
-        virtual int readTemperature(uint8_t id, uint32_t &temperature) override;
-        virtual int readVoltage(uint8_t id, double &voltage) override;
-        virtual int readHwErrorStatus(uint8_t id, uint32_t &hardware_status) override;
+        int readTemperature(uint8_t id, uint32_t &temperature) override;
+        int readVoltage(uint8_t id, double &voltage) override;
+        int readHwErrorStatus(uint8_t id, uint32_t &hardware_status) override;
 
-        virtual int syncReadFirmwareVersion(const std::vector<uint8_t> &id_list, std::vector<std::string> &firmware_list) override;
-        virtual int syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &temperature_list) override;
-        virtual int syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list) override;
-        virtual int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list) override;
+        int syncReadFirmwareVersion(const std::vector<uint8_t> &id_list, std::vector<std::string> &firmware_list) override;
+        int syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &temperature_list) override;
+        int syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list) override;
+        int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list) override;
 
     public:
         // AbstractMotorDriver interface : we cannot define them globally in AbstractMotorDriver
         // as it is needed here for polymorphism (AbstractMotorDriver cannot be a template class and does not
         // have access to reg_type). So it seems like a duplicate of DxlDriver
 
-        virtual int changeId(uint8_t id, uint8_t new_id) override;
+        int changeId(uint8_t id, uint8_t new_id) override;
 
-        virtual int readMinPosition(uint8_t id, uint32_t &min_pos) override;
-        virtual int readMaxPosition(uint8_t id, uint32_t &max_pos) override;
+        int readMinPosition(uint8_t id, uint32_t &min_pos) override;
+        int readMaxPosition(uint8_t id, uint32_t &max_pos) override;
 
-        virtual int setTorqueEnable(uint8_t id, uint32_t torque_enable) override;
-        virtual int setGoalPosition(uint8_t id, uint32_t position) override;
-        virtual int setGoalVelocity(uint8_t id, uint32_t velocity) override;
+        int setTorqueEnable(uint8_t id, uint32_t torque_enable) override;
+        int setGoalPosition(uint8_t id, uint32_t position) override;
+        int setGoalVelocity(uint8_t id, uint32_t velocity) override;
         
-        virtual int syncWriteTorqueEnable(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &torque_enable_list) override;
-        virtual int syncWritePositionGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &position_list) override;
-        virtual int syncWriteVelocityGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &velocity_list) override;
+        int syncWriteTorqueEnable(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &torque_enable_list) override;
+        int syncWritePositionGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &position_list) override;
+        int syncWriteVelocityGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &velocity_list) override;
 
         // ram read
-        virtual int readPosition(uint8_t id, uint32_t &present_position) override;
+        int readPosition(uint8_t id, uint32_t &present_position) override;
 
-        virtual int syncReadPosition(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &position_list) override;
+        int syncReadPosition(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &position_list) override;
 
         // AbstractStepperDriver interface
     public:
-        virtual int writeVelocityProfile(uint8_t id, const std::vector<uint32_t>& data) override;
+        int writeVelocityProfile(uint8_t id, const std::vector<uint32_t>& data) override;
 
-        virtual int startHoming(uint8_t id) override;
-        virtual int writeHomingDirection(uint8_t id, uint8_t direction) override;
-        virtual int readHomingStatus(uint8_t id, uint32_t &status) override;
-        virtual int readGoalVelocity(uint8_t id, uint32_t& present_velocity) override;
+        int startHoming(uint8_t id) override;
+        int writeHomingDirection(uint8_t id, uint8_t direction) override;
+        int readHomingStatus(uint8_t id, uint32_t &status) override;
+        int readGoalVelocity(uint8_t id, uint32_t& present_velocity) override;
 
-        virtual int readFirmwareRunning(uint8_t id, bool &is_running) override;
+        int readFirmwareRunning(uint8_t id, bool &is_running) override;
 };
 
 // definition of methods
@@ -104,17 +102,9 @@ class StepperDriver : public AbstractStepperDriver
 template<typename reg_type>
 StepperDriver<reg_type>::StepperDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
                                        std::shared_ptr<dynamixel::PacketHandler> packetHandler) :
-    AbstractStepperDriver(portHandler, packetHandler)
-{
-}
-
-/**
- * @brief DxlDriver<reg_type>::~DxlDriver
- */
-template<typename reg_type>
-StepperDriver<reg_type>::~StepperDriver()
-{
-}
+    AbstractStepperDriver(std::move(portHandler),
+                          std::move(packetHandler))
+{}
 
 //*****************************
 // AbstractMotorDriver interface
@@ -137,18 +127,18 @@ std::string StepperDriver<reg_type>::interpreteErrorState(uint32_t hw_state) con
     }
     if (hw_state & 1<<2)    // 0b00000100
     {
-        if (hardware_message != "")
+        if (!hardware_message.empty())
             hardware_message += ", ";
         hardware_message += "OverHeating";
     }
     if (hw_state & 1<<3)    // 0b00001000
     {
-        if (hardware_message != "")
+        if (!hardware_message.empty())
             hardware_message += ", ";
         hardware_message += "Motor Encoder";
     }
 
-    if (hardware_message != "")
+    if (!hardware_message.empty())
         hardware_message += " Error";
 
     return hardware_message;
@@ -274,14 +264,14 @@ int StepperDriver<reg_type>::syncReadPosition(const std::vector<uint8_t> &id_lis
 }
 
 template<typename reg_type>
-int StepperDriver<reg_type>::syncReadFirmwareVersion(const std::vector<uint8_t> &id_list, std::vector<std::string> &firmware_version)
+int StepperDriver<reg_type>::syncReadFirmwareVersion(const std::vector<uint8_t> &id_list, std::vector<std::string> &firmware_list)
 {
     int res = 0;
-    firmware_version.clear();
+    firmware_list.clear();
     std::vector<uint32_t> data_list{};
     res = syncRead(reg_type::ADDR_FIRMWARE_VERSION, reg_type::SIZE_FIRMWARE_VERSION, id_list, data_list);
     for(auto const& data : data_list)
-      firmware_version.emplace_back(interpreteFirmwareVersion(data));
+      firmware_list.emplace_back(interpreteFirmwareVersion(data));
     return res;
 }
 
@@ -358,9 +348,9 @@ int StepperDriver<reg_type>::writeVelocityProfile(uint8_t id, const std::vector<
       std::cout << "Failures during writeVelocityProfile : " << res << std::endl;
       return COMM_TX_FAIL;
   }
-  else {
+  
     return COMM_SUCCESS;
-  }
+  
 
 }
 

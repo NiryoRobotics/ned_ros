@@ -29,7 +29,7 @@
  * @brief readTemperature
  * @param cpu
  */
-void readTemperature(std::shared_ptr<cpu_interface::CpuInterfaceCore> cpu)
+void readTemperature(const std::shared_ptr<cpu_interface::CpuInterfaceCore>& cpu)
 {
     ros::Rate read_rpi_diagnostics_rate = ros::Rate(1);
 

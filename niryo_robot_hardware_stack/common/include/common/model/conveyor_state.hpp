@@ -34,15 +34,13 @@ namespace model
 class ConveyorState : public StepperMotorState {
 
     public:
+        ConveyorState() = default;
         ConveyorState(uint8_t default_id);
         ConveyorState(EBusProtocol bus_proto, uint8_t default_id);
         ConveyorState(EHardwareType type,
                       EBusProtocol bus_proto, uint8_t default_id);
         ConveyorState(EHardwareType type,
                       EBusProtocol bus_proto, uint8_t id, uint8_t default_id);
-
-        ConveyorState(const ConveyorState& state);
-        virtual ~ConveyorState() override;
 
         void updateId(uint8_t id);
 
@@ -57,12 +55,12 @@ class ConveyorState : public StepperMotorState {
         int8_t getAssenblyDirection() const;
         // other getters
 
-        virtual bool operator==(const ConveyorState& other);
+        bool operator==(const ConveyorState& other);
 
         // StepperMotorState interface
-        virtual std::string str() const override;
-        virtual void reset() override;
-        virtual bool isValid() const override;
+        std::string str() const override;
+        void reset() override;
+        bool isValid() const override;
 
 private:
         int8_t _assembly_direction{0};  // the direction where the conveyor is assembled in hw level

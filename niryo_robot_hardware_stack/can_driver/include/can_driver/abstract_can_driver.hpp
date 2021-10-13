@@ -45,9 +45,9 @@ public:
     static constexpr double STEPPER_MOTOR_TIMEOUT_VALUE         = 2.0;
 
 public:
-    AbstractCanDriver() {}
+    AbstractCanDriver() = default;
     AbstractCanDriver(std::shared_ptr<mcp_can_rpi::MCP_CAN> mcp_can);
-    virtual ~AbstractCanDriver();
+    virtual ~AbstractCanDriver() = default;
 
     virtual bool canReadData() const;
 
@@ -68,7 +68,7 @@ public:
     virtual int32_t interpretePositionStatus(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) = 0;
     virtual uint32_t interpreteTemperatureStatus(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) = 0;
     virtual std::string interpreteFirmwareVersion(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) = 0;
-    virtual std::tuple<common::model::EStepperCalibrationStatus, int32_t> interpreteCalibrationData(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) = 0;
+    virtual std::pair<common::model::EStepperCalibrationStatus, int32_t> interpreteCalibrationData(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) = 0;
     virtual std::tuple<bool, uint8_t, uint16_t> interpreteConveyorData(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) = 0;
 
 protected:
@@ -77,6 +77,13 @@ protected:
 
 private:
     std::shared_ptr<mcp_can_rpi::MCP_CAN> _mcp_can;
+
+protected:
+    // see https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c67-a-polymorphic-class-should-suppress-public-copymove
+    AbstractCanDriver( const AbstractCanDriver& ) = default;
+    AbstractCanDriver( AbstractCanDriver&& ) = default;
+    AbstractCanDriver& operator= ( AbstractCanDriver && ) = default;
+    AbstractCanDriver& operator= ( const AbstractCanDriver& ) = default;
 
 };
 

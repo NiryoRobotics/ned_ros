@@ -48,11 +48,11 @@ namespace can_driver
  * @brief CanManager::CanManager
  */
 CanManager::CanManager(ros::NodeHandle& nh) :
-    _nh(nh),
-    _calibration_status(EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED),
-    _debug_error_message("CanManager - No connection with CAN motors has been made yet")
+    _nh(nh)
 {
     ROS_DEBUG("CanManager - ctor");
+
+    _debug_error_message = "CanManager - No connection with CAN motors has been made yet";
 
     init(nh);
 
@@ -422,7 +422,7 @@ bool CanManager::ping(uint8_t id)
             }
             else
             {
-                ROS_ERROR_THROTTLE(1, "TtlManager::ping - the can drivers seeems uninitialized");
+                ROS_ERROR_THROTTLE(1, "CanManager::ping - the can drivers seeems uninitialized");
             }
         }
     }
@@ -507,12 +507,14 @@ void CanManager::_verifyMotorTimeoutLoop()
  */
 double CanManager::getCurrentTimeout() const
 {
+    double res = AbstractStepperDriver::STEPPER_MOTOR_TIMEOUT_VALUE;
+
     if (isCalibrationInProgress())
-        return _calibration_timeout;
+        res = _calibration_timeout;
     else if (_isPing)
-        return _ping_timeout;
-    else
-        return AbstractStepperDriver::STEPPER_MOTOR_TIMEOUT_VALUE;
+        res = _ping_timeout;
+
+    return res;
 }
 
 // ******************
@@ -534,9 +536,9 @@ int32_t CanManager::getPosition(const JointState &motor_state) const
     }
     auto jState = std::dynamic_pointer_cast<JointState>(_state_map.at(motor_id));
     if (jState)
-      return jState->getPositionState();
-    else
-      return 0;
+        return jState->getPositionState();
+
+    return 0;
 }
 
 // ******************
@@ -548,7 +550,7 @@ int32_t CanManager::getPosition(const JointState &motor_state) const
  * @param cmd
  * @return
  */
-int CanManager::writeSingleCommand(std::shared_ptr<common::model::AbstractCanSingleMotorCmd> cmd)
+int CanManager::writeSingleCommand(const std::shared_ptr<common::model::AbstractCanSingleMotorCmd>& cmd)
 {
     int result = CAN_INVALID_CMD;
     ROS_DEBUG("CanManager::readCommand - Received stepper cmd %s", cmd->str().c_str());
@@ -574,8 +576,8 @@ int CanManager::writeSingleCommand(std::shared_ptr<common::model::AbstractCanSin
 
     if (result != CAN_OK)
     {
-        ROS_WARN("TtlManager::writeSingleCommand - Failed to write a single command on motor id : %d", id);
-        _debug_error_message = "TtlManager - Failed to write a single command";
+        ROS_WARN("CanManager::writeSingleCommand - Failed to write a single command on motor id : %d", id);
+        _debug_error_message = "CanManager - Failed to write a single command";
     }
 
     return result;
@@ -599,7 +601,7 @@ void CanManager::executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, int32_
                 if (err != CAN_OK)
                 {
                     ROS_WARN("CanManager::executeJointTrajectoryCmd - Failed to write position");
-                    _debug_error_message = "TtlManager - Failed to write position";
+                    _debug_error_message = "CanManager - Failed to write position";
                 }
             }
         }
@@ -638,14 +640,14 @@ void CanManager::resetCalibration()
 }
 
 /**
- * @brief TtlManager::getCalibrationResult
+ * @brief CanManager::getCalibrationResult
  * @param motor_id
  * @return
  */
 int32_t CanManager::getCalibrationResult(uint8_t motor_id) const
 {
     if (!_state_map.count(motor_id) && _state_map.at(motor_id))
-        throw std::out_of_range("TtlManager::getMotorsState: Unknown motor id");
+        throw std::out_of_range("CanManager::getMotorsState: Unknown motor id");
 
     return std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(motor_id))->getCalibrationValue();
 }
@@ -687,9 +689,9 @@ void CanManager::updateCurrentCalibrationStatus()
  * @param motor_list
  * @param error
  */
-void CanManager::getBusState(bool &connection_status,
-                             std::vector<uint8_t> &motor_list,
-                             std::string &error) const
+void CanManager::getBusState(bool& connection_status,
+                             std::vector<uint8_t>& motor_list,
+                             std::string& error) const
 {
     error = _debug_error_message;
     motor_list = _all_motor_connected;
@@ -697,14 +699,14 @@ void CanManager::getBusState(bool &connection_status,
 }
 
 /**
- * @brief TtlManager::getMotorsStates
+ * @brief CanManager::getMotorsStates
  * @return only the joints states
  */
 std::vector<std::shared_ptr<JointState> >
 CanManager::getMotorsStates() const
 {
     std::vector<std::shared_ptr<JointState> > states;
-    for (auto it : _state_map)
+    for (const auto& it : _state_map)
     {
         if (EHardwareType::UNKNOWN != it.second->getHardwareType())
         {
@@ -734,7 +736,7 @@ CanManager::getHardwareState(uint8_t motor_id) const
 // ********************
 
 /**
- * @brief TtlManager::addHardwareDriver add driver corresponding to a type of hardware
+ * @brief CanManager::addHardwareDriver add driver corresponding to a type of hardware
  * @param hardware_type
  */
 void CanManager::addHardwareDriver(common::model::EHardwareType hardware_type)
@@ -762,6 +764,8 @@ void CanManager::addHardwareDriver(common::model::EHardwareType hardware_type)
 */
 void CanManager::readFakeConfig()
 {
+    _fake_data = std::make_shared<FakeCanData>();
+
     std::string hardware_version;
     _nh.getParam("hardware_version", hardware_version);
     assert(_nh.hasParam(hardware_version));
@@ -769,7 +773,7 @@ void CanManager::readFakeConfig()
     if (_nh.hasParam(hardware_version + "/steppers"))
     {
         std::string current_ns = hardware_version + "/steppers/";
-        retrieveFakeMotorData(current_ns, _fake_data.stepper_registers);
+        retrieveFakeMotorData(current_ns, _fake_data->stepper_registers);
     }
 }
 

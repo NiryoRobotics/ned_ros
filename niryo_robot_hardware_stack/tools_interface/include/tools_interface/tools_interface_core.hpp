@@ -28,7 +28,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <ros/ros.h>
 
 // niryo
-#include "common/model/i_interface_core.hpp"
+#include "common/util/i_interface_core.hpp"
 
 #include "common/model/tool_state.hpp"
 #include "ttl_driver/ttl_interface_core.hpp"
@@ -49,23 +49,30 @@ namespace tools_interface
 /**
  * @brief The ToolsInterfaceCore class
  */
-class ToolsInterfaceCore : public common::model::IInterfaceCore
+class ToolsInterfaceCore : public common::util::IInterfaceCore
 {
     public:
         ToolsInterfaceCore(ros::NodeHandle& nh,
                            std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface);
-        virtual ~ToolsInterfaceCore() override;
+        ~ToolsInterfaceCore() override = default;
 
-        virtual bool init(ros::NodeHandle &nh) override;
+        // non copyable class
+        ToolsInterfaceCore( const ToolsInterfaceCore& ) = delete;
+        ToolsInterfaceCore( ToolsInterfaceCore&& ) = delete;
+
+        ToolsInterfaceCore& operator= ( ToolsInterfaceCore && ) = delete;
+        ToolsInterfaceCore& operator= ( const ToolsInterfaceCore& ) = delete;
+
+        bool init(ros::NodeHandle &nh) override;
 
         bool isInitialized();
         void pubToolId(int id);
 
     private:
-        virtual void initParameters(ros::NodeHandle& nh) override;
-        virtual void startServices(ros::NodeHandle& nh) override;
-        virtual void startPublishers(ros::NodeHandle& nh) override;
-        virtual void startSubscribers(ros::NodeHandle& nh) override;
+        void initParameters(ros::NodeHandle& nh) override;
+        void startServices(ros::NodeHandle& nh) override;
+        void startPublishers(ros::NodeHandle& nh) override;
+        void startSubscribers(ros::NodeHandle& nh) override;
 
         bool _callbackPingAndSetTool(tools_interface::PingDxlTool::Request &, tools_interface::PingDxlTool::Response &res);
 

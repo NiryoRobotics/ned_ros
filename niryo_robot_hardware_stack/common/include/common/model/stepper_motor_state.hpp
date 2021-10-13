@@ -36,102 +36,100 @@ namespace model
 class StepperMotorState : public JointState
 {
 
-    public:
-        StepperMotorState();
-        StepperMotorState(EHardwareType type, EComponentType component_type,
-                          EBusProtocol bus_proto, uint8_t id);
-        StepperMotorState(std::string name, EHardwareType type, EComponentType component_type,
-                          EBusProtocol bus_proto, uint8_t id);
-        StepperMotorState(const StepperMotorState& state);
+public:
+    StepperMotorState() = default;
+    StepperMotorState(EHardwareType type, EComponentType component_type,
+                      EBusProtocol bus_proto, uint8_t id);
+    StepperMotorState(std::string name, EHardwareType type, EComponentType component_type,
+                      EBusProtocol bus_proto, uint8_t id);
 
-        virtual ~StepperMotorState() override;
+    int stepsPerRev();
 
-        int stepsPerRev();
+    // setters
+    void updateLastTimeRead();
+    void setHwFailCounter(double fail_counter);
+    void setGearRatio(double gear_ratio);
+    void setMaxEffort(double max_effort);
 
-        // setters
-        void updateLastTimeRead();
-        void setHwFailCounter(double fail_counter);
-        void setGearRatio(double gear_ratio);
-        void setMaxEffort(double max_effort);
+    void setCalibration(const common::model::EStepperCalibrationStatus &calibration_state,
+                        const int32_t &calibration_value);
+    void setCalibration(const std::tuple<EStepperCalibrationStatus, int32_t> &data);
 
-        void setCalibration(const common::model::EStepperCalibrationStatus &calibration_state,
-                            const int32_t &calibration_value);
-        void setCalibration(const std::tuple<EStepperCalibrationStatus, int32_t> &data);
+    // getters
+    double getLastTimeRead() const;
+    double getHwFailCounter() const;
 
-        // getters
-        double getLastTimeRead() const;
-        double getHwFailCounter() const;
+    double getGearRatio() const;
+    double getMaxEffort() const;
 
-        double getGearRatio() const;
-        double getMaxEffort() const;
+    common::model::EStepperCalibrationStatus getCalibrationState() const;
+    int32_t getCalibrationValue() const;
 
-        common::model::EStepperCalibrationStatus getCalibrationState() const;
-        int32_t getCalibrationValue() const;
+    // tests
+    bool isConveyor() const;
+    bool isTimeout() const;
 
-        // tests
-        bool isConveyor() const;
-        bool isTimeout() const;
+    // JointState interface
+    void reset() override;
+    bool isValid() const override;
+    std::string str() const override;
 
-        // JointState interface
-        virtual void reset() override;
-        virtual bool isValid() const override;
-        virtual std::string str() const override;
+    int to_motor_pos(double pos_rad) override;
+    double to_rad_pos(int pos) override;
 
-        virtual int to_motor_pos(double pos_rad) override;
-        virtual double to_rad_pos(int pos) override;
+    std::vector<uint32_t> getVelocityProfile() const;
 
-        std::vector<uint32_t> getVelocityProfile() const;
+    double getMicroSteps() const;
+    void setMicroSteps(double micro_steps);
 
-        double getMicroSteps() const;
-        void setMicroSteps(double micro_steps);
+    uint32_t getProfileVStart() const;
+    void setProfileVStart(const uint32_t &profile_v_start);
 
-        uint32_t getProfileVStart() const;
-        void setProfileVStart(const uint32_t &profile_v_start);
+    uint32_t getProfileA1() const;
+    void setProfileA1(const uint32_t &profile_a_1);
 
-        uint32_t getProfileA1() const;
-        void setProfileA1(const uint32_t &profile_a_1);
+    uint32_t getProfileV1() const;
+    void setProfileV1(const uint32_t &profile_v_1);
 
-        uint32_t getProfileV1() const;
-        void setProfileV1(const uint32_t &profile_v_1);
+    uint32_t getProfileAMax() const;
+    void setProfileAMax(const uint32_t &profile_a_max);
 
-        uint32_t getProfileAMax() const;
-        void setProfileAMax(const uint32_t &profile_a_max);
+    uint32_t getProfileVMax() const;
+    void setProfileVMax(const uint32_t &profile_v_max);
 
-        uint32_t getProfileVMax() const;
-        void setProfileVMax(const uint32_t &profile_v_max);
+    uint32_t getProfileDMax() const;
+    void setProfileDMax(const uint32_t &profile_d_max);
 
-        uint32_t getProfileDMax() const;
-        void setProfileDMax(const uint32_t &profile_d_max);
+    uint32_t getProfileD1() const;
+    void setProfileD1(const uint32_t &profile_d_1);
 
-        uint32_t getProfileD1() const;
-        void setProfileD1(const uint32_t &profile_d_1);
-
-        uint32_t getProfileVStop() const;
-        void setProfileVStop(const uint32_t &profile_v_stop);
+    uint32_t getProfileVStop() const;
+    void setProfileVStop(const uint32_t &profile_v_stop);
 
 protected:
-        double _last_time_read{-1.0};
-        double _hw_fail_counter{0.0};
+    double _last_time_read{-1.0};
+    double _hw_fail_counter{0.0};
 
-        double _gear_ratio{1.0};
-        double _max_effort{0.0};
-        double _micro_steps{8.0};
+    double _gear_ratio{1.0};
+    double _max_effort{0.0};
+    double _micro_steps{8.0};
 
-        // profile
-        uint32_t _profile_v_start{1};
-        uint32_t _profile_a_1{0};
-        uint32_t _profile_v_1{0};
-        uint32_t _profile_a_max{6000};
-        uint32_t _profile_v_max{6};
-        uint32_t _profile_d_max{6000};
-        uint32_t _profile_d_1{0};
-        uint32_t _profile_v_stop{2};
+    // profile
+    uint32_t _profile_v_start{1};
+    uint32_t _profile_a_1{0};
+    uint32_t _profile_v_1{0};
+    uint32_t _profile_a_max{6000};
+    uint32_t _profile_v_max{6};
+    uint32_t _profile_d_max{6000};
+    uint32_t _profile_d_1{0};
+    uint32_t _profile_v_stop{2};
 
-        common::model::EStepperCalibrationStatus _calibration_state{common::model::EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED};
-        int32_t _calibration_value{0};
+    common::model::EStepperCalibrationStatus _calibration_state{common::model::EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED};
+    int32_t _calibration_value{0};
 
-    private:
-        static constexpr double STEPPERS_MOTOR_STEPS_PER_REVOLUTION = 200.0;
+private:
+    static constexpr double STEPPERS_MOTOR_STEPS_PER_REVOLUTION = 200.0;
+
 };
 
 /**

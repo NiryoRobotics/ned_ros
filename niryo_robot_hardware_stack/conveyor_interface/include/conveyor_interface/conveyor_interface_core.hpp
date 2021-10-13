@@ -29,6 +29,8 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <ros/ros.h>
 
 // niryo
+#include "common/util/i_interface_core.hpp"
+
 #include "can_driver/can_interface_core.hpp"
 #include "ttl_driver/ttl_interface_core.hpp"
 
@@ -37,7 +39,6 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "conveyor_interface/ConveyorFeedbackArray.h"
 #include "niryo_robot_msgs/CommandStatus.h"
 
-#include "common/model/i_interface_core.hpp"
 
 namespace conveyor_interface
 {
@@ -45,24 +46,32 @@ namespace conveyor_interface
 /**
  * @brief The ConveyorInterfaceCore class
  */
-class ConveyorInterfaceCore : public common::model::IInterfaceCore
+class ConveyorInterfaceCore : public common::util::IInterfaceCore
 {
     public:
         ConveyorInterfaceCore(ros::NodeHandle& nh,
                               std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface,
                               std::shared_ptr<can_driver::CanInterfaceCore> can_interface);
-        virtual ~ConveyorInterfaceCore() override;
-        virtual bool init(ros::NodeHandle& nh) override;
+        ~ConveyorInterfaceCore() override = default;
+
+        // non copyable class
+        ConveyorInterfaceCore( const ConveyorInterfaceCore& ) = delete;
+        ConveyorInterfaceCore( ConveyorInterfaceCore&& ) = delete;
+
+        ConveyorInterfaceCore& operator= ( ConveyorInterfaceCore && ) = delete;
+        ConveyorInterfaceCore& operator= ( const ConveyorInterfaceCore& ) = delete;
+
+        bool init(ros::NodeHandle& nh) override;
 
         bool isInitialized();
 
         std::vector<std::shared_ptr<common::model::ConveyorState> > getConveyorStates() const;
 
 private:
-        virtual void initParameters(ros::NodeHandle& nh) override;
-        virtual void startServices(ros::NodeHandle& nh) override;
-        virtual void startPublishers(ros::NodeHandle& nh) override;
-        virtual void startSubscribers(ros::NodeHandle& nh) override;
+        void initParameters(ros::NodeHandle& nh) override;
+        void startServices(ros::NodeHandle& nh) override;
+        void startPublishers(ros::NodeHandle& nh) override;
+        void startSubscribers(ros::NodeHandle& nh) override;
 
         conveyor_interface::SetConveyor::Response addConveyor();
         conveyor_interface::SetConveyor::Response initTTLConveyor(const std::shared_ptr<common::model::ConveyorState>& conveyor_state);
@@ -83,7 +92,7 @@ private:
 
             bool isValid() { return !pool_id_list.empty() && type != common::model::EHardwareType::UNKNOWN; }
 
-            std::shared_ptr<common::model::IDriverCore> interface;
+            std::shared_ptr<common::util::IDriverCore> interface;
 
             common::model::EHardwareType type{common::model::EHardwareType::UNKNOWN};
             uint8_t default_id{1};

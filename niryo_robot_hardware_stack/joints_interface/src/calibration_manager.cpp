@@ -20,6 +20,7 @@
 // std
 #include <functional>
 #include <string>
+#include <utility>
 #include <vector>
 #include <fstream>
 
@@ -65,22 +66,15 @@ CalibrationManager::CalibrationManager(ros::NodeHandle& nh,
                                        std::vector<std::shared_ptr<JointState> > joint_list,
                                        std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface,
                                        std::shared_ptr<can_driver::CanInterfaceCore> can_interface) :
-    _ttl_interface(ttl_interface),
-    _can_interface(can_interface),
-    _joint_states_list(joint_list)
+    _ttl_interface(std::move(ttl_interface)),
+    _can_interface(std::move(can_interface)),
+    _joint_states_list(std::move(joint_list))
 {
     ROS_DEBUG("CalibrationManager::ctor");
 
     initParameters(nh);
 
     ROS_INFO("Calibration Interface - Calibration interface started");
-}
-
-/**
- * @brief CalibrationManager::~CalibrationManager
- */
-CalibrationManager::~CalibrationManager()
-{
 }
 
 /**
@@ -290,7 +284,7 @@ EStepperCalibrationStatus CalibrationManager::autoCalibration()
         timeout += 0.2;
         if (timeout >= 30.0)
         {
-            ROS_ERROR("Calibration Interface - calibration timeout, please try again");
+            ROS_ERROR("CalibrationManager::autoCalibration - calibration timeout, please try again");
             _calibration_in_progress = false;
             return common::model::EStepperCalibrationStatus::CALIBRATION_TIMEOUT;
         }
@@ -311,13 +305,13 @@ EStepperCalibrationStatus CalibrationManager::autoCalibration()
           sensor_offset_results.emplace_back(calibration_result);
           sensor_offset_ids.emplace_back(motor_id);
 
-          ROS_INFO("Calibration Interface - Motor %d, calibration cmd result %d ", motor_id, calibration_result);
+          ROS_INFO("CalibrationManager::autoCalibration - Motor %d, calibration cmd result %d ", motor_id, calibration_result);
         }
     }
 
     if (sensor_offset_results.at(0) && sensor_offset_results.at(1) && sensor_offset_results.at(2))
     {
-        ROS_INFO("Calibration Interface -  Calibration successfull, going back home");
+        ROS_INFO("CalibrationManager::autoCalibration -  Calibration successfull, going back home");
 
         // 5. Move Motor 1 to 0.0 (back to home)
         moveSteppersToHome();
@@ -328,7 +322,7 @@ EStepperCalibrationStatus CalibrationManager::autoCalibration()
     }
     else
     {
-        ROS_ERROR("Calibration Interface -  An error occured while calibrating stepper motors");
+        ROS_ERROR("CalibrationManager::autoCalibration -  An error occured while calibrating stepper motors");
     }
 
     // 7 - stop torques
@@ -397,7 +391,7 @@ CalibrationManager::manualCalibration()
 
                             offset_to_send %= steps_per_rev;
                             if (offset_to_send < 0)
-                            offset_to_send += steps_per_rev;
+                                offset_to_send += steps_per_rev;
 
                             StepperSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_POSITION_OFFSET, _joint_states_list.at(1)->getId(),
                                                          {offset_to_send, offset_to_send});
@@ -477,7 +471,7 @@ void CalibrationManager::setStepperCalibrationCommand(const std::shared_ptr<Step
     {
         uint8_t motor_id = pState->getId();
         int32_t offset = pState->to_motor_pos(pState->getOffsetPosition());
-        int32_t motor_direction = static_cast<int32_t>(pState->getDirection());
+        auto motor_direction = static_cast<int32_t>(pState->getDirection());
 
         if (EBusProtocol::CAN == pState->getBusProtocol())
         {
@@ -596,7 +590,7 @@ void CalibrationManager::moveSteppersToHome()
         }
         else if (EBusProtocol::TTL == pState->getBusProtocol())
         {
-            uint32_t steps = static_cast<uint32_t>(pState->to_motor_pos(0));
+            auto steps = static_cast<uint32_t>(pState->to_motor_pos(0));
 
             StepperTtlSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_POSITION, motor_id, {steps});
             getJointInterface(pState->getBusProtocol())->addSingleCommandToQueue(
@@ -712,7 +706,7 @@ bool CalibrationManager::setMotorsCalibrationOffsets(const std::vector<int> &mot
     bool res = false;
     if (motor_id_list.size() == steps_list.size())
     {
-        size_t found = _calibration_file_name.find_last_of("/");
+        size_t found = _calibration_file_name.find_last_of('/');
         std::string folder_name = _calibration_file_name.substr(0, found);
 
         boost::filesystem::path filepath(_calibration_file_name);
@@ -725,7 +719,7 @@ bool CalibrationManager::setMotorsCalibrationOffsets(const std::vector<int> &mot
         if (!returned_error)
         {
             // Create text to write
-            std::string text_to_write = "";
+            std::string text_to_write;
             for (size_t i = 0; i < motor_id_list.size(); i++)
             {
                 text_to_write += std::to_string(motor_id_list.at(i));
@@ -796,7 +790,7 @@ bool CalibrationManager::getMotorsCalibrationOffsets(std::vector<int> &motor_id_
         {
             try
             {
-                size_t index = current_line.find(":");
+                size_t index = current_line.find(':');
                 motor_id_list.emplace_back(stoi(current_line.substr(0, index)));
                 steps_list.emplace_back(stoi(current_line.erase(0, index + 1)));
             }

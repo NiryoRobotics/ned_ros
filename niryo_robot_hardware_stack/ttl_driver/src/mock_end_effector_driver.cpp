@@ -19,6 +19,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "ttl_driver/end_effector_reg.hpp"
 #include <cstddef>
 #include <string>
+#include <utility>
 #include <vector>
 
 namespace ttl_driver
@@ -28,18 +29,9 @@ namespace ttl_driver
 /**
  * @brief MockEndEffectorDriver::EndEffectorDriver
  */
-MockEndEffectorDriver::MockEndEffectorDriver(const std::shared_ptr<FakeTtlData>&  data) :
-  AbstractEndEffectorDriver(),
-  _fake_data(data)
+MockEndEffectorDriver::MockEndEffectorDriver(std::shared_ptr<FakeTtlData> data) :
+  _fake_data(std::move(data))
 {}
-
-/**
- * @brief MockEndEffectorDriver::~EndEffectorDriver
- */
-MockEndEffectorDriver::~MockEndEffectorDriver()
-{
-}
-
 
 //*****************************
 // AbstractTtlDriver interface
@@ -51,7 +43,7 @@ MockEndEffectorDriver::~MockEndEffectorDriver()
  */
 std::string MockEndEffectorDriver::str() const
 {
-    return common::model::HardwareTypeEnum(EndEffectorReg::motor_type).toString() + " : " + AbstractTtlDriver::str();
+    return common::model::HardwareTypeEnum(EndEffectorReg::motor_type).toString() + " : " + ttl_driver::AbstractEndEffectorDriver::str();
 }
 
 /**

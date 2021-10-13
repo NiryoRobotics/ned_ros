@@ -17,6 +17,7 @@
 #include "ttl_driver/abstract_ttl_driver.hpp"
 
 #include <sstream>
+#include <utility>
 #include <vector>
 #include <string>
 
@@ -30,29 +31,14 @@ namespace ttl_driver
 
 /**
  * @brief AbstractTtlDriver::AbstractTtlDriver
- */
-AbstractTtlDriver::AbstractTtlDriver()
-{}
-
-/**
- * @brief AbstractTtlDriver::AbstractTtlDriver
  * @param portHandler
  * @param packetHandler
  */
-AbstractTtlDriver::AbstractTtlDriver(shared_ptr<dynamixel::PortHandler> portHandler,
-                                     shared_ptr<dynamixel::PacketHandler> packetHandler) :
-    _dxlPortHandler(portHandler),
-    _dxlPacketHandler(packetHandler)
-{
-}
-
-/**
- * @brief AbstractTtlDriver::~AbstractTtlDriver
- */
-AbstractTtlDriver::~AbstractTtlDriver()
-{
-}
-
+AbstractTtlDriver::AbstractTtlDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
+                                     std::shared_ptr<dynamixel::PacketHandler> packetHandler) :
+    _dxlPortHandler(std::move(portHandler)),
+    _dxlPacketHandler(std::move(packetHandler))
+{}
 
 /**
  * @brief AbstractTtlDriver::ping

@@ -2,17 +2,14 @@
 end_effector_state.hpp
 Copyright (C) 2020 Niryo
 All rights reserved.
-
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
-
 This program is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
-
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
@@ -25,7 +22,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <array>
 #include <cstdint>
 #include <memory>
-#include <stdint.h>
+#include <cstdint>
 #include <string>
 #include <cassert>
 #include <sstream>
@@ -47,73 +44,35 @@ namespace model
  */
 class EndEffectorState : public AbstractHardwareState
 {
-    private:
+    public:
         /**
          * @brief The Button class
          */
-
         class Button : public IObject
         {
             public:
-                Button()
-                {
-                    actions.push(EActionType::NO_ACTION);
-                }
+                Button();
 
-                virtual ~Button() {}
-
-                 /**
-                 * @brief The Button struct describes the current state of a button (not its config)
-                 */
-                virtual std::string str() const override
-                {
-                    std::ostringstream ss;
-                    ss << "Button (" << ButtonTypeEnum(type).toString() << ") : "
-                       << ActionTypeEnum(actions.front()).toString();
-                    return ss.str();
-                }
-
-                virtual bool isValid() const override
-                {
-                    return (EButtonType::UNKNOWN != type);
-                }
-
-                virtual void reset() override
-                {
-                    type = EButtonType::UNKNOWN;
-                    std::queue<EActionType> empty_queue;
-                    actions.swap(empty_queue);
-                }
+                std::string str() const override;
+                bool isValid() const override;
+                void reset() override;
 
                 // need a delay to avoid state hand hold called when other states come
-                void setDelay()
-                {
-                    _time_last_read_state = ros::Time::now().toSec();
-                    _need_delay = true;
-                }
+                void setDelay();
 
                 // check if hand hold state came is needed to skip
-                bool isNeedToSkip()
-                {
-                    if (_need_delay && (ros::Time::now().toSec() - _time_last_read_state) <= _time_avoid_duplicate_state)
-                        return true;
-                    else
-                    {
-                      _need_delay = false;
-                      return false;
-                    }
-                }
+                bool needsToSkip();
+
             public:
                 EButtonType type{EButtonType::UNKNOWN};
                 std::queue<EActionType> actions;
 
             private:
                 static constexpr double _time_avoid_duplicate_state = 0.5;
-                double _time_last_read_state;
+                double _time_last_read_state{};
                 bool _need_delay{false};
         };
-    
-    public:
+
         struct Vector3D
         {
           uint32_t x{};
@@ -132,18 +91,15 @@ class EndEffectorState : public AbstractHardwareState
         EndEffectorState();
         EndEffectorState(uint8_t id);
         EndEffectorState(uint8_t id, common::model::EHardwareType type);
-        EndEffectorState(const EndEffectorState& state);
-
-        virtual ~EndEffectorState() override;
 
         void configureButton(uint8_t id, EButtonType button_type);
 
         // AbstractHardwareState interface
-        virtual std::string str() const override;
+        std::string str() const override;
 
         // IObject interface
     public:
-        virtual bool isValid() const override;
+        bool isValid() const override;
 
     public:
         void setButtonStatus(uint8_t id, EActionType action);
@@ -159,7 +115,7 @@ class EndEffectorState : public AbstractHardwareState
         void setAccelerometerZValue(const uint32_t& zValue);
 
         bool getCollisionStatus() const;
-        void setCollisionStatus(bool getCollisionStatus);
+        void setCollisionStatus(bool status);
 
         bool getDigitalIn() const;
         void setDigitalIn(bool digital_in);

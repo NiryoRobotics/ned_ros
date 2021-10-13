@@ -20,6 +20,7 @@
 #include "common/model/single_motor_cmd.hpp"
 
 #include <cassert>
+#include <utility>
 #include <vector>
 #include <string>
 
@@ -28,23 +29,12 @@ using ::common::model::EDxlCommandType;
 namespace ttl_driver
 {
 
-AbstractDxlDriver::AbstractDxlDriver() :
-  AbstractMotorDriver()
-{
-}
-
 /**
  * @brief AbstractDxlDriver::AbstractDxlDriver
 */
 AbstractDxlDriver::AbstractDxlDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
                                      std::shared_ptr<dynamixel::PacketHandler> packetHandler) :
-    AbstractMotorDriver(portHandler, packetHandler)
-{}
-
-/**
- * @brief AbstractDxlDriver::~AbstractDxlDriver
-*/
-AbstractDxlDriver::~AbstractDxlDriver()
+    AbstractMotorDriver(std::move(portHandler), std::move(packetHandler))
 {}
 
 std::string AbstractDxlDriver::str() const
@@ -121,7 +111,8 @@ int AbstractDxlDriver::writeSyncCmd(int type, const std::vector<uint8_t>& ids, c
     case EDxlCommandType::CMD_TYPE_LEARNING_MODE:
     {
         std::vector<uint32_t> params_inv;
-        for (auto const& p : params)
+        params_inv.reserve(params.size());
+for (auto const& p : params)
         {
             params_inv.emplace_back(!p);
         }

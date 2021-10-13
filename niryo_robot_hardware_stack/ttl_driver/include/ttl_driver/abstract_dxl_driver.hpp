@@ -33,18 +33,16 @@ namespace ttl_driver
 class AbstractDxlDriver : public AbstractMotorDriver
 {
     public:
-        AbstractDxlDriver();
+        AbstractDxlDriver() = default;
         AbstractDxlDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
                           std::shared_ptr<dynamixel::PacketHandler> packetHandler);
-        virtual ~AbstractDxlDriver() override;
-
 
     public:
         // AbstractMotorDriver interface
-        virtual std::string str() const override;
+        std::string str() const override;
 
-        virtual int writeSingleCmd(const std::shared_ptr<common::model::AbstractTtlSingleMotorCmd> &cmd) override;
-        virtual int writeSyncCmd(int type, const std::vector<uint8_t> &ids, const std::vector<uint32_t> &params) override;
+        int writeSingleCmd(const std::shared_ptr<common::model::AbstractTtlSingleMotorCmd> &cmd) override;
+        int writeSyncCmd(int type, const std::vector<uint8_t> &ids, const std::vector<uint32_t> &params) override;
 
     public:
         // specific DXL commands

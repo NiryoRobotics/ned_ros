@@ -20,31 +20,33 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <cstdint>
 #include <string>
 #include <vector>
+#include <map>
+
 namespace can_driver
 {
 
 class FakeCanData
 {
-    public:
-        FakeCanData() {}
-        ~FakeCanData() {}
-    public:
-        struct FakeStepperRegister
-        {
-            uint8_t        id{0};
-            uint32_t       position{0};
-            uint32_t       temperature{0};
-            double         voltage{0};
-            uint16_t       model_number{0};
-            std::string    firmware{};
+public:
+    FakeCanData() = default;
 
-            uint8_t       speed{0};
-            uint8_t       direction{0};
-            bool          state{false};
-        };
+    struct FakeStepperRegister
+    {
+        std::string   firmware{};
+        int32_t       position{0};
+        uint32_t      temperature{0};
+        double        voltage{0};
+        uint16_t      model_number{0};
 
-        // stepper
-        std::vector<FakeStepperRegister> stepper_registers;
+        uint8_t       id{0};
+
+        uint8_t       speed{0};
+        uint8_t       direction{0};
+        bool          state{false};
+    };
+
+    // stepper
+    std::map<uint8_t, FakeStepperRegister> stepper_registers;
 };
 }
 #endif //FAKE_TTL_DATA_HPP

@@ -43,12 +43,10 @@ public:
     AbstractMotorDriver();
     AbstractMotorDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
                         std::shared_ptr<dynamixel::PacketHandler> packetHandler);
-    virtual ~AbstractMotorDriver() override;
-
 
 public:
     // AbstractTtlDriver interface
-    virtual std::string str() const override;
+    std::string str() const override;
 
 public:
     // here are only common TTL commands found in both Steppers and DXl

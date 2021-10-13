@@ -20,6 +20,7 @@
 // c++
 #include <functional>
 #include <string>
+#include <utility>
 #include <vector>
 
 // ros
@@ -31,7 +32,6 @@
 #include "common/model/end_effector_state.hpp"
 
 
-using ::std::lock_guard;
 using ::std::string;
 using ::std::to_string;
 
@@ -51,18 +51,12 @@ namespace end_effector_interface
  */
 EndEffectorInterfaceCore::EndEffectorInterfaceCore(ros::NodeHandle& nh,
                                                    std::shared_ptr<ttl_driver::TtlInterfaceCore > ttl_interface):
-    _ttl_interface(ttl_interface)
+    _ttl_interface(std::move(ttl_interface))
 {
     ROS_DEBUG("EndEffectorInterfaceCore::ctor");
 
     init(nh);
 }
-
-/**
- * @brief EndEffectorInterfaceCore::~EndEffectorInterfaceCore
- */
-EndEffectorInterfaceCore::~EndEffectorInterfaceCore()
-{}
 
 /**
  * @brief EndEffectorInterfaceCore::init
@@ -119,7 +113,7 @@ void EndEffectorInterfaceCore::initParameters(ros::NodeHandle& nh)
     uint8_t button_id = 1;
     while (nh.hasParam("button_"  + std::to_string(button_id) + "/type"))
     {
-      std::string button_type = "";
+      std::string button_type;
       nh.getParam("button_" + std::to_string(button_id) + "/type", button_type);
       auto eType = ButtonTypeEnum(button_type.c_str());
 
@@ -207,12 +201,12 @@ void EndEffectorInterfaceCore::_publishButtonState(const ros::TimerEvent&)
 
     if (_end_effector_state)
     {
-        for (auto button : _end_effector_state->getButtonsStatus())
+        for (const auto& button : _end_effector_state->getButtonsStatus())
         {
             if (button->actions.empty())
                 continue;
 
-            button_msg.action = static_cast<int>(button->actions.front());
+            button_msg.action = static_cast<uint8_t>(button->actions.front());
             switch (button->type)
             {
                 case EButtonType::FREE_DRIVE_BUTTON:

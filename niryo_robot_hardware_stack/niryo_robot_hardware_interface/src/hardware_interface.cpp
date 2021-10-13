@@ -48,12 +48,6 @@ HardwareInterface::HardwareInterface(ros::NodeHandle &nh) :
 }
 
 /**
- * @brief HardwareInterface::~HardwareInterface
- */
-HardwareInterface::~HardwareInterface()
-{}
-
-/**
  * @brief HardwareInterface::init
  * @param nh
  * @return
@@ -258,7 +252,7 @@ void HardwareInterface::startSubscribers(ros::NodeHandle& /*nh*/)
  * @param res
  * @return
  */
-bool HardwareInterface::_callbackStopMotorsReport(niryo_robot_msgs::Trigger::Request &req,
+bool HardwareInterface::_callbackStopMotorsReport(niryo_robot_msgs::Trigger::Request & /*req*/,
                                                   niryo_robot_msgs::Trigger::Response &res)
 {
     res.status = niryo_robot_msgs::CommandStatus::FAILURE;
@@ -283,7 +277,7 @@ bool HardwareInterface::_callbackStopMotorsReport(niryo_robot_msgs::Trigger::Req
  * @param res
  * @return
  */
-bool HardwareInterface::_callbackLaunchMotorsReport(niryo_robot_msgs::Trigger::Request &req,
+bool HardwareInterface::_callbackLaunchMotorsReport(niryo_robot_msgs::Trigger::Request & /*req*/,
                                                     niryo_robot_msgs::Trigger::Response &res)
 {
     res.status = niryo_robot_msgs::CommandStatus::FAILURE;
@@ -343,7 +337,7 @@ bool HardwareInterface::_callbackLaunchMotorsReport(niryo_robot_msgs::Trigger::R
  * @param res
  * @return
  */
-bool HardwareInterface::_callbackRebootMotors(niryo_robot_msgs::Trigger::Request &req,
+bool HardwareInterface::_callbackRebootMotors(niryo_robot_msgs::Trigger::Request & /*req*/,
                                               niryo_robot_msgs::Trigger::Response &res)
 {
     res.status = niryo_robot_msgs::CommandStatus::FAILURE;
@@ -358,7 +352,7 @@ bool HardwareInterface::_callbackRebootMotors(niryo_robot_msgs::Trigger::Request
         _joints_interface->sendMotorsParams();
 
         int resp_learning_mode_status = 0;
-        std::string resp_learning_mode_message = "";
+        std::string resp_learning_mode_message;
         _joints_interface->activateLearningMode(false, resp_learning_mode_status, resp_learning_mode_message);
         _joints_interface->activateLearningMode(true, resp_learning_mode_status, resp_learning_mode_message);
     }
@@ -413,7 +407,7 @@ void HardwareInterface::_publishHardwareStatus(const ros::TimerEvent&)
         _joints_interface->getCalibrationState(need_calibration, calibration_in_progress);
 
         auto joints_states = _joints_interface->getJointsState();
-        for (std::shared_ptr<common::model::JointState> jState : joints_states)
+        for (const std::shared_ptr<common::model::JointState>& jState : joints_states)
         {
           motor_names.emplace_back(jState->getName());
           voltages.emplace_back(jState->getVoltage());
@@ -438,7 +432,7 @@ void HardwareInterface::_publishHardwareStatus(const ros::TimerEvent&)
     if (_conveyor_interface)
     {
         auto conveyor_states = _conveyor_interface->getConveyorStates();
-        for (std::shared_ptr<common::model::ConveyorState> cState : conveyor_states)
+        for (const std::shared_ptr<common::model::ConveyorState>& cState : conveyor_states)
         {
             {
                 motor_names.emplace_back("Conveyor");
@@ -491,7 +485,7 @@ void HardwareInterface::_publishSoftwareVersion(const ros::TimerEvent&)
     if (_joints_interface)
     {
         auto joints_states = _joints_interface->getJointsState();
-        for (std::shared_ptr<common::model::JointState> jState : joints_states)
+        for (const std::shared_ptr<common::model::JointState>& jState : joints_states)
         {
             motor_names.emplace_back(jState->getName());
             firmware_versions.emplace_back(jState->getFirmwareVersion());

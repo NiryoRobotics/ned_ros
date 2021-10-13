@@ -67,8 +67,8 @@ class JointHardwareInterface : public hardware_interface::RobotHW
     public:
         bool init(ros::NodeHandle& rootnh, ros::NodeHandle &robot_hwnh) override;
 
-        virtual void read(const ros::Time &/*time*/, const ros::Duration &/*period*/) override;
-        virtual void write(const ros::Time &/*time*/, const ros::Duration &/*period*/) override;
+        void read(const ros::Time &/*time*/, const ros::Duration &/*period*/) override;
+        void write(const ros::Time &/*time*/, const ros::Duration &/*period*/) override;
 
     private:
         bool initStepper(ros::NodeHandle &robot_hwnh,

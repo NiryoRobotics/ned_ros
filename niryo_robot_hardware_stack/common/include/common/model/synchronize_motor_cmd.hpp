@@ -48,38 +48,33 @@ class SynchronizeMotorCmd : public AbstractSynchronizeMotorCmd<ParamType>
         SynchronizeMotorCmd();
         SynchronizeMotorCmd(E type);
 
-        virtual ~SynchronizeMotorCmd() override;
-
         // setters
         void setType(E type);
 
         // getters
         E getType() const;
-        int getCmdType() const override
-        {
-            return static_cast<int>(_type);
-        }
+        int getCmdType() const override;
+
         // AbstractSingleMotorCmd interface
-        virtual bool isStepperCmd() const override;
-        virtual bool isDxlCmd() const override;
+        bool isStepperCmd() const override;
+        bool isDxlCmd() const override;
 
         // IObject interface
-        virtual void reset() override;
-        virtual std::string str() const override;
-        virtual bool isValid() const override;
+        void reset() override;
+        std::string str() const override;
+        bool isValid() const override;
 
     private:
         E _type{E::CMD_TYPE_UNKNOWN};
 };
 
 /**
- * @brief SynchronizeMotorCmd<E, ParamType>::SynchronizeMotorCmd
+ * @brief SingleMotorCmd<E, ParamType>::SingleMotorCmd
  */
 template<typename E, typename ParamType>
 SynchronizeMotorCmd<E, ParamType>::SynchronizeMotorCmd() :
-    AbstractSynchronizeMotorCmd<ParamType>()
-{
-}
+    SynchronizeMotorCmd<E, ParamType>(E::CMD_TYPE_UNKNOWN)
+{}
 
 /**
  * @brief SynchronizeMotorCmd<E, ParamType>::SynchronizeMotorCmd
@@ -87,20 +82,13 @@ SynchronizeMotorCmd<E, ParamType>::SynchronizeMotorCmd() :
  */
 template<typename E, typename ParamType>
 SynchronizeMotorCmd<E, ParamType>::SynchronizeMotorCmd(E type) :
-    SynchronizeMotorCmd()
+    AbstractSynchronizeMotorCmd<ParamType>()
 {
     static_assert(std::is_enum<E>::value, "E must be an enum");
-    setType(type);
 
+    this->setType(type);
     this->clear();
 }
-
-/**
- * @brief SynchronizeMotorCmd<E, ParamType>::SynchronizeMotorCmd
- */
-template<typename E, typename ParamType>
-SynchronizeMotorCmd<E, ParamType>::~SynchronizeMotorCmd()
-{}
 
 /**
  * @brief SynchronizeMotorCmd<E, ParamType>::setType
@@ -120,6 +108,16 @@ template<typename E, typename ParamType>
 E SynchronizeMotorCmd<E, ParamType>::getType() const
 {
     return _type;
+}
+
+/**
+ * @brief SynchronizeMotorCmd<E, ParamType>::getCmdType
+ * @return
+ */
+template<typename E, typename ParamType>
+int SynchronizeMotorCmd<E, ParamType>::getCmdType() const
+{
+  return static_cast<int>(_type);
 }
 
 /**

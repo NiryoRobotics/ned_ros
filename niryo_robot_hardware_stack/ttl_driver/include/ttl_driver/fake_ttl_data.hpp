@@ -28,8 +28,8 @@ namespace ttl_driver
 class FakeTtlData
 {
     public:
-        FakeTtlData() {}
-        ~FakeTtlData() {}
+        FakeTtlData() = default;
+
     public:
         struct AbstractFakeRegister
         {
@@ -43,7 +43,7 @@ class FakeTtlData
             uint32_t max_position{0};
 
             uint32_t temperature{0};
-            uint32_t voltage{0};
+            double voltage{0};
             std::string  firmware{};
         };
 

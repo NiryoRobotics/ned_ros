@@ -30,15 +30,16 @@ namespace model
 
 /**
  * @brief ConveyorState::ConveyorState
+ * @param default_id
  */
 ConveyorState::ConveyorState(uint8_t default_id) :
-  StepperMotorState(),
   _default_id(default_id)
 {}
 
 /**
  * @brief ConveyorState::ConveyorState
  * @param bus_proto
+ * @param default_id
  */
 ConveyorState::ConveyorState(EBusProtocol bus_proto, uint8_t default_id)
     : ConveyorState(EHardwareType::STEPPER, bus_proto, 1, default_id)
@@ -48,6 +49,7 @@ ConveyorState::ConveyorState(EBusProtocol bus_proto, uint8_t default_id)
  * @brief ConveyorState::ConveyorState
  * @param type
  * @param bus_proto
+ * @param default_id
  */
 ConveyorState::ConveyorState(EHardwareType type, EBusProtocol bus_proto, uint8_t default_id)
     : ConveyorState(type, bus_proto, 1, default_id)
@@ -58,30 +60,12 @@ ConveyorState::ConveyorState(EHardwareType type, EBusProtocol bus_proto, uint8_t
  * @param type
  * @param bus_proto
  * @param id
+ * @param default_id
  */
 ConveyorState::ConveyorState(EHardwareType type, EBusProtocol bus_proto, uint8_t id, uint8_t default_id)
     : StepperMotorState(type, EComponentType::CONVEYOR, bus_proto, id),
       _default_id(default_id)
 {}
-
-/**
- * @brief ConveyorState::ConveyorState
- * @param state
- */
-ConveyorState::ConveyorState(const ConveyorState &state) :
-  StepperMotorState(state)
-{
-  _state = state._state;
-  _speed = state._speed;
-  _default_id = state._default_id;
-}
-
-/**
- * @brief ConveyorState::~ConveyorState
- */
-ConveyorState::~ConveyorState()
-{}
-
 
 /**
  * @brief ConveyorState::updateId
@@ -143,12 +127,12 @@ void ConveyorState::setAssemblyDirection(int8_t direction)
 
 /**
  * @brief ConveyorState::operator ==
- * @param m
+ * @param other
  * @return
  */
-bool ConveyorState::operator==(const ConveyorState& m)
+bool ConveyorState::operator==(const ConveyorState& other)
 {
-    return (this->_id == m._id);
+    return (this->_id == other._id);
 }
 
 /**
