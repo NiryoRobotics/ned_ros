@@ -817,11 +817,9 @@ int TtlInterfaceCore::changeId(common::model::EHardwareType motor_type, uint8_t 
 {
     if (COMM_SUCCESS == _ttl_manager->changeId(motor_type, old_id, new_id))
         return niryo_robot_msgs::CommandStatus::SUCCESS;
-    
-    
-        ROS_ERROR("TtlInterfaceCore::setConveyor : unable to change conveyor ID");
-        return niryo_robot_msgs::CommandStatus::TTL_WRITE_ERROR;
-    
+
+    ROS_ERROR("TtlInterfaceCore::setConveyor : unable to change conveyor ID");
+    return niryo_robot_msgs::CommandStatus::TTL_WRITE_ERROR;
 }
 
 /**

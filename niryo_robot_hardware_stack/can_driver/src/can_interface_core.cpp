@@ -577,11 +577,9 @@ int CanInterfaceCore::changeId(common::model::EHardwareType motor_type, uint8_t 
 {
     if (CAN_OK == _can_manager->changeId(motor_type, old_id, new_id))
         return niryo_robot_msgs::CommandStatus::SUCCESS;
-    
-    
-        ROS_ERROR("CanInterfaceCore::setConveyor : unable to change conveyor ID");
-        return niryo_robot_msgs::CommandStatus::CAN_WRITE_ERROR;
-    
+
+    ROS_ERROR("CanInterfaceCore::setConveyor : unable to change conveyor ID");
+    return niryo_robot_msgs::CommandStatus::CAN_WRITE_ERROR;
 }
 
 /**

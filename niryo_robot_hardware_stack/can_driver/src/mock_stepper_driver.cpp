@@ -26,7 +26,6 @@
 #include <vector>
 #include <string>
 #include <tuple>
-#include <utility>
 #include <set>
 
 #include "common/model/stepper_calibration_status_enum.hpp"
@@ -427,11 +426,9 @@ MockStepperDriver::interpreteCalibrationData(const std::array<uint8_t, MAX_MESSA
             _calibration_status.at(_current_id).first = EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED;
             return current_calib_status;
         }
-        
-        
-            _fake_time--;
-            return _calibration_status.at(_current_id);
-        
+
+        _fake_time--;
+        return _calibration_status.at(_current_id);
      }
 
     return std::make_pair(EStepperCalibrationStatus::CALIBRATION_BAD_PARAM, 0);

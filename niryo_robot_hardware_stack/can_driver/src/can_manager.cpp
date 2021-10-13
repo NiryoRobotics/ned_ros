@@ -536,7 +536,7 @@ int32_t CanManager::getPosition(const JointState &motor_state) const
     auto jState = std::dynamic_pointer_cast<JointState>(_state_map.at(motor_id));
     if (jState)
         return jState->getPositionState();
-    
+
     return 0;
 }
 

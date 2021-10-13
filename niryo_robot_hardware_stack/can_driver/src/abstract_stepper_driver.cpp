@@ -22,7 +22,6 @@
 #include <utility>
 #include <vector>
 #include <tuple>
-#include <utility>
 
 using ::common::model::EStepperCommandType;
 

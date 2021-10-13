@@ -276,12 +276,10 @@ bool ToolsInterfaceCore::_callbackPingAndSetTool(tools_interface::PingDxlTool::R
 
                 break;
             }
-            
-            
-                ROS_WARN("ToolsInterfaceCore::_callbackPingAndSetDxlTool - "
-                         "Set tool failure, return : %d. Retrying (%d)...",
-                         result, tries);
-            
+
+            ROS_WARN("ToolsInterfaceCore::_callbackPingAndSetDxlTool - "
+                     "Set tool failure, return : %d. Retrying (%d)...",
+                     result, tries);
         }
 
         // on failure after three tries
