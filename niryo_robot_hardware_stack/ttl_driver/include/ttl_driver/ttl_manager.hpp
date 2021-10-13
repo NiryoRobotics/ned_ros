@@ -197,6 +197,8 @@ class TtlManager : public common::model::IBusManager
                                         {CALIBRATION_ERROR, common::model::EStepperCalibrationStatus::CALIBRATION_FAIL},
                                         {CALIBRATION_IDLE, common::model::EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED}};
 
+        int _conveyor_direction{0};
+
         bool _use_simu_gripper = true;
         std::shared_ptr<FakeTtlData> _fake_data;
 };

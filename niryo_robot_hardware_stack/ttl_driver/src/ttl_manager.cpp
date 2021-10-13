@@ -101,6 +101,7 @@ bool TtlManager::init(ros::NodeHandle& nh)
     nh.getParam("bus_params/baudrate", _baudrate);
     nh.getParam("led_motor", _led_motor_type_cfg);
     nh.getParam("simu_gripper", _use_simu_gripper);
+    nh.getParam("conveyor/direction", _conveyor_direction);
 
     if (_device_name != "fake")
     {
@@ -763,7 +764,7 @@ bool TtlManager::readHwStatus()
 
                             int16_t speed = static_cast<int16_t>(velocity);
                             auto cState = std::dynamic_pointer_cast<common::model::ConveyorState>(state);
-                            cState->setDirection(speed > 0 ? -1 : 1);
+                            cState->setDirection(cState->getAssenblyDirection() * (speed > 0 ? 1 : -1));
                             cState->setSpeed(std::abs(speed));
                             cState->setState(speed != 0);
                         }

@@ -111,6 +111,7 @@ void ConveyorState::reset()
     _direction = -1;
     _speed = 0;
     _state = false;
+    _assembly_direction = 0;
 }
 
 /**
@@ -129,6 +130,15 @@ void ConveyorState::setState(bool state)
 void ConveyorState::setSpeed(int16_t speed)
 {
     _speed = speed;
+}
+
+/**
+ * @brief ConveyorState::setSpeed
+ * @param direction
+ */
+void ConveyorState::setAssemblyDirection(int8_t direction)
+{
+    _assembly_direction = direction;
 }
 
 /**

@@ -112,7 +112,9 @@ void ConveyorInterfaceCore::initParameters(ros::NodeHandle& nh)
 
         nh.getParam("can/max_effort", canConfig.max_effort);
         nh.getParam("can/micro_steps", canConfig.micro_steps);
+        nh.getParam("can/assembly_direction", canConfig.assembly_direction);
         nh.getParam("can/default_id", default_conveyor_id);
+
         canConfig.default_id = static_cast<uint8_t>(default_conveyor_id);
 
         nh.getParam("can/pool_id_list", id_pool_list);
@@ -146,6 +148,8 @@ void ConveyorInterfaceCore::initParameters(ros::NodeHandle& nh)
 
         nh.getParam("ttl/default_id", default_conveyor_id);
         nh.getParam("ttl/pool_id_list", id_pool_list);
+        nh.getParam("ttl/assembly_direction", ttlConfig.assembly_direction);
+
         ttlConfig.default_id = static_cast<uint8_t>(default_conveyor_id);
 
         std::string pool_str{"["};
@@ -230,6 +234,8 @@ ConveyorInterfaceCore::addConveyor()
 
             auto conveyor_state = std::make_shared<ConveyorState>(bus.second.type, bus.first, bus.second.default_id, bus.second.default_id);
 
+            // set some params for conveyor state
+            conveyor_state->setAssemblyDirection(bus.second.assembly_direction);
             if (EBusProtocol::CAN == bus.first)
             {
                 conveyor_state->setMaxEffort(bus.second.max_effort);
@@ -410,18 +416,20 @@ bool ConveyorInterfaceCore::_callbackControlConveyor(conveyor_interface::Control
     {
         auto state = _state_map.at(req.id);
         EBusProtocol bus_proto = state->getBusProtocol();
+        int8_t assembly_direction = state->getAssenblyDirection();
 
         if (EBusProtocol::CAN == bus_proto)
         {
             _can_interface->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_CONVEYOR,
                                                                                        req.id, std::initializer_list<int32_t>{req.control_on,
-                                                                                       req.speed, req.direction}));
+                                                                                       req.speed, req.direction * assembly_direction}));
         }
         else if (EBusProtocol::TTL == bus_proto)
         {
             _ttl_interface->addSingleCommandToQueue(std::make_shared<StepperTtlSingleCmd>(EStepperCommandType::CMD_TYPE_CONVEYOR,
                                                                                           req.id, std::initializer_list<uint32_t>{req.control_on,
-                                                                                          static_cast<uint32_t>(req.speed), static_cast<uint32_t>(req.direction)}));
+                                                                                          static_cast<uint32_t>(req.speed),
+                                                                                          static_cast<uint32_t>(req.direction * assembly_direction)}));
         }
 
         res.message = "Set command on conveyor id ";
