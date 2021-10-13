@@ -230,7 +230,7 @@ ConveyorInterfaceCore::addConveyor()
             auto conveyor_state = std::make_shared<ConveyorState>(bus.second.type, bus.first, bus.second.default_id, bus.second.default_id);
 
             // set some params for conveyor state
-            conveyor_state->setAssemblyDirection(bus.second.assembly_direction);
+            conveyor_state->setAssemblyDirection(static_cast<int8_t>(bus.second.assembly_direction));
             if (EBusProtocol::CAN == bus.first)
             {
                 conveyor_state->setMaxEffort(bus.second.max_effort);

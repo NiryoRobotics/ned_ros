@@ -76,7 +76,7 @@ int AbstractStepperDriver::writeSingleCmd(const std::shared_ptr<common::model::A
             // convert direction and speed into signed speed
             int8_t dir = static_cast<int8_t>(cmd->getParams().at(2));
             // normal warning : we need to put an int32 inside an uint32_t
-            uint32_t speed = static_cast<uint32_t>(cmd->getParams().at(1) * dir);
+            uint32_t speed = static_cast<uint32_t>(static_cast<int>(cmd->getParams().at(1)) * dir);
             return setGoalVelocity(cmd->getId(), speed);
         }
         case EStepperCommandType::CMD_TYPE_VELOCITY_PROFILE:
