@@ -45,8 +45,7 @@ class DXLCommonTest : public testing::TestWithParam<std::tuple<EHardwareType, EC
             std::cout << "Test for MotorType " << HardwareTypeEnum(std::get<0>(GetParam())).toString() << std::endl;
 
             dxlState = common::model::DxlMotorState(std::get<0>(GetParam()),
-                                                    std::get<1>(GetParam()),
-                                                    common::model::EBusProtocol::TTL, 1);
+                                                    std::get<1>(GetParam()), 1);
             dxlState.setOffsetPosition(std::get<2>(GetParam()));
 
             // define precision according to smallest motor step in radian
@@ -71,8 +70,7 @@ class DXLIdentityRadTest : public testing::TestWithParam<std::tuple<EHardwareTyp
         std::cout << "Test for MotorType " << HardwareTypeEnum(std::get<0>(GetParam())).toString() << std::endl;
 
         dxlState = common::model::DxlMotorState(std::get<0>(GetParam()),
-                                                std::get<1>(GetParam()),
-                                                common::model::EBusProtocol::TTL, 1);
+                                                std::get<1>(GetParam()), 1);
         dxlState.setOffsetPosition(std::get<2>(GetParam()));
 
         // define precision according to smallest motor step in radian
@@ -95,8 +93,7 @@ class DXLIdentityMotorTest : public testing::TestWithParam<std::tuple<EHardwareT
         std::cout << "Test for MotorType " << HardwareTypeEnum(std::get<0>(GetParam())).toString() << std::endl;
 
         dxlState = common::model::DxlMotorState(std::get<0>(GetParam()),
-                                                std::get<1>(GetParam()),
-                                                common::model::EBusProtocol::TTL, 1);
+                                                std::get<1>(GetParam()), 1);
         dxlState.setOffsetPosition(std::get<2>(GetParam()));
 
         // define precision according to smallest motor step in radian
