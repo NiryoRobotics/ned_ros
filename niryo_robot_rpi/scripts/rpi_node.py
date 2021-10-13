@@ -4,8 +4,9 @@ import rospy
 import logging
 
 from ros_log_manager import RosLogManager
-from shutdown_manager import ShutdownManager
+from shutdown_manager import ShutdownManager, ShutdownManagerNed2
 
+from niryo_robot_status.msg import RobotStatus
 
 class NiryoRobotRpi:
     def __init__(self):
@@ -25,6 +26,7 @@ class NiryoRobotRpi:
             self.__fans_manager = FansManagerNed2(mcp=self.__mcp)
             self.__niryo_robot_button = NiryoButtonNed2()
             self.__end_effector_panel = NiryoEndEffectorPanel()
+            self.__shutdown_manager = ShutdownManagerNed2()
 
         else:
             from button_manager import NiryoButton
@@ -36,10 +38,17 @@ class NiryoRobotRpi:
             self.__fans_manager = FansManagerNedOne()
             self.__led_manager = LEDManager()
             self.__niryo_robot_button = NiryoButton()
+            self.__shutdown_manager = ShutdownManager()
 
         self.__ros_log_manager = RosLogManager()
-        self.__shutdown_manager = ShutdownManager()
 
+        self.robot_status_subscriber = rospy.Subscriber('/niryo_robot_status/robot_status',
+                                                        RobotStatus, self.__callback_robot_status, queue_size=10)
+
+    def __callback_robot_status(self, msg):
+        if msg.robot_status == RobotStatus.SHUTDOWN:
+            self.__fans_manager.shutdown()
+            self.__io_panel.shutdown()
 
 if __name__ == '__main__':
     rospy.init_node('niryo_robot_rpi', anonymous=False, log_level=rospy.INFO)

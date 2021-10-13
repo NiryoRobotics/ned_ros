@@ -161,6 +161,13 @@ class IOPanel(object):
         return self._create_response(CommandStatus.DIGITAL_IO_PANEL_ERROR,
                                      "You cannot change the IO mode on this robot version")
 
+    def shutdown(self):
+        for do in self._digital_outputs.values():
+            do.value = False
+
+        for ao in self._analog_outputs.values():
+            ao.value = 0
+
 
 class McpIOPanel(IOPanel):
     def __init__(self, mcp=None, adc=None, lock=None):
@@ -197,6 +204,14 @@ class McpIOPanel(IOPanel):
         self.read_digital_inputs()
 
     def __del__(self):
+        import RPi.GPIO as GPIO
+        GPIO.cleanup()
+
+    def shutdown(self):
+        super(McpIOPanel, self).shutdown()
+        self.__wifi_button.shutdown()
+
+        import RPi.GPIO as GPIO
         GPIO.cleanup()
 
     def __init_ios(self, lock):
@@ -331,6 +346,13 @@ class DigitalRpiIOPanel(DigitalIOPanel):
         self._publish_digital_io_state()
 
     def __del__(self):
+        import RPi.GPIO as GPIO
+        GPIO.cleanup()
+
+    def shutdown(self):
+        super(DigitalRpiIOPanel, self).shutdown()
+
+        import RPi.GPIO as GPIO
         GPIO.cleanup()
 
     def _init_ios(self):
