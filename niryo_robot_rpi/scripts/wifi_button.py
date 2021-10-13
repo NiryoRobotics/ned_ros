@@ -69,7 +69,7 @@ class WifiButton:
             self.__wifi_led.on()
         else:
             if self.__timer is None:
-                self.__timer = rospy.Timer(rospy.Duration.from_sec(0.5), self.__bink_wifi_led)
+                self.__timer = rospy.Timer(rospy.Duration.from_sec(2), self.__bink_pulse_wifi_led)
 
     def stop_blink(self):
         if self.__timer is not None:
@@ -78,6 +78,15 @@ class WifiButton:
 
     def __bink_wifi_led(self, _):
         self.__wifi_led.reverse_state()
+
+    def __bink_pulse_wifi_led(self, _):
+        self.__wifi_led.on()
+        rospy.sleep(0.2)
+        self.__wifi_led.off()
+        rospy.sleep(0.2)
+        self.__wifi_led.on()
+        rospy.sleep(0.2)
+        self.__wifi_led.off()
 
     def on_press(self):
         self.__pressed_time = rospy.Time.now()
@@ -110,6 +119,11 @@ class WifiButton:
     def pin(self):
         return self.__wifi_button.pin
 
-    def __del__(self):
+    def shutdown(self):
+        self.stop_blink()
         self.__wifi_button.disable_on_press()
         self.__wifi_button.disable_on_release()
+        self.__wifi_led.off()
+
+    def __del__(self):
+        self.shutdown()
