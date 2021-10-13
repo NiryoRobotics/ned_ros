@@ -194,11 +194,9 @@ int StepperMotorState::to_motor_pos(double pos_rad)
         double numerator = (STEPPERS_MOTOR_STEPS_PER_REVOLUTION * _micro_steps * _gear_ratio * pos_rad / (2*M_PI));
         return static_cast<int>(std::round( numerator * _direction));
     }
-    
-    
-        int pos = static_cast<int>(std::round((pos_rad*180) / (M_PI * 0.088) * _direction + _offset_position));
-        return pos > 0 ? pos : 0;
-    
+
+    int pos = static_cast<int>(std::round((pos_rad*180) / (M_PI * 0.088) * _direction + _offset_position));
+    return pos > 0 ? pos : 0;
 }
 
 /**
@@ -217,11 +215,9 @@ double StepperMotorState::to_rad_pos(int pos)
                     (STEPPERS_MOTOR_STEPS_PER_REVOLUTION * _micro_steps * _gear_ratio) *
                     _direction);
     }
-    
-    
-        auto pos_rad = static_cast<double>((pos - _offset_position) * 0.088 * (M_PI / 180) * _direction);
-        return pos_rad;
-    
+
+    auto pos_rad = static_cast<double>((pos - _offset_position) * 0.088 * (M_PI / 180) * _direction);
+    return pos_rad;
 }
 
 /**
