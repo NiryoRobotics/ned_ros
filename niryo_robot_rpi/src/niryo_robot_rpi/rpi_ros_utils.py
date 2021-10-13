@@ -32,7 +32,7 @@ class LedState:
 
 def send_hotspot_command():
     rospy.loginfo("HOTSPOT")
-    # send_led_state(LedState.WAIT_HOTSPOT)
+    send_led_state(LedState.WAIT_HOTSPOT)
     rospy.wait_for_service('/niryo_robot/wifi/manage', timeout=0.5)
     try:
         set_hotspot = rospy.ServiceProxy('/niryo_robot/wifi/manage', ManageWifi)
@@ -141,7 +141,14 @@ def send_reboot_command():
 
 
 def send_led_state(state):
-    rospy.wait_for_service('/niryo_robot/rpi/set_led_state', timeout=0.5)
+    if rospy.get_param("/niryo_robot_rpi/hardware_version") == 'ned2':
+        return
+
+    try:
+        rospy.wait_for_service('/niryo_robot/rpi/set_led_state', timeout=0.1)
+    except rospy.ROSException:
+        return
+
     try:
         set_led = rospy.ServiceProxy('/niryo_robot/rpi/set_led_state', SetInt)
         set_led(state)
