@@ -1238,7 +1238,7 @@ class NiryoRosWrapper:
         result = self.__call_service('/niryo_robot_tools_commander/update_tool', Trigger)
         return self.__classic_return_w_check(result)
 
-    def grasp_with_tool(self, pin_id=-1):
+    def grasp_with_tool(self, pin_id=""):
         """
         Grasp with the tool linked to tool_id.
         This action correspond to
@@ -1260,7 +1260,7 @@ class NiryoRosWrapper:
         elif tool_id == ToolID.ELECTROMAGNET_1:
             return self.activate_electromagnet(pin_id)
 
-    def release_with_tool(self, pin_id=-1):
+    def release_with_tool(self, pin_id=""):
         """
         Release with the tool associated to tool_id.
         This action correspond to
@@ -1381,11 +1381,11 @@ class NiryoRosWrapper:
         """
         return self.__deal_with_electromagnet(pin_id, ToolCommand.DEACTIVATE_DIGITAL_IO)
 
-    def __deal_with_electromagnet(self, pin, command_int):
+    def __deal_with_electromagnet(self, pin_id, command_int):
         goal = ToolActionGoal()
         goal.goal.cmd.tool_id = ToolID.ELECTROMAGNET_1
         goal.goal.cmd.cmd_type = command_int
-        goal.goal.cmd.gpio = pin
+        goal.goal.cmd.gpio = pin_id
         return self.__execute_tool_action(goal.goal)
 
     # - TCP
