@@ -346,7 +346,7 @@ int MockDxlDriver::syncWriteVelocityGoal(const std::vector<uint8_t> &id_list, co
  */
 int MockDxlDriver::readPosition(uint8_t id, uint32_t& present_position)
 {
-    if (!_fake_data->dxl_registers.count(id))
+    if (_fake_data->dxl_registers.count(id))
         present_position = _fake_data->dxl_registers.at(id).position;
     return COMM_SUCCESS;
 }
@@ -509,7 +509,7 @@ int MockDxlDriver::setLed(uint8_t id, uint32_t led_value)
 {
     (void)led_value;  // unused
 
-    if (_fake_data->dxl_registers.count(id))
+    if (!_fake_data->dxl_registers.count(id))
       return COMM_RX_FAIL;
 
     return COMM_SUCCESS;
@@ -548,7 +548,7 @@ int MockDxlDriver::setGoalTorque(uint8_t id, uint32_t torque)
 {
     (void)torque;  // unused
 
-    if (_fake_data->dxl_registers.count(id))
+    if (!_fake_data->dxl_registers.count(id))
       return COMM_RX_FAIL;
 
     return COMM_SUCCESS;

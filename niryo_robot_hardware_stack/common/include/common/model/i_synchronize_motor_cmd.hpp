@@ -33,7 +33,6 @@ namespace model
 class ISynchronizeMotorCmd : public IObject
 {
 public:
-    ISynchronizeMotorCmd() = default;
     ~ISynchronizeMotorCmd() override = default;
 
     virtual int getCmdType() const = 0;
@@ -42,12 +41,13 @@ public:
     virtual bool isDxlCmd() const = 0;
 
 protected:
+    ISynchronizeMotorCmd() = default;
     // see https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c67-a-polymorphic-class-should-suppress-public-copymove
-    ISynchronizeMotorCmd( const ISynchronizeMotorCmd& ) = default;
-    ISynchronizeMotorCmd( ISynchronizeMotorCmd&& ) = default;
+    ISynchronizeMotorCmd( const ISynchronizeMotorCmd& ) = delete;
+    ISynchronizeMotorCmd( ISynchronizeMotorCmd&& ) = delete;
 
-    ISynchronizeMotorCmd& operator= ( ISynchronizeMotorCmd && ) = default;
-    ISynchronizeMotorCmd& operator= ( const ISynchronizeMotorCmd& ) = default;
+    ISynchronizeMotorCmd& operator= ( ISynchronizeMotorCmd && ) = delete;
+    ISynchronizeMotorCmd& operator= ( const ISynchronizeMotorCmd& ) = delete;
 };
 
 } // namespace model

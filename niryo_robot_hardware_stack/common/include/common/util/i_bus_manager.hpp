@@ -42,13 +42,7 @@ namespace util
 class IBusManager
 {
 public:
-    IBusManager() = default;
     virtual ~IBusManager() = default;
-    // see https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c67-a-polymorphic-class-should-suppress-public-copymove
-    IBusManager( const IBusManager& ) = delete;
-    IBusManager( IBusManager&& ) = delete;
-    IBusManager& operator= ( IBusManager && ) = delete;
-    IBusManager& operator= ( const IBusManager& ) = delete;
 
     virtual bool init(ros::NodeHandle& nh) = 0;
 
@@ -69,6 +63,13 @@ public:
     virtual bool isCalibrationInProgress() const = 0;
     virtual int32_t getCalibrationResult(uint8_t id) const = 0;
     virtual common::model::EStepperCalibrationStatus getCalibrationStatus() const = 0;
+protected:
+    IBusManager() = default;
+    // see https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c67-a-polymorphic-class-should-suppress-public-copymove
+    IBusManager( const IBusManager& ) = delete;
+    IBusManager( IBusManager&& ) = delete;
+    IBusManager& operator= ( IBusManager && ) = delete;
+    IBusManager& operator= ( const IBusManager& ) = delete;
 private:
     virtual int setupCommunication() = 0;
     virtual void addHardwareDriver(common::model::EHardwareType hardware_type) = 0;
