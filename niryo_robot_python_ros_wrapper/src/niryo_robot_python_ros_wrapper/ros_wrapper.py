@@ -66,6 +66,21 @@ class NiryoRosWrapperException(Exception):
     pass
 
 
+def check_ned2_version(func):
+    '''Decorator that check the robot version'''
+
+    def wrap(*args, **kwargs):
+        robot_instance = args[0]
+        if robot_instance.get_hardware_version() != 'ned2':
+            raise NiryoRosWrapperException(
+                "Error Code : {}\nMessage : Wrong robot hardware version, feature only available on Ned2".format(
+                    CommandStatus.BAD_HARDWARE_VERSION))
+
+        return func(*args, **kwargs)
+
+    return wrap
+
+
 class NiryoRosWrapper:
     LOGS_LEVELS = {
         rospy.INFO: 'INFO',
@@ -2218,7 +2233,7 @@ class NiryoRosWrapper:
         return result.name_list
 
     # - Sound
-
+    @check_ned2_version
     def play_sound(self, sound_name, start_time_sec=0, end_time_sec=0, wait_end=0):
         """
         Call service to play_sound according to SoundStateCommand.
@@ -2240,6 +2255,7 @@ class NiryoRosWrapper:
         rospy.sleep(0.1)
         return self.__classic_return_w_check(result)
 
+    @check_ned2_version
     def set_volume(self, sound_volume):
         """
         Call service to set_volume to set the volume of Ned'sound accrding to sound_volume.
@@ -2255,6 +2271,7 @@ class NiryoRosWrapper:
         rospy.sleep(0.1)
         return self.__classic_return_w_check(result)
 
+    @check_ned2_version
     def stop_sound(self):
         """
         Call service stop_sound to stop a sound being played.
@@ -2307,7 +2324,7 @@ class NiryoRosWrapper:
     #     return self.__classic_return_w_check(result)
 
     # - Led Ring
-
+    @check_ned2_version
     def led_ring_solid(self, color, wait=False):
         """
         Set the whole Led Ring to a fixed color.
@@ -2327,6 +2344,7 @@ class NiryoRosWrapper:
         result = self.__call_service('/niryo_robot_led_ring/user_service', LedUser, user_led_request)
         return result.status, result.message
 
+    @check_ned2_version
     def led_ring_turn_off(self, wait=False):
         """
         Turn off all Leds
@@ -2344,6 +2362,7 @@ class NiryoRosWrapper:
         result = self.__call_service('/niryo_robot_led_ring/user_service', LedUser, user_led_request)
         return result.status, result.message
 
+    @check_ned2_version
     def led_ring_flash(self, color, period=0, iterations=0, wait=False):
         """
         Flashes a color according to a frequency.
@@ -2370,6 +2389,7 @@ class NiryoRosWrapper:
         result = self.__call_service('/niryo_robot_led_ring/user_service', LedUser, user_led_request)
         return result.status, result.message
 
+    @check_ned2_version
     def led_ring_alternate(self, color_list, period=0, iterations=0, wait=False):
         """
         Several colors are alternated one after the other.
@@ -2396,6 +2416,7 @@ class NiryoRosWrapper:
         result = self.__call_service('/niryo_robot_led_ring/user_service', LedUser, user_led_request)
         return result.status, result.message
 
+    @check_ned2_version
     def led_ring_chase(self, color, period=0, iterations=0, wait=False):
         """
         Movie theater light style chaser animation.
@@ -2423,6 +2444,7 @@ class NiryoRosWrapper:
         result = self.__call_service('/niryo_robot_led_ring/user_service', LedUser, user_led_request)
         return result.status, result.message
 
+    @check_ned2_version
     def led_ring_wipe(self, color, period=0, wait=False):
         """
         Wipe a color across the Led Ring, light a Led at a time.
@@ -2445,6 +2467,7 @@ class NiryoRosWrapper:
         result = self.__call_service('/niryo_robot_led_ring/user_service', LedUser, user_led_request)
         return result.status, result.message
 
+    @check_ned2_version
     def led_ring_rainbow(self, period=0, iterations=0, wait=False):
         """
         Draw rainbow that fades across all Leds at once.
@@ -2468,6 +2491,7 @@ class NiryoRosWrapper:
         result = self.__call_service('/niryo_robot_led_ring/user_service', LedUser, user_led_request)
         return result.status, result.message
 
+    @check_ned2_version
     def led_ring_rainbow_cycle(self, period=0, iterations=0, wait=False):
         """
         Draw rainbow that uniformly distributes itself across all Leds.
@@ -2491,6 +2515,7 @@ class NiryoRosWrapper:
         result = self.__call_service('/niryo_robot_led_ring/user_service', LedUser, user_led_request)
         return result.status, result.message
 
+    @check_ned2_version
     def led_ring_rainbow_chase(self, period=0, iterations=0, wait=False):
         """
         Rainbow chase animation, like the led_ring_chase method.
@@ -2514,6 +2539,7 @@ class NiryoRosWrapper:
         result = self.__call_service('/niryo_robot_led_ring/user_service', LedUser, user_led_request)
         return result.status, result.message
 
+    @check_ned2_version
     def led_ring_go_up(self, color, period=0, iterations=0, wait=False):
         """
         Leds turn on like a loading circle, and are then all turned off at once.
@@ -2541,6 +2567,7 @@ class NiryoRosWrapper:
         result = self.__call_service('/niryo_robot_led_ring/user_service', LedUser, user_led_request)
         return result.status, result.message
 
+    @check_ned2_version
     def led_ring_go_up_down(self, color, period=0, iterations=0, wait=False):
         """
         Leds turn on like a loading circle, and are turned off the same way.
@@ -2569,23 +2596,27 @@ class NiryoRosWrapper:
         return result.status, result.message
 
     # - EndEffector Button
-
+    @check_ned2_version
     def is_custom_button_pressed(self):
         return self.__custom_button.is_pressed
 
+    @check_ned2_version
     def get_custom_button_state(self):
         return self.__custom_button.button_state
 
+    @check_ned2_version
     def wait_for_button_action(self, action, timeout=0):
         return self.__custom_button.wait(action, timeout)
 
+    @check_ned2_version
     def wait_for_any_action(self, timeout=0):
         return self.__custom_button.wait_any(timeout)
 
+    @check_ned2_version
     def get_and_wait_press_duration(self, timeout=0):
         return self.__custom_button.get_press_time(timeout)
 
-    #wait_and_get_press_duration
+    # wait_and_get_press_duration
 
     # - Logs
 
