@@ -114,11 +114,11 @@ std::string EndEffectorState::str() const
  * @return
  */
 bool common::model::EndEffectorState::isValid() const
-  {
-  return (EHardwareType::END_EFFECTOR == getHardwareType() &&
-          EButtonType::UNKNOWN != _buttons_list.at(0)->type &&
-          EButtonType::UNKNOWN != _buttons_list.at(1)->type &&
-          EButtonType::UNKNOWN != _buttons_list.at(2)->type);
+{
+    return (EHardwareType::UNKNOWN != getHardwareType() &&
+            EButtonType::UNKNOWN != _buttons_list.at(0)->type &&
+            EButtonType::UNKNOWN != _buttons_list.at(1)->type &&
+            EButtonType::UNKNOWN != _buttons_list.at(2)->type);
 }
 
 /**
