@@ -2,10 +2,10 @@ type: "stepper"
 ttl:
   default_id: 8
   pool_id_list: [9,10]
-  assembly_direction: -1
+  direction: -1
 can:
   max_effort: 90
   micro_steps: 8
   default_id: 6
   pool_id_list: [12,13]
-  assembly_direction: 1
+  direction: 1

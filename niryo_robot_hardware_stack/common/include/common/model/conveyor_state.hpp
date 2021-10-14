@@ -48,11 +48,11 @@ class ConveyorState : public StepperMotorState {
 
         void setState(bool state);
         void setSpeed(int16_t speed);
-        void setAssemblyDirection(int8_t direction);
+        void setGoalDirection(int8_t direction);
 
         bool getState() const;
         int16_t getSpeed() const;
-        int8_t getAssenblyDirection() const;
+        int8_t getGoalDirection() const;
         // other getters
 
         bool operator==(const ConveyorState& other);
@@ -63,7 +63,7 @@ class ConveyorState : public StepperMotorState {
         bool isValid() const override;
 
 private:
-        int8_t _assembly_direction{0};  // the direction where the conveyor is assembled in hw level
+        int8_t _goal_direction{0};  // the direction where the conveyor is assembled in hw level
         bool _state{false};
         int16_t _speed{0};
         uint8_t _default_id{0};
@@ -90,13 +90,13 @@ int16_t ConveyorState::getSpeed() const
 }
 
 /**
- * @brief ConveyorState::getAssemblyDirection
+ * @brief ConveyorState::getGoalDirection
  * @return
  */
 inline
-int8_t ConveyorState::getAssenblyDirection() const
+int8_t ConveyorState::getGoalDirection() const
 {
-    return _assembly_direction;
+    return _goal_direction;
 }
 
 /**

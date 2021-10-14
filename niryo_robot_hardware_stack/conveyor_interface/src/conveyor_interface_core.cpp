@@ -107,7 +107,7 @@ void ConveyorInterfaceCore::initParameters(ros::NodeHandle& nh)
 
         nh.getParam("can/max_effort", canConfig.max_effort);
         nh.getParam("can/micro_steps", canConfig.micro_steps);
-        nh.getParam("can/assembly_direction", canConfig.assembly_direction);
+        nh.getParam("can/direction", canConfig.direction);
         nh.getParam("can/default_id", default_conveyor_id);
 
         canConfig.default_id = static_cast<uint8_t>(default_conveyor_id);
@@ -143,7 +143,7 @@ void ConveyorInterfaceCore::initParameters(ros::NodeHandle& nh)
 
         nh.getParam("ttl/default_id", default_conveyor_id);
         nh.getParam("ttl/pool_id_list", id_pool_list);
-        nh.getParam("ttl/assembly_direction", ttlConfig.assembly_direction);
+        nh.getParam("ttl/direction", ttlConfig.direction);
 
         ttlConfig.default_id = static_cast<uint8_t>(default_conveyor_id);
 
@@ -230,7 +230,7 @@ ConveyorInterfaceCore::addConveyor()
             auto conveyor_state = std::make_shared<ConveyorState>(bus.second.type, bus.first, bus.second.default_id, bus.second.default_id);
 
             // set some params for conveyor state
-            conveyor_state->setAssemblyDirection(static_cast<int8_t>(bus.second.assembly_direction));
+            conveyor_state->setDirection(static_cast<int8_t>(bus.second.direction));
             if (EBusProtocol::CAN == bus.first)
             {
                 conveyor_state->setMaxEffort(bus.second.max_effort);
@@ -411,7 +411,7 @@ bool ConveyorInterfaceCore::_callbackControlConveyor(conveyor_interface::Control
     {
         auto state = _state_map.at(req.id);
         EBusProtocol bus_proto = state->getBusProtocol();
-        int8_t assembly_direction = state->getAssenblyDirection();
+        int8_t assembly_direction = state->getDirection();
 
         if (EBusProtocol::CAN == bus_proto)
         {
@@ -484,7 +484,7 @@ void ConveyorInterfaceCore::_publishConveyorsFeedback(const ros::TimerEvent&)
                 {
                     data.conveyor_id = conveyor_state->getId();
                     data.running = conveyor_state->getState();
-                    data.direction = static_cast<int8_t>(conveyor_state->getDirection());
+                    data.direction = static_cast<int8_t>(conveyor_state->getGoalDirection());
                     data.speed = conveyor_state->getSpeed();
                     msg.conveyors.push_back(data);
 
