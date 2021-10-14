@@ -59,7 +59,7 @@ std::string MockStepperDriver::str() const
  */
 int MockStepperDriver::ping(uint8_t id)
 {
-    if (_fake_data->stepper_registers.count(id))
+    if (std::find(_id_list.begin(), _id_list.end(), id) != _id_list.end())
         return COMM_SUCCESS;
     return COMM_TX_FAIL;
 }

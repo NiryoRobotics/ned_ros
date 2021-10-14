@@ -75,6 +75,12 @@ class TtlInterfaceCore : public common::util::IDriverCore, public common::util::
 public:
     TtlInterfaceCore(ros::NodeHandle& nh);
     ~TtlInterfaceCore() override;
+    // non copyable class
+    TtlInterfaceCore( const TtlInterfaceCore& ) = delete;
+    TtlInterfaceCore( TtlInterfaceCore&& ) = delete;
+
+    TtlInterfaceCore& operator= ( TtlInterfaceCore && ) = delete;
+    TtlInterfaceCore& operator= ( const TtlInterfaceCore& ) = delete;
 
     bool init(ros::NodeHandle& nh) override;
 

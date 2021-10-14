@@ -84,6 +84,11 @@ public:
     TtlManager() = delete;
     TtlManager( ros::NodeHandle& nh );
     ~TtlManager() override = default;
+    // see https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c21-if-you-define-or-delete-any-copy-move-or-destructor-function-define-or-delete-them-all
+    TtlManager( const TtlManager& ) = delete;
+    TtlManager( TtlManager&& ) = delete;
+    TtlManager& operator= ( TtlManager && ) = delete;
+    TtlManager& operator= ( const TtlManager& ) = delete;
 
     // IBusManager Interface
     bool init(ros::NodeHandle& nh) override;

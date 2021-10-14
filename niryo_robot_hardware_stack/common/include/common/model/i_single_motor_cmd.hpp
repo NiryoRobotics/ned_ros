@@ -44,11 +44,11 @@ public:
 protected:
     ISingleMotorCmd() = default;
     // see https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c67-a-polymorphic-class-should-suppress-public-copymove
-    ISingleMotorCmd( const ISingleMotorCmd& ) = delete;
-    ISingleMotorCmd( ISingleMotorCmd&& ) = delete;
+    ISingleMotorCmd( const ISingleMotorCmd& ) = default;
+    ISingleMotorCmd( ISingleMotorCmd&& ) = default;
 
-    ISingleMotorCmd& operator= ( ISingleMotorCmd && ) = delete;
-    ISingleMotorCmd& operator= ( const ISingleMotorCmd& ) = delete;
+    ISingleMotorCmd& operator= ( ISingleMotorCmd && ) = default;
+    ISingleMotorCmd& operator= ( const ISingleMotorCmd& ) = default;
 };
 
 } // namespace model
