@@ -36,7 +36,7 @@ class FansManager(object):
         pass
 
     def shutdown(self):
-        rospy.sleep(0.5)
+        rospy.sleep(1)
         rospy.loginfo("Fan Manager - Stop fans")
         for fan in self._fans_list:
             fan.value = False
