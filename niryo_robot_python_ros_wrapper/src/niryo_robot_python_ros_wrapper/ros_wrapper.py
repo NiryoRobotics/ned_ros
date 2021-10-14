@@ -29,6 +29,7 @@ from niryo_robot_msgs.msg import HardwareStatus
 from niryo_robot_msgs.msg import RobotState
 from niryo_robot_msgs.msg import RPY
 from niryo_robot_rpi.msg import DigitalIO, DigitalIOState, AnalogIO, AnalogIOState
+from niryo_robot_msgs.msg import SoftwareVersion
 from niryo_robot_tools_commander.msg import ToolCommand
 
 # Services
@@ -137,6 +138,11 @@ class NiryoRosWrapper:
         rospy.Subscriber('/niryo_robot/conveyor/feedback', ConveyorFeedbackArray,
                          self.__callback_sub_conveyors_feedback)
 
+        # - Utils
+        self.__software_versions = None
+        rospy.Subscriber('/niryo_robot_hardwareq_interface/software_version', SoftwareVersion,
+                         self.__callback_software_versions)
+
         # - Action server
         # Robot action
         self.__robot_action_server_name = '/niryo_robot_arm_commander/robot_action'
@@ -228,6 +234,9 @@ class NiryoRosWrapper:
 
     def __callback_sub_conveyors_feedback(self, conveyors_feedback):
         self.__conveyors_feedback = conveyors_feedback
+
+    def __callback_software_versions(self, software_versions):
+        self.__software_versions = software_versions
 
     # -- Service & Action executors
     def __call_service(self, service_name, service_msg_type, *args):
@@ -1702,6 +1711,22 @@ class NiryoRosWrapper:
                     'Timeout: could not get conveyor 1 feedback (/niryo_robot/conveyor/feedback topic)')
         fb = self.__conveyors_feedback
         return fb.conveyors
+
+    # - Utils
+    def get_software_versions(self):
+        """
+        Get software versions
+
+        :return:
+        :rtype: SoftwareVersion
+        """
+        timeout = rospy.get_time() + 2.0
+        while self.__software_versions is None:
+            rospy.sleep(0.05)
+            if rospy.get_time() > timeout:
+                raise NiryoRosWrapperException(
+                    'Timeout: could not get software_versions /niryo_robot_hardware_interface/software_version topic)')
+        return self.__software_versions
 
     # - Vision
 
