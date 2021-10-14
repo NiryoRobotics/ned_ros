@@ -19,6 +19,7 @@
 
 #include "common/model/conveyor_state.hpp"
 
+#include <cstdint>
 #include <sstream>
 #include <string>
 #include <tuple>
@@ -83,7 +84,7 @@ void ConveyorState::updateData(const std::tuple<bool, uint8_t, uint16_t>& data)
 {
     setState(std::get<0>(data));
     setSpeed(std::get<1>(data));
-    setDirection(std::get<2>(data));
+    setGoalDirection(std::get<2>(data));
 }
 
 /**
@@ -92,10 +93,10 @@ void ConveyorState::updateData(const std::tuple<bool, uint8_t, uint16_t>& data)
 void ConveyorState::reset()
 {
     StepperMotorState::reset();
-    _direction = -1;
+    _direction = 0;
     _speed = 0;
     _state = false;
-    _assembly_direction = 0;
+    _goal_direction = -1;
 }
 
 /**
@@ -117,12 +118,12 @@ void ConveyorState::setSpeed(int16_t speed)
 }
 
 /**
- * @brief ConveyorState::setSpeed
+ * @brief ConveyorState::setGoalDirection
  * @param direction
  */
-void ConveyorState::setAssemblyDirection(int8_t direction)
+void ConveyorState::setGoalDirection(int8_t direction)
 {
-    _assembly_direction = direction;
+    _goal_direction = direction;
 }
 
 /**
@@ -147,7 +148,7 @@ std::string ConveyorState::str() const
 
     ss << "state: " << (_state ? "true" : "false")
        << "speed: " << _speed
-       << "direction: " << _direction;
+       << "direction: " << _goal_direction;
 
     ss << "\n---\n";
     ss << "\n";

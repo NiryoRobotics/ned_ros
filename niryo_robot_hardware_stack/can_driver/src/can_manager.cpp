@@ -302,7 +302,7 @@ void CanManager::readStatus()
                             if (cState)
                             {
                                 cState->updateData(driver->interpreteConveyorData(rxBuf));
-                                cState->setDirection(cState->getDirection() * cState->getAssenblyDirection());
+                                cState->setGoalDirection(cState->getGoalDirection() * cState->getDirection());
                             }
                             break;
                         }

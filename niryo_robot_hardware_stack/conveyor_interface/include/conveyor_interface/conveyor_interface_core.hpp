@@ -100,7 +100,7 @@ private:
 
             double max_effort{0.0};
             double micro_steps{8.0};
-            int assembly_direction{0};
+            int direction{0};
         };
         std::mutex _state_map_mutex;
 
@@ -119,7 +119,7 @@ private:
         std::shared_ptr<ttl_driver::TtlInterfaceCore> _ttl_interface;
         std::shared_ptr<can_driver::CanInterfaceCore> _can_interface;
 
-        std::map<uint8_t, std::shared_ptr<common::model::ConveyorState>> _state_map;
+        std::map<uint8_t, std::shared_ptr<common::model::ConveyorState> > _state_map;
         // vector keep track order of insertion in state_map
         std::vector<uint8_t> _order_insertion;
 
