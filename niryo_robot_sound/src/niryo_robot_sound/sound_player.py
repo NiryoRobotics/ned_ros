@@ -58,3 +58,7 @@ class SoundPlayer:
         self.__actual_sound = None
         self.__sound_publisher.publish("")
         return CommandStatus.SUCCESS, "{} sound played".format(sound)
+
+    def is_busy(self):
+        return self.__actual_sound is not None
+

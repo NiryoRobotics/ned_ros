@@ -4,13 +4,13 @@ from threading import Thread, Event
 
 # Messages
 from niryo_robot_status.msg import RobotStatus
+from std_msgs.msg import Empty
 
 # Services
 from niryo_robot_sound.srv import PlaySound
 
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus
-from std_msgs.msg import Empty
 
 from niryo_robot_sound.sound_database import SoundDatabase
 from niryo_robot_sound.sound_player import SoundPlayer
@@ -37,11 +37,9 @@ class SoundManager:
         # - Subscribers
         self.__robot_status = RobotStatus.BOOTING
         self.__logs_status = RobotStatus.NONE
-        rospy.Subscriber('/niryo_robot_status/robot_status', RobotStatus,
-                         self.__callback_sub_robot_status)
+        rospy.Subscriber('/niryo_robot_status/robot_status', RobotStatus, self.__callback_sub_robot_status)
 
-        rospy.Subscriber('/niryo_studio_connection', Empty,
-                         self.__callback_niryo_studio)
+        rospy.Subscriber('/niryo_studio_connection', Empty, self.__callback_niryo_studio)
 
         # - Services
         rospy.Service('/niryo_robot_sound/play', PlaySound, self.__callback_play_sound_user)
@@ -56,7 +54,7 @@ class SoundManager:
             return
         elif msg.robot_status == RobotStatus.SHUTDOWN:
             self.__robot_status = msg.robot_status
-            rospy.sleep(1) # avoid ctrl+c
+            rospy.sleep(1.5)  # avoid ctrl+c
             self.play_shutdown_sound()
             self.sound_end_event.set()
             return
@@ -114,8 +112,9 @@ class SoundManager:
             self.__overheat_timer = None
 
     def __callback_niryo_studio(self, _):
-        sound = self.__sound_database.connection_sound
-        self.play_sound(sound)
+        if not self.__sound_player.is_busy():
+            sound = self.__sound_database.connection_sound
+            self.play_sound(sound)
 
     def play_sound(self, sound, start_time=0, end_time=0, wait=False):
         if self.__sound_thread.is_alive():
@@ -130,6 +129,8 @@ class SoundManager:
                 self.__sound_thread.join(timeout=0.1)
 
     def play_shutdown_sound(self):
+        rospy.loginfo("Play shutdown sound")
+
         if self.__overheat_timer is not None:
             self.__overheat_timer.shutdown()
             self.__overheat_timer = None
@@ -137,6 +138,6 @@ class SoundManager:
         if self.__sound_thread.is_alive():
             self.__sound_player.stop()
             self.__sound_thread.join()
-        print "start"
+
         sound = self.__sound_database.sleep_sound
         self.__sound_player.play_sound(sound)
