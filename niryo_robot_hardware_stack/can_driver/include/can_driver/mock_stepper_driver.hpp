@@ -38,7 +38,7 @@ namespace can_driver
 class MockStepperDriver : public AbstractStepperDriver
 {
 public:
-    MockStepperDriver(std::shared_ptr<FakeCanData>   data);
+    MockStepperDriver(std::shared_ptr<FakeCanData> data);
 
     std::string str() const override;
 

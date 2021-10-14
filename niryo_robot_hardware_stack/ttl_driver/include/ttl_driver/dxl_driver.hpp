@@ -126,7 +126,8 @@ class DxlDriver : public AbstractDxlDriver
 template<typename reg_type>
 DxlDriver<reg_type>::DxlDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
                                std::shared_ptr<dynamixel::PacketHandler> packetHandler) :
-    AbstractDxlDriver(std::move(portHandler), std::move(packetHandler))
+    AbstractDxlDriver(std::move(portHandler),
+                      std::move(packetHandler))
 {}
 
 //*****************************

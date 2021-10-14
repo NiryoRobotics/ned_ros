@@ -67,7 +67,7 @@ public:
  */
 template<typename reg_type>
 StepperDriver<reg_type>::StepperDriver(std::shared_ptr<mcp_can_rpi::MCP_CAN> mcp_can) :
-    AbstractStepperDriver(mcp_can)
+    AbstractStepperDriver(std::move(mcp_can))
 {
 }
 
