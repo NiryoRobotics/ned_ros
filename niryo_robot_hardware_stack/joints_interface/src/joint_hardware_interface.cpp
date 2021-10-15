@@ -440,10 +440,10 @@ void JointHardwareInterface::write(const ros::Time &/*time*/, const ros::Duratio
     }
 
     if (_can_interface)
-        _can_interface->setTrajectoryControllerCommands(can_cmd);
+        _can_interface->setTrajectoryControllerCommands(std::move(can_cmd));
 
     if (_ttl_interface)
-      _ttl_interface->setTrajectoryControllerCommands(ttl_cmd);
+      _ttl_interface->setTrajectoryControllerCommands(std::move(ttl_cmd));
 }
 
 /**

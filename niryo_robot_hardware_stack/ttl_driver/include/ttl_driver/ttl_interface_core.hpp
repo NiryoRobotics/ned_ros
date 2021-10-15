@@ -89,14 +89,14 @@ public:
 
     bool setMotorPID(const common::model::DxlMotorState& dxlState);
 
-    void setTrajectoryControllerCommands(const std::vector<std::pair<uint8_t, uint32_t> > &cmd);
+    void setTrajectoryControllerCommands(std::vector<std::pair<uint8_t, uint32_t> > && cmd);
 
-    void setSyncCommand(const std::shared_ptr<common::model::ISynchronizeMotorCmd>& cmd) override;
+    void setSyncCommand(std::shared_ptr<common::model::ISynchronizeMotorCmd>&& cmd) override;
 
     // we have to use ISingleMotorCmd instead of AbstractTtlMotorCmd because this is pure virtual method in IDriverCore
     // IDriverCore used by Can and Ttl so AbstractTtlMotorCmd or AbstractCanMotorCmd can't be used in this case
-    void addSingleCommandToQueue(const std::shared_ptr<common::model::ISingleMotorCmd>& cmd) override;
-    void addSingleCommandToQueue(const std::vector<std::shared_ptr<common::model::ISingleMotorCmd> >& cmd) override;
+    void addSingleCommandToQueue(std::shared_ptr<common::model::ISingleMotorCmd>&& cmd) override;
+    void addSingleCommandToQueue(std::vector<std::shared_ptr<common::model::ISingleMotorCmd> >&& cmd) override;
 
     // joints control
     int addJoint(const std::shared_ptr<common::model::JointState>& jointState);

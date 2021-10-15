@@ -114,7 +114,7 @@ AbstractEndEffectorDriver::interpreteActionValue(uint32_t value) const
  * @param cmd
  * @return
  */
-int AbstractEndEffectorDriver::writeSingleCmd(const std::shared_ptr<common::model::AbstractTtlSingleMotorCmd> &cmd)
+int AbstractEndEffectorDriver::writeSingleCmd(std::shared_ptr<common::model::AbstractTtlSingleMotorCmd> && cmd)
 {
   if (cmd && cmd->isValid())
   {

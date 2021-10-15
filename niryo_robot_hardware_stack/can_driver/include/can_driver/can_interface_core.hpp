@@ -75,12 +75,12 @@ class CanInterfaceCore : public common::util::IDriverCore, public common::util::
         void clearSingleCommandQueue();
         void clearConveyorCommandQueue();
 
-        void setTrajectoryControllerCommands(const std::vector<std::pair<uint8_t, int32_t> >& cmd);
+        void setTrajectoryControllerCommands(std::vector<std::pair<uint8_t, int32_t> >&& cmd);
 
-        void setSyncCommand(const std::shared_ptr<common::model::ISynchronizeMotorCmd>& cmd) override;
+        void setSyncCommand(std::shared_ptr<common::model::ISynchronizeMotorCmd>&& cmd) override;
 
-        void addSingleCommandToQueue(const std::shared_ptr<common::model::ISingleMotorCmd>& cmd) override;
-        void addSingleCommandToQueue(const std::vector<std::shared_ptr<common::model::ISingleMotorCmd>>& cmd) override;
+        void addSingleCommandToQueue(std::shared_ptr<common::model::ISingleMotorCmd>&& cmd) override;
+        void addSingleCommandToQueue(std::vector<std::shared_ptr<common::model::ISingleMotorCmd>>&& cmd) override;
 
         void startCalibration() override;
         void resetCalibration() override;

@@ -56,9 +56,9 @@ public:
     virtual void startControlLoop() = 0;
     virtual bool isConnectionOk() const = 0;
     virtual bool scanMotorId(uint8_t motor_to_find) = 0;
-    virtual void addSingleCommandToQueue(const std::shared_ptr<common::model::ISingleMotorCmd>& cmd) = 0;
-    virtual void addSingleCommandToQueue(const std::vector<std::shared_ptr<common::model::ISingleMotorCmd> >& cmd) = 0;
-    virtual void setSyncCommand(const std::shared_ptr<common::model::ISynchronizeMotorCmd>& cmd) = 0;
+    virtual void addSingleCommandToQueue(std::shared_ptr<common::model::ISingleMotorCmd>&& cmd) = 0;
+    virtual void addSingleCommandToQueue(std::vector<std::shared_ptr<common::model::ISingleMotorCmd> >&& cmd) = 0;
+    virtual void setSyncCommand(std::shared_ptr<common::model::ISynchronizeMotorCmd>&& cmd) = 0;
 
     // driver for conveyor
     virtual int setConveyor(std::shared_ptr<common::model::ConveyorState> state) = 0;
