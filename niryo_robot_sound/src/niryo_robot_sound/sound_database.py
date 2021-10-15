@@ -36,6 +36,8 @@ class SoundDatabase:
         self.__turn_on_sound_name = rospy.get_param("~robot_sounds/turn_on_sound")
         self.__turn_off_sound_name = rospy.get_param("~robot_sounds/turn_off_sound")
         self.__connection_sound = rospy.get_param("~robot_sounds/connection_sound")
+        self.__robot_ready_sound = rospy.get_param("~robot_sounds/robot_ready_sound")
+        self.__calibration_sound = rospy.get_param("~robot_sounds/calibration_sound")
 
         self.__robot_sounds = {}
         self.__user_sounds = {}
@@ -80,6 +82,14 @@ class SoundDatabase:
     @property
     def connection_sound(self):
         return self.__robot_sounds[self.__connection_sound]
+
+    @property
+    def robot_ready_sound(self):
+        return self.__robot_sounds[self.__robot_ready_sound]
+
+    @property
+    def calibration_sound(self):
+        return self.__robot_sounds[self.__calibration_sound]
 
     def get_sound(self, sound_name):
         if sound_name in self.__user_sounds:
@@ -167,7 +177,7 @@ class SoundDatabase:
 
     def __load_robot_sounds(self):
         sounds = [self.__turn_on_sound_name, self.__turn_off_sound_name, self.__error_sound_name,
-                  self.__connection_sound]
+                  self.__connection_sound, self.__robot_ready_sound, self.__calibration_sound]
 
         self.__robot_sounds = {
             sound_name: Sound(sound_name, os.path.join(self.__robot_sound_directory_path, sound_name)) for sound_name in

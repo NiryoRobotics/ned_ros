@@ -30,6 +30,8 @@ class SoundManager:
         self.sound_end_event = Event()
         self.sound_end_event.clear()
 
+        self.play_sound(self.__sound_database.wake_up_sound)
+
         self.__rpi_overheating = False
         self.__overheat_timer = None
         self.__error_sound_delay = rospy.get_param("~error_sound_delay")
@@ -80,11 +82,11 @@ class SoundManager:
                 self.__sound_player.stop()
 
             if last_status == RobotStatus.BOOTING and self.__robot_status != RobotStatus.BOOTING:
-                sound = self.__sound_database.wake_up_sound
-                self.play_sound(sound)
+                self.play_sound(self.__sound_database.robot_ready_sound)
             elif self.__robot_status in [RobotStatus.FATAL_ERROR, RobotStatus.MOTOR_ERROR]:
-                sound = self.__sound_database.error_sound
-                self.play_sound(sound)
+                self.play_sound(self.__sound_database.error_sound)
+            elif last_status != RobotStatus.CALIBRATION_IN_PROGRESS and msg.robot_status == RobotStatus.CALIBRATION_IN_PROGRESS:
+                self.play_sound(self.__sound_database.calibration_sound)
 
         if self.__logs_status != msg.logs_status:
             self.__logs_status = msg.logs_status
