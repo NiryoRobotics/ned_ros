@@ -47,8 +47,12 @@ class NiryoRobotRpi:
 
     def __callback_robot_status(self, msg):
         if msg.robot_status == RobotStatus.SHUTDOWN:
-            self.__fans_manager.shutdown()
-            self.__io_panel.shutdown()
+            self.shutdown()
+
+    def shutdown(self):
+        self.__fans_manager.shutdown()
+        self.__io_panel.shutdown()
+        rospy.sleep(2)
 
 if __name__ == '__main__':
     rospy.init_node('niryo_robot_rpi', anonymous=False, log_level=rospy.INFO)
@@ -60,6 +64,8 @@ if __name__ == '__main__':
 
     try:
         node = NiryoRobotRpi()
+        rospy.on_shutdown(node.shutdown)
+
         rospy.spin()
     except rospy.ROSInterruptException:
         pass
