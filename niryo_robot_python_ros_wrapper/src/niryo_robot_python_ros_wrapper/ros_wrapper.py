@@ -140,7 +140,7 @@ class NiryoRosWrapper:
 
         # - Utils
         self.__software_versions = None
-        rospy.Subscriber('/niryo_robot_hardwareq_interface/software_version', SoftwareVersion,
+        rospy.Subscriber('/niryo_robot_hardware_interface/software_version', SoftwareVersion,
                          self.__callback_software_versions)
 
         # - Action server
