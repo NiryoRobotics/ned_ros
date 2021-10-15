@@ -82,6 +82,7 @@ class SoundManager:
                 self.__sound_player.stop()
 
             if last_status == RobotStatus.BOOTING and self.__robot_status != RobotStatus.BOOTING:
+                self.__sound_player.stop_w_fade_out()
                 self.play_sound(self.__sound_database.robot_ready_sound)
             elif self.__robot_status in [RobotStatus.FATAL_ERROR, RobotStatus.MOTOR_ERROR]:
                 self.play_sound(self.__sound_database.error_sound)

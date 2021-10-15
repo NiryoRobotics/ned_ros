@@ -18,8 +18,8 @@ path_robot_sound: "niryo_robot_state_sounds"
 
 robot_sounds:
   error_sound: "error4.2.wav"
-  turn_on_sound: "start2a.wav"
+  turn_on_sound: "start4a.wav"
   turn_off_sound: "stop.wav"
-  connection_sound: "connected2.wav"
+  connection_sound: "connected3.wav"
   robot_ready_sound: "connected2.wav"
-  calibration_sound: "error1.wav"
+  calibration_sound: "calibration.wav"

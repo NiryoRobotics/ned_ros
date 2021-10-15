@@ -14,3 +14,6 @@ led_offset: 8
 
 use_mesh: False
 simulation_led_mesh_path: "package://niryo_robot_description/meshes/led_ring/led.dae"
+
+simulation_led_ring_markers_publish_rate: 20
+led_ring_markers_publish_rate: 5

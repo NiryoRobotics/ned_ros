@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 # Lib
+# import sys
 import rospy
 import logging
 import rosnode
@@ -14,21 +15,25 @@ class LedRingNode:
         self.led_ring_commander = LedRingCommander()
 
         self.__shutdown_watcher_thread = Thread(target=self.shutdown_thread)
-        # self.__shutdown_watcher_thread.start()
+        self.__shutdown_watcher_thread.start()
 
     def shutdown_thread(self):
         try:
-            while not rospy.is_shutdown():
+            while not rospy.is_shutdown() and not self.led_ring_commander.is_shutdown:
                 rospy.sleep(0.5)
                 rosnode.get_node_names()
         except rosnode.ROSNodeIOException:
             self.led_ring_commander.shutdown()
-            rospy.signal_shutdown("shutdown")
+
+        rospy.signal_shutdown("shutdown")
+
+    def shutdown(self):
+        pass
+        # sys.exit(0)
 
 
 if __name__ == '__main__':
-    rospy.init_node('niryo_robot_led_ring_commander', anonymous=False, log_level=rospy.INFO, disable_signals=True)
-    node = None
+    rospy.init_node('niryo_robot_led_ring_commander', anonymous=False, log_level=rospy.INFO)
 
     # change logger level according to node parameter
     log_level = rospy.get_param("~log_level")
@@ -37,6 +42,7 @@ if __name__ == '__main__':
 
     try:
         node = LedRingNode()
+        rospy.on_shutdown(node.shutdown)
         rospy.spin()
     except rospy.ROSInterruptException:
         pass

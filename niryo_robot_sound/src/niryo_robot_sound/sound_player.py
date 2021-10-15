@@ -46,6 +46,12 @@ class SoundPlayer:
         if self.__actual_sound is not None:
             self.__actual_sound.stop()
 
+    def stop_w_fade_out(self):
+        old_volume = self.__volume_manager.volume
+        self.__volume_manager.fade_out()
+        self.__actual_sound.stop()
+        self.__volume_manager.set_volume(old_volume)
+
     def play_sound(self, sound, start_time_sec=0, end_time_sec=0):
         self.__actual_sound = sound
 

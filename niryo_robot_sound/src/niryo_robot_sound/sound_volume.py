@@ -3,6 +3,7 @@ import math
 import subprocess
 import rospy
 import os
+import numpy as np
 
 # Messages
 from std_msgs.msg import UInt8
@@ -60,6 +61,15 @@ class VolumeManager:
             self.__set_robot_volume()
             self.__volume_state_publisher.publish(self.__volume_percentage)
             self.__write_volume_file()
+
+    def fade_out(self, duration=2.5):
+        volume_list = np.linspace(self.__volume_percentage, 0, 12)[1:-1]
+        sleep_duration = rospy.Duration.from_sec(duration / len(volume_list))
+        for vol in volume_list:
+            loop_time = rospy.Time.now()
+            self.__volume_percentage = vol
+            self.__set_robot_volume()
+            rospy.sleep((loop_time + sleep_duration)-rospy.Time.now())
 
     def __set_robot_volume(self):
         if not self.__simulation_mode:

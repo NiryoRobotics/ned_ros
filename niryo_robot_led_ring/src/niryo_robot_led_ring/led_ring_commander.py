@@ -63,6 +63,7 @@ class LedRingCommander:
 
         # - Publishers
         self.__led_ring_status_pub = rospy.Publisher('~led_ring_status', LedRingStatus, latch=True, queue_size=10)
+        rospy.sleep(1)
         self._publish_led_ring_status()  # publish the status at the beginning
         self.display_user_mode()  # Turn on the leds with the right animation
 
@@ -88,12 +89,19 @@ class LedRingCommander:
 
     def shutdown(self):
         if not self.__is_shutdown:
-            self.__is_shutdown = True
             self.robot_status_subscriber.unregister()
             self.stop_led_ring_thread()
-            self.blink(WHITE, 2, 0.5)
             self.user_animation_lock.acquire()
+
+            command = LedUserRequest()
+            command.colors = [WHITE]
+            command.iterations = 1
+            command.period = 2
+            self.breath_animation(command)
+            self.blink(WHITE, 8, 0.5)
             self.error_animation_lock.acquire()
+            self.none_animation(None)
+            self.__is_shutdown = True
 
     @property
     def is_shutdown(self):
@@ -110,9 +118,16 @@ class LedRingCommander:
         if msg.robot_status == RobotStatus.SHUTDOWN:
             self.shutdown()
 
+        elif self.robot_status == RobotStatus.BOOTING and msg.robot_status != RobotStatus.BOOTING:
+            self.led_ring_anim.fade(BLUE)
+
         if (self.robot_status != msg.robot_status or
                 self.robot_out_of_bounds != msg.out_of_bounds or
                 self.rpi_overheating != msg.rpi_overheating):
+
+            if self.robot_status != RobotStatus.CALIBRATION_IN_PROGRESS and msg.robot_status == RobotStatus.CALIBRATION_IN_PROGRESS:
+                self.blink(YELLOW, 3, 1)
+
             self.robot_status = msg.robot_status
             self.robot_status_str = msg.robot_status_str
             self.logs_status = msg.logs_status

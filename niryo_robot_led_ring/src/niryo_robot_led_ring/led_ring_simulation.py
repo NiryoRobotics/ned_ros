@@ -18,15 +18,29 @@ class LedRingSimulation:
 
     def __init__(self, led_count):
         self.led_count = led_count  # Number of leds
+        self.need_publish = True
 
         self.use_mesh = rospy.get_param("~use_mesh")
         self.led_marker_collada_path = rospy.get_param("~simulation_led_mesh_path")
 
+        if rospy.get_param("/niryo_robot_led_ring/simulation_mode"):
+            self.led_ring_markers_publish_rate = rospy.get_param("~simulation_led_ring_markers_publish_rate")
+        else:
+            self.led_ring_markers_publish_rate = rospy.get_param("~led_ring_markers_publish_rate")
+
         # for simulation mode
         self.markers_array = [self.new_marker(led_id) for led_id in range(self.led_count)]
 
+        self.publish_markers_timer = rospy.Timer(rospy.Duration.from_sec(1.0 / self.led_ring_markers_publish_rate),
+                                                 self.__publish_makers_cb)
+
         self.marker_pub = rospy.Publisher('visualization_marker_array', MarkerArray, queue_size=20, latch=True)
         self.show_led_ring_markers()
+
+    def __publish_makers_cb(self, _):
+        if self.need_publish:
+            self.need_publish = False
+            self.marker_pub.publish(self.markers_array)
 
     def set_all_led_markers(self, color_per_marker):
         """
@@ -35,7 +49,7 @@ class LedRingSimulation:
         for led_id, color_rgba_255 in enumerate(color_per_marker):
             self.markers_array[led_id].color = self.get_rgba_color_for_markers(color_rgba_255)
 
-        self.marker_pub.publish(self.markers_array)
+        self.need_publish = True
 
     def set_one_led_marker(self, led_id, color_rgba_255):
         """
@@ -47,7 +61,7 @@ class LedRingSimulation:
         """
         Publish on the visualization marker array topic. Equivalent to strip.show, but in simulation.
         """
-        self.marker_pub.publish(self.markers_array)
+        self.need_publish = True
 
     def new_marker(self, position):
         """

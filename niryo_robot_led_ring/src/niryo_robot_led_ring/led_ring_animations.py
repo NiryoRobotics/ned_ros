@@ -1,4 +1,3 @@
-
 import rospy
 import time
 import math
@@ -120,7 +119,7 @@ class LedRingAnimations:
 
                 animation_function(color_cycle, cycle_index)
                 next_loop_time += rospy.Duration(loop_period)
-                rospy.sleep(next_loop_time - rospy.Time.now())
+                self.__sleep_animation(next_loop_time)
 
             if self.__stop_func:
                 break
@@ -242,7 +241,7 @@ class LedRingAnimations:
             self.show_leds()
 
             next_loop += period
-            rospy.sleep(next_loop - rospy.Time.now())
+            self.__sleep_animation(next_loop)
 
     def breath_animation(self, color_rgba, duration):
         next_loop = rospy.Time.now()
@@ -252,6 +251,8 @@ class LedRingAnimations:
 
         nb_steps = 255
         anim_period = rospy.Duration(duration * 1.0 / nb_steps)
+
+        self.current_animation_color = color_rgba
         for counter in range(nb_steps):
             if self.__stop_func:
                 break
@@ -260,7 +261,9 @@ class LedRingAnimations:
             factor = math.exp(-(pow(((counter * 1.0 / nb_steps) - beta) / gamma, 2.0)) / 2.0)
 
             # self.set_brightness(value)
-            self.set_and_show_leds(ColorRGBA(color_rgba.r * factor, color_rgba.g * factor, color_rgba.b * factor, 0))
+            self.set_and_show_leds(
+                ColorRGBA(self.current_animation_color.r * factor, self.current_animation_color.g * factor,
+                          self.current_animation_color.b * factor, 0))
 
             next_loop += anim_period
             rospy.sleep(next_loop - rospy.Time.now())
@@ -493,6 +496,19 @@ class LedRingAnimations:
         self.set_and_show_leds(self.off_color)
         self.set_current_anim_and_color(LedRingAnimation.NONE, BLACK)
 
+    def fade(self, color_rgba, duration=3.5, steps=100):
+        current_color = self.current_animation_color
+        step_r = (color_rgba.r - current_color.r) / float(steps)
+        step_g = (color_rgba.g - current_color.g) / float(steps)
+        step_b = (color_rgba.b - current_color.b) / float(steps)
+
+        sleep_duration = duration / float(steps)
+        for _ in range(steps):
+            self.current_animation_color = ColorRGBA(self.current_animation_color.r + step_g,
+                                                     self.current_animation_color.b + step_g,
+                                                     self.current_animation_color.b + step_b, 0)
+            rospy.sleep(sleep_duration)
+
     # - Real Led ring related method
 
     def get_state_list_from_pixel_strip(self):
@@ -557,6 +573,14 @@ class LedRingAnimations:
     def set_brightness(self, brightness):
         if not self.__is_simulation:
             self.strip.setBrightness(brightness)
+
+    def __sleep_animation(self, until_time):
+        while (until_time - rospy.Time.now()).to_sec() > 0.1:
+            rospy.sleep(0.1)
+            if self.__stop_func:
+                break
+        else:
+            rospy.sleep(until_time - rospy.Time.now())
 
     # Observable related methods
     def set_current_anim_and_color(self, animation, color=None):
