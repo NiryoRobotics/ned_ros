@@ -101,7 +101,7 @@ void JointsInterfaceCore::initParameters(ros::NodeHandle& nh)
 {
     nh.getParam("ros_control_loop_frequency", _control_loop_frequency);
     nh.getParam("publish_learning_mode_frequency", _publish_learning_mode_frequency);
-    nh.getParam("hardware_version", _hardware_version);
+    nh.getParam("/niryo_robot_hardware_interface/hardware_version", _hardware_version);
 
     ROS_DEBUG("JointsInterfaceCore::initParams - Ros control loop frequency %f",
               _control_loop_frequency);

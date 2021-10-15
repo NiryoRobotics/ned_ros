@@ -91,7 +91,7 @@ void CalibrationManager::initParameters(ros::NodeHandle &nh)
 {
     nh.getParam("calibration_timeout", _calibration_timeout);
     nh.getParam("calibration_file", _calibration_file_name);
-    nh.getParam("hardware_version", _hardware_version);
+    nh.getParam("/niryo_robot_hardware_interface/hardware_version", _hardware_version);
 
     ROS_DEBUG("Calibration Interface - hardware_version %s", _hardware_version.c_str());
     ROS_DEBUG("Calibration Interface - Calibration timeout %d", _calibration_timeout);
@@ -145,7 +145,7 @@ int CalibrationManager::startCalibration(int mode, std::string &result_message)
         result_message = "Calibration Interface - Please ensure that all motors are connected";
     }
 
-    ROS_WARN_COND(niryo_robot_msgs::CommandStatus::SUCCESS != res,
+    ROS_ERROR_COND(niryo_robot_msgs::CommandStatus::SUCCESS != res,
                   "Calibration Interface - Calibration error : %s", result_message.c_str());
 
     return res;
@@ -262,7 +262,7 @@ bool CalibrationManager::canProcessManualCalibration(std::string &result_message
       res = false;
     }
 
-    ROS_WARN_COND(!res, "Calibration Interface - Can't process manual calibration : %s", result_message.c_str());
+    ROS_ERROR_COND(!res, "Calibration Interface - Can't process manual calibration : %s", result_message.c_str());
 
     return res;
 }
@@ -274,6 +274,9 @@ bool CalibrationManager::canProcessManualCalibration(std::string &result_message
 EStepperCalibrationStatus CalibrationManager::autoCalibration()
 {
     _calibration_in_progress = true;
+
+    if ("ned2" == _hardware_version)
+        ros::Duration(3).sleep();
 
     // 1. Move robot back to home
     moveRobotBeforeCalibration();
