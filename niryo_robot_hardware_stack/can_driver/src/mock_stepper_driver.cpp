@@ -31,7 +31,6 @@
 
 #include "common/model/stepper_calibration_status_enum.hpp"
 #include "mcp_can_rpi/mcp_can_dfs_rpi.h"
-#include "ros/ros.h"
 
 #include "common/model/stepper_command_type_enum.hpp"
 
@@ -352,7 +351,6 @@ uint8_t MockStepperDriver::sendCalibrationCommand(uint8_t id, int offset, int de
 uint8_t MockStepperDriver::sendUpdateConveyorId(uint8_t old_id, uint8_t new_id)
 {
     int result = CAN_FAIL;
-    ROS_DEBUG("MockStepperDriver::sendUpdateConveyorId - Send update conveyor id from %d to %d", old_id, new_id);
 
     _id_list.erase(std::remove(_id_list.begin(), _id_list.end(), old_id), _id_list.end());
     _id_list.push_back(new_id);
