@@ -117,6 +117,7 @@ std::string MockStepperDriver::interpreteErrorState(uint32_t /*hw_state*/) const
  */
 int MockStepperDriver::changeId(uint8_t id, uint8_t new_id)
 {
+    int result = COMM_TX_FAIL;
     if (std::find(_id_list.begin(), _id_list.end(), id) != _id_list.end() &&
         std::find(_fake_data->full_id_list.begin(), _fake_data->full_id_list.end(), id) != _fake_data->full_id_list.end())
     {
@@ -125,10 +126,19 @@ int MockStepperDriver::changeId(uint8_t id, uint8_t new_id)
         _id_list.emplace_back(new_id);
         _fake_data->full_id_list.emplace_back(new_id);
 
-        return COMM_SUCCESS;
+        result = COMM_SUCCESS;
     }
 
-    return COMM_TX_FAIL;
+    const auto it = _fake_data->stepper_registers.find(id);
+    if (it != _fake_data->stepper_registers.end())
+    {
+        std::swap(_fake_data->stepper_registers[new_id], it->second);
+        result = COMM_SUCCESS;
+    }
+    else
+        result = COMM_TX_FAIL;
+
+    return result;
 }
 
 /**
