@@ -358,7 +358,7 @@ void JointHardwareInterface::sendInitMotorsParams()
                                   EStepperCommandType::CMD_TYPE_MICRO_STEPS,
                                   jState->getId(),
                                   {static_cast<int32_t>(stepperState->getMicroSteps())});
-                      _can_interface->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(cmd_micro));
+                      _can_interface->addSingleCommandToQueue(std::make_unique<StepperSingleCmd>(cmd_micro));
                       ros::Duration(0.05).sleep();
 
                       // CMD_TYPE_MAX_EFFORT cmd
@@ -366,7 +366,7 @@ void JointHardwareInterface::sendInitMotorsParams()
                                   EStepperCommandType::CMD_TYPE_MAX_EFFORT,
                                   jState->getId(),
                                   {static_cast<int32_t>(stepperState->getMaxEffort())});
-                      _can_interface->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(cmd_max_effort));
+                      _can_interface->addSingleCommandToQueue(std::make_unique<StepperSingleCmd>(cmd_max_effort));
                       ros::Duration(0.05).sleep();
                     }
                     else if (jState->getBusProtocol() == EBusProtocol::TTL)
@@ -377,7 +377,7 @@ void JointHardwareInterface::sendInitMotorsParams()
                                   EStepperCommandType::CMD_TYPE_VELOCITY_PROFILE,
                                   stepperState->getId(),
                                   stepperState->getVelocityProfile());
-                      _ttl_interface->addSingleCommandToQueue(std::make_shared<StepperTtlSingleCmd>(cmd_profile));
+                      _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperTtlSingleCmd>(cmd_profile));
                       ros::Duration(0.05).sleep();
                     }
                 }
@@ -543,21 +543,21 @@ void JointHardwareInterface::activateLearningMode(bool activated)
                 stepper_ttl_cmd.setId(jState->getId());
                 stepper_ttl_cmd.setParams({activated});
                 if (_ttl_interface)
-                    _ttl_interface->addSingleCommandToQueue(std::make_shared<StepperTtlSingleCmd>(stepper_ttl_cmd));
+                    _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperTtlSingleCmd>(stepper_ttl_cmd));
             }
             else
             {
                 stepper_cmd.setId(jState->getId());
                 stepper_cmd.setParams({activated});
                 if (_can_interface)
-                    _can_interface->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(stepper_cmd));
+                    _can_interface->addSingleCommandToQueue(std::make_unique<StepperSingleCmd>(stepper_cmd));
             }
         }
     }
 
     if (_ttl_interface)
     {
-        _ttl_interface->setSyncCommand(std::make_shared<DxlSyncCmd>(dxl_cmd));
+        _ttl_interface->setSyncCommand(std::make_unique<DxlSyncCmd>(dxl_cmd));
     }
 
     _learning_mode = activated;
@@ -576,7 +576,7 @@ void JointHardwareInterface::synchronizeMotors(bool synchronize)
         if (jState && jState->isValid() && jState->isStepper() && jState->getBusProtocol() == EBusProtocol::CAN)
         {
             StepperSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_SYNCHRONIZE, jState->getId(), {synchronize});
-                _can_interface->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(stepper_cmd));
+                _can_interface->addSingleCommandToQueue(std::make_unique<StepperSingleCmd>(stepper_cmd));
         }
     }
 }
@@ -599,7 +599,7 @@ void JointHardwareInterface::setSteppersProfiles()
                                 EStepperCommandType::CMD_TYPE_VELOCITY_PROFILE,
                                 stepperState->getId(),
                                 stepperState->getVelocityProfile());
-                    _ttl_interface->addSingleCommandToQueue(std::make_shared<StepperTtlSingleCmd>(cmd_profile));
+                    _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperTtlSingleCmd>(cmd_profile));
                     ros::Duration(0.05).sleep();
                   }
               }

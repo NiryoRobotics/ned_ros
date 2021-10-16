@@ -71,7 +71,7 @@ protected:
 
     // AbstractTtlDriver interface
 public:
-    int writeSingleCmd(std::shared_ptr<common::model::AbstractTtlSingleMotorCmd> && cmd) override;
+    int writeSingleCmd(std::unique_ptr<common::model::AbstractTtlSingleMotorCmd> && cmd) override;
     int writeSyncCmd(int type, const std::vector<uint8_t> &ids, const std::vector<uint32_t> &params) override;
 };
 

@@ -91,12 +91,12 @@ public:
 
     void setTrajectoryControllerCommands(std::vector<std::pair<uint8_t, uint32_t> > && cmd);
 
-    void setSyncCommand(std::shared_ptr<common::model::ISynchronizeMotorCmd>&& cmd) override;
+    void setSyncCommand(std::unique_ptr<common::model::ISynchronizeMotorCmd>&& cmd) override;
 
     // we have to use ISingleMotorCmd instead of AbstractTtlMotorCmd because this is pure virtual method in IDriverCore
     // IDriverCore used by Can and Ttl so AbstractTtlMotorCmd or AbstractCanMotorCmd can't be used in this case
-    void addSingleCommandToQueue(std::shared_ptr<common::model::ISingleMotorCmd>&& cmd) override;
-    void addSingleCommandToQueue(std::vector<std::shared_ptr<common::model::ISingleMotorCmd> >&& cmd) override;
+    void addSingleCommandToQueue(std::unique_ptr<common::model::ISingleMotorCmd>&& cmd) override;
+    void addSingleCommandToQueue(std::vector<std::unique_ptr<common::model::ISingleMotorCmd> >&& cmd) override;
 
     // joints control
     int addJoint(const std::shared_ptr<common::model::JointState>& jointState);
@@ -194,9 +194,9 @@ private:
     std::vector<std::pair<uint8_t, uint32_t> > _joint_trajectory_cmd;
 
     // ttl cmds
-    std::queue<std::shared_ptr<common::model::AbstractTtlSynchronizeMotorCmd> > _sync_cmds;
-    std::queue<std::shared_ptr<common::model::AbstractTtlSingleMotorCmd> > _single_cmds_queue;
-    std::queue<std::shared_ptr<common::model::AbstractTtlSingleMotorCmd> > _conveyor_cmds_queue;
+    std::queue<std::unique_ptr<common::model::AbstractTtlSynchronizeMotorCmd> > _sync_cmds;
+    std::queue<std::unique_ptr<common::model::AbstractTtlSingleMotorCmd> > _single_cmds_queue;
+    std::queue<std::unique_ptr<common::model::AbstractTtlSingleMotorCmd> > _conveyor_cmds_queue;
 
     ros::ServiceServer _activate_leds_server;
     ros::ServiceServer _custom_cmd_server;

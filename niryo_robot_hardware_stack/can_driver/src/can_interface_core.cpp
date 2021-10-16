@@ -29,12 +29,14 @@
 #include <tuple>
 
 // common
+#include "common/model/abstract_single_motor_cmd.hpp"
 #include "common/util/util_defs.hpp"
 #include "can_driver/can_interface_core.hpp"
 #include "common/model/conveyor_state.hpp"
 #include "common/model/hardware_type_enum.hpp"
 #include "common/model/stepper_command_type_enum.hpp"
 #include "common/model/single_motor_cmd.hpp"
+#include "common/util/unique_ptr_cast.hpp"
 
 using ::std::lock_guard;
 using ::std::mutex;
@@ -226,7 +228,7 @@ int CanInterfaceCore::motorCmdReport(const JointState& jState, common::model::EH
             ros::Duration(0.5).sleep();
             ROS_INFO("CanInterfaceCore::motorCmdReport - Debug - Send torque on command to motor %d", motor_id);
 
-            _can_manager->writeSingleCommand(std::make_shared<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_TORQUE,
+            _can_manager->writeSingleCommand(std::make_unique<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_TORQUE,
                                              motor_id,
                                              std::initializer_list<int32_t>{1}));
             ros::Duration(0.5).sleep();
@@ -238,7 +240,7 @@ int CanInterfaceCore::motorCmdReport(const JointState& jState, common::model::EH
             ros::Duration(0.5).sleep();
 
             ROS_INFO("CanInterfaceCore::motorCmdReport - Debug - Send move command on motor %d", motor_id);
-            _can_manager->writeSingleCommand(std::make_shared<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_RELATIVE_MOVE,
+            _can_manager->writeSingleCommand(std::make_unique<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_RELATIVE_MOVE,
                                                                                                   motor_id,
                                                                                                   std::initializer_list<int32_t>{ -1000 * direction, 1500}));
             ros::Duration(2).sleep();
@@ -250,7 +252,7 @@ int CanInterfaceCore::motorCmdReport(const JointState& jState, common::model::EH
             ros::Duration(0.5).sleep();
 
             ROS_INFO("CanInterfaceCore::motorCmdReport - Send can motor %d pose: %d ", motor_id, old_position);
-            _can_manager->writeSingleCommand(std::make_shared<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_RELATIVE_MOVE,
+            _can_manager->writeSingleCommand(std::make_unique<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_RELATIVE_MOVE,
                                                                                 motor_id,
                                                                                 std::initializer_list<int32_t>{1000*direction, 1000}));
             ros::Duration(2).sleep();
@@ -261,7 +263,7 @@ int CanInterfaceCore::motorCmdReport(const JointState& jState, common::model::EH
 
             // torque off
             ROS_INFO("CanInterfaceCore::motorCmdReport - Debug - Send torque off command on can motor %d", motor_id);
-            _can_manager->writeSingleCommand(std::make_shared<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_TORQUE,
+            _can_manager->writeSingleCommand(std::make_unique<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_TORQUE,
                                                                                 motor_id,
                                                                                 std::initializer_list<int32_t>{0}));
             ros::Duration(0.2).sleep();
@@ -410,12 +412,12 @@ void CanInterfaceCore::activeDebugMode(bool mode)
     {
         lock_guard<mutex> lck(_control_loop_mutex);
         // disable torque on motor 2
-        _can_manager->writeSingleCommand(std::make_shared<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_TORQUE,
+        _can_manager->writeSingleCommand(std::make_unique<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_TORQUE,
                                                               2, std::initializer_list<int32_t>{0}));
         ros::Duration(0.2).sleep();
 
         // disable torque on motor 3
-        _can_manager->writeSingleCommand(std::make_shared<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_TORQUE,
+        _can_manager->writeSingleCommand(std::make_unique<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_TORQUE,
                                                               3, std::initializer_list<int32_t>{0}));
     }
 }
@@ -519,13 +521,13 @@ int CanInterfaceCore::setConveyor(const std::shared_ptr<common::model::ConveyorS
         // send commands to init
         ROS_DEBUG("ConveyorInterfaceCore::addConveyor : Initializing for CAN bus");
 
-        _can_manager->writeSingleCommand(std::make_shared<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_MICRO_STEPS,
+        _can_manager->writeSingleCommand(std::make_unique<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_MICRO_STEPS,
                                                                                 state->getId(), std::initializer_list<int32_t>{static_cast<int32_t>(state->getMicroSteps())}));
 
-        _can_manager->writeSingleCommand(std::make_shared<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_MAX_EFFORT,
+        _can_manager->writeSingleCommand(std::make_unique<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_MAX_EFFORT,
                                                                                 state->getId(), std::initializer_list<int32_t>{static_cast<int32_t>(state->getMaxEffort())}));
 
-        _can_manager->writeSingleCommand(std::make_shared<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_CONVEYOR,
+        _can_manager->writeSingleCommand(std::make_unique<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_CONVEYOR,
                                                                                 state->getId(), std::initializer_list<int32_t>{false, 0, -1}));
 
         result = niryo_robot_msgs::CommandStatus::SUCCESS;
@@ -612,7 +614,7 @@ void CanInterfaceCore::setTrajectoryControllerCommands(std::vector<std::pair<uin
  * - cannot be a template method because we need it to be virtual (no static polymorphism possible)
  * - dynamic polymorphism necessary to be able to cast into a derived class
  */
-void CanInterfaceCore::addSingleCommandToQueue(std::shared_ptr<common::model::ISingleMotorCmd>&& cmd)
+void CanInterfaceCore::addSingleCommandToQueue(std::unique_ptr<common::model::ISingleMotorCmd>&& cmd)
 {
     ROS_DEBUG("CanInterfaceCore::addSingleCommandToQueue - %s", cmd->str().c_str());
 
@@ -627,7 +629,7 @@ void CanInterfaceCore::addSingleCommandToQueue(std::shared_ptr<common::model::IS
             }
             else
             {
-                _conveyor_cmds.push(std::dynamic_pointer_cast<StepperSingleCmd>(cmd));
+                _conveyor_cmds.push(common::util::static_unique_ptr_cast<common::model::AbstractCanSingleMotorCmd>(std::move(cmd)));
             }
         }
         else
@@ -638,7 +640,7 @@ void CanInterfaceCore::addSingleCommandToQueue(std::shared_ptr<common::model::IS
             }
             else
             {
-                _stepper_single_cmds.push(std::dynamic_pointer_cast<StepperSingleCmd>(cmd));
+                _stepper_single_cmds.push(common::util::static_unique_ptr_cast<common::model::AbstractCanSingleMotorCmd>(std::move(cmd)));
             }
         }
     }
@@ -648,17 +650,17 @@ void CanInterfaceCore::addSingleCommandToQueue(std::shared_ptr<common::model::IS
  * @brief CanInterfaceCore::addSingleCommandToQueue
  * @param cmd
  */
-void CanInterfaceCore::addSingleCommandToQueue(std::vector<std::shared_ptr<common::model::ISingleMotorCmd> >&& cmd)
+void CanInterfaceCore::addSingleCommandToQueue(std::vector<std::unique_ptr<common::model::ISingleMotorCmd>>&& cmd)
 {
-    for (auto c : cmd)
-        addSingleCommandToQueue(std::move(c));
+    for (size_t i = 0; i < cmd.size(); i++)
+        addSingleCommandToQueue(std::move(cmd[i]));
 }
 
 /**
  * @brief CanInterfaceCore::setSyncCommand
  * @param cmd
  */
-void CanInterfaceCore::setSyncCommand(std::shared_ptr<common::model::ISynchronizeMotorCmd>&& /*cmd*/)
+void CanInterfaceCore::setSyncCommand(std::unique_ptr<common::model::ISynchronizeMotorCmd>&& /*cmd*/)
 {
     ROS_INFO("CanInterfaceCore::setSyncCommand: need to be implemented");
 }

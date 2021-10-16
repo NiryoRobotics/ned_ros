@@ -46,7 +46,7 @@ std::string AbstractDxlDriver::str() const
  * @brief AbstractDxlDriver::writeSingleCmd
  * @param cmd
 */
-int AbstractDxlDriver::writeSingleCmd(std::shared_ptr<common::model::AbstractTtlSingleMotorCmd > && cmd)
+int AbstractDxlDriver::writeSingleCmd(std::unique_ptr<common::model::AbstractTtlSingleMotorCmd > && cmd)
 {
     if (cmd && cmd->isValid() && cmd->isDxlCmd())
     {

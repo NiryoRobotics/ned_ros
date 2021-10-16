@@ -1171,7 +1171,7 @@ int TtlManager::readMotorPID(uint8_t id,
  * @param cmd
  * @return
  */
-int TtlManager::writeSynchronizeCommand(std::shared_ptr<common::model::AbstractTtlSynchronizeMotorCmd>&& cmd)
+int TtlManager::writeSynchronizeCommand(std::unique_ptr<common::model::AbstractTtlSynchronizeMotorCmd>&& cmd)
 {
     int result = COMM_TX_ERROR;
     ROS_DEBUG_THROTTLE(0.5, "TtlManager::writeSynchronizeCommand:  %s", cmd->str().c_str());
@@ -1244,7 +1244,7 @@ int TtlManager::writeSynchronizeCommand(std::shared_ptr<common::model::AbstractT
  * @param cmd
  * @return
  */
-int TtlManager::writeSingleCommand(std::shared_ptr<common::model::AbstractTtlSingleMotorCmd >&& cmd)
+int TtlManager::writeSingleCommand(std::unique_ptr<common::model::AbstractTtlSingleMotorCmd >&& cmd)
 {
     int result = COMM_TX_ERROR;
 

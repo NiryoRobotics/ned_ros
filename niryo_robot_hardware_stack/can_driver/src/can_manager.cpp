@@ -550,7 +550,7 @@ int32_t CanManager::getPosition(const JointState &motor_state) const
  * @param cmd
  * @return
  */
-int CanManager::writeSingleCommand(std::shared_ptr<common::model::AbstractCanSingleMotorCmd>&& cmd)
+int CanManager::writeSingleCommand(std::unique_ptr<common::model::AbstractCanSingleMotorCmd>&& cmd)
 {
     int result = CAN_INVALID_CMD;
     ROS_DEBUG("CanManager::readCommand - Received stepper cmd %s", cmd->str().c_str());
@@ -567,7 +567,7 @@ int CanManager::writeSingleCommand(std::shared_ptr<common::model::AbstractCanSin
             result = CAN_FAIL;
             if (_driver_map.count(hardware_type) && _driver_map.at(hardware_type))
             {
-                result = _driver_map.at(hardware_type)->writeSingleCmd(cmd);
+                result = _driver_map.at(hardware_type)->writeSingleCmd(std::move(cmd));
             }
 
             ros::Duration(TIME_TO_WAIT_IF_BUSY).sleep();
