@@ -183,7 +183,7 @@ int CanManager::setupCommunication()
  * It can be a joint, conveyor...
  * @param state
  */
-void CanManager::addHardwareComponent(const std::shared_ptr<common::model::AbstractHardwareState>& state)
+void CanManager::addHardwareComponent(std::shared_ptr<common::model::AbstractHardwareState>&& state)
 {
     common::model::EHardwareType hardware_type = state->getHardwareType();
     uint8_t id = state->getId();

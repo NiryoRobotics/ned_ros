@@ -99,7 +99,7 @@ public:
     void addSingleCommandToQueue(std::vector<std::unique_ptr<common::model::ISingleMotorCmd> >&& cmd) override;
 
     // joints control
-    int addJoint(const std::shared_ptr<common::model::JointState>& jointState);
+    int addJoint(std::shared_ptr<common::model::JointState>&& jointState);
 
     // Tool control
     int setTool(const std::shared_ptr<common::model::ToolState>& toolState);

@@ -93,7 +93,7 @@ public:
     // IBusManager Interface
     bool init(ros::NodeHandle& nh) override;
 
-    void addHardwareComponent(const std::shared_ptr<common::model::AbstractHardwareState> &state) override;
+    void addHardwareComponent(std::shared_ptr<common::model::AbstractHardwareState> &&state) override;
 
     void removeHardwareComponent(uint8_t id) override;
     bool isConnectionOk() const override;

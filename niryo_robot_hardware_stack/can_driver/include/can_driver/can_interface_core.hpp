@@ -59,7 +59,7 @@ class CanInterfaceCore : public common::util::IDriverCore, public common::util::
         bool init(ros::NodeHandle& nh) override;
 
         // joints control
-        int addJoint(const std::shared_ptr<common::model::StepperMotorState>& jointState);
+        int addJoint(std::shared_ptr<common::model::StepperMotorState>&& jointState);
 
         // Tool control
         // N.A.

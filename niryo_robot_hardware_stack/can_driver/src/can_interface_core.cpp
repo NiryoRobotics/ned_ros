@@ -150,7 +150,7 @@ void CanInterfaceCore::startSubscribers(ros::NodeHandle &/*nh*/)
  * @param jointState
  * @return
  */
-int CanInterfaceCore::addJoint(const std::shared_ptr<common::model::StepperMotorState>& jointState)
+int CanInterfaceCore::addJoint(std::shared_ptr<common::model::StepperMotorState>&& jointState)
 {
   int result = niryo_robot_msgs::CommandStatus::CAN_READ_ERROR;
 
@@ -439,13 +439,15 @@ void CanInterfaceCore::controlLoop()
         }
         else if (_control_loop_flag)
         {
-            lock_guard<mutex> lck(_control_loop_mutex);
-            _can_manager->readStatus();
-
-            if (ros::Time::now().toSec() - _time_hw_data_last_write >= _delta_time_write)
             {
-                _time_hw_data_last_write = ros::Time::now().toSec();
-                _executeCommand();
+                lock_guard<mutex> lck(_control_loop_mutex);
+                _can_manager->readStatus();
+
+                if (ros::Time::now().toSec() - _time_hw_data_last_write >= _delta_time_write)
+                {
+                    _time_hw_data_last_write = ros::Time::now().toSec();
+                    _executeCommand();
+                }
             }
 
             bool isFreqMet = control_loop_rate.sleep();
@@ -467,28 +469,21 @@ void CanInterfaceCore::controlLoop()
  */
 void CanInterfaceCore::_executeCommand()
 {
-    bool need_sleep = false;
     if (!_joint_trajectory_cmd.empty())
     {
         _can_manager->executeJointTrajectoryCmd(_joint_trajectory_cmd);
         _joint_trajectory_cmd.clear();
-        need_sleep = true;
     }
 
     if (!_stepper_single_cmds.empty())
     {
         // as we use a queue, we don't need a mutex
-        if (need_sleep)
-            ros::Duration(0.01).sleep();
         _can_manager->writeSingleCommand(std::move(_stepper_single_cmds.front()));
         _stepper_single_cmds.pop();
-        need_sleep = true;
     }
     if (!_conveyor_cmds.empty())
     {
         // as we use a queue, we don't need a mutex
-        if (need_sleep)
-            ros::Duration(0.01).sleep();
         _can_manager->writeSingleCommand(std::move(_conveyor_cmds.front()));
         _conveyor_cmds.pop();
     }

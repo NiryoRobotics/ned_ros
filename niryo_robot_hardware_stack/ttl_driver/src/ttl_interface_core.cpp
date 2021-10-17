@@ -667,7 +667,7 @@ void TtlInterfaceCore::_executeCommand()
  * @param jointState
  * @return
  */
-int TtlInterfaceCore::addJoint(const std::shared_ptr<common::model::JointState>& jointState)
+int TtlInterfaceCore::addJoint(std::shared_ptr<common::model::JointState>&& jointState)
 {
   int result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
 

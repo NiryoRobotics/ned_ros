@@ -171,7 +171,7 @@ int TtlManager::setupCommunication()
  * @brief TtlManager::addHardwareComponent add hardware component like joint, ee, tool... to ttl manager
  * @param state
  */
-void TtlManager::addHardwareComponent(const std::shared_ptr<common::model::AbstractHardwareState>& state)
+void TtlManager::addHardwareComponent(std::shared_ptr<common::model::AbstractHardwareState>&& state)
 {
     common::model::EHardwareType hardware_type = state->getHardwareType();
     uint8_t id = state->getId();
