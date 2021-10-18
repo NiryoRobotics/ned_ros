@@ -19,8 +19,8 @@ fans:
     temperature_on_threshold: 45
     temperature_off_threshold: 40
   - pin: 12
-    temperature_on_threshold: 50
-    temperature_off_threshold: 45
+    temperature_on_threshold: 55
+    temperature_off_threshold: 50
 
 wifi:
   led_pin: 4
@@ -33,6 +33,8 @@ digital_inputs:
     pin: 1
   - name: DI3
     pin: 2
+  - name: DI5
+    pin: 2
 
 digital_outputs:
   - name: DO1
@@ -44,18 +46,15 @@ digital_outputs:
   - name: DO3
     pin: 13
     reverse: True
-  - name: Electromagnet
-    pin: 3
-    reverse: False
 
 analog_outputs:
-  - name: AO0
+  - name: AO1
     pin: 0
     address: 73
     i2c_bus: 0
     v_ref: 5.0
     resolution: 12
-  - name: AO1
+  - name: AO2
     pin: 0
     address: 75
     i2c_bus: 0
@@ -63,7 +62,7 @@ analog_outputs:
     resolution: 12
 
 analog_inputs:
-  - name: AI0
-    pin: 0
   - name: AI1
+    pin: 0
+  - name: AI2
     pin: 2
