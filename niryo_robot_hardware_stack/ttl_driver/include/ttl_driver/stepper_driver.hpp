@@ -89,8 +89,7 @@ class StepperDriver : public AbstractStepperDriver
         int writeVelocityProfile(uint8_t id, const std::vector<uint32_t>& data) override;
 
         int startHoming(uint8_t id) override;
-        int writeHomingDirection(uint8_t id, uint8_t direction) override;
-        int writeHomingStallThreshold(uint8_t id, uint8_t threshold) override;
+        int writeHomingSetup(uint8_t id, uint8_t direction, uint8_t stall_threshold) override;
 
         int readHomingStatus(uint8_t id, uint32_t &status) override;
 
@@ -462,6 +461,7 @@ int StepperDriver<reg_type>::syncReadHwErrorStatus(const std::vector<uint8_t> &i
  * @param id
  * @param data
  * @return
+ * TODO(CC) remove sleeps when fw will be updated
  */
 template<typename reg_type>
 int StepperDriver<reg_type>::writeVelocityProfile(uint8_t id, const std::vector<uint32_t>& data)
@@ -531,23 +531,32 @@ int StepperDriver<reg_type>::startHoming(uint8_t id)
  * @param id
  * @param direction
  * @return
+ * TODO(CC) remove sleeps when fw will be updated
  */
 template<typename reg_type>
-int StepperDriver<reg_type>::writeHomingDirection(uint8_t id, uint8_t direction)
+int StepperDriver<reg_type>::writeHomingSetup(uint8_t id, uint8_t direction, uint8_t stall_threshold)
 {
-  return write(reg_type::ADDR_HOMING_DIRECTION, reg_type::SIZE_HOMING_DIRECTION, id, direction);
-}
+    int res = 0;
+    double wait_duration = 0.5;
 
-/**
- * @brief StepperDriver<reg_type>::writeHomingStallThreshold
- * @param id
- * @param threshold
- * @return
- */
-template<typename reg_type>
-int StepperDriver<reg_type>::writeHomingStallThreshold(uint8_t id, uint8_t threshold)
-{
-  return write(reg_type::ADDR_HOMING_STALL_THRESHOLD, reg_type::SIZE_HOMING_STALL_THRESHOLD, id, threshold);
+    setTorqueEnable(id, true);
+    ros::Duration(wait_duration).sleep();
+
+    if (COMM_SUCCESS != write(reg_type::ADDR_HOMING_DIRECTION, reg_type::SIZE_HOMING_DIRECTION, id, direction))
+      res++;
+    ros::Duration(wait_duration).sleep();
+
+    if (COMM_SUCCESS != write(reg_type::ADDR_HOMING_STALL_THRESHOLD, reg_type::SIZE_HOMING_STALL_THRESHOLD, id, stall_threshold))
+      res++;
+    ros::Duration(wait_duration).sleep();
+
+    if(res > 0)
+    {
+        std::cout << "Failures during writeVelocityProfile : " << res << std::endl;
+        return COMM_TX_FAIL;
+    }
+
+    return COMM_SUCCESS;
 }
 
 /**

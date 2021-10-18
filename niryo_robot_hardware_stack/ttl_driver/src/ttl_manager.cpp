@@ -752,7 +752,7 @@ bool TtlManager::readHwStatus()
                         {
                             auto stepper_driver = std::dynamic_pointer_cast<ttl_driver::AbstractStepperDriver>(driver);
                             uint32_t velocity;
-                            if (COMM_SUCCESS != stepper_driver->readGoalVelocity(id, velocity))
+                            if (COMM_SUCCESS != stepper_driver->readVelocity(id, velocity))
                             {
                                 hw_errors_increment++;
                             }

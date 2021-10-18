@@ -91,8 +91,7 @@ class MockStepperDriver : public AbstractStepperDriver
         int writeVelocityProfile(uint8_t id, const std::vector<uint32_t>& data) override;
 
         int startHoming(uint8_t id) override;
-        int writeHomingDirection(uint8_t id, uint8_t direction) override;
-        int writeHomingStallThreshold(uint8_t id, uint8_t threshold) override;
+        int writeHomingSetup(uint8_t id, uint8_t direction, uint8_t stall_threshold) override;
 
         int readHomingStatus(uint8_t id, uint32_t &status) override;
 

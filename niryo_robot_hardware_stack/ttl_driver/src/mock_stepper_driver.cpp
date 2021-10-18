@@ -543,26 +543,12 @@ int MockStepperDriver::startHoming(uint8_t id)
  * @param direction
  * @return
  */
-int MockStepperDriver::writeHomingDirection(uint8_t id, uint8_t /*direction*/)
+int MockStepperDriver::writeHomingSetup(uint8_t id, uint8_t /*direction*/, uint8_t /*stall_threshold*/)
 {
     if (COMM_SUCCESS != ping(id))
         return COMM_RX_FAIL;
 
     return COMM_SUCCESS;
-}
-
-/**
- * @brief MockStepperDriver::writeHomingStallThreshold
- * @param id
- * @param threshold
- * @return
- */
-int MockStepperDriver::writeHomingStallThreshold(uint8_t id, uint8_t /*threshold*/)
-{
-  if (COMM_SUCCESS != ping(id))
-      return COMM_RX_FAIL;
-
-  return COMM_SUCCESS;
 }
 
 /**
