@@ -2,7 +2,7 @@
 
 import rospy
 
-from niryo_robot_rpi.rpi_ros_utils import activate_learning_mode, auto_calibration
+from niryo_robot_rpi.commun.rpi_ros_utils import activate_learning_mode, auto_calibration
 
 # Messages
 from std_msgs.msg import Int32, Bool

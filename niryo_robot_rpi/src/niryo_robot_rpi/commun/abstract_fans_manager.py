@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+# abstract_
 # fans_manager.py
 # Copyright (C) 2017 Niryo
 # All rights reserved.
@@ -18,12 +19,11 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import rospy
-from threading import Lock
 
 from niryo_robot_msgs.msg import HardwareStatus
 
 
-class FansManager(object):
+class AbstractFansManager(object):
     def __init__(self):
         self._fans_list = []
 
@@ -54,40 +54,3 @@ class FansManager(object):
     def _callback_hardware_status(self, msg):
         for fan in self._fans_list:
             fan.update(msg.rpi_temperature)
-
-
-class FansManagerNed2(FansManager):
-    def __init__(self, mcp=None, lock=None):
-        from niryo_robot_rpi.mcp_io_objects import Fan
-        from niryo_robot_rpi.MCP23017 import MCP23017
-
-        super(FansManagerNed2, self).__init__()
-        if mcp is None:
-            self.__mcp = MCP23017(address=rospy.get_param("~mcp/address"),
-                                  busnum=rospy.get_param("~mcp/i2c_bus"))
-        else:
-            self.__mcp = mcp
-
-        if lock is None:
-            lock = Lock()
-
-        self._fans_list = [Fan(self.__mcp, lock, fan["pin"], "FAN_{}".format(fan["pin"]),
-                               fan["temperature_on_threshold"], fan["temperature_off_threshold"])
-                           for fan in rospy.get_param("/niryo_robot_rpi/fans")]
-
-        rospy.loginfo("Fan Manager - Started")
-
-
-class FansManagerNedOne(FansManager):
-    def __init__(self):
-        from niryo_robot_rpi.rpi_io_objects import Fan
-
-        super(FansManagerNedOne, self).__init__()
-
-        lock = Lock()
-        self._fans_list = [Fan(lock, fan["pin"], "FAN_{}".format(fan["pin"]),
-                               fan["temperature_on_threshold"],
-                               fan["temperature_off_threshold"])
-                           for fan in rospy.get_param("/niryo_robot_rpi/fans")]
-
-        rospy.loginfo("Fan Manager - Started")

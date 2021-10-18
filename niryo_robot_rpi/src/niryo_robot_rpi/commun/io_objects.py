@@ -1,7 +1,3 @@
-import time
-from threading import Thread
-
-
 class PinMode:
     """
     Pin Mode is either OUTPUT or INPUT

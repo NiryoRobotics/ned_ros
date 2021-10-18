@@ -20,10 +20,11 @@
 import rospy
 from threading import Lock
 
-from niryo_robot_rpi.MCP23017 import MCP23017
-from niryo_robot_rpi.mcp_io_objects import Button, Led
-from niryo_robot_rpi.rpi_ros_utils import send_hotspot_command, send_restart_wifi_command, \
+from niryo_robot_rpi.commun.rpi_ros_utils import send_hotspot_command, send_restart_wifi_command, \
     send_deactivate_wifi_command, send_reconnect_wifi_command
+
+from hardware.MCP23017 import MCP23017
+from .mcp_io_objects import Button, Led
 
 from niryo_robot_system_api_client.msg import WifiStatus
 

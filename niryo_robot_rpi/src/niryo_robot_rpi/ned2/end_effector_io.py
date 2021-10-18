@@ -1,6 +1,6 @@
-import time
 from threading import Thread
-from io_objects import PinMode, NiryoIO, NiryoIOException
+
+from niryo_robot_rpi.commun.io_objects import PinMode, NiryoIO, NiryoIOException
 
 
 class DigitalOutput(NiryoIO):
@@ -182,8 +182,6 @@ class AnalogInput(NiryoIO):
 class AnalogOutput(NiryoIO):
 
     def __init__(self, lock, pin, name, address, bus_i2c, v_ref, resolution):
-        from DACx0501 import DACx0501
-
         super(AnalogOutput, self).__init__(lock, pin, name)
 
         self.__dac = DACx0501(bus=bus_i2c, address=address, v_ref=v_ref, resolution=resolution)
