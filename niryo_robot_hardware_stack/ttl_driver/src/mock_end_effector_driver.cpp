@@ -190,6 +190,16 @@ int MockEndEffectorDriver::syncReadHwErrorStatus(const std::vector<uint8_t> &/*i
     return COMM_SUCCESS;
 }
 
+/**
+ * @brief MockEndEffectorDriver::scan
+ * @param id_list
+ * @return
+ */
+int MockEndEffectorDriver::scan(std::vector<uint8_t> &id_list)
+{
+    id_list = _fake_data->full_id_list;
+    return COMM_SUCCESS;
+}
 // buttons status
 
 /**

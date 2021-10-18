@@ -386,7 +386,7 @@ CalibrationManager::manualCalibration()
 
                             StepperSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_POSITION_OFFSET, _joint_states_list.at(0)->getId(),
                                                          {offset_to_send, offset_to_send});
-                            _can_interface->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(stepper_cmd));
+                            _can_interface->addSingleCommandToQueue(std::make_unique<StepperSingleCmd>(stepper_cmd));
                         }
                         else if (motor_id == _joint_states_list.at(1)->getId())
                         {
@@ -398,7 +398,7 @@ CalibrationManager::manualCalibration()
 
                             StepperSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_POSITION_OFFSET, _joint_states_list.at(1)->getId(),
                                                          {offset_to_send, offset_to_send});
-                            _can_interface->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(stepper_cmd));
+                            _can_interface->addSingleCommandToQueue(std::make_unique<StepperSingleCmd>(stepper_cmd));
                         }
                         else if (motor_id == _joint_states_list.at(2)->getId())
                         {
@@ -406,7 +406,7 @@ CalibrationManager::manualCalibration()
 
                             StepperSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_POSITION_OFFSET, _joint_states_list.at(2)->getId(),
                                                          {offset_to_send, sensor_offset_steps});
-                            _can_interface->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(stepper_cmd));
+                            _can_interface->addSingleCommandToQueue(std::make_unique<StepperSingleCmd>(stepper_cmd));
                         }
                         ros::Duration(0.2).sleep();
                     }
@@ -448,14 +448,14 @@ void CalibrationManager::setTorqueStepperMotor(const std::shared_ptr<JointState>
             StepperSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_TORQUE, motor_id, {status});
             if (getJointInterface(pState->getBusProtocol()))
                 getJointInterface(pState->getBusProtocol())->addSingleCommandToQueue(
-                                        std::make_shared<StepperSingleCmd>(stepper_cmd));
+                                        std::make_unique<StepperSingleCmd>(stepper_cmd));
         }
         else if (EBusProtocol::TTL == pState->getBusProtocol())
         {
             StepperTtlSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_TORQUE, motor_id, {status});
             if (getJointInterface(pState->getBusProtocol()))
                 getJointInterface(pState->getBusProtocol())->addSingleCommandToQueue(
-                                        std::make_shared<StepperTtlSingleCmd>(stepper_cmd));
+                                        std::make_unique<StepperTtlSingleCmd>(stepper_cmd));
         }
     }
 }
@@ -481,13 +481,13 @@ void CalibrationManager::setStepperCalibrationCommand(const std::shared_ptr<Step
           StepperSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_CALIBRATION, motor_id,
                                     {offset, delay, motor_direction * calibration_direction, timeout});
           getJointInterface(pState->getBusProtocol())->addSingleCommandToQueue(
-                                  std::make_shared<StepperSingleCmd>(stepper_cmd));
+                                  std::make_unique<StepperSingleCmd>(stepper_cmd));
         }
         else if (EBusProtocol::TTL == pState->getBusProtocol())
         {
             StepperTtlSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_CALIBRATION, motor_id);
             getJointInterface(pState->getBusProtocol())->addSingleCommandToQueue(
-                                  std::make_shared<StepperTtlSingleCmd>(stepper_cmd));
+                                  std::make_unique<StepperTtlSingleCmd>(stepper_cmd));
         }
     }
 }
@@ -512,7 +512,7 @@ void CalibrationManager::moveRobotBeforeCalibration()
 
           StepperSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_RELATIVE_MOVE, motor_id, {steps, delay});
           getJointInterface(_joint_states_list.at(0)->getBusProtocol())->addSingleCommandToQueue(
-                                  std::make_shared<StepperSingleCmd>(stepper_cmd));
+                                  std::make_unique<StepperSingleCmd>(stepper_cmd));
         }
         ros::Duration(0.3).sleep();
 
@@ -532,7 +532,7 @@ void CalibrationManager::moveRobotBeforeCalibration()
 
           StepperSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_RELATIVE_MOVE, motor_id, {steps, delay});
           getJointInterface(_joint_states_list.at(2)->getBusProtocol())->addSingleCommandToQueue(
-                                  std::make_shared<StepperSingleCmd>(stepper_cmd));
+                                  std::make_unique<StepperSingleCmd>(stepper_cmd));
         }
         ros::Duration(0.5).sleep();
     }
@@ -546,7 +546,7 @@ void CalibrationManager::moveRobotBeforeCalibration()
         dynamixel_cmd.addMotorParam(_joint_states_list.at(4)->getHardwareType(), _joint_states_list.at(4)->getId(), 1);
         dynamixel_cmd.addMotorParam(_joint_states_list.at(5)->getHardwareType(), _joint_states_list.at(5)->getId(), 1);
 
-        _ttl_interface->setSyncCommand(std::make_shared<DxlSyncCmd>(dynamixel_cmd));
+        _ttl_interface->setSyncCommand(std::make_unique<DxlSyncCmd>(dynamixel_cmd));
         ros::Duration(0.2).sleep();
 
         // move dxls
@@ -562,7 +562,7 @@ void CalibrationManager::moveRobotBeforeCalibration()
         dynamixel_cmd.addMotorParam(_joint_states_list.at(5)->getHardwareType(), _joint_states_list.at(5)->getId(),
                                     static_cast<uint32_t>(_joint_states_list.at(5)->to_motor_pos(0)));
 
-        _ttl_interface->setSyncCommand(std::make_shared<DxlSyncCmd>(dynamixel_cmd));
+        _ttl_interface->setSyncCommand(std::make_unique<DxlSyncCmd>(dynamixel_cmd));
         ros::Duration(0.2).sleep();
     }
 }
@@ -589,7 +589,7 @@ void CalibrationManager::moveSteppersToHome()
             int delay = 550;
             StepperSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_RELATIVE_MOVE, motor_id, {steps, delay});
             getJointInterface(pState->getBusProtocol())->addSingleCommandToQueue(
-                                    std::make_shared<StepperSingleCmd>(stepper_cmd));
+                                    std::make_unique<StepperSingleCmd>(stepper_cmd));
         }
         else if (EBusProtocol::TTL == pState->getBusProtocol())
         {
@@ -597,7 +597,7 @@ void CalibrationManager::moveSteppersToHome()
 
             StepperTtlSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_POSITION, motor_id, {steps});
             getJointInterface(pState->getBusProtocol())->addSingleCommandToQueue(
-                                    std::make_shared<StepperTtlSingleCmd>(stepper_cmd));
+                                    std::make_unique<StepperTtlSingleCmd>(stepper_cmd));
         }
     }
 }
@@ -640,8 +640,9 @@ void CalibrationManager::sendCalibrationToSteppers()
 
             _ttl_interface->startCalibration();
 
-            StepperTtlSingleCmd calib_setup_cmd(EStepperCommandType::CMD_TYPE_CALIBRATION_SETUP, pStepperMotorState_2->getId(), {1, static_cast<uint8_t>(_calibration_stall_threshold)});
-            _ttl_interface->addSingleCommandToQueue(std::make_shared<StepperTtlSingleCmd>(calib_setup_cmd));
+            StepperTtlSingleCmd calib_setup_cmd(EStepperCommandType::CMD_TYPE_CALIBRATION_SETUP, pStepperMotorState_2->getId(), 
+                                                {1, static_cast<uint8_t>(_calibration_stall_threshold)});
+            _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperTtlSingleCmd>(calib_setup_cmd));
 
             setStepperCalibrationCommand(pStepperMotorState_1, 200, 1, _calibration_timeout);
             setStepperCalibrationCommand(pStepperMotorState_2, 1000, 1, _calibration_timeout);
@@ -676,20 +677,20 @@ void CalibrationManager::activateLearningMode(bool activated)
             {
                 stepper_ttl_cmd.setId(jState->getId());
                 stepper_ttl_cmd.setParams({activated});
-                _ttl_interface->addSingleCommandToQueue(std::make_shared<StepperTtlSingleCmd>(stepper_ttl_cmd));
+                _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperTtlSingleCmd>(stepper_ttl_cmd));
             }
             else
             {
                 stepper_cmd.setId(jState->getId());
                 stepper_cmd.setParams({activated});
-                _can_interface->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(stepper_cmd));
+                _can_interface->addSingleCommandToQueue(std::make_unique<StepperSingleCmd>(stepper_cmd));
             }
         }
     }
 
     if (_ttl_interface)
     {
-        _ttl_interface->setSyncCommand(std::make_shared<DxlSyncCmd>(dxl_cmd));
+        _ttl_interface->setSyncCommand(std::make_unique<DxlSyncCmd>(dxl_cmd));
     }
 }
 

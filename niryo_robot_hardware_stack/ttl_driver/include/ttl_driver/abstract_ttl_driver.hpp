@@ -52,7 +52,7 @@ public:
     virtual int readCustom(uint16_t address, uint8_t data_len, uint8_t id, uint32_t& data);
     virtual int writeCustom(uint16_t address, uint8_t data_len, uint8_t id, uint32_t data);
     
-    virtual int writeSingleCmd(const std::shared_ptr<common::model::AbstractTtlSingleMotorCmd >& cmd) = 0;
+    virtual int writeSingleCmd(std::unique_ptr<common::model::AbstractTtlSingleMotorCmd >&& cmd) = 0;
     virtual int writeSyncCmd(int type, const std::vector<uint8_t>& ids, const std::vector<uint32_t>& params) = 0;
 
 public:

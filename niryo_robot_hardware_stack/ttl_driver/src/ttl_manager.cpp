@@ -171,7 +171,7 @@ int TtlManager::setupCommunication()
  * @brief TtlManager::addHardwareComponent add hardware component like joint, ee, tool... to ttl manager
  * @param state
  */
-void TtlManager::addHardwareComponent(const std::shared_ptr<common::model::AbstractHardwareState>& state)
+void TtlManager::addHardwareComponent(std::shared_ptr<common::model::AbstractHardwareState> && state)
 {
     common::model::EHardwareType hardware_type = state->getHardwareType();
     uint8_t id = state->getId();
@@ -1192,7 +1192,7 @@ int TtlManager::readVelocityProfile(uint8_t id, uint32_t &v_start, uint32_t &a_1
  * @param cmd
  * @return
  */
-int TtlManager::writeSynchronizeCommand(const std::shared_ptr<common::model::AbstractTtlSynchronizeMotorCmd>& cmd)
+int TtlManager::writeSynchronizeCommand(std::unique_ptr<common::model::AbstractTtlSynchronizeMotorCmd> && cmd)
 {
     int result = COMM_TX_ERROR;
     ROS_DEBUG_THROTTLE(0.5, "TtlManager::writeSynchronizeCommand:  %s", cmd->str().c_str());
@@ -1265,7 +1265,7 @@ int TtlManager::writeSynchronizeCommand(const std::shared_ptr<common::model::Abs
  * @param cmd
  * @return
  */
-int TtlManager::writeSingleCommand(const std::shared_ptr<common::model::AbstractTtlSingleMotorCmd >& cmd)
+int TtlManager::writeSingleCommand(std::unique_ptr<common::model::AbstractTtlSingleMotorCmd> && cmd)
 {
     int result = COMM_TX_ERROR;
 
@@ -1286,7 +1286,7 @@ int TtlManager::writeSingleCommand(const std::shared_ptr<common::model::Abstract
                 result = COMM_TX_ERROR;
                 if (_driver_map.count(hardware_type) && _driver_map.at(hardware_type))
                 {
-                    result = _driver_map.at(hardware_type)->writeSingleCmd(cmd);
+                    result = _driver_map.at(hardware_type)->writeSingleCmd(std::move(cmd));
                 }
 
                 counter += 1;
@@ -1473,43 +1473,43 @@ TtlManager::getHardwareState(uint8_t motor_id) const
  */
 void TtlManager::addHardwareDriver(common::model::EHardwareType hardware_type)
 {
-  // if not already instanciated
-  if (!_driver_map.count(hardware_type))
-  {
-      switch (hardware_type)
-      {
-          case common::model::EHardwareType::STEPPER:
-              _driver_map.insert(std::make_pair(hardware_type, std::make_shared<StepperDriver<StepperReg> >(_portHandler, _packetHandler)));
-          break;
-          case common::model::EHardwareType::XL430:
-              _driver_map.insert(std::make_pair(hardware_type, std::make_shared<DxlDriver<XL430Reg> >(_portHandler, _packetHandler)));
-          break;
-          case common::model::EHardwareType::XC430:
-              _driver_map.insert(std::make_pair(hardware_type, std::make_shared<DxlDriver<XC430Reg> >(_portHandler, _packetHandler)));
-          break;
-          case common::model::EHardwareType::XL320:
-              _driver_map.insert(make_pair(hardware_type, std::make_shared<DxlDriver<XL320Reg> >(_portHandler, _packetHandler)));
-          break;
-          case common::model::EHardwareType::XL330:
-              _driver_map.insert(std::make_pair(hardware_type, std::make_shared<DxlDriver<XL330Reg> >(_portHandler, _packetHandler)));
-          break;
-          case common::model::EHardwareType::END_EFFECTOR:
-              _driver_map.insert(std::make_pair(hardware_type, std::make_shared<EndEffectorDriver<EndEffectorReg> >(_portHandler, _packetHandler)));
-          break;
-          case common::model::EHardwareType::FAKE_DXL_MOTOR:
-              _driver_map.insert(std::make_pair(hardware_type, std::make_shared<MockDxlDriver>(_fake_data)));
-          break;
-          case common::model::EHardwareType::FAKE_STEPPER_MOTOR:
-              _driver_map.insert(std::make_pair(hardware_type, std::make_shared<MockStepperDriver>(_fake_data)));
-          break;
-          case common::model::EHardwareType::FAKE_END_EFFECTOR:
-              _driver_map.insert(std::make_pair(hardware_type, std::make_shared<MockEndEffectorDriver>(_fake_data)));
-          break;
-          default:
-              ROS_ERROR("TtlManager - Unable to instanciate driver, unknown type");
-          break;
-      }
-  }
+    // if not already instanciated
+    if (!_driver_map.count(hardware_type))
+    {
+        switch (hardware_type)
+        {
+            case common::model::EHardwareType::STEPPER:
+                _driver_map.insert(std::make_pair(hardware_type, std::make_shared<StepperDriver<StepperReg> >(_portHandler, _packetHandler)));
+            break;
+            case common::model::EHardwareType::XL430:
+                _driver_map.insert(std::make_pair(hardware_type, std::make_shared<DxlDriver<XL430Reg> >(_portHandler, _packetHandler)));
+            break;
+            case common::model::EHardwareType::XC430:
+                _driver_map.insert(std::make_pair(hardware_type, std::make_shared<DxlDriver<XC430Reg> >(_portHandler, _packetHandler)));
+            break;
+            case common::model::EHardwareType::XL320:
+                _driver_map.insert(make_pair(hardware_type, std::make_shared<DxlDriver<XL320Reg> >(_portHandler, _packetHandler)));
+            break;
+            case common::model::EHardwareType::XL330:
+                _driver_map.insert(std::make_pair(hardware_type, std::make_shared<DxlDriver<XL330Reg> >(_portHandler, _packetHandler)));
+            break;
+            case common::model::EHardwareType::END_EFFECTOR:
+                _driver_map.insert(std::make_pair(hardware_type, std::make_shared<EndEffectorDriver<EndEffectorReg> >(_portHandler, _packetHandler)));
+            break;
+            case common::model::EHardwareType::FAKE_DXL_MOTOR:
+                _driver_map.insert(std::make_pair(hardware_type, std::make_shared<MockDxlDriver>(_fake_data)));
+            break;
+            case common::model::EHardwareType::FAKE_STEPPER_MOTOR:
+                _driver_map.insert(std::make_pair(hardware_type, std::make_shared<MockStepperDriver>(_fake_data)));
+            break;
+            case common::model::EHardwareType::FAKE_END_EFFECTOR:
+                _driver_map.insert(std::make_pair(hardware_type, std::make_shared<MockEndEffectorDriver>(_fake_data)));
+            break;
+            default:
+                ROS_ERROR("TtlManager - Unable to instanciate driver, unknown type");
+            break;
+        }
+    }
 }
 /**
  * @brief TtlManager::checkRemovedMotors

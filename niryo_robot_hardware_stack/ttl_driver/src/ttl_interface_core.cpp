@@ -15,10 +15,13 @@
 */
 
 #include "ttl_driver/ttl_interface_core.hpp"
+#include "common/model/abstract_single_motor_cmd.hpp"
+#include "common/model/abstract_synchronize_motor_cmd.hpp"
 #include "common/model/hardware_type_enum.hpp"
 #include "common/model/joint_state.hpp"
 #include "niryo_robot_msgs/CommandStatus.h"
 #include "ros/serialization.h"
+#include "common/util/unique_ptr_cast.hpp"
 
 // c++
 #include <cstdint>
@@ -26,6 +29,7 @@
 #include <algorithm>
 #include <cmath>
 #include <functional>
+#include <memory>
 #include <vector>
 #include <utility>
 #include <string>
@@ -297,10 +301,9 @@ int TtlInterfaceCore::motorCmdReport(const JointState& jState, EHardwareType mot
             }
             else
             {
-                std::shared_ptr<AbstractTtlSingleMotorCmd> cmd_torque = std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_TORQUE,
-                                                                                                       motor_id,
-                                                                                                       std::initializer_list<uint32_t>{1});
-                _ttl_manager->writeSingleCommand(cmd_torque);
+                _ttl_manager->writeSingleCommand(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_TORQUE,
+                                                                                motor_id,
+                                                                                std::initializer_list<uint32_t>{1}));
                 ros::Duration(0.5).sleep();
 
                 // set position to old position + 200
@@ -309,10 +312,9 @@ int TtlInterfaceCore::motorCmdReport(const JointState& jState, EHardwareType mot
                 ros::Duration(0.5).sleep();
 
                 ROS_INFO("TtlInterfaceCore::motorCmdReport - Debug - Send dxl %d pose: %d ", motor_id, old_position + 200);
-                std::shared_ptr<AbstractTtlSingleMotorCmd> cmd_pos = std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_POSITION,
-                                                                                                    motor_id,
-                                                                                                    std::initializer_list<uint32_t>{old_position + 200});
-                _ttl_manager->writeSingleCommand(cmd_pos);
+                _ttl_manager->writeSingleCommand(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_POSITION,
+                                                                                motor_id,
+                                                                                std::initializer_list<uint32_t>{old_position + 200}));
                 ros::Duration(2).sleep();
 
                 // set position back to old position
@@ -322,10 +324,9 @@ int TtlInterfaceCore::motorCmdReport(const JointState& jState, EHardwareType mot
                 ros::Duration(0.5).sleep();
 
                 ROS_INFO("TtlInterfaceCore - Debug - Send dxl %d pose: %d ", motor_id, old_position);
-                std::shared_ptr<AbstractTtlSingleMotorCmd> cmd_pos_2 = std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_POSITION,
-                                                                                                      motor_id,
-                                                                                                      std::initializer_list<uint32_t>{old_position});
-                _ttl_manager->writeSingleCommand(cmd_pos_2);
+                _ttl_manager->writeSingleCommand(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_POSITION,
+                                                                                motor_id,
+                                                                                std::initializer_list<uint32_t>{old_position}));
                 ros::Duration(2).sleep();
                 uint32_t new_position2 = _ttl_manager->getPosition(jState);
                 ROS_INFO("TtlInterfaceCore::motorCmdReport - Debug - get ttl motor %d pose: %d ", motor_id, new_position2);
@@ -334,10 +335,9 @@ int TtlInterfaceCore::motorCmdReport(const JointState& jState, EHardwareType mot
 
                 // torque off
                 ROS_INFO("TtlInterfaceCore::motorCmdReport - Debug - Send torque off command on ttl motor %d", motor_id);
-                std::shared_ptr<AbstractTtlSingleMotorCmd> cmd_torque_2 = std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_TORQUE,
-                                                                                                         motor_id,
-                                                                                                         std::initializer_list<uint32_t>{0});
-                _ttl_manager->writeSingleCommand(cmd_torque_2);
+                _ttl_manager->writeSingleCommand(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_TORQUE,
+                                                                                motor_id,
+                                                                                std::initializer_list<uint32_t>{0}));
 
                 if (abs(rest) < 50 || abs(rest2) < 50)
                 {
@@ -644,7 +644,7 @@ void TtlInterfaceCore::_executeCommand()
     }
     if (!_single_cmds_queue.empty())
     {
-        _ttl_manager->writeSingleCommand(_single_cmds_queue.front());
+        _ttl_manager->writeSingleCommand(std::move(_single_cmds_queue.front()));
         _single_cmds_queue.pop();
         _need_sleep = true;
     }
@@ -653,7 +653,7 @@ void TtlInterfaceCore::_executeCommand()
         // as we use a queue, we don't need a mutex
         if (_need_sleep)
             ros::Duration(0.01).sleep();
-        _ttl_manager->writeSingleCommand(_conveyor_cmds_queue.front());
+        _ttl_manager->writeSingleCommand(std::move(_conveyor_cmds_queue.front()));
         _conveyor_cmds_queue.pop();
     }
     if (!_sync_cmds.empty())
@@ -661,7 +661,7 @@ void TtlInterfaceCore::_executeCommand()
         // as we use a queue, we don't need a mutex
         if (_need_sleep)
             ros::Duration(0.01).sleep();
-        _ttl_manager->writeSynchronizeCommand(_sync_cmds.front());
+        _ttl_manager->writeSynchronizeCommand(std::move(_sync_cmds.front()));
         _sync_cmds.pop();
     }
 }
@@ -708,9 +708,8 @@ int TtlInterfaceCore::setTool(const std::shared_ptr<common::model::ToolState>& t
     if (_ttl_manager->ping(toolState->getId()))
     {
         // Enable torque
-        std::shared_ptr<AbstractTtlSingleMotorCmd> cmd_torque = std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_TORQUE,
-                                                            toolState->getId(), std::initializer_list<uint32_t>{1});
-        _ttl_manager->writeSingleCommand(cmd_torque);
+        _ttl_manager->writeSingleCommand(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_TORQUE,
+                                                            toolState->getId(), std::initializer_list<uint32_t>{1}));
         ros::Duration(0.05).sleep();
 
         // update leds
@@ -773,7 +772,7 @@ int TtlInterfaceCore::setEndEffector(const std::shared_ptr<common::model::EndEff
  * @param state
  * @return
  */
-int TtlInterfaceCore::setConveyor(const std::shared_ptr<common::model::ConveyorState> state)
+int TtlInterfaceCore::setConveyor(const std::shared_ptr<common::model::ConveyorState>& state)
 {
     int result = niryo_robot_msgs::CommandStatus::NO_CONVEYOR_FOUND;
 
@@ -852,7 +851,7 @@ void TtlInterfaceCore::clearConveyorCommandQueue()
  * @brief TtlInterfaceCore::setTrajectoryControllerCommands
  * @param cmd
  */
-void TtlInterfaceCore::setTrajectoryControllerCommands(const std::vector<std::pair<uint8_t, uint32_t> > &cmd)
+void TtlInterfaceCore::setTrajectoryControllerCommands(std::vector<std::pair<uint8_t, uint32_t> > && cmd)
 {
     _joint_trajectory_cmd = cmd;
 }
@@ -862,14 +861,11 @@ void TtlInterfaceCore::setTrajectoryControllerCommands(const std::vector<std::pa
  * @param cmd
  * TODO(CC) : templatize
  */
-void TtlInterfaceCore::setSyncCommand(const std::shared_ptr<common::model::ISynchronizeMotorCmd>& cmd)
+void TtlInterfaceCore::setSyncCommand(std::unique_ptr<common::model::ISynchronizeMotorCmd> && cmd)
 {
     if (cmd->isValid())
     {
-        if (cmd->isStepperCmd())
-            _sync_cmds.push(std::dynamic_pointer_cast<common::model::StepperTtlSyncCmd>(cmd));
-        else if (cmd->isDxlCmd())
-            _sync_cmds.push(std::dynamic_pointer_cast<common::model::DxlSyncCmd>(cmd));
+        _sync_cmds.push(common::util::static_unique_ptr_cast<common::model::AbstractTtlSynchronizeMotorCmd>(std::move(cmd)));
     }
     else
         ROS_WARN("TtlInterfaceCore::setSyncCommand : Invalid command %s", cmd->str().c_str());
@@ -880,28 +876,25 @@ void TtlInterfaceCore::setSyncCommand(const std::shared_ptr<common::model::ISync
  * @param cmd
  *
  */
-void TtlInterfaceCore::addSingleCommandToQueue(const std::shared_ptr<common::model::ISingleMotorCmd>& cmd)
+void TtlInterfaceCore::addSingleCommandToQueue(std::unique_ptr<common::model::ISingleMotorCmd> && cmd)
 {
     ROS_DEBUG("TtlInterfaceCore::addSingleCommandToQueue - %s", cmd->str().c_str());
 
     if (cmd->isValid())
     {
-        if (_single_cmds_queue.size() > QUEUE_OVERFLOW)
-            ROS_WARN("TtlInterfaceCore::addSingleCommandToQueue: dxl cmd queue overflow ! %d", static_cast<int>(_single_cmds_queue.size()));
-
-        if (cmd->isDxlCmd())
-            _single_cmds_queue.push(std::dynamic_pointer_cast<common::model::DxlSingleCmd>(cmd));
-        else if (cmd->isStepperCmd())
+        if (cmd->getCmdType() == static_cast<int>(EStepperCommandType::CMD_TYPE_CONVEYOR))
         {
-            if (cmd->getCmdType() == static_cast<int>(EStepperCommandType::CMD_TYPE_CONVEYOR))
-            {
-                if (_conveyor_cmds_queue.size() > QUEUE_OVERFLOW)
-                    ROS_WARN("TtlInterfaceCore::addCommandToQueue: Cmd queue overflow ! %d", static_cast<int>(_conveyor_cmds_queue.size()));
-                else
-                    _conveyor_cmds_queue.push(std::dynamic_pointer_cast<common::model::StepperTtlSingleCmd>(cmd));
-            }
+            if (_conveyor_cmds_queue.size() > QUEUE_OVERFLOW)
+                ROS_WARN("TtlInterfaceCore::addCommandToQueue: Cmd queue overflow ! %d", static_cast<int>(_conveyor_cmds_queue.size()));
             else
-                _single_cmds_queue.push(std::dynamic_pointer_cast<common::model::StepperTtlSingleCmd>(cmd));
+                _conveyor_cmds_queue.push(common::util::static_unique_ptr_cast<common::model::AbstractTtlSingleMotorCmd>(std::move(cmd)));
+        }
+        else
+        {
+            if (_single_cmds_queue.size() > QUEUE_OVERFLOW)
+                ROS_WARN("TtlInterfaceCore::addSingleCommandToQueue: dxl cmd queue overflow ! %d", static_cast<int>(_single_cmds_queue.size()));
+            else
+                _single_cmds_queue.push(common::util::static_unique_ptr_cast<common::model::AbstractTtlSingleMotorCmd>(std::move(cmd)));
         }
     }
     else
@@ -914,10 +907,10 @@ void TtlInterfaceCore::addSingleCommandToQueue(const std::shared_ptr<common::mod
  * @brief TtlInterfaceCore::addSingleCommandToQueue
  * @param cmd
  */
-void TtlInterfaceCore::addSingleCommandToQueue(const std::vector<std::shared_ptr<common::model::ISingleMotorCmd> >& cmd)
+void TtlInterfaceCore::addSingleCommandToQueue(std::vector<std::unique_ptr<common::model::ISingleMotorCmd>> && cmd)
 {
-    for (auto const& c : cmd)
-        addSingleCommandToQueue(c);
+    for (size_t i = 0; i < cmd.size(); i++)
+        addSingleCommandToQueue(std::move(cmd[i]));
 }
 
 // ***************
