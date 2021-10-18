@@ -853,7 +853,7 @@ void TtlInterfaceCore::setTrajectoryControllerCommands(std::vector<std::pair<uin
  * @param cmd
  * TODO(CC) : templatize
  */
-void TtlInterfaceCore::setSyncCommand(std::unique_ptr<common::model::ISynchronizeMotorCmd>&& cmd)
+void TtlInterfaceCore::setSyncCommand(std::unique_ptr<common::model::ISynchronizeMotorCmd> && cmd)
 {
     if (cmd->isValid())
     {
@@ -868,27 +868,26 @@ void TtlInterfaceCore::setSyncCommand(std::unique_ptr<common::model::ISynchroniz
  * @param cmd
  *
  */
-void TtlInterfaceCore::addSingleCommandToQueue(std::unique_ptr<common::model::ISingleMotorCmd>&& cmd)
+void TtlInterfaceCore::addSingleCommandToQueue(std::unique_ptr<common::model::ISingleMotorCmd> && cmd)
 {
     ROS_DEBUG("TtlInterfaceCore::addSingleCommandToQueue - %s", cmd->str().c_str());
 
     if (cmd->isValid())
     {
-        
-            if (cmd->getCmdType() == static_cast<int>(EStepperCommandType::CMD_TYPE_CONVEYOR))
-            {
-                if (_conveyor_cmds_queue.size() > QUEUE_OVERFLOW)
-                    ROS_WARN("TtlInterfaceCore::addCommandToQueue: Cmd queue overflow ! %d", static_cast<int>(_conveyor_cmds_queue.size()));
-                else
-                    _conveyor_cmds_queue.push(common::util::static_unique_ptr_cast<common::model::AbstractTtlSingleMotorCmd>(std::move(cmd)));
-            }
+        if (cmd->getCmdType() == static_cast<int>(EStepperCommandType::CMD_TYPE_CONVEYOR))
+        {
+            if (_conveyor_cmds_queue.size() > QUEUE_OVERFLOW)
+                ROS_WARN("TtlInterfaceCore::addCommandToQueue: Cmd queue overflow ! %d", static_cast<int>(_conveyor_cmds_queue.size()));
             else
-            {
-                if (_single_cmds_queue.size() > QUEUE_OVERFLOW)
-                    ROS_WARN("TtlInterfaceCore::addSingleCommandToQueue: dxl cmd queue overflow ! %d", static_cast<int>(_single_cmds_queue.size()));
-                else
-                    _single_cmds_queue.push(common::util::static_unique_ptr_cast<common::model::AbstractTtlSingleMotorCmd>(std::move(cmd)));
-            }
+                _conveyor_cmds_queue.push(common::util::static_unique_ptr_cast<common::model::AbstractTtlSingleMotorCmd>(std::move(cmd)));
+        }
+        else
+        {
+            if (_single_cmds_queue.size() > QUEUE_OVERFLOW)
+                ROS_WARN("TtlInterfaceCore::addSingleCommandToQueue: dxl cmd queue overflow ! %d", static_cast<int>(_single_cmds_queue.size()));
+            else
+                _single_cmds_queue.push(common::util::static_unique_ptr_cast<common::model::AbstractTtlSingleMotorCmd>(std::move(cmd)));
+        }
     }
     else
     {
@@ -900,7 +899,7 @@ void TtlInterfaceCore::addSingleCommandToQueue(std::unique_ptr<common::model::IS
  * @brief TtlInterfaceCore::addSingleCommandToQueue
  * @param cmd
  */
-void TtlInterfaceCore::addSingleCommandToQueue(std::vector<std::unique_ptr<common::model::ISingleMotorCmd> >&& cmd)
+void TtlInterfaceCore::addSingleCommandToQueue(std::vector<std::unique_ptr<common::model::ISingleMotorCmd>> && cmd)
 {
     for (size_t i = 0; i < cmd.size(); i++)
         addSingleCommandToQueue(std::move(cmd[i]));

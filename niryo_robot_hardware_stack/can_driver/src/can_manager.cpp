@@ -183,7 +183,7 @@ int CanManager::setupCommunication()
  * It can be a joint, conveyor...
  * @param state
  */
-void CanManager::addHardwareComponent(std::shared_ptr<common::model::AbstractHardwareState>&& state)
+void CanManager::addHardwareComponent(std::shared_ptr<common::model::AbstractHardwareState> && state)
 {
     common::model::EHardwareType hardware_type = state->getHardwareType();
     uint8_t id = state->getId();
@@ -550,7 +550,7 @@ int32_t CanManager::getPosition(const JointState &motor_state) const
  * @param cmd
  * @return
  */
-int CanManager::writeSingleCommand(std::unique_ptr<common::model::AbstractCanSingleMotorCmd>&& cmd)
+int CanManager::writeSingleCommand(std::unique_ptr<common::model::AbstractCanSingleMotorCmd> && cmd)
 {
     int result = CAN_INVALID_CMD;
     ROS_DEBUG("CanManager::readCommand - Received stepper cmd %s", cmd->str().c_str());

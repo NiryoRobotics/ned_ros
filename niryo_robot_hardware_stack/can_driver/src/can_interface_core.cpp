@@ -598,7 +598,7 @@ void CanInterfaceCore::clearConveyorCommandQueue()
  * @brief CanInterfaceCore::setTrajectoryControllerCommands
  * @param cmd
  */
-void CanInterfaceCore::setTrajectoryControllerCommands(std::vector<std::pair<uint8_t, int32_t> >&& cmd)
+void CanInterfaceCore::setTrajectoryControllerCommands(std::vector<std::pair<uint8_t, int32_t>> && cmd)
 {
     _joint_trajectory_cmd = cmd;
 }
@@ -609,7 +609,7 @@ void CanInterfaceCore::setTrajectoryControllerCommands(std::vector<std::pair<uin
  * - cannot be a template method because we need it to be virtual (no static polymorphism possible)
  * - dynamic polymorphism necessary to be able to cast into a derived class
  */
-void CanInterfaceCore::addSingleCommandToQueue(std::unique_ptr<common::model::ISingleMotorCmd>&& cmd)
+void CanInterfaceCore::addSingleCommandToQueue(std::unique_ptr<common::model::ISingleMotorCmd> && cmd)
 {
     ROS_DEBUG("CanInterfaceCore::addSingleCommandToQueue - %s", cmd->str().c_str());
 
@@ -645,7 +645,7 @@ void CanInterfaceCore::addSingleCommandToQueue(std::unique_ptr<common::model::IS
  * @brief CanInterfaceCore::addSingleCommandToQueue
  * @param cmd
  */
-void CanInterfaceCore::addSingleCommandToQueue(std::vector<std::unique_ptr<common::model::ISingleMotorCmd>>&& cmd)
+void CanInterfaceCore::addSingleCommandToQueue(std::vector<std::unique_ptr<common::model::ISingleMotorCmd>> && cmd)
 {
     for (size_t i = 0; i < cmd.size(); i++)
         addSingleCommandToQueue(std::move(cmd[i]));
@@ -655,7 +655,7 @@ void CanInterfaceCore::addSingleCommandToQueue(std::vector<std::unique_ptr<commo
  * @brief CanInterfaceCore::setSyncCommand
  * @param cmd
  */
-void CanInterfaceCore::setSyncCommand(std::unique_ptr<common::model::ISynchronizeMotorCmd>&& /*cmd*/)
+void CanInterfaceCore::setSyncCommand(std::unique_ptr<common::model::ISynchronizeMotorCmd> && /*cmd*/)  // NOLINT
 {
     ROS_INFO("CanInterfaceCore::setSyncCommand: need to be implemented");
 }

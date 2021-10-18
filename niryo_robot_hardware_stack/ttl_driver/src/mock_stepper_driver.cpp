@@ -23,6 +23,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <map>
 #include <string>
 #include <vector>
+#include <algorithm>
 
 namespace ttl_driver
 {
