@@ -70,13 +70,16 @@ class MockStepperDriver : public AbstractStepperDriver
         int syncWriteVelocityGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &velocity_list) override;
 
         // ram read
-        int readPosition(uint8_t id, uint32_t &present_position) override;
+
         int readTemperature(uint8_t id, uint32_t &temperature) override;
         int readVoltage(uint8_t id, double &voltage) override;
         int readHwErrorStatus(uint8_t id, uint32_t &hardware_status) override;
 
+        int readPosition(uint8_t id, uint32_t &present_position) override;
+        int readVelocity(uint8_t id, uint32_t &present_position) override;
 
         int syncReadPosition(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &position_list) override;
+        int syncReadVelocity(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &position_list) override;
 
         int syncReadFirmwareVersion(const std::vector<uint8_t> &id_list, std::vector<std::string> &firmware_list) override;
         int syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &temperature_list) override;
@@ -89,8 +92,9 @@ class MockStepperDriver : public AbstractStepperDriver
 
         int startHoming(uint8_t id) override;
         int writeHomingDirection(uint8_t id, uint8_t direction) override;
+        int writeHomingStallThreshold(uint8_t id, uint8_t threshold) override;
+
         int readHomingStatus(uint8_t id, uint32_t &status) override;
-        int readGoalVelocity(uint8_t id, uint32_t& present_velocity) override;
 
         int readFirmwareRunning(uint8_t id, bool &is_running) override;
 
@@ -109,6 +113,8 @@ class MockStepperDriver : public AbstractStepperDriver
         static constexpr int CALIBRATION_IN_PROGRESS = 1;
         static constexpr int CALIBRATION_SUCCESS = 2;
         static constexpr int CALIBRATION_ERROR = 3;
+
+
 };
 
 }

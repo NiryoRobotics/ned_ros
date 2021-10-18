@@ -315,6 +315,19 @@ int MockStepperDriver::readPosition(uint8_t id, uint32_t& present_position)
 }
 
 /**
+ * @brief MockStepperDriver::readVelocity
+ * @param id
+ * @param present_position
+ * @return
+ */
+int MockStepperDriver::readVelocity(uint8_t id, uint32_t &present_velocity)
+{
+  if (_fake_data->stepper_registers.count(id))
+      present_velocity = _fake_data->stepper_registers.at(id).velocity;
+  return COMM_SUCCESS;
+}
+
+/**
  * @brief MockStepperDriver::readTemperature
  * @param id
  * @param temperature
@@ -375,6 +388,31 @@ int MockStepperDriver::syncReadPosition(const std::vector<uint8_t> &id_list, std
             return GROUP_SYNC_REDONDANT_ID;  // redondant id
     }
     return COMM_SUCCESS;
+}
+
+/**
+ * @brief MockStepperDriver::syncReadVelocity
+ * @param id_list
+ * @param velocity_list
+ * @return
+ */
+int MockStepperDriver::syncReadVelocity(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &velocity_list)
+{
+  std::map<uint8_t, uint8_t> countMap;
+  velocity_list.clear();
+  for (auto & id : id_list)
+  {
+      if (_fake_data->stepper_registers.count(id))
+      {
+          velocity_list.emplace_back(_fake_data->stepper_registers.at(id).velocity);
+      }
+      else
+          return COMM_RX_FAIL;
+      auto result = countMap.insert(std::pair<uint8_t, uint8_t>(id, 1));
+      if (!result.second)
+          return GROUP_SYNC_REDONDANT_ID;  // redondant id
+  }
+  return COMM_SUCCESS;
 }
 
 /**
@@ -514,6 +552,20 @@ int MockStepperDriver::writeHomingDirection(uint8_t id, uint8_t /*direction*/)
 }
 
 /**
+ * @brief MockStepperDriver::writeHomingStallThreshold
+ * @param id
+ * @param threshold
+ * @return
+ */
+int MockStepperDriver::writeHomingStallThreshold(uint8_t id, uint8_t /*threshold*/)
+{
+  if (COMM_SUCCESS != ping(id))
+      return COMM_RX_FAIL;
+
+  return COMM_SUCCESS;
+}
+
+/**
  * @brief MockStepperDriver::readHomingStatus
  * @param id
  * @param status
@@ -532,19 +584,6 @@ int MockStepperDriver::readHomingStatus(uint8_t id, uint32_t &status)
         _calibration_status = CALIBRATION_SUCCESS;
 
     status = _calibration_status;
-    return COMM_SUCCESS;
-}
-
-/**
- * @brief MockStepperDriver::readGoalVelocity
- * @param id
- * @param present_velocity
- * @return
- */
-int MockStepperDriver::readGoalVelocity(uint8_t id, uint32_t& present_velocity)
-{
-    if (_fake_data->stepper_registers.count(id))
-        present_velocity = _fake_data->stepper_registers.at(id).velocity;
     return COMM_SUCCESS;
 }
 
