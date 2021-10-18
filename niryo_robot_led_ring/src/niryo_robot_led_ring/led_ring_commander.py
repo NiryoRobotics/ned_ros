@@ -126,6 +126,7 @@ class LedRingCommander:
                 self.rpi_overheating != msg.rpi_overheating):
 
             if self.robot_status != RobotStatus.CALIBRATION_IN_PROGRESS and msg.robot_status == RobotStatus.CALIBRATION_IN_PROGRESS:
+                rospy.sleep(0.5) # for synchro
                 self.blink(YELLOW, 3, 1)
 
             self.robot_status = msg.robot_status
