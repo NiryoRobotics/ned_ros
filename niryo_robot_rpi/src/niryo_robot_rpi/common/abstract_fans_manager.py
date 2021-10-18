@@ -46,9 +46,8 @@ class AbstractFansManager(object):
             return
 
         rospy.sleep(1)
-        rospy.loginfo("Fan Manager - Stop fans")
+        rospy.loginfo_once("Fan Manager - Stop fans")
         for fan in self._fans_list:
-            rospy.loginfo(fan.name)
             fan.value = False
 
     def _callback_hardware_status(self, msg):

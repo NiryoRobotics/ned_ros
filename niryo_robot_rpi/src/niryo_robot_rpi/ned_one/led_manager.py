@@ -19,15 +19,19 @@
 
 import rospy
 from threading import Thread, Lock
-from niryo_robot_rpi.rpi_ros_utils import LedState
+
+from niryo_robot_rpi.common.rpi_ros_utils import LedState
+
+from .rpi_io_objects import Led
 
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus
 from std_msgs.msg import Int8
 from niryo_robot_msgs.msg import HardwareStatus
 from niryo_robot_msgs.srv import SetInt
-from niryo_robot_rpi.srv import LedBlinker
 from niryo_robot_system_api_client.msg import WifiStatus
+from niryo_robot_rpi.srv import LedBlinker
+
 
 LED_OFF = 0
 LED_BLUE = 1
@@ -41,8 +45,6 @@ LED_WHITE = 7
 
 class LEDManager(object):
     def __init__(self, lock=None):
-        from niryo_robot_rpi.rpi_io_objects import Led
-
         self._red_led = None
         self._green_led = None
         self._blue_led = None

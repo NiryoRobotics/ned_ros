@@ -22,14 +22,14 @@ from threading import Lock
 from collections import OrderedDict
 import RPi.GPIO as GPIO
 
-from niryo_robot_rpi.commun.abstract_io_panel import AbstractDigitalIOPanel
-from niryo_robot_rpi.commun.io_objects import PinMode
+from niryo_robot_rpi.common.abstract_io_panel import AbstractDigitalIOPanel
+from niryo_robot_rpi.common.io_objects import PinMode
 from .rpi_io_objects import DigitalPin
 
 
-class DigitalIOPanel(AbstractDigitalIOPanel):
+class IOPanel(AbstractDigitalIOPanel):
     def __init__(self, lock=None):
-        super(DigitalIOPanel, self).__init__()
+        super(IOPanel, self).__init__()
 
         GPIO.setwarnings(False)
         GPIO.setmode(GPIO.BCM)
@@ -46,7 +46,7 @@ class DigitalIOPanel(AbstractDigitalIOPanel):
         GPIO.cleanup()
 
     def shutdown(self):
-        super(DigitalIOPanel, self).shutdown()
+        super(IOPanel, self).shutdown()
         GPIO.cleanup()
 
     def _init_ios(self):

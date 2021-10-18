@@ -1,4 +1,4 @@
-from niryo_robot_rpi.commun.io_objects import PinMode, NiryoIO
+from niryo_robot_rpi.common.io_objects import PinMode, NiryoIO
 
 
 class FakeDigitalIO(NiryoIO):

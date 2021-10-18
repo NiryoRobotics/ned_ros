@@ -1,8 +1,6 @@
 import time
 
-import rospy
-
-from io_objects import PinMode, NiryoIO, NiryoIOException
+from niryo_robot_rpi.common.io_objects import PinMode, NiryoIO, NiryoIOException
 import RPi.GPIO as GPIO
 
 

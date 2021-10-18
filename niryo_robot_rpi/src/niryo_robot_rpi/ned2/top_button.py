@@ -4,7 +4,7 @@ import rospy
 import RPi.GPIO as GPIO
 from threading import Thread
 
-from niryo_robot_rpi.commun.rpi_ros_utils import *
+from niryo_robot_rpi.common.rpi_ros_utils import *
 
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus

@@ -26,7 +26,7 @@ import RPi.GPIO as GPIO
 from niryo_robot_msgs.msg import CommandStatus
 
 # Libraries
-from niryo_robot_rpi.commun.abstract_io_panel import AbstractIOPanel
+from niryo_robot_rpi.common.abstract_io_panel import AbstractIOPanel
 
 from .hardware.MCP23017 import RegistersMCP23017
 from .hardware.MCP23017 import MCP23017

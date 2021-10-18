@@ -1,6 +1,6 @@
 from threading import Thread
 
-from niryo_robot_rpi.commun.io_objects import PinMode, NiryoIO, NiryoIOException
+from niryo_robot_rpi.common.io_objects import PinMode, NiryoIO, NiryoIOException
 
 
 class DigitalOutput(NiryoIO):

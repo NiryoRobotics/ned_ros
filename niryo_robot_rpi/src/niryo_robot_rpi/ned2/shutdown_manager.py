@@ -3,8 +3,8 @@
 import rospy
 import threading
 
-from niryo_robot_rpi.commun.rpi_ros_utils import send_shutdown_command, send_reboot_command
-from niryo_robot_rpi.commun.abstract_shutdown_manager import AbstractShutdownManager
+from niryo_robot_rpi.common.rpi_ros_utils import send_shutdown_command, send_reboot_command
+from niryo_robot_rpi.common.abstract_shutdown_manager import AbstractShutdownManager
 
 from std_msgs.msg import String
 

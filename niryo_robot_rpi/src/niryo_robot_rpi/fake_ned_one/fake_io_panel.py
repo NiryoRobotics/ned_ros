@@ -25,8 +25,8 @@ from niryo_robot_msgs.msg import CommandStatus
 
 from .fake_io_objects import FakeDigitalIO
 
-from niryo_robot_rpi.commun.abstract_io_panel import AbstractDigitalIOPanel
-from niryo_robot_rpi.commun.io_objects import PinMode
+from niryo_robot_rpi.common.abstract_io_panel import AbstractDigitalIOPanel
+from niryo_robot_rpi.common.io_objects import PinMode
 
 
 class FakeIOPanel(AbstractDigitalIOPanel):

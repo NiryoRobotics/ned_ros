@@ -2,7 +2,7 @@
 
 import rospy
 
-from niryo_robot_rpi.commun.ros_log_manager import RosLogManager
+from niryo_robot_rpi.common.ros_log_manager import RosLogManager
 
 from niryo_robot_status.msg import RobotStatus
 

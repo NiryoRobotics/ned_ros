@@ -5,7 +5,7 @@ import RPi.GPIO as GPIO
 from threading import Thread, Timer
 import rosnode
 
-from niryo_robot_rpi.commun.rpi_ros_utils import *
+from niryo_robot_rpi.common.rpi_ros_utils import *
 
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus

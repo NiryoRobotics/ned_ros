@@ -20,7 +20,7 @@
 import rospy
 from threading import Lock
 
-from niryo_robot_rpi.commun.abstract_fans_manager import AbstractFansManager
+from niryo_robot_rpi.common.abstract_fans_manager import AbstractFansManager
 
 from .mcp_io_objects import Fan
 from .hardware.MCP23017 import MCP23017

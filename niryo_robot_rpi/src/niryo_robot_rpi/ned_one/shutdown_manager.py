@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-from niryo_robot_rpi.commun.abstract_shutdown_manager import AbstractShutdownManager
+from niryo_robot_rpi.common.abstract_shutdown_manager import AbstractShutdownManager
 
 
 class ShutdownManager(AbstractShutdownManager):

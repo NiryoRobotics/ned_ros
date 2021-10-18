@@ -4,7 +4,7 @@ import rospy
 
 from niryo_robot_status.msg import RobotStatus
 
-from niryo_robot_rpi.commun.ros_log_manager import RosLogManager
+from niryo_robot_rpi.common.ros_log_manager import RosLogManager
 
 from hardware.MCP23017 import MCP23017
 
