@@ -32,88 +32,99 @@ struct StepperReg
 
     // EEPROM
     static constexpr uint16_t ADDR_MODEL_NUMBER             = 0;
-    static constexpr uint8_t SIZE_MODEL_NUMBER             = 2;
+    static constexpr uint8_t SIZE_MODEL_NUMBER              = 2;
 
     static constexpr uint16_t ADDR_ID                       = 7;
-    static constexpr uint8_t SIZE_ID                       = 1;
+    static constexpr uint8_t SIZE_ID                        = 1;
 
-    static constexpr uint16_t ADDR_BAUDRATE                 = 8;
+    static constexpr uint16_t ADDR_BAUDRATE                = 8;
     static constexpr uint8_t SIZE_BAUDRATE                 = 1;
 
     static constexpr uint16_t ADDR_MAX_POSITION_LIMIT       = 48;
-    static constexpr uint8_t SIZE_MAX_POSITION_LIMIT       = 4;
+    static constexpr uint8_t SIZE_MAX_POSITION_LIMIT        = 4;
 
     static constexpr uint16_t ADDR_MIN_POSITION_LIMIT       = 52;
-    static constexpr uint8_t SIZE_MIN_POSITION_LIMIT       = 4;
+    static constexpr uint8_t SIZE_MIN_POSITION_LIMIT        = 4;
 
     static constexpr uint16_t ADDR_FIRMWARE_VERSION         = 59;
-    static constexpr uint8_t SIZE_FIRMWARE_VERSION         = 4;
+    static constexpr uint8_t SIZE_FIRMWARE_VERSION          = 4;
 
     // RAM
 
     static constexpr uint16_t ADDR_TORQUE_ENABLE            = 64;
-    static constexpr uint8_t SIZE_TORQUE_ENABLE            = 1;
+    static constexpr uint8_t SIZE_TORQUE_ENABLE             = 1;
 
     static constexpr uint16_t ADDR_HW_ERROR_STATUS          = 70;
-    static constexpr uint8_t SIZE_HW_ERROR_STATUS          = 1;
+    static constexpr uint8_t SIZE_HW_ERROR_STATUS           = 1;
 
+    // unit = 0.01 RPM - Only on conveyor
     static constexpr uint16_t ADDR_GOAL_VELOCITY            = 104;
-    static constexpr uint8_t SIZE_GOAL_VELOCITY            = 4;
+    static constexpr uint8_t SIZE_GOAL_VELOCITY             = 4;
 
+    // unit = 0.088 deg
     static constexpr uint16_t ADDR_GOAL_POSITION            = 116;
-    static constexpr uint8_t SIZE_GOAL_POSITION            = 4;
+    static constexpr uint8_t SIZE_GOAL_POSITION             = 4;
 
+    // unit = 0.01 RPM
+    static constexpr uint16_t ADDR_PRESENT_VELOCITY         = 128;
+    static constexpr uint8_t SIZE_PRESENT_VELOCITY          = 4;
+
+    // unit = 0.088 deg
     static constexpr uint16_t ADDR_PRESENT_POSITION         = 132;
-    static constexpr uint8_t SIZE_PRESENT_POSITION         = 4;
+    static constexpr uint8_t SIZE_PRESENT_POSITION          = 4;
 
+    // unit = 1mV
     static constexpr uint16_t ADDR_PRESENT_VOLTAGE          = 144;
-    static constexpr uint8_t SIZE_PRESENT_VOLTAGE          = 2;
+    static constexpr uint8_t SIZE_PRESENT_VOLTAGE           = 2;
 
     static constexpr uint16_t ADDR_PRESENT_TEMPERATURE      = 146;
-    static constexpr uint8_t SIZE_PRESENT_TEMPERATURE      = 1;
+    static constexpr uint8_t SIZE_PRESENT_TEMPERATURE       = 1;
 
     static constexpr uint16_t ADDR_COMMAND                  = 147;
-    static constexpr uint8_t SIZE_COMMAND                  = 1;
+    static constexpr uint8_t SIZE_COMMAND                   = 1;
 
     static constexpr uint16_t ADDR_HOMING_STATUS            = 148;
-    static constexpr uint8_t SIZE_HOMING_STATUS            = 1;
+    static constexpr uint8_t SIZE_HOMING_STATUS             = 1;
 
     static constexpr uint16_t ADDR_HOMING_DIRECTION         = 149;
-    static constexpr uint8_t SIZE_HOMING_DIRECTION         = 1;
+    static constexpr uint8_t SIZE_HOMING_DIRECTION          = 1;
+
+    static constexpr uint16_t ADDR_HOMING_STALL_THRESHOLD   = 150;
+    static constexpr uint16_t SIZE_HOMING_STALL_THRESHOLD   = 1;
 
     // acceleration profile
 
-    static constexpr uint16_t ADDR_VSTART = 1024;
-    static constexpr uint8_t SIZE_VSTART = 4;
-    
-    static constexpr uint16_t ADDR_A1 = 1028;
-    static constexpr uint8_t SIZE_A1 = 4;
-    
-    static constexpr uint16_t ADDR_V1 = 1032;
-    static constexpr uint8_t SIZE_V1 = 4;
-    
-    static constexpr uint16_t ADDR_AMAX = 1036;
-    static constexpr uint8_t SIZE_AMAX = 4;
-    
-    static constexpr uint16_t ADDR_VMAX = 1040;
-    static constexpr uint8_t SIZE_VMAX = 4;
-    
-    static constexpr uint16_t ADDR_DMAX = 1044;
-    static constexpr uint8_t SIZE_DMAX = 4;
-    
-    static constexpr uint16_t ADDR_D1 = 1048;
-    static constexpr uint8_t SIZE_D1 = 4;
-    
-    static constexpr uint16_t ADDR_VSTOP = 1052;
-    static constexpr uint8_t SIZE_VSTOP = 4;
+    static constexpr uint16_t ADDR_VSTART                   = 1024;
+    static constexpr uint8_t SIZE_VSTART                    = 4;
+
+    static constexpr uint16_t ADDR_A1                       = 1028;
+    static constexpr uint8_t SIZE_A1                        = 4;
+
+    static constexpr uint16_t ADDR_V1                       = 1032;
+    static constexpr uint8_t SIZE_V1                        = 4;
+
+    static constexpr uint16_t ADDR_AMAX                     = 1036;
+    static constexpr uint8_t SIZE_AMAX                      = 4;
+
+    static constexpr uint16_t ADDR_VMAX                     = 1040;
+    static constexpr uint8_t SIZE_VMAX                      = 4;
+
+    static constexpr uint16_t ADDR_DMAX                     = 1044;
+    static constexpr uint8_t SIZE_DMAX                      = 4;
+
+    static constexpr uint16_t ADDR_D1                       = 1048;
+    static constexpr uint8_t SIZE_D1                        = 4;
+
+    static constexpr uint16_t ADDR_VSTOP                    = 1052;
+    static constexpr uint8_t SIZE_VSTOP                     = 4;
 
     // Firmware status
 
-    static constexpr uint16_t ADDR_FIRMWARE_RUNNING = 8192;
-    static constexpr uint8_t SIZE_FIRMWARE_RUNNING = 1;
+    static constexpr uint16_t ADDR_FIRMWARE_RUNNING         = 8192;
+    static constexpr uint8_t SIZE_FIRMWARE_RUNNING          = 1;
 
-    static constexpr uint16_t ADDR_ENTER_BOOTLOADER = 8193;
-    static constexpr uint8_t SIZE_ENTER_BOOTLOADER = 4;
+    static constexpr uint16_t ADDR_ENTER_BOOTLOADER         = 8193;
+    static constexpr uint8_t SIZE_ENTER_BOOTLOADER          = 4;
 };
 } // ttl_driver
 
