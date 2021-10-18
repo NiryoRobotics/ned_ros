@@ -93,7 +93,7 @@ void addJointToTtlInterface(const std::shared_ptr<ttl_driver::TtlInterfaceCore>&
                 stepperState->setMaxEffort(max_effort);
 
                 if (eBusProto == EBusProtocol::TTL)
-                    ttl_interface->addJoint(std::move(stepperState));
+                    ttl_interface->addJoint(stepperState);
 
                 currentIdStepper++;
             }
@@ -146,7 +146,7 @@ void addJointToTtlInterface(const std::shared_ptr<ttl_driver::TtlInterfaceCore>&
                 dxlState->setFF2Gain(static_cast<uint32_t>(FF2Gain));
 
                 if (eBusProto == EBusProtocol::TTL)
-                    ttl_interface->addJoint(std::move(dxlState));
+                    ttl_interface->addJoint(dxlState);
 
                 currentIdDxl++;
             }

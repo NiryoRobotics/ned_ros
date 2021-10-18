@@ -667,7 +667,7 @@ void TtlInterfaceCore::_executeCommand()
  * @param jointState
  * @return
  */
-int TtlInterfaceCore::addJoint(std::shared_ptr<common::model::JointState>&& jointState)
+int TtlInterfaceCore::addJoint(const std::shared_ptr<common::model::JointState>& jointState)
 {
   int result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
 
@@ -764,7 +764,7 @@ int TtlInterfaceCore::setEndEffector(const std::shared_ptr<common::model::EndEff
  * @param state
  * @return
  */
-int TtlInterfaceCore::setConveyor(const std::shared_ptr<common::model::ConveyorState> state)
+int TtlInterfaceCore::setConveyor(const std::shared_ptr<common::model::ConveyorState>& state)
 {
     int result = niryo_robot_msgs::CommandStatus::NO_CONVEYOR_FOUND;
 

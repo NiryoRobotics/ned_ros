@@ -59,7 +59,7 @@ class CanInterfaceCore : public common::util::IDriverCore, public common::util::
         bool init(ros::NodeHandle& nh) override;
 
         // joints control
-        int addJoint(std::shared_ptr<common::model::StepperMotorState>&& jointState);
+        int addJoint(const std::shared_ptr<common::model::StepperMotorState>& jointState);
 
         // Tool control
         // N.A.
@@ -68,7 +68,7 @@ class CanInterfaceCore : public common::util::IDriverCore, public common::util::
         // N.A.
 
         // conveyor control
-        int setConveyor(std::shared_ptr<common::model::ConveyorState> state) override;
+        int setConveyor(const std::shared_ptr<common::model::ConveyorState>& state) override;
         void unsetConveyor(uint8_t motor_id, uint8_t default_conveyor_id) override;
         int changeId(common::model::EHardwareType motor_type, uint8_t old_id, uint8_t new_id) override;
         

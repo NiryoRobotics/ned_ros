@@ -136,9 +136,9 @@ bool JointHardwareInterface::init(ros::NodeHandle& /*rootnh*/, ros::NodeHandle &
                 _map_stepper_name[stepperState->getId()] = stepperState->getName();
 
                 if (EBusProtocol::CAN == eBusProto)
-                    _can_interface->addJoint(std::move(stepperState));
+                    _can_interface->addJoint(stepperState);
                 else if (EBusProtocol::TTL == eBusProto)
-                    _ttl_interface->addJoint(std::move(stepperState));
+                    _ttl_interface->addJoint(stepperState);
             }
 
             currentIdStepper++;
@@ -163,7 +163,7 @@ bool JointHardwareInterface::init(ros::NodeHandle& /*rootnh*/, ros::NodeHandle &
                   ROS_ERROR("JointHardwareInterface::init : Dynamixel motors are not available on CAN Bus");
                 }
                 else if (EBusProtocol::TTL == eBusProto)
-                    _ttl_interface->addJoint(std::move(dxlState));
+                    _ttl_interface->addJoint(dxlState);
             }
             currentIdDxl++;
         }

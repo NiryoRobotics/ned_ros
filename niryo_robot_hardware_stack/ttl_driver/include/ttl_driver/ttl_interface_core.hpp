@@ -99,7 +99,7 @@ public:
     void addSingleCommandToQueue(std::vector<std::unique_ptr<common::model::ISingleMotorCmd> >&& cmd) override;
 
     // joints control
-    int addJoint(std::shared_ptr<common::model::JointState>&& jointState);
+    int addJoint(const std::shared_ptr<common::model::JointState>& jointState);
 
     // Tool control
     int setTool(const std::shared_ptr<common::model::ToolState>& toolState);
@@ -110,7 +110,7 @@ public:
     int setEndEffector(const std::shared_ptr<common::model::EndEffectorState>& end_effector_state);
 
     // conveyor control
-    int setConveyor(std::shared_ptr<common::model::ConveyorState> state) override;
+    int setConveyor(const std::shared_ptr<common::model::ConveyorState>& state) override;
     void unsetConveyor(uint8_t motor_id, uint8_t default_conveyor_id) override;
     int changeId(common::model::EHardwareType motor_type, uint8_t old_id, uint8_t new_id) override;
 

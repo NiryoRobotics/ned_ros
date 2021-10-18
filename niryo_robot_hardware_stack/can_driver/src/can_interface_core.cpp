@@ -150,7 +150,7 @@ void CanInterfaceCore::startSubscribers(ros::NodeHandle &/*nh*/)
  * @param jointState
  * @return
  */
-int CanInterfaceCore::addJoint(std::shared_ptr<common::model::StepperMotorState>&& jointState)
+int CanInterfaceCore::addJoint(const std::shared_ptr<common::model::StepperMotorState>& jointState)
 {
   int result = niryo_robot_msgs::CommandStatus::CAN_READ_ERROR;
 
@@ -498,7 +498,7 @@ void CanInterfaceCore::_executeCommand()
  * @param state
  * @return
  */
-int CanInterfaceCore::setConveyor(const std::shared_ptr<common::model::ConveyorState> state)
+int CanInterfaceCore::setConveyor(const std::shared_ptr<common::model::ConveyorState>& state)
 {
     int result = niryo_robot_msgs::CommandStatus::NO_CONVEYOR_FOUND;
 
