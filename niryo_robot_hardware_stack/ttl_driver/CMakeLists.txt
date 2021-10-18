@@ -47,8 +47,10 @@ add_service_files(
   FILES
     ReadCustomValue.srv
     ReadPIDValue.srv
+    ReadVelocityProfile.srv
     SendCustomValue.srv
     WritePIDValue.srv
+    WriteVelocityProfile.srv
 )
 
 generate_messages(

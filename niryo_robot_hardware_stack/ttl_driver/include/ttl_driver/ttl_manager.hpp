@@ -127,10 +127,16 @@ public:
     bool readPositionStatus();
     bool readEndEffectorStatus();
     bool readHwStatus();
+
     int readMotorPID(uint8_t id,
                      uint32_t& pos_p_gain, uint32_t& pos_i_gain, uint32_t& pos_d_gain,
                      uint32_t& vel_p_gain, uint32_t& vel_i_gain,
                      uint32_t& ff1_gain, uint32_t& ff2_gain);
+
+    int readVelocityProfile(uint8_t id,
+                            uint32_t& _v_start, uint32_t& _a_1, uint32_t& _v_1,
+                            uint32_t& _a_max, uint32_t& _v_max, uint32_t& _d_max,
+                            uint32_t& _d_1, uint32_t& _v_stop);
 
     //calibration
     void startCalibration() override;

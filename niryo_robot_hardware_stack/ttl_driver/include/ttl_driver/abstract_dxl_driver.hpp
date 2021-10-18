@@ -47,32 +47,21 @@ class AbstractDxlDriver : public AbstractMotorDriver
     public:
         // specific DXL commands
 
-        // ram write
-        virtual int setLed(uint8_t id, uint32_t led_value ) = 0;
-        virtual int syncWriteLed(const std::vector<uint8_t>& id_list, const std::vector<uint32_t>& led_list ) = 0;
-
-        virtual int setGoalTorque(uint8_t id, uint32_t torque ) = 0;
-        virtual int syncWriteTorqueGoal(const std::vector<uint8_t>& id_list, const std::vector<uint32_t>& torque_list ) = 0;
-
-        virtual int setPositionPGain(uint8_t id, uint32_t gain ) = 0;
-        virtual int setPositionIGain(uint8_t id, uint32_t gain ) = 0;
-        virtual int setPositionDGain(uint8_t id, uint32_t gain ) = 0;
-        virtual int setVelocityPGain(uint8_t id, uint32_t gain ) = 0;
-        virtual int setVelocityIGain(uint8_t id, uint32_t gain ) = 0;
-        virtual int setff1Gain(uint8_t id, uint32_t gain ) = 0;
-        virtual int setff2Gain(uint8_t id, uint32_t gain ) = 0;
-
-        virtual int readPositionPGain(uint8_t id, uint32_t& gain) = 0;
-        virtual int readPositionIGain(uint8_t id, uint32_t& gain) = 0;
-        virtual int readPositionDGain(uint8_t id, uint32_t& gain) = 0;
-        virtual int readVelocityPGain(uint8_t id, uint32_t& gain) = 0;
-        virtual int readVelocityIGain(uint8_t id, uint32_t& gain) = 0;
-        virtual int readFF1Gain(uint8_t id, uint32_t& gain) = 0;
-        virtual int readFF2Gain(uint8_t id, uint32_t& gain) = 0;
-
         // ram read
         virtual int readLoad(uint8_t id, uint32_t& present_load ) = 0;
         virtual int syncReadLoad(const std::vector<uint8_t>& id_list, std::vector<uint32_t>& load_list ) = 0;
+
+        virtual int readPID(uint8_t id, std::vector<uint32_t>& data) = 0;
+
+        // ram write
+        virtual int writePID(uint8_t id, const std::vector<uint32_t>& data) = 0;
+
+        virtual int writeLed(uint8_t id, uint32_t led_value ) = 0;
+        virtual int syncWriteLed(const std::vector<uint8_t>& id_list, const std::vector<uint32_t>& led_list ) = 0;
+
+        virtual int writeGoalTorque(uint8_t id, uint32_t torque ) = 0;
+        virtual int syncWriteTorqueGoal(const std::vector<uint8_t>& id_list, const std::vector<uint32_t>& torque_list ) = 0;
+
 };
 
 } // ttl_driver

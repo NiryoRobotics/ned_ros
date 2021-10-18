@@ -43,6 +43,8 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "ttl_driver/ReadCustomValue.h"
 #include "ttl_driver/WritePIDValue.h"
 #include "ttl_driver/ReadPIDValue.h"
+#include "ttl_driver/WriteVelocityProfile.h"
+#include "ttl_driver/ReadVelocityProfile.h"
 
 #include "niryo_robot_msgs/BusState.h"
 #include "niryo_robot_msgs/SetInt.h"
@@ -87,8 +89,6 @@ public:
 
     void clearSingleCommandQueue();
     void clearConveyorCommandQueue();
-
-    bool setMotorPID(const common::model::DxlMotorState& dxlState);
 
     void setTrajectoryControllerCommands(const std::vector<std::pair<uint8_t, uint32_t> > &cmd);
 
@@ -162,8 +162,12 @@ private:
     bool _callbackActivateLeds(niryo_robot_msgs::SetInt::Request &req, niryo_robot_msgs::SetInt::Response &res);
     bool _callbackWriteCustomValue(ttl_driver::SendCustomValue::Request &req, ttl_driver::SendCustomValue::Response &res);
     bool _callbackReadCustomValue(ttl_driver::ReadCustomValue::Request &req, ttl_driver::ReadCustomValue::Response &res);
+
     bool _callbackWritePIDValue(ttl_driver::WritePIDValue::Request &req, ttl_driver::WritePIDValue::Response &res);
     bool _callbackReadPIDValue(ttl_driver::ReadPIDValue::Request &req, ttl_driver::ReadPIDValue::Response &res);
+
+    bool _callbackWriteVelocityProfile(ttl_driver::WriteVelocityProfile::Request &req, ttl_driver::WriteVelocityProfile::Response &res);
+    bool _callbackReadVelocityProfile(ttl_driver::ReadVelocityProfile::Request &req, ttl_driver::ReadVelocityProfile::Response &res);
 
 private:
     bool _control_loop_flag{false};
@@ -200,10 +204,15 @@ private:
     std::queue<std::shared_ptr<common::model::AbstractTtlSingleMotorCmd> > _conveyor_cmds_queue;
 
     ros::ServiceServer _activate_leds_server;
+
     ros::ServiceServer _custom_cmd_server;
     ros::ServiceServer _custom_cmd_getter;
+
     ros::ServiceServer _pid_server;
     ros::ServiceServer _pid_getter;
+
+    ros::ServiceServer _velocity_profile_server;
+    ros::ServiceServer _velocity_profile_getter;
 
     static constexpr int QUEUE_OVERFLOW = 20;
 };

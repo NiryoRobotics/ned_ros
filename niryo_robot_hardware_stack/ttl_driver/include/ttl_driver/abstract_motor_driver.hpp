@@ -59,9 +59,9 @@ public:
     virtual int readMaxPosition(uint8_t id, uint32_t& max_pos) = 0;
 
     // ram write
-    virtual int setTorqueEnable(uint8_t id, uint32_t torque_enable) = 0;
-    virtual int setGoalPosition(uint8_t id, uint32_t position) = 0;
-    virtual int setGoalVelocity(uint8_t id, uint32_t velocity) = 0;
+    virtual int writeTorqueEnable(uint8_t id, uint32_t torque_enable) = 0;
+    virtual int writeGoalPosition(uint8_t id, uint32_t position) = 0;
+    virtual int writeGoalVelocity(uint8_t id, uint32_t velocity) = 0;
 
     virtual int syncWriteTorqueEnable(const std::vector<uint8_t>& id_list, const std::vector<uint32_t>& torque_enable_list) = 0;
     virtual int syncWritePositionGoal(const std::vector<uint8_t>& id_list, const std::vector<uint32_t>& position_list) = 0;

@@ -66,9 +66,9 @@ class MockDxlDriver : public AbstractDxlDriver
         int readMaxPosition(uint8_t id, uint32_t &max_pos) override;
 
         // ram write
-        int setTorqueEnable(uint8_t id, uint32_t torque_enable) override;
-        int setGoalPosition(uint8_t id, uint32_t position) override;
-        int setGoalVelocity(uint8_t id, uint32_t velocity) override;
+        int writeTorqueEnable(uint8_t id, uint32_t torque_enable) override;
+        int writeGoalPosition(uint8_t id, uint32_t position) override;
+        int writeGoalVelocity(uint8_t id, uint32_t velocity) override;
 
         int syncWriteTorqueEnable(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &torque_enable_list) override;
         int syncWritePositionGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &position_list) override;
@@ -89,25 +89,13 @@ class MockDxlDriver : public AbstractDxlDriver
 
         // AbstractDxlDriver interface
     public:
-        int setLed(uint8_t id, uint32_t led_value) override;
-        int syncWriteLed(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &led_list) override;
-        int setGoalTorque(uint8_t id, uint32_t torque) override;
-        int syncWriteTorqueGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &torque_list) override;
-        int setPositionPGain(uint8_t id, uint32_t gain) override;
-        int setPositionIGain(uint8_t id, uint32_t gain) override;
-        int setPositionDGain(uint8_t id, uint32_t gain) override;
-        int setVelocityPGain(uint8_t id, uint32_t gain) override;
-        int setVelocityIGain(uint8_t id, uint32_t gain) override;
-        int setff1Gain(uint8_t id, uint32_t gain) override;
-        int setff2Gain(uint8_t id, uint32_t gain) override;
+        int readPID(uint8_t id, std::vector<uint32_t> &data) override;
+        int writePID(uint8_t id, const std::vector<uint32_t> &data) override;
 
-        int readPositionPGain(uint8_t id, uint32_t& gain) override;
-        int readPositionIGain(uint8_t id, uint32_t& gain) override;
-        int readPositionDGain(uint8_t id, uint32_t& gain) override;
-        int readVelocityPGain(uint8_t id, uint32_t& gain) override;
-        int readVelocityIGain(uint8_t id, uint32_t& gain) override;
-        int readFF1Gain(uint8_t id, uint32_t& gain) override;
-        int readFF2Gain(uint8_t id, uint32_t& gain) override;
+        int writeLed(uint8_t id, uint32_t led_value) override;
+        int syncWriteLed(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &led_list) override;
+        int writeGoalTorque(uint8_t id, uint32_t torque) override;
+        int syncWriteTorqueGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &torque_list) override;
 
         int readLoad(uint8_t id, uint32_t &present_load) override;
         int syncReadLoad(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &load_list) override;
@@ -126,6 +114,7 @@ class MockDxlDriver : public AbstractDxlDriver
         // AbstractTtlDriver interface
     protected:
         std::string interpreteFirmwareVersion(uint32_t fw_version) const override;
+
 };
 
 } // DynamixelDriver

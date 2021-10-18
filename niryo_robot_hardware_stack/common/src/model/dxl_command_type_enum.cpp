@@ -58,13 +58,7 @@ DxlCommandTypeEnum::initialize()
     m[EDxlCommandType::CMD_TYPE_TORQUE]    = "torque";
     m[EDxlCommandType::CMD_TYPE_PING] = "ping";
     m[EDxlCommandType::CMD_TYPE_LEARNING_MODE]  = "learning mode";
-    m[EDxlCommandType::CMD_TYPE_POSITION_P_GAIN] = "Position P Gain";
-    m[EDxlCommandType::CMD_TYPE_POSITION_I_GAIN] = "Position I Gain";
-    m[EDxlCommandType::CMD_TYPE_POSITION_D_GAIN] = "Position D Gain";
-    m[EDxlCommandType::CMD_TYPE_VELOCITY_P_GAIN] = "Velocity P Gain";
-    m[EDxlCommandType::CMD_TYPE_VELOCITY_I_GAIN] = "Velocity I Gain";
-    m[EDxlCommandType::CMD_TYPE_FF1_GAIN] = "FF1 Gain";
-    m[EDxlCommandType::CMD_TYPE_FF2_GAIN] = "FF2 Gain";
+    m[EDxlCommandType::CMD_TYPE_PID] = "PID";
     m[EDxlCommandType::CMD_TYPE_UNKNOWN]  = "unknown type";
 
     return m;

@@ -62,9 +62,9 @@ class MockStepperDriver : public AbstractStepperDriver
         int readMaxPosition(uint8_t id, uint32_t &max_pos) override;
 
         // ram write
-        int setTorqueEnable(uint8_t id, uint32_t torque_enable) override;
-        int setGoalPosition(uint8_t id, uint32_t position) override;
-        int setGoalVelocity(uint8_t id, uint32_t velocity) override;
+        int writeTorqueEnable(uint8_t id, uint32_t torque_enable) override;
+        int writeGoalPosition(uint8_t id, uint32_t position) override;
+        int writeGoalVelocity(uint8_t id, uint32_t velocity) override;
         int syncWriteTorqueEnable(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &torque_enable_list) override;
         int syncWritePositionGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &position_list) override;
         int syncWriteVelocityGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &velocity_list) override;
@@ -88,6 +88,7 @@ class MockStepperDriver : public AbstractStepperDriver
 
         // AbstractStepperDriver interface
     public:
+        int readVelocityProfile(uint8_t id, std::vector<uint32_t>& data_list) override;
         int writeVelocityProfile(uint8_t id, const std::vector<uint32_t>& data) override;
 
         int startHoming(uint8_t id) override;

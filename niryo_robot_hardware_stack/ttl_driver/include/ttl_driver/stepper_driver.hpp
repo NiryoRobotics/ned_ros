@@ -37,63 +37,83 @@ namespace ttl_driver
 template<typename reg_type = StepperReg>
 class StepperDriver : public AbstractStepperDriver
 {
-    public:
-        StepperDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
-                      std::shared_ptr<dynamixel::PacketHandler> packetHandler);
+public:
+    StepperDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
+                  std::shared_ptr<dynamixel::PacketHandler> packetHandler);
 
-    public:
-        // AbstractTtlDriver interface
-        std::string str() const override;
+public:
+    // AbstractTtlDriver interface
+    std::string str() const override;
 
-        std::string interpreteErrorState(uint32_t hw_state) const override;
+    std::string interpreteErrorState(uint32_t hw_state) const override;
 
-        int checkModelNumber(uint8_t id) override;
-        int readFirmwareVersion(uint8_t id, std::string &version) override;
+    int checkModelNumber(uint8_t id) override;
+    int readFirmwareVersion(uint8_t id, std::string &version) override;
 
-        int readTemperature(uint8_t id, uint32_t &temperature) override;
-        int readVoltage(uint8_t id, double &voltage) override;
-        int readHwErrorStatus(uint8_t id, uint32_t &hardware_status) override;
+    int readTemperature(uint8_t id, uint32_t &temperature) override;
+    int readVoltage(uint8_t id, double &voltage) override;
+    int readHwErrorStatus(uint8_t id, uint32_t &hardware_status) override;
 
-        int syncReadFirmwareVersion(const std::vector<uint8_t> &id_list, std::vector<std::string> &firmware_list) override;
-        int syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &temperature_list) override;
-        int syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list) override;
-        int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list) override;
+    int syncReadFirmwareVersion(const std::vector<uint8_t> &id_list, std::vector<std::string> &firmware_list) override;
+    int syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &temperature_list) override;
+    int syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list) override;
+    int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list) override;
 
-    public:
-        // AbstractMotorDriver interface : we cannot define them globally in AbstractMotorDriver
-        // as it is needed here for polymorphism (AbstractMotorDriver cannot be a template class and does not
-        // have access to reg_type). So it seems like a duplicate of DxlDriver
+public:
+    // AbstractMotorDriver interface : we cannot define them globally in AbstractMotorDriver
+    // as it is needed here for polymorphism (AbstractMotorDriver cannot be a template class and does not
+    // have access to reg_type). So it seems like a duplicate of DxlDriver
 
-        int changeId(uint8_t id, uint8_t new_id) override;
+    int changeId(uint8_t id, uint8_t new_id) override;
 
-        int readMinPosition(uint8_t id, uint32_t &min_pos) override;
-        int readMaxPosition(uint8_t id, uint32_t &max_pos) override;
+    int readMinPosition(uint8_t id, uint32_t &min_pos) override;
+    int readMaxPosition(uint8_t id, uint32_t &max_pos) override;
 
-        int setTorqueEnable(uint8_t id, uint32_t torque_enable) override;
-        int setGoalPosition(uint8_t id, uint32_t position) override;
-        int setGoalVelocity(uint8_t id, uint32_t velocity) override;
-        
-        int syncWriteTorqueEnable(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &torque_enable_list) override;
-        int syncWritePositionGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &position_list) override;
-        int syncWriteVelocityGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &velocity_list) override;
+    int writeTorqueEnable(uint8_t id, uint32_t torque_enable) override;
+    int writeGoalPosition(uint8_t id, uint32_t position) override;
+    int writeGoalVelocity(uint8_t id, uint32_t velocity) override;
 
-        // ram read
-        int readPosition(uint8_t id, uint32_t &present_position) override;
-        int readVelocity(uint8_t id, uint32_t &present_velocity) override;
+    int syncWriteTorqueEnable(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &torque_enable_list) override;
+    int syncWritePositionGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &position_list) override;
+    int syncWriteVelocityGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &velocity_list) override;
 
-        int syncReadPosition(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &position_list) override;
-        int syncReadVelocity(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &velocity_list) override;
+    // ram read
+    int readPosition(uint8_t id, uint32_t &present_position) override;
+    int readVelocity(uint8_t id, uint32_t &present_velocity) override;
 
-        // AbstractStepperDriver interface
-    public:
-        int writeVelocityProfile(uint8_t id, const std::vector<uint32_t>& data) override;
+    int syncReadPosition(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &position_list) override;
+    int syncReadVelocity(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &velocity_list) override;
 
-        int startHoming(uint8_t id) override;
-        int writeHomingSetup(uint8_t id, uint8_t direction, uint8_t stall_threshold) override;
+    // AbstractStepperDriver interface
+public:
+    int readVelocityProfile(uint8_t id, std::vector<uint32_t>& data_list) override;
+    int writeVelocityProfile(uint8_t id, const std::vector<uint32_t>& data_list) override;
 
-        int readHomingStatus(uint8_t id, uint32_t &status) override;
+    int startHoming(uint8_t id) override;
+    int writeHomingSetup(uint8_t id, uint8_t direction, uint8_t stall_threshold) override;
 
-        int readFirmwareRunning(uint8_t id, bool &is_running) override;
+    int readHomingStatus(uint8_t id, uint32_t &status) override;
+
+    int readFirmwareRunning(uint8_t id, bool &is_running) override;
+
+private:
+    int writeVStart(uint8_t id, uint32_t v_start);
+    int writeA1(uint8_t id, uint32_t a_1);
+    int writeV1(uint8_t id, uint32_t v_1);
+    int writeAMax(uint8_t id, uint32_t a_max);
+    int writeVMax(uint8_t id, uint32_t v_max);
+    int writeDMax(uint8_t id, uint32_t d_max);
+    int writeD1(uint8_t id, uint32_t d_1);
+    int writeVStop(uint8_t id, uint32_t v_stop);
+
+    int readVStart(uint8_t id, uint32_t& v_start);
+    int readA1(uint8_t id, uint32_t& a_1);
+    int readV1(uint8_t id, uint32_t& v_1);
+    int readAMax(uint8_t id, uint32_t& a_max);
+    int readVMax(uint8_t id, uint32_t& v_max);
+    int readDMax(uint8_t id, uint32_t& d_max);
+    int readD1(uint8_t id, uint32_t& d_1);
+    int readVStop(uint8_t id, uint32_t& v_stop);
 };
 
 // definition of methods
@@ -232,38 +252,38 @@ int StepperDriver<reg_type>::readMaxPosition(uint8_t id, uint32_t &pos)
 // ram write
 
 /**
- * @brief StepperDriver<reg_type>::setTorqueEnable
+ * @brief StepperDriver<reg_type>::writeTorqueEnable
  * @param id
  * @param torque_enable
  * @return
  */
 template<typename reg_type>
-int StepperDriver<reg_type>::setTorqueEnable(uint8_t id, uint32_t torque_enable)
+int StepperDriver<reg_type>::writeTorqueEnable(uint8_t id, uint32_t torque_enable)
 {
     return write(reg_type::ADDR_TORQUE_ENABLE, reg_type::SIZE_TORQUE_ENABLE, id, torque_enable);
 }
 
 /**
- * @brief StepperDriver<reg_type>::setGoalPosition
+ * @brief StepperDriver<reg_type>::writeGoalPosition
  * @param id
  * @param position
  * @return
  */
 template<typename reg_type>
-int StepperDriver<reg_type>::setGoalPosition(uint8_t id, uint32_t position)
+int StepperDriver<reg_type>::writeGoalPosition(uint8_t id, uint32_t position)
 {
     return write(reg_type::ADDR_GOAL_POSITION, reg_type::SIZE_GOAL_POSITION, id, position);
 }
 
 // according to the registers, the data should be an int32_t ?
 /**
- * @brief StepperDriver<reg_type>::setGoalVelocity
+ * @brief StepperDriver<reg_type>::writeGoalVelocity
  * @param id
  * @param velocity
  * @return
  */
 template<typename reg_type>
-int StepperDriver<reg_type>::setGoalVelocity(uint8_t id, uint32_t velocity)
+int StepperDriver<reg_type>::writeGoalVelocity(uint8_t id, uint32_t velocity)
 {
     return write(reg_type::ADDR_GOAL_VELOCITY, reg_type::SIZE_GOAL_VELOCITY, id, velocity);
 }
@@ -457,50 +477,118 @@ int StepperDriver<reg_type>::syncReadHwErrorStatus(const std::vector<uint8_t> &i
 //*****************************
 
 /**
+ * @brief StepperDriver::readVelocityProfile
+ * @param id
+ * @param data_list
+ * @return
+ */
+template<typename reg_type>
+int StepperDriver<reg_type>::readVelocityProfile(uint8_t id, std::vector<uint32_t> &data_list)
+{
+  int res = 0;
+
+  uint32_t v_start{0};
+  if (COMM_SUCCESS != readVStart(id, v_start))
+      res++;
+
+  data_list.emplace_back(v_start);
+
+  uint32_t a_1{0};
+  if (COMM_SUCCESS != readA1(id, a_1))
+      res++;
+
+  data_list.emplace_back(a_1);
+
+  uint32_t v_1{0};
+  if (COMM_SUCCESS != readV1(id, v_1))
+      res++;
+
+  data_list.emplace_back(v_1);
+
+  uint32_t a_max{0};
+  if (COMM_SUCCESS != readAMax(id, a_max))
+      res++;
+
+  data_list.emplace_back(a_max);
+
+  uint32_t v_max{0};
+  if (COMM_SUCCESS != readVMax(id, v_max))
+      res++;
+
+  data_list.emplace_back(v_max);
+
+  uint32_t d_max{0};
+  if (COMM_SUCCESS != readDMax(id, d_max))
+      res++;
+
+  data_list.emplace_back(d_max);
+
+  uint32_t d_1{0};
+  if (COMM_SUCCESS != readD1(id, d_1))
+      res++;
+
+  data_list.emplace_back(d_1);
+
+  uint32_t v_stop{0};
+  if (COMM_SUCCESS != readVStop(id, v_stop))
+      res++;
+
+  data_list.emplace_back(v_stop);
+
+  if(res > 0)
+  {
+      std::cout << "Failures during read Velocity Profile: " << res << std::endl;
+      return COMM_TX_FAIL;
+  }
+
+  return COMM_SUCCESS;
+}
+
+/**
  * @brief StepperDriver<reg_type>::writeVelocityProfile
  * @param id
- * @param data
+ * @param data_list
  * @return
  * TODO(CC) remove sleeps when fw will be updated
  */
 template<typename reg_type>
-int StepperDriver<reg_type>::writeVelocityProfile(uint8_t id, const std::vector<uint32_t>& data)
+int StepperDriver<reg_type>::writeVelocityProfile(uint8_t id, const std::vector<uint32_t>& data_list)
 {
   int res = 0;
   double wait_duration = 0.5;
 
-  setTorqueEnable(id, true);
+  writeTorqueEnable(id, true);
   ros::Duration(wait_duration).sleep();
 
-  if (COMM_SUCCESS != write(reg_type::ADDR_VSTART, reg_type::SIZE_VSTART, id, data.at(0)))
+  if (COMM_SUCCESS != writeVStart(id, data_list.at(0)))
     res++;
   ros::Duration(wait_duration).sleep();
 
-  if (COMM_SUCCESS != write(reg_type::ADDR_A1, reg_type::SIZE_A1, id, data.at(1)))
+  if (COMM_SUCCESS != writeA1(id, data_list.at(1)))
     res++;
   ros::Duration(wait_duration).sleep();
 
-  if (COMM_SUCCESS != write(reg_type::ADDR_V1, reg_type::SIZE_V1, id, data.at(2)))
+  if (COMM_SUCCESS != writeV1(id, data_list.at(2)))
     res++;
   ros::Duration(wait_duration).sleep();
 
-  if (COMM_SUCCESS != write(reg_type::ADDR_AMAX, reg_type::SIZE_AMAX, id, data.at(3)))
+  if (COMM_SUCCESS != writeAMax(id, data_list.at(3)))
     res++;
   ros::Duration(wait_duration).sleep();
 
-  if (COMM_SUCCESS != write(reg_type::ADDR_VMAX, reg_type::SIZE_VMAX, id, data.at(4)))
+  if (COMM_SUCCESS != writeVMax(id, data_list.at(4)))
     res++;
   ros::Duration(wait_duration).sleep();
 
-  if (COMM_SUCCESS != write(reg_type::ADDR_DMAX, reg_type::SIZE_DMAX, id, data.at(5)))
+  if (COMM_SUCCESS != writeDMax(id, data_list.at(5)))
     res++;
   ros::Duration(wait_duration).sleep();
 
-  if (COMM_SUCCESS != write(reg_type::ADDR_D1, reg_type::SIZE_D1, id, data.at(6)))
+  if (COMM_SUCCESS != writeD1(id, data_list.at(6)))
     res++;
   ros::Duration(wait_duration).sleep();
 
-  if (COMM_SUCCESS != write(reg_type::ADDR_VSTOP, reg_type::SIZE_VSTOP, id, data.at(7)))
+  if (COMM_SUCCESS != writeVStop(id, data_list.at(7)))
     res++;
   ros::Duration(wait_duration).sleep();
 
@@ -509,10 +597,8 @@ int StepperDriver<reg_type>::writeVelocityProfile(uint8_t id, const std::vector<
       std::cout << "Failures during writeVelocityProfile : " << res << std::endl;
       return COMM_TX_FAIL;
   }
-  
-    return COMM_SUCCESS;
-  
 
+  return COMM_SUCCESS;
 }
 
 /**
@@ -539,7 +625,7 @@ int StepperDriver<reg_type>::writeHomingSetup(uint8_t id, uint8_t direction, uin
     int res = 0;
     double wait_duration = 0.5;
 
-    setTorqueEnable(id, true);
+    writeTorqueEnable(id, true);
     ros::Duration(wait_duration).sleep();
 
     if (COMM_SUCCESS != write(reg_type::ADDR_HOMING_DIRECTION, reg_type::SIZE_HOMING_DIRECTION, id, direction))
@@ -584,6 +670,200 @@ int StepperDriver<reg_type>::readFirmwareRunning(uint8_t id, bool &is_running)
   int res = read(reg_type::ADDR_FIRMWARE_RUNNING, reg_type::SIZE_FIRMWARE_RUNNING, id, data);
   is_running = data;
   return res;
+}
+
+// private
+
+/**
+ * @brief StepperDriver<reg_type>::writeVStart
+ * @param id
+ * @param v_start
+ * @return
+ */
+template<typename reg_type>
+int StepperDriver<reg_type>::writeVStart(uint8_t id, uint32_t v_start)
+{
+   return write(reg_type::ADDR_VSTART, reg_type::SIZE_VSTART, id, v_start);
+}
+
+/**
+ * @brief StepperDriver<reg_type>::writeA1
+ * @param id
+ * @param a_1
+ * @return
+ */
+template<typename reg_type>
+int StepperDriver<reg_type>::writeA1(uint8_t id, uint32_t a_1)
+{
+  return write(reg_type::ADDR_A1, reg_type::SIZE_A1, id, a_1);
+}
+
+/**
+ * @brief StepperDriver<reg_type>::writeV1
+ * @param id
+ * @param v_1
+ * @return
+ */
+template<typename reg_type>
+int StepperDriver<reg_type>::writeV1(uint8_t id, uint32_t v_1)
+{
+  return write(reg_type::ADDR_V1, reg_type::SIZE_V1, id, v_1);
+}
+
+/**
+ * @brief StepperDriver<reg_type>::writeAMax
+ * @param id
+ * @param a_max
+ * @return
+ */
+template<typename reg_type>
+int StepperDriver<reg_type>::writeAMax(uint8_t id, uint32_t a_max)
+{
+  return write(reg_type::ADDR_AMAX, reg_type::SIZE_AMAX, id, a_max);
+}
+
+/**
+ * @brief StepperDriver<reg_type>::writeVMax
+ * @param id
+ * @param v_max
+ * @return
+ */
+template<typename reg_type>
+int StepperDriver<reg_type>::writeVMax(uint8_t id, uint32_t v_max)
+{
+  return write(reg_type::ADDR_VMAX, reg_type::SIZE_VMAX, id, v_max);
+}
+
+/**
+ * @brief StepperDriver<reg_type>::writeDMax
+ * @param id
+ * @param d_max
+ * @return
+ */
+template<typename reg_type>
+int StepperDriver<reg_type>::writeDMax(uint8_t id, uint32_t d_max)
+{
+  return write(reg_type::ADDR_DMAX, reg_type::SIZE_DMAX, id, d_max);
+}
+
+/**
+ * @brief StepperDriver<reg_type>::writeD1
+ * @param id
+ * @param d_1
+ * @return
+ */
+template<typename reg_type>
+int StepperDriver<reg_type>::writeD1(uint8_t id, uint32_t d_1)
+{
+  return write(reg_type::ADDR_D1, reg_type::SIZE_D1, id, d_1);
+}
+
+/**
+ * @brief StepperDriver<reg_type>::writeVStop
+ * @param id
+ * @param v_stop
+ * @return
+ */
+template<typename reg_type>
+int StepperDriver<reg_type>::writeVStop(uint8_t id, uint32_t v_stop)
+{
+  return write(reg_type::ADDR_VSTOP, reg_type::SIZE_VSTOP, id, v_stop);
+}
+
+/**
+ * @brief StepperDriver<reg_type>::readVStart
+ * @param id
+ * @param v_start
+ * @return
+ */
+template<typename reg_type>
+int StepperDriver<reg_type>::readVStart(uint8_t id, uint32_t& v_start)
+{
+  return read(reg_type::ADDR_VSTART, reg_type::SIZE_VSTART, id, v_start);
+}
+
+/**
+ * @brief StepperDriver<reg_type>::readA1
+ * @param id
+ * @param a_1
+ * @return
+ */
+template<typename reg_type>
+int StepperDriver<reg_type>::readA1(uint8_t id, uint32_t& a_1)
+{
+  return read(reg_type::ADDR_A1, reg_type::SIZE_A1, id, a_1);
+}
+
+/**
+ * @brief StepperDriver<reg_type>::readV1
+ * @param id
+ * @param v_1
+ * @return
+ */
+template<typename reg_type>
+int StepperDriver<reg_type>::readV1(uint8_t id, uint32_t& v_1)
+{
+  return read(reg_type::ADDR_V1, reg_type::SIZE_V1, id, v_1);
+}
+
+/**
+ * @brief StepperDriver<reg_type>::readAMax
+ * @param id
+ * @param a_max
+ * @return
+ */
+template<typename reg_type>
+int StepperDriver<reg_type>::readAMax(uint8_t id, uint32_t& a_max)
+{
+  return read(reg_type::ADDR_AMAX, reg_type::SIZE_AMAX, id, a_max);
+}
+
+/**
+ * @brief StepperDriver<reg_type>::readVMax
+ * @param id
+ * @param v_max
+ * @return
+ */
+template<typename reg_type>
+int StepperDriver<reg_type>::readVMax(uint8_t id, uint32_t& v_max)
+{
+  return read(reg_type::ADDR_VMAX, reg_type::SIZE_VMAX, id, v_max);
+}
+
+/**
+ * @brief StepperDriver<reg_type>::readDMax
+ * @param id
+ * @param d_max
+ * @return
+ */
+template<typename reg_type>
+int StepperDriver<reg_type>::readDMax(uint8_t id, uint32_t& d_max)
+{
+  return read(reg_type::ADDR_DMAX, reg_type::SIZE_DMAX, id, d_max);
+}
+
+/**
+ * @brief StepperDriver<reg_type>::readD1
+ * @param id
+ * @param d_1
+ * @return
+ */
+template<typename reg_type>
+int StepperDriver<reg_type>::readD1(uint8_t id, uint32_t& d_1)
+{
+  return read(reg_type::ADDR_D1, reg_type::SIZE_D1, id, d_1);
+}
+
+/**
+ * @brief StepperDriver<reg_type>::readVStop
+ * @param id
+ * @param v_stop
+ * @return
+ */
+template<typename reg_type>
+int StepperDriver<reg_type>::readVStop(uint8_t id, uint32_t& v_stop)
+{
+  return read(reg_type::ADDR_VSTOP, reg_type::SIZE_VSTOP, id, v_stop);
 }
 
 } // ttl_driver

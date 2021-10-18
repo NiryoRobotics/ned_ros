@@ -49,6 +49,14 @@ class FakeTtlData
 
         struct FakeStepperRegister : public AbstractFakeRegister
         {
+            uint32_t v_start{1};
+            uint32_t a_1{0};
+            uint32_t v_1{0};
+            uint32_t a_max{6000};
+            uint32_t v_max{6};
+            uint32_t d_max{6000};
+            uint32_t d_1{0};
+            uint32_t v_stop{2};
         };
 
         struct FakeDxlRegister : public AbstractFakeRegister
@@ -82,7 +90,7 @@ class FakeTtlData
         std::map<uint8_t, FakeDxlRegister> dxl_registers;
 
         // stepper
-        std::map<uint8_t, FakeDxlRegister> stepper_registers;
+        std::map<uint8_t, FakeStepperRegister> stepper_registers;
 
         // common
         std::vector<uint8_t> full_id_list;

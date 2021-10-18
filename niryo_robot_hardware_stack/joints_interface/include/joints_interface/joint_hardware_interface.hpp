@@ -50,7 +50,6 @@ class JointHardwareInterface : public hardware_interface::RobotHW
                                std::shared_ptr<can_driver::CanInterfaceCore> can_interface);
 
         void sendInitMotorsParams();
-        void setSteppersProfiles();
         int calibrateJoints(int mode, std::string &result_message);
         void setNeedCalibration();
         void activateLearningMode(bool activated);
