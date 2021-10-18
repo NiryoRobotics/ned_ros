@@ -19,6 +19,7 @@
 
 #include "can_driver/mock_stepper_driver.hpp"
 
+#include <algorithm>
 #include <boost/exception/exception.hpp>
 #include <cstdint>
 #include <random>
@@ -30,7 +31,6 @@
 
 #include "common/model/stepper_calibration_status_enum.hpp"
 #include "mcp_can_rpi/mcp_can_dfs_rpi.h"
-#include "ros/ros.h"
 
 #include "common/model/stepper_command_type_enum.hpp"
 
@@ -72,7 +72,7 @@ std::string MockStepperDriver::str() const
  */
 int MockStepperDriver::ping(uint8_t id)
 {
-    if (_fake_data->stepper_registers.count(id))
+    if (std::find(_id_list.begin(), _id_list.end(), id) != _id_list.end())
         return CAN_OK;
     return CAN_FAIL;
 }
@@ -350,11 +350,20 @@ uint8_t MockStepperDriver::sendCalibrationCommand(uint8_t id, int offset, int de
  */
 uint8_t MockStepperDriver::sendUpdateConveyorId(uint8_t old_id, uint8_t new_id)
 {
-    ROS_DEBUG("MockStepperDriver::sendUpdateConveyorId - Send update conveyor id from %d to %d", old_id, new_id);
+    int result = CAN_FAIL;
 
     _id_list.erase(std::remove(_id_list.begin(), _id_list.end(), old_id), _id_list.end());
     _id_list.push_back(new_id);
-    return CAN_OK;
+
+    const auto it = _fake_data->stepper_registers.find(old_id);
+    if (it != _fake_data->stepper_registers.end())
+    {
+        std::swap(_fake_data->stepper_registers[new_id], it->second);
+        result = CAN_OK;
+        _fake_conveyor_id = new_id;
+    }
+
+    return result;
 }
 
 // ***************

@@ -75,7 +75,6 @@ class TtlInterfaceCore : public common::util::IDriverCore, public common::util::
 public:
     TtlInterfaceCore(ros::NodeHandle& nh);
     ~TtlInterfaceCore() override;
-
     // non copyable class
     TtlInterfaceCore( const TtlInterfaceCore& ) = delete;
     TtlInterfaceCore( TtlInterfaceCore&& ) = delete;
@@ -90,14 +89,14 @@ public:
 
     bool setMotorPID(const common::model::DxlMotorState& dxlState);
 
-    void setTrajectoryControllerCommands(const std::vector<std::pair<uint8_t, uint32_t> > &cmd);
+    void setTrajectoryControllerCommands(std::vector<std::pair<uint8_t, uint32_t> > && cmd);
 
-    void setSyncCommand(const std::shared_ptr<common::model::ISynchronizeMotorCmd>& cmd) override;
+    void setSyncCommand(std::unique_ptr<common::model::ISynchronizeMotorCmd>&& cmd) override;
 
     // we have to use ISingleMotorCmd instead of AbstractTtlMotorCmd because this is pure virtual method in IDriverCore
     // IDriverCore used by Can and Ttl so AbstractTtlMotorCmd or AbstractCanMotorCmd can't be used in this case
-    void addSingleCommandToQueue(const std::shared_ptr<common::model::ISingleMotorCmd>& cmd) override;
-    void addSingleCommandToQueue(const std::vector<std::shared_ptr<common::model::ISingleMotorCmd> >& cmd) override;
+    void addSingleCommandToQueue(std::unique_ptr<common::model::ISingleMotorCmd>&& cmd) override;
+    void addSingleCommandToQueue(std::vector<std::unique_ptr<common::model::ISingleMotorCmd> >&& cmd) override;
 
     // joints control
     int addJoint(const std::shared_ptr<common::model::JointState>& jointState);
@@ -111,7 +110,7 @@ public:
     int setEndEffector(const std::shared_ptr<common::model::EndEffectorState>& end_effector_state);
 
     // conveyor control
-    int setConveyor(std::shared_ptr<common::model::ConveyorState> state) override;
+    int setConveyor(const std::shared_ptr<common::model::ConveyorState>& state) override;
     void unsetConveyor(uint8_t motor_id, uint8_t default_conveyor_id) override;
     int changeId(common::model::EHardwareType motor_type, uint8_t old_id, uint8_t new_id) override;
 
@@ -195,9 +194,9 @@ private:
     std::vector<std::pair<uint8_t, uint32_t> > _joint_trajectory_cmd;
 
     // ttl cmds
-    std::queue<std::shared_ptr<common::model::AbstractTtlSynchronizeMotorCmd> > _sync_cmds;
-    std::queue<std::shared_ptr<common::model::AbstractTtlSingleMotorCmd> > _single_cmds_queue;
-    std::queue<std::shared_ptr<common::model::AbstractTtlSingleMotorCmd> > _conveyor_cmds_queue;
+    std::queue<std::unique_ptr<common::model::AbstractTtlSynchronizeMotorCmd> > _sync_cmds;
+    std::queue<std::unique_ptr<common::model::AbstractTtlSingleMotorCmd> > _single_cmds_queue;
+    std::queue<std::unique_ptr<common::model::AbstractTtlSingleMotorCmd> > _conveyor_cmds_queue;
 
     ros::ServiceServer _activate_leds_server;
     ros::ServiceServer _custom_cmd_server;

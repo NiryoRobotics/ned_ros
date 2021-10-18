@@ -49,26 +49,19 @@ namespace util
 class IDriverCore
 {
 public:
-    IDriverCore() = default;
     virtual ~IDriverCore() = default;
-
-    // see https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c67-a-polymorphic-class-should-suppress-public-copymove
-    IDriverCore( const IDriverCore& ) = delete;
-    IDriverCore( IDriverCore&& ) = delete;
-    IDriverCore& operator= ( IDriverCore && ) = delete;
-    IDriverCore& operator= ( const IDriverCore& ) = delete;
 
     virtual common::model::EBusProtocol getBusProtocol() const = 0;
 
     virtual void startControlLoop() = 0;
     virtual bool isConnectionOk() const = 0;
     virtual bool scanMotorId(uint8_t motor_to_find) = 0;
-    virtual void addSingleCommandToQueue(const std::shared_ptr<common::model::ISingleMotorCmd>& cmd) = 0;
-    virtual void addSingleCommandToQueue(const std::vector<std::shared_ptr<common::model::ISingleMotorCmd> >& cmd) = 0;
-    virtual void setSyncCommand(const std::shared_ptr<common::model::ISynchronizeMotorCmd>& cmd) = 0;
+    virtual void addSingleCommandToQueue(std::unique_ptr<common::model::ISingleMotorCmd>&& cmd) = 0;
+    virtual void addSingleCommandToQueue(std::vector<std::unique_ptr<common::model::ISingleMotorCmd> >&& cmd) = 0;
+    virtual void setSyncCommand(std::unique_ptr<common::model::ISynchronizeMotorCmd>&& cmd) = 0;
 
     // driver for conveyor
-    virtual int setConveyor(std::shared_ptr<common::model::ConveyorState> state) = 0;
+    virtual int setConveyor(const std::shared_ptr<common::model::ConveyorState>& state) = 0;
     virtual void unsetConveyor(uint8_t motor_id, uint8_t default_conveyor_id) = 0;
     virtual int changeId(common::model::EHardwareType motor_type, uint8_t old_id, uint8_t new_id) = 0;
 
@@ -87,6 +80,14 @@ public:
     virtual std::vector<std::shared_ptr<common::model::JointState> > getJointStates() const = 0;
     virtual std::shared_ptr<common::model::JointState> getJointState(uint8_t motor_id) const = 0;
     virtual std::vector<uint8_t> getRemovedMotorList() const = 0;
+protected:
+    IDriverCore() = default;
+    // see https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c67-a-polymorphic-class-should-suppress-public-copymove
+    IDriverCore( const IDriverCore& ) = delete;
+    IDriverCore( IDriverCore&& ) = delete;
+    IDriverCore& operator= ( IDriverCore && ) = delete;
+    IDriverCore& operator= ( const IDriverCore& ) = delete;
+
 private:
     virtual void resetHardwareControlLoopRates() = 0;
     virtual void controlLoop() = 0;

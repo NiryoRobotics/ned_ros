@@ -84,7 +84,6 @@ public:
     TtlManager() = delete;
     TtlManager( ros::NodeHandle& nh );
     ~TtlManager() override = default;
-
     // see https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c21-if-you-define-or-delete-any-copy-move-or-destructor-function-define-or-delete-them-all
     TtlManager( const TtlManager& ) = delete;
     TtlManager( TtlManager&& ) = delete;
@@ -94,7 +93,7 @@ public:
     // IBusManager Interface
     bool init(ros::NodeHandle& nh) override;
 
-    void addHardwareComponent(const std::shared_ptr<common::model::AbstractHardwareState> &state) override;
+    void addHardwareComponent(std::shared_ptr<common::model::AbstractHardwareState> &&state) override;
 
     void removeHardwareComponent(uint8_t id) override;
     bool isConnectionOk() const override;
@@ -110,8 +109,8 @@ public:
 
     int changeId(common::model::EHardwareType motor_type, uint8_t old_id, uint8_t new_id);
 
-    int writeSynchronizeCommand(const std::shared_ptr<common::model::AbstractTtlSynchronizeMotorCmd >& cmd);
-    int writeSingleCommand(const std::shared_ptr<common::model::AbstractTtlSingleMotorCmd >& cmd);
+    int writeSynchronizeCommand(std::unique_ptr<common::model::AbstractTtlSynchronizeMotorCmd >&& cmd);
+    int writeSingleCommand(std::unique_ptr<common::model::AbstractTtlSingleMotorCmd >&& cmd);
 
     void executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, uint32_t> > cmd_vec);
 

@@ -415,13 +415,13 @@ bool ConveyorInterfaceCore::_callbackControlConveyor(conveyor_interface::Control
 
         if (EBusProtocol::CAN == bus_proto)
         {
-            _can_interface->addSingleCommandToQueue(std::make_shared<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_CONVEYOR,
+            _can_interface->addSingleCommandToQueue(std::make_unique<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_CONVEYOR,
                                                                                        req.id, std::initializer_list<int32_t>{req.control_on,
                                                                                        req.speed, req.direction * assembly_direction}));
         }
         else if (EBusProtocol::TTL == bus_proto)
         {
-            _ttl_interface->addSingleCommandToQueue(std::make_shared<StepperTtlSingleCmd>(EStepperCommandType::CMD_TYPE_CONVEYOR,
+            _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperTtlSingleCmd>(EStepperCommandType::CMD_TYPE_CONVEYOR,
                                                                                           req.id, std::initializer_list<uint32_t>{req.control_on,
                                                                                           static_cast<uint32_t>(req.speed),
                                                                                           static_cast<uint32_t>(req.direction * assembly_direction)}));

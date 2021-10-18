@@ -21,7 +21,7 @@
 
 #include <tuple>
 #include <string>
-#include <math.h>
+#include <cmath>
 
 // Bring in gtest
 #include <gtest/gtest.h>
