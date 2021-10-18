@@ -73,9 +73,6 @@ class AbstractDxlDriver : public AbstractMotorDriver
         // ram read
         virtual int readLoad(uint8_t id, uint32_t& present_load ) = 0;
         virtual int syncReadLoad(const std::vector<uint8_t>& id_list, std::vector<uint32_t>& load_list ) = 0;
-
-        virtual int readVelocity(uint8_t id, uint32_t& present_velocity) = 0;
-        virtual int syncReadVelocity(const std::vector<uint8_t>& id_list, std::vector<uint32_t>& velocity_list) = 0;
 };
 
 } // ttl_driver

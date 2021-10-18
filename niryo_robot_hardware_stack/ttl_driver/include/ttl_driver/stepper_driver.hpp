@@ -113,12 +113,21 @@ StepperDriver<reg_type>::StepperDriver(std::shared_ptr<dynamixel::PortHandler> p
 // AbstractMotorDriver interface
 //*****************************
 
+/**
+ * @brief StepperDriver<reg_type>::str
+ * @return
+ */
 template<typename reg_type>
 std::string StepperDriver<reg_type>::str() const
 {
     return common::model::HardwareTypeEnum(reg_type::motor_type).toString() + " : " + AbstractStepperDriver::str();
 }
 
+/**
+ * @brief StepperDriver<reg_type>::interpreteErrorState
+ * @param hw_state
+ * @return
+ */
 template<typename reg_type>
 std::string StepperDriver<reg_type>::interpreteErrorState(uint32_t hw_state) const
 {
@@ -147,12 +156,23 @@ std::string StepperDriver<reg_type>::interpreteErrorState(uint32_t hw_state) con
     return hardware_message;
 }
 
+/**
+ * @brief StepperDriver<reg_type>::changeId
+ * @param id
+ * @param new_id
+ * @return
+ */
 template<typename reg_type>
 int StepperDriver<reg_type>::changeId(uint8_t id, uint8_t new_id)
 {
     return write(reg_type::ADDR_ID, reg_type::SIZE_ID, id, new_id);
 }
 
+/**
+ * @brief StepperDriver<reg_type>::checkModelNumber
+ * @param id
+ * @return
+ */
 template<typename reg_type>
 int StepperDriver<reg_type>::checkModelNumber(uint8_t id)
 {
@@ -170,6 +190,12 @@ int StepperDriver<reg_type>::checkModelNumber(uint8_t id)
     return ping_result;
 }
 
+/**
+ * @brief StepperDriver<reg_type>::readFirmwareVersion
+ * @param id
+ * @param version
+ * @return
+ */
 template<typename reg_type>
 int StepperDriver<reg_type>::readFirmwareVersion(uint8_t id, std::string &version)
 {
@@ -180,12 +206,24 @@ int StepperDriver<reg_type>::readFirmwareVersion(uint8_t id, std::string &versio
     return res;
 }
 
+/**
+ * @brief StepperDriver<reg_type>::readMinPosition
+ * @param id
+ * @param pos
+ * @return
+ */
 template<typename reg_type>
 int StepperDriver<reg_type>::readMinPosition(uint8_t id, uint32_t &pos)
 {
     return read(reg_type::ADDR_MIN_POSITION_LIMIT, reg_type::SIZE_MIN_POSITION_LIMIT, id, pos);
 }
 
+/**
+ * @brief StepperDriver<reg_type>::readMaxPosition
+ * @param id
+ * @param pos
+ * @return
+ */
 template<typename reg_type>
 int StepperDriver<reg_type>::readMaxPosition(uint8_t id, uint32_t &pos)
 {
@@ -194,12 +232,24 @@ int StepperDriver<reg_type>::readMaxPosition(uint8_t id, uint32_t &pos)
 
 // ram write
 
+/**
+ * @brief StepperDriver<reg_type>::setTorqueEnable
+ * @param id
+ * @param torque_enable
+ * @return
+ */
 template<typename reg_type>
 int StepperDriver<reg_type>::setTorqueEnable(uint8_t id, uint32_t torque_enable)
 {
     return write(reg_type::ADDR_TORQUE_ENABLE, reg_type::SIZE_TORQUE_ENABLE, id, torque_enable);
 }
 
+/**
+ * @brief StepperDriver<reg_type>::setGoalPosition
+ * @param id
+ * @param position
+ * @return
+ */
 template<typename reg_type>
 int StepperDriver<reg_type>::setGoalPosition(uint8_t id, uint32_t position)
 {
@@ -207,24 +257,48 @@ int StepperDriver<reg_type>::setGoalPosition(uint8_t id, uint32_t position)
 }
 
 // according to the registers, the data should be an int32_t ?
+/**
+ * @brief StepperDriver<reg_type>::setGoalVelocity
+ * @param id
+ * @param velocity
+ * @return
+ */
 template<typename reg_type>
 int StepperDriver<reg_type>::setGoalVelocity(uint8_t id, uint32_t velocity)
 {
     return write(reg_type::ADDR_GOAL_VELOCITY, reg_type::SIZE_GOAL_VELOCITY, id, velocity);
 }
 
+/**
+ * @brief StepperDriver<reg_type>::syncWriteTorqueEnable
+ * @param id_list
+ * @param torque_enable_list
+ * @return
+ */
 template<typename reg_type>
 int StepperDriver<reg_type>::syncWriteTorqueEnable(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &torque_enable_list)
 {
     return syncWrite(reg_type::ADDR_TORQUE_ENABLE, reg_type::SIZE_TORQUE_ENABLE, id_list, torque_enable_list);
 }
 
+/**
+ * @brief StepperDriver<reg_type>::syncWritePositionGoal
+ * @param id_list
+ * @param position_list
+ * @return
+ */
 template<typename reg_type>
 int StepperDriver<reg_type>::syncWritePositionGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &position_list)
 {
     return syncWrite(reg_type::ADDR_GOAL_POSITION, reg_type::SIZE_GOAL_POSITION, id_list, position_list);
 }
 
+/**
+ * @brief StepperDriver<reg_type>::syncWriteVelocityGoal
+ * @param id_list
+ * @param velocity_list
+ * @return
+ */
 template<typename reg_type>
 int StepperDriver<reg_type>::syncWriteVelocityGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &velocity_list)
 {
@@ -233,24 +307,48 @@ int StepperDriver<reg_type>::syncWriteVelocityGoal(const std::vector<uint8_t> &i
 
 // ram read
 
+/**
+ * @brief StepperDriver<reg_type>::readPosition
+ * @param id
+ * @param present_position
+ * @return
+ */
 template<typename reg_type>
 int StepperDriver<reg_type>::readPosition(uint8_t id, uint32_t& present_position)
 {
   return read(reg_type::ADDR_PRESENT_POSITION, reg_type::SIZE_PRESENT_POSITION, id, present_position);
 }
 
+/**
+ * @brief StepperDriver<reg_type>::readVelocity
+ * @param id
+ * @param present_velocity
+ * @return
+ */
 template<typename reg_type>
 int StepperDriver<reg_type>::readVelocity(uint8_t id, uint32_t &present_velocity)
 {
   return read(reg_type::ADDR_PRESENT_VELOCITY, reg_type::SIZE_PRESENT_VELOCITY, id, present_velocity);
 }
 
+/**
+ * @brief StepperDriver<reg_type>::readTemperature
+ * @param id
+ * @param temperature
+ * @return
+ */
 template<typename reg_type>
 int StepperDriver<reg_type>::readTemperature(uint8_t id, uint32_t& temperature)
 {
     return read(reg_type::ADDR_PRESENT_TEMPERATURE, reg_type::SIZE_PRESENT_TEMPERATURE, id, temperature);
 }
 
+/**
+ * @brief StepperDriver<reg_type>::readVoltage
+ * @param id
+ * @param voltage
+ * @return
+ */
 template<typename reg_type>
 int StepperDriver<reg_type>::readVoltage(uint8_t id, double& voltage)
 {
@@ -260,24 +358,48 @@ int StepperDriver<reg_type>::readVoltage(uint8_t id, double& voltage)
     return res;
 }
 
+/**
+ * @brief StepperDriver<reg_type>::readHwErrorStatus
+ * @param id
+ * @param hardware_status
+ * @return
+ */
 template<typename reg_type>
 int StepperDriver<reg_type>::readHwErrorStatus(uint8_t id, uint32_t& hardware_status)
 {
     return read(reg_type::ADDR_HW_ERROR_STATUS, reg_type::SIZE_HW_ERROR_STATUS, id, hardware_status);
 }
 
+/**
+ * @brief StepperDriver<reg_type>::syncReadPosition
+ * @param id_list
+ * @param position_list
+ * @return
+ */
 template<typename reg_type>
 int StepperDriver<reg_type>::syncReadPosition(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &position_list)
 {
   return syncRead(reg_type::ADDR_PRESENT_POSITION, reg_type::SIZE_PRESENT_POSITION, id_list, position_list);
 }
 
+/**
+ * @brief StepperDriver<reg_type>::syncReadVelocity
+ * @param id_list
+ * @param velocity_list
+ * @return
+ */
 template<typename reg_type>
 int StepperDriver<reg_type>::syncReadVelocity(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &velocity_list)
 {
   return syncRead(reg_type::ADDR_PRESENT_VELOCITY, reg_type::SIZE_PRESENT_VELOCITY, id_list, velocity_list);
 }
 
+/**
+ * @brief StepperDriver<reg_type>::syncReadFirmwareVersion
+ * @param id_list
+ * @param firmware_list
+ * @return
+ */
 template<typename reg_type>
 int StepperDriver<reg_type>::syncReadFirmwareVersion(const std::vector<uint8_t> &id_list, std::vector<std::string> &firmware_list)
 {
@@ -290,12 +412,24 @@ int StepperDriver<reg_type>::syncReadFirmwareVersion(const std::vector<uint8_t> 
     return res;
 }
 
+/**
+ * @brief StepperDriver<reg_type>::syncReadTemperature
+ * @param id_list
+ * @param temperature_list
+ * @return
+ */
 template<typename reg_type>
 int StepperDriver<reg_type>::syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &temperature_list)
 {
     return syncRead(reg_type::ADDR_PRESENT_TEMPERATURE, reg_type::SIZE_PRESENT_TEMPERATURE, id_list, temperature_list);
 }
 
+/**
+ * @brief StepperDriver<reg_type>::syncReadVoltage
+ * @param id_list
+ * @param voltage_list
+ * @return
+ */
 template<typename reg_type>
 int StepperDriver<reg_type>::syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list)
 {
@@ -307,6 +441,12 @@ int StepperDriver<reg_type>::syncReadVoltage(const std::vector<uint8_t> &id_list
     return res;
 }
 
+/**
+ * @brief StepperDriver<reg_type>::syncReadHwErrorStatus
+ * @param id_list
+ * @param hw_error_list
+ * @return
+ */
 template<typename reg_type>
 int StepperDriver<reg_type>::syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list)
 {
@@ -317,6 +457,12 @@ int StepperDriver<reg_type>::syncReadHwErrorStatus(const std::vector<uint8_t> &i
 // AbstractStepperDriver interface
 //*****************************
 
+/**
+ * @brief StepperDriver<reg_type>::writeVelocityProfile
+ * @param id
+ * @param data
+ * @return
+ */
 template<typename reg_type>
 int StepperDriver<reg_type>::writeVelocityProfile(uint8_t id, const std::vector<uint32_t>& data)
 {
@@ -369,30 +515,59 @@ int StepperDriver<reg_type>::writeVelocityProfile(uint8_t id, const std::vector<
 
 }
 
+/**
+ * @brief StepperDriver<reg_type>::startHoming
+ * @param id
+ * @return
+ */
 template<typename reg_type>
 int StepperDriver<reg_type>::startHoming(uint8_t id)
 {
     return write(reg_type::ADDR_COMMAND, reg_type::SIZE_COMMAND, id, 0);
 }
 
+/**
+ * @brief StepperDriver<reg_type>::writeHomingDirection
+ * @param id
+ * @param direction
+ * @return
+ */
 template<typename reg_type>
 int StepperDriver<reg_type>::writeHomingDirection(uint8_t id, uint8_t direction)
 {
   return write(reg_type::ADDR_HOMING_DIRECTION, reg_type::SIZE_HOMING_DIRECTION, id, direction);
 }
 
+/**
+ * @brief StepperDriver<reg_type>::writeHomingStallThreshold
+ * @param id
+ * @param threshold
+ * @return
+ */
 template<typename reg_type>
 int StepperDriver<reg_type>::writeHomingStallThreshold(uint8_t id, uint8_t threshold)
 {
   return write(reg_type::ADDR_HOMING_STALL_THRESHOLD, reg_type::SIZE_HOMING_STALL_THRESHOLD, id, threshold);
 }
 
+/**
+ * @brief StepperDriver<reg_type>::readHomingStatus
+ * @param id
+ * @param status
+ * @return
+ */
 template<typename reg_type>
 int StepperDriver<reg_type>::readHomingStatus(uint8_t id, uint32_t &status)
 {
     return read(reg_type::ADDR_HOMING_STATUS, reg_type::SIZE_HOMING_STATUS, id, status);
 }
 
+/**
+ * @brief StepperDriver<reg_type>::readFirmwareRunning
+ * @param id
+ * @param is_running
+ * @return
+ */
 template<typename reg_type>
 int StepperDriver<reg_type>::readFirmwareRunning(uint8_t id, bool &is_running)
 {
