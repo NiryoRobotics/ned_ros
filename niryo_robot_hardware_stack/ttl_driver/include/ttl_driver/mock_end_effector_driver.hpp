@@ -61,7 +61,8 @@ class MockEndEffectorDriver : public AbstractEndEffectorDriver
         int syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &temperature_list) override;
         int syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list) override;
         int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list) override;
-
+        
+        int scan(std::vector<uint8_t> &id_list) override;
     public:
         int ping(uint8_t id) override;
 

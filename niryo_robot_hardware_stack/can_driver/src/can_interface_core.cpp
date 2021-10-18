@@ -29,12 +29,14 @@
 #include <tuple>
 
 // common
+#include "common/model/abstract_single_motor_cmd.hpp"
 #include "common/util/util_defs.hpp"
 #include "can_driver/can_interface_core.hpp"
 #include "common/model/conveyor_state.hpp"
 #include "common/model/hardware_type_enum.hpp"
 #include "common/model/stepper_command_type_enum.hpp"
 #include "common/model/single_motor_cmd.hpp"
+#include "common/util/unique_ptr_cast.hpp"
 
 using ::std::lock_guard;
 using ::std::mutex;
@@ -226,10 +228,9 @@ int CanInterfaceCore::motorCmdReport(const JointState& jState, common::model::EH
             ros::Duration(0.5).sleep();
             ROS_INFO("CanInterfaceCore::motorCmdReport - Debug - Send torque on command to motor %d", motor_id);
 
-            std::shared_ptr<AbstractCanSingleMotorCmd> cmd_torque = std::make_shared<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_TORQUE,
-                                                                                                       motor_id,
-                                                                                                       std::initializer_list<int32_t>{1});
-            _can_manager->writeSingleCommand(cmd_torque);
+            _can_manager->writeSingleCommand(std::make_unique<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_TORQUE,
+                                             motor_id,
+                                             std::initializer_list<int32_t>{1}));
             ros::Duration(0.5).sleep();
 
             // move one direction
@@ -239,10 +240,9 @@ int CanInterfaceCore::motorCmdReport(const JointState& jState, common::model::EH
             ros::Duration(0.5).sleep();
 
             ROS_INFO("CanInterfaceCore::motorCmdReport - Debug - Send move command on motor %d", motor_id);
-            std::shared_ptr<AbstractCanSingleMotorCmd> cmd_pos = std::make_shared<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_RELATIVE_MOVE,
+            _can_manager->writeSingleCommand(std::make_unique<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_RELATIVE_MOVE,
                                                                                                   motor_id,
-                                                                                                  std::initializer_list<int32_t>{ -1000 * direction, 1500});
-            _can_manager->writeSingleCommand(cmd_pos);
+                                                                                                  std::initializer_list<int32_t>{ -1000 * direction, 1500}));
             ros::Duration(2).sleep();
             int32_t new_position = _can_manager->getPosition(jState);
             ROS_INFO("CanInterfaceCore::motorCmdReport - Debug - Get pose on motor %d: %d", motor_id, new_position);
@@ -252,10 +252,9 @@ int CanInterfaceCore::motorCmdReport(const JointState& jState, common::model::EH
             ros::Duration(0.5).sleep();
 
             ROS_INFO("CanInterfaceCore::motorCmdReport - Send can motor %d pose: %d ", motor_id, old_position);
-            std::shared_ptr<AbstractCanSingleMotorCmd> cmd_pos_2 = std::make_shared<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_RELATIVE_MOVE,
-                                                                                                  motor_id,
-                                                                                                  std::initializer_list<int32_t>{1000*direction, 1000});
-            _can_manager->writeSingleCommand(cmd_pos_2);
+            _can_manager->writeSingleCommand(std::make_unique<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_RELATIVE_MOVE,
+                                                                                motor_id,
+                                                                                std::initializer_list<int32_t>{1000*direction, 1000}));
             ros::Duration(2).sleep();
             int32_t new_position2 = _can_manager->getPosition(jState);
             ROS_INFO("CanInterfaceCore::motorCmdReport - Debug - get can motor %d pose: %d ", motor_id, new_position2);
@@ -264,10 +263,9 @@ int CanInterfaceCore::motorCmdReport(const JointState& jState, common::model::EH
 
             // torque off
             ROS_INFO("CanInterfaceCore::motorCmdReport - Debug - Send torque off command on can motor %d", motor_id);
-            std::shared_ptr<AbstractCanSingleMotorCmd> cmd_torque_2 = std::make_shared<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_TORQUE,
-                                                                                                         motor_id,
-                                                                                                         std::initializer_list<int32_t>{0});
-            _can_manager->writeSingleCommand(cmd_torque_2);
+            _can_manager->writeSingleCommand(std::make_unique<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_TORQUE,
+                                                                                motor_id,
+                                                                                std::initializer_list<int32_t>{0}));
             ros::Duration(0.2).sleep();
 
             if (abs(rest) < 250 || abs(rest2) < 250)
@@ -413,13 +411,14 @@ void CanInterfaceCore::activeDebugMode(bool mode)
     if (!mode)
     {
         lock_guard<mutex> lck(_control_loop_mutex);
-        std::shared_ptr<AbstractCanSingleMotorCmd> cmd_torque_2 = std::make_shared<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_TORQUE,
-                                                              2, std::initializer_list<int32_t>{0});
-        _can_manager->writeSingleCommand(cmd_torque_2);
+        // disable torque on motor 2
+        _can_manager->writeSingleCommand(std::make_unique<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_TORQUE,
+                                                              2, std::initializer_list<int32_t>{0}));
         ros::Duration(0.2).sleep();
-        std::shared_ptr<AbstractCanSingleMotorCmd> cmd_torque_3 = std::make_shared<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_TORQUE,
-                                                              3, std::initializer_list<int32_t>{0});
-        _can_manager->writeSingleCommand(cmd_torque_3);
+
+        // disable torque on motor 3
+        _can_manager->writeSingleCommand(std::make_unique<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_TORQUE,
+                                                              3, std::initializer_list<int32_t>{0}));
     }
 }
 
@@ -440,13 +439,15 @@ void CanInterfaceCore::controlLoop()
         }
         else if (_control_loop_flag)
         {
-            lock_guard<mutex> lck(_control_loop_mutex);
-            _can_manager->readStatus();
-
-            if (ros::Time::now().toSec() - _time_hw_data_last_write >= _delta_time_write)
             {
-                _time_hw_data_last_write = ros::Time::now().toSec();
-                _executeCommand();
+                lock_guard<mutex> lck(_control_loop_mutex);
+                _can_manager->readStatus();
+
+                if (ros::Time::now().toSec() - _time_hw_data_last_write >= _delta_time_write)
+                {
+                    _time_hw_data_last_write = ros::Time::now().toSec();
+                    _executeCommand();
+                }
             }
 
             bool isFreqMet = control_loop_rate.sleep();
@@ -468,29 +469,22 @@ void CanInterfaceCore::controlLoop()
  */
 void CanInterfaceCore::_executeCommand()
 {
-    bool need_sleep = false;
     if (!_joint_trajectory_cmd.empty())
     {
         _can_manager->executeJointTrajectoryCmd(_joint_trajectory_cmd);
         _joint_trajectory_cmd.clear();
-        need_sleep = true;
     }
 
     if (!_stepper_single_cmds.empty())
     {
         // as we use a queue, we don't need a mutex
-        if (need_sleep)
-            ros::Duration(0.01).sleep();
-        _can_manager->writeSingleCommand(_stepper_single_cmds.front());
+        _can_manager->writeSingleCommand(std::move(_stepper_single_cmds.front()));
         _stepper_single_cmds.pop();
-        need_sleep = true;
     }
     if (!_conveyor_cmds.empty())
     {
         // as we use a queue, we don't need a mutex
-        if (need_sleep)
-            ros::Duration(0.01).sleep();
-        _can_manager->writeSingleCommand(_conveyor_cmds.front());
+        _can_manager->writeSingleCommand(std::move(_conveyor_cmds.front()));
         _conveyor_cmds.pop();
     }
 }
@@ -504,7 +498,7 @@ void CanInterfaceCore::_executeCommand()
  * @param state
  * @return
  */
-int CanInterfaceCore::setConveyor(const std::shared_ptr<common::model::ConveyorState> state)
+int CanInterfaceCore::setConveyor(const std::shared_ptr<common::model::ConveyorState>& state)
 {
     int result = niryo_robot_msgs::CommandStatus::NO_CONVEYOR_FOUND;
 
@@ -522,13 +516,13 @@ int CanInterfaceCore::setConveyor(const std::shared_ptr<common::model::ConveyorS
         // send commands to init
         ROS_DEBUG("ConveyorInterfaceCore::addConveyor : Initializing for CAN bus");
 
-        _can_manager->writeSingleCommand(std::make_shared<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_MICRO_STEPS,
+        _can_manager->writeSingleCommand(std::make_unique<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_MICRO_STEPS,
                                                                                 state->getId(), std::initializer_list<int32_t>{static_cast<int32_t>(state->getMicroSteps())}));
 
-        _can_manager->writeSingleCommand(std::make_shared<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_MAX_EFFORT,
+        _can_manager->writeSingleCommand(std::make_unique<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_MAX_EFFORT,
                                                                                 state->getId(), std::initializer_list<int32_t>{static_cast<int32_t>(state->getMaxEffort())}));
 
-        _can_manager->writeSingleCommand(std::make_shared<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_CONVEYOR,
+        _can_manager->writeSingleCommand(std::make_unique<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_CONVEYOR,
                                                                                 state->getId(), std::initializer_list<int32_t>{false, 0, -1}));
 
         result = niryo_robot_msgs::CommandStatus::SUCCESS;
@@ -604,7 +598,7 @@ void CanInterfaceCore::clearConveyorCommandQueue()
  * @brief CanInterfaceCore::setTrajectoryControllerCommands
  * @param cmd
  */
-void CanInterfaceCore::setTrajectoryControllerCommands(const std::vector<std::pair<uint8_t, int32_t> > &cmd)
+void CanInterfaceCore::setTrajectoryControllerCommands(std::vector<std::pair<uint8_t, int32_t>> && cmd)
 {
     _joint_trajectory_cmd = cmd;
 }
@@ -615,7 +609,7 @@ void CanInterfaceCore::setTrajectoryControllerCommands(const std::vector<std::pa
  * - cannot be a template method because we need it to be virtual (no static polymorphism possible)
  * - dynamic polymorphism necessary to be able to cast into a derived class
  */
-void CanInterfaceCore::addSingleCommandToQueue(const std::shared_ptr<common::model::ISingleMotorCmd>& cmd)
+void CanInterfaceCore::addSingleCommandToQueue(std::unique_ptr<common::model::ISingleMotorCmd> && cmd)
 {
     ROS_DEBUG("CanInterfaceCore::addSingleCommandToQueue - %s", cmd->str().c_str());
 
@@ -630,7 +624,7 @@ void CanInterfaceCore::addSingleCommandToQueue(const std::shared_ptr<common::mod
             }
             else
             {
-                _conveyor_cmds.push(std::dynamic_pointer_cast<StepperSingleCmd>(cmd));
+                _conveyor_cmds.push(common::util::static_unique_ptr_cast<common::model::AbstractCanSingleMotorCmd>(std::move(cmd)));
             }
         }
         else
@@ -641,7 +635,7 @@ void CanInterfaceCore::addSingleCommandToQueue(const std::shared_ptr<common::mod
             }
             else
             {
-                _stepper_single_cmds.push(std::dynamic_pointer_cast<StepperSingleCmd>(cmd));
+                _stepper_single_cmds.push(common::util::static_unique_ptr_cast<common::model::AbstractCanSingleMotorCmd>(std::move(cmd)));
             }
         }
     }
@@ -651,17 +645,17 @@ void CanInterfaceCore::addSingleCommandToQueue(const std::shared_ptr<common::mod
  * @brief CanInterfaceCore::addSingleCommandToQueue
  * @param cmd
  */
-void CanInterfaceCore::addSingleCommandToQueue(const std::vector<std::shared_ptr<common::model::ISingleMotorCmd> >& cmd)
+void CanInterfaceCore::addSingleCommandToQueue(std::vector<std::unique_ptr<common::model::ISingleMotorCmd>> && cmd)
 {
-    for (auto const& c : cmd)
-        addSingleCommandToQueue(c);
+    for (size_t i = 0; i < cmd.size(); i++)
+        addSingleCommandToQueue(std::move(cmd[i]));
 }
 
 /**
  * @brief CanInterfaceCore::setSyncCommand
  * @param cmd
  */
-void CanInterfaceCore::setSyncCommand(const std::shared_ptr<common::model::ISynchronizeMotorCmd>& /*cmd*/)
+void CanInterfaceCore::setSyncCommand(std::unique_ptr<common::model::ISynchronizeMotorCmd> && /*cmd*/)  // NOLINT
 {
     ROS_INFO("CanInterfaceCore::setSyncCommand: need to be implemented");
 }

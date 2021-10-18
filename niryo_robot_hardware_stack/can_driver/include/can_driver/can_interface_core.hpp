@@ -68,19 +68,19 @@ class CanInterfaceCore : public common::util::IDriverCore, public common::util::
         // N.A.
 
         // conveyor control
-        int setConveyor(std::shared_ptr<common::model::ConveyorState> state) override;
+        int setConveyor(const std::shared_ptr<common::model::ConveyorState>& state) override;
         void unsetConveyor(uint8_t motor_id, uint8_t default_conveyor_id) override;
         int changeId(common::model::EHardwareType motor_type, uint8_t old_id, uint8_t new_id) override;
         
         void clearSingleCommandQueue();
         void clearConveyorCommandQueue();
 
-        void setTrajectoryControllerCommands(const std::vector<std::pair<uint8_t, int32_t> >& cmd);
+        void setTrajectoryControllerCommands(std::vector<std::pair<uint8_t, int32_t> >&& cmd);
 
-        void setSyncCommand(const std::shared_ptr<common::model::ISynchronizeMotorCmd>& cmd) override;
+        void setSyncCommand(std::unique_ptr<common::model::ISynchronizeMotorCmd>&& cmd) override;
 
-        void addSingleCommandToQueue(const std::shared_ptr<common::model::ISingleMotorCmd>& cmd) override;
-        void addSingleCommandToQueue(const std::vector<std::shared_ptr<common::model::ISingleMotorCmd>>& cmd) override;
+        void addSingleCommandToQueue(std::unique_ptr<common::model::ISingleMotorCmd>&& cmd) override;
+        void addSingleCommandToQueue(std::vector<std::unique_ptr<common::model::ISingleMotorCmd>>&& cmd) override;
 
         void startCalibration() override;
         void resetCalibration() override;
@@ -144,8 +144,8 @@ class CanInterfaceCore : public common::util::IDriverCore, public common::util::
         std::vector<std::pair<uint8_t, int32_t> > _joint_trajectory_cmd;
 
         // can cmds
-        std::queue<std::shared_ptr<common::model::AbstractCanSingleMotorCmd>> _stepper_single_cmds;
-        std::queue<std::shared_ptr<common::model::AbstractCanSingleMotorCmd>> _conveyor_cmds;
+        std::queue<std::unique_ptr<common::model::AbstractCanSingleMotorCmd>> _stepper_single_cmds;
+        std::queue<std::unique_ptr<common::model::AbstractCanSingleMotorCmd>> _conveyor_cmds;
 
         static constexpr int QUEUE_OVERFLOW = 20;
 };

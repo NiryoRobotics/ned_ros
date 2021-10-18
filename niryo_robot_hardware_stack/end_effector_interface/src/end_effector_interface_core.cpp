@@ -246,7 +246,7 @@ bool EndEffectorInterfaceCore::_callbackSetIOState(end_effector_interface::SetEE
 
     if (_end_effector_state && _end_effector_state->isValid())
     {
-        _ttl_interface->addSingleCommandToQueue(std::make_shared<EndEffectorSingleCmd>(EEndEffectorCommandType::CMD_TYPE_DIGITAL_OUTPUT,
+        _ttl_interface->addSingleCommandToQueue(std::make_unique<EndEffectorSingleCmd>(EEndEffectorCommandType::CMD_TYPE_DIGITAL_OUTPUT,
                                                                                        _end_effector_state->getId(), std::initializer_list<uint32_t>{req.data}));
         // TODO(cc) find a way to check if ok
         res.state = true;

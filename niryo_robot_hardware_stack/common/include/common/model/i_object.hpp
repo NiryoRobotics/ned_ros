@@ -33,7 +33,6 @@ namespace model
 class IObject
 {
 public:
-    IObject() = default;
     virtual ~IObject() = default;
 
     virtual void reset() = 0;
@@ -41,6 +40,7 @@ public:
     virtual bool isValid() const = 0;
 
 protected:
+    IObject() = default;
     // see https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c21-if-you-define-or-delete-any-copy-move-or-destructor-function-define-or-delete-them-all
     IObject( const IObject& ) = default;
     IObject( IObject&& ) = default;

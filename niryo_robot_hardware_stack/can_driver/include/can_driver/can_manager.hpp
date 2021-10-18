@@ -71,7 +71,7 @@ public:
     // IBusManager Interface
     bool init(ros::NodeHandle& nh) override;
 
-    void addHardwareComponent(const std::shared_ptr<common::model::AbstractHardwareState> &state) override;
+    void addHardwareComponent(std::shared_ptr<common::model::AbstractHardwareState> &&state) override;
 
     void removeHardwareComponent(uint8_t id) override;
     bool isConnectionOk() const override;
@@ -86,7 +86,7 @@ public:
     // commands
     int changeId(common::model::EHardwareType motor_type, uint8_t old_id, uint8_t new_id);
 
-    int writeSingleCommand(const std::shared_ptr<common::model::AbstractCanSingleMotorCmd>& cmd);
+    int writeSingleCommand(std::unique_ptr<common::model::AbstractCanSingleMotorCmd>&& cmd);
     void executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, int32_t> > cmd_vec);
 
     // read status

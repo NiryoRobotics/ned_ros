@@ -46,7 +46,6 @@ public:
 
     ~AbstractHardwareState() override = default;
 
-
     // getters
     EHardwareType getHardwareType() const;
     EComponentType getComponentType() const;
