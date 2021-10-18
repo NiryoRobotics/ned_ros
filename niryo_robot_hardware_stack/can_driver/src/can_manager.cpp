@@ -288,7 +288,7 @@ void CanManager::readStatus()
                     switch (control_byte)
                     {
                         case AbstractStepperDriver::CAN_DATA_POSITION:
-                            stepperState->setPositionState(driver->interpretePositionStatus(rxBuf));
+                            stepperState->setPosition(driver->interpretePositionStatus(rxBuf));
                             break;
                         case AbstractStepperDriver::CAN_DATA_DIAGNOSTICS:
                             stepperState->setTemperature(driver->interpreteTemperatureStatus(rxBuf));
@@ -536,7 +536,7 @@ int32_t CanManager::getPosition(const JointState &motor_state) const
     }
     auto jState = std::dynamic_pointer_cast<JointState>(_state_map.at(motor_id));
     if (jState)
-        return jState->getPositionState();
+        return jState->getPosition();
 
     return 0;
 }

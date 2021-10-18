@@ -76,11 +76,13 @@ class MockDxlDriver : public AbstractDxlDriver
 
         // ram read
         int readPosition(uint8_t id, uint32_t &present_position) override;
+        int readVelocity(uint8_t id, uint32_t &present_velocity) override;
         int readTemperature(uint8_t id, uint32_t &temperature) override;
         int readVoltage(uint8_t id, double &voltage) override;
         int readHwErrorStatus(uint8_t id, uint32_t &hardware_status) override;
 
         int syncReadPosition(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &position_list) override;
+        int syncReadVelocity(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &velocity_list) override;
 
         int syncReadFirmwareVersion(const std::vector<uint8_t> &id_list, std::vector<std::string> &firmware_list) override;
         int syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &temperature_list) override;
@@ -99,9 +101,7 @@ class MockDxlDriver : public AbstractDxlDriver
 
         int readLoad(uint8_t id, uint32_t &present_load) override;
         int syncReadLoad(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &load_list) override;
-        int readVelocity(uint8_t id, uint32_t &present_velocity) override;
-        int syncReadVelocity(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &velocity_list) override;
-    
+
         int removeGripper(uint8_t id = 11);
 
     private:

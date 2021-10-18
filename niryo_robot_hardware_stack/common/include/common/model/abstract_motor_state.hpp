@@ -46,10 +46,14 @@ public:
     ~AbstractMotorState() override = default;
 
     // getters
-    int getPositionState() const;
+    int getPosition() const;
+    int getVelocity() const;
+    int getTorque() const;
 
     // setters
-    void setPositionState(int pos);
+    void setPosition(int pos);
+    void setVelocity(int vel);
+    void setTorque(int torque);
 
     // tests
     bool isStepper() const;
@@ -62,7 +66,9 @@ public:
 
 protected:
     // read variables
-    int _position_state{0};
+    int _position{0};
+    int _velocity{0};
+    int _torque{0};
 
 protected:
     // see https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c67-a-polymorphic-class-should-suppress-public-copymove
@@ -78,9 +84,29 @@ protected:
  * @return
  */
 inline
-int AbstractMotorState::getPositionState() const
+int AbstractMotorState::getPosition() const
 {
-    return _position_state;
+    return _position;
+}
+
+/**
+ * @brief AbstractMotorState::getVelocityState
+ * @return
+ */
+inline
+int AbstractMotorState::getVelocity() const
+{
+    return _velocity;
+}
+
+/**
+ * @brief AbstractMotorState::getTorqueState
+ * @return
+ */
+inline
+int AbstractMotorState::getTorque() const
+{
+    return _torque;
 }
 
 /**

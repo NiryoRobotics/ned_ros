@@ -124,9 +124,9 @@ public:
     int readCustomCommand(uint8_t id, int32_t reg_address, int &value, int byte_number);
 
     // read status
-    bool readPositionStatus();
+    bool readJointsStatus();
     bool readEndEffectorStatus();
-    bool readHwStatus();
+    bool readHardwareStatus();
 
     int readMotorPID(uint8_t id,
                      uint32_t& pos_p_gain, uint32_t& pos_i_gain, uint32_t& pos_d_gain,
@@ -318,6 +318,10 @@ void TtlManager::retrieveFakeMotorData(const std::string& current_ns, std::map<u
     _nh.getParam(current_ns + "position", stepper_positions);
     assert(stepper_ids.size() == stepper_positions.size());
 
+    std::vector<int> stepper_velocities;
+    _nh.getParam(current_ns + "velocity", stepper_velocities);
+    assert(stepper_ids.size() == stepper_velocities.size());
+
     std::vector<int> stepper_temperatures;
     _nh.getParam(current_ns + "temperature", stepper_temperatures);
     assert(stepper_positions.size() == stepper_temperatures.size());
@@ -347,6 +351,7 @@ void TtlManager::retrieveFakeMotorData(const std::string& current_ns, std::map<u
         Reg tmp;
         tmp.id = static_cast<uint8_t>(stepper_ids.at(i));
         tmp.position = static_cast<uint32_t>(stepper_positions.at(i));
+        tmp.velocity = static_cast<uint32_t>(stepper_velocities.at(i));
         tmp.temperature = static_cast<uint32_t>(stepper_temperatures.at(i));
         tmp.voltage = stepper_voltages.at(i);
         tmp.model_number = static_cast<uint16_t>(stepper_model_numbers.at(i));

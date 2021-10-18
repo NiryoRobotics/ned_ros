@@ -85,9 +85,11 @@ class DxlDriver : public AbstractDxlDriver
         int syncWriteVelocityGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &velocity_list) override;
 
         int readPosition(uint8_t id, uint32_t &present_position) override;
-        
+        int readVelocity(uint8_t id, uint32_t &present_velocity) override;
+
         int syncReadPosition(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &position_list) override;
-        
+        int syncReadVelocity(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &velocity_list) override;
+
     public:
         // AbstractDxlDriver interface
         int writePID(uint8_t id, const std::vector<uint32_t>& data) override;
@@ -101,9 +103,6 @@ class DxlDriver : public AbstractDxlDriver
 
         int readLoad(uint8_t id, uint32_t &present_load) override;
         int syncReadLoad(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &load_list) override;
-
-        int readVelocity(uint8_t id, uint32_t &present_velocity) override;
-        int syncReadVelocity(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &velocity_list) override;
 
 private:
         int writePositionPGain(uint8_t id, uint32_t gain);

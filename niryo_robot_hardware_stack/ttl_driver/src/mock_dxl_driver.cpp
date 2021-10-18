@@ -352,6 +352,19 @@ int MockDxlDriver::readPosition(uint8_t id, uint32_t& present_position)
 }
 
 /**
+ * @brief MockDxlDriver::readVelocity
+ * @param id
+ * @param present_velocity
+ * @return
+ */
+int MockDxlDriver::readVelocity(uint8_t id, uint32_t& present_velocity)
+{
+  if (_fake_data->dxl_registers.count(id))
+      present_velocity = _fake_data->dxl_registers.at(id).velocity;
+  return COMM_SUCCESS;
+}
+
+/**
  * @brief MockDxlDriver::readTemperature
  * @param id
  * @param temperature
@@ -410,6 +423,28 @@ int MockDxlDriver::syncReadPosition(const std::vector<uint8_t> &id_list, std::ve
         if (!result.second)
             return GROUP_SYNC_REDONDANT_ID;  // redondant id
     }
+    return COMM_SUCCESS;
+}
+
+/**
+ * @brief MockDxlDriver::syncReadVelocity
+ * @param id_list
+ * @param velocity_list
+ * @return
+ */
+int MockDxlDriver::syncReadVelocity(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &velocity_list)
+{
+    std::map<uint8_t, uint8_t> countMap;
+    for (auto & id : id_list)
+    {
+        if (!_fake_data->dxl_registers.count(id))
+            return COMM_TX_ERROR;
+        velocity_list.emplace_back(_fake_data->dxl_registers.at(id).velocity);
+        auto result = countMap.insert(std::pair<uint8_t, uint8_t>(id, 1));
+        if (!result.second)
+            return GROUP_SYNC_REDONDANT_ID;  // redondant id
+    }
+
     return COMM_SUCCESS;
 }
 
@@ -656,33 +691,6 @@ int MockDxlDriver::syncReadLoad(const std::vector<uint8_t> &id_list, std::vector
     load_list = {};
     for (size_t i = 0; i < id_list.size(); i++)
         load_list.emplace_back(0);
-    return COMM_SUCCESS;
-}
-
-/**
- * @brief MockDxlDriver::readVelocity
- * @param id
- * @param present_velocity
- * @return
- */
-int MockDxlDriver::readVelocity(uint8_t id, uint32_t& present_velocity)
-{
-  if (_fake_data->dxl_registers.count(id))
-      present_velocity = _fake_data->dxl_registers.at(id).velocity;
-  return COMM_SUCCESS;
-}
-
-/**
- * @brief MockDxlDriver::syncReadVelocity
- * @param id_list
- * @param velocity_list
- * @return
- */
-int MockDxlDriver::syncReadVelocity(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &velocity_list)
-{
-    velocity_list = {};
-    for (size_t i = 0; i < id_list.size(); i++)
-        velocity_list.emplace_back(0);
     return COMM_SUCCESS;
 }
 

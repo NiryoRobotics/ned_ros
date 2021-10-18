@@ -409,18 +409,17 @@ void JointHardwareInterface::sendInitMotorsParams()
 
 /**
  * @brief JointHardwareInterface::read
+ * Reads the current state of the robot and update pos and vel of
  */
 void JointHardwareInterface::read(const ros::Time &/*time*/, const ros::Duration &/*period*/)
 {
-    int newPositionState = 0;
-
     for (auto& jState : _joint_list)
     {
         if (jState && jState->isValid())
         {
-            newPositionState = jState->getPositionState();
-
-            jState->pos = jState->to_rad_pos(newPositionState);
+            jState->pos = jState->to_rad_pos(jState->getPosition());
+            jState->vel = jState->getVelocity();
+            jState->eff = jState->getTorque();
         }
     }
 
