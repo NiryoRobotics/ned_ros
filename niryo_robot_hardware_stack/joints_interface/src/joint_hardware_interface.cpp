@@ -399,7 +399,7 @@ void JointHardwareInterface::sendInitMotorsParams()
                                                      dxlState->getFF1Gain(),
                                                      dxlState->getFF2Gain()});
 
-                    _ttl_interface->addSingleCommandToQueue(std::make_shared<DxlSingleCmd>(cmd_pid));
+                    _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(cmd_pid));
                     ros::Duration(0.05).sleep();
                 }
             }

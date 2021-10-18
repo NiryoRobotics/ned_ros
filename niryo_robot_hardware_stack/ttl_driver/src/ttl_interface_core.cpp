@@ -1127,14 +1127,14 @@ bool TtlInterfaceCore::_callbackWritePIDValue(ttl_driver::WritePIDValue::Request
 {
     int result = niryo_robot_msgs::CommandStatus::FAILURE;
 
-    auto dxl_cmd_pos_p = std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_PID,
+    auto dxl_cmd_pos_p = std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_PID,
                                                         req.id, std::initializer_list<uint32_t>{req.pos_p_gain, req.pos_i_gain, req.pos_d_gain,
                                                                                                 req.vel_p_gain, req.vel_i_gain,
                                                                                                 req.ff1_gain, req.ff2_gain});
 
     if (dxl_cmd_pos_p->isValid())
     {
-        addSingleCommandToQueue(dxl_cmd_pos_p);
+        addSingleCommandToQueue(std::move(dxl_cmd_pos_p));
         result = niryo_robot_msgs::CommandStatus::SUCCESS;
     }
 
@@ -1202,14 +1202,14 @@ bool TtlInterfaceCore::_callbackWriteVelocityProfile(ttl_driver::WriteVelocityPr
 {
   int result = niryo_robot_msgs::CommandStatus::FAILURE;
 
-  auto dxl_cmd_pos_p = std::make_shared<StepperTtlSingleCmd>(EStepperCommandType::CMD_TYPE_VELOCITY_PROFILE,
+  auto dxl_cmd_pos_p = std::make_unique<StepperTtlSingleCmd>(EStepperCommandType::CMD_TYPE_VELOCITY_PROFILE,
                                                       req.id, std::initializer_list<uint32_t>{req.v_start, req.a_1, req.v_1,
                                                                                               req.a_max, req.v_max, req.d_max,
                                                                                               req.d_1, req.v_stop});
 
   if (dxl_cmd_pos_p->isValid())
   {
-      addSingleCommandToQueue(dxl_cmd_pos_p);
+      addSingleCommandToQueue(std::move(dxl_cmd_pos_p));
       result = niryo_robot_msgs::CommandStatus::SUCCESS;
   }
 
