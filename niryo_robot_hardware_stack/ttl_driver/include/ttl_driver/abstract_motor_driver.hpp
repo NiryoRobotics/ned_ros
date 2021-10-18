@@ -69,8 +69,10 @@ public:
 
     // ram read
     virtual int readPosition(uint8_t id, uint32_t& present_position) = 0;
+    virtual int readVelocity(uint8_t id, uint32_t &present_position) = 0;
 
     virtual int syncReadPosition(const std::vector<uint8_t>& id_list, std::vector<uint32_t>& position_list) = 0;
+    virtual int syncReadVelocity(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &position_list) = 0;
 };
 
 } // ttl_driver

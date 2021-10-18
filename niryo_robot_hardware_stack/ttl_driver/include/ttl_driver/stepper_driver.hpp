@@ -79,8 +79,10 @@ class StepperDriver : public AbstractStepperDriver
 
         // ram read
         int readPosition(uint8_t id, uint32_t &present_position) override;
+        int readVelocity(uint8_t id, uint32_t &present_velocity) override;
 
         int syncReadPosition(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &position_list) override;
+        int syncReadVelocity(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &velocity_list) override;
 
         // AbstractStepperDriver interface
     public:
@@ -88,8 +90,9 @@ class StepperDriver : public AbstractStepperDriver
 
         int startHoming(uint8_t id) override;
         int writeHomingDirection(uint8_t id, uint8_t direction) override;
+        int writeHomingStallThreshold(uint8_t id, uint8_t threshold) override;
+
         int readHomingStatus(uint8_t id, uint32_t &status) override;
-        int readGoalVelocity(uint8_t id, uint32_t& present_velocity) override;
 
         int readFirmwareRunning(uint8_t id, bool &is_running) override;
 };
@@ -233,7 +236,13 @@ int StepperDriver<reg_type>::syncWriteVelocityGoal(const std::vector<uint8_t> &i
 template<typename reg_type>
 int StepperDriver<reg_type>::readPosition(uint8_t id, uint32_t& present_position)
 {
-    return read(reg_type::ADDR_PRESENT_POSITION, reg_type::SIZE_PRESENT_POSITION, id, present_position);
+  return read(reg_type::ADDR_PRESENT_POSITION, reg_type::SIZE_PRESENT_POSITION, id, present_position);
+}
+
+template<typename reg_type>
+int StepperDriver<reg_type>::readVelocity(uint8_t id, uint32_t &present_velocity)
+{
+  return read(reg_type::ADDR_PRESENT_VELOCITY, reg_type::SIZE_PRESENT_VELOCITY, id, present_velocity);
 }
 
 template<typename reg_type>
@@ -261,6 +270,12 @@ template<typename reg_type>
 int StepperDriver<reg_type>::syncReadPosition(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &position_list)
 {
   return syncRead(reg_type::ADDR_PRESENT_POSITION, reg_type::SIZE_PRESENT_POSITION, id_list, position_list);
+}
+
+template<typename reg_type>
+int StepperDriver<reg_type>::syncReadVelocity(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &velocity_list)
+{
+  return syncRead(reg_type::ADDR_PRESENT_VELOCITY, reg_type::SIZE_PRESENT_VELOCITY, id_list, velocity_list);
 }
 
 template<typename reg_type>
@@ -363,19 +378,19 @@ int StepperDriver<reg_type>::startHoming(uint8_t id)
 template<typename reg_type>
 int StepperDriver<reg_type>::writeHomingDirection(uint8_t id, uint8_t direction)
 {
-    return write(reg_type::ADDR_HOMING_DIRECTION, reg_type::SIZE_HOMING_DIRECTION, id, direction);
+  return write(reg_type::ADDR_HOMING_DIRECTION, reg_type::SIZE_HOMING_DIRECTION, id, direction);
+}
+
+template<typename reg_type>
+int StepperDriver<reg_type>::writeHomingStallThreshold(uint8_t id, uint8_t threshold)
+{
+  return write(reg_type::ADDR_HOMING_STALL_THRESHOLD, reg_type::SIZE_HOMING_STALL_THRESHOLD, id, threshold);
 }
 
 template<typename reg_type>
 int StepperDriver<reg_type>::readHomingStatus(uint8_t id, uint32_t &status)
 {
     return read(reg_type::ADDR_HOMING_STATUS, reg_type::SIZE_HOMING_STATUS, id, status);
-}
-
-template<typename reg_type>
-int StepperDriver<reg_type>::readGoalVelocity(uint8_t id, uint32_t& present_velocity)
-{
-    return read(reg_type::ADDR_GOAL_VELOCITY, reg_type::SIZE_GOAL_VELOCITY, id, present_velocity);
 }
 
 template<typename reg_type>
