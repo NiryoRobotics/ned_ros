@@ -486,6 +486,7 @@ template<typename reg_type>
 int StepperDriver<reg_type>::readVelocityProfile(uint8_t id, std::vector<uint32_t> &data_list)
 {
   int res = 0;
+  data_list.clear();
 
   uint32_t v_start{0};
   if (COMM_SUCCESS != readVStart(id, v_start))
@@ -616,6 +617,7 @@ int StepperDriver<reg_type>::startHoming(uint8_t id)
  * @brief StepperDriver<reg_type>::writeHomingDirection
  * @param id
  * @param direction
+ * @param stall_threshold
  * @return
  * TODO(CC) remove sleeps when fw will be updated
  */

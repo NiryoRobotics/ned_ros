@@ -506,15 +506,16 @@ int MockDxlDriver::readPID(uint8_t id, std::vector<uint32_t> &data)
 {
     int result = COMM_RX_FAIL;
 
+    data.clear();
     if (_fake_data->dxl_registers.count(id))
     {
-        data.at(0) = _fake_data->dxl_registers.at(id).position_p_gain;
-        data.at(1) = _fake_data->dxl_registers.at(id).position_i_gain;
-        data.at(2) = _fake_data->dxl_registers.at(id).position_d_gain;
-        data.at(3) = _fake_data->dxl_registers.at(id).velocity_p_gain;
-        data.at(4) = _fake_data->dxl_registers.at(id).velocity_i_gain;
-        data.at(5) = _fake_data->dxl_registers.at(id).ff1_gain;
-        data.at(6) = _fake_data->dxl_registers.at(id).ff2_gain;
+        data.emplace_back(_fake_data->dxl_registers.at(id).position_p_gain);
+        data.emplace_back(_fake_data->dxl_registers.at(id).position_i_gain);
+        data.emplace_back(_fake_data->dxl_registers.at(id).position_d_gain);
+        data.emplace_back(_fake_data->dxl_registers.at(id).velocity_p_gain);
+        data.emplace_back(_fake_data->dxl_registers.at(id).velocity_i_gain);
+        data.emplace_back(_fake_data->dxl_registers.at(id).ff1_gain);
+        data.emplace_back(_fake_data->dxl_registers.at(id).ff2_gain);
 
         result = COMM_SUCCESS;
     }

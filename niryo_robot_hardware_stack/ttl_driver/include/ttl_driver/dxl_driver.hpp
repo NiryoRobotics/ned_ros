@@ -545,6 +545,7 @@ template<typename reg_type>
 int DxlDriver<reg_type>::readPID(uint8_t id, std::vector<uint32_t>& data_list)
 {
     int res = 0;
+    data_list.clear();
 
     uint32_t pos_p_gain{0};
     if (COMM_SUCCESS != readPositionPGain(id, pos_p_gain))

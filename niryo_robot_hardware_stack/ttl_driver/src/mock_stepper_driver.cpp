@@ -317,7 +317,7 @@ int MockStepperDriver::readPosition(uint8_t id, uint32_t& present_position)
 /**
  * @brief MockStepperDriver::readVelocity
  * @param id
- * @param present_position
+ * @param present_velocity
  * @return
  */
 int MockStepperDriver::readVelocity(uint8_t id, uint32_t &present_velocity)
@@ -516,16 +516,18 @@ int MockStepperDriver::syncReadHwErrorStatus(const std::vector<uint8_t> &id_list
 int MockStepperDriver::readVelocityProfile(uint8_t id, std::vector<uint32_t>& data)
 {
     int result = COMM_RX_FAIL;
+
+    data.clear();
     if (_fake_data->stepper_registers.count(id))
     {
-        data.at(0) = _fake_data->stepper_registers.at(id).v_start;
-        data.at(1) = _fake_data->stepper_registers.at(id).a_1;
-        data.at(2) = _fake_data->stepper_registers.at(id).v_1;
-        data.at(3) = _fake_data->stepper_registers.at(id).a_max;
-        data.at(4) = _fake_data->stepper_registers.at(id).v_max;
-        data.at(5) = _fake_data->stepper_registers.at(id).d_max;
-        data.at(6) = _fake_data->stepper_registers.at(id).d_1;
-        data.at(7) = _fake_data->stepper_registers.at(id).v_stop;
+        data.emplace_back(_fake_data->stepper_registers.at(id).v_start);
+        data.emplace_back(_fake_data->stepper_registers.at(id).a_1);
+        data.emplace_back(_fake_data->stepper_registers.at(id).v_1);
+        data.emplace_back(_fake_data->stepper_registers.at(id).a_max);
+        data.emplace_back(_fake_data->stepper_registers.at(id).v_max);
+        data.emplace_back(_fake_data->stepper_registers.at(id).d_max);
+        data.emplace_back(_fake_data->stepper_registers.at(id).d_1);
+        data.emplace_back(_fake_data->stepper_registers.at(id).v_stop);
 
         result = COMM_SUCCESS;
     }
@@ -579,6 +581,7 @@ int MockStepperDriver::startHoming(uint8_t id)
  * @brief MockStepperDriver::writeHomingDirection
  * @param id
  * @param direction
+ * @param stall_threshold
  * @return
  */
 int MockStepperDriver::writeHomingSetup(uint8_t id, uint8_t /*direction*/, uint8_t /*stall_threshold*/)

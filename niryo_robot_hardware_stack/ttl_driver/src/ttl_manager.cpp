@@ -1070,25 +1070,27 @@ int TtlManager::readMotorPID(uint8_t id,
         if (_driver_map.count(motor_type) && _driver_map.at(motor_type))
         {
             auto driver = std::dynamic_pointer_cast<AbstractDxlDriver>(_driver_map.at(motor_type));
-
-            std::vector<uint32_t> data(7);
-            result = driver->readPID(id, data);
-
-            if(COMM_SUCCESS == result)
+            if (driver)
             {
-                pos_p_gain = data.at(0);
-                pos_i_gain = data.at(1);
-                pos_d_gain = data.at(2);
-                vel_p_gain = data.at(3);
-                vel_i_gain = data.at(4);
-                ff1_gain = data.at(5);
-                ff2_gain = data.at(6);
-            }
-            else
-            {
-                ROS_WARN("TtlManager::readMotorPID - Failed to read PID: %d", result);
-                result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
-                return result;
+                std::vector<uint32_t> data;
+                result = driver->readPID(id, data);
+
+                if(COMM_SUCCESS == result)
+                {
+                    pos_p_gain = data.at(0);
+                    pos_i_gain = data.at(1);
+                    pos_d_gain = data.at(2);
+                    vel_p_gain = data.at(3);
+                    vel_i_gain = data.at(4);
+                    ff1_gain = data.at(5);
+                    ff2_gain = data.at(6);
+                }
+                else
+                {
+                    ROS_WARN("TtlManager::readMotorPID - Failed to read PID: %d", result);
+                    result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
+                    return result;
+                }
             }
         }
         else
@@ -1135,26 +1137,28 @@ int TtlManager::readVelocityProfile(uint8_t id, uint32_t &v_start, uint32_t &a_1
         if (_driver_map.count(motor_type) && _driver_map.at(motor_type))
         {
             auto driver = std::dynamic_pointer_cast<AbstractStepperDriver>(_driver_map.at(motor_type));
-
-            std::vector<uint32_t> data(7);
-            result = driver->readVelocityProfile(id, data);
-
-            if(COMM_SUCCESS == result)
+            if (driver)
             {
-                v_start = data.at(0);
-                a_1 = data.at(1);
-                v_1 = data.at(2);
-                a_max = data.at(3);
-                v_max = data.at(4);
-                d_max = data.at(5);
-                d_1 = data.at(6);
-                v_stop = data.at(7);
-            }
-            else
-            {
-                ROS_WARN("TtlManager::readVelocityProfile - Failed to read velocity profile: %d", result);
-                result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
-                return result;
+                std::vector<uint32_t> data;
+                result = driver->readVelocityProfile(id, data);
+
+                if(COMM_SUCCESS == result)
+                {
+                    v_start = data.at(0);
+                    a_1 = data.at(1);
+                    v_1 = data.at(2);
+                    a_max = data.at(3);
+                    v_max = data.at(4);
+                    d_max = data.at(5);
+                    d_1 = data.at(6);
+                    v_stop = data.at(7);
+                }
+                else
+                {
+                    ROS_WARN("TtlManager::readVelocityProfile - Failed to read velocity profile: %d", result);
+                    result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
+                    return result;
+                }
             }
         }
         else
