@@ -45,6 +45,7 @@ using ::common::model::BusProtocolEnum;
 using ::common::model::StepperMotorState;
 using ::common::model::DxlMotorState;
 using ::common::model::DxlSyncCmd;
+using ::common::model::DxlSingleCmd;
 using ::common::model::StepperSingleCmd;
 using ::common::model::StepperTtlSyncCmd;
 using ::common::model::StepperTtlSingleCmd;
@@ -372,7 +373,6 @@ void JointHardwareInterface::sendInitMotorsParams()
                     else if (jState->getBusProtocol() == EBusProtocol::TTL)
                     {
                       // CMD_TYPE_VELOCITY_PROFILE cmd
-                      // TODO(CC) : Carefull, this command does not work if the torque is on
                       StepperTtlSingleCmd cmd_profile(
                                   EStepperCommandType::CMD_TYPE_VELOCITY_PROFILE,
                                   stepperState->getId(),
@@ -388,11 +388,19 @@ void JointHardwareInterface::sendInitMotorsParams()
                 auto dxlState = dynamic_pointer_cast<DxlMotorState>(jState);
                 if (dxlState && jState->getBusProtocol() == EBusProtocol::TTL)
                 {
-                    if (!_ttl_interface->setMotorPID(*dxlState))
-                    {
-                        ROS_ERROR("JointHardwareInterface::sendInitMotorsParams - Error setting motor PID for dynamixel id %d",
-                                static_cast<int>(dxlState->getId()));
-                    }
+                    // CMD_TYPE_PID cmd
+                    DxlSingleCmd cmd_pid(
+                                  EDxlCommandType::CMD_TYPE_PID,
+                                  dxlState->getId(),{dxlState->getPositionPGain(),
+                                                     dxlState->getPositionIGain(),
+                                                     dxlState->getPositionDGain(),
+                                                     dxlState->getVelocityPGain(),
+                                                     dxlState->getVelocityIGain(),
+                                                     dxlState->getFF1Gain(),
+                                                     dxlState->getFF2Gain()});
+
+                    _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(cmd_pid));
+                    ros::Duration(0.05).sleep();
                 }
             }
         }
@@ -401,18 +409,17 @@ void JointHardwareInterface::sendInitMotorsParams()
 
 /**
  * @brief JointHardwareInterface::read
+ * Reads the current state of the robot and update pos and vel of
  */
 void JointHardwareInterface::read(const ros::Time &/*time*/, const ros::Duration &/*period*/)
 {
-    int newPositionState = 0;
-
     for (auto& jState : _joint_list)
     {
         if (jState && jState->isValid())
         {
-            newPositionState = jState->getPositionState();
-
-            jState->pos = jState->to_rad_pos(newPositionState);
+            jState->pos = jState->to_rad_pos(jState->getPosition());
+            jState->vel = jState->getVelocity();
+            jState->eff = jState->getTorque();
         }
     }
 
@@ -579,33 +586,6 @@ void JointHardwareInterface::synchronizeMotors(bool synchronize)
                 _can_interface->addSingleCommandToQueue(std::make_unique<StepperSingleCmd>(stepper_cmd));
         }
     }
-}
-
-void JointHardwareInterface::setSteppersProfiles()
-{
-  for (auto const& jState : _joint_list)
-  {
-      if (jState)
-      {
-          if (jState->isStepper())
-          {
-              auto stepperState = std::dynamic_pointer_cast<StepperMotorState>(jState);
-              if (stepperState)
-              {
-                  if (jState->getBusProtocol() == EBusProtocol::TTL)
-                  {
-                    // CMD_TYPE_VELOCITY_PROFILE cmd
-                    StepperTtlSingleCmd cmd_profile(
-                                EStepperCommandType::CMD_TYPE_VELOCITY_PROFILE,
-                                stepperState->getId(),
-                                stepperState->getVelocityProfile());
-                    _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperTtlSingleCmd>(cmd_profile));
-                    ros::Duration(0.05).sleep();
-                  }
-              }
-          }
-      }
-  }
 }
 
 }  // namespace joints_interface

@@ -1,0 +1,20 @@
+# Check stepper ttl reference doc for
+# the complete register table
+
+uint8 id
+
+uint32 v_start
+
+uint32 a_1
+uint32 v_1
+
+uint32 a_max
+uint32 v_max
+uint32 d_max
+
+uint32 d_1
+
+uint32 v_stop
+---
+int32 status
+string message

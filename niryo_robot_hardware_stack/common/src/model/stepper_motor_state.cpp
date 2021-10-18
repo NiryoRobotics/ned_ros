@@ -185,39 +185,24 @@ std::string StepperMotorState::str() const
  * @brief StepperMotorState::to_motor_pos
  * @param pos_rad
  * @return
- * TODO(CC) find a similar formula for both
  */
 int StepperMotorState::to_motor_pos(double pos_rad)
 {
-    if (getBusProtocol() == common::model::EBusProtocol::CAN)
-    {
-        double numerator = (STEPPERS_MOTOR_STEPS_PER_REVOLUTION * _micro_steps * _gear_ratio * pos_rad / (2*M_PI));
-        return static_cast<int>(std::round( numerator * _direction));
-    }
-
-    int pos = static_cast<int>(std::round((pos_rad*180) / (M_PI * 0.088) * _direction + _offset_position));
-    return pos > 0 ? pos : 0;
+    return static_cast<int>(std::round(_offset_position + pos_rad * (getMultiplierRatio() * _direction) / ( 2 * M_PI)));
 }
 
 /**
  * @brief StepperMotorState::to_rad_pos
  * @param pos
  * @return
- * TODO(CC) find a similar formula for both
  */
 double StepperMotorState::to_rad_pos(int pos)
 {
-    if (getBusProtocol() == common::model::EBusProtocol::CAN)
-    {
-        assert(0.0 != (STEPPERS_MOTOR_STEPS_PER_REVOLUTION * _micro_steps * _gear_ratio * RADIAN_TO_DEGREE));
-        return static_cast<double>(
-                    (pos * 2*M_PI) /
-                    (STEPPERS_MOTOR_STEPS_PER_REVOLUTION * _micro_steps * _gear_ratio) *
-                    _direction);
-    }
+    double multiplier_ratio = getMultiplierRatio();
 
-    auto pos_rad = static_cast<double>((pos - _offset_position) * 0.088 * (M_PI / 180) * _direction);
-    return pos_rad;
+    assert(0.0 != multiplier_ratio);
+
+    return static_cast<double>( (pos - _offset_position) * _direction * 2 * M_PI / multiplier_ratio);
 }
 
 /**

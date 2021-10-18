@@ -49,7 +49,7 @@ enum class EStepperCommandType { CMD_TYPE_NONE=0,
                                  CMD_TYPE_UPDATE_CONVEYOR=12,
                                  CMD_TYPE_LEARNING_MODE=13,
                                  CMD_TYPE_PING=14,
-                                 CMD_TYPE_CALIBRATION_DIRECTION=15,
+                                 CMD_TYPE_CALIBRATION_SETUP=15,
                                  CMD_TYPE_VELOCITY_PROFILE=16,
                                  CMD_TYPE_UNKNOWN=100
                                };

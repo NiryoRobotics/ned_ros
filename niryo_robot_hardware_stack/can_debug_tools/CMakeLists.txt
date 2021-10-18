@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(ttl_driver)
+project(can_debug_tools)
 message( STATUS "\n## Reading ${PROJECT_NAME}/CMakeLists.txt...")
-
 
 #retrieve architecture
 execute_process( COMMAND
@@ -17,47 +16,22 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 ## By adding -Wall and -Werror, the compiler does not ignore warnings anymore,
 ## enforcing cleaner code.
-add_definitions(-Wall  -Werror -Os)
+add_definitions(-Wall  -Werror)
 
 ## Find catkin macros and libraries
 find_package(catkin REQUIRED
     COMPONENTS
-      common
-      dynamixel_sdk
-      message_generation
-      niryo_robot_msgs
-      roscpp
-      std_msgs
+      mcp_can_rpi
+)
+ 
+find_package(Boost REQUIRED
+    COMPONENTS
+        program_options
 )
 
 ###############################################
 # Declare ROS messages, services and actions ##
 ###############################################
-
-add_message_files(
-  FILES
-    ArrayMotorHardwareStatus.msg
-    MotorCommand.msg
-    MotorHardwareStatus.msg
-)
-
-add_service_files(
-  DIRECTORY
-    srv
-  FILES
-    ReadCustomValue.srv
-    ReadPIDValue.srv
-    ReadVelocityProfile.srv
-    SendCustomValue.srv
-    WritePIDValue.srv
-    WriteVelocityProfile.srv
-)
-
-generate_messages(
-  DEPENDENCIES
-    niryo_robot_msgs
-    std_msgs
-)
 
 ###################################
 ## catkin specific configuration ##
@@ -68,17 +42,8 @@ generate_messages(
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
-    INCLUDE_DIRS
-        include
-    LIBRARIES
-        ${PROJECT_NAME}
-    CATKIN_DEPENDS
-        common
-        dynamixel_sdk
-        message_runtime
-        niryo_robot_msgs
-        roscpp
-        std_msgs
+  CATKIN_DEPENDS 
+    mcp_can_rpi
 )
 
 ###########
@@ -90,44 +55,21 @@ catkin_package(
 include_directories(
     include
     ${catkin_INCLUDE_DIRS}
+    ${Boost_INCLUDE_DIRS}
 )
 
 ## Declare libs and execs
-add_library(${PROJECT_NAME}
-  src/abstract_dxl_driver.cpp
-  src/abstract_end_effector_driver.cpp
-  src/abstract_motor_driver.cpp
-  src/abstract_stepper_driver.cpp
-  src/abstract_ttl_driver.cpp
-  src/mock_dxl_driver.cpp
-  src/mock_end_effector_driver.cpp
-  src/mock_stepper_driver.cpp
-  src/ttl_interface_core.cpp
-  src/ttl_manager.cpp
-)
+add_library(${PROJECT_NAME}_core
+    src/can_tools.cpp)
 
-add_executable(${PROJECT_NAME}_node
-  src/ttl_driver_node.cpp
-)
+add_executable(${PROJECT_NAME}
+    src/can_debug.cpp)
 
-## Add dependencies to exported targets, like ROS msgs or srvs
-add_dependencies(${PROJECT_NAME}
-    niryo_robot_msgs_generate_messages_cpp
-    ${PROJECT_NAME}_generate_messages_cpp
-)
-
-add_dependencies(${PROJECT_NAME}_node
-  ${catkin_EXPORTED_TARGETS}
-)
-
-## Specify libraries to link executable targets against
-target_link_libraries(${PROJECT_NAME}
-  ${catkin_LIBRARIES}
-  pthread
-)
-
-target_link_libraries(${PROJECT_NAME}_node
-  ${PROJECT_NAME}
+target_link_libraries(${PROJECT_NAME} 
+    ${PROJECT_NAME}_core
+    ${catkin_LIBRARIES}
+    ${Boost_LIBRARIES}
+    pthread
 )
 
 #############
@@ -148,42 +90,17 @@ endif()
 #############
 
 if(CATKIN_ENABLE_TESTING)
-  find_package(rostest REQUIRED)
-
-  if ("${ARCHITECTURE}" MATCHES "^(arm.*|aarch64.*|arm64.*)$")
-    add_rostest_gtest(${PROJECT_NAME}_unit_tests
-      test/unit_tests.test
-      test/unit_tests.cpp
-    )
-  else()
-    add_rostest_gtest(${PROJECT_NAME}_unit_tests
-      test/unit_tests_fake.test
-      test/unit_tests.cpp
-    )
-  endif()
+    if ("${ARCHITECTURE}" MATCHES "^(arm.*|aarch64.*|arm64.*)$")
+      catkin_add_gtest(
+        ${PROJECT_NAME}_unit_tests
+        test/can_tools_unit_tests.cpp
+      )
+    endif()
 
   if(TARGET ${PROJECT_NAME}_unit_tests)
     target_link_libraries(${PROJECT_NAME}_unit_tests
-      ${PROJECT_NAME}
-      ${catkin_LIBRARIES}
-    )
-  endif()
-
-  if ("${ARCHITECTURE}" MATCHES "^(arm.*|aarch64.*|arm64.*)$")
-    add_rostest_gtest(${PROJECT_NAME}_integration_tests
-      test/service_client.test
-      test/service_client.cpp
-    )
-  else()
-    add_rostest_gtest(${PROJECT_NAME}_integration_tests
-      test/service_client_fake.test
-      test/service_client.cpp
-    )  
-  endif()
-  
-  if(TARGET ${PROJECT_NAME}_integration_tests)
-    target_link_libraries(${PROJECT_NAME}_integration_tests
-      ${PROJECT_NAME}
+        ${catkin_LIBRARIES}
+        ${PROJECT_NAME}_core
     )
   endif()
 
@@ -199,20 +116,19 @@ if(CATKIN_ENABLE_TESTING)
   endif()
 endif()
 
-
 #############
 ## Install ##
 #############
 
 install(
-  TARGETS ${PROJECT_NAME}
+  TARGETS ${PROJECT_NAME}_core
   ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
   RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
 )
 
 install(
-  TARGETS ${PROJECT_NAME}_node
+  TARGETS ${PROJECT_NAME}
   RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )
 
@@ -222,20 +138,9 @@ install(
   DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
 )
 
-
 if (rosdoc_lite_FOUND)
   install(
     DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc/
     DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/doc
   )
 endif()
-
-install(
-  DIRECTORY launch/
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
-)
-
-install(
-  DIRECTORY config/
-  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/config
-)

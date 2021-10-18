@@ -36,6 +36,10 @@ AbstractStepperDriver::AbstractStepperDriver(std::shared_ptr<dynamixel::PortHand
     AbstractMotorDriver(std::move(portHandler), std::move(packetHandler))
 {}
 
+/**
+ * @brief AbstractStepperDriver::str
+ * @return
+ */
 std::string AbstractStepperDriver::str() const
 {
     return "Abstract Stepper Driver  (" + AbstractMotorDriver::str() + ")";
@@ -52,17 +56,18 @@ int AbstractStepperDriver::writeSingleCmd(std::unique_ptr<common::model::Abstrac
         switch (EStepperCommandType(cmd->getCmdType()))
         {
         case EStepperCommandType::CMD_TYPE_VELOCITY:
-            return setGoalVelocity(cmd->getId(), cmd->getParam());
+            return writeGoalVelocity(cmd->getId(), cmd->getParam());
         case EStepperCommandType::CMD_TYPE_POSITION:
-            return setGoalPosition(cmd->getId(), cmd->getParam());
+            return writeGoalPosition(cmd->getId(), cmd->getParam());
         case EStepperCommandType::CMD_TYPE_TORQUE:
-            return setTorqueEnable(cmd->getId(), cmd->getParam());
+            return writeTorqueEnable(cmd->getId(), cmd->getParam());
         case EStepperCommandType::CMD_TYPE_LEARNING_MODE:
-            return setTorqueEnable(cmd->getId(), !cmd->getParam());
+            return writeTorqueEnable(cmd->getId(), !cmd->getParam());
         case EStepperCommandType::CMD_TYPE_CALIBRATION:
             return startHoming(cmd->getId());
-        case EStepperCommandType::CMD_TYPE_CALIBRATION_DIRECTION:
-            return writeHomingDirection(cmd->getId(), static_cast<uint8_t>(cmd->getParam()));
+        case EStepperCommandType::CMD_TYPE_CALIBRATION_SETUP:
+            return writeHomingSetup(cmd->getId(), static_cast<uint8_t>(cmd->getParams().at(0)),
+                                                  static_cast<uint8_t>(cmd->getParams().at(1)));
         case EStepperCommandType::CMD_TYPE_PING:
             return ping(cmd->getId());
         case EStepperCommandType::CMD_TYPE_CONVEYOR:
@@ -70,14 +75,14 @@ int AbstractStepperDriver::writeSingleCmd(std::unique_ptr<common::model::Abstrac
             std::vector<uint32_t> params = cmd->getParams();
             if (!params[0])
             {
-                return setGoalVelocity(cmd->getId(), 0);
+                return writeGoalVelocity(cmd->getId(), 0);
             }
 
             // convert direction and speed into signed speed
             int8_t dir = static_cast<int8_t>(cmd->getParams().at(2));
             // normal warning : we need to put an int32 inside an uint32_t
             uint32_t speed = static_cast<uint32_t>(static_cast<int>(cmd->getParams().at(1)) * dir);
-            return setGoalVelocity(cmd->getId(), speed);
+            return writeGoalVelocity(cmd->getId(), speed);
         }
         case EStepperCommandType::CMD_TYPE_VELOCITY_PROFILE:
             return writeVelocityProfile(cmd->getId(), cmd->getParams());

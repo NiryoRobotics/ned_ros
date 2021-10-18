@@ -84,11 +84,14 @@ CalibrationManager::CalibrationManager(ros::NodeHandle& nh,
 void CalibrationManager::initParameters(ros::NodeHandle &nh)
 {
     nh.getParam("calibration_timeout", _calibration_timeout);
+    nh.getParam("calibration_stall_threshold", _calibration_stall_threshold);
+
     nh.getParam("calibration_file", _calibration_file_name);
     nh.getParam("/niryo_robot_hardware_interface/hardware_version", _hardware_version);
 
     ROS_DEBUG("Calibration Interface - hardware_version %s", _hardware_version.c_str());
     ROS_DEBUG("Calibration Interface - Calibration timeout %d", _calibration_timeout);
+    ROS_DEBUG("Calibration Interface - Calibration stall threshold %d", _calibration_stall_threshold);
     ROS_DEBUG("Calibration Interface - Calibration file name %s", _calibration_file_name.c_str());
 }
 
@@ -637,8 +640,9 @@ void CalibrationManager::sendCalibrationToSteppers()
 
             _ttl_interface->startCalibration();
 
-            StepperTtlSingleCmd stepper_dir_cmd(EStepperCommandType::CMD_TYPE_CALIBRATION_DIRECTION, pStepperMotorState_2->getId(), {1});
-            _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperTtlSingleCmd>(stepper_dir_cmd));
+            StepperTtlSingleCmd calib_setup_cmd(EStepperCommandType::CMD_TYPE_CALIBRATION_SETUP, pStepperMotorState_2->getId(), 
+                                                {1, static_cast<uint8_t>(_calibration_stall_threshold)});
+            _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperTtlSingleCmd>(calib_setup_cmd));
 
             setStepperCalibrationCommand(pStepperMotorState_1, 200, 1, _calibration_timeout);
             setStepperCalibrationCommand(pStepperMotorState_2, 1000, 1, _calibration_timeout);

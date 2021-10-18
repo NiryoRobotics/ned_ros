@@ -469,9 +469,11 @@ uint32_t TtlManager::getPosition(const JointState &motor_state)
 }
 
 /**
- * @brief TtlManager::readPositionState
+ * @brief TtlManager::readJointStatus : reads the position and velocity of each joint and updates the states accordingly
+ * TODO(CC) add syncreadload
+ *
  */
-bool TtlManager::readPositionStatus()
+bool TtlManager::readJointsStatus()
 {
     bool res = false;
     unsigned int hw_errors_increment = 0;
@@ -487,33 +489,39 @@ bool TtlManager::readPositionStatus()
             // we retrieve all the associated id for the type of the current driver
             vector<uint8_t> id_list = _ids_map.at(type);
             vector<uint32_t> position_list;
+            vector<uint32_t> velocity_list;
 
-            if (COMM_SUCCESS == driver->syncReadPosition(id_list, position_list))
+            //retrieve positions
+            if (COMM_SUCCESS == driver->syncReadPosition(id_list, position_list) &&
+                COMM_SUCCESS == driver->syncReadVelocity(id_list, velocity_list))
             {
-                if (id_list.size() == position_list.size())
+                if (id_list.size() == position_list.size() && id_list.size() == velocity_list.size())
                 {
                     // set motors states accordingly
                     for (size_t i = 0; i < id_list.size(); ++i)
                     {
                         uint8_t id = id_list.at(i);
                         int position = static_cast<int>(position_list.at(i));
+                        int velocity = static_cast<int>(velocity_list.at(i));
 
                         if (_state_map.count(id))
                         {
                             auto state = std::dynamic_pointer_cast<common::model::AbstractMotorState>(_state_map.at(id));
                             if (state)
                             {
-                                state->setPositionState(position);
+                                state->setPosition(position);
+                                state->setVelocity(velocity);
                             }
                         }
                     }
                 }
                 else
                 {
-                    ROS_ERROR("TtlManager::readPositionStatus : Fail to sync read position - "
-                                "vector mismatch (id_list size %d, position_list size %d)",
+                    ROS_ERROR("TtlManager::readJointStatus : Fail to sync read joint state - "
+                                "vector mismatch (id_list size %d, position_list size %d, velocity_list size %d)",
                                 static_cast<int>(id_list.size()),
-                                static_cast<int>(position_list.size()));
+                                static_cast<int>(position_list.size()),
+                                static_cast<int>(velocity_list.size()));
                     hw_errors_increment++;
                 }
             }
@@ -537,7 +545,7 @@ bool TtlManager::readPositionStatus()
 
     if (_hw_fail_counter_read > MAX_HW_FAILURE)
     {
-        ROS_ERROR_THROTTLE(1, "TtlManager::readPositionStatus - motor connection problem - "
+        ROS_ERROR_THROTTLE(1, "TtlManager::readJointStatus - motor connection problem - "
                                 "Failed to read from bus (hw_fail_counter_read : %d)", _hw_fail_counter_read);
         _hw_fail_counter_read = 0;
         _is_connection_ok = false;
@@ -630,7 +638,7 @@ bool TtlManager::readEndEffectorStatus()
  * @brief TtlManager::readHwStatus
  * TODO(CC) refacto
  */
-bool TtlManager::readHwStatus()
+bool TtlManager::readHardwareStatus()
 {
     bool res = false;
 
@@ -752,7 +760,7 @@ bool TtlManager::readHwStatus()
                         {
                             auto stepper_driver = std::dynamic_pointer_cast<ttl_driver::AbstractStepperDriver>(driver);
                             uint32_t velocity;
-                            if (COMM_SUCCESS != stepper_driver->readGoalVelocity(id, velocity))
+                            if (COMM_SUCCESS != stepper_driver->readVelocity(id, velocity))
                             {
                                 hw_errors_increment++;
                             }
@@ -1070,87 +1078,100 @@ int TtlManager::readMotorPID(uint8_t id,
         if (_driver_map.count(motor_type) && _driver_map.at(motor_type))
         {
             auto driver = std::dynamic_pointer_cast<AbstractDxlDriver>(_driver_map.at(motor_type));
-
-            // position p gain
-            pos_p_gain = 0;
-            result = driver->readPositionPGain(id, pos_p_gain);
-
-            if (result != COMM_SUCCESS)
+            if (driver)
             {
-                ROS_WARN("TtlManager::readMotorPID - Failed to read position p gain: %d", result);
-                result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
-                return result;
-            }
+                std::vector<uint32_t> data;
+                result = driver->readPID(id, data);
 
-            // position i gain
-            pos_i_gain = 0;
-            result = driver->readPositionIGain(id, pos_i_gain);
-
-            if (result != COMM_SUCCESS)
-            {
-                ROS_WARN("TtlManager::readMotorPID - Failed to read position i gain: %d", result);
-                result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
-                return result;
-            }
-
-            // position d gain
-            pos_d_gain = 0;
-            result = driver->readPositionDGain(id, pos_d_gain);
-
-            if (result != COMM_SUCCESS)
-            {
-                ROS_WARN("TtlManager::readMotorPID - Failed to read position d gain: %d", result);
-                result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
-                return result;
-            }
-
-            // velocity p gain
-            vel_p_gain = 0;
-            result = driver->readVelocityPGain(id, vel_p_gain);
-
-            if (result != COMM_SUCCESS)
-            {
-                ROS_WARN("TtlManager::readMotorPID - Failed to read velocity p gain: %d", result);
-                result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
-                return result;
-            }
-
-            // velocity i gain
-            vel_i_gain = 0;
-            result = driver->readVelocityIGain(id, vel_i_gain);
-
-            if (result != COMM_SUCCESS)
-            {
-                ROS_WARN("TtlManager::readMotorPID - Failed to read velocity i gain: %d", result);
-                result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
-                return result;
-            }
-
-            // ff1 gain
-            ff1_gain = 0;
-            result = driver->readFF1Gain(id, ff1_gain);
-
-            if (result != COMM_SUCCESS)
-            {
-                ROS_WARN("TtlManager::readMotorPID - Failed to read FF1 gain: %d", result);
-                result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
-                return result;
-            }
-
-            // ff2 gain
-            ff2_gain = 0;
-            result = driver->readFF2Gain(id, ff2_gain);
-
-            if (result != COMM_SUCCESS)
-            {
-                ROS_WARN("TtlManager::readMotorPID - Failed to read FF2 gain: %d", result);
-                result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
-                return result;
+                if(COMM_SUCCESS == result)
+                {
+                    pos_p_gain = data.at(0);
+                    pos_i_gain = data.at(1);
+                    pos_d_gain = data.at(2);
+                    vel_p_gain = data.at(3);
+                    vel_i_gain = data.at(4);
+                    ff1_gain = data.at(5);
+                    ff2_gain = data.at(6);
+                }
+                else
+                {
+                    ROS_WARN("TtlManager::readMotorPID - Failed to read PID: %d", result);
+                    result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
+                    return result;
+                }
             }
         }
         else
         {
             ROS_ERROR_THROTTLE(1, "TtlManager::readMotorPID - driver for motor %s not available",
+                               HardwareTypeEnum(motor_type).toString().c_str());
+            result = niryo_robot_msgs::CommandStatus::WRONG_MOTOR_TYPE;
+        }
+    }
+    else
+    {
+      ROS_ERROR_THROTTLE(1, "TtlManager::readMotorPID - driver for motor id %d unknown",
+                         static_cast<int>(id));
+      result = niryo_robot_msgs::CommandStatus::WRONG_MOTOR_TYPE;
+    }
+
+    ros::Duration(0.005).sleep();
+    return result;
+}
+
+/**
+ * @brief TtlManager::readVelocityProfile
+ * @param id
+ * @param v_start
+ * @param a_1
+ * @param v_1
+ * @param a_max
+ * @param v_max
+ * @param d_max
+ * @param d_1
+ * @param v_stop
+ * @return
+ */
+int TtlManager::readVelocityProfile(uint8_t id, uint32_t &v_start, uint32_t &a_1, uint32_t &v_1,
+                                    uint32_t &a_max, uint32_t &v_max, uint32_t &d_max,
+                                    uint32_t &d_1, uint32_t &v_stop)
+{
+    int result = COMM_RX_FAIL;
+
+    if (_state_map.count(id) != 0 && _state_map.at(id))
+    {
+        EHardwareType motor_type = _state_map.at(id)->getHardwareType();
+
+        if (_driver_map.count(motor_type) && _driver_map.at(motor_type))
+        {
+            auto driver = std::dynamic_pointer_cast<AbstractStepperDriver>(_driver_map.at(motor_type));
+            if (driver)
+            {
+                std::vector<uint32_t> data;
+                result = driver->readVelocityProfile(id, data);
+
+                if(COMM_SUCCESS == result)
+                {
+                    v_start = data.at(0);
+                    a_1 = data.at(1);
+                    v_1 = data.at(2);
+                    a_max = data.at(3);
+                    v_max = data.at(4);
+                    d_max = data.at(5);
+                    d_1 = data.at(6);
+                    v_stop = data.at(7);
+                }
+                else
+                {
+                    ROS_WARN("TtlManager::readVelocityProfile - Failed to read velocity profile: %d", result);
+                    result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
+                    return result;
+                }
+            }
+        }
+        else
+        {
+            ROS_ERROR_THROTTLE(1, "TtlManager::readVelocityProfile - driver for motor %s not available",
                                HardwareTypeEnum(motor_type).toString().c_str());
             result = niryo_robot_msgs::CommandStatus::WRONG_MOTOR_TYPE;
         }

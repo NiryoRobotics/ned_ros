@@ -82,28 +82,13 @@ public:
     double getMicroSteps() const;
     void setMicroSteps(double micro_steps);
 
-    uint32_t getProfileVStart() const;
     void setProfileVStart(const uint32_t &profile_v_start);
-
-    uint32_t getProfileA1() const;
     void setProfileA1(const uint32_t &profile_a_1);
-
-    uint32_t getProfileV1() const;
     void setProfileV1(const uint32_t &profile_v_1);
-
-    uint32_t getProfileAMax() const;
     void setProfileAMax(const uint32_t &profile_a_max);
-
-    uint32_t getProfileVMax() const;
     void setProfileVMax(const uint32_t &profile_v_max);
-
-    uint32_t getProfileDMax() const;
     void setProfileDMax(const uint32_t &profile_d_max);
-
-    uint32_t getProfileD1() const;
     void setProfileD1(const uint32_t &profile_d_1);
-
-    uint32_t getProfileVStop() const;
     void setProfileVStop(const uint32_t &profile_v_stop);
 
 protected:
@@ -128,6 +113,7 @@ protected:
     int32_t _calibration_value{0};
 
 private:
+    double getMultiplierRatio() const;
     static constexpr double STEPPERS_MOTOR_STEPS_PER_REVOLUTION = 200.0;
 
 };
@@ -200,83 +186,25 @@ double StepperMotorState::getMicroSteps() const
 }
 
 /**
- * @brief StepperMotorState::getProfileVStart
+ * @brief StepperMotorState::getMultiplierRatio
  * @return
+ * TODO(CC) temporary solution. Remove the if and base this on conf or polymorphism
  */
 inline
-uint32_t StepperMotorState::getProfileVStart() const
+double StepperMotorState::getMultiplierRatio() const
 {
-  return _profile_v_start;
-}
+    double multiplier_ratio{1.0};
 
-/**
- * @brief StepperMotorState::getProfileA1
- * @return
- */
-inline
-uint32_t StepperMotorState::getProfileA1() const
-{
-  return _profile_a_1;
-}
+    if (common::model::EBusProtocol::CAN == _bus_proto)
+    {
+        multiplier_ratio = STEPPERS_MOTOR_STEPS_PER_REVOLUTION * _micro_steps * _gear_ratio;
+    }
+    else
+    {
+        multiplier_ratio = 360 / 0.088;
+    }
 
-/**
- * @brief StepperMotorState::getProfileV1
- * @return
- */
-inline
-uint32_t StepperMotorState::getProfileV1() const
-{
-  return _profile_v_1;
-}
-
-/**
- * @brief StepperMotorState::getProfileAMax
- * @return
- */
-inline
-uint32_t StepperMotorState::getProfileAMax() const
-{
-  return _profile_a_max;
-}
-
-/**
- * @brief StepperMotorState::getProfileVMax
- * @return
- */
-inline
-uint32_t StepperMotorState::getProfileVMax() const
-{
-  return _profile_v_max;
-}
-
-/**
- * @brief StepperMotorState::getProfileDMax
- * @return
- */
-inline
-uint32_t StepperMotorState::getProfileDMax() const
-{
-  return _profile_d_max;
-}
-
-/**
- * @brief StepperMotorState::getProfileD1
- * @return
- */
-inline
-uint32_t StepperMotorState::getProfileD1() const
-{
-  return _profile_d_1;
-}
-
-/**
- * @brief StepperMotorState::getProfileVStop
- * @return
- */
-inline
-uint32_t StepperMotorState::getProfileVStop() const
-{
-  return _profile_v_stop;
+    return multiplier_ratio;
 }
 
 /**

@@ -326,7 +326,7 @@ int MockEndEffectorDriver::readDigitalInput(uint8_t id, bool& in)
 }
 
 /**
- * @brief MockEndEffectorDriver::setDigitalOutput
+ * @brief MockEndEffectorDriver::writeDigitalOutput
  * @param id
  * @param out
  * @return

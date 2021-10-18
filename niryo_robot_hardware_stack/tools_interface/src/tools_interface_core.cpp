@@ -358,7 +358,7 @@ bool ToolsInterfaceCore::_callbackOpenGripper(tools_interface::OpenGripper::Requ
 
         auto dxl_speed = static_cast<double>(req.open_speed * _toolState->getStepsForOneSpeed());  // position . sec-1
         assert(dxl_speed != 0.00);
-        double dxl_steps_to_do = std::abs(static_cast<double>(req.open_position) - _toolState->getPositionState());
+        double dxl_steps_to_do = std::abs(static_cast<double>(req.open_position) - _toolState->getPosition());
         double seconds_to_wait =  dxl_steps_to_do /  dxl_speed + 0.25;  // sec
         ROS_DEBUG("Waiting for %f seconds", seconds_to_wait);
         ros::Duration(seconds_to_wait).sleep();
@@ -410,7 +410,7 @@ bool ToolsInterfaceCore::_callbackCloseGripper(tools_interface::CloseGripper::Re
         assert(dxl_speed != 0.0);
 
         // position
-        double dxl_steps_to_do = std::abs(static_cast<double>(req.close_position) - _toolState->getPositionState());
+        double dxl_steps_to_do = std::abs(static_cast<double>(req.close_position) - _toolState->getPosition());
         double seconds_to_wait =  dxl_steps_to_do /  dxl_speed + 0.25;  // sec
         ROS_DEBUG("Waiting for %f seconds", seconds_to_wait);
 
@@ -466,7 +466,7 @@ bool ToolsInterfaceCore::_callbackPullAirVacuumPump(tools_interface::PullAirVacu
             assert(dxl_speed != 0.0);
 
             // position
-            double dxl_steps_to_do = std::abs(static_cast<double>(req.pull_air_position) - _toolState->getPositionState());
+            double dxl_steps_to_do = std::abs(static_cast<double>(req.pull_air_position) - _toolState->getPosition());
             double seconds_to_wait =  dxl_steps_to_do /  dxl_speed + 0.5;  // sec
             ROS_DEBUG("Waiting for %f seconds", seconds_to_wait);
 
@@ -521,7 +521,7 @@ bool ToolsInterfaceCore:: _callbackPushAirVacuumPump(tools_interface::PushAirVac
             assert(dxl_speed != 0.0);
 
             // position
-            double dxl_steps_to_do = std::abs(static_cast<double>(req.push_air_position) - _toolState->getPositionState());
+            double dxl_steps_to_do = std::abs(static_cast<double>(req.push_air_position) - _toolState->getPosition());
             double seconds_to_wait =  dxl_steps_to_do /  dxl_speed + 0.25;  // sec
             ROS_DEBUG("Waiting for %f seconds", seconds_to_wait);
 

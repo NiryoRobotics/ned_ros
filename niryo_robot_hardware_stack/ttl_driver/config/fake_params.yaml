@@ -4,6 +4,7 @@ ned2:
     steppers:
       id: [2, 3, 4, 8]
       position: [0, 0, 0, 0]
+      velocity: [0, 0, 0, 0]
       temperature: [50, 52, 54, 55]
       voltage: [12.1, 12.2, 12.3, 12]
       min_position: [0, 0, 0, 0]
@@ -13,6 +14,7 @@ ned2:
     dynamixels:
       id: [5, 6, 7, 11]
       position: [2048, 2048, 2048, 370]
+      velocity: [0, 0, 0, 0]
       temperature: [50, 52, 54, 56]
       voltage: [50, 50, 50, 50]
       min_position: [0, 0, 0, 0]
@@ -29,6 +31,7 @@ ned:
     dynamixels:
       id: [2, 3, 6, 11]
       position: [2048, 2048, 2048, 370]
+      velocity: [0, 0, 0, 0]
       temperature: [50, 52, 54, 56]
       voltage: [50, 50, 50, 50]
       min_position: [0, 0, 0, 0]
@@ -41,6 +44,7 @@ one:
     dynamixels:
       id: [2, 3, 6, 11]
       position: [2048, 2048, 2048, 370]
+      velocity: [0, 0, 0, 0]
       temperature: [50, 52, 54, 56]
       voltage: [50, 50, 50, 50]
       min_position: [0, 0, 0, 0]

@@ -53,31 +53,19 @@ int AbstractDxlDriver::writeSingleCmd(std::unique_ptr<common::model::AbstractTtl
         switch (EDxlCommandType(cmd->getCmdType()))
         {
         case EDxlCommandType::CMD_TYPE_VELOCITY:
-            return setGoalVelocity(cmd->getId(), cmd->getParam());
+            return writeGoalVelocity(cmd->getId(), cmd->getParam());
         case EDxlCommandType::CMD_TYPE_POSITION:
-            return setGoalPosition(cmd->getId(), cmd->getParam());
+            return writeGoalPosition(cmd->getId(), cmd->getParam());
         case EDxlCommandType::CMD_TYPE_EFFORT:
-            return setGoalTorque(cmd->getId(), cmd->getParam());
+            return writeGoalTorque(cmd->getId(), cmd->getParam());
         case EDxlCommandType::CMD_TYPE_TORQUE:
-            return setTorqueEnable(cmd->getId(), cmd->getParam());
+            return writeTorqueEnable(cmd->getId(), cmd->getParam());
         case EDxlCommandType::CMD_TYPE_LEARNING_MODE:
-            return setTorqueEnable(cmd->getId(), !cmd->getParam());
+            return writeTorqueEnable(cmd->getId(), !cmd->getParam());
         case EDxlCommandType::CMD_TYPE_PING:
             return ping(cmd->getId());
-        case EDxlCommandType::CMD_TYPE_POSITION_P_GAIN:
-            return setPositionPGain(cmd->getId(), cmd->getParam());
-        case EDxlCommandType::CMD_TYPE_POSITION_I_GAIN:
-            return setPositionIGain(cmd->getId(), cmd->getParam());
-        case EDxlCommandType::CMD_TYPE_POSITION_D_GAIN:
-            return setPositionDGain(cmd->getId(), cmd->getParam());
-        case EDxlCommandType::CMD_TYPE_VELOCITY_P_GAIN:
-            return setVelocityPGain(cmd->getId(), cmd->getParam());
-        case EDxlCommandType::CMD_TYPE_VELOCITY_I_GAIN:
-            return setVelocityIGain(cmd->getId(), cmd->getParam());
-        case EDxlCommandType::CMD_TYPE_FF1_GAIN:
-            return setff1Gain(cmd->getId(), cmd->getParam());
-        case EDxlCommandType::CMD_TYPE_FF2_GAIN:
-            return setff2Gain(cmd->getId(), cmd->getParam());
+        case EDxlCommandType::CMD_TYPE_PID:
+            return writePID(cmd->getId(), cmd->getParams());
         default:
             std::cout << "Command not implemented " << cmd->getCmdType() << std::endl;
         }

@@ -212,12 +212,12 @@ int MockStepperDriver::readMaxPosition(uint8_t id, uint32_t &pos)
 // ram write
 
 /**
- * @brief MockStepperDriver::setTorqueEnable
+ * @brief MockStepperDriver::writeTorqueEnable
  * @param id
  * @param torque_enable
  * @return
  */
-int MockStepperDriver::setTorqueEnable(uint8_t id, uint32_t /*torque_enable*/)
+int MockStepperDriver::writeTorqueEnable(uint8_t id, uint32_t /*torque_enable*/)
 {
     if (COMM_SUCCESS != ping(id))
         return COMM_RX_FAIL;
@@ -226,12 +226,12 @@ int MockStepperDriver::setTorqueEnable(uint8_t id, uint32_t /*torque_enable*/)
 }
 
 /**
- * @brief MockStepperDriver::setGoalPosition
+ * @brief MockStepperDriver::writeGoalPosition
  * @param id
  * @param position
  * @return
  */
-int MockStepperDriver::setGoalPosition(uint8_t id, uint32_t position)
+int MockStepperDriver::writeGoalPosition(uint8_t id, uint32_t position)
 {
     if (_fake_data->stepper_registers.count(id))
         _fake_data->stepper_registers.at(id).position = position;
@@ -242,12 +242,12 @@ int MockStepperDriver::setGoalPosition(uint8_t id, uint32_t position)
 
 // according to the registers, the data should be an int32_t ?
 /**
- * @brief MockStepperDriver::setGoalVelocity
+ * @brief MockStepperDriver::writeGoalVelocity
  * @param id
  * @param velocity
  * @return
  */
-int MockStepperDriver::setGoalVelocity(uint8_t id, uint32_t velocity)
+int MockStepperDriver::writeGoalVelocity(uint8_t id, uint32_t velocity)
 {
     if (_fake_data->stepper_registers.count(id))
         _fake_data->stepper_registers.at(id).velocity = velocity;
@@ -341,6 +341,19 @@ int MockStepperDriver::readPosition(uint8_t id, uint32_t& present_position)
 }
 
 /**
+ * @brief MockStepperDriver::readVelocity
+ * @param id
+ * @param present_velocity
+ * @return
+ */
+int MockStepperDriver::readVelocity(uint8_t id, uint32_t &present_velocity)
+{
+  if (_fake_data->stepper_registers.count(id))
+      present_velocity = _fake_data->stepper_registers.at(id).velocity;
+  return COMM_SUCCESS;
+}
+
+/**
  * @brief MockStepperDriver::readTemperature
  * @param id
  * @param temperature
@@ -406,6 +419,31 @@ int MockStepperDriver::syncReadPosition(const std::vector<uint8_t> &id_list, std
             return GROUP_SYNC_REDONDANT_ID;  // redondant id
     }
     return COMM_SUCCESS;
+}
+
+/**
+ * @brief MockStepperDriver::syncReadVelocity
+ * @param id_list
+ * @param velocity_list
+ * @return
+ */
+int MockStepperDriver::syncReadVelocity(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &velocity_list)
+{
+  std::map<uint8_t, uint8_t> countMap;
+  velocity_list.clear();
+  for (auto & id : id_list)
+  {
+      if (_fake_data->stepper_registers.count(id))
+      {
+          velocity_list.emplace_back(_fake_data->stepper_registers.at(id).velocity);
+      }
+      else
+          return COMM_RX_FAIL;
+      auto result = countMap.insert(std::pair<uint8_t, uint8_t>(id, 1));
+      if (!result.second)
+          return GROUP_SYNC_REDONDANT_ID;  // redondant id
+  }
+  return COMM_SUCCESS;
 }
 
 /**
@@ -503,6 +541,33 @@ int MockStepperDriver::syncReadHwErrorStatus(const std::vector<uint8_t> &id_list
 //*****************************
 // AbstractStepperDriver interface
 //*****************************
+/**
+ * @brief MockStepperDriver::readVelocityProfile
+ * @param id
+ * @param data
+ * @return
+ */
+int MockStepperDriver::readVelocityProfile(uint8_t id, std::vector<uint32_t>& data)
+{
+    int result = COMM_RX_FAIL;
+
+    data.clear();
+    if (_fake_data->stepper_registers.count(id))
+    {
+        data.emplace_back(_fake_data->stepper_registers.at(id).v_start);
+        data.emplace_back(_fake_data->stepper_registers.at(id).a_1);
+        data.emplace_back(_fake_data->stepper_registers.at(id).v_1);
+        data.emplace_back(_fake_data->stepper_registers.at(id).a_max);
+        data.emplace_back(_fake_data->stepper_registers.at(id).v_max);
+        data.emplace_back(_fake_data->stepper_registers.at(id).d_max);
+        data.emplace_back(_fake_data->stepper_registers.at(id).d_1);
+        data.emplace_back(_fake_data->stepper_registers.at(id).v_stop);
+
+        result = COMM_SUCCESS;
+    }
+
+    return result;
+}
 
 /**
  * @brief MockStepperDriver::writeVelocityProfile
@@ -510,12 +575,25 @@ int MockStepperDriver::syncReadHwErrorStatus(const std::vector<uint8_t> &id_list
  * @param data
  * @return
  */
-int MockStepperDriver::writeVelocityProfile(uint8_t id, const std::vector<uint32_t>& /*data*/)
+int MockStepperDriver::writeVelocityProfile(uint8_t id, const std::vector<uint32_t>& data)
 {
-    if (COMM_SUCCESS != ping(id))
-        return COMM_RX_FAIL;
+  int result = COMM_RX_FAIL;
 
-    return COMM_SUCCESS;
+  if (_fake_data->stepper_registers.count(id))
+  {
+    _fake_data->stepper_registers.at(id).v_start = data.at(0);
+    _fake_data->stepper_registers.at(id).a_1 = data.at(1);
+    _fake_data->stepper_registers.at(id).v_1 = data.at(2);
+    _fake_data->stepper_registers.at(id).a_max = data.at(3);
+    _fake_data->stepper_registers.at(id).v_max = data.at(4);
+    _fake_data->stepper_registers.at(id).d_max = data.at(5);
+    _fake_data->stepper_registers.at(id).d_1 = data.at(6);
+    _fake_data->stepper_registers.at(id).v_stop = data.at(7);
+
+      result = COMM_SUCCESS;
+  }
+
+  return result;
 }
 
 /**
@@ -537,9 +615,10 @@ int MockStepperDriver::startHoming(uint8_t id)
  * @brief MockStepperDriver::writeHomingDirection
  * @param id
  * @param direction
+ * @param stall_threshold
  * @return
  */
-int MockStepperDriver::writeHomingDirection(uint8_t id, uint8_t /*direction*/)
+int MockStepperDriver::writeHomingSetup(uint8_t id, uint8_t /*direction*/, uint8_t /*stall_threshold*/)
 {
     return ping(id);
 }
@@ -563,21 +642,6 @@ int MockStepperDriver::readHomingStatus(uint8_t id, uint32_t &status)
         _calibration_status = CALIBRATION_SUCCESS;
 
     status = _calibration_status;
-    return COMM_SUCCESS;
-}
-
-/**
- * @brief MockStepperDriver::readGoalVelocity
- * @param id
- * @param present_velocity
- * @return
- */
-int MockStepperDriver::readGoalVelocity(uint8_t id, uint32_t& present_velocity)
-{
-    if (_fake_data->stepper_registers.count(id))
-        present_velocity = _fake_data->stepper_registers.at(id).velocity;
-    else
-        return COMM_RX_FAIL;
     return COMM_SUCCESS;
 }
 
