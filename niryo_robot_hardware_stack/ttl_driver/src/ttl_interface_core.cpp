@@ -1211,6 +1211,11 @@ bool TtlInterfaceCore::_callbackWriteVelocityProfile(ttl_driver::WriteVelocityPr
   {
       addSingleCommandToQueue(std::move(dxl_cmd_pos_p));
       result = niryo_robot_msgs::CommandStatus::SUCCESS;
+      res.message = "TtlInterfaceCore - Writing Velocity Profile successful";
+  }
+  else
+  {
+      res.message = "TtlInterfaceCore - Writing Velocity Profile failed";
   }
 
   res.status = result;
