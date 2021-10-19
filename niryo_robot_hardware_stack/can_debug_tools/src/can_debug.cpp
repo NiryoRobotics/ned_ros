@@ -27,8 +27,8 @@
 #include <sstream>
 #include <string>
 #include <vector>
-#include <thread>
-#include <chrono>
+#include <thread> // NOLINT [build/c++11]
+#include <chrono> // NOLINT [build/c++11]
 
 #include "mcp_can_rpi/mcp_can_rpi.h"
 
@@ -86,7 +86,7 @@ int handleUserInput(int argc, char **argv)
         if (vars.count("dump"))  // dump data
         {
             double check_data_freq = vars["freq"].as<double>();
-            if(0.0 != check_data_freq)
+            if (0.0 != check_data_freq)
             {
                 printf("--> Dumping CAN bus.\n");
                 canTools.startDump(check_data_freq);
@@ -99,9 +99,7 @@ int handleUserInput(int argc, char **argv)
                 std::cout << description << "\n";
                 return -1;
             }
-
         }
-
       }
       return -1;
   }
@@ -114,6 +112,6 @@ int handleUserInput(int argc, char **argv)
 
 int main(int argc, char **argv)
 {
-    return handleUserInput(argc,argv);
+    return handleUserInput(argc, argv);
 }
 

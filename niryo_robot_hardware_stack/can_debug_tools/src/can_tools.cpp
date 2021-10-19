@@ -20,6 +20,7 @@
 #include <utility>
 #include <vector>
 #include <iostream>
+#include <string>
 #include <sstream>
 #include <iomanip>
 
@@ -126,13 +127,13 @@ void can_debug_tools::CanTools::controlLoop()
               << "[0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07]"
               << std::endl;
 
-    for(int i = 0; _control_loop_ok; ++i)
+    for (int i = 0; _control_loop_ok; ++i)
     {
-      if(_mcp_can->canReadData())
-      {
-        std::cout << std::setfill ('0') << std::setw(sizeof(int)*2) << i
-                  << ":\t" << dumpData() << std::endl;
-      }
+        if (_mcp_can->canReadData())
+        {
+                std::cout << std::setfill ('0') << std::setw(sizeof(int)*2) << i
+                          << ":\t" << dumpData() << std::endl;
+        }
         std::this_thread::sleep_for(std::chrono::milliseconds(_check_data_delay_ms));
     }
 }
@@ -157,10 +158,10 @@ std::string CanTools::dumpData()
        << control_byte << "\t"
        << "[";
 
-    for(uint8_t const& d: rxBuf)
+    for (auto const& d : rxBuf)
     {
         ss << "0x"
-           << std::setfill ('0')
+           << std::setfill('0')
            << std::setw(sizeof(uint8_t)*2)
            << std::uppercase
            << std::hex << static_cast<int>(d) << ",";
@@ -192,4 +193,4 @@ uint8_t CanTools::read(INT32U *id, uint8_t *len, std::array<uint8_t, MAX_MESSAGE
     return status;
 }
 
-} // namespace can_debug_tools
+}  // namespace can_debug_tools

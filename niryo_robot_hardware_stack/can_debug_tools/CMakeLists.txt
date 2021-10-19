@@ -97,23 +97,23 @@ if(CATKIN_ENABLE_TESTING)
       )
     endif()
 
-  if(TARGET ${PROJECT_NAME}_unit_tests)
-    target_link_libraries(${PROJECT_NAME}_unit_tests
-        ${catkin_LIBRARIES}
-        ${PROJECT_NAME}_core
-    )
-  endif()
+    if(TARGET ${PROJECT_NAME}_unit_tests)
+      target_link_libraries(${PROJECT_NAME}_unit_tests
+          ${catkin_LIBRARIES}
+          ${PROJECT_NAME}_core
+      )
+    endif()
 
-  ##########################
-  ## Static code analysis ##
-  ##########################
-  find_package(roslint QUIET)
+    ##########################
+    ## Static code analysis ##
+    ##########################
+    find_package(roslint QUIET)
 
-  if(roslint_FOUND)
-      roslint_cpp()
-  else()
-      message(WARNING "roslint not found. Skipping roslint target building")
-  endif()
+    if(roslint_FOUND)
+        roslint_cpp()
+    else()
+        message(WARNING "roslint not found. Skipping roslint target building")
+    endif()
 endif()
 
 #############

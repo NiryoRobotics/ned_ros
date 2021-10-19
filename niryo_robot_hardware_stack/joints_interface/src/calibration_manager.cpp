@@ -640,7 +640,7 @@ void CalibrationManager::sendCalibrationToSteppers()
 
             _ttl_interface->startCalibration();
 
-            StepperTtlSingleCmd calib_setup_cmd(EStepperCommandType::CMD_TYPE_CALIBRATION_SETUP, pStepperMotorState_2->getId(), 
+            StepperTtlSingleCmd calib_setup_cmd(EStepperCommandType::CMD_TYPE_CALIBRATION_SETUP, pStepperMotorState_2->getId(),
                                                 {1, static_cast<uint8_t>(_calibration_stall_threshold)});
             _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperTtlSingleCmd>(calib_setup_cmd));
 

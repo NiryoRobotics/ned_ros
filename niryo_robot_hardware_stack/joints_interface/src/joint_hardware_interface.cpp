@@ -391,13 +391,13 @@ void JointHardwareInterface::sendInitMotorsParams()
                     // CMD_TYPE_PID cmd
                     DxlSingleCmd cmd_pid(
                                   EDxlCommandType::CMD_TYPE_PID,
-                                  dxlState->getId(),{dxlState->getPositionPGain(),
-                                                     dxlState->getPositionIGain(),
-                                                     dxlState->getPositionDGain(),
-                                                     dxlState->getVelocityPGain(),
-                                                     dxlState->getVelocityIGain(),
-                                                     dxlState->getFF1Gain(),
-                                                     dxlState->getFF2Gain()});
+                                  dxlState->getId(), {dxlState->getPositionPGain(),
+                                                      dxlState->getPositionIGain(),
+                                                      dxlState->getPositionDGain(),
+                                                      dxlState->getVelocityPGain(),
+                                                      dxlState->getVelocityIGain(),
+                                                      dxlState->getFF1Gain(),
+                                                      dxlState->getFF2Gain()});
 
                     _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(cmd_pid));
                     ros::Duration(0.05).sleep();

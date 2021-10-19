@@ -32,7 +32,6 @@ TEST(CanDebugToolsTestSuite, testInit)
     int spi_baudrate = vars["baudrate"].as<int>();
     int gpio_can_interrupt = vars["gpio"].as<int>();
 
-
     if (serial_port.empty())
     {
         std::cout << "Test invalid : not on the correct architecture. Passing" << std::endl;
@@ -40,7 +39,6 @@ TEST(CanDebugToolsTestSuite, testInit)
     }
     else
     {
-
         std::cout << "Using channel: " << spi_channel << ", "
                   << "Using baudrate: " << spi_baudrate << ", "
                   << "Using gpio: " << gpio_can_interrupt

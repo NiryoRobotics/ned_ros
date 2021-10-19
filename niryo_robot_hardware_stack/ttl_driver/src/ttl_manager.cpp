@@ -491,7 +491,7 @@ bool TtlManager::readJointsStatus()
             vector<uint32_t> position_list;
             vector<uint32_t> velocity_list;
 
-            //retrieve positions
+            // retrieve positions
             if (COMM_SUCCESS == driver->syncReadPosition(id_list, position_list) &&
                 COMM_SUCCESS == driver->syncReadVelocity(id_list, velocity_list))
             {
@@ -1083,7 +1083,7 @@ int TtlManager::readMotorPID(uint8_t id,
                 std::vector<uint32_t> data;
                 result = driver->readPID(id, data);
 
-                if(COMM_SUCCESS == result)
+                if (COMM_SUCCESS == result)
                 {
                     pos_p_gain = data.at(0);
                     pos_i_gain = data.at(1);
@@ -1150,7 +1150,7 @@ int TtlManager::readVelocityProfile(uint8_t id, uint32_t &v_start, uint32_t &a_1
                 std::vector<uint32_t> data;
                 result = driver->readVelocityProfile(id, data);
 
-                if(COMM_SUCCESS == result)
+                if (COMM_SUCCESS == result)
                 {
                     v_start = data.at(0);
                     a_1 = data.at(1);
