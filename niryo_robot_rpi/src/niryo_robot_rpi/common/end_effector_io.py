@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# fake_io_objects.py
+# end_effector_io.py
 # Copyright (C) 2021 Niryo
 # All rights reserved.
 #
@@ -17,39 +17,22 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-from niryo_robot_rpi.common.io_objects import PinMode, NiryoIO
+
+import rospy
+
+from niryo_robot_rpi.common.io_objects import PinMode, NiryoIO, NiryoIOException
+
+from end_effector_interface.srv import SetEEDigitalOut
 
 
-class FakeDigitalIO(NiryoIO):
-    def __init__(self, name, mode):
-        super(FakeDigitalIO, self).__init__(None, None, name)
+class DigitalOutput(NiryoIO):
+    def __init__(self, name):
+        super(DigitalOutput, self).__init__(lock=None, pin=0, name=name)
 
-        assert mode in [PinMode.DIGITAL_OUTPUT, PinMode.DIGITAL_INPUT], \
-            "The pin mode of a fake digital io must be either PinMode.ANALOG_INPUT or PinMode.ANALOG_OUTPUT"
+        self.__set_ee_io_state_service = rospy.ServiceProxy(
+            "/niryo_robot_hardware_interface/end_effector_interface/set_ee_io_state", SetEEDigitalOut)
 
-        self._mode = mode
-        self._value = 0
-
-    @property
-    def value(self):
-        return self._value
-
-    @value.setter
-    def value(self, value):
-        assert isinstance(value, (bool, int, float))
-        limited_value = max(0, min(int(value), 1))
-        self._value = limited_value
-
-
-class FakeAnalogIO(NiryoIO):
-    def __init__(self, name, mode):
-        super(FakeAnalogIO, self).__init__(None, None, name)
-
-        assert mode in [PinMode.ANALOG_INPUT, PinMode.ANALOG_OUTPUT], \
-            "The pin mode of a fake analog io must be either PinMode.ANALOG_INPUT or PinMode.ANALOG_OUTPUT"
-
-        self._mode = mode
-        self._value = 0
+        self.value = False
 
     @property
     def value(self):
@@ -58,4 +41,21 @@ class FakeAnalogIO(NiryoIO):
     @value.setter
     def value(self, value):
         assert isinstance(value, (bool, int, float))
+        try:
+            self.__set_ee_io_state_service(bool(value))
+            self._value = bool(value)
+        except rospy.service.ServiceException:
+            rospy.logwarn("End Effector Digital Output :: Failed to set its state")
+
+
+class DigitalInput(NiryoIO):
+    def __init__(self, name):
+        super(DigitalInput, self).__init__(lock=None, pin=0, name=name)
+
+    @property
+    def value(self):
+        return self._value
+
+    @value.setter
+    def value(self, value):
         self._value = value

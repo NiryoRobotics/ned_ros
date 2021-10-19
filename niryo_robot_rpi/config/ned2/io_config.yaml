@@ -26,6 +26,10 @@ wifi:
   led_pin: 4
   button_pin: 5
 
+end_effector_ios:
+   digital_input: DI4
+   digital_output: DO4
+
 digital_inputs:
   - name: DI1
     pin: 0
