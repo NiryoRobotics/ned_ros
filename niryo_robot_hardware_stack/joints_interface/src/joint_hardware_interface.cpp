@@ -271,7 +271,7 @@ bool JointHardwareInterface::initStepper(ros::NodeHandle &robot_hwnh,
         // add parameters
         stepperState->setOffsetPosition(offsetPos);
         stepperState->setGearRatio(gear_ratio);
-        stepperState->setDirection(direction);
+        stepperState->setDirection(static_cast<int8_t>(direction));
         stepperState->setMaxEffort(max_effort);
 
         res = true;
@@ -317,7 +317,7 @@ bool JointHardwareInterface::initDxl(ros::NodeHandle &robot_hwnh,
         robot_hwnh.getParam(currentNamespace + "/FF2_gain", FF2Gain);
 
         dxlState->setOffsetPosition(offsetPos);
-        dxlState->setDirection(direction);
+        dxlState->setDirection(static_cast<int8_t>(direction));
 
         dxlState->setPositionPGain(static_cast<uint32_t>(positionPGain));
         dxlState->setPositionIGain(static_cast<uint32_t>(positionIGain));

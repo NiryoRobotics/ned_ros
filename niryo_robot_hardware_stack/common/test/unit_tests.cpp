@@ -56,7 +56,7 @@ class DXLCommonTest : public testing::TestWithParam<std::tuple<EHardwareType, EC
         }
 
         common::model::DxlMotorState dxlState;
-        double precision;
+        double precision{};
 };
 
 // TODO(CC) find a better way to avoid redundancy of this setup method
@@ -81,7 +81,7 @@ class DXLIdentityRadTest : public testing::TestWithParam<std::tuple<EHardwareTyp
     }
 
         common::model::DxlMotorState dxlState;
-        double precision;
+        double precision{};
 };
 
 // int : motor_pos
@@ -104,7 +104,7 @@ class DXLIdentityMotorTest : public testing::TestWithParam<std::tuple<EHardwareT
     }
 
     common::model::DxlMotorState dxlState;
-    double precision;
+    double precision{};
 };
 
 TEST_P(DXLCommonTest, validity)
@@ -200,7 +200,7 @@ INSTANTIATE_TEST_CASE_P(IdentityMotorTests,
  * @param gear_ratio
  * @param direction
 */
-class StepperIdentityRadTest : public testing::TestWithParam<std::tuple<double, double, int> >
+class StepperIdentityRadTest : public testing::TestWithParam<std::tuple<double, double, int8_t> >
 {
     protected:
         void SetUp() override
@@ -236,7 +236,7 @@ INSTANTIATE_TEST_CASE_P(IdentityRadTest,
  * @param gear_ratio
  * @param direction
 */
-class StepperIdentityMotorTest : public testing::TestWithParam<std::tuple<int, double, int> >
+class StepperIdentityMotorTest : public testing::TestWithParam<std::tuple<int, double, int8_t> >
 {
     protected:
         void SetUp() override

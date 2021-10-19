@@ -567,7 +567,7 @@ int CanManager::writeSingleCommand(std::unique_ptr<common::model::AbstractCanSin
             result = CAN_FAIL;
             if (_driver_map.count(hardware_type) && _driver_map.at(hardware_type))
             {
-                result = _driver_map.at(hardware_type)->writeSingleCmd(std::move(cmd));
+                result = _driver_map.at(hardware_type)->writeSingleCmd(cmd);
             }
 
             ros::Duration(TIME_TO_WAIT_IF_BUSY).sleep();

@@ -80,7 +80,7 @@ void ConveyorState::updateId(uint8_t id)
 /**
  * @brief ConveyorState::updateData : for conveniency
  */
-void ConveyorState::updateData(const std::tuple<bool, uint8_t, uint16_t>& data)
+void ConveyorState::updateData(const std::tuple<bool, uint8_t, int8_t> &data)
 {
     setState(std::get<0>(data));
     setSpeed(std::get<1>(data));

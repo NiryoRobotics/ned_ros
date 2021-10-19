@@ -350,7 +350,7 @@ uint8_t MockStepperDriver::sendCalibrationCommand(uint8_t id, int offset, int de
  */
 uint8_t MockStepperDriver::sendUpdateConveyorId(uint8_t old_id, uint8_t new_id)
 {
-    int result = CAN_FAIL;
+    uint8_t result = CAN_FAIL;
 
     _id_list.erase(std::remove(_id_list.begin(), _id_list.end(), old_id), _id_list.end());
     _id_list.push_back(new_id);

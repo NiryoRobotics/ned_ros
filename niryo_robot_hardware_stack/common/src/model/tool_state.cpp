@@ -46,15 +46,6 @@ void ToolState::setName(std::string name)
     _tool_name = std::move(name);
 }
 
-/**
- * @brief ToolState::setPosition
- * @param position
- */
-void ToolState::setPosition(double position)
-{
-    _position = position;
-}
-
 // ***********************
 //  DxlMotorState intf
 // ***********************
@@ -66,7 +57,6 @@ void ToolState::reset()
 {
     DxlMotorState::reset();
     _tool_name = "No Tool";
-    _position = 0.0;
 }
 
 /**
@@ -80,7 +70,6 @@ std::string ToolState::str() const
     ss << "ToolState : ";
     ss << "name: " << "\"" << _tool_name << "\"" << ", ";
     ss << "connected: " << (_connected ? "true" : "false") << ", ";
-    ss << "position: " << _position;
     ss << "\n---\n";
     ss << "\n";
     ss << DxlMotorState::str();

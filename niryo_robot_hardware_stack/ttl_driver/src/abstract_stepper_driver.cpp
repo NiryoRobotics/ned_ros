@@ -49,7 +49,7 @@ std::string AbstractStepperDriver::str() const
  * @brief AbstractStepperDriver::writeSingleCmd
  * @param cmd
 */
-int AbstractStepperDriver::writeSingleCmd(std::unique_ptr<common::model::AbstractTtlSingleMotorCmd> && cmd)
+int AbstractStepperDriver::writeSingleCmd(const std::unique_ptr<common::model::AbstractTtlSingleMotorCmd>& cmd)
 {
     if (cmd->isValid() && cmd->isStepperCmd())
     {

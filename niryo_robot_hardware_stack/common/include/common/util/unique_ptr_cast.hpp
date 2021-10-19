@@ -44,7 +44,7 @@ std::unique_ptr<Derived> static_unique_ptr_cast(std::unique_ptr<Base>&& p)
 template<typename Derived, typename Base>
 std::unique_ptr<Derived> dynamic_unique_ptr_cast(std::unique_ptr<Base>&& p)
 {
-    if (Derived *result = dynamic_cast<Derived *>(p.get()))
+    if (auto *result = dynamic_cast<Derived *>(p.get()))
     {
         p.release();
         return std::unique_ptr<Derived>(result);

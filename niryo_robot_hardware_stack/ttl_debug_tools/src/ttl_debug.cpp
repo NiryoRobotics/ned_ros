@@ -48,13 +48,19 @@ namespace po = boost::program_options;
 
 #ifdef __arm__
     #define DEFAULT_PORT "/dev/serial0"
-#elif __aarch64__
+#elifdef __aarch64__
     #define DEFAULT_PORT "/dev/ttyAMA0"
 #else
     #define DEFAULT_PORT ""
 #endif
 
-int main(int argc, char **argv)
+/**
+ * @brief handleUserInput
+ * @param argc
+ * @param argv
+ * @return
+ */
+int handleUserInput(int argc, char **argv)
 {
     try
     {
@@ -245,6 +251,16 @@ int main(int argc, char **argv)
     catch(po::error& e)
     {
         std::cout << e.what() << "\n";
-        return 0;
+        return 1;
     }
+    catch(...)
+    {
+        std::cout << "Unknown error" << "\n";
+        return 1;
+    }
+}
+
+int main(int argc, char **argv)
+{
+    return handleUserInput(argc, argv);
 }

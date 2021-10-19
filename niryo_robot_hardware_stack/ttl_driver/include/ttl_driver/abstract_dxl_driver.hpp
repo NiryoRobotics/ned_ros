@@ -41,7 +41,7 @@ class AbstractDxlDriver : public AbstractMotorDriver
         // AbstractMotorDriver interface
         std::string str() const override;
 
-        int writeSingleCmd(std::unique_ptr<common::model::AbstractTtlSingleMotorCmd> && cmd) override;
+        int writeSingleCmd(const std::unique_ptr<common::model::AbstractTtlSingleMotorCmd> &cmd) override;
         int writeSyncCmd(int type, const std::vector<uint8_t> &ids, const std::vector<uint32_t> &params) override;
 
     public:

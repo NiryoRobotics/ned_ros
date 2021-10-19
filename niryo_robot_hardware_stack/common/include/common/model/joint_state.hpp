@@ -49,11 +49,11 @@ public:
 
     void setName(std::string &name);
     void setOffsetPosition(double offset_position);
-    void setDirection(int direction);
+    void setDirection(int8_t direction);
 
     std::string getName() const;
     double getOffsetPosition() const;
-    int getDirection() const;
+    int8_t getDirection() const;
 
     virtual bool operator==(const JointState &other) const;
 
@@ -75,7 +75,7 @@ protected:
     std::string _name;
     double _offset_position{0.0};
     bool _need_calibration{false};
-    int _direction{1};
+    int8_t _direction{1};
 
 protected:
     // see https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c67-a-polymorphic-class-should-suppress-public-copymove
@@ -113,7 +113,7 @@ double JointState::getOffsetPosition() const
  * @return
  */
 inline
-int JointState::getDirection() const
+int8_t JointState::getDirection() const
 {
     return _direction;
 }

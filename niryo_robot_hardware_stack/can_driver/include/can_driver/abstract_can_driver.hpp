@@ -48,13 +48,18 @@ public:
     AbstractCanDriver() = default;
     AbstractCanDriver(std::shared_ptr<mcp_can_rpi::MCP_CAN> mcp_can);
     virtual ~AbstractCanDriver() = default;
+    // see https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c67-a-polymorphic-class-should-suppress-public-copymove
+    AbstractCanDriver( const AbstractCanDriver& ) = delete;
+    AbstractCanDriver( AbstractCanDriver&& ) = delete;
+    AbstractCanDriver& operator= ( AbstractCanDriver && ) = delete;
+    AbstractCanDriver& operator= ( const AbstractCanDriver& ) = delete;
 
     virtual bool canReadData() const;
 
     virtual int ping(uint8_t id);
     virtual int scan(std::set<uint8_t>& motors_unfound, std::vector<uint8_t> &id_list);
 
-    virtual int writeSingleCmd(const std::shared_ptr<common::model::AbstractCanSingleMotorCmd >& cmd) = 0;
+    virtual int writeSingleCmd(const std::unique_ptr<common::model::AbstractCanSingleMotorCmd >& cmd) = 0;
 
 public:
     virtual std::string str() const;
@@ -77,13 +82,6 @@ protected:
 
 private:
     std::shared_ptr<mcp_can_rpi::MCP_CAN> _mcp_can;
-
-protected:
-    // see https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c67-a-polymorphic-class-should-suppress-public-copymove
-    AbstractCanDriver( const AbstractCanDriver& ) = delete;
-    AbstractCanDriver( AbstractCanDriver&& ) = delete;
-    AbstractCanDriver& operator= ( AbstractCanDriver && ) = delete;
-    AbstractCanDriver& operator= ( const AbstractCanDriver& ) = delete;
 
 };
 

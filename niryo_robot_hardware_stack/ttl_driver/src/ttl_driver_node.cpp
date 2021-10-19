@@ -89,7 +89,7 @@ void addJointToTtlInterface(const std::shared_ptr<ttl_driver::TtlInterfaceCore>&
                 // add parameters
                 stepperState->setOffsetPosition(offsetPos);
                 stepperState->setGearRatio(gear_ratio);
-                stepperState->setDirection(direction);
+                stepperState->setDirection(static_cast<int8_t>(direction));
                 stepperState->setMaxEffort(max_effort);
 
                 if (eBusProto == EBusProtocol::TTL)
@@ -133,7 +133,7 @@ void addJointToTtlInterface(const std::shared_ptr<ttl_driver::TtlInterfaceCore>&
                 robot_hwnh.getParam(currentDxlNamespace + "/FF2_gain", FF2Gain);
 
                 dxlState->setOffsetPosition(offsetPos);
-                dxlState->setDirection(direction);
+                dxlState->setDirection(static_cast<int8_t>(direction));
 
                 dxlState->setPositionPGain(static_cast<uint32_t>(positionPGain));
                 dxlState->setPositionIGain(static_cast<uint32_t>(positionIGain));

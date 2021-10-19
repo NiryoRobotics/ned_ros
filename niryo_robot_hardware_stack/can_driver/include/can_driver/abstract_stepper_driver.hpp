@@ -39,7 +39,7 @@ public:
     // AbstractCanDriver interface
     std::string str() const override;
 
-    int writeSingleCmd(const std::shared_ptr<common::model::AbstractCanSingleMotorCmd> &cmd) override;
+    int writeSingleCmd(const std::unique_ptr<common::model::AbstractCanSingleMotorCmd> &cmd) override;
 
     int32_t interpretePositionStatus(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) override;
     uint32_t interpreteTemperatureStatus(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) override;

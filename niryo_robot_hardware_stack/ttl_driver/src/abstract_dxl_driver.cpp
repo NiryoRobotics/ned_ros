@@ -46,7 +46,7 @@ std::string AbstractDxlDriver::str() const
  * @brief AbstractDxlDriver::writeSingleCmd
  * @param cmd
 */
-int AbstractDxlDriver::writeSingleCmd(std::unique_ptr<common::model::AbstractTtlSingleMotorCmd > && cmd)
+int AbstractDxlDriver::writeSingleCmd(const std::unique_ptr<common::model::AbstractTtlSingleMotorCmd >& cmd)
 {
     if (cmd && cmd->isValid() && cmd->isDxlCmd())
     {
@@ -72,7 +72,7 @@ int AbstractDxlDriver::writeSingleCmd(std::unique_ptr<common::model::AbstractTtl
     }
 
     std::cout << "Command not validated" << std::endl;
-    return -1;
+    return COMM_RX_CORRUPT;
 }
 
 /**

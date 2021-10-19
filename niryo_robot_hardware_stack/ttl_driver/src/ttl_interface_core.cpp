@@ -46,7 +46,6 @@ using ::std::string;
 using ::common::model::EHardwareType;
 using ::common::model::HardwareTypeEnum;
 using ::common::model::EndEffectorState;
-using ::common::model::DxlMotorState;
 using ::common::model::JointState;
 using ::common::model::EDxlCommandType;
 using ::common::model::EStepperCommandType;
@@ -907,10 +906,10 @@ void TtlInterfaceCore::addSingleCommandToQueue(std::unique_ptr<common::model::IS
  * @brief TtlInterfaceCore::addSingleCommandToQueue
  * @param cmd
  */
-void TtlInterfaceCore::addSingleCommandToQueue(std::vector<std::unique_ptr<common::model::ISingleMotorCmd>> && cmd)
+void TtlInterfaceCore::addSingleCommandToQueue(std::vector<std::unique_ptr<common::model::ISingleMotorCmd> >&& cmd)
 {
-    for (size_t i = 0; i < cmd.size(); i++)
-        addSingleCommandToQueue(std::move(cmd[i]));
+    for (auto&& c : cmd)
+        addSingleCommandToQueue(std::move(c));
 }
 
 // ***************

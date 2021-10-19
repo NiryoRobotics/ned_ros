@@ -144,9 +144,9 @@ void can_debug_tools::CanTools::controlLoop()
  */
 std::string CanTools::dumpData()
 {
-    INT32U rxId;
+    INT32U rxId{};
     uint8_t len{};
-    std::array<uint8_t, 8> rxBuf;
+    std::array<uint8_t, 8> rxBuf{};
 
     uint8_t status = read(&rxId, &len, rxBuf);
     uint8_t id = rxId & 0x0F;

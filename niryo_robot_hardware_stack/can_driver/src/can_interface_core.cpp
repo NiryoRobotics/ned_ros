@@ -234,7 +234,7 @@ int CanInterfaceCore::motorCmdReport(const JointState& jState, common::model::EH
             ros::Duration(0.5).sleep();
 
             // move one direction
-            int direction = jState.getDirection();
+            auto direction = jState.getDirection();
             int32_t old_position = _can_manager->getPosition(jState);
             ROS_INFO("CanInterfaceCore::motorCmdReport - Debug - Get pose on motor %d: %d", motor_id, old_position);
             ros::Duration(0.5).sleep();
@@ -254,7 +254,7 @@ int CanInterfaceCore::motorCmdReport(const JointState& jState, common::model::EH
             ROS_INFO("CanInterfaceCore::motorCmdReport - Send can motor %d pose: %d ", motor_id, old_position);
             _can_manager->writeSingleCommand(std::make_unique<StepperSingleCmd>(EStepperCommandType::CMD_TYPE_RELATIVE_MOVE,
                                                                                 motor_id,
-                                                                                std::initializer_list<int32_t>{1000*direction, 1000}));
+                                                                                std::initializer_list<int32_t>{1000 * direction, 1000}));
             ros::Duration(2).sleep();
             int32_t new_position2 = _can_manager->getPosition(jState);
             ROS_INFO("CanInterfaceCore::motorCmdReport - Debug - get can motor %d pose: %d ", motor_id, new_position2);
@@ -647,8 +647,8 @@ void CanInterfaceCore::addSingleCommandToQueue(std::unique_ptr<common::model::IS
  */
 void CanInterfaceCore::addSingleCommandToQueue(std::vector<std::unique_ptr<common::model::ISingleMotorCmd>> && cmd)
 {
-    for (size_t i = 0; i < cmd.size(); i++)
-        addSingleCommandToQueue(std::move(cmd[i]));
+    for (auto && c : cmd)
+        addSingleCommandToQueue(std::move(c));
 }
 
 /**

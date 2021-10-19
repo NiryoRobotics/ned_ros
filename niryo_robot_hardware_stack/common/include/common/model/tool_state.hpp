@@ -41,10 +41,8 @@ class ToolState : public DxlMotorState
         ToolState(std::string name, EHardwareType type, uint8_t id);
 
         void setName(std::string name);
-        void setPosition(double position);
 
         std::string getToolName() const;
-        double getPositionRef() const;
 
         bool isConnected() const;
 
@@ -69,7 +67,6 @@ class ToolState : public DxlMotorState
         std::string _tool_name;
 
         bool _connected{true};
-        double _position{0.0};
 };
 
 /**
@@ -80,16 +77,6 @@ inline
 std::string ToolState::getToolName() const
 {
     return _tool_name;
-}
-
-/**
- * @brief ToolState::getPositionRef
- * @return
- */
-inline
-double ToolState::getPositionRef() const
-{
-    return _position;
 }
 
 /**

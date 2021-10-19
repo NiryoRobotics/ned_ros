@@ -31,42 +31,43 @@ namespace model
 /**
  * @brief The ConveyorState class
  */
-class ConveyorState : public StepperMotorState {
+class ConveyorState : public StepperMotorState
+{
 
-    public:
-        ConveyorState() = default;
-        ConveyorState(uint8_t default_id);
-        ConveyorState(EBusProtocol bus_proto, uint8_t default_id);
-        ConveyorState(EHardwareType type,
-                      EBusProtocol bus_proto, uint8_t default_id);
-        ConveyorState(EHardwareType type,
-                      EBusProtocol bus_proto, uint8_t id, uint8_t default_id);
+public:
+    ConveyorState() = default;
+    ConveyorState(uint8_t default_id);
+    ConveyorState(EBusProtocol bus_proto, uint8_t default_id);
+    ConveyorState(EHardwareType type,
+                  EBusProtocol bus_proto, uint8_t default_id);
+    ConveyorState(EHardwareType type,
+                  EBusProtocol bus_proto, uint8_t id, uint8_t default_id);
 
-        void updateId(uint8_t id);
+    void updateId(uint8_t id);
 
-        void updateData(const std::tuple<bool, uint8_t, uint16_t> &data);
+    void updateData(const std::tuple<bool, uint8_t, int8_t> &data);
 
-        void setState(bool state);
-        void setSpeed(int16_t speed);
-        void setGoalDirection(int8_t direction);
+    void setState(bool state);
+    void setSpeed(int16_t speed);
+    void setGoalDirection(int8_t direction);
 
-        bool getState() const;
-        int16_t getSpeed() const;
-        int8_t getGoalDirection() const;
-        // other getters
+    bool getState() const;
+    int16_t getSpeed() const;
+    int8_t getGoalDirection() const;
+    // other getters
 
-        bool operator==(const ConveyorState& other);
+    bool operator==(const ConveyorState& other);
 
-        // StepperMotorState interface
-        std::string str() const override;
-        void reset() override;
-        bool isValid() const override;
+    // StepperMotorState interface
+    std::string str() const override;
+    void reset() override;
+    bool isValid() const override;
 
 private:
-        int8_t _goal_direction{0};  // the direction where the conveyor is assembled in hw level
-        bool _state{false};
-        int16_t _speed{0};
-        uint8_t _default_id{0};
+    int8_t _goal_direction{1};
+    bool _state{false};
+    int16_t _speed{0};
+    uint8_t _default_id{0};
 };
 
 /**

@@ -411,7 +411,7 @@ bool ConveyorInterfaceCore::_callbackControlConveyor(conveyor_interface::Control
     {
         auto state = _state_map.at(req.id);
         EBusProtocol bus_proto = state->getBusProtocol();
-        int8_t assembly_direction = state->getDirection();
+        auto assembly_direction = state->getDirection();
 
         if (EBusProtocol::CAN == bus_proto)
         {

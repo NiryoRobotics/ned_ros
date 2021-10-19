@@ -43,6 +43,12 @@ public:
     CanTools(std::shared_ptr<mcp_can_rpi::MCP_CAN> mcp_can);
 
     virtual ~CanTools();
+    // see https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c67-a-polymorphic-class-should-suppress-public-copymove
+    CanTools( const CanTools& ) = delete;
+    CanTools( CanTools&& ) = delete;
+    CanTools& operator= ( CanTools && ) = delete;
+    CanTools& operator= ( const CanTools& ) = delete;
+
     int setupCommunication();
 
     void startDump(double check_data_freq = 0.1);

@@ -1286,7 +1286,8 @@ int TtlManager::writeSingleCommand(std::unique_ptr<common::model::AbstractTtlSin
                 result = COMM_TX_ERROR;
                 if (_driver_map.count(hardware_type) && _driver_map.at(hardware_type))
                 {
-                    result = _driver_map.at(hardware_type)->writeSingleCmd(std::move(cmd));
+                    // writeSingleCmd is in a for loop, we cannot infer that this command will succeed. Thus we cannot move cmd in parameter
+                    result = _driver_map.at(hardware_type)->writeSingleCmd(cmd);
                 }
 
                 counter += 1;

@@ -50,6 +50,11 @@ class IDriverCore
 {
 public:
     virtual ~IDriverCore() = default;
+    // see https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c67-a-polymorphic-class-should-suppress-public-copymove
+    IDriverCore( const IDriverCore& ) = delete;
+    IDriverCore( IDriverCore&& ) = delete;
+    IDriverCore& operator= ( IDriverCore && ) = delete;
+    IDriverCore& operator= ( const IDriverCore& ) = delete;
 
     virtual common::model::EBusProtocol getBusProtocol() const = 0;
 
@@ -82,11 +87,6 @@ public:
     virtual std::vector<uint8_t> getRemovedMotorList() const = 0;
 protected:
     IDriverCore() = default;
-    // see https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c67-a-polymorphic-class-should-suppress-public-copymove
-    IDriverCore( const IDriverCore& ) = delete;
-    IDriverCore( IDriverCore&& ) = delete;
-    IDriverCore& operator= ( IDriverCore && ) = delete;
-    IDriverCore& operator= ( const IDriverCore& ) = delete;
 
 private:
     virtual void resetHardwareControlLoopRates() = 0;

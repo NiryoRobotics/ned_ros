@@ -474,7 +474,7 @@ void CalibrationManager::setStepperCalibrationCommand(const std::shared_ptr<Step
     {
         uint8_t motor_id = pState->getId();
         int32_t offset = pState->to_motor_pos(pState->getOffsetPosition());
-        auto motor_direction = static_cast<int32_t>(pState->getDirection());
+        auto motor_direction = pState->getDirection();
 
         if (EBusProtocol::CAN == pState->getBusProtocol())
         {
