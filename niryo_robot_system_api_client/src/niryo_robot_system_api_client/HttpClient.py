@@ -113,3 +113,12 @@ class HttpClient:
             return False, 'Unable to connect to the HTTP server'
 
         return True, response
+
+    def setup_ethernet(self, profile, ip="", mask="", gateway="", dns=""):
+        status_code, response = self.__post('/setEthernetProfile',
+                                            {'profile': profile, "ip": ip, "mask": mask, "gw": gateway, "dns": dns})
+
+        if not status_code:
+            return False, 'Unable to connect to the HTTP server'
+
+        return True, response
