@@ -30,9 +30,6 @@ class MotorDebug:
         # - Action serv
         self.__action_server_name = rospy.get_param("~joint_controller_name") + "/follow_joint_trajectory"
 
-        self.__traj_client = actionlib.SimpleActionClient(self.__action_server_name, FollowJointTrajectoryAction)
-        self.__traj_client.wait_for_server()
-
         # - Publishers
         self.__is_debug_motor_active_pub = rospy.Publisher('~is_debug_motor_active', Bool, latch=True, queue_size=10)
 
@@ -124,7 +121,7 @@ class MotorDebug:
                 rospy.sleep(1)
 
                 rospy.loginfo("Motor Debug - Go to default pose")
-                error_counter += 0 if self._play_trajectory(self._create_goal(default_joint_pose)) else 1
+                error_counter += 0 if self._play_trajectory(default_joint_pose) else 1
                 for _ in range(nb_loops):
                     for joint_index, joint_name in enumerate(self._joint_names):
                         rospy.loginfo("Motor Debug - Test {} limits".format(joint_name))
@@ -135,11 +132,11 @@ class MotorDebug:
                             test_limit_joints = default_joint_pose[:]
                             test_limit_joints[joint_index] = self._joint_limits[joint_name][limit_type]
                             test_limit_joints[joint_index] -= math.copysign(0.1, test_limit_joints[joint_index])
-                            error_counter += 0 if self._play_trajectory(self._create_goal(test_limit_joints),
+                            error_counter += 0 if self._play_trajectory(test_limit_joints,
                                                                         wait=2 if joint_index == 5 else 1) else 1
 
                             rospy.loginfo("Motor Debug - Return to default pose")
-                            error_counter += 0 if self._play_trajectory(self._create_goal(default_joint_pose),
+                            error_counter += 0 if self._play_trajectory(default_joint_pose,
                                                                         wait=2 if joint_index == 5 else 1) else 1
 
                             self.set_led_state(error_counter > 0, 5, LedBlinkerRequest.LED_WHITE, 60)
@@ -149,7 +146,7 @@ class MotorDebug:
                     for _ in range(nb_loops):
                         self.__play_fun_poses()
 
-                self._play_trajectory(self._create_goal([0.0, 0.50, -1.25, 0.0, 0.0, 0.0]))
+                self._play_trajectory([0.0, 0.50, -1.25, 0.0, 0.0, 0.0])
 
             rospy.sleep(1)
             self.__robot.set_learning_mode(True)
@@ -173,7 +170,7 @@ class MotorDebug:
                      [0.00,  0.60,  0.46, -1.55, -0.15,  2.50],
                      [-1.0,  0.00, -1.00, -1.70, -1.35, -0.14]]
         for wayoint in waypoints:
-            error_cpt += self._play_trajectory(self._create_goal(wayoint))
+            error_cpt += self._play_trajectory(wayoint)
 
         return error_cpt
 
@@ -187,33 +184,21 @@ class MotorDebug:
         response = self.__motor_report_service()
         return response.status, response.message
 
-    def _play_trajectory(self, goal, wait=1):
+    def _play_trajectory(self, joint_poses, duration=2, wait=1):
         self.__check_state()
-        rospy.loginfo("Motor Debug - Waiting for the joint_trajectory_action server")
-        self.__traj_client.wait_for_server()
-        rospy.loginfo("joint_trajectory_action server is ready")
-
-        # When to start the trajectory: 0.1s from now
-        goal.trajectory.header.stamp = rospy.Time.now() + rospy.Duration(0.1)
-        rospy.loginfo("Send Goad")
-        self.__traj_client.send_goal(goal)
-
-        rospy.loginfo("Goal sent: is waiting for result")
-        self.__traj_client.wait_for_result(timeout=rospy.Duration(6))
-
-        result = self.__traj_client.get_result()
-        if not result:
+        try:
+            self.__robot.move_without_moveit(joint_poses, duration)
+        except NiryoRosWrapperException:
             rospy.loginfo("Trajectory command has reached timeout limit")
             return False
 
         rospy.loginfo("Trajectory finished")
         rospy.sleep(wait)
         self.__check_state()
-        return self._check_if_goal_reached(goal)
+        return self._check_if_goal_reached(joint_poses)
 
-    def _check_if_goal_reached(self, goal):
+    def _check_if_goal_reached(self, target_joints):
         current_joints = self.__robot.get_joints()
-        target_joints = goal.trajectory.points[-1].positions
 
         rospy.loginfo("Target joints: {} \nCurrent joints: {}".format(target_joints, current_joints))
         for joint_index in range(len(current_joints)):
@@ -224,15 +209,6 @@ class MotorDebug:
                 return False
 
         return True
-
-    def _create_goal(self, joints_position, duration=2):
-        goal = FollowJointTrajectoryGoal()
-        goal.trajectory.joint_names = self._joint_names
-        goal.trajectory.points = [JointTrajectoryPoint()]
-        goal.trajectory.points[0].positions = joints_position
-        goal.trajectory.points[0].velocities = [0.0] * len(self._joint_names)
-        goal.trajectory.points[0].time_from_start = rospy.Duration(duration)
-        return goal
 
     def _set_log_debug(self, debug_mode):
         # loggers_list = self.__get_hardware_loggers_service()

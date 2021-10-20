@@ -22,6 +22,9 @@ from sensor_msgs.msg import CameraInfo
 from sensor_msgs.msg import CompressedImage
 from sensor_msgs.msg import JointState
 
+from control_msgs.msg import FollowJointTrajectoryAction, FollowJointTrajectoryGoal
+from trajectory_msgs.msg import JointTrajectoryPoint
+
 from conveyor_interface.msg import ConveyorFeedbackArray
 from niryo_robot_msgs.msg import HardwareStatus
 from niryo_robot_msgs.msg import RobotState
@@ -104,6 +107,7 @@ class NiryoRosWrapper:
         # -- Subscribers
         # - Pose
         self.__joints = None
+        self.__joints_name = []
         rospy.Subscriber('/joint_states', JointState,
                          self.__callback_sub_joint_states)
 
@@ -159,6 +163,8 @@ class NiryoRosWrapper:
         self.__robot_action_server_client = actionlib.SimpleActionClient(self.__robot_action_server_name,
                                                                          RobotMoveAction)
 
+        self.__follow_joint_traj_client = actionlib.SimpleActionClient(self.__action_server_name, FollowJointTrajectoryAction)
+
         # Tool action
         self.__tool_action_server_name = '/niryo_robot_tools_commander/action_server'
         self.__tool_action_server_client = actionlib.SimpleActionClient(self.__tool_action_server_name,
@@ -199,6 +205,7 @@ class NiryoRosWrapper:
 
     def __callback_sub_joint_states(self, joint_states):
         self.__joints = list(joint_states.position[:6])
+        self.__joints_name = joint_states.name[:6]
 
     def __callback_sub_robot_state(self, pose):
         self.__pose = pose
@@ -656,6 +663,29 @@ class NiryoRosWrapper:
         :rtype: (int, str)
         """
         return self.__move_pose_with_cmd(ArmMoveCommand.LINEAR_POSE, x, y, z, roll, pitch, yaw)
+
+    def move_without_moveit(self, joints_target, duration):
+        goal = self._create_goal(joints_target, duration)
+        self.__follow_joint_traj_client.wait_for_server()
+
+        # When to start the trajectory: 0.1s from now
+        goal.trajectory.header.stamp = rospy.Time.now() + rospy.Duration.from_sec(0.1)
+        self.__follow_joint_traj_client.send_goal(goal)
+        self.__follow_joint_traj_client.wait_for_result(timeout=rospy.Duration(2*duration+0.1))
+
+        result = self.__follow_joint_traj_client.get_result()
+        if not result:
+            raise NiryoRosWrapperException("Follow joint trajectory goal has reached timeout limit")
+
+
+    def _create_goal(self, joints_position, duration):
+        goal = FollowJointTrajectoryGoal()
+        goal.trajectory.joint_names = self.__joints_name
+        goal.trajectory.points = [JointTrajectoryPoint()]
+        goal.trajectory.points[0].positions = joints_position
+        goal.trajectory.points[0].velocities = [0.0] * len(self.__joints_name)
+        goal.trajectory.points[0].time_from_start = rospy.Duration(duration)
+        return goal
 
     def stop_move(self):
         """
