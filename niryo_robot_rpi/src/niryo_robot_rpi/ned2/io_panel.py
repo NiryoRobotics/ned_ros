@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# digital_io_panel.py
+# io_panel.py
 # Copyright (C) 2021 Niryo
 # All rights reserved.
 #
@@ -27,6 +27,7 @@ from niryo_robot_msgs.msg import CommandStatus
 
 # Libraries
 from niryo_robot_rpi.common.abstract_io_panel import AbstractIOPanel
+from niryo_robot_rpi.common.end_effector_panel import NiryoEndEffectorPanel
 
 from .hardware.MCP23017 import RegistersMCP23017
 from .hardware.MCP23017 import MCP23017
@@ -50,8 +51,9 @@ class IOPanel(AbstractIOPanel):
             lock = Lock()
         self.__lock = lock
 
-        self.__init_ios(lock)
         self.__wifi_button = WifiButton(mcp=self.__mcp, lock=lock)
+        self.__end_effector_panel = NiryoEndEffectorPanel()
+        self.__init_ios(lock)
 
         self._publish_digital_io_state()
         self.check_interrupt_flag_security_frequency = rospy.get_param("~check_interrupt_flag_security_frequency")
@@ -85,6 +87,12 @@ class IOPanel(AbstractIOPanel):
                                                                                  lock, digital_input["pin"],
                                                                                  digital_input["name"]))
                                             for digital_input in rospy.get_param("~digital_inputs")])
+
+        self._digital_outputs[self.__end_effector_panel.digital_output.name] = self.__end_effector_panel.digital_output
+        self._digital_inputs[self.__end_effector_panel.digital_input.name] = self.__end_effector_panel.digital_input
+
+        self._digital_outputs = OrderedDict(sorted(self._digital_outputs.items()))
+        self._digital_inputs = OrderedDict(sorted(self._digital_inputs.items()))
 
         self._analog_outputs = OrderedDict([(analog_output["name"],
                                              AnalogOutput(lock, analog_output["pin"], analog_output["name"],

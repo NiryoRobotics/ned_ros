@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# digital_io_panel.py
+# fake_io_panel.py
 # Copyright (C) 2021 Niryo
 # All rights reserved.
 #
@@ -25,12 +25,16 @@ from niryo_robot_msgs.msg import CommandStatus
 
 from niryo_robot_rpi.common.io_objects import PinMode
 from niryo_robot_rpi.common.abstract_io_panel import AbstractIOPanel
+from niryo_robot_rpi.common.end_effector_panel import NiryoEndEffectorPanel
+
 from .fake_io_objects import FakeDigitalIO, FakeAnalogIO
 
 
 class FakeIOPanel(AbstractIOPanel):
     def __init__(self):
         super(FakeIOPanel, self).__init__()
+
+        self.__end_effector_panel = NiryoEndEffectorPanel()
 
         self._digital_outputs = OrderedDict(
             [(digital_output["name"], FakeDigitalIO(digital_output["name"], PinMode.DIGITAL_OUTPUT))
@@ -39,6 +43,12 @@ class FakeIOPanel(AbstractIOPanel):
         self._digital_inputs = OrderedDict(
             [(digital_input["name"], FakeDigitalIO(digital_input["name"], PinMode.DIGITAL_INPUT))
              for digital_input in rospy.get_param("~digital_inputs")])
+
+        self._digital_outputs[self.__end_effector_panel.digital_output.name] = self.__end_effector_panel.digital_output
+        self._digital_inputs[self.__end_effector_panel.digital_input.name] = self.__end_effector_panel.digital_input
+
+        self._digital_outputs = OrderedDict(sorted(self._digital_outputs.items()))
+        self._digital_inputs = OrderedDict(sorted(self._digital_inputs.items()))
 
         self._analog_outputs = OrderedDict(
             [(analog_output["name"], FakeAnalogIO(analog_output["name"], PinMode.ANALOG_OUTPUT))

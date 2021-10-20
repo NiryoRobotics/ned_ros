@@ -228,8 +228,8 @@ void EndEffectorInterfaceCore::_publishButtonState()
         }
 
         // digital io state
-        io_msg.in = _end_effector_state->getDigitalIn();
-        io_msg.out = _end_effector_state->getDigitalOut();
+        io_msg.digital_input = _end_effector_state->getDigitalIn();
+        io_msg.digital_output = _end_effector_state->getDigitalOut();
         _digital_out_publisher.publish(io_msg);
 
         check_status_rate.sleep();

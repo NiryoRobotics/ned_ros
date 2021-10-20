@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# digital_io_panel.py
+# io_panel.py
 # Copyright (C) 2021 Niryo
 # All rights reserved.
 #

@@ -2,7 +2,7 @@ sound_publish_rate: 1.0
 volume_publish_rate: 1.0
 sound_user_publish_rate: 1.0
 
-error_sound_delay: 2
+error_sound_delay: 60
 
 default_volume: 100
 default_volume_simulation: 10
