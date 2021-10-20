@@ -10,6 +10,7 @@ import sys
 
 # Commanders
 from arm_commander import ArmCommander
+from robot_state_publisher import StatePublisher
 import moveit_commander
 from ArmParametersValidator import ArmParametersValidator
 from motor_debug import MotorDebug
@@ -20,17 +21,10 @@ from niryo_robot_arm_commander.command_enums import RobotCommanderException, Arm
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus
 
-# For State Publisher
-import tf
-from tf import LookupException, ConnectivityException, ExtrapolationException
-from tf.transformations import quaternion_from_euler
-from math import pi
-
 # Messages
 from actionlib_msgs.msg import GoalStatus
 from std_msgs.msg import Bool
-from geometry_msgs.msg import Quaternion
-from niryo_robot_msgs.msg import RobotState, HardwareStatus
+from niryo_robot_msgs.msg import HardwareStatus
 from niryo_robot_arm_commander.msg import ArmMoveCommand
 
 # Services
@@ -441,91 +435,6 @@ class RobotCommanderNode:
     @staticmethod
     def goal_to_cmd_type(goal_handle):
         return goal_handle.goal.goal.cmd.cmd_type
-
-
-# -- STATE PUBLISHER
-
-class StatePublisher:
-    """
-    This object read Transformation Publisher and Publish the RobotState
-     in the Topic '/niryo_robot/robot_state' at a certain rate
-    """
-
-    def __init__(self, transform_handler):
-
-        # Tf listener (position + rpy) of end effector tool
-        self.__position = [0, 0, 0]
-        self.__quaternion = [0, 0, 0, 0]
-        self.__rpy = [0, 0, 0]
-
-        self.__transform_handler = transform_handler
-
-        # State publisher
-        self.__robot_state_publisher = rospy.Publisher(
-            '/niryo_robot/robot_state', RobotState, queue_size=5)
-
-        # Get params from rosparams
-        rate_publish_state = rospy.get_param("/niryo_robot/robot_state/rate_publish_state")
-        rospy.logdebug("StatePublisher.init - rate_publish_state: %s", rate_publish_state)
-
-        rospy.Timer(rospy.Duration(1.0 / rate_publish_state), self.__publish_state)
-
-    def __update_ee_link_pose(self):
-        try:
-            t = self.__transform_handler.lookup_transform('base_link', 'TCP', rospy.Time(0))
-            self.__position = self.vector3_to_list(t.transform.translation)
-            self.__quaternion = self.quaternion_to_list(t.transform.rotation)
-            self.__rpy = tf.transformations.euler_from_quaternion(self.__quaternion)
-        except (LookupException, ConnectivityException, ExtrapolationException):
-            self.__transform_handler.set_empty_tcp_to_ee_link_transform("tool_link")
-            rospy.loginfo_throttle(1, "State Publisher - Failed to get TF base_link -> TCP")
-
-    def __publish_state(self, _):
-        self.__update_ee_link_pose()
-        msg = RobotState()
-        msg.position.x = self.__position[0]
-        msg.position.y = self.__position[1]
-        msg.position.z = self.__position[2]
-        msg.rpy.roll = self.__rpy[0]
-        msg.rpy.pitch = self.__rpy[1]
-        msg.rpy.yaw = self.__rpy[2]
-        msg.orientation.x = self.__quaternion[0]
-        msg.orientation.y = self.__quaternion[1]
-        msg.orientation.z = self.__quaternion[2]
-        msg.orientation.w = self.__quaternion[3]
-        try:
-            self.__robot_state_publisher.publish(msg)
-        except rospy.ROSException:
-            return
-
-    @staticmethod
-    def get_orientation_from_angles(r, p, y):
-        quaternion = quaternion_from_euler(r, p, y)
-        orientation = Quaternion()
-        orientation.x = quaternion[0]
-        orientation.y = quaternion[1]
-        orientation.z = quaternion[2]
-        orientation.w = quaternion[3]
-        return orientation
-
-    @staticmethod
-    def get_rpy_from_quaternion(rot):
-        euler = tf.transformations.euler_from_quaternion(rot)
-        # Force angles in [-PI, PI]
-        for i, angle in enumerate(euler):
-            if angle > pi:
-                euler[i] = angle % (2 * pi) - 2 * pi
-            elif angle < -pi:
-                euler[i] = angle % (2 * pi)
-        return euler
-
-    @staticmethod
-    def quaternion_to_list(quat):
-        return [quat.x, quat.y, quat.z, quat.w]
-
-    @staticmethod
-    def vector3_to_list(vect):
-        return [vect.x, vect.y, vect.z]
 
 
 if __name__ == '__main__':
