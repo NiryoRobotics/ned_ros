@@ -163,6 +163,7 @@ class NiryoRosWrapper:
         self.__robot_action_server_client = actionlib.SimpleActionClient(self.__robot_action_server_name,
                                                                          RobotMoveAction)
 
+        self.__action_server_name = rospy.get_param("/niryo_robot_arm_commander/joint_controller_name") + "/follow_joint_trajectory"
         self.__follow_joint_traj_client = actionlib.SimpleActionClient(self.__action_server_name, FollowJointTrajectoryAction)
 
         # Tool action

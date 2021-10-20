@@ -28,7 +28,7 @@ class MotordebugException(Exception):
 class MotorDebug:
     def __init__(self):
         # - Action serv
-        self.__action_server_name = rospy.get_param("~joint_controller_name") + "/follow_joint_trajectory"
+
 
         # - Publishers
         self.__is_debug_motor_active_pub = rospy.Publisher('~is_debug_motor_active', Bool, latch=True, queue_size=10)
