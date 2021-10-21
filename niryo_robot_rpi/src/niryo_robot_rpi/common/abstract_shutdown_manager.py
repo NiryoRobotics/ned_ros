@@ -38,17 +38,23 @@ class AbstractShutdownManager(object):
 
     def callback_shutdown_rpi(self, req):
         if req.value == 1:
-            self.__advertise_shutdown_service.call()
-            send_shutdown_command_thread = threading.Timer(1.0, self._shutdown)
-            send_shutdown_command_thread.start()
+            self.request_shutdown()
             return CommandStatus.SUCCESS, 'Robot is shutting down'
         elif req.value == 2:
-            self.__advertise_shutdown_service.call()
-            send_reboot_command_thread = threading.Timer(1.0, self._reboot)
-            send_reboot_command_thread.start()
+            self.request_reboot()
             return CommandStatus.SUCCESS, 'Robot is rebooting'
         else:
             return CommandStatus.UNKNOWN_COMMAND, 'Incorrect value: 1 for shutdown, 2 for reboot'
+
+    def request_shutdown(self):
+        self.__advertise_shutdown_service.call()
+        send_shutdown_command_thread = threading.Timer(1.0, self._shutdown)
+        send_shutdown_command_thread.start()
+
+    def request_reboot(self):
+        self.__advertise_shutdown_service.call()
+        send_shutdown_command_thread = threading.Timer(1.0, self._shutdown)
+        send_shutdown_command_thread.start()
 
     @staticmethod
     def _shutdown():

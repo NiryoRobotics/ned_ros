@@ -18,28 +18,19 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 import rospy
-from threading import Lock
 
 from niryo_robot_rpi.common.abstract_fans_manager import AbstractFansManager
-
-from .mcp_io_objects import Fan
-from .hardware.MCP23017 import MCP23017
+from .mcp_io_objects import McpIOManager
 
 
 class FansManager(AbstractFansManager):
-    def __init__(self, mcp=None, lock=None):
+    def __init__(self, mcp_manager):
         super(FansManager, self).__init__()
-        if mcp is None:
-            self.__mcp = MCP23017(address=rospy.get_param("~mcp/address"),
-                                  busnum=rospy.get_param("~mcp/i2c_bus"))
-        else:
-            self.__mcp = mcp
 
-        if lock is None:
-            lock = Lock()
+        self.__mcp_manager = mcp_manager if mcp_manager is not None else McpIOManager()
 
-        self._fans_list = [Fan(self.__mcp, lock, fan["pin"], "FAN_{}".format(fan["pin"]),
-                               fan["temperature_on_threshold"], fan["temperature_off_threshold"])
+        self._fans_list = [self.__mcp_manager.add_fan(fan["pin"], "FAN_{}".format(fan["pin"]),
+                                                      fan["temperature_on_threshold"], fan["temperature_off_threshold"])
                            for fan in rospy.get_param("/niryo_robot_rpi/fans")]
 
         rospy.loginfo("Fan Manager - Started")

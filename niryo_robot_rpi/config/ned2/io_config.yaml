@@ -10,15 +10,17 @@ mcp:
  i2c_bus: 0
  interrupt_bcm: 26
 
-ads:
+adc:
   i2c_bus: 0
-  reading_factor: 0.6
+  address: 54
+  v_ref: 3.0
+  resolution: 12
 
 fans:
-  - pin: 11
+  - pin: 8
     temperature_on_threshold: 45
     temperature_off_threshold: 40
-  - pin: 12
+  - pin: 9
     temperature_on_threshold: 55
     temperature_off_threshold: 50
 
@@ -30,6 +32,12 @@ end_effector_ios:
    digital_input: DI4
    digital_output: DO4
 
+shutdown_manager:
+  digital_input: 13
+  digital_output:
+    pin: 7
+    reverse: False
+
 digital_inputs:
   - name: DI1
     pin: 0
@@ -38,17 +46,17 @@ digital_inputs:
   - name: DI3
     pin: 2
   - name: DI5
-    pin: 2
+    pin: 3
 
 digital_outputs:
   - name: DO1
-    pin: 15
+    pin: 12
     reverse: True
   - name: DO2
-    pin: 14
+    pin: 11
     reverse: True
   - name: DO3
-    pin: 13
+    pin: 10
     reverse: True
 
 analog_outputs:
@@ -69,4 +77,4 @@ analog_inputs:
   - name: AI1
     pin: 0
   - name: AI2
-    pin: 2
+    pin: 1

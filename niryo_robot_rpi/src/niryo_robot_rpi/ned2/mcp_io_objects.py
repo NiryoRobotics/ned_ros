@@ -18,11 +18,95 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-from threading import Thread
+from threading import Thread, Lock
+import RPi.GPIO as GPIO
+import rospy
 
 from niryo_robot_rpi.common.io_objects import PinMode, NiryoIO, NiryoIOException
 
 from .hardware.DACx0501 import DACx0501
+from .hardware.MCP23017 import MCP23017, RegistersMCP23017
+
+
+class McpIOManager(object):
+    def __init__(self, mcp=None):
+        self.__mcp = mcp if mcp is not None else MCP23017(address=rospy.get_param("~mcp/address"),
+                                                          busnum=rospy.get_param("~mcp/i2c_bus"))
+
+        self.__mcp = mcp
+        self.__lock = Lock()
+
+        self.__inputs = {}
+        self.__outputs = {}
+
+        self.__callbacks = {}
+
+        interrupt_BCM = rospy.get_param("~mcp/interrupt_bcm")
+        GPIO.setwarnings(False)
+        GPIO.setmode(GPIO.BCM)
+        GPIO.setup(interrupt_BCM, GPIO.IN)
+        GPIO.add_event_detect(interrupt_BCM, GPIO.RISING, callback=self.interrupt_callback)
+
+        self.check_interrupt_flag_security_frequency = rospy.get_param("~check_interrupt_flag_security_frequency")
+        rospy.Timer(rospy.Duration(1.0 / self.check_interrupt_flag_security_frequency),
+                    self._check_interrupt_flag_security)
+
+        self.read_digital_inputs()
+
+    def __del__(self):
+        GPIO.cleanup()
+
+    @property
+    def lock(self):
+        return self.__lock
+
+    @staticmethod
+    def shutdown():
+        GPIO.cleanup()
+
+    def add_output(self, pin, name, reversed=False):
+        self.__outputs[name] = DigitalOutput(self.__mcp, self.__lock, pin, name, reversed)
+        return self.__outputs[name]
+
+    def add_input(self, pin, name, reverse_polarity=True):
+        self.__inputs[name] = DigitalInput(self.__mcp, self.__lock, pin, name, reverse_polarity)
+        return self.__inputs[name]
+
+    def add_button(self, pin, name):
+        self.__inputs[name] = Button(self.__mcp, self.__lock, pin, name)
+        return self.__inputs[name]
+
+    def add_led(self, pin, name):
+        self.__outputs[name] = Led(self.__mcp, self.__lock, pin, name)
+        return self.__outputs[name]
+
+    def add_fan(self, pin, name, temperature_on_threshold, temperature_off_threshold):
+        self.__outputs[name] = Fan(self.__mcp, self.__lock, pin, name, temperature_on_threshold,
+                                   temperature_off_threshold)
+        return self.__outputs[name]
+
+    def read_digital_inputs(self):
+        with self.__lock:
+            gpio_values = self.__mcp.read_all_gpios()
+            for digital_input in self.__inputs.values():
+                digital_input.value = bool((gpio_values >> digital_input.pin) & 0b1)
+
+    def interrupt_callback(self, _channel=None):
+        # self.__mcp.debug()
+        self.read_digital_inputs()
+
+    def register_on_change_callback(self, cb, cb_id):
+        self.__callbacks[cb_id] = cb
+
+    def unregister_on_change_callback(self, cb_id):
+        self.__callbacks[cb_id].pop()
+
+    def _check_interrupt_flag_security(self, _event):
+        with self.__lock:
+            pending_interrupts = self.__mcp.readU8(RegistersMCP23017.INTFA)
+
+        if pending_interrupts:
+            self.read_digital_inputs()
 
 
 class DigitalOutput(NiryoIO):
@@ -91,7 +175,7 @@ class DigitalInput(NiryoIO):
         with self._lock:
             self._mcp.config(self._pin, self._mcp.INPUT)
             self._mcp.enable_interrupt(self._pin, True)
-            self._mcp.reverse_polarity(self._pin, True)
+            self._mcp.reverse_polarity(self._pin, reverse_polarity)
 
     @property
     def value(self):
@@ -152,52 +236,17 @@ class Button(DigitalInput):
 
 
 class AnalogInput(NiryoIO):
-    GAIN_TWO_THIRD = 0x00
-    GAIN_ONE = 0x0200
-    GAIN_TWO = 0x0400
-    GAIN_FOUR = 0x0600
-    GAIN_EIGHT = 0x0800
-    GAIN_SIXTEEN = 0x0A00
 
-    CONVERSION_TO_MV = {
-        GAIN_TWO_THIRD: 0.1875,
-        GAIN_ONE: 0.125,
-        GAIN_TWO: 0.0625,
-        GAIN_FOUR: 0.03125,
-        GAIN_EIGHT: 0.015625,
-        GAIN_SIXTEEN: 0.0078125,
-    }
-
-    def __init__(self, adc, lock, pin, name, reading_factor=1.0):
+    def __init__(self, adc, lock, pin, name):
         super(AnalogInput, self).__init__(lock, pin, name)
 
         self.__adc = adc
         self.__mode = PinMode.ANALOG_INPUT
-        self.__gain = self.GAIN_TWO_THIRD
-        self.__reading_factor = reading_factor
-
-    @property
-    def gain(self):
-        return self.__gain
-
-    @gain.setter
-    def gain(self, gain):
-        assert isinstance(gain, (int, float))
-        if gain not in [self.GAIN_TWO_THIRD, self.GAIN_ONE, self.GAIN_TWO, self.GAIN_FOUR, self.GAIN_EIGHT,
-                        self.GAIN_SIXTEEN]:
-            raise NiryoIOException("Gain must be in [AnalogInput.GAIN_TWO_THIRD, AnalogInput.GAIN_ONE, "
-                                   "AnalogInput.GAIN_TWO, AnalogInput.GAIN_FOUR, AnalogInput.GAIN_EIGHT, "
-                                   "AnalogInput.GAIN_SIXTEEN]")
-        self.__gain = gain
 
     @property
     def value(self):
         with self._lock:
-            try:
-                self._value = round(self.__adc.read_adc(self._pin, gain=self.__gain) * (1.0 / self.__reading_factor) *
-                                    self.CONVERSION_TO_MV[self.__gain] / 1000, 2)
-            except TypeError:  # Handle bad behavior of the library ADS1115
-                pass
+            self._value = self.__adc.get_voltage(self._pin)
             return self._value
 
 

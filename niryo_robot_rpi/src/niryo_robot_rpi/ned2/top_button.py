@@ -54,7 +54,6 @@ class TopButton:
         self.last_time_button_pressed = rospy.Time.from_sec(0)
 
         self._robot_status = RobotStatus()
-        rospy.Subscriber('/niryo_robot_status/robot_status', RobotStatus, self._callback_robot_status)
 
         self._motor_debug_server_start = rospy.ServiceProxy('/niryo_robot_arm_commander/motor_debug_start', SetInt)
         self._motor_debug_server_stop = rospy.ServiceProxy('/niryo_robot_arm_commander/motor_debug_stop', Empty)
@@ -67,6 +66,8 @@ class TopButton:
         self.__last_is_prog_running = False
         self.__button_action_done = False
         self._send_pause_state(PausePlanExecution.STANDBY)
+
+        rospy.Subscriber('/niryo_robot_status/robot_status', RobotStatus, self._callback_robot_status)
 
         # Seems to be overkill over that value due to reading IO time
         self.__button_state = self.read_value()

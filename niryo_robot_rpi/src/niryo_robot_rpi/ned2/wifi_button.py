@@ -23,25 +23,18 @@ from threading import Lock
 from niryo_robot_rpi.common.rpi_ros_utils import send_hotspot_command, send_restart_wifi_command, \
     send_deactivate_wifi_command, send_reconnect_wifi_command
 
-from hardware.MCP23017 import MCP23017
-from .mcp_io_objects import Button, Led
+from .mcp_io_objects import McpIOManager
 
 from niryo_robot_system_api_client.msg import WifiStatus
 
 
 class WifiButton:
-    def __init__(self, mcp=None, lock=None):
-        if mcp is None:
-            self.__mcp = MCP23017(address=rospy.get_param("~mcp/address"),
-                                  busnum=rospy.get_param("~mcp/i2c_bus"))
-        else:
-            self.__mcp = mcp
+    def __init__(self, mcp_manager):
 
-        if lock is None:
-            lock = Lock()
+        self.__mcp_manager = mcp_manager if mcp_manager is not None else McpIOManager()
 
-        self.__wifi_led = Led(self.__mcp, lock, rospy.get_param("~wifi/led_pin"), "Wifi Led")
-        self.__wifi_button = Button(self.__mcp, lock, rospy.get_param("~wifi/button_pin"), "Wifi Button")
+        self.__wifi_led = mcp_manager.add_led(rospy.get_param("~wifi/led_pin"), "Wifi Led")
+        self.__wifi_button = mcp_manager.add_button(rospy.get_param("~wifi/button_pin"), "Wifi Button")
 
         self.__timer = None
         self.__set_hotspot_lock = Lock()
@@ -55,6 +48,9 @@ class WifiButton:
 
         self.__pressed_time = None
         self.__released_time = None
+
+    def __del__(self):
+        self.shutdown()
 
     def __wifi_status_callback(self, msg):
         if self.__wifi_status != msg.status:
@@ -113,18 +109,8 @@ class WifiButton:
                 self.stop_blink()
                 self.set_led_behaviour()
 
-    def set(self, value):
-        self.__wifi_button.value = int(bool(value))
-
-    @property
-    def pin(self):
-        return self.__wifi_button.pin
-
     def shutdown(self):
         self.stop_blink()
         self.__wifi_button.disable_on_press()
         self.__wifi_button.disable_on_release()
         self.__wifi_led.off()
-
-    def __del__(self):
-        self.shutdown()
