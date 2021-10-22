@@ -38,7 +38,7 @@ namespace model
 class AbstractHardwareState : public IObject
 {
 public:
-    AbstractHardwareState();
+    AbstractHardwareState() = default;
     AbstractHardwareState(EHardwareType type,
                           EComponentType component_type,
                           EBusProtocol bus_proto,

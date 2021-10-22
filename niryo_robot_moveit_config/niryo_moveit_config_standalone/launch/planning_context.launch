@@ -2,6 +2,10 @@
 <launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
   <arg name="hardware_version" default="ned"/>
+  <arg name="simulation_mode" default="false"/>
+
+  <arg name="config_dir" value="$(arg hardware_version)" unless="$(arg simulation_mode)" />
+  <arg name="config_dir" value="$(arg hardware_version)/simulation" if="$(arg simulation_mode)" />
 
   <!-- By default we do not overwrite the URDF. Change the following to true to change the default behavior -->
   <arg name="load_robot_description" default="false"/>
@@ -17,7 +21,7 @@
   
   <!-- Load updated joint limits (override information from URDF) -->
   <group ns="$(arg robot_description)_planning">
-    <rosparam command="load" file="$(find niryo_moveit_config_standalone)/config/$(arg hardware_version)/joint_limits.yaml"/>
+    <rosparam command="load" file="$(find niryo_moveit_config_standalone)/config/$(arg config_dir)/joint_limits.yaml"/>
   </group>
 
   <!-- Load default settings for kinematics; these settings are overridden by settings in a node's namespace -->

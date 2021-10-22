@@ -645,9 +645,9 @@ void CanInterfaceCore::addSingleCommandToQueue(std::unique_ptr<common::model::IS
  * @brief CanInterfaceCore::addSingleCommandToQueue
  * @param cmd
  */
-void CanInterfaceCore::addSingleCommandToQueue(std::vector<std::unique_ptr<common::model::ISingleMotorCmd>> && cmd)
+void CanInterfaceCore::addSingleCommandToQueue(std::vector<std::unique_ptr<common::model::ISingleMotorCmd> > cmd)
 {
-    for (auto && c : cmd)
+    for (auto& c : cmd)
         addSingleCommandToQueue(std::move(c));
 }
 

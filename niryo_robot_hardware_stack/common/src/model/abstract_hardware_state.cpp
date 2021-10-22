@@ -30,13 +30,6 @@ namespace common
 {
 namespace model
 {
-/**
- * @brief AbstractHardwareState::AbstractHardwareState
- */
-AbstractHardwareState::AbstractHardwareState()
-{
-    reset();
-}
 
 /**
  * @brief AbstractHardwareState::AbstractHardwareState

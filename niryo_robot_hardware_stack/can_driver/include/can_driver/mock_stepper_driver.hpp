@@ -67,22 +67,26 @@ public:
     std::tuple<bool, uint8_t, uint16_t> interpreteConveyorData(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) override;
 
 private:
-    std::shared_ptr<FakeCanData>  _fake_data;
+    bool init();
+
+    std::shared_ptr<FakeCanData> _fake_data;
     std::vector<uint8_t> _id_list;
     
     std::map<uint8_t, std::pair<common::model::EStepperCalibrationStatus, int32_t> > _calibration_status;
 
     uint8_t _fake_conveyor_id{6};
     uint8_t _current_id{1};
-    uint8_t _next_index{0};
-    uint8_t _next_control_byte{CAN_DATA_POSITION};
+    uint8_t _current_id_index{0};
+
+    uint8_t _default_position_spam = 30;
+    uint8_t _position_spam{30};
+
+    uint8_t _current_control_byte_index{0};
+
+    std::vector<uint8_t> _control_byte_list{CAN_DATA_DIAGNOSTICS, CAN_DATA_FIRMWARE_VERSION, CAN_DATA_CALIBRATION_RESULT};
 
     // fake time for calibration
     int _fake_time{0};
-
-    // using for fake event can
-    static constexpr uint8_t MAX_IDX = 2; // index for joints in _id_list
-    static constexpr uint8_t MAX_ID_JOINT = 3;
 
 };  // class MockStepperDriver
 

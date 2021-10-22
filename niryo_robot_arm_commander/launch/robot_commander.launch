@@ -3,6 +3,7 @@
         xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
     <arg name="log_level" default="INFO" />
     <arg name="hardware_version" default="ned"/>
+    <arg name="simulation_mode" default="false" />
     <arg name="gazebo" default="false"/>
 
     <include file="$(find niryo_robot_arm_commander)/launch/robot_commander_base.launch.xml">
@@ -13,13 +14,15 @@
     <group unless="$(arg gazebo)">
         <include file="$(find niryo_moveit_config_standalone)/launch/move_group.launch">
             <arg name="hardware_version" value="$(arg hardware_version)" />
+            <arg name="simulation_mode" value="$(arg simulation_mode)" />
         </include>
     </group>
     
     <group if="$(arg gazebo)">
         <include file="$(find niryo_moveit_config_w_gripper1)/launch/move_group.launch">
-            <arg name="hardware_version" value="$(arg hardware_version)" />
             <arg name="load_robot_description" value="false"/>
+            <arg name="hardware_version" value="$(arg hardware_version)" />
+            <arg name="simulation_mode" value="$(arg simulation_mode)" />
         </include>
     </group>
     
