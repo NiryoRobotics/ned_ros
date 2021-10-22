@@ -46,7 +46,10 @@ using ::common::model::EHardwareType;
 using ::common::model::StepperMotorState;
 using ::common::model::EBusProtocol;
 
-// Method add joints
+/**
+ * @brief addJointToTtlInterface
+ * @param ttl_interface
+ */
 void addJointToTtlInterface(const std::shared_ptr<ttl_driver::TtlInterfaceCore>& ttl_interface)
 {
     size_t nb_joints = 0;
@@ -166,6 +169,10 @@ void addJointToTtlInterface(const std::shared_ptr<ttl_driver::TtlInterfaceCore>&
     }  // end for (size_t j = 0; j < nb_joints; j++)
 }
 
+/**
+ * @brief addJointToTtlManager
+ * @param ttl_drv
+ */
 void addJointToTtlManager(const std::shared_ptr<ttl_driver::TtlManager>& ttl_drv)
 {
     size_t nb_joints = 0;
@@ -289,7 +296,10 @@ void addJointToTtlManager(const std::shared_ptr<ttl_driver::TtlManager>& ttl_drv
 /******************************************************/
 /************ Tests of ttl interface ******************/
 /******************************************************/
-// TODO(Thuc) use config to get info of motors for each type of hw instead of hardcode
+/**
+ * @brief The TtlInterfaceTestSuiteRobotWithCan class
+ * TODO(Thuc) use config to get info of motors for each type of hw instead of hardcode
+ */
 class TtlInterfaceTestSuiteRobotWithCan : public ::testing::Test
 {
   protected:
@@ -333,7 +343,9 @@ TEST_F(TtlInterfaceTestSuiteRobotWithCan, testRebootMotorsWrongID)
   EXPECT_FALSE(result);
 }
 
-
+/**
+ * @brief The TtlManagerTestSuiteRobotWithCan class
+ */
 class TtlManagerTestSuiteRobotWithCan : public ::testing::Test
 {
   protected:
@@ -529,6 +541,9 @@ TEST_F(TtlManagerTestSuiteRobotWithCan, scanTest)
     EXPECT_EQ(ttl_drv->scanAndCheck(), COMM_SUCCESS);
 }
 
+/**
+ * @brief The TtlInterfaceTestSuiteRotbotWithoutCan class
+ */
 class TtlInterfaceTestSuiteRotbotWithoutCan : public ::testing::Test
 {
   protected:
@@ -575,6 +590,9 @@ TEST_F(TtlInterfaceTestSuiteRotbotWithoutCan, testRebootMotorsWrongID)
   EXPECT_FALSE(result);
 }
 
+/**
+ * @brief The TtlManagerTestSuiteRobotWithoutCan class
+ */
 class TtlManagerTestSuiteRobotWithoutCan : public ::testing::Test
 {
   protected:
@@ -768,16 +786,14 @@ TEST_F(TtlManagerTestSuiteRobotWithoutCan, testSyncControlCmds)
     }
 
     // sync cmd
-    auto cmd_1_torque = std::make_unique<common::model::DxlSyncCmd>(
-                                                              common::model::EDxlCommandType::CMD_TYPE_TORQUE);
+    auto cmd_1_torque = std::make_unique<common::model::DxlSyncCmd>(common::model::EDxlCommandType::CMD_TYPE_TORQUE);
     cmd_1_torque->addMotorParam(dxl_type, 5, 1);
     cmd_1_torque->addMotorParam(dxl_type, 6, 1);
 
     EXPECT_EQ(ttl_drv->writeSynchronizeCommand(std::move(cmd_1_torque)), COMM_SUCCESS);
     ros::Duration(0.01).sleep();
 
-    auto cmd_2_torque = std::make_unique<common::model::StepperTtlSyncCmd>(
-                                                              common::model::EStepperCommandType::CMD_TYPE_TORQUE);
+    auto cmd_2_torque = std::make_unique<common::model::StepperTtlSyncCmd>(common::model::EStepperCommandType::CMD_TYPE_TORQUE);
     cmd_2_torque->addMotorParam(stepper_type, 2, 1);
     cmd_2_torque->addMotorParam(stepper_type, 3, 1);
 
