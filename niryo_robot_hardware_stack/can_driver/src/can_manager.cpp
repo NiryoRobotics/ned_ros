@@ -766,14 +766,17 @@ void CanManager::readFakeConfig()
 {
     _fake_data = std::make_shared<FakeCanData>();
 
-    std::string hardware_version;
-    _nh.getParam("hardware_version", hardware_version);
-    assert(_nh.hasParam(hardware_version));
-
-    if (_nh.hasParam(hardware_version + "/steppers"))
+    if (_nh.hasParam("fake_params"))
     {
-        std::string current_ns = hardware_version + "/steppers/";
-        retrieveFakeMotorData(current_ns, _fake_data->stepper_registers);
+        if (_nh.hasParam("fake_params/steppers"))
+        {
+            std::string current_ns = "fake_params/steppers/";
+            retrieveFakeMotorData(current_ns, _fake_data->stepper_registers);
+
+            int pos_spam{30};
+            _nh.getParam("fake_params/steppers/position_spam", pos_spam);
+            _fake_data->position_spam = static_cast<uint8_t>(pos_spam);
+        }
     }
 }
 

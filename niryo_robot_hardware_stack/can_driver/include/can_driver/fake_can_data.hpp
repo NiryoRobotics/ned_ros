@@ -45,6 +45,8 @@ public:
         bool          state{false};
     };
 
+    uint8_t position_spam{30};
+
     // stepper
     std::map<uint8_t, FakeStepperRegister> stepper_registers;
 };

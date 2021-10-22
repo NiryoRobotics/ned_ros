@@ -47,9 +47,35 @@ namespace can_driver
 MockStepperDriver::MockStepperDriver(std::shared_ptr<FakeCanData>  data) :
   _fake_data(std::move(data))
 {
-    // retrieve list of ids
-    for (auto const& imap : _fake_data->stepper_registers)
-        _id_list.emplace_back(imap.first);
+    init();
+}
+
+
+/**
+ * @brief MockStepperDriver::init
+ * @return
+ */
+bool MockStepperDriver::init()
+{
+    bool res = false;
+
+    if (_fake_data)
+    {
+        // retrieve list of ids
+        for (auto const& imap : _fake_data->stepper_registers)
+            _id_list.emplace_back(imap.first);
+
+        _default_position_spam = _fake_data->position_spam;
+        _position_spam = _default_position_spam;
+
+        res = true;
+    }
+    else
+    {
+        std::cout << "ERROR : Fake data not initialized" << std::endl;
+    }
+
+    return res;
 }
 
 /**
@@ -122,50 +148,42 @@ uint8_t MockStepperDriver::readData(uint8_t& id, int& control_byte,
 
     error_message.clear();
 
-    // change ID to generate event on the next id
-    _current_id = _id_list[_next_index];
-    id = _current_id;
-    _next_index++;
-    if (_next_index > MAX_IDX + 1)
+    // change ID to generate event on the next id (circular buffer)
+    _current_id_index++;
+    if (_current_id_index >= _id_list.size())
     {
-        _next_index = 0;
+        _current_id_index = 0;
     }
 
-    // change control byte to all type of data can be read
-    if (id == _fake_conveyor_id && _next_control_byte != CAN_DATA_CONVEYOR_STATE)
+    _current_id = _id_list[_current_id_index];
+    id = _current_id;
+
+    if (_calibration_status.count(_current_id) &&
+        EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS == _calibration_status.at(_current_id).first &&
+        0 <= _fake_time)
     {
-        control_byte = CAN_DATA_CONVEYOR_STATE;
-        return CAN_OK;
+        control_byte = CAN_DATA_CALIBRATION_RESULT;
     }
-    if (id != _fake_conveyor_id && _next_control_byte == CAN_DATA_CONVEYOR_STATE)
+    else  if (_position_spam > 0)
     {
+        // we need to spam the bus with position messages as in a normal CAN bus
+        _position_spam--;
         control_byte = CAN_DATA_POSITION;
     }
     else
     {
-        control_byte = _next_control_byte;
-        switch (control_byte) {
-        case CAN_DATA_POSITION:
-            // set next control byte
-            if (_next_index == MAX_IDX)
-                _next_control_byte = CAN_DATA_DIAGNOSTICS;
-            break;
-        case CAN_DATA_DIAGNOSTICS:
-            if (_next_index == MAX_IDX)
-                _next_control_byte = CAN_DATA_FIRMWARE_VERSION;
-            break;
-        case CAN_DATA_FIRMWARE_VERSION:
-            if (_next_index == MAX_IDX)
-                _next_control_byte = CAN_DATA_CALIBRATION_RESULT;
-            break;
-        case CAN_DATA_CALIBRATION_RESULT:
-            if (_next_index == MAX_IDX)
-                _next_control_byte = CAN_DATA_POSITION;
-            break;
-        default:
-            break;
+        _position_spam = _default_position_spam;
+
+        // change control byte to all type of data can be read (circular buffer)
+        _current_control_byte_index++;
+        if (_current_control_byte_index >= _control_byte_list.size())
+        {
+            _current_control_byte_index = 0;
         }
+
+        control_byte = _control_byte_list[_current_control_byte_index];
     }
+
     return CAN_OK;
 }
 
@@ -336,7 +354,7 @@ uint8_t MockStepperDriver::sendCalibrationCommand(uint8_t id, int offset, int de
                                                       std::make_pair(EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS,
                                                                      static_cast<int32_t>(offset))));
         }
-        _fake_time = 10;
+        _fake_time = 2;
     }
 
     return CAN_OK;
@@ -361,6 +379,7 @@ uint8_t MockStepperDriver::sendUpdateConveyorId(uint8_t old_id, uint8_t new_id)
         std::swap(_fake_data->stepper_registers[new_id], it->second);
         result = CAN_OK;
         _fake_conveyor_id = new_id;
+        _control_byte_list.emplace_back(CAN_DATA_CONVEYOR_STATE);
     }
 
     return result;
@@ -372,7 +391,7 @@ uint8_t MockStepperDriver::sendUpdateConveyorId(uint8_t old_id, uint8_t new_id)
 
 /**
  * @brief MockStepperDriver::interpretePositionStatus
- * The mission of readData in fake driver is no longer getting datat. It will generate only event.
+ * The mission of readData in fake driver is no longer getting data. It will generate only event.
  * So interpretePositionStatus or interprete* send final value corresponding to the event
  * @param data
  * @return

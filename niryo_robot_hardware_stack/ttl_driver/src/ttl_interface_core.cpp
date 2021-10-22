@@ -906,9 +906,9 @@ void TtlInterfaceCore::addSingleCommandToQueue(std::unique_ptr<common::model::IS
  * @brief TtlInterfaceCore::addSingleCommandToQueue
  * @param cmd
  */
-void TtlInterfaceCore::addSingleCommandToQueue(std::vector<std::unique_ptr<common::model::ISingleMotorCmd> >&& cmd)
+void TtlInterfaceCore::addSingleCommandToQueue(std::vector<std::unique_ptr<common::model::ISingleMotorCmd> > cmd)
 {
-    for (auto&& c : cmd)
+    for (auto& c : cmd)
         addSingleCommandToQueue(std::move(c));
 }
 

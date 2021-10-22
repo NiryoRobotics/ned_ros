@@ -80,7 +80,7 @@ class CanInterfaceCore : public common::util::IDriverCore, public common::util::
         void setSyncCommand(std::unique_ptr<common::model::ISynchronizeMotorCmd>&& cmd) override;
 
         void addSingleCommandToQueue(std::unique_ptr<common::model::ISingleMotorCmd>&& cmd) override;
-        void addSingleCommandToQueue(std::vector<std::unique_ptr<common::model::ISingleMotorCmd>>&& cmd) override;
+        void addSingleCommandToQueue(std::vector<std::unique_ptr<common::model::ISingleMotorCmd> > cmd) override;
 
         void startCalibration() override;
         void resetCalibration() override;

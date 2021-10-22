@@ -1,0 +1,13 @@
+# fake params using in fake driver
+fake_params:
+    id_list: [2, 3, 6, 11]
+    dynamixels:
+        id: [2, 3, 6, 11]
+        position: [2048, 2048, 2048, 370]
+        velocity: [0, 0, 0, 0]
+        temperature: [50, 52, 54, 56]
+        voltage: [50, 50, 50, 50]
+        min_position: [0, 0, 0, 0]
+        max_position: [4096, 4096, 4096, 4096]
+        model_number: [1, 1, 1, 1]
+        firmware: ["0.0.1", "0.0.01", "0.0.1", "0.0.1"]
