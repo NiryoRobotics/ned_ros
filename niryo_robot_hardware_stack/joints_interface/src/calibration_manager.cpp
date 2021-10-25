@@ -555,7 +555,6 @@ void CalibrationManager::moveRobotBeforeCalibration()
         dynamixel_cmd.addMotorParam(_joint_states_list.at(5)->getHardwareType(), _joint_states_list.at(5)->getId(), 1);
 
         _ttl_interface->setSyncCommand(std::make_unique<DxlSyncCmd>(dynamixel_cmd));
-        ros::Duration(0.2).sleep();
 
         // move dxls
         dynamixel_cmd.reset();
@@ -571,7 +570,9 @@ void CalibrationManager::moveRobotBeforeCalibration()
                                     static_cast<uint32_t>(_joint_states_list.at(5)->to_motor_pos(0)));
 
         _ttl_interface->setSyncCommand(std::make_unique<DxlSyncCmd>(dynamixel_cmd));
-        ros::Duration(0.2).sleep();
+
+        // Wait a little bit for all dxl go to home before calibration
+        ros::Duration(0.3).sleep();
     }
 }
 
@@ -636,7 +637,7 @@ void CalibrationManager::sendCalibrationToSteppers()
             setStepperCalibrationCommand(pStepperMotorState_2, 1000, 1, _calibration_timeout);
             setStepperCalibrationCommand(pStepperMotorState_3, 1000, -1, _calibration_timeout);
 
-            // wait for calibration status done
+            // wait for calibration status done (TODO(THUC) maybe not need this delay, after this function, we have to wait the calibration status returned)
             ros::Duration(0.2).sleep();
         }
         else
@@ -668,8 +669,6 @@ void CalibrationManager::sendCalibrationToSteppers()
             setStepperCalibrationCommand(pStepperMotorState_1, 200, 1, _calibration_timeout);
             setStepperCalibrationCommand(pStepperMotorState_2, 1000, 1, _calibration_timeout);
             setStepperCalibrationCommand(pStepperMotorState_3, 1000, 1, _calibration_timeout);
-
-            ros::Duration(0.2).sleep();
         }
     }
 }
