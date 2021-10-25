@@ -248,7 +248,7 @@ int EndEffectorDriver<reg_type>::syncReadHwErrorStatus(const std::vector<uint8_t
 // buttons status
 
 /**
- * @brief EndEffectorDriver<reg_type>::readButton1Status
+ * @brief EndEffectorDriver<reg_type>::readButton0Status
  * @param id
  * @param action
  * @return
@@ -264,7 +264,7 @@ int EndEffectorDriver<reg_type>::readButton0Status(uint8_t id,
 }
 
 /**
- * @brief EndEffectorDriver<reg_type>::readButton2Status
+ * @brief EndEffectorDriver<reg_type>::readButton1Status
  * @param id
  * @param action
  * @return
@@ -279,7 +279,7 @@ int EndEffectorDriver<reg_type>::readButton1Status(uint8_t id, common::model::EA
 }
 
 /**
- * @brief EndEffectorDriver<reg_type>::readButton3Status
+ * @brief EndEffectorDriver<reg_type>::readButton2Status
  * @param id
  * @param action
  * @return

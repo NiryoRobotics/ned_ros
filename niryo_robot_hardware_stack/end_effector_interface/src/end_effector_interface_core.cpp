@@ -110,7 +110,7 @@ void EndEffectorInterfaceCore::initParameters(ros::NodeHandle& nh)
     //  initiliaze end effector state
     _end_effector_state = std::make_shared<EndEffectorState>(_id, ee_type);
 
-    uint8_t button_id = 1;
+    uint8_t button_id = 0;
     while (nh.hasParam("button_"  + std::to_string(button_id) + "/type"))
     {
       std::string button_type;

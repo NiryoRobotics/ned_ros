@@ -203,7 +203,7 @@ int MockEndEffectorDriver::scan(std::vector<uint8_t> &id_list)
 // buttons status
 
 /**
- * @brief MockEndEffectorDriver::readButton1Status
+ * @brief MockEndEffectorDriver::readButton0Status
  * @param id
  * @param action
  * @return
@@ -218,7 +218,7 @@ int MockEndEffectorDriver::readButton0Status(uint8_t id, common::model::EActionT
 }
 
 /**
- * @brief MockEndEffectorDriver::readButton2Status
+ * @brief MockEndEffectorDriver::readButton1Status
  * @param id
  * @param action
  * @return
@@ -233,7 +233,7 @@ int MockEndEffectorDriver::readButton1Status(uint8_t id, common::model::EActionT
 }
 
 /**
- * @brief MockEndEffectorDriver::readButton3Status
+ * @brief MockEndEffectorDriver::readButton2Status
  * @param id
  * @param action
  * @return
