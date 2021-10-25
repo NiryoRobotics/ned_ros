@@ -655,15 +655,17 @@ void CalibrationManager::sendCalibrationToSteppers()
             _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperTtlSingleCmd>(
                                                     StepperTtlSingleCmd(EStepperCommandType::CMD_TYPE_CALIBRATION_SETUP,
                                                     pStepperMotorState_1->getId(),
-                                                    {0, static_cast<uint8_t>(_calibration_stall_threshold[0])})));
+                                                    {0, pStepperMotorState_1->getCalibrationStallThreshold()})));
+
             _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperTtlSingleCmd>(
                                                     StepperTtlSingleCmd(EStepperCommandType::CMD_TYPE_CALIBRATION_SETUP,
                                                     pStepperMotorState_2->getId(),
-                                                    {1, static_cast<uint8_t>(_calibration_stall_threshold[1])})));
+                                                    {1, pStepperMotorState_2->getCalibrationStallThreshold()})));
+
             _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperTtlSingleCmd>(
                                                     StepperTtlSingleCmd(EStepperCommandType::CMD_TYPE_CALIBRATION_SETUP,
                                                     pStepperMotorState_3->getId(),
-                                                    {0, static_cast<uint8_t>(_calibration_stall_threshold[2])})));
+                                                    {0, pStepperMotorState_3->getCalibrationStallThreshold()})));
 
             // send calibration commands
             setStepperCalibrationCommand(pStepperMotorState_1, 200, 1, _calibration_timeout);

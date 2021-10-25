@@ -1,6 +1,2 @@
 calibration_timeout: 5
-calibration_stall_threshold_motor_1: 8
-calibration_stall_threshold_motor_2: 6
-calibration_stall_threshold_motor_3: 6
-
 calibration_file:  "~/.niryo/simulation"

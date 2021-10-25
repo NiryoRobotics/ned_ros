@@ -62,12 +62,113 @@ StepperMotorState::StepperMotorState(std::string name,
                                      EBusProtocol bus_proto,
                                      uint8_t id) :
     JointState(std::move(name), type, component_type, bus_proto, id)
-{}
+{
+    updateMultiplierRatio();
+}
+
+
+// *********************
+//  JointState Interface
+// ********************
+
+/**
+ * @brief StepperMotorState::reset
+ */
+void StepperMotorState::reset()
+{
+    JointState::reset();
+    _last_time_read = 0.0;
+    _hw_fail_counter = 0.0;
+    _firmware_version.clear();
+    _calibration_value = 0;
+    _calibration_state = EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED;
+}
+
+/**
+ * @brief StepperMotorState::isValid
+ * @return
+ */
+bool StepperMotorState::isValid() const
+{
+    return (0 != _id) && ( 0.0 != _multiplier_ratio);
+}
+
+/**
+ * @brief StepperMotorState::str
+ * @return
+ */
+std::string StepperMotorState::str() const
+{
+    std::ostringstream ss;
+
+    ss << "StepperMotorState :\n";
+    ss << "firmware version: " << "\"" << _firmware_version << "\"";
+    ss << "last time read: " << _last_time_read << ", "
+       << "hw fail counter: " << _hw_fail_counter << "\n"
+       << "max effort: " << _max_effort << ", "
+       << "micro steps: " << _micro_steps << ", "
+       << "multiplier ratio: " << _multiplier_ratio << "\n";
+
+    ss << "velocity profile : ";
+    for (auto const& d : getVelocityProfile())
+      ss << d << ",";
+    ss << "\n";
+
+    ss << "calibration state: " << StepperCalibrationStatusEnum(_calibration_state).toString() << ", "
+       << "calibration value: " << _calibration_value;
+    ss << "\n---\n";
+    ss << "\n";
+    ss << JointState::str();
+
+    return ss.str();
+}
+
+/**
+ * @brief StepperMotorState::to_motor_pos
+ * @param pos_rad
+ * @return
+ */
+int StepperMotorState::to_motor_pos(double pos_rad)
+{
+    assert(0.0 != _multiplier_ratio);
+
+    int result =  static_cast<int>(std::round(_offset_position + pos_rad * (_multiplier_ratio * _direction) / (2 * M_PI)));
+
+    if (common::model::EBusProtocol::CAN == _bus_proto)
+    {
+        result = result > 0 ? result : 0;
+    }
+
+    return result;
+}
+
+/**
+ * @brief StepperMotorState::to_rad_pos
+ * @param pos
+ * @return
+ */
+double StepperMotorState::to_rad_pos(int pos)
+{
+    assert(0.0 != _multiplier_ratio);
+
+    return static_cast<double>( (pos - _offset_position) * _direction * 2 * M_PI / _multiplier_ratio);
+}
 
 // ****************
 //  Setters
 // ****************
 
+/**
+ * @brief StepperMotorState::setGearRatio
+ * @param micro_steps
+ * @param gear_ratio
+ */
+void StepperMotorState::setGearRatio(double gear_ratio)
+{
+    _gear_ratio = gear_ratio;
+
+    updateMultiplierRatio();
+}
 /**
  * @brief StepperMotorState::updateLastTimeRead
  */
@@ -83,15 +184,6 @@ void StepperMotorState::updateLastTimeRead()
 void StepperMotorState::setHwFailCounter(double fail_counter)
 {
     _hw_fail_counter = fail_counter;
-}
-
-/**
- * @brief StepperMotorState::setGearRatio
- * @param gear_ratio
- */
-void StepperMotorState::setGearRatio(double gear_ratio)
-{
-    _gear_ratio = gear_ratio;
 }
 
 /**
@@ -125,98 +217,6 @@ void StepperMotorState::setCalibration(const std::tuple<EStepperCalibrationStatu
     _calibration_value = std::get<1>(data);
 }
 
-// *********************
-//  JointState Interface
-// ********************
-
-/**
- * @brief StepperMotorState::reset
- */
-void StepperMotorState::reset()
-{
-    JointState::reset();
-    _last_time_read = 0.0;
-    _hw_fail_counter = 0.0;
-    _firmware_version.clear();
-    _calibration_value = 0;
-    _calibration_state = EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED;
-}
-
-/**
- * @brief StepperMotorState::isValid
- * @return
- */
-bool StepperMotorState::isValid() const
-{
-    return (0 != _id);
-}
-
-/**
- * @brief StepperMotorState::str
- * @return
- */
-std::string StepperMotorState::str() const
-{
-    std::ostringstream ss;
-
-    ss << "StepperMotorState :\n";
-    ss << "firmware version: " << "\"" << _firmware_version << "\"";
-    ss << "last time read: " << _last_time_read << ", "
-       << "hw fail counter: " << _hw_fail_counter << "\n"
-       << "gear ratio: " << _gear_ratio << ", "
-       << "max effort: " << _max_effort << ", "
-       << "micro steps: " << _micro_steps << "\n";
-
-    ss << "velocity profile : ";
-    for (auto const& d : getVelocityProfile())
-      ss << d << ",";
-    ss << "\n";
-
-    ss << "calibration state: " << StepperCalibrationStatusEnum(_calibration_state).toString() << ", "
-       << "calibration value: " << _calibration_value;
-    ss << "\n---\n";
-    ss << "\n";
-    ss << JointState::str();
-
-    return ss.str();
-}
-
-/**
- * @brief StepperMotorState::to_motor_pos
- * @param pos_rad
- * @return
- */
-int StepperMotorState::to_motor_pos(double pos_rad)
-{
-    double multiplier_ratio{1.0};
-
-    if (common::model::EBusProtocol::CAN == _bus_proto)
-    {
-        multiplier_ratio = STEPPERS_MOTOR_STEPS_PER_REVOLUTION * _micro_steps * _gear_ratio;
-        return static_cast<int>(std::round(_offset_position + pos_rad * (multiplier_ratio * _direction) / ( 2 * M_PI)));
-    }
-    else
-    {
-        multiplier_ratio = 360 / 0.088;
-        int result =  static_cast<int>(std::round(_offset_position + pos_rad * (getMultiplierRatio() * _direction) / (2 * M_PI)));
-        return result > 0 ? result : 0;
-    }
-}
-
-/**
- * @brief StepperMotorState::to_rad_pos
- * @param pos
- * @return
- */
-double StepperMotorState::to_rad_pos(int pos)
-{
-    double multiplier_ratio = getMultiplierRatio();
-
-    assert(0.0 != multiplier_ratio);
-
-    return static_cast<double>( (pos - _offset_position) * _direction * 2 * M_PI / multiplier_ratio);
-}
-
 /**
  * @brief StepperMotorState::setMicroSteps
  * @param micro_steps
@@ -224,6 +224,8 @@ double StepperMotorState::to_rad_pos(int pos)
 void StepperMotorState::setMicroSteps(double micro_steps)
 {
     _micro_steps = micro_steps;
+
+    updateMultiplierRatio();
 }
 
 /**
@@ -296,6 +298,35 @@ void StepperMotorState::setProfileD1(const uint32_t &profile_d_1)
 void StepperMotorState::setProfileVStop(const uint32_t &profile_v_stop)
 {
   _profile_v_stop = profile_v_stop;
+}
+
+/**
+ * @brief StepperMotorState::setCalibrationStallThreshold
+ * @param calibration_stall_threshold
+ */
+void StepperMotorState::setCalibrationStallThreshold(const uint8_t &calibration_stall_threshold)
+{
+  _calibration_stall_threshold = calibration_stall_threshold;
+}
+
+//**************
+//    Private
+//**************
+
+/**
+ * @brief StepperMotorState::updateMultiplierRatio
+ */
+void StepperMotorState::updateMultiplierRatio()
+{
+  if (common::model::EBusProtocol::CAN == _bus_proto)
+  {
+    _multiplier_ratio = STEPPERS_MOTOR_STEPS_PER_REVOLUTION * _micro_steps * _gear_ratio;
+
+    }
+    else
+    {
+        _multiplier_ratio = 360 / 0.088;
+    }
 }
 
 }  // namespace model

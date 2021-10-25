@@ -89,6 +89,7 @@ protected:
     std::string _hw_error_message{};
 
     uint8_t _id{0};
+
 protected:
     // see https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c67-a-polymorphic-class-should-suppress-public-copymove
     AbstractHardwareState( const AbstractHardwareState& ) = default;
