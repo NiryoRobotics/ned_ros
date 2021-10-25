@@ -51,7 +51,6 @@ class LedState:
 
 def send_hotspot_command():
     rospy.loginfo("HOTSPOT")
-    send_led_state(LedState.WAIT_HOTSPOT)
     rospy.wait_for_service('/niryo_robot/wifi/manage', timeout=0.5)
     try:
         set_hotspot = rospy.ServiceProxy('/niryo_robot/wifi/manage', ManageWifi)
@@ -117,7 +116,6 @@ def send_reboot_motors_command():
 
 def send_shutdown_command():
     rospy.loginfo("SHUTDOWN")
-    send_led_state(LedState.SHUTDOWN)
     rospy.loginfo("Activate learning mode")
     try:
         rospy.wait_for_service('/niryo_robot/learning_mode/activate', timeout=1)
@@ -139,7 +137,6 @@ def send_shutdown_command():
 
 def send_reboot_command():
     rospy.loginfo("REBOOT")
-    send_led_state(LedState.SHUTDOWN)
     rospy.loginfo("Activate learning mode")
     try:
         rospy.wait_for_service('/niryo_robot/learning_mode/activate', timeout=0.5)

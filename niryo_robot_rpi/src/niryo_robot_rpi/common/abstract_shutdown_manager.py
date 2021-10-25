@@ -34,7 +34,7 @@ class AbstractShutdownManager(object):
 
         rospy.Service('~shutdown_rpi', SetInt, self.callback_shutdown_rpi)
 
-        self.__advertise_shutdown_service = rospy.ServiceProxy('/niryo_robot_status/advertise_shutdown', Trigger)
+        self._advertise_shutdown_service = rospy.ServiceProxy('/niryo_robot_status/advertise_shutdown', Trigger)
 
     def callback_shutdown_rpi(self, req):
         if req.value == 1:
@@ -47,21 +47,21 @@ class AbstractShutdownManager(object):
             return CommandStatus.UNKNOWN_COMMAND, 'Incorrect value: 1 for shutdown, 2 for reboot'
 
     def request_shutdown(self):
-        self.__advertise_shutdown_service.call()
-        send_shutdown_command_thread = threading.Timer(1.0, self._shutdown)
+        self._advertise_shutdown_service.call()
+        send_shutdown_command_thread = threading.Timer(1.0, self.shutdown)
         send_shutdown_command_thread.start()
 
     def request_reboot(self):
-        self.__advertise_shutdown_service.call()
-        send_shutdown_command_thread = threading.Timer(1.0, self._shutdown)
+        self._advertise_shutdown_service.call()
+        send_shutdown_command_thread = threading.Timer(1.0, self.reboot)
         send_shutdown_command_thread.start()
 
     @staticmethod
-    def _shutdown():
-        print('shutdown')
+    def shutdown():
+        print('Shutdown')
         send_shutdown_command()
 
     @staticmethod
-    def _reboot():
-        print('reboot')
+    def reboot():
+        print('Reboot')
         send_reboot_command()

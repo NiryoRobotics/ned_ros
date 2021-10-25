@@ -146,6 +146,22 @@ class LedRingAnimations:
             mode = LedRingAnimation.NONE if color_rgba == self.off_color else LedRingAnimation.SOLID
             self.set_current_anim_and_color(mode, color_rgba)
 
+    def custom(self, color_rgba):
+        """
+        Sets all Leds to a color at once
+        """
+        self.init_animation()
+        with self.__animation_lock:
+            colors = color_rgba[:self.led_count] if len(color_rgba) > self.led_count else color_rgba + (
+                        len(color_rgba) - self.led_count) * [BLACK]
+
+            for led_id, led_color in enumerate(colors):
+                # set color led by led
+                self.set_led(led_id, led_color)
+            self.show_leds()  # display all leds
+
+            self.set_current_anim_and_color(LedRingAnimation.CUSTOM)
+
     def flashing(self, color_rgba, period=None, iterations=0):
         """
         Flash a color according to a frequency
@@ -504,7 +520,7 @@ class LedRingAnimations:
 
         sleep_duration = duration / float(steps)
         for _ in range(steps):
-            self.current_animation_color = ColorRGBA(self.current_animation_color.r + step_g,
+            self.current_animation_color = ColorRGBA(self.current_animation_color.r + step_r,
                                                      self.current_animation_color.b + step_g,
                                                      self.current_animation_color.b + step_b, 0)
             rospy.sleep(sleep_duration)

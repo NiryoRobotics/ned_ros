@@ -59,6 +59,7 @@ class LedRingCommander:
             LedRingAnimation.GO_UP_AND_DOWN: self.go_up_and_down_animation,
             LedRingAnimation.BREATH: self.breath_animation,
             LedRingAnimation.SNAKE: self.snake_animation,
+            LedRingAnimation.CUSTOM: self.custom_animation,
         }
 
         # - Publishers
@@ -126,7 +127,7 @@ class LedRingCommander:
                 self.rpi_overheating != msg.rpi_overheating):
 
             if self.robot_status != RobotStatus.CALIBRATION_IN_PROGRESS and msg.robot_status == RobotStatus.CALIBRATION_IN_PROGRESS:
-                rospy.sleep(0.5) # for synchro
+                rospy.sleep(0.5)  # for synchro
                 self.blink(YELLOW, 3, 1)
 
             self.robot_status = msg.robot_status
@@ -355,6 +356,9 @@ class LedRingCommander:
 
     def snake_animation(self, cmd):
         self.led_ring_anim.snake(cmd.colors[0], cmd.period, cmd.iterations)
+
+    def custom_animation(self, cmd):
+        self.led_ring_anim.custom(cmd.colors)
 
     def blink(self, color, iterations, period):
         with self.error_animation_lock:

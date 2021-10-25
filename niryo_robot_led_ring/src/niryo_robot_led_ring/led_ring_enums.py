@@ -50,4 +50,5 @@ ROBOT_ANIM_TO_STRING = {
     LedRingAnimation.GO_UP_AND_DOWN: "Go up and down",
     LedRingAnimation.BREATH: "Breath",
     LedRingAnimation.SNAKE: "Snake",
+    LedRingAnimation.CUSTOM: "Custom",
 }

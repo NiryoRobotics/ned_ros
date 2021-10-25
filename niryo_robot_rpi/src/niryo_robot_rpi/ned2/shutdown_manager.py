@@ -19,7 +19,7 @@
 
 
 import rospy
-from threading import Event, Lock
+from threading import Event, Lock, Timer
 
 from niryo_robot_rpi.common.rpi_ros_utils import send_shutdown_command, send_reboot_command
 from niryo_robot_rpi.common.abstract_shutdown_manager import AbstractShutdownManager
@@ -37,6 +37,7 @@ class ShutdownManager(AbstractShutdownManager):
 
         self.__turn_off_sound_name = rospy.get_param("/niryo_robot_sound/robot_sounds/turn_off_sound")
 
+        self.__shutdown_requested = False
         self.__shutdown_event = Event()
         self.__sound_status_sub = None
         self.__current_sound = ""
@@ -44,23 +45,26 @@ class ShutdownManager(AbstractShutdownManager):
         self.__mcp_manager = mcp_manager if mcp_manager is not None else McpIOManager()
 
         shutdown_output = rospy.get_param("~shutdown_manager/digital_output")
-        self.__shutdown_output = self.__mcp_manager.add_output(shutdown_output["pin"],
-                                                               "shutdown_output", reversed=shutdown_output["reverse"])
-
         shutdown_input = rospy.get_param("~shutdown_manager/digital_input")
+        self.__shutdown_output = self.__mcp_manager.add_output(shutdown_output, "shutdown_output")
         self.__shutdown_input = self.__mcp_manager.add_button(shutdown_input, "shutdown_input")
-        self.__shutdown_input.on_press(self.debug)#self.request_shutdown)
+        self.__shutdown_input.on_press(self.request_shutdown)
 
-    def debug(self):
-        rospy.logwarn(self.__shutdown_input.value)
+    def request_shutdown(self):
+        if not self.__shutdown_requested:
+            self.__shutdown_requested = True
+            self.__shutdown_output.value = True
+            self._advertise_shutdown_service.call()
+            send_shutdown_command_thread = Timer(1.0, self.shutdown)
+            send_shutdown_command_thread.start()
 
-    def _shutdown(self):
-        self.__shutdown_output.value = True
+    def shutdown(self):
+        self.__shutdown_output.value = False
         self.__shutdown_input.disable_on_press()
         self.wait_end_of_sound()
         send_shutdown_command()
 
-    def _reboot(self):
+    def reboot(self):
         self.wait_end_of_sound()
         send_reboot_command()
 

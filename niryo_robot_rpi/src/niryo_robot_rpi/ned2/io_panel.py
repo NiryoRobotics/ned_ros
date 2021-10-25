@@ -27,7 +27,6 @@ from niryo_robot_msgs.msg import CommandStatus
 from niryo_robot_rpi.common.abstract_io_panel import AbstractIOPanel
 from niryo_robot_rpi.common.end_effector_panel import NiryoEndEffectorPanel
 
-from .hardware.Adafruit_I2C import Adafruit_I2C
 from .hardware.MAX11644 import MAX11644
 
 from .mcp_io_objects import AnalogInput, AnalogOutput, McpIOManager
@@ -41,7 +40,6 @@ class IOPanel(AbstractIOPanel):
 
         adc_param = rospy.get_param("~adc")
         self.__adc = adc if adc is not None else MAX11644(bus=adc_param["i2c_bus"], address=adc_param["address"],
-                                                          resolution=adc_param["resolution"],
                                                           v_ref_internal=adc_param["v_ref"])
 
         self.__end_effector_panel = NiryoEndEffectorPanel()
@@ -53,8 +51,6 @@ class IOPanel(AbstractIOPanel):
 
     def shutdown(self):
         super(IOPanel, self).shutdown()
-        self.__wifi_button.shutdown()
-        self.__mcp_manager.shutdown()
 
     def __init_ios(self):
         self._digital_outputs = OrderedDict([(digital_output["name"], self.__mcp_manager.add_output(
@@ -80,7 +76,8 @@ class IOPanel(AbstractIOPanel):
 
         self._analog_inputs = OrderedDict([(analog_input["name"],
                                             AnalogInput(self.__adc, self.__mcp_manager.lock, analog_input["pin"],
-                                                        analog_input["name"])) for analog_input in
+                                                        analog_input["name"], analog_input["dividing_bridge_factor"]))
+                                           for analog_input in
                                            rospy.get_param("~analog_inputs")])
 
     def _callback_digital_io_change(self):

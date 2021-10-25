@@ -127,7 +127,7 @@ class NiryoEndEffectorPanel:
 
     def __callback_ee_io_state(self, msg):
         self.digital_input.value = msg.digital_input
-        self.digital_output.value = msg.digital_output
+        self.digital_output.force_value(msg.digital_output)
 
     def blockly_save_current_point(self):
         msg = Int32()

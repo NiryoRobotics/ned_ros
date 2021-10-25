@@ -72,8 +72,8 @@ class McpIOManager(object):
         self.__inputs[name] = DigitalInput(self.__mcp, self.__lock, pin, name, reverse_polarity)
         return self.__inputs[name]
 
-    def add_button(self, pin, name):
-        self.__inputs[name] = Button(self.__mcp, self.__lock, pin, name)
+    def add_button(self, pin, name, pullup=True):
+        self.__inputs[name] = Button(self.__mcp, self.__lock, pin, name, pullup)
         return self.__inputs[name]
 
     def add_led(self, pin, name):
@@ -104,7 +104,7 @@ class McpIOManager(object):
     def _check_interrupt_flag_security(self, _event):
         with self.__lock:
             pending_interrupts = self.__mcp.readU8(RegistersMCP23017.INTFA)
-
+        self.read_digital_inputs()
         if pending_interrupts:
             self.read_digital_inputs()
 
@@ -146,9 +146,11 @@ class Fan(DigitalOutput):
 
     def update(self, temperature):
         if temperature >= self.temperature_on_threshold:
-            self.value = 1
+            if not self._value:
+                self.value = 1
         elif temperature <= self.temperature_off_threshold:
-            self.value = 0
+            if self._value:
+                self.value = 0
 
 
 class Led(DigitalOutput):
@@ -195,13 +197,13 @@ class Button(DigitalInput):
     PRESSED_VALUE = 1
     RELEASED_VALUE = 0
 
-    def __init__(self, mcp, lock, pin, name):
+    def __init__(self, mcp, lock, pin, name, pullup=True):
         self.__on_press_function = None
         self.__on_release_function = None
 
         super(Button, self).__init__(mcp, lock, pin, name, reverse_polarity=False)
         with self._lock:
-            self._mcp.pullup(self._pin, True)
+            self._mcp.pullup(self._pin, pullup)
 
         self._value = self.RELEASED_VALUE
 
@@ -237,16 +239,17 @@ class Button(DigitalInput):
 
 class AnalogInput(NiryoIO):
 
-    def __init__(self, adc, lock, pin, name):
+    def __init__(self, adc, lock, pin, name, dividing_bridge_factor=1):
         super(AnalogInput, self).__init__(lock, pin, name)
 
         self.__adc = adc
         self.__mode = PinMode.ANALOG_INPUT
+        self.__dividing_bridge_factor = dividing_bridge_factor
 
     @property
     def value(self):
         with self._lock:
-            self._value = self.__adc.get_voltage(self._pin)
+            self._value = round(self.__adc.get_voltage(self._pin, self.__dividing_bridge_factor), 2)
             return self._value
 
 

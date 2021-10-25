@@ -13,7 +13,6 @@ __version__ = "1.1.0-auto.0"
 # Internal constants:
 _DEFAULT_ADDRESS = 0x36
 _DEFAULT_BUS = 1
-_RESOLUTION = 12
 _V_REF_INTERNAL = 4.096
 _VDD = 5.0
 
@@ -27,13 +26,12 @@ _VDD = 5.0
 
 
 class MAX11644(object):
-    def __init__(self, bus=_DEFAULT_BUS, address=_DEFAULT_ADDRESS, internal_reference=True, resolution=_RESOLUTION,
+    def __init__(self, bus=_DEFAULT_BUS, address=_DEFAULT_ADDRESS, internal_reference=True,
                  v_ref_internal=_V_REF_INTERNAL):
         # I2C bus object
         self._i2c = SMBus(bus)
         # added to avoid communication problems
         time.sleep(1)
-        self.resolution = resolution
         self._address = address
         self._SETUP = 0x80
         self._CONF = 0x00
@@ -76,8 +74,5 @@ class MAX11644(object):
         """Convert Full scale value (12 bits) into volts"""
         return self._ref_volt * value / 4096.
 
-    def get_voltage(self, channel=0):
-        return self.translate(self.convert_to_volt(self.get_value(channel)))
-
-    def translate(self, value):
-        return round(value, 3)  # round(float(value) / self._ref_volt * _VDD,3)
+    def get_voltage(self, channel=0, factor=1):
+        return self.convert_to_volt(self.get_value(channel) / factor)

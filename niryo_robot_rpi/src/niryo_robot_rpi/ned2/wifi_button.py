@@ -103,6 +103,7 @@ class WifiButton:
                 self.stop_blink()
                 self.__timer = rospy.Timer(rospy.Duration.from_sec(0.25), self.__bink_wifi_led)
                 if self.__wifi_status != WifiStatus.HOTSPOT:
+                    send_led_state(LedState.WAIT_HOTSPOT)
                     send_hotspot_command()
                 else:
                     send_reconnect_wifi_command()

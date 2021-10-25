@@ -47,6 +47,10 @@ class DigitalOutput(NiryoIO):
         except rospy.service.ServiceException:
             rospy.logwarn("End Effector Digital Output :: Failed to set its state")
 
+    def force_value(self, value):
+        assert isinstance(value, (bool, int, float))
+        self._value = bool(value)
+
 
 class DigitalInput(NiryoIO):
     def __init__(self, name):

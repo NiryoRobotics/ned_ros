@@ -175,6 +175,7 @@ class TopButton:
             if elapsed_seconds >= 10:
                 pass
             elif elapsed_seconds >= 3:
+                send_led_state(LedState.SHUTDOWN)
                 send_shutdown_command()
             elif 0.02 < elapsed_seconds < 3:
                 # Detect if a prog is running

@@ -61,4 +61,5 @@ class RobotRpi:
         self.__fans_manager.shutdown()
         self.__wifi_button.shutdown()
         self.__io_panel.shutdown()
+        self.__mcp_manager.shutdown()
         rospy.sleep(2)

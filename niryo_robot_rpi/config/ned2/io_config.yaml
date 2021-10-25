@@ -13,8 +13,7 @@ mcp:
 adc:
   i2c_bus: 0
   address: 54
-  v_ref: 3.0
-  resolution: 12
+  v_ref: 4.096
 
 fans:
   - pin: 8
@@ -33,10 +32,8 @@ end_effector_ios:
    digital_output: DO4
 
 shutdown_manager:
-  digital_input: 13
-  digital_output:
-    pin: 7
-    reverse: False
+  digital_output: 7
+  digital_input: 6
 
 digital_inputs:
   - name: DI1
@@ -76,5 +73,7 @@ analog_outputs:
 analog_inputs:
   - name: AI1
     pin: 0
+    dividing_bridge_factor: 0.6
   - name: AI2
     pin: 1
+    dividing_bridge_factor: 0.6

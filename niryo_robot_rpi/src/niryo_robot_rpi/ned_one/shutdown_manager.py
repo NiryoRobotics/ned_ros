@@ -18,8 +18,8 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-
 from niryo_robot_rpi.common.abstract_shutdown_manager import AbstractShutdownManager
+from niryo_robot_rpi.common.rpi_ros_utils import send_led_state, LedState
 
 
 class ShutdownManager(AbstractShutdownManager):
@@ -27,6 +27,10 @@ class ShutdownManager(AbstractShutdownManager):
     def __init__(self):
         super(ShutdownManager, self).__init__()
 
+    def shutdown(self):
+        send_led_state(LedState.SHUTDOWN)
+        super(ShutdownManager, self).shutdown()
 
-
-
+    def reboot(self):
+        send_led_state(LedState.SHUTDOWN)
+        super(ShutdownManager, self).reboot()
