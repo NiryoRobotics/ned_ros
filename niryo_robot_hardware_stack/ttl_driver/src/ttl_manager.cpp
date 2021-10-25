@@ -480,15 +480,15 @@ bool TtlManager::readJointsStatus()
     unsigned int hw_errors_increment = 0;
 
     // syncread from all drivers for all motors
-    //for (auto const& it : _driver_map)
-    //{
+    if (!_driver_map.empty())
+    {
       //  EHardwareType type = it.first;
         auto driver = std::dynamic_pointer_cast<AbstractMotorDriver>(_driver_map.begin()->second);
 
         if (driver) // && _ids_map.count(type))
         {
             // we retrieve all the associated id for the type of the current driver
-            vector<uint8_t> id_list = {2, 3, 4, 5, 6, 7}; //_ids_map.at(type);
+            vector<uint8_t> id_list{2, 3, 4, 5, 6, 7}; //_ids_map.at(type);
             vector<uint32_t> position_list;
             vector<uint32_t> velocity_list;
 
@@ -531,7 +531,7 @@ bool TtlManager::readJointsStatus()
                 hw_errors_increment++;
             }
         }
-    //}  // for driver_map
+    }  // for driver_map
 
     // we reset the global error variable only if no errors
     if (0 == hw_errors_increment)
