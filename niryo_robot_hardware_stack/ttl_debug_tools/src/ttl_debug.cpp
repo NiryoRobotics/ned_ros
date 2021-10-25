@@ -48,13 +48,19 @@ namespace po = boost::program_options;
 
 #ifdef __arm__
     #define DEFAULT_PORT "/dev/serial0"
-#elif __aarch64__
+#elifdef __aarch64__
     #define DEFAULT_PORT "/dev/ttyAMA0"
 #else
     #define DEFAULT_PORT ""
 #endif
 
-int main(int argc, char **argv)
+/**
+ * @brief handleUserInput
+ * @param argc
+ * @param argv
+ * @return
+ */
+int handleUserInput(int argc, char **argv)
 {
     try
     {
@@ -101,7 +107,7 @@ int main(int argc, char **argv)
             std::vector<int> id_list = vars["ids"].as<std::vector<int>>();
             for (auto l_id : id_list)
             {
-               ids.push_back(static_cast<uint8_t>(l_id));
+               ids.emplace_back(static_cast<uint8_t>(l_id));
             }
         }
 
@@ -154,9 +160,9 @@ int main(int argc, char **argv)
                     }
                     else
                     {
-                        uint16_t addr = static_cast<uint16_t>(params.at(0));
-                        uint32_t value = static_cast<uint32_t>(params.at(1));
-                        uint8_t size = static_cast<uint8_t>(params.at(2));
+                        auto addr = static_cast<uint16_t>(params.at(0));
+                        auto value = static_cast<uint32_t>(params.at(1));
+                        auto size = static_cast<uint8_t>(params.at(2));
 
                         printf("Register address: %d, Value: %d, Size (bytes): %d\n", addr, value, size);
 
@@ -187,16 +193,16 @@ int main(int argc, char **argv)
                 else if (vars.count("set-registers"))
                 {
                     std::vector<int> params = vars["set-registers"].as<std::vector<int>>();
-                    uint8_t addr = static_cast<uint8_t>(params.at(0));
-                    uint8_t size = static_cast<uint8_t>(params.at(1));
+                    auto addr = static_cast<uint8_t>(params.at(0));
+                    auto size = static_cast<uint8_t>(params.at(1));
 
                     std::stringstream ss;
                     ss << "register address : " << static_cast<int>(addr) << " size : " << static_cast<int>(size) << " values";
                     std::vector<uint32_t> values;
                     for (size_t i = 2; i < params.size(); i++)
                     {
-                        values.push_back(static_cast<uint32_t>(params.at(i)));
-                        ss << " " << params.at(static_cast<int>(i));
+                        values.emplace_back(static_cast<uint32_t>(params.at(i)));
+                        ss << " " << params.at(i);
                     }
 
                     std::cout << ss.str() << std::endl;
@@ -222,9 +228,9 @@ int main(int argc, char **argv)
                     else
                     {
                         std::stringstream ss;
-                        for (size_t i = 0; i < values.size(); i++)
+                        for (unsigned int value : values)
                         {
-                            ss << " " << values.at(i);
+                            ss << " " << value;
                         }
                         std::cout << "Retrieved values at address " << static_cast<int>(addr) << ":" << ss.str() << std::endl;
                     }
@@ -245,6 +251,16 @@ int main(int argc, char **argv)
     catch(po::error& e)
     {
         std::cout << e.what() << "\n";
-        return 0;
+        return 1;
     }
+    catch(...)
+    {
+        std::cout << "Unknown error" << "\n";
+        return 1;
+    }
+}
+
+int main(int argc, char **argv)
+{
+    return handleUserInput(argc, argv);
 }

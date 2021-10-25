@@ -56,9 +56,9 @@ void addJointToCanInterface(std::shared_ptr<can_driver::CanInterfaceCore> can_in
     for (size_t j = 0; j < nb_joints; j++)
     {
         int joint_id_config = 0;
-        string joint_name = "";
-        string joint_type = "";
-        string joint_bus = "";
+        string joint_name;
+        string joint_type;
+        string joint_bus;
 
         robot_hwnh.getParam("joint_" + to_string(j + 1) + "/id", joint_id_config);
         robot_hwnh.getParam("joint_" + to_string(j + 1) + "/name", joint_name);

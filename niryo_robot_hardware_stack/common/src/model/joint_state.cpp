@@ -22,19 +22,12 @@
 // C++
 #include <sstream>
 #include <string>
+#include <utility>
 
 namespace common
 {
 namespace model
 {
-
-/**
- * @brief JointState::JointState
- */
-JointState::JointState() :
-    AbstractMotorState()
-{
-}
 
 /**
  * @brief JointState::JointState
@@ -48,43 +41,18 @@ JointState::JointState(std::string name, EHardwareType type,
                        EComponentType component_type,
                        EBusProtocol bus_proto, uint8_t id) :
     AbstractMotorState(type, component_type, bus_proto, id),
-    _name(name)
-{
-}
-
-/**
- * @brief JointState::JointState
- * @param state
- */
-JointState::JointState(const JointState &state) :
-  AbstractMotorState(state)
-{
-    _name = state._name;
-    _offset_position = state._offset_position;
-    _need_calibration = state._need_calibration;
-    _direction = state._direction;
-
-    pos = state.pos;
-    cmd = state.cmd;
-    vel = state.vel;
-    eff = state.eff;
-}
-
-/**
- * @brief JointState::~JointState
- */
-JointState::~JointState()
+    _name(std::move(name))
 {
 }
 
 /**
  * @brief JointState::operator ==
- * @param m
+ * @param other
  * @return
  */
-bool JointState::operator==(const JointState& m) const
+bool JointState::operator==(const JointState& other) const
 {
-    return((this->_hw_type == m._hw_type) && (this->_id == m._id));
+    return((this->_hw_type == other._hw_type) && (this->_id == other._id));
 }
 
 /**
@@ -109,7 +77,7 @@ void JointState::setOffsetPosition(double offset_position)
  * @brief JointState::setDirection
  * @param direction
  */
-void JointState::setDirection(int direction)
+void JointState::setDirection(int8_t direction)
 {
     _direction = direction;
 }

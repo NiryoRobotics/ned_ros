@@ -32,8 +32,7 @@ namespace model
 /**
  * @brief AbstractMotorState::AbstractMotorState
  */
-AbstractMotorState::AbstractMotorState() :
-    AbstractHardwareState()
+AbstractMotorState::AbstractMotorState()
 {
     reset();
 }
@@ -47,25 +46,7 @@ AbstractMotorState::AbstractMotorState() :
  */
 AbstractMotorState::AbstractMotorState(EHardwareType type, EComponentType component_type,
                                        EBusProtocol bus_proto, uint8_t id) :
-      AbstractHardwareState(type, component_type, bus_proto, id),
-      _position_state(0)
-{
-}
-
-/**
- * @brief AbstractMotorState::AbstractMotorState
- * @param state
- */
-AbstractMotorState::AbstractMotorState(const AbstractMotorState &state) :
-  AbstractHardwareState(state)
-{
-  _position_state = state._position_state;
-}
-
-/**
- * @brief AbstractMotorState::~AbstractMotorState
- */
-AbstractMotorState::~AbstractMotorState()
+      AbstractHardwareState(type, component_type, bus_proto, id)
 {
 }
 
@@ -75,7 +56,7 @@ AbstractMotorState::~AbstractMotorState()
 void AbstractMotorState::reset()
 {
     AbstractHardwareState::reset();
-    _position_state = 0;
+    _position = 0;
 }
 
 /**
@@ -88,7 +69,9 @@ string AbstractMotorState::str() const
 
     ss << "AbstractMotorState:\n";
 
-    ss << "position " << _position_state;
+    ss << "position " << _position;
+    ss << "velocity " << _velocity;
+    ss << "torque " << _torque;
     ss << "\n---\n";
     ss << "\n";
     ss << AbstractHardwareState::str();
@@ -97,12 +80,30 @@ string AbstractMotorState::str() const
 }
 
 /**
- * @brief AbstractMotorState::setPositionState
+ * @brief AbstractMotorState::setPosition
  * @param pos
  */
-void AbstractMotorState::setPositionState(int pos)
+void AbstractMotorState::setPosition(int pos)
 {
-    _position_state = pos;
+    _position = pos;
+}
+
+/**
+ * @brief AbstractMotorState::setVelocity
+ * @param vel
+ */
+void AbstractMotorState::setVelocity(int vel)
+{
+    _velocity = vel;
+}
+
+/**
+ * @brief AbstractMotorState::setTorque
+ * @param torque
+ */
+void AbstractMotorState::setTorque(int torque)
+{
+    _torque = torque;
 }
 
 }  // namespace model

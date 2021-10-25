@@ -58,12 +58,10 @@ TEST(TESTSuite, sendCustomValue)
 
     if (hw_version == "ned" || hw_version == "one")
     {
-        srv.request.motor_type = 2;  // xl430
         srv.request.id = 2;
     }
     else
     {
-        srv.request.motor_type = 2;  // xl430
         srv.request.id = 5;
     }
     srv.request.reg_address = 64;  // Torque enable for xl430
@@ -89,12 +87,10 @@ TEST(TESTSuite, readCustomValue)
     ttl_driver::ReadCustomValue srv;
     if (hw_version == "ned" || hw_version == "one")
     {
-        srv.request.motor_type = 2;  // xl430
         srv.request.id = 2;
     }
     else
     {
-        srv.request.motor_type = 2;  // xl430
         srv.request.id =  5;
     }
     srv.request.reg_address = 64;

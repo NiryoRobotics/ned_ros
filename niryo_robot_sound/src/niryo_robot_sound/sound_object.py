@@ -24,6 +24,7 @@ class Sound(object):
         self.__name = name
         self.__path = path
 
+        rospy.logdebug("{} | {}".format(self.__name, self.__path))
         if not self.exists():
             raise SoundFileException("File {} doesn't exists".format(self.__path))
 

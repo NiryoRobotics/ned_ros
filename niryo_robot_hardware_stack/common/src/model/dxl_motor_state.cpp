@@ -20,10 +20,10 @@
 #include "common/model/dxl_motor_state.hpp"
 
 #include <sstream>
-#include <math.h>
-#include <cassert>
 #include <cmath>
+#include <cassert>
 #include <string>
+#include <utility>
 
 namespace common
 {
@@ -34,7 +34,6 @@ namespace model
  * @brief DxlMotorState::DxlMotorState
  */
 DxlMotorState::DxlMotorState()
-    : JointState()
 {
     reset();
 }
@@ -46,12 +45,10 @@ DxlMotorState::DxlMotorState(uint8_t id) :
     DxlMotorState("unknown", EHardwareType::UNKNOWN, EComponentType::JOINT, id)
 {}
 
-
 /**
  * @brief DxlMotorState::DxlMotorState
  * @param type
  * @param component_type
- * @param bus_proto
  * @param id
  */
 DxlMotorState::DxlMotorState(EHardwareType type,
@@ -65,14 +62,13 @@ DxlMotorState::DxlMotorState(EHardwareType type,
  * @param name
  * @param type
  * @param component_type
- * @param bus_proto
  * @param id
  */
 DxlMotorState::DxlMotorState(std::string name,
                              EHardwareType type,
                              EComponentType component_type,
                              uint8_t id) :
-    JointState(name, type, component_type, EBusProtocol::TTL, id)
+    JointState(std::move(name), type, component_type, EBusProtocol::TTL, id)
 {
     // to put in config ?
 
@@ -120,35 +116,6 @@ DxlMotorState::DxlMotorState(std::string name,
     }
 }
 
-/**
- * @brief DxlMotorState::DxlMotorState
- * @param state
- */
-DxlMotorState::DxlMotorState(const DxlMotorState &state) :
-    JointState(state)
-{
-  _pos_p_gain = state._pos_p_gain;
-  _pos_i_gain = state._pos_i_gain;
-  _pos_d_gain = state._pos_d_gain;
-
-  _vel_p_gain = state._vel_p_gain;
-  _vel_i_gain = state._vel_i_gain;
-
-  _ff1_gain = state._ff1_gain;
-  _ff2_gain = state._ff2_gain;
-
-  _total_range_position = state._total_range_position;
-  _middle_position = state._middle_position;
-  _total_angle = state._total_angle;
-  _steps_for_one_speed = state._steps_for_one_speed;
-}
-
-/**
- * @brief DxlMotorState::~DxlMotorState
- */
-DxlMotorState::~DxlMotorState()
-{}
-
 // *********************
 //  JointState Interface
 // ********************
@@ -158,7 +125,7 @@ DxlMotorState::~DxlMotorState()
  */
 void DxlMotorState::reset()
 {
-    AbstractMotorState::reset();
+    common::model::JointState::reset();
 }
 
 /**
@@ -321,11 +288,11 @@ void DxlMotorState::setFF1Gain(uint32_t ff1_gain)
 
 /**
  * @brief DxlMotorState::setFF2Gain
- * @param value
+ * @param ff2_gain
  */
-void DxlMotorState::setFF2Gain(uint32_t value)
+void DxlMotorState::setFF2Gain(uint32_t ff2_gain)
 {
-    _ff2_gain = value;
+    _ff2_gain = ff2_gain;
 }
 
 }  // namespace model

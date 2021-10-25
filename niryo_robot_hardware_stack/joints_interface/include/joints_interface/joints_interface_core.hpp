@@ -31,6 +31,8 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 
 #include <ros/ros.h>
 
+#include "common/util/i_interface_core.hpp"
+
 #include <controller_manager/controller_manager.h>
 #include <control_msgs/FollowJointTrajectoryActionResult.h>
 #include <control_msgs/FollowJointTrajectoryActionGoal.h>
@@ -45,12 +47,11 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "niryo_robot_msgs/Trigger.h"
 #include "common/model/hardware_type_enum.hpp"
 
-#include "common/model/i_interface_core.hpp"
 
 namespace joints_interface
 {
 
-class JointsInterfaceCore : common::model::IInterfaceCore
+class JointsInterfaceCore : common::util::IInterfaceCore
 {
     public:
 
@@ -58,9 +59,16 @@ class JointsInterfaceCore : common::model::IInterfaceCore
                             ros::NodeHandle& robot_hwnh,
                             std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface,
                             std::shared_ptr<can_driver::CanInterfaceCore> can_interface);
-        virtual ~JointsInterfaceCore() override;
+        ~JointsInterfaceCore() override;
 
-        virtual bool init(ros::NodeHandle& nh) override;
+        // non copyable class
+        JointsInterfaceCore( const JointsInterfaceCore& ) = delete;
+        JointsInterfaceCore( JointsInterfaceCore&& ) = delete;
+
+        JointsInterfaceCore& operator= ( JointsInterfaceCore && ) = delete;
+        JointsInterfaceCore& operator= ( const JointsInterfaceCore& ) = delete;
+
+        bool init(ros::NodeHandle& nh) override;
 
         void sendInitMotorsParams(bool learningMode);
         void activateLearningMode(bool activate, int &ostatus, std::string &omessage);
@@ -71,10 +79,10 @@ class JointsInterfaceCore : common::model::IInterfaceCore
         getJointsState() const;
 
     private:
-        virtual void initParameters(ros::NodeHandle& nh) override;
-        virtual void startServices(ros::NodeHandle& nh) override;
-        virtual void startPublishers(ros::NodeHandle& nh) override;
-        virtual void startSubscribers(ros::NodeHandle& nh) override;
+        void initParameters(ros::NodeHandle& nh) override;
+        void startServices(ros::NodeHandle& nh) override;
+        void startPublishers(ros::NodeHandle& nh) override;
+        void startSubscribers(ros::NodeHandle& nh) override;
 
         void rosControlLoop();
 
@@ -85,19 +93,15 @@ class JointsInterfaceCore : common::model::IInterfaceCore
 
         void _callbackTrajectoryResult(const control_msgs::FollowJointTrajectoryActionResult& msg);
 
-        void _publishLearningMode();
+        void _publishLearningMode(const ros::TimerEvent&);
 
     private:
         ros::NodeHandle _nh;
-
-        // TODO(CC) create a thread to update hw status from can and ttl into joint_states
 
         bool _enable_control_loop{true};
         bool _previous_state_learning_mode{true};
         bool _reset_controller{false};
 
-        double _control_loop_frequency{0.0};
-        double _publish_learning_mode_frequency{0.0};
         std::string _joint_controller_name;
 
         std::shared_ptr<JointHardwareInterface> _robot;
@@ -106,11 +110,14 @@ class JointsInterfaceCore : common::model::IInterfaceCore
         std::shared_ptr<ttl_driver::TtlInterfaceCore> _ttl_interface;
         std::shared_ptr<can_driver::CanInterfaceCore> _can_interface;
 
-        std::thread _publish_learning_mode_thread;
         std::thread _control_loop_thread;
+        ros::Rate _control_loop_rate{1.0};
+
+        ros::Publisher _learning_mode_publisher;
+        ros::Timer _learning_mode_publisher_timer;
+        ros::Duration _learning_mode_publisher_duration{1.0};
 
         ros::Subscriber _trajectory_result_subscriber;
-        ros::Publisher _learning_mode_publisher;
 
         ros::ServiceServer _reset_controller_server; // workaround to compensate missed steps
         ros::ServiceServer _calibrate_motors_server;

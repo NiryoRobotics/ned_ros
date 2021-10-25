@@ -21,6 +21,7 @@
 
 #include <string>
 #include <sstream>
+#include <utility>
 
 using ::std::string;
 using ::std::ostringstream;
@@ -32,10 +33,7 @@ namespace model
 /**
  * @brief AbstractHardwareState::AbstractHardwareState
  */
-AbstractHardwareState::AbstractHardwareState() :
-    _hw_type(EHardwareType::UNKNOWN),
-    _component_type(EComponentType::UNKNOWN),
-    _bus_proto(EBusProtocol::UNKNOWN)
+AbstractHardwareState::AbstractHardwareState()
 {
     reset();
 }
@@ -55,32 +53,7 @@ AbstractHardwareState::AbstractHardwareState(EHardwareType type,
       _component_type(component_type),
       _bus_proto(bus_proto),
       _id(id)
-{
-}
-
-/**
- * @brief AbstractHardwareState::AbstractHardwareState : copy ctor
- * @param state
- */
-AbstractHardwareState::AbstractHardwareState(const AbstractHardwareState &state)
-{
-  _hw_type = state._hw_type;
-  _component_type = state._component_type;
-  _bus_proto = state._bus_proto;
-  _id = state._id;
-  _firmware_version = state._firmware_version;
-  _temperature = state._temperature;
-  _voltage = state._voltage;
-  _hw_error = state._hw_error;
-  _hw_error_message = state._hw_error_message;
-}
-
-/**
- * @brief AbstractHardwareState::~AbstractHardwareState
- */
-AbstractHardwareState::~AbstractHardwareState()
-{
-}
+{}
 
 /**
  * @brief AbstractHardwareState::reset
@@ -96,12 +69,12 @@ void AbstractHardwareState::reset()
 
 /**
  * @brief AbstractHardwareState::operator ==
- * @param m
+ * @param other
  * @return
  */
-bool AbstractHardwareState::operator==(const AbstractHardwareState &m)
+bool AbstractHardwareState::operator==(const AbstractHardwareState &other)
 {
-    return (this->_id == m._id);
+    return (this->_id == other._id);
 }
 
 /**
@@ -171,7 +144,7 @@ void AbstractHardwareState::setHardwareError(uint32_t hw_error)
  */
 void AbstractHardwareState::setHardwareError(std::string hw_error_msg)
 {
-  _hw_error_message = hw_error_msg;
+  _hw_error_message = std::move(hw_error_msg);
 }
 
 }  // namespace model

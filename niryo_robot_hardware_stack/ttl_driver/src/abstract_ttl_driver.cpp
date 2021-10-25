@@ -17,6 +17,7 @@
 #include "ttl_driver/abstract_ttl_driver.hpp"
 
 #include <sstream>
+#include <utility>
 #include <vector>
 #include <string>
 
@@ -30,29 +31,14 @@ namespace ttl_driver
 
 /**
  * @brief AbstractTtlDriver::AbstractTtlDriver
- */
-AbstractTtlDriver::AbstractTtlDriver()
-{}
-
-/**
- * @brief AbstractTtlDriver::AbstractTtlDriver
  * @param portHandler
  * @param packetHandler
  */
-AbstractTtlDriver::AbstractTtlDriver(shared_ptr<dynamixel::PortHandler> portHandler,
-                 shared_ptr<dynamixel::PacketHandler> packetHandler) :
-    _dxlPortHandler(portHandler),
-    _dxlPacketHandler(packetHandler)
-{
-}
-
-/**
- * @brief AbstractTtlDriver::~AbstractTtlDriver
- */
-AbstractTtlDriver::~AbstractTtlDriver()
-{
-}
-
+AbstractTtlDriver::AbstractTtlDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
+                                     std::shared_ptr<dynamixel::PacketHandler> packetHandler) :
+    _dxlPortHandler(std::move(portHandler)),
+    _dxlPacketHandler(std::move(packetHandler))
+{}
 
 /**
  * @brief AbstractTtlDriver::ping
@@ -65,9 +51,6 @@ int AbstractTtlDriver::ping(uint8_t id)
 
     int result = _dxlPacketHandler->ping(_dxlPortHandler.get(),
                                          id, &dxl_error);
-
-    if (dxl_error != 0)
-        result = dxl_error;
 
     return result;
 }
@@ -86,9 +69,6 @@ int AbstractTtlDriver::getModelNumber(uint8_t id, uint16_t& model_number)
                                          id,
                                          &model_number,
                                          &dxl_error);
-
-    if (0 != dxl_error)
-        result = dxl_error;
 
     return result;
 }
@@ -111,12 +91,9 @@ int AbstractTtlDriver::scan(vector<uint8_t> &id_list)
 int AbstractTtlDriver::reboot(uint8_t id)
 {
     int result = -1;
-
     uint8_t dxl_error = 0;
-    result = _dxlPacketHandler->reboot(_dxlPortHandler.get(), id, &dxl_error);
 
-    if (0 != dxl_error)
-        result = dxl_error;
+    result = _dxlPacketHandler->reboot(_dxlPortHandler.get(), id, &dxl_error);
 
     return result;
 }

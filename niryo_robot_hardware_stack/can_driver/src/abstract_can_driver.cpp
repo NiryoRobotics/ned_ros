@@ -17,6 +17,7 @@
 #include "can_driver/abstract_can_driver.hpp"
 
 #include <sstream>
+#include <utility>
 #include <vector>
 #include <string>
 #include <set>
@@ -34,16 +35,8 @@ namespace can_driver
  * @param mcp_can
  */
 AbstractCanDriver::AbstractCanDriver(std::shared_ptr<mcp_can_rpi::MCP_CAN> mcp_can) :
-  _mcp_can(mcp_can)
-{
-}
-
-/**
- * @brief AbstractCanDriver::~AbstractCanDriver
- */
-AbstractCanDriver::~AbstractCanDriver()
-{
-}
+  _mcp_can(std::move(mcp_can))
+{}
 
 /**
  * @brief StepperDriver::ping
@@ -56,14 +49,14 @@ int AbstractCanDriver::ping(uint8_t id)
 
   double time_begin_scan = ros::Time::now().toSec();
 
-  while (ros::Time::now().toSec() - time_begin_scan < STEPPER_MOTOR_TIMEOUT_VALUE)
+  while (ros::Time::now().toSec() - time_begin_scan < PING_TIME_OUT)
   {
       ros::Duration(0.001).sleep();  // check at 1000 Hz
       if (canReadData())
       {
           INT32U rxId;
           uint8_t len;
-          std::array<uint8_t, 8> rxBuf;
+          std::array<uint8_t, 8> rxBuf{};
           read(&rxId, &len, rxBuf);
           uint8_t motor_id = rxId & 0x0F;
 
@@ -80,15 +73,14 @@ int AbstractCanDriver::ping(uint8_t id)
 
 /**
  * @brief AbstractCanDriver::scan : try to find "motors_to_find" list of motors for a given time
- * @param motors_to_find
+ * @param motors_unfound
  * @param id_list
  * @return
  */
-int AbstractCanDriver::scan(const std::set<uint8_t>& motors_to_find, std::vector<uint8_t> &id_list)
+int AbstractCanDriver::scan(std::set<uint8_t>& motors_unfound, std::vector<uint8_t> &id_list)
 {
   int result = CAN_FAIL;
 
-  std::set<uint8_t> motors_unfound = motors_to_find;
   id_list.clear();
 
   double time_begin_scan = ros::Time::now().toSec();
@@ -101,7 +93,7 @@ int AbstractCanDriver::scan(const std::set<uint8_t>& motors_to_find, std::vector
       {
           INT32U rxId;
           uint8_t len;
-          std::array<uint8_t, 8> rxBuf;
+          std::array<uint8_t, 8> rxBuf{};
           read(&rxId, &len, rxBuf);
           uint8_t motor_id = rxId & 0x0F;
 

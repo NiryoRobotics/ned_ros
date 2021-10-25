@@ -19,7 +19,9 @@
 
 #include <cassert>
 #include <string>
+#include <utility>
 #include <vector>
+#include <ros/ros.h>
 
 using ::common::model::EStepperCommandType;
 
@@ -28,52 +30,44 @@ namespace ttl_driver
 
 /**
  * @brief AbstractStepperDriver::AbstractStepperDriver
- */
-AbstractStepperDriver::AbstractStepperDriver() :
-  AbstractMotorDriver()
-{}
-
-/**
- * @brief AbstractStepperDriver::AbstractStepperDriver
 */
 AbstractStepperDriver::AbstractStepperDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
                                              std::shared_ptr<dynamixel::PacketHandler> packetHandler) :
-    AbstractMotorDriver(portHandler, packetHandler)
+    AbstractMotorDriver(std::move(portHandler), std::move(packetHandler))
 {}
 
 /**
- * @brief AbstractStepperDriver::~AbstractStepperDriver
-*/
-AbstractStepperDriver::~AbstractStepperDriver()
-{}
-
+ * @brief AbstractStepperDriver::str
+ * @return
+ */
 std::string AbstractStepperDriver::str() const
 {
-    return "Stepper Driver (" + AbstractMotorDriver::str() + ")";
+    return "Abstract Stepper Driver  (" + AbstractMotorDriver::str() + ")";
 }
 
 /**
  * @brief AbstractStepperDriver::writeSingleCmd
  * @param cmd
 */
-int AbstractStepperDriver::writeSingleCmd(const std::shared_ptr<common::model::AbstractTtlSingleMotorCmd>& cmd)
+int AbstractStepperDriver::writeSingleCmd(const std::unique_ptr<common::model::AbstractTtlSingleMotorCmd>& cmd)
 {
     if (cmd->isValid() && cmd->isStepperCmd())
     {
         switch (EStepperCommandType(cmd->getCmdType()))
         {
         case EStepperCommandType::CMD_TYPE_VELOCITY:
-            return setGoalVelocity(cmd->getId(), cmd->getParam());
+            return writeGoalVelocity(cmd->getId(), cmd->getParam());
         case EStepperCommandType::CMD_TYPE_POSITION:
-            return setGoalPosition(cmd->getId(), cmd->getParam());
+            return writeGoalPosition(cmd->getId(), cmd->getParam());
         case EStepperCommandType::CMD_TYPE_TORQUE:
-            return setTorqueEnable(cmd->getId(), cmd->getParam());
+            return writeTorqueEnable(cmd->getId(), cmd->getParam());
         case EStepperCommandType::CMD_TYPE_LEARNING_MODE:
-            return setTorqueEnable(cmd->getId(), !cmd->getParam());
+            return writeTorqueEnable(cmd->getId(), !cmd->getParam());
         case EStepperCommandType::CMD_TYPE_CALIBRATION:
             return startHoming(cmd->getId());
-        case EStepperCommandType::CMD_TYPE_CALIBRATION_DIRECTION:
-            return writeHomingDirection(cmd->getId(), cmd->getParam());
+        case EStepperCommandType::CMD_TYPE_CALIBRATION_SETUP:
+            return writeHomingSetup(cmd->getId(), static_cast<uint8_t>(cmd->getParams().at(0)),
+                                                  static_cast<uint8_t>(cmd->getParams().at(1)));
         case EStepperCommandType::CMD_TYPE_PING:
             return ping(cmd->getId());
         case EStepperCommandType::CMD_TYPE_CONVEYOR:
@@ -81,16 +75,14 @@ int AbstractStepperDriver::writeSingleCmd(const std::shared_ptr<common::model::A
             std::vector<uint32_t> params = cmd->getParams();
             if (!params[0])
             {
-                return setGoalVelocity(cmd->getId(), 0);
+                return writeGoalVelocity(cmd->getId(), 0);
             }
-            else
-            {
-                // convert direction and speed into signed speed
-                int8_t dir = static_cast<int8_t>(cmd->getParams().at(2));
-                // normal warning : we need to put an int32 inside an uint32_t
-                uint32_t speed = static_cast<uint32_t>(cmd->getParams().at(1) * dir);
-                return setGoalVelocity(cmd->getId(), speed);
-            }
+
+            // convert direction and speed into signed speed
+            int8_t dir = static_cast<int8_t>(cmd->getParams().at(2));
+            // normal warning : we need to put an int32 inside an uint32_t
+            uint32_t speed = static_cast<uint32_t>(static_cast<int>(cmd->getParams().at(1)) * dir);
+            return writeGoalVelocity(cmd->getId(), speed);
         }
         case EStepperCommandType::CMD_TYPE_VELOCITY_PROFILE:
             return writeVelocityProfile(cmd->getId(), cmd->getParams());
@@ -125,7 +117,8 @@ int AbstractStepperDriver::writeSyncCmd(int type, const std::vector<uint8_t>& id
     case EStepperCommandType::CMD_TYPE_LEARNING_MODE:
     {
         std::vector<uint32_t> params_inv;
-        for (auto const& p : params)
+        params_inv.reserve(params.size());
+for (auto const& p : params)
         {
             params_inv.emplace_back(!p);
         }
@@ -146,9 +139,9 @@ int AbstractStepperDriver::writeSyncCmd(int type, const std::vector<uint8_t>& id
  */
 std::string AbstractStepperDriver::interpreteFirmwareVersion(uint32_t fw_version) const
 {
-    uint8_t v_major = static_cast<uint8_t>(fw_version >> 24);
-    uint16_t v_minor = static_cast<uint16_t>(fw_version >> 8);
-    uint8_t v_patch = static_cast<uint8_t>(fw_version >> 0);
+    auto v_major = static_cast<uint8_t>(fw_version >> 24);
+    auto v_minor = static_cast<uint16_t>(fw_version >> 8);
+    auto v_patch = static_cast<uint8_t>(fw_version >> 0);
 
     std::ostringstream ss;
     ss << std::to_string(v_major) << "."

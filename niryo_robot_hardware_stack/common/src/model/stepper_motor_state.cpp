@@ -24,6 +24,7 @@
 #include <cassert>
 #include <string>
 #include <tuple>
+#include <utility>
 
 #include "ros/time.h"
 
@@ -31,14 +32,6 @@ namespace common
 {
 namespace model
 {
-
-/**
- * @brief StepperMotorState::StepperMotorState
- */
-StepperMotorState::StepperMotorState() :
-    JointState()
-{
-}
 
 /**
  * @brief StepperMotorState::StepperMotorState
@@ -68,43 +61,8 @@ StepperMotorState::StepperMotorState(std::string name,
                                      EComponentType component_type,
                                      EBusProtocol bus_proto,
                                      uint8_t id) :
-    JointState(name, type, component_type, bus_proto, id)
-{
-}
-
-/**
- * @brief StepperMotorState::StepperMotorState : copy ctor
- * @param state
- */
-StepperMotorState::StepperMotorState(const StepperMotorState &state) :
-  JointState(state)
-{
-    _last_time_read = state._last_time_read;
-    _hw_fail_counter = state._hw_fail_counter;
-
-    _gear_ratio = state._gear_ratio;
-    _max_effort = state._max_effort;
-    _micro_steps = state._micro_steps;
-
-    _calibration_state = state._calibration_state;
-    _calibration_value = state._calibration_value;
-
-    _profile_v_start = state._profile_v_start;
-    _profile_a_1 = state._profile_a_1;
-    _profile_v_1 = state._profile_v_1;
-    _profile_a_max = state._profile_a_max;
-    _profile_v_max = state._profile_v_max;
-    _profile_d_max = state._profile_d_max;
-    _profile_d_1 = state._profile_d_1;
-    _profile_v_stop = state._profile_v_stop;
-}
-
-/**
- * @brief StepperMotorState::~StepperMotorState
- */
-StepperMotorState::~StepperMotorState()
-{
-}
+    JointState(std::move(name), type, component_type, bus_proto, id)
+{}
 
 // ****************
 //  Setters
@@ -227,43 +185,24 @@ std::string StepperMotorState::str() const
  * @brief StepperMotorState::to_motor_pos
  * @param pos_rad
  * @return
- * TODO(CC) find a similar formula for both
  */
 int StepperMotorState::to_motor_pos(double pos_rad)
 {
-    if (getBusProtocol() == common::model::EBusProtocol::CAN)
-    {
-        double numerator = (STEPPERS_MOTOR_STEPS_PER_REVOLUTION * _micro_steps * _gear_ratio * pos_rad / (2*M_PI));
-        return std::round( numerator * _direction);
-    }
-    else
-    {
-        int pos = std::round((pos_rad*180) / (M_PI * 0.088) * _direction + _offset_position);
-        return pos > 0 ? pos : 0;
-    }
+    return static_cast<int>(std::round(_offset_position + pos_rad * (getMultiplierRatio() * _direction) / ( 2 * M_PI)));
 }
 
 /**
  * @brief StepperMotorState::to_rad_pos
  * @param pos
  * @return
- * TODO(CC) find a similar formula for both
  */
 double StepperMotorState::to_rad_pos(int pos)
 {
-    if (getBusProtocol() == common::model::EBusProtocol::CAN)
-    {
-        assert(0.0 != (STEPPERS_MOTOR_STEPS_PER_REVOLUTION * _micro_steps * _gear_ratio * RADIAN_TO_DEGREE));
-        return static_cast<double>(
-                    (pos * 2*M_PI) /
-                    (STEPPERS_MOTOR_STEPS_PER_REVOLUTION * _micro_steps * _gear_ratio) *
-                    _direction);
-    }
-    else
-    {
-        double pos_rad = static_cast<double>((pos - _offset_position) * 0.088 * (M_PI / 180) * _direction);
-        return pos_rad;
-    }
+    double multiplier_ratio = getMultiplierRatio();
+
+    assert(0.0 != multiplier_ratio);
+
+    return static_cast<double>( (pos - _offset_position) * _direction * 2 * M_PI / multiplier_ratio);
 }
 
 /**

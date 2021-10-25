@@ -20,6 +20,7 @@
 // c++
 #include <functional>
 #include <string>
+#include <utility>
 #include <vector>
 
 // ros
@@ -53,22 +54,13 @@ namespace tools_interface
  */
 ToolsInterfaceCore::ToolsInterfaceCore(ros::NodeHandle& nh,
                                        std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface):
-    _ttl_interface(ttl_interface)
+    _ttl_interface(std::move(ttl_interface))
 {
     ROS_DEBUG("ToolsInterfaceCore::ctor");
 
     init(nh);
 
     pubToolId(-1);
-}
-
-/**
- * @brief ToolsInterfaceCore::~ToolsInterfaceCore
- */
-ToolsInterfaceCore::~ToolsInterfaceCore()
-{
-    if (_publish_tool_connection_thread.joinable())
-        _publish_tool_connection_thread.join();
 }
 
 /**
@@ -99,15 +91,21 @@ bool ToolsInterfaceCore::init(ros::NodeHandle &nh)
  */
 void ToolsInterfaceCore::initParameters(ros::NodeHandle& nh)
 {
+    double tool_connection_frequency{1.0};
+    nh.getParam("check_tool_connection_frequency",
+                 tool_connection_frequency);
+
+    ROS_DEBUG("ToolsInterfaceCore::initParameters - check tool connection frequency : %f", tool_connection_frequency);
+
+    assert(tool_connection_frequency);
+    _tool_connection_publisher_duration = ros::Duration(1.0 / tool_connection_frequency);
+
     std::vector<int> idList;
     std::vector<string> typeList;
 
     _available_tools_map.clear();
     nh.getParam("tools_params/id_list", idList);
     nh.getParam("tools_params/type_list", typeList);
-
-    nh.getParam("check_tool_connection_frequency",
-                 _check_tool_connection_frequency);
 
     // debug - display info
     ostringstream ss;
@@ -122,7 +120,6 @@ void ToolsInterfaceCore::initParameters(ros::NodeHandle& nh)
     available_tools_list += "]";
 
     ROS_INFO("ToolsInterfaceCore::initParameters - List of tool ids : %s", available_tools_list.c_str());
-    ROS_DEBUG("ToolsInterfaceCore::initParameters - check tool connection frequency : %f", _check_tool_connection_frequency);
 
     // check that the two lists have the same size
     if (idList.size() != typeList.size())
@@ -132,7 +129,7 @@ void ToolsInterfaceCore::initParameters(ros::NodeHandle& nh)
     // put everything in maps
     for (size_t i = 0; i < idList.size(); ++i)
     {
-        uint8_t id = static_cast<uint8_t>(idList.at(i));
+        auto id = static_cast<uint8_t>(idList.at(i));
         EHardwareType type = HardwareTypeEnum(typeList.at(i).c_str());
 
         if (!_available_tools_map.count(id))
@@ -189,7 +186,10 @@ void ToolsInterfaceCore::startServices(ros::NodeHandle& nh)
 void ToolsInterfaceCore::startPublishers(ros::NodeHandle& nh)
 {
     _tool_connection_publisher = nh.advertise<std_msgs::Int32>("/niryo_robot_hardware/tools/current_id", 1, true);
-    _publish_tool_connection_thread = std::thread(&ToolsInterfaceCore::_publishToolConnection, this);
+
+    _tool_connection_publisher_timer = nh.createTimer(_tool_connection_publisher_duration,
+                                                      &ToolsInterfaceCore::_publishToolConnection,
+                                                      this);
 }
 
 /**
@@ -269,19 +269,17 @@ bool ToolsInterfaceCore::_callbackPingAndSetTool(tools_interface::PingDxlTool::R
             {
                 pubToolId(_toolState->getId());
                 res.state = ToolState::TOOL_STATE_PING_OK;
-                res.id = _toolState->getId();
+                res.id = static_cast<int8_t>(_toolState->getId());
 
                 ros::Duration(0.05).sleep();
                 ROS_INFO("ToolsInterfaceCore::_callbackPingAndSetDxlTool - Set tool success");
 
                 break;
             }
-            else
-            {
-                ROS_WARN("ToolsInterfaceCore::_callbackPingAndSetDxlTool - "
-                         "Set tool failure, return : %d. Retrying (%d)...",
-                         result, tries);
-            }
+
+            ROS_WARN("ToolsInterfaceCore::_callbackPingAndSetDxlTool - "
+                     "Set tool failure, return : %d. Retrying (%d)...",
+                     result, tries);
         }
 
         // on failure after three tries
@@ -347,20 +345,20 @@ bool ToolsInterfaceCore::_callbackOpenGripper(tools_interface::OpenGripper::Requ
     if (_toolState && _toolState->isValid() && req.id == _toolState->getId())
     {
         uint8_t tool_id = _toolState->getId();
-        _ttl_interface->addSingleCommandToQueue(std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_VELOCITY,
+        _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_VELOCITY,
                                                                                    tool_id, std::initializer_list<uint32_t>{req.open_speed}));
 
-        _ttl_interface->addSingleCommandToQueue(std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_POSITION,
+        _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_POSITION,
                                                                                     tool_id,  std::initializer_list<uint32_t>{req.open_position}));
 
         // cmd.setParam(req.open_max_torque);  // cc adapt niryo studio and srv for that
         // need to set max torque. It makes cmd changing speed take effect
-        _ttl_interface->addSingleCommandToQueue(std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_EFFORT,
+        _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_EFFORT,
                                                                                     tool_id,  std::initializer_list<uint32_t>{req.open_max_torque}));
 
-        double dxl_speed = static_cast<double>(req.open_speed * _toolState->getStepsForOneSpeed());  // position . sec-1
+        auto dxl_speed = static_cast<double>(req.open_speed * _toolState->getStepsForOneSpeed());  // position . sec-1
         assert(dxl_speed != 0.00);
-        double dxl_steps_to_do = std::abs(static_cast<double>(req.open_position) - _toolState->getPositionState());
+        double dxl_steps_to_do = std::abs(static_cast<double>(req.open_position) - _toolState->getPosition());
         double seconds_to_wait =  dxl_steps_to_do /  dxl_speed + 0.25;  // sec
         ROS_DEBUG("Waiting for %f seconds", seconds_to_wait);
         ros::Duration(seconds_to_wait).sleep();
@@ -369,7 +367,7 @@ bool ToolsInterfaceCore::_callbackOpenGripper(tools_interface::OpenGripper::Requ
 
 
         // set hold torque
-        _ttl_interface->addSingleCommandToQueue(std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_EFFORT,
+        _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_EFFORT,
                                                                                     tool_id,  std::initializer_list<uint32_t>{req.open_hold_torque}));
 
         res.state = ToolState::GRIPPER_STATE_OPEN;
@@ -397,29 +395,29 @@ bool ToolsInterfaceCore::_callbackCloseGripper(tools_interface::CloseGripper::Re
 
         uint32_t position_command = (req.close_position < 50) ? 0 : req.close_position - 50;
 
-        _ttl_interface->addSingleCommandToQueue(std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_VELOCITY,
+        _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_VELOCITY,
                                                                                    tool_id, std::initializer_list<uint32_t>{req.close_speed}));
 
-        _ttl_interface->addSingleCommandToQueue(std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_POSITION,
+        _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_POSITION,
                                                                                     tool_id, std::initializer_list<uint32_t>{position_command}));
 
-        _ttl_interface->addSingleCommandToQueue(std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_EFFORT,
+        _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_EFFORT,
                                                                                     tool_id, std::initializer_list<uint32_t>{req.close_max_torque}));
 
         // calculate close duration
         // cc to be removed => acknoledge instead
-        double dxl_speed = static_cast<double>(req.close_speed * _toolState->getStepsForOneSpeed());  // position . sec-1
+        auto dxl_speed = static_cast<double>(req.close_speed * _toolState->getStepsForOneSpeed());  // position . sec-1
         assert(dxl_speed != 0.0);
 
         // position
-        double dxl_steps_to_do = std::abs(static_cast<double>(req.close_position) - _toolState->getPositionState());
+        double dxl_steps_to_do = std::abs(static_cast<double>(req.close_position) - _toolState->getPosition());
         double seconds_to_wait =  dxl_steps_to_do /  dxl_speed + 0.25;  // sec
         ROS_DEBUG("Waiting for %f seconds", seconds_to_wait);
 
         ros::Duration(seconds_to_wait).sleep();
 
         // set hold torque
-        _ttl_interface->addSingleCommandToQueue(std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_EFFORT,
+        _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_EFFORT,
                                                                                     tool_id, std::initializer_list<uint32_t>{req.close_hold_torque}));
 
         res.state = ToolState::GRIPPER_STATE_CLOSE;
@@ -446,36 +444,36 @@ bool ToolsInterfaceCore::_callbackPullAirVacuumPump(tools_interface::PullAirVacu
     {
         uint8_t tool_id = _toolState->getId();
         // to be put in tool state
-        uint32_t pull_air_velocity = static_cast<uint32_t>(req.pull_air_velocity);
-        uint32_t pull_air_position = static_cast<uint32_t>(req.pull_air_position);
-        uint32_t pull_air_hold_torque = static_cast<uint32_t>(req.pull_air_hold_torque);
-        uint32_t pull_air_max_torque = static_cast<uint32_t>(req.pull_air_max_torque);
+        auto pull_air_velocity = static_cast<uint32_t>(req.pull_air_velocity);
+        auto pull_air_position = static_cast<uint32_t>(req.pull_air_position);
+        auto pull_air_hold_torque = static_cast<uint32_t>(req.pull_air_hold_torque);
+        auto pull_air_max_torque = static_cast<uint32_t>(req.pull_air_max_torque);
         // set vacuum pump pos, vel and torque
         if (_ttl_interface)
         {
-            _ttl_interface->addSingleCommandToQueue(std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_VELOCITY,
+            _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_VELOCITY,
                                                                                         tool_id, std::initializer_list<uint32_t>{pull_air_velocity}));
 
-            _ttl_interface->addSingleCommandToQueue(std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_POSITION,
+            _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_POSITION,
                                                                                         tool_id, std::initializer_list<uint32_t>{pull_air_position}));
 
-            _ttl_interface->addSingleCommandToQueue(std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_EFFORT,
+            _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_EFFORT,
                                                                                         tool_id, std::initializer_list<uint32_t>{pull_air_max_torque}));
 
             // calculate close duration
             // cc to be removed => acknoledge instead
-            double dxl_speed = static_cast<double>(req.pull_air_velocity * _toolState->getStepsForOneSpeed());  // position . sec-1
+            auto dxl_speed = static_cast<double>(req.pull_air_velocity * _toolState->getStepsForOneSpeed());  // position . sec-1
             assert(dxl_speed != 0.0);
 
             // position
-            double dxl_steps_to_do = std::abs(static_cast<double>(req.pull_air_position) - _toolState->getPositionState());
+            double dxl_steps_to_do = std::abs(static_cast<double>(req.pull_air_position) - _toolState->getPosition());
             double seconds_to_wait =  dxl_steps_to_do /  dxl_speed + 0.5;  // sec
             ROS_DEBUG("Waiting for %f seconds", seconds_to_wait);
 
             ros::Duration(seconds_to_wait).sleep();
 
             // set hold torque
-            _ttl_interface->addSingleCommandToQueue(std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_EFFORT,
+            _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_EFFORT,
                                                                                         tool_id, std::initializer_list<uint32_t>{pull_air_hold_torque}));
         }
 
@@ -502,35 +500,35 @@ bool ToolsInterfaceCore:: _callbackPushAirVacuumPump(tools_interface::PushAirVac
     {
         uint8_t tool_id = _toolState->getId();
         // to be defined in the toolstate
-        uint32_t push_air_velocity = static_cast<uint32_t>(req.push_air_velocity);
-        uint32_t push_air_position = static_cast<uint32_t>(req.push_air_position);
-        uint32_t push_air_max_torque = static_cast<uint32_t>(req.push_air_max_torque);
+        auto push_air_velocity = static_cast<uint32_t>(req.push_air_velocity);
+        auto push_air_position = static_cast<uint32_t>(req.push_air_position);
+        auto push_air_max_torque = static_cast<uint32_t>(req.push_air_max_torque);
 
         // set vacuum pump pos, vel and torque
         if (_ttl_interface)
         {
-            _ttl_interface->addSingleCommandToQueue(std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_VELOCITY,
+            _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_VELOCITY,
                                                                                         tool_id, std::initializer_list<uint32_t>{push_air_velocity}));
 
-            _ttl_interface->addSingleCommandToQueue(std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_POSITION,
+            _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_POSITION,
                                                                                         tool_id, std::initializer_list<uint32_t>{push_air_position}));
 
-            _ttl_interface->addSingleCommandToQueue(std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_EFFORT,
+            _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_EFFORT,
                                                                                         tool_id, std::initializer_list<uint32_t>{push_air_max_torque}));
 
             // cc to be removed => acknoledge instead
-            double dxl_speed = static_cast<double>(req.push_air_velocity * _toolState->getStepsForOneSpeed());  // position . sec-1
+            auto dxl_speed = static_cast<double>(req.push_air_velocity * _toolState->getStepsForOneSpeed());  // position . sec-1
             assert(dxl_speed != 0.0);
 
             // position
-            double dxl_steps_to_do = std::abs(static_cast<double>(req.push_air_position) - _toolState->getPositionState());
+            double dxl_steps_to_do = std::abs(static_cast<double>(req.push_air_position) - _toolState->getPosition());
             double seconds_to_wait =  dxl_steps_to_do /  dxl_speed + 0.25;  // sec
             ROS_DEBUG("Waiting for %f seconds", seconds_to_wait);
 
             ros::Duration(seconds_to_wait).sleep();
 
             // set torque to 0
-            _ttl_interface->addSingleCommandToQueue(std::make_shared<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_EFFORT,
+            _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_EFFORT,
                                                                                         tool_id, std::initializer_list<uint32_t>{0}));
         }
         res.state = ToolState::VACUUM_PUMP_STATE_PUSHED;
@@ -542,47 +540,41 @@ bool ToolsInterfaceCore:: _callbackPushAirVacuumPump(tools_interface::PushAirVac
 /**
  * @brief ToolsInterfaceCore::_publishToolConnection
  */
-void ToolsInterfaceCore::_publishToolConnection()
+void ToolsInterfaceCore::_publishToolConnection(const ros::TimerEvent&)
 {
-    ros::Rate check_connection_rate = ros::Rate(_check_tool_connection_frequency);
     std_msgs::Int32 msg;
 
-    int tool_ping_failed_cnt = 0;
+    lock_guard<mutex> lck(_tool_mutex);
 
-    while (ros::ok())
+    if (_toolState && _toolState->isValid())
     {
+        if (_ttl_interface && !_ttl_interface->scanMotorId(_toolState->getId()))
         {
-            lock_guard<mutex> lck(_tool_mutex);
-
-            if (_toolState && _toolState->isValid())
+            // try 3 times to ping tool, ttl failed to ping tool sometimes
+            if (3 == _tool_ping_failed_cnt)
             {
-                if (_ttl_interface && !_ttl_interface->scanMotorId(_toolState->getId()))
-                {
-                    // try 3 times to ping tool, ttl failed to ping tool sometimes
-                    if (tool_ping_failed_cnt == 3)
-                    {
-                        ROS_INFO("Tools Interface - Unset Current Tools");
-                        _ttl_interface->unsetTool(_toolState->getId());
-                        _toolState->reset();
-                        msg.data = -1;
-                        _tool_connection_publisher.publish(msg);
-                        tool_ping_failed_cnt = 0;
-                    }
-                    else
-                        tool_ping_failed_cnt++;
-                }
-                else
-                {
-                    tool_ping_failed_cnt = 0;
-                }
-            }
-            else
-            {
+                ROS_INFO("Tools Interface - Unset Current Tools");
+                _ttl_interface->unsetTool(_toolState->getId());
+                _toolState->reset();
                 msg.data = -1;
+                _tool_ping_failed_cnt = 0;
+
+                // publish message
                 _tool_connection_publisher.publish(msg);
             }
+            else
+                _tool_ping_failed_cnt++;
         }
-        check_connection_rate.sleep();
+        else
+        {
+            _tool_ping_failed_cnt = 0;
+        }
+    }
+    else
+    {
+        msg.data = -1;
+        _tool_connection_publisher.publish(msg);
     }
 }
+
 }  // namespace tools_interface

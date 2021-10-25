@@ -20,6 +20,7 @@
 #include "common/model/single_motor_cmd.hpp"
 
 #include <cassert>
+#include <utility>
 #include <vector>
 #include <string>
 
@@ -29,7 +30,7 @@ namespace ttl_driver
 {
 
 AbstractDxlDriver::AbstractDxlDriver() :
-  AbstractMotorDriver()
+  AbstractMotorDriver ()
 {
 }
 
@@ -38,13 +39,7 @@ AbstractDxlDriver::AbstractDxlDriver() :
 */
 AbstractDxlDriver::AbstractDxlDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
                                      std::shared_ptr<dynamixel::PacketHandler> packetHandler) :
-    AbstractMotorDriver(portHandler, packetHandler)
-{}
-
-/**
- * @brief AbstractDxlDriver::~AbstractDxlDriver
-*/
-AbstractDxlDriver::~AbstractDxlDriver()
+    AbstractMotorDriver(std::move(portHandler), std::move(packetHandler))
 {}
 
 std::string AbstractDxlDriver::str() const
@@ -56,45 +51,33 @@ std::string AbstractDxlDriver::str() const
  * @brief AbstractDxlDriver::writeSingleCmd
  * @param cmd
 */
-int AbstractDxlDriver::writeSingleCmd(const std::shared_ptr<common::model::AbstractTtlSingleMotorCmd > &cmd)
+int AbstractDxlDriver::writeSingleCmd(const std::unique_ptr<common::model::AbstractTtlSingleMotorCmd >& cmd)
 {
     if (cmd && cmd->isValid() && cmd->isDxlCmd())
     {
         switch (EDxlCommandType(cmd->getCmdType()))
         {
         case EDxlCommandType::CMD_TYPE_VELOCITY:
-            return setGoalVelocity(cmd->getId(), cmd->getParam());
+            return writeGoalVelocity(cmd->getId(), cmd->getParam());
         case EDxlCommandType::CMD_TYPE_POSITION:
-            return setGoalPosition(cmd->getId(), cmd->getParam());
+            return writeGoalPosition(cmd->getId(), cmd->getParam());
         case EDxlCommandType::CMD_TYPE_EFFORT:
-            return setGoalTorque(cmd->getId(), cmd->getParam());
+            return writeGoalTorque(cmd->getId(), cmd->getParam());
         case EDxlCommandType::CMD_TYPE_TORQUE:
-            return setTorqueEnable(cmd->getId(), cmd->getParam());
+            return writeTorqueEnable(cmd->getId(), cmd->getParam());
         case EDxlCommandType::CMD_TYPE_LEARNING_MODE:
-            return setTorqueEnable(cmd->getId(), !cmd->getParam());
+            return writeTorqueEnable(cmd->getId(), !cmd->getParam());
         case EDxlCommandType::CMD_TYPE_PING:
             return ping(cmd->getId());
-        case EDxlCommandType::CMD_TYPE_POSITION_P_GAIN:
-            return setPositionPGain(cmd->getId(), cmd->getParam());
-        case EDxlCommandType::CMD_TYPE_POSITION_I_GAIN:
-            return setPositionIGain(cmd->getId(), cmd->getParam());
-        case EDxlCommandType::CMD_TYPE_POSITION_D_GAIN:
-            return setPositionDGain(cmd->getId(), cmd->getParam());
-        case EDxlCommandType::CMD_TYPE_VELOCITY_P_GAIN:
-            return setVelocityPGain(cmd->getId(), cmd->getParam());
-        case EDxlCommandType::CMD_TYPE_VELOCITY_I_GAIN:
-            return setVelocityIGain(cmd->getId(), cmd->getParam());
-        case EDxlCommandType::CMD_TYPE_FF1_GAIN:
-            return setff1Gain(cmd->getId(), cmd->getParam());
-        case EDxlCommandType::CMD_TYPE_FF2_GAIN:
-            return setff2Gain(cmd->getId(), cmd->getParam());
+        case EDxlCommandType::CMD_TYPE_PID:
+            return writePID(cmd->getId(), cmd->getParams());
         default:
             std::cout << "Command not implemented " << cmd->getCmdType() << std::endl;
         }
     }
 
     std::cout << "Command not validated" << std::endl;
-    return -1;
+    return COMM_RX_CORRUPT;
 }
 
 /**
@@ -121,7 +104,8 @@ int AbstractDxlDriver::writeSyncCmd(int type, const std::vector<uint8_t>& ids, c
     case EDxlCommandType::CMD_TYPE_LEARNING_MODE:
     {
         std::vector<uint32_t> params_inv;
-        for (auto const& p : params)
+        params_inv.reserve(params.size());
+for (auto const& p : params)
         {
             params_inv.emplace_back(!p);
         }

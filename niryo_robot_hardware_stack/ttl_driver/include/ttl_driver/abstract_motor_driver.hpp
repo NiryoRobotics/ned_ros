@@ -43,12 +43,10 @@ public:
     AbstractMotorDriver();
     AbstractMotorDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
                         std::shared_ptr<dynamixel::PacketHandler> packetHandler);
-    virtual ~AbstractMotorDriver() override;
-
 
 public:
     // AbstractTtlDriver interface
-    virtual std::string str() const override;
+    std::string str() const override;
 
 public:
     // here are only common TTL commands found in both Steppers and DXl
@@ -61,9 +59,9 @@ public:
     virtual int readMaxPosition(uint8_t id, uint32_t& max_pos) = 0;
 
     // ram write
-    virtual int setTorqueEnable(uint8_t id, uint32_t torque_enable) = 0;
-    virtual int setGoalPosition(uint8_t id, uint32_t position) = 0;
-    virtual int setGoalVelocity(uint8_t id, uint32_t velocity) = 0;
+    virtual int writeTorqueEnable(uint8_t id, uint32_t torque_enable) = 0;
+    virtual int writeGoalPosition(uint8_t id, uint32_t position) = 0;
+    virtual int writeGoalVelocity(uint8_t id, uint32_t velocity) = 0;
 
     virtual int syncWriteTorqueEnable(const std::vector<uint8_t>& id_list, const std::vector<uint32_t>& torque_enable_list) = 0;
     virtual int syncWritePositionGoal(const std::vector<uint8_t>& id_list, const std::vector<uint32_t>& position_list) = 0;
@@ -71,8 +69,10 @@ public:
 
     // ram read
     virtual int readPosition(uint8_t id, uint32_t& present_position) = 0;
+    virtual int readVelocity(uint8_t id, uint32_t& present_velocity) = 0;
 
     virtual int syncReadPosition(const std::vector<uint8_t>& id_list, std::vector<uint32_t>& position_list) = 0;
+    virtual int syncReadVelocity(const std::vector<uint8_t> &id_list, std::vector<uint32_t>& velocity_list) = 0;
 };
 
 } // ttl_driver

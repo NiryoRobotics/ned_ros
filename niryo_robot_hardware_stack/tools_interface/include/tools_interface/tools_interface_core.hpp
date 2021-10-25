@@ -28,7 +28,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <ros/ros.h>
 
 // niryo
-#include "common/model/i_interface_core.hpp"
+#include "common/util/i_interface_core.hpp"
 
 #include "common/model/tool_state.hpp"
 #include "ttl_driver/ttl_interface_core.hpp"
@@ -49,25 +49,30 @@ namespace tools_interface
 /**
  * @brief The ToolsInterfaceCore class
  */
-class ToolsInterfaceCore : public common::model::IInterfaceCore
+class ToolsInterfaceCore : public common::util::IInterfaceCore
 {
     public:
         ToolsInterfaceCore(ros::NodeHandle& nh,
                            std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface);
-        virtual ~ToolsInterfaceCore() override;
+        ~ToolsInterfaceCore() override = default;
 
-        virtual bool init(ros::NodeHandle &nh) override;
+        // non copyable class
+        ToolsInterfaceCore( const ToolsInterfaceCore& ) = delete;
+        ToolsInterfaceCore( ToolsInterfaceCore&& ) = delete;
+
+        ToolsInterfaceCore& operator= ( ToolsInterfaceCore && ) = delete;
+        ToolsInterfaceCore& operator= ( const ToolsInterfaceCore& ) = delete;
+
+        bool init(ros::NodeHandle &nh) override;
 
         bool isInitialized();
         void pubToolId(int id);
 
     private:
-        virtual void initParameters(ros::NodeHandle& nh) override;
-        virtual void startServices(ros::NodeHandle& nh) override;
-        virtual void startPublishers(ros::NodeHandle& nh) override;
-        virtual void startSubscribers(ros::NodeHandle& nh) override;
-
-        void _publishToolConnection();
+        void initParameters(ros::NodeHandle& nh) override;
+        void startServices(ros::NodeHandle& nh) override;
+        void startPublishers(ros::NodeHandle& nh) override;
+        void startSubscribers(ros::NodeHandle& nh) override;
 
         bool _callbackPingAndSetTool(tools_interface::PingDxlTool::Request &, tools_interface::PingDxlTool::Response &res);
 
@@ -79,11 +84,15 @@ class ToolsInterfaceCore : public common::model::IInterfaceCore
         bool _callbackPullAirVacuumPump(tools_interface::PullAirVacuumPump::Request &req, tools_interface::PullAirVacuumPump::Response &res);
         bool _callbackPushAirVacuumPump(tools_interface::PushAirVacuumPump::Request &req, tools_interface::PushAirVacuumPump::Response &res);
 
+        void _publishToolConnection(const ros::TimerEvent&);
+
     private:
         std::mutex _tool_mutex;
 
         ros::Publisher _tool_connection_publisher;
-        std::thread _publish_tool_connection_thread;
+        ros::Timer     _tool_connection_publisher_timer;
+        ros::Duration  _tool_connection_publisher_duration{1.0};
+        uint8_t        _tool_ping_failed_cnt{0};
 
         std::shared_ptr<ttl_driver::TtlInterfaceCore> _ttl_interface;
 
@@ -96,9 +105,8 @@ class ToolsInterfaceCore : public common::model::IInterfaceCore
 
         std::shared_ptr<common::model::ToolState> _toolState;
         std::map<uint8_t, common::model::EHardwareType> _available_tools_map;
-
-        double _check_tool_connection_frequency{0.0};
 };
+
 } // ToolsInterface
 
 #endif

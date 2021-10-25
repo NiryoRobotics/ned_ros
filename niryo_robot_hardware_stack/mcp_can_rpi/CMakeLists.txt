@@ -69,7 +69,7 @@ if(CMAKE_CROSSCOMPILING)
     message(STATUS "Cross compiling : wiringPi library is required")
     target_link_libraries(${PROJECT_NAME}
         ${catkin_LIBRARIES}
-        -lwiringPi -lrt
+        -lwiringPi -lrt -lcrypt
     )
 else()
 
@@ -77,7 +77,7 @@ else()
         message(STATUS "wiringPi library is required for ${PROJECT_NAME} (ARM processor)")
         target_link_libraries(${PROJECT_NAME}
             ${catkin_LIBRARIES}
-            -lwiringPi -lrt
+            -lwiringPi -lrt -lcrypt
         )
     else()
         message(STATUS "wiringPi library not required")

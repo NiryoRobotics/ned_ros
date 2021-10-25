@@ -37,33 +37,46 @@ namespace model
  */
 class AbstractMotorState : public AbstractHardwareState
 {
-    public:
+public:
+    AbstractMotorState();
+    AbstractMotorState(EHardwareType type, EComponentType component_type,
+                       EBusProtocol bus_proto, uint8_t id);
 
-        AbstractMotorState();
-        AbstractMotorState(EHardwareType type, EComponentType component_type,
-                           EBusProtocol bus_proto, uint8_t id);
-        AbstractMotorState(const AbstractMotorState& state);
 
-        virtual ~AbstractMotorState() override;
+    ~AbstractMotorState() override = default;
 
-        // getters
-        int getPositionState() const;
+    // getters
+    int getPosition() const;
+    int getVelocity() const;
+    int getTorque() const;
 
-        // setters
-        void setPositionState(int pos);
+    // setters
+    void setPosition(int pos);
+    void setVelocity(int vel);
+    void setTorque(int torque);
 
-        // tests
-        bool isStepper() const;
-        bool isDynamixel() const;
+    // tests
+    bool isStepper() const;
+    bool isDynamixel() const;
 
-        // IObject interface
-        virtual void reset() override;
-        virtual std::string str() const override;
-        virtual bool isValid() const override = 0; // not reimplemented to keep this class abstract
+    // IObject interface
+    void reset() override;
+    std::string str() const override;
+    bool isValid() const override = 0; // not reimplemented to keep this class abstract
 
-    protected:
-        // read variables
-        int _position_state{0};
+protected:
+    // read variables
+    int _position{0};
+    int _velocity{0};
+    int _torque{0};
+
+protected:
+    // see https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c67-a-polymorphic-class-should-suppress-public-copymove
+    AbstractMotorState( const AbstractMotorState& ) = default;
+    AbstractMotorState( AbstractMotorState&& ) = default;
+
+    AbstractMotorState& operator= ( AbstractMotorState && ) = default;
+    AbstractMotorState& operator= ( const AbstractMotorState& ) = default;
 };
 
 /**
@@ -71,9 +84,29 @@ class AbstractMotorState : public AbstractHardwareState
  * @return
  */
 inline
-int AbstractMotorState::getPositionState() const
+int AbstractMotorState::getPosition() const
 {
-    return _position_state;
+    return _position;
+}
+
+/**
+ * @brief AbstractMotorState::getVelocityState
+ * @return
+ */
+inline
+int AbstractMotorState::getVelocity() const
+{
+    return _velocity;
+}
+
+/**
+ * @brief AbstractMotorState::getTorqueState
+ * @return
+ */
+inline
+int AbstractMotorState::getTorque() const
+{
+    return _torque;
 }
 
 /**

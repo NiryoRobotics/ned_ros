@@ -20,6 +20,7 @@
 // C++
 #include <functional>
 #include <string>
+#include <utility>
 
 #include "joints_interface/joints_interface_core.hpp"
 #include "common/util/util_defs.hpp"
@@ -39,8 +40,8 @@ JointsInterfaceCore::JointsInterfaceCore(ros::NodeHandle& rootnh,
                                          std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface,
                                          std::shared_ptr<can_driver::CanInterfaceCore> can_interface) :
     _joint_controller_name("/niryo_robot_follow_joint_trajectory_controller"),
-    _ttl_interface(ttl_interface),
-    _can_interface(can_interface)
+    _ttl_interface(std::move(ttl_interface)),
+    _can_interface(std::move(can_interface))
 {
     init(robot_hwnh);
 
@@ -64,9 +65,6 @@ JointsInterfaceCore::JointsInterfaceCore(ros::NodeHandle& rootnh,
  */
 JointsInterfaceCore::~JointsInterfaceCore()
 {
-    if (_publish_learning_mode_thread.joinable())
-        _publish_learning_mode_thread.join();
-
     if (_control_loop_thread.joinable())
         _control_loop_thread.join();
 }
@@ -99,16 +97,23 @@ bool JointsInterfaceCore::init(ros::NodeHandle& nh)
  */
 void JointsInterfaceCore::initParameters(ros::NodeHandle& nh)
 {
-    nh.getParam("ros_control_loop_frequency", _control_loop_frequency);
-    nh.getParam("publish_learning_mode_frequency", _publish_learning_mode_frequency);
+    double control_loop_frequency{1.0};
+    double learning_mode_frequency{1.0};
+
+    nh.getParam("ros_control_loop_frequency", control_loop_frequency);
+    nh.getParam("publish_learning_mode_frequency", learning_mode_frequency);
     nh.getParam("/niryo_robot_hardware_interface/hardware_version", _hardware_version);
 
     ROS_DEBUG("JointsInterfaceCore::initParams - Ros control loop frequency %f",
-              _control_loop_frequency);
+              control_loop_frequency);
     ROS_DEBUG("JointsInterfaceCore::initParams - Publish learning mode frequency : %f",
-              _publish_learning_mode_frequency);
+              learning_mode_frequency);
     ROS_DEBUG("Joint Hardware Interface - hardware_version %s",
               _hardware_version.c_str());
+
+    _learning_mode_publisher_duration = ros::Duration(1.0 / learning_mode_frequency);
+    _control_loop_rate = ros::Rate(control_loop_frequency);
+
 }
 
 /**
@@ -136,8 +141,11 @@ void JointsInterfaceCore::startServices(ros::NodeHandle& nh)
  */
 void JointsInterfaceCore::startPublishers(ros::NodeHandle& nh)
 {
-    _learning_mode_publisher = nh.advertise<std_msgs::Bool>("/niryo_robot/learning_mode/state", 10);
-    _publish_learning_mode_thread = std::thread(&JointsInterfaceCore::_publishLearningMode, this);
+    _learning_mode_publisher = nh.advertise<std_msgs::Bool>("/niryo_robot/learning_mode/state", 10, true);
+
+    _learning_mode_publisher_timer = nh.createTimer(_learning_mode_publisher_duration,
+                                                    &JointsInterfaceCore::_publishLearningMode,
+                                                    this);
 }
 
 /**
@@ -221,7 +229,6 @@ void JointsInterfaceCore::rosControlLoop()
     ros::Time last_time = ros::Time::now();
     ros::Time current_time = ros::Time::now();
     ros::Duration elapsed_time;
-    ros::Rate control_loop_rate = ros::Rate(_control_loop_frequency);
 
     while (ros::ok())
     {
@@ -249,11 +256,11 @@ void JointsInterfaceCore::rosControlLoop()
                 _robot->write(current_time, elapsed_time);
             }
 
-            bool isFreqMet = control_loop_rate.sleep();
+            bool isFreqMet = _control_loop_rate.sleep();
             ROS_DEBUG_COND(!isFreqMet,
                            "JointsInterfaceCore::rosControlLoop : freq not met : expected (%f s) vs actual (%f s)",
-                           control_loop_rate.expectedCycleTime().toSec(),
-                           control_loop_rate.cycleTime().toSec());
+                           _control_loop_rate.expectedCycleTime().toSec(),
+                           _control_loop_rate.cycleTime().toSec());
         }
     }
 }
@@ -309,7 +316,7 @@ bool JointsInterfaceCore::_callbackCalibrateMotors(niryo_robot_msgs::SetInt::Req
 {
     ROS_DEBUG("JointsInterfaceCore::_callbackCalibrateMotors - Received a calibration request");
     int calibration_mode = req.value;
-    std::string result_message = "";
+    std::string result_message;
     _enable_control_loop = false;
 
     int result = _robot->calibrateJoints(calibration_mode, result_message);
@@ -374,7 +381,7 @@ bool JointsInterfaceCore::_callbackActivateLearningMode(niryo_robot_msgs::SetBoo
  * @brief JointsInterfaceCore::_callbackTrajectoryResult
  * @param msg
  */
-void JointsInterfaceCore::_callbackTrajectoryResult(const control_msgs::FollowJointTrajectoryActionResult &msg)
+void JointsInterfaceCore::_callbackTrajectoryResult(const control_msgs::FollowJointTrajectoryActionResult & /*msg*/)
 {
     ROS_DEBUG("JointsInterfaceCore::_callbackTrajectoryResult - Received trajectory RESULT");
     _robot->synchronizeMotors(false);
@@ -382,21 +389,14 @@ void JointsInterfaceCore::_callbackTrajectoryResult(const control_msgs::FollowJo
 
 /**
  * @brief JointsInterfaceCore::_publishLearningMode
- *  // TODO(CC) use a timer
- *
  */
-void JointsInterfaceCore::_publishLearningMode()
+void JointsInterfaceCore::_publishLearningMode(const ros::TimerEvent&)
 {
     ROS_DEBUG("JointsInterfaceCore::_publishLearningMode");
 
-    ros::Rate publish_learning_mode_rate = ros::Rate(_publish_learning_mode_frequency);
-    while (ros::ok())
-    {
-        std_msgs::Bool msg;
-        msg.data = _previous_state_learning_mode;
-        _learning_mode_publisher.publish(msg);
-        publish_learning_mode_rate.sleep();
-    }
+    std_msgs::Bool msg;
+    msg.data = _previous_state_learning_mode;
+    _learning_mode_publisher.publish(msg);
 }
 
 }  // namespace joints_interface

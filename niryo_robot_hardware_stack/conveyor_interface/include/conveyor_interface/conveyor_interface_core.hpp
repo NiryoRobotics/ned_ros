@@ -21,6 +21,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #define CONVEYOR_INTERFACE_CORE_HPP
 
 // c++
+#include <cstdint>
 #include <memory>
 #include <vector>
 
@@ -28,14 +29,16 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <ros/ros.h>
 
 // niryo
+#include "common/util/i_interface_core.hpp"
+
 #include "can_driver/can_interface_core.hpp"
+#include "ttl_driver/ttl_interface_core.hpp"
 
 #include "conveyor_interface/SetConveyor.h"
 #include "conveyor_interface/ControlConveyor.h"
 #include "conveyor_interface/ConveyorFeedbackArray.h"
 #include "niryo_robot_msgs/CommandStatus.h"
 
-#include "common/model/i_interface_core.hpp"
 
 namespace conveyor_interface
 {
@@ -43,37 +46,67 @@ namespace conveyor_interface
 /**
  * @brief The ConveyorInterfaceCore class
  */
-class ConveyorInterfaceCore : public common::model::IInterfaceCore
+class ConveyorInterfaceCore : public common::util::IInterfaceCore
 {
     public:
         ConveyorInterfaceCore(ros::NodeHandle& nh,
-                              std::shared_ptr<common::model::IDriverCore> conveyor_driver);
-        virtual ~ConveyorInterfaceCore() override;
-        virtual bool init(ros::NodeHandle& nh) override;
+                              std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface,
+                              std::shared_ptr<can_driver::CanInterfaceCore> can_interface);
+        ~ConveyorInterfaceCore() override = default;
+
+        // non copyable class
+        ConveyorInterfaceCore( const ConveyorInterfaceCore& ) = delete;
+        ConveyorInterfaceCore( ConveyorInterfaceCore&& ) = delete;
+
+        ConveyorInterfaceCore& operator= ( ConveyorInterfaceCore && ) = delete;
+        ConveyorInterfaceCore& operator= ( const ConveyorInterfaceCore& ) = delete;
+
+        bool init(ros::NodeHandle& nh) override;
 
         bool isInitialized();
 
-        const std::vector<std::shared_ptr<common::model::ConveyorState> >&
-        getConveyorStates() const;
+        std::vector<std::shared_ptr<common::model::ConveyorState> > getConveyorStates() const;
 
 private:
-        virtual void initParameters(ros::NodeHandle& nh) override;
-        virtual void startServices(ros::NodeHandle& nh) override;
-        virtual void startPublishers(ros::NodeHandle& nh) override;
-        virtual void startSubscribers(ros::NodeHandle& nh) override;
+        void initParameters(ros::NodeHandle& nh) override;
+        void startServices(ros::NodeHandle& nh) override;
+        void startPublishers(ros::NodeHandle& nh) override;
+        void startSubscribers(ros::NodeHandle& nh) override;
 
         conveyor_interface::SetConveyor::Response addConveyor();
+        conveyor_interface::SetConveyor::Response initTTLConveyor(const std::shared_ptr<common::model::ConveyorState>& conveyor_state);
+        conveyor_interface::SetConveyor::Response initCANConveyor(const std::shared_ptr<common::model::ConveyorState>& conveyor_state);
         conveyor_interface::SetConveyor::Response removeConveyor(uint8_t id);
 
         bool _callbackPingAndSetConveyor(conveyor_interface::SetConveyor::Request &req, conveyor_interface::SetConveyor::Response &res);
         bool _callbackControlConveyor(conveyor_interface::ControlConveyor::Request &req, conveyor_interface::ControlConveyor::Response &res);
 
-        void _publishConveyorsFeedback();
+        void _publishConveyorsFeedback(const ros::TimerEvent&);
 
     private:
-        std::thread _publish_conveyors_feedback_thread;
+        struct BusConfig
+        {
+            BusConfig(common::model::EHardwareType t) :
+              type(t)
+            {}
 
-        std::shared_ptr<common::model::IDriverCore> _conveyor_driver;
+            bool isValid() { return !pool_id_list.empty() && type != common::model::EHardwareType::UNKNOWN; }
+
+            std::shared_ptr<common::util::IDriverCore> interface;
+
+            common::model::EHardwareType type{common::model::EHardwareType::UNKNOWN};
+            uint8_t default_id{1};
+            std::set<uint8_t> pool_id_list;
+
+            double max_effort{0.0};
+            double micro_steps{8.0};
+            int direction{0};
+        };
+        std::mutex _state_map_mutex;
+
+        std::map<common::model::EBusProtocol, BusConfig> _bus_config_map;
+
+        ros::Timer _publish_conveyors_feedback_timer;
 
         ros::ServiceServer _ping_and_set_stepper_server;
         ros::ServiceServer _control_conveyor_server;
@@ -81,29 +114,20 @@ private:
         ros::Publisher _conveyors_feedback_publisher;
         ros::Publisher _conveyor_status_publisher;
 
-        std::vector<std::shared_ptr<common::model::ConveyorState> > _conveyor_states;
+        // currently connected and configured conveyors
 
-        // pool of possible id we can set for a newly connected conveyor
-        std::set<uint8_t> _conveyor_pool_id_list;
+        std::shared_ptr<ttl_driver::TtlInterfaceCore> _ttl_interface;
+        std::shared_ptr<can_driver::CanInterfaceCore> _can_interface;
 
-        // list of currently connected conveyors
-        std::vector<uint8_t> _current_conveyor_id_list;
+        std::map<uint8_t, std::shared_ptr<common::model::ConveyorState> > _state_map;
+        // vector keep track order of insertion in state_map
+        std::vector<uint8_t> _order_insertion;
 
-        double _publish_feedback_frequency{0.0};
+        static constexpr int TTL_DEFAULT_ID{8};
+        static constexpr int CAN_DEFAULT_ID{6};
 
-        common::model::EBusProtocol _bus_protocol;
+        double _publish_feedback_duration{0.0};
 };
-
-/**
- * @brief JointsInterfaceCore::getJointsState
- * @return
- */
-inline
-const std::vector<std::shared_ptr<common::model::ConveyorState> >&
-ConveyorInterfaceCore::getConveyorStates() const
-{
-    return _conveyor_states;
-}
 
 } // ConveyorInterface
 

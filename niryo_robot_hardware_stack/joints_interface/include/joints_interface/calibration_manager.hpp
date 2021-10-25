@@ -21,7 +21,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #define CALIBRATION_INTERFACE_HPP
 
 #include <ros/ros.h>
-#include <stdint.h>
+#include <cstdint>
 #include <string>
 #include <vector>
 #include <thread>
@@ -46,7 +46,14 @@ public:
                        std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface,
                        std::shared_ptr<can_driver::CanInterfaceCore> can_interface);
 
-    virtual ~CalibrationManager();
+    ~CalibrationManager() = default;
+
+    // non copyable class
+    CalibrationManager( const CalibrationManager& ) = delete;
+    CalibrationManager( CalibrationManager&& ) = delete;
+
+    CalibrationManager& operator= ( CalibrationManager && ) = delete;
+    CalibrationManager& operator= ( const CalibrationManager& ) = delete;
 
     int startCalibration(int mode, std::string &result_message);
 
@@ -58,7 +65,7 @@ private:
     common::model::EStepperCalibrationStatus autoCalibration();
     common::model::EStepperCalibrationStatus manualCalibration();
 
-    std::shared_ptr<common::model::IDriverCore> getJointInterface(common::model::EBusProtocol proto);
+    std::shared_ptr<common::util::IDriverCore> getJointInterface(common::model::EBusProtocol proto);
     // tests
     bool canProcessManualCalibration(std::string &result_message);
     bool steppersConnected();
@@ -86,6 +93,8 @@ private:
 
     bool _calibration_in_progress{false};
     int _calibration_timeout{0};
+    int _calibration_stall_threshold{6};
+
     std::string _calibration_file_name;
     std::string _hardware_version;
 
@@ -107,12 +116,12 @@ bool CalibrationManager::CalibrationInprogress() const
 }
 
 inline
-std::shared_ptr<common::model::IDriverCore>
+std::shared_ptr<common::util::IDriverCore>
 CalibrationManager::getJointInterface(common::model::EBusProtocol proto)
 {
   if(common::model::EBusProtocol::CAN == proto)
     return _can_interface;
-  else if(common::model::EBusProtocol::TTL == proto)
+  if(common::model::EBusProtocol::TTL == proto)
     return _ttl_interface;
 
   return nullptr;

@@ -42,10 +42,9 @@ class AbstractEndEffectorDriver : public AbstractTtlDriver
 {
 
 public:
-    AbstractEndEffectorDriver();
+    AbstractEndEffectorDriver() = default;
     AbstractEndEffectorDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
                               std::shared_ptr<dynamixel::PacketHandler> packetHandler);
-    virtual ~AbstractEndEffectorDriver() override;
 
 public:
     virtual int readButton1Status(uint8_t id, common::model::EActionType& action) = 0;
@@ -61,11 +60,19 @@ public:
     virtual int readDigitalInput(uint8_t id, bool& in) = 0;
     virtual int writeDigitalOutput(uint8_t id, bool out) = 0;
 
-    virtual common::model::EActionType interpreteActionValue(uint32_t value) = 0;
+    std::string interpreteErrorState(uint32_t hw_state) const override;
+
+    common::model::EActionType interpreteActionValue(uint32_t value) const;
 
     // AbstractTtlDriver interface
 protected:
-    virtual std::string str() const override;
+    std::string str() const override;
+    std::string interpreteFirmwareVersion(uint32_t fw_version) const override;
+
+    // AbstractTtlDriver interface
+public:
+    int writeSingleCmd(const std::unique_ptr<common::model::AbstractTtlSingleMotorCmd> &cmd) override;
+    int writeSyncCmd(int type, const std::vector<uint8_t> &ids, const std::vector<uint32_t> &params) override;
 };
 
 } // ttl_driver

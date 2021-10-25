@@ -42,34 +42,29 @@ namespace ttl_driver
 class MockEndEffectorDriver : public AbstractEndEffectorDriver
 {
     public:
-        MockEndEffectorDriver(FakeTtlData data);
-        virtual ~MockEndEffectorDriver() override;
+        MockEndEffectorDriver(std::shared_ptr<FakeTtlData> data);
 
     public:
         // AbstractTtlDriver interface : we cannot define them globally in AbstractTtlDriver
         // as it is needed here for polymorphism (AbstractTtlDriver cannot be a template class and does not
         // have access to reg_type). So it seems like a duplicate of StepperDriver
-        virtual std::string str() const override;
+        std::string str() const override;
 
-        virtual int checkModelNumber(uint8_t id) override;
-        virtual int readFirmwareVersion(uint8_t id, std::string &version) override;
+        int checkModelNumber(uint8_t id) override;
+        int readFirmwareVersion(uint8_t id, std::string &version) override;
         
-        virtual int readTemperature(uint8_t id, uint32_t &_temperature) override;
-        virtual int readVoltage(uint8_t id, double &_voltage) override;
-        virtual int readHwErrorStatus(uint8_t id, uint32_t &hardware_status) override;
+        int readTemperature(uint8_t id, uint32_t &_temperature) override;
+        int readVoltage(uint8_t id, double &_voltage) override;
+        int readHwErrorStatus(uint8_t id, uint32_t &hardware_status) override;
 
-        virtual int syncReadFirmwareVersion(const std::vector<uint8_t> &id_list, std::vector<std::string> &firmware_list) override;
-        virtual int syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &temperature_list) override;
-        virtual int syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list) override;
-        virtual int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list) override;
-
-        virtual int writeSingleCmd(const std::shared_ptr<common::model::AbstractTtlSingleMotorCmd> &cmd) override;
-        virtual int writeSyncCmd(int type, const std::vector<uint8_t>& ids, const std::vector<uint32_t>& params) override;
-
+        int syncReadFirmwareVersion(const std::vector<uint8_t> &id_list, std::vector<std::string> &firmware_list) override;
+        int syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &temperature_list) override;
+        int syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list) override;
+        int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list) override;
+        
+        int scan(std::vector<uint8_t> &id_list) override;
     public:
-        virtual std::string interpreteErrorState(uint32_t hw_state) const override;
-
-        virtual int ping(uint8_t id) override;
+        int ping(uint8_t id) override;
 
         // AbstractEndEffectorDriver
         int readButton1Status(uint8_t id, common::model::EActionType& action) override;
@@ -85,18 +80,8 @@ class MockEndEffectorDriver : public AbstractEndEffectorDriver
         int readDigitalInput(uint8_t id, bool& in) override;
         int writeDigitalOutput(uint8_t id, bool out) override;
 
-        common::model::EActionType interpreteActionValue(uint32_t value) override;
-
-    protected:
-        virtual std::string interpreteFirmwareVersion(uint32_t fw_version) const override;
-
     private:
-        void initializeFakeData(FakeTtlData);
-
-    private:
-
-        FakeTtlData::FakeEndEffector _ee_info;
-
+        std::shared_ptr<FakeTtlData> _fake_data;
 };
 
 } // ttl_driver

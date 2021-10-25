@@ -17,7 +17,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 ## By adding -Wall and -Werror, the compiler does not ignore warnings anymore,
 ## enforcing cleaner code.
-add_definitions(-Wall  -Werror)
+add_definitions(-Wall  -Werror -Os)
 
 ## Find catkin macros and libraries
 find_package(catkin REQUIRED

@@ -20,7 +20,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #ifndef TOOL_STATE_H
 #define TOOL_STATE_H
 
-#include <stdint.h>
+#include <cstdint>
 #include <string>
 
 #include "hardware_type_enum.hpp"
@@ -37,23 +37,18 @@ namespace model
 class ToolState : public DxlMotorState
 {
     public:
-        ToolState();
+        ToolState() = default;
         ToolState(std::string name, EHardwareType type, uint8_t id);
-        ToolState(const ToolState& state);
-
-        virtual ~ToolState() override;
 
         void setName(std::string name);
-        void setPosition(double position);
 
         std::string getToolName() const;
-        double getPositionRef() const;
 
         bool isConnected() const;
 
         // DxlMotorState interface
-        virtual void reset() override;
-        virtual std::string str() const override;
+        void reset() override;
+        std::string str() const override;
 
     public:
         static constexpr int TOOL_STATE_PING_OK       = 0x01;
@@ -72,7 +67,6 @@ class ToolState : public DxlMotorState
         std::string _tool_name;
 
         bool _connected{true};
-        double _position{0.0};
 };
 
 /**
@@ -83,16 +77,6 @@ inline
 std::string ToolState::getToolName() const
 {
     return _tool_name;
-}
-
-/**
- * @brief ToolState::getPositionRef
- * @return
- */
-inline
-double ToolState::getPositionRef() const
-{
-    return _position;
 }
 
 /**

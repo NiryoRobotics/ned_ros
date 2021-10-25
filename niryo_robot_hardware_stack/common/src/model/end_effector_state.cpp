@@ -1,29 +1,39 @@
-/*
-    end_effector_state.cpp
-    Copyright (C) 2020 Niryo
-    All rights reserved.
+﻿
+// end_effector_state.hpp
+// Copyright(C) 2020 Niryo
+// All rights reserved.
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http:// www.gnu.org/licenses/>.
+//
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http:// www.gnu.org/licenses/>.
-*/
 #include "common/model/end_effector_state.hpp"
+
+// std
+#include <sstream>
+#include <string>
+#include <queue>
+#include <utility>
+
+// ros
+#include <ros/ros.h>
+
+// niryo
 #include "common/model/abstract_hardware_state.hpp"
 #include "common/model/action_type_enum.hpp"
 #include "common/model/bus_protocol_enum.hpp"
 #include "common/model/component_type_enum.hpp"
-#include <sstream>
-#include <string>
-#include <ros/ros.h>
+
 namespace common
 {
 namespace model
@@ -33,26 +43,16 @@ namespace model
  * @brief EndEffectorState::EndEffectorState
  */
 EndEffectorState::EndEffectorState() :
-  AbstractHardwareState()
-{
-  _buttons_list.at(0) = std::make_shared<Button>();
-  _buttons_list.at(1) = std::make_shared<Button>();
-  _buttons_list.at(2) = std::make_shared<Button>();
-}
+  EndEffectorState(1)
+{}
 
 /**
  * @brief EndEffectorState::EndEffectorState
  * @param id
  */
 EndEffectorState::EndEffectorState(uint8_t id) :
-  AbstractHardwareState(EHardwareType::END_EFFECTOR,
-                        EComponentType::END_EFFECTOR,
-                        EBusProtocol::TTL, id)
-{
-  _buttons_list.at(0) = std::make_shared<Button>();
-  _buttons_list.at(1) = std::make_shared<Button>();
-  _buttons_list.at(2) = std::make_shared<Button>();
-}
+  EndEffectorState(id, EHardwareType::END_EFFECTOR)
+{}
 
 /**
  * @brief EndEffectorState::EndEffectorState
@@ -68,25 +68,6 @@ EndEffectorState::EndEffectorState(uint8_t id, common::model::EHardwareType type
 }
 
 /**
- * @brief EndEffectorState::EndEffectorState : copy constructor
- * @param state
- */
-EndEffectorState::EndEffectorState(const EndEffectorState &state) :
-  AbstractHardwareState(state)
-{
-    _buttons_list = state._buttons_list;
-    _accelerometer_values = state._accelerometer_values;
-    _collision_status = state._collision_status;
-}
-
-/**
- * @brief EndEffectorState::~EndEffectorState
- */
-EndEffectorState::~EndEffectorState()
-{
-}
-
-/**
  * @brief EndEffectorState::configureButton
  * @param id
  * @param button_type
@@ -96,8 +77,8 @@ void EndEffectorState::configureButton(uint8_t id, EButtonType button_type)
 {
   assert(id <= 3);
 
-  _buttons_list[id - 1]->actions.push(EActionType::NO_ACTION);
-  _buttons_list[id - 1]->type = button_type;
+  _buttons_list.at(id - 1)->actions.push(EActionType::NO_ACTION);
+  _buttons_list.at(id - 1)->type = button_type;
 }
 
 // ***********************
@@ -133,11 +114,11 @@ std::string EndEffectorState::str() const
  * @return
  */
 bool common::model::EndEffectorState::isValid() const
-  {
-  return (EHardwareType::END_EFFECTOR == getHardwareType() &&
-          EButtonType::UNKNOWN != _buttons_list.at(0)->type &&
-          EButtonType::UNKNOWN != _buttons_list.at(1)->type &&
-          EButtonType::UNKNOWN != _buttons_list.at(2)->type);
+{
+    return (EHardwareType::UNKNOWN != getHardwareType() &&
+            EButtonType::UNKNOWN != _buttons_list.at(0)->type &&
+            EButtonType::UNKNOWN != _buttons_list.at(1)->type &&
+            EButtonType::UNKNOWN != _buttons_list.at(2)->type);
 }
 
 /**
@@ -149,12 +130,12 @@ void EndEffectorState::setButtonStatus(uint8_t id, EActionType action)
 {
   assert(id <= 3);
 
-  auto button = _buttons_list[id - 1];
+  auto button = _buttons_list.at(id - 1);
   // do not add 2 no action states consecutive
   if (button->actions.back() == EActionType::NO_ACTION &&
           action == EActionType::NO_ACTION)
       return;
-  else if (button->actions.back() !=EActionType::NO_ACTION &&
+  if (button->actions.back() !=EActionType::NO_ACTION &&
           action == EActionType::NO_ACTION)
   {
       button->actions.push(action);
@@ -165,7 +146,7 @@ void EndEffectorState::setButtonStatus(uint8_t id, EActionType action)
       button->actions.push(action);
       button->setDelay();
   }
-  else if (action == EActionType::LONG_PUSH_ACTION || (action == EActionType::HANDLE_HELD_ACTION && !button->isNeedToSkip()))
+  else if (action == EActionType::LONG_PUSH_ACTION || (action == EActionType::HANDLE_HELD_ACTION && !button->needsToSkip()))
   {
       button->actions.push(action);
   }
@@ -202,11 +183,11 @@ void EndEffectorState::setAccelerometerZValue(const uint32_t &zValue)
 
 /**
  * @brief EndEffectorState::setCollisionStatus
- * @param collision_satus
+ * @param status
  */
-void EndEffectorState::setCollisionStatus(bool collision_satus)
+void EndEffectorState::setCollisionStatus(bool status)
 {
-  _collision_status = collision_satus;
+  _collision_status = status;
 }
 
 /**
@@ -225,6 +206,72 @@ void EndEffectorState::setDigitalIn(bool digital_in)
 void EndEffectorState::setDigitalOut(bool digital_out)
 {
   _digital_out = digital_out;
+}
+
+//************************
+//    Button subclass
+//************************
+
+
+/**
+ * @brief EndEffectorState::Button::Button
+ */
+EndEffectorState::Button::Button()
+{
+  actions.push(EActionType::NO_ACTION);
+}
+
+/**
+ * @brief EndEffectorState::Button::str
+ * @return
+ */
+std::string EndEffectorState::Button::str() const
+{
+  std::ostringstream ss;
+  ss << "Button (" << ButtonTypeEnum(type).toString() << ") : "
+     << ActionTypeEnum(actions.front()).toString();
+  return ss.str();
+}
+
+/**
+ * @brief EndEffectorState::Button::isValid
+ * @return
+ */
+bool EndEffectorState::Button::isValid() const
+{
+  return (EButtonType::UNKNOWN != type);
+}
+
+/**
+ * @brief EndEffectorState::Button::reset
+ */
+void EndEffectorState::Button::reset()
+{
+  type = EButtonType::UNKNOWN;
+  std::queue<EActionType> empty_queue;
+  actions.swap(empty_queue);
+}
+
+/**
+ * @brief EndEffectorState::Button::setDelay
+ */
+void EndEffectorState::Button::setDelay()
+{
+  _time_last_read_state = ros::Time::now().toSec();
+  _need_delay = true;
+}
+
+/**
+ * @brief EndEffectorState::Button::needsToSkip
+ * @return
+ */
+bool EndEffectorState::Button::needsToSkip()
+{
+    if (_need_delay && (ros::Time::now().toSec() - _time_last_read_state) <= _time_avoid_duplicate_state)
+        return true;
+
+    _need_delay = false;
+    return false;
 }
 
 }  // namespace model

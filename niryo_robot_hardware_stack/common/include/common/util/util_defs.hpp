@@ -20,15 +20,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #ifndef UTIL_DEFS_H
 #define UTIL_DEFS_H
 // C++
-#include <ios>
-#include <cerrno>
-#include <cstring>
-#include <iostream>
-#include <sstream>
 
-// #include <fstream>
-#include <functional>
-#include <algorithm>
 /*
 common_defs.h
 Copyright (C) 2020 Niryo
@@ -62,17 +54,23 @@ namespace util
 {
 
 /**
- * Non copyable class a la "boost"
+ * Non copyable class
  */
 template <typename T>
 class CNonCopyable
 {
-    protected:
-        CNonCopyable () {}
-        ~CNonCopyable () {} // / Protected non-virtual destructor
-    private:
-        CNonCopyable (const CNonCopyable &);
-        T & operator = (const T &);
+protected:
+    CNonCopyable () = default;
+    ~CNonCopyable () = default; // / Protected non-virtual destructor
+
+public:
+    CNonCopyable( const CNonCopyable& ) = delete;
+    CNonCopyable& operator=( const CNonCopyable& ) = delete;
+    CNonCopyable( CNonCopyable&& ) = delete;
+    CNonCopyable& operator=( CNonCopyable&& ) = delete;
+
+    T& operator= ( const T & ) = delete;
+    T& operator= ( T && ) = delete;
 };
 
 /**

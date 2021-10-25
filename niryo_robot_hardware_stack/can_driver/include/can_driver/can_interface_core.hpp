@@ -31,8 +31,8 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <vector>
 
 #include "common/model/hardware_type_enum.hpp"
-#include "common/model/i_driver_core.hpp"
-#include "common/model/i_interface_core.hpp"
+#include "common/util/i_driver_core.hpp"
+#include "common/util/i_interface_core.hpp"
 #include "can_driver/can_manager.hpp"
 #include "can_driver/StepperArrayMotorHardwareStatus.h"
 #include "niryo_robot_msgs/BusState.h"
@@ -45,17 +45,21 @@ namespace can_driver
 /**
  * @brief The CanInterfaceCore class
  */
-class CanInterfaceCore : public common::model::IDriverCore, public common::model::IInterfaceCore
+class CanInterfaceCore : public common::util::IDriverCore, public common::util::IInterfaceCore
 {
     public:
 
         CanInterfaceCore(ros::NodeHandle& nh);
-        virtual ~CanInterfaceCore() override;
+        ~CanInterfaceCore() override;
+        CanInterfaceCore( const CanInterfaceCore& ) = delete;
+        CanInterfaceCore( CanInterfaceCore&& ) = delete;
+        CanInterfaceCore& operator= ( CanInterfaceCore && ) = delete;
+        CanInterfaceCore& operator= ( const CanInterfaceCore& ) = delete;
 
         bool init(ros::NodeHandle& nh) override;
 
         // joints control
-        int addJoint(const std::shared_ptr<common::model::StepperMotorState> jointState);
+        int addJoint(const std::shared_ptr<common::model::StepperMotorState>& jointState);
 
         // Tool control
         // N.A.
@@ -64,19 +68,19 @@ class CanInterfaceCore : public common::model::IDriverCore, public common::model
         // N.A.
 
         // conveyor control
-        int setConveyor(const std::shared_ptr<common::model::ConveyorState> state) override;
-        void unsetConveyor(uint8_t motor_id) override;
+        int setConveyor(const std::shared_ptr<common::model::ConveyorState>& state) override;
+        void unsetConveyor(uint8_t motor_id, uint8_t default_conveyor_id) override;
         int changeId(common::model::EHardwareType motor_type, uint8_t old_id, uint8_t new_id) override;
         
         void clearSingleCommandQueue();
         void clearConveyorCommandQueue();
 
-        void setTrajectoryControllerCommands(const std::vector<std::pair<uint8_t, int32_t> >& cmd);
+        void setTrajectoryControllerCommands(std::vector<std::pair<uint8_t, int32_t> >&& cmd);
 
-        void setSyncCommand(const std::shared_ptr<common::model::ISynchronizeMotorCmd>& cmd) override;
+        void setSyncCommand(std::unique_ptr<common::model::ISynchronizeMotorCmd>&& cmd) override;
 
-        void addSingleCommandToQueue(const std::shared_ptr<common::model::ISingleMotorCmd>& cmd) override;
-        void addSingleCommandToQueue(const std::vector<std::shared_ptr<common::model::ISingleMotorCmd>>& cmd) override;
+        void addSingleCommandToQueue(std::unique_ptr<common::model::ISingleMotorCmd>&& cmd) override;
+        void addSingleCommandToQueue(std::vector<std::unique_ptr<common::model::ISingleMotorCmd>>&& cmd) override;
 
         void startCalibration() override;
         void resetCalibration() override;
@@ -100,14 +104,14 @@ class CanInterfaceCore : public common::model::IDriverCore, public common::model
         bool isConnectionOk() const override;
         int launchMotorsReport() override;
         niryo_robot_msgs::BusState getBusState() const override;
-        virtual common::model::EBusProtocol getBusProtocol() const override;
+        common::model::EBusProtocol getBusProtocol() const override;
 
         std::vector<uint8_t> getRemovedMotorList() const override;
     private:
-        virtual void initParameters(ros::NodeHandle &nh) override;
-        virtual void startServices(ros::NodeHandle &nh) override;
-        virtual void startPublishers(ros::NodeHandle &nh) override;
-        virtual void startSubscribers(ros::NodeHandle &nh) override;
+        void initParameters(ros::NodeHandle &nh) override;
+        void startServices(ros::NodeHandle &nh) override;
+        void startPublishers(ros::NodeHandle &nh) override;
+        void startSubscribers(ros::NodeHandle &nh) override;
 
         void resetHardwareControlLoopRates() override;
         void controlLoop() override;
@@ -119,8 +123,8 @@ class CanInterfaceCore : public common::model::IDriverCore, public common::model
         bool _control_loop_flag{false};
         bool _debug_flag{false};
 
-        std::mutex _control_loop_mutex;
-        std::mutex _joint_trajectory_mutex;
+        std::mutex  _control_loop_mutex;
+        std::mutex  _joint_trajectory_mutex;
 
         std::thread _control_loop_thread;
 
@@ -134,21 +138,16 @@ class CanInterfaceCore : public common::model::IDriverCore, public common::model
         double _time_check_connection_last_read{0.0};
 
         // specific to stepper
-        double _delta_time_calib_read{0.0};
-        double _time_hw_calib_last_read{0.0};
 
         std::unique_ptr<CanManager> _can_manager;
 
         std::vector<std::pair<uint8_t, int32_t> > _joint_trajectory_cmd;
 
         // can cmds
-        std::queue<std::shared_ptr<common::model::AbstractCanSingleMotorCmd>> _stepper_single_cmds;
-        std::queue<std::shared_ptr<common::model::AbstractCanSingleMotorCmd>> _conveyor_cmds;
+        std::queue<std::unique_ptr<common::model::AbstractCanSingleMotorCmd>> _stepper_single_cmds;
+        std::queue<std::unique_ptr<common::model::AbstractCanSingleMotorCmd>> _conveyor_cmds;
 
         static constexpr int QUEUE_OVERFLOW = 20;
-
-        // conveyor default id, avoid hardcore value
-        uint8_t _default_conveyor_id = 0;
 };
 
 /**

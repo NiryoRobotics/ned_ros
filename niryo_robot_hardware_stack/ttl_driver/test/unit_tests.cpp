@@ -47,7 +47,7 @@ using ::common::model::StepperMotorState;
 using ::common::model::EBusProtocol;
 
 // Method add joints
-void addJointToTtlInterface(std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface)
+void addJointToTtlInterface(const std::shared_ptr<ttl_driver::TtlInterfaceCore>& ttl_interface)
 {
     size_t nb_joints = 0;
 
@@ -67,9 +67,9 @@ void addJointToTtlInterface(std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_in
     for (size_t j = 0; j < nb_joints; j++)
     {
         int joint_id_config = 0;
-        string joint_name = "";
-        string joint_type = "";
-        string joint_bus = "";
+        string joint_name;
+        string joint_type;
+        string joint_bus;
 
         robot_hwnh.getParam("joint_" + to_string(j + 1) + "/id", joint_id_config);
         robot_hwnh.getParam("joint_" + to_string(j + 1) + "/name", joint_name);
@@ -116,7 +116,6 @@ void addJointToTtlInterface(std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_in
             auto dxlState = std::make_shared<DxlMotorState>(joint_name,
                                                             eType,
                                                             common::model::EComponentType::JOINT,
-                                                            eBusProto,
                                                             static_cast<uint8_t>(joint_id_config));
             if (dxlState)
             {
@@ -167,7 +166,7 @@ void addJointToTtlInterface(std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_in
     }  // end for (size_t j = 0; j < nb_joints; j++)
 }
 
-void addJointToTtlManager(std::shared_ptr<ttl_driver::TtlManager> ttl_drv)
+void addJointToTtlManager(const std::shared_ptr<ttl_driver::TtlManager>& ttl_drv)
 {
     size_t nb_joints = 0;
 
@@ -186,9 +185,9 @@ void addJointToTtlManager(std::shared_ptr<ttl_driver::TtlManager> ttl_drv)
     for (size_t j = 0; j < nb_joints; j++)
     {
         int joint_id_config = 0;
-        string joint_name = "";
-        string joint_type = "";
-        string joint_bus = "";
+        string joint_name;
+        string joint_type;
+        string joint_bus;
 
         robot_hwnh.getParam("joint_" + to_string(j + 1) + "/id", joint_id_config);
         robot_hwnh.getParam("joint_" + to_string(j + 1) + "/name", joint_name);
@@ -235,7 +234,6 @@ void addJointToTtlManager(std::shared_ptr<ttl_driver::TtlManager> ttl_drv)
             auto dxlState = std::make_shared<DxlMotorState>(joint_name,
                                                         eType,
                                                         common::model::EComponentType::JOINT,
-                                                        eBusProto,
                                                         static_cast<uint8_t>(joint_id_config));
 
             if (dxlState)
@@ -466,9 +464,9 @@ TEST_F(TtlManagerTestSuiteRobotWithCan, testSingleControlCmds)
     auto state_motor_6 = std::dynamic_pointer_cast<common::model::AbstractMotorState>(ttl_drv->getHardwareState(6));
     assert(state_motor_6);
 
-    uint32_t pos_2 = state_motor_2->getPositionState();
-    uint32_t pos_3 = state_motor_3->getPositionState();
-    uint32_t pos_6 = state_motor_6->getPositionState();
+    uint32_t pos_2 = state_motor_2->getPosition();
+    uint32_t pos_3 = state_motor_3->getPosition();
+    uint32_t pos_6 = state_motor_6->getPosition();
 
     uint32_t new_pos_2 = (pos_2 > 2048) ? pos_2 - 100 : pos_2 + 100;
     uint32_t new_pos_3 = (pos_3 > 2048) ? pos_3 - 100 : pos_3 + 100;
@@ -496,11 +494,11 @@ TEST_F(TtlManagerTestSuiteRobotWithCan, testSingleControlCmds)
     ros::Duration(1.0).sleep();
 
     ttl_drv->readPositionStatus();
-    EXPECT_NEAR(state_motor_2->getPositionState(), new_pos_2, 30);
+    EXPECT_NEAR(state_motor_2->getPosition(), new_pos_2, 30);
 
-    EXPECT_NEAR(state_motor_3->getPositionState(), new_pos_3, 30);
+    EXPECT_NEAR(state_motor_3->getPosition(), new_pos_3, 30);
 
-    EXPECT_NEAR(state_motor_6->getPositionState(), new_pos_6, 30);
+    EXPECT_NEAR(state_motor_6->getPosition(), new_pos_6, 30);
 }
 
 TEST_F(TtlManagerTestSuiteRobotWithCan, testSyncControlCmds)
@@ -519,8 +517,8 @@ TEST_F(TtlManagerTestSuiteRobotWithCan, testSyncControlCmds)
   assert(state_motor_2);
   auto state_motor_3 = std::dynamic_pointer_cast<common::model::AbstractMotorState>(ttl_drv->getHardwareState(3));
   assert(state_motor_3);
-  uint32_t pos_2 = state_motor_2->getPositionState();
-  uint32_t pos_3 = state_motor_3->getPositionState();
+  uint32_t pos_2 = state_motor_2->getPosition();
+  uint32_t pos_3 = state_motor_3->getPosition();
 
   std::shared_ptr<common::model::DxlSyncCmd> cmd_1 = std::make_shared<common::model::DxlSyncCmd>(
                                                             common::model::EDxlCommandType::CMD_TYPE_POSITION);
@@ -534,9 +532,9 @@ TEST_F(TtlManagerTestSuiteRobotWithCan, testSyncControlCmds)
   ros::Duration(1.0).sleep();
 
   ttl_drv->readPositionStatus();
-  EXPECT_NEAR(state_motor_2->getPositionState(), new_pos_2, 30);
+  EXPECT_NEAR(state_motor_2->getPosition(), new_pos_2, 30);
 
-  EXPECT_NEAR(state_motor_3->getPositionState(), new_pos_3, 30);
+  EXPECT_NEAR(state_motor_3->getPosition(), new_pos_3, 30);
 }
 
 // Test driver scan motors
@@ -685,9 +683,9 @@ TEST_F(TtlManagerTestSuiteRobotWithoutCan, testSingleControlCmds)
     auto state_motor_5 = std::dynamic_pointer_cast<common::model::AbstractMotorState>(ttl_drv->getHardwareState(5));
     assert(state_motor_5);
 
-    uint32_t pos_2 = state_motor_2->getPositionState();
-    uint32_t pos_3 = state_motor_3->getPositionState();
-    uint32_t pos_5 = state_motor_5->getPositionState();
+    uint32_t pos_2 = state_motor_2->getPosition();
+    uint32_t pos_3 = state_motor_3->getPosition();
+    uint32_t pos_5 = state_motor_5->getPosition();
 
     uint32_t new_pos_2 = (pos_2 > 2048) ? pos_2 - 100 : pos_2 + 100;
     uint32_t new_pos_3 = (pos_3 > 2048) ? pos_3 - 100 : pos_3 + 100;
@@ -719,11 +717,11 @@ TEST_F(TtlManagerTestSuiteRobotWithoutCan, testSingleControlCmds)
 
     ttl_drv->readPositionStatus();
 
-    EXPECT_NEAR(state_motor_2->getPositionState(), new_pos_2, 30);
+    EXPECT_NEAR(state_motor_2->getPosition(), new_pos_2, 30);
 
-    EXPECT_NEAR(state_motor_3->getPositionState(), new_pos_3, 30);
+    EXPECT_NEAR(state_motor_3->getPosition(), new_pos_3, 30);
 
-    EXPECT_NEAR(state_motor_5->getPositionState(), new_pos_5, 10);
+    EXPECT_NEAR(state_motor_5->getPosition(), new_pos_5, 10);
 }
 
 TEST_F(TtlManagerTestSuiteRobotWithoutCan, testSyncCmds)
@@ -815,10 +813,10 @@ TEST_F(TtlManagerTestSuiteRobotWithoutCan, testSyncControlCmds)
     auto state_motor_6 = std::dynamic_pointer_cast<common::model::AbstractMotorState>(ttl_drv->getHardwareState(6));
     assert(state_motor_6);
 
-    uint32_t pos_2 = state_motor_2->getPositionState();
-    uint32_t pos_3 = state_motor_3->getPositionState();
-    uint32_t pos_5 = state_motor_5->getPositionState();
-    uint32_t pos_6 = state_motor_6->getPositionState();
+    uint32_t pos_2 = state_motor_2->getPosition();
+    uint32_t pos_3 = state_motor_3->getPosition();
+    uint32_t pos_5 = state_motor_5->getPosition();
+    uint32_t pos_6 = state_motor_6->getPosition();
 
     uint32_t new_pos_2 = (pos_2 > 2048) ? pos_2 - 100 : pos_2 + 100;
     uint32_t new_pos_3 = (pos_3 > 2048) ? pos_3 - 100 : pos_3 + 100;
@@ -843,13 +841,13 @@ TEST_F(TtlManagerTestSuiteRobotWithoutCan, testSyncControlCmds)
 
     ttl_drv->readPositionStatus();
 
-    EXPECT_NEAR(state_motor_5->getPositionState(), new_pos_5, 30);
+    EXPECT_NEAR(state_motor_5->getPosition(), new_pos_5, 30);
 
-    EXPECT_NEAR(state_motor_6->getPositionState(), new_pos_6, 30);
+    EXPECT_NEAR(state_motor_6->getPosition(), new_pos_6, 30);
 
-    EXPECT_NEAR(state_motor_2->getPositionState(), new_pos_2, 10);
+    EXPECT_NEAR(state_motor_2->getPosition(), new_pos_2, 10);
 
-    EXPECT_NEAR(state_motor_3->getPositionState(), new_pos_3, 10);
+    EXPECT_NEAR(state_motor_3->getPosition(), new_pos_3, 10);
 }
 // Test driver scan motors
 TEST_F(TtlManagerTestSuiteRobotWithoutCan, scanTest)
