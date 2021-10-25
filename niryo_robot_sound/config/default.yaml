@@ -4,7 +4,7 @@ sound_user_publish_rate: 1.0
 
 error_sound_delay: 2
 
-default_volume: 50
+default_volume: 20
 default_volume_simulation: 10
 min_volume: 0
 max_volume: 100

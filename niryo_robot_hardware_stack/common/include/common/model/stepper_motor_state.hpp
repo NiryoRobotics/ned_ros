@@ -113,7 +113,6 @@ protected:
     common::model::EStepperCalibrationStatus _calibration_state{common::model::EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED};
     int32_t _calibration_value{0};
 
-
     uint8_t _calibration_stall_threshold{6};
 
 private:

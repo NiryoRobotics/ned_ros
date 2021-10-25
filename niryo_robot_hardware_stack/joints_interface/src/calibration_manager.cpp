@@ -85,21 +85,12 @@ void CalibrationManager::initParameters(ros::NodeHandle &nh)
 {
     nh.getParam("calibration_timeout", _calibration_timeout);
 
-    // get all calibration stall threshold
-    for (int i = 1; i <= 3; i++)
-    {
-        int param = 0;
-        nh.getParam("calibration_stall_threshold_motor_" + std::to_string(i), param);
-        _calibration_stall_threshold[i - 1] = param;
-    }
     nh.getParam("calibration_file", _calibration_file_name);
     nh.getParam("/niryo_robot_hardware_interface/hardware_version", _hardware_version);
 
     ROS_DEBUG("Calibration Interface - hardware_version %s", _hardware_version.c_str());
     ROS_DEBUG("Calibration Interface - Calibration timeout %d", _calibration_timeout);
-    ROS_DEBUG("Calibration Interface - Calibration stall threshold %d %d %d", _calibration_stall_threshold[0],
-                                                                              _calibration_stall_threshold[1],
-                                                                              _calibration_stall_threshold[2]);
+
     ROS_DEBUG("Calibration Interface - Calibration file name %s", _calibration_file_name.c_str());
 }
 

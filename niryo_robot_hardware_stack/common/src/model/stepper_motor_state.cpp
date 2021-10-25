@@ -106,6 +106,7 @@ std::string StepperMotorState::str() const
     ss << "last time read: " << _last_time_read << ", "
        << "hw fail counter: " << _hw_fail_counter << "\n"
        << "max effort: " << _max_effort << ", "
+       << "gear ratio: " << _gear_ratio << ", "
        << "micro steps: " << _micro_steps << ", "
        << "multiplier ratio: " << _multiplier_ratio << "\n";
 
@@ -115,7 +116,9 @@ std::string StepperMotorState::str() const
     ss << "\n";
 
     ss << "calibration state: " << StepperCalibrationStatusEnum(_calibration_state).toString() << ", "
+       << "calibration stall threshold: " << _calibration_stall_threshold << ", "
        << "calibration value: " << _calibration_value;
+
     ss << "\n---\n";
     ss << "\n";
     ss << JointState::str();
