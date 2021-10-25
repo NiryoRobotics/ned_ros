@@ -26,6 +26,7 @@ class StatePublisher:
         self.__rpy = [0, 0, 0]
         self.__stamp = rospy.Time.now()
         self.__twist = Twist()
+        self.__tcp_speed = 0
 
         self.__transform_handler = transform_handler
 
@@ -54,6 +55,7 @@ class StatePublisher:
 
                 self.__twist.linear = Vector3(*lin_vel)
                 self.__twist.angular = Vector3(*rot_vel)
+                self.__tcp_speed = np.linalg.norm(lin_vel)
 
             self.__stamp = t.header.stamp
             self.__position = pos
@@ -77,6 +79,7 @@ class StatePublisher:
         msg.orientation.z = self.__quaternion[2]
         msg.orientation.w = self.__quaternion[3]
         msg.twist = self.__twist
+        msg.tcp_speed = self.__tcp_speed
         try:
             self.__robot_state_publisher.publish(msg)
         except rospy.ROSException:
