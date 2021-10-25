@@ -29,11 +29,6 @@ using ::common::model::EDxlCommandType;
 namespace ttl_driver
 {
 
-AbstractDxlDriver::AbstractDxlDriver() :
-  AbstractMotorDriver ()
-{
-}
-
 /**
  * @brief AbstractDxlDriver::AbstractDxlDriver
 */
