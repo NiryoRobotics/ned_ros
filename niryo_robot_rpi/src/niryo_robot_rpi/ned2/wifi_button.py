@@ -34,7 +34,7 @@ class WifiButton:
         self.__mcp_manager = mcp_manager if mcp_manager is not None else McpIOManager()
 
         self.__wifi_led = mcp_manager.add_led(rospy.get_param("~wifi/led_pin"), "Wifi Led")
-        self.__wifi_button = mcp_manager.add_button(rospy.get_param("~wifi/button_pin"), "Wifi Button")
+        self.__wifi_button = mcp_manager.add_button(rospy.get_param("~wifi/button_pin"), "Wifi Button", pullup=True, reverse_polarity=True)
 
         self.__timer = None
         self.__set_hotspot_lock = Lock()
@@ -103,7 +103,6 @@ class WifiButton:
                 self.stop_blink()
                 self.__timer = rospy.Timer(rospy.Duration.from_sec(0.25), self.__bink_wifi_led)
                 if self.__wifi_status != WifiStatus.HOTSPOT:
-                    send_led_state(LedState.WAIT_HOTSPOT)
                     send_hotspot_command()
                 else:
                     send_reconnect_wifi_command()

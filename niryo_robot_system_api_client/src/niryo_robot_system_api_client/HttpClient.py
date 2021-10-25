@@ -56,7 +56,7 @@ class HttpClient:
         return executed.getcode(), json.loads(executed.read())
 
     def set_robot_name(self, name):
-        status_code, response = self.__post('/settings/name', {'value': name})
+        status_code, response = self.__post('/setRobotName', {'name': name})
 
         if not status_code:
             return False, 'Unable to connect to the HTTP server'

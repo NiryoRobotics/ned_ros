@@ -70,10 +70,12 @@ class McpIOManager(object):
 
     def add_input(self, pin, name, reverse_polarity=True):
         self.__inputs[name] = DigitalInput(self.__mcp, self.__lock, pin, name, reverse_polarity)
+        self.read_digital_inputs()
         return self.__inputs[name]
 
-    def add_button(self, pin, name, pullup=True):
-        self.__inputs[name] = Button(self.__mcp, self.__lock, pin, name, pullup)
+    def add_button(self, pin, name, pullup=True, reverse_polarity=False):
+        self.__inputs[name] = Button(self.__mcp, self.__lock, pin, name, pullup, reverse_polarity)
+        self.read_digital_inputs()
         return self.__inputs[name]
 
     def add_led(self, pin, name):
@@ -197,11 +199,11 @@ class Button(DigitalInput):
     PRESSED_VALUE = 1
     RELEASED_VALUE = 0
 
-    def __init__(self, mcp, lock, pin, name, pullup=True):
+    def __init__(self, mcp, lock, pin, name, pullup=True, reverse_polarity=False):
         self.__on_press_function = None
         self.__on_release_function = None
 
-        super(Button, self).__init__(mcp, lock, pin, name, reverse_polarity=False)
+        super(Button, self).__init__(mcp, lock, pin, name, reverse_polarity)
         with self._lock:
             self._mcp.pullup(self._pin, pullup)
 

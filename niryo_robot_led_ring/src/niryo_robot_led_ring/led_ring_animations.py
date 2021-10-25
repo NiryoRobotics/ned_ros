@@ -521,7 +521,7 @@ class LedRingAnimations:
         sleep_duration = duration / float(steps)
         for _ in range(steps):
             self.current_animation_color = ColorRGBA(self.current_animation_color.r + step_r,
-                                                     self.current_animation_color.b + step_g,
+                                                     self.current_animation_color.g + step_g,
                                                      self.current_animation_color.b + step_b, 0)
             rospy.sleep(sleep_duration)
 
