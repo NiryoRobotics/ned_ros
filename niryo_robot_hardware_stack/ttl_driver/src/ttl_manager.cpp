@@ -582,19 +582,19 @@ bool TtlManager::readEndEffectorStatus()
                 if (state)
                 {
                     // free drive button
-                    if (COMM_SUCCESS == driver->readButton1Status(id, action))
+                    if (COMM_SUCCESS == driver->readButton0Status(id, action))
                         state->setButtonStatus(1, action);
                     else
                         hw_errors_increment++;
 
                     // save pos button
-                    if (COMM_SUCCESS == driver->readButton2Status(id, action))
+                    if (COMM_SUCCESS == driver->readButton1Status(id, action))
                         state->setButtonStatus(2, action);
                     else
                         hw_errors_increment++;
 
                     // custom button
-                    if (COMM_SUCCESS == driver->readButton3Status(id, action))
+                    if (COMM_SUCCESS == driver->readButton2Status(id, action))
                         state->setButtonStatus(3, action);
                     else
                         hw_errors_increment++;

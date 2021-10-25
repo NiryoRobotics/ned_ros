@@ -160,7 +160,6 @@ double StepperMotorState::to_rad_pos(int pos)
 
 /**
  * @brief StepperMotorState::setGearRatio
- * @param micro_steps
  * @param gear_ratio
  */
 void StepperMotorState::setGearRatio(double gear_ratio)

@@ -208,6 +208,21 @@ int MockEndEffectorDriver::scan(std::vector<uint8_t> &id_list)
  * @param action
  * @return
  */
+int MockEndEffectorDriver::readButton0Status(uint8_t id, common::model::EActionType& action)
+{
+    if (COMM_SUCCESS != ping(id))
+        return COMM_RX_FAIL;
+
+    action = interpreteActionValue(_fake_data->end_effector.button0_action);
+    return COMM_SUCCESS;
+}
+
+/**
+ * @brief MockEndEffectorDriver::readButton2Status
+ * @param id
+ * @param action
+ * @return
+ */
 int MockEndEffectorDriver::readButton1Status(uint8_t id, common::model::EActionType& action)
 {
     if (COMM_SUCCESS != ping(id))
@@ -218,7 +233,7 @@ int MockEndEffectorDriver::readButton1Status(uint8_t id, common::model::EActionT
 }
 
 /**
- * @brief MockEndEffectorDriver::readButton2Status
+ * @brief MockEndEffectorDriver::readButton3Status
  * @param id
  * @param action
  * @return
@@ -229,21 +244,6 @@ int MockEndEffectorDriver::readButton2Status(uint8_t id, common::model::EActionT
         return COMM_RX_FAIL;
 
     action = interpreteActionValue(_fake_data->end_effector.button2_action);
-    return COMM_SUCCESS;
-}
-
-/**
- * @brief MockEndEffectorDriver::readButton3Status
- * @param id
- * @param action
- * @return
- */
-int MockEndEffectorDriver::readButton3Status(uint8_t id, common::model::EActionType& action)
-{
-    if (COMM_SUCCESS != ping(id))
-        return COMM_RX_FAIL;
-
-    action = interpreteActionValue(_fake_data->end_effector.button3_action);
     return COMM_SUCCESS;
 }
 

@@ -27,52 +27,75 @@ struct EndEffectorReg
     static constexpr common::model::EHardwareType motor_type = common::model::EHardwareType::END_EFFECTOR;
 
     static constexpr float PROTOCOL_VERSION                     = 2.0;
-    static constexpr int MODEL_NUMBER                           = 3000;
+    static constexpr int MODEL_NUMBER                           = 2001;
     static constexpr int VOLTAGE_CONVERSION                     = 1000;
 
     // see table here : http:// support.robotis.com/en/product/actuator/dynamixel_x/xl_series/xl-320.htm
     // EEPROM
     static constexpr uint16_t ADDR_MODEL_NUMBER             = 0;
-    static constexpr uint8_t SIZE_MODEL_NUMBER             = 2;
+    static constexpr uint8_t SIZE_MODEL_NUMBER              = 2;
 
-    static constexpr uint16_t ADDR_FIRMWARE_VERSION         = 59;
-    static constexpr uint8_t SIZE_FIRMWARE_VERSION         = 4;
 
     static constexpr uint16_t ADDR_ID                       = 7;
-    static constexpr uint8_t SIZE_ID                       = 1;
+    static constexpr uint8_t SIZE_ID                        = 1;
 
     static constexpr uint16_t ADDR_BAUDRATE                 = 8;
-    static constexpr uint8_t SIZE_BAUDRATE                 = 1;
+    static constexpr uint8_t SIZE_BAUDRATE                  = 1;
 
-    static constexpr uint16_t ADDR_BUTTON_1_STATUS          = 64;
-    static constexpr uint8_t SIZE_BUTTON_1_STATUS          = 1;
+    static constexpr uint16_t ADDR_FIRMWARE_VERSION         = 59;
+    static constexpr uint8_t SIZE_FIRMWARE_VERSION          = 4;
 
-    static constexpr uint16_t ADDR_BUTTON_2_STATUS          = 65;
-    static constexpr uint8_t SIZE_BUTTON_2_STATUS          = 1;
-
-    static constexpr uint16_t ADDR_BUTTON_3_STATUS          = 66;
-    static constexpr uint8_t SIZE_BUTTON_3_STATUS          = 1;
-
-    static constexpr uint16_t ADDR_DIGITAL_IN               = 70;
-    static constexpr uint8_t SIZE_DIGITAL_IN               = 1;
-
-    static constexpr uint16_t ADDR_DIGITAL_OUT              = 71;
-    static constexpr uint8_t SIZE_DIGITAL_OUT              = 1;
-
-    static constexpr uint16_t ADDR_ACCELERO_VALUE_X         = 80;
-    static constexpr uint8_t SIZE_ACCELERO_VALUE_X         = 4;
-
-    static constexpr uint16_t ADDR_ACCELERO_VALUE_Y         = 84;
-    static constexpr uint8_t SIZE_ACCELERO_VALUE_Y         = 4;
-
-    static constexpr uint16_t ADDR_ACCELERO_VALUE_Z         = 88;
-    static constexpr uint8_t SIZE_ACCELERO_VALUE_Z         = 4;
+    static constexpr uint16_t ADDR_HW_ERROR_STATUS          = 70;
+    static constexpr uint8_t SIZE_HW_ERROR_STATUS           = 1;
 
     static constexpr uint16_t ADDR_PRESENT_VOLTAGE          = 144;
-    static constexpr uint8_t SIZE_PRESENT_VOLTAGE          = 2;
+    static constexpr uint8_t SIZE_PRESENT_VOLTAGE           = 2;
 
     static constexpr uint16_t ADDR_PRESENT_TEMPERATURE      = 146;
-    static constexpr uint8_t SIZE_PRESENT_TEMPERATURE      = 1;
+    static constexpr uint8_t SIZE_PRESENT_TEMPERATURE       = 1;
+
+    // specific to EE
+    static constexpr uint16_t ADDR_BUTTON_0_STATUS          = 1024;
+    static constexpr uint8_t SIZE_BUTTON_0_STATUS           = 1;
+
+    static constexpr uint16_t ADDR_BUTTON_1_STATUS          = 1025;
+    static constexpr uint8_t SIZE_BUTTON_1_STATUS           = 1;
+
+    static constexpr uint16_t ADDR_BUTTON_2_STATUS          = 1026;
+    static constexpr uint8_t SIZE_BUTTON_2_STATUS           = 1;
+
+
+    static constexpr uint16_t ADDR_DIGITAL_IN               = 1040;
+    static constexpr uint8_t SIZE_DIGITAL_IN                = 1;
+
+    static constexpr uint16_t ADDR_DIGITAL_OUT              = 1041;
+    static constexpr uint8_t SIZE_DIGITAL_OUT               = 1;
+
+
+    static constexpr uint16_t ADDR_COLLISION_STATUS         = 1048;
+    static constexpr uint8_t SIZE_COLLISION_STATUS          = 1;
+
+    static constexpr uint16_t ADDR_COLLISION_THRESHOLD      = 1049;
+    static constexpr uint8_t SIZE_COLLISION_THRESHOLD       = 1;
+
+
+    static constexpr uint16_t ADDR_ACCELERO_VALUE_X         = 1053;
+    static constexpr uint8_t SIZE_ACCELERO_VALUE_X         = 4;
+
+    static constexpr uint16_t ADDR_ACCELERO_VALUE_Y         = 1057;
+    static constexpr uint8_t SIZE_ACCELERO_VALUE_Y         = 4;
+
+    static constexpr uint16_t ADDR_ACCELERO_VALUE_Z         = 1061;
+    static constexpr uint8_t SIZE_ACCELERO_VALUE_Z         = 4;
+
+    // Firmware status
+
+    static constexpr uint16_t ADDR_FIRMWARE_RUNNING         = 8192;
+    static constexpr uint8_t SIZE_FIRMWARE_RUNNING          = 1;
+
+    static constexpr uint16_t ADDR_ENTER_BOOTLOADER         = 8193;
+    static constexpr uint8_t SIZE_ENTER_BOOTLOADER          = 4;
+
 };
 } // ttl_driver
 
