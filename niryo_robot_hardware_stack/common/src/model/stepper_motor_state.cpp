@@ -116,7 +116,7 @@ std::string StepperMotorState::str() const
     ss << "\n";
 
     ss << "calibration state: " << StepperCalibrationStatusEnum(_calibration_state).toString() << ", "
-       << "calibration stall threshold: " << _calibration_stall_threshold << ", "
+       << "calibration stall threshold: " << std::to_string(_calibration_stall_threshold) << ", "
        << "calibration value: " << _calibration_value;
 
     ss << "\n---\n";
