@@ -1339,7 +1339,7 @@ void TtlManager::executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, uint32
                 _debug_error_message = "TtlManager - Failed to write position";
             }
         }
-        // ros::Duration(0.01).sleep();
+        ros::Duration(0.001).sleep();
     }
 }
 

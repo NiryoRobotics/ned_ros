@@ -21,7 +21,6 @@
 #include <string>
 #include <utility>
 #include <vector>
-#include <ros/ros.h>
 
 using ::common::model::EStepperCommandType;
 
@@ -118,7 +117,7 @@ int AbstractStepperDriver::writeSyncCmd(int type, const std::vector<uint8_t>& id
     {
         std::vector<uint32_t> params_inv;
         params_inv.reserve(params.size());
-for (auto const& p : params)
+        for (auto const& p : params)
         {
             params_inv.emplace_back(!p);
         }

@@ -20,6 +20,7 @@
 #include "common/model/hardware_type_enum.hpp"
 #include "common/model/joint_state.hpp"
 #include "niryo_robot_msgs/CommandStatus.h"
+#include "ros/duration.h"
 #include "ros/serialization.h"
 #include "common/util/unique_ptr_cast.hpp"
 
@@ -614,6 +615,7 @@ void TtlInterfaceCore::controlLoop()
                 {
                     _executeCommand();
                     _time_hw_data_last_write = ros::Time::now().toSec();
+                    ros::Duration(0.001).sleep();
                 }
             }
             else
@@ -643,6 +645,8 @@ void TtlInterfaceCore::_executeCommand()
     }
     if (!_single_cmds_queue.empty())
     {
+        if (_need_sleep)
+            ros::Duration(0.01).sleep();
         _ttl_manager->writeSingleCommand(std::move(_single_cmds_queue.front()));
         _single_cmds_queue.pop();
         _need_sleep = true;
@@ -678,11 +682,8 @@ int TtlInterfaceCore::addJoint(const std::shared_ptr<common::model::JointState>&
 {
   int result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
 
-  std::lock_guard<std::mutex> lck(_control_loop_mutex);
-
   // add dynamixel as a new tool
   _ttl_manager->addHardwareComponent(jointState);
-  ros::Duration(0.2).sleep();
 
   // nothin here (done in sendInitMotorsParams for now)
   result = niryo_robot_msgs::CommandStatus::SUCCESS;
@@ -709,7 +710,7 @@ int TtlInterfaceCore::setTool(const std::shared_ptr<common::model::ToolState>& t
         // Enable torque
         _ttl_manager->writeSingleCommand(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_TORQUE,
                                                             toolState->getId(), std::initializer_list<uint32_t>{1}));
-        ros::Duration(0.05).sleep();
+        ros::Duration(0.01).sleep();
 
         // update leds
         _ttl_manager->setLeds(_ttl_manager->getLedState());
