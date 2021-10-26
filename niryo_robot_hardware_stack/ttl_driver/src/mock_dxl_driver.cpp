@@ -287,11 +287,11 @@ int MockDxlDriver::syncWriteTorqueEnable(const std::vector<uint8_t> &id_list, co
     (void)torque_enable_list;  // unused
 
     // Create a map to store the frequency of each element in vector
-    std::map<uint8_t, uint8_t> countMap;
+    std::set<uint8_t> countSet;
     // Iterate over the vector and store the frequency of each element in map
     for (auto & id : id_list)
     {
-        auto result = countMap.insert(std::pair<uint8_t, uint8_t>(id, 1));
+        auto result = countSet.insert(id);
         if (!result.second)
             return GROUP_SYNC_REDONDANT_ID;  // redondant id
     }
@@ -310,7 +310,7 @@ int MockDxlDriver::syncWritePositionGoal(const std::vector<uint8_t> &id_list, co
         return LEN_ID_DATA_NOT_SAME;
 
     // Create a map to store the frequency of each element in id_list. It helps find out which ID is redondant
-    std::map<uint8_t, uint8_t> countMap;
+    std::set<uint8_t> countSet;
     for (size_t i = 0; i < id_list.size(); i++)
     {
         if (!_fake_data->dxl_registers.count(id_list.at(i)))
@@ -318,7 +318,7 @@ int MockDxlDriver::syncWritePositionGoal(const std::vector<uint8_t> &id_list, co
         // write goal position as the current position
         _fake_data->dxl_registers.at(id_list.at(i)).position = position_list.at(i);
 
-        auto result = countMap.insert(std::pair<uint8_t, uint8_t>(id_list[i], 1));
+        auto result = countSet.insert(id_list[i]);
         if (!result.second)
             return GROUP_SYNC_REDONDANT_ID;  // redondant id
     }
@@ -337,7 +337,7 @@ int MockDxlDriver::syncWriteVelocityGoal(const std::vector<uint8_t> &id_list, co
         return LEN_ID_DATA_NOT_SAME;
 
     // Create a map to store the frequency of each element in id_list. It helps find out which ID is redondant
-    std::map<uint8_t, uint8_t> countMap;
+    std::set<uint8_t> countSet;
     for (size_t i = 0; i < id_list.size(); i++)
     {
         if (!_fake_data->dxl_registers.count(id_list.at(i)))
@@ -345,7 +345,7 @@ int MockDxlDriver::syncWriteVelocityGoal(const std::vector<uint8_t> &id_list, co
         // write goal position as the current position
         _fake_data->dxl_registers.at(id_list.at(i)).velocity = velocity_list.at(i);
 
-        auto result = countMap.insert(std::pair<uint8_t, uint8_t>(id_list[i], 1));
+        auto result = countSet.insert(id_list[i]);
         if (!result.second)
             return GROUP_SYNC_REDONDANT_ID;  // redondant id
     }
@@ -435,15 +435,17 @@ int MockDxlDriver::readHwErrorStatus(uint8_t id, uint32_t& hardware_status)
  */
 int MockDxlDriver::syncReadPosition(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &position_list)
 {
-    std::map<uint8_t, uint8_t> countMap;
+    std::set<uint8_t> countSet;
     for (auto & id : id_list)
     {
-        if (!_fake_data->dxl_registers.count(id))
+        if (_fake_data->dxl_registers.count(id))
+            position_list.emplace_back(_fake_data->dxl_registers.at(id).position);
+        else if (_fake_data->stepper_registers.count(id))
+            position_list.emplace_back(_fake_data->stepper_registers.at(id).position);
+        else
             return COMM_TX_ERROR;
 
-        position_list.emplace_back(_fake_data->dxl_registers.at(id).position);
-
-        auto result = countMap.insert(std::pair<uint8_t, uint8_t>(id, 1));
+        auto result = countSet.insert(id);
         if (!result.second)
             return GROUP_SYNC_REDONDANT_ID;  // redondant id
     }
@@ -458,18 +460,51 @@ int MockDxlDriver::syncReadPosition(const std::vector<uint8_t> &id_list, std::ve
  */
 int MockDxlDriver::syncReadVelocity(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &velocity_list)
 {
-    std::map<uint8_t, uint8_t> countMap;
+    std::set<uint8_t> countSet;
     for (auto & id : id_list)
     {
-        if (!_fake_data->dxl_registers.count(id))
+        if (_fake_data->dxl_registers.count(id))
+            velocity_list.emplace_back(_fake_data->dxl_registers.at(id).position);
+        else if (_fake_data->stepper_registers.count(id))
+            velocity_list.emplace_back(_fake_data->stepper_registers.at(id).position);
+        else
             return COMM_TX_ERROR;
-        velocity_list.emplace_back(_fake_data->dxl_registers.at(id).velocity);
-        auto result = countMap.insert(std::pair<uint8_t, uint8_t>(id, 1));
+        auto result = countSet.insert(id);
         if (!result.second)
             return GROUP_SYNC_REDONDANT_ID;  // redondant id
     }
 
     return COMM_SUCCESS;
+}
+
+/**
+ * @brief MockDxlDriver::syncReadJointStatus
+ * @param id_list
+ * @param data_array_list
+ * @return
+ */
+int MockDxlDriver::syncReadJointStatus(const std::vector<uint8_t> &id_list, std::vector<std::array<uint32_t, 2> > &data_array_list)
+{
+  std::set<uint8_t> countSet;
+  data_array_list.clear();
+  for (auto & id : id_list)
+  {
+      if (_fake_data->dxl_registers.count(id))
+      {
+          std::array<uint32_t, 2> blocks;
+
+          blocks.at(0) = _fake_data->dxl_registers.at(id).velocity;
+          blocks.at(1) = _fake_data->dxl_registers.at(id).position;
+
+          data_array_list.emplace_back(std::move(blocks));
+      }
+      else
+          return COMM_RX_FAIL;
+      auto result = countSet.insert(id);
+      if (!result.second)
+          return GROUP_SYNC_REDONDANT_ID;  // redondant id
+  }
+  return COMM_SUCCESS;
 }
 
 /**
@@ -480,7 +515,7 @@ int MockDxlDriver::syncReadVelocity(const std::vector<uint8_t> &id_list, std::ve
  */
 int MockDxlDriver::syncReadFirmwareVersion(const std::vector<uint8_t> &id_list, std::vector<std::string> &firmware_list)
 {
-    std::map<uint8_t, uint8_t> countMap;
+    std::set<uint8_t> countSet;
     for (auto & id : id_list)
     {
         if (!_fake_data->dxl_registers.count(id))
@@ -488,7 +523,7 @@ int MockDxlDriver::syncReadFirmwareVersion(const std::vector<uint8_t> &id_list, 
 
         firmware_list.emplace_back(_fake_data->dxl_registers.at(id).firmware);
 
-        auto result = countMap.insert(std::pair<uint8_t, uint8_t>(id, 1));
+        auto result = countSet.insert(id);
         if (!result.second)
             return GROUP_SYNC_REDONDANT_ID;  // redondant id
     }
@@ -503,7 +538,7 @@ int MockDxlDriver::syncReadFirmwareVersion(const std::vector<uint8_t> &id_list, 
  */
 int MockDxlDriver::syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &temperature_list)
 {
-    std::map<uint8_t, uint8_t> countMap;
+    std::set<uint8_t> countSet;
     for (auto & id : id_list)
     {
         if (!_fake_data->dxl_registers.count(id))
@@ -511,7 +546,7 @@ int MockDxlDriver::syncReadTemperature(const std::vector<uint8_t> &id_list, std:
 
         temperature_list.emplace_back(_fake_data->dxl_registers.at(id).temperature);
 
-        auto result = countMap.insert(std::pair<uint8_t, uint8_t>(id, 1));
+        auto result = countSet.insert(id);
         if (!result.second)
             return GROUP_SYNC_REDONDANT_ID;  // redondant id
     }
@@ -526,7 +561,7 @@ int MockDxlDriver::syncReadTemperature(const std::vector<uint8_t> &id_list, std:
  */
 int MockDxlDriver::syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list)
 {
-    std::map<uint8_t, uint8_t> countMap;
+    std::set<uint8_t> countSet;
     for (auto & id : id_list)
     {
         if (!_fake_data->dxl_registers.count(id))
@@ -534,7 +569,7 @@ int MockDxlDriver::syncReadVoltage(const std::vector<uint8_t> &id_list, std::vec
 
         voltage_list.emplace_back(_fake_data->dxl_registers.at(id).voltage);
 
-        auto result = countMap.insert(std::pair<uint8_t, uint8_t>(id, 1));
+        auto result = countSet.insert(id);
         if (!result.second)
             return GROUP_SYNC_REDONDANT_ID;  // redondant id
     }
@@ -550,11 +585,11 @@ int MockDxlDriver::syncReadVoltage(const std::vector<uint8_t> &id_list, std::vec
 int MockDxlDriver::syncReadHwErrorStatus(const std::vector<uint8_t> &id_list,
                                          std::vector<uint32_t> &hw_error_list)
 {
-    std::map<uint8_t, uint8_t> countMap;
+    std::set<uint8_t> countSet;
     for (auto & id : id_list)
     {
         hw_error_list.emplace_back(0);
-        auto result = countMap.insert(std::pair<uint8_t, uint8_t>(id, 1));
+        auto result = countSet.insert(id);
         if (!result.second)
             return GROUP_SYNC_REDONDANT_ID;  // redondant id
     }
@@ -644,12 +679,12 @@ int MockDxlDriver::syncWriteLed(const std::vector<uint8_t> &id_list,
 {
     (void)led_list;  // unused
 
-    std::map<uint8_t, uint8_t> countMap;
+    std::set<uint8_t> countSet;
     for (auto & id : id_list)
     {
         if (!_fake_data->dxl_registers.count(id))
             return COMM_TX_ERROR;
-        auto result = countMap.insert(std::pair<uint8_t, uint8_t>(id, 1));
+        auto result = countSet.insert(id);
         if (!result.second)
             return GROUP_SYNC_REDONDANT_ID;  // redondant id
     }
@@ -683,13 +718,13 @@ int MockDxlDriver::syncWriteTorqueGoal(const std::vector<uint8_t> &id_list,
 {
     (void)torque_list;  // unused
 
-    std::map<uint8_t, uint8_t> countMap;
+    std::set<uint8_t> countSet;
     for (auto & id : id_list)
     {
         if (!_fake_data->dxl_registers.count(id))
             return COMM_TX_ERROR;
 
-        auto result = countMap.insert(std::pair<uint8_t, uint8_t>(id, 1));
+        auto result = countSet.insert(id);
 
         if (!result.second)
             return GROUP_SYNC_REDONDANT_ID;  // redondant id

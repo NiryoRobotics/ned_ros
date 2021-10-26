@@ -75,10 +75,10 @@ EndEffectorState::EndEffectorState(uint8_t id, common::model::EHardwareType type
  */
 void EndEffectorState::configureButton(uint8_t id, EButtonType button_type)
 {
-  assert(id <= 3);
+  assert(id < 3);
 
-  _buttons_list.at(id - 1)->actions.push(EActionType::NO_ACTION);
-  _buttons_list.at(id - 1)->type = button_type;
+  _buttons_list.at(id)->actions.push(EActionType::NO_ACTION);
+  _buttons_list.at(id)->type = button_type;
 }
 
 // ***********************

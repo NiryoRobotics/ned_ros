@@ -52,11 +52,27 @@ std::string AbstractEndEffectorDriver::str() const
 /**
  * @brief MockEndEffectorDriver::interpreteErrorState
  * @return
- * TODO(CC) to be implemented
  */
-std::string AbstractEndEffectorDriver::interpreteErrorState(uint32_t /*hw_state*/) const
+std::string AbstractEndEffectorDriver::interpreteErrorState(uint32_t hw_state) const
 {
-    return "";
+    std::string hardware_message;
+
+    if (hw_state & 1<<0)    // 0b00000001
+    {
+        hardware_message += "Input Voltage";
+    }
+    if (hw_state & 1<<2)    // 0b00000100
+    {
+        if (!hardware_message.empty())
+            hardware_message += ", ";
+        hardware_message += "OverHeating";
+    }
+
+
+    if (!hardware_message.empty())
+        hardware_message += " Error";
+
+    return hardware_message;
 }
 
 /**

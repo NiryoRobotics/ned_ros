@@ -480,15 +480,15 @@ bool TtlManager::readPositionsStatus()
     unsigned int hw_errors_increment = 0;
 
     // syncread from all drivers for all motors
-    for (auto const& it : _driver_map)
+    if (!_driver_map.empty())
     {
-        EHardwareType type = it.first;
-        auto driver = std::dynamic_pointer_cast<AbstractMotorDriver>(it.second);
+      //  EHardwareType type = it.first;
+        auto driver = std::dynamic_pointer_cast<AbstractMotorDriver>(_driver_map.begin()->second);
 
-        if (driver && _ids_map.count(type))
+        if (driver) // && _ids_map.count(type))
         {
             // we retrieve all the associated id for the type of the current driver
-            vector<uint8_t> id_list = _ids_map.at(type);
+            vector<uint8_t> id_list{2, 3, 4, 5, 6, 7}; //_ids_map.at(type);
             vector<uint32_t> position_list;
 
             // retrieve positions
@@ -577,19 +577,19 @@ bool TtlManager::readEndEffectorStatus()
                 if (state)
                 {
                     // free drive button
-                    if (COMM_SUCCESS == driver->readButton1Status(id, action))
+                    if (COMM_SUCCESS == driver->readButton0Status(id, action))
                         state->setButtonStatus(1, action);
                     else
                         hw_errors_increment++;
 
                     // save pos button
-                    if (COMM_SUCCESS == driver->readButton2Status(id, action))
+                    if (COMM_SUCCESS == driver->readButton1Status(id, action))
                         state->setButtonStatus(2, action);
                     else
                         hw_errors_increment++;
 
                     // custom button
-                    if (COMM_SUCCESS == driver->readButton3Status(id, action))
+                    if (COMM_SUCCESS == driver->readButton2Status(id, action))
                         state->setButtonStatus(3, action);
                     else
                         hw_errors_increment++;

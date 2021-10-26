@@ -89,6 +89,7 @@ class DxlDriver : public AbstractDxlDriver
 
         int syncReadPosition(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &position_list) override;
         int syncReadVelocity(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &velocity_list) override;
+        int syncReadJointStatus(const std::vector<uint8_t> &id_list, std::vector<std::array<uint32_t, 2> > &data_array_list) override;
 
     public:
         // AbstractDxlDriver interface
@@ -120,6 +121,7 @@ private:
         int readVelocityIGain(uint8_t id, uint32_t& gain);
         int readFF1Gain(uint8_t id, uint32_t& gain);
         int readFF2Gain(uint8_t id, uint32_t& gain);
+
 };
 
 // definition of methods
@@ -644,7 +646,19 @@ int DxlDriver<reg_type>::readVelocity(uint8_t id, uint32_t& present_velocity)
 template<typename reg_type>
 int DxlDriver<reg_type>::syncReadVelocity(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &velocity_list)
 {
-    return syncRead(reg_type::ADDR_PRESENT_VELOCITY, reg_type::SIZE_PRESENT_VELOCITY, id_list, velocity_list);
+  return syncRead(reg_type::ADDR_PRESENT_VELOCITY, reg_type::SIZE_PRESENT_VELOCITY, id_list, velocity_list);
+}
+
+/**
+ * @brief DxlDriver::syncReadJointStatus
+ * @param id_list
+ * @param data_array_list
+ * @return
+ */
+template<typename reg_type>
+int DxlDriver<reg_type>::syncReadJointStatus(const std::vector<uint8_t> &id_list, std::vector<std::array<uint32_t, 2> > &data_array_list)
+{
+  return syncReadConsecutiveBytes<uint32_t, 2>(reg_type::ADDR_PRESENT_VELOCITY, id_list, data_array_list);
 }
 
 // private

@@ -67,9 +67,9 @@ class MockEndEffectorDriver : public AbstractEndEffectorDriver
         int ping(uint8_t id) override;
 
         // AbstractEndEffectorDriver
+        int readButton0Status(uint8_t id, common::model::EActionType& action) override;
         int readButton1Status(uint8_t id, common::model::EActionType& action) override;
         int readButton2Status(uint8_t id, common::model::EActionType& action) override;
-        int readButton3Status(uint8_t id, common::model::EActionType& action) override;
 
         int readAccelerometerXValue(uint8_t id, uint32_t& x_value) override;
         int readAccelerometerYValue(uint8_t id, uint32_t& y_value) override;

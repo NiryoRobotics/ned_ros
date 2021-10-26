@@ -105,15 +105,11 @@ DxlMotorState::DxlMotorState(std::string name,
             _middle_position = 2048;
             _steps_for_one_speed = 15.6330667;  // 0.229 * 4096 / 60
         break;
-        case EHardwareType::FAKE_STEPPER_MOTOR:
-            _total_angle = 360;
-            _total_range_position = 4096;
-            _middle_position = 2048;
-            _steps_for_one_speed = 15.6330667;  // 0.229 * 4096 / 60
-        break;
         default:
         break;
     }
+
+    updateMultiplierRatio();
 }
 
 // *********************
@@ -159,6 +155,8 @@ std::string DxlMotorState::str() const
     ss << "total range position: " << _total_range_position << ", "
        << "middle position: " << _middle_position << ", "
        << "total angle: " << _total_angle << ", "
+       << "pos multiplier ratio: " << _pos_multiplier_ratio << ", "
+       << "vel multiplier ratio: " << _vel_multiplier_ratio << ", "
        << "steps for one speed: " << _steps_for_one_speed;
 
     ss << "\n---\n";
@@ -170,66 +168,44 @@ std::string DxlMotorState::str() const
 
 /**
  * @brief DxlMotorState::to_motor_pos
- * @param pos_rad
+ * @param rad_pos
  * @return
  */
-int DxlMotorState::to_motor_pos(double pos_rad)
+int DxlMotorState::to_motor_pos(double rad_pos)
 {
-    double denominator = _total_angle;
-    assert(0.0 != denominator);
-    double numerator = ((pos_rad - _offset_position) * RADIAN_TO_DEGREE * _total_range_position);
-
-    return _middle_position + static_cast<int>(std::round(numerator / denominator)) * _direction;
+    return _middle_position + static_cast<int>(std::round((rad_pos - _offset_position) * _pos_multiplier_ratio * _direction));
 }
 
 /**
  * @brief DxlMotorState::to_rad_pos
- * @param position_dxl
+ * @param motor_pos
  * @return
  */
-double DxlMotorState::to_rad_pos(int position_dxl)
+double DxlMotorState::to_rad_pos(int motor_pos)
 {
-    double denominator = RADIAN_TO_DEGREE * _total_range_position;
-    assert(0.0 != denominator);
-    double numerator = (position_dxl - _middle_position) * _total_angle;
+    assert(0.0 != _pos_multiplier_ratio);
 
-    return _offset_position + (numerator / denominator) * _direction;
+    return _offset_position + ((motor_pos - _middle_position) * _direction / _pos_multiplier_ratio);
 }
 
 /**
- * @brief DxlMotorState::getTotalRangePosition
+ * @brief DxlMotorState::to_motor_vel
+ * @param rad_vel
  * @return
  */
-int DxlMotorState::getTotalRangePosition() const
+int DxlMotorState::to_motor_vel(double rad_vel)
 {
-    return _total_range_position;
+    return static_cast<int>(std::round(rad_vel / _vel_multiplier_ratio));
 }
 
 /**
- * @brief DxlMotorState::getMiddlePosition
+ * @brief DxlMotorState::to_motor_vel
+ * @param motor_vel
  * @return
  */
-int DxlMotorState::getMiddlePosition() const
+double DxlMotorState::to_rad_vel(int motor_vel)
 {
-    return _middle_position;
-}
-
-/**
- * @brief DxlMotorState::getTotalAngle
- * @return
- */
-double DxlMotorState::getTotalAngle() const
-{
-    return _total_angle;
-}
-
-/**
- * @brief DxlMotorState::getStepsForOneSpeed
- * @return
- */
-double DxlMotorState::getStepsForOneSpeed() const
-{
-    return _steps_for_one_speed;
+    return motor_vel * _vel_multiplier_ratio;
 }
 
 /**
@@ -292,7 +268,18 @@ void DxlMotorState::setFF1Gain(uint32_t ff1_gain)
  */
 void DxlMotorState::setFF2Gain(uint32_t ff2_gain)
 {
-    _ff2_gain = ff2_gain;
+  _ff2_gain = ff2_gain;
+}
+
+/**
+ * @brief DxlMotorState::updateMultiplierRatio
+ */
+void DxlMotorState::updateMultiplierRatio()
+{
+    assert(0.0 != _total_angle);
+
+    _pos_multiplier_ratio = RADIAN_TO_DEGREE * _total_range_position / _total_angle;
+    _vel_multiplier_ratio = 0.229;
 }
 
 }  // namespace model

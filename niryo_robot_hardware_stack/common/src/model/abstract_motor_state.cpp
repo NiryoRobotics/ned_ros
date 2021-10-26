@@ -69,8 +69,8 @@ string AbstractMotorState::str() const
 
     ss << "AbstractMotorState:\n";
 
-    ss << "position " << _position;
-    ss << "velocity " << _velocity;
+    ss << "position " << _position << ", ";
+    ss << "velocity " << _velocity << ", ";
     ss << "torque " << _torque;
     ss << "\n---\n";
     ss << "\n";
