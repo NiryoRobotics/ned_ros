@@ -305,22 +305,31 @@ EStepperCalibrationStatus CalibrationManager::autoCalibration()
     std::vector<int> sensor_offset_results;
     std::vector<int> sensor_offset_ids;
 
+    EStepperCalibrationStatus calibration_final = EStepperCalibrationStatus::CALIBRATION_OK;
     for (size_t i = 0; i < 3; ++i)
     {
         auto jState = _joint_states_list.at(i);
         uint8_t motor_id = jState->getId();
-        if (getJointInterface(jState->getBusProtocol()))
+
+        std::shared_ptr<common::util::IDriverCore> interface =  getJointInterface(jState->getBusProtocol());
+        if (interface)
         {
-          int calibration_result = getJointInterface(jState->getBusProtocol())->getCalibrationResult(motor_id);
+          int calibration_result = interface->getCalibrationResult(motor_id);
 
           sensor_offset_results.emplace_back(calibration_result);
           sensor_offset_ids.emplace_back(motor_id);
 
-          ROS_INFO("CalibrationManager::autoCalibration - Motor %d, calibration cmd result %d ", motor_id, calibration_result);
+          ROS_INFO("CalibrationManager::autoCalibration - Motor %d, calibration cmd result %d ", motor_id, calibration_result);  
         }
     }
 
-    if (sensor_offset_results.at(0) && sensor_offset_results.at(1) && sensor_offset_results.at(2))
+    // get calibration result final
+    if (_can_interface)
+        calibration_final = _can_interface->getCalibrationStatus();
+    else if (_ttl_interface)
+        calibration_final = _ttl_interface->getCalibrationStatus();
+
+    if (calibration_final == EStepperCalibrationStatus::CALIBRATION_OK)
     {
         ROS_INFO("CalibrationManager::autoCalibration -  Calibration successfull, going back home");
 
@@ -333,22 +342,15 @@ EStepperCalibrationStatus CalibrationManager::autoCalibration()
     }
     else
     {
-        ROS_ERROR("CalibrationManager::autoCalibration -  An error occured while calibrating stepper motors");
+        ROS_ERROR("CalibrationManager::autoCalibration -  An error occurred while calibrating stepper motors");
     }
 
     // 7 - stop torques
     activateLearningMode(true);
 
-    auto calibration_status = common::model::EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED;
-
-    if (_can_interface)
-        calibration_status = _can_interface->getCalibrationStatus();
-    else if (_ttl_interface)
-        calibration_status = _ttl_interface->getCalibrationStatus();
-
     _calibration_in_progress = false;
 
-    return calibration_status;
+    return calibration_final;
 }
 
 /**
@@ -602,7 +604,7 @@ void CalibrationManager::moveSteppersToHome()
         }
         else if (EBusProtocol::TTL == pState->getBusProtocol())
         {
-            auto steps = static_cast<uint32_t>(pState->to_motor_pos(0));
+            auto steps = static_cast<uint32_t>(pState->to_motor_pos(0.0));
 
             StepperTtlSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_POSITION, motor_id, {steps});
             getJointInterface(pState->getBusProtocol())->addSingleCommandToQueue(

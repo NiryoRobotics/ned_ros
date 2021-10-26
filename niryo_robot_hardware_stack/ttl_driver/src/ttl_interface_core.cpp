@@ -615,7 +615,7 @@ void TtlInterfaceCore::controlLoop()
                 {
                     _executeCommand();
                     _time_hw_data_last_write = ros::Time::now().toSec();
-                    ros::Duration(0.001).sleep();
+                    ros::Duration(0.005).sleep();
                 }
             }
             else

@@ -198,7 +198,7 @@ int StepperMotorState::to_motor_pos(double pos_rad)
     else
     {
         multiplier_ratio = 360 / 0.088;
-        int result =  static_cast<int>(std::round(_offset_position + pos_rad * (getMultiplierRatio() * _direction) / (2 * M_PI)));
+        int result =  static_cast<int>(std::round(_offset_position + pos_rad * (multiplier_ratio * _direction) / (2 * M_PI)));
         return result > 0 ? result : 0;
     }
 }
