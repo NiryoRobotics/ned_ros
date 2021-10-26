@@ -90,7 +90,7 @@ void StepperMotorState::reset()
  */
 bool StepperMotorState::isValid() const
 {
-    return (0 != _id) && ( 0.0 != _multiplier_ratio);
+    return (0 != _id) && ( 0.0 != _pos_multiplier_ratio);
 }
 
 /**
@@ -108,7 +108,8 @@ std::string StepperMotorState::str() const
        << "max effort: " << _max_effort << ", "
        << "gear ratio: " << _gear_ratio << ", "
        << "micro steps: " << _micro_steps << ", "
-       << "multiplier ratio: " << _multiplier_ratio << "\n";
+       << "pos multiplier ratio: " << _pos_multiplier_ratio << ", "
+       << "vel multiplier ratio: " << _vel_multiplier_ratio << "\n";
 
     ss << "velocity profile : ";
     for (auto const& d : getVelocityProfile())
@@ -128,14 +129,12 @@ std::string StepperMotorState::str() const
 
 /**
  * @brief StepperMotorState::to_motor_pos
- * @param pos_rad
+ * @param rad_pos
  * @return
  */
-int StepperMotorState::to_motor_pos(double pos_rad)
+int StepperMotorState::to_motor_pos(double rad_pos)
 {
-    assert(0.0 != _multiplier_ratio);
-
-    int result =  static_cast<int>(std::round(_offset_position + pos_rad * (_multiplier_ratio * _direction) / (2 * M_PI)));
+    int result =  static_cast<int>(std::round(_offset_position + (rad_pos * _pos_multiplier_ratio * _direction)));
 
     if (common::model::EBusProtocol::CAN == _bus_proto)
     {
@@ -147,26 +146,47 @@ int StepperMotorState::to_motor_pos(double pos_rad)
 
 /**
  * @brief StepperMotorState::to_rad_pos
- * @param pos
+ * @param motor_pos
  * @return
  */
-double StepperMotorState::to_rad_pos(int pos)
+double StepperMotorState::to_rad_pos(int motor_pos)
 {
-    assert(0.0 != _multiplier_ratio);
+    assert(0.0 != _pos_multiplier_ratio);
 
-    return static_cast<double>( (pos - _offset_position) * _direction * 2 * M_PI / _multiplier_ratio);
+    return static_cast<double>( (motor_pos - _offset_position) * _direction / _pos_multiplier_ratio);
 }
 
-// ****************
-//  Setters
-// ****************
+/**
+ * @brief StepperMotorState::to_motor_vel
+ * @param rad_vel
+ * @return
+ */
+int StepperMotorState::to_motor_vel(double rad_vel)
+{
+    assert(0.0 != _vel_multiplier_ratio);
+    return static_cast<int>(std::round(rad_vel / _vel_multiplier_ratio));
+}
 
 /**
+ * @brief StepperMotorState::to_rad_vel
+ * @param motor_vel
+ * @return
+ */
+double StepperMotorState::to_rad_vel(int motor_vel)
+{
+    return motor_vel * _vel_multiplier_ratio;
+}
+
+  // ****************
+  //  Setters
+  // ****************
+
+  /**
  * @brief StepperMotorState::setGearRatio
  * @param gear_ratio
  */
-void StepperMotorState::setGearRatio(double gear_ratio)
-{
+  void StepperMotorState::setGearRatio(double gear_ratio)
+  {
     _gear_ratio = gear_ratio;
 
     updateMultiplierRatio();
@@ -320,14 +340,19 @@ void StepperMotorState::setCalibrationStallThreshold(const uint8_t &calibration_
  */
 void StepperMotorState::updateMultiplierRatio()
 {
-  if (common::model::EBusProtocol::CAN == _bus_proto)
-  {
-    _multiplier_ratio = STEPPERS_MOTOR_STEPS_PER_REVOLUTION * _micro_steps * _gear_ratio;
+    double total_angle =  2 * M_PI;
 
+    assert(0.0 != total_angle);
+
+    if (common::model::EBusProtocol::CAN == _bus_proto)
+    {
+        _pos_multiplier_ratio = STEPPERS_MOTOR_STEPS_PER_REVOLUTION * _micro_steps * _gear_ratio / total_angle;
+        _vel_multiplier_ratio = 1.0;
     }
     else
     {
-        _multiplier_ratio = 360 / 0.088;
+        _pos_multiplier_ratio = 360 / (0.088 * total_angle);
+        _vel_multiplier_ratio = 0.01;
     }
 }
 

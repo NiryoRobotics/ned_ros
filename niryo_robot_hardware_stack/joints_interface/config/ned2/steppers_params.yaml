@@ -10,11 +10,11 @@ steppers:
         max_effort: 0
         v_start: 1
         a_1: 400
-        v_1: 5
-        a_max: 4000
-        v_max: 10
-        d_max: 5000
-        d_1: 2000
+        v_1: 4
+        a_max: 3000
+        v_max: 8
+        d_max: 4000
+        d_1: 1000
         v_stop: 2
         calibration_stall_threshold: 8
 
@@ -25,14 +25,14 @@ steppers:
         direction: -1
         max_effort: 0
         v_start: 1
-        a_1: 1000
+        a_1: 400
         v_1: 4
-        a_max: 4000
+        a_max: 3000
         v_max: 8
-        d_max: 5000
-        d_1: 2000
+        d_max: 4000
+        d_1: 1000
         v_stop: 2
-        calibration_stall_threshold: 6
+        calibration_stall_threshold: 5
 
     stepper_3:
         id: 4
@@ -41,11 +41,11 @@ steppers:
         direction: 1
         max_effort: 0
         v_start: 1
-        a_1: 1000
+        a_1: 400
         v_1: 4
-        a_max: 4000
+        a_max: 3000
         v_max: 8
-        d_max: 5000
-        d_1: 2000
+        d_max: 4000
+        d_1: 1000
         v_stop: 2
         calibration_stall_threshold: 6

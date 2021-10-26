@@ -50,8 +50,11 @@ class DxlMotorState : public JointState
         void reset() override;
         bool isValid() const override;
 
-        int to_motor_pos(double pos_rad) override;
-        double to_rad_pos(int position_dxl) override;
+        int to_motor_pos(double rad_pos) override;
+        double to_rad_pos(int motor_pos) override;
+
+        int to_motor_vel(double rad_vel) override;
+        double to_rad_vel(int motor_vel) override;
 
         uint32_t getPositionPGain() const;
         uint32_t getPositionIGain() const;
@@ -93,6 +96,12 @@ protected:
         int _middle_position{0};
         double _total_angle{0.0};
         double _steps_for_one_speed{0.0};
+
+private:
+        void updateMultiplierRatio();
+
+        double _pos_multiplier_ratio{1.0};
+        double _vel_multiplier_ratio{0.229};
 };
 
 /**
@@ -174,6 +183,46 @@ inline
 uint32_t DxlMotorState::getFF2Gain() const
 {
     return _ff2_gain;
+}
+
+/**
+ * @brief DxlMotorState::getStepsForOneSpeed
+ * @return
+ */
+inline
+double DxlMotorState::getStepsForOneSpeed() const
+{
+  return _steps_for_one_speed;
+}
+
+/**
+ * @brief DxlMotorState::getTotalRangePosition
+ * @return
+ */
+inline
+int DxlMotorState::getTotalRangePosition() const
+{
+  return _total_range_position;
+}
+
+/**
+ * @brief DxlMotorState::getMiddlePosition
+ * @return
+ */
+inline
+int DxlMotorState::getMiddlePosition() const
+{
+  return _middle_position;
+}
+
+/**
+ * @brief DxlMotorState::getTotalAngle
+ * @return
+ */
+inline
+double DxlMotorState::getTotalAngle() const
+{
+  return _total_angle;
 }
 
 } // namespace model

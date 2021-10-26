@@ -77,8 +77,11 @@ public:
     bool isValid() const override;
     std::string str() const override;
 
-    int to_motor_pos(double pos_rad) override;
-    double to_rad_pos(int pos) override;
+    int to_motor_pos(double rad_pos) override;
+    double to_rad_pos(int motor_pos) override;
+
+    int to_motor_vel(double rad_vel) override;
+    double to_rad_vel(int motor_vel) override;
 
     void setProfileVStart(const uint32_t &profile_v_start);
     void setProfileA1(const uint32_t &profile_a_1);
@@ -118,7 +121,9 @@ protected:
 private:
     void updateMultiplierRatio();
 
-    double _multiplier_ratio{1.0};
+    double _pos_multiplier_ratio{1.0};
+    double _vel_multiplier_ratio{1.0};
+
     static constexpr double STEPPERS_MOTOR_STEPS_PER_REVOLUTION = 200.0;
 
 };
