@@ -556,7 +556,7 @@ template<typename reg_type>
 int StepperDriver<reg_type>::writeVelocityProfile(uint8_t id, const std::vector<uint32_t>& data_list)
 {
   int res = 0;
-  double wait_duration = 0.5;
+  double wait_duration = 0.05;
 
   writeTorqueEnable(id, true);
   ros::Duration(wait_duration).sleep();
@@ -625,7 +625,7 @@ template<typename reg_type>
 int StepperDriver<reg_type>::writeHomingSetup(uint8_t id, uint8_t direction, uint8_t stall_threshold)
 {
     int res = 0;
-    double wait_duration = 0.5;
+    double wait_duration = 0.05;
 
     writeTorqueEnable(id, true);
     ros::Duration(wait_duration).sleep();

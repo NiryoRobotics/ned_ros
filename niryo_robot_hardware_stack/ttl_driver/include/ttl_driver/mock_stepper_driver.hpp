@@ -104,7 +104,7 @@ class MockStepperDriver : public AbstractStepperDriver
 
         uint32_t _calibration_status{CALIBRATION_IDLE};
         // fake time for calibration
-        int fake_time{0};
+        int _fake_time{0};
 
         static constexpr int GROUP_SYNC_REDONDANT_ID = 10;
         static constexpr int LEN_ID_DATA_NOT_SAME    = 20;

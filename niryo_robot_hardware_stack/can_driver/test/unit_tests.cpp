@@ -238,14 +238,14 @@ TEST_F(CanManagerTestSuite, addAndRemoveMotor)
 
 TEST_F(CanManagerTestSuite, testSingleCmds)
 {
-    std::shared_ptr<common::model::StepperSingleCmd> cmd_1 = std::make_shared<common::model::StepperSingleCmd>(
+    auto cmd_1 = std::make_shared<common::model::StepperSingleCmd>(
                                                                           common::model::EStepperCommandType::CMD_TYPE_TORQUE,
                                                                           2,
                                                                           std::initializer_list<int32_t>{1});
     EXPECT_EQ(can_manager->writeSingleCommand(cmd_1), CAN_OK);
     ros::Duration(0.01).sleep();
 
-    std::shared_ptr<common::model::StepperSingleCmd> cmd_2 = std::make_shared<common::model::StepperSingleCmd>(
+    auto cmd_2 = std::make_shared<common::model::StepperSingleCmd>(
                                                                           common::model::EStepperCommandType::CMD_TYPE_TORQUE,
                                                                           2,
                                                                           std::initializer_list<int32_t>{0});
@@ -254,7 +254,7 @@ TEST_F(CanManagerTestSuite, testSingleCmds)
     ros::Duration(0.01).sleep();
 
     // wrong id
-    std::shared_ptr<common::model::StepperSingleCmd> cmd_3 = std::make_shared<common::model::StepperSingleCmd>(
+    auto cmd_3 = std::make_shared<common::model::StepperSingleCmd>(
                                                                             common::model::EStepperCommandType::CMD_TYPE_TORQUE,
                                                                             7,
                                                                             std::initializer_list<int32_t>{1});
@@ -262,7 +262,7 @@ TEST_F(CanManagerTestSuite, testSingleCmds)
     ros::Duration(0.01).sleep();
 
     // wrong type cmd
-    std::shared_ptr<common::model::StepperSingleCmd> cmd_4 = std::make_shared<common::model::StepperSingleCmd>(
+    auto cmd_4 = std::make_shared<common::model::StepperSingleCmd>(
                                                                             common::model::EStepperCommandType::CMD_TYPE_UNKNOWN,
                                                                             2,
                                                                             std::initializer_list<int32_t>{1});

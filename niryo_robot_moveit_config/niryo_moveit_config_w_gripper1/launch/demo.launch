@@ -3,7 +3,8 @@
         xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
 
     <arg name="hardware_version" default="ned"/>
-    
+    <arg name="simulation_mode" default="false" />
+
     <!-- specify the planning pipeline -->
     <arg name="pipeline" default="ompl"/>
 
@@ -42,8 +43,9 @@
 
     <!-- Run the main MoveIt! executable without trajectory execution (we do not have controllers configured by default) -->
     <include file="$(find niryo_moveit_config_w_gripper1)/launch/move_group.launch">
-        <arg name="hardware_version" value="$(arg hardware_version)"/>
         <arg name="load_robot_description" value="true"/>
+        <arg name="hardware_version" value="$(arg hardware_version)"/>
+        <arg name="simulation_mode" value="$(arg simulation_mode)" />
         <arg name="debug" value="$(arg debug)"/>
         <arg name="info" value="true"/>
         <arg name="pipeline" value="$(arg pipeline)"/>

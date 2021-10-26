@@ -92,13 +92,14 @@ TtlManager::TtlManager(ros::NodeHandle& nh) :
 bool TtlManager::init(ros::NodeHandle& nh)
 {
     // get params from rosparams
+    nh.getParam("simulation_mode", _simulation_mode);
     nh.getParam("bus_params/uart_device_name", _device_name);
     nh.getParam("bus_params/baudrate", _baudrate);
     nh.getParam("led_motor", _led_motor_type_cfg);
     nh.getParam("simu_gripper", _use_simu_gripper);
     nh.getParam("conveyor/direction", _conveyor_direction);
 
-    if (_device_name != "fake")
+    if (!_simulation_mode)
     {
         _portHandler.reset(dynamixel::PortHandler::getPortHandler(_device_name.c_str()));
         _packetHandler.reset(dynamixel::PacketHandler::getPacketHandler(TTL_BUS_PROTOCOL_VERSION));
@@ -124,7 +125,7 @@ int TtlManager::setupCommunication()
     ROS_DEBUG("TtlManager::setupCommunication - initializing connection...");
 
     // fake drivers will always succeed for the communication
-    if ("fake" == _device_name)
+    if (_simulation_mode)
     {
         ret = COMM_SUCCESS;
     }
@@ -1338,7 +1339,7 @@ void TtlManager::executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, uint32
                 _debug_error_message = "TtlManager - Failed to write position";
             }
         }
-        // ros::Duration(0.01).sleep();
+        ros::Duration(0.001).sleep();
     }
 }
 
@@ -1534,42 +1535,42 @@ void TtlManager::checkRemovedMotors()
 void TtlManager::readFakeConfig()
 {
     _fake_data = std::make_shared<FakeTtlData>();
-    std::string hardware_version;
-    _nh.getParam("hardware_version", hardware_version);
-    assert(_nh.hasParam(hardware_version));
 
-    std::vector<int> full_id_list;
-    if (_nh.hasParam(hardware_version + "/id_list"))
-        _nh.getParam(hardware_version + "/id_list", full_id_list);
-    for (auto id : full_id_list)
-        _fake_data->full_id_list.emplace_back(static_cast<uint8_t>(id));
-
-    if (_nh.hasParam(hardware_version + "/steppers"))
+    if (_nh.hasParam("fake_params"))
     {
-        std::string current_ns = hardware_version + "/steppers/";
-        retrieveFakeMotorData(current_ns, _fake_data->stepper_registers);
-    }
+        std::vector<int> full_id_list;
+        if (_nh.hasParam("fake_params/id_list"))
+            _nh.getParam("fake_params/id_list", full_id_list);
+        for (auto id : full_id_list)
+            _fake_data->full_id_list.emplace_back(static_cast<uint8_t>(id));
 
-    if (_nh.hasParam(hardware_version + "/dynamixels/"))
-    {
-        std::string current_ns = hardware_version + "/dynamixels/";
-        retrieveFakeMotorData(current_ns, _fake_data->dxl_registers);
-    }
+        if (_nh.hasParam("fake_params/steppers"))
+        {
+            std::string current_ns = "fake_params/steppers/";
+            retrieveFakeMotorData(current_ns, _fake_data->stepper_registers);
+        }
 
-    if (_nh.hasParam(hardware_version + "/end_effector"))
-    {
-        std::string current_ns = hardware_version + "/end_effector/";
-        int id, temperature, voltage;
-        _nh.getParam(current_ns + "id", id);
-        _fake_data->end_effector.id = static_cast<uint8_t>(id);
-        _nh.getParam(current_ns + "temperature", temperature);
-        _fake_data->end_effector.temperature = static_cast<uint32_t>(temperature);
-        _nh.getParam(current_ns + "voltage", voltage);
-        _fake_data->end_effector.voltage = static_cast<double>(voltage);
+        if (_nh.hasParam("fake_params/dynamixels/"))
+        {
+            std::string current_ns = "fake_params/dynamixels/";
+            retrieveFakeMotorData(current_ns, _fake_data->dxl_registers);
+        }
 
-        std::string firmware;
-        _nh.getParam(current_ns + "firmware", firmware);
-        _fake_data->end_effector.firmware = firmware;
+        if (_nh.hasParam("fake_params/end_effector"))
+        {
+            std::string current_ns = "fake_params/end_effector/";
+            int id, temperature, voltage;
+            _nh.getParam(current_ns + "id", id);
+            _fake_data->end_effector.id = static_cast<uint8_t>(id);
+            _nh.getParam(current_ns + "temperature", temperature);
+            _fake_data->end_effector.temperature = static_cast<uint32_t>(temperature);
+            _nh.getParam(current_ns + "voltage", voltage);
+            _fake_data->end_effector.voltage = static_cast<double>(voltage);
+
+            std::string firmware;
+            _nh.getParam(current_ns + "firmware", firmware);
+            _fake_data->end_effector.firmware = firmware;
+        }
     }
 }
 

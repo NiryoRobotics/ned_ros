@@ -215,6 +215,8 @@ private:
 
     bool _use_simu_gripper = true;
     std::shared_ptr<FakeTtlData> _fake_data;
+    
+    bool _simulation_mode{false};
     int _conveyor_direction{0};
 };
 

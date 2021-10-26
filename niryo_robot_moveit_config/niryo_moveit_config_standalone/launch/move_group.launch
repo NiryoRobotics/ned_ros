@@ -3,10 +3,12 @@
         xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
     <arg name="hardware_version" default="ned"/>
     <arg name="load_robot_description" default="false"/>
+    <arg name="simulation_mode" default="false" />
 
     <!-- Load the URDF, SRDF and other .yaml configuration files on the param server -->
     <include file="$(find niryo_moveit_config_standalone)/launch/planning_context.launch">
         <arg name="hardware_version" value="$(arg hardware_version)" />
+        <arg name="simulation_mode" value="$(arg simulation_mode)" />
         <arg name="load_robot_description" value="$(arg load_robot_description)"/>
     </include>
 

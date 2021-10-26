@@ -607,7 +607,7 @@ int MockStepperDriver::startHoming(uint8_t id)
         return COMM_RX_FAIL;
 
     _calibration_status = CALIBRATION_IN_PROGRESS;
-    fake_time = 3;
+    _fake_time = 2;
     return COMM_SUCCESS;
 }
 
@@ -634,9 +634,9 @@ int MockStepperDriver::readHomingStatus(uint8_t id, uint32_t &status)
     if (COMM_SUCCESS != ping(id))
         return COMM_RX_FAIL;
 
-    if (fake_time)
+    if (_fake_time)
     {
-        fake_time--;
+        _fake_time--;
     }
     else
         _calibration_status = CALIBRATION_SUCCESS;

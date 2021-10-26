@@ -84,14 +84,22 @@ CalibrationManager::CalibrationManager(ros::NodeHandle& nh,
 void CalibrationManager::initParameters(ros::NodeHandle &nh)
 {
     nh.getParam("calibration_timeout", _calibration_timeout);
-    nh.getParam("calibration_stall_threshold", _calibration_stall_threshold);
 
+    // get all calibration stall threshold
+    for (int i = 1; i <= 3; i++)
+    {
+        int param = 0;
+        nh.getParam("calibration_stall_threshold_motor_" + std::to_string(i), param);
+        _calibration_stall_threshold[i - 1] = param;
+    }
     nh.getParam("calibration_file", _calibration_file_name);
     nh.getParam("/niryo_robot_hardware_interface/hardware_version", _hardware_version);
 
     ROS_DEBUG("Calibration Interface - hardware_version %s", _hardware_version.c_str());
     ROS_DEBUG("Calibration Interface - Calibration timeout %d", _calibration_timeout);
-    ROS_DEBUG("Calibration Interface - Calibration stall threshold %d", _calibration_stall_threshold);
+    ROS_DEBUG("Calibration Interface - Calibration stall threshold %d %d %d", _calibration_stall_threshold[0],
+                                                                              _calibration_stall_threshold[1],
+                                                                              _calibration_stall_threshold[2]);
     ROS_DEBUG("Calibration Interface - Calibration file name %s", _calibration_file_name.c_str());
 }
 
@@ -551,7 +559,6 @@ void CalibrationManager::moveRobotBeforeCalibration()
         dynamixel_cmd.addMotorParam(_joint_states_list.at(5)->getHardwareType(), _joint_states_list.at(5)->getId(), 1);
 
         _ttl_interface->setSyncCommand(std::make_unique<DxlSyncCmd>(dynamixel_cmd));
-        ros::Duration(0.2).sleep();
 
         // move dxls
         dynamixel_cmd.reset();
@@ -567,7 +574,9 @@ void CalibrationManager::moveRobotBeforeCalibration()
                                     static_cast<uint32_t>(_joint_states_list.at(5)->to_motor_pos(0)));
 
         _ttl_interface->setSyncCommand(std::make_unique<DxlSyncCmd>(dynamixel_cmd));
-        ros::Duration(0.2).sleep();
+
+        // Wait a little bit for all dxl go to home before calibration
+        ros::Duration(0.3).sleep();
     }
 }
 
@@ -632,27 +641,38 @@ void CalibrationManager::sendCalibrationToSteppers()
             setStepperCalibrationCommand(pStepperMotorState_2, 1000, 1, _calibration_timeout);
             setStepperCalibrationCommand(pStepperMotorState_3, 1000, -1, _calibration_timeout);
 
-            // wait for calibration status done
+            // wait for calibration status done (TODO(THUC) maybe not need this delay, after this function, we have to wait the calibration status returned)
             ros::Duration(0.2).sleep();
         }
         else
         {
             // calibration of steppers Ttl
+            // Disable torque
             setTorqueStepperMotor(pStepperMotorState_1, false);
             setTorqueStepperMotor(pStepperMotorState_2, false);
             setTorqueStepperMotor(pStepperMotorState_3, false);
 
+            // set state of calibration before calibrate
             _ttl_interface->startCalibration();
 
-            StepperTtlSingleCmd calib_setup_cmd(EStepperCommandType::CMD_TYPE_CALIBRATION_SETUP, pStepperMotorState_2->getId(),
-                                                {1, static_cast<uint8_t>(_calibration_stall_threshold)});
-            _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperTtlSingleCmd>(calib_setup_cmd));
+            // send config before calibrate
+            _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperTtlSingleCmd>(
+                                                    StepperTtlSingleCmd(EStepperCommandType::CMD_TYPE_CALIBRATION_SETUP,
+                                                    pStepperMotorState_1->getId(),
+                                                    {0, static_cast<uint8_t>(_calibration_stall_threshold[0])})));
+            _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperTtlSingleCmd>(
+                                                    StepperTtlSingleCmd(EStepperCommandType::CMD_TYPE_CALIBRATION_SETUP,
+                                                    pStepperMotorState_2->getId(),
+                                                    {1, static_cast<uint8_t>(_calibration_stall_threshold[1])})));
+            _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperTtlSingleCmd>(
+                                                    StepperTtlSingleCmd(EStepperCommandType::CMD_TYPE_CALIBRATION_SETUP,
+                                                    pStepperMotorState_3->getId(),
+                                                    {0, static_cast<uint8_t>(_calibration_stall_threshold[2])})));
 
+            // send calibration commands
             setStepperCalibrationCommand(pStepperMotorState_1, 200, 1, _calibration_timeout);
             setStepperCalibrationCommand(pStepperMotorState_2, 1000, 1, _calibration_timeout);
             setStepperCalibrationCommand(pStepperMotorState_3, 1000, 1, _calibration_timeout);
-
-            ros::Duration(0.2).sleep();
         }
     }
 }
