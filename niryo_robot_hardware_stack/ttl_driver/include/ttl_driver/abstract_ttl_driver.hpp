@@ -230,7 +230,8 @@ int AbstractTtlDriver::syncRead(uint8_t address,
             {
                 if (groupSyncRead.isAvailable(id, address, data_len))
                 {
-                    data_list.emplace_back(static_cast<T>(groupSyncRead.getData(id, address, data_len)));
+                    uint32_t data = groupSyncRead.getData(id, address, data_len);
+                    data_list.emplace_back(data);
                 }
                 else
                 {
