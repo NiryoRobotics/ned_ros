@@ -438,10 +438,12 @@ int MockDxlDriver::syncReadPosition(const std::vector<uint8_t> &id_list, std::ve
     std::set<uint8_t> countSet;
     for (auto & id : id_list)
     {
-        if (!_fake_data->dxl_registers.count(id))
+        if (_fake_data->dxl_registers.count(id))
+            position_list.emplace_back(_fake_data->dxl_registers.at(id).position);
+        else if (_fake_data->stepper_registers.count(id))
+            position_list.emplace_back(_fake_data->stepper_registers.at(id).position);
+        else
             return COMM_TX_ERROR;
-
-        position_list.emplace_back(_fake_data->dxl_registers.at(id).position);
 
         auto result = countSet.insert(id);
         if (!result.second)
@@ -461,9 +463,12 @@ int MockDxlDriver::syncReadVelocity(const std::vector<uint8_t> &id_list, std::ve
     std::set<uint8_t> countSet;
     for (auto & id : id_list)
     {
-        if (!_fake_data->dxl_registers.count(id))
+        if (_fake_data->dxl_registers.count(id))
+            velocity_list.emplace_back(_fake_data->dxl_registers.at(id).position);
+        else if (_fake_data->stepper_registers.count(id))
+            velocity_list.emplace_back(_fake_data->stepper_registers.at(id).position);
+        else
             return COMM_TX_ERROR;
-        velocity_list.emplace_back(_fake_data->dxl_registers.at(id).velocity);
         auto result = countSet.insert(id);
         if (!result.second)
             return GROUP_SYNC_REDONDANT_ID;  // redondant id

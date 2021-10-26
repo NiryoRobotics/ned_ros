@@ -503,7 +503,7 @@ bool TtlManager::readJointsStatus()
                     {
                         uint8_t id = id_list.at(i);
                         int position = static_cast<int>(position_list.at(i));
-                        int velocity = static_cast<int>(velocity_list.at(i));
+                        //int velocity = static_cast<int>(velocity_list.at(i));
 
                         if (_state_map.count(id))
                         {
@@ -511,7 +511,7 @@ bool TtlManager::readJointsStatus()
                             if (state)
                             {
                                 state->setPosition(position);
-                                state->setVelocity(velocity);
+                                //state->setVelocity(velocity);
                             }
                         }
                     }
