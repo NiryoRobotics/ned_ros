@@ -474,7 +474,7 @@ uint32_t TtlManager::getPosition(const JointState &motor_state)
  * TODO(CC) add syncreadload
  *
  */
-bool TtlManager::readJointsStatus()
+bool TtlManager::readPositionsStatus()
 {
     bool res = false;
     unsigned int hw_errors_increment = 0;
@@ -490,20 +490,17 @@ bool TtlManager::readJointsStatus()
             // we retrieve all the associated id for the type of the current driver
             vector<uint8_t> id_list = _ids_map.at(type);
             vector<uint32_t> position_list;
-            vector<uint32_t> velocity_list;
 
             // retrieve positions
-            if (COMM_SUCCESS == driver->syncReadPosition(id_list, position_list) &&
-                COMM_SUCCESS == driver->syncReadVelocity(id_list, velocity_list))
+            if (COMM_SUCCESS == driver->syncReadPosition(id_list, position_list))
             {
-                if (id_list.size() == position_list.size() && id_list.size() == velocity_list.size())
+                if (id_list.size() == position_list.size())
                 {
                     // set motors states accordingly
                     for (size_t i = 0; i < id_list.size(); ++i)
                     {
                         uint8_t id = id_list.at(i);
                         int position = static_cast<int>(position_list.at(i));
-                        int velocity = static_cast<int>(velocity_list.at(i));
 
                         if (_state_map.count(id))
                         {
@@ -511,7 +508,6 @@ bool TtlManager::readJointsStatus()
                             if (state)
                             {
                                 state->setPosition(position);
-                                state->setVelocity(velocity);
                             }
                         }
                     }
@@ -519,10 +515,9 @@ bool TtlManager::readJointsStatus()
                 else
                 {
                     ROS_ERROR("TtlManager::readJointStatus : Fail to sync read joint state - "
-                                "vector mismatch (id_list size %d, position_list size %d, velocity_list size %d)",
+                                "vector mismatch (id_list size %d, position_list size %d)",
                                 static_cast<int>(id_list.size()),
-                                static_cast<int>(position_list.size()),
-                                static_cast<int>(velocity_list.size()));
+                                static_cast<int>(position_list.size()));
                     hw_errors_increment++;
                 }
             }
@@ -657,6 +652,29 @@ bool TtlManager::readHardwareStatus()
             vector<uint8_t> id_list = _ids_map.at(type);
             size_t id_list_size = id_list.size();
 
+            // **************  velocity
+            vector<uint32_t> velocity_list;
+            auto motor_driver = std::dynamic_pointer_cast<AbstractMotorDriver>(it.second);
+            if (motor_driver && COMM_SUCCESS == motor_driver->syncReadVelocity(id_list, velocity_list))
+            {
+                if (id_list.size() == velocity_list.size())
+                {
+                    for (size_t i = 0; i < id_list.size(); ++i)
+                    {
+                        uint8_t id = id_list.at(i);
+                        int velocity = static_cast<int>(velocity_list.at(i));
+
+                        if (_state_map.count(id))
+                        {
+                            auto state = std::dynamic_pointer_cast<common::model::AbstractMotorState>(_state_map.at(id));
+                            if (state)
+                            {
+                                state->setVelocity(velocity);
+                            }
+                        }
+                    }
+                }
+            }
             // **************  firmware version
             vector<std::string> firmware_version_list;
 

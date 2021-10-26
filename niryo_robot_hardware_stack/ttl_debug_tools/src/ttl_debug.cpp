@@ -27,6 +27,8 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <chrono>
+#include <thread>
 
 // niryo
 #include "dynamixel_sdk/dynamixel_sdk.h"
@@ -135,10 +137,20 @@ int handleUserInput(int argc, char **argv)
             else if (vars.count("calibrate"))  // calibrate
             {
                 printf("--> calibrate joints\n");
+                ttlTools.setRegister(2, 64, 0, 1);
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                ttlTools.setRegister(3, 64, 0, 1);
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                ttlTools.setRegister(4, 64, 0, 1);
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
                 ttlTools.setRegister(3, 149, 1, 1);
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
                 ttlTools.setRegister(2, 147, 0, 1);
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
                 ttlTools.setRegister(3, 147, 0, 1);
-                ttlTools.setRegister(2, 147, 0, 1);
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
+                ttlTools.setRegister(4, 147, 0, 1);
+                std::this_thread::sleep_for(std::chrono::milliseconds(100));
             }
             else if (-1 == id && ids.empty())
             {

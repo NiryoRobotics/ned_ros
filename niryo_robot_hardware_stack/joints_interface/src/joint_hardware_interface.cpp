@@ -418,8 +418,6 @@ void JointHardwareInterface::read(const ros::Time &/*time*/, const ros::Duration
         if (jState && jState->isValid())
         {
             jState->pos = jState->to_rad_pos(jState->getPosition());
-            jState->vel = jState->getVelocity();
-            jState->eff = jState->getTorque();
         }
     }
 
