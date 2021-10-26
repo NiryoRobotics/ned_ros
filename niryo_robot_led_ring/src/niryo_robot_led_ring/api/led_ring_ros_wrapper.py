@@ -42,10 +42,8 @@ class LedRingRosWrapper(object):
     # - Led Ring
     @check_ned2_version
     def set_led_color(self, led_id, color):
-        rospy.logwarn(color)
-        color_rgba = [color if isinstance(color, ColorRGBA) else ColorRGBA(*(color[:3] + [0]))]
+        color_rgba = color if isinstance(color, ColorRGBA) else ColorRGBA(*(color[:3] + [0]))
         led_request = SetLedColorRequest(led_id=led_id, color=color_rgba)
-        rospy.logwarn(led_request)
         result = self.__call_service('/niryo_robot_led_ring/set_led_color', SetLedColor, led_request)
         return self.__classic_return_w_check(result)
 
