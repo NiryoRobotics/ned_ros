@@ -44,19 +44,19 @@ struct EndEffectorReg
     static constexpr uint16_t ADDR_BAUDRATE                 = 8;
     static constexpr uint8_t SIZE_BAUDRATE                 = 1;
 
-    static constexpr uint16_t ADDR_BUTTON_1_STATUS          = 64;
+    static constexpr uint16_t ADDR_BUTTON_1_STATUS          = 1024;
     static constexpr uint8_t SIZE_BUTTON_1_STATUS          = 1;
 
-    static constexpr uint16_t ADDR_BUTTON_2_STATUS          = 65;
+    static constexpr uint16_t ADDR_BUTTON_2_STATUS          = 1025;
     static constexpr uint8_t SIZE_BUTTON_2_STATUS          = 1;
 
-    static constexpr uint16_t ADDR_BUTTON_3_STATUS          = 66;
+    static constexpr uint16_t ADDR_BUTTON_3_STATUS          = 1026;
     static constexpr uint8_t SIZE_BUTTON_3_STATUS          = 1;
 
-    static constexpr uint16_t ADDR_DIGITAL_IN               = 70;
+    static constexpr uint16_t ADDR_DIGITAL_IN               = 1040;
     static constexpr uint8_t SIZE_DIGITAL_IN               = 1;
 
-    static constexpr uint16_t ADDR_DIGITAL_OUT              = 71;
+    static constexpr uint16_t ADDR_DIGITAL_OUT              = 1041;
     static constexpr uint8_t SIZE_DIGITAL_OUT              = 1;
 
     static constexpr uint16_t ADDR_ACCELERO_VALUE_X         = 80;
