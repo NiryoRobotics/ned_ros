@@ -5,7 +5,7 @@ from niryo_robot_led_ring.msg import LedRingAnimation, LedRingStatus
 from std_msgs.msg import ColorRGBA
 
 # - Services
-from niryo_robot_led_ring.srv import LedUser, LedUserRequest
+from niryo_robot_led_ring.srv import LedUser, LedUserRequest, SetLedColor, SetLedColorRequest
 
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus
@@ -41,6 +41,15 @@ class LedRingRosWrapper(object):
 
     # - Led Ring
     @check_ned2_version
+    def set_led_color(self, led_id, color):
+        rospy.logwarn(color)
+        color_rgba = [color if isinstance(color, ColorRGBA) else ColorRGBA(*(color[:3] + [0]))]
+        led_request = SetLedColorRequest(led_id=led_id, color=color_rgba)
+        rospy.logwarn(led_request)
+        result = self.__call_service('/niryo_robot_led_ring/set_led_color', SetLedColor, led_request)
+        return self.__classic_return_w_check(result)
+
+    @check_ned2_version
     def solid(self, color, wait=False):
         """
         Set the whole Led Ring to a fixed color.
@@ -53,9 +62,9 @@ class LedRingRosWrapper(object):
         :return: status, message
         :rtype: (int, str)
         """
-        color_rgba_list = [c if isinstance(c, ColorRGBA) else ColorRGBA(*(c[:3] + [0])) for c in color]
+        color_rgba = [color if isinstance(color, ColorRGBA) else ColorRGBA(*(color[:3] + [0]))]
         user_led_request = LedUserRequest(animation_mode=LedRingAnimation(LedRingAnimation.SOLID),
-                                          colors=color_rgba_list, wait_end=wait)
+                                          colors=color_rgba, wait_end=wait)
         result = self.__call_service('/niryo_robot_led_ring/user_service', LedUser, user_led_request)
         return self.__classic_return_w_check(result)
 
@@ -114,9 +123,9 @@ class LedRingRosWrapper(object):
         :return: status, message
         :rtype: (int, str)
         """
-        color_rgba = [color if isinstance(color, ColorRGBA) else ColorRGBA(*(color[:3] + [0]))]
+        color_rgba_list = [c if isinstance(c, ColorRGBA) else ColorRGBA(*(c[:3] + [0])) for c in color_list]
         user_led_request = LedUserRequest(animation_mode=LedRingAnimation(LedRingAnimation.ALTERNATE), wait_end=wait,
-                                          colors=color_rgba, period=period,
+                                          colors=color_rgba_list, period=period,
                                           iterations=iterations)
         user_led_request.animation_mode.animation = LedRingAnimation.ALTERNATE
         result = self.__call_service('/niryo_robot_led_ring/user_service', LedUser, user_led_request)

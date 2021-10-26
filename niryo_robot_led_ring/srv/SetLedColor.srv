@@ -1,0 +1,6 @@
+int8 led_id
+std_msgs/ColorRGBA color
+
+---
+int32 status
+string message

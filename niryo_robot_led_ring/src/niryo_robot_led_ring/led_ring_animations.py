@@ -162,6 +162,13 @@ class LedRingAnimations:
 
             self.set_current_anim_and_color(LedRingAnimation.CUSTOM)
 
+    def set_led_color(self, led_id, color_rgba):
+        self.init_animation()
+        with self.__animation_lock:
+            self.set_led(led_id, color_rgba)
+        self.show_leds()
+        self.set_current_anim_and_color(LedRingAnimation.CUSTOM)
+
     def flashing(self, color_rgba, period=None, iterations=0):
         """
         Flash a color according to a frequency

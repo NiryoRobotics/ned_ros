@@ -3,7 +3,7 @@ import rospy
 import threading
 
 # Services
-from niryo_robot_led_ring.srv import LedUser, LedUserRequest
+from niryo_robot_led_ring.srv import LedUser, LedUserRequest, SetLedColor, SetLedColorRequest
 from niryo_robot_led_ring.msg import LedRingStatus, LedRingAnimation, LedRingCurrentState
 
 # Message
@@ -76,6 +76,7 @@ class LedRingCommander:
 
         # - Services
         self.__set_ring_led_user = rospy.Service('~user_service', LedUser, self.__callback_set_led_ring_user)
+        self.__set_led_color_service = rospy.Service('~set_led_color', SetLedColor, self.__callback_set_led_color)
 
         # - Subscribers
         self.robot_status_subscriber = rospy.Subscriber('/niryo_robot_status/robot_status',
@@ -164,6 +165,20 @@ class LedRingCommander:
                 return CommandStatus.SUCCESS, "Led Ring set by user: {} mode launched".format(animation_name)
         else:
             return CommandStatus.FAILURE, "Led Ring set by user: command request doesn't exist"
+
+    def __callback_set_led_color(self, req):
+        if not self.user_mode:
+            # if the status of the robot is not RUNNING_AUTONOMOUS
+            return CommandStatus.ABORTED, "Led Ring not in autonomous mode, user can't control it"
+
+        if not (0 <= req.led_id < self.led_ring_anim.led_count):
+            return CommandStatus.FAILURE, "Wrong led id, must be between 0 and {}".format(
+                self.led_ring_anim.led_count - 1)
+
+        self.led_ring_anim.set_led_color(req.led_id, req.color)
+
+        return CommandStatus.SUCCESS, "Successfully set led {} at color {}" \
+            .format(req.led_id, [req.color.r, req.color.g, req.color.b])
 
     def __callback_save_current_point(self, _msg):
         if not self.user_mode:
