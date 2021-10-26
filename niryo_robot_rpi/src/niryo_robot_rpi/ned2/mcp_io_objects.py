@@ -90,8 +90,10 @@ class McpIOManager(object):
     def read_digital_inputs(self):
         with self.__lock:
             gpio_values = self.__mcp.read_all_gpios()
+            rospy.logdebug("GPIO:", gpio_values)
             for digital_input in self.__inputs.values():
                 digital_input.value = bool((gpio_values >> digital_input.pin) & 0b1)
+        self.advertise_callbacks()
 
     def interrupt_callback(self, _channel=None):
         # self.__mcp.debug()
@@ -103,10 +105,13 @@ class McpIOManager(object):
     def unregister_on_change_callback(self, cb_id):
         self.__callbacks[cb_id].pop()
 
+    def advertise_callbacks(self):
+        for cb in self.__callbacks.values():
+            cb()
+
     def _check_interrupt_flag_security(self, _event):
         with self.__lock:
             pending_interrupts = self.__mcp.readU8(RegistersMCP23017.INTFA)
-        self.read_digital_inputs()
         if pending_interrupts:
             self.read_digital_inputs()
 

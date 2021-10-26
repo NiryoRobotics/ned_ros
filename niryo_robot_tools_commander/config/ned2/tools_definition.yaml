@@ -70,11 +70,11 @@ tool_list:
       - close_gripper
     specs:
       open_position: 2840
-      open_hold_torque: 500
-      open_max_torque: 1750
+      open_hold_torque: 300
+      open_max_torque: 500
       close_position: 1859
-      close_hold_torque: 1750
-      close_max_torque: 1750
+      close_hold_torque: 200
+      close_max_torque: 1200
       open_speed: 300
       close_speed: 300
       limit_open_speed:
