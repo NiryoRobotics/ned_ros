@@ -45,6 +45,7 @@ from moveit_msgs.srv import GetStateValidity
 
 class JogController:
     def __init__(self, arm, kinematics_handler, parameters_validator):
+        self.__hardware_version = rospy.get_param('~hardware_version')
 
         # - Values Init
         self._shift_mode = None
@@ -591,8 +592,7 @@ class JogController:
                 return CommandStatus.ABORTED, "Cannot send command cause Jog is not activated and cannot be"
         self._last_command_timer = rospy.get_time()
 
-    @staticmethod
-    def __set_learning_mode(set_bool):
+    def __set_learning_mode(self, set_bool):
         """
         Activate or deactivate the learning mode using the ros service /niryo_robot/learning_mode/activate
 
@@ -602,6 +602,9 @@ class JogController:
         :return: Success if the learning mode was properly activate or deactivate, False if not
         :rtype: bool
         """
+        if set_bool and self.__hardware_version == 'ned2':
+            return True
+
         try:
             rospy.wait_for_service("/niryo_robot/learning_mode/activate", timeout=1)
             srv = rospy.ServiceProxy("/niryo_robot/learning_mode/activate", SetBool)

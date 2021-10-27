@@ -72,12 +72,7 @@ JointHardwareInterface::JointHardwareInterface(ros::NodeHandle& rootnh,
 {
     ROS_DEBUG("JointHardwareInterface::ctor");
 
-    // hack to have the profile velocity correctly set
-
     init(rootnh, robot_hwnh);
-
-    sendInitMotorsParams();
-    activateLearningMode(true);
 
     _calibration_manager = std::make_unique<CalibrationManager>(robot_hwnh, _joint_list, _ttl_interface, _can_interface);
 }
@@ -342,7 +337,7 @@ bool JointHardwareInterface::initDxl(ros::NodeHandle &robot_hwnh,
  * @brief JointHardwareInterface::sendInitMotorsParams
  * TODO(CC) : find out where the inits should be done (for tool and conveyor it is in addHardwareComponent() method)
  */
-void JointHardwareInterface::sendInitMotorsParams()
+void JointHardwareInterface::sendInitMotorsParams(bool learningMode)
 {
     ROS_DEBUG("JointHardwareInterface::sendInitMotorsParams");
 
@@ -408,6 +403,8 @@ void JointHardwareInterface::sendInitMotorsParams()
             }
         }
     }
+
+    activateLearningMode(learningMode);
 }
 
 /**
@@ -567,8 +564,6 @@ void JointHardwareInterface::activateLearningMode(bool activated)
     {
         _ttl_interface->setSyncCommand(std::make_unique<DxlSyncCmd>(dxl_cmd));
     }
-
-    _learning_mode = activated;
 }
 
 /**

@@ -2,17 +2,24 @@ sound_publish_rate: 1.0
 volume_publish_rate: 1.0
 sound_user_publish_rate: 1.0
 
-error_sound_delay: 2
+error_sound_delay: 60
 
-default_volume: 20
+default_volume: 100
 default_volume_simulation: 10
 min_volume: 0
-max_volume: 100
+max_volume: 200
+volume_file_path: "~/niryo_robot_saved_files/robot_sound_volume.txt"
+volume_file_path_simulation: "~/.niryo/simulation/robot_sound_volume.txt"
 
-path_user_sound: "niryo_robot_user_sounds"
+
+path_user_sound: "~/niryo_robot_saved_files/niryo_robot_user_sounds"
+path_user_sound_simulation: "~/.niryo/simulation/niryo_robot_user_sounds"
 path_robot_sound: "niryo_robot_state_sounds"
 
 robot_sounds:
-  error_sound: "error4.wav"
-  turn_on_sound: "start.wav"
+  error_sound: "error4.2.wav"
+  turn_on_sound: "start4a.wav"
   turn_off_sound: "stop.wav"
+  connection_sound: "connected3.wav"
+  robot_ready_sound: "connected2.wav"
+  calibration_sound: "calibration.wav"

@@ -89,7 +89,7 @@ class KinematicsHandler:
                  round(pose.position.y, 3),
                  round(pose.position.z, 3))
 
-        return RobotState(Point(*point), RPY(*rpy), Quaternion(*quaternion))
+        return RobotState(position=Point(*point), rpy=RPY(*rpy), orientation=Quaternion(*quaternion))
 
     def get_inverse_kinematics(self, pose):
         try:

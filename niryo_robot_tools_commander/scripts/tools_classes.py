@@ -185,14 +185,14 @@ class Electromagnet(Tool):
 
     def setup_digital_io(self, cmd):
         self._gpio = cmd.gpio
-        status, message = self.ros_command_interface.digital_output_tool_setup("Electromagnet")
+        status, message = self.ros_command_interface.digital_output_tool_setup(self._gpio)
         if status == CommandStatus.SUCCESS:
             return True, 'Successfully setup digital output PIN  ' + str(cmd.gpio) + ' for electromagnet'
         else:
             return False, message
 
     def activate_digital_io(self, cmd):
-        if cmd.gpio > 0:
+        if cmd.gpio != "":
             self._gpio = cmd.gpio
         status, message = self.ros_command_interface.digital_output_tool_activate(self._gpio, True)
         if status == CommandStatus.SUCCESS:
@@ -201,7 +201,7 @@ class Electromagnet(Tool):
             return False, message
 
     def deactivate_digital_io(self, cmd):
-        if cmd.gpio > 0:
+        if cmd.gpio != "":
             self._gpio = cmd.gpio
         status, message = self.ros_command_interface.digital_output_tool_activate(self._gpio, False)
         if status == CommandStatus.SUCCESS:

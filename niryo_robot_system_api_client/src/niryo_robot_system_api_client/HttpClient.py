@@ -56,7 +56,7 @@ class HttpClient:
         return executed.getcode(), json.loads(executed.read())
 
     def set_robot_name(self, name):
-        status_code, response = self.__post('/settings/name', {'value': name})
+        status_code, response = self.__post('/setRobotName', {'name': name})
 
         if not status_code:
             return False, 'Unable to connect to the HTTP server'
@@ -108,6 +108,15 @@ class HttpClient:
 
     def reconnect_last_wifi(self):
         status_code, response = self.__post('/reconnectLastWifi')
+
+        if not status_code:
+            return False, 'Unable to connect to the HTTP server'
+
+        return True, response
+
+    def setup_ethernet(self, profile, ip="", mask="", gateway="", dns=""):
+        status_code, response = self.__post('/setEthernetProfile',
+                                            {'profile': profile, "ip": ip, "mask": mask, "gw": gateway, "dns": dns})
 
         if not status_code:
             return False, 'Unable to connect to the HTTP server'

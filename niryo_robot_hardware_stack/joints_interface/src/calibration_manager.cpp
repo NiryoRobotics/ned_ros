@@ -141,7 +141,7 @@ int CalibrationManager::startCalibration(int mode, std::string &result_message)
         result_message = "Calibration Interface - Please ensure that all motors are connected";
     }
 
-    ROS_WARN_COND(niryo_robot_msgs::CommandStatus::SUCCESS != res,
+    ROS_ERROR_COND(niryo_robot_msgs::CommandStatus::SUCCESS != res,
                   "Calibration Interface - Calibration error : %s", result_message.c_str());
 
     return res;
@@ -258,7 +258,7 @@ bool CalibrationManager::canProcessManualCalibration(std::string &result_message
       res = false;
     }
 
-    ROS_WARN_COND(!res, "Calibration Interface - Can't process manual calibration : %s", result_message.c_str());
+    ROS_ERROR_COND(!res, "Calibration Interface - Can't process manual calibration : %s", result_message.c_str());
 
     return res;
 }
@@ -270,6 +270,9 @@ bool CalibrationManager::canProcessManualCalibration(std::string &result_message
 EStepperCalibrationStatus CalibrationManager::autoCalibration()
 {
     _calibration_in_progress = true;
+
+    if ("ned2" == _hardware_version)
+        ros::Duration(3).sleep();
 
     // 1. Move robot back to home
     moveRobotBeforeCalibration();
@@ -337,7 +340,7 @@ EStepperCalibrationStatus CalibrationManager::autoCalibration()
     }
 
     // 7 - stop torques
-    activateLearningMode(true);
+    activateLearningMode("ned2" != _hardware_version);
 
     _calibration_in_progress = false;
 
@@ -356,7 +359,7 @@ CalibrationManager::manualCalibration()
     EStepperCalibrationStatus status = EStepperCalibrationStatus::CALIBRATION_FAIL;
     _calibration_in_progress = true;
 
-    if  ("one" == _hardware_version)
+    if  ("ned2" != _hardware_version)
     {
         if (_can_interface)
         {
@@ -419,7 +422,8 @@ CalibrationManager::manualCalibration()
     }
     else
     {
-      ROS_ERROR("CalibrationManager::manualCalibration : manual calibration not available for %s robot. Only supported for Niryo One", _hardware_version.c_str());
+      ROS_ERROR("CalibrationManager::manualCalibration : manual calibration not available for %s robot."
+                "Only supported for Niryo One and Niryo Ned", _hardware_version.c_str());
     }
 
     _calibration_in_progress = false;

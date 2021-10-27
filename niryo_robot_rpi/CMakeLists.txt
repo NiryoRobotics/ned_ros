@@ -95,16 +95,8 @@ endif()
 #############
 
 catkin_install_python(PROGRAMS 
-    scripts/button_manager.py
-    scripts/end_effector_panel.py
     scripts/fake_rpi_node.py
-    scripts/fans_manager.py
-    scripts/io_panel.py
-    scripts/led_manager.py
-    scripts/ros_log_manager.py
     scripts/rpi_node.py
-    scripts/shutdown_manager.py
-    scripts/wifi_button.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 # Mark other files for installation

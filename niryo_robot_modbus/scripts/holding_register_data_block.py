@@ -128,11 +128,10 @@ HR_WORKSPACE_NAME = 626
 
 HR_SET_ANALOG_IO = 700
 
-AIO_ADDRESS_TO_NAME = OrderedDict({0: "AI0",
-                                   1: "AI1",
-                                   2: "AI2",
-                                   3: "AO0",
-                                   4: "AO1", })
+AIO_ADDRESS_TO_NAME = OrderedDict({0: "AI1",
+                                   1: "AI2",
+                                   2: "AO1",
+                                   3: "AO2" })
 
 
 # Positive number : 0 - 32767

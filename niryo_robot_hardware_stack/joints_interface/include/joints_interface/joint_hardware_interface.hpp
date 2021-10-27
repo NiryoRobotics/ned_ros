@@ -49,7 +49,8 @@ class JointHardwareInterface : public hardware_interface::RobotHW
                                std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface,
                                std::shared_ptr<can_driver::CanInterfaceCore> can_interface);
 
-        void sendInitMotorsParams();
+        void sendInitMotorsParams(bool learningMode);
+        void setSteppersProfiles();
         int calibrateJoints(int mode, std::string &result_message);
         void setNeedCalibration();
         void activateLearningMode(bool activated);
@@ -90,8 +91,6 @@ class JointHardwareInterface : public hardware_interface::RobotHW
         std::map<uint8_t, std::string> _map_dxl_name;
 
         std::vector<std::shared_ptr<common::model::JointState> > _joint_list;
-
-        bool _learning_mode{true};
 };
 
 /**

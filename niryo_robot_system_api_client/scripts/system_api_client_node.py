@@ -5,11 +5,10 @@ import logging
 
 from niryo_robot_system_api_client.HttpClient import HttpClient
 
-from std_msgs.msg import Bool
 from niryo_robot_msgs.msg import CommandStatus
 
 from niryo_robot_msgs.srv import SetString
-from niryo_robot_system_api_client.srv import ManageWifi
+from niryo_robot_system_api_client.srv import ManageWifi, ManageEthernet
 from niryo_robot_system_api_client.msg import WifiStatus
 
 
@@ -37,6 +36,9 @@ class SystemApiClientNode:
 
         self.manage_wifi_server = rospy.Service('/niryo_robot/wifi/manage', ManageWifi,
                                                 self.__callback_manage_wifi)
+
+        self.manage_wifi_server = rospy.Service('/niryo_robot/ethernet/manage', ManageEthernet,
+                                                self.__callback_manage_ethernet)
 
         # Set a bool to mentioned this node is initialized
         rospy.set_param('~initialized', True)
@@ -114,6 +116,23 @@ class SystemApiClientNode:
 
         conn_success, result = self.client.wifi_state()
         self.__publish_hotspot_state(conn_success, result)
+
+        return status, message
+
+    def __callback_manage_ethernet(self, req):
+        status, message = CommandStatus.SUCCESS, "Success"
+        if req.profile in [req.STATIC, req.AUTO]:
+            conn_success, result = self.client.setup_ethernet(req.profile)
+        elif req.profile == req.CUSTOM:
+            conn_success, result = self.client.setup_ethernet(req.profile, req.ip, req.mask, req.gateway, req.dns)
+            message = result["detail"]
+        else:
+            return CommandStatus.SYSTEM_API_CLIENT_UNKNOWN_COMMAND, "Command {} not found".format(req.profile)
+
+        if not conn_success:
+            return CommandStatus.SYSTEM_API_CLIENT_REQUEST_FAILED, result
+        if not result:
+            return CommandStatus.SYSTEM_API_CLIENT_UNKNOWN_ERROR, "Failed to change the ethernet profile"
 
         return status, message
 

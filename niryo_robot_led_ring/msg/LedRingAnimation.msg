@@ -11,5 +11,6 @@ int32 GO_UP = 9
 int32 GO_UP_AND_DOWN = 10
 int32 BREATH = 11
 int32 SNAKE = 12
+int32 CUSTOM = 13
 
 int32 animation

@@ -3,12 +3,13 @@ import rospy
 import threading
 
 # Services
-from niryo_robot_led_ring.srv import LedUser, LedUserRequest
+from niryo_robot_led_ring.srv import LedUser, LedUserRequest, SetLedColor, SetLedColorRequest
 from niryo_robot_led_ring.msg import LedRingStatus, LedRingAnimation, LedRingCurrentState
 
 # Message
 from niryo_robot_status.msg import RobotStatus
 from std_msgs.msg import Int32
+from std_msgs.msg import Empty
 
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus
@@ -58,10 +59,12 @@ class LedRingCommander:
             LedRingAnimation.GO_UP_AND_DOWN: self.go_up_and_down_animation,
             LedRingAnimation.BREATH: self.breath_animation,
             LedRingAnimation.SNAKE: self.snake_animation,
+            LedRingAnimation.CUSTOM: self.custom_animation,
         }
 
         # - Publishers
         self.__led_ring_status_pub = rospy.Publisher('~led_ring_status', LedRingStatus, latch=True, queue_size=10)
+        rospy.sleep(1)
         self._publish_led_ring_status()  # publish the status at the beginning
         self.display_user_mode()  # Turn on the leds with the right animation
 
@@ -73,6 +76,7 @@ class LedRingCommander:
 
         # - Services
         self.__set_ring_led_user = rospy.Service('~user_service', LedUser, self.__callback_set_led_ring_user)
+        self.__set_led_color_service = rospy.Service('~set_led_color', SetLedColor, self.__callback_set_led_color)
 
         # - Subscribers
         self.robot_status_subscriber = rospy.Subscriber('/niryo_robot_status/robot_status',
@@ -80,17 +84,26 @@ class LedRingCommander:
         self.save_point_publisher = rospy.Subscriber(
             "/niryo_robot/blockly/save_current_point", Int32, self.__callback_save_current_point)
 
+        rospy.Subscriber('/niryo_studio_connection', Empty,
+                         self.__callback_niryo_studio)
+
         rospy.loginfo("Led Ring Commander - Started")
 
     def shutdown(self):
         if not self.__is_shutdown:
-            self.__is_shutdown = True
             self.robot_status_subscriber.unregister()
             self.stop_led_ring_thread()
-            self.blink(WHITE, 2, 0.5)
             self.user_animation_lock.acquire()
+
+            command = LedUserRequest()
+            command.colors = [WHITE]
+            command.iterations = 1
+            command.period = 2
+            self.breath_animation(command)
+            self.blink(WHITE, 8, 0.5)
             self.error_animation_lock.acquire()
-            del self.led_ring_anim
+            self.none_animation(None)
+            self.__is_shutdown = True
 
     @property
     def is_shutdown(self):
@@ -107,9 +120,17 @@ class LedRingCommander:
         if msg.robot_status == RobotStatus.SHUTDOWN:
             self.shutdown()
 
+        elif self.robot_status == RobotStatus.BOOTING and msg.robot_status != RobotStatus.BOOTING:
+            self.led_ring_anim.fade(BLUE)
+
         if (self.robot_status != msg.robot_status or
                 self.robot_out_of_bounds != msg.out_of_bounds or
                 self.rpi_overheating != msg.rpi_overheating):
+
+            if self.robot_status != RobotStatus.CALIBRATION_IN_PROGRESS and msg.robot_status == RobotStatus.CALIBRATION_IN_PROGRESS:
+                rospy.sleep(0.5)  # for synchro
+                self.blink(YELLOW, 3, 1)
+
             self.robot_status = msg.robot_status
             self.robot_status_str = msg.robot_status_str
             self.logs_status = msg.logs_status
@@ -145,9 +166,27 @@ class LedRingCommander:
         else:
             return CommandStatus.FAILURE, "Led Ring set by user: command request doesn't exist"
 
+    def __callback_set_led_color(self, req):
+        if not self.user_mode:
+            # if the status of the robot is not RUNNING_AUTONOMOUS
+            return CommandStatus.ABORTED, "Led Ring not in autonomous mode, user can't control it"
+
+        if not (0 <= req.led_id < self.led_ring_anim.led_count):
+            return CommandStatus.FAILURE, "Wrong led id, must be between 0 and {}".format(
+                self.led_ring_anim.led_count - 1)
+
+        self.led_ring_anim.set_led_color(req.led_id, req.color)
+
+        return CommandStatus.SUCCESS, "Successfully set led {} at color {}" \
+            .format(req.led_id, [req.color.r, req.color.g, req.color.b])
+
     def __callback_save_current_point(self, _msg):
         if not self.user_mode:
             self.blink_over_status(WHITE, 1, 0.5)
+
+    def __callback_niryo_studio(self, _):
+        if not self.user_mode:
+            self.blink_over_status(PURPLE, 2, 0.5)
 
     def notify_current_anim_and_color(self, _observer):
         """
@@ -292,7 +331,10 @@ class LedRingCommander:
                 self.dict_led_ring_methods[robot_status_command.animation_mode.animation](robot_status_command)
 
     def none_animation(self, _cmd):
-        self.led_ring_anim.none()
+        try:
+            self.led_ring_anim.none()
+        except AttributeError:
+            pass
 
     def solid_animation(self, cmd):
         self.led_ring_anim.solid(cmd.colors[0])
@@ -329,6 +371,9 @@ class LedRingCommander:
 
     def snake_animation(self, cmd):
         self.led_ring_anim.snake(cmd.colors[0], cmd.period, cmd.iterations)
+
+    def custom_animation(self, cmd):
+        self.led_ring_anim.custom(cmd.colors)
 
     def blink(self, color, iterations, period):
         with self.error_animation_lock:
