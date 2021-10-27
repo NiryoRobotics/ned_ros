@@ -93,7 +93,7 @@ class JointsInterfaceCore : common::util::IInterfaceCore
 
         void _callbackTrajectoryResult(const control_msgs::FollowJointTrajectoryActionResult& msg);
 
-        void _publishLearningMode(const ros::TimerEvent&);
+        void _publishLearningMode();
 
     private:
         ros::NodeHandle _nh;
@@ -114,8 +114,6 @@ class JointsInterfaceCore : common::util::IInterfaceCore
         ros::Rate _control_loop_rate{1.0};
 
         ros::Publisher _learning_mode_publisher;
-        ros::Timer _learning_mode_publisher_timer;
-        ros::Duration _learning_mode_publisher_duration{1.0};
 
         ros::Subscriber _trajectory_result_subscriber;
 

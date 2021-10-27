@@ -56,6 +56,10 @@ JointsInterfaceCore::JointsInterfaceCore(ros::NodeHandle& rootnh,
     ROS_DEBUG("JointsInterfaceCore::init - Starting ros control thread...");
     _control_loop_thread = std::thread(&JointsInterfaceCore::rosControlLoop, this);
 
+    std::string result_message;
+    int result;
+    activateLearningMode("ned2" != _hardware_version, result, result_message);
+
     ROS_INFO("JointsInterfaceCore::init - Started");
     rootnh.setParam("/niryo_robot_joints_interface/initialized", true);
 }
@@ -98,22 +102,16 @@ bool JointsInterfaceCore::init(ros::NodeHandle& nh)
 void JointsInterfaceCore::initParameters(ros::NodeHandle& nh)
 {
     double control_loop_frequency{1.0};
-    double learning_mode_frequency{1.0};
 
     nh.getParam("ros_control_loop_frequency", control_loop_frequency);
-    nh.getParam("publish_learning_mode_frequency", learning_mode_frequency);
     nh.getParam("/niryo_robot_hardware_interface/hardware_version", _hardware_version);
 
     ROS_DEBUG("JointsInterfaceCore::initParams - Ros control loop frequency %f",
               control_loop_frequency);
-    ROS_DEBUG("JointsInterfaceCore::initParams - Publish learning mode frequency : %f",
-              learning_mode_frequency);
     ROS_DEBUG("Joint Hardware Interface - hardware_version %s",
               _hardware_version.c_str());
 
-    _learning_mode_publisher_duration = ros::Duration(1.0 / learning_mode_frequency);
     _control_loop_rate = ros::Rate(control_loop_frequency);
-
 }
 
 /**
@@ -142,10 +140,7 @@ void JointsInterfaceCore::startServices(ros::NodeHandle& nh)
 void JointsInterfaceCore::startPublishers(ros::NodeHandle& nh)
 {
     _learning_mode_publisher = nh.advertise<std_msgs::Bool>("/niryo_robot/learning_mode/state", 10, true);
-
-    _learning_mode_publisher_timer = nh.createTimer(_learning_mode_publisher_duration,
-                                                    &JointsInterfaceCore::_publishLearningMode,
-                                                    this);
+    _publishLearningMode();
 }
 
 /**
@@ -189,10 +184,7 @@ void JointsInterfaceCore::activateLearningMode(bool activate, int &ostatus, std:
             }
 
             _previous_state_learning_mode = activate;
-            // publish new state
-            std_msgs::Bool msg;
-            msg.data = activate;
-            _learning_mode_publisher.publish(msg);
+            _publishLearningMode();
         }
         else
         {
@@ -330,7 +322,6 @@ bool JointsInterfaceCore::_callbackCalibrateMotors(niryo_robot_msgs::SetInt::Req
     if (niryo_robot_msgs::CommandStatus::SUCCESS == result)
     {
         activateLearningMode("ned2" != _hardware_version, result, result_message);
-
         _enable_control_loop = true;
     }
 
@@ -390,7 +381,7 @@ void JointsInterfaceCore::_callbackTrajectoryResult(const control_msgs::FollowJo
 /**
  * @brief JointsInterfaceCore::_publishLearningMode
  */
-void JointsInterfaceCore::_publishLearningMode(const ros::TimerEvent&)
+void JointsInterfaceCore::_publishLearningMode()
 {
     ROS_DEBUG("JointsInterfaceCore::_publishLearningMode");
 
