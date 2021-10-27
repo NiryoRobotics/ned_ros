@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 
 # Lib
-import time
-import threading
 import rosgraph_msgs.msg
 import rospy
 import actionlib
@@ -18,11 +16,13 @@ from geometry_msgs.msg import Pose, Point, Quaternion
 from std_msgs.msg import Bool
 from std_msgs.msg import Int32
 from std_msgs.msg import String
-from std_msgs.msg import ColorRGBA
 
 from sensor_msgs.msg import CameraInfo
 from sensor_msgs.msg import CompressedImage
 from sensor_msgs.msg import JointState
+
+from control_msgs.msg import FollowJointTrajectoryAction, FollowJointTrajectoryGoal
+from trajectory_msgs.msg import JointTrajectoryPoint
 
 from conveyor_interface.msg import ConveyorFeedbackArray
 from niryo_robot_msgs.msg import HardwareStatus
@@ -30,7 +30,7 @@ from niryo_robot_msgs.msg import RobotState
 from niryo_robot_msgs.msg import RPY
 from niryo_robot_rpi.msg import DigitalIO, DigitalIOState, AnalogIO, AnalogIOState
 from niryo_robot_tools_commander.msg import ToolCommand
-from niryo_robot_led_ring.msg import LedRingAnimation, LedRingStatus
+
 
 # Services
 from conveyor_interface.srv import ControlConveyor, SetConveyor, SetConveyorRequest
@@ -42,14 +42,8 @@ from niryo_robot_vision.srv import SetImageParameter
 from niryo_robot_rpi.srv import GetDigitalIO, GetAnalogIO
 from niryo_robot_rpi.srv import SetDigitalIO, SetAnalogIO
 from niryo_robot_vision.srv import DebugMarkers, DebugMarkersRequest, DebugColorDetection, DebugColorDetectionRequest
-from niryo_robot_programs_manager.srv import SetProgramAutorun, SetProgramAutorunRequest, GetProgramAutorunInfos, \
-    GetProgramList, ManageProgram, ManageProgramRequest, GetProgram, GetProgramRequest, ExecuteProgram, \
-    ExecuteProgramRequest
-from niryo_robot_credentials.srv import GetCredential, SetCredential
 from std_srvs.srv import Trigger as StdTrigger
-from niryo_robot_led_ring.srv import LedUser, LedUserRequest
 from niryo_robot_rpi.srv import SetPullup, SetIOMode
-# from niryo_robot_sound.srv import SoundUserCommand, StopSound, DeleteSound, SendUserSound
 
 # Actions
 from niryo_robot_arm_commander.msg import RobotMoveAction, RobotMoveGoal
@@ -58,6 +52,10 @@ from niryo_robot_tools_commander.msg import ToolActionGoal, ToolResult, ToolActi
 
 # Enums
 from niryo_robot_python_ros_wrapper.ros_wrapper_enums import *
+
+from niryo_robot_python_ros_wrapper.custom_button_ros_wrapper import CustomButtonRosWrapper
+from niryo_robot_led_ring.api import LedRingRosWrapper
+from niryo_robot_sound.api import SoundRosWrapper
 
 
 class NiryoRosWrapperException(Exception):
@@ -81,8 +79,6 @@ class NiryoRosWrapper:
         self.__action_preempt_timeout = rospy.get_param("/niryo_robot/python_ros_wrapper/action_preempt_timeout")
         self.__simulation_mode = rospy.get_param("/niryo_robot/simulation_mode")
         self.__hardware_version = rospy.get_param("/niryo_robot/hardware_version")
-        self.__can_enabled = rospy.get_param("/niryo_robot_hardware_interface/can_enabled")
-        self.__ttl_enabled = rospy.get_param("/niryo_robot_hardware_interface/ttl_enabled")
 
         # - Publishers
         # Highlight publisher (to highlight blocks in Blockly interface)
@@ -95,6 +91,7 @@ class NiryoRosWrapper:
         # -- Subscribers
         # - Pose
         self.__joints = None
+        self.__joints_name = []
         rospy.Subscriber('/joint_states', JointState,
                          self.__callback_sub_joint_states)
 
@@ -127,12 +124,6 @@ class NiryoRosWrapper:
         rospy.Subscriber('/niryo_robot/max_velocity_scaling_factor', Int32,
                          self.__callback_sub_max_velocity_scaling_factor)
 
-        # - Software
-
-        self.__software_version = None
-        rospy.Subscriber('/niryo_robot_hardware_interface/software_version', SoftwareVersion,
-                         self.__callback_software_version)
-
         # - Vision
         self.__compressed_image_message = None
         rospy.Subscriber('/niryo_robot_vision/compressed_video_stream', CompressedImage,
@@ -147,33 +138,28 @@ class NiryoRosWrapper:
         rospy.Subscriber('/niryo_robot/conveyor/feedback', ConveyorFeedbackArray,
                          self.__callback_sub_conveyors_feedback)
 
-        # - Logs
-
-        self.__logs = []
-        rospy.Subscriber(
-            '/rosout_agg', rosgraph_msgs.msg.Log, self.__callback_rosout_agg
-        )
-
-        # - Blockly
-
-        self.__highlighted_block = None
-        rospy.Subscriber(
-            '/niryo_robot_blockly/highlight_block', String, self.__callback_highlight_block
-        )
-
-        self.__save_current_position_event = threading.Event()
-        rospy.Subscriber('/niryo_robot/blockly/save_current_point', Int32, self.__callback_save_current_position)
-
         # - Action server
         # Robot action
         self.__robot_action_server_name = '/niryo_robot_arm_commander/robot_action'
         self.__robot_action_server_client = actionlib.SimpleActionClient(self.__robot_action_server_name,
                                                                          RobotMoveAction)
 
+        self.__action_server_name = rospy.get_param("/niryo_robot_arm_commander/joint_controller_name") + "/follow_joint_trajectory"
+        self.__follow_joint_traj_client = actionlib.SimpleActionClient(self.__action_server_name, FollowJointTrajectoryAction)
+
         # Tool action
         self.__tool_action_server_name = '/niryo_robot_tools_commander/action_server'
         self.__tool_action_server_client = actionlib.SimpleActionClient(self.__tool_action_server_name,
                                                                         ToolAction)
+
+        # Led Ring
+        self.__led_ring = LedRingRosWrapper(self.__hardware_version, self.__service_timeout)
+
+        # Sound
+        self.__sound = SoundRosWrapper(self.__hardware_version, self.__service_timeout)
+
+        # - Custom button
+        self.__custom_button = CustomButtonRosWrapper(self.__hardware_version)
 
     def __del__(self):
         del self
@@ -210,6 +196,7 @@ class NiryoRosWrapper:
 
     def __callback_sub_joint_states(self, joint_states):
         self.__joints = list(joint_states.position[:6])
+        self.__joints_name = joint_states.name[:6]
 
     def __callback_sub_robot_state(self, pose):
         self.__pose = pose
@@ -222,9 +209,6 @@ class NiryoRosWrapper:
 
     def __callback_sub_max_velocity_scaling_factor(self, msg):
         self.__max_velocity_scaling_factor = msg.data
-
-    def __callback_software_version(self, msg):
-        self.__software_version = msg
 
     def __callback_sub_hardware_status(self, hw_status):
         self.__hw_status = hw_status
@@ -243,22 +227,6 @@ class NiryoRosWrapper:
 
     def __callback_sub_conveyors_feedback(self, conveyors_feedback):
         self.__conveyors_feedback = conveyors_feedback
-
-    def __callback_rosout_agg(self, log):
-        formatted_log = '[{}] [{}.{}]: {} - {}'.format(
-            NiryoRosWrapper.LOGS_LEVELS[log.level],
-            log.header.stamp.secs,
-            log.header.stamp.nsecs,
-            log.name,
-            log.msg,
-        )
-        self.__logs.append(formatted_log)
-
-    def __callback_highlight_block(self, block):
-        self.__highlighted_block = block.data
-
-    def __callback_save_current_position(self, _res):
-        self.__save_current_position_event.set()
 
     # -- Service & Action executors
     def __call_service(self, service_name, service_msg_type, *args):
@@ -686,6 +654,29 @@ class NiryoRosWrapper:
         :rtype: (int, str)
         """
         return self.__move_pose_with_cmd(ArmMoveCommand.LINEAR_POSE, x, y, z, roll, pitch, yaw)
+
+    def move_without_moveit(self, joints_target, duration):
+        goal = self._create_goal(joints_target, duration)
+        self.__follow_joint_traj_client.wait_for_server()
+
+        # When to start the trajectory: 0.1s from now
+        goal.trajectory.header.stamp = rospy.Time.now() + rospy.Duration.from_sec(0.1)
+        self.__follow_joint_traj_client.send_goal(goal)
+        self.__follow_joint_traj_client.wait_for_result(timeout=rospy.Duration(2*duration+0.1))
+
+        result = self.__follow_joint_traj_client.get_result()
+        if not result:
+            raise NiryoRosWrapperException("Follow joint trajectory goal has reached timeout limit")
+
+
+    def _create_goal(self, joints_position, duration):
+        goal = FollowJointTrajectoryGoal()
+        goal.trajectory.joint_names = self.__joints_name
+        goal.trajectory.points = [JointTrajectoryPoint()]
+        goal.trajectory.points[0].positions = joints_position
+        goal.trajectory.points[0].velocities = [0.0] * len(self.__joints_name)
+        goal.trajectory.points[0].time_from_start = rospy.Duration(duration)
+        return goal
 
     def stop_move(self):
         """
@@ -1234,7 +1225,7 @@ class NiryoRosWrapper:
         result = self.__call_service('/niryo_robot_tools_commander/update_tool', Trigger)
         return self.__classic_return_w_check(result)
 
-    def grasp_with_tool(self, pin_id=-1):
+    def grasp_with_tool(self, pin_id=""):
         """
         Grasp with the tool linked to tool_id.
         This action correspond to
@@ -1256,7 +1247,7 @@ class NiryoRosWrapper:
         elif tool_id == ToolID.ELECTROMAGNET_1:
             return self.activate_electromagnet(pin_id)
 
-    def release_with_tool(self, pin_id=-1):
+    def release_with_tool(self, pin_id=""):
         """
         Release with the tool associated to tool_id.
         This action correspond to
@@ -1377,11 +1368,11 @@ class NiryoRosWrapper:
         """
         return self.__deal_with_electromagnet(pin_id, ToolCommand.DEACTIVATE_DIGITAL_IO)
 
-    def __deal_with_electromagnet(self, pin, command_int):
+    def __deal_with_electromagnet(self, pin_id, command_int):
         goal = ToolActionGoal()
         goal.goal.cmd.tool_id = ToolID.ELECTROMAGNET_1
         goal.goal.cmd.cmd_type = command_int
-        goal.goal.cmd.gpio = pin
+        goal.goal.cmd.gpio = pin_id
         return self.__execute_tool_action(goal.goal)
 
     # - TCP
@@ -1487,7 +1478,7 @@ class NiryoRosWrapper:
         :return: status, message
         :rtype: (int, str)
         """
-        result = self.__call_service('/niryo_robot_rpi/set_digital_io_state',
+        result = self.__call_service('/niryo_robot_rpi/set_digital_io',
                                      SetDigitalIO, pin_id, digital_state)
         return self.__classic_return_w_check(result)
 
@@ -1503,7 +1494,7 @@ class NiryoRosWrapper:
         :rtype: (int, str)
         """
         result = self.__call_service('/niryo_robot_rpi/set_analog_io',
-                                     SetDigitalIO, pin_id, analog_state)
+                                     SetAnalogIO, pin_id, analog_state)
         return self.__classic_return_w_check(result)
 
     def digital_read(self, pin_id):
@@ -1534,24 +1525,10 @@ class NiryoRosWrapper:
         :rtype: PinState
         """
         result = self.__call_service('/niryo_robot_rpi/get_analog_io',
-                                     GetDigitalIO, pin_id)
+                                     GetAnalogIO, pin_id)
         self.__check_result_status(result)
         return result.value
 
-    def set_pullup_mode(self, pin_id, enable):
-        """
-        Enable or disable digital intput pullup resistor.
-
-        :param pin_id: The name of the pin
-        :type pin_id: Union[ PinID, str]
-        :param enable: True to enable the input pullup resistor, false otherwise.
-        :type enable: bool
-        :return: status, message
-        :rtype: (int, str)
-        """
-        result = self.__call_service('/niryo_robot_rpi/set_digital_input_pullup',
-                                     SetPullup, pin_id, enable)
-        return self.__classic_return_w_check(result)
 
     def get_digital_io_state(self):
         """
@@ -1573,18 +1550,6 @@ class NiryoRosWrapper:
         Get the robot hardware version
         """
         return self.__hardware_version
-
-    def get_can_enabled(self):
-        """
-        Get can_enabled
-        """
-        return self.__can_enabled
-
-    def get_ttl_enabled(self):
-        """
-        Get ttl_enabled
-        """
-        return self.__ttl_enabled
 
     def get_hardware_status(self):
         """
@@ -1652,111 +1617,6 @@ class NiryoRosWrapper:
         :rtype: (int, str)
         """
         result = self.__call_service('/niryo_robot_hardware_interface/reboot_motors', Trigger)
-        return self.__classic_return_w_check(result)
-
-    def debug_motors(self):
-        """
-        Debug the motors by going to each stop
-
-        :return: status, message
-        :rtype: (int, str)
-        """
-        result = self.__call_service('/niryo_robot_commander/motor_debug_start', SetInt, 0)
-        return self.__classic_return_w_check(result)
-
-    # - Button
-
-    def __change_button_mode(self, mode):
-        result = self.__call_service('/niryo_robot/rpi/change_button_mode', SetInt, mode)
-        return self.__classic_return_w_check(result)
-
-    def set_button_do_nothing(self):
-        """
-        Disable the button
-        :return: status, message
-        :rtype: (int, str)
-        """
-        return self.__change_button_mode(0)
-
-    def set_button_trigger_sequence_autorun(self):
-        """
-        Set the button in trigger sequence autorun mode
-        :return: status, message
-        :rtype: (int, str)
-        """
-        return self.__change_button_mode(1)
-
-    def set_button_blockly_save_point(self):
-        """
-        Set the button in blockly save point mode
-        :return: status, message
-        :rtype: (int, str)
-        """
-        return self.__change_button_mode(2)
-
-    # - Software
-
-    def get_software_version(self):
-        """
-        Get the robot software version
-
-        :return: rpi_image_version, ros_niryo_robot_version, motor_names, stepper_firmware_versions
-        :rtype: (str, str, list[str], list[str])
-        """
-        return self.__software_version
-
-    def set_robot_name(self, name):
-        """
-        Set the robot name
-
-        :param name: the new name of the robot
-        :type name: str
-        :return: status, message
-        :rtype: int, str
-        """
-        req = SetString()
-        req.data = name
-        result = self.__call_service('/niryo_robot/wifi/set_robot_name', SetString, req)
-        return self.__classic_return_w_check(result)
-
-    def __call_shutdown_rpi(self, value):
-        result = self.__call_service('/niryo_robot_rpi/shutdown_rpi', SetInt, value)
-        return self.__classic_return_w_check(result)
-
-    def shutdown_rpi(self):
-        """
-        Shutdown the rpi
-        :return: status, message
-        :rtype: (int, str)
-        """
-        return self.__call_shutdown_rpi(1)
-
-    def reboot_rpi(self):
-        """
-        Shutdown the rpi
-        :return: status, message
-        :rtype: (int, str)
-        """
-        return self.__call_shutdown_rpi(2)
-
-    def get_serial_number(self):
-        """
-        Get the serial number
-        :return: status, message
-        :rtype: (int, str)
-        """
-        result = self.__call_service('/niryo_robot_credentials/get_serial', GetCredential)
-        return self.__classic_return_w_check(result)
-
-    def set_api_key(self, key):
-        """
-        Set the cloud API key
-        :param key: the api key
-        :type key: str
-        :return: status, message
-        :rtype: (int, str)
-        """
-        result = self.__call_service('/niryo_robot_credentials/set_api_key', SetCredential, key)
         return self.__classic_return_w_check(result)
 
     # - Conveyor
@@ -2213,548 +2073,16 @@ class NiryoRosWrapper:
             return result.name_list, result.description_list
         return result.name_list
 
-    # - Sound
-
-    # def play_sound(self, sound_name):
-    #     """
-    #     Call service to play_sound according to SoundStateCommand.
-    #     If failed, raise NiryoRosWrapperException
-    #
-    #     :param sound_name: Name of the sound to play
-    #     :type string: string
-    #     :return: status, message
-    #     :rtype: (int, str)
-    #     """
-    #     result = self.__call_service('/niryo_robot_sound/play_sound_user',
-    #                                  SoundUserCommand, sound_name)
-    #     rospy.sleep(0.1)
-    #     return self.__classic_return_w_check(result)
-    #
-    # def set_volume(self, sound_volume):
-    #     """
-    #     Call service to set_volume to set the volume of Ned'sound accrding to sound_volume.
-    #     If failed, raise NiryoRosWrapperException
-    #
-    #     :param sound_volume: volume of the sound
-    #     :type int: int (0: no sound, 100: max sound)
-    #     :return: status, message
-    #     :rtype: (int, str)
-    #     """
-    #     print 'hereeeee'
-    #     result = self.__call_service('/niryo_robot_sound/set_volume',
-    #                                  SetInt, sound_volume)
-    #     rospy.sleep(0.1)
-    #     return self.__classic_return_w_check(result)
-    #
-    # def stop_sound(self):
-    #     """
-    #     Call service stop_sound to stop a sound being played.
-    #     If failed, raise NiryoRosWrapperException
-    #
-    #     :param None: take the sound being played
-    #     :type None: None
-    #     :return: status, message
-    #     :rtype: (int, str)
-    #     """
-    #     result = self.__call_service('/niryo_robot_sound/stop_sound',
-    #                                  StopSound)
-    #     rospy.sleep(0.1)
-    #     return self.__classic_return_w_check(result)
-    #
-    # def delete_sound(self, sound_name):
-    #     """
-    #     Call service delete_sound to delete a sound on the RaspberryPi of the robot.
-    #     If failed, raise NiryoRosWrapperException
-    #
-    #     :param sound_name: name of the sound which needs to be deleted
-    #     :type string: String
-    #     :return: status, message
-    #     :rtype: (int, str)
-    #     """
-    #     result = self.__call_service('/niryo_robot_sound/delete_sound_user',
-    #                                  DeleteSound, sound_name)
-    #     rospy.sleep(0.1)
-    #     return self.__classic_return_w_check(result)
-    #
-    #
-    # def import_sound(self, sound_name, sound_data):
-    #     """
-    #     Call service import_sound to delete a sound on the RaspberryPi of the robot.
-    #     If failed, raise NiryoRosWrapperException
-    #
-    #     :param sound_name, sound_data: name of the sound which needs to be deleted,
-    #            encoded data from the sound (wav or mp3), encoded data from the sound file (wav or mp3)
-    #     :type string, string: String, String containing the encoded data of the sound file
-    #     :return: status, message
-    #     :rtype: (int, str)
-    #     """
-    #     req = SendUserSound()
-    #     req.sound_name = sound_name
-    #     req.sound_data = sound_data
-    #     result = self.__call_service('/niryo_robot_sound/send_sound',
-    #                                  SendUserSound, req)
-    #     rospy.sleep(0.1)
-    #     print(result)
-    #     return self.__classic_return_w_check(result)
-
-    # - Led Ring
-
-    def led_ring_solid(self, color, wait=False):
-        """
-        Set the whole Led Ring to a fixed color.
-
-        :param color: Led ring color, in a list of size 3 (r, g, b: 0.0-255.0)
-        :type color: list[float]
-        :param wait: The service wait for the animation to finish or not to answer.
-                For this method, the action is quickly done, so waiting doesn't take a lot of time.
-        :type wait: bool
-        :return: status, message
-        :rtype: (int, str)
-        """
-        user_led_request = LedUserRequest()
-        user_led_request.animation_mode.animation = LedRingAnimation.SOLID
-        user_led_request.colors = [ColorRGBA(color[0], color[1], color[2], 0)]
-        user_led_request.wait_end = wait
-        result = self.__call_service('/niryo_robot_led_ring/user_service', LedUser, user_led_request)
-        return result.status, result.message
-
-    def led_ring_turn_off(self, wait=False):
-        """
-        Turn off all Leds
-
-        :param wait: the service wait for the animation to finish or not to answer.
-                For this method, the action is quickly done, so waiting doesn't take a lot of time.
-        :type wait: bool
-        :return: status, message
-        :rtype: (int, str)
-        """
-        user_led_request = LedUserRequest()
-        user_led_request.animation_mode.animation = LedRingAnimation.NONE
-        user_led_request.wait_end = wait
-
-        result = self.__call_service('/niryo_robot_led_ring/user_service', LedUser, user_led_request)
-        return result.status, result.message
-
-    def led_ring_flash(self, color, period=0, iterations=0, wait=False):
-        """
-        Flashes a color according to a frequency.
-
-        :param color: Led ring color, in a list of size 3 (r, g, b: 0.0-255.0)
-        :type color: list[float]
-        :param period: execution time for a pattern
-        :type period: float
-        :param iterations: Number of consecutives flashes. If 0, the Led Ring flashes endlessly.
-        :type iterations: int
-        :param wait: The service wait for the animation to finish all iterations or not to answer. If iterations
-                is 0, the service answers immediatly.
-        :type wait: bool
-        :return: status, message
-        :rtype: (int, str)
-        """
-        user_led_request = LedUserRequest()
-        user_led_request.animation_mode.animation = LedRingAnimation.FLASHING
-        user_led_request.colors = [ColorRGBA(color[0], color[1], color[2], 0)]
-        user_led_request.period = period
-        user_led_request.iterations = iterations
-        user_led_request.wait_end = wait
-
-        result = self.__call_service('/niryo_robot_led_ring/user_service', LedUser, user_led_request)
-        return result.status, result.message
-
-    def led_ring_alternate(self, color_list, period=0, iterations=0, wait=False):
-        """
-        Several colors are alternated one after the other.
-
-        :param color_list: Led ring color, in a list of size 3 (r, g, b: 0.0-255.0)
-        :type color_list: list[float]
-        :param period: execution time for a pattern
-        :type period: float
-        :param iterations: Number of consecutives alternations. If 0, the Led Ring alternates endlessly.
-        :type iterations: int
-        :param wait: The service wait for the animation to finish all iterations or not to answer. If iterations
-                is 0, the service answers immediatly.
-        :type wait: bool
-        :return: status, message
-        :rtype: (int, str)
-        """
-        user_led_request = LedUserRequest()
-        user_led_request.animation_mode.animation = LedRingAnimation.ALTERNATE
-        user_led_request.colors = [ColorRGBA(color[0], color[1], color[2], 0) for color in color_list]
-        user_led_request.period = period
-        user_led_request.iterations = iterations
-        user_led_request.wait_end = wait
-
-        result = self.__call_service('/niryo_robot_led_ring/user_service', LedUser, user_led_request)
-        return result.status, result.message
-
-    def led_ring_chase(self, color, period=0, iterations=0, wait=False):
-        """
-        Movie theater light style chaser animation.
-
-        :param color: Led ring color, in a list of size 3 (r, g, b: 0.0-255.0)
-        :type color: list[float]
-        :param period: execution time for a pattern
-        :type period: float
-        :param iterations: Number of consecutives chase. If 0, the animation continues endlessly.
-            One chase just lights one Led every 3 Leds.
-        :type iterations: int
-        :param wait: The service wait for the animation to finish all iterations or not to answer. If iterations
-                is 0, the service answers immediatly.
-        :type wait: bool
-        :return: status, message
-        :rtype: (int, str)
-        """
-        user_led_request = LedUserRequest()
-        user_led_request.animation_mode.animation = LedRingAnimation.CHASE
-        user_led_request.colors = [ColorRGBA(color[0], color[1], color[2], 0)]
-        user_led_request.period = period
-        user_led_request.iterations = iterations
-        user_led_request.wait_end = wait
-
-        result = self.__call_service('/niryo_robot_led_ring/user_service', LedUser, user_led_request)
-        return result.status, result.message
-
-    def led_ring_wipe(self, color, period=0, wait=False):
-        """
-        Wipe a color across the Led Ring, light a Led at a time.
-
-        :param color: Led ring color, in a list of size 3 (r, g, b: 0.0-255.0)
-        :type color: list[float]
-        :param period: execution time for a pattern
-        :type period: float
-        :param wait: The service wait for the animation to finish or not to answer.
-        :type wait: bool
-        :return: status, message
-        :rtype: (int, str)
-        """
-        user_led_request = LedUserRequest()
-        user_led_request.animation_mode.animation = LedRingAnimation.COLOR_WIPE
-        user_led_request.colors = [ColorRGBA(color[0], color[1], color[2], 0)]
-        user_led_request.period = period
-        user_led_request.wait_end = wait
-
-        result = self.__call_service('/niryo_robot_led_ring/user_service', LedUser, user_led_request)
-        return result.status, result.message
-
-    def led_ring_rainbow(self, period=0, iterations=0, wait=False):
-        """
-        Draw rainbow that fades across all Leds at once.
-
-        :param period: execution time for a pattern
-        :type period: float
-        :param iterations: Number of consecutives rainbows. If 0, the animation continues endlessly.
-        :type iterations: int
-        :param wait: The service wait for the animation to finish or not to answer. If iterations
-                is 0, the service answers immediatly.
-        :type wait: bool
-        :return: status, message
-        :rtype: (int, str)
-        """
-        user_led_request = LedUserRequest()
-        user_led_request.animation_mode.animation = LedRingAnimation.RAINBOW
-        user_led_request.period = period
-        user_led_request.iterations = iterations
-        user_led_request.wait_end = wait
-
-        result = self.__call_service('/niryo_robot_led_ring/user_service', LedUser, user_led_request)
-        return result.status, result.message
-
-    def led_ring_rainbow_cycle(self, period=0, iterations=0, wait=False):
-        """
-        Draw rainbow that uniformly distributes itself across all Leds.
-
-        :param period: execution time for a pattern
-        :type period: float
-        :param iterations: Number of consecutives rainbow cycles. If 0, the animation continues endlessly.
-        :type iterations: int
-        :param wait: The service wait for the animation to finish or not to answer. If iterations
-                is 0, the service answers immediatly.
-        :type wait: bool
-        :return: status, message
-        :rtype: (int, str)
-        """
-        user_led_request = LedUserRequest()
-        user_led_request.animation_mode.animation = LedRingAnimation.RAINBOW_CYLE
-        user_led_request.period = period
-        user_led_request.iterations = iterations
-        user_led_request.wait_end = wait
-
-        result = self.__call_service('/niryo_robot_led_ring/user_service', LedUser, user_led_request)
-        return result.status, result.message
-
-    def led_ring_rainbow_chase(self, period=0, iterations=0, wait=False):
-        """
-        Rainbow chase animation, like the led_ring_chase method.
-
-        :param period: execution time for a pattern
-        :type period: float
-        :param iterations: Number of consecutives rainbow cycles. If 0, the animation continues endlessly.
-        :type iterations: int
-        :param wait: The service wait for the animation to finish or not to answer. If iterations
-                is 0, the service answers immediatly.
-        :type wait: bool
-        :return: status, message
-        :rtype: (int, str)
-        """
-        user_led_request = LedUserRequest()
-        user_led_request.animation_mode.animation = LedRingAnimation.RAINBOW_CHASE
-        user_led_request.period = period
-        user_led_request.iterations = iterations
-        user_led_request.wait_end = wait
-
-        result = self.__call_service('/niryo_robot_led_ring/user_service', LedUser, user_led_request)
-        return result.status, result.message
-
-    def led_ring_go_up(self, color, period=0, iterations=0, wait=False):
-        """
-        Leds turn on like a loading circle, and are then all turned off at once.
-
-        :param color: Led ring color, in a list of size 3 (r, g, b: 0.0-255.0)
-        :type color: list[float]
-        :param period: execution time for a pattern
-        :type period: float
-        :param iterations: Number of consecutives turns around the Led Ring. If 0, the animation
-            continues endlessly.
-        :type iterations: int
-        :param wait: The service wait for the animation to finish or not to answer. If iterations
-                is 0, the service answers immediatly.
-        :type wait: bool
-        :return: status, message
-        :rtype: (int, str)
-        """
-        user_led_request = LedUserRequest()
-        user_led_request.animation_mode.animation = LedRingAnimation.GO_UP
-        user_led_request.colors = [ColorRGBA(color[0], color[1], color[2], 0)]
-        user_led_request.period = period
-        user_led_request.iterations = iterations
-        user_led_request.wait_end = wait
-
-        result = self.__call_service('/niryo_robot_led_ring/user_service', LedUser, user_led_request)
-        return result.status, result.message
-
-    def led_ring_go_up_down(self, color, period=0, iterations=0, wait=False):
-        """
-        Leds turn on like a loading circle, and are turned off the same way.
-
-        :param color: Led ring color, in a list of size 3 (r, g, b: 0.0-255.0)
-        :type color: list[float]
-        :param period: execution time for a pattern
-        :type period: float
-        :param iterations: Number of consecutives turns around the Led Ring. If 0, the animation
-            continues endlessly.
-        :type iterations: int
-        :param wait: The service wait for the animation to finish or not to answer. If iterations
-                is 0, the service answers immediatly.
-        :type wait: bool
-        :return: status, message
-        :rtype: (int, str)
-        """
-        user_led_request = LedUserRequest()
-        user_led_request.animation_mode.animation = LedRingAnimation.GO_UP_AND_DOWN
-        user_led_request.colors = [ColorRGBA(color[0], color[1], color[2], 0)]
-        user_led_request.period = period
-        user_led_request.iterations = iterations
-        user_led_request.wait_end = wait
-
-        result = self.__call_service('/niryo_robot_led_ring/user_service', LedUser, user_led_request)
-        return result.status, result.message
-
-    # - Logs
-
-    def get_logs(self):
-        """
-        Returns a generator iterating over all the logs published
-
-        :return: the last logs
-        :rtype: generator[str]
-        """
-        while len(self.__logs) > 0:
-            yield self.__logs.pop(0)
-
-    def purge_logs(self):
-        """
-        Purge the ros logs and discard the following
-        Restart the robot to have logs again
-
-        :return: status, message
-        :rtype: (int, str)
-        """
-        # The request data is ignored by the service
-        result = self.__call_service('/niryo_robot_rpi/purge_ros_logs', SetInt, 0)
-        return self.__classic_return_w_check(result)
-
-    def purge_logs_on_startup(self, value):
-        """
-        Purge the ros logs at rpi startup
-
-        :param value: If the rpi have to purge the logs at startup
-        :type value: bool
-        :return: status, message
-        :rtype: (int, str)
-        """
-        value = 1 if value is True else 0
-        result = self.__call_service('/niryo_robot_rpi/set_purge_ros_log_on_startup', SetInt, value)
-        return self.__classic_return_w_check(result)
-
-    # - Blockly
-
-    def get_highlighted_block(self):
-        """
-        Returns the blockly highlighted block
-
-        :return: the highlighted block id
-        :rtype: str
-        """
-        return self.__highlighted_block
-
-    def get_save_point_event(self):
-        """
-        Returns an event which is set when a pose must be saved
-
-        :return: the event
-        :rtype: Event
-        """
-        return self.__save_current_position_event
-
-    # - Programs
-
-    def get_programs_list(self):
-        """
-        Get all the programs stored in the robot
-
-        :return: names, descriptions
-        :rtype: list[str], list[str]
-        """
-        result = self.__call_service('/niryo_robot_programs_manager/get_program_list', GetProgramList)
-        return result.programs_names, result.programs_description
-
-    def add_program(self, name, language, description, code):
-        """
-        Create a program
-
-        :param name: the program's name
-        :type name: str
-        :param language: the program's language
-        :type language: ProgramLanguage
-        :param description: the program's description
-        :type description: str
-        :param code: the program's code
-        :type code: str
-
-        :return: status, message
-        :rtype: (int, str)
-        """
-        req = ManageProgramRequest()
-        req.cmd = 1
-        req.name = name
-        req.language.used = language
-        req.description = description
-        req.code = code
-        result = self.__call_service('/niryo_robot_programs_manager/manage_program', ManageProgram, req)
-        return self.__classic_return_w_check(result)
-
-    def get_program(self, name, language):
-        """
-        Get a program's code
-
-        :param name: the program's name
-        :type name: str
-        :param language: the program's language
-        :type language: ProgramLanguage
-        :return: the program's code
-        :rtype: str
-        """
-        req = GetProgramRequest()
-        req.name = name
-        req.language.used = language
-        result = self.__call_service('/niryo_robot_programs_manager/get_program', GetProgram, req)
-        self.__check_result_status(result)
-        return result.code
-
-    def set_autorun(self, name, language, mode):
-        """
-        Set a program as the autorun
-
-        :param name: the name of the program
-        :type name: str
-        :param language: the language of the program
-        :type language: ProgramLanguage
-        :param mode: the mode of the autorun
-        :type mode: AutorunMode
-        """
-        req = SetProgramAutorunRequest()
-        req.name = name
-        req.language.used = language
-        req.mode = mode
-        result = self.__call_service('/niryo_robot_programs_manager/set_program_autorun', SetProgramAutorun, req)
-        return self.__classic_return_w_check(result)
-
-    def start_program(self, name, language):
-        """
-        Start a program
-
-        :param name: The program's name
-        :type name: str
-        :param language: the program's language
-        :type language: ProgramLanguage
-        :return: status, message
-        :rtype: (int, str)
-        """
-        req = ExecuteProgramRequest()
-        req.name = name
-        req.language.used = language
-        result = self.__call_service('/niryo_robot_programs_manager/execute_program', ExecuteProgram, req)
-        return self.__classic_return_w_check(result)
-
-    def stop_program(self):
-        """
-        Stop the currently running program
-
-        :return: status, message
-        :rtype: (int, str)
-        """
-        result = self.__call_service('/niryo_robot_programs_manager/stop_program', Trigger)
-        return self.__classic_return_w_check(result)
-
-    def delete_program(self, name, language):
-        """
-        Delete a program
-
-        :param name: the program's name
-        :type name: str
-        :param language: the program's language
-        :type language: ProgramLanguage
-
-        :return: status, message
-        :rtype: (int, str)
-        """
-        req = ManageProgramRequest()
-        req.cmd = -1
-        req.name = name
-        req.language.used = language
-
-        result = self.__call_service('/niryo_robot_programs_manager/manage_program', ManageProgram, req)
-
-        return self.__classic_return_w_check(result)
-
-    # - Autorun
-    def start_autorun(self):
-        """
-        Start the program set as autorun
-
-        :return: status, message
-        :rtype: (int, str)
-        """
-        result = self.__call_service('/niryo_robot_programs_manager/execute_program_autorun', Trigger)
-        return self.__classic_return_w_check(result)
-
-    def get_autorun(self):
-        """
-        Get the autorun infos
-
-        :return: language, name, mode
-        :rtype: (int, str, int)
-        """
-        result = self.__call_service('/niryo_robot_programs_manager/get_program_autorun_infos', GetProgramAutorunInfos)
-        self.__check_result_status(result)
-        return result.language.used, result.name, result.mode
+    # - Ned 2
+
+    @property
+    def led_ring(self):
+        return self.__led_ring
+
+    @property
+    def sound(self):
+        return self.__sound
+
+    @property
+    def custom_button(self):
+        return self.custom_button

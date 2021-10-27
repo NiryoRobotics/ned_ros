@@ -60,11 +60,10 @@ IR_AIO_STATE = 610
 AIO_MODE_OUTPUT = SetIOModeRequest.OUTPUT
 AIO_MODE_INPUT = SetIOModeRequest.INPUT
 
-AIO_NAME_TO_ADDRESS = OrderedDict({"AI0": 0,
-                                   "AI1": 1,
-                                   "AI2": 2,
-                                   "AO0": 3,
-                                   "AO1": 4, })
+AIO_NAME_TO_ADDRESS = OrderedDict({"AI1": 0,
+                                   "AI2": 1,
+                                   "AO1": 2,
+                                   "AO2": 3, })
 
 
 def handle_negative(val):

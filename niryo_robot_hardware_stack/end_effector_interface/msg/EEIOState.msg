@@ -1,2 +1,2 @@
-bool in
-bool out
+bool digital_input
+bool digital_output

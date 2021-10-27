@@ -6,6 +6,18 @@ import rospy
 from niryo_robot_sound.msg import SoundObject
 
 
+class SoundException(Exception):
+    pass
+
+
+class SoundFormatException(Exception):
+    pass
+
+
+class SoundFileException(Exception):
+    pass
+
+
 class Sound(object):
 
     def __init__(self, name, path):
@@ -14,7 +26,7 @@ class Sound(object):
 
         rospy.logdebug("{} | {}".format(self.__name, self.__path))
         if not self.exists():
-            raise IOError("File {} doesn't exists".format(self.__path))
+            raise SoundFileException("File {} doesn't exists".format(self.__path))
 
         self.__duration = self.__get_sound_duration()
         self.__preempted = False
@@ -84,4 +96,7 @@ class Sound(object):
         popen = subprocess.Popen(args, stdout=subprocess.PIPE)
         popen.wait()
         output = popen.stdout.read()
-        return float(output.replace("[FORMAT]\nduration=", "").replace("\n[/FORMAT]\n", ""))
+        try:
+            return float(output.replace("[FORMAT]\nduration=", "").replace("\n[/FORMAT]\n", ""))
+        except ValueError:
+            raise SoundFormatException()

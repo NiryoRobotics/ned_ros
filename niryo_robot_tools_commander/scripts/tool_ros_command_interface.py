@@ -94,19 +94,20 @@ class ToolRosCommandInterface:
                          "An error has occurred or another ping was running")
             return CommandStatus.TOOL_ROS_INTERFACE_ERROR, "Cannot ping dxl tool"
 
-    def digital_output_tool_setup(self, gpio_pin):
+    def digital_output_tool_setup(self, gpio_name):
+        if rospy.get_param("/niryo_robot/hardware_version") == "ned2":
+            return CommandStatus.SUCCESS, "Success"
+
         try:
-            gpio_name = digital_outputs[gpio_pin % 100]
             resp = self.__service_setup_digital_output_tool(gpio_name, SetDigitalIO.Request.OUTPUT)  # set output
             return resp.status, resp.message
         except rospy.ServiceException:
             rospy.logerr("ROS Tool Interface - Failed to get digital output setup")
             return CommandStatus.TOOL_ROS_INTERFACE_ERROR, "Digital IO panel service failed"
 
-    def digital_output_tool_activate(self, gpio_pin, activate):
+    def digital_output_tool_activate(self, gpio_name, activate):
         try:
-            gpio_name = digital_outputs[gpio_pin % 100]
-            resp = self.__service_activate_digital_output_tool(gpio_name, activate)
+            resp = self.__service_activate_digital_output_tool(gpio_name, bool(activate))
             return resp.status, resp.message
         except rospy.ServiceException:
             rospy.logerr("ROS Tool Interface - Failed to activate digital output")

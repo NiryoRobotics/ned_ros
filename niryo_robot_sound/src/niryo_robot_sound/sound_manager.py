@@ -1,9 +1,10 @@
 # Lib
 import rospy
-from threading import Thread
+from threading import Thread, Event
 
 # Messages
 from niryo_robot_status.msg import RobotStatus
+from std_msgs.msg import Empty
 
 # Services
 from niryo_robot_sound.srv import PlaySound
@@ -26,6 +27,10 @@ class SoundManager:
         self.__sound_database = SoundDatabase()
 
         self.__sound_thread = Thread()
+        self.sound_end_event = Event()
+        self.sound_end_event.clear()
+
+        self.play_sound(self.__sound_database.wake_up_sound)
 
         self.__rpi_overheating = False
         self.__overheat_timer = None
@@ -34,11 +39,12 @@ class SoundManager:
         # - Subscribers
         self.__robot_status = RobotStatus.BOOTING
         self.__logs_status = RobotStatus.NONE
-        rospy.Subscriber('/niryo_robot_status/robot_status', RobotStatus,
-                         self.__callback_sub_robot_status)
+        rospy.Subscriber('/niryo_robot_status/robot_status', RobotStatus, self.__callback_sub_robot_status)
+
+        rospy.Subscriber('/niryo_studio_connection', Empty, self.__callback_niryo_studio)
 
         # - Services
-        rospy.Service('/niryo_robot_sound/play_sound', PlaySound, self.__callback_play_sound_user)
+        rospy.Service('/niryo_robot_sound/play', PlaySound, self.__callback_play_sound_user)
 
         # Set a bool to mention this node is initialized
         rospy.set_param('~initialized', True)
@@ -46,6 +52,15 @@ class SoundManager:
 
     # - Callbacks
     def __callback_sub_robot_status(self, msg):
+        if self.__robot_status == RobotStatus.SHUTDOWN:
+            return
+        elif msg.robot_status == RobotStatus.SHUTDOWN:
+            self.__robot_status = msg.robot_status
+            rospy.sleep(1.5)  # avoid ctrl+c
+            self.play_shutdown_sound()
+            self.sound_end_event.set()
+            return
+
         if msg.rpi_overheating != self.__rpi_overheating:
             self.__rpi_overheating = msg.rpi_overheating
             if self.__rpi_overheating:
@@ -61,12 +76,18 @@ class SoundManager:
             last_status = self.__robot_status
             self.__robot_status = msg.robot_status
 
+            if last_status in [RobotStatus.RUNNING_AUTONOMOUS, RobotStatus.LEARNING_MODE_AUTONOMOUS] \
+                    and self.__robot_status not in [RobotStatus.RUNNING_AUTONOMOUS,
+                                                    RobotStatus.LEARNING_MODE_AUTONOMOUS]:
+                self.__sound_player.stop()
+
             if last_status == RobotStatus.BOOTING and self.__robot_status != RobotStatus.BOOTING:
-                sound = self.__sound_database.wake_up_sound
-                self.play_sound(sound)
+                self.__sound_player.stop_w_fade_out()
+                self.play_sound(self.__sound_database.robot_ready_sound)
             elif self.__robot_status in [RobotStatus.FATAL_ERROR, RobotStatus.MOTOR_ERROR]:
-                sound = self.__sound_database.error_sound
-                self.play_sound(sound)
+                self.play_sound(self.__sound_database.error_sound)
+            elif last_status != RobotStatus.CALIBRATION_IN_PROGRESS and msg.robot_status == RobotStatus.CALIBRATION_IN_PROGRESS:
+                self.play_sound(self.__sound_database.calibration_sound)
 
         if self.__logs_status != msg.logs_status:
             self.__logs_status = msg.logs_status
@@ -93,6 +114,11 @@ class SoundManager:
             self.__overheat_timer.shutdown()
             self.__overheat_timer = None
 
+    def __callback_niryo_studio(self, _):
+        if not self.__sound_player.is_busy():
+            sound = self.__sound_database.connection_sound
+            self.play_sound(sound)
+
     def play_sound(self, sound, start_time=0, end_time=0, wait=False):
         if self.__sound_thread.is_alive():
             self.__sound_player.stop()
@@ -106,6 +132,8 @@ class SoundManager:
                 self.__sound_thread.join(timeout=0.1)
 
     def play_shutdown_sound(self):
+        rospy.loginfo("Play shutdown sound")
+
         if self.__overheat_timer is not None:
             self.__overheat_timer.shutdown()
             self.__overheat_timer = None

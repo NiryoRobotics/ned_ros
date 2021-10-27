@@ -694,7 +694,7 @@ int TtlInterfaceCore::addJoint(const std::shared_ptr<common::model::JointState>&
   // add dynamixel as a new tool
   _ttl_manager->addHardwareComponent(jointState);
 
-  // nothin here (done in sendInitMotorsParams for now)
+  // nothing here (done in sendInitMotorsParams for now)
   result = niryo_robot_msgs::CommandStatus::SUCCESS;
 
   return result;

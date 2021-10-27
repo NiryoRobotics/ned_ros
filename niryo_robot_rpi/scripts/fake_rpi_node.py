@@ -3,7 +3,6 @@
 import rospy
 import logging
 from std_msgs.msg import Int32, Bool
-from io_panel import FakeIOPanel, FakeDigitalIOPanel
 
 
 class FakeNiryoButton:
@@ -24,10 +23,13 @@ class FakeNiryoButton:
 class NiryoFakeRpi(object):
     def __init__(self):
         self.niryo_robot_fake_button = FakeNiryoButton()
+
         if rospy.get_param("~hardware_version") == "ned2":
-            self.digital_io_panel = FakeIOPanel()
+            from niryo_robot_rpi.fake_ned2 import FakeIOPanel
         else:
-            self.digital_io_panel = FakeDigitalIOPanel()
+            from niryo_robot_rpi.fake_ned_one import FakeIOPanel
+
+        self.digital_io_panel = FakeIOPanel()
 
 
 if __name__ == '__main__':

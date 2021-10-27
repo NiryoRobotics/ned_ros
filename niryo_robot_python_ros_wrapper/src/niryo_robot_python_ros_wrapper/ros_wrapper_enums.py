@@ -63,15 +63,23 @@ class PinID:
     def __init__(self):
         pass
 
-    GPIO_1A = 2
-    GPIO_1B = 3
-    GPIO_1C = 16
-    GPIO_2A = 26
-    GPIO_2B = 19
-    GPIO_2C = 6
+    GPIO_1A = "1A"
+    GPIO_1B = "1B"
+    GPIO_1C = "1C"
+    GPIO_2A = "2A"
+    GPIO_2B = "2B"
+    GPIO_2C = "2C"
 
-    SW_1 = 12
-    SW_2 = 13
+    SW_1 = "SW1"
+    SW_2 = "SW2"
+
+    DO1 = "DO1"
+    DO2 = "DO2"
+    DO3 = "DO3"
+    DI1 = "DI1"
+    DI2 = "DI2"
+    DI3 = "DI3"
+    ELECTROMAGNET = "ELECTROMAGNET"
 
 
 # - Conveyor
@@ -132,6 +140,17 @@ class AutorunMode:
     DISABLE = 0
     ONE_SHOT = 1
     LOOP = 2
+
+
+class ButtonAction:
+    def __init__(self):
+        pass
+
+    HANDLE_HELD_ACTION = 0
+    LONG_PUSH_ACTION = 1
+    SINGLE_PUSH_ACTION = 2
+    DOUBLE_PUSH_ACTION = 3
+    NO_ACTION = 100
 
 
 @unique

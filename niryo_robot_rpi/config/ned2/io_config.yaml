@@ -10,21 +10,30 @@ mcp:
  i2c_bus: 0
  interrupt_bcm: 26
 
-ads:
+adc:
   i2c_bus: 0
-  reading_factor: 0.6
+  address: 54
+  v_ref: 4.096
 
 fans:
-  - pin: 11
+  - pin: 8
     temperature_on_threshold: 45
     temperature_off_threshold: 40
-  - pin: 12
-    temperature_on_threshold: 50
-    temperature_off_threshold: 45
+  - pin: 9
+    temperature_on_threshold: 55
+    temperature_off_threshold: 50
 
 wifi:
   led_pin: 4
   button_pin: 5
+
+end_effector_ios:
+   digital_input: DI4
+   digital_output: DO4
+
+shutdown_manager:
+  digital_output: 7
+  digital_input: 6
 
 digital_inputs:
   - name: DI1
@@ -33,29 +42,28 @@ digital_inputs:
     pin: 1
   - name: DI3
     pin: 2
+  - name: DI5
+    pin: 3
 
 digital_outputs:
   - name: DO1
-    pin: 15
+    pin: 12
     reverse: True
   - name: DO2
-    pin: 14
+    pin: 11
     reverse: True
   - name: DO3
-    pin: 13
+    pin: 10
     reverse: True
-  - name: Electromagnet
-    pin: 3
-    reverse: False
 
 analog_outputs:
-  - name: AO0
+  - name: AO1
     pin: 0
     address: 73
     i2c_bus: 0
     v_ref: 5.0
     resolution: 12
-  - name: AO1
+  - name: AO2
     pin: 0
     address: 75
     i2c_bus: 0
@@ -63,7 +71,9 @@ analog_outputs:
     resolution: 12
 
 analog_inputs:
-  - name: AI0
-    pin: 0
   - name: AI1
-    pin: 2
+    pin: 0
+    dividing_bridge_factor: 0.6
+  - name: AI2
+    pin: 1
+    dividing_bridge_factor: 0.6

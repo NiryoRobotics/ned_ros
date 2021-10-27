@@ -13,15 +13,10 @@
     <arg name="conf_location" default="version.txt"/>
 
     <!-- Define most of ROS parameters -->
-    <include file="$(find niryo_robot_bringup)/launch/niryo_robot.launch">
-        <arg name="hardware_version" value="$(arg hardware_version)" />
-        <arg name="simulation_mode" value="true" />
+    <include file="$(find niryo_robot_bringup)/launch/niryo_$(arg hardware_version)_simulation.launch">
         <arg name="simu_gripper" value="false" />
         <arg name="log_level" value="$(arg log_level)" />
         <arg name="debug" value="$(arg debug)"/>
-        <arg name="can_enabled" value="false" unless="$(eval hardware_version =='one' or hardware_version =='ned')"/>
-        <arg name="can_enabled" value="true" if="$(eval hardware_version =='one' or hardware_version =='ned')"/>
-        <arg name="ttl_enabled" value="true" />
         <arg name="vision_enabled" value="false" />
         <arg name="gazebo" value="false" />
     </include>

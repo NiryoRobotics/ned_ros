@@ -70,10 +70,9 @@ class JointsInterfaceCore : common::util::IInterfaceCore
 
         bool init(ros::NodeHandle& nh) override;
 
-        void sendMotorsParams();
+        void sendInitMotorsParams(bool learningMode);
         void activateLearningMode(bool activate, int &ostatus, std::string &omessage);
 
-        bool getFreeDriveMode() const;
         void getCalibrationState(bool &need_calibration, bool &calibration_in_progress) const;
 
         const std::vector<std::shared_ptr<common::model::JointState> >&
@@ -124,17 +123,9 @@ class JointsInterfaceCore : common::util::IInterfaceCore
         ros::ServiceServer _calibrate_motors_server;
         ros::ServiceServer _request_new_calibration_server;
         ros::ServiceServer _activate_learning_mode_server;
-};
 
-/**
- * @brief JointsInterfaceCore::getFreeDriveMode
- * @return
- */
-inline
-bool JointsInterfaceCore::getFreeDriveMode() const
-{
-    return _previous_state_learning_mode;
-}
+        std::string _hardware_version;
+};
 
 /**
  * @brief JointsInterfaceCore::getCalibrationState

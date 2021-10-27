@@ -57,10 +57,12 @@ class DiscreteInputDataBlockNed2(DiscreteInputDataBlock):
     DIO_ADDRESS = OrderedDict({"DI1": 0,
                                "DI2": 1,
                                "DI3": 2,
-                               "DO1": 3,
-                               "DO2": 4,
-                               "DO3": 5,
-                               "Electromagnet": 6, })
+                               "DI4": 3,
+                               "DI5": 4,
+                               "DO1": 5,
+                               "DO2": 6,
+                               "DO3": 7,
+                               "DO4": 8, })
 
     def __init__(self):
         super(DiscreteInputDataBlockNed2, self).__init__()

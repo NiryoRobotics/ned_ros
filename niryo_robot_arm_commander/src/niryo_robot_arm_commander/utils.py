@@ -1,9 +1,10 @@
 #!/usr/bin/env python
 
 # Lib
-from tf.transformations import quaternion_from_euler, euler_from_quaternion
-
+import copy
 import numpy as np
+
+from tf.transformations import quaternion_from_euler, euler_from_quaternion, quaternion_multiply
 
 # Messages
 from geometry_msgs.msg import Pose, Point, Quaternion
@@ -79,3 +80,23 @@ def poses_too_close(p1, p2):
     dist = np.linalg.norm(np_pose1 - np_pose2)
 
     return dist < 0.001
+
+
+def invert_quat(q):
+    q_inv = copy.deepcopy(q)
+    if isinstance(q_inv, Quaternion):
+        q_inv.w = -q.w
+    elif isinstance(q_inv, list):
+        q_inv[3] = -q[3]
+    else:
+        raise TypeError
+    return q_inv
+
+
+def diff_quat(q1, q2):
+    q1_list = [q1.x, q1.y, q1.z, q1.w] if isinstance(q1, Quaternion) else q1
+    q2_list = [q2.x, q2.y, q2.z, q2.w] if isinstance(q2, Quaternion) else q2
+
+    q2_inv = invert_quat(q2_list)
+
+    return quaternion_multiply(q1_list, q2_inv)

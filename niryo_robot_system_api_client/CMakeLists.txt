@@ -17,6 +17,7 @@ add_message_files(
 add_service_files(
   DIRECTORY srv
   FILES
+  ManageEthernet.srv
   ManageWifi.srv
 )
 
