@@ -157,7 +157,9 @@ public:
 
     bool hasEndEffector() const;
 
+    // TtlManager will manage each type of hw to avoid unnecessary loop to find id 
     void addMotorList(uint8_t id);
+    void addConveyorList(uint8_t id);
 private:
     // IBusManager Interface
     int setupCommunication() override;
@@ -192,8 +194,10 @@ private:
     std::map<common::model::EHardwareType, std::vector<uint8_t> > _ids_map;
     // map of drivers for a given hardware type (xl, stepper, end effector)
     std::map<common::model::EHardwareType, std::shared_ptr<ttl_driver::AbstractTtlDriver> > _driver_map;
-    // vector of ids of motors
+    // vector of ids of motors and conveyors
+    // Theses vector help remove loop not necessary 
     std::vector<uint8_t> _motor_list;
+    std::vector<uint8_t> _conveyor_list;
 
     common::model::EStepperCalibrationStatus _calibration_status{common::model::EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED};
 
@@ -318,6 +322,16 @@ inline
 void TtlManager::addMotorList(uint8_t id)
 {
     _motor_list.push_back(id);
+}
+
+/**
+ * @brief TtlManager::AddConveyorList
+ * @return
+ */
+inline
+void TtlManager::addConveyorList(uint8_t id)
+{
+    _conveyor_list.push_back(id);
 }
 
 /**

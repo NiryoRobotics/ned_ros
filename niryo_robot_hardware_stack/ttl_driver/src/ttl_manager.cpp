@@ -288,6 +288,9 @@ int TtlManager::changeId(common::model::EHardwareType motor_type, uint8_t old_id
                     // update all maps
                     _ids_map.at(motor_type).emplace_back(new_id);
                 }
+                // change id in conveyor list
+                _conveyor_list.erase(std::remove(_conveyor_list.begin(), _conveyor_list.end(), old_id), _conveyor_list.end());
+                _conveyor_list.push_back(new_id);
             }
         }
     }
@@ -495,8 +498,13 @@ bool TtlManager::readPositionsStatus()
     // All addresses for position are the same 
     if (!_driver_map.empty())
     {
-      //  EHardwareType type = it.first;
-        auto driver = std::dynamic_pointer_cast<AbstractMotorDriver>(_driver_map.begin()->second);
+        std::shared_ptr<ttl_driver::AbstractMotorDriver> driver;
+        try {
+            // get driver of a motor
+            auto ttl_driver = _driver_map.at(_state_map.at(_motor_list.at(0))->getHardwareType());
+            driver = std::dynamic_pointer_cast<AbstractMotorDriver>(ttl_driver);
+        }
+        catch (const std::exception& e) {}
 
         if (driver) // && _ids_map.count(type))
         {
@@ -775,16 +783,20 @@ bool TtlManager::readHardwareStatus()
             }
 
             // **********  conveyor state
-            if (EHardwareType::FAKE_STEPPER_MOTOR == type || EHardwareType::STEPPER == type)
+            if (!_conveyor_list.empty() && (EHardwareType::FAKE_STEPPER_MOTOR == type || EHardwareType::STEPPER == type))
             {
-                for (auto id : _ids_map.at(type))
+                try
                 {
-                    if (_state_map.find(id) != _state_map.end())
+                    std::shared_ptr<ttl_driver::AbstractStepperDriver> stepper_driver;
+                    stepper_driver = std::dynamic_pointer_cast<ttl_driver::AbstractStepperDriver>(driver);
+
+                    for (auto id : _conveyor_list)
                     {
-                        auto state = std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(id));
+                        std::shared_ptr<StepperMotorState> state;
+                        state = std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(id));   
+                        
                         if (state && state->isConveyor())
                         {
-                            auto stepper_driver = std::dynamic_pointer_cast<ttl_driver::AbstractStepperDriver>(driver);
                             uint32_t velocity;
                             if (COMM_SUCCESS != stepper_driver->readVelocity(id, velocity))
                             {
@@ -799,6 +811,7 @@ bool TtlManager::readHardwareStatus()
                         }
                     }
                 }
+                catch(const std::exception& e) {}
             }
             // set motors states accordingly
             for (size_t i = 0; i < id_list_size; ++i)

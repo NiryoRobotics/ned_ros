@@ -781,6 +781,9 @@ int TtlInterfaceCore::setConveyor(const std::shared_ptr<common::model::ConveyorS
 
     lock_guard<mutex> lck(_control_loop_mutex);
 
+    // add conveyor id for conveyor list of ttl manager
+    _ttl_manager->addConveyorList(state->getId());
+
     // add hw component before to get driver
     _ttl_manager->addHardwareComponent(state);
 
