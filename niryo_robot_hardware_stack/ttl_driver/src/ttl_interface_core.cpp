@@ -682,6 +682,9 @@ int TtlInterfaceCore::addJoint(const std::shared_ptr<common::model::JointState>&
 {
   int result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
 
+  // save motor id to a list (this is used in syncread to get params at the same address for all motors)
+  _ttl_manager->addMotorList(jointState->getId());
+
   // add dynamixel as a new tool
   _ttl_manager->addHardwareComponent(jointState);
 

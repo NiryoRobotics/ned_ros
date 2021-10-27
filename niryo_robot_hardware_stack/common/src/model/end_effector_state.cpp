@@ -128,9 +128,9 @@ bool common::model::EndEffectorState::isValid() const
  */
 void EndEffectorState::setButtonStatus(uint8_t id, EActionType action)
 {
-  assert(id <= 3);
+  assert(id < 3);
 
-  auto button = _buttons_list.at(id - 1);
+  auto button = _buttons_list.at(id);
   // do not add 2 no action states consecutive
   if (button->actions.back() == EActionType::NO_ACTION &&
           action == EActionType::NO_ACTION)

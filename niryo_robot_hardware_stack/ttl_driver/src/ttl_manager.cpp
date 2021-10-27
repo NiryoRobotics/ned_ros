@@ -229,6 +229,18 @@ void TtlManager::removeHardwareComponent(uint8_t id)
                                              _removed_motor_id_list.end());
 }
 
+/**
+ * @brief TtlManager::isMotorType
+ * @param type 
+ * @return true 
+ * @return false 
+ */
+bool TtlManager::isMotorType(common::model::EHardwareType type)
+{
+    // All motors have value under 7 (check in common::model::EHardwareType)
+    return (static_cast<int>(type) <= 7); 
+}
+
 // ****************
 //  commands
 // ****************
@@ -479,7 +491,8 @@ bool TtlManager::readPositionsStatus()
     bool res = false;
     unsigned int hw_errors_increment = 0;
 
-    // syncread from all drivers for all motors
+    // syncread position for all motors. Using only one driver for all motors to avoid loop.
+    // All addresses for position are the same 
     if (!_driver_map.empty())
     {
       //  EHardwareType type = it.first;
@@ -488,18 +501,17 @@ bool TtlManager::readPositionsStatus()
         if (driver) // && _ids_map.count(type))
         {
             // we retrieve all the associated id for the type of the current driver
-            vector<uint8_t> id_list{2, 3, 4, 5, 6, 7}; //_ids_map.at(type);
             vector<uint32_t> position_list;
 
             // retrieve positions
-            if (COMM_SUCCESS == driver->syncReadPosition(id_list, position_list))
+            if (COMM_SUCCESS == driver->syncReadPosition(_motor_list, position_list))
             {
-                if (id_list.size() == position_list.size())
+                if (_motor_list.size() == position_list.size())
                 {
                     // set motors states accordingly
-                    for (size_t i = 0; i < id_list.size(); ++i)
+                    for (size_t i = 0; i < _motor_list.size(); ++i)
                     {
-                        uint8_t id = id_list.at(i);
+                        uint8_t id = _motor_list.at(i);
                         int position = static_cast<int>(position_list.at(i));
 
                         if (_state_map.count(id))
@@ -516,7 +528,7 @@ bool TtlManager::readPositionsStatus()
                 {
                     ROS_ERROR("TtlManager::readJointStatus : Fail to sync read joint state - "
                                 "vector mismatch (id_list size %d, position_list size %d)",
-                                static_cast<int>(id_list.size()),
+                                static_cast<int>(_motor_list.size()),
                                 static_cast<int>(position_list.size()));
                     hw_errors_increment++;
                 }
@@ -569,7 +581,7 @@ bool TtlManager::readEndEffectorStatus()
         {
             // we retrieve the associated id for the end effector
             uint8_t id = _ids_map.at(EHardwareType::END_EFFECTOR).front();
-            common::model::EActionType action;
+            std::vector<common::model::EActionType> actions;
 
             if (_state_map.count(id))
             {
@@ -577,20 +589,15 @@ bool TtlManager::readEndEffectorStatus()
                 if (state)
                 {
                     // free drive button
-                    if (COMM_SUCCESS == driver->readButton0Status(id, action))
-                        state->setButtonStatus(1, action);
-                    else
-                        hw_errors_increment++;
-
-                    // save pos button
-                    if (COMM_SUCCESS == driver->readButton1Status(id, action))
-                        state->setButtonStatus(2, action);
-                    else
-                        hw_errors_increment++;
-
-                    // custom button
-                    if (COMM_SUCCESS == driver->readButton2Status(id, action))
-                        state->setButtonStatus(3, action);
+                    if (COMM_SUCCESS == driver->readButtonsStatus(id, actions))
+                    {
+                        // free drive button
+                        state->setButtonStatus(0, actions.at(0));
+                        // save pos button
+                        state->setButtonStatus(1, actions.at(1));
+                        // custom button
+                        state->setButtonStatus(2, actions.at(2));
+                    }    
                     else
                         hw_errors_increment++;
 
@@ -1331,25 +1338,28 @@ int TtlManager::writeSingleCommand(std::unique_ptr<common::model::AbstractTtlSin
  */
 void TtlManager::executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, uint32_t> > cmd_vec)
 {
-    for (auto const& it : _driver_map)
+    // using only one driver for all motors to write faster. (all addresses of goal position are the same)
+    if (!_driver_map.empty())
     {
-        // build list of ids and params for this motor
-        std::vector<uint8_t> ids;
-        std::vector<uint32_t> params;
-        for (auto const& cmd : cmd_vec)
-        {
-            if (_state_map.count(cmd.first) && it.first == _state_map.at(cmd.first)->getHardwareType())
-            {
-                ids.emplace_back(cmd.first);
-                params.emplace_back(cmd.second);
-            }
+        std::shared_ptr<ttl_driver::AbstractMotorDriver> driver;
+        try {
+            auto ttl_driver = _driver_map.at(_state_map.at(_motor_list.at(0))->getHardwareType());
+            driver = std::dynamic_pointer_cast<AbstractMotorDriver>(ttl_driver);
         }
-
-        // syncwrite for this driver. The driver is responsible for sync write only to its associated motors
-        auto driver = std::dynamic_pointer_cast<AbstractMotorDriver>(it.second);
-
+        catch (const std::exception& e)
+        {
+            std::stringstream msg;
+            std::cout << "TtlManager::executeJointTrajectoryCmd: access to an element not exist in map with error " << e.what() << std::endl;
+        }
         if (driver)
         {
+            std::vector<uint8_t> ids;
+            std::vector<uint32_t> params;
+            for (auto cmd : cmd_vec)
+            {
+                ids.push_back(cmd.first);
+                params.push_back(cmd.second);
+            }
             int err = driver->syncWritePositionGoal(ids, params);
             if (err != COMM_SUCCESS)
             {
@@ -1357,7 +1367,6 @@ void TtlManager::executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, uint32
                 _debug_error_message = "TtlManager - Failed to write position";
             }
         }
-        ros::Duration(0.001).sleep();
     }
 }
 

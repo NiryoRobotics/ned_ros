@@ -157,6 +157,7 @@ public:
 
     bool hasEndEffector() const;
 
+    void addMotorList(uint8_t id);
 private:
     // IBusManager Interface
     int setupCommunication() override;
@@ -171,6 +172,9 @@ private:
     template<typename Reg>
     void retrieveFakeMotorData(const std::string& current_ns, std::map<uint8_t, Reg>& fake_params);
 
+    // check if hardware is a motor or not
+    // this helps get only one driver to use for all motors to get/set on the same address
+    bool isMotorType(common::model::EHardwareType type);
 private:
     ros::NodeHandle _nh;
     std::shared_ptr<dynamixel::PortHandler> _portHandler;
@@ -188,6 +192,8 @@ private:
     std::map<common::model::EHardwareType, std::vector<uint8_t> > _ids_map;
     // map of drivers for a given hardware type (xl, stepper, end effector)
     std::map<common::model::EHardwareType, std::shared_ptr<ttl_driver::AbstractTtlDriver> > _driver_map;
+    // vector of ids of motors
+    std::vector<uint8_t> _motor_list;
 
     common::model::EStepperCalibrationStatus _calibration_status{common::model::EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED};
 
@@ -302,6 +308,16 @@ inline
 bool TtlManager::hasEndEffector() const
 {
     return _driver_map.count(common::model::EHardwareType::END_EFFECTOR);
+}
+
+/**
+ * @brief TtlManager::AddMotorList
+ * @return
+ */
+inline
+void TtlManager::addMotorList(uint8_t id)
+{
+    _motor_list.push_back(id);
 }
 
 /**
