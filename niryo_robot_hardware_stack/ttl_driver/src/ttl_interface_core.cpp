@@ -216,7 +216,7 @@ bool TtlInterfaceCore::rebootMotor(uint8_t motor_id)
     lock_guard<mutex> lck(_control_loop_mutex);
     int result = _ttl_manager->rebootMotor(motor_id);
     ros::Duration(1.5).sleep();
-    // return truc if result is COMM_SUCCESS
+    // return true if result is COMM_SUCCESS
     return (COMM_SUCCESS == result);
 }
 
