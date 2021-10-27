@@ -57,8 +57,10 @@ class IOPanel(AbstractIOPanel):
             digital_output["pin"], digital_output["name"], reversed=digital_output["reverse"]))
                                              for digital_output in rospy.get_param("~digital_outputs")])
 
-        self._digital_inputs = OrderedDict([(digital_input["name"], self.__mcp_manager.add_input(digital_input["pin"],
-                                                                                                 digital_input["name"]))
+        self._digital_inputs = OrderedDict([(digital_input["name"],
+                                             self.__mcp_manager.add_input(digital_input["pin"],
+                                                                          digital_input["name"],
+                                                                          digital_input["reverse"]))
                                             for digital_input in rospy.get_param("~digital_inputs")])
 
         self._digital_outputs[self.__end_effector_panel.digital_output.name] = self.__end_effector_panel.digital_output

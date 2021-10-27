@@ -45,7 +45,7 @@ class McpIOManager(object):
         GPIO.setwarnings(False)
         GPIO.setmode(GPIO.BCM)
         GPIO.setup(interrupt_BCM, GPIO.IN)
-        GPIO.add_event_detect(interrupt_BCM, GPIO.RISING, callback=self.interrupt_callback)
+        GPIO.add_event_detect(interrupt_BCM, GPIO.FALLING, callback=self.interrupt_callback)
 
         self.check_interrupt_flag_security_frequency = rospy.get_param("~check_interrupt_flag_security_frequency")
         rospy.Timer(rospy.Duration(1.0 / self.check_interrupt_flag_security_frequency),
@@ -126,7 +126,6 @@ class DigitalOutput(NiryoIO):
 
         with self._lock:
             self._mcp.enable_interrupt(self._pin, False)
-            self._mcp.reverse_polarity(self._pin, False)
             self._mcp.config(self._pin, self._mcp.OUTPUT)
 
         self.value = 0
@@ -184,7 +183,7 @@ class DigitalInput(NiryoIO):
         with self._lock:
             self._mcp.config(self._pin, self._mcp.INPUT)
             self._mcp.enable_interrupt(self._pin, True)
-            self._mcp.reverse_polarity(self._pin, reverse_polarity)
+            self._mcp.reverse_input_polarity(self._pin, reverse_polarity)
 
     @property
     def value(self):
