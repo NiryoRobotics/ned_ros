@@ -23,6 +23,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <iostream>
 #include <sstream>
 #include <cassert>
+#include <ros/ros.h>
 
 #include "abstract_end_effector_driver.hpp"
 
@@ -69,7 +70,6 @@ class EndEffectorDriver : public AbstractEndEffectorDriver
         int readButton0Status(uint8_t id, common::model::EActionType& action) override;
         int readButton1Status(uint8_t id, common::model::EActionType& action) override;
         int readButton2Status(uint8_t id, common::model::EActionType& action) override;
-        int readButtonsStatus(uint8_t id, std::vector<common::model::EActionType>& actions) override;
 
         int readAccelerometerXValue(uint8_t id, uint32_t& x_value) override;
         int readAccelerometerYValue(uint8_t id, uint32_t& y_value) override;
@@ -291,30 +291,6 @@ int EndEffectorDriver<reg_type>::readButton2Status(uint8_t id, common::model::EA
     uint32_t status;
     int res = read(reg_type::ADDR_BUTTON_2_STATUS, reg_type::SIZE_BUTTON_2_STATUS, id, status);
     action = interpreteActionValue(status);
-    return res;
-}
-
-/**
- * @brief EndEffectorDriver<reg_type>::readButtonsStatus 
- * 
- * @param id 
- * @param actions 
- * @return int 
- */
-template<typename reg_type>
-int EndEffectorDriver<reg_type>::readButtonsStatus(uint8_t id, std::vector<common::model::EActionType>& actions)
-{
-    std::vector<uint16_t> address = {reg_type::ADDR_BUTTON_0_STATUS, reg_type::ADDR_BUTTON_1_STATUS, reg_type::ADDR_BUTTON_2_STATUS};
-    std::vector<uint8_t> id_list = {id, id, id};
-    std::vector<uint32_t> status_returned{0,0,0};
-
-    // all button have the same size for this type of address
-    int res = bulkRead(address, reg_type::SIZE_BUTTON_0_STATUS, id_list, status_returned);
-    
-    for (auto const status : status_returned)
-    {
-        actions.push_back(interpreteActionValue(status));
-    }
     return res;
 }
 

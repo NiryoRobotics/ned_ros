@@ -589,7 +589,7 @@ bool TtlManager::readEndEffectorStatus()
         {
             // we retrieve the associated id for the end effector
             uint8_t id = _ids_map.at(EHardwareType::END_EFFECTOR).front();
-            std::vector<common::model::EActionType> actions;
+            common::model::EActionType action;
 
             if (_state_map.count(id))
             {
@@ -597,15 +597,20 @@ bool TtlManager::readEndEffectorStatus()
                 if (state)
                 {
                     // free drive button
-                    if (COMM_SUCCESS == driver->readButtonsStatus(id, actions))
-                    {
-                        // free drive button
-                        state->setButtonStatus(0, actions.at(0));
-                        // save pos button
-                        state->setButtonStatus(1, actions.at(1));
-                        // custom button
-                        state->setButtonStatus(2, actions.at(2));
-                    }    
+                    if (COMM_SUCCESS == driver->readButton0Status(id, action))
+                        state->setButtonStatus(0, action);
+                    else
+                        hw_errors_increment++;
+
+                    // save pos button
+                    if (COMM_SUCCESS == driver->readButton1Status(id, action))
+                        state->setButtonStatus(1, action);
+                    else
+                        hw_errors_increment++;
+
+                    // custom button
+                    if (COMM_SUCCESS == driver->readButton2Status(id, action))
+                        state->setButtonStatus(2, action);
                     else
                         hw_errors_increment++;
 

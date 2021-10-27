@@ -247,18 +247,6 @@ int MockEndEffectorDriver::readButton2Status(uint8_t id, common::model::EActionT
     return COMM_SUCCESS;
 }
 
-int MockEndEffectorDriver::readButtonsStatus(uint8_t id, std::vector<common::model::EActionType>& actions)
-{
-    if (COMM_SUCCESS != ping(id))
-        return COMM_RX_FAIL;
-
-    // add fake actions of 3 buttons
-    actions.push_back(interpreteActionValue(_fake_data->end_effector.button0_action));
-    actions.push_back(interpreteActionValue(_fake_data->end_effector.button1_action));   
-    actions.push_back(interpreteActionValue(_fake_data->end_effector.button2_action));
-    return COMM_SUCCESS;
-}
-
 // accelerometers and collision
 
 /**

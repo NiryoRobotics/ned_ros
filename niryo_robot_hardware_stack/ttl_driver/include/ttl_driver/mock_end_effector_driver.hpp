@@ -70,7 +70,6 @@ class MockEndEffectorDriver : public AbstractEndEffectorDriver
         int readButton0Status(uint8_t id, common::model::EActionType& action) override;
         int readButton1Status(uint8_t id, common::model::EActionType& action) override;
         int readButton2Status(uint8_t id, common::model::EActionType& action) override;
-        int readButtonsStatus(uint8_t id, std::vector<common::model::EActionType>& actions) override;
 
         int readAccelerometerXValue(uint8_t id, uint32_t& x_value) override;
         int readAccelerometerYValue(uint8_t id, uint32_t& y_value) override;

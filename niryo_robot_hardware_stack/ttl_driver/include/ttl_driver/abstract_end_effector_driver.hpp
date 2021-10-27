@@ -50,7 +50,6 @@ public:
     virtual int readButton0Status(uint8_t id, common::model::EActionType& action) = 0;
     virtual int readButton1Status(uint8_t id, common::model::EActionType& action) = 0;
     virtual int readButton2Status(uint8_t id, common::model::EActionType& action) = 0;
-    virtual int readButtonsStatus(uint8_t id, std::vector<common::model::EActionType>& actions) = 0;
 
     virtual int readAccelerometerXValue(uint8_t id, uint32_t& x_value) = 0;
     virtual int readAccelerometerYValue(uint8_t id, uint32_t& y_value) = 0;
