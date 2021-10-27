@@ -48,6 +48,7 @@ class MCP23017(object):
         self.__direction |= self.readU8(RegistersMCP23017.IODIRB) << 8
         self.write8(RegistersMCP23017.GPPUA, 0x00)
         self.write8(RegistersMCP23017.GPPUB, 0x00)
+        self.write8(RegistersMCP23017.IOCONA, 0b00000100)  # INTA as open-drain
 
     def config(self, pin, mode):
         if pin < 8:
@@ -91,7 +92,7 @@ class MCP23017(object):
             return self._read_and_change_pin(RegistersMCP23017.GPPUB, pin - 8, value) << 8 | self.readU8(
                 RegistersMCP23017.GPPUA)
 
-    def reverse_polarity(self, pin, reverse):
+    def reverse_input_polarity(self, pin, reverse):
         value = bool(reverse)
         if (pin < 8):
             return self._read_and_change_pin(RegistersMCP23017.IPOLA, pin, value)
