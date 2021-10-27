@@ -78,10 +78,20 @@ public:
     virtual int syncReadHwErrorStatus(const std::vector<uint8_t>& id_list, std::vector<uint32_t>& hw_error_list) = 0;
 
 protected:
+    template<typename T>
+    int syncRead(uint8_t address, const std::vector<uint8_t>& id_list, std::vector<uint32_t>& data_list);
     int syncRead(uint8_t address, uint8_t data_len, const std::vector<uint8_t>& id_list, std::vector<uint32_t>& data_list);
+
+    template<typename T, const size_t N>
+    int syncReadConsecutiveBytes(uint16_t address,
+                                 const std::vector<uint8_t> &id_list,
+                                 std::vector<std::array<T, N> >& data_list);
     int syncWrite(uint8_t address, uint8_t data_len, const std::vector<uint8_t>& id_list, const std::vector<uint32_t>& data_list);
 
     // we use those commands in the children classes to actually read and write values in registers
+    template<typename T>
+    int read(uint16_t address, uint8_t id, uint32_t& data);
+
     int read(uint16_t address, uint8_t data_len, uint8_t id, uint32_t& data);
     int write(uint16_t address, uint8_t data_len, uint8_t id, uint32_t data);
 
@@ -108,6 +118,138 @@ protected:
     AbstractTtlDriver& operator= ( AbstractTtlDriver && ) = default;
     AbstractTtlDriver& operator= ( const AbstractTtlDriver& ) = default;
 };
+
+/**
+ * @brief AbstractTtlDriver::read
+ * @param address
+ * @param id
+ * @param data
+ * @return
+ * TODO(CC) : use a better method from dynamixel driver (bulk read ? maybe readRxTx ?)
+ */
+template<typename T>
+int AbstractTtlDriver::read(uint16_t address, uint8_t id, uint32_t& data)
+{
+    uint8_t data_len = sizeof(T);
+    return read(address, data_len, id, data);
+}
+
+
+/**
+ * @brief AbstractTtlDriver::syncRead8Bytes
+ * @param address
+ * @param id_list
+ * @param data_list
+ * Reads N consecutive blocks of T bytes simultaneously
+ * @return
+ */
+template<typename T, const size_t N>
+int AbstractTtlDriver::syncReadConsecutiveBytes(uint16_t address,
+                                                const std::vector<uint8_t> &id_list,
+                                                std::vector<std::array<T, N> >& data_list)
+{
+    data_list.clear();
+    int dxl_comm_result = COMM_TX_FAIL;
+
+    dynamixel::GroupSyncRead groupSyncRead(_dxlPortHandler.get(), _dxlPacketHandler.get(), address, 8);
+
+    for (auto const& id : id_list)
+    {
+        if (!groupSyncRead.addParam(id))
+        {
+            groupSyncRead.clearParam();
+            return GROUP_SYNC_REDONDANT_ID;
+        }
+    }
+
+    dxl_comm_result = groupSyncRead.txRxPacket();
+
+    if (COMM_SUCCESS == dxl_comm_result)
+    {
+        for (auto const& id : id_list)
+        {
+            if (groupSyncRead.isAvailable(id, address, 8))
+            {
+                std::array<T, N> blocks;
+
+                for(uint8_t b = 0; b < N; ++b)
+                {
+                    blocks.at(b) = static_cast<T>(groupSyncRead.getData(id, address, 4));
+                }
+
+                data_list.emplace_back(std::move(blocks));
+            }
+            else
+            {
+                dxl_comm_result = GROUP_SYNC_READ_RX_FAIL;
+                break;
+            }
+        }
+    }
+
+    groupSyncRead.clearParam();
+
+    return dxl_comm_result;
+}
+
+
+/**
+ * @brief AbstractTtlDriver::syncRead
+ * @param address
+ * @param id_list
+ * @param data_list
+ * @return
+ */
+template<typename T>
+int AbstractTtlDriver::syncRead(uint8_t address,
+                                const std::vector<uint8_t> &id_list,
+                                std::vector<uint32_t> &data_list)
+{
+    int dxl_comm_result = COMM_TX_FAIL;
+
+    data_list.clear();
+    uint8_t data_len = sizeof(T);
+    if(data_len <= 4)
+    {
+        dynamixel::GroupSyncRead groupSyncRead(_dxlPortHandler.get(), _dxlPacketHandler.get(), address, data_len);
+
+        for (auto const& id : id_list)
+        {
+            if (!groupSyncRead.addParam(id))
+            {
+                groupSyncRead.clearParam();
+                return GROUP_SYNC_REDONDANT_ID;
+            }
+        }
+
+        dxl_comm_result = groupSyncRead.txRxPacket();
+
+        if (COMM_SUCCESS == dxl_comm_result)
+        {
+            for (auto const& id : id_list)
+            {
+                if (groupSyncRead.isAvailable(id, address, data_len))
+                {
+                    uint32_t data = groupSyncRead.getData(id, address, data_len);
+                    data_list.emplace_back(data);
+                }
+                else
+                {
+                    dxl_comm_result = GROUP_SYNC_READ_RX_FAIL;
+                    break;
+                }
+            }
+        }
+
+        groupSyncRead.clearParam();
+    }
+    else
+    {
+        printf("AbstractTtlDriver::syncRead ERROR: Size param must be 1, 2 or 4 bytes\n");
+    }
+
+    return dxl_comm_result;
+}
 
 } // ttl_driver
 

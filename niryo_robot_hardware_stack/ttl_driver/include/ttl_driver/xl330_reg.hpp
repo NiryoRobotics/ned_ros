@@ -157,9 +157,11 @@ struct XL330Reg
     static constexpr uint8_t SIZE_PRESENT_CURRENT          = 2;
 
     static constexpr uint16_t ADDR_PRESENT_VELOCITY         = 128;
+    using TYPE_PRESENT_VELOCITY = uint32_t;
     static constexpr uint8_t SIZE_PRESENT_VELOCITY         = 4;
 
     static constexpr uint16_t ADDR_PRESENT_POSITION         = 132;
+    using TYPE_PRESENT_POSITION = uint32_t;
     static constexpr uint8_t SIZE_PRESENT_POSITION         = 4;
 
     static constexpr uint16_t ADDR_VELOCITY_TRAJECTORY      = 136;

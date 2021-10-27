@@ -123,7 +123,7 @@ public:
     int readCustomCommand(uint8_t id, int32_t reg_address, int &value, int byte_number);
 
     // read status
-    bool readJointsStatus();
+    bool readPositionsStatus();
     bool readEndEffectorStatus();
     bool readHardwareStatus();
 

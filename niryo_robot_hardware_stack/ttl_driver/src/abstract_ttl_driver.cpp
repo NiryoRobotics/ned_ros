@@ -139,6 +139,7 @@ std::string AbstractTtlDriver::str() const
     return ss.str();
 }
 
+
 /*
  *  -----------------   Read Write operations   --------------------
  */
@@ -195,7 +196,6 @@ int AbstractTtlDriver::read(uint16_t address, uint8_t data_len, uint8_t id, uint
     return dxl_comm_result;
 }
 
-
 /**
  * @brief AbstractTtlDriver::write
  * @param address
@@ -239,57 +239,23 @@ int AbstractTtlDriver::write(uint16_t address, uint8_t data_len, uint8_t id, uin
  * @return
  */
 int AbstractTtlDriver::syncRead(uint8_t address, uint8_t data_len,
-                                const vector<uint8_t> &id_list, vector<uint32_t> &data_list)
+                                const std::vector<uint8_t> &id_list,
+                                std::vector<uint32_t> &data_list)
 {
-    data_list.clear();
-
-    dynamixel::GroupSyncRead groupSyncRead(_dxlPortHandler.get(), _dxlPacketHandler.get(), address, data_len);
-    int dxl_comm_result = COMM_TX_FAIL;
-
-    for (auto const& id : id_list)
+    switch(data_len)
     {
-        if (!groupSyncRead.addParam(id))
-        {
-            groupSyncRead.clearParam();
-            return GROUP_SYNC_REDONDANT_ID;
-        }
+      case DXL_LEN_ONE_BYTE:
+        return syncRead<uint8_t>(address, id_list, data_list);
+      case DXL_LEN_TWO_BYTES:
+        return syncRead<uint16_t>(address, id_list, data_list);
+      case DXL_LEN_FOUR_BYTES:
+        return syncRead<uint32_t>(address, id_list, data_list);
+      default:
+        break;
     }
 
-    dxl_comm_result = groupSyncRead.txRxPacket();
-
-    if (COMM_SUCCESS == dxl_comm_result)
-    {
-        for (auto const& id : id_list)
-        {
-            if (groupSyncRead.isAvailable(id, address, data_len))
-            {
-                switch (data_len)
-                {
-                    case DXL_LEN_ONE_BYTE:
-                        data_list.emplace_back(static_cast<uint8_t>(groupSyncRead.getData(id, address, data_len)));
-                    break;
-                    case DXL_LEN_TWO_BYTES:
-                        data_list.emplace_back(static_cast<uint16_t>(groupSyncRead.getData(id, address, data_len)));
-                    break;
-                    case DXL_LEN_FOUR_BYTES:
-                        data_list.emplace_back(groupSyncRead.getData(id, address, data_len));
-                    break;
-                    default:
-                        printf("AbstractTtlDriver::syncRead ERROR: Size param must be 1, 2 or 4 bytes\n");
-                    break;
-                }
-            }
-            else
-            {
-                dxl_comm_result = GROUP_SYNC_READ_RX_FAIL;
-                break;
-            }
-        }
-    }
-
-    groupSyncRead.clearParam();
-
-    return dxl_comm_result;
+    printf("AbstractTtlDriver::syncRead ERROR: Size param must be 1, 2 or 4 bytes\n");
+    return COMM_TX_FAIL;
 }
 
 /**

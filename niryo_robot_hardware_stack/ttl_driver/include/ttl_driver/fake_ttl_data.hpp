@@ -74,9 +74,9 @@ class FakeTtlData
         
         struct FakeEndEffector : public AbstractFakeRegister
         {
+            uint32_t button0_action{0};
             uint32_t button1_action{0};
             uint32_t button2_action{0};
-            uint32_t button3_action{0};
             
             uint32_t x_value{1};
             uint32_t y_value{1};

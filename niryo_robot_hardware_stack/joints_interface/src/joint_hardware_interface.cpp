@@ -213,11 +213,13 @@ bool JointHardwareInterface::initStepper(ros::NodeHandle &robot_hwnh,
         double gear_ratio = 1.0;
         int direction = 1;
         double max_effort = 0.0;
+        int calibration_stall_threshold = 1;
 
         robot_hwnh.getParam(currentNamespace + "/offset_position", offsetPos);
         robot_hwnh.getParam(currentNamespace + "/gear_ratio", gear_ratio);
         robot_hwnh.getParam(currentNamespace + "/direction", direction);
         robot_hwnh.getParam(currentNamespace + "/max_effort", max_effort);
+        robot_hwnh.getParam(currentNamespace + "/calibration_stall_threshold", calibration_stall_threshold);
 
         // acceleration and velocity profiles
         int data{};
@@ -268,6 +270,7 @@ bool JointHardwareInterface::initStepper(ros::NodeHandle &robot_hwnh,
         stepperState->setGearRatio(gear_ratio);
         stepperState->setDirection(static_cast<int8_t>(direction));
         stepperState->setMaxEffort(max_effort);
+        stepperState->setCalibrationStallThreshold(static_cast<uint8_t>(calibration_stall_threshold));
 
         res = true;
     }
@@ -415,8 +418,6 @@ void JointHardwareInterface::read(const ros::Time &/*time*/, const ros::Duration
         if (jState && jState->isValid())
         {
             jState->pos = jState->to_rad_pos(jState->getPosition());
-            jState->vel = jState->getVelocity();
-            jState->eff = jState->getTorque();
         }
     }
 

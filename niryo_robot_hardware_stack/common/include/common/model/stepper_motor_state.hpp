@@ -48,22 +48,25 @@ public:
     // setters
     void updateLastTimeRead();
     void setHwFailCounter(double fail_counter);
-    void setGearRatio(double gear_ratio);
     void setMaxEffort(double max_effort);
+    void setGearRatio(double gear_ratio);
 
     void setCalibration(const common::model::EStepperCalibrationStatus &calibration_state,
                         const int32_t &calibration_value);
     void setCalibration(const std::tuple<EStepperCalibrationStatus, int32_t> &data);
+    void setMicroSteps(double micro_steps);
 
     // getters
     double getLastTimeRead() const;
     double getHwFailCounter() const;
 
-    double getGearRatio() const;
     double getMaxEffort() const;
+    double getMicroSteps() const;
 
     common::model::EStepperCalibrationStatus getCalibrationState() const;
     int32_t getCalibrationValue() const;
+
+    std::vector<uint32_t> getVelocityProfile() const;
 
     // tests
     bool isConveyor() const;
@@ -74,13 +77,11 @@ public:
     bool isValid() const override;
     std::string str() const override;
 
-    int to_motor_pos(double pos_rad) override;
-    double to_rad_pos(int pos) override;
+    int to_motor_pos(double rad_pos) override;
+    double to_rad_pos(int motor_pos) override;
 
-    std::vector<uint32_t> getVelocityProfile() const;
-
-    double getMicroSteps() const;
-    void setMicroSteps(double micro_steps);
+    int to_motor_vel(double rad_vel) override;
+    double to_rad_vel(int motor_vel) override;
 
     void setProfileVStart(const uint32_t &profile_v_start);
     void setProfileA1(const uint32_t &profile_a_1);
@@ -91,13 +92,16 @@ public:
     void setProfileD1(const uint32_t &profile_d_1);
     void setProfileVStop(const uint32_t &profile_v_stop);
 
+    uint8_t getCalibrationStallThreshold() const;
+    void setCalibrationStallThreshold(const uint8_t& calibration_stall_threshold);
+
 protected:
     double _last_time_read{-1.0};
     double _hw_fail_counter{0.0};
 
-    double _gear_ratio{1.0};
     double _max_effort{0.0};
     double _micro_steps{8.0};
+    double _gear_ratio{1.0};
 
     // profile
     uint32_t _profile_v_start{1};
@@ -112,8 +116,14 @@ protected:
     common::model::EStepperCalibrationStatus _calibration_state{common::model::EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED};
     int32_t _calibration_value{0};
 
+    uint8_t _calibration_stall_threshold{6};
+
 private:
-    double getMultiplierRatio() const;
+    void updateMultiplierRatio();
+
+    double _pos_multiplier_ratio{1.0};
+    double _vel_multiplier_ratio{1.0};
+
     static constexpr double STEPPERS_MOTOR_STEPS_PER_REVOLUTION = 200.0;
 
 };
@@ -158,6 +168,12 @@ bool StepperMotorState::isConveyor() const
     return (getComponentType() == common::model::EComponentType::CONVEYOR);
 }
 
+inline
+uint8_t StepperMotorState::getCalibrationStallThreshold() const
+{
+  return _calibration_stall_threshold;
+}
+
 /**
  * @brief StepperMotorState::getVelocityProfile
  * @return
@@ -183,38 +199,6 @@ inline
 double StepperMotorState::getMicroSteps() const
 {
   return _micro_steps;
-}
-
-/**
- * @brief StepperMotorState::getMultiplierRatio
- * @return
- * TODO(CC) temporary solution. Remove the if and base this on conf or polymorphism
- */
-inline
-double StepperMotorState::getMultiplierRatio() const
-{
-    double multiplier_ratio{1.0};
-
-    if (common::model::EBusProtocol::CAN == _bus_proto)
-    {
-        multiplier_ratio = STEPPERS_MOTOR_STEPS_PER_REVOLUTION * _micro_steps * _gear_ratio;
-    }
-    else
-    {
-        multiplier_ratio = 360 / 0.088;
-    }
-
-    return multiplier_ratio;
-}
-
-/**
- * @brief StepperMotorState::getGearRatio
- * @return
- */
-inline
-double StepperMotorState::getGearRatio() const
-{
-  return _gear_ratio;
 }
 
 /**

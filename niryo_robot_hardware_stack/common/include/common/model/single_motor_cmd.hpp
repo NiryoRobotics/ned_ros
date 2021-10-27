@@ -210,13 +210,13 @@ std::string DxlSingleCmd::str() const
 
     ss << DxlCommandTypeEnum(_type).toString() << " ";
 
-    ss << "Motor id: ";
-        ss << std::to_string(_id) << " ";
+    ss << "Motor id: "
+       << std::to_string(_id) << " "
+       << "; param: ";
 
-    if(!_param_list.empty())
+    for(auto const &p : _param_list)
     {
-        ss << "; param: ";
-        ss << std::to_string(getParam());
+        ss << std::to_string(p);
     }
 
     return ss.str();

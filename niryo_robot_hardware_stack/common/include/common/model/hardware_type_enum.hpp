@@ -59,6 +59,8 @@ public:
 private:
     friend class AbstractEnum<HardwareTypeEnum, EHardwareType>;
     static std::map<EHardwareType, std::string> initialize();
+
+
 };
 
 } // model

@@ -83,6 +83,7 @@ public:
 
     int syncReadPosition(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &position_list) override;
     int syncReadVelocity(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &velocity_list) override;
+    int syncReadJointStatus(const std::vector<uint8_t> &id_list, std::vector< std::array<uint32_t, 2> >& data_array_list) override;
 
     // AbstractStepperDriver interface
 public:
@@ -335,7 +336,7 @@ int StepperDriver<reg_type>::syncWriteVelocityGoal(const std::vector<uint8_t> &i
 template<typename reg_type>
 int StepperDriver<reg_type>::readPosition(uint8_t id, uint32_t& present_position)
 {
-  return read(reg_type::ADDR_PRESENT_POSITION, reg_type::SIZE_PRESENT_POSITION, id, present_position);
+  return read<typename reg_type::TYPE_PRESENT_POSITION>(reg_type::ADDR_PRESENT_POSITION, id, present_position);
 }
 
 /**
@@ -347,7 +348,7 @@ int StepperDriver<reg_type>::readPosition(uint8_t id, uint32_t& present_position
 template<typename reg_type>
 int StepperDriver<reg_type>::readVelocity(uint8_t id, uint32_t &present_velocity)
 {
-  return read(reg_type::ADDR_PRESENT_VELOCITY, reg_type::SIZE_PRESENT_VELOCITY, id, present_velocity);
+  return read<typename reg_type::TYPE_PRESENT_VELOCITY>(reg_type::ADDR_PRESENT_VELOCITY, id, present_velocity);
 }
 
 /**
@@ -398,7 +399,7 @@ int StepperDriver<reg_type>::readHwErrorStatus(uint8_t id, uint32_t& hardware_st
 template<typename reg_type>
 int StepperDriver<reg_type>::syncReadPosition(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &position_list)
 {
-  return syncRead(reg_type::ADDR_PRESENT_POSITION, reg_type::SIZE_PRESENT_POSITION, id_list, position_list);
+    return syncRead<typename reg_type::TYPE_PRESENT_POSITION>(reg_type::ADDR_PRESENT_POSITION, id_list, position_list);
 }
 
 /**
@@ -410,7 +411,20 @@ int StepperDriver<reg_type>::syncReadPosition(const std::vector<uint8_t> &id_lis
 template<typename reg_type>
 int StepperDriver<reg_type>::syncReadVelocity(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &velocity_list)
 {
-  return syncRead(reg_type::ADDR_PRESENT_VELOCITY, reg_type::SIZE_PRESENT_VELOCITY, id_list, velocity_list);
+  return syncRead<typename reg_type::TYPE_PRESENT_VELOCITY>(reg_type::ADDR_PRESENT_VELOCITY, id_list, velocity_list);
+}
+
+/**
+ * @brief StepperDriver::syncReadJointStatus
+ * @param id_list
+ * @param data_array
+ * @return
+ */
+template<typename reg_type>
+int StepperDriver<reg_type>::syncReadJointStatus(const std::vector<uint8_t> &id_list,
+                                                 std::vector<std::array<uint32_t, 2> >& data_array_list)
+{
+    return syncReadConsecutiveBytes(reg_type::ADDR_PRESENT_VELOCITY, id_list, data_array_list);
 }
 
 /**

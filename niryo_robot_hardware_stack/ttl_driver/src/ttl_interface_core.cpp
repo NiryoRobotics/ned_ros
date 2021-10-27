@@ -597,7 +597,7 @@ void TtlInterfaceCore::controlLoop()
                 lock_guard<mutex> lck(_control_loop_mutex);
                 if (ros::Time::now().toSec() - _time_hw_data_last_read >= _delta_time_data_read)
                 {
-                    _ttl_manager->readJointsStatus();
+                    _ttl_manager->readPositionsStatus();
                     _time_hw_data_last_read = ros::Time::now().toSec();
                 }
                 if (ros::Time::now().toSec() - _time_hw_status_last_read >= _delta_time_status_read)
@@ -608,14 +608,14 @@ void TtlInterfaceCore::controlLoop()
                 if (_ttl_manager->hasEndEffector() &&
                     ros::Time::now().toSec() - _time_hw_end_effector_last_read >= _delta_time_end_effector_read)
                 {
-                    _ttl_manager->readEndEffectorStatus();
+                    //_ttl_manager->readEndEffectorStatus();
                     _time_hw_end_effector_last_read = ros::Time::now().toSec();
                 }
                 if (ros::Time::now().toSec() - _time_hw_data_last_write >= _delta_time_write)
                 {
                     _executeCommand();
                     _time_hw_data_last_write = ros::Time::now().toSec();
-                    ros::Duration(0.001).sleep();
+                    ros::Duration(0.005).sleep();
                 }
             }
             else

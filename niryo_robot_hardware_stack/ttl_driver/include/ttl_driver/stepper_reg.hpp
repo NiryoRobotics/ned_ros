@@ -67,11 +67,11 @@ struct StepperReg
 
     // unit = 0.01 RPM
     static constexpr uint16_t ADDR_PRESENT_VELOCITY         = 128;
-    static constexpr uint8_t SIZE_PRESENT_VELOCITY          = 4;
+    using TYPE_PRESENT_VELOCITY = uint32_t;
 
     // unit = 0.088 deg
     static constexpr uint16_t ADDR_PRESENT_POSITION         = 132;
-    static constexpr uint8_t SIZE_PRESENT_POSITION          = 4;
+    using TYPE_PRESENT_POSITION = uint32_t;
 
     // unit = 1mV
     static constexpr uint16_t ADDR_PRESENT_VOLTAGE          = 144;
