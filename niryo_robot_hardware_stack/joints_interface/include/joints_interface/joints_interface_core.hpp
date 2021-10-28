@@ -47,10 +47,6 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "niryo_robot_msgs/Trigger.h"
 #include "common/model/hardware_type_enum.hpp"
 
-#include <joints_interface/stepper1Config.h>
-#include <joints_interface/stepper2Config.h>
-#include <joints_interface/stepper3Config.h>
-
 namespace joints_interface
 {
 
@@ -98,10 +94,6 @@ class JointsInterfaceCore : common::util::IInterfaceCore
 
         void _publishLearningMode();
 
-        void _config1Callback(joints_interface::stepper1Config &config, uint32_t level);
-        void _config2Callback(joints_interface::stepper2Config &config, uint32_t level);
-        void _config3Callback(joints_interface::stepper3Config &config, uint32_t level);
-
     private:
         ros::NodeHandle _nh;
 
@@ -128,10 +120,6 @@ class JointsInterfaceCore : common::util::IInterfaceCore
         ros::ServiceServer _calibrate_motors_server;
         ros::ServiceServer _request_new_calibration_server;
         ros::ServiceServer _activate_learning_mode_server;
-
-        dynamic_reconfigure::Server<joints_interface::stepper1Config> _dr_srv_1;
-        dynamic_reconfigure::Server<joints_interface::stepper2Config> _dr_srv_2;
-        dynamic_reconfigure::Server<joints_interface::stepper3Config> _dr_srv_3;
 
         std::string _hardware_version;
 };

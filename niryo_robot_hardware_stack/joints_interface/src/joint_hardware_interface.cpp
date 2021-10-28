@@ -77,85 +77,79 @@ JointHardwareInterface::JointHardwareInterface(ros::NodeHandle& rootnh,
     _calibration_manager = std::make_unique<CalibrationManager>(robot_hwnh, _joint_list, _ttl_interface, _can_interface);
 }
 
-void JointHardwareInterface::config1Callback(joints_interface::stepper1Config &config, uint32_t level)
+void JointHardwareInterface::configCallback(joints_interface::steppersConfig &config, uint32_t level)
 {
   ROS_INFO("Reconfigure Request: %d %d %d %d %d %d %d %d",
-            config.stepper_v_start, config.stepper_a_1,
-            config.stepper_v_1, config.stepper_a_max,
-            config.stepper_v_max, config.stepper_d_max,
-            config.stepper_d_1, config.stepper_v_stop);
+            config.s1_v_start, config.s1_a_1,
+            config.s1_v_1, config.s1_a_max,
+            config.s1_v_max, config.s1_d_max,
+            config.s1_d_1, config.s1_v_stop);
 
-    auto state = std::dynamic_pointer_cast<common::model::StepperMotorState>(_joint_list[0]);
+    auto s1 = std::dynamic_pointer_cast<common::model::StepperMotorState>(_joint_list[0]);
 
-    state->setProfileVStart(static_cast<uint32_t>(config.stepper_v_start));
-    state->setProfileA1(static_cast<uint32_t>(config.stepper_a_1));
-    state->setProfileV1(static_cast<uint32_t>(config.stepper_v_1));
-    state->setProfileAMax(static_cast<uint32_t>(config.stepper_a_max));
-    state->setProfileVMax(static_cast<uint32_t>(config.stepper_v_max));
-    state->setProfileDMax(static_cast<uint32_t>(config.stepper_d_max));
-    state->setProfileD1(static_cast<uint32_t>(config.stepper_d_1));
-    state->setProfileVStop(static_cast<uint32_t>(config.stepper_v_stop));
+    s1->setProfileVStart(static_cast<uint32_t>(config.s1_v_start));
+    s1->setProfileA1(static_cast<uint32_t>(config.s1_a_1));
+    s1->setProfileV1(static_cast<uint32_t>(config.s1_v_1));
+    s1->setProfileAMax(static_cast<uint32_t>(config.s1_a_max));
+    s1->setProfileVMax(static_cast<uint32_t>(config.s1_v_max));
+    s1->setProfileDMax(static_cast<uint32_t>(config.s1_d_max));
+    s1->setProfileD1(static_cast<uint32_t>(config.s1_d_1));
+    s1->setProfileVStop(static_cast<uint32_t>(config.s1_v_stop));
 
     StepperTtlSingleCmd cmd_profile(
                 EStepperCommandType::CMD_TYPE_VELOCITY_PROFILE,
-                state->getId(),
-                state->getVelocityProfile());
+                s1->getId(),
+                s1->getVelocityProfile());
 
     _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperTtlSingleCmd>(cmd_profile));
-}
 
-void JointHardwareInterface::config2Callback(joints_interface::stepper2Config &config, uint32_t level)
-{
-  ROS_INFO("Reconfigure Request: %d %d %d %d %d %d %d %d",
-            config.stepper_v_start, config.stepper_a_1,
-            config.stepper_v_1, config.stepper_a_max,
-            config.stepper_v_max, config.stepper_d_max,
-            config.stepper_d_1, config.stepper_v_stop);
+    ROS_INFO("Reconfigure Request: %d %d %d %d %d %d %d %d",
+              config.s2_v_start, config.s2_a_1,
+              config.s2_v_1, config.s2_a_max,
+              config.s2_v_max, config.s2_d_max,
+              config.s2_d_1, config.s2_v_stop);
 
-    auto state = std::dynamic_pointer_cast<common::model::StepperMotorState>(_joint_list[0]);
+    auto s2 = std::dynamic_pointer_cast<common::model::StepperMotorState>(_joint_list[0]);
 
-    state->setProfileVStart(static_cast<uint32_t>(config.stepper_v_start));
-    state->setProfileA1(static_cast<uint32_t>(config.stepper_a_1));
-    state->setProfileV1(static_cast<uint32_t>(config.stepper_v_1));
-    state->setProfileAMax(static_cast<uint32_t>(config.stepper_a_max));
-    state->setProfileVMax(static_cast<uint32_t>(config.stepper_v_max));
-    state->setProfileDMax(static_cast<uint32_t>(config.stepper_d_max));
-    state->setProfileD1(static_cast<uint32_t>(config.stepper_d_1));
-    state->setProfileVStop(static_cast<uint32_t>(config.stepper_v_stop));
+    s2->setProfileVStart(static_cast<uint32_t>(config.s2_v_start));
+    s2->setProfileA1(static_cast<uint32_t>(config.s2_a_1));
+    s2->setProfileV1(static_cast<uint32_t>(config.s2_v_1));
+    s2->setProfileAMax(static_cast<uint32_t>(config.s2_a_max));
+    s2->setProfileVMax(static_cast<uint32_t>(config.s2_v_max));
+    s2->setProfileDMax(static_cast<uint32_t>(config.s2_d_max));
+    s2->setProfileD1(static_cast<uint32_t>(config.s2_d_1));
+    s2->setProfileVStop(static_cast<uint32_t>(config.s2_v_stop));
 
-    StepperTtlSingleCmd cmd_profile(
+    StepperTtlSingleCmd cmd_profile2(
                 EStepperCommandType::CMD_TYPE_VELOCITY_PROFILE,
-                state->getId(),
-                state->getVelocityProfile());
+                s2->getId(),
+                s2->getVelocityProfile());
 
-    _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperTtlSingleCmd>(cmd_profile));
-}
+    _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperTtlSingleCmd>(cmd_profile2));
 
-void JointHardwareInterface::config3Callback(joints_interface::stepper3Config &config, uint32_t level)
-{
-  ROS_INFO("Reconfigure Request: %d %d %d %d %d %d %d %d",
-            config.stepper_v_start, config.stepper_a_1,
-            config.stepper_v_1, config.stepper_a_max,
-            config.stepper_v_max, config.stepper_d_max,
-            config.stepper_d_1, config.stepper_v_stop);
+    ROS_INFO("Reconfigure Request: %d %d %d %d %d %d %d %d",
+              config.s3_v_start, config.s3_a_1,
+              config.s3_v_1, config.s3_a_max,
+              config.s3_v_max, config.s3_d_max,
+              config.s3_d_1, config.s3_v_stop);
 
-    auto state = std::dynamic_pointer_cast<common::model::StepperMotorState>(_joint_list[0]);
+    auto s3 = std::dynamic_pointer_cast<common::model::StepperMotorState>(_joint_list[0]);
 
-    state->setProfileVStart(static_cast<uint32_t>(config.stepper_v_start));
-    state->setProfileA1(static_cast<uint32_t>(config.stepper_a_1));
-    state->setProfileV1(static_cast<uint32_t>(config.stepper_v_1));
-    state->setProfileAMax(static_cast<uint32_t>(config.stepper_a_max));
-    state->setProfileVMax(static_cast<uint32_t>(config.stepper_v_max));
-    state->setProfileDMax(static_cast<uint32_t>(config.stepper_d_max));
-    state->setProfileD1(static_cast<uint32_t>(config.stepper_d_1));
-    state->setProfileVStop(static_cast<uint32_t>(config.stepper_v_stop));
+    s3->setProfileVStart(static_cast<uint32_t>(config.s3_v_start));
+    s3->setProfileA1(static_cast<uint32_t>(config.s3_a_1));
+    s3->setProfileV1(static_cast<uint32_t>(config.s3_v_1));
+    s3->setProfileAMax(static_cast<uint32_t>(config.s3_a_max));
+    s3->setProfileVMax(static_cast<uint32_t>(config.s3_v_max));
+    s3->setProfileDMax(static_cast<uint32_t>(config.s3_d_max));
+    s3->setProfileD1(static_cast<uint32_t>(config.s3_d_1));
+    s3->setProfileVStop(static_cast<uint32_t>(config.s3_v_stop));
 
-    StepperTtlSingleCmd cmd_profile(
+    StepperTtlSingleCmd cmd_profile3(
                 EStepperCommandType::CMD_TYPE_VELOCITY_PROFILE,
-                state->getId(),
-                state->getVelocityProfile());
+                s3->getId(),
+                s3->getVelocityProfile());
 
-    _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperTtlSingleCmd>(cmd_profile));
+    _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperTtlSingleCmd>(cmd_profile3));
 }
 
 /**
@@ -273,16 +267,10 @@ bool JointHardwareInterface::init(ros::NodeHandle& /*rootnh*/, ros::NodeHandle &
     registerInterface(&_joint_state_interface);
     registerInterface(&_joint_position_interface);
 
-    dynamic_reconfigure::Server<joints_interface::stepper1Config>::CallbackType cb1;
-    cb1 = boost::bind(&JointHardwareInterface::config1Callback, this, _1, _2);;
-    dynamic_reconfigure::Server<joints_interface::stepper2Config>::CallbackType cb2;
-    cb2 = boost::bind(&JointHardwareInterface::config2Callback, this, _1, _2);;
-    dynamic_reconfigure::Server<joints_interface::stepper3Config>::CallbackType cb3;
-    cb3 = boost::bind(&JointHardwareInterface::config3Callback, this, _1, _2);;
+    dynamic_reconfigure::Server<joints_interface::steppersConfig>::CallbackType cb;
+    cb = boost::bind(&JointHardwareInterface::configCallback, this, _1, _2);
 
-    _dr_srv_1.setCallback(cb1);
-    _dr_srv_2.setCallback(cb2);
-    _dr_srv_3.setCallback(cb3);
+    _dr_srv.setCallback(cb);
 
     return true;
 }

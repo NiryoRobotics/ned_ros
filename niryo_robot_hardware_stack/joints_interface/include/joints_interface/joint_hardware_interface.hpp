@@ -38,9 +38,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "common/model/joint_state.hpp"
 
 #include <dynamic_reconfigure/server.h>
-#include <joints_interface/stepper1Config.h>
-#include <joints_interface/stepper2Config.h>
-#include <joints_interface/stepper3Config.h>
+#include <joints_interface/steppersConfig.h>
 
 namespace joints_interface
 {
@@ -77,9 +75,7 @@ class JointHardwareInterface : public hardware_interface::RobotHW
 
     private:
 
-        void config1Callback(joints_interface::stepper1Config &config, uint32_t level);
-        void config2Callback(joints_interface::stepper2Config &config, uint32_t level);
-        void config3Callback(joints_interface::stepper3Config &config, uint32_t level);
+        void configCallback(joints_interface::steppersConfig &config, uint32_t level);
 
         bool initStepper(ros::NodeHandle &robot_hwnh,
                          const std::shared_ptr<common::model::StepperMotorState>& stepperState,
@@ -89,9 +85,7 @@ class JointHardwareInterface : public hardware_interface::RobotHW
                      const std::string& currentNamespace) const;
 
     private:
-        dynamic_reconfigure::Server<joints_interface::stepper1Config> _dr_srv_1;
-        dynamic_reconfigure::Server<joints_interface::stepper2Config> _dr_srv_2;
-        dynamic_reconfigure::Server<joints_interface::stepper3Config> _dr_srv_3;
+        dynamic_reconfigure::Server<joints_interface::steppersConfig> _dr_srv;
 
         hardware_interface::JointStateInterface _joint_state_interface;
         hardware_interface::PositionJointInterface _joint_position_interface;
