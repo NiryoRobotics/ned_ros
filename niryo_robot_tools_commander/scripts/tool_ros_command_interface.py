@@ -31,10 +31,10 @@ class ToolRosCommandInterface:
 
         self.__service_ping_dxl_tool = rospy.ServiceProxy(namespace + 'ping_and_set_dxl_tool', PingDxlTool)
 
-        self.__service_setup_digital_output_tool = rospy.ServiceProxy('/niryo_robot_rpi/set_digital_io',
-                                                                      SetDigitalIO)
-        self.__service_activate_digital_output_tool = rospy.ServiceProxy('/niryo_robot_rpi/set_digital_io_mode',
-                                                                         SetIOMode)
+        self.__service_activate_digital_output_tool = rospy.ServiceProxy('/niryo_robot_rpi/set_digital_io',
+                                                                         SetDigitalIO)
+        self.__service_setup_digital_output_tool = rospy.ServiceProxy('/niryo_robot_rpi/set_digital_io_mode',
+                                                                      SetIOMode)
 
         self.__state_ros_communication_problem = state_ros_communication_problem
         rospy.logdebug("Interface between Tools Commander and ROS Control has been started.")
@@ -60,12 +60,12 @@ class ToolRosCommandInterface:
 
     # Vacuum
     def pull_air_vacuum_pump(
-                    self, vp_id, vp_pull_air_velocity, vp_pull_air_position,
-                    vp_pull_air_max_torque, vp_pull_air_hold_torque):
+            self, vp_id, vp_pull_air_velocity, vp_pull_air_position,
+            vp_pull_air_max_torque, vp_pull_air_hold_torque):
         try:
             resp = self.__service_pull_air_vacuum_pump(
-                                        vp_id, vp_pull_air_velocity, vp_pull_air_position,
-                                        vp_pull_air_max_torque, vp_pull_air_hold_torque)
+                vp_id, vp_pull_air_velocity, vp_pull_air_position,
+                vp_pull_air_max_torque, vp_pull_air_hold_torque)
             return resp.state
         except rospy.ServiceException:
             rospy.logerr("ROS Tool Interface - Failed to Pull Air")
@@ -74,8 +74,8 @@ class ToolRosCommandInterface:
     def push_air_vacuum_pump(self, vp_id, vp_push_air_velocity, vp_push_air_position, vp_push_air_max_torque):
         try:
             resp = self.__service_push_air_vacuum_pump(
-                                            vp_id, vp_push_air_velocity,
-                                            vp_push_air_position, vp_push_air_max_torque)
+                vp_id, vp_push_air_velocity,
+                vp_push_air_position, vp_push_air_max_torque)
             return resp.state
         except rospy.ServiceException:
             rospy.logerr("ROS Tool Interface - Failed to Push Air")

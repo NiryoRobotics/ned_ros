@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 # Lib
-import sys
+#import sys
 import rospy
 import logging
 import rosnode
@@ -28,7 +28,8 @@ class LedRingNode:
         rospy.signal_shutdown("shutdown")
 
     def shutdown(self):
-        sys.exit(0)
+        #sys.exit(0)
+        pass
 
 
 if __name__ == '__main__':
