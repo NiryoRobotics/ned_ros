@@ -86,14 +86,14 @@ void JointHardwareInterface::configCallback(joints_interface::steppersConfig &co
             config.stepper_1_d_1, config.stepper_1_v_stop);
 
     auto state = std::dynamic_pointer_cast<common::model::StepperMotorState>(_joint_list[0]);
-    // state->setProfileVStart(config.stepper_1_v_start);
-    // state->setProfileA1(config.stepper_1_a_1);
-    // state->setProfileV1(config.stepper_1_v_1);
-    // state->setProfileAMax(config.stepper_1_a_max);
-    // state->setProfileVMax(config.stepper_1_v_max);
-    // state->setProfileDMax(config.stepper_1_d_max);
-    // state->setProfileD1(config.stepper_1_d_1);
-    // state->setProfileVStop(config.stepper_1_v_stop);
+    state->setProfileVStart(config.stepper_1_v_start);
+    state->setProfileA1(config.stepper_1_a_1);
+    state->setProfileV1(config.stepper_1_v_1);
+    state->setProfileAMax(config.stepper_1_a_max);
+    state->setProfileVMax(config.stepper_1_v_max);
+    state->setProfileDMax(config.stepper_1_d_max);
+    state->setProfileD1(config.stepper_1_d_1);
+    state->setProfileVStop(config.stepper_1_v_stop);
 }
 
 /**
@@ -215,7 +215,7 @@ bool JointHardwareInterface::init(ros::NodeHandle& /*rootnh*/, ros::NodeHandle &
 
     cb = boost::bind(&JointHardwareInterface::configCallback, this, _1, _2);
     _dr_srv.setCallback(cb);
-    
+
     return true;
 }
 
