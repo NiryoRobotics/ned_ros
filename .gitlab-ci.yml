@@ -100,7 +100,7 @@ build_doc_job:
   retry:
     max: 1
   before_script:
-    - pip3 install -U -I pyyaml rospkg
+    - pip3 install -U pyyaml rospkg
   script:
     # Quick fix for changing "ROS folder "
     - previous_path=`pwd`
