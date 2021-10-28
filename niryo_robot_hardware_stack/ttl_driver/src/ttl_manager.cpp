@@ -582,46 +582,43 @@ bool TtlManager::readEndEffectorStatus()
     if (_driver_map.count(EHardwareType::END_EFFECTOR))
     {
         unsigned int hw_errors_increment = 0;
-
-        shared_ptr<EndEffectorDriver<EndEffectorReg> > driver = std::dynamic_pointer_cast<EndEffectorDriver<EndEffectorReg> >(_driver_map.at(EHardwareType::END_EFFECTOR));
-
-        if (driver && _ids_map.count(EHardwareType::END_EFFECTOR))
+        try
         {
-            // we retrieve the associated id for the end effector
-            uint8_t id = _ids_map.at(EHardwareType::END_EFFECTOR).front();
-            common::model::EActionType action;
-
-            if (_state_map.count(id))
+            shared_ptr<EndEffectorDriver<EndEffectorReg> > driver = std::dynamic_pointer_cast<EndEffectorDriver<EndEffectorReg> >(_driver_map.at(EHardwareType::END_EFFECTOR));
+            if (_ids_map.count(EHardwareType::END_EFFECTOR))
             {
+                // we retrieve the associated id for the end effector
+                uint8_t id = _ids_map.at(EHardwareType::END_EFFECTOR).front();
+                common::model::EActionType action;
+
+                // read buttons status if state map have id of EE
                 auto state = std::dynamic_pointer_cast<EndEffectorState>(_state_map.at(id));
-                if (state)
-                {
-                    // free drive button
-                    if (COMM_SUCCESS == driver->readButton0Status(id, action))
-                        state->setButtonStatus(0, action);
-                    else
-                        hw_errors_increment++;
+                // free drive button
+                if (COMM_SUCCESS == driver->readButton0Status(id, action))
+                    state->setButtonStatus(0, action);
+                else
+                    hw_errors_increment++;
 
-                    // save pos button
-                    if (COMM_SUCCESS == driver->readButton1Status(id, action))
-                        state->setButtonStatus(1, action);
-                    else
-                        hw_errors_increment++;
+                // save pos button
+                if (COMM_SUCCESS == driver->readButton1Status(id, action))
+                    state->setButtonStatus(1, action);
+                else
+                    hw_errors_increment++;
 
-                    // custom button
-                    if (COMM_SUCCESS == driver->readButton2Status(id, action))
-                        state->setButtonStatus(2, action);
-                    else
-                        hw_errors_increment++;
+                // custom button
+                if (COMM_SUCCESS == driver->readButton2Status(id, action))
+                    state->setButtonStatus(2, action);
+                else
+                    hw_errors_increment++;
 
-                    bool digital_data;
-                    if (COMM_SUCCESS == driver->readDigitalInput(id, digital_data))
-                        state->setDigitalIn(digital_data);
-                    else
-                        hw_errors_increment++;
-                }
-            }
-        }  // for driver_map
+                bool digital_data;
+                if (COMM_SUCCESS == driver->readDigitalInput(id, digital_data))
+                    state->setDigitalIn(digital_data);
+                else
+                    hw_errors_increment++;
+            }  // for driver_map
+        }
+        catch(const std::exception& e) {}
 
         // we reset the global error variable only if no errors
         if (0 == hw_errors_increment)
