@@ -216,7 +216,7 @@ bool TtlInterfaceCore::rebootMotor(uint8_t motor_id)
     lock_guard<mutex> lck(_control_loop_mutex);
     int result = _ttl_manager->rebootMotor(motor_id);
     ros::Duration(1.5).sleep();
-    // return truc if result is COMM_SUCCESS
+    // return true if result is COMM_SUCCESS
     return (COMM_SUCCESS == result);
 }
 
@@ -576,18 +576,22 @@ void TtlInterfaceCore::controlLoop()
                 ROS_DEBUG("TtlInterfaceCore::controlLoop - Scan to find motors");
 
                 int bus_state = COMM_PORT_BUSY;
+                {
+                    lock_guard<mutex> lck(_control_loop_mutex);
+                    bus_state = _ttl_manager->scanAndCheck();
+                }
                 while (TTL_SCAN_OK != bus_state)
                 {
-                    {
-                        lock_guard<mutex> lck(_control_loop_mutex);
-                        bus_state = _ttl_manager->scanAndCheck();
-                    }
                     missing_ids = getRemovedMotorList();
                     for (auto const& id : missing_ids)
                     {
                         ROS_WARN("TtlInterfaceCore::controlLoop - motor %d do not seem to be connected", id);
                     }
                     ros::Duration(0.25).sleep();
+                    {
+                        lock_guard<mutex> lck(_control_loop_mutex);
+                        bus_state = _ttl_manager->scanAndCheck();
+                    }
                 }
                 ROS_INFO("TtlInterfaceCore::controlLoop - Bus is ok");
             }
@@ -597,26 +601,31 @@ void TtlInterfaceCore::controlLoop()
                 lock_guard<mutex> lck(_control_loop_mutex);
                 if (ros::Time::now().toSec() - _time_hw_data_last_read >= _delta_time_data_read)
                 {
+                    _time_hw_data_last_read += _delta_time_data_read;
                     _ttl_manager->readPositionsStatus();
-                    _time_hw_data_last_read = ros::Time::now().toSec();
+                    // _time_hw_data_last_read = ros::Time::now().toSec();
                 }
                 if (ros::Time::now().toSec() - _time_hw_status_last_read >= _delta_time_status_read)
                 {
+                    _time_hw_status_last_read += _delta_time_status_read;
                     _ttl_manager->readHardwareStatus();
-                    _time_hw_status_last_read = ros::Time::now().toSec();
+                    // _time_hw_status_last_read = ros::Time::now().toSec();
                 }
                 if (_ttl_manager->hasEndEffector() &&
                     ros::Time::now().toSec() - _time_hw_end_effector_last_read >= _delta_time_end_effector_read)
                 {
+                    _time_hw_end_effector_last_read += _delta_time_end_effector_read;
                     _ttl_manager->readEndEffectorStatus();
-                    _time_hw_end_effector_last_read = ros::Time::now().toSec();
+                    // _time_hw_end_effector_last_read = ros::Time::now().toSec();
                 }
                 if (ros::Time::now().toSec() - _time_hw_data_last_write >= _delta_time_write)
                 {
+                    _time_hw_data_last_write += _delta_time_write;
                     _executeCommand();
-                    _time_hw_data_last_write = ros::Time::now().toSec();
-                    ros::Duration(0.005).sleep();
+                    // _time_hw_data_last_write = ros::Time::now().toSec();
+                    
                 }
+                ros::Duration(0.005).sleep();
             }
             else
             {

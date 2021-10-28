@@ -9,10 +9,10 @@ steppers:
         direction: 1
         max_effort: 0
         v_start: 1
-        a_1: 400
-        v_1: 5
+        a_1: 2000
+        v_1: 10
         a_max: 4000
-        v_max: 10
+        v_max: 20
         d_max: 5000
         d_1: 2000
         v_stop: 2
@@ -25,10 +25,10 @@ steppers:
         direction: -1
         max_effort: 0
         v_start: 1
-        a_1: 1000
-        v_1: 4
+        a_1: 2000
+        v_1: 10
         a_max: 4000
-        v_max: 8
+        v_max: 15
         d_max: 5000
         d_1: 2000
         v_stop: 2

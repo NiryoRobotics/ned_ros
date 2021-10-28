@@ -32,11 +32,16 @@ find_package(catkin REQUIRED
       sensor_msgs
       std_msgs
       ttl_driver
+      dynamic_reconfigure
 )
 
 find_package(Boost REQUIRED
     COMPONENTS
         system
+)
+
+generate_dynamic_reconfigure_options(
+  cfg/steppers_config.cfg
 )
 
 ###############################################
@@ -104,6 +109,8 @@ add_dependencies(${PROJECT_NAME}
 add_dependencies(${PROJECT_NAME}_node
     ${catkin_EXPORTED_TARGETS}
 )
+
+add_dependencies(${PROJECT_NAME}_node ${PROJECT_NAME}_gencfg)
 
 ## Specify libraries to link executable targets against
 target_link_libraries(${PROJECT_NAME}
