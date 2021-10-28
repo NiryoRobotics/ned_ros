@@ -224,7 +224,7 @@ bool JointHardwareInterface::init(ros::NodeHandle& /*rootnh*/, ros::NodeHandle &
 
     cb = boost::bind(&JointHardwareInterface::configCallback, this, _1, _2);
     _dr_srv.setCallback(cb);
-    
+
     return true;
 }
 
