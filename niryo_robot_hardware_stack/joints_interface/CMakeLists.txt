@@ -41,7 +41,9 @@ find_package(Boost REQUIRED
 )
 
 generate_dynamic_reconfigure_options(
-  cfg/steppers.cfg
+    cfg/stepper1.cfg
+    cfg/stepper2.cfg
+    cfg/stepper3.cfg
 )
 
 ###############################################
