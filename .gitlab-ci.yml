@@ -186,18 +186,20 @@ build_doc_job:
     - EOF
 
 upload_staging_job:
+  rules:
+    - if: $CI_COMMIT_BRANCH
+      when: manual
   image: registry.gitlab.com/niryo/dockers/build_docs/base:v1.0.4
   stage: upload
   environment:
     name: staging
     deployment_tier: staging
+  tags:
+    - staging
   variables:
     BASE_FOLDER_DOC_URL: https://staging.docs.niryo.com/dev
     TARGET_FOLDER_OVH: ~/docs_staging/dev
     CI_COMMIT_TAG: v0.0.1
-  rules:
-    - if: $CI_COMMIT_BRANCH
-      when: manual
   dependencies:
     - build_doc_job
   needs:
@@ -215,6 +217,8 @@ upload_production_job:
   environment:
     name: production
     deployment_tier: production
+  tags:
+    - production
   variables:
     BASE_FOLDER_DOC_URL: https://docs.niryo.com/dev
     TARGET_FOLDER_OVH: ~/docs/dev
@@ -225,11 +229,11 @@ upload_production_job:
   extends: .abstract_upload
 
 release_gitlab_job:
-  image: registry.gitlab.com/gitlab-org/release-cli:v0.8.0
   rules:
     ## Just in case we would restrict to master (https://stackoverflow.com/a/64448994)
     # If a it's a tag && protected tag
     - if: $CI_COMMIT_TAG && $CI_COMMIT_REF_PROTECTED == "true"
+  image: registry.gitlab.com/gitlab-org/release-cli:v0.8.0
   environment:
     name: production
     deployment_tier: production
