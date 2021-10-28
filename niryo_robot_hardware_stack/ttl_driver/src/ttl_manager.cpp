@@ -660,28 +660,30 @@ bool TtlManager::readHardwareStatus()
 
     unsigned int hw_errors_increment = 0;
 
-    // syncread from all drivers for all motors
-    for (auto const& it : _driver_map)
+    // **************  read Velocity
+    if (!_driver_map.empty())
     {
-        EHardwareType type = it.first;
-        shared_ptr<AbstractTtlDriver> driver = it.second;
+        std::shared_ptr<ttl_driver::AbstractMotorDriver> driver;
+        try {
+            // get driver of a motor
+            auto ttl_driver = _driver_map.at(_state_map.at(_motor_list.at(0))->getHardwareType());
+            driver = std::dynamic_pointer_cast<AbstractMotorDriver>(ttl_driver);
+        }
+        catch (const std::exception& e) {}
 
-        if (driver && _ids_map.count(type))
+        if (driver)
         {
-            // we retrieve all the associated id for the type of the current driver
-            vector<uint8_t> id_list = _ids_map.at(type);
-            size_t id_list_size = id_list.size();
-
-            // **************  velocity
             vector<uint32_t> velocity_list;
-            auto motor_driver = std::dynamic_pointer_cast<AbstractMotorDriver>(it.second);
-            if (motor_driver && COMM_SUCCESS == motor_driver->syncReadVelocity(id_list, velocity_list))
+
+            // retrieve velocity
+            if (COMM_SUCCESS == driver->syncReadVelocity(_motor_list, velocity_list))
             {
-                if (id_list.size() == velocity_list.size())
+                if (_motor_list.size() == velocity_list.size())
                 {
-                    for (size_t i = 0; i < id_list.size(); ++i)
+                    // set motors states accordingly
+                    for (size_t i = 0; i < _motor_list.size(); ++i)
                     {
-                        uint8_t id = id_list.at(i);
+                        uint8_t id = _motor_list.at(i);
                         int velocity = static_cast<int>(velocity_list.at(i));
 
                         if (_state_map.count(id))
@@ -694,7 +696,30 @@ bool TtlManager::readHardwareStatus()
                         }
                     }
                 }
+                else
+                {
+                    hw_errors_increment++;
+                }
             }
+            else
+            {
+                hw_errors_increment++;
+            }
+        }
+    }  // for driver_map
+
+    // syncread from all drivers for all motors
+    for (auto const& it : _driver_map)
+    {
+        EHardwareType type = it.first;
+        shared_ptr<AbstractTtlDriver> driver = it.second;
+
+        if (driver && _ids_map.count(type))
+        {
+            // we retrieve all the associated id for the type of the current driver
+            vector<uint8_t> id_list = _ids_map.at(type);
+            size_t id_list_size = id_list.size();
+
             // **************  firmware version
             vector<std::string> firmware_version_list;
 
