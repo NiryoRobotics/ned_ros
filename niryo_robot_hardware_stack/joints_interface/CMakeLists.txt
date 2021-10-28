@@ -41,7 +41,7 @@ find_package(Boost REQUIRED
 )
 
 generate_dynamic_reconfigure_options(
-  cfg/steppers_config.cfg
+  cfg/steppers.cfg
 )
 
 ###############################################
@@ -107,10 +107,10 @@ add_dependencies(${PROJECT_NAME}
 ## Add dependencies to exported targets, like ROS msgs or srvs
 
 add_dependencies(${PROJECT_NAME}_node
+    ${${PROJECT_NAME}_EXPORTED_TARGETS}
     ${catkin_EXPORTED_TARGETS}
+    ${PROJECT_NAME}_gencfg
 )
-
-add_dependencies(${PROJECT_NAME}_node ${PROJECT_NAME}_gencfg)
 
 ## Specify libraries to link executable targets against
 target_link_libraries(${PROJECT_NAME}
