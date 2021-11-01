@@ -22,7 +22,7 @@
 #ifndef DYNAMIXEL_SDK_INCLUDE_DYNAMIXEL_SDK_LINUX_PORTHANDLERLINUX_H_
 #define DYNAMIXEL_SDK_INCLUDE_DYNAMIXEL_SDK_LINUX_PORTHANDLERLINUX_H_
 
-
+#include "serial/serial.h"
 #include "port_handler.h"
 
 namespace dynamixel
@@ -34,20 +34,15 @@ namespace dynamixel
 class PortHandlerLinux : public PortHandler
 {
  private:
-  int     socket_fd_;
-  int     baudrate_;
-  char    port_name_[100];
+  serial::Serial serial_;
+  double  packet_start_time_ms_;
+  double  packet_timeout_ms_;
 
-  double  packet_start_time_;
-  double  packet_timeout_;
-  double  tx_time_per_byte;
-
-  bool    setupPort(const int cflag_baud);
-  bool    setCustomBaudrate(int speed);
-  int     getCFlagBaud(const int baudrate);
-
-  double  getCurrentTime();
+  double  getCurrentTimeMs();
   double  getTimeSinceStart();
+
+  void    gpioHigh();
+  void    gpioLow();
 
  public:
   ////////////////////////////////////////////////////////////////////////////////
@@ -61,9 +56,6 @@ class PortHandlerLinux : public PortHandler
   /// @description The function calls PortHandlerLinux::closePort() to close the port.
   ////////////////////////////////////////////////////////////////////////////////
   virtual ~PortHandlerLinux() { closePort(); }
-
-  void    gpioHigh();
-  void    gpioLow();
   
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that opens the port
@@ -96,7 +88,7 @@ class PortHandlerLinux : public PortHandler
   /// @description The function returns current port name set into the port handler.
   /// @return Port name
   ////////////////////////////////////////////////////////////////////////////////
-  char   *getPortName();
+  const char   *getPortName();
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that sets baudrate into the port handler

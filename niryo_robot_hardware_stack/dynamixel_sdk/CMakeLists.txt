@@ -16,7 +16,10 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 ## Find catkin macros and libraries
-find_package(catkin REQUIRED)
+find_package(catkin REQUIRED
+    COMPONENTS
+      serial
+)
 
 ###############################################
 # Declare ROS messages, services and actions ##
@@ -35,6 +38,8 @@ catkin_package(
     include
   LIBRARIES
     ${PROJECT_NAME}
+  CATKIN_DEPENDS
+    serial
 )
 
 ###########
@@ -74,7 +79,7 @@ if(CMAKE_CROSSCOMPILING)
     message(STATUS "Cross compiling : wiringPi library is required")
     target_link_libraries(${PROJECT_NAME}
         ${catkin_LIBRARIES}
-        -lwiringPi -lrt -lcrypt
+        serial -lwiringPi -lrt -lcrypt
     )
 else()
 
@@ -82,7 +87,7 @@ else()
         message(STATUS "wiringPi library is required - arm processor")
         target_link_libraries(${PROJECT_NAME}
             ${catkin_LIBRARIES}
-            -lwiringPi -lrt -lcrypt
+            serial -lwiringPi -lrt -lcrypt
         )
     else()
         message(STATUS "wiringPi library not required")

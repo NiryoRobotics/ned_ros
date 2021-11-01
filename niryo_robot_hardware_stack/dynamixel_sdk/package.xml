@@ -18,6 +18,12 @@
   <author email="rwjung@robotis.com">Leon</author>
 
   <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>serial</build_depend>
+
+  <build_export_depend>serial</build_export_depend>
+
+  <exec_depend>serial</exec_depend>
   
   <test_depend>python-catkin-lint</test_depend>
   <test_depend>roslint</test_depend>
