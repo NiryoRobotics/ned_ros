@@ -20,7 +20,7 @@ _VDD = 5.0
     MAX11644 is 12-bit analog to digital converter.
     :param int bus: The channel number if it's different to 1.
     :param int address: The address of the device if set differently from the default
-    :param bool internal_reference: External or internal voltage reference boolean (True, False if you want to use VDD 
+    :param bool internal_reference: External or internal voltage reference boolean (True, False if you want to use VDD
             as reference)
 """
 

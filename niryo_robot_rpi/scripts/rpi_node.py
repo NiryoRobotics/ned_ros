@@ -3,6 +3,7 @@
 import rospy
 import logging
 
+
 class NiryoRobotRpiNode:
     def __init__(self):
         rospy.logdebug("NiryoRobotRpi - Entering in Init")
