@@ -313,10 +313,13 @@ int MockDxlDriver::syncWritePositionGoal(const std::vector<uint8_t> &id_list, co
     std::set<uint8_t> countSet;
     for (size_t i = 0; i < id_list.size(); i++)
     {
-        if (!_fake_data->dxl_registers.count(id_list.at(i)))
+        if (_fake_data->dxl_registers.count(id_list.at(i)))
+            _fake_data->dxl_registers.at(id_list.at(i)).position = position_list.at(i);
+        else if (_fake_data->stepper_registers.count(id_list.at(i)))
+            _fake_data->stepper_registers.at(id_list.at(i)).position = position_list.at(i);
+        else
             return COMM_TX_ERROR;
         // write goal position as the current position
-        _fake_data->dxl_registers.at(id_list.at(i)).position = position_list.at(i);
 
         auto result = countSet.insert(id_list[i]);
         if (!result.second)
@@ -443,7 +446,7 @@ int MockDxlDriver::syncReadPosition(const std::vector<uint8_t> &id_list, std::ve
         else if (_fake_data->stepper_registers.count(id))
             position_list.emplace_back(_fake_data->stepper_registers.at(id).position);
         else
-            return COMM_TX_ERROR;
+            return COMM_RX_FAIL;
 
         auto result = countSet.insert(id);
         if (!result.second)

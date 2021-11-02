@@ -259,6 +259,71 @@ int AbstractTtlDriver::syncRead(uint8_t address, uint8_t data_len,
 }
 
 /**
+ * @brief AbstractTtlDriver::bulkRead
+ * 
+ * @param address 
+ * @param id_list 
+ * @param data_list 
+ * @return int 
+ */
+int AbstractTtlDriver::bulkRead(std::vector<uint16_t> address,
+                                uint8_t data_len,
+                                const std::vector<uint8_t> &id_list,
+                                std::vector<uint32_t> &data_list)
+{
+    int dxl_comm_result = COMM_TX_FAIL;
+
+    if(data_len <= 4)
+    {
+        if (address.size() == id_list.size())
+        {
+            dynamixel::GroupBulkRead groupBulkRead(_dxlPortHandler.get(), _dxlPacketHandler.get());
+
+            for (size_t i = 0; i < address.size(); i++)
+            {
+                if (!groupBulkRead.addParam(id_list[i], address[i], data_len))
+                {
+                    groupBulkRead.clearParam();
+                    return GROUP_SYNC_REDONDANT_ID;
+                }
+            }
+
+            dxl_comm_result = groupBulkRead.txRxPacket();
+
+            if (COMM_SUCCESS == dxl_comm_result)
+            {
+                for (size_t i = 0; i < address.size(); i++)
+                {
+                    if (groupBulkRead.isAvailable(id_list[i], address[i], data_len))
+                    {
+                        uint32_t data = groupBulkRead.getData(id_list[i], address[i], data_len);
+                        data_list.emplace_back(data);
+                    }
+                    else
+                    {
+                        dxl_comm_result = GROUP_SYNC_READ_RX_FAIL;
+                        break;
+                    }
+                }
+            }
+
+            groupBulkRead.clearParam();
+        }
+        else
+        {
+            dxl_comm_result = LEN_ID_DATA_NOT_SAME;
+            printf("AbstractTtlDriver::syncRead ERROR: size of lists param must be equal\n");
+        }
+    }
+    else
+    {
+        printf("AbstractTtlDriver::syncRead ERROR: Size param must be 1, 2 or 4 bytes\n");
+    }
+
+    return dxl_comm_result;
+}
+
+/**
  * @brief AbstractTtlDriver::syncWrite
  * @param address
  * @param data_len
