@@ -1,68 +1,103 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.0.2)
 project(serial)
+message( STATUS "\n## Reading ${PROJECT_NAME}/CMakeLists.txt...")
 
-# Find catkin
+## c++ options
+## Compile as C++14, supported in ROS Melodic and newer
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+## enforcing cleaner code.
+add_definitions(-Os)
+
+## Find catkin macros and libraries
 find_package(catkin REQUIRED)
 
-if(APPLE)
-    find_library(IOKIT_LIBRARY IOKit)
-    find_library(FOUNDATION_LIBRARY Foundation)
-endif()
+# If Linux, add rt and pthread
+set(rt_LIBRARIES rt)
+set(pthread_LIBRARIES pthread)
 
-if(UNIX AND NOT APPLE)
-    # If Linux, add rt and pthread
-    set(rt_LIBRARIES rt)
-    set(pthread_LIBRARIES pthread)
-    catkin_package(
-        LIBRARIES ${PROJECT_NAME}
-        INCLUDE_DIRS include
-        DEPENDS rt pthread
-    )
-else()
-    # Otherwise normal call
-    catkin_package(
-        LIBRARIES ${PROJECT_NAME}
-        INCLUDE_DIRS include
-    )
-endif()
 
-## Sources
-set(serial_SRCS
-    src/serial.cc
-    include/serial/serial.h
-    include/serial/v8stdint.h
+###############################################
+# Declare ROS messages, services and actions ##
+###############################################
+
+###################################
+## catkin specific configuration ##
+###################################
+
+## INCLUDE_DIRS: if your package contains header files
+## LIBRARIES: libraries you create in this project that dependent projects also need
+## CATKIN_DEPENDS: catkin_packages dependent projects also need
+## DEPENDS: system dependencies of this project that dependent projects also need
+catkin_package(
+    INCLUDE_DIRS 
+        include
+    LIBRARIES 
+        ${PROJECT_NAME}
+    DEPENDS 
+        rt 
+        pthread
 )
-if(APPLE)
-    # If OSX
-    list(APPEND serial_SRCS src/impl/unix.cc)
-    list(APPEND serial_SRCS src/impl/list_ports/list_ports_osx.cc)
-elseif(UNIX)
-    # If unix
-    list(APPEND serial_SRCS src/impl/unix.cc)
-    list(APPEND serial_SRCS src/impl/list_ports/list_ports_linux.cc)
+
+###########
+## Build ##
+###########
+
+## Specify additional locations of header files
+## Your package locations should be listed before other locations
+include_directories(
+    include
+)
+
+## Declare libs and execs
+add_library(${PROJECT_NAME} 
+    src/serial.cc
+    src/impl/unix.cc
+    src/impl/list_ports/list_ports_linux.cc
+)
+
+## Specify libraries to link executable targets against
+target_link_libraries(${PROJECT_NAME} 
+    rt 
+    pthread
+)
+
+#############
+##   Doc   ##
+#############
+
+find_program(rosdoc_lite_FOUND rosdoc_lite)
+if(rosdoc_lite_FOUND)
+    add_custom_target (${PROJECT_NAME}_doc ALL
+        rosdoc_lite -o ${CMAKE_CURRENT_BINARY_DIR}/doc ${CMAKE_CURRENT_LIST_DIR}
+    )
 else()
-    # If windows
-    list(APPEND serial_SRCS src/impl/win.cc)
-    list(APPEND serial_SRCS src/impl/list_ports/list_ports_win.cc)
+  message(WARNING "rosdoc_lite not found. Skipping documentation building")
 endif()
 
-## Add serial library
-add_library(${PROJECT_NAME} ${serial_SRCS})
-if(APPLE)
-    target_link_libraries(${PROJECT_NAME} ${FOUNDATION_LIBRARY} ${IOKIT_LIBRARY})
-elseif(UNIX)
-    target_link_libraries(${PROJECT_NAME} rt pthread)
-else()
-    target_link_libraries(${PROJECT_NAME} setupapi)
+#############
+## Testing ##
+#############
+
+if(CATKIN_ENABLE_TESTING)
+  add_subdirectory(tests)
+
+  ##########################
+  ## Static code analysis ##
+  ##########################
+  find_package(roslint QUIET)
+
+  if(roslint_FOUND)
+      roslint_cpp()
+  else()
+      message(WARNING "roslint not found. Skipping roslint target building")
+  endif()
 endif()
 
-## Uncomment for example
-#add_executable(serial_example examples/serial_example.cc)
-#add_dependencies(serial_example ${PROJECT_NAME})
-#target_link_libraries(serial_example ${PROJECT_NAME})
-
-## Include headers
-include_directories(include)
+#############
+## Install ##
+#############
 
 ## Install executable
 install(TARGETS ${PROJECT_NAME}
@@ -71,11 +106,15 @@ install(TARGETS ${PROJECT_NAME}
     RUNTIME DESTINATION ${CATKIN_GLOBAL_BIN_DESTINATION}
 )
 
-## Install headers
-install(FILES include/serial/serial.h include/serial/v8stdint.h
-  DESTINATION ${CATKIN_GLOBAL_INCLUDE_DESTINATION}/serial)
+# Mark other files for installation
+install(
+  DIRECTORY include/${PROJECT_NAME}/
+  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+)
 
-## Tests
-if(CATKIN_ENABLE_TESTING)
-    add_subdirectory(tests)
+if (rosdoc_lite_FOUND)
+  install(
+    DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc/
+    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/doc
+  )
 endif()

@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.0.2)
 project(joints_interface)
 message( STATUS "\n## Reading ${PROJECT_NAME}/CMakeLists.txt...")
 
-
 #retrieve architecture
 execute_process( COMMAND
             uname -m COMMAND tr -d '\n'
