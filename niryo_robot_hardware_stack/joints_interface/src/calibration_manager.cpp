@@ -639,14 +639,6 @@ void CalibrationManager::sendCalibrationToSteppers()
         }
         else
         {
-            // calibration of steppers Ttl
-            if  ("ned2" != _hardware_version)
-            {
-                // Disable torque
-                setTorqueStepperMotor(pStepperMotorState_1, false);
-                setTorqueStepperMotor(pStepperMotorState_2, false);
-                setTorqueStepperMotor(pStepperMotorState_3, false);
-            }
 
             // set state of calibration before calibrate
             _ttl_interface->startCalibration();
