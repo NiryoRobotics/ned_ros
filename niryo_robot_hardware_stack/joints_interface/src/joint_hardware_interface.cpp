@@ -77,34 +77,6 @@ JointHardwareInterface::JointHardwareInterface(ros::NodeHandle& rootnh,
     _calibration_manager = std::make_unique<CalibrationManager>(robot_hwnh, _joint_list, _ttl_interface, _can_interface);
 }
 
-void JointHardwareInterface::configCallback(joints_interface::steppersConfig &config, uint32_t level)
-{
-  ROS_INFO("Reconfigure Request: %d %d %d %d %d %d %d %d", 
-            config.stepper_1_v_start, config.stepper_1_a_1, 
-            config.stepper_1_v_1, config.stepper_1_a_max,
-            config.stepper_1_v_max, config.stepper_1_d_max,
-            config.stepper_1_d_1, config.stepper_1_v_stop);
-
-    auto state = std::dynamic_pointer_cast<common::model::StepperMotorState>(_joint_list[0]);
-
-    state->setProfileVStart(static_cast<uint32_t>(config.stepper_1_v_start));
-    state->setProfileA1(static_cast<uint32_t>(config.stepper_1_a_1));
-    state->setProfileV1(static_cast<uint32_t>(config.stepper_1_v_1));
-    state->setProfileAMax(static_cast<uint32_t>(config.stepper_1_a_max));
-    state->setProfileVMax(static_cast<uint32_t>(config.stepper_1_v_max));
-    state->setProfileDMax(static_cast<uint32_t>(config.stepper_1_d_max));
-    state->setProfileD1(static_cast<uint32_t>(config.stepper_1_d_1));
-    state->setProfileVStop(static_cast<uint32_t>(config.stepper_1_v_stop));
-
-    StepperTtlSingleCmd cmd_profile(
-                EStepperCommandType::CMD_TYPE_VELOCITY_PROFILE,
-                state->getId(),
-                state->getVelocityProfile());
-
-    _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperTtlSingleCmd>(cmd_profile));
-
-}
-
 /**
  * @brief JointHardwareInterface::initJoints : build the joints by gathering information in config files and instanciating
  * correct state (dxl or stepper)
@@ -219,11 +191,6 @@ bool JointHardwareInterface::init(ros::NodeHandle& /*rootnh*/, ros::NodeHandle &
     // register the interfaces
     registerInterface(&_joint_state_interface);
     registerInterface(&_joint_position_interface);
-
-    dynamic_reconfigure::Server<joints_interface::steppersConfig>::CallbackType cb;
-
-    cb = boost::bind(&JointHardwareInterface::configCallback, this, _1, _2);
-    _dr_srv.setCallback(cb);
 
     return true;
 }
