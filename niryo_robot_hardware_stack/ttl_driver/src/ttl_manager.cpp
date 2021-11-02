@@ -512,6 +512,7 @@ bool TtlManager::readPositionsStatus()
             vector<uint32_t> position_list;
 
             // retrieve positions
+            _motor_list = {3, 2, 4, 5, 6, 7};
             if (COMM_SUCCESS == driver->syncReadPosition(_motor_list, position_list))
             {
                 if (_motor_list.size() == position_list.size())

@@ -158,8 +158,8 @@ public:
     bool hasEndEffector() const;
 
     // TtlManager will manage each type of hw to avoid unnecessary loop to find id 
-    void addMotorList(uint8_t id);
-    void addConveyorList(uint8_t id);
+    void addToMotorList(uint8_t id);
+    void addToConveyorList(uint8_t id);
 private:
     // IBusManager Interface
     int setupCommunication() override;
@@ -315,21 +315,21 @@ bool TtlManager::hasEndEffector() const
 }
 
 /**
- * @brief TtlManager::AddMotorList
+ * @brief TtlManager::addToMotorList
  * @return
  */
 inline
-void TtlManager::addMotorList(uint8_t id)
+void TtlManager::addToMotorList(uint8_t id)
 {
     _motor_list.push_back(id);
 }
 
 /**
- * @brief TtlManager::AddConveyorList
+ * @brief TtlManager::addToConveyorList
  * @return
  */
 inline
-void TtlManager::addConveyorList(uint8_t id)
+void TtlManager::addToConveyorList(uint8_t id)
 {
     _conveyor_list.push_back(id);
 }
