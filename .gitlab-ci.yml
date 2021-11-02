@@ -74,7 +74,7 @@ build_doc_job:
   retry:
     max: 1
   before_script:
-    - pip3 install -U -I pyyaml rospkg
+    - pip3 install -U pyyaml rospkg
   script:
     # Do stuff to move source properly for catkin_make
     - !reference [.abstract_move_source_tricks_job, script]
