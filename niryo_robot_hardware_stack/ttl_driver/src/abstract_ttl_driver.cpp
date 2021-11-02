@@ -242,7 +242,7 @@ int AbstractTtlDriver::syncRead(uint8_t address, uint8_t data_len,
                                 const std::vector<uint8_t> &id_list,
                                 std::vector<uint32_t> &data_list)
 {
-    switch(data_len)
+    switch (data_len)
     {
       case DXL_LEN_ONE_BYTE:
         return syncRead<uint8_t>(address, id_list, data_list);
@@ -273,7 +273,7 @@ int AbstractTtlDriver::bulkRead(std::vector<uint16_t> address,
 {
     int dxl_comm_result = COMM_TX_FAIL;
 
-    if(data_len <= 4)
+    if (data_len <= 4)
     {
         if (address.size() == id_list.size())
         {
