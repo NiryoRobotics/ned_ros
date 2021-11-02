@@ -238,7 +238,7 @@ void TtlManager::removeHardwareComponent(uint8_t id)
 bool TtlManager::isMotorType(common::model::EHardwareType type)
 {
     // All motors have value under 7 (check in common::model::EHardwareType)
-    return (static_cast<int>(type) <= 7); 
+    return (static_cast<int>(type) <= 7);
 }
 
 // ****************
@@ -495,7 +495,7 @@ bool TtlManager::readPositionsStatus()
     unsigned int hw_errors_increment = 0;
 
     // syncread position for all motors. Using only one driver for all motors to avoid loop.
-    // All addresses for position are the same 
+    // All addresses for position are the same
     if (!_driver_map.empty())
     {
         std::shared_ptr<ttl_driver::AbstractMotorDriver> driver;
@@ -506,7 +506,7 @@ bool TtlManager::readPositionsStatus()
         }
         catch (const std::exception& e) {}
 
-        if (driver) // && _ids_map.count(type))
+        if (driver)  // && _ids_map.count(type))
         {
             // we retrieve all the associated id for the type of the current driver
             vector<uint32_t> position_list;
@@ -820,8 +820,7 @@ bool TtlManager::readHardwareStatus()
                     for (auto id : _conveyor_list)
                     {
                         std::shared_ptr<StepperMotorState> state;
-                        state = std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(id));   
-                        
+                        state = std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(id));
                         if (state && state->isConveyor())
                         {
                             uint32_t velocity;

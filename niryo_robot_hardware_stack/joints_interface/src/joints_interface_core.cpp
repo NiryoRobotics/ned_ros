@@ -230,7 +230,6 @@ void JointsInterfaceCore::rosControlLoop()
             current_time = ros::Time::now();
             elapsed_time = ros::Duration(current_time - last_time);
             last_time = current_time;
-            
 
             if (_reset_controller)
             {

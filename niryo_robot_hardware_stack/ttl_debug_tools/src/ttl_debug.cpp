@@ -27,8 +27,8 @@
 #include <sstream>
 #include <string>
 #include <vector>
-#include <chrono>
-#include <thread>
+#include <chrono>   // NOLINT
+#include <thread>   // NOLINT
 
 // niryo
 #include "dynamixel_sdk/dynamixel_sdk.h"
