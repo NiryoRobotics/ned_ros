@@ -226,10 +226,11 @@ void JointsInterfaceCore::rosControlLoop()
     {
         if (_enable_control_loop)
         {
+            _robot->read(current_time, elapsed_time);
             current_time = ros::Time::now();
             elapsed_time = ros::Duration(current_time - last_time);
             last_time = current_time;
-            _robot->read(current_time, elapsed_time);
+            
 
             if (_reset_controller)
             {

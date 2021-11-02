@@ -34,11 +34,6 @@ find_package(catkin REQUIRED
       ttl_driver
 )
 
-find_package(Boost REQUIRED
-    COMPONENTS
-        system
-)
-
 ###############################################
 # Declare ROS messages, services and actions ##
 ###############################################
@@ -77,7 +72,6 @@ catkin_package(
 include_directories(
     include
     ${catkin_INCLUDE_DIRS}
-    ${Boost_INCLUDE_DIRS}
 )
 
 ## Declare libs and execs
@@ -102,6 +96,7 @@ add_dependencies(${PROJECT_NAME}
 ## Add dependencies to exported targets, like ROS msgs or srvs
 
 add_dependencies(${PROJECT_NAME}_node
+    ${${PROJECT_NAME}_EXPORTED_TARGETS}
     ${catkin_EXPORTED_TARGETS}
 )
 
