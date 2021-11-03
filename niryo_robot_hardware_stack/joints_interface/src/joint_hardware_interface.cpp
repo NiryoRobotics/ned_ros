@@ -541,10 +541,10 @@ void JointHardwareInterface::activateLearningMode(bool activated)
         {
             if ( jState->getBusProtocol() == EBusProtocol::TTL)
             {
-                //if(jState->isDynamixel())
-                  //dxl_cmd.addMotorParam(EHardwareType::XL430, jState->getId(), activated);
-                //else
-                  stepper_ttl_cmd.addMotorParam(EHardwareType::STEPPER, jState->getId(), activated);
+                if(jState->isDynamixel())
+                  dxl_cmd.addMotorParam(jState->getHardwareType(), jState->getId(), activated);
+                else
+                  stepper_ttl_cmd.addMotorParam(jState->getHardwareType(), jState->getId(), activated);
             }
             else
             {

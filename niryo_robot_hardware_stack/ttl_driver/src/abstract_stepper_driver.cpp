@@ -121,7 +121,7 @@ int AbstractStepperDriver::writeSyncCmd(int type, const std::vector<uint8_t>& id
         {
             params_inv.emplace_back(!p);
         }
-        return syncWriteTorqueEnable(ids, params);
+        return syncWriteTorqueEnable(ids, params_inv);
     }
     default:
         std::cout << "Command not implemented " << type << std::endl;
