@@ -1260,7 +1260,7 @@ int TtlManager::readVelocityProfile(uint8_t id, uint32_t &v_start, uint32_t &a_1
 int TtlManager::writeSynchronizeCommand(std::unique_ptr<common::model::AbstractTtlSynchronizeMotorCmd> && cmd)
 {
     int result = COMM_TX_ERROR;
-    ROS_DEBUG_THROTTLE(0.5, "TtlManager::writeSynchronizeCommand:  %s", cmd->str().c_str());
+    ROS_DEBUG("TtlManager::writeSynchronizeCommand:  %s", cmd->str().c_str());
 
     if (cmd->isValid())
     {

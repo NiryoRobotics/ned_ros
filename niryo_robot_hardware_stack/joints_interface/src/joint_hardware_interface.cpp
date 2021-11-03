@@ -541,7 +541,7 @@ void JointHardwareInterface::activateLearningMode(bool activated)
         {
             if ( jState->getBusProtocol() == EBusProtocol::TTL)
             {
-                dxl_cmd.addMotorParam(jState->getHardwareType(), jState->getId(), activated);
+                dxl_cmd.addMotorParam(EHardwareType::XL430, jState->getId(), activated);
             }
             /*else if ((jState->isStepper() && jState->getBusProtocol() == EBusProtocol::TTL))
             {
