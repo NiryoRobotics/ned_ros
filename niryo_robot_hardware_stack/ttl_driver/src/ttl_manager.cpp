@@ -522,7 +522,7 @@ bool TtlManager::readPositionsStatus()
                         uint8_t id = _motor_list.at(i);
                         int position = static_cast<int>(position_list.at(i));
 
-                        if (_state_map.cou0.088 *nt(id))
+                        if (_state_map.count(id))
                         {
                             auto state = std::dynamic_pointer_cast<common::model::AbstractMotorState>(_state_map.at(id));
                             if (state)
@@ -1260,7 +1260,7 @@ int TtlManager::readVelocityProfile(uint8_t id, uint32_t &v_start, uint32_t &a_1
 int TtlManager::writeSynchronizeCommand(std::unique_ptr<common::model::AbstractTtlSynchronizeMotorCmd> && cmd)
 {
     int result = COMM_TX_ERROR;
-    ROS_DEBUG("TtlManager::writeSynchronizeCommand:  %s", cmd->str().c_str());
+    ROS_DEBUG_THROTTLE(0.5, "TtlManager::writeSynchronizeCommand:  %s", cmd->str().c_str());
 
     if (cmd->isValid())
     {
