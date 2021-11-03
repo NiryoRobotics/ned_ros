@@ -311,7 +311,8 @@ int TtlManager::getLedState() const
 inline
 bool TtlManager::hasEndEffector() const
 {
-    return _driver_map.count(common::model::EHardwareType::END_EFFECTOR);
+    return (_driver_map.count(common::model::EHardwareType::END_EFFECTOR) ||
+            _driver_map.count(common::model::EHardwareType::FAKE_END_EFFECTOR));
 }
 
 /**
