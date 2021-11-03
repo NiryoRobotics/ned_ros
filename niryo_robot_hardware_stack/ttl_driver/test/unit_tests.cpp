@@ -608,7 +608,10 @@ class TtlManagerTestSuiteRobotWithoutCan : public ::testing::Test
       // check connections
       EXPECT_TRUE(ttl_drv->ping(2));
       EXPECT_TRUE(ttl_drv->ping(3));
+      EXPECT_TRUE(ttl_drv->ping(4));
+      EXPECT_TRUE(ttl_drv->ping(5));
       EXPECT_TRUE(ttl_drv->ping(6));
+      EXPECT_TRUE(ttl_drv->ping(7));
     }
 
     static std::string hw_version;
@@ -946,14 +949,12 @@ int main(int argc, char **argv)
     testing::InitGoogleTest(&argc, argv);
     ros::init(argc, argv, "ttl_driver_unit_tests");
 
-/*    bool can_enabled;
+    std::string gtest_filter;
 
     ros::NodeHandle nh_private("~");
-    nh_private.getParam("can_enabled", can_enabled);
-    if (!can_enabled)
-      testing::GTEST_FLAG(filter) = "-TtlManagerTestSuiteRobotWithCan.*:TtlInterfaceTestSuiteRobotWithCan.*";
-    else
-      testing::GTEST_FLAG(filter) = "-TtlManagerTestSuiteRobotWithoutCan.*:TtlInterfaceTestSuiteRotbotWithoutCan.*";
-*/
+    nh_private.getParam("gtest_filter", gtest_filter);
+    if (!gtest_filter.empty())
+      testing::GTEST_FLAG(filter) = gtest_filter;
+
     return RUN_ALL_TESTS();
 }
