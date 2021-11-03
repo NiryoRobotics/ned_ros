@@ -108,6 +108,10 @@ class RobotStatusObserver(object):
         msg.header = Header()
         msg.rpi_temperature = 0
         msg.temperatures = []
+        # TODO remove this shit
+        msg.hardware_errors = len(msg.hardware_errors)*[0]
+        msg.hardware_errors_message = len(msg.hardware_errors_message)*[""]
+        ##
         msg.voltages = []
         if self.hardware_status != msg:
             self.hardware_status = msg

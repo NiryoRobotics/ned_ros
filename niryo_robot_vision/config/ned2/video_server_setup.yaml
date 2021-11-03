@@ -12,6 +12,7 @@ obj_calib_name:     "cam_intrinsics"
 frame_size: # Available resolutions : 320x240, 352x288, 640x360, 640x480, 1280x720, 1920x1080
   - 640  # width
   - 480  # height
+flip_img: true
 
 restart_rate: 0.2
 max_restart_time: 120.0

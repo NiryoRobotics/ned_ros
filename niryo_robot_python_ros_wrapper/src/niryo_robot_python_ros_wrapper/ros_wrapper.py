@@ -206,7 +206,6 @@ class NiryoRosWrapper:
         self.__learning_mode_on = learning_mode.data
 
     def __callback_sub_current_tool_id(self, msg):
-        print self.__current_tool_id
         self.__current_tool_id = msg.data
 
     def __callback_sub_max_velocity_scaling_factor(self, msg):
