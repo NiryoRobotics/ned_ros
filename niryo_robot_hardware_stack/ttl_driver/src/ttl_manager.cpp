@@ -509,7 +509,7 @@ bool TtlManager::readPositionsStatus()
         if (driver)  // && _ids_map.count(type))
         {
             // we retrieve all the associated id for the type of the current driver
-            vector<uint32_t> position_list{42,42,42,42,42,42};
+            vector<uint32_t> position_list;
 
             // retrieve positions
             if (COMM_SUCCESS == driver->syncReadPosition(_motor_list, position_list))
@@ -1260,7 +1260,7 @@ int TtlManager::readVelocityProfile(uint8_t id, uint32_t &v_start, uint32_t &a_1
 int TtlManager::writeSynchronizeCommand(std::unique_ptr<common::model::AbstractTtlSynchronizeMotorCmd> && cmd)
 {
     int result = COMM_TX_ERROR;
-    ROS_DEBUG("TtlManager::writeSynchronizeCommand:  %s", cmd->str().c_str());
+    ROS_DEBUG_THROTTLE(0.5, "TtlManager::writeSynchronizeCommand:  %s", cmd->str().c_str());
 
     if (cmd->isValid())
     {

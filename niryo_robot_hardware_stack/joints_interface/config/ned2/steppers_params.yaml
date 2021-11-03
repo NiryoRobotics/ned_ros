@@ -16,7 +16,7 @@ steppers:
         d_max: 600
         d_1: 400
         v_stop: 2
-        calibration_stall_threshold: 8
+        calibration_stall_threshold: 7
 
     stepper_2:
         id: 3

@@ -128,15 +128,15 @@ int TtlTools::setRegister(uint8_t id, uint16_t reg_address,
     switch (byte_number)
     {
         case 1:
-            comm_result = _packetHandler->write1ByteTxOnly(_portHandler.get(), id,
+            comm_result = _packetHandler->write1ByteTxRx(_portHandler.get(), id,
                     reg_address, static_cast<uint8_t>(value));
         break;
         case 2:
-            comm_result = _packetHandler->write2ByteTxOnly(_portHandler.get(), id,
+            comm_result = _packetHandler->write2ByteTxRx(_portHandler.get(), id,
                     reg_address, static_cast<uint16_t>(value));
         break;
         case 4:
-            comm_result = _packetHandler->write4ByteTxOnly(_portHandler.get(), id,
+            comm_result = _packetHandler->write4ByteTxRx(_portHandler.get(), id,
                     reg_address, static_cast<uint32_t>(value));
         break;
         default:
