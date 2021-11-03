@@ -542,17 +542,10 @@ void JointHardwareInterface::activateLearningMode(bool activated)
             if ( jState->getBusProtocol() == EBusProtocol::TTL)
             {
                 //if(jState->isDynamixel())
-                  dxl_cmd.addMotorParam(EHardwareType::XL430, jState->getId(), activated);
+                  //dxl_cmd.addMotorParam(EHardwareType::XL430, jState->getId(), activated);
                 //else
-                  //stepper_ttl_cmd.addMotorParam(jState->getHardwareType(), jState->getId(), activated);
+                  stepper_ttl_cmd.addMotorParam(EHardwareType::STEPPER, jState->getId(), activated);
             }
-            /*else if ((jState->isStepper() && jState->getBusProtocol() == EBusProtocol::TTL))
-            {
-                stepper_ttl_cmd.setId(jState->getId());
-                stepper_ttl_cmd.setParams({activated});
-                if (_ttl_interface)
-                    _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperTtlSingleCmd>(stepper_ttl_cmd));
-            }*/
             else
             {
                 stepper_cmd.setId(jState->getId());
