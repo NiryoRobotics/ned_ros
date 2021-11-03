@@ -18,7 +18,7 @@
 // Bring in my package's API, which is what I'm testing
 #include "mcp_can_rpi/mcp_can_rpi.h"
 
-#include "can_debug_tools/can_tools.h"
+#include "can_debug_tools/can_tools.hpp"
 
 #include <string>
 
