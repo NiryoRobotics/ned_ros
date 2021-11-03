@@ -509,7 +509,7 @@ bool TtlManager::readPositionsStatus()
         if (driver)  // && _ids_map.count(type))
         {
             // we retrieve all the associated id for the type of the current driver
-            vector<uint32_t> position_list{42,42,42,42,42,42};
+            vector<uint32_t> position_list;
 
             // retrieve positions
             if (COMM_SUCCESS == driver->syncReadPosition(_motor_list, position_list))
