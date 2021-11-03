@@ -29,7 +29,6 @@ class MotorDebug:
     def __init__(self):
         # - Action serv
 
-
         # - Publishers
         self.__is_debug_motor_active_pub = rospy.Publisher('~is_debug_motor_active', Bool, latch=True, queue_size=10)
 

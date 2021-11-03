@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.0.2)
 project(joints_interface)
 message( STATUS "\n## Reading ${PROJECT_NAME}/CMakeLists.txt...")
 
-
 #retrieve architecture
 execute_process( COMMAND
             uname -m COMMAND tr -d '\n'
@@ -32,11 +31,6 @@ find_package(catkin REQUIRED
       sensor_msgs
       std_msgs
       ttl_driver
-)
-
-find_package(Boost REQUIRED
-    COMPONENTS
-        system
 )
 
 ###############################################
@@ -77,7 +71,6 @@ catkin_package(
 include_directories(
     include
     ${catkin_INCLUDE_DIRS}
-    ${Boost_INCLUDE_DIRS}
 )
 
 ## Declare libs and execs
@@ -102,6 +95,7 @@ add_dependencies(${PROJECT_NAME}
 ## Add dependencies to exported targets, like ROS msgs or srvs
 
 add_dependencies(${PROJECT_NAME}_node
+    ${${PROJECT_NAME}_EXPORTED_TARGETS}
     ${catkin_EXPORTED_TARGETS}
 )
 

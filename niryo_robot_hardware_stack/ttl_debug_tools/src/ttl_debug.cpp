@@ -27,8 +27,8 @@
 #include <sstream>
 #include <string>
 #include <vector>
-#include <chrono>
-#include <thread>
+#include <chrono>   // NOLINT
+#include <thread>   // NOLINT
 
 // niryo
 #include "dynamixel_sdk/dynamixel_sdk.h"
@@ -79,6 +79,7 @@ int handleUserInput(int argc, char **argv)
             ("get-register", po::value<int>(), "Get a value from a register (arg: reg_addr)")
             ("size", po::value<int>()->default_value(1), "Size (for get-register only)")
             ("calibrate", "calibrate joints")
+            ("test", "a test movement")
             ("set-register", po::value<std::vector<int>>()->multitoken(), "Set a value to a register (args: reg_addr, value, size)")
             ("set-registers", po::value<std::vector<int>>()->multitoken(), "Set the values to a register for multiples devices (args: reg_addr, size, values)")
             ("get-registers", po::value<int>()->multitoken(), "get the values of a register for multiples devices (arg: reg_addr)");
@@ -151,6 +152,45 @@ int handleUserInput(int argc, char **argv)
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
                 ttlTools.setRegister(4, 147, 0, 1);
                 std::this_thread::sleep_for(std::chrono::milliseconds(100));
+            }
+            else if (vars.count("test"))  // calibrate
+            {
+                uint32_t pos;
+                printf("--> Beginning Test\n");
+                ttlTools.setRegister(2, 64, 1, 1);
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+                ttlTools.getRegister(2, 132, pos, 4);
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+                printf("pos %d\n", pos);
+                ttlTools.getRegister(2, 132, pos, 4);
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+                printf("pos %d\n", pos);
+                ttlTools.getRegister(2, 132, pos, 4);
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+                printf("pos %d\n", pos);
+                ttlTools.getRegister(2, 132, pos, 4);
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+                printf("pos %d\n", pos);
+                ttlTools.getRegister(2, 132, pos, 4);
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+                printf("pos %d\n", pos);
+                ttlTools.setRegister(2, 64, 0, 1);
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+                ttlTools.getRegister(2, 132, pos, 4);
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+                printf("pos %d\n", pos);
+                ttlTools.getRegister(2, 132, pos, 4);
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+                printf("pos %d\n", pos);
+                ttlTools.getRegister(2, 132, pos, 4);
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+                printf("pos %d\n", pos);
+                ttlTools.getRegister(2, 132, pos, 4);
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+                printf("pos %d\n", pos);
+                ttlTools.getRegister(2, 132, pos, 4);
+                std::this_thread::sleep_for(std::chrono::milliseconds(10));
+                printf("pos %d\n", pos);
             }
             else if (-1 == id && ids.empty())
             {
