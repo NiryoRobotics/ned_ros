@@ -182,6 +182,9 @@ private:
     std::shared_ptr<dynamixel::PortHandler> _portHandler;
     std::shared_ptr<dynamixel::PacketHandler> _packetHandler;
 
+    mutable std::mutex _sync_mutex;
+
+
     std::string _device_name;
     int _baudrate{1000000};
 
