@@ -946,8 +946,8 @@ int main(int argc, char **argv)
     testing::InitGoogleTest(&argc, argv);
     ros::init(argc, argv, "ttl_driver_unit_tests");
 
-    bool can_enabled;
-/*
+/*    bool can_enabled;
+
     ros::NodeHandle nh_private("~");
     nh_private.getParam("can_enabled", can_enabled);
     if (!can_enabled)
