@@ -47,7 +47,7 @@ class SoundPlayer:
             self.__actual_sound.stop()
 
     def stop_w_fade_out(self):
-        old_volume = self.__volume_manager.volume
+        old_volume = self.__volume_manager.raw_volume
         self.__volume_manager.fade_out()
         self.stop()
         self.__volume_manager.set_volume(old_volume)
