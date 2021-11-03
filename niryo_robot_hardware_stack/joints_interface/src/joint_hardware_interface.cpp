@@ -539,14 +539,20 @@ void JointHardwareInterface::activateLearningMode(bool activated)
     {
         if (jState)
         {
-            if (jState->isDynamixel())
+            if ( jState->getBusProtocol() == EBusProtocol::TTL)
             {
-                dxl_cmd.addMotorParam(jState->getHardwareType(), jState->getId(), activated);
+                //if(jState->isDynamixel())
+                  dxl_cmd.addMotorParam(EHardwareType::XL430, jState->getId(), activated);
+                //else
+                  //stepper_ttl_cmd.addMotorParam(jState->getHardwareType(), jState->getId(), activated);
             }
-            else if ((jState->isStepper() && jState->getBusProtocol() == EBusProtocol::TTL))
+            /*else if ((jState->isStepper() && jState->getBusProtocol() == EBusProtocol::TTL))
             {
-                stepper_ttl_cmd.addMotorParam(jState->getHardwareType(), jState->getId(), activated);
-            }
+                stepper_ttl_cmd.setId(jState->getId());
+                stepper_ttl_cmd.setParams({activated});
+                if (_ttl_interface)
+                    _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperTtlSingleCmd>(stepper_ttl_cmd));
+            }*/
             else
             {
                 stepper_cmd.setId(jState->getId());
@@ -559,10 +565,10 @@ void JointHardwareInterface::activateLearningMode(bool activated)
 
     if (_ttl_interface)
     {
-        if(dxl_cmd.isValid())
+        if (dxl_cmd.isValid())
           _ttl_interface->addSyncCommandToQueue(std::make_unique<DxlSyncCmd>(dxl_cmd));
 
-        if(stepper_ttl_cmd.isValid())
+        if (stepper_ttl_cmd.isValid())
           _ttl_interface->addSyncCommandToQueue(std::make_unique<StepperTtlSyncCmd>(stepper_ttl_cmd));
     }
 }
