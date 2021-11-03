@@ -37,7 +37,7 @@ class SystemApiClientNode:
         self.manage_wifi_server = rospy.Service('/niryo_robot/wifi/manage', ManageWifi,
                                                 self.__callback_manage_wifi)
 
-        self.manage_wifi_server = rospy.Service('/niryo_robot/ethernet/manage', ManageEthernet,
+        self.manage_ethernet_server = rospy.Service('/niryo_robot/ethernet/manage', ManageEthernet,
                                                 self.__callback_manage_ethernet)
 
         # Set a bool to mentioned this node is initialized
@@ -120,6 +120,7 @@ class SystemApiClientNode:
         return status, message
 
     def __callback_manage_ethernet(self, req):
+        print "ethernettttttttttttttt"
         status, message = CommandStatus.SUCCESS, "Success"
         if req.profile in [req.STATIC, req.AUTO]:
             conn_success, result = self.client.setup_ethernet(req.profile)

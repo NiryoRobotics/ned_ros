@@ -7,8 +7,7 @@ from niryo_robot_msgs.msg import CommandStatus
 
 # Services
 from tools_interface.srv import PingDxlTool
-from tools_interface.srv import OpenGripper, CloseGripper
-from tools_interface.srv import PullAirVacuumPump, PushAirVacuumPump
+from tools_interface.srv import ToolCommand
 from niryo_robot_rpi.srv import SetDigitalIO
 from niryo_robot_rpi.srv import SetIOMode
 
@@ -20,14 +19,14 @@ class ToolRosCommandInterface:
 
         namespace = rospy.get_param("~namespace_topics")
         self.__service_open_gripper = rospy.ServiceProxy(namespace + 'open_gripper',
-                                                         OpenGripper)
+                                                         ToolCommand)
         self.__service_close_gripper = rospy.ServiceProxy(namespace + 'close_gripper',
-                                                          CloseGripper)
+                                                          ToolCommand)
 
         self.__service_pull_air_vacuum_pump = rospy.ServiceProxy(namespace + 'pull_air_vacuum_pump',
-                                                                 PullAirVacuumPump)
+                                                                 ToolCommand)
         self.__service_push_air_vacuum_pump = rospy.ServiceProxy(namespace + 'push_air_vacuum_pump',
-                                                                 PushAirVacuumPump)
+                                                                 ToolCommand)
 
         self.__service_ping_dxl_tool = rospy.ServiceProxy(namespace + 'ping_and_set_dxl_tool', PingDxlTool)
 
@@ -43,7 +42,8 @@ class ToolRosCommandInterface:
 
     def open_gripper(self, gripper_id, open_position, open_speed, open_hold_torque, open_max_torque):
         try:
-            resp = self.__service_open_gripper(gripper_id, open_position, open_speed, open_hold_torque, open_max_torque)
+            resp = self.__service_open_gripper(id=gripper_id, position=open_position, speed=open_speed,
+                                               hold_torque=open_hold_torque, max_torque=open_max_torque)
             return resp.state
         except rospy.ServiceException:
             rospy.logerr("ROS Tool Interface - Failed to Open Gripper")
@@ -51,8 +51,9 @@ class ToolRosCommandInterface:
 
     def close_gripper(self, gripper_id, close_position, close_speed, close_hold_torque, close_max_torque):
         try:
-            resp = self.__service_close_gripper(gripper_id, close_position, close_speed, close_hold_torque,
-                                                close_max_torque)
+            resp = self.__service_close_gripper(id=gripper_id, position=close_position,
+                                                speed=close_speed, hold_torque=close_hold_torque,
+                                                max_torque=close_max_torque)
             return resp.state
         except rospy.ServiceException:
             rospy.logerr("ROS Tool Interface - Failed to Close Gripper")
@@ -64,8 +65,8 @@ class ToolRosCommandInterface:
             vp_pull_air_max_torque, vp_pull_air_hold_torque):
         try:
             resp = self.__service_pull_air_vacuum_pump(
-                vp_id, vp_pull_air_velocity, vp_pull_air_position,
-                vp_pull_air_max_torque, vp_pull_air_hold_torque)
+                id=vp_id, speed=vp_pull_air_velocity, position=vp_pull_air_position,
+                max_torque=vp_pull_air_max_torque, hold_torque=vp_pull_air_hold_torque)
             return resp.state
         except rospy.ServiceException:
             rospy.logerr("ROS Tool Interface - Failed to Pull Air")
@@ -73,9 +74,9 @@ class ToolRosCommandInterface:
 
     def push_air_vacuum_pump(self, vp_id, vp_push_air_velocity, vp_push_air_position, vp_push_air_max_torque):
         try:
-            resp = self.__service_push_air_vacuum_pump(
-                vp_id, vp_push_air_velocity,
-                vp_push_air_position, vp_push_air_max_torque)
+            resp = self.__service_push_air_vacuum_pump(id=vp_id, speed=vp_push_air_velocity,
+                                                       position=vp_push_air_position, max_torque=vp_push_air_max_torque,
+                                                       hold_torque=0)
             return resp.state
         except rospy.ServiceException:
             rospy.logerr("ROS Tool Interface - Failed to Push Air")
@@ -86,7 +87,7 @@ class ToolRosCommandInterface:
         try:
             resp = self.__service_ping_dxl_tool()
             if (resp is not None):
-                return resp.state, resp.id
+                return resp.state, resp.tool.id
             else:
                 return CommandStatus.TOOL_ROS_INTERFACE_ERROR, "Cannot ping dxl tool"
         except rospy.ServiceException:
