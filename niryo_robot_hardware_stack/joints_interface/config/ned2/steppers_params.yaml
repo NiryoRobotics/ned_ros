@@ -12,11 +12,11 @@ steppers:
         a_1: 400
         v_1: 3
         a_max: 600
-        v_max: 4
+        v_max: 10
         d_max: 600
         d_1: 400
         v_stop: 2
-        calibration_stall_threshold: 6
+        calibration_stall_threshold: 8
 
     stepper_2:
         id: 3
@@ -28,7 +28,7 @@ steppers:
         a_1: 400
         v_1: 3
         a_max: 600
-        v_max: 4
+        v_max: 10
         d_max: 600
         d_1: 400
         v_stop: 2
@@ -44,7 +44,7 @@ steppers:
         a_1: 400
         v_1: 3
         a_max: 600
-        v_max: 4
+        v_max: 10
         d_max: 600
         d_1: 400
         v_stop: 2
