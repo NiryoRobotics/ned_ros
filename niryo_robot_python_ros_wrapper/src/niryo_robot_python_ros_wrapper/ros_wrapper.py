@@ -144,8 +144,10 @@ class NiryoRosWrapper:
         self.__robot_action_server_client = actionlib.SimpleActionClient(self.__robot_action_server_name,
                                                                          RobotMoveAction)
 
-        self.__action_server_name = rospy.get_param("/niryo_robot_arm_commander/joint_controller_name") + "/follow_joint_trajectory"
-        self.__follow_joint_traj_client = actionlib.SimpleActionClient(self.__action_server_name, FollowJointTrajectoryAction)
+        self.__action_server_name = rospy.get_param(
+            "/niryo_robot_arm_commander/joint_controller_name") + "/follow_joint_trajectory"
+        self.__follow_joint_traj_client = actionlib.SimpleActionClient(self.__action_server_name,
+                                                                       FollowJointTrajectoryAction)
 
         # Tool action
         self.__tool_action_server_name = '/niryo_robot_tools_commander/action_server'
@@ -667,7 +669,6 @@ class NiryoRosWrapper:
         result = self.__follow_joint_traj_client.get_result()
         if not result:
             raise NiryoRosWrapperException("Follow joint trajectory goal has reached timeout limit")
-
 
     def _create_goal(self, joints_position, duration):
         goal = FollowJointTrajectoryGoal()
@@ -1528,7 +1529,6 @@ class NiryoRosWrapper:
                                      GetAnalogIO, pin_id)
         self.__check_result_status(result)
         return result.value
-
 
     def get_digital_io_state(self):
         """

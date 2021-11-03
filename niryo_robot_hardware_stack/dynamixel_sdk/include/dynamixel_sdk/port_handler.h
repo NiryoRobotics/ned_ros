@@ -101,7 +101,7 @@ class WINDECLSPEC PortHandler
   /// @description The function returns current port name set into the port handler.
   /// @return Port name
   ////////////////////////////////////////////////////////////////////////////////
-  virtual char   *getPortName() = 0;
+  virtual const char   *getPortName() = 0;
 
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that sets baudrate into the port handler

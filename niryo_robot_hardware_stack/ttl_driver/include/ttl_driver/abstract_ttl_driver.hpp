@@ -86,6 +86,8 @@ protected:
     int syncReadConsecutiveBytes(uint16_t address,
                                  const std::vector<uint8_t> &id_list,
                                  std::vector<std::array<T, N> >& data_list);
+    
+    int bulkRead(std::vector<uint16_t> address, uint8_t data_len, const std::vector<uint8_t>& id_list, std::vector<uint32_t>& data_list);
     int syncWrite(uint8_t address, uint8_t data_len, const std::vector<uint8_t>& id_list, const std::vector<uint32_t>& data_list);
 
     // we use those commands in the children classes to actually read and write values in registers

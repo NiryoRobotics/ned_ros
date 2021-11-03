@@ -33,6 +33,7 @@ from .shutdown_manager import ShutdownManager
 from .wifi_button import WifiButton
 from .mcp_io_objects import McpIOManager
 
+
 class RobotRpi:
     def __init__(self):
         self.__mcp = MCP23017(address=rospy.get_param("~mcp/address"),

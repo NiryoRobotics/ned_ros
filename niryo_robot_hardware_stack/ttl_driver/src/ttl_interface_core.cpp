@@ -216,7 +216,7 @@ bool TtlInterfaceCore::rebootMotor(uint8_t motor_id)
     lock_guard<mutex> lck(_control_loop_mutex);
     int result = _ttl_manager->rebootMotor(motor_id);
     ros::Duration(1.5).sleep();
-    // return truc if result is COMM_SUCCESS
+    // return true if result is COMM_SUCCESS
     return (COMM_SUCCESS == result);
 }
 
@@ -576,18 +576,22 @@ void TtlInterfaceCore::controlLoop()
                 ROS_DEBUG("TtlInterfaceCore::controlLoop - Scan to find motors");
 
                 int bus_state = COMM_PORT_BUSY;
+                {
+                    lock_guard<mutex> lck(_control_loop_mutex);
+                    bus_state = _ttl_manager->scanAndCheck();
+                }
                 while (TTL_SCAN_OK != bus_state)
                 {
-                    {
-                        lock_guard<mutex> lck(_control_loop_mutex);
-                        bus_state = _ttl_manager->scanAndCheck();
-                    }
                     missing_ids = getRemovedMotorList();
                     for (auto const& id : missing_ids)
                     {
                         ROS_WARN("TtlInterfaceCore::controlLoop - motor %d do not seem to be connected", id);
                     }
                     ros::Duration(0.25).sleep();
+                    {
+                        lock_guard<mutex> lck(_control_loop_mutex);
+                        bus_state = _ttl_manager->scanAndCheck();
+                    }
                 }
                 ROS_INFO("TtlInterfaceCore::controlLoop - Bus is ok");
             }
@@ -615,8 +619,8 @@ void TtlInterfaceCore::controlLoop()
                 {
                     _executeCommand();
                     _time_hw_data_last_write = ros::Time::now().toSec();
-                    ros::Duration(0.005).sleep();
                 }
+                ros::Duration(0.005).sleep();
             }
             else
             {
@@ -681,6 +685,9 @@ void TtlInterfaceCore::_executeCommand()
 int TtlInterfaceCore::addJoint(const std::shared_ptr<common::model::JointState>& jointState)
 {
   int result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
+
+  // save motor id to a list (this is used in syncread to get params at the same address for all motors)
+  _ttl_manager->addMotorList(jointState->getId());
 
   // add dynamixel as a new tool
   _ttl_manager->addHardwareComponent(jointState);
@@ -777,6 +784,9 @@ int TtlInterfaceCore::setConveyor(const std::shared_ptr<common::model::ConveyorS
     int result = niryo_robot_msgs::CommandStatus::NO_CONVEYOR_FOUND;
 
     lock_guard<mutex> lck(_control_loop_mutex);
+
+    // add conveyor id for conveyor list of ttl manager
+    _ttl_manager->addConveyorList(state->getId());
 
     // add hw component before to get driver
     _ttl_manager->addHardwareComponent(state);

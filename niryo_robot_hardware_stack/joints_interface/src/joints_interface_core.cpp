@@ -226,10 +226,10 @@ void JointsInterfaceCore::rosControlLoop()
     {
         if (_enable_control_loop)
         {
+            _robot->read(current_time, elapsed_time);
             current_time = ros::Time::now();
             elapsed_time = ros::Duration(current_time - last_time);
             last_time = current_time;
-            _robot->read(current_time, elapsed_time);
 
             if (_reset_controller)
             {
@@ -315,13 +315,12 @@ bool JointsInterfaceCore::_callbackCalibrateMotors(niryo_robot_msgs::SetInt::Req
     res.status = result;
     res.message = result_message;
 
-    // special case here
-    // we set flag learning_mode_on, but we don't activate from here
-    // learning_mode should be activated in comm, AFTER motors have been calibrated
-    // --> this fixes an issue where motors will jump back to a previous cmd after being calibrated
     if (niryo_robot_msgs::CommandStatus::SUCCESS == result)
     {
-        activateLearningMode("ned2" != _hardware_version, result, result_message);
+        // we have to reset controller to avoid ros controller set command to the previous position
+        // before the calibration
+        _reset_controller = true;
+        _previous_state_learning_mode = ("ned2" != _hardware_version);
         _enable_control_loop = true;
     }
 

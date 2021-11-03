@@ -98,6 +98,7 @@ catkin_install_python(PROGRAMS
     scripts/robot_commander_node.py
     scripts/trajectories_executor.py
     scripts/transform_handler.py
+    scripts/robot_state_publisher.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 # Mark other files for installation

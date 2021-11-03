@@ -229,6 +229,18 @@ void TtlManager::removeHardwareComponent(uint8_t id)
                                              _removed_motor_id_list.end());
 }
 
+/**
+ * @brief TtlManager::isMotorType
+ * @param type 
+ * @return true 
+ * @return false 
+ */
+bool TtlManager::isMotorType(common::model::EHardwareType type)
+{
+    // All motors have value under 7 (check in common::model::EHardwareType)
+    return (static_cast<int>(type) <= 7);
+}
+
 // ****************
 //  commands
 // ****************
@@ -276,6 +288,9 @@ int TtlManager::changeId(common::model::EHardwareType motor_type, uint8_t old_id
                     // update all maps
                     _ids_map.at(motor_type).emplace_back(new_id);
                 }
+                // change id in conveyor list
+                _conveyor_list.erase(std::remove(_conveyor_list.begin(), _conveyor_list.end(), old_id), _conveyor_list.end());
+                _conveyor_list.push_back(new_id);
             }
         }
     }
@@ -479,27 +494,32 @@ bool TtlManager::readPositionsStatus()
     bool res = false;
     unsigned int hw_errors_increment = 0;
 
-    // syncread from all drivers for all motors
+    // syncread position for all motors. Using only one driver for all motors to avoid loop.
+    // All addresses for position are the same
     if (!_driver_map.empty())
     {
-      //  EHardwareType type = it.first;
-        auto driver = std::dynamic_pointer_cast<AbstractMotorDriver>(_driver_map.begin()->second);
+        std::shared_ptr<ttl_driver::AbstractMotorDriver> driver;
+        try {
+            // get driver of a motor
+            auto ttl_driver = _driver_map.at(_state_map.at(_motor_list.at(0))->getHardwareType());
+            driver = std::dynamic_pointer_cast<AbstractMotorDriver>(ttl_driver);
+        }
+        catch (const std::exception& e) {}
 
-        if (driver) // && _ids_map.count(type))
+        if (driver)  // && _ids_map.count(type))
         {
             // we retrieve all the associated id for the type of the current driver
-            vector<uint8_t> id_list{2, 3, 4, 5, 6, 7}; //_ids_map.at(type);
             vector<uint32_t> position_list;
 
             // retrieve positions
-            if (COMM_SUCCESS == driver->syncReadPosition(id_list, position_list))
+            if (COMM_SUCCESS == driver->syncReadPosition(_motor_list, position_list))
             {
-                if (id_list.size() == position_list.size())
+                if (_motor_list.size() == position_list.size())
                 {
                     // set motors states accordingly
-                    for (size_t i = 0; i < id_list.size(); ++i)
+                    for (size_t i = 0; i < _motor_list.size(); ++i)
                     {
-                        uint8_t id = id_list.at(i);
+                        uint8_t id = _motor_list.at(i);
                         int position = static_cast<int>(position_list.at(i));
 
                         if (_state_map.count(id))
@@ -516,7 +536,7 @@ bool TtlManager::readPositionsStatus()
                 {
                     ROS_ERROR("TtlManager::readJointStatus : Fail to sync read joint state - "
                                 "vector mismatch (id_list size %d, position_list size %d)",
-                                static_cast<int>(id_list.size()),
+                                static_cast<int>(_motor_list.size()),
                                 static_cast<int>(position_list.size()));
                     hw_errors_increment++;
                 }
@@ -562,46 +582,43 @@ bool TtlManager::readEndEffectorStatus()
     if (_driver_map.count(EHardwareType::END_EFFECTOR))
     {
         unsigned int hw_errors_increment = 0;
-
-        shared_ptr<EndEffectorDriver<EndEffectorReg> > driver = std::dynamic_pointer_cast<EndEffectorDriver<EndEffectorReg> >(_driver_map.at(EHardwareType::END_EFFECTOR));
-
-        if (driver && _ids_map.count(EHardwareType::END_EFFECTOR))
+        try
         {
-            // we retrieve the associated id for the end effector
-            uint8_t id = _ids_map.at(EHardwareType::END_EFFECTOR).front();
-            common::model::EActionType action;
-
-            if (_state_map.count(id))
+            shared_ptr<EndEffectorDriver<EndEffectorReg> > driver = std::dynamic_pointer_cast<EndEffectorDriver<EndEffectorReg> >(_driver_map.at(EHardwareType::END_EFFECTOR));
+            if (_ids_map.count(EHardwareType::END_EFFECTOR))
             {
+                // we retrieve the associated id for the end effector
+                uint8_t id = _ids_map.at(EHardwareType::END_EFFECTOR).front();
+                common::model::EActionType action;
+
+                // read buttons status if state map have id of EE
                 auto state = std::dynamic_pointer_cast<EndEffectorState>(_state_map.at(id));
-                if (state)
-                {
-                    // free drive button
-                    if (COMM_SUCCESS == driver->readButton0Status(id, action))
-                        state->setButtonStatus(1, action);
-                    else
-                        hw_errors_increment++;
+                // free drive button
+                if (COMM_SUCCESS == driver->readButton0Status(id, action))
+                    state->setButtonStatus(0, action);
+                else
+                    hw_errors_increment++;
 
-                    // save pos button
-                    if (COMM_SUCCESS == driver->readButton1Status(id, action))
-                        state->setButtonStatus(2, action);
-                    else
-                        hw_errors_increment++;
+                // save pos button
+                if (COMM_SUCCESS == driver->readButton1Status(id, action))
+                    state->setButtonStatus(1, action);
+                else
+                    hw_errors_increment++;
 
-                    // custom button
-                    if (COMM_SUCCESS == driver->readButton2Status(id, action))
-                        state->setButtonStatus(3, action);
-                    else
-                        hw_errors_increment++;
+                // custom button
+                if (COMM_SUCCESS == driver->readButton2Status(id, action))
+                    state->setButtonStatus(2, action);
+                else
+                    hw_errors_increment++;
 
-                    bool digital_data;
-                    if (COMM_SUCCESS == driver->readDigitalInput(id, digital_data))
-                        state->setDigitalIn(digital_data);
-                    else
-                        hw_errors_increment++;
-                }
-            }
-        }  // for driver_map
+                bool digital_data;
+                if (COMM_SUCCESS == driver->readDigitalInput(id, digital_data))
+                    state->setDigitalIn(digital_data);
+                else
+                    hw_errors_increment++;
+            }  // for driver_map
+        }
+        catch(const std::exception& e) {}
 
         // we reset the global error variable only if no errors
         if (0 == hw_errors_increment)
@@ -640,28 +657,30 @@ bool TtlManager::readHardwareStatus()
 
     unsigned int hw_errors_increment = 0;
 
-    // syncread from all drivers for all motors
-    for (auto const& it : _driver_map)
+    // **************  read Velocity
+    if (!_driver_map.empty())
     {
-        EHardwareType type = it.first;
-        shared_ptr<AbstractTtlDriver> driver = it.second;
+        std::shared_ptr<ttl_driver::AbstractMotorDriver> driver;
+        try {
+            // get driver of a motor
+            auto ttl_driver = _driver_map.at(_state_map.at(_motor_list.at(0))->getHardwareType());
+            driver = std::dynamic_pointer_cast<AbstractMotorDriver>(ttl_driver);
+        }
+        catch (const std::exception& e) {}
 
-        if (driver && _ids_map.count(type))
+        if (driver)
         {
-            // we retrieve all the associated id for the type of the current driver
-            vector<uint8_t> id_list = _ids_map.at(type);
-            size_t id_list_size = id_list.size();
-
-            // **************  velocity
             vector<uint32_t> velocity_list;
-            auto motor_driver = std::dynamic_pointer_cast<AbstractMotorDriver>(it.second);
-            if (motor_driver && COMM_SUCCESS == motor_driver->syncReadVelocity(id_list, velocity_list))
+
+            // retrieve velocity
+            if (COMM_SUCCESS == driver->syncReadVelocity(_motor_list, velocity_list))
             {
-                if (id_list.size() == velocity_list.size())
+                if (_motor_list.size() == velocity_list.size())
                 {
-                    for (size_t i = 0; i < id_list.size(); ++i)
+                    // set motors states accordingly
+                    for (size_t i = 0; i < _motor_list.size(); ++i)
                     {
-                        uint8_t id = id_list.at(i);
+                        uint8_t id = _motor_list.at(i);
                         int velocity = static_cast<int>(velocity_list.at(i));
 
                         if (_state_map.count(id))
@@ -674,7 +693,30 @@ bool TtlManager::readHardwareStatus()
                         }
                     }
                 }
+                else
+                {
+                    hw_errors_increment++;
+                }
             }
+            else
+            {
+                hw_errors_increment++;
+            }
+        }
+    }  // for driver_map
+
+    // syncread from all drivers for all motors
+    for (auto const& it : _driver_map)
+    {
+        EHardwareType type = it.first;
+        shared_ptr<AbstractTtlDriver> driver = it.second;
+
+        if (driver && _ids_map.count(type))
+        {
+            // we retrieve all the associated id for the type of the current driver
+            vector<uint8_t> id_list = _ids_map.at(type);
+            size_t id_list_size = id_list.size();
+
             // **************  firmware version
             vector<std::string> firmware_version_list;
 
@@ -768,16 +810,19 @@ bool TtlManager::readHardwareStatus()
             }
 
             // **********  conveyor state
-            if (EHardwareType::FAKE_STEPPER_MOTOR == type || EHardwareType::STEPPER == type)
+            if (!_conveyor_list.empty() && (EHardwareType::FAKE_STEPPER_MOTOR == type || EHardwareType::STEPPER == type))
             {
-                for (auto id : _ids_map.at(type))
+                try
                 {
-                    if (_state_map.find(id) != _state_map.end())
+                    std::shared_ptr<ttl_driver::AbstractStepperDriver> stepper_driver;
+                    stepper_driver = std::dynamic_pointer_cast<ttl_driver::AbstractStepperDriver>(driver);
+
+                    for (auto id : _conveyor_list)
                     {
-                        auto state = std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(id));
+                        std::shared_ptr<StepperMotorState> state;
+                        state = std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(id));
                         if (state && state->isConveyor())
                         {
-                            auto stepper_driver = std::dynamic_pointer_cast<ttl_driver::AbstractStepperDriver>(driver);
                             uint32_t velocity;
                             if (COMM_SUCCESS != stepper_driver->readVelocity(id, velocity))
                             {
@@ -792,6 +837,7 @@ bool TtlManager::readHardwareStatus()
                         }
                     }
                 }
+                catch(const std::exception& e) {}
             }
             // set motors states accordingly
             for (size_t i = 0; i < id_list_size; ++i)
@@ -1331,25 +1377,28 @@ int TtlManager::writeSingleCommand(std::unique_ptr<common::model::AbstractTtlSin
  */
 void TtlManager::executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, uint32_t> > cmd_vec)
 {
-    for (auto const& it : _driver_map)
+    // using only one driver for all motors to write faster. (all addresses of goal position are the same)
+    if (!_driver_map.empty())
     {
-        // build list of ids and params for this motor
-        std::vector<uint8_t> ids;
-        std::vector<uint32_t> params;
-        for (auto const& cmd : cmd_vec)
-        {
-            if (_state_map.count(cmd.first) && it.first == _state_map.at(cmd.first)->getHardwareType())
-            {
-                ids.emplace_back(cmd.first);
-                params.emplace_back(cmd.second);
-            }
+        std::shared_ptr<ttl_driver::AbstractMotorDriver> driver;
+        try {
+            auto ttl_driver = _driver_map.at(_state_map.at(_motor_list.at(0))->getHardwareType());
+            driver = std::dynamic_pointer_cast<AbstractMotorDriver>(ttl_driver);
         }
-
-        // syncwrite for this driver. The driver is responsible for sync write only to its associated motors
-        auto driver = std::dynamic_pointer_cast<AbstractMotorDriver>(it.second);
-
+        catch (const std::exception& e)
+        {
+            std::stringstream msg;
+            std::cout << "TtlManager::executeJointTrajectoryCmd: access to an element not exist in map with error " << e.what() << std::endl;
+        }
         if (driver)
         {
+            std::vector<uint8_t> ids;
+            std::vector<uint32_t> params;
+            for (auto cmd : cmd_vec)
+            {
+                ids.push_back(cmd.first);
+                params.push_back(cmd.second);
+            }
             int err = driver->syncWritePositionGoal(ids, params);
             if (err != COMM_SUCCESS)
             {
@@ -1357,7 +1406,6 @@ void TtlManager::executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, uint32
                 _debug_error_message = "TtlManager - Failed to write position";
             }
         }
-        ros::Duration(0.001).sleep();
     }
 }
 
