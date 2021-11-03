@@ -24,6 +24,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <string>
 #include <vector>
 #include <algorithm>
+#include <set>
 
 namespace ttl_driver
 {
@@ -293,10 +294,12 @@ int MockStepperDriver::syncWritePositionGoal(const std::vector<uint8_t> &id_list
 
     for (size_t i = 0; i < id_list.size(); ++i)
     {
-        if (!_fake_data->stepper_registers.count(id_list.at(i)))
-            return COMM_TX_FAIL;
-
-        _fake_data->stepper_registers.at(id_list.at(i)).position = position_list.at(i);
+        if (_fake_data->dxl_registers.count(id_list.at(i)))
+            _fake_data->dxl_registers.at(id_list.at(i)).position = position_list.at(i);
+        else if (_fake_data->stepper_registers.count(id_list.at(i)))
+            _fake_data->stepper_registers.at(id_list.at(i)).position = position_list.at(i);
+        else
+            return COMM_TX_ERROR;
 
         auto result = countSet.insert(id_list.at(i));
         if (!result.second)
@@ -411,13 +414,13 @@ int MockStepperDriver::syncReadPosition(const std::vector<uint8_t> &id_list, std
     position_list.clear();
     for (auto & id : id_list)
     {
-        if (_fake_data->stepper_registers.count(id))
-        {
+        if (_fake_data->dxl_registers.count(id))
+            position_list.emplace_back(_fake_data->dxl_registers.at(id).position);
+        else if (_fake_data->stepper_registers.count(id))
             position_list.emplace_back(_fake_data->stepper_registers.at(id).position);
-        }
         else
             return COMM_RX_FAIL;
-
+        
         auto result = countSet.insert(id);
         if (!result.second)
             return GROUP_SYNC_REDONDANT_ID;  // redondant id

@@ -313,7 +313,7 @@ EStepperCalibrationStatus CalibrationManager::autoCalibration()
           sensor_offset_results.emplace_back(calibration_result);
           sensor_offset_ids.emplace_back(motor_id);
 
-          ROS_INFO("CalibrationManager::autoCalibration - Motor %d, calibration cmd result %d ", motor_id, calibration_result);  
+          ROS_INFO("CalibrationManager::autoCalibration - Motor %d, calibration cmd result %d ", motor_id, calibration_result);
         }
     }
 

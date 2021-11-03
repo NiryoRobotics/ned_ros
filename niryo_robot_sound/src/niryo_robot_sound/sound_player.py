@@ -67,4 +67,3 @@ class SoundPlayer:
 
     def is_busy(self):
         return self.__actual_sound is not None
-

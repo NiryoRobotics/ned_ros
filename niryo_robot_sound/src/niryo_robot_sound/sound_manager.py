@@ -86,7 +86,8 @@ class SoundManager:
                 self.play_sound(self.__sound_database.robot_ready_sound)
             elif self.__robot_status in [RobotStatus.FATAL_ERROR, RobotStatus.MOTOR_ERROR]:
                 self.play_sound(self.__sound_database.error_sound)
-            elif last_status != RobotStatus.CALIBRATION_IN_PROGRESS and msg.robot_status == RobotStatus.CALIBRATION_IN_PROGRESS:
+            elif last_status != RobotStatus.CALIBRATION_IN_PROGRESS and \
+                    msg.robot_status == RobotStatus.CALIBRATION_IN_PROGRESS:
                 self.play_sound(self.__sound_database.calibration_sound)
 
         if self.__logs_status != msg.logs_status:
