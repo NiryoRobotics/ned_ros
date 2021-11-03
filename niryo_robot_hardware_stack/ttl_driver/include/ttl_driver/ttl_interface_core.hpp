@@ -92,7 +92,7 @@ public:
 
     void setTrajectoryControllerCommands(std::vector<std::pair<uint8_t, uint32_t> > && cmd);
 
-    void setSyncCommand(std::unique_ptr<common::model::ISynchronizeMotorCmd>&& cmd) override;
+    void addSyncCommandToQueue(std::unique_ptr<common::model::ISynchronizeMotorCmd>&& cmd) override;
 
     // we have to use ISingleMotorCmd instead of AbstractTtlMotorCmd because this is pure virtual method in IDriverCore
     // IDriverCore used by Can and Ttl so AbstractTtlMotorCmd or AbstractCanMotorCmd can't be used in this case

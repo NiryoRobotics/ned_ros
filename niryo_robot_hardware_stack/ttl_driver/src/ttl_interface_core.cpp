@@ -888,7 +888,7 @@ void TtlInterfaceCore::setTrajectoryControllerCommands(std::vector<std::pair<uin
  * @brief TtlInterfaceCore::setSyncCommand
  * @param cmd
  */
-void TtlInterfaceCore::setSyncCommand(std::unique_ptr<common::model::ISynchronizeMotorCmd> && cmd)
+void TtlInterfaceCore::addSyncCommandToQueue(std::unique_ptr<common::model::ISynchronizeMotorCmd> && cmd)
 {
     std::lock_guard<std::mutex> lock(_sync_cmd_queue_mutex);
 

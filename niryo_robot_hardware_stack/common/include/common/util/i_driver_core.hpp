@@ -63,7 +63,7 @@ public:
     virtual bool scanMotorId(uint8_t motor_to_find) = 0;
     virtual void addSingleCommandToQueue(std::unique_ptr<common::model::ISingleMotorCmd>&& cmd) = 0;
     virtual void addSingleCommandToQueue(std::vector<std::unique_ptr<common::model::ISingleMotorCmd> > cmd) = 0;
-    virtual void setSyncCommand(std::unique_ptr<common::model::ISynchronizeMotorCmd>&& cmd) = 0;
+    virtual void addSyncCommandToQueue(std::unique_ptr<common::model::ISynchronizeMotorCmd>&& cmd) = 0;
 
     // driver for conveyor
     virtual int setConveyor(const std::shared_ptr<common::model::ConveyorState>& state) = 0;

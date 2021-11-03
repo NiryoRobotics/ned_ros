@@ -77,7 +77,7 @@ class CanInterfaceCore : public common::util::IDriverCore, public common::util::
 
         void setTrajectoryControllerCommands(std::vector<std::pair<uint8_t, int32_t> >&& cmd);
 
-        void setSyncCommand(std::unique_ptr<common::model::ISynchronizeMotorCmd>&& cmd) override;
+        void addSyncCommandToQueue(std::unique_ptr<common::model::ISynchronizeMotorCmd>&& cmd) override;
 
         void addSingleCommandToQueue(std::unique_ptr<common::model::ISingleMotorCmd>&& cmd) override;
         void addSingleCommandToQueue(std::vector<std::unique_ptr<common::model::ISingleMotorCmd> > cmd) override;
