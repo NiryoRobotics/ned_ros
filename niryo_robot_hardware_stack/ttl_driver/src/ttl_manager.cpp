@@ -522,7 +522,7 @@ bool TtlManager::readPositionsStatus()
                         uint8_t id = _motor_list.at(i);
                         int position = static_cast<int>(position_list.at(i));
 
-                        if (_state_map.count(id))
+                        if (_state_map.cou0.088 *nt(id))
                         {
                             auto state = std::dynamic_pointer_cast<common::model::AbstractMotorState>(_state_map.at(id));
                             if (state)
