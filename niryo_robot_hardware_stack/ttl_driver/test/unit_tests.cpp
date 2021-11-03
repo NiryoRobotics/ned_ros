@@ -947,13 +947,13 @@ int main(int argc, char **argv)
     ros::init(argc, argv, "ttl_driver_unit_tests");
 
     bool can_enabled;
-
+/*
     ros::NodeHandle nh_private("~");
     nh_private.getParam("can_enabled", can_enabled);
     if (!can_enabled)
       testing::GTEST_FLAG(filter) = "-TtlManagerTestSuiteRobotWithCan.*:TtlInterfaceTestSuiteRobotWithCan.*";
     else
       testing::GTEST_FLAG(filter) = "-TtlManagerTestSuiteRobotWithoutCan.*:TtlInterfaceTestSuiteRotbotWithoutCan.*";
-
+*/
     return RUN_ALL_TESTS();
 }
