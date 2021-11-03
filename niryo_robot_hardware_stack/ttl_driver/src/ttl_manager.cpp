@@ -508,10 +508,8 @@ bool TtlManager::readPositionsStatus()
 
         if (driver)  // && _ids_map.count(type))
         {
-            std::lock_guard<std::mutex> lock(_sync_mutex);
-
             // we retrieve all the associated id for the type of the current driver
-            vector<uint32_t> position_list;
+            vector<uint32_t> position_list{42,42,42,42,42,42};
 
             // retrieve positions
             if (COMM_SUCCESS == driver->syncReadPosition(_motor_list, position_list))
@@ -1283,8 +1281,6 @@ int TtlManager::writeSynchronizeCommand(std::unique_ptr<common::model::AbstractT
                     auto driver = std::dynamic_pointer_cast<AbstractMotorDriver>(it.second);
                     if (driver)
                     {
-                      std::lock_guard<std::mutex> lock(_sync_mutex);
-
                       result = driver->writeSyncCmd(cmd->getCmdType(),
                                                     cmd->getMotorsId(it.first),
                                                     cmd->getParams(it.first));
