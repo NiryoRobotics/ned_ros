@@ -1,4 +1,3 @@
-#!/usr/bin/python
 #
 #
 # https://github.com/adafruit/Adafruit-Raspberry-Pi-Python-Code/tree/legacy

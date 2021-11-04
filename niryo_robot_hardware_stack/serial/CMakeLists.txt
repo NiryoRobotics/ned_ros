@@ -34,10 +34,7 @@ catkin_package(
     INCLUDE_DIRS 
         include
     LIBRARIES 
-        ${PROJECT_NAME}
-    DEPENDS 
-        rt 
-        pthread
+        ${PROJECT_NAME} 
 )
 
 ###########
@@ -52,9 +49,9 @@ include_directories(
 
 ## Declare libs and execs
 add_library(${PROJECT_NAME} 
-    src/serial.cc
-    src/impl/unix.cc
     src/impl/list_ports/list_ports_linux.cc
+    src/impl/unix.cc
+    src/serial.cc
 )
 
 ## Specify libraries to link executable targets against

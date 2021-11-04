@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 # abstract_fans_manager.py
 # Copyright (C) 2017 Niryo
 # All rights reserved.

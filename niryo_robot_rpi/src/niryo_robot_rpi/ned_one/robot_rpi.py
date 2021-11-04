@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 # robot_rpi.py
 # Copyright (C) 2021 Niryo
 # All rights reserved.
