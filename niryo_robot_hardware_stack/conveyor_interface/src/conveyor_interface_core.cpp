@@ -405,6 +405,7 @@ bool ConveyorInterfaceCore::_callbackPingAndSetConveyor(conveyor_interface::SetC
 bool ConveyorInterfaceCore::_callbackControlConveyor(conveyor_interface::ControlConveyor::Request &req,
                                                      conveyor_interface::ControlConveyor::Response &res)
 {
+    ROS_INFO("Conveyor interface - ControlConveyorCallback received id %d speed %d direction %d ", req.id, req.speed, req.direction);
     std::lock_guard<std::mutex> lck(_state_map_mutex);
     // if id found in list
     if (_state_map.count(req.id) && _state_map.at(req.id))
