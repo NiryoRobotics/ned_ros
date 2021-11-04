@@ -539,9 +539,9 @@ void JointHardwareInterface::activateLearningMode(bool activated)
     {
         if (jState)
         {
-            if ( jState->getBusProtocol() == EBusProtocol::TTL)
+            if (jState->getBusProtocol() == EBusProtocol::TTL)
             {
-                if(jState->isDynamixel())
+                if (jState->isDynamixel())
                   dxl_cmd.addMotorParam(jState->getHardwareType(), jState->getId(), activated);
                 else
                   stepper_ttl_cmd.addMotorParam(jState->getHardwareType(), jState->getId(), activated);

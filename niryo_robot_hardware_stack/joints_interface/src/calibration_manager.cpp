@@ -647,7 +647,7 @@ void CalibrationManager::sendCalibrationToSteppers()
                 setTorqueStepperMotor(pStepperMotorState_2, false);
                 setTorqueStepperMotor(pStepperMotorState_3, false);
             }
-            
+
             // set state of calibration before calibrate
             _ttl_interface->startCalibration();
 

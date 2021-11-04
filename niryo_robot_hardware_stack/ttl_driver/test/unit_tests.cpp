@@ -933,7 +933,6 @@ TEST_F(TtlManagerTestSuiteRobotWithoutCan, testSyncTorqueAndPos)
     EXPECT_EQ(pos_4, pos_4_new);
     EXPECT_EQ(pos_5, pos_5_new);
     EXPECT_EQ(pos_6, pos_6_new);
-
 }
 
 // Test driver scan motors

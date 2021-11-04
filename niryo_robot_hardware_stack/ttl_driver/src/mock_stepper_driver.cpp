@@ -420,7 +420,7 @@ int MockStepperDriver::syncReadPosition(const std::vector<uint8_t> &id_list, std
             position_list.emplace_back(_fake_data->stepper_registers.at(id).position);
         else
             return COMM_RX_FAIL;
-        
+
         auto result = countSet.insert(id);
         if (!result.second)
             return GROUP_SYNC_REDONDANT_ID;  // redondant id

@@ -724,9 +724,9 @@ int TtlInterfaceCore::setTool(const std::shared_ptr<common::model::ToolState>& t
         if (EHardwareType::XL330 == toolState->getHardwareType())
         {
             int reg_value = 0;
-            int operating_mode = 5; // Torque + Position
+            int operating_mode = 5;  // Torque + Position
             _ttl_manager->readCustomCommand(toolState->getId() , ttl_driver::XL330Reg::ADDR_OPERATING_MODE, reg_value, ttl_driver::XL330Reg::SIZE_OPERATING_MODE);
-            for(int counter = 0; counter < 3 && operating_mode != reg_value; ++counter)
+            for (int counter = 0; counter < 3 && operating_mode != reg_value; ++counter)
             {
                 _ttl_manager->sendCustomCommand(toolState->getId(), ttl_driver::XL330Reg::ADDR_OPERATING_MODE, operating_mode, ttl_driver::XL330Reg::SIZE_OPERATING_MODE);
                 ros::Duration(0.01).sleep();
@@ -929,7 +929,6 @@ void TtlInterfaceCore::addSingleCommandToQueue(std::unique_ptr<common::model::IS
     {
         if (cmd->getCmdType() == static_cast<int>(EStepperCommandType::CMD_TYPE_CONVEYOR))
         {
-
             if (_conveyor_cmds_queue.size() > QUEUE_OVERFLOW)
                 ROS_WARN("TtlInterfaceCore::addCommandToQueue: Cmd queue overflow ! %d", static_cast<int>(_conveyor_cmds_queue.size()));
             else

@@ -22,7 +22,7 @@
 #include <string>
 #include <utility>
 #include <vector>
-#include <inttypes.h> 
+#include <inttypes.h>
 
 // ros
 

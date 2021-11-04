@@ -38,7 +38,7 @@ class SystemApiClientNode:
                                                 self.__callback_manage_wifi)
 
         self.manage_ethernet_server = rospy.Service('/niryo_robot/ethernet/manage', ManageEthernet,
-                                                self.__callback_manage_ethernet)
+                                                    self.__callback_manage_ethernet)
 
         # Set a bool to mentioned this node is initialized
         rospy.set_param('~initialized', True)
