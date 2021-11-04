@@ -207,24 +207,30 @@ int AbstractTtlDriver::read(uint16_t address, uint8_t data_len, uint8_t id, uint
 int AbstractTtlDriver::write(uint16_t address, uint8_t data_len, uint8_t id, uint32_t data)
 {
     int dxl_comm_result = COMM_TX_FAIL;
+    uint8_t error = 0;
 
     switch (data_len)
     {
         case DXL_LEN_ONE_BYTE:
-            dxl_comm_result = _dxlPacketHandler->write1ByteTxOnly(_dxlPortHandler.get(),
-                                                                  id, address, static_cast<uint8_t>(data));
+            dxl_comm_result = _dxlPacketHandler->write1ByteTxRx(_dxlPortHandler.get(),
+                                                                  id, address, static_cast<uint8_t>(data), &error);
         break;
         case DXL_LEN_TWO_BYTES:
-            dxl_comm_result = _dxlPacketHandler->write2ByteTxOnly(_dxlPortHandler.get(),
-                                                                  id, address, static_cast<uint16_t>(data));
+            dxl_comm_result = _dxlPacketHandler->write2ByteTxRx(_dxlPortHandler.get(),
+                                                                  id, address, static_cast<uint16_t>(data), &error);
         break;
         case DXL_LEN_FOUR_BYTES:
-            dxl_comm_result = _dxlPacketHandler->write4ByteTxOnly(_dxlPortHandler.get(),
-                                                                  id, address, data);
+            dxl_comm_result = _dxlPacketHandler->write4ByteTxRx(_dxlPortHandler.get(),
+                                                                  id, address, data, &error);
         break;
         default:
             printf("AbstractTtlDriver::write ERROR: Size param must be 1, 2 or 4 bytes\n");
         break;
+    }
+
+    if (error != 0)
+    {
+        printf("AbstractTtlDriver::write ERROR: device return error: id=%d, addr=%d, len=%d, err=0x%02x\n", id, address, data_len, error);
     }
 
     return dxl_comm_result;

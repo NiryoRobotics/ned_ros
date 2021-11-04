@@ -421,9 +421,10 @@ bool ConveyorInterfaceCore::_callbackControlConveyor(conveyor_interface::Control
         }
         else if (EBusProtocol::TTL == bus_proto)
         {
+            int32_t speed = req.speed;
             _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperTtlSingleCmd>(EStepperCommandType::CMD_TYPE_CONVEYOR,
                                                                                           req.id, std::initializer_list<uint32_t>{req.control_on,
-                                                                                          static_cast<uint32_t>(req.speed),
+                                                                                          static_cast<uint32_t>(speed),
                                                                                           static_cast<uint32_t>(req.direction * assembly_direction)}));
         }
 
@@ -469,16 +470,17 @@ void ConveyorInterfaceCore::_publishConveyorsFeedback(const ros::TimerEvent&)
             if (interface)
             {
                 int cnt_scan_failed = 0;
-                while (cnt_scan_failed < 2)
+                while (cnt_scan_failed < 3)
                 {
                     if (!interface->scanMotorId(conveyor_state->getId()))
                     {
                         cnt_scan_failed++;
+                        ros::Duration(0.1).sleep();
                     }
                     else
                         break;
                 }
-                if (cnt_scan_failed == 2)
+                if (cnt_scan_failed == 3)
                     removeConveyor(conveyor_state->getId());
                 else
                 {

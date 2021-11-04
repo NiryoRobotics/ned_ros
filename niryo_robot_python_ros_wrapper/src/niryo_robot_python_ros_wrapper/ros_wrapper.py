@@ -31,7 +31,6 @@ from niryo_robot_msgs.msg import RPY
 from niryo_robot_rpi.msg import DigitalIO, DigitalIOState, AnalogIO, AnalogIOState
 from niryo_robot_tools_commander.msg import ToolCommand
 
-
 # Services
 from conveyor_interface.srv import ControlConveyor, SetConveyor, SetConveyorRequest
 from niryo_robot_arm_commander.srv import GetFK, GetIK
@@ -664,7 +663,7 @@ class NiryoRosWrapper:
         # When to start the trajectory: 0.1s from now
         goal.trajectory.header.stamp = rospy.Time.now() + rospy.Duration.from_sec(0.1)
         self.__follow_joint_traj_client.send_goal(goal)
-        self.__follow_joint_traj_client.wait_for_result(timeout=rospy.Duration(2*duration+0.1))
+        self.__follow_joint_traj_client.wait_for_result(timeout=rospy.Duration(2 * duration + 0.1))
 
         result = self.__follow_joint_traj_client.get_result()
         if not result:
@@ -1271,36 +1270,46 @@ class NiryoRosWrapper:
             return self.deactivate_electromagnet(pin_id)
 
     # - Gripper
-    def open_gripper(self, speed=500):
+    def open_gripper(self, speed=500, max_torque_percentage=100, hold_torque_percentage=20):
         """
         Open gripper with a speed 'speed'
 
         :param speed: Default -> 500
         :type speed: int
+        :param max_torque_percentage: Default -> 100
+        :type max_torque_percentage: int
+        :param hold_torque_percentage: Default -> 20
+        :type hold_torque_percentage: int
         :return: status, message
         :rtype: (int, str)
         """
-        return self.__deal_with_gripper(speed, ToolCommand.OPEN_GRIPPER)
+        return self.__deal_with_gripper(ToolCommand.OPEN_GRIPPER, speed, max_torque_percentage, hold_torque_percentage)
 
-    def close_gripper(self, speed=500):
+    def close_gripper(self, speed=500, max_torque_percentage=100, hold_torque_percentage=50):
         """
         Close gripper with a speed 'speed'
 
         :param speed: Default -> 500
         :type speed: int
+        :param max_torque_percentage: Default -> 100
+        :type max_torque_percentage: int
+        :param hold_torque_percentage: Default -> 20
+        :type hold_torque_percentage: int
         :return: status, message
         :rtype: (int, str)
         """
-        return self.__deal_with_gripper(speed, ToolCommand.CLOSE_GRIPPER)
+        return self.__deal_with_gripper(ToolCommand.CLOSE_GRIPPER, speed, max_torque_percentage, hold_torque_percentage)
 
-    def __deal_with_gripper(self, speed, command_int):
+    def __deal_with_gripper(self, command_int, speed=500, max_torque_percentage=100, hold_torque_percentage=100):
         goal = ToolActionGoal()
         goal.goal.cmd.tool_id = self.get_current_tool_id()
         goal.goal.cmd.cmd_type = command_int
+        goal.goal.cmd.max_torque_percentage = max_torque_percentage
+        goal.goal.cmd.hold_torque_percentage = hold_torque_percentage
         if command_int == ToolCommand.OPEN_GRIPPER:
-            goal.goal.cmd.gripper_open_speed = speed
+            goal.goal.cmd.speed = speed
         else:
-            goal.goal.cmd.gripper_close_speed = speed
+            goal.goal.cmd.speed = speed
         return self.__execute_tool_action(goal.goal)
 
     # - Vacuum
@@ -2085,4 +2094,4 @@ class NiryoRosWrapper:
 
     @property
     def custom_button(self):
-        return self.custom_button
+        return self.__custom_button

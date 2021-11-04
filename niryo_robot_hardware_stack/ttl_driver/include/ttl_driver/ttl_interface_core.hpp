@@ -88,10 +88,11 @@ public:
 
     void clearSingleCommandQueue();
     void clearConveyorCommandQueue();
+    void clearSyncCommandQueue();
 
     void setTrajectoryControllerCommands(std::vector<std::pair<uint8_t, uint32_t> > && cmd);
 
-    void setSyncCommand(std::unique_ptr<common::model::ISynchronizeMotorCmd>&& cmd) override;
+    void addSyncCommandToQueue(std::unique_ptr<common::model::ISynchronizeMotorCmd>&& cmd) override;
 
     // we have to use ISingleMotorCmd instead of AbstractTtlMotorCmd because this is pure virtual method in IDriverCore
     // IDriverCore used by Can and Ttl so AbstractTtlMotorCmd or AbstractCanMotorCmd can't be used in this case
@@ -172,7 +173,11 @@ private:
     bool _control_loop_flag{false};
     bool _debug_flag{false};
 
-    std::mutex _control_loop_mutex;
+    mutable std::mutex _control_loop_mutex;
+    mutable std::mutex _single_cmd_queue_mutex;
+    mutable std::mutex _conveyor_cmd_queue_mutex;
+    mutable std::mutex _sync_cmd_queue_mutex;
+
     std::thread _control_loop_thread;
 
     double _control_loop_frequency{0.0};
@@ -198,7 +203,7 @@ private:
     std::vector<std::pair<uint8_t, uint32_t> > _joint_trajectory_cmd;
 
     // ttl cmds
-    std::queue<std::unique_ptr<common::model::AbstractTtlSynchronizeMotorCmd> > _sync_cmds;
+    std::queue<std::unique_ptr<common::model::AbstractTtlSynchronizeMotorCmd> > _sync_cmds_queue;
     std::queue<std::unique_ptr<common::model::AbstractTtlSingleMotorCmd> > _single_cmds_queue;
     std::queue<std::unique_ptr<common::model::AbstractTtlSingleMotorCmd> > _conveyor_cmds_queue;
 

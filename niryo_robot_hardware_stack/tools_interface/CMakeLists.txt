@@ -33,15 +33,17 @@ find_package(catkin REQUIRED
 # Declare ROS messages, services and actions ##
 ###############################################
 
+add_message_files(
+  FILES
+    Tool.msg
+)
+
 add_service_files(
   DIRECTORY
     srv
   FILES
-    CloseGripper.srv
-    OpenGripper.srv
     PingDxlTool.srv
-    PullAirVacuumPump.srv
-    PushAirVacuumPump.srv
+    ToolCommand.srv
 )
 
 generate_messages(
