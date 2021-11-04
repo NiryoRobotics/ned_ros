@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 # shutdown_manager.py
 # Copyright (C) 2021 Niryo
 # All rights reserved.

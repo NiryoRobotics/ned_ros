@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 # top_button.py
 # Copyright (C) 2021 Niryo
 # All rights reserved.

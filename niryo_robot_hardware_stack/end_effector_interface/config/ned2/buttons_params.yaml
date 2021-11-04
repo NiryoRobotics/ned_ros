@@ -1,8 +1,8 @@
-button_0:
+button_2:
     type: "free_drive"
 
 button_1:
     type: "save_position"
 
-button_2:
+button_0:
     type: "custom"
