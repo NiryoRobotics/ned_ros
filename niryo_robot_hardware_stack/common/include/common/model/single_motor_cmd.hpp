@@ -216,7 +216,7 @@ std::string DxlSingleCmd::str() const
 
     for(auto const &p : _param_list)
     {
-        ss << std::to_string(p);
+        ss << std::to_string(p) << " ";
     }
 
     return ss.str();

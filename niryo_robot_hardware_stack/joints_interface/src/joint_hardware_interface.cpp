@@ -532,23 +532,19 @@ void JointHardwareInterface::activateLearningMode(bool activated)
     ROS_DEBUG("JointHardwareInterface::activateLearningMode - activate learning mode");
 
     DxlSyncCmd dxl_cmd(EDxlCommandType::CMD_TYPE_LEARNING_MODE);
-    StepperTtlSingleCmd stepper_ttl_cmd(EStepperCommandType::CMD_TYPE_LEARNING_MODE);
+    StepperTtlSyncCmd stepper_ttl_cmd(EStepperCommandType::CMD_TYPE_LEARNING_MODE);
     StepperSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_LEARNING_MODE);
 
     for (auto const& jState : _joint_list)
     {
         if (jState)
         {
-            if (jState->isDynamixel())
+            if ( jState->getBusProtocol() == EBusProtocol::TTL)
             {
-                dxl_cmd.addMotorParam(jState->getHardwareType(), jState->getId(), activated);
-            }
-            else if ((jState->isStepper() && jState->getBusProtocol() == EBusProtocol::TTL))
-            {
-                stepper_ttl_cmd.setId(jState->getId());
-                stepper_ttl_cmd.setParams({activated});
-                if (_ttl_interface)
-                    _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperTtlSingleCmd>(stepper_ttl_cmd));
+                if(jState->isDynamixel())
+                  dxl_cmd.addMotorParam(jState->getHardwareType(), jState->getId(), activated);
+                else
+                  stepper_ttl_cmd.addMotorParam(jState->getHardwareType(), jState->getId(), activated);
             }
             else
             {
@@ -562,7 +558,11 @@ void JointHardwareInterface::activateLearningMode(bool activated)
 
     if (_ttl_interface)
     {
-        _ttl_interface->setSyncCommand(std::make_unique<DxlSyncCmd>(dxl_cmd));
+        if (dxl_cmd.isValid())
+          _ttl_interface->addSyncCommandToQueue(std::make_unique<DxlSyncCmd>(dxl_cmd));
+
+        if (stepper_ttl_cmd.isValid())
+          _ttl_interface->addSyncCommandToQueue(std::make_unique<StepperTtlSyncCmd>(stepper_ttl_cmd));
     }
 }
 

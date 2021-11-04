@@ -100,7 +100,7 @@ int AbstractDxlDriver::writeSyncCmd(int type, const std::vector<uint8_t>& ids, c
     {
         std::vector<uint32_t> params_inv;
         params_inv.reserve(params.size());
-for (auto const& p : params)
+        for (auto const& p : params)
         {
             params_inv.emplace_back(!p);
         }

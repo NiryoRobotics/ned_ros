@@ -551,7 +551,7 @@ void CalibrationManager::moveRobotBeforeCalibration()
         dynamixel_cmd.addMotorParam(_joint_states_list.at(4)->getHardwareType(), _joint_states_list.at(4)->getId(), 1);
         dynamixel_cmd.addMotorParam(_joint_states_list.at(5)->getHardwareType(), _joint_states_list.at(5)->getId(), 1);
 
-        _ttl_interface->setSyncCommand(std::make_unique<DxlSyncCmd>(dynamixel_cmd));
+        _ttl_interface->addSyncCommandToQueue(std::make_unique<DxlSyncCmd>(dynamixel_cmd));
 
         // move dxls
         dynamixel_cmd.reset();
@@ -566,7 +566,7 @@ void CalibrationManager::moveRobotBeforeCalibration()
         dynamixel_cmd.addMotorParam(_joint_states_list.at(5)->getHardwareType(), _joint_states_list.at(5)->getId(),
                                     static_cast<uint32_t>(_joint_states_list.at(5)->to_motor_pos(0)));
 
-        _ttl_interface->setSyncCommand(std::make_unique<DxlSyncCmd>(dynamixel_cmd));
+        _ttl_interface->addSyncCommandToQueue(std::make_unique<DxlSyncCmd>(dynamixel_cmd));
 
         // Wait a little bit for all dxl go to home before calibration
         ros::Duration(0.3).sleep();
@@ -647,7 +647,7 @@ void CalibrationManager::sendCalibrationToSteppers()
                 setTorqueStepperMotor(pStepperMotorState_2, false);
                 setTorqueStepperMotor(pStepperMotorState_3, false);
             }
-
+            
             // set state of calibration before calibrate
             _ttl_interface->startCalibration();
 
@@ -712,7 +712,7 @@ void CalibrationManager::activateLearningMode(bool activated)
 
     if (_ttl_interface)
     {
-        _ttl_interface->setSyncCommand(std::make_unique<DxlSyncCmd>(dxl_cmd));
+        _ttl_interface->addSyncCommandToQueue(std::make_unique<DxlSyncCmd>(dxl_cmd));
     }
 }
 
