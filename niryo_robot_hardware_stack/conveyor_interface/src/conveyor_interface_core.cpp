@@ -487,7 +487,7 @@ void ConveyorInterfaceCore::_publishConveyorsFeedback(const ros::TimerEvent&)
                 {
                     data.conveyor_id = conveyor_state->getId();
                     data.running = conveyor_state->getState();
-                    data.direction = static_cast<int8_t>(conveyor_state->getGoalDirection());
+                    data.direction = static_cast<int8_t>(conveyor_state->getDirection() * conveyor_state->getGoalDirection());
                     data.speed = conveyor_state->getSpeed();
                     msg.conveyors.push_back(data);
 

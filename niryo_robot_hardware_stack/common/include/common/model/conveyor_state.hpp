@@ -97,9 +97,7 @@ int16_t ConveyorState::getSpeed() const
 inline
 int8_t ConveyorState::getGoalDirection() const
 {
-    // TODO : hotfix 
-    //return _goal_direction;
-    return - _goal_direction;
+    return _goal_direction;
 }
 
 /**
