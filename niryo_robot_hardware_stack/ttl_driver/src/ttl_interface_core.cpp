@@ -622,7 +622,6 @@ void TtlInterfaceCore::controlLoop()
                     _executeCommand();
                     _time_hw_data_last_write = ros::Time::now().toSec();
                 }
-                ros::Duration(0.005).sleep();
             }
             else
             {
@@ -652,7 +651,7 @@ void TtlInterfaceCore::_executeCommand()
     if (!_single_cmds_queue.empty())
     {
         if (_need_sleep)
-            ros::Duration(0.01).sleep();
+            ros::Duration(0.001).sleep();
         _ttl_manager->writeSingleCommand(std::move(_single_cmds_queue.front()));
         _single_cmds_queue.pop();
         _need_sleep = true;
@@ -661,7 +660,7 @@ void TtlInterfaceCore::_executeCommand()
     {
         // as we use a queue, we don't need a mutex
         if (_need_sleep)
-            ros::Duration(0.01).sleep();
+            ros::Duration(0.001).sleep();
         _ttl_manager->writeSingleCommand(std::move(_conveyor_cmds_queue.front()));
         _conveyor_cmds_queue.pop();
     }
@@ -669,10 +668,13 @@ void TtlInterfaceCore::_executeCommand()
     {
         // as we use a queue, we don't need a mutex
         if (_need_sleep)
-            ros::Duration(0.01).sleep();
+            ros::Duration(0.001).sleep();
         _ttl_manager->writeSynchronizeCommand(std::move(_sync_cmds.front()));
         _sync_cmds.pop();
+        _need_sleep = true;
     }
+    if (_need_sleep)
+        ros::Duration(0.001).sleep();
 }
 
 // *************
