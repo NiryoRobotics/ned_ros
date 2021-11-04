@@ -25,7 +25,7 @@ from niryo_robot_vision.srv import SetImageParameter
 
 
 class VideoStream(object):
-    def __init__(self, calibration_object, publisher_compressed_stream):
+    def __init__(self, calibration_object, publisher_compressed_stream, flip_img=False):
         self._calibration_object = calibration_object
         self._publisher_compressed_stream = publisher_compressed_stream
 
@@ -44,6 +44,7 @@ class VideoStream(object):
         self._saturation = 1.0
         self._contrast = 1.0
         self._brightness = 1.0
+        self._flip_img = flip_img
 
         # - Publisher about Running/Stopped Stream
         self._running = False
@@ -161,8 +162,8 @@ class VideoStream(object):
 
 class WebcamStream(VideoStream):
 
-    def __init__(self, calibration_object, publisher_compressed_stream):
-        super(WebcamStream, self).__init__(calibration_object, publisher_compressed_stream)
+    def __init__(self, calibration_object, publisher_compressed_stream, flip_img=False):
+        super(WebcamStream, self).__init__(calibration_object, publisher_compressed_stream, flip_img)
 
         self.__cam_port = rospy.get_param("~camera_port")
         restart_rate = rospy.get_param("~restart_rate")
@@ -194,9 +195,10 @@ class WebcamStream(VideoStream):
         if ret is False:
             return None
         if self._calibration_object.is_set():
-            return self._calibration_object.undistort_image(frame)
+            img = self._calibration_object.undistort_image(frame)
+            return cv2.flip(frame, -1) if self._flip_img else img
         else:
-            return frame
+            return cv2.flip(frame, -1) if self._flip_img else frame
 
     def read_raw_img(self):
         if not self._running or not self._should_run:
@@ -285,6 +287,8 @@ class WebcamStream(VideoStream):
                         self.__frame_undistort = None
                     used_image = self.__frame_undistort if self._undistort_stream else self.__frame_raw
                     used_image = self.adjust_image(used_image)
+                    if self._flip_img:
+                        used_image = cv2.flip(frame, -1)
                     if self._display:
                         cv2.imshow("Video Stream", used_image)
                         cv2.waitKey(1)
@@ -306,8 +310,8 @@ class WebcamStream(VideoStream):
 
 class GazeboStream(VideoStream):
 
-    def __init__(self, calibration_object, publisher_compressed_stream):
-        super(GazeboStream, self).__init__(calibration_object, publisher_compressed_stream)
+    def __init__(self, calibration_object, publisher_compressed_stream, flip_img=False):
+        super(GazeboStream, self).__init__(calibration_object, publisher_compressed_stream, flip_img)
 
         self.__image_raw_sub = rospy.Subscriber('/gazebo_camera/image_raw', Image,
                                                 self.__callback_sub_image_raw)
@@ -330,9 +334,10 @@ class GazeboStream(VideoStream):
         if self.__last_image_raw is None:
             return None
         if self._calibration_object.is_set():
-            return self._calibration_object.undistort_image(self.__last_image_raw)
+            img = self._calibration_object.undistort_image(self.__last_image_raw)
+            return cv2.flip(img, -1) if self._flip_img else img
         else:
-            return self.__last_image_raw
+            return cv2.flip(self.__last_image_raw, -1) if self._flip_img else self.__last_image_raw
 
     def read_raw_img(self):
         return self.__last_image_raw
@@ -345,10 +350,11 @@ class GazeboStream(VideoStream):
                 continue
 
             self._running = True
-            if self.__last_image_raw is not None:
-                cv2.imshow("Video Stream", self.__last_image_raw)
-                cv2.waitKey(1)
 
+            if self.__last_image_raw is not None:
+                cv2.imshow("Video Stream",
+                           cv2.flip(self.__last_image_raw, -1) if self._flip_img else self.__last_image_raw)
+                cv2.waitKey(1)
             try:
                 self._publisher_compressed_stream.publish(self.__last_image_compressed_msg)
             except rospy.ROSException:

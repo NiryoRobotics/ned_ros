@@ -45,7 +45,7 @@
         <parent link="base_link"/>
         <child link="shoulder_link"/>
         <axis xyz="0 0 1"/>
-        <limit effort="10.0" velocity="2.2" lower="${(limit_low_shoulder_rotation + safety_pos_margin) * deg_to_rad}"
+        <limit effort="10.0" velocity="10.0" lower="${(limit_low_shoulder_rotation + safety_pos_margin) * deg_to_rad}"
                upper="${(limit_up_shoulder_rotation - safety_pos_margin) * deg_to_rad}"/>
     </joint>
 
@@ -79,7 +79,7 @@
         <parent link="shoulder_link"/>
         <child link="arm_link"/>
         <axis xyz="0 0 1"/>
-        <limit effort="10.0" velocity="2.2" lower="${(limit_low_arm_rotation + safety_pos_margin) * deg_to_rad}"
+        <limit effort="10.0" velocity="8.0" lower="${(limit_low_arm_rotation + safety_pos_margin) * deg_to_rad}"
                upper="${(limit_up_arm_rotation - safety_pos_margin) * deg_to_rad}"/>
 
     </joint>
@@ -114,7 +114,7 @@
         <parent link="arm_link"/>
         <child link="elbow_link"/>
         <axis xyz="0 0 1"/>
-        <limit effort="7.0" velocity="2.0" lower="${(limit_low_elbow_rotation + safety_pos_margin) * deg_to_rad}"
+        <limit effort="7.0" velocity="8.0" lower="${(limit_low_elbow_rotation + safety_pos_margin) * deg_to_rad}"
                upper="${(limit_up_elbow_rotation - safety_pos_margin) * deg_to_rad}"/>
 
     </joint>

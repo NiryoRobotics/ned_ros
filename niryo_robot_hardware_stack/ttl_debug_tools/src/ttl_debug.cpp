@@ -155,7 +155,7 @@ int handleUserInput(int argc, char **argv)
             }
             else if (vars.count("test"))  // calibrate
             {
-                uint32_t pos;
+                uint32_t pos{};
                 printf("--> Beginning Test\n");
                 ttlTools.setRegister(2, 64, 1, 1);
                 std::this_thread::sleep_for(std::chrono::milliseconds(10));

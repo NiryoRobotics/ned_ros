@@ -89,7 +89,7 @@ if(CATKIN_ENABLE_TESTING)
   find_package(roslint QUIET)
 
   if(roslint_FOUND)
-      roslint_cpp()
+      roslint_cpp(empty)
   else()
       message(WARNING "roslint not found. Skipping roslint target building")
   endif()

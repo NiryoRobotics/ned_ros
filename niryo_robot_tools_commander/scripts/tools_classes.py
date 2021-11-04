@@ -93,18 +93,21 @@ class NoTool(Tool):
 
 
 class Gripper(Tool):
-    def __init__(self, tool_id, tool_name, tool_transformation, tools_state, ros_command_interface, specs):
+    def __init__(self, tool_id, tool_name, tool_transformation, tools_state, ros_command_interface, specs,
+                 hardware_version):
         super(Gripper, self).__init__(tool_id, tool_name, tool_transformation, tools_state, ros_command_interface)
+        self.hardware_version = hardware_version
 
-        self.open_position = specs["open_position"]
-        self.open_hold_torque = specs["open_hold_torque"]
-        self.open_max_torque = specs["open_max_torque"]
-        self.close_position = specs["close_position"]
-        self.close_hold_torque = specs["close_hold_torque"]
-        self.close_max_torque = specs["close_max_torque"]
+        self.open_position = specs.get("open_position")
+        self.open_hold_torque = specs.get("open_hold_torque")
+        self.open_max_torque = specs.get("open_max_torque")
+        self.close_position = specs.get("close_position")
+        self.close_hold_torque = specs.get("close_hold_torque")
+        self.close_max_torque = specs.get("close_max_torque")
 
-        self.open_speed_limits = specs["limit_open_speed"]
-        self.close_speed_limits = specs["limit_close_speed"]
+        self.open_speed_limits = specs.get("limit_open_speed", {'min': 0, 'max': 1000})
+        self.close_speed_limits = specs.get("limit_close_speed", {'min': 0, 'max': 1000})
+        self.torque_limits = specs.get("torque_limit", {'min': -1000, 'max': 1000})
 
         self._functions_dict = {
             "open_gripper": self.open_gripper,
@@ -116,11 +119,11 @@ class Gripper(Tool):
         return "gripper"
 
     def validate_command(self, cmd):
-        if not self.open_speed_limits["min"] <= cmd.gripper_open_speed < self.open_speed_limits["max"]:
+        if not self.open_speed_limits["min"] <= cmd.speed < self.open_speed_limits["max"]:
             raise ToolValidationException(
                 "Gripper open speed must be in ( {}, {})".format(self.open_speed_limits["min"],
                                                                  self.open_speed_limits["max"]))
-        elif not self.close_speed_limits["min"] <= cmd.gripper_close_speed < self.close_speed_limits["max"]:
+        elif not self.close_speed_limits["min"] <= cmd.speed < self.close_speed_limits["max"]:
             raise ToolValidationException(
                 "Gripper close speed must be in ( {}, {})".format(self.close_speed_limits["min"],
                                                                   self.close_speed_limits["max"]))
@@ -146,13 +149,45 @@ class Gripper(Tool):
             return False, "A communication problem occured, please retry"
 
     def open_gripper(self, cmd):
+        if self.hardware_version != 'ned2' or cmd.max_torque_percentage < 0:
+            max_torque = self.open_max_torque
+        else:
+            if self.open_max_torque > 0:
+                max_torque = int(min(100, cmd.max_torque_percentage) / 100. * self.torque_limits["max"])
+            else:
+                max_torque = int(min(100, cmd.max_torque_percentage) / 100. * self.torque_limits["min"])
+
+        if self.hardware_version != 'ned2' or cmd.hold_torque_percentage < 0:
+            hold_torque = self.open_hold_torque
+        else:
+            if self.open_hold_torque > 0:
+                hold_torque = int(min(100, cmd.hold_torque_percentage) / 100. * self.torque_limits["max"])
+            else:
+                hold_torque = int(min(100, cmd.hold_torque_percentage) / 100. * self.torque_limits["min"])
+
         state = self.ros_command_interface.open_gripper(
-            self._id, self.open_position, cmd.gripper_open_speed, self.open_hold_torque, self.open_max_torque)
+            self._id, self.open_position, cmd.speed, hold_torque, max_torque)
         return self.return_gripper_status(state)
 
     def close_gripper(self, cmd):
+        if self.hardware_version != 'ned2' or cmd.max_torque_percentage < 0:
+            max_torque = self.close_max_torque
+        else:
+            if self.close_max_torque > 0:
+                max_torque = int(min(100, cmd.max_torque_percentage) / 100. * self.torque_limits["max"])
+            else:
+                max_torque = int(min(100, cmd.max_torque_percentage) / 100. * self.torque_limits["min"])
+
+        if self.hardware_version != 'ned2' or cmd.hold_torque_percentage < 0:
+            hold_torque = self.close_hold_torque
+        else:
+            if self.close_hold_torque > 0:
+                hold_torque = int(min(100, cmd.hold_torque_percentage) / 100. * self.torque_limits["max"])
+            else:
+                hold_torque = int(min(100, cmd.hold_torque_percentage) / 100. * self.torque_limits["min"])
+
         state = self.ros_command_interface.close_gripper(
-            self._id, self.close_position, cmd.gripper_close_speed, self.close_hold_torque, self.close_max_torque)
+            self._id, self.close_position, cmd.speed, hold_torque, max_torque)
         return self.return_gripper_status(state)
 
     def update_params(self, open_position, open_hold_torque, open_max_torque, close_position,
@@ -213,13 +248,16 @@ class Electromagnet(Tool):
 class VacuumPump(Tool):
     def __init__(self, tool_id, tool_name, tool_transformation, tools_state, ros_command_interface, specs):
         super(VacuumPump, self).__init__(tool_id, tool_name, tool_transformation, tools_state, ros_command_interface)
-        self.__pull_air_velocity = specs["pull_air_velocity"]
         self.__pull_air_position = specs["pull_air_position"]
         self.__pull_air_max_torque = specs["pull_air_max_torque"]
         self.__pull_air_hold_torque = specs["pull_air_hold_torque"]
-        self.__push_air_velocity = specs["push_air_velocity"]
         self.__push_air_position = specs["push_air_position"]
         self.__push_air_max_torque = specs["push_air_max_torque"]
+
+        self.__pull_air_velocity = specs.get("pull_air_velocity", 0)
+        self.__push_air_velocity = specs.get("push_air_velocity", 0)
+
+        self.__torque_limits = specs.get("torque_limit", [0, 1000])
 
         self._functions_dict = {
             "pull_air_vacuum_pump": self.pull_air_vacuum_pump,

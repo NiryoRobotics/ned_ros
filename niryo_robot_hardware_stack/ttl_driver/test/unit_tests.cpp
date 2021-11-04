@@ -459,7 +459,7 @@ TEST_F(TtlManagerTestSuiteRobotWithCan, testSingleControlCmds)
     EXPECT_EQ(ttl_drv->writeSingleCommand(std::move(cmd_3_torque)), COMM_SUCCESS);
     ros::Duration(0.01).sleep();
 
-    ttl_drv->readJointsStatus();
+    ttl_drv->readPositionsStatus();
     auto state_motor_2 = std::dynamic_pointer_cast<common::model::AbstractMotorState>(ttl_drv->getHardwareState(2));
     assert(state_motor_2);
     auto state_motor_3 = std::dynamic_pointer_cast<common::model::AbstractMotorState>(ttl_drv->getHardwareState(3));
@@ -493,7 +493,7 @@ TEST_F(TtlManagerTestSuiteRobotWithCan, testSingleControlCmds)
     EXPECT_EQ(ttl_drv->writeSingleCommand(std::move(cmd_3)), COMM_SUCCESS);
     ros::Duration(1.0).sleep();
 
-    ttl_drv->readJointsStatus();
+    ttl_drv->readPositionsStatus();
     EXPECT_NEAR(state_motor_2->getPosition(), new_pos_2, 30);
 
     EXPECT_NEAR(state_motor_3->getPosition(), new_pos_3, 30);
@@ -511,7 +511,7 @@ TEST_F(TtlManagerTestSuiteRobotWithCan, testSyncControlCmds)
     EXPECT_EQ(ttl_drv->writeSynchronizeCommand(std::move(cmd_1_torque)), COMM_SUCCESS);
     ros::Duration(0.01).sleep();
 
-  ttl_drv->readJointsStatus();
+  ttl_drv->readPositionsStatus();
   auto state_motor_2 = std::dynamic_pointer_cast<common::model::AbstractMotorState>(ttl_drv->getHardwareState(2));
   assert(state_motor_2);
   auto state_motor_3 = std::dynamic_pointer_cast<common::model::AbstractMotorState>(ttl_drv->getHardwareState(3));
@@ -529,7 +529,7 @@ TEST_F(TtlManagerTestSuiteRobotWithCan, testSyncControlCmds)
   EXPECT_EQ(ttl_drv->writeSynchronizeCommand(std::move(cmd_1)), COMM_SUCCESS);
   ros::Duration(1.0).sleep();
 
-  ttl_drv->readJointsStatus();
+  ttl_drv->readPositionsStatus();
   EXPECT_NEAR(state_motor_2->getPosition(), new_pos_2, 30);
 
   EXPECT_NEAR(state_motor_3->getPosition(), new_pos_3, 30);
@@ -608,7 +608,10 @@ class TtlManagerTestSuiteRobotWithoutCan : public ::testing::Test
       // check connections
       EXPECT_TRUE(ttl_drv->ping(2));
       EXPECT_TRUE(ttl_drv->ping(3));
+      EXPECT_TRUE(ttl_drv->ping(4));
+      EXPECT_TRUE(ttl_drv->ping(5));
       EXPECT_TRUE(ttl_drv->ping(6));
+      EXPECT_TRUE(ttl_drv->ping(7));
     }
 
     static std::string hw_version;
@@ -674,7 +677,7 @@ TEST_F(TtlManagerTestSuiteRobotWithoutCan, testSingleControlCmds)
     EXPECT_EQ(ttl_drv->writeSingleCommand(std::move(cmd_3_torque)), COMM_SUCCESS);
     ros::Duration(0.01).sleep();
 
-    ttl_drv->readJointsStatus();
+    ttl_drv->readPositionsStatus();
     auto state_motor_2 = std::dynamic_pointer_cast<common::model::AbstractMotorState>(ttl_drv->getHardwareState(2));
     assert(state_motor_2);
     auto state_motor_3 = std::dynamic_pointer_cast<common::model::AbstractMotorState>(ttl_drv->getHardwareState(3));
@@ -714,7 +717,7 @@ TEST_F(TtlManagerTestSuiteRobotWithoutCan, testSingleControlCmds)
     EXPECT_EQ(ttl_drv->writeSingleCommand(std::move(cmd_3)), COMM_SUCCESS);
     ros::Duration(0.5).sleep();
 
-    ttl_drv->readJointsStatus();
+    ttl_drv->readPositionsStatus();
 
     EXPECT_NEAR(state_motor_2->getPosition(), new_pos_2, 30);
 
@@ -800,7 +803,7 @@ TEST_F(TtlManagerTestSuiteRobotWithoutCan, testSyncControlCmds)
     EXPECT_EQ(ttl_drv->writeSynchronizeCommand(std::move(cmd_2_torque)), COMM_SUCCESS);
     ros::Duration(0.01).sleep();
 
-    ttl_drv->readJointsStatus();
+    ttl_drv->readPositionsStatus();
     auto state_motor_2 = std::dynamic_pointer_cast<common::model::AbstractMotorState>(ttl_drv->getHardwareState(2));
     assert(state_motor_2);
     auto state_motor_3 = std::dynamic_pointer_cast<common::model::AbstractMotorState>(ttl_drv->getHardwareState(3));
@@ -834,7 +837,7 @@ TEST_F(TtlManagerTestSuiteRobotWithoutCan, testSyncControlCmds)
     EXPECT_EQ(ttl_drv->writeSynchronizeCommand(std::move(cmd_2)), COMM_SUCCESS);
     ros::Duration(0.5).sleep();
 
-    ttl_drv->readJointsStatus();
+    ttl_drv->readPositionsStatus();
 
     EXPECT_NEAR(state_motor_5->getPosition(), new_pos_5, 30);
 
@@ -844,6 +847,94 @@ TEST_F(TtlManagerTestSuiteRobotWithoutCan, testSyncControlCmds)
 
     EXPECT_NEAR(state_motor_3->getPosition(), new_pos_3, 10);
 }
+
+
+TEST_F(TtlManagerTestSuiteRobotWithoutCan, testSyncTorqueAndPos)
+{
+    bool simulation_mode{false};
+    ros::NodeHandle nh_private("~");
+    nh_private.getParam("simulation_mode", simulation_mode);
+
+    common::model::EHardwareType dxl_type;
+    common::model::EHardwareType stepper_type;
+
+    if (simulation_mode)
+    {
+        dxl_type = common::model::EHardwareType::FAKE_DXL_MOTOR;
+        stepper_type = common::model::EHardwareType::FAKE_STEPPER_MOTOR;
+    }
+    else
+    {
+        dxl_type = common::model::EHardwareType::XL430;
+        stepper_type = common::model::EHardwareType::STEPPER;
+    }
+
+    // forge all cmds
+    auto cmd_1_torque = std::make_unique<common::model::DxlSyncCmd>(common::model::EDxlCommandType::CMD_TYPE_TORQUE);
+
+    cmd_1_torque->addMotorParam(stepper_type, 2, 1);
+    cmd_1_torque->addMotorParam(stepper_type, 3, 1);
+    cmd_1_torque->addMotorParam(stepper_type, 4, 1);
+    cmd_1_torque->addMotorParam(dxl_type, 5, 1);
+    cmd_1_torque->addMotorParam(dxl_type, 6, 1);
+
+    auto cmd_2_torque = std::make_unique<common::model::DxlSyncCmd>(common::model::EDxlCommandType::CMD_TYPE_TORQUE);
+
+    cmd_2_torque->addMotorParam(stepper_type, 2, 0);
+    cmd_2_torque->addMotorParam(stepper_type, 3, 0);
+    cmd_2_torque->addMotorParam(stepper_type, 4, 0);
+    cmd_2_torque->addMotorParam(dxl_type, 5, 0);
+    cmd_2_torque->addMotorParam(dxl_type, 6, 0);
+
+    // get old position
+    ttl_drv->readPositionsStatus();
+    auto state_motor_2 = std::dynamic_pointer_cast<common::model::AbstractMotorState>(ttl_drv->getHardwareState(2));
+    assert(state_motor_2);
+    auto state_motor_3 = std::dynamic_pointer_cast<common::model::AbstractMotorState>(ttl_drv->getHardwareState(3));
+    assert(state_motor_3);
+    auto state_motor_4 = std::dynamic_pointer_cast<common::model::AbstractMotorState>(ttl_drv->getHardwareState(4));
+    assert(state_motor_4);
+    auto state_motor_5 = std::dynamic_pointer_cast<common::model::AbstractMotorState>(ttl_drv->getHardwareState(5));
+    assert(state_motor_5);
+    auto state_motor_6 = std::dynamic_pointer_cast<common::model::AbstractMotorState>(ttl_drv->getHardwareState(6));
+    assert(state_motor_6);
+
+    uint32_t pos_2 = state_motor_2->getPosition();
+    uint32_t pos_3 = state_motor_3->getPosition();
+    uint32_t pos_4 = state_motor_4->getPosition();
+    uint32_t pos_5 = state_motor_5->getPosition();
+    uint32_t pos_6 = state_motor_6->getPosition();
+
+
+    EXPECT_EQ(ttl_drv->writeSynchronizeCommand(std::move(cmd_1_torque)), COMM_SUCCESS);
+
+    // get new position
+    ttl_drv->readPositionsStatus();
+    auto state_motor_2_new = std::dynamic_pointer_cast<common::model::AbstractMotorState>(ttl_drv->getHardwareState(2));
+    assert(state_motor_2_new);
+    auto state_motor_3_new = std::dynamic_pointer_cast<common::model::AbstractMotorState>(ttl_drv->getHardwareState(3));
+    assert(state_motor_3_new);
+    auto state_motor_4_new = std::dynamic_pointer_cast<common::model::AbstractMotorState>(ttl_drv->getHardwareState(4));
+    assert(state_motor_4_new);
+    auto state_motor_5_new = std::dynamic_pointer_cast<common::model::AbstractMotorState>(ttl_drv->getHardwareState(5));
+    assert(state_motor_5_new);
+    auto state_motor_6_new = std::dynamic_pointer_cast<common::model::AbstractMotorState>(ttl_drv->getHardwareState(6));
+    assert(state_motor_6_new);
+
+    uint32_t pos_2_new = state_motor_2_new->getPosition();
+    uint32_t pos_3_new = state_motor_3_new->getPosition();
+    uint32_t pos_4_new = state_motor_4_new->getPosition();
+    uint32_t pos_5_new = state_motor_5_new->getPosition();
+    uint32_t pos_6_new = state_motor_6_new->getPosition();
+
+
+    EXPECT_EQ(pos_2, pos_2_new);
+    EXPECT_EQ(pos_3, pos_3_new);
+    EXPECT_EQ(pos_4, pos_4_new);
+    EXPECT_EQ(pos_5, pos_5_new);
+    EXPECT_EQ(pos_6, pos_6_new);
+}
+
 // Test driver scan motors
 TEST_F(TtlManagerTestSuiteRobotWithoutCan, scanTest)
 {
@@ -857,14 +948,12 @@ int main(int argc, char **argv)
     testing::InitGoogleTest(&argc, argv);
     ros::init(argc, argv, "ttl_driver_unit_tests");
 
-    bool can_enabled;
+    std::string gtest_filter;
 
     ros::NodeHandle nh_private("~");
-    nh_private.getParam("can_enabled", can_enabled);
-    if (!can_enabled)
-      testing::GTEST_FLAG(filter) = "-TtlManagerTestSuiteRobotWithCan.*:TtlInterfaceTestSuiteRobotWithCan.*";
-    else
-      testing::GTEST_FLAG(filter) = "-TtlManagerTestSuiteRobotWithoutCan.*:TtlInterfaceTestSuiteRotbotWithoutCan.*";
+    nh_private.getParam("gtest_filter", gtest_filter);
+    if (!gtest_filter.empty())
+      testing::GTEST_FLAG(filter) = gtest_filter;
 
     return RUN_ALL_TESTS();
 }
