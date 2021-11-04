@@ -18,6 +18,8 @@
   <exec_depend>niryo_robot_description</exec_depend>
   <exec_depend>niryo_robot_gazebo</exec_depend>
   <exec_depend>niryo_moveit_config_standalone</exec_depend>
+  <exec_depend>niryo_robot_sound</exec_depend>
+  <exec_depend>niryo_robot_led_ring</exec_depend>
   <exec_depend>niryo_robot_vision</exec_depend>
   <exec_depend>rviz</exec_depend>
   <exec_depend>timed_roslaunch</exec_depend>

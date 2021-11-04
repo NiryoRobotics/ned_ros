@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 # fake_io_objects.py
 # Copyright (C) 2021 Niryo
 # All rights reserved.

@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 # wifi_button.py
 # Copyright (C) 2017 Niryo
 # All rights reserved.

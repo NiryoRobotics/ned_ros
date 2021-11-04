@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 # rpi_ros_utils.py
 # Copyright (C) 2021 Niryo
 # All rights reserved.
