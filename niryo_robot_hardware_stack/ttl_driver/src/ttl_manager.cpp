@@ -828,12 +828,15 @@ bool TtlManager::readHardwareStatus()
                             {
                                 hw_errors_increment++;
                             }
-
-                            auto speed = static_cast<int16_t>(velocity);
-                            auto cState = std::dynamic_pointer_cast<common::model::ConveyorState>(state);
-                            cState->setGoalDirection(cState->getDirection() * (speed > 0 ? 1 : -1));
-                            cState->setSpeed(static_cast<int16_t>(std::abs(speed)));
-                            cState->setState(speed);
+                            else
+                            {
+                                auto speed = static_cast<int32_t>(velocity);
+                                auto cState = std::dynamic_pointer_cast<common::model::ConveyorState>(state);
+                                cState->setGoalDirection(cState->getDirection() * (speed > 0 ? 1 : -1));
+                                // speed of ttl conveyor is in range 0 - 6000. Therefore, we convert this absolute value to percentage
+                                cState->setSpeed(static_cast<int16_t>(std::abs(speed * 100 / 6000)));  //TODO(Thuc) avoid hardcode 6000 here
+                                cState->setState(speed);
+                            }
                         }
                     }
                 }
