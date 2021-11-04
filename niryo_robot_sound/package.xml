@@ -1,4 +1,8 @@
-<package>
+<?xml version="1.0"?>
+<?xml-model
+  href="http://download.ros.org/schema/package_format3.xsd"
+  schematypens="http://www.w3.org/2001/XMLSchema"?>
+    <package format="3">
     <name>niryo_robot_sound</name>
     <version>3.2.0</version>
     <description> Linking Ned 2 to his sound card in order to deal with sounds and musics</description>
@@ -14,12 +18,15 @@
     <build_depend>roslint</build_depend>
     <build_depend>std_msgs</build_depend>
 
-    <run_depend>message_runtime</run_depend>
-    <run_depend>niryo_robot_status</run_depend>
-    <run_depend>niryo_robot_msgs</run_depend>
-    <run_depend>std_msgs</run_depend>
+    <build_export_depend>niryo_robot_msgs</build_export_depend>
+    <build_export_depend>std_msgs</build_export_depend>
+
+    <exec_depend>message_runtime</exec_depend>
+    <exec_depend>niryo_robot_status</exec_depend>
+    <exec_depend>niryo_robot_msgs</exec_depend>
+    <exec_depend>std_msgs</exec_depend>
 
     <!-- Python Dependencies -->
-    <run_depend>python-numpy</run_depend>
+    <exec_depend>python-numpy</exec_depend>
 
 </package>

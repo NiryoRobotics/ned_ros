@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 # led_manager.py
 # Copyright (C) 2017 Niryo
 # All rights reserved.
