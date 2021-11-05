@@ -249,6 +249,7 @@ upload_staging_job:
   rules:
     - if: $CI_COMMIT_BRANCH
       when: manual
+      allow_failure: true
   dependencies:
     - build_doc_job
   needs:
