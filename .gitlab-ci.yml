@@ -74,24 +74,6 @@ catkin_make_arm:
       - src
       - build
 
-python_test:
-  stage: test
-  dependencies: 
-    - catkin_make_amd
-  script:
-    # Quick fix for changing "ROS folder "
-    - previous_path=`pwd`
-    - mkdir -p ${NIRYO_HOME_FOLDER}
-    - cd ${NIRYO_HOME_FOLDER}
-    - mv ${previous_path}/src .
-    - mv ${previous_path}/devel .
-    - mv ${previous_path}/build .
-    ################# Quickfix end ###############
-    - source devel/setup.bash
-    # Tests
-    - python src/niryo_robot_unit_tests/scripts/script_test_headless.py
-
-
 build_doc_job:
   image: registry.gitlab.com/niryo/dockers/build_docs/ned_ros_stack:v1.0.4
   dependencies: 
@@ -121,6 +103,41 @@ build_doc_job:
   artifacts:
     paths:
       - ${DOCUMENTATION_OUTPUT_FOLDER}
+
+python_test:
+  stage: test
+  dependencies:
+    - catkin_make_amd
+  script:
+    # Quick fix for changing "ROS folder "
+    - previous_path=`pwd`
+    - mkdir -p ${NIRYO_HOME_FOLDER}
+    - cd ${NIRYO_HOME_FOLDER}
+    - mv ${previous_path}/src .
+    - mv ${previous_path}/devel .
+    - mv ${previous_path}/build .
+    ################# Quickfix end ###############
+    - source devel/setup.bash
+    # Tests
+    - python src/niryo_robot_unit_tests/scripts/script_test_headless.py
+
+## See https://docs.gitlab.com/ee/user/project/merge_requests/code_quality.html
+include:
+  - template: Code-Quality.gitlab-ci.yml
+
+code_quality:
+  tags:
+    - dind
+  artifacts:
+    paths: [gl-code-quality-report.json]
+
+code_quality_html:
+  extends: code_quality
+  variables:
+    REPORT_FORMAT: html
+  artifacts:
+    paths: [gl-code-quality-report.html]
+##
 
 .abstract_upload:
   before_script:
