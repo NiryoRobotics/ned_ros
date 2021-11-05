@@ -45,6 +45,8 @@ add_service_files(
   DIRECTORY
     srv
   FILES
+    SetFrequencies.srv
+    GetFrequencies.srv
     ReadCustomValue.srv
     ReadPIDValue.srv
     ReadVelocityProfile.srv
