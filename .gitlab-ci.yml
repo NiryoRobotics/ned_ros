@@ -206,6 +206,7 @@ upload_staging_job:
   rules:
     - if: $CI_COMMIT_BRANCH
       when: manual
+      allow_failure: true
   image: registry.gitlab.com/niryo/dockers/build_docs/base:v1.0.4
   stage: upload
   environment:
