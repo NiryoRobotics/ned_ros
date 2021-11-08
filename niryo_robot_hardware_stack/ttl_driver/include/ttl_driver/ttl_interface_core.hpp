@@ -145,6 +145,8 @@ public:
     niryo_robot_msgs::BusState getBusState() const override;
     common::model::EBusProtocol getBusProtocol() const override;
 
+    // read firmware version for all motors
+    bool readFirmwareVersionStatus();
 private:
     void initParameters(ros::NodeHandle& nh) override;
     void startServices(ros::NodeHandle& nh) override;
@@ -252,6 +254,16 @@ std::vector<uint8_t> TtlInterfaceCore::getRemovedMotorList() const
     return _ttl_manager->getRemovedMotorList();
 }
 
+/**
+ * @brief TtlInterfaceCore::readFirmwareVersionStatus
+ * @return true 
+ * @return false 
+ */
+inline
+bool TtlInterfaceCore::readFirmwareVersionStatus()
+{
+    return _ttl_manager->readFirmwareVersionStatus();
+}
 } // ttl_driver
 
 #endif // TTL_INTERFACE_CORE_HPP

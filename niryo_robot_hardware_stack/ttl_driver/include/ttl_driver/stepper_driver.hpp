@@ -424,7 +424,7 @@ template<typename reg_type>
 int StepperDriver<reg_type>::syncReadJointStatus(const std::vector<uint8_t> &id_list,
                                                  std::vector<std::array<uint32_t, 2> >& data_array_list)
 {
-    return syncReadConsecutiveBytes(reg_type::ADDR_PRESENT_VELOCITY, id_list, data_array_list);
+    return syncReadConsecutiveBytes<uint32_t, 2>(reg_type::ADDR_PRESENT_VELOCITY, id_list, data_array_list);
 }
 
 /**
