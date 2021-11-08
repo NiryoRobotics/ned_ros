@@ -70,7 +70,7 @@ class JointsInterfaceCore : common::util::IInterfaceCore
 
         bool init(ros::NodeHandle& nh) override;
 
-        void sendInitMotorsParams(bool learningMode);
+        void sendAndReceiveInitMotorsParams(bool learningMode);
         void activateLearningMode(bool activate, int &ostatus, std::string &omessage);
 
         void getCalibrationState(bool &need_calibration, bool &calibration_in_progress) const;

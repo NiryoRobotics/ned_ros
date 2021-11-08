@@ -349,7 +349,7 @@ bool HardwareInterface::_callbackRebootMotors(niryo_robot_msgs::Trigger::Request
     {
         res.message = "Reboot motors done";
 
-        _joints_interface->sendInitMotorsParams("ned2" != _hardware_version);
+        _joints_interface->sendAndReceiveInitMotorsParams("ned2" != _hardware_version);
 
         int resp_learning_mode_status = 0;
         std::string resp_learning_mode_message;

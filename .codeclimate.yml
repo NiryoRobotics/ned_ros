@@ -1,0 +1,15 @@
+version: "2"
+plugins:
+  pep8:
+    enabled: true
+  sonar-python:
+    enabled: true
+  cppcheck:
+    enabled: true
+  fixme:
+    enabled: true
+exclude_patterns:
+  - "sphinx_doc/"
+  - "niryo_robot_moveit_config/"
+  - "niryo_robot_hardware_stack/dynamixel_sdk"
+  - "niryo_robot_hardware_stack/mcp_can_rpi"
