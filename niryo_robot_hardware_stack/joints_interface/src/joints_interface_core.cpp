@@ -48,17 +48,13 @@ JointsInterfaceCore::JointsInterfaceCore(ros::NodeHandle& rootnh,
     ROS_DEBUG("JointsInterfaceCore::init - Start joint hardware interface");
     _robot.reset(new JointHardwareInterface(rootnh, robot_hwnh, _ttl_interface, _can_interface));
 
-    _robot->sendInitMotorsParams("ned2" != _hardware_version);
+    sendAndReceiveInitMotorsParams("ned2" != _hardware_version);
 
     ROS_DEBUG("JointsInterfaceCore::init - Create controller manager");
     _cm.reset(new controller_manager::ControllerManager(_robot.get(), _nh));
 
     ROS_DEBUG("JointsInterfaceCore::init - Starting ros control thread...");
     _control_loop_thread = std::thread(&JointsInterfaceCore::rosControlLoop, this);
-
-    std::string result_message;
-    int result;
-    activateLearningMode("ned2" != _hardware_version, result, result_message);
 
     ROS_INFO("JointsInterfaceCore::init - Started");
     rootnh.setParam("/niryo_robot_joints_interface/initialized", true);
@@ -204,9 +200,13 @@ void JointsInterfaceCore::activateLearningMode(bool activate, int &ostatus, std:
  * @brief JointsInterfaceCore::sendInitMotorsParams
  * @param learningMode
  */
-void JointsInterfaceCore::sendInitMotorsParams(bool learningMode)
+void JointsInterfaceCore::sendAndReceiveInitMotorsParams(bool learningMode)
 {
     _robot->sendInitMotorsParams(learningMode);
+
+    // read firmware version of all motors when all motor find out
+    if (_ttl_interface)
+        _ttl_interface->readFirmwareVersionStatus();
 }
 
 // *********************

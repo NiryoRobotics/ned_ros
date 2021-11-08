@@ -85,7 +85,7 @@ protected:
     template<typename T, const size_t N>
     int syncReadConsecutiveBytes(uint16_t address,
                                  const std::vector<uint8_t> &id_list,
-                                 std::vector<std::array<T, N> >& data_list);
+                                 std::vector<std::array<T, 2> >& data_list);
     
     int bulkRead(std::vector<uint16_t> address, uint8_t data_len, const std::vector<uint8_t>& id_list, std::vector<uint32_t>& data_list);
     int syncWrite(uint8_t address, uint8_t data_len, const std::vector<uint8_t>& id_list, const std::vector<uint32_t>& data_list);
@@ -148,7 +148,7 @@ int AbstractTtlDriver::read(uint16_t address, uint8_t id, uint32_t& data)
 template<typename T, const size_t N>
 int AbstractTtlDriver::syncReadConsecutiveBytes(uint16_t address,
                                                 const std::vector<uint8_t> &id_list,
-                                                std::vector<std::array<T, N> >& data_list)
+                                                std::vector<std::array<T, 2> >& data_list)
 {
     data_list.clear();
     int dxl_comm_result = COMM_TX_FAIL;
@@ -176,7 +176,8 @@ int AbstractTtlDriver::syncReadConsecutiveBytes(uint16_t address,
 
                 for(uint8_t b = 0; b < N; ++b)
                 {
-                    blocks.at(b) = static_cast<T>(groupSyncRead.getData(id, address, 4));
+                    uint32_t data = groupSyncRead.getData(id, address + b * 4, 4);
+                    blocks.at(b) = data;
                 }
 
                 data_list.emplace_back(std::move(blocks));
