@@ -124,8 +124,10 @@ public:
 
     // read status
     bool readPositionsStatus();
+    bool readJointsStatus();
     bool readEndEffectorStatus();
     bool readHardwareStatus();
+    bool readFirmwareVersionStatus();
 
     int readMotorPID(uint8_t id,
                      uint32_t& pos_p_gain, uint32_t& pos_i_gain, uint32_t& pos_d_gain,
