@@ -713,19 +713,19 @@ bool TtlManager::readEndEffectorStatus()
         // we reset the global error variable only if no errors
         if (0 == hw_errors_increment)
         {
-            _hw_fail_counter_read = 0;
+            _end_effector_fail_counter_read = 0;
             res = true;
         }
         else
         {
-            _hw_fail_counter_read += hw_errors_increment;
+            _end_effector_fail_counter_read += hw_errors_increment;
         }
 
-        if (_hw_fail_counter_read > MAX_HW_FAILURE)
+        if (_end_effector_fail_counter_read > MAX_HW_FAILURE)
         {
             ROS_ERROR_THROTTLE(1, "TtlManager::readEndEffectorStatus - motor connection problem - "
-                                  "Failed to read from bus (hw_fail_counter_read : %d)", _hw_fail_counter_read);
-            _hw_fail_counter_read = 0;
+                                  "Failed to read from bus (hw_fail_counter_read : %d)", _end_effector_fail_counter_read);
+            _end_effector_fail_counter_read = 0;
             _debug_error_message = "TtlManager - Connection problem with physical Bus.";
         }
     }

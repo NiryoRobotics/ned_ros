@@ -9,12 +9,12 @@ steppers:
         direction: 1
         max_effort: 0
         v_start: 1
-        a_1: 1800
+        a_1: 1600
         v_1: 3
-        a_max: 4800
-        v_max: 15
-        d_max: 4800
-        d_1: 1800
+        a_max: 3200
+        v_max: 14
+        d_max: 3200
+        d_1: 1600
         v_stop: 2
         calibration_stall_threshold: 7
 
