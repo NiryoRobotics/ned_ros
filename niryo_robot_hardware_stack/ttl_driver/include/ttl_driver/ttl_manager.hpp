@@ -211,13 +211,14 @@ private:
     std::string _debug_error_message;
 
     uint32_t _hw_fail_counter_read{0};
+    uint32_t _end_effector_fail_counter_read{0};
 
     int _led_state{-1};
 
     std::string _led_motor_type_cfg;
 
     // TODO(cc) To be changed back to 50 when connection pb with new steppers and end effector will be corrected
-    static constexpr uint32_t MAX_HW_FAILURE = 2500;
+    static constexpr uint32_t MAX_HW_FAILURE = 25;
     static constexpr uint32_t CALIBRATION_IDLE = 0;
     static constexpr uint32_t CALIBRATION_IN_PROGRESS = 1;
     static constexpr uint32_t CALIBRATION_SUCCESS = 2;
