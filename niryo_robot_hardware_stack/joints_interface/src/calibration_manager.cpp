@@ -173,7 +173,6 @@ void CalibrationManager::initParameters(ros::NodeHandle &nh)
                   profile.v_stop);
 
         _calibration_params_map.insert(std::make_pair(static_cast<uint8_t>(id), conf));
-
     }
 }
 
@@ -342,9 +341,9 @@ EStepperCalibrationStatus CalibrationManager::autoCalibration()
     // 0. Init velocity profile
     initVelocityProfiles();
 
-    while(!_ttl_interface->isSingleQueueFree())
+    while (!_ttl_interface->isSingleQueueFree())
     {
-      ros::Duration(0.2).sleep();
+        ros::Duration(0.2).sleep();
     }
 
     // 1. Place robot in position
@@ -353,7 +352,7 @@ EStepperCalibrationStatus CalibrationManager::autoCalibration()
     // 2. Send calibration cmd 1 + 2 + 3 (from can or ttl depending of which interface is instanciated)
     sendCalibrationToSteppers();
 
-    while(!_ttl_interface->isSingleQueueFree())
+    while (!_ttl_interface->isSingleQueueFree())
     {
         ros::Duration(0.2).sleep();
     }
@@ -524,7 +523,7 @@ CalibrationManager::manualCalibration()
 void CalibrationManager::setTorqueStepperMotor(const std::shared_ptr<JointState>& pState,
                                                bool status)
 {
-    while(!_ttl_interface->isSyncQueueFree())
+    while (!_ttl_interface->isSyncQueueFree())
     {
         ros::Duration(0.2).sleep();
     }
@@ -553,15 +552,14 @@ void CalibrationManager::setTorqueStepperMotor(const std::shared_ptr<JointState>
  */
 void CalibrationManager::initVelocityProfiles()
 {
-
-    while(!_ttl_interface->isSyncQueueFree())
+    while (!_ttl_interface->isSyncQueueFree())
     {
         ros::Duration(0.2).sleep();
     }
 
     if ("ned2" == _hardware_version)
     {
-        for(auto param : _calibration_params_map)
+        for (auto param : _calibration_params_map)
         {
             // CMD_TYPE_VELOCITY_PROFILE cmd
             StepperTtlSingleCmd cmd_profile(
@@ -578,20 +576,19 @@ void CalibrationManager::initVelocityProfiles()
  */
 void CalibrationManager::resetVelocityProfiles()
 {
-
-    while(!_ttl_interface->isSyncQueueFree())
+    while (!_ttl_interface->isSyncQueueFree())
     {
         ros::Duration(0.2).sleep();
     }
 
     if ("ned2" == _hardware_version)
     {
-        for(auto jState : _joint_states_list)
+        for (auto jState : _joint_states_list)
         {
-            if(jState && jState->isStepper() && EBusProtocol::TTL == jState->getBusProtocol())
+            if (jState && jState->isStepper() && EBusProtocol::TTL == jState->getBusProtocol())
             {
                 auto stepperState = std::dynamic_pointer_cast<StepperMotorState>(jState);
-                if(stepperState)
+                if (stepperState)
                 {
                     // CMD_TYPE_VELOCITY_PROFILE cmd
                     StepperTtlSingleCmd cmd_profile(
@@ -609,11 +606,11 @@ void CalibrationManager::resetVelocityProfiles()
  * @brief CalibrationManager::moveRobotBeforeCalibration
  */
 void CalibrationManager::moveRobotBeforeCalibration()
-{ 
+{
     // 0. activate torque for all motors
     activateTorque(true);
 
-    while(!_ttl_interface->isSyncQueueFree())
+    while (!_ttl_interface->isSyncQueueFree())
     {
         ros::Duration(0.2).sleep();
     }
@@ -656,9 +653,9 @@ void CalibrationManager::moveRobotBeforeCalibration()
         }
     }
 
-    while(!_ttl_interface->isSingleQueueFree())
+    while (!_ttl_interface->isSingleQueueFree())
     {
-      ros::Duration(0.2).sleep();
+        ros::Duration(0.2).sleep();
     }
 
     // 3. Move All Dynamixel to Home Position
@@ -667,9 +664,9 @@ void CalibrationManager::moveRobotBeforeCalibration()
         // set torque on
         DxlSyncCmd dynamixel_cmd(EDxlCommandType::CMD_TYPE_POSITION);
 
-        for(auto jState : _joint_states_list)
+        for (auto jState : _joint_states_list)
         {
-            if(jState && jState->isDynamixel())
+            if (jState && jState->isDynamixel())
             {
                 dynamixel_cmd.addMotorParam(jState->getHardwareType(), jState->getId(),
                                             static_cast<uint32_t>(jState->to_motor_pos(jState->getHomePosition())));
@@ -681,9 +678,9 @@ void CalibrationManager::moveRobotBeforeCalibration()
 
     // Wait a little bit for all dxl go to home before calibration
 
-    while(!_ttl_interface->isSyncQueueFree())
+    while (!_ttl_interface->isSyncQueueFree())
     {
-      ros::Duration(0.3).sleep();
+        ros::Duration(0.3).sleep();
     }
 }
 
@@ -699,9 +696,9 @@ void CalibrationManager::moveSteppersToHome()
     // 2. move all steppers to offsetPosition (Home)
     StepperTtlSyncCmd stepper_ttl_cmd(EStepperCommandType::CMD_TYPE_POSITION);
 
-    for(auto jState : _joint_states_list)
+    for (auto jState : _joint_states_list)
     {
-        if(jState && jState->isStepper())
+        if (jState && jState->isStepper())
         {
             uint8_t motor_id = jState->getId();
 
@@ -741,15 +738,15 @@ void CalibrationManager::sendCalibrationToSteppers()
       _ttl_interface->startCalibration();
 
 
-    while(!_ttl_interface->isSyncQueueFree())
+    while (!_ttl_interface->isSyncQueueFree())
     {
         ros::Duration(0.2).sleep();
     }
 
     // 2. for each stepper, configure and send calibration cmd
-    for(auto jState : _joint_states_list)
+    for (auto jState : _joint_states_list)
     {
-        if (jState && jState->isStepper()) // only steppers can be calibrated
+        if (jState && jState->isStepper())  // only steppers can be calibrated
         {
             auto pStepperMotorState = std::dynamic_pointer_cast<StepperMotorState>(jState);
             if (pStepperMotorState && pStepperMotorState->isValid())
@@ -773,7 +770,6 @@ void CalibrationManager::sendCalibrationToSteppers()
                     _can_interface->addSingleCommandToQueue(std::make_unique<StepperSingleCmd>(
                                                             StepperSingleCmd(EStepperCommandType::CMD_TYPE_CALIBRATION, id,
                                                                                        {offset, delay, direction, _calibration_timeout})));
-
                 }
                 else if (_ttl_interface && EBusProtocol::TTL == pStepperMotorState->getBusProtocol())
                 {
@@ -800,7 +796,7 @@ void CalibrationManager::sendCalibrationToSteppers()
  */
 void CalibrationManager::activateTorque(bool activated)
 {
-    while(!_ttl_interface->isSingleQueueFree())
+    while (!_ttl_interface->isSingleQueueFree())
     {
         ros::Duration(0.2).sleep();
     }

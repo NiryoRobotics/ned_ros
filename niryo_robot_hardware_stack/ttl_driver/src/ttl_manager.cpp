@@ -458,7 +458,7 @@ uint32_t TtlManager::getPosition(const JointState &motor_state)
     if (_driver_map.count(hardware_type) && _driver_map.at(hardware_type))
     {
         auto driver = std::dynamic_pointer_cast<AbstractMotorDriver>(_driver_map.at(hardware_type));
-        if(driver)
+        if (driver)
         {
             for (_hw_fail_counter_read = 0; _hw_fail_counter_read < MAX_HW_FAILURE; ++_hw_fail_counter_read)
             {
