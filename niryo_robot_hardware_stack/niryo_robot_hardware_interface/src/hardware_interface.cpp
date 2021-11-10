@@ -39,11 +39,11 @@ namespace niryo_robot_hardware_interface
 HardwareInterface::HardwareInterface(ros::NodeHandle &nh) :
     _nh(nh)
 {
-    for (int i = 0; i < 10; ++i)
+    /*for (int i = 0; i < 10; ++i)
     {
       ros::Duration(1).sleep();
       ROS_WARN("sleeping for %d", i);
-    }
+    }*/
     init(nh);
 }
 
@@ -432,12 +432,15 @@ void HardwareInterface::_publishHardwareStatus(const ros::TimerEvent&)
     if (_tools_interface)
     {
         auto tool_state = _tools_interface->getToolState();
-        motor_names.emplace_back(tool_state->getToolName());
-        voltages.emplace_back(tool_state->getVoltage());
-        temperatures.emplace_back(tool_state->getTemperature());
-        hw_errors.emplace_back(tool_state->getHardwareError());
-        hw_errors_msg.emplace_back(tool_state->getHardwareErrorMessage());
-        motor_types.emplace_back(common::model::HardwareTypeEnum(tool_state->getHardwareType()).toString());
+        if (tool_state && tool_state->isValid())
+        {
+            motor_names.emplace_back(tool_state->getToolName());
+            voltages.emplace_back(tool_state->getVoltage());
+            temperatures.emplace_back(tool_state->getTemperature());
+            hw_errors.emplace_back(tool_state->getHardwareError());
+            hw_errors_msg.emplace_back(tool_state->getHardwareErrorMessage());
+            motor_types.emplace_back(common::model::HardwareTypeEnum(tool_state->getHardwareType()).toString());
+        }
     }
 
     if (_conveyor_interface)
