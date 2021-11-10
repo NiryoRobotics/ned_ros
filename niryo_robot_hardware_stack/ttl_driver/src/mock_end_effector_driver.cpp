@@ -124,7 +124,7 @@ int MockEndEffectorDriver::readVoltage(uint8_t id, double& voltage)
  * @param hardware_status
  * @return
  */
-int MockEndEffectorDriver::readHwErrorStatus(uint8_t id, uint32_t& hardware_status)
+int MockEndEffectorDriver::readHwErrorStatus(uint8_t id, uint8_t& hardware_status)
 {
     if (COMM_SUCCESS != ping(id))
         return COMM_RX_FAIL;
@@ -202,9 +202,8 @@ int MockEndEffectorDriver::syncReadHwStatus(const std::vector<uint8_t> &id_list,
  * @param hw_error_list
  * @return
  */
-int MockEndEffectorDriver::syncReadHwErrorStatus(const std::vector<uint8_t> &/*id_list*/, std::vector<uint32_t> &hw_error_list)
+int MockEndEffectorDriver::syncReadHwErrorStatus(const std::vector<uint8_t> &/*id_list*/, std::vector<uint8_t> &hw_error_list)
 {
-    // return syncRead(reg_type::ADDR_HW_ERROR_STATUS, reg_type::SIZE_HW_ERROR_STATUS, id_list, hw_error_list);
     hw_error_list.clear();
     hw_error_list.emplace_back(0);
     return COMM_SUCCESS;

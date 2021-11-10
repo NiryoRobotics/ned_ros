@@ -73,7 +73,7 @@ class MockStepperDriver : public AbstractStepperDriver
 
         int readTemperature(uint8_t id, uint8_t& temperature) override;
         int readVoltage(uint8_t id, double &voltage) override;
-        int readHwErrorStatus(uint8_t id, uint32_t &hardware_status) override;
+        int readHwErrorStatus(uint8_t id, uint8_t& hardware_error_status) override;
 
         int readPosition(uint8_t id, uint32_t &present_position) override;
         int readVelocity(uint8_t id, uint32_t &present_velocity) override;
@@ -87,7 +87,7 @@ class MockStepperDriver : public AbstractStepperDriver
         int syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list) override;
         int syncReadHwStatus(const std::vector<uint8_t> &id_list, std::vector<std::pair<double, uint8_t> >& data_list) override;
 
-        int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list) override;
+        int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint8_t> &hw_error_list) override;
 
         // AbstractStepperDriver interface
     public:

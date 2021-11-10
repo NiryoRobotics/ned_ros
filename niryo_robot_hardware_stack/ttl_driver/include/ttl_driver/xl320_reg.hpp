@@ -36,7 +36,7 @@ struct XL320Reg
     static constexpr uint8_t SIZE_MODEL_NUMBER        = 2;
 
     static constexpr uint16_t ADDR_FIRMWARE_VERSION    = 2;
-    static constexpr uint8_t SIZE_FIRMWARE_VERSION    = 1;
+    using TYPE_FIRMWARE_VERSION = uint8_t;
 
     static constexpr uint16_t ADDR_ID                  = 3;
     static constexpr uint8_t SIZE_ID                  = 1;
@@ -100,19 +100,19 @@ struct XL320Reg
     static constexpr uint8_t SIZE_GOAL_TORQUE         = 2;
 
     static constexpr uint16_t ADDR_PRESENT_POSITION    = 37;
-    static constexpr uint8_t SIZE_PRESENT_POSITION    = 2;
+    using TYPE_PRESENT_POSITION = uint16_t;
 
     static constexpr uint16_t ADDR_PRESENT_VELOCITY    = 39;
-    static constexpr uint8_t SIZE_PRESENT_VELOCITY    = 2;
+    using TYPE_PRESENT_VELOCITY = uint16_t;
 
     static constexpr uint16_t ADDR_PRESENT_LOAD        = 41;
     static constexpr uint8_t SIZE_PRESENT_LOAD        = 2;
 
     static constexpr uint16_t ADDR_PRESENT_VOLTAGE     = 45;
-    static constexpr uint8_t SIZE_PRESENT_VOLTAGE     = 1;
+    using TYPE_PRESENT_VOLTAGE = uint8_t;
 
     static constexpr uint16_t ADDR_PRESENT_TEMPERATURE = 46;
-    static constexpr uint8_t SIZE_PRESENT_TEMPERATURE = 1;
+    using TYPE_PRESENT_TEMPERATURE = uint8_t;
 
     static constexpr uint16_t ADDR_REGISTERED          = 47;
     static constexpr uint8_t SIZE_REGISTERED          = 1;
@@ -121,7 +121,7 @@ struct XL320Reg
     static constexpr uint8_t SIZE_MOVING              = 1;
 
     static constexpr uint16_t ADDR_HW_ERROR_STATUS     = 50;
-    static constexpr uint8_t SIZE_HW_ERROR_STATUS     = 1;
+    using TYPE_HW_ERROR_STATUS = uint8_t;
 
     static constexpr uint16_t ADDR_PUNCH               = 51;
     static constexpr uint8_t SIZE_PUNCH               = 2;

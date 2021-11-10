@@ -395,7 +395,7 @@ int MockStepperDriver::readVoltage(uint8_t id, double &voltage)
  * @param hardware_status
  * @return
  */
-int MockStepperDriver::readHwErrorStatus(uint8_t /*id*/, uint32_t& hardware_status)
+int MockStepperDriver::readHwErrorStatus(uint8_t /*id*/, uint8_t& hardware_status)
 {
     hardware_status = 0;
     return COMM_SUCCESS;
@@ -598,7 +598,7 @@ int MockStepperDriver::syncReadHwStatus(const std::vector<uint8_t> &id_list,
  * @param hw_error_list
  * @return
  */
-int MockStepperDriver::syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list)
+int MockStepperDriver::syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint8_t> &hw_error_list)
 {
     std::set<uint8_t> countSet;
 

@@ -43,16 +43,16 @@ struct EndEffectorReg
     static constexpr uint8_t SIZE_BAUDRATE                  = 1;
 
     static constexpr uint16_t ADDR_FIRMWARE_VERSION         = 59;
-    static constexpr uint8_t SIZE_FIRMWARE_VERSION          = 4;
+    using TYPE_FIRMWARE_VERSION = uint32_t;
 
     static constexpr uint16_t ADDR_HW_ERROR_STATUS          = 70;
-    static constexpr uint8_t SIZE_HW_ERROR_STATUS           = 1;
+    using TYPE_HW_ERROR_STATUS = uint8_t;
 
     static constexpr uint16_t ADDR_PRESENT_VOLTAGE          = 144;
-    static constexpr uint8_t SIZE_PRESENT_VOLTAGE           = 2;
+    using TYPE_PRESENT_VOLTAGE = uint16_t;
 
     static constexpr uint16_t ADDR_PRESENT_TEMPERATURE      = 146;
-    static constexpr uint8_t SIZE_PRESENT_TEMPERATURE       = 1;
+    using TYPE_PRESENT_TEMPERATURE = uint8_t;
 
     // specific to EE
     static constexpr uint16_t ADDR_BUTTON_0_STATUS          = 1024;

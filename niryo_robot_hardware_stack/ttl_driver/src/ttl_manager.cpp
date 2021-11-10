@@ -867,7 +867,7 @@ bool TtlManager::readHardwareStatus()
             }
 
             // **********  error state
-            vector<uint32_t> hw_error_status_list;
+            vector<uint8_t> hw_error_status_list;
 
             if (COMM_SUCCESS != driver->syncReadHwErrorStatus(id_list, hw_error_status_list))
             {
@@ -1719,7 +1719,7 @@ void TtlManager::readFakeConfig()
             _nh.getParam(current_ns + "id", id);
             _fake_data->end_effector.id = static_cast<uint8_t>(id);
             _nh.getParam(current_ns + "temperature", temperature);
-            _fake_data->end_effector.temperature = static_cast<uint32_t>(temperature);
+            _fake_data->end_effector.temperature = static_cast<uint8_t>(temperature);
             _nh.getParam(current_ns + "voltage", voltage);
             _fake_data->end_effector.voltage = static_cast<double>(voltage);
 

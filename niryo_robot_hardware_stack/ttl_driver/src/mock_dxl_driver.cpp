@@ -422,7 +422,7 @@ int MockDxlDriver::readVoltage(uint8_t id, double& voltage)
  * @param hardware_status
  * @return
  */
-int MockDxlDriver::readHwErrorStatus(uint8_t id, uint32_t& hardware_status)
+int MockDxlDriver::readHwErrorStatus(uint8_t id, uint8_t& hardware_status)
 {
     if (_fake_data->dxl_registers.count(id))
       return COMM_RX_FAIL;
@@ -618,7 +618,7 @@ int MockDxlDriver::syncReadHwStatus(const std::vector<uint8_t> &id_list,
  * @return
  */
 int MockDxlDriver::syncReadHwErrorStatus(const std::vector<uint8_t> &id_list,
-                                         std::vector<uint32_t> &hw_error_list)
+                                         std::vector<uint8_t> &hw_error_list)
 {
     std::set<uint8_t> countSet;
     for (auto & id : id_list)

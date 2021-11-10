@@ -57,14 +57,14 @@ class EndEffectorDriver : public AbstractEndEffectorDriver
         
         int readTemperature(uint8_t id, uint8_t& temperature) override;
         int readVoltage(uint8_t id, double &voltage) override;
-        int readHwErrorStatus(uint8_t id, uint32_t &hardware_status) override;
+        int readHwErrorStatus(uint8_t id, uint8_t& hardware_error_status) override;
 
         int syncReadFirmwareVersion(const std::vector<uint8_t> &id_list, std::vector<std::string> &firmware_list) override;
         int syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint8_t>& temperature_list) override;
         int syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list) override;
         int syncReadHwStatus(const std::vector<uint8_t> &id_list, std::vector<std::pair<double, uint8_t> >& data_list) override;
 
-        int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list) override;
+        int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint8_t> &hw_error_list) override;
 
     public:
         // AbstractEndEffectorDriver
@@ -142,7 +142,7 @@ int EndEffectorDriver<reg_type>::readFirmwareVersion(uint8_t id, std::string &ve
 {
     int res = COMM_RX_FAIL;
     uint32_t data{};
-    res = read(reg_type::ADDR_FIRMWARE_VERSION, reg_type::SIZE_FIRMWARE_VERSION, id, data);
+    res = read<typename reg_type::TYPE_FIRMWARE_VERSION>(reg_type::ADDR_FIRMWARE_VERSION, id, data);
     version = interpreteFirmwareVersion(data);
     return res;
 }
@@ -158,7 +158,7 @@ int EndEffectorDriver<reg_type>::readFirmwareVersion(uint8_t id, std::string &ve
 template<typename reg_type>
 int EndEffectorDriver<reg_type>::readTemperature(uint8_t id, uint8_t& temperature)
 {
-    return read(reg_type::ADDR_PRESENT_TEMPERATURE, reg_type::SIZE_PRESENT_TEMPERATURE, id, temperature);
+    return read<typename reg_type::TYPE_PRESENT_TEMPERATURE>(reg_type::ADDR_PRESENT_TEMPERATURE, id, temperature);
 }
 
 /**
@@ -170,8 +170,8 @@ int EndEffectorDriver<reg_type>::readTemperature(uint8_t id, uint8_t& temperatur
 template<typename reg_type>
 int EndEffectorDriver<reg_type>::readVoltage(uint8_t id, double& voltage)
 {
-  uint32_t voltage_mV = 0;
-  int res = read(reg_type::ADDR_PRESENT_VOLTAGE, reg_type::SIZE_PRESENT_VOLTAGE, id, voltage_mV);
+  uint16_t voltage_mV = 0;
+  int res = read<typename reg_type::TYPE_PRESENT_VOLTAGE>(reg_type::ADDR_PRESENT_VOLTAGE, id, voltage_mV);
   voltage = static_cast<double>(voltage_mV) / reg_type::VOLTAGE_CONVERSION;
   return res;
 }
@@ -183,10 +183,10 @@ int EndEffectorDriver<reg_type>::readVoltage(uint8_t id, double& voltage)
  * @return
  */
 template<typename reg_type>
-int EndEffectorDriver<reg_type>::readHwErrorStatus(uint8_t id, uint32_t& hardware_status)
+int EndEffectorDriver<reg_type>::readHwErrorStatus(uint8_t id, uint8_t& hardware_status)
 {
     hardware_status = 0;
-    return read(reg_type::ADDR_HW_ERROR_STATUS, reg_type::SIZE_HW_ERROR_STATUS, id, hardware_status);
+    return read<typename reg_type::TYPE_HW_ERROR_STATUS>(reg_type::ADDR_HW_ERROR_STATUS, id, hardware_status);
 }
 
 /**
@@ -201,7 +201,7 @@ int EndEffectorDriver<reg_type>::syncReadFirmwareVersion(const std::vector<uint8
     int res = 0;
     firmware_list.clear();
     std::vector<uint32_t> data_list{};
-    res = syncRead(reg_type::ADDR_FIRMWARE_VERSION, reg_type::SIZE_FIRMWARE_VERSION, id_list, data_list);
+    res = syncRead<typename reg_type::TYPE_FIRMWARE_VERSION>(reg_type::ADDR_FIRMWARE_VERSION, id_list, data_list);
     for(auto const& data : data_list)
       firmware_list.emplace_back(interpreteFirmwareVersion(data));
     return res;
@@ -216,7 +216,7 @@ int EndEffectorDriver<reg_type>::syncReadFirmwareVersion(const std::vector<uint8
 template<typename reg_type>
 int EndEffectorDriver<reg_type>::syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint8_t>& temperature_list)
 {
-    return syncRead(reg_type::ADDR_PRESENT_TEMPERATURE, reg_type::SIZE_PRESENT_TEMPERATURE, id_list, temperature_list);
+    return syncRead<typename reg_type::TYPE_PRESENT_TEMPERATURE>(reg_type::ADDR_PRESENT_TEMPERATURE, id_list, temperature_list);
 }
 
 /**
@@ -229,8 +229,8 @@ template<typename reg_type>
 int EndEffectorDriver<reg_type>::syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list)
 {
     voltage_list.clear();
-    std::vector<uint32_t> v_read;
-    int res = syncRead(reg_type::ADDR_PRESENT_VOLTAGE, reg_type::SIZE_PRESENT_VOLTAGE, id_list, v_read);
+    std::vector<uint16_t> v_read;
+    int res = syncRead<typename reg_type::TYPE_PRESENT_VOLTAGE>(reg_type::ADDR_PRESENT_VOLTAGE, id_list, v_read);
     for(auto const& v : v_read)
         voltage_list.emplace_back(static_cast<double>(v) / reg_type::VOLTAGE_CONVERSION);
     return res;
@@ -273,9 +273,9 @@ int EndEffectorDriver<reg_type>::syncReadHwStatus(const std::vector<uint8_t> &id
  * @return
  */
 template<typename reg_type>
-int EndEffectorDriver<reg_type>::syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list)
+int EndEffectorDriver<reg_type>::syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint8_t> &hw_error_list)
 {
-    return syncRead(reg_type::ADDR_HW_ERROR_STATUS, reg_type::SIZE_HW_ERROR_STATUS, id_list, hw_error_list);
+    return syncRead<typename reg_type::TYPE_HW_ERROR_STATUS>(reg_type::ADDR_HW_ERROR_STATUS, id_list, hw_error_list);
 }
 
 // buttons status
