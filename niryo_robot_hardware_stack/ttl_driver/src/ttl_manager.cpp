@@ -947,10 +947,10 @@ bool TtlManager::readHardwareStatus()
                     auto state = _state_map.at(id);
 
                     // **************  temperature and voltage
-                    if (hw_error_status_list.size() > i)
+                    if (hw_data_list.size() > i)
                     {
                         double voltage = (hw_data_list.at(i)).first;
-                        uint32_t temperature = (hw_data_list.at(i)).second;
+                        uint8_t temperature = (hw_data_list.at(i)).second;
 
                         state->setTemperature(temperature);
                         state->setVoltage(voltage);
