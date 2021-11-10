@@ -693,9 +693,6 @@ int TtlInterfaceCore::addJoint(const std::shared_ptr<common::model::JointState>&
 {
   int result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
 
-  // save motor id to a list (this is used in syncread to get params at the same address for all motors)
-  _ttl_manager->addToMotorList(jointState->getId());
-
   // add dynamixel as a new tool
   _ttl_manager->addHardwareComponent(jointState);
 
@@ -803,9 +800,6 @@ int TtlInterfaceCore::setConveyor(const std::shared_ptr<common::model::ConveyorS
     int result = niryo_robot_msgs::CommandStatus::NO_CONVEYOR_FOUND;
 
     lock_guard<mutex> lck(_control_loop_mutex);
-
-    // add conveyor id for conveyor list of ttl manager
-    _ttl_manager->addToConveyorList(state->getId());
 
     // add hw component before to get driver
     _ttl_manager->addHardwareComponent(state);

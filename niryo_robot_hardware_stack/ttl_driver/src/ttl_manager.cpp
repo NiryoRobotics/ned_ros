@@ -195,7 +195,29 @@ void TtlManager::addHardwareComponent(std::shared_ptr<common::model::AbstractHar
         _ids_map.at(hardware_type).emplace_back(id);
     }
 
-    addHardwareDriver(hardware_type);
+    // add to global lists
+    switch(state->getComponentType())
+    {
+    case common::model::EComponentType::TOOL:
+        _hw_list.emplace_back(id);
+      break;
+    case common::model::EComponentType::JOINT:
+        _motor_list.emplace_back(id);
+      break;
+    case common::model::EComponentType::CONVEYOR:
+        _conveyor_list.emplace_back(id);
+      break;
+    case common::model::EComponentType::END_EFFECTOR:
+        _hw_list.emplace_back(id);
+      break;
+    default:
+      break;
+    }
+
+    if (!_driver_map.count(hardware_type))
+    {
+        addHardwareDriver(hardware_type);
+    }
 }
 
 /**
@@ -290,7 +312,7 @@ int TtlManager::changeId(common::model::EHardwareType motor_type, uint8_t old_id
                 }
                 // change id in conveyor list
                 _conveyor_list.erase(std::remove(_conveyor_list.begin(), _conveyor_list.end(), old_id), _conveyor_list.end());
-                _conveyor_list.push_back(new_id);
+                _conveyor_list.emplace_back(new_id);
             }
         }
     }
@@ -487,93 +509,6 @@ uint32_t TtlManager::getPosition(const JointState &motor_state)
 }
 
 /**
- * @brief TtlManager::readJointStatus : reads the position and velocity of each joint and updates the states accordingly
- * TODO(CC) add syncreadload
- *
- */
-bool TtlManager::readPositionsStatus()
-{
-    bool res = false;
-    unsigned int hw_errors_increment = 0;
-
-    // syncread position for all motors. Using only one driver for all motors to avoid loop.
-    // All addresses for position are the same
-    if (!_driver_map.empty())
-    {
-        std::shared_ptr<ttl_driver::AbstractMotorDriver> driver;
-        try {
-            // get driver of a motor
-            auto ttl_driver = _driver_map.at(_state_map.at(_motor_list.at(0))->getHardwareType());
-            driver = std::dynamic_pointer_cast<AbstractMotorDriver>(ttl_driver);
-        }
-        catch (const std::exception& e) {}
-
-        if (driver)  // && _ids_map.count(type))
-        {
-            // we retrieve all the associated id for the type of the current driver
-            vector<uint32_t> position_list;
-
-            // retrieve positions
-            if (COMM_SUCCESS == driver->syncReadPosition(_motor_list, position_list))
-            {
-                if (_motor_list.size() == position_list.size())
-                {
-                    // set motors states accordingly
-                    for (size_t i = 0; i < _motor_list.size(); ++i)
-                    {
-                        uint8_t id = _motor_list.at(i);
-                        int position = static_cast<int>(position_list.at(i));
-
-                        if (_state_map.count(id))
-                        {
-                            auto state = std::dynamic_pointer_cast<common::model::AbstractMotorState>(_state_map.at(id));
-                            if (state)
-                            {
-                                state->setPosition(position);
-                            }
-                        }
-                    }
-                }
-                else
-                {
-                    ROS_ERROR("TtlManager::readJointStatus : Fail to sync read joint state - "
-                                "vector mismatch (id_list size %d, position_list size %d)",
-                                static_cast<int>(_motor_list.size()),
-                                static_cast<int>(position_list.size()));
-                    hw_errors_increment++;
-                }
-            }
-            else
-            {
-                hw_errors_increment++;
-            }
-        }
-    }  // for driver_map
-
-    // we reset the global error variable only if no errors
-    if (0 == hw_errors_increment)
-    {
-        _hw_fail_counter_read = 0;
-        res = true;
-    }
-    else
-    {
-        _hw_fail_counter_read += hw_errors_increment;
-    }
-
-    if (_hw_fail_counter_read > MAX_HW_FAILURE)
-    {
-        ROS_ERROR_THROTTLE(1, "TtlManager::readJointStatus - motor connection problem - "
-                                "Failed to read from bus (hw_fail_counter_read : %d)", _hw_fail_counter_read);
-        _hw_fail_counter_read = 0;
-        _is_connection_ok = false;
-        _debug_error_message = "TtlManager - Connection problem with physical Bus.";
-    }
-
-    return res;
-}
-
-/**
  * @brief TtlManager::readJointsStatus
  * @return
  */
@@ -584,15 +519,10 @@ bool TtlManager::readJointsStatus()
 
     // syncread position for all motors. Using only one driver for all motors to avoid loop.
     // All addresses for position are the same
-    if (!_driver_map.empty())
+    if (!_driver_map.empty() && _driver_map.begin()->second)
     {
-        std::shared_ptr<ttl_driver::AbstractMotorDriver> driver;
-        try {
-            // get driver of a motor
-            auto ttl_driver = _driver_map.at(_state_map.at(_motor_list.at(0))->getHardwareType());
-            driver = std::dynamic_pointer_cast<AbstractMotorDriver>(ttl_driver);
-        }
-        catch (const std::exception& e) {}
+        // get driver of the first motor
+        auto driver = std::dynamic_pointer_cast<AbstractMotorDriver>(_driver_map.begin()->second);
 
         if (driver)  // && _ids_map.count(type))
         {
@@ -674,7 +604,7 @@ bool TtlManager::readEndEffectorStatus()
         unsigned int hw_errors_increment = 0;
         try
         {
-            shared_ptr<EndEffectorDriver<EndEffectorReg> > driver = std::dynamic_pointer_cast<EndEffectorDriver<EndEffectorReg> >(_driver_map.at(EHardwareType::END_EFFECTOR));
+            auto driver = std::dynamic_pointer_cast<EndEffectorDriver<EndEffectorReg> >(_driver_map.at(EHardwareType::END_EFFECTOR));
             if (_ids_map.count(EHardwareType::END_EFFECTOR))
             {
                 // we retrieve the associated id for the end effector
@@ -739,7 +669,6 @@ bool TtlManager::readEndEffectorStatus()
 
 /**
  * @brief TtlManager::readFirmwareVersionStatus
- * // TODO(CC) : find out where to put it
  */
 bool TtlManager::readFirmwareVersionStatus()
 {
@@ -834,176 +763,166 @@ bool TtlManager::readHardwareStatus()
     bool res = false;
 
     unsigned int hw_errors_increment = 0;
+    EHardwareType hw_type = _simulation_mode ? EHardwareType::FAKE_STEPPER_MOTOR : EHardwareType::STEPPER;
 
-    // Warning : this breaks the Ned and One compatibility
-    EHardwareType motor_type{EHardwareType::UNKNOWN};
-    if(_driver_map.count(EHardwareType::STEPPER))
-        motor_type = EHardwareType::STEPPER;
-    else if(_driver_map.count(EHardwareType::FAKE_STEPPER_MOTOR))
-        motor_type = EHardwareType::FAKE_STEPPER_MOTOR;
-
-    std::shared_ptr<ttl_driver::AbstractStepperDriver> stepper_driver;
-
-    if (_driver_map.count(motor_type))
-        stepper_driver = std::dynamic_pointer_cast<ttl_driver::AbstractStepperDriver>(_driver_map.at(motor_type));
-
-
-    // 1. syncread for all motors
-    if (stepper_driver)
+    if (!_driver_map.empty() && _driver_map.count(hw_type))
     {
-        // we retrieve all the associated id for the type of the current driver
-        vector<uint8_t> id_list = _motor_list;
-        size_t id_list_size = id_list.size();
+        // get driver of the first motor
+        auto stepper_driver = std::dynamic_pointer_cast<AbstractStepperDriver>(_driver_map.at(hw_type));
 
-        // **********  voltage and Temperature
-        vector<std::pair<double, uint8_t> > hw_data_list;
-
-        if (COMM_SUCCESS != stepper_driver->syncReadHwStatus(id_list, hw_data_list))
+        // 1. syncread for all motors
+        if (stepper_driver)
         {
-            // this operation can fail, it is normal, so no error message
-            hw_errors_increment++;
-        }
-        else if (id_list_size != hw_data_list.size())
-        {
-            // however, if we have a mismatch here, it is not normal
-            ROS_ERROR("TtlManager::readHardwareStatus : syncReadHwStatus failed - "
-                        "vector mistmatch (id_list size %d, hw_data_list size %d)",
-                        static_cast<int>(id_list_size), static_cast<int>(hw_data_list.size()));
+            // **********  voltage and Temperature
+            vector<std::pair<double, uint8_t> > hw_data_list;
 
-            hw_errors_increment++;
-        }
-
-        // **********  error state
-        vector<uint8_t> hw_error_status_list;
-
-        if (COMM_SUCCESS != stepper_driver->syncReadHwErrorStatus(id_list, hw_error_status_list))
-        {
-            hw_errors_increment++;
-        }
-        else if (id_list_size != hw_error_status_list.size())
-        {
-            ROS_ERROR("TtlManager::readHardwareStatus : syncReadTemperature failed - "
-                        "vector mistmatch (id_list size %d, hw_status_list size %d)",
-                        static_cast<int>(id_list_size), static_cast<int>(hw_error_status_list.size()));
-
-            hw_errors_increment++;
-        }
-
-        // ***********  calibration status
-        std::vector<uint8_t> homing_status_list;
-        if (_calibration_status != EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED &&
-            COMM_SUCCESS != stepper_driver->syncReadHomingStatus(id_list, homing_status_list))
-        {
-            hw_errors_increment++;
-        }
-        else if (id_list_size != homing_status_list.size())
-        {
-            ROS_ERROR("TtlManager::readHardwareStatus : syncReadHomingStatus failed - "
-                        "vector mistmatch (id_list size %d, homing_status_list size %d)",
-                        static_cast<int>(id_list_size), static_cast<int>(homing_status_list.size()));
-
-            hw_errors_increment++;
-        }
-
-        // **********  conveyor state
-        // TODO(CC) add conveyors and tools to motor list and get velocity in readJointStatus
-        if (!_conveyor_list.empty())
-        {
-            try
+            if (COMM_SUCCESS != stepper_driver->syncReadHwStatus(_hw_list, hw_data_list))
             {
-                for (auto id : _conveyor_list)
+                // this operation can fail, it is normal, so no error message
+                hw_errors_increment++;
+            }
+            else if (_hw_list.size() != hw_data_list.size())
+            {
+                // however, if we have a mismatch here, it is not normal
+                ROS_ERROR("TtlManager::readHardwareStatus : syncReadHwStatus failed - "
+                            "vector mistmatch (id_list size %d, hw_data_list size %d)",
+                            static_cast<int>(_hw_list.size()), static_cast<int>(hw_data_list.size()));
+
+                hw_errors_increment++;
+            }
+
+            // **********  error state
+            vector<uint8_t> hw_error_status_list;
+
+            if (COMM_SUCCESS != stepper_driver->syncReadHwErrorStatus(_hw_list, hw_error_status_list))
+            {
+                hw_errors_increment++;
+            }
+            else if (_hw_list.size() != hw_error_status_list.size())
+            {
+                ROS_ERROR("TtlManager::readHardwareStatus : syncReadTemperature failed - "
+                            "vector mistmatch (id_list size %d, hw_status_list size %d)",
+                            static_cast<int>(_hw_list.size()), static_cast<int>(hw_error_status_list.size()));
+
+                hw_errors_increment++;
+            }
+
+            // ***********  calibration status
+            std::vector<uint8_t> homing_status_list;
+            if (_calibration_status != EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED && _ids_map.count(hw_type) &&
+                COMM_SUCCESS != stepper_driver->syncReadHomingStatus(_ids_map.at(hw_type), homing_status_list))
+            {
+                hw_errors_increment++;
+            }
+            else if (_ids_map.at(hw_type).size() != homing_status_list.size())
+            {
+                ROS_ERROR("TtlManager::readHardwareStatus : syncReadHomingStatus failed - "
+                            "vector mistmatch (id_list size %d, homing_status_list size %d)",
+                            static_cast<int>(_ids_map.at(hw_type).size()), static_cast<int>(homing_status_list.size()));
+
+                hw_errors_increment++;
+            }
+
+            // **********  conveyor state
+            // TODO(CC)  get velocity in readJointStatus
+            if (!_conveyor_list.empty())
+            {
+                try
                 {
-                    std::shared_ptr<StepperMotorState> state;
-                    state = std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(id));
-                    if (state && state->isConveyor())
+                    for (auto id : _conveyor_list)
                     {
-                        uint32_t velocity;
-                        if (COMM_SUCCESS != stepper_driver->readVelocity(id, velocity))
+                        std::shared_ptr<StepperMotorState> state;
+                        state = std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(id));
+                        if (state && state->isConveyor())
                         {
-                            hw_errors_increment++;
-                        }
-                        else
-                        {
-                            auto speed = static_cast<int32_t>(velocity);
-                            auto cState = std::dynamic_pointer_cast<common::model::ConveyorState>(state);
-                            cState->setGoalDirection(cState->getDirection() * (speed > 0 ? 1 : -1));
-                            // speed of ttl conveyor is in range 0 - 6000. Therefore, we convert this absolute value to percentage
-                            cState->setSpeed(static_cast<int16_t>(std::abs(speed * 100 / 6000)));  // TODO(Thuc) avoid hardcoded 6000 here
-                            cState->setState(speed);
+                            uint32_t velocity;
+                            if (COMM_SUCCESS != stepper_driver->readVelocity(id, velocity))
+                            {
+                                hw_errors_increment++;
+                            }
+                            else
+                            {
+                                auto speed = static_cast<int32_t>(velocity);
+                                auto cState = std::dynamic_pointer_cast<common::model::ConveyorState>(state);
+                                cState->setGoalDirection(cState->getDirection() * (speed > 0 ? 1 : -1));
+                                // speed of ttl conveyor is in range 0 - 6000. Therefore, we convert this absolute value to percentage
+                                cState->setSpeed(static_cast<int16_t>(std::abs(speed * 100 / 6000)));  // TODO(Thuc) avoid hardcoded 6000 here
+                                cState->setState(speed);
+                            }
                         }
                     }
                 }
-            }
-            catch(const std::exception& e)
-            {
-
-            }
-        }
-
-        // 2. set motors states accordingly
-        for (size_t i = 0; i < id_list_size; ++i)
-        {
-            uint8_t id = id_list.at(i);
-
-            if (_state_map.count(id))
-            {
-                auto state = _state_map.at(id);
-
-                // **************  temperature and voltage
-                if (hw_data_list.size() > i)
+                catch(const std::exception& e)
                 {
-                    double voltage = (hw_data_list.at(i)).first;
-                    uint8_t temperature = (hw_data_list.at(i)).second;
 
-                    state->setTemperature(temperature);
-                    state->setVoltage(voltage);
                 }
+            }
 
-                // **********  error state
-                if (hw_error_status_list.size() > i)
-                {
-                    state->setHardwareError(hw_error_status_list.at(i));
-                    string hardware_message = stepper_driver->interpreteErrorState(hw_error_status_list.at(i));
-                    state->setHardwareError(hardware_message);
-                }
+            // 2. set motors states accordingly
+            for (size_t i = 0; i < _hw_list.size(); ++i)
+            {
+                uint8_t id = _motor_list.at(i);
 
-                // **********  calibration status
-                if (homing_status_list.size() > i)
+                if (_state_map.count(id))
                 {
-                    if (_map_calibration_status.count(homing_status_list.at(i)))
+                    auto state = _state_map.at(id);
+
+                    // **************  temperature and voltage
+                    if (hw_data_list.size() > i)
                     {
-                        auto stepperState = std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(id));
-                        if (stepperState)
-                            stepperState->setCalibration(_map_calibration_status.at(homing_status_list.at(i)), 1);
+                        double voltage = (hw_data_list.at(i)).first;
+                        uint8_t temperature = (hw_data_list.at(i)).second;
+
+                        state->setTemperature(temperature);
+                        state->setVoltage(voltage);
+                    }
+
+                    // **********  error state
+                    if (hw_error_status_list.size() > i)
+                    {
+                        state->setHardwareError(hw_error_status_list.at(i));
+                        string hardware_message = stepper_driver->interpreteErrorState(hw_error_status_list.at(i));
+                        state->setHardwareError(hardware_message);
+                    }
+
+                    // **********  calibration status
+                    if (homing_status_list.size() > i)
+                    {
+                        if (_map_calibration_status.count(homing_status_list.at(i)))
+                        {
+                            auto stepperState = std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(id));
+                            if (stepperState)
+                                stepperState->setCalibration(_map_calibration_status.at(homing_status_list.at(i)), 1);
+                        }
                     }
                 }
+            }  // for id_list
+
+            // 3. update some values
+            updateCurrentCalibrationStatus();
+
+            // we reset the global error variable only if no errors
+            if (0 == hw_errors_increment)
+            {
+                _hw_fail_counter_read = 0;
+                res = true;
             }
-        }  // for id_list
-    } // if stepper_driver
+            else
+            {
+                _hw_fail_counter_read += hw_errors_increment;
+            }
 
-    // 3. update some values
-    updateCurrentCalibrationStatus();
-
-    // we reset the global error variable only if no errors
-    if (0 == hw_errors_increment)
-    {
-        _hw_fail_counter_read = 0;
-        res = true;
-    }
-    else
-    {
-        _hw_fail_counter_read += hw_errors_increment;
-    }
-
-    // if too much errors, disconnect
-    if (_hw_fail_counter_read > MAX_HW_FAILURE )
-    {
-        ROS_ERROR_THROTTLE(1, "TtlManager::readHardwareStatus - motor connection problem - "
-                              "Failed to read from bus (hw_fail_counter_read : %d)", _hw_fail_counter_read);
-        _hw_fail_counter_read = 0;
-        res = false;
-        _is_connection_ok = false;
-        _debug_error_message = "TtlManager - Connection problem with physical Bus.";
+            // if too much errors, disconnect
+            if (_hw_fail_counter_read > MAX_HW_FAILURE )
+            {
+                ROS_ERROR_THROTTLE(1, "TtlManager::readHardwareStatus - motor connection problem - "
+                                      "Failed to read from bus (hw_fail_counter_read : %d)", _hw_fail_counter_read);
+                _hw_fail_counter_read = 0;
+                res = false;
+                _is_connection_ok = false;
+                _debug_error_message = "TtlManager - Connection problem with physical Bus.";
+            }
+        } // if stepper_driver
     }
 
     return res;
@@ -1030,8 +949,7 @@ int TtlManager::getAllIdsOnBus(vector<uint8_t> &id_list)
     auto it = _driver_map.begin();
 
     if  (it != _driver_map.end())
-    {
-      if (it->second)
+    {     if (it->second)
       {
           vector<uint8_t> l_idList;
           result = it->second->scan(l_idList);
@@ -1483,7 +1401,9 @@ int TtlManager::writeSingleCommand(std::unique_ptr<common::model::AbstractTtlSin
 void TtlManager::executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, uint32_t> > cmd_vec)
 {
     // using only one driver for all motors to write faster. (all addresses of goal position are the same)
-    if (!_driver_map.empty())
+    if (!_motor_list.empty() &&
+        _state_map.count(_motor_list.at(0)) &&
+        _driver_map.count(_state_map.at(_motor_list.at(0))->getHardwareType()))
     {
         std::shared_ptr<ttl_driver::AbstractMotorDriver> driver;
         try {

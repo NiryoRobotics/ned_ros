@@ -123,7 +123,6 @@ public:
     int readCustomCommand(uint8_t id, int32_t reg_address, int &value, int byte_number);
 
     // read status
-    bool readPositionsStatus();
     bool readJointsStatus();
     bool readEndEffectorStatus();
     bool readHardwareStatus();
@@ -159,9 +158,6 @@ public:
 
     bool hasEndEffector() const;
 
-    // TtlManager will manage each type of hw to avoid unnecessary loop to find id 
-    void addToMotorList(uint8_t id);
-    void addToConveyorList(uint8_t id);
 private:
     // IBusManager Interface
     int setupCommunication() override;
@@ -202,6 +198,7 @@ private:
     // vector of ids of motors and conveyors
     // Theses vector help remove loop not necessary 
     std::vector<uint8_t> _motor_list;
+    std::vector<uint8_t> _hw_list;
     std::vector<uint8_t> _conveyor_list;
 
     common::model::EStepperCalibrationStatus _calibration_status{common::model::EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED};
@@ -320,26 +317,6 @@ bool TtlManager::hasEndEffector() const
 {
     return (_driver_map.count(common::model::EHardwareType::END_EFFECTOR) ||
             _driver_map.count(common::model::EHardwareType::FAKE_END_EFFECTOR));
-}
-
-/**
- * @brief TtlManager::addToMotorList
- * @return
- */
-inline
-void TtlManager::addToMotorList(uint8_t id)
-{
-    _motor_list.push_back(id);
-}
-
-/**
- * @brief TtlManager::addToConveyorList
- * @return
- */
-inline
-void TtlManager::addToConveyorList(uint8_t id)
-{
-    _conveyor_list.push_back(id);
 }
 
 /**

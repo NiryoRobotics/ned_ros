@@ -94,7 +94,12 @@ class EndEffectorInterfaceCore : public common::util::IInterfaceCore
         uint8_t _id{1};
 };
 
-inline std::shared_ptr<common::model::EndEffectorState>
+/**
+ * @brief EndEffectorInterfaceCore::getEndEffectorState
+ * @return
+ */
+inline
+std::shared_ptr<common::model::EndEffectorState>
 EndEffectorInterfaceCore::getEndEffectorState() const
 {
     return _end_effector_state;

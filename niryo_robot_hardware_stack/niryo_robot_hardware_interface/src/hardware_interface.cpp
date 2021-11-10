@@ -429,6 +429,17 @@ void HardwareInterface::_publishHardwareStatus(const ros::TimerEvent&)
         motor_types.emplace_back(common::model::HardwareTypeEnum(state->getHardwareType()).toString());
     }
 
+    if (_tools_interface)
+    {
+        auto tool_state = _tools_interface->getToolState();
+        motor_names.emplace_back(tool_state->getToolName());
+        voltages.emplace_back(tool_state->getVoltage());
+        temperatures.emplace_back(tool_state->getTemperature());
+        hw_errors.emplace_back(tool_state->getHardwareError());
+        hw_errors_msg.emplace_back(tool_state->getHardwareErrorMessage());
+        motor_types.emplace_back(common::model::HardwareTypeEnum(tool_state->getHardwareType()).toString());
+    }
+
     if (_conveyor_interface)
     {
         auto conveyor_states = _conveyor_interface->getConveyorStates();
