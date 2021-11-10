@@ -203,12 +203,14 @@ void TtlManager::addHardwareComponent(std::shared_ptr<common::model::AbstractHar
       break;
     case common::model::EComponentType::JOINT:
         _motor_list.emplace_back(id);
+        _hw_list.emplace_back(id);
       break;
     case common::model::EComponentType::CONVEYOR:
         _conveyor_list.emplace_back(id);
+        _hw_list.emplace_back(id);
       break;
     case common::model::EComponentType::END_EFFECTOR:
-        _hw_list.emplace_back(id);
+        _hw_list.emplace_back(id);        
       break;
     default:
       break;
@@ -310,9 +312,11 @@ int TtlManager::changeId(common::model::EHardwareType motor_type, uint8_t old_id
                     // update all maps
                     _ids_map.at(motor_type).emplace_back(new_id);
                 }
-                // change id in conveyor list
+                // change id in conveyor list and hw list
                 _conveyor_list.erase(std::remove(_conveyor_list.begin(), _conveyor_list.end(), old_id), _conveyor_list.end());
                 _conveyor_list.emplace_back(new_id);
+                _hw_list.erase(std::remove(_hw_list.begin(), _hw_list.end(), old_id), _hw_list.end());
+                _hw_list.emplace_back(new_id);
             }
         }
     }
