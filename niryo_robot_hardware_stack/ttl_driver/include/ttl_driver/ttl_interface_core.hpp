@@ -147,6 +147,10 @@ public:
 
     // read firmware version for all motors
     bool readFirmwareVersionStatus();
+
+    bool isSyncQueueFree();
+    bool isSingleQueueFree();
+
 private:
     void initParameters(ros::NodeHandle& nh) override;
     void startServices(ros::NodeHandle& nh) override;
@@ -205,6 +209,8 @@ private:
     std::vector<std::pair<uint8_t, uint32_t> > _joint_trajectory_cmd;
 
     // ttl cmds
+    // TODO(CC) it seems like having two queues can lead to pbs if a sync is launched before the sincle queue is finished
+    // and vice versa. So having a unique queue would be preferable (see calibration)
     std::queue<std::unique_ptr<common::model::AbstractTtlSynchronizeMotorCmd> > _sync_cmds_queue;
     std::queue<std::unique_ptr<common::model::AbstractTtlSingleMotorCmd> > _single_cmds_queue;
     std::queue<std::unique_ptr<common::model::AbstractTtlSingleMotorCmd> > _conveyor_cmds_queue;

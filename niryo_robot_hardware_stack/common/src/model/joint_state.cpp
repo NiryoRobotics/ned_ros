@@ -74,6 +74,15 @@ void JointState::setOffsetPosition(double offset_position)
 }
 
 /**
+ * @brief JointState::setHomePosition
+ * @param home_position
+ */
+void JointState::setHomePosition(double home_position)
+{
+    _home_position = home_position;
+}
+
+/**
  * @brief JointState::setDirection
  * @param direction
  */
@@ -116,6 +125,7 @@ std::string JointState::str() const
     ss << "JointState : ";
     ss << "name: " << "\"" << _name << "\"" << ",\n";
     ss << "offset position: " << _offset_position << ", ";
+    ss << "home position: " << _home_position << ", ";
     ss << "need calibration: " << (_need_calibration ? "true" : "false") << ", ";
     ss << "direction : " << (_direction == 1 ? 1 : -1) << ",\n";
     ss << "pos(" << pos << "), ";

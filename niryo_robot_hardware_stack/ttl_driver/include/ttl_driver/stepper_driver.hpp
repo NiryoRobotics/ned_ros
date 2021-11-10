@@ -609,7 +609,6 @@ int StepperDriver<reg_type>::writeVelocityProfile(uint8_t id, const std::vector<
 
   if(res > 0)
   {
-      std::cout << "Failures during writeVelocityProfile : " << res << std::endl;
       return COMM_TX_FAIL;
   }
 

@@ -416,7 +416,6 @@ int DxlDriver<reg_type>::writePID(uint8_t id, const std::vector<uint32_t> &data)
 
     if(res > 0)
     {
-        std::cout << "Failures during writeVelocityProfile : " << res << std::endl;
         return COMM_TX_FAIL;
     }
 
