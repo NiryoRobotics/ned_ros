@@ -410,7 +410,7 @@ int32_t MockStepperDriver::interpretePositionStatus(const std::array<uint8_t, MA
  * @param data
  * @return
  */
-uint32_t MockStepperDriver::interpreteTemperatureStatus(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data)
+uint8_t MockStepperDriver::interpreteTemperatureStatus(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data)
 {
     (void)data;  // unused
 
