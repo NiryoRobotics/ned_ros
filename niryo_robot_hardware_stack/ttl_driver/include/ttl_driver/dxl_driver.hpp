@@ -488,7 +488,7 @@ int DxlDriver<reg_type>::syncReadHwStatus(const std::vector<uint8_t> &id_list,
     for (auto const& data : raw_data)
     {
         // Voltage is first reg, uint16
-        uint16_t v = ((uint16_t)data.at(0) << 8) | data.at(1);
+        uint16_t v = ((uint16_t)data.at(1) << 8) | data.at(0);
         double voltage = static_cast<double>(v)  / reg_type::VOLTAGE_CONVERSION;
 
         // Temperature is second reg, uint8
