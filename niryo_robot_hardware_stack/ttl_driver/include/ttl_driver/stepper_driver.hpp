@@ -50,13 +50,15 @@ public:
     int checkModelNumber(uint8_t id) override;
     int readFirmwareVersion(uint8_t id, std::string &version) override;
 
-    int readTemperature(uint8_t id, uint32_t &temperature) override;
+    int readTemperature(uint8_t id, uint8_t& temperature) override;
     int readVoltage(uint8_t id, double &voltage) override;
     int readHwErrorStatus(uint8_t id, uint32_t &hardware_status) override;
 
     int syncReadFirmwareVersion(const std::vector<uint8_t> &id_list, std::vector<std::string> &firmware_list) override;
-    int syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &temperature_list) override;
+    int syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint8_t>& temperature_list) override;
     int syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list) override;
+    int syncReadHwStatus(const std::vector<uint8_t> &id_list, std::vector<std::pair<double, uint8_t> >& data_list) override;
+
     int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list) override;
 
 public:
@@ -358,7 +360,7 @@ int StepperDriver<reg_type>::readVelocity(uint8_t id, uint32_t &present_velocity
  * @return
  */
 template<typename reg_type>
-int StepperDriver<reg_type>::readTemperature(uint8_t id, uint32_t& temperature)
+int StepperDriver<reg_type>::readTemperature(uint8_t id, uint8_t& temperature)
 {
     return read(reg_type::ADDR_PRESENT_TEMPERATURE, reg_type::SIZE_PRESENT_TEMPERATURE, id, temperature);
 }
@@ -452,7 +454,7 @@ int StepperDriver<reg_type>::syncReadFirmwareVersion(const std::vector<uint8_t> 
  * @return
  */
 template<typename reg_type>
-int StepperDriver<reg_type>::syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &temperature_list)
+int StepperDriver<reg_type>::syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint8_t>& temperature_list)
 {
     return syncRead(reg_type::ADDR_PRESENT_TEMPERATURE, reg_type::SIZE_PRESENT_TEMPERATURE, id_list, temperature_list);
 }
@@ -474,6 +476,35 @@ int StepperDriver<reg_type>::syncReadVoltage(const std::vector<uint8_t> &id_list
     return res;
 }
 
+/**
+ * @brief StepperDriver<reg_type>::syncReadHwStatus
+ * @param id_list
+ * @param data_list
+ * @return
+ */
+template<typename reg_type>
+int StepperDriver<reg_type>::syncReadHwStatus(const std::vector<uint8_t> &id_list,
+                                              std::vector<std::pair<double, uint8_t> >& data_list)
+{
+    data_list.clear();
+
+    std::vector<std::array<uint8_t, 3> > raw_data;
+    int res = syncReadConsecutiveBytes<uint8_t, 3>(reg_type::ADDR_PRESENT_VOLTAGE, id_list, raw_data);
+
+    for (auto const& data : raw_data)
+    {
+        // Voltage is first reg, uint16
+        uint16_t v = ((uint16_t)data.at(0) << 8) | data.at(1);
+        double voltage = static_cast<double>(v)  / reg_type::VOLTAGE_CONVERSION;
+
+        // Temperature is second reg, uint8
+        uint8_t temperature = data.at(2);
+
+        data_list.emplace_back(std::make_pair(voltage, temperature));
+    }
+
+    return res;
+}
 /**
  * @brief StepperDriver<reg_type>::syncReadHwErrorStatus
  * @param id_list

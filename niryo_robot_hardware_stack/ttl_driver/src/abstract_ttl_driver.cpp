@@ -139,7 +139,6 @@ std::string AbstractTtlDriver::str() const
     return ss.str();
 }
 
-
 /*
  *  -----------------   Read Write operations   --------------------
  */

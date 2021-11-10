@@ -603,7 +603,7 @@ void TtlInterfaceCore::controlLoop()
                 lock_guard<mutex> lck(_control_loop_mutex);
                 if (ros::Time::now().toSec() - _time_hw_data_last_read >= _delta_time_data_read)
                 {
-                    _ttl_manager->readPositionsStatus();
+                    _ttl_manager->readJointsStatus();
                     _time_hw_data_last_read = ros::Time::now().toSec();
                 }
                 if (ros::Time::now().toSec() - _time_hw_status_last_read >= _delta_time_status_read)

@@ -108,7 +108,7 @@ void AbstractHardwareState::setFirmwareVersion(const std::string& firmware_versi
  * @brief AbstractHardwareState::setTemperature
  * @param temp
  */
-void AbstractHardwareState::setTemperature(uint32_t temp)
+void AbstractHardwareState::setTemperature(uint8_t temp)
 {
     _temperature = temp;
 }

@@ -54,14 +54,14 @@ public:
     uint8_t getId() const;
 
     std::string getFirmwareVersion() const;
-    uint32_t getTemperature() const;
+    uint8_t getTemperature() const;
     double getVoltage() const;
     uint32_t getHardwareError() const;
     std::string getHardwareErrorMessage() const;
 
     // setters
     void setFirmwareVersion(const std::string &firmware_version);
-    void setTemperature(uint32_t temp);
+    void setTemperature(uint8_t temp);
     void setVoltage(double volt);
     void setHardwareError(uint32_t hw_error);
     void setHardwareError(std::string hw_error_msg);
@@ -83,7 +83,7 @@ protected:
     // read variables
     std::string _firmware_version{};
 
-    uint32_t _temperature{0};
+    uint8_t _temperature{0};
     double _voltage{0.0};
     uint32_t _hw_error{0};
     std::string _hw_error_message{};
@@ -155,7 +155,7 @@ std::string AbstractHardwareState::getFirmwareVersion() const
  * @return
  */
 inline
-uint32_t AbstractHardwareState::getTemperature() const
+uint8_t AbstractHardwareState::getTemperature() const
 {
     return _temperature;
 }

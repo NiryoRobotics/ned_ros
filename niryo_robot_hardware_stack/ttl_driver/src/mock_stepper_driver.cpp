@@ -365,7 +365,7 @@ int MockStepperDriver::readVelocity(uint8_t id, uint32_t &present_velocity)
  * @param temperature
  * @return
  */
-int MockStepperDriver::readTemperature(uint8_t id, uint32_t& temperature)
+int MockStepperDriver::readTemperature(uint8_t id, uint8_t& temperature)
 {
     if (_fake_data->stepper_registers.count(id))
         temperature = _fake_data->stepper_registers.at(id).temperature;
@@ -517,7 +517,7 @@ int MockStepperDriver::syncReadFirmwareVersion(const std::vector<uint8_t> &id_li
  * @param temperature_list
  * @return
  */
-int MockStepperDriver::syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &temperature_list)
+int MockStepperDriver::syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint8_t>& temperature_list)
 {
     std::set<uint8_t> countSet;
 
@@ -551,6 +551,37 @@ int MockStepperDriver::syncReadVoltage(const std::vector<uint8_t> &id_list, std:
     {
         if (_fake_data->stepper_registers.count(id))
             voltage_list.emplace_back(_fake_data->stepper_registers.at(id).voltage);
+        else
+            return COMM_RX_FAIL;
+
+        auto result = countSet.insert(id);
+        if (!result.second)
+            return GROUP_SYNC_REDONDANT_ID;  // redondant id
+    }
+    return COMM_SUCCESS;
+}
+
+/**
+ * @brief MockStepperDriver::syncReadHwStatus
+ * @param id_list
+ * @param data_list
+ * @return
+ */
+int MockStepperDriver::syncReadHwStatus(const std::vector<uint8_t> &id_list,
+                                        std::vector<std::pair<double, uint8_t> >& data_list)
+{
+    data_list.clear();
+
+    std::set<uint8_t> countSet;
+
+    for (auto & id : id_list)
+    {
+        if (_fake_data->stepper_registers.count(id))
+        {
+            double voltage = _fake_data->stepper_registers.at(id).voltage;
+            uint8_t temperature = _fake_data->stepper_registers.at(id).temperature;
+            data_list.emplace_back(std::make_pair(voltage, temperature));
+        }
         else
             return COMM_RX_FAIL;
 

@@ -94,7 +94,7 @@ int MockEndEffectorDriver::readFirmwareVersion(uint8_t id, std::string &version)
  * @param temperature
  * @return
  */
-int MockEndEffectorDriver::readTemperature(uint8_t id, uint32_t& temperature)
+int MockEndEffectorDriver::readTemperature(uint8_t id, uint8_t& temperature)
 {
     if (COMM_SUCCESS != ping(id))
         return COMM_RX_FAIL;
@@ -154,7 +154,7 @@ int MockEndEffectorDriver::syncReadFirmwareVersion(const std::vector<uint8_t> &i
  * @param temperature_list
  * @return
  */
-int MockEndEffectorDriver::syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &temperature_list)
+int MockEndEffectorDriver::syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint8_t>& temperature_list)
 {
     temperature_list.clear();
     for (size_t i = 0; i < id_list.size(); i++)
@@ -173,6 +173,26 @@ int MockEndEffectorDriver::syncReadVoltage(const std::vector<uint8_t> &id_list, 
     voltage_list.clear();
     for (size_t i = 0; i < id_list.size(); i++)
         voltage_list.emplace_back(static_cast<double>(_fake_data->end_effector.voltage) / EndEffectorReg::VOLTAGE_CONVERSION);
+    return COMM_SUCCESS;
+}
+
+/**
+ * @brief MockEndEffectorDriver::syncReadHwStatus
+ * @param id_list
+ * @param data_list
+ * @return
+ */
+int MockEndEffectorDriver::syncReadHwStatus(const std::vector<uint8_t> &id_list,
+                                            std::vector<std::pair<double, uint8_t> >& data_list)
+{
+    data_list.clear();
+
+    for (size_t i = 0; i < id_list.size(); i++)
+    {
+        double voltage = _fake_data->end_effector.voltage;
+        uint8_t temperature = _fake_data->end_effector.temperature;
+        data_list.emplace_back(std::make_pair(voltage, temperature));
+    }
     return COMM_SUCCESS;
 }
 

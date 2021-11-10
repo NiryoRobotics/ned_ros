@@ -423,7 +423,7 @@ int TtlManager::rebootMotor(uint8_t motor_id)
             if (COMM_SUCCESS == return_value)
             {
                 ros::Time start_time = ros::Time::now();
-                uint32_t tmp = 0;
+                uint8_t tmp = 0;
                 int wait_result = _driver_map.at(type)->readTemperature(motor_id, tmp);
                 while (COMM_SUCCESS != wait_result || !tmp)
                 {
@@ -847,53 +847,37 @@ bool TtlManager::readHardwareStatus()
             vector<uint8_t> id_list = _ids_map.at(type);
             size_t id_list_size = id_list.size();
 
-            // **************  temperature
-            vector<uint32_t> temperature_list;
+            // **********  voltage and Temperature
+            vector<std::pair<double, uint8_t> > hw_data_list;
 
-            if (COMM_SUCCESS != driver->syncReadTemperature(id_list, temperature_list))
+            if (COMM_SUCCESS != driver->syncReadHwStatus(id_list, hw_data_list))
             {
                 // this operation can fail, it is normal, so no error message
                 hw_errors_increment++;
             }
-            else if (id_list_size != temperature_list.size())
+            else if (id_list_size != hw_data_list.size())
             {
                 // however, if we have a mismatch here, it is not normal
 
-                ROS_ERROR("TtlManager::readHardwareStatus : syncReadTemperature failed - "
-                            "vector mistmatch (id_list size %d, temperature_list size %d)",
-                            static_cast<int>(id_list_size), static_cast<int>(temperature_list.size()));
-
-                hw_errors_increment++;
-            }
-
-            // **********  voltage
-            vector<double> voltage_list;
-
-            if (COMM_SUCCESS != driver->syncReadVoltage(id_list, voltage_list))
-            {
-                hw_errors_increment++;
-            }
-            else if (id_list_size != voltage_list.size())
-            {
-                ROS_ERROR("TtlManager::readHardwareStatus : syncReadTemperature failed - "
-                            "vector mistmatch (id_list size %d, voltage_list size %d)",
-                            static_cast<int>(id_list_size), static_cast<int>(voltage_list.size()));
+                ROS_ERROR("TtlManager::readHardwareStatus : syncReadHwStatus failed - "
+                            "vector mistmatch (id_list size %d, hw_data_list size %d)",
+                            static_cast<int>(id_list_size), static_cast<int>(hw_data_list.size()));
 
                 hw_errors_increment++;
             }
 
             // **********  error state
-            vector<uint32_t> hw_status_list;
+            vector<uint32_t> hw_error_status_list;
 
-            if (COMM_SUCCESS != driver->syncReadHwErrorStatus(id_list, hw_status_list))
+            if (COMM_SUCCESS != driver->syncReadHwErrorStatus(id_list, hw_error_status_list))
             {
                 hw_errors_increment++;
             }
-            else if (id_list_size != hw_status_list.size())
+            else if (id_list_size != hw_error_status_list.size())
             {
                 ROS_ERROR("TtlManager::readHardwareStatus : syncReadTemperature failed - "
                             "vector mistmatch (id_list size %d, hw_status_list size %d)",
-                            static_cast<int>(id_list_size), static_cast<int>(hw_status_list.size()));
+                            static_cast<int>(id_list_size), static_cast<int>(hw_error_status_list.size()));
 
                 hw_errors_increment++;
             }
@@ -962,23 +946,21 @@ bool TtlManager::readHardwareStatus()
                 {
                     auto state = _state_map.at(id);
 
-                    // **************  temperature
-                    if (temperature_list.size() > i)
+                    // **************  temperature and voltage
+                    if (hw_error_status_list.size() > i)
                     {
-                        state->setTemperature(temperature_list.at(i));
-                    }
+                        double voltage = (hw_data_list.at(i)).first;
+                        uint32_t temperature = (hw_data_list.at(i)).second;
 
-                    // **********  voltage
-                    if (voltage_list.size() > i)
-                    {
-                        state->setVoltage(voltage_list.at(i));
+                        state->setTemperature(temperature);
+                        state->setVoltage(voltage);
                     }
 
                     // **********  error state
-                    if (hw_status_list.size() > i)
+                    if (hw_error_status_list.size() > i)
                     {
-                        state->setHardwareError(hw_status_list.at(i));
-                        string hardware_message = driver->interpreteErrorState(hw_status_list.at(i));
+                        state->setHardwareError(hw_error_status_list.at(i));
+                        string hardware_message = driver->interpreteErrorState(hw_error_status_list.at(i));
                         state->setHardwareError(hardware_message);
                     }
                 }
