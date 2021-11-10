@@ -721,7 +721,7 @@ bool TtlManager::readEndEffectorStatus()
             _end_effector_fail_counter_read += hw_errors_increment;
         }
 
-        if (_end_effector_fail_counter_read > MAX_HW_FAILURE)
+        if (_end_effector_fail_counter_read > MAX_READ_EE_FAILURE)
         {
             ROS_ERROR_THROTTLE(1, "TtlManager::readEndEffectorStatus - motor connection problem - "
                                   "Failed to read from bus (hw_fail_counter_read : %d)", _end_effector_fail_counter_read);

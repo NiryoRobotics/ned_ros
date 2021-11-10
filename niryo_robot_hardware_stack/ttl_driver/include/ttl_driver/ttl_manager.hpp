@@ -219,6 +219,7 @@ private:
 
     // TODO(cc) To be changed back to 50 when connection pb with new steppers and end effector will be corrected
     static constexpr uint32_t MAX_HW_FAILURE = 25;
+    static constexpr uint32_t MAX_READ_EE_FAILURE = 50;
     static constexpr uint32_t CALIBRATION_IDLE = 0;
     static constexpr uint32_t CALIBRATION_IN_PROGRESS = 1;
     static constexpr uint32_t CALIBRATION_SUCCESS = 2;
