@@ -865,7 +865,7 @@ bool TtlManager::readHardwareStatus()
             // 2. set motors states accordingly
             for (size_t i = 0; i < _hw_list.size(); ++i)
             {
-                uint8_t id = _motor_list.at(i);
+                uint8_t id = _hw_list.at(i);
 
                 if (_state_map.count(id))
                 {
