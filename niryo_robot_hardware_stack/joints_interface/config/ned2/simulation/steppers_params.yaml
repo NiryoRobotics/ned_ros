@@ -8,7 +8,6 @@ steppers:
         offset_position: 1900
         direction: 1
         max_effort: 0
-        calibration_stall_threshold: 8
 
     stepper_2:
         id: 3
@@ -16,7 +15,6 @@ steppers:
         offset_position: 371
         direction: -1
         max_effort: 0
-        calibration_stall_threshold: 8
 
     stepper_3:
         id: 4
@@ -24,4 +22,3 @@ steppers:
         offset_position: 855
         direction: 1
         max_effort: 0
-        calibration_stall_threshold: 8

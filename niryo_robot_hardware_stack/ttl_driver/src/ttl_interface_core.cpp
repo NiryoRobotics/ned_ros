@@ -1030,6 +1030,16 @@ niryo_robot_msgs::BusState TtlInterfaceCore::getBusState() const
     return bus_state;
 }
 
+bool TtlInterfaceCore::isSyncQueueFree()
+{
+    return _sync_cmds_queue.empty();
+}
+
+bool TtlInterfaceCore::isSingleQueueFree()
+{
+    return _single_cmds_queue.empty();
+}
+
 // *******************
 //    Callbacks     *
 // *******************

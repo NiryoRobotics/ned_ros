@@ -115,11 +115,11 @@ TEST_P(DXLCommonTest, validity)
 TEST_P(DXLCommonTest, zero)
 {
     // check 0 (middle pos)
-    EXPECT_NEAR(dxlState.to_rad_pos(dxlState.getMiddlePosition()),
+    EXPECT_NEAR(dxlState.to_rad_pos(0),
                 dxlState.getOffsetPosition(), precision) << "to_motor_pos failed";
 
     EXPECT_NEAR(dxlState.to_motor_pos(dxlState.getOffsetPosition()),
-                dxlState.getMiddlePosition(), precision) << "to_motor_pos failed";
+                0, precision) << "to_motor_pos failed";
 }
 
 TEST_P(DXLCommonTest, extremeLow)

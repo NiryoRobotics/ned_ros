@@ -68,7 +68,6 @@ class DxlMotorState : public JointState
 
         double getStepsForOneSpeed() const;
         int getTotalRangePosition() const;
-        int getMiddlePosition() const;
         double getTotalAngle() const;
 
         void setPositionPGain(uint32_t p_gain);
@@ -93,7 +92,6 @@ protected:
         uint32_t _ff2_gain{0};
 
         int _total_range_position{0};
-        int _middle_position{0};
         double _total_angle{0.0};
         double _steps_for_one_speed{0.0};
 
@@ -203,16 +201,6 @@ inline
 int DxlMotorState::getTotalRangePosition() const
 {
   return _total_range_position;
-}
-
-/**
- * @brief DxlMotorState::getMiddlePosition
- * @return
- */
-inline
-int DxlMotorState::getMiddlePosition() const
-{
-  return _middle_position;
 }
 
 /**
