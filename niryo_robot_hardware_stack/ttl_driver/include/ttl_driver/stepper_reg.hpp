@@ -84,7 +84,7 @@ struct StepperReg
     static constexpr uint8_t SIZE_COMMAND                   = 1;
 
     static constexpr uint16_t ADDR_HOMING_STATUS            = 148;
-    static constexpr uint8_t SIZE_HOMING_STATUS             = 1;
+    using TYPE_HOMING_STATUS = uint8_t;
 
     static constexpr uint16_t ADDR_HOMING_DIRECTION         = 149;
     static constexpr uint8_t SIZE_HOMING_DIRECTION          = 1;

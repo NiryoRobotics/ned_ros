@@ -97,7 +97,8 @@ class MockStepperDriver : public AbstractStepperDriver
         int startHoming(uint8_t id) override;
         int writeHomingSetup(uint8_t id, uint8_t direction, uint8_t stall_threshold) override;
 
-        int readHomingStatus(uint8_t id, uint32_t &status) override;
+        int readHomingStatus(uint8_t id, uint8_t &status) override;
+        int syncReadHomingStatus(const std::vector<uint8_t> &id_list, std::vector<uint8_t> &status_list) override;
 
         int readFirmwareRunning(uint8_t id, bool &is_running) override;
 
@@ -105,7 +106,7 @@ class MockStepperDriver : public AbstractStepperDriver
         std::shared_ptr<FakeTtlData>  _fake_data;
         std::vector<uint8_t> _id_list;
 
-        uint32_t _calibration_status{CALIBRATION_IDLE};
+        uint8_t _calibration_status{CALIBRATION_IDLE};
         // fake time for calibration
         int _fake_time{0};
 

@@ -95,7 +95,8 @@ public:
     int startHoming(uint8_t id) override;
     int writeHomingSetup(uint8_t id, uint8_t direction, uint8_t stall_threshold) override;
 
-    int readHomingStatus(uint8_t id, uint32_t &status) override;
+    int readHomingStatus(uint8_t id, uint8_t &status) override;
+    int syncReadHomingStatus(const std::vector<uint8_t> &id_list, std::vector<uint8_t> &status_list) override;
 
     int readFirmwareRunning(uint8_t id, bool &is_running) override;
 
@@ -698,9 +699,21 @@ int StepperDriver<reg_type>::writeHomingSetup(uint8_t id, uint8_t direction, uin
  * @return
  */
 template<typename reg_type>
-int StepperDriver<reg_type>::readHomingStatus(uint8_t id, uint32_t &status)
+int StepperDriver<reg_type>::readHomingStatus(uint8_t id, uint8_t &status)
 {
-    return read(reg_type::ADDR_HOMING_STATUS, reg_type::SIZE_HOMING_STATUS, id, status);
+  return read<typename reg_type::TYPE_HOMING_STATUS>(reg_type::ADDR_HOMING_STATUS, id, status);
+}
+
+/**
+ * @brief StepperDriver<reg_type>::syncReadHomingStatus
+ * @param id_list
+ * @param status_list
+ * @return
+ */
+template<typename reg_type>
+int StepperDriver<reg_type>::syncReadHomingStatus(const std::vector<uint8_t> &id_list, std::vector<uint8_t> &status_list)
+{
+    return syncRead<typename reg_type::TYPE_HOMING_STATUS>(reg_type::ADDR_HOMING_STATUS, id_list, status_list);
 }
 
 /**

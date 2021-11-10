@@ -53,7 +53,9 @@ public:
 
     // ram write
     virtual int startHoming(uint8_t id) = 0;
-    virtual int readHomingStatus(uint8_t id, uint32_t& status) = 0;
+    virtual int readHomingStatus(uint8_t id, uint8_t& status) = 0;
+    virtual int syncReadHomingStatus(const std::vector<uint8_t> &id_list, std::vector<uint8_t> &status_list) = 0;
+
     virtual int writeHomingSetup(uint8_t id, uint8_t direction, uint8_t stall_threshold) = 0;
 
     virtual int readVelocityProfile(uint8_t id, std::vector<uint32_t>& data_list) = 0;
