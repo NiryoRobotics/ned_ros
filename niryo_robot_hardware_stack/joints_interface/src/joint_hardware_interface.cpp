@@ -537,7 +537,6 @@ void JointHardwareInterface::setNeedCalibration()
  */
 void JointHardwareInterface::activateLearningMode(bool activated)
 {
-
     while (!_ttl_interface->isSingleQueueFree())
     {
         ros::Duration(0.05).sleep();

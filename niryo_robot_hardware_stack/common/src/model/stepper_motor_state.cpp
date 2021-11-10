@@ -133,7 +133,7 @@ std::string StepperMotorState::str() const
  */
 int StepperMotorState::to_motor_pos(double rad_pos)
 {
-    int result =  static_cast<int>(std::round( (rad_pos - _offset_position) * _pos_multiplier_ratio * _direction));
+    int result =  static_cast<int>(std::round((rad_pos - _offset_position) * _pos_multiplier_ratio * _direction));
 
     if (common::model::EBusProtocol::TTL == _bus_proto)
     {

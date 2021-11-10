@@ -84,7 +84,6 @@ if __name__ == '__main__':
             except NiryoRosWrapperException:
                 pass
 
-
     except NiryoRosWrapperException as e:
         print e
 
