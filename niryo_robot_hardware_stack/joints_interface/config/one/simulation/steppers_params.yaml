@@ -26,5 +26,5 @@ steppers:
         offset_position: 0
         home_position: -1.25
         limit_position: -1.397485  # limit position is the position used for calibration of stepper can
-        direction: 1
+        direction: -1
         max_effort: 120
