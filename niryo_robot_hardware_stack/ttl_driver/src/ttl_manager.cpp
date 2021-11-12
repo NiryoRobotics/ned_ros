@@ -85,6 +85,14 @@ TtlManager::TtlManager(ros::NodeHandle& nh) :
 }
 
 /**
+ * @brief TtlManager::~TtlManager
+ */
+TtlManager::~TtlManager()
+{
+    _portHandler->closePort();
+}
+
+/**
  * @brief TtlManager::init
  * @param nh
  * @return
@@ -679,25 +687,19 @@ bool TtlManager::readEndEffectorStatus()
             {
                 // we retrieve the associated id for the end effector
                 uint8_t id = _ids_map.at(EHardwareType::END_EFFECTOR).front();
-                common::model::EActionType action;
+                vector<common::model::EActionType> action_list;
 
                 // read buttons status if state map have id of EE
                 auto state = std::dynamic_pointer_cast<EndEffectorState>(_state_map.at(id));
-                // free drive button
-                if (COMM_SUCCESS == driver->readButton0Status(id, action))
-                    state->setButtonStatus(0, action);
-                else
-                    hw_errors_increment++;
 
-                // save pos button
-                if (COMM_SUCCESS == driver->readButton1Status(id, action))
-                    state->setButtonStatus(1, action);
-                else
-                    hw_errors_increment++;
-
-                // custom button
-                if (COMM_SUCCESS == driver->readButton2Status(id, action))
-                    state->setButtonStatus(2, action);
+                // get action of free driver button, save pos button, custom button
+                if (COMM_SUCCESS == driver->syncReadButtonsStatus(id, action_list))
+                {
+                    for (size_t i = 0; i < action_list.size(); i++)
+                    {
+                        state->setButtonStatus(i, action_list.at(i));
+                    }
+                }
                 else
                     hw_errors_increment++;
 
@@ -706,6 +708,20 @@ bool TtlManager::readEndEffectorStatus()
                     state->setDigitalIn(digital_data);
                 else
                     hw_errors_increment++;
+
+                // not accept other status of collistion in 1 second if it detected a collision
+                if (_last_collision_detected == 0.0)
+                {
+                    if (COMM_SUCCESS == driver->readCollisionStatus(id, _collision_status))
+                    {
+                        if (_collision_status)
+                            _last_collision_detected = ros::Time::now().toSec();
+                    }
+                    else
+                        hw_errors_increment++;
+                }
+                else if (ros::Time::now().toSec() - _last_collision_detected >= 1.0)
+                    _last_collision_detected = 0.0;
             }  // for driver_map
         }
         catch(const std::exception& e) {}
@@ -1143,10 +1159,11 @@ int TtlManager::sendCustomCommand(uint8_t id, int reg_address, int value,  int b
 
         if (_driver_map.count(motor_type) && _driver_map.at(motor_type))
         {
-            result = _driver_map.at(motor_type)->writeCustom(static_cast<uint8_t>(reg_address),
+            int32_t value_conv = value;
+            result = _driver_map.at(motor_type)->writeCustom(static_cast<uint16_t>(reg_address),
                                                              static_cast<uint8_t>(byte_number),
                                                              id,
-                                                             static_cast<uint32_t>(value));
+                                                             static_cast<uint32_t>(value_conv));
             if (result != COMM_SUCCESS)
             {
                 ROS_WARN("TtlManager::sendCustomCommand - Failed to write custom command: %d", result);
@@ -1194,11 +1211,12 @@ int TtlManager::readCustomCommand(uint8_t id, int32_t reg_address, int& value, i
         if (_driver_map.count(motor_type) && _driver_map.at(motor_type))
         {
             uint32_t data = 0;
-            result = _driver_map.at(motor_type)->readCustom(static_cast<uint8_t>(reg_address),
+            result = _driver_map.at(motor_type)->readCustom(static_cast<uint16_t>(reg_address),
                                                             static_cast<uint8_t>(byte_number),
                                                             id,
                                                             data);
-            value = static_cast<int>(data);
+            int32_t data_conv = static_cast<int32_t>(data);
+            value = data_conv;
 
             if (result != COMM_SUCCESS)
             {

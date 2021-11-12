@@ -190,9 +190,6 @@ int AbstractTtlDriver::read(uint16_t address, uint8_t data_len, uint8_t id, uint
         break;
     }
 
-    if (0 != dxl_error)
-        dxl_comm_result = dxl_error;
-
     return dxl_comm_result;
 }
 

@@ -85,7 +85,7 @@ protected:
     template<typename T, const size_t N>
     int syncReadConsecutiveBytes(uint16_t address,
                                  const std::vector<uint8_t> &id_list,
-                                 std::vector<std::array<T, 2> >& data_list);
+                                 std::vector<std::array<T, N> >& data_list);
     
     int bulkRead(std::vector<uint16_t> address, uint8_t data_len, const std::vector<uint8_t>& id_list, std::vector<uint32_t>& data_list);
     int syncWrite(uint8_t address, uint8_t data_len, const std::vector<uint8_t>& id_list, const std::vector<uint32_t>& data_list);
@@ -138,7 +138,7 @@ int AbstractTtlDriver::read(uint16_t address, uint8_t id, uint32_t& data)
 
 
 /**
- * @brief AbstractTtlDriver::syncRead8Bytes
+ * @brief AbstractTtlDriver::syncReadConsecutiveBytes
  * @param address
  * @param id_list
  * @param data_list
@@ -148,12 +148,13 @@ int AbstractTtlDriver::read(uint16_t address, uint8_t id, uint32_t& data)
 template<typename T, const size_t N>
 int AbstractTtlDriver::syncReadConsecutiveBytes(uint16_t address,
                                                 const std::vector<uint8_t> &id_list,
-                                                std::vector<std::array<T, 2> >& data_list)
+                                                std::vector<std::array<T, N> >& data_list)
 {
     data_list.clear();
+    uint16_t data_size = sizeof(T);
     int dxl_comm_result = COMM_TX_FAIL;
 
-    dynamixel::GroupSyncRead groupSyncRead(_dxlPortHandler.get(), _dxlPacketHandler.get(), address, 8);
+    dynamixel::GroupSyncRead groupSyncRead(_dxlPortHandler.get(), _dxlPacketHandler.get(), address, data_size * N);
 
     for (auto const& id : id_list)
     {
@@ -170,14 +171,13 @@ int AbstractTtlDriver::syncReadConsecutiveBytes(uint16_t address,
     {
         for (auto const& id : id_list)
         {
-            if (groupSyncRead.isAvailable(id, address, 8))
+            if (groupSyncRead.isAvailable(id, address, data_size * N))
             {
                 std::array<T, N> blocks;
 
                 for(uint8_t b = 0; b < N; ++b)
                 {
-                    uint32_t data = groupSyncRead.getData(id, address + b * 4, 4);
-                    blocks.at(b) = data;
+                    blocks.at(b) = groupSyncRead.getData(id, address + b * data_size, data_size);
                 }
 
                 data_list.emplace_back(std::move(blocks));
@@ -194,7 +194,6 @@ int AbstractTtlDriver::syncReadConsecutiveBytes(uint16_t address,
 
     return dxl_comm_result;
 }
-
 
 /**
  * @brief AbstractTtlDriver::syncRead
