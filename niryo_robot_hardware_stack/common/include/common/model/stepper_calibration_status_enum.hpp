@@ -35,7 +35,7 @@ namespace model
  * @brief The EStepperCalibrationStatus enum
  */
 enum class EStepperCalibrationStatus {
-    UNINITIALIZED = 0, // means no calibration is expected
+    UNINITIALIZED = 0, // means a calibration is expected
     OK = 1,
     TIMEOUT = 2,
     BAD_PARAM = 3,
