@@ -225,48 +225,50 @@ std::shared_ptr<can_driver::CanManager> CanManagerTestSuite::can_manager;
 
 TEST_F(CanManagerTestSuite, addAndRemoveMotor)
 {
-    EXPECT_THROW(can_manager->getPosition(10), std::out_of_range);
+    common::model::StepperMotorState state;
+    EXPECT_THROW(can_manager->getPosition(state), std::out_of_range);
 
-    can_manager->addHardwareComponent(std::make_shared<common::model::StepperMotorState>(common::model::EHardwareType::STEPPER,
-                                                                                        common::model::EComponentType::JOINT,
-                                                                                        common::model::EBusProtocol::CAN, 10));
-    EXPECT_EQ(can_manager->getPosition(10), 0);
+    common::model::StepperMotorState new_state(common::model::EHardwareType::STEPPER,
+                                                common::model::EComponentType::JOINT,
+                                                common::model::EBusProtocol::CAN, 10);
+    can_manager->addHardwareComponent(std::make_shared<common::model::StepperMotorState>(new_state));
+    EXPECT_EQ(can_manager->getPosition(new_state), 0);
 
-    can_manager->removeMotor(10);
-    EXPECT_THROW(can_manager->getPosition(10), std::out_of_range);
+    can_manager->removeHardwareComponent(10);
+    EXPECT_THROW(can_manager->getPosition(new_state), std::out_of_range);
 }
 
 TEST_F(CanManagerTestSuite, testSingleCmds)
 {
-    auto cmd_1 = std::make_shared<common::model::StepperSingleCmd>(
-                                                                          common::model::EStepperCommandType::CMD_TYPE_TORQUE,
-                                                                          2,
-                                                                          std::initializer_list<int32_t>{1});
-    EXPECT_EQ(can_manager->writeSingleCommand(cmd_1), CAN_OK);
+    auto cmd_1 = std::make_unique<common::model::StepperSingleCmd>(
+                                                                    common::model::EStepperCommandType::CMD_TYPE_TORQUE,
+                                                                    2,
+                                                                    std::initializer_list<int32_t>{1});
+    EXPECT_EQ(can_manager->writeSingleCommand(std::move(cmd_1)), CAN_OK);
     ros::Duration(0.01).sleep();
 
-    auto cmd_2 = std::make_shared<common::model::StepperSingleCmd>(
-                                                                          common::model::EStepperCommandType::CMD_TYPE_TORQUE,
-                                                                          2,
-                                                                          std::initializer_list<int32_t>{0});
-    EXPECT_EQ(can_manager->writeSingleCommand(cmd_2), CAN_OK);
+    auto cmd_2 = std::make_unique<common::model::StepperSingleCmd>(
+                                                                    common::model::EStepperCommandType::CMD_TYPE_TORQUE,
+                                                                    2,
+                                                                    std::initializer_list<int32_t>{0});
+    EXPECT_EQ(can_manager->writeSingleCommand(std::move(cmd_2)), CAN_OK);
 
     ros::Duration(0.01).sleep();
 
     // wrong id
-    auto cmd_3 = std::make_shared<common::model::StepperSingleCmd>(
+    auto cmd_3 = std::make_unique<common::model::StepperSingleCmd>(
                                                                             common::model::EStepperCommandType::CMD_TYPE_TORQUE,
                                                                             7,
                                                                             std::initializer_list<int32_t>{1});
-    EXPECT_NE(can_manager->writeSingleCommand(cmd_3), CAN_OK);
+    EXPECT_NE(can_manager->writeSingleCommand(std::move(cmd_3)), CAN_OK);
     ros::Duration(0.01).sleep();
 
     // wrong type cmd
-    auto cmd_4 = std::make_shared<common::model::StepperSingleCmd>(
+    auto cmd_4 = std::make_unique<common::model::StepperSingleCmd>(
                                                                             common::model::EStepperCommandType::CMD_TYPE_UNKNOWN,
                                                                             2,
                                                                             std::initializer_list<int32_t>{1});
-    EXPECT_NE(can_manager->writeSingleCommand(cmd_4), CAN_OK);
+    EXPECT_NE(can_manager->writeSingleCommand(std::move(cmd_4)), CAN_OK);
     ros::Duration(0.01).sleep();
 }
 
@@ -275,15 +277,6 @@ int main(int argc, char **argv)
 {
   testing::InitGoogleTest(&argc, argv);
   ros::init(argc, argv, "can_driver_unit_tests");
-
-  ros::NodeHandle nh_private("~");
-  bool can_enabled;
-
-  nh_private.getParam("can_enabled", can_enabled);
-  if (!can_enabled)
-  {
-    testing::GTEST_FLAG(filter) = "-CanInterfaceTestSuite.*:CanManagerTestSuite.*";  // This test is applied only for NED, so skip it
-  }
 
   return RUN_ALL_TESTS();
 }
