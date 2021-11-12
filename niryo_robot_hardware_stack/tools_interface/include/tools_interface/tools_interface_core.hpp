@@ -90,6 +90,12 @@ class ToolsInterfaceCore : public common::util::IInterfaceCore
         void _publishToolConnection(const ros::TimerEvent&);
 
     private:
+        struct ToolConfig
+        {
+            std::string name;
+            common::model::EHardwareType type;
+        };
+
         std::mutex _tool_mutex;
 
         ros::Publisher _tool_connection_publisher;
@@ -107,7 +113,7 @@ class ToolsInterfaceCore : public common::util::IInterfaceCore
         ros::ServiceServer _push_air_vacuum_pump_server;
 
         std::shared_ptr<common::model::ToolState> _toolState;
-        std::map<uint8_t, common::model::EHardwareType> _available_tools_map;
+        std::map<uint8_t, ToolConfig> _available_tools_map;
 };
 
 /**

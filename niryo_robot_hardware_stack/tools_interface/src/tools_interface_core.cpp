@@ -102,55 +102,51 @@ void ToolsInterfaceCore::initParameters(ros::NodeHandle& nh)
 
     std::vector<int> idList;
     std::vector<string> typeList;
+    std::vector<string> nameList;
 
     _available_tools_map.clear();
     nh.getParam("tools_params/id_list", idList);
     nh.getParam("tools_params/type_list", typeList);
+    nh.getParam("tools_params/name_list", nameList);
 
-    // debug - display info
-    ostringstream ss;
-    ss << "[";
-    for (size_t i = 0; i < idList.size() && i < typeList.size() ; ++i)
+    // check that the three lists have the same size
+    if (idList.size() == typeList.size() && idList.size() == nameList.size())
     {
-        ss << " id " << idList.at(i) << ": " << typeList.at(i) << ",";
+        // put everything in maps
+        for (size_t i = 0; i < idList.size(); ++i)
+        {
+            auto id = static_cast<uint8_t>(idList.at(i));
+            EHardwareType type = HardwareTypeEnum(typeList.at(i).c_str());
+            std::string name = nameList.at(i);
+
+            if (!_available_tools_map.count(id))
+            {
+                if (EHardwareType::UNKNOWN != type)
+                {
+                    _available_tools_map.insert(std::make_pair(id, ToolConfig{name, type}));
+                }
+                else
+                    ROS_ERROR("ToolsInterfaceCore::initParameters - unknown type %s. "
+                              "Please check your configuration file (tools_interface/config/default.yaml)",
+                              typeList.at(id).c_str());
+            }
+            else
+                ROS_ERROR("ToolsInterfaceCore::initParameters - duplicate id %d. "
+                          "Please check your configuration file (tools_interface/config/default.yaml)", id);
+        }
     }
-
-    string available_tools_list = ss.str();
-    available_tools_list.pop_back();  // remove last ","
-    available_tools_list += "]";
-
-    ROS_INFO("ToolsInterfaceCore::initParameters - List of tool ids : %s", available_tools_list.c_str());
-
-    // check that the two lists have the same size
-    if (idList.size() != typeList.size())
+    else {
         ROS_ERROR("ToolsInterfaceCore::initParameters - wrong dynamixel configuration. "
                   "Please check your configuration file (tools_interface/config/default.yaml)");
-
-    // put everything in maps
-    for (size_t i = 0; i < idList.size(); ++i)
-    {
-        auto id = static_cast<uint8_t>(idList.at(i));
-        EHardwareType type = HardwareTypeEnum(typeList.at(i).c_str());
-
-        if (!_available_tools_map.count(id))
-        {
-            if (EHardwareType::UNKNOWN != type)
-                _available_tools_map.insert(std::make_pair(id, type));
-            else
-                ROS_ERROR("ToolsInterfaceCore::initParameters - unknown type %s. "
-                          "Please check your configuration file (tools_interface/config/default.yaml)",
-                          typeList.at(id).c_str());
-        }
-        else
-            ROS_ERROR("ToolsInterfaceCore::initParameters - duplicate id %d. "
-                      "Please check your configuration file (tools_interface/config/default.yaml)", id);
     }
+
 
     for (auto const &tool : _available_tools_map)
     {
-        ROS_DEBUG("ToolsInterfaceCore::initParameters - Available tools map: %d => %s",
+        ROS_DEBUG("ToolsInterfaceCore::initParameters - Available tools map: %d => %s (%s)",
                                         static_cast<int>(tool.first),
-                                        HardwareTypeEnum(tool.second).toString().c_str());
+                                        tool.second.name.c_str(),
+                                        HardwareTypeEnum(tool.second.type).toString().c_str());
     }
 }
 
@@ -282,7 +278,7 @@ bool ToolsInterfaceCore::_callbackPingAndSetTool(tools_interface::PingDxlTool::R
     {
         if (_available_tools_map.count(m_id))
         {
-            _toolState = std::make_shared<ToolState>("auto", _available_tools_map.at(m_id), m_id);
+            _toolState = std::make_shared<ToolState>(_available_tools_map.at(m_id).name, _available_tools_map.at(m_id).type, m_id);
             break;
         }
     }
