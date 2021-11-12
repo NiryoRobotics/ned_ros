@@ -1019,12 +1019,13 @@ bool TtlManager::readHardwareStatus()
                         {
                             stepperState->setCalibration(status, 1);
                             if (newStatus < status)
+                            {
                                 newStatus = status;
+                                _calibration_status = newStatus;
+                            }
                         }
                     }
                 }
-
-                _calibration_status = newStatus;
 
             }  // for id_list
 
