@@ -71,9 +71,9 @@ class MockStepperDriver : public AbstractStepperDriver
 
         // ram read
 
-        int readTemperature(uint8_t id, uint32_t &temperature) override;
+        int readTemperature(uint8_t id, uint8_t& temperature) override;
         int readVoltage(uint8_t id, double &voltage) override;
-        int readHwErrorStatus(uint8_t id, uint32_t &hardware_status) override;
+        int readHwErrorStatus(uint8_t id, uint8_t& hardware_error_status) override;
 
         int readPosition(uint8_t id, uint32_t &present_position) override;
         int readVelocity(uint8_t id, uint32_t &present_velocity) override;
@@ -83,9 +83,11 @@ class MockStepperDriver : public AbstractStepperDriver
         int syncReadJointStatus(const std::vector<uint8_t> &id_list, std::vector<std::array<uint32_t, 2> >& data_array) override;
 
         int syncReadFirmwareVersion(const std::vector<uint8_t> &id_list, std::vector<std::string> &firmware_list) override;
-        int syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &temperature_list) override;
+        int syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint8_t>& temperature_list) override;
         int syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list) override;
-        int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list) override;
+        int syncReadHwStatus(const std::vector<uint8_t> &id_list, std::vector<std::pair<double, uint8_t> >& data_list) override;
+
+        int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint8_t> &hw_error_list) override;
 
         // AbstractStepperDriver interface
     public:
@@ -95,7 +97,8 @@ class MockStepperDriver : public AbstractStepperDriver
         int startHoming(uint8_t id) override;
         int writeHomingSetup(uint8_t id, uint8_t direction, uint8_t stall_threshold) override;
 
-        int readHomingStatus(uint8_t id, uint32_t &status) override;
+        int readHomingStatus(uint8_t id, uint8_t &status) override;
+        int syncReadHomingStatus(const std::vector<uint8_t> &id_list, std::vector<uint8_t> &status_list) override;
 
         int readFirmwareRunning(uint8_t id, bool &is_running) override;
 
@@ -103,7 +106,7 @@ class MockStepperDriver : public AbstractStepperDriver
         std::shared_ptr<FakeTtlData>  _fake_data;
         std::vector<uint8_t> _id_list;
 
-        uint32_t _calibration_status{CALIBRATION_IDLE};
+        uint8_t _calibration_status{CALIBRATION_IDLE};
         // fake time for calibration
         int _fake_time{0};
 

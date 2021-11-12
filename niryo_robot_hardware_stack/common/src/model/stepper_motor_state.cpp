@@ -81,7 +81,7 @@ void StepperMotorState::reset()
     _hw_fail_counter = 0.0;
     _firmware_version.clear();
     _calibration_value = 0;
-    _calibration_state = EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED;
+    _calibration_state = EStepperCalibrationStatus::UNINITIALIZED;
 }
 
 /**

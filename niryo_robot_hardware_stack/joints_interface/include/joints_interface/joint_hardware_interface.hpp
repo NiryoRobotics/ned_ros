@@ -98,16 +98,6 @@ class JointHardwareInterface : public hardware_interface::RobotHW
  * @return
  */
 inline
-bool JointHardwareInterface::isCalibrationInProgress() const
-{
-    return _calibration_manager->CalibrationInprogress();
-}
-
-/**
- * @brief JointHardwareInterface::getJointsState
- * @return
- */
-inline
 const std::vector<std::shared_ptr<common::model::JointState> >&
 JointHardwareInterface::getJointsState() const
 {

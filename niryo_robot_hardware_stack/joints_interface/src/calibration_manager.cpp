@@ -72,6 +72,16 @@ CalibrationManager::CalibrationManager(ros::NodeHandle& nh,
 {
     ROS_DEBUG("CalibrationManager::ctor");
 
+    // we need at least tlt_interface
+    assert(_ttl_interface);
+
+    if (_can_interface)
+        _stepper_bus_interface = _can_interface;
+    else
+        _stepper_bus_interface = _ttl_interface;
+
+    assert(_stepper_bus_interface);
+
     initParameters(nh);
 
     ROS_INFO("Calibration Interface - Calibration interface started");
@@ -189,11 +199,11 @@ int CalibrationManager::startCalibration(int mode, std::string &result_message)
 
     // if ttl connection is ok AND (can not present OR can connection ok)
     if ((_ttl_interface && _ttl_interface->isConnectionOk()) &&
-        (!_can_interface || _can_interface->isConnectionOk()))
+        (_stepper_bus_interface && _stepper_bus_interface->isConnectionOk()))
     {
         if (AUTO_CALIBRATION == mode)  // auto
         {
-            if (EStepperCalibrationStatus::CALIBRATION_OK == autoCalibration())
+            if (EStepperCalibrationStatus::OK == autoCalibration())
             {
                 result_message = "Calibration Interface - Calibration done";
                 res = niryo_robot_msgs::CommandStatus::SUCCESS;
@@ -205,7 +215,7 @@ int CalibrationManager::startCalibration(int mode, std::string &result_message)
         {
             if (canProcessManualCalibration(result_message))
             {
-                if (EStepperCalibrationStatus::CALIBRATION_OK == manualCalibration())
+                if (EStepperCalibrationStatus::OK == manualCalibration())
                 {
                     result_message = "Calibration Interface - Calibration done";
                     res = niryo_robot_msgs::CommandStatus::SUCCESS;
@@ -232,6 +242,21 @@ int CalibrationManager::startCalibration(int mode, std::string &result_message)
 }
 
 /**
+ * @brief CalibrationManager::getCalibrationStatus
+ * @return
+ */
+EStepperCalibrationStatus
+CalibrationManager::getCalibrationStatus() const
+{
+    EStepperCalibrationStatus status{EStepperCalibrationStatus::FAIL};
+
+    if (_stepper_bus_interface)
+        status = _stepper_bus_interface->getCalibrationStatus();
+
+    return status;
+}
+
+/**
  * @brief CalibrationManager::canProcessManualCalibration
  * @param result_message
  * @return
@@ -240,88 +265,81 @@ bool CalibrationManager::canProcessManualCalibration(std::string &result_message
 {
     bool res = true;
     result_message.clear();
-    if ("one" == _hardware_version)
+
+    if (_stepper_bus_interface)
     {
-        if (_can_interface)
+        auto stepper_motor_states = _stepper_bus_interface->getJointStates();
+
+        // 1. Check if motors firmware version is ok
+        for (auto const& mState : stepper_motor_states)
         {
-            auto stepper_motor_states = _can_interface->getJointStates();
-
-            // 1. Check if motors firmware version is ok
-            for (auto const& mState : stepper_motor_states)
+            if (mState)
             {
-                if (mState)
+                std::string firmware_version = std::dynamic_pointer_cast<StepperMotorState>(mState)->getFirmwareVersion();
+                if (!firmware_version.empty())
                 {
-                    std::string firmware_version = std::dynamic_pointer_cast<StepperMotorState>(mState)->getFirmwareVersion();
-                    if (!firmware_version.empty())
+                    if (stoi(firmware_version.substr(0, 1)) >= 2)
                     {
-                        if (stoi(firmware_version.substr(0, 1)) >= 2)
+                        // 2. Check if motor offset values have been previously saved (with auto calibration)
+                        std::vector<int> motor_id_list;
+                        std::vector<int> steps_list;
+
+                        if (readCalibrationOffsetsFromFile(motor_id_list, steps_list))
                         {
-                            // 2. Check if motor offset values have been previously saved (with auto calibration)
-                            std::vector<int> motor_id_list;
-                            std::vector<int> steps_list;
+                            // 3. Check if all connected motors have a motor offset value
 
-                            if (readCalibrationOffsetsFromFile(motor_id_list, steps_list))
+                            bool found = false;
+
+                            for (auto const& m_id : motor_id_list)
                             {
-                                // 3. Check if all connected motors have a motor offset value
-
-                                bool found = false;
-
-                                for (auto const& m_id : motor_id_list)
+                                if (m_id == mState->getId())
                                 {
-                                    if (m_id == mState->getId())
-                                    {
-                                        found = true;
-                                        break;
-                                    }
-                                }
-
-                                if (!found)
-                                {
-                                    result_message = "Calibration Interface - Motor " +
-                                                    std::to_string(mState->getId()) +
-                                                    " does not have a saved offset value, " +
-                                                    "you need to do one auto calibration";
-
-                                    res = false;
+                                    found = true;
+                                    break;
                                 }
                             }
-                            else
+
+                            if (!found)
                             {
-                                result_message = "Calibration Interface - You need to make an "
-                                                 "auto calibration before using the manual calibration";
+                                result_message = "Calibration Interface - Motor " +
+                                                std::to_string(mState->getId()) +
+                                                " does not have a saved offset value, " +
+                                                "you need to do one auto calibration";
 
                                 res = false;
                             }
                         }
                         else
                         {
-                            result_message = "Calibration Interface - You need to upgrade stepper firmware for motor " +
-                                                std::to_string(mState->getId());
+                            result_message = "Calibration Interface - You need to make an "
+                                             "auto calibration before using the manual calibration";
 
                             res = false;
                         }
                     }
                     else
                     {
-                        result_message = "Calibration Interface - No firmware version available for motor " +
-                                        std::to_string(mState->getId()) +
-                                        ". Make sure all motors are connected";
+                        result_message = "Calibration Interface - You need to upgrade stepper firmware for motor " +
+                                            std::to_string(mState->getId());
 
                         res = false;
                     }
-                }  // if (mState)
-            }  // for (auto const& mState : stepper_motor_states)
-        }
-        else
-        {
-          result_message = "Calibration Interface - CAN interface not available";
+                }
+                else
+                {
+                    result_message = "Calibration Interface - No firmware version available for motor " +
+                                    std::to_string(mState->getId()) +
+                                    ". Make sure all motors are connected";
 
-          res = false;
-        }
+                    res = false;
+                }
+            }  // if (mState)
+        }  // for (auto const& mState : stepper_motor_states)
     }
     else
     {
-      result_message = "Calibration Interface - manual calibration available for Niryo One only";
+      result_message = "Calibration Interface - Steppers interface not available";
+
       res = false;
     }
 
@@ -336,8 +354,6 @@ bool CalibrationManager::canProcessManualCalibration(std::string &result_message
  */
 EStepperCalibrationStatus CalibrationManager::autoCalibration()
 {
-    _calibration_in_progress = true;
-
     // 0. Init velocity profile
     initVelocityProfiles();
 
@@ -358,49 +374,47 @@ EStepperCalibrationStatus CalibrationManager::autoCalibration()
     }
 
     double timeout = 0.0;
-    // 3. wait for calibration status to change
-    while ((_can_interface && _can_interface->isCalibrationInProgress()) ||
-           (_ttl_interface && _ttl_interface->isCalibrationInProgress()))
+    // 3. wait for calibration status to change*
+
+    // get calibration result final
+    EStepperCalibrationStatus final_status = EStepperCalibrationStatus::IN_PROGRESS;
+
+    while (EStepperCalibrationStatus::IN_PROGRESS == final_status)
     {
         ros::Duration(0.2).sleep();
         timeout += 0.2;
         if (timeout >= 30.0)
         {
             ROS_ERROR("CalibrationManager::autoCalibration - calibration timeout, please try again");
-            _calibration_in_progress = false;
-            return common::model::EStepperCalibrationStatus::CALIBRATION_TIMEOUT;
+            return common::model::EStepperCalibrationStatus::TIMEOUT;
         }
+        final_status = getCalibrationStatus();
+        ROS_DEBUG("CalibrationManager::autoCalibration - calibration status, %s", common::model::StepperCalibrationStatusEnum(final_status).toString().c_str());
     }
+
+    ros::Duration(0.5).sleep();
 
     // 4. retrieve values for the calibration
     std::vector<int> sensor_offset_results;
     std::vector<int> sensor_offset_ids;
 
-    EStepperCalibrationStatus final_status = EStepperCalibrationStatus::CALIBRATION_OK;
     for (size_t i = 0; i < 3; ++i)
     {
         auto jState = _joint_states_list.at(i);
         uint8_t motor_id = jState->getId();
 
-        std::shared_ptr<common::util::IDriverCore> interface =  getJointInterface(jState->getBusProtocol());
-        if (interface)
+        if (_stepper_bus_interface)
         {
-          int calibration_result = interface->getCalibrationResult(motor_id);
+            int calibration_result = _stepper_bus_interface->getCalibrationResult(motor_id);
 
-          sensor_offset_results.emplace_back(calibration_result);
-          sensor_offset_ids.emplace_back(motor_id);
+            sensor_offset_results.emplace_back(calibration_result);
+            sensor_offset_ids.emplace_back(motor_id);
 
-          ROS_INFO("CalibrationManager::autoCalibration - Motor %d, calibration cmd result %d ", motor_id, calibration_result);
+            ROS_INFO("CalibrationManager::autoCalibration - Motor %d, calibration cmd result %d ", motor_id, calibration_result);
         }
     }
 
-    // get calibration result final
-    if (_can_interface)
-        final_status = _can_interface->getCalibrationStatus();
-    else if (_ttl_interface)
-        final_status = _ttl_interface->getCalibrationStatus();
-
-    if (EStepperCalibrationStatus::CALIBRATION_OK == final_status)
+    if (EStepperCalibrationStatus::OK == final_status)
     {
         ROS_INFO("CalibrationManager::autoCalibration -  Calibration successfull, going back home");
 
@@ -422,8 +436,6 @@ EStepperCalibrationStatus CalibrationManager::autoCalibration()
     // 7 - activate torque for ned2, disactivate for ned1
     activateTorque("ned2" == _hardware_version);
 
-    _calibration_in_progress = false;
-
     return final_status;
 }
 
@@ -436,19 +448,18 @@ EStepperCalibrationStatus CalibrationManager::autoCalibration()
 EStepperCalibrationStatus
 CalibrationManager::manualCalibration()
 {
-    EStepperCalibrationStatus status = EStepperCalibrationStatus::CALIBRATION_FAIL;
-    _calibration_in_progress = true;
+    EStepperCalibrationStatus status = EStepperCalibrationStatus::FAIL;
 
     if  ("ned2" != _hardware_version)
     {
-        if (_can_interface)
+        if (_stepper_bus_interface)
         {
             std::vector<int> motor_id_list;
             std::vector<int> steps_list;
 
             if (readCalibrationOffsetsFromFile(motor_id_list, steps_list))
             {
-                _can_interface->startCalibration();
+                _stepper_bus_interface->startCalibration();
 
                 // 0. Torque ON for motor 2
                 auto state = std::dynamic_pointer_cast<common::model::StepperMotorState>(_joint_states_list.at(1));
@@ -470,7 +481,7 @@ CalibrationManager::manualCalibration()
 
                             StepperSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_POSITION_OFFSET, _joint_states_list.at(0)->getId(),
                                                          {offset_to_send, offset_to_send});
-                            _can_interface->addSingleCommandToQueue(std::make_unique<StepperSingleCmd>(stepper_cmd));
+                            _stepper_bus_interface->addSingleCommandToQueue(std::make_unique<StepperSingleCmd>(stepper_cmd));
                         }
                         else if (motor_id == _joint_states_list.at(1)->getId())
                         {
@@ -482,7 +493,7 @@ CalibrationManager::manualCalibration()
 
                             StepperSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_POSITION_OFFSET, _joint_states_list.at(1)->getId(),
                                                          {offset_to_send, offset_to_send});
-                            _can_interface->addSingleCommandToQueue(std::make_unique<StepperSingleCmd>(stepper_cmd));
+                            _stepper_bus_interface->addSingleCommandToQueue(std::make_unique<StepperSingleCmd>(stepper_cmd));
                         }
                         else if (motor_id == _joint_states_list.at(2)->getId())
                         {
@@ -490,12 +501,12 @@ CalibrationManager::manualCalibration()
 
                             StepperSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_POSITION_OFFSET, _joint_states_list.at(2)->getId(),
                                                          {offset_to_send, sensor_offset_steps});
-                            _can_interface->addSingleCommandToQueue(std::make_unique<StepperSingleCmd>(stepper_cmd));
+                            _stepper_bus_interface->addSingleCommandToQueue(std::make_unique<StepperSingleCmd>(stepper_cmd));
                         }
                         ros::Duration(0.2).sleep();
                     }
 
-                    status = _can_interface->getCalibrationStatus();
+                    status = _stepper_bus_interface->getCalibrationStatus();
                 }
             }  // if (state)
         }  // if (getMotorsCalibrationOffsets(motor_id_list, steps_list))
@@ -505,8 +516,6 @@ CalibrationManager::manualCalibration()
       ROS_ERROR("CalibrationManager::manualCalibration : manual calibration not available for %s robot."
                 "Only supported for Niryo One and Niryo Ned", _hardware_version.c_str());
     }
-
-    _calibration_in_progress = false;
 
     return status;
 }
@@ -732,11 +741,8 @@ void CalibrationManager::moveSteppersToHome()
 void CalibrationManager::sendCalibrationToSteppers()
 {
     // 1. change status in interfaces
-    if (_can_interface)
-      _can_interface->startCalibration();
-    if (_ttl_interface)
-      _ttl_interface->startCalibration();
-
+    if (_stepper_bus_interface)
+      _stepper_bus_interface->startCalibration();
 
     while (!_ttl_interface->isSyncQueueFree())
     {

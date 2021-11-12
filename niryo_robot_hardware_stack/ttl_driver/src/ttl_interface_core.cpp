@@ -499,15 +499,6 @@ void TtlInterfaceCore::resetCalibration()
 }
 
 /**
- * @brief TtlInterfaceCore::isCalibrationInProgress
- * @return
- */
-bool TtlInterfaceCore::isCalibrationInProgress() const
-{
-    return _ttl_manager->isCalibrationInProgress();
-}
-
-/**
  * @brief TtlInterfaceCore::getCalibrationResult
  * @param id
  * @return
@@ -569,6 +560,7 @@ void TtlInterfaceCore::controlLoop()
 {
     ros::Rate control_loop_rate = ros::Rate(_control_loop_frequency);
     resetHardwareControlLoopRates();
+
     while (ros::ok())
     {
         if (!_debug_flag)
@@ -607,7 +599,7 @@ void TtlInterfaceCore::controlLoop()
                 lock_guard<mutex> lck(_control_loop_mutex);
                 if (ros::Time::now().toSec() - _time_hw_data_last_read >= _delta_time_data_read)
                 {
-                    _ttl_manager->readPositionsStatus();
+                    _ttl_manager->readJointsStatus();
                     _time_hw_data_last_read = ros::Time::now().toSec();
                 }
                 if (ros::Time::now().toSec() - _time_hw_status_last_read >= _delta_time_status_read)
@@ -696,9 +688,6 @@ void TtlInterfaceCore::_executeCommand()
 int TtlInterfaceCore::addJoint(const std::shared_ptr<common::model::JointState>& jointState)
 {
   int result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
-
-  // save motor id to a list (this is used in syncread to get params at the same address for all motors)
-  _ttl_manager->addToMotorList(jointState->getId());
 
   // add dynamixel as a new tool
   _ttl_manager->addHardwareComponent(jointState);
@@ -807,9 +796,6 @@ int TtlInterfaceCore::setConveyor(const std::shared_ptr<common::model::ConveyorS
     int result = niryo_robot_msgs::CommandStatus::NO_CONVEYOR_FOUND;
 
     lock_guard<mutex> lck(_control_loop_mutex);
-
-    // add conveyor id for conveyor list of ttl manager
-    _ttl_manager->addToConveyorList(state->getId());
 
     // add hw component before to get driver
     _ttl_manager->addHardwareComponent(state);
@@ -997,7 +983,6 @@ TtlInterfaceCore::getJointState(uint8_t motor_id) const
  * @brief TtlInterfaceCore::getEndEffectorState
  * @param id
  * @return
- * TODO(CC) to be refactorized
  */
 std::shared_ptr<common::model::EndEffectorState>
 TtlInterfaceCore::getEndEffectorState(uint8_t id)
@@ -1034,11 +1019,19 @@ niryo_robot_msgs::BusState TtlInterfaceCore::getBusState() const
     return bus_state;
 }
 
+/**
+ * @brief TtlInterfaceCore::isSyncQueueFree
+ * @return
+ */
 bool TtlInterfaceCore::isSyncQueueFree()
 {
     return _sync_cmds_queue.empty();
 }
 
+/**
+ * @brief TtlInterfaceCore::isSingleQueueFree
+ * @return
+ */
 bool TtlInterfaceCore::isSingleQueueFree()
 {
     return _single_cmds_queue.empty();

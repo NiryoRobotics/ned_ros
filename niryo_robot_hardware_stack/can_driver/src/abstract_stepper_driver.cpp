@@ -121,7 +121,7 @@ int32_t AbstractStepperDriver::interpretePositionStatus(const std::array<uint8_t
  * @param data
  * @return
  */
-uint32_t AbstractStepperDriver::interpreteTemperatureStatus(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data)
+uint8_t AbstractStepperDriver::interpreteTemperatureStatus(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data)
 {
     int driver_temp_raw = (data[2] << 8) + data[3];
     double a = -0.00316;
