@@ -39,6 +39,7 @@ add_message_files(
     ArrayMotorHardwareStatus.msg
     MotorCommand.msg
     MotorHardwareStatus.msg
+    CollisionStatus.msg
 )
 
 add_service_files(

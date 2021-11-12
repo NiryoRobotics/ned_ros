@@ -236,7 +236,6 @@ int AbstractTtlDriver::syncReadConsecutiveBytes(uint16_t address,
     return dxl_comm_result;
 }
 
-
 /**
  * @brief AbstractTtlDriver::syncRead
  * @param address

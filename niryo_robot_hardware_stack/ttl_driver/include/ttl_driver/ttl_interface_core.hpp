@@ -148,6 +148,8 @@ public:
     // read firmware version for all motors
     bool readFirmwareVersionStatus();
 
+    // read Collision Status from motors
+    bool readCollisionStatus() const;
     bool isSyncQueueFree();
     bool isSingleQueueFree();
 
@@ -175,7 +177,12 @@ private:
     bool _callbackWriteVelocityProfile(ttl_driver::WriteVelocityProfile::Request &req, ttl_driver::WriteVelocityProfile::Response &res);
     bool _callbackReadVelocityProfile(ttl_driver::ReadVelocityProfile::Request &req, ttl_driver::ReadVelocityProfile::Response &res);
 
+    void _publishCollisionStatus(const ros::TimerEvent&);
 private:
+    ros::Publisher _collision_status_publisher;
+    ros::Timer     _collision_status_publisher_timer;
+    ros::Duration  _collision_status_publisher_duration{1.0};
+
     bool _control_loop_flag{false};
     bool _debug_flag{false};
 
@@ -269,6 +276,17 @@ inline
 bool TtlInterfaceCore::readFirmwareVersionStatus()
 {
     return _ttl_manager->readFirmwareVersionStatus();
+}
+
+/**
+ * @brief TtlInterfaceCore::readCollisionStatus
+ * @return true 
+ * @return false 
+ */
+inline
+bool TtlInterfaceCore::readCollisionStatus() const
+{
+    return _ttl_manager->readCollisionStatus();
 }
 } // ttl_driver
 

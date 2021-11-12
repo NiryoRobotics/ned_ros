@@ -83,7 +83,7 @@ class TtlManager : public common::util::IBusManager
 public:
     TtlManager() = delete;
     TtlManager( ros::NodeHandle& nh );
-    ~TtlManager() override = default;
+    ~TtlManager() override;
     // see https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c21-if-you-define-or-delete-any-copy-move-or-destructor-function-define-or-delete-them-all
     TtlManager( const TtlManager& ) = delete;
     TtlManager( TtlManager&& ) = delete;
@@ -159,6 +159,9 @@ public:
 
     bool hasEndEffector() const;
 
+    // get collision status of motors
+    bool readCollisionStatus() const;
+    
 private:
     // IBusManager Interface
     int setupCommunication() override;
@@ -233,6 +236,10 @@ private:
     bool _simulation_mode{false};
     // TODO(CC) put elsewhere
     int _conveyor_direction{0};
+
+    // status to track collision status
+    bool _collision_status{false};
+    double _last_collision_detected{0.0};
 };
 
 // inline getters
@@ -375,6 +382,17 @@ void TtlManager::retrieveFakeMotorData(const std::string& current_ns, std::map<u
         tmp.firmware = stepper_firmwares.at(i);
         fake_params.insert(std::make_pair(tmp.id, tmp));
     }
+}
+
+/**
+ * @brief TtlManager::readCollisionStatus
+ * @return true 
+ * @return false 
+ */
+inline
+bool TtlManager::readCollisionStatus() const
+{
+    return _collision_status;
 }
 
 } // ttl_driver
