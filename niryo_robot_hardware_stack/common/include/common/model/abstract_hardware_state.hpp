@@ -63,6 +63,7 @@ public:
     void setFirmwareVersion(const std::string &firmware_version);
     void setTemperature(uint8_t temp);
     void setVoltage(double volt);
+    void setRawVoltage(double raw_volt);
     void setHardwareError(uint32_t hw_error);
     void setHardwareError(std::string hw_error_msg);
 

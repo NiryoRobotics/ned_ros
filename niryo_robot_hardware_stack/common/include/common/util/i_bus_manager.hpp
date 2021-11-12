@@ -74,7 +74,6 @@ protected:
 private:
     virtual int setupCommunication() = 0;
     virtual void addHardwareDriver(common::model::EHardwareType hardware_type) = 0;
-    virtual void updateCurrentCalibrationStatus() = 0;
 };
 
 } // namespace util

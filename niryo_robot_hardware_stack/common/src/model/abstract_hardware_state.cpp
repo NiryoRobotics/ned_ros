@@ -114,6 +114,19 @@ void AbstractHardwareState::setTemperature(uint8_t temp)
 }
 
 /**
+ * @brief AbstractHardwareState::setRawVoltage
+ * @param volt
+ * TODO(CC) avoid using hardcoded values, only usable for Ned2 for now
+ */
+void AbstractHardwareState::setRawVoltage(double raw_volt)
+{
+    if (EHardwareType::STEPPER == _hw_type || EHardwareType::END_EFFECTOR == _hw_type)
+        _voltage = raw_volt / 1000;
+    else
+        _voltage = raw_volt / 10;
+}
+
+/**
  * @brief AbstractHardwareState::setVoltage
  * @param volt
  */

@@ -110,7 +110,7 @@ private:
     int setupCommunication() override;
     void addHardwareDriver(common::model::EHardwareType hardware_type) override;
 
-    void updateCurrentCalibrationStatus() override;
+    void updateCurrentCalibrationStatus();
 
     void _verifyMotorTimeoutLoop();
     double getCurrentTimeout() const;

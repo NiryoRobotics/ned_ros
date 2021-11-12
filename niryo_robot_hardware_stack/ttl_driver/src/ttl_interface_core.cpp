@@ -565,6 +565,7 @@ void TtlInterfaceCore::controlLoop()
 {
     ros::Rate control_loop_rate = ros::Rate(_control_loop_frequency);
     resetHardwareControlLoopRates();
+
     while (ros::ok())
     {
         if (!_debug_flag)
@@ -987,7 +988,6 @@ TtlInterfaceCore::getJointState(uint8_t motor_id) const
  * @brief TtlInterfaceCore::getEndEffectorState
  * @param id
  * @return
- * TODO(CC) to be refactorized
  */
 std::shared_ptr<common::model::EndEffectorState>
 TtlInterfaceCore::getEndEffectorState(uint8_t id)
@@ -1024,11 +1024,19 @@ niryo_robot_msgs::BusState TtlInterfaceCore::getBusState() const
     return bus_state;
 }
 
+/**
+ * @brief TtlInterfaceCore::isSyncQueueFree
+ * @return
+ */
 bool TtlInterfaceCore::isSyncQueueFree()
 {
     return _sync_cmds_queue.empty();
 }
 
+/**
+ * @brief TtlInterfaceCore::isSingleQueueFree
+ * @return
+ */
 bool TtlInterfaceCore::isSingleQueueFree()
 {
     return _single_cmds_queue.empty();

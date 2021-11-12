@@ -422,12 +422,37 @@ int StepperDriver<reg_type>::syncReadVelocity(const std::vector<uint8_t> &id_lis
  * @param id_list
  * @param data_array
  * @return
+ * reads both position and velocity if torque is enabled. Reads only position otherwise
  */
 template<typename reg_type>
 int StepperDriver<reg_type>::syncReadJointStatus(const std::vector<uint8_t> &id_list,
                                                  std::vector<std::array<uint32_t, 2> >& data_array_list)
 {
-    return syncReadConsecutiveBytes<uint32_t, 2>(reg_type::ADDR_PRESENT_VELOCITY, id_list, data_array_list);
+    int res = COMM_TX_FAIL;
+
+    if(id_list.empty())
+        return res;
+
+    data_array_list.clear();
+
+    // read torque enable on first id
+    uint32_t torque;
+    read(reg_type::ADDR_TORQUE_ENABLE, reg_type::SIZE_TORQUE_ENABLE, id_list.at(0), torque);
+
+    //if torque on, read position and velocity
+    if (torque)
+    {
+        res = syncReadConsecutiveBytes<uint32_t, 2>(reg_type::ADDR_PRESENT_VELOCITY, id_list, data_array_list);
+    }
+    else  //else read position only
+    {
+        std::vector<uint32_t> position_list;
+        res = syncReadPosition(id_list, position_list);
+        for (auto p : position_list)
+          data_array_list.emplace_back(std::array<uint32_t, 2>{0, p});
+    }
+
+    return res;
 }
 
 /**
@@ -496,7 +521,7 @@ int StepperDriver<reg_type>::syncReadHwStatus(const std::vector<uint8_t> &id_lis
     {
         // Voltage is first reg, uint16
         uint16_t v = ((uint16_t)data.at(1) << 8) | data.at(0); // concatenate 2 bytes
-        double voltage = static_cast<double>(v)  / reg_type::VOLTAGE_CONVERSION;
+        double voltage = static_cast<double>(v);
 
         // Temperature is second reg, uint8
         uint8_t temperature = data.at(2);

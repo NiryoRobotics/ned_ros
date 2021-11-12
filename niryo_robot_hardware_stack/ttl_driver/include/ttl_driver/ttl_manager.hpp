@@ -123,6 +123,7 @@ public:
     int readCustomCommand(uint8_t id, int32_t reg_address, int &value, int byte_number);
 
     // read status
+    bool readPositionsStatus();
     bool readJointsStatus();
     bool readEndEffectorStatus();
     bool readHardwareStatus();
@@ -163,8 +164,6 @@ private:
     int setupCommunication() override;
     void addHardwareDriver(common::model::EHardwareType hardware_type) override;
 
-    void updateCurrentCalibrationStatus() override;
-
     void checkRemovedMotors();
 
     // Config params using in fake driver
@@ -181,7 +180,6 @@ private:
     std::shared_ptr<dynamixel::PacketHandler> _packetHandler;
 
     mutable std::mutex _sync_mutex;
-
 
     std::string _device_name;
     int _baudrate{1000000};
@@ -200,8 +198,7 @@ private:
     std::vector<uint8_t> _motor_list;
     std::vector<uint8_t> _hw_list;
     std::vector<uint8_t> _conveyor_list;
-
-    common::model::EStepperCalibrationStatus _calibration_status{common::model::EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED};
+    // TODO(CC) add tools_list ?
 
     // for hardware control
     bool _is_connection_ok{false};
@@ -214,9 +211,10 @@ private:
 
     std::string _led_motor_type_cfg;
 
-    // TODO(cc) To be changed back to 50 when connection pb with new steppers and end effector will be corrected
     static constexpr uint32_t MAX_HW_FAILURE = 25;
     static constexpr uint32_t MAX_READ_EE_FAILURE = 50;
+
+    // TODO(CC) all calibration stuff should be in calibration interface
     static constexpr uint32_t CALIBRATION_IDLE = 0;
     static constexpr uint32_t CALIBRATION_IN_PROGRESS = 1;
     static constexpr uint32_t CALIBRATION_SUCCESS = 2;
@@ -227,10 +225,13 @@ private:
                                     {CALIBRATION_ERROR, common::model::EStepperCalibrationStatus::CALIBRATION_FAIL},
                                     {CALIBRATION_IDLE, common::model::EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED}};
 
+    common::model::EStepperCalibrationStatus _calibration_status{common::model::EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED};
+
     bool _use_simu_gripper = true;
     std::shared_ptr<FakeTtlData> _fake_data;
     
     bool _simulation_mode{false};
+    // TODO(CC) put elsewhere
     int _conveyor_direction{0};
 };
 
