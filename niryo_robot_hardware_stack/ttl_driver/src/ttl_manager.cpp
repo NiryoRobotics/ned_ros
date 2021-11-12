@@ -1014,7 +1014,7 @@ bool TtlManager::readHardwareStatus()
                     {
                         EStepperCalibrationStatus status = stepper_driver->interpreteHomingStatus(homing_status_list.at(i));
 
-                        auto stepperState = std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(id));
+                        auto stepperState = std::dynamic_pointer_cast<StepperMotorState>(state);
                         if (stepperState && !stepperState->isConveyor())
                         {
                             stepperState->setCalibration(status, 1);
