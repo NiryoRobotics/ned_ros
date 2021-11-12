@@ -26,7 +26,7 @@
 
 static std::unique_ptr<ros::NodeHandle> nh;
 
-TEST(TESTSuite, setConveyor)
+TEST(TESTSuiteNedAndOne, setConveyor)
 {
     auto client = nh->serviceClient<conveyor_interface::SetConveyor>("/niryo_robot/conveyor/ping_and_set_conveyor");
 
@@ -76,7 +76,7 @@ TEST(TESTSuite, setConveyor)
 //     EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::NO_CONVEYOR_LEFT);
 // }
 
-TEST(TESTSuite, controlConveyor1)
+TEST(TESTSuiteNedAndOne, controlConveyor1)
 {
     auto client = nh->serviceClient<conveyor_interface::ControlConveyor>("/niryo_robot/conveyor/control_conveyor");
 
@@ -93,7 +93,7 @@ TEST(TESTSuite, controlConveyor1)
     EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
 }
 
-TEST(TESTSuite, controlConveyor2)
+TEST(TESTSuiteNedAndOne, controlConveyor2)
 {
     auto client = nh->serviceClient<conveyor_interface::ControlConveyor>("/niryo_robot/conveyor/control_conveyor");
 
@@ -111,7 +111,7 @@ TEST(TESTSuite, controlConveyor2)
 }
 
 
-TEST(TESTSuite, controlConveyor3)
+TEST(TESTSuiteNedAndOne, controlConveyor3)
 {
     auto client = nh->serviceClient<conveyor_interface::ControlConveyor>("/niryo_robot/conveyor/control_conveyor");
 
@@ -128,7 +128,7 @@ TEST(TESTSuite, controlConveyor3)
     EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
 }
 
-TEST(TESTSuite, controlConveyorWrongId)
+TEST(TESTSuiteNedAndOne, controlConveyorWrongId)
 {
     auto client = nh->serviceClient<conveyor_interface::ControlConveyor>("/niryo_robot/conveyor/control_conveyor");
 
@@ -145,7 +145,7 @@ TEST(TESTSuite, controlConveyorWrongId)
     EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::CONVEYOR_ID_INVALID);
 }
 
-TEST(TESTSuite, removeConveyor)
+TEST(TESTSuiteNedAndOne, removeConveyor)
 {
     auto client = nh->serviceClient<conveyor_interface::SetConveyor>("/niryo_robot/conveyor/ping_and_set_conveyor");
 
@@ -160,7 +160,7 @@ TEST(TESTSuite, removeConveyor)
     EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
 }
 
-TEST(TESTSuite, duplicatteRemovingConveyor)
+TEST(TESTSuiteNedAndOne, duplicatteRemovingConveyor)
 {
     auto client = nh->serviceClient<conveyor_interface::SetConveyor>("/niryo_robot/conveyor/ping_and_set_conveyor");
 
@@ -175,7 +175,7 @@ TEST(TESTSuite, duplicatteRemovingConveyor)
     EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::NO_CONVEYOR_FOUND);
 }
 
-TEST(TESTSuite, RemoveConveyorWrongId)
+TEST(TESTSuiteNedAndOne, RemoveConveyorWrongId)
 {
     auto client = nh->serviceClient<conveyor_interface::SetConveyor>("/niryo_robot/conveyor/ping_and_set_conveyor");
 
@@ -190,7 +190,7 @@ TEST(TESTSuite, RemoveConveyorWrongId)
     EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::NO_CONVEYOR_FOUND);
 }
 
-TEST(TESTSuiteFakeDriver, setConveyor)
+TEST(TESTSuiteNed2, setConveyor)
 {
     auto client = nh->serviceClient<conveyor_interface::SetConveyor>("/niryo_robot/conveyor/ping_and_set_conveyor");
 
@@ -206,7 +206,7 @@ TEST(TESTSuiteFakeDriver, setConveyor)
     EXPECT_NE(srv.response.id, srv.request.id);
 }
 
-TEST(TESTSuiteFakeDriver, controlConveyor1)
+TEST(TESTSuiteNed2, controlConveyor1)
 {
     auto client = nh->serviceClient<conveyor_interface::ControlConveyor>("/niryo_robot/conveyor/control_conveyor");
 
@@ -223,7 +223,7 @@ TEST(TESTSuiteFakeDriver, controlConveyor1)
     EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
 }
 
-TEST(TESTSuiteFakeDriver, controlConveyor2)
+TEST(TESTSuiteNed2, controlConveyor2)
 {
     auto client = nh->serviceClient<conveyor_interface::ControlConveyor>("/niryo_robot/conveyor/control_conveyor");
 
@@ -241,7 +241,7 @@ TEST(TESTSuiteFakeDriver, controlConveyor2)
 }
 
 
-TEST(TESTSuiteFakeDriver, controlConveyor3)
+TEST(TESTSuiteNed2, controlConveyor3)
 {
     auto client = nh->serviceClient<conveyor_interface::ControlConveyor>("/niryo_robot/conveyor/control_conveyor");
 
@@ -258,7 +258,7 @@ TEST(TESTSuiteFakeDriver, controlConveyor3)
     EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
 }
 
-TEST(TESTSuiteFakeDriver, controlConveyorWrongId)
+TEST(TESTSuiteNed2, controlConveyorWrongId)
 {
     auto client = nh->serviceClient<conveyor_interface::ControlConveyor>("/niryo_robot/conveyor/control_conveyor");
 
@@ -275,7 +275,7 @@ TEST(TESTSuiteFakeDriver, controlConveyorWrongId)
     EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::CONVEYOR_ID_INVALID);
 }
 
-TEST(TESTSuiteFakeDriver, removeConveyor)
+TEST(TESTSuiteNed2, removeConveyor)
 {
     auto client = nh->serviceClient<conveyor_interface::SetConveyor>("/niryo_robot/conveyor/ping_and_set_conveyor");
 
@@ -290,7 +290,7 @@ TEST(TESTSuiteFakeDriver, removeConveyor)
     EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
 }
 
-TEST(TESTSuiteFakeDriver, duplicatteRemovingConveyor)
+TEST(TESTSuiteNed2, duplicatteRemovingConveyor)
 {
     auto client = nh->serviceClient<conveyor_interface::SetConveyor>("/niryo_robot/conveyor/ping_and_set_conveyor");
 
@@ -305,7 +305,7 @@ TEST(TESTSuiteFakeDriver, duplicatteRemovingConveyor)
     EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::NO_CONVEYOR_FOUND);
 }
 
-TEST(TESTSuiteFakeDriver, RemoveConveyorWrongId)
+TEST(TESTSuiteNed2, RemoveConveyorWrongId)
 {
     auto client = nh->serviceClient<conveyor_interface::SetConveyor>("/niryo_robot/conveyor/ping_and_set_conveyor");
 
@@ -329,14 +329,14 @@ int main(int argc, char **argv)
 
     testing::InitGoogleTest(&argc, argv);
 
-    bool simulation_mode;
+    std::string hardware_version;
     ros::NodeHandle nh_private("~");
-    nh_private.getParam("simulation_mode", simulation_mode);
+    nh_private.getParam("hardware_version", hardware_version);
 
-    if (simulation_mode)
-        testing::GTEST_FLAG(filter) = "-TESTSuite.*";
-    else
-        testing::GTEST_FLAG(filter) = "-TESTSuiteFakeDriver.*";
+    if (hardware_version == "ned2")
+        testing::GTEST_FLAG(filter) = "-TESTSuiteNedAndOne.*";
+    else if (hardware_version == "ned" || hardware_version == "one")
+        testing::GTEST_FLAG(filter) = "-TESTSuiteNed2.*";
 
     return RUN_ALL_TESTS();
 }

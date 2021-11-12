@@ -43,24 +43,19 @@ int main(int argc, char **argv)
 
     std::string hardware_version;
 
-    bool can_enabled{false};
-    bool ttl_enabled{false};
-
     nh.getParam("hardware_version", hardware_version);
-    nh.getParam("can_enabled", can_enabled);
-    nh.getParam("ttl_enabled", ttl_enabled);
 
     std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_driver;
     std::shared_ptr<can_driver::CanInterfaceCore> can_driver;
 
-    if (can_enabled)
+    if (hardware_version == "ned2")
     {
         ros::NodeHandle nh_ttl("ttl_driver");
         ttl_driver = std::make_shared<ttl_driver::TtlInterfaceCore>(nh_ttl);
         ros::Duration(0.25).sleep();
     }
 
-    if (ttl_enabled)
+    if (hardware_version == "ned" || hardware_version == "one")
     {
         ros::NodeHandle nh_can("can_driver");
         can_driver = std::make_shared<can_driver::CanInterfaceCore>(nh_can);
