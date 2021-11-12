@@ -354,8 +354,6 @@ bool CalibrationManager::canProcessManualCalibration(std::string &result_message
  */
 EStepperCalibrationStatus CalibrationManager::autoCalibration()
 {
-    _calibration_in_progress = true;
-
     // 0. Init velocity profile
     initVelocityProfiles();
 
@@ -376,18 +374,25 @@ EStepperCalibrationStatus CalibrationManager::autoCalibration()
     }
 
     double timeout = 0.0;
-    // 3. wait for calibration status to change
-    while (EStepperCalibrationStatus::IN_PROGRESS == getCalibrationStatus())
+    // 3. wait for calibration status to change*
+
+    // get calibration result final
+    EStepperCalibrationStatus final_status = EStepperCalibrationStatus::IN_PROGRESS;
+
+    while (EStepperCalibrationStatus::IN_PROGRESS == final_status)
     {
         ros::Duration(0.2).sleep();
         timeout += 0.2;
         if (timeout >= 30.0)
         {
             ROS_ERROR("CalibrationManager::autoCalibration - calibration timeout, please try again");
-            _calibration_in_progress = false;
             return common::model::EStepperCalibrationStatus::TIMEOUT;
         }
+        final_status = getCalibrationStatus();
+        ROS_DEBUG("CalibrationManager::autoCalibration - calibration status, %s", common::model::StepperCalibrationStatusEnum(final_status).toString().c_str());
     }
+
+    ros::Duration(0.5).sleep();
 
     // 4. retrieve values for the calibration
     std::vector<int> sensor_offset_results;
@@ -408,9 +413,6 @@ EStepperCalibrationStatus CalibrationManager::autoCalibration()
             ROS_INFO("CalibrationManager::autoCalibration - Motor %d, calibration cmd result %d ", motor_id, calibration_result);
         }
     }
-
-    // get calibration result final
-    EStepperCalibrationStatus final_status = getCalibrationStatus();
 
     if (EStepperCalibrationStatus::OK == final_status)
     {
@@ -434,8 +436,6 @@ EStepperCalibrationStatus CalibrationManager::autoCalibration()
     // 7 - activate torque for ned2, disactivate for ned1
     activateTorque("ned2" == _hardware_version);
 
-    _calibration_in_progress = false;
-
     return final_status;
 }
 
@@ -449,7 +449,6 @@ EStepperCalibrationStatus
 CalibrationManager::manualCalibration()
 {
     EStepperCalibrationStatus status = EStepperCalibrationStatus::FAIL;
-    _calibration_in_progress = true;
 
     if  ("ned2" != _hardware_version)
     {
@@ -517,8 +516,6 @@ CalibrationManager::manualCalibration()
       ROS_ERROR("CalibrationManager::manualCalibration : manual calibration not available for %s robot."
                 "Only supported for Niryo One and Niryo Ned", _hardware_version.c_str());
     }
-
-    _calibration_in_progress = false;
 
     return status;
 }

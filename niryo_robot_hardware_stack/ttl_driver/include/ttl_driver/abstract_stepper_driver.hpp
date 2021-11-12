@@ -45,7 +45,7 @@ public:
     int writeSingleCmd(const std::unique_ptr<common::model::AbstractTtlSingleMotorCmd> &cmd) override;
     int writeSyncCmd(int type, const std::vector<uint8_t>& ids, const std::vector<uint32_t>& params) override;
 
-    common::model::EStepperCalibrationStatus interpreteHomingStatus(uint8_t status) const;
+    common::model::EStepperCalibrationStatus interpreteHomingData(uint8_t status) const;
 
 protected:
     // AbstractTtlDriver interface

@@ -160,7 +160,7 @@ std::string AbstractStepperDriver::interpreteFirmwareVersion(uint32_t fw_version
  * @return
  */
 common::model::EStepperCalibrationStatus
-AbstractStepperDriver::interpreteHomingStatus(uint8_t status) const
+AbstractStepperDriver::interpreteHomingData(uint8_t status) const
 {
     EStepperCalibrationStatus homing_status{EStepperCalibrationStatus::UNINITIALIZED};
 

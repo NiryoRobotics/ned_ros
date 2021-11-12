@@ -732,7 +732,7 @@ bool TtlManager::readEndEffectorStatus()
                         }
                         else
                         {
-                            // hw_errors_increment++;
+                             hw_errors_increment++;
                         }
 
                         // not accept other status of collistion in 1 second if it detected a collision
@@ -745,7 +745,7 @@ bool TtlManager::readEndEffectorStatus()
                             }
                             else
                             {
-                                // hw_errors_increment++;
+                                 hw_errors_increment++;
                             }
                         }
                         else
@@ -928,7 +928,8 @@ bool TtlManager::readHardwareStatus()
 
             // ***********  calibration status, only if initialized
             std::vector<uint8_t> homing_status_list;
-            if (_calibration_status != EStepperCalibrationStatus::UNINITIALIZED)
+            if (_calibration_status != EStepperCalibrationStatus::UNINITIALIZED &&
+                _calibration_status != EStepperCalibrationStatus::OK)
             {
                 if (_ids_map.count(hw_type) && COMM_SUCCESS != stepper_driver->syncReadHomingStatus(_ids_map.at(hw_type), homing_status_list))
                 {
@@ -982,9 +983,8 @@ bool TtlManager::readHardwareStatus()
             // 2. set motors states accordingly
             for (size_t i = 0; i < _hw_list.size(); ++i)
             {
-                EStepperCalibrationStatus newStatus = EStepperCalibrationStatus::UNINITIALIZED;
-
                 uint8_t id = _hw_list.at(i);
+                int max_status = -1;
 
                 if (_state_map.count(id))
                 {
@@ -1012,20 +1012,23 @@ bool TtlManager::readHardwareStatus()
                     // update global calibration status
                     if (homing_status_list.size() > i)
                     {
-                        EStepperCalibrationStatus status = stepper_driver->interpreteHomingStatus(homing_status_list.at(i));
+                        max_status = max_status < homing_status_list.at(i) ? homing_status_list.at(i) : max_status;
+
+                        EStepperCalibrationStatus status = stepper_driver->interpreteHomingData(homing_status_list.at(i));
 
                         auto stepperState = std::dynamic_pointer_cast<StepperMotorState>(state);
                         if (stepperState && !stepperState->isConveyor())
                         {
                             stepperState->setCalibration(status, 1);
-                            if (newStatus < status)
-                            {
-                                newStatus = status;
-                                _calibration_status = newStatus;
-                            }
                         }
                     }
                 }
+
+                if (max_status >= 0)
+                {
+                    _calibration_status = stepper_driver->interpreteHomingData(static_cast<uint8_t>(max_status));
+                }
+
 
             }  // for id_list
 

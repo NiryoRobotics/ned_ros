@@ -101,7 +101,6 @@ private:
     std::vector<std::shared_ptr<common::model::JointState> > _joint_states_list;
     std::map<uint8_t, CalibrationConfig > _calibration_params_map;
 
-    bool _calibration_in_progress{false};
     int _calibration_timeout{0};
 
     std::string _calibration_file_name;
