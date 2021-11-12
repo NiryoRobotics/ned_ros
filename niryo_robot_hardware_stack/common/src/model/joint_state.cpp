@@ -83,6 +83,15 @@ void JointState::setHomePosition(double home_position)
 }
 
 /**
+ * @brief JointState::setLimitPosition
+ * @param home_position
+ */
+void JointState::setLimitPosition(double limit_position)
+{
+    _limit_position = limit_position;
+}
+
+/**
  * @brief JointState::setDirection
  * @param direction
  */

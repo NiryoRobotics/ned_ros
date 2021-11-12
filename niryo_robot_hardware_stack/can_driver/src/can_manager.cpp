@@ -637,6 +637,12 @@ void CanManager::resetCalibration()
     ROS_DEBUG_THROTTLE(0.5, "CanManager::resetCalibration: reseting...");
 
     _calibration_status = EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED;
+    for (auto &s : _state_map)
+    {
+        if (s.second && (s.second->getHardwareType() == EHardwareType::STEPPER || s.second->getHardwareType() == EHardwareType::FAKE_STEPPER_MOTOR)  &&
+            !std::dynamic_pointer_cast<StepperMotorState>(s.second)->isConveyor())
+            std::dynamic_pointer_cast<StepperMotorState>(s.second)->setCalibration(EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED, 0);
+    }
 }
 
 /**

@@ -464,7 +464,7 @@ CalibrationManager::manualCalibration()
 
                         if (motor_id == _joint_states_list.at(0)->getId())
                         {
-                            offset_to_send = sensor_offset_steps - _joint_states_list.at(0)->to_motor_pos(_joint_states_list.at(0)->getOffsetPosition()) % steps_per_rev;
+                            offset_to_send = sensor_offset_steps - _joint_states_list.at(0)->to_motor_pos(_joint_states_list.at(0)->getLimitPosition()) % steps_per_rev;
                             if (offset_to_send < 0)
                                 offset_to_send += steps_per_rev;
 
@@ -474,7 +474,7 @@ CalibrationManager::manualCalibration()
                         }
                         else if (motor_id == _joint_states_list.at(1)->getId())
                         {
-                            offset_to_send = sensor_offset_steps - _joint_states_list.at(1)->to_motor_pos(_joint_states_list.at(1)->getOffsetPosition());
+                            offset_to_send = sensor_offset_steps - _joint_states_list.at(1)->to_motor_pos(_joint_states_list.at(1)->getLimitPosition());
 
                             offset_to_send %= steps_per_rev;
                             if (offset_to_send < 0)
@@ -486,7 +486,7 @@ CalibrationManager::manualCalibration()
                         }
                         else if (motor_id == _joint_states_list.at(2)->getId())
                         {
-                            offset_to_send = sensor_offset_steps - _joint_states_list.at(2)->to_motor_pos(_joint_states_list.at(2)->getOffsetPosition());
+                            offset_to_send = sensor_offset_steps - _joint_states_list.at(2)->to_motor_pos(_joint_states_list.at(2)->getLimitPosition());
 
                             StepperSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_POSITION_OFFSET, _joint_states_list.at(2)->getId(),
                                                          {offset_to_send, sensor_offset_steps});
@@ -734,7 +734,7 @@ void CalibrationManager::sendCalibrationToSteppers()
     // 1. change status in interfaces
     if (_can_interface)
       _can_interface->startCalibration();
-    if (_ttl_interface)
+    else if (_ttl_interface)
       _ttl_interface->startCalibration();
 
 
@@ -765,7 +765,7 @@ void CalibrationManager::sendCalibrationToSteppers()
 
                 if (_can_interface && EBusProtocol::CAN == pStepperMotorState->getBusProtocol())
                 {
-                    int32_t offset = pStepperMotorState->to_motor_pos(pStepperMotorState->getOffsetPosition());
+                    int32_t offset = pStepperMotorState->to_motor_pos(pStepperMotorState->getLimitPosition());
 
                     _can_interface->addSingleCommandToQueue(std::make_unique<StepperSingleCmd>(
                                                             StepperSingleCmd(EStepperCommandType::CMD_TYPE_CALIBRATION, id,
