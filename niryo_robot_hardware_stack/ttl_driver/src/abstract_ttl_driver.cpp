@@ -155,7 +155,6 @@ int AbstractTtlDriver::read(uint16_t address, uint8_t data_len, uint8_t id, uint
 {
     // clean output data first
     data = 0;
-    uint8_t dxl_error = 0;
     int dxl_comm_result = COMM_TX_FAIL;
 
     switch (data_len)

@@ -218,7 +218,7 @@ void TtlManager::addHardwareComponent(std::shared_ptr<common::model::AbstractHar
         _hw_list.emplace_back(id);
       break;
     case common::model::EComponentType::END_EFFECTOR:
-        _hw_list.emplace_back(id);        
+        _hw_list.emplace_back(id);
       break;
     default:
       break;
@@ -263,9 +263,9 @@ void TtlManager::removeHardwareComponent(uint8_t id)
 
 /**
  * @brief TtlManager::isMotorType
- * @param type 
- * @return true 
- * @return false 
+ * @param type
+ * @return true
+ * @return false
  */
 bool TtlManager::isMotorType(common::model::EHardwareType type)
 {
@@ -696,51 +696,68 @@ bool TtlManager::readEndEffectorStatus()
     if (_driver_map.count(EHardwareType::END_EFFECTOR))
     {
         unsigned int hw_errors_increment = 0;
-        try
+        auto driver = std::dynamic_pointer_cast<EndEffectorDriver<EndEffectorReg> >(_driver_map.at(EHardwareType::END_EFFECTOR));
+
+        if (driver)
         {
-            auto driver = std::dynamic_pointer_cast<EndEffectorDriver<EndEffectorReg> >(_driver_map.at(EHardwareType::END_EFFECTOR));
             if (_ids_map.count(EHardwareType::END_EFFECTOR))
             {
-                // we retrieve the associated id for the end effector
                 uint8_t id = _ids_map.at(EHardwareType::END_EFFECTOR).front();
-                vector<common::model::EActionType> action_list;
 
-                // read buttons status if state map have id of EE
-                auto state = std::dynamic_pointer_cast<EndEffectorState>(_state_map.at(id));
-
-                // get action of free driver button, save pos button, custom button
-                if (COMM_SUCCESS == driver->syncReadButtonsStatus(id, action_list))
+                if (_state_map.count(id))
                 {
-                    for (size_t i = 0; i < action_list.size(); i++)
-                    {
-                        state->setButtonStatus(i, action_list.at(i));
-                    }
-                }
-                else
-                    hw_errors_increment++;
+                    // we retrieve the associated id for the end effector
+                    auto state = std::dynamic_pointer_cast<EndEffectorState>(_state_map.at(id));
 
-                bool digital_data;
-                if (COMM_SUCCESS == driver->readDigitalInput(id, digital_data))
-                    state->setDigitalIn(digital_data);
-                else
-                    hw_errors_increment++;
-
-                // not accept other status of collistion in 1 second if it detected a collision
-                if (_last_collision_detected == 0.0)
-                {
-                    if (COMM_SUCCESS == driver->readCollisionStatus(id, _collision_status))
+                    if(state)
                     {
-                        if (_collision_status)
-                            _last_collision_detected = ros::Time::now().toSec();
-                    }
-                    else
-                        hw_errors_increment++;
-                }
-                else if (ros::Time::now().toSec() - _last_collision_detected >= 1.0)
-                    _last_collision_detected = 0.0;
-            }  // for driver_map
-        }
-        catch(const std::exception& e) {}
+                        vector<common::model::EActionType> action_list;
+
+                        // get action of free driver button, save pos button, custom button
+                        if (COMM_SUCCESS == driver->syncReadButtonsStatus(id, action_list))
+                        {
+                            for (size_t i = 0; i < action_list.size(); i++)
+                            {
+                                state->setButtonStatus(i, action_list.at(i));
+                            }
+                        }
+                        else
+                        {
+                            hw_errors_increment++;
+                        }
+
+                        bool digital_data{};
+                        if (COMM_SUCCESS == driver->readDigitalInput(id, digital_data))
+                        {
+                            state->setDigitalIn(digital_data);
+                        }
+                        else
+                        {
+                            // hw_errors_increment++;
+                        }
+
+                        // not accept other status of collistion in 1 second if it detected a collision
+                        if ((ros::Time::now().toSec() - _last_collision_detected) < 1.0)
+                        {
+                            if (COMM_SUCCESS == driver->readCollisionStatus(id, _collision_status))
+                            {
+                                if (_collision_status)
+                                    _last_collision_detected = ros::Time::now().toSec();
+                            }
+                            else
+                            {
+                                // hw_errors_increment++;
+                            }
+                        }
+                        else
+                        {
+                            _last_collision_detected = 0.0;
+                        }
+
+                    }  // if (state)
+                }  // if (_state_map.count(id))
+            }  // if (_ids_map.count(EHardwareType::END_EFFECTOR))
+        } // if (driver)
 
         // we reset the global error variable only if no errors
         if (0 == hw_errors_increment)
@@ -750,13 +767,14 @@ bool TtlManager::readEndEffectorStatus()
         }
         else
         {
+            ROS_DEBUG("TtlManager::readEndEffectorStatus: nb error = %d", _end_effector_fail_counter_read);
             _end_effector_fail_counter_read += hw_errors_increment;
         }
 
         if (_end_effector_fail_counter_read > MAX_READ_EE_FAILURE)
         {
-            ROS_ERROR_THROTTLE(1, "TtlManager::readEndEffectorStatus - motor connection problem - "
-                                  "Failed to read from bus (hw_fail_counter_read : %d)", _end_effector_fail_counter_read);
+            ROS_ERROR("TtlManager::readEndEffectorStatus - motor connection problem - Failed to read from bus (hw_fail_counter_read : %d)",
+                      _end_effector_fail_counter_read);
             _end_effector_fail_counter_read = 0;
             _debug_error_message = "TtlManager - Connection problem with physical Bus.";
         }

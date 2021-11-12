@@ -72,8 +72,7 @@ class EndEffectorDriver : public AbstractEndEffectorDriver
         int readButton0Status(uint8_t id, common::model::EActionType& action) override;
         int readButton1Status(uint8_t id, common::model::EActionType& action) override;
         int readButton2Status(uint8_t id, common::model::EActionType& action) override;
-        int syncReadButtonsStatus(const uint8_t& id,
-                                  std::vector<common::model::EActionType>& action_list);
+        int syncReadButtonsStatus(const uint8_t& id, std::vector<common::model::EActionType>& action_list) override;
 
         int readAccelerometerXValue(uint8_t id, uint32_t& x_value) override;
         int readAccelerometerYValue(uint8_t id, uint32_t& y_value) override;
@@ -292,8 +291,8 @@ template<typename reg_type>
 int EndEffectorDriver<reg_type>::readButton0Status(uint8_t id,
                                                    common::model::EActionType& action)
 {
-    uint32_t status;
-    int res = read<uint8_t>(reg_type::ADDR_BUTTON_0_STATUS, id, status);
+    uint8_t status;
+    int res = read<typename reg_type::TYPE_BUTTON_STATUS>(reg_type::ADDR_BUTTON_0_STATUS, id, status);
     action = interpreteActionValue(status);
     return res;
 }
@@ -307,8 +306,8 @@ int EndEffectorDriver<reg_type>::readButton0Status(uint8_t id,
 template<typename reg_type>
 int EndEffectorDriver<reg_type>::readButton1Status(uint8_t id, common::model::EActionType& action)
 {
-    uint32_t status;
-    int res = read<uint8_t>(reg_type::ADDR_BUTTON_1_STATUS, id, status);
+    uint8_t status;
+    int res = read<typename reg_type::TYPE_BUTTON_STATUS>(reg_type::ADDR_BUTTON_1_STATUS, id, status);
     action = interpreteActionValue(status);
     return res;
 }
@@ -322,19 +321,25 @@ int EndEffectorDriver<reg_type>::readButton1Status(uint8_t id, common::model::EA
 template<typename reg_type>
 int EndEffectorDriver<reg_type>::readButton2Status(uint8_t id, common::model::EActionType& action)
 {
-    uint32_t status;
-    int res = read<uint8_t>(reg_type::ADDR_BUTTON_2_STATUS, id, status);
+    uint8_t status;
+    int res = read<typename reg_type::TYPE_BUTTON_STATUS>(reg_type::ADDR_BUTTON_2_STATUS, id, status);
     action = interpreteActionValue(status);
     return res;
 }
 
+/**
+ * @brief EndEffectorDriver<reg_type>::syncReadButtonsStatus
+ * @param id
+ * @param action_list
+ * @return
+ */
 template<typename reg_type>
 int EndEffectorDriver<reg_type>::syncReadButtonsStatus(const uint8_t& id,
                                                         std::vector<common::model::EActionType>& action_list)
 {
-    std::vector<std::array<uint8_t, 3>> data_array_list;
+    std::vector<std::array<uint8_t, 3> > data_array_list;
     int res;
-    res = syncReadConsecutiveBytes<uint8_t, 3>(reg_type::ADDR_BUTTON_0_STATUS, {id}, data_array_list);
+    res = syncReadConsecutiveBytes<typename reg_type::TYPE_BUTTON_STATUS, 3>(reg_type::ADDR_BUTTON_0_STATUS, {id}, data_array_list);
     if (res == COMM_SUCCESS && data_array_list.size() == 1)
     {
         for (auto data : data_array_list.at(0))
