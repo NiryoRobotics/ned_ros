@@ -70,6 +70,8 @@ class EndEffectorDriver : public AbstractEndEffectorDriver
         int readButton0Status(uint8_t id, common::model::EActionType& action) override;
         int readButton1Status(uint8_t id, common::model::EActionType& action) override;
         int readButton2Status(uint8_t id, common::model::EActionType& action) override;
+        int syncReadButtonsStatus(const uint8_t& id,
+                                  std::vector<common::model::EActionType>& action_list);
 
         int readAccelerometerXValue(uint8_t id, uint32_t& x_value) override;
         int readAccelerometerYValue(uint8_t id, uint32_t& y_value) override;
@@ -259,7 +261,7 @@ int EndEffectorDriver<reg_type>::readButton0Status(uint8_t id,
                                                    common::model::EActionType& action)
 {
     uint32_t status;
-    int res = read(reg_type::ADDR_BUTTON_0_STATUS, reg_type::SIZE_BUTTON_0_STATUS, id, status);
+    int res = read<uint8_t>(reg_type::ADDR_BUTTON_0_STATUS, id, status);
     action = interpreteActionValue(status);
     return res;
 }
@@ -274,7 +276,7 @@ template<typename reg_type>
 int EndEffectorDriver<reg_type>::readButton1Status(uint8_t id, common::model::EActionType& action)
 {
     uint32_t status;
-    int res = read(reg_type::ADDR_BUTTON_1_STATUS, reg_type::SIZE_BUTTON_1_STATUS, id, status);
+    int res = read<uint8_t>(reg_type::ADDR_BUTTON_1_STATUS, id, status);
     action = interpreteActionValue(status);
     return res;
 }
@@ -289,11 +291,27 @@ template<typename reg_type>
 int EndEffectorDriver<reg_type>::readButton2Status(uint8_t id, common::model::EActionType& action)
 {
     uint32_t status;
-    int res = read(reg_type::ADDR_BUTTON_2_STATUS, reg_type::SIZE_BUTTON_2_STATUS, id, status);
+    int res = read<uint8_t>(reg_type::ADDR_BUTTON_2_STATUS, id, status);
     action = interpreteActionValue(status);
     return res;
 }
 
+template<typename reg_type>
+int EndEffectorDriver<reg_type>::syncReadButtonsStatus(const uint8_t& id,
+                                                        std::vector<common::model::EActionType>& action_list)
+{
+    std::vector<std::array<uint8_t, 3>> data_array_list;
+    int res;
+    res = syncReadConsecutiveBytes<uint8_t, 3>(reg_type::ADDR_BUTTON_0_STATUS, {id}, data_array_list);
+    if (res == COMM_SUCCESS && data_array_list.size() == 1)
+    {
+        for (auto data : data_array_list.at(0))
+        {
+            action_list.push_back(interpreteActionValue(data));
+        }
+    }
+    return res;
+}
 // accelerometers and collision
 
 /**
@@ -341,10 +359,15 @@ int EndEffectorDriver<reg_type>::readAccelerometerZValue(uint8_t id, uint32_t& z
 template<typename reg_type>
 int EndEffectorDriver<reg_type>::readCollisionStatus(uint8_t id, bool& status)
 {
-    uint32_t value;
-
+    uint32_t value = 1;
+    status = false;
     int res = read(reg_type::ADDR_COLLISION_STATUS, reg_type::SIZE_COLLISION_STATUS, id, value);
-    status = (value > 0) ? true : false;
+    if (res == COMM_SUCCESS)
+    {
+        status = (value > 0) ? true : false;
+        if (status)
+            ROS_ERROR("test read collistion status %d", value);
+    }
     return res;
 }
 

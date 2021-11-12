@@ -56,13 +56,13 @@ struct EndEffectorReg
 
     // specific to EE
     static constexpr uint16_t ADDR_BUTTON_0_STATUS          = 1024;
-    static constexpr uint8_t SIZE_BUTTON_0_STATUS           = 1;
+    using TYPE_BUTTON_0_STATUS = uint8_t;
 
     static constexpr uint16_t ADDR_BUTTON_1_STATUS          = 1025;
-    static constexpr uint8_t SIZE_BUTTON_1_STATUS           = 1;
+    using TYPE_BUTTON_1_STATUS = uint8_t;
 
     static constexpr uint16_t ADDR_BUTTON_2_STATUS          = 1026;
-    static constexpr uint8_t SIZE_BUTTON_2_STATUS           = 1;
+    using TYPE_BUTTON_2_STATUS = uint8_t;
 
 
     static constexpr uint16_t ADDR_DIGITAL_IN               = 1040;
