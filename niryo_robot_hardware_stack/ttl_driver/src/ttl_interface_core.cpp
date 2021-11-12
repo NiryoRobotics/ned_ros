@@ -499,15 +499,6 @@ void TtlInterfaceCore::resetCalibration()
 }
 
 /**
- * @brief TtlInterfaceCore::isCalibrationInProgress
- * @return
- */
-bool TtlInterfaceCore::isCalibrationInProgress() const
-{
-    return _ttl_manager->isCalibrationInProgress();
-}
-
-/**
  * @brief TtlInterfaceCore::getCalibrationResult
  * @param id
  * @return

@@ -35,13 +35,13 @@ namespace model
  * @brief The EStepperCalibrationStatus enum
  */
 enum class EStepperCalibrationStatus {
-    CALIBRATION_UNINITIALIZED = 0, // means no calibration is expected
-    CALIBRATION_OK = 1,
-    CALIBRATION_TIMEOUT = 2,
-    CALIBRATION_BAD_PARAM = 3,
-    CALIBRATION_FAIL = 4,
-    CALIBRATION_WAITING_USER_INPUT = 5,
-    CALIBRATION_IN_PROGRESS = 6,
+    UNINITIALIZED = 0, // means no calibration is expected
+    OK = 1,
+    TIMEOUT = 2,
+    BAD_PARAM = 3,
+    FAIL = 4,
+    WAITING_USER_INPUT = 5,
+    IN_PROGRESS = 6,
 };
 
 /**
@@ -50,7 +50,7 @@ enum class EStepperCalibrationStatus {
 class StepperCalibrationStatusEnum : public AbstractEnum<StepperCalibrationStatusEnum, EStepperCalibrationStatus>
 {
 public:
-    StepperCalibrationStatusEnum(EStepperCalibrationStatus e=EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED);
+    StepperCalibrationStatusEnum(EStepperCalibrationStatus e=EStepperCalibrationStatus::UNINITIALIZED);
     StepperCalibrationStatusEnum(const char* str);
 
 private:

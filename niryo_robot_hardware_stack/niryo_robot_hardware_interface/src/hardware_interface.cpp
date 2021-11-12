@@ -404,7 +404,8 @@ void HardwareInterface::_publishHardwareStatus(const ros::TimerEvent&)
 
     if (_joints_interface)
     {
-        _joints_interface->getCalibrationState(need_calibration, calibration_in_progress);
+        need_calibration = _joints_interface->needCalibration();
+        calibration_in_progress = _joints_interface->isCalibrationInProgress();
 
         auto joints_states = _joints_interface->getJointsState();
         for (const std::shared_ptr<common::model::JointState>& jState : joints_states)

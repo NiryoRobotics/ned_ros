@@ -509,7 +509,7 @@ double CanManager::getCurrentTimeout() const
 {
     double res = AbstractStepperDriver::STEPPER_MOTOR_TIMEOUT_VALUE;
 
-    if (isCalibrationInProgress())
+    if (EStepperCalibrationStatus::IN_PROGRESS == _calibration_status)
         res = _calibration_timeout;
     else if (_isPing)
         res = _ping_timeout;
@@ -623,10 +623,10 @@ void CanManager::startCalibration()
     {
         if (s.second && (EHardwareType::STEPPER == s.second->getHardwareType() || EHardwareType::FAKE_STEPPER_MOTOR == s.second->getHardwareType()) &&
             !std::dynamic_pointer_cast<StepperMotorState>(s.second)->isConveyor())
-            std::dynamic_pointer_cast<StepperMotorState>(s.second)->setCalibration(EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS, 0);
+            std::dynamic_pointer_cast<StepperMotorState>(s.second)->setCalibration(EStepperCalibrationStatus::IN_PROGRESS, 0);
     }
 
-    _calibration_status = EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS;
+    _calibration_status = EStepperCalibrationStatus::IN_PROGRESS;
 }
 
 /**
@@ -636,7 +636,7 @@ void CanManager::resetCalibration()
 {
     ROS_DEBUG_THROTTLE(0.5, "CanManager::resetCalibration: reseting...");
 
-    _calibration_status = EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED;
+    _calibration_status = EStepperCalibrationStatus::UNINITIALIZED;
 }
 
 /**
@@ -657,7 +657,7 @@ int32_t CanManager::getCalibrationResult(uint8_t motor_id) const
  */
 void CanManager::updateCurrentCalibrationStatus()
 {
-    EStepperCalibrationStatus newStatus = _calibration_status > EStepperCalibrationStatus::CALIBRATION_OK ? EStepperCalibrationStatus::CALIBRATION_OK : _calibration_status;
+    EStepperCalibrationStatus newStatus = _calibration_status > EStepperCalibrationStatus::OK ? EStepperCalibrationStatus::OK : _calibration_status;
     // update current state of the calibrationtimeout_motors
     // rule is : if a status in a motor is worse than one previously found, we take it
     // we are not taking "uninitialized" into account as it means a calibration as not been started for this motor

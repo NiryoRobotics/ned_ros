@@ -19,6 +19,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 
 #include <memory>
 #include "common/model/hardware_type_enum.hpp"
+#include "common/model/stepper_calibration_status_enum.hpp"
 
 namespace ttl_driver
 {

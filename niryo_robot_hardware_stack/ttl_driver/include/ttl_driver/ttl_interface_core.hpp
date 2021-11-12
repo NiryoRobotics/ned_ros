@@ -134,7 +134,6 @@ public:
 
     void startCalibration() override;
     void resetCalibration() override ;
-    bool isCalibrationInProgress() const override ;
     int32_t getCalibrationResult(uint8_t id) const override ;
     common::model::EStepperCalibrationStatus getCalibrationStatus() const override;
 

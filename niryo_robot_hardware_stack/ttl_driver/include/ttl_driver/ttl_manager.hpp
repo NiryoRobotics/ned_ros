@@ -142,7 +142,7 @@ public:
     //calibration
     void startCalibration() override;
     void resetCalibration() override;
-    bool isCalibrationInProgress() const override;
+
     int32_t getCalibrationResult(uint8_t id) const override;
     common::model::EStepperCalibrationStatus getCalibrationStatus() const override;
 
@@ -161,7 +161,7 @@ public:
 
     // get collision status of motors
     bool readCollisionStatus() const;
-    
+
 private:
     // IBusManager Interface
     int setupCommunication() override;
@@ -196,8 +196,9 @@ private:
     std::map<common::model::EHardwareType, std::vector<uint8_t> > _ids_map;
     // map of drivers for a given hardware type (xl, stepper, end effector)
     std::map<common::model::EHardwareType, std::shared_ptr<ttl_driver::AbstractTtlDriver> > _driver_map;
+
     // vector of ids of motors and conveyors
-    // Theses vector help remove loop not necessary 
+    // Theses vector help remove loop not necessary
     std::vector<uint8_t> _motor_list;
     std::vector<uint8_t> _hw_list;
     std::vector<uint8_t> _conveyor_list;
@@ -217,25 +218,12 @@ private:
     static constexpr uint32_t MAX_HW_FAILURE = 25;
     static constexpr uint32_t MAX_READ_EE_FAILURE = 50;
 
-    // TODO(CC) all calibration stuff should be in calibration interface
-    static constexpr uint32_t CALIBRATION_IDLE = 0;
-    static constexpr uint32_t CALIBRATION_IN_PROGRESS = 1;
-    static constexpr uint32_t CALIBRATION_SUCCESS = 2;
-    static constexpr uint32_t CALIBRATION_ERROR = 3;
-    std::map<uint32_t, common::model::EStepperCalibrationStatus> _map_calibration_status {
-                                    {CALIBRATION_SUCCESS, common::model::EStepperCalibrationStatus::CALIBRATION_OK},
-                                    {CALIBRATION_IN_PROGRESS, common::model::EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS},
-                                    {CALIBRATION_ERROR, common::model::EStepperCalibrationStatus::CALIBRATION_FAIL},
-                                    {CALIBRATION_IDLE, common::model::EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED}};
+    common::model::EStepperCalibrationStatus _calibration_status{common::model::EStepperCalibrationStatus::UNINITIALIZED};
 
-    common::model::EStepperCalibrationStatus _calibration_status{common::model::EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED};
-
-    bool _use_simu_gripper = true;
+    // for simulation only
     std::shared_ptr<FakeTtlData> _fake_data;
-    
+    bool _use_simu_gripper = true;
     bool _simulation_mode{false};
-    // TODO(CC) put elsewhere
-    int _conveyor_direction{0};
 
     // status to track collision status
     bool _collision_status{false};
@@ -282,16 +270,6 @@ inline
 std::string TtlManager::getErrorMessage() const
 {
     return _debug_error_message;
-}
-
-/**
- * @brief TtlManager::isCalibrationInProgress
- * @return
- */
-inline
-bool TtlManager::isCalibrationInProgress() const
-{
-  return (common::model::EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS == _calibration_status);
 }
 
 /**
@@ -386,8 +364,8 @@ void TtlManager::retrieveFakeMotorData(const std::string& current_ns, std::map<u
 
 /**
  * @brief TtlManager::readCollisionStatus
- * @return true 
- * @return false 
+ * @return true
+ * @return false
  */
 inline
 bool TtlManager::readCollisionStatus() const

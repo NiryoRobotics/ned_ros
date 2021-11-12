@@ -95,7 +95,6 @@ public:
     //calibration
     void startCalibration() override;
     void resetCalibration() override;
-    bool isCalibrationInProgress() const override;
     int32_t getCalibrationResult(uint8_t id) const override;
     common::model::EStepperCalibrationStatus getCalibrationStatus() const override;
 
@@ -143,7 +142,7 @@ private:
     bool _isPing{false};
     static double constexpr _ping_timeout{5.0}; // prevent timeout check on motors when a ping failed
 
-    common::model::EStepperCalibrationStatus _calibration_status{common::model::EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED};
+    common::model::EStepperCalibrationStatus _calibration_status{common::model::EStepperCalibrationStatus::UNINITIALIZED};
 
     bool _simulation_mode{false};
     bool _is_connection_ok{false};
@@ -202,16 +201,6 @@ CanManager::getCalibrationStatus() const
 {
     return _calibration_status;
 }
-
-/**
- * @brief CanManager::isCalibrationInProgress
- * @return
- */
-inline
-bool CanManager::isCalibrationInProgress() const {
-    return common::model::EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS == _calibration_status;
-}
-
 
 /**
  * @brief CanManager::retrieveFakeMotorData get config for motors

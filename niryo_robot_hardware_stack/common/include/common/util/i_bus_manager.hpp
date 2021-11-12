@@ -65,7 +65,6 @@ public:
     //calibration
     virtual void startCalibration() = 0;
     virtual void resetCalibration() = 0;
-    virtual bool isCalibrationInProgress() const = 0;
     virtual int32_t getCalibrationResult(uint8_t id) const = 0;
     virtual common::model::EStepperCalibrationStatus getCalibrationStatus() const = 0;
 protected:

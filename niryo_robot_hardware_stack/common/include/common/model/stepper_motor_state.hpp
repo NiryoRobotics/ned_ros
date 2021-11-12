@@ -119,7 +119,7 @@ protected:
     // profile
     VelocityProfile _profile;
 
-    common::model::EStepperCalibrationStatus _calibration_state{common::model::EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED};
+    common::model::EStepperCalibrationStatus _calibration_state{common::model::EStepperCalibrationStatus::UNINITIALIZED};
     int32_t _calibration_value{0};
 
 private:

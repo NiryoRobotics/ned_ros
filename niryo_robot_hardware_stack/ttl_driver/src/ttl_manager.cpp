@@ -105,7 +105,6 @@ bool TtlManager::init(ros::NodeHandle& nh)
     nh.getParam("bus_params/baudrate", _baudrate);
     nh.getParam("led_motor", _led_motor_type_cfg);
     nh.getParam("simu_gripper", _use_simu_gripper);
-    nh.getParam("conveyor/direction", _conveyor_direction);
 
     if (!_simulation_mode)
     {
@@ -929,7 +928,7 @@ bool TtlManager::readHardwareStatus()
 
             // ***********  calibration status, only if initialized
             std::vector<uint8_t> homing_status_list;
-            if (_calibration_status != EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED)
+            if (_calibration_status != EStepperCalibrationStatus::UNINITIALIZED)
             {
                 if (_ids_map.count(hw_type) && COMM_SUCCESS != stepper_driver->syncReadHomingStatus(_ids_map.at(hw_type), homing_status_list))
                 {
@@ -983,7 +982,7 @@ bool TtlManager::readHardwareStatus()
             // 2. set motors states accordingly
             for (size_t i = 0; i < _hw_list.size(); ++i)
             {
-                EStepperCalibrationStatus newStatus = EStepperCalibrationStatus::CALIBRATION_OK;
+                EStepperCalibrationStatus newStatus = EStepperCalibrationStatus::OK;
 
                 uint8_t id = _hw_list.at(i);
 
@@ -1013,16 +1012,14 @@ bool TtlManager::readHardwareStatus()
                     // update global calibration status
                     if (homing_status_list.size() > i)
                     {
-                        if (_map_calibration_status.count(homing_status_list.at(i)))
+                        EStepperCalibrationStatus status = stepper_driver->interpreteHomingStatus(homing_status_list.at(i));
+
+                        auto stepperState = std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(id));
+                        if (stepperState && !stepperState->isConveyor())
                         {
-                            auto stepperState = std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(id));
-                            if (stepperState && !stepperState->isConveyor())
-                            {
-                                EStepperCalibrationStatus status = _map_calibration_status.at(homing_status_list.at(i));
-                                stepperState->setCalibration(status, 1);
-                                if (newStatus < status)
-                                    newStatus = status;
-                            }
+                            stepperState->setCalibration(status, 1);
+                            if (newStatus < status)
+                                newStatus = status;
                         }
                     }
                 }
@@ -1580,10 +1577,10 @@ void TtlManager::startCalibration()
     for (auto const& s : _state_map)
     {
         if (s.second && EHardwareType::STEPPER == s.second->getHardwareType() && !std::dynamic_pointer_cast<StepperMotorState>(s.second)->isConveyor())
-            std::dynamic_pointer_cast<StepperMotorState>(s.second)->setCalibration(EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS, 0);
+            std::dynamic_pointer_cast<StepperMotorState>(s.second)->setCalibration(EStepperCalibrationStatus::IN_PROGRESS, 0);
     }
 
-    _calibration_status = EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS;
+    _calibration_status = EStepperCalibrationStatus::IN_PROGRESS;
 }
 
 /**
@@ -1593,7 +1590,7 @@ void TtlManager::resetCalibration()
 {
     ROS_DEBUG("TtlManager::resetCalibration: reseting...");
 
-    _calibration_status = EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED;
+    _calibration_status = EStepperCalibrationStatus::UNINITIALIZED;
 }
 
 /**

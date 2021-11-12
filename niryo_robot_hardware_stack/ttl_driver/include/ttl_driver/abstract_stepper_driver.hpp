@@ -26,6 +26,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 // common
 #include "common/model/single_motor_cmd.hpp"
 #include "common/model/synchronize_motor_cmd.hpp"
+#include "common/model/stepper_calibration_status_enum.hpp"
 
 namespace ttl_driver
 {
@@ -43,6 +44,8 @@ public:
 
     int writeSingleCmd(const std::unique_ptr<common::model::AbstractTtlSingleMotorCmd> &cmd) override;
     int writeSyncCmd(int type, const std::vector<uint8_t>& ids, const std::vector<uint32_t>& params) override;
+
+    common::model::EStepperCalibrationStatus interpreteHomingStatus(uint8_t status) const;
 
 protected:
     // AbstractTtlDriver interface

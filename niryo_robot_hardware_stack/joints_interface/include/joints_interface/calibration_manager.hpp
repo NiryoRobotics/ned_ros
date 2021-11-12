@@ -57,7 +57,7 @@ public:
 
     int startCalibration(int mode, std::string &result_message);
 
-    bool CalibrationInprogress() const;
+    common::model::EStepperCalibrationStatus getCalibrationStatus() const;
 
 private:
     void initParameters(ros::NodeHandle& nh);
@@ -66,7 +66,6 @@ private:
     common::model::EStepperCalibrationStatus autoCalibration();
     common::model::EStepperCalibrationStatus manualCalibration();
 
-    std::shared_ptr<common::util::IDriverCore> getJointInterface(common::model::EBusProtocol proto);
     // tests
     bool canProcessManualCalibration(std::string &result_message);
     bool steppersConnected();
@@ -96,6 +95,8 @@ private:
 
     std::shared_ptr<ttl_driver::TtlInterfaceCore> _ttl_interface;
     std::shared_ptr<can_driver::CanInterfaceCore> _can_interface;
+    // one of the above interface, responsible for steppers
+    std::shared_ptr<common::util::IDriverCore> _stepper_bus_interface;
 
     std::vector<std::shared_ptr<common::model::JointState> > _joint_states_list;
     std::map<uint8_t, CalibrationConfig > _calibration_params_map;
@@ -110,28 +111,6 @@ private:
     static constexpr int MANUAL_CALIBRATION = 2;
 
 };
-
-/**
- * @brief CalibrationManager::CalibrationInprogress
- * @return
- */
-inline
-bool CalibrationManager::CalibrationInprogress() const
-{
-  return _calibration_in_progress;
-}
-
-inline
-std::shared_ptr<common::util::IDriverCore>
-CalibrationManager::getJointInterface(common::model::EBusProtocol proto)
-{
-  if(common::model::EBusProtocol::CAN == proto)
-    return _can_interface;
-  if(common::model::EBusProtocol::TTL == proto)
-    return _ttl_interface;
-
-  return nullptr;
-}
 
 } // JointsInterface
 #endif
