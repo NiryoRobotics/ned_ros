@@ -67,6 +67,9 @@ class ToolsInterfaceCore : public common::util::IInterfaceCore
         bool isInitialized();
         tools_interface::Tool pubToolId(int id, EHardwareType motor_type);
 
+        // getters
+        std::shared_ptr<common::model::ToolState> getToolState() const;
+
     private:
         void initParameters(ros::NodeHandle& nh) override;
         void startServices(ros::NodeHandle& nh) override;
@@ -87,6 +90,12 @@ class ToolsInterfaceCore : public common::util::IInterfaceCore
         void _publishToolConnection(const ros::TimerEvent&);
 
     private:
+        struct ToolConfig
+        {
+            std::string name;
+            common::model::EHardwareType type;
+        };
+
         std::mutex _tool_mutex;
 
         ros::Publisher _tool_connection_publisher;
@@ -104,8 +113,19 @@ class ToolsInterfaceCore : public common::util::IInterfaceCore
         ros::ServiceServer _push_air_vacuum_pump_server;
 
         std::shared_ptr<common::model::ToolState> _toolState;
-        std::map<uint8_t, common::model::EHardwareType> _available_tools_map;
+        std::map<uint8_t, ToolConfig> _available_tools_map;
 };
+
+/**
+ * @brief ToolsInterfaceCore::getToolState
+ * @return
+ */
+inline
+std::shared_ptr<common::model::ToolState>
+ToolsInterfaceCore::getToolState() const
+{
+    return _toolState;
+}
 
 } // ToolsInterface
 

@@ -39,7 +39,7 @@ struct XL330Reg
     static constexpr uint8_t SIZE_MODEL_INFORMATION        = 4;
 
     static constexpr uint16_t ADDR_FIRMWARE_VERSION         = 6;
-    static constexpr uint8_t SIZE_FIRMWARE_VERSION         = 1;
+    using TYPE_FIRMWARE_VERSION = uint8_t;
 
     static constexpr uint16_t ADDR_ID                       = 7;
     static constexpr uint8_t SIZE_ID                       = 1;
@@ -100,7 +100,7 @@ struct XL330Reg
     static constexpr uint8_t SIZE_REGISTERED_INSTRUCTION   = 1;
 
     static constexpr uint16_t ADDR_HW_ERROR_STATUS          = 70;
-    static constexpr uint8_t SIZE_HW_ERROR_STATUS          = 1;
+    using TYPE_HW_ERROR_STATUS = uint8_t;
 
     static constexpr uint16_t ADDR_VELOCITY_I_GAIN          = 76;
     static constexpr uint8_t SIZE_VELOCITY_I_GAIN          = 2;
@@ -158,11 +158,9 @@ struct XL330Reg
 
     static constexpr uint16_t ADDR_PRESENT_VELOCITY         = 128;
     using TYPE_PRESENT_VELOCITY = uint32_t;
-    static constexpr uint8_t SIZE_PRESENT_VELOCITY         = 4;
 
     static constexpr uint16_t ADDR_PRESENT_POSITION         = 132;
     using TYPE_PRESENT_POSITION = uint32_t;
-    static constexpr uint8_t SIZE_PRESENT_POSITION         = 4;
 
     static constexpr uint16_t ADDR_VELOCITY_TRAJECTORY      = 136;
     static constexpr uint8_t SIZE_VELOCITY_TRAJECTORY      = 4;
@@ -171,10 +169,10 @@ struct XL330Reg
     static constexpr uint8_t SIZE_POSITION_TRAJECTORY      = 4;
 
     static constexpr uint16_t ADDR_PRESENT_VOLTAGE          = 144;
-    static constexpr uint8_t SIZE_PRESENT_VOLTAGE          = 2;
+    using TYPE_PRESENT_VOLTAGE = uint16_t;
 
     static constexpr uint16_t ADDR_PRESENT_TEMPERATURE      = 146;
-    static constexpr uint8_t SIZE_PRESENT_TEMPERATURE      = 1;
+    using TYPE_PRESENT_TEMPERATURE = uint8_t;
 };
 
 } // ttl_driver

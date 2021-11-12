@@ -50,14 +50,16 @@ public:
     int checkModelNumber(uint8_t id) override;
     int readFirmwareVersion(uint8_t id, std::string &version) override;
 
-    int readTemperature(uint8_t id, uint32_t &temperature) override;
+    int readTemperature(uint8_t id, uint8_t& temperature) override;
     int readVoltage(uint8_t id, double &voltage) override;
-    int readHwErrorStatus(uint8_t id, uint32_t &hardware_status) override;
+    int readHwErrorStatus(uint8_t id, uint8_t &hardware_status) override;
 
     int syncReadFirmwareVersion(const std::vector<uint8_t> &id_list, std::vector<std::string> &firmware_list) override;
-    int syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &temperature_list) override;
+    int syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint8_t>& temperature_list) override;
     int syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list) override;
-    int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list) override;
+    int syncReadHwStatus(const std::vector<uint8_t> &id_list, std::vector<std::pair<double, uint8_t> >& data_list) override;
+
+    int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint8_t> &hw_error_list) override;
 
 public:
     // AbstractMotorDriver interface : we cannot define them globally in AbstractMotorDriver
@@ -93,7 +95,8 @@ public:
     int startHoming(uint8_t id) override;
     int writeHomingSetup(uint8_t id, uint8_t direction, uint8_t stall_threshold) override;
 
-    int readHomingStatus(uint8_t id, uint32_t &status) override;
+    int readHomingStatus(uint8_t id, uint8_t &status) override;
+    int syncReadHomingStatus(const std::vector<uint8_t> &id_list, std::vector<uint8_t> &status_list) override;
 
     int readFirmwareRunning(uint8_t id, bool &is_running) override;
 
@@ -221,7 +224,7 @@ int StepperDriver<reg_type>::readFirmwareVersion(uint8_t id, std::string &versio
 {
     int res = 0;
     uint32_t data{};
-    res = read(reg_type::ADDR_FIRMWARE_VERSION, reg_type::SIZE_FIRMWARE_VERSION, id, data);
+    res = read<typename reg_type::TYPE_FIRMWARE_VERSION>(reg_type::ADDR_FIRMWARE_VERSION, id, data);
     version = interpreteFirmwareVersion(data);
     return res;
 }
@@ -358,9 +361,9 @@ int StepperDriver<reg_type>::readVelocity(uint8_t id, uint32_t &present_velocity
  * @return
  */
 template<typename reg_type>
-int StepperDriver<reg_type>::readTemperature(uint8_t id, uint32_t& temperature)
+int StepperDriver<reg_type>::readTemperature(uint8_t id, uint8_t& temperature)
 {
-    return read(reg_type::ADDR_PRESENT_TEMPERATURE, reg_type::SIZE_PRESENT_TEMPERATURE, id, temperature);
+    return read<typename reg_type::TYPE_PRESENT_TEMPERATURE>(reg_type::ADDR_PRESENT_TEMPERATURE, id, temperature);
 }
 
 /**
@@ -372,8 +375,8 @@ int StepperDriver<reg_type>::readTemperature(uint8_t id, uint32_t& temperature)
 template<typename reg_type>
 int StepperDriver<reg_type>::readVoltage(uint8_t id, double& voltage)
 {
-    uint32_t voltage_mV = 0;
-    int res = read(reg_type::ADDR_PRESENT_VOLTAGE, reg_type::SIZE_PRESENT_VOLTAGE, id, voltage_mV);
+    uint16_t voltage_mV = 0;
+    int res = read<typename reg_type::TYPE_PRESENT_VOLTAGE>(reg_type::ADDR_PRESENT_VOLTAGE, id, voltage_mV);
     voltage = static_cast<double>(voltage_mV)  / reg_type::VOLTAGE_CONVERSION;
     return res;
 }
@@ -385,9 +388,9 @@ int StepperDriver<reg_type>::readVoltage(uint8_t id, double& voltage)
  * @return
  */
 template<typename reg_type>
-int StepperDriver<reg_type>::readHwErrorStatus(uint8_t id, uint32_t& hardware_status)
+int StepperDriver<reg_type>::readHwErrorStatus(uint8_t id, uint8_t& hardware_status)
 {
-    return read(reg_type::ADDR_HW_ERROR_STATUS, reg_type::SIZE_HW_ERROR_STATUS, id, hardware_status);
+    return read<typename reg_type::TYPE_HW_ERROR_STATUS>(reg_type::ADDR_HW_ERROR_STATUS, id, hardware_status);
 }
 
 /**
@@ -419,12 +422,37 @@ int StepperDriver<reg_type>::syncReadVelocity(const std::vector<uint8_t> &id_lis
  * @param id_list
  * @param data_array
  * @return
+ * reads both position and velocity if torque is enabled. Reads only position otherwise
  */
 template<typename reg_type>
 int StepperDriver<reg_type>::syncReadJointStatus(const std::vector<uint8_t> &id_list,
                                                  std::vector<std::array<uint32_t, 2> >& data_array_list)
 {
-    return syncReadConsecutiveBytes<uint32_t, 2>(reg_type::ADDR_PRESENT_VELOCITY, id_list, data_array_list);
+    int res = COMM_TX_FAIL;
+
+    if(id_list.empty())
+        return res;
+
+    data_array_list.clear();
+
+    // read torque enable on first id
+    uint32_t torque;
+    read(reg_type::ADDR_TORQUE_ENABLE, reg_type::SIZE_TORQUE_ENABLE, id_list.at(0), torque);
+
+    //if torque on, read position and velocity
+    if (torque)
+    {
+        res = syncReadConsecutiveBytes<uint32_t, 2>(reg_type::ADDR_PRESENT_VELOCITY, id_list, data_array_list);
+    }
+    else  //else read position only
+    {
+        std::vector<uint32_t> position_list;
+        res = syncReadPosition(id_list, position_list);
+        for (auto p : position_list)
+          data_array_list.emplace_back(std::array<uint32_t, 2>{0, p});
+    }
+
+    return res;
 }
 
 /**
@@ -439,7 +467,7 @@ int StepperDriver<reg_type>::syncReadFirmwareVersion(const std::vector<uint8_t> 
     int res = 0;
     firmware_list.clear();
     std::vector<uint32_t> data_list{};
-    res = syncRead(reg_type::ADDR_FIRMWARE_VERSION, reg_type::SIZE_FIRMWARE_VERSION, id_list, data_list);
+    res = syncRead<typename reg_type::TYPE_FIRMWARE_VERSION>(reg_type::ADDR_FIRMWARE_VERSION, id_list, data_list);
     for(auto const& data : data_list)
       firmware_list.emplace_back(interpreteFirmwareVersion(data));
     return res;
@@ -452,9 +480,9 @@ int StepperDriver<reg_type>::syncReadFirmwareVersion(const std::vector<uint8_t> 
  * @return
  */
 template<typename reg_type>
-int StepperDriver<reg_type>::syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &temperature_list)
+int StepperDriver<reg_type>::syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint8_t>& temperature_list)
 {
-    return syncRead(reg_type::ADDR_PRESENT_TEMPERATURE, reg_type::SIZE_PRESENT_TEMPERATURE, id_list, temperature_list);
+    return syncRead<typename reg_type::TYPE_PRESENT_TEMPERATURE>(reg_type::ADDR_PRESENT_TEMPERATURE, id_list, temperature_list);
 }
 
 /**
@@ -467,13 +495,42 @@ template<typename reg_type>
 int StepperDriver<reg_type>::syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list)
 {
     voltage_list.clear();
-    std::vector<uint32_t> v_read;
-    int res = syncRead(reg_type::ADDR_PRESENT_VOLTAGE, reg_type::SIZE_PRESENT_VOLTAGE, id_list, v_read);
+    std::vector<uint16_t> v_read;
+    int res = syncRead<typename reg_type::TYPE_PRESENT_VOLTAGE>(reg_type::ADDR_PRESENT_VOLTAGE, id_list, v_read);
     for(auto const& v : v_read)
         voltage_list.emplace_back(static_cast<double>(v)  / reg_type::VOLTAGE_CONVERSION);
     return res;
 }
 
+/**
+ * @brief StepperDriver<reg_type>::syncReadHwStatus
+ * @param id_list
+ * @param data_list
+ * @return
+ */
+template<typename reg_type>
+int StepperDriver<reg_type>::syncReadHwStatus(const std::vector<uint8_t> &id_list,
+                                              std::vector<std::pair<double, uint8_t> >& data_list)
+{
+    data_list.clear();
+
+    std::vector<std::array<uint8_t, 3> > raw_data;
+    int res = syncReadConsecutiveBytes<uint8_t, 3>(reg_type::ADDR_PRESENT_VOLTAGE, id_list, raw_data);
+
+    for (auto const& data : raw_data)
+    {
+        // Voltage is first reg, uint16
+        uint16_t v = ((uint16_t)data.at(1) << 8) | data.at(0); // concatenate 2 bytes
+        double voltage = static_cast<double>(v);
+
+        // Temperature is second reg, uint8
+        uint8_t temperature = data.at(2);
+
+        data_list.emplace_back(std::make_pair(voltage, temperature));
+    }
+
+    return res;
+}
 /**
  * @brief StepperDriver<reg_type>::syncReadHwErrorStatus
  * @param id_list
@@ -481,9 +538,9 @@ int StepperDriver<reg_type>::syncReadVoltage(const std::vector<uint8_t> &id_list
  * @return
  */
 template<typename reg_type>
-int StepperDriver<reg_type>::syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list)
+int StepperDriver<reg_type>::syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint8_t> &hw_error_list)
 {
-   return syncRead(reg_type::ADDR_HW_ERROR_STATUS, reg_type::SIZE_HW_ERROR_STATUS, id_list, hw_error_list);
+   return syncRead<typename reg_type::TYPE_HW_ERROR_STATUS>(reg_type::ADDR_HW_ERROR_STATUS, id_list, hw_error_list);
 }
 
 //*****************************
@@ -667,9 +724,21 @@ int StepperDriver<reg_type>::writeHomingSetup(uint8_t id, uint8_t direction, uin
  * @return
  */
 template<typename reg_type>
-int StepperDriver<reg_type>::readHomingStatus(uint8_t id, uint32_t &status)
+int StepperDriver<reg_type>::readHomingStatus(uint8_t id, uint8_t &status)
 {
-    return read(reg_type::ADDR_HOMING_STATUS, reg_type::SIZE_HOMING_STATUS, id, status);
+  return read<typename reg_type::TYPE_HOMING_STATUS>(reg_type::ADDR_HOMING_STATUS, id, status);
+}
+
+/**
+ * @brief StepperDriver<reg_type>::syncReadHomingStatus
+ * @param id_list
+ * @param status_list
+ * @return
+ */
+template<typename reg_type>
+int StepperDriver<reg_type>::syncReadHomingStatus(const std::vector<uint8_t> &id_list, std::vector<uint8_t> &status_list)
+{
+    return syncRead<typename reg_type::TYPE_HOMING_STATUS>(reg_type::ADDR_HOMING_STATUS, id_list, status_list);
 }
 
 /**

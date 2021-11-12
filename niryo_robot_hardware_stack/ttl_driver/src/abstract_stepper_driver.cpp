@@ -23,6 +23,7 @@
 #include <vector>
 
 using ::common::model::EStepperCommandType;
+using ::common::model::EStepperCalibrationStatus;
 
 namespace ttl_driver
 {
@@ -151,6 +152,37 @@ std::string AbstractStepperDriver::interpreteFirmwareVersion(uint32_t fw_version
     std::string version = ss.str();
 
     return version;
+}
+
+/**
+ * @brief AbstractStepperDriver::interpreteHomingStatus
+ * @param fw_version
+ * @return
+ */
+common::model::EStepperCalibrationStatus
+AbstractStepperDriver::interpreteHomingData(uint8_t status) const
+{
+    EStepperCalibrationStatus homing_status{EStepperCalibrationStatus::UNINITIALIZED};
+
+    switch(status)
+    {
+    case 0:
+      homing_status = EStepperCalibrationStatus::UNINITIALIZED;
+      break;
+    case 1:
+      homing_status = EStepperCalibrationStatus::IN_PROGRESS;
+      break;
+    case 2:
+      homing_status = EStepperCalibrationStatus::OK;
+      break;
+    case 3:
+      homing_status = EStepperCalibrationStatus::FAIL;
+      break;
+    default:
+      break;
+    }
+
+    return homing_status;
 }
 
 }  // namespace ttl_driver

@@ -478,15 +478,16 @@ void JointHardwareInterface::setCommandToCurrentPosition()
  */
 bool JointHardwareInterface::needCalibration() const
 {
-    bool result = false;
-    if (_can_interface)
-        result = (EStepperCalibrationStatus::CALIBRATION_OK != _can_interface->getCalibrationStatus());
-    else
-        result = (EStepperCalibrationStatus::CALIBRATION_OK != _ttl_interface->getCalibrationStatus());
+    return (EStepperCalibrationStatus::OK != _calibration_manager->getCalibrationStatus());
+}
 
-    ROS_DEBUG_THROTTLE(2, "JointHardwareInterface::needCalibration - Need calibration returned: %d",
-                       static_cast<int>(result));
-    return result;
+/**
+ * @brief JointHardwareInterface::isCalibrationInProgress
+ * @return
+ */
+bool JointHardwareInterface::isCalibrationInProgress() const
+{
+    return (EStepperCalibrationStatus::IN_PROGRESS == _calibration_manager->getCalibrationStatus());
 }
 
 /**

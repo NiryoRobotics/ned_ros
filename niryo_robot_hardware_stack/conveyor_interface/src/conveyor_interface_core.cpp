@@ -368,8 +368,7 @@ bool ConveyorInterfaceCore::isInitialized()
 bool ConveyorInterfaceCore::_callbackPingAndSetConveyor(conveyor_interface::SetConveyor::Request &req,
                                                         conveyor_interface::SetConveyor::Response &res)
 {
-    if ((_ttl_interface && !_ttl_interface->isCalibrationInProgress()) ||
-        (_can_interface && !_can_interface->isCalibrationInProgress()))
+    if (!isCalibrationInProgress())
     {
         switch (req.cmd)
         {
@@ -497,6 +496,21 @@ void ConveyorInterfaceCore::_publishConveyorsFeedback(const ros::TimerEvent&)
         }
     }
     _conveyors_feedback_publisher.publish(msg);
+}
+
+/**
+ * @brief ConveyorInterfaceCore::isCalibrationInProgress
+ * @return
+ */
+bool ConveyorInterfaceCore::isCalibrationInProgress() const
+{
+    if(_can_interface)
+        return common::model::EStepperCalibrationStatus::IN_PROGRESS == _can_interface->getCalibrationStatus();
+    else if(_ttl_interface)
+      return common::model::EStepperCalibrationStatus::IN_PROGRESS == _ttl_interface->getCalibrationStatus();
+
+    ROS_ERROR("ConveyorInterfaceCore::isCalibrationInProgress - No valid bus interface found");
+    return false;
 }
 
 /**

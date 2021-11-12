@@ -102,7 +102,6 @@ void JointState::reset()
 {
     AbstractMotorState::reset();
     _name.clear();
-    _need_calibration = false;
 }
 
 /**
@@ -126,7 +125,6 @@ std::string JointState::str() const
     ss << "name: " << "\"" << _name << "\"" << ",\n";
     ss << "offset position: " << _offset_position << ", ";
     ss << "home position: " << _home_position << ", ";
-    ss << "need calibration: " << (_need_calibration ? "true" : "false") << ", ";
     ss << "direction : " << (_direction == 1 ? 1 : -1) << ",\n";
     ss << "pos(" << pos << "), ";
     ss << "cmd(" << cmd << "), ";

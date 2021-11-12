@@ -142,7 +142,7 @@ public:
     //calibration
     void startCalibration() override;
     void resetCalibration() override;
-    bool isCalibrationInProgress() const override;
+
     int32_t getCalibrationResult(uint8_t id) const override;
     common::model::EStepperCalibrationStatus getCalibrationStatus() const override;
 
@@ -159,18 +159,13 @@ public:
 
     bool hasEndEffector() const;
 
-    // TtlManager will manage each type of hw to avoid unnecessary loop to find id 
-    void addToMotorList(uint8_t id);
-    void addToConveyorList(uint8_t id);
-
     // get collision status of motors
     bool readCollisionStatus() const;
+
 private:
     // IBusManager Interface
     int setupCommunication() override;
     void addHardwareDriver(common::model::EHardwareType hardware_type) override;
-
-    void updateCurrentCalibrationStatus() override;
 
     void checkRemovedMotors();
 
@@ -189,7 +184,6 @@ private:
 
     mutable std::mutex _sync_mutex;
 
-
     std::string _device_name;
     int _baudrate{1000000};
 
@@ -202,12 +196,13 @@ private:
     std::map<common::model::EHardwareType, std::vector<uint8_t> > _ids_map;
     // map of drivers for a given hardware type (xl, stepper, end effector)
     std::map<common::model::EHardwareType, std::shared_ptr<ttl_driver::AbstractTtlDriver> > _driver_map;
-    // vector of ids of motors and conveyors
-    // Theses vector help remove loop not necessary 
-    std::vector<uint8_t> _motor_list;
-    std::vector<uint8_t> _conveyor_list;
 
-    common::model::EStepperCalibrationStatus _calibration_status{common::model::EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED};
+    // vector of ids of motors and conveyors
+    // Theses vector help remove loop not necessary
+    std::vector<uint8_t> _motor_list;
+    std::vector<uint8_t> _hw_list;
+    std::vector<uint8_t> _conveyor_list;
+    // TODO(CC) add tools_list ?
 
     // for hardware control
     bool _is_connection_ok{false};
@@ -220,24 +215,15 @@ private:
 
     std::string _led_motor_type_cfg;
 
-    // TODO(cc) To be changed back to 50 when connection pb with new steppers and end effector will be corrected
     static constexpr uint32_t MAX_HW_FAILURE = 25;
     static constexpr uint32_t MAX_READ_EE_FAILURE = 50;
-    static constexpr uint32_t CALIBRATION_IDLE = 0;
-    static constexpr uint32_t CALIBRATION_IN_PROGRESS = 1;
-    static constexpr uint32_t CALIBRATION_SUCCESS = 2;
-    static constexpr uint32_t CALIBRATION_ERROR = 3;
-    std::map<uint32_t, common::model::EStepperCalibrationStatus> _map_calibration_status {
-                                    {CALIBRATION_SUCCESS, common::model::EStepperCalibrationStatus::CALIBRATION_OK},
-                                    {CALIBRATION_IN_PROGRESS, common::model::EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS},
-                                    {CALIBRATION_ERROR, common::model::EStepperCalibrationStatus::CALIBRATION_FAIL},
-                                    {CALIBRATION_IDLE, common::model::EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED}};
 
-    bool _use_simu_gripper = true;
+    common::model::EStepperCalibrationStatus _calibration_status{common::model::EStepperCalibrationStatus::UNINITIALIZED};
+
+    // for simulation only
     std::shared_ptr<FakeTtlData> _fake_data;
-    
+    bool _use_simu_gripper = true;
     bool _simulation_mode{false};
-    int _conveyor_direction{0};
 
     // status to track collision status
     bool _collision_status{false};
@@ -287,16 +273,6 @@ std::string TtlManager::getErrorMessage() const
 }
 
 /**
- * @brief TtlManager::isCalibrationInProgress
- * @return
- */
-inline
-bool TtlManager::isCalibrationInProgress() const
-{
-  return (common::model::EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS == _calibration_status);
-}
-
-/**
  * @brief TtlManager::getCalibrationStatus
  * @return
  */
@@ -327,26 +303,6 @@ bool TtlManager::hasEndEffector() const
 {
     return (_driver_map.count(common::model::EHardwareType::END_EFFECTOR) ||
             _driver_map.count(common::model::EHardwareType::FAKE_END_EFFECTOR));
-}
-
-/**
- * @brief TtlManager::addToMotorList
- * @return
- */
-inline
-void TtlManager::addToMotorList(uint8_t id)
-{
-    _motor_list.push_back(id);
-}
-
-/**
- * @brief TtlManager::addToConveyorList
- * @return
- */
-inline
-void TtlManager::addToConveyorList(uint8_t id)
-{
-    _conveyor_list.push_back(id);
 }
 
 /**
@@ -408,8 +364,8 @@ void TtlManager::retrieveFakeMotorData(const std::string& current_ns, std::map<u
 
 /**
  * @brief TtlManager::readCollisionStatus
- * @return true 
- * @return false 
+ * @return true
+ * @return false
  */
 inline
 bool TtlManager::readCollisionStatus() const
