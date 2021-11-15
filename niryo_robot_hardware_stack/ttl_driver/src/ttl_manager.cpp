@@ -203,7 +203,7 @@ void TtlManager::addHardwareComponent(std::shared_ptr<common::model::AbstractHar
     }
 
     // add to global lists
-    switch(state->getComponentType())
+    switch (state->getComponentType())
     {
     case common::model::EComponentType::TOOL:
         _hw_list.emplace_back(id);
@@ -708,7 +708,7 @@ bool TtlManager::readEndEffectorStatus()
                     // we retrieve the associated id for the end effector
                     auto state = std::dynamic_pointer_cast<EndEffectorState>(_state_map.at(id));
 
-                    if(state)
+                    if (state)
                     {
                         vector<common::model::EActionType> action_list;
 
@@ -752,11 +752,10 @@ bool TtlManager::readEndEffectorStatus()
                         {
                             _last_collision_detected = 0.0;
                         }
-
                     }  // if (state)
                 }  // if (_state_map.count(id))
             }  // if (_ids_map.count(EHardwareType::END_EFFECTOR))
-        } // if (driver)
+        }  // if (driver)
 
         // we reset the global error variable only if no errors
         if (0 == hw_errors_increment)
@@ -959,9 +958,7 @@ bool TtlManager::readHardwareStatus()
                         }
                     }
                     catch(const std::exception& e)
-                    {
-
-                    }
+                    {}
                 }
 
                 // 2. set motors states accordingly
@@ -991,7 +988,6 @@ bool TtlManager::readHardwareStatus()
                             state->setHardwareError(hardware_message);
                         }
                     }
-
                 }  // for _hw_list
             }
             else  // no need to retrieve other data from motors when calibrating
@@ -1000,9 +996,8 @@ bool TtlManager::readHardwareStatus()
                 std::vector<uint8_t> homing_status_list;
                 if (isCalibrationInProgress())
                 {
-
                     std::vector<uint8_t> steppers_list;
-                    if(_ids_map.count(hw_type))
+                    if (_ids_map.count(hw_type))
                          steppers_list = _ids_map.at(hw_type);
 
                     if (!steppers_list.empty() && COMM_SUCCESS != stepper_driver->syncReadHomingStatus(steppers_list, homing_status_list))
@@ -1035,7 +1030,7 @@ bool TtlManager::readHardwareStatus()
                             EStepperCalibrationStatus status = stepper_driver->interpreteHomingData(homing_status_list.at(i));
 
                             // if one status is in progress, we are still in progress
-                            if(EStepperCalibrationStatus::IN_PROGRESS == status)
+                            if (EStepperCalibrationStatus::IN_PROGRESS == status)
                                 isInProgress = true;
 
                             if (stepperState && !stepperState->isConveyor())
@@ -1048,7 +1043,6 @@ bool TtlManager::readHardwareStatus()
                         {
                             _calibration_status = stepper_driver->interpreteHomingData(static_cast<uint8_t>(max_status));
                         }
-
                     }  // for steppers_list
                 }
             }
@@ -1074,9 +1068,8 @@ bool TtlManager::readHardwareStatus()
                 _is_connection_ok = false;
                 _debug_error_message = "TtlManager - Connection problem with physical Bus.";
             }
-        } // if stepper_driver
+        }  // if stepper_driver
     }
-
     return res;
 }
 
@@ -1602,7 +1595,7 @@ void TtlManager::startCalibration()
     _calibration_status = EStepperCalibrationStatus::IN_PROGRESS;
 
     std::vector<uint8_t> stepper_list;
-    if(_ids_map.count(EHardwareType::STEPPER))
+    if (_ids_map.count(EHardwareType::STEPPER))
         stepper_list = _ids_map.at(EHardwareType::STEPPER);
 
     for (size_t i = 0; i < stepper_list.size(); ++i)
@@ -1619,7 +1612,6 @@ void TtlManager::startCalibration()
             }
         }
     }  // for steppers_list
-
 }
 
 /**
@@ -1632,7 +1624,7 @@ void TtlManager::resetCalibration()
     _calibration_status = EStepperCalibrationStatus::UNINITIALIZED;
 
     std::vector<uint8_t> stepper_list;
-    if(_ids_map.count(EHardwareType::STEPPER))
+    if (_ids_map.count(EHardwareType::STEPPER))
         stepper_list = _ids_map.at(EHardwareType::STEPPER);
 
     for (size_t i = 0; i < stepper_list.size(); ++i)

@@ -504,9 +504,9 @@ void ConveyorInterfaceCore::_publishConveyorsFeedback(const ros::TimerEvent&)
  */
 bool ConveyorInterfaceCore::isCalibrationInProgress() const
 {
-    if(_can_interface)
+    if (_can_interface)
         return common::model::EStepperCalibrationStatus::IN_PROGRESS == _can_interface->getCalibrationStatus();
-    else if(_ttl_interface)
+    else if (_ttl_interface)
       return common::model::EStepperCalibrationStatus::IN_PROGRESS == _ttl_interface->getCalibrationStatus();
 
     ROS_ERROR("ConveyorInterfaceCore::isCalibrationInProgress - No valid bus interface found");

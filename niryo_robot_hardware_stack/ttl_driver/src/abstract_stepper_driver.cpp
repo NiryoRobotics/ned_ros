@@ -164,7 +164,7 @@ AbstractStepperDriver::interpreteHomingData(uint8_t status) const
 {
     EStepperCalibrationStatus homing_status{EStepperCalibrationStatus::UNINITIALIZED};
 
-    switch(status)
+    switch (status)
     {
     case 0:
       homing_status = EStepperCalibrationStatus::UNINITIALIZED;

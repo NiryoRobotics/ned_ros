@@ -217,7 +217,7 @@ private:
 
     std::string _led_motor_type_cfg;
 
-    static constexpr uint32_t MAX_HW_FAILURE = 200;
+    static constexpr uint32_t MAX_HW_FAILURE = 25;
     static constexpr uint32_t MAX_READ_EE_FAILURE = 50;
 
     common::model::EStepperCalibrationStatus _calibration_status{common::model::EStepperCalibrationStatus::UNINITIALIZED};
