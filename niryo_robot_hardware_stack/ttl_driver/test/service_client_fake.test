@@ -1,7 +1,7 @@
 <?xml version="1.0" ?>
 <launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
-    <arg name="hardware_version" default="ned"/>
+    <arg name="hardware_version" default="ned2"/>
 
     <!-- launch the ttl_driver_node node using ttl_driver_node executable from ttl_driver package -->
     <include file="$(find ttl_driver)/launch/ttl_driver.launch" >
