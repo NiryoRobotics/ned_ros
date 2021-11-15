@@ -63,6 +63,7 @@ class MockEndEffectorDriver : public AbstractEndEffectorDriver
         int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list) override;
         
         int scan(std::vector<uint8_t> &id_list) override;
+        int reboot(uint8_t id) override;
     public:
         int ping(uint8_t id) override;
 
