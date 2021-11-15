@@ -353,8 +353,7 @@ int MockEndEffectorDriver::readCollisionStatus(uint8_t id, bool& status)
         return COMM_RX_FAIL;
 
     status = false;
-    std::cout << "MockEndEffectorDriver::readCollisionStatus: need to be implemented!" << std::endl;
-    return 0;
+    return COMM_SUCCESS;
 }
 
 /**
