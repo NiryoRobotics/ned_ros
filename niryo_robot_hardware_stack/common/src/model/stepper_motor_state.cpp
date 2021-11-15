@@ -81,7 +81,7 @@ void StepperMotorState::reset()
     _hw_fail_counter = 0.0;
     _firmware_version.clear();
     _calibration_value = 0;
-    _calibration_state = EStepperCalibrationStatus::UNINITIALIZED;
+    _calibration_status = EStepperCalibrationStatus::UNINITIALIZED;
 }
 
 /**
@@ -116,7 +116,7 @@ std::string StepperMotorState::str() const
       ss << d << ",";
     ss << "\n";
 
-    ss << "calibration state: " << StepperCalibrationStatusEnum(_calibration_state).toString() << ", "
+    ss << "calibration state: " << StepperCalibrationStatusEnum(_calibration_status).toString() << ", "
        << "calibration value: " << _calibration_value;
 
     ss << "\n---\n";
@@ -224,7 +224,7 @@ void StepperMotorState::setMaxEffort(double max_effort)
 void StepperMotorState::setCalibration(const EStepperCalibrationStatus &calibration_state,
                                        const int32_t &calibration_value)
 {
-    _calibration_state = calibration_state;
+    _calibration_status = calibration_state;
     _calibration_value = calibration_value;
 }
 
@@ -234,7 +234,7 @@ void StepperMotorState::setCalibration(const EStepperCalibrationStatus &calibrat
  */
 void StepperMotorState::setCalibration(const std::tuple<EStepperCalibrationStatus, int32_t> &data)
 {
-    _calibration_state = std::get<0>(data);
+    _calibration_status = std::get<0>(data);
     _calibration_value = std::get<1>(data);
 }
 

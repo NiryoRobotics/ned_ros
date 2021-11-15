@@ -87,7 +87,7 @@ public:
     double getMaxEffort() const;
     double getMicroSteps() const;
 
-    common::model::EStepperCalibrationStatus getCalibrationState() const;
+    common::model::EStepperCalibrationStatus getCalibrationStatus() const;
     int32_t getCalibrationValue() const;
 
     VelocityProfile getVelocityProfile() const;
@@ -119,7 +119,7 @@ protected:
     // profile
     VelocityProfile _profile;
 
-    common::model::EStepperCalibrationStatus _calibration_state{common::model::EStepperCalibrationStatus::UNINITIALIZED};
+    common::model::EStepperCalibrationStatus _calibration_status{common::model::EStepperCalibrationStatus::UNINITIALIZED};
     int32_t _calibration_value{0};
 
 private:
@@ -146,9 +146,9 @@ double StepperMotorState::getMaxEffort() const
  * @return
  */
 inline
-EStepperCalibrationStatus StepperMotorState::getCalibrationState() const
+EStepperCalibrationStatus StepperMotorState::getCalibrationStatus() const
 {
-    return _calibration_state;
+    return _calibration_status;
 }
 
 /**

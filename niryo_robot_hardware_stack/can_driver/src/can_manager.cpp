@@ -669,7 +669,7 @@ void CanManager::updateCurrentCalibrationStatus()
             auto sState = std::dynamic_pointer_cast<StepperMotorState>(s.second);
             if (sState && !sState->isConveyor())
             {
-                EStepperCalibrationStatus status = sState->getCalibrationState();
+                EStepperCalibrationStatus status = sState->getCalibrationStatus();
                 if (newStatus < status)
                     newStatus = status;
             }

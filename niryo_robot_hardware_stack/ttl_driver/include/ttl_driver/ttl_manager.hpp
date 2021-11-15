@@ -145,6 +145,8 @@ public:
 
     int32_t getCalibrationResult(uint8_t id) const override;
     common::model::EStepperCalibrationStatus getCalibrationStatus() const override;
+    bool needCalibration() const;
+    bool isCalibrationInProgress() const;
 
     // getters
     int getAllIdsOnBus(std::vector<uint8_t> &id_list);
@@ -215,7 +217,7 @@ private:
 
     std::string _led_motor_type_cfg;
 
-    static constexpr uint32_t MAX_HW_FAILURE = 25;
+    static constexpr uint32_t MAX_HW_FAILURE = 200;
     static constexpr uint32_t MAX_READ_EE_FAILURE = 50;
 
     common::model::EStepperCalibrationStatus _calibration_status{common::model::EStepperCalibrationStatus::UNINITIALIZED};
@@ -281,6 +283,27 @@ common::model::EStepperCalibrationStatus
 TtlManager::getCalibrationStatus() const
 {
   return _calibration_status;
+}
+
+/**
+ * @brief TtlManager::needCalibration
+ * @return
+ */
+inline
+bool TtlManager::needCalibration() const
+{
+  return (common::model::EStepperCalibrationStatus::OK != getCalibrationStatus() &&
+          common::model::EStepperCalibrationStatus::IN_PROGRESS != getCalibrationStatus());
+}
+
+/**
+ * @brief TtlManager::isCalibrationInProgress
+ * @return
+ */
+inline
+bool TtlManager::isCalibrationInProgress() const
+{
+    return (common::model::EStepperCalibrationStatus::IN_PROGRESS == getCalibrationStatus());
 }
 
 /**
