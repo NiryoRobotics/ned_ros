@@ -659,7 +659,7 @@ bool TtlManager::readJointsStatus()
         }
     }  // for driver_map
 
-    ROS_DEBUG("_hw_fail_counter_read, hw_errors_increment: %d, %d", _hw_fail_counter_read, hw_errors_increment);
+    ROS_DEBUG_THROTTLE(2, "_hw_fail_counter_read, hw_errors_increment: %d, %d", _hw_fail_counter_read, hw_errors_increment);
 
     // we reset the global error variable only if no errors
     if (0 == hw_errors_increment)
