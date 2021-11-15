@@ -478,7 +478,8 @@ void JointHardwareInterface::setCommandToCurrentPosition()
  */
 bool JointHardwareInterface::needCalibration() const
 {
-    return (EStepperCalibrationStatus::OK != _calibration_manager->getCalibrationStatus());
+    return (EStepperCalibrationStatus::OK != _calibration_manager->getCalibrationStatus() &&
+            EStepperCalibrationStatus::IN_PROGRESS != _calibration_manager->getCalibrationStatus());
 }
 
 /**
