@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.0.2)
 project(joints_interface)
 message( STATUS "\n## Reading ${PROJECT_NAME}/CMakeLists.txt...")
 
-
 #retrieve architecture
 execute_process( COMMAND
             uname -m COMMAND tr -d '\n'
@@ -32,16 +31,6 @@ find_package(catkin REQUIRED
       sensor_msgs
       std_msgs
       ttl_driver
-      dynamic_reconfigure
-)
-
-find_package(Boost REQUIRED
-    COMPONENTS
-        system
-)
-
-generate_dynamic_reconfigure_options(
-    cfg/steppers.cfg
 )
 
 ###############################################
@@ -82,7 +71,6 @@ catkin_package(
 include_directories(
     include
     ${catkin_INCLUDE_DIRS}
-    ${Boost_INCLUDE_DIRS}
 )
 
 ## Declare libs and execs
@@ -109,7 +97,6 @@ add_dependencies(${PROJECT_NAME}
 add_dependencies(${PROJECT_NAME}_node
     ${${PROJECT_NAME}_EXPORTED_TARGETS}
     ${catkin_EXPORTED_TARGETS}
-    ${PROJECT_NAME}_gencfg
 )
 
 ## Specify libraries to link executable targets against

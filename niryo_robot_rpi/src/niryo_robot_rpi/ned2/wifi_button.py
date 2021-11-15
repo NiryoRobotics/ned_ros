@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 # wifi_button.py
 # Copyright (C) 2017 Niryo
 # All rights reserved.
@@ -34,7 +32,8 @@ class WifiButton:
         self.__mcp_manager = mcp_manager if mcp_manager is not None else McpIOManager()
 
         self.__wifi_led = mcp_manager.add_led(rospy.get_param("~wifi/led_pin"), "Wifi Led")
-        self.__wifi_button = mcp_manager.add_button(rospy.get_param("~wifi/button_pin"), "Wifi Button", pullup=True, reverse_polarity=True)
+        self.__wifi_button = mcp_manager.add_button(rospy.get_param("~wifi/button_pin"),
+                                                    "Wifi Button", pullup=True, reverse_polarity=True)
 
         self.__timer = None
         self.__set_hotspot_lock = Lock()

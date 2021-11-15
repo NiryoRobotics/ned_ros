@@ -90,10 +90,11 @@ public:
 
     void clearSingleCommandQueue();
     void clearConveyorCommandQueue();
+    void clearSyncCommandQueue();
 
     void setTrajectoryControllerCommands(std::vector<std::pair<uint8_t, uint32_t> > && cmd);
 
-    void setSyncCommand(std::unique_ptr<common::model::ISynchronizeMotorCmd>&& cmd) override;
+    void addSyncCommandToQueue(std::unique_ptr<common::model::ISynchronizeMotorCmd>&& cmd) override;
 
     // we have to use ISingleMotorCmd instead of AbstractTtlMotorCmd because this is pure virtual method in IDriverCore
     // IDriverCore used by Can and Ttl so AbstractTtlMotorCmd or AbstractCanMotorCmd can't be used in this case
@@ -135,7 +136,6 @@ public:
 
     void startCalibration() override;
     void resetCalibration() override ;
-    bool isCalibrationInProgress() const override ;
     int32_t getCalibrationResult(uint8_t id) const override ;
     common::model::EStepperCalibrationStatus getCalibrationStatus() const override;
 
@@ -145,6 +145,14 @@ public:
     int launchMotorsReport() override;
     niryo_robot_msgs::BusState getBusState() const override;
     common::model::EBusProtocol getBusProtocol() const override;
+
+    // read firmware version for all motors
+    bool readFirmwareVersionStatus();
+
+    // read Collision Status from motors
+    bool readCollisionStatus() const;
+    bool isSyncQueueFree();
+    bool isSingleQueueFree();
 
 private:
     void initParameters(ros::NodeHandle& nh) override;
@@ -174,11 +182,20 @@ private:
     bool _callbackGetFrequencies(ttl_driver::GetFrequencies::Request &req, ttl_driver::GetFrequencies::Response &res);
 
 
+    void _publishCollisionStatus(const ros::TimerEvent&);
 private:
+    ros::Publisher _collision_status_publisher;
+    ros::Timer     _collision_status_publisher_timer;
+    ros::Duration  _collision_status_publisher_duration{1.0};
+
     bool _control_loop_flag{false};
     bool _debug_flag{false};
 
-    std::mutex _control_loop_mutex;
+    mutable std::mutex _control_loop_mutex;
+    mutable std::mutex _single_cmd_queue_mutex;
+    mutable std::mutex _conveyor_cmd_queue_mutex;
+    mutable std::mutex _sync_cmd_queue_mutex;
+
     std::thread _control_loop_thread;
 
     double _control_loop_frequency{0.0};
@@ -206,7 +223,9 @@ private:
     std::vector<std::pair<uint8_t, uint32_t> > _joint_trajectory_cmd;
 
     // ttl cmds
-    std::queue<std::unique_ptr<common::model::AbstractTtlSynchronizeMotorCmd> > _sync_cmds;
+    // TODO(CC) it seems like having two queues can lead to pbs if a sync is launched before the sincle queue is finished
+    // and vice versa. So having a unique queue would be preferable (see calibration)
+    std::queue<std::unique_ptr<common::model::AbstractTtlSynchronizeMotorCmd> > _sync_cmds_queue;
     std::queue<std::unique_ptr<common::model::AbstractTtlSingleMotorCmd> > _single_cmds_queue;
     std::queue<std::unique_ptr<common::model::AbstractTtlSingleMotorCmd> > _conveyor_cmds_queue;
 
@@ -258,6 +277,27 @@ std::vector<uint8_t> TtlInterfaceCore::getRemovedMotorList() const
     return _ttl_manager->getRemovedMotorList();
 }
 
+/**
+ * @brief TtlInterfaceCore::readFirmwareVersionStatus
+ * @return true 
+ * @return false 
+ */
+inline
+bool TtlInterfaceCore::readFirmwareVersionStatus()
+{
+    return _ttl_manager->readFirmwareVersionStatus();
+}
+
+/**
+ * @brief TtlInterfaceCore::readCollisionStatus
+ * @return true 
+ * @return false 
+ */
+inline
+bool TtlInterfaceCore::readCollisionStatus() const
+{
+    return _ttl_manager->readCollisionStatus();
+}
 } // ttl_driver
 
 #endif // TTL_INTERFACE_CORE_HPP

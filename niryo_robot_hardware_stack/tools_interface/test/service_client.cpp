@@ -65,7 +65,7 @@ class ToolTestSuite : public ::testing::Test
             tools_interface::PingDxlTool srv_ping;
             client.call(srv_ping);
 
-            id = srv_ping.response.id;
+            id = srv_ping.response.tool.id;
         }
 
         static int id;
@@ -77,7 +77,7 @@ TEST_F(ToolTestSuite, openTool)
 {
     if (id == -1) return;
 
-    tools_interface::OpenGripper srv;
+    tools_interface::ToolCommand srv;
 
     XmlRpc::XmlRpcValue filters;
 
@@ -88,14 +88,14 @@ TEST_F(ToolTestSuite, openTool)
         if (static_cast<int>(filters[i]["id"]) == id)
         {
             srv.request.id = static_cast<uint8_t>(id);
-            srv.request.open_position = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["open_position"]));
-            srv.request.open_speed = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["open_speed"]));
-            srv.request.open_hold_torque = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["open_hold_torque"]));
-            srv.request.open_max_torque = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["open_max_torque"]));
+            srv.request.position = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["open_position"]));
+            srv.request.speed = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["open_speed"]));
+            srv.request.hold_torque = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["open_hold_torque"]));
+            srv.request.max_torque = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["open_max_torque"]));
         }
     }
 
-    auto client = nh->serviceClient<tools_interface::OpenGripper>("/niryo_robot/tools/open_gripper");
+    auto client = nh->serviceClient<tools_interface::ToolCommand>("/niryo_robot/tools/open_gripper");
 
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);
@@ -109,7 +109,7 @@ TEST_F(ToolTestSuite, CloseTool)
 {
     if (id == -1) return;
 
-    tools_interface::CloseGripper srv;
+    tools_interface::ToolCommand srv;
 
     XmlRpc::XmlRpcValue filters;
     nh->getParam("tool_list", filters);
@@ -119,15 +119,15 @@ TEST_F(ToolTestSuite, CloseTool)
         if (static_cast<int>(filters[i]["id"]) == id)
         {
             srv.request.id = static_cast<uint8_t>(id);
-            srv.request.close_position = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["close_position"]));
-            srv.request.close_speed = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["close_speed"]));
-            srv.request.close_hold_torque = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["close_hold_torque"]));
-            srv.request.close_max_torque = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["close_max_torque"]));
+            srv.request.position = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["close_position"]));
+            srv.request.speed = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["close_speed"]));
+            srv.request.hold_torque = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["close_hold_torque"]));
+            srv.request.max_torque = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["close_max_torque"]));
             break;
         }
     }
 
-    auto client = nh->serviceClient<tools_interface::CloseGripper>("/niryo_robot/tools/close_gripper");
+    auto client = nh->serviceClient<tools_interface::ToolCommand>("/niryo_robot/tools/close_gripper");
 
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);
@@ -141,7 +141,7 @@ TEST_F(ToolTestSuite, CloseTool)
 TEST_F(ToolTestSuite, PullAirVacuumPump)
 {
     if (id != 31) return;
-    tools_interface::PullAirVacuumPump srv;
+    tools_interface::ToolCommand srv;
 
     XmlRpc::XmlRpcValue filters;
     nh->getParam("tool_list", filters);
@@ -151,15 +151,15 @@ TEST_F(ToolTestSuite, PullAirVacuumPump)
         if (static_cast<int>(filters[i]["id"]) == id)
         {
             srv.request.id = static_cast<uint8_t>(id);
-            srv.request.pull_air_position = static_cast<int16_t>(static_cast<int>(filters[i]["specs"]["pull_air_position"]));
-            srv.request.pull_air_hold_torque = static_cast<int16_t>(static_cast<int>(filters[i]["specs"]["pull_air_hold_torque"]));
-            srv.request.pull_air_velocity = static_cast<int16_t>(static_cast<int>(filters[i]["specs"]["pull_air_velocity"]));
-            srv.request.pull_air_max_torque = static_cast<int16_t>(static_cast<int>(filters[i]["specs"]["pull_air_max_torque"]));
+            srv.request.position = static_cast<int16_t>(static_cast<int>(filters[i]["specs"]["pull_air_position"]));
+            srv.request.hold_torque = static_cast<int16_t>(static_cast<int>(filters[i]["specs"]["pull_air_hold_torque"]));
+            srv.request.speed = static_cast<int16_t>(static_cast<int>(filters[i]["specs"]["pull_air_velocity"]));
+            srv.request.max_torque = static_cast<int16_t>(static_cast<int>(filters[i]["specs"]["pull_air_max_torque"]));
             break;
         }
     }
 
-    auto client = nh->serviceClient<tools_interface::PullAirVacuumPump>("/niryo_robot/tools/pull_air_vacuum_pump");
+    auto client = nh->serviceClient<tools_interface::ToolCommand>("/niryo_robot/tools/pull_air_vacuum_pump");
 
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);
@@ -173,7 +173,7 @@ TEST_F(ToolTestSuite, PullAirVacuumPump)
 TEST_F(ToolTestSuite, PushAirVacuumPump)
 {
     if (id != 31) return;
-    tools_interface::PushAirVacuumPump srv;
+    tools_interface::ToolCommand srv;
 
     XmlRpc::XmlRpcValue filters;
     nh->getParam("tool_list", filters);
@@ -183,14 +183,14 @@ TEST_F(ToolTestSuite, PushAirVacuumPump)
         if (static_cast<int>(filters[i]["id"]) == id)
         {
             srv.request.id = static_cast<uint8_t>(id);
-            srv.request.push_air_position = static_cast<int16_t>(static_cast<int>(filters[i]["specs"]["push_air_position"]));
-            srv.request.push_air_velocity = static_cast<int16_t>(static_cast<int>(filters[i]["specs"]["push_air_velocity"]));
-            srv.request.push_air_max_torque = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["push_air_max_torque"]));
+            srv.request.position = static_cast<int16_t>(static_cast<int>(filters[i]["specs"]["push_air_position"]));
+            srv.request.speed = static_cast<int16_t>(static_cast<int>(filters[i]["specs"]["push_air_velocity"]));
+            srv.request.max_torque = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["push_air_max_torque"]));
             break;
         }
     }
 
-    auto client = nh->serviceClient<tools_interface::PushAirVacuumPump>("/niryo_robot/tools/push_air_vacuum_pump");
+    auto client = nh->serviceClient<tools_interface::ToolCommand>("/niryo_robot/tools/push_air_vacuum_pump");
 
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);

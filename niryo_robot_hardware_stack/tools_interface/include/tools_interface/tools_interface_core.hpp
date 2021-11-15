@@ -34,14 +34,13 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "ttl_driver/ttl_interface_core.hpp"
 
 #include "tools_interface/PingDxlTool.h"
-#include "tools_interface/OpenGripper.h"
-#include "tools_interface/CloseGripper.h"
-#include "tools_interface/PullAirVacuumPump.h"
-#include "tools_interface/PushAirVacuumPump.h"
+#include "tools_interface/ToolCommand.h"
+#include "tools_interface/Tool.h"
 
-#include "std_msgs/Int32.h"
 #include "std_srvs/Trigger.h"
+#include "std_msgs/Int32.h"
 
+using ::common::model::EHardwareType;
 
 namespace tools_interface
 {
@@ -66,7 +65,10 @@ class ToolsInterfaceCore : public common::util::IInterfaceCore
         bool init(ros::NodeHandle &nh) override;
 
         bool isInitialized();
-        void pubToolId(int id);
+        tools_interface::Tool pubToolId(int id, EHardwareType motor_type);
+
+        // getters
+        std::shared_ptr<common::model::ToolState> getToolState() const;
 
     private:
         void initParameters(ros::NodeHandle& nh) override;
@@ -76,17 +78,24 @@ class ToolsInterfaceCore : public common::util::IInterfaceCore
 
         bool _callbackPingAndSetTool(tools_interface::PingDxlTool::Request &, tools_interface::PingDxlTool::Response &res);
 
-        bool _callbackOpenGripper(tools_interface::OpenGripper::Request &req, tools_interface::OpenGripper::Response &res);
-        bool _callbackCloseGripper(tools_interface::CloseGripper::Request &req, tools_interface::CloseGripper::Response &res);
+        bool _callbackOpenGripper(tools_interface::ToolCommand::Request &req, tools_interface::ToolCommand::Response &res);
+        bool _callbackCloseGripper(tools_interface::ToolCommand::Request &req, tools_interface::ToolCommand::Response &res);
 
         bool _callbackToolReboot(std_srvs::Trigger::Request &, std_srvs::Trigger::Response &res);
 
-        bool _callbackPullAirVacuumPump(tools_interface::PullAirVacuumPump::Request &req, tools_interface::PullAirVacuumPump::Response &res);
-        bool _callbackPushAirVacuumPump(tools_interface::PushAirVacuumPump::Request &req, tools_interface::PushAirVacuumPump::Response &res);
+        bool _callbackPullAirVacuumPump(tools_interface::ToolCommand::Request &req, tools_interface::ToolCommand::Response &res);
+        bool _callbackPushAirVacuumPump(tools_interface::ToolCommand::Request &req, tools_interface::ToolCommand::Response &res);
 
+        void _toolCommand(uint32_t position, int torque, uint32_t velocity);
         void _publishToolConnection(const ros::TimerEvent&);
 
     private:
+        struct ToolConfig
+        {
+            std::string name;
+            common::model::EHardwareType type;
+        };
+
         std::mutex _tool_mutex;
 
         ros::Publisher _tool_connection_publisher;
@@ -104,8 +113,19 @@ class ToolsInterfaceCore : public common::util::IInterfaceCore
         ros::ServiceServer _push_air_vacuum_pump_server;
 
         std::shared_ptr<common::model::ToolState> _toolState;
-        std::map<uint8_t, common::model::EHardwareType> _available_tools_map;
+        std::map<uint8_t, ToolConfig> _available_tools_map;
 };
+
+/**
+ * @brief ToolsInterfaceCore::getToolState
+ * @return
+ */
+inline
+std::shared_ptr<common::model::ToolState>
+ToolsInterfaceCore::getToolState() const
+{
+    return _toolState;
+}
 
 } // ToolsInterface
 

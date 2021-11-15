@@ -1,0 +1,8 @@
+uint8 id
+
+uint16 position
+uint16 speed
+int16 hold_torque
+int16 max_torque
+---
+uint8 state

@@ -26,6 +26,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 // common
 #include "common/model/single_motor_cmd.hpp"
 #include "common/model/synchronize_motor_cmd.hpp"
+#include "common/model/stepper_calibration_status_enum.hpp"
 
 namespace ttl_driver
 {
@@ -44,6 +45,8 @@ public:
     int writeSingleCmd(const std::unique_ptr<common::model::AbstractTtlSingleMotorCmd> &cmd) override;
     int writeSyncCmd(int type, const std::vector<uint8_t>& ids, const std::vector<uint32_t>& params) override;
 
+    common::model::EStepperCalibrationStatus interpreteHomingData(uint8_t status) const;
+
 protected:
     // AbstractTtlDriver interface
     std::string interpreteFirmwareVersion(uint32_t fw_version) const override;
@@ -53,7 +56,9 @@ public:
 
     // ram write
     virtual int startHoming(uint8_t id) = 0;
-    virtual int readHomingStatus(uint8_t id, uint32_t& status) = 0;
+    virtual int readHomingStatus(uint8_t id, uint8_t& status) = 0;
+    virtual int syncReadHomingStatus(const std::vector<uint8_t> &id_list, std::vector<uint8_t> &status_list) = 0;
+
     virtual int writeHomingSetup(uint8_t id, uint8_t direction, uint8_t stall_threshold) = 0;
 
     virtual int readVelocityProfile(uint8_t id, std::vector<uint32_t>& data_list) = 0;

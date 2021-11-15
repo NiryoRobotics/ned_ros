@@ -39,7 +39,7 @@ namespace niryo_robot_hardware_interface
 HardwareInterface::HardwareInterface(ros::NodeHandle &nh) :
     _nh(nh)
 {
-    /*for (int i = 0; i < 5; ++i)
+    /*for (int i = 0; i < 10; ++i)
     {
       ros::Duration(1).sleep();
       ROS_WARN("sleeping for %d", i);
@@ -349,7 +349,7 @@ bool HardwareInterface::_callbackRebootMotors(niryo_robot_msgs::Trigger::Request
     {
         res.message = "Reboot motors done";
 
-        _joints_interface->sendInitMotorsParams("ned2" != _hardware_version);
+        _joints_interface->sendAndReceiveInitMotorsParams("ned2" != _hardware_version);
 
         int resp_learning_mode_status = 0;
         std::string resp_learning_mode_message;
@@ -404,7 +404,8 @@ void HardwareInterface::_publishHardwareStatus(const ros::TimerEvent&)
 
     if (_joints_interface)
     {
-        _joints_interface->getCalibrationState(need_calibration, calibration_in_progress);
+        need_calibration = _joints_interface->needCalibration();
+        calibration_in_progress = _joints_interface->isCalibrationInProgress();
 
         auto joints_states = _joints_interface->getJointsState();
         for (const std::shared_ptr<common::model::JointState>& jState : joints_states)
@@ -427,6 +428,20 @@ void HardwareInterface::_publishHardwareStatus(const ros::TimerEvent&)
         hw_errors.emplace_back(state->getHardwareError());
         hw_errors_msg.emplace_back(state->getHardwareErrorMessage());
         motor_types.emplace_back(common::model::HardwareTypeEnum(state->getHardwareType()).toString());
+    }
+
+    if (_tools_interface)
+    {
+        auto tool_state = _tools_interface->getToolState();
+        if (tool_state && tool_state->isValid())
+        {
+            motor_names.emplace_back(tool_state->getToolName());
+            voltages.emplace_back(tool_state->getVoltage());
+            temperatures.emplace_back(tool_state->getTemperature());
+            hw_errors.emplace_back(tool_state->getHardwareError());
+            hw_errors_msg.emplace_back(tool_state->getHardwareErrorMessage());
+            motor_types.emplace_back(common::model::HardwareTypeEnum(tool_state->getHardwareType()).toString());
+        }
     }
 
     if (_conveyor_interface)

@@ -48,12 +48,16 @@ public:
     ~JointState() override = default;
 
     void setName(std::string &name);
-    void setOffsetPosition(double offset_position);
     void setDirection(int8_t direction);
+    void setOffsetPosition(double offset_position);
+    void setHomePosition(double home_position);
+    void setLimitPosition(double limit_position);
 
     std::string getName() const;
-    double getOffsetPosition() const;
     int8_t getDirection() const;
+    double getOffsetPosition() const;
+    double getHomePosition() const;
+    double getLimitPosition() const;
 
     virtual bool operator==(const JointState &other) const;
 
@@ -76,9 +80,11 @@ public:
 
 protected:
     std::string _name;
-    double _offset_position{0.0};
-    bool _need_calibration{false};
     int8_t _direction{1};
+    double _offset_position{0.0};
+    double _home_position{0.0};
+    // TODO(CC) for ned only, to be changed
+    double _limit_position{0.0};
 
 protected:
     // see https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c67-a-polymorphic-class-should-suppress-public-copymove
@@ -109,6 +115,26 @@ inline
 double JointState::getOffsetPosition() const
 {
     return _offset_position;
+}
+
+/**
+ * @brief JointState::getHomePosition
+ * @return
+ */
+inline
+double JointState::getHomePosition() const
+{
+    return _home_position;
+}
+
+/**
+ * @brief JointState::getLimitPosition
+ * @return
+ */
+inline
+double JointState::getLimitPosition() const
+{
+    return _limit_position;
 }
 
 /**

@@ -55,6 +55,10 @@ class VolumeManager:
         # In simulation the volume is managed by ffplay
         return self.__volume_percentage
 
+    @property
+    def raw_volume(self):
+        return self.__volume_percentage
+
     def set_volume(self, percentage):
         if percentage != self.__volume_percentage:
             self.__volume_percentage = self.__check_before_set_volume(percentage)

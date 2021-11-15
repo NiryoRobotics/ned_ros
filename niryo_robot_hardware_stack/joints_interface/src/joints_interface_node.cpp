@@ -40,7 +40,7 @@ int main(int argc, char **argv)
 
     ros::NodeHandle nh_private("~");
     std::string hw_version;
-    nh_private.getParam("/niryo_robot_hardware_interface/hardware_version", hw_version);
+    nh_private.getParam("hardware_version", hw_version);
 
     ros::NodeHandle nh_ttl("ttl_driver");
     auto ttl_driver = std::make_shared<ttl_driver::TtlInterfaceCore>(nh_ttl);

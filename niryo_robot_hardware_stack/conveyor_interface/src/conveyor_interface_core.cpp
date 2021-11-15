@@ -368,8 +368,7 @@ bool ConveyorInterfaceCore::isInitialized()
 bool ConveyorInterfaceCore::_callbackPingAndSetConveyor(conveyor_interface::SetConveyor::Request &req,
                                                         conveyor_interface::SetConveyor::Response &res)
 {
-    if ((_ttl_interface && !_ttl_interface->isCalibrationInProgress()) ||
-        (_can_interface && !_can_interface->isCalibrationInProgress()))
+    if (!isCalibrationInProgress())
     {
         switch (req.cmd)
         {
@@ -405,6 +404,7 @@ bool ConveyorInterfaceCore::_callbackPingAndSetConveyor(conveyor_interface::SetC
 bool ConveyorInterfaceCore::_callbackControlConveyor(conveyor_interface::ControlConveyor::Request &req,
                                                      conveyor_interface::ControlConveyor::Response &res)
 {
+    ROS_INFO("Conveyor interface - ControlConveyorCallback received id %d speed %d direction %d ", req.id, req.speed, req.direction);
     std::lock_guard<std::mutex> lck(_state_map_mutex);
     // if id found in list
     if (_state_map.count(req.id) && _state_map.at(req.id))
@@ -421,9 +421,10 @@ bool ConveyorInterfaceCore::_callbackControlConveyor(conveyor_interface::Control
         }
         else if (EBusProtocol::TTL == bus_proto)
         {
+            int32_t speed = req.speed;
             _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperTtlSingleCmd>(EStepperCommandType::CMD_TYPE_CONVEYOR,
                                                                                           req.id, std::initializer_list<uint32_t>{req.control_on,
-                                                                                          static_cast<uint32_t>(req.speed),
+                                                                                          static_cast<uint32_t>(speed),
                                                                                           static_cast<uint32_t>(req.direction * assembly_direction)}));
         }
 
@@ -469,22 +470,23 @@ void ConveyorInterfaceCore::_publishConveyorsFeedback(const ros::TimerEvent&)
             if (interface)
             {
                 int cnt_scan_failed = 0;
-                while (cnt_scan_failed < 2)
+                while (cnt_scan_failed < 3)
                 {
                     if (!interface->scanMotorId(conveyor_state->getId()))
                     {
                         cnt_scan_failed++;
+                        ros::Duration(0.1).sleep();
                     }
                     else
                         break;
                 }
-                if (cnt_scan_failed == 2)
+                if (cnt_scan_failed == 3)
                     removeConveyor(conveyor_state->getId());
                 else
                 {
                     data.conveyor_id = conveyor_state->getId();
                     data.running = conveyor_state->getState();
-                    data.direction = static_cast<int8_t>(conveyor_state->getGoalDirection());
+                    data.direction = static_cast<int8_t>(conveyor_state->getDirection() * conveyor_state->getGoalDirection());
                     data.speed = conveyor_state->getSpeed();
                     msg.conveyors.push_back(data);
 
@@ -494,6 +496,21 @@ void ConveyorInterfaceCore::_publishConveyorsFeedback(const ros::TimerEvent&)
         }
     }
     _conveyors_feedback_publisher.publish(msg);
+}
+
+/**
+ * @brief ConveyorInterfaceCore::isCalibrationInProgress
+ * @return
+ */
+bool ConveyorInterfaceCore::isCalibrationInProgress() const
+{
+    if(_can_interface)
+        return common::model::EStepperCalibrationStatus::IN_PROGRESS == _can_interface->getCalibrationStatus();
+    else if(_ttl_interface)
+      return common::model::EStepperCalibrationStatus::IN_PROGRESS == _ttl_interface->getCalibrationStatus();
+
+    ROS_ERROR("ConveyorInterfaceCore::isCalibrationInProgress - No valid bus interface found");
+    return false;
 }
 
 /**

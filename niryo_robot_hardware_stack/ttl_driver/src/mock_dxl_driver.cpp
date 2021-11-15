@@ -23,6 +23,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <map>
 #include <string>
 #include <vector>
+#include <set>
 
 namespace ttl_driver
 {
@@ -313,10 +314,13 @@ int MockDxlDriver::syncWritePositionGoal(const std::vector<uint8_t> &id_list, co
     std::set<uint8_t> countSet;
     for (size_t i = 0; i < id_list.size(); i++)
     {
-        if (!_fake_data->dxl_registers.count(id_list.at(i)))
+        if (_fake_data->dxl_registers.count(id_list.at(i)))
+            _fake_data->dxl_registers.at(id_list.at(i)).position = position_list.at(i);
+        else if (_fake_data->stepper_registers.count(id_list.at(i)))
+            _fake_data->stepper_registers.at(id_list.at(i)).position = position_list.at(i);
+        else
             return COMM_TX_ERROR;
         // write goal position as the current position
-        _fake_data->dxl_registers.at(id_list.at(i)).position = position_list.at(i);
 
         auto result = countSet.insert(id_list[i]);
         if (!result.second)
@@ -388,7 +392,7 @@ int MockDxlDriver::readVelocity(uint8_t id, uint32_t& present_velocity)
  * @param temperature
  * @return
  */
-int MockDxlDriver::readTemperature(uint8_t id, uint32_t& temperature)
+int MockDxlDriver::readTemperature(uint8_t id, uint8_t& temperature)
 {
     if (_fake_data->dxl_registers.count(id))
         temperature = _fake_data->dxl_registers.at(id).temperature;
@@ -418,7 +422,7 @@ int MockDxlDriver::readVoltage(uint8_t id, double& voltage)
  * @param hardware_status
  * @return
  */
-int MockDxlDriver::readHwErrorStatus(uint8_t id, uint32_t& hardware_status)
+int MockDxlDriver::readHwErrorStatus(uint8_t id, uint8_t& hardware_status)
 {
     if (_fake_data->dxl_registers.count(id))
       return COMM_RX_FAIL;
@@ -443,7 +447,7 @@ int MockDxlDriver::syncReadPosition(const std::vector<uint8_t> &id_list, std::ve
         else if (_fake_data->stepper_registers.count(id))
             position_list.emplace_back(_fake_data->stepper_registers.at(id).position);
         else
-            return COMM_TX_ERROR;
+            return COMM_RX_FAIL;
 
         auto result = countSet.insert(id);
         if (!result.second)
@@ -536,7 +540,7 @@ int MockDxlDriver::syncReadFirmwareVersion(const std::vector<uint8_t> &id_list, 
  * @param temperature_list
  * @return
  */
-int MockDxlDriver::syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &temperature_list)
+int MockDxlDriver::syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint8_t>& temperature_list)
 {
     std::set<uint8_t> countSet;
     for (auto & id : id_list)
@@ -577,13 +581,44 @@ int MockDxlDriver::syncReadVoltage(const std::vector<uint8_t> &id_list, std::vec
 }
 
 /**
+ * @brief MockDxlDriver::syncReadHwStatus
+ * @param id_list
+ * @param data_list
+ * @return
+ */
+int MockDxlDriver::syncReadHwStatus(const std::vector<uint8_t> &id_list,
+                                    std::vector<std::pair<double, uint8_t> >& data_list)
+{
+    data_list.clear();
+
+    std::set<uint8_t> countSet;
+
+    for (auto & id : id_list)
+    {
+        if (_fake_data->dxl_registers.count(id))
+        {
+            double voltage = _fake_data->dxl_registers.at(id).voltage;
+            uint8_t temperature = _fake_data->dxl_registers.at(id).temperature;
+            data_list.emplace_back(std::make_pair(voltage, temperature));
+        }
+        else
+            return COMM_RX_FAIL;
+
+        auto result = countSet.insert(id);
+        if (!result.second)
+            return GROUP_SYNC_REDONDANT_ID;  // redondant id
+    }
+    return COMM_SUCCESS;
+}
+
+/**
  * @brief MockDxlDriver::syncReadHwErrorStatus
  * @param id_list
  * @param hw_error_list
  * @return
  */
 int MockDxlDriver::syncReadHwErrorStatus(const std::vector<uint8_t> &id_list,
-                                         std::vector<uint32_t> &hw_error_list)
+                                         std::vector<uint8_t> &hw_error_list)
 {
     std::set<uint8_t> countSet;
     for (auto & id : id_list)

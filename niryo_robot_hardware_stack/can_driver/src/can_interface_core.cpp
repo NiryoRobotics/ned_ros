@@ -248,7 +248,6 @@ int CanInterfaceCore::motorCmdReport(const JointState& jState, common::model::EH
             ROS_INFO("CanInterfaceCore::motorCmdReport - Debug - Get pose on motor %d: %d", motor_id, new_position);
 
             // set position back to old position
-            int rest = static_cast<int>(new_position - old_position);
             ros::Duration(0.5).sleep();
 
             ROS_INFO("CanInterfaceCore::motorCmdReport - Send can motor %d pose: %d ", motor_id, old_position);
@@ -268,7 +267,7 @@ int CanInterfaceCore::motorCmdReport(const JointState& jState, common::model::EH
                                                                                 std::initializer_list<int32_t>{0}));
             ros::Duration(0.2).sleep();
 
-            if (abs(rest) < 250 || abs(rest2) < 250)
+            if (abs(rest2) < 250)
             {
                 ROS_WARN("CanInterfaceCore::motorCmdReport - Debug - Pose error on motor %d", motor_id);
                 ret = niryo_robot_msgs::CommandStatus::FAILURE;
@@ -655,7 +654,7 @@ void CanInterfaceCore::addSingleCommandToQueue(std::vector<std::unique_ptr<commo
  * @brief CanInterfaceCore::setSyncCommand
  * @param cmd
  */
-void CanInterfaceCore::setSyncCommand(std::unique_ptr<common::model::ISynchronizeMotorCmd> && /*cmd*/)  // NOLINT
+void CanInterfaceCore::addSyncCommandToQueue(std::unique_ptr<common::model::ISynchronizeMotorCmd> && /*cmd*/)  // NOLINT
 {
     ROS_INFO("CanInterfaceCore::setSyncCommand: need to be implemented");
 }

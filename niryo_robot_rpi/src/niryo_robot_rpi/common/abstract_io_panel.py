@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 # abstract_io_panel.py
 # Copyright (C) 2021 Niryo
 # All rights reserved.

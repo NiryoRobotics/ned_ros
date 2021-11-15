@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 # end_effector_io.py
 # Copyright (C) 2021 Niryo
 # All rights reserved.

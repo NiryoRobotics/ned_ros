@@ -37,9 +37,6 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "ttl_driver/ttl_interface_core.hpp"
 #include "common/model/joint_state.hpp"
 
-#include <dynamic_reconfigure/server.h>
-#include <joints_interface/steppersConfig.h>
-
 namespace joints_interface
 {
 
@@ -74,19 +71,14 @@ class JointHardwareInterface : public hardware_interface::RobotHW
         void write(const ros::Time &/*time*/, const ros::Duration &/*period*/) override;
 
     private:
-
-        void configCallback(joints_interface::steppersConfig &config, uint32_t level);
-
-        bool initStepper(ros::NodeHandle &robot_hwnh,
+        bool initStepperState(ros::NodeHandle &robot_hwnh,
                          const std::shared_ptr<common::model::StepperMotorState>& stepperState,
                          const std::string& currentNamespace) const;
-        bool initDxl(ros::NodeHandle &robot_hwnh,
+        bool initDxlState(ros::NodeHandle &robot_hwnh,
                      const std::shared_ptr<common::model::DxlMotorState>& dxlState,
                      const std::string& currentNamespace) const;
 
     private:
-        dynamic_reconfigure::Server<joints_interface::steppersConfig> _dr_srv;
-
         hardware_interface::JointStateInterface _joint_state_interface;
         hardware_interface::PositionJointInterface _joint_position_interface;
 
@@ -100,16 +92,6 @@ class JointHardwareInterface : public hardware_interface::RobotHW
 
         std::vector<std::shared_ptr<common::model::JointState> > _joint_list;
 };
-
-/**
- * @brief JointHardwareInterface::getJointsState
- * @return
- */
-inline
-bool JointHardwareInterface::isCalibrationInProgress() const
-{
-    return _calibration_manager->CalibrationInprogress();
-}
 
 /**
  * @brief JointHardwareInterface::getJointsState

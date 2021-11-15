@@ -126,20 +126,22 @@ bool common::model::EndEffectorState::isValid() const
  * @param id
  * @param action
  */
-void EndEffectorState::setButtonStatus(uint8_t id, EActionType action)
+void EndEffectorState::setButtonStatus(uint8_t button_id, EActionType action)
 {
-  assert(id <= 3);
+  assert(button_id < 3);
 
-  auto button = _buttons_list.at(id - 1);
+  auto button = _buttons_list.at(button_id);
   // do not add 2 no action states consecutive
   if (button->actions.back() == EActionType::NO_ACTION &&
           action == EActionType::NO_ACTION)
       return;
-  if (button->actions.back() !=EActionType::NO_ACTION &&
+  // add action as no action if last action is not no action state
+  if (button->actions.back() != EActionType::NO_ACTION &&
           action == EActionType::NO_ACTION)
   {
       button->actions.push(action);
   }
+  // if action is single or double push, push to list
   else if (action == EActionType::SINGLE_PUSH_ACTION ||
         action == EActionType::DOUBLE_PUSH_ACTION)
   {

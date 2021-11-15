@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 # robot_rpi.py
 # Copyright (C) 2021 Niryo
 # All rights reserved.
@@ -32,6 +30,7 @@ from .fans_manager import FansManager
 from .shutdown_manager import ShutdownManager
 from .wifi_button import WifiButton
 from .mcp_io_objects import McpIOManager
+
 
 class RobotRpi:
     def __init__(self):

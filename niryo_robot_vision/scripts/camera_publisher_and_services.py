@@ -75,7 +75,8 @@ class VisionNode:
         # -- VIDEO STREAM
         rospy.logdebug("Vision Node - Creating Video Stream object")
         cls_ = GazeboStream if self.__simulation_mode else WebcamStream
-        self.__video_stream = cls_(self.__calibration_object, self.__publisher_compressed_stream)
+        self.__video_stream = cls_(self.__calibration_object, self.__publisher_compressed_stream,
+                                   rospy.get_param("~flip_img"))
         rospy.logdebug("Vision Node - Video Stream Created")
 
         self.__video_stream.start()

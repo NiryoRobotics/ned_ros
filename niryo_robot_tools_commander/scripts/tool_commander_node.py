@@ -17,6 +17,8 @@ from niryo_robot_msgs.msg import CommandStatus
 # Messages
 from std_msgs.msg import Int32
 
+from tools_interface.msg import Tool
+
 from niryo_robot_tools_commander.msg import ToolAction, ToolResult
 from niryo_robot_tools_commander.msg import ToolCommand
 
@@ -48,6 +50,7 @@ class ToolCommander:
         self.__tools_state = ToolsState(rospy.get_param("~state_dict"))
         self.__is_gripper_simulated = rospy.get_param("~simu_gripper")
         self.__is_use_gazebo = rospy.get_param("~gazebo")
+        self.__hardware_version = rospy.get_param("~hardware_version")
         move_group_tool_commander_name = rospy.get_param("~move_group_tool_commander_name")
         reference_frame = rospy.get_param("~reference_frame")
 
@@ -62,6 +65,7 @@ class ToolCommander:
         self.__transform_handler = ToolTransformHandler()
 
         self.__current_tool = None
+        self.__motor_type = Tool.NO_MOTOR
 
         self.__available_tools, self.__dict_commands_string_to_id = self.create_tools()
 
@@ -77,8 +81,8 @@ class ToolCommander:
                 self.__tool_simu.set_pose_reference_frame(reference_frame)
 
         # Subscriber
-        rospy.Subscriber('/niryo_robot_hardware/tools/current_id', Int32,
-                         self.__callback_current_tool_id)
+        rospy.Subscriber('/niryo_robot_hardware/tools/motor', Tool,
+                         self.__callback_current_tool_motor)
 
         # Publisher
         self.__tool_id_publisher = rospy.Publisher('~current_id', Int32, queue_size=10, latch=True)
@@ -107,10 +111,10 @@ class ToolCommander:
 
     # Subscriber
 
-    def __callback_current_tool_id(self, msg):
+    def __callback_current_tool_motor(self, msg):
         if self.__current_tool != "electromagnet":
-            id_ = msg.data
-            self.set_tool(self.__available_tools[id_])
+            self.set_tool(self.__available_tools[msg.id])
+            self.__motor_type = msg.motor_type
 
         self.__tool_id_publisher.publish(self.__current_tool.get_id())
 
@@ -231,7 +235,7 @@ class ToolCommander:
             tool_transformation = self.__transform_handler.transform_from_dict(tool_transformation)
             if tool_type == Gripper.get_type():
                 new_tool = Gripper(tool_id, tool_name, tool_transformation,
-                                   self.__tools_state, self.__ros_command_interface, specs)
+                                   self.__tools_state, self.__ros_command_interface, specs, self.__hardware_version)
             elif tool_type == Electromagnet.get_type():
                 new_tool = Electromagnet(tool_id, tool_name, tool_transformation,
                                          self.__tools_state, self.__ros_command_interface)

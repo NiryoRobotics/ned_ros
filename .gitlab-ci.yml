@@ -74,7 +74,7 @@ build_doc_job:
   retry:
     max: 1
   before_script:
-    - pip3 install -U -I pyyaml rospkg
+    - pip3 install -U pyyaml rospkg
   script:
     # Do stuff to move source properly for catkin_make
     - !reference [.abstract_move_source_tricks_job, script]
@@ -155,6 +155,24 @@ catkin_lint_job:
     # Check code linting
     - catkin lint -W2 --rosdistro melodic --ignore missing_directory --explain src
 
+## See https://docs.gitlab.com/ee/user/project/merge_requests/code_quality.html
+include:
+  - template: Code-Quality.gitlab-ci.yml
+
+code_quality:
+  tags:
+    - dind
+  artifacts:
+    paths: [gl-code-quality-report.json]
+
+code_quality_html:
+  extends: code_quality
+  variables:
+    REPORT_FORMAT: html
+  artifacts:
+    paths: [gl-code-quality-report.html]
+##
+
 .abstract_upload:
   before_script:
     - mv ${DOCUMENTATION_OUTPUT_FOLDER} ${CI_COMMIT_TAG}
@@ -231,6 +249,7 @@ upload_staging_job:
   rules:
     - if: $CI_COMMIT_BRANCH
       when: manual
+      allow_failure: true
   dependencies:
     - build_doc_job
   needs:

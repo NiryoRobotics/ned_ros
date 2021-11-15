@@ -74,82 +74,9 @@ JointHardwareInterface::JointHardwareInterface(ros::NodeHandle& rootnh,
 
     init(rootnh, robot_hwnh);
 
-    _calibration_manager = std::make_unique<CalibrationManager>(robot_hwnh, _joint_list, _ttl_interface, _can_interface);
-}
-
-void JointHardwareInterface::configCallback(joints_interface::steppersConfig &config, uint32_t level)
-{
-  ROS_INFO("Reconfigure Request: %d %d %d %d %d %d %d %d",
-            config.s1_v_start, config.s1_a_1,
-            config.s1_v_1, config.s1_a_max,
-            config.s1_v_max, config.s1_d_max,
-            config.s1_d_1, config.s1_v_stop);
-
-    auto s1 = std::dynamic_pointer_cast<common::model::StepperMotorState>(_joint_list[0]);
-
-    s1->setProfileVStart(static_cast<uint32_t>(config.s1_v_start));
-    s1->setProfileA1(static_cast<uint32_t>(config.s1_a_1));
-    s1->setProfileV1(static_cast<uint32_t>(config.s1_v_1));
-    s1->setProfileAMax(static_cast<uint32_t>(config.s1_a_max));
-    s1->setProfileVMax(static_cast<uint32_t>(config.s1_v_max));
-    s1->setProfileDMax(static_cast<uint32_t>(config.s1_d_max));
-    s1->setProfileD1(static_cast<uint32_t>(config.s1_d_1));
-    s1->setProfileVStop(static_cast<uint32_t>(config.s1_v_stop));
-
-    StepperTtlSingleCmd cmd_profile(
-                EStepperCommandType::CMD_TYPE_VELOCITY_PROFILE,
-                s1->getId(),
-                s1->getVelocityProfile());
-
-    _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperTtlSingleCmd>(cmd_profile));
-
-    ROS_INFO("Reconfigure Request: %d %d %d %d %d %d %d %d",
-              config.s2_v_start, config.s2_a_1,
-              config.s2_v_1, config.s2_a_max,
-              config.s2_v_max, config.s2_d_max,
-              config.s2_d_1, config.s2_v_stop);
-
-    auto s2 = std::dynamic_pointer_cast<common::model::StepperMotorState>(_joint_list[0]);
-
-    s2->setProfileVStart(static_cast<uint32_t>(config.s2_v_start));
-    s2->setProfileA1(static_cast<uint32_t>(config.s2_a_1));
-    s2->setProfileV1(static_cast<uint32_t>(config.s2_v_1));
-    s2->setProfileAMax(static_cast<uint32_t>(config.s2_a_max));
-    s2->setProfileVMax(static_cast<uint32_t>(config.s2_v_max));
-    s2->setProfileDMax(static_cast<uint32_t>(config.s2_d_max));
-    s2->setProfileD1(static_cast<uint32_t>(config.s2_d_1));
-    s2->setProfileVStop(static_cast<uint32_t>(config.s2_v_stop));
-
-    StepperTtlSingleCmd cmd_profile2(
-                EStepperCommandType::CMD_TYPE_VELOCITY_PROFILE,
-                s2->getId(),
-                s2->getVelocityProfile());
-
-    _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperTtlSingleCmd>(cmd_profile2));
-
-    ROS_INFO("Reconfigure Request: %d %d %d %d %d %d %d %d",
-              config.s3_v_start, config.s3_a_1,
-              config.s3_v_1, config.s3_a_max,
-              config.s3_v_max, config.s3_d_max,
-              config.s3_d_1, config.s3_v_stop);
-
-    auto s3 = std::dynamic_pointer_cast<common::model::StepperMotorState>(_joint_list[0]);
-
-    s3->setProfileVStart(static_cast<uint32_t>(config.s3_v_start));
-    s3->setProfileA1(static_cast<uint32_t>(config.s3_a_1));
-    s3->setProfileV1(static_cast<uint32_t>(config.s3_v_1));
-    s3->setProfileAMax(static_cast<uint32_t>(config.s3_a_max));
-    s3->setProfileVMax(static_cast<uint32_t>(config.s3_v_max));
-    s3->setProfileDMax(static_cast<uint32_t>(config.s3_d_max));
-    s3->setProfileD1(static_cast<uint32_t>(config.s3_d_1));
-    s3->setProfileVStop(static_cast<uint32_t>(config.s3_v_stop));
-
-    StepperTtlSingleCmd cmd_profile3(
-                EStepperCommandType::CMD_TYPE_VELOCITY_PROFILE,
-                s3->getId(),
-                s3->getVelocityProfile());
-
-    _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperTtlSingleCmd>(cmd_profile3));
+    _calibration_manager = std::make_unique<CalibrationManager>(robot_hwnh, _joint_list,
+                                                                _ttl_interface,
+                                                                _can_interface);
 }
 
 /**
@@ -201,7 +128,7 @@ bool JointHardwareInterface::init(ros::NodeHandle& /*rootnh*/, ros::NodeHandle &
                                                                     eBusProto,
                                                                     static_cast<uint8_t>(joint_id_config));
 
-            if (initStepper(robot_hwnh, stepperState, currentNamespace))
+            if (initStepperState(robot_hwnh, stepperState, currentNamespace))
             {
                 _joint_list.emplace_back(stepperState);
                 _map_stepper_name[stepperState->getId()] = stepperState->getName();
@@ -224,7 +151,7 @@ bool JointHardwareInterface::init(ros::NodeHandle& /*rootnh*/, ros::NodeHandle &
                                                             common::model::EComponentType::JOINT,
                                                             static_cast<uint8_t>(joint_id_config));
 
-            if (initDxl(robot_hwnh, dxlState, currentNamespace))
+            if (initDxlState(robot_hwnh, dxlState, currentNamespace))
             {
                 _joint_list.emplace_back(dxlState);
                 _map_dxl_name[dxlState->getId()] = dxlState->getName();
@@ -267,11 +194,6 @@ bool JointHardwareInterface::init(ros::NodeHandle& /*rootnh*/, ros::NodeHandle &
     registerInterface(&_joint_state_interface);
     registerInterface(&_joint_position_interface);
 
-    dynamic_reconfigure::Server<joints_interface::steppersConfig>::CallbackType cb;
-    cb = boost::bind(&JointHardwareInterface::configCallback, this, _1, _2);
-
-    _dr_srv.setCallback(cb);
-
     return true;
 }
 
@@ -282,7 +204,7 @@ bool JointHardwareInterface::init(ros::NodeHandle& /*rootnh*/, ros::NodeHandle &
  * @param currentNamespace
  * @return
  */
-bool JointHardwareInterface::initStepper(ros::NodeHandle &robot_hwnh,
+bool JointHardwareInterface::initStepperState(ros::NodeHandle &robot_hwnh,
                                          const std::shared_ptr<StepperMotorState>& stepperState,
                                          const std::string& currentNamespace) const
 {
@@ -293,56 +215,59 @@ bool JointHardwareInterface::initStepper(ros::NodeHandle &robot_hwnh,
         double gear_ratio = 1.0;
         int direction = 1;
         double max_effort = 0.0;
-        int calibration_stall_threshold = 1;
+        double home_position = 0.0;
+        double limit_position = 0.0;
 
         robot_hwnh.getParam(currentNamespace + "/offset_position", offsetPos);
         robot_hwnh.getParam(currentNamespace + "/gear_ratio", gear_ratio);
         robot_hwnh.getParam(currentNamespace + "/direction", direction);
         robot_hwnh.getParam(currentNamespace + "/max_effort", max_effort);
-        robot_hwnh.getParam(currentNamespace + "/calibration_stall_threshold", calibration_stall_threshold);
+        robot_hwnh.getParam(currentNamespace + "/home_position", home_position);
+        robot_hwnh.getParam(currentNamespace + "/limit_position", limit_position);
 
         // acceleration and velocity profiles
+        common::model::VelocityProfile profile{};
         int data{};
         if (robot_hwnh.hasParam(currentNamespace + "/v_start"))
         {
             robot_hwnh.getParam(currentNamespace + "/v_start", data);
-            stepperState->setProfileVStart(static_cast<uint32_t>(data));
+            profile.v_start = static_cast<uint32_t>(data);
         }
 
         if (robot_hwnh.hasParam(currentNamespace + "/a_1"))
         {
             robot_hwnh.getParam(currentNamespace + "/a_1", data);
-            stepperState->setProfileA1(static_cast<uint32_t>(data));
+            profile.a_1 = static_cast<uint32_t>(data);
         }
         if (robot_hwnh.hasParam(currentNamespace + "/v_1"))
         {
             robot_hwnh.getParam(currentNamespace + "/v_1", data);
-            stepperState->setProfileV1(static_cast<uint32_t>(data));
+            profile.v_1 = static_cast<uint32_t>(data);
         }
         if (robot_hwnh.hasParam(currentNamespace + "/a_max"))
         {
             robot_hwnh.getParam(currentNamespace + "/a_max", data);
-            stepperState->setProfileAMax(static_cast<uint32_t>(data));
+            profile.a_max = static_cast<uint32_t>(data);
         }
         if (robot_hwnh.hasParam(currentNamespace + "/v_max"))
         {
             robot_hwnh.getParam(currentNamespace + "/v_max", data);
-            stepperState->setProfileVMax(static_cast<uint32_t>(data));
+            profile.v_max = static_cast<uint32_t>(data);
         }
         if (robot_hwnh.hasParam(currentNamespace + "/d_max"))
         {
             robot_hwnh.getParam(currentNamespace + "/d_max", data);
-            stepperState->setProfileDMax(static_cast<uint32_t>(data));
+            profile.d_max = static_cast<uint32_t>(data);
         }
         if (robot_hwnh.hasParam(currentNamespace + "/d_1"))
         {
             robot_hwnh.getParam(currentNamespace + "/d_1", data);
-            stepperState->setProfileD1(static_cast<uint32_t>(data));
+            profile.d_1 = static_cast<uint32_t>(data);
         }
         if (robot_hwnh.hasParam(currentNamespace + "/v_stop"))
         {
             robot_hwnh.getParam(currentNamespace + "/v_stop", data);
-            stepperState->setProfileVStop(static_cast<uint32_t>(data));
+            profile.v_stop = static_cast<uint32_t>(data);
         }
 
         // add parameters
@@ -350,7 +275,9 @@ bool JointHardwareInterface::initStepper(ros::NodeHandle &robot_hwnh,
         stepperState->setGearRatio(gear_ratio);
         stepperState->setDirection(static_cast<int8_t>(direction));
         stepperState->setMaxEffort(max_effort);
-        stepperState->setCalibrationStallThreshold(static_cast<uint8_t>(calibration_stall_threshold));
+        stepperState->setVelocityProfile(profile);
+        stepperState->setHomePosition(home_position);
+        stepperState->setLimitPosition(limit_position);
 
         res = true;
     }
@@ -364,7 +291,7 @@ bool JointHardwareInterface::initStepper(ros::NodeHandle &robot_hwnh,
  * @param currentNamespace
  * @return
  */
-bool JointHardwareInterface::initDxl(ros::NodeHandle &robot_hwnh,
+bool JointHardwareInterface::initDxlState(ros::NodeHandle &robot_hwnh,
                                      const std::shared_ptr<DxlMotorState>& dxlState,
                                      const std::string& currentNamespace) const
 {
@@ -372,6 +299,7 @@ bool JointHardwareInterface::initDxl(ros::NodeHandle &robot_hwnh,
     if (dxlState)
     {
         double offsetPos = 0.0;
+        double home_position = 0.0;
         int direction = 1;
         int positionPGain = 0;
         int positionIGain = 0;
@@ -393,8 +321,10 @@ bool JointHardwareInterface::initDxl(ros::NodeHandle &robot_hwnh,
 
         robot_hwnh.getParam(currentNamespace + "/FF1_gain", FF1Gain);
         robot_hwnh.getParam(currentNamespace + "/FF2_gain", FF2Gain);
+        robot_hwnh.getParam(currentNamespace + "/home_position", home_position);
 
         dxlState->setOffsetPosition(offsetPos);
+        dxlState->setHomePosition(home_position);
         dxlState->setDirection(static_cast<int8_t>(direction));
 
         dxlState->setPositionPGain(static_cast<uint32_t>(positionPGain));
@@ -454,7 +384,7 @@ void JointHardwareInterface::sendInitMotorsParams(bool learningMode)
                       StepperTtlSingleCmd cmd_profile(
                                   EStepperCommandType::CMD_TYPE_VELOCITY_PROFILE,
                                   stepperState->getId(),
-                                  stepperState->getVelocityProfile());
+                                  stepperState->getVelocityProfile().to_list());
                       _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperTtlSingleCmd>(cmd_profile));
                       ros::Duration(0.05).sleep();
                     }
@@ -498,6 +428,7 @@ void JointHardwareInterface::read(const ros::Time &/*time*/, const ros::Duration
         if (jState && jState->isValid())
         {
             jState->pos = jState->to_rad_pos(jState->getPosition());
+            jState->vel = jState->to_rad_vel(jState->getVelocity());
         }
     }
 
@@ -550,15 +481,17 @@ void JointHardwareInterface::setCommandToCurrentPosition()
  */
 bool JointHardwareInterface::needCalibration() const
 {
-    bool result = false;
-    if (_can_interface)
-        result = (EStepperCalibrationStatus::CALIBRATION_OK != _can_interface->getCalibrationStatus());
-    else
-        result = (EStepperCalibrationStatus::CALIBRATION_OK != _ttl_interface->getCalibrationStatus());
+    return (EStepperCalibrationStatus::OK != _calibration_manager->getCalibrationStatus() &&
+            EStepperCalibrationStatus::IN_PROGRESS != _calibration_manager->getCalibrationStatus());
+}
 
-    ROS_DEBUG_THROTTLE(2, "JointHardwareInterface::needCalibration - Need calibration returned: %d",
-                       static_cast<int>(result));
-    return result;
+/**
+ * @brief JointHardwareInterface::isCalibrationInProgress
+ * @return
+ */
+bool JointHardwareInterface::isCalibrationInProgress() const
+{
+    return (EStepperCalibrationStatus::IN_PROGRESS == _calibration_manager->getCalibrationStatus());
 }
 
 /**
@@ -609,29 +542,31 @@ void JointHardwareInterface::setNeedCalibration()
  */
 void JointHardwareInterface::activateLearningMode(bool activated)
 {
+    while (!_ttl_interface->isSingleQueueFree())
+    {
+        ros::Duration(0.05).sleep();
+    }
+
     ROS_DEBUG("JointHardwareInterface::activateLearningMode - activate learning mode");
 
     DxlSyncCmd dxl_cmd(EDxlCommandType::CMD_TYPE_LEARNING_MODE);
-    StepperTtlSingleCmd stepper_ttl_cmd(EStepperCommandType::CMD_TYPE_LEARNING_MODE);
-    StepperSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_LEARNING_MODE);
+    StepperTtlSyncCmd stepper_ttl_cmd(EStepperCommandType::CMD_TYPE_LEARNING_MODE);
 
     for (auto const& jState : _joint_list)
     {
         if (jState)
         {
-            if (jState->isDynamixel())
+            if (jState->getBusProtocol() == EBusProtocol::TTL)
             {
-                dxl_cmd.addMotorParam(jState->getHardwareType(), jState->getId(), activated);
-            }
-            else if ((jState->isStepper() && jState->getBusProtocol() == EBusProtocol::TTL))
-            {
-                stepper_ttl_cmd.setId(jState->getId());
-                stepper_ttl_cmd.setParams({activated});
-                if (_ttl_interface)
-                    _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperTtlSingleCmd>(stepper_ttl_cmd));
+                if (jState->isDynamixel())
+                  dxl_cmd.addMotorParam(jState->getHardwareType(), jState->getId(), activated);
+                else
+                  stepper_ttl_cmd.addMotorParam(jState->getHardwareType(), jState->getId(), activated);
             }
             else
             {
+                StepperSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_LEARNING_MODE);
+
                 stepper_cmd.setId(jState->getId());
                 stepper_cmd.setParams({activated});
                 if (_can_interface)
@@ -642,7 +577,11 @@ void JointHardwareInterface::activateLearningMode(bool activated)
 
     if (_ttl_interface)
     {
-        _ttl_interface->setSyncCommand(std::make_unique<DxlSyncCmd>(dxl_cmd));
+        if (dxl_cmd.isValid())
+          _ttl_interface->addSyncCommandToQueue(std::make_unique<DxlSyncCmd>(dxl_cmd));
+
+        if (stepper_ttl_cmd.isValid())
+          _ttl_interface->addSyncCommandToQueue(std::make_unique<StepperTtlSyncCmd>(stepper_ttl_cmd));
     }
 }
 

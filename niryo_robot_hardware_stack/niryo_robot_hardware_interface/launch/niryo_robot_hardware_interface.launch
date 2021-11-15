@@ -5,8 +5,8 @@
     <arg name="execute_on_niryo_robot_raspberry_pi_image" default="true" />
     <arg name="simu_gripper" default="true"/>
     <arg name="gazebo" default="false"/>
-    <arg name="can_enabled" default="false"/>
-    <arg name="ttl_enabled" default="false"/>
+    <arg name="can_enabled" default="true"/>
+    <arg name="ttl_enabled" default="true"/>
     <arg name="hardware_version" default="ned"/>
     <arg name="simulation_mode" default="false"/>
     <arg name="debug" default="false"/>

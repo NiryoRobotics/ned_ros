@@ -1,1 +1,1 @@
-from .robot_rpi import RobotRpi
+from robot_rpi import RobotRpi

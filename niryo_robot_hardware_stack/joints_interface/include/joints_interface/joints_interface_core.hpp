@@ -69,13 +69,13 @@ class JointsInterfaceCore : common::util::IInterfaceCore
 
         bool init(ros::NodeHandle& nh) override;
 
-        void sendInitMotorsParams(bool learningMode);
+        void sendAndReceiveInitMotorsParams(bool learningMode);
         void activateLearningMode(bool activate, int &ostatus, std::string &omessage);
 
-        void getCalibrationState(bool &need_calibration, bool &calibration_in_progress) const;
+        bool needCalibration() const;
+        bool isCalibrationInProgress() const;
 
-        const std::vector<std::shared_ptr<common::model::JointState> >&
-        getJointsState() const;
+        const std::vector<std::shared_ptr<common::model::JointState> >& getJointsState() const;
 
     private:
         void initParameters(ros::NodeHandle& nh) override;
@@ -125,17 +125,22 @@ class JointsInterfaceCore : common::util::IInterfaceCore
 };
 
 /**
- * @brief JointsInterfaceCore::getCalibrationState
- * @param need_calibration
- * @param calibration_in_progress
+ * @brief JointsInterfaceCore::needCalibration
+ * @return
  */
-inline
-void JointsInterfaceCore::getCalibrationState(bool &need_calibration, bool &calibration_in_progress) const
+bool JointsInterfaceCore::needCalibration() const
 {
-    need_calibration = _robot->needCalibration();
-    calibration_in_progress = _robot->isCalibrationInProgress();
+    return _robot->needCalibration();
 }
 
+/**
+ * @brief JointsInterfaceCore::isCalibrationInProgress
+ * @return
+ */
+bool JointsInterfaceCore::isCalibrationInProgress() const
+{
+    return _robot->isCalibrationInProgress();
+}
 /**
  * @brief JointsInterfaceCore::getJointsState
  * @return

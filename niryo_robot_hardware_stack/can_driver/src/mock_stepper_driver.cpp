@@ -159,7 +159,7 @@ uint8_t MockStepperDriver::readData(uint8_t& id, int& control_byte,
     id = _current_id;
 
     if (_calibration_status.count(_current_id) &&
-        EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS == _calibration_status.at(_current_id).first &&
+        EStepperCalibrationStatus::IN_PROGRESS == _calibration_status.at(_current_id).first &&
         0 <= _fake_time)
     {
         control_byte = CAN_DATA_CALIBRATION_RESULT;
@@ -247,6 +247,7 @@ uint8_t MockStepperDriver::sendRelativeMoveCommand(uint8_t id, int steps, int de
 
     if (_fake_data->stepper_registers.count(id))
     {
+        _fake_data->stepper_registers.at(id).position = steps * -1;
         return CAN_OK;
     }
     return CAN_FAIL;
@@ -346,12 +347,12 @@ uint8_t MockStepperDriver::sendCalibrationCommand(uint8_t id, int offset, int de
     {
         if (_calibration_status.count(id))
         {
-            _calibration_status.at(id).first = EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS;
+            _calibration_status.at(id).first = EStepperCalibrationStatus::IN_PROGRESS;
             _calibration_status.at(id).second = offset;
         }
         else {
             _calibration_status.insert(std::make_pair(id,
-                                                      std::make_pair(EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS,
+                                                      std::make_pair(EStepperCalibrationStatus::IN_PROGRESS,
                                                                      static_cast<int32_t>(offset))));
         }
         _fake_time = 2;
@@ -410,7 +411,7 @@ int32_t MockStepperDriver::interpretePositionStatus(const std::array<uint8_t, MA
  * @param data
  * @return
  */
-uint32_t MockStepperDriver::interpreteTemperatureStatus(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data)
+uint8_t MockStepperDriver::interpreteTemperatureStatus(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data)
 {
     (void)data;  // unused
 
@@ -449,9 +450,9 @@ MockStepperDriver::interpreteCalibrationData(const std::array<uint8_t, MAX_MESSA
         if (_fake_time <= 0 && _fake_time >= -3)
         {
             _fake_time--;
-            _calibration_status.at(_current_id).first = EStepperCalibrationStatus::CALIBRATION_OK;
+            _calibration_status.at(_current_id).first = EStepperCalibrationStatus::OK;
             auto current_calib_status = _calibration_status.at(_current_id);
-            _calibration_status.at(_current_id).first = EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED;
+            _calibration_status.at(_current_id).first = EStepperCalibrationStatus::UNINITIALIZED;
             return current_calib_status;
         }
 
@@ -459,7 +460,7 @@ MockStepperDriver::interpreteCalibrationData(const std::array<uint8_t, MAX_MESSA
         return _calibration_status.at(_current_id);
      }
 
-    return std::make_pair(EStepperCalibrationStatus::CALIBRATION_BAD_PARAM, 0);
+    return std::make_pair(EStepperCalibrationStatus::BAD_PARAM, 0);
 }
 
 /**

@@ -48,7 +48,6 @@ namespace can_driver
 class CanInterfaceCore : public common::util::IDriverCore, public common::util::IInterfaceCore
 {
     public:
-
         CanInterfaceCore(ros::NodeHandle& nh);
         ~CanInterfaceCore() override;
         CanInterfaceCore( const CanInterfaceCore& ) = delete;
@@ -77,7 +76,7 @@ class CanInterfaceCore : public common::util::IDriverCore, public common::util::
 
         void setTrajectoryControllerCommands(std::vector<std::pair<uint8_t, int32_t> >&& cmd);
 
-        void setSyncCommand(std::unique_ptr<common::model::ISynchronizeMotorCmd>&& cmd) override;
+        void addSyncCommandToQueue(std::unique_ptr<common::model::ISynchronizeMotorCmd>&& cmd) override;
 
         void addSingleCommandToQueue(std::unique_ptr<common::model::ISingleMotorCmd>&& cmd) override;
         void addSingleCommandToQueue(std::vector<std::unique_ptr<common::model::ISingleMotorCmd> > cmd) override;
@@ -89,7 +88,6 @@ class CanInterfaceCore : public common::util::IDriverCore, public common::util::
         bool scanMotorId(uint8_t motor_to_find) override;
 
         // getters
-        bool isCalibrationInProgress() const override ;
         int32_t getCalibrationResult(uint8_t id) const override;
         common::model::EStepperCalibrationStatus getCalibrationStatus() const override;
 
@@ -169,16 +167,6 @@ common::model::EBusProtocol
 CanInterfaceCore::getBusProtocol() const
 {
     return common::model::EBusProtocol::CAN;
-}
-
-/**
- * @brief CanInterfaceCore::isCalibrationInProgress
- * @return
- */
-inline
-bool CanInterfaceCore::isCalibrationInProgress() const
-{
-    return _can_manager->isCalibrationInProgress();
 }
 
 /**

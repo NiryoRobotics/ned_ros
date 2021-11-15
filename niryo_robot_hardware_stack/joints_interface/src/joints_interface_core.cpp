@@ -48,17 +48,13 @@ JointsInterfaceCore::JointsInterfaceCore(ros::NodeHandle& rootnh,
     ROS_DEBUG("JointsInterfaceCore::init - Start joint hardware interface");
     _robot.reset(new JointHardwareInterface(rootnh, robot_hwnh, _ttl_interface, _can_interface));
 
-    _robot->sendInitMotorsParams("ned2" != _hardware_version);
+    sendAndReceiveInitMotorsParams("ned2" != _hardware_version);
 
     ROS_DEBUG("JointsInterfaceCore::init - Create controller manager");
     _cm.reset(new controller_manager::ControllerManager(_robot.get(), _nh));
 
     ROS_DEBUG("JointsInterfaceCore::init - Starting ros control thread...");
     _control_loop_thread = std::thread(&JointsInterfaceCore::rosControlLoop, this);
-
-    std::string result_message;
-    int result;
-    activateLearningMode("ned2" != _hardware_version, result, result_message);
 
     ROS_INFO("JointsInterfaceCore::init - Started");
     rootnh.setParam("/niryo_robot_joints_interface/initialized", true);
@@ -204,9 +200,13 @@ void JointsInterfaceCore::activateLearningMode(bool activate, int &ostatus, std:
  * @brief JointsInterfaceCore::sendInitMotorsParams
  * @param learningMode
  */
-void JointsInterfaceCore::sendInitMotorsParams(bool learningMode)
+void JointsInterfaceCore::sendAndReceiveInitMotorsParams(bool learningMode)
 {
     _robot->sendInitMotorsParams(learningMode);
+
+    // read firmware version of all motors when all motor find out
+    if (_ttl_interface)
+        _ttl_interface->readFirmwareVersionStatus();
 }
 
 // *********************
@@ -230,7 +230,6 @@ void JointsInterfaceCore::rosControlLoop()
             current_time = ros::Time::now();
             elapsed_time = ros::Duration(current_time - last_time);
             last_time = current_time;
-            
 
             if (_reset_controller)
             {
@@ -316,13 +315,12 @@ bool JointsInterfaceCore::_callbackCalibrateMotors(niryo_robot_msgs::SetInt::Req
     res.status = result;
     res.message = result_message;
 
-    // special case here
-    // we set flag learning_mode_on, but we don't activate from here
-    // learning_mode should be activated in comm, AFTER motors have been calibrated
-    // --> this fixes an issue where motors will jump back to a previous cmd after being calibrated
     if (niryo_robot_msgs::CommandStatus::SUCCESS == result)
     {
-        activateLearningMode("ned2" != _hardware_version, result, result_message);
+        // we have to reset controller to avoid ros controller set command to the previous position
+        // before the calibration
+        _reset_controller = true;
+        _previous_state_learning_mode = ("ned2" != _hardware_version);
         _enable_control_loop = true;
     }
 

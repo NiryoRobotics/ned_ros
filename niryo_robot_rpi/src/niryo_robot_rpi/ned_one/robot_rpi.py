@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 # robot_rpi.py
 # Copyright (C) 2021 Niryo
 # All rights reserved.
@@ -16,8 +14,6 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-
 
 import rospy
 

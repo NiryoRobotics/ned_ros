@@ -131,7 +131,7 @@ HR_SET_ANALOG_IO = 700
 AIO_ADDRESS_TO_NAME = OrderedDict({0: "AI1",
                                    1: "AI2",
                                    2: "AO1",
-                                   3: "AO2" })
+                                   3: "AO2"})
 
 
 # Positive number : 0 - 32767
