@@ -195,6 +195,12 @@ int AbstractTtlDriver::syncReadConsecutiveBytes(uint16_t address,
     uint16_t data_size = sizeof(T);
     int dxl_comm_result = COMM_TX_FAIL;
 
+    std::string title = "Empty";
+    if (!id_list.empty())
+    {
+        title = std::to_string(id_list.at(0)) + " address: " + std::to_string(static_cast<int>(address)) + " data size: " + std::to_string(static_cast<int>(data_size));
+    }
+
     dynamixel::GroupSyncRead groupSyncRead(_dxlPortHandler.get(), _dxlPacketHandler.get(), address, data_size * N);
 
     for (auto const& id : id_list)
@@ -218,7 +224,17 @@ int AbstractTtlDriver::syncReadConsecutiveBytes(uint16_t address,
 
                 for(uint8_t b = 0; b < N; ++b)
                 {
-                    blocks.at(b) = groupSyncRead.getData(id, address + b * data_size, data_size);
+                    if(N == 8 && id == 2)
+                    {
+                        std::cout << "syncReadConsecutiveBytes: " << title << std::endl;
+                        std::cout << "b: " << b << " -> " << address + b * data_size << std::endl;
+                    }
+                    T data = groupSyncRead.getData(id, address + b * data_size, data_size);
+                    blocks.at(b) = data;
+                    if(N == 8 && id == 2)
+                    {
+                        std::cout << "data: " << data << std::endl;
+                    }
                 }
 
                 data_list.emplace_back(std::move(blocks));

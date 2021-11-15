@@ -740,10 +740,6 @@ void CalibrationManager::moveSteppersToHome()
  */
 void CalibrationManager::sendCalibrationToSteppers()
 {
-    // 1. change status in interfaces
-    if (_stepper_bus_interface)
-      _stepper_bus_interface->startCalibration();
-
     while (!_ttl_interface->isSyncQueueFree())
     {
         ros::Duration(0.2).sleep();
