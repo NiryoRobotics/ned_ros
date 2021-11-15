@@ -125,8 +125,7 @@ TEST_P(DXLCommonTest, zero)
 TEST_P(DXLCommonTest, extremeLow)
 {
     // check to_rad_pos extreme values
-    double totalAngle_rad = dxlState.getTotalAngle() / RADIAN_TO_DEGREE;
-    EXPECT_NEAR(dxlState.to_rad_pos(0), dxlState.getOffsetPosition() - totalAngle_rad/2, precision)
+    EXPECT_NEAR(dxlState.to_rad_pos(0), dxlState.getOffsetPosition(), precision)
                  << "to_motor_pos failed";
 }
 
@@ -135,7 +134,7 @@ TEST_P(DXLCommonTest, extremeHigh)
     double totalAngle_rad = dxlState.getTotalAngle() / RADIAN_TO_DEGREE;
 
     EXPECT_NEAR(dxlState.to_rad_pos(dxlState.getTotalRangePosition()),
-                dxlState.getOffsetPosition() + totalAngle_rad/2, precision)
+                totalAngle_rad + dxlState.getOffsetPosition(), precision)
                 << "to_motor_pos failed";
 }
 

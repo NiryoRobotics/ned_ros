@@ -4,21 +4,50 @@
 steppers:
     stepper_1:
         id: 2
-        gear_ratio: 1
-        offset_position: 1900
+        # gear_ratio, max_effort and micro_steps not used for ttl steppers
+        # assembly offset position (rad)
+        offset_position: -2.9182
+        # home position (rad)
+        home_position: 0.0
+        limit_position: 2.96706
+        # assembly direction (1 or -1)
         direction: 1
-        max_effort: 0
+        v_start: 1
+        a_1: 1600
+        v_1: 3
+        a_max: 3200
+        v_max: 14
+        d_max: 3200
+        d_1: 1600
+        v_stop: 2
 
     stepper_2:
         id: 3
-        gear_ratio: 1
-        offset_position: 371
+        offset_position: 0.5698
+        home_position: 0.5
+        limit_position: 0.610865
         direction: -1
-        max_effort: 0
-
+        v_start: 1
+        a_1: 1300
+        v_1: 3
+        a_max: 2500
+        v_max: 12
+        d_max: 2500
+        d_1: 1300
+        v_stop: 2
+        
     stepper_3:
         id: 4
-        gear_ratio: 1
-        offset_position: 855
+        offset_position: -1.3132
+        home_position: -1.25
+        limit_position: -1.3439
         direction: 1
-        max_effort: 0
+        v_start: 1
+        a_1: 1800
+        v_1: 3
+        a_max: 3000
+        v_max: 12
+        d_max: 3000
+        d_1: 1800
+        v_stop: 2
+

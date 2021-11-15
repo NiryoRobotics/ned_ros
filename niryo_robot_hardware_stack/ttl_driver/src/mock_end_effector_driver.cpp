@@ -219,6 +219,20 @@ int MockEndEffectorDriver::scan(std::vector<uint8_t> &id_list)
     id_list = _fake_data->full_id_list;
     return COMM_SUCCESS;
 }
+
+/**
+ * @brief MockEndEffectorDriver::reboot
+ * @param id
+ * @return
+ */
+int MockEndEffectorDriver::reboot(uint8_t id)
+{
+    if (COMM_SUCCESS != ping(id))
+        return COMM_RX_FAIL;
+
+    return COMM_SUCCESS;
+}
+
 // buttons status
 
 /**

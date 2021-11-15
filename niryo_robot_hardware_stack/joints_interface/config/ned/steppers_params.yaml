@@ -5,24 +5,27 @@ steppers:
     stepper_1:
         id: 1
         gear_ratio: 5.4375
-        offset_position: 2.96706
-        direction: -1
+        offset_position: 0
+        home_position: 0.0
+        limit_position: 2.96706  # limit position is the position used for calibration of stepper can
+        direction: 1
         max_effort: 110
 
     stepper_2:
         id: 2
         gear_ratio: 8.5625
-        offset_position: 0.610865
+        offset_position: 0
+        home_position: 0.5
+        limit_position: 0.610865  # limit position is the position used for calibration of stepper can 
         direction: -1
         max_effort: 130
         
     stepper_3:
         id: 3
         gear_ratio: 7.6875
-        offset_position: -1.3439
+        offset_position: 0
+        home_position: -1.25
+        limit_position: -1.3439  # limit position is the position used for calibration of stepper can
         direction: -1
         max_effort: 120
-
-
-
 

@@ -216,12 +216,14 @@ bool JointHardwareInterface::initStepperState(ros::NodeHandle &robot_hwnh,
         int direction = 1;
         double max_effort = 0.0;
         double home_position = 0.0;
+        double limit_position = 0.0;
 
         robot_hwnh.getParam(currentNamespace + "/offset_position", offsetPos);
         robot_hwnh.getParam(currentNamespace + "/gear_ratio", gear_ratio);
         robot_hwnh.getParam(currentNamespace + "/direction", direction);
         robot_hwnh.getParam(currentNamespace + "/max_effort", max_effort);
         robot_hwnh.getParam(currentNamespace + "/home_position", home_position);
+        robot_hwnh.getParam(currentNamespace + "/limit_position", limit_position);
 
         // acceleration and velocity profiles
         common::model::VelocityProfile profile{};
@@ -275,6 +277,7 @@ bool JointHardwareInterface::initStepperState(ros::NodeHandle &robot_hwnh,
         stepperState->setMaxEffort(max_effort);
         stepperState->setVelocityProfile(profile);
         stepperState->setHomePosition(home_position);
+        stepperState->setLimitPosition(limit_position);
 
         res = true;
     }

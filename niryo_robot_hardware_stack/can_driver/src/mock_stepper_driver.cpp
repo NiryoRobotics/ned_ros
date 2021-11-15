@@ -247,6 +247,7 @@ uint8_t MockStepperDriver::sendRelativeMoveCommand(uint8_t id, int steps, int de
 
     if (_fake_data->stepper_registers.count(id))
     {
+        _fake_data->stepper_registers.at(id).position = steps * -1;
         return CAN_OK;
     }
     return CAN_FAIL;
