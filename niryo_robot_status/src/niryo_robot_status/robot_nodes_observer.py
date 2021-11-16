@@ -20,9 +20,20 @@ class RobotNodesObserver(object):
             self.__vital_nodes += rospy.get_param("~vital_nodes_real")
 
         self.__are_vital_nodes_alive = False
+        self.user_program_is_running = False
         self.__missing_vital_nodes = []
         self.__not_initialized_nodes = []
         self.__check_nodes_timer = None
+
+        self.__check_user_program_timer = rospy.Timer(rospy.Duration.from_sec(0.5),
+                                                      self.__user_programm_is_running_callback)
+
+    def __user_programm_is_running_callback(self):
+        python_prog_is_running = self.check_user_node
+
+        if python_prog_is_running != self.user_program_is_running:
+            self.user_program_is_running = python_prog_is_running
+            self.__robot_status_handler.advertise_new_state()
 
     @property
     def check_user_node(self):

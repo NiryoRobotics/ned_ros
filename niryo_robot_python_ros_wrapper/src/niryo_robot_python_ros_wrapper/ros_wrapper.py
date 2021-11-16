@@ -1554,6 +1554,15 @@ class NiryoRosWrapper:
                     'Timeout: could not get digital io state (/niryo_robot_rpi/digital_io_state topic)')
         return self.__digital_io_state
 
+    def get_analog_io_state(self):
+        timeout = rospy.get_time() + 2.0
+        while self.__analog_io_state is None:
+            rospy.sleep(0.05)
+            if rospy.get_time() > timeout:
+                raise NiryoRosWrapperException(
+                    'Timeout: could not get analog io state (/niryo_robot_rpi/analog_io_state topic)')
+        return self.__analog_io_state
+
     def get_hardware_version(self):
         """
         Get the robot hardware version
