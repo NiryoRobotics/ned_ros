@@ -699,9 +699,6 @@ void CalibrationManager::moveRobotBeforeCalibration()
  */
 void CalibrationManager::moveSteppersToHome()
 {
-    // 1. set torque on
-    activateTorque(true);
-
     // 2. move all steppers to offsetPosition (Home)
     StepperTtlSyncCmd stepper_ttl_cmd(EStepperCommandType::CMD_TYPE_POSITION);
 
