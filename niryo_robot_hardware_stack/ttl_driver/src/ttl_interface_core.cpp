@@ -780,7 +780,7 @@ int TtlInterfaceCore::setEndEffector(const std::shared_ptr<common::model::EndEff
   }
   else
   {
-      ROS_WARN("TtlInterfaceCore::setTool - No end effector found with id %d", end_effector_state->getId());
+      ROS_WARN("TtlInterfaceCore::setEndEffector - No end effector found with id %d", end_effector_state->getId());
   }
 
   return result;
