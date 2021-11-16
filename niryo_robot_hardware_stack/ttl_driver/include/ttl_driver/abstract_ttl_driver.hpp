@@ -59,7 +59,7 @@ public:
     virtual std::string str() const;
 
     // here are only common TTL commands found in both Steppers and DXl
-    virtual std::string interpreteErrorState(uint32_t hw_state) const = 0;
+    virtual std::string interpretErrorState(uint32_t hw_state) const = 0;
 
     // eeprom write
 
@@ -102,7 +102,7 @@ protected:
 
     static constexpr int PING_WRONG_MODEL_NUMBER = 30;
 
-    virtual std::string interpreteFirmwareVersion(uint32_t fw_version) const = 0;
+    virtual std::string interpretFirmwareVersion(uint32_t fw_version) const = 0;
 
 private:
     std::shared_ptr<dynamixel::PortHandler> _dxlPortHandler;

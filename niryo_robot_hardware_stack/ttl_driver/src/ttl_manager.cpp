@@ -993,7 +993,7 @@ bool TtlManager::readHardwareStatus()
                         if (hw_error_status_list.size() > i)
                         {
                             state->setHardwareError(hw_error_status_list.at(i));
-                            string hardware_message = stepper_driver->interpreteErrorState(hw_error_status_list.at(i));
+                            string hardware_message = stepper_driver->interpretErrorState(hw_error_status_list.at(i));
                             state->setHardwareError(hardware_message);
                         }
                     }
@@ -1022,21 +1022,22 @@ bool TtlManager::readHardwareStatus()
                         hw_errors_increment++;
                     }
 
+                    EStepperCalibrationStatus max_status = EStepperCalibrationStatus::UNINITIALIZED;
+                    bool isInProgress = false;
                     // set states accordingly
                     for (size_t i = 0; i < steppers_list.size() && i < homing_status_list.size(); ++i)
                     {
                         uint8_t id = steppers_list.at(i);
-                        int max_status = 0;
-                        bool isInProgress = false;
 
                         if (_state_map.count(id))
                         {
                             auto stepperState = std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(id));
+                            EStepperCalibrationStatus homing_status = stepper_driver->interpretHomingData(homing_status_list.at(i));
 
                             // get min status of all motors (to retrieve potential errors)
-                            max_status = max_status < homing_status_list.at(i) ? homing_status_list.at(i) : max_status;
+                            max_status = static_cast<int>(max_status) < static_cast<int>(homing_status) ? homing_status : max_status;
 
-                            EStepperCalibrationStatus status = stepper_driver->interpreteHomingData(homing_status_list.at(i));
+                            EStepperCalibrationStatus status = stepper_driver->interpretHomingData(homing_status_list.at(i));
 
                             // if one status is in progress, we are still in progress
                             if (EStepperCalibrationStatus::IN_PROGRESS == status)
@@ -1047,12 +1048,11 @@ bool TtlManager::readHardwareStatus()
                                 stepperState->setCalibration(status, 1);
                             }
                         }
-
-                        if (!isInProgress && max_status != 0)
-                        {
-                            _calibration_status = stepper_driver->interpreteHomingData(static_cast<uint8_t>(max_status));
-                        }
                     }  // for steppers_list
+                    if (!isInProgress && max_status != EStepperCalibrationStatus::UNINITIALIZED)
+                    {
+                        _calibration_status = max_status;
+                    }
                 }
             }
 

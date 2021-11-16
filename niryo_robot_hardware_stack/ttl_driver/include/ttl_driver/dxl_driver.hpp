@@ -47,7 +47,7 @@ class DxlDriver : public AbstractDxlDriver
                   std::shared_ptr<dynamixel::PacketHandler> packetHandler);
 
         std::string str() const override;
-        std::string interpreteErrorState(uint32_t hw_state) const override;
+        std::string interpretErrorState(uint32_t hw_state) const override;
 
     public:
         int checkModelNumber(uint8_t id) override;
@@ -66,7 +66,7 @@ class DxlDriver : public AbstractDxlDriver
 
     protected:
         // AbstractTtlDriver interface
-        std::string interpreteFirmwareVersion(uint32_t fw_version) const override;
+        std::string interpretFirmwareVersion(uint32_t fw_version) const override;
 
     public:
         // AbstractMotorDriver interface : we cannot define them globally in AbstractMotorDriver
@@ -153,22 +153,22 @@ std::string DxlDriver<reg_type>::str() const
 }
 
 /**
- * @brief DxlDriver<reg_type>::interpreteErrorState
+ * @brief DxlDriver<reg_type>::interpretErrorState
  * @return
  */
 template<typename reg_type>
-std::string DxlDriver<reg_type>::interpreteErrorState(uint32_t /*hw_state*/) const
+std::string DxlDriver<reg_type>::interpretErrorState(uint32_t /*hw_state*/) const
 {
     return "";
 }
 
 /**
- * @brief DxlDriver<reg_type>::interpreteFirmwareVersion
+ * @brief DxlDriver<reg_type>::interpretFirmwareVersion
  * @param fw_version
  * @return
  */
 template<typename reg_type>
-std::string DxlDriver<reg_type>::interpreteFirmwareVersion(uint32_t fw_version) const
+std::string DxlDriver<reg_type>::interpretFirmwareVersion(uint32_t fw_version) const
 {
     std::string version = std::to_string(static_cast<uint8_t>(fw_version));
 
@@ -221,7 +221,7 @@ int DxlDriver<reg_type>::readFirmwareVersion(uint8_t id, std::string &version)
     int res = COMM_RX_FAIL;
     uint8_t data{};
     res = read<typename reg_type::TYPE_FIRMWARE_VERSION>(reg_type::ADDR_FIRMWARE_VERSION, id, data);
-    version = interpreteFirmwareVersion(data);
+    version = interpretFirmwareVersion(data);
     return res;
 }
 
@@ -437,7 +437,7 @@ int DxlDriver<reg_type>::syncReadFirmwareVersion(const std::vector<uint8_t> &id_
     std::vector<uint8_t> data_list;
     res = syncRead<typename reg_type::TYPE_FIRMWARE_VERSION>(reg_type::ADDR_FIRMWARE_VERSION, id_list, data_list);
     for(auto const& data : data_list)
-      firmware_list.emplace_back(interpreteFirmwareVersion(data));
+      firmware_list.emplace_back(interpretFirmwareVersion(data));
     return res;
 }
 
@@ -886,7 +886,7 @@ inline int DxlDriver<XL320Reg>::readMaxPosition(uint8_t /*id*/, uint32_t &pos)
 }
 
 template<>
-inline std::string DxlDriver<XL320Reg>::interpreteErrorState(uint32_t hw_state) const
+inline std::string DxlDriver<XL320Reg>::interpretErrorState(uint32_t hw_state) const
 {
     std::string hardware_message;
 
@@ -1024,7 +1024,7 @@ inline int DxlDriver<XL320Reg>::syncWriteVelocityGoal(const std::vector<uint8_t>
 // XL430
 
 template<>
-inline std::string DxlDriver<XL430Reg>::interpreteErrorState(uint32_t hw_state) const
+inline std::string DxlDriver<XL430Reg>::interpretErrorState(uint32_t hw_state) const
 {
     std::string hardware_message;
 
@@ -1079,7 +1079,7 @@ inline int DxlDriver<XL430Reg>::syncWriteTorqueGoal(const std::vector<uint8_t> &
 // XC430
 
 template<>
-inline std::string DxlDriver<XC430Reg>::interpreteErrorState(uint32_t hw_state) const
+inline std::string DxlDriver<XC430Reg>::interpretErrorState(uint32_t hw_state) const
 {
     std::string hardware_message;
 
@@ -1134,7 +1134,7 @@ inline int DxlDriver<XC430Reg>::syncWriteTorqueGoal(const std::vector<uint8_t> &
 // XL330
 
 template<>
-inline std::string DxlDriver<XL330Reg>::interpreteErrorState(uint32_t hw_state) const
+inline std::string DxlDriver<XL330Reg>::interpretErrorState(uint32_t hw_state) const
 {
     std::string hardware_message;
 

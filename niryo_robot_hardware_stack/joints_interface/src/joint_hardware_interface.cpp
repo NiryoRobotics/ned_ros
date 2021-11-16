@@ -509,12 +509,6 @@ int JointHardwareInterface::calibrateJoints(int mode, string &result_message)
     {
         if (needCalibration())
         {
-            // 1. change status in interfaces
-            if (_can_interface)
-                _can_interface->startCalibration();
-            else
-                _ttl_interface->startCalibration();
-
             // sleep for 3 seconds, waiting for light and sound
             ros::Duration(3.0).sleep();
 
