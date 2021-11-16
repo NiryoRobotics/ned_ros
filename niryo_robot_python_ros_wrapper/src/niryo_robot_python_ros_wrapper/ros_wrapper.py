@@ -1202,7 +1202,7 @@ class NiryoRosWrapper:
 
     def get_current_tool_id(self):
         """
-        Use /niryo_robot_hardware/tools/current_id  topic to get current tool id
+        Use /niryo_robot_tools_commander/current_id  topic to get current tool id
 
         :return: Tool Id
         :rtype: ToolID

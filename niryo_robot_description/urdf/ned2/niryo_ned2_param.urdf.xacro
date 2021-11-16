@@ -7,8 +7,8 @@
 
     <xacro:property name="distance_hand_tool" value="0.0215"/>
 
-    <xacro:property name="limit_low_shoulder_rotation" value="-170.0"/>
-    <xacro:property name="limit_up_shoulder_rotation" value="170.0"/>
+    <xacro:property name="limit_low_shoulder_rotation" value="-169.0"/>
+    <xacro:property name="limit_up_shoulder_rotation" value="169.0"/>
     <xacro:property name="limit_low_arm_rotation" value="-120.0"/>
     <xacro:property name="limit_up_arm_rotation" value="35.0"/>
     <xacro:property name="limit_low_elbow_rotation" value="-77.0"/>

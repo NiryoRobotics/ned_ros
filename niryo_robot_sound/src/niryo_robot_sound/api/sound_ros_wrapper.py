@@ -6,6 +6,7 @@ from niryo_robot_sound.msg import SoundList
 # - Services
 from niryo_robot_sound.srv import PlaySound
 from niryo_robot_msgs.srv import SetInt, Trigger
+from niryo_robot_sound.srv import ManageSound, ManageSoundRequest
 
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus
@@ -53,7 +54,7 @@ class SoundRosWrapper(object):
         self.__sounds = msg.sounds
 
     @check_ned2_version
-    def play(self, sound_name, start_time_sec=0, end_time_sec=0, wait_end=0):
+    def play(self, sound_name, start_time_sec=0, end_time_sec=0, wait_end=True):
         """
         Call service to play_sound according to SoundStateCommand.
         If failed, raise NiryoRosWrapperException
@@ -105,42 +106,35 @@ class SoundRosWrapper(object):
         rospy.sleep(0.1)
         return self.__classic_return_w_check(result)
 
-    #
-    # def delete_sound(self, sound_name):
-    #     """
-    #     Call service delete_sound to delete a sound on the RaspberryPi of the robot.
-    #     If failed, raise NiryoRosWrapperException
-    #
-    #     :param sound_name: name of the sound which needs to be deleted
-    #     :type string: String
-    #     :return: status, message
-    #     :rtype: (int, str)
-    #     """
-    #     result = self.__call_service('/niryo_robot_sound/delete_sound_user',
-    #                                  DeleteSound, sound_name)
-    #     rospy.sleep(0.1)
-    #     return self.__classic_return_w_check(result)
-    #
-    #
-    # def import_sound(self, sound_name, sound_data):
-    #     """
-    #     Call service import_sound to delete a sound on the RaspberryPi of the robot.
-    #     If failed, raise NiryoRosWrapperException
-    #
-    #     :param sound_name, sound_data: name of the sound which needs to be deleted,
-    #            encoded data from the sound (wav or mp3), encoded data from the sound file (wav or mp3)
-    #     :type string, string: String, String containing the encoded data of the sound file
-    #     :return: status, message
-    #     :rtype: (int, str)
-    #     """
-    #     req = SendUserSound()
-    #     req.sound_name = sound_name
-    #     req.sound_data = sound_data
-    #     result = self.__call_service('/niryo_robot_sound/send_sound',
-    #                                  SendUserSound, req)
-    #     rospy.sleep(0.1)
-    #     print(result)
-    #     return self.__classic_return_w_check(result)
+    def delete_sound(self, sound_name):
+        """
+        Call service delete_sound to delete a sound on the RaspberryPi of the robot.
+        If failed, raise NiryoRosWrapperException
+
+        :param sound_name: name of the sound which needs to be deleted
+        :type string: String
+        :return: status, message
+        :rtype: (int, str)
+        """
+        req = ManageSoundRequest(sound_name=sound_name, action=ManageSoundRequest.DELETE)
+        result = self.__call_service('/niryo_robot_sound/manage', ManageSound, req)
+        return self.__classic_return_w_check(result)
+
+    def import_sound(self, sound_name, sound_data):
+        """
+        Call service import_sound to delete a sound on the RaspberryPi of the robot.
+        If failed, raise NiryoRosWrapperException
+
+        :param sound_name, sound_data: name of the sound which needs to be deleted,
+               encoded data from the sound (wav or mp3), encoded data from the sound file (wav or mp3)
+        :type string, string: String, String containing the encoded data of the sound file
+        :return: status, message
+        :rtype: (int, str)
+        """
+        print(sound_data)
+        req = ManageSoundRequest(sound_name=sound_name, action=ManageSoundRequest.DELETE, sound_data=sound_data)
+        result = self.__call_service('/niryo_robot_sound/send_sound', ManageSound, req)
+        return self.__classic_return_w_check(result)
 
     # --- Functions interface
     def __call_service(self, service_name, service_msg_type, *args):
