@@ -477,6 +477,15 @@ int MockStepperDriver::syncReadJointStatus(const std::vector<uint8_t> &id_list,
 
             data_array_list.emplace_back(std::move(blocks));
         }
+        if (_fake_data->dxl_registers.count(id))
+        {
+            std::array<uint32_t, 2> blocks;
+
+            blocks.at(0) = _fake_data->dxl_registers.at(id).velocity;
+            blocks.at(1) = _fake_data->dxl_registers.at(id).position;
+
+            data_array_list.emplace_back(std::move(blocks));
+        }
         else
             return COMM_RX_FAIL;
         auto result = countSet.insert(id);

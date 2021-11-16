@@ -432,7 +432,7 @@ void JointHardwareInterface::read(const ros::Time &/*time*/, const ros::Duration
         }
     }
 
-    if ((_can_interface && !_can_interface->isConnectionOk()) || (_ttl_interface && !_ttl_interface->isConnectionOk()))
+    if (!needCalibration() && ((_can_interface && !_can_interface->isConnectionOk()) || (_ttl_interface && !_ttl_interface->isConnectionOk())))
         this->setNeedCalibration();
 }
 
@@ -509,7 +509,16 @@ int JointHardwareInterface::calibrateJoints(int mode, string &result_message)
     {
         if (needCalibration())
         {
-          calib_res = _calibration_manager->startCalibration(mode, result_message);
+            // 1. change status in interfaces
+            if (_can_interface)
+                _can_interface->startCalibration();
+            else
+                _ttl_interface->startCalibration();
+
+            // sleep for 3 seconds, waiting for light and sound
+            ros::Duration(3.0).sleep();
+
+            calib_res = _calibration_manager->startCalibration(mode, result_message);
         }
         else
         {

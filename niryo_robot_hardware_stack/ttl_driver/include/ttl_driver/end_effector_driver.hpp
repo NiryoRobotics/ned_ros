@@ -23,7 +23,6 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <iostream>
 #include <sstream>
 #include <cassert>
-#include <ros/ros.h>
 
 #include "abstract_end_effector_driver.hpp"
 
@@ -402,8 +401,6 @@ int EndEffectorDriver<reg_type>::readCollisionStatus(uint8_t id, bool& status)
     if (res == COMM_SUCCESS)
     {
         status = (value > 0) ? true : false;
-        if (status)
-            ROS_ERROR("test read collistion status %d", value);
     }
     return res;
 }

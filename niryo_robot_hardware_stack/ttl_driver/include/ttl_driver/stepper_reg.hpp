@@ -95,6 +95,7 @@ struct StepperReg
 
     // acceleration profile
 
+    using TYPE_VELOCITY_PROFILE = uint32_t;
     static constexpr uint16_t ADDR_VSTART                   = 1024;
     static constexpr uint8_t SIZE_VSTART                    = 4;
 

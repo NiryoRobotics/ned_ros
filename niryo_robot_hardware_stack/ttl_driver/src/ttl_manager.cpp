@@ -659,7 +659,7 @@ bool TtlManager::readJointsStatus()
         }
     }  // for driver_map
 
-    ROS_DEBUG("_hw_fail_counter_read, hw_errors_increment: %d, %d", _hw_fail_counter_read, hw_errors_increment);
+    ROS_DEBUG_THROTTLE(2, "_hw_fail_counter_read, hw_errors_increment: %d, %d", _hw_fail_counter_read, hw_errors_increment);
 
     // we reset the global error variable only if no errors
     if (0 == hw_errors_increment)
@@ -691,17 +691,28 @@ bool TtlManager::readEndEffectorStatus()
 {
     bool res = false;
 
+    EHardwareType ee_type;
+    std::shared_ptr<AbstractEndEffectorDriver> driver;
+    if (_driver_map.count(EHardwareType::END_EFFECTOR))
+    {
+        ee_type = EHardwareType::END_EFFECTOR;
+    }
+    else if (_driver_map.count(EHardwareType::FAKE_END_EFFECTOR))
+    {
+        ee_type = EHardwareType::FAKE_END_EFFECTOR;
+    }
     // if has end effector driver
-    if (_driver_map.count(EHardwareType::END_EFFECTOR) && !isCalibrationInProgress())
+    if (!isCalibrationInProgress())
     {
         unsigned int hw_errors_increment = 0;
-        auto driver = std::dynamic_pointer_cast<EndEffectorDriver<EndEffectorReg> >(_driver_map.at(EHardwareType::END_EFFECTOR));
+
+        auto driver = std::dynamic_pointer_cast<AbstractEndEffectorDriver>(_driver_map.at(ee_type));
 
         if (driver)
         {
-            if (_ids_map.count(EHardwareType::END_EFFECTOR))
+            if (_ids_map.count(ee_type))
             {
-                uint8_t id = _ids_map.at(EHardwareType::END_EFFECTOR).front();
+                uint8_t id = _ids_map.at(ee_type).front();
 
                 if (_state_map.count(id))
                 {
@@ -736,7 +747,7 @@ bool TtlManager::readEndEffectorStatus()
                         }
 
                         // not accept other status of collistion in 1 second if it detected a collision
-                        if ((ros::Time::now().toSec() - _last_collision_detected) < 1.0)
+                        if (_last_collision_detected == 0.0)
                         {
                             if (COMM_SUCCESS == driver->readCollisionStatus(id, _collision_status))
                             {
@@ -744,11 +755,9 @@ bool TtlManager::readEndEffectorStatus()
                                     _last_collision_detected = ros::Time::now().toSec();
                             }
                             else
-                            {
-                                 hw_errors_increment++;
-                            }
+                                hw_errors_increment++;
                         }
-                        else
+                        else if (ros::Time::now().toSec() - _last_collision_detected >= 1.0)
                         {
                             _last_collision_detected = 0.0;
                         }
