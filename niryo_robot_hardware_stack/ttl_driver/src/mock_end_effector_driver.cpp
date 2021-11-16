@@ -246,7 +246,7 @@ int MockEndEffectorDriver::readButton0Status(uint8_t id, common::model::EActionT
     if (COMM_SUCCESS != ping(id))
         return COMM_RX_FAIL;
 
-    action = interpreteActionValue(_fake_data->end_effector.button0_action);
+    action = interpretActionValue(_fake_data->end_effector.button0_action);
     return COMM_SUCCESS;
 }
 
@@ -261,7 +261,7 @@ int MockEndEffectorDriver::readButton1Status(uint8_t id, common::model::EActionT
     if (COMM_SUCCESS != ping(id))
         return COMM_RX_FAIL;
 
-    action = interpreteActionValue(_fake_data->end_effector.button1_action);
+    action = interpretActionValue(_fake_data->end_effector.button1_action);
     return COMM_SUCCESS;
 }
 
@@ -276,7 +276,7 @@ int MockEndEffectorDriver::readButton2Status(uint8_t id, common::model::EActionT
     if (COMM_SUCCESS != ping(id))
         return COMM_RX_FAIL;
 
-    action = interpreteActionValue(_fake_data->end_effector.button2_action);
+    action = interpretActionValue(_fake_data->end_effector.button2_action);
     return COMM_SUCCESS;
 }
 
@@ -287,9 +287,9 @@ int MockEndEffectorDriver::syncReadButtonsStatus(const uint8_t &id, std::vector<
     if (COMM_SUCCESS != ping(id))
         return COMM_RX_FAIL;
 
-    action_list.emplace_back(interpreteActionValue(_fake_data->end_effector.button0_action));
-    action_list.emplace_back(interpreteActionValue(_fake_data->end_effector.button1_action));
-    action_list.emplace_back(interpreteActionValue(_fake_data->end_effector.button2_action));
+    action_list.emplace_back(interpretActionValue(_fake_data->end_effector.button0_action));
+    action_list.emplace_back(interpretActionValue(_fake_data->end_effector.button1_action));
+    action_list.emplace_back(interpretActionValue(_fake_data->end_effector.button2_action));
 
     return COMM_SUCCESS;
 }

@@ -787,6 +787,7 @@ void CalibrationManager::sendCalibrationToSteppers()
                                                             StepperTtlSingleCmd(EStepperCommandType::CMD_TYPE_CALIBRATION,
                                                                                 id)));
                 }
+                _stepper_bus_interface->startCalibration();
             }
         }
     }

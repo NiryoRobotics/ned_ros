@@ -135,11 +135,11 @@ int AbstractStepperDriver::writeSyncCmd(int type, const std::vector<uint8_t>& id
 }
 
 /**
- * @brief AbstractStepperDriver::interpreteFirmwareVersion
+ * @brief AbstractStepperDriver::interpretFirmwareVersion
  * @param fw_version
  * @return
  */
-std::string AbstractStepperDriver::interpreteFirmwareVersion(uint32_t fw_version) const
+std::string AbstractStepperDriver::interpretFirmwareVersion(uint32_t fw_version) const
 {
     auto v_major = static_cast<uint8_t>(fw_version >> 24);
     auto v_minor = static_cast<uint16_t>(fw_version >> 8);
@@ -155,12 +155,12 @@ std::string AbstractStepperDriver::interpreteFirmwareVersion(uint32_t fw_version
 }
 
 /**
- * @brief AbstractStepperDriver::interpreteHomingStatus
+ * @brief AbstractStepperDriver::interpretHomingStatus
  * @param fw_version
  * @return
  */
 common::model::EStepperCalibrationStatus
-AbstractStepperDriver::interpreteHomingData(uint8_t status) const
+AbstractStepperDriver::interpretHomingData(uint8_t status) const
 {
     EStepperCalibrationStatus homing_status{EStepperCalibrationStatus::UNINITIALIZED};
 

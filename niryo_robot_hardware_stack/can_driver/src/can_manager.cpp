@@ -288,27 +288,27 @@ void CanManager::readStatus()
                     switch (control_byte)
                     {
                         case AbstractStepperDriver::CAN_DATA_POSITION:
-                            stepperState->setPosition(driver->interpretePositionStatus(rxBuf));
+                            stepperState->setPosition(driver->interpretPositionStatus(rxBuf));
                             break;
                         case AbstractStepperDriver::CAN_DATA_DIAGNOSTICS:
-                            stepperState->setTemperature(driver->interpreteTemperatureStatus(rxBuf));
+                            stepperState->setTemperature(driver->interpretTemperatureStatus(rxBuf));
                             break;
                         case AbstractStepperDriver::CAN_DATA_FIRMWARE_VERSION:
-                            stepperState->setFirmwareVersion(driver->interpreteFirmwareVersion(rxBuf));
+                            stepperState->setFirmwareVersion(driver->interpretFirmwareVersion(rxBuf));
                             break;
                         case AbstractStepperDriver::CAN_DATA_CONVEYOR_STATE:
                         {
                             auto cState = std::dynamic_pointer_cast<ConveyorState>(stepperState);
                             if (cState)
                             {
-                                cState->updateData(driver->interpreteConveyorData(rxBuf));
+                                cState->updateData(driver->interpretConveyorData(rxBuf));
                                 cState->setGoalDirection(cState->getGoalDirection() * cState->getDirection());
                             }
                             break;
                         }
                         case AbstractStepperDriver::CAN_DATA_CALIBRATION_RESULT:
                         {
-                            stepperState->setCalibration(driver->interpreteCalibrationData(rxBuf));
+                            stepperState->setCalibration(driver->interpretCalibrationData(rxBuf));
                             updateCurrentCalibrationStatus();
                             break;
                         }

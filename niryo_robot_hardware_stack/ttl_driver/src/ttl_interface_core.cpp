@@ -602,6 +602,11 @@ void TtlInterfaceCore::controlLoop()
                     _ttl_manager->readJointsStatus();
                     _time_hw_data_last_read = ros::Time::now().toSec();
                 }
+                if (ros::Time::now().toSec() - _time_hw_data_last_write >= _delta_time_write)
+                {
+                    _executeCommand();
+                    _time_hw_data_last_write = ros::Time::now().toSec();
+                }
                 if (ros::Time::now().toSec() - _time_hw_status_last_read >= _delta_time_status_read)
                 {
                     _ttl_manager->readHardwareStatus();
@@ -612,11 +617,6 @@ void TtlInterfaceCore::controlLoop()
                 {
                     _ttl_manager->readEndEffectorStatus();
                     _time_hw_end_effector_last_read = ros::Time::now().toSec();
-                }
-                if (ros::Time::now().toSec() - _time_hw_data_last_write >= _delta_time_write)
-                {
-                    _executeCommand();
-                    _time_hw_data_last_write = ros::Time::now().toSec();
                 }
             }
             else

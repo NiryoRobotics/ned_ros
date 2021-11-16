@@ -50,10 +50,10 @@ std::string AbstractEndEffectorDriver::str() const
 }
 
 /**
- * @brief MockEndEffectorDriver::interpreteErrorState
+ * @brief MockEndEffectorDriver::interpretErrorState
  * @return
  */
-std::string AbstractEndEffectorDriver::interpreteErrorState(uint32_t hw_state) const
+std::string AbstractEndEffectorDriver::interpretErrorState(uint32_t hw_state) const
 {
     std::string hardware_message;
 
@@ -76,10 +76,10 @@ std::string AbstractEndEffectorDriver::interpreteErrorState(uint32_t hw_state) c
 }
 
 /**
- * @brief MockEndEffectorDriver::interpreteFirwmareVersion
+ * @brief MockEndEffectorDriver::interpretFirmawreVersion
  * @return
  */
-std::string AbstractEndEffectorDriver::interpreteFirmwareVersion(uint32_t fw_version) const
+std::string AbstractEndEffectorDriver::interpretFirmwareVersion(uint32_t fw_version) const
 {
     auto v_major = static_cast<uint8_t>(fw_version >> 24);
     auto v_minor = static_cast<uint16_t>(fw_version >> 8);
@@ -95,12 +95,12 @@ std::string AbstractEndEffectorDriver::interpreteFirmwareVersion(uint32_t fw_ver
 }
 
 /**
- * @brief MockEndEffectorDriver::interpreteActionValue
+ * @brief MockEndEffectorDriver::interpretActionValue
  * @param value
  * @return
  */
 common::model::EActionType
-AbstractEndEffectorDriver::interpreteActionValue(uint32_t value) const
+AbstractEndEffectorDriver::interpretActionValue(uint32_t value) const
 {
   common::model::EActionType action = common::model::EActionType::NO_ACTION;
 

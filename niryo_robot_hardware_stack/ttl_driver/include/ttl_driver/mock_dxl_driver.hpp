@@ -51,7 +51,7 @@ class MockDxlDriver : public AbstractDxlDriver
         int scan(std::vector<uint8_t>& id_list) override;
         int reboot(uint8_t id) override;
 
-        std::string interpreteErrorState(uint32_t hw_state) const override;
+        std::string interpretErrorState(uint32_t hw_state) const override;
 
         int readCustom(uint16_t address, uint8_t data_len, uint8_t id, uint32_t& data) override;
         int writeCustom(uint16_t address, uint8_t data_len, uint8_t id, uint32_t data) override;
@@ -116,7 +116,7 @@ class MockDxlDriver : public AbstractDxlDriver
 
         // AbstractTtlDriver interface
     protected:
-        std::string interpreteFirmwareVersion(uint32_t fw_version) const override;
+        std::string interpretFirmwareVersion(uint32_t fw_version) const override;
 
 };
 

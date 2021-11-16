@@ -61,14 +61,14 @@ public:
     virtual int readDigitalInput(uint8_t id, bool& in) = 0;
     virtual int writeDigitalOutput(uint8_t id, bool out) = 0;
 
-    std::string interpreteErrorState(uint32_t hw_state) const override;
+    std::string interpretErrorState(uint32_t hw_state) const override;
 
-    common::model::EActionType interpreteActionValue(uint32_t value) const;
+    common::model::EActionType interpretActionValue(uint32_t value) const;
 
     // AbstractTtlDriver interface
 protected:
     std::string str() const override;
-    std::string interpreteFirmwareVersion(uint32_t fw_version) const override;
+    std::string interpretFirmwareVersion(uint32_t fw_version) const override;
 
     // AbstractTtlDriver interface
 public:

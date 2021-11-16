@@ -103,10 +103,10 @@ int MockDxlDriver::reboot(uint8_t id)
 }
 
 /**
- * @brief MockDxlDriver::interpreteErrorState
+ * @brief MockDxlDriver::interpretErrorState
  * @return
  */
-std::string MockDxlDriver::interpreteErrorState(uint32_t /*hw_state*/) const
+std::string MockDxlDriver::interpretErrorState(uint32_t /*hw_state*/) const
 {
     return "";
 }
@@ -806,11 +806,11 @@ int MockDxlDriver::syncReadLoad(const std::vector<uint8_t> &id_list, std::vector
 }
 
 /**
- * @brief MockDxlDriver::interpreteFirmwareVersion
+ * @brief MockDxlDriver::interpretFirmwareVersion
  * @param fw_version
  * @return
  */
-std::string MockDxlDriver::interpreteFirmwareVersion(uint32_t fw_version) const
+std::string MockDxlDriver::interpretFirmwareVersion(uint32_t fw_version) const
 {
     return std::to_string(fw_version);
 }
