@@ -431,37 +431,37 @@ bool TtlManager::ping(uint8_t id)
 }
 
 /**
- * @brief TtlManager::rebootMotor
+ * @brief TtlManager::rebootHwComponent
  * @param motor_id
  * @return
  */
-int TtlManager::rebootHwComponent(uint8_t motor_id)
+int TtlManager::rebootHardware(uint8_t hw_id)
 {
     int return_value = COMM_TX_FAIL;
 
-    if (_state_map.count(motor_id) != 0 && _state_map.at(motor_id))
+    if (_state_map.count(hw_id) != 0 && _state_map.at(hw_id))
     {
-        EHardwareType type = _state_map.at(motor_id)->getHardwareType();
-        ROS_DEBUG("TtlManager::rebootMotors - Reboot motor with ID: %d", motor_id);
+        EHardwareType type = _state_map.at(hw_id)->getHardwareType();
+        ROS_DEBUG("TtlManager::rebootHardware - Reboot hardware with ID: %d", hw_id);
         if (_driver_map.count(type))
         {
-            return_value = _driver_map.at(type)->reboot(motor_id);
+            return_value = _driver_map.at(type)->reboot(hw_id);
             if (COMM_SUCCESS == return_value)
             {
                 ros::Time start_time = ros::Time::now();
                 std::string fw_version = "";
 
                 // update firmware version
-                while (COMM_SUCCESS != _driver_map.at(type)->readFirmwareVersion(motor_id, fw_version))
+                while (COMM_SUCCESS != _driver_map.at(type)->readFirmwareVersion(hw_id, fw_version))
                 {
                     if ((ros::Time::now() - start_time).toSec() > 1)
                         break;
                     ros::Duration(0.1).sleep();
                 }
-                _state_map.at(motor_id)->setFirmwareVersion(fw_version);
+                _state_map.at(hw_id)->setFirmwareVersion(fw_version);
             }
             ROS_WARN_COND(COMM_SUCCESS != return_value,
-                          "TtlManager::rebootMotors - Failed to reboot motor: %d",
+                          "TtlManager::rebootHardware - Failed to reboot hardware: %d",
                           return_value);
         }
     }

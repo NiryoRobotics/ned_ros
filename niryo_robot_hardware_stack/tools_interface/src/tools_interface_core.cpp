@@ -94,7 +94,7 @@ bool ToolsInterfaceCore::init(ros::NodeHandle &nh)
 bool ToolsInterfaceCore::rebootHardware(bool torque_on)
 {
     // reboot
-    bool res = _ttl_interface->rebootMotor(_toolState);
+    bool res = _ttl_interface->rebootHardware(_toolState);
 
     // re init
     initHardware(torque_on);
@@ -124,7 +124,6 @@ int ToolsInterfaceCore::initHardware(bool torque_on)
     // TORQUE cmd on if ned2, off otherwise
     _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_TORQUE,
                                                                            motor_id, std::initializer_list<uint32_t>{torque_on}));
-
     return niryo_robot_msgs::CommandStatus::SUCCESS;
 }
 

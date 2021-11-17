@@ -86,7 +86,7 @@ class CanInterfaceCore : public common::util::IDriverCore, public common::util::
 
         // direct commands
         bool scanMotorId(uint8_t motor_to_find) override;
-        bool rebootMotor(const std::shared_ptr<common::model::AbstractMotorState>& motor_state) override;
+        bool rebootHardware(const std::shared_ptr<common::model::AbstractHardwareState>& motor_state) override;
 
         // getters
         int32_t getCalibrationResult(uint8_t id) const override;

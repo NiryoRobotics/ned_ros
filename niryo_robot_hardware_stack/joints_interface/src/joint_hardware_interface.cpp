@@ -486,7 +486,7 @@ bool JointHardwareInterface::rebootAll(bool torque_on)
     bool res = true;
     for (auto state : _joint_state_list)
     {
-        if  (_ttl_interface->rebootMotor(state))
+        if  (_ttl_interface->rebootHardware(state))
         {
             initHardware(state, torque_on);
         }

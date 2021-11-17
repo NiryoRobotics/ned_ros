@@ -202,15 +202,15 @@ void TtlInterfaceCore::startSubscribers(ros::NodeHandle &/*nh*/)
  * @brief TtlInterfaceCore::rebootMotor
  * @return
  */
-bool TtlInterfaceCore::rebootMotor(const std::shared_ptr<common::model::AbstractMotorState> &motor_state)
+bool TtlInterfaceCore::rebootHardware(const std::shared_ptr<common::model::AbstractHardwareState> &hw_state)
 {
     int result = COMM_TX_FAIL;
 
-    if (motor_state && motor_state->isValid())
+    if (hw_state && hw_state->isValid())
     {
-        ROS_INFO("TtlInterfaceCore::rebootMotor - Reboot motor %d", static_cast<int>(motor_state->getId()));
+        ROS_INFO("TtlInterfaceCore::rebootHardware - Reboot hardware %d", static_cast<int>(hw_state->getId()));
         lock_guard<mutex> lck(_control_loop_mutex);
-        result = _ttl_manager->rebootHwComponent(motor_state->getId());
+        result = _ttl_manager->rebootHardware(hw_state->getId());
         ros::Duration(1.5).sleep();
     }
 
