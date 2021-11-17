@@ -399,7 +399,7 @@ int TtlManager::scanAndCheck()
         else
         {
             _debug_error_message = "Motor(s):" + error_motors_message + " do not seem to be connected";
-            result = TTL_SCAN_MISSING_MOTOR; 
+            result = TTL_SCAN_MISSING_MOTOR;
         }
     }
     else
@@ -445,7 +445,7 @@ int TtlManager::rebootHardware(uint8_t hw_id)
         EHardwareType type = _state_map.at(hw_id)->getHardwareType();
         ROS_DEBUG("TtlManager::rebootHardware - Reboot hardware with ID: %d", hw_id);
         if (_driver_map.count(type))
-        {   
+        {
             return_value = _driver_map.at(type)->reboot(hw_id);
             if (COMM_SUCCESS == return_value)
             {
