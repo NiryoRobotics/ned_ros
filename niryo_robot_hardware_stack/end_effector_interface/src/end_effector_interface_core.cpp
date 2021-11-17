@@ -179,7 +179,7 @@ void EndEffectorInterfaceCore::initEndEffectorHardware()
 
       if (niryo_robot_msgs::CommandStatus::SUCCESS == result)
       {
-          ROS_INFO("ToolsInterfaceCore::ctor - Set end effector success");
+          ROS_INFO("EndEffectorInterfaceCore::ctor - Set end effector success");
       }
       else
       {

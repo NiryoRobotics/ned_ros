@@ -357,21 +357,11 @@ EStepperCalibrationStatus CalibrationManager::autoCalibration()
     // 0. Init velocity profile
     initVelocityProfiles();
 
-    while (!_ttl_interface->isSingleQueueFree())
-    {
-        ros::Duration(0.2).sleep();
-    }
-
     // 1. Place robot in position
     moveRobotBeforeCalibration();
 
     // 2. Send calibration cmd 1 + 2 + 3 (from can or ttl depending of which interface is instanciated)
     sendCalibrationToSteppers();
-
-    while (!_ttl_interface->isSingleQueueFree())
-    {
-        ros::Duration(0.2).sleep();
-    }
 
     double timeout = 0.0;
     // 3. wait for calibration status to change*
@@ -608,6 +598,10 @@ void CalibrationManager::resetVelocityProfiles()
                 }
             }
         }
+        while (!_ttl_interface->isSingleQueueFree())
+        {
+            ros::Duration(0.2).sleep();
+        }
     }
 }
 
@@ -699,9 +693,6 @@ void CalibrationManager::moveRobotBeforeCalibration()
  */
 void CalibrationManager::moveSteppersToHome()
 {
-    // 1. set torque on
-    activateTorque(true);
-
     // 2. move all steppers to offsetPosition (Home)
     StepperTtlSyncCmd stepper_ttl_cmd(EStepperCommandType::CMD_TYPE_POSITION);
 
@@ -740,11 +731,6 @@ void CalibrationManager::moveSteppersToHome()
  */
 void CalibrationManager::sendCalibrationToSteppers()
 {
-    while (!_ttl_interface->isSyncQueueFree())
-    {
-        ros::Duration(0.2).sleep();
-    }
-
     // 2. for each stepper, configure and send calibration cmd
     for (auto jState : _joint_states_list)
     {
@@ -790,6 +776,11 @@ void CalibrationManager::sendCalibrationToSteppers()
                 _stepper_bus_interface->startCalibration();
             }
         }
+    }
+
+    while (!_ttl_interface->isSingleQueueFree())
+    {
+        ros::Duration(0.2).sleep();
     }
 }
 
