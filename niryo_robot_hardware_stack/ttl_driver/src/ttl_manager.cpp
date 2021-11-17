@@ -561,7 +561,7 @@ bool TtlManager::readPositionsStatus()
                 }
                 else
                 {
-                    ROS_ERROR("TtlManager::readJointStatus : Fail to sync read joint state - "
+                    ROS_ERROR("TtlManager::readPostionsStatus : Fail to sync read joint state - "
                                 "vector mismatch (id_list size %d, position_list size %d)",
                                 static_cast<int>(_motor_list.size()),
                                 static_cast<int>(position_list.size()));
