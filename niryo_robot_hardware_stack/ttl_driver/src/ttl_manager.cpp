@@ -444,7 +444,7 @@ int TtlManager::rebootHardware(uint8_t hw_id)
         EHardwareType type = _state_map.at(hw_id)->getHardwareType();
         ROS_DEBUG("TtlManager::rebootHardware - Reboot hardware with ID: %d", hw_id);
         if (_driver_map.count(type))
-        {
+        {   
             return_value = _driver_map.at(type)->reboot(hw_id);
             if (COMM_SUCCESS == return_value)
             {
@@ -1114,7 +1114,7 @@ bool TtlManager::readHardwareStatus()
                     if (temperature_list.size() > i && voltage_list.size() > i)
                     {
                         state->setTemperature(temperature_list.at(i));
-                        state->setRawVoltage(voltage_list.at(i));
+                        state->setVoltage(voltage_list.at(i));
                     }
 
                     // **********  error state

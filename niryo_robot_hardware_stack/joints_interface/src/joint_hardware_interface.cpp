@@ -483,9 +483,18 @@ bool JointHardwareInterface::isCalibrationInProgress() const
  */
 bool JointHardwareInterface::rebootAll(bool torque_on)
 {
+    _ttl_interface->waitSingleQueueFree();
+
     bool res = true;
     for (auto state : _joint_state_list)
     {
+        // first set torque off
+        if (state->isStepper())
+            _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperTtlSingleCmd>(EStepperCommandType::CMD_TYPE_TORQUE,
+                                                                               state->getId(), std::initializer_list<uint32_t>{false}));
+
+        ros::Duration(0.2).sleep();
+
         if  (_ttl_interface->rebootHardware(state))
         {
             initHardware(state, torque_on);
@@ -578,10 +587,7 @@ int JointHardwareInterface::initHardware(std::shared_ptr<common::model::JointSta
     }
 
     // wait for empty cmd queue (all init cmd processed correctly)
-    while (!_ttl_interface->isSingleQueueFree())
-    {
-        ros::Duration(0.05).sleep();
-    }
+    _ttl_interface->waitSingleQueueFree();
 
     return niryo_robot_msgs::CommandStatus::SUCCESS;
 }
@@ -643,10 +649,7 @@ void JointHardwareInterface::setNeedCalibration()
  */
 void JointHardwareInterface::activateLearningMode(bool activated)
 {
-    while (!_ttl_interface->isSingleQueueFree())
-    {
-        ros::Duration(0.05).sleep();
-    }
+    _ttl_interface->waitSingleQueueFree();
 
     ROS_DEBUG("JointHardwareInterface::activateLearningMode - activate learning mode");
 

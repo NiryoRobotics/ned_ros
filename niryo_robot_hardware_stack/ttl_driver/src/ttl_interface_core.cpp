@@ -989,21 +989,25 @@ niryo_robot_msgs::BusState TtlInterfaceCore::getBusState() const
 }
 
 /**
- * @brief TtlInterfaceCore::isSyncQueueFree
- * @return
+ * @brief TtlInterfaceCore::waitSyncQueueFree
  */
-bool TtlInterfaceCore::isSyncQueueFree()
+void TtlInterfaceCore::waitSyncQueueFree()
 {
-    return _sync_cmds_queue.empty();
+    while (!_sync_cmds_queue.empty())
+    {
+        ros::Duration(0.2).sleep();
+    }
 }
 
 /**
- * @brief TtlInterfaceCore::isSingleQueueFree
- * @return
+ * @brief TtlInterfaceCore::waitSingleQueueFree
  */
-bool TtlInterfaceCore::isSingleQueueFree()
+void TtlInterfaceCore::waitSingleQueueFree()
 {
-    return _single_cmds_queue.empty();
+    while (!_single_cmds_queue.empty())
+    {
+        ros::Duration(0.2).sleep();
+    }
 }
 
 // *******************

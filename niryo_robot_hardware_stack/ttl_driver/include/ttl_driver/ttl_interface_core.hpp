@@ -146,8 +146,8 @@ public:
 
     // read Collision Status from motors
     bool readCollisionStatus() const;
-    bool isSyncQueueFree();
-    bool isSingleQueueFree();
+    void waitSyncQueueFree();
+    void waitSingleQueueFree();
 
 private:
     void initParameters(ros::NodeHandle& nh) override;
