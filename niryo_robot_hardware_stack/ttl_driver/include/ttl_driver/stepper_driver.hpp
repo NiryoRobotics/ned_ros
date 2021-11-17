@@ -592,7 +592,7 @@ int StepperDriver<reg_type>::writeVelocityProfile(uint8_t id, const std::vector<
   int res = 0;
   double wait_duration = 0.05;
 
-  writeTorqueEnable(id, true);
+  writeTorqueEnable(id, 1);
   ros::Duration(wait_duration).sleep();
 
   if (COMM_SUCCESS != writeVStart(id, data_list.at(0)))

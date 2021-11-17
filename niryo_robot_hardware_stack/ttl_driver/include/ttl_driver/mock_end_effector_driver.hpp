@@ -82,7 +82,7 @@ class MockEndEffectorDriver : public AbstractEndEffectorDriver
         int readCollisionStatus(uint8_t id, bool& status) override;
 
         int readDigitalInput(uint8_t id, bool& in) override;
-        int writeDigitalOutput(uint8_t id, bool out) override;
+        int writeDigitalOutput(uint8_t id, uint32_t out) override;
 
     private:
         std::shared_ptr<FakeTtlData> _fake_data;
