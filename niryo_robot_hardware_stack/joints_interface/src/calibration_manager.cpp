@@ -364,7 +364,7 @@ EStepperCalibrationStatus CalibrationManager::autoCalibration()
     sendCalibrationToSteppers();
 
     double timeout = 0.0;
-    // 3. wait for calibration status to change*
+    // 3. wait for calibration status to change
 
     // get calibration result final
     EStepperCalibrationStatus final_status = EStepperCalibrationStatus::IN_PROGRESS;
@@ -449,8 +449,6 @@ CalibrationManager::manualCalibration()
 
             if (readCalibrationOffsetsFromFile(motor_id_list, steps_list))
             {
-                _stepper_bus_interface->startCalibration();
-
                 // 0. Torque ON for motor 2
                 auto state = std::dynamic_pointer_cast<common::model::StepperMotorState>(_joint_states_list.at(1));
                 if (state)
@@ -693,7 +691,7 @@ void CalibrationManager::moveRobotBeforeCalibration()
  */
 void CalibrationManager::moveSteppersToHome()
 {
-    // 2. move all steppers to offsetPosition (Home)
+    // 2. move all steppers to Home Position
     StepperTtlSyncCmd stepper_ttl_cmd(EStepperCommandType::CMD_TYPE_POSITION);
 
     for (auto jState : _joint_states_list)
@@ -773,7 +771,6 @@ void CalibrationManager::sendCalibrationToSteppers()
                                                             StepperTtlSingleCmd(EStepperCommandType::CMD_TYPE_CALIBRATION,
                                                                                 id)));
                 }
-                _stepper_bus_interface->startCalibration();
             }
         }
     }

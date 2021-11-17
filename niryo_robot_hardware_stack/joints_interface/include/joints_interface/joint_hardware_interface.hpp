@@ -49,8 +49,6 @@ class JointHardwareInterface : public hardware_interface::RobotHW
                                std::shared_ptr<ttl_driver::TtlInterfaceCore> ttl_interface,
                                std::shared_ptr<can_driver::CanInterfaceCore> can_interface);
 
-        void sendInitMotorsParams(bool learningMode);
-        void setSteppersProfiles();
         int calibrateJoints(int mode, std::string &result_message);
         void setNeedCalibration();
         void activateLearningMode(bool activated);
@@ -61,11 +59,14 @@ class JointHardwareInterface : public hardware_interface::RobotHW
         bool needCalibration() const;
         bool isCalibrationInProgress() const;
 
+        bool rebootAll(bool torque_on);
+
         const std::vector<std::shared_ptr<common::model::JointState> >& getJointsState() const;
 
         // RobotHW interface
     public:
         bool init(ros::NodeHandle& rootnh, ros::NodeHandle &robot_hwnh) override;
+        int initHardware(std::shared_ptr<common::model::JointState> motor_state, bool torque_on);
 
         void read(const ros::Time &/*time*/, const ros::Duration &/*period*/) override;
         void write(const ros::Time &/*time*/, const ros::Duration &/*period*/) override;
@@ -90,7 +91,7 @@ class JointHardwareInterface : public hardware_interface::RobotHW
         std::map<uint8_t, std::string> _map_stepper_name;
         std::map<uint8_t, std::string> _map_dxl_name;
 
-        std::vector<std::shared_ptr<common::model::JointState> > _joint_list;
+        std::vector<std::shared_ptr<common::model::JointState> > _joint_state_list;
 };
 
 /**
@@ -101,7 +102,7 @@ inline
 const std::vector<std::shared_ptr<common::model::JointState> >&
 JointHardwareInterface::getJointsState() const
 {
-    return _joint_list;
+    return _joint_state_list;
 }
 
 } // JointsInterface

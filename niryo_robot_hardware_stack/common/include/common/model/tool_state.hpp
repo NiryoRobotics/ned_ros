@@ -41,8 +41,10 @@ class ToolState : public DxlMotorState
         ToolState(std::string name, EHardwareType type, uint8_t id);
 
         void setName(std::string name);
+        void setLedState(int led_state);
 
         std::string getToolName() const;
+        int getLedState() const;
 
         bool isConnected() const;
 
@@ -67,6 +69,7 @@ class ToolState : public DxlMotorState
         std::string _tool_name;
 
         bool _connected{true};
+        int _led_state{-1};
 };
 
 /**
@@ -87,6 +90,16 @@ inline
 bool ToolState::isConnected() const
 {
     return _connected;
+}
+
+/**
+ * @brief TtlManager::getLedState
+ * @return
+ */
+inline
+int ToolState::getLedState() const
+{
+    return _led_state;
 }
 
 } // namespace model

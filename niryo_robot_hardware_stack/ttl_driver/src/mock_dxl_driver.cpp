@@ -693,6 +693,38 @@ int MockDxlDriver::writePID(uint8_t id, const std::vector<uint32_t> &data)
     return result;
 }
 
+/**
+ * @brief MockDxlDriver::writeControlMode
+ * @param id
+ * @param data
+ * @return
+ */
+int MockDxlDriver::writeControlMode(uint8_t id, uint8_t data)
+{
+    (void)data;  // unused
+
+    if (!_fake_data->dxl_registers.count(id))
+        return COMM_TX_ERROR;
+
+    return COMM_SUCCESS;
+}
+
+/**
+ * @brief MockDxlDriver::readControlMode
+ * @param id
+ * @param data
+ * @return
+ */
+int MockDxlDriver::readControlMode(uint8_t id, uint8_t &data)
+{
+  (void)data;  // unused
+
+  if (!_fake_data->dxl_registers.count(id))
+      return COMM_TX_ERROR;
+
+  return COMM_SUCCESS;
+}
+
 //*****************************
 // AbstractDxlDriver interface
 //*****************************

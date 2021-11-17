@@ -163,6 +163,12 @@ std::string StepperDriver<reg_type>::interpretErrorState(uint32_t hw_state) cons
             hardware_message += ", ";
         hardware_message += "Motor Encoder";
     }
+    if (hw_state & 1<<7)    // 0b10000000 => added by us : disconnected error
+    {
+        if (!hardware_message.empty())
+            hardware_message += ", ";
+        hardware_message += "Disconnection";
+    }
 
     if (!hardware_message.empty())
         hardware_message += " Error";
