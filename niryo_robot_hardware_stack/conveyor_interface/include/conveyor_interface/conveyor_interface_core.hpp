@@ -62,6 +62,7 @@ class ConveyorInterfaceCore : public common::util::IInterfaceCore
         ConveyorInterfaceCore& operator= ( const ConveyorInterfaceCore& ) = delete;
 
         bool init(ros::NodeHandle& nh) override;
+        bool rebootAll();
 
         bool isInitialized();
 
@@ -74,14 +75,14 @@ private:
         void startSubscribers(ros::NodeHandle& nh) override;
 
         conveyor_interface::SetConveyor::Response addConveyor();
-        conveyor_interface::SetConveyor::Response initTTLConveyor(const std::shared_ptr<common::model::ConveyorState>& conveyor_state);
-        conveyor_interface::SetConveyor::Response initCANConveyor(const std::shared_ptr<common::model::ConveyorState>& conveyor_state);
         conveyor_interface::SetConveyor::Response removeConveyor(uint8_t id);
 
         bool _callbackPingAndSetConveyor(conveyor_interface::SetConveyor::Request &req, conveyor_interface::SetConveyor::Response &res);
         bool _callbackControlConveyor(conveyor_interface::ControlConveyor::Request &req, conveyor_interface::ControlConveyor::Response &res);
 
         void _publishConveyorsFeedback(const ros::TimerEvent&);
+
+        bool isCalibrationInProgress() const;
 
     private:
         struct BusConfig
@@ -102,6 +103,9 @@ private:
             double micro_steps{8.0};
             int direction{0};
         };
+
+        int initHardware(common::model::EBusProtocol protocol, std::shared_ptr<common::model::ConveyorState> motor_state);
+
         std::mutex _state_map_mutex;
 
         std::map<common::model::EBusProtocol, BusConfig> _bus_config_map;
@@ -115,11 +119,11 @@ private:
         ros::Publisher _conveyor_status_publisher;
 
         // currently connected and configured conveyors
+        std::map<uint8_t, std::shared_ptr<common::model::ConveyorState> > _conveyor_state_map;
 
         std::shared_ptr<ttl_driver::TtlInterfaceCore> _ttl_interface;
         std::shared_ptr<can_driver::CanInterfaceCore> _can_interface;
 
-        std::map<uint8_t, std::shared_ptr<common::model::ConveyorState> > _state_map;
         // vector keep track order of insertion in state_map
         std::vector<uint8_t> _order_insertion;
 

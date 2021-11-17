@@ -48,7 +48,6 @@ namespace can_driver
 class CanInterfaceCore : public common::util::IDriverCore, public common::util::IInterfaceCore
 {
     public:
-
         CanInterfaceCore(ros::NodeHandle& nh);
         ~CanInterfaceCore() override;
         CanInterfaceCore( const CanInterfaceCore& ) = delete;
@@ -87,9 +86,9 @@ class CanInterfaceCore : public common::util::IDriverCore, public common::util::
 
         // direct commands
         bool scanMotorId(uint8_t motor_to_find) override;
+        bool rebootHardware(const std::shared_ptr<common::model::AbstractHardwareState>& motor_state) override;
 
         // getters
-        bool isCalibrationInProgress() const override ;
         int32_t getCalibrationResult(uint8_t id) const override;
         common::model::EStepperCalibrationStatus getCalibrationStatus() const override;
 
@@ -169,16 +168,6 @@ common::model::EBusProtocol
 CanInterfaceCore::getBusProtocol() const
 {
     return common::model::EBusProtocol::CAN;
-}
-
-/**
- * @brief CanInterfaceCore::isCalibrationInProgress
- * @return
- */
-inline
-bool CanInterfaceCore::isCalibrationInProgress() const
-{
-    return _can_manager->isCalibrationInProgress();
 }
 
 /**

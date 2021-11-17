@@ -141,6 +141,11 @@ if(CATKIN_ENABLE_TESTING)
       test/unit_tests.test
       test/unit_tests.cpp
     )
+  else()
+    add_rostest_gtest(${PROJECT_NAME}_unit_tests
+      test/unit_tests_fake.test
+      test/unit_tests.cpp
+    )
   endif()
   if(TARGET ${PROJECT_NAME}_unit_tests)
     target_link_libraries(${PROJECT_NAME}_unit_tests

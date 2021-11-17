@@ -51,7 +51,7 @@ class MockDxlDriver : public AbstractDxlDriver
         int scan(std::vector<uint8_t>& id_list) override;
         int reboot(uint8_t id) override;
 
-        std::string interpreteErrorState(uint32_t hw_state) const override;
+        std::string interpretErrorState(uint32_t hw_state) const override;
 
         int readCustom(uint16_t address, uint8_t data_len, uint8_t id, uint32_t& data) override;
         int writeCustom(uint16_t address, uint8_t data_len, uint8_t id, uint32_t data) override;
@@ -77,23 +77,29 @@ class MockDxlDriver : public AbstractDxlDriver
         // ram read
         int readPosition(uint8_t id, uint32_t &present_position) override;
         int readVelocity(uint8_t id, uint32_t &present_velocity) override;
-        int readTemperature(uint8_t id, uint32_t &temperature) override;
+        int readTemperature(uint8_t id, uint8_t& temperature) override;
         int readVoltage(uint8_t id, double &voltage) override;
-        int readHwErrorStatus(uint8_t id, uint32_t &hardware_status) override;
+        int readHwErrorStatus(uint8_t id, uint8_t& hardware_error_status) override;
 
         int syncReadPosition(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &position_list) override;
         int syncReadVelocity(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &velocity_list) override;
         int syncReadJointStatus(const std::vector<uint8_t> &id_list, std::vector<std::array<uint32_t, 2> >& data_array_list) override;
 
         int syncReadFirmwareVersion(const std::vector<uint8_t> &id_list, std::vector<std::string> &firmware_list) override;
-        int syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &temperature_list) override;
+        int syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint8_t>& temperature_list) override;
         int syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list) override;
-        int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list) override;
+        int syncReadRawVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list) override;
+        int syncReadHwStatus(const std::vector<uint8_t> &id_list, std::vector<std::pair<double, uint8_t> >& data_list) override;
+
+        int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint8_t> &hw_error_list) override;
 
         // AbstractDxlDriver interface
     public:
         int readPID(uint8_t id, std::vector<uint32_t> &data) override;
         int writePID(uint8_t id, const std::vector<uint32_t> &data) override;
+
+        int writeControlMode(uint8_t id, uint8_t data) override;
+        int readControlMode(uint8_t id, uint8_t& data) override;
 
         int writeLed(uint8_t id, uint32_t led_value) override;
         int syncWriteLed(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &led_list) override;
@@ -114,7 +120,7 @@ class MockDxlDriver : public AbstractDxlDriver
 
         // AbstractTtlDriver interface
     protected:
-        std::string interpreteFirmwareVersion(uint32_t fw_version) const override;
+        std::string interpretFirmwareVersion(uint32_t fw_version) const override;
 
 };
 

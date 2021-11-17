@@ -39,7 +39,7 @@ namespace niryo_robot_hardware_interface
 HardwareInterface::HardwareInterface(ros::NodeHandle &nh) :
     _nh(nh)
 {
-    /*for (int i = 0; i < 5; ++i)
+    /*for (int i = 0; i < 20; ++i)
     {
       ros::Duration(1).sleep();
       ROS_WARN("sleeping for %d", i);
@@ -342,23 +342,42 @@ bool HardwareInterface::_callbackRebootMotors(niryo_robot_msgs::Trigger::Request
 {
     res.status = niryo_robot_msgs::CommandStatus::FAILURE;
 
-    if (_ttl_interface)
-        res.status = _ttl_interface->rebootMotors();
+    // for each interface, call for reboot
+    int ret = 0;
+    std::string message;
+    bool torque_on = ("ned2" == _hardware_version);
 
-    if (niryo_robot_msgs::CommandStatus::SUCCESS == res.status)
+    if (_joints_interface && !_joints_interface->rebootAll(torque_on))
     {
+        ret++;
+        message += "Joints Interface, ";
+    }
+    if (_tools_interface && !_tools_interface->rebootHardware(torque_on))
+    {
+        ret++;
+        message += "Tools Interface, ";
+    }
+    if (_conveyor_interface && _conveyor_interface->rebootAll())
+    {
+        ret++;
+        message += "Conveyor Interface, ";
+    }
+    if (_end_effector_interface && _end_effector_interface->rebootHardware())
+    {
+        ret++;
+        message += "End Effector Panel Interface, ";
+    }
+
+    // no reboot for can interface for now
+
+    if (!ret)
+    {
+        res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
         res.message = "Reboot motors done";
-
-        _joints_interface->sendAndReceiveInitMotorsParams("ned2" != _hardware_version);
-
-        int resp_learning_mode_status = 0;
-        std::string resp_learning_mode_message;
-        _joints_interface->activateLearningMode(false, resp_learning_mode_status, resp_learning_mode_message);
-        _joints_interface->activateLearningMode(true, resp_learning_mode_status, resp_learning_mode_message);
     }
     else
     {
-        res.message = "Reboot motors Problems";
+        res.message = "Reboot motors Problems: " + message;
     }
 
     return true;
@@ -404,10 +423,11 @@ void HardwareInterface::_publishHardwareStatus(const ros::TimerEvent&)
 
     if (_joints_interface)
     {
-        _joints_interface->getCalibrationState(need_calibration, calibration_in_progress);
+        need_calibration = _joints_interface->needCalibration();
+        calibration_in_progress = _joints_interface->isCalibrationInProgress();
 
         auto joints_states = _joints_interface->getJointsState();
-        for (const std::shared_ptr<common::model::JointState>& jState : joints_states)
+        for (const auto& jState : joints_states)
         {
           motor_names.emplace_back(jState->getName());
           voltages.emplace_back(jState->getVoltage());
@@ -420,20 +440,38 @@ void HardwareInterface::_publishHardwareStatus(const ros::TimerEvent&)
 
     if (_end_effector_interface)
     {
-        auto state = _end_effector_interface->getEndEffectorState();
-        motor_names.emplace_back("End Effector");
-        voltages.emplace_back(state->getVoltage());
-        temperatures.emplace_back(state->getTemperature());
-        hw_errors.emplace_back(state->getHardwareError());
-        hw_errors_msg.emplace_back(state->getHardwareErrorMessage());
-        motor_types.emplace_back(common::model::HardwareTypeEnum(state->getHardwareType()).toString());
+        auto ee_state = _end_effector_interface->getEndEffectorState();
+        if (ee_state && ee_state->isValid())
+        {
+            motor_names.emplace_back("End Effector");
+            voltages.emplace_back(ee_state->getVoltage());
+            temperatures.emplace_back(ee_state->getTemperature());
+            hw_errors.emplace_back(ee_state->getHardwareError());
+            hw_errors_msg.emplace_back(ee_state->getHardwareErrorMessage());
+            motor_types.emplace_back(common::model::HardwareTypeEnum(ee_state->getHardwareType()).toString());
+        }
+    }
+
+    if (_tools_interface)
+    {
+        auto tool_state = _tools_interface->getToolState();
+        if (tool_state && tool_state->isValid())
+        {
+            motor_names.emplace_back("Tool");
+            voltages.emplace_back(tool_state->getVoltage());
+            temperatures.emplace_back(tool_state->getTemperature());
+            hw_errors.emplace_back(tool_state->getHardwareError());
+            hw_errors_msg.emplace_back(tool_state->getHardwareErrorMessage());
+            motor_types.emplace_back(common::model::HardwareTypeEnum(tool_state->getHardwareType()).toString());
+        }
     }
 
     if (_conveyor_interface)
     {
         auto conveyor_states = _conveyor_interface->getConveyorStates();
-        for (const std::shared_ptr<common::model::ConveyorState>& cState : conveyor_states)
+        for (const auto& cState : conveyor_states)
         {
+            if (cState && cState->isValid())
             {
                 motor_names.emplace_back("Conveyor");
                 voltages.emplace_back(cState->getVoltage());
@@ -485,7 +523,7 @@ void HardwareInterface::_publishSoftwareVersion(const ros::TimerEvent&)
     if (_joints_interface)
     {
         auto joints_states = _joints_interface->getJointsState();
-        for (const std::shared_ptr<common::model::JointState>& jState : joints_states)
+        for (const auto& jState : joints_states)
         {
             motor_names.emplace_back(jState->getName());
             firmware_versions.emplace_back(jState->getFirmwareVersion());
@@ -494,9 +532,35 @@ void HardwareInterface::_publishSoftwareVersion(const ros::TimerEvent&)
 
     if (_end_effector_interface)
     {
-        auto state = _end_effector_interface->getEndEffectorState();
-        motor_names.emplace_back("End Effector");
-        firmware_versions.emplace_back(state->getFirmwareVersion());
+        auto ee_state = _end_effector_interface->getEndEffectorState();
+        if (ee_state && ee_state->isValid())
+        {
+            motor_names.emplace_back("End Effector");
+            firmware_versions.emplace_back(ee_state->getFirmwareVersion());
+        }
+    }
+
+    if (_tools_interface)
+    {
+        auto tool_state = _tools_interface->getToolState();
+        if (tool_state && tool_state->isValid())
+        {
+            motor_names.emplace_back("Tool");
+            firmware_versions.emplace_back(tool_state->getFirmwareVersion());
+        }
+    }
+
+    if (_conveyor_interface)
+    {
+        auto conveyor_states = _conveyor_interface->getConveyorStates();
+        for (const auto& cState : conveyor_states)
+        {
+            if (cState && cState->isValid())
+            {
+                motor_names.emplace_back("Conveyor");
+                firmware_versions.emplace_back(cState->getFirmwareVersion());
+            }
+        }
     }
 
     niryo_robot_msgs::SoftwareVersion msg;

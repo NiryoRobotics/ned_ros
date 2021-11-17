@@ -90,7 +90,6 @@ class ConveyorID:
     def __init__(self):
         pass
 
-    # TODO(CC) compatibility ned and one to add (id 12 and 13)
     NONE = 0
     ID_1 = 9
     ID_2 = 10

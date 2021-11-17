@@ -34,7 +34,7 @@ public:
     {
         std::string   firmware{};
         int32_t       position{0};
-        uint32_t      temperature{0};
+        uint8_t       temperature{0};
         double        voltage{0};
         uint16_t      model_number{0};
 

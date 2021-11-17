@@ -5,9 +5,9 @@
 joint_limits:
   joint_1:
     has_velocity_limits: true
-    max_velocity: 1.5708
+    max_velocity: 1.467
     has_acceleration_limits: true
-    max_acceleration: 8.4
+    max_acceleration: 5.586
   joint_2:
     has_velocity_limits: true
     max_velocity: 1.257

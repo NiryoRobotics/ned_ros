@@ -65,6 +65,8 @@ public:
     virtual void addSingleCommandToQueue(std::vector<std::unique_ptr<common::model::ISingleMotorCmd> > cmd) = 0;
     virtual void addSyncCommandToQueue(std::unique_ptr<common::model::ISynchronizeMotorCmd>&& cmd) = 0;
 
+    virtual bool rebootHardware(const std::shared_ptr<common::model::AbstractHardwareState>& motor_state) = 0;
+
     // driver for conveyor
     virtual int setConveyor(const std::shared_ptr<common::model::ConveyorState>& state) = 0;
     virtual void unsetConveyor(uint8_t motor_id, uint8_t default_conveyor_id) = 0;
@@ -73,7 +75,6 @@ public:
     // calibration
     virtual void startCalibration() = 0;
     virtual void resetCalibration() = 0;
-    virtual bool isCalibrationInProgress() const = 0;
     virtual int32_t getCalibrationResult(uint8_t id) const = 0;
     virtual common::model::EStepperCalibrationStatus getCalibrationStatus() const = 0;
 

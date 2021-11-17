@@ -74,6 +74,24 @@ void JointState::setOffsetPosition(double offset_position)
 }
 
 /**
+ * @brief JointState::setHomePosition
+ * @param home_position
+ */
+void JointState::setHomePosition(double home_position)
+{
+    _home_position = home_position;
+}
+
+/**
+ * @brief JointState::setLimitPosition
+ * @param home_position
+ */
+void JointState::setLimitPosition(double limit_position)
+{
+    _limit_position = limit_position;
+}
+
+/**
  * @brief JointState::setDirection
  * @param direction
  */
@@ -93,7 +111,6 @@ void JointState::reset()
 {
     AbstractMotorState::reset();
     _name.clear();
-    _need_calibration = false;
 }
 
 /**
@@ -116,7 +133,7 @@ std::string JointState::str() const
     ss << "JointState : ";
     ss << "name: " << "\"" << _name << "\"" << ",\n";
     ss << "offset position: " << _offset_position << ", ";
-    ss << "need calibration: " << (_need_calibration ? "true" : "false") << ", ";
+    ss << "home position: " << _home_position << ", ";
     ss << "direction : " << (_direction == 1 ? 1 : -1) << ",\n";
     ss << "pos(" << pos << "), ";
     ss << "cmd(" << cmd << "), ";

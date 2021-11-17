@@ -69,12 +69,12 @@ public:
                              std::array<uint8_t, MAX_MESSAGE_LENGTH>& rxBuf,
                              std::string& error_message);
 
-    // Interprete data received
-    virtual int32_t interpretePositionStatus(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) = 0;
-    virtual uint32_t interpreteTemperatureStatus(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) = 0;
-    virtual std::string interpreteFirmwareVersion(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) = 0;
-    virtual std::pair<common::model::EStepperCalibrationStatus, int32_t> interpreteCalibrationData(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) = 0;
-    virtual std::tuple<bool, uint8_t, uint16_t> interpreteConveyorData(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) = 0;
+    // Interpret data received
+    virtual int32_t interpretPositionStatus(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) = 0;
+    virtual uint8_t interpretTemperatureStatus(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) = 0;
+    virtual std::string interpretFirmwareVersion(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) = 0;
+    virtual std::pair<common::model::EStepperCalibrationStatus, int32_t> interpretCalibrationData(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) = 0;
+    virtual std::tuple<bool, uint8_t, uint16_t> interpretConveyorData(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) = 0;
 
 protected:
     uint8_t read(INT32U *id, uint8_t *len, std::array<uint8_t, MAX_MESSAGE_LENGTH> &buf);

@@ -101,6 +101,7 @@ public:
 
     // joints control
     int addJoint(const std::shared_ptr<common::model::JointState>& jointState);
+    int initMotor(const std::shared_ptr<common::model::AbstractMotorState>& motor_state);
 
     // Tool control
     int setTool(const std::shared_ptr<common::model::ToolState>& toolState);
@@ -116,8 +117,7 @@ public:
     int changeId(common::model::EHardwareType motor_type, uint8_t old_id, uint8_t new_id) override;
 
     // direct commands
-    int rebootMotors();
-    bool rebootMotor(uint8_t motor_id);
+    bool rebootHardware(const std::shared_ptr<common::model::AbstractHardwareState>& hw_state) override;
 
     // getters
     std::vector<uint8_t> getRemovedMotorList() const override;
@@ -134,7 +134,6 @@ public:
 
     void startCalibration() override;
     void resetCalibration() override ;
-    bool isCalibrationInProgress() const override ;
     int32_t getCalibrationResult(uint8_t id) const override ;
     common::model::EStepperCalibrationStatus getCalibrationStatus() const override;
 
@@ -145,8 +144,11 @@ public:
     niryo_robot_msgs::BusState getBusState() const override;
     common::model::EBusProtocol getBusProtocol() const override;
 
-    // read firmware version for all motors
-    bool readFirmwareVersionStatus();
+    // read Collision Status from motors
+    bool readCollisionStatus() const;
+    void waitSyncQueueFree();
+    void waitSingleQueueFree();
+
 private:
     void initParameters(ros::NodeHandle& nh) override;
     void startServices(ros::NodeHandle& nh) override;
@@ -171,7 +173,12 @@ private:
     bool _callbackWriteVelocityProfile(ttl_driver::WriteVelocityProfile::Request &req, ttl_driver::WriteVelocityProfile::Response &res);
     bool _callbackReadVelocityProfile(ttl_driver::ReadVelocityProfile::Request &req, ttl_driver::ReadVelocityProfile::Response &res);
 
+    void _publishCollisionStatus(const ros::TimerEvent&);
 private:
+    ros::Publisher _collision_status_publisher;
+    ros::Timer     _collision_status_publisher_timer;
+    ros::Duration  _collision_status_publisher_duration{1.0};
+
     bool _control_loop_flag{false};
     bool _debug_flag{false};
 
@@ -205,6 +212,8 @@ private:
     std::vector<std::pair<uint8_t, uint32_t> > _joint_trajectory_cmd;
 
     // ttl cmds
+    // TODO(CC) it seems like having two queues can lead to pbs if a sync is launched before the sincle queue is finished
+    // and vice versa. So having a unique queue would be preferable (see calibration)
     std::queue<std::unique_ptr<common::model::AbstractTtlSynchronizeMotorCmd> > _sync_cmds_queue;
     std::queue<std::unique_ptr<common::model::AbstractTtlSingleMotorCmd> > _single_cmds_queue;
     std::queue<std::unique_ptr<common::model::AbstractTtlSingleMotorCmd> > _conveyor_cmds_queue;
@@ -255,14 +264,14 @@ std::vector<uint8_t> TtlInterfaceCore::getRemovedMotorList() const
 }
 
 /**
- * @brief TtlInterfaceCore::readFirmwareVersionStatus
+ * @brief TtlInterfaceCore::readCollisionStatus
  * @return true 
  * @return false 
  */
 inline
-bool TtlInterfaceCore::readFirmwareVersionStatus()
+bool TtlInterfaceCore::readCollisionStatus() const
 {
-    return _ttl_manager->readFirmwareVersionStatus();
+    return _ttl_manager->readCollisionStatus();
 }
 } // ttl_driver
 

@@ -47,24 +47,27 @@ class DxlDriver : public AbstractDxlDriver
                   std::shared_ptr<dynamixel::PacketHandler> packetHandler);
 
         std::string str() const override;
-        std::string interpreteErrorState(uint32_t hw_state) const override;
+        std::string interpretErrorState(uint32_t hw_state) const override;
 
     public:
         int checkModelNumber(uint8_t id) override;
         int readFirmwareVersion(uint8_t id, std::string &version) override;
 
-        int readTemperature(uint8_t id, uint32_t &temperature) override;
+        int readTemperature(uint8_t id, uint8_t& temperature) override;
         int readVoltage(uint8_t id, double &voltage) override;
-        int readHwErrorStatus(uint8_t id, uint32_t &hardware_status) override;
+        int readHwErrorStatus(uint8_t id, uint8_t& hardware_error_status) override;
 
         int syncReadFirmwareVersion(const std::vector<uint8_t> &id_list, std::vector<std::string> &firmware_list) override;
-        int syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &temperature_list) override;
+        int syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint8_t>& temperature_list) override;
         int syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list) override;
-        int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list) override;
+        int syncReadRawVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list) override;
+        int syncReadHwStatus(const std::vector<uint8_t> &id_list, std::vector<std::pair<double, uint8_t> >& data_list) override;
+
+        int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint8_t> &hw_error_list) override;
 
     protected:
         // AbstractTtlDriver interface
-        std::string interpreteFirmwareVersion(uint32_t fw_version) const override;
+        std::string interpretFirmwareVersion(uint32_t fw_version) const override;
 
     public:
         // AbstractMotorDriver interface : we cannot define them globally in AbstractMotorDriver
@@ -95,6 +98,9 @@ class DxlDriver : public AbstractDxlDriver
         // AbstractDxlDriver interface
         int writePID(uint8_t id, const std::vector<uint32_t>& data) override;
         int readPID(uint8_t id, std::vector<uint32_t>& data_list) override;
+
+        int writeControlMode(uint8_t id, uint8_t data) override;
+        int readControlMode(uint8_t id, uint8_t& data) override;
 
         int writeLed(uint8_t id, uint32_t led_value) override;
         int syncWriteLed(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &led_list) override;
@@ -151,22 +157,22 @@ std::string DxlDriver<reg_type>::str() const
 }
 
 /**
- * @brief DxlDriver<reg_type>::interpreteErrorState
+ * @brief DxlDriver<reg_type>::interpretErrorState
  * @return
  */
 template<typename reg_type>
-std::string DxlDriver<reg_type>::interpreteErrorState(uint32_t /*hw_state*/) const
+std::string DxlDriver<reg_type>::interpretErrorState(uint32_t /*hw_state*/) const
 {
     return "";
 }
 
 /**
- * @brief DxlDriver<reg_type>::interpreteFirmwareVersion
+ * @brief DxlDriver<reg_type>::interpretFirmwareVersion
  * @param fw_version
  * @return
  */
 template<typename reg_type>
-std::string DxlDriver<reg_type>::interpreteFirmwareVersion(uint32_t fw_version) const
+std::string DxlDriver<reg_type>::interpretFirmwareVersion(uint32_t fw_version) const
 {
     std::string version = std::to_string(static_cast<uint8_t>(fw_version));
 
@@ -217,9 +223,9 @@ template<typename reg_type>
 int DxlDriver<reg_type>::readFirmwareVersion(uint8_t id, std::string &version)
 {
     int res = COMM_RX_FAIL;
-    uint32_t data{};
-    res = read(reg_type::ADDR_FIRMWARE_VERSION, reg_type::SIZE_FIRMWARE_VERSION, id, data);
-    version = interpreteFirmwareVersion(data);
+    uint8_t data{};
+    res = read<typename reg_type::TYPE_FIRMWARE_VERSION>(reg_type::ADDR_FIRMWARE_VERSION, id, data);
+    version = interpretFirmwareVersion(data);
     return res;
 }
 
@@ -334,7 +340,7 @@ int DxlDriver<reg_type>::syncWriteVelocityGoal(const std::vector<uint8_t> &id_li
 template<typename reg_type>
 int DxlDriver<reg_type>::readPosition(uint8_t id, uint32_t& present_position)
 {
-    return read(reg_type::ADDR_PRESENT_POSITION, reg_type::SIZE_PRESENT_POSITION, id, present_position);
+    return read<typename reg_type::TYPE_PRESENT_POSITION>(reg_type::ADDR_PRESENT_POSITION, id, present_position);
 }
 
 /**
@@ -344,9 +350,9 @@ int DxlDriver<reg_type>::readPosition(uint8_t id, uint32_t& present_position)
  * @return
  */
 template<typename reg_type>
-int DxlDriver<reg_type>::readTemperature(uint8_t id, uint32_t& temperature)
+int DxlDriver<reg_type>::readTemperature(uint8_t id, uint8_t& temperature)
 {
-    return read(reg_type::ADDR_PRESENT_TEMPERATURE, reg_type::SIZE_PRESENT_TEMPERATURE, id, temperature);
+    return read<typename reg_type::TYPE_PRESENT_TEMPERATURE>(reg_type::ADDR_PRESENT_TEMPERATURE, id, temperature);
 }
 
 /**
@@ -358,8 +364,8 @@ int DxlDriver<reg_type>::readTemperature(uint8_t id, uint32_t& temperature)
 template<typename reg_type>
 int DxlDriver<reg_type>::readVoltage(uint8_t id, double& voltage)
 {
-  uint32_t voltage_mV = 0;
-  int res = read(reg_type::ADDR_PRESENT_VOLTAGE, reg_type::SIZE_PRESENT_VOLTAGE, id, voltage_mV);
+  typename reg_type::TYPE_PRESENT_VOLTAGE voltage_mV{};
+  int res = read<typename reg_type::TYPE_PRESENT_VOLTAGE>(reg_type::ADDR_PRESENT_VOLTAGE, id, voltage_mV);
   voltage = static_cast<double>(voltage_mV) / reg_type::VOLTAGE_CONVERSION;
   return res;
 }
@@ -371,9 +377,9 @@ int DxlDriver<reg_type>::readVoltage(uint8_t id, double& voltage)
  * @return
  */
 template<typename reg_type>
-int DxlDriver<reg_type>::readHwErrorStatus(uint8_t id, uint32_t& hardware_status)
+int DxlDriver<reg_type>::readHwErrorStatus(uint8_t id, uint8_t& hardware_status)
 {
-    return read(reg_type::ADDR_HW_ERROR_STATUS, reg_type::SIZE_HW_ERROR_STATUS, id, hardware_status);
+    return read<typename reg_type::TYPE_HW_ERROR_STATUS>(reg_type::ADDR_HW_ERROR_STATUS, id, hardware_status);
 }
 
 /**
@@ -385,7 +391,7 @@ int DxlDriver<reg_type>::readHwErrorStatus(uint8_t id, uint32_t& hardware_status
 template<typename reg_type>
 int DxlDriver<reg_type>::syncReadPosition(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &position_list)
 {
-  return syncRead(reg_type::ADDR_PRESENT_POSITION, reg_type::SIZE_PRESENT_POSITION, id_list, position_list);
+  return syncRead<typename reg_type::TYPE_PRESENT_POSITION>(reg_type::ADDR_PRESENT_POSITION, id_list, position_list);
 }
 
 /**
@@ -416,7 +422,6 @@ int DxlDriver<reg_type>::writePID(uint8_t id, const std::vector<uint32_t> &data)
 
     if(res > 0)
     {
-        std::cout << "Failures during writeVelocityProfile : " << res << std::endl;
         return COMM_TX_FAIL;
     }
 
@@ -433,10 +438,10 @@ template<typename reg_type>
 int DxlDriver<reg_type>::syncReadFirmwareVersion(const std::vector<uint8_t> &id_list, std::vector<std::string> &firmware_list)
 {
     int res = COMM_RX_FAIL;
-    std::vector<uint32_t> data_list;
-    res = syncRead(reg_type::ADDR_FIRMWARE_VERSION, reg_type::SIZE_FIRMWARE_VERSION, id_list, data_list);
+    std::vector<uint8_t> data_list;
+    res = syncRead<typename reg_type::TYPE_FIRMWARE_VERSION>(reg_type::ADDR_FIRMWARE_VERSION, id_list, data_list);
     for(auto const& data : data_list)
-      firmware_list.emplace_back(interpreteFirmwareVersion(data));
+      firmware_list.emplace_back(interpretFirmwareVersion(data));
     return res;
 }
 
@@ -447,9 +452,9 @@ int DxlDriver<reg_type>::syncReadFirmwareVersion(const std::vector<uint8_t> &id_
  * @return
  */
 template<typename reg_type>
-int DxlDriver<reg_type>::syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &temperature_list)
+int DxlDriver<reg_type>::syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint8_t>& temperature_list)
 {
-    return syncRead(reg_type::ADDR_PRESENT_TEMPERATURE, reg_type::SIZE_PRESENT_TEMPERATURE, id_list, temperature_list);
+    return syncRead<typename reg_type::TYPE_PRESENT_TEMPERATURE>(reg_type::ADDR_PRESENT_TEMPERATURE, id_list, temperature_list);
 }
 
 /**
@@ -462,11 +467,58 @@ template<typename reg_type>
 int DxlDriver<reg_type>::syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list)
 {
   voltage_list.clear();
-  std::vector<uint32_t> v_read;
-  int res = syncRead(reg_type::ADDR_PRESENT_VOLTAGE, reg_type::SIZE_PRESENT_VOLTAGE, id_list, v_read);
+  std::vector<typename reg_type::TYPE_PRESENT_VOLTAGE> v_read;
+  int res = syncRead<typename reg_type::TYPE_PRESENT_VOLTAGE>(reg_type::ADDR_PRESENT_VOLTAGE, id_list, v_read);
   for(auto const& v : v_read)
       voltage_list.emplace_back(static_cast<double>(v) / reg_type::VOLTAGE_CONVERSION);
   return res;
+}
+
+/**
+ * @brief DxlDriver<reg_type>::syncReadRawVoltage
+ * @param id_list
+ * @param voltage_list
+ * @return
+ */
+template<typename reg_type>
+int DxlDriver<reg_type>::syncReadRawVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list)
+{
+  voltage_list.clear();
+  std::vector<typename reg_type::TYPE_PRESENT_VOLTAGE> v_read;
+  int res = syncRead<typename reg_type::TYPE_PRESENT_VOLTAGE>(reg_type::ADDR_PRESENT_VOLTAGE, id_list, v_read);
+  for(auto const& v : v_read)
+      voltage_list.emplace_back(static_cast<double>(v));
+  return res;
+}
+
+/**
+ * @brief DxlDriver<reg_type>::syncReadHwStatus
+ * @param id_list
+ * @param data_list
+ * @return
+ */
+template<typename reg_type>
+int DxlDriver<reg_type>::syncReadHwStatus(const std::vector<uint8_t> &id_list,
+                                          std::vector<std::pair<double, uint8_t> >& data_list)
+{
+    data_list.clear();
+
+    std::vector<std::array<uint8_t, 3> > raw_data;
+    int res = syncReadConsecutiveBytes<uint8_t, 3>(reg_type::ADDR_PRESENT_VOLTAGE, id_list, raw_data);
+
+    for (auto const& data : raw_data)
+    {
+        // Voltage is first reg, uint16
+        uint16_t v = ((uint16_t)data.at(1) << 8) | data.at(0);
+        double voltage = static_cast<double>(v);
+
+        // Temperature is second reg, uint8
+        uint8_t temperature = data.at(2);
+
+        data_list.emplace_back(std::make_pair(voltage, temperature));
+    }
+
+    return res;
 }
 
 /**
@@ -476,9 +528,9 @@ int DxlDriver<reg_type>::syncReadVoltage(const std::vector<uint8_t> &id_list, st
  * @return
  */
 template<typename reg_type>
-int DxlDriver<reg_type>::syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list)
+int DxlDriver<reg_type>::syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint8_t> &hw_error_list)
 {
-    return syncRead(reg_type::ADDR_HW_ERROR_STATUS, reg_type::SIZE_HW_ERROR_STATUS, id_list, hw_error_list);
+    return syncRead<typename reg_type::TYPE_HW_ERROR_STATUS>(reg_type::ADDR_HW_ERROR_STATUS, id_list, hw_error_list);
 }
 
 //*****************************
@@ -599,6 +651,33 @@ int DxlDriver<reg_type>::readPID(uint8_t id, std::vector<uint32_t>& data_list)
     return COMM_SUCCESS;
 }
 
+/**
+ * @brief DxlDriver<reg_type>::writeControlMode
+ * @param id
+ * @param control_mode
+ * @return
+ */
+template<typename reg_type>
+int DxlDriver<reg_type>::writeControlMode(uint8_t id, uint8_t control_mode)
+{
+    return write(reg_type::ADDR_OPERATING_MODE, reg_type::SIZE_OPERATING_MODE, id, control_mode);
+}
+
+/**
+ * @brief DxlDriver<reg_type>::readControlMode
+ * @param id
+ * @param data
+ * @return
+ */
+template<typename reg_type>
+int DxlDriver<reg_type>::readControlMode(uint8_t id, uint8_t &data)
+{
+    int res = 0;
+    uint32_t raw{};
+    res = read(reg_type::ADDR_OPERATING_MODE, reg_type::SIZE_OPERATING_MODE, id, raw);
+    data = static_cast<uint8_t>(raw);
+    return res;
+}
 //other
 
 /**
@@ -634,7 +713,7 @@ int DxlDriver<reg_type>::syncReadLoad(const std::vector<uint8_t> &id_list, std::
 template<typename reg_type>
 int DxlDriver<reg_type>::readVelocity(uint8_t id, uint32_t& present_velocity)
 {
-    return read(reg_type::ADDR_PRESENT_VELOCITY, reg_type::SIZE_PRESENT_VELOCITY, id, present_velocity);
+    return read<typename reg_type::TYPE_PRESENT_VELOCITY>(reg_type::ADDR_PRESENT_VELOCITY, id, present_velocity);
 }
 
 /**
@@ -646,7 +725,7 @@ int DxlDriver<reg_type>::readVelocity(uint8_t id, uint32_t& present_velocity)
 template<typename reg_type>
 int DxlDriver<reg_type>::syncReadVelocity(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &velocity_list)
 {
-  return syncRead(reg_type::ADDR_PRESENT_VELOCITY, reg_type::SIZE_PRESENT_VELOCITY, id_list, velocity_list);
+  return syncRead<typename reg_type::TYPE_PRESENT_VELOCITY>(reg_type::ADDR_PRESENT_VELOCITY, id_list, velocity_list);
 }
 
 /**
@@ -855,7 +934,7 @@ inline int DxlDriver<XL320Reg>::readMaxPosition(uint8_t /*id*/, uint32_t &pos)
 }
 
 template<>
-inline std::string DxlDriver<XL320Reg>::interpreteErrorState(uint32_t hw_state) const
+inline std::string DxlDriver<XL320Reg>::interpretErrorState(uint32_t hw_state) const
 {
     std::string hardware_message;
 
@@ -875,9 +954,72 @@ inline std::string DxlDriver<XL320Reg>::interpreteErrorState(uint32_t hw_state) 
             hardware_message += ", ";
         hardware_message += "Input voltage out of range";
     }
+    if (hw_state & 1<<7)    // 0b10000000 => added by us : disconnected error
+    {
+        if (!hardware_message.empty())
+            hardware_message += ", ";
+        hardware_message += "Disconnection";
+    }
 
     return hardware_message;
 }
+
+template<>
+inline int DxlDriver<XL320Reg>::readPosition(uint8_t id, uint32_t& present_position)
+{
+    typename XL320Reg::TYPE_PRESENT_POSITION raw_data{};
+    int res = read<typename XL320Reg::TYPE_PRESENT_POSITION>(XL320Reg::ADDR_PRESENT_POSITION, id, raw_data);
+    present_position = raw_data;
+    return res;
+}
+
+template<>
+inline int DxlDriver<XL320Reg>::syncReadPosition(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &position_list)
+{
+    position_list.clear();
+    std::vector<typename XL320Reg::TYPE_PRESENT_POSITION> raw_data_list{};
+
+    int res = syncRead<typename XL320Reg::TYPE_PRESENT_POSITION>(XL320Reg::ADDR_PRESENT_POSITION, id_list, raw_data_list);
+    for(auto p : raw_data_list)
+        position_list.emplace_back(p);
+
+    return res;
+}
+
+template<>
+inline int DxlDriver<XL320Reg>::readVelocity(uint8_t id, uint32_t& present_velocity)
+{
+    typename XL320Reg::TYPE_PRESENT_VELOCITY raw_data{};
+    int res = read<typename XL320Reg::TYPE_PRESENT_VELOCITY>(XL320Reg::ADDR_PRESENT_VELOCITY, id, raw_data);
+    present_velocity = raw_data;
+
+    return res;
+}
+
+template<>
+inline int DxlDriver<XL320Reg>::syncReadVelocity(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &velocity_list)
+{
+    std::vector<typename XL320Reg::TYPE_PRESENT_VELOCITY> raw_data_list;
+    int res = syncRead<typename XL320Reg::TYPE_PRESENT_VELOCITY>(XL320Reg::ADDR_PRESENT_VELOCITY, id_list, raw_data_list);
+    for(auto v : raw_data_list)
+        velocity_list.emplace_back(v);
+    return res;
+}
+
+template<>
+inline int DxlDriver<XL320Reg>::writeControlMode(uint8_t /*id*/, uint8_t /*data*/)
+{
+    std::cout << "writeControlMode not available for motor XL320" << std::endl;
+    return COMM_SUCCESS;
+}
+
+template<>
+inline int DxlDriver<XL320Reg>::readControlMode(uint8_t /*id*/, uint8_t& /*data*/)
+{
+    std::cout << "readControlMode not available for motor XL320" << std::endl;
+    return COMM_SUCCESS;
+}
+
 
 template<>
 inline int DxlDriver<XL320Reg>::writeVelocityPGain(uint8_t /*id*/, uint32_t /*gain*/)
@@ -951,7 +1093,7 @@ inline int DxlDriver<XL320Reg>::syncWriteVelocityGoal(const std::vector<uint8_t>
 // XL430
 
 template<>
-inline std::string DxlDriver<XL430Reg>::interpreteErrorState(uint32_t hw_state) const
+inline std::string DxlDriver<XL430Reg>::interpretErrorState(uint32_t hw_state) const
 {
     std::string hardware_message;
 
@@ -982,6 +1124,12 @@ inline std::string DxlDriver<XL430Reg>::interpreteErrorState(uint32_t hw_state) 
         if (!hardware_message.empty())
             hardware_message += ", ";
         hardware_message += "Overload";
+    }
+    if (hw_state & 1<<7)    // 0b10000000 => added by us : disconnected error
+    {
+        if (!hardware_message.empty())
+            hardware_message += ", ";
+        hardware_message += "Disconnection";
     }
     if (!hardware_message.empty())
         hardware_message += " Error";
@@ -1006,7 +1154,7 @@ inline int DxlDriver<XL430Reg>::syncWriteTorqueGoal(const std::vector<uint8_t> &
 // XC430
 
 template<>
-inline std::string DxlDriver<XC430Reg>::interpreteErrorState(uint32_t hw_state) const
+inline std::string DxlDriver<XC430Reg>::interpretErrorState(uint32_t hw_state) const
 {
     std::string hardware_message;
 
@@ -1037,6 +1185,12 @@ inline std::string DxlDriver<XC430Reg>::interpreteErrorState(uint32_t hw_state) 
         if (!hardware_message.empty())
             hardware_message += ", ";
         hardware_message += "Overload";
+    }
+    if (hw_state & 1<<7)    // 0b10000000 => added by us : disconnected error
+    {
+        if (!hardware_message.empty())
+            hardware_message += ", ";
+        hardware_message += "Disconnection";
     }
     if (!hardware_message.empty())
         hardware_message += " Error";
@@ -1061,7 +1215,7 @@ inline int DxlDriver<XC430Reg>::syncWriteTorqueGoal(const std::vector<uint8_t> &
 // XL330
 
 template<>
-inline std::string DxlDriver<XL330Reg>::interpreteErrorState(uint32_t hw_state) const
+inline std::string DxlDriver<XL330Reg>::interpretErrorState(uint32_t hw_state) const
 {
     std::string hardware_message;
 
@@ -1092,6 +1246,12 @@ inline std::string DxlDriver<XL330Reg>::interpreteErrorState(uint32_t hw_state) 
         if (!hardware_message.empty())
             hardware_message += ", ";
         hardware_message += "Overload";
+    }
+    if (hw_state & 1<<7)    // 0b10000000 => added by us : disconnected error
+    {
+        if (!hardware_message.empty())
+            hardware_message += ", ";
+        hardware_message += "Disconnection";
     }
     if (!hardware_message.empty())
         hardware_message += " Error";

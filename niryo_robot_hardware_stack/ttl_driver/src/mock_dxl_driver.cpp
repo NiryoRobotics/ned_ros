@@ -103,10 +103,10 @@ int MockDxlDriver::reboot(uint8_t id)
 }
 
 /**
- * @brief MockDxlDriver::interpreteErrorState
+ * @brief MockDxlDriver::interpretErrorState
  * @return
  */
-std::string MockDxlDriver::interpreteErrorState(uint32_t /*hw_state*/) const
+std::string MockDxlDriver::interpretErrorState(uint32_t /*hw_state*/) const
 {
     return "";
 }
@@ -392,7 +392,7 @@ int MockDxlDriver::readVelocity(uint8_t id, uint32_t& present_velocity)
  * @param temperature
  * @return
  */
-int MockDxlDriver::readTemperature(uint8_t id, uint32_t& temperature)
+int MockDxlDriver::readTemperature(uint8_t id, uint8_t& temperature)
 {
     if (_fake_data->dxl_registers.count(id))
         temperature = _fake_data->dxl_registers.at(id).temperature;
@@ -422,7 +422,7 @@ int MockDxlDriver::readVoltage(uint8_t id, double& voltage)
  * @param hardware_status
  * @return
  */
-int MockDxlDriver::readHwErrorStatus(uint8_t id, uint32_t& hardware_status)
+int MockDxlDriver::readHwErrorStatus(uint8_t id, uint8_t& hardware_status)
 {
     if (_fake_data->dxl_registers.count(id))
       return COMM_RX_FAIL;
@@ -468,9 +468,9 @@ int MockDxlDriver::syncReadVelocity(const std::vector<uint8_t> &id_list, std::ve
     for (auto & id : id_list)
     {
         if (_fake_data->dxl_registers.count(id))
-            velocity_list.emplace_back(_fake_data->dxl_registers.at(id).position);
+            velocity_list.emplace_back(_fake_data->dxl_registers.at(id).velocity);
         else if (_fake_data->stepper_registers.count(id))
-            velocity_list.emplace_back(_fake_data->stepper_registers.at(id).position);
+            velocity_list.emplace_back(_fake_data->stepper_registers.at(id).velocity);
         else
             return COMM_TX_ERROR;
         auto result = countSet.insert(id);
@@ -489,26 +489,35 @@ int MockDxlDriver::syncReadVelocity(const std::vector<uint8_t> &id_list, std::ve
  */
 int MockDxlDriver::syncReadJointStatus(const std::vector<uint8_t> &id_list, std::vector<std::array<uint32_t, 2> > &data_array_list)
 {
-  std::set<uint8_t> countSet;
-  data_array_list.clear();
-  for (auto & id : id_list)
-  {
-      if (_fake_data->dxl_registers.count(id))
-      {
-          std::array<uint32_t, 2> blocks;
+    std::set<uint8_t> countSet;
+    data_array_list.clear();
+    for (auto & id : id_list)
+    {
+        if (_fake_data->dxl_registers.count(id))
+        {
+            std::array<uint32_t, 2> blocks;
 
-          blocks.at(0) = _fake_data->dxl_registers.at(id).velocity;
-          blocks.at(1) = _fake_data->dxl_registers.at(id).position;
+            blocks.at(0) = _fake_data->dxl_registers.at(id).velocity;
+            blocks.at(1) = _fake_data->dxl_registers.at(id).position;
 
-          data_array_list.emplace_back(std::move(blocks));
-      }
-      else
-          return COMM_RX_FAIL;
-      auto result = countSet.insert(id);
-      if (!result.second)
-          return GROUP_SYNC_REDONDANT_ID;  // redondant id
-  }
-  return COMM_SUCCESS;
+            data_array_list.emplace_back(std::move(blocks));
+        }
+        else if (_fake_data->stepper_registers.count(id))
+        {
+            std::array<uint32_t, 2> blocks;
+
+            blocks.at(0) = _fake_data->stepper_registers.at(id).velocity;
+            blocks.at(1) = _fake_data->stepper_registers.at(id).position;
+
+            data_array_list.emplace_back(std::move(blocks));
+        }
+        else
+            return COMM_RX_FAIL;
+        auto result = countSet.insert(id);
+        if (!result.second)
+            return GROUP_SYNC_REDONDANT_ID;  // redondant id
+    }
+    return COMM_SUCCESS;
 }
 
 /**
@@ -540,7 +549,7 @@ int MockDxlDriver::syncReadFirmwareVersion(const std::vector<uint8_t> &id_list, 
  * @param temperature_list
  * @return
  */
-int MockDxlDriver::syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &temperature_list)
+int MockDxlDriver::syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint8_t>& temperature_list)
 {
     std::set<uint8_t> countSet;
     for (auto & id : id_list)
@@ -581,13 +590,55 @@ int MockDxlDriver::syncReadVoltage(const std::vector<uint8_t> &id_list, std::vec
 }
 
 /**
+ * @brief MockDxlDriver::syncReadRawVoltage
+ * @param id_list
+ * @param voltage_list
+ * @return
+ */
+int MockDxlDriver::syncReadRawVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list)
+{
+    return syncReadVoltage(id_list, voltage_list);
+}
+
+/**
+ * @brief MockDxlDriver::syncReadHwStatus
+ * @param id_list
+ * @param data_list
+ * @return
+ */
+int MockDxlDriver::syncReadHwStatus(const std::vector<uint8_t> &id_list,
+                                    std::vector<std::pair<double, uint8_t> >& data_list)
+{
+    data_list.clear();
+
+    std::set<uint8_t> countSet;
+
+    for (auto & id : id_list)
+    {
+        if (_fake_data->dxl_registers.count(id))
+        {
+            double voltage = _fake_data->dxl_registers.at(id).voltage;
+            uint8_t temperature = _fake_data->dxl_registers.at(id).temperature;
+            data_list.emplace_back(std::make_pair(voltage, temperature));
+        }
+        else
+            return COMM_RX_FAIL;
+
+        auto result = countSet.insert(id);
+        if (!result.second)
+            return GROUP_SYNC_REDONDANT_ID;  // redondant id
+    }
+    return COMM_SUCCESS;
+}
+
+/**
  * @brief MockDxlDriver::syncReadHwErrorStatus
  * @param id_list
  * @param hw_error_list
  * @return
  */
 int MockDxlDriver::syncReadHwErrorStatus(const std::vector<uint8_t> &id_list,
-                                         std::vector<uint32_t> &hw_error_list)
+                                         std::vector<uint8_t> &hw_error_list)
 {
     std::set<uint8_t> countSet;
     for (auto & id : id_list)
@@ -651,6 +702,38 @@ int MockDxlDriver::writePID(uint8_t id, const std::vector<uint32_t> &data)
     }
 
     return result;
+}
+
+/**
+ * @brief MockDxlDriver::writeControlMode
+ * @param id
+ * @param data
+ * @return
+ */
+int MockDxlDriver::writeControlMode(uint8_t id, uint8_t data)
+{
+    (void)data;  // unused
+
+    if (!_fake_data->dxl_registers.count(id))
+        return COMM_TX_ERROR;
+
+    return COMM_SUCCESS;
+}
+
+/**
+ * @brief MockDxlDriver::readControlMode
+ * @param id
+ * @param data
+ * @return
+ */
+int MockDxlDriver::readControlMode(uint8_t id, uint8_t &data)
+{
+  (void)data;  // unused
+
+  if (!_fake_data->dxl_registers.count(id))
+      return COMM_TX_ERROR;
+
+  return COMM_SUCCESS;
 }
 
 //*****************************
@@ -766,11 +849,11 @@ int MockDxlDriver::syncReadLoad(const std::vector<uint8_t> &id_list, std::vector
 }
 
 /**
- * @brief MockDxlDriver::interpreteFirmwareVersion
+ * @brief MockDxlDriver::interpretFirmwareVersion
  * @param fw_version
  * @return
  */
-std::string MockDxlDriver::interpreteFirmwareVersion(uint32_t fw_version) const
+std::string MockDxlDriver::interpretFirmwareVersion(uint32_t fw_version) const
 {
     return std::to_string(fw_version);
 }

@@ -139,7 +139,6 @@ std::string AbstractTtlDriver::str() const
     return ss.str();
 }
 
-
 /*
  *  -----------------   Read Write operations   --------------------
  */
@@ -156,7 +155,6 @@ int AbstractTtlDriver::read(uint16_t address, uint8_t data_len, uint8_t id, uint
 {
     // clean output data first
     data = 0;
-    uint8_t dxl_error = 0;
     int dxl_comm_result = COMM_TX_FAIL;
 
     switch (data_len)
@@ -164,24 +162,21 @@ int AbstractTtlDriver::read(uint16_t address, uint8_t data_len, uint8_t id, uint
         case DXL_LEN_ONE_BYTE:
         {
             uint8_t read_data;
-            dxl_comm_result = _dxlPacketHandler->read1ByteTxRx(_dxlPortHandler.get(),
-                                                               id, address, &read_data, &dxl_error);
+            dxl_comm_result = read<uint8_t>(address, id, read_data);
             data = read_data;
         }
         break;
         case DXL_LEN_TWO_BYTES:
         {
             uint16_t read_data;
-            dxl_comm_result = _dxlPacketHandler->read2ByteTxRx(_dxlPortHandler.get(),
-                                                               id, address, &read_data, &dxl_error);
+            dxl_comm_result = read<uint16_t>(address, id, read_data);
             data = read_data;
         }
         break;
         case DXL_LEN_FOUR_BYTES:
         {
             uint32_t read_data;
-            dxl_comm_result = _dxlPacketHandler->read4ByteTxRx(_dxlPortHandler.get(),
-                                                               id, address, &read_data, &dxl_error);
+            dxl_comm_result = read<uint32_t>(address, id, read_data);
             data = read_data;
         }
         break;
@@ -189,9 +184,6 @@ int AbstractTtlDriver::read(uint16_t address, uint8_t data_len, uint8_t id, uint
             printf("AbstractTtlDriver::read ERROR: Size param must be 1, 2 or 4 bytes\n");
         break;
     }
-
-    if (0 != dxl_error)
-        dxl_comm_result = dxl_error;
 
     return dxl_comm_result;
 }
@@ -251,11 +243,11 @@ int AbstractTtlDriver::syncRead(uint8_t address, uint8_t data_len,
     switch (data_len)
     {
       case DXL_LEN_ONE_BYTE:
-        return syncRead<uint8_t>(address, id_list, data_list);
+        return syncRead_32<uint8_t>(address, id_list, data_list);
       case DXL_LEN_TWO_BYTES:
-        return syncRead<uint16_t>(address, id_list, data_list);
+        return syncRead_32<uint16_t>(address, id_list, data_list);
       case DXL_LEN_FOUR_BYTES:
-        return syncRead<uint32_t>(address, id_list, data_list);
+        return syncRead_32<uint32_t>(address, id_list, data_list);
       default:
         break;
     }
@@ -318,12 +310,12 @@ int AbstractTtlDriver::bulkRead(std::vector<uint16_t> address,
         else
         {
             dxl_comm_result = LEN_ID_DATA_NOT_SAME;
-            printf("AbstractTtlDriver::syncRead ERROR: size of lists param must be equal\n");
+            printf("AbstractTtlDriver::bulkRead ERROR: size of lists param must be equal\n");
         }
     }
     else
     {
-        printf("AbstractTtlDriver::syncRead ERROR: Size param must be 1, 2 or 4 bytes\n");
+        printf("AbstractTtlDriver::bulkRead ERROR: Size param must be 1, 2 or 4 bytes\n");
     }
 
     return dxl_comm_result;

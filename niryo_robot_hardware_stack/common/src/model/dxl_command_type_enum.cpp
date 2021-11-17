@@ -59,6 +59,8 @@ DxlCommandTypeEnum::initialize()
     m[EDxlCommandType::CMD_TYPE_PING] = "ping";
     m[EDxlCommandType::CMD_TYPE_LEARNING_MODE]  = "learning mode";
     m[EDxlCommandType::CMD_TYPE_PID] = "PID";
+    m[EDxlCommandType::CMD_TYPE_CONTROL_MODE] = "Control Mode";
+    m[EDxlCommandType::CMD_TYPE_LED_STATE] = "Led State";
     m[EDxlCommandType::CMD_TYPE_UNKNOWN]  = "unknown type";
 
     return m;

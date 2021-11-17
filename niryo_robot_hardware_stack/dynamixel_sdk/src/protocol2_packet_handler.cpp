@@ -849,7 +849,7 @@ int Protocol2PacketHandler::writeTxRx(PortHandler *port, uint8_t id, uint16_t ad
   int result                  = COMM_TX_FAIL;
 
   uint8_t *txpacket           = (uint8_t *)malloc(length + 12 + (length / 3));
-  uint8_t rxpacket[11]        = {0};
+  uint8_t rxpacket[RXPACKET_MAX_LEN]        = {0};
 
   if (txpacket == NULL)
     return result;

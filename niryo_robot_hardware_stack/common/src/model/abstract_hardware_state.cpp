@@ -108,9 +108,22 @@ void AbstractHardwareState::setFirmwareVersion(const std::string& firmware_versi
  * @brief AbstractHardwareState::setTemperature
  * @param temp
  */
-void AbstractHardwareState::setTemperature(uint32_t temp)
+void AbstractHardwareState::setTemperature(uint8_t temp)
 {
     _temperature = temp;
+}
+
+/**
+ * @brief AbstractHardwareState::setRawVoltage
+ * @param volt
+ * TODO(CC) avoid using hardcoded values, only usable for Ned2 for now
+ */
+void AbstractHardwareState::setRawVoltage(double raw_volt)
+{
+    if (EHardwareType::STEPPER == _hw_type || EHardwareType::END_EFFECTOR == _hw_type)
+        _voltage = raw_volt / 1000;
+    else
+        _voltage = raw_volt / 10;
 }
 
 /**
@@ -129,6 +142,18 @@ void AbstractHardwareState::setVoltage(double volt)
 void AbstractHardwareState::setHardwareError(uint32_t hw_error)
 {
     _hw_error = hw_error;
+}
+
+/**
+ * @brief AbstractHardwareState::setConnectionStatus
+ * @param hw_error
+ */
+void AbstractHardwareState::setConnectionStatus(bool connected)
+{
+    if (connected)
+      _hw_error |= (1UL << 7);
+    else
+      _hw_error &= ~(1UL << 7);
 }
 
 /**
