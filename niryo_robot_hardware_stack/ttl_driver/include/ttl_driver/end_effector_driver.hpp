@@ -143,7 +143,7 @@ int EndEffectorDriver<reg_type>::readFirmwareVersion(uint8_t id, std::string &ve
     int res = COMM_RX_FAIL;
     uint32_t data{};
     res = read<typename reg_type::TYPE_FIRMWARE_VERSION>(reg_type::ADDR_FIRMWARE_VERSION, id, data);
-    version = interpreteFirmwareVersion(data);
+    version = interpretFirmwareVersion(data);
     return res;
 }
 
@@ -203,7 +203,7 @@ int EndEffectorDriver<reg_type>::syncReadFirmwareVersion(const std::vector<uint8
     std::vector<uint32_t> data_list{};
     res = syncRead<typename reg_type::TYPE_FIRMWARE_VERSION>(reg_type::ADDR_FIRMWARE_VERSION, id_list, data_list);
     for(auto const& data : data_list)
-      firmware_list.emplace_back(interpreteFirmwareVersion(data));
+      firmware_list.emplace_back(interpretFirmwareVersion(data));
     return res;
 }
 
@@ -292,7 +292,7 @@ int EndEffectorDriver<reg_type>::readButton0Status(uint8_t id,
 {
     uint8_t status;
     int res = read<typename reg_type::TYPE_BUTTON_STATUS>(reg_type::ADDR_BUTTON_0_STATUS, id, status);
-    action = interpreteActionValue(status);
+    action = interpretActionValue(status);
     return res;
 }
 
@@ -307,7 +307,7 @@ int EndEffectorDriver<reg_type>::readButton1Status(uint8_t id, common::model::EA
 {
     uint8_t status;
     int res = read<typename reg_type::TYPE_BUTTON_STATUS>(reg_type::ADDR_BUTTON_1_STATUS, id, status);
-    action = interpreteActionValue(status);
+    action = interpretActionValue(status);
     return res;
 }
 
@@ -322,7 +322,7 @@ int EndEffectorDriver<reg_type>::readButton2Status(uint8_t id, common::model::EA
 {
     uint8_t status;
     int res = read<typename reg_type::TYPE_BUTTON_STATUS>(reg_type::ADDR_BUTTON_2_STATUS, id, status);
-    action = interpreteActionValue(status);
+    action = interpretActionValue(status);
     return res;
 }
 
@@ -343,7 +343,7 @@ int EndEffectorDriver<reg_type>::syncReadButtonsStatus(const uint8_t& id,
     {
         for (auto data : data_array_list.at(0))
         {
-            action_list.push_back(interpreteActionValue(data));
+            action_list.push_back(interpretActionValue(data));
         }
     }
     return res;

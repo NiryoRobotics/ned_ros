@@ -45,7 +45,7 @@ public:
     // AbstractTtlDriver interface
     std::string str() const override;
 
-    std::string interpreteErrorState(uint32_t hw_state) const override;
+    std::string interpretErrorState(uint32_t hw_state) const override;
 
     int checkModelNumber(uint8_t id) override;
     int readFirmwareVersion(uint8_t id, std::string &version) override;
@@ -138,12 +138,12 @@ std::string StepperDriver<reg_type>::str() const
 }
 
 /**
- * @brief StepperDriver<reg_type>::interpreteErrorState
+ * @brief StepperDriver<reg_type>::interpretErrorState
  * @param hw_state
  * @return
  */
 template<typename reg_type>
-std::string StepperDriver<reg_type>::interpreteErrorState(uint32_t hw_state) const
+std::string StepperDriver<reg_type>::interpretErrorState(uint32_t hw_state) const
 {
     std::string hardware_message;
 
@@ -162,6 +162,12 @@ std::string StepperDriver<reg_type>::interpreteErrorState(uint32_t hw_state) con
         if (!hardware_message.empty())
             hardware_message += ", ";
         hardware_message += "Motor Encoder";
+    }
+    if (hw_state & 1<<7)    // 0b10000000 => added by us : disconnected error
+    {
+        if (!hardware_message.empty())
+            hardware_message += ", ";
+        hardware_message += "Disconnection";
     }
 
     if (!hardware_message.empty())
@@ -216,7 +222,7 @@ int StepperDriver<reg_type>::readFirmwareVersion(uint8_t id, std::string &versio
     int res = 0;
     uint32_t data{};
     res = read<typename reg_type::TYPE_FIRMWARE_VERSION>(reg_type::ADDR_FIRMWARE_VERSION, id, data);
-    version = interpreteFirmwareVersion(data);
+    version = interpretFirmwareVersion(data);
     return res;
 }
 
@@ -460,7 +466,7 @@ int StepperDriver<reg_type>::syncReadFirmwareVersion(const std::vector<uint8_t> 
     std::vector<uint32_t> data_list{};
     res = syncRead<typename reg_type::TYPE_FIRMWARE_VERSION>(reg_type::ADDR_FIRMWARE_VERSION, id_list, data_list);
     for(auto const& data : data_list)
-      firmware_list.emplace_back(interpreteFirmwareVersion(data));
+      firmware_list.emplace_back(interpretFirmwareVersion(data));
     return res;
 }
 

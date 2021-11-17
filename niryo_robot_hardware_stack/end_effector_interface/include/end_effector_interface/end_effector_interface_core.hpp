@@ -60,6 +60,7 @@ class EndEffectorInterfaceCore : public common::util::IInterfaceCore
         EndEffectorInterfaceCore& operator= ( const EndEffectorInterfaceCore& ) = delete;
 
         bool init(ros::NodeHandle &nh) override;
+        bool rebootHardware();
 
         // getters
         std::shared_ptr<common::model::EndEffectorState> getEndEffectorState() const;
