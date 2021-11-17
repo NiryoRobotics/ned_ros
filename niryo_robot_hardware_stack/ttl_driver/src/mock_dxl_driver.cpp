@@ -590,6 +590,17 @@ int MockDxlDriver::syncReadVoltage(const std::vector<uint8_t> &id_list, std::vec
 }
 
 /**
+ * @brief MockDxlDriver::syncReadRawVoltage
+ * @param id_list
+ * @param voltage_list
+ * @return
+ */
+int MockDxlDriver::syncReadRawVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list)
+{
+    return syncReadVoltage(id_list, voltage_list);
+}
+
+/**
  * @brief MockDxlDriver::syncReadHwStatus
  * @param id_list
  * @param data_list

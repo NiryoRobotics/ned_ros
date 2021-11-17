@@ -341,7 +341,7 @@ TEST_F(TtlInterfaceTestSuiteRobotWithCan, testRebootMotors)
 TEST_F(TtlInterfaceTestSuiteRobotWithCan, testRebootMotorsWrongID)
 {
   bool result;
-  result = ttl_interface->rebootMotor(20);
+  result = ttl_interface->rebootHardware(20);
   EXPECT_FALSE(result);
 }
 
@@ -637,7 +637,7 @@ TEST_F(TtlInterfaceTestSuiteRotbotWithoutCan, testRebootMotors)
 TEST_F(TtlInterfaceTestSuiteRotbotWithoutCan, testRebootMotorsWrongID)
 {
   bool result;
-  result = ttl_interface->rebootMotor(20);
+  result = ttl_interface->rebootHardware(20);
   EXPECT_FALSE(result);
 }
 

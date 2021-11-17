@@ -83,10 +83,19 @@ bool EndEffectorInterfaceCore::init(ros::NodeHandle &nh)
     return true;
 }
 
+/**
+ * @brief EndEffectorInterfaceCore::rebootHardware
+ * @return
+ */
 bool EndEffectorInterfaceCore::rebootHardware()
 {
-  // TODO(CC)
-  return false;
+  // reboot
+  bool res = _ttl_interface->rebootHardware(_end_effector_state);
+
+  // re init
+  initHardware();
+
+  return res;
 }
 
 /**
@@ -183,7 +192,8 @@ void EndEffectorInterfaceCore::initEndEffectorHardware()
   {
       int result = _ttl_interface->setEndEffector(_end_effector_state);
 
-      if (niryo_robot_msgs::CommandStatus::SUCCESS == result)
+      if (niryo_robot_msgs::CommandStatus::SUCCESS == result &&
+          niryo_robot_msgs::CommandStatus::SUCCESS == initHardware())
       {
           ROS_INFO("EndEffectorInterfaceCore::ctor - Set end effector success");
       }
@@ -194,6 +204,15 @@ void EndEffectorInterfaceCore::initEndEffectorHardware()
                    result);
       }
   }
+}
+
+/**
+ * @brief EndEffectorInterfaceCore::initHardware
+ */
+int EndEffectorInterfaceCore::initHardware()
+{
+    // nothing to init for now;
+    return niryo_robot_msgs::CommandStatus::SUCCESS;
 }
 
 /**

@@ -114,7 +114,7 @@ public:
 
     void executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, uint32_t> > cmd_vec);
 
-    int rebootHwComponent(uint8_t id);
+    int rebootHardware(uint8_t id);
 
     int setLeds(int led);
 

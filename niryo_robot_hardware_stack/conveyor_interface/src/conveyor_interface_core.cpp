@@ -103,7 +103,7 @@ bool ConveyorInterfaceCore::rebootAll()
 
         if (_bus_config_map.count(bus_proto) && _bus_config_map.at(bus_proto).interface)
         {
-            if (_bus_config_map.at(bus_proto).interface->rebootMotor(it.second))
+            if (_bus_config_map.at(bus_proto).interface->rebootHardware(it.second))
             {
                 initHardware(bus_proto, it.second);
             }

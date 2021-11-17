@@ -520,10 +520,7 @@ CalibrationManager::manualCalibration()
 void CalibrationManager::setTorqueStepperMotor(const std::shared_ptr<JointState>& pState,
                                                bool status)
 {
-    while (!_ttl_interface->isSyncQueueFree())
-    {
-        ros::Duration(0.2).sleep();
-    }
+    _ttl_interface->waitSyncQueueFree();
 
     if (pState && pState->isStepper())
     {
@@ -549,10 +546,7 @@ void CalibrationManager::setTorqueStepperMotor(const std::shared_ptr<JointState>
  */
 void CalibrationManager::initVelocityProfiles()
 {
-    while (!_ttl_interface->isSyncQueueFree())
-    {
-        ros::Duration(0.2).sleep();
-    }
+    _ttl_interface->waitSyncQueueFree();
 
     if ("ned2" == _hardware_version)
     {
@@ -573,10 +567,7 @@ void CalibrationManager::initVelocityProfiles()
  */
 void CalibrationManager::resetVelocityProfiles()
 {
-    while (!_ttl_interface->isSyncQueueFree())
-    {
-        ros::Duration(0.2).sleep();
-    }
+    _ttl_interface->waitSyncQueueFree();
 
     if ("ned2" == _hardware_version)
     {
@@ -596,10 +587,8 @@ void CalibrationManager::resetVelocityProfiles()
                 }
             }
         }
-        while (!_ttl_interface->isSingleQueueFree())
-        {
-            ros::Duration(0.2).sleep();
-        }
+
+        _ttl_interface->waitSingleQueueFree();
     }
 }
 
@@ -611,10 +600,7 @@ void CalibrationManager::moveRobotBeforeCalibration()
     // 0. activate torque for all motors
     activateTorque(true);
 
-    while (!_ttl_interface->isSyncQueueFree())
-    {
-        ros::Duration(0.2).sleep();
-    }
+    _ttl_interface->waitSyncQueueFree();
 
     // 1. Relative Move Motor 1 (can only)
     if (_can_interface &&
@@ -654,10 +640,7 @@ void CalibrationManager::moveRobotBeforeCalibration()
         }
     }
 
-    while (!_ttl_interface->isSingleQueueFree())
-    {
-        ros::Duration(0.2).sleep();
-    }
+    _ttl_interface->waitSingleQueueFree();
 
     // 3. Move All Dynamixel to Home Position
     if (_ttl_interface)
@@ -678,11 +661,7 @@ void CalibrationManager::moveRobotBeforeCalibration()
     }
 
     // Wait a little bit for all dxl go to home before calibration
-
-    while (!_ttl_interface->isSyncQueueFree())
-    {
-        ros::Duration(0.3).sleep();
-    }
+    _ttl_interface->waitSyncQueueFree();
 }
 
 /**
@@ -775,10 +754,7 @@ void CalibrationManager::sendCalibrationToSteppers()
         }
     }
 
-    while (!_ttl_interface->isSingleQueueFree())
-    {
-        ros::Duration(0.2).sleep();
-    }
+    _ttl_interface->waitSingleQueueFree();
 }
 
 /**
@@ -787,10 +763,7 @@ void CalibrationManager::sendCalibrationToSteppers()
  */
 void CalibrationManager::activateTorque(bool activated)
 {
-    while (!_ttl_interface->isSingleQueueFree())
-    {
-        ros::Duration(0.2).sleep();
-    }
+    _ttl_interface->waitSingleQueueFree();
 
     ROS_DEBUG("CalibrationManager::activateTorque - activate learning mode");
 

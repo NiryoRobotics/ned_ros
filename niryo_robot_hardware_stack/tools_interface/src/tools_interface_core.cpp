@@ -94,7 +94,7 @@ bool ToolsInterfaceCore::init(ros::NodeHandle &nh)
 bool ToolsInterfaceCore::rebootHardware(bool torque_on)
 {
     // reboot
-    bool res = _ttl_interface->rebootMotor(_toolState);
+    bool res = _ttl_interface->rebootHardware(_toolState);
 
     // re init
     initHardware(torque_on);
@@ -115,16 +115,17 @@ int ToolsInterfaceCore::initHardware(bool torque_on)
         _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_CONTROL_MODE,
                                                                                motor_id, std::initializer_list<uint32_t>{new_mode}));
     }
-
-    // update leds
-    _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_LED_STATE,
+    else
+    {
+        // update leds
+        _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_LED_STATE,
                                                                            motor_id, std::initializer_list<uint32_t>{static_cast<uint32_t>(_toolState->getLedState())}));
-    ros::Duration(0.01).sleep();
+        ros::Duration(0.01).sleep();
+    }
 
     // TORQUE cmd on if ned2, off otherwise
     _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_TORQUE,
                                                                            motor_id, std::initializer_list<uint32_t>{torque_on}));
-
     return niryo_robot_msgs::CommandStatus::SUCCESS;
 }
 

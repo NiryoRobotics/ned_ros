@@ -30,10 +30,10 @@ dynamixels:
         offset_position: -3.1415
         home_position: 0.0
         direction: 1
-        position_P_gain: 5120
-        position_I_gain: 3277
-        position_D_gain: 7184
+        position_P_gain: 240
+        position_I_gain: 66
+        position_D_gain: 4800
         velocity_P_gain: 0
         velocity_I_gain: 0
         FF1_gain: 0
-        FF2_gain: 408
+        FF2_gain: 0
