@@ -66,6 +66,10 @@ int AbstractDxlDriver::writeSingleCmd(const std::unique_ptr<common::model::Abstr
             return ping(cmd->getId());
         case EDxlCommandType::CMD_TYPE_PID:
             return writePID(cmd->getId(), cmd->getParams());
+        case EDxlCommandType::CMD_TYPE_CONTROL_MODE:
+            return writeControlMode(cmd->getId(), static_cast<uint8_t>(cmd->getParam()));
+        case EDxlCommandType::CMD_TYPE_LED_STATE:
+            return writeLed(cmd->getId(), cmd->getParam());
         default:
             std::cout << "Command not implemented " << cmd->getCmdType() << std::endl;
         }

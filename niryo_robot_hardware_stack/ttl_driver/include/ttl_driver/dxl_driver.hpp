@@ -98,6 +98,9 @@ class DxlDriver : public AbstractDxlDriver
         int writePID(uint8_t id, const std::vector<uint32_t>& data) override;
         int readPID(uint8_t id, std::vector<uint32_t>& data_list) override;
 
+        int writeControlMode(uint8_t id, uint8_t data) override;
+        int readControlMode(uint8_t id, uint8_t& data) override;
+
         int writeLed(uint8_t id, uint32_t led_value) override;
         int syncWriteLed(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &led_list) override;
 
@@ -630,6 +633,33 @@ int DxlDriver<reg_type>::readPID(uint8_t id, std::vector<uint32_t>& data_list)
     return COMM_SUCCESS;
 }
 
+/**
+ * @brief DxlDriver<reg_type>::writeControlMode
+ * @param id
+ * @param control_mode
+ * @return
+ */
+template<typename reg_type>
+int DxlDriver<reg_type>::writeControlMode(uint8_t id, uint8_t control_mode)
+{
+    return write(reg_type::ADDR_OPERATING_MODE, reg_type::SIZE_OPERATING_MODE, id, control_mode);
+}
+
+/**
+ * @brief DxlDriver<reg_type>::readControlMode
+ * @param id
+ * @param data
+ * @return
+ */
+template<typename reg_type>
+int DxlDriver<reg_type>::readControlMode(uint8_t id, uint8_t &data)
+{
+    int res = 0;
+    uint32_t raw{};
+    res = read(reg_type::ADDR_OPERATING_MODE, reg_type::SIZE_OPERATING_MODE, id, raw);
+    data = static_cast<uint8_t>(raw);
+    return res;
+}
 //other
 
 /**
@@ -906,6 +936,12 @@ inline std::string DxlDriver<XL320Reg>::interpretErrorState(uint32_t hw_state) c
             hardware_message += ", ";
         hardware_message += "Input voltage out of range";
     }
+    if (hw_state & 1<<7)    // 0b10000000 => added by us : disconnected error
+    {
+        if (!hardware_message.empty())
+            hardware_message += ", ";
+        hardware_message += "Disconnection";
+    }
 
     return hardware_message;
 }
@@ -951,6 +987,21 @@ inline int DxlDriver<XL320Reg>::syncReadVelocity(const std::vector<uint8_t> &id_
         velocity_list.emplace_back(v);
     return res;
 }
+
+template<>
+inline int DxlDriver<XL320Reg>::writeControlMode(uint8_t /*id*/, uint8_t /*data*/)
+{
+    std::cout << "writeControlMode not available for motor XL320" << std::endl;
+    return COMM_SUCCESS;
+}
+
+template<>
+inline int DxlDriver<XL320Reg>::readControlMode(uint8_t /*id*/, uint8_t& /*data*/)
+{
+    std::cout << "readControlMode not available for motor XL320" << std::endl;
+    return COMM_SUCCESS;
+}
+
 
 template<>
 inline int DxlDriver<XL320Reg>::writeVelocityPGain(uint8_t /*id*/, uint32_t /*gain*/)
@@ -1056,6 +1107,12 @@ inline std::string DxlDriver<XL430Reg>::interpretErrorState(uint32_t hw_state) c
             hardware_message += ", ";
         hardware_message += "Overload";
     }
+    if (hw_state & 1<<7)    // 0b10000000 => added by us : disconnected error
+    {
+        if (!hardware_message.empty())
+            hardware_message += ", ";
+        hardware_message += "Disconnection";
+    }
     if (!hardware_message.empty())
         hardware_message += " Error";
 
@@ -1111,6 +1168,12 @@ inline std::string DxlDriver<XC430Reg>::interpretErrorState(uint32_t hw_state) c
             hardware_message += ", ";
         hardware_message += "Overload";
     }
+    if (hw_state & 1<<7)    // 0b10000000 => added by us : disconnected error
+    {
+        if (!hardware_message.empty())
+            hardware_message += ", ";
+        hardware_message += "Disconnection";
+    }
     if (!hardware_message.empty())
         hardware_message += " Error";
 
@@ -1165,6 +1228,12 @@ inline std::string DxlDriver<XL330Reg>::interpretErrorState(uint32_t hw_state) c
         if (!hardware_message.empty())
             hardware_message += ", ";
         hardware_message += "Overload";
+    }
+    if (hw_state & 1<<7)    // 0b10000000 => added by us : disconnected error
+    {
+        if (!hardware_message.empty())
+            hardware_message += ", ";
+        hardware_message += "Disconnection";
     }
     if (!hardware_message.empty())
         hardware_message += " Error";

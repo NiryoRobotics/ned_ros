@@ -62,6 +62,7 @@ class ConveyorInterfaceCore : public common::util::IInterfaceCore
         ConveyorInterfaceCore& operator= ( const ConveyorInterfaceCore& ) = delete;
 
         bool init(ros::NodeHandle& nh) override;
+        bool rebootAll();
 
         bool isInitialized();
 
@@ -102,6 +103,9 @@ private:
             double micro_steps{8.0};
             int direction{0};
         };
+
+        int initHardware(common::model::EBusProtocol protocol, std::shared_ptr<common::model::ConveyorState> motor_state);
+
         std::mutex _state_map_mutex;
 
         std::map<common::model::EBusProtocol, BusConfig> _bus_config_map;
@@ -115,7 +119,7 @@ private:
         ros::Publisher _conveyor_status_publisher;
 
         // currently connected and configured conveyors
-        std::map<uint8_t, std::shared_ptr<common::model::ConveyorState> > _state_map;
+        std::map<uint8_t, std::shared_ptr<common::model::ConveyorState> > _conveyor_state_map;
 
         std::shared_ptr<ttl_driver::TtlInterfaceCore> _ttl_interface;
         std::shared_ptr<can_driver::CanInterfaceCore> _can_interface;

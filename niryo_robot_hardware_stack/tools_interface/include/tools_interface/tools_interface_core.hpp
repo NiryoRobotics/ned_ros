@@ -64,7 +64,10 @@ class ToolsInterfaceCore : public common::util::IInterfaceCore
 
         bool init(ros::NodeHandle &nh) override;
 
+        bool rebootHardware(bool torque_on = true);
+
         bool isInitialized();
+
         tools_interface::Tool pubToolId(int id, EHardwareType motor_type);
 
         // getters
@@ -75,6 +78,8 @@ class ToolsInterfaceCore : public common::util::IInterfaceCore
         void startServices(ros::NodeHandle& nh) override;
         void startPublishers(ros::NodeHandle& nh) override;
         void startSubscribers(ros::NodeHandle& nh) override;
+
+        int initHardware(bool torque_on = true);
 
         bool _callbackPingAndSetTool(tools_interface::PingDxlTool::Request &, tools_interface::PingDxlTool::Response &res);
 

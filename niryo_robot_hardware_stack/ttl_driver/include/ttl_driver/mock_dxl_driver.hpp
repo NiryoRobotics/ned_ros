@@ -97,6 +97,9 @@ class MockDxlDriver : public AbstractDxlDriver
         int readPID(uint8_t id, std::vector<uint32_t> &data) override;
         int writePID(uint8_t id, const std::vector<uint32_t> &data) override;
 
+        int writeControlMode(uint8_t id, uint8_t data) override;
+        int readControlMode(uint8_t id, uint8_t& data) override;
+
         int writeLed(uint8_t id, uint32_t led_value) override;
         int syncWriteLed(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &led_list) override;
         int writeGoalTorque(uint8_t id, uint32_t torque) override;

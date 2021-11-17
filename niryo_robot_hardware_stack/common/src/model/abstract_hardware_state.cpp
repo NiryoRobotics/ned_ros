@@ -145,6 +145,18 @@ void AbstractHardwareState::setHardwareError(uint32_t hw_error)
 }
 
 /**
+ * @brief AbstractHardwareState::setConnectionStatus
+ * @param hw_error
+ */
+void AbstractHardwareState::setConnectionStatus(bool connected)
+{
+    if (connected)
+      _hw_error |= (1UL << 7);
+    else
+      _hw_error &= ~(1UL << 7);
+}
+
+/**
  * @brief AbstractHardwareState::setHardwareError
  * @param hw_error_msg
  */
