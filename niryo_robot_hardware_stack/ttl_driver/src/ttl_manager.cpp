@@ -1037,7 +1037,7 @@ bool TtlManager::readHardwareStatus()
 
             // **********  Voltage
             vector<double> voltage_list;
-            if (COMM_SUCCESS != stepper_driver->syncReadVoltage(_hw_list, voltage_list))
+            if (COMM_SUCCESS != stepper_driver->syncReadRawVoltage(_hw_list, voltage_list))
             {
                 // this operation can fail, it is normal, so no error message
                 hw_errors_increment++;
@@ -1115,7 +1115,7 @@ bool TtlManager::readHardwareStatus()
                     if (temperature_list.size() > i && voltage_list.size() > i)
                     {
                         state->setTemperature(temperature_list.at(i));
-                        state->setVoltage(voltage_list.at(i));
+                        state->setRawVoltage(voltage_list.at(i));
                     }
 
                     // **********  error state

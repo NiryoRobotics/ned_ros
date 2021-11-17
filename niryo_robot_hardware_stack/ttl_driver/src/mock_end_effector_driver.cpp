@@ -177,6 +177,17 @@ int MockEndEffectorDriver::syncReadVoltage(const std::vector<uint8_t> &id_list, 
 }
 
 /**
+ * @brief MockEndEffectorDriver::syncReadRawVoltage
+ * @param id_list
+ * @param voltage_list
+ * @return
+ */
+int MockEndEffectorDriver::syncReadRawVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list)
+{
+    return syncReadVoltage(id_list, voltage_list);
+}
+
+/**
  * @brief MockEndEffectorDriver::syncReadHwStatus
  * @param id_list
  * @param data_list

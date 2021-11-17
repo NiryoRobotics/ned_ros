@@ -570,6 +570,18 @@ int MockStepperDriver::syncReadVoltage(const std::vector<uint8_t> &id_list, std:
     return COMM_SUCCESS;
 }
 
+
+/**
+ * @brief MockStepperDriver::syncReadVoltage
+ * @param id_list
+ * @param voltage_list
+ * @return
+ */
+int MockStepperDriver::syncReadRawVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list)
+{
+    return syncReadVoltage(id_list, voltage_list);
+}
+
 /**
  * @brief MockStepperDriver::syncReadHwStatus
  * @param id_list

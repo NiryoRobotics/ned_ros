@@ -75,6 +75,7 @@ public:
     virtual int syncReadFirmwareVersion(const std::vector<uint8_t>& id_list, std::vector<std::string>& firmware_version) = 0;
     virtual int syncReadTemperature(const std::vector<uint8_t>& id_list, std::vector<uint8_t>& temperature_list) = 0;
     virtual int syncReadVoltage(const std::vector<uint8_t>& id_list, std::vector<double>& voltage_list) = 0;
+    virtual int syncReadRawVoltage(const std::vector<uint8_t>& id_list, std::vector<double>& voltage_list) = 0;
     virtual int syncReadHwErrorStatus(const std::vector<uint8_t>& id_list, std::vector<uint8_t>& hw_error_list) = 0;
     virtual int syncReadHwStatus(const std::vector<uint8_t> &id_list, std::vector<std::pair<double, uint8_t> >& data_array_list) = 0;
 
