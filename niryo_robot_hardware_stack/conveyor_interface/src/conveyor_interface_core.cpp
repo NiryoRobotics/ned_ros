@@ -101,7 +101,7 @@ bool ConveyorInterfaceCore::rebootAll()
     {
         EBusProtocol bus_proto = it.second->getBusProtocol();
 
-        if(_bus_config_map.count(bus_proto) && _bus_config_map.at(bus_proto).interface)
+        if (_bus_config_map.count(bus_proto) && _bus_config_map.at(bus_proto).interface)
         {
             if (_bus_config_map.at(bus_proto).interface->rebootMotor(it.second))
             {
@@ -113,7 +113,6 @@ bool ConveyorInterfaceCore::rebootAll()
                 res = false;
             }
         }
-
     }
 
     return res;

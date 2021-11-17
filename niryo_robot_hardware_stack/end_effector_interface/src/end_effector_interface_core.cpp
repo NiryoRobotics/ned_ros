@@ -85,7 +85,7 @@ bool EndEffectorInterfaceCore::init(ros::NodeHandle &nh)
 
 bool EndEffectorInterfaceCore::rebootHardware()
 {
-  //  TODO(CC)
+  // TODO(CC)
   return false;
 }
 

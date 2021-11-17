@@ -539,7 +539,6 @@ int JointHardwareInterface::initHardware(std::shared_ptr<common::model::JointSta
                 }
                 else if (motor_state->getBusProtocol() == EBusProtocol::TTL)
                 {
-
                     // CMD_TYPE_VELOCITY_PROFILE cmd
                     _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperTtlSingleCmd>(EStepperCommandType::CMD_TYPE_VELOCITY_PROFILE,
                                                                                   stepperState->getId(),

@@ -234,7 +234,7 @@ int TtlManager::addHardwareComponent(std::shared_ptr<common::model::AbstractHard
     }
 
     // update firmware version
-    if(_driver_map.count(hardware_type))
+    if (_driver_map.count(hardware_type))
     {
         std::string version;
         _driver_map.at(hardware_type)->readFirmwareVersion(state->getId(), version);
@@ -1163,7 +1163,7 @@ bool TtlManager::readHardwareStatus()
                         // max status need to be kept not converted into EStepperCalibrationStatus because max status is "in progress" in the enum
                         int max_status = 0;
 
-                        //debug only
+                        // debug only
                         std::ostringstream ss_debug;
                         ss_debug << "homing status : ";
 
@@ -1222,7 +1222,6 @@ bool TtlManager::readHardwareStatus()
 
                         hw_errors_increment++;
                     }
-
                 }
                 else
                 {
