@@ -368,6 +368,7 @@ int TtlManager::scanAndCheck()
                 _debug_error_message += " " + to_string(id);
             }
             _debug_error_message += " do not seem to be connected";
+            result = TTL_SCAN_MISSING_MOTOR; 
         }
     }
     else
