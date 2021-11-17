@@ -399,6 +399,7 @@ int TtlManager::scanAndCheck()
         else
         {
             _debug_error_message = "Motor(s):" + error_motors_message + " do not seem to be connected";
+            result = TTL_SCAN_MISSING_MOTOR; 
         }
     }
     else
@@ -557,7 +558,7 @@ bool TtlManager::readPositionsStatus()
                 }
                 else
                 {
-                    ROS_ERROR("TtlManager::readJointStatus : Fail to sync read joint state - "
+                    ROS_ERROR("TtlManager::readPostionsStatus : Fail to sync read joint state - "
                                 "vector mismatch (id_list size %d, position_list size %d)",
                                 static_cast<int>(_motor_list.size()),
                                 static_cast<int>(position_list.size()));

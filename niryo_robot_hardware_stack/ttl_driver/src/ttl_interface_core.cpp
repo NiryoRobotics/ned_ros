@@ -38,6 +38,7 @@
 #include <utility>
 #include <string>
 #include <tuple>
+#include <sstream>
 
 #include <common/model/conveyor_state.hpp>
 
@@ -560,25 +561,41 @@ void TtlInterfaceCore::controlLoop()
             // 1. check connection status of motors
             if (!_ttl_manager->isConnectionOk())
             {
-                // case 1 : connection lost but it is a feature (ex Tool or conveyor)
-                ROS_WARN("TtlInterfaceCore::controlLoop - motor connection error");
+                // clear all commands concerned move joints to avoid when a motor reconnected, it moves a little bit because of command unsent yet
+                _joint_trajectory_cmd.clear();
+
+                // scan motors again
+                ROS_WARN_THROTTLE(1.0, "TtlInterfaceCore::controlLoop - motor connection error");
+                ros::Duration(0.1).sleep();
 
                 vector<uint8_t> missing_ids;
-                ROS_DEBUG("TtlInterfaceCore::controlLoop - Scan to find motors");
 
                 int bus_state = COMM_PORT_BUSY;
 
                 while (TTL_SCAN_OK != bus_state)
                 {
-                    ros::Duration(0.25).sleep();
+                    // scan and get removed motor
                     {
                         lock_guard<mutex> lck(_control_loop_mutex);
                         bus_state = _ttl_manager->scanAndCheck();
                     }
-                    missing_ids = getRemovedMotorList();
-                    for (auto const& id : missing_ids)
+
+                    if (bus_state == TTL_SCAN_OK)
+                        break;
+                    else
                     {
-                        ROS_WARN("TtlInterfaceCore::controlLoop - motor %d does not seem to be connected", id);
+                        missing_ids = getRemovedMotorList();
+
+                        std::string msg;
+                        msg += "TtlInterfaceCore::controlLoop - motor";
+                        for (auto const& id : missing_ids)
+                        {
+                            msg += " " + std::to_string(id);
+                        }
+                        msg += " do not seem to be connected";
+                        ROS_WARN_THROTTLE(1.0, "%s", msg.c_str());
+
+                        ros::Duration(0.25).sleep();
                     }
                 }
                 ROS_INFO("TtlInterfaceCore::controlLoop - Bus is ok");
@@ -608,6 +625,7 @@ void TtlInterfaceCore::controlLoop()
                     _ttl_manager->readEndEffectorStatus();
                     _time_hw_end_effector_last_read = ros::Time::now().toSec();
                 }
+                ros::Rate(_control_loop_frequency).sleep();
             }
             else
             {
