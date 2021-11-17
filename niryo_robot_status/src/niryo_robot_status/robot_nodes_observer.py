@@ -28,7 +28,7 @@ class RobotNodesObserver(object):
         self.__check_user_program_timer = rospy.Timer(rospy.Duration.from_sec(0.5),
                                                       self.__user_programm_is_running_callback)
 
-    def __user_programm_is_running_callback(self):
+    def __user_programm_is_running_callback(self, _):
         python_prog_is_running = self.check_user_node
 
         if python_prog_is_running != self.user_program_is_running:

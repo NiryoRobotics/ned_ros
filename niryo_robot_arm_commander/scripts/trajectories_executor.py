@@ -188,6 +188,10 @@ class TrajectoriesExecutor:
         except Exception:
             raise ArmCommanderException(CommandStatus.ARM_COMMANDER_FAILURE, "IK Fail")
 
+        if plan is None:
+            raise ArmCommanderException(CommandStatus.NO_PLAN_AVAILABLE,
+                                        "The goal cannot be reached with a linear trajectory")
+
         # Apply robot speeds
         plan = self.retime_plan(plan, velocity_scaling_factor=velocity_factor,
                                 acceleration_scaling_factor=acceleration_factor, optimize=False)

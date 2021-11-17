@@ -656,6 +656,12 @@ class NiryoRosWrapper:
         """
         return self.__move_pose_with_cmd(ArmMoveCommand.LINEAR_POSE, x, y, z, roll, pitch, yaw)
 
+    def move_spiral(self, radius=0.2, angle_step=5, nb_steps=72, plan=1):
+        goal = RobotMoveGoal()
+        goal.cmd.cmd_type = ArmMoveCommand.DRAW_SPIRAL
+        goal.cmd.args = [radius, angle_step, nb_steps, plan]
+        return self.__execute_robot_move_action(goal)
+
     def move_without_moveit(self, joints_target, duration):
         goal = self._create_goal(joints_target, duration)
         self.__follow_joint_traj_client.wait_for_server()
@@ -668,6 +674,15 @@ class NiryoRosWrapper:
         result = self.__follow_joint_traj_client.get_result()
         if not result:
             raise NiryoRosWrapperException("Follow joint trajectory goal has reached timeout limit")
+
+        msg_dict = {result.SUCCESSFUL: "Successful",
+                    result.INVALID_GOAL: "Invalid goal",
+                    result.INVALID_JOINTS: "Invalid joints",
+                    result.OLD_HEADER_TIMESTAMP: "Old header timestamp",
+                    result.PATH_TOLERANCE_VIOLATED: "Path tolerance violated",
+                    result.GOAL_TOLERANCE_VIOLATED: "Goal tolerance violated"}
+
+        return result.error_code, msg_dict[result.error_code]
 
     def _create_goal(self, joints_position, duration):
         goal = FollowJointTrajectoryGoal()

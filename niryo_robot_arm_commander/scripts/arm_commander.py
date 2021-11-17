@@ -339,7 +339,7 @@ class ArmCommander:
         :return: status, message
         """
         min_radius = 0.003
-        radius, angle_step, total_steps = [float(arg) for arg in arm_cmd.args]
+        radius, angle_step, total_steps, plan = [float(arg) for arg in arm_cmd.args]
 
         center_position = self.__arm.get_current_pose().pose.position
         target_pose = self.__arm.get_current_pose().pose
@@ -352,12 +352,30 @@ class ArmCommander:
                 if i == 1:
                     dist_from_center = radius - dist_from_center
                 dist_from_center += min_radius
-                y_offset = dist_from_center * math.cos(angle)
-                z_offset = dist_from_center * math.sin(angle)
-                target_pose.position.y = center_position.y + y_offset
-                target_pose.position.z = center_position.z + z_offset
+
+                if plan == 1:
+                    y_offset = dist_from_center * math.cos(angle)
+                    z_offset = dist_from_center * math.sin(angle)
+                    target_pose.position.y = center_position.y + y_offset
+                    target_pose.position.z = center_position.z + z_offset
+                elif plan == 2:
+                    x_offset = dist_from_center * math.cos(angle)
+                    z_offset = dist_from_center * math.sin(angle)
+                    target_pose.position.x = center_position.x + x_offset
+                    target_pose.position.z = center_position.z + z_offset
+                elif plan == 3:
+                    x_offset = dist_from_center * math.cos(angle)
+                    y_offset = dist_from_center * math.sin(angle)
+                    target_pose.position.x = center_position.x + x_offset
+                    target_pose.position.y = center_position.y + y_offset
+                else:
+                    rospy.logwarn("Spiral planer: bad plan parameter, must be between 1 and 3: "
+                                  "[1 = yz plan, 2 = xz plan, 3 = xy plan]")
+                    raise ArmCommanderException
+
                 waypoints.append(copy.deepcopy(target_pose))
                 angle += angle_step_rad
+
         return self.__traj_executor.compute_and_execute_cartesian_plan(waypoints, self.__velocity_scaling_factor,
                                                                        self.__acceleration_scaling_factor)
 

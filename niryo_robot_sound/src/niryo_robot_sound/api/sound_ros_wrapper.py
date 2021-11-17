@@ -39,6 +39,7 @@ class SoundRosWrapper(object):
         self.__hardware_version = hardware_version
 
         self.__sounds = []
+        self.__sound_duration = {}
         if hardware_version == 'ned2':
             rospy.Subscriber('/niryo_robot_sound/sound_database', SoundList, self.__sound_database_callback)
 
@@ -51,10 +52,11 @@ class SoundRosWrapper(object):
         return self.__sounds
 
     def __sound_database_callback(self, msg):
-        self.__sounds = msg.sounds
+        self.__sound_duration = {sound.name: sound.duration for sound in msg.sounds}
+        self.__sounds = list(self.__sound_duration.keys())
 
     @check_ned2_version
-    def play(self, sound_name, start_time_sec=0, end_time_sec=0, wait_end=True):
+    def play(self, sound_name, wait_end=True, start_time_sec=0, end_time_sec=0):
         """
         Call service to play_sound according to SoundStateCommand.
         If failed, raise NiryoRosWrapperException
@@ -135,6 +137,13 @@ class SoundRosWrapper(object):
         req = ManageSoundRequest(sound_name=sound_name, action=ManageSoundRequest.DELETE, sound_data=sound_data)
         result = self.__call_service('/niryo_robot_sound/send_sound', ManageSound, req)
         return self.__classic_return_w_check(result)
+
+    @check_ned2_version
+    def get_sound_duration(self, sound_name):
+        if sound_name not in self.__sound_duration:
+            raise SoundRosWrapperException("Sound name: {} not found".format(sound_name))
+
+        return self.__sound_duration[sound_name]
 
     # --- Functions interface
     def __call_service(self, service_name, service_msg_type, *args):

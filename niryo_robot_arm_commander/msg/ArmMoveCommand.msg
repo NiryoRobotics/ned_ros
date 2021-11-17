@@ -19,3 +19,5 @@ niryo_robot_arm_commander/ShiftPose shift
 
 geometry_msgs/Pose[] list_poses
 float32 dist_smoothing
+
+float64[] args
