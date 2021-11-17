@@ -53,16 +53,20 @@ class MockEndEffectorDriver : public AbstractEndEffectorDriver
         int checkModelNumber(uint8_t id) override;
         int readFirmwareVersion(uint8_t id, std::string &version) override;
         
-        int readTemperature(uint8_t id, uint32_t &_temperature) override;
+        int readTemperature(uint8_t id, uint8_t &temperature) override;
         int readVoltage(uint8_t id, double &_voltage) override;
-        int readHwErrorStatus(uint8_t id, uint32_t &hardware_status) override;
+        int readHwErrorStatus(uint8_t id, uint8_t& hardware_error_status) override;
 
         int syncReadFirmwareVersion(const std::vector<uint8_t> &id_list, std::vector<std::string> &firmware_list) override;
-        int syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &temperature_list) override;
+        int syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint8_t>& temperature_list) override;
         int syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list) override;
-        int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list) override;
+        int syncReadRawVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list) override;
+        int syncReadHwStatus(const std::vector<uint8_t> &id_list, std::vector<std::pair<double, uint8_t> >& data_list) override;
+
+        int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint8_t> &hw_error_list) override;
         
         int scan(std::vector<uint8_t> &id_list) override;
+        int reboot(uint8_t id) override;
     public:
         int ping(uint8_t id) override;
 
@@ -70,6 +74,7 @@ class MockEndEffectorDriver : public AbstractEndEffectorDriver
         int readButton0Status(uint8_t id, common::model::EActionType& action) override;
         int readButton1Status(uint8_t id, common::model::EActionType& action) override;
         int readButton2Status(uint8_t id, common::model::EActionType& action) override;
+        int syncReadButtonsStatus(const uint8_t& id, std::vector<common::model::EActionType>& action_list) override;
 
         int readAccelerometerXValue(uint8_t id, uint32_t& x_value) override;
         int readAccelerometerYValue(uint8_t id, uint32_t& y_value) override;
@@ -78,7 +83,7 @@ class MockEndEffectorDriver : public AbstractEndEffectorDriver
         int readCollisionStatus(uint8_t id, bool& status) override;
 
         int readDigitalInput(uint8_t id, bool& in) override;
-        int writeDigitalOutput(uint8_t id, bool out) override;
+        int writeDigitalOutput(uint8_t id, uint32_t out) override;
 
     private:
         std::shared_ptr<FakeTtlData> _fake_data;

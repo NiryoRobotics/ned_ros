@@ -57,74 +57,59 @@ public:
 
     int startCalibration(int mode, std::string &result_message);
 
-    bool CalibrationInprogress() const;
+    common::model::EStepperCalibrationStatus getCalibrationStatus() const;
 
 private:
     void initParameters(ros::NodeHandle& nh);
+    void initCalibrationParams(ros::NodeHandle &nh);
 
     common::model::EStepperCalibrationStatus autoCalibration();
     common::model::EStepperCalibrationStatus manualCalibration();
 
-    std::shared_ptr<common::util::IDriverCore> getJointInterface(common::model::EBusProtocol proto);
     // tests
     bool canProcessManualCalibration(std::string &result_message);
     bool steppersConnected();
 
     // commands
-    void setStepperCalibrationCommand(const std::shared_ptr<common::model::StepperMotorState>& pState,
-                                      int32_t delay, int32_t calibration_direction, int32_t timeout);
-
     void setTorqueStepperMotor(const std::shared_ptr<common::model::JointState>& pState, bool status);
 
+    void initVelocityProfiles();
+    void resetVelocityProfiles();
     void moveRobotBeforeCalibration();
     void moveSteppersToHome();
     void sendCalibrationToSteppers();
-    void activateLearningMode(bool activated);
+    void activateTorque(bool activated);
 
     // file operations
-    bool setMotorsCalibrationOffsets(const std::vector<int>& motor_id_list, const std::vector<int> &steps_list);
-    bool getMotorsCalibrationOffsets(std::vector<int> &motor_id_list, std::vector<int>& steps_list);
+    bool saveCalibrationOffsetsToFile(const std::vector<int>& motor_id_list, const std::vector<int> &steps_list);
+    bool readCalibrationOffsetsFromFile(std::vector<int> &motor_id_list, std::vector<int>& steps_list);
 
 private:
+    struct CalibrationConfig
+    {
+        uint8_t stall_threshold{0};
+        int8_t direction{0};
+        int32_t delay{0};
+        common::model::VelocityProfile profile;
+    };
+
     std::shared_ptr<ttl_driver::TtlInterfaceCore> _ttl_interface;
     std::shared_ptr<can_driver::CanInterfaceCore> _can_interface;
+    // one of the above interface, responsible for steppers
+    std::shared_ptr<common::util::IDriverCore> _stepper_bus_interface;
 
     std::vector<std::shared_ptr<common::model::JointState> > _joint_states_list;
+    std::map<uint8_t, CalibrationConfig > _calibration_params_map;
 
-    bool _calibration_in_progress{false};
     int _calibration_timeout{0};
 
     std::string _calibration_file_name;
     std::string _hardware_version;
 
-    std::vector<int32_t> _motor_calibration_list;
-
     static constexpr int AUTO_CALIBRATION = 1;
     static constexpr int MANUAL_CALIBRATION = 2;
 
 };
-
-/**
- * @brief CalibrationManager::CalibrationInprogress
- * @return
- */
-inline
-bool CalibrationManager::CalibrationInprogress() const
-{
-  return _calibration_in_progress;
-}
-
-inline
-std::shared_ptr<common::util::IDriverCore>
-CalibrationManager::getJointInterface(common::model::EBusProtocol proto)
-{
-  if(common::model::EBusProtocol::CAN == proto)
-    return _can_interface;
-  if(common::model::EBusProtocol::TTL == proto)
-    return _ttl_interface;
-
-  return nullptr;
-}
 
 } // JointsInterface
 #endif

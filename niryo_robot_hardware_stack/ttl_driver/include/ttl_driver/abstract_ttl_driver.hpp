@@ -59,7 +59,7 @@ public:
     virtual std::string str() const;
 
     // here are only common TTL commands found in both Steppers and DXl
-    virtual std::string interpreteErrorState(uint32_t hw_state) const = 0;
+    virtual std::string interpretErrorState(uint32_t hw_state) const = 0;
 
     // eeprom write
 
@@ -68,38 +68,42 @@ public:
     virtual int readFirmwareVersion(uint8_t id, std::string& version) = 0;
 
     // ram read
-    virtual int readTemperature(uint8_t id, uint32_t& temperature) = 0;
+    virtual int readTemperature(uint8_t id, uint8_t& temperature) = 0;
     virtual int readVoltage(uint8_t id, double& voltage) = 0;
-    virtual int readHwErrorStatus(uint8_t id, uint32_t& hardware_status) = 0;
+    virtual int readHwErrorStatus(uint8_t id, uint8_t& hardware_status) = 0;
 
     virtual int syncReadFirmwareVersion(const std::vector<uint8_t>& id_list, std::vector<std::string>& firmware_version) = 0;
-    virtual int syncReadTemperature(const std::vector<uint8_t>& id_list, std::vector<uint32_t>& temperature_list) = 0;
+    virtual int syncReadTemperature(const std::vector<uint8_t>& id_list, std::vector<uint8_t>& temperature_list) = 0;
     virtual int syncReadVoltage(const std::vector<uint8_t>& id_list, std::vector<double>& voltage_list) = 0;
-    virtual int syncReadHwErrorStatus(const std::vector<uint8_t>& id_list, std::vector<uint32_t>& hw_error_list) = 0;
+    virtual int syncReadRawVoltage(const std::vector<uint8_t>& id_list, std::vector<double>& voltage_list) = 0;
+    virtual int syncReadHwErrorStatus(const std::vector<uint8_t>& id_list, std::vector<uint8_t>& hw_error_list) = 0;
+    virtual int syncReadHwStatus(const std::vector<uint8_t> &id_list, std::vector<std::pair<double, uint8_t> >& data_array_list) = 0;
 
 protected:
     template<typename T>
-    int syncRead(uint8_t address, const std::vector<uint8_t>& id_list, std::vector<uint32_t>& data_list);
+    int syncRead(uint8_t address, const std::vector<uint8_t>& id_list, std::vector<T>& data_list);
+    template<typename T>
+    int syncRead_32(uint8_t address, const std::vector<uint8_t>& id_list, std::vector<uint32_t>& data_list);
     int syncRead(uint8_t address, uint8_t data_len, const std::vector<uint8_t>& id_list, std::vector<uint32_t>& data_list);
 
     template<typename T, const size_t N>
     int syncReadConsecutiveBytes(uint16_t address,
                                  const std::vector<uint8_t> &id_list,
-                                 std::vector<std::array<T, 2> >& data_list);
+                                 std::vector<std::array<T, N> >& data_list);
     
     int bulkRead(std::vector<uint16_t> address, uint8_t data_len, const std::vector<uint8_t>& id_list, std::vector<uint32_t>& data_list);
     int syncWrite(uint8_t address, uint8_t data_len, const std::vector<uint8_t>& id_list, const std::vector<uint32_t>& data_list);
 
     // we use those commands in the children classes to actually read and write values in registers
     template<typename T>
-    int read(uint16_t address, uint8_t id, uint32_t& data);
+    int read(uint16_t address, uint8_t id, T& data);
 
     int read(uint16_t address, uint8_t data_len, uint8_t id, uint32_t& data);
     int write(uint16_t address, uint8_t data_len, uint8_t id, uint32_t data);
 
     static constexpr int PING_WRONG_MODEL_NUMBER = 30;
 
-    virtual std::string interpreteFirmwareVersion(uint32_t fw_version) const = 0;
+    virtual std::string interpretFirmwareVersion(uint32_t fw_version) const = 0;
 
 private:
     std::shared_ptr<dynamixel::PortHandler> _dxlPortHandler;
@@ -130,15 +134,53 @@ protected:
  * TODO(CC) : use a better method from dynamixel driver (bulk read ? maybe readRxTx ?)
  */
 template<typename T>
-int AbstractTtlDriver::read(uint16_t address, uint8_t id, uint32_t& data)
+int AbstractTtlDriver::read(uint16_t address, uint8_t id, T& data)
 {
-    uint8_t data_len = sizeof(T);
-    return read(address, data_len, id, data);
+    // clean output data first
+    data = 0;
+    uint8_t dxl_error = 0;
+    int dxl_comm_result = COMM_TX_FAIL;
+
+    switch (sizeof(T))
+    {
+        case DXL_LEN_ONE_BYTE:
+        {
+            uint8_t raw_data;
+            dxl_comm_result = _dxlPacketHandler->read1ByteTxRx(_dxlPortHandler.get(),
+                                                               id, address, &raw_data, &dxl_error);
+            data = raw_data;
+        }
+        break;
+        case DXL_LEN_TWO_BYTES:
+        {
+            uint16_t raw_data;
+            dxl_comm_result = _dxlPacketHandler->read2ByteTxRx(_dxlPortHandler.get(),
+                                                               id, address, &raw_data, &dxl_error);
+            data = raw_data;
+        }
+        break;
+        case DXL_LEN_FOUR_BYTES:
+        {
+            uint32_t raw_data;
+            dxl_comm_result = _dxlPacketHandler->read4ByteTxRx(_dxlPortHandler.get(),
+                                                               id, address, &raw_data, &dxl_error);
+            data = raw_data;
+        }
+        break;
+        default:
+            printf("AbstractTtlDriver::read ERROR: Size param must be 1, 2 or 4 bytes\n");
+        break;
+    }
+
+    if (0 != dxl_error)
+        dxl_comm_result = dxl_error;
+
+    return dxl_comm_result;
 }
 
 
 /**
- * @brief AbstractTtlDriver::syncRead8Bytes
+ * @brief AbstractTtlDriver::syncReadConsecutiveBytes
  * @param address
  * @param id_list
  * @param data_list
@@ -148,12 +190,19 @@ int AbstractTtlDriver::read(uint16_t address, uint8_t id, uint32_t& data)
 template<typename T, const size_t N>
 int AbstractTtlDriver::syncReadConsecutiveBytes(uint16_t address,
                                                 const std::vector<uint8_t> &id_list,
-                                                std::vector<std::array<T, 2> >& data_list)
+                                                std::vector<std::array<T, N> >& data_list)
 {
     data_list.clear();
+    uint16_t data_size = sizeof(T);
     int dxl_comm_result = COMM_TX_FAIL;
 
-    dynamixel::GroupSyncRead groupSyncRead(_dxlPortHandler.get(), _dxlPacketHandler.get(), address, 8);
+    std::string title = "Empty";
+    if (!id_list.empty())
+    {
+        title = std::to_string(id_list.at(0)) + " address: " + std::to_string(static_cast<int>(address)) + " data size: " + std::to_string(static_cast<int>(data_size));
+    }
+
+    dynamixel::GroupSyncRead groupSyncRead(_dxlPortHandler.get(), _dxlPacketHandler.get(), address, data_size * N);
 
     for (auto const& id : id_list)
     {
@@ -170,14 +219,23 @@ int AbstractTtlDriver::syncReadConsecutiveBytes(uint16_t address,
     {
         for (auto const& id : id_list)
         {
-            if (groupSyncRead.isAvailable(id, address, 8))
+            if (groupSyncRead.isAvailable(id, address, data_size * N))
             {
                 std::array<T, N> blocks;
 
                 for(uint8_t b = 0; b < N; ++b)
                 {
-                    uint32_t data = groupSyncRead.getData(id, address + b * 4, 4);
+                    if(N == 8 && id == 2)
+                    {
+                        std::cout << "syncReadConsecutiveBytes: " << title << std::endl;
+                        std::cout << "b: " << b << " -> " << address + b * data_size << std::endl;
+                    }
+                    T data = groupSyncRead.getData(id, address + b * data_size, data_size);
                     blocks.at(b) = data;
+                    if(N == 8 && id == 2)
+                    {
+                        std::cout << "data: " << data << std::endl;
+                    }
                 }
 
                 data_list.emplace_back(std::move(blocks));
@@ -195,7 +253,6 @@ int AbstractTtlDriver::syncReadConsecutiveBytes(uint16_t address,
     return dxl_comm_result;
 }
 
-
 /**
  * @brief AbstractTtlDriver::syncRead
  * @param address
@@ -206,7 +263,7 @@ int AbstractTtlDriver::syncReadConsecutiveBytes(uint16_t address,
 template<typename T>
 int AbstractTtlDriver::syncRead(uint8_t address,
                                 const std::vector<uint8_t> &id_list,
-                                std::vector<uint32_t> &data_list)
+                                std::vector<T> &data_list)
 {
     int dxl_comm_result = COMM_TX_FAIL;
 
@@ -233,7 +290,66 @@ int AbstractTtlDriver::syncRead(uint8_t address,
             {
                 if (groupSyncRead.isAvailable(id, address, data_len))
                 {
-                    uint32_t data = groupSyncRead.getData(id, address, data_len);
+                    T data = groupSyncRead.getData(id, address, data_len);
+                    data_list.emplace_back(data);
+                }
+                else
+                {
+                    dxl_comm_result = GROUP_SYNC_READ_RX_FAIL;
+                    break;
+                }
+            }
+        }
+
+        groupSyncRead.clearParam();
+    }
+    else
+    {
+        printf("AbstractTtlDriver::syncRead ERROR: Size param must be 1, 2 or 4 bytes\n");
+    }
+
+    return dxl_comm_result;
+}
+
+
+/**
+ * @brief AbstractTtlDriver::syncRead_32
+ * @param address
+ * @param id_list
+ * @param data_list
+ * @return
+ */
+template<typename T>
+int AbstractTtlDriver::syncRead_32(uint8_t address,
+                                   const std::vector<uint8_t> &id_list,
+                                   std::vector<uint32_t> &data_list)
+{
+    int dxl_comm_result = COMM_TX_FAIL;
+
+    data_list.clear();
+    uint8_t data_len = sizeof(T);
+    if(data_len <= 4)
+    {
+        dynamixel::GroupSyncRead groupSyncRead(_dxlPortHandler.get(), _dxlPacketHandler.get(), address, data_len);
+
+        for (auto const& id : id_list)
+        {
+            if (!groupSyncRead.addParam(id))
+            {
+                groupSyncRead.clearParam();
+                return GROUP_SYNC_REDONDANT_ID;
+            }
+        }
+
+        dxl_comm_result = groupSyncRead.txRxPacket();
+
+        if (COMM_SUCCESS == dxl_comm_result)
+        {
+            for (auto const& id : id_list)
+            {
+                if (groupSyncRead.isAvailable(id, address, data_len))
+                {
+                    T data = groupSyncRead.getData(id, address, data_len);
                     data_list.emplace_back(data);
                 }
                 else

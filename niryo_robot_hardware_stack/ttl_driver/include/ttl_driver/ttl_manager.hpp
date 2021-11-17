@@ -83,7 +83,7 @@ class TtlManager : public common::util::IBusManager
 public:
     TtlManager() = delete;
     TtlManager( ros::NodeHandle& nh );
-    ~TtlManager() override = default;
+    ~TtlManager() override;
     // see https://github.com/isocpp/CppCoreGuidelines/blob/master/CppCoreGuidelines.md#c21-if-you-define-or-delete-any-copy-move-or-destructor-function-define-or-delete-them-all
     TtlManager( const TtlManager& ) = delete;
     TtlManager( TtlManager&& ) = delete;
@@ -93,7 +93,7 @@ public:
     // IBusManager Interface
     bool init(ros::NodeHandle& nh) override;
 
-    void addHardwareComponent(std::shared_ptr<common::model::AbstractHardwareState> &&state) override;
+    int addHardwareComponent(std::shared_ptr<common::model::AbstractHardwareState> &&state) override;
 
     void removeHardwareComponent(uint8_t id) override;
     bool isConnectionOk() const override;
@@ -114,8 +114,7 @@ public:
 
     void executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, uint32_t> > cmd_vec);
 
-    int rebootMotors();
-    int rebootMotor(uint8_t motor_id);
+    int rebootHardware(uint8_t id);
 
     int setLeds(int led);
 
@@ -127,7 +126,7 @@ public:
     bool readJointsStatus();
     bool readEndEffectorStatus();
     bool readHardwareStatus();
-    bool readFirmwareVersionStatus();
+    bool readHardwareStatusOptimized();
 
     int readMotorPID(uint8_t id,
                      uint32_t& pos_p_gain, uint32_t& pos_i_gain, uint32_t& pos_d_gain,
@@ -135,16 +134,20 @@ public:
                      uint32_t& ff1_gain, uint32_t& ff2_gain);
 
     int readVelocityProfile(uint8_t id,
-                            uint32_t& _v_start, uint32_t& _a_1, uint32_t& _v_1,
-                            uint32_t& _a_max, uint32_t& _v_max, uint32_t& _d_max,
-                            uint32_t& _d_1, uint32_t& _v_stop);
+                            uint32_t& v_start, uint32_t& a_1, uint32_t& v_1,
+                            uint32_t& a_max, uint32_t& v_max, uint32_t& d_max,
+                            uint32_t& d_1, uint32_t& v_stop);
+
+    int readControlMode(uint8_t id, uint8_t& control_mode);
 
     //calibration
     void startCalibration() override;
     void resetCalibration() override;
-    bool isCalibrationInProgress() const override;
+
     int32_t getCalibrationResult(uint8_t id) const override;
     common::model::EStepperCalibrationStatus getCalibrationStatus() const override;
+    bool needCalibration() const;
+    bool isCalibrationInProgress() const;
 
     // getters
     int getAllIdsOnBus(std::vector<uint8_t> &id_list);
@@ -159,17 +162,13 @@ public:
 
     bool hasEndEffector() const;
 
-    // TtlManager will manage each type of hw to avoid unnecessary loop to find id 
-    void addToMotorList(uint8_t id);
-    void addToConveyorList(uint8_t id);
+    // get collision status of motors
+    bool readCollisionStatus() const;
+
 private:
     // IBusManager Interface
     int setupCommunication() override;
     void addHardwareDriver(common::model::EHardwareType hardware_type) override;
-
-    void updateCurrentCalibrationStatus() override;
-
-    void checkRemovedMotors();
 
     // Config params using in fake driver
     void readFakeConfig();
@@ -186,7 +185,6 @@ private:
 
     mutable std::mutex _sync_mutex;
 
-
     std::string _device_name;
     int _baudrate{1000000};
 
@@ -199,40 +197,88 @@ private:
     std::map<common::model::EHardwareType, std::vector<uint8_t> > _ids_map;
     // map of drivers for a given hardware type (xl, stepper, end effector)
     std::map<common::model::EHardwareType, std::shared_ptr<ttl_driver::AbstractTtlDriver> > _driver_map;
-    // vector of ids of motors and conveyors
-    // Theses vector help remove loop not necessary 
-    std::vector<uint8_t> _motor_list;
-    std::vector<uint8_t> _conveyor_list;
+    // default ttl driver is always available
+    std::shared_ptr<ttl_driver::AbstractTtlDriver> _default_ttl_driver;
 
-    common::model::EStepperCalibrationStatus _calibration_status{common::model::EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED};
+    // vector of ids of motors and conveyors
+    // Theses vector help remove loop not necessary
+    std::vector<uint8_t> _motor_list;
+    std::vector<uint8_t> _hw_list;
+    std::vector<uint8_t> _conveyor_list;
+    // TODO(CC) add tools_list ?
 
     // for hardware control
     bool _is_connection_ok{false};
     std::string _debug_error_message;
 
     uint32_t _hw_fail_counter_read{0};
-
-    int _led_state{-1};
+    uint32_t _end_effector_fail_counter_read{0};
 
     std::string _led_motor_type_cfg;
 
-    // TODO(cc) To be changed back to 50 when connection pb with new steppers and end effector will be corrected
-    static constexpr uint32_t MAX_HW_FAILURE = 2500;
-    static constexpr uint32_t CALIBRATION_IDLE = 0;
-    static constexpr uint32_t CALIBRATION_IN_PROGRESS = 1;
-    static constexpr uint32_t CALIBRATION_SUCCESS = 2;
-    static constexpr uint32_t CALIBRATION_ERROR = 3;
-    std::map<uint32_t, common::model::EStepperCalibrationStatus> _map_calibration_status {
-                                    {CALIBRATION_SUCCESS, common::model::EStepperCalibrationStatus::CALIBRATION_OK},
-                                    {CALIBRATION_IN_PROGRESS, common::model::EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS},
-                                    {CALIBRATION_ERROR, common::model::EStepperCalibrationStatus::CALIBRATION_FAIL},
-                                    {CALIBRATION_IDLE, common::model::EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED}};
+    static constexpr uint32_t MAX_HW_FAILURE = 25;
+    static constexpr uint32_t MAX_READ_EE_FAILURE = 150;
 
-    bool _use_simu_gripper = true;
+    common::model::EStepperCalibrationStatus _calibration_status{common::model::EStepperCalibrationStatus::UNINITIALIZED};
+
+    // for simulation only
     std::shared_ptr<FakeTtlData> _fake_data;
-    
+    bool _use_simu_gripper = true;
     bool _simulation_mode{false};
-    int _conveyor_direction{0};
+
+    // status to track collision status
+    bool _collision_status{false};
+    double _last_collision_detected{0.0};
+
+    bool _check_calibration_status{true};
+    bool _calibration_in_progress_really{true};
+
+    class CalibrationMachineState
+    {
+
+    public:
+        enum class State
+        {
+          IDLE = 1,
+          STARTING = 2,
+          IN_PROGRESS = 3,
+          UPDATING = 4
+        };
+
+        void reset()
+        {
+            s = State::IDLE;
+        }
+
+        void start()
+        {
+            s = State::STARTING;
+        }
+
+        /**
+         * @brief next : nex state, stops at updating (dont circle)
+         */
+        void next()
+        {
+            int newState = static_cast<int>(s);
+            if (State::UPDATING != s)
+               newState++;
+
+            s = static_cast<State>(newState);
+        }
+
+        State status()
+        {
+          return s;
+        }
+
+    private:
+        State s{State::UPDATING};
+    };
+
+    CalibrationMachineState _calib_machine_state;
+
+    static constexpr double _calibration_timeout{3.0};
 };
 
 // inline getters
@@ -278,16 +324,6 @@ std::string TtlManager::getErrorMessage() const
 }
 
 /**
- * @brief TtlManager::isCalibrationInProgress
- * @return
- */
-inline
-bool TtlManager::isCalibrationInProgress() const
-{
-  return (common::model::EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS == _calibration_status);
-}
-
-/**
  * @brief TtlManager::getCalibrationStatus
  * @return
  */
@@ -299,14 +335,24 @@ TtlManager::getCalibrationStatus() const
 }
 
 /**
- * @brief TtlManager::getLedState
+ * @brief TtlManager::needCalibration
  * @return
- * TODO(CC) to be removed from TtlManager : not the purpose of the manager to register states
  */
 inline
-int TtlManager::getLedState() const
+bool TtlManager::needCalibration() const
 {
-    return _led_state;
+  return (common::model::EStepperCalibrationStatus::OK != getCalibrationStatus() &&
+          common::model::EStepperCalibrationStatus::IN_PROGRESS != getCalibrationStatus());
+}
+
+/**
+ * @brief TtlManager::isCalibrationInProgress
+ * @return
+ */
+inline
+bool TtlManager::isCalibrationInProgress() const
+{
+    return (common::model::EStepperCalibrationStatus::IN_PROGRESS == getCalibrationStatus());
 }
 
 /**
@@ -318,26 +364,6 @@ bool TtlManager::hasEndEffector() const
 {
     return (_driver_map.count(common::model::EHardwareType::END_EFFECTOR) ||
             _driver_map.count(common::model::EHardwareType::FAKE_END_EFFECTOR));
-}
-
-/**
- * @brief TtlManager::addToMotorList
- * @return
- */
-inline
-void TtlManager::addToMotorList(uint8_t id)
-{
-    _motor_list.push_back(id);
-}
-
-/**
- * @brief TtlManager::addToConveyorList
- * @return
- */
-inline
-void TtlManager::addToConveyorList(uint8_t id)
-{
-    _conveyor_list.push_back(id);
 }
 
 /**
@@ -395,6 +421,17 @@ void TtlManager::retrieveFakeMotorData(const std::string& current_ns, std::map<u
         tmp.firmware = stepper_firmwares.at(i);
         fake_params.insert(std::make_pair(tmp.id, tmp));
     }
+}
+
+/**
+ * @brief TtlManager::readCollisionStatus
+ * @return true
+ * @return false
+ */
+inline
+bool TtlManager::readCollisionStatus() const
+{
+    return _collision_status;
 }
 
 } // ttl_driver

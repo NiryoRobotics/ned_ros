@@ -60,6 +60,7 @@ class EndEffectorInterfaceCore : public common::util::IInterfaceCore
         EndEffectorInterfaceCore& operator= ( const EndEffectorInterfaceCore& ) = delete;
 
         bool init(ros::NodeHandle &nh) override;
+        bool rebootHardware();
 
         // getters
         std::shared_ptr<common::model::EndEffectorState> getEndEffectorState() const;
@@ -71,6 +72,7 @@ class EndEffectorInterfaceCore : public common::util::IInterfaceCore
         void startSubscribers(ros::NodeHandle& nh) override;
 
         void initEndEffectorHardware();
+        int initHardware();
         void _publishButtonState(const ros::TimerEvent&);
 
         bool _callbackSetIOState(end_effector_interface::SetEEDigitalOut::Request &req,
@@ -94,7 +96,12 @@ class EndEffectorInterfaceCore : public common::util::IInterfaceCore
         uint8_t _id{1};
 };
 
-inline std::shared_ptr<common::model::EndEffectorState>
+/**
+ * @brief EndEffectorInterfaceCore::getEndEffectorState
+ * @return
+ */
+inline
+std::shared_ptr<common::model::EndEffectorState>
 EndEffectorInterfaceCore::getEndEffectorState() const
 {
     return _end_effector_state;

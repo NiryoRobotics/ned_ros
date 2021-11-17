@@ -78,31 +78,26 @@ DxlMotorState::DxlMotorState(std::string name,
         case EHardwareType::XL320:
             _total_angle = 300;
             _total_range_position = 1024;
-            _middle_position = 512;
             _steps_for_one_speed =  1.8944;  // 0.111 * 1024 / 60
         break;
         case EHardwareType::XC430:
             _total_angle = 360;
             _total_range_position = 4096;
-            _middle_position = 2048;
             _steps_for_one_speed = 15.6330667;  // 0.229 * 4096 / 60
         break;
         case EHardwareType::XL330:
             _total_angle = 360;
             _total_range_position = 4096;
-            _middle_position = 2048;
             _steps_for_one_speed = 15.6330667;  // 0.229 * 4096 / 60
         break;
         case EHardwareType::XL430:
             _total_angle = 360;
             _total_range_position = 4096;
-            _middle_position = 2048;
             _steps_for_one_speed = 15.6330667;  // 0.229 * 4096 / 60
         break;
         case EHardwareType::FAKE_DXL_MOTOR:
             _total_angle = 360;
             _total_range_position = 4096;
-            _middle_position = 2048;
             _steps_for_one_speed = 15.6330667;  // 0.229 * 4096 / 60
         break;
         default:
@@ -153,7 +148,6 @@ std::string DxlMotorState::str() const
        << "ff2 gain: " << _ff2_gain << ",\n";
 
     ss << "total range position: " << _total_range_position << ", "
-       << "middle position: " << _middle_position << ", "
        << "total angle: " << _total_angle << ", "
        << "pos multiplier ratio: " << _pos_multiplier_ratio << ", "
        << "vel multiplier ratio: " << _vel_multiplier_ratio << ", "
@@ -173,7 +167,7 @@ std::string DxlMotorState::str() const
  */
 int DxlMotorState::to_motor_pos(double rad_pos)
 {
-    return _middle_position + static_cast<int>(std::round((rad_pos - _offset_position) * _pos_multiplier_ratio * _direction));
+    return static_cast<int>(std::round((rad_pos - _offset_position) * _pos_multiplier_ratio * _direction));
 }
 
 /**
@@ -185,7 +179,7 @@ double DxlMotorState::to_rad_pos(int motor_pos)
 {
     assert(0.0 != _pos_multiplier_ratio);
 
-    return _offset_position + ((motor_pos - _middle_position) * _direction / _pos_multiplier_ratio);
+    return _offset_position + (motor_pos * _direction / _pos_multiplier_ratio);
 }
 
 /**

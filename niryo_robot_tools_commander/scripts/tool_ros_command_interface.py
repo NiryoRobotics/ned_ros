@@ -42,7 +42,7 @@ class ToolRosCommandInterface:
 
     def open_gripper(self, gripper_id, open_position, open_speed, open_hold_torque, open_max_torque):
         self.__service_open_gripper(id=gripper_id, position=open_position, speed=open_speed,
-                                               hold_torque=open_hold_torque, max_torque=open_max_torque)
+                                    hold_torque=open_hold_torque, max_torque=open_max_torque)
         return True
         # try:
         #     resp = self.__service_open_gripper(id=gripper_id, position=open_position, speed=open_speed,

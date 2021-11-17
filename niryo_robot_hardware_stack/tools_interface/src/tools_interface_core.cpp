@@ -87,6 +87,49 @@ bool ToolsInterfaceCore::init(ros::NodeHandle &nh)
 }
 
 /**
+ * @brief ToolsInterfaceCore::rebootAll
+ * @param hardware_version
+ * @return
+ */
+bool ToolsInterfaceCore::rebootHardware(bool torque_on)
+{
+    // reboot
+    bool res = _ttl_interface->rebootHardware(_toolState);
+
+    // re init
+    initHardware(torque_on);
+
+    return res;
+}
+
+/**
+ * @brief ToolsInterfaceCore::initHardware
+ */
+int ToolsInterfaceCore::initHardware(bool torque_on)
+{
+    uint8_t motor_id = _toolState->getId();
+
+    if (EHardwareType::XL330 == _toolState->getHardwareType())
+    {
+        uint8_t new_mode = 5;  // torque + position
+        _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_CONTROL_MODE,
+                                                                               motor_id, std::initializer_list<uint32_t>{new_mode}));
+    }
+    else
+    {
+        // update leds
+        _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_LED_STATE,
+                                                                           motor_id, std::initializer_list<uint32_t>{static_cast<uint32_t>(_toolState->getLedState())}));
+        ros::Duration(0.01).sleep();
+    }
+
+    // TORQUE cmd on if ned2, off otherwise
+    _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_TORQUE,
+                                                                           motor_id, std::initializer_list<uint32_t>{torque_on}));
+    return niryo_robot_msgs::CommandStatus::SUCCESS;
+}
+
+/**
  * @brief ToolsInterfaceCore::initParameters
  * @param nh
  */
@@ -102,55 +145,51 @@ void ToolsInterfaceCore::initParameters(ros::NodeHandle& nh)
 
     std::vector<int> idList;
     std::vector<string> typeList;
+    std::vector<string> nameList;
 
     _available_tools_map.clear();
     nh.getParam("tools_params/id_list", idList);
     nh.getParam("tools_params/type_list", typeList);
+    nh.getParam("tools_params/name_list", nameList);
 
-    // debug - display info
-    ostringstream ss;
-    ss << "[";
-    for (size_t i = 0; i < idList.size() && i < typeList.size() ; ++i)
+    // check that the three lists have the same size
+    if (idList.size() == typeList.size() && idList.size() == nameList.size())
     {
-        ss << " id " << idList.at(i) << ": " << typeList.at(i) << ",";
+        // put everything in maps
+        for (size_t i = 0; i < idList.size(); ++i)
+        {
+            auto id = static_cast<uint8_t>(idList.at(i));
+            EHardwareType type = HardwareTypeEnum(typeList.at(i).c_str());
+            std::string name = nameList.at(i);
+
+            if (!_available_tools_map.count(id))
+            {
+                if (EHardwareType::UNKNOWN != type)
+                {
+                    _available_tools_map.insert(std::make_pair(id, ToolConfig{name, type}));
+                }
+                else
+                    ROS_ERROR("ToolsInterfaceCore::initParameters - unknown type %s. "
+                              "Please check your configuration file (tools_interface/config/default.yaml)",
+                              typeList.at(id).c_str());
+            }
+            else
+                ROS_ERROR("ToolsInterfaceCore::initParameters - duplicate id %d. "
+                          "Please check your configuration file (tools_interface/config/default.yaml)", id);
+        }
     }
-
-    string available_tools_list = ss.str();
-    available_tools_list.pop_back();  // remove last ","
-    available_tools_list += "]";
-
-    ROS_INFO("ToolsInterfaceCore::initParameters - List of tool ids : %s", available_tools_list.c_str());
-
-    // check that the two lists have the same size
-    if (idList.size() != typeList.size())
+    else {
         ROS_ERROR("ToolsInterfaceCore::initParameters - wrong dynamixel configuration. "
                   "Please check your configuration file (tools_interface/config/default.yaml)");
-
-    // put everything in maps
-    for (size_t i = 0; i < idList.size(); ++i)
-    {
-        auto id = static_cast<uint8_t>(idList.at(i));
-        EHardwareType type = HardwareTypeEnum(typeList.at(i).c_str());
-
-        if (!_available_tools_map.count(id))
-        {
-            if (EHardwareType::UNKNOWN != type)
-                _available_tools_map.insert(std::make_pair(id, type));
-            else
-                ROS_ERROR("ToolsInterfaceCore::initParameters - unknown type %s. "
-                          "Please check your configuration file (tools_interface/config/default.yaml)",
-                          typeList.at(id).c_str());
-        }
-        else
-            ROS_ERROR("ToolsInterfaceCore::initParameters - duplicate id %d. "
-                      "Please check your configuration file (tools_interface/config/default.yaml)", id);
     }
+
 
     for (auto const &tool : _available_tools_map)
     {
-        ROS_DEBUG("ToolsInterfaceCore::initParameters - Available tools map: %d => %s",
+        ROS_DEBUG("ToolsInterfaceCore::initParameters - Available tools map: %d => %s (%s)",
                                         static_cast<int>(tool.first),
-                                        HardwareTypeEnum(tool.second).toString().c_str());
+                                        tool.second.name.c_str(),
+                                        HardwareTypeEnum(tool.second.type).toString().c_str());
     }
 }
 
@@ -282,7 +321,7 @@ bool ToolsInterfaceCore::_callbackPingAndSetTool(tools_interface::PingDxlTool::R
     {
         if (_available_tools_map.count(m_id))
         {
-            _toolState = std::make_shared<ToolState>("auto", _available_tools_map.at(m_id), m_id);
+            _toolState = std::make_shared<ToolState>(_available_tools_map.at(m_id).name, _available_tools_map.at(m_id).type, m_id);
             break;
         }
     }
@@ -296,8 +335,9 @@ bool ToolsInterfaceCore::_callbackPingAndSetTool(tools_interface::PingDxlTool::R
             ros::Duration(0.05).sleep();
             int result = _ttl_interface->setTool(_toolState);
 
-            // on success, tool is set, we go out of loop
-            if (niryo_robot_msgs::CommandStatus::SUCCESS == result)
+            // on success, tool is set, we initialize it and go out of loop
+            if (niryo_robot_msgs::CommandStatus::SUCCESS == result &&
+                niryo_robot_msgs::CommandStatus::SUCCESS == initHardware())
             {
                 res.tool = pubToolId(_toolState->getId(), _toolState->getHardwareType());
                 res.state = ToolState::TOOL_STATE_PING_OK;
@@ -343,8 +383,7 @@ bool ToolsInterfaceCore::_callbackToolReboot(std_srvs::Trigger::Request &/*req*/
 
     if (_toolState->isValid())
     {
-        std::lock_guard<std::mutex> lck(_tool_mutex);
-        res.success = _ttl_interface->rebootMotor(_toolState->getId());
+        res.success = rebootHardware(true);
         res.message = (res.success) ? "Tool reboot succeeded" : "Tool reboot failed";
     }
     else

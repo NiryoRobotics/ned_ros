@@ -52,13 +52,13 @@ StepperCalibrationStatusEnum::initialize()
 {
     std::map<EStepperCalibrationStatus, std::string> m;
 
-    m[EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED] = "uninitialized";
-    m[EStepperCalibrationStatus::CALIBRATION_OK]    = "ok";
-    m[EStepperCalibrationStatus::CALIBRATION_TIMEOUT]     = "timeout";
-    m[EStepperCalibrationStatus::CALIBRATION_BAD_PARAM]    = "bad parameter";
-    m[EStepperCalibrationStatus::CALIBRATION_FAIL] = "fail";
-    m[EStepperCalibrationStatus::CALIBRATION_WAITING_USER_INPUT]  = "waiting user input";
-    m[EStepperCalibrationStatus::CALIBRATION_IN_PROGRESS]  = "in progress";
+    m[EStepperCalibrationStatus::UNINITIALIZED] = "uninitialized";
+    m[EStepperCalibrationStatus::OK]    = "ok";
+    m[EStepperCalibrationStatus::TIMEOUT]     = "timeout";
+    m[EStepperCalibrationStatus::BAD_PARAM]    = "bad parameter";
+    m[EStepperCalibrationStatus::FAIL] = "fail";
+    m[EStepperCalibrationStatus::WAITING_USER_INPUT]  = "waiting user input";
+    m[EStepperCalibrationStatus::IN_PROGRESS]  = "in progress";
 
     return m;
 }

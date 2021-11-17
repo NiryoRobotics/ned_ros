@@ -231,8 +231,9 @@ void addJointToTtlManager(const std::shared_ptr<ttl_driver::TtlManager>& ttl_drv
                 stepperState->setMaxEffort(max_effort);
 
                 if (eBusProto == EBusProtocol::TTL)
+                {
                   ttl_drv->addHardwareComponent(stepperState);
-
+                }
                 currentIdStepper++;
             }
         }
@@ -284,8 +285,9 @@ void addJointToTtlManager(const std::shared_ptr<ttl_driver::TtlManager>& ttl_drv
                 dxlState->setFF2Gain(static_cast<uint32_t>(FF2Gain));
 
                 if (eBusProto == EBusProtocol::TTL)
+                {
                   ttl_drv->addHardwareComponent(dxlState);
-
+                }
                 currentIdDxl++;
             }
         }
@@ -339,7 +341,7 @@ TEST_F(TtlInterfaceTestSuiteRobotWithCan, testRebootMotors)
 TEST_F(TtlInterfaceTestSuiteRobotWithCan, testRebootMotorsWrongID)
 {
   bool result;
-  result = ttl_interface->rebootMotor(20);
+  result = ttl_interface->rebootHardware(20);
   EXPECT_FALSE(result);
 }
 
@@ -407,15 +409,53 @@ TEST_F(TtlManagerTestSuiteRobotWithCan, testSingleCmds)
 
 TEST_F(TtlManagerTestSuiteRobotWithCan, testSyncCmds)
 {
-  // sync cmd
-  auto dynamixel_cmd_1 = std::make_unique<common::model::DxlSyncCmd>(common::model::EDxlCommandType::CMD_TYPE_TORQUE);
-  dynamixel_cmd_1->addMotorParam(common::model::EHardwareType::XL430, 2, 1);
-  dynamixel_cmd_1->addMotorParam(common::model::EHardwareType::XL430, 3, 1);
+  bool simulation_mode;
+  ros::NodeHandle nh_private("~");
+  nh_private.getParam("simulation_mode", simulation_mode);
 
-  EXPECT_EQ(ttl_drv->writeSynchronizeCommand(std::move(dynamixel_cmd_1)), COMM_SUCCESS);
-  ros::Duration(0.5).sleep();
+  if (simulation_mode)
+  {
+    // sync cmd
+    auto dynamixel_cmd_1 = std::make_unique<common::model::DxlSyncCmd>(common::model::EDxlCommandType::CMD_TYPE_TORQUE);
+    dynamixel_cmd_1->addMotorParam(common::model::EHardwareType::FAKE_DXL_MOTOR, 2, 1);
+    dynamixel_cmd_1->addMotorParam(common::model::EHardwareType::FAKE_DXL_MOTOR, 3, 1);
 
-  // sync cmd with different motor types
+    EXPECT_EQ(ttl_drv->writeSynchronizeCommand(std::move(dynamixel_cmd_1)), COMM_SUCCESS);
+    ros::Duration(0.5).sleep();
+
+    // sync cmd with different motor types
+    auto dynamixel_cmd_2 = std::make_unique<common::model::DxlSyncCmd>(common::model::EDxlCommandType::CMD_TYPE_TORQUE);
+    dynamixel_cmd_2->addMotorParam(common::model::EHardwareType::FAKE_DXL_MOTOR, 2, 1);
+    dynamixel_cmd_2->addMotorParam(common::model::EHardwareType::FAKE_DXL_MOTOR, 6, 1);
+
+    EXPECT_EQ(ttl_drv->writeSynchronizeCommand(std::move(dynamixel_cmd_2)), COMM_SUCCESS);
+    ros::Duration(0.5).sleep();
+
+    // redondant id
+    auto dynamixel_cmd_3 = std::make_unique<common::model::DxlSyncCmd>(common::model::EDxlCommandType::CMD_TYPE_TORQUE);
+    dynamixel_cmd_3->addMotorParam(common::model::EHardwareType::FAKE_DXL_MOTOR, 3, 1);
+    dynamixel_cmd_3->addMotorParam(common::model::EHardwareType::FAKE_DXL_MOTOR, 3, 1);
+
+    EXPECT_NE(ttl_drv->writeSynchronizeCommand(std::move(dynamixel_cmd_3)), COMM_SUCCESS);
+
+    // wrong cmd type
+    auto dynamixel_cmd_4 = std::make_unique<common::model::DxlSyncCmd>(common::model::EDxlCommandType::CMD_TYPE_UNKNOWN);
+    dynamixel_cmd_4->addMotorParam(common::model::EHardwareType::FAKE_DXL_MOTOR, 5, 1);
+    dynamixel_cmd_4->addMotorParam(common::model::EHardwareType::FAKE_DXL_MOTOR, 3, 1);
+
+    EXPECT_NE(ttl_drv->writeSynchronizeCommand(std::move(dynamixel_cmd_4)), COMM_SUCCESS);
+  }
+  else
+  {
+    // sync cmd
+    auto dynamixel_cmd_1 = std::make_unique<common::model::DxlSyncCmd>(common::model::EDxlCommandType::CMD_TYPE_TORQUE);
+    dynamixel_cmd_1->addMotorParam(common::model::EHardwareType::XL430, 2, 1);
+    dynamixel_cmd_1->addMotorParam(common::model::EHardwareType::XL430, 3, 1);
+
+    EXPECT_EQ(ttl_drv->writeSynchronizeCommand(std::move(dynamixel_cmd_1)), COMM_SUCCESS);
+    ros::Duration(0.5).sleep();
+
+    // sync cmd with different motor types
     auto dynamixel_cmd_2 = std::make_unique<common::model::DxlSyncCmd>(common::model::EDxlCommandType::CMD_TYPE_TORQUE);
     dynamixel_cmd_2->addMotorParam(common::model::EHardwareType::XL430, 2, 1);
     dynamixel_cmd_2->addMotorParam(common::model::EHardwareType::XL320, 6, 1);
@@ -423,19 +463,20 @@ TEST_F(TtlManagerTestSuiteRobotWithCan, testSyncCmds)
     EXPECT_EQ(ttl_drv->writeSynchronizeCommand(std::move(dynamixel_cmd_2)), COMM_SUCCESS);
     ros::Duration(0.5).sleep();
 
-  // redondant id
-  auto dynamixel_cmd_3 = std::make_unique<common::model::DxlSyncCmd>(common::model::EDxlCommandType::CMD_TYPE_TORQUE);
-  dynamixel_cmd_3->addMotorParam(common::model::EHardwareType::XL430, 3, 1);
-  dynamixel_cmd_3->addMotorParam(common::model::EHardwareType::XL430, 3, 1);
+    // redondant id
+    auto dynamixel_cmd_3 = std::make_unique<common::model::DxlSyncCmd>(common::model::EDxlCommandType::CMD_TYPE_TORQUE);
+    dynamixel_cmd_3->addMotorParam(common::model::EHardwareType::XL430, 3, 1);
+    dynamixel_cmd_3->addMotorParam(common::model::EHardwareType::XL430, 3, 1);
 
-  EXPECT_NE(ttl_drv->writeSynchronizeCommand(std::move(dynamixel_cmd_3)), COMM_SUCCESS);
+    EXPECT_NE(ttl_drv->writeSynchronizeCommand(std::move(dynamixel_cmd_3)), COMM_SUCCESS);
 
-  // wrong cmd type
-  auto dynamixel_cmd_4 = std::make_unique<common::model::DxlSyncCmd>(common::model::EDxlCommandType::CMD_TYPE_UNKNOWN);
-  dynamixel_cmd_4->addMotorParam(common::model::EHardwareType::XL320, 5, 1);
-  dynamixel_cmd_4->addMotorParam(common::model::EHardwareType::XL320, 3, 1);
+    // wrong cmd type
+    auto dynamixel_cmd_4 = std::make_unique<common::model::DxlSyncCmd>(common::model::EDxlCommandType::CMD_TYPE_UNKNOWN);
+    dynamixel_cmd_4->addMotorParam(common::model::EHardwareType::XL320, 5, 1);
+    dynamixel_cmd_4->addMotorParam(common::model::EHardwareType::XL430, 3, 1);
 
-  EXPECT_NE(ttl_drv->writeSynchronizeCommand(std::move(dynamixel_cmd_4)), COMM_SUCCESS);
+    EXPECT_NE(ttl_drv->writeSynchronizeCommand(std::move(dynamixel_cmd_4)), COMM_SUCCESS);
+  }
 }
 
 //  Test control cmds
@@ -503,15 +544,25 @@ TEST_F(TtlManagerTestSuiteRobotWithCan, testSingleControlCmds)
 
 TEST_F(TtlManagerTestSuiteRobotWithCan, testSyncControlCmds)
 {
-    // sync cmd
-    auto cmd_1_torque = std::make_unique<common::model::DxlSyncCmd>(common::model::EDxlCommandType::CMD_TYPE_TORQUE);
-    cmd_1_torque->addMotorParam(common::model::EHardwareType::XL430, 2, 1);
-    cmd_1_torque->addMotorParam(common::model::EHardwareType::XL430, 3, 1);
+  bool simulation_mode;
+  ros::NodeHandle nh_private("~");
+  nh_private.getParam("simulation_mode", simulation_mode);
 
-    EXPECT_EQ(ttl_drv->writeSynchronizeCommand(std::move(cmd_1_torque)), COMM_SUCCESS);
-    ros::Duration(0.01).sleep();
+  common::model::EHardwareType dxl_type;
+  if (!simulation_mode)
+    dxl_type = common::model::EHardwareType::XL430;
+  else
+    dxl_type = common::model::EHardwareType::FAKE_DXL_MOTOR;
 
-  ttl_drv->readPositionsStatus();
+  // sync cmd
+  auto cmd_1_torque = std::make_unique<common::model::DxlSyncCmd>(common::model::EDxlCommandType::CMD_TYPE_TORQUE);
+  cmd_1_torque->addMotorParam(dxl_type, 2, 1);
+  cmd_1_torque->addMotorParam(dxl_type, 3, 1);
+
+  EXPECT_EQ(ttl_drv->writeSynchronizeCommand(std::move(cmd_1_torque)), COMM_SUCCESS);
+  ros::Duration(0.01).sleep();
+
+  EXPECT_EQ(ttl_drv->readPositionsStatus(), true);
   auto state_motor_2 = std::dynamic_pointer_cast<common::model::AbstractMotorState>(ttl_drv->getHardwareState(2));
   assert(state_motor_2);
   auto state_motor_3 = std::dynamic_pointer_cast<common::model::AbstractMotorState>(ttl_drv->getHardwareState(3));
@@ -523,13 +574,13 @@ TEST_F(TtlManagerTestSuiteRobotWithCan, testSyncControlCmds)
 
   uint32_t new_pos_2 = (pos_2 > 2048) ? pos_2 - 100 : pos_2 + 100;
   uint32_t new_pos_3 = (pos_3 > 1000) ? pos_3 - 100 : pos_3 + 100;
-  cmd_1->addMotorParam(common::model::EHardwareType::XL430, 2, new_pos_2);
-  cmd_1->addMotorParam(common::model::EHardwareType::XL430, 3, new_pos_3);
+  cmd_1->addMotorParam(dxl_type, 2, new_pos_2);
+  cmd_1->addMotorParam(dxl_type, 3, new_pos_3);
 
   EXPECT_EQ(ttl_drv->writeSynchronizeCommand(std::move(cmd_1)), COMM_SUCCESS);
   ros::Duration(1.0).sleep();
 
-  ttl_drv->readPositionsStatus();
+  EXPECT_EQ(ttl_drv->readPositionsStatus(), true);
   EXPECT_NEAR(state_motor_2->getPosition(), new_pos_2, 30);
 
   EXPECT_NEAR(state_motor_3->getPosition(), new_pos_3, 30);
@@ -586,7 +637,7 @@ TEST_F(TtlInterfaceTestSuiteRotbotWithoutCan, testRebootMotors)
 TEST_F(TtlInterfaceTestSuiteRotbotWithoutCan, testRebootMotorsWrongID)
 {
   bool result;
-  result = ttl_interface->rebootMotor(20);
+  result = ttl_interface->rebootHardware(20);
   EXPECT_FALSE(result);
 }
 
@@ -948,12 +999,13 @@ int main(int argc, char **argv)
     testing::InitGoogleTest(&argc, argv);
     ros::init(argc, argv, "ttl_driver_unit_tests");
 
-    std::string gtest_filter;
+    std::string hardware_version;
 
     ros::NodeHandle nh_private("~");
-    nh_private.getParam("gtest_filter", gtest_filter);
-    if (!gtest_filter.empty())
-      testing::GTEST_FLAG(filter) = gtest_filter;
-
+    nh_private.getParam("hardware_version", hardware_version);
+    if (hardware_version == "ned" || hardware_version == "one")
+      testing::GTEST_FLAG(filter) = "-TtlManagerTestSuiteRobotWithoutCan.*:TtlInterfaceTestSuiteRotbotWithoutCan.*";
+    else if (hardware_version == "ned2")
+      testing::GTEST_FLAG(filter) = "-TtlManagerTestSuiteRobotWithCan.*:TtlInterfaceTestSuiteRobotWithCan.*";
     return RUN_ALL_TESTS();
 }

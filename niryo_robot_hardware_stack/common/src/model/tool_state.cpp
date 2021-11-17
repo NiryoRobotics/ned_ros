@@ -43,7 +43,16 @@ ToolState::ToolState(std::string name, EHardwareType type, uint8_t id) :
  */
 void ToolState::setName(std::string name)
 {
-    _tool_name = std::move(name);
+  _tool_name = std::move(name);
+}
+
+/**
+ * @brief ToolState::setLedState
+ * @param led_state
+ */
+void ToolState::setLedState(int led_state)
+{
+    _led_state = led_state;
 }
 
 // ***********************

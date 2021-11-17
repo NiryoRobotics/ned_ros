@@ -50,6 +50,7 @@ public:
     virtual int readButton0Status(uint8_t id, common::model::EActionType& action) = 0;
     virtual int readButton1Status(uint8_t id, common::model::EActionType& action) = 0;
     virtual int readButton2Status(uint8_t id, common::model::EActionType& action) = 0;
+    virtual int syncReadButtonsStatus(const uint8_t& id, std::vector<common::model::EActionType>& action_list) = 0;
 
     virtual int readAccelerometerXValue(uint8_t id, uint32_t& x_value) = 0;
     virtual int readAccelerometerYValue(uint8_t id, uint32_t& y_value) = 0;
@@ -58,16 +59,16 @@ public:
     virtual int readCollisionStatus(uint8_t id, bool& status) = 0;
 
     virtual int readDigitalInput(uint8_t id, bool& in) = 0;
-    virtual int writeDigitalOutput(uint8_t id, bool out) = 0;
+    virtual int writeDigitalOutput(uint8_t id, uint32_t out) = 0;
 
-    std::string interpreteErrorState(uint32_t hw_state) const override;
+    std::string interpretErrorState(uint32_t hw_state) const override;
 
-    common::model::EActionType interpreteActionValue(uint32_t value) const;
+    common::model::EActionType interpretActionValue(uint32_t value) const;
 
     // AbstractTtlDriver interface
 protected:
     std::string str() const override;
-    std::string interpreteFirmwareVersion(uint32_t fw_version) const override;
+    std::string interpretFirmwareVersion(uint32_t fw_version) const override;
 
     // AbstractTtlDriver interface
 public:

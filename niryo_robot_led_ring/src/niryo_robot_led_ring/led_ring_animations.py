@@ -153,7 +153,7 @@ class LedRingAnimations:
         self.init_animation()
         with self.__animation_lock:
             colors = color_rgba[:self.led_count] if len(color_rgba) > self.led_count else color_rgba + (
-                        len(color_rgba) - self.led_count) * [BLACK]
+                    len(color_rgba) - self.led_count) * [BLACK]
 
             for led_id, led_color in enumerate(colors):
                 # set color led by led
@@ -451,11 +451,9 @@ class LedRingAnimations:
         """
 
         def animation(color_counter):
-            # for led_id in range(self.led_count):
-            #   self.set_led(led_id, wheel_rgba(((led_id * 256.0 // self.led_count) + color_counter) & 255))
-            # self.show_leds()
-
-            self.set_and_show_leds(wheel_rgba(((256 // self.led_count) + color_counter) & 255))
+            for led_id in range(self.led_count):
+                self.set_led(led_id, wheel_rgba(int((led_id * 256.0 // self.led_count + color_counter)) & 255))
+            self.show_leds()
 
         self.init_animation()
         if not period:

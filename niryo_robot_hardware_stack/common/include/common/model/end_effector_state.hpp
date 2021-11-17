@@ -92,7 +92,7 @@ class EndEffectorState : public AbstractHardwareState
         EndEffectorState(uint8_t id);
         EndEffectorState(uint8_t id, common::model::EHardwareType type);
 
-        void configureButton(uint8_t id, EButtonType button_type);
+        void configureButton(uint8_t button_id, EButtonType button_type);
 
         // AbstractHardwareState interface
         std::string str() const override;

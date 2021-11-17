@@ -104,10 +104,10 @@ int MockStepperDriver::reboot(uint8_t id)
 }
 
 /**
- * @brief MockStepperDriver::interpreteErrorState
+ * @brief MockStepperDriver::interpretErrorState
  * @return
  */
-std::string MockStepperDriver::interpreteErrorState(uint32_t /*hw_state*/) const
+std::string MockStepperDriver::interpretErrorState(uint32_t /*hw_state*/) const
 {
     return "";
 }
@@ -365,7 +365,7 @@ int MockStepperDriver::readVelocity(uint8_t id, uint32_t &present_velocity)
  * @param temperature
  * @return
  */
-int MockStepperDriver::readTemperature(uint8_t id, uint32_t& temperature)
+int MockStepperDriver::readTemperature(uint8_t id, uint8_t& temperature)
 {
     if (_fake_data->stepper_registers.count(id))
         temperature = _fake_data->stepper_registers.at(id).temperature;
@@ -395,7 +395,7 @@ int MockStepperDriver::readVoltage(uint8_t id, double &voltage)
  * @param hardware_status
  * @return
  */
-int MockStepperDriver::readHwErrorStatus(uint8_t /*id*/, uint32_t& hardware_status)
+int MockStepperDriver::readHwErrorStatus(uint8_t /*id*/, uint8_t& hardware_status)
 {
     hardware_status = 0;
     return COMM_SUCCESS;
@@ -477,6 +477,15 @@ int MockStepperDriver::syncReadJointStatus(const std::vector<uint8_t> &id_list,
 
             data_array_list.emplace_back(std::move(blocks));
         }
+        if (_fake_data->dxl_registers.count(id))
+        {
+            std::array<uint32_t, 2> blocks;
+
+            blocks.at(0) = _fake_data->dxl_registers.at(id).velocity;
+            blocks.at(1) = _fake_data->dxl_registers.at(id).position;
+
+            data_array_list.emplace_back(std::move(blocks));
+        }
         else
             return COMM_RX_FAIL;
         auto result = countSet.insert(id);
@@ -517,7 +526,7 @@ int MockStepperDriver::syncReadFirmwareVersion(const std::vector<uint8_t> &id_li
  * @param temperature_list
  * @return
  */
-int MockStepperDriver::syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &temperature_list)
+int MockStepperDriver::syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint8_t>& temperature_list)
 {
     std::set<uint8_t> countSet;
 
@@ -561,13 +570,56 @@ int MockStepperDriver::syncReadVoltage(const std::vector<uint8_t> &id_list, std:
     return COMM_SUCCESS;
 }
 
+
+/**
+ * @brief MockStepperDriver::syncReadVoltage
+ * @param id_list
+ * @param voltage_list
+ * @return
+ */
+int MockStepperDriver::syncReadRawVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list)
+{
+    return syncReadVoltage(id_list, voltage_list);
+}
+
+/**
+ * @brief MockStepperDriver::syncReadHwStatus
+ * @param id_list
+ * @param data_list
+ * @return
+ */
+int MockStepperDriver::syncReadHwStatus(const std::vector<uint8_t> &id_list,
+                                        std::vector<std::pair<double, uint8_t> >& data_list)
+{
+    data_list.clear();
+
+    std::set<uint8_t> countSet;
+
+    for (auto & id : id_list)
+    {
+        if (_fake_data->stepper_registers.count(id))
+        {
+            double voltage = _fake_data->stepper_registers.at(id).voltage;
+            uint8_t temperature = _fake_data->stepper_registers.at(id).temperature;
+            data_list.emplace_back(std::make_pair(voltage, temperature));
+        }
+        else
+            return COMM_RX_FAIL;
+
+        auto result = countSet.insert(id);
+        if (!result.second)
+            return GROUP_SYNC_REDONDANT_ID;  // redondant id
+    }
+    return COMM_SUCCESS;
+}
+
 /**
  * @brief MockStepperDriver::syncReadHwErrorStatus
  * @param id_list
  * @param hw_error_list
  * @return
  */
-int MockStepperDriver::syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &hw_error_list)
+int MockStepperDriver::syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint8_t> &hw_error_list)
 {
     std::set<uint8_t> countSet;
 
@@ -673,7 +725,7 @@ int MockStepperDriver::writeHomingSetup(uint8_t id, uint8_t /*direction*/, uint8
  * @param status
  * @return
  */
-int MockStepperDriver::readHomingStatus(uint8_t id, uint32_t &status)
+int MockStepperDriver::readHomingStatus(uint8_t id, uint8_t &status)
 {
     if (COMM_SUCCESS != ping(id))
         return COMM_RX_FAIL;
@@ -686,6 +738,36 @@ int MockStepperDriver::readHomingStatus(uint8_t id, uint32_t &status)
         _calibration_status = CALIBRATION_SUCCESS;
 
     status = _calibration_status;
+    return COMM_SUCCESS;
+}
+
+/**
+ * @brief MockStepperDriver::syncReadHomingStatus
+ * @param id_list
+ * @param status_list
+ * @return
+ */
+int MockStepperDriver::syncReadHomingStatus(const std::vector<uint8_t> &id_list,
+                                            std::vector<uint8_t> &status_list)
+{
+    if (_fake_time)
+    {
+        _fake_time--;
+    }
+    else
+        _calibration_status = CALIBRATION_SUCCESS;
+
+    std::set<uint8_t> countSet;
+
+    status_list.clear();
+    for (auto & id : id_list)
+    {
+        status_list.emplace_back(_calibration_status);
+        auto result = countSet.insert(id);
+        if (!result.second)
+            return GROUP_SYNC_REDONDANT_ID;  // redondant id
+    }
+
     return COMM_SUCCESS;
 }
 

@@ -19,6 +19,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 
 #include <memory>
 #include "common/model/hardware_type_enum.hpp"
+#include "common/model/stepper_calibration_status_enum.hpp"
 
 namespace ttl_driver
 {
@@ -47,7 +48,7 @@ struct StepperReg
     static constexpr uint8_t SIZE_MIN_POSITION_LIMIT        = 4;
 
     static constexpr uint16_t ADDR_FIRMWARE_VERSION         = 59;
-    static constexpr uint8_t SIZE_FIRMWARE_VERSION          = 4;
+    using TYPE_FIRMWARE_VERSION = uint32_t;
 
     // RAM
 
@@ -55,7 +56,7 @@ struct StepperReg
     static constexpr uint8_t SIZE_TORQUE_ENABLE             = 1;
 
     static constexpr uint16_t ADDR_HW_ERROR_STATUS          = 70;
-    static constexpr uint8_t SIZE_HW_ERROR_STATUS           = 1;
+    using TYPE_HW_ERROR_STATUS = uint8_t;
 
     // unit = 0.01 RPM - Only on conveyor
     static constexpr uint16_t ADDR_GOAL_VELOCITY            = 104;
@@ -75,16 +76,16 @@ struct StepperReg
 
     // unit = 1mV
     static constexpr uint16_t ADDR_PRESENT_VOLTAGE          = 144;
-    static constexpr uint8_t SIZE_PRESENT_VOLTAGE           = 2;
+    using TYPE_PRESENT_VOLTAGE = uint16_t;
 
     static constexpr uint16_t ADDR_PRESENT_TEMPERATURE      = 146;
-    static constexpr uint8_t SIZE_PRESENT_TEMPERATURE       = 1;
+    using TYPE_PRESENT_TEMPERATURE = uint8_t;
 
     static constexpr uint16_t ADDR_COMMAND                  = 147;
     static constexpr uint8_t SIZE_COMMAND                   = 1;
 
     static constexpr uint16_t ADDR_HOMING_STATUS            = 148;
-    static constexpr uint8_t SIZE_HOMING_STATUS             = 1;
+    using TYPE_HOMING_STATUS = uint8_t;
 
     static constexpr uint16_t ADDR_HOMING_DIRECTION         = 149;
     static constexpr uint8_t SIZE_HOMING_DIRECTION          = 1;
@@ -94,6 +95,7 @@ struct StepperReg
 
     // acceleration profile
 
+    using TYPE_VELOCITY_PROFILE = uint32_t;
     static constexpr uint16_t ADDR_VSTART                   = 1024;
     static constexpr uint8_t SIZE_VSTART                    = 4;
 

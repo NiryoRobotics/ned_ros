@@ -30,6 +30,30 @@ namespace common
 namespace model
 {
 
+struct VelocityProfile
+{
+    uint32_t v_start{1};
+    uint32_t a_1{0};
+    uint32_t v_1{0};
+    uint32_t a_max{6000};
+    uint32_t v_max{6};
+    uint32_t d_max{6000};
+    uint32_t d_1{0};
+    uint32_t v_stop{2};
+
+    std::vector<uint32_t> to_list() const
+    {
+      return {v_start,
+              a_1,
+              v_1,
+              a_max,
+              v_max,
+              d_max,
+              d_1,
+              v_stop};
+    }
+};
+
 /**
  * @brief The StepperMotorState class
  */
@@ -63,10 +87,11 @@ public:
     double getMaxEffort() const;
     double getMicroSteps() const;
 
-    common::model::EStepperCalibrationStatus getCalibrationState() const;
+    common::model::EStepperCalibrationStatus getCalibrationStatus() const;
     int32_t getCalibrationValue() const;
 
-    std::vector<uint32_t> getVelocityProfile() const;
+    VelocityProfile getVelocityProfile() const;
+    void setVelocityProfile(const VelocityProfile& profile);
 
     // tests
     bool isConveyor() const;
@@ -83,18 +108,6 @@ public:
     int to_motor_vel(double rad_vel) override;
     double to_rad_vel(int motor_vel) override;
 
-    void setProfileVStart(const uint32_t &profile_v_start);
-    void setProfileA1(const uint32_t &profile_a_1);
-    void setProfileV1(const uint32_t &profile_v_1);
-    void setProfileAMax(const uint32_t &profile_a_max);
-    void setProfileVMax(const uint32_t &profile_v_max);
-    void setProfileDMax(const uint32_t &profile_d_max);
-    void setProfileD1(const uint32_t &profile_d_1);
-    void setProfileVStop(const uint32_t &profile_v_stop);
-
-    uint8_t getCalibrationStallThreshold() const;
-    void setCalibrationStallThreshold(const uint8_t& calibration_stall_threshold);
-
 protected:
     double _last_time_read{-1.0};
     double _hw_fail_counter{0.0};
@@ -104,19 +117,10 @@ protected:
     double _gear_ratio{1.0};
 
     // profile
-    uint32_t _profile_v_start{1};
-    uint32_t _profile_a_1{0};
-    uint32_t _profile_v_1{0};
-    uint32_t _profile_a_max{6000};
-    uint32_t _profile_v_max{6};
-    uint32_t _profile_d_max{6000};
-    uint32_t _profile_d_1{0};
-    uint32_t _profile_v_stop{2};
+    VelocityProfile _profile;
 
-    common::model::EStepperCalibrationStatus _calibration_state{common::model::EStepperCalibrationStatus::CALIBRATION_UNINITIALIZED};
+    common::model::EStepperCalibrationStatus _calibration_status{common::model::EStepperCalibrationStatus::UNINITIALIZED};
     int32_t _calibration_value{0};
-
-    uint8_t _calibration_stall_threshold{6};
 
 private:
     void updateMultiplierRatio();
@@ -125,7 +129,6 @@ private:
     double _vel_multiplier_ratio{1.0};
 
     static constexpr double STEPPERS_MOTOR_STEPS_PER_REVOLUTION = 200.0;
-
 };
 
 /**
@@ -143,9 +146,9 @@ double StepperMotorState::getMaxEffort() const
  * @return
  */
 inline
-EStepperCalibrationStatus StepperMotorState::getCalibrationState() const
+EStepperCalibrationStatus StepperMotorState::getCalibrationStatus() const
 {
-    return _calibration_state;
+    return _calibration_status;
 }
 
 /**
@@ -168,27 +171,14 @@ bool StepperMotorState::isConveyor() const
     return (getComponentType() == common::model::EComponentType::CONVEYOR);
 }
 
-inline
-uint8_t StepperMotorState::getCalibrationStallThreshold() const
-{
-  return _calibration_stall_threshold;
-}
-
 /**
  * @brief StepperMotorState::getVelocityProfile
  * @return
  */
 inline
-std::vector<uint32_t> StepperMotorState::getVelocityProfile() const
+VelocityProfile StepperMotorState::getVelocityProfile() const
 {
-  return {_profile_v_start,
-          _profile_a_1,
-          _profile_v_1,
-          _profile_a_max,
-          _profile_v_max,
-          _profile_d_max,
-          _profile_d_1,
-          _profile_v_stop};
+    return _profile;
 }
 
 /**
