@@ -377,7 +377,7 @@ int MockEndEffectorDriver::readDigitalInput(uint8_t id, bool& in)
  * @param out
  * @return
  */
-int MockEndEffectorDriver::writeDigitalOutput(uint8_t id, bool out)
+int MockEndEffectorDriver::writeDigitalOutput(uint8_t id, uint32_t out)
 {
     if (COMM_SUCCESS != ping(id))
         return COMM_RX_FAIL;

@@ -80,7 +80,7 @@ class EndEffectorDriver : public AbstractEndEffectorDriver
         int readCollisionStatus(uint8_t id, bool& status) override;
 
         int readDigitalInput(uint8_t id, bool& in) override;
-        int writeDigitalOutput(uint8_t id, bool out) override;      
+        int writeDigitalOutput(uint8_t id, uint32_t out) override;      
 };
 
 // definition of methods
@@ -423,13 +423,13 @@ int EndEffectorDriver<reg_type>::readDigitalInput(uint8_t id, bool& in)
 /**
  * @brief EndEffectorDriver<reg_type>::setDigitalOutput
  * @param id
- * @param out
+ * @param out  1 : true, 0: false
  * @return
  */
 template<typename reg_type>
-int EndEffectorDriver<reg_type>::writeDigitalOutput(uint8_t id, bool out)
+int EndEffectorDriver<reg_type>::writeDigitalOutput(uint8_t id, uint32_t out)
 {
-    return write(reg_type::ADDR_DIGITAL_OUT, reg_type::SIZE_DIGITAL_OUT, id, (out > 0) ? 1 : 0);
+    return write(reg_type::ADDR_DIGITAL_OUT, reg_type::SIZE_DIGITAL_OUT, id, out);
 }
 
 } // ttl_driver
