@@ -59,7 +59,7 @@ std::string MockDxlDriver::str() const
  */
 int MockDxlDriver::ping(uint8_t id)
 {
-    if (_fake_data->dxl_registers.count(id))
+    if (std::find(_fake_data->full_id_list.begin(), _fake_data->full_id_list.end(), id) != _fake_data->full_id_list.end())
         return COMM_SUCCESS;
     return COMM_TX_FAIL;
 }
@@ -80,6 +80,27 @@ int MockDxlDriver::getModelNumber(uint8_t id, uint16_t& model_number)
 }
 
 /**
+ * @brief MockDxlDriver::checkModelNumber
+ * @param id
+ * @return
+ */
+int MockDxlDriver::checkModelNumber(uint8_t id)
+{
+    uint16_t model_number = 0;
+    int ping_result = getModelNumber(id, model_number);
+
+    if (ping_result == COMM_SUCCESS)
+    {
+        if (model_number)
+        {
+            return PING_WRONG_MODEL_NUMBER;
+        }
+    }
+
+    return ping_result;
+}
+
+/**
  * @brief MockDxlDriver::scan
  * @param id_list
  * @return
@@ -97,9 +118,7 @@ int MockDxlDriver::scan(std::vector<uint8_t>& id_list)
  */
 int MockDxlDriver::reboot(uint8_t id)
 {
-    if (std::find(_id_list.begin(), _id_list.end(), id) == _id_list.end())
-        return COMM_TX_FAIL;
-    return COMM_SUCCESS;
+    return ping(id);
 }
 
 /**
@@ -159,27 +178,6 @@ int MockDxlDriver::changeId(uint8_t id, uint8_t new_id)
     (void)new_id;  // unused
 
     return COMM_TX_FAIL;
-}
-
-/**
- * @brief MockDxlDriver::checkModelNumber
- * @param id
- * @return
- */
-int MockDxlDriver::checkModelNumber(uint8_t id)
-{
-    uint16_t model_number = 0;
-    int ping_result = getModelNumber(id, model_number);
-
-    if (ping_result == COMM_SUCCESS)
-    {
-        if (model_number)
-        {
-            return PING_WRONG_MODEL_NUMBER;
-        }
-    }
-
-    return ping_result;
 }
 
 /**

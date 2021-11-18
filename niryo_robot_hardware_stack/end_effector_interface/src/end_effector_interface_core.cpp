@@ -199,6 +199,7 @@ void EndEffectorInterfaceCore::initEndEffectorHardware()
       }
       else
       {
+          _end_effector_state->setConnectionStatus(false);
           ROS_WARN("EndEffectorInterfaceCore::initEndEffectorHardware - "
                    "Set end effector failure, return : %d. Aborted...",
                    result);

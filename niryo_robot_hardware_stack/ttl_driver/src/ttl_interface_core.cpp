@@ -595,9 +595,12 @@ void TtlInterfaceCore::controlLoop()
                         msg += " do not seem to be connected";
                         ROS_WARN_THROTTLE(1.0, "%s", msg.c_str());
 
-                        ros::Duration(0.25).sleep();
                     }
+                    // still keep hardware status updated
+                    _ttl_manager->readHardwareStatus();
+                    ros::Duration(0.25).sleep();
                 }
+
                 ROS_INFO("TtlInterfaceCore::controlLoop - Bus is ok");
             }
 
@@ -695,10 +698,11 @@ void TtlInterfaceCore::_executeCommand()
  */
 int TtlInterfaceCore::addJoint(const std::shared_ptr<common::model::JointState>& jointState)
 {
-    int result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
+    int result = niryo_robot_msgs::CommandStatus::FAILURE;
 
-    lock_guard<mutex> lck(_control_loop_mutex);
-
+    //lock_guard<mutex> lck(_control_loop_mutex);
+    return _ttl_manager->addHardwareComponent(jointState);
+/*
     // try to find motor
     if (_ttl_manager->ping(jointState->getId()))
     {
@@ -708,7 +712,7 @@ int TtlInterfaceCore::addJoint(const std::shared_ptr<common::model::JointState>&
     else
     {
         ROS_WARN("TtlInterfaceCore::addJoint - No joint found with motor id %d", jointState->getId());
-    }
+    }*/
 
     return result;
 }

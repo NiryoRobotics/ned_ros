@@ -43,7 +43,8 @@ MockEndEffectorDriver::MockEndEffectorDriver(std::shared_ptr<FakeTtlData> data) 
  */
 std::string MockEndEffectorDriver::str() const
 {
-    return common::model::HardwareTypeEnum(EndEffectorReg::motor_type).toString() + " : " + ttl_driver::AbstractEndEffectorDriver::str();
+    return common::model::HardwareTypeEnum(EndEffectorReg::motor_type).toString() + " : "
+        + ttl_driver::AbstractEndEffectorDriver::str();
 }
 
 /**
@@ -53,9 +54,24 @@ std::string MockEndEffectorDriver::str() const
  */
 int MockEndEffectorDriver::ping(uint8_t id)
 {
-    if (id == _fake_data->end_effector.id)
+    if (std::find(_fake_data->full_id_list.begin(), _fake_data->full_id_list.end(), id) != _fake_data->full_id_list.end())
         return COMM_SUCCESS;
     return COMM_TX_FAIL;
+}
+
+/**
+ * @brief MockEndEffectorDriver::getModelNumber
+ * @param id
+ * @param model_number
+ * @return
+ */
+int MockEndEffectorDriver::getModelNumber(uint8_t id, uint16_t &model_number)
+{
+    if (_fake_data->end_effector.id == id)
+        model_number = _fake_data->end_effector.model_number;
+    else
+        return COMM_RX_FAIL;
+    return COMM_SUCCESS;
 }
 
 /**
@@ -65,10 +81,39 @@ int MockEndEffectorDriver::ping(uint8_t id)
  */
 int MockEndEffectorDriver::checkModelNumber(uint8_t id)
 {
-    if (COMM_SUCCESS != ping(id))
-        return COMM_RX_FAIL;
+    uint16_t model_number = 0;
+    int ping_result = getModelNumber(id, model_number);
 
+    if (ping_result == COMM_SUCCESS)
+    {
+        if (model_number)
+        {
+            return PING_WRONG_MODEL_NUMBER;
+        }
+    }
+
+    return ping_result;
+}
+
+/**
+ * @brief MockEndEffectorDriver::scan
+ * @param id_list
+ * @return
+ */
+int MockEndEffectorDriver::scan(std::vector<uint8_t> &id_list)
+{
+    id_list = _fake_data->full_id_list;
     return COMM_SUCCESS;
+}
+
+/**
+ * @brief MockEndEffectorDriver::reboot
+ * @param id
+ * @return
+ */
+int MockEndEffectorDriver::reboot(uint8_t id)
+{
+   return ping(id);
 }
 
 /**
@@ -220,29 +265,6 @@ int MockEndEffectorDriver::syncReadHwErrorStatus(const std::vector<uint8_t> &/*i
     return COMM_SUCCESS;
 }
 
-/**
- * @brief MockEndEffectorDriver::scan
- * @param id_list
- * @return
- */
-int MockEndEffectorDriver::scan(std::vector<uint8_t> &id_list)
-{
-    id_list = _fake_data->full_id_list;
-    return COMM_SUCCESS;
-}
-
-/**
- * @brief MockEndEffectorDriver::reboot
- * @param id
- * @return
- */
-int MockEndEffectorDriver::reboot(uint8_t id)
-{
-    if (COMM_SUCCESS != ping(id))
-        return COMM_RX_FAIL;
-
-    return COMM_SUCCESS;
-}
 
 // buttons status
 

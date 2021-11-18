@@ -61,7 +61,7 @@ std::string MockStepperDriver::str() const
  */
 int MockStepperDriver::ping(uint8_t id)
 {
-    if (std::find(_id_list.begin(), _id_list.end(), id) != _id_list.end())
+    if (std::find(_fake_data->full_id_list.begin(), _fake_data->full_id_list.end(), id) != _fake_data->full_id_list.end())
         return COMM_SUCCESS;
     return COMM_TX_FAIL;
 }
@@ -77,6 +77,27 @@ int MockStepperDriver::getModelNumber(uint8_t id, uint16_t& model_number)
     if (_fake_data->stepper_registers.count(id))
         model_number = _fake_data->stepper_registers.at(id).model_number;
     return COMM_SUCCESS;
+}
+
+/**
+ * @brief MockStepperDriver::checkModelNumber
+ * @param id
+ * @return
+ */
+int MockStepperDriver::checkModelNumber(uint8_t id)
+{
+    uint16_t model_number = 0;
+    int ping_result = getModelNumber(id, model_number);
+
+    if (ping_result == COMM_SUCCESS)
+    {
+        if (model_number)
+        {
+            return PING_WRONG_MODEL_NUMBER;
+        }
+    }
+
+    return ping_result;
 }
 
 /**
@@ -98,9 +119,7 @@ int MockStepperDriver::scan(std::vector<uint8_t>& id_list)
  */
 int MockStepperDriver::reboot(uint8_t id)
 {
-    if (std::find(_id_list.begin(), _id_list.end(), id) == _id_list.end())
-        return COMM_TX_FAIL;
-    return COMM_SUCCESS;
+    return ping(id);
 }
 
 /**
@@ -142,27 +161,6 @@ int MockStepperDriver::changeId(uint8_t id, uint8_t new_id)
         result = COMM_TX_FAIL;
 
     return result;
-}
-
-/**
- * @brief MockStepperDriver::checkModelNumber
- * @param id
- * @return
- */
-int MockStepperDriver::checkModelNumber(uint8_t id)
-{
-    uint16_t model_number = 0;
-    int ping_result = getModelNumber(id, model_number);
-
-    if (ping_result == COMM_SUCCESS)
-    {
-        if (model_number)
-        {
-            return PING_WRONG_MODEL_NUMBER;
-        }
-    }
-
-    return ping_result;
 }
 
 /**
@@ -477,7 +475,7 @@ int MockStepperDriver::syncReadJointStatus(const std::vector<uint8_t> &id_list,
 
             data_array_list.emplace_back(std::move(blocks));
         }
-        if (_fake_data->dxl_registers.count(id))
+        else if (_fake_data->dxl_registers.count(id))
         {
             std::array<uint32_t, 2> blocks;
 
