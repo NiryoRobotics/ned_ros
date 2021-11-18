@@ -7,6 +7,7 @@ from niryo_robot_sound.msg import SoundList
 from niryo_robot_sound.srv import PlaySound
 from niryo_robot_msgs.srv import SetInt, Trigger
 from niryo_robot_sound.srv import ManageSound, ManageSoundRequest
+from niryo_robot_sound.srv import TextToSpeech
 
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus
@@ -144,6 +145,15 @@ class SoundRosWrapper(object):
             raise SoundRosWrapperException("Sound name: {} not found".format(sound_name))
 
         return self.__sound_duration[sound_name]
+
+    @check_ned2_version
+    def say(self, text, language=0):
+        result = self.__call_service('/niryo_robot_sound/text_to_speech', TextToSpeech, text, language)
+
+        if not result.success:
+            raise SoundRosWrapperException("Message : {}".format(result.message))
+
+        return result.success, result.message
 
     # --- Functions interface
     def __call_service(self, service_name, service_msg_type, *args):
