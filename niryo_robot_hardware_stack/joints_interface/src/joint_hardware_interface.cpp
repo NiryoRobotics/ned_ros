@@ -85,6 +85,7 @@ JointHardwareInterface::JointHardwareInterface(ros::NodeHandle& rootnh,
  */
 bool JointHardwareInterface::init(ros::NodeHandle& /*rootnh*/, ros::NodeHandle &robot_hwnh)
 {
+    std::cout << "###### JointHardwareInterface::init" << std::endl;
     size_t nb_joints = 0;
     bool torque_status = true;
 
@@ -137,7 +138,7 @@ bool JointHardwareInterface::init(ros::NodeHandle& /*rootnh*/, ros::NodeHandle &
                 int result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
 
                 // Try 3 times
-                for (int tries = 0; tries < 10; tries++)
+                for (int tries = 0; tries < 3; tries++)
                 {
                     if (EBusProtocol::CAN == eBusProto)
                         result = _can_interface->addJoint(stepperState);
@@ -145,21 +146,33 @@ bool JointHardwareInterface::init(ros::NodeHandle& /*rootnh*/, ros::NodeHandle &
                         result = _ttl_interface->addJoint(stepperState);
 
                     // on success, we initialize the joint and go out of loop
-                    if (niryo_robot_msgs::CommandStatus::SUCCESS == result &&
-                        niryo_robot_msgs::CommandStatus::SUCCESS == initHardware(stepperState, torque_status))
+                    if (niryo_robot_msgs::CommandStatus::SUCCESS == result)
                     {
-                        ROS_INFO("JointHardwareInterface::init - add stepper joint success");
-                        break;
+                        result = initHardware(stepperState, torque_status);
+                        if(niryo_robot_msgs::CommandStatus::SUCCESS == result)
+                        {
+                            ROS_INFO("JointHardwareInterface::init - add stepper joint success");
+                            break;
+                        }
+                        else
+                        {
+                          ROS_WARN("JointHardwareInterface::init - "
+                                   "initialize stepper joint failure, return : %d. Retrying (%d)...",
+                                   result, tries);
+                        }
                     }
-
-                    ROS_WARN("JointHardwareInterface::init - "
-                             "add stepper joint failure, return : %d. Retrying (%d)...",
-                             result, tries);
+                    else
+                    {
+                      ROS_WARN("JointHardwareInterface::init - "
+                               "add stepper joint failure, return : %d. Retrying (%d)...",
+                               result, tries);
+                    }
                 }
 
                 if (niryo_robot_msgs::CommandStatus::SUCCESS != result)
                 {
                     ROS_ERROR("JointHardwareInterface::init - Fail to add joint, return : %d", result);
+                    stepperState->setConnectionStatus(false);
                     ros::Duration(0.05).sleep();
                 }
             }
@@ -188,7 +201,7 @@ bool JointHardwareInterface::init(ros::NodeHandle& /*rootnh*/, ros::NodeHandle &
                 int result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
 
                 // Try 3 times
-                for (int tries = 0; tries < 10; tries++)
+                for (int tries = 0; tries < 3; tries++)
                 {
                     if (EBusProtocol::CAN == eBusProto)
                         ROS_ERROR("JointHardwareInterface::init : Dynamixel motors are not available on CAN Bus");
@@ -196,21 +209,33 @@ bool JointHardwareInterface::init(ros::NodeHandle& /*rootnh*/, ros::NodeHandle &
                         result = _ttl_interface->addJoint(dxlState);
 
                     // on success, we initialize the joint and go out of loop
-                    if (niryo_robot_msgs::CommandStatus::SUCCESS == result &&
-                        niryo_robot_msgs::CommandStatus::SUCCESS == initHardware(dxlState, torque_status))
+                    if (niryo_robot_msgs::CommandStatus::SUCCESS == result)
                     {
-                        ROS_INFO("JointHardwareInterface::init - add dxl joint success");
-                        break;
+                        result = initHardware(dxlState, torque_status);
+                        if(niryo_robot_msgs::CommandStatus::SUCCESS == result)
+                        {
+                            ROS_INFO("JointHardwareInterface::init - add dxl joint success");
+                            break;
+                        }
+                        else
+                        {
+                            ROS_WARN("JointHardwareInterface::init - "
+                                     "init dxl joint failure, return : %d. Retrying (%d)...",
+                                     result, tries);
+                        }
                     }
-
-                    ROS_WARN("JointHardwareInterface::init - "
-                             "add dxl joint failure, return : %d. Retrying (%d)...",
-                             result, tries);
+                    else
+                    {
+                        ROS_WARN("JointHardwareInterface::init - "
+                                 "add dxl joint failure, return : %d. Retrying (%d)...",
+                                 result, tries);
+                    }
                 }
 
                 if (niryo_robot_msgs::CommandStatus::SUCCESS != result)
                 {
                     ROS_ERROR("JointHardwareInterface::init - Fail to add joint, return : %d", result);
+                    dxlState->setConnectionStatus(false);
                     ros::Duration(0.05).sleep();
                 }
             }

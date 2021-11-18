@@ -388,19 +388,22 @@ EStepperCalibrationStatus CalibrationManager::autoCalibration()
     std::vector<int> sensor_offset_results;
     std::vector<int> sensor_offset_ids;
 
-    for (size_t i = 0; i < 3; ++i)
+    for (size_t i = 0; i < _joint_states_list.size(); ++i)
     {
         auto jState = _joint_states_list.at(i);
-        uint8_t motor_id = jState->getId();
-
-        if (_stepper_bus_interface)
+        if (jState)
         {
-            int calibration_result = _stepper_bus_interface->getCalibrationResult(motor_id);
+            uint8_t motor_id = jState->getId();
 
-            sensor_offset_results.emplace_back(calibration_result);
-            sensor_offset_ids.emplace_back(motor_id);
+            if (_stepper_bus_interface)
+            {
+                int calibration_result = _stepper_bus_interface->getCalibrationResult(motor_id);
 
-            ROS_INFO("CalibrationManager::autoCalibration - Motor %d, calibration cmd result %d ", motor_id, calibration_result);
+                sensor_offset_results.emplace_back(calibration_result);
+                sensor_offset_ids.emplace_back(motor_id);
+
+                ROS_INFO("CalibrationManager::autoCalibration - Motor %d, calibration cmd result %d ", motor_id, calibration_result);
+            }
         }
     }
 

@@ -6,10 +6,11 @@
     <arg name="hardware_version" default="ned"/>
     <arg name="server_address" default="0.0.0.0"/>
     <arg name="server_port" default="5020"/>
+    <arg name="node_start_delay" default="0" />
 
     <include file="$(find niryo_robot_modbus)/launch/modbus_server_base.launch.xml" />
 
-    <node name="niryo_robot_modbus" pkg="niryo_robot_modbus" type="modbus_server_node.py" output="screen">
+    <node name="niryo_robot_modbus" pkg="niryo_robot_modbus" type="modbus_server_node.py" output="screen" launch-prefix="bash -c 'sleep $(arg node_start_delay); $0 $@' " >
         <param name="log_level" type="string" value="$(arg log_level)" />
         <param name="server_address" value="$(arg server_address)"/>
         <param name="server_port" value="$(arg server_port)"/>

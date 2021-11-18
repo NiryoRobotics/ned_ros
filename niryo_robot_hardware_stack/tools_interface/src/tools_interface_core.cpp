@@ -332,7 +332,6 @@ bool ToolsInterfaceCore::_callbackPingAndSetTool(tools_interface::PingDxlTool::R
         // Try 3 times
         for (int tries = 0; tries < 3; tries++)
         {
-            ros::Duration(0.05).sleep();
             int result = _ttl_interface->setTool(_toolState);
 
             // on success, tool is set, we initialize it and go out of loop

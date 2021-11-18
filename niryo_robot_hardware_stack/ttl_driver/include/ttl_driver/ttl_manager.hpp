@@ -188,7 +188,7 @@ private:
     std::string _device_name;
     int _baudrate{1000000};
 
-    std::vector<uint8_t> _all_motor_connected; // with all ttl motors connected (including the tool)
+    std::vector<uint8_t> _all_ids_connected; // with all ttl motors connected (including the tool)
     std::vector<uint8_t> _removed_motor_id_list;
 
     // state of a component for a given id
