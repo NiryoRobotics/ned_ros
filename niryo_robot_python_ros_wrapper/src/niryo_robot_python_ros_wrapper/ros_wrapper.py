@@ -2130,9 +2130,8 @@ class NiryoRosWrapper:
         :param value: the value of the setting
         :type value: object
         """
-        from niryo_robot_database.srv import SetSettings, SetSettingsRequest
-        req = SetSettingsRequest(name, value, type(value).__name__)
-        self.__call_service('/niryo_robot_database/settings/set', SetSettings, name, value, req)
+        from niryo_robot_database.srv import SetSettings
+        self.__call_service('/niryo_robot_database/settings/set', SetSettings, name, str(value), type(value).__name__)
 
     def get_database_setting(self, name):
         """
