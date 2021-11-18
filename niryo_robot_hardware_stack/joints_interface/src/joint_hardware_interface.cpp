@@ -273,6 +273,7 @@ bool JointHardwareInterface::initStepperState(ros::NodeHandle &robot_hwnh,
         double max_effort = 0.0;
         double home_position = 0.0;
         double limit_position = 0.0;
+        double motor_ratio = 0.0;
 
         robot_hwnh.getParam(currentNamespace + "/offset_position", offsetPos);
         robot_hwnh.getParam(currentNamespace + "/gear_ratio", gear_ratio);
@@ -280,6 +281,7 @@ bool JointHardwareInterface::initStepperState(ros::NodeHandle &robot_hwnh,
         robot_hwnh.getParam(currentNamespace + "/max_effort", max_effort);
         robot_hwnh.getParam(currentNamespace + "/home_position", home_position);
         robot_hwnh.getParam(currentNamespace + "/limit_position", limit_position);
+        robot_hwnh.getParam(currentNamespace + "/motor_ratio", motor_ratio);
 
         // acceleration and velocity profiles
         common::model::VelocityProfile profile{};
@@ -334,6 +336,10 @@ bool JointHardwareInterface::initStepperState(ros::NodeHandle &robot_hwnh,
         stepperState->setVelocityProfile(profile);
         stepperState->setHomePosition(home_position);
         stepperState->setLimitPosition(limit_position);
+        stepperState->setMotorRatio(motor_ratio);
+
+        // update ratio used to convert rad to pos motor
+        stepperState->updateMultiplierRatio();
 
         res = true;
     }
@@ -411,6 +417,7 @@ void JointHardwareInterface::read(const ros::Time &/*time*/, const ros::Duration
         {
             jState->pos = jState->to_rad_pos(jState->getPosition());
             jState->vel = jState->to_rad_vel(jState->getVelocity());
+            // ROS_ERROR("TEST read position %lf %d", jState->to_rad_pos(jState->getPosition()), jState->getPosition());
         }
     }
 

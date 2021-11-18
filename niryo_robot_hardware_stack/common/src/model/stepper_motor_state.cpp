@@ -108,6 +108,7 @@ std::string StepperMotorState::str() const
        << "max effort: " << _max_effort << ", "
        << "gear ratio: " << _gear_ratio << ", "
        << "micro steps: " << _micro_steps << ", "
+       << "motor_ratio: " << _motor_ratio << ", "
        << "pos multiplier ratio: " << _pos_multiplier_ratio << ", "
        << "vel multiplier ratio: " << _vel_multiplier_ratio << "\n";
 
@@ -187,8 +188,6 @@ double StepperMotorState::to_rad_vel(int motor_vel)
   void StepperMotorState::setGearRatio(double gear_ratio)
   {
     _gear_ratio = gear_ratio;
-
-    updateMultiplierRatio();
 }
 /**
  * @brief StepperMotorState::updateLastTimeRead
@@ -214,6 +213,15 @@ void StepperMotorState::setHwFailCounter(double fail_counter)
 void StepperMotorState::setMaxEffort(double max_effort)
 {
     _max_effort = max_effort;
+}
+
+/**
+ * @brief StepperMotorState::setMotorRatio
+ * @param motor_ratio   
+ */
+void StepperMotorState::setMotorRatio(double motor_ratio)
+{
+    _motor_ratio = motor_ratio;
 }
 
 /**
@@ -278,7 +286,7 @@ void StepperMotorState::updateMultiplierRatio()
     }
     else
     {
-        _pos_multiplier_ratio = 360 / (0.088 * total_angle);
+        _pos_multiplier_ratio = 360 / (_motor_ratio * total_angle);
         _vel_multiplier_ratio = 0.01;
     }
 }
