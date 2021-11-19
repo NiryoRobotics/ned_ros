@@ -134,12 +134,11 @@ std::string StepperMotorState::str() const
  */
 int StepperMotorState::to_motor_pos(double rad_pos)
 {
+    if (rad_pos > _limit_position_max)
+        rad_pos = _limit_position_max;
+    else if (rad_pos < _limit_position_min)
+        rad_pos = _limit_position_min;
     int result =  static_cast<int>(std::round((rad_pos - _offset_position) * _pos_multiplier_ratio * _direction));
-
-    if (common::model::EBusProtocol::TTL == _bus_proto)
-    {
-        result = result > 0 ? result : 0;
-    }
 
     return result;
 }

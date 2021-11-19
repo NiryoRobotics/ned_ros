@@ -272,7 +272,8 @@ bool JointHardwareInterface::initStepperState(ros::NodeHandle &robot_hwnh,
         int direction = 1;
         double max_effort = 0.0;
         double home_position = 0.0;
-        double limit_position = 0.0;
+        double limit_position_min = 0.0;
+        double limit_position_max = 0.0;
         double motor_ratio = 0.0;
 
         robot_hwnh.getParam(currentNamespace + "/offset_position", offsetPos);
@@ -280,7 +281,8 @@ bool JointHardwareInterface::initStepperState(ros::NodeHandle &robot_hwnh,
         robot_hwnh.getParam(currentNamespace + "/direction", direction);
         robot_hwnh.getParam(currentNamespace + "/max_effort", max_effort);
         robot_hwnh.getParam(currentNamespace + "/home_position", home_position);
-        robot_hwnh.getParam(currentNamespace + "/limit_position", limit_position);
+        robot_hwnh.getParam(currentNamespace + "/limit_position_min", limit_position_min);
+        robot_hwnh.getParam(currentNamespace + "/limit_position_max", limit_position_max);
         robot_hwnh.getParam(currentNamespace + "/motor_ratio", motor_ratio);
 
         // acceleration and velocity profiles
@@ -335,7 +337,8 @@ bool JointHardwareInterface::initStepperState(ros::NodeHandle &robot_hwnh,
         stepperState->setMaxEffort(max_effort);
         stepperState->setVelocityProfile(profile);
         stepperState->setHomePosition(home_position);
-        stepperState->setLimitPosition(limit_position);
+        stepperState->setLimitPositionMax(limit_position_max);
+        stepperState->setLimitPositionMin(limit_position_min);
         stepperState->setMotorRatio(motor_ratio);
 
         // update ratio used to convert rad to pos motor
