@@ -61,7 +61,8 @@ std::string MockStepperDriver::str() const
  */
 int MockStepperDriver::ping(uint8_t id)
 {
-    if (std::find(_id_list.begin(), _id_list.end(), id) != _id_list.end())
+    if (std::find(_fake_data->full_id_list.begin(), _fake_data->full_id_list.end(), id) != _fake_data->full_id_list.end() ||
+        _fake_data->end_effector.id == id)
         return COMM_SUCCESS;
     return COMM_TX_FAIL;
 }
@@ -88,6 +89,7 @@ int MockStepperDriver::scan(std::vector<uint8_t>& id_list)
 {
     // full id list using only for scan
     id_list = _fake_data->full_id_list;
+    id_list.emplace_back(_fake_data->end_effector.id);
     return COMM_SUCCESS;
 }
 
