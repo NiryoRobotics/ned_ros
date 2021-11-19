@@ -26,7 +26,6 @@ class Settings:
         return result['value'], result['type']
 
     def set(self, name, value, value_type):
-
         if not isinstance(value, locate(value_type)):
             raise TypeError('{} is not of type {}'.format(value, value_type))
 

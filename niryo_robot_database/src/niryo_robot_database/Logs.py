@@ -22,6 +22,8 @@ class Logs:
         result = self.__dao.execute(query).fetchall()
         return result
 
-    def rm_all_since_date(self, date):
-        query = 'DELETE FROM log WHERE date < :date'
-        self.__dao.execute(query, {'date': date})
+    def rm_with_ids(self, ids):
+        query = 'DELETE FROM log WHERE id in ({})'.format(
+            ','.join('?' * len(ids))
+        )
+        self.__dao.execute(query, ids)

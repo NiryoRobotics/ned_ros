@@ -21,4 +21,16 @@ CREATE TABLE IF NOT EXISTS log(
     severity      TEXT      NOT NULL,
     origin        TEXT      NOT NULL,
     message       TEXT      NOT NULL
-)
+);
+
+CREATE TRIGGER log_row_count
+BEFORE INSERT ON log
+WHEN (SELECT COUNT(*) FROM log) >= 1000
+BEGIN
+    DELETE FROM log WHERE id in (
+        SELECT id
+        FROM log
+        ORDER BY date
+        LIMIT (SELECT COUNT(*) FROM log) - 1000
+    );
+END;
