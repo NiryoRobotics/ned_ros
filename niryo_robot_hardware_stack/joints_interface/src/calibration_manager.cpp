@@ -375,6 +375,7 @@ EStepperCalibrationStatus CalibrationManager::autoCalibration()
         timeout += 0.2;
         if (timeout >= 30.0)
         {
+            _stepper_bus_interface->resetCalibration();
             ROS_ERROR("CalibrationManager::autoCalibration - calibration timeout, please try again");
             return common::model::EStepperCalibrationStatus::TIMEOUT;
         }
