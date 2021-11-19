@@ -89,13 +89,14 @@ bool EndEffectorInterfaceCore::init(ros::NodeHandle &nh)
  */
 bool EndEffectorInterfaceCore::rebootHardware()
 {
-  // reboot
-  bool res = _ttl_interface->rebootHardware(_end_effector_state);
+    // reboot
+    bool res = _ttl_interface->rebootHardware(_end_effector_state);
 
-  // re init
-  initHardware();
+    // re init
+    if (res)
+        initHardware();
 
-  return res;
+    return res;
 }
 
 /**

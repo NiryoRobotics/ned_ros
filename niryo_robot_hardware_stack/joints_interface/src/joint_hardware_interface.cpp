@@ -373,6 +373,8 @@ bool JointHardwareInterface::initDxlState(ros::NodeHandle &robot_hwnh,
         int velocityIGain = 0;
         int FF1Gain = 0;
         int FF2Gain = 0;
+        double limit_position_min = 0.0;
+        double limit_position_max = 0.0;
 
         robot_hwnh.getParam(currentNamespace + "/offset_position", offsetPos);
         robot_hwnh.getParam(currentNamespace + "/direction", direction);
@@ -387,6 +389,8 @@ bool JointHardwareInterface::initDxlState(ros::NodeHandle &robot_hwnh,
         robot_hwnh.getParam(currentNamespace + "/FF1_gain", FF1Gain);
         robot_hwnh.getParam(currentNamespace + "/FF2_gain", FF2Gain);
         robot_hwnh.getParam(currentNamespace + "/home_position", home_position);
+        robot_hwnh.getParam(currentNamespace + "/limit_position_min", limit_position_min);
+        robot_hwnh.getParam(currentNamespace + "/limit_position_max", limit_position_max);
 
         dxlState->setOffsetPosition(offsetPos);
         dxlState->setHomePosition(home_position);
@@ -401,6 +405,9 @@ bool JointHardwareInterface::initDxlState(ros::NodeHandle &robot_hwnh,
 
         dxlState->setFF1Gain(static_cast<uint32_t>(FF1Gain));
         dxlState->setFF2Gain(static_cast<uint32_t>(FF2Gain));
+        
+        dxlState->setLimitPositionMin(limit_position_min);
+        dxlState->setLimitPositionMax(limit_position_max);
 
         res = true;
     }

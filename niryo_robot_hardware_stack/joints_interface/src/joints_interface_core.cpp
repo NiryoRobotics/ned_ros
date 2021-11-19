@@ -201,7 +201,16 @@ void JointsInterfaceCore::activateLearningMode(bool activate, int &ostatus, std:
  */
 bool JointsInterfaceCore::rebootAll(bool torque_on)
 {
-    return _robot->rebootAll(torque_on);
+    _enable_control_loop = false;
+    bool res = _robot->rebootAll(torque_on);
+
+    // reset ros controller to update command to be equal with position actual to avoid movement undefined
+    _enable_control_loop = true;
+    _reset_controller = true;
+
+    // need calibration after reset joints
+    _robot->setNeedCalibration();
+    return res;
 }
 
 // *********************
@@ -297,6 +306,8 @@ bool JointsInterfaceCore::_callbackResetController(niryo_robot_msgs::Trigger::Re
     // set pos and command equal
     if (_hardware_version == "ned2")
     {
+        _robot->setCommandToCurrentPosition();
+        _robot->write(ros::Time::now(), ros::Duration(0.0));
         _lock_write_cnt = 200;
     }
     else if (_hardware_version == "ned" || _hardware_version == "one")
