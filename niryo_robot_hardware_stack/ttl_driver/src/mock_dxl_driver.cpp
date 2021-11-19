@@ -87,6 +87,7 @@ int MockDxlDriver::getModelNumber(uint8_t id, uint16_t& model_number)
 int MockDxlDriver::scan(std::vector<uint8_t>& id_list)
 {
     id_list = _fake_data->full_id_list;
+    id_list.emplace_back(_fake_data->end_effector.id);
     return COMM_SUCCESS;
 }
 
