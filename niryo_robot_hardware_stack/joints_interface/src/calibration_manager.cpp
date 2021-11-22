@@ -392,7 +392,7 @@ EStepperCalibrationStatus CalibrationManager::autoCalibration()
     for (size_t i = 0; i < _joint_states_list.size(); ++i)
     {
         auto jState = _joint_states_list.at(i);
-        if (jState)
+        if (jState && jState->isStepper())
         {
             uint8_t motor_id = jState->getId();
 
