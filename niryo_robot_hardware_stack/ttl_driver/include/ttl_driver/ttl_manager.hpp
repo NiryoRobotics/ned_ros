@@ -32,6 +32,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <functional>
 #include <algorithm>
 #include <set>
+#include <utility>
 
 // ros
 #include "ros/node_handle.h"
@@ -43,6 +44,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "niryo_robot_msgs/CommandStatus.h"
 
 #include "ttl_driver/abstract_motor_driver.hpp"
+#include "ttl_driver/abstract_stepper_driver.hpp"
 #include "ttl_driver/fake_ttl_data.hpp"
 #include "ttl_driver/MotorCommand.h"
 
@@ -122,11 +124,10 @@ public:
     int readCustomCommand(uint8_t id, int32_t reg_address, int &value, int byte_number);
 
     // read status
-    bool readPositionsStatus();
     bool readJointsStatus();
     bool readEndEffectorStatus();
     bool readHardwareStatus();
-    bool readHardwareStatusOptimized();
+    bool readCalibrationStatus();
 
     int readMotorPID(uint8_t id,
                      uint32_t& pos_p_gain, uint32_t& pos_i_gain, uint32_t& pos_d_gain,
@@ -195,15 +196,19 @@ private:
     std::map<uint8_t, std::shared_ptr<common::model::AbstractHardwareState> > _state_map;
     // map of associated ids for a given hardware type
     std::map<common::model::EHardwareType, std::vector<uint8_t> > _ids_map;
-    // map of drivers for a given hardware type (xl, stepper, end effector)
+    // map of drivers for a given hardware type (dxl, stepper, end effector)
     std::map<common::model::EHardwareType, std::shared_ptr<ttl_driver::AbstractTtlDriver> > _driver_map;
+
+    // used to retrieve diverse TTL status
+    std::vector<std::pair<std::shared_ptr<ttl_driver::AbstractMotorDriver>, std::vector<uint8_t> > > _joint_status_driver_map;
+    std::vector<std::pair<std::shared_ptr<ttl_driver::AbstractStepperDriver>, std::vector<uint8_t> > > _calibration_status_driver_map;
+    std::vector<std::pair<std::shared_ptr<ttl_driver::AbstractTtlDriver>, std::vector<uint8_t> > > _hw_status_driver_map;
+
     // default ttl driver is always available
     std::shared_ptr<ttl_driver::AbstractTtlDriver> _default_ttl_driver;
 
     // vector of ids of motors and conveyors
     // Theses vector help remove loop not necessary
-    std::vector<uint8_t> _motor_list;
-    std::vector<uint8_t> _hw_list;
     std::vector<uint8_t> _conveyor_list;
     // TODO(CC) add tools_list ?
 
@@ -219,7 +224,8 @@ private:
     static constexpr uint32_t MAX_HW_FAILURE = 50;
     static constexpr uint32_t MAX_READ_EE_FAILURE = 150;
 
-    common::model::EStepperCalibrationStatus _calibration_status{common::model::EStepperCalibrationStatus::UNINITIALIZED};
+    // at init, no hw, so no calib needed
+    common::model::EStepperCalibrationStatus _calibration_status{common::model::EStepperCalibrationStatus::OK};
 
     // for simulation only
     std::shared_ptr<FakeTtlData> _fake_data;
@@ -229,9 +235,6 @@ private:
     // status to track collision status
     bool _collision_status{false};
     double _last_collision_detected{0.0};
-
-    bool _check_calibration_status{true};
-    bool _calibration_in_progress_really{true};
 
     class CalibrationMachineState
     {

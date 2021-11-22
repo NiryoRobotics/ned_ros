@@ -1006,6 +1006,25 @@ inline int DxlDriver<XL320Reg>::syncReadVelocity(const std::vector<uint8_t> &id_
     return res;
 }
 
+/**
+ * @brief DxlDriver::syncReadJointStatus
+ * @param id_list
+ * @param data_array_list
+ * @return
+ */
+template<>
+inline int DxlDriver<XL320Reg>::syncReadJointStatus(const std::vector<uint8_t> &id_list, std::vector<std::array<uint32_t, 2> > &data_array_list)
+{
+    data_array_list.clear();
+
+    std::vector<std::array<uint16_t, 2> > raw_data;
+    int res = syncReadConsecutiveBytes<typename XL320Reg::TYPE_PRESENT_POSITION, 2>(XL320Reg::ADDR_PRESENT_POSITION, id_list, raw_data);
+    // invert data
+    for (auto const& a : raw_data)
+        data_array_list.emplace_back(std::array<uint32_t, 2>{a.at(1), a.at(0)});
+    return res;
+}
+
 template<>
 inline int DxlDriver<XL320Reg>::writeControlMode(uint8_t /*id*/, uint8_t /*data*/)
 {
