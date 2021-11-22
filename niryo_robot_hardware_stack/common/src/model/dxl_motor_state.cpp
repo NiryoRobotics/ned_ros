@@ -167,12 +167,11 @@ std::string DxlMotorState::str() const
  */
 int DxlMotorState::to_motor_pos(double rad_pos)
 {
-    double rad = rad_pos - _offset_position;
-    if (rad > _limit_position_max)
-        rad = _limit_position_max;
-    else if (rad  < _limit_position_min)
-        rad = _limit_position_min;
-    return static_cast<int>(std::round((rad) * _pos_multiplier_ratio * _direction));
+    if (rad_pos > _limit_position_max)
+        rad_pos = _limit_position_max;
+    else if (rad_pos < _limit_position_min)
+        rad_pos = _limit_position_min;
+    return static_cast<int>(std::round((rad_pos - _offset_position) * _pos_multiplier_ratio * _direction));
 }
 
 /**
