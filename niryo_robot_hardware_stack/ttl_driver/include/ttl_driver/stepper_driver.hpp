@@ -613,6 +613,7 @@ int StepperDriver<reg_type>::writeVelocityProfile(uint8_t id, const std::vector<
 
     writeTorqueEnable(id, 1);
 
+    // only rewrite the params which is not success
     while (tries > 0)  // try 10 times
     {
         tries--;

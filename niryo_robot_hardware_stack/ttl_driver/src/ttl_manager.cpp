@@ -224,7 +224,7 @@ int TtlManager::addHardwareComponent(std::shared_ptr<common::model::AbstractHard
         if (std::find(_hw_list.begin(), _hw_list.end(), id) == _hw_list.end())
             _hw_list.emplace_back(id);
         if (std::find(_motor_list.begin(), _motor_list.end(), id) == _motor_list.end())
-        _motor_list.emplace_back(id);
+            _motor_list.emplace_back(id);
         break;
     case common::model::EComponentType::CONVEYOR:
         if (std::find(_conveyor_list.begin(), _conveyor_list.end(), id) == _conveyor_list.end())
@@ -1143,7 +1143,9 @@ bool TtlManager::readHardwareStatus()
             }  // for _hw_list
 
             // we want to check calibration (done at startup and when calibration is started)
-            if (CalibrationMachineState::State::IDLE != _calib_machine_state.status())
+            if (CalibrationMachineState::State::IDLE != _calib_machine_state.status() && 
+                ((_ids_map.count(EHardwareType::STEPPER) != 0 && _ids_map.at(EHardwareType::STEPPER).size() == 3) ||
+                (_ids_map.count(EHardwareType::FAKE_STEPPER_MOTOR) != 0 && _ids_map.at(EHardwareType::FAKE_STEPPER_MOTOR).size() == 3)))
             {
                 /* Truth Table
                  * still_in_progress | state | new state
@@ -1171,7 +1173,7 @@ bool TtlManager::readHardwareStatus()
                     if (steppers_list.size() == homing_status_list.size())
                     {
                         // max status need to be kept not converted into EStepperCalibrationStatus because max status is "in progress" in the enum
-                        int max_status = 0;
+                        EStepperCalibrationStatus max_status = EStepperCalibrationStatus::UNINITIALIZED;
 
                         // debug only
                         std::ostringstream ss_debug;
@@ -1186,10 +1188,9 @@ bool TtlManager::readHardwareStatus()
                             if (_state_map.count(id))
                             {
                                 auto stepperState = std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(id));
-
-                                // get min status of all motors (to retrieve potential errors)
-                                max_status = max_status < homing_status_list.at(i) ? homing_status_list.at(i) : max_status;
                                 EStepperCalibrationStatus status = stepper_driver->interpretHomingData(homing_status_list.at(i));
+                                // get max status of all motors (to retrieve potential errors)
+                                max_status = max_status < status ? status : max_status;
 
                                 ss_debug << static_cast<int>(homing_status_list.at(i)) << ", ";
                                 // if one status is in progress, we are really in progress
@@ -1220,7 +1221,7 @@ bool TtlManager::readHardwareStatus()
                         // see truth table above
                         if (CalibrationMachineState::State::UPDATING == _calib_machine_state.status())
                         {
-                            _calibration_status = stepper_driver->interpretHomingData(static_cast<uint8_t>(max_status));
+                            _calibration_status = max_status;
                             _calib_machine_state.reset();
                         }
                     }

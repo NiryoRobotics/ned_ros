@@ -406,6 +406,7 @@ int DxlDriver<reg_type>::writePID(uint8_t id, const std::vector<uint32_t> &data)
     int tries = 10;
     int res;
 
+    // only rewrite params which is not success
     while (tries > 0)
     {
         tries--;
