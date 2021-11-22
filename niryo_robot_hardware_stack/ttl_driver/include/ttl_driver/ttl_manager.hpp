@@ -200,9 +200,9 @@ private:
     std::map<common::model::EHardwareType, std::shared_ptr<ttl_driver::AbstractTtlDriver> > _driver_map;
 
     // used to retrieve diverse TTL status
-    std::vector<std::pair<std::shared_ptr<ttl_driver::AbstractMotorDriver>, std::vector<uint8_t> > > _joint_status_driver_map;
-    std::vector<std::pair<std::shared_ptr<ttl_driver::AbstractStepperDriver>, std::vector<uint8_t> > > _calibration_status_driver_map;
-    std::vector<std::pair<std::shared_ptr<ttl_driver::AbstractTtlDriver>, std::vector<uint8_t> > > _hw_status_driver_map;
+    std::map<common::model::EHardwareType, std::vector<uint8_t> > _joint_status_driver_map;
+    std::map<common::model::EHardwareType, std::vector<uint8_t> > _calibration_status_driver_map;
+    std::map<common::model::EHardwareType, std::vector<uint8_t> > _hw_status_driver_map;
 
     // default ttl driver is always available
     std::shared_ptr<ttl_driver::AbstractTtlDriver> _default_ttl_driver;
