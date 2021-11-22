@@ -152,27 +152,7 @@ void CanInterfaceCore::startSubscribers(ros::NodeHandle &/*nh*/)
  */
 int CanInterfaceCore::addJoint(const std::shared_ptr<common::model::StepperMotorState>& jointState)
 {
-  int result = niryo_robot_msgs::CommandStatus::CAN_READ_ERROR;
-
-  // add dynamixel as a new tool
-  _can_manager->addHardwareComponent(jointState);
-
-  bool res;
-  {
-    std::lock_guard<std::mutex> lck(_control_loop_mutex);
-    res = _can_manager->ping(jointState->getId());
-  }
-  if (res)
-  {
-      // no init commands
-      result = niryo_robot_msgs::CommandStatus::SUCCESS;
-  }
-  else
-  {
-      ROS_WARN("CanInterfaceCore::addJoint - No joint found with motor id %d", jointState->getId());
-  }
-
-  return result;
+    return _can_manager->addHardwareComponent(jointState);
 }
 
 // ***************

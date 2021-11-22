@@ -150,7 +150,8 @@ class TrajectoriesExecutor:
                 raise ArmCommanderException(
                     CommandStatus.PLAN_FAILED, "MoveIt failed to compute the plan.")
 
-            self.__reset_controller()
+            # TODO(Thuc) test ned and one without reset controller hear
+            # self.__reset_controller()
             rospy.logdebug("Arm commander - Send MoveIt trajectory to controller.")
             status, message = self.execute_plan(plan)
 

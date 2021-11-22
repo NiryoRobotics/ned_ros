@@ -333,7 +333,7 @@ std::shared_ptr<ttl_driver::TtlInterfaceCore> TtlInterfaceTestSuiteRobotWithCan:
 // Test reboot motors
 TEST_F(TtlInterfaceTestSuiteRobotWithCan, testRebootMotors)
 {
-  int resutl = ttl_interface->rebootMotors();
+  int resutl = ttl_interface->rebootHardware(ttl_interface->getJointState(2));
   EXPECT_EQ(resutl, static_cast<int>(niryo_robot_msgs::CommandStatus::SUCCESS));
 }
 
@@ -341,7 +341,7 @@ TEST_F(TtlInterfaceTestSuiteRobotWithCan, testRebootMotors)
 TEST_F(TtlInterfaceTestSuiteRobotWithCan, testRebootMotorsWrongID)
 {
   bool result;
-  result = ttl_interface->rebootHardware(20);
+  result = ttl_interface->rebootHardware(std::make_shared<common::model::StepperMotorState>());
   EXPECT_FALSE(result);
 }
 
@@ -629,15 +629,15 @@ std::shared_ptr<ttl_driver::TtlInterfaceCore>  TtlInterfaceTestSuiteRotbotWithou
 // Test reboot motors
 TEST_F(TtlInterfaceTestSuiteRotbotWithoutCan, testRebootMotors)
 {
-  int resutl = ttl_interface->rebootMotors();
-  EXPECT_EQ(resutl, static_cast<int>(niryo_robot_msgs::CommandStatus::SUCCESS));
+  int result = ttl_interface->rebootHardware(ttl_interface->getJointState(2));
+  EXPECT_EQ(result, static_cast<int>(niryo_robot_msgs::CommandStatus::SUCCESS));
 }
 
 // Test reboot motor with wrong id
 TEST_F(TtlInterfaceTestSuiteRotbotWithoutCan, testRebootMotorsWrongID)
 {
   bool result;
-  result = ttl_interface->rebootHardware(20);
+  result = ttl_interface->rebootHardware(std::make_shared<common::model::StepperMotorState>());
   EXPECT_FALSE(result);
 }
 

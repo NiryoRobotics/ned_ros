@@ -5,7 +5,6 @@
     <arg name="hardware_version" default="ned"/>
     <arg name="simulation_mode" default="false" />
     <arg name="gazebo" default="false"/>
-    <arg name="node_start_delay" default="0" />
 
     <include file="$(find niryo_robot_arm_commander)/launch/robot_commander_base.launch.xml">
         <arg name="hardware_version" value="$(arg hardware_version)" />
@@ -39,7 +38,7 @@
 
     <!-- Launch Arm commander node -->
     <node name="niryo_robot_arm_commander" pkg="niryo_robot_arm_commander" type="robot_commander_node.py" output="screen"
-          respawn="false"  launch-prefix="bash -c 'sleep $(arg node_start_delay); $0 $@' " >
+          respawn="false">
         <param name="log_level" type="string" value="$(arg log_level)" />
         <param name="hardware_version" value="$(arg hardware_version)"/>
     </node>

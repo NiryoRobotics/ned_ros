@@ -149,7 +149,7 @@ bool JointHardwareInterface::init(ros::NodeHandle& /*rootnh*/, ros::NodeHandle &
                     if (niryo_robot_msgs::CommandStatus::SUCCESS == result)
                     {
                         result = initHardware(stepperState, torque_status);
-                        if(niryo_robot_msgs::CommandStatus::SUCCESS == result)
+                        if (niryo_robot_msgs::CommandStatus::SUCCESS == result)
                         {
                             ROS_INFO("JointHardwareInterface::init - add stepper joint success");
                             break;
@@ -212,7 +212,7 @@ bool JointHardwareInterface::init(ros::NodeHandle& /*rootnh*/, ros::NodeHandle &
                     if (niryo_robot_msgs::CommandStatus::SUCCESS == result)
                     {
                         result = initHardware(dxlState, torque_status);
-                        if(niryo_robot_msgs::CommandStatus::SUCCESS == result)
+                        if (niryo_robot_msgs::CommandStatus::SUCCESS == result)
                         {
                             ROS_INFO("JointHardwareInterface::init - add dxl joint success");
                             break;
@@ -297,7 +297,8 @@ bool JointHardwareInterface::initStepperState(ros::NodeHandle &robot_hwnh,
         int direction = 1;
         double max_effort = 0.0;
         double home_position = 0.0;
-        double limit_position = 0.0;
+        double limit_position_min = 0.0;
+        double limit_position_max = 0.0;
         double motor_ratio = 0.0;
 
         robot_hwnh.getParam(currentNamespace + "/offset_position", offsetPos);
@@ -305,7 +306,8 @@ bool JointHardwareInterface::initStepperState(ros::NodeHandle &robot_hwnh,
         robot_hwnh.getParam(currentNamespace + "/direction", direction);
         robot_hwnh.getParam(currentNamespace + "/max_effort", max_effort);
         robot_hwnh.getParam(currentNamespace + "/home_position", home_position);
-        robot_hwnh.getParam(currentNamespace + "/limit_position", limit_position);
+        robot_hwnh.getParam(currentNamespace + "/limit_position_min", limit_position_min);
+        robot_hwnh.getParam(currentNamespace + "/limit_position_max", limit_position_max);
         robot_hwnh.getParam(currentNamespace + "/motor_ratio", motor_ratio);
 
         // acceleration and velocity profiles
@@ -360,7 +362,8 @@ bool JointHardwareInterface::initStepperState(ros::NodeHandle &robot_hwnh,
         stepperState->setMaxEffort(max_effort);
         stepperState->setVelocityProfile(profile);
         stepperState->setHomePosition(home_position);
-        stepperState->setLimitPosition(limit_position);
+        stepperState->setLimitPositionMax(limit_position_max);
+        stepperState->setLimitPositionMin(limit_position_min);
         stepperState->setMotorRatio(motor_ratio);
 
         // update ratio used to convert rad to pos motor
@@ -395,6 +398,8 @@ bool JointHardwareInterface::initDxlState(ros::NodeHandle &robot_hwnh,
         int velocityIGain = 0;
         int FF1Gain = 0;
         int FF2Gain = 0;
+        double limit_position_min = 0.0;
+        double limit_position_max = 0.0;
 
         robot_hwnh.getParam(currentNamespace + "/offset_position", offsetPos);
         robot_hwnh.getParam(currentNamespace + "/direction", direction);
@@ -409,6 +414,8 @@ bool JointHardwareInterface::initDxlState(ros::NodeHandle &robot_hwnh,
         robot_hwnh.getParam(currentNamespace + "/FF1_gain", FF1Gain);
         robot_hwnh.getParam(currentNamespace + "/FF2_gain", FF2Gain);
         robot_hwnh.getParam(currentNamespace + "/home_position", home_position);
+        robot_hwnh.getParam(currentNamespace + "/limit_position_min", limit_position_min);
+        robot_hwnh.getParam(currentNamespace + "/limit_position_max", limit_position_max);
 
         dxlState->setOffsetPosition(offsetPos);
         dxlState->setHomePosition(home_position);
@@ -423,6 +430,9 @@ bool JointHardwareInterface::initDxlState(ros::NodeHandle &robot_hwnh,
 
         dxlState->setFF1Gain(static_cast<uint32_t>(FF1Gain));
         dxlState->setFF2Gain(static_cast<uint32_t>(FF2Gain));
+
+        dxlState->setLimitPositionMin(limit_position_min);
+        dxlState->setLimitPositionMax(limit_position_max);
 
         res = true;
     }

@@ -439,12 +439,13 @@ int MockStepperDriver::syncReadVelocity(const std::vector<uint8_t> &id_list, std
   velocity_list.clear();
   for (auto & id : id_list)
   {
-      if (_fake_data->stepper_registers.count(id))
-      {
+      if (_fake_data->dxl_registers.count(id))
+          velocity_list.emplace_back(_fake_data->dxl_registers.at(id).velocity);
+      else if (_fake_data->stepper_registers.count(id))
           velocity_list.emplace_back(_fake_data->stepper_registers.at(id).velocity);
-      }
       else
           return COMM_RX_FAIL;
+
       auto result = countSet.insert(id);
       if (!result.second)
           return GROUP_SYNC_REDONDANT_ID;  // redondant id
@@ -486,6 +487,7 @@ int MockStepperDriver::syncReadJointStatus(const std::vector<uint8_t> &id_list,
         }
         else
             return COMM_RX_FAIL;
+
         auto result = countSet.insert(id);
         if (!result.second)
             return GROUP_SYNC_REDONDANT_ID;  // redondant id
@@ -506,7 +508,9 @@ int MockStepperDriver::syncReadFirmwareVersion(const std::vector<uint8_t> &id_li
     firmware_list.clear();
     for (auto & id : id_list)
     {
-        if (_fake_data->stepper_registers.count(id))
+        if (_fake_data->dxl_registers.count(id))
+            firmware_list.emplace_back(_fake_data->dxl_registers.at(id).firmware);
+        else if (_fake_data->stepper_registers.count(id))
             firmware_list.emplace_back(_fake_data->stepper_registers.at(id).firmware);
         else
             return COMM_RX_FAIL;
@@ -531,8 +535,12 @@ int MockStepperDriver::syncReadTemperature(const std::vector<uint8_t> &id_list, 
     temperature_list.clear();
     for (auto & id : id_list)
     {
-        if (_fake_data->stepper_registers.count(id))
+        if (_fake_data->dxl_registers.count(id))
+            temperature_list.emplace_back(_fake_data->dxl_registers.at(id).temperature);
+        else if (_fake_data->stepper_registers.count(id))
             temperature_list.emplace_back(_fake_data->stepper_registers.at(id).temperature);
+        else if (_fake_data->end_effector.id == id)
+            temperature_list.emplace_back(_fake_data->end_effector.temperature);
         else
             return COMM_RX_FAIL;
 
@@ -556,8 +564,12 @@ int MockStepperDriver::syncReadVoltage(const std::vector<uint8_t> &id_list, std:
     voltage_list.clear();
     for (auto & id : id_list)
     {
-        if (_fake_data->stepper_registers.count(id))
-            voltage_list.emplace_back(_fake_data->stepper_registers.at(id).voltage);
+        if (_fake_data->dxl_registers.count(id))
+            voltage_list.emplace_back(_fake_data->dxl_registers.at(id).voltage / 10);
+        else if (_fake_data->stepper_registers.count(id))
+            voltage_list.emplace_back(_fake_data->stepper_registers.at(id).voltage / 1000);
+        else if (_fake_data->end_effector.id == id)
+            voltage_list.emplace_back(_fake_data->end_effector.voltage / 1000);
         else
             return COMM_RX_FAIL;
 
@@ -577,7 +589,25 @@ int MockStepperDriver::syncReadVoltage(const std::vector<uint8_t> &id_list, std:
  */
 int MockStepperDriver::syncReadRawVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list)
 {
-    return syncReadVoltage(id_list, voltage_list);
+    std::set<uint8_t> countSet;
+
+    voltage_list.clear();
+    for (auto & id : id_list)
+    {
+        if (_fake_data->dxl_registers.count(id))
+            voltage_list.emplace_back(_fake_data->dxl_registers.at(id).voltage);
+        else if (_fake_data->stepper_registers.count(id))
+            voltage_list.emplace_back(_fake_data->stepper_registers.at(id).voltage);
+        else if (_fake_data->end_effector.id == id)
+            voltage_list.emplace_back(_fake_data->end_effector.voltage);
+        else
+            return COMM_RX_FAIL;
+
+        auto result = countSet.insert(id);
+        if (!result.second)
+            return GROUP_SYNC_REDONDANT_ID;  // redondant id
+    }
+    return COMM_SUCCESS;
 }
 
 /**
@@ -595,10 +625,22 @@ int MockStepperDriver::syncReadHwStatus(const std::vector<uint8_t> &id_list,
 
     for (auto & id : id_list)
     {
-        if (_fake_data->stepper_registers.count(id))
+        if (_fake_data->dxl_registers.count(id))
+        {
+            double voltage = _fake_data->dxl_registers.at(id).voltage;
+            uint8_t temperature = _fake_data->dxl_registers.at(id).temperature;
+            data_list.emplace_back(std::make_pair(voltage, temperature));
+        }
+        else if (_fake_data->stepper_registers.count(id))
         {
             double voltage = _fake_data->stepper_registers.at(id).voltage;
             uint8_t temperature = _fake_data->stepper_registers.at(id).temperature;
+            data_list.emplace_back(std::make_pair(voltage, temperature));
+        }
+        else if (_fake_data->end_effector.id == id)
+        {
+            double voltage = _fake_data->end_effector.voltage;
+            uint8_t temperature = _fake_data->end_effector.temperature;
             data_list.emplace_back(std::make_pair(voltage, temperature));
         }
         else
@@ -752,7 +794,7 @@ int MockStepperDriver::syncReadHomingStatus(const std::vector<uint8_t> &id_list,
     {
         _fake_time--;
     }
-    else
+    else  // when calibration finished or at startup
         _calibration_status = CALIBRATION_SUCCESS;
 
     std::set<uint8_t> countSet;
