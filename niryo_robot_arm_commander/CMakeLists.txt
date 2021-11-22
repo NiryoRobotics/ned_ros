@@ -94,7 +94,6 @@ catkin_install_python(PROGRAMS
     scripts/ArmParametersValidator.py
     scripts/jog_controller.py
     scripts/kinematics_handler.py
-    scripts/motor_debug.py
     scripts/robot_commander_node.py
     scripts/trajectories_executor.py
     scripts/transform_handler.py
