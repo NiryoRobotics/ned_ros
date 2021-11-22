@@ -51,11 +51,7 @@ class TopButton:
 
         self._robot_status = RobotStatus()
 
-        self._motor_debug_server_start = rospy.ServiceProxy('/niryo_robot_arm_commander/motor_debug_start', SetInt)
-        self._motor_debug_server_stop = rospy.ServiceProxy('/niryo_robot_arm_commander/motor_debug_stop', Empty)
-        self._motor_debug_thread = Thread()
-
-        # - Publishers
+         # - Publishers
         self.__pause_movement_publisher = rospy.Publisher('~pause_state',
                                                           PausePlanExecution, latch=True, queue_size=1)
         self._pause_state = None
@@ -125,10 +121,8 @@ class TopButton:
             # Get long press to cancle program
             if not self.__button_action_done and (rospy.Time.now() - self.last_time_button_pressed).to_sec() > 2:
                 self.__button_action_done = True
-                if self._motor_debug_thread.is_alive():
-                    self._motor_debug_server_stop()
-                    activate_learning_mode(True)
-                elif self._is_prog_running():
+
+                if self._is_prog_running():
                     self._send_pause_state(PausePlanExecution.CANCEL)
                     rospy.logwarn("Button Manager - Cancel sequence")
                     self._cancel_program_from_program_manager()
@@ -156,24 +150,7 @@ class TopButton:
     def _trigger_sequence_autorun(self):
         rospy.loginfo("Button Manager - Run Auto-sequence")
         self._send_pause_state(PausePlanExecution.PLAY)
-
-        if self._motor_debug_thread.is_alive():
-            self._motor_debug_server_stop()
-            self._motor_debug_thread.join()
-        else:
-            status, message = send_trigger_program_autorun()
-            if status != CommandStatus.SUCCESS:
-                self._trigger_motor_debug()
-
-    def _trigger_motor_debug(self):
-        try:
-            rospy.wait_for_service("/niryo_robot_arm_commander/motor_debug_start", timeout=0.5)
-            self._motor_debug_thread = Thread(target=self._motor_debug_server_start,
-                                              name="motor_debug_button_thread",
-                                              args=(self.debug_loop_repetition,))
-            self._motor_debug_thread.start()
-        except rospy.ROSException:
-            pass
+        _status, _message = send_trigger_program_autorun()
 
     @staticmethod
     def _cancel_program_from_program_manager():

@@ -68,11 +68,6 @@ class TopButton:
         rospy.Subscriber('/niryo_robot/rpi/led_state',
                          Int8, self.__callback_led_state)
 
-        self.__motor_debug_server_start = rospy.ServiceProxy('/niryo_robot_arm_commander/motor_debug_start', SetInt)
-        self.__motor_debug_server_stop = rospy.ServiceProxy('/niryo_robot_arm_commander/motor_debug_stop', Empty)
-        self.__motor_debug_thread = Thread(target=self.__motor_debug_server_start, name="motor_debug_button_thread",
-                                           args=(self.debug_loop_repetition,))
-
         self.button_mode = ButtonMode.TRIGGER_SEQUENCE_AUTORUN
         rospy.Service("/niryo_robot/rpi/change_button_mode",
                       SetInt, self.callback_change_button_mode)
@@ -211,20 +206,9 @@ class TopButton:
     def __trigger_sequence_autorun(self):
         rospy.loginfo("Button Manager - Run Auto-sequence")
         self.send_pause_state(PausePlanExecution.PLAY)
-        if self.__motor_debug_thread.is_alive():
-            self.__motor_debug_server_stop()
-            _status, _message = send_trigger_program_autorun()
-        else:
-            status, message = send_trigger_program_autorun()
-            if status != CommandStatus.SUCCESS:
-                try:
-                    rospy.wait_for_service("/niryo_robot_arm_commander/motor_debug_start", timeout=0.5)
-                    self.__motor_debug_thread = Thread(target=self.__motor_debug_server_start,
-                                                       name="motor_debug_button_thread",
-                                                       args=(self.debug_loop_repetition,))
-                    self.__motor_debug_thread.start()
-                except rospy.ROSException:
-                    pass
+
+        _status, _message = send_trigger_program_autorun()
+
 
     def cancel_or_resume(self):
         # if double clic

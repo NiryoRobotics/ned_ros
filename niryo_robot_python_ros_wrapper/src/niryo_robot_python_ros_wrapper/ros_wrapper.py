@@ -30,6 +30,7 @@ from niryo_robot_msgs.msg import RobotState
 from niryo_robot_msgs.msg import RPY
 from niryo_robot_rpi.msg import DigitalIO, DigitalIOState, AnalogIO, AnalogIOState
 from niryo_robot_tools_commander.msg import ToolCommand
+from niryo_robot_status.msg import RobotStatus
 
 # Services
 from conveyor_interface.srv import ControlConveyor, SetConveyor, SetConveyorRequest
@@ -1598,6 +1599,10 @@ class NiryoRosWrapper:
                 raise NiryoRosWrapperException(
                     'Timeout: could not get hardware status (/niryo_robot_hardware_interface/hardware_status topic)')
         return self.__hw_status
+
+    def get_robot_status(self):
+        msg = rospy.wait_for_message('/niryo_robot_status/robot_status', RobotStatus, 2)
+        return msg
 
     def get_axis_limits(self):
         """
