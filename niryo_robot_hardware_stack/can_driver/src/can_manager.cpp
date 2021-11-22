@@ -24,6 +24,7 @@
 #include "common/model/bus_protocol_enum.hpp"
 #include "can_driver/mock_stepper_driver.hpp"
 #include "can_driver/stepper_driver.hpp"
+#include "niryo_robot_msgs/CommandStatus.h"
 
 // c++
 #include <asm-generic/errno.h>
@@ -185,6 +186,8 @@ int CanManager::setupCommunication()
  */
 int CanManager::addHardwareComponent(std::shared_ptr<common::model::AbstractHardwareState> && state)
 {
+    int result = niryo_robot_msgs::CommandStatus::FAILURE;
+
     common::model::EHardwareType hardware_type = state->getHardwareType();
     uint8_t id = state->getId();
 
@@ -198,7 +201,9 @@ int CanManager::addHardwareComponent(std::shared_ptr<common::model::AbstractHard
 
     addHardwareDriver(hardware_type);
 
-    return 0;
+    result = niryo_robot_msgs::CommandStatus::SUCCESS;
+
+    return result;
 }
 
 /**

@@ -229,10 +229,7 @@ int TtlManager::addHardwareComponent(std::shared_ptr<common::model::AbstractHard
       break;
     }
 
-    if (!_driver_map.count(hardware_type))
-    {
-        addHardwareDriver(hardware_type);
-    }
+    addHardwareDriver(hardware_type);
 
     // update firmware version
     if (_driver_map.count(hardware_type))
