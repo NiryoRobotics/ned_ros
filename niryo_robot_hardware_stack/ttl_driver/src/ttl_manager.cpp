@@ -2066,7 +2066,6 @@ void TtlManager::readFakeConfig()
     }
 
     _default_ttl_driver = std::make_shared<MockStepperDriver>(_fake_data);
-
 }
 
 }  // namespace ttl_driver

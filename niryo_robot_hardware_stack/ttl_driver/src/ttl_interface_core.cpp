@@ -594,7 +594,6 @@ void TtlInterfaceCore::controlLoop()
                         }
                         msg += " do not seem to be connected";
                         ROS_WARN_THROTTLE(1.0, "%s", msg.c_str());
-
                     }
                     // still keep hardware status updated
                     _ttl_manager->readHardwareStatus();

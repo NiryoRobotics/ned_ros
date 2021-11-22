@@ -794,7 +794,7 @@ int MockStepperDriver::syncReadHomingStatus(const std::vector<uint8_t> &id_list,
     {
         _fake_time--;
     }
-    else // when calibration finished or at startup
+    else  // when calibration finished or at startup
         _calibration_status = CALIBRATION_SUCCESS;
 
     std::set<uint8_t> countSet;

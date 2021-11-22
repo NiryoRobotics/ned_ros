@@ -113,7 +113,7 @@ int MockEndEffectorDriver::scan(std::vector<uint8_t> &id_list)
  */
 int MockEndEffectorDriver::reboot(uint8_t id)
 {
-   return ping(id);
+    return ping(id);
 }
 
 /**
