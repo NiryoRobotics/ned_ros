@@ -698,23 +698,7 @@ void TtlInterfaceCore::_executeCommand()
  */
 int TtlInterfaceCore::addJoint(const std::shared_ptr<common::model::JointState>& jointState)
 {
-    int result = niryo_robot_msgs::CommandStatus::FAILURE;
-
-    //lock_guard<mutex> lck(_control_loop_mutex);
     return _ttl_manager->addHardwareComponent(jointState);
-/*
-    // try to find motor
-    if (_ttl_manager->ping(jointState->getId()))
-    {
-        // add dynamixel as a new joint
-        result = _ttl_manager->addHardwareComponent(jointState);
-    }
-    else
-    {
-        ROS_WARN("TtlInterfaceCore::addJoint - No joint found with motor id %d", jointState->getId());
-    }*/
-
-    return result;
 }
 
 /**
@@ -765,17 +749,16 @@ int TtlInterfaceCore::setEndEffector(const std::shared_ptr<common::model::EndEff
 
     lock_guard<mutex> lck(_control_loop_mutex);
 
+    result = _ttl_manager->addHardwareComponent(end_effector_state);
     // try to find hw
     if (_ttl_manager->ping(end_effector_state->getId()))
     {
-        // add end effector
-        result = _ttl_manager->addHardwareComponent(end_effector_state);
+        result = niryo_robot_msgs::CommandStatus::SUCCESS;
     }
     else
     {
         ROS_WARN("TtlInterfaceCore::setEndEffector - No end effector found with id %d", end_effector_state->getId());
     }
-
     return result;
 }
 

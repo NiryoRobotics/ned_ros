@@ -117,6 +117,7 @@ bool TtlManager::init(ros::NodeHandle& nh)
     else
     {
         readFakeConfig();
+        _default_ttl_driver = std::make_shared<MockStepperDriver >(_fake_data);
     }
 
     ROS_DEBUG("TtlManager::init - Dxl : set port name (%s), baudrate(%d)", _device_name.c_str(), _baudrate);
@@ -585,7 +586,7 @@ bool TtlManager::readPositionsStatus()
 
     if (_hw_fail_counter_read > MAX_HW_FAILURE)
     {
-        ROS_ERROR_THROTTLE(1, "TtlManager::readJointStatus - motor connection problem - "
+        ROS_ERROR_THROTTLE(1, "TtlManager::readPositionStatus - motor connection problem - "
                                 "Failed to read from bus (hw_fail_counter_read : %d)", _hw_fail_counter_read);
         _hw_fail_counter_read = 0;
         _is_connection_ok = false;
