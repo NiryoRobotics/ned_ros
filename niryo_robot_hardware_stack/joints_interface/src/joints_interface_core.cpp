@@ -316,7 +316,7 @@ bool JointsInterfaceCore::_callbackResetController(niryo_robot_msgs::Trigger::Re
         _cm->update(ros::Time::now(), ros::Duration(0.0), true);
         _robot->synchronizeMotors(true);
     }
-    
+
     res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
     res.message = "Reset done";
 

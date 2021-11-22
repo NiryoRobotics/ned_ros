@@ -405,7 +405,7 @@ bool JointHardwareInterface::initDxlState(ros::NodeHandle &robot_hwnh,
 
         dxlState->setFF1Gain(static_cast<uint32_t>(FF1Gain));
         dxlState->setFF2Gain(static_cast<uint32_t>(FF2Gain));
-        
+
         dxlState->setLimitPositionMin(limit_position_min);
         dxlState->setLimitPositionMax(limit_position_max);
 
