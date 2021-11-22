@@ -575,8 +575,7 @@ int JointHardwareInterface::initHardware(std::shared_ptr<common::model::JointSta
                 }
             }
         }
-
-        if (motor_state->isDynamixel())
+        else if (motor_state->isDynamixel())
         {
             auto dxlState = std::dynamic_pointer_cast<common::model::DxlMotorState>(motor_state);
             if (dxlState)

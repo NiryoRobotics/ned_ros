@@ -89,6 +89,7 @@ TtlManager::TtlManager(ros::NodeHandle& nh) :
  */
 TtlManager::~TtlManager()
 {
+    _portHandler->clearPort();
     _portHandler->closePort();
 }
 
@@ -156,6 +157,10 @@ int TtlManager::setupCommunication()
                 {
                     // wait a bit to be sure the connection is established
                     ros::Duration(0.1).sleep();
+
+                    // clear port
+                    _portHandler->clearPort();
+
                     ret = COMM_SUCCESS;
                 }
                 else
@@ -212,21 +217,27 @@ int TtlManager::addHardwareComponent(std::shared_ptr<common::model::AbstractHard
     switch (state->getComponentType())
     {
     case common::model::EComponentType::TOOL:
-        _hw_list.emplace_back(id);
-      break;
+        if (std::find(_hw_list.begin(), _hw_list.end(), id) == _hw_list.end())
+            _hw_list.emplace_back(id);
+        break;
     case common::model::EComponentType::JOINT:
+        if (std::find(_hw_list.begin(), _hw_list.end(), id) == _hw_list.end())
+            _hw_list.emplace_back(id);
+        if (std::find(_motor_list.begin(), _motor_list.end(), id) == _motor_list.end())
         _motor_list.emplace_back(id);
-        _hw_list.emplace_back(id);
-      break;
+        break;
     case common::model::EComponentType::CONVEYOR:
-        _conveyor_list.emplace_back(id);
-        _hw_list.emplace_back(id);
-      break;
+        if (std::find(_conveyor_list.begin(), _conveyor_list.end(), id) == _conveyor_list.end())
+            _conveyor_list.emplace_back(id);
+        if (std::find(_hw_list.begin(), _hw_list.end(), id) == _hw_list.end())
+            _hw_list.emplace_back(id);
+        break;
     case common::model::EComponentType::END_EFFECTOR:
-        _hw_list.emplace_back(id);
-      break;
+        if (std::find(_hw_list.begin(), _hw_list.end(), id) == _hw_list.end())
+            _hw_list.emplace_back(id);
+        break;
     default:
-      break;
+        break;
     }
 
     if (!_driver_map.count(hardware_type))
@@ -241,9 +252,8 @@ int TtlManager::addHardwareComponent(std::shared_ptr<common::model::AbstractHard
         _driver_map.at(hardware_type)->readFirmwareVersion(state->getId(), version);
         state->setFirmwareVersion(version);
 
-        result = niryo_robot_msgs::CommandStatus::SUCCESS;
     }
-
+    result = niryo_robot_msgs::CommandStatus::SUCCESS;
     return result;
 }
 

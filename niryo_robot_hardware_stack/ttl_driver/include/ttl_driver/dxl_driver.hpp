@@ -403,29 +403,84 @@ int DxlDriver<reg_type>::syncReadPosition(const std::vector<uint8_t> &id_list, s
 template<typename reg_type>
 int DxlDriver<reg_type>::writePID(uint8_t id, const std::vector<uint32_t> &data)
 {
-    int res = 0;
+    int tries = 10;
+    int res;
 
-    if (COMM_SUCCESS != writePositionPGain(id, data.at(0)))
-        res++;
-    if (COMM_SUCCESS != writePositionIGain(id, data.at(1)))
-        res++;
-    if (COMM_SUCCESS != writePositionDGain(id, data.at(2)))
-        res++;
-    if (COMM_SUCCESS != writeVelocityPGain(id, data.at(3)))
-        res++;
-    if (COMM_SUCCESS != writeVelocityIGain(id, data.at(4)))
-        res++;
-    if (COMM_SUCCESS != writeFF1Gain(id, data.at(5)))
-        res++;
-    if (COMM_SUCCESS != writeFF2Gain(id, data.at(6)))
-        res++;
-
-    if(res > 0)
+    while (tries > 0)
     {
-        return COMM_TX_FAIL;
+        tries--;
+        res = writePositionPGain(id, data.at(0));
+        if (res == COMM_SUCCESS)
+            break;
+    }
+    if (res != COMM_SUCCESS)
+        return res;
+
+    tries = 10;
+    while (tries > 0)
+    {
+        tries--;
+        res = writePositionIGain(id, data.at(1));
+        if (res == COMM_SUCCESS)
+            break;
+    }
+    if (res != COMM_SUCCESS)
+        return res;
+
+    tries = 10;
+    while (tries > 0)
+    {
+        tries--;
+        res = writePositionDGain(id, data.at(2));
+        if (res == COMM_SUCCESS)
+            break;
+    }
+    if (res != COMM_SUCCESS)
+        return res;
+
+    tries = 10;
+    while (tries > 0)
+    {
+        tries--;
+        res = writeVelocityPGain(id, data.at(3));
+        if (res == COMM_SUCCESS)
+            break;
+    }
+    if (res != COMM_SUCCESS)
+        return res;
+
+    tries = 10;
+    while (tries > 0)
+    {
+        tries--;
+        res = writeVelocityIGain(id, data.at(4));
+        if (res == COMM_SUCCESS)
+            break;
+    }
+    if (res != COMM_SUCCESS)
+        return res;
+
+    tries = 10;    
+    while (tries > 0)
+    {
+        tries--;
+        res = writeFF1Gain(id, data.at(5));
+        if (res == COMM_SUCCESS)
+            break;
+    }
+    if (res != COMM_SUCCESS)
+        return res;
+
+    tries = 10;
+    while (tries > 0)
+    {
+        tries--;
+        res = writeFF2Gain(id, data.at(6));
+        if (res == COMM_SUCCESS)
+            break;
     }
 
-    return COMM_SUCCESS;
+    return res;
 }
 
 /**
