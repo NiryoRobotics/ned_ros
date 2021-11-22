@@ -523,12 +523,12 @@ bool TtlManager::readPositionsStatus()
 
     // syncread position for all motors. Using only one driver for all motors to avoid loop.
     // All addresses for position are the same
-    if (!_driver_map.empty() && _driver_map.begin()->second)
+    if (_default_ttl_driver && !isCalibrationInProgress())
     {
         // get driver of the first motor
-        auto driver = std::dynamic_pointer_cast<AbstractMotorDriver>(_driver_map.begin()->second);
+        auto driver = std::dynamic_pointer_cast<AbstractMotorDriver>(_default_ttl_driver);
 
-        if (driver)  // && _ids_map.count(type))
+        if (driver)
         {
             // we retrieve all the associated id for the type of the current driver
             vector<uint32_t> position_list;
@@ -609,7 +609,7 @@ bool TtlManager::readJointsStatus()
         // get driver of the first motor
         auto driver = std::dynamic_pointer_cast<AbstractMotorDriver>(_default_ttl_driver);
 
-        if (driver)  // && _ids_map.count(type))
+        if (driver)
         {
             // we retrieve all the associated id for the type of the current driver
             vector<std::array<uint32_t, 2> > data_list;
@@ -1047,20 +1047,19 @@ bool TtlManager::readHardwareStatus()
     bool res = false;
 
     unsigned int hw_errors_increment = 0;
-    EHardwareType hw_type = _simulation_mode ? EHardwareType::FAKE_STEPPER_MOTOR : EHardwareType::STEPPER;
 
-    if (!_driver_map.empty() && _driver_map.count(hw_type))
+    // take first driver in line
+    if (!_driver_map.empty())
     {
         // get driver of the first motor
-        auto stepper_driver = std::dynamic_pointer_cast<AbstractStepperDriver>(_driver_map.at(hw_type));
-
+        auto first_driver = _driver_map.begin()->second;
         // 1. syncread for all motors
-        if (stepper_driver)
+        if (first_driver)
         {
             // **********  Temperature
             vector<uint8_t> temperature_list;
 
-            if (COMM_SUCCESS != stepper_driver->syncReadTemperature(_hw_list, temperature_list))
+            if (COMM_SUCCESS != first_driver->syncReadTemperature(_hw_list, temperature_list))
             {
                 // this operation can fail, it is normal, so no error message
                 hw_errors_increment++;
@@ -1077,7 +1076,7 @@ bool TtlManager::readHardwareStatus()
 
             // **********  Voltage
             vector<double> voltage_list;
-            if (COMM_SUCCESS != stepper_driver->syncReadRawVoltage(_hw_list, voltage_list))
+            if (COMM_SUCCESS != first_driver->syncReadRawVoltage(_hw_list, voltage_list))
             {
                 // this operation can fail, it is normal, so no error message
                 hw_errors_increment++;
@@ -1095,7 +1094,7 @@ bool TtlManager::readHardwareStatus()
             // **********  error state
             vector<uint8_t> hw_error_status_list;
 
-            if (COMM_SUCCESS != stepper_driver->syncReadHwErrorStatus(_hw_list, hw_error_status_list))
+            if (COMM_SUCCESS != first_driver->syncReadHwErrorStatus(_hw_list, hw_error_status_list))
             {
                 hw_errors_increment++;
             }
@@ -1122,7 +1121,7 @@ bool TtlManager::readHardwareStatus()
                         if (state && state->isConveyor())
                         {
                             uint32_t velocity;
-                            if (COMM_SUCCESS != stepper_driver->readVelocity(id, velocity))
+                            if (COMM_SUCCESS != first_driver->readVelocity(id, velocity))
                             {
                                 hw_errors_increment++;
                             }
@@ -1197,7 +1196,7 @@ bool TtlManager::readHardwareStatus()
                 if (_ids_map.count(hw_type))
                      steppers_list = _ids_map.at(hw_type);
 
-                if (!steppers_list.empty() && COMM_SUCCESS == stepper_driver->syncReadHomingStatus(steppers_list, homing_status_list))
+                if (!steppers_list.empty() && COMM_SUCCESS == first_driver->syncReadHomingStatus(steppers_list, homing_status_list))
                 {
                     if (steppers_list.size() == homing_status_list.size())
                     {
@@ -1220,7 +1219,7 @@ bool TtlManager::readHardwareStatus()
 
                                 // get min status of all motors (to retrieve potential errors)
                                 max_status = max_status < homing_status_list.at(i) ? homing_status_list.at(i) : max_status;
-                                EStepperCalibrationStatus status = stepper_driver->interpretHomingData(homing_status_list.at(i));
+                                EStepperCalibrationStatus status = first_driver->interpretHomingData(homing_status_list.at(i));
 
                                 ss_debug << static_cast<int>(homing_status_list.at(i)) << ", ";
                                 // if one status is in progress, we are really in progress
@@ -1251,7 +1250,7 @@ bool TtlManager::readHardwareStatus()
                         // see truth table above
                         if (CalibrationMachineState::State::UPDATING == _calib_machine_state.status())
                         {
-                            _calibration_status = stepper_driver->interpretHomingData(static_cast<uint8_t>(max_status));
+                            _calibration_status = first_driver->interpretHomingData(static_cast<uint8_t>(max_status));
                             _calib_machine_state.reset();
                         }
                     }
