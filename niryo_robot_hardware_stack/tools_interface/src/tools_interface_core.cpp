@@ -87,6 +87,48 @@ bool ToolsInterfaceCore::init(ros::NodeHandle &nh)
 }
 
 /**
+ * @brief ToolsInterfaceCore::rebootAll
+ * @param hardware_version
+ * @return
+ */
+bool ToolsInterfaceCore::rebootHardware(bool torque_on)
+{
+    // reboot
+    bool res = _ttl_interface->rebootMotor(_toolState);
+
+    // re init
+    initHardware(torque_on);
+
+    return res;
+}
+
+/**
+ * @brief ToolsInterfaceCore::initHardware
+ */
+int ToolsInterfaceCore::initHardware(bool torque_on)
+{
+    uint8_t motor_id = _toolState->getId();
+
+    if (EHardwareType::XL330 == _toolState->getHardwareType())
+    {
+        uint8_t new_mode = 5;  // torque + position
+        _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_CONTROL_MODE,
+                                                                               motor_id, std::initializer_list<uint32_t>{new_mode}));
+    }
+
+    // update leds
+    _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_LED_STATE,
+                                                                           motor_id, std::initializer_list<uint32_t>{static_cast<uint32_t>(_toolState->getLedState())}));
+    ros::Duration(0.01).sleep();
+
+    // TORQUE cmd on if ned2, off otherwise
+    _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_TORQUE,
+                                                                           motor_id, std::initializer_list<uint32_t>{torque_on}));
+
+    return niryo_robot_msgs::CommandStatus::SUCCESS;
+}
+
+/**
  * @brief ToolsInterfaceCore::initParameters
  * @param nh
  */
@@ -292,8 +334,9 @@ bool ToolsInterfaceCore::_callbackPingAndSetTool(tools_interface::PingDxlTool::R
             ros::Duration(0.05).sleep();
             int result = _ttl_interface->setTool(_toolState);
 
-            // on success, tool is set, we go out of loop
-            if (niryo_robot_msgs::CommandStatus::SUCCESS == result)
+            // on success, tool is set, we initialize it and go out of loop
+            if (niryo_robot_msgs::CommandStatus::SUCCESS == result &&
+                niryo_robot_msgs::CommandStatus::SUCCESS == initHardware())
             {
                 res.tool = pubToolId(_toolState->getId(), _toolState->getHardwareType());
                 res.state = ToolState::TOOL_STATE_PING_OK;
@@ -339,8 +382,7 @@ bool ToolsInterfaceCore::_callbackToolReboot(std_srvs::Trigger::Request &/*req*/
 
     if (_toolState->isValid())
     {
-        std::lock_guard<std::mutex> lck(_tool_mutex);
-        res.success = _ttl_interface->rebootMotor(_toolState->getId());
+        res.success = rebootHardware(true);
         res.message = (res.success) ? "Tool reboot succeeded" : "Tool reboot failed";
     }
     else

@@ -1,4 +1,3 @@
-
 # Lib
 import rospy
 
@@ -44,7 +43,10 @@ class SoundPlayer:
     # - Main class usage
     def stop(self):
         if self.__actual_sound is not None:
-            self.__actual_sound.stop()
+            try:
+                self.__actual_sound.stop()
+            except OSError:
+                pass
 
     def stop_w_fade_out(self):
         old_volume = self.__volume_manager.raw_volume

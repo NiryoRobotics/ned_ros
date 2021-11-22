@@ -51,7 +51,7 @@ public:
 
     virtual bool init(ros::NodeHandle& nh) = 0;
 
-    virtual void addHardwareComponent(std::shared_ptr<common::model::AbstractHardwareState>&& state) = 0;
+    virtual int addHardwareComponent(std::shared_ptr<common::model::AbstractHardwareState>&& state) = 0;
     virtual void removeHardwareComponent(uint8_t id) = 0;
     virtual bool isConnectionOk() const = 0;
     virtual int scanAndCheck() = 0;

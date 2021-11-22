@@ -83,6 +83,12 @@ bool EndEffectorInterfaceCore::init(ros::NodeHandle &nh)
     return true;
 }
 
+bool EndEffectorInterfaceCore::rebootHardware()
+{
+  // TODO(CC)
+  return false;
+}
+
 /**
  * @brief EndEffectorInterfaceCore::initParameters
  * @param nh
@@ -179,11 +185,11 @@ void EndEffectorInterfaceCore::initEndEffectorHardware()
 
       if (niryo_robot_msgs::CommandStatus::SUCCESS == result)
       {
-          ROS_INFO("ToolsInterfaceCore::ctor - Set end effector success");
+          ROS_INFO("EndEffectorInterfaceCore::ctor - Set end effector success");
       }
       else
       {
-          ROS_WARN("EndEffectorInterfaceCore::sendInitEndEffectorParams - "
+          ROS_WARN("EndEffectorInterfaceCore::initEndEffectorHardware - "
                    "Set end effector failure, return : %d. Aborted...",
                    result);
       }

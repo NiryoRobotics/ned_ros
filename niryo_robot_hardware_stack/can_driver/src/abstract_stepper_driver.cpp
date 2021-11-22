@@ -104,11 +104,11 @@ int AbstractStepperDriver::writeSingleCmd(const std::unique_ptr<common::model::A
 }
 
 /**
- * @brief AbstractStepperDriver::interpretePositionStatus
+ * @brief AbstractStepperDriver::interpretPositionStatus
  * @param data
  * @return
  */
-int32_t AbstractStepperDriver::interpretePositionStatus(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data)
+int32_t AbstractStepperDriver::interpretPositionStatus(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data)
 {
     int32_t pos = (data[1] << 16) + (data[2] << 8) + data[3];
     pos = (pos & (1 << 15)) ? -1 * ((~pos + 1) & 0xFFFF) : pos;
@@ -117,11 +117,11 @@ int32_t AbstractStepperDriver::interpretePositionStatus(const std::array<uint8_t
 }
 
 /**
- * @brief StepperDriver::interpreteTemperatureStatus
+ * @brief StepperDriver::interpretTemperatureStatus
  * @param data
  * @return
  */
-uint8_t AbstractStepperDriver::interpreteTemperatureStatus(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data)
+uint8_t AbstractStepperDriver::interpretTemperatureStatus(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data)
 {
     int driver_temp_raw = (data[2] << 8) + data[3];
     double a = -0.00316;
@@ -134,11 +134,11 @@ uint8_t AbstractStepperDriver::interpreteTemperatureStatus(const std::array<uint
 }
 
 /**
- * @brief StepperDriver::interpreteFirmwareVersion
+ * @brief StepperDriver::interpretFirmwareVersion
  * @param data
  * @return
  */
-std::string AbstractStepperDriver::interpreteFirmwareVersion(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data)
+std::string AbstractStepperDriver::interpretFirmwareVersion(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data)
 {
     int v_major = data[1];
     int v_minor = data[2];
@@ -151,12 +151,12 @@ std::string AbstractStepperDriver::interpreteFirmwareVersion(const std::array<ui
 }
 
 /**
- * @brief StepperDriver::interpreteCalibrationData
+ * @brief StepperDriver::interpretCalibrationData
  * @param data
  * @return
  */
 std::pair<common::model::EStepperCalibrationStatus, int32_t>
-AbstractStepperDriver::interpreteCalibrationData(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data)
+AbstractStepperDriver::interpretCalibrationData(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data)
 {
     auto status = static_cast<common::model::EStepperCalibrationStatus>(data[1]);
     int32_t value = (data[2] << 8) + data[3];
@@ -165,12 +165,12 @@ AbstractStepperDriver::interpreteCalibrationData(const std::array<uint8_t, MAX_M
 }
 
 /**
- * @brief StepperDriver::interpreteConveyorData
+ * @brief StepperDriver::interpretConveyorData
  * @param data
  * @return
  */
 std::tuple<bool, uint8_t, uint16_t>
-AbstractStepperDriver::interpreteConveyorData(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data)
+AbstractStepperDriver::interpretConveyorData(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data)
 {
     bool state = data[1];
     int16_t speed = data[2];

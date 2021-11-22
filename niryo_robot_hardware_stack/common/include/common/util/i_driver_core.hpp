@@ -65,6 +65,8 @@ public:
     virtual void addSingleCommandToQueue(std::vector<std::unique_ptr<common::model::ISingleMotorCmd> > cmd) = 0;
     virtual void addSyncCommandToQueue(std::unique_ptr<common::model::ISynchronizeMotorCmd>&& cmd) = 0;
 
+    virtual bool rebootMotor(const std::shared_ptr<common::model::AbstractMotorState>& motor_state) = 0;
+
     // driver for conveyor
     virtual int setConveyor(const std::shared_ptr<common::model::ConveyorState>& state) = 0;
     virtual void unsetConveyor(uint8_t motor_id, uint8_t default_conveyor_id) = 0;

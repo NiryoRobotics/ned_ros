@@ -112,7 +112,7 @@ class ToolCommander:
     # Subscriber
 
     def __callback_current_tool_motor(self, msg):
-        if self.__current_tool != "electromagnet":
+        if self.__current_tool is None or self.__current_tool.get_type() != "electromagnet":
             self.set_tool(self.__available_tools[msg.id])
             self.__motor_type = msg.motor_type
 

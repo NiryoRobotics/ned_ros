@@ -64,9 +64,6 @@ class RobotCommanderNode:
 
         rospy.logdebug("Arm Commander - Sub Commanders are loaded")
 
-        # Initialize motor debug
-        self.__motor_debug = MotorDebug()
-
         # Dict which link MoveCommand to arm functions
         self.dict_interpreter_move_cmd = {
             # Move to One Pose

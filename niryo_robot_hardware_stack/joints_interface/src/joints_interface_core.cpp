@@ -48,8 +48,6 @@ JointsInterfaceCore::JointsInterfaceCore(ros::NodeHandle& rootnh,
     ROS_DEBUG("JointsInterfaceCore::init - Start joint hardware interface");
     _robot.reset(new JointHardwareInterface(rootnh, robot_hwnh, _ttl_interface, _can_interface));
 
-    sendAndReceiveInitMotorsParams("ned2" != _hardware_version);
-
     ROS_DEBUG("JointsInterfaceCore::init - Create controller manager");
     _cm.reset(new controller_manager::ControllerManager(_robot.get(), _nh));
 
@@ -197,16 +195,13 @@ void JointsInterfaceCore::activateLearningMode(bool activate, int &ostatus, std:
 }
 
 /**
- * @brief JointsInterfaceCore::sendInitMotorsParams
- * @param learningMode
+ * @brief JointsInterfaceCore::rebootAll
+ * @param hardware_version
+ * @return
  */
-void JointsInterfaceCore::sendAndReceiveInitMotorsParams(bool learningMode)
+bool JointsInterfaceCore::rebootAll(bool torque_on)
 {
-    _robot->sendInitMotorsParams(learningMode);
-
-    // read firmware version of all motors when all motor find out
-    if (_ttl_interface)
-        _ttl_interface->readFirmwareVersionStatus();
+    return _robot->rebootAll(torque_on);
 }
 
 // *********************

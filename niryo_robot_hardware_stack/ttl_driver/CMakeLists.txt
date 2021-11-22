@@ -37,9 +37,9 @@ find_package(catkin REQUIRED
 add_message_files(
   FILES
     ArrayMotorHardwareStatus.msg
+    CollisionStatus.msg
     MotorCommand.msg
     MotorHardwareStatus.msg
-    CollisionStatus.msg
 )
 
 add_service_files(

@@ -206,29 +206,21 @@ void TtlInterfaceCore::startSubscribers(ros::NodeHandle &/*nh*/)
 // ***************
 
 /**
- * @brief TtlInterfaceCore::rebootMotors
+ * @brief TtlInterfaceCore::rebootMotor
  * @return
  */
-int TtlInterfaceCore::rebootMotors()
+bool TtlInterfaceCore::rebootMotor(const std::shared_ptr<common::model::AbstractMotorState> &motor_state)
 {
-    ROS_INFO("TtlInterfaceCore::rebootMotors - Reboot motors");
-    lock_guard<mutex> lck(_control_loop_mutex);
-    int result = _ttl_manager->rebootMotors();
-    ros::Duration(1.5).sleep();
-    return result;
-}
+    int result = COMM_TX_FAIL;
 
+    if (motor_state && motor_state->isValid())
+    {
+        ROS_INFO("TtlInterfaceCore::rebootMotor - Reboot motor %d", static_cast<int>(motor_state->getId()));
+        lock_guard<mutex> lck(_control_loop_mutex);
+        result = _ttl_manager->rebootHwComponent(motor_state->getId());
+        ros::Duration(1.5).sleep();
+    }
 
-/**
- * @brief TtlInterfaceCore::rebootMotors
- * @return
- */
-bool TtlInterfaceCore::rebootMotor(uint8_t motor_id)
-{
-    ROS_INFO("TtlInterfaceCore::rebootMotor - Reboot motor %d", static_cast<int>(motor_id));
-    lock_guard<mutex> lck(_control_loop_mutex);
-    int result = _ttl_manager->rebootMotor(motor_id);
-    ros::Duration(1.5).sleep();
     // return true if result is COMM_SUCCESS
     return (COMM_SUCCESS == result);
 }
@@ -572,30 +564,28 @@ void TtlInterfaceCore::controlLoop()
     {
         if (!_debug_flag)
         {
+            // 1. check connection status of motors
             if (!_ttl_manager->isConnectionOk())
             {
+                // case 1 : connection lost but it is a feature (ex Tool or conveyor)
                 ROS_WARN("TtlInterfaceCore::controlLoop - motor connection error");
-                ros::Duration(0.1).sleep();
 
                 vector<uint8_t> missing_ids;
                 ROS_DEBUG("TtlInterfaceCore::controlLoop - Scan to find motors");
 
                 int bus_state = COMM_PORT_BUSY;
-                {
-                    lock_guard<mutex> lck(_control_loop_mutex);
-                    bus_state = _ttl_manager->scanAndCheck();
-                }
+
                 while (TTL_SCAN_OK != bus_state)
                 {
-                    missing_ids = getRemovedMotorList();
-                    for (auto const& id : missing_ids)
-                    {
-                        ROS_WARN("TtlInterfaceCore::controlLoop - motor %d do not seem to be connected", id);
-                    }
                     ros::Duration(0.25).sleep();
                     {
                         lock_guard<mutex> lck(_control_loop_mutex);
                         bus_state = _ttl_manager->scanAndCheck();
+                    }
+                    missing_ids = getRemovedMotorList();
+                    for (auto const& id : missing_ids)
+                    {
+                        ROS_WARN("TtlInterfaceCore::controlLoop - motor %d does not seem to be connected", id);
                     }
                 }
                 ROS_INFO("TtlInterfaceCore::controlLoop - Bus is ok");
@@ -609,6 +599,11 @@ void TtlInterfaceCore::controlLoop()
                     _ttl_manager->readJointsStatus();
                     _time_hw_data_last_read = ros::Time::now().toSec();
                 }
+                if (ros::Time::now().toSec() - _time_hw_data_last_write >= _delta_time_write)
+                {
+                    _executeCommand();
+                    _time_hw_data_last_write = ros::Time::now().toSec();
+                }
                 if (ros::Time::now().toSec() - _time_hw_status_last_read >= _delta_time_status_read)
                 {
                     _ttl_manager->readHardwareStatus();
@@ -619,11 +614,6 @@ void TtlInterfaceCore::controlLoop()
                 {
                     _ttl_manager->readEndEffectorStatus();
                     _time_hw_end_effector_last_read = ros::Time::now().toSec();
-                }
-                if (ros::Time::now().toSec() - _time_hw_data_last_write >= _delta_time_write)
-                {
-                    _executeCommand();
-                    _time_hw_data_last_write = ros::Time::now().toSec();
                 }
             }
             else
@@ -694,15 +684,22 @@ void TtlInterfaceCore::_executeCommand()
  */
 int TtlInterfaceCore::addJoint(const std::shared_ptr<common::model::JointState>& jointState)
 {
-  int result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
+    int result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
 
-  // add dynamixel as a new tool
-  _ttl_manager->addHardwareComponent(jointState);
+    lock_guard<mutex> lck(_control_loop_mutex);
 
-  // nothing here (done in sendInitMotorsParams for now)
-  result = niryo_robot_msgs::CommandStatus::SUCCESS;
+    // try to find motor
+    if (_ttl_manager->ping(jointState->getId()))
+    {
+        // add dynamixel as a new joint
+        result = _ttl_manager->addHardwareComponent(jointState);
+    }
+    else
+    {
+        ROS_WARN("TtlInterfaceCore::addJoint - No joint found with motor id %d", jointState->getId());
+    }
 
-  return result;
+    return result;
 }
 
 /**
@@ -715,34 +712,12 @@ int TtlInterfaceCore::setTool(const std::shared_ptr<common::model::ToolState>& t
     int result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
 
     lock_guard<mutex> lck(_control_loop_mutex);
-    // add motor as a new tool
-    _ttl_manager->addHardwareComponent(toolState);
 
     // try to find motor
     if (_ttl_manager->ping(toolState->getId()))
     {
-        if (EHardwareType::XL330 == toolState->getHardwareType())
-        {
-            int reg_value = 0;
-            int operating_mode = 5;  // Torque + Position
-            _ttl_manager->readCustomCommand(toolState->getId() , ttl_driver::XL330Reg::ADDR_OPERATING_MODE, reg_value, ttl_driver::XL330Reg::SIZE_OPERATING_MODE);
-            for (int counter = 0; counter < 3 && operating_mode != reg_value; ++counter)
-            {
-                _ttl_manager->sendCustomCommand(toolState->getId(), ttl_driver::XL330Reg::ADDR_OPERATING_MODE, operating_mode, ttl_driver::XL330Reg::SIZE_OPERATING_MODE);
-                ros::Duration(0.01).sleep();
-                _ttl_manager->readCustomCommand(toolState->getId() , ttl_driver::XL330Reg::ADDR_OPERATING_MODE, reg_value, ttl_driver::XL330Reg::SIZE_OPERATING_MODE);
-            }
-        }
-        // Enable torque
-        _ttl_manager->writeSingleCommand(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_TORQUE,
-                                                            toolState->getId(), std::initializer_list<uint32_t>{1}));
-        ros::Duration(0.01).sleep();
-
-        // update leds
-        _ttl_manager->setLeds(_ttl_manager->getLedState());
-        ros::Duration(0.01).sleep();
-
-        result = niryo_robot_msgs::CommandStatus::SUCCESS;
+        // add motor as a new tool
+        result = _ttl_manager->addHardwareComponent(toolState);
     }
     else
     {
@@ -771,26 +746,22 @@ void TtlInterfaceCore::unsetTool(uint8_t motor_id)
  */
 int TtlInterfaceCore::setEndEffector(const std::shared_ptr<common::model::EndEffectorState>& end_effector_state)
 {
-  int result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
+    int result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
 
-  lock_guard<mutex> lck(_control_loop_mutex);
+    lock_guard<mutex> lck(_control_loop_mutex);
 
-  // add end effector
-  _ttl_manager->addHardwareComponent(end_effector_state);
+    // try to find hw
+    if (_ttl_manager->ping(end_effector_state->getId()))
+    {
+        // add end effector
+        result = _ttl_manager->addHardwareComponent(end_effector_state);
+    }
+    else
+    {
+        ROS_WARN("TtlInterfaceCore::setEndEffector - No end effector found with id %d", end_effector_state->getId());
+    }
 
-  // try to find hw
-  if (_ttl_manager->ping(end_effector_state->getId()))
-  {
-      //  no config for end effector
-
-      result = niryo_robot_msgs::CommandStatus::SUCCESS;
-  }
-  else
-  {
-      ROS_WARN("TtlInterfaceCore::setTool - No end effector found with id %d", end_effector_state->getId());
-  }
-
-  return result;
+    return result;
 }
 
 /**
@@ -804,13 +775,10 @@ int TtlInterfaceCore::setConveyor(const std::shared_ptr<common::model::ConveyorS
 
     lock_guard<mutex> lck(_control_loop_mutex);
 
-    // add hw component before to get driver
-    _ttl_manager->addHardwareComponent(state);
-
     if (_ttl_manager->ping(state->getId()))
     {
-        // no init needed
-        result = niryo_robot_msgs::CommandStatus::SUCCESS;
+        // add hw component before to get driver
+        result = _ttl_manager->addHardwareComponent(state);
     }
     else
     {
@@ -854,6 +822,7 @@ int TtlInterfaceCore::changeId(common::model::EHardwareType motor_type, uint8_t 
     ROS_ERROR("TtlInterfaceCore::setConveyor : unable to change conveyor ID");
     return niryo_robot_msgs::CommandStatus::TTL_WRITE_ERROR;
 }
+
 
 /**
  * @brief TtlInterfaceCore::clearSingleCommandQueue

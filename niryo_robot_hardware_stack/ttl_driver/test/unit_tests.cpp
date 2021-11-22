@@ -233,7 +233,6 @@ void addJointToTtlManager(const std::shared_ptr<ttl_driver::TtlManager>& ttl_drv
                 if (eBusProto == EBusProtocol::TTL)
                 {
                   ttl_drv->addHardwareComponent(stepperState);
-                  ttl_drv->addToMotorList(joint_id_config);
                 }
                 currentIdStepper++;
             }
@@ -288,7 +287,6 @@ void addJointToTtlManager(const std::shared_ptr<ttl_driver::TtlManager>& ttl_drv
                 if (eBusProto == EBusProtocol::TTL)
                 {
                   ttl_drv->addHardwareComponent(dxlState);
-                  ttl_drv->addToMotorList(joint_id_config);
                 }
                 currentIdDxl++;
             }

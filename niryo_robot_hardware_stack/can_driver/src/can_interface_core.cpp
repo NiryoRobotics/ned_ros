@@ -191,6 +191,17 @@ bool CanInterfaceCore::scanMotorId(uint8_t motor_to_find)
 }
 
 /**
+ * @brief CanInterfaceCore::rebootMotor
+ * @param motor_state
+ * @return
+ */
+bool CanInterfaceCore::rebootMotor(const std::shared_ptr<common::model::AbstractMotorState> &/*motor_state*/)
+{
+    ROS_ERROR("Reboot motors Not available for CAN");
+    return false;
+}
+
+/**
  * @brief CanInterfaceCore::startCalibration
  */
 void CanInterfaceCore::startCalibration()

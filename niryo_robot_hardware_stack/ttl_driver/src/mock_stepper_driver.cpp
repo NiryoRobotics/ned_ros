@@ -104,10 +104,10 @@ int MockStepperDriver::reboot(uint8_t id)
 }
 
 /**
- * @brief MockStepperDriver::interpreteErrorState
+ * @brief MockStepperDriver::interpretErrorState
  * @return
  */
-std::string MockStepperDriver::interpreteErrorState(uint32_t /*hw_state*/) const
+std::string MockStepperDriver::interpretErrorState(uint32_t /*hw_state*/) const
 {
     return "";
 }
@@ -474,6 +474,15 @@ int MockStepperDriver::syncReadJointStatus(const std::vector<uint8_t> &id_list,
 
             blocks.at(0) = _fake_data->stepper_registers.at(id).velocity;
             blocks.at(1) = _fake_data->stepper_registers.at(id).position;
+
+            data_array_list.emplace_back(std::move(blocks));
+        }
+        if (_fake_data->dxl_registers.count(id))
+        {
+            std::array<uint32_t, 2> blocks;
+
+            blocks.at(0) = _fake_data->dxl_registers.at(id).velocity;
+            blocks.at(1) = _fake_data->dxl_registers.at(id).position;
 
             data_array_list.emplace_back(std::move(blocks));
         }

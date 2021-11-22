@@ -93,7 +93,7 @@ public:
     // IBusManager Interface
     bool init(ros::NodeHandle& nh) override;
 
-    void addHardwareComponent(std::shared_ptr<common::model::AbstractHardwareState> &&state) override;
+    int addHardwareComponent(std::shared_ptr<common::model::AbstractHardwareState> &&state) override;
 
     void removeHardwareComponent(uint8_t id) override;
     bool isConnectionOk() const override;
@@ -114,8 +114,7 @@ public:
 
     void executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, uint32_t> > cmd_vec);
 
-    int rebootMotors();
-    int rebootMotor(uint8_t motor_id);
+    int rebootHwComponent(uint8_t id);
 
     int setLeds(int led);
 
@@ -127,7 +126,7 @@ public:
     bool readJointsStatus();
     bool readEndEffectorStatus();
     bool readHardwareStatus();
-    bool readFirmwareVersionStatus();
+    bool readHardwareStatusOptimized();
 
     int readMotorPID(uint8_t id,
                      uint32_t& pos_p_gain, uint32_t& pos_i_gain, uint32_t& pos_d_gain,
@@ -135,9 +134,11 @@ public:
                      uint32_t& ff1_gain, uint32_t& ff2_gain);
 
     int readVelocityProfile(uint8_t id,
-                            uint32_t& _v_start, uint32_t& _a_1, uint32_t& _v_1,
-                            uint32_t& _a_max, uint32_t& _v_max, uint32_t& _d_max,
-                            uint32_t& _d_1, uint32_t& _v_stop);
+                            uint32_t& v_start, uint32_t& a_1, uint32_t& v_1,
+                            uint32_t& a_max, uint32_t& v_max, uint32_t& d_max,
+                            uint32_t& d_1, uint32_t& v_stop);
+
+    int readControlMode(uint8_t id, uint8_t& control_mode);
 
     //calibration
     void startCalibration() override;
@@ -169,8 +170,6 @@ private:
     int setupCommunication() override;
     void addHardwareDriver(common::model::EHardwareType hardware_type) override;
 
-    void checkRemovedMotors();
-
     // Config params using in fake driver
     void readFakeConfig();
     template<typename Reg>
@@ -198,6 +197,8 @@ private:
     std::map<common::model::EHardwareType, std::vector<uint8_t> > _ids_map;
     // map of drivers for a given hardware type (xl, stepper, end effector)
     std::map<common::model::EHardwareType, std::shared_ptr<ttl_driver::AbstractTtlDriver> > _driver_map;
+    // default ttl driver is always available
+    std::shared_ptr<ttl_driver::AbstractTtlDriver> _default_ttl_driver;
 
     // vector of ids of motors and conveyors
     // Theses vector help remove loop not necessary
@@ -213,12 +214,10 @@ private:
     uint32_t _hw_fail_counter_read{0};
     uint32_t _end_effector_fail_counter_read{0};
 
-    int _led_state{-1};
-
     std::string _led_motor_type_cfg;
 
-    static constexpr uint32_t MAX_HW_FAILURE = 200;
-    static constexpr uint32_t MAX_READ_EE_FAILURE = 50;
+    static constexpr uint32_t MAX_HW_FAILURE = 25;
+    static constexpr uint32_t MAX_READ_EE_FAILURE = 150;
 
     common::model::EStepperCalibrationStatus _calibration_status{common::model::EStepperCalibrationStatus::UNINITIALIZED};
 
@@ -230,6 +229,56 @@ private:
     // status to track collision status
     bool _collision_status{false};
     double _last_collision_detected{0.0};
+
+    bool _check_calibration_status{true};
+    bool _calibration_in_progress_really{true};
+
+    class CalibrationMachineState
+    {
+
+    public:
+        enum class State
+        {
+          IDLE = 1,
+          STARTING = 2,
+          IN_PROGRESS = 3,
+          UPDATING = 4
+        };
+
+        void reset()
+        {
+            s = State::IDLE;
+        }
+
+        void start()
+        {
+            s = State::STARTING;
+        }
+
+        /**
+         * @brief next : nex state, stops at updating (dont circle)
+         */
+        void next()
+        {
+            int newState = static_cast<int>(s);
+            if (State::UPDATING != s)
+               newState++;
+
+            s = static_cast<State>(newState);
+        }
+
+        State status()
+        {
+          return s;
+        }
+
+    private:
+        State s{State::UPDATING};
+    };
+
+    CalibrationMachineState _calib_machine_state;
+
+    static constexpr double _calibration_timeout{3.0};
 };
 
 // inline getters
@@ -304,17 +353,6 @@ inline
 bool TtlManager::isCalibrationInProgress() const
 {
     return (common::model::EStepperCalibrationStatus::IN_PROGRESS == getCalibrationStatus());
-}
-
-/**
- * @brief TtlManager::getLedState
- * @return
- * TODO(CC) to be removed from TtlManager : not the purpose of the manager to register states
- */
-inline
-int TtlManager::getLedState() const
-{
-    return _led_state;
 }
 
 /**

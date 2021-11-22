@@ -30,6 +30,7 @@ from niryo_robot_msgs.msg import RobotState
 from niryo_robot_msgs.msg import RPY
 from niryo_robot_rpi.msg import DigitalIO, DigitalIOState, AnalogIO, AnalogIOState
 from niryo_robot_tools_commander.msg import ToolCommand
+from niryo_robot_status.msg import RobotStatus
 
 # Services
 from conveyor_interface.srv import ControlConveyor, SetConveyor, SetConveyorRequest
@@ -656,6 +657,12 @@ class NiryoRosWrapper:
         """
         return self.__move_pose_with_cmd(ArmMoveCommand.LINEAR_POSE, x, y, z, roll, pitch, yaw)
 
+    def move_spiral(self, radius=0.2, angle_step=5, nb_steps=72, plan=1):
+        goal = RobotMoveGoal()
+        goal.cmd.cmd_type = ArmMoveCommand.DRAW_SPIRAL
+        goal.cmd.args = [radius, angle_step, nb_steps, plan]
+        return self.__execute_robot_move_action(goal)
+
     def move_without_moveit(self, joints_target, duration):
         goal = self._create_goal(joints_target, duration)
         self.__follow_joint_traj_client.wait_for_server()
@@ -668,6 +675,15 @@ class NiryoRosWrapper:
         result = self.__follow_joint_traj_client.get_result()
         if not result:
             raise NiryoRosWrapperException("Follow joint trajectory goal has reached timeout limit")
+
+        msg_dict = {result.SUCCESSFUL: "Successful",
+                    result.INVALID_GOAL: "Invalid goal",
+                    result.INVALID_JOINTS: "Invalid joints",
+                    result.OLD_HEADER_TIMESTAMP: "Old header timestamp",
+                    result.PATH_TOLERANCE_VIOLATED: "Path tolerance violated",
+                    result.GOAL_TOLERANCE_VIOLATED: "Goal tolerance violated"}
+
+        return result.error_code, msg_dict[result.error_code]
 
     def _create_goal(self, joints_position, duration):
         goal = FollowJointTrajectoryGoal()
@@ -1202,7 +1218,7 @@ class NiryoRosWrapper:
 
     def get_current_tool_id(self):
         """
-        Use /niryo_robot_hardware/tools/current_id  topic to get current tool id
+        Use /niryo_robot_tools_commander/current_id  topic to get current tool id
 
         :return: Tool Id
         :rtype: ToolID
@@ -1554,6 +1570,15 @@ class NiryoRosWrapper:
                     'Timeout: could not get digital io state (/niryo_robot_rpi/digital_io_state topic)')
         return self.__digital_io_state
 
+    def get_analog_io_state(self):
+        timeout = rospy.get_time() + 2.0
+        while self.__analog_io_state is None:
+            rospy.sleep(0.05)
+            if rospy.get_time() > timeout:
+                raise NiryoRosWrapperException(
+                    'Timeout: could not get analog io state (/niryo_robot_rpi/analog_io_state topic)')
+        return self.__analog_io_state
+
     def get_hardware_version(self):
         """
         Get the robot hardware version
@@ -1574,6 +1599,10 @@ class NiryoRosWrapper:
                 raise NiryoRosWrapperException(
                     'Timeout: could not get hardware status (/niryo_robot_hardware_interface/hardware_status topic)')
         return self.__hw_status
+
+    def get_robot_status(self):
+        msg = rospy.wait_for_message('/niryo_robot_status/robot_status', RobotStatus, 2)
+        return msg
 
     def get_axis_limits(self):
         """

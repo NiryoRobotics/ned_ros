@@ -66,6 +66,7 @@ public:
     void setRawVoltage(double raw_volt);
     void setHardwareError(uint32_t hw_error);
     void setHardwareError(std::string hw_error_msg);
+    void setConnectionStatus(bool connected);
 
     // operators
     virtual bool operator==(const AbstractHardwareState& other);

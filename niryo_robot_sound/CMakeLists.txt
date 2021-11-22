@@ -21,6 +21,7 @@ add_service_files(
   FILES
   ManageSound.srv
   PlaySound.srv
+  TextToSpeech.srv
 )
 
 generate_messages(

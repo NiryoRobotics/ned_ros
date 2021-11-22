@@ -103,6 +103,7 @@ public:
 
     // joints control
     int addJoint(const std::shared_ptr<common::model::JointState>& jointState);
+    int initMotor(const std::shared_ptr<common::model::AbstractMotorState>& motor_state);
 
     // Tool control
     int setTool(const std::shared_ptr<common::model::ToolState>& toolState);
@@ -118,8 +119,7 @@ public:
     int changeId(common::model::EHardwareType motor_type, uint8_t old_id, uint8_t new_id) override;
 
     // direct commands
-    int rebootMotors();
-    bool rebootMotor(uint8_t motor_id);
+    bool rebootMotor(const std::shared_ptr<common::model::AbstractMotorState>& motor_state) override;
 
     // getters
     std::vector<uint8_t> getRemovedMotorList() const override;
@@ -145,9 +145,6 @@ public:
     int launchMotorsReport() override;
     niryo_robot_msgs::BusState getBusState() const override;
     common::model::EBusProtocol getBusProtocol() const override;
-
-    // read firmware version for all motors
-    bool readFirmwareVersionStatus();
 
     // read Collision Status from motors
     bool readCollisionStatus() const;
@@ -275,17 +272,6 @@ inline
 std::vector<uint8_t> TtlInterfaceCore::getRemovedMotorList() const
 {
     return _ttl_manager->getRemovedMotorList();
-}
-
-/**
- * @brief TtlInterfaceCore::readFirmwareVersionStatus
- * @return true 
- * @return false 
- */
-inline
-bool TtlInterfaceCore::readFirmwareVersionStatus()
-{
-    return _ttl_manager->readFirmwareVersionStatus();
 }
 
 /**

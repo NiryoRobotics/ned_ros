@@ -45,7 +45,7 @@ public:
     // AbstractTtlDriver interface
     std::string str() const override;
 
-    std::string interpreteErrorState(uint32_t hw_state) const override;
+    std::string interpretErrorState(uint32_t hw_state) const override;
 
     int checkModelNumber(uint8_t id) override;
     int readFirmwareVersion(uint8_t id, std::string &version) override;
@@ -109,15 +109,6 @@ private:
     int writeDMax(uint8_t id, uint32_t d_max);
     int writeD1(uint8_t id, uint32_t d_1);
     int writeVStop(uint8_t id, uint32_t v_stop);
-
-    int readVStart(uint8_t id, uint32_t& v_start);
-    int readA1(uint8_t id, uint32_t& a_1);
-    int readV1(uint8_t id, uint32_t& v_1);
-    int readAMax(uint8_t id, uint32_t& a_max);
-    int readVMax(uint8_t id, uint32_t& v_max);
-    int readDMax(uint8_t id, uint32_t& d_max);
-    int readD1(uint8_t id, uint32_t& d_1);
-    int readVStop(uint8_t id, uint32_t& v_stop);
 };
 
 // definition of methods
@@ -147,12 +138,12 @@ std::string StepperDriver<reg_type>::str() const
 }
 
 /**
- * @brief StepperDriver<reg_type>::interpreteErrorState
+ * @brief StepperDriver<reg_type>::interpretErrorState
  * @param hw_state
  * @return
  */
 template<typename reg_type>
-std::string StepperDriver<reg_type>::interpreteErrorState(uint32_t hw_state) const
+std::string StepperDriver<reg_type>::interpretErrorState(uint32_t hw_state) const
 {
     std::string hardware_message;
 
@@ -171,6 +162,12 @@ std::string StepperDriver<reg_type>::interpreteErrorState(uint32_t hw_state) con
         if (!hardware_message.empty())
             hardware_message += ", ";
         hardware_message += "Motor Encoder";
+    }
+    if (hw_state & 1<<7)    // 0b10000000 => added by us : disconnected error
+    {
+        if (!hardware_message.empty())
+            hardware_message += ", ";
+        hardware_message += "Disconnection";
     }
 
     if (!hardware_message.empty())
@@ -225,7 +222,7 @@ int StepperDriver<reg_type>::readFirmwareVersion(uint8_t id, std::string &versio
     int res = 0;
     uint32_t data{};
     res = read<typename reg_type::TYPE_FIRMWARE_VERSION>(reg_type::ADDR_FIRMWARE_VERSION, id, data);
-    version = interpreteFirmwareVersion(data);
+    version = interpretFirmwareVersion(data);
     return res;
 }
 
@@ -469,7 +466,7 @@ int StepperDriver<reg_type>::syncReadFirmwareVersion(const std::vector<uint8_t> 
     std::vector<uint32_t> data_list{};
     res = syncRead<typename reg_type::TYPE_FIRMWARE_VERSION>(reg_type::ADDR_FIRMWARE_VERSION, id_list, data_list);
     for(auto const& data : data_list)
-      firmware_list.emplace_back(interpreteFirmwareVersion(data));
+      firmware_list.emplace_back(interpretFirmwareVersion(data));
     return res;
 }
 
@@ -556,64 +553,30 @@ int StepperDriver<reg_type>::syncReadHwErrorStatus(const std::vector<uint8_t> &i
 template<typename reg_type>
 int StepperDriver<reg_type>::readVelocityProfile(uint8_t id, std::vector<uint32_t> &data_list)
 {
-  int res = 0;
+  int res = COMM_RX_FAIL;
   data_list.clear();
 
-  uint32_t v_start{0};
-  if (COMM_SUCCESS != readVStart(id, v_start))
-      res++;
-
-  data_list.emplace_back(v_start);
-
-  uint32_t a_1{0};
-  if (COMM_SUCCESS != readA1(id, a_1))
-      res++;
-
-  data_list.emplace_back(a_1);
-
-  uint32_t v_1{0};
-  if (COMM_SUCCESS != readV1(id, v_1))
-      res++;
-
-  data_list.emplace_back(v_1);
-
-  uint32_t a_max{0};
-  if (COMM_SUCCESS != readAMax(id, a_max))
-      res++;
-
-  data_list.emplace_back(a_max);
-
-  uint32_t v_max{0};
-  if (COMM_SUCCESS != readVMax(id, v_max))
-      res++;
-
-  data_list.emplace_back(v_max);
-
-  uint32_t d_max{0};
-  if (COMM_SUCCESS != readDMax(id, d_max))
-      res++;
-
-  data_list.emplace_back(d_max);
-
-  uint32_t d_1{0};
-  if (COMM_SUCCESS != readD1(id, d_1))
-      res++;
-
-  data_list.emplace_back(d_1);
-
-  uint32_t v_stop{0};
-  if (COMM_SUCCESS != readVStop(id, v_stop))
-      res++;
-
-  data_list.emplace_back(v_stop);
-
-  if(res > 0)
+  std::vector<std::array<typename reg_type::TYPE_VELOCITY_PROFILE, 8> > data_array_list;
+  if (COMM_SUCCESS == syncReadConsecutiveBytes<typename reg_type::TYPE_VELOCITY_PROFILE, 8>(reg_type::ADDR_VSTART, {id}, data_array_list))
   {
-      std::cout << "Failures during read Velocity Profile: " << res << std::endl;
-      return COMM_TX_FAIL;
+      if(!data_array_list.empty())
+      {
+          auto block = data_array_list.at(0);
+
+          for(auto data : block)
+          {
+              data_list.emplace_back(data);
+          }
+      }
+
+      res = COMM_SUCCESS;
+  }
+  else
+  {
+      std::cout << "Failures during read Velocity Profile" << std::endl;
   }
 
-  return COMM_SUCCESS;
+  return res;
 }
 
 /**
@@ -852,102 +815,6 @@ template<typename reg_type>
 int StepperDriver<reg_type>::writeVStop(uint8_t id, uint32_t v_stop)
 {
   return write(reg_type::ADDR_VSTOP, reg_type::SIZE_VSTOP, id, v_stop);
-}
-
-/**
- * @brief StepperDriver<reg_type>::readVStart
- * @param id
- * @param v_start
- * @return
- */
-template<typename reg_type>
-int StepperDriver<reg_type>::readVStart(uint8_t id, uint32_t& v_start)
-{
-  return read(reg_type::ADDR_VSTART, reg_type::SIZE_VSTART, id, v_start);
-}
-
-/**
- * @brief StepperDriver<reg_type>::readA1
- * @param id
- * @param a_1
- * @return
- */
-template<typename reg_type>
-int StepperDriver<reg_type>::readA1(uint8_t id, uint32_t& a_1)
-{
-  return read(reg_type::ADDR_A1, reg_type::SIZE_A1, id, a_1);
-}
-
-/**
- * @brief StepperDriver<reg_type>::readV1
- * @param id
- * @param v_1
- * @return
- */
-template<typename reg_type>
-int StepperDriver<reg_type>::readV1(uint8_t id, uint32_t& v_1)
-{
-  return read(reg_type::ADDR_V1, reg_type::SIZE_V1, id, v_1);
-}
-
-/**
- * @brief StepperDriver<reg_type>::readAMax
- * @param id
- * @param a_max
- * @return
- */
-template<typename reg_type>
-int StepperDriver<reg_type>::readAMax(uint8_t id, uint32_t& a_max)
-{
-  return read(reg_type::ADDR_AMAX, reg_type::SIZE_AMAX, id, a_max);
-}
-
-/**
- * @brief StepperDriver<reg_type>::readVMax
- * @param id
- * @param v_max
- * @return
- */
-template<typename reg_type>
-int StepperDriver<reg_type>::readVMax(uint8_t id, uint32_t& v_max)
-{
-  return read(reg_type::ADDR_VMAX, reg_type::SIZE_VMAX, id, v_max);
-}
-
-/**
- * @brief StepperDriver<reg_type>::readDMax
- * @param id
- * @param d_max
- * @return
- */
-template<typename reg_type>
-int StepperDriver<reg_type>::readDMax(uint8_t id, uint32_t& d_max)
-{
-  return read(reg_type::ADDR_DMAX, reg_type::SIZE_DMAX, id, d_max);
-}
-
-/**
- * @brief StepperDriver<reg_type>::readD1
- * @param id
- * @param d_1
- * @return
- */
-template<typename reg_type>
-int StepperDriver<reg_type>::readD1(uint8_t id, uint32_t& d_1)
-{
-  return read(reg_type::ADDR_D1, reg_type::SIZE_D1, id, d_1);
-}
-
-/**
- * @brief StepperDriver<reg_type>::readVStop
- * @param id
- * @param v_stop
- * @return
- */
-template<typename reg_type>
-int StepperDriver<reg_type>::readVStop(uint8_t id, uint32_t& v_stop)
-{
-  return read(reg_type::ADDR_VSTOP, reg_type::SIZE_VSTOP, id, v_stop);
 }
 
 } // ttl_driver
