@@ -6,14 +6,13 @@
     <arg name="hardware_version" default="ned"/>
     <arg name="simu_gripper" default="false"/>
     <arg name="gazebo" default="false"/>
-    <arg name="node_start_delay" default="0"/>
 
     <include file="$(find niryo_robot_tools_commander)/launch/tools_commander_base.launch.xml"> 
         <arg name="hardware_version" value="$(arg hardware_version)" />
     </include>
 
     <node name="niryo_robot_tools_commander" pkg="niryo_robot_tools_commander" 
-          type="tool_commander_node.py" output="screen" respawn="false" launch-prefix="bash -c 'sleep $(arg node_start_delay); $0 $@' ">
+          type="tool_commander_node.py" output="screen" respawn="false">
         <param name="log_level" type="string" value="$(arg log_level)" />
         <param name="simu_gripper" type="bool" value="$(arg simu_gripper)"/>
         <param name="gazebo" type="bool" value="$(arg gazebo)"/>
