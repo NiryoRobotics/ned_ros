@@ -437,7 +437,6 @@ void JointHardwareInterface::read(const ros::Time &/*time*/, const ros::Duration
         {
             jState->pos = jState->to_rad_pos(jState->getPosition());
             jState->vel = jState->to_rad_vel(jState->getVelocity());
-            // ROS_ERROR("TEST read position %lf %d", jState->to_rad_pos(jState->getPosition()), jState->getPosition());
         }
     }
 

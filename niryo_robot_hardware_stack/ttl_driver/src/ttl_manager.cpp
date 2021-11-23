@@ -959,7 +959,6 @@ bool TtlManager::readHardwareStatusOptimized()
                     {
                         auto stepperState = std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(id));
                         EStepperCalibrationStatus homing_status = stepper_driver->interpretHomingData(homing_status_list.at(i));
-                        ROS_ERROR("TEST calibration id %d, status %d", id, static_cast<int>(homing_status));
 
                         // get min status of all motors (to retrieve potential errors)
                         max_status = static_cast<int>(max_status) < static_cast<int>(homing_status) ? homing_status : max_status;
@@ -1189,7 +1188,7 @@ bool TtlManager::readHardwareStatus()
                                 auto stepperState = std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(id));
                                 // get max status of all motors (to retrieve potential errors)
                                 EStepperCalibrationStatus status = stepper_driver->interpretHomingData(homing_status_list.at(i));
-                                ROS_ERROR("TEST1 %d", (int)status);
+
                                 if (max_status != EStepperCalibrationStatus::UNINITIALIZED && status != EStepperCalibrationStatus::UNINITIALIZED)
                                     max_status = max_status < status ? status : max_status;
                                 else if (status == EStepperCalibrationStatus::UNINITIALIZED)
@@ -1214,14 +1213,11 @@ bool TtlManager::readHardwareStatus()
                         if ((!still_in_progress && CalibrationMachineState::State::IN_PROGRESS == _calib_machine_state.status()) ||
                             (still_in_progress && CalibrationMachineState::State::STARTING == _calib_machine_state.status()))
                         {
-                            ROS_ERROR("TEST4");
                             _calib_machine_state.next();
                         }
                         // This case protect calibration status never be returned if joints have been at limit
                         else if (ros::Time::now().toSec() - _calib_machine_state.getCalibrationTime() >= _calibration_timeout)
                         {
-                            ROS_ERROR("TEST %lf %lf", ros::Time::now().toSec(), _calib_machine_state.getCalibrationTime());
-                            ROS_ERROR("TEST3");
                             _calib_machine_state.setStatus(CalibrationMachineState::State::UPDATING);
                         }
 
@@ -1231,7 +1227,6 @@ bool TtlManager::readHardwareStatus()
                         if (CalibrationMachineState::State::UPDATING == _calib_machine_state.status())
                         {
                             _calibration_status = max_status;
-                            ROS_ERROR("TEST2 %d", (int)_calibration_status);
                             _calib_machine_state.reset();
                             _calib_machine_state.setCalibrationTimeOut(0.0);
                         }
