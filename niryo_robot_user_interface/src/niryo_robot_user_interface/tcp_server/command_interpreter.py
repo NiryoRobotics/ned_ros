@@ -897,22 +897,26 @@ class CommandInterpreter:
 
     # - Sound
 
-    @check_nb_args(1)
-    def __play_sound(self, sound_name):
-        return self.__send_answer(self.__niryo_robot.play_sound(sound_name))
+    @check_nb_args(4)
+    def __play_sound(self, sound_name, wait_end, start_time_sec, end_time_sec):
+        return self.__send_answer(self.__niryo_robot.sound.play(sound_name, wait_end, start_time_sec, end_time_sec))
 
     @check_nb_args(1)
     def __set_volume(self, sound_volume):
-        return self.__send_answer(self.__niryo_robot.set_volume(sound_volume))
+        return self.__send_answer(self.__niryo_robot.sound.set_volume(sound_volume))
 
     @check_nb_args(0)
     def __stop_sound(self):
-        return self.__send_answer(self.__niryo_robot.stop_sound())
+        return self.__send_answer(self.__niryo_robot.sound.stop())
+
+    @check_nb_args(0)
+    def __get_sounds(self):
+        return self.__send_answer(self.__niryo_robot.sound.sounds)
 
     @check_nb_args(1)
-    def __delete_sound(self, sound_name):
-        return self.__send_answer(self.__niryo_robot.delete_sound(sound_name))
+    def __get_sound_duration(self, sound_name):
+        return self.__send_answer(self.__niryo_robot.sound.get_sound_duration(sound_name))
 
     @check_nb_args(2)
-    def __import_sound(self, sound_name, sound_data):
-        return self.__send_answer(self.__niryo_robot.import_sound(sound_name, sound_data))
+    def __say(self, text, language):
+        return self.__send_answer(self.__niryo_robot.sound.say(text, language))

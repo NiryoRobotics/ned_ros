@@ -268,6 +268,9 @@ class CommandEnum(Enum):
     STOP_SOUND = 242
     DELETE_SOUND = 243
     IMPORT_SOUND = 244
+    GET_SOUNDS = 245
+    GET_SOUND_DURATION = 246
+    SAY = 247
 
     # Led Ring
     LED_RING_SOLID = 250

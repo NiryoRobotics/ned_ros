@@ -17,8 +17,8 @@ PINK = [255, 0, 255]
 RED = [255, 0, 0]
 
 USE_BUTTON = False
-VOLUME = 100
-LOOPS = 5
+VOLUME = 10
+LOOPS = 2
 
 
 def almost_equal_array(a, b, decimal=1):
@@ -127,6 +127,7 @@ class TestProduction:
         ]
 
     def run(self):
+        rospy.sleep(1)
         try:
             for test in self.__sub_tests:
                 test.run()
@@ -180,7 +181,6 @@ class TestFunctions(object):
 
             self.__robot.sound.say("Validez la position du robot", 1)
             report.execute(self.wait_save_button_press, "Wait save button press to validate")
-            report.end()
 
     def test_led_ring(self, report):
         self.__robot.led_ring.solid(WHITE)
