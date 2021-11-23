@@ -199,17 +199,11 @@ private:
     // map of drivers for a given hardware type (dxl, stepper, end effector)
     std::map<common::model::EHardwareType, std::shared_ptr<ttl_driver::AbstractTtlDriver> > _driver_map;
 
-    // used to retrieve diverse TTL status
-    std::map<common::model::EHardwareType, std::vector<uint8_t> > _joint_status_driver_map;
-    std::map<common::model::EHardwareType, std::vector<uint8_t> > _calibration_status_driver_map;
-    std::map<common::model::EHardwareType, std::vector<uint8_t> > _hw_status_driver_map;
-
     // default ttl driver is always available
     std::shared_ptr<ttl_driver::AbstractTtlDriver> _default_ttl_driver;
 
     // vector of ids of motors and conveyors
     // Theses vector help remove loop not necessary
-    std::vector<uint8_t> _conveyor_list;
     // TODO(CC) add tools_list ?
 
     // for hardware control
