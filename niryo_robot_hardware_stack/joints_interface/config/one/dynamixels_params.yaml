@@ -19,6 +19,7 @@ dynamixels:
         position_I_gain: 0
         position_D_gain: 4000
 
+
     dxl_3:
         offset_position: -2.6
         home_position: 0.0
