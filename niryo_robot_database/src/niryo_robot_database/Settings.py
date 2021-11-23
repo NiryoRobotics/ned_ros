@@ -26,8 +26,12 @@ class Settings:
         return result['value'], result['type']
 
     def set(self, name, value, value_type):
-
-        if not isinstance(value, locate(value_type)):
+        try:
+            if value_type == 'bool' and value not in ['True', 'true', 'False', 'false']:
+                raise ValueError()
+            else:
+                locate(value_type)(value)
+        except ValueError:
             raise TypeError('{} is not of type {}'.format(value, value_type))
 
         settings_exists, settings_id = self.exists(name)

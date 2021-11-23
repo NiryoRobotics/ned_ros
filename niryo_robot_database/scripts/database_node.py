@@ -2,22 +2,23 @@
 
 # Libs
 import os
+import subprocess
+
 import rospy
-import logging
+import rospkg
 from sqlite3 import OperationalError
 
 from niryo_robot_database.SQLiteDAO import SQLiteDAO
 from niryo_robot_database.Logs import Logs
-from niryo_robot_database.Metrics import Metrics
-from niryo_robot_database.Settings import Settings
+from niryo_robot_database.Metrics import Metrics, UnknownMetricException
+from niryo_robot_database.Settings import Settings, UnknownSettingsException
 
 # msg
 from niryo_robot_msgs.msg import CommandStatus
 from niryo_robot_database.msg import Log, Metric
 
 # srv
-from niryo_robot_database.srv import (AddLog, GetAllLogs, GetAllMetrics,
-                                      RmLogSinceDate, SetMetric, SetSettings, GetSettings)
+from niryo_robot_database.srv import AddLog, GetAllLogs, GetAllMetrics, RmLogsWithIds, SetMetric, SetSettings, GetSettings
 
 
 class DatabaseNode:
@@ -26,12 +27,16 @@ class DatabaseNode:
 
         db_path = os.path.expanduser(rospy.get_param('~sqlite_db_file_path'))
 
-        try:
-            sqlite_dao = SQLiteDAO(db_path)
-        except IOError:
-            rospy.logerr(
-                'Database Node - Unable to open the database. Did you run sql/init.sh ?'
-            )
+        if not os.path.isfile(db_path):
+            package_path = rospkg.RosPack().get_path('niryo_robot_database')
+            file_path = package_path + '/sql/init.sh'
+            subprocess.call(['bash', file_path])
+            if not os.path.isfile(db_path):
+                rospy.logerr(
+                    'Database Node - Unable to open the database. Did you run sql/init.sh ?'
+                )
+
+        sqlite_dao = SQLiteDAO(db_path)
 
         self.__settings = Settings(sqlite_dao)
         self.__logs = Logs(sqlite_dao)
@@ -43,8 +48,7 @@ class DatabaseNode:
             '~metrics/get_all', GetAllMetrics, self.__callback_get_all_metrics
         )
         rospy.Service(
-            '~logs/rm_since_date', RmLogSinceDate,
-            self.__callback_rm_logs_since_date
+            '~logs/rm_with_ids', RmLogsWithIds, self.__callback_rm_logs_with_ids
         )
         rospy.Service('~metrics/set', SetMetric, self.__callback_set_metric)
 
@@ -89,9 +93,9 @@ class DatabaseNode:
             return CommandStatus.DATABASE_DB_ERROR, str(e)
         return CommandStatus.SUCCESS, metrics
 
-    def __callback_rm_logs_since_date(self, req):
+    def __callback_rm_logs_with_ids(self, req):
         try:
-            self.__logs.rm_all_since_date(req.date)
+            self.__logs.rm_with_ids(req.ids)
         except OperationalError as e:
             return CommandStatus.DATABASE_DB_ERROR, str(e)
         return CommandStatus.SUCCESS, 'Logs deleted'
@@ -115,7 +119,7 @@ class DatabaseNode:
     def __callback_get_settings(self, req):
         try:
             value, value_type = self.__settings.get(req.name)
-        except Settings.UnknownSettingsException():
+        except UnknownSettingsException:
             return CommandStatus.DATABASE_SETTINGS_UNKNOWN, 'Unknown settings', None
         except OperationalError as e:
             return CommandStatus.DATABASE_DB_ERROR, str(e)
@@ -123,13 +127,9 @@ class DatabaseNode:
 
 
 if __name__ == "__main__":
-    rospy.init_node('niryo_robot_database', anonymous=False, log_level=rospy.INFO)
-
-    # change logger level according to node parameter
-    log_level = rospy.get_param("~log_level")
-    logger = logging.getLogger("rosout")
-    logger.setLevel(log_level)
-
+    rospy.init_node(
+        'niryo_robot_database', anonymous=False, log_level=rospy.INFO
+    )
     try:
         node = DatabaseNode()
         rospy.spin()
