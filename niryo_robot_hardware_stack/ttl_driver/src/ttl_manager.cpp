@@ -251,7 +251,6 @@ int TtlManager::addHardwareComponent(std::shared_ptr<common::model::AbstractHard
         std::string version;
         _driver_map.at(hardware_type)->readFirmwareVersion(state->getId(), version);
         state->setFirmwareVersion(version);
-
     }
     result = niryo_robot_msgs::CommandStatus::SUCCESS;
     return result;
@@ -1142,7 +1141,7 @@ bool TtlManager::readHardwareStatus()
             }  // for _hw_list
 
             // we want to check calibration (done at startup and when calibration is started)
-            if (CalibrationMachineState::State::IDLE != _calib_machine_state.status() && 
+            if (CalibrationMachineState::State::IDLE != _calib_machine_state.status() &&
                 ((_ids_map.count(hw_type) != 0 && _ids_map.at(hw_type).size() == 3)))
             {
                 /* Truth Table
