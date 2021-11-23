@@ -932,7 +932,7 @@ bool TtlManager::readCalibrationStatus()
 
                                 // if 0, uninitialized, else, take max
                                 // we need to keep the status unconverted to have the correct order
-                                if ((0 != homing_status_list.at(i)) ||
+                                if ((0 == homing_status_list.at(i)) ||
                                     (0 != max_status && homing_status_list.at(i) > max_status))
                                     max_status = homing_status_list.at(i);
 
@@ -943,6 +943,8 @@ bool TtlManager::readCalibrationStatus()
                                 }
                             }
                         }  // for steppers_list
+
+                        ss_debug << " => max_status: " << static_cast<int>(max_status);
 
                         ROS_DEBUG("TtlManager::readCalibrationStatus : %s", ss_debug.str().c_str());
 

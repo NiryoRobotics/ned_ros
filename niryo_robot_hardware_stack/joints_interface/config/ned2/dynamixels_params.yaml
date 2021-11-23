@@ -8,13 +8,13 @@ dynamixels:
         limit_position_max: 2.093
         limit_position_min: -2.093
         direction: 1
-        position_P_gain: 5120
-        position_I_gain: 500
-        position_D_gain: 16383
+        position_P_gain: 3264
+        position_I_gain: 0
+        position_D_gain: 9520
         velocity_P_gain: 0
         velocity_I_gain: 0
         FF1_gain: 400
-        FF2_gain: 400
+        FF2_gain: 0
 
     dxl_2:
         offset_position: 3.1415
@@ -22,13 +22,13 @@ dynamixels:
         limit_position_max: 1.919
         limit_position_min: -1.919
         direction: -1
-        position_P_gain: 3840
-        position_I_gain: 500
-        position_D_gain: 16383
+        position_P_gain: 2560
+        position_I_gain: 0
+        position_D_gain: 352
         velocity_P_gain: 0
         velocity_I_gain: 0
-        FF1_gain: 400
-        FF2_gain: 400
+        FF1_gain: 0
+        FF2_gain: 0
 
     dxl_3:
         offset_position: -3.1415
@@ -36,9 +36,9 @@ dynamixels:
         limit_position_max: 2.53
         limit_position_min: -2.53
         direction: 1
-        position_P_gain: 240
-        position_I_gain: 66
-        position_D_gain: 4800
+        position_P_gain: 2560
+        position_I_gain: 0
+        position_D_gain: 1424
         velocity_P_gain: 0
         velocity_I_gain: 0
         FF1_gain: 0
