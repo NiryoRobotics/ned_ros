@@ -814,13 +814,12 @@ bool TtlManager::readHardwareStatus()
                     }
 
                     // interpret any error code into message (even if not retrieved now)
-                    if (_driver_map.count(state->getHardwareType()) && _driver_map.at(state->getHardwareType()))
-                    {
-                        string hardware_message = _driver_map.at(state->getHardwareType())->interpretErrorState(state->getHardwareError());
-                        state->setHardwareError(hardware_message);
-                    }
+                    string hardware_message = driver->interpretErrorState(state->getHardwareError());
+                    state->setHardwareError(hardware_message);
                 }
             }  // for ids_list
+
+            readCalibrationStatus();
 
             // we reset the global error variable only if no errors
             if (0 == hw_errors_increment)
@@ -853,7 +852,6 @@ bool TtlManager::readHardwareStatus()
 /**
  * @brief TtlManager::readCalibrationStatus
  * @return
- * TODO(cc) replace with an _calibration_driver_map as _joint_driver_map
  */
 bool TtlManager::readCalibrationStatus()
 {
@@ -939,7 +937,7 @@ bool TtlManager::readCalibrationStatus()
                             _calib_machine_state.next();
                         }
 
-                        ROS_DEBUG("%s", ss_debug.str().c_str());
+                        ROS_DEBUG("TtlManager::readCalibrationStatus : %s", ss_debug.str().c_str());
 
                         // see truth table above
                         if (CalibrationMachineState::State::UPDATING == _calib_machine_state.status())
@@ -950,7 +948,7 @@ bool TtlManager::readCalibrationStatus()
                     }
                     else
                     {
-                        ROS_ERROR("TtlManager::readHardwareStatus : syncReadHomingStatus failed - "
+                        ROS_ERROR("TtlManager::readCalibrationStatus : syncReadHomingStatus failed - "
                                     "vector mistmatch (id_list size %d, homing_status_list size %d)",
                                     static_cast<int>(ids_list.size()), static_cast<int>(homing_status_list.size()));
 
@@ -965,8 +963,8 @@ bool TtlManager::readCalibrationStatus()
         } // for (auto it : _calibration_status_driver_map)
     }
 
-    ROS_DEBUG("_calibration_status: %s", common::model::StepperCalibrationStatusEnum(_calibration_status).toString().c_str());
-    ROS_DEBUG("_calib_machine_state: %d", static_cast<int>(_calib_machine_state.status()));
+    ROS_DEBUG("TtlManager::readCalibrationStatus: _calibration_status: %s", common::model::StepperCalibrationStatusEnum(_calibration_status).toString().c_str());
+    ROS_DEBUG("TtlManager::readCalibrationStatus: _calib_machine_state: %d", static_cast<int>(_calib_machine_state.status()));
 
     return (0 == hw_errors_increment);
 }

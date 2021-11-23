@@ -44,7 +44,7 @@ public:
     int32_t interpretPositionStatus(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) override;
     uint8_t interpretTemperatureStatus(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) override;
     std::string interpretFirmwareVersion(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) override;
-    std::pair<common::model::EStepperCalibrationStatus, int32_t> interpretCalibrationData(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) override;
+    std::pair<common::model::EStepperCalibrationStatus, int32_t> interpretHomingData(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) override;
     std::tuple<bool, uint8_t, uint16_t> interpretConveyorData(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data) override;
 
 public:

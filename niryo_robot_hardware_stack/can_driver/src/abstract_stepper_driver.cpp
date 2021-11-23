@@ -151,12 +151,12 @@ std::string AbstractStepperDriver::interpretFirmwareVersion(const std::array<uin
 }
 
 /**
- * @brief StepperDriver::interpretCalibrationData
+ * @brief StepperDriver::interpretHomingData
  * @param data
  * @return
  */
 std::pair<common::model::EStepperCalibrationStatus, int32_t>
-AbstractStepperDriver::interpretCalibrationData(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data)
+AbstractStepperDriver::interpretHomingData(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data)
 {
     auto status = static_cast<common::model::EStepperCalibrationStatus>(data[1]);
     int32_t value = (data[2] << 8) + data[3];

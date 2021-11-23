@@ -315,7 +315,7 @@ void CanManager::readStatus()
                         }
                         case AbstractStepperDriver::CAN_DATA_CALIBRATION_RESULT:
                         {
-                            stepperState->setCalibration(driver->interpretCalibrationData(rxBuf));
+                            stepperState->setCalibration(driver->interpretHomingData(rxBuf));
                             updateCurrentCalibrationStatus();
                             break;
                         }

@@ -229,7 +229,10 @@ int MockEndEffectorDriver::syncReadVoltage(const std::vector<uint8_t> &id_list, 
  */
 int MockEndEffectorDriver::syncReadRawVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list)
 {
-    return syncReadVoltage(id_list, voltage_list);
+  voltage_list.clear();
+  for (size_t i = 0; i < id_list.size(); i++)
+      voltage_list.emplace_back(static_cast<double>(_fake_data->end_effector.voltage));
+  return COMM_SUCCESS;
 }
 
 /**
@@ -313,6 +316,12 @@ int MockEndEffectorDriver::readButton2Status(uint8_t id, common::model::EActionT
     return COMM_SUCCESS;
 }
 
+/**
+ * @brief MockEndEffectorDriver::syncReadButtonsStatus
+ * @param id
+ * @param action_list
+ * @return
+ */
 int MockEndEffectorDriver::syncReadButtonsStatus(const uint8_t &id, std::vector<common::model::EActionType> &action_list)
 {
     action_list.clear();
