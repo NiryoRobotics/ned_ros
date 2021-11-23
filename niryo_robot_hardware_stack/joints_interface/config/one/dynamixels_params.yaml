@@ -1,6 +1,6 @@
 dynamixels:
     dxl_1:
-        offset_position: -3.1415
+        offset_position: -3.1
         home_position: 0.0
         direction: 1
         limit_position_max: 2.093
@@ -10,7 +10,7 @@ dynamixels:
         position_D_gain: 4000
 
     dxl_2:
-        offset_position: 3.1415
+        offset_position: 3.1
         home_position: 0.0
         direction: 1
         limit_position_max: 1.919
@@ -20,7 +20,7 @@ dynamixels:
         position_D_gain: 4000
 
     dxl_3:
-        offset_position: -3.1415
+        offset_position: -2.6
         home_position: 0.0
         direction: 1
         limit_position_max: 2.53

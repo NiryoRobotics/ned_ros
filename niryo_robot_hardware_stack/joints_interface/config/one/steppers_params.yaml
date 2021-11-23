@@ -29,6 +29,6 @@ steppers:
         home_position: -1.3439
         limit_position_min: -1.3439
         limit_position_max: 1.57
-        direction: -1
+        direction: 1
         max_effort: 120
 

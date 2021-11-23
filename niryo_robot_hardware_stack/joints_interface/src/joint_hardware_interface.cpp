@@ -85,7 +85,6 @@ JointHardwareInterface::JointHardwareInterface(ros::NodeHandle& rootnh,
  */
 bool JointHardwareInterface::init(ros::NodeHandle& /*rootnh*/, ros::NodeHandle &robot_hwnh)
 {
-    std::cout << "###### JointHardwareInterface::init" << std::endl;
     size_t nb_joints = 0;
     bool torque_status = true;
 
