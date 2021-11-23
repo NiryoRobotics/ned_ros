@@ -1173,7 +1173,7 @@ bool TtlManager::readHardwareStatus()
                     if (steppers_list.size() == homing_status_list.size())
                     {
                         // max status need to be kept not converted into EStepperCalibrationStatus because max status is "in progress" in the enum
-                        EStepperCalibrationStatus max_status = EStepperCalibrationStatus::UNINITIALIZED;
+                        EStepperCalibrationStatus max_status = EStepperCalibrationStatus::OK;
 
                         // debug only
                         std::ostringstream ss_debug;
@@ -1188,9 +1188,12 @@ bool TtlManager::readHardwareStatus()
                             if (_state_map.count(id))
                             {
                                 auto stepperState = std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(id));
-                                EStepperCalibrationStatus status = stepper_driver->interpretHomingData(homing_status_list.at(i));
                                 // get max status of all motors (to retrieve potential errors)
-                                max_status = max_status < status ? status : max_status;
+                                EStepperCalibrationStatus status = stepper_driver->interpretHomingData(homing_status_list.at(i));
+                                if (max_status != EStepperCalibrationStatus::UNINITIALIZED && status != EStepperCalibrationStatus::UNINITIALIZED)
+                                    max_status = max_status < status ? status : max_status;
+                                else if (status == EStepperCalibrationStatus::UNINITIALIZED)
+                                    max_status = status;
 
                                 ss_debug << static_cast<int>(homing_status_list.at(i)) << ", ";
                                 // if one status is in progress, we are really in progress
