@@ -377,6 +377,7 @@ class RobotCommanderNode:
             self.__current_goal_handle.set_canceled(result)
             rospy.loginfo("Commander Action Serv - Goal has been successfully canceled")
         elif response.status == CommandStatus.CONTROLLER_PROBLEMS:
+            self.__cancel_command()
             self.__current_goal_handle.set_aborted(result)
             rospy.logwarn("Commander Action Serv - Controller failed during execution : " +
                           "Goal has been aborted.\n" +

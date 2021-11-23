@@ -61,6 +61,7 @@ class EndEffectorDriver : public AbstractEndEffectorDriver
         int syncReadFirmwareVersion(const std::vector<uint8_t> &id_list, std::vector<std::string> &firmware_list) override;
         int syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint8_t>& temperature_list) override;
         int syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list) override;
+        int syncReadRawVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list) override;
         int syncReadHwStatus(const std::vector<uint8_t> &id_list, std::vector<std::pair<double, uint8_t> >& data_list) override;
 
         int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint8_t> &hw_error_list) override;
@@ -80,7 +81,7 @@ class EndEffectorDriver : public AbstractEndEffectorDriver
         int readCollisionStatus(uint8_t id, bool& status) override;
 
         int readDigitalInput(uint8_t id, bool& in) override;
-        int writeDigitalOutput(uint8_t id, bool out) override;      
+        int writeDigitalOutput(uint8_t id, uint32_t out) override;      
 };
 
 // definition of methods
@@ -233,6 +234,23 @@ int EndEffectorDriver<reg_type>::syncReadVoltage(const std::vector<uint8_t> &id_
     int res = syncRead<typename reg_type::TYPE_PRESENT_VOLTAGE>(reg_type::ADDR_PRESENT_VOLTAGE, id_list, v_read);
     for(auto const& v : v_read)
         voltage_list.emplace_back(static_cast<double>(v) / reg_type::VOLTAGE_CONVERSION);
+    return res;
+}
+
+/**
+ * @brief EndEffectorDriver<reg_type>::syncReadRawVoltage
+ * @param id_list
+ * @param voltage_list
+ * @return
+ */
+template<typename reg_type>
+int EndEffectorDriver<reg_type>::syncReadRawVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list)
+{
+    voltage_list.clear();
+    std::vector<uint16_t> v_read;
+    int res = syncRead<typename reg_type::TYPE_PRESENT_VOLTAGE>(reg_type::ADDR_PRESENT_VOLTAGE, id_list, v_read);
+    for(auto const& v : v_read)
+        voltage_list.emplace_back(static_cast<double>(v));
     return res;
 }
 
@@ -423,13 +441,13 @@ int EndEffectorDriver<reg_type>::readDigitalInput(uint8_t id, bool& in)
 /**
  * @brief EndEffectorDriver<reg_type>::setDigitalOutput
  * @param id
- * @param out
+ * @param out  1 : true, 0: false
  * @return
  */
 template<typename reg_type>
-int EndEffectorDriver<reg_type>::writeDigitalOutput(uint8_t id, bool out)
+int EndEffectorDriver<reg_type>::writeDigitalOutput(uint8_t id, uint32_t out)
 {
-    return write(reg_type::ADDR_DIGITAL_OUT, reg_type::SIZE_DIGITAL_OUT, id, (out > 0) ? 1 : 0);
+    return write(reg_type::ADDR_DIGITAL_OUT, reg_type::SIZE_DIGITAL_OUT, id, out);
 }
 
 } // ttl_driver

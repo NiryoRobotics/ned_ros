@@ -38,6 +38,7 @@
 #include <utility>
 #include <string>
 #include <tuple>
+#include <sstream>
 
 #include <common/model/conveyor_state.hpp>
 
@@ -202,15 +203,15 @@ void TtlInterfaceCore::startSubscribers(ros::NodeHandle &/*nh*/)
  * @brief TtlInterfaceCore::rebootMotor
  * @return
  */
-bool TtlInterfaceCore::rebootMotor(const std::shared_ptr<common::model::AbstractMotorState> &motor_state)
+bool TtlInterfaceCore::rebootHardware(const std::shared_ptr<common::model::AbstractHardwareState> &hw_state)
 {
     int result = COMM_TX_FAIL;
 
-    if (motor_state && motor_state->isValid())
+    if (hw_state && hw_state->isValid())
     {
-        ROS_INFO("TtlInterfaceCore::rebootMotor - Reboot motor %d", static_cast<int>(motor_state->getId()));
+        ROS_INFO("TtlInterfaceCore::rebootHardware - Reboot hardware %d", static_cast<int>(hw_state->getId()));
         lock_guard<mutex> lck(_control_loop_mutex);
-        result = _ttl_manager->rebootHwComponent(motor_state->getId());
+        result = _ttl_manager->rebootHardware(hw_state->getId());
         ros::Duration(1.5).sleep();
     }
 
@@ -560,25 +561,41 @@ void TtlInterfaceCore::controlLoop()
             // 1. check connection status of motors
             if (!_ttl_manager->isConnectionOk())
             {
-                // case 1 : connection lost but it is a feature (ex Tool or conveyor)
-                ROS_WARN("TtlInterfaceCore::controlLoop - motor connection error");
+                // clear all commands concerned move joints to avoid when a motor reconnected, it moves a little bit because of command unsent yet
+                _joint_trajectory_cmd.clear();
+
+                // scan motors again
+                ROS_WARN_THROTTLE(1.0, "TtlInterfaceCore::controlLoop - motor connection error");
+                ros::Duration(0.1).sleep();
 
                 vector<uint8_t> missing_ids;
-                ROS_DEBUG("TtlInterfaceCore::controlLoop - Scan to find motors");
 
                 int bus_state = COMM_PORT_BUSY;
 
                 while (TTL_SCAN_OK != bus_state)
                 {
-                    ros::Duration(0.25).sleep();
+                    // scan and get removed motor
                     {
                         lock_guard<mutex> lck(_control_loop_mutex);
                         bus_state = _ttl_manager->scanAndCheck();
                     }
-                    missing_ids = getRemovedMotorList();
-                    for (auto const& id : missing_ids)
+
+                    if (bus_state == TTL_SCAN_OK)
+                        break;
+                    else
                     {
-                        ROS_WARN("TtlInterfaceCore::controlLoop - motor %d does not seem to be connected", id);
+                        missing_ids = getRemovedMotorList();
+
+                        std::string msg;
+                        msg += "TtlInterfaceCore::controlLoop - motor";
+                        for (auto const& id : missing_ids)
+                        {
+                            msg += " " + std::to_string(id);
+                        }
+                        msg += " do not seem to be connected";
+                        ROS_WARN_THROTTLE(1.0, "%s", msg.c_str());
+
+                        ros::Duration(0.25).sleep();
                     }
                 }
                 ROS_INFO("TtlInterfaceCore::controlLoop - Bus is ok");
@@ -608,6 +625,7 @@ void TtlInterfaceCore::controlLoop()
                     _ttl_manager->readEndEffectorStatus();
                     _time_hw_end_effector_last_read = ros::Time::now().toSec();
                 }
+                ros::Rate(_control_loop_frequency).sleep();
             }
             else
             {
@@ -679,18 +697,7 @@ int TtlInterfaceCore::addJoint(const std::shared_ptr<common::model::JointState>&
 {
     int result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
 
-    lock_guard<mutex> lck(_control_loop_mutex);
-
-    // try to find motor
-    if (_ttl_manager->ping(jointState->getId()))
-    {
-        // add dynamixel as a new joint
-        result = _ttl_manager->addHardwareComponent(jointState);
-    }
-    else
-    {
-        ROS_WARN("TtlInterfaceCore::addJoint - No joint found with motor id %d", jointState->getId());
-    }
+    result = _ttl_manager->addHardwareComponent(jointState);
 
     return result;
 }
@@ -743,17 +750,16 @@ int TtlInterfaceCore::setEndEffector(const std::shared_ptr<common::model::EndEff
 
     lock_guard<mutex> lck(_control_loop_mutex);
 
+    result = _ttl_manager->addHardwareComponent(end_effector_state);
     // try to find hw
     if (_ttl_manager->ping(end_effector_state->getId()))
     {
-        // add end effector
-        result = _ttl_manager->addHardwareComponent(end_effector_state);
+        result = niryo_robot_msgs::CommandStatus::SUCCESS;
     }
     else
     {
         ROS_WARN("TtlInterfaceCore::setEndEffector - No end effector found with id %d", end_effector_state->getId());
     }
-
     return result;
 }
 
@@ -989,21 +995,25 @@ niryo_robot_msgs::BusState TtlInterfaceCore::getBusState() const
 }
 
 /**
- * @brief TtlInterfaceCore::isSyncQueueFree
- * @return
+ * @brief TtlInterfaceCore::waitSyncQueueFree
  */
-bool TtlInterfaceCore::isSyncQueueFree()
+void TtlInterfaceCore::waitSyncQueueFree()
 {
-    return _sync_cmds_queue.empty();
+    while (!_sync_cmds_queue.empty())
+    {
+        ros::Duration(0.2).sleep();
+    }
 }
 
 /**
- * @brief TtlInterfaceCore::isSingleQueueFree
- * @return
+ * @brief TtlInterfaceCore::waitSingleQueueFree
  */
-bool TtlInterfaceCore::isSingleQueueFree()
+void TtlInterfaceCore::waitSingleQueueFree()
 {
-    return _single_cmds_queue.empty();
+    while (!_single_cmds_queue.empty())
+    {
+        ros::Duration(0.2).sleep();
+    }
 }
 
 // *******************
@@ -1157,7 +1167,7 @@ bool TtlInterfaceCore::_callbackWritePIDValue(ttl_driver::WritePIDValue::Request
     auto dxl_cmd_pos_p = std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_PID,
                                                         req.id, std::initializer_list<uint32_t>{req.pos_p_gain, req.pos_i_gain, req.pos_d_gain,
                                                                                                 req.vel_p_gain, req.vel_i_gain,
-                                                                                                req.ff1_gain, req.ff2_gain});
+                                                                                                req.ff1_gain, req.ff2_gain, req.vel_profile, req.acc_profile});
 
     if (dxl_cmd_pos_p->isValid())
     {

@@ -60,6 +60,7 @@ class MockEndEffectorDriver : public AbstractEndEffectorDriver
         int syncReadFirmwareVersion(const std::vector<uint8_t> &id_list, std::vector<std::string> &firmware_list) override;
         int syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint8_t>& temperature_list) override;
         int syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list) override;
+        int syncReadRawVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list) override;
         int syncReadHwStatus(const std::vector<uint8_t> &id_list, std::vector<std::pair<double, uint8_t> >& data_list) override;
 
         int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint8_t> &hw_error_list) override;
@@ -82,7 +83,7 @@ class MockEndEffectorDriver : public AbstractEndEffectorDriver
         int readCollisionStatus(uint8_t id, bool& status) override;
 
         int readDigitalInput(uint8_t id, bool& in) override;
-        int writeDigitalOutput(uint8_t id, bool out) override;
+        int writeDigitalOutput(uint8_t id, uint32_t out) override;
 
     private:
         std::shared_ptr<FakeTtlData> _fake_data;

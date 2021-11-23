@@ -86,9 +86,18 @@ void JointState::setHomePosition(double home_position)
  * @brief JointState::setLimitPosition
  * @param home_position
  */
-void JointState::setLimitPosition(double limit_position)
+void JointState::setLimitPositionMax(double max_position)
 {
-    _limit_position = limit_position;
+    _limit_position_max = max_position;
+}
+
+/**
+ * @brief JointState::setLimitPosition
+ * @param home_position
+ */
+void JointState::setLimitPositionMin(double min_position)
+{
+    _limit_position_min = min_position;
 }
 
 /**
