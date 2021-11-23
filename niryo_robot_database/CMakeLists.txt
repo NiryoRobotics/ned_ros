@@ -20,7 +20,7 @@ add_service_files(
   GetAllLogs.srv
   GetAllMetrics.srv
   GetSettings.srv
-  RmLogSinceDate.srv
+  RmLogWithIds.srv
   SetMetric.srv
   SetSettings.srv
 )
