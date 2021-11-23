@@ -57,6 +57,7 @@ public:
     int syncReadFirmwareVersion(const std::vector<uint8_t> &id_list, std::vector<std::string> &firmware_list) override;
     int syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint8_t>& temperature_list) override;
     int syncReadVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list) override;
+    int syncReadRawVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list) override;
     int syncReadHwStatus(const std::vector<uint8_t> &id_list, std::vector<std::pair<double, uint8_t> >& data_list) override;
 
     int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint8_t> &hw_error_list) override;
@@ -500,6 +501,23 @@ int StepperDriver<reg_type>::syncReadVoltage(const std::vector<uint8_t> &id_list
 }
 
 /**
+ * @brief StepperDriver<reg_type>::syncReadRawVoltage
+ * @param id_list
+ * @param voltage_list
+ * @return
+ */
+template<typename reg_type>
+int StepperDriver<reg_type>::syncReadRawVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list)
+{
+    voltage_list.clear();
+    std::vector<uint16_t> v_read;
+    int res = syncRead<typename reg_type::TYPE_PRESENT_VOLTAGE>(reg_type::ADDR_PRESENT_VOLTAGE, id_list, v_read);
+    for(auto const& v : v_read)
+        voltage_list.emplace_back(static_cast<double>(v));
+    return res;
+}
+
+/**
  * @brief StepperDriver<reg_type>::syncReadHwStatus
  * @param id_list
  * @param data_list
@@ -589,50 +607,107 @@ int StepperDriver<reg_type>::readVelocityProfile(uint8_t id, std::vector<uint32_
 template<typename reg_type>
 int StepperDriver<reg_type>::writeVelocityProfile(uint8_t id, const std::vector<uint32_t>& data_list)
 {
-  int res = 0;
-  double wait_duration = 0.05;
+    int tries = 10;
+    int res;
+    double wait_duration = 0.05;
 
-  writeTorqueEnable(id, true);
-  ros::Duration(wait_duration).sleep();
+    writeTorqueEnable(id, 1);
 
-  if (COMM_SUCCESS != writeVStart(id, data_list.at(0)))
-    res++;
-  ros::Duration(wait_duration).sleep();
+    // only rewrite the params which is not success
+    while (tries > 0)  // try 10 times
+    {
+        tries--;
+        ros::Duration(wait_duration).sleep();
+        res = writeVStart(id, data_list.at(0));
+        if (res == COMM_SUCCESS) 
+            break;
+    }
+    if (res != COMM_SUCCESS)
+        return res;
 
-  if (COMM_SUCCESS != writeA1(id, data_list.at(1)))
-    res++;
-  ros::Duration(wait_duration).sleep();
+    tries = 10;
+    while (tries > 0)  // try 10 times
+    {
+        tries--;
+        ros::Duration(wait_duration).sleep();
+        res = writeA1(id, data_list.at(1));
+        if (res == COMM_SUCCESS) 
+            break;
+    }
+    if (res != COMM_SUCCESS)
+        return res;
 
-  if (COMM_SUCCESS != writeV1(id, data_list.at(2)))
-    res++;
-  ros::Duration(wait_duration).sleep();
+    tries = 10;
+    while (tries > 0)  // try 10 times
+    {
+        tries--;
+        ros::Duration(wait_duration).sleep();
+        res = writeV1(id, data_list.at(2));
+        if (res == COMM_SUCCESS) 
+            break;
+    }
+    if (res != COMM_SUCCESS)
+    return res;
 
-  if (COMM_SUCCESS != writeAMax(id, data_list.at(3)))
-    res++;
-  ros::Duration(wait_duration).sleep();
+    tries = 10;
+    while (tries > 0)  // try 10 times
+    {
+        tries--;
+        ros::Duration(wait_duration).sleep();
+        res = writeAMax(id, data_list.at(3));
+        if (res == COMM_SUCCESS) 
+            break;
+    }
+    if (res != COMM_SUCCESS)
+        return res;
 
-  if (COMM_SUCCESS != writeVMax(id, data_list.at(4)))
-    res++;
-  ros::Duration(wait_duration).sleep();
+    tries = 10;
+    while (tries > 0)  // try 10 times
+    {
+        tries--;
+        ros::Duration(wait_duration).sleep();
+        res = writeVMax(id, data_list.at(4));
+        if (res == COMM_SUCCESS) 
+            break;
+    }
+    if (res != COMM_SUCCESS)
+        return res;
 
-  if (COMM_SUCCESS != writeDMax(id, data_list.at(5)))
-    res++;
-  ros::Duration(wait_duration).sleep();
+    tries = 10;
+    while (tries > 0)  // try 10 times
+    {
+        tries--;
+        ros::Duration(wait_duration).sleep();
+        res = writeDMax(id, data_list.at(5));
+        if (res == COMM_SUCCESS) 
+            break;
+    }
+    if (res != COMM_SUCCESS)
+        return res;
 
-  if (COMM_SUCCESS != writeD1(id, data_list.at(6)))
-    res++;
-  ros::Duration(wait_duration).sleep();
+    tries = 10;
+    while (tries > 0)  // try 10 times
+    {
+        tries--;
+        ros::Duration(wait_duration).sleep();
+        res = writeD1(id, data_list.at(6));
+        if (res == COMM_SUCCESS) 
+            break;
+    }
+    if (res != COMM_SUCCESS)
+        return res;
 
-  if (COMM_SUCCESS != writeVStop(id, data_list.at(7)))
-    res++;
-  ros::Duration(wait_duration).sleep();
+    tries = 10;
+    while (tries > 0)  // try 10 times
+    {
+        tries--;
+        ros::Duration(wait_duration).sleep();
+        res = writeVStop(id, data_list.at(7));
+        if (res == COMM_SUCCESS) 
+            break;
+    }
 
-  if(res > 0)
-  {
-      return COMM_TX_FAIL;
-  }
-
-  return COMM_SUCCESS;
+    return res;
 }
 
 /**

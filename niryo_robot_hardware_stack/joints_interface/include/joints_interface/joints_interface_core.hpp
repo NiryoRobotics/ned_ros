@@ -26,6 +26,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <vector>
 #include <thread>
 #include <functional>
+#include <mutex>
 #include <std_msgs/Empty.h>
 #include <std_msgs/Bool.h>
 
@@ -122,6 +123,7 @@ class JointsInterfaceCore : common::util::IInterfaceCore
         ros::ServiceServer _activate_learning_mode_server;
 
         std::string _hardware_version;
+        int _lock_write_cnt{-1};
 };
 
 /**

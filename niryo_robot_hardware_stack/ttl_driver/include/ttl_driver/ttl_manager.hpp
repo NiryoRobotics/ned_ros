@@ -114,7 +114,7 @@ public:
 
     void executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, uint32_t> > cmd_vec);
 
-    int rebootHwComponent(uint8_t id);
+    int rebootHardware(uint8_t id);
 
     int setLeds(int led);
 
@@ -216,7 +216,7 @@ private:
 
     std::string _led_motor_type_cfg;
 
-    static constexpr uint32_t MAX_HW_FAILURE = 25;
+    static constexpr uint32_t MAX_HW_FAILURE = 50;
     static constexpr uint32_t MAX_READ_EE_FAILURE = 150;
 
     common::model::EStepperCalibrationStatus _calibration_status{common::model::EStepperCalibrationStatus::UNINITIALIZED};
@@ -267,18 +267,34 @@ private:
             s = static_cast<State>(newState);
         }
 
+        void setStatus(const State state)
+        {
+            s = state;
+        }
+
         State status()
         {
           return s;
         }
 
+        double getCalibrationTime()
+        {
+            return _calibration_timeout;            
+        }
+
+        void setCalibrationTimeOut(const double timeout)
+        {
+            _calibration_timeout = timeout;
+        }
+
     private:
         State s{State::UPDATING};
+        double _calibration_timeout{0.0};
     };
 
     CalibrationMachineState _calib_machine_state;
 
-    static constexpr double _calibration_timeout{3.0};
+    static constexpr double _calibration_timeout{15.0};
 };
 
 // inline getters

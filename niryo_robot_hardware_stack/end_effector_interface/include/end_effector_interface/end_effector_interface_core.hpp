@@ -72,6 +72,7 @@ class EndEffectorInterfaceCore : public common::util::IInterfaceCore
         void startSubscribers(ros::NodeHandle& nh) override;
 
         void initEndEffectorHardware();
+        int initHardware();
         void _publishButtonState(const ros::TimerEvent&);
 
         bool _callbackSetIOState(end_effector_interface::SetEEDigitalOut::Request &req,

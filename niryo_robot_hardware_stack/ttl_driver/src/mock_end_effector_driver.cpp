@@ -177,6 +177,17 @@ int MockEndEffectorDriver::syncReadVoltage(const std::vector<uint8_t> &id_list, 
 }
 
 /**
+ * @brief MockEndEffectorDriver::syncReadRawVoltage
+ * @param id_list
+ * @param voltage_list
+ * @return
+ */
+int MockEndEffectorDriver::syncReadRawVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list)
+{
+    return syncReadVoltage(id_list, voltage_list);
+}
+
+/**
  * @brief MockEndEffectorDriver::syncReadHwStatus
  * @param id_list
  * @param data_list
@@ -377,7 +388,7 @@ int MockEndEffectorDriver::readDigitalInput(uint8_t id, bool& in)
  * @param out
  * @return
  */
-int MockEndEffectorDriver::writeDigitalOutput(uint8_t id, bool out)
+int MockEndEffectorDriver::writeDigitalOutput(uint8_t id, uint32_t out)
 {
     if (COMM_SUCCESS != ping(id))
         return COMM_RX_FAIL;

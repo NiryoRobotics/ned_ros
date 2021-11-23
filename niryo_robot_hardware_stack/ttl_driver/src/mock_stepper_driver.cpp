@@ -61,7 +61,8 @@ std::string MockStepperDriver::str() const
  */
 int MockStepperDriver::ping(uint8_t id)
 {
-    if (std::find(_id_list.begin(), _id_list.end(), id) != _id_list.end())
+    if (std::find(_fake_data->full_id_list.begin(), _fake_data->full_id_list.end(), id) != _fake_data->full_id_list.end() ||
+        _fake_data->end_effector.id == id)
         return COMM_SUCCESS;
     return COMM_TX_FAIL;
 }
@@ -88,6 +89,7 @@ int MockStepperDriver::scan(std::vector<uint8_t>& id_list)
 {
     // full id list using only for scan
     id_list = _fake_data->full_id_list;
+    id_list.emplace_back(_fake_data->end_effector.id);
     return COMM_SUCCESS;
 }
 
@@ -477,7 +479,7 @@ int MockStepperDriver::syncReadJointStatus(const std::vector<uint8_t> &id_list,
 
             data_array_list.emplace_back(std::move(blocks));
         }
-        if (_fake_data->dxl_registers.count(id))
+        else if (_fake_data->dxl_registers.count(id))
         {
             std::array<uint32_t, 2> blocks;
 
@@ -568,6 +570,18 @@ int MockStepperDriver::syncReadVoltage(const std::vector<uint8_t> &id_list, std:
             return GROUP_SYNC_REDONDANT_ID;  // redondant id
     }
     return COMM_SUCCESS;
+}
+
+
+/**
+ * @brief MockStepperDriver::syncReadVoltage
+ * @param id_list
+ * @param voltage_list
+ * @return
+ */
+int MockStepperDriver::syncReadRawVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list)
+{
+    return syncReadVoltage(id_list, voltage_list);
 }
 
 /**

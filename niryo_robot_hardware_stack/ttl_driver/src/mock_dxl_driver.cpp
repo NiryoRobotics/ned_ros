@@ -87,6 +87,7 @@ int MockDxlDriver::getModelNumber(uint8_t id, uint16_t& model_number)
 int MockDxlDriver::scan(std::vector<uint8_t>& id_list)
 {
     id_list = _fake_data->full_id_list;
+    id_list.emplace_back(_fake_data->end_effector.id);
     return COMM_SUCCESS;
 }
 
@@ -274,6 +275,25 @@ int MockDxlDriver::writeGoalVelocity(uint8_t id, uint32_t velocity)
     }
 
     // in mode control Position Control Mode, velocity profile in datasheet is used to set velocity (except xl320)
+    return res;
+}
+
+/**
+ * @brief MockDxlDriver::writeGoalAcceleration
+ * write acceleration profile
+ * @param id
+ * @param acceleration
+ * @return
+ */
+int MockDxlDriver::writeGoalAcceleration(uint8_t id, uint32_t acceleration)
+{
+    (void)acceleration;
+    int res = COMM_RX_FAIL;
+    if (_fake_data->dxl_registers.count(id))
+    {
+        res = COMM_SUCCESS;
+    }
+
     return res;
 }
 
@@ -587,6 +607,17 @@ int MockDxlDriver::syncReadVoltage(const std::vector<uint8_t> &id_list, std::vec
             return GROUP_SYNC_REDONDANT_ID;  // redondant id
     }
     return COMM_SUCCESS;
+}
+
+/**
+ * @brief MockDxlDriver::syncReadRawVoltage
+ * @param id_list
+ * @param voltage_list
+ * @return
+ */
+int MockDxlDriver::syncReadRawVoltage(const std::vector<uint8_t> &id_list, std::vector<double> &voltage_list)
+{
+    return syncReadVoltage(id_list, voltage_list);
 }
 
 /**

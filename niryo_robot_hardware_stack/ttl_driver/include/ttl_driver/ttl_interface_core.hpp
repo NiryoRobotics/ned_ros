@@ -119,7 +119,7 @@ public:
     int changeId(common::model::EHardwareType motor_type, uint8_t old_id, uint8_t new_id) override;
 
     // direct commands
-    bool rebootMotor(const std::shared_ptr<common::model::AbstractMotorState>& motor_state) override;
+    bool rebootHardware(const std::shared_ptr<common::model::AbstractHardwareState>& hw_state) override;
 
     // getters
     std::vector<uint8_t> getRemovedMotorList() const override;
@@ -148,8 +148,8 @@ public:
 
     // read Collision Status from motors
     bool readCollisionStatus() const;
-    bool isSyncQueueFree();
-    bool isSingleQueueFree();
+    void waitSyncQueueFree();
+    void waitSingleQueueFree();
 
 private:
     void initParameters(ros::NodeHandle& nh) override;
