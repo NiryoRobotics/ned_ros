@@ -12,7 +12,8 @@ import numpy as np
 from trajectories_executor import TrajectoriesExecutor
 from kinematics_handler import KinematicsHandler
 from jog_controller import JogController
-from niryo_robot_arm_commander.utils import list_to_pose, pose_to_list, dist_2_poses, poses_too_close
+from niryo_robot_arm_commander.utils import list_to_pose, pose_to_list, dist_2_poses, dist_2_points, poses_too_close, \
+    angle_between_2_points
 
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus
@@ -378,6 +379,36 @@ class ArmCommander:
 
         return self.__traj_executor.compute_and_execute_cartesian_plan(waypoints, self.__velocity_scaling_factor,
                                                                        self.__acceleration_scaling_factor)
+
+    def draw_circle_trajectory(self, arm_cmd):
+        """
+        Generate waypoints to draw a circle and generate a cartesian path with these waypoints
+        Then execute the trajectory plan
+
+        :param arm_cmd: ArmMoveCommand message containing target values
+        :type : ArmMoveCommand
+        :return: status, message
+        """
+        target_pose = self.__arm.get_current_pose().pose
+        center_point = arm_cmd.position
+        dist_from_center = dist_2_points(target_pose.position, center_point)
+
+        tmp_point = Point(round(target_pose.position.x - center_point.x, 4),
+                          round(target_pose.position.y - center_point.y, 4),
+                          round(target_pose.position.z - center_point.z, 4))
+
+        angle_off = angle_between_2_points(Point(0, 1, 0), tmp_point)
+
+        waypoints = []
+        angle_steps = 3
+        for angle in range(0, 360 + angle_steps, angle_steps):
+            angle_rad = math.radians(-angle) + angle_off
+            y_offset = dist_from_center * math.cos(angle_rad)
+            z_offset = dist_from_center * math.sin(angle_rad)
+            target_pose.position.y = center_point.y + y_offset
+            target_pose.position.z = center_point.z + z_offset
+            waypoints.append(copy.deepcopy(target_pose))
+        return self.__traj_executor.compute_and_execute_cartesian_plan(waypoints)
 
     # - Waypointed Trajectory
     def execute_trajectory(self, arm_cmd):
