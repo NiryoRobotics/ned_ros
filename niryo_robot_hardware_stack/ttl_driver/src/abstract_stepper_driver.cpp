@@ -193,8 +193,8 @@ std::string AbstractStepperDriver::interpretErrorState(uint32_t hw_state) const
 }
 
 /**
- * @brief AbstractStepperDriver::interpretHomingStatus
- * @param fw_version
+ * @brief AbstractStepperDriver::interpretHomingData
+ * @param status
  * @return
  */
 common::model::EStepperCalibrationStatus
@@ -217,6 +217,7 @@ AbstractStepperDriver::interpretHomingData(uint8_t status) const
       homing_status = EStepperCalibrationStatus::FAIL;
       break;
     default:
+      homing_status = EStepperCalibrationStatus::FAIL;
       break;
     }
 

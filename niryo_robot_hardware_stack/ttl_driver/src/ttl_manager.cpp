@@ -90,7 +90,10 @@ TtlManager::TtlManager(ros::NodeHandle& nh) :
 TtlManager::~TtlManager()
 {
     if (_portHandler)
+    {
+        _portHandler->clearPort();
         _portHandler->closePort();
+    }
 }
 
 /**
@@ -157,6 +160,10 @@ int TtlManager::setupCommunication()
                 {
                     // wait a bit to be sure the connection is established
                     ros::Duration(0.1).sleep();
+
+                    // clear port
+                    _portHandler->clearPort();
+
                     ret = COMM_SUCCESS;
                 }
                 else
@@ -886,58 +893,67 @@ bool TtlManager::readCalibrationStatus()
 
                 // ***********  calibration status, only if initialized
                 std::vector<uint8_t> homing_status_list;
-                // to go to next step of calibration machine state if calibration is still ok
-                double calibration_update_time = ros::Time::now().toSec();
-
                 if (COMM_SUCCESS == stepper_driver->syncReadHomingStatus(ids_list, homing_status_list))
                 {
                     if (ids_list.size() == homing_status_list.size())
                     {
                         // max status need to be kept not converted into EStepperCalibrationStatus because max status is "in progress" in the enum
-                        int max_status = 0;
+                        int max_status = -1;
 
                         // debug only
                         std::ostringstream ss_debug;
                         ss_debug << "homing status : ";
 
                         bool still_in_progress = false;
+
                         // set states accordingly
                         for (size_t i = 0; i < homing_status_list.size(); ++i)
                         {
                             uint8_t id = ids_list.at(i);
+                            ss_debug << static_cast<int>(homing_status_list.at(i)) << ", ";
 
                             if (_state_map.count(id))
                             {
-                                // get min status of all motors (to retrieve potential errors)
-                                max_status = max_status < homing_status_list.at(i) ? homing_status_list.at(i) : max_status;
                                 EStepperCalibrationStatus status = stepper_driver->interpretHomingData(homing_status_list.at(i));
 
-                                ss_debug << static_cast<int>(homing_status_list.at(i)) << ", ";
-                                // if one status is in progress, we are really in progress
-                                if (EStepperCalibrationStatus::IN_PROGRESS == status)
-                                {
-                                    still_in_progress = true;
-                                }
-
+                                // set status in state
                                 auto stepperState = std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(id));
                                 if (stepperState && !stepperState->isConveyor())
                                 {
                                     stepperState->setCalibration(status, 1);
                                 }
+
+                                // get max status of all motors (to retrieve potential errors)
+                                // carefull to those possible cases :
+                                // 1, 1, 1
+                                // 1, 2, 1
+                                // 0, 2, 2
+                                // 2, 0, 2
+
+                                // if 0, uninitialized, else, take max
+                                // we need to keep the status unconverted to have the correct order
+                                if ((0 != homing_status_list.at(i)) ||
+                                    (0 != max_status && homing_status_list.at(i) > max_status))
+                                    max_status = homing_status_list.at(i);
+
+                                // if one status is in progress, we are really in progress
+                                if (EStepperCalibrationStatus::IN_PROGRESS == status)
+                                {
+                                    still_in_progress = true;
+                                }
                             }
                         }  // for steppers_list
+
+                        ROS_DEBUG("TtlManager::readCalibrationStatus : %s", ss_debug.str().c_str());
 
                         // see truth table above
                         // timeout is here to prevent being stuck here if retrying calibration when already at the butee
                         if ((!still_in_progress && CalibrationMachineState::State::IN_PROGRESS == _calib_machine_state.status()) ||
                             (still_in_progress && CalibrationMachineState::State::STARTING == _calib_machine_state.status()) ||
-                            calibration_update_time - ros::Time::now().toSec() >= _calibration_timeout)
+                            _calib_machine_state.isTimeout())
                         {
-                            calibration_update_time = ros::Time::now().toSec();
                             _calib_machine_state.next();
                         }
-
-                        ROS_DEBUG("TtlManager::readCalibrationStatus : %s", ss_debug.str().c_str());
 
                         // see truth table above
                         if (CalibrationMachineState::State::UPDATING == _calib_machine_state.status())

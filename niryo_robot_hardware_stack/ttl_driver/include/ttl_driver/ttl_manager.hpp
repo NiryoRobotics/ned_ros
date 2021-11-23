@@ -250,10 +250,11 @@ private:
         void start()
         {
             s = State::STARTING;
+            _time = ros::Time::now().toSec(); // keep last date updated
         }
 
         /**
-         * @brief next : nex state, stops at updating (dont circle)
+         * @brief next : next state, stops at updating (dont circle)
          */
         void next()
         {
@@ -261,21 +262,28 @@ private:
             if (State::UPDATING != s)
                newState++;
 
+            _time = ros::Time::now().toSec(); // keep last date updated
             s = static_cast<State>(newState);
         }
 
         State status()
         {
-          return s;
+            return s;
+        }
+
+        bool isTimeout()
+        {
+            return (ros::Time::now().toSec() - _time > _calibration_timeout);
         }
 
     private:
         State s{State::UPDATING};
+        double _time{};
+        static constexpr double _calibration_timeout{3.0};
     };
 
     CalibrationMachineState _calib_machine_state;
 
-    static constexpr double _calibration_timeout{3.0};
 };
 
 // inline getters
