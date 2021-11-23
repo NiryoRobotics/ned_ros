@@ -267,18 +267,34 @@ private:
             s = static_cast<State>(newState);
         }
 
+        void setStatus(const State state)
+        {
+            s = state;
+        }
+
         State status()
         {
           return s;
         }
 
+        double getCalibrationTime()
+        {
+            return _calibration_timeout;            
+        }
+
+        void setCalibrationTimeOut(const double timeout)
+        {
+            _calibration_timeout = timeout;
+        }
+
     private:
         State s{State::UPDATING};
+        double _calibration_timeout{0.0};
     };
 
     CalibrationMachineState _calib_machine_state;
 
-    static constexpr double _calibration_timeout{3.0};
+    static constexpr double _calibration_timeout{15.0};
 };
 
 // inline getters

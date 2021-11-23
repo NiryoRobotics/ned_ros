@@ -1144,8 +1144,7 @@ bool TtlManager::readHardwareStatus()
 
             // we want to check calibration (done at startup and when calibration is started)
             if (CalibrationMachineState::State::IDLE != _calib_machine_state.status() && 
-                ((_ids_map.count(EHardwareType::STEPPER) != 0 && _ids_map.at(EHardwareType::STEPPER).size() == 3) ||
-                (_ids_map.count(EHardwareType::FAKE_STEPPER_MOTOR) != 0 && _ids_map.at(EHardwareType::FAKE_STEPPER_MOTOR).size() == 3)))
+                ((_ids_map.count(hw_type) != 0 && _ids_map.at(hw_type).size() == 3)))
             {
                 /* Truth Table
                  * still_in_progress | state | new state
@@ -1163,10 +1162,10 @@ bool TtlManager::readHardwareStatus()
                 std::vector<uint8_t> homing_status_list;
                 std::vector<uint8_t> steppers_list;
                 // to go to next step of calibration machine state if calibration is still ok
-                double calibration_update_time = ros::Time::now().toSec();
+                if (_calib_machine_state.getCalibrationTime() == 0.0)
+                    _calib_machine_state.setCalibrationTimeOut(ros::Time::now().toSec());
 
-                if (_ids_map.count(hw_type))
-                     steppers_list = _ids_map.at(hw_type);
+                steppers_list = _ids_map.at(hw_type);
 
                 if (!steppers_list.empty() && COMM_SUCCESS == stepper_driver->syncReadHomingStatus(steppers_list, homing_status_list))
                 {
@@ -1198,7 +1197,7 @@ bool TtlManager::readHardwareStatus()
 
                                 ss_debug << static_cast<int>(homing_status_list.at(i)) << ", ";
                                 // if one status is in progress, we are really in progress
-                                if (EStepperCalibrationStatus::IN_PROGRESS == status)
+                                if (EStepperCalibrationStatus::IN_PROGRESS == max_status)
                                 {
                                     still_in_progress = true;
                                 }
@@ -1213,11 +1212,17 @@ bool TtlManager::readHardwareStatus()
                         // see truth table above
                         // timeout is here to prevent being stuck here if retrying calibration when already at the butee
                         if ((!still_in_progress && CalibrationMachineState::State::IN_PROGRESS == _calib_machine_state.status()) ||
-                            (still_in_progress && CalibrationMachineState::State::STARTING == _calib_machine_state.status()) ||
-                            calibration_update_time - ros::Time::now().toSec() >= _calibration_timeout)
+                            (still_in_progress && CalibrationMachineState::State::STARTING == _calib_machine_state.status()))
                         {
-                            calibration_update_time = ros::Time::now().toSec();
+                            ROS_ERROR("TEST4");
                             _calib_machine_state.next();
+                        }
+                        // This case protect calibration status never be returned if joints have been at limit
+                        else if (ros::Time::now().toSec() - _calib_machine_state.getCalibrationTime() >= _calibration_timeout)
+                        {
+                            ROS_ERROR("TEST %lf %lf", ros::Time::now().toSec(), _calib_machine_state.getCalibrationTime());
+                            ROS_ERROR("TEST3");
+                            _calib_machine_state.setStatus(CalibrationMachineState::State::UPDATING);
                         }
 
                         ROS_DEBUG("%s", ss_debug.str().c_str());
@@ -1228,6 +1233,7 @@ bool TtlManager::readHardwareStatus()
                             _calibration_status = max_status;
                             ROS_ERROR("TEST2 %d", (int)_calibration_status);
                             _calib_machine_state.reset();
+                            _calib_machine_state.setCalibrationTimeOut(0.0);
                         }
                     }
                     else
