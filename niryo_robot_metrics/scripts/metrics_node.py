@@ -5,7 +5,7 @@ import rospy
 import logging
 
 from niryo_robot_metrics.TuptimeWrapper import TuptimeWrapper
-from niryo_robot_metrics.DataSender import DataSender
+from niryo_robot_metrics.CloudAPI import CloudAPI
 
 # msg
 from niryo_robot_msgs.msg import CommandStatus
@@ -38,14 +38,13 @@ class MetricsNode:
         if not self.__able_to_send:
             rospy.logwarn('Metrics Node - Unable to retrieve the serial number')
 
-        self.__data_sender = DataSender(
+        self.__cloud_api = CloudAPI(
             cloud_domain,
             serial_number_response.message,
-            api_key_response.message,
+            api_key_response.message
         )
 
         rospy.Service('~save_all', SaveAll, self.__callback_save_all)
-        rospy.Service('~send_all', SendAll, self.__callback_send_all)
 
         self.__save_metric = rospy.ServiceProxy(
             '/niryo_robot_database/metrics/set', SetMetric
@@ -68,10 +67,6 @@ class MetricsNode:
         self.fetch_and_save_metrics()
         return CommandStatus.SUCCESS, 'Metrics successfully saved'
 
-    def __callback_send_all(self, _req):
-        self.send_datas()
-        return CommandStatus.SUCCESS, 'Metrics successfully sent'
-
     # - functions
 
     def fetch_and_save_metrics(self):
@@ -87,14 +82,11 @@ class MetricsNode:
             return CommandStatus.METRICS_UNABLE_TO_SEND, 'Unable to send the datas'
         metrics_response = self.__get_all_metrics()
         logs_response = self.__get_all_logs()
-        if metrics_response.status == CommandStatus.SUCCESS:
-            self.__data_sender.send_metrics(metrics_response.metrics)
-        else:
+        if metrics_response.status != CommandStatus.SUCCESS:
             rospy.logwarn('Metrics Node - Unable to retrieve the metrics')
-        if logs_response.status == CommandStatus.SUCCESS:
-            self.__data_sender.send_logs(logs_response.logs)
-        else:
+        if logs_response.status != CommandStatus.SUCCESS:
             rospy.logwarn('Metrics Node - Unable to retrieve the logs')
+        #TODO: envoyer les datas
 
 
 if __name__ == "__main__":

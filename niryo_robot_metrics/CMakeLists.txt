@@ -11,7 +11,6 @@ add_service_files(
   DIRECTORY srv
   FILES
   SaveAll.srv
-  SendAll.srv
 )
 
 # enable python module support
