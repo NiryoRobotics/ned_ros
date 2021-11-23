@@ -373,6 +373,8 @@ bool JointHardwareInterface::initDxlState(ros::NodeHandle &robot_hwnh,
         int velocityIGain = 0;
         int FF1Gain = 0;
         int FF2Gain = 0;
+        int velocityProfile = 0;
+        int accelerationProfile = 0;
         double limit_position_min = 0.0;
         double limit_position_max = 0.0;
 
@@ -388,9 +390,14 @@ bool JointHardwareInterface::initDxlState(ros::NodeHandle &robot_hwnh,
 
         robot_hwnh.getParam(currentNamespace + "/FF1_gain", FF1Gain);
         robot_hwnh.getParam(currentNamespace + "/FF2_gain", FF2Gain);
+
+        robot_hwnh.getParam(currentNamespace + "/velocity_profile", velocityProfile);
+        robot_hwnh.getParam(currentNamespace + "/acceleration_profile", accelerationProfile);
+
         robot_hwnh.getParam(currentNamespace + "/home_position", home_position);
         robot_hwnh.getParam(currentNamespace + "/limit_position_min", limit_position_min);
         robot_hwnh.getParam(currentNamespace + "/limit_position_max", limit_position_max);
+
 
         dxlState->setOffsetPosition(offsetPos);
         dxlState->setHomePosition(home_position);
@@ -405,6 +412,9 @@ bool JointHardwareInterface::initDxlState(ros::NodeHandle &robot_hwnh,
 
         dxlState->setFF1Gain(static_cast<uint32_t>(FF1Gain));
         dxlState->setFF2Gain(static_cast<uint32_t>(FF2Gain));
+
+        dxlState->setVelProfile(static_cast<uint32_t>(velocityProfile));
+        dxlState->setAccProfile(static_cast<uint32_t>(accelerationProfile));
 
         dxlState->setLimitPositionMin(limit_position_min);
         dxlState->setLimitPositionMax(limit_position_max);
@@ -589,7 +599,9 @@ int JointHardwareInterface::initHardware(std::shared_ptr<common::model::JointSta
                                                                                                                      dxlState->getVelocityPGain(),
                                                                                                                      dxlState->getVelocityIGain(),
                                                                                                                      dxlState->getFF1Gain(),
-                                                                                                                     dxlState->getFF2Gain()})));
+                                                                                                                     dxlState->getFF2Gain(),
+                                                                                                                     dxlState->getVelProfile(),
+                                                                                                                     dxlState->getAccProfile()})));
 
                 // TORQUE cmd on if ned2, off otherwise
                 _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(DxlSingleCmd(EDxlCommandType::CMD_TYPE_TORQUE,

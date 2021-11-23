@@ -145,7 +145,9 @@ std::string DxlMotorState::str() const
        << "velocity p gain: " << _vel_p_gain << ", "
        << "velocity i gain: " << _vel_i_gain << ",\n"
        << "ff1 gain: " << _ff1_gain << ", "
-       << "ff2 gain: " << _ff2_gain << ",\n";
+       << "ff2 gain: " << _ff2_gain << ",\n"
+       << "velocity profile: " << _vel_profile << ", "
+       << "acceleration profile: " << _acc_profile << ",\n";
 
     ss << "total range position: " << _total_range_position << ", "
        << "total angle: " << _total_angle << ", "
@@ -267,6 +269,24 @@ void DxlMotorState::setFF1Gain(uint32_t ff1_gain)
 void DxlMotorState::setFF2Gain(uint32_t ff2_gain)
 {
   _ff2_gain = ff2_gain;
+}
+
+/**
+ * @brief DxlMotorState::setVelProfile
+ * @param vel_profile
+ */
+void DxlMotorState::setVelProfile(uint32_t vel_profile)
+{
+    _vel_profile = vel_profile;
+}
+
+/**
+ * @brief DxlMotorState::setAccProfile
+ * @param acc_profile
+ */
+void DxlMotorState::setAccProfile(uint32_t acc_profile)
+{
+  _acc_profile = acc_profile;
 }
 
 /**

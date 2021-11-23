@@ -1190,6 +1190,7 @@ bool TtlManager::readHardwareStatus()
                                 auto stepperState = std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(id));
                                 // get max status of all motors (to retrieve potential errors)
                                 EStepperCalibrationStatus status = stepper_driver->interpretHomingData(homing_status_list.at(i));
+                                ROS_ERROR("TEST1 %d", (int)status);
                                 if (max_status != EStepperCalibrationStatus::UNINITIALIZED && status != EStepperCalibrationStatus::UNINITIALIZED)
                                     max_status = max_status < status ? status : max_status;
                                 else if (status == EStepperCalibrationStatus::UNINITIALIZED)
@@ -1225,6 +1226,7 @@ bool TtlManager::readHardwareStatus()
                         if (CalibrationMachineState::State::UPDATING == _calib_machine_state.status())
                         {
                             _calibration_status = max_status;
+                            ROS_ERROR("TEST2 %d", (int)_calibration_status);
                             _calib_machine_state.reset();
                         }
                     }

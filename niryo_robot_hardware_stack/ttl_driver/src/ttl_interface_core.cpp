@@ -1167,7 +1167,7 @@ bool TtlInterfaceCore::_callbackWritePIDValue(ttl_driver::WritePIDValue::Request
     auto dxl_cmd_pos_p = std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_PID,
                                                         req.id, std::initializer_list<uint32_t>{req.pos_p_gain, req.pos_i_gain, req.pos_d_gain,
                                                                                                 req.vel_p_gain, req.vel_i_gain,
-                                                                                                req.ff1_gain, req.ff2_gain});
+                                                                                                req.ff1_gain, req.ff2_gain, req.vel_profile, req.acc_profile});
 
     if (dxl_cmd_pos_p->isValid())
     {

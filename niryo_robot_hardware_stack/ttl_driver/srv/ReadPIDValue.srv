@@ -12,5 +12,10 @@ uint32 vel_i_gain
 
 uint32 ff1_gain
 uint32 ff2_gain
+
+# vel and acc profile for dxl
+uint32 vel_profile
+uint32 acc_profile
+
 int32 status
 string message
