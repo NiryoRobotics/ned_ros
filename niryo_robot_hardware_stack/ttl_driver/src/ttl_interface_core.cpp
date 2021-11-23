@@ -594,10 +594,12 @@ void TtlInterfaceCore::controlLoop()
                         }
                         msg += " do not seem to be connected";
                         ROS_WARN_THROTTLE(1.0, "%s", msg.c_str());
-
-                        ros::Duration(0.25).sleep();
                     }
+                    // still keep hardware status updated
+                    _ttl_manager->readHardwareStatus();
+                    ros::Duration(0.25).sleep();
                 }
+
                 ROS_INFO("TtlInterfaceCore::controlLoop - Bus is ok");
             }
 
