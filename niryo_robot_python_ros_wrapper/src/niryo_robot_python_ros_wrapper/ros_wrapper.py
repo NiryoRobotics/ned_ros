@@ -569,6 +569,9 @@ class NiryoRosWrapper:
 
         return self.__move_pose_with_cmd(ArmMoveCommand.POSE, x, y, z, roll, pitch, yaw)
 
+    def move_circle(self, x, y, z):
+        return self.__move_pose_with_cmd(ArmMoveCommand.DRAW_CIRCLE, x, y, z, 0, 0, 0)
+
     def move_pose_saved(self, pose_name):
         """
         Move robot end effector pose to a pose saved

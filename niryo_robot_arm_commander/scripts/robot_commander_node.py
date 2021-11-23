@@ -80,6 +80,7 @@ class RobotCommanderNode:
 
             # Add-Ons
             ArmMoveCommand.DRAW_SPIRAL: self.__arm_commander.draw_spiral_trajectory,
+            ArmMoveCommand.DRAW_CIRCLE: self.__arm_commander.draw_circle_trajectory,
         }
 
         # - Subscribers
