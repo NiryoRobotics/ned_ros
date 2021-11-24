@@ -949,10 +949,11 @@ bool TtlManager::readCalibrationStatus()
                         ROS_DEBUG("TtlManager::readCalibrationStatus : %s", ss_debug.str().c_str());
 
                         // see truth table above
-                        // timeout is here to prevent being stuck here if retrying calibration when already at the butee
+                        // timeout is here to prevent being stuck here if retrying calibration when already at the butee (then the system has no time to switch to "in progress"
+                        // before "ok" or "error"
                         if ((!still_in_progress && CalibrationMachineState::State::IN_PROGRESS == _calib_machine_state.status()) ||
                             (still_in_progress && CalibrationMachineState::State::STARTING == _calib_machine_state.status()) ||
-                            _calib_machine_state.isTimeout())
+                            (!still_in_progress && _calib_machine_state.isTimeout()))
                         {
                             _calib_machine_state.next();
                         }
