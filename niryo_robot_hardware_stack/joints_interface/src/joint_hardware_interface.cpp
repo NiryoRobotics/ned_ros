@@ -529,15 +529,7 @@ bool JointHardwareInterface::rebootAll(bool torque_on)
     bool res = true;
     for (auto state : _joint_state_list)
     {
-        bool reboot_ok{false};
-        if (state->getBusProtocol() == EBusProtocol::CAN)
-        {
-            if (_can_interface)
-            {
-                reboot_ok = _can_interface->rebootHardware(state);
-            }
-        }
-        else
+        if (state->getBusProtocol() == EBusProtocol::TTL)
         {
             // first set torque off
             if (state->isStepper())
@@ -546,20 +538,19 @@ bool JointHardwareInterface::rebootAll(bool torque_on)
 
             ros::Duration(0.2).sleep();
 
-            reboot_ok = _ttl_interface->rebootHardware(state);
+            if (_ttl_interface->rebootHardware(state))
+            {
+                initHardware(state, torque_on);
+            }
+            else
+            {
+                ROS_ERROR("Fail to reboot motor id %d", state->getId());
+                res = false;
+            }
         }
-
-        if (reboot_ok)
-        {
-            initHardware(state, torque_on);
-        }
-        else
-        {
-            ROS_ERROR("Fail to reboot motor id %d", state->getId());
-            res = false;
-        }
+        // reboot not available for CAN
     }
-
+    
     return res;
 }
 
