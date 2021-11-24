@@ -628,10 +628,11 @@ void TtlInterfaceCore::controlLoop()
                     _time_hw_end_effector_last_read = ros::Time::now().toSec();
                 }
                 bool isFreqMet = control_loop_rate.sleep();
-                ROS_WARN_COND(!isFreqMet,
-                               "TtlInterfaceCore::rosControlLoop : freq not met : expected (%f s) vs actual (%f s)",
-                               control_loop_rate.expectedCycleTime().toSec(),
-                               control_loop_rate.cycleTime().toSec());
+            if(!isFreqMet)
+                ROS_WARN_THROTTLE(2,
+                           "TtlInterfaceCore::rosControlLoop : freq not met : expected (%f s) vs actual (%f s)",
+                           control_loop_rate.expectedCycleTime().toSec(),
+                           control_loop_rate.cycleTime().toSec());
             }
             else
             {
