@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(niryo_robot_metrics)
+project(niryo_robot_reports)
 message( STATUS "\n## Reading ${PROJECT_NAME}/CMakeLists.txt...")
 
 find_package(catkin REQUIRED COMPONENTS
@@ -65,7 +65,7 @@ endif()
 #############
 
 catkin_install_python(PROGRAMS 
-    scripts/metrics_node.py
+    scripts/reports_node.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 # Mark other files for installation

@@ -12,7 +12,7 @@ class CloudAPI:
         self.__headers = {
             'accept': 'application/json',
             'serialNumber': serial_number,
-            'apiKey': api_key
+            'api': api_key
         }
 
     @property
@@ -28,4 +28,8 @@ class CloudAPI:
     def ping(self):
         route = '/ping'
         response = requests.get(self.__url + route, headers=self.__headers)
+        return response.status_code == 200
+
+    def send(self, payload):
+        response = requests.post(self.__url, headers=self.__headers, json=payload)
         return response.status_code == 200

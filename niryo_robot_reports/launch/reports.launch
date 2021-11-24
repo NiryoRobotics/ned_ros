@@ -4,9 +4,9 @@
     <arg name="log_level" default="INFO" />
     <arg name="cloud_domain" default="staging-api-rfm.niryo.com"/>
 
-    <include file="$(find niryo_robot_metrics)/launch/metrics_base.launch.xml" />
+    <include file="$(find niryo_robot_reports)/launch/reports_base.launch.xml" />
 
-    <node name="niryo_robot_metrics" pkg="niryo_robot_metrics" type="metrics_node.py" output="screen" >
+    <node name="niryo_robot_reports" pkg="niryo_robot_reports" type="reports_node.py" output="screen" >
         <param name="log_level" value="$(arg log_level)" />
         <param name="cloud_domain" value="$(arg cloud_domain)"/>
     </node>
