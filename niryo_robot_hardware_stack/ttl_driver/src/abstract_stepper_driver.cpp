@@ -93,7 +93,7 @@ int AbstractStepperDriver::writeSingleCmd(const std::unique_ptr<common::model::A
         }
     }
 
-    std::cout << "Command not validated" << std::endl;
+    std::cout << "AbstractStepperDriver::writeSingleCmd: Command not validated : " << cmd->str() << std::endl;
     return -1;
 }
 
@@ -130,7 +130,7 @@ int AbstractStepperDriver::writeSyncCmd(int type, const std::vector<uint8_t>& id
         std::cout << "Command not implemented " << type << std::endl;
     }
 
-    std::cout << "Command not validated" << std::endl;
+    std::cout << "AbstractStepperDriver::writeSyncCmd : Command not validated : " << type << std::endl;
     return -1;
 }
 

@@ -529,14 +529,27 @@ bool JointHardwareInterface::rebootAll(bool torque_on)
     bool res = true;
     for (auto state : _joint_state_list)
     {
-        // first set torque off
-        if (state->isStepper())
-            _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperTtlSingleCmd>(EStepperCommandType::CMD_TYPE_TORQUE,
-                                                                               state->getId(), std::initializer_list<uint32_t>{false}));
+        bool reboot_ok{false};
+        if (state->getBusProtocol() == EBusProtocol::CAN)
+        {
+            if (_can_interface)
+            {
+                reboot_ok = _can_interface->rebootHardware(state);
+            }
+        }
+        else
+        {
+            // first set torque off
+            if (state->isStepper())
+                _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperTtlSingleCmd>(EStepperCommandType::CMD_TYPE_TORQUE,
+                                                                                state->getId(), std::initializer_list<uint32_t>{false}));
 
-        ros::Duration(0.2).sleep();
+            ros::Duration(0.2).sleep();
 
-        if  (_ttl_interface->rebootHardware(state))
+            reboot_ok = _ttl_interface->rebootHardware(state);
+        }
+
+        if (reboot_ok)
         {
             initHardware(state, torque_on);
         }

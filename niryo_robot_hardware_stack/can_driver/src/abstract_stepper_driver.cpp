@@ -99,7 +99,7 @@ int AbstractStepperDriver::writeSingleCmd(const std::unique_ptr<common::model::A
         }
     }
 
-    std::cout << "Command not validated" << std::endl;
+    std::cout << "AbstractStepperDriver::writeSingleCmd : Command not validated: " << cmd->str() << std::endl;
     return -1;
 }
 
