@@ -932,12 +932,12 @@ bool TtlManager::readCalibrationStatus()
 
                                 // if 0, uninitialized, else, take max
                                 // we need to keep the status unconverted to have the correct order
-                                if ((0 == homing_status_list.at(i)) ||
-                                    (0 != max_status && homing_status_list.at(i) > max_status))
+                                if (0 != max_status && homing_status_list.at(i) > max_status)
                                     max_status = homing_status_list.at(i);
 
                                 // if one status is in progress, we are really in progress
-                                if (EStepperCalibrationStatus::IN_PROGRESS == status)
+                                if ((0 == homing_status_list.at(i)) ||
+                                    EStepperCalibrationStatus::IN_PROGRESS == status)
                                 {
                                     still_in_progress = true;
                                 }
