@@ -21,4 +21,9 @@ INSERT INTO settings VALUES (
     'sharing_allowed',
     'False',
     'bool'
+), (
+    lower(hex(randomblob(4)) || '-' || hex(randomblob(2)) || '-' || hex(randomblob(2)) || '-' || hex(randomblob(2)) || '-' || hex(randomblob(6))),
+    'reports_path',
+    '~/niryo_robot_saved_files/reports',
+    'str'
 );

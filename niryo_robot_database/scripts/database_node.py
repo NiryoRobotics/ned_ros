@@ -9,16 +9,16 @@ import rospkg
 from sqlite3 import OperationalError
 
 from niryo_robot_database.SQLiteDAO import SQLiteDAO
-from niryo_robot_database.Logs import Logs
 from niryo_robot_database.Metrics import Metrics, UnknownMetricException
 from niryo_robot_database.Settings import Settings, UnknownSettingsException
+from niryo_robot_database.FilePath import FilePath, UnknownFilePathException
 
 # msg
 from niryo_robot_msgs.msg import CommandStatus
-from niryo_robot_database.msg import Log, Metric
+from niryo_robot_database.msg import Metric
 
 # srv
-from niryo_robot_database.srv import AddLog, GetAllLogs, GetAllMetrics, RmLogsWithIds, SetMetric, SetSettings, GetSettings
+from niryo_robot_database.srv import GetAllMetrics, SetMetric, SetSettings, GetSettings, AddFilePath, GetFilePath
 
 
 class DatabaseNode:
@@ -39,16 +39,11 @@ class DatabaseNode:
         sqlite_dao = SQLiteDAO(db_path)
 
         self.__settings = Settings(sqlite_dao)
-        self.__logs = Logs(sqlite_dao)
         self.__metrics = Metrics(sqlite_dao)
+        self.__file_paths = FilePath(sqlite_dao)
 
-        rospy.Service('~logs/add', AddLog, self.__callback_add_log)
-        rospy.Service('~logs/get_all', GetAllLogs, self.__callback_get_all_logs)
         rospy.Service(
             '~metrics/get_all', GetAllMetrics, self.__callback_get_all_metrics
-        )
-        rospy.Service(
-            '~logs/rm_with_ids', RmLogsWithIds, self.__callback_rm_logs_with_ids
         )
         rospy.Service('~metrics/set', SetMetric, self.__callback_set_metric)
 
@@ -58,30 +53,13 @@ class DatabaseNode:
         rospy.Service(
             '~settings/get', GetSettings, self.__callback_get_settings
         )
+        rospy.Service('~file_paths/add', AddFilePath, self.__callback_add_file_path)
+        rospy.Service('~file_paths/get_path', GetFilePath, self.__callback_get_file_path)
 
         # Set a bool to mentioned this node is initialized
         rospy.set_param('~initialized', True)
 
         rospy.logdebug("Database Node - Node Started")
-
-    def __callback_add_log(self, req):
-        log = req.log
-        try:
-            self.__logs.add(log.date, log.severity, log.origin, log.message)
-        except OperationalError as e:
-            return CommandStatus.DATABASE_DB_ERROR, str(e)
-        return CommandStatus.SUCCESS, 'Log added'
-
-    def __callback_get_all_logs(self, _req):
-        try:
-            logs = [
-                Log(
-                    x['id'], x['date'], x['severity'], x['origin'], x['message']
-                ) for x in self.__logs.get_all()
-            ]
-        except OperationalError as e:
-            return CommandStatus.DATABASE_DB_ERROR, str(e)
-        return CommandStatus.SUCCESS, logs
 
     def __callback_get_all_metrics(self, _req):
         try:
@@ -92,13 +70,6 @@ class DatabaseNode:
         except OperationalError as e:
             return CommandStatus.DATABASE_DB_ERROR, str(e)
         return CommandStatus.SUCCESS, metrics
-
-    def __callback_rm_logs_with_ids(self, req):
-        try:
-            self.__logs.rm_with_ids(req.ids)
-        except OperationalError as e:
-            return CommandStatus.DATABASE_DB_ERROR, str(e)
-        return CommandStatus.SUCCESS, 'Logs deleted'
 
     def __callback_set_metric(self, req):
         try:
@@ -124,6 +95,22 @@ class DatabaseNode:
         except OperationalError as e:
             return CommandStatus.DATABASE_DB_ERROR, str(e)
         return CommandStatus.SUCCESS, value, value_type
+
+    def __callback_add_file_path(self, req):
+        try:
+            self.__file_paths.add_file_path(req.type, req.name, req.path)
+        except OperationalError as e:
+            return CommandStatus.DATABASE_DB_ERROR, str(e)
+        return CommandStatus.SUCCESS, 'File path successfully added'
+
+    def __callback_get_file_path(self, req):
+        try:
+            path = self.__file_paths.get_path_from_name(req.name)
+        except UnknownSettingsException:
+            return CommandStatus.DATABASE_FILE_PATH_UNKNOWN, 'Unknown file path', None
+        except OperationalError as e:
+            return CommandStatus.DATABASE_DB_ERROR, str(e)
+        return CommandStatus.SUCCESS, path
 
 
 if __name__ == "__main__":
