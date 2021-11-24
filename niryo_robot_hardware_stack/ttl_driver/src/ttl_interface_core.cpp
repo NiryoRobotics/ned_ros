@@ -594,7 +594,6 @@ void TtlInterfaceCore::controlLoop()
                         }
                         msg += " do not seem to be connected";
                         ROS_WARN_THROTTLE(1.0, "%s", msg.c_str());
-
                     }
                     // still keep hardware status updated
                     _ttl_manager->readHardwareStatus();
@@ -628,7 +627,11 @@ void TtlInterfaceCore::controlLoop()
                     _ttl_manager->readEndEffectorStatus();
                     _time_hw_end_effector_last_read = ros::Time::now().toSec();
                 }
-                ros::Rate(_control_loop_frequency).sleep();
+                bool isFreqMet = control_loop_rate.sleep();
+                ROS_WARN_COND(!isFreqMet,
+                               "TtlInterfaceCore::rosControlLoop : freq not met : expected (%f s) vs actual (%f s)",
+                               control_loop_rate.expectedCycleTime().toSec(),
+                               control_loop_rate.cycleTime().toSec());
             }
             else
             {

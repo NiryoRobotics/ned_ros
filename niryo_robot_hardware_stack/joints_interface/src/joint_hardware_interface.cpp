@@ -148,7 +148,7 @@ bool JointHardwareInterface::init(ros::NodeHandle& /*rootnh*/, ros::NodeHandle &
                     if (niryo_robot_msgs::CommandStatus::SUCCESS == result)
                     {
                         result = initHardware(stepperState, torque_status);
-                        if(niryo_robot_msgs::CommandStatus::SUCCESS == result)
+                        if (niryo_robot_msgs::CommandStatus::SUCCESS == result)
                         {
                             ROS_INFO("JointHardwareInterface::init - add stepper joint success");
                             break;
@@ -211,7 +211,7 @@ bool JointHardwareInterface::init(ros::NodeHandle& /*rootnh*/, ros::NodeHandle &
                     if (niryo_robot_msgs::CommandStatus::SUCCESS == result)
                     {
                         result = initHardware(dxlState, torque_status);
-                        if(niryo_robot_msgs::CommandStatus::SUCCESS == result)
+                        if (niryo_robot_msgs::CommandStatus::SUCCESS == result)
                         {
                             ROS_INFO("JointHardwareInterface::init - add dxl joint success");
                             break;

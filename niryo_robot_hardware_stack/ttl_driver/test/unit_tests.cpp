@@ -333,7 +333,7 @@ std::shared_ptr<ttl_driver::TtlInterfaceCore> TtlInterfaceTestSuiteRobotWithCan:
 // Test reboot motors
 TEST_F(TtlInterfaceTestSuiteRobotWithCan, testRebootMotors)
 {
-  int resutl = ttl_interface->rebootMotors();
+  int resutl = ttl_interface->rebootHardware(ttl_interface->getJointState(2));
   EXPECT_EQ(resutl, static_cast<int>(niryo_robot_msgs::CommandStatus::SUCCESS));
 }
 
@@ -341,7 +341,7 @@ TEST_F(TtlInterfaceTestSuiteRobotWithCan, testRebootMotors)
 TEST_F(TtlInterfaceTestSuiteRobotWithCan, testRebootMotorsWrongID)
 {
   bool result;
-  result = ttl_interface->rebootHardware(20);
+  result = ttl_interface->rebootHardware(std::make_shared<common::model::DxlMotorState>());
   EXPECT_FALSE(result);
 }
 
@@ -500,7 +500,7 @@ TEST_F(TtlManagerTestSuiteRobotWithCan, testSingleControlCmds)
     EXPECT_EQ(ttl_drv->writeSingleCommand(std::move(cmd_3_torque)), COMM_SUCCESS);
     ros::Duration(0.01).sleep();
 
-    ttl_drv->readPositionsStatus();
+    ttl_drv->readJointsStatus();
     auto state_motor_2 = std::dynamic_pointer_cast<common::model::AbstractMotorState>(ttl_drv->getHardwareState(2));
     assert(state_motor_2);
     auto state_motor_3 = std::dynamic_pointer_cast<common::model::AbstractMotorState>(ttl_drv->getHardwareState(3));
@@ -534,7 +534,7 @@ TEST_F(TtlManagerTestSuiteRobotWithCan, testSingleControlCmds)
     EXPECT_EQ(ttl_drv->writeSingleCommand(std::move(cmd_3)), COMM_SUCCESS);
     ros::Duration(1.0).sleep();
 
-    ttl_drv->readPositionsStatus();
+    ttl_drv->readJointsStatus();
     EXPECT_NEAR(state_motor_2->getPosition(), new_pos_2, 30);
 
     EXPECT_NEAR(state_motor_3->getPosition(), new_pos_3, 30);
@@ -562,7 +562,7 @@ TEST_F(TtlManagerTestSuiteRobotWithCan, testSyncControlCmds)
   EXPECT_EQ(ttl_drv->writeSynchronizeCommand(std::move(cmd_1_torque)), COMM_SUCCESS);
   ros::Duration(0.01).sleep();
 
-  EXPECT_EQ(ttl_drv->readPositionsStatus(), true);
+  EXPECT_EQ(ttl_drv->readJointsStatus(), true);
   auto state_motor_2 = std::dynamic_pointer_cast<common::model::AbstractMotorState>(ttl_drv->getHardwareState(2));
   assert(state_motor_2);
   auto state_motor_3 = std::dynamic_pointer_cast<common::model::AbstractMotorState>(ttl_drv->getHardwareState(3));
@@ -580,7 +580,7 @@ TEST_F(TtlManagerTestSuiteRobotWithCan, testSyncControlCmds)
   EXPECT_EQ(ttl_drv->writeSynchronizeCommand(std::move(cmd_1)), COMM_SUCCESS);
   ros::Duration(1.0).sleep();
 
-  EXPECT_EQ(ttl_drv->readPositionsStatus(), true);
+  EXPECT_EQ(ttl_drv->readJointsStatus(), true);
   EXPECT_NEAR(state_motor_2->getPosition(), new_pos_2, 30);
 
   EXPECT_NEAR(state_motor_3->getPosition(), new_pos_3, 30);
@@ -629,7 +629,7 @@ std::shared_ptr<ttl_driver::TtlInterfaceCore>  TtlInterfaceTestSuiteRotbotWithou
 // Test reboot motors
 TEST_F(TtlInterfaceTestSuiteRotbotWithoutCan, testRebootMotors)
 {
-  int resutl = ttl_interface->rebootMotors();
+  int resutl = ttl_interface->rebootHardware(ttl_interface->getJointState(4));
   EXPECT_EQ(resutl, static_cast<int>(niryo_robot_msgs::CommandStatus::SUCCESS));
 }
 
@@ -637,7 +637,7 @@ TEST_F(TtlInterfaceTestSuiteRotbotWithoutCan, testRebootMotors)
 TEST_F(TtlInterfaceTestSuiteRotbotWithoutCan, testRebootMotorsWrongID)
 {
   bool result;
-  result = ttl_interface->rebootHardware(20);
+  result = ttl_interface->rebootHardware(std::make_shared<common::model::StepperMotorState>());
   EXPECT_FALSE(result);
 }
 
@@ -728,7 +728,7 @@ TEST_F(TtlManagerTestSuiteRobotWithoutCan, testSingleControlCmds)
     EXPECT_EQ(ttl_drv->writeSingleCommand(std::move(cmd_3_torque)), COMM_SUCCESS);
     ros::Duration(0.01).sleep();
 
-    ttl_drv->readPositionsStatus();
+    ttl_drv->readJointsStatus();
     auto state_motor_2 = std::dynamic_pointer_cast<common::model::AbstractMotorState>(ttl_drv->getHardwareState(2));
     assert(state_motor_2);
     auto state_motor_3 = std::dynamic_pointer_cast<common::model::AbstractMotorState>(ttl_drv->getHardwareState(3));
@@ -768,7 +768,7 @@ TEST_F(TtlManagerTestSuiteRobotWithoutCan, testSingleControlCmds)
     EXPECT_EQ(ttl_drv->writeSingleCommand(std::move(cmd_3)), COMM_SUCCESS);
     ros::Duration(0.5).sleep();
 
-    ttl_drv->readPositionsStatus();
+    ttl_drv->readJointsStatus();
 
     EXPECT_NEAR(state_motor_2->getPosition(), new_pos_2, 30);
 
@@ -854,7 +854,7 @@ TEST_F(TtlManagerTestSuiteRobotWithoutCan, testSyncControlCmds)
     EXPECT_EQ(ttl_drv->writeSynchronizeCommand(std::move(cmd_2_torque)), COMM_SUCCESS);
     ros::Duration(0.01).sleep();
 
-    ttl_drv->readPositionsStatus();
+    ttl_drv->readJointsStatus();
     auto state_motor_2 = std::dynamic_pointer_cast<common::model::AbstractMotorState>(ttl_drv->getHardwareState(2));
     assert(state_motor_2);
     auto state_motor_3 = std::dynamic_pointer_cast<common::model::AbstractMotorState>(ttl_drv->getHardwareState(3));
@@ -888,7 +888,7 @@ TEST_F(TtlManagerTestSuiteRobotWithoutCan, testSyncControlCmds)
     EXPECT_EQ(ttl_drv->writeSynchronizeCommand(std::move(cmd_2)), COMM_SUCCESS);
     ros::Duration(0.5).sleep();
 
-    ttl_drv->readPositionsStatus();
+    ttl_drv->readJointsStatus();
 
     EXPECT_NEAR(state_motor_5->getPosition(), new_pos_5, 30);
 
@@ -938,7 +938,7 @@ TEST_F(TtlManagerTestSuiteRobotWithoutCan, testSyncTorqueAndPos)
     cmd_2_torque->addMotorParam(dxl_type, 6, 0);
 
     // get old position
-    ttl_drv->readPositionsStatus();
+    ttl_drv->readJointsStatus();
     auto state_motor_2 = std::dynamic_pointer_cast<common::model::AbstractMotorState>(ttl_drv->getHardwareState(2));
     assert(state_motor_2);
     auto state_motor_3 = std::dynamic_pointer_cast<common::model::AbstractMotorState>(ttl_drv->getHardwareState(3));
@@ -960,7 +960,7 @@ TEST_F(TtlManagerTestSuiteRobotWithoutCan, testSyncTorqueAndPos)
     EXPECT_EQ(ttl_drv->writeSynchronizeCommand(std::move(cmd_1_torque)), COMM_SUCCESS);
 
     // get new position
-    ttl_drv->readPositionsStatus();
+    ttl_drv->readJointsStatus();
     auto state_motor_2_new = std::dynamic_pointer_cast<common::model::AbstractMotorState>(ttl_drv->getHardwareState(2));
     assert(state_motor_2_new);
     auto state_motor_3_new = std::dynamic_pointer_cast<common::model::AbstractMotorState>(ttl_drv->getHardwareState(3));

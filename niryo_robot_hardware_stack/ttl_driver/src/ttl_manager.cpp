@@ -849,8 +849,8 @@ bool TtlManager::readHardwareStatus()
                 _is_connection_ok = false;
                 _debug_error_message = "TtlManager - Connection problem with physical Bus.";
             }
-        }  //  if driver
-    } //    for (auto it : _hw_status_driver_map)
+        }  // if driver
+    }  // for (auto it : _hw_status_driver_map)
 
     return res;
 }
@@ -978,8 +978,8 @@ bool TtlManager::readCalibrationStatus()
                 {
                     hw_errors_increment++;
                 }
-            } // if (_driver_map.count(hw_type) && _driver_map.at(hw_type))
-        } // for (auto it : _calibration_status_driver_map)
+            }  // if (_driver_map.count(hw_type) && _driver_map.at(hw_type))
+        }  // for (auto it : _calibration_status_driver_map)
     }
 
     ROS_DEBUG("TtlManager::readCalibrationStatus: _calibration_status: %s", common::model::StepperCalibrationStatusEnum(_calibration_status).toString().c_str());
@@ -1755,7 +1755,6 @@ void TtlManager::readFakeConfig()
     }
 
     _default_ttl_driver = std::make_shared<MockStepperDriver>(_fake_data);
-
 }
 
 }  // namespace ttl_driver
