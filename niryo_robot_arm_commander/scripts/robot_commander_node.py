@@ -13,7 +13,6 @@ from arm_commander import ArmCommander
 from robot_state_publisher import StatePublisher
 import moveit_commander
 from ArmParametersValidator import ArmParametersValidator
-from motor_debug import MotorDebug
 
 from transform_handler import ArmTCPTransformHandler
 from niryo_robot_arm_commander.command_enums import RobotCommanderException, ArmCommanderException
