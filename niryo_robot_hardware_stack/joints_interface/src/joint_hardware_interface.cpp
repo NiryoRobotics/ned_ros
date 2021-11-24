@@ -550,7 +550,7 @@ bool JointHardwareInterface::rebootAll(bool torque_on)
         }
         // reboot not available for CAN
     }
-    
+
     return res;
 }
 
