@@ -441,8 +441,8 @@ void CanInterfaceCore::controlLoop()
             }
 
             bool isFreqMet = control_loop_rate.sleep();
-            if(!isFreqMet)
-                ROS_WARN_THROTTLE(2,
+            if (!isFreqMet)
+                ROS_DEBUG_THROTTLE(2,
                            "CanInterfaceCore::rosControlLoop : freq not met : expected (%f s) vs actual (%f s)",
                            control_loop_rate.expectedCycleTime().toSec(),
                            control_loop_rate.cycleTime().toSec());
