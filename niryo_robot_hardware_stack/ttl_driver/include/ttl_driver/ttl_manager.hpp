@@ -204,6 +204,7 @@ private:
 
     // vector of ids of motors and conveyors
     // Theses vector help remove loop not necessary
+    std::vector<uint8_t> _conveyor_list;
     // TODO(CC) add tools_list ?
 
     // for hardware control
