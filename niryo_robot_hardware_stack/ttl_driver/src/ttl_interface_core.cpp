@@ -124,7 +124,7 @@ void TtlInterfaceCore::initParameters(ros::NodeHandle& nh)
     nh.getParam("ttl_hardware_read_data_frequency",
                  read_data_frequency);
 
-    nh.getParam("ttl_hardware_read_data_frequency",
+    nh.getParam("ttl_hardware_read_end_effector_frequency",
                  read_end_effector_frequency);
 
     nh.getParam("ttl_hardware_read_status_frequency",
@@ -736,8 +736,6 @@ int TtlInterfaceCore::setTool(const std::shared_ptr<common::model::ToolState>& t
  */
 void TtlInterfaceCore::unsetTool(uint8_t motor_id)
 {
-    lock_guard<mutex> lck(_control_loop_mutex);
-
     ROS_DEBUG("TtlInterfaceCore::unsetTool - UnsetTool: id %d", motor_id);
     _ttl_manager->removeHardwareComponent(motor_id);
 }
@@ -796,12 +794,13 @@ int TtlInterfaceCore::setConveyor(const std::shared_ptr<common::model::ConveyorS
  */
 void TtlInterfaceCore::unsetConveyor(uint8_t motor_id, uint8_t default_conveyor_id)
 {
-    lock_guard<mutex> lck(_control_loop_mutex);
-
     ROS_DEBUG("TtlInterfaceCore::unsetConveyor - unsetConveyor: id %d", motor_id);
 
+    // block control loop to avoid control loop called when removing conveyor is not finished yet
+    lock_guard<mutex> lck(_control_loop_mutex);
+
     auto state = getJointState(motor_id);
-    if (COMM_SUCCESS == _ttl_manager->changeId(state->getHardwareType(), motor_id, default_conveyor_id))
+    if (niryo_robot_msgs::CommandStatus::SUCCESS == changeId(state->getHardwareType(), motor_id, default_conveyor_id))
     {
         _ttl_manager->removeHardwareComponent(default_conveyor_id);
     }
@@ -821,7 +820,7 @@ int TtlInterfaceCore::changeId(common::model::EHardwareType motor_type, uint8_t 
     if (COMM_SUCCESS == _ttl_manager->changeId(motor_type, old_id, new_id))
         return niryo_robot_msgs::CommandStatus::SUCCESS;
 
-    ROS_ERROR("TtlInterfaceCore::setConveyor : unable to change conveyor ID");
+    ROS_ERROR("TtlInterfaceCore::changeId : unable to change conveyor ID");
     return niryo_robot_msgs::CommandStatus::TTL_WRITE_ERROR;
 }
 
@@ -1170,7 +1169,7 @@ bool TtlInterfaceCore::_callbackWritePIDValue(ttl_driver::WritePIDValue::Request
     auto dxl_cmd_pos_p = std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_PID,
                                                         req.id, std::initializer_list<uint32_t>{req.pos_p_gain, req.pos_i_gain, req.pos_d_gain,
                                                                                                 req.vel_p_gain, req.vel_i_gain,
-                                                                                                req.ff1_gain, req.ff2_gain});
+                                                                                                req.ff1_gain, req.ff2_gain, req.vel_profile, req.acc_profile});
 
     if (dxl_cmd_pos_p->isValid())
     {

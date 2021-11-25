@@ -247,7 +247,8 @@ void JointsInterfaceCore::rosControlLoop()
                 _cm->update(ros::Time::now(), elapsed_time, false);
             }
 
-            if (!_previous_state_learning_mode && _lock_write_cnt == -1)
+            // we just use cmd from moveit only in torque on + calibration finished
+            if (!_previous_state_learning_mode && _lock_write_cnt == -1 && !_robot->needCalibration())
             {
                 _robot->write(current_time, elapsed_time);
             }

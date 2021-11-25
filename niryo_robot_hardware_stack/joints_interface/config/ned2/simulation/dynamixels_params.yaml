@@ -13,8 +13,10 @@ dynamixels:
         position_D_gain: 9520
         velocity_P_gain: 0
         velocity_I_gain: 0
-        FF1_gain: 400
-        FF2_gain: 0
+        FF1_gain: 0
+        FF2_gain: 400
+        acceleration_profile: 200  # profile acc and vel used by dxl motors
+        velocity_profile: 200
 
     dxl_2:
         offset_position: 3.1415
@@ -29,6 +31,8 @@ dynamixels:
         velocity_I_gain: 0
         FF1_gain: 0
         FF2_gain: 0
+        acceleration_profile: 200  # profile acc and vel used by dxl motors
+        velocity_profile: 200
 
     dxl_3:
         offset_position: -3.1415
@@ -43,3 +47,5 @@ dynamixels:
         velocity_I_gain: 0
         FF1_gain: 0
         FF2_gain: 0
+        acceleration_profile: 200  # profile acc and vel used by dxl motors
+        velocity_profile: 200

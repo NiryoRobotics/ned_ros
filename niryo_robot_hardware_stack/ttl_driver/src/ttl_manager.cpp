@@ -216,6 +216,13 @@ int TtlManager::addHardwareComponent(std::shared_ptr<common::model::AbstractHard
         _ids_map.at(hardware_type).emplace_back(id);
     }
 
+    // add to global lists
+    if (common::model::EComponentType::CONVEYOR == state->getComponentType())
+    {
+        if (std::find(_conveyor_list.begin(), _conveyor_list.end(), id) == _conveyor_list.end())
+            _conveyor_list.emplace_back(id);
+    }
+
     addHardwareDriver(hardware_type);
 
     // update firmware version
@@ -224,10 +231,9 @@ int TtlManager::addHardwareComponent(std::shared_ptr<common::model::AbstractHard
         std::string version;
         _driver_map.at(hardware_type)->readFirmwareVersion(state->getId(), version);
         state->setFirmwareVersion(version);
-
+        
         result = niryo_robot_msgs::CommandStatus::SUCCESS;
     }
-
     return result;
 }
 
@@ -256,6 +262,8 @@ void TtlManager::removeHardwareComponent(uint8_t id)
 
         _state_map.erase(id);
     }
+    // remove id from conveyor list if they contains id
+    _conveyor_list.erase(std::remove(_conveyor_list.begin(), _conveyor_list.end(), id), _conveyor_list.end());
 
     _removed_motor_id_list.erase(std::remove(_removed_motor_id_list.begin(),
                                              _removed_motor_id_list.end(), id),
@@ -784,6 +792,40 @@ bool TtlManager::readHardwareStatus()
                 hw_errors_increment++;
             }
 
+
+            // **********  conveyor state
+            // TODO(CC)  get velocity in readJointStatus
+            /*if (!_conveyor_list.empty())
+            {
+                try
+                {
+                    for (auto id : _conveyor_list)
+                    {
+                        std::shared_ptr<StepperMotorState> state;
+                        state = std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(id));
+                        if (state && state->isConveyor())
+                        {
+                            uint32_t velocity;
+                            if (COMM_SUCCESS != stepper_driver->readVelocity(id, velocity))
+                            {
+                                hw_errors_increment++;
+                            }
+                            else
+                            {
+                                auto speed = static_cast<int32_t>(velocity);
+                                auto cState = std::dynamic_pointer_cast<common::model::ConveyorState>(state);
+                                cState->setGoalDirection(cState->getDirection() * (speed > 0 ? 1 : -1));
+                                // speed of ttl conveyor is in range 0 - 6000. Therefore, we convert this absolute value to percentage
+                                cState->setSpeed(static_cast<int16_t>(std::abs(speed * 100 / 6000)));  // TODO(Thuc) avoid hardcoded 6000 here
+                                cState->setState(speed);
+                            }
+                        }
+                    }
+                }
+                catch(const std::exception& e)
+                {}
+            }*/
+
             // 2. set motors states accordingly
             for (size_t i = 0; i < ids_list.size(); ++i)
             {
@@ -935,7 +977,7 @@ bool TtlManager::readCalibrationStatus()
                                 if (0 != max_status && homing_status_list.at(i) > max_status)
                                     max_status = homing_status_list.at(i);
 
-                                // if one status is in progress, we are really in progress
+                                // if one status is in progress or uinitialized, we are really in progress
                                 if ((0 == homing_status_list.at(i)) ||
                                     EStepperCalibrationStatus::IN_PROGRESS == status)
                                 {
@@ -1479,6 +1521,11 @@ int TtlManager::writeSingleCommand(std::unique_ptr<common::model::AbstractTtlSin
 
                 ros::Duration(TIME_TO_WAIT_IF_BUSY).sleep();
             }
+        }
+        else
+        {
+            ROS_DEBUG("TtlManager::writeSingleCommand: command is sent to a removed hardware component. Skipped");
+            result = COMM_SUCCESS;
         }
     }
 
