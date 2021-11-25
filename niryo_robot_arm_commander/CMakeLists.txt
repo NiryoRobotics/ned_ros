@@ -6,6 +6,7 @@ find_package(catkin REQUIRED COMPONENTS
   actionlib_msgs
   geometry_msgs
   message_generation
+  moveit_msgs
   niryo_robot_msgs
 )
 
@@ -20,6 +21,7 @@ add_message_files(
 add_service_files(
   DIRECTORY srv
   FILES
+  ComputeTrajectory.srv
   GetFK.srv
   GetIK.srv
   GetJointLimits.srv
@@ -39,6 +41,7 @@ generate_messages(
   DEPENDENCIES
   actionlib_msgs
   geometry_msgs
+  moveit_msgs
   niryo_robot_msgs
 )
 

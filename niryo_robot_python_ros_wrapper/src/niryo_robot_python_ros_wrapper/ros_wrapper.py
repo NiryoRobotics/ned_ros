@@ -44,6 +44,7 @@ from niryo_robot_rpi.srv import SetDigitalIO, SetAnalogIO
 from niryo_robot_vision.srv import DebugMarkers, DebugMarkersRequest, DebugColorDetection, DebugColorDetectionRequest
 from std_srvs.srv import Trigger as StdTrigger
 from niryo_robot_rpi.srv import SetPullup, SetIOMode
+from niryo_robot_arm_commander.srv import ComputeTrajectory
 
 # Actions
 from niryo_robot_arm_commander.msg import RobotMoveAction, RobotMoveGoal
@@ -1032,10 +1033,24 @@ class NiryoRosWrapper:
         :return: status, message
         :rtype: (int, str)
         """
-        from niryo_robot_poses_handlers.transform_functions import quaternion_from_euler
 
         if len(list_poses_raw) < 2:
             return "Give me at least 2 points"
+        list_poses = self.__list_pose_raw_to_list_poses(list_poses_raw)
+        return self.__execute_trajectory_from_formatted_poses(list_poses, dist_smoothing)
+
+    def compute_trajectory_from_poses(self,  list_poses_raw, dist_smoothing=0.0):
+        if len(list_poses_raw) < 2:
+            return "Give me at least 2 points"
+        list_poses = self.__list_pose_raw_to_list_poses(list_poses_raw)
+
+        result = self.__call_service("/niryo_robot_arm_commander/compute_waypointed_trajectory",
+                                     ComputeTrajectory, list_poses, dist_smoothing)
+        return result.trajectory
+
+    def __list_pose_raw_to_list_poses(self, list_poses_raw):
+        from niryo_robot_poses_handlers.transform_functions import quaternion_from_euler
+
         list_poses = []
         for pose in list_poses_raw:
             point = Point(*pose[:3])
@@ -1046,7 +1061,7 @@ class NiryoRosWrapper:
                 quaternion = angle
             orientation = Quaternion(*quaternion)
             list_poses.append(Pose(point, orientation))
-        return self.__execute_trajectory_from_formatted_poses(list_poses, dist_smoothing)
+        return list_poses
 
     def execute_trajectory_from_poses_and_joints(self, list_pose_joints, list_type=None, dist_smoothing=0.0):
         """
@@ -1063,6 +1078,15 @@ class NiryoRosWrapper:
         :return: status, message
         :rtype: (int, str)
         """
+
+        list_pose_waypoints = self.__list_pose_joints_to_list_poses(list_pose_joints, list_type)
+        return self.execute_trajectory_from_poses(list_pose_waypoints, dist_smoothing)
+
+    def compute_trajectory_from_poses_and_joints(self,  list_pose_joints, list_type=None, dist_smoothing=0.0):
+        list_pose_waypoints = self.__list_pose_joints_to_list_poses(list_pose_joints, list_type)
+        return self.compute_trajectory_from_poses(list_pose_waypoints, dist_smoothing)
+
+    def __list_pose_joints_to_list_poses(self, list_pose_joints, list_type=None):
         if list_type is None:
             list_type = ['pose']
         list_pose_waypoints = []
@@ -1097,7 +1121,7 @@ class NiryoRosWrapper:
                 'Execute trajectory from poses and joints - List of waypoints (size ' + str(len(list_pose_joints)) +
                 ') and list of type (size ' + str(len(list_type)) + ') must be the same size.')
 
-        return self.execute_trajectory_from_poses(list_pose_waypoints, dist_smoothing)
+        return list_pose_waypoints
 
     def save_trajectory(self, trajectory_name, list_poses_raw):
         """
@@ -1152,6 +1176,12 @@ class NiryoRosWrapper:
         goal.cmd.cmd_type = ArmMoveCommand.EXECUTE_TRAJ
         goal.cmd.list_poses = list_poses
         goal.cmd.dist_smoothing = dist_smoothing
+        return self.__execute_robot_move_action(goal)
+
+    def execute_moveit_robot_trajectory(self, moveit_robot_trajectory):
+        goal = RobotMoveGoal()
+        goal.cmd.cmd_type = ArmMoveCommand.EXECUTE_FULL_TRAJ
+        goal.cmd.trajectory = moveit_robot_trajectory
         return self.__execute_robot_move_action(goal)
 
     def delete_trajectory(self, trajectory_name):

@@ -411,45 +411,54 @@ class ArmCommander:
         return self.__traj_executor.compute_and_execute_cartesian_plan(waypoints)
 
     # - Waypointed Trajectory
-    def execute_trajectory(self, arm_cmd):
+    def execute_waypointed_trajectory(self, arm_cmd):
+        self.__arm.set_joint_value_target(arm_cmd.trajectory.joint_trajectory.points[0].positions)
+        partial_plan = self.__traj_executor.plan()
+        plan = self.__link_plans(partial_plan, arm_cmd.trajectory)
+        return self.__traj_executor.execute_plan(plan)
+
+    def compute_and_execute_waypointed_trajectory(self, arm_cmd):
+        status, message, plan = self.compute_waypointed_trajectory(arm_cmd)
+        if status != CommandStatus.SUCCESS:
+            return status, message
+
+        return self.__traj_executor.execute_plan(plan)
+
+    def compute_waypointed_trajectory(self, arm_cmd):
         """
         Version 1 : Go to first pose using "classic" trajectory then compute cartesian path between all points
         Version 2 : Going to all poses one by one using "classical way"
         Version 3 : Generate all plans, merge them & smooth transitions
-
         """
         list_tcp_poses = arm_cmd.list_poses
         if len(list_tcp_poses) == 0:
-            return CommandStatus.NO_PLAN_AVAILABLE, "Can't generate plan from a list of length 0"
+            return CommandStatus.NO_PLAN_AVAILABLE, "Can't generate plan from a list of length 0", None
         list_ee_poses = [self.__transform_handler.tcp_to_ee_link_pose_target(tcp_pose, self.__end_effector_link) for
                          tcp_pose in list_tcp_poses]
 
         dist_smoothing = arm_cmd.dist_smoothing
 
         if dist_smoothing == 0.0:
-            if len(list_ee_poses) < 3:  # Classical moves
-                for pose in list_ee_poses:
-                    ret = self.set_pose_quat_from_pose(pose)
-                    if ret[0] != CommandStatus.SUCCESS:
-                        return ret
-                return CommandStatus.SUCCESS, "Trajectory is Good!"
-            else:  # Linear path
-                # We are going to the initial pose using "classical" method
-                try:
-                    return self.__traj_executor.compute_and_execute_cartesian_plan(list_ee_poses,
-                                                                                   self.__velocity_scaling_factor,
-                                                                                   self.__acceleration_scaling_factor)
-                except ArmCommanderException as e:
-                    if e.status == CommandStatus.NO_PLAN_AVAILABLE:
-                        rospy.loginfo("Cartesian path computation failed, let's try another way!")
-                        return self.__compute_and_execute_trajectory(list_ee_poses, dist_smoothing=dist_smoothing)
-                    else:
-                        raise e
+            # We are going to the initial pose using "classical" method
+            try:
+                plan = self.__traj_executor.compute_cartesian_plan(list_ee_poses)
+                if plan is None:
+                    raise ArmCommanderException(CommandStatus.NO_PLAN_AVAILABLE, "")
+                plan = self.__traj_executor.retime_plan(plan, self.__velocity_scaling_factor,
+                                                        self.__acceleration_scaling_factor, optimize=False)
 
+            except ArmCommanderException as e:
+                if e.status == CommandStatus.NO_PLAN_AVAILABLE:
+                    rospy.loginfo("Cartesian path computation failed, let's try another way!")
+                    plan = self.__compute_trajectory(list_ee_poses, dist_smoothing=dist_smoothing)
+                else:
+                    raise e
         else:
-            return self.__compute_and_execute_trajectory(list_ee_poses, dist_smoothing=dist_smoothing)
+            plan = self.__compute_trajectory(list_ee_poses, dist_smoothing=dist_smoothing)
 
-    def __compute_and_execute_trajectory(self, list_poses, dist_smoothing=0.01):
+        return CommandStatus.SUCCESS, "Trajectory is Good!", plan
+
+    def __compute_trajectory(self, list_poses, dist_smoothing=0.01):
         """
         Hard try to to smooth Trajectories, not really working at the moment
         :param list_poses: list of Pose object
@@ -490,7 +499,7 @@ class ArmCommander:
         else:
             plan = self.__link_plans(*list_plans)
         self.display_traj(plan, id_=int(1000 * dist_smoothing))
-        return self.__traj_executor.execute_plan(plan)
+        return plan
 
     def __link_plans(self, *plans):
         # Link plans

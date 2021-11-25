@@ -7,8 +7,9 @@ int32 LINEAR_POSE = 5       # uses position and rpy
 int32 SHIFT_POSE = 6        # uses shift
 int32 SHIFT_LINEAR_POSE = 7 # uses shift
 int32 EXECUTE_TRAJ = 8      # uses dist_smoothing, list_poses
-int32 DRAW_SPIRAL = 9      
+int32 DRAW_SPIRAL = 9
 int32 DRAW_CIRCLE = 10
+int32 EXECUTE_FULL_TRAJ = 11
 
 int32 cmd_type
 
@@ -20,5 +21,7 @@ niryo_robot_arm_commander/ShiftPose shift
 
 geometry_msgs/Pose[] list_poses
 float32 dist_smoothing
+
+moveit_msgs/RobotTrajectory trajectory
 
 float64[] args

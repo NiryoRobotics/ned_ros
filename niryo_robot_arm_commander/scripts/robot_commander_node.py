@@ -25,11 +25,13 @@ from actionlib_msgs.msg import GoalStatus
 from std_msgs.msg import Bool
 from niryo_robot_msgs.msg import HardwareStatus
 from niryo_robot_arm_commander.msg import ArmMoveCommand
+from moveit_msgs.msg import RobotTrajectory
 
 # Services
 from niryo_robot_msgs.srv import Trigger
 from niryo_robot_msgs.srv import SetBool
 from niryo_robot_msgs.srv import GetBool
+from niryo_robot_arm_commander.srv import ComputeTrajectory
 
 # Action msgs
 from niryo_robot_arm_commander.msg import PausePlanExecution
@@ -75,7 +77,8 @@ class RobotCommanderNode:
             ArmMoveCommand.SHIFT_POSE: self.__arm_commander.set_shift_pose_target,
             ArmMoveCommand.SHIFT_LINEAR_POSE: self.__arm_commander.set_shift_linear_pose_target,
             # Trajectory
-            ArmMoveCommand.EXECUTE_TRAJ: self.__arm_commander.execute_trajectory,
+            ArmMoveCommand.EXECUTE_TRAJ: self.__arm_commander.compute_and_execute_waypointed_trajectory,
+            ArmMoveCommand.EXECUTE_FULL_TRAJ: self.__arm_commander.execute_waypointed_trajectory,
 
             # Add-Ons
             ArmMoveCommand.DRAW_SPIRAL: self.__arm_commander.draw_spiral_trajectory,
@@ -122,6 +125,9 @@ class RobotCommanderNode:
 
         rospy.Service('~is_active', GetBool,
                       self.__callback_is_active)
+
+        rospy.Service('~compute_waypointed_trajectory', ComputeTrajectory,
+                      self.__callback_compute_trajectory)
 
         rospy.Service('~linear_trajectory/activate', SetBool,
                       self.__callback_linear_trajectory)  # service to  manage the linear trajectory calculation or not
@@ -223,6 +229,10 @@ class RobotCommanderNode:
         status = CommandStatus.SUCCESS
         message = resp_message
         return [status, message]
+
+    def __callback_compute_trajectory(self, req):
+        status, message, plan = self.__arm_commander.compute_waypointed_trajectory(req)
+        return status, message, RobotTrajectory() if plan is None else plan
 
     # - Action Server
     def __callback_goal(self, goal_handle):
