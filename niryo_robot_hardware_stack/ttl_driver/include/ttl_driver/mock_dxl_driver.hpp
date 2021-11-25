@@ -69,6 +69,7 @@ class MockDxlDriver : public AbstractDxlDriver
         int writeTorqueEnable(uint8_t id, uint32_t torque_enable) override;
         int writeGoalPosition(uint8_t id, uint32_t position) override;
         int writeGoalVelocity(uint8_t id, uint32_t velocity) override;
+        int writeGoalAcceleration(uint8_t id, uint32_t acceleration) override;
 
         int syncWriteTorqueEnable(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &torque_enable_list) override;
         int syncWritePositionGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &position_list) override;

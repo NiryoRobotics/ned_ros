@@ -81,7 +81,8 @@ class DxlDriver : public AbstractDxlDriver
 
         int writeTorqueEnable(uint8_t id, uint32_t torque_enable) override;
         int writeGoalPosition(uint8_t id, uint32_t position) override;
-        int writeGoalVelocity(uint8_t id, uint32_t velocity) override;
+        int writeGoalVelocity(uint8_t id, uint32_t velocity_profile) override;
+        int writeGoalAcceleration(uint8_t id, uint32_t acceleration_profile) override;
 
         int syncWriteTorqueEnable(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &torque_enable_list) override;
         int syncWritePositionGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &position_list) override;
@@ -281,15 +282,29 @@ int DxlDriver<reg_type>::writeGoalPosition(uint8_t id, uint32_t position)
 
 /**
  * @brief DxlDriver<reg_type>::writeGoalVelocity
+ * Write velocity profile for dxl
  * @param id
  * @param velocity
  * @return
  */
 template<typename reg_type>
-int DxlDriver<reg_type>::writeGoalVelocity(uint8_t id, uint32_t velocity)
+int DxlDriver<reg_type>::writeGoalVelocity(uint8_t id, uint32_t velocity_profile)
 {
     // in mode control Position Control Mode, velocity profile in datasheet is used to write velocity (except xl320)
-    return write(reg_type::ADDR_PROFILE_VELOCITY, reg_type::SIZE_PROFILE_VELOCITY, id, velocity);
+    return write(reg_type::ADDR_PROFILE_VELOCITY, reg_type::SIZE_PROFILE_VELOCITY, id, velocity_profile);
+}
+
+/**
+ * @brief DxlDriver<reg_type>::writeGoalAcceleration
+ * Write acceleration profile for dxl
+ * @param id
+ * @param acceleration_profile
+ * @return
+ */
+template<typename reg_type>
+int DxlDriver<reg_type>::writeGoalAcceleration(uint8_t id, uint32_t acceleration_profile)
+{
+    return write(reg_type::ADDR_PROFILE_ACCELERATION, reg_type::SIZE_PROFILE_ACCELERATION, id, acceleration_profile);
 }
 
 /**
@@ -403,29 +418,107 @@ int DxlDriver<reg_type>::syncReadPosition(const std::vector<uint8_t> &id_list, s
 template<typename reg_type>
 int DxlDriver<reg_type>::writePID(uint8_t id, const std::vector<uint32_t> &data)
 {
-    int res = 0;
+    int tries = 10;
+    int res;
 
-    if (COMM_SUCCESS != writePositionPGain(id, data.at(0)))
-        res++;
-    if (COMM_SUCCESS != writePositionIGain(id, data.at(1)))
-        res++;
-    if (COMM_SUCCESS != writePositionDGain(id, data.at(2)))
-        res++;
-    if (COMM_SUCCESS != writeVelocityPGain(id, data.at(3)))
-        res++;
-    if (COMM_SUCCESS != writeVelocityIGain(id, data.at(4)))
-        res++;
-    if (COMM_SUCCESS != writeFF1Gain(id, data.at(5)))
-        res++;
-    if (COMM_SUCCESS != writeFF2Gain(id, data.at(6)))
-        res++;
-
-    if(res > 0)
+    // only rewrite params which is not success
+    while (tries > 0)
     {
-        return COMM_TX_FAIL;
+        tries--;
+        res = writePositionPGain(id, data.at(0));
+        if (res == COMM_SUCCESS)
+            break;
+    }
+    if (res != COMM_SUCCESS)
+        return res;
+
+    tries = 10;
+    while (tries > 0)
+    {
+        tries--;
+        res = writePositionIGain(id, data.at(1));
+        if (res == COMM_SUCCESS)
+            break;
+    }
+    if (res != COMM_SUCCESS)
+        return res;
+
+    tries = 10;
+    while (tries > 0)
+    {
+        tries--;
+        res = writePositionDGain(id, data.at(2));
+        if (res == COMM_SUCCESS)
+            break;
+    }
+    if (res != COMM_SUCCESS)
+        return res;
+
+    tries = 10;
+    while (tries > 0)
+    {
+        tries--;
+        res = writeVelocityPGain(id, data.at(3));
+        if (res == COMM_SUCCESS)
+            break;
+    }
+    if (res != COMM_SUCCESS)
+        return res;
+
+    tries = 10;
+    while (tries > 0)
+    {
+        tries--;
+        res = writeVelocityIGain(id, data.at(4));
+        if (res == COMM_SUCCESS)
+            break;
+    }
+    if (res != COMM_SUCCESS)
+        return res;
+
+    tries = 10;    
+    while (tries > 0)
+    {
+        tries--;
+        res = writeFF1Gain(id, data.at(5));
+        if (res == COMM_SUCCESS)
+            break;
+    }
+    if (res != COMM_SUCCESS)
+        return res;
+
+    tries = 10;
+    while (tries > 0)
+    {
+        tries--;
+        res = writeFF2Gain(id, data.at(6));
+        if (res == COMM_SUCCESS)
+            break;
+    }
+    if (res != COMM_SUCCESS)
+        return res;
+
+    tries = 10;
+    while (tries > 0)
+    {
+        tries--;
+        res = writeGoalVelocity(id, data.at(7));
+        if (res == COMM_SUCCESS)
+            break;
+    }
+    if (res != COMM_SUCCESS)
+        return res;
+    
+    tries = 10;
+    while (tries > 0)
+    {
+        tries--;
+        res = writeGoalAcceleration(id, data.at(8));
+        if (res == COMM_SUCCESS)
+            break;
     }
 
-    return COMM_SUCCESS;
+    return res;
 }
 
 /**
@@ -641,6 +734,7 @@ int DxlDriver<reg_type>::readPID(uint8_t id, std::vector<uint32_t>& data_list)
         res++;
 
     data_list.emplace_back(ff2_gain);
+    // velocity and acceleration profile is readonly
 
     if(res > 0)
     {
@@ -1079,9 +1173,16 @@ inline int DxlDriver<XL320Reg>::readFF2Gain(uint8_t /*id*/, uint32_t& /*gain*/)
 }
 
 template<>
-inline int DxlDriver<XL320Reg>::writeGoalVelocity(uint8_t id, uint32_t velocity)
+inline int DxlDriver<XL320Reg>::writeGoalVelocity(uint8_t id, uint32_t velocity_profile)
 {
-    return write(XL320Reg::ADDR_GOAL_VELOCITY, XL320Reg::SIZE_GOAL_VELOCITY, id, velocity);
+    return write(XL320Reg::ADDR_GOAL_VELOCITY, XL320Reg::SIZE_GOAL_VELOCITY, id, velocity_profile);
+}
+
+template<>
+inline int DxlDriver<XL320Reg>::writeGoalAcceleration(uint8_t id, uint32_t acceleration_profile)
+{
+    std::cout << "write acceleration profile in XL320 is not available" << std::endl;
+    return COMM_SUCCESS;
 }
 
 template<>
