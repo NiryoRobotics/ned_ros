@@ -50,8 +50,6 @@ class MockStepperDriver : public AbstractStepperDriver
         int scan(std::vector<uint8_t>& id_list) override;
         int reboot(uint8_t id) override;
 
-        std::string interpretErrorState(uint32_t hw_state) const override;
-
         // eeprom write
         int changeId(uint8_t id, uint8_t new_id) override;
 

@@ -415,7 +415,7 @@ EStepperCalibrationStatus CalibrationManager::autoCalibration()
         // 8. put back velocity profiles to normal
         resetVelocityProfiles();
 
-        // 5. Move Motor 1 to 0.0 (back to home)
+        // 5. Move steppers to home
         moveSteppersToHome();
         ros::Duration(3.5).sleep();
 
@@ -682,23 +682,17 @@ void CalibrationManager::moveSteppersToHome()
         if (jState && jState->isStepper())
         {
             uint8_t motor_id = jState->getId();
+            int steps = jState->to_motor_pos(jState->getHomePosition());
 
             if (EBusProtocol::CAN == jState->getBusProtocol())
             {
-                // -0.01 to bypass error
-
-                int steps = -1 * jState->to_motor_pos(jState->getHomePosition());
-                int delay = 550;
-
                 _can_interface->addSingleCommandToQueue(std::make_unique<StepperSingleCmd>(
-                                                          StepperSingleCmd(EStepperCommandType::CMD_TYPE_RELATIVE_MOVE,
-                                                                           motor_id, {steps, delay})));
+                                                          StepperSingleCmd(EStepperCommandType::CMD_TYPE_POSITION,
+                                                                           motor_id, {steps})));
             }
             else if (EBusProtocol::TTL == jState->getBusProtocol())
             {
-                auto steps = static_cast<uint32_t>(jState->to_motor_pos(jState->getHomePosition()));
-
-                stepper_ttl_cmd.addMotorParam(jState->getHardwareType(), motor_id, steps);
+                stepper_ttl_cmd.addMotorParam(jState->getHardwareType(), motor_id, static_cast<uint32_t>(steps));
             }
         }
     }

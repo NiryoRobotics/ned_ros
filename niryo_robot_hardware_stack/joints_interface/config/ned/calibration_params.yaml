@@ -15,5 +15,5 @@ calibration_params:
 
     stepper_3:
         id: 3
-        direction: 1
+        direction: -1
         delay: 1000

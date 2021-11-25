@@ -627,7 +627,8 @@ void TtlInterfaceCore::controlLoop()
                     _ttl_manager->readEndEffectorStatus();
                     _time_hw_end_effector_last_read = ros::Time::now().toSec();
                 }
-                ros::Rate(_control_loop_frequency).sleep();
+
+                control_loop_rate.sleep();
             }
             else
             {

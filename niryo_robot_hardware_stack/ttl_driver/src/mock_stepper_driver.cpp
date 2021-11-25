@@ -123,15 +123,6 @@ int MockStepperDriver::reboot(uint8_t id)
 }
 
 /**
- * @brief MockStepperDriver::interpretErrorState
- * @return
- */
-std::string MockStepperDriver::interpretErrorState(uint32_t /*hw_state*/) const
-{
-    return "";
-}
-
-/**
  * @brief MockStepperDriver::changeId
  * @param id
  * @param new_id

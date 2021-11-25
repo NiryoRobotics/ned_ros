@@ -435,12 +435,12 @@ std::string MockStepperDriver::interpretFirmwareVersion(const std::array<uint8_t
 }
 
 /**
- * @brief MockStepperDriver::interpretCalibrationData
+ * @brief MockStepperDriver::interpretHomingData
  * @param data
  * @return
  */
 std::pair<EStepperCalibrationStatus, int32_t>
-MockStepperDriver::interpretCalibrationData(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data)
+MockStepperDriver::interpretHomingData(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data)
 {
     (void)data;  // unused
 

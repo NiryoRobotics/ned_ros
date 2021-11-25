@@ -263,7 +263,8 @@ void JointsInterfaceCore::rosControlLoop()
                 _reset_controller = true;
             }
             bool isFreqMet = _control_loop_rate.sleep();
-            ROS_DEBUG_COND(!isFreqMet,
+            if (!isFreqMet)
+                ROS_DEBUG_THROTTLE(2,
                            "JointsInterfaceCore::rosControlLoop : freq not met : expected (%f s) vs actual (%f s)",
                            _control_loop_rate.expectedCycleTime().toSec(),
                            _control_loop_rate.cycleTime().toSec());

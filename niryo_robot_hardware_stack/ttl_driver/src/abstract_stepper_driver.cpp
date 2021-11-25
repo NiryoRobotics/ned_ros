@@ -93,7 +93,7 @@ int AbstractStepperDriver::writeSingleCmd(const std::unique_ptr<common::model::A
         }
     }
 
-    std::cout << "Command not validated" << std::endl;
+    std::cout << "AbstractStepperDriver::writeSingleCmd: Command not validated : " << cmd->str() << std::endl;
     return -1;
 }
 
@@ -130,7 +130,7 @@ int AbstractStepperDriver::writeSyncCmd(int type, const std::vector<uint8_t>& id
         std::cout << "Command not implemented " << type << std::endl;
     }
 
-    std::cout << "Command not validated" << std::endl;
+    std::cout << "AbstractStepperDriver::writeSyncCmd : Command not validated : " << type << std::endl;
     return -1;
 }
 
@@ -155,8 +155,46 @@ std::string AbstractStepperDriver::interpretFirmwareVersion(uint32_t fw_version)
 }
 
 /**
- * @brief AbstractStepperDriver::interpretHomingStatus
- * @param fw_version
+ * @brief AbstractStepperDriver::interpretErrorState
+ * @param hw_state
+ * @return
+ */
+std::string AbstractStepperDriver::interpretErrorState(uint32_t hw_state) const
+{
+    std::string hardware_message;
+
+    if (hw_state & 1<<0)    // 0b00000001
+    {
+        hardware_message += "Input Voltage";
+    }
+    if (hw_state & 1<<2)    // 0b00000100
+    {
+        if (!hardware_message.empty())
+            hardware_message += ", ";
+        hardware_message += "OverHeating";
+    }
+    if (hw_state & 1<<3)    // 0b00001000
+    {
+        if (!hardware_message.empty())
+            hardware_message += ", ";
+        hardware_message += "Motor Encoder";
+    }
+    if (hw_state & 1<<7)    // 0b10000000 => added by us : disconnected error
+    {
+        if (!hardware_message.empty())
+            hardware_message += ", ";
+        hardware_message += "Disconnection";
+    }
+
+    if (!hardware_message.empty())
+        hardware_message += " Error";
+
+    return hardware_message;
+}
+
+/**
+ * @brief AbstractStepperDriver::interpretHomingData
+ * @param status
  * @return
  */
 common::model::EStepperCalibrationStatus
@@ -179,6 +217,7 @@ AbstractStepperDriver::interpretHomingData(uint8_t status) const
       homing_status = EStepperCalibrationStatus::FAIL;
       break;
     default:
+      homing_status = EStepperCalibrationStatus::FAIL;
       break;
     }
 

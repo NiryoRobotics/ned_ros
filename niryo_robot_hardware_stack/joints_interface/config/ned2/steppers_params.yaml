@@ -32,12 +32,12 @@ steppers:
         limit_position_min: -2.09
         direction: -1
         v_start: 1
-        a_1: 1300
-        v_1: 3
+        a_1: 300
+        v_1: 2
         a_max: 2500
         v_max: 12
         d_max: 2500
-        d_1: 1300
+        d_1: 300
         v_stop: 2
         
     stepper_3:

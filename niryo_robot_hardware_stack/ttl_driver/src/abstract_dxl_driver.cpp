@@ -75,7 +75,7 @@ int AbstractDxlDriver::writeSingleCmd(const std::unique_ptr<common::model::Abstr
         }
     }
 
-    std::cout << "Command not validated" << std::endl;
+    std::cout << "AbstractDxlDriver::writeSingleCmd : Command not validated: " << cmd->str() << std::endl;
     return COMM_RX_CORRUPT;
 }
 
@@ -114,7 +114,7 @@ int AbstractDxlDriver::writeSyncCmd(int type, const std::vector<uint8_t>& ids, c
         std::cout << "Command not implemented " << type << std::endl;
     }
 
-    std::cout << "Command not validated" << std::endl;
+    std::cout << "AbstractDxlDriver::writeSyncCmd : Command not validated: " << type << std::endl;
     return -1;
 }
 
