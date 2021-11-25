@@ -12,5 +12,6 @@ uint32 vel_i_gain
 
 uint32 ff1_gain
 uint32 ff2_gain
+
 int32 status
 string message

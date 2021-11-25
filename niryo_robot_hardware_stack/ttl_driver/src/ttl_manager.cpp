@@ -89,6 +89,7 @@ TtlManager::TtlManager(ros::NodeHandle& nh) :
  */
 TtlManager::~TtlManager()
 {
+    _portHandler->clearPort();
     _portHandler->closePort();
 }
 
@@ -156,6 +157,10 @@ int TtlManager::setupCommunication()
                 {
                     // wait a bit to be sure the connection is established
                     ros::Duration(0.1).sleep();
+
+                    // clear port
+                    _portHandler->clearPort();
+
                     ret = COMM_SUCCESS;
                 }
                 else
@@ -211,22 +216,29 @@ int TtlManager::addHardwareComponent(std::shared_ptr<common::model::AbstractHard
     // add to global lists
     switch (state->getComponentType())
     {
+    // only add id in vector ids if not exist
     case common::model::EComponentType::TOOL:
-        _hw_list.emplace_back(id);
-      break;
+        if (std::find(_hw_list.begin(), _hw_list.end(), id) == _hw_list.end())
+            _hw_list.emplace_back(id);
+        break;
     case common::model::EComponentType::JOINT:
-        _motor_list.emplace_back(id);
-        _hw_list.emplace_back(id);
-      break;
+        if (std::find(_hw_list.begin(), _hw_list.end(), id) == _hw_list.end())
+            _hw_list.emplace_back(id);
+        if (std::find(_motor_list.begin(), _motor_list.end(), id) == _motor_list.end())
+            _motor_list.emplace_back(id);
+        break;
     case common::model::EComponentType::CONVEYOR:
-        _conveyor_list.emplace_back(id);
-        _hw_list.emplace_back(id);
-      break;
+        if (std::find(_conveyor_list.begin(), _conveyor_list.end(), id) == _conveyor_list.end())
+            _conveyor_list.emplace_back(id);
+        if (std::find(_hw_list.begin(), _hw_list.end(), id) == _hw_list.end())
+            _hw_list.emplace_back(id);
+        break;
     case common::model::EComponentType::END_EFFECTOR:
-        _hw_list.emplace_back(id);
-      break;
+        if (std::find(_hw_list.begin(), _hw_list.end(), id) == _hw_list.end())
+            _hw_list.emplace_back(id);
+        break;
     default:
-      break;
+        break;
     }
 
     addHardwareDriver(hardware_type);
@@ -237,10 +249,8 @@ int TtlManager::addHardwareComponent(std::shared_ptr<common::model::AbstractHard
         std::string version;
         _driver_map.at(hardware_type)->readFirmwareVersion(state->getId(), version);
         state->setFirmwareVersion(version);
-
-        result = niryo_robot_msgs::CommandStatus::SUCCESS;
     }
-
+    result = niryo_robot_msgs::CommandStatus::SUCCESS;
     return result;
 }
 
@@ -269,6 +279,10 @@ void TtlManager::removeHardwareComponent(uint8_t id)
 
         _state_map.erase(id);
     }
+    // remove id from hw_list, conveyor list or motor list if they contains id
+    _hw_list.erase(std::remove(_hw_list.begin(), _hw_list.end(), id), _hw_list.end());
+    _conveyor_list.erase(std::remove(_conveyor_list.begin(), _conveyor_list.end(), id), _conveyor_list.end());
+    _motor_list.erase(std::remove(_motor_list.begin(), _motor_list.end(), id), _motor_list.end());
 
     _removed_motor_id_list.erase(std::remove(_removed_motor_id_list.begin(),
                                              _removed_motor_id_list.end(), id),
@@ -604,10 +618,10 @@ bool TtlManager::readJointsStatus()
 
     // syncread position for all motors. Using only one driver for all motors to avoid loop.
     // All addresses for position are the same
-    if (_default_ttl_driver && !isCalibrationInProgress())
+    if (!_driver_map.empty() && _driver_map.begin()->second && !isCalibrationInProgress())
     {
         // get driver of the first motor
-        auto driver = std::dynamic_pointer_cast<AbstractMotorDriver>(_default_ttl_driver);
+        auto driver = std::dynamic_pointer_cast<AbstractMotorDriver>(_driver_map.begin()->second);
 
         if (driver)  // && _ids_map.count(type))
         {
@@ -1174,7 +1188,8 @@ bool TtlManager::readHardwareStatus()
             }  // for _hw_list
 
             // we want to check calibration (done at startup and when calibration is started)
-            if (CalibrationMachineState::State::IDLE != _calib_machine_state.status())
+            if (CalibrationMachineState::State::IDLE != _calib_machine_state.status() &&
+                ((_ids_map.count(hw_type) != 0 && _ids_map.at(hw_type).size() == 3)))
             {
                 /* Truth Table
                  * still_in_progress | state | new state
@@ -1192,17 +1207,17 @@ bool TtlManager::readHardwareStatus()
                 std::vector<uint8_t> homing_status_list;
                 std::vector<uint8_t> steppers_list;
                 // to go to next step of calibration machine state if calibration is still ok
-                double calibration_update_time = ros::Time::now().toSec();
+                if (_calib_machine_state.getCalibrationTime() == 0.0)
+                    _calib_machine_state.setCalibrationTimeOut(ros::Time::now().toSec());
 
-                if (_ids_map.count(hw_type))
-                     steppers_list = _ids_map.at(hw_type);
+                steppers_list = _ids_map.at(hw_type);
 
                 if (!steppers_list.empty() && COMM_SUCCESS == stepper_driver->syncReadHomingStatus(steppers_list, homing_status_list))
                 {
                     if (steppers_list.size() == homing_status_list.size())
                     {
                         // max status need to be kept not converted into EStepperCalibrationStatus because max status is "in progress" in the enum
-                        int max_status = 0;
+                        EStepperCalibrationStatus max_status = EStepperCalibrationStatus::OK;
 
                         // debug only
                         std::ostringstream ss_debug;
@@ -1217,14 +1232,17 @@ bool TtlManager::readHardwareStatus()
                             if (_state_map.count(id))
                             {
                                 auto stepperState = std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(id));
-
-                                // get min status of all motors (to retrieve potential errors)
-                                max_status = max_status < homing_status_list.at(i) ? homing_status_list.at(i) : max_status;
+                                // get max status of all motors (to retrieve potential errors)
                                 EStepperCalibrationStatus status = stepper_driver->interpretHomingData(homing_status_list.at(i));
+
+                                if (max_status != EStepperCalibrationStatus::UNINITIALIZED && status != EStepperCalibrationStatus::UNINITIALIZED)
+                                    max_status = max_status < status ? status : max_status;
+                                else if (status == EStepperCalibrationStatus::UNINITIALIZED)
+                                    max_status = status;
 
                                 ss_debug << static_cast<int>(homing_status_list.at(i)) << ", ";
                                 // if one status is in progress, we are really in progress
-                                if (EStepperCalibrationStatus::IN_PROGRESS == status)
+                                if (EStepperCalibrationStatus::IN_PROGRESS == max_status)
                                 {
                                     still_in_progress = true;
                                 }
@@ -1239,11 +1257,14 @@ bool TtlManager::readHardwareStatus()
                         // see truth table above
                         // timeout is here to prevent being stuck here if retrying calibration when already at the butee
                         if ((!still_in_progress && CalibrationMachineState::State::IN_PROGRESS == _calib_machine_state.status()) ||
-                            (still_in_progress && CalibrationMachineState::State::STARTING == _calib_machine_state.status()) ||
-                            calibration_update_time - ros::Time::now().toSec() >= _calibration_timeout)
+                            (still_in_progress && CalibrationMachineState::State::STARTING == _calib_machine_state.status()))
                         {
-                            calibration_update_time = ros::Time::now().toSec();
                             _calib_machine_state.next();
+                        }
+                        // This case protect calibration status never be returned if joints have been at limit
+                        else if (ros::Time::now().toSec() - _calib_machine_state.getCalibrationTime() >= _calibration_timeout)
+                        {
+                            _calib_machine_state.setStatus(CalibrationMachineState::State::UPDATING);
                         }
 
                         ROS_DEBUG("%s", ss_debug.str().c_str());
@@ -1251,8 +1272,9 @@ bool TtlManager::readHardwareStatus()
                         // see truth table above
                         if (CalibrationMachineState::State::UPDATING == _calib_machine_state.status())
                         {
-                            _calibration_status = stepper_driver->interpretHomingData(static_cast<uint8_t>(max_status));
+                            _calibration_status = max_status;
                             _calib_machine_state.reset();
+                            _calib_machine_state.setCalibrationTimeOut(0.0);
                         }
                     }
                     else
@@ -1790,6 +1812,11 @@ int TtlManager::writeSingleCommand(std::unique_ptr<common::model::AbstractTtlSin
 
                 ros::Duration(TIME_TO_WAIT_IF_BUSY).sleep();
             }
+        }
+        else
+        {
+            ROS_DEBUG("TtlManager::writeSingleCommand: command is sent to hardware component removed. Skipped");
+            result = COMM_SUCCESS;
         }
     }
 

@@ -276,6 +276,25 @@ int MockDxlDriver::writeGoalVelocity(uint8_t id, uint32_t velocity)
 }
 
 /**
+ * @brief MockDxlDriver::writeGoalAcceleration
+ * write acceleration profile
+ * @param id
+ * @param acceleration
+ * @return
+ */
+int MockDxlDriver::writeGoalAcceleration(uint8_t id, uint32_t acceleration)
+{
+    (void)acceleration;
+    int res = COMM_RX_FAIL;
+    if (_fake_data->dxl_registers.count(id))
+    {
+        res = COMM_SUCCESS;
+    }
+
+    return res;
+}
+
+/**
  * @brief MockDxlDriver::syncWriteTorqueEnable
  * @param id_list
  * @param torque_enable_list

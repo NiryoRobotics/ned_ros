@@ -64,6 +64,7 @@ class AbstractDxlDriver : public AbstractMotorDriver
         virtual int writeGoalTorque(uint8_t id, uint32_t torque ) = 0;
         virtual int syncWriteTorqueGoal(const std::vector<uint8_t>& id_list, const std::vector<uint32_t>& torque_list ) = 0;
 
+        virtual int writeGoalAcceleration(uint8_t id, uint32_t acceleration_profile) = 0;
 };
 
 } // ttl_driver

@@ -186,7 +186,12 @@ std::string StepperDriver<reg_type>::interpretErrorState(uint32_t hw_state) cons
 template<typename reg_type>
 int StepperDriver<reg_type>::changeId(uint8_t id, uint8_t new_id)
 {
-    return write(reg_type::ADDR_ID, reg_type::SIZE_ID, id, new_id);
+    // TODO(THUC) verify that COMM_RX_TIMEOUT error code do not impact on data sent to motor
+    // when COMM_RX_TIMEOUT error, id changed also, so we consider that change id successfully
+    int res =  write(reg_type::ADDR_ID, reg_type::SIZE_ID, id, new_id);
+    if (res == COMM_RX_TIMEOUT)
+        res = COMM_SUCCESS;
+    return res;
 }
 
 /**
@@ -607,50 +612,107 @@ int StepperDriver<reg_type>::readVelocityProfile(uint8_t id, std::vector<uint32_
 template<typename reg_type>
 int StepperDriver<reg_type>::writeVelocityProfile(uint8_t id, const std::vector<uint32_t>& data_list)
 {
-  int res = 0;
-  double wait_duration = 0.05;
+    int tries = 10;
+    int res;
+    double wait_duration = 0.05;
 
-  writeTorqueEnable(id, 1);
-  ros::Duration(wait_duration).sleep();
+    writeTorqueEnable(id, 1);
 
-  if (COMM_SUCCESS != writeVStart(id, data_list.at(0)))
-    res++;
-  ros::Duration(wait_duration).sleep();
+    // only rewrite the params which is not success
+    while (tries > 0)  // try 10 times
+    {
+        tries--;
+        ros::Duration(wait_duration).sleep();
+        res = writeVStart(id, data_list.at(0));
+        if (res == COMM_SUCCESS) 
+            break;
+    }
+    if (res != COMM_SUCCESS)
+        return res;
 
-  if (COMM_SUCCESS != writeA1(id, data_list.at(1)))
-    res++;
-  ros::Duration(wait_duration).sleep();
+    tries = 10;
+    while (tries > 0)  // try 10 times
+    {
+        tries--;
+        ros::Duration(wait_duration).sleep();
+        res = writeA1(id, data_list.at(1));
+        if (res == COMM_SUCCESS) 
+            break;
+    }
+    if (res != COMM_SUCCESS)
+        return res;
 
-  if (COMM_SUCCESS != writeV1(id, data_list.at(2)))
-    res++;
-  ros::Duration(wait_duration).sleep();
+    tries = 10;
+    while (tries > 0)  // try 10 times
+    {
+        tries--;
+        ros::Duration(wait_duration).sleep();
+        res = writeV1(id, data_list.at(2));
+        if (res == COMM_SUCCESS) 
+            break;
+    }
+    if (res != COMM_SUCCESS)
+    return res;
 
-  if (COMM_SUCCESS != writeAMax(id, data_list.at(3)))
-    res++;
-  ros::Duration(wait_duration).sleep();
+    tries = 10;
+    while (tries > 0)  // try 10 times
+    {
+        tries--;
+        ros::Duration(wait_duration).sleep();
+        res = writeAMax(id, data_list.at(3));
+        if (res == COMM_SUCCESS) 
+            break;
+    }
+    if (res != COMM_SUCCESS)
+        return res;
 
-  if (COMM_SUCCESS != writeVMax(id, data_list.at(4)))
-    res++;
-  ros::Duration(wait_duration).sleep();
+    tries = 10;
+    while (tries > 0)  // try 10 times
+    {
+        tries--;
+        ros::Duration(wait_duration).sleep();
+        res = writeVMax(id, data_list.at(4));
+        if (res == COMM_SUCCESS) 
+            break;
+    }
+    if (res != COMM_SUCCESS)
+        return res;
 
-  if (COMM_SUCCESS != writeDMax(id, data_list.at(5)))
-    res++;
-  ros::Duration(wait_duration).sleep();
+    tries = 10;
+    while (tries > 0)  // try 10 times
+    {
+        tries--;
+        ros::Duration(wait_duration).sleep();
+        res = writeDMax(id, data_list.at(5));
+        if (res == COMM_SUCCESS) 
+            break;
+    }
+    if (res != COMM_SUCCESS)
+        return res;
 
-  if (COMM_SUCCESS != writeD1(id, data_list.at(6)))
-    res++;
-  ros::Duration(wait_duration).sleep();
+    tries = 10;
+    while (tries > 0)  // try 10 times
+    {
+        tries--;
+        ros::Duration(wait_duration).sleep();
+        res = writeD1(id, data_list.at(6));
+        if (res == COMM_SUCCESS) 
+            break;
+    }
+    if (res != COMM_SUCCESS)
+        return res;
 
-  if (COMM_SUCCESS != writeVStop(id, data_list.at(7)))
-    res++;
-  ros::Duration(wait_duration).sleep();
+    tries = 10;
+    while (tries > 0)  // try 10 times
+    {
+        tries--;
+        ros::Duration(wait_duration).sleep();
+        res = writeVStop(id, data_list.at(7));
+        if (res == COMM_SUCCESS) 
+            break;
+    }
 
-  if(res > 0)
-  {
-      return COMM_TX_FAIL;
-  }
-
-  return COMM_SUCCESS;
+    return res;
 }
 
 /**
