@@ -231,7 +231,7 @@ int TtlManager::addHardwareComponent(std::shared_ptr<common::model::AbstractHard
         std::string version;
         _driver_map.at(hardware_type)->readFirmwareVersion(state->getId(), version);
         state->setFirmwareVersion(version);
-        
+
         result = niryo_robot_msgs::CommandStatus::SUCCESS;
     }
     return result;
