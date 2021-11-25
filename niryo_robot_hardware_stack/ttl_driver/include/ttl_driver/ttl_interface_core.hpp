@@ -45,6 +45,8 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "ttl_driver/ReadPIDValue.h"
 #include "ttl_driver/WriteVelocityProfile.h"
 #include "ttl_driver/ReadVelocityProfile.h"
+#include "ttl_driver/SetFrequencies.h"
+#include "ttl_driver/GetFrequencies.h"
 
 #include "niryo_robot_msgs/BusState.h"
 #include "niryo_robot_msgs/SetInt.h"
@@ -173,6 +175,10 @@ private:
     bool _callbackWriteVelocityProfile(ttl_driver::WriteVelocityProfile::Request &req, ttl_driver::WriteVelocityProfile::Response &res);
     bool _callbackReadVelocityProfile(ttl_driver::ReadVelocityProfile::Request &req, ttl_driver::ReadVelocityProfile::Response &res);
 
+    bool _callbackSetFrequencies(ttl_driver::SetFrequencies::Request &req, ttl_driver::SetFrequencies::Response &res);
+    bool _callbackGetFrequencies(ttl_driver::GetFrequencies::Request &req, ttl_driver::GetFrequencies::Response &res);
+
+
     void _publishCollisionStatus(const ros::TimerEvent&);
 private:
     ros::Publisher _collision_status_publisher;
@@ -190,6 +196,8 @@ private:
     std::thread _control_loop_thread;
 
     double _control_loop_frequency{0.0};
+    double _write_frequency{0.0};
+    double _read_data_frequency{0.0};
 
     double _delta_time_data_read{0.0};
     double _delta_time_end_effector_read{0.0};
@@ -228,6 +236,9 @@ private:
 
     ros::ServiceServer _velocity_profile_server;
     ros::ServiceServer _velocity_profile_getter;
+
+    ros::ServiceServer _frequencies_setter;
+    ros::ServiceServer _frequencies_getter;
 
     static constexpr int QUEUE_OVERFLOW = 20;
 };

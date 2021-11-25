@@ -110,8 +110,8 @@ bool TtlInterfaceCore::init(ros::NodeHandle& nh)
 void TtlInterfaceCore::initParameters(ros::NodeHandle& nh)
 {
     _control_loop_frequency = 0.0;
-    double write_frequency = 0.0;
-    double read_data_frequency = 0.0;
+    _write_frequency = 0.0;
+    _read_data_frequency = 0.0;
     double read_end_effector_frequency = 0.0;
     double read_status_frequency = 0.0;
 
@@ -119,10 +119,10 @@ void TtlInterfaceCore::initParameters(ros::NodeHandle& nh)
                  _control_loop_frequency);
 
     nh.getParam("ttl_hardware_write_frequency",
-                 write_frequency);
+                 _write_frequency);
 
     nh.getParam("ttl_hardware_read_data_frequency",
-                 read_data_frequency);
+                 _read_data_frequency);
 
     nh.getParam("ttl_hardware_read_data_frequency",
                  read_end_effector_frequency);
@@ -131,15 +131,15 @@ void TtlInterfaceCore::initParameters(ros::NodeHandle& nh)
                  read_status_frequency);
 
     ROS_DEBUG("TtlInterfaceCore::initParameters - ttl_hardware_control_loop_frequency : %f", _control_loop_frequency);
-    ROS_DEBUG("TtlInterfaceCore::initParameters - ttl_hardware_write_frequency : %f", write_frequency);
-    ROS_DEBUG("TtlInterfaceCore::initParameters - ttl_hardware_read_data_frequency : %f", read_data_frequency);
+    ROS_DEBUG("TtlInterfaceCore::initParameters - ttl_hardware_write_frequency : %f", _write_frequency);
+    ROS_DEBUG("TtlInterfaceCore::initParameters - ttl_hardware_read_data_frequency : %f", _read_data_frequency);
     ROS_DEBUG("TtlInterfaceCore::initParameters - ttl_hardware_read_end_effector_frequency : %f", read_end_effector_frequency);
     ROS_DEBUG("TtlInterfaceCore::initParameters - ttl_hardware_read_status_frequency : %f", read_status_frequency);
 
-    _delta_time_data_read = 1.0 / read_data_frequency;
+    _delta_time_data_read = 1.0 / _read_data_frequency;
     _delta_time_end_effector_read = 1.0 / read_end_effector_frequency;
     _delta_time_status_read = 1.0 / read_status_frequency;
-    _delta_time_write = 1.0 / write_frequency;
+    _delta_time_write = 1.0 / _write_frequency;
 }
 
 /**
@@ -172,6 +172,13 @@ void TtlInterfaceCore::startServices(ros::NodeHandle& nh)
 
     _velocity_profile_getter = nh.advertiseService("/niryo_robot/ttl_driver/write_velocity_profile",
                                               &TtlInterfaceCore::_callbackWriteVelocityProfile, this);
+
+    _frequencies_setter = nh.advertiseService("/niryo_robot/ttl_driver/frequencies_setter",
+                                              &TtlInterfaceCore::_callbackSetFrequencies, this);
+
+    _frequencies_getter = nh.advertiseService("/niryo_robot/ttl_driver/frequencies_getter",
+                                              &TtlInterfaceCore::_callbackGetFrequencies, this);
+
 }
 
 /**
@@ -594,10 +601,12 @@ void TtlInterfaceCore::controlLoop()
                         }
                         msg += " do not seem to be connected";
                         ROS_WARN_THROTTLE(1.0, "%s", msg.c_str());
-
-                        ros::Duration(0.25).sleep();
                     }
+                    // still keep hardware status updated
+                    _ttl_manager->readHardwareStatus();
+                    ros::Duration(0.25).sleep();
                 }
+
                 ROS_INFO("TtlInterfaceCore::controlLoop - Bus is ok");
             }
 
@@ -1259,6 +1268,83 @@ bool TtlInterfaceCore::_callbackWriteVelocityProfile(ttl_driver::WriteVelocityPr
 
   return (niryo_robot_msgs::CommandStatus::SUCCESS == result);
 }
+
+/**
+ * @brief TtlInterfaceCore::_callbackSetFrequencies
+ * @param req
+ * @param res
+ */
+bool TtlInterfaceCore::_callbackSetFrequencies(ttl_driver::SetFrequencies::Request &req,
+                                                ttl_driver::SetFrequencies::Response &res)
+{
+
+    int read_data_frequency = req.read_frequency;
+    int write_frequency = req.write_frequency;
+    int result = niryo_robot_msgs::CommandStatus::FAILURE;
+
+    
+    if (write_frequency != 0)
+    {
+        if (read_data_frequency != 0 )
+        {
+            _delta_time_data_read = 1.0 / read_data_frequency;
+            _delta_time_write = 1.0 / write_frequency;
+            result = niryo_robot_msgs::CommandStatus::SUCCESS;
+            res.message = "TtlInterfaceCore - Setting Frequencies Successful";
+        }
+        else
+        {
+            res.message = "TtlInterfaceCore - Setting Frequencies Failed";
+        }
+    }
+
+    else
+    {
+        res.message = "TtlInterfaceCore - Setting Frequencies Failed";
+    }
+    
+    res.status = result;
+
+    return (niryo_robot_msgs::CommandStatus::SUCCESS == result);
+}
+
+/**
+ * @brief TtlInterfaceCore::_callbackGetFrequencies
+ * @param req
+ * @param res
+ */
+bool TtlInterfaceCore::_callbackGetFrequencies(ttl_driver::GetFrequencies::Request &req,
+                                                ttl_driver::GetFrequencies::Response &res)
+{
+
+    int result = niryo_robot_msgs::CommandStatus::FAILURE;
+
+    
+    if (_read_data_frequency >= 0)
+    {
+        if (_write_frequency >= 0)
+        {
+            res.read_frequency = _read_data_frequency;
+            res.write_frequency = _write_frequency;
+            result = niryo_robot_msgs::CommandStatus::SUCCESS;
+            res.message = "TtlInterfaceCore - Setting Frequencies Successful";
+        }
+        else
+        {
+            res.message = "TtlInterfaceCore - Setting Frequencies Failed";
+        }
+    }
+
+    else
+    {
+        res.message = "TtlInterfaceCore - Setting Frequencies Failed";
+    }
+    
+    res.status = result;
+
+    return (niryo_robot_msgs::CommandStatus::SUCCESS == result);
+}
+
 
 void TtlInterfaceCore::_publishCollisionStatus(const ros::TimerEvent&)
 {
