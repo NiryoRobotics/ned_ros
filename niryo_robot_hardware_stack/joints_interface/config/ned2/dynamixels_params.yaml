@@ -15,7 +15,7 @@ dynamixels:
         velocity_I_gain: 0
         FF1_gain: 0
         FF2_gain: 400
-        acceleration_profile: 200  # profile acc and vel used by dxl motors
+        acceleration_profile: 100  # profile acc and vel used by dxl motors
         velocity_profile: 200
 
     dxl_2:
@@ -31,7 +31,7 @@ dynamixels:
         velocity_I_gain: 0
         FF1_gain: 0
         FF2_gain: 0
-        acceleration_profile: 125  # profile acc and vel used by dxl motors
+        acceleration_profile: 75  # profile acc and vel used by dxl motors
         velocity_profile: 150
 
     dxl_3:
@@ -47,5 +47,5 @@ dynamixels:
         velocity_I_gain: 0
         FF1_gain: 0
         FF2_gain: 0
-        acceleration_profile: 100  # profile acc and vel used by dxl motors
+        acceleration_profile: 50  # profile acc and vel used by dxl motors
         velocity_profile: 100
