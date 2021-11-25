@@ -1,6 +1,12 @@
 #
 #  Stepper caracteristics for Ned's hardware
 #
+
+
+# for profile, we need to reach the same velocities within the same times
+# v_1-v_0 = a_1* dt
+# v_max - v_1 = a_max * dt
+# strategy : focus on stepper 2 and propagate
 steppers:
     stepper_1:
         id: 2
@@ -15,12 +21,16 @@ steppers:
         # assembly direction (1 or -1)
         direction: 1
         v_start: 1
-        a_1: 1600
-        v_1: 3
-        a_max: 3200
-        v_max: 14
-        d_max: 3200
-        d_1: 1600
+        # rule is a_max = a_1 * 3
+        #         d_max = d_1 * 3
+        #         v_max = v_1 * 3
+        #         d_max = a_max + 200
+        a_1: 1200
+        v_1: 5
+        a_max: 2571
+        v_max: 15
+        d_max: 2714
+        d_1: 1900
         v_stop: 2
 
     stepper_2:
@@ -32,12 +42,16 @@ steppers:
         limit_position_min: -2.09
         direction: -1
         v_start: 1
-        a_1: 300
-        v_1: 2
-        a_max: 2500
-        v_max: 12
-        d_max: 2500
-        d_1: 300
+        # rule is a_max = a_1 * 3
+        #         d_max = d_1 * 3
+        #         v_max = v_1 * 3
+        #         d_max = a_max + 100
+        a_1: 600
+        v_1: 3
+        a_max: 1800
+        v_max: 10
+        d_max: 1900
+        d_1: 633
         v_stop: 2
         
     stepper_3:
@@ -49,11 +63,15 @@ steppers:
         limit_position_max: 1.57
         direction: 1
         v_start: 1
-        a_1: 1800
-        v_1: 3
-        a_max: 3000
+        # rule is a_max = a_1 * 3
+        #         d_max = d_1 * 3
+        #         v_max = v_1 * 3
+        #         d_max = a_max + 100
+        a_1: 900
+        v_1: 4
+        a_max: 2057
         v_max: 12
-        d_max: 3000
-        d_1: 1800
+        d_max: 2171
+        d_1: 1267
         v_stop: 2
 

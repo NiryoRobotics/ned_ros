@@ -280,7 +280,7 @@ private:
     private:
         State s{State::UPDATING};
         double _time{};
-        static constexpr double _calibration_timeout{3.0};
+        static constexpr double _calibration_timeout{5.0};
     };
 
     CalibrationMachineState _calib_machine_state;
