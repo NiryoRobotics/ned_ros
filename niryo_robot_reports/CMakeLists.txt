@@ -10,7 +10,6 @@ find_package(catkin REQUIRED COMPONENTS
 add_service_files(
   DIRECTORY srv
   FILES
-  SaveAll.srv
 )
 
 # enable python module support
