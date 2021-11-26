@@ -50,6 +50,8 @@ class RobotCommanderNode:
     """
 
     def __init__(self):
+        self.wait_for_nodes_initialization()
+
         rospy.logdebug("Arm Commander - Entering in Init")
         # Initialize MoveIt!
         moveit_commander.roscpp_initialize(sys.argv)
@@ -158,6 +160,11 @@ class RobotCommanderNode:
         rospy.set_param('~initialized', True)
 
         rospy.loginfo("Arm Commander - Started")
+
+    @classmethod
+    def wait_for_nodes_initialization(cls):
+        from actionlib_msgs.msg import GoalStatusArray
+        _ = rospy.wait_for_message("/move_group/status", GoalStatusArray, timeout=120)
 
     def __start_action_server(self):
         self.__action_server.start()

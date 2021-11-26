@@ -109,6 +109,11 @@ class ToolCommander:
         self.__action_server.start()
         self.update_tool()
 
+    @classmethod
+    def wait_for_controller(cls):
+        from actionlib_msgs.msg import GoalStatusArray
+        _ = rospy.wait_for_message("/move_group/status", GoalStatusArray, timeout=120)
+
     # Subscriber
 
     def __callback_current_tool_motor(self, msg):
