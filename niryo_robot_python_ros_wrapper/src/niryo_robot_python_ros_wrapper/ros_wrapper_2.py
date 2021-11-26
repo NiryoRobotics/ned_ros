@@ -17,8 +17,7 @@ from niryo_robot_msgs.srv import GetNameDescriptionList, SetBool, SetInt, Trigge
 from niryo_robot_programs_manager.srv import SetProgramAutorun, SetProgramAutorunRequest, GetProgramAutorunInfos, \
     GetProgramList, ManageProgram, ManageProgramRequest, GetProgram, GetProgramRequest, ExecuteProgram, \
     ExecuteProgramRequest
-from niryo_robot_credentials.srv import GetCredential, SetCredential
-
+from niryo_robot_database.srv import GetSettings, SetSettings
 
 # Enums
 from niryo_robot_python_ros_wrapper.ros_wrapper_enums import *
@@ -244,24 +243,28 @@ class NiryoRosWrapper2:
         """
         return self.__call_shutdown_rpi(2)
 
-    def get_serial_number(self):
+    def get_setting(self, name):
         """
-        Get the serial number
+        Get a setting from the database
+        :param name: the setting name
+        :type name: str
         :return: status, message
         :rtype: (int, str)
         """
-        result = self.__call_service('/niryo_robot_credentials/get_serial', GetCredential)
+        result = self.__call_service('/niryo_robot_database/settings/get', GetSettings)
         return self.__classic_return_w_check(result)
 
-    def set_api_key(self, key):
+    def set_setting(self, name, value):
         """
-        Set the cloud API key
-        :param key: the api key
-        :type key: str
+        Set a setting in the database
+        :param name: the setting name
+        :type name: str
+        :param value: the setting value
+        :type value: str
         :return: status, message
         :rtype: (int, str)
         """
-        result = self.__call_service('/niryo_robot_credentials/set_api_key', SetCredential, key)
+        result = self.__call_service('/niryo_robot_database/settings/set', SetSettings, name, value)
         return self.__classic_return_w_check(result)
 
     # - Logs

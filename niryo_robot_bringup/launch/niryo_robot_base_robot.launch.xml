@@ -64,11 +64,6 @@
         <arg name="simulation_mode" value="$(arg simulation_mode)"/>
     </include>
 
-    <include file="$(find niryo_robot_credentials)/launch/credentials.launch">
-        <arg name="log_level" value="$(arg log_level)" />
-        <arg name="credentials_path" value="$(arg conf_location)"/>
-    </include>
-
     <include file="$(find niryo_robot_system_api_client)/launch/system_api_client.launch">
         <arg name="log_level" value="$(arg log_level)" />
     </include>
