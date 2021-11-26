@@ -76,15 +76,15 @@ if __name__ == '__main__':
 
                 while n.vision_pick_w_obs_joints("gazebo_2", 0.002, ObjectShape.ANY, ObjectColor.ANY, obs_joints2)[0]:
                     print "Object picked ..."
-                    pose = n.get_target_pose_from_rel("gazebo_1", 0.005, 0.1 + random.random() * 0.8,
-                                                      0.1 + random.random() * 0.8, 0.0)
+                    pose = n.get_target_pose_from_rel("gazebo_1", 0.005, 0.15 + random.random() * 0.7,
+                                                      0.15 + random.random() * 0.7, 0.0)
                     print "Place randomly on the restricted workspace area ..."
                     n.place_from_pose(pose.position.x, pose.position.y, pose.position.z,
                                       pose.rpy.roll, pose.rpy.pitch, pose.rpy.yaw)
-            except NiryoRosWrapperException:
+            except Exception:
                 pass
 
-    except NiryoRosWrapperException as e:
+    except Exception as e:
         print e
 
     print "--- End"
