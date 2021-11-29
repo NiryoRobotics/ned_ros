@@ -48,7 +48,6 @@
     <disable_collisions link1="arm_link" link2="forearm_link" reason="Never" />
     <disable_collisions link1="arm_link" link2="hand_link" reason="Never" />
     <disable_collisions link1="arm_link" link2="shoulder_link" reason="Adjacent" />
-    <disable_collisions link1="arm_link" link2="wrist_link" reason="Never" />
     <disable_collisions link1="base_link" link2="elbow_link" reason="Never" />
     <disable_collisions link1="base_link" link2="shoulder_link" reason="Adjacent" />
     <disable_collisions link1="elbow_link" link2="forearm_link" reason="Adjacent" />
@@ -56,7 +55,6 @@
     <disable_collisions link1="elbow_link" link2="shoulder_link" reason="Never" />
     <disable_collisions link1="elbow_link" link2="joint5_motor" reason="User" />
     <disable_collisions link1="elbow_link" link2="tool_link" reason="Never" />
-    <disable_collisions link1="elbow_link" link2="wrist_link" reason="Never" />
     <disable_collisions link1="forearm_link" link2="hand_link" reason="Never" />
     <disable_collisions link1="forearm_link" link2="shoulder_link" reason="User" />
     <disable_collisions link1="forearm_link" link2="joint5_motor" reason="User" />
@@ -67,4 +65,6 @@
     <disable_collisions link1="hand_link" link2="wrist_link" reason="Adjacent" />
     <disable_collisions link1="joint5_motor" link2="wrist_link" reason="User" />
     <disable_collisions link1="tool_link" link2="wrist_link" reason="Default" />
+    <disable_collisions link1="led_ring_link" link2="base_link" reason="Adjacent"/>
+    <disable_collisions link1="led_ring_link" link2="shoulder_link" reason="Adjacent"/>
 </robot>
