@@ -42,6 +42,23 @@ class LedRingRosWrapper(object):
     # - Led Ring
     @check_ned2_version
     def set_led_color(self, led_id, color):
+        """
+        Lights up an LED in one colour. RGB colour between 0 and 255.
+
+        Example: ::
+
+            from std_msgs.msg import ColorRGBA
+
+            led_ring.set_led_color(5, [15, 50, 255])
+            led_ring.set_led_color(5, ColorRGBA(r=15, g=50, b=255))
+
+        :param led_id: Id of the led: between 0 and 29
+        :type led_id: int
+        :param color: Led color in a list of size 3[R, G, B] or in an ColorRGBA object. RGB channels from 0 to 255.
+        :type color: list[float]  or ColorRGBA
+        :return: status, message
+        :rtype: (int, str)
+        """
         color_rgba = color if isinstance(color, ColorRGBA) else ColorRGBA(*(color[:3] + [0]))
         led_request = SetLedColorRequest(led_id=led_id, color=color_rgba)
         result = self.__call_service('/niryo_robot_led_ring/set_led_color', SetLedColor, led_request)
@@ -52,8 +69,15 @@ class LedRingRosWrapper(object):
         """
         Set the whole Led Ring to a fixed color.
 
-        :param color: Led ring color, in a list of size 3 (r, g, b: 0.0-255.0)
-        :type color: list[float]
+        Example: ::
+
+            from std_msgs.msg import ColorRGBA
+
+            led_ring.solid([15, 50, 255])
+            led_ring.solid(ColorRGBA(r=15, g=50, b=255), True)
+
+        :param color: Led color in a list of size 3[R, G, B] or in an ColorRGBA object. RGB channels from 0 to 255.
+        :type color: list[float]  or ColorRGBA
         :param wait: The service wait for the animation to finish or not to answer.
                 For this method, the action is quickly done, so waiting doesn't take a lot of time.
         :type wait: bool
@@ -71,7 +95,11 @@ class LedRingRosWrapper(object):
         """
         Turn off all Leds
 
-        :param wait: the service wait for the animation to finish or not to answer.
+        Example: ::
+
+            led_ring.turn_off()
+
+        :param wait: The service wait for the animation to finish or not to answer.
                 For this method, the action is quickly done, so waiting doesn't take a lot of time.
         :type wait: bool
         :return: status, message
@@ -84,16 +112,28 @@ class LedRingRosWrapper(object):
     @check_ned2_version
     def flashing(self, color, period=0, iterations=0, wait=False):
         """
-        Flashes a color according to a frequency.
+        Flashes a color according to a frequency. The frequency is equal to 1 / period.
 
-        :param color: Led ring color, in a list of size 3 (r, g, b: 0.0-255.0)
-        :type color: list[float]
-        :param period: execution time for a pattern
+        Examples: ::
+
+            from std_msgs.msg import ColorRGBA
+
+            led_ring.flashing([15, 50, 255])
+            led_ring.flashing([15, 50, 255], 1, 100, True)
+            led_ring.flashing([15, 50, 255], iterations=20, wait=True)
+
+            frequency = 20  # Hz
+            total_duration = 10 # seconds
+            led_ring.flashing(ColorRGBA(r=15, g=50, b=255), 1./frequency, total_duration * frequency , True)
+
+        :param color: Led color in a list of size 3[R, G, B] or in an ColorRGBA object. RGB channels from 0 to 255.
+        :type color: list[float]  or ColorRGBA
+        :param period: Execution time for a pattern in seconds. If 0, the default time will be used.
         :type period: float
-        :param iterations: Number of consecutives flashes. If 0, the Led Ring flashes endlessly.
+        :param iterations: Number of consecutive flashes. If 0, the Led Ring flashes endlessly.
         :type iterations: int
         :param wait: The service wait for the animation to finish all iterations or not to answer. If iterations
-                is 0, the service answers immediatly.
+                is 0, the service answers immediately.
         :type wait: bool
         :return: status, message
         :rtype: (int, str)
@@ -109,14 +149,28 @@ class LedRingRosWrapper(object):
         """
         Several colors are alternated one after the other.
 
-        :param color_list: Led ring color, in a list of size 3 (r, g, b: 0.0-255.0)
-        :type color_list: list[lis[float]]
-        :param period: execution time for a pattern
+        Examples: ::
+
+            from std_msgs.msg import ColorRGBA
+
+            color_list = [
+                ColorRGBA(r=15, g=50, b=255),
+                [255, 0, 0],
+                [0, 255, 0],
+            ]
+
+            led_ring.alternate(color_list)
+            led_ring.alternate(color_list, 1, 100, True)
+            led_ring.alternate(color_list, iterations=20, wait=True)
+
+        :param color_list: Led color list of lists of size 3[R, G, B] or ColorRGBA objects. RGB channels from 0 to 255.
+        :type color_list: list[list[float] or ColorRGBA]
+        :param period: Execution time for a pattern in seconds. If 0, the default time will be used.
         :type period: float
-        :param iterations: Number of consecutives alternations. If 0, the Led Ring alternates endlessly.
+        :param iterations: Number of consecutive alternations. If 0, the Led Ring alternates endlessly.
         :type iterations: int
         :param wait: The service wait for the animation to finish all iterations or not to answer. If iterations
-                is 0, the service answers immediatly.
+                is 0, the service answers immediately.
         :type wait: bool
         :return: status, message
         :rtype: (int, str)
@@ -134,15 +188,23 @@ class LedRingRosWrapper(object):
         """
         Movie theater light style chaser animation.
 
-        :param color: Led ring color, in a list of size 3 (r, g, b: 0.0-255.0)
-        :type color: list[float]
-        :param period: execution time for a pattern
+        Examples: ::
+
+            from std_msgs.msg import ColorRGBA
+
+            led_ring.chase(ColorRGBA(r=15, g=50, b=255))
+            led_ring.chase([15, 50, 255], 1, 100, True)
+            led_ring.chase(ColorRGBA(r=15, g=50, b=255), iterations=20, wait=True)
+
+        :param color: Led color in a list of size 3[R, G, B] or in an ColorRGBA object. RGB channels from 0 to 255.
+        :type color: list or ColorRGBA
+        :param period: Execution time for a pattern in seconds. If 0, the default time will be used.
         :type period: float
-        :param iterations: Number of consecutives chase. If 0, the animation continues endlessly.
+        :param iterations: Number of consecutive chase. If 0, the animation continues endlessly.
             One chase just lights one Led every 3 Leds.
         :type iterations: int
         :param wait: The service wait for the animation to finish all iterations or not to answer. If iterations
-                is 0, the service answers immediatly.
+                is 0, the service answers immediately.
         :type wait: bool
         :return: status, message
         :rtype: (int, str)
@@ -158,9 +220,17 @@ class LedRingRosWrapper(object):
         """
         Wipe a color across the Led Ring, light a Led at a time.
 
-        :param color: Led ring color, in a list of size 3 (r, g, b: 0.0-255.0)
-        :type color: list[float]
-        :param period: execution time for a pattern
+        Examples: ::
+
+            from std_msgs.msg import ColorRGBA
+
+            led_ring.wipe(ColorRGBA(r=15, g=50, b=255))
+            led_ring.wipe([15, 50, 255], 1, True)
+            led_ring.wipe(ColorRGBA(r=15, g=50, b=255), wait=True)
+
+        :param color: Led color in a list of size 3[R, G, B] or in an ColorRGBA object. RGB channels from 0 to 255.
+        :type color: list[float]  or ColorRGBA
+        :param period: Execution time for a pattern in seconds. If 0, the default time will be used.
         :type period: float
         :param wait: The service wait for the animation to finish or not to answer.
         :type wait: bool
@@ -178,12 +248,18 @@ class LedRingRosWrapper(object):
         """
         Draw rainbow that fades across all Leds at once.
 
-        :param period: execution time for a pattern
+        Examples: ::
+
+            led_ring.rainbow()
+            led_ring.rainbow(5, 2, True)
+            led_ring.rainbow(wait=True)
+
+        :param period: Execution time for a pattern in seconds. If 0, the default time will be used.
         :type period: float
-        :param iterations: Number of consecutives rainbows. If 0, the animation continues endlessly.
+        :param iterations: Number of consecutive rainbows. If 0, the animation continues endlessly.
         :type iterations: int
         :param wait: The service wait for the animation to finish or not to answer. If iterations
-                is 0, the service answers immediatly.
+                is 0, the service answers immediately.
         :type wait: bool
         :return: status, message
         :rtype: (int, str)
@@ -198,12 +274,18 @@ class LedRingRosWrapper(object):
         """
         Draw rainbow that uniformly distributes itself across all Leds.
 
-        :param period: execution time for a pattern
+        Examples: ::
+
+            led_ring.rainbow_cycle()
+            led_ring.rainbow_cycle(5, 2, True)
+            led_ring.rainbow_cycle(wait=True)
+
+        :param period: Execution time for a pattern in seconds. If 0, the default time will be used.
         :type period: float
-        :param iterations: Number of consecutives rainbow cycles. If 0, the animation continues endlessly.
+        :param iterations: Number of consecutive rainbow cycles. If 0, the animation continues endlessly.
         :type iterations: int
         :param wait: The service wait for the animation to finish or not to answer. If iterations
-                is 0, the service answers immediatly.
+                is 0, the service answers immediately.
         :type wait: bool
         :return: status, message
         :rtype: (int, str)
@@ -218,12 +300,18 @@ class LedRingRosWrapper(object):
         """
         Rainbow chase animation, like the led_ring_chase method.
 
-        :param period: execution time for a pattern
+        Examples: ::
+
+            led_ring.rainbow_chase()
+            led_ring.rainbow_chase(5, 2, True)
+            led_ring.rainbow_chase(wait=True)
+
+        :param period: Execution time for a pattern in seconds. If 0, the default time will be used.
         :type period: float
-        :param iterations: Number of consecutives rainbow cycles. If 0, the animation continues endlessly.
+        :param iterations: Number of consecutive rainbow cycles. If 0, the animation continues endlessly.
         :type iterations: int
         :param wait: The service wait for the animation to finish or not to answer. If iterations
-                is 0, the service answers immediatly.
+                is 0, the service answers immediately.
         :type wait: bool
         :return: status, message
         :rtype: (int, str)
@@ -239,15 +327,24 @@ class LedRingRosWrapper(object):
         """
         Leds turn on like a loading circle, and are then all turned off at once.
 
-        :param color: Led ring color, in a list of size 3 (r, g, b: 0.0-255.0)
-        :type color: list[float]
-        :param period: execution time for a pattern
+        Examples: ::
+
+            from std_msgs.msg import ColorRGBA
+
+            led_ring.go_up(ColorRGBA(r=15, g=50, b=255))
+            led_ring.go_up([15, 50, 255], 1, 100, True)
+            led_ring.go_up(ColorRGBA(r=15, g=50, b=255), iterations=20, wait=True)
+
+
+        :param color: Led color in a list of size 3[R, G, B] or in an ColorRGBA object. RGB channels from 0 to 255.
+        :type color: list[float] or ColorRGBA
+        :param period: Execution time for a pattern in seconds. If 0, the default time will be used.
         :type period: float
-        :param iterations: Number of consecutives turns around the Led Ring. If 0, the animation
+        :param iterations: Number of consecutive turns around the Led Ring. If 0, the animation
             continues endlessly.
         :type iterations: int
         :param wait: The service wait for the animation to finish or not to answer. If iterations
-                is 0, the service answers immediatly.
+                is 0, the service answers immediately.
         :type wait: bool
         :return: status, message
         :rtype: (int, str)
@@ -263,15 +360,24 @@ class LedRingRosWrapper(object):
         """
         Leds turn on like a loading circle, and are turned off the same way.
 
-        :param color: Led ring color, in a list of size 3 (r, g, b: 0.0-255.0)
-        :type color: list[float]
-        :param period: execution time for a pattern
+        Examples: ::
+
+            from std_msgs.msg import ColorRGBA
+
+            led_ring.go_up_down(ColorRGBA(r=15, g=50, b=255))
+            led_ring.go_up_down([15, 50, 255], 1, 100, True)
+            led_ring.go_up_down(ColorRGBA(r=15, g=50, b=255), iterations=20, wait=True)
+
+
+        :param color: Led color in a list of size 3[R, G, B] or in an ColorRGBA object. RGB channels from 0 to 255.
+        :type color: list[float] or ColorRGBA
+        :param period: Execution time for a pattern in seconds. If 0, the default time will be used.
         :type period: float
-        :param iterations: Number of consecutives turns around the Led Ring. If 0, the animation
+        :param iterations: Number of consecutive turns around the Led Ring. If 0, the animation
             continues endlessly.
         :type iterations: int
         :param wait: The service wait for the animation to finish or not to answer. If iterations
-                is 0, the service answers immediatly.
+                is 0, the service answers immediately.
         :type wait: bool
         :return: status, message
         :rtype: (int, str)
@@ -286,17 +392,25 @@ class LedRingRosWrapper(object):
     @check_ned2_version
     def breath(self, color, period=0, iterations=0, wait=False):
         """
-        Leds turn on like a loading circle, and are then all turned off at once.
+        Variation of the light intensity of the LED ring, similar to human breathing.
 
-        :param color: Led ring color, in a list of size 3 (r, g, b: 0.0-255.0)
-        :type color: list[float]
-        :param period: execution time for a pattern
+        Examples: ::
+
+            from std_msgs.msg import ColorRGBA
+
+            led_ring.breath(ColorRGBA(r=15, g=50, b=255))
+            led_ring.breath([15, 50, 255], 1, 100, True)
+            led_ring.breath(ColorRGBA(r=15, g=50, b=255), iterations=20, wait=True)
+
+        :param color: Led color in a list of size 3[R, G, B] or in an ColorRGBA object. RGB channels from 0 to 255.
+        :type color: list[float] or ColorRGBA
+        :param period: Execution time for a pattern in seconds. If 0, the default time will be used.
         :type period: float
-        :param iterations: Number of consecutives turns around the Led Ring. If 0, the animation
+        :param iterations: Number of consecutive turns around the Led Ring. If 0, the animation
             continues endlessly.
         :type iterations: int
         :param wait: The service wait for the animation to finish or not to answer. If iterations
-                is 0, the service answers immediatly.
+                is 0, the service answers immediately.
         :type wait: bool
         :return: status, message
         :rtype: (int, str)
@@ -310,17 +424,25 @@ class LedRingRosWrapper(object):
     @check_ned2_version
     def snake(self, color, period=0, iterations=0, wait=False):
         """
-        Leds turn on like a loading circle, and are then all turned off at once.
+        A small coloured snake (certainly a python :D ) runs around the LED ring.
 
-        :param color: Led ring color, in a list of size 3 (r, g, b: 0.0-255.0)
-        :type color: list[float]
-        :param period: execution time for a pattern
+        Examples: ::
+
+            from std_msgs.msg import ColorRGBA
+
+            led_ring.snake(ColorRGBA(r=15, g=50, b=255))
+            led_ring.snake([15, 50, 255], 1, 100, True)
+            led_ring.snake(ColorRGBA(r=15, g=50, b=255), iterations=20, wait=True)
+
+        :param color: Led color in a list of size 3[R, G, B] or in an ColorRGBA object. RGB channels from 0 to 255.
+        :type color: list[float] or ColorRGBA
+        :param period: Execution time for a pattern in seconds. If 0, the default duration will be used.
         :type period: float
-        :param iterations: Number of consecutives turns around the Led Ring. If 0, the animation
+        :param iterations: Number of consecutive turns around the Led Ring. If 0, the animation
             continues endlessly.
         :type iterations: int
         :param wait: The service wait for the animation to finish or not to answer. If iterations
-                is 0, the service answers immediatly.
+                is 0, the service answers immediately.
         :type wait: bool
         :return: status, message
         :rtype: (int, str)
@@ -334,18 +456,17 @@ class LedRingRosWrapper(object):
     @check_ned2_version
     def custom(self, led_colors):
         """
-        Leds turn on like a loading circle, and are then all turned off at once.
+        Sends a colour command to all LEDs of the LED ring.
+        The function expects a list of colours for the 30 LEDs  of the robot.
 
-        :param color: Led ring color, in a list of size 3 (r, g, b: 0.0-255.0)
-        :type color: list[float]
-        :param period: execution time for a pattern
-        :type period: float
-        :param iterations: Number of consecutives turns around the Led Ring. If 0, the animation
-            continues endlessly.
-        :type iterations: int
-        :param wait: The service wait for the animation to finish or not to answer. If iterations
-                is 0, the service answers immediatly.
-        :type wait: bool
+        Example: ::
+
+            led_list = [[i / 30. * 255 , 0, 255 - i / 30.] for i in range(30)]
+            led_ring.custom(led_list)
+
+        :param led_colors: List of size 30 of led color in a list of size 3[R, G, B] or in an ColorRGBA object.
+                RGB channels from 0 to 255.
+        :type led_colors: list[list[float] or ColorRGBA]
         :return: status, message
         :rtype: (int, str)
         """

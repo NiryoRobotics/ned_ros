@@ -120,7 +120,6 @@ class SystemApiClientNode:
         return status, message
 
     def __callback_manage_ethernet(self, req):
-        print "ethernettttttttttttttt"
         status, message = CommandStatus.SUCCESS, "Success"
         if req.profile in [req.STATIC, req.AUTO]:
             conn_success, result = self.client.setup_ethernet(req.profile)

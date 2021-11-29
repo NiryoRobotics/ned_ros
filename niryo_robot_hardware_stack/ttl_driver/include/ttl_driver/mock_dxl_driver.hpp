@@ -66,16 +66,19 @@ class MockDxlDriver : public AbstractDxlDriver
         int readMaxPosition(uint8_t id, uint32_t &max_pos) override;
 
         // ram write
-        int writeTorqueEnable(uint8_t id, uint32_t torque_enable) override;
-        int writeGoalPosition(uint8_t id, uint32_t position) override;
-        int writeGoalVelocity(uint8_t id, uint32_t velocity) override;
-        int writeGoalAcceleration(uint8_t id, uint32_t acceleration) override;
+        int writeVelocityProfile(uint8_t id, const std::vector<uint32_t>& data_list) override;
 
-        int syncWriteTorqueEnable(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &torque_enable_list) override;
+        int writeTorqueEnable(uint8_t id, uint8_t torque_enable) override;
+        int writePositionGoal(uint8_t id, uint32_t position) override;
+        int writeVelocityGoal(uint8_t id, uint32_t position) override;
+
+        int syncWriteTorqueEnable(const std::vector<uint8_t> &id_list, const std::vector<uint8_t> &torque_enable_list) override;
         int syncWritePositionGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &position_list) override;
         int syncWriteVelocityGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &velocity_list) override;
 
         // ram read
+        int readVelocityProfile(uint8_t id, std::vector<uint32_t>& data_list) override;
+
         int readPosition(uint8_t id, uint32_t &present_position) override;
         int readVelocity(uint8_t id, uint32_t &present_velocity) override;
         int readTemperature(uint8_t id, uint8_t& temperature) override;
@@ -102,13 +105,13 @@ class MockDxlDriver : public AbstractDxlDriver
         int writeControlMode(uint8_t id, uint8_t data) override;
         int readControlMode(uint8_t id, uint8_t& data) override;
 
-        int writeLed(uint8_t id, uint32_t led_value) override;
-        int syncWriteLed(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &led_list) override;
-        int writeGoalTorque(uint8_t id, uint32_t torque) override;
-        int syncWriteTorqueGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &torque_list) override;
+        int writeLed(uint8_t id, uint8_t led_value) override;
+        int syncWriteLed(const std::vector<uint8_t> &id_list, const std::vector<uint8_t> &led_list) override;
+        int writeTorqueGoal(uint8_t id, uint16_t torque) override;
+        int syncWriteTorqueGoal(const std::vector<uint8_t> &id_list, const std::vector<uint16_t> &torque_list) override;
 
-        int readLoad(uint8_t id, uint32_t &present_load) override;
-        int syncReadLoad(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &load_list) override;
+        int readLoad(uint8_t id, uint16_t &present_load) override;
+        int syncReadLoad(const std::vector<uint8_t> &id_list, std::vector<uint16_t> &load_list) override;
 
         int removeGripper(uint8_t id = 11);
 

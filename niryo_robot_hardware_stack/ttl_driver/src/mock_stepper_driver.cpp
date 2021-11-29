@@ -207,7 +207,7 @@ int MockStepperDriver::readMaxPosition(uint8_t id, uint32_t &pos)
  * @param torque_enable
  * @return
  */
-int MockStepperDriver::writeTorqueEnable(uint8_t id, uint32_t /*torque_enable*/)
+int MockStepperDriver::writeTorqueEnable(uint8_t id, uint8_t /*torque_enable*/)
 {
     if (COMM_SUCCESS != ping(id))
         return COMM_RX_FAIL;
@@ -216,12 +216,12 @@ int MockStepperDriver::writeTorqueEnable(uint8_t id, uint32_t /*torque_enable*/)
 }
 
 /**
- * @brief MockStepperDriver::writeGoalPosition
+ * @brief MockStepperDriver::writePositionGoal
  * @param id
  * @param position
  * @return
  */
-int MockStepperDriver::writeGoalPosition(uint8_t id, uint32_t position)
+int MockStepperDriver::writePositionGoal(uint8_t id, uint32_t position)
 {
     if (_fake_data->stepper_registers.count(id))
         _fake_data->stepper_registers.at(id).position = position;
@@ -232,12 +232,12 @@ int MockStepperDriver::writeGoalPosition(uint8_t id, uint32_t position)
 
 // according to the registers, the data should be an int32_t ?
 /**
- * @brief MockStepperDriver::writeGoalVelocity
+ * @brief MockStepperDriver::writeVelocityGoal
  * @param id
  * @param velocity
  * @return
  */
-int MockStepperDriver::writeGoalVelocity(uint8_t id, uint32_t velocity)
+int MockStepperDriver::writeVelocityGoal(uint8_t id, uint32_t velocity)
 {
     if (_fake_data->stepper_registers.count(id))
         _fake_data->stepper_registers.at(id).velocity = velocity;
@@ -252,7 +252,7 @@ int MockStepperDriver::writeGoalVelocity(uint8_t id, uint32_t velocity)
  * @param torque_enable_list
  * @return
  */
-int MockStepperDriver::syncWriteTorqueEnable(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &/*torque_enable_list*/)
+int MockStepperDriver::syncWriteTorqueEnable(const std::vector<uint8_t> &id_list, const std::vector<uint8_t> &/*torque_enable_list*/)
 {
     // Create a map to store the frequency of each element in vector
     std::set<uint8_t> countSet;

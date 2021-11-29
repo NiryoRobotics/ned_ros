@@ -48,7 +48,6 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "niryo_robot_msgs/Trigger.h"
 #include "common/model/hardware_type_enum.hpp"
 
-
 namespace joints_interface
 {
 

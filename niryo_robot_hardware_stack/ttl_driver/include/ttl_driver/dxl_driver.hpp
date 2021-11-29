@@ -79,14 +79,18 @@ class DxlDriver : public AbstractDxlDriver
         int readMinPosition(uint8_t id, uint32_t &min_pos) override;
         int readMaxPosition(uint8_t id, uint32_t &max_pos) override;
 
-        int writeTorqueEnable(uint8_t id, uint32_t torque_enable) override;
-        int writeGoalPosition(uint8_t id, uint32_t position) override;
-        int writeGoalVelocity(uint8_t id, uint32_t velocity_profile) override;
-        int writeGoalAcceleration(uint8_t id, uint32_t acceleration_profile) override;
+        int writeVelocityProfile(uint8_t id, const std::vector<uint32_t>& data_list) override;
 
-        int syncWriteTorqueEnable(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &torque_enable_list) override;
+        int writeTorqueEnable(uint8_t id, uint8_t torque_enable) override;
+
+        int writePositionGoal(uint8_t id, uint32_t position) override;
+        int writeVelocityGoal(uint8_t id, uint32_t velocity) override;
+
+        int syncWriteTorqueEnable(const std::vector<uint8_t> &id_list, const std::vector<uint8_t> &torque_enable_list) override;
         int syncWritePositionGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &position_list) override;
         int syncWriteVelocityGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &velocity_list) override;
+
+        int readVelocityProfile(uint8_t id, std::vector<uint32_t>& data_list) override;
 
         int readPosition(uint8_t id, uint32_t &present_position) override;
         int readVelocity(uint8_t id, uint32_t &present_velocity) override;
@@ -98,36 +102,36 @@ class DxlDriver : public AbstractDxlDriver
     public:
         // AbstractDxlDriver interface
         int writePID(uint8_t id, const std::vector<uint32_t>& data) override;
-        int readPID(uint8_t id, std::vector<uint32_t>& data_list) override;
+        int readPID(uint8_t id, std::vector<uint32_t> &data_list) override;
 
         int writeControlMode(uint8_t id, uint8_t data) override;
         int readControlMode(uint8_t id, uint8_t& data) override;
 
-        int writeLed(uint8_t id, uint32_t led_value) override;
-        int syncWriteLed(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &led_list) override;
+        int writeLed(uint8_t id, uint8_t led_value) override;
+        int syncWriteLed(const std::vector<uint8_t> &id_list, const std::vector<uint8_t> &led_list) override;
 
-        int writeGoalTorque(uint8_t id, uint32_t torque) override;
-        int syncWriteTorqueGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &torque_list) override;
+        int writeTorqueGoal(uint8_t id, uint16_t torque) override;
+        int syncWriteTorqueGoal(const std::vector<uint8_t> &id_list, const std::vector<uint16_t> &torque_list) override;
 
-        int readLoad(uint8_t id, uint32_t &present_load) override;
-        int syncReadLoad(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &load_list) override;
+        int readLoad(uint8_t id, uint16_t &present_load) override;
+        int syncReadLoad(const std::vector<uint8_t> &id_list, std::vector<uint16_t> &load_list) override;
 
 private:
-        int writePositionPGain(uint8_t id, uint32_t gain);
-        int writePositionIGain(uint8_t id, uint32_t gain);
-        int writePositionDGain(uint8_t id, uint32_t gain);
-        int writeVelocityPGain(uint8_t id, uint32_t gain);
-        int writeVelocityIGain(uint8_t id, uint32_t gain);
-        int writeFF1Gain(uint8_t id, uint32_t gain);
-        int writeFF2Gain(uint8_t id, uint32_t gain);
+        int writePositionPGain(uint8_t id, uint16_t gain);
+        int writePositionIGain(uint8_t id, uint16_t gain);
+        int writePositionDGain(uint8_t id, uint16_t gain);
+        int writeVelocityPGain(uint8_t id, uint16_t gain);
+        int writeVelocityIGain(uint8_t id, uint16_t gain);
+        int writeFF1Gain(uint8_t id, uint16_t gain);
+        int writeFF2Gain(uint8_t id, uint16_t gain);
 
-        int readPositionPGain(uint8_t id, uint32_t& gain);
-        int readPositionIGain(uint8_t id, uint32_t& gain);
-        int readPositionDGain(uint8_t id, uint32_t& gain);
-        int readVelocityPGain(uint8_t id, uint32_t& gain);
-        int readVelocityIGain(uint8_t id, uint32_t& gain);
-        int readFF1Gain(uint8_t id, uint32_t& gain);
-        int readFF2Gain(uint8_t id, uint32_t& gain);
+        int readPositionPGain(uint8_t id, uint16_t& gain);
+        int readPositionIGain(uint8_t id, uint16_t& gain);
+        int readPositionDGain(uint8_t id, uint16_t& gain);
+        int readVelocityPGain(uint8_t id, uint16_t& gain);
+        int readVelocityIGain(uint8_t id, uint16_t& gain);
+        int readFF1Gain(uint8_t id, uint16_t& gain);
+        int readFF2Gain(uint8_t id, uint16_t& gain);
 
 };
 
@@ -189,7 +193,7 @@ std::string DxlDriver<reg_type>::interpretFirmwareVersion(uint32_t fw_version) c
 template<typename reg_type>
 int DxlDriver<reg_type>::changeId(uint8_t id, uint8_t new_id)
 {
-    return write(reg_type::ADDR_ID, reg_type::SIZE_ID, id, new_id);
+    return write<typename reg_type::TYPE_ID>(reg_type::ADDR_ID, id, new_id);
 }
 
 /**
@@ -239,7 +243,7 @@ int DxlDriver<reg_type>::readFirmwareVersion(uint8_t id, std::string &version)
 template<typename reg_type>
 int DxlDriver<reg_type>::readMinPosition(uint8_t id, uint32_t &pos)
 {
-    return read(reg_type::ADDR_MIN_POSITION_LIMIT, reg_type::SIZE_MIN_POSITION_LIMIT, id, pos);
+    return read<typename reg_type::TYPE_MIN_POSITION_LIMIT>(reg_type::ADDR_MIN_POSITION_LIMIT, id, pos);
 }
 
 /**
@@ -251,10 +255,46 @@ int DxlDriver<reg_type>::readMinPosition(uint8_t id, uint32_t &pos)
 template<typename reg_type>
 int DxlDriver<reg_type>::readMaxPosition(uint8_t id, uint32_t &pos)
 {
-    return read(reg_type::ADDR_MAX_POSITION_LIMIT, reg_type::SIZE_MAX_POSITION_LIMIT, id, pos);
+    return read<typename reg_type::TYPE_MAX_POSITION_LIMIT>(reg_type::ADDR_MAX_POSITION_LIMIT, id, pos);
 }
 
 // ram write
+
+/**
+ * @brief DxlDriver<reg_type>::writeVelocityProfile
+ * Write velocity profile for dxl
+ * @param id
+ * @param data_list [ velocity, acceleration]
+ * @return
+ */
+template<typename reg_type>
+int DxlDriver<reg_type>::writeVelocityProfile(uint8_t id, const std::vector<uint32_t>& data_list)
+{
+    // in mode control Position Control Mode, velocity profile in datasheet is used to write velocity (except xl320)
+    int res = 0;
+
+    int tries = 10;
+    while (tries > 0)
+    {
+        tries--;
+        res = write<typename reg_type::TYPE_PROFILE>(reg_type::ADDR_PROFILE_VELOCITY, id, data_list.at(0));
+        if (COMM_SUCCESS == res)
+            break;
+    }
+    tries = 10;
+    while (tries > 0)
+    {
+        tries--;
+        res = write<typename reg_type::TYPE_PROFILE>(reg_type::ADDR_PROFILE_ACCELERATION, id, data_list.at(1));
+        if (COMM_SUCCESS == res)
+            break;
+    }
+
+    if (COMM_SUCCESS != res)
+        return res;
+
+    return res;
+}
 
 /**
  * @brief DxlDriver<reg_type>::writeTorqueEnable
@@ -263,48 +303,33 @@ int DxlDriver<reg_type>::readMaxPosition(uint8_t id, uint32_t &pos)
  * @return
  */
 template<typename reg_type>
-int DxlDriver<reg_type>::writeTorqueEnable(uint8_t id, uint32_t torque_enable)
+int DxlDriver<reg_type>::writeTorqueEnable(uint8_t id, uint8_t torque_enable)
 {
-    return write(reg_type::ADDR_TORQUE_ENABLE, reg_type::SIZE_TORQUE_ENABLE, id, torque_enable);
+    return write<typename reg_type::TYPE_TORQUE_ENABLE>(reg_type::ADDR_TORQUE_ENABLE, id, torque_enable);
 }
 
 /**
- * @brief DxlDriver<reg_type>::writeGoalPosition
+ * @brief DxlDriver<reg_type>::writePositionGoal
  * @param id
  * @param position
  * @return
  */
 template<typename reg_type>
-int DxlDriver<reg_type>::writeGoalPosition(uint8_t id, uint32_t position)
+int DxlDriver<reg_type>::writePositionGoal(uint8_t id, uint32_t position)
 {
-    return write(reg_type::ADDR_GOAL_POSITION, reg_type::SIZE_GOAL_POSITION, id, position);
+    return write<typename reg_type::TYPE_GOAL_POSITION>(reg_type::ADDR_GOAL_POSITION, id, position);
 }
 
 /**
- * @brief DxlDriver<reg_type>::writeGoalVelocity
- * Write velocity profile for dxl
+ * @brief DxlDriver<reg_type>::writeVelocityGoal
  * @param id
  * @param velocity
  * @return
  */
 template<typename reg_type>
-int DxlDriver<reg_type>::writeGoalVelocity(uint8_t id, uint32_t velocity_profile)
+int DxlDriver<reg_type>::writeVelocityGoal(uint8_t id, uint32_t velocity)
 {
-    // in mode control Position Control Mode, velocity profile in datasheet is used to write velocity (except xl320)
-    return write(reg_type::ADDR_PROFILE_VELOCITY, reg_type::SIZE_PROFILE_VELOCITY, id, velocity_profile);
-}
-
-/**
- * @brief DxlDriver<reg_type>::writeGoalAcceleration
- * Write acceleration profile for dxl
- * @param id
- * @param acceleration_profile
- * @return
- */
-template<typename reg_type>
-int DxlDriver<reg_type>::writeGoalAcceleration(uint8_t id, uint32_t acceleration_profile)
-{
-    return write(reg_type::ADDR_PROFILE_ACCELERATION, reg_type::SIZE_PROFILE_ACCELERATION, id, acceleration_profile);
+    return write<typename reg_type::TYPE_GOAL_VELOCITY>(reg_type::ADDR_GOAL_VELOCITY, id, velocity);
 }
 
 /**
@@ -314,9 +339,9 @@ int DxlDriver<reg_type>::writeGoalAcceleration(uint8_t id, uint32_t acceleration
  * @return
  */
 template<typename reg_type>
-int DxlDriver<reg_type>::syncWriteTorqueEnable(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &torque_enable_list)
+int DxlDriver<reg_type>::syncWriteTorqueEnable(const std::vector<uint8_t> &id_list, const std::vector<uint8_t> &torque_enable_list)
 {
-    return syncWrite(reg_type::ADDR_TORQUE_ENABLE, reg_type::SIZE_TORQUE_ENABLE, id_list, torque_enable_list);
+    return syncWrite<typename reg_type::TYPE_TORQUE_ENABLE>(reg_type::ADDR_TORQUE_ENABLE, id_list, torque_enable_list);
 }
 
 /**
@@ -328,7 +353,7 @@ int DxlDriver<reg_type>::syncWriteTorqueEnable(const std::vector<uint8_t> &id_li
 template<typename reg_type>
 int DxlDriver<reg_type>::syncWritePositionGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &position_list)
 {
-    return syncWrite(reg_type::ADDR_GOAL_POSITION, reg_type::SIZE_GOAL_POSITION, id_list, position_list);
+    return syncWrite<typename reg_type::TYPE_GOAL_POSITION>(reg_type::ADDR_GOAL_POSITION, id_list, position_list);
 }
 
 /**
@@ -340,11 +365,27 @@ int DxlDriver<reg_type>::syncWritePositionGoal(const std::vector<uint8_t> &id_li
 template<typename reg_type>
 int DxlDriver<reg_type>::syncWriteVelocityGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &velocity_list)
 {
-    // in mode control Position Control Mode, velocity profile in datasheet is used to write velocity (except xl320)
-    return syncWrite(reg_type::ADDR_PROFILE_VELOCITY, reg_type::SIZE_PROFILE_VELOCITY, id_list, velocity_list);
+    return syncWrite<typename reg_type::TYPE_GOAL_VELOCITY>(reg_type::ADDR_GOAL_VELOCITY, id_list, velocity_list);
 }
 
 // ram read
+template<typename reg_type>
+int DxlDriver<reg_type>::readVelocityProfile(uint8_t id, std::vector<uint32_t>& data_list)
+{
+    data_list.clear();
+    typename reg_type::TYPE_PROFILE velocity_profile{};
+    typename reg_type::TYPE_PROFILE acceleration_profile{};
+
+    int res = read<typename reg_type::TYPE_PROFILE>(reg_type::ADDR_PROFILE_VELOCITY, id, velocity_profile);
+    if (COMM_SUCCESS == res)
+      res = read<typename reg_type::TYPE_PROFILE>(reg_type::ADDR_PROFILE_ACCELERATION, id, acceleration_profile);
+
+    data_list.emplace_back(velocity_profile);
+    data_list.emplace_back(acceleration_profile);
+
+    return res;
+}
+
 
 /**
  * @brief DxlDriver<reg_type>::readPosition
@@ -495,28 +536,6 @@ int DxlDriver<reg_type>::writePID(uint8_t id, const std::vector<uint32_t> &data)
         if (res == COMM_SUCCESS)
             break;
     }
-    if (res != COMM_SUCCESS)
-        return res;
-
-    tries = 10;
-    while (tries > 0)
-    {
-        tries--;
-        res = writeGoalVelocity(id, data.at(7));
-        if (res == COMM_SUCCESS)
-            break;
-    }
-    if (res != COMM_SUCCESS)
-        return res;
-    
-    tries = 10;
-    while (tries > 0)
-    {
-        tries--;
-        res = writeGoalAcceleration(id, data.at(8));
-        if (res == COMM_SUCCESS)
-            break;
-    }
 
     return res;
 }
@@ -638,9 +657,9 @@ int DxlDriver<reg_type>::syncReadHwErrorStatus(const std::vector<uint8_t> &id_li
  * @return
  */
 template<typename reg_type>
-int DxlDriver<reg_type>::writeLed(uint8_t id, uint32_t led_value)
+int DxlDriver<reg_type>::writeLed(uint8_t id, uint8_t led_value)
 {
-    return write(reg_type::ADDR_LED, reg_type::SIZE_LED, id, led_value);
+    return write<typename reg_type::TYPE_LED>(reg_type::ADDR_LED, id, led_value);
 }
 
 /**
@@ -650,21 +669,21 @@ int DxlDriver<reg_type>::writeLed(uint8_t id, uint32_t led_value)
  * @return
  */
 template<typename reg_type>
-int DxlDriver<reg_type>::syncWriteLed(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &led_list)
+int DxlDriver<reg_type>::syncWriteLed(const std::vector<uint8_t> &id_list, const std::vector<uint8_t> &led_list)
 {
-    return syncWrite(reg_type::ADDR_LED, reg_type::SIZE_LED, id_list, led_list);
+    return syncWrite<typename reg_type::TYPE_LED>(reg_type::ADDR_LED, id_list, led_list);
 }
 
 /**
- * @brief DxlDriver<reg_type>::writeGoalTorque
+ * @brief DxlDriver<reg_type>::writeTorqueGoal
  * @param id
  * @param torque
  * @return
  */
 template<typename reg_type>
-int DxlDriver<reg_type>::writeGoalTorque(uint8_t id, uint32_t torque)
+int DxlDriver<reg_type>::writeTorqueGoal(uint8_t id, uint16_t torque)
 {
-    return write(reg_type::ADDR_GOAL_TORQUE, reg_type::SIZE_GOAL_TORQUE, id, torque);
+    return write<typename reg_type::TYPE_GOAL_TORQUE>(reg_type::ADDR_GOAL_TORQUE, id, torque);
 }
 
 /**
@@ -674,9 +693,9 @@ int DxlDriver<reg_type>::writeGoalTorque(uint8_t id, uint32_t torque)
  * @return
  */
 template<typename reg_type>
-int DxlDriver<reg_type>::syncWriteTorqueGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &torque_list)
+int DxlDriver<reg_type>::syncWriteTorqueGoal(const std::vector<uint8_t> &id_list, const std::vector<uint16_t> &torque_list)
 {
-    return syncWrite(reg_type::ADDR_GOAL_TORQUE, reg_type::SIZE_GOAL_TORQUE, id_list, torque_list);
+    return syncWrite<typename reg_type::TYPE_GOAL_TORQUE>(reg_type::ADDR_GOAL_TORQUE, id_list, torque_list);
 }
 
 // read
@@ -686,6 +705,7 @@ int DxlDriver<reg_type>::syncWriteTorqueGoal(const std::vector<uint8_t> &id_list
  * @param id
  * @param data_list
  * @return
+ *  TODO(cc) bulk read all in one shot
  */
 template<typename reg_type>
 int DxlDriver<reg_type>::readPID(uint8_t id, std::vector<uint32_t>& data_list)
@@ -693,48 +713,47 @@ int DxlDriver<reg_type>::readPID(uint8_t id, std::vector<uint32_t>& data_list)
     int res = 0;
     data_list.clear();
 
-    uint32_t pos_p_gain{0};
+    uint16_t pos_p_gain{0};
     if (COMM_SUCCESS != readPositionPGain(id, pos_p_gain))
         res++;
 
     data_list.emplace_back(pos_p_gain);
 
-    uint32_t pos_i_gain{0};
+    uint16_t pos_i_gain{0};
     if (COMM_SUCCESS != readPositionIGain(id, pos_i_gain))
         res++;
 
     data_list.emplace_back(pos_i_gain);
 
-    uint32_t pos_d_gain{0};
+    uint16_t pos_d_gain{0};
     if (COMM_SUCCESS != readPositionDGain(id, pos_d_gain))
         res++;
 
     data_list.emplace_back(pos_d_gain);
 
-    uint32_t vel_p_gain{0};
+    uint16_t vel_p_gain{0};
     if (COMM_SUCCESS != readVelocityPGain(id, vel_p_gain))
         res++;
 
     data_list.emplace_back(vel_p_gain);
 
-    uint32_t vel_i_gain{0};
+    uint16_t vel_i_gain{0};
     if (COMM_SUCCESS != readVelocityIGain(id, vel_i_gain))
         res++;
 
     data_list.emplace_back(vel_i_gain);
 
-    uint32_t ff1_gain{0};
+    uint16_t ff1_gain{0};
     if (COMM_SUCCESS != readFF1Gain(id, ff1_gain))
         res++;
 
     data_list.emplace_back(ff1_gain);
 
-    uint32_t ff2_gain{0};
+    uint16_t ff2_gain{0};
     if (COMM_SUCCESS != readFF2Gain(id, ff2_gain))
         res++;
 
     data_list.emplace_back(ff2_gain);
-    // velocity and acceleration profile is readonly
 
     if(res > 0)
     {
@@ -754,7 +773,7 @@ int DxlDriver<reg_type>::readPID(uint8_t id, std::vector<uint32_t>& data_list)
 template<typename reg_type>
 int DxlDriver<reg_type>::writeControlMode(uint8_t id, uint8_t control_mode)
 {
-    return write(reg_type::ADDR_OPERATING_MODE, reg_type::SIZE_OPERATING_MODE, id, control_mode);
+    return write<typename reg_type::TYPE_OPERATING_MODE>(reg_type::ADDR_OPERATING_MODE, id, control_mode);
 }
 
 /**
@@ -767,8 +786,8 @@ template<typename reg_type>
 int DxlDriver<reg_type>::readControlMode(uint8_t id, uint8_t &data)
 {
     int res = 0;
-    uint32_t raw{};
-    res = read(reg_type::ADDR_OPERATING_MODE, reg_type::SIZE_OPERATING_MODE, id, raw);
+    typename reg_type::TYPE_OPERATING_MODE raw{};
+    res = read<typename reg_type::TYPE_OPERATING_MODE>(reg_type::ADDR_OPERATING_MODE, id, raw);
     data = static_cast<uint8_t>(raw);
     return res;
 }
@@ -781,9 +800,9 @@ int DxlDriver<reg_type>::readControlMode(uint8_t id, uint8_t &data)
  * @return
  */
 template<typename reg_type>
-int DxlDriver<reg_type>::readLoad(uint8_t id, uint32_t& present_load)
+int DxlDriver<reg_type>::readLoad(uint8_t id, uint16_t& present_load)
 {
-    return read(reg_type::ADDR_PRESENT_LOAD, reg_type::SIZE_PRESENT_LOAD, id, present_load);
+    return read<typename reg_type::TYPE_PRESENT_LOAD>(reg_type::ADDR_PRESENT_LOAD, id, present_load);
 }
 
 /**
@@ -793,9 +812,9 @@ int DxlDriver<reg_type>::readLoad(uint8_t id, uint32_t& present_load)
  * @return
  */
 template<typename reg_type>
-int DxlDriver<reg_type>::syncReadLoad(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &load_list)
+int DxlDriver<reg_type>::syncReadLoad(const std::vector<uint8_t> &id_list, std::vector<uint16_t> &load_list)
 {
-    return syncRead(reg_type::ADDR_PRESENT_LOAD, reg_type::SIZE_PRESENT_LOAD, id_list, load_list);
+    return syncRead<typename reg_type::TYPE_PRESENT_LOAD>(reg_type::ADDR_PRESENT_LOAD, id_list, load_list);
 }
 
 /**
@@ -830,8 +849,32 @@ int DxlDriver<reg_type>::syncReadVelocity(const std::vector<uint8_t> &id_list, s
  */
 template<typename reg_type>
 int DxlDriver<reg_type>::syncReadJointStatus(const std::vector<uint8_t> &id_list, std::vector<std::array<uint32_t, 2> > &data_array_list)
-{
-  return syncReadConsecutiveBytes<uint32_t, 2>(reg_type::ADDR_PRESENT_VELOCITY, id_list, data_array_list);
+{  
+    int res = COMM_TX_FAIL;
+
+    if(id_list.empty())
+        return res;
+
+    data_array_list.clear();
+
+    // read torque enable on first id
+    typename reg_type::TYPE_TORQUE_ENABLE torque;
+    read<typename reg_type::TYPE_TORQUE_ENABLE>(reg_type::ADDR_TORQUE_ENABLE, id_list.at(0), torque);
+
+    //if torque on, read position and velocity
+    if (torque)
+    {
+        res = syncReadConsecutiveBytes<uint32_t, 2>(reg_type::ADDR_PRESENT_VELOCITY, id_list, data_array_list);
+    }
+    else  //else read position only
+    {
+        std::vector<uint32_t> position_list;
+        res = syncReadPosition(id_list, position_list);
+        for (auto p : position_list)
+          data_array_list.emplace_back(std::array<uint32_t, 2>{0, p});
+    }
+
+    return res;
 }
 
 // private
@@ -843,9 +886,9 @@ int DxlDriver<reg_type>::syncReadJointStatus(const std::vector<uint8_t> &id_list
  * @return
  */
 template<typename reg_type>
-int DxlDriver<reg_type>::readPositionPGain(uint8_t id, uint32_t& gain)
+int DxlDriver<reg_type>::readPositionPGain(uint8_t id, uint16_t& gain)
 {
-    return read(reg_type::ADDR_POSITION_P_GAIN, reg_type::SIZE_POSITION_P_GAIN, id, gain);
+    return read<typename reg_type::TYPE_PID_GAIN>(reg_type::ADDR_POSITION_P_GAIN, id, gain);
 }
 
 /**
@@ -855,9 +898,9 @@ int DxlDriver<reg_type>::readPositionPGain(uint8_t id, uint32_t& gain)
  * @return
  */
 template<typename reg_type>
-int DxlDriver<reg_type>::readPositionIGain(uint8_t id, uint32_t& gain)
+int DxlDriver<reg_type>::readPositionIGain(uint8_t id, uint16_t& gain)
 {
-    return read(reg_type::ADDR_POSITION_I_GAIN, reg_type::SIZE_POSITION_I_GAIN, id, gain);
+    return read<typename reg_type::TYPE_PID_GAIN>(reg_type::ADDR_POSITION_I_GAIN, id, gain);
 }
 
 /**
@@ -867,9 +910,9 @@ int DxlDriver<reg_type>::readPositionIGain(uint8_t id, uint32_t& gain)
  * @return
  */
 template<typename reg_type>
-int DxlDriver<reg_type>::readPositionDGain(uint8_t id, uint32_t& gain)
+int DxlDriver<reg_type>::readPositionDGain(uint8_t id, uint16_t& gain)
 {
-    return read(reg_type::ADDR_POSITION_D_GAIN, reg_type::SIZE_POSITION_D_GAIN, id, gain);
+    return read<typename reg_type::TYPE_PID_GAIN>(reg_type::ADDR_POSITION_D_GAIN, id, gain);
 }
 
 /**
@@ -879,9 +922,9 @@ int DxlDriver<reg_type>::readPositionDGain(uint8_t id, uint32_t& gain)
  * @return
  */
 template<typename reg_type>
-int DxlDriver<reg_type>::readVelocityPGain(uint8_t id, uint32_t& gain)
+int DxlDriver<reg_type>::readVelocityPGain(uint8_t id, uint16_t& gain)
 {
-    return read(reg_type::ADDR_VELOCITY_P_GAIN, reg_type::SIZE_VELOCITY_P_GAIN, id, gain);
+    return read<typename reg_type::TYPE_PID_GAIN>(reg_type::ADDR_VELOCITY_P_GAIN, id, gain);
 }
 
 /**
@@ -891,9 +934,9 @@ int DxlDriver<reg_type>::readVelocityPGain(uint8_t id, uint32_t& gain)
  * @return
  */
 template<typename reg_type>
-int DxlDriver<reg_type>::readVelocityIGain(uint8_t id, uint32_t& gain)
+int DxlDriver<reg_type>::readVelocityIGain(uint8_t id, uint16_t& gain)
 {
-    return read(reg_type::ADDR_VELOCITY_I_GAIN, reg_type::SIZE_VELOCITY_I_GAIN, id, gain);
+    return read<typename reg_type::TYPE_PID_GAIN>(reg_type::ADDR_VELOCITY_I_GAIN, id, gain);
 }
 
 /**
@@ -903,9 +946,9 @@ int DxlDriver<reg_type>::readVelocityIGain(uint8_t id, uint32_t& gain)
  * @return
  */
 template<typename reg_type>
-int DxlDriver<reg_type>::readFF1Gain(uint8_t id, uint32_t& gain)
+int DxlDriver<reg_type>::readFF1Gain(uint8_t id, uint16_t& gain)
 {
-    return read(reg_type::ADDR_FF1_GAIN, reg_type::SIZE_FF1_GAIN, id, gain);
+    return read<typename reg_type::TYPE_PID_GAIN>(reg_type::ADDR_FF1_GAIN, id, gain);
 }
 
 /**
@@ -915,9 +958,9 @@ int DxlDriver<reg_type>::readFF1Gain(uint8_t id, uint32_t& gain)
  * @return
  */
 template<typename reg_type>
-int DxlDriver<reg_type>::readFF2Gain(uint8_t id, uint32_t& gain)
+int DxlDriver<reg_type>::readFF2Gain(uint8_t id, uint16_t& gain)
 {
-    return read(reg_type::ADDR_FF2_GAIN, reg_type::SIZE_FF2_GAIN, id, gain);
+    return read<typename reg_type::TYPE_PID_GAIN>(reg_type::ADDR_FF2_GAIN, id, gain);
 }
 
 // write
@@ -928,9 +971,9 @@ int DxlDriver<reg_type>::readFF2Gain(uint8_t id, uint32_t& gain)
  * @return
  */
 template<typename reg_type>
-int DxlDriver<reg_type>::writePositionPGain(uint8_t id, uint32_t gain)
+int DxlDriver<reg_type>::writePositionPGain(uint8_t id, uint16_t gain)
 {
-    return write(reg_type::ADDR_POSITION_P_GAIN, reg_type::SIZE_POSITION_P_GAIN, id, gain);
+    return write<typename reg_type::TYPE_PID_GAIN>(reg_type::ADDR_POSITION_P_GAIN, id, gain);
 }
 
 /**
@@ -940,9 +983,9 @@ int DxlDriver<reg_type>::writePositionPGain(uint8_t id, uint32_t gain)
  * @return
  */
 template<typename reg_type>
-int DxlDriver<reg_type>::writePositionIGain(uint8_t id, uint32_t gain)
+int DxlDriver<reg_type>::writePositionIGain(uint8_t id, uint16_t gain)
 {
-    return write(reg_type::ADDR_POSITION_I_GAIN, reg_type::SIZE_POSITION_I_GAIN, id, gain);
+    return write<typename reg_type::TYPE_PID_GAIN>(reg_type::ADDR_POSITION_I_GAIN, id, gain);
 }
 
 /**
@@ -952,9 +995,9 @@ int DxlDriver<reg_type>::writePositionIGain(uint8_t id, uint32_t gain)
  * @return
  */
 template<typename reg_type>
-int DxlDriver<reg_type>::writePositionDGain(uint8_t id, uint32_t gain)
+int DxlDriver<reg_type>::writePositionDGain(uint8_t id, uint16_t gain)
 {
-    return write(reg_type::ADDR_POSITION_D_GAIN, reg_type::SIZE_POSITION_D_GAIN, id, gain);
+    return write<typename reg_type::TYPE_PID_GAIN>(reg_type::ADDR_POSITION_D_GAIN, id, gain);
 }
 
 /**
@@ -964,9 +1007,9 @@ int DxlDriver<reg_type>::writePositionDGain(uint8_t id, uint32_t gain)
  * @return
  */
 template<typename reg_type>
-int DxlDriver<reg_type>::writeVelocityPGain(uint8_t id, uint32_t gain)
+int DxlDriver<reg_type>::writeVelocityPGain(uint8_t id, uint16_t gain)
 {
-    return write(reg_type::ADDR_VELOCITY_P_GAIN, reg_type::SIZE_VELOCITY_P_GAIN, id, gain);
+    return write<typename reg_type::TYPE_PID_GAIN>(reg_type::ADDR_VELOCITY_P_GAIN, id, gain);
 }
 
 /**
@@ -976,9 +1019,9 @@ int DxlDriver<reg_type>::writeVelocityPGain(uint8_t id, uint32_t gain)
  * @return
  */
 template<typename reg_type>
-int DxlDriver<reg_type>::writeVelocityIGain(uint8_t id, uint32_t gain)
+int DxlDriver<reg_type>::writeVelocityIGain(uint8_t id, uint16_t gain)
 {
-    return write(reg_type::ADDR_VELOCITY_I_GAIN, reg_type::SIZE_VELOCITY_I_GAIN, id, gain);
+    return write<typename reg_type::TYPE_PID_GAIN>(reg_type::ADDR_VELOCITY_I_GAIN, id, gain);
 }
 
 /**
@@ -988,9 +1031,9 @@ int DxlDriver<reg_type>::writeVelocityIGain(uint8_t id, uint32_t gain)
  * @return
  */
 template<typename reg_type>
-int DxlDriver<reg_type>::writeFF1Gain(uint8_t id, uint32_t gain)
+int DxlDriver<reg_type>::writeFF1Gain(uint8_t id, uint16_t gain)
 {
-    return write(reg_type::ADDR_FF1_GAIN, reg_type::SIZE_FF1_GAIN, id, gain);
+    return write<typename reg_type::TYPE_PID_GAIN>(reg_type::ADDR_FF1_GAIN, id, gain);
 }
 
 /**
@@ -1000,9 +1043,9 @@ int DxlDriver<reg_type>::writeFF1Gain(uint8_t id, uint32_t gain)
  * @return
  */
 template<typename reg_type>
-int DxlDriver<reg_type>::writeFF2Gain(uint8_t id, uint32_t gain)
+int DxlDriver<reg_type>::writeFF2Gain(uint8_t id, uint16_t gain)
 {
-    return write(reg_type::ADDR_FF2_GAIN, reg_type::SIZE_FF2_GAIN, id, gain);
+    return write<typename reg_type::TYPE_PID_GAIN>(reg_type::ADDR_FF2_GAIN, id, gain);
 }
 
 /*
@@ -1057,6 +1100,21 @@ inline std::string DxlDriver<XL320Reg>::interpretErrorState(uint32_t hw_state) c
 
     return hardware_message;
 }
+
+template<>
+inline int DxlDriver<XL320Reg>::readVelocityProfile(uint8_t /*id*/, std::vector<uint32_t>& /*data_list*/)
+{
+    std::cout << "readVelocityProfile not available for XL320" << std::endl;
+    return COMM_SUCCESS;
+}
+
+template<>
+inline int DxlDriver<XL320Reg>::writeVelocityProfile(uint8_t /*id*/, const std::vector<uint32_t>& /*data_list*/)
+{
+    std::cout << "writeVelocityProfile not available for XL320" << std::endl;
+    return COMM_SUCCESS;
+}
+
 
 template<>
 inline int DxlDriver<XL320Reg>::readPosition(uint8_t id, uint32_t& present_position)
@@ -1119,6 +1177,40 @@ inline int DxlDriver<XL320Reg>::syncReadJointStatus(const std::vector<uint8_t> &
     return res;
 }
 
+/**
+ * @brief DxlDriver<reg_type>::syncWritePositionGoal
+ * @param id_list
+ * @param position_list
+ * @return
+ */
+template<>
+inline int DxlDriver<XL320Reg>::syncWritePositionGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &position_list)
+{
+    std::vector<typename XL320Reg::TYPE_GOAL_POSITION> casted_list;
+    for (auto const& p : position_list)
+    {
+        casted_list.emplace_back(static_cast<typename XL320Reg::TYPE_GOAL_POSITION>(p));
+    }
+    return syncWrite<typename XL320Reg::TYPE_GOAL_POSITION>(XL320Reg::ADDR_GOAL_POSITION, id_list, casted_list);
+}
+
+/**
+ * @brief DxlDriver<reg_type>::syncWriteVelocityGoal
+ * @param id_list
+ * @param velocity_list
+ * @return
+ */
+template<>
+inline int DxlDriver<XL320Reg>::syncWriteVelocityGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &velocity_list)
+{
+    std::vector<typename XL320Reg::TYPE_GOAL_VELOCITY> casted_list;
+    for (auto const& v : velocity_list)
+    {
+        casted_list.emplace_back(static_cast<typename XL320Reg::TYPE_GOAL_VELOCITY>(v));
+    }
+    return syncWrite<typename XL320Reg::TYPE_GOAL_VELOCITY>(XL320Reg::ADDR_GOAL_VELOCITY, id_list, casted_list);
+}
+
 template<>
 inline int DxlDriver<XL320Reg>::writeControlMode(uint8_t /*id*/, uint8_t /*data*/)
 {
@@ -1133,30 +1225,49 @@ inline int DxlDriver<XL320Reg>::readControlMode(uint8_t /*id*/, uint8_t& /*data*
     return COMM_SUCCESS;
 }
 
+// write PID
+template<>
+inline int DxlDriver<XL320Reg>::writePositionPGain(uint8_t id, uint16_t gain)
+{
+    return write<typename XL320Reg::TYPE_PID_GAIN>(XL320Reg::ADDR_POSITION_P_GAIN, id, static_cast<typename XL320Reg::TYPE_PID_GAIN>(gain));
+}
 
 template<>
-inline int DxlDriver<XL320Reg>::writeVelocityPGain(uint8_t /*id*/, uint32_t /*gain*/)
+inline int DxlDriver<XL320Reg>::writePositionIGain(uint8_t id, uint16_t gain)
+{
+    return write<typename XL320Reg::TYPE_PID_GAIN>(XL320Reg::ADDR_POSITION_I_GAIN, id, static_cast<typename XL320Reg::TYPE_PID_GAIN>(gain));
+}
+
+template<>
+inline int DxlDriver<XL320Reg>::writePositionDGain(uint8_t id, uint16_t gain)
+{
+    return write<typename XL320Reg::TYPE_PID_GAIN>(XL320Reg::ADDR_POSITION_D_GAIN, id, static_cast<typename XL320Reg::TYPE_PID_GAIN>(gain));
+}
+
+
+template<>
+inline int DxlDriver<XL320Reg>::writeVelocityPGain(uint8_t /*id*/, uint16_t /*gain*/)
 {
     std::cout << "writeVelocityPGain not available for motor XL320" << std::endl;
     return COMM_SUCCESS;
 }
 
 template<>
-inline int DxlDriver<XL320Reg>::writeVelocityIGain(uint8_t /*id*/, uint32_t /*gain*/)
+inline int DxlDriver<XL320Reg>::writeVelocityIGain(uint8_t /*id*/, uint16_t /*gain*/)
 {
     std::cout << "writeVelocityIGain not available for motor XL320" << std::endl;
     return COMM_SUCCESS;
 }
 
 template<>
-inline int DxlDriver<XL320Reg>::writeFF1Gain(uint8_t /*id*/, uint32_t /*gain*/)
+inline int DxlDriver<XL320Reg>::writeFF1Gain(uint8_t /*id*/, uint16_t /*gain*/)
 {
     std::cout << "writeff1Gain not available for motor XL320" << std::endl;
     return COMM_SUCCESS;
 }
 
 template<>
-inline int DxlDriver<XL320Reg>::writeFF2Gain(uint8_t /*id*/, uint32_t /*gain*/)
+inline int DxlDriver<XL320Reg>::writeFF2Gain(uint8_t /*id*/, uint16_t /*gain*/)
 {
     std::cout << "writeff2Gain not available for motor XL320" << std::endl;
     return COMM_SUCCESS;
@@ -1164,50 +1275,61 @@ inline int DxlDriver<XL320Reg>::writeFF2Gain(uint8_t /*id*/, uint32_t /*gain*/)
 
 // read PID
 template<>
-inline int DxlDriver<XL320Reg>::readVelocityPGain(uint8_t /*id*/, uint32_t& /*gain*/)
+inline int DxlDriver<XL320Reg>::readPositionPGain(uint8_t id, uint16_t& gain)
+{
+    uint8_t raw_data{};
+    int res = read<typename XL320Reg::TYPE_PID_GAIN>(XL320Reg::ADDR_POSITION_P_GAIN, id, raw_data);
+    gain = raw_data;
+
+    return res;
+}
+
+template<>
+inline int DxlDriver<XL320Reg>::readPositionIGain(uint8_t id, uint16_t& gain)
+{
+    uint8_t raw_data{};
+    int res = read<typename XL320Reg::TYPE_PID_GAIN>(XL320Reg::ADDR_POSITION_I_GAIN, id, raw_data);
+    gain = raw_data;
+
+    return res;
+}
+
+template<>
+inline int DxlDriver<XL320Reg>::readPositionDGain(uint8_t id, uint16_t& gain)
+{
+    uint8_t raw_data{};
+    int res = read<typename XL320Reg::TYPE_PID_GAIN>(XL320Reg::ADDR_POSITION_D_GAIN, id, raw_data);
+    gain = raw_data;
+
+    return res;
+}
+
+template<>
+inline int DxlDriver<XL320Reg>::readVelocityPGain(uint8_t /*id*/, uint16_t& /*gain*/)
 {
     std::cout << "readVelocityPGain not available for motor XL320" << std::endl;
     return COMM_SUCCESS;
 }
 
 template<>
-inline int DxlDriver<XL320Reg>::readVelocityIGain(uint8_t /*id*/, uint32_t& /*gain*/)
+inline int DxlDriver<XL320Reg>::readVelocityIGain(uint8_t /*id*/, uint16_t& /*gain*/)
 {
     std::cout << "readVelocityIGain not available for motor XL320" << std::endl;
     return COMM_SUCCESS;
 }
 
 template<>
-inline int DxlDriver<XL320Reg>::readFF1Gain(uint8_t /*id*/, uint32_t& /*gain*/)
+inline int DxlDriver<XL320Reg>::readFF1Gain(uint8_t /*id*/, uint16_t& /*gain*/)
 {
     std::cout << "readFF1Gain not available for motor XL320" << std::endl;
     return COMM_SUCCESS;
 }
 
 template<>
-inline int DxlDriver<XL320Reg>::readFF2Gain(uint8_t /*id*/, uint32_t& /*gain*/)
+inline int DxlDriver<XL320Reg>::readFF2Gain(uint8_t /*id*/, uint16_t& /*gain*/)
 {
     std::cout << "readFF2Gain not available for motor XL320" << std::endl;
     return COMM_SUCCESS;
-}
-
-template<>
-inline int DxlDriver<XL320Reg>::writeGoalVelocity(uint8_t id, uint32_t velocity_profile)
-{
-    return write(XL320Reg::ADDR_GOAL_VELOCITY, XL320Reg::SIZE_GOAL_VELOCITY, id, velocity_profile);
-}
-
-template<>
-inline int DxlDriver<XL320Reg>::writeGoalAcceleration(uint8_t id, uint32_t acceleration_profile)
-{
-    std::cout << "write acceleration profile in XL320 is not available" << std::endl;
-    return COMM_SUCCESS;
-}
-
-template<>
-inline int DxlDriver<XL320Reg>::syncWriteVelocityGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &velocity_list)
-{
-    return syncWrite(XL320Reg::ADDR_GOAL_VELOCITY, XL320Reg::SIZE_GOAL_VELOCITY, id_list, velocity_list);
 }
 
 // XL430
@@ -1258,14 +1380,14 @@ inline std::string DxlDriver<XL430Reg>::interpretErrorState(uint32_t hw_state) c
 }
 
 template<>
-inline int DxlDriver<XL430Reg>::writeGoalTorque(uint8_t /*id*/, uint32_t /*torque*/)
+inline int DxlDriver<XL430Reg>::writeTorqueGoal(uint8_t /*id*/, uint16_t /*torque*/)
 {
-    std::cout << "writeGoalTorque not available for motor XL430" << std::endl;
+    std::cout << "writeTorqueGoal not available for motor XL430" << std::endl;
     return COMM_TX_ERROR;
 }
 
 template<>
-inline int DxlDriver<XL430Reg>::syncWriteTorqueGoal(const std::vector<uint8_t> &/*id_list*/, const std::vector<uint32_t> &/*torque_list*/)
+inline int DxlDriver<XL430Reg>::syncWriteTorqueGoal(const std::vector<uint8_t> &/*id_list*/, const std::vector<uint16_t> &/*torque_list*/)
 {
     std::cout << "syncWriteTorqueGoal not available for motor XL430" << std::endl;
     return COMM_TX_ERROR;
@@ -1319,14 +1441,14 @@ inline std::string DxlDriver<XC430Reg>::interpretErrorState(uint32_t hw_state) c
 }
 
 template<>
-inline int DxlDriver<XC430Reg>::writeGoalTorque(uint8_t /*id*/, uint32_t /*torque*/)
+inline int DxlDriver<XC430Reg>::writeTorqueGoal(uint8_t /*id*/, uint16_t /*torque*/)
 {
-    std::cout << "writeGoalTorque not available for motor XC430" << std::endl;
+    std::cout << "writeTorqueGoal not available for motor XC430" << std::endl;
     return COMM_TX_ERROR;
 }
 
 template<>
-inline int DxlDriver<XC430Reg>::syncWriteTorqueGoal(const std::vector<uint8_t> &/*id_list*/, const std::vector<uint32_t> &/*torque_list*/)
+inline int DxlDriver<XC430Reg>::syncWriteTorqueGoal(const std::vector<uint8_t> &/*id_list*/, const std::vector<uint16_t> &/*torque_list*/)
 {
     std::cout << "syncWriteTorqueGoal not available for motor XC430" << std::endl;
     return COMM_TX_ERROR;
@@ -1382,27 +1504,27 @@ inline std::string DxlDriver<XL330Reg>::interpretErrorState(uint32_t hw_state) c
 // works with current instead of load
 
 template<>
-inline int DxlDriver<XL330Reg>::writeGoalTorque(uint8_t id, uint32_t torque)
+inline int DxlDriver<XL330Reg>::writeTorqueGoal(uint8_t id, uint16_t torque)
 {
-    return write(XL330Reg::ADDR_GOAL_CURRENT, XL330Reg::SIZE_GOAL_CURRENT, id, torque);
+    return write<typename XL330Reg::TYPE_GOAL_CURRENT>(XL330Reg::ADDR_GOAL_CURRENT, id, torque);
 }
 
 template<>
-inline int DxlDriver<XL330Reg>::syncWriteTorqueGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &torque_list)
+inline int DxlDriver<XL330Reg>::syncWriteTorqueGoal(const std::vector<uint8_t> &id_list, const std::vector<uint16_t>& torque_list)
 {
-    return syncWrite(XL330Reg::ADDR_GOAL_CURRENT, XL330Reg::SIZE_GOAL_CURRENT, id_list, torque_list);
+    return syncWrite<typename XL330Reg::TYPE_GOAL_CURRENT>(XL330Reg::ADDR_GOAL_CURRENT, id_list, torque_list);
 }
 
 template<>
-inline int DxlDriver<XL330Reg>::readLoad(uint8_t id, uint32_t& present_load)
+inline int DxlDriver<XL330Reg>::readLoad(uint8_t id, uint16_t& present_load)
 {
-    return read(XL330Reg::ADDR_PRESENT_CURRENT, XL330Reg::SIZE_PRESENT_CURRENT, id, present_load);
+    return read<typename XL330Reg::TYPE_PRESENT_CURRENT>(XL330Reg::ADDR_PRESENT_CURRENT, id, present_load);
 }
 
 template<>
-inline int DxlDriver<XL330Reg>::syncReadLoad(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &load_list)
+inline int DxlDriver<XL330Reg>::syncReadLoad(const std::vector<uint8_t> &id_list, std::vector<uint16_t> &load_list)
 {
-    return syncRead(XL330Reg::ADDR_PRESENT_CURRENT, XL330Reg::SIZE_PRESENT_CURRENT, id_list, load_list);
+    return syncRead<typename XL330Reg::TYPE_PRESENT_CURRENT>(XL330Reg::ADDR_PRESENT_CURRENT, id_list, load_list);
 }
 
 } // ttl_driver

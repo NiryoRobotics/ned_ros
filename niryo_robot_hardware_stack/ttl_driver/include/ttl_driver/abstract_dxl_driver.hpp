@@ -48,8 +48,8 @@ class AbstractDxlDriver : public AbstractMotorDriver
         // specific DXL commands
 
         // ram read
-        virtual int readLoad(uint8_t id, uint32_t& present_load ) = 0;
-        virtual int syncReadLoad(const std::vector<uint8_t>& id_list, std::vector<uint32_t>& load_list ) = 0;
+        virtual int readLoad(uint8_t id, uint16_t& present_load ) = 0;
+        virtual int syncReadLoad(const std::vector<uint8_t>& id_list, std::vector<uint16_t>& load_list ) = 0;
 
         virtual int readPID(uint8_t id, std::vector<uint32_t>& data) = 0;
         virtual int readControlMode(uint8_t id, uint8_t& control_mode) = 0;
@@ -58,13 +58,11 @@ class AbstractDxlDriver : public AbstractMotorDriver
         virtual int writePID(uint8_t id, const std::vector<uint32_t>& data) = 0;
         virtual int writeControlMode(uint8_t id, uint8_t data) = 0;
 
-        virtual int writeLed(uint8_t id, uint32_t led_value ) = 0;
-        virtual int syncWriteLed(const std::vector<uint8_t>& id_list, const std::vector<uint32_t>& led_list ) = 0;
+        virtual int writeLed(uint8_t id, uint8_t led_value ) = 0;
+        virtual int syncWriteLed(const std::vector<uint8_t>& id_list, const std::vector<uint8_t>& led_list ) = 0;
 
-        virtual int writeGoalTorque(uint8_t id, uint32_t torque ) = 0;
-        virtual int syncWriteTorqueGoal(const std::vector<uint8_t>& id_list, const std::vector<uint32_t>& torque_list ) = 0;
-
-        virtual int writeGoalAcceleration(uint8_t id, uint32_t acceleration_profile) = 0;
+        virtual int writeTorqueGoal(uint8_t id, uint16_t torque ) = 0;
+        virtual int syncWriteTorqueGoal(const std::vector<uint8_t>& id_list, const std::vector<uint16_t>& torque_list ) = 0;
 };
 
 } // ttl_driver

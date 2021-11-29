@@ -617,18 +617,23 @@ int JointHardwareInterface::initHardware(std::shared_ptr<common::model::JointSta
             auto dxlState = std::dynamic_pointer_cast<common::model::DxlMotorState>(motor_state);
             if (dxlState)
             {
-                // CMD_TYPE_PID cmd
+                // set PID
                 _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_PID,
-                                                                                    dxlState->getId(),
-                                                                                    std::initializer_list<uint32_t>({dxlState->getPositionPGain(),
-                                                                                                                     dxlState->getPositionIGain(),
-                                                                                                                     dxlState->getPositionDGain(),
-                                                                                                                     dxlState->getVelocityPGain(),
-                                                                                                                     dxlState->getVelocityIGain(),
-                                                                                                                     dxlState->getFF1Gain(),
-                                                                                                                     dxlState->getFF2Gain(),
-                                                                                                                     dxlState->getVelProfile(),
-                                                                                                                     dxlState->getAccProfile()})));
+                                                                                       dxlState->getId(),
+                                                                                       std::initializer_list<uint32_t>({dxlState->getPositionPGain(),
+                                                                                                                        dxlState->getPositionIGain(),
+                                                                                                                        dxlState->getPositionDGain(),
+                                                                                                                        dxlState->getVelocityPGain(),
+                                                                                                                        dxlState->getVelocityIGain(),
+                                                                                                                        dxlState->getFF1Gain(),
+                                                                                                                        dxlState->getFF2Gain(),
+                                                                                                                        dxlState->getVelProfile(),
+                                                                                                                        dxlState->getAccProfile()})));
+                // set velocity and acceleration profile
+                _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_PROFILE,
+                                                                                       dxlState->getId(),
+                                                                                       std::initializer_list<uint32_t>({dxlState->getVelProfile(),
+                                                                                                                        dxlState->getAccProfile()})));
 
                 // TORQUE cmd on if ned2, off otherwise
                 _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(DxlSingleCmd(EDxlCommandType::CMD_TYPE_TORQUE,
