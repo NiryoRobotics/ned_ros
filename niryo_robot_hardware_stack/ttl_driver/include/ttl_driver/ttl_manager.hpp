@@ -268,11 +268,6 @@ private:
             s = static_cast<State>(newState);
         }
 
-        void setStatus(const State state)
-        {
-            s = state;
-        }
-
         State status()
         {
             return s;
@@ -281,16 +276,6 @@ private:
         bool isTimeout()
         {
             return (ros::Time::now().toSec() - _time > _calibration_timeout);
-        }
-
-        double getCalibrationTime()
-        {
-            return _calibration_timeout;            
-        }
-
-        void setCalibrationTimeOut(const double timeout)
-        {
-            _calibration_timeout = timeout;
         }
 
     private:
