@@ -89,7 +89,9 @@ bool CanManager::init(ros::NodeHandle& nh)
     int spi_baudrate = 0;
     int gpio_can_interrupt = 0;
 
+    bool simu_conveyor{false};
     nh.getParam("simulation_mode", _simulation_mode);
+    nh.getParam("simu_conveyor", simu_conveyor);
     nh.getParam("bus_params/spi_channel", spi_channel);
     nh.getParam("bus_params/spi_baudrate", spi_baudrate);
     nh.getParam("bus_params/gpio_can_interrupt", gpio_can_interrupt);
@@ -105,7 +107,7 @@ bool CanManager::init(ros::NodeHandle& nh)
                                                       static_cast<uint8_t>(gpio_can_interrupt));
     else
     {
-        readFakeConfig();
+        readFakeConfig(simu_conveyor);
     }
     return true;
 }

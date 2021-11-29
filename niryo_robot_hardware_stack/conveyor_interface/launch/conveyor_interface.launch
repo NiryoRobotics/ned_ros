@@ -4,6 +4,7 @@
     
     <arg name="hardware_version" default="ned"/>
     <arg name="simulation_mode" default="true"/>
+    <arg name="simu_conveyor" default="true"/>
 
     <!-- use can_driver config -->
     <include file="$(find can_driver)/launch/can_driver_base.launch.xml" if="$(eval hardware_version == 'one' or hardware_version == 'ned')">
