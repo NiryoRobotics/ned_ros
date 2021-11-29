@@ -42,3 +42,8 @@ install(
   DIRECTORY config/
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/config
 )
+
+install(
+    DIRECTORY scripts/
+    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}/scripts
+)

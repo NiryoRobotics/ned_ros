@@ -73,12 +73,12 @@ class ToolCommander:
                                              in self.__dict_commands_string_to_id.iteritems()}
 
         # if gripper simulated, setup variables to control it through moveit
-        if self.__is_use_gazebo:
-            if self.__is_gripper_simulated:
-                # Get Tool MoveGroupCommander
-                self.__tool_simu = moveit_commander.MoveGroupCommander(move_group_tool_commander_name)
-                # Set pose reference frame
-                self.__tool_simu.set_pose_reference_frame(reference_frame)
+        if self.__is_use_gazebo and self.__is_gripper_simulated:
+            self.wait_for_controller()
+            # Get Tool MoveGroupCommander
+            self.__tool_simu = moveit_commander.MoveGroupCommander(move_group_tool_commander_name)
+            # Set pose reference frame
+            self.__tool_simu.set_pose_reference_frame(reference_frame)
 
         # Subscriber
         rospy.Subscriber('/niryo_robot_hardware/tools/motor', Tool,
@@ -112,7 +112,10 @@ class ToolCommander:
     @classmethod
     def wait_for_controller(cls):
         from actionlib_msgs.msg import GoalStatusArray
+
         _ = rospy.wait_for_message("/move_group/status", GoalStatusArray, timeout=120)
+        _ = rospy.wait_for_message("/gazebo_tool_commander/follow_joint_trajectory/status", GoalStatusArray,
+                                   timeout=120)
 
     # Subscriber
 

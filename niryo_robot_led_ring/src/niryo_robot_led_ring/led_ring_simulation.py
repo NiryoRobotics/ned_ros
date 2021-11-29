@@ -66,7 +66,7 @@ class LedRingSimulation:
         Return a positioned marker, equivalent to a Led pixel, but in simulation
         """
         led_ring_marker = Marker()
-        led_ring_marker.header.frame_id = "shoulder_link"
+        led_ring_marker.header.frame_id = "led_ring_link"
         # led_ring_marker.header.stamp = rospy.Time.now()
         led_ring_marker.ns = "led ring"
         led_ring_marker.id = position
@@ -82,7 +82,7 @@ class LedRingSimulation:
             led_ring_marker.scale.y = 1
             led_ring_marker.scale.z = 1
 
-            led_ring_marker.pose.position.z = -0.012
+            led_ring_marker.pose.position.z = -0.0
             led_ring_marker.pose.orientation = Quaternion(
                 *quaternion_from_euler(0, 0, angle))
 
@@ -91,13 +91,13 @@ class LedRingSimulation:
 
         else:
             led_ring_marker.type = led_ring_marker.CUBE
-            led_ring_marker.scale.x = 0.0152
-            led_ring_marker.scale.y = 0.004023
-            led_ring_marker.scale.z = 0.005
+            led_ring_marker.scale.x = 0.01641
+            led_ring_marker.scale.y = 0.0011
+            led_ring_marker.scale.z = 0.002
 
-            led_ring_marker.pose.position.z = -0.012
-            led_ring_marker.pose.position.x = 0.072 * math.cos(angle)
-            led_ring_marker.pose.position.y = 0.072 * math.sin(angle)
+            led_ring_marker.pose.position.z = 0
+            led_ring_marker.pose.position.x = 0.0775 * math.cos(angle)
+            led_ring_marker.pose.position.y = 0.0775 * math.sin(angle)
             led_ring_marker.pose.orientation = Quaternion(
                 *quaternion_from_euler(0, 0, angle + math.pi / 2))
 
