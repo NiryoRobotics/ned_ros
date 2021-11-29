@@ -33,19 +33,19 @@ struct StepperReg
 
     // EEPROM
     static constexpr uint16_t ADDR_MODEL_NUMBER             = 0;
-    static constexpr uint8_t SIZE_MODEL_NUMBER              = 2;
+    using TYPE_MODEL_NUMBER = uint16_t;
 
     static constexpr uint16_t ADDR_ID                       = 7;
-    static constexpr uint8_t SIZE_ID                        = 1;
+    using TYPE_ID = uint8_t;
 
     static constexpr uint16_t ADDR_BAUDRATE                = 8;
-    static constexpr uint8_t SIZE_BAUDRATE                 = 1;
+    using TYPE_BAUDRATE = uint8_t;
 
     static constexpr uint16_t ADDR_MAX_POSITION_LIMIT       = 48;
-    static constexpr uint8_t SIZE_MAX_POSITION_LIMIT        = 4;
+    using TYPE_MAX_POSITION_LIMIT = uint32_t;
 
     static constexpr uint16_t ADDR_MIN_POSITION_LIMIT       = 52;
-    static constexpr uint8_t SIZE_MIN_POSITION_LIMIT        = 4;
+    using TYPE_MIN_POSITION_LIMIT = uint32_t;
 
     static constexpr uint16_t ADDR_FIRMWARE_VERSION         = 59;
     using TYPE_FIRMWARE_VERSION = uint32_t;
@@ -53,18 +53,18 @@ struct StepperReg
     // RAM
 
     static constexpr uint16_t ADDR_TORQUE_ENABLE            = 64;
-    static constexpr uint8_t SIZE_TORQUE_ENABLE             = 1;
+    using TYPE_TORQUE_ENABLE = uint8_t;
 
     static constexpr uint16_t ADDR_HW_ERROR_STATUS          = 70;
     using TYPE_HW_ERROR_STATUS = uint8_t;
 
     // unit = 0.01 RPM - Only on conveyor
     static constexpr uint16_t ADDR_GOAL_VELOCITY            = 104;
-    static constexpr uint8_t SIZE_GOAL_VELOCITY             = 4;
+    using TYPE_GOAL_VELOCITY = uint32_t;
 
     // unit = 0.088 deg
     static constexpr uint16_t ADDR_GOAL_POSITION            = 116;
-    static constexpr uint8_t SIZE_GOAL_POSITION             = 4;
+    using TYPE_GOAL_POSITION = uint32_t;
 
     // unit = 0.01 RPM
     static constexpr uint16_t ADDR_PRESENT_VELOCITY         = 128;
@@ -82,51 +82,35 @@ struct StepperReg
     using TYPE_PRESENT_TEMPERATURE = uint8_t;
 
     static constexpr uint16_t ADDR_COMMAND                  = 147;
-    static constexpr uint8_t SIZE_COMMAND                   = 1;
+    using TYPE_COMMAND = uint8_t;
 
     static constexpr uint16_t ADDR_HOMING_STATUS            = 148;
     using TYPE_HOMING_STATUS = uint8_t;
 
     static constexpr uint16_t ADDR_HOMING_DIRECTION         = 149;
-    static constexpr uint8_t SIZE_HOMING_DIRECTION          = 1;
+    using TYPE_HOMING_DIRECTION = uint8_t;
 
     static constexpr uint16_t ADDR_HOMING_STALL_THRESHOLD   = 150;
-    static constexpr uint16_t SIZE_HOMING_STALL_THRESHOLD   = 1;
+    using TYPE_HOMING_STALL_THRESHOLD = uint8_t;
 
     // acceleration profile
-
-    using TYPE_VELOCITY_PROFILE = uint32_t;
+    using TYPE_PROFILE = uint32_t;
     static constexpr uint16_t ADDR_VSTART                   = 1024;
-    static constexpr uint8_t SIZE_VSTART                    = 4;
-
     static constexpr uint16_t ADDR_A1                       = 1028;
-    static constexpr uint8_t SIZE_A1                        = 4;
-
     static constexpr uint16_t ADDR_V1                       = 1032;
-    static constexpr uint8_t SIZE_V1                        = 4;
-
     static constexpr uint16_t ADDR_AMAX                     = 1036;
-    static constexpr uint8_t SIZE_AMAX                      = 4;
-
     static constexpr uint16_t ADDR_VMAX                     = 1040;
-    static constexpr uint8_t SIZE_VMAX                      = 4;
-
     static constexpr uint16_t ADDR_DMAX                     = 1044;
-    static constexpr uint8_t SIZE_DMAX                      = 4;
-
     static constexpr uint16_t ADDR_D1                       = 1048;
-    static constexpr uint8_t SIZE_D1                        = 4;
-
     static constexpr uint16_t ADDR_VSTOP                    = 1052;
-    static constexpr uint8_t SIZE_VSTOP                     = 4;
 
     // Firmware status
 
     static constexpr uint16_t ADDR_FIRMWARE_RUNNING         = 8192;
-    static constexpr uint8_t SIZE_FIRMWARE_RUNNING          = 1;
+    using TYPE_FIRMWARE_RUNNING = uint8_t;
 
     static constexpr uint16_t ADDR_ENTER_BOOTLOADER         = 8193;
-    static constexpr uint8_t SIZE_ENTER_BOOTLOADER          = 4;
+    using TYPE_ENTER_BOOTLOADER = uint32_t;
 };
 } // ttl_driver
 

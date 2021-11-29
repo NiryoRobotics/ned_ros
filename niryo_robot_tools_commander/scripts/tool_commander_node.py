@@ -109,10 +109,15 @@ class ToolCommander:
         self.__action_server.start()
         self.update_tool()
 
+    @classmethod
+    def wait_for_controller(cls):
+        from actionlib_msgs.msg import GoalStatusArray
+        _ = rospy.wait_for_message("/move_group/status", GoalStatusArray, timeout=120)
+
     # Subscriber
 
     def __callback_current_tool_motor(self, msg):
-        if self.__current_tool != "electromagnet":
+        if self.__current_tool is None or self.__current_tool.get_type() != "electromagnet":
             self.set_tool(self.__available_tools[msg.id])
             self.__motor_type = msg.motor_type
 

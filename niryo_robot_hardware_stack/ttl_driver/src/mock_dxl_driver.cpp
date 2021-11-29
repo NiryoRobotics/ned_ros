@@ -233,7 +233,7 @@ int MockDxlDriver::readMaxPosition(uint8_t id, uint32_t &pos)
  * @param torque_enable
  * @return
  */
-int MockDxlDriver::writeTorqueEnable(uint8_t id, uint32_t torque_enable)
+int MockDxlDriver::writeTorqueEnable(uint8_t id, uint8_t torque_enable)
 {
     (void)id;  // unused
     (void)torque_enable;  // unused
@@ -242,12 +242,12 @@ int MockDxlDriver::writeTorqueEnable(uint8_t id, uint32_t torque_enable)
 }
 
 /**
- * @brief MockDxlDriver::writeGoalPosition
+ * @brief MockDxlDriver::writePositionGoal
  * @param id
  * @param position
  * @return
  */
-int MockDxlDriver::writeGoalPosition(uint8_t id, uint32_t position)
+int MockDxlDriver::writePositionGoal(uint8_t id, uint32_t position)
 {
     if (_fake_data->dxl_registers.count(id))
         _fake_data->dxl_registers.at(id).position = position;
@@ -257,34 +257,29 @@ int MockDxlDriver::writeGoalPosition(uint8_t id, uint32_t position)
 }
 
 /**
- * @brief MockDxlDriver::writeGoalVelocity
+ * @brief MockDxlDriver::writeVelocityGoal
  * @param id
  * @param velocity
  * @return
  */
-int MockDxlDriver::writeGoalVelocity(uint8_t id, uint32_t velocity)
+int MockDxlDriver::writeVelocityGoal(uint8_t id, uint32_t velocity)
 {
-    int res = COMM_RX_FAIL;
     if (_fake_data->dxl_registers.count(id))
-    {
         _fake_data->dxl_registers.at(id).velocity = velocity;
-        res = COMM_SUCCESS;
-    }
-
-    // in mode control Position Control Mode, velocity profile in datasheet is used to set velocity (except xl320)
-    return res;
+    else
+        return COMM_RX_FAIL;
+    return COMM_SUCCESS;
 }
 
 /**
- * @brief MockDxlDriver::writeGoalAcceleration
- * write acceleration profile
+ * @brief MockDxlDriver::writeVelocityProfile
  * @param id
- * @param acceleration
+ * @param velocity
  * @return
  */
-int MockDxlDriver::writeGoalAcceleration(uint8_t id, uint32_t acceleration)
+int MockDxlDriver::writeVelocityProfile(uint8_t id, const std::vector<uint32_t>& data_list)
 {
-    (void)acceleration;
+    (void)data_list;
     int res = COMM_RX_FAIL;
     if (_fake_data->dxl_registers.count(id))
     {
@@ -300,7 +295,7 @@ int MockDxlDriver::writeGoalAcceleration(uint8_t id, uint32_t acceleration)
  * @param torque_enable_list
  * @return
  */
-int MockDxlDriver::syncWriteTorqueEnable(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &torque_enable_list)
+int MockDxlDriver::syncWriteTorqueEnable(const std::vector<uint8_t> &id_list, const std::vector<uint8_t> &torque_enable_list)
 {
     (void)torque_enable_list;  // unused
 
@@ -370,6 +365,18 @@ int MockDxlDriver::syncWriteVelocityGoal(const std::vector<uint8_t> &id_list, co
         if (!result.second)
             return GROUP_SYNC_REDONDANT_ID;  // redondant id
     }
+    return COMM_SUCCESS;
+}
+
+int MockDxlDriver::readVelocityProfile(uint8_t id, std::vector<uint32_t> &data_list)
+{
+    data_list.clear();
+    if (_fake_data->dxl_registers.count(id))
+      return COMM_RX_FAIL;
+
+    data_list.emplace_back(0);
+    data_list.emplace_back(0);
+
     return COMM_SUCCESS;
 }
 
@@ -762,7 +769,7 @@ int MockDxlDriver::readControlMode(uint8_t id, uint8_t &data)
  * @param led_value
  * @return
  */
-int MockDxlDriver::writeLed(uint8_t id, uint32_t led_value)
+int MockDxlDriver::writeLed(uint8_t id, uint8_t led_value)
 {
     (void)led_value;  // unused
 
@@ -779,7 +786,7 @@ int MockDxlDriver::writeLed(uint8_t id, uint32_t led_value)
  * @return
  */
 int MockDxlDriver::syncWriteLed(const std::vector<uint8_t> &id_list,
-                                const std::vector<uint32_t> &led_list)
+                                const std::vector<uint8_t> &led_list)
 {
     (void)led_list;  // unused
 
@@ -796,12 +803,12 @@ int MockDxlDriver::syncWriteLed(const std::vector<uint8_t> &id_list,
 }
 
 /**
- * @brief MockDxlDriver::writeGoalTorque
+ * @brief MockDxlDriver::writeTorqueGoal
  * @param id
  * @param torque
  * @return
  */
-int MockDxlDriver::writeGoalTorque(uint8_t id, uint32_t torque)
+int MockDxlDriver::writeTorqueGoal(uint8_t id, uint16_t torque)
 {
     (void)torque;  // unused
 
@@ -818,7 +825,7 @@ int MockDxlDriver::writeGoalTorque(uint8_t id, uint32_t torque)
  * @return
  */
 int MockDxlDriver::syncWriteTorqueGoal(const std::vector<uint8_t> &id_list,
-                                       const std::vector<uint32_t> &torque_list)
+                                       const std::vector<uint16_t> &torque_list)
 {
     (void)torque_list;  // unused
 
@@ -842,7 +849,7 @@ int MockDxlDriver::syncWriteTorqueGoal(const std::vector<uint8_t> &id_list,
  * @param present_load
  * @return
  */
-int MockDxlDriver::readLoad(uint8_t id, uint32_t& present_load)
+int MockDxlDriver::readLoad(uint8_t id, uint16_t& present_load)
 {
     (void)present_load;  // unused
 
@@ -857,7 +864,7 @@ int MockDxlDriver::readLoad(uint8_t id, uint32_t& present_load)
  * @param load_list
  * @return
  */
-int MockDxlDriver::syncReadLoad(const std::vector<uint8_t> &id_list, std::vector<uint32_t> &load_list)
+int MockDxlDriver::syncReadLoad(const std::vector<uint8_t> &id_list, std::vector<uint16_t> &load_list)
 {
     load_list = {};
     for (size_t i = 0; i < id_list.size(); i++)

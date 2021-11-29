@@ -164,7 +164,7 @@ class HoldingRegisterDataBlock(DataBlock):
         # Tool
         self.current_tool_id = None
         self.list_id_grippers = [11, 12, 13, 14]
-        rospy.Subscriber('/niryo_robot_hardware/tools/current_id', Int32,
+        rospy.Subscriber('/niryo_robot_tools_commander/current_id', Int32,
                          self.sub_selected_tool_id)
 
         # Variables

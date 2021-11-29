@@ -12,7 +12,8 @@ import numpy as np
 from trajectories_executor import TrajectoriesExecutor
 from kinematics_handler import KinematicsHandler
 from jog_controller import JogController
-from niryo_robot_arm_commander.utils import list_to_pose, pose_to_list, dist_2_poses, poses_too_close
+from niryo_robot_arm_commander.utils import list_to_pose, pose_to_list, dist_2_poses, dist_2_points, poses_too_close, \
+    angle_between_2_points
 
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus
@@ -339,7 +340,7 @@ class ArmCommander:
         :return: status, message
         """
         min_radius = 0.003
-        radius, angle_step, total_steps = [float(arg) for arg in arm_cmd.args]
+        radius, angle_step, total_steps, plan = [float(arg) for arg in arm_cmd.args]
 
         center_position = self.__arm.get_current_pose().pose.position
         target_pose = self.__arm.get_current_pose().pose
@@ -352,55 +353,112 @@ class ArmCommander:
                 if i == 1:
                     dist_from_center = radius - dist_from_center
                 dist_from_center += min_radius
-                y_offset = dist_from_center * math.cos(angle)
-                z_offset = dist_from_center * math.sin(angle)
-                target_pose.position.y = center_position.y + y_offset
-                target_pose.position.z = center_position.z + z_offset
+
+                if plan == 1:
+                    y_offset = dist_from_center * math.cos(angle)
+                    z_offset = dist_from_center * math.sin(angle)
+                    target_pose.position.y = center_position.y + y_offset
+                    target_pose.position.z = center_position.z + z_offset
+                elif plan == 2:
+                    x_offset = dist_from_center * math.cos(angle)
+                    z_offset = dist_from_center * math.sin(angle)
+                    target_pose.position.x = center_position.x + x_offset
+                    target_pose.position.z = center_position.z + z_offset
+                elif plan == 3:
+                    x_offset = dist_from_center * math.cos(angle)
+                    y_offset = dist_from_center * math.sin(angle)
+                    target_pose.position.x = center_position.x + x_offset
+                    target_pose.position.y = center_position.y + y_offset
+                else:
+                    rospy.logwarn("Spiral planer: bad plan parameter, must be between 1 and 3: "
+                                  "[1 = yz plan, 2 = xz plan, 3 = xy plan]")
+                    raise ArmCommanderException
+
                 waypoints.append(copy.deepcopy(target_pose))
                 angle += angle_step_rad
+
         return self.__traj_executor.compute_and_execute_cartesian_plan(waypoints, self.__velocity_scaling_factor,
                                                                        self.__acceleration_scaling_factor)
 
+    def draw_circle_trajectory(self, arm_cmd):
+        """
+        Generate waypoints to draw a circle and generate a cartesian path with these waypoints
+        Then execute the trajectory plan
+
+        :param arm_cmd: ArmMoveCommand message containing target values
+        :type : ArmMoveCommand
+        :return: status, message
+        """
+        target_pose = self.__arm.get_current_pose().pose
+        center_point = arm_cmd.position
+        dist_from_center = dist_2_points(target_pose.position, center_point)
+
+        tmp_point = Point(round(target_pose.position.x - center_point.x, 4),
+                          round(target_pose.position.y - center_point.y, 4),
+                          round(target_pose.position.z - center_point.z, 4))
+
+        angle_off = angle_between_2_points(Point(0, 1, 0), tmp_point)
+
+        waypoints = []
+        angle_steps = 3
+        for angle in range(0, 360 + angle_steps, angle_steps):
+            angle_rad = math.radians(-angle) + angle_off
+            y_offset = dist_from_center * math.cos(angle_rad)
+            z_offset = dist_from_center * math.sin(angle_rad)
+            target_pose.position.y = center_point.y + y_offset
+            target_pose.position.z = center_point.z + z_offset
+            waypoints.append(copy.deepcopy(target_pose))
+        return self.__traj_executor.compute_and_execute_cartesian_plan(waypoints)
+
     # - Waypointed Trajectory
-    def execute_trajectory(self, arm_cmd):
+    def execute_waypointed_trajectory(self, arm_cmd):
+        self.__arm.set_joint_value_target(arm_cmd.trajectory.joint_trajectory.points[0].positions)
+        partial_plan = self.__traj_executor.plan()
+        plan = self.__link_plans(partial_plan, arm_cmd.trajectory)
+        return self.__traj_executor.execute_plan(plan)
+
+    def compute_and_execute_waypointed_trajectory(self, arm_cmd):
+        status, message, plan = self.compute_waypointed_trajectory(arm_cmd)
+        if status != CommandStatus.SUCCESS:
+            return status, message
+
+        return self.__traj_executor.execute_plan(plan)
+
+    def compute_waypointed_trajectory(self, arm_cmd):
         """
         Version 1 : Go to first pose using "classic" trajectory then compute cartesian path between all points
         Version 2 : Going to all poses one by one using "classical way"
         Version 3 : Generate all plans, merge them & smooth transitions
-
         """
         list_tcp_poses = arm_cmd.list_poses
         if len(list_tcp_poses) == 0:
-            return CommandStatus.NO_PLAN_AVAILABLE, "Can't generate plan from a list of length 0"
+            return CommandStatus.NO_PLAN_AVAILABLE, "Can't generate plan from a list of length 0", None
         list_ee_poses = [self.__transform_handler.tcp_to_ee_link_pose_target(tcp_pose, self.__end_effector_link) for
                          tcp_pose in list_tcp_poses]
 
         dist_smoothing = arm_cmd.dist_smoothing
 
         if dist_smoothing == 0.0:
-            if len(list_ee_poses) < 3:  # Classical moves
-                for pose in list_ee_poses:
-                    ret = self.set_pose_quat_from_pose(pose)
-                    if ret[0] != CommandStatus.SUCCESS:
-                        return ret
-                return CommandStatus.SUCCESS, "Trajectory is Good!"
-            else:  # Linear path
-                # We are going to the initial pose using "classical" method
-                try:
-                    return self.__traj_executor.compute_and_execute_cartesian_plan(list_ee_poses,
-                                                                                   self.__velocity_scaling_factor,
-                                                                                   self.__acceleration_scaling_factor)
-                except ArmCommanderException as e:
-                    if e.status == CommandStatus.NO_PLAN_AVAILABLE:
-                        rospy.loginfo("Cartesian path computation failed, let's try another way!")
-                        return self.__compute_and_execute_trajectory(list_ee_poses, dist_smoothing=dist_smoothing)
-                    else:
-                        raise e
+            # We are going to the initial pose using "classical" method
+            try:
+                plan = self.__traj_executor.compute_cartesian_plan(list_ee_poses)
+                if plan is None:
+                    raise ArmCommanderException(CommandStatus.NO_PLAN_AVAILABLE, "")
+                plan = self.__traj_executor.retime_plan(plan, self.__velocity_scaling_factor,
+                                                        self.__acceleration_scaling_factor, optimize=False)
 
+            except ArmCommanderException as e:
+                if e.status == CommandStatus.NO_PLAN_AVAILABLE:
+                    rospy.loginfo("Cartesian path computation failed, let's try another way!")
+                    plan = self.__compute_trajectory(list_ee_poses, dist_smoothing=dist_smoothing)
+                else:
+                    raise e
         else:
-            return self.__compute_and_execute_trajectory(list_ee_poses, dist_smoothing=dist_smoothing)
+            plan = self.__compute_trajectory(list_ee_poses, dist_smoothing=dist_smoothing)
 
-    def __compute_and_execute_trajectory(self, list_poses, dist_smoothing=0.01):
+        return CommandStatus.SUCCESS, "Trajectory is Good!", plan
+
+    def __compute_trajectory(self, list_poses, dist_smoothing=0.01):
         """
         Hard try to to smooth Trajectories, not really working at the moment
         :param list_poses: list of Pose object
@@ -441,7 +499,7 @@ class ArmCommander:
         else:
             plan = self.__link_plans(*list_plans)
         self.display_traj(plan, id_=int(1000 * dist_smoothing))
-        return self.__traj_executor.execute_plan(plan)
+        return plan
 
     def __link_plans(self, *plans):
         # Link plans

@@ -61,15 +61,15 @@ class FakeTtlData
 
         struct FakeDxlRegister : public AbstractFakeRegister
         {
-            uint32_t       position_p_gain{0};
-            uint32_t       position_i_gain{0};
-            uint32_t       position_d_gain{0};
+            uint16_t       position_p_gain{0};
+            uint16_t       position_i_gain{0};
+            uint16_t       position_d_gain{0};
 
-            uint32_t       velocity_p_gain{0};
-            uint32_t       velocity_i_gain{0};
+            uint16_t       velocity_p_gain{0};
+            uint16_t       velocity_i_gain{0};
 
-            uint32_t       ff1_gain{0};
-            uint32_t       ff2_gain{0};
+            uint16_t       ff1_gain{0};
+            uint16_t       ff2_gain{0};
         };
         
         struct FakeEndEffector : public AbstractFakeRegister

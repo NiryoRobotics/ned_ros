@@ -109,6 +109,7 @@ class RobotStatusObserver(object):
         msg.rpi_temperature = 0
         msg.temperatures = []
         # TODO remove this shit
+        msg.error_message = ""
         msg.hardware_errors = len(msg.hardware_errors)*[0]
         msg.hardware_errors_message = len(msg.hardware_errors_message)*[""]
         ##

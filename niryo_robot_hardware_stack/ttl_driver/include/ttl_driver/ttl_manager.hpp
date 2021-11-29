@@ -124,10 +124,10 @@ public:
     int readCustomCommand(uint8_t id, int32_t reg_address, int &value, int byte_number);
 
     // read status
-    bool readJointsStatus();
-    bool readEndEffectorStatus();
     bool readHardwareStatus();
-    bool readCalibrationStatus();
+    bool readEndEffectorStatus();
+    uint8_t readSteppersStatus();
+    bool readJointsStatus();
 
     int readMotorPID(uint8_t id,
                      uint32_t& pos_p_gain, uint32_t& pos_i_gain, uint32_t& pos_d_gain,
@@ -201,6 +201,7 @@ private:
 
     // default ttl driver is always available
     std::shared_ptr<ttl_driver::AbstractTtlDriver> _default_ttl_driver;
+    std::shared_ptr<ttl_driver::AbstractStepperDriver> _default_stepper_driver;
 
     // vector of ids of motors and conveyors
     // Theses vector help remove loop not necessary

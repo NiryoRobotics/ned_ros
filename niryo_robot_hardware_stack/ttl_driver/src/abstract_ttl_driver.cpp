@@ -204,16 +204,13 @@ int AbstractTtlDriver::write(uint16_t address, uint8_t data_len, uint8_t id, uin
     switch (data_len)
     {
         case DXL_LEN_ONE_BYTE:
-            dxl_comm_result = _dxlPacketHandler->write1ByteTxRx(_dxlPortHandler.get(),
-                                                                  id, address, static_cast<uint8_t>(data), &error);
+            dxl_comm_result = write<uint8_t>(address, id, static_cast<uint8_t>(data));
         break;
         case DXL_LEN_TWO_BYTES:
-            dxl_comm_result = _dxlPacketHandler->write2ByteTxRx(_dxlPortHandler.get(),
-                                                                  id, address, static_cast<uint16_t>(data), &error);
+            dxl_comm_result = write<uint16_t>(address, id, static_cast<uint16_t>(data));
         break;
         case DXL_LEN_FOUR_BYTES:
-            dxl_comm_result = _dxlPacketHandler->write4ByteTxRx(_dxlPortHandler.get(),
-                                                                  id, address, data, &error);
+            dxl_comm_result = write<uint32_t>(address, id, data);
         break;
         default:
             printf("AbstractTtlDriver::write ERROR: Size param must be 1, 2 or 4 bytes\n");
@@ -330,8 +327,11 @@ int AbstractTtlDriver::bulkRead(std::vector<uint16_t> address,
  * @return
  */
 int AbstractTtlDriver::syncWrite(uint8_t address, uint8_t data_len,
-                                   const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &data_list)
+                                 const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &data_list)
 {
+    printf("AbstractTtlDriver::syncRead ERROR: Size param must be 1, 2 or 4 bytes\n");
+    return COMM_TX_FAIL;
+
     int dxl_comm_result = COMM_SUCCESS;
 
     if (!id_list.empty())

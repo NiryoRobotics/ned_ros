@@ -1,0 +1,8 @@
+# Set reading and writting frequencies of the ttl hardware driver
+
+---
+
+int32 read_frequency
+int32 write_frequency
+int32 status
+string message

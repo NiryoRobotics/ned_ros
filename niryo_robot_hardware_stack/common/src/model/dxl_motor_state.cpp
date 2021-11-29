@@ -183,9 +183,9 @@ int DxlMotorState::to_motor_pos(double rad_pos)
  */
 double DxlMotorState::to_rad_pos(int motor_pos)
 {
-    assert(0.0 != _pos_multiplier_ratio);
+    assert(0.0 != _pos_multiplier_ratio * _direction);
 
-    return _offset_position + (motor_pos * _direction / _pos_multiplier_ratio);
+    return _offset_position + (motor_pos / (_pos_multiplier_ratio * _direction));
 }
 
 /**

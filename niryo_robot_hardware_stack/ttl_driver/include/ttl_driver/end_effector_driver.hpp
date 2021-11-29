@@ -81,7 +81,7 @@ class EndEffectorDriver : public AbstractEndEffectorDriver
         int readCollisionStatus(uint8_t id, bool& status) override;
 
         int readDigitalInput(uint8_t id, bool& in) override;
-        int writeDigitalOutput(uint8_t id, uint32_t out) override;      
+        int writeDigitalOutput(uint8_t id, bool out) override;
 };
 
 // definition of methods
@@ -377,7 +377,7 @@ int EndEffectorDriver<reg_type>::syncReadButtonsStatus(const uint8_t& id,
 template<typename reg_type>
 int EndEffectorDriver<reg_type>::readAccelerometerXValue(uint8_t id, uint32_t& x_value)
 {
-    return read(reg_type::ADDR_ACCELERO_VALUE_X, reg_type::SIZE_ACCELERO_VALUE_X, id, x_value);
+    return read<typename reg_type::TYPE_ACCELERO_VALUE_X>(reg_type::ADDR_ACCELERO_VALUE_X, id, x_value);
 }
 
 /**
@@ -389,7 +389,7 @@ int EndEffectorDriver<reg_type>::readAccelerometerXValue(uint8_t id, uint32_t& x
 template<typename reg_type>
 int EndEffectorDriver<reg_type>::readAccelerometerYValue(uint8_t id, uint32_t& y_value)
 {
-    return read(reg_type::ADDR_ACCELERO_VALUE_Y, reg_type::SIZE_ACCELERO_VALUE_Y, id, y_value);
+    return read<typename reg_type::TYPE_ACCELERO_VALUE_Y>(reg_type::ADDR_ACCELERO_VALUE_Y, id, y_value);
 }
 
 /**
@@ -401,7 +401,7 @@ int EndEffectorDriver<reg_type>::readAccelerometerYValue(uint8_t id, uint32_t& y
 template<typename reg_type>
 int EndEffectorDriver<reg_type>::readAccelerometerZValue(uint8_t id, uint32_t& z_value)
 {
-    return read(reg_type::ADDR_ACCELERO_VALUE_Z, reg_type::SIZE_ACCELERO_VALUE_Z, id, z_value);
+    return read<typename reg_type::TYPE_ACCELERO_VALUE_Z>(reg_type::ADDR_ACCELERO_VALUE_Z, id, z_value);
 }
 
 /**
@@ -413,9 +413,9 @@ int EndEffectorDriver<reg_type>::readAccelerometerZValue(uint8_t id, uint32_t& z
 template<typename reg_type>
 int EndEffectorDriver<reg_type>::readCollisionStatus(uint8_t id, bool& status)
 {
-    uint32_t value = 1;
+    uint8_t value = 1;
     status = false;
-    int res = read(reg_type::ADDR_COLLISION_STATUS, reg_type::SIZE_COLLISION_STATUS, id, value);
+    int res = read<typename reg_type::TYPE_COLLISION_STATUS>(reg_type::ADDR_COLLISION_STATUS, id, value);
     if (res == COMM_SUCCESS)
     {
         status = (value > 0) ? true : false;
@@ -432,8 +432,8 @@ int EndEffectorDriver<reg_type>::readCollisionStatus(uint8_t id, bool& status)
 template<typename reg_type>
 int EndEffectorDriver<reg_type>::readDigitalInput(uint8_t id, bool& in)
 {
-    uint32_t value;
-    int res = read(reg_type::ADDR_DIGITAL_IN, reg_type::SIZE_DIGITAL_IN, id, value);
+    uint8_t value;
+    int res = read<typename reg_type::TYPE_DIGITAL_IN>(reg_type::ADDR_DIGITAL_IN, id, value);
     in = (value > 0) ? true : false;
     return res;
 }
@@ -445,9 +445,9 @@ int EndEffectorDriver<reg_type>::readDigitalInput(uint8_t id, bool& in)
  * @return
  */
 template<typename reg_type>
-int EndEffectorDriver<reg_type>::writeDigitalOutput(uint8_t id, uint32_t out)
+int EndEffectorDriver<reg_type>::writeDigitalOutput(uint8_t id, bool out)
 {
-    return write(reg_type::ADDR_DIGITAL_OUT, reg_type::SIZE_DIGITAL_OUT, id, out);
+    return write<typename reg_type::TYPE_DIGITAL_OUT>(reg_type::ADDR_DIGITAL_OUT, id, static_cast<uint8_t>(out));
 }
 
 } // ttl_driver

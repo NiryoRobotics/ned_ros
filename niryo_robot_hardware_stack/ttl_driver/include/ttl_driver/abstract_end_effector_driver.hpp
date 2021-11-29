@@ -59,7 +59,7 @@ public:
     virtual int readCollisionStatus(uint8_t id, bool& status) = 0;
 
     virtual int readDigitalInput(uint8_t id, bool& in) = 0;
-    virtual int writeDigitalOutput(uint8_t id, uint32_t out) = 0;
+    virtual int writeDigitalOutput(uint8_t id, bool out) = 0;
 
     std::string interpretErrorState(uint32_t hw_state) const override;
 
