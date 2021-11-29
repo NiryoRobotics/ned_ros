@@ -1295,7 +1295,6 @@ bool TtlInterfaceCore::_callbackSetFrequencies(ttl_driver::SetFrequencies::Reque
     {
         res.message = "TtlInterfaceCore - Setting Frequencies Failed";
     }
-
     res.status = result;
 
     return (niryo_robot_msgs::CommandStatus::SUCCESS == result);
@@ -1330,7 +1329,6 @@ bool TtlInterfaceCore::_callbackGetFrequencies(ttl_driver::GetFrequencies::Reque
     {
         res.message = "TtlInterfaceCore - Setting Frequencies Failed";
     }
-
     res.status = result;
 
     return (niryo_robot_msgs::CommandStatus::SUCCESS == result);
