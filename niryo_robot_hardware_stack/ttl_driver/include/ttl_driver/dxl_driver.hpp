@@ -831,7 +831,31 @@ int DxlDriver<reg_type>::syncReadVelocity(const std::vector<uint8_t> &id_list, s
 template<typename reg_type>
 int DxlDriver<reg_type>::syncReadJointStatus(const std::vector<uint8_t> &id_list, std::vector<std::array<uint32_t, 2> > &data_array_list)
 {
-  return syncReadConsecutiveBytes<uint32_t, 2>(reg_type::ADDR_PRESENT_VELOCITY, id_list, data_array_list);
+    int res = COMM_TX_FAIL;
+
+    if(id_list.empty())
+        return res;
+
+    data_array_list.clear();
+
+    // read torque enable on first id
+    uint32_t torque;
+    read(reg_type::ADDR_TORQUE_ENABLE, reg_type::SIZE_TORQUE_ENABLE, id_list.at(0), torque);
+
+    //if torque on, read position and velocity
+    if (torque)
+    {
+        res = syncReadConsecutiveBytes<uint32_t, 2>(reg_type::ADDR_PRESENT_VELOCITY, id_list, data_array_list);
+    }
+    else  //else read position only
+    {
+        std::vector<uint32_t> position_list;
+        res = syncReadPosition(id_list, position_list);
+        for (auto p : position_list)
+          data_array_list.emplace_back(std::array<uint32_t, 2>{0, p});
+    }
+
+    return res;
 }
 
 // private
