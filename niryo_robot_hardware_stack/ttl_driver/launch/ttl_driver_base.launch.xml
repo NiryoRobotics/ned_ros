@@ -5,6 +5,7 @@
   <arg name="hardware_version" default="ned"/>
   <arg name="simulation_mode" default="false" />
   <arg name="simu_gripper" default="false"/>
+  <arg name="simu_conveyor" default="false"/>
 
   <arg name="config_dir" value="$(arg hardware_version)" unless="$(arg simulation_mode)" />
   <arg name="config_dir" value="$(arg hardware_version)/simulation" if="$(arg simulation_mode)" />
@@ -16,6 +17,8 @@
     <rosparam file="$(find ttl_driver)/config/$(arg hardware_version)/simulation/fake_params.yaml" command="load" if="$(arg simulation_mode)" />
     <param name="hardware_version" value="$(arg hardware_version)"/>
     <param name="simulation_mode" value="$(arg simulation_mode)"/>
+    <param name="simu_gripper" value="$(arg simu_gripper)"/>
+    <param name="simu_conveyor" value="$(arg simu_conveyor)"/>
   </group>
 
 </launch>

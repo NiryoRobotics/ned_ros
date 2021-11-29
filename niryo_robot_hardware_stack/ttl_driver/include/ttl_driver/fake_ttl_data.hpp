@@ -30,6 +30,8 @@ class FakeTtlData
     public:
         FakeTtlData() = default;
 
+        void updateFullIdList();
+
     public:
         struct AbstractFakeRegister
         {
@@ -86,17 +88,36 @@ class FakeTtlData
             bool DigitalOutput = true;
         };
 
-        // dxl
+        // dxl by id
         std::map<uint8_t, FakeDxlRegister> dxl_registers;
 
-        // stepper
+        // stepper by id
         std::map<uint8_t, FakeStepperRegister> stepper_registers;
 
-        // common
+        // all ids
         std::vector<uint8_t> full_id_list;
 
         // end_effector
         FakeEndEffector end_effector;
 };
+
+inline
+void FakeTtlData::updateFullIdList()
+{
+    full_id_list.clear();
+    for (auto it : dxl_registers)
+    {
+        full_id_list.emplace_back(it.first);
+    }
+
+    for (auto it : stepper_registers)
+    {
+        full_id_list.emplace_back(it.first);
+    }
+
+    if (!end_effector.firmware.empty())
+        full_id_list.emplace_back(end_effector.id);
+}
+
 }
 #endif //FAKE_TTL_DATA_HPP

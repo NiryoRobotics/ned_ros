@@ -97,7 +97,7 @@ std::string MockStepperDriver::str() const
  */
 int MockStepperDriver::ping(uint8_t id)
 {
-    if (std::find(_id_list.begin(), _id_list.end(), id) != _id_list.end())
+    if (std::find(_fake_data->full_id_list.begin(), _fake_data->full_id_list.end(), id) != _fake_data->full_id_list.end())
         return CAN_OK;
     return CAN_FAIL;
 }

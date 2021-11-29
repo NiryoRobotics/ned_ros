@@ -103,6 +103,8 @@ class MockStepperDriver : public AbstractStepperDriver
         int readFirmwareRunning(uint8_t id, bool &is_running) override;
 
     private:
+        bool init();
+
         std::shared_ptr<FakeTtlData>  _fake_data;
         std::vector<uint8_t> _id_list;
 
