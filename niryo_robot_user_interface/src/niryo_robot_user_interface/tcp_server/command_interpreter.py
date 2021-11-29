@@ -803,92 +803,123 @@ class CommandInterpreter:
     @check_nb_args(1)
     def __led_ring_turn_off(self, wait):
         wait = self.__check_and_get_from_dict(wait, self.__boolean_string_dict_converter)
-        self.__niryo_robot.led_ring_turn_off(wait)
+        self.__niryo_robot.led_ring.turn_off(wait)
         return self.__send_answer()
 
     @check_nb_args(4)
-    def __led_ring_flash(self, color, frequency, iterations, wait):
+    def __led_ring_flash(self, color, period, iterations, wait):
         wait = self.__check_and_get_from_dict(wait, self.__boolean_string_dict_converter)
         color = self.__check_color_led_ring(color)
-        self.__check_type(frequency, int)
+        self.__check_type(period, float)
         self.__check_type(iterations, int)
-        self.__niryo_robot.led_ring_flash(color, frequency, iterations, wait)
+        self.__niryo_robot.led_ring.flashing(color, period, iterations, wait)
         return self.__send_answer()
 
     @check_nb_args(3)
-    def __led_ring_alternate(self, color_list, iterations, wait):
+    def __led_ring_alternate(self, color_list, period, iterations, wait):
         wait = self.__check_and_get_from_dict(wait, self.__boolean_string_dict_converter)
         for index, color in enumerate(color_list):
             color = self.__check_color_led_ring(color)
             color_list[index] = color
-        self.__check_type(iterations, int)
-        self.__niryo_robot.led_ring_alternate(color_list, iterations, wait)
+        self.__check_type(period, float)
+        self.__niryo_robot.led_ring.alternate(color_list, period, iterations, wait)
         return self.__send_answer()
 
     @check_nb_args(4)
-    def __led_ring_chase(self, color, speed, iterations, wait):
+    def __led_ring_chase(self, color, period, iterations, wait):
         wait = self.__check_and_get_from_dict(wait, self.__boolean_string_dict_converter)
         color = self.__check_color_led_ring(color)
-        self.__check_type(speed, int)
+        self.__check_type(period, float)
         self.__check_type(iterations, int)
-        self.__niryo_robot.led_ring_chase(color, speed, iterations, wait)
+        self.__niryo_robot.led_ring.chase(color, period, iterations, wait)
         return self.__send_answer()
 
     @check_nb_args(3)
-    def __led_ring_wipe(self, color, speed, wait):
+    def __led_ring_wipe(self, color, period, wait):
         wait = self.__check_and_get_from_dict(wait, self.__boolean_string_dict_converter)
         color = self.__check_color_led_ring(color)
-        self.__check_type(speed, int)
-        self.__niryo_robot.led_ring_wipe(color, speed, wait)
+        self.__check_type(period, float)
+        self.__niryo_robot.led_ring.wipe(color, period, wait)
         return self.__send_answer()
 
     @check_nb_args(3)
-    def __led_ring_rainbow(self, speed, iterations, wait):
+    def __led_ring_rainbow(self, period, iterations, wait):
         wait = self.__check_and_get_from_dict(wait, self.__boolean_string_dict_converter)
-        self.__check_type(speed, int)
+        self.__check_type(period, float)
         self.__check_type(iterations, int)
-        self.__niryo_robot.led_ring_rainbow(speed, iterations, wait)
+        self.__niryo_robot.led_ring.rainbow(period, iterations, wait)
         return self.__send_answer()
 
     @check_nb_args(3)
-    def __led_ring_rainbow_cycle(self, speed, iterations, wait):
+    def __led_ring_rainbow_cycle(self, period, iterations, wait):
         wait = self.__check_and_get_from_dict(wait, self.__boolean_string_dict_converter)
-        self.__check_type(speed, int)
+        self.__check_type(period, float)
         self.__check_type(iterations, int)
-        self.__niryo_robot.led_ring_rainbow_cycle(speed, iterations, wait)
+        self.__niryo_robot.led_ring.rainbow_cycle(period, iterations, wait)
         return self.__send_answer()
 
     @check_nb_args(3)
-    def __led_ring_rainbow_chase(self, speed, iterations, wait):
+    def __led_ring_rainbow_chase(self, period, iterations, wait):
         wait = self.__check_and_get_from_dict(wait, self.__boolean_string_dict_converter)
-        self.__check_type(speed, int)
+        self.__check_type(period, float)
         self.__check_type(iterations, int)
-        self.__niryo_robot.led_ring_rainbow_chase(speed, iterations, wait)
+        self.__niryo_robot.led_ring.rainbow_chase(period, iterations, wait)
         return self.__send_answer()
 
     @check_nb_args(4)
-    def __led_ring_go_up(self, color, speed, iterations, wait):
+    def __led_ring_go_up(self, color, period, iterations, wait):
         wait = self.__check_and_get_from_dict(wait, self.__boolean_string_dict_converter)
         color = self.__check_color_led_ring(color)
-        self.__check_type(speed, int)
+        self.__check_type(period, float)
         self.__check_type(iterations, int)
-        self.__niryo_robot.led_ring_go_up(color, speed, iterations, wait)
+        self.__niryo_robot.led_ring.go_up(color, period, iterations, wait)
         return self.__send_answer()
 
     @check_nb_args(4)
-    def __led_ring_go_up_down(self, color, speed, iterations, wait):
+    def __led_ring_go_up_down(self, color, period, iterations, wait):
         wait = self.__check_and_get_from_dict(wait, self.__boolean_string_dict_converter)
         color = self.__check_color_led_ring(color)
-        self.__check_type(speed, int)
+        self.__check_type(period, float)
         self.__check_type(iterations, int)
-        self.__niryo_robot.led_ring_go_up_down(color, speed, iterations, wait)
+        self.__niryo_robot.led_ring.go_up_down(color, period, iterations, wait)
+        return self.__send_answer()
+
+    @check_nb_args(4)
+    def __led_ring_breath(self, color, period, iterations, wait):
+        wait = self.__check_and_get_from_dict(wait, self.__boolean_string_dict_converter)
+        color = self.__check_color_led_ring(color)
+        self.__check_type(period, float)
+        self.__check_type(iterations, int)
+        self.__niryo_robot.led_ring.breath(color, period, iterations, wait)
+        return self.__send_answer()
+
+    @check_nb_args(4)
+    def __led_ring_snake(self, color, period, iterations, wait):
+        wait = self.__check_and_get_from_dict(wait, self.__boolean_string_dict_converter)
+        color = self.__check_color_led_ring(color)
+        self.__check_type(period, float)
+        self.__check_type(iterations, int)
+        self.__niryo_robot.led_ring.snake(color, period, iterations, wait)
+        return self.__send_answer()
+
+    @check_nb_args(1)
+    def __led_ring_custom(self, color_list):
+        verified_color_list = [self.__check_color_led_ring(color) for color in color_list]
+        self.__niryo_robot.led_ring.custom(verified_color_list)
+        return self.__send_answer()
+
+    @check_nb_args(2)
+    def __led_ring_set_led(self, led_id, color):
+        color = self.__check_color_led_ring(color)
+        self.__check_type(led_id, int)
+        self.__niryo_robot.led_ring.set_led_color(led_id, color)
         return self.__send_answer()
 
     # Usefull method Led Ring
     def __check_color_led_ring(self, color):
         self.__check_type(color, list)
         if len(color) != 3:
-            self.__raise_exception("Color must be a list of size 3: [r, g, b]")
+            self.__raise_exception_expected_type("Color must be a list of size 3: [r, g, b]", color)
         for index, color_elem in enumerate(color):
             if color_elem < 0 or color_elem > 255:
                 self.__raise_exception_expected_choice("[0 => 255]", color_elem)
@@ -896,7 +927,6 @@ class CommandInterpreter:
         return color
 
     # - Sound
-
     @check_nb_args(4)
     def __play_sound(self, sound_name, wait_end, start_time_sec, end_time_sec):
         return self.__send_answer(self.__niryo_robot.sound.play(sound_name, wait_end, start_time_sec, end_time_sec))
