@@ -50,6 +50,7 @@ catkin_package(
   actionlib_msgs
   geometry_msgs
   message_runtime
+  moveit_msgs
   niryo_robot_msgs
 )
 

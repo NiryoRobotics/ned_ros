@@ -515,7 +515,7 @@ bool TtlManager::readJointsStatus()
     // All addresses for position are the same
 
     // if no stepper, this should never be false (to be checked)
-    if (!isCalibrationInProgress())
+    if (getCalibrationStatus() == common::model::EStepperCalibrationStatus::OK)
     {
         for (auto const& it : _driver_map)
         {

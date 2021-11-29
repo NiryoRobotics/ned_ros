@@ -861,7 +861,7 @@ int DxlDriver<reg_type>::syncReadJointStatus(const std::vector<uint8_t> &id_list
     typename reg_type::TYPE_TORQUE_ENABLE torque;
     read<typename reg_type::TYPE_TORQUE_ENABLE>(reg_type::ADDR_TORQUE_ENABLE, id_list.at(0), torque);
 
-    //if torque on, read position and velocity
+    // if torque on, read position and velocity
     if (torque)
     {
         res = syncReadConsecutiveBytes<uint32_t, 2>(reg_type::ADDR_PRESENT_VELOCITY, id_list, data_array_list);

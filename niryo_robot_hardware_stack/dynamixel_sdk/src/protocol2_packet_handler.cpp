@@ -415,6 +415,8 @@ int Protocol2PacketHandler::rxPacket(PortHandler *port, uint8_t *rxpacket)
 
   if (result == COMM_SUCCESS)
     removeStuffing(rxpacket);
+  
+  port->clearPort();
 
   return result;
 }
