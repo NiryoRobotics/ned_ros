@@ -882,21 +882,4 @@ std::string MockDxlDriver::interpretFirmwareVersion(uint32_t fw_version) const
     return std::to_string(fw_version);
 }
 
-/**
- * @brief MockDxlDriver::removeGripper
- */
-int MockDxlDriver::removeGripper(uint8_t id)
-{
-    if (std::find(_id_list.begin(), _id_list.end(), id) != _id_list.end() &&
-        std::find(_fake_data->full_id_list.begin(), _fake_data->full_id_list.end(), id) != _fake_data->full_id_list.end())
-    {
-        _id_list.erase(std::remove(_id_list.begin(), _id_list.end(), id), _id_list.end());
-        _fake_data->full_id_list.erase(std::remove(_fake_data->full_id_list.begin(), _fake_data->full_id_list.end(), id), _fake_data->full_id_list.end());
-
-        return COMM_SUCCESS;
-    }
-
-    return COMM_TX_FAIL;
-}
-
 }  // namespace ttl_driver

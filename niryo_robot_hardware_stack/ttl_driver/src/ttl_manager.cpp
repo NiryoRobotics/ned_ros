@@ -108,7 +108,10 @@ bool TtlManager::init(ros::NodeHandle& nh)
     nh.getParam("bus_params/uart_device_name", _device_name);
     nh.getParam("bus_params/baudrate", _baudrate);
     nh.getParam("led_motor", _led_motor_type_cfg);
-    nh.getParam("simu_gripper", _use_simu_gripper);
+    bool use_simu_gripper{false};
+    bool use_simu_conveyor{false};
+    nh.getParam("simu_gripper", use_simu_gripper);
+    nh.getParam("simu_conveyor", use_simu_conveyor);
 
     if (!_simulation_mode)
     {
@@ -120,7 +123,7 @@ bool TtlManager::init(ros::NodeHandle& nh)
     }
     else
     {
-        readFakeConfig();
+        readFakeConfig(use_simu_gripper, use_simu_conveyor);
         _default_ttl_driver = std::make_shared<MockStepperDriver >(_fake_data);
     }
 
@@ -1026,14 +1029,6 @@ int TtlManager::getAllIdsOnBus(vector<uint8_t> &id_list)
 {
     int result = COMM_RX_FAIL;
 
-    // remove tool in fake driver
-    if (!_use_simu_gripper && _driver_map.count(EHardwareType::FAKE_DXL_MOTOR) && _driver_map.at(EHardwareType::FAKE_DXL_MOTOR))
-    {
-        auto driver = std::dynamic_pointer_cast<MockDxlDriver>(_driver_map.at(EHardwareType::FAKE_DXL_MOTOR));
-        if (driver)
-            driver->removeGripper();
-    }
-
     // 1. Get all ids from ttl bus. We can use any driver for that
     if  (_default_ttl_driver)
     {
@@ -1745,7 +1740,7 @@ void TtlManager::addHardwareDriver(EHardwareType hardware_type)
  /**
  * @brief TtlManager::readFakeConfig
  */
-void TtlManager::readFakeConfig()
+void TtlManager::readFakeConfig(bool use_simu_gripper, bool use_simu_conveyor)
 {
     _fake_data = std::make_shared<FakeTtlData>();
 
@@ -1771,19 +1766,39 @@ void TtlManager::readFakeConfig()
 
         if (_nh.hasParam("fake_params/end_effector"))
         {
-            std::string current_ns = "fake_params/end_effector/";
-            int id, temperature, voltage;
-            _nh.getParam(current_ns + "id", id);
-            _fake_data->end_effector.id = static_cast<uint8_t>(id);
-            _nh.getParam(current_ns + "temperature", temperature);
-            _fake_data->end_effector.temperature = static_cast<uint8_t>(temperature);
-            _nh.getParam(current_ns + "voltage", voltage);
-            _fake_data->end_effector.voltage = static_cast<double>(voltage);
+            string current_ns = "fake_params/end_effector/";
+            vector<int> id_list, temperature_list, voltage_list;
+            vector<string> firmware_list;
+            _nh.getParam(current_ns + "id", id_list);
+            _nh.getParam(current_ns + "temperature", temperature_list);
+            _nh.getParam(current_ns + "voltage", voltage_list);
+            _nh.getParam(current_ns + "firmware", firmware_list);
 
-            std::string firmware;
-            _nh.getParam(current_ns + "firmware", firmware);
-            _fake_data->end_effector.firmware = firmware;
+            assert(!id_list.empty());
+            assert(!temperature_list.empty());
+            assert(!voltage_list.empty());
+            assert(!firmware_list.empty());
+
+            _fake_data->end_effector.id = static_cast<uint8_t>(id_list.at(0));
+            _fake_data->end_effector.temperature = static_cast<uint8_t>(temperature_list.at(0));
+            _fake_data->end_effector.voltage = static_cast<double>(voltage_list.at(0));
+
+            _fake_data->end_effector.firmware = firmware_list.at(0);
         }
+
+        if (use_simu_gripper && _nh.hasParam("fake_params/tool/"))
+        {
+            std::string current_ns = "fake_params/tool/";
+            retrieveFakeMotorData(current_ns, _fake_data->dxl_registers);
+        }
+
+        if (use_simu_conveyor && _nh.hasParam("fake_params/conveyors/"))
+        {
+            std::string current_ns = "fake_params/conveyors/";
+            retrieveFakeMotorData(current_ns, _fake_data->stepper_registers);
+        }
+
+        _fake_data->updateFullIdList();
     }
 }
 

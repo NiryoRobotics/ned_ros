@@ -15,12 +15,14 @@ This will reduce the amount of time spent waiting during program shutdown
     <arg name="hardware_version" default="ned" />
     <arg name="debug" default="false"/>
     <arg name="gripper_n_camera" default="true"/>
+    <arg name="simu_conveyor" default="true"/>
     <arg name="gui" default="true"/>
     <arg name="conf_location" default="version.txt"/>
 
     <!-- Define most of ROS parameters -->
     <include file="$(find niryo_robot_bringup)/launch/niryo_$(arg hardware_version)_simulation.launch">
         <arg name="simu_gripper" value="$(arg gripper_n_camera)"/>
+        <arg name="simu_conveyor" value="$(arg simu_conveyor)"/>
         <arg name="log_level" value="$(arg log_level)" />
         <arg name="debug" value="$(arg debug)"/>
         <arg name="gazebo" value="true" />

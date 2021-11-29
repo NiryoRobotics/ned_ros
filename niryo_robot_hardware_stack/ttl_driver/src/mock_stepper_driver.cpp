@@ -37,11 +37,33 @@ namespace ttl_driver
 MockStepperDriver::MockStepperDriver(std::shared_ptr<FakeTtlData>  data) :
     _fake_data(std::move(data))
 {
-    // retrieve list of ids
-    for (auto const& imap : _fake_data->stepper_registers)
-        _id_list.emplace_back(imap.first);
+    init();
 }
 
+
+/**
+ * @brief MockStepperDriver::init
+ * @return
+ */
+bool MockStepperDriver::init()
+{
+    bool res = false;
+
+    if (_fake_data)
+    {
+        // retrieve list of ids
+        for (auto const& imap : _fake_data->stepper_registers)
+            _id_list.emplace_back(imap.first);
+
+        res = true;
+    }
+    else
+    {
+        std::cout << "ERROR : Fake data not initialized" << std::endl;
+    }
+
+    return res;
+}
 /**
  * @brief MockStepperDriver::str
  * @return

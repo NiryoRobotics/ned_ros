@@ -113,8 +113,6 @@ class MockDxlDriver : public AbstractDxlDriver
         int readLoad(uint8_t id, uint16_t &present_load) override;
         int syncReadLoad(const std::vector<uint8_t> &id_list, std::vector<uint16_t> &load_list) override;
 
-        int removeGripper(uint8_t id = 11);
-
     private:
         std::shared_ptr<FakeTtlData> _fake_data;
         std::vector<uint8_t> _id_list;

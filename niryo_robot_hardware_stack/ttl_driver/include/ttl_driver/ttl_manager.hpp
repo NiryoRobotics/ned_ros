@@ -172,7 +172,7 @@ private:
     void addHardwareDriver(common::model::EHardwareType hardware_type) override;
 
     // Config params using in fake driver
-    void readFakeConfig();
+    void readFakeConfig(bool use_simu_gripper, bool use_simu_conveyor);
     template<typename Reg>
     void retrieveFakeMotorData(const std::string& current_ns, std::map<uint8_t, Reg>& fake_params);
 
@@ -225,7 +225,6 @@ private:
 
     // for simulation only
     std::shared_ptr<FakeTtlData> _fake_data;
-    bool _use_simu_gripper = true;
     bool _simulation_mode{false};
 
     // status to track collision status
@@ -381,51 +380,51 @@ bool TtlManager::hasEndEffector() const
 template<typename Reg>
 void TtlManager::retrieveFakeMotorData(const std::string& current_ns, std::map<uint8_t, Reg> &fake_params)
 {
-    std::vector<int> stepper_ids;
-    _nh.getParam(current_ns + "id", stepper_ids);
+    std::vector<int> hw_ids;
+    _nh.getParam(current_ns + "id", hw_ids);
 
-    std::vector<int> stepper_positions;
-    _nh.getParam(current_ns + "position", stepper_positions);
-    assert(stepper_ids.size() == stepper_positions.size());
+    std::vector<int> hw_positions;
+    _nh.getParam(current_ns + "position", hw_positions);
+    assert(hw_ids.size() == hw_positions.size());
 
-    std::vector<int> stepper_velocities;
-    _nh.getParam(current_ns + "velocity", stepper_velocities);
-    assert(stepper_ids.size() == stepper_velocities.size());
+    std::vector<int> hw_velocities;
+    _nh.getParam(current_ns + "velocity", hw_velocities);
+    assert(hw_ids.size() == hw_velocities.size());
 
-    std::vector<int> stepper_temperatures;
-    _nh.getParam(current_ns + "temperature", stepper_temperatures);
-    assert(stepper_positions.size() == stepper_temperatures.size());
+    std::vector<int> hw_temperatures;
+    _nh.getParam(current_ns + "temperature", hw_temperatures);
+    assert(hw_positions.size() == hw_temperatures.size());
 
-     std::vector<double> stepper_voltages;
-    _nh.getParam(current_ns + "voltage", stepper_voltages);
-    assert(stepper_temperatures.size() == stepper_voltages.size());
+     std::vector<double> hw_voltages;
+    _nh.getParam(current_ns + "voltage", hw_voltages);
+    assert(hw_temperatures.size() == hw_voltages.size());
 
-    std::vector<int> stepper_min_positions;
-    _nh.getParam(current_ns + "min_position", stepper_min_positions);
-    assert(stepper_voltages.size() == stepper_min_positions.size());
+    std::vector<int> hw_min_positions;
+    _nh.getParam(current_ns + "min_position", hw_min_positions);
+    assert(hw_voltages.size() == hw_min_positions.size());
 
-    std::vector<int> stepper_max_positions;
-    _nh.getParam(current_ns + "max_position", stepper_max_positions);
-    assert(stepper_min_positions.size() == stepper_max_positions.size());
+    std::vector<int> hw_max_positions;
+    _nh.getParam(current_ns + "max_position", hw_max_positions);
+    assert(hw_min_positions.size() == hw_max_positions.size());
 
-    std::vector<int> stepper_model_numbers;
-    _nh.getParam(current_ns + "model_number", stepper_model_numbers);
-    assert(stepper_max_positions.size() == stepper_model_numbers.size());
+    std::vector<int> hw_model_numbers;
+    _nh.getParam(current_ns + "model_number", hw_model_numbers);
+    assert(hw_max_positions.size() == hw_model_numbers.size());
 
-     std::vector<std::string> stepper_firmwares;
-    _nh.getParam(current_ns + "firmware", stepper_firmwares);
-    assert(stepper_firmwares.size() == stepper_firmwares.size());
+     std::vector<std::string> hw_firmwares;
+    _nh.getParam(current_ns + "firmware", hw_firmwares);
+    assert(hw_firmwares.size() == hw_firmwares.size());
 
-    for (size_t i = 0; i < stepper_ids.size(); i++)
+    for (size_t i = 0; i < hw_ids.size(); i++)
     {
         Reg tmp;
-        tmp.id = static_cast<uint8_t>(stepper_ids.at(i));
-        tmp.position = static_cast<uint32_t>(stepper_positions.at(i));
-        tmp.velocity = static_cast<uint32_t>(stepper_velocities.at(i));
-        tmp.temperature = static_cast<uint32_t>(stepper_temperatures.at(i));
-        tmp.voltage = stepper_voltages.at(i);
-        tmp.model_number = static_cast<uint16_t>(stepper_model_numbers.at(i));
-        tmp.firmware = stepper_firmwares.at(i);
+        tmp.id = static_cast<uint8_t>(hw_ids.at(i));
+        tmp.position = static_cast<uint32_t>(hw_positions.at(i));
+        tmp.velocity = static_cast<uint32_t>(hw_velocities.at(i));
+        tmp.temperature = static_cast<uint32_t>(hw_temperatures.at(i));
+        tmp.voltage = hw_voltages.at(i);
+        tmp.model_number = static_cast<uint16_t>(hw_model_numbers.at(i));
+        tmp.firmware = hw_firmwares.at(i);
         fake_params.insert(std::make_pair(tmp.id, tmp));
     }
 }
