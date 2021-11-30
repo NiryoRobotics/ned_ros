@@ -30,11 +30,12 @@ from end_effector_interface.msg import EEIOState
 
 
 class NiryoEndEffectorPanel:
-    def __init__(self):
+    def __init__(self, on_change_callback):
         rospy.logdebug("Niryo end effector panel - Entering in Init")
 
         # - Init
         self.__robot_status = RobotStatus()
+        self.__on_change_callback = on_change_callback
 
         self.__learning_mode_button_state = EEButtonStatus.NO_ACTION
         self.__custom_button_state = EEButtonStatus.NO_ACTION
@@ -131,8 +132,11 @@ class NiryoEndEffectorPanel:
         self.__learning_mode_on = msg.data
 
     def __callback_ee_io_state(self, msg):
-        self.digital_input.value = msg.digital_input
-        self.digital_output.force_value(msg.digital_output)
+        if self.digital_input.value != msg.digital_input or self.digital_output.value != msg.digital_output:
+            self.digital_input.value = msg.digital_input
+            self.digital_output.force_value(msg.digital_output)
+
+            self.__on_change_callback()
 
     def blockly_save_current_point(self):
         msg = Int32()

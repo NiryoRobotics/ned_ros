@@ -54,10 +54,13 @@ class DigitalInput(NiryoIO):
     def __init__(self, name):
         super(DigitalInput, self).__init__(lock=None, pin=0, name=name)
 
+        self.value = False
+
     @property
     def value(self):
         return self._value
 
     @value.setter
     def value(self, value):
-        self._value = value
+        print value
+        self._value = bool(value)
