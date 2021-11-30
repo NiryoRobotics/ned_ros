@@ -4,10 +4,17 @@ import os
 
 class ReportHandler:
     def __init__(self, path):
+        self.__path = ''
+        self.__deleted = False
         self.set_path(path)
 
     def delete(self):
         os.remove(self.__path)
+        self.__deleted = True
+
+    def __del__(self):
+        if not self.__deleted:
+            self.__write()
 
     def set_path(self, path):
         self.__path = path

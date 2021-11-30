@@ -17,7 +17,7 @@ from niryo_robot_msgs.msg import CommandStatus
 
 # srv
 
-from niryo_robot_database.srv import GetSettings, GetAllByType, AddFilePath
+from niryo_robot_database.srv import GetSettings, GetAllByType, AddFilePath, RmFilePath
 
 
 class ReportsNode:
@@ -50,26 +50,44 @@ class ReportsNode:
         if not os.path.isdir(self.__reports_path):
             mkpath(self.__reports_path)
 
-        self.__curent_date = str(date.today())
-        report_path = '{}/{}.json'.format(
-            self.__reports_path, self.__curent_date
-        )
+        self.__current_date = str(date.today())
 
-        get_all_files_paths = rospy.ServiceProxy('/niryo_robot_database/file_paths/get_all_by_type', GetAllByType)
+        get_all_files_paths = rospy.ServiceProxy(
+            '/niryo_robot_database/file_paths/get_all_by_type', GetAllByType
+        )
+        self.__add_report_db = rospy.ServiceProxy(
+            '/niryo_robot_database/file_paths/add', AddFilePath
+        )
+        self.__rm_report_db = rospy.ServiceProxy(
+            '/niryo_robot_database/file_paths/rm', RmFilePath
+        )
         daily_reports_response = get_all_files_paths('daily_report')
         if daily_reports_response.status == CommandStatus.SUCCESS:
             for report in daily_reports_response.filepaths:
-                if report.date == self.__curent_date:
+                if report.date == self.__current_date:
                     continue
                 report_handler = ReportHandler(report.path)
                 rospy.loginfo('Sending the report of {}'.format(report.date))
-                self.__cloud_api.daily_reports.send({
-                    'date': report.date,
-                    'report': report_handler.content
+                success = self.__cloud_api.daily_reports.send({
+                    'date':
+                    report.date,
+                    'report':
+                    report_handler.content
                 })
-                # report_handler.delete()
+                if success:
+                    continue
+                    report_handler.delete()
+                    self.__rm_report_db(report.id)
+                else:
+                    rospy.logerr('Unable to send the report')
 
+        report_name = '{}.json'.format(self.__current_date)
+        report_path = '{}/{}'.format(self.__reports_path, report_name)
         self.__report_handler = ReportHandler(report_path)
+        add_report_response = self.__add_report_db(
+            'daily_report', report_name, report_path
+        )
+        self.__current_id = add_report_response.message
 
         rospy.Subscriber('~new_day', Empty, self.__new_day_callback)
         rospy.Subscriber(
@@ -86,16 +104,19 @@ class ReportsNode:
 
     def __new_day_callback(self, _req):
         current_day = str(date.today())
-        if current_day == self.__curent_date:
+        if current_day == self.__current_date:
             return
         success = self.__cloud_api.daily_reports.send({
-            'date': self.__curent_date,
-            'report': self.__report_handler.content
+            'date':
+            self.__current_date,
+            'report':
+            self.__report_handler.content
         })
         if success:
             self.__report_handler.delete()
-        self.__curent_date = current_day
-        new_path = '{}/{}.json'.format(self.__reports_path, self.__curent_date)
+            self.__rm_report_db(self.__current_id)
+        self.__current_date = current_day
+        new_path = '{}/{}.json'.format(self.__reports_path, self.__current_date)
         self.__report_handler.set_path(new_path)
 
     def __robot_status_callback(self, req):

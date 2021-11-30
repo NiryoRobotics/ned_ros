@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime
+from datetime import date
 
 
 class UnknownFilePathException(Exception):
@@ -29,7 +29,7 @@ class FilePath:
         params = {
             'type': file_type,
             'name': name,
-            'date': datetime.now().isoformat(),
+            'date': str(date.today()),
             'path': path,
         }
 
@@ -40,9 +40,9 @@ class FilePath:
             params['id'] = str(uuid.uuid4())
 
         self.__dao.execute(query, params)
+        return self.__dao.last_row_id
 
-    def rm_file_path(self, ids):
-        query = 'DELETE FROM file_path WHERE id IN ({})'.format(
-            ', '.join(['?'] * len(ids))
-        )
-        self.__dao.execute(query, ids)
+    def rm_file_path(self, file_id):
+        query = 'DELETE FROM file_path WHERE id = :id'
+        params = {'id': file_id}
+        self.__dao.execute(query, params)

@@ -18,7 +18,7 @@ from niryo_robot_msgs.msg import CommandStatus
 from niryo_robot_database.msg import Metric, FilePath as FilePathMsg
 
 # srv
-from niryo_robot_database.srv import GetAllMetrics, SetMetric, SetSettings, GetSettings, AddFilePath, GetAllByType
+from niryo_robot_database.srv import GetAllMetrics, SetMetric, SetSettings, GetSettings, AddFilePath, GetAllByType, RmFilePath
 
 
 class DatabaseNode:
@@ -55,6 +55,9 @@ class DatabaseNode:
         )
         rospy.Service(
             '~file_paths/add', AddFilePath, self.__callback_add_file_path
+        )
+        rospy.Service(
+            '~file_paths/rm', RmFilePath, self.__callback_rm_file_path
         )
         rospy.Service(
             '~file_paths/get_all_by_type',
@@ -104,18 +107,26 @@ class DatabaseNode:
 
     def __callback_add_file_path(self, req):
         try:
-            self.__file_paths.add_file_path(req.type, req.name, req.path)
+            row_id = self.__file_paths.add_file_path(
+                req.type, req.name, req.path
+            )
         except OperationalError as e:
             return CommandStatus.DATABASE_DB_ERROR, str(e)
-        return CommandStatus.SUCCESS, 'File path successfully added'
+        return CommandStatus.SUCCESS, str(row_id)
 
     def __callback_get_all_by_type(self, req):
         try:
             filepaths = self.__file_paths.get_all_by_type(req.type)
         except OperationalError as e:
             return CommandStatus.DATABASE_DB_ERROR, str(e)
-        res = [FilePathMsg(x['id'], x['type'], x['name'], x['date'], x['path']) for x in filepaths]
+        res = [
+            FilePathMsg(x['id'], x['type'], x['name'], x['date'], x['path'])
+            for x in filepaths
+        ]
         return CommandStatus.SUCCESS, res
+
+    def __callback_rm_file_path(self, req):
+        self.__file_paths.rm_file_path(req.id)
 
 
 if __name__ == "__main__":

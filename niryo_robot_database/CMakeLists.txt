@@ -21,6 +21,7 @@ add_service_files(
   SetMetric.srv
   SetSettings.srv
   AddFilePath.srv
+  RmFilePath.srv
   GetAllByType.srv
 )
 

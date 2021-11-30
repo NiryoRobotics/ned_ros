@@ -24,6 +24,10 @@ class SQLiteDAO:
             d[col[0]] = value
         return d
 
+    @property
+    def last_row_id(self):
+        return self.__cursor.lastrowid
+
     def execute(self, *args, **kwargs):
         exec_result = self.__cursor.execute(*args, **kwargs)
         self.__con.commit()
