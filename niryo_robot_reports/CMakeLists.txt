@@ -7,11 +7,6 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
 )
 
-add_service_files(
-  DIRECTORY srv
-  FILES
-)
-
 # enable python module support
 catkin_python_setup()
 
