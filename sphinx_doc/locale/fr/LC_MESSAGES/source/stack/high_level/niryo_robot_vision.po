@@ -1,0 +1,326 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2021, Niryo All rights reserved. No part of this document
+# may be reproduced or transmitted in any form or by any means without prior
+# written consent of Niryo SAS
+# This file is distributed under the same license as the Ned ROS
+# Documentation package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Ned ROS Documentation v3.2\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-10-22 17:37+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.9.1\n"
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:2
+msgid "Niryo_robot_vision"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:4
+msgid "This package is the one dealing with all vision related stuff."
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:8
+msgid "Vision Node"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:9
+msgid ""
+"The ROS Node is made of several services to deal with video streaming, "
+"object detection... The node is working exactly the same way if you chose"
+" to use it on simulation or reality."
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:12
+msgid "This node can be launched locally in a standalone mode via the command: ::"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:16
+msgid ""
+"Configuration (Frame Per Second, Camera Port, Video Resolution) can be "
+"edited in the config file:"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:19
+msgid "For \"standard\" Node: *niryo_robot_vision/config/video_server_setup.yaml*"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:20
+msgid "For local Node: *niryo_robot_vision/config/video_server_setup_local.yaml*"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:22
+msgid "The namespace used is: |namespace_emphasize|"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:25
+msgid "Parameters - Vision"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:27
+msgid "Vision Package's Parameters"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:33
+#: ../../source/stack/high_level/niryo_robot_vision.rst:57
+#: ../../source/stack/high_level/niryo_robot_vision.rst:76
+msgid "Name"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:34
+#: ../../source/stack/high_level/niryo_robot_vision.rst:59
+#: ../../source/stack/high_level/niryo_robot_vision.rst:78
+msgid "Description"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:35
+msgid "``frame_rate``"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:36
+msgid "Streams frame rate"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:37
+msgid "``simulation_mode``"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst
+msgid "Sets to true if you are using the gazebo simulation."
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst
+msgid "It will adapt how the node get its video stream"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:40
+msgid "``debug_compression_quality``"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:41
+msgid "Debugs Stream compression quality"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:42
+msgid "``stream_compression_quality``"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:43
+msgid "Streams compression quality"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:44
+msgid "``subsampling``"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:45
+msgid "Streams subsampling factor"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:49
+msgid "Publisher - Vision"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:51
+msgid "Vision Package's Publishers"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:58
+#: ../../source/stack/high_level/niryo_robot_vision.rst:77
+msgid "Message Type"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:60
+msgid "``compressed_video_stream``"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:61
+msgid ":sensor_msgs:`CompressedImage`"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:62
+msgid "Publishes the last image read as a compressed image"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:63
+msgid "``video_stream_parameters``"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:64
+msgid ""
+":ref:`ImageParameters<source/stack/high_level/niryo_robot_vision:ImageParameters"
+" (Topic)>`"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:65
+msgid ""
+"Publishes the brightness, contrast and saturation settings of the video "
+"stream"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:68
+msgid "Services - Vision"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:70
+msgid "Programs manager Services"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:79
+msgid "``debug_colors``"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:80
+msgid ""
+":ref:`DebugColorDetection<source/stack/high_level/niryo_robot_vision:DebugColorDetection"
+" (Service)>`"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:81
+msgid "Returns an annotated image to emphasize what happened with color detection"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:82
+msgid "``debug_markers``"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:83
+msgid ""
+":ref:`DebugMarkers<source/stack/high_level/niryo_robot_vision:DebugMarkers"
+" (Service)>`"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:84
+msgid ""
+"Returns an annotated image to emphasize what happened with markers "
+"detection"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:85
+msgid "``obj_detection_rel``"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:86
+msgid ""
+":ref:`ObjDetection<source/stack/high_level/niryo_robot_vision:ObjDetection"
+" (Service)>`"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:87
+msgid "Object detection service"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:88
+msgid "``start_stop_video_streaming``"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:89
+msgid ":ref:`source/stack/high_level/niryo_robot_msgs:SetBool`"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:90
+msgid "Starts or stops video streaming"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:91
+msgid "``take_picture``"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:92
+msgid ""
+":ref:`TakePicture<source/stack/high_level/niryo_robot_vision:TakePicture "
+"(Service)>`"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:93
+msgid "Saves a picture in the specified folder"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:94
+msgid "``set_brightness``"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:95
+#: ../../source/stack/high_level/niryo_robot_vision.rst:98
+#: ../../source/stack/high_level/niryo_robot_vision.rst:101
+msgid ""
+":ref:`SetImageParameter<source/stack/high_level/niryo_robot_vision:SetImageParameter"
+" (Service)>`"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:96
+msgid "Sets the brightness of the video stream"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:97
+msgid "``set_contrast``"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:99
+msgid "Sets the contrast of the video stream"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:100
+msgid "``set_saturation``"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:102
+msgid "Sets the saturation of the video stream"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:105
+msgid "All these services are available as soon as the node is started."
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:109
+msgid "Dependencies - Vision"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:110
+msgid ":doc:`niryo_robot_msgs`"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:111
+msgid ":msgs_index:`sensor_msgs`"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:115
+msgid "Topics files - Vision"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:118
+msgid "ImageParameters (Topic)"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:126
+msgid "Services files - Vision"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:129
+msgid "DebugColorDetection (Service)"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:136
+msgid "DebugMarkers (Service)"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:143
+msgid "ObjDetection (Service)"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:150
+msgid "TakePicture (Service)"
+msgstr ""
+
+#: ../../source/stack/high_level/niryo_robot_vision.rst:156
+msgid "SetImageParameter (Service)"
+msgstr ""
+

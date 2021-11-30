@@ -6,13 +6,11 @@
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
-
-
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-13 09:16+0000\n"
+"POT-Creation-Date: 2021-11-30 10:58+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -28,13 +26,13 @@ msgstr ""
 #: ../../index.rst:9
 msgid ""
 "This documentation contains everything you need to understand Ned's "
-"functioning & how to control it through ROS."
+"functioning and how to control it through ROS."
 msgstr ""
 
 #: ../../index.rst:11
 msgid ""
-"It is made as well for users who are using the \"physic\" robot as those "
-"who want to use a virtual version."
+"It is made as well for users who are using the \"physical\" robot as for "
+"those who want to use a virtual version."
 msgstr ""
 
 #: ../../index.rst:30
@@ -44,62 +42,67 @@ msgstr ""
 #: ../../index.rst:32
 msgid ""
 "Before diving into the software documentation, you can learn more about "
-"the robot development in the :doc:`Overwiew <source/overview>` section."
+"the robot development in the :doc:`Overwiew <source/stack/overview>` "
+"section."
 msgstr ""
 
 #: ../../index.rst:35
 msgid ""
-"Also, if you want to use a simulated version of Ned, browse the "
-":doc:`Simulation <source/simulation>` section."
+"Then, you should check the :doc:`source/installation/getting_started` "
+"section to setup your environment and try out the stack by yourself. If "
+"you don't have a real robot at your disposal, you can still simulate it "
+"via the :doc:`source/simulation` section."
 msgstr ""
 
-#: ../../index.rst:39
+#: ../../index.rst:40
 msgid "Ned Control via ROS"
 msgstr ""
 
-#: ../../index.rst:41
+#: ../../index.rst:42
 msgid "Ned is fully based on ROS."
 msgstr ""
 
-#: ../../index.rst:44
+#: ../../index.rst:45
 msgid "ROS Direct control"
 msgstr ""
 
-#: ../../index.rst:47
+#: ../../index.rst:48
 msgid ""
 "To control the robot directly with ROS, you will need either to be "
 "connected in SSH to the physic robot, or to use the simulation."
 msgstr ""
 
-#: ../../index.rst:50
-msgid "ROS is the most direct way to control the robot. It allows:"
-msgstr ""
-
-#: ../../index.rst:52
-msgid ""
-"to send command via the terminal in order to call services, trigger "
-"action, ..."
+#: ../../index.rst:51
+msgid "ROS is the most direct way to control the robot. It allows you to:"
 msgstr ""
 
 #: ../../index.rst:53
-msgid "to write a entire Python/C++ node in a script to realize a full process."
+msgid ""
+"Send command via the terminal in order to call services, trigger action, "
+"..."
 msgstr ""
 
-#: ../../index.rst:55
-msgid "See :doc:`ROS <source/ros>` section to see all Topic & Services available."
+#: ../../index.rst:54
+msgid "Write an entire Python/C++ node to realize a full process."
 msgstr ""
 
-#: ../../index.rst:58
+#: ../../index.rst:56
+msgid ""
+"See :doc:`ROS <source/stack/high_level>` section to see all Topic & "
+"Services available."
+msgstr ""
+
+#: ../../index.rst:59
 msgid "Python ROS Wrapper"
 msgstr ""
 
-#: ../../index.rst:60
+#: ../../index.rst:61
 msgid ""
 "To use Python ROS Wrapper, you will need either to be connected in SSH to"
 " the physic robot, or to use the simulation."
 msgstr ""
 
-#: ../../index.rst:63
+#: ../../index.rst:64
 msgid ""
 "The Python ROS Wrapper is built on top of ROS to allow a faster "
 "development than ROS. Programs are run directly on the robot which allows"
@@ -107,23 +110,23 @@ msgid ""
 "needed."
 msgstr ""
 
-#: ../../index.rst:67
+#: ../../index.rst:68
 msgid ""
 "See :doc:`Python ROS Wrapper <source/ros_wrapper>` to see which functions"
 " are accessible and examples on how to use them."
 msgstr ""
 
-#: ../../index.rst:71
+#: ../../index.rst:72
 msgid "More ways"
 msgstr ""
 
-#: ../../index.rst:73
+#: ../../index.rst:74
 msgid ""
 "Other methods are available to control the robot allowing the user to "
 "code and run programs outside his terminal."
 msgstr ""
 
-#: ../../index.rst:76
+#: ../../index.rst:77
 msgid "Learn more on this :doc:`section <source/more>`."
 msgstr ""
 
@@ -211,5 +214,51 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "ROS is the more direct way to control the robot. It allows:"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "This documentation contains everything you "
+#~ "need to understand Ned's functioning &"
+#~ " how to control it through ROS."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "It is made as well for users "
+#~ "who are using the \"physic\" robot "
+#~ "as those who want to use a "
+#~ "virtual version."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Before diving into the software "
+#~ "documentation, you can learn more about"
+#~ " the robot development in the "
+#~ ":doc:`Overwiew <source/overview>` section."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Also, if you want to use a "
+#~ "simulated version of Ned, browse the "
+#~ ":doc:`Simulation <source/simulation>` section."
+#~ msgstr ""
+
+#~ msgid "ROS is the most direct way to control the robot. It allows:"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "to send command via the terminal "
+#~ "in order to call services, trigger "
+#~ "action, ..."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "to write a entire Python/C++ node "
+#~ "in a script to realize a full "
+#~ "process."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "See :doc:`ROS <source/ros>` section to "
+#~ "see all Topic & Services available."
 #~ msgstr ""
 

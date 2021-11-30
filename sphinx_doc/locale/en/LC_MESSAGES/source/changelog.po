@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-22 14:07+0000\n"
+"POT-Creation-Date: 2021-10-22 17:37+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,140 +21,148 @@ msgstr ""
 "Generated-By: Babel 2.9.1\n"
 
 #: ../../source/changelog.rst:2
-msgid "September release - New features batch"
+msgid "December release - Hardware Stack refinement"
 msgstr ""
 
-#: ../../source/changelog.rst:5
+#: ../../source/changelog.rst:5 ../../source/changelog.rst:14
 msgid "Features"
 msgstr ""
 
-#: ../../source/changelog.rst:8
+#: ../../source/changelog.rst:7
+msgid "TODO"
+msgstr ""
+
+#: ../../source/changelog.rst:11
+msgid "September release - New features batch"
+msgstr ""
+
+#: ../../source/changelog.rst:17
 msgid "Tool commander package"
 msgstr ""
 
-#: ../../source/changelog.rst:10
+#: ../../source/changelog.rst:19
 msgid "TCP service settings"
 msgstr ""
 
-#: ../../source/changelog.rst:12
+#: ../../source/changelog.rst:21
 msgid "TCP.msg"
 msgstr ""
 
-#: ../../source/changelog.rst:14
+#: ../../source/changelog.rst:23
 msgid "SetTCP.srv"
 msgstr ""
 
-#: ../../source/changelog.rst:18
+#: ../../source/changelog.rst:27
 msgid "Arm commander package"
 msgstr ""
 
-#: ../../source/changelog.rst:20
+#: ../../source/changelog.rst:29
 msgid "New movements available in ArmMoveCommand.msg"
 msgstr ""
 
-#: ../../source/changelog.rst:22 ../../source/changelog.rst:36
+#: ../../source/changelog.rst:31 ../../source/changelog.rst:45
 msgid "linear pose"
 msgstr ""
 
-#: ../../source/changelog.rst:24 ../../source/changelog.rst:42
+#: ../../source/changelog.rst:33 ../../source/changelog.rst:51
 msgid "shift linear pose"
 msgstr ""
 
-#: ../../source/changelog.rst:26
+#: ../../source/changelog.rst:35
 msgid "trajectory"
 msgstr ""
 
-#: ../../source/changelog.rst:30
+#: ../../source/changelog.rst:39
 msgid "Python ROS Wrapper package"
 msgstr ""
 
-#: ../../source/changelog.rst:32
+#: ../../source/changelog.rst:41
 msgid "New movement functions available"
 msgstr ""
 
-#: ../../source/changelog.rst:34
+#: ../../source/changelog.rst:43
 msgid "move linear pose"
 msgstr ""
 
-#: ../../source/changelog.rst:38
+#: ../../source/changelog.rst:47
 msgid "jog pose shift"
 msgstr ""
 
-#: ../../source/changelog.rst:40
+#: ../../source/changelog.rst:49
 msgid "jog joints shift"
 msgstr ""
 
-#: ../../source/changelog.rst:44
+#: ../../source/changelog.rst:53
 msgid "execute trajectory from pose"
 msgstr ""
 
-#: ../../source/changelog.rst:46
+#: ../../source/changelog.rst:55
 msgid "New TCP functions available"
 msgstr ""
 
-#: ../../source/changelog.rst:48
+#: ../../source/changelog.rst:57
 msgid "set_tcp"
 msgstr ""
 
-#: ../../source/changelog.rst:50
+#: ../../source/changelog.rst:59
 msgid "enable_tcp"
 msgstr ""
 
-#: ../../source/changelog.rst:52
+#: ../../source/changelog.rst:61
 msgid "reset_tcp"
 msgstr ""
 
-#: ../../source/changelog.rst:54
+#: ../../source/changelog.rst:63
 msgid "New camera settings functions available"
 msgstr ""
 
-#: ../../source/changelog.rst:56
+#: ../../source/changelog.rst:65
 msgid "set_brightness"
 msgstr ""
 
-#: ../../source/changelog.rst:58
+#: ../../source/changelog.rst:67
 msgid "set_contrast"
 msgstr ""
 
-#: ../../source/changelog.rst:60
+#: ../../source/changelog.rst:69
 msgid "set_saturation"
 msgstr ""
 
-#: ../../source/changelog.rst:63
+#: ../../source/changelog.rst:72
 msgid "Improvements"
 msgstr ""
 
-#: ../../source/changelog.rst:65
+#: ../../source/changelog.rst:74
 msgid "Refactoring Tool Commander and Robot Commander packages."
 msgstr ""
 
-#: ../../source/changelog.rst:67
+#: ../../source/changelog.rst:76
 msgid "Remove Robot Commander package"
 msgstr ""
 
-#: ../../source/changelog.rst:69
+#: ../../source/changelog.rst:78
 msgid ""
 "Reorder Robot Commander package between Tool Commander and Arm Commander "
 "packages."
 msgstr ""
 
-#: ../../source/changelog.rst:71
+#: ../../source/changelog.rst:80
 msgid "Self collision detection"
 msgstr ""
 
-#: ../../source/changelog.rst:73
+#: ../../source/changelog.rst:82
 msgid "Add self-collision detection via MoveIt."
 msgstr ""
 
-#: ../../source/changelog.rst:75
+#: ../../source/changelog.rst:84
 msgid "Collision detection"
 msgstr ""
 
-#: ../../source/changelog.rst:77
+#: ../../source/changelog.rst:86
 msgid "Collision detection improvement on each joints."
 msgstr ""
 
-#: ../../source/changelog.rst:79
+#: ../../source/changelog.rst:88
 msgid "Learning mode activation in case of a collision."
 msgstr ""
 
