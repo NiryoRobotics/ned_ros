@@ -16,15 +16,27 @@
 ## Génération
 Placez vous à la racine de votre dossier sphinx
 
-Pour générer le html, utilisez : 
+Pour générer la documentation complete en html, utilisez : 
 
-`make html`
+`make all`
 
-Le fichier à ouvrir est : **_build/html/index.html**
+Pour mettre à jour les fichiers de traduction, utiliser :
+
+`make update`
+
+Pour mettre à jour la documentation en anglais uniquement, utilisez :
+
+`make en`
+
+Pour mettre à jour la documentation en français uniquement, utilisez :
+
+`make fr`
+
+Le fichier à ouvrir est : **_build/fr/index.html** pour la documentation française, **_build/en/index.html** pour la documentation anglaise
 
 Command clean + make + open : 
 
-`make clean; make html ; google-chrome _build/html/index.html`
+`make clean; make all ; xdg-open _build/fr/index.html`
 
 ## Ressources
 ### Spinxcontrib
