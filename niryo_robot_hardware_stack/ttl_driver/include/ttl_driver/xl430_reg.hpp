@@ -33,122 +33,108 @@ struct XL430Reg
     // see table here : http:// support.robotis.com/en/product/actuator/dynamixel_x/xl_series/xl-320.htm
     // EEPROM
     static constexpr uint16_t ADDR_MODEL_NUMBER             = 0;
-    static constexpr uint8_t SIZE_MODEL_NUMBER             = 2;
+    using TYPE_MODEL_NUMBER = uint16_t;
 
     static constexpr uint16_t ADDR_MODEL_INFORMATION        = 2;
-    static constexpr uint8_t SIZE_MODEL_INFORMATION        = 4;
+    using TYPE_MODEL_INFORMATION = uint32_t;
 
     static constexpr uint16_t ADDR_FIRMWARE_VERSION         = 6;
     using TYPE_FIRMWARE_VERSION = uint8_t;
 
     static constexpr uint16_t ADDR_ID                       = 7;
-    static constexpr uint8_t SIZE_ID                       = 1;
+    using TYPE_ID = uint8_t;
 
     static constexpr uint16_t ADDR_BAUDRATE                 = 8;
-    static constexpr uint8_t SIZE_BAUDRATE                 = 1;
+    using TYPE_BAUDRATE = uint8_t;
 
     static constexpr uint16_t ADDR_RETURN_DELAY_TIME        = 9;
-    static constexpr uint8_t SIZE_RETURN_DELAY_TIME        = 1;
+    using TYPE_RETURN_DELAY_TIME = uint8_t;
 
     static constexpr uint16_t ADDR_DRIVE_MODE               = 10;
-    static constexpr uint8_t SIZE_DRIVE_MODE               = 1;
+    using TYPE_DRIVE_MODE = uint8_t;
 
     static constexpr uint16_t ADDR_OPERATING_MODE           = 11;
-    static constexpr uint8_t SIZE_OPERATING_MODE           = 1;
+    using TYPE_OPERATING_MODE = uint8_t;
 
     static constexpr uint16_t ADDR_HOMING_OFFSET            = 20;
-    static constexpr uint8_t SIZE_HOMING_OFFSET            = 4;
+    using TYPE_HOMING_OFFSET = uint32_t;
 
     static constexpr uint16_t ADDR_TEMPERATURE_LIMIT        = 31;
-    static constexpr uint8_t SIZE_TEMPERATURE_LIMIT        = 1;
+    using TYPE_TEMPERATURE_LIMIT = uint8_t;
 
     static constexpr uint16_t ADDR_MAX_VOLTAGE_LIMIT        = 32;
-    static constexpr uint8_t SIZE_MAX_VOLTAGE_LIMIT        = 2;
+    using TYPE_MAX_VOLTAGE_LIMIT = uint16_t;
 
     static constexpr uint16_t ADDR_MIN_VOLTAGE_LIMIT        = 34;
-    static constexpr uint8_t SIZE_MIN_VOLTAGE_LIMIT        = 2;
+    using TYPE_MIN_VOLTAGE_LIMIT = uint16_t;
 
     static constexpr uint16_t ADDR_PWM_LIMIT                = 36;
-    static constexpr uint8_t SIZE_PWM_LIMIT                = 2;
+    using TYPE_PWM_LIMIT = uint16_t;
 
     static constexpr uint16_t ADDR_VELOCITY_LIMIT           = 44;
-    static constexpr uint8_t SIZE_VELOCITY_LIMIT           = 4;
+    using TYPE_VELOCITY_LIMIT = uint32_t;
 
     static constexpr uint16_t ADDR_MAX_POSITION_LIMIT       = 48;
-    static constexpr uint8_t SIZE_MAX_POSITION_LIMIT       = 4;
+    using TYPE_MAX_POSITION_LIMIT = uint32_t;
 
     static constexpr uint16_t ADDR_MIN_POSITION_LIMIT       = 52;
-    static constexpr uint8_t SIZE_MIN_POSITION_LIMIT       = 4;
+    using TYPE_MIN_POSITION_LIMIT = uint32_t;
 
     static constexpr uint16_t ADDR_ALARM_SHUTDOWN           = 63;
-    static constexpr uint8_t SIZE_ALARM_SHUTDOWN           = 1;
+    using TYPE_ALARM_SHUTDOWN = uint8_t;
 
     // RAM
     static constexpr uint16_t ADDR_TORQUE_ENABLE            = 64;
-    static constexpr uint8_t SIZE_TORQUE_ENABLE            = 1;
+    using TYPE_TORQUE_ENABLE = uint8_t;
 
     static constexpr uint16_t ADDR_LED                      = 65;
-    static constexpr uint8_t SIZE_LED                      = 1;
+    using TYPE_LED = uint8_t;
 
     static constexpr uint16_t ADDR_STATUS_RETURN_LEVEL      = 68;
-    static constexpr uint8_t SIZE_STATUS_RETURN_LEVEL      = 1;
+    using TYPE_STATUS_RETURN_LEVEL = uint8_t;
 
     static constexpr uint16_t ADDR_REGISTERED_INSTRUCTION   = 69;
-    static constexpr uint8_t SIZE_REGISTERED_INSTRUCTION   = 1;
+    using TYPE_REGISTERED_INSTRUCTION = uint8_t;
 
     static constexpr uint16_t ADDR_HW_ERROR_STATUS          = 70;
     using TYPE_HW_ERROR_STATUS = uint8_t;
 
+    using TYPE_PID_GAIN = uint16_t;
     static constexpr uint16_t ADDR_VELOCITY_I_GAIN          = 76;
-    static constexpr uint8_t SIZE_VELOCITY_I_GAIN          = 2;
-
     static constexpr uint16_t ADDR_VELOCITY_P_GAIN          = 78;
-    static constexpr uint8_t SIZE_VELOCITY_P_GAIN          = 2;
-
     static constexpr uint16_t ADDR_POSITION_D_GAIN          = 80;
-    static constexpr uint8_t SIZE_POSITION_D_GAIN          = 2;
-
     static constexpr uint16_t ADDR_POSITION_I_GAIN          = 82;
-    static constexpr uint8_t SIZE_POSITION_I_GAIN          = 2;
-
     static constexpr uint16_t ADDR_POSITION_P_GAIN          = 84;
-    static constexpr uint8_t SIZE_POSITION_P_GAIN          = 2;
-
     static constexpr uint16_t ADDR_FF2_GAIN                 = 88;
-    static constexpr uint8_t SIZE_FF2_GAIN                 = 2;
-
     static constexpr uint16_t ADDR_FF1_GAIN                 = 90;
-    static constexpr uint8_t SIZE_FF1_GAIN                 = 2;
 
     static constexpr uint16_t ADDR_BUS_WATCHDOG             = 98;
-    static constexpr uint8_t SIZE_BUS_WATCHDOG             = 1;
+    using TYPE_BUS_WATCHDOG = uint8_t;
 
     static constexpr uint16_t ADDR_GOAL_PWM                 = 100;
-    static constexpr uint8_t SIZE_GOAL_PWM                 = 2;
+    using TYPE_GOAL_PWM = uint16_t;
 
     static constexpr uint16_t ADDR_GOAL_VELOCITY            = 104;
-    static constexpr uint8_t SIZE_GOAL_VELOCITY            = 4;
+    using TYPE_GOAL_VELOCITY = uint32_t;
 
+    using TYPE_PROFILE = uint32_t;
     static constexpr uint16_t ADDR_PROFILE_ACCELERATION     = 108;
-    static constexpr uint8_t SIZE_PROFILE_ACCELERATION     = 4;
-
     static constexpr uint16_t ADDR_PROFILE_VELOCITY         = 112;
-    static constexpr uint8_t SIZE_PROFILE_VELOCITY         = 4;
 
     static constexpr uint16_t ADDR_GOAL_POSITION            = 116;
-    static constexpr uint8_t SIZE_GOAL_POSITION            = 4;
+    using TYPE_GOAL_POSITION = uint32_t;
 
     static constexpr uint16_t ADDR_MOVING                   = 122;
-    static constexpr uint8_t SIZE_MOVING                   = 1;
+    using TYPE_MOVING = uint8_t;
 
     static constexpr uint16_t ADDR_MOVING_STATUS            = 123;
-    static constexpr uint8_t SIZE_MOVING_STATUS            = 1;
+    using TYPE_MOVING_STATUS = uint8_t;
 
     static constexpr uint16_t ADDR_PRESENT_PWM              = 124;
-    static constexpr uint8_t SIZE_PRESENT_PWM              = 2;
+    using TYPE_PRESENT_PWM = uint16_t;
 
     static constexpr uint16_t ADDR_PRESENT_LOAD             = 126;
-    static constexpr uint8_t SIZE_PRESENT_LOAD             = 2;
+    using TYPE_PRESENT_LOAD = uint16_t;
 
     static constexpr uint16_t ADDR_PRESENT_VELOCITY         = 128;
     using TYPE_PRESENT_VELOCITY = uint32_t;
@@ -157,10 +143,10 @@ struct XL430Reg
     using TYPE_PRESENT_POSITION = uint32_t;
 
     static constexpr uint16_t ADDR_VELOCITY_TRAJECTORY      = 136;
-    static constexpr uint8_t SIZE_VELOCITY_TRAJECTORY      = 4;
+    using TYPE_VELOCITY_TRAJECTORY = uint32_t;
 
     static constexpr uint16_t ADDR_POSITION_TRAJECTORY      = 140;
-    static constexpr uint8_t SIZE_POSITION_TRAJECTORY      = 4;
+    using TYPE_POSITION_TRAJECTORY = uint32_t;
 
     static constexpr uint16_t ADDR_PRESENT_VOLTAGE          = 144;
     using TYPE_PRESENT_VOLTAGE = uint16_t;

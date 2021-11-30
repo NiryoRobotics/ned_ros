@@ -25,6 +25,7 @@ from niryo_robot_rpi.common.abstract_shutdown_manager import AbstractShutdownMan
 from .mcp_io_objects import McpIOManager
 
 from std_msgs.msg import String
+from niryo_robot_msgs.srv import Trigger
 
 
 class ShutdownManager(AbstractShutdownManager):
@@ -46,6 +47,7 @@ class ShutdownManager(AbstractShutdownManager):
         shutdown_input = rospy.get_param("~shutdown_manager/digital_input")
         self.__shutdown_output = self.__mcp_manager.add_output(shutdown_output, "shutdown_output")
         self.__shutdown_input = self.__mcp_manager.add_button(shutdown_input, "shutdown_input")
+
         self.__shutdown_input.on_press(self.request_shutdown)
 
     def request_shutdown(self):
@@ -59,12 +61,24 @@ class ShutdownManager(AbstractShutdownManager):
     def shutdown(self):
         self.__shutdown_output.value = False
         self.__shutdown_input.disable_on_press()
+        self.__stop_move()
         self.wait_end_of_sound()
         send_shutdown_command()
 
     def reboot(self):
         self.wait_end_of_sound()
         send_reboot_command()
+
+    @staticmethod
+    def __stop_move():
+        """
+        Stop the robot movement
+        """
+        stop_move_service = rospy.ServiceProxy('/niryo_robot_commander/stop_command', Trigger)
+        stop_move_service()
+
+        stop_program_service = rospy.ServiceProxy('/niryo_robot_programs_manager/stop_program', Trigger)
+        stop_program_service()
 
     def wait_end_of_sound(self):
         self.__shutdown_event.clear()

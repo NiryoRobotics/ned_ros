@@ -50,8 +50,6 @@ class MockStepperDriver : public AbstractStepperDriver
         int scan(std::vector<uint8_t>& id_list) override;
         int reboot(uint8_t id) override;
 
-        std::string interpretErrorState(uint32_t hw_state) const override;
-
         // eeprom write
         int changeId(uint8_t id, uint8_t new_id) override;
 
@@ -62,10 +60,11 @@ class MockStepperDriver : public AbstractStepperDriver
         int readMaxPosition(uint8_t id, uint32_t &max_pos) override;
 
         // ram write
-        int writeTorqueEnable(uint8_t id, uint32_t torque_enable) override;
-        int writeGoalPosition(uint8_t id, uint32_t position) override;
-        int writeGoalVelocity(uint8_t id, uint32_t velocity) override;
-        int syncWriteTorqueEnable(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &torque_enable_list) override;
+        int writeTorqueEnable(uint8_t id, uint8_t torque_enable) override;
+        int writePositionGoal(uint8_t id, uint32_t position) override;
+        int writeVelocityGoal(uint8_t id, uint32_t velocity) override;
+
+        int syncWriteTorqueEnable(const std::vector<uint8_t> &id_list, const std::vector<uint8_t> &torque_enable_list) override;
         int syncWritePositionGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &position_list) override;
         int syncWriteVelocityGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &velocity_list) override;
 
@@ -104,6 +103,8 @@ class MockStepperDriver : public AbstractStepperDriver
         int readFirmwareRunning(uint8_t id, bool &is_running) override;
 
     private:
+        bool init();
+
         std::shared_ptr<FakeTtlData>  _fake_data;
         std::vector<uint8_t> _id_list;
 

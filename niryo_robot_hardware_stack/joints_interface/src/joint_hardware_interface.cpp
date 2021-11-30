@@ -137,7 +137,7 @@ bool JointHardwareInterface::init(ros::NodeHandle& /*rootnh*/, ros::NodeHandle &
                 int result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
 
                 // Try 3 times
-                for (int tries = 0; tries < 10; tries++)
+                for (int tries = 0; tries < 3; tries++)
                 {
                     if (EBusProtocol::CAN == eBusProto)
                         result = _can_interface->addJoint(stepperState);
@@ -145,21 +145,33 @@ bool JointHardwareInterface::init(ros::NodeHandle& /*rootnh*/, ros::NodeHandle &
                         result = _ttl_interface->addJoint(stepperState);
 
                     // on success, we initialize the joint and go out of loop
-                    if (niryo_robot_msgs::CommandStatus::SUCCESS == result &&
-                        niryo_robot_msgs::CommandStatus::SUCCESS == initHardware(stepperState, torque_status))
+                    if (niryo_robot_msgs::CommandStatus::SUCCESS == result)
                     {
-                        ROS_INFO("JointHardwareInterface::init - add stepper joint success");
-                        break;
+                        result = initHardware(stepperState, torque_status);
+                        if (niryo_robot_msgs::CommandStatus::SUCCESS == result)
+                        {
+                            ROS_INFO("JointHardwareInterface::init - add stepper joint success");
+                            break;
+                        }
+                        else
+                        {
+                          ROS_WARN("JointHardwareInterface::init - "
+                                   "initialize stepper joint failure, return : %d. Retrying (%d)...",
+                                   result, tries);
+                        }
                     }
-
-                    ROS_WARN("JointHardwareInterface::init - "
-                             "add stepper joint failure, return : %d. Retrying (%d)...",
-                             result, tries);
+                    else
+                    {
+                      ROS_WARN("JointHardwareInterface::init - "
+                               "add stepper joint failure, return : %d. Retrying (%d)...",
+                               result, tries);
+                    }
                 }
 
                 if (niryo_robot_msgs::CommandStatus::SUCCESS != result)
                 {
                     ROS_ERROR("JointHardwareInterface::init - Fail to add joint, return : %d", result);
+                    stepperState->setConnectionStatus(false);
                     ros::Duration(0.05).sleep();
                 }
             }
@@ -188,7 +200,7 @@ bool JointHardwareInterface::init(ros::NodeHandle& /*rootnh*/, ros::NodeHandle &
                 int result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
 
                 // Try 3 times
-                for (int tries = 0; tries < 10; tries++)
+                for (int tries = 0; tries < 3; tries++)
                 {
                     if (EBusProtocol::CAN == eBusProto)
                         ROS_ERROR("JointHardwareInterface::init : Dynamixel motors are not available on CAN Bus");
@@ -196,21 +208,33 @@ bool JointHardwareInterface::init(ros::NodeHandle& /*rootnh*/, ros::NodeHandle &
                         result = _ttl_interface->addJoint(dxlState);
 
                     // on success, we initialize the joint and go out of loop
-                    if (niryo_robot_msgs::CommandStatus::SUCCESS == result &&
-                        niryo_robot_msgs::CommandStatus::SUCCESS == initHardware(dxlState, torque_status))
+                    if (niryo_robot_msgs::CommandStatus::SUCCESS == result)
                     {
-                        ROS_INFO("JointHardwareInterface::init - add dxl joint success");
-                        break;
+                        result = initHardware(dxlState, torque_status);
+                        if (niryo_robot_msgs::CommandStatus::SUCCESS == result)
+                        {
+                            ROS_INFO("JointHardwareInterface::init - add dxl joint success");
+                            break;
+                        }
+                        else
+                        {
+                            ROS_WARN("JointHardwareInterface::init - "
+                                     "init dxl joint failure, return : %d. Retrying (%d)...",
+                                     result, tries);
+                        }
                     }
-
-                    ROS_WARN("JointHardwareInterface::init - "
-                             "add dxl joint failure, return : %d. Retrying (%d)...",
-                             result, tries);
+                    else
+                    {
+                        ROS_WARN("JointHardwareInterface::init - "
+                                 "add dxl joint failure, return : %d. Retrying (%d)...",
+                                 result, tries);
+                    }
                 }
 
                 if (niryo_robot_msgs::CommandStatus::SUCCESS != result)
                 {
                     ROS_ERROR("JointHardwareInterface::init - Fail to add joint, return : %d", result);
+                    dxlState->setConnectionStatus(false);
                     ros::Duration(0.05).sleep();
                 }
             }
@@ -272,14 +296,18 @@ bool JointHardwareInterface::initStepperState(ros::NodeHandle &robot_hwnh,
         int direction = 1;
         double max_effort = 0.0;
         double home_position = 0.0;
-        double limit_position = 0.0;
+        double limit_position_min = 0.0;
+        double limit_position_max = 0.0;
+        double motor_ratio = 0.0;
 
         robot_hwnh.getParam(currentNamespace + "/offset_position", offsetPos);
         robot_hwnh.getParam(currentNamespace + "/gear_ratio", gear_ratio);
         robot_hwnh.getParam(currentNamespace + "/direction", direction);
         robot_hwnh.getParam(currentNamespace + "/max_effort", max_effort);
         robot_hwnh.getParam(currentNamespace + "/home_position", home_position);
-        robot_hwnh.getParam(currentNamespace + "/limit_position", limit_position);
+        robot_hwnh.getParam(currentNamespace + "/limit_position_min", limit_position_min);
+        robot_hwnh.getParam(currentNamespace + "/limit_position_max", limit_position_max);
+        robot_hwnh.getParam(currentNamespace + "/motor_ratio", motor_ratio);
 
         // acceleration and velocity profiles
         common::model::VelocityProfile profile{};
@@ -333,7 +361,12 @@ bool JointHardwareInterface::initStepperState(ros::NodeHandle &robot_hwnh,
         stepperState->setMaxEffort(max_effort);
         stepperState->setVelocityProfile(profile);
         stepperState->setHomePosition(home_position);
-        stepperState->setLimitPosition(limit_position);
+        stepperState->setLimitPositionMax(limit_position_max);
+        stepperState->setLimitPositionMin(limit_position_min);
+        stepperState->setMotorRatio(motor_ratio);
+
+        // update ratio used to convert rad to pos motor
+        stepperState->updateMultiplierRatio();
 
         res = true;
     }
@@ -364,6 +397,10 @@ bool JointHardwareInterface::initDxlState(ros::NodeHandle &robot_hwnh,
         int velocityIGain = 0;
         int FF1Gain = 0;
         int FF2Gain = 0;
+        int velocityProfile = 0;
+        int accelerationProfile = 0;
+        double limit_position_min = 0.0;
+        double limit_position_max = 0.0;
 
         robot_hwnh.getParam(currentNamespace + "/offset_position", offsetPos);
         robot_hwnh.getParam(currentNamespace + "/direction", direction);
@@ -377,7 +414,14 @@ bool JointHardwareInterface::initDxlState(ros::NodeHandle &robot_hwnh,
 
         robot_hwnh.getParam(currentNamespace + "/FF1_gain", FF1Gain);
         robot_hwnh.getParam(currentNamespace + "/FF2_gain", FF2Gain);
+
+        robot_hwnh.getParam(currentNamespace + "/velocity_profile", velocityProfile);
+        robot_hwnh.getParam(currentNamespace + "/acceleration_profile", accelerationProfile);
+
         robot_hwnh.getParam(currentNamespace + "/home_position", home_position);
+        robot_hwnh.getParam(currentNamespace + "/limit_position_min", limit_position_min);
+        robot_hwnh.getParam(currentNamespace + "/limit_position_max", limit_position_max);
+
 
         dxlState->setOffsetPosition(offsetPos);
         dxlState->setHomePosition(home_position);
@@ -392,6 +436,12 @@ bool JointHardwareInterface::initDxlState(ros::NodeHandle &robot_hwnh,
 
         dxlState->setFF1Gain(static_cast<uint32_t>(FF1Gain));
         dxlState->setFF2Gain(static_cast<uint32_t>(FF2Gain));
+
+        dxlState->setVelProfile(static_cast<uint32_t>(velocityProfile));
+        dxlState->setAccProfile(static_cast<uint32_t>(accelerationProfile));
+
+        dxlState->setLimitPositionMin(limit_position_min);
+        dxlState->setLimitPositionMax(limit_position_max);
 
         res = true;
     }
@@ -488,22 +538,26 @@ bool JointHardwareInterface::rebootAll(bool torque_on)
     bool res = true;
     for (auto state : _joint_state_list)
     {
-        // first set torque off
-        if (state->isStepper())
-            _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperTtlSingleCmd>(EStepperCommandType::CMD_TYPE_TORQUE,
-                                                                               state->getId(), std::initializer_list<uint32_t>{false}));
-
-        ros::Duration(0.2).sleep();
-
-        if  (_ttl_interface->rebootHardware(state))
+        if (state->getBusProtocol() == EBusProtocol::TTL)
         {
-            initHardware(state, torque_on);
+            // first set torque off
+            if (state->isStepper())
+                _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperTtlSingleCmd>(EStepperCommandType::CMD_TYPE_TORQUE,
+                                                                                state->getId(), std::initializer_list<uint32_t>{false}));
+
+            ros::Duration(0.2).sleep();
+
+            if (_ttl_interface->rebootHardware(state))
+            {
+                initHardware(state, torque_on);
+            }
+            else
+            {
+                ROS_ERROR("Fail to reboot motor id %d", state->getId());
+                res = false;
+            }
         }
-        else
-        {
-            ROS_ERROR("Fail to reboot motor id %d", state->getId());
-            res = false;
-        }
+        // reboot not available for CAN
     }
 
     return res;
@@ -558,22 +612,28 @@ int JointHardwareInterface::initHardware(std::shared_ptr<common::model::JointSta
                 }
             }
         }
-
-        if (motor_state->isDynamixel())
+        else if (motor_state->isDynamixel())
         {
             auto dxlState = std::dynamic_pointer_cast<common::model::DxlMotorState>(motor_state);
             if (dxlState)
             {
-                // CMD_TYPE_PID cmd
+                // set PID
                 _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_PID,
-                                                                                    dxlState->getId(),
-                                                                                    std::initializer_list<uint32_t>({dxlState->getPositionPGain(),
-                                                                                                                     dxlState->getPositionIGain(),
-                                                                                                                     dxlState->getPositionDGain(),
-                                                                                                                     dxlState->getVelocityPGain(),
-                                                                                                                     dxlState->getVelocityIGain(),
-                                                                                                                     dxlState->getFF1Gain(),
-                                                                                                                     dxlState->getFF2Gain()})));
+                                                                                       dxlState->getId(),
+                                                                                       std::initializer_list<uint32_t>({dxlState->getPositionPGain(),
+                                                                                                                        dxlState->getPositionIGain(),
+                                                                                                                        dxlState->getPositionDGain(),
+                                                                                                                        dxlState->getVelocityPGain(),
+                                                                                                                        dxlState->getVelocityIGain(),
+                                                                                                                        dxlState->getFF1Gain(),
+                                                                                                                        dxlState->getFF2Gain(),
+                                                                                                                        dxlState->getVelProfile(),
+                                                                                                                        dxlState->getAccProfile()})));
+                // set velocity and acceleration profile
+                _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_PROFILE,
+                                                                                       dxlState->getId(),
+                                                                                       std::initializer_list<uint32_t>({dxlState->getVelProfile(),
+                                                                                                                        dxlState->getAccProfile()})));
 
                 // TORQUE cmd on if ned2, off otherwise
                 _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(DxlSingleCmd(EDxlCommandType::CMD_TYPE_TORQUE,

@@ -201,7 +201,16 @@ void JointsInterfaceCore::activateLearningMode(bool activate, int &ostatus, std:
  */
 bool JointsInterfaceCore::rebootAll(bool torque_on)
 {
-    return _robot->rebootAll(torque_on);
+    _enable_control_loop = false;
+    bool res = _robot->rebootAll(torque_on);
+
+    // reset ros controller to update command to be equal with position actual to avoid movement undefined
+    _enable_control_loop = true;
+    _reset_controller = true;
+
+    // need calibration after reset joints
+    _robot->setNeedCalibration();
+    return res;
 }
 
 // *********************
@@ -238,13 +247,24 @@ void JointsInterfaceCore::rosControlLoop()
                 _cm->update(ros::Time::now(), elapsed_time, false);
             }
 
-            if (!_previous_state_learning_mode)
+            // we just use cmd from moveit only in torque on + calibration finished
+            if (!_previous_state_learning_mode && _lock_write_cnt == -1 && !_robot->needCalibration())
             {
                 _robot->write(current_time, elapsed_time);
             }
 
+            if (_lock_write_cnt > 0)
+            {
+                _lock_write_cnt--;
+            }
+            else if (_lock_write_cnt == 0)
+            {
+                _lock_write_cnt = -1;
+                _reset_controller = true;
+            }
             bool isFreqMet = _control_loop_rate.sleep();
-            ROS_DEBUG_COND(!isFreqMet,
+            if (!isFreqMet)
+                ROS_DEBUG_THROTTLE(2,
                            "JointsInterfaceCore::rosControlLoop : freq not met : expected (%f s) vs actual (%f s)",
                            _control_loop_rate.expectedCycleTime().toSec(),
                            _control_loop_rate.cycleTime().toSec());
@@ -261,7 +281,7 @@ void JointsInterfaceCore::rosControlLoop()
  * @param req
  * @param res
  * @return
- *
+ * NED && ONE
  * Problem : for joint_trajectory_controller, position command has no discontinuity
  * --> If the stepper motor missed some steps, we need to start at current position (given by the encoder)
  *  So current real position != current trajectory command, we need a discontinuity in controller command.
@@ -273,18 +293,31 @@ void JointsInterfaceCore::rosControlLoop()
  *  send a new goal, be sure to send a message on /joints_interface/steppers_reset_controller BEFORE sending the goal.
  *
  *  This behavior is used in robot_commander node.
+ * 
+ * NED2
+ * Callback call when we have to make a discontinuity of position command in ros control (like if we have a collision, we have 
+ * to update the position command to be equal with the position actual to avoid joints continue moving)
+ * This way is a treat to block the write function of robot and wait a little bit and then reset controller to make ros controller
+ * update cmd. If ros controller is reset rapidly, The pid return unvalid position.
  */
 bool JointsInterfaceCore::_callbackResetController(niryo_robot_msgs::Trigger::Request &/*req*/,
                                                    niryo_robot_msgs::Trigger::Response &res)
 {
     ROS_DEBUG("JointsInterfaceCore::_callbackResetController - Reset Controller");
 
-    // set current command to encoder position
-    _robot->setCommandToCurrentPosition();
-
-    // reset controllers to allow a discontinuity in position command
-    _cm->update(ros::Time::now(), ros::Duration(0.00), true);
-    _robot->synchronizeMotors(true);
+    // set pos and command equal
+    if (_hardware_version == "ned2")
+    {
+        _robot->setCommandToCurrentPosition();
+        _robot->write(ros::Time::now(), ros::Duration(0.0));
+        _lock_write_cnt = 200;
+    }
+    else if (_hardware_version == "ned" || _hardware_version == "one")
+    {
+        _robot->setCommandToCurrentPosition();
+        _cm->update(ros::Time::now(), ros::Duration(0.0), true);
+        _robot->synchronizeMotors(true);
+    }
 
     res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
     res.message = "Reset done";

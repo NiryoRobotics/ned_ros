@@ -32,6 +32,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <functional>
 #include <algorithm>
 #include <set>
+#include <utility>
 
 // ros
 #include "ros/node_handle.h"
@@ -43,6 +44,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include "niryo_robot_msgs/CommandStatus.h"
 
 #include "ttl_driver/abstract_motor_driver.hpp"
+#include "ttl_driver/abstract_stepper_driver.hpp"
 #include "ttl_driver/fake_ttl_data.hpp"
 #include "ttl_driver/MotorCommand.h"
 
@@ -122,11 +124,10 @@ public:
     int readCustomCommand(uint8_t id, int32_t reg_address, int &value, int byte_number);
 
     // read status
-    bool readPositionsStatus();
-    bool readJointsStatus();
-    bool readEndEffectorStatus();
     bool readHardwareStatus();
-    bool readHardwareStatusOptimized();
+    bool readEndEffectorStatus();
+    uint8_t readSteppersStatus();
+    bool readJointsStatus();
 
     int readMotorPID(uint8_t id,
                      uint32_t& pos_p_gain, uint32_t& pos_i_gain, uint32_t& pos_d_gain,
@@ -171,7 +172,7 @@ private:
     void addHardwareDriver(common::model::EHardwareType hardware_type) override;
 
     // Config params using in fake driver
-    void readFakeConfig();
+    void readFakeConfig(bool use_simu_gripper, bool use_simu_conveyor);
     template<typename Reg>
     void retrieveFakeMotorData(const std::string& current_ns, std::map<uint8_t, Reg>& fake_params);
 
@@ -188,22 +189,22 @@ private:
     std::string _device_name;
     int _baudrate{1000000};
 
-    std::vector<uint8_t> _all_motor_connected; // with all ttl motors connected (including the tool)
+    std::vector<uint8_t> _all_ids_connected; // with all ttl motors connected (including the tool)
     std::vector<uint8_t> _removed_motor_id_list;
 
     // state of a component for a given id
     std::map<uint8_t, std::shared_ptr<common::model::AbstractHardwareState> > _state_map;
     // map of associated ids for a given hardware type
     std::map<common::model::EHardwareType, std::vector<uint8_t> > _ids_map;
-    // map of drivers for a given hardware type (xl, stepper, end effector)
+    // map of drivers for a given hardware type (dxl, stepper, end effector)
     std::map<common::model::EHardwareType, std::shared_ptr<ttl_driver::AbstractTtlDriver> > _driver_map;
+
     // default ttl driver is always available
     std::shared_ptr<ttl_driver::AbstractTtlDriver> _default_ttl_driver;
+    std::shared_ptr<ttl_driver::AbstractStepperDriver> _default_stepper_driver;
 
     // vector of ids of motors and conveyors
     // Theses vector help remove loop not necessary
-    std::vector<uint8_t> _motor_list;
-    std::vector<uint8_t> _hw_list;
     std::vector<uint8_t> _conveyor_list;
     // TODO(CC) add tools_list ?
 
@@ -216,22 +217,19 @@ private:
 
     std::string _led_motor_type_cfg;
 
-    static constexpr uint32_t MAX_HW_FAILURE = 25;
+    static constexpr uint32_t MAX_HW_FAILURE = 50;
     static constexpr uint32_t MAX_READ_EE_FAILURE = 150;
 
-    common::model::EStepperCalibrationStatus _calibration_status{common::model::EStepperCalibrationStatus::UNINITIALIZED};
+    // at init, no hw, so no calib needed
+    common::model::EStepperCalibrationStatus _calibration_status{common::model::EStepperCalibrationStatus::OK};
 
     // for simulation only
     std::shared_ptr<FakeTtlData> _fake_data;
-    bool _use_simu_gripper = true;
     bool _simulation_mode{false};
 
     // status to track collision status
     bool _collision_status{false};
     double _last_collision_detected{0.0};
-
-    bool _check_calibration_status{true};
-    bool _calibration_in_progress_really{true};
 
     class CalibrationMachineState
     {
@@ -253,10 +251,11 @@ private:
         void start()
         {
             s = State::STARTING;
+            _time = ros::Time::now().toSec(); // keep last date updated
         }
 
         /**
-         * @brief next : nex state, stops at updating (dont circle)
+         * @brief next : next state, stops at updating (dont circle)
          */
         void next()
         {
@@ -264,21 +263,28 @@ private:
             if (State::UPDATING != s)
                newState++;
 
+            _time = ros::Time::now().toSec(); // keep last date updated
             s = static_cast<State>(newState);
         }
 
         State status()
         {
-          return s;
+            return s;
+        }
+
+        bool isTimeout()
+        {
+            return (ros::Time::now().toSec() - _time > _calibration_timeout);
         }
 
     private:
         State s{State::UPDATING};
+        double _time{};
+        static constexpr double _calibration_timeout{5.0};
     };
 
     CalibrationMachineState _calib_machine_state;
 
-    static constexpr double _calibration_timeout{3.0};
 };
 
 // inline getters
@@ -374,51 +380,51 @@ bool TtlManager::hasEndEffector() const
 template<typename Reg>
 void TtlManager::retrieveFakeMotorData(const std::string& current_ns, std::map<uint8_t, Reg> &fake_params)
 {
-    std::vector<int> stepper_ids;
-    _nh.getParam(current_ns + "id", stepper_ids);
+    std::vector<int> hw_ids;
+    _nh.getParam(current_ns + "id", hw_ids);
 
-    std::vector<int> stepper_positions;
-    _nh.getParam(current_ns + "position", stepper_positions);
-    assert(stepper_ids.size() == stepper_positions.size());
+    std::vector<int> hw_positions;
+    _nh.getParam(current_ns + "position", hw_positions);
+    assert(hw_ids.size() == hw_positions.size());
 
-    std::vector<int> stepper_velocities;
-    _nh.getParam(current_ns + "velocity", stepper_velocities);
-    assert(stepper_ids.size() == stepper_velocities.size());
+    std::vector<int> hw_velocities;
+    _nh.getParam(current_ns + "velocity", hw_velocities);
+    assert(hw_ids.size() == hw_velocities.size());
 
-    std::vector<int> stepper_temperatures;
-    _nh.getParam(current_ns + "temperature", stepper_temperatures);
-    assert(stepper_positions.size() == stepper_temperatures.size());
+    std::vector<int> hw_temperatures;
+    _nh.getParam(current_ns + "temperature", hw_temperatures);
+    assert(hw_positions.size() == hw_temperatures.size());
 
-     std::vector<double> stepper_voltages;
-    _nh.getParam(current_ns + "voltage", stepper_voltages);
-    assert(stepper_temperatures.size() == stepper_voltages.size());
+     std::vector<double> hw_voltages;
+    _nh.getParam(current_ns + "voltage", hw_voltages);
+    assert(hw_temperatures.size() == hw_voltages.size());
 
-    std::vector<int> stepper_min_positions;
-    _nh.getParam(current_ns + "min_position", stepper_min_positions);
-    assert(stepper_voltages.size() == stepper_min_positions.size());
+    std::vector<int> hw_min_positions;
+    _nh.getParam(current_ns + "min_position", hw_min_positions);
+    assert(hw_voltages.size() == hw_min_positions.size());
 
-    std::vector<int> stepper_max_positions;
-    _nh.getParam(current_ns + "max_position", stepper_max_positions);
-    assert(stepper_min_positions.size() == stepper_max_positions.size());
+    std::vector<int> hw_max_positions;
+    _nh.getParam(current_ns + "max_position", hw_max_positions);
+    assert(hw_min_positions.size() == hw_max_positions.size());
 
-    std::vector<int> stepper_model_numbers;
-    _nh.getParam(current_ns + "model_number", stepper_model_numbers);
-    assert(stepper_max_positions.size() == stepper_model_numbers.size());
+    std::vector<int> hw_model_numbers;
+    _nh.getParam(current_ns + "model_number", hw_model_numbers);
+    assert(hw_max_positions.size() == hw_model_numbers.size());
 
-     std::vector<std::string> stepper_firmwares;
-    _nh.getParam(current_ns + "firmware", stepper_firmwares);
-    assert(stepper_firmwares.size() == stepper_firmwares.size());
+     std::vector<std::string> hw_firmwares;
+    _nh.getParam(current_ns + "firmware", hw_firmwares);
+    assert(hw_firmwares.size() == hw_firmwares.size());
 
-    for (size_t i = 0; i < stepper_ids.size(); i++)
+    for (size_t i = 0; i < hw_ids.size(); i++)
     {
         Reg tmp;
-        tmp.id = static_cast<uint8_t>(stepper_ids.at(i));
-        tmp.position = static_cast<uint32_t>(stepper_positions.at(i));
-        tmp.velocity = static_cast<uint32_t>(stepper_velocities.at(i));
-        tmp.temperature = static_cast<uint32_t>(stepper_temperatures.at(i));
-        tmp.voltage = stepper_voltages.at(i);
-        tmp.model_number = static_cast<uint16_t>(stepper_model_numbers.at(i));
-        tmp.firmware = stepper_firmwares.at(i);
+        tmp.id = static_cast<uint8_t>(hw_ids.at(i));
+        tmp.position = static_cast<uint32_t>(hw_positions.at(i));
+        tmp.velocity = static_cast<uint32_t>(hw_velocities.at(i));
+        tmp.temperature = static_cast<uint32_t>(hw_temperatures.at(i));
+        tmp.voltage = hw_voltages.at(i);
+        tmp.model_number = static_cast<uint16_t>(hw_model_numbers.at(i));
+        tmp.firmware = hw_firmwares.at(i);
         fake_params.insert(std::make_pair(tmp.id, tmp));
     }
 }

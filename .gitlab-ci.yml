@@ -164,6 +164,9 @@ code_quality:
     - dind
   artifacts:
     paths: [gl-code-quality-report.json]
+  # Authenticate with account to not be limited by docker hub pull rate limit
+  before_script:
+   - docker login -u ${DOCKER_HUB_DOCKER_ID} -p ${DOCKER_HUB_PASSWORD}
 
 code_quality_html:
   extends: code_quality

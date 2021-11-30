@@ -31,6 +31,7 @@ from niryo_robot_msgs.msg import RPY
 from niryo_robot_rpi.msg import DigitalIO, DigitalIOState, AnalogIO, AnalogIOState
 from niryo_robot_msgs.msg import SoftwareVersion
 from niryo_robot_tools_commander.msg import ToolCommand
+from niryo_robot_status.msg import RobotStatus
 
 # Services
 from conveyor_interface.srv import ControlConveyor, SetConveyor, SetConveyorRequest
@@ -44,6 +45,7 @@ from niryo_robot_rpi.srv import SetDigitalIO, SetAnalogIO
 from niryo_robot_vision.srv import DebugMarkers, DebugMarkersRequest, DebugColorDetection, DebugColorDetectionRequest
 from std_srvs.srv import Trigger as StdTrigger
 from niryo_robot_rpi.srv import SetPullup, SetIOMode
+from niryo_robot_arm_commander.srv import ComputeTrajectory
 
 # Actions
 from niryo_robot_arm_commander.msg import RobotMoveAction, RobotMoveGoal
@@ -577,6 +579,9 @@ class NiryoRosWrapper:
 
         return self.__move_pose_with_cmd(ArmMoveCommand.POSE, x, y, z, roll, pitch, yaw)
 
+    def move_circle(self, x, y, z):
+        return self.__move_pose_with_cmd(ArmMoveCommand.DRAW_CIRCLE, x, y, z, 0, 0, 0)
+
     def move_pose_saved(self, pose_name):
         """
         Move robot end effector pose to a pose saved
@@ -665,6 +670,12 @@ class NiryoRosWrapper:
         """
         return self.__move_pose_with_cmd(ArmMoveCommand.LINEAR_POSE, x, y, z, roll, pitch, yaw)
 
+    def move_spiral(self, radius=0.2, angle_step=5, nb_steps=72, plan=1):
+        goal = RobotMoveGoal()
+        goal.cmd.cmd_type = ArmMoveCommand.DRAW_SPIRAL
+        goal.cmd.args = [radius, angle_step, nb_steps, plan]
+        return self.__execute_robot_move_action(goal)
+
     def move_without_moveit(self, joints_target, duration):
         goal = self._create_goal(joints_target, duration)
         self.__follow_joint_traj_client.wait_for_server()
@@ -677,6 +688,15 @@ class NiryoRosWrapper:
         result = self.__follow_joint_traj_client.get_result()
         if not result:
             raise NiryoRosWrapperException("Follow joint trajectory goal has reached timeout limit")
+
+        msg_dict = {result.SUCCESSFUL: "Successful",
+                    result.INVALID_GOAL: "Invalid goal",
+                    result.INVALID_JOINTS: "Invalid joints",
+                    result.OLD_HEADER_TIMESTAMP: "Old header timestamp",
+                    result.PATH_TOLERANCE_VIOLATED: "Path tolerance violated",
+                    result.GOAL_TOLERANCE_VIOLATED: "Goal tolerance violated"}
+
+        return result.error_code, msg_dict[result.error_code]
 
     def _create_goal(self, joints_position, duration):
         goal = FollowJointTrajectoryGoal()
@@ -1022,10 +1042,24 @@ class NiryoRosWrapper:
         :return: status, message
         :rtype: (int, str)
         """
-        from niryo_robot_poses_handlers.transform_functions import quaternion_from_euler
 
         if len(list_poses_raw) < 2:
             return "Give me at least 2 points"
+        list_poses = self.__list_pose_raw_to_list_poses(list_poses_raw)
+        return self.__execute_trajectory_from_formatted_poses(list_poses, dist_smoothing)
+
+    def compute_trajectory_from_poses(self,  list_poses_raw, dist_smoothing=0.0):
+        if len(list_poses_raw) < 2:
+            return "Give me at least 2 points"
+        list_poses = self.__list_pose_raw_to_list_poses(list_poses_raw)
+
+        result = self.__call_service("/niryo_robot_arm_commander/compute_waypointed_trajectory",
+                                     ComputeTrajectory, list_poses, dist_smoothing)
+        return result.trajectory
+
+    def __list_pose_raw_to_list_poses(self, list_poses_raw):
+        from niryo_robot_poses_handlers.transform_functions import quaternion_from_euler
+
         list_poses = []
         for pose in list_poses_raw:
             point = Point(*pose[:3])
@@ -1036,7 +1070,7 @@ class NiryoRosWrapper:
                 quaternion = angle
             orientation = Quaternion(*quaternion)
             list_poses.append(Pose(point, orientation))
-        return self.__execute_trajectory_from_formatted_poses(list_poses, dist_smoothing)
+        return list_poses
 
     def execute_trajectory_from_poses_and_joints(self, list_pose_joints, list_type=None, dist_smoothing=0.0):
         """
@@ -1053,6 +1087,15 @@ class NiryoRosWrapper:
         :return: status, message
         :rtype: (int, str)
         """
+
+        list_pose_waypoints = self.__list_pose_joints_to_list_poses(list_pose_joints, list_type)
+        return self.execute_trajectory_from_poses(list_pose_waypoints, dist_smoothing)
+
+    def compute_trajectory_from_poses_and_joints(self,  list_pose_joints, list_type=None, dist_smoothing=0.0):
+        list_pose_waypoints = self.__list_pose_joints_to_list_poses(list_pose_joints, list_type)
+        return self.compute_trajectory_from_poses(list_pose_waypoints, dist_smoothing)
+
+    def __list_pose_joints_to_list_poses(self, list_pose_joints, list_type=None):
         if list_type is None:
             list_type = ['pose']
         list_pose_waypoints = []
@@ -1087,7 +1130,7 @@ class NiryoRosWrapper:
                 'Execute trajectory from poses and joints - List of waypoints (size ' + str(len(list_pose_joints)) +
                 ') and list of type (size ' + str(len(list_type)) + ') must be the same size.')
 
-        return self.execute_trajectory_from_poses(list_pose_waypoints, dist_smoothing)
+        return list_pose_waypoints
 
     def save_trajectory(self, trajectory_name, list_poses_raw):
         """
@@ -1142,6 +1185,12 @@ class NiryoRosWrapper:
         goal.cmd.cmd_type = ArmMoveCommand.EXECUTE_TRAJ
         goal.cmd.list_poses = list_poses
         goal.cmd.dist_smoothing = dist_smoothing
+        return self.__execute_robot_move_action(goal)
+
+    def execute_moveit_robot_trajectory(self, moveit_robot_trajectory):
+        goal = RobotMoveGoal()
+        goal.cmd.cmd_type = ArmMoveCommand.EXECUTE_FULL_TRAJ
+        goal.cmd.trajectory = moveit_robot_trajectory
         return self.__execute_robot_move_action(goal)
 
     def delete_trajectory(self, trajectory_name):
@@ -1211,7 +1260,7 @@ class NiryoRosWrapper:
 
     def get_current_tool_id(self):
         """
-        Use /niryo_robot_hardware/tools/current_id  topic to get current tool id
+        Use /niryo_robot_tools_commander/current_id  topic to get current tool id
 
         :return: Tool Id
         :rtype: ToolID
@@ -1563,6 +1612,15 @@ class NiryoRosWrapper:
                     'Timeout: could not get digital io state (/niryo_robot_rpi/digital_io_state topic)')
         return self.__digital_io_state
 
+    def get_analog_io_state(self):
+        timeout = rospy.get_time() + 2.0
+        while self.__analog_io_state is None:
+            rospy.sleep(0.05)
+            if rospy.get_time() > timeout:
+                raise NiryoRosWrapperException(
+                    'Timeout: could not get analog io state (/niryo_robot_rpi/analog_io_state topic)')
+        return self.__analog_io_state
+
     def get_hardware_version(self):
         """
         Get the robot hardware version
@@ -1583,6 +1641,10 @@ class NiryoRosWrapper:
                 raise NiryoRosWrapperException(
                     'Timeout: could not get hardware status (/niryo_robot_hardware_interface/hardware_status topic)')
         return self.__hw_status
+
+    def get_robot_status(self):
+        msg = rospy.wait_for_message('/niryo_robot_status/robot_status', RobotStatus, 2)
+        return msg
 
     def get_axis_limits(self):
         """

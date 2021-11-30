@@ -125,6 +125,11 @@ void PortHandlerLinux::clearPort()
     serial_.flush();
 }
 
+void PortHandlerLinux::flushInput()
+{
+    serial_.flushInput();
+}
+
 void PortHandlerLinux::setPortName(const char *port_name)
 {
     serial_.setPort(port_name);

@@ -13,7 +13,6 @@ from arm_commander import ArmCommander
 from robot_state_publisher import StatePublisher
 import moveit_commander
 from ArmParametersValidator import ArmParametersValidator
-from motor_debug import MotorDebug
 
 from transform_handler import ArmTCPTransformHandler
 from niryo_robot_arm_commander.command_enums import RobotCommanderException, ArmCommanderException
@@ -26,11 +25,13 @@ from actionlib_msgs.msg import GoalStatus
 from std_msgs.msg import Bool
 from niryo_robot_msgs.msg import HardwareStatus
 from niryo_robot_arm_commander.msg import ArmMoveCommand
+from moveit_msgs.msg import RobotTrajectory
 
 # Services
 from niryo_robot_msgs.srv import Trigger
 from niryo_robot_msgs.srv import SetBool
 from niryo_robot_msgs.srv import GetBool
+from niryo_robot_arm_commander.srv import ComputeTrajectory
 
 # Action msgs
 from niryo_robot_arm_commander.msg import PausePlanExecution
@@ -49,6 +50,8 @@ class RobotCommanderNode:
     """
 
     def __init__(self):
+        self.wait_for_nodes_initialization()
+
         rospy.logdebug("Arm Commander - Entering in Init")
         # Initialize MoveIt!
         moveit_commander.roscpp_initialize(sys.argv)
@@ -64,9 +67,6 @@ class RobotCommanderNode:
 
         rospy.logdebug("Arm Commander - Sub Commanders are loaded")
 
-        # Initialize motor debug
-        self.__motor_debug = MotorDebug()
-
         # Dict which link MoveCommand to arm functions
         self.dict_interpreter_move_cmd = {
             # Move to One Pose
@@ -79,10 +79,12 @@ class RobotCommanderNode:
             ArmMoveCommand.SHIFT_POSE: self.__arm_commander.set_shift_pose_target,
             ArmMoveCommand.SHIFT_LINEAR_POSE: self.__arm_commander.set_shift_linear_pose_target,
             # Trajectory
-            ArmMoveCommand.EXECUTE_TRAJ: self.__arm_commander.execute_trajectory,
+            ArmMoveCommand.EXECUTE_TRAJ: self.__arm_commander.compute_and_execute_waypointed_trajectory,
+            ArmMoveCommand.EXECUTE_FULL_TRAJ: self.__arm_commander.execute_waypointed_trajectory,
 
             # Add-Ons
             ArmMoveCommand.DRAW_SPIRAL: self.__arm_commander.draw_spiral_trajectory,
+            ArmMoveCommand.DRAW_CIRCLE: self.__arm_commander.draw_circle_trajectory,
         }
 
         # - Subscribers
@@ -126,6 +128,9 @@ class RobotCommanderNode:
         rospy.Service('~is_active', GetBool,
                       self.__callback_is_active)
 
+        rospy.Service('~compute_waypointed_trajectory', ComputeTrajectory,
+                      self.__callback_compute_trajectory)
+
         rospy.Service('~linear_trajectory/activate', SetBool,
                       self.__callback_linear_trajectory)  # service to  manage the linear trajectory calculation or not
 
@@ -155,6 +160,11 @@ class RobotCommanderNode:
         rospy.set_param('~initialized', True)
 
         rospy.loginfo("Arm Commander - Started")
+
+    @classmethod
+    def wait_for_nodes_initialization(cls):
+        from actionlib_msgs.msg import GoalStatusArray
+        _ = rospy.wait_for_message("/move_group/status", GoalStatusArray, timeout=120)
 
     def __start_action_server(self):
         self.__action_server.start()
@@ -226,6 +236,10 @@ class RobotCommanderNode:
         status = CommandStatus.SUCCESS
         message = resp_message
         return [status, message]
+
+    def __callback_compute_trajectory(self, req):
+        status, message, plan = self.__arm_commander.compute_waypointed_trajectory(req)
+        return status, message, RobotTrajectory() if plan is None else plan
 
     # - Action Server
     def __callback_goal(self, goal_handle):
@@ -380,6 +394,7 @@ class RobotCommanderNode:
             self.__current_goal_handle.set_canceled(result)
             rospy.loginfo("Commander Action Serv - Goal has been successfully canceled")
         elif response.status == CommandStatus.CONTROLLER_PROBLEMS:
+            self.__cancel_command()
             self.__current_goal_handle.set_aborted(result)
             rospy.logwarn("Commander Action Serv - Controller failed during execution : " +
                           "Goal has been aborted.\n" +

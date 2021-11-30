@@ -46,10 +46,12 @@ add_service_files(
   DIRECTORY
     srv
   FILES
+    GetFrequencies.srv
     ReadCustomValue.srv
     ReadPIDValue.srv
     ReadVelocityProfile.srv
     SendCustomValue.srv
+    SetFrequencies.srv
     WritePIDValue.srv
     WriteVelocityProfile.srv
 )

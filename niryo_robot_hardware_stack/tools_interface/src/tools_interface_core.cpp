@@ -97,7 +97,8 @@ bool ToolsInterfaceCore::rebootHardware(bool torque_on)
     bool res = _ttl_interface->rebootHardware(_toolState);
 
     // re init
-    initHardware(torque_on);
+    if (res)
+        initHardware(torque_on);
 
     return res;
 }
@@ -107,25 +108,28 @@ bool ToolsInterfaceCore::rebootHardware(bool torque_on)
  */
 int ToolsInterfaceCore::initHardware(bool torque_on)
 {
-    uint8_t motor_id = _toolState->getId();
-
-    if (EHardwareType::XL330 == _toolState->getHardwareType())
+    uint8_t motor_id;
+    if (_toolState)
     {
-        uint8_t new_mode = 5;  // torque + position
-        _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_CONTROL_MODE,
-                                                                               motor_id, std::initializer_list<uint32_t>{new_mode}));
-    }
-    else
-    {
-        // update leds
-        _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_LED_STATE,
-                                                                           motor_id, std::initializer_list<uint32_t>{static_cast<uint32_t>(_toolState->getLedState())}));
-        ros::Duration(0.01).sleep();
-    }
+        motor_id = _toolState->getId();
+        if (EHardwareType::XL330 == _toolState->getHardwareType())
+        {
+            uint8_t new_mode = 5;  // torque + position
+            _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_CONTROL_MODE,
+                                                                                motor_id, std::initializer_list<uint32_t>{new_mode}));
+        }
+        else
+        {
+            // update leds
+            _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_LED_STATE,
+                                                                            motor_id, std::initializer_list<uint32_t>{static_cast<uint32_t>(_toolState->getLedState())}));
+            ros::Duration(0.01).sleep();
+        }
 
-    // TORQUE cmd on if ned2, off otherwise
-    _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_TORQUE,
-                                                                           motor_id, std::initializer_list<uint32_t>{torque_on}));
+        // TORQUE cmd on if ned2, off otherwise
+        _ttl_interface->addSingleCommandToQueue(std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_TORQUE,
+                                                                            motor_id, std::initializer_list<uint32_t>{torque_on}));
+    }
     return niryo_robot_msgs::CommandStatus::SUCCESS;
 }
 
@@ -332,7 +336,6 @@ bool ToolsInterfaceCore::_callbackPingAndSetTool(tools_interface::PingDxlTool::R
         // Try 3 times
         for (int tries = 0; tries < 3; tries++)
         {
-            ros::Duration(0.05).sleep();
             int result = _ttl_interface->setTool(_toolState);
 
             // on success, tool is set, we initialize it and go out of loop

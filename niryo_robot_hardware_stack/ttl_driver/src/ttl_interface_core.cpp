@@ -110,8 +110,8 @@ bool TtlInterfaceCore::init(ros::NodeHandle& nh)
 void TtlInterfaceCore::initParameters(ros::NodeHandle& nh)
 {
     _control_loop_frequency = 0.0;
-    double write_frequency = 0.0;
-    double read_data_frequency = 0.0;
+    _write_frequency = 0.0;
+    _read_data_frequency = 0.0;
     double read_end_effector_frequency = 0.0;
     double read_status_frequency = 0.0;
 
@@ -119,27 +119,27 @@ void TtlInterfaceCore::initParameters(ros::NodeHandle& nh)
                  _control_loop_frequency);
 
     nh.getParam("ttl_hardware_write_frequency",
-                 write_frequency);
+                 _write_frequency);
 
     nh.getParam("ttl_hardware_read_data_frequency",
-                 read_data_frequency);
+                 _read_data_frequency);
 
-    nh.getParam("ttl_hardware_read_data_frequency",
+    nh.getParam("ttl_hardware_read_end_effector_frequency",
                  read_end_effector_frequency);
 
     nh.getParam("ttl_hardware_read_status_frequency",
                  read_status_frequency);
 
     ROS_DEBUG("TtlInterfaceCore::initParameters - ttl_hardware_control_loop_frequency : %f", _control_loop_frequency);
-    ROS_DEBUG("TtlInterfaceCore::initParameters - ttl_hardware_write_frequency : %f", write_frequency);
-    ROS_DEBUG("TtlInterfaceCore::initParameters - ttl_hardware_read_data_frequency : %f", read_data_frequency);
+    ROS_DEBUG("TtlInterfaceCore::initParameters - ttl_hardware_write_frequency : %f", _write_frequency);
+    ROS_DEBUG("TtlInterfaceCore::initParameters - ttl_hardware_read_data_frequency : %f", _read_data_frequency);
     ROS_DEBUG("TtlInterfaceCore::initParameters - ttl_hardware_read_end_effector_frequency : %f", read_end_effector_frequency);
     ROS_DEBUG("TtlInterfaceCore::initParameters - ttl_hardware_read_status_frequency : %f", read_status_frequency);
 
-    _delta_time_data_read = 1.0 / read_data_frequency;
+    _delta_time_data_read = 1.0 / _read_data_frequency;
     _delta_time_end_effector_read = 1.0 / read_end_effector_frequency;
     _delta_time_status_read = 1.0 / read_status_frequency;
-    _delta_time_write = 1.0 / write_frequency;
+    _delta_time_write = 1.0 / _write_frequency;
 }
 
 /**
@@ -172,6 +172,12 @@ void TtlInterfaceCore::startServices(ros::NodeHandle& nh)
 
     _velocity_profile_getter = nh.advertiseService("/niryo_robot/ttl_driver/write_velocity_profile",
                                               &TtlInterfaceCore::_callbackWriteVelocityProfile, this);
+
+    _frequencies_setter = nh.advertiseService("/niryo_robot/ttl_driver/frequencies_setter",
+                                              &TtlInterfaceCore::_callbackSetFrequencies, this);
+
+    _frequencies_getter = nh.advertiseService("/niryo_robot/ttl_driver/frequencies_getter",
+                                              &TtlInterfaceCore::_callbackGetFrequencies, this);
 }
 
 /**
@@ -594,10 +600,12 @@ void TtlInterfaceCore::controlLoop()
                         }
                         msg += " do not seem to be connected";
                         ROS_WARN_THROTTLE(1.0, "%s", msg.c_str());
-
-                        ros::Duration(0.25).sleep();
                     }
+                    // still keep hardware status updated
+                    _ttl_manager->readHardwareStatus();
+                    ros::Duration(0.25).sleep();
                 }
+
                 ROS_INFO("TtlInterfaceCore::controlLoop - Bus is ok");
             }
 
@@ -625,7 +633,8 @@ void TtlInterfaceCore::controlLoop()
                     _ttl_manager->readEndEffectorStatus();
                     _time_hw_end_effector_last_read = ros::Time::now().toSec();
                 }
-                ros::Rate(_control_loop_frequency).sleep();
+
+                control_loop_rate.sleep();
             }
             else
             {
@@ -695,22 +704,7 @@ void TtlInterfaceCore::_executeCommand()
  */
 int TtlInterfaceCore::addJoint(const std::shared_ptr<common::model::JointState>& jointState)
 {
-    int result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
-
-    lock_guard<mutex> lck(_control_loop_mutex);
-
-    // try to find motor
-    if (_ttl_manager->ping(jointState->getId()))
-    {
-        // add dynamixel as a new joint
-        result = _ttl_manager->addHardwareComponent(jointState);
-    }
-    else
-    {
-        ROS_WARN("TtlInterfaceCore::addJoint - No joint found with motor id %d", jointState->getId());
-    }
-
-    return result;
+    return _ttl_manager->addHardwareComponent(jointState);
 }
 
 /**
@@ -744,8 +738,6 @@ int TtlInterfaceCore::setTool(const std::shared_ptr<common::model::ToolState>& t
  */
 void TtlInterfaceCore::unsetTool(uint8_t motor_id)
 {
-    lock_guard<mutex> lck(_control_loop_mutex);
-
     ROS_DEBUG("TtlInterfaceCore::unsetTool - UnsetTool: id %d", motor_id);
     _ttl_manager->removeHardwareComponent(motor_id);
 }
@@ -761,17 +753,16 @@ int TtlInterfaceCore::setEndEffector(const std::shared_ptr<common::model::EndEff
 
     lock_guard<mutex> lck(_control_loop_mutex);
 
+    result = _ttl_manager->addHardwareComponent(end_effector_state);
     // try to find hw
     if (_ttl_manager->ping(end_effector_state->getId()))
     {
-        // add end effector
-        result = _ttl_manager->addHardwareComponent(end_effector_state);
+        result = niryo_robot_msgs::CommandStatus::SUCCESS;
     }
     else
     {
         ROS_WARN("TtlInterfaceCore::setEndEffector - No end effector found with id %d", end_effector_state->getId());
     }
-
     return result;
 }
 
@@ -805,12 +796,13 @@ int TtlInterfaceCore::setConveyor(const std::shared_ptr<common::model::ConveyorS
  */
 void TtlInterfaceCore::unsetConveyor(uint8_t motor_id, uint8_t default_conveyor_id)
 {
-    lock_guard<mutex> lck(_control_loop_mutex);
-
     ROS_DEBUG("TtlInterfaceCore::unsetConveyor - unsetConveyor: id %d", motor_id);
 
+    // block control loop to avoid control loop called when removing conveyor is not finished yet
+    lock_guard<mutex> lck(_control_loop_mutex);
+
     auto state = getJointState(motor_id);
-    if (COMM_SUCCESS == _ttl_manager->changeId(state->getHardwareType(), motor_id, default_conveyor_id))
+    if (niryo_robot_msgs::CommandStatus::SUCCESS == changeId(state->getHardwareType(), motor_id, default_conveyor_id))
     {
         _ttl_manager->removeHardwareComponent(default_conveyor_id);
     }
@@ -830,7 +822,7 @@ int TtlInterfaceCore::changeId(common::model::EHardwareType motor_type, uint8_t 
     if (COMM_SUCCESS == _ttl_manager->changeId(motor_type, old_id, new_id))
         return niryo_robot_msgs::CommandStatus::SUCCESS;
 
-    ROS_ERROR("TtlInterfaceCore::setConveyor : unable to change conveyor ID");
+    ROS_ERROR("TtlInterfaceCore::changeId : unable to change conveyor ID");
     return niryo_robot_msgs::CommandStatus::TTL_WRITE_ERROR;
 }
 
@@ -1179,7 +1171,7 @@ bool TtlInterfaceCore::_callbackWritePIDValue(ttl_driver::WritePIDValue::Request
     auto dxl_cmd_pos_p = std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_PID,
                                                         req.id, std::initializer_list<uint32_t>{req.pos_p_gain, req.pos_i_gain, req.pos_d_gain,
                                                                                                 req.vel_p_gain, req.vel_i_gain,
-                                                                                                req.ff1_gain, req.ff2_gain});
+                                                                                                req.ff1_gain, req.ff2_gain, req.vel_profile, req.acc_profile});
 
     if (dxl_cmd_pos_p->isValid())
     {
@@ -1271,6 +1263,77 @@ bool TtlInterfaceCore::_callbackWriteVelocityProfile(ttl_driver::WriteVelocityPr
 
   return (niryo_robot_msgs::CommandStatus::SUCCESS == result);
 }
+
+/**
+ * @brief TtlInterfaceCore::_callbackSetFrequencies
+ * @param req
+ * @param res
+ */
+bool TtlInterfaceCore::_callbackSetFrequencies(ttl_driver::SetFrequencies::Request &req,
+                                                ttl_driver::SetFrequencies::Response &res)
+{
+    int read_data_frequency = req.read_frequency;
+    int write_frequency = req.write_frequency;
+    int result = niryo_robot_msgs::CommandStatus::FAILURE;
+
+    if (write_frequency != 0)
+    {
+        if (read_data_frequency != 0)
+        {
+            _delta_time_data_read = 1.0 / read_data_frequency;
+            _delta_time_write = 1.0 / write_frequency;
+            result = niryo_robot_msgs::CommandStatus::SUCCESS;
+            res.message = "TtlInterfaceCore - Setting Frequencies Successful";
+        }
+        else
+        {
+            res.message = "TtlInterfaceCore - Setting Frequencies Failed";
+        }
+    }
+
+    else
+    {
+        res.message = "TtlInterfaceCore - Setting Frequencies Failed";
+    }
+    res.status = result;
+
+    return (niryo_robot_msgs::CommandStatus::SUCCESS == result);
+}
+
+/**
+ * @brief TtlInterfaceCore::_callbackGetFrequencies
+ * @param req
+ * @param res
+ */
+bool TtlInterfaceCore::_callbackGetFrequencies(ttl_driver::GetFrequencies::Request &req,
+                                                ttl_driver::GetFrequencies::Response &res)
+{
+    int result = niryo_robot_msgs::CommandStatus::FAILURE;
+
+    if (_read_data_frequency >= 0)
+    {
+        if (_write_frequency >= 0)
+        {
+            res.read_frequency = _read_data_frequency;
+            res.write_frequency = _write_frequency;
+            result = niryo_robot_msgs::CommandStatus::SUCCESS;
+            res.message = "TtlInterfaceCore - Setting Frequencies Successful";
+        }
+        else
+        {
+            res.message = "TtlInterfaceCore - Setting Frequencies Failed";
+        }
+    }
+
+    else
+    {
+        res.message = "TtlInterfaceCore - Setting Frequencies Failed";
+    }
+    res.status = result;
+
+    return (niryo_robot_msgs::CommandStatus::SUCCESS == result);
+}
+
 
 void TtlInterfaceCore::_publishCollisionStatus(const ros::TimerEvent&)
 {

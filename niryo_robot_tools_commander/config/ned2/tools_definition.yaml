@@ -25,13 +25,13 @@ tool_list:
       open_hold_torque: 500
       open_max_torque: 1200
       close_position: 900
-      close_hold_torque: -500
-      close_max_torque: -1000
+      close_hold_torque: -1200
+      close_max_torque: -1400
       open_speed: 300
       close_speed: 300
       torque_limit:
-        min: -1000
-        max: 1200
+        min: -1400
+        max: 1400
     transformation:
       translation: [0.085, 0.0, 0.0]
       quaternion: [0.0, 0.0, 0.0, 1.0]
@@ -85,7 +85,7 @@ tool_list:
     specs:
       [ ]
     transformation:
-      translation: [0.0225, 0.0, 0.0]
+      translation: [0.026, 0.0, 0.0]
       quaternion: [0.0, 0.0, 0.0, 1.0]
   - name: "Vacuum Pump 1"
     type: "vacuum_pump"
@@ -103,7 +103,7 @@ tool_list:
         min: -1000
         max: 1000
     transformation:
-      translation: [0.047, 0.0, 0.0]
+      translation: [0.036, 0.0, 0.0]
       quaternion: [0.0, 0.0, 0.0, 1.0]
 
 

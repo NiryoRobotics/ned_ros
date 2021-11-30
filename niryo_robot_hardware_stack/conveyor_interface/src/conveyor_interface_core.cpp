@@ -105,7 +105,7 @@ bool ConveyorInterfaceCore::rebootAll()
         {
             if (_bus_config_map.at(bus_proto).interface->rebootHardware(it.second))
             {
-                initHardware(bus_proto, it.second);
+                initHardware(bus_proto, it.second, it.first);
             }
             else
             {
@@ -267,7 +267,7 @@ ConveyorInterfaceCore::addConveyor()
 
                 // on success, we initialize the conveyor and go out of loop
                 if (niryo_robot_msgs::CommandStatus::SUCCESS == result &&
-                    niryo_robot_msgs::CommandStatus::SUCCESS == initHardware(bus.first, conveyor_state))
+                    niryo_robot_msgs::CommandStatus::SUCCESS == initHardware(bus.first, conveyor_state, conveyor_id))
                 {
                     res.message = "Set new conveyor on id ";
                     res.message += to_string(conveyor_id);
@@ -279,12 +279,14 @@ ConveyorInterfaceCore::addConveyor()
                     ROS_INFO("ConveyorInterfaceCore::addConveyor - Set conveyor success");
                     break;
                 }
+                else if (result != niryo_robot_msgs::CommandStatus::NO_CONVEYOR_FOUND)
+                {
+                    bus.second.interface->unsetConveyor(conveyor_state->getId(), bus.second.default_id);
+                }
 
                 ROS_DEBUG_COND(niryo_robot_msgs::CommandStatus::SUCCESS != result, "ConveyorInterfaceCore::addConveyor - "
                               "Set conveyor failure, return : %d. Retrying (%d)...",
                               result, tries);
-
-                bus.second.interface->unsetConveyor(conveyor_state->getId(), bus.second.default_id);
             }
 
             // on success we leave
@@ -319,17 +321,15 @@ ConveyorInterfaceCore::addConveyor()
  * @brief ConveyorInterfaceCore::initHardware
  * @param motor_state
  */
-int ConveyorInterfaceCore::initHardware(common::model::EBusProtocol protocol, std::shared_ptr<common::model::ConveyorState> conveyor_state)
+int ConveyorInterfaceCore::initHardware(common::model::EBusProtocol protocol, std::shared_ptr<common::model::ConveyorState> conveyor_state, uint8_t new_id)
 {
     ROS_DEBUG("ConveyorInterfaceCore::initHardware");
 
     int result = niryo_robot_msgs::CommandStatus::FAILURE;
     if (_bus_config_map.count(protocol) && conveyor_state)
     {
-        uint8_t conveyor_id = conveyor_state->getId();
-
         // change Id
-        result = _bus_config_map.at(protocol).interface->changeId(conveyor_state->getHardwareType(), conveyor_state->getId(), conveyor_id);
+        result = _bus_config_map.at(protocol).interface->changeId(conveyor_state->getHardwareType(), conveyor_state->getId(), new_id);
 
         // on success, conveyor is set, we finish configuring state
         if (niryo_robot_msgs::CommandStatus::SUCCESS == result)
@@ -343,9 +343,9 @@ int ConveyorInterfaceCore::initHardware(common::model::EBusProtocol protocol, st
             }
 
             // add state to list of current connected ids
-            conveyor_state->updateId(conveyor_id);
-            _conveyor_state_map.insert(std::make_pair(conveyor_id, conveyor_state));
-            _order_insertion.push_back(conveyor_id);
+            conveyor_state->updateId(new_id);
+            _conveyor_state_map.insert(std::make_pair(new_id, conveyor_state));
+            _order_insertion.push_back(new_id);
 
             // remove from pool
             _bus_config_map.at(protocol).pool_id_list.erase(_bus_config_map.at(protocol).pool_id_list.begin());

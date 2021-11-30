@@ -45,8 +45,6 @@ public:
     // AbstractTtlDriver interface
     std::string str() const override;
 
-    std::string interpretErrorState(uint32_t hw_state) const override;
-
     int checkModelNumber(uint8_t id) override;
     int readFirmwareVersion(uint8_t id, std::string &version) override;
 
@@ -72,11 +70,11 @@ public:
     int readMinPosition(uint8_t id, uint32_t &min_pos) override;
     int readMaxPosition(uint8_t id, uint32_t &max_pos) override;
 
-    int writeTorqueEnable(uint8_t id, uint32_t torque_enable) override;
-    int writeGoalPosition(uint8_t id, uint32_t position) override;
-    int writeGoalVelocity(uint8_t id, uint32_t velocity) override;
+    int writeTorqueEnable(uint8_t id, uint8_t torque_enable) override;
+    int writePositionGoal(uint8_t id, uint32_t position) override;
+    int writeVelocityGoal(uint8_t id, uint32_t velocity) override;
 
-    int syncWriteTorqueEnable(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &torque_enable_list) override;
+    int syncWriteTorqueEnable(const std::vector<uint8_t> &id_list, const std::vector<uint8_t> &torque_enable_list) override;
     int syncWritePositionGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &position_list) override;
     int syncWriteVelocityGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &velocity_list) override;
 
@@ -139,45 +137,6 @@ std::string StepperDriver<reg_type>::str() const
 }
 
 /**
- * @brief StepperDriver<reg_type>::interpretErrorState
- * @param hw_state
- * @return
- */
-template<typename reg_type>
-std::string StepperDriver<reg_type>::interpretErrorState(uint32_t hw_state) const
-{
-    std::string hardware_message;
-
-    if (hw_state & 1<<0)    // 0b00000001
-    {
-        hardware_message += "Input Voltage";
-    }
-    if (hw_state & 1<<2)    // 0b00000100
-    {
-        if (!hardware_message.empty())
-            hardware_message += ", ";
-        hardware_message += "OverHeating";
-    }
-    if (hw_state & 1<<3)    // 0b00001000
-    {
-        if (!hardware_message.empty())
-            hardware_message += ", ";
-        hardware_message += "Motor Encoder";
-    }
-    if (hw_state & 1<<7)    // 0b10000000 => added by us : disconnected error
-    {
-        if (!hardware_message.empty())
-            hardware_message += ", ";
-        hardware_message += "Disconnection";
-    }
-
-    if (!hardware_message.empty())
-        hardware_message += " Error";
-
-    return hardware_message;
-}
-
-/**
  * @brief StepperDriver<reg_type>::changeId
  * @param id
  * @param new_id
@@ -186,7 +145,12 @@ std::string StepperDriver<reg_type>::interpretErrorState(uint32_t hw_state) cons
 template<typename reg_type>
 int StepperDriver<reg_type>::changeId(uint8_t id, uint8_t new_id)
 {
-    return write(reg_type::ADDR_ID, reg_type::SIZE_ID, id, new_id);
+    // TODO(THUC) verify that COMM_RX_TIMEOUT error code do not impact on data sent to motor
+    // when COMM_RX_TIMEOUT error, id changed also, so we consider that change id successfully
+    int res =  write<typename reg_type::TYPE_ID>(reg_type::ADDR_ID, id, new_id);
+    if (res == COMM_RX_TIMEOUT)
+        res = COMM_SUCCESS;
+    return res;
 }
 
 /**
@@ -236,7 +200,7 @@ int StepperDriver<reg_type>::readFirmwareVersion(uint8_t id, std::string &versio
 template<typename reg_type>
 int StepperDriver<reg_type>::readMinPosition(uint8_t id, uint32_t &pos)
 {
-    return read(reg_type::ADDR_MIN_POSITION_LIMIT, reg_type::SIZE_MIN_POSITION_LIMIT, id, pos);
+    return read<typename reg_type::TYPE_MIN_POSITION_LIMIT>(reg_type::ADDR_MIN_POSITION_LIMIT, id, pos);
 }
 
 /**
@@ -248,7 +212,7 @@ int StepperDriver<reg_type>::readMinPosition(uint8_t id, uint32_t &pos)
 template<typename reg_type>
 int StepperDriver<reg_type>::readMaxPosition(uint8_t id, uint32_t &pos)
 {
-    return read(reg_type::ADDR_MAX_POSITION_LIMIT, reg_type::SIZE_MAX_POSITION_LIMIT, id, pos);
+    return read<typename reg_type::TYPE_MAX_POSITION_LIMIT>(reg_type::ADDR_MAX_POSITION_LIMIT, id, pos);
 }
 
 // ram write
@@ -260,34 +224,34 @@ int StepperDriver<reg_type>::readMaxPosition(uint8_t id, uint32_t &pos)
  * @return
  */
 template<typename reg_type>
-int StepperDriver<reg_type>::writeTorqueEnable(uint8_t id, uint32_t torque_enable)
+int StepperDriver<reg_type>::writeTorqueEnable(uint8_t id, uint8_t torque_enable)
 {
-    return write(reg_type::ADDR_TORQUE_ENABLE, reg_type::SIZE_TORQUE_ENABLE, id, torque_enable);
+    return write<typename reg_type::TYPE_TORQUE_ENABLE>(reg_type::ADDR_TORQUE_ENABLE, id, torque_enable);
 }
 
 /**
- * @brief StepperDriver<reg_type>::writeGoalPosition
+ * @brief StepperDriver<reg_type>::writePositionGoal
  * @param id
  * @param position
  * @return
  */
 template<typename reg_type>
-int StepperDriver<reg_type>::writeGoalPosition(uint8_t id, uint32_t position)
+int StepperDriver<reg_type>::writePositionGoal(uint8_t id, uint32_t position)
 {
-    return write(reg_type::ADDR_GOAL_POSITION, reg_type::SIZE_GOAL_POSITION, id, position);
+    return write<typename reg_type::TYPE_GOAL_POSITION>(reg_type::ADDR_GOAL_POSITION, id, position);
 }
 
 // according to the registers, the data should be an int32_t ?
 /**
- * @brief StepperDriver<reg_type>::writeGoalVelocity
+ * @brief StepperDriver<reg_type>::writeVelocityGoal
  * @param id
  * @param velocity
  * @return
  */
 template<typename reg_type>
-int StepperDriver<reg_type>::writeGoalVelocity(uint8_t id, uint32_t velocity)
+int StepperDriver<reg_type>::writeVelocityGoal(uint8_t id, uint32_t velocity)
 {
-    return write(reg_type::ADDR_GOAL_VELOCITY, reg_type::SIZE_GOAL_VELOCITY, id, velocity);
+    return write<typename reg_type::TYPE_GOAL_VELOCITY>(reg_type::ADDR_GOAL_VELOCITY, id, velocity);
 }
 
 /**
@@ -297,9 +261,9 @@ int StepperDriver<reg_type>::writeGoalVelocity(uint8_t id, uint32_t velocity)
  * @return
  */
 template<typename reg_type>
-int StepperDriver<reg_type>::syncWriteTorqueEnable(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &torque_enable_list)
+int StepperDriver<reg_type>::syncWriteTorqueEnable(const std::vector<uint8_t> &id_list, const std::vector<uint8_t> &torque_enable_list)
 {
-    return syncWrite(reg_type::ADDR_TORQUE_ENABLE, reg_type::SIZE_TORQUE_ENABLE, id_list, torque_enable_list);
+    return syncWrite<typename reg_type::TYPE_TORQUE_ENABLE>(reg_type::ADDR_TORQUE_ENABLE, id_list, torque_enable_list);
 }
 
 /**
@@ -311,7 +275,7 @@ int StepperDriver<reg_type>::syncWriteTorqueEnable(const std::vector<uint8_t> &i
 template<typename reg_type>
 int StepperDriver<reg_type>::syncWritePositionGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &position_list)
 {
-    return syncWrite(reg_type::ADDR_GOAL_POSITION, reg_type::SIZE_GOAL_POSITION, id_list, position_list);
+    return syncWrite<typename reg_type::TYPE_GOAL_POSITION>(reg_type::ADDR_GOAL_POSITION, id_list, position_list);
 }
 
 /**
@@ -323,7 +287,7 @@ int StepperDriver<reg_type>::syncWritePositionGoal(const std::vector<uint8_t> &i
 template<typename reg_type>
 int StepperDriver<reg_type>::syncWriteVelocityGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &velocity_list)
 {
-    return syncWrite(reg_type::ADDR_GOAL_VELOCITY, reg_type::SIZE_GOAL_VELOCITY, id_list, velocity_list);
+    return syncWrite<typename reg_type::TYPE_GOAL_VELOCITY>(reg_type::ADDR_GOAL_VELOCITY, id_list, velocity_list);
 }
 
 // ram read
@@ -434,8 +398,8 @@ int StepperDriver<reg_type>::syncReadJointStatus(const std::vector<uint8_t> &id_
     data_array_list.clear();
 
     // read torque enable on first id
-    uint32_t torque;
-    read(reg_type::ADDR_TORQUE_ENABLE, reg_type::SIZE_TORQUE_ENABLE, id_list.at(0), torque);
+    typename reg_type::TYPE_TORQUE_ENABLE torque;
+    read<typename reg_type::TYPE_TORQUE_ENABLE>(reg_type::ADDR_TORQUE_ENABLE, id_list.at(0), torque);
 
     //if torque on, read position and velocity
     if (torque)
@@ -574,8 +538,8 @@ int StepperDriver<reg_type>::readVelocityProfile(uint8_t id, std::vector<uint32_
   int res = COMM_RX_FAIL;
   data_list.clear();
 
-  std::vector<std::array<typename reg_type::TYPE_VELOCITY_PROFILE, 8> > data_array_list;
-  if (COMM_SUCCESS == syncReadConsecutiveBytes<typename reg_type::TYPE_VELOCITY_PROFILE, 8>(reg_type::ADDR_VSTART, {id}, data_array_list))
+  std::vector<std::array<typename reg_type::TYPE_PROFILE, 8> > data_array_list;
+  if (COMM_SUCCESS == syncReadConsecutiveBytes<typename reg_type::TYPE_PROFILE, 8>(reg_type::ADDR_VSTART, {id}, data_array_list))
   {
       if(!data_array_list.empty())
       {
@@ -607,50 +571,107 @@ int StepperDriver<reg_type>::readVelocityProfile(uint8_t id, std::vector<uint32_
 template<typename reg_type>
 int StepperDriver<reg_type>::writeVelocityProfile(uint8_t id, const std::vector<uint32_t>& data_list)
 {
-  int res = 0;
-  double wait_duration = 0.05;
+    int tries = 10;
+    int res;
+    double wait_duration = 0.05;
 
-  writeTorqueEnable(id, 1);
-  ros::Duration(wait_duration).sleep();
+    writeTorqueEnable(id, 1);
 
-  if (COMM_SUCCESS != writeVStart(id, data_list.at(0)))
-    res++;
-  ros::Duration(wait_duration).sleep();
+    // only rewrite the params which is not success
+    while (tries > 0)  // try 10 times
+    {
+        tries--;
+        ros::Duration(wait_duration).sleep();
+        res = writeVStart(id, data_list.at(0));
+        if (res == COMM_SUCCESS) 
+            break;
+    }
+    if (res != COMM_SUCCESS)
+        return res;
 
-  if (COMM_SUCCESS != writeA1(id, data_list.at(1)))
-    res++;
-  ros::Duration(wait_duration).sleep();
+    tries = 10;
+    while (tries > 0)  // try 10 times
+    {
+        tries--;
+        ros::Duration(wait_duration).sleep();
+        res = writeA1(id, data_list.at(1));
+        if (res == COMM_SUCCESS) 
+            break;
+    }
+    if (res != COMM_SUCCESS)
+        return res;
 
-  if (COMM_SUCCESS != writeV1(id, data_list.at(2)))
-    res++;
-  ros::Duration(wait_duration).sleep();
+    tries = 10;
+    while (tries > 0)  // try 10 times
+    {
+        tries--;
+        ros::Duration(wait_duration).sleep();
+        res = writeV1(id, data_list.at(2));
+        if (res == COMM_SUCCESS) 
+            break;
+    }
+    if (res != COMM_SUCCESS)
+    return res;
 
-  if (COMM_SUCCESS != writeAMax(id, data_list.at(3)))
-    res++;
-  ros::Duration(wait_duration).sleep();
+    tries = 10;
+    while (tries > 0)  // try 10 times
+    {
+        tries--;
+        ros::Duration(wait_duration).sleep();
+        res = writeAMax(id, data_list.at(3));
+        if (res == COMM_SUCCESS) 
+            break;
+    }
+    if (res != COMM_SUCCESS)
+        return res;
 
-  if (COMM_SUCCESS != writeVMax(id, data_list.at(4)))
-    res++;
-  ros::Duration(wait_duration).sleep();
+    tries = 10;
+    while (tries > 0)  // try 10 times
+    {
+        tries--;
+        ros::Duration(wait_duration).sleep();
+        res = writeVMax(id, data_list.at(4));
+        if (res == COMM_SUCCESS) 
+            break;
+    }
+    if (res != COMM_SUCCESS)
+        return res;
 
-  if (COMM_SUCCESS != writeDMax(id, data_list.at(5)))
-    res++;
-  ros::Duration(wait_duration).sleep();
+    tries = 10;
+    while (tries > 0)  // try 10 times
+    {
+        tries--;
+        ros::Duration(wait_duration).sleep();
+        res = writeDMax(id, data_list.at(5));
+        if (res == COMM_SUCCESS) 
+            break;
+    }
+    if (res != COMM_SUCCESS)
+        return res;
 
-  if (COMM_SUCCESS != writeD1(id, data_list.at(6)))
-    res++;
-  ros::Duration(wait_duration).sleep();
+    tries = 10;
+    while (tries > 0)  // try 10 times
+    {
+        tries--;
+        ros::Duration(wait_duration).sleep();
+        res = writeD1(id, data_list.at(6));
+        if (res == COMM_SUCCESS) 
+            break;
+    }
+    if (res != COMM_SUCCESS)
+        return res;
 
-  if (COMM_SUCCESS != writeVStop(id, data_list.at(7)))
-    res++;
-  ros::Duration(wait_duration).sleep();
+    tries = 10;
+    while (tries > 0)  // try 10 times
+    {
+        tries--;
+        ros::Duration(wait_duration).sleep();
+        res = writeVStop(id, data_list.at(7));
+        if (res == COMM_SUCCESS) 
+            break;
+    }
 
-  if(res > 0)
-  {
-      return COMM_TX_FAIL;
-  }
-
-  return COMM_SUCCESS;
+    return res;
 }
 
 /**
@@ -661,7 +682,7 @@ int StepperDriver<reg_type>::writeVelocityProfile(uint8_t id, const std::vector<
 template<typename reg_type>
 int StepperDriver<reg_type>::startHoming(uint8_t id)
 {
-    return write(reg_type::ADDR_COMMAND, reg_type::SIZE_COMMAND, id, 0);
+    return write<typename reg_type::TYPE_COMMAND>(reg_type::ADDR_COMMAND, id, 0);
 }
 
 /**
@@ -681,11 +702,11 @@ int StepperDriver<reg_type>::writeHomingSetup(uint8_t id, uint8_t direction, uin
     writeTorqueEnable(id, true);
     ros::Duration(wait_duration).sleep();
 
-    if (COMM_SUCCESS != write(reg_type::ADDR_HOMING_DIRECTION, reg_type::SIZE_HOMING_DIRECTION, id, direction))
+    if (COMM_SUCCESS != write<typename reg_type::TYPE_HOMING_DIRECTION>(reg_type::ADDR_HOMING_DIRECTION, id, direction))
       res++;
     ros::Duration(wait_duration).sleep();
 
-    if (COMM_SUCCESS != write(reg_type::ADDR_HOMING_STALL_THRESHOLD, reg_type::SIZE_HOMING_STALL_THRESHOLD, id, stall_threshold))
+    if (COMM_SUCCESS != write<typename reg_type::TYPE_HOMING_STALL_THRESHOLD>(reg_type::ADDR_HOMING_STALL_THRESHOLD, id, stall_threshold))
       res++;
     ros::Duration(wait_duration).sleep();
 
@@ -731,8 +752,8 @@ int StepperDriver<reg_type>::syncReadHomingStatus(const std::vector<uint8_t> &id
 template<typename reg_type>
 int StepperDriver<reg_type>::readFirmwareRunning(uint8_t id, bool &is_running)
 {
-  uint32_t data{};
-  int res = read(reg_type::ADDR_FIRMWARE_RUNNING, reg_type::SIZE_FIRMWARE_RUNNING, id, data);
+  typename reg_type::TYPE_FIRMWARE_RUNNING data{};
+  int res = read<typename reg_type::TYPE_FIRMWARE_RUNNING>(reg_type::ADDR_FIRMWARE_RUNNING, id, data);
   is_running = data;
   return res;
 }
@@ -748,7 +769,7 @@ int StepperDriver<reg_type>::readFirmwareRunning(uint8_t id, bool &is_running)
 template<typename reg_type>
 int StepperDriver<reg_type>::writeVStart(uint8_t id, uint32_t v_start)
 {
-   return write(reg_type::ADDR_VSTART, reg_type::SIZE_VSTART, id, v_start);
+   return write<typename reg_type::TYPE_PROFILE>(reg_type::ADDR_VSTART, id, v_start);
 }
 
 /**
@@ -760,7 +781,7 @@ int StepperDriver<reg_type>::writeVStart(uint8_t id, uint32_t v_start)
 template<typename reg_type>
 int StepperDriver<reg_type>::writeA1(uint8_t id, uint32_t a_1)
 {
-  return write(reg_type::ADDR_A1, reg_type::SIZE_A1, id, a_1);
+  return write<typename reg_type::TYPE_PROFILE>(reg_type::ADDR_A1, id, a_1);
 }
 
 /**
@@ -772,7 +793,7 @@ int StepperDriver<reg_type>::writeA1(uint8_t id, uint32_t a_1)
 template<typename reg_type>
 int StepperDriver<reg_type>::writeV1(uint8_t id, uint32_t v_1)
 {
-  return write(reg_type::ADDR_V1, reg_type::SIZE_V1, id, v_1);
+  return write<typename reg_type::TYPE_PROFILE>(reg_type::ADDR_V1, id, v_1);
 }
 
 /**
@@ -784,7 +805,7 @@ int StepperDriver<reg_type>::writeV1(uint8_t id, uint32_t v_1)
 template<typename reg_type>
 int StepperDriver<reg_type>::writeAMax(uint8_t id, uint32_t a_max)
 {
-  return write(reg_type::ADDR_AMAX, reg_type::SIZE_AMAX, id, a_max);
+  return write<typename reg_type::TYPE_PROFILE>(reg_type::ADDR_AMAX, id, a_max);
 }
 
 /**
@@ -796,7 +817,7 @@ int StepperDriver<reg_type>::writeAMax(uint8_t id, uint32_t a_max)
 template<typename reg_type>
 int StepperDriver<reg_type>::writeVMax(uint8_t id, uint32_t v_max)
 {
-  return write(reg_type::ADDR_VMAX, reg_type::SIZE_VMAX, id, v_max);
+  return write<typename reg_type::TYPE_PROFILE>(reg_type::ADDR_VMAX, id, v_max);
 }
 
 /**
@@ -808,7 +829,7 @@ int StepperDriver<reg_type>::writeVMax(uint8_t id, uint32_t v_max)
 template<typename reg_type>
 int StepperDriver<reg_type>::writeDMax(uint8_t id, uint32_t d_max)
 {
-  return write(reg_type::ADDR_DMAX, reg_type::SIZE_DMAX, id, d_max);
+  return write<typename reg_type::TYPE_PROFILE>(reg_type::ADDR_DMAX, id, d_max);
 }
 
 /**
@@ -820,7 +841,7 @@ int StepperDriver<reg_type>::writeDMax(uint8_t id, uint32_t d_max)
 template<typename reg_type>
 int StepperDriver<reg_type>::writeD1(uint8_t id, uint32_t d_1)
 {
-  return write(reg_type::ADDR_D1, reg_type::SIZE_D1, id, d_1);
+  return write<typename reg_type::TYPE_PROFILE>(reg_type::ADDR_D1, id, d_1);
 }
 
 /**
@@ -832,7 +853,7 @@ int StepperDriver<reg_type>::writeD1(uint8_t id, uint32_t d_1)
 template<typename reg_type>
 int StepperDriver<reg_type>::writeVStop(uint8_t id, uint32_t v_stop)
 {
-  return write(reg_type::ADDR_VSTOP, reg_type::SIZE_VSTOP, id, v_stop);
+  return write<typename reg_type::TYPE_PROFILE>(reg_type::ADDR_VSTOP, id, v_stop);
 }
 
 } // ttl_driver

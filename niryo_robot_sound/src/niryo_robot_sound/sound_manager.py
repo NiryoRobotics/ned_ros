@@ -12,8 +12,9 @@ from niryo_robot_sound.srv import PlaySound
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus
 
-from niryo_robot_sound.sound_database import SoundDatabase
-from niryo_robot_sound.sound_player import SoundPlayer
+from .sound_database import SoundDatabase
+from .sound_player import SoundPlayer
+from .text_to_speech import NiryoTextToSpeech
 
 
 class SoundManager:
@@ -25,6 +26,7 @@ class SoundManager:
         # - Init
         self.__sound_player = SoundPlayer()
         self.__sound_database = SoundDatabase()
+        self.__text_to_speech = NiryoTextToSpeech(self, self.__sound_database)
 
         self.__sound_thread = Thread()
         self.sound_end_event = Event()
@@ -97,11 +99,14 @@ class SoundManager:
 
     def __callback_play_sound_user(self, msg):
         sound_name = msg.sound_name
+        return self.play_user_sound(sound_name, msg.start_time_sec, msg.end_time_sec, msg.wait_end)
+
+    def play_user_sound(self, sound_name, start_time_sec=0, end_time_sec=0, wait_end=True):
         sound = self.__sound_database(sound_name)
         if sound is None:
             return CommandStatus.SOUND_FILE_NOT_FOUND, "{} sound not found".format(sound_name)
 
-        self.play_sound(sound, msg.start_time_sec, msg.end_time_sec, wait=msg.wait_end)
+        self.play_sound(sound, start_time_sec, end_time_sec, wait=wait_end)
 
         if sound.preempted:
             return CommandStatus.SUCCESS, "{} sound preempted".format(sound_name)

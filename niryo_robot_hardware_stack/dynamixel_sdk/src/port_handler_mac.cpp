@@ -73,6 +73,10 @@ void PortHandlerMac::clearPort()
   tcflush(socket_fd_, TCIFLUSH);
 }
 
+void PortHandlerMac::flushInput()
+{
+}
+
 void PortHandlerMac::setPortName(const char *port_name)
 {
   strcpy(port_name_, port_name);

@@ -91,6 +91,14 @@ class SoundDatabase:
     def calibration_sound(self):
         return self.__robot_sounds[self.__calibration_sound]
 
+    @property
+    def state_sound_directory_path(self):
+        return self.__robot_sound_directory_path
+
+    @property
+    def user_sound_directory_path(self):
+        return self.__user_sound_directory_path
+
     def get_sound(self, sound_name):
         if sound_name in self.__user_sounds:
             return self.__user_sounds[sound_name]
@@ -161,6 +169,9 @@ class SoundDatabase:
                 sound_name)
 
         return CommandStatus.SUCCESS, "{} sound successfully deleted".format(sound_name)
+
+    def refresh_user_sounds(self):
+        self.__load_user_sounds()
 
     # # - Publishers
 

@@ -1,0 +1,13 @@
+string text # < 100 char
+
+
+int8 ENGLISH = 0
+int8 FRENCH = 1
+int8 SPANISH = 3
+int8 MANDARIN = 4
+int8 PORTUGUESE = 5
+
+int8 language
+---
+bool success
+string message

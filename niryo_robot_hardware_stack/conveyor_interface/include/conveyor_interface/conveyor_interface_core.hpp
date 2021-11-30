@@ -104,7 +104,7 @@ private:
             int direction{0};
         };
 
-        int initHardware(common::model::EBusProtocol protocol, std::shared_ptr<common::model::ConveyorState> motor_state);
+        int initHardware(common::model::EBusProtocol protocol, std::shared_ptr<common::model::ConveyorState> motor_state, uint8_t new_id);
 
         std::mutex _state_map_mutex;
 

@@ -34,7 +34,7 @@ class NiryoEndEffectorPanel:
         rospy.logdebug("Niryo end effector panel - Entering in Init")
 
         # - Init
-        self._robot_status = RobotStatus()
+        self.__robot_status = RobotStatus()
 
         self.__learning_mode_button_state = EEButtonStatus.NO_ACTION
         self.__custom_button_state = EEButtonStatus.NO_ACTION
@@ -113,12 +113,19 @@ class NiryoEndEffectorPanel:
                 self.blockly_save_current_point()
 
     def __callback_custom_pos_button_status(self, msg):
-        if (self.__custom_button_state != EEButtonStatus.NO_ACTION and
-                msg.action == EEButtonStatus.NO_ACTION and self.__robot_status == RobotStatus.CALIBRATION_NEEDED):
-            self.__custom_button_state = msg.action
+        old_button_state = self.__custom_button_state
+        self.__custom_button_state = msg.action
+
+        if self.__robot_status == RobotStatus.CALIBRATION_NEEDED and \
+                old_button_state != EEButtonStatus.NO_ACTION == self.__custom_button_state:
             auto_calibration()
-        else:
-            self.__custom_button_state = msg.action
+
+        if old_button_state == EEButtonStatus.HANDLE_HELD_ACTION \
+                and self.__custom_button_state == EEButtonStatus.NO_ACTION:
+            self.__button_state_publisher.publish(False)
+        elif old_button_state == EEButtonStatus.NO_ACTION \
+                and self.__custom_button_state == EEButtonStatus.HANDLE_HELD_ACTION:
+            self.__button_state_publisher.publish(True)
 
     def __callback_sub_learning_mode(self, msg):
         self.__learning_mode_on = msg.data

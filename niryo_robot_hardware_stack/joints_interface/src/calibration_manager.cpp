@@ -375,6 +375,7 @@ EStepperCalibrationStatus CalibrationManager::autoCalibration()
         timeout += 0.2;
         if (timeout >= 30.0)
         {
+            _stepper_bus_interface->resetCalibration();
             ROS_ERROR("CalibrationManager::autoCalibration - calibration timeout, please try again");
             return common::model::EStepperCalibrationStatus::TIMEOUT;
         }
@@ -388,19 +389,22 @@ EStepperCalibrationStatus CalibrationManager::autoCalibration()
     std::vector<int> sensor_offset_results;
     std::vector<int> sensor_offset_ids;
 
-    for (size_t i = 0; i < 3; ++i)
+    for (size_t i = 0; i < _joint_states_list.size(); ++i)
     {
         auto jState = _joint_states_list.at(i);
-        uint8_t motor_id = jState->getId();
-
-        if (_stepper_bus_interface)
+        if (jState && jState->isStepper())
         {
-            int calibration_result = _stepper_bus_interface->getCalibrationResult(motor_id);
+            uint8_t motor_id = jState->getId();
 
-            sensor_offset_results.emplace_back(calibration_result);
-            sensor_offset_ids.emplace_back(motor_id);
+            if (_stepper_bus_interface)
+            {
+                int calibration_result = _stepper_bus_interface->getCalibrationResult(motor_id);
 
-            ROS_INFO("CalibrationManager::autoCalibration - Motor %d, calibration cmd result %d ", motor_id, calibration_result);
+                sensor_offset_results.emplace_back(calibration_result);
+                sensor_offset_ids.emplace_back(motor_id);
+
+                ROS_INFO("CalibrationManager::autoCalibration - Motor %d, calibration cmd result %d ", motor_id, calibration_result);
+            }
         }
     }
 
@@ -411,7 +415,7 @@ EStepperCalibrationStatus CalibrationManager::autoCalibration()
         // 8. put back velocity profiles to normal
         resetVelocityProfiles();
 
-        // 5. Move Motor 1 to 0.0 (back to home)
+        // 5. Move steppers to home
         moveSteppersToHome();
         ros::Duration(3.5).sleep();
 
@@ -463,7 +467,7 @@ CalibrationManager::manualCalibration()
 
                         if (motor_id == _joint_states_list.at(0)->getId())
                         {
-                            offset_to_send = sensor_offset_steps - _joint_states_list.at(0)->to_motor_pos(_joint_states_list.at(0)->getLimitPosition()) % steps_per_rev;
+                            offset_to_send = sensor_offset_steps - _joint_states_list.at(0)->to_motor_pos(_joint_states_list.at(0)->getLimitPositionMax()) % steps_per_rev;
                             if (offset_to_send < 0)
                                 offset_to_send += steps_per_rev;
 
@@ -473,7 +477,7 @@ CalibrationManager::manualCalibration()
                         }
                         else if (motor_id == _joint_states_list.at(1)->getId())
                         {
-                            offset_to_send = sensor_offset_steps - _joint_states_list.at(1)->to_motor_pos(_joint_states_list.at(1)->getLimitPosition());
+                            offset_to_send = sensor_offset_steps - _joint_states_list.at(1)->to_motor_pos(_joint_states_list.at(1)->getLimitPositionMax());
 
                             offset_to_send %= steps_per_rev;
                             if (offset_to_send < 0)
@@ -485,7 +489,7 @@ CalibrationManager::manualCalibration()
                         }
                         else if (motor_id == _joint_states_list.at(2)->getId())
                         {
-                            offset_to_send = sensor_offset_steps - _joint_states_list.at(2)->to_motor_pos(_joint_states_list.at(2)->getLimitPosition());
+                            offset_to_send = sensor_offset_steps - _joint_states_list.at(2)->to_motor_pos(_joint_states_list.at(2)->getLimitPositionMin());
 
                             StepperSingleCmd stepper_cmd(EStepperCommandType::CMD_TYPE_POSITION_OFFSET, _joint_states_list.at(2)->getId(),
                                                          {offset_to_send, sensor_offset_steps});
@@ -678,23 +682,17 @@ void CalibrationManager::moveSteppersToHome()
         if (jState && jState->isStepper())
         {
             uint8_t motor_id = jState->getId();
+            int steps = jState->to_motor_pos(jState->getHomePosition());
 
             if (EBusProtocol::CAN == jState->getBusProtocol())
             {
-                // -0.01 to bypass error
-
-                int steps = -1 * jState->to_motor_pos(jState->getHomePosition());
-                int delay = 550;
-
                 _can_interface->addSingleCommandToQueue(std::make_unique<StepperSingleCmd>(
-                                                          StepperSingleCmd(EStepperCommandType::CMD_TYPE_RELATIVE_MOVE,
-                                                                           motor_id, {steps, delay})));
+                                                          StepperSingleCmd(EStepperCommandType::CMD_TYPE_POSITION,
+                                                                           motor_id, {steps})));
             }
             else if (EBusProtocol::TTL == jState->getBusProtocol())
             {
-                auto steps = static_cast<uint32_t>(jState->to_motor_pos(jState->getHomePosition()));
-
-                stepper_ttl_cmd.addMotorParam(jState->getHardwareType(), motor_id, steps);
+                stepper_ttl_cmd.addMotorParam(jState->getHardwareType(), motor_id, static_cast<uint32_t>(steps));
             }
         }
     }
@@ -730,7 +728,13 @@ void CalibrationManager::sendCalibrationToSteppers()
 
                 if (_can_interface && EBusProtocol::CAN == pStepperMotorState->getBusProtocol())
                 {
-                    int32_t offset = pStepperMotorState->to_motor_pos(pStepperMotorState->getLimitPosition());
+                    int32_t offset;
+                    // max limit in robot is correspond to the position initial of motor, with other motors
+                    // min limit is correspond to the position initial
+                    if (jState->getId() == 2)
+                        offset = pStepperMotorState->to_motor_pos(pStepperMotorState->getLimitPositionMax());
+                    else
+                        offset = pStepperMotorState->to_motor_pos(pStepperMotorState->getLimitPositionMin());
 
                     _can_interface->addSingleCommandToQueue(std::make_unique<StepperSingleCmd>(
                                                             StepperSingleCmd(EStepperCommandType::CMD_TYPE_CALIBRATION, id,

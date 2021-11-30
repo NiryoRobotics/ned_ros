@@ -94,6 +94,12 @@ class PortHandlerArduino : public PortHandler
   void    clearPort();
 
   ////////////////////////////////////////////////////////////////////////////////
+  /// @brief The function that flush Input
+  /// @description The function flush input if data received but not read.
+  ////////////////////////////////////////////////////////////////////////////////
+  void    flushInput();
+
+  ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that sets port name into the port handler
   /// @description The function sets port name into the port handler.
   /// @param port_name Port name
