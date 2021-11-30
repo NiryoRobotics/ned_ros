@@ -6,8 +6,6 @@ from tf.transformations import quaternion_from_euler
 from geometry_msgs.msg import Quaternion
 import math
 
-LED_ANGLE_OFFSET_RAD = 1.57
-
 
 class LedRingSimulation:
     """
@@ -75,7 +73,7 @@ class LedRingSimulation:
         led_ring_marker.color = ColorRGBA(51, 51, 51, 0)
         led_ring_marker.lifetime = rospy.Duration(0)
 
-        angle = (position * 2 * math.pi / self.led_count) + LED_ANGLE_OFFSET_RAD
+        angle = (position * 2 * math.pi / self.led_count)
         if self.use_mesh:
             led_ring_marker.type = led_ring_marker.MESH_RESOURCE
             led_ring_marker.scale.x = 1

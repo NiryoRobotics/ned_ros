@@ -22,7 +22,6 @@
   <exec_depend>niryo_robot_led_ring</exec_depend>
   <exec_depend>niryo_robot_vision</exec_depend>
   <exec_depend>rviz</exec_depend>
-  <exec_depend>timed_roslaunch</exec_depend>
   <exec_depend>xacro</exec_depend>
 
   <test_depend>python-catkin-lint</test_depend>
