@@ -183,4 +183,14 @@
     <link name="tool_link">
     </link>
 
+    <link name="led_ring_link">
+    </link>
+
+    <joint name="joint_led_ring" type="fixed">
+        <parent link="world"/>
+        <child link="led_ring_link"/>
+        <origin xyz="0 0 0.0923" rpy="0 0 ${PI/2}"/>
+    </joint>
+
+
 </robot>
