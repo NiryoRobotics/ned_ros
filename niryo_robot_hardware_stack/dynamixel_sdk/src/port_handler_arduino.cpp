@@ -105,6 +105,10 @@ void PortHandlerArduino::clearPort()
 #endif
 }
 
+void PortHandlerArduino::flushInput()
+{
+}
+
 void PortHandlerArduino::setPortName(const char *port_name)
 {
   strcpy(port_name_, port_name);
