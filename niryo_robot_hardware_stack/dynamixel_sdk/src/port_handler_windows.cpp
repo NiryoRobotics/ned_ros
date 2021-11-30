@@ -70,6 +70,10 @@ void PortHandlerWindows::clearPort()
   PurgeComm(serial_handle_, PURGE_RXABORT | PURGE_RXCLEAR);
 }
 
+void PortHandlerWindows::flushInput()
+{
+}
+
 void PortHandlerWindows::setPortName(const char *port_name)
 {
   strcpy_s(port_name_, sizeof(port_name_), port_name);
