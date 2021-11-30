@@ -1,3 +1,5 @@
+import json
+
 import requests
 
 
@@ -12,7 +14,7 @@ class CloudAPI:
         self.__headers = {
             'accept': 'application/json',
             'serialNumber': serial_number,
-            'api': api_key
+            'apiKey': api_key
         }
 
     @property
@@ -31,5 +33,8 @@ class CloudAPI:
         return response.status_code == 200
 
     def send(self, payload):
-        response = requests.post(self.__url, headers=self.__headers, json=payload)
+        response = requests.post(
+            self.__url, headers=self.__headers, json=payload
+        )
+        print(json.dumps(payload))
         return response.status_code == 200

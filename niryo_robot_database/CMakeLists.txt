@@ -21,7 +21,7 @@ add_service_files(
   SetMetric.srv
   SetSettings.srv
   AddFilePath.srv
-  GetFilePath.srv
+  GetAllByType.srv
 )
 
 # enable python module support

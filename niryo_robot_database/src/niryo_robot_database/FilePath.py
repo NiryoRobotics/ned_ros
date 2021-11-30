@@ -1,6 +1,7 @@
 import uuid
 from datetime import datetime
 
+
 class UnknownFilePathException(Exception):
     pass
 
@@ -17,12 +18,10 @@ class FilePath:
         else:
             return True, result['id']
 
-    def get_path_from_name(self, name):
-        query = 'SELECT path FROM file_path WHERE name = :name'
-        result = self.__dao.execute(query, {'name': name}).fetchone()
-        if result is None:
-            raise UnknownFilePathException()
-        return result['path']
+    def get_all_by_type(self, file_type):
+        query = 'SELECT id, type, name, date, path FROM file_path WHERE type = :type'
+        result = self.__dao.execute(query, {'type': file_type}).fetchall()
+        return result
 
     def add_file_path(self, file_type, name, path):
         file_path_exists, file_path_id = self.exists(name)
@@ -41,3 +40,9 @@ class FilePath:
             params['id'] = str(uuid.uuid4())
 
         self.__dao.execute(query, params)
+
+    def rm_file_path(self, ids):
+        query = 'DELETE FROM file_path WHERE id IN ({})'.format(
+            ', '.join(['?'] * len(ids))
+        )
+        self.__dao.execute(query, ids)

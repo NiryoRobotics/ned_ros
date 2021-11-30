@@ -17,14 +17,16 @@ from niryo_robot_msgs.msg import CommandStatus
 
 # srv
 
-from niryo_robot_database.srv import GetSettings
+from niryo_robot_database.srv import GetSettings, GetAllByType, AddFilePath
 
 
 class ReportsNode:
     def __init__(self):
         rospy.logdebug("Reports Node - Entering in Init")
 
-        self.__get_setting = rospy.ServiceProxy('/niryo_robot_database/settings/get', GetSettings)
+        self.__get_setting = rospy.ServiceProxy(
+            '/niryo_robot_database/settings/get', GetSettings
+        )
 
         cloud_domain = rospy.get_param('~cloud_domain')
         get_serial_number_response = self.__get_setting('serial_number')
@@ -35,24 +37,45 @@ class ReportsNode:
             rospy.logwarn('Reports Node - Unable to retrieve the serial number')
 
         self.__cloud_api = CloudAPI(
-            cloud_domain,
-            get_serial_number_response.value,
+            cloud_domain, get_serial_number_response.value,
             get_api_key_response.value
         )
 
         get_report_path_response = self.__get_setting('reports_path')
         if get_report_path_response.status != CommandStatus.SUCCESS:
-            rospy.logerr('Unable to retrieve the reports directory path from the database')
+            rospy.logerr(
+                'Unable to retrieve the reports directory path from the database'
+            )
         self.__reports_path = os.path.expanduser(get_report_path_response.value)
         if not os.path.isdir(self.__reports_path):
             mkpath(self.__reports_path)
 
         self.__curent_date = str(date.today())
-        report_path = '{}/{}.json'.format(self.__reports_path, self.__curent_date)
+        report_path = '{}/{}.json'.format(
+            self.__reports_path, self.__curent_date
+        )
+
+        get_all_files_paths = rospy.ServiceProxy('/niryo_robot_database/file_paths/get_all_by_type', GetAllByType)
+        daily_reports_response = get_all_files_paths('daily_report')
+        if daily_reports_response.status == CommandStatus.SUCCESS:
+            for report in daily_reports_response.filepaths:
+                if report.date == self.__curent_date:
+                    continue
+                report_handler = ReportHandler(report.path)
+                rospy.loginfo('Sending the report of {}'.format(report.date))
+                self.__cloud_api.daily_reports.send({
+                    'date': report.date,
+                    'report': report_handler.content
+                })
+                # report_handler.delete()
+
         self.__report_handler = ReportHandler(report_path)
 
         rospy.Subscriber('~new_day', Empty, self.__new_day_callback)
-        rospy.Subscriber('/niryo_robot_status/robot_status', RobotStatus, self.__robot_status_callback)
+        rospy.Subscriber(
+            '/niryo_robot_status/robot_status', RobotStatus,
+            self.__robot_status_callback
+        )
 
         # Set a bool to mentioned this node is initialized
         rospy.set_param('~initialized', True)
@@ -65,25 +88,33 @@ class ReportsNode:
         current_day = str(date.today())
         if current_day == self.__curent_date:
             return
-        report = self.__report_handler.content
-        self.__cloud_api.daily_reports.send({
-            date: self.__curent_date,
-            report: report
+        success = self.__cloud_api.daily_reports.send({
+            'date': self.__curent_date,
+            'report': self.__report_handler.content
         })
+        if success:
+            self.__report_handler.delete()
         self.__curent_date = current_day
-        self.__report_handler.set_path(self.__curent_date)
+        new_path = '{}/{}.json'.format(self.__reports_path, self.__curent_date)
+        self.__report_handler.set_path(new_path)
 
     def __robot_status_callback(self, req):
         if req.logs_status_str.lower() not in ['error', 'critical']:
             return
         log_io = StringIO(req.logs_message)
-        level, from_node, msg, from_file, function, line = map(lambda x: x[x.index(':')+2:], log_io.readlines())
-        formatted_log = '{} - {}: {} in {}.{}:{}'.format(level, from_node, msg, from_file, function, line)
+        level, from_node, msg, from_file, function, line = map(
+            lambda x: x[x.index(':') + 2:], log_io.readlines()
+        )
+        formatted_log = '{} - {}: {} in {}.{}:{}'.format(
+            level, from_node, msg, from_file, function, line
+        )
         self.__report_handler.add_log(formatted_log, 'ROS', str(datetime.now()))
 
 
 if __name__ == "__main__":
-    rospy.init_node('niryo_robot_reports', anonymous=False, log_level=rospy.INFO)
+    rospy.init_node(
+        'niryo_robot_reports', anonymous=False, log_level=rospy.INFO
+    )
 
     try:
         node = ReportsNode()

@@ -6,6 +6,9 @@ class ReportHandler:
     def __init__(self, path):
         self.set_path(path)
 
+    def delete(self):
+        os.remove(self.__path)
+
     def set_path(self, path):
         self.__path = path
         if not os.path.isfile(self.__path):

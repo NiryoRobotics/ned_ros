@@ -15,10 +15,10 @@ from niryo_robot_database.FilePath import FilePath, UnknownFilePathException
 
 # msg
 from niryo_robot_msgs.msg import CommandStatus
-from niryo_robot_database.msg import Metric
+from niryo_robot_database.msg import Metric, FilePath as FilePathMsg
 
 # srv
-from niryo_robot_database.srv import GetAllMetrics, SetMetric, SetSettings, GetSettings, AddFilePath, GetFilePath
+from niryo_robot_database.srv import GetAllMetrics, SetMetric, SetSettings, GetSettings, AddFilePath, GetAllByType
 
 
 class DatabaseNode:
@@ -53,8 +53,14 @@ class DatabaseNode:
         rospy.Service(
             '~settings/get', GetSettings, self.__callback_get_settings
         )
-        rospy.Service('~file_paths/add', AddFilePath, self.__callback_add_file_path)
-        rospy.Service('~file_paths/get_path', GetFilePath, self.__callback_get_file_path)
+        rospy.Service(
+            '~file_paths/add', AddFilePath, self.__callback_add_file_path
+        )
+        rospy.Service(
+            '~file_paths/get_all_by_type',
+            GetAllByType,
+            self.__callback_get_all_by_type,
+        )
 
         # Set a bool to mentioned this node is initialized
         rospy.set_param('~initialized', True)
@@ -103,14 +109,13 @@ class DatabaseNode:
             return CommandStatus.DATABASE_DB_ERROR, str(e)
         return CommandStatus.SUCCESS, 'File path successfully added'
 
-    def __callback_get_file_path(self, req):
+    def __callback_get_all_by_type(self, req):
         try:
-            path = self.__file_paths.get_path_from_name(req.name)
-        except UnknownSettingsException:
-            return CommandStatus.DATABASE_FILE_PATH_UNKNOWN, 'Unknown file path', None
+            filepaths = self.__file_paths.get_all_by_type(req.type)
         except OperationalError as e:
             return CommandStatus.DATABASE_DB_ERROR, str(e)
-        return CommandStatus.SUCCESS, path
+        res = [FilePathMsg(x['id'], x['type'], x['name'], x['date'], x['path']) for x in filepaths]
+        return CommandStatus.SUCCESS, res
 
 
 if __name__ == "__main__":
