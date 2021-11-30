@@ -22,135 +22,40 @@ Simulation environment installation
 .. attention::
     The whole ROS Stack is developed and tested on ROS **Melodic** which requires
     **Ubuntu 18.04** to run correctly. The using of another ROS version or OS
-    may lead to malfunctions of some packages.
+    may lead to malfunctions of some packages. Please follow the steps in 
+    :ref:`Simulation Environment Installation <source/installation/ubuntu_18>`.
+    to install a working environment.
 
-To allow the simulation to run on your computer, you will need to install ROS and some
-packages.
-
-Installation index:
-
-.. contents::
-   :local:
-   :depth: 1
-
-Prepare environment
--------------------------
-.. note::
-    All terminal command listed are for Ubuntu users.
-
-Place yourself in the folder of your choice and create a folder
-**catkin_ws_niryo_ned** as well as a sub-folder **src**: ::
-
-    mkdir -p catkin_ws_niryo_ned/src
-
-Then go to the folder **catkin_ws_niryo_ned** and
-clone Ned repository in the folder **src**.
-For the future operation, be sure to stay in the **catkin_ws_niryo_ned** folder: ::
-
-    cd catkin_ws_niryo_ned
-    git clone https://github.com/NiryoRobotics/ned_ros src
-
-
-Install ROS dependencies
-------------------------------------
-
-Install ROS
-^^^^^^^^^^^^^
-
-You firstly need to install ROS Melodic. To do so, follow the ROS official tutorial
-`here <http://wiki.ros.org/melodic/Installation/Ubuntu>`_ and chose the
-**Desktop-Full Install**.
-
-Install additional packages
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-To ensure the functioning of all Ned's packages, you need to
-install several more packages:
-
-Method 1: Quick installation via ROSDep
-"""""""""""""""""""""""""""""""""""""""""""""""""
-For each packages, we have referenced all the dependencies in their respective
-*package.xml* file, which allow to install each dependency via *rosdep* command: ::
-
- rosdep update
- rosdep install --from-paths src --ignore-src --default-yes --rosdistro melodic --skip-keys "python-rpi.gpio"
-
-
-Method 2: Full installation
-"""""""""""""""""""""""""""""""""""""""""""""""""
-
-ROS packages needed are:
-
-* build-essential
-* catkin
-* python-catkin-pkg
-* python-pymodbus
-* python-rosdistro
-* python-rospkg
-* python-rosdep-modules
-* python-rosinstall python-rosinstall-generator
-* python-wstool
-
-To install a package on Ubuntu: ::
-
-    sudo apt install <package_name>
-
-
-Melodic specific packages needed are:
-
-* moveit
-* control
-* controllers
-* tf2-web-republisher
-* rosbridge-server
-* joint-state-publisher-gui
-
-To install a ROS Melodic's package on Ubuntu: ::
-
-    sudo apt install ros-melodic-<package_name>
-
-
-Setup Ned ROS environment
---------------------------------
-
-.. note::
-    Be sure to be still placed in the **catkin_ws_niryo_ned** folder.
-
-Then perform the **make** of Ned's ROS Stack via the command: ::
-
-    catkin_make
-
-If no errors occurred during the **make** phase, the setup
-of your environment is almost complete!
-
-It is necessary to source the configuration file to add all Ned
-packages to ROS environment. To do so, run the command: ::
-
-    source devel/setup.bash
-
-It is necessary to run this command each time you launch a new terminal.
-If you want to make this sourcing appends for all your futur terminals,
-you can add it to your **bashrc** file: ::
-
-    echo "source $(pwd)/devel/setup.bash" >> ~/.bashrc
-    source ~/.bashrc
-
-Installation is now finished!
-
-
-Simulation utilization
+Simulation usage
 =========================================
 
 .. important::
-    - If you haven't follow the step of
-      :ref:`Simulation Environment Installation <source/simulation:Simulation Environment Installation>`.
-      you won't be able to use the simulation.
-    - Hardware features won't be accessible.
+    - Hardware features are simulated as if you were using a real robot.
+    - The data returned by the faked drivers is arbitrary and immutable. Among this data, 
+    you will have : voltage, temperature, error state (always 0), ping (always true), 
+    end effector state (immutable)
 
-| The simulation is a powerful tool which allow to test new programs directly on your computer
+| The simulation is a powerful tool allowing to test new programs directly on your computer
  which prevent to transfer new code on the robot.
 | It also helps for developing purpose → no need to transfer code, compile and restart the robot
  which is way slower than doing it on a desktop computer.
 
+Without physics - No Visualization
+--------------------------------------
+
+This mode is mainly for simulation and tests purpose, bringing you in the closest state as possible to
+a real robot control. It is available for all currently supported architectures. You can access it by using the command: ::
+
+One simulation:
+    `roslaunch niryo_robot_bringup niryo_one_simulation.launch`
+
+Ned simulation:
+    `roslaunch niryo_robot_bringup niryo_ned_simulation.launch`
+
+Ned2 simulation:
+    `roslaunch niryo_robot_bringup niryo_ned2_simulation.launch`
+
+TODO
 
 Without physics - Visualization
 --------------------------------------
@@ -188,6 +93,8 @@ To run it: ::
     :alt: Ned on Rviz
 
     Rviz opening, with the robot ready to be controlled with ROS!
+
+    **TODO add parameters**
 
 With physics - Simulation
 --------------------------------------

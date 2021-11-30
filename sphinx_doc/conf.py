@@ -141,8 +141,9 @@ window.onload = function ()
     // Change dynamically titles in left menu
     if (document.documentElement.lang == 'fr') {
         matches[0].innerText = "Introduction"
-        matches[1].innerText = "Packages"
-        matches[2].innerText = "Pour aller plus loin..."
+        matches[1].innerText = "Installation"
+        matches[2].innerText = "Packages"
+        matches[3].innerText = "Pour aller plus loin..."
     }
 }
 """
