@@ -1,0 +1,102 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2021, Niryo All rights reserved. No part of this document
+# may be reproduced or transmitted in any form or by any means without prior
+# written consent of Niryo SAS
+# This file is distributed under the same license as the Ned ROS
+# Documentation package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Ned ROS Documentation v3.2\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-10-22 17:37+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.9.1\n"
+
+#: ../../source/stack/low_level/cpu_interface.rst:2
+msgid "CPU Interface"
+msgstr ""
+
+#: ../../source/stack/low_level/cpu_interface.rst:4
+msgid "This package provides an interface for CPU monitoring"
+msgstr ""
+
+#: ../../source/stack/low_level/cpu_interface.rst:7
+msgid "CPU Interface Node"
+msgstr ""
+
+#: ../../source/stack/low_level/cpu_interface.rst:9
+msgid "The ROS Node is made to:"
+msgstr ""
+
+#: ../../source/stack/low_level/cpu_interface.rst:9
+msgid "monitor CPU temperature."
+msgstr ""
+
+#: ../../source/stack/low_level/cpu_interface.rst:12
+msgid "Parameters"
+msgstr ""
+
+#: ../../source/stack/low_level/cpu_interface.rst:14
+msgid "CPU Interface's Parameters"
+msgstr ""
+
+#: ../../source/stack/low_level/cpu_interface.rst:20
+msgid "Name"
+msgstr ""
+
+#: ../../source/stack/low_level/cpu_interface.rst:21
+msgid "Description"
+msgstr ""
+
+#: ../../source/stack/low_level/cpu_interface.rst:22
+msgid "``read_rpi_diagnostics_frequency``"
+msgstr ""
+
+#: ../../source/stack/low_level/cpu_interface.rst
+msgid "Publishes rate for CPU temperature"
+msgstr ""
+
+#: ../../source/stack/low_level/cpu_interface.rst
+msgid "Default: '0.25'"
+msgstr ""
+
+#: ../../source/stack/low_level/cpu_interface.rst:25
+msgid "``temperature_warn_threshold``"
+msgstr ""
+
+#: ../../source/stack/low_level/cpu_interface.rst
+msgid "CPU temperature [celsius] threshold before a warn message"
+msgstr ""
+
+#: ../../source/stack/low_level/cpu_interface.rst
+msgid "Default: '75'"
+msgstr ""
+
+#: ../../source/stack/low_level/cpu_interface.rst:28
+msgid "``temperature_shutdown_threshold``"
+msgstr ""
+
+#: ../../source/stack/low_level/cpu_interface.rst
+msgid "CPU temperature [celsius] threshold before shutdown the robot"
+msgstr ""
+
+#: ../../source/stack/low_level/cpu_interface.rst
+msgid "Default: '85'"
+msgstr ""
+
+#: ../../source/stack/low_level/cpu_interface.rst:34
+msgid "Dependencies"
+msgstr ""
+
+#: ../../source/stack/low_level/cpu_interface.rst:38
+msgid "Services, Topics and Messages"
+msgstr ""
+

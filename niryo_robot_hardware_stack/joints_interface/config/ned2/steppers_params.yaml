@@ -20,18 +20,18 @@ steppers:
         limit_position_max: 2.966   # joint limit max
         # assembly direction (1 or -1)
         direction: 1
-        v_start: 1
         # rule is a_max = a_1 * 3
         #         d_max = d_1 * 3
         #         v_max = v_1 * 3
         #         d_max = a_max + 200
-        a_1: 1200
-        v_1: 5
-        a_max: 2571
-        v_max: 15
-        d_max: 2714
-        d_1: 1900
-        v_stop: 2
+        v_start: 0
+        a_1: 1260
+        v_1: 500
+        a_max: 2500
+        v_max: 1500
+        d_max: 2500
+        d_1: 1228
+        v_stop: 20
 
     stepper_2:
         id: 3
@@ -41,18 +41,18 @@ steppers:
         limit_position_max: 0.61
         limit_position_min: -2.09
         direction: -1
-        v_start: 1
         # rule is a_max = a_1 * 3
         #         d_max = d_1 * 3
         #         v_max = v_1 * 3
         #         d_max = a_max + 100
-        a_1: 600
-        v_1: 3
-        a_max: 1800
-        v_max: 10
-        d_max: 1900
-        d_1: 633
-        v_stop: 2
+        v_start: 0
+        a_1: 860
+        v_1: 300
+        a_max: 1400
+        v_max: 1000
+        d_max: 1400
+        d_1: 860
+        v_stop: 20
         
     stepper_3:
         id: 4
@@ -62,16 +62,16 @@ steppers:
         limit_position_min: -1.34
         limit_position_max: 1.57
         direction: 1
-        v_start: 1
         # rule is a_max = a_1 * 3
         #         d_max = d_1 * 3
         #         v_max = v_1 * 3
         #         d_max = a_max + 100
-        a_1: 900
-        v_1: 4
-        a_max: 2057
-        v_max: 12
-        d_max: 2171
-        d_1: 1267
-        v_stop: 2
+        v_start: 0
+        a_1: 915
+        v_1: 400
+        a_max: 1700
+        v_max: 1200
+        d_max: 1700
+        d_1: 983
+        v_stop: 20
 

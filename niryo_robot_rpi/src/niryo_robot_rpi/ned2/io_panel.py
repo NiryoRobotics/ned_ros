@@ -40,7 +40,7 @@ class IOPanel(AbstractIOPanel):
         self.__adc = adc if adc is not None else MAX11644(bus=adc_param["i2c_bus"], address=adc_param["address"],
                                                           v_ref_internal=adc_param["v_ref"])
 
-        self.__end_effector_panel = NiryoEndEffectorPanel()
+        self.__end_effector_panel = NiryoEndEffectorPanel(self._callback_digital_io_change)
         self.__init_ios()
 
         self._publish_digital_io_state()

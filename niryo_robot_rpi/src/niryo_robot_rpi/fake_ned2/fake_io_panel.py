@@ -32,7 +32,7 @@ class FakeIOPanel(AbstractIOPanel):
     def __init__(self):
         super(FakeIOPanel, self).__init__()
 
-        self.__end_effector_panel = NiryoEndEffectorPanel()
+        self.__end_effector_panel = NiryoEndEffectorPanel(self._publish_digital_io_state)
 
         self._digital_outputs = OrderedDict(
             [(digital_output["name"], FakeDigitalIO(digital_output["name"], PinMode.DIGITAL_OUTPUT))

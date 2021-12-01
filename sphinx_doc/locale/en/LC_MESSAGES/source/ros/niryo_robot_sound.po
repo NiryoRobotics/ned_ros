@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-05 16:45+0200\n"
+"POT-Creation-Date: 2021-11-30 10:58+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -70,7 +70,7 @@ msgid "``/niryo_robot_sound/sound_user_state``"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_sound.rst:26
-msgid ":ref:`std_msgs/Bool<Bool>`"
+msgid ":std_msgs:`std_msgs/Bool<Bool>`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_sound.rst:27
@@ -84,7 +84,7 @@ msgid "``/niryo_robot_sound/volume_state``"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_sound.rst:29
-msgid ":ref:`std_msgs/Int8<Int8>`"
+msgid ":std_msgs:`std_msgs/Int8<Int8>`"
 msgstr ""
 
 #: ../../source/ros/niryo_robot_sound.rst:30
@@ -236,5 +236,11 @@ msgid "StopSound (Service)"
 msgstr ""
 
 #~ msgid ":ref:`std_msgs`"
+#~ msgstr ""
+
+#~ msgid ":ref:`std_msgs/Bool<Bool>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`std_msgs/Int8<Int8>`"
 #~ msgstr ""
 
