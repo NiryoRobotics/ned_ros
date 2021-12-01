@@ -42,8 +42,8 @@ class DigitalOutput(NiryoIO):
         try:
             self.__set_ee_io_state_service(bool(value))
             self._value = bool(value)
-        except rospy.service.ServiceException:
-            rospy.logwarn("End Effector Digital Output :: Failed to set its state")
+        except rospy.service.ServiceException as e:
+            rospy.logwarn("End Effector Digital Output :: Failed to set its state\n{}".format(str(e)))
 
     def force_value(self, value):
         assert isinstance(value, (bool, int, float))
