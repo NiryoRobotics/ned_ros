@@ -63,5 +63,4 @@ class DigitalInput(NiryoIO):
 
     @value.setter
     def value(self, value):
-        print value
         self._value = bool(value)
