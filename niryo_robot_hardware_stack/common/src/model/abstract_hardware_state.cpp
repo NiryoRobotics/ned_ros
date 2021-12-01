@@ -115,7 +115,7 @@ void AbstractHardwareState::setTemperature(uint8_t temp)
 
 /**
  * @brief AbstractHardwareState::setRawVoltage
- * @param volt
+ * @param raw_volt
  * TODO(CC) avoid using hardcoded values, only usable for Ned2 for now
  */
 void AbstractHardwareState::setRawVoltage(double raw_volt)
@@ -147,7 +147,7 @@ void AbstractHardwareState::setHardwareError(uint32_t hw_error)
 
 /**
  * @brief AbstractHardwareState::setConnectionStatus
- * @param hw_error
+ * @param connected
  */
 void AbstractHardwareState::setConnectionStatus(bool connected)
 {

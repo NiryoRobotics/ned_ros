@@ -99,8 +99,8 @@ class MockDxlDriver : public AbstractDxlDriver
 
         // AbstractDxlDriver interface
     public:
-        int readPID(uint8_t id, std::vector<uint32_t> &data) override;
-        int writePID(uint8_t id, const std::vector<uint32_t> &data) override;
+        int readPID(uint8_t id, std::vector<uint16_t> &data) override;
+        int writePID(uint8_t id, const std::vector<uint16_t> &data) override;
 
         int writeControlMode(uint8_t id, uint8_t data) override;
         int readControlMode(uint8_t id, uint8_t& data) override;

@@ -196,7 +196,7 @@ void JointsInterfaceCore::activateLearningMode(bool activate, int &ostatus, std:
 
 /**
  * @brief JointsInterfaceCore::rebootAll
- * @param hardware_version
+ * @param torque_on
  * @return
  */
 bool JointsInterfaceCore::rebootAll(bool torque_on)

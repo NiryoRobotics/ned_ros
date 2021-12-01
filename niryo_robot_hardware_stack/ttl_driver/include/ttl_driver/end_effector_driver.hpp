@@ -354,7 +354,7 @@ template<typename reg_type>
 int EndEffectorDriver<reg_type>::syncReadButtonsStatus(const uint8_t& id,
                                                         std::vector<common::model::EActionType>& action_list)
 {
-    std::vector<std::array<uint8_t, 3> > data_array_list;
+    std::vector<std::array<typename reg_type::TYPE_BUTTON_STATUS, 3> > data_array_list;
     int res;
     res = syncReadConsecutiveBytes<typename reg_type::TYPE_BUTTON_STATUS, 3>(reg_type::ADDR_BUTTON_0_STATUS, {id}, data_array_list);
     if (res == COMM_SUCCESS && data_array_list.size() == 1)

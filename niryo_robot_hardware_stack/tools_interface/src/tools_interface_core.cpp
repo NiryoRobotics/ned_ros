@@ -87,8 +87,8 @@ bool ToolsInterfaceCore::init(ros::NodeHandle &nh)
 }
 
 /**
- * @brief ToolsInterfaceCore::rebootAll
- * @param hardware_version
+ * @brief ToolsInterfaceCore::rebootHardware
+ * @param torque_on
  * @return
  */
 bool ToolsInterfaceCore::rebootHardware(bool torque_on)

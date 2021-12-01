@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 
-# send_custom_value.py
+# read_custom_value.py
 # Copyright (C) 2018 Niryo
 # All rights reserved.
 #
@@ -28,7 +28,6 @@ if __name__ == '__main__':
     # 1. Parse args
     parser = argparse.ArgumentParser(description='Read custom value from a Dynamixel motor during Ned runtime')
 
-    parser.add_argument('--type', type=int, required=True, help='Motor type (2 for XL-430, 3 for XL-320, 4 for XL-330, 5 for XC-430)')
     parser.add_argument('--id', type=int, required=True, help='Motor ID')
     parser.add_argument('--address', type=int, required=True, help='Register address')
     parser.add_argument('--size', type=int, required=True, help='Size(bytes) of the value to send (1,2 or 4)')

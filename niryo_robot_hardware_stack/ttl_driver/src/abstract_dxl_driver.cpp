@@ -65,7 +65,14 @@ int AbstractDxlDriver::writeSingleCmd(const std::unique_ptr<common::model::Abstr
         case EDxlCommandType::CMD_TYPE_PING:
             return ping(cmd->getId());
         case EDxlCommandType::CMD_TYPE_PID:
-            return writePID(cmd->getId(), cmd->getParams());
+        {
+            std::vector<uint16_t> params_conv;
+            for (auto p : cmd->getParams())
+            {
+                params_conv.emplace_back(static_cast<uint16_t>(p));
+            }
+            return writePID(cmd->getId(), params_conv);
+        }
         case EDxlCommandType::CMD_TYPE_PROFILE:
             return writeVelocityProfile(cmd->getId(), cmd->getParams());
         case EDxlCommandType::CMD_TYPE_CONTROL_MODE:

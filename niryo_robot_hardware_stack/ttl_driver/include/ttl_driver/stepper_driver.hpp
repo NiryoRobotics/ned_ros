@@ -380,9 +380,9 @@ int StepperDriver<reg_type>::syncReadVelocity(const std::vector<uint8_t> &id_lis
 }
 
 /**
- * @brief StepperDriver::syncReadJointStatus
+ * @brief StepperDriver<reg_type>::syncReadJointStatus
  * @param id_list
- * @param data_array
+ * @param data_array_list
  * @return
  * reads both position and velocity if torque is enabled. Reads only position otherwise
  */
