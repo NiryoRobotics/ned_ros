@@ -27,6 +27,7 @@ class DigitalOutput(NiryoIO):
     def __init__(self, name):
         super(DigitalOutput, self).__init__(lock=None, pin=0, name=name)
 
+        rospy.wait_for_service("/niryo_robot_hardware_interface/end_effector_interface/set_ee_io_state", 120)
         self.__set_ee_io_state_service = rospy.ServiceProxy(
             "/niryo_robot_hardware_interface/end_effector_interface/set_ee_io_state", SetEEDigitalOut)
 
