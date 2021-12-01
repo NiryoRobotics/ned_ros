@@ -230,9 +230,22 @@ int TtlManager::addHardwareComponent(std::shared_ptr<common::model::AbstractHard
     if (_driver_map.count(hardware_type))
     {
         std::string version;
-        if (COMM_SUCCESS == _driver_map.at(hardware_type)->readFirmwareVersion(state->getId(), version))
+        int res = COMM_RX_FAIL;
+        for (int tries = 10; tries > 0; tries--)
         {
-            state->setFirmwareVersion(version);
+            res = _driver_map.at(hardware_type)->readFirmwareVersion(id, version);
+            if (COMM_SUCCESS == res)
+            {
+              state->setFirmwareVersion(version);
+              break;
+            }
+            ros::Duration(0.1).sleep();
+        }
+
+        if (COMM_SUCCESS != res)
+        {
+            ROS_WARN("TtlManager::addHardwareComponent : Unable to retrieve firmware version for "
+                     "hardware id %d : result = %d", id, res);
         }
     }
 
@@ -317,10 +330,21 @@ int TtlManager::changeId(EHardwareType motor_type, uint8_t old_id, uint8_t new_i
                 // update all maps
                 if (i_state != _state_map.end())
                 {
-                    // update all maps
+                    // insert new_id in map, move i_state->second to its new place
                     std::swap(_state_map[new_id], i_state->second);
                     // update all maps
                     _state_map.erase(i_state);
+
+                    assert(_state_map.at(new_id));
+
+                    // update conveyor list if needed
+                    if (common::model::EComponentType::CONVEYOR == _state_map.at(new_id)->getComponentType())
+                    {
+                        // change old id into new id in vector
+                        auto iter = std::find(_conveyor_list.begin(), _conveyor_list.end(), old_id);
+                        if (iter != _conveyor_list.end())
+                            *iter = new_id;
+                    }
                 }
                 if (_ids_map.count(motor_type))
                 {
@@ -422,8 +446,8 @@ bool TtlManager::ping(uint8_t id)
 }
 
 /**
- * @brief TtlManager::rebootHwComponent
- * @param motor_id
+ * @brief TtlManager::rebootHardware
+ * @param hw_id
  * @return
  */
 int TtlManager::rebootHardware(uint8_t hw_id)
@@ -439,17 +463,24 @@ int TtlManager::rebootHardware(uint8_t hw_id)
             return_value = _driver_map.at(type)->reboot(hw_id);
             if (COMM_SUCCESS == return_value)
             {
-                ros::Time start_time = ros::Time::now();
-                std::string fw_version = "";
-
-                // update firmware version
-                while (COMM_SUCCESS != _driver_map.at(type)->readFirmwareVersion(hw_id, fw_version))
+                std::string version;
+                int res = COMM_RX_FAIL;
+                for (int tries = 10; tries > 0; tries--)
                 {
-                    if ((ros::Time::now() - start_time).toSec() > 1)
-                        break;
+                    res = _driver_map.at(type)->readFirmwareVersion(hw_id, version);
+                    if (COMM_SUCCESS == res)
+                    {
+                      _state_map.at(hw_id)->setFirmwareVersion(version);
+                      break;
+                    }
                     ros::Duration(0.1).sleep();
                 }
-                _state_map.at(hw_id)->setFirmwareVersion(fw_version);
+
+                if (COMM_SUCCESS != res)
+                {
+                    ROS_WARN("TtlManager::addHardwareComponent : Unable to retrieve firmware version for "
+                             "hardware id %d : result = %d", hw_id, res);
+                }
             }
             ROS_WARN_COND(COMM_SUCCESS != return_value,
                           "TtlManager::rebootHardware - Failed to reboot hardware: %d",
@@ -1233,9 +1264,9 @@ int TtlManager::readCustomCommand(uint8_t id, int32_t reg_address, int& value, i
  * @return
  */
 int TtlManager::readMotorPID(uint8_t id,
-                             uint32_t& pos_p_gain, uint32_t& pos_i_gain, uint32_t& pos_d_gain,
-                             uint32_t& vel_p_gain, uint32_t& vel_i_gain,
-                             uint32_t& ff1_gain, uint32_t& ff2_gain)
+                             uint16_t& pos_p_gain, uint16_t& pos_i_gain, uint16_t& pos_d_gain,
+                             uint16_t& vel_p_gain, uint16_t& vel_i_gain,
+                             uint16_t& ff1_gain, uint16_t& ff2_gain)
 {
     int result = COMM_RX_FAIL;
 
@@ -1248,7 +1279,7 @@ int TtlManager::readMotorPID(uint8_t id,
             auto driver = std::dynamic_pointer_cast<AbstractDxlDriver>(_driver_map.at(motor_type));
             if (driver)
             {
-                std::vector<uint32_t> data;
+                std::vector<uint16_t> data;
                 result = driver->readPID(id, data);
 
                 if (COMM_SUCCESS == result)

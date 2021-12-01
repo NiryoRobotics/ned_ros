@@ -130,9 +130,9 @@ public:
     bool readJointsStatus();
 
     int readMotorPID(uint8_t id,
-                     uint32_t& pos_p_gain, uint32_t& pos_i_gain, uint32_t& pos_d_gain,
-                     uint32_t& vel_p_gain, uint32_t& vel_i_gain,
-                     uint32_t& ff1_gain, uint32_t& ff2_gain);
+                     uint16_t& pos_p_gain, uint16_t& pos_i_gain, uint16_t& pos_d_gain,
+                     uint16_t& vel_p_gain, uint16_t& vel_i_gain,
+                     uint16_t& ff1_gain, uint16_t& ff2_gain);
 
     int readVelocityProfile(uint8_t id,
                             uint32_t& v_start, uint32_t& a_1, uint32_t& v_1,

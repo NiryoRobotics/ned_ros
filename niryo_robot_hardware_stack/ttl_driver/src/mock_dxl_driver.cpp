@@ -274,7 +274,7 @@ int MockDxlDriver::writeVelocityGoal(uint8_t id, uint32_t velocity)
 /**
  * @brief MockDxlDriver::writeVelocityProfile
  * @param id
- * @param velocity
+ * @param data_list
  * @return
  */
 int MockDxlDriver::writeVelocityProfile(uint8_t id, const std::vector<uint32_t>& data_list)
@@ -681,7 +681,7 @@ int MockDxlDriver::syncReadHwErrorStatus(const std::vector<uint8_t> &id_list,
  * @param data
  * @return
  */
-int MockDxlDriver::readPID(uint8_t id, std::vector<uint32_t> &data)
+int MockDxlDriver::readPID(uint8_t id, std::vector<uint16_t> &data)
 {
     int result = COMM_RX_FAIL;
 
@@ -708,7 +708,7 @@ int MockDxlDriver::readPID(uint8_t id, std::vector<uint32_t> &data)
  * @param data
  * @return
  */
-int MockDxlDriver::writePID(uint8_t id, const std::vector<uint32_t> &data)
+int MockDxlDriver::writePID(uint8_t id, const std::vector<uint16_t> &data)
 {
     int result = COMM_RX_FAIL;
 

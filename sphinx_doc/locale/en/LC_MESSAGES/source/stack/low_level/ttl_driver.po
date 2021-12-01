@@ -168,7 +168,7 @@ msgstr ""
 
 #: ../../source/stack/low_level/ttl_driver.rst:62
 msgid ""
-":ref:`ttl_driver/SendCustomValue<source/stack_hardware/ttl_driver:SendCustomValue"
+":ref:`ttl_driver/WriteCustomValue<source/stack_hardware/ttl_driver:WriteCustomValue"
 " (Service)>`"
 msgstr ""
 
@@ -255,7 +255,7 @@ msgid "Services files"
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_driver.rst:84
-msgid "SendCustomValue (Service)"
+msgid "WriteCustomValue (Service)"
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_driver.rst:90

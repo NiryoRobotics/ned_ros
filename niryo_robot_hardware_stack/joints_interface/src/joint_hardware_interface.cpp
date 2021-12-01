@@ -528,7 +528,7 @@ bool JointHardwareInterface::isCalibrationInProgress() const
 
 /**
  * @brief JointHardwareInterface::rebootAll
- * @param hardware_version
+ * @param torque_on
  * @return
  */
 bool JointHardwareInterface::rebootAll(bool torque_on)

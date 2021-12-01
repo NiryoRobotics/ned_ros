@@ -20,7 +20,7 @@
 import rospy
 import argparse
 
-from ttl_driver.srv import SendCustomValue
+from ttl_driver.srv import WriteCustomValue
 
 if __name__ == '__main__':
     rospy.init_node("send_custom_value")
@@ -28,7 +28,6 @@ if __name__ == '__main__':
     # 1. Parse args
     parser = argparse.ArgumentParser(description='Send custom value to a Dynamixel motor during Ned runtime')
 
-    parser.add_argument('--type', type=int, required=True, help='Motor type (2 for XL-430, 3 for XL-320, 4 for XL-330, 5 for XC-430)')
     parser.add_argument('--id', type=int, required=True, help='Motor ID')
     parser.add_argument('--address', type=int, required=True, help='Register address')
     parser.add_argument('--value', type=int, required=True, help='Value to send to the motor')
@@ -47,7 +46,7 @@ if __name__ == '__main__':
         exit()
 
     try:
-        send_cmd = rospy.ServiceProxy(service_name, SendCustomValue)
+        send_cmd = rospy.ServiceProxy(service_name, WriteCustomValue)
         response = send_cmd(args.id, args.value, args.address, args.size)
         rospy.loginfo(response.message)
     except rospy.ServiceException as e:

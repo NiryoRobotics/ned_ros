@@ -37,8 +37,7 @@ AbstractEndEffectorDriver::AbstractEndEffectorDriver(shared_ptr<dynamixel::PortH
                                                      shared_ptr<dynamixel::PacketHandler> packetHandler) :
   AbstractTtlDriver(std::move(portHandler),
                     std::move(packetHandler))
-{
-}
+{}
 
 /**
  * @brief AbstractEndEffectorDriver::str : build a string describing the object. For debug purpose only

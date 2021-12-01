@@ -59,7 +59,7 @@ Services, Topics and Messages
       -  :ref:`source/high_level/niryo_robot_msgs:SetInt`
       -  Control dynamixels LED
    *  -  ``niryo_robot/ttl_driver/send_custom_value``
-      -  :ref:`ttl_driver/SendCustomValue<source/stack_hardware/ttl_driver:SendCustomValue (Service)>`
+      -  :ref:`ttl_driver/WriteCustomValue<source/stack_hardware/ttl_driver:WriteCustomValue (Service)>`
       -  Send a custom command on the TTL bus
    *  -  ``niryo_robot/ttl_driver/read_custom_value``
       -  :ref:`ttl_driver/ReadCustomValue<source/stack_hardware/ttl_driver:ReadCustomValue (Service)>`
@@ -80,10 +80,10 @@ Services, Topics and Messages
 Services files
 --------------------------------------------------
 
-SendCustomValue (Service)
+WriteCustomValue (Service)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. literalinclude:: ../../../../niryo_robot_hardware_stack/ttl_driver/srv/SendCustomValue.srv
+.. literalinclude:: ../../../../niryo_robot_hardware_stack/ttl_driver/srv/WriteCustomValue.srv
    :language: rostype
 
 ReadCustomValue (Service)

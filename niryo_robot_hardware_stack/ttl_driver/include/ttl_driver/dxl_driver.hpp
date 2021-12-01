@@ -101,8 +101,8 @@ class DxlDriver : public AbstractDxlDriver
 
     public:
         // AbstractDxlDriver interface
-        int writePID(uint8_t id, const std::vector<uint32_t>& data) override;
-        int readPID(uint8_t id, std::vector<uint32_t> &data_list) override;
+        int writePID(uint8_t id, const std::vector<uint16_t>& data) override;
+        int readPID(uint8_t id, std::vector<uint16_t> &data_list) override;
 
         int writeControlMode(uint8_t id, uint8_t data) override;
         int readControlMode(uint8_t id, uint8_t& data) override;
@@ -115,24 +115,6 @@ class DxlDriver : public AbstractDxlDriver
 
         int readLoad(uint8_t id, uint16_t &present_load) override;
         int syncReadLoad(const std::vector<uint8_t> &id_list, std::vector<uint16_t> &load_list) override;
-
-private:
-        int writePositionPGain(uint8_t id, uint16_t gain);
-        int writePositionIGain(uint8_t id, uint16_t gain);
-        int writePositionDGain(uint8_t id, uint16_t gain);
-        int writeVelocityPGain(uint8_t id, uint16_t gain);
-        int writeVelocityIGain(uint8_t id, uint16_t gain);
-        int writeFF1Gain(uint8_t id, uint16_t gain);
-        int writeFF2Gain(uint8_t id, uint16_t gain);
-
-        int readPositionPGain(uint8_t id, uint16_t& gain);
-        int readPositionIGain(uint8_t id, uint16_t& gain);
-        int readPositionDGain(uint8_t id, uint16_t& gain);
-        int readVelocityPGain(uint8_t id, uint16_t& gain);
-        int readVelocityIGain(uint8_t id, uint16_t& gain);
-        int readFF1Gain(uint8_t id, uint16_t& gain);
-        int readFF2Gain(uint8_t id, uint16_t& gain);
-
 };
 
 // definition of methods
@@ -271,20 +253,17 @@ template<typename reg_type>
 int DxlDriver<reg_type>::writeVelocityProfile(uint8_t id, const std::vector<uint32_t>& data_list)
 {
     // in mode control Position Control Mode, velocity profile in datasheet is used to write velocity (except xl320)
-    int res = 0;
+    int res = COMM_RX_FAIL;
 
-    int tries = 10;
-    while (tries > 0)
+    for (int tries = 10; tries > 0; --tries)
     {
-        tries--;
         res = write<typename reg_type::TYPE_PROFILE>(reg_type::ADDR_PROFILE_VELOCITY, id, data_list.at(0));
         if (COMM_SUCCESS == res)
             break;
     }
-    tries = 10;
-    while (tries > 0)
+
+    for (int tries = 10; tries > 0; --tries)
     {
-        tries--;
         res = write<typename reg_type::TYPE_PROFILE>(reg_type::ADDR_PROFILE_ACCELERATION, id, data_list.at(1));
         if (COMM_SUCCESS == res)
             break;
@@ -457,82 +436,69 @@ int DxlDriver<reg_type>::syncReadPosition(const std::vector<uint8_t> &id_list, s
  * @return
  */
 template<typename reg_type>
-int DxlDriver<reg_type>::writePID(uint8_t id, const std::vector<uint32_t> &data)
+int DxlDriver<reg_type>::writePID(uint8_t id, const std::vector<uint16_t> &data)
 {
-    int tries = 10;
-    int res;
+    int res = COMM_TX_FAIL;
 
     // only rewrite params which is not success
-    while (tries > 0)
+    for (int tries = 10; tries > 0; --tries)
     {
-        tries--;
-        res = writePositionPGain(id, data.at(0));
-        if (res == COMM_SUCCESS)
+        res = write<typename reg_type::TYPE_PID_GAIN>(reg_type::ADDR_POSITION_P_GAIN, id, data.at(0));
+        if (COMM_SUCCESS == res)
             break;
     }
-    if (res != COMM_SUCCESS)
+
+    if (COMM_SUCCESS != res)
         return res;
 
-    tries = 10;
-    while (tries > 0)
+    for (int tries = 10; tries > 0; --tries)
     {
-        tries--;
-        res = writePositionIGain(id, data.at(1));
-        if (res == COMM_SUCCESS)
+        res = write<typename reg_type::TYPE_PID_GAIN>(reg_type::ADDR_POSITION_I_GAIN, id, data.at(1));
+        if (COMM_SUCCESS == res)
             break;
     }
-    if (res != COMM_SUCCESS)
+    if (COMM_SUCCESS != res)
         return res;
 
-    tries = 10;
-    while (tries > 0)
+    for (int tries = 10; tries > 0; --tries)
     {
-        tries--;
-        res = writePositionDGain(id, data.at(2));
-        if (res == COMM_SUCCESS)
+        res = write<typename reg_type::TYPE_PID_GAIN>(reg_type::ADDR_POSITION_D_GAIN, id, data.at(2));
+        if (COMM_SUCCESS == res)
             break;
     }
-    if (res != COMM_SUCCESS)
+    if (COMM_SUCCESS != res)
         return res;
 
-    tries = 10;
-    while (tries > 0)
+    for (int tries = 10; tries > 0; --tries)
     {
-        tries--;
-        res = writeVelocityPGain(id, data.at(3));
-        if (res == COMM_SUCCESS)
+        res = write<typename reg_type::TYPE_PID_GAIN>(reg_type::ADDR_VELOCITY_P_GAIN, id, data.at(3));
+        if (COMM_SUCCESS == res)
             break;
     }
-    if (res != COMM_SUCCESS)
+    if (COMM_SUCCESS != res)
         return res;
 
-    tries = 10;
-    while (tries > 0)
+    for (int tries = 10; tries > 0; --tries)
     {
-        tries--;
-        res = writeVelocityIGain(id, data.at(4));
-        if (res == COMM_SUCCESS)
+        res = write<typename reg_type::TYPE_PID_GAIN>(reg_type::ADDR_VELOCITY_I_GAIN, id, data.at(4));
+        if (COMM_SUCCESS == res)
             break;
     }
-    if (res != COMM_SUCCESS)
+    if (COMM_SUCCESS != res)
         return res;
 
-    tries = 10;    
-    while (tries > 0)
+    for (int tries = 10; tries > 0; --tries)
     {
-        tries--;
-        res = writeFF1Gain(id, data.at(5));
-        if (res == COMM_SUCCESS)
+        res = write<typename reg_type::TYPE_PID_GAIN>(reg_type::ADDR_FF1_GAIN, id, data.at(5));
+        if (COMM_SUCCESS == res)
             break;
     }
-    if (res != COMM_SUCCESS)
+    if (COMM_SUCCESS != res)
         return res;
 
-    tries = 10;
-    while (tries > 0)
+    for (int tries = 10; tries > 0; --tries)
     {
-        tries--;
-        res = writeFF2Gain(id, data.at(6));
+        res = write<typename reg_type::TYPE_PID_GAIN>(reg_type::ADDR_FF2_GAIN, id, data.at(6));
         if (res == COMM_SUCCESS)
             break;
     }
@@ -552,7 +518,7 @@ int DxlDriver<reg_type>::syncReadFirmwareVersion(const std::vector<uint8_t> &id_
     int res = COMM_RX_FAIL;
     std::vector<uint8_t> data_list;
     res = syncRead<typename reg_type::TYPE_FIRMWARE_VERSION>(reg_type::ADDR_FIRMWARE_VERSION, id_list, data_list);
-    for(auto const& data : data_list)
+    for (auto const& data : data_list)
       firmware_list.emplace_back(interpretFirmwareVersion(data));
     return res;
 }
@@ -581,7 +547,7 @@ int DxlDriver<reg_type>::syncReadVoltage(const std::vector<uint8_t> &id_list, st
   voltage_list.clear();
   std::vector<typename reg_type::TYPE_PRESENT_VOLTAGE> v_read;
   int res = syncRead<typename reg_type::TYPE_PRESENT_VOLTAGE>(reg_type::ADDR_PRESENT_VOLTAGE, id_list, v_read);
-  for(auto const& v : v_read)
+  for (auto const& v : v_read)
       voltage_list.emplace_back(static_cast<double>(v) / reg_type::VOLTAGE_CONVERSION);
   return res;
 }
@@ -598,7 +564,7 @@ int DxlDriver<reg_type>::syncReadRawVoltage(const std::vector<uint8_t> &id_list,
   voltage_list.clear();
   std::vector<typename reg_type::TYPE_PRESENT_VOLTAGE> v_read;
   int res = syncRead<typename reg_type::TYPE_PRESENT_VOLTAGE>(reg_type::ADDR_PRESENT_VOLTAGE, id_list, v_read);
-  for(auto const& v : v_read)
+  for (auto const& v : v_read)
       voltage_list.emplace_back(static_cast<double>(v));
   return res;
 }
@@ -703,59 +669,37 @@ int DxlDriver<reg_type>::syncWriteTorqueGoal(const std::vector<uint8_t> &id_list
 /**
  * @brief DxlDriver<reg_type>::readPID
  * @param id
- * @param data_list
+ * @param data_list : [pos_p, pos_i, pos_d, vel_p, vel_i, ff1, ff2]
  * @return
- *  TODO(cc) bulk read all in one shot
  */
 template<typename reg_type>
-int DxlDriver<reg_type>::readPID(uint8_t id, std::vector<uint32_t>& data_list)
+int DxlDriver<reg_type>::readPID(uint8_t id, std::vector<uint16_t>& data_list)
 {
     int res = 0;
     data_list.clear();
+    std::vector<std::array<typename reg_type::TYPE_PID_GAIN, 8> > raw_data;
 
-    uint16_t pos_p_gain{0};
-    if (COMM_SUCCESS != readPositionPGain(id, pos_p_gain))
-        res++;
+    // only rewrite params which is not success
+    for (int tries = 10; tries > 0; --tries)
+    {
+        res = syncReadConsecutiveBytes<typename reg_type::TYPE_PID_GAIN, 8>(reg_type::ADDR_VELOCITY_I_GAIN, {id}, raw_data);
+        if (COMM_SUCCESS == res)
+            break;
+    }
 
-    data_list.emplace_back(pos_p_gain);
-
-    uint16_t pos_i_gain{0};
-    if (COMM_SUCCESS != readPositionIGain(id, pos_i_gain))
-        res++;
-
-    data_list.emplace_back(pos_i_gain);
-
-    uint16_t pos_d_gain{0};
-    if (COMM_SUCCESS != readPositionDGain(id, pos_d_gain))
-        res++;
-
-    data_list.emplace_back(pos_d_gain);
-
-    uint16_t vel_p_gain{0};
-    if (COMM_SUCCESS != readVelocityPGain(id, vel_p_gain))
-        res++;
-
-    data_list.emplace_back(vel_p_gain);
-
-    uint16_t vel_i_gain{0};
-    if (COMM_SUCCESS != readVelocityIGain(id, vel_i_gain))
-        res++;
-
-    data_list.emplace_back(vel_i_gain);
-
-    uint16_t ff1_gain{0};
-    if (COMM_SUCCESS != readFF1Gain(id, ff1_gain))
-        res++;
-
-    data_list.emplace_back(ff1_gain);
-
-    uint16_t ff2_gain{0};
-    if (COMM_SUCCESS != readFF2Gain(id, ff2_gain))
-        res++;
-
-    data_list.emplace_back(ff2_gain);
-
-    if(res > 0)
+    // we need to reorder the data in its correct place in data_list
+    if (COMM_SUCCESS == res && raw_data.size() == 1)
+    {
+          data_list.emplace_back(raw_data.at(0).at(4));  // pos p is 5th
+          data_list.emplace_back(raw_data.at(0).at(3));  // pos i is 4th
+          data_list.emplace_back(raw_data.at(0).at(2));  // pos d is 3rd
+          data_list.emplace_back(raw_data.at(0).at(1));  // vel p is 2nd
+          data_list.emplace_back(raw_data.at(0).at(0));  // vel i is 1st
+          data_list.emplace_back(raw_data.at(0).at(7));  // ff1 is 8th
+          data_list.emplace_back(raw_data.at(0).at(6));  // ff2 is 7th
+          // nothing at 6th
+    }
+    else
     {
         std::cout << "Failures during read PID gains: " << res << std::endl;
         return COMM_TX_FAIL;
@@ -877,177 +821,6 @@ int DxlDriver<reg_type>::syncReadJointStatus(const std::vector<uint8_t> &id_list
     return res;
 }
 
-// private
-// read
-/**
- * @brief DxlDriver<reg_type>::readPositionPGain
- * @param id
- * @param gain
- * @return
- */
-template<typename reg_type>
-int DxlDriver<reg_type>::readPositionPGain(uint8_t id, uint16_t& gain)
-{
-    return read<typename reg_type::TYPE_PID_GAIN>(reg_type::ADDR_POSITION_P_GAIN, id, gain);
-}
-
-/**
- * @brief DxlDriver<reg_type>::readPositionIGain
- * @param id
- * @param gain
- * @return
- */
-template<typename reg_type>
-int DxlDriver<reg_type>::readPositionIGain(uint8_t id, uint16_t& gain)
-{
-    return read<typename reg_type::TYPE_PID_GAIN>(reg_type::ADDR_POSITION_I_GAIN, id, gain);
-}
-
-/**
- * @brief DxlDriver<reg_type>::readPositionDGain
- * @param id
- * @param gain
- * @return
- */
-template<typename reg_type>
-int DxlDriver<reg_type>::readPositionDGain(uint8_t id, uint16_t& gain)
-{
-    return read<typename reg_type::TYPE_PID_GAIN>(reg_type::ADDR_POSITION_D_GAIN, id, gain);
-}
-
-/**
- * @brief DxlDriver<reg_type>::readVelocityPGain
- * @param id
- * @param gain
- * @return
- */
-template<typename reg_type>
-int DxlDriver<reg_type>::readVelocityPGain(uint8_t id, uint16_t& gain)
-{
-    return read<typename reg_type::TYPE_PID_GAIN>(reg_type::ADDR_VELOCITY_P_GAIN, id, gain);
-}
-
-/**
- * @brief DxlDriver<reg_type>::readVelocityIGain
- * @param id
- * @param gain
- * @return
- */
-template<typename reg_type>
-int DxlDriver<reg_type>::readVelocityIGain(uint8_t id, uint16_t& gain)
-{
-    return read<typename reg_type::TYPE_PID_GAIN>(reg_type::ADDR_VELOCITY_I_GAIN, id, gain);
-}
-
-/**
- * @brief DxlDriver<reg_type>::readFF1Gain
- * @param id
- * @param gain
- * @return
- */
-template<typename reg_type>
-int DxlDriver<reg_type>::readFF1Gain(uint8_t id, uint16_t& gain)
-{
-    return read<typename reg_type::TYPE_PID_GAIN>(reg_type::ADDR_FF1_GAIN, id, gain);
-}
-
-/**
- * @brief DxlDriver<reg_type>::readFF2Gain
- * @param id
- * @param gain
- * @return
- */
-template<typename reg_type>
-int DxlDriver<reg_type>::readFF2Gain(uint8_t id, uint16_t& gain)
-{
-    return read<typename reg_type::TYPE_PID_GAIN>(reg_type::ADDR_FF2_GAIN, id, gain);
-}
-
-// write
-/**
- * @brief DxlDriver<reg_type>::writePositionPGain
- * @param id
- * @param gain
- * @return
- */
-template<typename reg_type>
-int DxlDriver<reg_type>::writePositionPGain(uint8_t id, uint16_t gain)
-{
-    return write<typename reg_type::TYPE_PID_GAIN>(reg_type::ADDR_POSITION_P_GAIN, id, gain);
-}
-
-/**
- * @brief DxlDriver<reg_type>::writePositionIGain
- * @param id
- * @param gain
- * @return
- */
-template<typename reg_type>
-int DxlDriver<reg_type>::writePositionIGain(uint8_t id, uint16_t gain)
-{
-    return write<typename reg_type::TYPE_PID_GAIN>(reg_type::ADDR_POSITION_I_GAIN, id, gain);
-}
-
-/**
- * @brief DxlDriver<reg_type>::writePositionDGain
- * @param id
- * @param gain
- * @return
- */
-template<typename reg_type>
-int DxlDriver<reg_type>::writePositionDGain(uint8_t id, uint16_t gain)
-{
-    return write<typename reg_type::TYPE_PID_GAIN>(reg_type::ADDR_POSITION_D_GAIN, id, gain);
-}
-
-/**
- * @brief DxlDriver<reg_type>::writeVelocityPGain
- * @param id
- * @param gain
- * @return
- */
-template<typename reg_type>
-int DxlDriver<reg_type>::writeVelocityPGain(uint8_t id, uint16_t gain)
-{
-    return write<typename reg_type::TYPE_PID_GAIN>(reg_type::ADDR_VELOCITY_P_GAIN, id, gain);
-}
-
-/**
- * @brief DxlDriver<reg_type>::writeVelocityIGain
- * @param id
- * @param gain
- * @return
- */
-template<typename reg_type>
-int DxlDriver<reg_type>::writeVelocityIGain(uint8_t id, uint16_t gain)
-{
-    return write<typename reg_type::TYPE_PID_GAIN>(reg_type::ADDR_VELOCITY_I_GAIN, id, gain);
-}
-
-/**
- * @brief DxlDriver<reg_type>::writeFF1Gain
- * @param id
- * @param gain
- * @return
- */
-template<typename reg_type>
-int DxlDriver<reg_type>::writeFF1Gain(uint8_t id, uint16_t gain)
-{
-    return write<typename reg_type::TYPE_PID_GAIN>(reg_type::ADDR_FF1_GAIN, id, gain);
-}
-
-/**
- * @brief DxlDriver<reg_type>::writeFF2Gain
- * @param id
- * @param gain
- * @return
- */
-template<typename reg_type>
-int DxlDriver<reg_type>::writeFF2Gain(uint8_t id, uint16_t gain)
-{
-    return write<typename reg_type::TYPE_PID_GAIN>(reg_type::ADDR_FF2_GAIN, id, gain);
-}
-
 /*
  *  -----------------   specializations   --------------------
  */
@@ -1132,7 +905,7 @@ inline int DxlDriver<XL320Reg>::syncReadPosition(const std::vector<uint8_t> &id_
     std::vector<typename XL320Reg::TYPE_PRESENT_POSITION> raw_data_list{};
 
     int res = syncRead<typename XL320Reg::TYPE_PRESENT_POSITION>(XL320Reg::ADDR_PRESENT_POSITION, id_list, raw_data_list);
-    for(auto p : raw_data_list)
+    for (auto p : raw_data_list)
         position_list.emplace_back(p);
 
     return res;
@@ -1153,7 +926,7 @@ inline int DxlDriver<XL320Reg>::syncReadVelocity(const std::vector<uint8_t> &id_
 {
     std::vector<typename XL320Reg::TYPE_PRESENT_VELOCITY> raw_data_list;
     int res = syncRead<typename XL320Reg::TYPE_PRESENT_VELOCITY>(XL320Reg::ADDR_PRESENT_VELOCITY, id_list, raw_data_list);
-    for(auto v : raw_data_list)
+    for (auto v : raw_data_list)
         velocity_list.emplace_back(v);
     return res;
 }
@@ -1169,11 +942,124 @@ inline int DxlDriver<XL320Reg>::syncReadJointStatus(const std::vector<uint8_t> &
 {
     data_array_list.clear();
 
-    std::vector<std::array<uint16_t, 2> > raw_data;
+    std::vector<std::array<typename XL320Reg::TYPE_PRESENT_POSITION, 2> > raw_data;
     int res = syncReadConsecutiveBytes<typename XL320Reg::TYPE_PRESENT_POSITION, 2>(XL320Reg::ADDR_PRESENT_POSITION, id_list, raw_data);
     // invert data
     for (auto const& a : raw_data)
         data_array_list.emplace_back(std::array<uint32_t, 2>{a.at(1), a.at(0)});
+    return res;
+}
+
+
+/**
+ * @brief DxlDriver<reg_type>::syncReadHwStatus
+ * @param id_list
+ * @param data_list
+ * @return
+ */
+template<>
+inline int DxlDriver<XL320Reg>::syncReadHwStatus(const std::vector<uint8_t> &id_list,
+                                          std::vector<std::pair<double, uint8_t> >& data_list)
+{
+    data_list.clear();
+
+    std::vector<std::array<uint8_t, 2> > raw_data;
+    int res = syncReadConsecutiveBytes<uint8_t, 2>(XL320Reg::ADDR_PRESENT_VOLTAGE, id_list, raw_data);
+
+    for (auto const& data : raw_data)
+    {
+        // Voltage is first reg, uint16
+        double voltage = static_cast<double>(data.at(0));
+
+        // Temperature is second reg, uint8
+        uint8_t temperature = data.at(1);
+
+        data_list.emplace_back(std::make_pair(voltage, temperature));
+    }
+
+    return res;
+}
+
+/**
+ * @brief DxlDriver<reg_type>::readPID : only position PID for XL320
+ * @param id
+ * @param data_list : [pos_p, pos_i, pos_d, vel_p, vel_i, ff1, ff2]
+ * @return
+ */
+template<>
+inline int DxlDriver<XL320Reg>::readPID(uint8_t id, std::vector<uint16_t>& data_list)
+{
+    int res = COMM_RX_FAIL;
+    data_list.clear();
+    std::vector<std::array<typename XL320Reg::TYPE_PID_GAIN, 3> > raw_data;
+
+    // only rewrite params which is not success
+    for (int tries = 10; tries > 0; --tries)
+    {
+        res = syncReadConsecutiveBytes<typename XL320Reg::TYPE_PID_GAIN, 3>(XL320Reg::ADDR_POSITION_D_GAIN, {id}, raw_data);
+        if (COMM_SUCCESS == res)
+            break;
+    }
+
+     // we need to reorder the data in its correct place in data_list
+    if (COMM_SUCCESS == res && raw_data.size() == 1)
+    {
+          data_list.emplace_back(static_cast<uint16_t>(raw_data.at(0).at(2)));  // pos p is 3rd
+          data_list.emplace_back(static_cast<uint16_t>(raw_data.at(0).at(1)));  // pos i is 2nd
+          data_list.emplace_back(static_cast<uint16_t>(raw_data.at(0).at(0)));  // pos d is 1st
+          data_list.emplace_back(0);  // no vel p
+          data_list.emplace_back(0);  // no vel i
+          data_list.emplace_back(0);  // no ff1
+          data_list.emplace_back(0);  // no ff2
+    }
+    else
+    {
+        std::cout << "Failures during read PID gains: " << res << std::endl;
+        return COMM_TX_FAIL;
+    }
+
+    return COMM_SUCCESS;
+}
+
+
+/**
+ * @brief DxlDriver<reg_type>::writePID : only position PID for XL320
+ * @param id
+ * @param data_list
+ * @return
+ *  TODO(cc) bulk read all in one shot
+ */
+template<>
+inline int DxlDriver<XL320Reg>::writePID(uint8_t id, const std::vector<uint16_t>& data_list)
+{
+    int res = COMM_TX_FAIL;
+
+    // only rewrite params which is not success
+    for (int tries = 10; tries > 0; --tries)
+    {
+        res = write<typename XL320Reg::TYPE_PID_GAIN>(XL320Reg::ADDR_POSITION_P_GAIN, id, data_list.at(0));
+        if (COMM_SUCCESS == res)
+            break;
+    }
+    if (COMM_SUCCESS != res)
+        return res;
+
+    for (int tries = 10; tries > 0; --tries)
+    {
+        res = write<typename XL320Reg::TYPE_PID_GAIN>(XL320Reg::ADDR_POSITION_I_GAIN, id, data_list.at(1));
+        if (COMM_SUCCESS == res)
+            break;
+    }
+    if (COMM_SUCCESS != res)
+        return res;
+
+    for (int tries = 10; tries > 0; --tries)
+    {
+        res = write<typename XL320Reg::TYPE_PID_GAIN>(XL320Reg::ADDR_POSITION_D_GAIN, id, data_list.at(2));
+        if (COMM_SUCCESS == res)
+            break;
+    }
+
     return res;
 }
 
@@ -1222,113 +1108,6 @@ template<>
 inline int DxlDriver<XL320Reg>::readControlMode(uint8_t /*id*/, uint8_t& /*data*/)
 {
     std::cout << "readControlMode not available for motor XL320" << std::endl;
-    return COMM_SUCCESS;
-}
-
-// write PID
-template<>
-inline int DxlDriver<XL320Reg>::writePositionPGain(uint8_t id, uint16_t gain)
-{
-    return write<typename XL320Reg::TYPE_PID_GAIN>(XL320Reg::ADDR_POSITION_P_GAIN, id, static_cast<typename XL320Reg::TYPE_PID_GAIN>(gain));
-}
-
-template<>
-inline int DxlDriver<XL320Reg>::writePositionIGain(uint8_t id, uint16_t gain)
-{
-    return write<typename XL320Reg::TYPE_PID_GAIN>(XL320Reg::ADDR_POSITION_I_GAIN, id, static_cast<typename XL320Reg::TYPE_PID_GAIN>(gain));
-}
-
-template<>
-inline int DxlDriver<XL320Reg>::writePositionDGain(uint8_t id, uint16_t gain)
-{
-    return write<typename XL320Reg::TYPE_PID_GAIN>(XL320Reg::ADDR_POSITION_D_GAIN, id, static_cast<typename XL320Reg::TYPE_PID_GAIN>(gain));
-}
-
-
-template<>
-inline int DxlDriver<XL320Reg>::writeVelocityPGain(uint8_t /*id*/, uint16_t /*gain*/)
-{
-    std::cout << "writeVelocityPGain not available for motor XL320" << std::endl;
-    return COMM_SUCCESS;
-}
-
-template<>
-inline int DxlDriver<XL320Reg>::writeVelocityIGain(uint8_t /*id*/, uint16_t /*gain*/)
-{
-    std::cout << "writeVelocityIGain not available for motor XL320" << std::endl;
-    return COMM_SUCCESS;
-}
-
-template<>
-inline int DxlDriver<XL320Reg>::writeFF1Gain(uint8_t /*id*/, uint16_t /*gain*/)
-{
-    std::cout << "writeff1Gain not available for motor XL320" << std::endl;
-    return COMM_SUCCESS;
-}
-
-template<>
-inline int DxlDriver<XL320Reg>::writeFF2Gain(uint8_t /*id*/, uint16_t /*gain*/)
-{
-    std::cout << "writeff2Gain not available for motor XL320" << std::endl;
-    return COMM_SUCCESS;
-}
-
-// read PID
-template<>
-inline int DxlDriver<XL320Reg>::readPositionPGain(uint8_t id, uint16_t& gain)
-{
-    uint8_t raw_data{};
-    int res = read<typename XL320Reg::TYPE_PID_GAIN>(XL320Reg::ADDR_POSITION_P_GAIN, id, raw_data);
-    gain = raw_data;
-
-    return res;
-}
-
-template<>
-inline int DxlDriver<XL320Reg>::readPositionIGain(uint8_t id, uint16_t& gain)
-{
-    uint8_t raw_data{};
-    int res = read<typename XL320Reg::TYPE_PID_GAIN>(XL320Reg::ADDR_POSITION_I_GAIN, id, raw_data);
-    gain = raw_data;
-
-    return res;
-}
-
-template<>
-inline int DxlDriver<XL320Reg>::readPositionDGain(uint8_t id, uint16_t& gain)
-{
-    uint8_t raw_data{};
-    int res = read<typename XL320Reg::TYPE_PID_GAIN>(XL320Reg::ADDR_POSITION_D_GAIN, id, raw_data);
-    gain = raw_data;
-
-    return res;
-}
-
-template<>
-inline int DxlDriver<XL320Reg>::readVelocityPGain(uint8_t /*id*/, uint16_t& /*gain*/)
-{
-    std::cout << "readVelocityPGain not available for motor XL320" << std::endl;
-    return COMM_SUCCESS;
-}
-
-template<>
-inline int DxlDriver<XL320Reg>::readVelocityIGain(uint8_t /*id*/, uint16_t& /*gain*/)
-{
-    std::cout << "readVelocityIGain not available for motor XL320" << std::endl;
-    return COMM_SUCCESS;
-}
-
-template<>
-inline int DxlDriver<XL320Reg>::readFF1Gain(uint8_t /*id*/, uint16_t& /*gain*/)
-{
-    std::cout << "readFF1Gain not available for motor XL320" << std::endl;
-    return COMM_SUCCESS;
-}
-
-template<>
-inline int DxlDriver<XL320Reg>::readFF2Gain(uint8_t /*id*/, uint16_t& /*gain*/)
-{
-    std::cout << "readFF2Gain not available for motor XL320" << std::endl;
     return COMM_SUCCESS;
 }
 

@@ -357,11 +357,7 @@ bool HardwareInterface::_callbackRebootMotors(niryo_robot_msgs::Trigger::Request
         ret++;
         message += "Tools Interface, ";
     }
-    if (_conveyor_interface && _conveyor_interface->rebootAll())
-    {
-        ret++;
-        message += "Conveyor Interface, ";
-    }
+
     if (_end_effector_interface && _end_effector_interface->rebootHardware())
     {
         ret++;
