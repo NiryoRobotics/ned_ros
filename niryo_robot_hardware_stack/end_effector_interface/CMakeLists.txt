@@ -148,7 +148,7 @@ if(CATKIN_ENABLE_TESTING)
   if(TARGET ${PROJECT_NAME}_integration_tests)
     target_link_libraries(
       ${PROJECT_NAME}_integration_tests
-      ${PROJECT_NAME}
+      ${PROJECT_NAME}https://gitlab.com/niryo/niryo-one-s/development-tools/-/blob/master/code_coverage.sh
       ${catkin_LIBRARIES}
     )
   endif()
