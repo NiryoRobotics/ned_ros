@@ -155,7 +155,6 @@ if(CATKIN_ENABLE_TESTING)
         test/unit_tests.cpp
       )
     endif()
-  endif()
   if(TARGET ${PROJECT_NAME}_unit_tests)
     target_link_libraries(${PROJECT_NAME}_unit_tests
       ${PROJECT_NAME}
@@ -171,7 +170,8 @@ if(CATKIN_ENABLE_TESTING)
       DEPENDENCIES tests
     )
   endif()
-  
+endif()
+
   ##########################
   ## Static code analysis ##
   ##########################
