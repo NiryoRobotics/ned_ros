@@ -31,8 +31,11 @@
 #include <iostream>
 #include <string>
 
-static std::unique_ptr<ros::NodeHandle> nh;
+static std::unique_ptr<ros::NodeHandle> nh_g;
 
+/**
+ * @brief Check config tool added correctly or not
+ */
 TEST(ToolTestConfigSuite, correctPath)
 {
     ros::NodeHandle nh("");
@@ -42,6 +45,10 @@ TEST(ToolTestConfigSuite, correctPath)
     ASSERT_TRUE(nh.hasParam("tools_interface/check_tool_connection_frequency"));
 }
 
+/**
+ * @brief Test checks config does not miss any param
+ * 
+ */
 TEST(ToolTestConfigSuite, correctSize)
 {
     ros::NodeHandle nh("");
@@ -57,9 +64,40 @@ TEST(ToolTestConfigSuite, correctSize)
     ASSERT_TRUE(idList.size() == nameList.size());
 }
 
+/**
+ * @brief Check if config in tool interface and tool commander is compatible
+ */
+TEST(ToolTestConfigSuite, compabilityConfig)
+{
+    // config in tool interface
+    ros::NodeHandle nh("");
+    std::vector<int> idList;
+    nh.getParam("tools_interface/tools_params/id_list", idList);
+
+    tools_interface::ToolCommand srv;
+    XmlRpc::XmlRpcValue filters;
+
+    nh_g->getParam("tool_list", filters);
+
+    for (int i = 0; i < filters.size(); i++)
+    {
+        int id = static_cast<int>(filters[i]["id"]);
+        if (id == -1)
+            continue;
+        EXPECT_TRUE(std::find(idList.begin(), idList.end(), id) != idList.end());
+    }
+}
+
+/**
+ * @brief Test checks if can add tool correctly if tool connected physically
+ */
 TEST(ToolTestSetTool, addTool)
 {
-    auto client = nh->serviceClient<tools_interface::PingDxlTool>("/niryo_robot/tools/ping_and_set_dxl_tool");
+    ros::NodeHandle nh("");
+    std::vector<int> idList;
+    nh.getParam("tools_interface/tools_params/id_list", idList);
+
+    auto client = nh_g->serviceClient<tools_interface::PingDxlTool>("/niryo_robot/tools/ping_and_set_dxl_tool");
 
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);
@@ -70,6 +108,12 @@ TEST(ToolTestSetTool, addTool)
     // surprisingly we must first create a variable to have it work
     int res = common::model::ToolState::TOOL_STATE_PING_OK;
     EXPECT_EQ(srv.response.state, res);
+
+    // check id after added, -1 if failed or no tool connected
+    EXPECT_TRUE(std::find(idList.begin(), idList.end(), srv.response.tool.id) != idList.end());
+
+    // check motor type of tool, if unknow type and state is TOOL_STATE_PING_OK, that means no tool connected physically
+    EXPECT_NE(static_cast<int>(srv.response.tool.motor_type), static_cast<int>(common::model::EHardwareType::UNKNOWN));
 }
 
 class ToolTestControlSuite : public ::testing::Test
@@ -82,7 +126,7 @@ class ToolTestControlSuite : public ::testing::Test
 
         static void pingTool()
         {
-            auto client = nh->serviceClient<tools_interface::PingDxlTool>("/niryo_robot/tools/ping_and_set_dxl_tool");
+            auto client = nh_g->serviceClient<tools_interface::PingDxlTool>("/niryo_robot/tools/ping_and_set_dxl_tool");
 
             bool exists(client.waitForExistence(ros::Duration(1)));
             EXPECT_TRUE(exists);
@@ -95,7 +139,6 @@ class ToolTestControlSuite : public ::testing::Test
             ASSERT_EQ(srv_ping.response.state, res);
 
             id = srv_ping.response.tool.id;
-            ROS_ERROR("TEST id %d, res %d", id, (int)srv_ping.response.state);
         }
 
         static int id;
@@ -111,28 +154,22 @@ TEST_F(ToolTestControlSuite, checkToolScannedId)
     ros::NodeHandle nh("");
     std::vector<int> id_list;
     nh.getParam("tools_interface/tools_params/id_list", id_list);
-    for (auto i : id_list)
-    {
-        ROS_ERROR("TEST id list %d", i);
-    }
-    ROS_ERROR("TEST id %d", id);
+   
     EXPECT_TRUE(std::find(id_list.begin(), id_list.end(), id) != id_list.end()); 
 }
 
-/**
- * @brief Test check if add Tool fail
- */
-
-
 TEST_F(ToolTestControlSuite, openTool)
 {
+    // only test tool if tool can be added and type gripper
     ASSERT_FALSE(id == -1);
+    if (id != 11 && id != 12 && id != 13)
+        return;
 
     tools_interface::ToolCommand srv;
 
     XmlRpc::XmlRpcValue filters;
 
-    nh->getParam("tool_list", filters);
+    nh_g->getParam("tool_list", filters);
 
     for (int i = 0; i < filters.size(); i++)
     {
@@ -146,7 +183,7 @@ TEST_F(ToolTestControlSuite, openTool)
         }
     }
 
-    auto client = nh->serviceClient<tools_interface::ToolCommand>("/niryo_robot/tools/open_gripper");
+    auto client = nh_g->serviceClient<tools_interface::ToolCommand>("/niryo_robot/tools/open_gripper");
 
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);
@@ -158,12 +195,15 @@ TEST_F(ToolTestControlSuite, openTool)
 
 TEST_F(ToolTestControlSuite, CloseTool)
 {
+    // only test tool if tool can be added and type gripper
     ASSERT_FALSE(id == -1);
+    if (id != 11 && id != 12 && id != 13)
+        return;
 
     tools_interface::ToolCommand srv;
 
     XmlRpc::XmlRpcValue filters;
-    nh->getParam("tool_list", filters);
+    nh_g->getParam("tool_list", filters);
 
     for (int i = 0; i < filters.size(); i++)
     {
@@ -178,7 +218,7 @@ TEST_F(ToolTestControlSuite, CloseTool)
         }
     }
 
-    auto client = nh->serviceClient<tools_interface::ToolCommand>("/niryo_robot/tools/close_gripper");
+    auto client = nh_g->serviceClient<tools_interface::ToolCommand>("/niryo_robot/tools/close_gripper");
 
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);
@@ -195,7 +235,7 @@ TEST_F(ToolTestControlSuite, PullAirVacuumPump)
     tools_interface::ToolCommand srv;
 
     XmlRpc::XmlRpcValue filters;
-    nh->getParam("tool_list", filters);
+    nh_g->getParam("tool_list", filters);
 
     for (int i = 0; i < filters.size(); i++)
     {
@@ -210,7 +250,7 @@ TEST_F(ToolTestControlSuite, PullAirVacuumPump)
         }
     }
 
-    auto client = nh->serviceClient<tools_interface::ToolCommand>("/niryo_robot/tools/pull_air_vacuum_pump");
+    auto client = nh_g->serviceClient<tools_interface::ToolCommand>("/niryo_robot/tools/pull_air_vacuum_pump");
 
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);
@@ -227,7 +267,7 @@ TEST_F(ToolTestControlSuite, PushAirVacuumPump)
     tools_interface::ToolCommand srv;
 
     XmlRpc::XmlRpcValue filters;
-    nh->getParam("tool_list", filters);
+    nh_g->getParam("tool_list", filters);
 
     for (int i = 0; i < filters.size(); i++)
     {
@@ -241,7 +281,7 @@ TEST_F(ToolTestControlSuite, PushAirVacuumPump)
         }
     }
 
-    auto client = nh->serviceClient<tools_interface::ToolCommand>("/niryo_robot/tools/push_air_vacuum_pump");
+    auto client = nh_g->serviceClient<tools_interface::ToolCommand>("/niryo_robot/tools/push_air_vacuum_pump");
 
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);
@@ -256,7 +296,7 @@ TEST_F(ToolTestControlSuite, ToolReboot)
 {
     ASSERT_FALSE(id == -1);
 
-    auto client = nh->serviceClient<std_srvs::Trigger>("/niryo_robot/tools/reboot");
+    auto client = nh_g->serviceClient<std_srvs::Trigger>("/niryo_robot/tools/reboot");
 
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);
@@ -265,13 +305,14 @@ TEST_F(ToolTestControlSuite, ToolReboot)
     client.call(srv);
 
     EXPECT_EQ(srv.response.success, true);
+    EXPECT_EQ(srv.response.message, "Tool reboot succeeded");
 }
 
 int main(int argc, char **argv)
 {
     ros::init(argc, argv, "tools_interface_service_client");
 
-    nh = std::make_unique<ros::NodeHandle>("~");
+    nh_g = std::make_unique<ros::NodeHandle>("~");
 
     testing::InitGoogleTest(&argc, argv);
 
