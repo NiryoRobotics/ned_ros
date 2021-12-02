@@ -138,19 +138,34 @@ endif()
 ## Testing ##
 #############
 
+SET(HARDWARE_VERSION "ned2" CACHE STRING "run test on this hardware version")
+
 if(CATKIN_ENABLE_TESTING)
   find_package(rostest REQUIRED)
-
-  if ("${ARCHITECTURE}" MATCHES "^(arm.*|aarch64.*|arm64.*)$")
-    add_rostest_gtest(${PROJECT_NAME}_integration_tests
-      test/service_client.test
-      test/service_client.cpp
-    )
-  else()    
+  if ("${ARCHITECTURE}" MATCHES "^(arm.*|aarch64.*|arm64.*)$") 
+    if ("${HARDWARE_VERSION}" STREQUAL "ned" OR "${HARDWARE_VERSION}" STREQUAL "one")
       add_rostest_gtest(${PROJECT_NAME}_integration_tests
-      test/service_client_fake.test
-      test/service_client.cpp
-    )
+        test/service_client.test
+        test/service_client_ned_one.cpp
+      )
+    else()
+      add_rostest_gtest(${PROJECT_NAME}_integration_tests
+        test/service_client.test
+        test/service_client_ned2.cpp
+      )
+    endif()
+  else()    
+    if ("${HARDWARE_VERSION}" STREQUAL "ned" OR "${HARDWARE_VERSION}" STREQUAL "one")
+      add_rostest_gtest(${PROJECT_NAME}_integration_tests
+        test/service_client_fake.test
+        test/service_client_ned_one.cpp
+      )
+    else()
+      add_rostest_gtest(${PROJECT_NAME}_integration_tests
+        test/service_client_fake.test
+        test/service_client_ned2.cpp
+      )
+    endif()
   endif()
 
   if(TARGET ${PROJECT_NAME}_integration_tests)

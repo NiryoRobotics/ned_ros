@@ -132,20 +132,23 @@ endif()
 #############
 ## Testing ##
 #############
+SET(HARDWARE_VERSION "ned2" CACHE STRING "run test on this hardware version")
 
 if(CATKIN_ENABLE_TESTING)
   find_package(rostest REQUIRED)
 
-  if ("${ARCHITECTURE}" MATCHES "^(arm.*|aarch64.*|arm64.*)$")
-    add_rostest_gtest(${PROJECT_NAME}_unit_tests
-      test/unit_tests.test
-      test/unit_tests.cpp
-    )
-  else()
-    add_rostest_gtest(${PROJECT_NAME}_unit_tests
-      test/unit_tests_fake.test
-      test/unit_tests.cpp
-    )
+  if ("${HARDWARE_VERSION}" STREQUAL "ned" OR "${HARDWARE_VERSION}" STREQUAL "one")
+    if ("${ARCHITECTURE}" MATCHES "^(arm.*|aarch64.*|arm64.*)$")
+      add_rostest_gtest(${PROJECT_NAME}_unit_tests
+        test/unit_tests.test
+        test/unit_tests.cpp
+      )
+    else()
+      add_rostest_gtest(${PROJECT_NAME}_unit_tests
+        test/unit_tests_fake.test
+        test/unit_tests.cpp
+      )
+    endif()
   endif()
   if(TARGET ${PROJECT_NAME}_unit_tests)
     target_link_libraries(${PROJECT_NAME}_unit_tests

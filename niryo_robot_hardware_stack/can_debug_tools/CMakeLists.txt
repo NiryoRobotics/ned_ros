@@ -89,31 +89,35 @@ endif()
 ## Testing ##
 #############
 
+SET(HARDWARE_VERSION "ned2" CACHE STRING "run test on this hardware version")
+
 if(CATKIN_ENABLE_TESTING)
+  if (${HARDWARE_VERSION} STREQUAL "ned" OR ${HARDWARE_VERSION} STREQUAL "one")
     if ("${ARCHITECTURE}" MATCHES "^(arm.*|aarch64.*|arm64.*)$")
       catkin_add_gtest(
         ${PROJECT_NAME}_unit_tests
         test/can_tools_unit_tests.cpp
       )
     endif()
+  endif()
 
-    if(TARGET ${PROJECT_NAME}_unit_tests)
-      target_link_libraries(${PROJECT_NAME}_unit_tests
-          ${catkin_LIBRARIES}
-          ${PROJECT_NAME}_core
-      )
-    endif()
+  if(TARGET ${PROJECT_NAME}_unit_tests)
+    target_link_libraries(${PROJECT_NAME}_unit_tests
+        ${catkin_LIBRARIES}
+        ${PROJECT_NAME}_core
+    )
+  endif()
 
-    ##########################
-    ## Static code analysis ##
-    ##########################
-    find_package(roslint QUIET)
+  ##########################
+  ## Static code analysis ##
+  ##########################
+  find_package(roslint QUIET)
 
-    if(roslint_FOUND)
-        roslint_cpp()
-    else()
-        message(WARNING "roslint not found. Skipping roslint target building")
-    endif()
+  if(roslint_FOUND)
+      roslint_cpp()
+  else()
+      message(WARNING "roslint not found. Skipping roslint target building")
+  endif()
 endif()
 
 #############

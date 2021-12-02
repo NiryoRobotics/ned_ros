@@ -133,34 +133,36 @@ endif()
 if(CATKIN_ENABLE_TESTING)
   find_package(rostest REQUIRED)
 
-  if ("${ARCHITECTURE}" MATCHES "^(arm.*|aarch64.*|arm64.*)$")
-    add_rostest_gtest(${PROJECT_NAME}_integration_tests
-      test/service_client.test
-      test/service_client.cpp
-    )
-  else()
-    add_rostest_gtest(${PROJECT_NAME}_integration_tests
-    test/service_client_fake.test
+SET(HARDWARE_VERSION "ned2" CACHE STRING "run test on this hardware version")
+
+if ("${ARCHITECTURE}" MATCHES "^(arm.*|aarch64.*|arm64.*)$")
+  add_rostest_gtest(${PROJECT_NAME}_integration_tests
+    test/service_client.test
     test/service_client.cpp
-    )
-  endif()
-  
-  if(TARGET ${PROJECT_NAME}_integration_tests)
-    target_link_libraries(
-      ${PROJECT_NAME}_integration_tests
-      ${PROJECT_NAME}_core
-    )
-  endif()
+  )
+else()
+  add_rostest_gtest(${PROJECT_NAME}_integration_tests
+  test/service_client_fake.test
+  test/service_client.cpp
+  )
+endif()
 
-  ##########################
-  ## Static code analysis ##
-  ##########################
-  find_package(roslint QUIET)
+if(TARGET ${PROJECT_NAME}_integration_tests)
+  target_link_libraries(
+    ${PROJECT_NAME}_integration_tests
+    ${PROJECT_NAME}_core
+  )
+endif()
 
-  if(roslint_FOUND)
-      roslint_cpp()
+##########################
+## Static code analysis ##
+##########################
+find_package(roslint QUIET)
+
+if(roslint_FOUND)
+  roslint_cpp()
   else()
-      message(WARNING "roslint not found. Skipping roslint target building")
+    message(WARNING "roslint not found. Skipping roslint target building")
   endif()
 endif()
 
