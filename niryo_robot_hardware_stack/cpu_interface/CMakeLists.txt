@@ -93,16 +93,27 @@ endif()
 #############
 
 if(CATKIN_ENABLE_TESTING)
-  ##########################
-  ## Static code analysis ##
-  ##########################
-  find_package(roslint QUIET)
+    catkin_add_gtest(
+      ${PROJECT_NAME}_unit_tests
+      test/cpu_interface_unit_tests.cpp
+    )
+    if(TARGET ${PROJECT_NAME}_unit_tests)
+      target_link_libraries(
+        ${PROJECT_NAME}_unit_tests
+        ${PROJECT_NAME}
+      )
+    endif()
 
-  if(roslint_FOUND)
+    ##########################
+    ## Static code analysis ##
+    ##########################
+    find_package(roslint QUIET)
+
+    if(roslint_FOUND)
     roslint_cpp()
-  else()
+    else()
       message(WARNING "roslint not found. Skipping roslint target building")
-  endif()
+    endif()
 endif()
 
 #############
