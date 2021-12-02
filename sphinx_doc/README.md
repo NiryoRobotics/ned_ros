@@ -14,29 +14,36 @@
     `git submodule update --init relative_path_to/front_end`
 
 ## Génération
-Placez vous à la racine de votre dossier sphinx
+- Placez vous à la racine de votre dossier sphinx
 
-Pour générer la documentation complete en html, utilisez : 
+- Pour générer la documentation complete en html, utilisez : 
 
-`make all`
+    `make all`
 
-Pour mettre à jour les fichiers de traduction, utiliser :
+- Pour mettre à jour les fichiers de traduction, utiliser :
 
-`make update`
+    `make update`
 
-Pour mettre à jour la documentation en anglais uniquement, utilisez :
+- Pour mettre à jour la documentation en anglais uniquement, utilisez :
 
-`make en`
+    `make en`
 
-Pour mettre à jour la documentation en français uniquement, utilisez :
+- Pour mettre à jour la documentation en français uniquement, utilisez :
 
-`make fr`
+    `make fr`
 
-Le fichier à ouvrir est : **_build/fr/index.html** pour la documentation française, **_build/en/index.html** pour la documentation anglaise
+- Le fichier à ouvrir est : **_build/fr/index.html** pour la documentation française, **_build/en/index.html** pour la documentation anglaise
 
-Command clean + make + open : 
+    Command clean + make + open : 
 
-`make clean; make all ; xdg-open _build/fr/index.html`
+    ``make clean; make all ; xdg-open _build/fr/index.html``
+
+- Pour les paquets concernant le ros, vous pouvez générer une template pour le fichier .rst. Il récupéra automatiquement les services, messages, config et créer le template pour les services et topics. Allez dans le directorie `scripts`
+
+    ```./generateDocRst.sh -p [path of doc rst from source]```
+
+    example:
+    `./generateDocRst.sh -p ros/stack/low_level/common`. Cette commande génère un fichier doc common.rst dans le `sphinx/source/ros/stack/low_level/common`.
 
 ## Ressources
 ### Spinxcontrib
