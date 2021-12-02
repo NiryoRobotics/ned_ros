@@ -30,6 +30,12 @@ find_package(catkin REQUIRED
       ttl_driver
 )
 
+if(CATKIN_ENABLE_TESTING AND ENABLE_COVERAGE_TESTING)
+  find_package(code_coverage REQUIRED)
+  # Add compiler flags for coverage instrumentation before defining any targets
+  APPEND_COVERAGE_COMPILER_FLAGS()
+endif()
+
 ###############################################
 # Declare ROS messages, services and actions ##
 ###############################################
@@ -134,12 +140,10 @@ endif()
 if(CATKIN_ENABLE_TESTING)
   find_package(rostest REQUIRED)
 
-  if ("${ARCHITECTURE}" MATCHES "^(arm.*|aarch64.*|arm64.*)$")
-    add_rostest_gtest(${PROJECT_NAME}_integration_tests
-      test/service_client.test
-      test/service_client.cpp
-    )
-  endif()
+  add_rostest_gtest(${PROJECT_NAME}_integration_tests
+    test/service_client.test
+    test/service_client.cpp
+  )
 
   if(TARGET ${PROJECT_NAME}_integration_tests)
     target_link_libraries(
@@ -149,6 +153,15 @@ if(CATKIN_ENABLE_TESTING)
     )
   endif()
 
+  # Create a target ${PROJECT_NAME}_coverage_report
+  if(ENABLE_COVERAGE_TESTING)
+    set(COVERAGE_EXCLUDES "*/${PROJECT_NAME}/test*")
+    add_code_coverage(
+      NAME ${PROJECT_NAME}_coverage_report
+      DEPENDENCIES tests
+    )
+  endif()
+  
   ##########################
   ## Static code analysis ##
   ##########################
