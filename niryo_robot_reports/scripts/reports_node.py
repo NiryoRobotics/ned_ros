@@ -75,7 +75,6 @@ class ReportsNode:
                     report_handler.content
                 })
                 if success:
-                    continue
                     report_handler.delete()
                     self.__rm_report_db(report.id)
                 else:
