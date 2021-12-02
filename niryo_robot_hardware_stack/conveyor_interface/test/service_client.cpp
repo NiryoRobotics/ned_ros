@@ -331,9 +331,9 @@ int main(int argc, char **argv)
     testing::InitGoogleTest(&argc, argv);
 
     std::string hardware_version;
-    ros::NodeHandle nh_private("~");
-    nh_private.getParam("hardware_version", hardware_version);
+    nh->getParam("hardware_version", hardware_version);
 
+    std::cout << hardware_version << std::endl;
     if (hardware_version == "ned2")
         testing::GTEST_FLAG(filter) = "-TESTSuiteNedAndOne.*";
     else if (hardware_version == "ned" || hardware_version == "one")
