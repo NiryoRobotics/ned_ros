@@ -143,6 +143,16 @@ if(CATKIN_ENABLE_TESTING)
       test/service_client_fake.test
       test/service_client.cpp
     )
+  elseif ("${HARDWARE_VERSION}" STREQUAL "ned")
+    add_rostest_gtest(${PROJECT_NAME}_integration_tests
+      test/service_client_fake.test
+      test/service_client.cpp
+    )
+  elseif ("${HARDWARE_VERSION}" STREQUAL "one")
+    add_rostest_gtest(${PROJECT_NAME}_integration_tests
+      test/service_client_fake.test
+      test/service_client.cpp
+    )
   endif()
 
   if(TARGET ${PROJECT_NAME}_integration_tests)

@@ -29,10 +29,35 @@
 
 #include <XmlRpcValue.h>
 #include <iostream>
+#include <string>
 
 static std::unique_ptr<ros::NodeHandle> nh;
 
-TEST(TESTSuite, pingTool)
+TEST(ToolTestConfigSuite, correctPath)
+{
+    ros::NodeHandle nh("");
+    ASSERT_TRUE(nh.hasParam("tools_interface/tools_params/id_list"));
+    ASSERT_TRUE(nh.hasParam("tools_interface/tools_params/type_list"));
+    ASSERT_TRUE(nh.hasParam("tools_interface/tools_params/name_list"));
+    ASSERT_TRUE(nh.hasParam("tools_interface/check_tool_connection_frequency"));
+}
+
+TEST(ToolTestConfigSuite, correctSize)
+{
+    ros::NodeHandle nh("");
+    std::vector<int> idList;
+    std::vector<std::string> typeList;
+    std::vector<std::string> nameList;
+
+    nh.getParam("tools_interface/tools_params/id_list", idList);
+    nh.getParam("tools_interface/tools_params/type_list", typeList);
+    nh.getParam("tools_interface/tools_params/name_list", nameList);
+
+    ASSERT_TRUE(idList.size() == typeList.size());
+    ASSERT_TRUE(idList.size() == nameList.size());
+}
+
+TEST(ToolTestSetTool, addTool)
 {
     auto client = nh->serviceClient<tools_interface::PingDxlTool>("/niryo_robot/tools/ping_and_set_dxl_tool");
 
@@ -47,7 +72,7 @@ TEST(TESTSuite, pingTool)
     EXPECT_EQ(srv.response.state, res);
 }
 
-class ToolTestSuite : public ::testing::Test
+class ToolTestControlSuite : public ::testing::Test
 {
     protected:
         static void SetUpTestCase()
@@ -65,17 +90,43 @@ class ToolTestSuite : public ::testing::Test
             tools_interface::PingDxlTool srv_ping;
             client.call(srv_ping);
 
+            // Continue only if set tool successfully 
+            int res = common::model::ToolState::TOOL_STATE_PING_OK;
+            ASSERT_EQ(srv_ping.response.state, res);
+
             id = srv_ping.response.tool.id;
+            ROS_ERROR("TEST id %d, res %d", id, (int)srv_ping.response.state);
         }
 
         static int id;
 };
 
-int ToolTestSuite::id;
+int ToolTestControlSuite::id;
 
-TEST_F(ToolTestSuite, openTool)
+/**
+ * @brief Test check if tool scanned is in list id config
+ */
+TEST_F(ToolTestControlSuite, checkToolScannedId)
 {
-    if (id == -1) return;
+    ros::NodeHandle nh("");
+    std::vector<int> id_list;
+    nh.getParam("tools_interface/tools_params/id_list", id_list);
+    for (auto i : id_list)
+    {
+        ROS_ERROR("TEST id list %d", i);
+    }
+    ROS_ERROR("TEST id %d", id);
+    EXPECT_TRUE(std::find(id_list.begin(), id_list.end(), id) != id_list.end()); 
+}
+
+/**
+ * @brief Test check if add Tool fail
+ */
+
+
+TEST_F(ToolTestControlSuite, openTool)
+{
+    ASSERT_FALSE(id == -1);
 
     tools_interface::ToolCommand srv;
 
@@ -105,9 +156,9 @@ TEST_F(ToolTestSuite, openTool)
     EXPECT_EQ(srv.response.state, res);
 }
 
-TEST_F(ToolTestSuite, CloseTool)
+TEST_F(ToolTestControlSuite, CloseTool)
 {
-    if (id == -1) return;
+    ASSERT_FALSE(id == -1);
 
     tools_interface::ToolCommand srv;
 
@@ -138,7 +189,7 @@ TEST_F(ToolTestSuite, CloseTool)
     EXPECT_EQ(srv.response.state, res);
 }
 
-TEST_F(ToolTestSuite, PullAirVacuumPump)
+TEST_F(ToolTestControlSuite, PullAirVacuumPump)
 {
     if (id != 31) return;
     tools_interface::ToolCommand srv;
@@ -170,7 +221,7 @@ TEST_F(ToolTestSuite, PullAirVacuumPump)
     EXPECT_EQ(srv.response.state, res);
 }
 
-TEST_F(ToolTestSuite, PushAirVacuumPump)
+TEST_F(ToolTestControlSuite, PushAirVacuumPump)
 {
     if (id != 31) return;
     tools_interface::ToolCommand srv;
@@ -201,9 +252,9 @@ TEST_F(ToolTestSuite, PushAirVacuumPump)
     EXPECT_EQ(srv.response.state, res);
 }
 
-TEST_F(ToolTestSuite, ToolReboot)
+TEST_F(ToolTestControlSuite, ToolReboot)
 {
-    if (id != 0) return;
+    ASSERT_FALSE(id == -1);
 
     auto client = nh->serviceClient<std_srvs::Trigger>("/niryo_robot/tools/reboot");
 
