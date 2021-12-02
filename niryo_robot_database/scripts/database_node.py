@@ -127,6 +127,7 @@ class DatabaseNode:
 
     def __callback_rm_file_path(self, req):
         self.__file_paths.rm_file_path(req.id)
+        return CommandStatus.SUCCESS, 'Successfully deleted'
 
 
 if __name__ == "__main__":
