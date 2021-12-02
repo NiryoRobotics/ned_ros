@@ -30,6 +30,12 @@ find_package(catkin REQUIRED
       ttl_driver
 )
 
+if(CATKIN_ENABLE_TESTING AND ENABLE_COVERAGE_TESTING)
+  find_package(code_coverage REQUIRED)
+  # Add compiler flags for coverage instrumentation before defining any targets
+  APPEND_COVERAGE_COMPILER_FLAGS()
+endif()
+
 ###############################################
 # Declare ROS messages, services and actions ##
 ###############################################
@@ -141,16 +147,30 @@ if(CATKIN_ENABLE_TESTING)
       test/service_client.test
       test/service_client.cpp
     )
+  elseif ("${HARDWARE_VERSION}" STREQUAL "ned2")
+    add_rostest_gtest(${PROJECT_NAME}_integration_tests
+      test/service_client_fake.test
+      test/service_client.cpp
+    )
   endif()
 
   if(TARGET ${PROJECT_NAME}_integration_tests)
     target_link_libraries(
       ${PROJECT_NAME}_integration_tests
-      ${PROJECT_NAME}
+      ${PROJECT_NAME}https://gitlab.com/niryo/niryo-one-s/development-tools/-/blob/master/code_coverage.sh
       ${catkin_LIBRARIES}
     )
   endif()
 
+  # Create a target ${PROJECT_NAME}_coverage_report
+  if(ENABLE_COVERAGE_TESTING)
+    set(COVERAGE_EXCLUDES "*/${PROJECT_NAME}/test*")
+    add_code_coverage(
+      NAME ${PROJECT_NAME}_coverage_report
+      DEPENDENCIES tests
+    )
+  endif()
+  
   ##########################
   ## Static code analysis ##
   ##########################

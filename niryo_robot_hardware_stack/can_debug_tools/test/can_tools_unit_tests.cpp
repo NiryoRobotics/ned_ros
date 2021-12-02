@@ -14,7 +14,6 @@
     along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
-
 // Bring in my package's API, which is what I'm testing
 #include "mcp_can_rpi/mcp_can_rpi.h"
 
@@ -28,30 +27,22 @@
 // Declare a test
 TEST(CanDebugToolsTestSuite, testInit)
 {
-    int spi_channel = vars["channel"].as<int>();
-    int spi_baudrate = vars["baudrate"].as<int>();
-    int gpio_can_interrupt = vars["gpio"].as<int>();
+    int spi_channel = 0;
+    int spi_baudrate = 1000000;
+    int gpio_can_interrupt = 25;
 
-    if (serial_port.empty())
-    {
-        std::cout << "Test invalid : not on the correct architecture. Passing" << std::endl;
-        ASSERT_TRUE(true);
-    }
-    else
-    {
-        std::cout << "Using channel: " << spi_channel << ", "
-                  << "Using baudrate: " << spi_baudrate << ", "
-                  << "Using gpio: " << gpio_can_interrupt
-                  << "\n";
+    std::cout << "Using channel: " << spi_channel << ", "
+                << "Using baudrate: " << spi_baudrate << ", "
+                << "Using gpio: " << gpio_can_interrupt
+                << "\n";
 
-        // Setup TTL communication
-        auto mcp_can = std::make_shared<mcp_can_rpi::MCP_CAN>(spi_channel, spi_baudrate,
-                                                      static_cast<uint8_t>(gpio_can_interrupt));
+    // Setup TTL communication
+    auto mcp_can = std::make_shared<mcp_can_rpi::MCP_CAN>(spi_channel, spi_baudrate,
+                                                    static_cast<uint8_t>(gpio_can_interrupt));
 
-        can_debug_tools::CanTools canTools(mcp_can);
+    can_debug_tools::CanTools canTools(mcp_can);
 
-        ASSERT_NE(-1, canTools.setupBus());
-    }
+    ASSERT_NE(-1, canTools.setupCommunication());
 }
 
 // Run all the tests that were declared with TEST()
