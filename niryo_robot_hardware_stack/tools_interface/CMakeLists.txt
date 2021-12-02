@@ -128,6 +128,8 @@ endif()
 ## Testing ##
 #############
 
+SET(HARDWARE_VERSION "ned2" CACHE STRING "run test on this hardware version")
+
 if(CATKIN_ENABLE_TESTING)
   find_package(rostest REQUIRED)
 
@@ -136,7 +138,7 @@ if(CATKIN_ENABLE_TESTING)
       test/service_client.test
       test/service_client.cpp
     )
-  else()
+  elseif ("${HARDWARE_VERSION}" STREQUAL "ned2")
     add_rostest_gtest(${PROJECT_NAME}_integration_tests
       test/service_client_fake.test
       test/service_client.cpp
