@@ -12,8 +12,7 @@
     GNU General Public License for more details.
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http:// www.gnu.org/licenses/>.
-*//home/ccocq/Workspace/catkin_ws_niryo_ned/src/niryo_robot_hardware_stack/can_debug_tools/test/can_tools_unit_tests.cpp:31:23:
-
+*/
 
 // Bring in my package's API, which is what I'm testing
 #include "mcp_can_rpi/mcp_can_rpi.h"
@@ -43,7 +42,7 @@ TEST(CanDebugToolsTestSuite, testInit)
 
     can_debug_tools::CanTools canTools(mcp_can);
 
-    ASSERT_NE(-1, canTools.setupBus());
+    ASSERT_NE(-1, canTools.setupCommunication());
 }
 
 // Run all the tests that were declared with TEST()
