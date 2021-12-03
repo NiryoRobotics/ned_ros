@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 # Libs
+import json
 import os
 import rospy
 from datetime import date, datetime
@@ -8,10 +9,10 @@ from StringIO import StringIO
 from distutils.dir_util import mkpath
 
 from niryo_robot_reports.CloudAPI import CloudAPI
-from niryo_robot_reports.ReportHandler import ReportHandler
+from niryo_robot_reports.DailyReport import DailyReport
 
 # msg
-from std_msgs.msg import Empty
+from std_msgs.msg import Empty, String
 from niryo_robot_status.msg import RobotStatus
 from niryo_robot_msgs.msg import CommandStatus
 
@@ -66,7 +67,7 @@ class ReportsNode:
             for report in daily_reports_response.filepaths:
                 if report.date == self.__current_date:
                     continue
-                report_handler = ReportHandler(report.path)
+                report_handler = DailyReport(report.path)
                 rospy.loginfo('Sending the report of {}'.format(report.date))
                 success = self.__cloud_api.daily_reports.send({
                     'date':
@@ -82,7 +83,7 @@ class ReportsNode:
 
         report_name = '{}.json'.format(self.__current_date)
         report_path = '{}/{}'.format(self.__reports_path, report_name)
-        self.__report_handler = ReportHandler(report_path)
+        self.__report_handler = DailyReport(report_path)
         add_report_response = self.__add_report_db(
             'daily_report', report_name, report_path
         )
@@ -93,6 +94,8 @@ class ReportsNode:
             '/niryo_robot_status/robot_status', RobotStatus,
             self.__robot_status_callback
         )
+
+        rospy.Subscriber('~test_report', String, self.__test_report_callback)
 
         # Set a bool to mentioned this node is initialized
         rospy.set_param('~initialized', True)
@@ -129,6 +132,14 @@ class ReportsNode:
             level, from_node, msg, from_file, function, line
         )
         self.__report_handler.add_log(formatted_log, 'ROS', str(datetime.now()))
+
+    def __test_report_callback(self, req):
+        try:
+            parsed_json = json.loads(req.date)
+        except ValueError as e:
+            rospy.logerr('Malformed json: ' + str(e))
+            return
+        self.__cloud_api.test_report.send(parsed_json)
 
 
 if __name__ == "__main__":

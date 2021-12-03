@@ -2,7 +2,7 @@ import json
 import os
 
 
-class ReportHandler:
+class DailyReport:
     def __init__(self, path):
         self.__path = ''
         self.__deleted = False
