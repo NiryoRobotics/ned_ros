@@ -39,14 +39,12 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 
 #include "ttl_driver/ttl_manager.hpp"
 #include "ttl_driver/ArrayMotorHardwareStatus.h"
-#include "ttl_driver/SendCustomValue.h"
+#include "ttl_driver/WriteCustomValue.h"
 #include "ttl_driver/ReadCustomValue.h"
 #include "ttl_driver/WritePIDValue.h"
 #include "ttl_driver/ReadPIDValue.h"
 #include "ttl_driver/WriteVelocityProfile.h"
 #include "ttl_driver/ReadVelocityProfile.h"
-#include "ttl_driver/SetFrequencies.h"
-#include "ttl_driver/GetFrequencies.h"
 
 #include "niryo_robot_msgs/BusState.h"
 #include "niryo_robot_msgs/SetInt.h"
@@ -166,7 +164,7 @@ private:
 
     // use other callbacks instead of executecommand
     bool _callbackActivateLeds(niryo_robot_msgs::SetInt::Request &req, niryo_robot_msgs::SetInt::Response &res);
-    bool _callbackWriteCustomValue(ttl_driver::SendCustomValue::Request &req, ttl_driver::SendCustomValue::Response &res);
+    bool _callbackWriteCustomValue(ttl_driver::WriteCustomValue::Request &req, ttl_driver::WriteCustomValue::Response &res);
     bool _callbackReadCustomValue(ttl_driver::ReadCustomValue::Request &req, ttl_driver::ReadCustomValue::Response &res);
 
     bool _callbackWritePIDValue(ttl_driver::WritePIDValue::Request &req, ttl_driver::WritePIDValue::Response &res);
@@ -174,10 +172,6 @@ private:
 
     bool _callbackWriteVelocityProfile(ttl_driver::WriteVelocityProfile::Request &req, ttl_driver::WriteVelocityProfile::Response &res);
     bool _callbackReadVelocityProfile(ttl_driver::ReadVelocityProfile::Request &req, ttl_driver::ReadVelocityProfile::Response &res);
-
-    bool _callbackSetFrequencies(ttl_driver::SetFrequencies::Request &req, ttl_driver::SetFrequencies::Response &res);
-    bool _callbackGetFrequencies(ttl_driver::GetFrequencies::Request &req, ttl_driver::GetFrequencies::Response &res);
-
 
     void _publishCollisionStatus(const ros::TimerEvent&);
 private:
@@ -196,8 +190,6 @@ private:
     std::thread _control_loop_thread;
 
     double _control_loop_frequency{0.0};
-    double _write_frequency{0.0};
-    double _read_data_frequency{0.0};
 
     double _delta_time_data_read{0.0};
     double _delta_time_end_effector_read{0.0};

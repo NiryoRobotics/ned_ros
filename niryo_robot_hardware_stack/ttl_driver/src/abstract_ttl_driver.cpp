@@ -255,11 +255,11 @@ int AbstractTtlDriver::syncRead(uint8_t address, uint8_t data_len,
 
 /**
  * @brief AbstractTtlDriver::bulkRead
- * 
- * @param address 
- * @param id_list 
- * @param data_list 
- * @return int 
+ * @param address
+ * @param data_len
+ * @param id_list
+ * @param data_list
+ * @return
  */
 int AbstractTtlDriver::bulkRead(std::vector<uint16_t> address,
                                 uint8_t data_len,

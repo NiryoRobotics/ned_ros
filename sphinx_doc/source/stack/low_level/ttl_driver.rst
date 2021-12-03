@@ -1,16 +1,26 @@
 TTL Driver
-===================================
+=====================================
 
-| This package handles communication on TTL bus via dynamixel sdk.
+| This package handles motors which communicate via the protocol TTL.
+| This package is based on the DXL SDK.
 | It provides an interface to :wiki_ros:`dynamixel_sdk`.
 
-TTL Driver Node
+TTL Driver Node (For Development and Debugging)
 --------------------------
 The ROS Node is made to:
- - Send commands to any hardware on TTL bus
- - Receive data from the TTL bus
+ - Initialize TTL Interface.
+ - Get configuration of motors and add to TTL Interface
 
-Parameters
+TTL Interface
+--------------------------
+
+It is integrated in :doc:`niryo_robot_hardware_interface` package
+ - Initialize the TTL Interface and TTL bus with the configuration.
+ - Add or remove devices using protocol TTL to the Interface from other packages.
+ - Start getting data and sending data on the physical bus.
+ - Start ROS stuffs like services, topic.
+
+Parameters - TTL Driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. list-table:: TTL Driver's Parameters 
@@ -23,28 +33,28 @@ Parameters
       -  Description
    *  -  ``ttl_hardware_control_loop_frequency``
       -  | Controls loop frequency.
-         | Default: '100.0'
+         | Default: '600.0'
    *  -  ``ttl_hardware_write_frequency``
-      -  | Write frequency.
-         | Default: '50.0'
+      -  | Writing frequency.
+         | Default: '200.0'
    *  -  ``ttl_hardware_read_data_frequency``
-      -  | Read frequency.
-         | Default: '15.0'
-   *  -  ``ttl_hardware_read_end_effector_frequency``
-      -  | Read end effector status frequency.
-         | Default: '10.0'   
+      -  | Reading frequency.
+         | Default: '300.0'
    *  -  ``ttl_hardware_read_status_frequency``
-      -  | Read hardware status frequency.
-         | Default: '0.5'
+      -  | Reads Ttl's device status frequency.
+         | Default: '0.7'
+   *  -  ``ttl_hardware_read_end_effector_frequency``
+      -  | Reads End Effector's status frequency.
+         | Default: '13.0'
+   *  -  ``bus_params/Baudrate``
+      -  | Baudrate of TTL bus
+         | Default: '1000000'
+   *  -  ``bus_params/uart_device_name``
+      -  | name of uart port using
+         | Default: '/dev/ttyAMA0'
 
-Dependencies
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-- :wiki_ros:`dynamixel_sdk` 
-- :doc:`../high_level/niryo_robot_msgs`
-
-Services, Topics and Messages
--------------------------------------------------
+Services - TTL Driver
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. list-table:: TTL Driver Package Services
    :header-rows: 1
@@ -56,34 +66,41 @@ Services, Topics and Messages
       -  Message Type
       -  Description
    *  -  ``niryo_robot/ttl_driver/set_dxl_leds``
-      -  :ref:`source/high_level/niryo_robot_msgs:SetInt`
-      -  Control dynamixels LED
+      -  :ref:`source/ros/niryo_robot_msgs:SetInt`
+      -  Control dynmixel LED
    *  -  ``niryo_robot/ttl_driver/send_custom_value``
-      -  :ref:`ttl_driver/SendCustomValue<source/stack_hardware/ttl_driver:SendCustomValue (Service)>`
-      -  Send a custom command on the TTL bus
+      -  :ref:`SendCustomValue<source/stack/low_level/ttl_driver:SendCustomValue (Service)>`
+      -  Send a custom command to Ttl device
    *  -  ``niryo_robot/ttl_driver/read_custom_value``
-      -  :ref:`ttl_driver/ReadCustomValue<source/stack_hardware/ttl_driver:ReadCustomValue (Service)>`
-      -  Reads a custom register on the TTL bus
-   *  -  ``niryo_robot/ttl_driver/write_pid_value``
-      -  :ref:`ttl_driver/WritePIDValue<source/stack_hardware/ttl_driver:WritePIDValue (Service)>`
-      -  Writes PID values to a dynamixel motor on the TTL Bus
+      -  :ref:`ReadCustomValue<source/stack/low_level/ttl_driver:ReadCustomValue (Service)>`
+      -  Read a custom command to Ttl device
    *  -  ``niryo_robot/ttl_driver/read_pid_value``
-      -  :ref:`ttl_driver/ReadPIDValue<source/stack_hardware/ttl_driver:ReadPIDValue (Service)>`
-      -  Reads PID values from a dynamixel motor on the TTL Bus
-   *  -  ``niryo_robot/ttl_driver/write_velocity_profile``
-      -  :ref:`ttl_driver/WriteVelocityProfile<source/stack_hardware/ttl_driver:WriteVelocityProfile (Service)>`
-      -  Writes velocity and acceleration profiles to a stepper motor on the TTL Bus
+      -  :ref:`ReadPIDValue<source/stack/low_level/ttl_driver:ReadPIDValue (Service)>`
+      -  Read the PID of dxl motors
+   *  -  ``niryo_robot/ttl_driver/write_pid_value``
+      -  :ref:`WritePIDValue<source/stack/low_level/ttl_driver:WritePIDValue (Service)>`
+      -  Write the PID for dxl motors
    *  -  ``niryo_robot/ttl_driver/read_velocity_profile``
-      -  :ref:`ttl_driver/ReadVelocityProfile<source/stack_hardware/ttl_driver:ReadVelocityProfile (Service)>`
-      -  Reads velocity and acceleration profiles from a stepper motor on the TTL Bus
+      -  :ref:`ReadVelocityProfile<source/stack/low_level/ttl_driver:ReadVelocityProfile (Service)>`
+      -  Read velocity Profile for steppers
+   *  -  ``niryo_robot/ttl_driver/write_velocity_profile``
+      -  :ref:`WriteVelocityProfile<source/stack/low_level/ttl_driver:WriteVelocityProfile (Service)>`
+      -  Write velocity Profile for steppers
 
-Services files
+Dependencies - TTL Driver
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- :wiki_ros:`dynamixel_sdk` 
+- :doc:`../../ros/niryo_robot_msgs`
+- :msgs_index:`std_msgs`
+
+Services & Messages files - TTL Driver
 --------------------------------------------------
 
 SendCustomValue (Service)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. literalinclude:: ../../../../niryo_robot_hardware_stack/ttl_driver/srv/SendCustomValue.srv
+.. literalinclude:: ../../../../niryo_robot_hardware_stack/ttl_driver/srv/WriteCustomValue.srv
    :language: rostype
 
 ReadCustomValue (Service)
@@ -92,22 +109,16 @@ ReadCustomValue (Service)
 .. literalinclude:: ../../../../niryo_robot_hardware_stack/ttl_driver/srv/ReadCustomValue.srv
    :language: rostype
 
-WritePIDValue (Service)
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-.. literalinclude:: ../../../../niryo_robot_hardware_stack/ttl_driver/srv/WritePIDValue.srv
-   :language: rostype
-
 ReadPIDValue (Service)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. literalinclude:: ../../../../niryo_robot_hardware_stack/ttl_driver/srv/ReadPIDValue.srv
    :language: rostype
 
-WriteVelocityProfile (Service)
+WritePIDValue (Service)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. literalinclude:: ../../../../niryo_robot_hardware_stack/ttl_driver/srv/WriteVelocityProfile.srv
+.. literalinclude:: ../../../../niryo_robot_hardware_stack/ttl_driver/srv/ReadPIDValue.srv
    :language: rostype
 
 ReadVelocityProfile (Service)
@@ -116,9 +127,11 @@ ReadVelocityProfile (Service)
 .. literalinclude:: ../../../../niryo_robot_hardware_stack/ttl_driver/srv/ReadVelocityProfile.srv
    :language: rostype
 
+WriteVelocityProfile (Service)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Messages files
---------------------------------------------------
+.. literalinclude:: ../../../../niryo_robot_hardware_stack/ttl_driver/srv/WriteVelocityProfile.srv
+   :language: rostype
 
 MotorHardwareStatus (Message)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -136,4 +149,10 @@ ArrayMotorHardwareStatus (Message)
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. literalinclude:: ../../../../niryo_robot_hardware_stack/ttl_driver/msg/ArrayMotorHardwareStatus.msg
+   :language: rostype
+
+CollisionStatus (Message)
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. literalinclude:: ../../../../niryo_robot_hardware_stack/ttl_driver/msg/CollisionStatus.msg
    :language: rostype
