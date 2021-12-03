@@ -1,5 +1,5 @@
 /*
-    tools_interface_service_client.cpp
+    tools_interface_service_client_ned_one.cpp
     Copyright (C) 2020 Niryo
     All rights reserved.
 
@@ -158,6 +158,7 @@ TEST_F(ToolTestControlSuite, checkToolScannedId)
     EXPECT_TRUE(std::find(id_list.begin(), id_list.end(), id) != id_list.end()); 
 }
 
+// open tool correct ID
 TEST_F(ToolTestControlSuite, openTool)
 {
     // only test tool if tool can be added and type gripper
@@ -191,6 +192,32 @@ TEST_F(ToolTestControlSuite, openTool)
 
     int res = common::model::ToolState::GRIPPER_STATE_OPEN;
     EXPECT_EQ(srv.response.state, res);
+}
+
+// open tool with wrong parameter 
+TEST_F(ToolTestControlSuite, openToolWrongId)
+{
+    tools_interface::ToolCommand srv;
+
+    XmlRpc::XmlRpcValue filters;
+
+    nh_g->getParam("tool_list", filters);
+
+    // wrong id
+    srv.request.id = static_cast<uint8_t>(20);
+    srv.request.position = static_cast<uint16_t>(static_cast<int>(filters[1]["specs"]["open_position"]));
+    srv.request.speed = static_cast<uint16_t>(static_cast<int>(filters[1]["specs"]["open_speed"]));
+    srv.request.hold_torque = static_cast<uint16_t>(static_cast<int>(filters[1]["specs"]["open_hold_torque"]));
+    srv.request.max_torque = static_cast<uint16_t>(static_cast<int>(filters[1]["specs"]["open_max_torque"]));
+
+    auto client = nh_g->serviceClient<tools_interface::ToolCommand>("/niryo_robot/tools/open_gripper");
+ 
+    bool exists(client.waitForExistence(ros::Duration(1)));
+    EXPECT_TRUE(exists);
+    client.call(srv);
+
+    int res = common::model::ToolState::GRIPPER_STATE_OPEN;
+    EXPECT_NE(srv.response.state, res);
 }
 
 TEST_F(ToolTestControlSuite, CloseTool)
@@ -227,6 +254,32 @@ TEST_F(ToolTestControlSuite, CloseTool)
 
     int res = common::model::ToolState::GRIPPER_STATE_CLOSE;
     EXPECT_EQ(srv.response.state, res);
+}
+
+// close tool with wrong parameter 
+TEST_F(ToolTestControlSuite, closeToolWrongId)
+{
+    tools_interface::ToolCommand srv;
+
+    XmlRpc::XmlRpcValue filters;
+
+    nh_g->getParam("tool_list", filters);
+
+    // wrong id
+    srv.request.id = static_cast<uint8_t>(20);
+    srv.request.position = static_cast<uint16_t>(static_cast<int>(filters[1]["specs"]["close_position"]));
+    srv.request.speed = static_cast<uint16_t>(static_cast<int>(filters[1]["specs"]["close_speed"]));
+    srv.request.hold_torque = static_cast<uint16_t>(static_cast<int>(filters[1]["specs"]["close_hold_torque"]));
+    srv.request.max_torque = static_cast<uint16_t>(static_cast<int>(filters[1]["specs"]["close_max_torque"]));
+
+    auto client = nh_g->serviceClient<tools_interface::ToolCommand>("/niryo_robot/tools/close_gripper");
+ 
+    bool exists(client.waitForExistence(ros::Duration(1)));
+    EXPECT_TRUE(exists);
+    client.call(srv);
+
+    int res = common::model::ToolState::GRIPPER_STATE_CLOSE;
+    EXPECT_NE(srv.response.state, res);
 }
 
 TEST_F(ToolTestControlSuite, PullAirVacuumPump)
@@ -319,3 +372,5 @@ int main(int argc, char **argv)
     ros::Duration(5.0).sleep();
     return RUN_ALL_TESTS();
 }
+
+
