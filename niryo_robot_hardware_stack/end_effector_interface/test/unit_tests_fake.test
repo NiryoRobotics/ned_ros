@@ -1,0 +1,22 @@
+<?xml version="1.0" ?>
+<launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+
+    <arg name="simulation_mode" default="true"/>
+    <arg name="hardware_version" default="ned2"/>
+
+    <!-- use ttl_driver config -->
+    <include file="$(find ttl_driver)/launch/ttl_driver_base.launch.xml" >
+        <arg name="hardware_version" value="$(arg hardware_version)"/>
+        <arg name="simulation_mode" value="$(arg simulation_mode)"/>
+    </include>
+
+    <!-- launch the end_effector_interface_node node using end_effector_interface_node executable from end_effector_interface package -->
+    <include file="$(find end_effector_interface)/launch/end_effector_interface_base.launch.xml" >
+        <arg name="simulation_mode" value="$(arg simulation_mode)" />
+    </include>
+    
+    <test test-name="end_effector_interface_unit_tests" pkg="end_effector_interface"  type="end_effector_interface_unit_tests" />
+
+</launch>
+

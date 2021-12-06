@@ -147,17 +147,34 @@ if(CATKIN_ENABLE_TESTING)
       test/service_client.test
       test/service_client.cpp
     )
+
+    add_rostest_gtest(${PROJECT_NAME}_unit_tests
+      test/unit_tests.test
+      test/unit_tests.cpp
+    )
   elseif ("${HARDWARE_VERSION}" STREQUAL "ned2")
     add_rostest_gtest(${PROJECT_NAME}_integration_tests
       test/service_client_fake.test
-      test/service_client.cpp
+      test/service_client_fake.cpp
+    )
+
+    add_rostest_gtest(${PROJECT_NAME}_unit_tests
+      test/unit_tests_fake.test
+      test/unit_tests_fake.cpp
     )
   endif()
 
+  if(TARGET ${PROJECT_NAME}_unit_tests)
+    target_link_libraries(
+      ${PROJECT_NAME}_unit_tests
+      ${PROJECT_NAME}
+      ${catkin_LIBRARIES}
+    )
+  endif()
   if(TARGET ${PROJECT_NAME}_integration_tests)
     target_link_libraries(
       ${PROJECT_NAME}_integration_tests
-      ${PROJECT_NAME}https://gitlab.com/niryo/niryo-one-s/development-tools/-/blob/master/code_coverage.sh
+      ${PROJECT_NAME}
       ${catkin_LIBRARIES}
     )
   endif()

@@ -1,5 +1,5 @@
 /*
-    end_effector_interface_node.cpp
+    end_effector_interface_service_client.cpp
     Copyright (C) 2020 Niryo
     All rights reserved.
 
@@ -17,32 +17,40 @@
     along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
-// ros
 #include <ros/ros.h>
+#include <ros/service_client.h>
+#include <gtest/gtest.h>
 
-// niryo
+#include "common/model/tool_state.hpp"
+
 #include "end_effector_interface/end_effector_interface_core.hpp"
+
 #include "ttl_driver/ttl_interface_core.hpp"
+
+static std::unique_ptr<ros::NodeHandle> nh;
+
+// Test service set Digital IO
+TEST(EndEffectorTESTSuite, serviceTest)
+{
+    auto client = nh->serviceClient<end_effector_interface::SetEEDigitalOut>("end_effector_interface/set_ee_io_state");
+
+    // wait for node launched
+    bool exists(client.waitForExistence(ros::Duration(10.0)));
+    EXPECT_TRUE(exists);
+
+    end_effector_interface::SetEEDigitalOut srv;
+    client.call(srv);
+
+    EXPECT_EQ(srv.response.state, true);
+}
 
 int main(int argc, char **argv)
 {
-    ros::init(argc, argv, "end_effector_interface_node");
+    ros::init(argc, argv, "end_effector_interface_service_client");
 
-    ROS_DEBUG("Launching end_effector_interface_node");
+    nh = std::make_unique<ros::NodeHandle>("");
 
-    ros::AsyncSpinner spinner(4);
-    spinner.start();
+    testing::InitGoogleTest(&argc, argv);
 
-    ros::NodeHandle nh_ttl("ttl_driver");
-    ros::NodeHandle nh("end_effector_interface");
-
-    auto ttl_driver = std::make_shared<ttl_driver::TtlInterfaceCore>(nh_ttl);
-    ros::Duration(1).sleep();
-
-    auto tool = std::make_shared<end_effector_interface::EndEffectorInterfaceCore>(nh, ttl_driver);
-    ros::Duration(1).sleep();
-
-    ros::waitForShutdown();
-
-    ROS_INFO("Tools Interface - Shutdown node");
+    return RUN_ALL_TESTS();
 }
