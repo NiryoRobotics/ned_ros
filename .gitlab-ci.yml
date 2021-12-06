@@ -161,8 +161,10 @@ code_coverage_cpp_job:
   stage: build
   # dependencies:
   #   - catkin_make_amd
+  tags:
+    - local_corentin
   variables:
-    SCRIPT_PATH: Code_Analysis/build_code_coverage.sh
+    SCRIPT_PATH: development-tools/Code_Analysis/build_code_coverage.sh
   script:
     - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.com/niryo/niryo-one-s/development-tools.git
     - ./${SCRIPT_PATH} -p ${CATKIN_PROFILE_NAME}
