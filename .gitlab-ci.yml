@@ -162,16 +162,10 @@ code_coverage_cpp_job:
   # dependencies:
   #   - catkin_make_amd
   variables:
-    SCRIPT_NAME: build_code_coverage.sh
-    SCRIPT_URL: https://gitlab.com/api/v4/projects/30000580/repository/files/Code_Analysis%2F${SCRIPT_NAME}/raw?ref=master
+    SCRIPT_PATH: Code_Analysis/build_code_coverage.sh
   script:
-    # I followed this doc page to download file from Giltab API: https://docs.gitlab.com/ee/api/repository_files.html
-    - echo ${SCRIPT_URL}
-    -  >
-      curl --form "token=${CI_JOB_TOKEN}" "${SCRIPT_URL}" > ${SCRIPT_NAME}
-    - cat ${SCRIPT_NAME}
-    - chmod +x ${SCRIPT_NAME}
-    - ./${SCRIPT_NAME} -p ${CATKIN_PROFILE_NAME}
+    - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.com/niryo/niryo-one-s/development-tools.git
+    - ./${SCRIPT_PATH} -p ${CATKIN_PROFILE_NAME}
 
 ## See https://docs.gitlab.com/ee/user/project/merge_requests/code_quality.html
 include:
