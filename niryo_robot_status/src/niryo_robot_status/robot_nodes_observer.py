@@ -45,6 +45,8 @@ class RobotNodesObserver(object):
         for vital_node in self.__vital_nodes:
             if vital_node not in alive_nodes:
                 missing_nodes.append(vital_node)
+            elif not rosnode.rosnode_ping(vital_node, 1):
+                missing_nodes.append(vital_node)
 
         self.__are_vital_nodes_alive = not bool(missing_nodes)
         self.__missing_vital_nodes = missing_nodes
@@ -65,7 +67,7 @@ class RobotNodesObserver(object):
 
     def start_nodes_check_loop(self):
         if self.__check_nodes_timer is None:
-            self.__check_nodes_timer = rospy.Timer(rospy.Duration(1.0), self.__check_vital_nodes_callback)
+            self.__check_nodes_timer = rospy.Timer(rospy.Duration.from_sec(1.0), self.__check_vital_nodes_callback)
 
     def __check_vital_nodes_callback(self, _):
         self.check_vital_nodes()

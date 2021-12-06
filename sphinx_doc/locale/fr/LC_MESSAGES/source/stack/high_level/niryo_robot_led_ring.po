@@ -244,7 +244,7 @@ msgstr ""
 msgid ""
 "Several animations are implemented to allow the user different ways to "
 "control the Led Ring. Refer to the following table. The node receives "
-"commands through the service ``/niryo_robot_led_ring/user_service`` (see "
+"commands through the service ``/niryo_robot_led_ring/set_user_animation`` (see "
 ":ref:`Services - Led Ring` section)"
 msgstr ""
 
@@ -685,7 +685,7 @@ msgid "Message type"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:273
-msgid "``user_service``"
+msgid "``set_user_animation``"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:274

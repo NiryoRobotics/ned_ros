@@ -41,7 +41,7 @@ class Test_Led_ring:
         cmd.animation_mode = LedRingAnimation()
         cmd.animation_mode.animation = LedRingAnimation.NONE
         cmd.wait_answer = True
-        print(self.__call_service('/niryo_robot_led_ring/user_service', LedUser, cmd))
+        print(self.__call_service('/niryo_robot_led_ring/set_user_animation', LedUser, cmd))
         print '\n'
 
     def solid(self):
@@ -55,7 +55,7 @@ class Test_Led_ring:
         cmd.color.g = 234
         cmd.color.b = 11
         cmd.wait_answer = True
-        print(self.__call_service('/niryo_robot_led_ring/user_service', LedUser, cmd))
+        print(self.__call_service('/niryo_robot_led_ring/set_user_animation', LedUser, cmd))
         print '\n'
 
     def flashing(self):
@@ -72,7 +72,7 @@ class Test_Led_ring:
         cmd.frequency = 4
         cmd.wait_answer = True
         cmd.iterations = 15
-        print(self.__call_service('/niryo_robot_led_ring/user_service', LedUser, cmd))
+        print(self.__call_service('/niryo_robot_led_ring/set_user_animation', LedUser, cmd))
         print '\n'
 
     def alternate(self):
@@ -96,7 +96,7 @@ class Test_Led_ring:
         cmd.colors_list = [color1, color2, color3]
         cmd.iterations = 5
         cmd.wait_answer = True
-        print(self.__call_service('/niryo_robot_led_ring/user_service', LedUser, cmd))
+        print(self.__call_service('/niryo_robot_led_ring/set_user_animation', LedUser, cmd))
         print '\n'
 
     def chase(self):
@@ -113,7 +113,7 @@ class Test_Led_ring:
         cmd.speed_ms = 200
         cmd.iterations = 100
         cmd.wait_answer = True
-        print(self.__call_service('/niryo_robot_led_ring/user_service', LedUser, cmd))
+        print(self.__call_service('/niryo_robot_led_ring/set_user_animation', LedUser, cmd))
         print '\n'
 
     def wipe(self):
@@ -129,7 +129,7 @@ class Test_Led_ring:
         cmd.color = color
         cmd.speed_ms = 100
         cmd.wait_answer = True
-        print(self.__call_service('/niryo_robot_led_ring/user_service', LedUser, cmd))
+        print(self.__call_service('/niryo_robot_led_ring/set_user_animation', LedUser, cmd))
         print '\n'
 
     def rainbow(self):
@@ -141,7 +141,7 @@ class Test_Led_ring:
         cmd.speed_ms = 10
         cmd.iterations = 4
         cmd.wait_answer = True
-        print(self.__call_service('/niryo_robot_led_ring/user_service', LedUser, cmd))
+        print(self.__call_service('/niryo_robot_led_ring/set_user_animation', LedUser, cmd))
         print '\n'
 
     def rainbow_cycle(self):
@@ -153,7 +153,7 @@ class Test_Led_ring:
         cmd.speed_ms = 5
         cmd.iterations = 2
         cmd.wait_answer = True
-        print(self.__call_service('/niryo_robot_led_ring/user_service', LedUser, cmd))
+        print(self.__call_service('/niryo_robot_led_ring/set_user_animation', LedUser, cmd))
         print '\n'
 
     def rainbow_chase(self):
@@ -165,7 +165,7 @@ class Test_Led_ring:
         cmd.speed_ms = 40  # speed of the chase, not the rainbow
         cmd.iterations = 4
         cmd.wait_answer = True
-        print(self.__call_service('/niryo_robot_led_ring/user_service', LedUser, cmd))
+        print(self.__call_service('/niryo_robot_led_ring/set_user_animation', LedUser, cmd))
         print '\n'
 
     def go_up(self):
@@ -181,7 +181,7 @@ class Test_Led_ring:
         cmd.iterations = 5
         cmd.speed_ms = 20
         cmd.wait_answer = True
-        print(self.__call_service('/niryo_robot_led_ring/user_service', LedUser, cmd))
+        print(self.__call_service('/niryo_robot_led_ring/set_user_animation', LedUser, cmd))
         print '\n'
 
     def go_up_and_down(self):
@@ -197,7 +197,7 @@ class Test_Led_ring:
         cmd.iterations = 5
         cmd.speed_ms = 20
         cmd.wait_answer = True
-        print(self.__call_service('/niryo_robot_led_ring/user_service', LedUser, cmd))
+        print(self.__call_service('/niryo_robot_led_ring/set_user_animation', LedUser, cmd))
         print '\n'
 
     def __call_service(self, service_name, service_msg_type, *args):

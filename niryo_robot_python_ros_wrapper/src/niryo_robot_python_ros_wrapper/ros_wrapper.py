@@ -155,14 +155,16 @@ class NiryoRosWrapper:
         self.__tool_action_server_client = actionlib.SimpleActionClient(self.__tool_action_server_name,
                                                                         ToolAction)
 
-        # Led Ring
-        self.__led_ring = LedRingRosWrapper(self.__hardware_version, self.__service_timeout)
-
-        # Sound
-        self.__sound = SoundRosWrapper(self.__hardware_version, self.__service_timeout)
-
-        # - Custom button
-        self.__custom_button = CustomButtonRosWrapper(self.__hardware_version)
+        self.__led_ring = None
+        self.__sound = None
+        self.__custom_button = None
+        if self.__hardware_version == 'ned2':
+            # Led Ring
+            self.__led_ring = LedRingRosWrapper(self.__hardware_version, self.__service_timeout)
+            # Sound
+            self.__sound = SoundRosWrapper(self.__hardware_version, self.__service_timeout)
+            # - Custom button
+            self.__custom_button = CustomButtonRosWrapper(self.__hardware_version)
 
     def __del__(self):
         del self
