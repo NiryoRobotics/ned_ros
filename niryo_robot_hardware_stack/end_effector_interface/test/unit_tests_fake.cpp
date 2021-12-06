@@ -87,6 +87,15 @@ TEST_F(EndEffectorTestSuite, getButtonState)
     ASSERT_TRUE(buttons.at(0)->type != common::model::EButtonType::UNKNOWN);
     ASSERT_TRUE(buttons.at(1)->type != common::model::EButtonType::UNKNOWN);
     ASSERT_TRUE(buttons.at(2)->type != common::model::EButtonType::UNKNOWN);
+
+    bool updated_status;
+    for (int i = 0; i < 3; i++)
+    {
+        updated_status = !buttons.at(0)->actions.empty();
+        if (updated_status)
+            break;
+    }
+    ASSERT_TRUE(updated_status);
 }
 
 // Test service set Digital IO
