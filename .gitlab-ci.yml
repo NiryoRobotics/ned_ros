@@ -162,7 +162,7 @@ code_coverage_cpp_job:
   # dependencies:
   #   - catkin_make_amd
   script:
-    - wget https://gitlab.com/niryo/niryo-one-s/development-tools/-/blob/master/Code_Analysis/build_code_coverage.sh
+    - curl --header 'Private-Token: ${CI_JOB_TOKEN}' https://gitlab.com/api/v4/projects/30000580/repository/files/Code_Analysis%2Fbuild_code_coverage.sh/raw?ref=master > build_code_coverage.sh
     - ./build_code_coverage -p ${CATKIN_PROFILE_NAME}
 
 ## See https://docs.gitlab.com/ee/user/project/merge_requests/code_quality.html
