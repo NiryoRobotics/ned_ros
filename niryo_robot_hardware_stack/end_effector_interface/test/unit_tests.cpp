@@ -65,9 +65,9 @@ TEST_F(EndEffectorTestSuite, config)
     ASSERT_EQ(id, 0);
     EXPECT_EQ(hw_type, "end_effector");
 
-    ASSERT_TRUE(nh.hasParam("button2/type"));
-    ASSERT_TRUE(nh.hasParam("button1/type"));
-    ASSERT_TRUE(nh.hasParam("button0/type"));
+    ASSERT_TRUE(nh.hasParam("button_2/type"));
+    ASSERT_TRUE(nh.hasParam("button_1/type"));
+    ASSERT_TRUE(nh.hasParam("button_0/type"));
 }
 
 // Test service set Digital IO
