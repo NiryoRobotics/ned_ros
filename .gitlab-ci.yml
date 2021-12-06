@@ -166,6 +166,8 @@ code_coverage_cpp_job:
   variables:
     SCRIPT_PATH: development-tools/Code_Analysis/build_code_coverage.sh
   script:
+    # Do stuff to move source properly for catkin_make
+    - !reference [.abstract_move_source_tricks_job, script]
     - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.com/niryo/niryo-one-s/development-tools.git
     - ./${SCRIPT_PATH} -p ${CATKIN_PROFILE_NAME}
 
