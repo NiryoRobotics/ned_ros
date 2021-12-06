@@ -166,7 +166,8 @@ code_coverage_cpp_job:
   script:
     # I followed this doc page to download file from Giltab API: https://docs.gitlab.com/ee/api/repository_files.html
     -  >
-      curl --header "Private-Token: ${CI_JOB_TOKEN}" "https://gitlab.com/api/v4/projects/30000580/repository/files/Code_Analysis%2F${SCRIPT_NAME}/raw?ref=master" > ${SCRIPT_NAME}
+      curl --form "token=${CI_JOB_TOKEN}" "https://gitlab.com/api/v4/projects/30000580/repository/files/Code_Analysis%2F${SCRIPT_NAME}/raw?ref=master" > ${SCRIPT_NAME}
+    - cat ${SCRIPT_NAME}
     - chmod +x ${SCRIPT_NAME}
     - ./${SCRIPT_NAME} -p ${CATKIN_PROFILE_NAME}
 
