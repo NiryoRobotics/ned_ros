@@ -175,7 +175,6 @@ class NiryoRosWrapper:
 
     def __init__(self):
         # - Getting ROS parameters
-        print "a"
         self.__service_timeout = rospy.get_param("/niryo_robot/python_ros_wrapper/service_timeout")
         self.__simulation_mode = rospy.get_param("/niryo_robot/simulation_mode")
         self.__hardware_version = rospy.get_param("/niryo_robot/hardware_version")
@@ -192,7 +191,7 @@ class NiryoRosWrapper:
         # - Pose
         self.__joints_ntv = NiryoTopicValue('/joint_states', JointState)
         self.__pose_ntv = NiryoTopicValue('/niryo_robot/robot_state', RobotState)
-        print "b"
+
         # - Hardware
         self.__learning_mode_on_ntv = NiryoTopicValue('/niryo_robot/learning_mode/state', Bool)
         self.__hw_status_ntv = NiryoTopicValue('/niryo_robot_hardware_interface/hardware_status', HardwareStatus)
@@ -206,7 +205,6 @@ class NiryoRosWrapper:
                                                               CompressedImage, queue_size=1)
         self.__camera_intrinsics_message_ntv = NiryoTopicValue('/niryo_robot_vision/camera_intrinsics', CameraInfo,
                                                                queue_size=1)
-        print "c"
         # - Conveyor
         self.__conveyors_feedback_ntv = NiryoTopicValue('/niryo_robot/conveyor/feedback', ConveyorFeedbackArray)
 
@@ -221,7 +219,7 @@ class NiryoRosWrapper:
         # Tool action
         self.__tool_action_nac = NiryoActionClient('/niryo_robot_tools_commander/action_server', ToolAction,
                                                    ToolGoal)
-        print "d"
+
         if self.__hardware_version == 'ned2':
             from niryo_robot_python_ros_wrapper.custom_button_ros_wrapper import CustomButtonRosWrapper
             from niryo_robot_led_ring.api import LedRingRosWrapper
@@ -542,7 +540,7 @@ class NiryoRosWrapper:
         :rtype: (int, str)
         """
         x, y, z, roll, pitch, yaw = pose
-        cmd = ArmMoveCommand(cmd_type=cmd_type, position=Pose(x, y, z), rpy=RPY(roll=roll, pitch=pitch, yaw=yaw))
+        cmd = ArmMoveCommand(cmd_type=cmd_type, position=Point(x, y, z), rpy=RPY(roll=roll, pitch=pitch, yaw=yaw))
         goal = RobotMoveGoal(cmd=cmd)
         return self.__robot_action_nac.execute(goal)
 
@@ -999,6 +997,7 @@ class NiryoRosWrapper:
 
         result = self.__call_service("/niryo_robot_arm_commander/compute_waypointed_trajectory",
                                      ComputeTrajectory, list_poses, dist_smoothing)
+        self.__classic_return_w_check(result)
         return result.trajectory
 
     def __list_pose_raw_to_list_poses(self, list_poses_raw):

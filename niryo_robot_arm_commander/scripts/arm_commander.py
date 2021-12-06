@@ -420,7 +420,11 @@ class ArmCommander:
         return self.__traj_executor.execute_plan(plan)
 
     def compute_and_execute_waypointed_trajectory(self, arm_cmd):
-        status, message, plan = self.compute_waypointed_trajectory(arm_cmd)
+        try:
+            status, message, plan = self.compute_waypointed_trajectory(arm_cmd)
+        except ArmCommanderException as e:
+            return e.status, e.message
+
         if status != CommandStatus.SUCCESS:
             return status, message
 

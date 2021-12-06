@@ -232,7 +232,11 @@ class RobotCommanderNode:
         return [status, message]
 
     def __callback_compute_trajectory(self, req):
-        status, message, plan = self.__arm_commander.compute_waypointed_trajectory(req)
+        try:
+            status, message, plan = self.__arm_commander.compute_waypointed_trajectory(req)
+        except ArmCommanderException as e:
+            return e.status, e.message, None
+
         return status, message, RobotTrajectory() if plan is None else plan.joint_trajectory
 
     # - Action Server
