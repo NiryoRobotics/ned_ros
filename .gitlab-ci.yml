@@ -158,9 +158,13 @@ catkin_lint_job:
     - catkin lint -W2 --rosdistro melodic --ignore missing_directory --explain src
 
 code_coverage_cpp_job:
-  stage: build
+  stage: test
   dependencies:
     - catkin_make_amd
+  ## TO DELETE
+  needs:
+    - catkin_make_amd
+  ## ------------
   tags:
     - local_corentin
   variables:
