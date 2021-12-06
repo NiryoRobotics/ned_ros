@@ -29,8 +29,52 @@
 
 static std::unique_ptr<ros::NodeHandle> nh;
 
+struct HandleMsgReturn
+{
+    HandleMsgReturn() {}
+    const static int max_failures = 200;
+
+    static bool getCorrectMsg(const end_effector_interface::EEButtonStatusConstPtr& data, int value)
+    {
+        bool data_received = false;
+        for (int i = 0; i < max_failures; i++)
+        {
+            if (data && data->action == value)
+            {
+                data_received = true;
+                break;
+            }
+            else
+            {
+                ros::spinOnce();
+                ros::WallDuration(0.01).sleep();
+            }
+        }
+        return data_received;
+    }
+
+    template<class T>
+    static bool publisherIsOn(const boost::shared_ptr<T const>& data)
+    {
+        bool data_received = false;
+        for (int i = 0; i < max_failures; i++)
+        {
+            if (data)
+            {
+                data_received = true;
+                break;
+            }
+            else
+            {
+                ros::spinOnce();
+                ros::WallDuration(0.01).sleep();
+            }
+        }
+        return data_received;
+    }
+};
 // Test service set Digital IO
-TEST(EndEffectorTESTSuite, serviceTest)
+TEST(EndEffectorTestTSuite, serviceTest)
 {
     auto client = nh->serviceClient<end_effector_interface::SetEEDigitalOut>("end_effector_interface/set_ee_io_state");
 
@@ -42,6 +86,70 @@ TEST(EndEffectorTESTSuite, serviceTest)
     client.call(srv);
 
     EXPECT_EQ(srv.response.state, true);
+}
+
+// check if status of button from driver is published to upper layer or not
+// in real hw, we can't check because of manually press on button.
+TEST(EndEffectorTestSuite, publisherTestButtonCustom)
+{
+    end_effector_interface::EEButtonStatusConstPtr data;
+    ros::Subscriber sub = nh->subscribe<end_effector_interface::EEButtonStatus>("end_effector_interface/custom_button_status", 10,
+                            [&](const end_effector_interface::EEButtonStatusConstPtr msg) {data = msg;});
+
+    // wait a while to get data from topic
+    bool res = HandleMsgReturn::getCorrectMsg(data, 0);
+
+    ASSERT_EQ(sub.getNumPublishers(), 1U);
+    
+    ASSERT_TRUE(res) << "No data sent from publisher on topic end_effector_interface/custom_button_status";
+
+    EXPECT_EQ(data->action, 0);
+}
+
+TEST(EndEffectorTestSuite, publisherTestButtonFreeDriver)
+{
+    end_effector_interface::EEButtonStatusConstPtr data;
+    ros::Subscriber sub = nh->subscribe<end_effector_interface::EEButtonStatus>("end_effector_interface/free_drive_button_status", 10,
+                            [&](const end_effector_interface::EEButtonStatusConstPtr msg) {data = msg;});
+
+    // wait a while to get data from topic
+    bool res = HandleMsgReturn::getCorrectMsg(data, 2);
+
+    ASSERT_EQ(sub.getNumPublishers(), 1U);
+    
+    ASSERT_TRUE(res) << "No data sent from publisher on topic end_effector_interface/free_drive_button_status";
+
+    EXPECT_EQ(data->action, 2);
+}
+
+TEST(EndEffectorTestSuite, publisherTestSavePosition)
+{
+    end_effector_interface::EEButtonStatusConstPtr data;
+    ros::Subscriber sub = nh->subscribe<end_effector_interface::EEButtonStatus>("end_effector_interface/save_pos_button_status", 10,
+                            [&](const end_effector_interface::EEButtonStatusConstPtr msg) {data = msg;});
+
+    // wait a while to get data from topic
+    bool res = HandleMsgReturn::getCorrectMsg(data, 3);
+
+    ASSERT_EQ(sub.getNumPublishers(), 1U);
+    
+    ASSERT_TRUE(res) << "No data sent from publisher on topic end_effector_interface/save_pos_button_status";
+
+    EXPECT_EQ(data->action, 3);
+}
+
+TEST(EndEffectorTestSuite, publisherDigitalIO)
+{
+    end_effector_interface::EEIOStateConstPtr data;
+    ros::Subscriber sub = nh->subscribe<end_effector_interface::EEIOState>("end_effector_interface/io_state", 10,
+                            [&](const end_effector_interface::EEIOStateConstPtr msg) {data = msg;});
+
+    // wait a while to get data from topic
+    bool res = HandleMsgReturn::publisherIsOn<end_effector_interface::EEIOState>(data);
+
+    ASSERT_EQ(sub.getNumPublishers(), 1U);
+    
+    ASSERT_TRUE(res) << "No data sent from publisher on topic end_effector_interface/io_state";
 }
 
 int main(int argc, char **argv)
