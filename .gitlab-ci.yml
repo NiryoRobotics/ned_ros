@@ -16,7 +16,7 @@ variables:
   GIT_DEPTH: 0
   NIRYO_HOME_FOLDER: /home/niryo/catkin_ws
   GET_SOURCES_ATTEMPTS: 3
-  CATKIN_PROFILE_NAME: release
+  CATKIN_PROFILE_NAME: debug_ned2
   
 
 stages:
@@ -40,7 +40,7 @@ image: registry.gitlab.com/niryo/niryo-one-s/ned_ros_stack/ned2:amd64
     - mv !(src) ${NIRYO_HOME_FOLDER}/src/
     ######################################
     - cd ${NIRYO_HOME_FOLDER}
-    - catkin build --profile ${CATKIN_PROFILE_NAME}
+    - catkin build --profile ${CATKIN_PROFILE_NAME} --catkin-make-args tests
     - cd -
     - mv ${NIRYO_HOME_FOLDER}/* .
 
