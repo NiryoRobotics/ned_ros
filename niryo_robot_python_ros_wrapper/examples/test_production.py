@@ -3,7 +3,7 @@ import json
 import numpy as np
 from datetime import datetime
 
-from std_msgs.msg import Int32
+from std_msgs.msg import Int32, String
 
 from niryo_robot_python_ros_wrapper.ros_wrapper import NiryoRosWrapper, NiryoRosWrapperException
 from niryo_robot_python_ros_wrapper.ros_wrapper_enums import ButtonAction
@@ -146,6 +146,11 @@ class TestProduction:
 
     def print_report(self):
         print(json.dumps(self.get_report(), indent=4, sort_keys=True))
+
+    def send_report(self):
+        new_report_publisher = rospy.Publisher('/niryo_robot_reports/test_report', String, queue_size=10)
+        print(json.dumps(self.get_report()))
+        new_report_publisher.publish(json.dumps(self.get_report()))
 
 
 class TestFunctions(object):
@@ -487,3 +492,4 @@ if __name__ == '__main__':
     test.run()
     print("----- END -----")
     test.print_report()
+    test.send_report()

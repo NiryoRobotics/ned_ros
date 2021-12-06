@@ -9,6 +9,7 @@ from StringIO import StringIO
 from distutils.dir_util import mkpath
 
 from niryo_robot_reports.CloudAPI import CloudAPI
+from niryo_robot_reports.TestReport import TestReport
 from niryo_robot_reports.DailyReport import DailyReport
 
 # msg
@@ -25,6 +26,7 @@ class ReportsNode:
     def __init__(self):
         rospy.logdebug("Reports Node - Entering in Init")
 
+        rospy.wait_for_service('/niryo_robot_database/settings/get')
         self.__get_setting = rospy.ServiceProxy(
             '/niryo_robot_database/settings/get', GetSettings
         )
@@ -52,8 +54,7 @@ class ReportsNode:
             mkpath(self.__reports_path)
 
         self.__current_date = str(date.today())
-
-        get_all_files_paths = rospy.ServiceProxy(
+        self.__get_all_files_paths = rospy.ServiceProxy(
             '/niryo_robot_database/file_paths/get_all_by_type', GetAllByType
         )
         self.__add_report_db = rospy.ServiceProxy(
@@ -62,24 +63,9 @@ class ReportsNode:
         self.__rm_report_db = rospy.ServiceProxy(
             '/niryo_robot_database/file_paths/rm', RmFilePath
         )
-        daily_reports_response = get_all_files_paths('daily_report')
-        if daily_reports_response.status == CommandStatus.SUCCESS:
-            for report in daily_reports_response.filepaths:
-                if report.date == self.__current_date:
-                    continue
-                report_handler = DailyReport(report.path)
-                rospy.loginfo('Sending the report of {}'.format(report.date))
-                success = self.__cloud_api.daily_reports.send({
-                    'date':
-                    report.date,
-                    'report':
-                    report_handler.content
-                })
-                if success:
-                    report_handler.delete()
-                    self.__rm_report_db(report.id)
-                else:
-                    rospy.logerr('Unable to send the report')
+
+        self.__send_failed_daily_reports()
+        self.__send_failed_test_reports()
 
         report_name = '{}.json'.format(self.__current_date)
         report_path = '{}/{}'.format(self.__reports_path, report_name)
@@ -135,11 +121,53 @@ class ReportsNode:
 
     def __test_report_callback(self, req):
         try:
-            parsed_json = json.loads(req.date)
+            parsed_json = json.loads(req.data)
         except ValueError as e:
             rospy.logerr('Malformed json: ' + str(e))
             return
-        self.__cloud_api.test_report.send(parsed_json)
+        parsed_json['date'] = datetime.now().isoformat()
+        success = self.__cloud_api.test_report.send(parsed_json)
+        if not success:
+            report_name = 'test_{}.json'.format(parsed_json['date'])
+            report_path = '{}/{}'.format(self.__reports_path, report_name)
+            report_handler = TestReport(report_path)
+            report_handler.set_content(parsed_json)
+            self.__add_report_db(
+                'test_report', report_name, report_path
+            )
+
+    def __send_failed_daily_reports(self):
+        daily_reports_response = self.__get_all_files_paths('daily_report')
+        if daily_reports_response.status == CommandStatus.SUCCESS:
+            for report in daily_reports_response.filepaths:
+                if report.date == self.__current_date:
+                    continue
+                report_handler = DailyReport(report.path)
+                rospy.loginfo('Sending the report of {}'.format(report.date))
+                success = self.__cloud_api.daily_reports.send({
+                    'date':
+                        report.date,
+                    'report':
+                        report_handler.content
+                })
+                if success:
+                    report_handler.delete()
+                    self.__rm_report_db(report.id)
+                else:
+                    rospy.logerr('Unable to send the report')
+
+    def __send_failed_test_reports(self):
+        test_reports_response = self.__get_all_files_paths('test_report')
+        if test_reports_response.status == CommandStatus.SUCCESS:
+            for report in test_reports_response.filepaths:
+                report_handler = TestReport(report.path)
+                rospy.loginfo('Sending the test report of {}'.format(report_handler.content['date']))
+                success = self.__cloud_api.test_report.send(report_handler.content)
+                if success:
+                    report_handler.delete()
+                    self.__rm_report_db(report.id)
+                else:
+                    rospy.logerr('Unable to send the report')
 
 
 if __name__ == "__main__":

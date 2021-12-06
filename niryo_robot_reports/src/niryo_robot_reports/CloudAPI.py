@@ -36,5 +36,4 @@ class CloudAPI:
         response = requests.post(
             self.__url, headers=self.__headers, json=payload
         )
-        print(response.text)
         return response.status_code == 200
