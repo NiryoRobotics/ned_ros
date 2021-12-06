@@ -159,8 +159,8 @@ catkin_lint_job:
 
 code_coverage_cpp_job:
   stage: build
-  # dependencies:
-  #   - catkin_make_amd
+  dependencies:
+    - catkin_make_amd
   tags:
     - local_corentin
   variables:
