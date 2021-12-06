@@ -16,6 +16,8 @@ variables:
   GIT_DEPTH: 0
   NIRYO_HOME_FOLDER: /home/niryo/catkin_ws
   GET_SOURCES_ATTEMPTS: 3
+  CATKIN_PROFILE_NAME: release
+  
 
 stages:
   - build
@@ -38,7 +40,7 @@ image: registry.gitlab.com/niryo/niryo-one-s/ned_ros_stack/ned2:amd64
     - mv !(src) ${NIRYO_HOME_FOLDER}/src/
     ######################################
     - cd ${NIRYO_HOME_FOLDER}
-    - catkin build --profile release
+    - catkin build --profile ${CATKIN_PROFILE_NAME}
     - cd -
     - mv ${NIRYO_HOME_FOLDER}/* .
 
@@ -154,6 +156,14 @@ catkin_lint_job:
     - !reference [.abstract_move_source_tricks_job, script]
     # Check code linting
     - catkin lint -W2 --rosdistro melodic --ignore missing_directory --explain src
+
+code_coverage_cpp_job:
+  stage: build
+  # dependencies:
+  #   - catkin_make_amd
+  script:
+    - wget https://gitlab.com/niryo/niryo-one-s/development-tools/-/blob/master/Code_Analysis/build_code_coverage.sh
+    - ./build_code_coverage -p ${CATKIN_PROFILE_NAME}
 
 ## See https://docs.gitlab.com/ee/user/project/merge_requests/code_quality.html
 include:
