@@ -122,17 +122,11 @@ class RobotCommanderNode:
                        active_publish_rate_sec)
 
         # - Services
-        rospy.Service('~stop_command', Trigger,
-                      self.__callback_stop_command)
-
-        rospy.Service('~is_active', GetBool,
-                      self.__callback_is_active)
-
-        rospy.Service('~compute_waypointed_trajectory', ComputeTrajectory,
-                      self.__callback_compute_trajectory)
-
-        rospy.Service('~linear_trajectory/activate', SetBool,
-                      self.__callback_linear_trajectory)  # service to  manage the linear trajectory calculation or not
+        rospy.Service('~stop_command', Trigger, self.__callback_stop_command)
+        rospy.Service('~is_active', GetBool, self.__callback_is_active)
+        rospy.Service('~compute_waypointed_trajectory', ComputeTrajectory, self.__callback_compute_trajectory)
+        # service to  manage the linear trajectory calculation or not
+        rospy.Service('~linear_trajectory/activate', SetBool, self.__callback_linear_trajectory)
 
         # Robot Action Server
         self.__current_goal_handle = actionlib.ServerGoalHandle()
@@ -239,7 +233,7 @@ class RobotCommanderNode:
 
     def __callback_compute_trajectory(self, req):
         status, message, plan = self.__arm_commander.compute_waypointed_trajectory(req)
-        return status, message, RobotTrajectory() if plan is None else plan
+        return status, message, RobotTrajectory() if plan is None else plan.joint_trajectory
 
     # - Action Server
     def __callback_goal(self, goal_handle):

@@ -1,10 +1,8 @@
 #!/usr/bin/env python
-print "0"
 # Lib
 import rospy
 import actionlib
 
-print "0.1"
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus, SoftwareVersion
 
@@ -21,32 +19,16 @@ from niryo_robot_tools_commander.msg import ToolCommand
 from niryo_robot_status.msg import RobotStatus
 
 # Services
-print "3"
 from niryo_robot_msgs.srv import GetNameDescriptionList, SetBool, SetInt, Trigger
-
-print "2"
 
 # Actions
 from actionlib_msgs.msg import GoalStatus
 from control_msgs.msg import FollowJointTrajectoryAction, FollowJointTrajectoryGoal
-
-print "bbbbbbbbb"
 from niryo_robot_tools_commander.msg import ToolGoal, ToolAction
+from niryo_robot_arm_commander.msg import ArmMoveCommand, RobotMoveGoal, RobotMoveAction
 
-print "454554"
 # Enums
 from niryo_robot_python_ros_wrapper.ros_wrapper_enums import *
-
-print "aaaaaaaa"
-from niryo_robot_arm_commander.msg import ArmMoveCommand
-
-print "aaaaaaaa222"
-from niryo_robot_arm_commander.msg import RobotMoveGoal
-
-print "aaaaaaaa333"
-from niryo_robot_arm_commander.msg import RobotMoveAction
-
-print "3"
 
 
 class NiryoRosWrapperException(Exception):
@@ -131,7 +113,7 @@ class NiryoActionClient(object):
     @property
     def action_server(self):
         if self.__action_server is None:
-            actionlib.SimpleActionClient(self.__action_name, self.__action_type)
+            self.__action_server = actionlib.SimpleActionClient(self.__action_name, self.__action_type)
         return self.__action_server
 
     def execute(self, goal):
@@ -140,7 +122,7 @@ class NiryoActionClient(object):
                 'Wrong goal type: expected {} but got {}'.format(type(goal), type(self.__action_goal_type)))
 
         if self.__action_server is None:
-            actionlib.SimpleActionClient(self.__action_name, self.__action_type)
+            self.__action_server = actionlib.SimpleActionClient(self.__action_name, self.__action_type)
 
         # Connect to server
         if not self.__action_server.wait_for_server(rospy.Duration(self.__action_connection_timeout)):

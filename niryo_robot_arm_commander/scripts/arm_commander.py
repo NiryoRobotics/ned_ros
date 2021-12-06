@@ -21,6 +21,7 @@ from niryo_robot_msgs.msg import CommandStatus
 # Messages
 from geometry_msgs.msg import Pose, Point, Quaternion
 from moveit_msgs.msg import RobotState as RobotStateMoveIt
+from moveit_msgs.msg import RobotTrajectory
 from std_msgs.msg import Int32
 from niryo_robot_arm_commander.msg import ArmMoveCommand
 from niryo_robot_msgs.msg import RPY
@@ -412,9 +413,10 @@ class ArmCommander:
 
     # - Waypointed Trajectory
     def execute_waypointed_trajectory(self, arm_cmd):
-        self.__arm.set_joint_value_target(arm_cmd.trajectory.joint_trajectory.points[0].positions)
+        imported_moveit_plan = RobotTrajectory(joint_trajectory=arm_cmd.trajectory)
+        self.__arm.set_joint_value_target(imported_moveit_plan.joint_trajectory.points[0].positions)
         partial_plan = self.__traj_executor.plan()
-        plan = self.__link_plans(partial_plan, arm_cmd.trajectory)
+        plan = self.__link_plans(partial_plan, imported_moveit_plan)
         return self.__traj_executor.execute_plan(plan)
 
     def compute_and_execute_waypointed_trajectory(self, arm_cmd):
