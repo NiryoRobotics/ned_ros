@@ -1035,7 +1035,9 @@ bool TtlInterfaceCore::_callbackActivateLeds(niryo_robot_msgs::SetInt::Request &
 
     res.status = result;
     res.message = message;
-    return (niryo_robot_msgs::CommandStatus::SUCCESS == result);
+
+    // return response even request failed
+    return true;
 }
 
 
@@ -1069,7 +1071,7 @@ bool TtlInterfaceCore::_callbackReadCustomValue(ttl_driver::ReadCustomValue::Req
     }
 
     res.status = result;
-    return (niryo_robot_msgs::CommandStatus::SUCCESS == result);
+    return true;
 }
 
 /**
@@ -1101,7 +1103,7 @@ bool TtlInterfaceCore::_callbackWriteCustomValue(ttl_driver::WriteCustomValue::R
     }
 
     res.status = result;
-    return (niryo_robot_msgs::CommandStatus::SUCCESS == result);
+    return true;
 }
 
 /**
@@ -1148,7 +1150,7 @@ bool TtlInterfaceCore::_callbackReadPIDValue(ttl_driver::ReadPIDValue::Request &
 
     res.status = result;
 
-    return (niryo_robot_msgs::CommandStatus::SUCCESS == result);
+    return true;
 }
 
 /**
@@ -1175,7 +1177,7 @@ bool TtlInterfaceCore::_callbackWritePIDValue(ttl_driver::WritePIDValue::Request
 
     res.status = result;
 
-    return (niryo_robot_msgs::CommandStatus::SUCCESS == result);
+    return true;
 }
 
 /**
@@ -1223,7 +1225,7 @@ bool TtlInterfaceCore::_callbackReadVelocityProfile(ttl_driver::ReadVelocityProf
 
     res.status = result;
 
-    return (niryo_robot_msgs::CommandStatus::SUCCESS == result);
+    return true;
 }
 
 /**
@@ -1255,7 +1257,7 @@ bool TtlInterfaceCore::_callbackWriteVelocityProfile(ttl_driver::WriteVelocityPr
 
   res.status = result;
 
-  return (niryo_robot_msgs::CommandStatus::SUCCESS == result);
+  return true;
 }
 
 void TtlInterfaceCore::_publishCollisionStatus(const ros::TimerEvent&)
