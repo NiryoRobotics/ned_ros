@@ -2,13 +2,13 @@ cmake_minimum_required(VERSION 3.0.2)
 project(can_driver)
 message( STATUS "\n## Reading ${PROJECT_NAME}/CMakeLists.txt...")
 
-SET(HARDWARE_VERSION "ned2" CACHE STRING "Robot model target")
+set(HARDWARE_VERSION "ned2" CACHE STRING "Robot model target")
 # for preprocessor directives
-if (${HARDWARE_VERSION} STREQUAL "one")
+if ("${HARDWARE_VERSION}" STREQUAL "one")
     add_definitions(-DNIRYO_ONE)
-elseif (${HARDWARE_VERSION} STREQUAL "ned")
+elseif ("${HARDWARE_VERSION}" STREQUAL "ned")
     add_definitions(-DNIRYO_NED)
-elseif (${HARDWARE_VERSION} STREQUAL "ned2")
+elseif ("${HARDWARE_VERSION}" STREQUAL "ned2")
     add_definitions(-DNIRYO_NED2)
 endif()
 
@@ -42,7 +42,7 @@ find_package(catkin REQUIRED
 if(CATKIN_ENABLE_TESTING AND ENABLE_COVERAGE_TESTING)
   find_package(code_coverage REQUIRED)
   # Add compiler flags for coverage instrumentation before defining any targets
-  APPEND_COVERAGE_COMPILER_FLAGS()
+  append_coverage_compiler_flags()
 endif()
 
 ###############################################
@@ -164,22 +164,23 @@ if(CATKIN_ENABLE_TESTING)
         test/unit_tests.cpp
       )
     endif()
-  if(TARGET ${PROJECT_NAME}_unit_tests)
-    target_link_libraries(${PROJECT_NAME}_unit_tests
-      ${PROJECT_NAME}
-      ${catkin_LIBRARIES}
-    )
 
-    # Create a target ${PROJECT_NAME}_coverage_report
-    if(ENABLE_COVERAGE_TESTING)
-      set(COVERAGE_EXCLUDES "*/${PROJECT_NAME}/test*")
-      add_code_coverage(
-        NAME ${PROJECT_NAME}_coverage_report
-        DEPENDENCIES tests
+    if(TARGET ${PROJECT_NAME}_unit_tests)
+      target_link_libraries(${PROJECT_NAME}_unit_tests
+        ${PROJECT_NAME}
+        ${catkin_LIBRARIES}
       )
+
+      # Create a target ${PROJECT_NAME}_coverage_report
+      if(ENABLE_COVERAGE_TESTING)
+        set(COVERAGE_EXCLUDES "*/${PROJECT_NAME}/test*")
+        add_code_coverage(
+          NAME ${PROJECT_NAME}_coverage_report
+          DEPENDENCIES tests
+        )
+      endif()
     endif()
   endif()
-endif()
 
   ##########################
   ## Static code analysis ##

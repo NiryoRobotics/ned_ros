@@ -18,13 +18,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 ## enforcing cleaner code.
 add_definitions(-Wall  -Werror)
 
-SET(HARDWARE_VERSION "ned2" CACHE STRING "Robot model target")
+set(HARDWARE_VERSION "ned2" CACHE STRING "Robot model target")
 # for preprocessor directives
-if (${HARDWARE_VERSION} STREQUAL "one")
+if ("${HARDWARE_VERSION}" STREQUAL "one")
     add_definitions(-DNIRYO_ONE)
-elseif (${HARDWARE_VERSION} STREQUAL "ned")
+elseif ("${HARDWARE_VERSION}" STREQUAL "ned")
     add_definitions(-DNIRYO_NED)
-elseif (${HARDWARE_VERSION} STREQUAL "ned2")
+elseif ("${HARDWARE_VERSION}" STREQUAL "ned2")
     add_definitions(-DNIRYO_NED2)
 endif()
 
@@ -42,7 +42,7 @@ find_package(Boost REQUIRED
 if(CATKIN_ENABLE_TESTING AND ENABLE_COVERAGE_TESTING)
   find_package(code_coverage REQUIRED)
   # Add compiler flags for coverage instrumentation before defining any targets
-  APPEND_COVERAGE_COMPILER_FLAGS()
+  append_coverage_compiler_flags()
 endif()
 
 ###############################################
@@ -106,7 +106,7 @@ endif()
 #############
 
 if(CATKIN_ENABLE_TESTING)
-  if (${HARDWARE_VERSION} STREQUAL "ned" OR ${HARDWARE_VERSION} STREQUAL "one")
+  if ("${HARDWARE_VERSION}" STREQUAL "ned" OR "${HARDWARE_VERSION}" STREQUAL "one")
     if ("${ARCHITECTURE}" MATCHES "^(arm.*|aarch64.*|arm64.*)$")
       catkin_add_gtest(
         ${PROJECT_NAME}_unit_tests
@@ -114,22 +114,23 @@ if(CATKIN_ENABLE_TESTING)
       )
     endif()
 
-  if(TARGET ${PROJECT_NAME}_unit_tests)
-    target_link_libraries(${PROJECT_NAME}_unit_tests
-        ${catkin_LIBRARIES}
-        ${PROJECT_NAME}_core
-    )
-
-    # Create a target ${PROJECT_NAME}_coverage_report
-    if(ENABLE_COVERAGE_TESTING)
-      set(COVERAGE_EXCLUDES "*/${PROJECT_NAME}/test*")
-      add_code_coverage(
-        NAME ${PROJECT_NAME}_coverage_report
-        DEPENDENCIES tests
+    if(TARGET ${PROJECT_NAME}_unit_tests)
+      target_link_libraries(${PROJECT_NAME}_unit_tests
+          ${catkin_LIBRARIES}
+          ${PROJECT_NAME}_core
       )
+
+      # Create a target ${PROJECT_NAME}_coverage_report
+      if(ENABLE_COVERAGE_TESTING)
+        set(COVERAGE_EXCLUDES "*/${PROJECT_NAME}/test*")
+        add_code_coverage(
+          NAME ${PROJECT_NAME}_coverage_report
+          DEPENDENCIES tests
+        )
+      endif()
     endif()
   endif()
-endif()
+
 
   ##########################
   ## Static code analysis ##

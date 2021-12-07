@@ -20,7 +20,7 @@
 #include <ros/ros.h>
 #include <ros/service_client.h>
 #include <gtest/gtest.h>
-
+#include <vector>
 #include "common/model/tool_state.hpp"
 
 #include "tools_interface/tools_interface_core.hpp"
@@ -134,7 +134,7 @@ class ToolTestControlSuite : public ::testing::Test
             tools_interface::PingDxlTool srv_ping;
             client.call(srv_ping);
 
-            // Continue only if set tool successfully 
+            // Continue only if set tool successfully
             int res = common::model::ToolState::TOOL_STATE_PING_OK;
             ASSERT_EQ(srv_ping.response.state, res);
 
@@ -154,14 +154,14 @@ TEST_F(ToolTestControlSuite, checkToolScannedId)
     ros::NodeHandle nh("");
     std::vector<int> id_list;
     nh.getParam("tools_interface/tools_params/id_list", id_list);
-   
-    EXPECT_TRUE(std::find(id_list.begin(), id_list.end(), id) != id_list.end()); 
+
+    EXPECT_TRUE(std::find(id_list.begin(), id_list.end(), id) != id_list.end());
 }
 
 TEST_F(ToolTestControlSuite, openTool)
 {
     // only test tool if tool can be added and type gripper
-    ASSERT_FALSE(id == -1);
+    ASSERT_NE(id, -1);
     if (id != 11 && id != 12 && id != 13)
         return;
 
@@ -196,7 +196,7 @@ TEST_F(ToolTestControlSuite, openTool)
 TEST_F(ToolTestControlSuite, CloseTool)
 {
     // only test tool if tool can be added and type gripper
-    ASSERT_FALSE(id == -1);
+    ASSERT_NE(id, -1);
     if (id != 11 && id != 12 && id != 13)
         return;
 
@@ -294,7 +294,7 @@ TEST_F(ToolTestControlSuite, PushAirVacuumPump)
 
 TEST_F(ToolTestControlSuite, ToolReboot)
 {
-    ASSERT_FALSE(id == -1);
+    ASSERT_NE(id, -1);
 
     auto client = nh_g->serviceClient<std_srvs::Trigger>("/niryo_robot/tools/reboot");
 
@@ -310,11 +310,20 @@ TEST_F(ToolTestControlSuite, ToolReboot)
 
 int main(int argc, char **argv)
 {
+    testing::InitGoogleTest(&argc, argv);
+
     ros::init(argc, argv, "tools_interface_service_client");
 
     nh_g = std::make_unique<ros::NodeHandle>("~");
 
-    testing::InitGoogleTest(&argc, argv);
+    bool manual_tests{false};
+    ros::NodeHandle nh_private("~");
+    nh_private.getParam("manual_tests", manual_tests);
+    ROS_DEBUG("manual_tests: %s", manual_tests ? "True" : "False");
+
+    // remove manual tests if automatic mode
+    if (!manual_tests)
+      testing::GTEST_FLAG(filter) = "-ToolTestControlSuiteManual.*";
 
     ros::Duration(5.0).sleep();
     return RUN_ALL_TESTS();

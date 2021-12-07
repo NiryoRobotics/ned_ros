@@ -59,7 +59,7 @@ void waitForMessage(const conveyor_interface::ConveyorFeedbackArrayConstPtr& msg
       ros::WallDuration(0.1).sleep();
       ++i;
     }
-    if(i == MAX_FAILURES)
+    if (i == MAX_FAILURES)
     {
       ADD_FAILURE();
     }
@@ -102,7 +102,6 @@ protected:
   {
     ROS_INFO("TearDownTestCase : Manual");
   }
-
 };
 
 //************************
@@ -149,7 +148,7 @@ TEST_F(ConveyorInterfaceTestSuiteAuto, controlConveyor1)
 
     conveyor_interface::ConveyorFeedbackArrayConstPtr pcl;
     auto subscriber = nh->subscribe<conveyor_interface::ConveyorFeedbackArray>("/niryo_robot/conveyor/feedback", 1,
-                                    [&](const conveyor_interface::ConveyorFeedbackArrayConstPtr& msg){ pcl = msg;});
+                                    [&pcl](const conveyor_interface::ConveyorFeedbackArrayConstPtr& msg){ pcl = msg;});
 
     waitForMessage(pcl);
 
@@ -162,7 +161,7 @@ TEST_F(ConveyorInterfaceTestSuiteAuto, controlConveyor1)
       ros::WallDuration(0.1).sleep();
       ++i;
     }
-    if(i == MAX_FAILURES)
+    if (i == MAX_FAILURES)
     {
       ADD_FAILURE();
     }
@@ -198,7 +197,7 @@ TEST_F(ConveyorInterfaceTestSuiteAuto, controlConveyor2)
 
     conveyor_interface::ConveyorFeedbackArrayConstPtr pcl;
     auto subscriber = nh->subscribe<conveyor_interface::ConveyorFeedbackArray>("/niryo_robot/conveyor/feedback", 1,
-                                    [&](const conveyor_interface::ConveyorFeedbackArrayConstPtr& msg){ pcl = msg;});
+                                    [&pcl](const conveyor_interface::ConveyorFeedbackArrayConstPtr& msg){ pcl = msg;});
 
     waitForMessage(pcl);
 
@@ -237,7 +236,7 @@ TEST_F(ConveyorInterfaceTestSuiteAuto, controlConveyor3)
 
     conveyor_interface::ConveyorFeedbackArrayConstPtr pcl;
     auto subscriber = nh->subscribe<conveyor_interface::ConveyorFeedbackArray>("/niryo_robot/conveyor/feedback", 1,
-                                    [&](const conveyor_interface::ConveyorFeedbackArrayConstPtr& msg){ pcl = msg;});
+                                    [&pcl](const conveyor_interface::ConveyorFeedbackArrayConstPtr& msg){ pcl = msg;});
 
 
     waitForMessage(pcl);
@@ -354,7 +353,7 @@ TEST_F(ConveyorInterfaceTestSuiteManual, setTwoConveyor)
     EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
     EXPECT_NE(first_id, srv.request.id);
 
-    for(int i = 0; i < 10; ++i)
+    for (int i = 0; i < 10; ++i)
     {
       ROS_WARN("################### Wait for second conveyor to be manually connected: (%d s) ###################", i);
       ros::Duration(1).sleep();
@@ -374,7 +373,7 @@ TEST_F(ConveyorInterfaceTestSuiteManual, setTwoConveyor)
 
     conveyor_interface::ConveyorFeedbackArrayConstPtr pcl;
     auto subscriber = nh->subscribe<conveyor_interface::ConveyorFeedbackArray>("/niryo_robot/conveyor/feedback", 1,
-                                    [&](const conveyor_interface::ConveyorFeedbackArrayConstPtr& msg){pcl = msg;});
+                                    [&pcl](const conveyor_interface::ConveyorFeedbackArrayConstPtr& msg){pcl = msg;});
 
     waitForMessage(pcl);
 
@@ -442,7 +441,7 @@ TEST_F(ConveyorInterfaceTestSuiteManual, controlBothConveyors)
 
     conveyor_interface::ConveyorFeedbackArrayConstPtr pcl;
     auto subscriber = nh->subscribe<conveyor_interface::ConveyorFeedbackArray>("/niryo_robot/conveyor/feedback", 1,
-                                    [&](const conveyor_interface::ConveyorFeedbackArrayConstPtr& msg){pcl = msg;});
+                                    [&pcl](const conveyor_interface::ConveyorFeedbackArrayConstPtr& msg){pcl = msg;});
 
 
     waitForMessage(pcl);
@@ -507,7 +506,7 @@ TEST_F(ConveyorInterfaceTestSuiteManual, controlConveyor1_bis)
 
     conveyor_interface::ConveyorFeedbackArrayConstPtr pcl;
     auto subscriber = nh->subscribe<conveyor_interface::ConveyorFeedbackArray>("/niryo_robot/conveyor/feedback", 1,
-                                    [&](const conveyor_interface::ConveyorFeedbackArrayConstPtr& msg){pcl = msg;});
+                                    [&pcl](const conveyor_interface::ConveyorFeedbackArrayConstPtr& msg){pcl = msg;});
 
 
     waitForMessage(pcl);
@@ -544,7 +543,7 @@ TEST_F(ConveyorInterfaceTestSuiteManual, controlConveyor2_bis)
 
     conveyor_interface::ConveyorFeedbackArrayConstPtr pcl;
     auto subscriber = nh->subscribe<conveyor_interface::ConveyorFeedbackArray>("/niryo_robot/conveyor/feedback", 1,
-                                    [&](const conveyor_interface::ConveyorFeedbackArrayConstPtr& msg){pcl = msg;});
+                                    [&pcl](const conveyor_interface::ConveyorFeedbackArrayConstPtr& msg){pcl = msg;});
 
 
     waitForMessage(pcl);
@@ -582,7 +581,7 @@ TEST_F(ConveyorInterfaceTestSuiteManual, controlConveyor3_bis)
 
     conveyor_interface::ConveyorFeedbackArrayConstPtr pcl;
     auto subscriber = nh->subscribe<conveyor_interface::ConveyorFeedbackArray>("/niryo_robot/conveyor/feedback", 1,
-                                    [&](const conveyor_interface::ConveyorFeedbackArrayConstPtr& msg){pcl = msg;});
+                                    [&pcl](const conveyor_interface::ConveyorFeedbackArrayConstPtr& msg){pcl = msg;});
 
 
     waitForMessage(pcl);
@@ -630,7 +629,7 @@ int main(int argc, char **argv)
 
     // remove manual tests if automatic mode
     if (!manual_tests)
-      testing::GTEST_FLAG(filter) = "-ConveyorInterfaceTestSuiteManual.*";
+        testing::GTEST_FLAG(filter) = "-ConveyorInterfaceTestSuiteManual.*";
 
     return RUN_ALL_TESTS();
 }
