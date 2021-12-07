@@ -85,7 +85,7 @@ string AbstractHardwareState::str() const
        << "Component Type " << ComponentTypeEnum(_component_type).toString() << "\n"
        << "Bus Protocol " << BusProtocolEnum(_bus_proto).toString() << "\n";
 
-    ss << "temperature " << _temperature << "\n"
+    ss << "temperature " << static_cast<int>(_temperature) << "\n"
        << "voltage " << _voltage << "\n"
        << "hw_error " << _hw_error << "\n"
        << "hw_error_message \"" << _hw_error_message << "\"";

@@ -640,6 +640,9 @@ void TtlInterfaceCore::controlLoop()
         {
             ros::Duration(0.5).sleep();
         }
+
+        // essential to allow publishers and subscribers to do their job
+        ros::spinOnce();
     }
 }
 
@@ -667,7 +670,6 @@ void TtlInterfaceCore::_executeCommand()
     if (!_conveyor_cmds_queue.empty())
     {
         std::lock_guard<std::mutex> lock(_conveyor_cmd_queue_mutex);
-
         if (_need_sleep)
             ros::Duration(0.001).sleep();
         _ttl_manager->writeSingleCommand(std::move(_conveyor_cmds_queue.front()));
