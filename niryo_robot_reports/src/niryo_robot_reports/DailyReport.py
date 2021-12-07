@@ -19,3 +19,7 @@ class DailyReport(Report):
                 'occurred': [date]
             })
         self.__write()
+
+    def set_date(self, date):
+        self.content['date'] = date
+        self.__write()

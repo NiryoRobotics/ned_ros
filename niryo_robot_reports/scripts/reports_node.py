@@ -69,7 +69,8 @@ class ReportsNode:
 
         report_name = '{}.json'.format(self.__current_date)
         report_path = '{}/{}'.format(self.__reports_path, report_name)
-        self.__report_handler = DailyReport(report_path)
+        self.__daily_report = DailyReport(report_path)
+        self.__daily_report.set_date(self.__current_date)
         add_report_response = self.__add_report_db(
             'daily_report', report_name, report_path
         )
@@ -98,14 +99,14 @@ class ReportsNode:
             'date':
             self.__current_date,
             'report':
-            self.__report_handler.content
+            self.__daily_report.content
         })
         if success:
-            self.__report_handler.delete()
+            self.__daily_report.delete()
             self.__rm_report_db(self.__current_id)
         self.__current_date = current_day
         new_path = '{}/{}.json'.format(self.__reports_path, self.__current_date)
-        self.__report_handler.set_path(new_path)
+        self.__daily_report.set_path(new_path)
 
     def __robot_status_callback(self, req):
         if req.logs_status_str.lower() not in ['error', 'critical']:
@@ -117,7 +118,7 @@ class ReportsNode:
         formatted_log = '{} - {}: {} in {}.{}:{}'.format(
             level, from_node, msg, from_file, function, line
         )
-        self.__report_handler.add_log(formatted_log, 'ROS', str(datetime.now()))
+        self.__daily_report.add_log(formatted_log, 'ROS', str(datetime.now()))
 
     def __test_report_callback(self, req):
         try:
@@ -144,12 +145,7 @@ class ReportsNode:
                     continue
                 report_handler = DailyReport(report.path)
                 rospy.loginfo('Sending the report of {}'.format(report.date))
-                success = self.__cloud_api.daily_reports.send({
-                    'date':
-                        report.date,
-                    'report':
-                        report_handler.content
-                })
+                success = self.__cloud_api.daily_reports.send(report_handler.content)
                 if success:
                     report_handler.delete()
                     self.__rm_report_db(report.id)
