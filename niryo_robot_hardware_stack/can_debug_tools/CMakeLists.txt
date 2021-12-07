@@ -18,6 +18,16 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 ## enforcing cleaner code.
 add_definitions(-Wall  -Werror)
 
+SET(HARDWARE_VERSION "ned2" CACHE STRING "Robot model target")
+# for preprocessor directives
+if (${HARDWARE_VERSION} STREQUAL "one")
+    add_definitions(-DNIRYO_ONE)
+elseif (${HARDWARE_VERSION} STREQUAL "ned")
+    add_definitions(-DNIRYO_NED)
+elseif (${HARDWARE_VERSION} STREQUAL "ned2")
+    add_definitions(-DNIRYO_NED2)
+endif()
+
 ## Find catkin macros and libraries
 find_package(catkin REQUIRED
     COMPONENTS
@@ -95,8 +105,6 @@ endif()
 ## Testing ##
 #############
 
-SET(HARDWARE_VERSION "ned2" CACHE STRING "run test on this hardware version")
-
 if(CATKIN_ENABLE_TESTING)
   if (${HARDWARE_VERSION} STREQUAL "ned" OR ${HARDWARE_VERSION} STREQUAL "one")
     if ("${ARCHITECTURE}" MATCHES "^(arm.*|aarch64.*|arm64.*)$")
@@ -111,15 +119,15 @@ if(CATKIN_ENABLE_TESTING)
         ${catkin_LIBRARIES}
         ${PROJECT_NAME}_core
     )
-  endif()
 
-  # Create a target ${PROJECT_NAME}_coverage_report
-  if(ENABLE_COVERAGE_TESTING)
-    set(COVERAGE_EXCLUDES "*/${PROJECT_NAME}/test*")
-    add_code_coverage(
-      NAME ${PROJECT_NAME}_coverage_report
-      DEPENDENCIES tests
-    )
+    # Create a target ${PROJECT_NAME}_coverage_report
+    if(ENABLE_COVERAGE_TESTING)
+      set(COVERAGE_EXCLUDES "*/${PROJECT_NAME}/test*")
+      add_code_coverage(
+        NAME ${PROJECT_NAME}_coverage_report
+        DEPENDENCIES tests
+      )
+    endif()
   endif()
 endif()
 

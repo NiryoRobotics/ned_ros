@@ -98,16 +98,17 @@ if(CATKIN_ENABLE_TESTING)
         ${catkin_LIBRARIES}
         ${PROJECT_NAME}_core
     )
+
+    # Create a target ${PROJECT_NAME}_coverage_report
+    if(ENABLE_COVERAGE_TESTING)
+      set(COVERAGE_EXCLUDES "*/${PROJECT_NAME}/test*")
+      add_code_coverage(
+        NAME ${PROJECT_NAME}_coverage_report
+        DEPENDENCIES tests
+      )
+    endif()
   endif()
 
-  # Create a target ${PROJECT_NAME}_coverage_report
-  if(ENABLE_COVERAGE_TESTING)
-    set(COVERAGE_EXCLUDES "*/${PROJECT_NAME}/test*")
-    add_code_coverage(
-      NAME ${PROJECT_NAME}_coverage_report
-      DEPENDENCIES tests
-    )
-  endif()
   
   ##########################
   ## Static code analysis ##

@@ -2,6 +2,15 @@ cmake_minimum_required(VERSION 3.0.2)
 project(ttl_driver)
 message( STATUS "\n## Reading ${PROJECT_NAME}/CMakeLists.txt...")
 
+SET(HARDWARE_VERSION "ned2" CACHE STRING "Robot model target")
+# for preprocessor directives
+if (${HARDWARE_VERSION} STREQUAL "one")
+    add_definitions(-DNIRYO_ONE)
+elseif (${HARDWARE_VERSION} STREQUAL "ned")
+    add_definitions(-DNIRYO_NED)
+elseif (${HARDWARE_VERSION} STREQUAL "ned2")
+    add_definitions(-DNIRYO_NED2)
+endif()
 
 #retrieve architecture
 execute_process( COMMAND
@@ -154,8 +163,6 @@ endif()
 ## Testing ##
 #############
 
-SET(HARDWARE_VERSION "ned2" CACHE STRING "run test on this hardware version")
-
 if(CATKIN_ENABLE_TESTING)
   find_package(rostest REQUIRED)
 
@@ -185,13 +192,6 @@ if(CATKIN_ENABLE_TESTING)
     endif()
   endif()
 
-  if(TARGET ${PROJECT_NAME}_unit_tests)
-    target_link_libraries(${PROJECT_NAME}_unit_tests
-      ${PROJECT_NAME}
-      ${catkin_LIBRARIES}
-    )
-  endif()
-
   if ("${HARDWARE_VERSION}" STREQUAL "ned" OR "${HARDWARE_VERSION}" STREQUAL "one")
     if ("${ARCHITECTURE}" MATCHES "^(arm.*|aarch64.*|arm64.*)$")
       add_rostest_gtest(${PROJECT_NAME}_integration_tests
@@ -217,7 +217,14 @@ if(CATKIN_ENABLE_TESTING)
       )  
     endif()
   endif()
-  
+
+  if(TARGET ${PROJECT_NAME}_unit_tests)
+    target_link_libraries(${PROJECT_NAME}_unit_tests
+      ${PROJECT_NAME}
+      ${catkin_LIBRARIES}
+    )
+  endif()
+
   if(TARGET ${PROJECT_NAME}_integration_tests)
     target_link_libraries(${PROJECT_NAME}_integration_tests
       ${PROJECT_NAME}
