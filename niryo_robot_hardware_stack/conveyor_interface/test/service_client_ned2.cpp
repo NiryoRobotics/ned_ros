@@ -202,8 +202,8 @@ TEST_F(ConveyorInterfaceTestSuiteAuto, controlConveyor2)
     waitForMessage(pcl);
 
     EXPECT_EQ(subscriber.getNumPublishers(), 1U);
-
     wait_spin(2.0);
+
     auto conv_vec = pcl->conveyors;
     ASSERT_EQ(conv_vec.size(), 1U);
 
@@ -447,9 +447,10 @@ TEST_F(ConveyorInterfaceTestSuiteManual, controlBothConveyors)
     waitForMessage(pcl);
 
     EXPECT_EQ(subscriber.getNumPublishers(), 1U);
+    wait_spin(2.0);
 
     auto conv_vec = pcl->conveyors;
-    ASSERT_EQ(conv_vec.size(), 1U);
+    ASSERT_EQ(conv_vec.size(), 2U);
 
     EXPECT_EQ(conv_vec.at(0).conveyor_id, srv_1.request.id);
     EXPECT_EQ(conv_vec.at(0).running, srv_1.request.control_on);
@@ -512,6 +513,7 @@ TEST_F(ConveyorInterfaceTestSuiteManual, controlConveyor1_bis)
     waitForMessage(pcl);
 
     EXPECT_EQ(subscriber.getNumPublishers(), 1U);
+    wait_spin(2.0);
 
     auto conv_vec = pcl->conveyors;
     ASSERT_EQ(conv_vec.size(), 1U);
@@ -549,6 +551,7 @@ TEST_F(ConveyorInterfaceTestSuiteManual, controlConveyor2_bis)
     waitForMessage(pcl);
 
     EXPECT_EQ(subscriber.getNumPublishers(), 1U);
+    wait_spin(2.0);
 
     auto conv_vec = pcl->conveyors;
     ASSERT_EQ(conv_vec.size(), 1U);
@@ -587,6 +590,7 @@ TEST_F(ConveyorInterfaceTestSuiteManual, controlConveyor3_bis)
     waitForMessage(pcl);
 
     EXPECT_EQ(subscriber.getNumPublishers(), 1U);
+    wait_spin(2.0);
 
     auto conv_vec = pcl->conveyors;
     ASSERT_EQ(conv_vec.size(), 1U);
