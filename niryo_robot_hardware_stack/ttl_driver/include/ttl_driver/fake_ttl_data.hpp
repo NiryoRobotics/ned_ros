@@ -51,6 +51,7 @@ class FakeTtlData
 
         struct FakeStepperRegister : public AbstractFakeRegister
         {
+            uint8_t torque{0};
             uint32_t v_start{1};
             uint32_t a_1{0};
             uint32_t v_1{0};
@@ -63,6 +64,7 @@ class FakeTtlData
 
         struct FakeDxlRegister : public AbstractFakeRegister
         {
+            uint8_t        torque{0};
             uint16_t       position_p_gain{0};
             uint16_t       position_i_gain{0};
             uint16_t       position_d_gain{0};

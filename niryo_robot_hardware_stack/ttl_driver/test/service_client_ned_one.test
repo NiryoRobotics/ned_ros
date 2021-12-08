@@ -15,6 +15,7 @@
             <arg name="simulation_mode" value="$(arg simulation_mode)" />
     </include>
         
-    <test test-name="ttl_driver_integration_tests" pkg="ttl_driver"  type="ttl_driver_integration_tests" />
-
+    <test test-name="ttl_driver_integration_tests" pkg="ttl_driver"  type="ttl_driver_integration_tests">
+        <param name="simulation_mode" value="$(arg simulation_mode)"/>
+    </test>
 </launch>
