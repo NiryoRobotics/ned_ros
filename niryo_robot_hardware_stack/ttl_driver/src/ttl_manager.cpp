@@ -1197,9 +1197,9 @@ int TtlManager::sendCustomCommand(uint8_t id, int reg_address, int value,  int b
     }
     else
     {
-      ROS_ERROR_THROTTLE(1, "TtlManager::sendCustomCommand - driver for motor id %d unknown",
-                         static_cast<int>(id));
-      result = niryo_robot_msgs::CommandStatus::WRONG_MOTOR_TYPE;
+        ROS_ERROR_THROTTLE(1, "TtlManager::sendCustomCommand - driver for motor id %d unknown",
+                            static_cast<int>(id));
+        result = niryo_robot_msgs::CommandStatus::WRONG_MOTOR_TYPE;
     }
 
     ros::Duration(0.005).sleep();
@@ -1541,8 +1541,8 @@ int TtlManager::writeSingleCommand(std::unique_ptr<common::model::AbstractTtlSin
         }
         else
         {
-            ROS_DEBUG("TtlManager::writeSingleCommand: command is sent to a removed hardware component. Skipped");
-            result = COMM_SUCCESS;
+            ROS_DEBUG("TtlManager::writeSingleCommand: command is sent to a removed hardware component. Skipped or write to a unknow device");
+            result = COMM_TX_ERROR;
         }
     }
 

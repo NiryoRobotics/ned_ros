@@ -23,6 +23,7 @@
 #include <utility>
 #include <vector>
 #include <string>
+#include <ros/ros.h>
 
 using ::common::model::EDxlCommandType;
 

@@ -169,24 +169,24 @@ if(CATKIN_ENABLE_TESTING)
   if ("${HARDWARE_VERSION}" STREQUAL "ned" OR "${HARDWARE_VERSION}" STREQUAL "one")
     if ("${ARCHITECTURE}" MATCHES "^(arm.*|aarch64.*|arm64.*)$")
       add_rostest_gtest(${PROJECT_NAME}_unit_tests
-        test/unit_tests.test
+        test/unit_tests_ned_one.test
         test/unit_tests_ned_one.cpp
       )
     else()
       add_rostest_gtest(${PROJECT_NAME}_unit_tests
-        test/unit_tests_fake.test
+        test/unit_tests_fake_ned_one.test
         test/unit_tests_ned_one.cpp
       )
     endif()
   else()
     if ("${ARCHITECTURE}" MATCHES "^(arm.*|aarch64.*|arm64.*)$")
       add_rostest_gtest(${PROJECT_NAME}_unit_tests
-        test/unit_tests.test
+        test/unit_tests_ned2.test
         test/unit_tests_ned2.cpp
       )
     else()
       add_rostest_gtest(${PROJECT_NAME}_unit_tests
-        test/unit_tests_fake.test
+        test/unit_tests_fake_ned2.test
         test/unit_tests_ned2.cpp
       )
     endif()
@@ -195,24 +195,24 @@ if(CATKIN_ENABLE_TESTING)
   if ("${HARDWARE_VERSION}" STREQUAL "ned" OR "${HARDWARE_VERSION}" STREQUAL "one")
     if ("${ARCHITECTURE}" MATCHES "^(arm.*|aarch64.*|arm64.*)$")
       add_rostest_gtest(${PROJECT_NAME}_integration_tests
-        test/service_client.test
+        test/service_client_ned_one.test
         test/service_client_ned_one.cpp
       )
     else()
       add_rostest_gtest(${PROJECT_NAME}_integration_tests
-        test/service_client_fake.test
+        test/service_client_fake_ned_one.test
         test/service_client_ned_one.cpp
       )  
     endif()
   else()
     if ("${ARCHITECTURE}" MATCHES "^(arm.*|aarch64.*|arm64.*)$")
       add_rostest_gtest(${PROJECT_NAME}_integration_tests
-        test/service_client.test
+        test/service_client_ned2.test
         test/service_client_ned2.cpp
       )
     else()
       add_rostest_gtest(${PROJECT_NAME}_integration_tests
-        test/service_client_fake.test
+        test/service_client_fake_ned2.test
         test/service_client_ned2.cpp
       )  
     endif()
