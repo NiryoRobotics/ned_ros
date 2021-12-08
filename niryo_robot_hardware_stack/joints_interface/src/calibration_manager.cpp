@@ -213,15 +213,23 @@ int CalibrationManager::startCalibration(int mode, std::string &result_message)
         }
         else if (MANUAL_CALIBRATION == mode)  // manuel
         {
-            if (canProcessManualCalibration(result_message))
+            if (_hardware_version == "one")
             {
-                if (EStepperCalibrationStatus::OK == manualCalibration())
+                if (canProcessManualCalibration(result_message))
                 {
-                    result_message = "Calibration Interface - Calibration done";
-                    res = niryo_robot_msgs::CommandStatus::SUCCESS;
+                    if (EStepperCalibrationStatus::OK == manualCalibration())
+                    {
+                        result_message = "Calibration Interface - Calibration done";
+                        res = niryo_robot_msgs::CommandStatus::SUCCESS;
+                    }
+                    else
+                        result_message = "Calibration Interface - manual calibration failed";
                 }
-                else
-                    result_message = "Calibration Interface - manual calibration failed";
+            }
+            else
+            {
+                result_message = "Calibration Interface - Command calibration manual on this plateform is not available";
+                res = niryo_robot_msgs::CommandStatus::SUCCESS;
             }
         }
         else                          // unknown
