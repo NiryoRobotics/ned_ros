@@ -737,9 +737,9 @@ bool TtlManager::readHardwareStatus()
 
             // 1. syncread for all motors
             // **********  voltage and Temperature
-            /* vector<std::pair<double, uint8_t> > hw_data_list;
+             vector<std::pair<double, uint8_t> > hw_data_list;
 
-            if (COMM_SUCCESS != stepper_driver->syncReadHwStatus(ids_list, hw_data_list))
+            if (COMM_SUCCESS != driver->syncReadHwStatus(ids_list, hw_data_list))
             {
                 // this operation can fail, it is normal, so no error message
                 hw_errors_increment++;
@@ -750,40 +750,6 @@ bool TtlManager::readHardwareStatus()
                 ROS_ERROR("TtlManager::readHardwareStatusOptimized : syncReadHwStatus failed - "
                             "vector mistmatch (id_list size %d, hw_data_list size %d)",
                             static_cast<int>(ids_list.size()), static_cast<int>(hw_data_list.size()));
-
-                hw_errors_increment++;
-            }*/
-
-            // **********  Temperature
-            vector<uint8_t> temperature_list;
-            if (COMM_SUCCESS != driver->syncReadTemperature(ids_list, temperature_list))
-            {
-                // this operation can fail, it is normal, so no error message
-                hw_errors_increment++;
-            }
-            else if (ids_list.size() != temperature_list.size())
-            {
-                // however, if we have a mismatch here, it is not normal
-                ROS_ERROR("TtlManager::readHardwareStatus : syncReadHwStatus failed - "
-                            "vector mistmatch (id_list size %d, hw_data_list size %d)",
-                            static_cast<int>(ids_list.size()), static_cast<int>(temperature_list.size()));
-
-                hw_errors_increment++;
-            }
-
-            // **********  Voltage
-            vector<double> voltage_list;
-            if (COMM_SUCCESS != driver->syncReadRawVoltage(ids_list, voltage_list))
-            {
-                // this operation can fail, it is normal, so no error message
-                hw_errors_increment++;
-            }
-            else if (ids_list.size() != voltage_list.size())
-            {
-                // however, if we have a mismatch here, it is not normal
-                ROS_ERROR("TtlManager::readHardwareStatus : syncReadHwStatus failed - "
-                            "vector mistmatch (id_list size %d, hw_data_list size %d)",
-                            static_cast<int>(ids_list.size()), static_cast<int>(voltage_list.size()));
 
                 hw_errors_increment++;
             }
@@ -814,24 +780,13 @@ bool TtlManager::readHardwareStatus()
                     auto state = _state_map.at(id);
 
                     // **************  temperature and voltage
-                    /*if (hw_data_list.size() > i)
+                    if (hw_data_list.size() > i)
                     {
                         double voltage = (hw_data_list.at(i)).first;
                         uint8_t temperature = (hw_data_list.at(i)).second;
 
                         state->setTemperature(temperature);
                         state->setRawVoltage(voltage);
-                    }*/
-
-                    // **************  temperature and voltage
-                    if (temperature_list.size() > i)
-                    {
-                        state->setTemperature(temperature_list.at(i));
-                    }
-
-                    if (voltage_list.size() > i)
-                    {
-                        state->setRawVoltage(voltage_list.at(i));
                     }
 
                     // **********  error state
