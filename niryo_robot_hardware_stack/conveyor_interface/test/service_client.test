@@ -12,7 +12,8 @@
         <arg name="simu_conveyor" value="false"/>
     </include>
 
-    <test test-name="conveyor_interface_integration_tests" pkg="conveyor_interface"  type="conveyor_interface_integration_tests">
+    <test test-name="conveyor_interface_integration_tests" pkg="conveyor_interface"
+          type="conveyor_interface_integration_tests" time-limit="120.0" >
         <param name="manual_tests" value="$(arg manual_tests)" />
         <param name="simulation_mode" value="false"/>
     </test>
