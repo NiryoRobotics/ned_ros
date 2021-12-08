@@ -1,4 +1,3 @@
-
 import rospy
 import rosnode
 
@@ -25,8 +24,8 @@ class RobotNodesObserver(object):
         self.__not_initialized_nodes = []
         self.__check_nodes_timer = None
 
-       # self.__check_user_program_timer = rospy.Timer(rospy.Duration.from_sec(0.5),
-       #                                               self.__user_programm_is_running_callback)
+    # self.__check_user_program_timer = rospy.Timer(rospy.Duration.from_sec(0.5),
+    #                                               self.__user_programm_is_running_callback)
 
     def __user_programm_is_running_callback(self, _):
         python_prog_is_running = self.check_user_node
@@ -64,9 +63,9 @@ class RobotNodesObserver(object):
         return not self.__not_initialized_nodes
 
     def start_nodes_check_loop(self):
-        pass
-        #if self.__check_nodes_timer is None:
-        #    self.__check_nodes_timer = rospy.Timer(rospy.Duration(1.0), self.__check_vital_nodes_callback)
+        if self.__check_nodes_timer is None:
+            self.__check_nodes_timer = rospy.Timer(rospy.Duration(1. / rospy.get_param("~check_nodes_frequency")),
+                                                   self.__check_vital_nodes_callback)
 
     def __check_vital_nodes_callback(self, _):
         self.check_vital_nodes()
