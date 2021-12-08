@@ -139,7 +139,7 @@ TEST(TESTSuite, ReadPIDValue)
 
     ttl_driver::ReadPIDValue srv;
     srv.request.id = 2;
-    
+
     client.call(srv);
 
     EXPECT_EQ(srv.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);

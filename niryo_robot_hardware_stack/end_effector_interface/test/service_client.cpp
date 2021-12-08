@@ -31,8 +31,8 @@ static std::unique_ptr<ros::NodeHandle> nh;
 
 struct HandleMsgReturn
 {
+    static constexpr int max_failures = 200;
     HandleMsgReturn() {}
-    const static int max_failures = 200;
 
     static bool getCorrectMsg(const end_effector_interface::EEButtonStatusConstPtr& data, int value)
     {
@@ -94,13 +94,13 @@ TEST(EndEffectorTestSuite, publisherTestButtonCustom)
 {
     end_effector_interface::EEButtonStatusConstPtr data;
     ros::Subscriber sub = nh->subscribe<end_effector_interface::EEButtonStatus>("end_effector_interface/custom_button_status", 10,
-                            [&](const end_effector_interface::EEButtonStatusConstPtr msg) {data = msg;});
+                            [&data](const end_effector_interface::EEButtonStatusConstPtr msg) {data = msg;});
 
     // wait a while to get data from topic
     bool res = HandleMsgReturn::publisherIsOn<end_effector_interface::EEButtonStatus>(data);
 
     ASSERT_EQ(sub.getNumPublishers(), 1U);
-    
+
     ASSERT_TRUE(res) << "No data sent from publisher on topic end_effector_interface/custom_button_status";
 }
 
@@ -108,13 +108,13 @@ TEST(EndEffectorTestSuite, publisherTestButtonFreeDriver)
 {
     end_effector_interface::EEButtonStatusConstPtr data;
     ros::Subscriber sub = nh->subscribe<end_effector_interface::EEButtonStatus>("end_effector_interface/free_drive_button_status", 10,
-                            [&](const end_effector_interface::EEButtonStatusConstPtr msg) {data = msg;});
+                            [&data](const end_effector_interface::EEButtonStatusConstPtr msg) {data = msg;});
 
     // wait a while to get data from topic
     bool res = HandleMsgReturn::publisherIsOn<end_effector_interface::EEButtonStatus>(data);
 
     ASSERT_EQ(sub.getNumPublishers(), 1U);
-    
+
     ASSERT_TRUE(res) << "No data sent from publisher on topic end_effector_interface/free_drive_button_status";
 }
 
@@ -122,13 +122,13 @@ TEST(EndEffectorTestSuite, publisherTestSavePosition)
 {
     end_effector_interface::EEButtonStatusConstPtr data;
     ros::Subscriber sub = nh->subscribe<end_effector_interface::EEButtonStatus>("end_effector_interface/save_pos_button_status", 10,
-                            [&](const end_effector_interface::EEButtonStatusConstPtr msg) {data = msg;});
+                            [&data](const end_effector_interface::EEButtonStatusConstPtr msg) {data = msg;});
 
     // wait a while to get data from topic
     bool res = HandleMsgReturn::publisherIsOn(data);
 
     ASSERT_EQ(sub.getNumPublishers(), 1U);
-    
+
     ASSERT_TRUE(res) << "No data sent from publisher on topic end_effector_interface/save_pos_button_status";
 }
 
@@ -136,13 +136,13 @@ TEST(EndEffectorTestSuite, publisherDigitalIO)
 {
     end_effector_interface::EEIOStateConstPtr data;
     ros::Subscriber sub = nh->subscribe<end_effector_interface::EEIOState>("end_effector_interface/io_state", 10,
-                            [&](const end_effector_interface::EEIOStateConstPtr msg) {data = msg;});
+                            [&data](const end_effector_interface::EEIOStateConstPtr msg) {data = msg;});
 
     // wait a while to get data from topic
     bool res = HandleMsgReturn::publisherIsOn<end_effector_interface::EEIOState>(data);
 
     ASSERT_EQ(sub.getNumPublishers(), 1U);
-    
+
     ASSERT_TRUE(res) << "No data sent from publisher on topic end_effector_interface/io_state";
 }
 

@@ -195,7 +195,7 @@ TEST_F(ToolTestControlSuite, openTool)
     EXPECT_EQ(srv.response.state, res);
 }
 
-// open tool with wrong parameter 
+// open tool with wrong parameter
 TEST_F(ToolTestControlSuite, openToolWrongId)
 {
     tools_interface::ToolCommand srv;
@@ -212,7 +212,7 @@ TEST_F(ToolTestControlSuite, openToolWrongId)
     srv.request.max_torque = static_cast<uint16_t>(static_cast<int>(filters[1]["specs"]["open_max_torque"]));
 
     auto client = nh_g->serviceClient<tools_interface::ToolCommand>("/niryo_robot/tools/open_gripper");
- 
+
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);
     client.call(srv);
@@ -257,7 +257,7 @@ TEST_F(ToolTestControlSuite, CloseTool)
     EXPECT_EQ(srv.response.state, res);
 }
 
-// close tool with wrong parameter 
+// close tool with wrong parameter
 TEST_F(ToolTestControlSuite, closeToolWrongId)
 {
     tools_interface::ToolCommand srv;
@@ -274,7 +274,7 @@ TEST_F(ToolTestControlSuite, closeToolWrongId)
     srv.request.max_torque = static_cast<uint16_t>(static_cast<int>(filters[1]["specs"]["close_max_torque"]));
 
     auto client = nh_g->serviceClient<tools_interface::ToolCommand>("/niryo_robot/tools/close_gripper");
- 
+
     bool exists(client.waitForExistence(ros::Duration(1)));
     EXPECT_TRUE(exists);
     client.call(srv);

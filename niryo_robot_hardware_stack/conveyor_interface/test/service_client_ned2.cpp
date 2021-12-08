@@ -427,7 +427,7 @@ TEST_F(ConveyorInterfaceTestSuiteManual, removeAndResetConveyor)
   ASSERT_EQ(conv_vec.size(), 2U);
 
   EXPECT_NE(conv_vec.at(0).conveyor_id, conv_vec.at(1).conveyor_id);
-  EXPECT_EQ(conv_vec.at(1).conveyor_id, srv_rm.request.id); // expect first id to be now second
+  EXPECT_EQ(conv_vec.at(1).conveyor_id, srv_rm.request.id);  // expect first id to be now second
 
   wait_spin(WAITING_TIME);
 }

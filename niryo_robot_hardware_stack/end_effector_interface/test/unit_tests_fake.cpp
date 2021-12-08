@@ -20,6 +20,7 @@
 #include <ros/ros.h>
 #include <ros/service_client.h>
 #include <gtest/gtest.h>
+#include <string>
 
 #include "common/model/tool_state.hpp"
 
@@ -72,7 +73,7 @@ TEST_F(EndEffectorTestSuite, config)
 
 TEST_F(EndEffectorTestSuite, getEndEffectorState)
 {
-    auto ee_state = ee_interface->getEndEffectorState(); 
+    auto ee_state = ee_interface->getEndEffectorState();
     ASSERT_NE(ee_state, nullptr);
     ASSERT_EQ(ee_state->getId(), 0);
     ASSERT_EQ(ee_state->getHardwareType(), common::model::EHardwareType::FAKE_END_EFFECTOR);
@@ -80,7 +81,7 @@ TEST_F(EndEffectorTestSuite, getEndEffectorState)
 
 TEST_F(EndEffectorTestSuite, getButtonState)
 {
-    auto ee_state = ee_interface->getEndEffectorState(); 
+    auto ee_state = ee_interface->getEndEffectorState();
     ASSERT_NE(ee_state, nullptr);
 
     auto buttons = ee_state->getButtonsStatus();
