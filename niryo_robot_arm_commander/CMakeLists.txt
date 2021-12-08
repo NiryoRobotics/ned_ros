@@ -95,6 +95,7 @@ endif()
 
 catkin_install_python(PROGRAMS 
     scripts/arm_commander.py
+    scripts/arm_state.py
     scripts/ArmParametersValidator.py
     scripts/jog_controller.py
     scripts/kinematics_handler.py
