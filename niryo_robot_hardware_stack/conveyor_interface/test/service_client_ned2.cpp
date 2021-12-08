@@ -378,6 +378,7 @@ TEST_F(ConveyorInterfaceTestSuiteManual, setTwoConveyor)
     waitForMessage(pcl);
 
     EXPECT_EQ(subscriber.getNumPublishers(), 1U);
+    wait_spin(2.0);
 
     auto conv_vec = pcl->conveyors;
     ASSERT_EQ(conv_vec.size(), 2U);
@@ -400,7 +401,7 @@ TEST_F(ConveyorInterfaceTestSuiteManual, removeAndResetConveyor)
   EXPECT_EQ(srv_rm.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
   wait_spin(WAITING_TIME);
 
-  // reset first conveyor
+  // reset first conveyor -> now the order of the conveyors should be inverted
   conveyor_interface::SetConveyor srv_set;
   srv_set.request.id = 8;
   srv_set.request.cmd = conveyor_interface::SetConveyor::Request::ADD;
@@ -408,6 +409,25 @@ TEST_F(ConveyorInterfaceTestSuiteManual, removeAndResetConveyor)
 
   EXPECT_EQ(srv_set.response.status, niryo_robot_msgs::CommandStatus::SUCCESS);
   EXPECT_EQ(srv_set.response.id, srv_rm.request.id);
+
+  wait_spin(WAITING_TIME);
+
+  // subscribe to feedback
+
+  conveyor_interface::ConveyorFeedbackArrayConstPtr pcl;
+  auto subscriber = nh->subscribe<conveyor_interface::ConveyorFeedbackArray>("/niryo_robot/conveyor/feedback", 1,
+                                  [&pcl](const conveyor_interface::ConveyorFeedbackArrayConstPtr& msg){pcl = msg;});
+
+  waitForMessage(pcl);
+
+  EXPECT_EQ(subscriber.getNumPublishers(), 1U);
+  wait_spin(2.0);
+
+  auto conv_vec = pcl->conveyors;
+  ASSERT_EQ(conv_vec.size(), 2U);
+
+  EXPECT_NE(conv_vec.at(0).conveyor_id, conv_vec.at(1).conveyor_id);
+  EXPECT_EQ(conv_vec.at(1).conveyor_id, srv_rm.request.id); // expect first id to be now second
 
   wait_spin(WAITING_TIME);
 }
@@ -452,15 +472,16 @@ TEST_F(ConveyorInterfaceTestSuiteManual, controlBothConveyors)
     auto conv_vec = pcl->conveyors;
     ASSERT_EQ(conv_vec.size(), 2U);
 
-    EXPECT_EQ(conv_vec.at(0).conveyor_id, srv_1.request.id);
-    EXPECT_EQ(conv_vec.at(0).running, srv_1.request.control_on);
-    EXPECT_EQ(conv_vec.at(0).speed, srv_1.request.speed);
-    EXPECT_EQ(conv_vec.at(0).direction, srv_1.request.direction);
+    // we remove and reset first conveyor, we should now have an inverted situation
+    EXPECT_EQ(conv_vec.at(1).conveyor_id, srv_1.request.id);
+    EXPECT_EQ(conv_vec.at(1).running, srv_1.request.control_on);
+    EXPECT_EQ(conv_vec.at(1).speed, srv_1.request.speed);
+    EXPECT_EQ(conv_vec.at(1).direction, srv_1.request.direction);
 
-    EXPECT_EQ(conv_vec.at(1).conveyor_id, srv_2.request.id);
-    EXPECT_EQ(conv_vec.at(1).running, srv_2.request.control_on);
-    EXPECT_EQ(conv_vec.at(1).speed, srv_2.request.speed);
-    EXPECT_EQ(conv_vec.at(1).direction, srv_2.request.direction);
+    EXPECT_EQ(conv_vec.at(0).conveyor_id, srv_2.request.id);
+    EXPECT_EQ(conv_vec.at(0).running, srv_2.request.control_on);
+    EXPECT_EQ(conv_vec.at(0).speed, srv_2.request.speed);
+    EXPECT_EQ(conv_vec.at(0).direction, srv_2.request.direction);
 
     wait_spin(WAITING_TIME);
 }
@@ -598,7 +619,6 @@ TEST_F(ConveyorInterfaceTestSuiteManual, controlConveyor3_bis)
     EXPECT_EQ(conv_vec.at(0).conveyor_id, srv.request.id);
     EXPECT_EQ(conv_vec.at(0).running, srv.request.control_on);
     EXPECT_EQ(conv_vec.at(0).speed, 0);
-    EXPECT_EQ(conv_vec.at(0).direction, srv.request.direction);
 
     wait_spin(WAITING_TIME);
 }
