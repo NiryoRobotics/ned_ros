@@ -1,6 +1,8 @@
 import rospy
 import rosnode
 
+from niryo_robot_msgs.srv import Ping, PingResponse
+
 
 class RobotNodesObserver(object):
 
@@ -19,31 +21,33 @@ class RobotNodesObserver(object):
             self.__vital_nodes += rospy.get_param("~vital_nodes_real")
 
         self.__are_vital_nodes_alive = False
-        self.user_program_is_running = False
         self.__missing_vital_nodes = []
         self.__not_initialized_nodes = []
         self.__check_nodes_timer = None
 
-    # self.__check_user_program_timer = rospy.Timer(rospy.Duration.from_sec(0.5),
-    #                                               self.__user_programm_is_running_callback)
+        self.__python_wrapper_nodes = set()
+        self.__advertise_python_ros_wrapper = rospy.Service('~ping_ros_wrapper', Ping,
+                                                            self.__callback_python_ros_wrapper_node)
 
-    def __user_programm_is_running_callback(self, _):
-        python_prog_is_running = self.check_user_node
-
-        if python_prog_is_running != self.user_program_is_running:
-            self.user_program_is_running = python_prog_is_running
+    def __callback_python_ros_wrapper_node(self, req):
+        if req.name not in ['/niryo_robot_user_interface', '']:
+            if req.state:
+                self.__python_wrapper_nodes.add(req.name)
+            elif req.name in self.__python_wrapper_nodes:
+                self.__python_wrapper_nodes.remove(req.name)
             self.__robot_status_handler.advertise_new_state()
+        return PingResponse()
 
     @property
     def check_user_node(self):
-        return bool([s for s in rosnode.get_node_names() if "ros_wrapper" in s])
+        return bool(self.__python_wrapper_nodes)
 
     def check_vital_nodes(self):
-        missing_nodes = []
         alive_nodes = rosnode.get_node_names()
-        for vital_node in self.__vital_nodes:
-            if vital_node not in alive_nodes:
-                missing_nodes.append(vital_node)
+
+        self.__python_wrapper_nodes = {pywrapper_node for pywrapper_node in self.__python_wrapper_nodes if
+                                       pywrapper_node in alive_nodes}
+        missing_nodes = [vital_node for vital_node in self.__vital_nodes if vital_node not in alive_nodes]
 
         self.__are_vital_nodes_alive = not bool(missing_nodes)
         self.__missing_vital_nodes = missing_nodes

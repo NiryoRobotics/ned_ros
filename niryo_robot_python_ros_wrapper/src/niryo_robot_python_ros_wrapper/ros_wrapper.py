@@ -1,10 +1,12 @@
 #!/usr/bin/env python
 # Lib
 import rospy
-import actionlib
 
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus, SoftwareVersion
+
+from niryo_action_client import NiryoActionClient
+from niryo_topic_value import NiryoTopicValue
 
 # Messages
 from geometry_msgs.msg import Pose, Point, Quaternion
@@ -19,149 +21,16 @@ from niryo_robot_tools_commander.msg import ToolCommand
 from niryo_robot_status.msg import RobotStatus
 
 # Services
-from niryo_robot_msgs.srv import GetNameDescriptionList, SetBool, SetInt, Trigger
+from niryo_robot_msgs.srv import GetNameDescriptionList, SetBool, SetInt, Trigger, Ping
 
 # Actions
-from actionlib_msgs.msg import GoalStatus
 from control_msgs.msg import FollowJointTrajectoryAction, FollowJointTrajectoryGoal
 from niryo_robot_tools_commander.msg import ToolGoal, ToolAction
 from niryo_robot_arm_commander.msg import ArmMoveCommand, RobotMoveGoal, RobotMoveAction
 
 # Enums
+from niryo_robot_python_ros_wrapper.ros_wrapper_enums import NiryoRosWrapperException
 from niryo_robot_python_ros_wrapper.ros_wrapper_enums import *
-
-
-class NiryoRosWrapperException(Exception):
-    pass
-
-
-class NiryoTopicValue(object):
-
-    def __init__(self, topic_name, topic_type, timeout=2, queue_size=None):
-        self.__topic_name = topic_name
-        self.__topic_type = topic_type
-        self.__topic_queue_size = queue_size
-        self.__timeout = timeout
-
-        self.__topic = None
-        self.__value = None
-
-    def __call__(self, *args, **kwargs):
-        return self.value
-
-    def __launch_topic(self):
-        self.__topic = rospy.Subscriber(self.__topic_name, self.__topic_type, self.__internal_callback,
-                                        queue_size=self.__topic_queue_size)
-
-    @property
-    def topic(self):
-        return self.__topic
-
-    @property
-    def value(self):
-        if self.__topic is None:
-            self.__launch_topic()
-
-        if self.__value is None:
-            return self.wait_for_message(timeout=self.__timeout)
-
-        return self.__value
-
-    def get_value(self):
-        return self.value
-
-    def wait_for_message(self, timeout=5):
-        if self.__topic is None:
-            self.__launch_topic()
-
-        try:
-            value = rospy.wait_for_message(self.__topic_name, self.__topic_type, timeout=timeout)
-        except rospy.ROSException:
-            raise NiryoRosWrapperException("Could not get data on the {} topic".format(self.__topic))
-        return value
-
-    def __internal_callback(self, msg):
-        self.__value = msg
-
-
-class NiryoActionClient(object):
-
-    def __init__(self, action_name, action_type, action_goal_type):
-
-        self.__action_name = action_name
-        self.__action_type = action_type
-        self.__action_goal_type = action_goal_type
-
-        self.__action_connection_timeout = rospy.get_param("/niryo_robot/python_ros_wrapper/action_connection_timeout")
-        self.__action_execute_timeout = rospy.get_param("/niryo_robot/python_ros_wrapper/action_execute_timeout")
-        self.__action_preempt_timeout = rospy.get_param("/niryo_robot/python_ros_wrapper/action_preempt_timeout")
-
-        self.__action_server = None
-
-    @property
-    def name(self):
-        return self.__action_name
-
-    @property
-    def empty_goal(self):
-        return self.__action_goal_type()
-
-    @property
-    def get_empty_goal(self):
-        return self.empty_goal
-
-    @property
-    def action_server(self):
-        if self.__action_server is None:
-            self.__action_server = actionlib.SimpleActionClient(self.__action_name, self.__action_type)
-        return self.__action_server
-
-    def execute(self, goal):
-        if not isinstance(goal, self.__action_goal_type):
-            raise NiryoRosWrapperException(
-                'Wrong goal type: expected {} but got {}'.format(type(goal), type(self.__action_goal_type)))
-
-        if self.__action_server is None:
-            self.__action_server = actionlib.SimpleActionClient(self.__action_name, self.__action_type)
-
-        # Connect to server
-        if not self.__action_server.wait_for_server(rospy.Duration(self.__action_connection_timeout)):
-            rospy.logwarn("ROS Wrapper - Failed to connect to {} action server".format(self.__action_name))
-
-            raise NiryoRosWrapperException('Action Server is not up : {}'.format(self.__action_name))
-        # Send goal and check response
-        goal_state, response = self.__send_goal_and_wait_for_completed(goal)
-
-        if response.status == CommandStatus.GOAL_STILL_ACTIVE:
-            rospy.loginfo("ROS Wrapper - Command still active: try to stop it")
-            self.__action_server.cancel_goal()
-            self.__action_server.stop_tracking_goal()
-            rospy.sleep(0.2)
-            rospy.loginfo("ROS Wrapper - Trying to resend command ...")
-            goal_state, response = self.__send_goal_and_wait_for_completed(goal)
-
-        if goal_state != GoalStatus.SUCCEEDED:
-            self.__action_server.stop_tracking_goal()
-
-        if goal_state == GoalStatus.REJECTED:
-            raise NiryoRosWrapperException('Goal has been rejected : {}'.format(response.message))
-        elif goal_state == GoalStatus.ABORTED:
-            raise NiryoRosWrapperException('Goal has been aborted : {}'.format(response.message))
-        elif goal_state != GoalStatus.SUCCEEDED:
-            raise NiryoRosWrapperException('Error when processing goal : {}'.format(response.message))
-
-        return response.status, response.message
-
-    def __send_goal_and_wait_for_completed(self, goal):
-        self.__action_server.send_goal(goal)
-        if not self.__action_server.wait_for_result(timeout=rospy.Duration(self.__action_execute_timeout)):
-            self.__action_server.cancel_goal()
-            self.__action_server.stop_tracking_goal()
-            raise NiryoRosWrapperException('Action Server timeout : {}'.format(self.__action_name))
-
-        goal_state = self.__action_server.get_state()
-        response = self.__action_server.get_result()
-        return goal_state, response
 
 
 class NiryoRosWrapper:
@@ -174,6 +43,13 @@ class NiryoRosWrapper:
     }
 
     def __init__(self):
+        self.__node_name = rospy.get_name()
+        self.__ping_ros_wrapper_srv = rospy.Service("~/ping", Trigger, self.__ping_ros_wrapper_callback)
+        rospy.wait_for_service("/niryo_robot_status/ping_ros_wrapper", timeout=5)
+        self.__advertise_ros_wrapper_srv = rospy.ServiceProxy("/niryo_robot_status/ping_ros_wrapper", Ping)
+        self.__advertise_ros_wrapper_srv(self.__node_name, True)
+        rospy.on_shutdown(self.__advertise_stop)
+
         # - Getting ROS parameters
         self.__service_timeout = rospy.get_param("/niryo_robot/python_ros_wrapper/service_timeout")
         self.__simulation_mode = rospy.get_param("/niryo_robot/simulation_mode")
@@ -238,6 +114,12 @@ class NiryoRosWrapper:
 
     def __del__(self):
         del self
+
+    def __advertise_stop(self):
+        self.__advertise_ros_wrapper_srv(self.__node_name, False)
+
+    def __ping_ros_wrapper_callback(self):
+        return CommandStatus.SUCCESS, self.__node_name
 
     @classmethod
     def wait_for_nodes_initialization(cls, simulation_mode=False):
