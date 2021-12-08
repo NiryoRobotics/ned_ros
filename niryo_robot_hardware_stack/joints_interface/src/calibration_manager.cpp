@@ -691,20 +691,21 @@ void CalibrationManager::moveSteppersToHome()
         {
             uint8_t motor_id = jState->getId();
             int steps{0}; 
-            // after calibration, joint 1 2 is at limit max but joint 3 is at limit min
-            if (motor_id != 3)
-                steps = jState->to_motor_pos(jState->getHomePosition()) - jState->to_motor_pos(jState->getLimitPositionMax());
-            else
-                steps = jState->to_motor_pos(jState->getHomePosition()) - jState->to_motor_pos(jState->getLimitPositionMin());
 
             if (EBusProtocol::CAN == jState->getBusProtocol())
             {
+                // after calibration, joint 1 2 is at limit max but joint 3 is at limit min
+                if (motor_id != 3)
+                    steps = jState->to_motor_pos(jState->getHomePosition()) - jState->to_motor_pos(jState->getLimitPositionMax());
+                else
+                    steps = jState->to_motor_pos(jState->getHomePosition()) - jState->to_motor_pos(jState->getLimitPositionMin());
                 int delay = 550;
                 _can_interface->addSingleCommandToQueue(std::make_unique<StepperSingleCmd>(StepperSingleCmd(
                                                             EStepperCommandType::CMD_TYPE_RELATIVE_MOVE, motor_id, {steps, delay})));
             }
             else if (EBusProtocol::TTL == jState->getBusProtocol())
             {
+                steps = jState->to_motor_pos(jState->getHomePosition());
                 stepper_ttl_cmd.addMotorParam(jState->getHardwareType(), motor_id, static_cast<uint32_t>(steps));
             }
         }
