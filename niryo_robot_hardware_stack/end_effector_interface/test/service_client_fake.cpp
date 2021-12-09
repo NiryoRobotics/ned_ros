@@ -31,8 +31,8 @@ static std::unique_ptr<ros::NodeHandle> nh;
 
 struct HandleMsgReturn
 {
-    static constexpr int max_failures = 200;
     HandleMsgReturn() {}
+    static constexpr int max_failures = 200;
 
     static bool getCorrectMsg(const end_effector_interface::EEButtonStatusConstPtr& data, int value)
     {
@@ -97,11 +97,13 @@ TEST(EndEffectorTestSuite, publisherTestButtonCustom)
                             [&data](const end_effector_interface::EEButtonStatusConstPtr msg) {data = msg;});
 
     // wait a while to get data from topic
-    bool res = HandleMsgReturn::publisherIsOn<end_effector_interface::EEButtonStatus>(data);
+    bool res = HandleMsgReturn::getCorrectMsg(data, 0);
 
     ASSERT_EQ(sub.getNumPublishers(), 1U);
 
     ASSERT_TRUE(res) << "No data sent from publisher on topic end_effector_interface/custom_button_status";
+
+    EXPECT_EQ(data->action, 0);
 }
 
 TEST(EndEffectorTestSuite, publisherTestButtonFreeDriver)
@@ -111,11 +113,13 @@ TEST(EndEffectorTestSuite, publisherTestButtonFreeDriver)
                             [&data](const end_effector_interface::EEButtonStatusConstPtr msg) {data = msg;});
 
     // wait a while to get data from topic
-    bool res = HandleMsgReturn::publisherIsOn<end_effector_interface::EEButtonStatus>(data);
+    bool res = HandleMsgReturn::getCorrectMsg(data, 2);
 
     ASSERT_EQ(sub.getNumPublishers(), 1U);
 
     ASSERT_TRUE(res) << "No data sent from publisher on topic end_effector_interface/free_drive_button_status";
+
+    EXPECT_EQ(data->action, 2);
 }
 
 TEST(EndEffectorTestSuite, publisherTestSavePosition)
@@ -125,11 +129,13 @@ TEST(EndEffectorTestSuite, publisherTestSavePosition)
                             [&data](const end_effector_interface::EEButtonStatusConstPtr msg) {data = msg;});
 
     // wait a while to get data from topic
-    bool res = HandleMsgReturn::publisherIsOn(data);
+    bool res = HandleMsgReturn::getCorrectMsg(data, 3);
 
     ASSERT_EQ(sub.getNumPublishers(), 1U);
 
     ASSERT_TRUE(res) << "No data sent from publisher on topic end_effector_interface/save_pos_button_status";
+
+    EXPECT_EQ(data->action, 3);
 }
 
 TEST(EndEffectorTestSuite, publisherDigitalIO)

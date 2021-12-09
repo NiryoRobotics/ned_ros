@@ -34,7 +34,7 @@ int main(int argc, char **argv)
     spinner.start();
 
     ros::NodeHandle nh_ttl("ttl_driver");
-    ros::NodeHandle nh("~");
+    ros::NodeHandle nh("end_effector_interface");
 
     auto ttl_driver = std::make_shared<ttl_driver::TtlInterfaceCore>(nh_ttl);
     ros::Duration(1).sleep();
