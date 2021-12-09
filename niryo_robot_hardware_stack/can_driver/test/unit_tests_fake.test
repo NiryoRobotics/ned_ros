@@ -1,0 +1,23 @@
+<?xml version="1.0" ?>
+<launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+
+    <arg name="hardware_version" default="ned"/>
+    <arg name="simulation_mode" default="true"/>
+
+    <include file="$(find joints_interface)/launch/joints_interface_base.launch.xml" >
+            <arg name="hardware_version" value="$(arg hardware_version)" />
+            <arg name="simulation_mode" value="$(arg simulation_mode)" />
+    </include>
+    
+    <!-- launch the can_driver_node node using can_driver_node executable from can_driver package -->
+    <include file="$(find can_driver)/launch/can_driver_base.launch.xml" if="$(eval hardware_version=='ned')">
+        <arg name="hardware_version" value="$(arg hardware_version)" />
+        <arg name="simulation_mode" value="$(arg simulation_mode)" />
+    </include>
+    
+    <test test-name="can_driver_unit_tests" pkg="can_driver" type="can_driver_unit_tests">
+        <param name="hardware_version" value="$(arg hardware_version)" />
+    </test>
+        
+</launch>

@@ -1,0 +1,33 @@
+# Config for all the end-effectors
+
+command_list:
+  # Gripper
+  open_gripper: 1
+  close_gripper: 2
+  # Vacuump pump
+  pull_air_vacuum_pump: 10
+  push_air_vacuum_pump: 11
+  # Tools controlled by digital I/Os
+  setup_digital_io: 20
+  activate_digital_io: 21
+  deactivate_digital_io: 22
+
+state_dict:
+  ping_ok: 0x01
+  ping_error: 0x02
+  wrong_id: 0x03
+  timeout: 0x04
+
+  gripper_open: 0x10
+  gripper_close: 0x11
+
+  vacuum_pump_pulled: 0x20
+  vacuum_pump_pushed: 0x21
+
+  ros_communication_problem: 0xA0
+
+namespace_topics: "/niryo_robot/tools/"
+
+# - MoveIt! simulation params
+reference_frame: world
+move_group_tool_commander_name: tool

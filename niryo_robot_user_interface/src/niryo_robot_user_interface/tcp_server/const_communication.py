@@ -1,4 +1,3 @@
-TCP_PORT = 40001  # Port used for TCP communication
 READ_SIZE = 512  # Buffer used for receiving TCP packet
 
 # - Infos on the JSON size

@@ -1,0 +1,16 @@
+int32 NONE = -1
+int32 SOLID = 1
+int32 FLASHING = 2   
+int32 ALTERNATE = 3  
+int32 CHASE = 4       
+int32 COLOR_WIPE = 5   
+int32 RAINBOW = 6
+int32 RAINBOW_CYLE = 7
+int32 RAINBOW_CHASE = 8
+int32 GO_UP = 9
+int32 GO_UP_AND_DOWN = 10
+int32 BREATH = 11
+int32 SNAKE = 12
+int32 CUSTOM = 13
+
+int32 animation

@@ -1,0 +1,121 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2021, Niryo All rights reserved. No part of this document
+# may be reproduced or transmitted in any form or by any means without prior
+# written consent of Niryo SAS
+# This file is distributed under the same license as the Ned ROS
+# Documentation package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Ned ROS Documentation v3.2\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-10-22 17:37+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.9.1\n"
+
+#: ../../source/stack/low_level/ttl_debug_tools.rst:2
+msgid "TTL Debug Tools"
+msgstr ""
+
+#: ../../source/stack/low_level/ttl_debug_tools.rst:4
+msgid ""
+"This package offers scripts to change ping/scan DXL motors and changes "
+"register values of these motors."
+msgstr ""
+
+#: ../../source/stack/low_level/ttl_debug_tools.rst:8
+msgid "Niryo robot - Ttl debug tools"
+msgstr ""
+
+#: ../../source/stack/low_level/ttl_debug_tools.rst:9
+#: ../../source/stack/low_level/ttl_debug_tools.rst:33
+#: ../../source/stack/low_level/ttl_debug_tools.rst:46
+msgid "This script can be launched via:  ::"
+msgstr ""
+
+#: ../../source/stack/low_level/ttl_debug_tools.rst:14
+msgid "Parameters - Ttl debug tools"
+msgstr ""
+
+#: ../../source/stack/low_level/ttl_debug_tools.rst:15
+msgid "**--help / -h:** Print help message"
+msgstr ""
+
+#: ../../source/stack/low_level/ttl_debug_tools.rst:16
+msgid "**--baudrate / -b [Number]:** Baudrate (1000000 by default)"
+msgstr ""
+
+#: ../../source/stack/low_level/ttl_debug_tools.rst:17
+msgid "**--port / -p [Number]:** Set port"
+msgstr ""
+
+#: ../../source/stack/low_level/ttl_debug_tools.rst:18
+msgid "**--id / -i [Number]:** Dxl motor ID (0 by default)"
+msgstr ""
+
+#: ../../source/stack/low_level/ttl_debug_tools.rst:19
+msgid "**--scan:** Scan all Dxl motors on the bus"
+msgstr ""
+
+#: ../../source/stack/low_level/ttl_debug_tools.rst:20
+msgid "**--ping:** Ping specific ID"
+msgstr ""
+
+#: ../../source/stack/low_level/ttl_debug_tools.rst:21
+msgid ""
+"**--set-register [Number] [Number] [Number]:** Set a value to a register,"
+" parameters are in the order: register address / value / size (in bytes) "
+"of the value"
+msgstr ""
+
+#: ../../source/stack/low_level/ttl_debug_tools.rst:24
+msgid "Services, Topics and Messages"
+msgstr ""
+
+#: ../../source/stack/low_level/ttl_debug_tools.rst:29
+msgid "Scripts"
+msgstr ""
+
+#: ../../source/stack/low_level/ttl_debug_tools.rst:32
+msgid "Niryo robot - Send DXL custom value"
+msgstr ""
+
+#: ../../source/stack/low_level/ttl_debug_tools.rst:38
+msgid "Parameters - Send custom value"
+msgstr ""
+
+#: ../../source/stack/low_level/ttl_debug_tools.rst:39
+#: ../../source/stack/low_level/ttl_debug_tools.rst:52
+msgid "**--id [Number]:** Motor ID"
+msgstr ""
+
+#: ../../source/stack/low_level/ttl_debug_tools.rst:40
+#: ../../source/stack/low_level/ttl_debug_tools.rst:53
+msgid "**--address [Number]:** Register address to modify"
+msgstr ""
+
+#: ../../source/stack/low_level/ttl_debug_tools.rst:41
+#: ../../source/stack/low_level/ttl_debug_tools.rst:54
+msgid "**--value [Number]:** Value to store at the register address given"
+msgstr ""
+
+#: ../../source/stack/low_level/ttl_debug_tools.rst:42
+#: ../../source/stack/low_level/ttl_debug_tools.rst:55
+msgid "**--size [Number]:** Size in bytes of the value given"
+msgstr ""
+
+#: ../../source/stack/low_level/ttl_debug_tools.rst:45
+msgid "Niryo robot - Read DXL custom value"
+msgstr ""
+
+#: ../../source/stack/low_level/ttl_debug_tools.rst:51
+msgid "Parameters - Read custom value"
+msgstr ""
+

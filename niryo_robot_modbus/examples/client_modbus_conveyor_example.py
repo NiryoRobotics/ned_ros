@@ -30,7 +30,7 @@ if __name__ == '__main__':
     print "Ping and set the conveyor"
     client.write_register(520, 1)
     time.sleep(2)
-    
+
     print "set the direction to backward"
     client.write_register(523, number_to_raw_data(-1))
     time.sleep(1)
@@ -66,7 +66,7 @@ if __name__ == '__main__':
     print "Remove the conveyor"
     client.write_register(521, 1)
     time.sleep(1)
-    
+
     client.close()
     print "Close connection to modbus server"
     print "--- END"

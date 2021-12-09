@@ -19,6 +19,7 @@ from control_msgs.msg import FollowJointTrajectoryActionFeedback
 from moveit_msgs.msg import RobotState as RobotStateMoveIt
 from trajectory_msgs.msg import JointTrajectory
 from visualization_msgs.msg import Marker, MarkerArray
+from std_msgs.msg import Bool
 from geometry_msgs.msg import Quaternion
 
 # Services
@@ -37,6 +38,7 @@ class TrajectoriesExecutor:
     def __init__(self, arm_move_group):
         self.__arm = arm_move_group
         self.__joints_name = rospy.get_param('~joint_names')
+        self.__hardware_version = rospy.get_param('~hardware_version')
 
         # - Direct topic to joint_trajectory_controller
         self.__current_goal_id = None
@@ -71,8 +73,11 @@ class TrajectoriesExecutor:
 
         self.__joint_trajectory_publisher = rospy.Publisher('{}/command'.format(joint_controller_base_name),
                                                             JointTrajectory, queue_size=10)
+
         self.__reset_controller_service = rospy.ServiceProxy('/niryo_robot/joints_interface/steppers_reset_controller',
                                                              Trigger)
+
+        self.__collision_detected_publisher = rospy.Publisher('~collision_detected', Bool, queue_size=10)
 
     def __set_position_hold_mode(self):
         """
@@ -145,7 +150,8 @@ class TrajectoriesExecutor:
                 raise ArmCommanderException(
                     CommandStatus.PLAN_FAILED, "MoveIt failed to compute the plan.")
 
-            self.__reset_controller()
+            # TODO(Thuc) test ned and one without reset controller hear
+            # self.__reset_controller()
             rospy.logdebug("Arm commander - Send MoveIt trajectory to controller.")
             status, message = self.execute_plan(plan)
 
@@ -182,6 +188,10 @@ class TrajectoriesExecutor:
             plan = self.compute_cartesian_plan(list_poses)
         except Exception:
             raise ArmCommanderException(CommandStatus.ARM_COMMANDER_FAILURE, "IK Fail")
+
+        if plan is None:
+            raise ArmCommanderException(CommandStatus.NO_PLAN_AVAILABLE,
+                                        "The goal cannot be reached with a linear trajectory")
 
         # Apply robot speeds
         plan = self.retime_plan(plan, velocity_scaling_factor=velocity_factor,
@@ -244,6 +254,7 @@ class TrajectoriesExecutor:
         trajectory_time_out = max(1.5 * self.__get_plan_time(plan), self.__trajectory_minimum_timeout)
 
         # Send trajectory and wait
+        self.__collision_detected = False
         self.__arm.execute(plan, wait=False)
         if self.__traj_finished_event.wait(trajectory_time_out):
             if self.__current_goal_result == GoalStatus.SUCCEEDED:
@@ -251,8 +262,10 @@ class TrajectoriesExecutor:
             elif self.__current_goal_result == GoalStatus.PREEMPTED:
                 if self.__collision_detected:
                     self.__collision_detected = False
-                    return CommandStatus.STOPPED, "Command has been aborted due to a collision or " \
-                                                  "a motor not able to follow the given trajectory"
+                    self.__collision_detected_publisher.publish(True)
+                    self.__set_learning_mode(True)
+                    return (CommandStatus.STOPPED, "Command has been aborted due to a collision "
+                            "or a motor not able to follow the given trajectory")
                 else:
                     return CommandStatus.STOPPED, "Command has been successfully stopped"
             elif self.__current_goal_result == GoalStatus.ABORTED:
@@ -263,6 +276,8 @@ class TrajectoriesExecutor:
                 self.__set_position_hold_mode()
                 abort_str = "Command has been aborted due to a collision or " \
                             "a motor not able to follow the given trajectory"
+                self.__set_learning_mode(True)
+                self.__collision_detected_publisher.publish(True)
                 return CommandStatus.CONTROLLER_PROBLEMS, abort_str
 
             else:  # problem from ros_control itself
@@ -297,17 +312,19 @@ class TrajectoriesExecutor:
         Take a plan and retime it
         """
         start_state = self.__get_plan_start_robot_state(plan)
-
-        if optimize:
-            algorithm = "time_optimal_trajectory_generation"
+        if self.__hardware_version == "one":
+            # for ros kinetic
+            plan_out = self.__arm.retime_trajectory(start_state, plan, velocity_scaling_factor=velocity_scaling_factor)
         else:
-            algorithm = "iterative_time_parameterization"
+            if optimize:
+                algorithm = "time_optimal_trajectory_generation"
+            else:
+                algorithm = "iterative_time_parameterization"
 
-        plan_out = self.__arm.retime_trajectory(start_state, plan,
-                                                velocity_scaling_factor=velocity_scaling_factor,
-                                                acceleration_scaling_factor=acceleration_scaling_factor,
-                                                algorithm=algorithm
-                                                )
+            plan_out = self.__arm.retime_trajectory(start_state, plan,
+                                                    velocity_scaling_factor=velocity_scaling_factor,
+                                                    acceleration_scaling_factor=acceleration_scaling_factor,
+                                                    algorithm=algorithm)
         return plan_out
 
     def __get_plan_start_robot_state(self, plan):
@@ -331,8 +348,7 @@ class TrajectoriesExecutor:
             raise ArmCommanderException(CommandStatus.NO_PLAN_AVAILABLE,
                                         "No current plan found")
 
-    @staticmethod
-    def __set_learning_mode(set_bool):
+    def __set_learning_mode(self, set_bool):
         """
         Activate or deactivate the learning mode using the ros service /niryo_robot/learning_mode/activate
 
@@ -342,6 +358,9 @@ class TrajectoriesExecutor:
         :return: Success if the learning mode was properly activate or deactivate, False if not
         :rtype: bool
         """
+        if set_bool and self.__hardware_version == 'ned2':
+            return True
+
         try:
             rospy.wait_for_service('/niryo_robot/learning_mode/activate', timeout=1)
             srv = rospy.ServiceProxy('/niryo_robot/learning_mode/activate', SetBool)

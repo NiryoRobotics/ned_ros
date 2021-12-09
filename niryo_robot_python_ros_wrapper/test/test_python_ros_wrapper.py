@@ -67,8 +67,6 @@ class TestPythonWrapper(unittest.TestCase):
 
     # - Main Purpose
     def test_calibrate(self):
-        if simulation_mode:
-            self.assertStatus(self.niryo_robot.calibrate_manual())
         self.assertStatus(self.niryo_robot.calibrate_auto())
 
     def test_learning_mode(self):

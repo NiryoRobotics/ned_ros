@@ -16,15 +16,15 @@ uint8 cmd_type
 # Gripper1= 11, Gripper2=12, Gripper3=13, VaccuumPump=31, Electromagnet=30
 uint8 tool_id
 
-# if gripper close
-uint16 gripper_close_speed
+# if gripper Ned1/One
+uint16 speed
 
-# if gripper open
-uint16 gripper_open_speed
+# if gripper Ned2
+uint8 max_torque_percentage
+uint8 hold_torque_percentage
 
 # if vacuum pump or electromagnet grove
 bool activate
 
 # if tool is set by digital outputs (electromagnet)
-# if gpio<0 get value in memory
-int8 gpio
+string gpio

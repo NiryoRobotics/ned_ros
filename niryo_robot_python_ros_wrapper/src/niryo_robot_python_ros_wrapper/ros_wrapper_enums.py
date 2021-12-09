@@ -1,6 +1,10 @@
 from enum import Enum, unique
 
 
+class NiryoRosWrapperException(Exception):
+    pass
+
+
 class ShiftPose:
     def __init__(self):
         pass
@@ -51,8 +55,8 @@ class PinState:
     def __init__(self):
         pass
 
-    LOW = 0
-    HIGH = 1
+    LOW = False
+    HIGH = True
 
 
 class PinID:
@@ -63,15 +67,25 @@ class PinID:
     def __init__(self):
         pass
 
-    GPIO_1A = 2
-    GPIO_1B = 3
-    GPIO_1C = 16
-    GPIO_2A = 26
-    GPIO_2B = 19
-    GPIO_2C = 6
+    GPIO_1A = "1A"
+    GPIO_1B = "1B"
+    GPIO_1C = "1C"
+    GPIO_2A = "2A"
+    GPIO_2B = "2B"
+    GPIO_2C = "2C"
 
-    SW_1 = 12
-    SW_2 = 13
+    SW_1 = "SW1"
+    SW_2 = "SW2"
+
+    DO1 = "DO1"
+    DO2 = "DO2"
+    DO3 = "DO3"
+    DO4 = "DO4"
+    DI1 = "DI1"
+    DI2 = "DI2"
+    DI3 = "DI3"
+    DI4 = "DI4"
+    DI5 = "DI5"
 
 
 # - Conveyor
@@ -81,8 +95,8 @@ class ConveyorID:
         pass
 
     NONE = 0
-    ID_1 = 12
-    ID_2 = 13
+    ID_1 = 9
+    ID_2 = 10
 
 
 class ConveyorDirection:
@@ -114,6 +128,37 @@ class ObjectShape:
     ANY = "ANY"
 
 
+class ProgramLanguage:
+    def __init__(self):
+        pass
+
+    NONE = -1
+    ALL = 0
+    PYTHON2 = 1
+    PYTHON3 = 2
+    BLOCKLY = 66
+
+
+class AutorunMode:
+    def __init__(self):
+        pass
+
+    DISABLE = 0
+    ONE_SHOT = 1
+    LOOP = 2
+
+
+class ButtonAction:
+    def __init__(self):
+        pass
+
+    HANDLE_HELD_ACTION = 0
+    LONG_PUSH_ACTION = 1
+    SINGLE_PUSH_ACTION = 2
+    DOUBLE_PUSH_ACTION = 3
+    NO_ACTION = 100
+
+
 @unique
 class CommandEnum(Enum):
     """
@@ -136,11 +181,9 @@ class CommandEnum(Enum):
     MOVE_JOINTS = 20
     MOVE_POSE = 21
     SHIFT_POSE = 22
-  
 
     MOVE_LINEAR_POSE = 23
     SHIFT_LINEAR_POSE = 24
-    
 
     JOG_JOINTS = 25
     JOG_POSE = 26
@@ -192,6 +235,8 @@ class CommandEnum(Enum):
     DIGITAL_READ = 152
     GET_DIGITAL_IO_STATE = 153
     GET_HARDWARE_STATUS = 154
+    ANALOG_WRITE = 155
+    ANALOG_READ = 156
 
     # - Conveyor
     SET_CONVEYOR = 180
@@ -220,3 +265,30 @@ class CommandEnum(Enum):
     SET_IMAGE_CONTRAST = 231
     SET_IMAGE_SATURATION = 232
     GET_IMAGE_PARAMETERS = 235
+
+    # - Sound
+    PLAY_SOUND = 240
+    SET_VOLUME = 241
+    STOP_SOUND = 242
+    DELETE_SOUND = 243
+    IMPORT_SOUND = 244
+    GET_SOUNDS = 245
+    GET_SOUND_DURATION = 246
+    SAY = 247
+
+    # Led Ring
+    LED_RING_SOLID = 250
+    LED_RING_TURN_OFF = 251
+    LED_RING_FLASH = 252
+    LED_RING_ALTERNATE = 253
+    LED_RING_CHASE = 254
+    LED_RING_WIPE = 255
+    LED_RING_RAINBOW = 256
+    LED_RING_RAINBOW_CYCLE = 257
+    LED_RING_RAINBOW_CHASE = 258
+    LED_RING_GO_UP = 259
+    LED_RING_GO_UP_DOWN = 260
+    LED_RING_BREATH = 261
+    LED_RING_SNAKE = 262
+    LED_RING_CUSTOM = 263
+    LED_RING_SET_LED = 264

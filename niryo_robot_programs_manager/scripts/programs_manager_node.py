@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 
 import rospy
+import logging
 import os
 import yaml
 
@@ -16,6 +17,7 @@ from niryo_robot_msgs.msg import CommandStatus
 # Messages
 from niryo_robot_programs_manager.msg import ProgramList
 from niryo_robot_programs_manager.msg import ProgramLanguage, ProgramLanguageList
+from niryo_robot_programs_manager.msg import ProgramIsRunning
 from std_msgs.msg import Bool
 
 # Services
@@ -82,7 +84,7 @@ class ProgramManagerNode:
         rospy.Service('~stop_program', Trigger,
                       self.__callback_stop_program)
 
-        self.__program_is_running = False
+        self.__program_is_running = ProgramIsRunning(False, ProgramIsRunning.NONE, "")
 
         # Publisher
         self.__program_list_publisher = rospy.Publisher(
@@ -90,7 +92,7 @@ class ProgramManagerNode:
         self.__publish_program_list()
 
         self.__program_is_running_publisher = rospy.Publisher(
-            '~program_is_running', Bool, latch=True, queue_size=1)
+            '~program_is_running', ProgramIsRunning, latch=True, queue_size=1)
         self.__program_is_running_publisher.publish(self.__program_is_running)
 
         # - Autorun
@@ -169,7 +171,7 @@ class ProgramManagerNode:
             return resp
 
     def __callback_execute_program(self, req):
-        if self.__program_is_running:
+        if self.__program_is_running.program_is_running:
             return CommandStatus.PROGRAMS_MANAGER_EXECUTION_FAILED, "Program is already running"
         language = req.language.used
         if req.execute_from_string:
@@ -181,7 +183,7 @@ class ProgramManagerNode:
         return self.__execute_program(language, name=name, code_string=code_string)
 
     def __callback_stop_program(self, _req):
-        if not self.__program_is_running:
+        if not self.__program_is_running.program_is_running:
             return CommandStatus.SUCCESS, "No program is running"
 
         try:
@@ -190,9 +192,8 @@ class ProgramManagerNode:
             if not self.__standalone:
                 self.__stop_robot_action()
 
-            if self.__program_is_running:
-                self.__program_is_running = False
-                self.__program_is_running_publisher.publish(self.__program_is_running)
+            self.__program_is_running = ProgramIsRunning(False, ProgramIsRunning.PREEMPTED, "")
+            self.__program_is_running_publisher.publish(self.__program_is_running)
 
         except Exception as e:
             return CommandStatus.PROGRAMS_MANAGER_FAILURE, str(e)
@@ -237,7 +238,7 @@ class ProgramManagerNode:
         return CommandStatus.SUCCESS, "OK", language, name, mode
 
     def __callback_execute_program_autorun(self, _req):
-        if self.__program_is_running:
+        if self.__program_is_running.program_is_running:
             return CommandStatus.PROGRAMS_MANAGER_EXECUTION_FAILED, "Program is already running"
 
         language_obj, name, mode = self.__get_autorun_infos()
@@ -254,7 +255,7 @@ class ProgramManagerNode:
         else:
             self.__loop_autorun = True
 
-        self.__program_is_running = True
+        self.__program_is_running.program_is_running = True
         self.__program_is_running_publisher.publish(self.__program_is_running)
 
         self.__execution_thread = Thread(target=self.__execute_program, name="execution_thread_programs_manager",
@@ -287,8 +288,8 @@ class ProgramManagerNode:
         self.__execution_stopped = False
 
         try:
-            if not self.__program_is_running:
-                self.__program_is_running = True
+            if not self.__program_is_running.program_is_running:
+                self.__program_is_running.program_is_running = True
                 self.__program_is_running_publisher.publish(self.__program_is_running)
 
             ret, message = manager.execute(prog_name)
@@ -296,30 +297,34 @@ class ProgramManagerNode:
                 ret, message = manager.execute(prog_name)
 
         except FileDoesNotExistException:
-            self.__program_is_running = False
+            self.__program_is_running = ProgramIsRunning(False, ProgramIsRunning.FILE_ERROR, "File Doesn't Exist")
             self.__program_is_running_publisher.publish(self.__program_is_running)
             return CommandStatus.PROGRAMS_MANAGER_FILE_DOES_NOT_EXIST, "File Doesn't Exist"
         except Exception as e:
-            self.__program_is_running = False
+            self.__program_is_running = ProgramIsRunning(False, ProgramIsRunning.EXECUTION_ERROR, str(e))
             self.__program_is_running_publisher.publish(self.__program_is_running)
             return CommandStatus.PROGRAMS_MANAGER_EXECUTION_FAILED, str(e)
 
-        self.__program_is_running = False
-        self.__program_is_running_publisher.publish(self.__program_is_running)
         if ret:
             message = "Program execution success"
             rospy.loginfo("Programs Manager - {}".format(message))
-            return CommandStatus.SUCCESS, message
+            status = CommandStatus.SUCCESS
+            self.__program_is_running = ProgramIsRunning(False, ProgramIsRunning.SUCCESS, message)
         elif self.__execution_stopped:
-            return CommandStatus.PREEMPTED, "Program successfully stopped"
+            status, message = CommandStatus.PREEMPTED, "Program successfully stopped"
+            self.__program_is_running = ProgramIsRunning(False, ProgramIsRunning.PREEMPTED, message)
         else:
-            return CommandStatus.PROGRAMS_MANAGER_EXECUTION_FAILED, message
+            status, message = CommandStatus.PROGRAMS_MANAGER_EXECUTION_FAILED, message
+            self.__program_is_running = ProgramIsRunning(False, ProgramIsRunning.EXECUTION_ERROR, message)
+
+        self.__program_is_running_publisher.publish(self.__program_is_running)
+        return status, message
 
     def __get_autorun_infos(self):
         if not os.path.isfile(self.__autorun_file_path):
             return None, None, None
         with open(self.__autorun_file_path, "r") as input_file:
-            yaml_file = yaml.load(input_file)
+            yaml_file = yaml.safe_load(input_file)
 
         mode = self._str_to_autorun_mode[yaml_file["mode"]]
 
@@ -408,6 +413,12 @@ class ProgramManagerNode:
 
 if __name__ == "__main__":
     rospy.init_node('niryo_programs_manager', anonymous=False, log_level=rospy.INFO)
+
+    # change logger level according to node parameter
+    log_level = rospy.get_param("~log_level")
+    logger = logging.getLogger("rosout")
+    logger.setLevel(log_level)
+
     try:
         node = ProgramManagerNode()
         rospy.spin()

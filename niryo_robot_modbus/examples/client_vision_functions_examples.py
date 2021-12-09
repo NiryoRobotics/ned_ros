@@ -6,7 +6,8 @@ import time
 from enum import Enum, unique
 
 """
-This code is an example of how to use each available vision related function in the Modbus TCP server from the client side.
+This code is an example of how to use each available vision related
+function in the Modbus TCP server from the client side.
 """
 
 
@@ -47,7 +48,7 @@ def raw_data_to_number(val):
 
 # ---- Usefull functions
 
-def string_to_register(string): 
+def string_to_register(string):
     # code a string to 16 bits hex value to store in register
     builder = BinaryPayloadBuilder()
     builder.add_string(string)
@@ -63,7 +64,6 @@ def print_result(func_name=None, args=None, result=None):
     for res in result:
         print res,
     print '\n'
-    
 
 
 # ----------- Modbus server related function
@@ -104,7 +104,7 @@ def pick_and_place_from_pose(pose):
 
 def back_to_observation():
     # To change
-    # joint_real = [0.057, 0.604, -0.576, -0.078, -1.384,0.253] 
+    # joint_real = [0.057, 0.604, -0.576, -0.078, -1.384,0.253]
     joint_simu = [0, -0.092, 0, 0, -1.744, 0]
 
     joint_to_send = list(map(lambda j: int(number_to_raw_data(j * 1000)), joint_simu))
@@ -280,7 +280,7 @@ def vision_pick(workspace_str, height_offset, shape_int, color_int):
 if __name__ == '__main__':
     print "--- START"
 
-    client = ModbusTcpClient('localhost', port=5020)  
+    client = ModbusTcpClient('localhost', port=5020)
 
     # -------- Variable definition
     # To change
@@ -296,9 +296,8 @@ if __name__ == '__main__':
     back_to_observation()
 
     # update and open tool
-    client.write_registers(500, 1) 
+    client.write_registers(500, 1)
     open_tool()
-
 
     # ------------------- MOVEMENTS AND VISION ------------------------- #
 
@@ -306,8 +305,8 @@ if __name__ == '__main__':
     print '\n'
     print '------ DETECT OBJECT : get rel. pose of any blue pawn'
 
-    shape = ShapeEnum.ANY.value 
-    color = ColorEnum.BLUE.value  
+    shape = ShapeEnum.ANY.value
+    color = ColorEnum.BLUE.value
     obj_rel_pose, shape_found, color_found = detect_object(workspace_name, shape, color)
 
     print_result('detect_object', [ShapeEnum(shape).name, ColorEnum(color).name],
@@ -315,13 +314,12 @@ if __name__ == '__main__':
 
     back_to_observation()
 
-
     # ------ GET TARGET POSE FROM REL
     print '\n'
     print '------ GET TARGET POSE FROM REL : get target pose from blue pawn rel. pose, and pick&place it'
-    
+
     # Get object detected previously
-    x_rel = obj_rel_pose[0] 
+    x_rel = obj_rel_pose[0]
     y_rel = obj_rel_pose[1]
     yaw_rel = obj_rel_pose[5]
 
@@ -332,13 +330,12 @@ if __name__ == '__main__':
     pick_and_place_from_pose(target_pose)
     back_to_observation()
 
-
     # ----- GET TARGET POSE FROM CAM
     print '\n'
     print '------ GET TARGET POSE FROM CAM : get target pose of any red pawn and pick&place it'
 
-    shape = ShapeEnum.ANY.value  
-    color = ColorEnum.RED.value 
+    shape = ShapeEnum.ANY.value
+    color = ColorEnum.RED.value
     obj_pose = get_target_pose_from_cam(workspace_name, height_offset, shape, color)
     print_result('get_target_pose_from_cam', [ShapeEnum(shape).name, ColorEnum(color).name],
                  ['target pose', obj_pose])
@@ -347,26 +344,24 @@ if __name__ == '__main__':
     pick_and_place_from_pose(obj_pose)
     back_to_observation()
 
-
     # ----- MOVE TO OBJECT function
     print '\n'
     print '------ MOVE TO OBJECT - move over any green pawn'
 
-    shape = ShapeEnum.ANY.value  
-    color = ColorEnum.GREEN.value  
+    shape = ShapeEnum.ANY.value
+    color = ColorEnum.GREEN.value
     shape_found, color_found = move_to_object(workspace_name, height_offset, shape, color)
     print_result('move_to_object', [ShapeEnum(shape).name, ColorEnum(color).name],
                  [ShapeEnum(shape_found).name, ColorEnum(color_found).name])
 
     back_to_observation()
 
-
     # ----- Vision pick function
     print '\n'
     print '------ VISION PICK - pick any red pawn, lift it and release it'
 
-    shape = ShapeEnum.ANY.value  
-    color = ColorEnum.RED.value  
+    shape = ShapeEnum.ANY.value
+    color = ColorEnum.RED.value
     shape_picked, color_picked = vision_pick(workspace_name, height_offset, shape, color)
     print_result('vision_pick', [ShapeEnum(shape).name, ColorEnum(color).name],
                  ['picked ', ShapeEnum(shape_picked).name, ColorEnum(color_picked).name])

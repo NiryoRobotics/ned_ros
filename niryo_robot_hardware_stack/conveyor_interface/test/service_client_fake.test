@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+
+    <arg name="hardware_version" default="ned2" />
+        
+    <!-- launch the conveyor_interface_node node using conveyor_interface_node executable from conveyor_interface package -->
+    <include file="$(find conveyor_interface)/launch/conveyor_interface.launch" >
+        <arg name="hardware_version" value="$(arg hardware_version)" />
+        <arg name="simulation_mode" value="true" />
+    </include>
+
+    <test test-name="conveyor_interface_integration_tests" pkg="conveyor_interface"  type="conveyor_interface_integration_tests" >
+        <param name="hardware_version" value="$(arg hardware_version)" />
+    </test>
+
+</launch>

@@ -1,19 +1,27 @@
-<package>
+<?xml version="1.0"?>
+<?xml-model
+  href="http://download.ros.org/schema/package_format3.xsd"
+  schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
   <name>niryo_robot_user_interface</name>
   <version>3.2.0</version>
   <description>Handles high level commands from user</description>
-  <author email="r.lux@niryo.com">Remi Lux</author>
   <maintainer email="r.lux@niryo.com">Remi Lux</maintainer>
   <maintainer email="c.ducatez@niryo.com">Corentin Ducatez</maintainer>
   <license>GPLv3</license>
-
+  <author email="r.lux@niryo.com">Remi Lux</author>
+  
   <buildtool_depend>catkin</buildtool_depend>
 
-  <run_depend>actionlib</run_depend>
-  <run_depend>actionlib_msgs</run_depend>
-  <run_depend>niryo_robot_arm_commander</run_depend>
-  <run_depend>niryo_robot_msgs</run_depend>
-  <run_depend>sensor_msgs</run_depend>
-  <run_depend>std_msgs</run_depend>
+  <build_depend>message_generation</build_depend>
 
+  <exec_depend>actionlib</exec_depend>
+  <exec_depend>actionlib_msgs</exec_depend>
+  <exec_depend>niryo_robot_arm_commander</exec_depend>
+  <exec_depend>niryo_robot_msgs</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+
+  <test_depend>python-catkin-lint</test_depend>
+  <test_depend>roslint</test_depend>
 </package>

@@ -1,43 +1,56 @@
-<package>
-    <name>niryo_robot_arm_commander</name>
-    <version>3.2.0</version>
-    <description>
-        Interface between user and Moveit! to easily control Ned (arm + tools). Validates params, checks if
-        previous trajectory has not finished, ...
-    </description>
-    <author email="r.lux@niryo.com">Rémi Lux</author>
-    <maintainer email="r.lux@niryo.com">Rémi Lux</maintainer>
-    <maintainer email="v.pitre@niryo.com">Valentin Pitre</maintainer>
-    <license>GPLv3</license>
+<?xml version="1.0"?>
+<?xml-model
+  href="http://download.ros.org/schema/package_format3.xsd"
+  schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>niryo_robot_arm_commander</name>
+  <version>3.2.0</version>
+  <description>
+      Interface between user and Moveit! to easily control Ned (arm + tools). Validates params, checks if
+      previous trajectory has not finished, ...
+  </description>
+  <maintainer email="r.lux@niryo.com">Rémi Lux</maintainer>
+  <maintainer email="v.pitre@niryo.com">Valentin Pitre</maintainer>
+  <license>GPLv3</license>
+  <author email="r.lux@niryo.com">Rémi Lux</author>
+  
+  <buildtool_depend>catkin</buildtool_depend>
 
-    <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>actionlib_msgs</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>niryo_robot_msgs</build_depend>
+  <build_depend>message_generation</build_depend>
+  <build_depend>trajectory_msgs</build_depend>
 
-    <build_depend>actionlib_msgs</build_depend>
-    <build_depend>geometry_msgs</build_depend>
-    <build_depend>message_generation</build_depend>
-    <build_depend>niryo_robot_msgs</build_depend>
+  <build_export_depend>actionlib_msgs</build_export_depend>
+  <build_export_depend>niryo_robot_msgs</build_export_depend>
+  <build_export_depend>geometry_msgs</build_export_depend>
+  <build_export_depend>trajectory_msgs</build_export_depend>
 
-    <run_depend>actionlib</run_depend>
-    <run_depend>actionlib_msgs</run_depend>
-    <run_depend>control_msgs</run_depend>
-    <run_depend>geometry_msgs</run_depend>
-    <run_depend>message_runtime</run_depend>
-    <run_depend>moveit</run_depend>
-    <run_depend>moveit_msgs</run_depend>
-    <run_depend>ros_controllers</run_depend>
-    <run_depend>rosbridge_server</run_depend>
-    <run_depend>sensor_msgs</run_depend>
-    <run_depend>std_msgs</run_depend>
-    <run_depend>tf2_web_republisher</run_depend>
-    <run_depend>trajectory_msgs</run_depend>
+  <exec_depend>actionlib</exec_depend>
+  <exec_depend>actionlib_msgs</exec_depend>
+  <exec_depend>control_msgs</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>moveit</exec_depend>
+  <exec_depend>moveit_msgs</exec_depend>
+  <exec_depend>ros_controllers</exec_depend>
+  <exec_depend>rosbridge_server</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>tf2_web_republisher</exec_depend>
+  <exec_depend>trajectory_msgs</exec_depend>
+  <exec_depend>message_runtime</exec_depend>
 
-    <!-- Niryo Dependencies -->
-    <run_depend>niryo_robot_hardware_interface</run_depend>
-    <run_depend>niryo_robot_msgs</run_depend>
-    <run_depend>niryo_ned_moveit_config_standalone</run_depend>
-    <run_depend>niryo_ned_moveit_config_w_gripper1</run_depend>
+  <!-- Niryo Dependencies -->
+  <exec_depend>niryo_robot_hardware_interface</exec_depend>
+  <exec_depend>niryo_robot_msgs</exec_depend>
+  <exec_depend>niryo_robot_tools_commander</exec_depend>
+  <exec_depend>niryo_moveit_config_w_gripper1</exec_depend>
+  <exec_depend>niryo_moveit_config_standalone</exec_depend>
 
-    <!-- Python Dependencies -->
-    <run_depend>python-numpy</run_depend>
+  <!-- Python Dependencies -->
+  <exec_depend>python-numpy</exec_depend>
 
+  <test_depend>python-catkin-lint</test_depend>
+  <test_depend>roslint</test_depend>
 </package>

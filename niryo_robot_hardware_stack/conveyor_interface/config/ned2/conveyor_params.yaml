@@ -1,0 +1,5 @@
+type: "stepper"
+ttl:
+  default_id: 8
+  pool_id_list: [9,10]
+  direction: -1

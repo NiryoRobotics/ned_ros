@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 
 import rospy
+import logging
+
 import actionlib
 import moveit_commander
 
@@ -14,6 +16,8 @@ from niryo_robot_msgs.msg import CommandStatus
 
 # Messages
 from std_msgs.msg import Int32
+
+from tools_interface.msg import Tool
 
 from niryo_robot_tools_commander.msg import ToolAction, ToolResult
 from niryo_robot_tools_commander.msg import ToolCommand
@@ -37,37 +41,48 @@ class ToolsState:
 
         self.ROS_COMMUNICATION_PROBLEM = state_dict["ros_communication_problem"]
 
+    def __str__(self):
+        return str(self.__class__) + ": " + str(self.__dict__)
+
 
 class ToolCommander:
     def __init__(self):
         self.__tools_state = ToolsState(rospy.get_param("~state_dict"))
+        self.__is_gripper_simulated = rospy.get_param("~simu_gripper")
+        self.__is_use_gazebo = rospy.get_param("~gazebo")
+        self.__hardware_version = rospy.get_param("~hardware_version")
+        move_group_tool_commander_name = rospy.get_param("~move_group_tool_commander_name")
+        reference_frame = rospy.get_param("~reference_frame")
+
+        rospy.logdebug("ToolCommander.init - state_dict: {}".format(str(self.__tools_state)))
+        rospy.logdebug("ToolCommander.init - simu_gripper: {}".format(self.__is_gripper_simulated))
+        rospy.logdebug("ToolCommander.init - move_group_tool_commander_name: {}".format(move_group_tool_commander_name))
+        rospy.logdebug("ToolCommander.init - reference_frame: {}".format(reference_frame))
+
         self.__ros_command_interface = ToolRosCommandInterface(self.__tools_state.ROS_COMMUNICATION_PROBLEM)
 
         # Transform Handlers
         self.__transform_handler = ToolTransformHandler()
 
         self.__current_tool = None
+        self.__motor_type = Tool.NO_MOTOR
 
         self.__available_tools, self.__dict_commands_string_to_id = self.create_tools()
 
         self.__dict_id_commands_to_string = {string: id_ for id_, string
                                              in self.__dict_commands_string_to_id.iteritems()}
 
-        self.__is_simulation = rospy.get_param("~simulation_mode")
-
         # if gripper simulated, setup variables to control it through moveit
-        self.__is_gripper_simulated = rospy.get_param("~simu_gripper")
-
-        if self.__is_gripper_simulated:
+        if self.__is_use_gazebo and self.__is_gripper_simulated:
+            self.wait_for_controller()
             # Get Tool MoveGroupCommander
-            self.__tool_simu = moveit_commander.MoveGroupCommander(rospy.get_param("~move_group_tool_commander_name"))
+            self.__tool_simu = moveit_commander.MoveGroupCommander(move_group_tool_commander_name)
             # Set pose reference frame
-            self.__tool_simu.set_pose_reference_frame(rospy.get_param("~reference_frame"))
-            
+            self.__tool_simu.set_pose_reference_frame(reference_frame)
 
         # Subscriber
-        rospy.Subscriber('/niryo_robot_hardware/tools/current_id', Int32,
-                         self.__callback_current_tool_id)
+        rospy.Subscriber('/niryo_robot_hardware/tools/motor', Tool,
+                         self.__callback_current_tool_motor)
 
         # Publisher
         self.__tool_id_publisher = rospy.Publisher('~current_id', Int32, queue_size=10, latch=True)
@@ -94,12 +109,20 @@ class ToolCommander:
         self.__action_server.start()
         self.update_tool()
 
+    @classmethod
+    def wait_for_controller(cls):
+        from actionlib_msgs.msg import GoalStatusArray
+
+        _ = rospy.wait_for_message("/move_group/status", GoalStatusArray, timeout=120)
+        _ = rospy.wait_for_message("/gazebo_tool_commander/follow_joint_trajectory/status", GoalStatusArray,
+                                   timeout=120)
+
     # Subscriber
 
-    def __callback_current_tool_id(self, msg):
-        if self.__current_tool != "electromagnet":
-            id_ = msg.data
-            self.set_tool(self.__available_tools[id_])
+    def __callback_current_tool_motor(self, msg):
+        if self.__current_tool is None or self.__current_tool.get_type() != "electromagnet":
+            self.set_tool(self.__available_tools[msg.id])
+            self.__motor_type = msg.motor_type
 
         self.__tool_id_publisher.publish(self.__current_tool.get_id())
 
@@ -114,24 +137,23 @@ class ToolCommander:
             self.__action_server.set_aborted(self.create_action_result(CommandStatus.TOOL_FAILURE, "No tool selected"))
             return
 
-        if not self.__is_simulation:
-            # 1. Check tool id
-            if cmd.tool_id != self.__current_tool.get_id():
-                msg = "Tools ID do not match -> Given : {} Expected : {}".format(cmd.tool_id,
-                                                                                 self.__current_tool.get_id())
-                rospy.logwarn("Tool Commander - {}".format(msg))
-                self.__action_server.set_aborted(self.create_action_result(CommandStatus.TOOL_FAILURE, msg))
-                return
+        # 1. Check tool id
+        if cmd.tool_id != self.__current_tool.get_id():
+            msg = "Tools ID do not match -> Given : {} Expected : {}".format(cmd.tool_id,
+                                                                             self.__current_tool.get_id())
+            rospy.logwarn("Tool Commander - {}".format(msg))
+            self.__action_server.set_aborted(self.create_action_result(CommandStatus.TOOL_FAILURE, msg))
+            return
 
-            # 2. Check if current tool is active
-            if self.__current_tool.is_active():
-                self.__action_server.set_aborted(
-                    self.create_action_result(CommandStatus.TOOL_FAILURE, "Tool still active, retry later"))
-                return
+        # 2. Check if current tool is active
+        if self.__current_tool.is_active():
+            self.__action_server.set_aborted(
+                self.create_action_result(CommandStatus.TOOL_FAILURE, "Tool still active, retry later"))
+            return
 
         # 3. Check cmd_type (if exists, and is available for selected tool)
         # Skip in case of simulation
-        if not self.__is_simulation and cmd.cmd_type not in self.__current_tool.get_available_commands():
+        if cmd.cmd_type not in self.__current_tool.get_available_commands():
             msg = "Command '{}' is not available for {}".format(self.__dict_id_commands_to_string[cmd.cmd_type],
                                                                 self.__current_tool.name)
             rospy.logwarn("Tool Commander - {}".format(msg))
@@ -145,40 +167,39 @@ class ToolCommander:
             self.__action_server.set_aborted(self.create_action_result(CommandStatus.TOOL_FAILURE, str(e)))
             return
 
-        if not self.__is_simulation:
-            # 4. Execute cmd -> retrieve cmd name in command list and execute on current tool
-            self.__current_tool.set_as_active()
+        # 4. Execute cmd -> retrieve cmd name in command list and execute on current tool
+        self.__current_tool.set_as_active()
 
-            function_name = self.__dict_id_commands_to_string[cmd.cmd_type]
-            success, message = self.__current_tool(function_name, cmd)  # Execute function from name
-            
-            self.__current_tool.set_as_non_active()
+        function_name = self.__dict_id_commands_to_string[cmd.cmd_type]
+        success, message = self.__current_tool(function_name, cmd)  # Execute function from name
 
-            # 5. Return success or error
-            if success:
-                self.__action_server.set_succeeded(
-                    self.create_action_result(CommandStatus.SUCCESS, "Tool action successfully finished"))
-            else:
-                rospy.loginfo("Tool Commander - error : {}".format(message))
-                self.__action_server.set_aborted(self.create_action_result(CommandStatus.TOOL_FAILURE, message))
-        
-        # Gripper simulated
-        elif self.__is_gripper_simulated:
-            if cmd.cmd_type == ToolCommand.OPEN_GRIPPER:
-                self.__tool_simu.set_named_target("open")
-                self.__tool_simu.go()
-            elif cmd.cmd_type == ToolCommand.CLOSE_GRIPPER:
-                self.__tool_simu.set_named_target("close")
-                self.__tool_simu.go()     
-            
-            self.__action_server.set_succeeded(
-                self.create_action_result(CommandStatus.SUCCESS, "Simulated tool action successfully finished"))      
-            return
+        self.__current_tool.set_as_non_active()
 
-        #Simulation mode without gripper
-        else: 
+        # 5. Return success or error
+        if success:
             self.__action_server.set_succeeded(
                 self.create_action_result(CommandStatus.SUCCESS, "Tool action successfully finished"))
+        else:
+            rospy.loginfo("Tool Commander - error : {}".format(message))
+            self.__action_server.set_aborted(self.create_action_result(CommandStatus.TOOL_FAILURE, message))
+
+        # Gripper simulated
+        if self.__is_use_gazebo:
+            if self.__is_gripper_simulated:
+                if cmd.cmd_type == ToolCommand.OPEN_GRIPPER:
+                    self.__tool_simu.set_named_target("open")
+                    self.__tool_simu.go()
+                elif cmd.cmd_type == ToolCommand.CLOSE_GRIPPER:
+                    self.__tool_simu.set_named_target("close")
+                    self.__tool_simu.go()
+
+                self.__action_server.set_succeeded(
+                    self.create_action_result(CommandStatus.SUCCESS, "Simulated tool action successfully finished"))
+                return
+            # Simulation mode without gripper
+            else:
+                self.__action_server.set_succeeded(
+                    self.create_action_result(CommandStatus.SUCCESS, "Tool action successfully finished"))
 
     def __callback_update_tool(self, _req):
         state, id_ = self.update_tool()
@@ -211,19 +232,27 @@ class ToolCommander:
         tool_config_dict = rospy.get_param("~tool_list")
         list_commands_all_tools = rospy.get_param("~command_list")
 
+        rospy.logdebug("ToolCommander.create_tools - tool_list: {}".format(tool_config_dict))
+        rospy.logdebug("ToolCommander.create_tools - command_list: {}".format(list_commands_all_tools))
+
         dict_tools = {}
 
         for tool in tool_config_dict:
-            tool_type, tool_id, tool_name, tool_transformation, specs = (tool[key] for key in ['type', 'id', 'name', 'transformation', 'specs'])
+            (tool_type, tool_id, tool_name,
+             tool_transformation, specs) = (tool[key] for key in ['type', 'id', 'name', 'transformation', 'specs'])
             tool_transformation = self.__transform_handler.transform_from_dict(tool_transformation)
             if tool_type == Gripper.get_type():
-                new_tool = Gripper(tool_id, tool_name, tool_transformation, self.__tools_state, self.__ros_command_interface, specs)
+                new_tool = Gripper(tool_id, tool_name, tool_transformation,
+                                   self.__tools_state, self.__ros_command_interface, specs, self.__hardware_version)
             elif tool_type == Electromagnet.get_type():
-                new_tool = Electromagnet(tool_id, tool_name, tool_transformation, self.__tools_state, self.__ros_command_interface)
+                new_tool = Electromagnet(tool_id, tool_name, tool_transformation,
+                                         self.__tools_state, self.__ros_command_interface)
             elif tool_type == VacuumPump.get_type():
-                new_tool = VacuumPump(tool_id, tool_name, tool_transformation, self.__tools_state, self.__ros_command_interface, specs)
+                new_tool = VacuumPump(tool_id, tool_name, tool_transformation,
+                                      self.__tools_state, self.__ros_command_interface, specs)
             elif tool_type == NoTool.get_type():
-                new_tool = NoTool(tool_id, tool_name, tool_transformation, self.__tools_state, self.__ros_command_interface)
+                new_tool = NoTool(tool_id, tool_name, tool_transformation,
+                                  self.__tools_state, self.__ros_command_interface)
             else:
                 rospy.logwarn("Tool Commander - Type not recognized from tool config list : " + str(tool['type']))
                 continue
@@ -236,7 +265,7 @@ class ToolCommander:
                 except KeyError:
                     rospy.logwarn("Tool Commander - Unknown command : {}".format(cmd))
                     continue
-                
+
             new_tool.set_available_commands(tool_command_list)
 
             dict_tools[tool_id] = new_tool
@@ -266,6 +295,12 @@ class ToolCommander:
 
 if __name__ == '__main__':
     rospy.init_node('niryo_robot_tools_commander', anonymous=False, log_level=rospy.INFO)
+
+    # change logger level according to node parameter
+    log_level = rospy.get_param("~log_level")
+    logger = logging.getLogger("rosout")
+    logger.setLevel(log_level)
+
     try:
         node = ToolCommander()
         rospy.spin()

@@ -1,12 +1,22 @@
-<launch>
-    <arg name="simulation_mode" default="false"/>
+<?xml version="1.0" ?>
+<launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+    <!-- Arguments -->
+    <arg name="log_level" default="INFO" />
+    <arg name="hardware_version" default="ned"/>
     <arg name="simu_gripper" default="false"/>
+    <arg name="gazebo" default="false"/>
 
-    <node name="niryo_robot_tools_commander" pkg="niryo_robot_tools_commander" type="tool_commander_node.py" output="screen"
-          respawn="false">
-        <param name="simulation_mode" type="bool" value="$(arg simulation_mode)"/>
-         <param name="simu_gripper" type="bool" value="$(arg simu_gripper)"/>
-        <rosparam file="$(find niryo_robot_tools_commander)/config/end_effectors.yaml"/>
+    <include file="$(find niryo_robot_tools_commander)/launch/tools_commander_base.launch.xml"> 
+        <arg name="hardware_version" value="$(arg hardware_version)" />
+    </include>
+
+    <node name="niryo_robot_tools_commander" pkg="niryo_robot_tools_commander" 
+          type="tool_commander_node.py" output="screen" respawn="false">
+        <param name="log_level" type="string" value="$(arg log_level)" />
+        <param name="simu_gripper" type="bool" value="$(arg simu_gripper)"/>
+        <param name="gazebo" type="bool" value="$(arg gazebo)"/>
+        <param name="hardware_version" type="string" value="$(arg hardware_version)"/>
     </node>
 
 </launch>

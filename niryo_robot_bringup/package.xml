@@ -1,23 +1,29 @@
-<package>
+<?xml version="1.0"?>
+<?xml-model
+  href="http://download.ros.org/schema/package_format3.xsd"
+  schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
   <name>niryo_robot_bringup</name>
   <version>3.2.0</version>
   <description>Provides roslaunch scripts to start Ned packages and initialize ROS params</description>
-  <author email="r.lux@niryo.com">Rémi Lux</author>
   <maintainer email="r.lux@niryo.com">Rémi Lux</maintainer>
   <maintainer email="v.pitre@niryo.com">Valentin Pitre</maintainer>
   <maintainer email="c.ducatez@niryo.com">Corentin Ducatez</maintainer>
   <license>GPLv3</license>
-
+  <author email="r.lux@niryo.com">Rémi Lux</author>
+  
   <buildtool_depend>catkin</buildtool_depend>
 
-  <run_depend>xacro</run_depend>
-  <run_depend>rviz</run_depend>
+  <exec_depend>niryo_robot_arm_commander</exec_depend>
+  <exec_depend>niryo_robot_description</exec_depend>
+  <exec_depend>niryo_robot_gazebo</exec_depend>
+  <exec_depend>niryo_moveit_config_standalone</exec_depend>
+  <exec_depend>niryo_robot_sound</exec_depend>
+  <exec_depend>niryo_robot_led_ring</exec_depend>
+  <exec_depend>niryo_robot_vision</exec_depend>
+  <exec_depend>rviz</exec_depend>
+  <exec_depend>xacro</exec_depend>
 
-  <!-- Niryo Dependencies -->
-  <run_depend>niryo_robot_description</run_depend>
-  <run_depend>niryo_robot_gazebo</run_depend>
-  <run_depend>niryo_robot_vision</run_depend>
-  <run_depend>niryo_robot_arm_commander</run_depend>
-  <run_depend>niryo_ned_moveit_config_standalone</run_depend>
-
+  <test_depend>python-catkin-lint</test_depend>
+  <test_depend>roslint</test_depend>
 </package>

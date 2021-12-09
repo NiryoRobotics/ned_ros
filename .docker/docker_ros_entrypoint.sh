@@ -4,7 +4,9 @@ set -e
 # setup ros environment
 source "/opt/ros/$ROS_DISTRO/setup.bash"
 
-if [ -f ${HOME}/catkin_ws/devel/setup.bash ]; then
+if [ -f ${HOME}/catkin_ws/install/release/setup.bash ]; then
+    source "${HOME}/catkin_ws/install/release/setup.bash"
+elif [ -f ${HOME}/catkin_ws/devel/setup.bash ]; then
     source "${HOME}/catkin_ws/devel/setup.bash"
 fi
 

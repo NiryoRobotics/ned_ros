@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<?xml-model
+  href="http://download.ros.org/schema/package_format3.xsd"
+  schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>niryo_robot_credentials</name>
+  <version>3.2.0</version>
+  <description>Provides a way to have a unique serial number by robot</description>
+
+  <maintainer email="j.mottier@niryo.com">Justin Mottier</maintainer>
+  <maintainer email="c.ducatez@niryo.com">Corentin Ducatez</maintainer>
+  <license>GPLv3</license>
+  <author email="j.mottier@niryo.com">Justin Mottier</author>
+  
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>message_generation</build_depend>
+  <build_depend>rospy</build_depend>
+
+  <exec_depend>message_runtime</exec_depend>
+  <exec_depend>rospy</exec_depend>
+
+  <test_depend>python-catkin-lint</test_depend>
+  <test_depend>roslint</test_depend>
+</package>

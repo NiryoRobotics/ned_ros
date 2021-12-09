@@ -1,32 +1,40 @@
-<package>
+<?xml version="1.0"?>
+<?xml-model
+  href="http://download.ros.org/schema/package_format3.xsd"
+  schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
   <name>niryo_robot_rpi</name>
   <version>3.2.0</version>
   <description>Specific utilities for Ned RPI + custom Ned shield</description>
-  <author>Edouard Renard</author>
-  <author email="v.pitre@niryo.com">Valentin Pitre</author>
   <maintainer email="v.pitre@niryo.com">Valentin Pitre</maintainer>
   <license>GPLv3</license>
+  <author>Edouard Renard</author>
+  <author email="v.pitre@niryo.com">Valentin Pitre</author>
   
   <buildtool_depend>catkin</buildtool_depend>
-
-  <build_depend>actionlib_msgs</build_depend>
-  <build_depend>message_generation</build_depend>
-  <build_depend>niryo_robot_msgs</build_depend>
+  
   <build_depend>rospy</build_depend>
   <build_depend>std_msgs</build_depend>
+  <build_depend>actionlib_msgs</build_depend>
+  <build_depend>niryo_robot_msgs</build_depend>
   <build_depend>sensor_msgs</build_depend>
+  <build_depend>roscpp</build_depend>
+  <build_depend>message_generation</build_depend>
 
-  <run_depend>actionlib_msgs</run_depend>
-  <run_depend>message_runtime</run_depend>
-  <run_depend>niryo_robot_msgs</run_depend>
-  <run_depend>rospy</run_depend>
-  <run_depend>sensor_msgs</run_depend>
-  <run_depend>std_msgs</run_depend>
+  <build_export_depend>std_msgs</build_export_depend>
+  <build_export_depend>actionlib_msgs</build_export_depend>
+  <build_export_depend>sensor_msgs</build_export_depend>
+  <build_export_depend>niryo_robot_msgs</build_export_depend>
+  
+  <exec_depend>rospy</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+  <exec_depend>message_runtime</exec_depend>
+  <exec_depend>niryo_robot_msgs</exec_depend>
 
   <!-- Python Dependencies -->
-  <run_depend>python-flask</run_depend>
-  <run_depend>python-rpi.gpio</run_depend>
+  <exec_depend>python-flask</exec_depend>
+  <exec_depend>python-rpi.gpio</exec_depend>
   
-  <export>
-  </export>
+  <test_depend>python-catkin-lint</test_depend>
+  <test_depend>roslint</test_depend>
 </package>

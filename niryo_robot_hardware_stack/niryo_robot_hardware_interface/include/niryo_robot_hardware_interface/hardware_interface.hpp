@@ -1,36 +1,37 @@
 /*
-    hardware_interface.cpp
-    Copyright (C) 2020 Niryo
-    All rights reserved.
+hardware_interface.hpp
+Copyright (C) 2020 Niryo
+All rights reserved.
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+This program is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+You should have received a copy of the GNU General Public License
+along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 */
 
 #ifndef HARDWARE_INTERFACE_HPP
 #define HARDWARE_INTERFACE_HPP
 
 #include <ros/ros.h>
-#include <boost/shared_ptr.hpp>
+#include <memory>
+
+#include "common/util/i_interface_core.hpp"
 
 #include "joints_interface/joints_interface_core.hpp"
 #include "tools_interface/tools_interface_core.hpp"
+#include "end_effector_interface/end_effector_interface_core.hpp"
 #include "conveyor_interface/conveyor_interface_core.hpp"
 #include "cpu_interface/cpu_interface_core.hpp"
-#include "dynamixel_driver/dxl_driver_core.hpp"
-#include "stepper_driver/stepper_driver_core.hpp"
-#include "fake_interface/fake_interface_core.hpp"
-#include "dynamixel_driver/dxl_enum.hpp"
+#include "ttl_driver/ttl_interface_core.hpp"
+#include "can_driver/can_interface_core.hpp"
 
 #include "niryo_robot_msgs/Trigger.h"
 #include "niryo_robot_msgs/SetBool.h"
@@ -39,56 +40,76 @@
 #include "niryo_robot_msgs/SoftwareVersion.h"
 #include "niryo_robot_msgs/CommandStatus.h"
 
-namespace NiryoRobotHardwareInterface
+namespace niryo_robot_hardware_interface
 {
-    class HardwareInterface
-    {
+/**
+ * @brief The HardwareInterface class
+ */
+class HardwareInterface : common::util::IInterfaceCore
+{
     public:
         HardwareInterface(ros::NodeHandle &nh);
+        ~HardwareInterface() override = default;
+
+        // non copyable class
+        HardwareInterface( const HardwareInterface& ) = delete;
+        HardwareInterface( HardwareInterface&& ) = delete;
+
+        HardwareInterface& operator= ( HardwareInterface && ) = delete;
+        HardwareInterface& operator= ( const HardwareInterface& ) = delete;
+
+        bool init(ros::NodeHandle &nh) override;
 
     private:
-        ros::NodeHandle &_nh;
+        void initParameters(ros::NodeHandle &nh) override;
+        void startServices(ros::NodeHandle &nh) override;
+        void startPublishers(ros::NodeHandle &nh) override;
+        void startSubscribers(ros::NodeHandle &nh) override;
 
-        bool _simulation_mode;
-        bool _gazebo;
-        bool _can_enabled;
-        bool _dxl_enabled;
+        void initNodes(ros::NodeHandle &nh);
 
-        ros::Publisher _hardware_status_publisher;
-        ros::Publisher _software_version_publisher;
+        bool _callbackLaunchMotorsReport(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
+        bool _callbackStopMotorsReport(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
+        bool _callbackRebootMotors(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
 
-        double _publish_hw_status_frequency;
-        double _publish_software_version_frequency;
+        void _publishHardwareStatus(const ros::TimerEvent&);
+        void _publishSoftwareVersion(const ros::TimerEvent&);
+
+    private:
+        ros::NodeHandle _nh;
+
+        ros::Publisher _hw_status_publisher;
+        ros::Timer _hw_status_publisher_timer;
+        ros::Duration _hw_status_publisher_duration{1.0};
+
+        ros::Publisher _sw_version_publisher;
+        ros::Timer _sw_version_publisher_timer;
+        ros::Duration _sw_version_publisher_duration{1.0};
+
+        ros::ServiceServer _motors_report_service;
+        ros::ServiceServer _stop_motors_report_service;
+        ros::ServiceServer _reboot_motors_service;
+
+        std::shared_ptr<ttl_driver::TtlInterfaceCore> _ttl_interface;
+        std::shared_ptr<can_driver::CanInterfaceCore> _can_interface;
+        std::shared_ptr<cpu_interface::CpuInterfaceCore> _cpu_interface;
+        std::shared_ptr<conveyor_interface::ConveyorInterfaceCore> _conveyor_interface;
+        std::shared_ptr<tools_interface::ToolsInterfaceCore> _tools_interface;
+        std::shared_ptr<end_effector_interface::EndEffectorInterfaceCore> _end_effector_interface;
+        std::shared_ptr<joints_interface::JointsInterfaceCore> _joints_interface;
+
+        bool _gazebo{false};
+
+        bool _can_enabled{false};
+        bool _ttl_enabled{false};
+        bool _end_effector_enabled{false};
+
+        common::model::EBusProtocol _conveyor_bus{common::model::EBusProtocol::CAN};
 
         std::string _rpi_image_version;
         std::string _ros_niryo_robot_version;
+        std::string _hardware_version;
+};
 
-        void initNodes();
-        void initPublishers();
-        void initParams();
-
-        void _publishHardwareStatus();
-        void _publishSoftwareVersion();
-
-        bool _callbackLaunchMotorsReport(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
-        ros::ServiceServer _motors_report_service;
-
-        bool _callbackStopMotorsReport(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
-        ros::ServiceServer _stop_motors_report_service;
-
-        bool _callbackRebootMotors(niryo_robot_msgs::Trigger::Request &req, niryo_robot_msgs::Trigger::Response &res);
-        ros::ServiceServer _reboot_motors_service;
-
-        boost::shared_ptr<DynamixelDriver::DynamixelDriverCore> _dynamixel_driver;
-        boost::shared_ptr<StepperDriver::StepperDriverCore> _stepper_driver;
-        boost::shared_ptr<CpuInterfaceCore> _cpu_interface;
-        boost::shared_ptr<ConveyorInterfaceCore> _conveyor_interface;
-        boost::shared_ptr<ToolsInterfaceCore> _tools_interface;
-        boost::shared_ptr<JointsInterfaceCore> _joints_interface;
-        boost::shared_ptr<FakeInterfaceCore> _fake_interface;
-
-        boost::shared_ptr<std::thread> _publish_hardware_status_thread;
-        boost::shared_ptr<std::thread> _publish_software_version_thread;
-    };
-} // namespace NiryoRobotHardwareInterface
+} // namespace niryo_robot_hardware_interface
 #endif

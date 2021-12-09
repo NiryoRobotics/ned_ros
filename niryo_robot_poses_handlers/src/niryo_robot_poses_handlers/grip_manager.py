@@ -55,7 +55,6 @@ class Grip(object):
 
         t.header.frame_id = dict_["transform"]["header_frame_id"]
         t.child_frame_id = dict_["transform"]["child_frame_id"]
-
         return cls(dict_["name"], t)
 
 

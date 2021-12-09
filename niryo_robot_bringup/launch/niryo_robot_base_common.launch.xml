@@ -1,67 +1,99 @@
-<launch>
+<?xml version="1.0" ?>
+<launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
     <!-- Arguments -->
-    <arg name="gazebo" default="false"/>
-    <arg name="hardware_version" value="ned"/>
-    <arg name="simu_gripper" default="false"/>
-    <arg name="simulation_mode" default="false"/>
+    <arg name="log_level" default="INFO"/>
+    <arg name="hardware_version" default="ned"/>
     <arg name="debug" default="false"/>
+    <arg name="can_enabled" default="true"/>
+    <arg name="ttl_enabled" default="true"/>
+    <arg name="gazebo" default="false"/>
+    <arg name="simulation_mode" default="false"/>
+    <arg name="simu_gripper" default="false"/>
+    <arg name="simu_conveyor" default="false"/>
+
+    <!-- for conveniency -->
+    <arg name="ros_version" value="$(env ROS_DISTRO)"/>
 
     <!-- SHARED PARAMS -->
     <group ns="niryo_robot">
-        <param name="hardware_version" type="str" value="$(arg hardware_version)"/>
+        <param name="hardware_version" type="string" value="$(arg hardware_version)"/>
+        <param name="simulation_mode" value="$(arg simulation_mode)"/>
         <param name="reboot_when_auto_change_version" type="bool" value="true"/>
-        <param name="simulation_mode" type="bool" value="$(arg simulation_mode)"/>
-    </group>
 
-    <group ns="niryo_robot/info">
-        <param name="robot_type" type="string" value="niryo_$(arg hardware_version)" />
-        <param name="ros_version" type="string" command="rosversion niryo_robot_bringup"/>
-    </group>
+        <group ns="info">
+            <param name="robot_type" type="string" value="niryo_$(arg hardware_version)"/>
+            <param name="ros_version" type="string" value="$(arg ros_version)"/>
+        </group>
 
-    <group ns="niryo_robot/python_ros_wrapper">
-        <param name="service_timeout" type="int" value="2"/>
-        <param name="action_connection_timeout" type="int" value="20"/>
-        <param name="action_execute_timeout" type="int" value="60"/>
-        <param name="action_preempt_timeout" type="int" value="60"/>
+        <group ns="python_ros_wrapper">
+            <param name="service_timeout" type="int" value="2"/>
+            <param name="action_connection_timeout" type="int" value="20"/>
+            <param name="action_execute_timeout" type="int" value="60"/>
+            <param name="action_preempt_timeout" type="int" value="60"/>
+        </group>
     </group>
-
-    <arg name="ros_version" value="$(optenv ROS_DISTRO kinetic)"/>
 
     <!-- Launching TF ROS Bridge-->
     <node name="tf2_web_republisher" pkg="tf2_web_republisher" type="tf2_web_republisher"/>
     <include file="$(find rosbridge_server)/launch/rosbridge_websocket.launch">
         <arg name="port" value="9090"/>
-         <arg name="output" value="log" unless="$(eval 'kinetic' == arg('ros_version'))"/>
+        <arg name="output" value="log" unless="$(eval ros_version == 'kinetic')"/>
     </include>
 
     <!-- Including launch files -->
-
     <include file="$(find niryo_robot_hardware_interface)/launch/controllers.launch">
         <arg name="gazebo" default="$(arg gazebo)"/>
-        <arg name="simu_gripper" default="$(arg simu_gripper)"/>
-        <arg name="simulation_mode" default="$(arg simulation_mode)"/>
+        <arg name="debug" value="$(arg debug)"/>
+    </include>
+
+    <include file="$(find niryo_robot_hardware_interface)/launch/niryo_robot_hardware_interface.launch">
+        <arg name="hardware_version" value="$(arg hardware_version)"/>
+        <arg name="simulation_mode" value="$(arg simulation_mode)"/>
+        <arg name="simu_gripper" value="$(arg simu_gripper)"/>
+        <arg name="simu_conveyor" value="$(arg simu_conveyor)"/>
+        <arg name="gazebo" value="$(arg gazebo)"/>
+        <arg name="can_enabled" value="$(arg can_enabled)"/>
+        <arg name="ttl_enabled" value="$(arg ttl_enabled)"/>
         <arg name="debug" value="$(arg debug)"/>
     </include>
 
     <include file="$(find niryo_robot_arm_commander)/launch/robot_commander.launch">
-        <arg name="simu_gripper" value="$(arg simu_gripper)"/>
+        <arg name="log_level" value="$(arg log_level)"/>
+        <arg name="gazebo" value="$(arg gazebo)"/>
+        <arg name="hardware_version" value="$(arg hardware_version)"/>
+        <arg name="simulation_mode" value="$(arg simulation_mode)"/>
     </include>
 
     <include file="$(find niryo_robot_tools_commander)/launch/tools_commander.launch">
-        <arg name="simulation_mode" value="$(arg simulation_mode)"/>
+        <arg name="log_level" value="$(arg log_level)"/>
+        <arg name="hardware_version" value="$(arg hardware_version)"/>
         <arg name="simu_gripper" value="$(arg simu_gripper)"/>
+        <arg name="gazebo" value="$(arg gazebo)"/>
     </include>
 
     <include file="$(find niryo_robot_poses_handlers)/launch/poses_handlers.launch">
+        <arg name="hardware_version" value="$(arg hardware_version)"/>
         <arg name="simulation_mode" value="$(arg simulation_mode)"/>
+        <arg name="log_level" value="$(arg log_level)"/>
     </include>
 
     <include file="$(find niryo_robot_programs_manager)/launch/programs_manager.launch">
         <arg name="simulation_mode" value="$(arg simulation_mode)"/>
+        <arg name="log_level" value="$(arg log_level)"/>
     </include>
 
     <include file="$(find niryo_robot_user_interface)/launch/user_interface.launch">
+        <arg name="log_level" value="$(arg log_level)"/>
     </include>
 
-    <include file="$(find niryo_robot_modbus)/launch/modbus_server.launch"/>
+    <group if="$(eval hardware_version != 'one')">
+        <include file="$(find niryo_robot_status)/launch/robot_status.launch">
+        </include>
+    </group>
+
+    <include file="$(find niryo_robot_modbus)/launch/modbus_server.launch">
+        <arg name="log_level" value="$(arg log_level)"/>
+        <arg name="hardware_version" value="$(arg hardware_version)"/>
+    </include>
 </launch>
