@@ -18,8 +18,8 @@ class DailyReport(Report):
                 'type': log_type,
                 'occurred': [date]
             })
-        self.__write()
+        self._write()
 
     def set_date(self, date):
         self.content['date'] = date
-        self.__write()
+        self._write()

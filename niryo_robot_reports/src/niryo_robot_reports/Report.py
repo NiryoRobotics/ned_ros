@@ -17,21 +17,21 @@ class Report:
 
     def __del__(self):
         if not self.__deleted:
-            self.__write()
+            self._write()
 
     def set_path(self, path):
         self.__path = path
         if not os.path.isfile(self.__path):
             open(self.__path, 'w+').close()
-        self.__read()
+        self._read()
 
-    def __read(self):
+    def _read(self):
         with open(self.__path, 'r') as f:
             try:
                 self.content = json.load(f)
             except ValueError:
                 self.content = self.DEFAULT_VALUE
 
-    def __write(self):
+    def _write(self):
         with open(self.__path, 'w') as f:
             json.dump(self.content, f)
