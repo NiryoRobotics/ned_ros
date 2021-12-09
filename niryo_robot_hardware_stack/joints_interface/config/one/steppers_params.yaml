@@ -26,7 +26,7 @@ steppers:
         id: 3
         gear_ratio: 7.875
         offset_position: 0
-        home_position: -1.3439
+        home_position: -1.25
         limit_position_min: -1.3439
         limit_position_max: 1.57
         direction: 1
