@@ -51,6 +51,7 @@ class FakeTtlData
 
         struct FakeStepperRegister : public AbstractFakeRegister
         {
+            uint8_t torque{0};
             uint32_t v_start{1};
             uint32_t a_1{0};
             uint32_t v_1{0};
@@ -63,6 +64,7 @@ class FakeTtlData
 
         struct FakeDxlRegister : public AbstractFakeRegister
         {
+            uint8_t        torque{0};
             uint16_t       position_p_gain{0};
             uint16_t       position_i_gain{0};
             uint16_t       position_d_gain{0};
@@ -76,9 +78,9 @@ class FakeTtlData
         
         struct FakeEndEffector : public AbstractFakeRegister
         {
-            uint32_t button0_action{0};
-            uint32_t button1_action{0};
-            uint32_t button2_action{0};
+            uint32_t button0_action{1};
+            uint32_t button1_action{2};
+            uint32_t button2_action{8};
             
             uint32_t x_value{1};
             uint32_t y_value{1};

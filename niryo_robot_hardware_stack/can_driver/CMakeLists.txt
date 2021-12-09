@@ -2,6 +2,16 @@ cmake_minimum_required(VERSION 3.0.2)
 project(can_driver)
 message( STATUS "\n## Reading ${PROJECT_NAME}/CMakeLists.txt...")
 
+set(HARDWARE_VERSION "ned2" CACHE STRING "Robot model target")
+# for preprocessor directives
+if ("${HARDWARE_VERSION}" STREQUAL "one")
+    add_definitions(-DNIRYO_ONE)
+elseif ("${HARDWARE_VERSION}" STREQUAL "ned")
+    add_definitions(-DNIRYO_NED)
+elseif ("${HARDWARE_VERSION}" STREQUAL "ned2")
+    add_definitions(-DNIRYO_NED2)
+endif()
+
 #retrieve architecture
 execute_process( COMMAND
             uname -m COMMAND tr -d '\n'
@@ -28,6 +38,12 @@ find_package(catkin REQUIRED
       roscpp
       std_msgs
 )
+
+if(CATKIN_ENABLE_TESTING AND ENABLE_COVERAGE_TESTING)
+  find_package(code_coverage REQUIRED)
+  # Add compiler flags for coverage instrumentation before defining any targets
+  append_coverage_compiler_flags()
+endif()
 
 ###############################################
 # Declare ROS messages, services and actions ##
@@ -136,22 +152,34 @@ endif()
 if(CATKIN_ENABLE_TESTING)
   find_package(rostest REQUIRED)
 
-  if ("${ARCHITECTURE}" MATCHES "^(arm.*|aarch64.*|arm64.*)$")
-    add_rostest_gtest(${PROJECT_NAME}_unit_tests
-      test/unit_tests.test
-      test/unit_tests.cpp
-    )
-  else()
-    add_rostest_gtest(${PROJECT_NAME}_unit_tests
-      test/unit_tests_fake.test
-      test/unit_tests.cpp
-    )
-  endif()
-  if(TARGET ${PROJECT_NAME}_unit_tests)
-    target_link_libraries(${PROJECT_NAME}_unit_tests
-      ${PROJECT_NAME}
-      ${catkin_LIBRARIES}
-    )
+  if ("${HARDWARE_VERSION}" STREQUAL "ned" OR "${HARDWARE_VERSION}" STREQUAL "one")
+    if ("${ARCHITECTURE}" MATCHES "^(arm.*|aarch64.*|arm64.*)$")
+      add_rostest_gtest(${PROJECT_NAME}_unit_tests
+        test/unit_tests.test
+        test/unit_tests.cpp
+      )
+    else()
+      add_rostest_gtest(${PROJECT_NAME}_unit_tests
+        test/unit_tests_fake.test
+        test/unit_tests.cpp
+      )
+    endif()
+
+    if(TARGET ${PROJECT_NAME}_unit_tests)
+      target_link_libraries(${PROJECT_NAME}_unit_tests
+        ${PROJECT_NAME}
+        ${catkin_LIBRARIES}
+      )
+
+      # Create a target ${PROJECT_NAME}_coverage_report
+      if(ENABLE_COVERAGE_TESTING)
+        set(COVERAGE_EXCLUDES "*/${PROJECT_NAME}/test*")
+        add_code_coverage(
+          NAME ${PROJECT_NAME}_coverage_report
+          DEPENDENCIES tests
+        )
+      endif()
+    endif()
   endif()
 
   ##########################

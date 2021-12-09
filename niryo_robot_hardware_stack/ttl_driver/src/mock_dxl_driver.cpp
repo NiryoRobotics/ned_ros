@@ -236,7 +236,12 @@ int MockDxlDriver::readMaxPosition(uint8_t id, uint32_t &pos)
 int MockDxlDriver::writeTorqueEnable(uint8_t id, uint8_t torque_enable)
 {
     (void)id;  // unused
-    (void)torque_enable;  // unused
+    if (_fake_data->dxl_registers.count(id))
+        _fake_data->dxl_registers.at(id).torque = torque_enable;
+    else if (_fake_data->stepper_registers.count(id))
+        _fake_data->stepper_registers.at(id).torque = torque_enable;
+    else
+        return COMM_TX_ERROR;
 
     return COMM_SUCCESS;
 }
@@ -297,16 +302,15 @@ int MockDxlDriver::writeVelocityProfile(uint8_t id, const std::vector<uint32_t>&
  */
 int MockDxlDriver::syncWriteTorqueEnable(const std::vector<uint8_t> &id_list, const std::vector<uint8_t> &torque_enable_list)
 {
-    (void)torque_enable_list;  // unused
-
     // Create a map to store the frequency of each element in vector
     std::set<uint8_t> countSet;
     // Iterate over the vector and store the frequency of each element in map
-    for (auto & id : id_list)
+    for (size_t i = 0; i < id_list.size(); i++)
     {
-        auto result = countSet.insert(id);
+        auto result = countSet.insert(id_list.at(i));
         if (!result.second)
             return GROUP_SYNC_REDONDANT_ID;  // redondant id
+        writeTorqueEnable(id_list.at(i), torque_enable_list.at(i));
     }
     return COMM_SUCCESS;
 }

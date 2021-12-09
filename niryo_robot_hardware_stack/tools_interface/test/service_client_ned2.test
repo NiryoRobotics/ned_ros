@@ -1,0 +1,16 @@
+<?xml version="1.0" ?>
+<launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+
+    <arg name="hardware_version" default="ned2"/>
+    <arg name="manual_tests" default="false" />
+
+    <!-- launch the tools_interface_node node using tools_interface_node executable from tools_interface package -->
+    <include file="$(find tools_interface)/launch/tools_interface.launch" />
+
+    <test test-name="tools_interface_integration_tests" pkg="tools_interface"  type="tools_interface_integration_tests">
+        <rosparam command="load" file="$(find niryo_robot_tools_commander)/config/$(arg hardware_version)/tools_definition.yaml" />
+        <param name="manual_tests" value="$(arg manual_tests)" />
+    </test>
+
+</launch>

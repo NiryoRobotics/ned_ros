@@ -103,8 +103,8 @@ std::string StepperMotorState::str() const
 
     ss << "StepperMotorState :\n";
     ss << "firmware version: " << "\"" << _firmware_version << "\"";
-    ss << "last time read: " << _last_time_read << ", "
-       << "hw fail counter: " << _hw_fail_counter << "\n"
+    ss << ", last time read: " << _last_time_read
+       << ", hw fail counter: " << _hw_fail_counter << "\n"
        << "max effort: " << _max_effort << ", "
        << "gear ratio: " << _gear_ratio << ", "
        << "micro steps: " << _micro_steps << ", "

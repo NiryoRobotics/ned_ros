@@ -21,6 +21,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <ros/ros.h>
 
 using ::common::model::EStepperCommandType;
 using ::common::model::EStepperCalibrationStatus;
