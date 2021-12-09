@@ -5,7 +5,7 @@ calibration_file:  "/home/niryo/niryo_robot_saved_files/stepper_motor_calibratio
 calibration_params:
     stepper_1:
         id: 1
-        direction: -1
+        direction: 1
         delay: 200
 
     stepper_2:
