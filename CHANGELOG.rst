@@ -16,12 +16,12 @@ Forthcoming
 
 ned2_v0.6 (2021-12-02)
 ----------------
-## Requirements
+**Requirements**
 
 * steppers driver with fw 1.0.16
 * gtts (pip install gTTS)
 
-## Bug corrections
+**Bug corrections**
 
 * slower movements
 * wrong conveyor feedback
@@ -34,7 +34,7 @@ ned2_v0.6 (2021-12-02)
 * warn end effector at startup
 * rework of bringup to simplify it
 
-## Features
+**Features**
 
 * Compatibility Ned and One
 * Calibration ok
@@ -53,7 +53,7 @@ ned2_v0.6 (2021-12-02)
 * Save and Replay waypointed trajectories
 * Google Text to speech
 
-## Limitations
+**Limitations**
 
 * You need to update your steppers drivers to version 1.16
 * control mode bug if the stack is launch with a tool connected
@@ -65,35 +65,37 @@ Non tested (will be updated)
 
 ned2_v0.5 (2021-11-25)
 ----------------
-## Bug corrections
+**Bug corrections**
 
 * less jerky mouvments
 * stabilised reboot
 * security on moveit
 * pb out of bond corrected
 
-## Features
+**Features**
 
 * Compatibility Ned and One
 * last PID in place
 * last velocity and acceleration profiles
 
-## Limitations
+**Limitations**
+
 * connection loss from time to time, linked to bus pb (corrected in new cards, stand by for now)
 
-## Tests done
+**Tests done**
 
 * compilation
 * calibration Ned2
 
-Non tested (will be updated)
+**Non tested (will be updated)**
+
 *  all accessories, grippers and conveyors
 *  blockly
 *  Ned, one simu
 
 ned2_v0.4 (2021-11-17)
 ----------------
-## Features
+**Features**
 
 * Calibration reworked, more stable, slower
 * Initializations rework
@@ -103,7 +105,7 @@ ned2_v0.4 (2021-11-17)
 * Version, Temperature and voltage addition on Tools and Conveyors
 * Calibration status kept if motors are not shutdown
 
-## Limitations
+**Limitations**
 
 * Not tested with conveyor
 * Control mode fail on gripper
@@ -114,7 +116,8 @@ ned2_v0.4 (2021-11-17)
 
 ned2_v0.3 (2021-11-08)
 -----------------
-## Bug Corrections
+**Bug Corrections**
+
 * correction in joints_limit.yaml
 * remove end effector read status when robot moving (check if collision is still read...)
 * smoother movement
@@ -123,14 +126,15 @@ ned2_v0.3 (2021-11-08)
 ned2_v0.2 (2021-11-04)
 ------------------
 
-## Bug corrections
+**Bug corrections**
 
 * smoother movements
 * conveyor fixes (to be tested)
 * last additions from valentin
 * cross compilation rpi4 pk
 
-## Limitations
+**Limitations**
+
 * Carefull : ned and one compatibility broken
 
 
