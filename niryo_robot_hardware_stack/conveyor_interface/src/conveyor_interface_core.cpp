@@ -194,7 +194,8 @@ void ConveyorInterfaceCore::startPublishers(ros::NodeHandle& nh)
     _conveyors_feedback_publisher = nh.advertise<conveyor_interface::ConveyorFeedbackArray>(
                                                     "/niryo_robot/conveyor/feedback", 10, true);
 
-    _publish_conveyors_feedback_timer = nh.createTimer(ros::Duration(_publish_feedback_duration), &ConveyorInterfaceCore::_publishConveyorsFeedback, this);
+    _publish_conveyors_feedback_timer = nh.createTimer(ros::Duration(_publish_feedback_duration),
+                                                       &ConveyorInterfaceCore::_publishConveyorsFeedback, this);
 }
 
 /**
@@ -460,7 +461,7 @@ bool ConveyorInterfaceCore::_callbackControlConveyor(conveyor_interface::Control
     auto id = req.id;
     auto it = std::find_if(_conveyor_state_list.begin(), _conveyor_state_list.end(),
                            [id](std::shared_ptr<ConveyorState> c)
-                           { return (c->getId() == id); });
+                                { return (c->getId() == id); });
 
     // if found
     if (it != _conveyor_state_list.end() && *it)
@@ -520,7 +521,6 @@ void ConveyorInterfaceCore::_publishConveyorsFeedback(const ros::TimerEvent&)
                 interface = _can_interface;
             else
                 interface = _ttl_interface;
-            // TODO(CC) put in ttl_manager ?
             if (interface)
             {
                 int cnt_scan_failed = 0;
