@@ -107,6 +107,7 @@ class ReportsNode:
         self.__current_date = current_day
         new_path = '{}/{}.json'.format(self.__reports_path, self.__current_date)
         self.__daily_report.set_path(new_path)
+        self.__daily_report.set_date(self.__current_date)
 
     def __robot_status_callback(self, req):
         if req.logs_status_str.lower() not in ['error', 'critical']:
