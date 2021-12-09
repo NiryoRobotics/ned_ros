@@ -573,7 +573,8 @@ bool TtlManager::readJointsStatus()
                 vector<std::array<uint32_t, 2> > data_list;
 
                 // retrieve joint status
-                if (COMM_SUCCESS == driver->syncReadJointStatus(ids_list, data_list))
+                int res = driver->syncReadJointStatus(ids_list, data_list);
+                if (COMM_SUCCESS == res)
                 {
                     if (ids_list.size() == data_list.size())
                     {
@@ -607,6 +608,8 @@ bool TtlManager::readJointsStatus()
                 }
                 else
                 {
+                    ROS_ERROR("TtlManager::readJointStatus : Fail to sync read joint state - "
+                              "driver fail to syncReadJointStatus (error %d)", res);
                     hw_errors_increment++;
                 }
             }

@@ -803,8 +803,9 @@ int DxlDriver<reg_type>::syncReadJointStatus(const std::vector<uint8_t> &id_list
 
     // read torque enable on first id
     typename reg_type::TYPE_TORQUE_ENABLE torque{1};
-    if (read<typename reg_type::TYPE_TORQUE_ENABLE>(reg_type::ADDR_TORQUE_ENABLE, id_list.at(0), torque))
-        std::cout << "#############"" ERROR reading dxl torque in syncReadJointStatus" << std::endl;
+    res = read<typename reg_type::TYPE_TORQUE_ENABLE>(reg_type::ADDR_TORQUE_ENABLE, id_list.at(0), torque);
+    if (COMM_SUCCESS != res)
+        std::cout << "#############"" ERROR reading dxl torque in syncReadJointStatus (error " << res << ")" << std::endl;
 
     // if torque on, read position and velocity
     if (torque)
@@ -816,7 +817,7 @@ int DxlDriver<reg_type>::syncReadJointStatus(const std::vector<uint8_t> &id_list
         std::vector<uint32_t> position_list;
         res = syncReadPosition(id_list, position_list);
         for (auto p : position_list)
-          data_array_list.emplace_back(std::array<uint32_t, 2>{0, p});
+          data_array_list.emplace_back(std::array<uint32_t, 2>{1, p});
     }
 
     return res;
