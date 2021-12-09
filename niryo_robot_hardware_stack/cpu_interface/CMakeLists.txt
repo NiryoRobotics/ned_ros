@@ -18,6 +18,12 @@ find_package(catkin REQUIRED
         roscpp
 )
 
+if(CATKIN_ENABLE_TESTING AND ENABLE_COVERAGE_TESTING)
+  find_package(code_coverage REQUIRED)
+  # Add compiler flags for coverage instrumentation before defining any targets
+  append_coverage_compiler_flags()
+endif()
+
 ###############################################
 # Declare ROS messages, services and actions ##
 ###############################################
@@ -93,16 +99,37 @@ endif()
 #############
 
 if(CATKIN_ENABLE_TESTING)
-  ##########################
-  ## Static code analysis ##
-  ##########################
-  find_package(roslint QUIET)
+    catkin_add_gtest(
+      ${PROJECT_NAME}_unit_tests
+      test/cpu_interface_unit_tests.cpp
+    )
+    if(TARGET ${PROJECT_NAME}_unit_tests)
+      target_link_libraries(
+        ${PROJECT_NAME}_unit_tests
+        ${PROJECT_NAME}
+      )
 
-  if(roslint_FOUND)
-    roslint_cpp()
-  else()
+      # Create a target ${PROJECT_NAME}_coverage_report
+      if(ENABLE_COVERAGE_TESTING)
+        set(COVERAGE_EXCLUDES "*/${PROJECT_NAME}/test*")
+        add_code_coverage(
+          NAME ${PROJECT_NAME}_coverage_report
+          DEPENDENCIES tests
+        )
+      endif()
+    endif()
+
+
+    ##########################
+    ## Static code analysis ##
+    ##########################
+    find_package(roslint QUIET)
+
+    if(roslint_FOUND)
+      roslint_cpp()
+    else()
       message(WARNING "roslint not found. Skipping roslint target building")
-  endif()
+    endif()
 endif()
 
 #############
