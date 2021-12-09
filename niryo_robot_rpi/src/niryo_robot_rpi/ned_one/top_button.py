@@ -170,7 +170,7 @@ class TopButton:
             self.pause_time = rospy.Time.now()
             self.send_pause_state(PausePlanExecution.PAUSE)
             # Pause led advertiser
-            self.__set_led_state_service(True, 5, LedBlinkerRequest.LED_WHITE, 0)
+            self.__set_led_state_service(True, 5, LedBlinkerRequest.LED_WHITE, PausePlanExecution.PAUSE_TIMEOUT)
         # Double press on pause: activate learning mode
         elif self._pause_state == PausePlanExecution.PAUSE and (rospy.Time.now() - self.pause_time).to_sec() < 1:
             activate_learning_mode(True)

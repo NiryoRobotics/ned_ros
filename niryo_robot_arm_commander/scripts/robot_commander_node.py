@@ -87,7 +87,7 @@ class RobotCommanderNode:
         # Event which allows to timeout if pause take too long
         self.__pause_finished_event = threading.Event()
         self.__pause_finished_event.set()
-        self.__pause_timeout = rospy.get_param("~pause_timeout")
+        self.__pause_timeout = PausePlanExecution.PAUSE_TIMEOUT
         self.__command_still_active_max_tries = rospy.get_param("~command_still_active_max_tries")
         active_publish_rate_sec = rospy.get_param("~active_publish_rate_sec")
 

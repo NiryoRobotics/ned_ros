@@ -43,17 +43,18 @@ class NiryoRosWrapper:
     }
 
     def __init__(self):
-        self.__node_name = rospy.get_name()
-        self.__ping_ros_wrapper_srv = rospy.Service("~/ping", Trigger, self.__ping_ros_wrapper_callback)
-        rospy.wait_for_service("/niryo_robot_status/ping_ros_wrapper", timeout=5)
-        self.__advertise_ros_wrapper_srv = rospy.ServiceProxy("/niryo_robot_status/ping_ros_wrapper", Ping)
-        self.__advertise_ros_wrapper_srv(self.__node_name, True)
-        rospy.on_shutdown(self.__advertise_stop)
-
         # - Getting ROS parameters
         self.__service_timeout = rospy.get_param("/niryo_robot/python_ros_wrapper/service_timeout")
         self.__simulation_mode = rospy.get_param("/niryo_robot/simulation_mode")
         self.__hardware_version = rospy.get_param("/niryo_robot/hardware_version")
+
+        if self.__hardware_version in ['ned', 'ned2']:
+            self.__node_name = rospy.get_name()
+            self.__ping_ros_wrapper_srv = rospy.Service("~/ping", Trigger, self.__ping_ros_wrapper_callback)
+            rospy.wait_for_service("/niryo_robot_status/ping_ros_wrapper", timeout=5)
+            self.__advertise_ros_wrapper_srv = rospy.ServiceProxy("/niryo_robot_status/ping_ros_wrapper", Ping)
+            self.__advertise_ros_wrapper_srv(self.__node_name, True)
+            rospy.on_shutdown(self.__advertise_stop)
 
         # - Publishers
         # Highlight publisher (to highlight blocks in Blockly interface)
@@ -116,7 +117,8 @@ class NiryoRosWrapper:
         del self
 
     def __advertise_stop(self):
-        self.__advertise_ros_wrapper_srv(self.__node_name, False)
+        if self.__hardware_version in ['ned', 'ned2']:
+            self.__advertise_ros_wrapper_srv(self.__node_name, False)
 
     def __ping_ros_wrapper_callback(self):
         return CommandStatus.SUCCESS, self.__node_name
