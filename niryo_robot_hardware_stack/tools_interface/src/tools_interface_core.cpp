@@ -384,7 +384,7 @@ bool ToolsInterfaceCore::_callbackToolReboot(std_srvs::Trigger::Request &/*req*/
 {
     res.success = false;
 
-    if (_toolState->isValid())
+    if (_toolState && _toolState->isValid())
     {
         res.success = rebootHardware(true);
         res.message = (res.success) ? "Tool reboot succeeded" : "Tool reboot failed";
