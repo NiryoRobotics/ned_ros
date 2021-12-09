@@ -21,7 +21,7 @@ from niryo_robot_tools_commander.msg import ToolCommand
 from niryo_robot_status.msg import RobotStatus
 
 # Services
-from niryo_robot_msgs.srv import GetNameDescriptionList, SetBool, SetInt, Trigger, Ping
+from niryo_robot_msgs.srv import GetNameDescriptionList, SetBool, SetInt, Trigger, Ping, SetFloat
 
 # Actions
 from control_msgs.msg import FollowJointTrajectoryAction, FollowJointTrajectoryGoal
@@ -295,6 +295,18 @@ class NiryoRosWrapper:
                                      SetInt, percentage)
         return self.__classic_return_w_check(result)
 
+    def set_arm_max_acceleration(self, percentage):
+        """
+        Set relative max acceleration (in %)
+
+        :param percentage: Percentage of max acceleration
+        :type percentage: int
+        :return: status, message
+        :rtype: (int, str)
+        """
+        result = self.__call_service('/niryo_robot_arm_commander/set_acceleration_factor', SetFloat, percentage/100.)
+        return self.__classic_return_w_check(result)
+
     # - Useful functions
     @staticmethod
     def wait(time_sleep):
@@ -320,7 +332,7 @@ class NiryoRosWrapper:
         :return: list of the name of the joints
         :rtype: list[string]
         """
-        return list(self.__joints_ntv.value.joint_states.name[:6])
+        return list(self.__joints_ntv.value.name[:6])
 
     def get_pose(self):
         """

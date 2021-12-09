@@ -10,7 +10,7 @@ from niryo_robot_msgs.msg import RobotState, HardwareStatus, CommandStatus
 
 # - Services
 from moveit_msgs.srv import GetStateValidity
-from niryo_robot_msgs.srv import SetBool, SetInt
+from niryo_robot_msgs.srv import SetBool, SetInt, SetFloat
 
 # - Classes
 from transform_handler import ArmTCPTransformHandler
@@ -45,6 +45,9 @@ class ArmState(object):
         self.__publish_velocity_scaling_percentage()
         rospy.Service('/niryo_robot_arm_commander/set_max_velocity_scaling_factor', SetInt,
                       self.__callback_set_max_velocity_scaling_factor)
+
+        rospy.Service('/niryo_robot_arm_commander/set_acceleration_factor', SetFloat,
+                      self.__callback_set_acceleration_factor)
 
         # Joint State
         self.__joint_states = None
@@ -158,6 +161,15 @@ class ArmState(object):
 
         return {'status': CommandStatus.SUCCESS, 'message': 'Success'}
 
+    def __callback_set_acceleration_factor(self, req):
+        if not 0.1 <= req.value <= 1:
+            return {'status': CommandStatus.INVALID_PARAMETERS, 'message': 'Value must be between 0.1 and 1'}
+
+        self.__acceleration_scaling_factor = req.value
+        self.__arm.set_max_acceleration_scaling_factor(self.__acceleration_scaling_factor)
+
+        return {'status': CommandStatus.SUCCESS, 'message': 'Success'}
+
     # -- Publishers call
     def __publish_velocity_scaling_percentage(self):
         """
@@ -180,6 +192,7 @@ class ArmState(object):
         self.__velocity_scaling_factor = percentage / 100.0
         self.__arm.set_max_velocity_scaling_factor(self.__velocity_scaling_factor)
         self.__publish_velocity_scaling_percentage()
+
 
     def set_learning_mode(self, set_bool):
         """
