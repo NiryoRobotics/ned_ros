@@ -690,7 +690,7 @@ void CalibrationManager::moveSteppersToHome()
         if (jState && jState->isStepper())
         {
             uint8_t motor_id = jState->getId();
-            int steps{0}; 
+            int steps{0};
 
             if (EBusProtocol::CAN == jState->getBusProtocol())
             {
