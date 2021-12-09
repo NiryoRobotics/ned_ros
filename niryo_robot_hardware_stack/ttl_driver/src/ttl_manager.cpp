@@ -214,7 +214,7 @@ int TtlManager::addHardwareComponent(std::shared_ptr<common::model::AbstractHard
     }
     else
     {
-        _ids_map.at(hardware_type).emplace_back(id);
+        _ids_map.at(hardware_type).insert(_ids_map.at(hardware_type).begin(), state->getId());
     }
 
     // add to global lists
