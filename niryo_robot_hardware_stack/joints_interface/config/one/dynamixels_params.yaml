@@ -1,6 +1,6 @@
 dynamixels:
     dxl_1:
-        offset_position: -3.1415
+        offset_position: -3.06
         home_position: 0.0
         direction: 1
         limit_position_max: 2.093
