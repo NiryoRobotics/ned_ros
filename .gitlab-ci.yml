@@ -109,7 +109,7 @@ build_doc_job:
     - mv ${previous_path}/build .
     - mv ${previous_path}/devel .
     ################# Quickfix end ###############
-    - source install/release/setup.bash
+    - source install/${CATKIN_PROFILE_NAME}/setup.bash
   after_script:
     - mv ${NIRYO_HOME_FOLDER}/* .
 
@@ -120,14 +120,14 @@ test_job:
   artifacts:
     when: always
     paths:
-        - build/release/*/test_results/*/rostest-*.xml
-        - build/release/*/test_results/*/gtest-*.xml
-        - build/release/*/test_results/*/rosunit-*.xml
+        - build/${CATKIN_PROFILE_NAME}/*/test_results/*/rostest-*.xml
+        - build/${CATKIN_PROFILE_NAME}/*/test_results/*/gtest-*.xml
+        - build/${CATKIN_PROFILE_NAME}/*/test_results/*/rosunit-*.xml
     reports:
       junit:
-        - build/release/*/test_results/*/rostest-*.xml
-        - build/release/*/test_results/*/gtest-*.xml
-        - build/release/*/test_results/*/rosunit-*.xml
+        - build/${CATKIN_PROFILE_NAME}/*/test_results/*/rostest-*.xml
+        - build/${CATKIN_PROFILE_NAME}/*/test_results/*/gtest-*.xml
+        - build/${CATKIN_PROFILE_NAME}/*/test_results/*/rosunit-*.xml
   script:
     # Do stuff to move source properly for catkin_make
     - !reference [.abstract_move_source_tricks_job, script]
