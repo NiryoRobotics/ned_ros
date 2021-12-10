@@ -351,7 +351,7 @@ int AbstractTtlDriver::syncRead_32(uint8_t address,
             {
                 if (groupSyncRead.isAvailable(id, address, data_len))
                 {
-                    T data = groupSyncRead.getData(id, address, data_len);
+                    T data = static_cast<T>(groupSyncRead.getData(id, address, data_len));
                     data_list.emplace_back(data);
                 }
                 else

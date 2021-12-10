@@ -296,7 +296,8 @@ int DxlDriver<reg_type>::writeTorqueEnable(uint8_t id, uint8_t torque_enable)
 template<typename reg_type>
 int DxlDriver<reg_type>::writePositionGoal(uint8_t id, uint32_t position)
 {
-    return write<typename reg_type::TYPE_GOAL_POSITION>(reg_type::ADDR_GOAL_POSITION, id, position);
+    return write<typename reg_type::TYPE_GOAL_POSITION>(reg_type::ADDR_GOAL_POSITION, id,
+                                                        static_cast<typename reg_type::TYPE_GOAL_POSITION>(position));
 }
 
 /**
@@ -308,7 +309,8 @@ int DxlDriver<reg_type>::writePositionGoal(uint8_t id, uint32_t position)
 template<typename reg_type>
 int DxlDriver<reg_type>::writeVelocityGoal(uint8_t id, uint32_t velocity)
 {
-    return write<typename reg_type::TYPE_GOAL_VELOCITY>(reg_type::ADDR_GOAL_VELOCITY, id, velocity);
+    return write<typename reg_type::TYPE_GOAL_VELOCITY>(reg_type::ADDR_GOAL_VELOCITY, id,
+                                                        static_cast<typename reg_type::TYPE_GOAL_VELOCITY>(velocity));
 }
 
 /**
