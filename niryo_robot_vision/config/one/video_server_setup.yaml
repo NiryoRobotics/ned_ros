@@ -1,7 +1,7 @@
 # -- Editable settings
 undistort_stream:   false
 frame_rate:         15  # 15, 25 or 30
-subsampling:        4
+subsampling:        3
 camera_port:        -1
 calibration_grid_shape:
   - 9

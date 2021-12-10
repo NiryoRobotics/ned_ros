@@ -263,7 +263,7 @@ void JointsInterfaceCore::rosControlLoop()
                 _reset_controller = true;
             }
             bool isFreqMet = _control_loop_rate.sleep();
-            ROS_WARN_COND(!isFreqMet,
+            ROS_DEBUG_COND(!isFreqMet,
                           "JointsInterfaceCore::rosControlLoop : freq not met : expected (%f s) vs actual (%f s)",
                           _control_loop_rate.expectedCycleTime().toSec(),
                           _control_loop_rate.cycleTime().toSec());
@@ -305,18 +305,18 @@ bool JointsInterfaceCore::_callbackResetController(niryo_robot_msgs::Trigger::Re
     ROS_DEBUG("JointsInterfaceCore::_callbackResetController - Reset Controller");
 
     // set pos and command equal
-    if (_hardware_version == "ned2")
-    {
-        _robot->setCommandToCurrentPosition();
-        _robot->write(ros::Time::now(), ros::Duration(0.0));
-        _lock_write_cnt = 200;
-    }
-    else if (_hardware_version == "ned" || _hardware_version == "one")
-    {
-        _robot->setCommandToCurrentPosition();
-        _cm->update(ros::Time::now(), ros::Duration(0.0), true);
-        _robot->synchronizeMotors(true);
-    }
+    // if (_hardware_version == "ned2")
+    // {
+    _robot->setCommandToCurrentPosition();
+    _robot->write(ros::Time::now(), ros::Duration(0.0));
+    _lock_write_cnt = 50;
+    // }
+    // else if (_hardware_version == "ned" || _hardware_version == "one")
+    // {
+    //     _robot->setCommandToCurrentPosition();
+    //     _cm->update(ros::Time::now(), ros::Duration(0.0), true);
+    //     _robot->synchronizeMotors(true);
+    // }
 
     res.status = niryo_robot_msgs::CommandStatus::SUCCESS;
     res.message = "Reset done";

@@ -22,6 +22,6 @@ niryo_robot_arm_commander/ShiftPose shift
 geometry_msgs/Pose[] list_poses
 float32 dist_smoothing
 
-trajectory_msgs/JointTrajectory trajectory
+moveit_msgs/RobotTrajectory trajectory
 
 float64[] args

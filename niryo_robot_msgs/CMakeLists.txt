@@ -28,7 +28,6 @@ add_service_files(
   GetInt.srv
   GetNameDescriptionList.srv
   GetStringList.srv
-  Ping.srv
   SetBool.srv
   SetFloat.srv
   SetInt.srv
