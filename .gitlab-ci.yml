@@ -40,6 +40,9 @@ image: registry.gitlab.com/niryo/niryo-one-s/ned_ros_stack/ned2:amd64
     - mv !(src) ${NIRYO_HOME_FOLDER}/src/
     ######################################
     - cd ${NIRYO_HOME_FOLDER}
+    # quick fix to add install space and allow documentation generation (should be done in docker image instead)
+    - catkin config --profile ${CATKIN_PROFILE_NAME} --install
+    # we need to first build the packages before building tests
     - catkin build --profile ${CATKIN_PROFILE_NAME}
     - catkin build --profile ${CATKIN_PROFILE_NAME} --make-args tests
     - cd -
