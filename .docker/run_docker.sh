@@ -14,8 +14,16 @@ HOME_FOLDER=home/niryo
 
 ROS_SRC_FOLDER=src
 
+if [[ $ARCHITECTURE == "amd64" && $current_architecture == 'x86_64' ]]; then
+    cross_build=false;
+elif [[ $ARCHITECTURE == "arm64" && $current_architecture == 'aarch64' ]]; then
+    cross_build=false;
+else
+    cross_build=true;
+fi
+
 # Multi platform builder is not enabled
-if ! ls /proc/sys/fs/binfmt_misc/ | egrep --quiet qemu-*; then
+if $cross_build && ! ls /proc/sys/fs/binfmt_misc/ | egrep --quiet qemu-*; then
     echo "Starting multi platform builder..."
     docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 fi
