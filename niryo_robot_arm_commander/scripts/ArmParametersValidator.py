@@ -17,6 +17,7 @@ from niryo_robot_arm_commander.msg import JointLimits
 
 # Services
 from niryo_robot_arm_commander.srv import GetJointLimits, GetJointLimitsResponse
+from moveit_msgs.srv import GetStateValidity
 
 
 class ArmParametersValidator:
