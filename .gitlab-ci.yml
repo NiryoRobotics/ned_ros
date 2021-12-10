@@ -42,6 +42,7 @@ image: registry.gitlab.com/niryo/niryo-one-s/ned_ros_stack/ned2:amd64
     - cd ${NIRYO_HOME_FOLDER}
     # quick fix to add install space and allow documentation generation (should be done in docker image instead)
     - catkin config --profile ${CATKIN_PROFILE_NAME} --install
+    - catkin config --profile ${CATKIN_PROFILE_NAME} --cmake-args -DHARDWARE_VERSION=ned2 -DCATKIN_ENABLE_TESTING=ON -DENABLE_COVERAGE_TESTING=ON -DCMAKE_BUILD_TYPE=Debug
     # we need to first build the packages before building tests
     - catkin build --profile ${CATKIN_PROFILE_NAME}
     - catkin build --profile ${CATKIN_PROFILE_NAME} --make-args tests
@@ -149,7 +150,7 @@ roslint_job:
     # Do stuff to move source properly for catkin_make
     - !reference [.abstract_move_source_tricks_job, script]
     # Check code linting
-    - catkin build --make-args roslint -j1
+    - catkin build --profile ${CATKIN_PROFILE_NAME} --make-args roslint -j1
 
 catkin_lint_job:
   stage: test
