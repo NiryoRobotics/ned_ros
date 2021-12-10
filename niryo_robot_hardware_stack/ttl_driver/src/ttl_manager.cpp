@@ -257,7 +257,6 @@ int TtlManager::addHardwareComponent(std::shared_ptr<common::model::AbstractHard
         }
     }
 
-    setLeds(_led_state);
     return niryo_robot_msgs::CommandStatus::SUCCESS;
 }
 
@@ -1119,7 +1118,6 @@ int TtlManager::getAllIdsOnBus(vector<uint8_t> &id_list)
  */
 int TtlManager::setLeds(int led)
 {
-    _led_state = led;
     int ret = niryo_robot_msgs::CommandStatus::TTL_WRITE_ERROR;
 
     EHardwareType mType = HardwareTypeEnum(_led_motor_type_cfg.c_str());

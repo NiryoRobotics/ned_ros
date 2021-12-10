@@ -215,7 +215,6 @@ private:
     uint32_t _hw_fail_counter_read{0};
     uint32_t _end_effector_fail_counter_read{0};
 
-    int _led_state = 0;
     std::string _led_motor_type_cfg;
 
     static constexpr uint32_t MAX_HW_FAILURE = 50;

@@ -6,8 +6,8 @@ find_package(catkin REQUIRED COMPONENTS
   actionlib_msgs
   geometry_msgs
   message_generation
+  moveit_msgs
   niryo_robot_msgs
-  trajectory_msgs
 )
 
 add_message_files(
@@ -41,8 +41,8 @@ generate_messages(
   DEPENDENCIES
   actionlib_msgs
   geometry_msgs
+  moveit_msgs
   niryo_robot_msgs
-  trajectory_msgs
 )
 
 catkin_package(
@@ -50,8 +50,8 @@ catkin_package(
   actionlib_msgs
   geometry_msgs
   message_runtime
+  moveit_msgs
   niryo_robot_msgs
-  trajectory_msgs
 )
 
 include_directories(
@@ -95,7 +95,6 @@ endif()
 
 catkin_install_python(PROGRAMS 
     scripts/arm_commander.py
-    scripts/arm_state.py
     scripts/ArmParametersValidator.py
     scripts/jog_controller.py
     scripts/kinematics_handler.py

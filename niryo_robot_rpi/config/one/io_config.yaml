@@ -13,9 +13,9 @@ fans:
     temperature_off_threshold: 45
 
 led:
-  b_pin: 22
-  r_pin: 18
-  g_pin: 24
+  b_pin: 18
+  r_pin: 24
+  g_pin: 22
   
 wifi:
   button_pin: 5

@@ -11,14 +11,14 @@ from niryo_robot_msgs.msg import RobotState
 
 from niryo_robot_arm_commander.utils import diff_quat
 
-class StatePublisher(object):
+
+class StatePublisher:
     """
     This object read Transformation Publisher and Publish the RobotState
      in the Topic '/niryo_robot/robot_state' at a certain rate
     """
 
-    def __init__(self, arm_state):
-        self.__arm_state = arm_state
+    def __init__(self, transform_handler):
 
         # Tf listener (position + rpy) of end effector tool
         self.__position = [0, 0, 0]
@@ -28,10 +28,11 @@ class StatePublisher(object):
         self.__twist = Twist()
         self.__tcp_speed = 0
 
-        self.__transform_handler = self.__arm_state.transform_handler
+        self.__transform_handler = transform_handler
 
         # State publisher
-        self.__robot_state_publisher = rospy.Publisher('/niryo_robot/robot_state', RobotState, queue_size=5)
+        self.__robot_state_publisher = rospy.Publisher(
+            '/niryo_robot/robot_state', RobotState, queue_size=5)
 
         # Get params from rosparams
         rate_publish_state = rospy.get_param("/niryo_robot/robot_state/rate_publish_state")
@@ -66,7 +67,6 @@ class StatePublisher(object):
 
     def __publish_state(self, _):
         self.__update_ee_link_pose()
-
         msg = RobotState()
         msg.position.x = self.__position[0]
         msg.position.y = self.__position[1]
@@ -80,8 +80,6 @@ class StatePublisher(object):
         msg.orientation.w = self.__quaternion[3]
         msg.twist = self.__twist
         msg.tcp_speed = self.__tcp_speed
-
-        self.__arm_state.robot_state = msg
         try:
             self.__robot_state_publisher.publish(msg)
         except rospy.ROSException:
