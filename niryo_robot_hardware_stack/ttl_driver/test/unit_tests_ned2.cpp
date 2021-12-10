@@ -479,7 +479,7 @@ class TtlManagerTestSuite : public ::testing::Test
 
         // for stepper TTL 0 is decreasing direction
         // send config before calibrate
-        for (int id = 2; id < 5; id++)
+        for (uint8_t id = 2; id < 5; id++)
         {
             uint8_t direction{0};
             if (id == 3)
@@ -581,9 +581,9 @@ TEST_F(TtlManagerTestSuite, testSingleControlCmds)
     auto state_motor_5 = std::dynamic_pointer_cast<common::model::JointState>(ttl_drv->getHardwareState(5));
     assert(state_motor_5);
 
-    uint32_t new_pos_2 = state_motor_2->to_motor_pos(state_motor_2->getHomePosition());
-    uint32_t new_pos_3 = state_motor_3->to_motor_pos(state_motor_3->getHomePosition());
-    uint32_t new_pos_5 = state_motor_5->to_motor_pos(state_motor_5->getHomePosition());
+    auto new_pos_2 = static_cast<uint32_t>(state_motor_2->to_motor_pos(state_motor_2->getHomePosition()));
+    auto new_pos_3 = static_cast<uint32_t>(state_motor_3->to_motor_pos(state_motor_3->getHomePosition()));
+    auto new_pos_5 = static_cast<uint32_t>(state_motor_5->to_motor_pos(state_motor_5->getHomePosition()));
 
     // single control cmd for stepper ttl id 2
     auto cmd_1 = std::make_unique<common::model::StepperTtlSingleCmd>(
@@ -687,12 +687,12 @@ TEST_F(TtlManagerTestSuite, testSyncControlCmds)
     auto state_motor_7 = std::dynamic_pointer_cast<common::model::JointState>(ttl_drv->getHardwareState(7));
     assert(state_motor_7);
 
-    uint32_t new_pos_2 = state_motor_2->getHomePosition();
-    uint32_t new_pos_3 = state_motor_3->getHomePosition();
-    uint32_t new_pos_4 = state_motor_4->getHomePosition();
-    uint32_t new_pos_5 = state_motor_5->getHomePosition();
-    uint32_t new_pos_6 = state_motor_6->getHomePosition();
-    uint32_t new_pos_7 = state_motor_7->getHomePosition();
+    auto new_pos_2 = static_cast<uint32_t>(state_motor_2->getHomePosition());
+    auto new_pos_3 = static_cast<uint32_t>(state_motor_3->getHomePosition());
+    auto new_pos_4 = static_cast<uint32_t>(state_motor_4->getHomePosition());
+    auto new_pos_5 = static_cast<uint32_t>(state_motor_5->getHomePosition());
+    auto new_pos_6 = static_cast<uint32_t>(state_motor_6->getHomePosition());
+    auto new_pos_7 = static_cast<uint32_t>(state_motor_7->getHomePosition());
 
     auto cmd_1 = std::make_unique<common::model::DxlSyncCmd>(common::model::EDxlCommandType::CMD_TYPE_POSITION);
     cmd_1->addMotorParam(dxl_type, 5, new_pos_5);

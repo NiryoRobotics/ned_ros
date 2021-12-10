@@ -104,8 +104,8 @@ class DxlDriver : public AbstractDxlDriver
         int writePID(uint8_t id, const std::vector<uint16_t>& data) override;
         int readPID(uint8_t id, std::vector<uint16_t> &data_list) override;
 
-        int writeControlMode(uint8_t id, uint8_t data) override;
-        int readControlMode(uint8_t id, uint8_t& data) override;
+        int writeControlMode(uint8_t id, uint8_t control_mode) override;
+        int readControlMode(uint8_t id, uint8_t& control_mode) override;
 
         int writeLed(uint8_t id, uint8_t led_value) override;
         int syncWriteLed(const std::vector<uint8_t> &id_list, const std::vector<uint8_t> &led_list) override;
@@ -296,7 +296,8 @@ int DxlDriver<reg_type>::writeTorqueEnable(uint8_t id, uint8_t torque_enable)
 template<typename reg_type>
 int DxlDriver<reg_type>::writePositionGoal(uint8_t id, uint32_t position)
 {
-    return write<typename reg_type::TYPE_GOAL_POSITION>(reg_type::ADDR_GOAL_POSITION, id, position);
+    return write<typename reg_type::TYPE_GOAL_POSITION>(reg_type::ADDR_GOAL_POSITION, id,
+                                                        static_cast<typename reg_type::TYPE_GOAL_POSITION>(position));
 }
 
 /**
@@ -308,7 +309,8 @@ int DxlDriver<reg_type>::writePositionGoal(uint8_t id, uint32_t position)
 template<typename reg_type>
 int DxlDriver<reg_type>::writeVelocityGoal(uint8_t id, uint32_t velocity)
 {
-    return write<typename reg_type::TYPE_GOAL_VELOCITY>(reg_type::ADDR_GOAL_VELOCITY, id, velocity);
+    return write<typename reg_type::TYPE_GOAL_VELOCITY>(reg_type::ADDR_GOAL_VELOCITY, id,
+                                                        static_cast<typename reg_type::TYPE_GOAL_VELOCITY>(velocity));
 }
 
 /**
@@ -408,13 +410,13 @@ int DxlDriver<reg_type>::readVoltage(uint8_t id, double& voltage)
 /**
  * @brief DxlDriver<reg_type>::readHwErrorStatus
  * @param id
- * @param hardware_status
+ * @param hardware_error_status
  * @return
  */
 template<typename reg_type>
-int DxlDriver<reg_type>::readHwErrorStatus(uint8_t id, uint8_t& hardware_status)
+int DxlDriver<reg_type>::readHwErrorStatus(uint8_t id, uint8_t& hardware_error_status)
 {
-    return read<typename reg_type::TYPE_HW_ERROR_STATUS>(reg_type::ADDR_HW_ERROR_STATUS, id, hardware_status);
+    return read<typename reg_type::TYPE_HW_ERROR_STATUS>(reg_type::ADDR_HW_ERROR_STATUS, id, hardware_error_status);
 }
 
 /**
@@ -587,8 +589,7 @@ int DxlDriver<reg_type>::syncReadHwStatus(const std::vector<uint8_t> &id_list,
     for (auto const& data : raw_data)
     {
         // Voltage is first reg, uint16
-        uint16_t v = ((uint16_t)data.at(1) << 8) | data.at(0);
-        double voltage = static_cast<double>(v);
+        auto voltage = static_cast<double>((static_cast<uint16_t>(data.at(1)) << 8) | data.at(0));
 
         // Temperature is second reg, uint8
         uint8_t temperature = data.at(2);
@@ -723,16 +724,16 @@ int DxlDriver<reg_type>::writeControlMode(uint8_t id, uint8_t control_mode)
 /**
  * @brief DxlDriver<reg_type>::readControlMode
  * @param id
- * @param data
+ * @param control_mode
  * @return
  */
 template<typename reg_type>
-int DxlDriver<reg_type>::readControlMode(uint8_t id, uint8_t &data)
+int DxlDriver<reg_type>::readControlMode(uint8_t id, uint8_t &control_mode)
 {
     int res = 0;
     typename reg_type::TYPE_OPERATING_MODE raw{};
     res = read<typename reg_type::TYPE_OPERATING_MODE>(reg_type::ADDR_OPERATING_MODE, id, raw);
-    data = static_cast<uint8_t>(raw);
+    control_mode = static_cast<uint8_t>(raw);
     return res;
 }
 //other
@@ -969,7 +970,7 @@ inline int DxlDriver<XL320Reg>::syncReadHwStatus(const std::vector<uint8_t> &id_
     for (auto const& data : raw_data)
     {
         // Voltage is first reg, uint16
-        double voltage = static_cast<double>(data.at(0));
+        auto voltage = static_cast<double>(data.at(0));
 
         // Temperature is second reg, uint8
         uint8_t temperature = data.at(1);
@@ -1027,7 +1028,7 @@ inline int DxlDriver<XL320Reg>::readPID(uint8_t id, std::vector<uint16_t>& data_
  * @param id
  * @param data_list
  * @return
- *  TODO(cc) bulk read all in one shot
+ *  TODO(cc) bulk write all in one shot
  */
 template<>
 inline int DxlDriver<XL320Reg>::writePID(uint8_t id, const std::vector<uint16_t>& data_list)
@@ -1073,6 +1074,7 @@ template<>
 inline int DxlDriver<XL320Reg>::syncWritePositionGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &position_list)
 {
     std::vector<typename XL320Reg::TYPE_GOAL_POSITION> casted_list;
+    casted_list.reserve(position_list.size());
     for (auto const& p : position_list)
     {
         casted_list.emplace_back(static_cast<typename XL320Reg::TYPE_GOAL_POSITION>(p));
@@ -1090,6 +1092,7 @@ template<>
 inline int DxlDriver<XL320Reg>::syncWriteVelocityGoal(const std::vector<uint8_t> &id_list, const std::vector<uint32_t> &velocity_list)
 {
     std::vector<typename XL320Reg::TYPE_GOAL_VELOCITY> casted_list;
+    casted_list.reserve(velocity_list.size());
     for (auto const& v : velocity_list)
     {
         casted_list.emplace_back(static_cast<typename XL320Reg::TYPE_GOAL_VELOCITY>(v));
