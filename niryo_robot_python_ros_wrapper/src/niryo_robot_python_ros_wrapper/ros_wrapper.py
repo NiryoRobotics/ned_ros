@@ -17,7 +17,6 @@ from trajectory_msgs.msg import JointTrajectoryPoint, JointTrajectory
 from conveyor_interface.msg import ConveyorFeedbackArray
 from niryo_robot_msgs.msg import HardwareStatus, RobotState, RPY
 from niryo_robot_rpi.msg import DigitalIO, DigitalIOState, AnalogIO, AnalogIOState
-from niryo_robot_msgs.msg import SoftwareVersion
 from niryo_robot_tools_commander.msg import ToolCommand
 from niryo_robot_status.msg import RobotStatus
 
@@ -85,11 +84,6 @@ class NiryoRosWrapper:
                                                                queue_size=1)
         # - Conveyor
         self.__conveyors_feedback_ntv = NiryoTopicValue('/niryo_robot/conveyor/feedback', ConveyorFeedbackArray)
-
-        # - Utils
-        self.__software_versions = None
-        rospy.Subscriber('/niryo_robot_hardware_interface/software_version', SoftwareVersion,
-                         self.__callback_software_versions)
 
         # - Action server
         # Robot action
@@ -1562,22 +1556,6 @@ class NiryoRosWrapper:
         """
         fb = self.__conveyors_feedback_ntv.value
         return fb.conveyors
-
-    # - Utils
-    def get_software_versions(self):
-        """
-        Get software versions
-
-        :return:
-        :rtype: SoftwareVersion
-        """
-        timeout = rospy.get_time() + 2.0
-        while self.__software_versions is None:
-            rospy.sleep(0.05)
-            if rospy.get_time() > timeout:
-                raise NiryoRosWrapperException(
-                    'Timeout: could not get software_versions /niryo_robot_hardware_interface/software_version topic)')
-        return self.__software_versions
 
     # - Vision
 
