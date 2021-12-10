@@ -309,7 +309,7 @@ bool JointsInterfaceCore::_callbackResetController(niryo_robot_msgs::Trigger::Re
     // {
     _robot->setCommandToCurrentPosition();
     _robot->write(ros::Time::now(), ros::Duration(0.0));
-    _lock_write_cnt = 850;
+    _lock_write_cnt = 50;
     // }
     // else if (_hardware_version == "ned" || _hardware_version == "one")
     // {
