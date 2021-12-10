@@ -18,6 +18,7 @@ from niryo_robot_msgs.msg import CommandStatus
 from niryo_robot_programs_manager.msg import ProgramList
 from niryo_robot_programs_manager.msg import ProgramLanguage, ProgramLanguageList
 from niryo_robot_programs_manager.msg import ProgramIsRunning
+from rospy.core import rospyinfo
 from std_msgs.msg import Bool
 
 # Services
@@ -187,9 +188,11 @@ class ProgramManagerNode:
             return CommandStatus.SUCCESS, "No program is running"
 
         try:
+            rospyinfo("stop program button pressed")
             self.__loop_autorun = False
             ret, message = self.__python2_manager.stop_execution()
             if not self.__standalone:
+                rospyinfo("have standalone")
                 self.__stop_robot_action()
 
             self.__program_is_running = ProgramIsRunning(False, ProgramIsRunning.PREEMPTED, "")
