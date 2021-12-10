@@ -40,7 +40,6 @@ class ArmParametersValidator:
         # Check joint validity service (used for self collisions checking)
         self.check_state_validity = rospy.ServiceProxy('check_state_validity', GetStateValidity)
 
-
     def __callback_get_joint_limits(self, _req):
         resp = GetJointLimitsResponse()
         resp.joint_limits = []

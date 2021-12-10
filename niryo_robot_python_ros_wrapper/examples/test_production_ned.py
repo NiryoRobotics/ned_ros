@@ -209,7 +209,9 @@ class TestFunctions(object):
         last_target[2] = joint_limit[joint_names[2]]['max'] - 0.1
         last_target[4] = joint_limit[joint_names[4]]['min'] + 0.1
 
-        poses = [default_joint_pose, first_target, default_joint_pose, second_target, default_joint_pose, third_target, last_target]
+        poses = [default_joint_pose, first_target,
+                 default_joint_pose, second_target,
+                 default_joint_pose, third_target, last_target]
 
         for loop_index in range(LOOPS):
             for position_index, joint_position in enumerate(poses):

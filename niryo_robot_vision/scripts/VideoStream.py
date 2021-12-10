@@ -262,7 +262,6 @@ class WebcamStream(VideoStream):
                 self.__actualization_rate_no_stream.sleep()
                 continue
 
-
             rospy.loginfo("Vision Node - Video Stream Open")
             self.__setup_stream_settings()
             self.__acquisition_loop()
@@ -298,7 +297,7 @@ class WebcamStream(VideoStream):
                     used_image = self.__frame_undistort
                 else:
                     self.__frame_undistort = None
-                    used_image =  self.__frame_raw
+                    used_image = self.__frame_raw
 
                 used_image = self.adjust_image(used_image)
                 if self._flip_img:
