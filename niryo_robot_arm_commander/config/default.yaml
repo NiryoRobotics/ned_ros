@@ -22,7 +22,5 @@ jump_threshold: 0.0
 # - Other params
 # "Is Active" topic's publish rate
 active_publish_rate_sec: 0.1
-
 command_still_active_max_tries : 3
 
-pause_timeout : 45.0
