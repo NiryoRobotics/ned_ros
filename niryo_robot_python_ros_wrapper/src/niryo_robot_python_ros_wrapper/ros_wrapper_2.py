@@ -248,24 +248,31 @@ class NiryoRosWrapper2:
         Get a setting from the database
         :param name: the setting name
         :type name: str
-        :return: status, message
-        :rtype: (int, str)
+        :return: the value of the setting
+        :rtype: object
         """
-        result = self.__call_service('/niryo_robot_database/settings/get', GetSettings)
-        return self.__classic_return_w_check(result)
+        from pydoc import locate
+        from niryo_robot_database.srv import GetSettings
+        result = self.__call_service('/niryo_robot_database/settings/get', GetSettings, name)
+        if result.status == CommandStatus.DATABASE_SETTINGS_UNKNOWN:
+            return None
+        if result.type != 'bool':
+            casted_type = locate(result.type)(result.value)
+        else:
+            casted_type = result.value in ['True', 'true']
+        return casted_type
 
     def set_setting(self, name, value):
         """
         Set a setting in the database
-        :param name: the setting name
+
+        :param name: the name of a setting
         :type name: str
-        :param value: the setting value
-        :type value: str
-        :return: status, message
-        :rtype: (int, str)
+        :param value: the value of the setting
+        :type value: object
         """
-        result = self.__call_service('/niryo_robot_database/settings/set', SetSettings, name, value)
-        return self.__classic_return_w_check(result)
+        from niryo_robot_database.srv import SetSettings
+        self.__call_service('/niryo_robot_database/settings/set', SetSettings, name, str(value), type(value).__name__)
 
     # - Logs
 
