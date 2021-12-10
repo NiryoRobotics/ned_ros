@@ -238,7 +238,7 @@ void CanManager::retrieveFakeMotorData(const std::string& current_ns, std::map<u
         Reg tmp;
         tmp.id = static_cast<uint8_t>(hw_ids.at(i));
         tmp.position = static_cast<int32_t>(hw_positions.at(i));
-        tmp.temperature = static_cast<uint32_t>(hw_temperatures.at(i));
+        tmp.temperature = static_cast<uint8_t>(hw_temperatures.at(i));
         tmp.voltage = hw_voltages.at(i);
         tmp.model_number = static_cast<uint16_t>(hw_model_numbers.at(i));
         tmp.firmware = hw_firmwares.at(i);

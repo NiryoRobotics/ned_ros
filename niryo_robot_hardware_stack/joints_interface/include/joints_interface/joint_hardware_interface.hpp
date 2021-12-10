@@ -66,7 +66,7 @@ class JointHardwareInterface : public hardware_interface::RobotHW
         // RobotHW interface
     public:
         bool init(ros::NodeHandle& rootnh, ros::NodeHandle &robot_hwnh) override;
-        int initHardware(std::shared_ptr<common::model::JointState> motor_state, bool torque_on);
+        int initHardware(const std::shared_ptr<common::model::JointState>& motor_state, bool torque_on);
 
         void read(const ros::Time &/*time*/, const ros::Duration &/*period*/) override;
         void write(const ros::Time &/*time*/, const ros::Duration &/*period*/) override;

@@ -180,14 +180,14 @@ int EndEffectorDriver<reg_type>::readVoltage(uint8_t id, double& voltage)
 /**
  * @brief EndEffectorDriver<reg_type>::readHwErrorStatus
  * @param id
- * @param hardware_status
+ * @param hardware_error_status
  * @return
  */
 template<typename reg_type>
-int EndEffectorDriver<reg_type>::readHwErrorStatus(uint8_t id, uint8_t& hardware_status)
+int EndEffectorDriver<reg_type>::readHwErrorStatus(uint8_t id, uint8_t& hardware_error_status)
 {
-    hardware_status = 0;
-    return read<typename reg_type::TYPE_HW_ERROR_STATUS>(reg_type::ADDR_HW_ERROR_STATUS, id, hardware_status);
+    hardware_error_status = 0;
+    return read<typename reg_type::TYPE_HW_ERROR_STATUS>(reg_type::ADDR_HW_ERROR_STATUS, id, hardware_error_status);
 }
 
 /**
@@ -272,8 +272,7 @@ int EndEffectorDriver<reg_type>::syncReadHwStatus(const std::vector<uint8_t> &id
     for (auto const& data : raw_data)
     {
         // Voltage is first reg, uint16
-        uint16_t v = ((uint16_t)data.at(1) << 8) | data.at(0);
-        double voltage = static_cast<double>(v);
+        auto voltage = static_cast<double>((static_cast<uint16_t>(data.at(1)) << 8) | data.at(0));
 
         // Temperature is second reg, uint8
         uint8_t temperature = data.at(2);
