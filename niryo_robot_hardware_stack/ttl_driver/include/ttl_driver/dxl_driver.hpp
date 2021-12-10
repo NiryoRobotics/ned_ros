@@ -1038,7 +1038,8 @@ inline int DxlDriver<XL320Reg>::writePID(uint8_t id, const std::vector<uint16_t>
     // only rewrite params which is not success
     for (int tries = 10; tries > 0; --tries)
     {
-        res = write<typename XL320Reg::TYPE_PID_GAIN>(XL320Reg::ADDR_POSITION_P_GAIN, id, data_list.at(0));
+        res = write<typename XL320Reg::TYPE_PID_GAIN>(XL320Reg::ADDR_POSITION_P_GAIN, id,
+                                                      static_cast<typename XL320Reg::TYPE_PID_GAIN>(data_list.at(0)));
         if (COMM_SUCCESS == res)
             break;
     }
@@ -1047,7 +1048,8 @@ inline int DxlDriver<XL320Reg>::writePID(uint8_t id, const std::vector<uint16_t>
 
     for (int tries = 10; tries > 0; --tries)
     {
-        res = write<typename XL320Reg::TYPE_PID_GAIN>(XL320Reg::ADDR_POSITION_I_GAIN, id, data_list.at(1));
+        res = write<typename XL320Reg::TYPE_PID_GAIN>(XL320Reg::ADDR_POSITION_I_GAIN, id,
+                                                      static_cast<typename XL320Reg::TYPE_PID_GAIN>(data_list.at(1)));
         if (COMM_SUCCESS == res)
             break;
     }
@@ -1056,7 +1058,8 @@ inline int DxlDriver<XL320Reg>::writePID(uint8_t id, const std::vector<uint16_t>
 
     for (int tries = 10; tries > 0; --tries)
     {
-        res = write<typename XL320Reg::TYPE_PID_GAIN>(XL320Reg::ADDR_POSITION_D_GAIN, id, data_list.at(2));
+        res = write<typename XL320Reg::TYPE_PID_GAIN>(XL320Reg::ADDR_POSITION_D_GAIN, id,
+                                                      static_cast<typename XL320Reg::TYPE_PID_GAIN>(data_list.at(2)));
         if (COMM_SUCCESS == res)
             break;
     }
