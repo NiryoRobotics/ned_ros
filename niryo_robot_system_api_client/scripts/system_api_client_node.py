@@ -19,7 +19,7 @@ class SystemApiClientNode:
         domain = rospy.get_param('~server_domain')
         port = rospy.get_param('~server_port')
 
-        # TODO remettre prefix
+        # TODO (Justin) prefix?
         prefix = None  # rospy.get_param('~api_prefix')
 
         rospy.logdebug("SystemApiClientNode.init - server_domain: {}".format(domain))
