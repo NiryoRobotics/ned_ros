@@ -83,10 +83,8 @@ class SystemApiClientNode:
             msg.status = msg.DISABLED
         elif status['hotspot_state']:
             msg.status = msg.HOTSPOT
-        elif status['connected']:
-            msg.status = msg.CONNECTED
         else:
-            msg.status = msg.DISCONNECTED
+            msg.status = msg.CONNECTED
         try:
             self.wifi_state_publisher.publish(msg)
         except rospy.ROSException:
