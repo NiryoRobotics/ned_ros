@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-22 17:37+0200\n"
+"POT-Creation-Date: 2021-12-10 16:25+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -24,11 +24,53 @@ msgstr ""
 msgid "Common"
 msgstr ""
 
-#: ../../source/stack/low_level/common.rst:5
-msgid "Parameters"
+#: ../../source/stack/low_level/common.rst:4
+msgid "Add Description of package here."
 msgstr ""
 
-#: ../../source/stack/low_level/common.rst:8
-msgid "Dependencies"
+#: ../../source/stack/low_level/common.rst:7
+msgid "Name of Important Element in Package"
 msgstr ""
+
+#: ../../source/stack/low_level/common.rst:9
+msgid "[This Element] is used to:"
+msgstr ""
+
+#: ../../source/stack/low_level/common.rst:9
+msgid "Some usages."
+msgstr ""
+
+#: ../../source/stack/low_level/common.rst:12
+msgid "Parameters - common"
+msgstr ""
+
+#: ../../source/stack/low_level/common.rst:23
+msgid "Published topics - common interface"
+msgstr ""
+
+#: ../../source/stack/low_level/common.rst:24
+msgid "remove this if there aren't any publisher"
+msgstr ""
+
+#: ../../source/stack/low_level/common.rst:28
+msgid "Services - common"
+msgstr ""
+
+#: ../../source/stack/low_level/common.rst:41
+msgid "Dependencies - common"
+msgstr ""
+
+#: ../../source/stack/low_level/common.rst:43
+msgid "Add dependencies of package"
+msgstr ""
+
+#: ../../source/stack/low_level/common.rst:46
+msgid "Services & Messages files - common"
+msgstr ""
+
+#~ msgid "Parameters"
+#~ msgstr ""
+
+#~ msgid "Dependencies"
+#~ msgstr ""
 

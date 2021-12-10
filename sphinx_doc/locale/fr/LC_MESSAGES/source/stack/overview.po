@@ -32,12 +32,17 @@ msgid ""
 "Ned is a robot based on Raspberry, Arduino & ROS. It uses ROS to make the "
 "interface between Hardware and high-level bindings."
 msgstr ""
+"Le Ned est un robot basé sur Raspberry pi, Arduino et ROS. Il utilises ROS "
+"pour faire l'interface entre le materiel et les fonctions de haut niveau."
 
 #: ../../source/stack/overview.rst:8
 msgid ""
 "On the following figure, you can see a global overview of the Niryo's robot "
 "software in order to understand where are placed each part of the software."
 msgstr ""
+"Sur la figure suivante, vous trouverez une vue globale de l'architecture "
+"logicielle du robot de Niryo, afin de mieux comprendre où sont définies "
+"chaque composants logiciels."
 
 #: ../../source/stack/overview.rst:17
 msgid "Niryo robot v3 software"
@@ -45,7 +50,7 @@ msgstr "Niryo robot Logiciel V3"
 
 #: ../../source/stack/overview.rst:25
 msgid "ROS Logo"
-msgstr ""
+msgstr "Logo ROS"
 
 #: ../../source/stack/overview.rst:27
 msgid ""
@@ -53,24 +58,33 @@ msgid ""
 "allows to ease robot software development. The framework is used in almost "
 "each part of Ned's software."
 msgstr ""
+"ROS (Robot Operating System) est une infrastructure (Framework) robotique "
+"Open Source permettant de faciliter le développement logiciel des robots. "
+"Elle est utilisée dans presque tous les composants logiciels du Ned."
 
 #: ../../source/stack/overview.rst:31
 msgid "The Stack is split into two parts:"
-msgstr ""
+msgstr "La stack est divisée en deux parties :"
 
 #: ../../source/stack/overview.rst:33
 msgid ""
 "The :doc:`high_level` (motion planner, vision, ...), developed in Python to "
 "give good readability"
 msgstr ""
+"La partie :doc:`high_level` (motion planner, vision, ...), développée en "
+"Python pour une meilleure lisibilité"
 
 #: ../../source/stack/overview.rst:34
 msgid ""
 "The :doc:`low_level` (drivers, hardware management, ...), developed in C++ "
 "to ensure real time capabilities."
 msgstr ""
+"La partie :doc:`low_level` (drivers, gestion matérielle, ...), développée en "
+"C++ pour assurer des performances temps réelles."
 
 #: ../../source/stack/overview.rst:37
 msgid ""
 "To learn more about ROS, go on `Official ROS Wiki <http://wiki.ros.org/>`_."
 msgstr ""
+"Pour en savoir plus sur ROS, vous pouvez lire le `Wiki Officiel "
+"ROS<http://wiki.ros.org/>`_."

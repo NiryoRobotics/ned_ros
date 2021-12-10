@@ -85,7 +85,7 @@ msgid ""
 "this data,"
 msgstr ""
 "Les données renvoyées par les drivers simulés sont arbitraires et immuables. "
-"Parmi les données, "
+"Parmi les données,"
 
 #: ../../source/simulation.rst:35
 msgid ""
@@ -154,7 +154,7 @@ msgstr "`roslaunch niryo_robot_bringup niryo_ned2_simulation.launch`"
 
 #: ../../source/simulation.rst:58
 msgid "TODO"
-msgstr ""
+msgstr "En construction"
 
 #: ../../source/simulation.rst:61
 msgid "Without physics - Visualization"
@@ -221,7 +221,7 @@ msgstr "L’ouverture de Rviz, avec le robot prêt à être contrôlé avec ROS 
 
 #: ../../source/simulation.rst:97
 msgid "**TODO add parameters**"
-msgstr ""
+msgstr "**TODO add parameters**"
 
 #: ../../source/simulation.rst:100
 msgid "With physics - Simulation"
