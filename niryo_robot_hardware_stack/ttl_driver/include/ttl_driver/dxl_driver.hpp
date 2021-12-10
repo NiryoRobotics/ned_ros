@@ -1027,7 +1027,7 @@ inline int DxlDriver<XL320Reg>::readPID(uint8_t id, std::vector<uint16_t>& data_
  * @param id
  * @param data_list
  * @return
- *  TODO(cc) bulk read all in one shot
+ *  TODO(cc) bulk write all in one shot
  */
 template<>
 inline int DxlDriver<XL320Reg>::writePID(uint8_t id, const std::vector<uint16_t>& data_list)

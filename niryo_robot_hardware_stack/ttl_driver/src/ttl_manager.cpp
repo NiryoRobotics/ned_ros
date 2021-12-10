@@ -1560,7 +1560,6 @@ int TtlManager::writeSingleCommand(std::unique_ptr<common::model::AbstractTtlSin
 /**
  * @brief TtlManager::executeJointTrajectoryCmd
  * @param cmd_vec
- * TODO(CC) to be refacto
  */
 void TtlManager::executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, uint32_t> > cmd_vec)
 {

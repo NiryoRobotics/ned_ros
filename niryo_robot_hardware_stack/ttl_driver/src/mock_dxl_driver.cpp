@@ -235,7 +235,6 @@ int MockDxlDriver::readMaxPosition(uint8_t id, uint32_t &pos)
  */
 int MockDxlDriver::writeTorqueEnable(uint8_t id, uint8_t torque_enable)
 {
-    (void)id;  // unused
     if (_fake_data->dxl_registers.count(id))
         _fake_data->dxl_registers.at(id).torque = torque_enable;
     else if (_fake_data->stepper_registers.count(id))
