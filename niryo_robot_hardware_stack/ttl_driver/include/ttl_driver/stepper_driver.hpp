@@ -50,7 +50,7 @@ public:
 
     int readTemperature(uint8_t id, uint8_t& temperature) override;
     int readVoltage(uint8_t id, double &voltage) override;
-    int readHwErrorStatus(uint8_t id, uint8_t &hardware_status) override;
+    int readHwErrorStatus(uint8_t id, uint8_t &hardware_error_status) override;
 
     int syncReadFirmwareVersion(const std::vector<uint8_t> &id_list, std::vector<std::string> &firmware_list) override;
     int syncReadTemperature(const std::vector<uint8_t> &id_list, std::vector<uint8_t>& temperature_list) override;
@@ -346,13 +346,13 @@ int StepperDriver<reg_type>::readVoltage(uint8_t id, double& voltage)
 /**
  * @brief StepperDriver<reg_type>::readHwErrorStatus
  * @param id
- * @param hardware_status
+ * @param hardware_error_status
  * @return
  */
 template<typename reg_type>
-int StepperDriver<reg_type>::readHwErrorStatus(uint8_t id, uint8_t& hardware_status)
+int StepperDriver<reg_type>::readHwErrorStatus(uint8_t id, uint8_t& hardware_error_status)
 {
-    return read<typename reg_type::TYPE_HW_ERROR_STATUS>(reg_type::ADDR_HW_ERROR_STATUS, id, hardware_status);
+    return read<typename reg_type::TYPE_HW_ERROR_STATUS>(reg_type::ADDR_HW_ERROR_STATUS, id, hardware_error_status);
 }
 
 /**
@@ -499,8 +499,8 @@ int StepperDriver<reg_type>::syncReadHwStatus(const std::vector<uint8_t> &id_lis
     for (auto const& data : raw_data)
     {
         // Voltage is first reg, uint16
-        uint16_t v = ((uint16_t)data.at(1) << 8) | data.at(0); // concatenate 2 bytes
-        double voltage = static_cast<double>(v);
+        auto v = static_cast<uint16_t>((static_cast<uint16_t>(data.at(1)) << 8) | data.at(0)); // concatenate 2 bytes
+        auto voltage = static_cast<double>(v);
 
         // Temperature is second reg, uint8
         uint8_t temperature = data.at(2);
@@ -572,7 +572,7 @@ template<typename reg_type>
 int StepperDriver<reg_type>::writeVelocityProfile(uint8_t id, const std::vector<uint32_t>& data_list)
 {
     int tries = 10;
-    int res;
+    int res = COMM_RX_FAIL;
     double wait_duration = 0.05;
 
     writeTorqueEnable(id, 1);
@@ -611,7 +611,7 @@ int StepperDriver<reg_type>::writeVelocityProfile(uint8_t id, const std::vector<
             break;
     }
     if (res != COMM_SUCCESS)
-    return res;
+        return res;
 
     tries = 10;
     while (tries > 0)  // try 10 times

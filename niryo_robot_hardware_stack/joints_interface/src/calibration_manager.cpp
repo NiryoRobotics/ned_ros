@@ -397,9 +397,8 @@ EStepperCalibrationStatus CalibrationManager::autoCalibration()
     std::vector<int> sensor_offset_results;
     std::vector<int> sensor_offset_ids;
 
-    for (size_t i = 0; i < _joint_states_list.size(); ++i)
+    for (auto const& jState : _joint_states_list)
     {
-        auto jState = _joint_states_list.at(i);
         if (jState && jState->isStepper())
         {
             uint8_t motor_id = jState->getId();
@@ -583,7 +582,7 @@ void CalibrationManager::resetVelocityProfiles()
 
     if ("ned2" == _hardware_version)
     {
-        for (auto jState : _joint_states_list)
+        for (auto const& jState : _joint_states_list)
         {
             if (jState && jState->isStepper() && EBusProtocol::TTL == jState->getBusProtocol())
             {
@@ -660,7 +659,7 @@ void CalibrationManager::moveRobotBeforeCalibration()
         // set torque on
         DxlSyncCmd dynamixel_cmd(EDxlCommandType::CMD_TYPE_POSITION);
 
-        for (auto jState : _joint_states_list)
+        for (auto const& jState : _joint_states_list)
         {
             if (jState && jState->isDynamixel())
             {
@@ -685,7 +684,7 @@ void CalibrationManager::moveSteppersToHome()
     // 2. move all steppers to Home Position
     StepperTtlSyncCmd stepper_ttl_cmd(EStepperCommandType::CMD_TYPE_POSITION);
 
-    for (auto jState : _joint_states_list)
+    for (auto const& jState : _joint_states_list)
     {
         if (jState && jState->isStepper())
         {
@@ -721,7 +720,7 @@ void CalibrationManager::moveSteppersToHome()
 void CalibrationManager::sendCalibrationToSteppers()
 {
     // 2. for each stepper, configure and send calibration cmd
-    for (auto jState : _joint_states_list)
+    for (auto const& jState : _joint_states_list)
     {
         if (jState && jState->isStepper())  // only steppers can be calibrated
         {

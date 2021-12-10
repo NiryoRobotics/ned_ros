@@ -251,7 +251,8 @@ ConveyorInterfaceCore::addConveyor()
                     ROS_INFO("ConveyorInterfaceCore::addConveyor - Set conveyor success");
                     break;
                 }
-                else if (result != niryo_robot_msgs::CommandStatus::NO_CONVEYOR_FOUND)
+
+                if (result != niryo_robot_msgs::CommandStatus::NO_CONVEYOR_FOUND)
                 {
                     bus.second.interface->unsetConveyor(conveyor_state->getId(), bus.second.default_id);
                 }
@@ -512,7 +513,7 @@ void ConveyorInterfaceCore::_publishConveyorsFeedback(const ros::TimerEvent&)
 
     std::lock_guard<std::mutex> lck(_state_map_mutex);
 
-    for (auto conveyor_state : _conveyor_state_list)
+    for (auto const& conveyor_state : _conveyor_state_list)
     {
         if (conveyor_state)
         {
@@ -560,7 +561,8 @@ bool ConveyorInterfaceCore::isCalibrationInProgress() const
 {
     if (_can_interface)
         return common::model::EStepperCalibrationStatus::IN_PROGRESS == _can_interface->getCalibrationStatus();
-    else if (_ttl_interface)
+
+    if (_ttl_interface)
       return common::model::EStepperCalibrationStatus::IN_PROGRESS == _ttl_interface->getCalibrationStatus();
 
     ROS_ERROR("ConveyorInterfaceCore::isCalibrationInProgress - No valid bus interface found");

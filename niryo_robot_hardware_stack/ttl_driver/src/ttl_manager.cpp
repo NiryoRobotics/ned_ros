@@ -571,7 +571,7 @@ bool TtlManager::readJointsStatus()
                 vector<uint8_t> ids_list = _ids_map.at(hw_type);
 
                 // we retrieve all the associated id for the type of the current driver
-                vector<std::array<uint32_t, 2> > data_list;
+                vector<std::array<uint32_t, 2> > data_list{};
 
                 // retrieve joint status
                 if (COMM_SUCCESS == driver->syncReadJointStatus(ids_list, data_list))
@@ -1017,7 +1017,7 @@ uint8_t TtlManager::readSteppersStatus()
                     for (size_t i = 0; i < velocity_list.size(); ++i)
                     {
                         uint8_t conveyor_id = _conveyor_list.at(i);
-                        int32_t velocity = static_cast<int32_t>(velocity_list.at(i));
+                        auto velocity = static_cast<int32_t>(velocity_list.at(i));
 
                         if (_state_map.count(conveyor_id))
                         {
@@ -1234,7 +1234,7 @@ int TtlManager::readCustomCommand(uint8_t id, int32_t reg_address, int& value, i
                                                             static_cast<uint8_t>(byte_number),
                                                             id,
                                                             data);
-            int32_t data_conv = static_cast<int32_t>(data);
+            auto data_conv = static_cast<int32_t>(data);
             value = data_conv;
 
             if (result != COMM_SUCCESS)
@@ -1611,10 +1611,8 @@ void TtlManager::startCalibration()
     if (_ids_map.count(EHardwareType::STEPPER))
         stepper_list = _ids_map.at(EHardwareType::STEPPER);
 
-    for (size_t i = 0; i < stepper_list.size(); ++i)
+    for (auto const& id : stepper_list)
     {
-        uint8_t id = stepper_list.at(i);
-
         if (_state_map.count(id))
         {
             auto stepperState = std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(id));
@@ -1641,10 +1639,8 @@ void TtlManager::resetCalibration()
     if (_ids_map.count(EHardwareType::STEPPER))
         stepper_list = _ids_map.at(EHardwareType::STEPPER);
 
-    for (size_t i = 0; i < stepper_list.size(); ++i)
+    for (auto const id : stepper_list)
     {
-        uint8_t id = stepper_list.at(i);
-
         if (_state_map.count(id))
         {
             auto stepperState = std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(id));

@@ -364,7 +364,7 @@ bool JointsInterfaceCore::_callbackRequestNewCalibration(niryo_robot_msgs::Trigg
                                                          niryo_robot_msgs::Trigger::Response &res)
 {
     ROS_DEBUG("JointsInterfaceCore::_callbackRequestNewCalibration - New calibration requested");
-    std::string result_message = "";
+    std::string result_message;
     int result = niryo_robot_msgs::CommandStatus::FAILURE;
     activateLearningMode("ned2" != _hardware_version, result, result_message);
 

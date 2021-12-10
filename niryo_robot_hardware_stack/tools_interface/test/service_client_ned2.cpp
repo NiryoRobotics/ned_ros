@@ -179,8 +179,8 @@ TEST_F(ToolTestControlSuite, openTool)
             srv.request.id = static_cast<uint8_t>(id);
             srv.request.position = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["open_position"]));
             srv.request.speed = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["open_speed"]));
-            srv.request.hold_torque = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["open_hold_torque"]));
-            srv.request.max_torque = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["open_max_torque"]));
+            srv.request.hold_torque = static_cast<int16_t>(static_cast<int>(filters[i]["specs"]["open_hold_torque"]));
+            srv.request.max_torque = static_cast<int16_t>(static_cast<int>(filters[i]["specs"]["open_max_torque"]));
         }
     }
 
@@ -207,8 +207,8 @@ TEST_F(ToolTestControlSuite, openToolWrongId)
     srv.request.id = static_cast<uint8_t>(20);
     srv.request.position = static_cast<uint16_t>(static_cast<int>(filters[1]["specs"]["open_position"]));
     srv.request.speed = static_cast<uint16_t>(static_cast<int>(filters[1]["specs"]["open_speed"]));
-    srv.request.hold_torque = static_cast<uint16_t>(static_cast<int>(filters[1]["specs"]["open_hold_torque"]));
-    srv.request.max_torque = static_cast<uint16_t>(static_cast<int>(filters[1]["specs"]["open_max_torque"]));
+    srv.request.hold_torque = static_cast<int16_t>(static_cast<int>(filters[1]["specs"]["open_hold_torque"]));
+    srv.request.max_torque = static_cast<int16_t>(static_cast<int>(filters[1]["specs"]["open_max_torque"]));
 
     auto client = nh_g->serviceClient<tools_interface::ToolCommand>("/niryo_robot/tools/open_gripper");
 
@@ -239,8 +239,8 @@ TEST_F(ToolTestControlSuite, CloseTool)
             srv.request.id = static_cast<uint8_t>(id);
             srv.request.position = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["close_position"]));
             srv.request.speed = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["close_speed"]));
-            srv.request.hold_torque = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["close_hold_torque"]));
-            srv.request.max_torque = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["close_max_torque"]));
+            srv.request.hold_torque = static_cast<int16_t>(static_cast<int>(filters[i]["specs"]["close_hold_torque"]));
+            srv.request.max_torque = static_cast<int16_t>(static_cast<int>(filters[i]["specs"]["close_max_torque"]));
             break;
         }
     }
@@ -269,8 +269,8 @@ TEST_F(ToolTestControlSuite, closeToolWrongId)
     srv.request.id = static_cast<uint8_t>(20);
     srv.request.position = static_cast<uint16_t>(static_cast<int>(filters[1]["specs"]["close_position"]));
     srv.request.speed = static_cast<uint16_t>(static_cast<int>(filters[1]["specs"]["close_speed"]));
-    srv.request.hold_torque = static_cast<uint16_t>(static_cast<int>(filters[1]["specs"]["close_hold_torque"]));
-    srv.request.max_torque = static_cast<uint16_t>(static_cast<int>(filters[1]["specs"]["close_max_torque"]));
+    srv.request.hold_torque = static_cast<int16_t>(static_cast<int>(filters[1]["specs"]["close_hold_torque"]));
+    srv.request.max_torque = static_cast<int16_t>(static_cast<int>(filters[1]["specs"]["close_max_torque"]));
 
     auto client = nh_g->serviceClient<tools_interface::ToolCommand>("/niryo_robot/tools/close_gripper");
 
@@ -295,9 +295,9 @@ TEST_F(ToolTestControlSuite, PullAirVacuumPump)
         if (static_cast<int>(filters[i]["id"]) == id)
         {
             srv.request.id = static_cast<uint8_t>(id);
-            srv.request.position = static_cast<int16_t>(static_cast<int>(filters[i]["specs"]["pull_air_position"]));
+            srv.request.position = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["pull_air_position"]));
             srv.request.hold_torque = static_cast<int16_t>(static_cast<int>(filters[i]["specs"]["pull_air_hold_torque"]));
-            srv.request.speed = static_cast<int16_t>(static_cast<int>(filters[i]["specs"]["pull_air_velocity"]));
+            srv.request.speed = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["pull_air_velocity"]));
             srv.request.max_torque = static_cast<int16_t>(static_cast<int>(filters[i]["specs"]["pull_air_max_torque"]));
             break;
         }
@@ -327,9 +327,9 @@ TEST_F(ToolTestControlSuite, PushAirVacuumPump)
         if (static_cast<int>(filters[i]["id"]) == id)
         {
             srv.request.id = static_cast<uint8_t>(id);
-            srv.request.position = static_cast<int16_t>(static_cast<int>(filters[i]["specs"]["push_air_position"]));
-            srv.request.speed = static_cast<int16_t>(static_cast<int>(filters[i]["specs"]["push_air_velocity"]));
-            srv.request.max_torque = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["push_air_max_torque"]));
+            srv.request.position = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["push_air_position"]));
+            srv.request.speed = static_cast<uint16_t>(static_cast<int>(filters[i]["specs"]["push_air_velocity"]));
+            srv.request.max_torque = static_cast<int16_t>(static_cast<int>(filters[i]["specs"]["push_air_max_torque"]));
             break;
         }
     }

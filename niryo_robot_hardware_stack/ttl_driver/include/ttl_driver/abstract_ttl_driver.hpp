@@ -70,7 +70,7 @@ public:
     // ram read
     virtual int readTemperature(uint8_t id, uint8_t& temperature) = 0;
     virtual int readVoltage(uint8_t id, double& voltage) = 0;
-    virtual int readHwErrorStatus(uint8_t id, uint8_t& hardware_status) = 0;
+    virtual int readHwErrorStatus(uint8_t id, uint8_t& hardware_error_status) = 0;
 
     virtual int syncReadFirmwareVersion(const std::vector<uint8_t>& id_list, std::vector<std::string>& firmware_version) = 0;
     virtual int syncReadTemperature(const std::vector<uint8_t>& id_list, std::vector<uint8_t>& temperature_list) = 0;
@@ -160,7 +160,7 @@ int AbstractTtlDriver::read(uint16_t address, uint8_t id, T& data)
 
             dxl_comm_result = _dxlPacketHandler->read1ByteTxRx(_dxlPortHandler.get(),
                                                                id, address, &raw_data, &error);
-            data = raw_data;
+            data = static_cast<T>(raw_data);
         }
         break;
         case DXL_LEN_TWO_BYTES:
@@ -169,7 +169,7 @@ int AbstractTtlDriver::read(uint16_t address, uint8_t id, T& data)
 
             dxl_comm_result = _dxlPacketHandler->read2ByteTxRx(_dxlPortHandler.get(),
                                                                id, address, &raw_data, &error);
-            data = raw_data;
+            data = static_cast<T>(raw_data);
         }
         break;
         case DXL_LEN_FOUR_BYTES:
@@ -178,7 +178,7 @@ int AbstractTtlDriver::read(uint16_t address, uint8_t id, T& data)
 
             dxl_comm_result = _dxlPacketHandler->read4ByteTxRx(_dxlPortHandler.get(),
                                                                id, address, &raw_data, &error);
-            data = raw_data;
+            data = static_cast<T>(raw_data);
         }
         break;
         default:
@@ -232,11 +232,11 @@ int AbstractTtlDriver::syncReadConsecutiveBytes(uint16_t address,
         {
             if (groupSyncRead.isAvailable(id, address, data_size * N))
             {
-                std::array<T, N> blocks;
+                std::array<T, N> blocks{};
 
                 for(uint8_t b = 0; b < N; ++b)
                 {
-                    T data = groupSyncRead.getData(id, address + b * data_size, data_size);
+                    T data = static_cast<T>(groupSyncRead.getData(id, address + b * data_size, data_size));
                     blocks.at(b) = data;
                 }
 
@@ -292,7 +292,7 @@ int AbstractTtlDriver::syncRead(uint8_t address,
             {
                 if (groupSyncRead.isAvailable(id, address, data_len))
                 {
-                    T data = groupSyncRead.getData(id, address, data_len);
+                    T data = static_cast<T>(groupSyncRead.getData(id, address, data_len));
                     data_list.emplace_back(data);
                 }
                 else
