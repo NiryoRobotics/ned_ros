@@ -12,7 +12,7 @@ from niryo_robot_msgs.msg import RobotState
 from niryo_robot_arm_commander.utils import diff_quat
 
 
-class StatePublisher:
+class StatePublisher(object):
     """
     This object read Transformation Publisher and Publish the RobotState
      in the Topic '/niryo_robot/robot_state' at a certain rate
