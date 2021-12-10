@@ -65,7 +65,6 @@ class ToolState : public DxlMotorState
         static constexpr int VACUUM_PUMP_STATE_PUSHED = 0x21;
 
     protected:
-        // TODO(CC) use joint _name ?
         std::string _tool_name;
 
         bool _connected{true};

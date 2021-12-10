@@ -59,7 +59,7 @@ public:
 inline
 void FakeCanData::updateFullIdList()
 {
-    for (auto it : stepper_registers)
+    for (const auto& it : stepper_registers)
     {
         full_id_list.emplace_back(it.first);
     }

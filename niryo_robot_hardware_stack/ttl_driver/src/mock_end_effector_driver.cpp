@@ -166,15 +166,15 @@ int MockEndEffectorDriver::readVoltage(uint8_t id, double& voltage)
 /**
  * @brief MockEndEffectorDriver::readHwErrorStatus
  * @param id
- * @param hardware_status
+ * @param hardware_error_status
  * @return
  */
-int MockEndEffectorDriver::readHwErrorStatus(uint8_t id, uint8_t& hardware_status)
+int MockEndEffectorDriver::readHwErrorStatus(uint8_t id, uint8_t& hardware_error_status)
 {
     if (COMM_SUCCESS != ping(id))
         return COMM_RX_FAIL;
 
-    hardware_status = 0;
+    hardware_error_status = 0;
     return COMM_SUCCESS;
 }
 

@@ -128,7 +128,7 @@ uint8_t AbstractStepperDriver::interpretTemperatureStatus(const std::array<uint8
     double b = -12.924;
     double c = 2367.7;
     double v_temp = driver_temp_raw * 3.3 / 1024.0 * 1000.0;
-    auto driver_temp = static_cast<uint32_t>((-b - std::sqrt(b * b - 4 * a * (c - v_temp))) / (2 * a) + 30);
+    uint8_t driver_temp = static_cast<uint8_t>((-b - std::sqrt(b * b - 4 * a * (c - v_temp))) / (2 * a) + 30);
 
     return driver_temp;
 }
