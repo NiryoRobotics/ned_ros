@@ -31,3 +31,6 @@ docs_build/
 docker/
 _singlehtml/
 generated_pdfs/
+
+
+.style.yapf

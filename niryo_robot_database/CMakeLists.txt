@@ -9,20 +9,20 @@ find_package(catkin REQUIRED COMPONENTS
 
 add_message_files(
   FILES
-  Log.msg
   Metric.msg
+  FilePath.msg
 )
 
 add_service_files(
   DIRECTORY srv
   FILES
-  AddLog.srv
-  GetAllLogs.srv
   GetAllMetrics.srv
   GetSettings.srv
-  RmLogSinceDate.srv
   SetMetric.srv
   SetSettings.srv
+  AddFilePath.srv
+  RmFilePath.srv
+  GetAllByType.srv
 )
 
 # enable python module support

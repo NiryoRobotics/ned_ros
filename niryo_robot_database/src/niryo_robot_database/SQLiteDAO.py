@@ -3,9 +3,6 @@ import sqlite3
 
 class SQLiteDAO:
     def __init__(self, db_path):
-        # Raise an IOError if the file doesnt exist
-        open(db_path).close()
-
         self.__con = sqlite3.connect(db_path, check_same_thread=False)
         self.__con.row_factory = self.dict_factory
         self.__cursor = self.__con.cursor()
@@ -26,6 +23,10 @@ class SQLiteDAO:
 
             d[col[0]] = value
         return d
+
+    @property
+    def last_row_id(self):
+        return self.__cursor.lastrowid
 
     def execute(self, *args, **kwargs):
         exec_result = self.__cursor.execute(*args, **kwargs)

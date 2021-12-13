@@ -19,7 +19,6 @@
     <build_depend>rospy</build_depend>
 
     <exec_depend>message_runtime</exec_depend>
-    <exec_depend>niryo_robot_metrics</exec_depend>
     <exec_depend>rospy</exec_depend>
 
     <test_depend>python-catkin-lint</test_depend>

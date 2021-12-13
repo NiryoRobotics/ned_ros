@@ -3,6 +3,8 @@ import json
 import numpy as np
 from datetime import datetime
 
+from std_msgs.msg import String
+
 from niryo_robot_rpi.srv import LedBlinker, LedBlinkerRequest
 from niryo_robot_python_ros_wrapper.ros_wrapper import NiryoRosWrapper, NiryoRosWrapperException
 
@@ -139,6 +141,19 @@ class TestProduction:
     def print_report(self):
         print(json.dumps(self.get_report(), indent=4, sort_keys=True))
 
+    def send_report(self):
+        new_report_publisher = rospy.Publisher('/niryo_robot_reports/test_report', String, queue_size=10)
+
+        # Wait for the publisher initialization
+        start_time = rospy.Time.now()
+        while not rospy.is_shutdown() and new_report_publisher.get_num_connections() == 0:
+            if (rospy.Time.now() - start_time).to_sec() > 1:
+                rospy.logerr('Unable to publish the new report')
+                return
+            rospy.sleep(0.1)
+
+        new_report_publisher.publish(json.dumps(self.get_report()))
+        rospy.logdebug('test report published')
 
 class TestFunctions(object):
 
@@ -312,3 +327,4 @@ if __name__ == '__main__':
     test.run()
     print("----- END -----")
     test.print_report()
+    test.send_report()
