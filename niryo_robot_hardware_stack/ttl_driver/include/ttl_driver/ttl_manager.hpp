@@ -206,7 +206,6 @@ private:
     // vector of ids of motors and conveyors
     // Theses vector help remove loop not necessary
     std::vector<uint8_t> _conveyor_list;
-    // TODO(CC) add tools_list ?
 
     // for hardware control
     bool _is_connection_ok{false};
@@ -422,7 +421,7 @@ void TtlManager::retrieveFakeMotorData(const std::string& current_ns, std::map<u
         tmp.id = static_cast<uint8_t>(hw_ids.at(i));
         tmp.position = static_cast<uint32_t>(hw_positions.at(i));
         tmp.velocity = static_cast<uint32_t>(hw_velocities.at(i));
-        tmp.temperature = static_cast<uint32_t>(hw_temperatures.at(i));
+        tmp.temperature = static_cast<uint8_t>(hw_temperatures.at(i));
         tmp.voltage = hw_voltages.at(i);
         tmp.model_number = static_cast<uint16_t>(hw_model_numbers.at(i));
         tmp.firmware = hw_firmwares.at(i);

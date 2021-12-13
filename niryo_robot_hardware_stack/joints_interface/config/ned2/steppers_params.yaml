@@ -74,4 +74,3 @@ steppers:
         d_max: 1700
         d_1: 983
         v_stop: 20
-
