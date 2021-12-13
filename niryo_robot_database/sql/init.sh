@@ -1,5 +1,12 @@
 #!/usr/bin/env bash
 
+sqlite3 -v > /dev/null 2>&1
+
+if [ $? -ne 1 ] ; then
+    echo "sqlite3 is not installed"
+    exit 1
+fi
+
 DB_PATH="$HOME/.config/niryo/ned.db"
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
