@@ -14,11 +14,11 @@ CREATE TABLE IF NOT EXISTS metric(
     update_date TEXT   NOT NULL
 );
 
-DROP TABLE IF EXISTS log;
-CREATE TABLE IF NOT EXISTS log(
-    id            TEXT      NOT NULL   PRIMARY KEY,
-    date          TEXT      NOT NULL,
-    severity      TEXT      NOT NULL,
-    origin        TEXT      NOT NULL,
-    message       TEXT      NOT NULL
-)
+DROP TABLE IF EXISTS file_path;
+CREATE TABLE IF NOT EXISTS file_path(
+    id   TEXT NOT NULL PRIMARY KEY,
+    type TEXT NOT NULL,
+    name TEXT NOT NULL,
+    date TEXT NOT NULL,
+    path TEXT NOT NULL
+);

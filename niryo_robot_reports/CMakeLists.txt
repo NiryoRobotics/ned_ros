@@ -1,18 +1,10 @@
 cmake_minimum_required(VERSION 3.0.2)
-project(niryo_robot_credentials)
+project(niryo_robot_reports)
 message( STATUS "\n## Reading ${PROJECT_NAME}/CMakeLists.txt...")
 
-find_package(catkin REQUIRED 
-  COMPONENTS
-    message_generation
-    rospy
-)
-
-add_service_files(
-  DIRECTORY srv
-  FILES
-  GetCredential.srv
-  SetCredential.srv
+find_package(catkin REQUIRED COMPONENTS
+  message_generation
+  rospy
 )
 
 # enable python module support
@@ -23,8 +15,8 @@ generate_messages(
 )
 
 catkin_package(
-    CATKIN_DEPENDS
-        message_runtime
+  CATKIN_DEPENDS
+  message_runtime
 )
 
 include_directories(
@@ -49,6 +41,7 @@ endif()
 #############
 
 if(CATKIN_ENABLE_TESTING)
+
   ##########################
   ## Static code analysis ##
   ##########################
@@ -66,11 +59,11 @@ endif()
 #############
 
 catkin_install_python(PROGRAMS 
-    scripts/credentials_node.py
-  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-)
+    scripts/reports_node.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
 
 # Mark other files for installation
+
 install(
   DIRECTORY launch/
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
