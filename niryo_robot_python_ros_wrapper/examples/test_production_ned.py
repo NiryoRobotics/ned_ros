@@ -153,6 +153,7 @@ class TestProduction:
             rospy.sleep(0.1)
 
         new_report_publisher.publish(json.dumps(self.get_report()))
+        rospy.logdebug('test report published')
 
 class TestFunctions(object):
 

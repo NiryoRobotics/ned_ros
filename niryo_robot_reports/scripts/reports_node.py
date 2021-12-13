@@ -122,6 +122,7 @@ class ReportsNode:
         self.__daily_report.add_log(formatted_log, 'ROS', str(datetime.now()))
 
     def __test_report_callback(self, req):
+        rospy.logdebug('report received')
         try:
             parsed_json = json.loads(req.data)
         except ValueError as e:
@@ -129,6 +130,7 @@ class ReportsNode:
             return
         parsed_json['date'] = datetime.now().isoformat()
         success = self.__cloud_api.test_report.send(parsed_json)
+        rospy.logdebug('send result: ' + str(success))
         if not success:
             report_name = 'test_{}.json'.format(parsed_json['date'])
             report_path = '{}/{}'.format(self.__reports_path, report_name)
