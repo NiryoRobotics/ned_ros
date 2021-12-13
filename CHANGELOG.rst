@@ -4,6 +4,15 @@ Changelog for ned_ros_stack
 
 Forthcoming
 -----------
+
+**Requirements**
+sudo apt-get install sqlite3
+End effector driver fw 1.0.7
+
+**Bug corrections**
+
+
+**Features**
 * add VERSION file at root 
 * add CHANGELOG.rst in every package (using catkin_generate_changelog tool)
 * add this changelog
@@ -11,6 +20,9 @@ Forthcoming
 * add documentation strucutre (sphinx doc)
 * update PID values for DXL (ned2)
 * update joints_interface and ttl_driver read and write frequencies
+
+**Limitations**
+
 
 * Contributors: AdminIT, Clément Cocquempot, Corentin Ducatez, Minh Thuc, Mottier Justin, Thuc PHAM, Valentin Pitre, f.dupuis
 
