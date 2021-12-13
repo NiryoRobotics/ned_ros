@@ -195,64 +195,11 @@ void addJointToTtlManager(const std::shared_ptr<ttl_driver::TtlManager>& ttl_drv
         string joint_name;
         string joint_type;
         string joint_bus;
-        double home_position = 0.0;
-        double limit_position_min = 0.0;
-        double limit_position_max = 0.0;
-        double motor_ratio = 0.0;
 
         robot_hwnh.getParam("joint_" + to_string(j + 1) + "/id", joint_id_config);
         robot_hwnh.getParam("joint_" + to_string(j + 1) + "/name", joint_name);
         robot_hwnh.getParam("joint_" + to_string(j + 1) + "/type", joint_type);
         robot_hwnh.getParam("joint_" + to_string(j + 1) + "/bus", joint_bus);
-        robot_hwnh.getParam("joint_" + to_string(j + 1) + "/home_position", home_position);
-        robot_hwnh.getParam("joint_" + to_string(j + 1) + "/limit_position_min", limit_position_min);
-        robot_hwnh.getParam("joint_" + to_string(j + 1) + "/limit_position_max", limit_position_max);
-        robot_hwnh.getParam("joint_" + to_string(j + 1) + "/motor_ratio", motor_ratio);
-
-        // acceleration and velocity profiles
-        common::model::VelocityProfile profile{};
-        int data{};
-        if (robot_hwnh.hasParam("joint_" + to_string(j + 1) + "/v_start"))
-        {
-            robot_hwnh.getParam("joint_" + to_string(j + 1) + "/v_start", data);
-            profile.v_start = static_cast<uint32_t>(data);
-        }
-
-        if (robot_hwnh.hasParam("joint_" + to_string(j + 1) + "/a_1"))
-        {
-            robot_hwnh.getParam("joint_" + to_string(j + 1) + "/a_1", data);
-            profile.a_1 = static_cast<uint32_t>(data);
-        }
-        if (robot_hwnh.hasParam("joint_" + to_string(j + 1) + "/v_1"))
-        {
-            robot_hwnh.getParam("joint_" + to_string(j + 1) + "/v_1", data);
-            profile.v_1 = static_cast<uint32_t>(data);
-        }
-        if (robot_hwnh.hasParam("joint_" + to_string(j + 1) + "/a_max"))
-        {
-            robot_hwnh.getParam("joint_" + to_string(j + 1) + "/a_max", data);
-            profile.a_max = static_cast<uint32_t>(data);
-        }
-        if (robot_hwnh.hasParam("joint_" + to_string(j + 1) + "/v_max"))
-        {
-            robot_hwnh.getParam("joint_" + to_string(j + 1) + "/v_max", data);
-            profile.v_max = static_cast<uint32_t>(data);
-        }
-        if (robot_hwnh.hasParam("joint_" + to_string(j + 1) + "/d_max"))
-        {
-            robot_hwnh.getParam("joint_" + to_string(j + 1) + "/d_max", data);
-            profile.d_max = static_cast<uint32_t>(data);
-        }
-        if (robot_hwnh.hasParam("joint_" + to_string(j + 1) + "/d_1"))
-        {
-            robot_hwnh.getParam("joint_" + to_string(j + 1) + "/d_1", data);
-            profile.d_1 = static_cast<uint32_t>(data);
-        }
-        if (robot_hwnh.hasParam("joint_" + to_string(j + 1) + "/v_stop"))
-        {
-            robot_hwnh.getParam("joint_" + to_string(j + 1) + "/v_stop", data);
-            profile.v_stop = static_cast<uint32_t>(data);
-        }
 
         HardwareTypeEnum eType = HardwareTypeEnum(joint_type.c_str());
         BusProtocolEnum eBusProto = BusProtocolEnum(joint_bus.c_str());
@@ -272,11 +219,64 @@ void addJointToTtlManager(const std::shared_ptr<ttl_driver::TtlManager>& ttl_drv
                 double gear_ratio = 1.0;
                 int direction = 1;
                 double max_effort = 0.0;
+                double home_position = 0.0;
+                double limit_position_min = 0.0;
+                double limit_position_max = 0.0;
+                double motor_ratio = 0.0;
 
                 robot_hwnh.getParam(currentStepperNamespace + "/offset_position", offsetPos);
                 robot_hwnh.getParam(currentStepperNamespace + "/gear_ratio", gear_ratio);
                 robot_hwnh.getParam(currentStepperNamespace + "/direction", direction);
                 robot_hwnh.getParam(currentStepperNamespace + "/max_effort", max_effort);
+                robot_hwnh.getParam(currentStepperNamespace + "/home_position", home_position);
+                robot_hwnh.getParam(currentStepperNamespace + "/limit_position_min", limit_position_min);
+                robot_hwnh.getParam(currentStepperNamespace + "/limit_position_max", limit_position_max);
+                robot_hwnh.getParam(currentStepperNamespace + "/motor_ratio", motor_ratio);
+
+                // acceleration and velocity profiles
+                common::model::VelocityProfile profile{};
+                int data{};
+                if (robot_hwnh.hasParam(currentStepperNamespace + "/v_start"))
+                {
+                    robot_hwnh.getParam(currentStepperNamespace + "/v_start", data);
+                    profile.v_start = static_cast<uint32_t>(data);
+                }
+
+                if (robot_hwnh.hasParam(currentStepperNamespace + "/a_1"))
+                {
+                    robot_hwnh.getParam(currentStepperNamespace + "/a_1", data);
+                    profile.a_1 = static_cast<uint32_t>(data);
+                }
+                if (robot_hwnh.hasParam(currentStepperNamespace + "/v_1"))
+                {
+                    robot_hwnh.getParam(currentStepperNamespace + "/v_1", data);
+                    profile.v_1 = static_cast<uint32_t>(data);
+                }
+                if (robot_hwnh.hasParam(currentStepperNamespace + "/a_max"))
+                {
+                    robot_hwnh.getParam(currentStepperNamespace + "/a_max", data);
+                    profile.a_max = static_cast<uint32_t>(data);
+                }
+                if (robot_hwnh.hasParam(currentStepperNamespace + "/v_max"))
+                {
+                    robot_hwnh.getParam(currentStepperNamespace + "/v_max", data);
+                    profile.v_max = static_cast<uint32_t>(data);
+                }
+                if (robot_hwnh.hasParam(currentStepperNamespace + "/d_max"))
+                {
+                    robot_hwnh.getParam(currentStepperNamespace + "/d_max", data);
+                    profile.d_max = static_cast<uint32_t>(data);
+                }
+                if (robot_hwnh.hasParam(currentStepperNamespace + "/d_1"))
+                {
+                    robot_hwnh.getParam(currentStepperNamespace + "/d_1", data);
+                    profile.d_1 = static_cast<uint32_t>(data);
+                }
+                if (robot_hwnh.hasParam(currentStepperNamespace + "/v_stop"))
+                {
+                    robot_hwnh.getParam(currentStepperNamespace + "/v_stop", data);
+                    profile.v_stop = static_cast<uint32_t>(data);
+                }
 
                 // add parameters
                 stepperState->setOffsetPosition(offsetPos);
@@ -302,7 +302,6 @@ void addJointToTtlManager(const std::shared_ptr<ttl_driver::TtlManager>& ttl_drv
                                                             eType,
                                                             common::model::EComponentType::JOINT,
                                                             static_cast<uint8_t>(joint_id_config));
-
             if (dxlState)
             {
                 double offsetPos = 0.0;
@@ -318,6 +317,7 @@ void addJointToTtlManager(const std::shared_ptr<ttl_driver::TtlManager>& ttl_drv
                 int accelerationProfile = 0;
                 double limit_position_min = 0.0;
                 double limit_position_max = 0.0;
+                double home_position = 0.0;
 
                 std::string currentDxlNamespace = "dynamixels/dxl_" + to_string(currentIdDxl);
 
@@ -479,7 +479,7 @@ class TtlManagerTestSuite : public ::testing::Test
 
         // for stepper TTL 0 is decreasing direction
         // send config before calibrate
-        for (int id = 2; id < 5; id++)
+        for (uint8_t id = 2; id < 5; id++)
         {
             uint8_t direction{0};
             if (id == 3)
@@ -581,9 +581,9 @@ TEST_F(TtlManagerTestSuite, testSingleControlCmds)
     auto state_motor_5 = std::dynamic_pointer_cast<common::model::JointState>(ttl_drv->getHardwareState(5));
     assert(state_motor_5);
 
-    uint32_t new_pos_2 = state_motor_2->to_motor_pos(state_motor_2->getHomePosition());
-    uint32_t new_pos_3 = state_motor_3->to_motor_pos(state_motor_3->getHomePosition());
-    uint32_t new_pos_5 = state_motor_5->to_motor_pos(state_motor_5->getHomePosition());
+    auto new_pos_2 = static_cast<uint32_t>(state_motor_2->to_motor_pos(state_motor_2->getHomePosition()));
+    auto new_pos_3 = static_cast<uint32_t>(state_motor_3->to_motor_pos(state_motor_3->getHomePosition()));
+    auto new_pos_5 = static_cast<uint32_t>(state_motor_5->to_motor_pos(state_motor_5->getHomePosition()));
 
     // single control cmd for stepper ttl id 2
     auto cmd_1 = std::make_unique<common::model::StepperTtlSingleCmd>(
@@ -687,12 +687,12 @@ TEST_F(TtlManagerTestSuite, testSyncControlCmds)
     auto state_motor_7 = std::dynamic_pointer_cast<common::model::JointState>(ttl_drv->getHardwareState(7));
     assert(state_motor_7);
 
-    uint32_t new_pos_2 = state_motor_2->getHomePosition();
-    uint32_t new_pos_3 = state_motor_3->getHomePosition();
-    uint32_t new_pos_4 = state_motor_4->getHomePosition();
-    uint32_t new_pos_5 = state_motor_5->getHomePosition();
-    uint32_t new_pos_6 = state_motor_6->getHomePosition();
-    uint32_t new_pos_7 = state_motor_7->getHomePosition();
+    auto new_pos_2 = static_cast<uint32_t>(state_motor_2->getHomePosition());
+    auto new_pos_3 = static_cast<uint32_t>(state_motor_3->getHomePosition());
+    auto new_pos_4 = static_cast<uint32_t>(state_motor_4->getHomePosition());
+    auto new_pos_5 = static_cast<uint32_t>(state_motor_5->getHomePosition());
+    auto new_pos_6 = static_cast<uint32_t>(state_motor_6->getHomePosition());
+    auto new_pos_7 = static_cast<uint32_t>(state_motor_7->getHomePosition());
 
     auto cmd_1 = std::make_unique<common::model::DxlSyncCmd>(common::model::EDxlCommandType::CMD_TYPE_POSITION);
     cmd_1->addMotorParam(dxl_type, 5, new_pos_5);
@@ -705,7 +705,7 @@ TEST_F(TtlManagerTestSuite, testSyncControlCmds)
     auto cmd_2 = std::make_unique<common::model::StepperTtlSyncCmd>(common::model::EStepperCommandType::CMD_TYPE_POSITION);
     cmd_2->addMotorParam(stepper_type, 2, new_pos_2);
     cmd_2->addMotorParam(stepper_type, 3, new_pos_3);
-    cmd_2->addMotorParam(stepper_type, 4, new_pos_3);
+    cmd_2->addMotorParam(stepper_type, 4, new_pos_4);
 
     EXPECT_EQ(ttl_drv->writeSynchronizeCommand(std::move(cmd_2)), COMM_SUCCESS);
     ros::Duration(0.5).sleep();

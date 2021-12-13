@@ -5,4 +5,4 @@ float32 dist_smoothing
 
 int32 status
 string message
-trajectory_msgs/JointTrajectory trajectory
+moveit_msgs/RobotTrajectory trajectory

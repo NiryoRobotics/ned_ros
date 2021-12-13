@@ -152,7 +152,7 @@ class TrajectoriesExecutor:
 
             # TODO(Thuc) test ned and one without reset controller hear
             # self.__reset_controller()
-            rospy.logdebug("Arm commander - Send MoveIt trajectory to controller.")
+            rospy.loginfo("Arm commander - Send MoveIt trajectory to controller.")
             status, message = self.execute_plan(plan)
 
             if status != CommandStatus.SHOULD_RESTART:

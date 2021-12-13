@@ -582,19 +582,18 @@ void TtlInterfaceCore::controlLoop()
 
                     if (bus_state == TTL_SCAN_OK)
                         break;
-                    else
-                    {
-                        missing_ids = getRemovedMotorList();
 
-                        std::string msg;
-                        msg += "TtlInterfaceCore::controlLoop - motor";
-                        for (auto const& id : missing_ids)
-                        {
-                            msg += " " + std::to_string(id);
-                        }
-                        msg += " do not seem to be connected";
-                        ROS_WARN_THROTTLE(1.0, "%s", msg.c_str());
+                    missing_ids = getRemovedMotorList();
+
+                    std::string msg;
+                    msg += "TtlInterfaceCore::controlLoop - motor";
+                    for (auto const& id : missing_ids)
+                    {
+                        msg += " " + std::to_string(id);
                     }
+                    msg += " do not seem to be connected";
+                    ROS_WARN_THROTTLE(1.0, "%s", msg.c_str());
+
                     // still keep hardware status updated
                     _ttl_manager->readHardwareStatus();
                     ros::Duration(0.25).sleep();

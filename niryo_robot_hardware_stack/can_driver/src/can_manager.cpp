@@ -397,7 +397,6 @@ int CanManager::scanAndCheck()
         }
 
         // update last time read on found motors
-        // TODO(cc) move updateLastTimeRead in hardwareState ?
         for (auto& motor_id : _all_motor_connected)
         {
             if (_state_map.count(motor_id) && _state_map.at(motor_id))

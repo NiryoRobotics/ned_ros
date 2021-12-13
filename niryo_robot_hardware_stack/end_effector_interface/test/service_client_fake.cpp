@@ -31,7 +31,6 @@ static std::unique_ptr<ros::NodeHandle> nh;
 
 struct HandleMsgReturn
 {
-    HandleMsgReturn() {}
     static constexpr int max_failures = 200;
 
     static bool getCorrectMsg(const end_effector_interface::EEButtonStatusConstPtr& data, int value)
@@ -44,11 +43,9 @@ struct HandleMsgReturn
                 data_received = true;
                 break;
             }
-            else
-            {
-                ros::spinOnce();
-                ros::WallDuration(0.01).sleep();
-            }
+
+            ros::spinOnce();
+            ros::WallDuration(0.01).sleep();
         }
         return data_received;
     }

@@ -64,7 +64,6 @@ namespace ttl_driver
 /**
  * @brief The TtlInterfaceCore class schedules and manager the communication in the TTL bus
  * its main purpose it to manage queues of commands for the TTL Motors
- * TODO(CC) Do we need to use TtlInterfaceCore or TtlManager when used with another node ?
  * This class is used for now by :
  * - ToolsInterfaceCore
  * - JointsInterfaceCore

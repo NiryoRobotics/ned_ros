@@ -107,12 +107,12 @@ inline
 void FakeTtlData::updateFullIdList()
 {
     full_id_list.clear();
-    for (auto it : dxl_registers)
+    for (auto const& it : dxl_registers)
     {
         full_id_list.emplace_back(it.first);
     }
 
-    for (auto it : stepper_registers)
+    for (auto const& it : stepper_registers)
     {
         full_id_list.emplace_back(it.first);
     }

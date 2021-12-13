@@ -2,6 +2,7 @@
 
 # Lib
 import rospy
+import moveit_commander
 from tf.transformations import quaternion_from_euler
 
 import copy
@@ -9,6 +10,7 @@ import math
 import numpy as np
 
 from trajectories_executor import TrajectoriesExecutor
+from kinematics_handler import KinematicsHandler
 from jog_controller import JogController
 from niryo_robot_arm_commander.utils import list_to_pose, pose_to_list, dist_2_poses, dist_2_points, poses_too_close, \
     angle_between_2_points
@@ -19,9 +21,13 @@ from niryo_robot_msgs.msg import CommandStatus
 # Messages
 from geometry_msgs.msg import Pose, Point, Quaternion
 from moveit_msgs.msg import RobotState as RobotStateMoveIt
-from moveit_msgs.msg import RobotTrajectory
+from std_msgs.msg import Int32
 from niryo_robot_arm_commander.msg import ArmMoveCommand
 from niryo_robot_msgs.msg import RPY
+
+# Services
+from moveit_msgs.srv import GetStateValidity
+from niryo_robot_msgs.srv import SetInt
 
 # Enums
 from niryo_robot_arm_commander.command_enums import ArmCommanderException
@@ -32,32 +38,114 @@ class ArmCommander:
     Object which set the arm goals to MoveIt
     """
 
-    def __init__(self, arm_state):
+    def __init__(self, parameters_validator, transform_handler):
         rospy.logdebug("Arm Commander - Entering in Init")
-        self.__arm_state = arm_state
-        self.__joints_name = self.__arm_state.joints_name
+
+        # Getting reference frame from robot_commander.launch
+        self.__reference_frame = rospy.get_param("~reference_frame")
+        rospy.logdebug("ArmCommander.init - reference_frame: %s", self.__reference_frame)
+
+        self.__joints_name = rospy.get_param('~joint_names')
+        rospy.logdebug("ArmCommander.init - joint_controller_name: %s", self.__joints_name)
 
         # -- Commanders
         # - Move It Commander
-        self.__arm = self.__arm_state.arm
-        self.__end_effector_link = self.__arm.get_end_effector_link()
-
-        # Executor
+        self.__arm = None
+        self.__velocity_scaling_factor = 1.0
+        self.__acceleration_scaling_factor = 1.0
+        self.__init_move_group_commander()
         self.__traj_executor = TrajectoriesExecutor(self.__arm)
 
         # Validation
-        self.__parameters_validator = self.__arm_state.parameters_validator
+        self.__parameters_validator = parameters_validator
 
         # - Frames managers
-        self.__transform_handler = self.__arm_state.transform_handler
-        self.__kinematics_handler = self.__arm_state.kinematics
+        self.__transform_handler = transform_handler
+        self.__kinematics_handler = KinematicsHandler(self.__arm, self.__transform_handler)
 
         # Jog Controller
-        self.__jog_controller = JogController(self.__arm_state)
+        self.__jog_controller = JogController(self.__arm, self.__kinematics_handler, self.__parameters_validator)
+
+        # Arm velocity
+        self.__max_velocity_scaling_factor = 100  # Start robot with max velocity
+        self.__max_velocity_scaling_factor_pub = rospy.Publisher(
+            '/niryo_robot/max_velocity_scaling_factor', Int32, queue_size=10)
+        self.timer = rospy.Timer(rospy.Duration(1), self.__publish_arm_max_velocity_scaling_factor)
+        rospy.Service('/niryo_robot_arm_commander/set_max_velocity_scaling_factor', SetInt,
+                      self.__callback_set_max_velocity_scaling_factor)
+
+        # Check joint validity service (used for self collisions checking)
+        self.check_state_validity = rospy.ServiceProxy('check_state_validity', GetStateValidity)
+
+        # set default velocity and acceleration to 100%
+        self.__arm.set_max_velocity_scaling_factor(1)
+        self.__arm.set_max_acceleration_scaling_factor(1)
+
+    def __init_move_group_commander(self):
+        # Get Arm MoveGroupCommander
+        move_group_commander_name = rospy.get_param("~move_group_commander_name")
+        rospy.logdebug("ArmCommander.init - move_group_commander_name: %s", move_group_commander_name)
+
+        self.__arm = moveit_commander.MoveGroupCommander(move_group_commander_name)
+        # Get end effector link
+        self.__end_effector_link = self.__arm.get_end_effector_link()
+
+        # Set pose reference frame
+        self.__arm.set_pose_reference_frame(self.__reference_frame)
+        self.__arm.set_max_velocity_scaling_factor(self.__velocity_scaling_factor)
+        self.__arm.set_max_acceleration_scaling_factor(self.__acceleration_scaling_factor)
+
+        # Set planning parameters
+        self.__arm.allow_replanning(rospy.get_param("~allow_replanning"))
+        self.__arm.set_goal_joint_tolerance(rospy.get_param("~goal_joint_tolerance"))
+        self.__arm.set_goal_position_tolerance(rospy.get_param("~goal_position_tolerance"))
+        self.__arm.set_goal_orientation_tolerance(rospy.get_param("~goal_orientation_tolerance"))
+
+        rospy.loginfo("Arm commander - MoveIt! successfully connected to move_group '{}'".format(self.__arm.get_name()))
+        rospy.logdebug("Arm commander - MoveIt! will move '{}' in the"
+                       " planning_frame '{}'".format(self.__end_effector_link, self.__arm.get_planning_frame()))
 
     @property
     def trajectories_executor(self):
         return self.__traj_executor
+
+    # -- Publishers call
+    def __publish_arm_max_velocity_scaling_factor(self, _):
+        """
+        Publish Integer between 1 and 100 which correspond to the function name :)
+        :param _: TimeEvent object which is not used
+        :return: None
+        """
+        rospy.logdebug("ArmCommander.init - __publish_arm_max_velocity_scaling_factor: %d",
+                       self.__max_velocity_scaling_factor)
+
+        msg = Int32()
+        msg.data = self.__max_velocity_scaling_factor
+        self.__max_velocity_scaling_factor_pub.publish(msg)
+
+    # -- Callbacks
+    def __callback_set_max_velocity_scaling_factor(self, req):
+        rospy.logdebug("ArmCommander.init - __callback_set_max_velocity_scaling_factor: %d", req.value)
+
+        if not 0 < req.value <= 100:
+            return {'status': CommandStatus.INVALID_PARAMETERS, 'message': 'Value must be between 1 and 100'}
+        try:
+            self.__set_max_velocity_scaling_factor(req.value / 100.0)
+        except ArmCommanderException as e:
+            return {'status': CommandStatus.ARM_COMMANDER_FAILURE, 'message': e.message}
+        self.__max_velocity_scaling_factor = req.value
+        self.__publish_arm_max_velocity_scaling_factor(None)
+        return {'status': CommandStatus.SUCCESS, 'message': 'Success'}
+
+    # -- Core
+    def __set_max_velocity_scaling_factor(self, percentage):
+        """
+        Ask MoveIt to set the relative speed to (percentage)%
+        :param percentage:
+        :return: None
+        """
+        self.__velocity_scaling_factor = percentage
+        self.__arm.set_max_velocity_scaling_factor(percentage)
 
     # - PTP Trajectory
     def set_joint_target(self, arm_cmd):
@@ -211,9 +299,8 @@ class ArmCommander:
 
         # set arm pose target
         self.__arm.set_pose_target(pose_list, self.__end_effector_link)
-        return self.__traj_executor.compute_and_execute_cartesian_plan([msg_pose],
-                                                                       self.__arm_state.velocity_scaling_factor,
-                                                                       self.__arm_state.acceleration_scaling_factor)
+        return self.__traj_executor.compute_and_execute_cartesian_plan([msg_pose], self.__velocity_scaling_factor,
+                                                                       self.__acceleration_scaling_factor)
 
     # - Linear Trajectory
     def set_linear_trajectory(self, arm_cmd):
@@ -239,9 +326,8 @@ class ArmCommander:
             return CommandStatus.SUCCESS, "Command was already satisfied"
 
         else:
-            return self.__traj_executor.compute_and_execute_cartesian_plan([ee_pose],
-                                                                           self.__arm_state.velocity_scaling_factor,
-                                                                           self.__arm_state.acceleration_scaling_factor)
+            return self.__traj_executor.compute_and_execute_cartesian_plan([ee_pose], self.__velocity_scaling_factor,
+                                                                           self.__acceleration_scaling_factor)
 
     # - Spiral Trajectory
     def draw_spiral_trajectory(self, arm_cmd):
@@ -291,9 +377,8 @@ class ArmCommander:
                 waypoints.append(copy.deepcopy(target_pose))
                 angle += angle_step_rad
 
-        return self.__traj_executor.compute_and_execute_cartesian_plan(waypoints,
-                                                                       self.__arm_state.velocity_scaling_factor,
-                                                                       self.__arm_state.acceleration_scaling_factor)
+        return self.__traj_executor.compute_and_execute_cartesian_plan(waypoints, self.__velocity_scaling_factor,
+                                                                       self.__acceleration_scaling_factor)
 
     def draw_circle_trajectory(self, arm_cmd):
         """
@@ -327,18 +412,13 @@ class ArmCommander:
 
     # - Waypointed Trajectory
     def execute_waypointed_trajectory(self, arm_cmd):
-        imported_moveit_plan = RobotTrajectory(joint_trajectory=arm_cmd.trajectory)
-        self.__arm.set_joint_value_target(imported_moveit_plan.joint_trajectory.points[0].positions)
+        self.__arm.set_joint_value_target(arm_cmd.trajectory.joint_trajectory.points[0].positions)
         partial_plan = self.__traj_executor.plan()
-        plan = self.__link_plans(partial_plan, imported_moveit_plan)
+        plan = self.__link_plans(partial_plan, arm_cmd.trajectory)
         return self.__traj_executor.execute_plan(plan)
 
     def compute_and_execute_waypointed_trajectory(self, arm_cmd):
-        try:
-            status, message, plan = self.compute_waypointed_trajectory(arm_cmd)
-        except ArmCommanderException as e:
-            return e.status, e.message
-
+        status, message, plan = self.compute_waypointed_trajectory(arm_cmd)
         if status != CommandStatus.SUCCESS:
             return status, message
 
@@ -364,8 +444,8 @@ class ArmCommander:
                 plan = self.__traj_executor.compute_cartesian_plan(list_ee_poses)
                 if plan is None:
                     raise ArmCommanderException(CommandStatus.NO_PLAN_AVAILABLE, "")
-                plan = self.__traj_executor.retime_plan(plan, self.__arm_state.velocity_scaling_factor,
-                                                        self.__arm_state.acceleration_scaling_factor, optimize=False)
+                plan = self.__traj_executor.retime_plan(plan, self.__velocity_scaling_factor,
+                                                        self.__acceleration_scaling_factor, optimize=False)
 
             except ArmCommanderException as e:
                 if e.status == CommandStatus.NO_PLAN_AVAILABLE:
@@ -429,8 +509,7 @@ class ArmCommander:
             final_plan.joint_trajectory.points.extend(plan.joint_trajectory.points)
 
         # Retime plan et recompute velocities
-        final_plan = self.__traj_executor.retime_plan(final_plan, optimize=True)
-        return self.__filtering_plan(final_plan)
+        return self.__traj_executor.retime_plan(final_plan, optimize=True)
 
     def __link_plans_with_smoothing(self, dist_smoothing=0.0, *plans):
         """
@@ -485,27 +564,10 @@ class ArmCommander:
                 bezier_result = bezier(begin_positions, mid_positions, end_positions, ratio)
                 big_plan.joint_trajectory.points[point_index].positions = bezier_result
 
-        final_plan = self.__traj_executor.retime_plan(
-            big_plan, optimize=True,
-            velocity_scaling_factor=self.__arm_state.velocity_scaling_factor,
-            acceleration_scaling_factor=self.__arm_state.acceleration_scaling_factor
-        )
+        final_plan = self.__traj_executor.retime_plan(big_plan, optimize=True,
+                                                      velocity_scaling_factor=self.__velocity_scaling_factor,
+                                                      acceleration_scaling_factor=self.__acceleration_scaling_factor)
         return final_plan
-
-    def __filtering_plan(self, plan):
-        if plan is None:
-            return None
-
-        new_plan = RobotTrajectory()
-        new_plan.joint_trajectory.header = plan.joint_trajectory.header
-        new_plan.joint_trajectory.joint_names = plan.joint_trajectory.joint_names
-        new_plan.joint_trajectory.points = []
-
-        for i, point in enumerate(plan.joint_trajectory.points[:-1]):
-            if point.time_from_start != plan.joint_trajectory.points[i + 1].time_from_start:
-                new_plan.joint_trajectory.points.append(point)
-        new_plan.joint_trajectory.points.append(plan.joint_trajectory.points[-1])
-        return new_plan
 
     # - General Purposes
     def display_traj(self, plan, id_=1):
@@ -555,7 +617,7 @@ class ArmCommander:
             robot_state_target.joint_state.position = joints
             robot_state_target.joint_state.name = self.__joints_name
             group_name = self.__arm.get_name()
-            response = self.__parameters_validator.check_state_validity(robot_state_target, group_name, None)
+            response = self.check_state_validity(robot_state_target, group_name, None)
             if not response.valid:
                 if len(response.contacts) > 0:
                     rospy.logwarn('Arm commander - Joints target unreachable because of collision between %s and %s',

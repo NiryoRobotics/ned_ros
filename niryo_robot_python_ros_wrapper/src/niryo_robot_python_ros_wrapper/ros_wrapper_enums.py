@@ -1,10 +1,6 @@
 from enum import Enum, unique
 
 
-class NiryoRosWrapperException(Exception):
-    pass
-
-
 class ShiftPose:
     def __init__(self):
         pass
