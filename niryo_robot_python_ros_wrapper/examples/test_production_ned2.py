@@ -1,9 +1,11 @@
 import rospy
 import json
+import argparse
 import numpy as np
 from datetime import datetime
 
 from std_msgs.msg import Int32, String
+from niryo_robot_database.srv import SetSettings
 
 from niryo_robot_python_ros_wrapper.ros_wrapper import NiryoRosWrapper, NiryoRosWrapperException
 from niryo_robot_python_ros_wrapper.ros_wrapper_enums import ButtonAction
@@ -18,7 +20,7 @@ RED = [255, 0, 0]
 
 USE_BUTTON = False
 VOLUME = 10
-LOOPS = 2
+LOOPS = 0
 
 
 def almost_equal_array(a, b, decimal=1):
@@ -501,3 +503,11 @@ if __name__ == '__main__':
     print("----- END -----")
     test.print_report()
     test.send_report()
+
+    # This is to avoid deactivating the sharing each time we run this script
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--set_sharing_allowed', action='store_true')
+    args = parser.parse_args()
+    if args.set_sharing_allowed:
+        set_setting = rospy.ServiceProxy('/niryo_robot_database/settings/set', SetSettings)
+        set_setting('sharing_allowed', 'False', 'bool')

@@ -26,7 +26,6 @@ class ReportsNode:
     def __init__(self):
         rospy.logdebug("Reports Node - Entering in Init")
 
-        rospy.wait_for_service('/niryo_robot_database/settings/get')
         self.__get_setting = rospy.ServiceProxy(
             '/niryo_robot_database/settings/get', GetSettings
         )
@@ -173,6 +172,15 @@ if __name__ == "__main__":
     rospy.init_node(
         'niryo_robot_reports', anonymous=False, log_level=rospy.INFO
     )
+
+    rospy.wait_for_service('/niryo_robot_database/settings/get')
+    get_setting = rospy.ServiceProxy(
+        '/niryo_robot_database/settings/get', GetSettings
+    )
+    sharing_allowed_response = get_setting('sharing_allowed')
+    if sharing_allowed_response.status != CommandStatus.SUCCESS or sharing_allowed_response.value == 'False':
+        rospy.logwarn('Sharing not allowed, the niryo_robot_reports won\'t start')
+        exit()
 
     try:
         node = ReportsNode()
