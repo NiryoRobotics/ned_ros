@@ -326,3 +326,4 @@ if __name__ == '__main__':
     test.run()
     print("----- END -----")
     test.print_report()
+    test.send_report()
