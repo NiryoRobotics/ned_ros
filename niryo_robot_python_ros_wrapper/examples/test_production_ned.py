@@ -3,6 +3,8 @@ import json
 import numpy as np
 from datetime import datetime
 
+from std_msgs.msg import String
+
 from niryo_robot_rpi.srv import LedBlinker, LedBlinkerRequest
 from niryo_robot_python_ros_wrapper.ros_wrapper import NiryoRosWrapper, NiryoRosWrapperException
 
