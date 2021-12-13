@@ -96,17 +96,75 @@ void addJointToTtlInterface(const std::shared_ptr<ttl_driver::TtlInterfaceCore>&
                 double gear_ratio = 1.0;
                 int direction = 1;
                 double max_effort = 0.0;
+                double home_position = 0.0;
+                double limit_position_min = 0.0;
+                double limit_position_max = 0.0;
+                double motor_ratio = 0.0;
 
                 robot_hwnh.getParam(currentStepperNamespace + "/offset_position", offsetPos);
                 robot_hwnh.getParam(currentStepperNamespace + "/gear_ratio", gear_ratio);
                 robot_hwnh.getParam(currentStepperNamespace + "/direction", direction);
                 robot_hwnh.getParam(currentStepperNamespace + "/max_effort", max_effort);
+                robot_hwnh.getParam(currentStepperNamespace + "/home_position", home_position);
+                robot_hwnh.getParam(currentStepperNamespace + "/limit_position_min", limit_position_min);
+                robot_hwnh.getParam(currentStepperNamespace + "/limit_position_max", limit_position_max);
+                robot_hwnh.getParam(currentStepperNamespace + "/motor_ratio", motor_ratio);
+                    
+                // acceleration and velocity profiles
+                common::model::VelocityProfile profile{};
+                int data{};
+                if (robot_hwnh.hasParam(currentStepperNamespace + "/v_start"))
+                {
+                    robot_hwnh.getParam(currentStepperNamespace + "/v_start", data);
+                    profile.v_start = static_cast<uint32_t>(data);
+                }
+
+                if (robot_hwnh.hasParam(currentStepperNamespace + "/a_1"))
+                {
+                    robot_hwnh.getParam(currentStepperNamespace + "/a_1", data);
+                    profile.a_1 = static_cast<uint32_t>(data);
+                }
+                if (robot_hwnh.hasParam(currentStepperNamespace + "/v_1"))
+                {
+                    robot_hwnh.getParam(currentStepperNamespace + "/v_1", data);
+                    profile.v_1 = static_cast<uint32_t>(data);
+                }
+                if (robot_hwnh.hasParam(currentStepperNamespace + "/a_max"))
+                {
+                    robot_hwnh.getParam(currentStepperNamespace + "/a_max", data);
+                    profile.a_max = static_cast<uint32_t>(data);
+                }
+                if (robot_hwnh.hasParam(currentStepperNamespace + "/v_max"))
+                {
+                    robot_hwnh.getParam(currentStepperNamespace + "/v_max", data);
+                    profile.v_max = static_cast<uint32_t>(data);
+                }
+                if (robot_hwnh.hasParam(currentStepperNamespace + "/d_max"))
+                {
+                    robot_hwnh.getParam(currentStepperNamespace + "/d_max", data);
+                    profile.d_max = static_cast<uint32_t>(data);
+                }
+                if (robot_hwnh.hasParam(currentStepperNamespace + "/d_1"))
+                {
+                    robot_hwnh.getParam(currentStepperNamespace + "/d_1", data);
+                    profile.d_1 = static_cast<uint32_t>(data);
+                }
+                if (robot_hwnh.hasParam(currentStepperNamespace + "/v_stop"))
+                {
+                    robot_hwnh.getParam(currentStepperNamespace + "/v_stop", data);
+                    profile.v_stop = static_cast<uint32_t>(data);
+                }
 
                 // add parameters
                 stepperState->setOffsetPosition(offsetPos);
                 stepperState->setGearRatio(gear_ratio);
                 stepperState->setDirection(static_cast<int8_t>(direction));
                 stepperState->setMaxEffort(max_effort);
+                stepperState->setHomePosition(home_position);
+                stepperState->setLimitPositionMax(limit_position_max);
+                stepperState->setLimitPositionMin(limit_position_min);
+                stepperState->setMotorRatio(motor_ratio);
+                stepperState->setVelocityProfile(profile);
 
                 if (eBusProto == EBusProtocol::TTL)
                   ttl_interface->addJoint(stepperState);
@@ -131,6 +189,11 @@ void addJointToTtlInterface(const std::shared_ptr<ttl_driver::TtlInterfaceCore>&
                 int velocityIGain = 0;
                 int FF1Gain = 0;
                 int FF2Gain = 0;
+                int velocityProfile = 0;
+                int accelerationProfile = 0;
+                double limit_position_min = 0.0;
+                double limit_position_max = 0.0;
+                double home_position = 0.0;
 
                 std::string currentDxlNamespace = "dynamixels/dxl_" + to_string(currentIdDxl);
 
@@ -147,6 +210,13 @@ void addJointToTtlInterface(const std::shared_ptr<ttl_driver::TtlInterfaceCore>&
                 robot_hwnh.getParam(currentDxlNamespace + "/FF1_gain", FF1Gain);
                 robot_hwnh.getParam(currentDxlNamespace + "/FF2_gain", FF2Gain);
 
+                robot_hwnh.getParam(currentDxlNamespace + "/velocity_profile", velocityProfile);
+                robot_hwnh.getParam(currentDxlNamespace + "/acceleration_profile", accelerationProfile);
+
+                robot_hwnh.getParam(currentDxlNamespace + "/home_position", home_position);
+                robot_hwnh.getParam(currentDxlNamespace + "/limit_position_min", limit_position_min);
+                robot_hwnh.getParam(currentDxlNamespace + "/limit_position_max", limit_position_max);
+
                 dxlState->setOffsetPosition(offsetPos);
                 dxlState->setDirection(static_cast<int8_t>(direction));
 
@@ -159,6 +229,14 @@ void addJointToTtlInterface(const std::shared_ptr<ttl_driver::TtlInterfaceCore>&
 
                 dxlState->setFF1Gain(static_cast<uint32_t>(FF1Gain));
                 dxlState->setFF2Gain(static_cast<uint32_t>(FF2Gain));
+
+                dxlState->setVelProfile(static_cast<uint32_t>(velocityProfile));
+                dxlState->setAccProfile(static_cast<uint32_t>(accelerationProfile));
+
+                dxlState->setLimitPositionMin(limit_position_min);
+                dxlState->setLimitPositionMax(limit_position_max);
+
+                dxlState->setHomePosition(home_position);
 
                 if (eBusProto == EBusProtocol::TTL)
                   ttl_interface->addJoint(dxlState);
