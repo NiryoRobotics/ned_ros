@@ -5,7 +5,6 @@ from niryo_robot_poses_handlers.file_manager import FileManager
 from geometry_msgs.msg import TransformStamped
 
 
-# Todo : Shouldn't be ROS dependant
 class Grip(object):
     """
     Represents the robot tool_0 position (the one we plan for) with respect to

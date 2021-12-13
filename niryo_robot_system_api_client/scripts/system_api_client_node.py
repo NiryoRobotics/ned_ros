@@ -19,7 +19,7 @@ class SystemApiClientNode:
         domain = rospy.get_param('~server_domain')
         port = rospy.get_param('~server_port')
 
-        # TODO remettre prefix
+        # TODO (Justin) prefix?
         prefix = None  # rospy.get_param('~api_prefix')
 
         rospy.logdebug("SystemApiClientNode.init - server_domain: {}".format(domain))
@@ -83,10 +83,8 @@ class SystemApiClientNode:
             msg.status = msg.DISABLED
         elif status['hotspot_state']:
             msg.status = msg.HOTSPOT
-        elif status['connected']:
-            msg.status = msg.CONNECTED
         else:
-            msg.status = msg.DISCONNECTED
+            msg.status = msg.CONNECTED
         try:
             self.wifi_state_publisher.publish(msg)
         except rospy.ROSException:
