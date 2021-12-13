@@ -75,6 +75,7 @@
 
     <include file="$(find niryo_robot_system_api_client)/launch/system_api_client.launch">
         <arg name="log_level" value="$(arg log_level)" />
+        <arg name="hardware_version" value="$(arg hardware_version)" />
     </include>
 
 </launch>
