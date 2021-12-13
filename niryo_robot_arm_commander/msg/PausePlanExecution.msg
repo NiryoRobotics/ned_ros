@@ -4,4 +4,6 @@ int8 PAUSE = 2
 int8 RESUME = 3
 int8 CANCEL = 4
 
+float64 PAUSE_TIMEOUT = 45.0
+
 int8 state
