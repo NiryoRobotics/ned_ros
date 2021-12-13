@@ -149,7 +149,15 @@ class TestProduction:
 
     def send_report(self):
         new_report_publisher = rospy.Publisher('/niryo_robot_reports/test_report', String, queue_size=10)
-        print(json.dumps(self.get_report()))
+
+        # Wait for the publisher initialization
+        start_time = rospy.Time.now()
+        while not rospy.is_shutdown() and new_report_publisher.get_num_connections() == 0:
+            if (rospy.Time.now() - start_time).to_sec() > 1:
+                rospy.logerr('Unable to publish the new report')
+                return
+            rospy.sleep(0.1)
+
         new_report_publisher.publish(json.dumps(self.get_report()))
 
 
