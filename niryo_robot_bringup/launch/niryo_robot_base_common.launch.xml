@@ -88,8 +88,10 @@
         <arg name="log_level" value="$(arg log_level)"/>
     </include>
 
-    <include file="$(find niryo_robot_status)/launch/robot_status.launch">
-    </include>
+    <group if="$(eval hardware_version != 'one')">
+        <include file="$(find niryo_robot_status)/launch/robot_status.launch">
+        </include>
+    </group>
 
     <include file="$(find niryo_robot_modbus)/launch/modbus_server.launch">
         <arg name="log_level" value="$(arg log_level)"/>
