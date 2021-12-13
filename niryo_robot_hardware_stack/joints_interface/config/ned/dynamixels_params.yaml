@@ -38,8 +38,8 @@ dynamixels:
         offset_position: -2.6179
         home_position: 0.0
         direction: 1
-        limit_position_max: 2.6179
-        limit_position_min: -2.6179
+        limit_position_max: 2.53
+        limit_position_min: -2.53
         position_P_gain: 84
         position_I_gain: 9
         position_D_gain: 5

@@ -798,7 +798,7 @@ class CommandInterpreter:
         wait = self.__check_and_get_from_dict(wait, self.__boolean_string_dict_converter)
         color = self.__check_color_led_ring(color)
         self.__niryo_robot.led_ring_solid(color, wait)
-        return self.__send_answer()  # TODO : should we return something ?
+        return self.__send_answer()
 
     @check_nb_args(1)
     def __led_ring_turn_off(self, wait):
