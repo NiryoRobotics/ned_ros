@@ -126,6 +126,7 @@ while True:
         n.move_pose(0.3, 0, 0.3, 0, 0, 0)
         n.move_spiral(0.1, 5, 216, 1)
 
+
         print("Circle")
         n.move_pose(0.3, 0, 0.4, 0, 0, 0)
         n.move_circle(0.3, 0, 0.3)
@@ -138,6 +139,7 @@ while True:
         print("Slalome")
         n.move_pose(*pose_list[0])
         n.execute_moveit_robot_trajectory(slalome_traj)
+
 
         print("Pick and place")
         pick_1 = [

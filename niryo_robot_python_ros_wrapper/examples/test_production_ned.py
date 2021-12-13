@@ -3,8 +3,6 @@ import json
 import numpy as np
 from datetime import datetime
 
-from std_msgs.msg import String
-
 from niryo_robot_rpi.srv import LedBlinker, LedBlinkerRequest
 from niryo_robot_python_ros_wrapper.ros_wrapper import NiryoRosWrapper, NiryoRosWrapperException
 
@@ -141,11 +139,6 @@ class TestProduction:
     def print_report(self):
         print(json.dumps(self.get_report(), indent=4, sort_keys=True))
 
-    def send_report(self):
-        new_report_publisher = rospy.Publisher('/niryo_robot_reports/test_report', String, queue_size=10)
-        print(json.dumps(self.get_report()))
-        new_report_publisher.publish(json.dumps(self.get_report()))
-
 
 class TestFunctions(object):
 
@@ -216,9 +209,7 @@ class TestFunctions(object):
         last_target[2] = joint_limit[joint_names[2]]['max'] - 0.1
         last_target[4] = joint_limit[joint_names[4]]['min'] + 0.1
 
-        poses = [default_joint_pose, first_target,
-                 default_joint_pose, second_target,
-                 default_joint_pose, third_target, last_target]
+        poses = [default_joint_pose, first_target, default_joint_pose, second_target, default_joint_pose, third_target, last_target]
 
         for loop_index in range(LOOPS):
             for position_index, joint_position in enumerate(poses):
@@ -321,5 +312,3 @@ if __name__ == '__main__':
     test.run()
     print("----- END -----")
     test.print_report()
-    test.send_report()
-
