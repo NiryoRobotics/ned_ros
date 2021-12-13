@@ -72,4 +72,8 @@
         </include>
     </group>
 
+    <include file="$(find niryo_robot_system_api_client)/launch/system_api_client.launch">
+        <arg name="log_level" value="$(arg log_level)" />
+    </include>
+
 </launch>
