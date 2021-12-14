@@ -41,9 +41,6 @@ class PortHandlerLinux : public PortHandler
   double  getCurrentTimeMs();
   double  getTimeSinceStart();
 
-  void    gpioHigh();
-  void    gpioLow();
-
  public:
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that initializes instance of PortHandler and gets port_name

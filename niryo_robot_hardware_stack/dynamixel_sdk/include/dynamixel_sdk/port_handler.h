@@ -68,8 +68,6 @@ class WINDECLSPEC PortHandler
 
   virtual ~PortHandler() { }
 
-  virtual void gpioHigh() = 0;
-  virtual void gpioLow() = 0;
   ////////////////////////////////////////////////////////////////////////////////
   /// @brief The function that opens the port
   /// @description The function calls PortHandlerLinux::setBaudRate() to open the port.
