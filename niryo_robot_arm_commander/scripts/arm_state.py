@@ -134,7 +134,6 @@ class ArmState(object):
     def acceleration_scaling_factor(self):
         return self.__acceleration_scaling_factor
 
-
     # -- Callbacks
     def __callback_sub_robot_state(self, robot_state):
         self.__robot_state = robot_state
@@ -192,7 +191,6 @@ class ArmState(object):
         self.__velocity_scaling_factor = percentage / 100.0
         self.__arm.set_max_velocity_scaling_factor(self.__velocity_scaling_factor)
         self.__publish_velocity_scaling_percentage()
-
 
     def set_learning_mode(self, set_bool):
         """

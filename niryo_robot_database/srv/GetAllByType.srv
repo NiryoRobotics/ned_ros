@@ -1,0 +1,4 @@
+string type
+---
+int32 status
+FilePath[] filepaths

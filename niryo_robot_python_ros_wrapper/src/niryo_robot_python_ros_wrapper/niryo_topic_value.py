@@ -6,7 +6,6 @@ import rospy
 from niryo_robot_python_ros_wrapper.ros_wrapper_enums import NiryoRosWrapperException
 
 
-
 class NiryoTopicValue(object):
 
     def __init__(self, topic_name, topic_type, timeout=2, queue_size=None):

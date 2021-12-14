@@ -3,10 +3,10 @@
   href="http://download.ros.org/schema/package_format3.xsd"
   schematypens="http://www.w3.org/2001/XMLSchema"?>
     <package format="3">
-    <name>niryo_robot_database</name>
+    <name>niryo_robot_reports</name>
     <version>3.2.0</version>
     <description>
-        Handles sqlite database for the cloud
+        Takes care of reports
     </description>
 
     <maintainer email="j.mottier@niryo.com">Justin Mottier</maintainer>
