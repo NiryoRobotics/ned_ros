@@ -260,7 +260,7 @@ class NiryoRosWrapper:
         :return: ``True`` if activate else ``False``
         :rtype: bool
         """
-        return self.__learning_mode_on_ntv.value
+        return self.__learning_mode_on_ntv.value.data
 
     def set_learning_mode(self, set_bool):
         """
@@ -306,7 +306,7 @@ class NiryoRosWrapper:
         :return: status, message
         :rtype: (int, str)
         """
-        result = self.__call_service('/niryo_robot_arm_commander/set_acceleration_factor', SetFloat, percentage/100.)
+        result = self.__call_service('/niryo_robot_arm_commander/set_acceleration_factor', SetFloat, percentage / 100.)
         return self.__classic_return_w_check(result)
 
     # - Useful functions
@@ -1089,7 +1089,7 @@ class NiryoRosWrapper:
         :return: Tool Id
         :rtype: ToolID
         """
-        return self.__current_tool_id_ntv.value
+        return self.__current_tool_id_ntv.value.data
 
     def update_tool(self):
         """
@@ -1137,6 +1137,7 @@ class NiryoRosWrapper:
         :rtype: (int, str)
         """
         tool_id = self.get_current_tool_id()
+        print tool_id
 
         if tool_id in (ToolID.GRIPPER_1, ToolID.GRIPPER_2, ToolID.GRIPPER_3, ToolID.GRIPPER_4):
             return self.open_gripper()
