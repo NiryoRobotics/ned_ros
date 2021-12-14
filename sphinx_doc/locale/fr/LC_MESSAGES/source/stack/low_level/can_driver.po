@@ -11,122 +11,129 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-22 17:37+0200\n"
+"POT-Creation-Date: 2021-12-14 17:18+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.9.1\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Language: fr\n"
+"X-Source-Language: C\n"
 
 #: ../../source/stack/low_level/can_driver.rst:2
 msgid "CAN Driver"
-msgstr ""
+msgstr "Driver CAN"
 
 #: ../../source/stack/low_level/can_driver.rst:4
 msgid ""
 "This package provides an interface between high level ROS packages and "
 "motors on CAN bus"
 msgstr ""
+"Ce package procure une interface entre les packages ROS haut niveau et les "
+"moteurs sur le bus CAN"
 
 #: ../../source/stack/low_level/can_driver.rst:7
 msgid "CAN Driver Node"
-msgstr ""
+msgstr "Node Driver CAN"
 
 #: ../../source/stack/low_level/can_driver.rst:10
 msgid "The ROS Node is made to:"
-msgstr ""
+msgstr "Le Node ROS est conçu pour :"
 
 #: ../../source/stack/low_level/can_driver.rst:9
 msgid "Send commands to stepper motors."
-msgstr ""
+msgstr "Envoyer des commandes aux moteurs stepper."
 
 #: ../../source/stack/low_level/can_driver.rst:10
 msgid "Receive stepper motors data."
-msgstr ""
+msgstr "Recevoir des données des moteurs stepper."
 
 #: ../../source/stack/low_level/can_driver.rst:13
 msgid "Parameters"
-msgstr ""
+msgstr "Paramètres"
 
 #: ../../source/stack/low_level/can_driver.rst:15
 msgid "Stepper Driver's Parameters"
-msgstr ""
+msgstr "Paramètres du Driver des Steppers"
 
 #: ../../source/stack/low_level/can_driver.rst:21
 msgid "Name"
-msgstr ""
+msgstr "Nom"
 
 #: ../../source/stack/low_level/can_driver.rst:22
 msgid "Description"
-msgstr ""
+msgstr "Description"
 
 #: ../../source/stack/low_level/can_driver.rst:23
 msgid "``can_hardware_control_loop_frequency``"
-msgstr ""
+msgstr "``can_hardware_control_loop_frequency``"
 
 #: ../../source/stack/low_level/can_driver.rst
 msgid "Controls loop frequency."
-msgstr ""
+msgstr "Frequence de la boucle de control."
 
 #: ../../source/stack/low_level/can_driver.rst
 msgid "Default: '100.0'"
-msgstr ""
+msgstr "Défaut: '100.0'"
 
 #: ../../source/stack/low_level/can_driver.rst:26
 msgid "``can_hw_write_frequency``"
-msgstr ""
+msgstr "``can_hw_write_frequency``"
 
 #: ../../source/stack/low_level/can_driver.rst
 msgid "Write frequency."
-msgstr ""
+msgstr "Fréqunce d'écriture."
 
 #: ../../source/stack/low_level/can_driver.rst
 msgid "Default: '50.0'"
-msgstr ""
+msgstr "Défaut: '50.0'"
 
 #: ../../source/stack/low_level/can_driver.rst:29
 msgid "``can_hw_read_frequency``"
-msgstr ""
+msgstr "``can_hw_read_frequency``"
 
 #: ../../source/stack/low_level/can_driver.rst
 msgid "Read frequency."
-msgstr ""
+msgstr "Fréquence de lecture."
 
 #: ../../source/stack/low_level/can_driver.rst:35
 msgid "Dependencies"
-msgstr ""
+msgstr "Dépendances"
 
 #: ../../source/stack/low_level/can_driver.rst:37
 msgid ":doc:`../third_parties/mcp_can_rpi`"
-msgstr ""
+msgstr ":doc:`../third_parties/mcp_can_rpi`"
 
 #: ../../source/stack/low_level/can_driver.rst:38
-msgid ":doc:`../high_level/niryo_robot_msgs`"
-msgstr ""
+msgid ":doc:`../../ros/niryo_robot_msgs`"
+msgstr ":doc:`../../ros/niryo_robot_msgs`"
 
 #: ../../source/stack/low_level/can_driver.rst:39
 msgid ":doc:`common`"
-msgstr ""
+msgstr ":doc:`common`"
 
 #: ../../source/stack/low_level/can_driver.rst:43
 msgid "Services, Topics and Messages"
-msgstr ""
+msgstr "Services, Topics et Messages"
 
 #: ../../source/stack/low_level/can_driver.rst:46
 msgid "StepperCmd (Service)"
-msgstr ""
+msgstr "StepperCmd (Service)"
 
 #: ../../source/stack/low_level/can_driver.rst:52
 msgid "StepperMotorHardwareStatus (Message)"
-msgstr ""
+msgstr "StepperMotorHardwareStatus (Message)"
 
 #: ../../source/stack/low_level/can_driver.rst:58
 msgid "StepperMotorCommand (Message)"
-msgstr ""
+msgstr "StepperMotorCommand (Message)"
 
 #: ../../source/stack/low_level/can_driver.rst:64
 msgid "StepperArrayMotorHardwareStatus (Message)"
-msgstr ""
+msgstr "StepperArrayMotorHardwareStatus (Message)"
 
+#~ msgid ":doc:`../high_level/niryo_robot_msgs`"
+#~ msgstr ""

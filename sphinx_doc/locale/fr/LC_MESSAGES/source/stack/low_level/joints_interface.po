@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-22 17:37+0200\n"
+"POT-Creation-Date: 2021-12-14 17:18+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -151,7 +151,7 @@ msgid ":doc:`can_driver`"
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst:48
-msgid ":doc:`../high_level/niryo_robot_msgs`"
+msgid ":doc:`../../ros/niryo_robot_msgs`"
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst:51
@@ -196,7 +196,7 @@ msgid "``/niryo_robot/joints_interface/calibrate_motors``"
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst:82
-msgid ":ref:`source/stack/high_level/niryo_robot_msgs:SetInt`"
+msgid ":ref:`source/stack/../ros/niryo_robot_msgs:SetInt`"
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst:83
@@ -211,7 +211,7 @@ msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst:85
 #: ../../source/stack/low_level/joints_interface.rst:88
-msgid ":ref:`source/stack/high_level/niryo_robot_msgs:Trigger`"
+msgid ":ref:`source/stack/../ros/niryo_robot_msgs:Trigger`"
 msgstr ""
 
 #: ../../source/stack/low_level/joints_interface.rst:86
@@ -225,4 +225,13 @@ msgstr ""
 #: ../../source/stack/low_level/joints_interface.rst:89
 msgid "Either activates or deactivates learning mode"
 msgstr ""
+
+#~ msgid ":doc:`../high_level/niryo_robot_msgs`"
+#~ msgstr ""
+
+#~ msgid ":ref:`source/stack/high_level/niryo_robot_msgs:SetInt`"
+#~ msgstr ""
+
+#~ msgid ":ref:`source/stack/high_level/niryo_robot_msgs:Trigger`"
+#~ msgstr ""
 
