@@ -1,0 +1,2 @@
+class AlertReportHandler:
+    pass

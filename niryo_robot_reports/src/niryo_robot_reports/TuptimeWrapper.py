@@ -4,7 +4,9 @@ import subprocess
 
 
 class TuptimeWrapper:
-    def get_tuptime_datas(self):
+
+    @property
+    def data(self):
         # root access is sometimes needed at boot
         output = subprocess.check_output(['sudo', 'tuptime', '-c'])
         loutput = output.splitlines()
