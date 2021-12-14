@@ -18,7 +18,8 @@ from niryo_robot_msgs.msg import CommandStatus
 from niryo_robot_database.msg import Metric, FilePath as FilePathMsg
 
 # srv
-from niryo_robot_database.srv import GetAllMetrics, SetMetric, SetSettings, GetSettings, AddFilePath, GetAllByType, RmFilePath
+from niryo_robot_database.srv import (GetAllMetrics, SetMetric, SetSettings, GetSettings, AddFilePath, GetAllByType,
+                                      RmFilePath)
 
 
 class DatabaseNode:
