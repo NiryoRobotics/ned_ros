@@ -487,7 +487,9 @@ class JogController:
         group_name = self.__arm.get_name()
         null_constraints = Constraints()
         try:
-            response = self.__parameters_validator.check_state_validity(robot_state_target, group_name, null_constraints)
+            response = self.__parameters_validator.check_state_validity(robot_state_target,
+                                                                        group_name,
+                                                                        null_constraints)
             if not response.valid:
                 if len(response.contacts) > 0:
                     rospy.logwarn('Jog Controller - Joints target unreachable because of collision between %s and %s',
