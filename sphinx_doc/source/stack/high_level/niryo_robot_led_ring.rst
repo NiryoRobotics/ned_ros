@@ -121,53 +121,53 @@ table. The node receives commands through the service ``/niryo_robot_led_ring/us
         | iterations (int)
       - | The different colors are alternated one after the other, each displayed during
         | "wait_ms" millisecondes. If iterations is 0, alternates indefinitely.
-      - .. figure:: ../../../images/gif_led_ring/alternate.gif
+      - .. figure:: ../../../images/stack/high_level/gif_led_ring/alternate.gif
    *  - chase
       - | color (:std_msgs:`std_msgs/ColorRGBA<ColorRGBA>`)
         | wait_ms (in millisecondes, int)
         | iterations (int)
       - | Movie theater light style chase animation. Each step lasts for "wait_ms" millisecondes.
         | If iterations is 0, do it indefinitely.
-      - .. figure:: ../../../images/gif_led_ring/chase.gif
+      - .. figure:: ../../../images/stack/high_level/gif_led_ring/chase.gif
    *  - color_wipe
       - | color (:std_msgs:`std_msgs/ColorRGBA<ColorRGBA>`)
         | wait_ms (in millisecondes, int)
       - | Wipe a color across the Led Ring, lighting a Led at each step (of duration "wait_ms").
         | Similar to go_up, but Leds are not turned off at the end.
-      - .. figure:: ../../../images/gif_led_ring/color_wipe.gif
+      - .. figure:: ../../../images/stack/high_level/gif_led_ring/color_wipe.gif
    *  - rainbow
       - | wait_ms (in millisecondes, int)
         | iterations (int)
       - | Draws rainbow that fades across all Leds at once.
         | If iterations is 0, do it indefinitely
-      -  .. figure:: ../../../images/gif_led_ring/rainbow.gif
+      -  .. figure:: ../../../images/stack/high_level/gif_led_ring/rainbow.gif
    *  - rainbow_cycle
       - | wait_ms (in millisecondes, int)
         | iterations (int)
       - | Draw rainbow that uniformly distributes itself across all Leds
         | If iterations is 0, do it indefinitely.
-      - .. figure:: ../../../images/gif_led_ring/rainbow_cycle.gif
+      - .. figure:: ../../../images/stack/high_level/gif_led_ring/rainbow_cycle.gif
    *  - rainbow_chase
       - | wait_ms (in millisecondes, int)
         | iterations (int)
       - | Rainbow chase animation.
         | If iterations is 0, do it indefinitely. One iteration corresponds
         | to one full rainbow fading accross Leds, unlike the chase method
-      - .. figure:: ../../../images/gif_led_ring/rainbow_chase.gif
+      - .. figure:: ../../../images/stack/high_level/gif_led_ring/rainbow_chase.gif
    *  - go_up
       - | color (:std_msgs:`std_msgs/ColorRGBA<ColorRGBA>`)
         | wait_ms (in millisecondes, int)
         | iterations (int)
       - | Leds turn on like a loading circle until lighting up the whole Led Ring.
         | and are then all turned off at the same time. If iterations is 0, do it indefinitely
-      - .. figure:: ../../../images/gif_led_ring/goup.gif
+      - .. figure:: ../../../images/stack/high_level/gif_led_ring/goup.gif
    *  - go_up_and_down
       - | color (:std_msgs:`std_msgs/ColorRGBA<ColorRGBA>`)
         | wait_ms (in millisecondes, int)
         | iterations (int)
       - | Like go_up, but Leds are turned off the same way they are turned on.
         | If iterations is 0, do it indefinitely
-      - .. figure:: ../../../images/gif_led_ring/goupanddown.gif
+      - .. figure:: ../../../images/stack/high_level/gif_led_ring/goupanddown.gif
 
 .. note:: When displaying the robot status, the Led Ring commander uses those methods, with the defaults parameters defined below.
 
