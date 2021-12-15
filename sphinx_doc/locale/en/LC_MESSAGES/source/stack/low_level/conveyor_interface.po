@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-30 12:47+0100\n"
+"POT-Creation-Date: 2021-12-15 14:38+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,165 +25,444 @@ msgid "Conveyor Interface"
 msgstr ""
 
 #: ../../source/stack/low_level/conveyor_interface.rst:4
-msgid "This package handles Niryo's Conveyor Belt."
+msgid "This package handles Niryo's Conveyors."
 msgstr ""
 
 #: ../../source/stack/low_level/conveyor_interface.rst:5
-msgid "You can control two Conveyors Belt."
+msgid "It allows you to control up to two Conveyors at the same time."
+msgstr ""
+
+#: ../../source/stack/low_level/conveyor_interface.rst:6
+msgid ""
+"Two version of the conveyor exist : The Conveyor Belt 1, communicating "
+"via a CAN bus, and the Conveyor Belt 2,"
+msgstr ""
+
+#: ../../source/stack/low_level/conveyor_interface.rst:7
+msgid "communicating via a TTL bus."
 msgstr ""
 
 #: ../../source/stack/low_level/conveyor_interface.rst:8
-msgid "Conveyor Belt interface node"
+msgid ""
+"Both of them are directly compatible for the Ned and One. For the Ned 2 "
+"Robot, you will need to change the stepper card"
 msgstr ""
 
-#: ../../source/stack/low_level/conveyor_interface.rst:13
-msgid "The ROS Node is made to:"
-msgstr ""
-
-#: ../../source/stack/low_level/conveyor_interface.rst:10
-msgid "Initialize Conveyor Belt motor parameters."
-msgstr ""
-
-#: ../../source/stack/low_level/conveyor_interface.rst:11
-msgid "Set and control Conveyors Belt."
+#: ../../source/stack/low_level/conveyor_interface.rst:9
+msgid ""
+"of the CAN Conveyor Belt to be able to use it on a TTL port (there is no "
+"CAN port on Ned 2)."
 msgstr ""
 
 #: ../../source/stack/low_level/conveyor_interface.rst:12
-msgid "Publish Conveyors Belt state."
-msgstr ""
-
-#: ../../source/stack/low_level/conveyor_interface.rst:13
-msgid "test now"
+msgid "Conveyor Interface node (For development and debugging purpose only)"
 msgstr ""
 
 #: ../../source/stack/low_level/conveyor_interface.rst:15
-msgid "The namespace used is: |namespace_emphasize|"
+msgid "This ROS Node has been conceived to:"
+msgstr ""
+
+#: ../../source/stack/low_level/conveyor_interface.rst:14
+msgid ""
+"Use the correct low level driver according to the hardware version of the"
+" robot."
+msgstr ""
+
+#: ../../source/stack/low_level/conveyor_interface.rst:15
+msgid "Initialize the Conveyor Interface."
 msgstr ""
 
 #: ../../source/stack/low_level/conveyor_interface.rst:18
-msgid "Parameters"
+msgid "Conveyor Interface core"
 msgstr ""
 
-#: ../../source/stack/low_level/conveyor_interface.rst:20
-msgid "Conveyor Belt Interface's Parameters"
+#: ../../source/stack/low_level/conveyor_interface.rst:19
+msgid ""
+"It is integrated to :doc:`niryo_robot_hardware_interface` package Its "
+"purpose is to: - Interface itself with low level drivers (CAN or TTL for "
+"Ned and One, TTL only for Ned2) - Initialize conveyor motors parameters. "
+"- Handle the requests from services to set, control or remove the "
+"conveyors. - Publish conveyor states."
 msgstr ""
 
 #: ../../source/stack/low_level/conveyor_interface.rst:26
-#: ../../source/stack/low_level/conveyor_interface.rst:51
-#: ../../source/stack/low_level/conveyor_interface.rst:67
+msgid "The namespace used is: |namespace_emphasize|"
+msgstr ""
+
+#: ../../source/stack/low_level/conveyor_interface.rst:29
+msgid "Parameters"
+msgstr ""
+
+#: ../../source/stack/low_level/conveyor_interface.rst:31
+msgid "Conveyor Interface's Parameters"
+msgstr ""
+
+#: ../../source/stack/low_level/conveyor_interface.rst:37
+#: ../../source/stack/low_level/conveyor_interface.rst:79
+#: ../../source/stack/low_level/conveyor_interface.rst:95
 msgid "Name"
 msgstr ""
 
-#: ../../source/stack/low_level/conveyor_interface.rst:27
-#: ../../source/stack/low_level/conveyor_interface.rst:53
-#: ../../source/stack/low_level/conveyor_interface.rst:69
+#: ../../source/stack/low_level/conveyor_interface.rst:38
+#: ../../source/stack/low_level/conveyor_interface.rst:81
+#: ../../source/stack/low_level/conveyor_interface.rst:97
 msgid "Description"
 msgstr ""
 
-#: ../../source/stack/low_level/conveyor_interface.rst:28
+#: ../../source/stack/low_level/conveyor_interface.rst:39
 msgid "``publish_frequency``"
 msgstr ""
 
 #: ../../source/stack/low_level/conveyor_interface.rst
-msgid "Publishes rate for conveyors state."
+msgid "Publishing rate for conveyors state."
 msgstr ""
 
 #: ../../source/stack/low_level/conveyor_interface.rst
 msgid "Default: '2.0'"
 msgstr ""
 
-#: ../../source/stack/low_level/conveyor_interface.rst:34
-msgid "Dependencies"
-msgstr ""
-
-#: ../../source/stack/low_level/conveyor_interface.rst:36
-msgid ":msgs_index:`std_msgs`"
-msgstr ""
-
-#: ../../source/stack/low_level/conveyor_interface.rst:37
-msgid ":doc:`can_driver`"
-msgstr ""
-
-#: ../../source/stack/low_level/conveyor_interface.rst:40
-msgid "Services, Topics and Messages"
-msgstr ""
-
 #: ../../source/stack/low_level/conveyor_interface.rst:43
-msgid "Published topics"
+msgid "``type``"
 msgstr ""
 
-#: ../../source/stack/low_level/conveyor_interface.rst:45
-msgid "Conveyor Belt Interface's Published Topics"
+#: ../../source/stack/low_level/conveyor_interface.rst
+msgid "Type of the motor used."
 msgstr ""
 
-#: ../../source/stack/low_level/conveyor_interface.rst:52
-#: ../../source/stack/low_level/conveyor_interface.rst:68
-msgid "Message Type"
+#: ../../source/stack/low_level/conveyor_interface.rst
+msgid "Default: 'Stepper'"
+msgstr ""
+
+#: ../../source/stack/low_level/conveyor_interface.rst:47
+msgid "``protocol``"
+msgstr ""
+
+#: ../../source/stack/low_level/conveyor_interface.rst
+msgid "Protocol of the communication."
+msgstr ""
+
+#: ../../source/stack/low_level/conveyor_interface.rst
+msgid "It can be 'CAN' (for Ned or One) or 'TTL' (for Ned or One or Ned 2)"
+msgstr ""
+
+#: ../../source/stack/low_level/conveyor_interface.rst:51
+msgid "``default_id``"
+msgstr ""
+
+#: ../../source/stack/low_level/conveyor_interface.rst
+msgid "Default id of the conveyor before the connection."
 msgstr ""
 
 #: ../../source/stack/low_level/conveyor_interface.rst:54
-msgid "``feedback``"
+msgid "``Pool_id_list``"
 msgstr ""
 
-#: ../../source/stack/low_level/conveyor_interface.rst:55
-msgid ""
-":ref:`ConveyorFeedbackArray<source/stack_hardware/conveyor_interface:ConveyorFeedbackArray"
-" (Message)>`"
+#: ../../source/stack/low_level/conveyor_interface.rst
+msgid "Id of the conveyor after the connection."
 msgstr ""
 
-#: ../../source/stack/low_level/conveyor_interface.rst:56
-msgid "Conveyors Belt states"
+#: ../../source/stack/low_level/conveyor_interface.rst:57
+msgid "``Direction``"
 msgstr ""
 
-#: ../../source/stack/low_level/conveyor_interface.rst:59
-msgid "Services"
+#: ../../source/stack/low_level/conveyor_interface.rst
+msgid "Direction of the conveyor."
 msgstr ""
 
-#: ../../source/stack/low_level/conveyor_interface.rst:61
-msgid "Conveyor Belt Interface Package Services"
+#: ../../source/stack/low_level/conveyor_interface.rst:60
+msgid "``max_effort`` (CAN Only)"
 msgstr ""
 
-#: ../../source/stack/low_level/conveyor_interface.rst:70
-msgid "``control_conveyor``"
+#: ../../source/stack/low_level/conveyor_interface.rst
+msgid "Max effort used by the steppers"
+msgstr ""
+
+#: ../../source/stack/low_level/conveyor_interface.rst
+msgid "Default: '90'"
+msgstr ""
+
+#: ../../source/stack/low_level/conveyor_interface.rst:65
+msgid "``micro_steps`` (CAN only)"
+msgstr ""
+
+#: ../../source/stack/low_level/conveyor_interface.rst
+msgid "Micro steps used by the Steppers"
+msgstr ""
+
+#: ../../source/stack/low_level/conveyor_interface.rst
+msgid "Default: '8'"
 msgstr ""
 
 #: ../../source/stack/low_level/conveyor_interface.rst:71
-msgid ""
-":ref:`ControlConveyor<source/stack_hardware/conveyor_interface:ControlConveyor"
-" (Service)>`"
-msgstr ""
-
-#: ../../source/stack/low_level/conveyor_interface.rst:72
-msgid "Sends a command to the desired Conveyor Belt"
+msgid "Published topics - Conveyor interface"
 msgstr ""
 
 #: ../../source/stack/low_level/conveyor_interface.rst:73
+msgid "Conveyor Interface's Published Topics"
+msgstr ""
+
+#: ../../source/stack/low_level/conveyor_interface.rst:80
+#: ../../source/stack/low_level/conveyor_interface.rst:96
+msgid "Message Type"
+msgstr ""
+
+#: ../../source/stack/low_level/conveyor_interface.rst:82
+msgid "``feedback``"
+msgstr ""
+
+#: ../../source/stack/low_level/conveyor_interface.rst:83
+msgid ""
+":ref:`ConveyorFeedbackArray<source/stack/low_level/conveyor_interface:ConveyorFeedbackArray"
+" (Message)>`"
+msgstr ""
+
+#: ../../source/stack/low_level/conveyor_interface.rst:84
+msgid "Conveyors states"
+msgstr ""
+
+#: ../../source/stack/low_level/conveyor_interface.rst:87
+msgid "Services"
+msgstr ""
+
+#: ../../source/stack/low_level/conveyor_interface.rst:89
+msgid "Conveyor Interface Package Services"
+msgstr ""
+
+#: ../../source/stack/low_level/conveyor_interface.rst:98
+msgid "``control_conveyor``"
+msgstr ""
+
+#: ../../source/stack/low_level/conveyor_interface.rst:99
+msgid ""
+":ref:`ControlConveyor<source/stack/low_level/conveyor_interface:ControlConveyor"
+" (Service)>`"
+msgstr ""
+
+#: ../../source/stack/low_level/conveyor_interface.rst:100
+msgid "Sends a command to the desired Conveyor"
+msgstr ""
+
+#: ../../source/stack/low_level/conveyor_interface.rst:101
 msgid "``ping_and_set_conveyor``"
 msgstr ""
 
-#: ../../source/stack/low_level/conveyor_interface.rst:74
+#: ../../source/stack/low_level/conveyor_interface.rst:102
 msgid ""
-":ref:`SetConveyor<source/stack_hardware/conveyor_interface:SetConveyor "
+":ref:`SetConveyor<source/stack/low_level/conveyor_interface:SetConveyor "
 "(Service)>`"
 msgstr ""
 
-#: ../../source/stack/low_level/conveyor_interface.rst:75
-msgid "Scans and sets a new Conveyor Belt"
+#: ../../source/stack/low_level/conveyor_interface.rst:103
+msgid "Scans and sets a new Conveyor or remove a connected Conveyor"
 msgstr ""
 
-#: ../../source/stack/low_level/conveyor_interface.rst:79
+#: ../../source/stack/low_level/conveyor_interface.rst:106
+msgid "Dependencies - Conveyor interface"
+msgstr ""
+
+#: ../../source/stack/low_level/conveyor_interface.rst:108
+msgid ":msgs_index:`std_msgs`"
+msgstr ""
+
+#: ../../source/stack/low_level/conveyor_interface.rst:109
+msgid ":doc:`can_driver`"
+msgstr ""
+
+#: ../../source/stack/low_level/conveyor_interface.rst:110
+msgid ":doc:`ttl_driver`"
+msgstr ""
+
+#: ../../source/stack/low_level/conveyor_interface.rst:113
+msgid "Services & messages files - Conveyor interface"
+msgstr ""
+
+#: ../../source/stack/low_level/conveyor_interface.rst:116
 msgid "ControlConveyor (Service)"
 msgstr ""
 
-#: ../../source/stack/low_level/conveyor_interface.rst:85
+#: ../../source/stack/low_level/conveyor_interface.rst:122
 msgid "SetConveyor (Service)"
 msgstr ""
 
-#: ../../source/stack/low_level/conveyor_interface.rst:91
+#: ../../source/stack/low_level/conveyor_interface.rst:128
 msgid "ConveyorFeedbackArray (Message)"
 msgstr ""
 
-#: ../../source/stack/low_level/conveyor_interface.rst:97
+#: ../../source/stack/low_level/conveyor_interface.rst:134
 msgid "ConveyorFeedback (Message)"
 msgstr ""
+
+#~ msgid "You can control two Conveyors Belt."
+#~ msgstr ""
+
+#~ msgid "Conveyor Belt interface node"
+#~ msgstr ""
+
+#~ msgid "Set and control Conveyors Belt."
+#~ msgstr ""
+
+#~ msgid "Publish Conveyors Belt state."
+#~ msgstr ""
+
+#~ msgid "test now"
+#~ msgstr ""
+
+#~ msgid "Dependencies"
+#~ msgstr ""
+
+#~ msgid "Services, Topics and Messages"
+#~ msgstr ""
+
+#~ msgid "Published topics"
+#~ msgstr ""
+
+#~ msgid "Scans and sets a new Conveyor Belt"
+#~ msgstr ""
+
+#~ msgid "This package handles Niryo's Conveyor Belt."
+#~ msgstr ""
+
+#~ msgid "Actually, you can control two Conveyors Belt in the same time."
+#~ msgstr ""
+
+#~ msgid "Conveyor Belt interface node (For development and debugging)"
+#~ msgstr ""
+
+#~ msgid "The ROS Node is made to:"
+#~ msgstr ""
+
+#~ msgid "Get low level driver compatible with the robot using."
+#~ msgstr ""
+
+#~ msgid "Initialize Conveyor Belt Interface"
+#~ msgstr ""
+
+#~ msgid "Conveyor Belt Interface"
+#~ msgstr ""
+
+#~ msgid "It is integrated to :doc:`niryo_robot_hardware_interface` package"
+#~ msgstr ""
+
+#~ msgid "Get low level driver"
+#~ msgstr ""
+
+#~ msgid "Initialize Conveyor Belt motor parameters."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Wait the request from service to "
+#~ "set and Control Conveyors Belt or "
+#~ "to remove Conveyors Belt."
+#~ msgstr ""
+
+#~ msgid "Publish Conveyor Belt states."
+#~ msgstr ""
+
+#~ msgid "Conveyor Belt Interface's Parameters"
+#~ msgstr ""
+
+#~ msgid "Publishes rate for conveyors state."
+#~ msgstr ""
+
+#~ msgid "Type of the motor using."
+#~ msgstr ""
+
+#~ msgid "It can be 'CAN' or 'TTL'"
+#~ msgstr ""
+
+#~ msgid "Default id of Conveyor Belt before the connection."
+#~ msgstr ""
+
+#~ msgid "Id of Conveyor Belt after the connection."
+#~ msgstr ""
+
+#~ msgid "The direction of the Conveyor Belt."
+#~ msgstr ""
+
+#~ msgid "Max effort using by stepper"
+#~ msgstr ""
+
+#~ msgid "Micro steps used by Stepper"
+#~ msgstr ""
+
+#~ msgid "Published topics - Conveyor Belt interface"
+#~ msgstr ""
+
+#~ msgid "Conveyor Belt Interface's Published Topics"
+#~ msgstr ""
+
+#~ msgid "Conveyors Belt states"
+#~ msgstr ""
+
+#~ msgid "Conveyor Belt Interface Package Services"
+#~ msgstr ""
+
+#~ msgid "Sends a command to the desired Conveyor Belt"
+#~ msgstr ""
+
+#~ msgid "Scans and sets a new Conveyor Belt or remove a Conveyor Belt connected"
+#~ msgstr ""
+
+#~ msgid "Dependencies - Conveyor Belt interface"
+#~ msgstr ""
+
+#~ msgid "Services & messages files - Conveyor Belt interface"
+#~ msgstr ""
+
+#~ msgid "It allows you to control up to two TTL Conveyors at the same time."
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`ControlConveyor<source/stack_hardware/conveyor_interface:ControlConveyor"
+#~ " (Service)>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`SetConveyor<source/stack_hardware/conveyor_interface:SetConveyor"
+#~ " (Service)>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "of the CAN Conveyor Belt to be "
+#~ "able to use it on a TTL port"
+#~ " (there is no CAN port on Ned"
+#~ " 2)"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Use the correct low level driver "
+#~ "according to the hardware version of "
+#~ "the robot"
+#~ msgstr ""
+
+#~ msgid "Initialize the Conveyor Interface"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`ConveyorFeedbackArray<source/stack_hardware/conveyor_interface:ConveyorFeedbackArray"
+#~ " (Message)>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "It is integrated to "
+#~ ":doc:`niryo_robot_hardware_interface` package Its "
+#~ "purpose is to:"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Interface itself with low level drivers"
+#~ " (CAN or TTL for Ned and One,"
+#~ " TTL only for Ned2)"
+#~ msgstr ""
+
+#~ msgid "Initialize conveyor motors parameters."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Handle the requests from services to "
+#~ "set, control or remove the conveyors."
+#~ msgstr ""
+
+#~ msgid "Publish conveyor states."
+#~ msgstr ""
 

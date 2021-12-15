@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-11-30 11:17+0100\n"
+"POT-Creation-Date: 2021-12-15 15:00+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -53,48 +53,46 @@ msgid ""
 "The whole ROS Stack is developed and tested on ROS **Melodic** which "
 "requires **Ubuntu 18.04** to run correctly. The using of another ROS "
 "version or OS may lead to malfunctions of some packages. Please follow "
-"the steps in :ref:`Simulation Environment Installation "
-"<source/installation/ubuntu_18>`. to install a working environment."
+"the steps in :ref:`source/installation/ubuntu_18:Ubuntu 18 Installation`."
 msgstr ""
 
-#: ../../source/simulation.rst:30
+#: ../../source/simulation.rst:28
+msgid "to install a working environment."
+msgstr ""
+
+#: ../../source/simulation.rst:31
 msgid "Simulation usage"
 msgstr ""
 
-#: ../../source/simulation.rst:33
-msgid "Hardware features are simulated as if you were using a real robot."
-msgstr ""
-
 #: ../../source/simulation.rst:34
-msgid ""
-"The data returned by the faked drivers is arbitrary and immutable. Among "
-"this data,"
+msgid "Hardware features are simulated as if you were using a real robot."
 msgstr ""
 
 #: ../../source/simulation.rst:35
 msgid ""
-"you will have : voltage, temperature, error state (always 0), ping "
-"(always true), end effector state (immutable)"
+"The data returned by the faked drivers is arbitrary and immutable. Among "
+"this data, you will have : voltage, temperature, error state (always 0), "
+"ping (always true), end effector state (immutable)"
 msgstr ""
 
-#: ../../source/simulation.rst:39
+#: ../../source/simulation.rst:40
 msgid ""
 "The simulation is a powerful tool allowing to test new programs directly "
 "on your computer which prevent to transfer new code on the robot."
 msgstr ""
 
-#: ../../source/simulation.rst:41
+#: ../../source/simulation.rst:42
 msgid ""
 "It also helps for developing purpose → no need to transfer code, compile "
 "and restart the robot which is way slower than doing it on a desktop "
 "computer."
 msgstr ""
 
-#: ../../source/simulation.rst:44
+#: ../../source/simulation.rst:45
 msgid "Without physics - No Visualization"
 msgstr ""
 
-#: ../../source/simulation.rst:46
+#: ../../source/simulation.rst:47
 msgid ""
 "This mode is mainly for simulation and tests purpose, bringing you in the"
 " closest state as possible to a real robot control. It is available for "
@@ -102,165 +100,165 @@ msgid ""
 "command: ::"
 msgstr ""
 
-#: ../../source/simulation.rst:50
+#: ../../source/simulation.rst:51
 msgid "One simulation:"
 msgstr ""
 
-#: ../../source/simulation.rst:50
+#: ../../source/simulation.rst:51
 msgid "`roslaunch niryo_robot_bringup niryo_one_simulation.launch`"
 msgstr ""
 
-#: ../../source/simulation.rst:53
+#: ../../source/simulation.rst:54
 msgid "Ned simulation:"
 msgstr ""
 
-#: ../../source/simulation.rst:53
+#: ../../source/simulation.rst:54
 msgid "`roslaunch niryo_robot_bringup niryo_ned_simulation.launch`"
 msgstr ""
 
-#: ../../source/simulation.rst:56
+#: ../../source/simulation.rst:57
 msgid "Ned2 simulation:"
 msgstr ""
 
-#: ../../source/simulation.rst:56
+#: ../../source/simulation.rst:57
 msgid "`roslaunch niryo_robot_bringup niryo_ned2_simulation.launch`"
 msgstr ""
 
-#: ../../source/simulation.rst:58
+#: ../../source/simulation.rst:59
 msgid "TODO"
 msgstr ""
 
-#: ../../source/simulation.rst:61
+#: ../../source/simulation.rst:62
 msgid "Without physics - Visualization"
 msgstr ""
 
-#: ../../source/simulation.rst:63
+#: ../../source/simulation.rst:64
 msgid "The visualization happens with Rviz which is a powerful tool."
 msgstr ""
 
-#: ../../source/simulation.rst:66
+#: ../../source/simulation.rst:67
 msgid "Control with trackbar"
 msgstr ""
 
-#: ../../source/simulation.rst:68
+#: ../../source/simulation.rst:69
 msgid ""
 "This visualization allows an easy first control of the robot, and helps "
 "to understand joints disposal. You can access it by using the command: ::"
 msgstr ""
 
-#: ../../source/simulation.rst:73
+#: ../../source/simulation.rst:74
 msgid ""
 "Rviz should open with a window containing 6 trackbars. Each of these "
 "trackbars allows to control the corresponding joint."
 msgstr ""
 
-#: ../../source/simulation.rst:79
+#: ../../source/simulation.rst:80
 msgid "Example of trackbars use."
 msgstr ""
 
-#: ../../source/simulation.rst:82
+#: ../../source/simulation.rst:83
 msgid "Control with ROS"
 msgstr ""
 
-#: ../../source/simulation.rst:85
+#: ../../source/simulation.rst:86
 msgid ""
 "Not only Rviz can display the robot, it can also be linked with ROS "
 "controllers to show robot's actions from ROS commands!"
 msgstr ""
 
-#: ../../source/simulation.rst:86
+#: ../../source/simulation.rst:87
 msgid ""
 "This method can help you debugging ROS topics, services and also, API "
 "scripts."
 msgstr ""
 
-#: ../../source/simulation.rst:88 ../../source/simulation.rst:119
+#: ../../source/simulation.rst:89 ../../source/simulation.rst:120
 msgid "To run it: ::"
 msgstr ""
 
-#: ../../source/simulation.rst:95
+#: ../../source/simulation.rst:96
 msgid "Rviz opening, with the robot ready to be controlled with ROS!"
 msgstr ""
 
-#: ../../source/simulation.rst:97
+#: ../../source/simulation.rst:98
 msgid "**TODO add parameters**"
 msgstr ""
 
-#: ../../source/simulation.rst:100
+#: ../../source/simulation.rst:101
 msgid "With physics - Simulation"
 msgstr ""
 
-#: ../../source/simulation.rst:102
+#: ../../source/simulation.rst:103
 msgid ""
 "For the simulation, Ned uses Gazebo, a well known tool among the ROS "
 "community. It allows:"
 msgstr ""
 
-#: ../../source/simulation.rst:105
+#: ../../source/simulation.rst:106
 msgid "Collision."
 msgstr ""
 
-#: ../../source/simulation.rst:106
+#: ../../source/simulation.rst:107
 msgid ""
 "World creation → An virtual environment in which the robot can deal with "
 "objects."
 msgstr ""
 
-#: ../../source/simulation.rst:107
+#: ../../source/simulation.rst:108
 msgid "Gripper & Camera using."
 msgstr ""
 
-#: ../../source/simulation.rst:109
+#: ../../source/simulation.rst:110
 msgid ""
 "The Niryo Gripper 1 has been replicated in Gazebo. The Camera is also "
 "implemented."
 msgstr ""
 
-#: ../../source/simulation.rst:113
+#: ../../source/simulation.rst:114
 msgid ""
 "Gazebo also generates camera distortion, which brings the simulation even"
 " closer from the reality!"
 msgstr ""
 
-#: ../../source/simulation.rst:116
+#: ../../source/simulation.rst:117
 msgid "Launch simulation"
 msgstr ""
 
-#: ../../source/simulation.rst:117
+#: ../../source/simulation.rst:118
 msgid "A specific world has been created to use Ned in Gazebo with 2 workspaces."
 msgstr ""
 
-#: ../../source/simulation.rst:126
+#: ../../source/simulation.rst:127
 msgid "Gazebo view, with the robot ready to be controlled with ROS!"
 msgstr ""
 
-#: ../../source/simulation.rst:129
+#: ../../source/simulation.rst:130
 msgid ""
 "You can edit Gazebo world to do your own! It's placed in the folder "
 "*worlds* of the package niryo_robot_gazebo."
 msgstr ""
 
-#: ../../source/simulation.rst:133
+#: ../../source/simulation.rst:134
 msgid "Simulation option"
 msgstr ""
 
-#: ../../source/simulation.rst:135
+#: ../../source/simulation.rst:136
 msgid ""
 "The user can disable 3 things by adding the specific string to the "
 "command line:"
 msgstr ""
 
-#: ../../source/simulation.rst:137
+#: ../../source/simulation.rst:138
 msgid "the Gazebo graphical interface: `gui:=false`."
 msgstr ""
 
-#: ../../source/simulation.rst:138
+#: ../../source/simulation.rst:139
 msgid ""
 "the Camera & the Gripper - Vision & Gripper wise functions won't be "
 "usable: `gripper_n_camera:=false`."
 msgstr ""
 
-#: ../../source/simulation.rst:142
+#: ../../source/simulation.rst:143
 msgid ""
 "Gazebo can be very slow. If your tests do not need Gripper and Camera, "
 "consider using Rviz to alleviate your CPU."
@@ -742,5 +740,29 @@ msgstr ""
 #~ "directly on your computer which prevent"
 #~ " to transfer new code on the "
 #~ "robot."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "The whole ROS Stack is developed "
+#~ "and tested on ROS **Melodic** which "
+#~ "requires **Ubuntu 18.04** to run "
+#~ "correctly. The using of another ROS "
+#~ "version or OS may lead to "
+#~ "malfunctions of some packages. Please "
+#~ "follow the steps in :ref:`Simulation "
+#~ "Environment Installation <source/installation/ubuntu_18>`."
+#~ " to install a working environment."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "The data returned by the faked "
+#~ "drivers is arbitrary and immutable. "
+#~ "Among this data,"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "you will have : voltage, temperature,"
+#~ " error state (always 0), ping (always"
+#~ " true), end effector state (immutable)"
 #~ msgstr ""
 

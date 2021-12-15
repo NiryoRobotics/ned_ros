@@ -9,9 +9,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Ned ROS Documentation v3.2\n"
+"Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-22 17:37+0200\n"
+"POT-Creation-Date: 2021-12-15 14:52+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -829,7 +829,9 @@ msgid "Dependencies - Led Ring"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:332
-msgid ":ref:`niryo_robot_msgs <Niryo Robot Messages Package>`"
+msgid ""
+":ref:`niryo_robot_msgs "
+"<source/stack/high_level/niryo_robot_msgs:Niryo_robot_msgs>`"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:333
@@ -859,4 +861,16 @@ msgstr ""
 #: ../../source/stack/high_level/niryo_robot_led_ring.rst:359
 msgid "LedRingAnimation (Message)"
 msgstr ""
+
+#~ msgid ""
+#~ "add gif to explain and put this"
+#~ " table in the Ned documentation "
+#~ "instead of in the ROS documentation"
+#~ msgstr ""
+
+#~ msgid "add a link to the services section"
+#~ msgstr ""
+
+#~ msgid ":ref:`niryo_robot_msgs <Niryo Robot Messages Package>`"
+#~ msgstr ""
 

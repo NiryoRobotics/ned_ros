@@ -5,13 +5,13 @@ End Effector Interface
 | The End Effector can be used to do many things like activating Free Motion, Calibration and much more.
 
 End Effector Interface node (For development and debugging)
---------------------------
+------------------------------------------------------------
 The ROS Node in End Effector Interface Package is used to:
  - Create :doc:ttl_driver to communicate with hardware.
  - Initialize End Effector Interface.
 
-End Effector Interface
---------------------------
+End Effector Interface Core
+-----------------------------
 This interface is integrated in to :doc:niryo_robot_hardware_interface package.
 
 The missions of End Effector Interfaces:
@@ -51,6 +51,8 @@ Parameters - End Effector Interface
    *  -  ``hardware_type``
       -  | Type of End Effector. It can be end_effector or fake_end_effector
          | Default: end_effector
+
+
 Published topics - End Effector Interface
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 

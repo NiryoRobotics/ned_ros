@@ -6,12 +6,11 @@
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Ned ROS Documentation v3.2\n"
+"Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-22 17:37+0200\n"
+"POT-Creation-Date: 2021-12-15 12:28+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -27,6 +26,8 @@ msgstr ""
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:4
 msgid "Provides functionalities to control end-effectors and accessories for Ned."
 msgstr ""
+"Ce package fournit des fonctionnalités pour contrôler les effecteurs et "
+"les accessoires pour Ned."
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:6
 msgid ""
@@ -37,46 +38,57 @@ msgid ""
 "by adapting the TCP transformation to them. By default this feature is "
 "disabled, but can be enabled through the robot services."
 msgstr ""
+"Ce package permet de contrôler le PCO du robot (Point Central de l'Outil,"
+" ou plus connu sous le nom de TCP pour Tool Center Point en anglais). Si "
+"cette fonctionnalité est activée, tous les mouvement (en coordonnées "
+"cartésiennes [x, y, z, roulis, tangage, lacet]) du robot seront "
+"effectuées en fonction du PCO. Un même programme peut donc fonctionner "
+"avec plusieurs outils différents en adaptant le TCP du robot à eux. Par "
+"défaut, cette fonctionnalité est désactivée, mais elle peut être activée "
+"via les services du noeud."
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:12
 msgid "Tools Commander node"
-msgstr ""
+msgstr "Package des commandes des outils du robot Niryo"
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:13
 msgid ""
 "The ROS Node is made of services to equip tool, an action server for tool"
 " command and topics for the current tool or the tool state."
 msgstr ""
+"Le nœud ROS est constitué de services pour équiper l'outil, d'un serveur "
+"d'action pour commander l'outil et de rubriques pour l'outil ou l'état de"
+" ce dernier."
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:15
 msgid "The namespace used is: |namespace_emphasize|"
-msgstr ""
+msgstr "L'espace de nom utilisé est : |namespace_emphasize|"
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:18
 msgid "Action server - tools"
-msgstr ""
+msgstr "Serveur d'action - Outils"
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:20
 msgid "Tools Package Action Server"
-msgstr ""
+msgstr "Serveur d'action du package d'outils"
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:26
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:42
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:61
 msgid "Name"
-msgstr ""
+msgstr "Nom"
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:27
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:43
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:62
 msgid "Message Type"
-msgstr ""
+msgstr "Type du message"
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:28
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:44
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:63
 msgid "Description"
-msgstr ""
+msgstr "Description"
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:29
 msgid "``action_server``"
@@ -90,15 +102,15 @@ msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:31
 msgid "Command the tool through an action server"
-msgstr ""
+msgstr "Commander l'outil via un serveur d'action"
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:34
 msgid "Publisher - tools"
-msgstr ""
+msgstr "Diffuseur - outils"
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:36
 msgid "Tools Package Publishers"
-msgstr ""
+msgstr "Diffuseurs de packages d'outils"
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:45
 msgid "``current_id``"
@@ -110,7 +122,7 @@ msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:47
 msgid "Publish the current tool ID"
-msgstr ""
+msgstr "Publier l'ID d'outil actuel"
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:48
 msgid "``tcp``"
@@ -127,14 +139,16 @@ msgid ""
 "Publish if the TCP (Tool Center Point) is enabled and transformation "
 "between the tool_link and the TCP"
 msgstr ""
+"Publier le status du PCO (activé / désactivé) ainsi que la transformation"
+" entre tool_link et le PCO."
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:53
 msgid "Services - tools"
-msgstr ""
+msgstr "Services - outils"
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:55
 msgid "Tools Package Services"
-msgstr ""
+msgstr "Services de package d'outils"
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:64
 msgid "``update_tool``"
@@ -150,6 +164,8 @@ msgid ""
 "Ping/scan for a dxl motor flashed with an ID corresponding to a tool and "
 "equip it (if found)"
 msgstr ""
+"Scanner pour voir si un moteur dynamixel est flashé avec un ID "
+"correspondant à un outil et l'équiper"
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:67
 msgid "``equip_electromagnet``"
@@ -161,7 +177,7 @@ msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:69
 msgid "Equip the electromagnet with the motor ID given as parameter"
-msgstr ""
+msgstr "Equiper l'électroaimant avec l'ID moteur donné comme paramètre"
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:70
 msgid "``enable_tcp``"
@@ -173,17 +189,19 @@ msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst
 msgid "Enable or disable the TCP (Tool Center Point) functionality."
-msgstr ""
+msgstr "Activer ou désactiver le PCO (Point central de l'outil)"
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst
 msgid ""
 "When we activate it, the transformation will be the last one saved since "
 "the robot started."
 msgstr ""
+"Lorsqu'on l'active, la transformation appliquée au PCO sera la dernière "
+"enregistrée depuis le démarrage du robot."
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst
 msgid "By default it will be the one of the equipped tool."
-msgstr ""
+msgstr "Celle par défaut, est celle de l'outil équipé."
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:75
 msgid "``set_tcp``"
@@ -199,7 +217,7 @@ msgstr ""
 msgid ""
 "Activate the TCP (Tool Center Point) functionality and defines a new TCP "
 "transformation."
-msgstr ""
+msgstr "Activer le PCO et définir un nouveau PCO"
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:78
 msgid "``reset_tcp``"
@@ -209,11 +227,11 @@ msgstr ""
 msgid ""
 "Reset the TCP transformation. By default it will be the one of the "
 "equipped tool."
-msgstr ""
+msgstr "Réinitialiser la transformation du PCO avec celle de l'outil équipé."
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:83
 msgid "Dependencies - tools"
-msgstr ""
+msgstr "Dépendances - outils"
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:84
 msgid ":doc:`niryo_robot_msgs`"
@@ -229,7 +247,7 @@ msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:89
 msgid "Action files - tools"
-msgstr ""
+msgstr "Fichier du serveur d'actions - Outils"
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:92
 msgid "ToolAction (Action)"
@@ -237,7 +255,7 @@ msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:98
 msgid "Messages files - tools"
-msgstr ""
+msgstr "Fichiers  de messages - outils"
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:101
 msgid "ToolCommand (Message)"
@@ -249,9 +267,77 @@ msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:113
 msgid "Services files - tools"
-msgstr ""
+msgstr "Fichiers de services - outils"
 
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:116
 msgid "SetTCP (Service)"
 msgstr ""
+
+#~ msgid "Niryo Robot Tools Package"
+#~ msgstr "Package outils du robot Niryo"
+
+#~ msgid "Tools Node"
+#~ msgstr "Noeud d'outil"
+
+#~ msgid "The namespace used is : |namespace_emphasize|"
+#~ msgstr "L'espace de nom utilisé est : |namespace_emphasize|"
+
+#~ msgid "Action Server - Tools"
+#~ msgstr "Serveur d’action - Outils"
+
+#~ msgid "Publisher - Tools"
+#~ msgstr "Éditeur - outils"
+
+#~ msgid "Services - Tools"
+#~ msgstr "Services - outils"
+
+#~ msgid "Dependencies - Tools"
+#~ msgstr "Dépendances - outils"
+
+#~ msgid "Action, Services & Messages files - Tools"
+#~ msgstr "Fichiers d’actions, de services et de messages - outils"
+
+#~ msgid "Tools node"
+#~ msgstr "Noeud d'outil"
+
+#~ msgid "``robot_action``"
+#~ msgstr ""
+
+#~ msgid ":ref:`ToolAction<ToolAction (Action)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`TCP<TCP (Message)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`Trigger`"
+#~ msgstr ""
+
+#~ msgid ":ref:`SetInt`"
+#~ msgstr ""
+
+#~ msgid ":ref:`SetBool`"
+#~ msgstr ""
+
+#~ msgid ":ref:`SetTCP<SetTCP (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`niryo_robot_msgs <Niryo Robot Messages Package>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`ToolAction<source/ros/niryo_robot_tools_commander:ToolAction "
+#~ "(Action)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`TCP<source/ros/niryo_robot_tools_commander:TCP (Message)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`source/ros/niryo_robot_msgs:SetInt`"
+#~ msgstr ""
+
+#~ msgid ":ref:`source/ros/niryo_robot_msgs:SetBool`"
+#~ msgstr ""
+
+#~ msgid ":ref:`SetTCP<source/ros/niryo_robot_tools_commander:SetTCP (Service)>`"
+#~ msgstr ""
 
