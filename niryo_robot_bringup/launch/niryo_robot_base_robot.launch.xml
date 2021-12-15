@@ -66,13 +66,11 @@
         <arg name="simulation_mode" value="$(arg simulation_mode)"/>
     </include>
 
-    <!-- Waiting for the next release
     <group if="$(eval hardware_version != 'one')">
         <include file="$(find niryo_robot_reports)/launch/reports.launch">
             <arg name="log_level" value="$(arg log_level)" />
         </include>
     </group>
-    -->
 
     <include file="$(find niryo_robot_system_api_client)/launch/system_api_client.launch">
         <arg name="log_level" value="$(arg log_level)" />
