@@ -5,6 +5,7 @@ import numpy as np
 from datetime import datetime
 
 from std_msgs.msg import Int32, String
+from niryo_robot_reports.srv import CheckConnection
 from niryo_robot_database.srv import SetSettings
 
 from niryo_robot_python_ros_wrapper.ros_wrapper import NiryoRosWrapper, NiryoRosWrapperException
@@ -116,6 +117,7 @@ class TestProduction:
         self.__success = False
 
         self.__sub_tests = [
+            TestStep(self.__functions.test_cloud_connection, "Test robot connection", critical=True),
             TestStep(self.__functions.test_robot_status, "Test robot status", critical=True),
             TestStep(self.__functions.test_sound, "Test sound", critical=False),
             TestStep(self.__functions.test_calibration, "Test calibration", critical=True),
@@ -168,6 +170,19 @@ class TestFunctions(object):
     def __init__(self):
         rospy.sleep(2)
         self.__robot = NiryoRosWrapper()
+
+    def test_cloud_connection(self, report):
+        check_connection_service = rospy.ServiceProxy('/niryo_robot_reports/check_connection', CheckConnection)
+        result = check_connection_service('test_reports')
+        if result.status < 0:
+            error_str = "Service test_report doesn't exists"
+            report.append(error_str)
+            raise TestFailure("Service test_report doesn't exists")
+        if result.success is False:
+            error_str = "Service test_reports didnt respond"
+            report.append(error_str)
+            raise TestFailure(error_str)
+        report.append('Service test_reports successfully reached')
 
     def test_robot_status(self, report):
         try:
