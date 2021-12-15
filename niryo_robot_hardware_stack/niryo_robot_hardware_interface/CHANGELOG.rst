@@ -365,7 +365,7 @@ Forthcoming
 * add configuration into dxl state and stepper state. Inherit DxlState and StepperState from JointState. Add rad_pos_to_motor_pos() and to_rad_pos() in jointstate interface
 * adding AbstractMotorCmd and IObject interfaces
 * join StepperMotorEnum and DxlMotorEnum into MotorEnum; simplify jointInterface
-* corrections for shared_ptr, unique_ptr, adding reallyAsync method in util, remove dependancy of jointInterface to drivers
+* corrections for shared_ptr, unique_ptr, adding reallyAsync method in util, remove dependency of jointInterface to drivers
 * adding a common lib with model and utils subdirs. All classes refering to a State, a Cmd, an enum have been moved into model. Created a new enum structure, based on the CRTP design pattern
 * bugs corrections on dynamixel driver
 * small corrections following hw tests
