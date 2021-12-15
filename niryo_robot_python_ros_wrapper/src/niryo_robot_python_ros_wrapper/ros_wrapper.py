@@ -1,66 +1,36 @@
 #!/usr/bin/env python
-
 # Lib
-import rosgraph_msgs.msg
 import rospy
-import actionlib
 
 # Command Status
 from niryo_robot_msgs.msg import CommandStatus, SoftwareVersion
 
+from niryo_action_client import NiryoActionClient
+from niryo_topic_value import NiryoTopicValue
+
 # Messages
-from actionlib_msgs.msg import GoalStatus
-
 from geometry_msgs.msg import Pose, Point, Quaternion
-
-from std_msgs.msg import Bool
-from std_msgs.msg import Int32
-from std_msgs.msg import String
-
-from sensor_msgs.msg import CameraInfo
-from sensor_msgs.msg import CompressedImage
-from sensor_msgs.msg import JointState
-
-from control_msgs.msg import FollowJointTrajectoryAction, FollowJointTrajectoryGoal
-from trajectory_msgs.msg import JointTrajectoryPoint
+from std_msgs.msg import Bool, Int32, String
+from sensor_msgs.msg import CameraInfo, CompressedImage, JointState
+from trajectory_msgs.msg import JointTrajectoryPoint, JointTrajectory
 
 from conveyor_interface.msg import ConveyorFeedbackArray
-from niryo_robot_msgs.msg import HardwareStatus
-from niryo_robot_msgs.msg import RobotState
-from niryo_robot_msgs.msg import RPY
+from niryo_robot_msgs.msg import HardwareStatus, RobotState, RPY
 from niryo_robot_rpi.msg import DigitalIO, DigitalIOState, AnalogIO, AnalogIOState
 from niryo_robot_tools_commander.msg import ToolCommand
 from niryo_robot_status.msg import RobotStatus
 
 # Services
-from conveyor_interface.srv import ControlConveyor, SetConveyor, SetConveyorRequest
-from niryo_robot_arm_commander.srv import GetFK, GetIK
-from niryo_robot_arm_commander.srv import JogShift, JogShiftRequest
-from niryo_robot_msgs.srv import GetNameDescriptionList, SetBool, SetInt, Trigger, SetString
-from niryo_robot_tools_commander.srv import SetTCP, SetTCPRequest
-from niryo_robot_vision.srv import SetImageParameter
-from niryo_robot_rpi.srv import GetDigitalIO, GetAnalogIO
-from niryo_robot_rpi.srv import SetDigitalIO, SetAnalogIO
-from niryo_robot_vision.srv import DebugMarkers, DebugMarkersRequest, DebugColorDetection, DebugColorDetectionRequest
-from std_srvs.srv import Trigger as StdTrigger
-from niryo_robot_rpi.srv import SetPullup, SetIOMode
-from niryo_robot_arm_commander.srv import ComputeTrajectory
+from niryo_robot_msgs.srv import GetNameDescriptionList, SetBool, SetInt, Trigger, Ping, SetFloat
 
 # Actions
-from niryo_robot_arm_commander.msg import RobotMoveAction, RobotMoveGoal
-from niryo_robot_arm_commander.msg import ArmMoveCommand
-from niryo_robot_tools_commander.msg import ToolActionGoal, ToolResult, ToolAction
+from control_msgs.msg import FollowJointTrajectoryAction, FollowJointTrajectoryGoal
+from niryo_robot_tools_commander.msg import ToolGoal, ToolAction
+from niryo_robot_arm_commander.msg import ArmMoveCommand, RobotMoveGoal, RobotMoveAction
 
 # Enums
+from niryo_robot_python_ros_wrapper.ros_wrapper_enums import NiryoRosWrapperException
 from niryo_robot_python_ros_wrapper.ros_wrapper_enums import *
-
-from niryo_robot_python_ros_wrapper.custom_button_ros_wrapper import CustomButtonRosWrapper
-from niryo_robot_led_ring.api import LedRingRosWrapper
-from niryo_robot_sound.api import SoundRosWrapper
-
-
-class NiryoRosWrapperException(Exception):
-    pass
 
 
 class NiryoRosWrapper:
@@ -75,11 +45,16 @@ class NiryoRosWrapper:
     def __init__(self):
         # - Getting ROS parameters
         self.__service_timeout = rospy.get_param("/niryo_robot/python_ros_wrapper/service_timeout")
-        self.__action_connection_timeout = rospy.get_param("/niryo_robot/python_ros_wrapper/action_connection_timeout")
-        self.__action_execute_timeout = rospy.get_param("/niryo_robot/python_ros_wrapper/action_execute_timeout")
-        self.__action_preempt_timeout = rospy.get_param("/niryo_robot/python_ros_wrapper/action_preempt_timeout")
         self.__simulation_mode = rospy.get_param("/niryo_robot/simulation_mode")
         self.__hardware_version = rospy.get_param("/niryo_robot/hardware_version")
+
+        if self.__hardware_version in ['ned', 'ned2']:
+            self.__node_name = rospy.get_name()
+            self.__ping_ros_wrapper_srv = rospy.Service("~/ping", Trigger, self.__ping_ros_wrapper_callback)
+            rospy.wait_for_service("/niryo_robot_status/ping_ros_wrapper", timeout=5)
+            self.__advertise_ros_wrapper_srv = rospy.ServiceProxy("/niryo_robot_status/ping_ros_wrapper", Ping)
+            self.__advertise_ros_wrapper_srv(self.__node_name, True)
+            rospy.on_shutdown(self.__advertise_stop)
 
         # - Publishers
         # Highlight publisher (to highlight blocks in Blockly interface)
@@ -91,81 +66,62 @@ class NiryoRosWrapper:
 
         # -- Subscribers
         # - Pose
-        self.__joints = None
-        self.__joints_name = []
-        rospy.Subscriber('/joint_states', JointState,
-                         self.__callback_sub_joint_states)
-
-        self.__pose = None
-        rospy.Subscriber('/niryo_robot/robot_state', RobotState,
-                         self.__callback_sub_robot_state)
+        self.__joints_ntv = NiryoTopicValue('/joint_states', JointState)
+        self.__pose_ntv = NiryoTopicValue('/niryo_robot/robot_state', RobotState)
 
         # - Hardware
-        self.__learning_mode_on = None
-        rospy.Subscriber('/niryo_robot/learning_mode/state', Bool,
-                         self.__callback_sub_learning_mode)
-
-        self.__hw_status = None
-        rospy.Subscriber('/niryo_robot_hardware_interface/hardware_status', HardwareStatus,
-                         self.__callback_sub_hardware_status)
-
-        self.__digital_io_state = None
-        rospy.Subscriber('/niryo_robot_rpi/digital_io_state', DigitalIOState,
-                         self.__callback_sub_digital_io_state)
-
-        self.__analog_io_state = None
-        rospy.Subscriber('/niryo_robot_rpi/analog_io_state', AnalogIOState,
-                         self.__callback_sub_analog_io_state)
-
-        self.__current_tool_id = None
-        rospy.Subscriber('/niryo_robot_tools_commander/current_id', Int32,
-                         self.__callback_sub_current_tool_id)
-
-        self.__max_velocity_scaling_factor = None
-        rospy.Subscriber('/niryo_robot/max_velocity_scaling_factor', Int32,
-                         self.__callback_sub_max_velocity_scaling_factor)
+        self.__learning_mode_on_ntv = NiryoTopicValue('/niryo_robot/learning_mode/state', Bool)
+        self.__hw_status_ntv = NiryoTopicValue('/niryo_robot_hardware_interface/hardware_status', HardwareStatus)
+        self.__digital_io_state_ntv = NiryoTopicValue('/niryo_robot_rpi/digital_io_state', DigitalIOState)
+        self.__analog_io_state_ntv = NiryoTopicValue('/niryo_robot_rpi/analog_io_state', AnalogIOState)
+        self.__current_tool_id_ntv = NiryoTopicValue('/niryo_robot_tools_commander/current_id', Int32)
+        self.__max_velocity_scaling_factor_ntv = NiryoTopicValue('/niryo_robot/max_velocity_scaling_factor', Int32)
 
         # - Vision
-        self.__compressed_image_message = None
-        rospy.Subscriber('/niryo_robot_vision/compressed_video_stream', CompressedImage,
-                         self.__callback_sub_stream_video, queue_size=1)
-
-        self.__camera_intrinsics_message = None
-        rospy.Subscriber('/niryo_robot_vision/camera_intrinsics', CameraInfo,
-                         self.__callback_camera_intrinsics, queue_size=1)
-
+        self.__compressed_image_message_ntv = NiryoTopicValue('/niryo_robot_vision/compressed_video_stream',
+                                                              CompressedImage, queue_size=1)
+        self.__camera_intrinsics_message_ntv = NiryoTopicValue('/niryo_robot_vision/camera_intrinsics', CameraInfo,
+                                                               queue_size=1)
         # - Conveyor
-        self.__conveyors_feedback = None
-        rospy.Subscriber('/niryo_robot/conveyor/feedback', ConveyorFeedbackArray,
-                         self.__callback_sub_conveyors_feedback)
+        self.__conveyors_feedback_ntv = NiryoTopicValue('/niryo_robot/conveyor/feedback', ConveyorFeedbackArray)
 
         # - Action server
         # Robot action
-        self.__robot_action_server_name = '/niryo_robot_arm_commander/robot_action'
-        self.__robot_action_server_client = actionlib.SimpleActionClient(self.__robot_action_server_name,
-                                                                         RobotMoveAction)
-
-        self.__action_server_name = rospy.get_param(
-            "/niryo_robot_arm_commander/joint_controller_name") + "/follow_joint_trajectory"
-        self.__follow_joint_traj_client = actionlib.SimpleActionClient(self.__action_server_name,
-                                                                       FollowJointTrajectoryAction)
+        self.__robot_action_nac = NiryoActionClient('/niryo_robot_arm_commander/robot_action', RobotMoveAction,
+                                                    RobotMoveGoal)
+        self.__follow_joint_traj_nac = NiryoActionClient(
+            rospy.get_param("/niryo_robot_arm_commander/joint_controller_name") + "/follow_joint_trajectory",
+            FollowJointTrajectoryAction, FollowJointTrajectoryGoal)
 
         # Tool action
-        self.__tool_action_server_name = '/niryo_robot_tools_commander/action_server'
-        self.__tool_action_server_client = actionlib.SimpleActionClient(self.__tool_action_server_name,
-                                                                        ToolAction)
+        self.__tool_action_nac = NiryoActionClient('/niryo_robot_tools_commander/action_server', ToolAction,
+                                                   ToolGoal)
 
-        # Led Ring
-        self.__led_ring = LedRingRosWrapper(self.__hardware_version, self.__service_timeout)
+        if self.__hardware_version == 'ned2':
+            from niryo_robot_python_ros_wrapper.custom_button_ros_wrapper import CustomButtonRosWrapper
+            from niryo_robot_led_ring.api import LedRingRosWrapper
+            from niryo_robot_sound.api import SoundRosWrapper
 
-        # Sound
-        self.__sound = SoundRosWrapper(self.__hardware_version, self.__service_timeout)
+            # Led Ring
+            self.__led_ring = LedRingRosWrapper(self.__hardware_version, self.__service_timeout)
+            # Sound
+            self.__sound = SoundRosWrapper(self.__hardware_version, self.__service_timeout)
+            # - Custom button
+            self.__custom_button = CustomButtonRosWrapper(self.__hardware_version)
+        else:
+            self.__led_ring = self.__sound = self.__custom_button = None
 
-        # - Custom button
-        self.__custom_button = CustomButtonRosWrapper(self.__hardware_version)
+        rospy.loginfo("Python ROS Wrapper ready")
 
     def __del__(self):
         del self
+
+    def __advertise_stop(self):
+        if self.__hardware_version in ['ned', 'ned2']:
+            self.__advertise_ros_wrapper_srv(self.__node_name, False)
+
+    def __ping_ros_wrapper_callback(self):
+        return CommandStatus.SUCCESS, self.__node_name
 
     @classmethod
     def wait_for_nodes_initialization(cls, simulation_mode=False):
@@ -195,42 +151,6 @@ class NiryoRosWrapper:
         # Close program
         sys.exit()
 
-    # -- Subscribers callbacks
-
-    def __callback_sub_joint_states(self, joint_states):
-        self.__joints = list(joint_states.position[:6])
-        self.__joints_name = joint_states.name[:6]
-
-    def __callback_sub_robot_state(self, pose):
-        self.__pose = pose
-
-    def __callback_sub_learning_mode(self, learning_mode):
-        self.__learning_mode_on = learning_mode.data
-
-    def __callback_sub_current_tool_id(self, msg):
-        self.__current_tool_id = msg.data
-
-    def __callback_sub_max_velocity_scaling_factor(self, msg):
-        self.__max_velocity_scaling_factor = msg.data
-
-    def __callback_sub_hardware_status(self, hw_status):
-        self.__hw_status = hw_status
-
-    def __callback_sub_digital_io_state(self, digital_io_state):
-        self.__digital_io_state = digital_io_state
-
-    def __callback_sub_analog_io_state(self, analog_io_state):
-        self.__analog_io_state = analog_io_state
-
-    def __callback_sub_stream_video(self, compressed_image_message):
-        self.__compressed_image_message = compressed_image_message
-
-    def __callback_camera_intrinsics(self, camera_info_message):
-        self.__camera_intrinsics_message = camera_info_message
-
-    def __callback_sub_conveyors_feedback(self, conveyors_feedback):
-        self.__conveyors_feedback = conveyors_feedback
-
     # -- Service & Action executors
     def __call_service(self, service_name, service_msg_type, *args):
         """
@@ -256,88 +176,6 @@ class NiryoRosWrapper:
             return response
         except rospy.ServiceException as e:
             raise NiryoRosWrapperException(e)
-
-    def __execute_robot_move_action(self, goal):
-        # Connect to server
-        if not self.__robot_action_server_client.wait_for_server(rospy.Duration(self.__action_connection_timeout)):
-            rospy.logwarn("ROS Wrapper - Failed to connect to Robot action server")
-
-            raise NiryoRosWrapperException('Action Server is not up : {}'.format(self.__robot_action_server_name))
-        # Send goal and check response
-        goal_state, response = self.__send_goal_and_wait_for_completed(goal)
-
-        if response.status == CommandStatus.GOAL_STILL_ACTIVE:
-            rospy.loginfo("ROS Wrapper - Command still active: try to stop it")
-            self.__robot_action_server_client.cancel_goal()
-            self.__robot_action_server_client.stop_tracking_goal()
-            rospy.sleep(0.2)
-            rospy.loginfo("ROS Wrapper - Trying to resend command ...")
-            goal_state, response = self.__send_goal_and_wait_for_completed(goal)
-
-        if goal_state != GoalStatus.SUCCEEDED:
-            self.__robot_action_server_client.stop_tracking_goal()
-
-        if goal_state == GoalStatus.REJECTED:
-            raise NiryoRosWrapperException('Goal has been rejected : {}'.format(response.message))
-        elif goal_state == GoalStatus.ABORTED:
-            raise NiryoRosWrapperException('Goal has been aborted : {}'.format(response.message))
-        elif goal_state != GoalStatus.SUCCEEDED:
-            raise NiryoRosWrapperException('Error when processing goal : {}'.format(response.message))
-
-        return response.status, response.message
-
-    def __send_goal_and_wait_for_completed(self, goal):
-        self.__robot_action_server_client.send_goal(goal)
-        if not self.__robot_action_server_client.wait_for_result(timeout=rospy.Duration(self.__action_execute_timeout)):
-            self.__robot_action_server_client.cancel_goal()
-            self.__robot_action_server_client.stop_tracking_goal()
-            raise NiryoRosWrapperException('Action Server timeout : {}'.format(self.__robot_action_server_name))
-
-        goal_state = self.__robot_action_server_client.get_state()
-        response = self.__robot_action_server_client.get_result()
-
-        return goal_state, response
-
-    def __execute_tool_action(self, goal):
-        # Connect to server
-        if not self.__tool_action_server_client.wait_for_server(rospy.Duration(self.__action_connection_timeout)):
-            rospy.logwarn("ROS Wrapper - Failed to connect to Tool action server")
-
-            raise NiryoRosWrapperException('Action Server is not up : {}'.format(self.__tool_action_server_name))
-        # Send goal and check response
-        goal_state, response = self.__send_tool_goal_and_wait_for_completed(goal)
-
-        if response.status == CommandStatus.GOAL_STILL_ACTIVE:
-            rospy.loginfo("ROS Wrapper - Command still active: try to stop it")
-            self.__tool_action_server_client.cancel_goal()
-            self.__tool_action_server_client.stop_tracking_goal()
-            rospy.sleep(0.2)
-            rospy.loginfo("ROS Wrapper - Trying to resend command ...")
-            goal_state, response = self.__send_tool_goal_and_wait_for_completed(goal)
-
-        if goal_state != GoalStatus.SUCCEEDED:
-            self.__tool_action_server_client.stop_tracking_goal()
-
-        if goal_state == GoalStatus.REJECTED:
-            raise NiryoRosWrapperException('Goal has been rejected : {}'.format(response.message))
-        elif goal_state == GoalStatus.ABORTED:
-            raise NiryoRosWrapperException('Goal has been aborted : {}'.format(response.message))
-        elif goal_state != GoalStatus.SUCCEEDED:
-            raise NiryoRosWrapperException('Error when processing goal : {}'.format(response.message))
-
-        return response.status, response.message
-
-    def __send_tool_goal_and_wait_for_completed(self, goal):
-        self.__tool_action_server_client.send_goal(goal)
-        if not self.__tool_action_server_client.wait_for_result(timeout=rospy.Duration(self.__action_execute_timeout)):
-            self.__tool_action_server_client.cancel_goal()
-            self.__tool_action_server_client.stop_tracking_goal()
-            raise NiryoRosWrapperException('Action Server timeout : {}'.format(self.__robot_action_server_name))
-
-        goal_state = self.__tool_action_server_client.get_state()
-        response = self.__tool_action_server_client.get_result()
-
-        return goal_state, response
 
     # --- Functions interface
     def __classic_return_w_check(self, result):
@@ -392,8 +230,7 @@ class NiryoRosWrapper:
         :return: status, message
         :rtype: (int, str)
         """
-        hw_status = rospy.wait_for_message('/niryo_robot_hardware_interface/hardware_status',
-                                           HardwareStatus, timeout=5)
+        hw_status = self.__hw_status_ntv.wait_for_message()
         if not hw_status.calibration_needed:
             return self.return_success("Calibration not needed")
 
@@ -405,8 +242,7 @@ class NiryoRosWrapper:
         calibration_finished = False
         while not calibration_finished:
             try:
-                hw_status = rospy.wait_for_message('/niryo_robot_hardware_interface/hardware_status',
-                                                   HardwareStatus, timeout=5)
+                hw_status = self.__hw_status_ntv.wait_for_message()
                 if not (hw_status.calibration_needed or hw_status.calibration_in_progress):
                     calibration_finished = True
                 else:
@@ -424,13 +260,7 @@ class NiryoRosWrapper:
         :return: ``True`` if activate else ``False``
         :rtype: bool
         """
-        timeout = rospy.get_time() + 2.0
-        while self.__learning_mode_on is None:
-            rospy.sleep(0.05)
-            if rospy.get_time() > timeout:
-                raise NiryoRosWrapperException('Timeout: could not get learning mode '
-                                               '(/niryo_robot/learning_mode/state topic)')
-        return self.__learning_mode_on
+        return self.__learning_mode_on_ntv.value.data
 
     def set_learning_mode(self, set_bool):
         """
@@ -452,7 +282,7 @@ class NiryoRosWrapper:
         :return: max velocity scaling factor
         :rtype: float
         """
-        return self.__max_velocity_scaling_factor
+        return self.__max_velocity_scaling_factor_ntv.value
 
     def set_arm_max_velocity(self, percentage):
         """
@@ -465,6 +295,18 @@ class NiryoRosWrapper:
         """
         result = self.__call_service('/niryo_robot_arm_commander/set_max_velocity_scaling_factor',
                                      SetInt, percentage)
+        return self.__classic_return_w_check(result)
+
+    def set_arm_max_acceleration(self, percentage):
+        """
+        Set relative max acceleration (in %)
+
+        :param percentage: Percentage of max acceleration
+        :type percentage: int
+        :return: status, message
+        :rtype: (int, str)
+        """
+        result = self.__call_service('/niryo_robot_arm_commander/set_acceleration_factor', SetFloat, percentage / 100.)
         return self.__classic_return_w_check(result)
 
     # - Useful functions
@@ -483,12 +325,16 @@ class NiryoRosWrapper:
         :return: list of joints value
         :rtype: list[float]
         """
-        timeout = rospy.get_time() + 2.0
-        while self.__joints is None:
-            rospy.sleep(0.05)
-            if rospy.get_time() > timeout:
-                raise NiryoRosWrapperException('Timeout: could not get joints (/joint_states topic)')
-        return self.__joints
+        return list(self.__joints_ntv.value.position[:6])
+
+    def get_joint_names(self):
+        """
+        Use /joint_states topic to get the name of the joints
+
+        :return: list of the name of the joints
+        :rtype: list[string]
+        """
+        return list(self.__joints_ntv.value.name[:6])
 
     def get_pose(self):
         """
@@ -497,12 +343,7 @@ class NiryoRosWrapper:
         :return: RobotState object (position.x/y/z && rpy.roll/pitch/yaw && orientation.x/y/z/w)
         :rtype: RobotState
         """
-        timeout = rospy.get_time() + 2.0
-        while self.__pose is None:
-            rospy.sleep(0.05)
-            if rospy.get_time() > timeout:
-                raise NiryoRosWrapperException('Timeout: could not get pose (/niryo_robot/robot_state topic)')
-        return self.__pose
+        return self.__pose_ntv.value
 
     def get_pose_as_list(self):
         """
@@ -533,10 +374,9 @@ class NiryoRosWrapper:
         :return: status, message
         :rtype: (int, str)
         """
-        goal = RobotMoveGoal()
-        goal.cmd.cmd_type = ArmMoveCommand.JOINTS
-        goal.cmd.joints = [j1, j2, j3, j4, j5, j6]
-        return self.__execute_robot_move_action(goal)
+        cmd = ArmMoveCommand(cmd_type=ArmMoveCommand.JOINTS, joints=[j1, j2, j3, j4, j5, j6])
+        goal = RobotMoveGoal(cmd=cmd)
+        return self.__robot_action_nac.execute(goal)
 
     def move_to_sleep_pose(self):
         """
@@ -596,15 +436,9 @@ class NiryoRosWrapper:
         :rtype: (int, str)
         """
         x, y, z, roll, pitch, yaw = pose
-        goal = RobotMoveGoal()
-        goal.cmd.cmd_type = cmd_type
-        goal.cmd.position.x = x
-        goal.cmd.position.y = y
-        goal.cmd.position.z = z
-        goal.cmd.rpy.roll = roll
-        goal.cmd.rpy.pitch = pitch
-        goal.cmd.rpy.yaw = yaw
-        return self.__execute_robot_move_action(goal)
+        cmd = ArmMoveCommand(cmd_type=cmd_type, position=Point(x, y, z), rpy=RPY(roll=roll, pitch=pitch, yaw=yaw))
+        goal = RobotMoveGoal(cmd=cmd)
+        return self.__robot_action_nac.execute(goal)
 
     def shift_pose(self, axis, value):
         """
@@ -617,11 +451,10 @@ class NiryoRosWrapper:
         :return: status, message
         :rtype: (int, str)
         """
-        goal = RobotMoveGoal()
-        goal.cmd.cmd_type = ArmMoveCommand.SHIFT_POSE
-        goal.cmd.shift.axis_number = axis
-        goal.cmd.shift.value = value
-        return self.__execute_robot_move_action(goal)
+        from niryo_robot_arm_commander.msg import ShiftPose
+        cmd = ArmMoveCommand(cmd_type=ArmMoveCommand.SHIFT_POSE, shift=ShiftPose(axis_number=axis, value=value))
+        goal = RobotMoveGoal(cmd=cmd)
+        return self.__robot_action_nac.execute(goal)
 
     def shift_linear_pose(self, axis, value):
         """
@@ -634,11 +467,10 @@ class NiryoRosWrapper:
         :return: status, message
         :rtype: (int, str)
         """
-        goal = RobotMoveGoal()
-        goal.cmd.cmd_type = ArmMoveCommand.SHIFT_LINEAR_POSE
-        goal.cmd.shift.axis_number = axis
-        goal.cmd.shift.value = value
-        return self.__execute_robot_move_action(goal)
+        from niryo_robot_arm_commander.msg import ShiftPose
+        cmd = ArmMoveCommand(cmd_type=ArmMoveCommand.SHIFT_LINEAR_POSE, shift=ShiftPose(axis_number=axis, value=value))
+        goal = RobotMoveGoal(cmd=cmd)
+        return self.__robot_action_nac.execute(goal)
 
     def move_linear_pose(self, x, y, z, roll, pitch, yaw):
         """
@@ -662,21 +494,31 @@ class NiryoRosWrapper:
         return self.__move_pose_with_cmd(ArmMoveCommand.LINEAR_POSE, x, y, z, roll, pitch, yaw)
 
     def move_spiral(self, radius=0.2, angle_step=5, nb_steps=72, plan=1):
-        goal = RobotMoveGoal()
-        goal.cmd.cmd_type = ArmMoveCommand.DRAW_SPIRAL
-        goal.cmd.args = [radius, angle_step, nb_steps, plan]
-        return self.__execute_robot_move_action(goal)
+        """
+        Call robot action service to draw a spiral trajectory
+
+        :param radius: maximum distance between the spiral and the starting point
+        :param angle_step: rotation between each waypoint creation
+        :param nb_steps: number of waypoints from the beginning to the end of the spiral
+        :param plan: xyz plan of the spiral:  1 = yz plan, 2 = xz plan, 3 = xy plan
+        :type plan: int
+        :return: status, message
+        :rtype: (int, str)
+        """
+        cmd = ArmMoveCommand(cmd_type=ArmMoveCommand.DRAW_SPIRAL, args=[radius, angle_step, nb_steps, plan])
+        goal = RobotMoveGoal(cmd=cmd)
+        return self.__robot_action_nac.execute(goal)
 
     def move_without_moveit(self, joints_target, duration):
         goal = self._create_goal(joints_target, duration)
-        self.__follow_joint_traj_client.wait_for_server()
+        self.__follow_joint_traj_nac.action_server.wait_for_server()
 
         # When to start the trajectory: 0.1s from now
         goal.trajectory.header.stamp = rospy.Time.now() + rospy.Duration.from_sec(0.1)
-        self.__follow_joint_traj_client.send_goal(goal)
-        self.__follow_joint_traj_client.wait_for_result(timeout=rospy.Duration(2 * duration + 0.1))
+        self.__follow_joint_traj_nac.action_server.send_goal(goal)
+        self.__follow_joint_traj_nac.action_server.wait_for_result(timeout=rospy.Duration(2 * duration + 0.1))
 
-        result = self.__follow_joint_traj_client.get_result()
+        result = self.__follow_joint_traj_nac.action_server.get_result()
         if not result:
             raise NiryoRosWrapperException("Follow joint trajectory goal has reached timeout limit")
 
@@ -690,12 +532,12 @@ class NiryoRosWrapper:
         return result.error_code, msg_dict[result.error_code]
 
     def _create_goal(self, joints_position, duration):
-        goal = FollowJointTrajectoryGoal()
-        goal.trajectory.joint_names = self.__joints_name
-        goal.trajectory.points = [JointTrajectoryPoint()]
-        goal.trajectory.points[0].positions = joints_position
-        goal.trajectory.points[0].velocities = [0.0] * len(self.__joints_name)
-        goal.trajectory.points[0].time_from_start = rospy.Duration(duration)
+        trajectory_point = JointTrajectoryPoint(positions=joints_position,
+                                                velocities=[0.0] * len(joints_position),
+                                                time_from_start=rospy.Duration(duration))
+
+        trajectory = JointTrajectory(joint_names=self.get_joint_names(), points=[trajectory_point])
+        goal = FollowJointTrajectoryGoal(trajectory=trajectory)
         return goal
 
     def stop_move(self):
@@ -729,6 +571,7 @@ class NiryoRosWrapper:
         :return: status, message
         :rtype: (int, str)
         """
+        from niryo_robot_arm_commander.srv import JogShift, JogShiftRequest
         return self.__jog_shift(JogShiftRequest.JOINTS_SHIFT, shift_values)
 
     def jog_pose_shift(self, shift_values):
@@ -740,9 +583,11 @@ class NiryoRosWrapper:
         :return: status, message
         :rtype: (int, str)
         """
+        from niryo_robot_arm_commander.srv import JogShift, JogShiftRequest
         return self.__jog_shift(JogShiftRequest.POSE_SHIFT, shift_values)
 
     def __jog_shift(self, cmd, shift_values):
+        from niryo_robot_arm_commander.srv import JogShift, JogShiftRequest
         result = self.__call_service('/niryo_robot/jog_interface/jog_shift_commander', JogShift, cmd, shift_values)
 
         return self.__classic_return_w_check(result)
@@ -766,6 +611,7 @@ class NiryoRosWrapper:
         :return: list corresponding to [x, y, z, roll, pitch, yaw]
         :rtype: list[float]
         """
+        from niryo_robot_arm_commander.srv import GetFK
         joints = [j1, j2, j3, j4, j5, j6]
         result = self.__call_service('/niryo_robot/kinematics/forward', GetFK, joints)
         return self.robot_state_msg_to_list(result.pose)
@@ -789,9 +635,8 @@ class NiryoRosWrapper:
         :return: list of joints value
         :rtype: list[float]
         """
-        state = RobotState()
-        state.position = Point(x, y, z)
-        state.rpy = RPY(roll, pitch, yaw)
+        from niryo_robot_arm_commander.srv import GetIK
+        state = RobotState(position=Point(x, y, z), rpy=RPY(roll, pitch, yaw))
         result = self.__call_service('/niryo_robot/kinematics/inverse', GetIK, state)
         if not result.success:
             raise NiryoRosWrapperException("Failed to perform invert kinematic")
@@ -1039,13 +884,16 @@ class NiryoRosWrapper:
         list_poses = self.__list_pose_raw_to_list_poses(list_poses_raw)
         return self.__execute_trajectory_from_formatted_poses(list_poses, dist_smoothing)
 
-    def compute_trajectory_from_poses(self,  list_poses_raw, dist_smoothing=0.0):
+    def compute_trajectory_from_poses(self, list_poses_raw, dist_smoothing=0.0):
+        from niryo_robot_arm_commander.srv import ComputeTrajectory
+
         if len(list_poses_raw) < 2:
             return "Give me at least 2 points"
         list_poses = self.__list_pose_raw_to_list_poses(list_poses_raw)
 
         result = self.__call_service("/niryo_robot_arm_commander/compute_waypointed_trajectory",
                                      ComputeTrajectory, list_poses, dist_smoothing)
+        self.__classic_return_w_check(result)
         return result.trajectory
 
     def __list_pose_raw_to_list_poses(self, list_poses_raw):
@@ -1082,7 +930,7 @@ class NiryoRosWrapper:
         list_pose_waypoints = self.__list_pose_joints_to_list_poses(list_pose_joints, list_type)
         return self.execute_trajectory_from_poses(list_pose_waypoints, dist_smoothing)
 
-    def compute_trajectory_from_poses_and_joints(self,  list_pose_joints, list_type=None, dist_smoothing=0.0):
+    def compute_trajectory_from_poses_and_joints(self, list_pose_joints, list_type=None, dist_smoothing=0.0):
         list_pose_waypoints = self.__list_pose_joints_to_list_poses(list_pose_joints, list_type)
         return self.compute_trajectory_from_poses(list_pose_waypoints, dist_smoothing)
 
@@ -1155,34 +1003,19 @@ class NiryoRosWrapper:
                                      ManageTrajectory, req)
         return self.__classic_return_w_check(result)
 
-    def draw_spiral(self, radius, angle_step, total_steps):
-        """
-        Call robot action service to draw a spiral trajectory
-
-        :param radius: maximum distance between the spiral and the starting point
-        :param angle_step: rotation between each waypoint creation
-        :param total_steps: number of waypoints from the beginning to the end of the spiral
-        :return: status, message
-        :rtype: (int, str)
-        """
-        goal = RobotMoveGoal()
-        goal.cmd.cmd_type = ArmMoveCommand.DRAW_SPIRAL
-        goal.cmd.args = [str(radius), str(angle_step), str(total_steps)]
-        return self.__execute_robot_move_action(goal)
-
     def __execute_trajectory_from_formatted_poses(self, list_poses, dist_smoothing=0.0):
 
         goal = RobotMoveGoal()
         goal.cmd.cmd_type = ArmMoveCommand.EXECUTE_TRAJ
         goal.cmd.list_poses = list_poses
         goal.cmd.dist_smoothing = dist_smoothing
-        return self.__execute_robot_move_action(goal)
+        return self.__robot_action_nac.execute(goal)
 
     def execute_moveit_robot_trajectory(self, moveit_robot_trajectory):
         goal = RobotMoveGoal()
         goal.cmd.cmd_type = ArmMoveCommand.EXECUTE_FULL_TRAJ
         goal.cmd.trajectory = moveit_robot_trajectory
-        return self.__execute_robot_move_action(goal)
+        return self.__robot_action_nac.execute(goal)
 
     def delete_trajectory(self, trajectory_name):
         """
@@ -1256,13 +1089,7 @@ class NiryoRosWrapper:
         :return: Tool Id
         :rtype: ToolID
         """
-        timeout = rospy.get_time() + 2.0
-        while self.__current_tool_id is None:
-            rospy.sleep(0.05)
-            if rospy.get_time() > timeout:
-                raise NiryoRosWrapperException(
-                    'Timeout: could not get current tool id (/niryo_robot_tools_commander/current_id topic)')
-        return self.__current_tool_id
+        return self.__current_tool_id_ntv.value.data
 
     def update_tool(self):
         """
@@ -1310,6 +1137,7 @@ class NiryoRosWrapper:
         :rtype: (int, str)
         """
         tool_id = self.get_current_tool_id()
+        print tool_id
 
         if tool_id in (ToolID.GRIPPER_1, ToolID.GRIPPER_2, ToolID.GRIPPER_3, ToolID.GRIPPER_4):
             return self.open_gripper()
@@ -1350,16 +1178,16 @@ class NiryoRosWrapper:
         return self.__deal_with_gripper(ToolCommand.CLOSE_GRIPPER, speed, max_torque_percentage, hold_torque_percentage)
 
     def __deal_with_gripper(self, command_int, speed=500, max_torque_percentage=100, hold_torque_percentage=100):
-        goal = ToolActionGoal()
-        goal.goal.cmd.tool_id = self.get_current_tool_id()
-        goal.goal.cmd.cmd_type = command_int
-        goal.goal.cmd.max_torque_percentage = max_torque_percentage
-        goal.goal.cmd.hold_torque_percentage = hold_torque_percentage
+        goal = ToolGoal()
+        goal.cmd.tool_id = self.get_current_tool_id()
+        goal.cmd.cmd_type = command_int
+        goal.cmd.max_torque_percentage = max_torque_percentage
+        goal.cmd.hold_torque_percentage = hold_torque_percentage
         if command_int == ToolCommand.OPEN_GRIPPER:
-            goal.goal.cmd.speed = speed
+            goal.cmd.speed = speed
         else:
-            goal.goal.cmd.speed = speed
-        return self.__execute_tool_action(goal.goal)
+            goal.cmd.speed = speed
+        return self.__tool_action_nac.execute(goal)
 
     # - Vacuum
     def pull_air_vacuum_pump(self):
@@ -1381,11 +1209,11 @@ class NiryoRosWrapper:
         return self.__deal_with_vacuum_pump(ToolCommand.PUSH_AIR_VACUUM_PUMP)
 
     def __deal_with_vacuum_pump(self, command_int):
-        goal = ToolActionGoal()
-        goal.goal.cmd.tool_id = ToolID.VACUUM_PUMP_1
-        goal.goal.cmd.cmd_type = command_int
+        goal = ToolGoal()
+        goal.cmd.tool_id = ToolID.VACUUM_PUMP_1
+        goal.cmd.cmd_type = command_int
 
-        return self.__execute_tool_action(goal.goal)
+        return self.__tool_action_nac.execute(goal.goal)
 
     # - Electromagnet
     def setup_electromagnet(self, pin_id):
@@ -1428,11 +1256,11 @@ class NiryoRosWrapper:
         return self.__deal_with_electromagnet(pin_id, ToolCommand.DEACTIVATE_DIGITAL_IO)
 
     def __deal_with_electromagnet(self, pin_id, command_int):
-        goal = ToolActionGoal()
-        goal.goal.cmd.tool_id = ToolID.ELECTROMAGNET_1
-        goal.goal.cmd.cmd_type = command_int
-        goal.goal.cmd.gpio = pin_id
-        return self.__execute_tool_action(goal.goal)
+        goal = ToolGoal()
+        goal.cmd.tool_id = ToolID.ELECTROMAGNET_1
+        goal.cmd.cmd_type = command_int
+        goal.cmd.gpio = pin_id
+        return self.__tool_action_nac.execute(goal)
 
     # - TCP
     def enable_tcp(self, enable=True):
@@ -1447,8 +1275,7 @@ class NiryoRosWrapper:
         :return: status, message
         :rtype: (int, str)
         """
-        result = self.__call_service('/niryo_robot_tools_commander/enable_tcp',
-                                     SetBool, enable)
+        result = self.__call_service('/niryo_robot_tools_commander/enable_tcp', SetBool, enable)
         return self.__classic_return_w_check(result)
 
     def set_tcp(self, x, y, z, roll, pitch, yaw):
@@ -1471,12 +1298,9 @@ class NiryoRosWrapper:
         :return: status, message
         :rtype: (int, str)
         """
-        req = SetTCPRequest()
-        req.position = Point(x, y, z)
-        req.rpy = RPY(roll, pitch, yaw)
-
-        result = self.__call_service('/niryo_robot_tools_commander/set_tcp',
-                                     SetTCP, req)
+        from niryo_robot_tools_commander.srv import SetTCP, SetTCPRequest
+        req = SetTCPRequest(position=Point(x, y, z), rpy=RPY(roll, pitch, yaw))
+        result = self.__call_service('/niryo_robot_tools_commander/set_tcp', SetTCP, req)
         return self.__classic_return_w_check(result)
 
     def reset_tcp(self):
@@ -1487,8 +1311,7 @@ class NiryoRosWrapper:
         :return: status, message
         :rtype: (int, str)
         """
-        result = self.__call_service('/niryo_robot_tools_commander/reset_tcp',
-                                     Trigger)
+        result = self.__call_service('/niryo_robot_tools_commander/reset_tcp', Trigger)
         return self.__classic_return_w_check(result)
 
     def tool_reboot(self):
@@ -1498,8 +1321,8 @@ class NiryoRosWrapper:
         :return: success, message
         :rtype: (bool, str)
         """
-        result = self.__call_service('/niryo_robot/tools/reboot',
-                                     StdTrigger)
+        from std_srvs.srv import Trigger as StdTrigger
+        result = self.__call_service('/niryo_robot/tools/reboot', StdTrigger)
 
         return result.success, result.message
 
@@ -1522,8 +1345,8 @@ class NiryoRosWrapper:
         :return: status, message
         :rtype: (int, str)
         """
-        result = self.__call_service('/niryo_robot_rpi/set_digital_io_mode',
-                                     SetIOMode, pin_id, pin_mode)
+        from niryo_robot_rpi.srv import SetIOMode
+        result = self.__call_service('/niryo_robot_rpi/set_digital_io_mode', SetIOMode, pin_id, pin_mode)
         return self.__classic_return_w_check(result)
 
     def digital_write(self, pin_id, digital_state):
@@ -1537,8 +1360,8 @@ class NiryoRosWrapper:
         :return: status, message
         :rtype: (int, str)
         """
-        result = self.__call_service('/niryo_robot_rpi/set_digital_io',
-                                     SetDigitalIO, pin_id, digital_state)
+        from niryo_robot_rpi.srv import SetDigitalIO
+        result = self.__call_service('/niryo_robot_rpi/set_digital_io', SetDigitalIO, pin_id, digital_state)
         return self.__classic_return_w_check(result)
 
     def analog_write(self, pin_id, analog_state):
@@ -1552,8 +1375,8 @@ class NiryoRosWrapper:
         :return: status, message
         :rtype: (int, str)
         """
-        result = self.__call_service('/niryo_robot_rpi/set_analog_io',
-                                     SetAnalogIO, pin_id, analog_state)
+        from niryo_robot_rpi.srv import SetAnalogIO
+        result = self.__call_service('/niryo_robot_rpi/set_analog_io', SetAnalogIO, pin_id, analog_state)
         return self.__classic_return_w_check(result)
 
     def digital_read(self, pin_id):
@@ -1565,14 +1388,10 @@ class NiryoRosWrapper:
         :return: state
         :rtype: PinState
         """
-        result = self.__call_service('/niryo_robot_rpi/get_digital_io',
-                                     GetDigitalIO, pin_id)
+        from niryo_robot_rpi.srv import GetDigitalIO
+        result = self.__call_service('/niryo_robot_rpi/get_digital_io', GetDigitalIO, pin_id)
         self.__check_result_status(result)
-
-        if result.value == 0:
-            return PinState.LOW
-        else:
-            return PinState.HIGH
+        return PinState.LOW if result.value == 0 else PinState.HIGH
 
     def analog_read(self, pin_id):
         """
@@ -1583,8 +1402,8 @@ class NiryoRosWrapper:
         :return: state
         :rtype: PinState
         """
-        result = self.__call_service('/niryo_robot_rpi/get_analog_io',
-                                     GetAnalogIO, pin_id)
+        from niryo_robot_rpi.srv import GetAnalogIO
+        result = self.__call_service('/niryo_robot_rpi/get_analog_io', GetAnalogIO, pin_id)
         self.__check_result_status(result)
         return result.value
 
@@ -1595,22 +1414,10 @@ class NiryoRosWrapper:
         :return: Infos contains in a IOsState object (see niryo_robot_msgs)
         :rtype: IOsState
         """
-        timeout = rospy.get_time() + 2.0
-        while self.__digital_io_state is None:
-            rospy.sleep(0.05)
-            if rospy.get_time() > timeout:
-                raise NiryoRosWrapperException(
-                    'Timeout: could not get digital io state (/niryo_robot_rpi/digital_io_state topic)')
-        return self.__digital_io_state
+        return self.__digital_io_state_ntv.value
 
     def get_analog_io_state(self):
-        timeout = rospy.get_time() + 2.0
-        while self.__analog_io_state is None:
-            rospy.sleep(0.05)
-            if rospy.get_time() > timeout:
-                raise NiryoRosWrapperException(
-                    'Timeout: could not get analog io state (/niryo_robot_rpi/analog_io_state topic)')
-        return self.__analog_io_state
+        return self.__analog_io_state_ntv.value
 
     def get_hardware_version(self):
         """
@@ -1625,13 +1432,7 @@ class NiryoRosWrapper:
         :return: Infos contains in a HardwareStatus object (see niryo_robot_msgs)
         :rtype: HardwareStatus
         """
-        timeout = rospy.get_time() + 2.0
-        while self.__hw_status is None:
-            rospy.sleep(0.05)
-            if rospy.get_time() > timeout:
-                raise NiryoRosWrapperException(
-                    'Timeout: could not get hardware status (/niryo_robot_hardware_interface/hardware_status topic)')
-        return self.__hw_status
+        return self.__hw_status_ntv.value
 
     def get_robot_status(self):
         msg = rospy.wait_for_message('/niryo_robot_status/robot_status', RobotStatus, 2)
@@ -1700,10 +1501,9 @@ class NiryoRosWrapper:
         :return: ID
         :rtype: ConveyorID
         """
-        req = SetConveyorRequest()
-        req.cmd = SetConveyorRequest.ADD
-        result = self.__call_service('/niryo_robot/conveyor/ping_and_set_conveyor',
-                                     SetConveyor, req)
+        from conveyor_interface.srv import SetConveyor, SetConveyorRequest
+        req = SetConveyorRequest(cmd=SetConveyorRequest.ADD)
+        result = self.__call_service('/niryo_robot/conveyor/ping_and_set_conveyor', SetConveyor, req)
 
         # If no new conveyor is detected, it should not crash
         if result.status in [CommandStatus.NO_CONVEYOR_LEFT, CommandStatus.NO_CONVEYOR_FOUND]:
@@ -1722,11 +1522,9 @@ class NiryoRosWrapper:
         :return: status, message
         :rtype: (int, str)
         """
-        req = SetConveyorRequest()
-        req.cmd = SetConveyorRequest.REMOVE
-        req.id = conveyor_id
-        result = self.__call_service('/niryo_robot/conveyor/ping_and_set_conveyor',
-                                     SetConveyor, req)
+        from conveyor_interface.srv import SetConveyor, SetConveyorRequest
+        req = SetConveyorRequest(cmd=SetConveyorRequest.REMOVE, id=conveyor_id)
+        result = self.__call_service('/niryo_robot/conveyor/ping_and_set_conveyor', SetConveyor, req)
         return self.__classic_return_w_check(result)
 
     def control_conveyor(self, conveyor_id, bool_control_on, speed, direction):
@@ -1745,6 +1543,7 @@ class NiryoRosWrapper:
         :return: status, message
         :rtype: (int, str)
         """
+        from conveyor_interface.srv import ControlConveyor
         result = self.__call_service('/niryo_robot/conveyor/control_conveyor',
                                      ControlConveyor, conveyor_id, bool_control_on, speed, direction)
         return self.__classic_return_w_check(result)
@@ -1756,13 +1555,7 @@ class NiryoRosWrapper:
         :return: List[ID, connection_state, running, speed, direction]
         :rtype: List(int, bool, bool, int, int)
         """
-        timeout = rospy.get_time() + 2.0
-        while self.__conveyors_feedback is None:
-            rospy.sleep(0.05)
-            if rospy.get_time() > timeout:
-                raise NiryoRosWrapperException(
-                    'Timeout: could not get conveyor 1 feedback (/niryo_robot/conveyor/feedback topic)')
-        fb = self.__conveyors_feedback
+        fb = self.__conveyors_feedback_ntv.value
         return fb.conveyors
 
     # - Vision
@@ -1774,17 +1567,12 @@ class NiryoRosWrapper:
         :return: string containing a JPEG compressed image
         :rtype: str
         """
-        timeout = rospy.get_time() + 2.0
-        while self.__compressed_image_message is None:
-            rospy.sleep(0.05)
-            if rospy.get_time() > timeout:
-                raise NiryoRosWrapperException(
-                    'Timeout: could not video stream message (/niryo_robot_vision/compressed_video_stream topic)')
+        compressed_img = self.__compressed_image_message_ntv.value
 
         if with_seq:
-            return self.__compressed_image_message.data, self.__compressed_image_message.header.seq
+            return compressed_img.data, compressed_img.header.seq
 
-        return self.__compressed_image_message.data
+        return compressed_img.data
 
     def set_brightness(self, brightness_factor):
         """
@@ -1797,6 +1585,7 @@ class NiryoRosWrapper:
         :return: status, message
         :rtype: (int, str)
         """
+        from niryo_robot_vision.srv import SetImageParameter
         result = self.__call_service('/niryo_robot_vision/set_brightness', SetImageParameter, brightness_factor)
         return self.__classic_return_w_check(result)
 
@@ -1810,6 +1599,7 @@ class NiryoRosWrapper:
         :return: status, message
         :rtype: (int, str)
         """
+        from niryo_robot_vision.srv import SetImageParameter
         result = self.__call_service('/niryo_robot_vision/set_contrast', SetImageParameter, contrast_factor)
         return self.__classic_return_w_check(result)
 
@@ -1824,6 +1614,7 @@ class NiryoRosWrapper:
         :return: status, message
         :rtype: (int, str)
         """
+        from niryo_robot_vision.srv import SetImageParameter
         result = self.__call_service('/niryo_robot_vision/set_saturation', SetImageParameter, saturation_factor)
         return self.__classic_return_w_check(result)
 
@@ -1846,8 +1637,13 @@ class NiryoRosWrapper:
         """
         from niryo_robot_vision.msg import ImageParameters
 
-        img_param_msg = rospy.wait_for_message('/niryo_robot_vision/video_stream_parameters', ImageParameters,
-                                               timeout=5)
+        try:
+            img_param_msg = rospy.wait_for_message('/niryo_robot_vision/video_stream_parameters', ImageParameters,
+                                                   timeout=5)
+        except rospy.ROSException:
+            raise NiryoRosWrapperException(
+                "Could not get image parameters on the {} topic".format('/niryo_robot_vision/video_stream_parameters'))
+
         return img_param_msg.brightness_factor, img_param_msg.contrast_factor, img_param_msg.saturation_factor
 
     def get_target_pose_from_rel(self, workspace_name, height_offset, x_rel, y_rel, yaw_rel):
@@ -2007,22 +1803,18 @@ class NiryoRosWrapper:
         :return: raw camera intrinsics, distortions coefficients
         :rtype: (list, list)
         """
-        timeout = rospy.get_time() + 2.0
-        while self.__camera_intrinsics_message is None:
-            rospy.sleep(0.05)
-            if rospy.get_time() > timeout:
-                raise NiryoRosWrapperException(
-                    'Timeout: could not video stream message (/niryo_robot_vision/camera_intrinsics topic)')
-        return self.__camera_intrinsics_message.K, self.__camera_intrinsics_message.D
+
+        camera_intrinsics = self.__camera_intrinsics_message_ntv.value
+        return camera_intrinsics.K, camera_intrinsics.D
 
     def get_debug_markers(self):
-        req = DebugMarkersRequest()
-        result = self.__call_service('/niryo_robot_vision/debug_markers', DebugMarkers, req)
+        from niryo_robot_vision.srv import DebugMarkers, DebugMarkersRequest
+        result = self.__call_service('/niryo_robot_vision/debug_markers', DebugMarkers, DebugMarkersRequest())
         return result
 
     def get_debug_colors(self, color):
-        req = DebugColorDetectionRequest()
-        req.color = color
+        from niryo_robot_vision.srv import DebugColorDetection, DebugColorDetectionRequest
+        req = DebugColorDetectionRequest(color=color)
         result = self.__call_service('/niryo_robot_vision/debug_colors', DebugColorDetection, req)
         return result
 
@@ -2157,3 +1949,35 @@ class NiryoRosWrapper:
     @property
     def custom_button(self):
         return self.__custom_button
+
+    def set_database_setting(self, name, value):
+        """
+        Set a setting in the database
+
+        :param name: the name of a setting
+        :type name: str
+        :param value: the value of the setting
+        :type value: object
+        """
+        from niryo_robot_database.srv import SetSettings
+        self.__call_service('/niryo_robot_database/settings/set', SetSettings, name, str(value), type(value).__name__)
+
+    def get_database_setting(self, name):
+        """
+        Retrieve a setting from the database
+
+        :param name: the name of the setting
+        :type name: str
+        :return: the value of the setting
+        :rtype: object
+        """
+        from pydoc import locate
+        from niryo_robot_database.srv import GetSettings
+        result = self.__call_service('/niryo_robot_database/settings/get', GetSettings, name)
+        if result.status == CommandStatus.DATABASE_SETTINGS_UNKNOWN:
+            return None
+        if result.type != 'bool':
+            casted_type = locate(result.type)(result.value)
+        else:
+            casted_type = result.value in ['True', 'true']
+        return casted_type

@@ -144,7 +144,6 @@ class VideoStream(object):
         self._publisher_stream_parameters.publish(self._brightness, self._contrast, self._saturation)
 
     # -- METHODS
-
     def read_undistorted(self):
         raise NotImplementedError
 
@@ -252,6 +251,7 @@ class WebcamStream(VideoStream):
                 self._running = False
                 self.__actualization_rate_no_stream.sleep()
                 continue
+
             self.__video_stream = cv2.VideoCapture(self.__cam_port)
             if not self.__video_stream.isOpened():
                 rospy.logwarn_throttle(10.0, "Vision Node - Failed to open video stream. Check camera is well plugged.")
@@ -264,44 +264,7 @@ class WebcamStream(VideoStream):
 
             rospy.loginfo("Vision Node - Video Stream Open")
             self.__setup_stream_settings()
-            self._running = True
-            self._should_run = True
-
-            index_read = -1
-            while not rospy.is_shutdown() and self._should_run:
-                index_read = (index_read + 1) % self._subsample_read
-                with self.__lock_image:
-                    bool_grabbed = self.__video_stream.grab()
-                if not bool_grabbed:
-                    rospy.logwarn("Vision Node - Image not grabbed. Camera may have been unplugged.")
-                    rospy.logwarn("Vision Node - Closing Video Stream")
-                    break
-                if index_read == 0:
-                    _, frame = self.__video_stream.retrieve()
-                    self.__last_time_read = rospy.get_time()
-
-                    self.__frame_raw = frame
-                    if self._undistort_stream:
-                        self.__frame_undistort = self._calibration_object.undistort_image(frame)
-                    else:
-                        self.__frame_undistort = None
-                    used_image = self.__frame_undistort if self._undistort_stream else self.__frame_raw
-                    used_image = self.adjust_image(used_image)
-                    if self._flip_img:
-                        used_image = cv2.flip(frame, -1)
-                    if self._display:
-                        cv2.imshow("Video Stream", used_image)
-                        cv2.waitKey(1)
-                    result, msg = generate_msg_from_image(used_image)
-
-                    if not result:
-                        continue
-                    rospy.logdebug("Vision Node - Publishing an image")
-                    try:
-                        self._publisher_compressed_stream.publish(msg)
-                    except rospy.ROSException:
-                        return
-                self._actualization_rate_ros.sleep()
+            self.__acquisition_loop()
 
             self.__video_stream.release()
             rospy.loginfo("Vision Node - Video Stream Stopped")
@@ -401,10 +364,12 @@ class GazeboStream(VideoStream):
                 cv2.imshow("Video Stream",
                            cv2.flip(self.__last_image_raw, -1) if self._flip_img else self.__last_image_raw)
                 cv2.waitKey(1)
+
             try:
                 self._publisher_compressed_stream.publish(self.__last_image_compressed_msg)
             except rospy.ROSException:
                 return
+
             try:
                 self._actualization_rate_ros.sleep()
             except rospy.ROSInterruptException:
