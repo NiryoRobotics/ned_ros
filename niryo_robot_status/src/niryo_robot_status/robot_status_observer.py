@@ -4,6 +4,7 @@ import rospy
 from std_msgs.msg import Bool
 from std_msgs.msg import Header
 from sensor_msgs.msg import JointState
+from rosbridge_msgs.msg import ConnectedClients
 
 from niryo_robot_msgs.msg import HardwareStatus
 from niryo_robot_arm_commander.msg import PausePlanExecution
@@ -11,6 +12,7 @@ from niryo_robot_programs_manager.msg import ProgramIsRunning
 
 # - Services
 from niryo_robot_arm_commander.srv import GetJointLimits
+from niryo_robot_msgs.srv import GetString
 
 
 class RobotStatusObserver(object):
@@ -36,9 +38,18 @@ class RobotStatusObserver(object):
         self.pause_state = PausePlanExecution.STANDBY
         self.collision_detected = False
         self.rpi_overheating = False
+        self.pyniryo2_ping = False
 
         self.rpi_overheating_temperature = rospy.get_param(
             "niryo_robot_hardware_interface/cpu_interface/temperature_warn_threshold", 75)
+
+        # # - Publisher
+        # self.__ping_pyniryo_publisher = rospy.Publisher('/niryo_robot_pyniryo2/ping', Empty, latch=False, queue_size=10)
+
+        # - Services
+        # self.__pong_pniryo_service = rospy.Service('/niryo_robot_pyniryo2/pong',
+        #                                            SetString, self.__callback_pong_pyniryo2)
+        self.__ping_pniryo_service = rospy.ServiceProxy("/niryo_robot_pyniryo2/ping", GetString)
 
         # - Subscribers
         self.hardware_status_sub = rospy.Subscriber('/niryo_robot_hardware_interface/hardware_status',
@@ -67,6 +78,9 @@ class RobotStatusObserver(object):
 
         self.__collision_detected_sub = rospy.Subscriber('/niryo_robot_arm_commander/collision_detected',
                                                          Bool, self.__callback_collision_detected)
+
+        self.__rosbridge_clients_sub = rospy.Subscriber('/connected_clients',
+                                                        ConnectedClients, self.__callback_rosbridge_connected_clients)
 
         self.__joint_state_sub = rospy.Subscriber('/joint_states', JointState, self.__callback_joint_states)
 
@@ -130,6 +144,30 @@ class RobotStatusObserver(object):
 
     def __callback_collision_detected(self, msg):
         self.collision_detected = msg.data
+
+    def __callback_rosbridge_connected_clients(self, msg):
+        last_pyniryo2_ping = self.pyniryo2_ping
+        self.pyniryo2_ping  = len(msg.clients) > 0
+        # last_pyniryo2_ping = self.pyniryo2_ping
+        #
+        # if len(msg.clients) == 0:
+        #     self.pyniryo2_ping = False
+        # else:
+        #
+        #     print("try ping")
+        #     try:
+        #         self.__ping_pniryo_service.wait_for_service(timeout=1)
+        #         resp = self.__ping_pniryo_service()
+        #         rospy.loginfo("Pyniryo2 connected at ip: {}".format(resp.value))
+        #         self.pyniryo2_ping = True
+        #     except rospy.ROSException:
+        #         print("fail ping")
+        #         self.pyniryo2_ping = False
+        #
+        # print self.pyniryo2_ping
+        print (last_pyniryo2_ping, self.pyniryo2_ping)
+        if last_pyniryo2_ping != self.pyniryo2_ping:
+            self.__robot_status_handler.advertise_new_state()
 
     def __callback_joint_states(self, msg):
         if not self.joint_limits:
