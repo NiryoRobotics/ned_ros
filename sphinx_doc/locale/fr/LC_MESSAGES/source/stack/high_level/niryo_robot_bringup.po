@@ -6,8 +6,6 @@
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
-
-
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
@@ -17,29 +15,32 @@ msgstr ""
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.9.1\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Language: fr\n"
+"X-Source-Language: C\n"
 
 #: ../../source/ros/niryo_robot_bringup.rst:2
 msgid "Niryo_robot_bringup"
-msgstr ""
+msgstr "Niryo_robot_bringup"
 
 #: ../../source/ros/niryo_robot_bringup.rst:3
 msgid ""
-"This packages provides config and launch files to start Ned and ROS "
-"packages with various parameters."
+"This packages provides config and launch files to start Ned and ROS packages "
+"with various parameters."
 msgstr ""
 "Ce package fournit des fichiers de configuration et de lancement pour "
 "démarrer les packages Ned et ROS avec divers paramètres."
 
 #: ../../source/ros/niryo_robot_bringup.rst:5
 msgid ""
-"Launch files are placed in the *launch* folder. Only files with "
-"**.launch** extension can be executed."
+"Launch files are placed in the *launch* folder. Only files with **.launch** "
+"extension can be executed."
 msgstr ""
-"Les fichiers de lancement sont placés dans le dossier de *lancement*. "
-"Seuls les fichiers avec **.lancement** peuvent être exécutés."
+"Les fichiers de lancement sont placés dans le dossier de *lancement*. Seuls "
+"les fichiers avec **.lancement** peuvent être exécutés."
 
 #: ../../source/ros/niryo_robot_bringup.rst:13
 msgid "Bring Up Launch Files' organization"
@@ -55,17 +56,15 @@ msgstr "Ned"
 
 #: ../../source/ros/niryo_robot_bringup.rst:21
 msgid ""
-"The file **niryo_ned_robot.launch** allows to launch ROS on a Raspberry "
-"Pi 4."
+"The file **niryo_ned_robot.launch** allows to launch ROS on a Raspberry Pi 4."
 msgstr ""
-"Le fichier **niryo_ned_robot.launch** permet de lancer ROS sur une "
-"Raspberry Pi 4."
+"Le fichier **niryo_ned_robot.launch** permet de lancer ROS sur une Raspberry "
+"Pi 4."
 
 #: ../../source/ros/niryo_robot_bringup.rst:22
 msgid "This file is automatically launched when Ned boots (Ned RPi4B image)."
 msgstr ""
-"Ce fichier est automatiquement lancé au démarrage de Ned (image Ned "
-"RPi4B)."
+"Ce fichier est automatiquement lancé au démarrage de Ned (image Ned RPi4B)."
 
 #: ../../source/ros/niryo_robot_bringup.rst:24
 msgid "Command to launch Ned's ROS Stack:"
@@ -73,7 +72,7 @@ msgstr "Commande pour lancer la stack ROS de Ned : ::"
 
 #: ../../source/ros/niryo_robot_bringup.rst:26
 msgid "roslaunch niryo_robot_bringup niryo_ned_robot.launch"
-msgstr ""
+msgstr "roslaunch niryo_robot_bringup niryo_ned_robot.launch"
 
 #: ../../source/ros/niryo_robot_bringup.rst:29
 msgid "On Desktop (Simulation)"
@@ -81,8 +80,8 @@ msgstr "Sur le bureau (Simulation)"
 
 #: ../../source/ros/niryo_robot_bringup.rst:31
 msgid ""
-"As the simulation happens on a computer, the hardware-related stuff is "
-"not used."
+"As the simulation happens on a computer, the hardware-related stuff is not "
+"used."
 msgstr ""
 "Comme la simulation se produit sur un ordinateur, les éléments liés au "
 "matériel ne sont pas utilisés."
@@ -101,11 +100,11 @@ msgstr "La simulation via Gazebo"
 
 #: ../../source/ros/niryo_robot_bringup.rst:43
 msgid ""
-"Run Gazebo simulation. The robot can do everything that is not hardware-"
-"related:"
+"Run Gazebo simulation. The robot can do everything that is not "
+"hardware-related:"
 msgstr ""
-"Exécuter la simulation Gazebo. Le robot peut faire tout ce qui n'est pas "
-"lié au matériel :"
+"Exécuter la simulation Gazebo. Le robot peut faire tout ce qui n'est pas lié "
+"au matériel :"
 
 #: ../../source/ros/niryo_robot_bringup.rst:40
 msgid "move, get_pose."
@@ -114,20 +113,20 @@ msgstr "move, get_pose."
 #: ../../source/ros/niryo_robot_bringup.rst:41
 msgid "use the camera (to disable it, set \"camera\" parameter to 'false')."
 msgstr ""
-"Utiliser la caméra (pour la désactiver, régler le paramètre \"caméra\" "
-"sur 'faux')."
+"Utiliser la caméra (pour la désactiver, régler le paramètre \"caméra\" sur "
+"'faux')."
 
 #: ../../source/ros/niryo_robot_bringup.rst:42
 msgid ""
-"use the Gripper 1 (to disable it, set \"simu_gripper\" parameter to "
-"'false')."
+"use the Gripper 1 (to disable it, set \"simu_gripper\" parameter to 'false')."
 msgstr ""
 "Utilisez le Gripper Custom (pour le désactiver, définissez le paramètre "
 "\"simu_gripper\" sur 'faux')."
 
 #: ../../source/ros/niryo_robot_bringup.rst:43
 msgid "save/run programs, go to saved pose, ..."
-msgstr "Enregistrer/exécuter des programmes, accéder à la pose enregistrée, ..."
+msgstr ""
+"Enregistrer/exécuter des programmes, accéder à la pose enregistrée, ..."
 
 #: ../../source/ros/niryo_robot_bringup.rst:45
 msgid "Command to launch the simulation: ::"
@@ -143,12 +142,11 @@ msgstr "La simulation via Rviz"
 
 #: ../../source/ros/niryo_robot_bringup.rst:56
 msgid ""
-"Run Rviz simulation. You can access same features as Gazebo except Camera"
-" & Gripper."
+"Run Rviz simulation. You can access same features as Gazebo except Camera & "
+"Gripper."
 msgstr ""
 "Exécuter la simulation Rviz. Il est possible d’accéder aux mêmes "
-"fonctionnalités que Gazebo, à l'exception de la caméra et du Gripper "
-"Custom."
+"fonctionnalités que Gazebo, à l'exception de la caméra et du Gripper Custom."
 
 #: ../../source/ros/niryo_robot_bringup.rst:58
 msgid "To run it, use the command: ::"
@@ -170,62 +168,32 @@ msgstr ""
 #~ msgstr "Le package Bringup robot Niryo"
 
 #~ msgid ""
-#~ "Launch files are placed in the "
-#~ "*launch* folder. Only files with "
+#~ "Launch files are placed in the *launch* folder. Only files with "
 #~ "**.launch** extension can be executed"
 #~ msgstr ""
-#~ "Les fichiers de lancement sont placés"
-#~ " dans le dossier *launch*. Seuls les"
-#~ " fichiers avec l'extension **.launch** "
-#~ "peuvent être exécutés."
+#~ "Les fichiers de lancement sont placés dans le dossier *launch*. Seuls les "
+#~ "fichiers avec l'extension **.launch** peuvent être exécutés."
 
 #~ msgid "On RPI"
 #~ msgstr "Sur RasberryPI"
 
-#~ msgid "For both of following launch files, you can set:"
-#~ msgstr "Pour les deux fichiers de lancement suivants, vous pouvez définir :"
-
-#~ msgid "*gui* to \"false\" in order to disable graphical interface."
-#~ msgstr "*gui* to \"false\" pour désactiver l'interface graphique."
-
 #~ msgid "Gazebo Simulation"
 #~ msgstr "La simulation via Gazebo"
-
-#~ msgid ""
-#~ "Run Gazebo simulation. The robot can "
-#~ "do everything that is not hardware-"
-#~ "related:"
-#~ msgstr ""
-#~ "Exécuter la simulation Gazebo. Le robot"
-#~ " peut faire tout ce qui n'est "
-#~ "pas lié au matériel :"
 
 #~ msgid "move, get_pose"
 #~ msgstr "move, get_pose"
 
 #~ msgid "use the camera (to disable it, set \"camera\" parameter to 'false')"
 #~ msgstr ""
-#~ "Utiliser la caméra (pour la désactiver,"
-#~ " réglez le paramètre \"caméra\" sur "
-#~ "'false')"
+#~ "Utiliser la caméra (pour la désactiver, réglez le paramètre \"caméra\" "
+#~ "sur 'false')"
 
 #~ msgid ""
-#~ "use the Gripper 1 (to disable it,"
-#~ " set \"simu_gripper\" parameter to 'false')"
+#~ "use the Gripper 1 (to disable it, set \"simu_gripper\" parameter to "
+#~ "'false')"
 #~ msgstr ""
-#~ "Utilisez la Gripper Custom (pour le "
-#~ "désactiver, définissez le paramètre "
+#~ "Utilisez la Gripper Custom (pour le désactiver, définissez le paramètre "
 #~ "\"simu_gripper\" sur 'faux')"
-
-#~ msgid "Command to launch the simulation: ::"
-#~ msgstr "La commande pour lancer la simulation est : ::"
-
-#~ msgid "To disable camera & gripper: ::"
-#~ msgstr "La commande pour désactiver la caméra et le Gripper est : ::"
 
 #~ msgid "Rviz Simulation"
 #~ msgstr "La simulation via Rviz"
-
-#~ msgid "To run it, use the command: ::"
-#~ msgstr "Pour l'éxécuter, utiliser la commande : ::"
-
