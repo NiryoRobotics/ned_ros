@@ -6,22 +6,22 @@ Conveyor Interface
 | Two version of the conveyor exist : The Conveyor Belt 1, communicating via a CAN bus, and the Conveyor Belt 2, 
 | communicating via a TTL bus.
 | Both of them are directly compatible for the Ned and One. For the Ned 2 Robot, you will need to change the stepper card 
-| of the CAN Conveyor Belt to be able to use it on a TTL port (there is no CAN port on Ned 2)  
+| of the CAN Conveyor Belt to be able to use it on a TTL port (there is no CAN port on Ned 2).
 
 Conveyor Interface node (For development and debugging purpose only) 
------------------------------
+------------------------------------------------------------------------
 This ROS Node has been conceived to:
- - Use the correct low level driver according to the hardware version of the robot
- - Initialize the Conveyor Interface
+ - Use the correct low level driver according to the hardware version of the robot.
+ - Initialize the Conveyor Interface.
 
-Conveyor Interface
+Conveyor Interface core
 ----------------------------
 It is integrated to :doc:`niryo_robot_hardware_interface` package
 Its purpose is to:
- - Interface itself with low level drivers (CAN or TTL for Ned and One, TTL only for Ned2)
- - Initialize conveyor motors parameters.
- - Handle the requests from services to set, control or remove the conveyors.
- - Publish conveyor states.
+- Interface itself with low level drivers (CAN or TTL for Ned and One, TTL only for Ned2)
+- Initialize conveyor motors parameters.
+- Handle the requests from services to set, control or remove the conveyors.
+- Publish conveyor states.
 
 The namespace used is: |namespace_emphasize|
 
@@ -80,7 +80,7 @@ Published topics - Conveyor interface
       -  Message Type
       -  Description
    *  -  ``feedback``
-      -  :ref:`ConveyorFeedbackArray<source/stack_hardware/conveyor_interface:ConveyorFeedbackArray (Message)>`
+      -  :ref:`ConveyorFeedbackArray<source/stack/low_level/conveyor_interface:ConveyorFeedbackArray (Message)>`
       -  Conveyors states
 
 Services
@@ -96,10 +96,10 @@ Services
       -  Message Type
       -  Description
    *  -  ``control_conveyor``
-      -  :ref:`ControlConveyor<source/stack_hardware/conveyor_interface:ControlConveyor (Service)>`
+      -  :ref:`ControlConveyor<source/stack/low_level/conveyor_interface:ControlConveyor (Service)>`
       -  Sends a command to the desired Conveyor
    *  -  ``ping_and_set_conveyor``
-      -  :ref:`SetConveyor<source/stack_hardware/conveyor_interface:SetConveyor (Service)>`
+      -  :ref:`SetConveyor<source/stack/low_level/conveyor_interface:SetConveyor (Service)>`
       -  Scans and sets a new Conveyor or remove a connected Conveyor
 
 Dependencies - Conveyor interface

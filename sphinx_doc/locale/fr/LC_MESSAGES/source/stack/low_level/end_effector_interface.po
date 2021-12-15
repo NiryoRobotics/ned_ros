@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-10 16:25+0100\n"
+"POT-Creation-Date: 2021-12-15 15:00+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,7 +21,6 @@ msgstr ""
 "Generated-By: Babel 2.9.1\n"
 
 #: ../../source/stack/low_level/end_effector_interface.rst:2
-#: ../../source/stack/low_level/end_effector_interface.rst:14
 msgid "End Effector Interface"
 msgstr ""
 
@@ -49,6 +48,10 @@ msgstr ""
 
 #: ../../source/stack/low_level/end_effector_interface.rst:11
 msgid "Initialize End Effector Interface."
+msgstr ""
+
+#: ../../source/stack/low_level/end_effector_interface.rst:14
+msgid "End Effector Interface Core"
 msgstr ""
 
 #: ../../source/stack/low_level/end_effector_interface.rst:15
@@ -94,14 +97,14 @@ msgid "end_effector_interface's Parameters"
 msgstr ""
 
 #: ../../source/stack/low_level/end_effector_interface.rst:34
-#: ../../source/stack/low_level/end_effector_interface.rst:63
-#: ../../source/stack/low_level/end_effector_interface.rst:88
+#: ../../source/stack/low_level/end_effector_interface.rst:65
+#: ../../source/stack/low_level/end_effector_interface.rst:90
 msgid "Name"
 msgstr ""
 
 #: ../../source/stack/low_level/end_effector_interface.rst:35
-#: ../../source/stack/low_level/end_effector_interface.rst:65
-#: ../../source/stack/low_level/end_effector_interface.rst:90
+#: ../../source/stack/low_level/end_effector_interface.rst:67
+#: ../../source/stack/low_level/end_effector_interface.rst:92
 msgid "Description"
 msgstr ""
 
@@ -177,119 +180,119 @@ msgstr ""
 msgid "Default: end_effector"
 msgstr ""
 
-#: ../../source/stack/low_level/end_effector_interface.rst:55
+#: ../../source/stack/low_level/end_effector_interface.rst:57
 msgid "Published topics - End Effector Interface"
 msgstr ""
 
-#: ../../source/stack/low_level/end_effector_interface.rst:57
+#: ../../source/stack/low_level/end_effector_interface.rst:59
 msgid "end_effector_interface Package Published Topics"
 msgstr ""
 
-#: ../../source/stack/low_level/end_effector_interface.rst:64
+#: ../../source/stack/low_level/end_effector_interface.rst:66
 msgid "Message Type"
 msgstr ""
 
-#: ../../source/stack/low_level/end_effector_interface.rst:66
+#: ../../source/stack/low_level/end_effector_interface.rst:68
 msgid "/niryo_robot_hardware_interface/end_effector_interface/_free_drive_button_state_publisher"
 msgstr ""
 
-#: ../../source/stack/low_level/end_effector_interface.rst:67
-#: ../../source/stack/low_level/end_effector_interface.rst:70
-#: ../../source/stack/low_level/end_effector_interface.rst:73
+#: ../../source/stack/low_level/end_effector_interface.rst:69
+#: ../../source/stack/low_level/end_effector_interface.rst:72
+#: ../../source/stack/low_level/end_effector_interface.rst:75
 msgid ""
 ":ref:`EEButtonStatus<source/stack/low_level/end_effector_interface:EEButtonStatus"
 " (Message)>`"
 msgstr ""
 
-#: ../../source/stack/low_level/end_effector_interface.rst:68
+#: ../../source/stack/low_level/end_effector_interface.rst:70
 msgid "Publish state of Free Driver Button"
 msgstr ""
 
-#: ../../source/stack/low_level/end_effector_interface.rst:69
+#: ../../source/stack/low_level/end_effector_interface.rst:71
 msgid "/niryo_robot_hardware_interface/end_effector_interface/_save_button_state_publisher"
 msgstr ""
 
-#: ../../source/stack/low_level/end_effector_interface.rst:71
+#: ../../source/stack/low_level/end_effector_interface.rst:73
 msgid "Publish state of Save Position Button"
 msgstr ""
 
-#: ../../source/stack/low_level/end_effector_interface.rst:72
+#: ../../source/stack/low_level/end_effector_interface.rst:74
 msgid "/niryo_robot_hardware_interface/end_effector_interface/_custom_button_state_publisher"
 msgstr ""
 
-#: ../../source/stack/low_level/end_effector_interface.rst:74
+#: ../../source/stack/low_level/end_effector_interface.rst:76
 msgid "Publish state of Custom Button"
 msgstr ""
 
-#: ../../source/stack/low_level/end_effector_interface.rst:75
+#: ../../source/stack/low_level/end_effector_interface.rst:77
 msgid "/niryo_robot_hardware_interface/end_effector_interface/_digital_out_publisher"
 msgstr ""
 
-#: ../../source/stack/low_level/end_effector_interface.rst:76
+#: ../../source/stack/low_level/end_effector_interface.rst:78
 msgid ""
 ":ref:`EEIOState<source/stack/low_level/end_effector_interface:EEIOState "
 "(Message)>`"
 msgstr ""
 
-#: ../../source/stack/low_level/end_effector_interface.rst:77
+#: ../../source/stack/low_level/end_effector_interface.rst:79
 msgid "Publish state of IO Digital"
 msgstr ""
 
-#: ../../source/stack/low_level/end_effector_interface.rst:80
+#: ../../source/stack/low_level/end_effector_interface.rst:82
 msgid "Services - End Effector Interface"
 msgstr ""
 
-#: ../../source/stack/low_level/end_effector_interface.rst:82
+#: ../../source/stack/low_level/end_effector_interface.rst:84
 msgid "end_effector_interface Package Services"
 msgstr ""
 
-#: ../../source/stack/low_level/end_effector_interface.rst:89
+#: ../../source/stack/low_level/end_effector_interface.rst:91
 msgid "Service Type"
 msgstr ""
 
-#: ../../source/stack/low_level/end_effector_interface.rst:91
+#: ../../source/stack/low_level/end_effector_interface.rst:93
 msgid "set_ee_io_state"
 msgstr ""
 
-#: ../../source/stack/low_level/end_effector_interface.rst:92
+#: ../../source/stack/low_level/end_effector_interface.rst:94
 msgid ""
 ":ref:`SetEEDigitalOut<source/stack/low_level/end_effector_interface:SetEEDigitalOut"
 " (Service)>`"
 msgstr ""
 
-#: ../../source/stack/low_level/end_effector_interface.rst:93
+#: ../../source/stack/low_level/end_effector_interface.rst:95
 msgid "Set up digital output on End Effector"
 msgstr ""
 
-#: ../../source/stack/low_level/end_effector_interface.rst:96
+#: ../../source/stack/low_level/end_effector_interface.rst:98
 msgid "Dependencies - End Effector Interface"
 msgstr ""
 
-#: ../../source/stack/low_level/end_effector_interface.rst:97
+#: ../../source/stack/low_level/end_effector_interface.rst:99
 msgid ":msgs_index:`std_msgs`"
 msgstr ""
 
-#: ../../source/stack/low_level/end_effector_interface.rst:98
+#: ../../source/stack/low_level/end_effector_interface.rst:100
 msgid ":doc:`ttl_driver`"
 msgstr ""
 
-#: ../../source/stack/low_level/end_effector_interface.rst:100
+#: ../../source/stack/low_level/end_effector_interface.rst:102
 msgid "Add dependencies of package"
 msgstr ""
 
-#: ../../source/stack/low_level/end_effector_interface.rst:103
+#: ../../source/stack/low_level/end_effector_interface.rst:105
 msgid "Services & Messages files - End Effector Interface"
 msgstr ""
 
-#: ../../source/stack/low_level/end_effector_interface.rst:106
+#: ../../source/stack/low_level/end_effector_interface.rst:108
 msgid "SetEEDigitalOut (Service)"
 msgstr ""
 
-#: ../../source/stack/low_level/end_effector_interface.rst:112
+#: ../../source/stack/low_level/end_effector_interface.rst:114
 msgid "EEButtonStatus (Message)"
 msgstr ""
 
-#: ../../source/stack/low_level/end_effector_interface.rst:118
+#: ../../source/stack/low_level/end_effector_interface.rst:120
 msgid "EEIOState (Message)"
 msgstr ""
 

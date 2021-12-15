@@ -4,7 +4,7 @@ Niryo Robot Hardware Interface
 | This package handles packages related to the robot's hardware.
 | It launches hardware interface nodes, motors communication and driver.  
 
-.. figure:: ../../../images/ros/hardware_stack_nodes.png
+.. figure:: ../../../images/stack/high_level/hardware_stack_nodes.png
    :alt: hardware packages organization
    :height: 500px
    :align: center
@@ -48,7 +48,7 @@ Dependencies
 - :doc:`joints_interface`
 - :doc:`conveyor_interface`
 - :doc:`cpu_interface`
-- :doc:`../../ros/niryo_robot_msgs`
+- :doc:`../high_level/niryo_robot_msgs`
 
 .. |namespace_emphasize| replace:: ``/niryo_robot_hardware_interface/``
 
@@ -68,10 +68,10 @@ Published topics
       -  Message Type
       -  Description
    *  -  ``hardware_status``
-      -  :ref:`niryo_robot_msgs/HardwareStatus<source/stack/../ros/niryo_robot_msgs:HardwareStatus>`
+      -  :ref:`niryo_robot_msgs/HardwareStatus<source/stack/high_level/niryo_robot_msgs:HardwareStatus>`
       -  Motors, bus, joints and CPU status
    *  -  ``software_version``
-      -  :ref:`niryo_robot_msgs/SoftwareVersion<source/stack/../ros/niryo_robot_msgs:SoftwareVersion>`
+      -  :ref:`niryo_robot_msgs/SoftwareVersion<source/stack/high_level/niryo_robot_msgs:SoftwareVersion>`
       -  Raspberry and stepper software version
 
 Services
@@ -87,11 +87,11 @@ Services
       -  Message Type
       -  Description
    *  -  ``launch_motors_report``
-      -  :ref:`source/stack/../ros/niryo_robot_msgs:Trigger`
+      -  :ref:`source/stack/high_level/niryo_robot_msgs:Trigger`
       -  Starts motors report
    *  -  ``reboot_motors``
-      -  :ref:`source/stack/../ros/niryo_robot_msgs:Trigger`
+      -  :ref:`source/stack/high_level/niryo_robot_msgs:Trigger`
       -  Reboots motors
    *  -  ``stop_motors_report``
-      -  :ref:`source/stack/../ros/niryo_robot_msgs:Trigger`
+      -  :ref:`source/stack/high_level/niryo_robot_msgs:Trigger`
       -  Stops motors report

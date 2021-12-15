@@ -11,17 +11,14 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-14 17:18+0100\n"
+"POT-Creation-Date: 2021-12-15 12:28+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.9.1\n"
-"Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Language: fr\n"
-"X-Source-Language: C\n"
 
 #: ../../source/stack/low_level/can_driver.rst:2
 msgid "CAN Driver"
@@ -32,8 +29,8 @@ msgid ""
 "This package provides an interface between high level ROS packages and "
 "motors on CAN bus"
 msgstr ""
-"Ce package procure une interface entre les packages ROS haut niveau et les "
-"moteurs sur le bus CAN"
+"Ce package procure une interface entre les packages ROS haut niveau et "
+"les moteurs sur le bus CAN"
 
 #: ../../source/stack/low_level/can_driver.rst:7
 msgid "CAN Driver Node"
@@ -108,7 +105,8 @@ msgid ":doc:`../third_parties/mcp_can_rpi`"
 msgstr ":doc:`../third_parties/mcp_can_rpi`"
 
 #: ../../source/stack/low_level/can_driver.rst:38
-msgid ":doc:`../../ros/niryo_robot_msgs`"
+#, fuzzy
+msgid ":doc:`../../stack/high_level/niryo_robot_msgs`"
 msgstr ":doc:`../../ros/niryo_robot_msgs`"
 
 #: ../../source/stack/low_level/can_driver.rst:39
@@ -137,3 +135,4 @@ msgstr "StepperArrayMotorHardwareStatus (Message)"
 
 #~ msgid ":doc:`../high_level/niryo_robot_msgs`"
 #~ msgstr ""
+

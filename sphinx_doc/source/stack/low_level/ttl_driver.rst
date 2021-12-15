@@ -6,12 +6,12 @@ TTL Driver
 | It provides an interface to :wiki_ros:`dynamixel_sdk`.
 
 TTL Driver Node (For Development and Debugging)
---------------------------
+--------------------------------------------------
 The ROS Node is made to:
  - Initialize TTL Interface.
  - Get configuration of motors and add to TTL Interface
 
-TTL Interface
+TTL Interface Core
 --------------------------
 
 It is integrated in :doc:`niryo_robot_hardware_interface` package
@@ -66,7 +66,7 @@ Services - TTL Driver
       -  Message Type
       -  Description
    *  -  ``niryo_robot/ttl_driver/set_dxl_leds``
-      -  :ref:`source/ros/niryo_robot_msgs:SetInt`
+      -  :ref:`source/stack/high_level/niryo_robot_msgs:SetInt`
       -  Control dynmixel LED
    *  -  ``niryo_robot/ttl_driver/send_custom_value``
       -  :ref:`SendCustomValue<source/stack/low_level/ttl_driver:SendCustomValue (Service)>`
@@ -91,7 +91,7 @@ Dependencies - TTL Driver
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 - :wiki_ros:`dynamixel_sdk` 
-- :doc:`../../ros/niryo_robot_msgs`
+- :doc:`../../stack/high_level/niryo_robot_msgs`
 - :msgs_index:`std_msgs`
 
 Services & Messages files - TTL Driver

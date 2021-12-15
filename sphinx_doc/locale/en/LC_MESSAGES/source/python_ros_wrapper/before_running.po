@@ -6,13 +6,11 @@
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
-
-
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-08-26 16:48+0000\n"
+"POT-Creation-Date: 2021-12-15 14:33+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -45,7 +43,7 @@ msgstr ""
 #: ../../source/python_ros_wrapper/before_running.rst:10
 msgid ""
 "If your are using simulation, be sure to have followed the setup from "
-":ref:`source/simulation:Setup Ned ROS Environment`."
+":ref:`source/installation/ubuntu_18:Ubuntu 18 Installation`."
 msgstr ""
 
 #: ../../source/python_ros_wrapper/before_running.rst:15
@@ -116,5 +114,12 @@ msgstr ""
 #~ " you below the piece of code "
 #~ "you must use to make Python ROS"
 #~ " Wrapper work: ::"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "If your are using simulation, be "
+#~ "sure to have followed the setup "
+#~ "from :ref:`source/simulation:Setup Ned ROS "
+#~ "Environment`."
 #~ msgstr ""
 

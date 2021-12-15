@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-10 16:25+0100\n"
+"POT-Creation-Date: 2021-12-15 15:00+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -53,7 +53,7 @@ msgid "Get configuration of motors and add to TTL Interface"
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_driver.rst:15
-msgid "TTL Interface"
+msgid "TTL Interface Core"
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_driver.rst:21
@@ -197,7 +197,7 @@ msgid "``niryo_robot/ttl_driver/set_dxl_leds``"
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_driver.rst:69
-msgid ":ref:`source/ros/niryo_robot_msgs:SetInt`"
+msgid ":ref:`source/stack/high_level/niryo_robot_msgs:SetInt`"
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_driver.rst:70
@@ -297,7 +297,7 @@ msgid ":wiki_ros:`dynamixel_sdk`"
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_driver.rst:94
-msgid ":doc:`../../ros/niryo_robot_msgs`"
+msgid ":doc:`../../stack/high_level/niryo_robot_msgs`"
 msgstr ""
 
 #: ../../source/stack/low_level/ttl_driver.rst:95
@@ -466,5 +466,14 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "Messages files"
+#~ msgstr ""
+
+#~ msgid ":ref:`source/ros/niryo_robot_msgs:SetInt`"
+#~ msgstr ""
+
+#~ msgid ":doc:`../../ros/niryo_robot_msgs`"
+#~ msgstr ""
+
+#~ msgid "TTL Interface"
 #~ msgstr ""
 

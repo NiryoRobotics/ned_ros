@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-14 18:13+0100\n"
+"POT-Creation-Date: 2021-12-15 14:38+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -21,7 +21,6 @@ msgstr ""
 "Generated-By: Babel 2.9.1\n"
 
 #: ../../source/stack/low_level/conveyor_interface.rst:2
-#: ../../source/stack/low_level/conveyor_interface.rst:18
 msgid "Conveyor Interface"
 msgstr ""
 
@@ -52,7 +51,7 @@ msgstr ""
 #: ../../source/stack/low_level/conveyor_interface.rst:9
 msgid ""
 "of the CAN Conveyor Belt to be able to use it on a TTL port (there is no "
-"CAN port on Ned 2)"
+"CAN port on Ned 2)."
 msgstr ""
 
 #: ../../source/stack/low_level/conveyor_interface.rst:12
@@ -66,35 +65,24 @@ msgstr ""
 #: ../../source/stack/low_level/conveyor_interface.rst:14
 msgid ""
 "Use the correct low level driver according to the hardware version of the"
-" robot"
+" robot."
 msgstr ""
 
 #: ../../source/stack/low_level/conveyor_interface.rst:15
-msgid "Initialize the Conveyor Interface"
+msgid "Initialize the Conveyor Interface."
+msgstr ""
+
+#: ../../source/stack/low_level/conveyor_interface.rst:18
+msgid "Conveyor Interface core"
 msgstr ""
 
 #: ../../source/stack/low_level/conveyor_interface.rst:19
 msgid ""
 "It is integrated to :doc:`niryo_robot_hardware_interface` package Its "
-"purpose is to:"
-msgstr ""
-
-#: ../../source/stack/low_level/conveyor_interface.rst:21
-msgid ""
-"Interface itself with low level drivers (CAN or TTL for Ned and One, TTL "
-"only for Ned2)"
-msgstr ""
-
-#: ../../source/stack/low_level/conveyor_interface.rst:22
-msgid "Initialize conveyor motors parameters."
-msgstr ""
-
-#: ../../source/stack/low_level/conveyor_interface.rst:23
-msgid "Handle the requests from services to set, control or remove the conveyors."
-msgstr ""
-
-#: ../../source/stack/low_level/conveyor_interface.rst:24
-msgid "Publish conveyor states."
+"purpose is to: - Interface itself with low level drivers (CAN or TTL for "
+"Ned and One, TTL only for Ned2) - Initialize conveyor motors parameters. "
+"- Handle the requests from services to set, control or remove the "
+"conveyors. - Publish conveyor states."
 msgstr ""
 
 #: ../../source/stack/low_level/conveyor_interface.rst:26
@@ -224,7 +212,7 @@ msgstr ""
 
 #: ../../source/stack/low_level/conveyor_interface.rst:83
 msgid ""
-":ref:`ConveyorFeedbackArray<source/stack_hardware/conveyor_interface:ConveyorFeedbackArray"
+":ref:`ConveyorFeedbackArray<source/stack/low_level/conveyor_interface:ConveyorFeedbackArray"
 " (Message)>`"
 msgstr ""
 
@@ -246,7 +234,7 @@ msgstr ""
 
 #: ../../source/stack/low_level/conveyor_interface.rst:99
 msgid ""
-":ref:`ControlConveyor<source/stack_hardware/conveyor_interface:ControlConveyor"
+":ref:`ControlConveyor<source/stack/low_level/conveyor_interface:ControlConveyor"
 " (Service)>`"
 msgstr ""
 
@@ -260,7 +248,7 @@ msgstr ""
 
 #: ../../source/stack/low_level/conveyor_interface.rst:102
 msgid ""
-":ref:`SetConveyor<source/stack_hardware/conveyor_interface:SetConveyor "
+":ref:`SetConveyor<source/stack/low_level/conveyor_interface:SetConveyor "
 "(Service)>`"
 msgstr ""
 
@@ -422,5 +410,59 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid "It allows you to control up to two TTL Conveyors at the same time."
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`ControlConveyor<source/stack_hardware/conveyor_interface:ControlConveyor"
+#~ " (Service)>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`SetConveyor<source/stack_hardware/conveyor_interface:SetConveyor"
+#~ " (Service)>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "of the CAN Conveyor Belt to be "
+#~ "able to use it on a TTL port"
+#~ " (there is no CAN port on Ned"
+#~ " 2)"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Use the correct low level driver "
+#~ "according to the hardware version of "
+#~ "the robot"
+#~ msgstr ""
+
+#~ msgid "Initialize the Conveyor Interface"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`ConveyorFeedbackArray<source/stack_hardware/conveyor_interface:ConveyorFeedbackArray"
+#~ " (Message)>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "It is integrated to "
+#~ ":doc:`niryo_robot_hardware_interface` package Its "
+#~ "purpose is to:"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Interface itself with low level drivers"
+#~ " (CAN or TTL for Ned and One,"
+#~ " TTL only for Ned2)"
+#~ msgstr ""
+
+#~ msgid "Initialize conveyor motors parameters."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Handle the requests from services to "
+#~ "set, control or remove the conveyors."
+#~ msgstr ""
+
+#~ msgid "Publish conveyor states."
 #~ msgstr ""
 

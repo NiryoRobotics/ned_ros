@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-14 17:18+0100\n"
+"POT-Creation-Date: 2021-12-15 14:39+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -133,7 +133,7 @@ msgid ":doc:`cpu_interface`"
 msgstr ""
 
 #: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:51
-msgid ":doc:`../../ros/niryo_robot_msgs`"
+msgid ":doc:`../high_level/niryo_robot_msgs`"
 msgstr ""
 
 #: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:56
@@ -158,7 +158,7 @@ msgid "``hardware_status``"
 msgstr ""
 
 #: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:71
-msgid ":ref:`niryo_robot_msgs/HardwareStatus<source/stack/../ros/niryo_robot_msgs:HardwareStatus>`"
+msgid ":ref:`niryo_robot_msgs/HardwareStatus<source/stack/high_level/niryo_robot_msgs:HardwareStatus>`"
 msgstr ""
 
 #: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:72
@@ -170,7 +170,7 @@ msgid "``software_version``"
 msgstr ""
 
 #: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:74
-msgid ":ref:`niryo_robot_msgs/SoftwareVersion<source/stack/../ros/niryo_robot_msgs:SoftwareVersion>`"
+msgid ":ref:`niryo_robot_msgs/SoftwareVersion<source/stack/high_level/niryo_robot_msgs:SoftwareVersion>`"
 msgstr ""
 
 #: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:75
@@ -192,7 +192,7 @@ msgstr ""
 #: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:90
 #: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:93
 #: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:96
-msgid ":ref:`source/stack/../ros/niryo_robot_msgs:Trigger`"
+msgid ":ref:`source/stack/high_level/niryo_robot_msgs:Trigger`"
 msgstr ""
 
 #: ../../source/stack/low_level/niryo_robot_hardware_interface.rst:91
@@ -225,5 +225,29 @@ msgstr ""
 #~ msgstr ""
 
 #~ msgid ":ref:`source/stack/high_level/niryo_robot_msgs:Trigger`"
+#~ msgstr ""
+
+#~ msgid ":doc:`../../ros/niryo_robot_msgs`"
+#~ msgstr ""
+
+#~ msgid ":ref:`niryo_robot_msgs/HardwareStatus<source/stack/../ros/niryo_robot_msgs:HardwareStatus>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`niryo_robot_msgs/SoftwareVersion<source/stack/../ros/niryo_robot_msgs:SoftwareVersion>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`source/stack/../ros/niryo_robot_msgs:Trigger`"
+#~ msgstr ""
+
+#~ msgid ":doc:`../../stack/high_level/niryo_robot_msgs`"
+#~ msgstr ""
+
+#~ msgid ":ref:`niryo_robot_msgs/HardwareStatus<source/stack/../stack/high_level/niryo_robot_msgs:HardwareStatus>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`niryo_robot_msgs/SoftwareVersion<source/stack/../stack/high_level/niryo_robot_msgs:SoftwareVersion>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`source/stack/../stack/high_level/niryo_robot_msgs:Trigger`"
 #~ msgstr ""
 

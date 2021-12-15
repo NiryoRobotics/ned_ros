@@ -45,7 +45,7 @@ Dependencies
 - :wiki_ros:`controller_manager <controller_manager>`
 - :doc:`ttl_driver`
 - :doc:`can_driver`
-- :doc:`../../ros/niryo_robot_msgs`
+- :doc:`../high_level/niryo_robot_msgs`
 
 Services, Topics and Messages
 -------------------------------------------------
@@ -79,11 +79,11 @@ Services
       -  Message Type
       -  Description
    *  -  ``/niryo_robot/joints_interface/calibrate_motors``
-      -  :ref:`source/stack/../ros/niryo_robot_msgs:SetInt`
+      -  :ref:`source/stack/high_level/niryo_robot_msgs:SetInt`
       -  Starst motors calibration - value can be 1 for auto calibration, 2 for manual
    *  -  ``/niryo_robot/joints_interface/request_new_calibration``
-      -  :ref:`source/stack/../ros/niryo_robot_msgs:Trigger`
+      -  :ref:`source/stack/high_level/niryo_robot_msgs:Trigger`
       -  Unsets motors calibration
    *  -  ``niryo_robot/learning_mode/activate``
-      -  :ref:`source/stack/../ros/niryo_robot_msgs:Trigger`
+      -  :ref:`source/stack/high_level/niryo_robot_msgs:Trigger`
       -  Either activates or deactivates learning mode

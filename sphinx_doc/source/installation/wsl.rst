@@ -18,11 +18,11 @@ Install WSL2 [3]_
 
 1. Enable Windows Subsystem for Linux on your machine (in a powershell terminal)
 ::
-    dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
+dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
 
 2. Update WSL to use version 2 (in a powershell terminal)
 ::
-    dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
+dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
 
 3. You then need to restart your machine to finish the WSL install and the upgrade to WSL2.
 
