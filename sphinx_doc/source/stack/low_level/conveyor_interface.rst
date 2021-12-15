@@ -16,7 +16,7 @@ This ROS Node has been conceived to:
 
 Conveyor Interface core
 ----------------------------
-It is integrated to :doc:`niryo_robot_hardware_interface` package
+It is integrated to :doc:`niryo_robot_hardware_interface` package.
 Its purpose is to:
 - Interface itself with low level drivers (CAN or TTL for Ned and One, TTL only for Ned2)
 - Initialize conveyor motors parameters.
