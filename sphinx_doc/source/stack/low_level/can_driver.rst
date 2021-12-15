@@ -35,7 +35,7 @@ Dependencies
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 - :doc:`../third_parties/mcp_can_rpi`
-- :doc:`../high_level/niryo_robot_msgs`
+- :doc:`../../stack/high_level/niryo_robot_msgs`
 - :doc:`common`
 
 

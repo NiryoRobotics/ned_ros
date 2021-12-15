@@ -16,19 +16,21 @@ msgstr ""
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.9.1\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Language: fr\n"
+"X-Source-Language: C\n"
 
 #: ../../source/stack/low_level/can_debug_tools.rst:2
 msgid "CAN Debug Tools"
-msgstr ""
+msgstr "CAN Debug Tools"
 
 #: ../../source/stack/low_level/can_debug_tools.rst:4
 msgid "Parameters"
-msgstr ""
+msgstr "Paramètres"
 
 #: ../../source/stack/low_level/can_debug_tools.rst:7
 msgid "Dependencies"
-msgstr ""
-
+msgstr "Dépendances"

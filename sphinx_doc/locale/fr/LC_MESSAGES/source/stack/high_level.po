@@ -16,21 +16,25 @@ msgstr ""
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.9.1\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Language: fr\n"
+"X-Source-Language: C\n"
 
 #: ../../source/stack/high_level.rst:2
 msgid "High Level Packages"
-msgstr ""
+msgstr "Paquets Haut Niveau"
 
 #: ../../source/stack/high_level.rst:4
 msgid ""
-"In this section, you will have access to all information about each Niryo"
-" Robot's ROS packages developed for High Level interfaces."
+"In this section, you will have access to all information about each Niryo "
+"Robot's ROS packages developed for High Level interfaces."
 msgstr ""
+"Dans cette section, vous aurez accès aux informations concernant chaque "
+"paquet ROS des robots Niryo dédiés aux interfaces Haut Niveau."
 
 #: ../../source/stack/high_level.rst:7
 msgid "Packages Detailed Documentation"
-msgstr ""
-
+msgstr "Documentation Détaillée des Paquets"

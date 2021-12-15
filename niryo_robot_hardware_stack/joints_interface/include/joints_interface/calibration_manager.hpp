@@ -102,6 +102,7 @@ private:
     std::map<uint8_t, CalibrationConfig > _calibration_params_map;
 
     int _calibration_timeout{0};
+    bool _simulation_mode{false};
 
     std::string _calibration_file_name;
     std::string _hardware_version;

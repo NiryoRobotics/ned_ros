@@ -16,7 +16,7 @@
 
 #include "can_driver/abstract_stepper_driver.hpp"
 #include "common/model/stepper_command_type_enum.hpp"
-
+#include <ros/ros.h>
 #include <cassert>
 #include <string>
 #include <utility>
@@ -86,9 +86,9 @@ int AbstractStepperDriver::writeSingleCmd(const std::unique_ptr<common::model::A
                                               cmd->getParams().at(3));
 
             case EStepperCommandType::CMD_TYPE_POSITION_OFFSET:
-                    return sendPositionOffsetCommand(cmd->getId(),
-                                                     cmd->getParams().at(0),
-                                                     cmd->getParams().at(1));
+                return sendPositionOffsetCommand(cmd->getId(),
+                                                    cmd->getParams().at(0),
+                                                    cmd->getParams().at(1));
             case EStepperCommandType::CMD_TYPE_CONVEYOR:
                     return sendConveyorOnCommand(cmd->getId(),
                                                  cmd->getParams().at(0),
