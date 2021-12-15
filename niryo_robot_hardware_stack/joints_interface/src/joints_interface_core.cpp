@@ -309,7 +309,7 @@ bool JointsInterfaceCore::_callbackResetController(niryo_robot_msgs::Trigger::Re
     // {
     _robot->setCommandToCurrentPosition();
     _robot->write(ros::Time::now(), ros::Duration(0.0));
-    _lock_write_cnt = 50;
+    _lock_write_cnt = 100;
     // }
     // else if (_hardware_version == "ned" || _hardware_version == "one")
     // {
@@ -351,7 +351,7 @@ bool JointsInterfaceCore::_callbackCalibrateMotors(niryo_robot_msgs::SetInt::Req
         _enable_control_loop = true;
     }
 
-    return (niryo_robot_msgs::CommandStatus::SUCCESS == result);
+    return true;
 }
 
 /**

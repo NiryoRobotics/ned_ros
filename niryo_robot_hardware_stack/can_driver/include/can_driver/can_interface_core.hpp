@@ -91,6 +91,7 @@ class CanInterfaceCore : public common::util::IDriverCore, public common::util::
         // getters
         int32_t getCalibrationResult(uint8_t id) const override;
         common::model::EStepperCalibrationStatus getCalibrationStatus() const override;
+        void setCalibrationStatus(const common::model::EStepperCalibrationStatus status) override;
 
         std::vector<std::shared_ptr<common::model::JointState> > getJointStates() const override;
         std::shared_ptr<common::model::JointState> getJointState(uint8_t motor_id) const override;
@@ -190,6 +191,17 @@ common::model::EStepperCalibrationStatus
 CanInterfaceCore::getCalibrationStatus() const
 {
     return _can_manager->getCalibrationStatus();
+}
+
+
+/**
+ * @brief CanInterfaceCore::setCalibrationStatus
+ * @return
+ */
+inline
+void CanInterfaceCore::setCalibrationStatus(const common::model::EStepperCalibrationStatus status)
+{
+    _can_manager->setCalibrationStatus(status);
 }
 
 } // CanManager

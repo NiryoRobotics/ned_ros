@@ -77,6 +77,7 @@ public:
     virtual void resetCalibration() = 0;
     virtual int32_t getCalibrationResult(uint8_t id) const = 0;
     virtual common::model::EStepperCalibrationStatus getCalibrationStatus() const = 0;
+    virtual void setCalibrationStatus(const common::model::EStepperCalibrationStatus status) = 0;
 
     virtual void activeDebugMode(bool mode) = 0;
 
