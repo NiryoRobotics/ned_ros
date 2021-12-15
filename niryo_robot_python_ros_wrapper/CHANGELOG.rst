@@ -245,7 +245,6 @@ Forthcoming
 * merging last 5 commits
 * edit doc
 * merge HW stack into v3.2.0. A new branch has been defined for this purpose
-* get_logs in ros_wrapper
 * Merge branch 'refacto_tool_commander' into 'v3.2.0'
   Refacto tool commander
   See merge request `niryo/niryo-one-s/ned_ros_stack!22 <https://gitlab.com/niryo/niryo-one-s/ned_ros_stack/-/merge_requests/22>`_
