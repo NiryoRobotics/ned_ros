@@ -98,7 +98,7 @@ class NiryoRosWrapper:
                                                    ToolGoal)
 
         # database
-        from niryo_robot_database.src.niryo_robot_database.api import DatabaseRosWrapper
+        from niryo_robot_database.api import DatabaseRosWrapper
         self.__database = DatabaseRosWrapper(self.__service_timeout)
 
         if self.__hardware_version == 'ned2':
