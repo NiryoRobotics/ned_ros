@@ -19,7 +19,7 @@ class SystemApiClientNode:
         domain = rospy.get_param('~server_domain')
         port = rospy.get_param('~server_port')
 
-        # TODO remettre prefix
+        # TODO (Justin) prefix?
         prefix = None  # rospy.get_param('~api_prefix')
 
         rospy.logdebug("SystemApiClientNode.init - server_domain: {}".format(domain))
@@ -32,7 +32,10 @@ class SystemApiClientNode:
 
         self.wifi_state_publisher = rospy.Publisher('/niryo_robot/wifi/status', WifiStatus, queue_size=2)
         self.slow_mode = False
-        self.hotspot_timer = rospy.Timer(rospy.Duration(1), self.__publish_hotspot_state_callback)
+        self.slow_mode_timer = rospy.Duration(rospy.get_param('~slow_mode_timer'))
+        self.normal_mode_timer = rospy.Duration(rospy.get_param('~normal_mode_timer'))
+
+        self.hotspot_timer = rospy.Timer(self.normal_mode_timer, self.__publish_hotspot_state_callback)
 
         self.manage_wifi_server = rospy.Service('/niryo_robot/wifi/manage', ManageWifi,
                                                 self.__callback_manage_wifi)
@@ -66,12 +69,13 @@ class SystemApiClientNode:
         if not conn_success:
             self.slow_mode = True
             self.hotspot_timer.shutdown()
-            self.hotspot_timer = rospy.Timer(rospy.Duration(5), self.__publish_hotspot_state_callback)
-
-        if conn_success and self.slow_mode:
+            self.hotspot_timer = rospy.Timer(self.slow_mode_timer,
+                                             self.__publish_hotspot_state_callback)
+        elif self.slow_mode:
             self.slow_mode = False
             self.hotspot_timer.shutdown()
-            self.hotspot_timer = rospy.Timer(rospy.Duration(1), self.__publish_hotspot_state_callback)
+            self.hotspot_timer = rospy.Timer(self.normal_mode_timer,
+                                             self.__publish_hotspot_state_callback)
 
         self.__publish_hotspot_state(conn_success, status)
 
@@ -83,10 +87,8 @@ class SystemApiClientNode:
             msg.status = msg.DISABLED
         elif status['hotspot_state']:
             msg.status = msg.HOTSPOT
-        elif status['connected']:
-            msg.status = msg.CONNECTED
         else:
-            msg.status = msg.DISCONNECTED
+            msg.status = msg.CONNECTED
         try:
             self.wifi_state_publisher.publish(msg)
         except rospy.ROSException:
@@ -133,6 +135,9 @@ class SystemApiClientNode:
             return CommandStatus.SYSTEM_API_CLIENT_REQUEST_FAILED, result
         if not result:
             return CommandStatus.SYSTEM_API_CLIENT_UNKNOWN_ERROR, "Failed to change the ethernet profile"
+
+        conn_success, result = self.client.wifi_state()
+        self.__publish_hotspot_state(conn_success, result)
 
         return status, message
 

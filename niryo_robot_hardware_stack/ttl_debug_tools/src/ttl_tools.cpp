@@ -286,11 +286,11 @@ int TtlTools::getRegisters(std::vector<uint8_t> ids, uint16_t reg_address, std::
 
     for (auto const& id : ids)
     {
-    if (!groupSyncRead.addParam(id))
-    {
-        groupSyncRead.clearParam();
-        return COMM_RX_FAIL;
-    }
+        if (!groupSyncRead.addParam(id))
+        {
+            groupSyncRead.clearParam();
+            return COMM_RX_FAIL;
+        }
     }
 
     dxl_comm_result = groupSyncRead.txRxPacket();

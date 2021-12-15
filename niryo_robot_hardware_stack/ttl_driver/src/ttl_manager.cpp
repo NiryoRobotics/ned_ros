@@ -104,14 +104,25 @@ TtlManager::~TtlManager()
 bool TtlManager::init(ros::NodeHandle& nh)
 {
     // get params from rosparams
-    nh.getParam("simulation_mode", _simulation_mode);
+    bool use_simu_gripper{false};
+    bool use_simu_conveyor{false};
+
     nh.getParam("bus_params/uart_device_name", _device_name);
     nh.getParam("bus_params/baudrate", _baudrate);
     nh.getParam("led_motor", _led_motor_type_cfg);
-    bool use_simu_gripper{false};
-    bool use_simu_conveyor{false};
+
+    nh.getParam("simulation_mode", _simulation_mode);
     nh.getParam("simu_gripper", use_simu_gripper);
     nh.getParam("simu_conveyor", use_simu_conveyor);
+
+    ROS_DEBUG("TtlManager::init - Dxl : set port name (%s), baudrate(%d)", _device_name.c_str(), _baudrate);
+    ROS_DEBUG("TtlManager::init - led motor type config : %s", _led_motor_type_cfg.c_str());
+
+    ROS_DEBUG("TtlManager::init - Simulation mode: %s, simu_gripper: %s, simu_conveyor: %s",
+              _simulation_mode ? "True" : "False",
+              use_simu_gripper ? "True" : "False",
+              use_simu_conveyor ? "True" : "False");
+
 
     if (!_simulation_mode)
     {
@@ -126,9 +137,6 @@ bool TtlManager::init(ros::NodeHandle& nh)
         readFakeConfig(use_simu_gripper, use_simu_conveyor);
         _default_ttl_driver = std::make_shared<MockStepperDriver >(_fake_data);
     }
-
-    ROS_DEBUG("TtlManager::init - Dxl : set port name (%s), baudrate(%d)", _device_name.c_str(), _baudrate);
-    ROS_DEBUG("TtlManager::init - led motor type config : %s", _led_motor_type_cfg.c_str());
 
     return true;
 }
@@ -249,6 +257,7 @@ int TtlManager::addHardwareComponent(std::shared_ptr<common::model::AbstractHard
         }
     }
 
+    setLeds(_led_state);
     return niryo_robot_msgs::CommandStatus::SUCCESS;
 }
 
@@ -562,7 +571,7 @@ bool TtlManager::readJointsStatus()
                 vector<uint8_t> ids_list = _ids_map.at(hw_type);
 
                 // we retrieve all the associated id for the type of the current driver
-                vector<std::array<uint32_t, 2> > data_list;
+                vector<std::array<uint32_t, 2> > data_list{};
 
                 // retrieve joint status
                 if (COMM_SUCCESS == driver->syncReadJointStatus(ids_list, data_list))
@@ -963,7 +972,7 @@ uint8_t TtlManager::readSteppersStatus()
 
                     ss_debug << " => max_status: " << static_cast<int>(max_status);
 
-                    ROS_DEBUG("TtlManager::readCalibrationStatus : %s", ss_debug.str().c_str());
+                    ROS_DEBUG_THROTTLE(2.0, "TtlManager::readCalibrationStatus : %s", ss_debug.str().c_str());
 
                     // see truth table above
                     // timeout is here to prevent being stuck here if retrying calibration when already at the butee (then the system has no time to switch to "in progress"
@@ -1008,7 +1017,7 @@ uint8_t TtlManager::readSteppersStatus()
                     for (size_t i = 0; i < velocity_list.size(); ++i)
                     {
                         uint8_t conveyor_id = _conveyor_list.at(i);
-                        int32_t velocity = static_cast<int32_t>(velocity_list.at(i));
+                        auto velocity = static_cast<int32_t>(velocity_list.at(i));
 
                         if (_state_map.count(conveyor_id))
                         {
@@ -1043,8 +1052,8 @@ uint8_t TtlManager::readSteppersStatus()
         }
     }
 
-    ROS_DEBUG("TtlManager::readCalibrationStatus: _calibration_status: %s", common::model::StepperCalibrationStatusEnum(_calibration_status).toString().c_str());
-    ROS_DEBUG("TtlManager::readCalibrationStatus: _calib_machine_state: %d", static_cast<int>(_calib_machine_state.status()));
+    ROS_DEBUG_THROTTLE(2.0, "TtlManager::readCalibrationStatus: _calibration_status: %s", common::model::StepperCalibrationStatusEnum(_calibration_status).toString().c_str());
+    ROS_DEBUG_THROTTLE(2.0, "TtlManager::readCalibrationStatus: _calib_machine_state: %d", static_cast<int>(_calib_machine_state.status()));
 
     return hw_errors_increment;
 }
@@ -1110,6 +1119,7 @@ int TtlManager::getAllIdsOnBus(vector<uint8_t> &id_list)
  */
 int TtlManager::setLeds(int led)
 {
+    _led_state = led;
     int ret = niryo_robot_msgs::CommandStatus::TTL_WRITE_ERROR;
 
     EHardwareType mType = HardwareTypeEnum(_led_motor_type_cfg.c_str());
@@ -1189,9 +1199,9 @@ int TtlManager::sendCustomCommand(uint8_t id, int reg_address, int value,  int b
     }
     else
     {
-      ROS_ERROR_THROTTLE(1, "TtlManager::sendCustomCommand - driver for motor id %d unknown",
-                         static_cast<int>(id));
-      result = niryo_robot_msgs::CommandStatus::WRONG_MOTOR_TYPE;
+        ROS_ERROR_THROTTLE(1, "TtlManager::sendCustomCommand - driver for motor id %d unknown",
+                            static_cast<int>(id));
+        result = niryo_robot_msgs::CommandStatus::WRONG_MOTOR_TYPE;
     }
 
     ros::Duration(0.005).sleep();
@@ -1224,7 +1234,7 @@ int TtlManager::readCustomCommand(uint8_t id, int32_t reg_address, int& value, i
                                                             static_cast<uint8_t>(byte_number),
                                                             id,
                                                             data);
-            int32_t data_conv = static_cast<int32_t>(data);
+            auto data_conv = static_cast<int32_t>(data);
             value = data_conv;
 
             if (result != COMM_SUCCESS)
@@ -1533,8 +1543,8 @@ int TtlManager::writeSingleCommand(std::unique_ptr<common::model::AbstractTtlSin
         }
         else
         {
-            ROS_DEBUG("TtlManager::writeSingleCommand: command is sent to a removed hardware component. Skipped");
-            result = COMM_SUCCESS;
+            ROS_DEBUG("TtlManager::writeSingleCommand: command is sent to a removed hardware component. Skipped or write to a unknow device");
+            result = COMM_TX_ERROR;
         }
     }
 
@@ -1550,7 +1560,6 @@ int TtlManager::writeSingleCommand(std::unique_ptr<common::model::AbstractTtlSin
 /**
  * @brief TtlManager::executeJointTrajectoryCmd
  * @param cmd_vec
- * TODO(CC) to be refacto
  */
 void TtlManager::executeJointTrajectoryCmd(std::vector<std::pair<uint8_t, uint32_t> > cmd_vec)
 {
@@ -1602,10 +1611,8 @@ void TtlManager::startCalibration()
     if (_ids_map.count(EHardwareType::STEPPER))
         stepper_list = _ids_map.at(EHardwareType::STEPPER);
 
-    for (size_t i = 0; i < stepper_list.size(); ++i)
+    for (auto const& id : stepper_list)
     {
-        uint8_t id = stepper_list.at(i);
-
         if (_state_map.count(id))
         {
             auto stepperState = std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(id));
@@ -1632,10 +1639,8 @@ void TtlManager::resetCalibration()
     if (_ids_map.count(EHardwareType::STEPPER))
         stepper_list = _ids_map.at(EHardwareType::STEPPER);
 
-    for (size_t i = 0; i < stepper_list.size(); ++i)
+    for (auto const id : stepper_list)
     {
-        uint8_t id = stepper_list.at(i);
-
         if (_state_map.count(id))
         {
             auto stepperState = std::dynamic_pointer_cast<StepperMotorState>(_state_map.at(id));

@@ -130,6 +130,7 @@ class JointsInterfaceCore : common::util::IInterfaceCore
  * @brief JointsInterfaceCore::needCalibration
  * @return
  */
+inline
 bool JointsInterfaceCore::needCalibration() const
 {
     return _robot->needCalibration();
@@ -139,6 +140,7 @@ bool JointsInterfaceCore::needCalibration() const
  * @brief JointsInterfaceCore::isCalibrationInProgress
  * @return
  */
+inline
 bool JointsInterfaceCore::isCalibrationInProgress() const
 {
     return _robot->isCalibrationInProgress();

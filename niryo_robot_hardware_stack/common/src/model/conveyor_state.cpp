@@ -147,8 +147,8 @@ std::string ConveyorState::str() const
     ss << "ConveyorState : ";
 
     ss << "state: " << (_state ? "true" : "false")
-       << "speed: " << _speed
-       << "direction: " << _goal_direction;
+       << ", speed: " << _speed
+       << ", direction: " << static_cast<int>(_goal_direction);
 
     ss << "\n---\n";
     ss << "\n";

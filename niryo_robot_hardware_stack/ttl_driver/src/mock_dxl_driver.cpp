@@ -235,8 +235,12 @@ int MockDxlDriver::readMaxPosition(uint8_t id, uint32_t &pos)
  */
 int MockDxlDriver::writeTorqueEnable(uint8_t id, uint8_t torque_enable)
 {
-    (void)id;  // unused
-    (void)torque_enable;  // unused
+    if (_fake_data->dxl_registers.count(id))
+        _fake_data->dxl_registers.at(id).torque = torque_enable;
+    else if (_fake_data->stepper_registers.count(id))
+        _fake_data->stepper_registers.at(id).torque = torque_enable;
+    else
+        return COMM_TX_ERROR;
 
     return COMM_SUCCESS;
 }
@@ -297,16 +301,15 @@ int MockDxlDriver::writeVelocityProfile(uint8_t id, const std::vector<uint32_t>&
  */
 int MockDxlDriver::syncWriteTorqueEnable(const std::vector<uint8_t> &id_list, const std::vector<uint8_t> &torque_enable_list)
 {
-    (void)torque_enable_list;  // unused
-
     // Create a map to store the frequency of each element in vector
     std::set<uint8_t> countSet;
     // Iterate over the vector and store the frequency of each element in map
-    for (auto & id : id_list)
+    for (size_t i = 0; i < id_list.size(); i++)
     {
-        auto result = countSet.insert(id);
+        auto result = countSet.insert(id_list.at(i));
         if (!result.second)
             return GROUP_SYNC_REDONDANT_ID;  // redondant id
+        writeTorqueEnable(id_list.at(i), torque_enable_list.at(i));
     }
     return COMM_SUCCESS;
 }
@@ -443,15 +446,15 @@ int MockDxlDriver::readVoltage(uint8_t id, double& voltage)
 /**
  * @brief MockDxlDriver::readHwErrorStatus
  * @param id
- * @param hardware_status
+ * @param hardware_error_status
  * @return
  */
-int MockDxlDriver::readHwErrorStatus(uint8_t id, uint8_t& hardware_status)
+int MockDxlDriver::readHwErrorStatus(uint8_t id, uint8_t& hardware_error_status)
 {
     if (_fake_data->dxl_registers.count(id))
       return COMM_RX_FAIL;
 
-    hardware_status = 0;
+    hardware_error_status = 0;
     return COMM_SUCCESS;
 }
 
@@ -519,21 +522,21 @@ int MockDxlDriver::syncReadJointStatus(const std::vector<uint8_t> &id_list, std:
     {
         if (_fake_data->dxl_registers.count(id))
         {
-            std::array<uint32_t, 2> blocks;
+            std::array<uint32_t, 2> blocks{};
 
             blocks.at(0) = _fake_data->dxl_registers.at(id).velocity;
             blocks.at(1) = _fake_data->dxl_registers.at(id).position;
 
-            data_array_list.emplace_back(std::move(blocks));
+            data_array_list.emplace_back(blocks);
         }
         else if (_fake_data->stepper_registers.count(id))
         {
-            std::array<uint32_t, 2> blocks;
+            std::array<uint32_t, 2> blocks{};
 
             blocks.at(0) = _fake_data->stepper_registers.at(id).velocity;
             blocks.at(1) = _fake_data->stepper_registers.at(id).position;
 
-            data_array_list.emplace_back(std::move(blocks));
+            data_array_list.emplace_back(blocks);
         }
         else
             return COMM_RX_FAIL;

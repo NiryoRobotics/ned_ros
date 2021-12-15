@@ -49,6 +49,7 @@
   <exec_depend>niryo_moveit_config_standalone</exec_depend>
 
   <test_depend>rostest</test_depend>
+  <test_depend>code_coverage</test_depend>
   <test_depend>python-catkin-lint</test_depend>
   <test_depend>roslint</test_depend>
 </package>

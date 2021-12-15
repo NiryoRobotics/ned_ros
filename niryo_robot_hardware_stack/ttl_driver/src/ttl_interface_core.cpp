@@ -582,19 +582,18 @@ void TtlInterfaceCore::controlLoop()
 
                     if (bus_state == TTL_SCAN_OK)
                         break;
-                    else
-                    {
-                        missing_ids = getRemovedMotorList();
 
-                        std::string msg;
-                        msg += "TtlInterfaceCore::controlLoop - motor";
-                        for (auto const& id : missing_ids)
-                        {
-                            msg += " " + std::to_string(id);
-                        }
-                        msg += " do not seem to be connected";
-                        ROS_WARN_THROTTLE(1.0, "%s", msg.c_str());
+                    missing_ids = getRemovedMotorList();
+
+                    std::string msg;
+                    msg += "TtlInterfaceCore::controlLoop - motor";
+                    for (auto const& id : missing_ids)
+                    {
+                        msg += " " + std::to_string(id);
                     }
+                    msg += " do not seem to be connected";
+                    ROS_WARN_THROTTLE(1.0, "%s", msg.c_str());
+
                     // still keep hardware status updated
                     _ttl_manager->readHardwareStatus();
                     ros::Duration(0.25).sleep();
@@ -640,6 +639,9 @@ void TtlInterfaceCore::controlLoop()
         {
             ros::Duration(0.5).sleep();
         }
+
+        // essential to allow publishers and subscribers to do their job
+        ros::spinOnce();
     }
 }
 
@@ -667,7 +669,6 @@ void TtlInterfaceCore::_executeCommand()
     if (!_conveyor_cmds_queue.empty())
     {
         std::lock_guard<std::mutex> lock(_conveyor_cmd_queue_mutex);
-
         if (_need_sleep)
             ros::Duration(0.001).sleep();
         _ttl_manager->writeSingleCommand(std::move(_conveyor_cmds_queue.front()));
@@ -1035,7 +1036,9 @@ bool TtlInterfaceCore::_callbackActivateLeds(niryo_robot_msgs::SetInt::Request &
 
     res.status = result;
     res.message = message;
-    return (niryo_robot_msgs::CommandStatus::SUCCESS == result);
+
+    // return response even request failed
+    return true;
 }
 
 
@@ -1069,7 +1072,7 @@ bool TtlInterfaceCore::_callbackReadCustomValue(ttl_driver::ReadCustomValue::Req
     }
 
     res.status = result;
-    return (niryo_robot_msgs::CommandStatus::SUCCESS == result);
+    return true;
 }
 
 /**
@@ -1101,7 +1104,7 @@ bool TtlInterfaceCore::_callbackWriteCustomValue(ttl_driver::WriteCustomValue::R
     }
 
     res.status = result;
-    return (niryo_robot_msgs::CommandStatus::SUCCESS == result);
+    return true;
 }
 
 /**
@@ -1148,7 +1151,7 @@ bool TtlInterfaceCore::_callbackReadPIDValue(ttl_driver::ReadPIDValue::Request &
 
     res.status = result;
 
-    return (niryo_robot_msgs::CommandStatus::SUCCESS == result);
+    return true;
 }
 
 /**
@@ -1175,7 +1178,7 @@ bool TtlInterfaceCore::_callbackWritePIDValue(ttl_driver::WritePIDValue::Request
 
     res.status = result;
 
-    return (niryo_robot_msgs::CommandStatus::SUCCESS == result);
+    return true;
 }
 
 /**
@@ -1223,7 +1226,7 @@ bool TtlInterfaceCore::_callbackReadVelocityProfile(ttl_driver::ReadVelocityProf
 
     res.status = result;
 
-    return (niryo_robot_msgs::CommandStatus::SUCCESS == result);
+    return true;
 }
 
 /**
@@ -1255,7 +1258,7 @@ bool TtlInterfaceCore::_callbackWriteVelocityProfile(ttl_driver::WriteVelocityPr
 
   res.status = result;
 
-  return (niryo_robot_msgs::CommandStatus::SUCCESS == result);
+  return true;
 }
 
 void TtlInterfaceCore::_publishCollisionStatus(const ros::TimerEvent&)

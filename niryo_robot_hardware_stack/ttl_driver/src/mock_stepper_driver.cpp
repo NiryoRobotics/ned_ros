@@ -25,6 +25,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 #include <vector>
 #include <algorithm>
 #include <set>
+#include <ros/ros.h>
 
 namespace ttl_driver
 {
@@ -403,12 +404,12 @@ int MockStepperDriver::readVoltage(uint8_t id, double &voltage)
 /**
  * @brief MockStepperDriver::readHwErrorStatus
  * @param id
- * @param hardware_status
+ * @param hardware_error_status
  * @return
  */
-int MockStepperDriver::readHwErrorStatus(uint8_t /*id*/, uint8_t& hardware_status)
+int MockStepperDriver::readHwErrorStatus(uint8_t /*id*/, uint8_t& hardware_error_status)
 {
-    hardware_status = 0;
+    hardware_error_status = 0;
     return COMM_SUCCESS;
 }
 
@@ -482,21 +483,21 @@ int MockStepperDriver::syncReadJointStatus(const std::vector<uint8_t> &id_list,
     {
         if (_fake_data->stepper_registers.count(id))
         {
-            std::array<uint32_t, 2> blocks;
+            std::array<uint32_t, 2> blocks{};
 
             blocks.at(0) = _fake_data->stepper_registers.at(id).velocity;
             blocks.at(1) = _fake_data->stepper_registers.at(id).position;
 
-            data_array_list.emplace_back(std::move(blocks));
+            data_array_list.emplace_back(blocks);
         }
         else if (_fake_data->dxl_registers.count(id))
         {
-            std::array<uint32_t, 2> blocks;
+            std::array<uint32_t, 2> blocks{};
 
             blocks.at(0) = _fake_data->dxl_registers.at(id).velocity;
             blocks.at(1) = _fake_data->dxl_registers.at(id).position;
 
-            data_array_list.emplace_back(std::move(blocks));
+            data_array_list.emplace_back(blocks);
         }
         else
             return COMM_RX_FAIL;

@@ -29,7 +29,7 @@ class LedRingAnimations:
         self.LED_FREQ_HZ = rospy.get_param('~led_freq_hs')  # LED signal frequency in hertz (usually 800khz)
         self.LED_DMA = rospy.get_param('~led_dma')  # DMA channel to use for generating signal (try 10)
         self.LED_BRIGHTNESS = rospy.get_param(
-            '~led_brightness')  # Set to 0 for darkest and 255 for brightest # TODO : add a service to change brightness
+            '~led_brightness')  # Set to 0 for darkest and 255 for brightest
         self.LED_INVERT = rospy.get_param(
             '~led_invert')  # True to invert the signal (when using NPN transistor level shift)
         self.LED_CHANNEL = rospy.get_param('~led_channel')

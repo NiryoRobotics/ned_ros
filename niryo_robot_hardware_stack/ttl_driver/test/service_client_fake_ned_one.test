@@ -1,0 +1,23 @@
+<?xml version="1.0" ?>
+<launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+    <arg name="hardware_version" default="ned"/>
+    <arg name="simulation_mode" default="true"/>
+
+    <!-- launch the ttl_driver_node node using ttl_driver_node executable from ttl_driver package -->
+    <include file="$(find ttl_driver)/launch/ttl_driver.launch" >
+        <arg name="hardware_version" value="$(arg hardware_version)" />
+        <arg name="simulation_mode" value="$(arg simulation_mode)" />
+    </include>
+
+    <include file="$(find joints_interface)/launch/joints_interface_base.launch.xml" >
+        <arg name="hardware_version" value="$(arg hardware_version)" />
+        <arg name="simulation_mode" value="$(arg simulation_mode)" />
+    </include>
+        
+    <test test-name="ttl_driver_integration_tests" pkg="ttl_driver"  type="ttl_driver_integration_tests">
+        <param name="simulation_mode" value="$(arg simulation_mode)"/>
+    </test>
+
+</launch>
+

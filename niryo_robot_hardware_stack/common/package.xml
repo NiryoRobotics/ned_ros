@@ -21,6 +21,7 @@
 
   <exec_depend>roscpp</exec_depend>
 
+  <test_depend>code_coverage</test_depend>
   <test_depend>python-catkin-lint</test_depend>
   <test_depend>roslint</test_depend>
 </package>

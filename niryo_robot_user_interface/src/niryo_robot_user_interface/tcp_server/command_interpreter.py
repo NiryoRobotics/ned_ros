@@ -511,18 +511,22 @@ class CommandInterpreter:
         return self.__send_answer()
 
     # - Gripper
-    @check_nb_args(1)
-    def __open_gripper(self, speed):
+    @check_nb_args(3)
+    def __open_gripper(self, speed, max_troque_percentage, hold_torque_percentage):
         self.__check_type(speed, int)
+        self.__check_type(max_troque_percentage, int)
+        self.__check_type(hold_torque_percentage, int)
 
-        self.__niryo_robot.open_gripper(speed)
+        self.__niryo_robot.open_gripper(speed, max_troque_percentage, hold_torque_percentage)
         return self.__send_answer()
 
-    @check_nb_args(1)
-    def __close_gripper(self, speed):
+    @check_nb_args(3)
+    def __close_gripper(self, speed, max_troque_percentage, hold_torque_percentage):
         self.__check_type(speed, int)
+        self.__check_type(max_troque_percentage, int)
+        self.__check_type(hold_torque_percentage, int)
 
-        self.__niryo_robot.close_gripper(speed)
+        self.__niryo_robot.close_gripper(speed, max_troque_percentage, hold_torque_percentage)
         return self.__send_answer()
 
     # - Vacuum
@@ -607,18 +611,6 @@ class CommandInterpreter:
         return self.__send_answer()
 
     @check_nb_args(2)
-    def __analog_write(self, pin_string, voltage):
-        self.__check_instance(voltage, (float, int))
-
-        self.__niryo_robot.analog_write(pin_string, voltage)
-        return self.__send_answer()
-
-    @check_nb_args(1)
-    def __analog_read(self, pin_string):
-        digital_state = self.__niryo_robot.analog_read(pin_string)
-        return self.__send_answer(self.__digital_state_string_dict_convertor_inv[digital_state])
-
-    @check_nb_args(2)
     def __digital_write(self, pin_string, state_string):
         state = self.__check_and_get_from_dict(state_string, self.__digital_state_string_dict_convertor)
         self.__niryo_robot.digital_write(pin_string, state)
@@ -648,6 +640,17 @@ class CommandInterpreter:
                                 digital_io_state_array.modes[counter],
                                 digital_io_state_array.states[counter]])
         return self.__send_answer(*data_answer)
+
+    @check_nb_args(2)
+    def __analog_write(self, pin_string, voltage):
+        self.__check_instance(voltage, (float, int))
+        self.__niryo_robot.analog_write(pin_string, voltage)
+        return self.__send_answer()
+
+    @check_nb_args(1)
+    def __analog_read(self, pin_string):
+        analog_state = self.__niryo_robot.analog_read(pin_string)
+        return self.__send_answer(analog_state)
 
     # - Conveyor
     @check_nb_args(0)
@@ -798,7 +801,7 @@ class CommandInterpreter:
         wait = self.__check_and_get_from_dict(wait, self.__boolean_string_dict_converter)
         color = self.__check_color_led_ring(color)
         self.__niryo_robot.led_ring_solid(color, wait)
-        return self.__send_answer()  # TODO : should we return something ?
+        return self.__send_answer()
 
     @check_nb_args(1)
     def __led_ring_turn_off(self, wait):

@@ -153,12 +153,10 @@ bool JointHardwareInterface::init(ros::NodeHandle& /*rootnh*/, ros::NodeHandle &
                             ROS_INFO("JointHardwareInterface::init - add stepper joint success");
                             break;
                         }
-                        else
-                        {
-                          ROS_WARN("JointHardwareInterface::init - "
-                                   "initialize stepper joint failure, return : %d. Retrying (%d)...",
-                                   result, tries);
-                        }
+
+                        ROS_WARN("JointHardwareInterface::init - "
+                                 "initialize stepper joint failure, return : %d. Retrying (%d)...",
+                                 result, tries);
                     }
                     else
                     {
@@ -216,12 +214,10 @@ bool JointHardwareInterface::init(ros::NodeHandle& /*rootnh*/, ros::NodeHandle &
                             ROS_INFO("JointHardwareInterface::init - add dxl joint success");
                             break;
                         }
-                        else
-                        {
-                            ROS_WARN("JointHardwareInterface::init - "
-                                     "init dxl joint failure, return : %d. Retrying (%d)...",
-                                     result, tries);
-                        }
+
+                        ROS_WARN("JointHardwareInterface::init - "
+                                 "init dxl joint failure, return : %d. Retrying (%d)...",
+                                 result, tries);
                     }
                     else
                     {
@@ -536,24 +532,24 @@ bool JointHardwareInterface::rebootAll(bool torque_on)
     _ttl_interface->waitSingleQueueFree();
 
     bool res = true;
-    for (auto state : _joint_state_list)
+    for (auto const& jState : _joint_state_list)
     {
-        if (state->getBusProtocol() == EBusProtocol::TTL)
+        if (jState->getBusProtocol() == EBusProtocol::TTL)
         {
             // first set torque off
-            if (state->isStepper())
+            if (jState->isStepper())
                 _ttl_interface->addSingleCommandToQueue(std::make_unique<StepperTtlSingleCmd>(EStepperCommandType::CMD_TYPE_TORQUE,
-                                                                                state->getId(), std::initializer_list<uint32_t>{false}));
+                                                                                jState->getId(), std::initializer_list<uint32_t>{false}));
 
             ros::Duration(0.2).sleep();
 
-            if (_ttl_interface->rebootHardware(state))
+            if (_ttl_interface->rebootHardware(jState))
             {
-                initHardware(state, torque_on);
+                initHardware(jState, torque_on);
             }
             else
             {
-                ROS_ERROR("Fail to reboot motor id %d", state->getId());
+                ROS_ERROR("Fail to reboot motor id %d", jState->getId());
                 res = false;
             }
         }
@@ -569,7 +565,7 @@ bool JointHardwareInterface::rebootAll(bool torque_on)
  * @param torque_on
  * initializes all joints
  */
-int JointHardwareInterface::initHardware(std::shared_ptr<common::model::JointState> motor_state, bool torque_on)
+int JointHardwareInterface::initHardware(const std::shared_ptr<common::model::JointState>& motor_state, bool torque_on)
 {
     ROS_DEBUG("TtlInterfaceCore::initHardware");
 

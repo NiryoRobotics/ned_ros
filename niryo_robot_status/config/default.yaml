@@ -1,3 +1,5 @@
+check_nodes_frequency: 0.2
+
 node_logs:
  - '/niryo_robot_hardware_interface'
  - '/move_group'
