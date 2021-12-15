@@ -7,6 +7,12 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
 )
 
+add_service_files(
+  DIRECTORY srv
+  FILES
+  CheckConnection.srv
+)
+
 # enable python module support
 catkin_python_setup()
 

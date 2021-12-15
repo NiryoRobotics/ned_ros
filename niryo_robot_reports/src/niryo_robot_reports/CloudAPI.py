@@ -1,6 +1,7 @@
 import json
 
 import requests
+import rospy
 
 
 class CloudAPI:
@@ -23,17 +24,19 @@ class CloudAPI:
         return self
 
     @property
-    def test_report(self):
+    def test_reports(self):
         self.__url = self.__base_url + self.__TEST_PATH
         return self
 
     def ping(self):
         route = '/ping'
         response = requests.get(self.__url + route, headers=self.__headers)
+        rospy.logdebug('Cloud API responded with code: {}'.format(response.status_code))
         return response.status_code == 200
 
     def send(self, payload):
         response = requests.post(
             self.__url, headers=self.__headers, json=payload
         )
+        rospy.logdebug('Cloud API responded with code: {}'.format(response.status_code))
         return response.status_code == 200

@@ -14,6 +14,7 @@ from niryo_robot_msgs.msg import CommandStatus
 
 # srv
 from niryo_robot_database.srv import GetSettings, GetAllByType, AddFilePath, RmFilePath
+from niryo_robot_reports.srv import CheckConnection
 
 
 class ReportsNode:
@@ -31,7 +32,7 @@ class ReportsNode:
         if get_serial_number_response.status != get_api_key_response.status != 200:
             rospy.logerr('Unable to fetch either the serial number or the api key')
 
-        cloud_api = CloudAPI(
+        self.__cloud_api = CloudAPI(
             cloud_domain, get_serial_number_response.value,
             get_api_key_response.value
         )
@@ -55,13 +56,25 @@ class ReportsNode:
             '/niryo_robot_database/file_paths/rm', RmFilePath
         )
 
-        DailyReportHandler(cloud_api, reports_path, add_report_db, rm_report_db, get_all_files_paths)
-        TestReportHandler(cloud_api, reports_path, add_report_db, rm_report_db, get_all_files_paths)
+        DailyReportHandler(self.__cloud_api, reports_path, add_report_db, rm_report_db, get_all_files_paths)
+        TestReportHandler(self.__cloud_api, reports_path, add_report_db, rm_report_db, get_all_files_paths)
+
+        rospy.Service('~check_connection', CheckConnection, self.__check_connection_callback)
 
         # Set a bool to mentioned this node is initialized
         rospy.set_param('~initialized', True)
 
         rospy.logdebug("Reports Node - Node Started")
+
+    def __check_connection_callback(self, req):
+        if req.service == 'test_reports':
+            success = self.__cloud_api.test_reports.ping()
+        elif req.service == 'daily_reports':
+            success = self.__cloud_api.daily_reports.ping()
+        else:
+            return CommandStatus.REPORTS_SERVICE_UNREACHABLE, False
+
+        return CommandStatus.SUCCESS, success
 
 
 if __name__ == "__main__":
