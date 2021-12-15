@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-12-15 12:28+0100\n"
+"POT-Creation-Date: 2021-12-15 18:18+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -93,7 +93,6 @@ msgid "Hardware Type Enum inheritance graph"
 msgstr "Graphe d'héritage de Hardware Type Enum"
 
 #: ../../source/stack/low_level/common.rst:38
-#: ../../source/stack/low_level/common.rst:50
 msgid "Commands"
 msgstr "Commandes"
 
@@ -106,6 +105,10 @@ msgstr ""
 "Classes représentant les commandes simple et synchrones, pour les steppers "
 "et les dynamixels. Elles sont nécessaires pour leur utilisation au sein des "
 "queues de commandes des packages ttl_driver et can_driver."
+
+#: ../../source/stack/low_level/common.rst:50
+msgid "Commands graphs"
+msgstr "Graph des Commandes"
 
 #: ../../source/stack/low_level/common.rst:55
 msgid "|picSingle|"
