@@ -68,19 +68,19 @@ msgstr ""
 "réel à disposition, vous pouvez toujours el simuler via la section "
 ":doc:`source/simulation`."
 
-#: ../../index.rst:40
+#: ../../index.rst:39
 msgid "Ned Control via ROS"
 msgstr "Contrôler Ned via ROS"
 
-#: ../../index.rst:42
+#: ../../index.rst:41
 msgid "Ned is fully based on ROS."
 msgstr "Ned est entièrement basé sur ROS."
 
-#: ../../index.rst:45
+#: ../../index.rst:44
 msgid "ROS Direct control"
 msgstr "Contrôle direct du Ned avec ROS"
 
-#: ../../index.rst:48
+#: ../../index.rst:47
 msgid ""
 "To control the robot directly with ROS, you will need either to be connected "
 "in SSH to the physic robot, or to use the simulation."
@@ -92,7 +92,7 @@ msgstr ""
 msgid "ROS is the most direct way to control the robot. It allows you to:"
 msgstr "ROS est le moyen le plus direct de contrôler le robot. Il permet :"
 
-#: ../../index.rst:53
+#: ../../index.rst:52
 msgid ""
 "Send command via the terminal in order to call services, trigger action, ..."
 msgstr ""
@@ -113,11 +113,11 @@ msgstr ""
 "Se diriger vers la section :doc:`ROS <source/stack/high_level>` pour voir "
 "tous les Topics et Services disponibles."
 
-#: ../../index.rst:59
+#: ../../index.rst:58
 msgid "Python ROS Wrapper"
 msgstr "Python ROS Wrapper"
 
-#: ../../index.rst:61
+#: ../../index.rst:60
 msgid ""
 "To use Python ROS Wrapper, you will need either to be connected in SSH to "
 "the physic robot, or to use the simulation."
@@ -125,7 +125,7 @@ msgstr ""
 "Pour utiliser Python ROS Wrapper, il faut être connecté en SSH au robot "
 "physique, ou alors utiliser la simulation."
 
-#: ../../index.rst:64
+#: ../../index.rst:63
 msgid ""
 "The Python ROS Wrapper is built on top of ROS to allow a faster development "
 "than ROS. Programs are run directly on the robot which allows to trigger "
@@ -136,7 +136,7 @@ msgstr ""
 "ce qui permet de les déclencher avec le bouton du robot une fois qu’un "
 "ordinateur n’est plus nécessaire."
 
-#: ../../index.rst:68
+#: ../../index.rst:67
 msgid ""
 "See :doc:`Python ROS Wrapper <source/ros_wrapper>` to see which functions "
 "are accessible and examples on how to use them."
@@ -145,11 +145,11 @@ msgstr ""
 "<source/ros_wrapper>` pour voir les fonctions accessibles et des exemples "
 "d’utilisation."
 
-#: ../../index.rst:72
+#: ../../index.rst:71
 msgid "More ways"
 msgstr "Autres alternatives"
 
-#: ../../index.rst:74
+#: ../../index.rst:73
 msgid ""
 "Other methods are available to control the robot allowing the user to code "
 "and run programs outside his terminal."
@@ -158,7 +158,7 @@ msgstr ""
 "l'utilisateur de coder et d'exécuter des programmes en dehors de son "
 "terminal."
 
-#: ../../index.rst:77
+#: ../../index.rst:76
 msgid "Learn more on this :doc:`section <source/more>`."
 msgstr "En savoir plus sur cette :doc:`section <source/more>`."
 

@@ -54,19 +54,19 @@ msgid ""
 "via the :doc:`source/simulation` section."
 msgstr ""
 
-#: ../../index.rst:40
+#: ../../index.rst:39
 msgid "Ned Control via ROS"
 msgstr ""
 
-#: ../../index.rst:42
+#: ../../index.rst:41
 msgid "Ned is fully based on ROS."
 msgstr ""
 
-#: ../../index.rst:45
+#: ../../index.rst:44
 msgid "ROS Direct control"
 msgstr ""
 
-#: ../../index.rst:48
+#: ../../index.rst:47
 msgid ""
 "To control the robot directly with ROS, you will need either to be "
 "connected in SSH to the physic robot, or to use the simulation."
@@ -76,7 +76,7 @@ msgstr ""
 msgid "ROS is the most direct way to control the robot. It allows you to:"
 msgstr ""
 
-#: ../../index.rst:53
+#: ../../index.rst:52
 msgid ""
 "Send command via the terminal in order to call services, trigger action, "
 "..."
@@ -92,17 +92,17 @@ msgid ""
 "Services available."
 msgstr ""
 
-#: ../../index.rst:59
+#: ../../index.rst:58
 msgid "Python ROS Wrapper"
 msgstr ""
 
-#: ../../index.rst:61
+#: ../../index.rst:60
 msgid ""
 "To use Python ROS Wrapper, you will need either to be connected in SSH to"
 " the physic robot, or to use the simulation."
 msgstr ""
 
-#: ../../index.rst:64
+#: ../../index.rst:63
 msgid ""
 "The Python ROS Wrapper is built on top of ROS to allow a faster "
 "development than ROS. Programs are run directly on the robot which allows"
@@ -110,23 +110,23 @@ msgid ""
 "needed."
 msgstr ""
 
-#: ../../index.rst:68
+#: ../../index.rst:67
 msgid ""
 "See :doc:`Python ROS Wrapper <source/ros_wrapper>` to see which functions"
 " are accessible and examples on how to use them."
 msgstr ""
 
-#: ../../index.rst:72
+#: ../../index.rst:71
 msgid "More ways"
 msgstr ""
 
-#: ../../index.rst:74
+#: ../../index.rst:73
 msgid ""
 "Other methods are available to control the robot allowing the user to "
 "code and run programs outside his terminal."
 msgstr ""
 
-#: ../../index.rst:77
+#: ../../index.rst:76
 msgid "Learn more on this :doc:`section <source/more>`."
 msgstr ""
 
