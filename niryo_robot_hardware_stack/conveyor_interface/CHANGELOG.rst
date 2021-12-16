@@ -308,7 +308,7 @@ Forthcoming
 * refactorize calibration
 * add interface IDriverCore. Add queue to StepperDriver
 * join StepperMotorEnum and DxlMotorEnum into MotorEnum; simplify jointInterface
-* corrections for shared_ptr, unique_ptr, adding reallyAsync method in util, remove dependancy of jointInterface to drivers
+* corrections for shared_ptr, unique_ptr, adding reallyAsync method in util, remove dependency of jointInterface to drivers
 * adding a common lib with model and utils subdirs. All classes refering to a State, a Cmd, an enum have been moved into model. Created a new enum structure, based on the CRTP design pattern
 * bugs corrections on dynamixel driver
 * adding logger configuration file in niryo_robot_bringup

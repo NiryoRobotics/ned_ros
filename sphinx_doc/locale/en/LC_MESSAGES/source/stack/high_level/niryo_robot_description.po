@@ -6,12 +6,13 @@
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
-#, fuzzy
+
+
 msgid ""
 msgstr ""
-"Project-Id-Version: Ned ROS Documentation v3.2\n"
+"Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-22 17:37+0200\n"
+"POT-Creation-Date: 2021-08-13 09:42+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,22 +21,31 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.9.1\n"
 
-#: ../../source/stack/high_level/niryo_robot_description.rst:2
+#: ../../source/ros/niryo_robot_description.rst:2
 msgid "Niryo_robot_description"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_description.rst:4
+#: ../../source/ros/niryo_robot_description.rst:4
 msgid "This package contains URDF files and meshes (collada + stl) for Ned."
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_description.rst:6
+#: ../../source/ros/niryo_robot_description.rst:6
 msgid "To display Ned on Rviz: ::"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_description.rst:12
+#: ../../source/ros/niryo_robot_description.rst:11
 msgid ""
 "**Note** : 3D visualization is not available on Ned Raspberry Pi4 image. "
 "To use the following commands, you must have setup Ned ros stack on your "
 "computer."
 msgstr ""
+
+#~ msgid "Niryo Robot Description Package"
+#~ msgstr ""
+
+#~ msgid "To display Ned on Rviz ::"
+#~ msgstr ""
+
+#~ msgid "Niryo robot description package"
+#~ msgstr ""
 

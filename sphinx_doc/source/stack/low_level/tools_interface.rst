@@ -72,12 +72,18 @@ Services
    *  -  ``niryo_robot/tools/ping_and_set_dxl_tool``
       -  :ref:`tools_interface/PingDxlTool<source/stack/low_level/tools_interface:PingDxlTool (Service)>`
       -  Scans and sets for a tool plugged
-   *  -  ``niryo_robot/tools/tool_command``
+   *  -  ``niryo_robot/tools/open_gripper``
       -  :ref:`tools_interface/OpenGripper<source/stack/low_level/tools_interface:ToolCommand (Service)>`
-      -  Send a command to the tool (Open or close)
+      -  Opens the gripper
    *  -  ``niryo_robot/tools/close_gripper``
-      -  :ref:`tools_interface/CloseGripper<source/stack/low_level/tools_interface:CloseGripper (Service)>`
-      -  Closes a gripper tool
+      -  :ref:`tools_interface/OpenGripper<source/stack/low_level/tools_interface:ToolCommand (Service)>`
+      -  Closes the gripper
+   *  -  ``niryo_robot/tools/pull_air_vacuum_pump``
+      -  :ref:`tools_interface/OpenGripper<source/stack/low_level/tools_interface:ToolCommand (Service)>`
+      -  Pulls air with the vacuum pump
+   *  -  ``niryo_robot/tools/push_air_vacuum_pump``
+      -  :ref:`tools_interface/OpenGripper<source/stack/low_level/tools_interface:ToolCommand (Service)>`
+      -  Pushes air with the vacuum pump
    *  -  ``niryo_robot/tools/reboot``
       -  :std_srvs:`Trigger`
       -  Reboots the motor of the equipped tool

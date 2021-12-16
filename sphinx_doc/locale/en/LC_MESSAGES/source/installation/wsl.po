@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-22 17:37+0200\n"
+"POT-Creation-Date: 2021-12-15 15:00+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -57,11 +57,15 @@ msgstr ""
 #: ../../source/installation/wsl.rst:19
 msgid ""
 "1. Enable Windows Subsystem for Linux on your machine (in a powershell "
-"terminal) ::"
+"terminal) :: dism.exe /online /enable-feature /featurename:Microsoft-"
+"Windows-Subsystem-Linux /all /norestart"
 msgstr ""
 
 #: ../../source/installation/wsl.rst:23
-msgid "2. Update WSL to use version 2 (in a powershell terminal) ::"
+msgid ""
+"2. Update WSL to use version 2 (in a powershell terminal) :: dism.exe "
+"/online /enable-feature /featurename:VirtualMachinePlatform /all "
+"/norestart"
 msgstr ""
 
 #: ../../source/installation/wsl.rst:27
@@ -174,4 +178,13 @@ msgstr ""
 #: ../../source/installation/wsl.rst:120
 msgid "`<https://docs.microsoft.com/en-us/windows/wsl/install-win10>`_"
 msgstr ""
+
+#~ msgid ""
+#~ "1. Enable Windows Subsystem for Linux"
+#~ " on your machine (in a powershell "
+#~ "terminal) ::"
+#~ msgstr ""
+
+#~ msgid "2. Update WSL to use version 2 (in a powershell terminal) ::"
+#~ msgstr ""
 

@@ -6,36 +6,48 @@
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Ned ROS Documentation v3.2\n"
+"Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-22 17:37+0200\n"
+"POT-Creation-Date: 2021-08-13 09:42+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.9.1\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Language: fr\n"
+"X-Source-Language: C\n"
 
-#: ../../source/stack/high_level/niryo_robot_description.rst:2
+#: ../../source/ros/niryo_robot_description.rst:2
 msgid "Niryo_robot_description"
-msgstr ""
+msgstr "Niryo_robot_description"
 
-#: ../../source/stack/high_level/niryo_robot_description.rst:4
+#: ../../source/ros/niryo_robot_description.rst:4
 msgid "This package contains URDF files and meshes (collada + stl) for Ned."
 msgstr ""
+"Ce package contient des fichiers URDF et des maillages (collada + stl) pour "
+"Ned."
 
-#: ../../source/stack/high_level/niryo_robot_description.rst:6
+#: ../../source/ros/niryo_robot_description.rst:6
 msgid "To display Ned on Rviz: ::"
-msgstr ""
+msgstr "Pour afficher Ned sur Rviz : ::"
 
-#: ../../source/stack/high_level/niryo_robot_description.rst:12
+#: ../../source/ros/niryo_robot_description.rst:11
 msgid ""
-"**Note** : 3D visualization is not available on Ned Raspberry Pi4 image. "
-"To use the following commands, you must have setup Ned ros stack on your "
+"**Note** : 3D visualization is not available on Ned Raspberry Pi4 image. To "
+"use the following commands, you must have setup Ned ros stack on your "
 "computer."
 msgstr ""
+"**Note** : la visualisation 3D n'est pas disponible sur l'image Ned "
+"Raspberry Pi4. Pour l’utilisation des commandes suivantes, il est nécessaire "
+"de configurer la stack ROS pour Ned sur votre ordinateur."
 
+#~ msgid "Niryo Robot Description Package"
+#~ msgstr "Le package description du robot Niryo"
+
+#~ msgid "To display Ned on Rviz ::"
+#~ msgstr "Pour afficher Ned sur Rviz : ::"

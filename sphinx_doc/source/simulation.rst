@@ -23,7 +23,8 @@ Simulation environment installation
     The whole ROS Stack is developed and tested on ROS **Melodic** which requires
     **Ubuntu 18.04** to run correctly. The using of another ROS version or OS
     may lead to malfunctions of some packages. Please follow the steps in 
-    :ref:`Simulation Environment Installation <source/installation/ubuntu_18>`.
+    :ref:`source/installation/ubuntu_18:Ubuntu 18 Installation`.
+
     to install a working environment.
 
 Simulation usage
@@ -32,8 +33,8 @@ Simulation usage
 .. important::
     - Hardware features are simulated as if you were using a real robot.
     - The data returned by the faked drivers is arbitrary and immutable. Among this data, 
-    you will have : voltage, temperature, error state (always 0), ping (always true), 
-    end effector state (immutable)
+      you will have : voltage, temperature, error state (always 0), ping (always true), 
+      end effector state (immutable)
 
 | The simulation is a powerful tool allowing to test new programs directly on your computer
  which prevent to transfer new code on the robot.

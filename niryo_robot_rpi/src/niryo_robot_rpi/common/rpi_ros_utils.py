@@ -113,14 +113,7 @@ def send_reboot_motors_command():
 def send_shutdown_command():
     rospy.loginfo("SHUTDOWN")
     rospy.loginfo("Activate learning mode")
-    try:
-        rospy.wait_for_service('/niryo_robot/learning_mode/activate', timeout=1)
-    except rospy.ROSException:
-        pass
-    try:
-        rospy.ServiceProxy('/niryo_robot/learning_mode/activate', SetBool)(True)
-    except rospy.ServiceException:
-        pass
+    activate_learning_mode(True)
     send_reboot_motors_command()
     rospy.sleep(0.2)
     rospy.loginfo("Command 'sudo shutdown now'")
@@ -134,14 +127,7 @@ def send_shutdown_command():
 def send_reboot_command():
     rospy.loginfo("REBOOT")
     rospy.loginfo("Activate learning mode")
-    try:
-        rospy.wait_for_service('/niryo_robot/learning_mode/activate', timeout=0.5)
-    except rospy.ROSException:
-        pass
-    try:
-        rospy.ServiceProxy('/niryo_robot/learning_mode/activate', SetBool)(True)
-    except rospy.ServiceException:
-        pass
+    activate_learning_mode(True)
     send_reboot_motors_command()
     rospy.sleep(0.2)
     rospy.loginfo("Command 'sudo reboot'")

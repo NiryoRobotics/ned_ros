@@ -4,7 +4,7 @@ Niryo Robot Hardware Interface
 | This package handles packages related to the robot's hardware.
 | It launches hardware interface nodes, motors communication and driver.  
 
-.. figure:: ../../../images/ros/hardware_stack_nodes.png
+.. figure:: ../../../images/stack/high_level/hardware_stack_nodes.png
    :alt: hardware packages organization
    :height: 500px
    :align: center

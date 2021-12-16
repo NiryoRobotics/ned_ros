@@ -6,12 +6,11 @@
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Ned ROS Documentation v3.2\n"
+"Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-22 17:37+0200\n"
+"POT-Creation-Date: 2021-12-15 12:28+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -341,4 +340,169 @@ msgstr ""
 #: ../../source/stack/high_level/niryo_robot_rpi.rst:136
 msgid "LogStatus (Service)"
 msgstr ""
+
+#~ msgid "Niryo Robot RPI Package"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "This package deals with raspberry pi "
+#~ "related stuff (Button, fans, I/O, leds,"
+#~ " ...)"
+#~ msgstr ""
+
+#~ msgid "RPI Node"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "The ROS Node manages the following "
+#~ "components: - Physical top button: "
+#~ "executes actions when the button is "
+#~ "pressed. - Digital I/O panel : "
+#~ "gets commands and sends the current "
+#~ "state of digital I/Os. Also controls "
+#~ "tools like the electromagnet. - Robot"
+#~ " fans - Led : sets the LED "
+#~ "color. - ROS log : can remove "
+#~ "all previous logs on startup to "
+#~ "prevent a lack of disk space in"
+#~ " the long run (SD cards do not"
+#~ " have infinite storage)."
+#~ msgstr ""
+
+#~ msgid "The namespace used is : |namespace_emphasize|"
+#~ msgstr ""
+
+#~ msgid "Publisher - RPI"
+#~ msgstr ""
+
+#~ msgid "Services - RPI"
+#~ msgstr ""
+
+#~ msgid "Dependencies - RPI"
+#~ msgstr ""
+
+#~ msgid "Services & Messages files - RPI"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "**Note that this package should not "
+#~ "be used when you are using Ned "
+#~ "ROS stack on your computer, in "
+#~ "simulation mode.**executes actions when the"
+#~ " button is pressed.**"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Publish current point when user is "
+#~ "in blockly page to save block by"
+#~ " pressing button"
+#~ msgstr ""
+
+#~ msgid "Shutdown the raspberry pi"
+#~ msgstr ""
+
+#~ msgid "Purge ros log"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Modify the permanent settings that tells"
+#~ " if robot should purge it's ros "
+#~ "log at each boot"
+#~ msgstr ""
+
+#~ msgid ":ref:`PausePlanExecution<PausePlanExecution (Message)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`DigitalIOState<DigitalIOState (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`LogStatus<LogStatus (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`SetInt<SetInt>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`GetDigitalIO<GetDigitalIO (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`SetDigitalIO<SetDigitalIO (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`std_msgs/SetInt<SetInt>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`LedBlinker<LedBlinker (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`niryo_robot_msgs <Niryo Robot Messages Package>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`niryo_robot_commander <Niryo Robot Commander Package>`"
+#~ msgstr ""
+
+#~ msgid "Niryo robot RPI package"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`niryo_robot_msgs <source/ros/niryo_robot_msgs:Niryo "
+#~ "Robot Messages Package>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`niryo_robot_commander "
+#~ "<source/ros/niryo_robot_commander:Niryo Robot Commander"
+#~ " Package>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "The ROS Node manages the following "
+#~ "components: - Physical top button: "
+#~ "executes actions when the button is "
+#~ "pressed. - Digital I/O panel: gets "
+#~ "commands and sends the current state "
+#~ "of digital I/Os. Also controls tools "
+#~ "like the Electromagnet. - Robot fans."
+#~ " - Led: sets the LED color. -"
+#~ " ROS log: can remove all previous "
+#~ "logs on startup to prevent a lack"
+#~ " of disk space in the long run"
+#~ " (SD cards do not have infinite "
+#~ "storage)."
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`PausePlanExecution<source/ros/niryo_robot_commander:PausePlanExecution"
+#~ " (Message)>`"
+#~ msgstr ""
+
+#~ msgid ":doc:`niryo_robot_commander`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`PausePlanExecution<source/ros/niryo_robot_arm_commander:PausePlanExecution"
+#~ " (Message)>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`DigitalIOState<source/ros/niryo_robot_rpi:DigitalIOState "
+#~ "(Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`LogStatus<source/ros/niryo_robot_rpi:LogStatus (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`SetInt<source/ros/niryo_robot_msgs:SetInt>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`GetDigitalIO<source/ros/niryo_robot_rpi:GetDigitalIO (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`SetDigitalIO<source/ros/niryo_robot_rpi:SetDigitalIO (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`std_msgs/SetInt<source/ros/niryo_robot_msgs:SetInt>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`LedBlinker<source/ros/niryo_robot_rpi:LedBlinker (Service)>`"
+#~ msgstr ""
 

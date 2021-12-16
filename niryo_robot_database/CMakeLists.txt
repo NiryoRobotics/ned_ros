@@ -9,20 +9,20 @@ find_package(catkin REQUIRED COMPONENTS
 
 add_message_files(
   FILES
-  Log.msg
   Metric.msg
+  FilePath.msg
 )
 
 add_service_files(
   DIRECTORY srv
   FILES
-  AddLog.srv
-  GetAllLogs.srv
   GetAllMetrics.srv
   GetSettings.srv
-  RmLogSinceDate.srv
   SetMetric.srv
   SetSettings.srv
+  AddFilePath.srv
+  RmFilePath.srv
+  GetAllByType.srv
 )
 
 # enable python module support
@@ -90,6 +90,12 @@ install(
 install(
   DIRECTORY config/
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/config
+)
+
+install(
+  DIRECTORY sql/
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/sql
+  USE_SOURCE_PERMISSIONS
 )
 
 if (rosdoc_lite_FOUND)

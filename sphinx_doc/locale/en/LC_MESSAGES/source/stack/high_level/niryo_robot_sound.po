@@ -9,9 +9,9 @@
 #, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Ned ROS Documentation v3.2\n"
+"Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-22 17:37+0200\n"
+"POT-Creation-Date: 2021-12-15 14:54+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -164,7 +164,7 @@ msgid "``/niryo_robot_sound/set_volume``"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:60
-msgid ":ref:`SetInt<SetInt>`"
+msgid ":ref:`SetInt<source/stack/high_level/niryo_robot_msgs:SetInt>`"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:61
@@ -192,11 +192,15 @@ msgid ":msgs_index:`std_msgs`"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:70
-msgid ":doc:`niryo_robot_msgs`"
+msgid ""
+":ref:`niryo_robot_msgs "
+"<source/stack/high_level/niryo_robot_msgs:Niryo_robot_msgs>`"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:71
-msgid ":doc:`niryo_robot_status`"
+msgid ""
+":ref:`niryo_robot_status "
+"<source/stack/high_level/niryo_robot_status:Niryo_robot_status>`"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:74
@@ -204,34 +208,67 @@ msgid "Services & Messages files - Sound"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:77
-msgid "SoundName (Message)"
+msgid "SoundList (Message)"
 msgstr ""
 
 #: ../../source/stack/high_level/niryo_robot_sound.rst:83
 msgid "SoundObject (Message)"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:89
-msgid "SoundUser (Message)"
+#: ../../source/stack/high_level/niryo_robot_sound.rst:91
+msgid "ManageSound (Service)"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:95
-msgid "DeleteSound (Service)"
+#: ../../source/stack/high_level/niryo_robot_sound.rst:97
+msgid "PlaySound (Service)"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:101
-msgid "SendUserSound (Service)"
+#: ../../source/stack/high_level/niryo_robot_sound.rst:103
+msgid "TextToSpeech (Service)"
 msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:107
-msgid "SoundStateCommand (Service)"
-msgstr ""
+#~ msgid ":ref:`std_msgs`"
+#~ msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:113
-msgid "SoundUserCommand (Service)"
-msgstr ""
+#~ msgid ":ref:`std_msgs/Bool<Bool>`"
+#~ msgstr ""
 
-#: ../../source/stack/high_level/niryo_robot_sound.rst:119
-msgid "StopSound (Service)"
-msgstr ""
+#~ msgid ":ref:`std_msgs/Int8<Int8>`"
+#~ msgstr ""
+
+#~ msgid "SoundName (Message)"
+#~ msgstr ""
+
+#~ msgid "SoundUser (Message)"
+#~ msgstr ""
+
+#~ msgid "DeleteSound (Service)"
+#~ msgstr ""
+
+#~ msgid "SendUserSound (Service)"
+#~ msgstr ""
+
+#~ msgid "SoundStateCommand (Service)"
+#~ msgstr ""
+
+#~ msgid "SoundUserCommand (Service)"
+#~ msgstr ""
+
+#~ msgid "StopSound (Service)"
+#~ msgstr ""
+
+#~ msgid ":ref:`niryo_robot_msgs <Niryo Robot Messages Package>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`niryo_robot_msgs "
+#~ "<source/stack/high_level/niryo_robot_msgs:Niryo Robot "
+#~ "Messages Package>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`niryo_robot_status <Niryo Robot Status Package>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`SetInt<SetInt>`"
+#~ msgstr ""
 
