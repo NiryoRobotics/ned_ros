@@ -3,9 +3,6 @@ import rospy
 # - Services
 from niryo_robot_system_api_client.srv import ManageEthernet, ManageEthernetRequest
 
-# Command Status
-from niryo_robot_msgs.msg import CommandStatus
-
 
 class SystemApiClientRosWrapperException(Exception):
     pass
@@ -76,14 +73,14 @@ class SystemApiClientRosWrapper(object):
         :param service_name:
         :param service_msg_type:
         :param args: Tuple of arguments
-        :raises DatabaseRosWrapperException: Timeout during waiting of services
+        :raises SystemApiClientRosWrapperException: Timeout during waiting of services
         :return: Response
         """
         # Connect to service
         try:
             rospy.wait_for_service(service_name, self.__service_timeout)
         except rospy.ROSException as e:
-            raise DatabaseRosWrapperException(e)
+            raise SystemApiClientRosWrapperException(e)
 
         # Call service
         try:
@@ -91,7 +88,7 @@ class SystemApiClientRosWrapper(object):
             response = service(*args)
             return response
         except rospy.ServiceException as e:
-            raise DatabaseRosWrapperException(e)
+            raise SystemApiClientRosWrapperException(e)
 
     def __classic_return_w_check(self, result):
         self.__check_result_status(result)
@@ -100,4 +97,6 @@ class SystemApiClientRosWrapper(object):
     @staticmethod
     def __check_result_status(result):
         if result.status < 0:
-            raise DatabaseRosWrapperException("Error Code : {}\nMessage : {}".format(result.status, result.message))
+            raise SystemApiClientRosWrapperException(
+                "Error Code : {}\nMessage : {}".format(result.status, result.message)
+            )
