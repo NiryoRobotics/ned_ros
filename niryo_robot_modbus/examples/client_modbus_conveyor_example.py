@@ -66,7 +66,7 @@ if __name__ == '__main__':
     print "Remove the conveyor"
     client.write_register(521, 1)
     time.sleep(1)
-
+    
     client.close()
     print "Close connection to modbus server"
     print "--- END"
