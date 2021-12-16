@@ -51,6 +51,8 @@ class DatabaseRosWrapper(object):
         :type name: str
         :param value: the value of the setting
         :type value: object
+        :return: status, message
+        :rtype: (int, str)
         """
         result = self.__call_service('/niryo_robot_database/settings/set', SetSettings,
                                      name, str(value), type(value).__name__)
