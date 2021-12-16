@@ -106,7 +106,7 @@ packages to ROS environment. To do so, run the command: ::
     source devel/setup.bash
 
 It is necessary to run this command each time you launch a new terminal.
-If you want to make this sourcing appends for all your futur terminals,
+If you want to make this sourcing appends for all your future terminals,
 you can add it to your **bashrc** file: ::
 
     echo "source $(pwd)/devel/setup.bash" >> ~/.bashrc

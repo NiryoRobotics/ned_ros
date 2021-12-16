@@ -16,87 +16,94 @@ msgstr ""
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.9.1\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Language: fr\n"
+"X-Source-Language: C\n"
 
 #: ../../source/stack/low_level/cpu_interface.rst:2
 msgid "CPU Interface"
-msgstr ""
+msgstr "CPU Interface"
 
 #: ../../source/stack/low_level/cpu_interface.rst:4
 msgid "This package provides an interface for CPU monitoring"
 msgstr ""
+"Ce package procure une interface pour la surveillance des processeurs de la "
+"raspberry"
 
 #: ../../source/stack/low_level/cpu_interface.rst:7
 msgid "CPU Interface Node"
-msgstr ""
+msgstr "CPU Interface Node"
 
 #: ../../source/stack/low_level/cpu_interface.rst:9
 msgid "The ROS Node is made to:"
-msgstr ""
+msgstr "Le node ROS est conçu pour :"
 
 #: ../../source/stack/low_level/cpu_interface.rst:9
 msgid "monitor CPU temperature."
-msgstr ""
+msgstr "monitorer la température des processeurs"
 
 #: ../../source/stack/low_level/cpu_interface.rst:12
 msgid "Parameters"
-msgstr ""
+msgstr "Paramètres"
 
 #: ../../source/stack/low_level/cpu_interface.rst:14
 msgid "CPU Interface's Parameters"
-msgstr ""
+msgstr "Paramètres de l'interface"
 
 #: ../../source/stack/low_level/cpu_interface.rst:20
 msgid "Name"
-msgstr ""
+msgstr "Nom"
 
 #: ../../source/stack/low_level/cpu_interface.rst:21
 msgid "Description"
-msgstr ""
+msgstr "Description"
 
 #: ../../source/stack/low_level/cpu_interface.rst:22
 msgid "``read_rpi_diagnostics_frequency``"
-msgstr ""
+msgstr "``read_rpi_diagnostics_frequency``"
 
 #: ../../source/stack/low_level/cpu_interface.rst
 msgid "Publishes rate for CPU temperature"
-msgstr ""
+msgstr "Fréquence de publication de la température des processeurs"
 
 #: ../../source/stack/low_level/cpu_interface.rst
 msgid "Default: '0.25'"
-msgstr ""
+msgstr "Défaut : '0.25'"
 
 #: ../../source/stack/low_level/cpu_interface.rst:25
 msgid "``temperature_warn_threshold``"
-msgstr ""
+msgstr "``temperature_warn_threshold``"
 
 #: ../../source/stack/low_level/cpu_interface.rst
 msgid "CPU temperature [celsius] threshold before a warn message"
 msgstr ""
+"Seuil de température des processeurs [celsius] avant d'envoyer un message "
+"d'alerte"
 
 #: ../../source/stack/low_level/cpu_interface.rst
 msgid "Default: '75'"
-msgstr ""
+msgstr "Défaut : '75'"
 
 #: ../../source/stack/low_level/cpu_interface.rst:28
 msgid "``temperature_shutdown_threshold``"
-msgstr ""
+msgstr "``temperature_shutdown_threshold``"
 
 #: ../../source/stack/low_level/cpu_interface.rst
 msgid "CPU temperature [celsius] threshold before shutdown the robot"
 msgstr ""
+"Seuil de température des processeurs [celsius] avant d'éteindre le robot"
 
 #: ../../source/stack/low_level/cpu_interface.rst
 msgid "Default: '85'"
-msgstr ""
+msgstr "Défaut : '85'"
 
 #: ../../source/stack/low_level/cpu_interface.rst:34
 msgid "Dependencies"
-msgstr ""
+msgstr "Dépendances"
 
 #: ../../source/stack/low_level/cpu_interface.rst:38
 msgid "Services, Topics and Messages"
-msgstr ""
-
+msgstr "Services, Topics et Messages"
