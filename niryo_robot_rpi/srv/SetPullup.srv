@@ -1,0 +1,6 @@
+string name
+bool enable
+
+---
+int32 status
+string message

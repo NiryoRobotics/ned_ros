@@ -1,0 +1,61 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2021, Niryo All rights reserved. No part of this document
+# may be reproduced or transmitted in any form or by any means without prior
+# written consent of Niryo SAS
+# This file is distributed under the same license as the Ned ROS
+# Documentation package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Ned ROS Documentation 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-09-13 09:16+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.9.1\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Language: fr\n"
+"X-Source-Language: C\n"
+
+#: ../../source/ros/niryo_robot_user_interface.rst:2
+msgid "Niryo_robot_user_interface"
+msgstr "Niryo_robot_user_interface"
+
+#: ../../source/ros/niryo_robot_user_interface.rst:4
+
+
+msgid ""
+"This packages handle high-level user interface commands coming TCP requests "
+"and also system-related features like I/Os, LED and fans."
+msgstr ""
+"Ce package gère les commandes d'interface utilisateur de haut niveau "
+"provenant des requêtes MATLAB ainsi que les fonctionnalités relatives au "
+"système comme les E/S, LED et ventilateurs internes."
+
+#: ../../source/ros/niryo_robot_user_interface.rst:7
+msgid "You can find their documentations here:"
+msgstr "Vous pouvez trouver leurs documentations ici :"
+
+#: ../../source/ros/niryo_robot_user_interface.rst:7
+msgid ":ref:`TCP Server<source/tcp_server:Use Ned's TCP server>`"
+msgstr ":ref:`TCP Server<source/tcp_server:Use Ned's TCP server>`"
+
+#~ msgid "Niryo Robot User Interface Package"
+#~ msgstr "Package d'interface utilisateur du robot Niryo"
+
+#~ msgid ":ref:`TCP Server<Use Ned TCP Server>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`Matlab Manager<Matlab Manager>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`TCP Server<source/tcp_server:Use Ned TCP server>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`Matlab Manager<source/matlab_manager:Matlab Manager>`"
+#~ msgstr ""

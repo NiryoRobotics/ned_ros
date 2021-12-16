@@ -47,7 +47,11 @@
             </include>
             <pose frame=''>0.212 -0.0369 0.011 0 0 -0.3</pose>
         </model>
-
+        <physics name='default_physics' default='0' type='ode'>
+            <max_step_size>0.001</max_step_size>
+            <real_time_factor>1</real_time_factor>
+            <real_time_update_rate>1000</real_time_update_rate>
+        </physics>
         <!--GUI-->
         <gui fullscreen='0'>
             <camera name='user_camera'>

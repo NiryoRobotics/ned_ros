@@ -24,14 +24,12 @@ class KinematicsHandler:
     Object which handle the arm kinematics functions.
     """
 
-    def __init__(self, arm_move_group, transform_handler):
-        self.__joints = None
-        self.__joints_name = rospy.get_param('~joint_names')
-        rospy.Subscriber('/joint_states', JointState, self.__callback_sub_joint_states)
+    def __init__(self, arm_state):
+        self.__arm_state = arm_state
 
         # Get Arm MoveGroupCommander
-        self.__arm = arm_move_group
-        self.__transform_handler = transform_handler
+        self.__arm = self.__arm_state.arm
+        self.__transform_handler = self.__arm_state.transform_handler
 
         # - CALLABLE SERVICES
         # Kinematics
@@ -39,9 +37,6 @@ class KinematicsHandler:
         rospy.Service('/niryo_robot/kinematics/inverse', GetIK, self.__callback_get_inverse_kinematics)
 
     # -- Callbacks
-    def __callback_sub_joint_states(self, joint_states):
-        self.__joints = list(joint_states.position[:6])
-
     def __callback_get_forward_kinematics(self, req):
         return self.get_forward_kinematics(joints=req.joints)
 
@@ -72,7 +67,7 @@ class KinematicsHandler:
             fk_link = ['base_link', 'tool_link']
             header = Header(0, rospy.Time.now(), "world")
             rs = RobotStateMoveIt()
-            rs.joint_state.name = self.__joints_name
+            rs.joint_state.name = self.__arm_state.joints_name
             rs.joint_state.position = joints
             response = moveit_fk(header, fk_link, rs)
         except rospy.ServiceException as e:
@@ -89,7 +84,7 @@ class KinematicsHandler:
                  round(pose.position.y, 3),
                  round(pose.position.z, 3))
 
-        return RobotState(Point(*point), RPY(*rpy), Quaternion(*quaternion))
+        return RobotState(position=Point(*point), rpy=RPY(*rpy), orientation=Quaternion(*quaternion))
 
     def get_inverse_kinematics(self, pose):
         try:
@@ -105,8 +100,8 @@ class KinematicsHandler:
             req.group_name = self.__arm.get_name()
             req.ik_link_name = self.__arm.get_end_effector_link()
 
-            req.robot_state.joint_state.name = self.__joints_name
-            req.robot_state.joint_state.position = self.__joints
+            req.robot_state.joint_state.name = self.__arm_state.joints_name
+            req.robot_state.joint_state.position = self.__arm_state.joint_states
             req.pose_stamped.pose = tool_link_pose
 
             response = moveit_ik(req)

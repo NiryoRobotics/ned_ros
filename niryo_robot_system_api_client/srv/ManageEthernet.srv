@@ -1,0 +1,16 @@
+int8 STATIC = 1
+int8 AUTO = 2
+int8 CUSTOM = 3
+
+int8 profile
+
+# Only for the custom profile
+string ip       # ex: '192.168.1.73'
+string mask     # ex: '255.255.255.0'
+string gateway  # ex: '192.168.1.1'
+# Optional
+string dns      # ex: '8.8.8.8 4.4.4.4' separated by spaces
+
+---
+int32 status
+string message

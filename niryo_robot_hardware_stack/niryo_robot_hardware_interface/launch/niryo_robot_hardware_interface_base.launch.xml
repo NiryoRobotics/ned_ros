@@ -1,0 +1,61 @@
+<?xml version="1.0" ?>
+<launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+    <!-- Arguments -->
+    <arg name="can_enabled" default="false"/>
+    <arg name="ttl_enabled" default="false"/>
+    <arg name="hardware_version" default="ned"/>
+    <arg name="simulation_mode" default="false" />
+    <arg name="simu_gripper" default="false"/>
+    <arg name="simu_conveyor" default="false"/>
+
+    <rosparam file="$(find joints_interface)/config/niryo_controllers.yaml" command="load" />
+
+    <group ns="niryo_robot_hardware_interface">
+        <!-- use can_driver config -->
+        <group if="$(arg can_enabled)" >
+            <include file="$(find can_driver)/launch/can_driver_base.launch.xml" >
+                <arg name="hardware_version" value="$(arg hardware_version)" />
+                <arg name="simulation_mode" value="$(arg simulation_mode)" />
+            </include>
+        </group>
+        
+        <!--use ttl_driver config -->
+        <group if="$(arg ttl_enabled)" >
+            <include file="$(find ttl_driver)/launch/ttl_driver_base.launch.xml" >
+                <arg name="hardware_version" value="$(arg hardware_version)" />
+                <arg name="simulation_mode" value="$(arg simulation_mode)" />
+                <arg name="simu_gripper" value="$(arg simu_gripper)"/>
+                <arg name="simu_conveyor" value="$(arg simu_conveyor)"/>
+            </include>
+        </group>
+
+        <include file="$(find joints_interface)/launch/joints_interface_base.launch.xml" >
+            <arg name="hardware_version" value="$(arg hardware_version)" />
+            <arg name="simulation_mode" value="$(arg simulation_mode)" />
+        </include>
+
+        <include file="$(find conveyor_interface)/launch/conveyor_interface_base.launch.xml" >
+            <arg name="hardware_version" value="$(arg hardware_version)" />
+            <arg name="simulation_mode" value="$(arg simulation_mode)" />
+        </include>
+
+        <include file="$(find tools_interface)/launch/tools_interface_base.launch.xml" >
+            <arg name="hardware_version" value="$(arg hardware_version)" />
+            <arg name="simulation_mode" value="$(arg simulation_mode)" />
+        </include>
+
+        <include file="$(find cpu_interface)/launch/cpu_interface_base.launch.xml" >
+            <arg name="simulation_mode" value="$(arg simulation_mode)" />
+        </include>
+            
+        <!-- end effector only in ned2 -->
+        <group if="$(eval hardware_version == 'ned2')" >
+            <include file="$(find end_effector_interface)/launch/end_effector_interface_base.launch.xml" >
+                <arg name="hardware_version" value="$(arg hardware_version)"/>
+                <arg name="simulation_mode" value="$(arg simulation_mode)"/>
+            </include>
+        </group>
+    </group>
+    
+</launch>

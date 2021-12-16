@@ -1,0 +1,217 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2021, Niryo All rights reserved. No part of this document
+# may be reproduced or transmitted in any form or by any means without prior
+# written consent of Niryo SAS
+# This file is distributed under the same license as the Ned ROS
+# Documentation package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Ned ROS Documentation v3.2\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-12-15 18:18+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.9.1\n"
+
+#: ../../source/stack/low_level/common.rst:2
+msgid "Common"
+msgstr ""
+
+#: ../../source/stack/low_level/common.rst:4
+msgid ""
+"The Common package defines the common software components of the low "
+"level stack. It is split into a model part and a utility part :"
+msgstr ""
+
+#: ../../source/stack/low_level/common.rst:5
+msgid ""
+"- The 'model' subpackage defines the model tree needed to keep a virtual "
+"state of the robot up to date at any time."
+msgstr ""
+
+#: ../../source/stack/low_level/common.rst:6
+msgid "- The 'util' subpackage defines cpp interfaces and useful functions"
+msgstr ""
+
+#: ../../source/stack/low_level/common.rst:9
+msgid "Model"
+msgstr ""
+
+#: ../../source/stack/low_level/common.rst:10
+msgid "The model subpackage is comprised of:"
+msgstr ""
+
+#: ../../source/stack/low_level/common.rst:15
+msgid "States"
+msgstr ""
+
+#: ../../source/stack/low_level/common.rst:16
+msgid ""
+"Classes to represent the virtual state of each hardware component at any "
+"moment. The hierarchy allows powerful polymorphism so that we can "
+"interpret each component differently based on the information we need to "
+"obtain."
+msgstr ""
+
+#: ../../source/stack/low_level/common.rst:24
+msgid "Abstract Hardware State inheritance graph"
+msgstr ""
+
+#: ../../source/stack/low_level/common.rst:27
+msgid "Enums"
+msgstr ""
+
+#: ../../source/stack/low_level/common.rst:28
+msgid ""
+"Enhanced enums, to keep trace of various enumeration and be able to have "
+"useful utilities attached to them (like conversion in string)."
+msgstr ""
+
+#: ../../source/stack/low_level/common.rst:35
+msgid "Hardware Type Enum inheritance graph"
+msgstr ""
+
+#: ../../source/stack/low_level/common.rst:38
+msgid "Commands"
+msgstr ""
+
+#: ../../source/stack/low_level/common.rst:39
+msgid ""
+"Classes representing single and synchronize commands, for steppers and "
+"dynamixels. They are needed in queues in the ttl_driver and can_driver "
+"packages."
+msgstr ""
+
+#: ../../source/stack/low_level/common.rst:50
+msgid "Commands graphs"
+msgstr ""
+
+#: ../../source/stack/low_level/common.rst:55
+msgid "|picSingle|"
+msgstr ""
+
+#: ../../source/stack/low_level/common.rst:55
+msgid "|picSync|"
+msgstr ""
+
+#: ../../source/stack/low_level/common.rst:57
+msgid "Single Cmd"
+msgstr ""
+
+#: ../../source/stack/low_level/common.rst:57
+msgid "Sync Cmd"
+msgstr ""
+
+#: ../../source/stack/low_level/common.rst:60
+msgid ""
+"Each type of command is an alias to specified versions of two base "
+"template classes : AbstractSynchronizeMotorCmd and AbstractSingleMotorCmd"
+msgstr ""
+
+#: ../../source/stack/low_level/common.rst:63
+msgid "Util"
+msgstr ""
+
+#: ../../source/stack/low_level/common.rst:64
+msgid "The util subpackage is comprised of:"
+msgstr ""
+
+#: ../../source/stack/low_level/common.rst:66
+msgid "Cpp interfaces, used globally in the stack for polymorphism for instance"
+msgstr ""
+
+#: ../../source/stack/low_level/common.rst:67
+msgid "Utility functions usable globally in the stack"
+msgstr ""
+
+#: ../../source/stack/low_level/common.rst:70
+msgid "Dependencies"
+msgstr ""
+
+#: ../../source/stack/low_level/common.rst:71
+msgid ""
+"This package does not depend on any package. This package is a dependency"
+" of the following packages :"
+msgstr ""
+
+#: ../../source/stack/low_level/common.rst:74
+msgid "can_driver"
+msgstr ""
+
+#: ../../source/stack/low_level/common.rst:75
+msgid "conveyor_interface"
+msgstr ""
+
+#: ../../source/stack/low_level/common.rst:76
+msgid "cpu_interface"
+msgstr ""
+
+#: ../../source/stack/low_level/common.rst:77
+msgid "end_effector_interface"
+msgstr ""
+
+#: ../../source/stack/low_level/common.rst:78
+msgid "joints_interface"
+msgstr ""
+
+#: ../../source/stack/low_level/common.rst:79
+msgid "niryo_robot_hardware_interface"
+msgstr ""
+
+#: ../../source/stack/low_level/common.rst:80
+msgid "tools_interface"
+msgstr ""
+
+#: ../../source/stack/low_level/common.rst:81
+msgid "ttl_driver"
+msgstr ""
+
+#~ msgid "Parameters"
+#~ msgstr ""
+
+#~ msgid "Dependencies"
+#~ msgstr ""
+
+#~ msgid "Add Description of package here."
+#~ msgstr ""
+
+#~ msgid "Name of Important Element in Package"
+#~ msgstr ""
+
+#~ msgid "[This Element] is used to:"
+#~ msgstr ""
+
+#~ msgid "Some usages."
+#~ msgstr ""
+
+#~ msgid "Parameters - common"
+#~ msgstr ""
+
+#~ msgid "Published topics - common interface"
+#~ msgstr ""
+
+#~ msgid "remove this if there aren't any publisher"
+#~ msgstr ""
+
+#~ msgid "Services - common"
+#~ msgstr ""
+
+#~ msgid "Dependencies - common"
+#~ msgstr ""
+
+#~ msgid "Add dependencies of package"
+#~ msgstr ""
+
+#~ msgid "Services & Messages files - common"
+#~ msgstr ""
+
+#~ msgid "Commands table"
+#~ msgstr ""
+

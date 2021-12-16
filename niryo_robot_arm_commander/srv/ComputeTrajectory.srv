@@ -1,0 +1,8 @@
+geometry_msgs/Pose[] list_poses
+float32 dist_smoothing
+
+---
+
+int32 status
+string message
+trajectory_msgs/JointTrajectory trajectory

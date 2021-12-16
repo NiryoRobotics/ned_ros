@@ -1,0 +1,21 @@
+<?xml version="1.0" ?>
+<launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+
+    <arg name="hardware_version" default="ned2" />
+    <arg name="manual_tests" default="false" />
+
+    <!-- launch the conveyor_interface_node node using conveyor_interface_node executable from conveyor_interface package -->
+    <include file="$(find conveyor_interface)/launch/conveyor_interface.launch" >
+        <arg name="hardware_version" value="$(arg hardware_version)" />
+        <arg name="simulation_mode" value="false"/>
+        <arg name="simu_conveyor" value="false"/>
+    </include>
+
+    <test test-name="conveyor_interface_integration_tests" pkg="conveyor_interface"
+          type="conveyor_interface_integration_tests" time-limit="120.0" >
+        <param name="manual_tests" value="$(arg manual_tests)" />
+        <param name="simulation_mode" value="false"/>
+    </test>
+
+</launch>

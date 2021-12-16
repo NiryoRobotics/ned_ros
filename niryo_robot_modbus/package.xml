@@ -1,25 +1,32 @@
-<package>
-    <name>niryo_robot_modbus</name>
-    <version>3.2.0</version>
-    <description>Ned Modbus Server</description>
-    <author>Edouard Renard</author>
-    <maintainer email="c.ducatez@niryo.com">Corentin Ducatez</maintainer>
+<?xml version="1.0"?>
+<?xml-model
+  href="http://download.ros.org/schema/package_format3.xsd"
+  schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>niryo_robot_modbus</name>
+  <version>4.0.0</version>
+  <description>Ned Modbus Server</description>
+  <maintainer email="c.ducatez@niryo.com">Corentin Ducatez</maintainer>
 
-    <license>GPLv3</license>
+  <license>GPLv3</license>
+  <author>Edouard Renard</author>
+  
+  <buildtool_depend>catkin</buildtool_depend>
 
-    <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>niryo_robot_msgs</build_depend>
+  <build_depend>rospy</build_depend>
+  <build_depend>std_msgs</build_depend>
 
-    <build_depend>niryo_robot_msgs</build_depend>
-    <build_depend>rospy</build_depend>
-    <build_depend>std_msgs</build_depend>
+  <build_export_depend>niryo_robot_msgs</build_export_depend>
+  <build_export_depend>std_msgs</build_export_depend>
 
-    <run_depend>niryo_robot_msgs</run_depend>
-    <run_depend>rospy</run_depend>
-    <run_depend>std_msgs</run_depend>
+  <exec_depend>niryo_robot_msgs</exec_depend>
+  <exec_depend>rospy</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
 
-    <!-- Python Dependencies -->
-    <run_depend>python-pymodbus</run_depend>
+  <!-- Python Dependencies -->
+  <exec_depend>python-pymodbus</exec_depend>
 
-    <export>
-    </export>
+  <test_depend>python-catkin-lint</test_depend>
+  <test_depend>roslint</test_depend>
 </package>

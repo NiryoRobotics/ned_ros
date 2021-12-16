@@ -6,7 +6,8 @@ import time
 from enum import Enum, unique
 
 """
-This code is an example of how to use two available vision related function in the Modbus TCP server from the client side.
+This code is an example of how to use two available vision related
+function in the Modbus TCP server from the client side.
 It picks pawns detected in the workspace and stacks them according to their shape.
 """
 
@@ -48,7 +49,7 @@ def raw_data_to_number(val):
 
 # ---- Usefull functions
 
-def string_to_register(string): 
+def string_to_register(string):
     # code a string to 16 bits hex value to store in register
     builder = BinaryPayloadBuilder()
     builder.add_string(string)
@@ -59,7 +60,7 @@ def string_to_register(string):
 # ----------- Modbus server related function
 
 def back_to_observation():
-    joint_real = [0.057, 0.604, -0.576, -0.078, -1.384,0.253]
+    joint_real = [0.057, 0.604, -0.576, -0.078, -1.384, 0.253]
     joint_real_to_send = list(map(lambda j: int(number_to_raw_data(j * 1000)), joint_real))
     client.write_registers(0, joint_real_to_send)
     client.write_register(100, 1)
@@ -163,20 +164,19 @@ def get_target_pose_from_rel(workspace_str, height_offset, x_rel, y_rel, yaw_rel
     return obj_pose
 
 
-
 # ----------- Main programm
 
 if __name__ == '__main__':
     print "--- START"
 
-    client = ModbusTcpClient('localhost', port=5020)  
+    client = ModbusTcpClient('localhost', port=5020)
 
     # -------- Variable definition
     workspace_name = 'workspace_modbus_vision'
     height_offset = 0.009
-    release_pose_square =  [0.187, 0.184, 0.006, -0.052, 1.426, 0.621]
-    release_pose_circle =  [0.282, 0.198, 0.006, -0.568, 1.46, 0.251]
-    intermediate_joint = [-0.05,-0.073,-0.408, 0.018,-0.955, 0.046]
+    release_pose_square = [0.187, 0.184, 0.006, -0.052, 1.426, 0.621]
+    release_pose_circle = [0.282, 0.198, 0.006, -0.568, 1.46, 0.251]
+    intermediate_joint = [-0.05, -0.073, -0.408, 0.018, -0.955, 0.046]
     nb_square = 0
     nb_circle = 0
 
@@ -189,13 +189,12 @@ if __name__ == '__main__':
     back_to_observation()
 
     # updatetool
-    client.write_registers(500, 1) 
-
+    client.write_registers(500, 1)
 
     # ------------------- DETECT, PICK AND PLACE ACCORDING ON THE SHAPE ------------------------- #
 
-    shape = ShapeEnum.ANY.value 
-    color = ColorEnum.ANY.value 
+    shape = ShapeEnum.ANY.value
+    color = ColorEnum.ANY.value
 
     while (detect_object(workspace_name, shape, color)[1] != ShapeEnum.NONE.value):
         # while objects are detected in the workspace, grab them and stack them
@@ -203,8 +202,8 @@ if __name__ == '__main__':
 
         obj_rel_pose, shape_found, color_found = detect_object(workspace_name, shape, color)
         print 'Detected a', ColorEnum(color_found).name, ShapeEnum(shape_found).name
-        
-        x_rel = obj_rel_pose[0] 
+
+        x_rel = obj_rel_pose[0]
         y_rel = obj_rel_pose[1]
         yaw_rel = obj_rel_pose[5]
         target_pose = get_target_pose_from_rel(workspace_name, height_offset, x_rel, y_rel, yaw_rel)
@@ -215,11 +214,11 @@ if __name__ == '__main__':
         client.write_register(101, 1)
         while client.read_holding_registers(150, count=1).registers[0] == 1:
             time.sleep(0.01)
-        
+
         close_tool()
 
         # ---- Go to intermediate joints (over the workspace)
-        intermediate_joint = [-0.05,-0.073,-0.408, 0.018,-0.955, 0.046]
+        intermediate_joint = [-0.05, -0.073, -0.408, 0.018, -0.955, 0.046]
         joints_to_send = list(map(lambda j: int(number_to_raw_data(j * 1000)), intermediate_joint))
         client.write_registers(0, joints_to_send)
         client.write_register(100, 1)
@@ -227,13 +226,15 @@ if __name__ == '__main__':
             time.sleep(0.01)
 
         # ---- Compute release pose according to the shape
-        pose = [0]*6
+        pose = [0] * 6
 
         if shape_found == ShapeEnum.SQUARE.value:
-            pose = [release_pose_square[i] if i != 2 else release_pose_square[i]+(0.015*nb_square) for i in range(6)]
+            pose = [release_pose_square[i] if i != 2 else release_pose_square[i] + (0.015 * nb_square) for i in
+                    range(6)]
             nb_square += 1
         else:
-            pose = [release_pose_circle[i] if i != 2 else release_pose_circle[i]+(0.015*nb_circle) for i in range(6)]
+            pose = [release_pose_circle[i] if i != 2 else release_pose_circle[i] + (0.015 * nb_circle) for i in
+                    range(6)]
             nb_circle += 1
 
         # ---- Go to release pose
@@ -243,17 +244,14 @@ if __name__ == '__main__':
         while client.read_holding_registers(150, count=1).registers[0] == 1:
             time.sleep(0.01)
 
-        # ---- Release pawn and go back to observation 
+        # ---- Release pawn and go back to observation
         open_tool()
         back_to_observation()
 
     print 'No more objects detected in the workspace'
-
 
     # Activate learning mode and close connexion
     client.write_register(300, 1)
     client.close()
     print "Close connection to modbus server"
     print "--- END"
-
-    

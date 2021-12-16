@@ -6,13 +6,11 @@
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
-
-
 msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-13 09:16+0000\n"
+"POT-Creation-Date: 2021-12-15 12:28+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,7 +21,7 @@ msgstr ""
 
 #: ../../source/ros_wrapper.rst:2
 msgid "Control with Python ROS Wrapper"
-msgstr "Contrôler avec Python ROS Wrapper"
+msgstr "Contrôle avec Python ROS Wrapper"
 
 #: ../../source/ros_wrapper.rst:9
 msgid "Python Logo"
@@ -34,8 +32,9 @@ msgid ""
 "In order to control Ned more easily than calling each topics & services "
 "one by one, a Python ROS Wrapper has been built on top of ROS."
 msgstr ""
-"Afin de contrôler Ned plus facilement que d'appeler chaque topics & "
-"service un par un, un Python ROS Wrapper a été construit au-dessus de "
+"Pour contrôler le Ned plus simplement qu'en appelant chaque topic et "
+"service l'un après l'autre, une API python d'encapsulation de ROS, "
+"appelée dans la suite Python ROS Wrapper, a été construite au dessus de "
 "ROS."
 
 #: ../../source/ros_wrapper.rst:14
@@ -44,34 +43,38 @@ msgid ""
 " like: ::"
 msgstr ""
 "Par exemple, un script réalisant un moveJ via Python ROS Wrapper "
-"ressemblera à : ::"
+"ressemblera a : ::"
 
 #: ../../source/ros_wrapper.rst:20
 msgid "What this code is doing in a hidden way:"
-msgstr "Ce que fait ce code de manière cachée :"
+msgstr "Ce que fait ce code en arrière plan :"
 
 #: ../../source/ros_wrapper.rst:22
+#, fuzzy
 msgid ""
 "It generates a :ref:`RobotMove Action "
-"Goal<source/ros/niryo_robot_arm_commander:RobotMove (Action)>` and set it"
-" as a joint command with the corresponding joints value."
+"Goal<source/stack/high_level/niryo_robot_arm_commander:RobotMove "
+"(Action)>` and set it as a joint command with the corresponding joints "
+"value."
 msgstr ""
 "Il génère un :ref:`RobotMove Action "
 "Goal<source/ros/niryo_robot_arm_commander:RobotMove (Action)>` et le "
-"définit comme une commande conjointe avec la valeur d'articulation "
-"correspondante."
+"définit comme une command de joint avec les valeurs de joints "
+"correspondantes."
 
 #: ../../source/ros_wrapper.rst:24
 msgid "Sends goal to the Commander Action Server."
-msgstr "Envoyer l'objectif au Arm Commander Action Server."
+msgstr "Envoie un but au Commander Action Server."
 
 #: ../../source/ros_wrapper.rst:25
 msgid "Waits for the Commander Action Server to set Action as finished."
-msgstr "Attendre que le Commander Action Server définisse l'action comme terminée."
+msgstr ""
+"Attend que le Commander Action Server définisse l'Action comme "
+"\"finished\"."
 
 #: ../../source/ros_wrapper.rst:26
 msgid "Checks if action finished with a success."
-msgstr "Vérifier si l'action s'est terminée avec succès."
+msgstr "Vérifie si l'action s'est terminée avec succès."
 
 #: ../../source/ros_wrapper.rst:29
 msgid ""
@@ -79,10 +82,9 @@ msgid ""
 "Wrapper to control Ned, as well as a complete documentation of the "
 "functions available in the Ned Python ROS Wrapper."
 msgstr ""
-"Dans cette section, nous donnerons quelques exemples sur la façon "
-"d'utiliser le Python ROS Wrapper pour contrôler Ned, ainsi qu'une "
-"documentation complète des fonctions disponibles dans le Python ROS "
-"Wrapper de Ned."
+"Dans cette section, vous trouverez quelques exemple d'utilisation de "
+"Python ROS Wrapper pour contrôler le Ned, ainsi qu'une documentation "
+"complète des fonctions présente dans Ned Python ROS Wrapper."
 
 #: ../../source/ros_wrapper.rst:34
 msgid ""
@@ -91,58 +93,874 @@ msgid ""
 "If you do not want that, and run code directly from your computer you can"
 " use the python Package :ref:`source/more:PyNiryo`."
 msgstr ""
-"Le Python ROS Wrapper oblige l'utilisateur à écrire son code directement "
-"dans le robot, ou, du moins, à copier le code sur le robot via une "
-"commande de terminal. Si vous ne le souhaitez pas et exécutez le code "
-"directement à partir de votre ordinateur, vous pouvez utiliser le package"
-" :ref:`source/more:PyNiryo`."
+"Le Python ROS Wrapper force l'utilisateur à écrire son code directement "
+"dans le robot, ou a minima, copier le code sur le robot via une commande "
+"en terminal. Si vous nous souhaitez pas faire cela, et lancer directement"
+" le code depuis votre ordinateur, vous pouvez utiliser le package Python "
+":ref:`source/more:PyNiryo`."
 
 #: ../../source/ros_wrapper.rst:40
 msgid "Section Contents:"
-msgstr "Contenu de la section :"
+msgstr "Section Contenus :"
 
-#~ msgid ""
-#~ "For instance, a script realizing a "
-#~ "moveJ via Python ROS Wrapper will "
-#~ "look like : ::"
-#~ msgstr ""
-
-#~ msgid "What this code is doing in a hidden way :"
+#~ msgid "Python ROS Wrapper Documentation"
 #~ msgstr ""
 
 #~ msgid ""
-#~ "It generates a :ref:`RobotMove Action "
-#~ "Goal<RobotMove (Action)>` and set it as"
-#~ " a joint command with the "
-#~ "corresponding joints value"
+#~ "This file presents the different "
+#~ "Functions, Classes & Enums available "
+#~ "with the API"
 #~ msgstr ""
 
-#~ msgid "Send goal to the Commander Action Server"
+#~ msgid "API Functions"
 #~ msgstr ""
 
-#~ msgid "Wait for the Commander Action Server to set Action as Finished"
+#~ msgid "This class allows you to control the robot via internal API"
 #~ msgstr ""
 
-#~ msgid "Check if action finished with a success"
+#~ msgid "By controlling, we mean"
+#~ msgstr ""
+
+#~ msgid "Moving the robot"
+#~ msgstr ""
+
+#~ msgid "Using Vision"
+#~ msgstr ""
+
+#~ msgid "Controlling Conveyors"
+#~ msgstr ""
+
+#~ msgid "Playing with Hardware"
+#~ msgstr ""
+
+#~ msgid "Saved Poses"
+#~ msgstr ""
+
+#~ msgid "Pick & Place"
+#~ msgstr ""
+
+#~ msgid "Conveyor"
 #~ msgstr ""
 
 #~ msgid ""
-#~ "In this section, we will give some"
-#~ " examples on how to use the "
-#~ "Python ROS Wrapper to control the "
-#~ "Ned, as well as a complete "
-#~ "documentation of the functions available "
-#~ "in the Ned Python ROS Wrapper"
+#~ "Call service to calibrate motors then"
+#~ " wait for its end. If failed, "
+#~ "raise NiryoRosWrapperException"
+#~ msgstr ""
+#~ "Appelle le service pour calibrer les "
+#~ "moteurs, puis attend que la calibration"
+#~ " soit terminée. Si ce n'est pas "
+#~ "réussi, soulève une exception "
+#~ "NiryoRosWrapperException"
+
+#~ msgid "Returns"
+#~ msgstr "Renvoie"
+
+#~ msgid "status, message"
+#~ msgstr "Statut, message"
+
+#~ msgid "Return type"
+#~ msgstr "Type renvoyé"
+
+#~ msgid ""
+#~ "Use /niryo_robot/learning_mode/state topic "
+#~ "subscriber to get learning mode status"
+#~ msgstr ""
+#~ "Utilise /niryo_robot/learning_mode/state topic "
+#~ "subscriber pour obtenir le statut du "
+#~ "mode apprentissage"
+
+#~ msgid "``True`` if activate else ``False``"
+#~ msgstr "``True`` si activé, sinon ``False``"
+
+#~ msgid ""
+#~ "Call service to set_learning_mode according"
+#~ " to set_bool. If failed, raise "
+#~ "NiryoRosWrapperException"
+#~ msgstr ""
+#~ "Appelle le service set_learning_mode pour "
+#~ "activer ou désactiver le mode "
+#~ "apprentissage en fonction de set_bool. "
+#~ "Si échec, soulève une exception "
+#~ "NiryoRosWrapperException"
+
+#~ msgid "Parameters"
+#~ msgstr "Paramètre"
+
+#~ msgid "``True`` to activate, ``False`` to deactivate"
+#~ msgstr "``True`` pour activer, ``False`` pour désactiver"
+
+#~ msgid "Set relative max velocity (in %)"
+#~ msgstr "Définir la vitesse relative maximum (en %) "
+
+#~ msgid "Percentage of max velocity"
+#~ msgstr "Pourcentage de la vitesse maximum"
+
+#~ msgid "Use /joint_states topic to get joints status"
+#~ msgstr "Récupération de la valeurs des axes via le topic /joint_states"
+
+#~ msgid "list of joints value"
+#~ msgstr "Liste des valeurs des axes"
+
+#~ msgid "Use /niryo_robot/robot_state topic to get pose status"
+#~ msgstr ""
+#~ "Récupération de la position de "
+#~ "l'effecteur via le topic "
+#~ "/niryo_robot/robot_state"
+
+#~ msgid ""
+#~ "RobotState object (position.x/y/z && "
+#~ "rpy.roll/pitch/yaw && orientation.x/y/z/w)"
+#~ msgstr ""
+#~ "Objet RobotState [position.x/y/z ; "
+#~ "rpy.rool/pitch/yaw ; orientation.x/y/z]"
+
+#~ msgid "list corresponding to [x, y, z, roll, pitch, yaw]"
+#~ msgstr "Une liste correspondant à [x, y, z, roll, pitch, yaw]"
+
+#~ msgid "Execute Move joints action"
+#~ msgstr "Réalise une action de mouvement d'axes"
+
+#~ msgid ""
+#~ "Move to Sleep pose which allows "
+#~ "the user to activate the learning "
+#~ "mode without the risk of the robot"
+#~ " hitting something because of gravity"
+#~ msgstr ""
+#~ "Déplace le robot à la position de"
+#~ " repos ce qui permet d'activer le "
+#~ "mode apprentissage sans risque que le"
+#~ " robot touche quelque chose."
+
+#~ msgid "Move robot end effector pose to a (x, y, z, roll, pitch, yaw) pose."
+#~ msgstr "Déplace l'effecteur à la position [x, y, z, roll, pitch, yaw]."
+
+#~ msgid "Execute Shift pose action"
+#~ msgstr "Réalise une action de déplacement de l'effecteur par glissement"
+
+#~ msgid "Value of RobotAxis enum corresponding to where the shift happens"
+#~ msgstr "Valeur de l'énumérations correspondant à l'axe de glissement"
+
+#~ msgid "shift value"
+#~ msgstr "Valeur du glissement"
+
+#~ msgid "Execute Shift pose action with a linear trajectory"
+#~ msgstr "Réalise un glissement de façon linéaire"
+
+#~ msgid ""
+#~ "Move robot end effector pose to a"
+#~ " (x, y, z, roll, pitch, yaw) "
+#~ "pose, with a linear trajectory"
+#~ msgstr ""
+#~ "Déplacement de l'effecteur du robot à"
+#~ " la posistion [x, y, z, roll, "
+#~ "pitch, yaw] suivant une trajectoire "
+#~ "linéaire"
+
+#~ msgid "Turn jog controller On or Off"
+#~ msgstr "Active ou désactive le controle direct"
+
+#~ msgid "``True`` to turn on, else ``False``"
+#~ msgstr "``True`` quand activé, ``False`` sinon"
+
+#~ msgid "Make a Jog on joints position"
+#~ msgstr "Réalise un control directe sur la position des axes"
+
+#~ msgid "list corresponding to the shift to be applied to each joint"
+#~ msgstr "La liste correspondant au déplacement à appliquer à chaque axe."
+
+#~ msgid "Make a Jog on end-effector position"
+#~ msgstr "Réalise un control direct sur la position de l'effecteur"
+
+#~ msgid "Compute forward kinematics"
+#~ msgstr "Calcule la cinématique directe"
+
+#~ msgid "Compute inverse kinematics"
+#~ msgstr "Calcule la cinématique inverse"
+
+#~ msgid "Move robot end effector pose to a pose saved"
+#~ msgstr "Déplace l'éffecteur du robot à une position sauvegardées"
+
+#~ msgid ""
+#~ "Get saved pose from robot intern "
+#~ "storage Will raise error if position "
+#~ "does not exist"
+#~ msgstr ""
+#~ "Récupération des position sauvegardées dans"
+#~ " le robot. Renvoie une erreur si "
+#~ "la position n'existe pas"
+
+#~ msgid "Pose Name"
+#~ msgstr "Nom de la position"
+
+#~ msgid "x, y, z, roll, pitch, yaw"
+#~ msgstr ""
+
+#~ msgid "Save pose in robot's memory"
+#~ msgstr "Sauvegarde de la position dans le robot"
+
+#~ msgid "Send delete command to the pose manager service"
+#~ msgstr "Supprime la position "
+
+#~ msgid "Ask the pose manager service which positions are available"
+#~ msgstr "Renvoie la liste des positions sauvegardées"
+
+#~ msgid "list of positions name"
+#~ msgstr "La liste des noms des positions"
+
+#~ msgid ""
+#~ "Execute a picking from a position. "
+#~ "If an error happens during the "
+#~ "movement, error will be raised. A "
+#~ "picking is described as : - going"
+#~ " over the object - going down "
+#~ "until height = z - grasping with"
+#~ " tool - going back over the "
+#~ "object"
+#~ msgstr ""
+#~ "Réalise un prélèvement depuis une "
+#~ "position. Un prélèvement est décrit "
+#~ "comme : - aller au dessus de "
+#~ "l'objet - descendre jusqu'à l'hauteur z"
+#~ " - attraper avec l'outil - retourner"
+#~ " au dessus de l'objet"
+
+#~ msgid ""
+#~ "Execute a placing from a position. "
+#~ "If an error happens during the "
+#~ "movement, error will be raised. A "
+#~ "placing is described as : - going"
+#~ " over the place - going down "
+#~ "until height = z - releasing the"
+#~ " object with tool - going back "
+#~ "over the place"
+#~ msgstr ""
+#~ "Réalise un placement à partir d'une "
+#~ "position. Un placement est décrit comme"
+#~ " : - aller au dessus du "
+#~ "placement - descendre jusqu'à la hauteur"
+#~ " z - relâcher l'objet avec l'outil"
+#~ " - retourner au dessus du placement"
+
+#~ msgid ""
+#~ "Execute a pick and place. If an"
+#~ " error happens during the movement, "
+#~ "error will be raised. -> Args "
+#~ "param is for development purposes"
+#~ msgstr "Réalise un prélèvement puis un placement."
+
+#~ msgid "Distance from waypoints before smoothing trajectory"
+#~ msgstr "Distance entre les points de passage avant de lisser la trajectoire"
+
+#~ msgid ""
+#~ "Get saved trajectory from robot intern"
+#~ " storage Will raise error if position"
+#~ " does not exist"
+#~ msgstr "Récupération des trajectoires sauvegardées dans le robot. "
+
+#~ msgid "Raises"
+#~ msgstr "Lève"
+
+#~ msgid "If trajectory file doesn't exist"
+#~ msgstr "si la trajectoire n'existe pas"
+
+#~ msgid "list of [x, y, z, qx, qy, qz, qw]"
+#~ msgstr "Liste de [x, y, z, qx, qy, qz, qw]"
+
+#~ msgid "Execute trajectory saved in Robot internal storage"
+#~ msgstr "Réalise une trajectoire sauvegardées dans le robot"
+
+#~ msgid "Execute trajectory from a list of pose"
+#~ msgstr "Réalise un trajectoire à partir d'une liste de position"
+
+#~ msgid "Save trajectory object and send it to the trajectory manager service"
+#~ msgstr "Sauvegarde de la trajectoire"
+
+#~ msgid "name which will have the trajectory"
+#~ msgstr "Nom de la trajectoire"
+
+#~ msgid "Send delete command to the trajectory manager service"
+#~ msgstr "Supprime une trajectoire"
+
+#~ msgid "name"
+#~ msgstr "nom"
+
+#~ msgid "Ask the pose trajectory service which trajectories are available"
+#~ msgstr "Renvoie la liste des trajectoires sauvegardées"
+
+#~ msgid "list of trajectory name"
+#~ msgstr "Liste des noms des trajectoires"
+
+#~ msgid ""
+#~ "Use /niryo_robot_hardware/tools/current_id  topic to"
+#~ " get current tool id"
+#~ msgstr ""
+#~ "Récupération de l'id de l'outil courant"
+#~ " via le topic "
+#~ "/niryo_robot_hardware/tools/current_id"
+
+#~ msgid "Tool Id"
+#~ msgstr "Id de l'outil"
+
+#~ msgid "Call service niryo_robot_tools_commander/update_tool to update tool"
+#~ msgstr ""
+#~ "Mise a jour de l'outil en appelant"
+#~ " le service niryo_robot_tools_commander/update_tool"
+
+#~ msgid ""
+#~ "Grasp with the tool linked to "
+#~ "tool_id. This action correspond to - "
+#~ "Close gripper for Grippers - Pull "
+#~ "Air for Vacuum pump - Activate for"
+#~ " Electromagnet"
+#~ msgstr ""
+#~ "Attrape avec l'outil lié à l'id de"
+#~ " l'outil. L'action correspond à - "
+#~ "Fermer la pince pour une pince -"
+#~ " Tirer l'air pour la pompe à "
+#~ "vide - Activer l'électroaimant"
+
+#~ msgid "[Only required for electromagnet] Pin ID of the electromagnet"
+#~ msgstr "[Seulement pour l'électroaimant] L'ID de la broche de l'électroaimant"
+
+#~ msgid ""
+#~ "Release with the tool associated to "
+#~ "tool_id. This action correspond to - "
+#~ "Open gripper for Grippers - Push "
+#~ "Air for Vacuum pump - Deactivate "
+#~ "for Electromagnet"
+#~ msgstr ""
+#~ "Relâcher avec l'outil lié à l'id "
+#~ "de l'outil. L'action correspond à - "
+#~ "Ouvri la pince pour une pince -"
+#~ " Expulser l'air pour la pompe à "
+#~ "vide - Désactiver l'électroaimant"
+
+#~ msgid "Open gripper with a speed 'speed'"
+#~ msgstr "Ouvir la pince avec une vitesse 'speed'"
+
+#~ msgid "Default -> 500"
+#~ msgstr "par défaut -> 500"
+
+#~ msgid "Close gripper with a speed 'speed'"
+#~ msgstr "Fermer pince avec une vitesse 'speed'"
+
+#~ msgid "Pull air"
+#~ msgstr "Tirer l'air"
+
+#~ msgid "Setup electromagnet on pin"
+#~ msgstr "Installation de l'électroaimant sur la pin"
+
+#~ msgid "Pin ID"
+#~ msgstr "Id de la broche"
+
+#~ msgid "Activate electromagnet associated to electromagnet_id on pin_id"
+#~ msgstr "Activer l'électroaimant associé à electromagnet_id sur pin_id"
+
+#~ msgid "Deactivate electromagnet associated to electromagnet_id on pin_id"
+#~ msgstr "Désactiver l'électroaimant associé à electromagnet_id sur pin_id"
+
+#~ msgid "Set pin number pin_id to mode pin_mode"
+#~ msgstr "Initialise le numéro de broche pin_id dans le mode pin_mode"
+
+#~ msgid "Set pin_id state to pin_state"
+#~ msgstr "Initialise l'état de la broche pin_id à pin_state"
+
+#~ msgid "Read pin number pin_id and return its state"
+#~ msgstr "Lecture de l'état pin_state de la broche pin_id"
+
+#~ msgid "state"
+#~ msgstr "état"
+
+#~ msgid ""
+#~ "Get hardware status : Temperature, "
+#~ "Hardware version, motors names & types"
+#~ " ..."
+#~ msgstr ""
+#~ "Récupération de l'état du matériel : "
+#~ "Température, version matériel, nom des "
+#~ "moteurs et types"
+
+#~ msgid "Infos contains in a HardwareStatus object (see niryo_robot_msgs)"
+#~ msgstr ""
+#~ "Informations contenues dans l'object "
+#~ "HardwareStatus (voir niryo_robot_msgs)"
+
+#~ msgid "Get Digital IO state : Names, modes, states"
+#~ msgstr ""
+#~ "Récupération de l'état des Entres/Sorties "
+#~ "Numériques : Noms, modes, états"
+
+#~ msgid "Infos contains in a DigitalIOState object (see niryo_robot_msgs)"
+#~ msgstr ""
+#~ "Informations contenues dans l'objet "
+#~ "DigitalIOState (voir niryo_robot_msgs)"
+
+#~ msgid ""
+#~ "Scan for conveyor on can bus. If"
+#~ " conveyor detected, return the conveyor "
+#~ "ID"
+#~ msgstr ""
+#~ "Analyse la présence d'un convoyeur sur"
+#~ " le bus can. Si un convoyeur "
+#~ "est détecté, renvoie l'id du convoyeur"
+
+#~ msgid "ID"
+#~ msgstr "ID"
+
+#~ msgid "Remove specific conveyor."
+#~ msgstr "Retire un convoyeur spécifique"
+
+#~ msgid "Basically, ConveyorID.ONE or ConveyorID.TWO"
+#~ msgstr "Essentiellement, ConveyorID.ONE ou ConveyorID.TWO"
+
+#~ msgid ""
+#~ "Control conveyor associated to conveyor_id."
+#~ " Then stops it if bool_control_on is"
+#~ " False, else refreshes it speed and"
+#~ " direction"
+#~ msgstr ""
+#~ "Controle du convoyeur associé à "
+#~ "conveyor_id. Stop si bool_control_on est "
+#~ "False, sinon rafraichit la vitesse et"
+#~ " la direction."
+
+#~ msgid "ConveyorID.ID_1 or ConveyorID.ID_2"
+#~ msgstr "ConveyorID.ID_1 ou ConveyorID.ID_2"
+
+#~ msgid "True for activate, False for deactivate"
+#~ msgstr "True pour activer, False pour désactiver"
+
+#~ msgid "target speed"
+#~ msgstr "vitesse ciblée"
+
+#~ msgid "Target direction"
+#~ msgstr "Direction ciblées"
+
+#~ msgid "Get last stream image in a compressed format"
+#~ msgstr "Récupération de la dernière image au format compressé"
+
+#~ msgid "string containing a JPEG compressed image"
+#~ msgstr "chaine de charactère contenant l'image compressé en JPEG."
+
+#~ msgid ""
+#~ "Given a pose (x_rel, y_rel, yaw_rel) "
+#~ "relative to a workspace, this function"
+#~ " returns the robot pose in which "
+#~ "the current tool will be able to"
+#~ " pick an object at this pose. "
+#~ "The height_offset argument (in m) "
+#~ "defines how high the tool will "
+#~ "hover over the workspace. If "
+#~ "height_offset = 0, the tool will "
+#~ "nearly touch the workspace."
+#~ msgstr ""
+#~ "Pour une pose (x_rel, y_rel, yaw_rel)"
+#~ " relative à l'espace de travail, "
+#~ "retourne la position du robot dans "
+#~ "laquelle l'outil courant sera capable de"
+#~ " prendre un objetL'argument height_offset "
+#~ "(en mètre) définir à quelle hauteur "
+#~ "l'outil sera placé au dessus de "
+#~ "l'espace de travail. Si height_offset=0, "
+#~ "l'outil touchera presque l'espace de "
+#~ "travail."
+
+#~ msgid "name of the workspace"
+#~ msgstr "nom de l'espace de travail"
+
+#~ msgid "offset between the workspace and the target height"
+#~ msgstr "Décalage entre l'espace de travail et l'hauteur ciblé"
+
+#~ msgid "target_pose"
+#~ msgstr "target_pose"
+
+#~ msgid ""
+#~ "First detects the specified object using"
+#~ " the camera and then returns the "
+#~ "robot pose in which the object can"
+#~ " be picked with the current tool"
+#~ msgstr ""
+#~ "Commence par détecter l'objet spécifié "
+#~ "en utilisant la caméra puis retourne "
+#~ "la position du robot dans laquelle "
+#~ "l'objet peut être pris avec l'outil "
+#~ "courrant."
+
+#~ msgid "shape of the target"
+#~ msgstr "Forme de la cible"
+
+#~ msgid "color of the target"
+#~ msgstr "Couleur de la cible"
+
+#~ msgid "object_found, object_pose, object_shape, object_color"
+#~ msgstr "object_found, object_pose, object_shape, object_color"
+
+#~ msgid "Move Joints to observation_joints, then execute a vision pick"
+#~ msgstr ""
+#~ "Déplace les axes à observation_joints, "
+#~ "puis réalise une prise par vision"
+
+#~ msgid "Move Pose to observation_pose, then execute a vision pick"
+#~ msgstr ""
+#~ "Déplace la position à observation_pose, "
+#~ "puis réalise une prise par vision"
+
+#~ msgid ""
+#~ "Picks the specified object from the "
+#~ "workspace. This function has multiple "
+#~ "phases: 1. detect object using the "
+#~ "camera 2. prepare the current tool "
+#~ "for picking 3. approach the object "
+#~ "4. move down to the correct "
+#~ "picking pose 5. actuate the current "
+#~ "tool 6. lift the object"
+#~ msgstr ""
+#~ "Prise d'un objet spécifique dans un "
+#~ "espace de travail. Les phases 1. "
+#~ "détection de l'objet via la caméra "
+#~ "2. préparation de l'outil courant pour"
+#~ " la prise 3. rappochement vers "
+#~ "l'objet4. déscente jusqu'à la position "
+#~ "de pirse. 5. Actionne l'outil courrant."
+#~ " 6. soulève l'outil."
+
+#~ msgid "object_found, object_shape, object_color"
+#~ msgstr "object_found, object_shape, object_color"
+
+#~ msgid "Same as `get_target_pose_from_cam` but directly moves to this position"
+#~ msgstr ""
+#~ "idem que `get_target_pose_from_cam` mais "
+#~ "déplacement direct vers la position"
+
+#~ msgid "Get calibration object: camera intrinsics, distortions coefficients"
+#~ msgstr ""
+#~ "Récupération de l'objet calibration : "
+#~ "paramètres intrinsèques, coéfficients de "
+#~ "distortions"
+
+#~ msgid "raw camera intrinsics, distortions coefficients"
+#~ msgstr "paramètres intrinsèques, coéfficients de distortions"
+
+#~ msgid ""
+#~ "Save workspace by giving the poses "
+#~ "of the robot to point its 4 "
+#~ "corners with the calibration Tip. "
+#~ "Corners should be in the good "
+#~ "order"
+#~ msgstr ""
+#~ "Sauvegarde de l'espace de travail en "
+#~ "donnat les positions du robot permettant"
+#~ " de cibler les 4 coins avec "
+#~ "l'outil de calibration. Les coins "
+#~ "doivent être donnés dans le bon "
+#~ "ordre."
+
+#~ msgid "workspace name"
+#~ msgstr "Nom de l'espace de travail"
+
+#~ msgid "list of 4 corners pose"
+#~ msgstr "Liste des 4 positions des coins"
+
+#~ msgid "Save workspace by giving the poses of its 4 corners in the good order"
+#~ msgstr ""
+#~ "Sauvegarde de l'espace de travail en "
+#~ "donnant la listes des 4 positions "
+#~ "des coins dans le bon ordre."
+
+#~ msgid "list of 4 corners [x, y, z]"
+#~ msgstr "Liste des 4 coins [x, y, z]"
+
+#~ msgid "Call workspace manager to delete a certain workspace"
+#~ msgstr "Supprime un espace de travail"
+
+#~ msgid "Get the 4 workspace poses of the workspace called 'name'"
+#~ msgstr ""
+#~ "Récupération des 4 positions des coins"
+#~ " de l'espace de travail donné par "
+#~ "'name'"
+
+#~ msgid "List of the 4 workspace poses"
+#~ msgstr "Liste des 4 positions des coins de l'espace de travail"
+
+#~ msgid "Give the length over width ratio of a certain workspace"
+#~ msgstr "Récupération du ratiot longueur sur largeur de l'espace de travail "
+
+#~ msgid "ratio"
+#~ msgstr "ratio"
+
+#~ msgid "Ask the workspace manager service names of the available workspace"
+#~ msgstr "Récupération de la liste des espaces de travail"
+
+#~ msgid "list of workspaces name"
+#~ msgstr "Liste des noms des espaces de travail"
+
+#~ msgid ""
+#~ "Tools IDs (need to match tools ids"
+#~ " in niryo_robot_tools_commander package)"
+#~ msgstr ""
+#~ "Id de l'outil (doit correspondre à "
+#~ "l'id de l'outil du package "
+#~ "niryo_robot_tools_commander"
+
+#~ msgid "Pin Mode is either OUTPUT or INPUT"
+#~ msgstr "Le Mode d'une broche peut être SORTIE ou ENTREE"
+
+#~ msgid "Pin State is either LOW or HIGH"
+#~ msgstr "L'état d'une broche peut être BAS ou HAUT"
+
+#~ msgid "Pins ID"
+#~ msgstr "ID de la broche"
+
+#~ msgid "None"
 #~ msgstr ""
 
 #~ msgid ""
-#~ "The Python ROS Wrapper forces the "
-#~ "user to write his code directly in"
-#~ " the robot, or, at least, copy "
-#~ "the code on the robot via a "
-#~ "terminal command. If you do not "
-#~ "want that, and run code directly "
-#~ "from your computer you can use the"
-#~ " python Package :ref:`PyNiryo`"
+#~ "list of [x, y, z, qx, qy, "
+#~ "qz, qw] or list of [x, y, z,"
+#~ " roll, pitch, yaw]"
 #~ msgstr ""
+#~ "Liste de [x, y, z, qx, qy, "
+#~ "qz, qw] ou liste de [x, y, "
+#~ "z, roll, pitch, yaw]"
+
+#~ msgid ""
+#~ "Enables or disables the TCP function "
+#~ "(Tool Center Point). If activation is"
+#~ " requested, the last recorded TCP "
+#~ "value will be applied. The default "
+#~ "value depends on the gripper equipped."
+#~ " If deactivation is requested, the "
+#~ "TCP will be coincident with the "
+#~ "tool_link."
+#~ msgstr ""
+#~ "Active ou désactive la fonctions PCO "
+#~ "(Point Central Objet). Si activé, la "
+#~ "dernière valeur du PCO sera appliquée."
+#~ " La valeur par défaut dépend de "
+#~ "l'outil équipé. Si désactivé, le PCO "
+#~ "coincidera avec le tool_link (point "
+#~ "d'attache de l'outil sur le bras)"
+
+#~ msgid "True to enable, False otherwise."
+#~ msgstr "True pour activer, sinon false"
+
+#~ msgid ""
+#~ "Activates the TCP function (Tool Center"
+#~ " Point) and defines the transformation "
+#~ "between the tool_link frame and the "
+#~ "TCP frame."
+#~ msgstr ""
+#~ "Active la fonction PCO (Point Central"
+#~ " Objet) et définit la transformation "
+#~ "entre le repère tool_link et le "
+#~ "repère du PCO"
+
+#~ msgid ""
+#~ "Reset the TCP (Tool Center Point) "
+#~ "transformation. The PCO will be reset"
+#~ " according to the tool equipped."
+#~ msgstr ""
+
+#~ msgid "Modify image brightness"
+#~ msgstr "Modifie la luminosité de l'image"
+
+#~ msgid ""
+#~ "How much to adjust the brightness. "
+#~ "0.5 will give a darkened image, 1"
+#~ " will give the original image while"
+#~ " 2 will enhance the brightness by "
+#~ "a factor of 2."
+#~ msgstr ""
+#~ "Comment ajuster la luminosité. 0.5 "
+#~ "donnera une image assombrie, 1 l'image"
+#~ " d'origine et 2 augmentera la "
+#~ "luminosité par un facteur 2"
+
+#~ msgid "Modify image contrast"
+#~ msgstr "Modifie le contraste de l'image"
+
+#~ msgid ""
+#~ "While a factor of 1 gives original"
+#~ " image. Making the factor towards 0"
+#~ " makes the image greyer, while "
+#~ "factor>1 increases the contrast of the"
+#~ " image."
+#~ msgstr "Plus le facteur est proche de 0, plus l'image deviendra grise"
+
+#~ msgid "Modify image saturation"
+#~ msgstr "Modifie la saturation de l'image"
+
+#~ msgid ""
+#~ "How much to adjust the saturation. "
+#~ "0 will give a black and white "
+#~ "image, 1 will give the original "
+#~ "image while 2 will enhance the "
+#~ "saturation by a factor of 2."
+#~ msgstr ""
+#~ "Le facteur permet de modifier la "
+#~ "valeur de saturation appliquée à "
+#~ "l'image."
+
+#~ msgid "Python ROS Wrapper documentation"
+#~ msgstr "Documentation Python ROS Wrapper"
+
+#~ msgid ""
+#~ "This file presents the different "
+#~ "Functions, Classes & Enums available "
+#~ "with the API."
+#~ msgstr ""
+#~ "Ce fichier présente les différentes "
+#~ "fonctions, classes et énumérations disponibles"
+#~ " avec l'API."
+
+#~ msgid "API functions"
+#~ msgstr "Les fonctions de l'API"
+
+#~ msgid "This class allows you to control the robot via internal API."
+#~ msgstr "Cette classe vous permet de contrôler le robot via l'API interne."
+
+#~ msgid "By controlling, we mean:"
+#~ msgstr "Par contrôle, nous entendons :"
+
+#~ msgid "Moving the robot."
+#~ msgstr "Changer la position du robot"
+
+#~ msgid "Using Vision."
+#~ msgstr "Utiliser la Vision"
+
+#~ msgid "Controlling Conveyors Belt."
+#~ msgstr "Contrôler le Convoyeur"
+
+#~ msgid "Playing with hardware."
+#~ msgstr "Jouer avec du matériel."
+
+#~ msgid "List of functions subsections:"
+#~ msgstr "Liste des sous-sections des fonctions :"
+
+#~ msgid "Main purpose functions"
+#~ msgstr "Fonctions majeures"
+
+#~ msgid "Joints & Pose"
+#~ msgstr "Axe et Pose"
+
+#~ msgid "list corresponding to the shift to be applied to the position"
+#~ msgstr "La liste correspondant au déplacement à appliquer à la position"
+
+#~ msgid "Saved poses"
+#~ msgstr "Positions sauvegardées"
+
+#~ msgid "Pick & place"
+#~ msgstr ""
+
+#~ msgid "Trajectories"
+#~ msgstr "Trajectoires"
+
+#~ msgid "Execute trajectory from list of poses and joints"
+#~ msgstr "Réalise une trajectoire à partir d'une liste de positions ou d'axes"
+
+#~ msgid ""
+#~ "List of [x,y,z,qx,qy,qz,qw] or list of"
+#~ " [x,y,z,roll,pitch,yaw] or a list of "
+#~ "[j1,j2,j3,j4,j5,j6]"
+#~ msgstr ""
+#~ "Liste de [x,y,z,qx,qy,qz,qw] ou liste de"
+#~ " [x,y,z,roll,pitch,yaw] ou liste de "
+#~ "[j1,j2,j3,j4,j5,j6]"
+
+#~ msgid ""
+#~ "List of string 'pose' or 'joint', "
+#~ "or ['pose'] (if poses only) or "
+#~ "['joint'] (if joints only). If None, "
+#~ "it is assumed there are only poses"
+#~ " in the list."
+#~ msgstr ""
+#~ "Liste de string de valeur 'pose' "
+#~ "ou 'joint', ou ['pose'] (si ce "
+#~ "n'est que des positions) ou ['joint']"
+#~ " (si que des axes). Sans valeur, "
+#~ "la fonction concidère qu'il n'y a "
+#~ "que des positions dans la liste."
+
+#~ msgid "Tools"
+#~ msgstr "Outils"
+
+#~ msgid ""
+#~ "Reset the TCP (Tool Center Point) "
+#~ "transformation. The TCP will be reset"
+#~ " according to the tool equipped."
+#~ msgstr ""
+#~ "Réinitialise la transformation du PCO "
+#~ "(Point Central Objet). Le PCO est "
+#~ "réinitialisé selon l'outil équipé."
+
+#~ msgid "Hardware"
+#~ msgstr "Matériel"
+
+#~ msgid "Conveyor Belt"
+#~ msgstr "Convoyeur"
+
+#~ msgid "Vision"
+#~ msgstr "Vision"
+
+#~ msgid "workspace name, max 30 char."
+#~ msgstr "nom de l'espace de travail. Max 30 charactères"
+
+#~ msgid "Sound"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Call service to play_sound according to"
+#~ " SoundStateCommand. If failed, raise "
+#~ "NiryoRosWrapperException"
+#~ msgstr ""
+
+#~ msgid "Name of the sound to play"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Call service to set_volume to set "
+#~ "the volume of Ned'sound accrding to "
+#~ "sound_volume. If failed, raise "
+#~ "NiryoRosWrapperException"
+#~ msgstr ""
+
+#~ msgid "volume of the sound"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Call service stop_sound to stop a "
+#~ "sound being played. If failed, raise "
+#~ "NiryoRosWrapperException"
+#~ msgstr ""
+
+#~ msgid "take the sound being played"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Call service delete_sound to delete a"
+#~ " sound on the RaspberryPi of the "
+#~ "robot. If failed, raise "
+#~ "NiryoRosWrapperException"
+#~ msgstr ""
+
+#~ msgid "name of the sound which needs to be deleted"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Call service import_sound to delete a"
+#~ " sound on the RaspberryPi of the "
+#~ "robot. If failed, raise "
+#~ "NiryoRosWrapperException"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "name of the sound which needs to"
+#~ " be deleted, encoded data from the"
+#~ " sound (wav or mp3), encoded data "
+#~ "from the sound file (wav or mp3)"
+#~ msgstr ""
+
+#~ msgid "Enums"
+#~ msgstr "Enumération"
 

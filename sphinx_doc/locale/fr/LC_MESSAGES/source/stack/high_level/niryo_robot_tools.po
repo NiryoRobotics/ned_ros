@@ -1,0 +1,210 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2021, Niryo All rights reserved. No part of this document
+# may be reproduced or transmitted in any form or by any means without prior
+# written consent of Niryo SAS
+# This file is distributed under the same license as the Ned ROS
+# Documentation package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Ned ROS Documentation 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-08-13 09:50+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.9.1\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Language: fr\n"
+"X-Source-Language: C\n"
+
+#: ../../source/ros/niryo_robot_tools.rst:2
+msgid "Niryo_robot_tools"
+msgstr "Niryo_robot_tools"
+
+#: ../../source/ros/niryo_robot_tools.rst:4
+msgid ""
+"Provides functionalities to control end-effectors and accessories for Ned."
+msgstr ""
+"Ce package fournit des fonctionnalités pour contrôler les effecteurs et les "
+"accessoires pour Ned."
+
+#: ../../source/ros/niryo_robot_tools.rst:7
+msgid "Tools node"
+msgstr "Noeud d'outil"
+
+#: ../../source/ros/niryo_robot_tools.rst:8
+msgid ""
+"The ROS Node is made of services to equip tool, an action server for tool "
+"command and topics for the current tool or the tool state."
+msgstr ""
+"Le nœud ROS est constitué de services pour équiper l'outil, d'un serveur "
+"d'action pour commander l'outil et de rubriques pour l'outil ou l'état de ce "
+"dernier."
+
+#: ../../source/ros/niryo_robot_tools.rst:10
+msgid "The namespace used is: |namespace_emphasize|"
+msgstr "L'espace de nom utilisé est : |namespace_emphasize|"
+
+#: ../../source/ros/niryo_robot_tools.rst:13
+msgid "Action server - tools"
+msgstr "Serveur d'action - Outils"
+
+#: ../../source/ros/niryo_robot_tools.rst:15
+msgid "Tools Package Action Server"
+msgstr "Serveur d'action du package d'outils"
+
+#: ../../source/ros/niryo_robot_tools.rst:21
+#: ../../source/ros/niryo_robot_tools.rst:37
+#: ../../source/ros/niryo_robot_tools.rst:53
+msgid "Name"
+msgstr "Nom"
+
+#: ../../source/ros/niryo_robot_tools.rst:22
+#: ../../source/ros/niryo_robot_tools.rst:38
+#: ../../source/ros/niryo_robot_tools.rst:54
+msgid "Message Type"
+msgstr "Type du message"
+
+#: ../../source/ros/niryo_robot_tools.rst:23
+#: ../../source/ros/niryo_robot_tools.rst:39
+#: ../../source/ros/niryo_robot_tools.rst:55
+msgid "Description"
+msgstr "Description"
+
+#: ../../source/ros/niryo_robot_tools.rst:24
+msgid "``robot_action``"
+msgstr "``robot_action``"
+
+#: ../../source/ros/niryo_robot_tools.rst:25
+msgid ":ref:`ToolAction<source/ros/niryo_robot_tools:ToolAction (Action)>`"
+msgstr ":ref:`ToolAction<source/ros/niryo_robot_tools:ToolAction (Action)>`"
+
+#: ../../source/ros/niryo_robot_tools.rst:26
+msgid "Command the tool through an action server"
+msgstr "Commander l'outil via un serveur d'action"
+
+#: ../../source/ros/niryo_robot_tools.rst:29
+msgid "Publisher - tools"
+msgstr "Diffuseur - outils"
+
+#: ../../source/ros/niryo_robot_tools.rst:31
+msgid "Tools Package Publishers"
+msgstr "Diffuseurs de packages d'outils"
+
+#: ../../source/ros/niryo_robot_tools.rst:40
+msgid "``current_id``"
+msgstr "``current_id``"
+
+#: ../../source/ros/niryo_robot_tools.rst:41
+msgid ":std_msgs:`Int32`"
+msgstr ":std_msgs:`Int32`"
+
+#: ../../source/ros/niryo_robot_tools.rst:42
+msgid "Publish the current tool ID"
+msgstr "Publier l'ID d'outil actuel"
+
+#: ../../source/ros/niryo_robot_tools.rst:45
+msgid "Services - tools"
+msgstr "Services - outils"
+
+#: ../../source/ros/niryo_robot_tools.rst:47
+msgid "Tools Package Services"
+msgstr "Services de package d'outils"
+
+#: ../../source/ros/niryo_robot_tools.rst:56
+msgid "``update_tool``"
+msgstr "``update_tool``"
+
+#: ../../source/ros/niryo_robot_tools.rst:57
+msgid ":ref:`source/ros/niryo_robot_msgs:Trigger`"
+msgstr ":ref:`source/ros/niryo_robot_msgs:Trigger`"
+
+#: ../../source/ros/niryo_robot_tools.rst:58
+msgid ""
+"Ping/scan for a dxl motor flashed with an ID corresponding to a tool and "
+"equip it (if found)"
+msgstr ""
+"Scanner pour voir si un moteur dynamixel est flashé avec un ID correspondant "
+"à un outil et l'équiper"
+
+#: ../../source/ros/niryo_robot_tools.rst:59
+msgid "``equip_electromagnet``"
+msgstr "``equip_electromagnet``"
+
+#: ../../source/ros/niryo_robot_tools.rst:60
+msgid ":ref:`source/ros/niryo_robot_msgs:SetInt`"
+msgstr ":ref:`source/ros/niryo_robot_msgs:SetInt`"
+
+#: ../../source/ros/niryo_robot_tools.rst:61
+msgid "Equip the electromagnet with the motor ID given as parameter"
+msgstr "Equiper l'électroaimant avec l'ID moteur donné comme paramètre"
+
+#: ../../source/ros/niryo_robot_tools.rst:64
+msgid "Dependencies - tools"
+msgstr "Dépendances - outils"
+
+#: ../../source/ros/niryo_robot_tools.rst:65
+msgid ":doc:`niryo_robot_msgs`"
+msgstr ":doc:`niryo_robot_msgs`"
+
+#: ../../source/ros/niryo_robot_tools.rst:66
+msgid ":msgs_index:`std_msgs`"
+msgstr ":msgs_index:`std_msgs`"
+
+#: ../../source/ros/niryo_robot_tools.rst:69
+msgid "Action, services & messages files - tools"
+msgstr "Fichiers d'actions, de services et de messages - outils"
+
+#: ../../source/ros/niryo_robot_tools.rst:72
+msgid "ToolAction (Action)"
+msgstr "ToolAction (Action)"
+
+#: ../../source/ros/niryo_robot_tools.rst:78
+msgid "ToolCommand (Message)"
+msgstr "ToolCommand (Message)"
+
+#~ msgid "Niryo Robot Tools Package"
+#~ msgstr "Package outils du robot Niryo"
+
+#~ msgid "Tools Node"
+#~ msgstr "Noeud d'outi"
+
+#~ msgid "The namespace used is : |namespace_emphasize|"
+#~ msgstr "L'espace de nom utilisé est : |namespace_emphasize|"
+
+#~ msgid "Action Server - Tools"
+#~ msgstr "Serveur d’action - Outils"
+
+#~ msgid "Publisher - Tools"
+#~ msgstr "Éditeur - outils"
+
+#~ msgid "Services - Tools"
+#~ msgstr "Services - outils"
+
+#~ msgid "Dependencies - Tools"
+#~ msgstr "Dépendances - outils"
+
+#~ msgid "Action, Services & Messages files - Tools"
+#~ msgstr "Fichiers d’actions, de services et de messages - outils"
+
+#~ msgid ":ref:`ToolAction<ToolAction (Action)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`Trigger`"
+#~ msgstr ""
+
+#~ msgid ":ref:`SetInt`"
+#~ msgstr ""
+
+#~ msgid ":ref:`niryo_robot_msgs <Niryo Robot Messages Package>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`niryo_robot_msgs <source/ros/niryo_robot_msgs:Niryo Robot Messages "
+#~ "Package>`"
+#~ msgstr ""

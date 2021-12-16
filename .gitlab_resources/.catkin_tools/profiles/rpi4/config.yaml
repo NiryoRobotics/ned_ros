@@ -1,0 +1,19 @@
+blacklist: []
+build_space: build/rpi4
+catkin_make_args: []
+cmake_args:
+- -DCMAKE_TOOLCHAIN_FILE=
+- -DCMAKE_CROSS_COMPILE_PREFIX=
+devel_layout: linked
+devel_space: devel/rpi4
+extend_path: 
+install: true
+install_space: install/rpi4
+isolate_install: false
+jobs_args: []
+log_space: logs/rpi4
+make_args: []
+source_space: src
+use_env_cache: false
+use_internal_make_jobserver: true
+whitelist: []

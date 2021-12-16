@@ -1,8 +1,2 @@
-# GPIO pin
-int32[] pins
-# PIN names seen by user to make it simpler
-string[] names
-# IN/OUT
-int32[] modes
-# HIGH/LOW
-int32[] states
+niryo_robot_rpi/DigitalIO[] digital_inputs
+niryo_robot_rpi/DigitalIO[] digital_outputs

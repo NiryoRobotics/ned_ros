@@ -1,0 +1,20 @@
+# Check XL-XXX motors reference doc for
+# the complete register table
+
+uint8 id
+uint16 pos_p_gain
+uint16 pos_i_gain
+uint16 pos_d_gain
+
+uint16 vel_p_gain
+uint16 vel_i_gain
+
+uint16 ff1_gain
+uint16 ff2_gain
+
+# vel and acc profile for dxl
+uint32 vel_profile
+uint32 acc_profile
+---
+int32 status
+string message

@@ -1,0 +1,25 @@
+<?xml version="1.0" ?>
+<launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+    <arg name="log_level" default="INFO" />
+    <arg name="hardware_version" default="ned2"/>
+    <arg name="simulation_mode" default="false" />
+
+    <group if="$(eval hardware_version =='ned2')" >
+        <include file="$(find niryo_robot_led_ring)/launch/led_ring_commander_base.launch.xml" />
+
+        <node unless="$(arg simulation_mode)" pkg="niryo_robot_led_ring" type="led_ring_node.py"
+              name="niryo_robot_led_ring" output="screen" launch-prefix="sudo">
+            <param name="simulation_mode" type="bool" value="$(arg simulation_mode)" />
+            <param name="log_level" value="$(arg log_level)" />
+        </node>
+
+        <node if="$(arg simulation_mode)" pkg="niryo_robot_led_ring" type="led_ring_node.py"
+              name="niryo_robot_led_ring" output="screen">
+            <param name="simulation_mode" type="bool" value="$(arg simulation_mode)" />
+            <param name="log_level" value="$(arg log_level)" />
+        </node>
+    </group>
+    
+
+</launch>

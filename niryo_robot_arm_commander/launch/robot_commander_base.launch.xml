@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+<launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+    <arg name="hardware_version" default="ned"/>
+
+    <!-- Command validation params -->
+    <group ns="niryo_robot">
+        <group ns="robot_command_validation">
+            <rosparam file="$(find niryo_robot_arm_commander)/config/$(arg hardware_version)/robot_command_validation.yaml" command="load"/>
+        </group>
+    </group>
+
+    <group ns="niryo_robot_arm_commander">
+        <rosparam file="$(find niryo_robot_arm_commander)/config/default.yaml" command="load"/>
+        <rosparam file="$(find niryo_robot_arm_commander)/config/jog_params.yaml" command="load"/>
+        <rosparam file="$(find niryo_robot_arm_commander)/config/$(arg hardware_version)/error_tolerances.yaml" command="load"/>
+    </group>
+</launch>

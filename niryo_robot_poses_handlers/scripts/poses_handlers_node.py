@@ -2,6 +2,7 @@
 
 # Libs
 import rospy
+import logging
 
 from transform_handler import PosesTransformHandler
 from niryo_robot_poses_handlers.transform_functions import euler_from_quaternion
@@ -52,9 +53,9 @@ class PoseHandlerNode:
         self.__tool_id = 0
         rospy.Subscriber('/niryo_robot_tools_commander/current_id', Int32,  self.__callback_tool_id)
 
-
         # Workspaces
         ws_dir = rospy.get_param("~workspace_dir")
+
         self.__ws_manager = WorkspaceManager(ws_dir)
         rospy.Service('~manage_workspace', ManageWorkspace,
                       self.__callback_manage_workspace)
@@ -70,7 +71,6 @@ class PoseHandlerNode:
                 if ws_name not in self.get_available_workspaces()[0]:
                     rospy.loginfo("Poses Handler - Adding the {} workspace...".format(ws_name))
                     self.create_workspace_from_points(ws_name, "", [Point(*point) for point in ws_poses])
-
 
         # Grips
         tool_config_dict = rospy.get_param("niryo_robot_tools_commander/tool_list", dict())
@@ -126,7 +126,7 @@ class PoseHandlerNode:
     def __callback_manage_workspace(self, req):
         cmd = req.cmd
         workspace = req.workspace
-        if len(workspace.name)>30:
+        if len(workspace.name) > 30:
             rospy.logwarn('Poses Handlers - Workspace name is too long, using : %s instead', workspace.name[:30])
         workspace.name = workspace.name[:30]
         if cmd == req.SAVE:
@@ -475,6 +475,12 @@ class PoseHandlerNode:
 
 if __name__ == "__main__":
     rospy.init_node('niryo_robot_poses_handlers', anonymous=False, log_level=rospy.INFO)
+
+    # change logger level according to node parameter
+    log_level = rospy.get_param("~log_level")
+    logger = logging.getLogger("rosout")
+    logger.setLevel(log_level)
+
     try:
         vision_node = PoseHandlerNode()
         rospy.spin()

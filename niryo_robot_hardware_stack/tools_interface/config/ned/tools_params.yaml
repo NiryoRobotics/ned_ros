@@ -1,0 +1,4 @@
+tools_params:
+    id_list: [11,12,13,30,31]
+    type_list: ["xl320","xl320","xl320","xl320","xl320"]
+    name_list: ["Standard Gripper", "Large Gripper", "Adaptive Gripper", "Vacuum Pump", "Electromagnet"]

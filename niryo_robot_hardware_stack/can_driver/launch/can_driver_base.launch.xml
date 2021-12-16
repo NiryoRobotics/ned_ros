@@ -1,0 +1,18 @@
+<?xml version="1.0" ?>
+<launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+    <arg name="hardware_version" default="ned"/>
+    <arg name="simulation_mode" default="false"/>
+    <arg name="simu_conveyor" default="false"/>
+
+    <group ns="can_driver">
+        <rosparam file="$(find can_driver)/config/default.yaml" command="load"  unless="$(arg simulation_mode)" />
+        <rosparam file="$(find can_driver)/config/$(arg hardware_version)/simulation/default.yaml" command="load" if="$(arg simulation_mode)" />
+
+        <rosparam file="$(find can_driver)/config/$(arg hardware_version)/bus_params.yaml" command="load"/>
+        <rosparam file="$(find can_driver)/config/$(arg hardware_version)/simulation/fake_params.yaml" command="load" if="$(arg simulation_mode)" />
+        <param name="hardware_version" value="$(arg hardware_version)"/>
+        <param name="simulation_mode" value="$(arg simulation_mode)"/>
+        <param name="simu_conveyor" value="$(arg simu_conveyor)"/>
+    </group>  
+</launch>

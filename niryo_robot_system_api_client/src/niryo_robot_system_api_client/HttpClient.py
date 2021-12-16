@@ -5,9 +5,10 @@ import urllib2
 
 class HttpClient:
 
-    def __init__(self, host, port):
+    def __init__(self, host, port, prefix=None):
         self.host = host
         self.port = port
+        self.prefix = prefix
         self.last_error = ''
 
     def __url_builder(self, uri, params=None):
@@ -19,7 +20,10 @@ class HttpClient:
         :return: None
         :rtype: str
         """
-        url = 'http://{}:{}/{}'.format(self.host, self.port, uri)
+        url = 'http://{}:{}'.format(self.host, self.port)
+        if self.prefix is not None:
+            url += self.prefix
+        url += uri
 
         if params:
             url += '?{}'.format(urllib.urlencode(params))
@@ -52,7 +56,7 @@ class HttpClient:
         return executed.getcode(), json.loads(executed.read())
 
     def set_robot_name(self, name):
-        status_code, response = self.__post('setRobotName', {'name': name})
+        status_code, response = self.__post('/setRobotName', {'name': name})
 
         if not status_code:
             return False, 'Unable to connect to the HTTP server'
@@ -63,17 +67,58 @@ class HttpClient:
         return True, response['detail']
 
     def hotspot_state(self):
-        status_code, response = self.__get('hotspotState')
+        status_code, response = self.__get('/hotspotState')
 
         if not status_code:
             return False, 'Unable to connect to the HTTP server'
 
         return True, response['state']
 
-    def activate_hotspot(self):
-        status_code, response = self.__post('switchToHotspot')
+    def wifi_state(self):
+        status_code, response = self.__get('/wifiState')
 
         if not status_code:
             return False, 'Unable to connect to the HTTP server'
 
-        return True, status_code == 200
+        return True, response
+
+    def activate_hotspot(self):
+        status_code, response = self.__post('/switchToHotspot')
+
+        if not status_code:
+            return False, 'Unable to connect to the HTTP server'
+
+        return True, response
+
+    def restart_wifi(self):
+        status_code, response = self.__post('/restartWifi')
+
+        if not status_code:
+            return False, 'Unable to connect to the HTTP server'
+
+        return True, response
+
+    def deactivate_wifi(self):
+        status_code, response = self.__post('/deactivateWifi')
+
+        if not status_code:
+            return False, 'Unable to connect to the HTTP server'
+
+        return True, response
+
+    def reconnect_last_wifi(self):
+        status_code, response = self.__post('/reconnectLastWifi')
+
+        if not status_code:
+            return False, 'Unable to connect to the HTTP server'
+
+        return True, response
+
+    def setup_ethernet(self, profile, ip="", mask="", gateway="", dns=""):
+        status_code, response = self.__post('/setEthernetProfile',
+                                            {'profile': profile, "ip": ip, "mask": mask, "gw": gateway, "dns": dns})
+
+        if not status_code:
+            return False, 'Unable to connect to the HTTP server'
+
+        return True, response

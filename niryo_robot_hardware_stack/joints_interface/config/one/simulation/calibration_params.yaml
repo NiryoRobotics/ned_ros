@@ -1,0 +1,19 @@
+calibration_timeout: 5
+
+calibration_file:  "~/.niryo/simulation"
+
+calibration_params:
+    stepper_1:
+        id: 1
+        direction: 1
+        delay: 200
+
+    stepper_2:
+        id: 2
+        direction: 1
+        delay: 1000
+
+    stepper_3:
+        id: 3
+        direction: -1
+        delay: 1000

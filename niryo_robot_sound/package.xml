@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<?xml-model
+  href="http://download.ros.org/schema/package_format3.xsd"
+  schematypens="http://www.w3.org/2001/XMLSchema"?>
+    <package format="3">
+    <name>niryo_robot_sound</name>
+    <version>4.0.0</version>
+    <description> Linking Ned 2 to his sound card in order to deal with sounds and musics</description>
+    <author email="n.guy@niryo.com">Nicolas Guy</author>
+    <maintainer email="n.guy@niryo.com">Nicolas Guy</maintainer>
+    <maintainer email="v.pitre@niryo.com">Valentin Pitre</maintainer>
+    <license>GPLv3</license>
+
+    <buildtool_depend>catkin</buildtool_depend>
+
+    <build_depend>message_generation</build_depend>
+    <build_depend>niryo_robot_msgs</build_depend>
+    <build_depend>roslint</build_depend>
+    <build_depend>std_msgs</build_depend>
+
+    <build_export_depend>niryo_robot_msgs</build_export_depend>
+    <build_export_depend>std_msgs</build_export_depend>
+
+    <exec_depend>message_runtime</exec_depend>
+    <exec_depend>niryo_robot_status</exec_depend>
+    <exec_depend>niryo_robot_msgs</exec_depend>
+    <exec_depend>std_msgs</exec_depend>
+
+    <!-- Python Dependencies -->
+    <exec_depend>python-numpy</exec_depend>
+
+</package>

@@ -1,0 +1,22 @@
+<?xml version="1.0" ?>
+<launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+    <arg name="hardware_version" default="ned"/>
+    <arg name="simulation_mode" default="true"/>
+
+    <!-- use ttl_driver config -->
+    <include file="$(find ttl_driver)/launch/ttl_driver_base.launch.xml" >
+        <arg name="hardware_version" value="$(arg hardware_version)" />
+        <arg name="simulation_mode" value="$(arg simulation_mode)" />
+        <arg name="simu_gripper" value="true" />
+    </include>
+
+    <!-- use tools_interface config -->
+    <include file="$(find tools_interface)/launch/tools_interface_base.launch.xml" >
+        <arg name="hardware_version" value="$(arg hardware_version)" />
+        <arg name="simulation_mode" value="$(arg simulation_mode)" />
+    </include>
+
+    <node pkg="tools_interface" type="tools_interface_node" name="tools_interface" output="screen" />
+
+</launch>

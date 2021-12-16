@@ -1,0 +1,60 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2021, Niryo All rights reserved. No part of this document
+# may be reproduced or transmitted in any form or by any means without prior
+# written consent of Niryo SAS
+# This file is distributed under the same license as the Ned ROS
+# Documentation package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Ned ROS Documentation v3.2\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-10-22 17:37+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.9.1\n"
+
+#: ../../source/installation/getting_started.rst:2
+msgid "Getting Started"
+msgstr ""
+
+#: ../../source/installation/getting_started.rst:4
+msgid "The Niryo ROS Stack can be installed in multiple target OS:"
+msgstr ""
+
+#: ../../source/installation/getting_started.rst:6
+msgid "Raspberry pi 3"
+msgstr ""
+
+#: ../../source/installation/getting_started.rst:7
+msgid "Raspberry pi 4"
+msgstr ""
+
+#: ../../source/installation/getting_started.rst:8
+msgid "Desktop"
+msgstr ""
+
+#: ../../source/installation/getting_started.rst:10
+msgid ""
+"As the stack is based on ROS melodic or kinetic, you need to be on a "
+"system based on Ubuntu. We currently support the following versions:"
+msgstr ""
+
+#: ../../source/installation/getting_started.rst:12
+msgid "Ubuntu 16.04 :doc:`ubuntu_16`"
+msgstr ""
+
+#: ../../source/installation/getting_started.rst:13
+msgid "Ubuntu 18.04 :doc:`ubuntu_18`"
+msgstr ""
+
+#: ../../source/installation/getting_started.rst:14
+msgid "Windows Subsystem for Linux 2 (WSL 2) - Ubuntu 18.04 :doc:`wsl`"
+msgstr ""
+

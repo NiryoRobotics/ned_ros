@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+    <arg name="database_path" default="~/.config/niryo"/>
+    <arg name="hardware_version" default="ned"/>
+
+    <group ns="niryo_robot_database">
+        <param name="sqlite_db_file_path" value="$(arg database_path)/$(arg hardware_version).db"/>
+        <rosparam file="$(find niryo_robot_database)/config/default.yaml" command="load"/>
+    </group>
+</launch>

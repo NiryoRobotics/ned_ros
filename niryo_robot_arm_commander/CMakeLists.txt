@@ -1,16 +1,19 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.0.2)
 project(niryo_robot_arm_commander)
+message( STATUS "\n## Reading ${PROJECT_NAME}/CMakeLists.txt...")
 
 find_package(catkin REQUIRED COMPONENTS
   actionlib_msgs
   geometry_msgs
   message_generation
   niryo_robot_msgs
+  trajectory_msgs
 )
 
 add_message_files(
   FILES
   ArmMoveCommand.msg
+  JointLimits.msg
   PausePlanExecution.msg
   ShiftPose.msg
 )
@@ -18,8 +21,10 @@ add_message_files(
 add_service_files(
   DIRECTORY srv
   FILES
+  ComputeTrajectory.srv
   GetFK.srv
   GetIK.srv
+  GetJointLimits.srv
   JogShift.srv
 )
 
@@ -29,6 +34,7 @@ add_action_files(
   RobotMove.action
 )
 
+# enable python module support
 catkin_python_setup()
 
 generate_messages(
@@ -36,6 +42,7 @@ generate_messages(
   actionlib_msgs
   geometry_msgs
   niryo_robot_msgs
+  trajectory_msgs
 )
 
 catkin_package(
@@ -44,14 +51,76 @@ catkin_package(
   geometry_msgs
   message_runtime
   niryo_robot_msgs
+  trajectory_msgs
 )
 
 include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-catkin_install_python(
-    PROGRAMS scripts/robot_commander_node.py
-    DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+#############
+##   Doc   ##
+#############
+
+find_program(rosdoc_lite_FOUND rosdoc_lite)
+if(rosdoc_lite_FOUND)
+    add_custom_target (${PROJECT_NAME}_doc ALL
+        rosdoc_lite -o ${CMAKE_CURRENT_BINARY_DIR}/doc ${CMAKE_CURRENT_LIST_DIR}
+    )
+else()
+  message(WARNING "rosdoc_lite not found. Skipping documentation building")
+endif()
+
+#############
+## Testing ##
+#############
+
+if(CATKIN_ENABLE_TESTING)
+
+  ##########################
+  ## Static code analysis ##
+  ##########################
+  find_package(roslint QUIET)
+
+  if(roslint_FOUND)
+      set(ROSLINT_PYTHON_OPTS "1>&2")
+      roslint_python()
+  else()
+      message(WARNING "roslint not found. Skipping roslint target building")
+  endif()
+endif()
+
+#############
+## Install ##
+#############
+
+catkin_install_python(PROGRAMS 
+    scripts/arm_commander.py
+    scripts/arm_state.py
+    scripts/ArmParametersValidator.py
+    scripts/jog_controller.py
+    scripts/kinematics_handler.py
+    scripts/robot_commander_node.py
+    scripts/trajectories_executor.py
+    scripts/transform_handler.py
+    scripts/robot_state_publisher.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+
+# Mark other files for installation
+
+install(
+  DIRECTORY launch/
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
 )
 
+install(
+  DIRECTORY config/
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/config
+)
+
+if (rosdoc_lite_FOUND)
+  install(
+    DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/doc/
+    DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/doc
+  )
+endif()

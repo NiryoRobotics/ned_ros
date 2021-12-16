@@ -1,0 +1,10 @@
+<?xml version="1.0" ?>
+<launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+
+    <group ns="niryo_robot_led_ring">
+        <rosparam file="$(find niryo_robot_led_ring)/config/led_control_library/led_strip_params.yaml" command="load"/>
+        <rosparam file="$(find niryo_robot_led_ring)/config/led_ring_params.yaml" command="load"/>
+    </group>
+
+</launch>

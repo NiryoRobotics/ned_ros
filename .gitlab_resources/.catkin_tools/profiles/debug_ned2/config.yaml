@@ -1,0 +1,21 @@
+blacklist: []
+build_space: build/debug/ned2
+catkin_make_args: []
+cmake_args:
+- -DHARDWARE_VERSION=ned2
+- -DCATKIN_ENABLE_TESTING=ON
+- -DENABLE_COVERAGE_TESTING=ON
+- -DCMAKE_BUILD_TYPE=Debug
+devel_layout: linked
+devel_space: devel/debug/ned2
+extend_path: /opt/ros/melodic
+install: false
+install_space: install/debug/ned2
+isolate_install: false
+jobs_args: []
+log_space: logs/debug/ned2
+make_args: []
+source_space: src
+use_env_cache: false
+use_internal_make_jobserver: true
+whitelist: []
