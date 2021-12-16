@@ -124,6 +124,9 @@ class RobotStatusObserver(object):
         msg.temperatures = []
         msg.voltages = []
 
+        # Todo remove this shit
+        msg.error_message = ""
+
         if self.hardware_status != msg:
             self.hardware_status = msg
             self.rpi_overheating = rpi_overheating
@@ -165,7 +168,7 @@ class RobotStatusObserver(object):
         #         self.pyniryo2_ping = False
         #
         # print self.pyniryo2_ping
-        print (last_pyniryo2_ping, self.pyniryo2_ping)
+        #print (last_pyniryo2_ping, self.pyniryo2_ping)
         if last_pyniryo2_ping != self.pyniryo2_ping:
             self.__robot_status_handler.advertise_new_state()
 

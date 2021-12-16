@@ -251,8 +251,6 @@ class LedRingCommander:
         led_ring_state.animation_mode.animation = self.led_ring_anim.current_animation
         led_ring_state.animation_color = self.led_ring_anim.current_animation_color
 
-        print led_ring_state
-
         if led_ring_state != self.led_ring_state:
             self.led_ring_state = led_ring_state
             try:

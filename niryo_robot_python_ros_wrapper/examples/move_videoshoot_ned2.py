@@ -3,8 +3,9 @@
 # To use the API, copy these 4 lines on each Python file you create
 from niryo_robot_python_ros_wrapper.ros_wrapper import *
 import rospy
-import time
-import math
+import threading
+import random
+
 
 WHITE = [255, 255, 255]
 GREEN = [50, 255, 0]
@@ -16,17 +17,72 @@ RED = [255, 0, 0]
 CYAN = [0, 255, 255]
 
 rospy.init_node('niryo_robot_example_python_ros_wrapper')
-
 print "--- Start"
 
 n = NiryoRosWrapper()
 # n.request_new_calibration()
 n.set_arm_max_velocity(100)
 n.calibrate_auto()
+n.wait(1)
+
+
+def french_flag():
+    colors = []
+    colors += [[255, 0, 0] for _ in range(5)]
+    colors += [[255, 255, 255] for _ in range(5)]
+    colors += [[0, 0, 255] for _ in range(10)]
+    colors += [[255, 255, 255] for _ in range(5)]
+    colors += [[255, 0, 0] for _ in range(5)]
+    n.led_ring.custom(colors)
+
+
+run_flag = True
+
+
+def french_flag_moving():
+    colors = []
+    colors += [[255, 0, 0] for _ in range(5)]
+    colors += [[255, 255, 255] for _ in range(5)]
+    colors += [[0, 0, 255] for _ in range(10)]
+    colors += [[255, 255, 255] for _ in range(5)]
+    colors += [[255, 0, 0] for _ in range(5)]
+    rate = rospy.Rate(10)
+    while not rospy.is_shutdown() and run_flag:
+        for i in range(len(colors)):
+            n.led_ring.custom(colors[i:] + colors[:i])
+            rate.sleep()
+
+
+def start_run_flag():
+    global run_flag
+    run_flag = True
+    t = threading.Thread(target=french_flag_moving)
+    t.start()
+
+
+def stop_flag():
+    global run_flag
+    run_flag = False
+
+
+def close_gripper():
+    try:
+        n.close_gripper(max_torque_percentage=100, hold_torque_percentage=100)
+    except Exception:
+        pass
+
+
+def open_gripper():
+    try:
+        n.open_gripper(max_torque_percentage=100, hold_torque_percentage=100)
+    except Exception:
+        pass
+
 
 print "--- Prepare traj --"
 
 n.move_joints(*(6 * [0]))
+french_flag()
 n.move_pose(*[0.029, 0.217, 0.3, 2.254, 1.476, -2.38])
 print ("-- Compute traj 1 --")
 traj1 = n.compute_trajectory_from_poses_and_joints(
@@ -127,6 +183,7 @@ while True:
         print "Calibration finished !"
 
         print("Wave")
+        open_gripper()
         n.led_ring.breath(BLUE)
         n.move_joints(*(6 * [0]))
         # Niryo wave
@@ -137,28 +194,39 @@ while True:
         n.set_arm_max_velocity(100)
 
         print("Moves")
-        n.led_ring.chase(GREEN)
+        n.led_ring.solid(GREEN)
+        threading.Timer(2, close_gripper).start()
+        threading.Timer(3.4, close_gripper).start()
+        threading.Timer(6, open_gripper).start()
         n.move_pose(*[0.094, -0.085, 0.3, 0.927, 1.157, 0.899])
         n.move_pose(*[0.029, 0.217, 0.3, 2.254, 1.476, -2.38])
         n.execute_moveit_robot_trajectory(traj1)
         n.move_pose(*[0.179, 0.001, 0.264, 2.532, 1.532, 2.618])
 
+
         print("Spiral")
-        n.led_ring.snake(PINK)
+        n.led_ring.snake(BLUE)
         n.move_pose(0.3, 0, 0.3, 0, 0, 0)
         n.move_spiral(0.1, 5, 216, 1)
 
         print("Moves")
         n.led_ring.breath(BLUE)
+        threading.Timer(2.5, close_gripper).start()
+        threading.Timer(4.8, close_gripper).start()
+        threading.Timer(5.4, open_gripper).start()
+
         n.execute_moveit_robot_trajectory(traj2)
 
         print("Circle")
-        n.led_ring.breath(PINK)
+        french_flag()
         n.move_pose(0.3, 0, 0.4, 0, 0, 0)
         n.move_circle(0.3, 0, 0.3)
 
         print("Moves")
         n.led_ring.rainbow()
+        threading.Timer(1, close_gripper).start()
+        threading.Timer(2.1, close_gripper).start()
+        threading.Timer(6.4, open_gripper).start()
         n.execute_moveit_robot_trajectory(traj3)
 
         print("Linear")
@@ -168,16 +236,22 @@ while True:
 
         print("Moves")
         n.led_ring.chase(WHITE)
+        threading.Timer(3, close_gripper).start()
+        threading.Timer(3.5, close_gripper).start()
+        threading.Timer(4, open_gripper).start()
         n.execute_moveit_robot_trajectory(traj2)
 
         # Slalome
         print("Slalome")
-        n.led_ring.rainbow_cycle()
-
+        start_run_flag()
+        close_gripper()
         n.move_pose(*pose_list[0])
         n.execute_moveit_robot_trajectory(slalome_traj)
 
         print("Moves")
+        threading.Timer(3, close_gripper).start()
+        threading.Timer(5, close_gripper).start()
+        threading.Timer(6, open_gripper).start()
         n.execute_moveit_robot_trajectory(traj3)
 
         print("Pick and place")
@@ -210,22 +284,16 @@ while True:
 
         n.release_with_tool()
         n.execute_trajectory_from_poses(pick_1, 0.002)
-        try:
-            n.close_gripper(max_torque_percentage=100, hold_torque_percentage=100)
-        except Exception:
-            pass
+        open_gripper()
         n.execute_trajectory_from_poses(place_1, 0.002)
         n.release_with_tool()
         n.execute_trajectory_from_poses(pick_2, 0.002)
-        try:
-            n.close_gripper(max_torque_percentage=100, hold_torque_percentage=100)
-        except Exception:
-            pass
+        close_gripper()
         n.execute_trajectory_from_poses(place_2, 0.002)
         n.execute_trajectory_from_poses(end_pose, 0.002)
 
         print("Wave")
-        n.led_ring.breath(BLUE)
+        french_flag()
         n.move_joints(*(6 * [0]))
         # Niryo wave
         n.move_pose(*full_traj[0])
