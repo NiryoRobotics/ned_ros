@@ -101,6 +101,10 @@ class NiryoRosWrapper:
         from niryo_robot_database.api import DatabaseRosWrapper
         self.__database = DatabaseRosWrapper(self.__service_timeout)
 
+        # system_api_client
+        from niryo_robot_system_api_client.api import SystemApiClientRosWrapper
+        self.__system_api_client = SystemApiClientRosWrapper(self.__service_timeout)
+
         if self.__hardware_version == 'ned2':
             from niryo_robot_python_ros_wrapper.custom_button_ros_wrapper import CustomButtonRosWrapper
             from niryo_robot_led_ring.api import LedRingRosWrapper
@@ -1939,6 +1943,10 @@ class NiryoRosWrapper:
         if with_desc:
             return result.name_list, result.description_list
         return result.name_list
+
+    @property
+    def system_api_client(self):
+        return self.__system_api_client
 
     # - Ned
 
