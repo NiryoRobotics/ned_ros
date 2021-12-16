@@ -6,12 +6,11 @@
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Ned ROS Documentation v3.2\n"
+"Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-22 17:37+0200\n"
+"POT-Creation-Date: 2021-12-15 12:28+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -231,4 +230,100 @@ msgstr ""
 #: ../../source/stack/high_level/niryo_robot_msgs.rst:148
 msgid "Trigger"
 msgstr ""
+
+#~ msgid "Niryo Robot Messages Package"
+#~ msgstr ""
+
+#~ msgid "Niryo Messages"
+#~ msgstr ""
+
+#~ msgid "Niryo Services"
+#~ msgstr ""
+
+#~ msgid "Niryo Message Dependencies"
+#~ msgstr ""
+
+#~ msgid "Niryo Message files"
+#~ msgstr ""
+
+#~ msgid ":ref:`CommandStatus`"
+#~ msgstr ""
+
+#~ msgid ":ref:`ObjectPose`"
+#~ msgstr ""
+
+#~ msgid ":ref:`RobotState`"
+#~ msgstr ""
+
+#~ msgid ":ref:`RPY`"
+#~ msgstr ""
+
+#~ msgid ":ref:`HardwareStatus`"
+#~ msgstr ""
+
+#~ msgid ":ref:`SoftwareVersion`"
+#~ msgstr ""
+
+#~ msgid ":ref:`GetBool`"
+#~ msgstr ""
+
+#~ msgid ":ref:`GetInt`"
+#~ msgstr ""
+
+#~ msgid ":ref:`GetStringList`"
+#~ msgstr ""
+
+#~ msgid ":ref:`SetBool`"
+#~ msgstr ""
+
+#~ msgid ":ref:`SetInt`"
+#~ msgstr ""
+
+#~ msgid ":ref:`SetString`"
+#~ msgstr ""
+
+#~ msgid ":ref:`Trigger`"
+#~ msgstr ""
+
+#~ msgid "Niryo robot messages package"
+#~ msgstr ""
+
+#~ msgid ":ref:`source/ros/niryo_robot_msgs:CommandStatus`"
+#~ msgstr ""
+
+#~ msgid ":ref:`source/ros/niryo_robot_msgs:ObjectPose`"
+#~ msgstr ""
+
+#~ msgid ":ref:`source/ros/niryo_robot_msgs:RobotState`"
+#~ msgstr ""
+
+#~ msgid ":ref:`source/ros/niryo_robot_msgs:RPY`"
+#~ msgstr ""
+
+#~ msgid ":ref:`source/ros/niryo_robot_msgs:HardwareStatus`"
+#~ msgstr ""
+
+#~ msgid ":ref:`source/ros/niryo_robot_msgs:SoftwareVersion`"
+#~ msgstr ""
+
+#~ msgid ":ref:`source/ros/niryo_robot_msgs:GetBool`"
+#~ msgstr ""
+
+#~ msgid ":ref:`source/ros/niryo_robot_msgs:GetInt`"
+#~ msgstr ""
+
+#~ msgid ":ref:`source/ros/niryo_robot_msgs:GetStringList`"
+#~ msgstr ""
+
+#~ msgid ":ref:`source/ros/niryo_robot_msgs:SetBool`"
+#~ msgstr ""
+
+#~ msgid ":ref:`source/ros/niryo_robot_msgs:SetInt`"
+#~ msgstr ""
+
+#~ msgid ":ref:`source/ros/niryo_robot_msgs:SetString`"
+#~ msgstr ""
+
+#~ msgid ":ref:`source/ros/niryo_robot_msgs:Trigger`"
+#~ msgstr ""
 

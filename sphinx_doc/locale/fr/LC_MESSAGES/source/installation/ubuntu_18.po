@@ -11,199 +11,229 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation v3.2\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-22 17:37+0200\n"
+"POT-Creation-Date: 2021-12-15 17:58+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.9.1\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Language: fr\n"
+"X-Source-Language: C\n"
 
 #: ../../source/installation/ubuntu_18.rst:2
 msgid "Ubuntu 18 Installation"
-msgstr ""
+msgstr "Installer sous Ubuntu 18"
 
 #: ../../source/installation/ubuntu_18.rst:5
 msgid ""
-"To allow the simulation to run on your computer, you will need to install"
-" ROS and some packages."
+"To allow the simulation to run on your computer, you will need to install "
+"ROS and some packages."
 msgstr ""
+"Afin de faire tourner la simulation sur votre ordinateur, vous devez "
+"installer ROS et quelques paquets supplémentaires."
 
 #: ../../source/installation/ubuntu_18.rst:8
 msgid "Installation index:"
-msgstr ""
+msgstr "Sommaire :"
 
 #: ../../source/installation/ubuntu_18.rst:15
 msgid "Prerequisites"
-msgstr ""
+msgstr "Prérequis"
 
 #: ../../source/installation/ubuntu_18.rst:17
 msgid "All terminal command listed are for Ubuntu users."
 msgstr ""
+"Toutes les commandes de terminal listées sont pour des utilisateurs Ubuntu."
 
 #: ../../source/installation/ubuntu_18.rst:19
 msgid ""
 "Place yourself in the folder of your choice and create a folder "
 "**catkin_ws_niryo_ned** as well as a sub-folder **src**: ::"
 msgstr ""
+"Positionnez-vous dans un dossier de votre choix et créés un dossier "
+"**catkin_ws_niryo_ned** ainsi qu'un sous-dossier **src**: ::"
 
 #: ../../source/installation/ubuntu_18.rst:24
 msgid ""
-"Then go to the folder **catkin_ws_niryo_ned** and clone Ned repository in"
-" the folder **src**. For the future operation, be sure to stay in the "
+"Then go to the folder **catkin_ws_niryo_ned** and clone Ned repository in "
+"the folder **src**. For the future operation, be sure to stay in the "
 "**catkin_ws_niryo_ned** folder: ::"
 msgstr ""
+"Ensuite aller dans le dossier **catkin_ws_niryo_ned** et cloner le "
+"repository Ned dans le dossier **src**. Pour les prochaines commandes, "
+"vérifiez que vous êtes bien dans le dossier **catkin_ws_niryo_ned** : ::"
 
 #: ../../source/installation/ubuntu_18.rst:33
 msgid "Install ROS dependencies"
-msgstr ""
+msgstr "Installer les dépendances de ROS"
 
 #: ../../source/installation/ubuntu_18.rst:36
 msgid "Install ROS"
-msgstr ""
+msgstr "Installer ROS"
 
 #: ../../source/installation/ubuntu_18.rst:38
 msgid ""
-"You firstly need to install ROS Melodic. To do so, follow the ROS "
-"official tutorial `here "
-"<http://wiki.ros.org/melodic/Installation/Ubuntu>`_ and chose the "
-"**Desktop-Full Install**."
+"You firstly need to install ROS Melodic. To do so, follow the ROS official "
+"tutorial `here <http://wiki.ros.org/melodic/Installation/Ubuntu>`_ and chose "
+"the **Desktop-Full Install**."
 msgstr ""
+"Vous devez tout d'abord installer ROS Melodic. Pour cela, suivez les "
+"instructions du tutoriel officiel de ROS `ici "
+"<http://wiki.ros.org/melodic/Installation/Ubuntu>`_ et choisissez l'option "
+"**Desktop-Full Install**."
 
 #: ../../source/installation/ubuntu_18.rst:43
 msgid "Install additional packages"
-msgstr ""
+msgstr "Installet les paquets additionnels"
 
 #: ../../source/installation/ubuntu_18.rst:44
 msgid ""
-"To ensure the functioning of all Ned's packages, you need to install "
-"several more packages:"
+"To ensure the functioning of all Ned's packages, you need to install several "
+"more packages:"
 msgstr ""
+"Pour assurer le fonctionnement de tous les paquets du Ned, vous devez "
+"installer quelques paquets supplémentaires :"
 
 #: ../../source/installation/ubuntu_18.rst:48
 msgid "Method 1: Quick installation via ROSDep"
-msgstr ""
+msgstr "Méthode 1 : Installation rapide via ROSDep"
 
 #: ../../source/installation/ubuntu_18.rst:49
 msgid ""
 "For each packages, we have referenced all the dependencies in their "
-"respective *package.xml* file, which allow to install each dependency via"
-" *rosdep* command: ::"
+"respective *package.xml* file, which allow to install each dependency via "
+"*rosdep* command: ::"
 msgstr ""
+"Pour chaque package, les dépendances requises sont listées dans leur fichier "
+"*package.xml* respectifs, ce qui permet l'installation de chacun d'entre eux "
+"via la commande *rosdep* : ::"
 
 #: ../../source/installation/ubuntu_18.rst:57
 msgid "Method 2: Full installation"
-msgstr ""
+msgstr "Méthode 2 : Installation Complète"
 
 #: ../../source/installation/ubuntu_18.rst:59
 msgid "ROS packages needed are:"
-msgstr ""
+msgstr "Les packages ROS requis sont :"
 
 #: ../../source/installation/ubuntu_18.rst:61
 msgid "build-essential"
-msgstr ""
+msgstr "build-essential"
 
 #: ../../source/installation/ubuntu_18.rst:62
 msgid "catkin"
-msgstr ""
+msgstr "catkin"
 
 #: ../../source/installation/ubuntu_18.rst:63
 msgid "python-catkin-pkg"
-msgstr ""
+msgstr "python-catkin-pkg"
 
 #: ../../source/installation/ubuntu_18.rst:64
 msgid "python-pymodbus"
-msgstr ""
+msgstr "python-pymodbus"
 
 #: ../../source/installation/ubuntu_18.rst:65
 msgid "python-rosdistro"
-msgstr ""
+msgstr "python-rosdistro"
 
 #: ../../source/installation/ubuntu_18.rst:66
 msgid "python-rospkg"
-msgstr ""
+msgstr "python-rospkg"
 
 #: ../../source/installation/ubuntu_18.rst:67
 msgid "python-rosdep-modules"
-msgstr ""
+msgstr "python-rosdep-modules"
 
 #: ../../source/installation/ubuntu_18.rst:68
 msgid "python-rosinstall python-rosinstall-generator"
-msgstr ""
+msgstr "python-rosinstall python-rosinstall-generator"
 
 #: ../../source/installation/ubuntu_18.rst:69
 msgid "python-wstool"
-msgstr ""
+msgstr "python-wstool"
 
 #: ../../source/installation/ubuntu_18.rst:71
 msgid "To install a package on Ubuntu: ::"
-msgstr ""
+msgstr "Pour installer un package sur Ubuntu : ::"
 
 #: ../../source/installation/ubuntu_18.rst:76
 msgid "Melodic specific packages needed are:"
-msgstr ""
+msgstr "Les packages melodic spécifiques requis sont :"
 
 #: ../../source/installation/ubuntu_18.rst:78
 msgid "moveit"
-msgstr ""
+msgstr "moveit"
 
 #: ../../source/installation/ubuntu_18.rst:79
 msgid "control"
-msgstr ""
+msgstr "control"
 
 #: ../../source/installation/ubuntu_18.rst:80
 msgid "controllers"
-msgstr ""
+msgstr "controllers"
 
 #: ../../source/installation/ubuntu_18.rst:81
 msgid "tf2-web-republisher"
-msgstr ""
+msgstr "tf2-web-republisher"
 
 #: ../../source/installation/ubuntu_18.rst:82
 msgid "rosbridge-server"
-msgstr ""
+msgstr "rosbridge-server"
 
 #: ../../source/installation/ubuntu_18.rst:83
 msgid "joint-state-publisher-gui"
-msgstr ""
+msgstr "joint-state-publisher-gui"
 
 #: ../../source/installation/ubuntu_18.rst:85
 msgid "To install a ROS Melodic's package on Ubuntu: ::"
-msgstr ""
+msgstr "Pour installer un package ROS Melodic sur Ubuntu : ::"
 
 #: ../../source/installation/ubuntu_18.rst:91
 msgid "Setup Ned ROS environment"
-msgstr ""
+msgstr "Mise en place de l'environnement ROS"
 
 #: ../../source/installation/ubuntu_18.rst:94
 msgid "Be sure to be still placed in the **catkin_ws_niryo_ned** folder."
 msgstr ""
+"Vérifier que vous êtes bien positionnez dans le dossier "
+"**catkin_ws_niryo_ned**."
 
 #: ../../source/installation/ubuntu_18.rst:96
 msgid "Then perform the **make** of Ned's ROS Stack via the command: ::"
 msgstr ""
+"Lancez ensuite la compilation de la stack ROS Niryo via la commande suivante "
+": ::"
 
 #: ../../source/installation/ubuntu_18.rst:100
 msgid ""
 "If no errors occurred during the **make** phase, the setup of your "
 "environment is almost complete!"
 msgstr ""
+"Si aucune erreur ne se produit pendant la phase de compilation, la mise en "
+"place de votre environnement est presque complète !"
 
 #: ../../source/installation/ubuntu_18.rst:103
 msgid ""
-"It is necessary to source the configuration file to add all Ned packages "
-"to ROS environment. To do so, run the command: ::"
+"It is necessary to source the configuration file to add all Ned packages to "
+"ROS environment. To do so, run the command: ::"
 msgstr ""
+"Il est nécessaire de sourcer le fichier de configuration pour ajouter tous "
+"les packages du Ned dans l'environnement ROS. Pour faire cela, lancer la "
+"commande : ::"
 
 #: ../../source/installation/ubuntu_18.rst:108
 msgid ""
-"It is necessary to run this command each time you launch a new terminal. "
-"If you want to make this sourcing appends for all your futur terminals, "
-"you can add it to your **bashrc** file: ::"
+"It is necessary to run this command each time you launch a new terminal. If "
+"you want to make this sourcing appends for all your future terminals, you "
+"can add it to your **bashrc** file: ::"
 msgstr ""
+"Il est nécessaire de lancer cette commande à chaque fois que vous lancez un "
+"nouveau terminal. Si vous voulez l'appliquer à chaque ouverture d'un "
+"terminal, vous pouvez ajouter cette ligne à votre fichier **.bashrc : ::"
 
 #: ../../source/installation/ubuntu_18.rst:115
 msgid "Installation is now finished!"
-msgstr ""
-
+msgstr "L'installation est maintenant terminée !"

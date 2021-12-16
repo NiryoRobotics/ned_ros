@@ -1137,7 +1137,7 @@ class NiryoRosWrapper:
         :rtype: (int, str)
         """
         tool_id = self.get_current_tool_id()
-        print tool_id
+        print(tool_id)
 
         if tool_id in (ToolID.GRIPPER_1, ToolID.GRIPPER_2, ToolID.GRIPPER_3, ToolID.GRIPPER_4):
             return self.open_gripper()

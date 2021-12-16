@@ -15,13 +15,16 @@ msgstr ""
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Generated-By: Babel 2.9.1\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Language: fr\n"
+"X-Source-Language: C\n"
 
 #: ../../source/changelog.rst:2
 msgid "December release - Hardware Stack refinement"
-msgstr ""
+msgstr "Release de Décembre - Refonte Stack Hardware"
 
 #: ../../source/changelog.rst:5 ../../source/changelog.rst:14
 msgid "Features"
@@ -29,7 +32,7 @@ msgstr "Fonctionnalités"
 
 #: ../../source/changelog.rst:7
 msgid "TODO"
-msgstr ""
+msgstr "TODO"
 
 #: ../../source/changelog.rst:11
 msgid "September release - New features batch"
@@ -37,7 +40,7 @@ msgstr "Version septembre - Nouvelles fonctionnalités"
 
 #: ../../source/changelog.rst:17
 msgid "Tool commander package"
-msgstr ""
+msgstr "Package Tool Commander"
 
 #: ../../source/changelog.rst:19
 msgid "TCP service settings"
@@ -45,15 +48,15 @@ msgstr "Service de configuration du PCO"
 
 #: ../../source/changelog.rst:21
 msgid "TCP.msg"
-msgstr ""
+msgstr "TCP.msg"
 
 #: ../../source/changelog.rst:23
 msgid "SetTCP.srv"
-msgstr ""
+msgstr "SetTCP.srv"
 
 #: ../../source/changelog.rst:27
 msgid "Arm commander package"
-msgstr ""
+msgstr "package Arm Commander"
 
 #: ../../source/changelog.rst:29
 msgid "New movements available in ArmMoveCommand.msg"
@@ -61,19 +64,19 @@ msgstr "Nouveaux mouvements disponibles dans ArmMoveCommand.msg"
 
 #: ../../source/changelog.rst:31 ../../source/changelog.rst:45
 msgid "linear pose"
-msgstr ""
+msgstr "linear pose"
 
 #: ../../source/changelog.rst:33 ../../source/changelog.rst:51
 msgid "shift linear pose"
-msgstr ""
+msgstr "shift linear pose"
 
 #: ../../source/changelog.rst:35
 msgid "trajectory"
-msgstr ""
+msgstr "trajectoire"
 
 #: ../../source/changelog.rst:39
 msgid "Python ROS Wrapper package"
-msgstr ""
+msgstr "Package Python ROS Wrapper"
 
 #: ../../source/changelog.rst:41
 msgid "New movement functions available"
@@ -81,19 +84,19 @@ msgstr "Nouvelles fonctions de mouvement"
 
 #: ../../source/changelog.rst:43
 msgid "move linear pose"
-msgstr ""
+msgstr "move linear pose"
 
 #: ../../source/changelog.rst:47
 msgid "jog pose shift"
-msgstr ""
+msgstr "jog pose shift"
 
 #: ../../source/changelog.rst:49
 msgid "jog joints shift"
-msgstr ""
+msgstr "jog joints shift"
 
 #: ../../source/changelog.rst:53
 msgid "execute trajectory from pose"
-msgstr ""
+msgstr "executer une trajectoire depuis une position"
 
 #: ../../source/changelog.rst:55
 msgid "New TCP functions available"
@@ -101,15 +104,15 @@ msgstr "Nouvelles fonctions PCO"
 
 #: ../../source/changelog.rst:57
 msgid "set_tcp"
-msgstr ""
+msgstr "set_tcp"
 
 #: ../../source/changelog.rst:59
 msgid "enable_tcp"
-msgstr ""
+msgstr "enable_tcp"
 
 #: ../../source/changelog.rst:61
 msgid "reset_tcp"
-msgstr ""
+msgstr "reset_tcp"
 
 #: ../../source/changelog.rst:63
 msgid "New camera settings functions available"
@@ -117,23 +120,23 @@ msgstr "Nouvelles fonctions de configuration de la caméra"
 
 #: ../../source/changelog.rst:65
 msgid "set_brightness"
-msgstr ""
+msgstr "set_brightness"
 
 #: ../../source/changelog.rst:67
 msgid "set_contrast"
-msgstr ""
+msgstr "set_contrast"
 
 #: ../../source/changelog.rst:69
 msgid "set_saturation"
-msgstr ""
+msgstr "set_saturation"
 
 #: ../../source/changelog.rst:72
 msgid "Improvements"
-msgstr ""
+msgstr "Améliorations"
 
 #: ../../source/changelog.rst:74
 msgid "Refactoring Tool Commander and Robot Commander packages."
-msgstr "Refactorisation des packages Tool Commander et Robot Commander"
+msgstr "Refactorisation des packages Tool Commander et Robot Commander."
 
 #: ../../source/changelog.rst:76
 msgid "Remove Robot Commander package"
@@ -144,8 +147,8 @@ msgid ""
 "Reorder Robot Commander package between Tool Commander and Arm Commander "
 "packages."
 msgstr ""
-"Redistribution du package Robot Commander entre les packages Tool "
-"Commander et Arm Commander. "
+"Redistribution du package Robot Commander entre les packages Tool Commander "
+"et Arm Commander."
 
 #: ../../source/changelog.rst:80
 msgid "Self collision detection"
@@ -153,7 +156,7 @@ msgstr "Détection d'auto-collision"
 
 #: ../../source/changelog.rst:82
 msgid "Add self-collision detection via MoveIt."
-msgstr "Ajout de la fonction de détection d'auto-collision via MoveIt"
+msgstr "Ajout de la fonction de détection d'auto-collision via MoveIt."
 
 #: ../../source/changelog.rst:84
 msgid "Collision detection"
@@ -166,4 +169,3 @@ msgstr "Amélioration de la détection de collision du robot sur tous ses axes."
 #: ../../source/changelog.rst:88
 msgid "Learning mode activation in case of a collision."
 msgstr "Le robot se met en Mode Apprentissage en cas de collision."
-

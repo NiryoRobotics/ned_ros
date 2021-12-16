@@ -60,6 +60,7 @@ endif()
 find_package(roslint QUIET)
 
 if(roslint_FOUND)
+    set(ROSLINT_PYTHON_OPTS "1>&2")
     roslint_python()
 else()
     message(WARNING "roslint not found. Skipping roslint target building")

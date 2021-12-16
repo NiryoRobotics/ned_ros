@@ -6,12 +6,11 @@
 # Documentation package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
 #
-#, fuzzy
 msgid ""
 msgstr ""
-"Project-Id-Version: Ned ROS Documentation v3.2\n"
+"Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-10-22 17:37+0200\n"
+"POT-Creation-Date: 2021-12-15 12:28+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -254,4 +253,90 @@ msgstr ""
 #: ../../source/stack/high_level/niryo_robot_tools_commander.rst:116
 msgid "SetTCP (Service)"
 msgstr ""
+
+#~ msgid "Niryo Robot Tools Commander Package"
+#~ msgstr ""
+
+#~ msgid "Tools Commander Node"
+#~ msgstr ""
+
+#~ msgid "The namespace used is : |namespace_emphasize|"
+#~ msgstr ""
+
+#~ msgid "Action Server - Tools"
+#~ msgstr ""
+
+#~ msgid "Publisher - Tools"
+#~ msgstr ""
+
+#~ msgid "Services - Tools"
+#~ msgstr ""
+
+#~ msgid "Dependencies - Tools"
+#~ msgstr ""
+
+#~ msgid "Action, Services & Messages files - Tools"
+#~ msgstr ""
+
+#~ msgid "Action, services & messages files - tools"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "This package allows to manage the "
+#~ "TCP (Tool Center Point) of the "
+#~ "robot. If the functionality is "
+#~ "activated, all the movements (move to"
+#~ " pose [x, y, z, roll, pitch, "
+#~ "yaw]) of the robot will be "
+#~ "performed according to this TCP. The "
+#~ "same program can then work with "
+#~ "several tools by adapting the TCP "
+#~ "transformation to them. By default this"
+#~ " feature is disabled, but can be "
+#~ "enabled through the robot services."
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Publish if the TCP (Tool Center "
+#~ "Point) is enabled and the TCP "
+#~ "transformation"
+#~ msgstr ""
+
+#~ msgid ":ref:`ToolAction<ToolAction (Action)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`TCP<TCP (Message)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`Trigger`"
+#~ msgstr ""
+
+#~ msgid ":ref:`SetInt`"
+#~ msgstr ""
+
+#~ msgid ":ref:`SetBool`"
+#~ msgstr ""
+
+#~ msgid ":ref:`SetTCP<SetTCP (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`niryo_robot_msgs <Niryo Robot Messages Package>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`ToolAction<source/ros/niryo_robot_tools_commander:ToolAction "
+#~ "(Action)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`TCP<source/ros/niryo_robot_tools_commander:TCP (Message)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`source/ros/niryo_robot_msgs:SetInt`"
+#~ msgstr ""
+
+#~ msgid ":ref:`source/ros/niryo_robot_msgs:SetBool`"
+#~ msgstr ""
+
+#~ msgid ":ref:`SetTCP<source/ros/niryo_robot_tools_commander:SetTCP (Service)>`"
+#~ msgstr ""
 
