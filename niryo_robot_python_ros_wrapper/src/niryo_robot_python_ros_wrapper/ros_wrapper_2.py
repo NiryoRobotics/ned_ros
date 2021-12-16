@@ -17,8 +17,7 @@ from niryo_robot_msgs.srv import GetNameDescriptionList, SetBool, SetInt, Trigge
 from niryo_robot_programs_manager.srv import SetProgramAutorun, SetProgramAutorunRequest, GetProgramAutorunInfos, \
     GetProgramList, ManageProgram, ManageProgramRequest, GetProgram, GetProgramRequest, ExecuteProgram, \
     ExecuteProgramRequest
-from niryo_robot_credentials.srv import GetCredential, SetCredential
-
+from niryo_robot_database.srv import GetSettings, SetSettings
 
 # Enums
 from niryo_robot_python_ros_wrapper.ros_wrapper_enums import *
@@ -244,25 +243,36 @@ class NiryoRosWrapper2:
         """
         return self.__call_shutdown_rpi(2)
 
-    def get_serial_number(self):
+    def get_setting(self, name):
         """
-        Get the serial number
-        :return: status, message
-        :rtype: (int, str)
+        Get a setting from the database
+        :param name: the setting name
+        :type name: str
+        :return: the value of the setting
+        :rtype: object
         """
-        result = self.__call_service('/niryo_robot_credentials/get_serial', GetCredential)
-        return self.__classic_return_w_check(result)
+        from pydoc import locate
+        from niryo_robot_database.srv import GetSettings
+        result = self.__call_service('/niryo_robot_database/settings/get', GetSettings, name)
+        if result.status == CommandStatus.DATABASE_SETTINGS_UNKNOWN:
+            return None
+        if result.type != 'bool':
+            casted_type = locate(result.type)(result.value)
+        else:
+            casted_type = result.value in ['True', 'true']
+        return casted_type
 
-    def set_api_key(self, key):
+    def set_setting(self, name, value):
         """
-        Set the cloud API key
-        :param key: the api key
-        :type key: str
-        :return: status, message
-        :rtype: (int, str)
+        Set a setting in the database
+
+        :param name: the name of a setting
+        :type name: str
+        :param value: the value of the setting
+        :type value: object
         """
-        result = self.__call_service('/niryo_robot_credentials/set_api_key', SetCredential, key)
-        return self.__classic_return_w_check(result)
+        from niryo_robot_database.srv import SetSettings
+        self.__call_service('/niryo_robot_database/settings/set', SetSettings, name, str(value), type(value).__name__)
 
     # - Logs
 
