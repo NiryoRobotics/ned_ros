@@ -11,6 +11,7 @@
     <arg name="gazebo" default="false" />
     <arg name="simulation_mode" default="false" />
     <arg name="simu_gripper" default="true" />
+    <arg name="simu_conveyor" default="true" />
     <arg name="conf_location" default="$(env HOME)/.config/niryo/version/version.txt"/>
 
     <arg name="urdf_path" value="urdf/$(arg hardware_version)/without_mesh_niryo_$(arg hardware_version).urdf.xacro" unless="$(eval simulation_mode)" />
@@ -21,10 +22,10 @@
 
     <!-- Load URDF -->
     <param name="robot_description"
-           command="$(find xacro)/xacro $(find niryo_robot_description)/$(arg urdf_path)" />
+           command="$(find xacro)/xacro --inorder $(find niryo_robot_description)/$(arg urdf_path)" />
 
     <param name="robot_description_tf2"
-           command="$(find xacro)/xacro $(find niryo_robot_description)/urdf/$(arg hardware_version)/niryo_$(arg hardware_version).urdf.xacro" />
+           command="$(find xacro)/xacro --inorder $(find niryo_robot_description)/urdf/$(arg hardware_version)/niryo_$(arg hardware_version).urdf.xacro" />
 
     <!-- PARAMS -->
     <group ns="niryo_robot">
@@ -42,6 +43,7 @@
         <arg name="hardware_version" value="$(arg hardware_version)" />
         <arg name="simulation_mode" value="$(arg simulation_mode)" />
         <arg name="simu_gripper" value="$(arg simu_gripper)" />
+        <arg name="simu_conveyor" value="$(arg simu_conveyor)" />
         <arg name="log_level" value="$(arg log_level)" />
         <arg name="debug" value="$(arg debug)"/>
         <arg name="can_enabled" value="$(arg can_enabled)"/>
@@ -64,13 +66,17 @@
         <arg name="simulation_mode" value="$(arg simulation_mode)"/>
     </include>
 
-    <include file="$(find niryo_robot_credentials)/launch/credentials.launch">
-        <arg name="log_level" value="$(arg log_level)" />
-        <arg name="credentials_path" value="$(arg conf_location)"/>
-    </include>
+    <!-- Waiting for the next release
+    <group if="$(eval hardware_version != 'one')">
+        <include file="$(find niryo_robot_reports)/launch/reports.launch">
+            <arg name="log_level" value="$(arg log_level)" />
+        </include>
+    </group>
+    -->
 
     <include file="$(find niryo_robot_system_api_client)/launch/system_api_client.launch">
         <arg name="log_level" value="$(arg log_level)" />
+        <arg name="hardware_version" value="$(arg hardware_version)" />
     </include>
 
 </launch>

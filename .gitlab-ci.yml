@@ -16,6 +16,8 @@ variables:
   GIT_DEPTH: 0
   NIRYO_HOME_FOLDER: /home/niryo/catkin_ws
   GET_SOURCES_ATTEMPTS: 3
+  CATKIN_PROFILE_NAME: debug
+  
 
 stages:
   - build
@@ -38,7 +40,12 @@ image: registry.gitlab.com/niryo/niryo-one-s/ned_ros_stack/ned2:amd64
     - mv !(src) ${NIRYO_HOME_FOLDER}/src/
     ######################################
     - cd ${NIRYO_HOME_FOLDER}
-    - catkin build --profile release
+    # quick fix to add install space and allow documentation generation (should be done in docker image instead)
+    - catkin config --profile ${CATKIN_PROFILE_NAME} --install
+    - catkin config --profile ${CATKIN_PROFILE_NAME} --cmake-args -DHARDWARE_VERSION=ned2 -DCATKIN_ENABLE_TESTING=ON -DENABLE_COVERAGE_TESTING=ON -DCMAKE_BUILD_TYPE=Debug
+    # we need to first build the packages before building tests
+    - catkin build --profile ${CATKIN_PROFILE_NAME}
+    - catkin build --profile ${CATKIN_PROFILE_NAME} --make-args tests
     - cd -
     - mv ${NIRYO_HOME_FOLDER}/* .
 
@@ -103,7 +110,7 @@ build_doc_job:
     - mv ${previous_path}/build .
     - mv ${previous_path}/devel .
     ################# Quickfix end ###############
-    - source install/release/setup.bash
+    - source install/${CATKIN_PROFILE_NAME}/setup.bash
   after_script:
     - mv ${NIRYO_HOME_FOLDER}/* .
 
@@ -114,14 +121,14 @@ test_job:
   artifacts:
     when: always
     paths:
-        - build/release/*/test_results/*/rostest-*.xml
-        - build/release/*/test_results/*/gtest-*.xml
-        - build/release/*/test_results/*/rosunit-*.xml
+        - build/${CATKIN_PROFILE_NAME}/*/test_results/*/rostest-*.xml
+        - build/${CATKIN_PROFILE_NAME}/*/test_results/*/gtest-*.xml
+        - build/${CATKIN_PROFILE_NAME}/*/test_results/*/rosunit-*.xml
     reports:
       junit:
-        - build/release/*/test_results/*/rostest-*.xml
-        - build/release/*/test_results/*/gtest-*.xml
-        - build/release/*/test_results/*/rosunit-*.xml
+        - build/${CATKIN_PROFILE_NAME}/*/test_results/*/rostest-*.xml
+        - build/${CATKIN_PROFILE_NAME}/*/test_results/*/gtest-*.xml
+        - build/${CATKIN_PROFILE_NAME}/*/test_results/*/rosunit-*.xml
   script:
     # Do stuff to move source properly for catkin_make
     - !reference [.abstract_move_source_tricks_job, script]
@@ -143,7 +150,7 @@ roslint_job:
     # Do stuff to move source properly for catkin_make
     - !reference [.abstract_move_source_tricks_job, script]
     # Check code linting
-    - catkin build --make-args roslint -j1
+    - catkin build --profile ${CATKIN_PROFILE_NAME} --make-args roslint -j1
 
 catkin_lint_job:
   stage: test
@@ -155,6 +162,24 @@ catkin_lint_job:
     # Check code linting
     - catkin lint -W2 --rosdistro melodic --ignore missing_directory --explain src
 
+code_coverage_cpp_job:
+  stage: test
+  dependencies:
+    - catkin_make_amd
+  ## TO DELETE
+  needs:
+    - catkin_make_amd
+  ## ------------
+  tags:
+    - local_corentin
+  variables:
+    SCRIPT_PATH: development-tools/Code_Analysis/build_code_coverage.sh
+  script:
+    # Do stuff to move source properly for catkin_make
+    - !reference [.abstract_move_source_tricks_job, script]
+    - git clone https://gitlab-ci-token:${CI_JOB_TOKEN}@gitlab.com/niryo/niryo-one-s/development-tools.git
+    - ./${SCRIPT_PATH} -p ${CATKIN_PROFILE_NAME}
+
 ## See https://docs.gitlab.com/ee/user/project/merge_requests/code_quality.html
 include:
   - template: Code-Quality.gitlab-ci.yml
@@ -164,6 +189,9 @@ code_quality:
     - dind
   artifacts:
     paths: [gl-code-quality-report.json]
+  # Authenticate with account to not be limited by docker hub pull rate limit
+  before_script:
+   - docker login -u ${DOCKER_HUB_DOCKER_ID} -p ${DOCKER_HUB_PASSWORD}
 
 code_quality_html:
   extends: code_quality

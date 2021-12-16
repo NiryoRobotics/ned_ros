@@ -60,6 +60,34 @@ def dist_2_poses(p1, p2):
     return np.linalg.norm(np_pose1 - np_pose2)
 
 
+def dist_2_points(p1, p2):
+    """
+    :param p1:
+    :type p1: Pose
+    :param p2:
+    :type p2: Pose
+
+    :return: The distance (in meters) between the two poses
+    :rtype: float
+    """
+    np_point1 = np.array([p1.x, p1.y, p1.z])
+    np_point2 = np.array([p2.x, p2.y, p2.z])
+
+    return np.linalg.norm(np_point1 - np_point2)
+
+
+def angle_between_2_points(p1, p2):
+    np_point1 = np.array([p1.x, p1.y, p1.z])
+    np_point2 = np.array([p2.x, p2.y, p2.z])
+
+    unit_vector_1 = np_point1 / np.linalg.norm(np_point1)
+    unit_vector_2 = np_point2 / np.linalg.norm(np_point2)
+    dot_product = np.dot(unit_vector_1, unit_vector_2)
+    angle = np.arccos(dot_product)
+
+    return angle
+
+
 def poses_too_close(p1, p2):
     """
     Check that distance between p1 and p2 is bigger than the minimal required distance for a move.

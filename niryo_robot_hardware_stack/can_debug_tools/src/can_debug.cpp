@@ -37,7 +37,20 @@
 
 namespace po = boost::program_options;
 
-/**
+// CC : just for example
+#ifdef NIRYO_ONE
+  #pragma message "One compilation"
+#endif
+
+#ifdef NIRYO_NED
+  #pragma message "Ned compilation"
+#endif
+
+#ifdef NIRYO_NED2
+  #pragma message "Ned 2 compilation"
+#endif
+
+/*
  * @brief handleUserInput
  * @param argc
  * @param argv
@@ -47,7 +60,7 @@ int handleUserInput(int argc, char **argv)
 {
     try
     {
-        // Get args
+        // Get args#pragma message ( "C Preprocessor got here!" )
         po::options_description description("Options");
         description.add_options()
             ("help,h", "Print help message")

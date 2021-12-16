@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+  <arg name="time" default="0"/>
+  <arg name="pkg" default=""/>
+  <arg name="file" default=""/>
+  <arg name="value" default="" />
+  <arg name="node_name" default="timed_roslaunch_$(arg time)_$(arg pkg)" />
+
+  <node pkg="niryo_robot_bringup" type="timed_launch.sh" args="$(arg time) $(arg pkg) $(arg file) $(arg value)" name="$(arg node_name)" />
+</launch>

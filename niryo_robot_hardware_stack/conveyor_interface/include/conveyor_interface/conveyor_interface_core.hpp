@@ -62,7 +62,6 @@ class ConveyorInterfaceCore : public common::util::IInterfaceCore
         ConveyorInterfaceCore& operator= ( const ConveyorInterfaceCore& ) = delete;
 
         bool init(ros::NodeHandle& nh) override;
-        bool rebootAll();
 
         bool isInitialized();
 
@@ -77,8 +76,11 @@ private:
         conveyor_interface::SetConveyor::Response addConveyor();
         conveyor_interface::SetConveyor::Response removeConveyor(uint8_t id);
 
-        bool _callbackPingAndSetConveyor(conveyor_interface::SetConveyor::Request &req, conveyor_interface::SetConveyor::Response &res);
-        bool _callbackControlConveyor(conveyor_interface::ControlConveyor::Request &req, conveyor_interface::ControlConveyor::Response &res);
+        bool _callbackPingAndSetConveyor(conveyor_interface::SetConveyor::Request &req,
+                                         conveyor_interface::SetConveyor::Response &res);
+
+        bool _callbackControlConveyor(conveyor_interface::ControlConveyor::Request &req,
+                                      conveyor_interface::ControlConveyor::Response &res);
 
         void _publishConveyorsFeedback(const ros::TimerEvent&);
 
@@ -87,8 +89,7 @@ private:
     private:
         struct BusConfig
         {
-            BusConfig(common::model::EHardwareType t) :
-              type(t)
+            BusConfig(common::model::EHardwareType t) : type(t)
             {}
 
             bool isValid() { return !pool_id_list.empty() && type != common::model::EHardwareType::UNKNOWN; }
@@ -104,7 +105,7 @@ private:
             int direction{0};
         };
 
-        int initHardware(common::model::EBusProtocol protocol, std::shared_ptr<common::model::ConveyorState> motor_state);
+        int initHardware(std::shared_ptr<common::model::ConveyorState> conveyor_state);
 
         std::mutex _state_map_mutex;
 
@@ -119,13 +120,10 @@ private:
         ros::Publisher _conveyor_status_publisher;
 
         // currently connected and configured conveyors
-        std::map<uint8_t, std::shared_ptr<common::model::ConveyorState> > _conveyor_state_map;
+        std::vector<std::shared_ptr<common::model::ConveyorState> > _conveyor_state_list;
 
         std::shared_ptr<ttl_driver::TtlInterfaceCore> _ttl_interface;
         std::shared_ptr<can_driver::CanInterfaceCore> _can_interface;
-
-        // vector keep track order of insertion in state_map
-        std::vector<uint8_t> _order_insertion;
 
         static constexpr int TTL_DEFAULT_ID{8};
         static constexpr int CAN_DEFAULT_ID{6};

@@ -124,7 +124,7 @@ void TtlInterfaceCore::initParameters(ros::NodeHandle& nh)
     nh.getParam("ttl_hardware_read_data_frequency",
                  read_data_frequency);
 
-    nh.getParam("ttl_hardware_read_data_frequency",
+    nh.getParam("ttl_hardware_read_end_effector_frequency",
                  read_end_effector_frequency);
 
     nh.getParam("ttl_hardware_read_status_frequency",
@@ -582,22 +582,23 @@ void TtlInterfaceCore::controlLoop()
 
                     if (bus_state == TTL_SCAN_OK)
                         break;
-                    else
+
+                    missing_ids = getRemovedMotorList();
+
+                    std::string msg;
+                    msg += "TtlInterfaceCore::controlLoop - motor";
+                    for (auto const& id : missing_ids)
                     {
-                        missing_ids = getRemovedMotorList();
-
-                        std::string msg;
-                        msg += "TtlInterfaceCore::controlLoop - motor";
-                        for (auto const& id : missing_ids)
-                        {
-                            msg += " " + std::to_string(id);
-                        }
-                        msg += " do not seem to be connected";
-                        ROS_WARN_THROTTLE(1.0, "%s", msg.c_str());
-
-                        ros::Duration(0.25).sleep();
+                        msg += " " + std::to_string(id);
                     }
+                    msg += " do not seem to be connected";
+                    ROS_WARN_THROTTLE(1.0, "%s", msg.c_str());
+
+                    // still keep hardware status updated
+                    _ttl_manager->readHardwareStatus();
+                    ros::Duration(0.25).sleep();
                 }
+
                 ROS_INFO("TtlInterfaceCore::controlLoop - Bus is ok");
             }
 
@@ -625,7 +626,8 @@ void TtlInterfaceCore::controlLoop()
                     _ttl_manager->readEndEffectorStatus();
                     _time_hw_end_effector_last_read = ros::Time::now().toSec();
                 }
-                ros::Rate(_control_loop_frequency).sleep();
+
+                control_loop_rate.sleep();
             }
             else
             {
@@ -637,6 +639,9 @@ void TtlInterfaceCore::controlLoop()
         {
             ros::Duration(0.5).sleep();
         }
+
+        // essential to allow publishers and subscribers to do their job
+        ros::spinOnce();
     }
 }
 
@@ -664,7 +669,6 @@ void TtlInterfaceCore::_executeCommand()
     if (!_conveyor_cmds_queue.empty())
     {
         std::lock_guard<std::mutex> lock(_conveyor_cmd_queue_mutex);
-
         if (_need_sleep)
             ros::Duration(0.001).sleep();
         _ttl_manager->writeSingleCommand(std::move(_conveyor_cmds_queue.front()));
@@ -695,22 +699,7 @@ void TtlInterfaceCore::_executeCommand()
  */
 int TtlInterfaceCore::addJoint(const std::shared_ptr<common::model::JointState>& jointState)
 {
-    int result = niryo_robot_msgs::CommandStatus::TTL_READ_ERROR;
-
-    lock_guard<mutex> lck(_control_loop_mutex);
-
-    // try to find motor
-    if (_ttl_manager->ping(jointState->getId()))
-    {
-        // add dynamixel as a new joint
-        result = _ttl_manager->addHardwareComponent(jointState);
-    }
-    else
-    {
-        ROS_WARN("TtlInterfaceCore::addJoint - No joint found with motor id %d", jointState->getId());
-    }
-
-    return result;
+    return _ttl_manager->addHardwareComponent(jointState);
 }
 
 /**
@@ -744,8 +733,6 @@ int TtlInterfaceCore::setTool(const std::shared_ptr<common::model::ToolState>& t
  */
 void TtlInterfaceCore::unsetTool(uint8_t motor_id)
 {
-    lock_guard<mutex> lck(_control_loop_mutex);
-
     ROS_DEBUG("TtlInterfaceCore::unsetTool - UnsetTool: id %d", motor_id);
     _ttl_manager->removeHardwareComponent(motor_id);
 }
@@ -761,17 +748,16 @@ int TtlInterfaceCore::setEndEffector(const std::shared_ptr<common::model::EndEff
 
     lock_guard<mutex> lck(_control_loop_mutex);
 
+    result = _ttl_manager->addHardwareComponent(end_effector_state);
     // try to find hw
     if (_ttl_manager->ping(end_effector_state->getId()))
     {
-        // add end effector
-        result = _ttl_manager->addHardwareComponent(end_effector_state);
+        result = niryo_robot_msgs::CommandStatus::SUCCESS;
     }
     else
     {
         ROS_WARN("TtlInterfaceCore::setEndEffector - No end effector found with id %d", end_effector_state->getId());
     }
-
     return result;
 }
 
@@ -805,12 +791,13 @@ int TtlInterfaceCore::setConveyor(const std::shared_ptr<common::model::ConveyorS
  */
 void TtlInterfaceCore::unsetConveyor(uint8_t motor_id, uint8_t default_conveyor_id)
 {
-    lock_guard<mutex> lck(_control_loop_mutex);
-
     ROS_DEBUG("TtlInterfaceCore::unsetConveyor - unsetConveyor: id %d", motor_id);
 
+    // block control loop to avoid control loop called when removing conveyor is not finished yet
+    lock_guard<mutex> lck(_control_loop_mutex);
+
     auto state = getJointState(motor_id);
-    if (COMM_SUCCESS == _ttl_manager->changeId(state->getHardwareType(), motor_id, default_conveyor_id))
+    if (niryo_robot_msgs::CommandStatus::SUCCESS == changeId(state->getHardwareType(), motor_id, default_conveyor_id))
     {
         _ttl_manager->removeHardwareComponent(default_conveyor_id);
     }
@@ -830,7 +817,7 @@ int TtlInterfaceCore::changeId(common::model::EHardwareType motor_type, uint8_t 
     if (COMM_SUCCESS == _ttl_manager->changeId(motor_type, old_id, new_id))
         return niryo_robot_msgs::CommandStatus::SUCCESS;
 
-    ROS_ERROR("TtlInterfaceCore::setConveyor : unable to change conveyor ID");
+    ROS_ERROR("TtlInterfaceCore::changeId : unable to change conveyor ID");
     return niryo_robot_msgs::CommandStatus::TTL_WRITE_ERROR;
 }
 
@@ -1049,7 +1036,9 @@ bool TtlInterfaceCore::_callbackActivateLeds(niryo_robot_msgs::SetInt::Request &
 
     res.status = result;
     res.message = message;
-    return (niryo_robot_msgs::CommandStatus::SUCCESS == result);
+
+    // return response even request failed
+    return true;
 }
 
 
@@ -1083,17 +1072,17 @@ bool TtlInterfaceCore::_callbackReadCustomValue(ttl_driver::ReadCustomValue::Req
     }
 
     res.status = result;
-    return (niryo_robot_msgs::CommandStatus::SUCCESS == result);
+    return true;
 }
 
 /**
- * @brief TtlInterfaceCore::callbackSendCustomValue
+ * @brief TtlInterfaceCore::callbackWriteCustomValue
  * @param req
  * @param res
  * @return
  */
-bool TtlInterfaceCore::_callbackWriteCustomValue(ttl_driver::SendCustomValue::Request &req,
-                                               ttl_driver::SendCustomValue::Response &res)
+bool TtlInterfaceCore::_callbackWriteCustomValue(ttl_driver::WriteCustomValue::Request &req,
+                                               ttl_driver::WriteCustomValue::Response &res)
 {
     int result = niryo_robot_msgs::CommandStatus::FAILURE;
 
@@ -1115,7 +1104,7 @@ bool TtlInterfaceCore::_callbackWriteCustomValue(ttl_driver::SendCustomValue::Re
     }
 
     res.status = result;
-    return (niryo_robot_msgs::CommandStatus::SUCCESS == result);
+    return true;
 }
 
 /**
@@ -1130,15 +1119,15 @@ bool TtlInterfaceCore::_callbackReadPIDValue(ttl_driver::ReadPIDValue::Request &
     int result = niryo_robot_msgs::CommandStatus::FAILURE;
 
     uint8_t id = req.id;
-    uint32_t pos_p_gain{0};
-    uint32_t pos_i_gain{0};
-    uint32_t pos_d_gain{0};
+    uint16_t pos_p_gain{0};
+    uint16_t pos_i_gain{0};
+    uint16_t pos_d_gain{0};
 
-    uint32_t vel_p_gain{0};
-    uint32_t vel_i_gain{0};
+    uint16_t vel_p_gain{0};
+    uint16_t vel_i_gain{0};
 
-    uint32_t ff1_gain{0};
-    uint32_t ff2_gain{0};
+    uint16_t ff1_gain{0};
+    uint16_t ff2_gain{0};
 
 
     if (COMM_SUCCESS == _ttl_manager->readMotorPID(id, pos_p_gain, pos_i_gain, pos_d_gain,
@@ -1162,7 +1151,7 @@ bool TtlInterfaceCore::_callbackReadPIDValue(ttl_driver::ReadPIDValue::Request &
 
     res.status = result;
 
-    return (niryo_robot_msgs::CommandStatus::SUCCESS == result);
+    return true;
 }
 
 /**
@@ -1179,7 +1168,7 @@ bool TtlInterfaceCore::_callbackWritePIDValue(ttl_driver::WritePIDValue::Request
     auto dxl_cmd_pos_p = std::make_unique<DxlSingleCmd>(EDxlCommandType::CMD_TYPE_PID,
                                                         req.id, std::initializer_list<uint32_t>{req.pos_p_gain, req.pos_i_gain, req.pos_d_gain,
                                                                                                 req.vel_p_gain, req.vel_i_gain,
-                                                                                                req.ff1_gain, req.ff2_gain});
+                                                                                                req.ff1_gain, req.ff2_gain, req.vel_profile, req.acc_profile});
 
     if (dxl_cmd_pos_p->isValid())
     {
@@ -1189,7 +1178,7 @@ bool TtlInterfaceCore::_callbackWritePIDValue(ttl_driver::WritePIDValue::Request
 
     res.status = result;
 
-    return (niryo_robot_msgs::CommandStatus::SUCCESS == result);
+    return true;
 }
 
 /**
@@ -1237,7 +1226,7 @@ bool TtlInterfaceCore::_callbackReadVelocityProfile(ttl_driver::ReadVelocityProf
 
     res.status = result;
 
-    return (niryo_robot_msgs::CommandStatus::SUCCESS == result);
+    return true;
 }
 
 /**
@@ -1269,7 +1258,7 @@ bool TtlInterfaceCore::_callbackWriteVelocityProfile(ttl_driver::WriteVelocityPr
 
   res.status = result;
 
-  return (niryo_robot_msgs::CommandStatus::SUCCESS == result);
+  return true;
 }
 
 void TtlInterfaceCore::_publishCollisionStatus(const ros::TimerEvent&)

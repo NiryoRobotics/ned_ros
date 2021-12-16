@@ -16,7 +16,7 @@
 
 #include "can_driver/abstract_stepper_driver.hpp"
 #include "common/model/stepper_command_type_enum.hpp"
-
+#include <ros/ros.h>
 #include <cassert>
 #include <string>
 #include <utility>
@@ -86,9 +86,9 @@ int AbstractStepperDriver::writeSingleCmd(const std::unique_ptr<common::model::A
                                               cmd->getParams().at(3));
 
             case EStepperCommandType::CMD_TYPE_POSITION_OFFSET:
-                    return sendPositionOffsetCommand(cmd->getId(),
-                                                     cmd->getParams().at(0),
-                                                     cmd->getParams().at(1));
+                return sendPositionOffsetCommand(cmd->getId(),
+                                                    cmd->getParams().at(0),
+                                                    cmd->getParams().at(1));
             case EStepperCommandType::CMD_TYPE_CONVEYOR:
                     return sendConveyorOnCommand(cmd->getId(),
                                                  cmd->getParams().at(0),
@@ -99,7 +99,7 @@ int AbstractStepperDriver::writeSingleCmd(const std::unique_ptr<common::model::A
         }
     }
 
-    std::cout << "Command not validated" << std::endl;
+    std::cout << "AbstractStepperDriver::writeSingleCmd : Command not validated: " << cmd->str() << std::endl;
     return -1;
 }
 
@@ -128,7 +128,7 @@ uint8_t AbstractStepperDriver::interpretTemperatureStatus(const std::array<uint8
     double b = -12.924;
     double c = 2367.7;
     double v_temp = driver_temp_raw * 3.3 / 1024.0 * 1000.0;
-    auto driver_temp = static_cast<uint32_t>((-b - std::sqrt(b * b - 4 * a * (c - v_temp))) / (2 * a) + 30);
+    uint8_t driver_temp = static_cast<uint8_t>((-b - std::sqrt(b * b - 4 * a * (c - v_temp))) / (2 * a) + 30);
 
     return driver_temp;
 }
@@ -151,12 +151,12 @@ std::string AbstractStepperDriver::interpretFirmwareVersion(const std::array<uin
 }
 
 /**
- * @brief StepperDriver::interpretCalibrationData
+ * @brief StepperDriver::interpretHomingData
  * @param data
  * @return
  */
 std::pair<common::model::EStepperCalibrationStatus, int32_t>
-AbstractStepperDriver::interpretCalibrationData(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data)
+AbstractStepperDriver::interpretHomingData(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data)
 {
     auto status = static_cast<common::model::EStepperCalibrationStatus>(data[1]);
     int32_t value = (data[2] << 8) + data[3];

@@ -19,7 +19,7 @@
         <parent link="tool_link"/>
         <child link="base_gripper_1"/>
         <origin
-                xyz="0 0 0.005"
+                xyz="0.005 0 0.005"
                 rpy="0 ${PI/2} ${PI/2}"/>
     </joint>
 

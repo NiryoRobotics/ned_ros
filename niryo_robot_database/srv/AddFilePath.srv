@@ -1,0 +1,6 @@
+string type
+string name
+string path
+---
+int32 status
+string message

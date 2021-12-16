@@ -18,5 +18,6 @@
 
   <exec_depend>mcp_can_rpi</exec_depend>
 
+  <test_depend>code_coverage</test_depend>
   <test_depend>roslint</test_depend>
 </package>

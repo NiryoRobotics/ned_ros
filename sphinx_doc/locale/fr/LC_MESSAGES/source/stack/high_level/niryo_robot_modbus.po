@@ -1,0 +1,555 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2021, Niryo All rights reserved. No part of this document
+# may be reproduced or transmitted in any form or by any means without prior
+# written consent of Niryo SAS
+# This file is distributed under the same license as the Ned ROS
+# Documentation package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Ned ROS Documentation 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-08-12 16:18+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.9.1\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Language: fr\n"
+"X-Source-Language: C\n"
+
+#: ../../source/ros/niryo_robot_modbus.rst:2
+msgid "Niryo_robot_modbus"
+msgstr "Niryo_robot_modbus"
+
+#~ msgid "Use Modbus TCP Server"
+#~ msgstr "Utilisation du serveur Modbus TCP"
+
+#~ msgid "Connection - Modbus TCP Server"
+#~ msgstr "Connexion - Serveur Modbus TCP"
+
+#~ msgid "Description -  Modbus TCP Server"
+#~ msgstr "Description - Modbus TCP server"
+
+#~ msgid "All 4 Modbus datastores are implemented :"
+#~ msgstr "Les 4 banques de données Modbus sont implémentées :"
+
+#~ msgid "Discrete Input"
+#~ msgstr "Entrée discrète"
+
+#~ msgid "Holding Register"
+#~ msgstr "Registre de détention"
+
+#~ msgid "Accepted Modbus functions:"
+#~ msgstr "Les fonctions Modbus acceptées :"
+
+#~ msgid "Enable a Conveyor newly connected [on success: store it's ID at 152]"
+#~ msgstr ""
+#~ "Activer un Convoyeur récemment connecté [en cas de succès : enregistrer "
+#~ "son ID à 152]"
+
+#~ msgid "Detach / disable Conveyor with the conveyor ID given at 525"
+#~ msgstr ""
+#~ "Détacher / désactiver le Convoyeur avec l’ID du Convoyeur donné à 525"
+
+#~ msgid "Control Conveyor with the conveyor ID given at 525"
+#~ msgstr "Contrôler le Convoyeur avec l’ID du Convoyeur donné à 525"
+
+#~ msgid "Conveyor direction (backward = -1 , forward = 1)"
+#~ msgstr "Direction du Convoyeur (vers l’arrière = -1, vers l’avant = 1)"
+
+#~ msgid "Conveyor speed (0-100)(%)"
+#~ msgstr "Vitesse du Convoyeur (0-100)(%)"
+
+#~ msgid "Store the Conveyor ID for all related command"
+#~ msgstr "Stocker l’ID du Convoyeur pour toutes les commandes associées"
+
+#~ msgid "Stop Conveyor with the conveyor ID given at 525"
+#~ msgstr "Arrêter le Convoyeur avec l’ID du Convoyeur donné à 525"
+
+#~ msgid "Axes (mrad)"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "`librairie Pymodbus "
+#~ "<https://pymodbus.readthedocs.io/en/latest/index.html>`_"
+#~ msgstr ""
+
+#~ msgid ":ref:`niryo_robot_msgs <Niryo Robot Messages Package>`"
+#~ msgstr ""
+
+#~ msgid "Use Modbus TCP server"
+#~ msgstr "Niryo_robot_modbus"
+
+#~ msgid ""
+#~ "Ned is permanently running a Modbus TCP Server that enables Ned to "
+#~ "communicate with a PLC, or another computer in the same network."
+#~ msgstr ""
+#~ "Ned exécute en permanence un serveur Modbus TCP qui permet à Ned de "
+#~ "communiquer avec une API ou un autre ordinateur du même réseau. "
+
+#~ msgid "Connection - Modbus TCP server"
+#~ msgstr "Connexion - Serveur Modbus TCP"
+
+#~ msgid "The Modbus TCP server is running on port 5020 by default."
+#~ msgstr "Le serveur Modbus TCP s'exécute par défaut sur le port 5020."
+
+#~ msgid "Description -  Modbus TCP server"
+#~ msgstr "Description - Serveur Modbus TCP"
+
+#~ msgid ""
+#~ "It has been built on top of the `pymodbus library "
+#~ "<https://pymodbus.readthedocs.io/en/latest/index.html>`_."
+#~ msgstr ""
+#~ "Il a été construit au-dessus de la `librairie Pymodbus "
+#~ "<https://pymodbus.readthedocs.io/en/latest/index.html>`_."
+
+#~ msgid "All 4 Modbus datastores are implemented:"
+#~ msgstr "Les 4 banques de données Modbus sont implémentées :"
+
+#~ msgid "Coil."
+#~ msgstr "Coil (bobine)."
+
+#~ msgid "Discrete Input."
+#~ msgstr "Entrée discrète."
+
+#~ msgid "Holding Register."
+#~ msgstr "Registre de détention."
+
+#~ msgid "Input Register."
+#~ msgstr "Registre d'entrée."
+
+#~ msgid ""
+#~ "Each datastore has a different set of functionalities. Note that each "
+#~ "datastore contains a completely different set of data."
+#~ msgstr ""
+#~ "Chaque banque de données a un ensemble différent de fonctionnalités. Il "
+#~ "est important de noter que chaque banque de données contient un ensemble "
+#~ "de données complètement différent."
+
+#~ msgid "Address tables start at 0."
+#~ msgstr "Les tables d'adresses commencent à 0."
+
+#~ msgid "Coil"
+#~ msgstr "Coil (Bobine)"
+
+#~ msgid "Each address contains a 1bit value."
+#~ msgstr "Chaque adresse contient une valeur de 1bit."
+
+#~ msgid ""
+#~ "READ/WRITE (the stored values correspond to the last given command, not "
+#~ "the current robot state)."
+#~ msgstr ""
+#~ "READ/WRITE (les valeurs stockées correspondent à la dernière commande "
+#~ "donnée, non pas à l'état actuel du robot)."
+
+#~ msgid "0x01: READ_COILS"
+#~ msgstr ""
+
+#~ msgid "0x05: WRITE_SINGLE_COIL"
+#~ msgstr ""
+
+#~ msgid "This datastore can be used to set Digital I/O mode and state."
+#~ msgstr ""
+#~ "Cette banque de données peut être utilisée pour définir le mode et l'état "
+#~ "des entrées et sorties numériques."
+
+#~ msgid "Digital I/O numbers used for Modbus:"
+#~ msgstr "Nombre d'entrées et sorties numériques utilisées pour Modbus :"
+
+#~ msgid "0/100: 1A"
+#~ msgstr ""
+
+#~ msgid "1/101: 1B"
+#~ msgstr ""
+
+#~ msgid "2/102: 1C"
+#~ msgstr ""
+
+#~ msgid "3/103: 2A"
+#~ msgstr ""
+
+#~ msgid "4/104: 2B"
+#~ msgstr ""
+
+#~ msgid "5/105: 2C"
+#~ msgstr ""
+
+#~ msgid "Address"
+#~ msgstr "Adresses"
+
+#~ msgid "Description"
+#~ msgstr "Description"
+
+#~ msgid "0-5"
+#~ msgstr ""
+
+#~ msgid "Digital I/O mode (Input = 1, Output = 0)"
+#~ msgstr "Mode Entrée/Sortie numérique (entrée = 1, sortie = 0)"
+
+#~ msgid "100-105"
+#~ msgstr ""
+
+#~ msgid "Digital I/O state (High = 1, Low = 0)"
+#~ msgstr "État Entrée/Sortie numérique (élevé = 1, faible = 0)"
+
+#~ msgid "200-299"
+#~ msgstr ""
+
+#~ msgid "Can be used to store your own variables"
+#~ msgstr "Peut être utilisé pour stocker vos propres variables"
+
+#~ msgid "Discrete input"
+#~ msgstr "Entrée discrète"
+
+#~ msgid "READ-ONLY"
+#~ msgstr ""
+
+#~ msgid "0x02: READ_DISCRETE_INPUTS"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "This datastore can be used to read Digital I/O mode and state of the "
+#~ "robot. See :ref:`source/modbus_tcp_server:Coil` above for digital I/O "
+#~ "number mapping."
+#~ msgstr ""
+#~ "Cette banque de données peut être utilisée pour lire le mode d'E/S "
+#~ "numériques et l'état du robot. Se référer à la section "
+#~ ":ref:`source/modbus_tcp_server:Coil` ci-dessus pour le mappage des "
+#~ "numéros d'E/S numériques."
+
+#~ msgid "Holding register"
+#~ msgstr "Registre de détention"
+
+#~ msgid "Each address contains a 16bits value."
+#~ msgstr "Chaque adresse contient une valeur de 16bits."
+
+#~ msgid ""
+#~ "READ/WRITE (the stored values correspond to the last given command, not "
+#~ "the current robot state)"
+#~ msgstr ""
+#~ "READ/WRITE (les valeurs stockées correspondent à la dernière commande "
+#~ "donnée, non pas à l'état actuel du robot)."
+
+#~ msgid "0x03: READ_HOLDING_REGISTERS"
+#~ msgstr ""
+
+#~ msgid "0x06: WRITE_SINGLE_REGISTER"
+#~ msgstr ""
+
+#~ msgid "Joints (mrad)"
+#~ msgstr ""
+
+#~ msgid "10-12"
+#~ msgstr ""
+
+#~ msgid "Position x,y,z (mm)"
+#~ msgstr ""
+
+#~ msgid "13-15"
+#~ msgstr ""
+
+#~ msgid "Orientation roll, pitch, yaw (mrad)"
+#~ msgstr ""
+
+#~ msgid "100"
+#~ msgstr ""
+
+#~ msgid "Send Joint Move command with stored joints"
+#~ msgstr "Envoyer la commande de déplacement d'axe avec les axes stockés"
+
+#~ msgid "101"
+#~ msgstr ""
+
+#~ msgid "Send Pose Move command with stored position and orientation"
+#~ msgstr ""
+#~ "Envoyer la commande Pose Move avec les positions et les orientations "
+#~ "enregistrées"
+
+#~ msgid "110"
+#~ msgstr ""
+
+#~ msgid "Stop current command execution"
+#~ msgstr "Arrêter l'exécution de la commande en cours"
+
+#~ msgid "150"
+#~ msgstr ""
+
+#~ msgid "Is executing command flag"
+#~ msgstr "Exécute l'indicateur de commande"
+
+#~ msgid "151"
+#~ msgstr ""
+
+#~ msgid "Last command result (status of the last command)"
+#~ msgstr "Résultat de la dernière commande (état de la dernière commande)"
+
+#~ msgid "152"
+#~ msgstr ""
+
+#~ msgid "Contains data retrieved from last cmd (depends of the cmd)"
+#~ msgstr ""
+#~ "Contient les données extraites de la dernière commande (dépend de la "
+#~ "commande)"
+
+#~ msgid "300"
+#~ msgstr ""
+
+#~ msgid "Learning Mode (On = 1, Off = 0)"
+#~ msgstr "Mode apprentissage (On = 1, Off = 0)"
+
+#~ msgid "301"
+#~ msgstr ""
+
+#~ msgid "Joystick Enabled (On = 1, Off = 0)"
+#~ msgstr "Joystick activé (On = 1, Off = 0)"
+
+#~ msgid "310"
+#~ msgstr ""
+
+#~ msgid "Request new calibration"
+#~ msgstr "Demander une nouvelle calibration"
+
+#~ msgid "311"
+#~ msgstr ""
+
+#~ msgid "Start auto calibration"
+#~ msgstr "Démarrer une calibration automatique"
+
+#~ msgid "312"
+#~ msgstr ""
+
+#~ msgid "Start manual calibration"
+#~ msgstr "Démarrer une calibration manuelle"
+
+#~ msgid "401"
+#~ msgstr ""
+
+#~ msgid "Gripper open speed (100-1000)"
+#~ msgstr "Vitesse d'ouverture du gripper (100-1000)"
+
+#~ msgid "402"
+#~ msgstr ""
+
+#~ msgid "Gripper close speed (100-1000)"
+#~ msgstr "Vitesse de fermeture du gripper (100-1000)"
+
+#~ msgid "500"
+#~ msgstr ""
+
+#~ msgid "Select tool from given id"
+#~ msgstr "Sélectionner l'outil à partir de l'identifiant donné **"
+
+#~ msgid "510"
+#~ msgstr ""
+
+#~ msgid "Open gripper with given id"
+#~ msgstr "Ouvrir le gripper avec un identifiant donné"
+
+#~ msgid "511"
+#~ msgstr ""
+
+#~ msgid "Close gripper with given id"
+#~ msgstr "Fermer le gripper avec un identifiant donné"
+
+#~ msgid "512"
+#~ msgstr ""
+
+#~ msgid "Pull air vacuum pump from given id"
+#~ msgstr "Activer la pompe à vide d'air avec un identifiant donné"
+
+#~ msgid "513"
+#~ msgstr ""
+
+#~ msgid "Push air vacuum pump from given id"
+#~ msgstr "Vider la pompe à vide de son air avec un identifiant donné"
+
+#~ msgid "520"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Enable a Conveyor Belt newly connected [on success: store it's ID at 152]"
+#~ msgstr ""
+#~ "Activer un Convoyeur récemment connecté [en cas de succès : enregistrer "
+#~ "son ID à 152]"
+
+#~ msgid "521"
+#~ msgstr ""
+
+#~ msgid ""
+#~ "Detach / disable Conveyor Belt with the Conveyor Belt ID given at 525"
+#~ msgstr ""
+#~ "Détacher / désactiver le Convoyeur avec l'ID du Convoyeur donné à 525"
+
+#~ msgid "522"
+#~ msgstr ""
+
+#~ msgid "Control Conveyor Belt with the Conveyor Belt ID given at 525"
+#~ msgstr "Contrôler le Convoyeur avec l'ID du Convoyeur donné à 525"
+
+#~ msgid "523 [related to 522]"
+#~ msgstr ""
+
+#~ msgid "Conveyor Belt direction (backward = -1 , forward = 1)"
+#~ msgstr "Direction du Convoyeur (vers l'arrière = -1, vers l'avant = 1)"
+
+#~ msgid "524 [related to 522]"
+#~ msgstr ""
+
+#~ msgid "Conveyor Belt speed (0-100)(%)"
+#~ msgstr "Vitesse du Convoyeur (0-100)(%)"
+
+#~ msgid "525 [related to 520/521/522/526]"
+#~ msgstr ""
+
+#~ msgid "Store the Conveyor Belt ID for all related command"
+#~ msgstr "Stocker l'ID du Convoyeur pour toutes les commandes associées"
+
+#~ msgid "526"
+#~ msgstr ""
+
+#~ msgid "Stop Conveyor Belt with the Conveyor Belt ID given at 525"
+#~ msgstr "Arrêter le Convoyeur avec l'ID du Convoyeur donné à 525"
+
+#~ msgid "Input Register"
+#~ msgstr "Registre d'entrée"
+
+#~ msgid "0x04: READ_INPUT_REGISTERS"
+#~ msgstr ""
+
+#~ msgid "200"
+#~ msgstr ""
+
+#~ msgid "Selected tool ID (0 for no tool)"
+#~ msgstr "ID de l'outil sélectionné (0 pour aucun outil)"
+
+#~ msgid "Learning Mode activated"
+#~ msgstr "Mode apprentissage activé"
+
+#~ msgid "400"
+#~ msgstr ""
+
+#~ msgid "Motors connection up (Ok = 1, Not ok = 0)"
+#~ msgstr "Connexion des moteurs (Ok = 1, Pas OK = 0)"
+
+#~ msgid "Calibration needed flag"
+#~ msgstr "Indicateur calibration nécessaire"
+
+#~ msgid "Calibration in progress flag"
+#~ msgstr "Indicateur calibration en cours"
+
+#~ msgid "403"
+#~ msgstr ""
+
+#~ msgid "Raspberry Pi temperature"
+#~ msgstr "Température de la Raspberry Pi"
+
+#~ msgid "404"
+#~ msgstr ""
+
+#~ msgid "Raspberry Pi available disk size"
+#~ msgstr "Taille de disque disponible pour Raspberry Pi"
+
+#~ msgid "405"
+#~ msgstr ""
+
+#~ msgid "Raspberry Pi ROS log size"
+#~ msgstr "Taille du log Raspberry Pi ROS"
+
+#~ msgid "406"
+#~ msgstr ""
+
+#~ msgid "RPI software version n.1"
+#~ msgstr "Version n.1 du logiciel RPI"
+
+#~ msgid "407"
+#~ msgstr ""
+
+#~ msgid "RPI software version n.2"
+#~ msgstr "Version n.2 du logiciel RPI"
+
+#~ msgid "408"
+#~ msgstr ""
+
+#~ msgid "RPI software version n.3"
+#~ msgstr "Version n.3 du logiciel RPI"
+
+#~ msgid "409"
+#~ msgstr ""
+
+#~ msgid "Hardware version (1 or 2)"
+#~ msgstr "Version matériel (1 ou 2)"
+
+#~ msgid "530"
+#~ msgstr ""
+
+#~ msgid "Conveyor 1 connection state (Connected = 1 , Not connected = 0)"
+#~ msgstr ""
+#~ "État de la connexion du Convoyeur 1 (Connecté = 1, Pas connecté = 0)"
+
+#~ msgid "531"
+#~ msgstr ""
+
+#~ msgid "Conveyor 1 control status ( On = 0, Off = 1)"
+#~ msgstr "État de la commande du Convoyeur 1 (On = 0, Off = 1)"
+
+#~ msgid "532"
+#~ msgstr ""
+
+#~ msgid "Conveyor 1 Speed (0-100 (%))"
+#~ msgstr "Vitesse du Convoyeur 1 (0-100)(%)"
+
+#~ msgid "533"
+#~ msgstr ""
+
+#~ msgid "Conveyor 1 direction (Backward = -1, Forward = 1)"
+#~ msgstr "Direction du Convoyeur 1 (vers l'arrière = -1, vers l'avant = 1)"
+
+#~ msgid "540"
+#~ msgstr ""
+
+#~ msgid "Conveyor 2 connection state (Connected = 1 , Not connected = 0)"
+#~ msgstr ""
+#~ "État de la connexion du Convoyeur 1 (Connecté = 1, Pas connecté = 0)"
+
+#~ msgid "541"
+#~ msgstr ""
+
+#~ msgid "Conveyor 2 control status ( On = 0, Off = 1)"
+#~ msgstr "État de la commande du Convoyeur 1 (On = 0, Off = 1)"
+
+#~ msgid "542"
+#~ msgstr ""
+
+#~ msgid "Conveyor 2 Speed (0-100 (%))"
+#~ msgstr "Vitesse du Convoyeur 2 (0-100)(%)"
+
+#~ msgid "543"
+#~ msgstr ""
+
+#~ msgid "Conveyor 2 direction (Backward = -1, Forward = 1)"
+#~ msgstr "Direction du Convoyeur 2 (vers l'arrière = -1, vers l'avant = 1)"
+
+#~ msgid "Dependencies - Modbus TCP Server"
+#~ msgstr "Les dépendances - Serveur Modbus TCP"
+
+#~ msgid ""
+#~ "`pymodbus library <https://pymodbus.readthedocs.io/en/latest/index.html>`_"
+#~ msgstr ""
+#~ "Il a été construit au-dessus de la `librairie Pymodbus "
+#~ "<https://pymodbus.readthedocs.io/en/latest/index.html>`_."
+
+#~ msgid ""
+#~ ":ref:`niryo_robot_msgs <source/ros/niryo_robot_msgs:Niryo Robot Messages "
+#~ "Package>`"
+#~ msgstr ""
+
+#~ msgid ":msgs_index:`std_msgs`"
+#~ msgstr ""
+
+#~ msgid "Niryo Robot Modbus package"
+#~ msgstr ""

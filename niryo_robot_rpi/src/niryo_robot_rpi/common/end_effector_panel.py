@@ -30,11 +30,12 @@ from end_effector_interface.msg import EEIOState
 
 
 class NiryoEndEffectorPanel:
-    def __init__(self):
+    def __init__(self, on_change_callback):
         rospy.logdebug("Niryo end effector panel - Entering in Init")
 
         # - Init
-        self._robot_status = RobotStatus()
+        self.__robot_status = RobotStatus()
+        self.__on_change_callback = on_change_callback
 
         self.__learning_mode_button_state = EEButtonStatus.NO_ACTION
         self.__custom_button_state = EEButtonStatus.NO_ACTION
@@ -113,19 +114,29 @@ class NiryoEndEffectorPanel:
                 self.blockly_save_current_point()
 
     def __callback_custom_pos_button_status(self, msg):
-        if (self.__custom_button_state != EEButtonStatus.NO_ACTION and
-                msg.action == EEButtonStatus.NO_ACTION and self.__robot_status == RobotStatus.CALIBRATION_NEEDED):
-            self.__custom_button_state = msg.action
+        old_button_state = self.__custom_button_state
+        self.__custom_button_state = msg.action
+
+        if self.__robot_status == RobotStatus.CALIBRATION_NEEDED and \
+                old_button_state != EEButtonStatus.NO_ACTION == self.__custom_button_state:
             auto_calibration()
-        else:
-            self.__custom_button_state = msg.action
+
+        if old_button_state == EEButtonStatus.HANDLE_HELD_ACTION \
+                and self.__custom_button_state == EEButtonStatus.NO_ACTION:
+            self.__button_state_publisher.publish(False)
+        elif old_button_state == EEButtonStatus.NO_ACTION \
+                and self.__custom_button_state == EEButtonStatus.HANDLE_HELD_ACTION:
+            self.__button_state_publisher.publish(True)
 
     def __callback_sub_learning_mode(self, msg):
         self.__learning_mode_on = msg.data
 
     def __callback_ee_io_state(self, msg):
-        self.digital_input.value = msg.digital_input
-        self.digital_output.force_value(msg.digital_output)
+        if self.digital_input.value != msg.digital_input or self.digital_output.value != msg.digital_output:
+            self.digital_input.value = msg.digital_input
+            self.digital_output.force_value(msg.digital_output)
+
+            self.__on_change_callback()
 
     def blockly_save_current_point(self):
         msg = Int32()

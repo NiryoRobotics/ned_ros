@@ -30,6 +30,8 @@ class FakeCanData
 public:
     FakeCanData() = default;
 
+    void updateFullIdList();
+
     struct FakeStepperRegister
     {
         std::string   firmware{};
@@ -49,6 +51,19 @@ public:
 
     // stepper
     std::map<uint8_t, FakeStepperRegister> stepper_registers;
+
+    // all ids
+    std::vector<uint8_t> full_id_list;
 };
+
+inline
+void FakeCanData::updateFullIdList()
+{
+    for (const auto& it : stepper_registers)
+    {
+        full_id_list.emplace_back(it.first);
+    }
+}
+
 }
 #endif //FAKE_TTL_DATA_HPP

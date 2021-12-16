@@ -35,7 +35,9 @@ namespace model
 ToolState::ToolState(std::string name, EHardwareType type, uint8_t id) :
     DxlMotorState(type, EComponentType::TOOL, id),
     _tool_name(std::move(name))
-{}
+{
+    _led_state = 2;  // green if valid
+}
 
 /**
  * @brief ToolState::setName

@@ -50,7 +50,6 @@ MockStepperDriver::MockStepperDriver(std::shared_ptr<FakeCanData>  data) :
     init();
 }
 
-
 /**
  * @brief MockStepperDriver::init
  * @return
@@ -63,10 +62,20 @@ bool MockStepperDriver::init()
     {
         // retrieve list of ids
         for (auto const& imap : _fake_data->stepper_registers)
-            _id_list.emplace_back(imap.first);
+        {
+            uint8_t id = imap.first;
+            _id_list.emplace_back(id);
+
+            // init calibration status map
+            _calibration_status.insert(std::make_pair(id,
+                                       std::make_pair(EStepperCalibrationStatus::OK,
+                                                      0)));
+        }
 
         _default_position_spam = _fake_data->position_spam;
         _position_spam = _default_position_spam;
+
+
 
         res = true;
     }
@@ -247,7 +256,7 @@ uint8_t MockStepperDriver::sendRelativeMoveCommand(uint8_t id, int steps, int de
 
     if (_fake_data->stepper_registers.count(id))
     {
-        _fake_data->stepper_registers.at(id).position = steps * -1;
+        _fake_data->stepper_registers.at(id).position = _fake_data->stepper_registers.at(id).position - steps;
         return CAN_OK;
     }
     return CAN_FAIL;
@@ -343,18 +352,11 @@ uint8_t MockStepperDriver::sendCalibrationCommand(uint8_t id, int offset, int de
     (void)delay;  // unused
     (void)timeout;  // unused
 
-    if (_fake_data->stepper_registers.count(id))
+    if (_fake_data->stepper_registers.count(id) && _calibration_status.count(id))
     {
-        if (_calibration_status.count(id))
-        {
-            _calibration_status.at(id).first = EStepperCalibrationStatus::IN_PROGRESS;
-            _calibration_status.at(id).second = offset;
-        }
-        else {
-            _calibration_status.insert(std::make_pair(id,
-                                                      std::make_pair(EStepperCalibrationStatus::IN_PROGRESS,
-                                                                     static_cast<int32_t>(offset))));
-        }
+        _calibration_status.at(id).first = EStepperCalibrationStatus::IN_PROGRESS;
+        _calibration_status.at(id).second = offset;
+
         _fake_time = 2;
     }
 
@@ -435,12 +437,12 @@ std::string MockStepperDriver::interpretFirmwareVersion(const std::array<uint8_t
 }
 
 /**
- * @brief MockStepperDriver::interpretCalibrationData
+ * @brief MockStepperDriver::interpretHomingData
  * @param data
  * @return
  */
 std::pair<EStepperCalibrationStatus, int32_t>
-MockStepperDriver::interpretCalibrationData(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data)
+MockStepperDriver::interpretHomingData(const std::array<uint8_t, MAX_MESSAGE_LENGTH> &data)
 {
     (void)data;  // unused
 
@@ -459,6 +461,7 @@ MockStepperDriver::interpretCalibrationData(const std::array<uint8_t, MAX_MESSAG
         _fake_time--;
         return _calibration_status.at(_current_id);
      }
+
 
     return std::make_pair(EStepperCalibrationStatus::BAD_PARAM, 0);
 }

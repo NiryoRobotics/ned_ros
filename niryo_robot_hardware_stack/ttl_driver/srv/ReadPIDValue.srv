@@ -3,14 +3,15 @@
 
 uint8 id
 ---
-uint32 pos_p_gain
-uint32 pos_i_gain
-uint32 pos_d_gain
+uint16 pos_p_gain
+uint16 pos_i_gain
+uint16 pos_d_gain
 
-uint32 vel_p_gain
-uint32 vel_i_gain
+uint16 vel_p_gain
+uint16 vel_i_gain
 
-uint32 ff1_gain
-uint32 ff2_gain
+uint16 ff1_gain
+uint16 ff2_gain
+
 int32 status
 string message

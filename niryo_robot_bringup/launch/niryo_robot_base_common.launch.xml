@@ -10,6 +10,8 @@
     <arg name="gazebo" default="false"/>
     <arg name="simulation_mode" default="false"/>
     <arg name="simu_gripper" default="false"/>
+    <arg name="simu_conveyor" default="false"/>
+    <arg name="conf_location" value="~/.config/niryo"/>
 
     <!-- for conveniency -->
     <arg name="ros_version" value="$(env ROS_DISTRO)"/>
@@ -50,6 +52,7 @@
         <arg name="hardware_version" value="$(arg hardware_version)"/>
         <arg name="simulation_mode" value="$(arg simulation_mode)"/>
         <arg name="simu_gripper" value="$(arg simu_gripper)"/>
+        <arg name="simu_conveyor" value="$(arg simu_conveyor)"/>
         <arg name="gazebo" value="$(arg gazebo)"/>
         <arg name="can_enabled" value="$(arg can_enabled)"/>
         <arg name="ttl_enabled" value="$(arg ttl_enabled)"/>
@@ -85,11 +88,19 @@
         <arg name="log_level" value="$(arg log_level)"/>
     </include>
 
-    <include file="$(find niryo_robot_status)/launch/robot_status.launch">
-    </include>
+    <group if="$(eval hardware_version != 'one')">
+        <include file="$(find niryo_robot_status)/launch/robot_status.launch">
+        </include>
+    </group>
 
     <include file="$(find niryo_robot_modbus)/launch/modbus_server.launch">
         <arg name="log_level" value="$(arg log_level)"/>
         <arg name="hardware_version" value="$(arg hardware_version)"/>
     </include>
+
+    <group if="$(eval hardware_version != 'one')">
+        <include file="$(find niryo_robot_database)/launch/database.launch">
+            <arg name="database_path" value="$(arg conf_location)"/>
+        </include>
+    </group>
 </launch>

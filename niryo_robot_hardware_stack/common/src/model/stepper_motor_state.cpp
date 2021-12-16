@@ -103,11 +103,12 @@ std::string StepperMotorState::str() const
 
     ss << "StepperMotorState :\n";
     ss << "firmware version: " << "\"" << _firmware_version << "\"";
-    ss << "last time read: " << _last_time_read << ", "
-       << "hw fail counter: " << _hw_fail_counter << "\n"
+    ss << ", last time read: " << _last_time_read
+       << ", hw fail counter: " << _hw_fail_counter << "\n"
        << "max effort: " << _max_effort << ", "
        << "gear ratio: " << _gear_ratio << ", "
        << "micro steps: " << _micro_steps << ", "
+       << "motor_ratio: " << _motor_ratio << ", "
        << "pos multiplier ratio: " << _pos_multiplier_ratio << ", "
        << "vel multiplier ratio: " << _vel_multiplier_ratio << "\n";
 
@@ -133,12 +134,11 @@ std::string StepperMotorState::str() const
  */
 int StepperMotorState::to_motor_pos(double rad_pos)
 {
+    if (rad_pos > _limit_position_max)
+        rad_pos = _limit_position_max;
+    else if (rad_pos < _limit_position_min)
+        rad_pos = _limit_position_min;
     int result =  static_cast<int>(std::round((rad_pos - _offset_position) * _pos_multiplier_ratio * _direction));
-
-    if (common::model::EBusProtocol::TTL == _bus_proto)
-    {
-        result = result > 0 ? result : 0;
-    }
 
     return result;
 }
@@ -187,8 +187,6 @@ double StepperMotorState::to_rad_vel(int motor_vel)
   void StepperMotorState::setGearRatio(double gear_ratio)
   {
     _gear_ratio = gear_ratio;
-
-    updateMultiplierRatio();
 }
 /**
  * @brief StepperMotorState::updateLastTimeRead
@@ -214,6 +212,15 @@ void StepperMotorState::setHwFailCounter(double fail_counter)
 void StepperMotorState::setMaxEffort(double max_effort)
 {
     _max_effort = max_effort;
+}
+
+/**
+ * @brief StepperMotorState::setMotorRatio
+ * @param motor_ratio   
+ */
+void StepperMotorState::setMotorRatio(double motor_ratio)
+{
+    _motor_ratio = motor_ratio;
 }
 
 /**
@@ -278,7 +285,7 @@ void StepperMotorState::updateMultiplierRatio()
     }
     else
     {
-        _pos_multiplier_ratio = 360 / (0.088 * total_angle);
+        _pos_multiplier_ratio = 360 / (_motor_ratio * total_angle);
         _vel_multiplier_ratio = 0.01;
     }
 }

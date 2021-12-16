@@ -85,7 +85,7 @@ string AbstractHardwareState::str() const
        << "Component Type " << ComponentTypeEnum(_component_type).toString() << "\n"
        << "Bus Protocol " << BusProtocolEnum(_bus_proto).toString() << "\n";
 
-    ss << "temperature " << _temperature << "\n"
+    ss << "temperature " << static_cast<int>(_temperature) << "\n"
        << "voltage " << _voltage << "\n"
        << "hw_error " << _hw_error << "\n"
        << "hw_error_message \"" << _hw_error_message << "\"";
@@ -115,12 +115,13 @@ void AbstractHardwareState::setTemperature(uint8_t temp)
 
 /**
  * @brief AbstractHardwareState::setRawVoltage
- * @param volt
+ * @param raw_volt
  * TODO(CC) avoid using hardcoded values, only usable for Ned2 for now
  */
 void AbstractHardwareState::setRawVoltage(double raw_volt)
 {
-    if (EHardwareType::STEPPER == _hw_type || EHardwareType::END_EFFECTOR == _hw_type)
+    if (EHardwareType::STEPPER == _hw_type || EHardwareType::FAKE_STEPPER_MOTOR == _hw_type ||
+        EHardwareType::END_EFFECTOR == _hw_type || EHardwareType::FAKE_END_EFFECTOR == _hw_type)
         _voltage = raw_volt / 1000;
     else
         _voltage = raw_volt / 10;
@@ -146,7 +147,7 @@ void AbstractHardwareState::setHardwareError(uint32_t hw_error)
 
 /**
  * @brief AbstractHardwareState::setConnectionStatus
- * @param hw_error
+ * @param connected
  */
 void AbstractHardwareState::setConnectionStatus(bool connected)
 {

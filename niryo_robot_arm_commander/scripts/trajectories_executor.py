@@ -150,8 +150,9 @@ class TrajectoriesExecutor:
                 raise ArmCommanderException(
                     CommandStatus.PLAN_FAILED, "MoveIt failed to compute the plan.")
 
-            self.__reset_controller()
-            rospy.logdebug("Arm commander - Send MoveIt trajectory to controller.")
+            # TODO(Thuc) test ned and one without reset controller hear
+            # self.__reset_controller()
+            rospy.loginfo("Arm commander - Send MoveIt trajectory to controller.")
             status, message = self.execute_plan(plan)
 
             if status != CommandStatus.SHOULD_RESTART:
@@ -187,6 +188,10 @@ class TrajectoriesExecutor:
             plan = self.compute_cartesian_plan(list_poses)
         except Exception:
             raise ArmCommanderException(CommandStatus.ARM_COMMANDER_FAILURE, "IK Fail")
+
+        if plan is None:
+            raise ArmCommanderException(CommandStatus.NO_PLAN_AVAILABLE,
+                                        "The goal cannot be reached with a linear trajectory")
 
         # Apply robot speeds
         plan = self.retime_plan(plan, velocity_scaling_factor=velocity_factor,

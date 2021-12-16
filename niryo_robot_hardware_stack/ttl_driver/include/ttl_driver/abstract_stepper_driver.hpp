@@ -46,6 +46,7 @@ public:
     int writeSyncCmd(int type, const std::vector<uint8_t>& ids, const std::vector<uint32_t>& params) override;
 
     common::model::EStepperCalibrationStatus interpretHomingData(uint8_t status) const;
+    std::string interpretErrorState(uint32_t hw_state) const override;
 
 protected:
     // AbstractTtlDriver interface
@@ -56,15 +57,14 @@ public:
 
     // ram write
     virtual int startHoming(uint8_t id) = 0;
+    virtual int writeHomingSetup(uint8_t id, uint8_t direction, uint8_t stall_threshold) = 0;
+
+    // read
     virtual int readHomingStatus(uint8_t id, uint8_t& status) = 0;
     virtual int syncReadHomingStatus(const std::vector<uint8_t> &id_list, std::vector<uint8_t> &status_list) = 0;
 
-    virtual int writeHomingSetup(uint8_t id, uint8_t direction, uint8_t stall_threshold) = 0;
-
-    virtual int readVelocityProfile(uint8_t id, std::vector<uint32_t>& data_list) = 0;
-    virtual int writeVelocityProfile(uint8_t id, const std::vector<uint32_t>& data_list) = 0;
-    // read
     virtual int readFirmwareRunning(uint8_t id, bool &is_running) = 0;
+
 };
 
 } // ttl_driver

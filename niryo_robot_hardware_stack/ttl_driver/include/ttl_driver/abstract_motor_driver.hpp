@@ -40,7 +40,7 @@ namespace ttl_driver
 class AbstractMotorDriver : public AbstractTtlDriver
 {
 public:
-    AbstractMotorDriver();
+    AbstractMotorDriver() = default;
     AbstractMotorDriver(std::shared_ptr<dynamixel::PortHandler> portHandler,
                         std::shared_ptr<dynamixel::PacketHandler> packetHandler);
 
@@ -59,15 +59,19 @@ public:
     virtual int readMaxPosition(uint8_t id, uint32_t& max_pos) = 0;
 
     // ram write
-    virtual int writeTorqueEnable(uint8_t id, uint32_t torque_enable) = 0;
-    virtual int writeGoalPosition(uint8_t id, uint32_t position) = 0;
-    virtual int writeGoalVelocity(uint8_t id, uint32_t velocity) = 0;
+    virtual int writeVelocityProfile(uint8_t id, const std::vector<uint32_t>& data_list) = 0;
 
-    virtual int syncWriteTorqueEnable(const std::vector<uint8_t>& id_list, const std::vector<uint32_t>& torque_enable_list) = 0;
+    virtual int writeTorqueEnable(uint8_t id, uint8_t torque_enable) = 0;
+    virtual int writePositionGoal(uint8_t id, uint32_t position) = 0;
+    virtual int writeVelocityGoal(uint8_t id, uint32_t velocity) = 0;
+
+    virtual int syncWriteTorqueEnable(const std::vector<uint8_t>& id_list, const std::vector<uint8_t>& torque_enable_list) = 0;
     virtual int syncWritePositionGoal(const std::vector<uint8_t>& id_list, const std::vector<uint32_t>& position_list) = 0;
     virtual int syncWriteVelocityGoal(const std::vector<uint8_t>& id_list, const std::vector<uint32_t>& velocity_list) = 0;
 
     // ram read
+    virtual int readVelocityProfile(uint8_t id, std::vector<uint32_t>& data_list) = 0;
+
     virtual int readPosition(uint8_t id, uint32_t& present_position) = 0;
     virtual int readVelocity(uint8_t id, uint32_t& present_velocity) = 0;
 

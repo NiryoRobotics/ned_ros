@@ -66,6 +66,9 @@ class DxlMotorState : public JointState
         uint32_t getFF1Gain() const;
         uint32_t getFF2Gain() const;
 
+        uint32_t getVelProfile() const;
+        uint32_t getAccProfile() const;
+
         double getStepsForOneSpeed() const;
         int getTotalRangePosition() const;
         double getTotalAngle() const;
@@ -80,6 +83,9 @@ class DxlMotorState : public JointState
         void setFF1Gain(uint32_t ff1_gain);
         void setFF2Gain(uint32_t ff2_gain);
 
+        void setVelProfile(uint32_t vel_profile);
+        void setAccProfile(uint32_t acc_profile);
+
 protected:
         uint32_t _pos_p_gain{0};
         uint32_t _pos_i_gain{0};
@@ -90,6 +96,8 @@ protected:
 
         uint32_t _ff1_gain{0};
         uint32_t _ff2_gain{0};
+        uint32_t _vel_profile{0};
+        uint32_t _acc_profile{0};        
 
         int _total_range_position{0};
         double _total_angle{0.0};
@@ -181,6 +189,26 @@ inline
 uint32_t DxlMotorState::getFF2Gain() const
 {
     return _ff2_gain;
+}
+
+/**
+ * @brief DxlMotorState::getVelProfile
+ * @return
+ */
+inline
+uint32_t DxlMotorState::getVelProfile() const
+{
+    return _vel_profile;
+}
+
+/**
+ * @brief DxlMotorState::getAccProfile
+ * @return
+ */
+inline
+uint32_t DxlMotorState::getAccProfile() const
+{
+    return _acc_profile;
 }
 
 /**

@@ -415,6 +415,12 @@ int Protocol2PacketHandler::rxPacket(PortHandler *port, uint8_t *rxpacket)
 
   if (result == COMM_SUCCESS)
     removeStuffing(rxpacket);
+  else if (result == COMM_RX_TIMEOUT || result == COMM_RX_CORRUPT)
+  {
+    // Flush data received but not read and clear Port (trying to avoid data block motors)
+    port->flushInput();
+    port->clearPort();
+  }
 
   return result;
 }

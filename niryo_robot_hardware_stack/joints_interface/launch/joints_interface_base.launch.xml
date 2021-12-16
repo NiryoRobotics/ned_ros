@@ -15,6 +15,7 @@
     <rosparam file="$(find joints_interface)/config/$(arg config_dir)/steppers_params.yaml" command="load" />  
     <rosparam file="$(find joints_interface)/config/$(arg config_dir)/joints_params.yaml" command="load" />
     <rosparam file="$(find joints_interface)/config/$(arg config_dir)/calibration_params.yaml" command="load" />
+    <param name="simulation_mode" value="$(arg simulation_mode)"/>
   </group>
 
 </launch>

@@ -39,7 +39,7 @@ along with this program.  If not, see <http:// www.gnu.org/licenses/>.
 
 #include "ttl_driver/ttl_manager.hpp"
 #include "ttl_driver/ArrayMotorHardwareStatus.h"
-#include "ttl_driver/SendCustomValue.h"
+#include "ttl_driver/WriteCustomValue.h"
 #include "ttl_driver/ReadCustomValue.h"
 #include "ttl_driver/WritePIDValue.h"
 #include "ttl_driver/ReadPIDValue.h"
@@ -64,7 +64,6 @@ namespace ttl_driver
 /**
  * @brief The TtlInterfaceCore class schedules and manager the communication in the TTL bus
  * its main purpose it to manage queues of commands for the TTL Motors
- * TODO(CC) Do we need to use TtlInterfaceCore or TtlManager when used with another node ?
  * This class is used for now by :
  * - ToolsInterfaceCore
  * - JointsInterfaceCore
@@ -136,6 +135,7 @@ public:
     void resetCalibration() override ;
     int32_t getCalibrationResult(uint8_t id) const override ;
     common::model::EStepperCalibrationStatus getCalibrationStatus() const override;
+    void setCalibrationStatus(const common::model::EStepperCalibrationStatus status) override;
 
     void activeDebugMode(bool mode) override;
 
@@ -164,7 +164,7 @@ private:
 
     // use other callbacks instead of executecommand
     bool _callbackActivateLeds(niryo_robot_msgs::SetInt::Request &req, niryo_robot_msgs::SetInt::Response &res);
-    bool _callbackWriteCustomValue(ttl_driver::SendCustomValue::Request &req, ttl_driver::SendCustomValue::Response &res);
+    bool _callbackWriteCustomValue(ttl_driver::WriteCustomValue::Request &req, ttl_driver::WriteCustomValue::Response &res);
     bool _callbackReadCustomValue(ttl_driver::ReadCustomValue::Request &req, ttl_driver::ReadCustomValue::Response &res);
 
     bool _callbackWritePIDValue(ttl_driver::WritePIDValue::Request &req, ttl_driver::WritePIDValue::Response &res);
@@ -229,6 +229,9 @@ private:
     ros::ServiceServer _velocity_profile_server;
     ros::ServiceServer _velocity_profile_getter;
 
+    ros::ServiceServer _frequencies_setter;
+    ros::ServiceServer _frequencies_getter;
+
     static constexpr int QUEUE_OVERFLOW = 20;
 };
 
@@ -273,6 +276,16 @@ bool TtlInterfaceCore::readCollisionStatus() const
 {
     return _ttl_manager->readCollisionStatus();
 }
+
+/**
+ * @brief TtlInterfaceCore::setCalibrationStatus
+ */
+inline
+void TtlInterfaceCore::setCalibrationStatus(const common::model::EStepperCalibrationStatus status)
+{
+    ROS_INFO("Set calibration status is not availble for TTL");
+}
+
 } // ttl_driver
 
 #endif // TTL_INTERFACE_CORE_HPP

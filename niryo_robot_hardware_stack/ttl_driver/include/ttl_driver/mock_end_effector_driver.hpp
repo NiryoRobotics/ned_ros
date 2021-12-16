@@ -64,11 +64,13 @@ class MockEndEffectorDriver : public AbstractEndEffectorDriver
         int syncReadHwStatus(const std::vector<uint8_t> &id_list, std::vector<std::pair<double, uint8_t> >& data_list) override;
 
         int syncReadHwErrorStatus(const std::vector<uint8_t> &id_list, std::vector<uint8_t> &hw_error_list) override;
-        
-        int scan(std::vector<uint8_t> &id_list) override;
-        int reboot(uint8_t id) override;
+
     public:
         int ping(uint8_t id) override;
+        int getModelNumber(uint8_t id,
+                            uint16_t& model_number) override;
+        int scan(std::vector<uint8_t> &id_list) override;
+        int reboot(uint8_t id) override;
 
         // AbstractEndEffectorDriver
         int readButton0Status(uint8_t id, common::model::EActionType& action) override;
@@ -83,7 +85,7 @@ class MockEndEffectorDriver : public AbstractEndEffectorDriver
         int readCollisionStatus(uint8_t id, bool& status) override;
 
         int readDigitalInput(uint8_t id, bool& in) override;
-        int writeDigitalOutput(uint8_t id, uint32_t out) override;
+        int writeDigitalOutput(uint8_t id, bool out) override;
 
     private:
         std::shared_ptr<FakeTtlData> _fake_data;

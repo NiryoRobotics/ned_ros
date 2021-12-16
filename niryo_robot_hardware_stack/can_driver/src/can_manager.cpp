@@ -24,6 +24,7 @@
 #include "common/model/bus_protocol_enum.hpp"
 #include "can_driver/mock_stepper_driver.hpp"
 #include "can_driver/stepper_driver.hpp"
+#include "niryo_robot_msgs/CommandStatus.h"
 
 // c++
 #include <asm-generic/errno.h>
@@ -88,7 +89,9 @@ bool CanManager::init(ros::NodeHandle& nh)
     int spi_baudrate = 0;
     int gpio_can_interrupt = 0;
 
+    bool simu_conveyor{false};
     nh.getParam("simulation_mode", _simulation_mode);
+    nh.getParam("simu_conveyor", simu_conveyor);
     nh.getParam("bus_params/spi_channel", spi_channel);
     nh.getParam("bus_params/spi_baudrate", spi_baudrate);
     nh.getParam("bus_params/gpio_can_interrupt", gpio_can_interrupt);
@@ -104,7 +107,7 @@ bool CanManager::init(ros::NodeHandle& nh)
                                                       static_cast<uint8_t>(gpio_can_interrupt));
     else
     {
-        readFakeConfig();
+        readFakeConfig(simu_conveyor);
     }
     return true;
 }
@@ -185,6 +188,8 @@ int CanManager::setupCommunication()
  */
 int CanManager::addHardwareComponent(std::shared_ptr<common::model::AbstractHardwareState> && state)
 {
+    int result = niryo_robot_msgs::CommandStatus::FAILURE;
+
     common::model::EHardwareType hardware_type = state->getHardwareType();
     uint8_t id = state->getId();
 
@@ -198,7 +203,9 @@ int CanManager::addHardwareComponent(std::shared_ptr<common::model::AbstractHard
 
     addHardwareDriver(hardware_type);
 
-    return 0;
+    result = niryo_robot_msgs::CommandStatus::SUCCESS;
+
+    return result;
 }
 
 /**
@@ -310,7 +317,7 @@ void CanManager::readStatus()
                         }
                         case AbstractStepperDriver::CAN_DATA_CALIBRATION_RESULT:
                         {
-                            stepperState->setCalibration(driver->interpretCalibrationData(rxBuf));
+                            stepperState->setCalibration(driver->interpretHomingData(rxBuf));
                             updateCurrentCalibrationStatus();
                             break;
                         }
@@ -390,7 +397,6 @@ int CanManager::scanAndCheck()
         }
 
         // update last time read on found motors
-        // TODO(cc) move updateLastTimeRead in hardwareState ?
         for (auto& motor_id : _all_motor_connected)
         {
             if (_state_map.count(motor_id) && _state_map.at(motor_id))
@@ -641,7 +647,8 @@ void CanManager::resetCalibration()
     _calibration_status = EStepperCalibrationStatus::UNINITIALIZED;
     for (auto &s : _state_map)
     {
-        if (s.second && (s.second->getHardwareType() == EHardwareType::STEPPER || s.second->getHardwareType() == EHardwareType::FAKE_STEPPER_MOTOR)  &&
+        if (s.second && (s.second->getHardwareType() == EHardwareType::STEPPER ||
+                         s.second->getHardwareType() == EHardwareType::FAKE_STEPPER_MOTOR)  &&
             !std::dynamic_pointer_cast<StepperMotorState>(s.second)->isConveyor())
             std::dynamic_pointer_cast<StepperMotorState>(s.second)->setCalibration(EStepperCalibrationStatus::UNINITIALIZED, 0);
     }
@@ -770,7 +777,7 @@ void CanManager::addHardwareDriver(common::model::EHardwareType hardware_type)
 /**
 * @brief CanManager::readFakeConfig read the config for fake driver.
 */
-void CanManager::readFakeConfig()
+void CanManager::readFakeConfig(bool use_simu_conveyor)
 {
     _fake_data = std::make_shared<FakeCanData>();
 
@@ -782,9 +789,17 @@ void CanManager::readFakeConfig()
             retrieveFakeMotorData(current_ns, _fake_data->stepper_registers);
 
             int pos_spam{30};
-            _nh.getParam("fake_params/steppers/position_spam", pos_spam);
+            _nh.getParam("fake_params/position_spam", pos_spam);
             _fake_data->position_spam = static_cast<uint8_t>(pos_spam);
         }
+
+        if (use_simu_conveyor && _nh.hasParam("fake_params/conveyors/"))
+        {
+            std::string current_ns = "fake_params/conveyors/";
+            retrieveFakeMotorData(current_ns, _fake_data->stepper_registers);
+        }
+
+        _fake_data->updateFullIdList();
     }
 }
 

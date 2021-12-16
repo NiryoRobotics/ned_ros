@@ -39,7 +39,7 @@ namespace niryo_robot_hardware_interface
 HardwareInterface::HardwareInterface(ros::NodeHandle &nh) :
     _nh(nh)
 {
-    /*for (int i = 0; i < 20; ++i)
+    /*for (int i = 0; i < 5; ++i)
     {
       ros::Duration(1).sleep();
       ROS_WARN("sleeping for %d", i);
@@ -138,6 +138,11 @@ void HardwareInterface::initNodes(ros::NodeHandle &nh)
 {
     ROS_DEBUG("HardwareInterface::initNodes - Init Nodes");
 
+    ROS_DEBUG("HardwareInterface::initNodes - Start CPU Interface Node");
+    ros::NodeHandle nh_cpu(nh, "cpu_interface");
+    _cpu_interface = std::make_shared<cpu_interface::CpuInterfaceCore>(nh_cpu);
+    ros::Duration(0.25).sleep();
+
     if (_ttl_enabled)
     {
         ROS_DEBUG("HardwareInterface::initNodes - Start Dynamixel Driver Node");
@@ -177,12 +182,6 @@ void HardwareInterface::initNodes(ros::NodeHandle &nh)
         ROS_DEBUG("HardwareInterface::initNodes - CAN communication is disabled for debug purposes");
     }
 
-    ROS_DEBUG("HardwareInterface::initNodes - Start Conveyor Interface Node");
-    ros::NodeHandle nh_conveyor(nh, "conveyor");
-    _conveyor_interface = std::make_shared<conveyor_interface::ConveyorInterfaceCore>(nh_conveyor,
-                                                                                      _ttl_interface, _can_interface);
-    ros::Duration(0.25).sleep();
-
     ROS_DEBUG("HardwareInterface::initNodes - Start Joints Interface Node");
     ros::NodeHandle nh_joints(nh, "joints_interface");
     _joints_interface = std::make_shared<joints_interface::JointsInterfaceCore>(nh,
@@ -191,9 +190,10 @@ void HardwareInterface::initNodes(ros::NodeHandle &nh)
                                                                                 _can_interface);
     ros::Duration(0.25).sleep();
 
-    ROS_DEBUG("HardwareInterface::initNodes - Start CPU Interface Node");
-    ros::NodeHandle nh_cpu(nh, "cpu_interface");
-    _cpu_interface = std::make_shared<cpu_interface::CpuInterfaceCore>(nh_cpu);
+    ROS_DEBUG("HardwareInterface::initNodes - Start Conveyor Interface Node");
+    ros::NodeHandle nh_conveyor(nh, "conveyor");
+    _conveyor_interface = std::make_shared<conveyor_interface::ConveyorInterfaceCore>(nh_conveyor,
+                                                                                      _ttl_interface, _can_interface);
     ros::Duration(0.25).sleep();
 }
 
@@ -357,11 +357,7 @@ bool HardwareInterface::_callbackRebootMotors(niryo_robot_msgs::Trigger::Request
         ret++;
         message += "Tools Interface, ";
     }
-    if (_conveyor_interface && _conveyor_interface->rebootAll())
-    {
-        ret++;
-        message += "Conveyor Interface, ";
-    }
+
     if (_end_effector_interface && _end_effector_interface->rebootHardware())
     {
         ret++;

@@ -23,15 +23,14 @@ from niryo_robot_msgs.msg import CommandStatus
 
 # Messages
 from std_msgs.msg import Bool, String
-from sensor_msgs.msg import JointState
+
 from trajectory_msgs.msg import JointTrajectory
 from trajectory_msgs.msg import JointTrajectoryPoint
-from geometry_msgs.msg import Pose, Point, Quaternion
+from geometry_msgs.msg import Pose, Quaternion
 from control_msgs.msg import JointTrajectoryControllerState
 from moveit_msgs.msg import RobotState as RobotStateMoveIt
 from moveit_msgs.msg import Constraints
 
-from niryo_robot_msgs.msg import HardwareStatus
 from niryo_robot_msgs.msg import RobotState
 from niryo_robot_msgs.msg import CommandJog
 from niryo_robot_msgs.msg import RPY
@@ -40,12 +39,11 @@ from niryo_robot_msgs.msg import RPY
 from niryo_robot_arm_commander.srv import JogShift, JogShiftRequest
 from niryo_robot_msgs.srv import SetBool
 from niryo_robot_msgs.srv import GetBool
-from moveit_msgs.srv import GetStateValidity
 
 
 class JogController:
-    def __init__(self, arm, kinematics_handler, parameters_validator):
-        self.__hardware_version = rospy.get_param('~hardware_version')
+    def __init__(self, arm_state):
+        self.__arm_state = arm_state
 
         # - Values Init
         self._shift_mode = None
@@ -54,24 +52,26 @@ class JogController:
         self._last_shift_values_cmd = None
         self._target_lock = Lock()
         self._target_values = None
-        self.__joints_name = rospy.get_param("~joint_names")
+
         self._current_jogged_joints = []
         self.__error_tolerance_joint = rospy.get_param("~error_tolerance_joint")
         self.__time_without_jog_limit = rospy.get_param(
             "~time_without_jog_TCP_limit")  # jog disabled after one second for the jogTCP Niryo Studio
 
         # - Move It Commander / Get Arm MoveGroupCommander
-        self.__arm = arm
+        self.__arm = self.__arm_state.arm
+
+        # - Kinematics
+        self.__kinematics_handler = self.__arm_state.kinematics
 
         # Validation
-        self.__parameters_validator = parameters_validator
+        self.__parameters_validator = self.__arm_state.parameters_validator
+
         jog_limits = rospy.get_param("~jog_limits")
         self.__pose_translation_max = jog_limits["translation"]
         self.__pose_rotation_max = jog_limits["rotation"]
         self.__joints_rotation_max = jog_limits["joints"]
 
-        # - Kinematics
-        self.__kinematics_handler = kinematics_handler
         self._new_robot_state = RobotState()
         self._last_robot_state_published = RobotState()
 
@@ -79,13 +79,10 @@ class JogController:
         self._enabled = False
         self.__jog_errors_cpt = 0
 
-        self._jog_enabled_publisher = rospy.Publisher('/niryo_robot/jog_interface/is_enabled',
-                                                      Bool, queue_size=3)
-        self._jog_errors_publisher = rospy.Publisher('/niryo_robot/jog_interface/errors',
-                                                     String, queue_size=3)
+        self._jog_enabled_publisher = rospy.Publisher('/niryo_robot/jog_interface/is_enabled', Bool, queue_size=3)
+        self._jog_errors_publisher = rospy.Publisher('/niryo_robot/jog_interface/errors', String, queue_size=3)
 
-        rospy.Timer(rospy.Duration(1.0 / rospy.get_param("~jog_enable_publish_rate")),
-                    self._publish_jog_enabled)
+        rospy.Timer(rospy.Duration(1.0 / rospy.get_param("~jog_enable_publish_rate")), self._publish_jog_enabled)
 
         self._check_disable_jog_timer = None
         self._last_command_timer = rospy.get_time()
@@ -105,22 +102,6 @@ class JogController:
         rospy.Subscriber(rospy.get_param("~joint_controller_name") + '/state', JointTrajectoryControllerState,
                          self.__callback_joint_controller_state)
 
-        self._joint_states = None
-        rospy.Subscriber('/joint_states', JointState,
-                         self.__callback_joint_states)
-
-        self._robot_state = None
-        rospy.Subscriber('/niryo_robot/robot_state', RobotState,
-                         self.__callback_sub_robot_state)
-
-        self.__learning_mode_on = None
-        rospy.Subscriber('/niryo_robot/learning_mode/state', Bool,
-                         self.__callback_sub_learning_mode)
-
-        self.__hardware_status = None
-        rospy.Subscriber('/niryo_robot_hardware_interface/hardware_status', HardwareStatus,
-                         self.__callback_hardware_status)
-
         # topic used to jog pose via Niryo Studio, to avoid calling the service
         self._jog_command_ik = None
         rospy.Subscriber('/niryo_robot_arm_commander/send_jog_command_ik', CommandJog,
@@ -133,26 +114,9 @@ class JogController:
         # - Service
         # Service to enable Jog Controller
         rospy.Service('/niryo_robot/jog_interface/enable', SetBool, self.__callback_enable_jog)
-
-        rospy.Service('/niryo_robot/jog_interface/jog_shift_commander', JogShift,
-                      self.__callback_jog_commander)
-
-        # Check joint validity service (used for self collisions checking)
-        self.check_state_validity = rospy.ServiceProxy('check_state_validity', GetStateValidity)
+        rospy.Service('/niryo_robot/jog_interface/jog_shift_commander', JogShift,   self.__callback_jog_commander)
 
     # - Callbacks
-
-    def __callback_sub_robot_state(self, robot_state):
-        self._robot_state = robot_state
-
-    def __callback_joint_states(self, joint_states_msg):
-        self._joint_states = joint_states_msg.position[:6]
-
-    def __callback_sub_learning_mode(self, learning_mode):
-        self.__learning_mode_on = learning_mode.data
-
-    def __callback_hardware_status(self, msg):
-        self.__hardware_status = msg
 
     def __callback_enable_jog(self, req):
         if req.value:
@@ -260,7 +224,7 @@ class JogController:
         for error, tolerance in zip(current_joints_error, self.__error_tolerance_joint):
             if abs(error) > tolerance and self._enabled and self._shift_mode == JogShiftRequest.JOINTS_SHIFT:
                 self.__collision_detected = True
-                self.__set_learning_mode(True)
+                self.__arm_state.set_learning_mode(True)
                 abort_str = "Command has been aborted due to a collision or " \
                             "a motor not able to follow the given trajectory"
                 rospy.logwarn(abort_str)
@@ -365,7 +329,7 @@ class JogController:
             point.positions = positions
 
         else:
-            msg.joint_names = self.__joints_name
+            msg.joint_names = self.__arm_state.joints_name
             point.positions = target_values
         point.time_from_start = rospy.Duration(self._timer_rate)
         msg.points = [point]
@@ -423,8 +387,6 @@ class JogController:
             rospy.logwarn(msg_str)
             return CommandStatus.ABORTED, msg_str
 
-        rospy.wait_for_message("/niryo_robot/robot_state", RobotState, timeout=2)
-        rospy.wait_for_message("/joint_states", JointState, timeout=2)
         self._enabled = True
         self._reset_last_pub()
         self._last_command_timer = rospy.get_time()
@@ -481,8 +443,8 @@ class JogController:
             self.disable()
 
     def _reset_last_pub(self):
-        self._last_target_values = self._joint_states
-        self._last_robot_state_published = self._robot_state
+        self._last_target_values = self.__arm_state.joint_states
+        self._last_robot_state_published = self.__arm_state.robot_state
         self.__jog_errors_cpt = 0
 
     def _get_new_joints_w_ik(self, shift_command):
@@ -521,11 +483,13 @@ class JogController:
         robot_state_target = RobotStateMoveIt()
         robot_state_target.joint_state.header.frame_id = "world"
         robot_state_target.joint_state.position = joints
-        robot_state_target.joint_state.name = self.__joints_name
+        robot_state_target.joint_state.name = self.__arm_state.joints_name
         group_name = self.__arm.get_name()
         null_constraints = Constraints()
         try:
-            response = self.check_state_validity(robot_state_target, group_name, null_constraints)
+            response = self.__parameters_validator.check_state_validity(robot_state_target,
+                                                                        group_name,
+                                                                        null_constraints)
             if not response.valid:
                 if len(response.contacts) > 0:
                     rospy.logwarn('Jog Controller - Joints target unreachable because of collision between %s and %s',
@@ -556,7 +520,7 @@ class JogController:
         :rtype: list
         """
 
-        actual_joints = list(self._joint_states)
+        actual_joints = list(self.__arm_state.joint_states)
         for i in range(len(joints)):
             if abs(actual_joints[i] - joints[i]) > 0.5:
                 error_str = "Jog Controller can't execute this command: {}".format(
@@ -577,11 +541,13 @@ class JogController:
         :return: None
         :rtype: None
         """
-        if self.__hardware_status.calibration_needed or self.__hardware_status.calibration_in_progress:
+        hdw_st = self.__arm_state.hardware_status
+        if hdw_st.calibration_needed or hdw_st.calibration_in_progress:
             return CommandStatus.ABORTED, "Cannot send command cause Jog because calibration is not done"
-        if self.__learning_mode_on:
+
+        if self.__arm_state.learning_mode_on:
             try:
-                self.__set_learning_mode(False)
+                self.__arm_state.set_learning_mode(False)
                 rospy.sleep(0.1)
             except (rospy.ROSException, rospy.ServiceException):
                 return CommandStatus.ABORTED, "Error while trying to turn Off learning mode"
@@ -591,27 +557,6 @@ class JogController:
             if ret == CommandStatus.ABORTED:
                 return CommandStatus.ABORTED, "Cannot send command cause Jog is not activated and cannot be"
         self._last_command_timer = rospy.get_time()
-
-    def __set_learning_mode(self, set_bool):
-        """
-        Activate or deactivate the learning mode using the ros service /niryo_robot/learning_mode/activate
-
-        :param set_bool:
-        :type set_bool: bool
-
-        :return: Success if the learning mode was properly activate or deactivate, False if not
-        :rtype: bool
-        """
-        if set_bool and self.__hardware_version == 'ned2':
-            return True
-
-        try:
-            rospy.wait_for_service("/niryo_robot/learning_mode/activate", timeout=1)
-            srv = rospy.ServiceProxy("/niryo_robot/learning_mode/activate", SetBool)
-            resp = srv(set_bool)
-            return resp.status == CommandStatus.SUCCESS
-        except (rospy.ServiceException, rospy.ROSException):
-            return False
 
 
 if __name__ == '__main__':

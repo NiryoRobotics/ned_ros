@@ -79,6 +79,7 @@ public:
                         const int32_t &calibration_value);
     void setCalibration(const std::tuple<EStepperCalibrationStatus, int32_t> &data);
     void setMicroSteps(double micro_steps);
+    void setMotorRatio(double motor_ratio);
 
     // getters
     double getLastTimeRead() const;
@@ -108,6 +109,7 @@ public:
     int to_motor_vel(double rad_vel) override;
     double to_rad_vel(int motor_vel) override;
 
+    void updateMultiplierRatio();
 protected:
     double _last_time_read{-1.0};
     double _hw_fail_counter{0.0};
@@ -115,6 +117,7 @@ protected:
     double _max_effort{0.0};
     double _micro_steps{8.0};
     double _gear_ratio{1.0};
+    double _motor_ratio{1.0};  // ned2
 
     // profile
     VelocityProfile _profile;
@@ -123,8 +126,6 @@ protected:
     int32_t _calibration_value{0};
 
 private:
-    void updateMultiplierRatio();
-
     double _pos_multiplier_ratio{1.0};
     double _vel_multiplier_ratio{1.0};
 

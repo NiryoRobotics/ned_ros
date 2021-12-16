@@ -21,6 +21,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <ros/ros.h>
 
 using ::common::model::EStepperCommandType;
 using ::common::model::EStepperCalibrationStatus;
@@ -56,13 +57,13 @@ int AbstractStepperDriver::writeSingleCmd(const std::unique_ptr<common::model::A
         switch (EStepperCommandType(cmd->getCmdType()))
         {
         case EStepperCommandType::CMD_TYPE_VELOCITY:
-            return writeGoalVelocity(cmd->getId(), cmd->getParam());
+            return writeVelocityGoal(cmd->getId(), cmd->getParam());
         case EStepperCommandType::CMD_TYPE_POSITION:
-            return writeGoalPosition(cmd->getId(), cmd->getParam());
+            return writePositionGoal(cmd->getId(), cmd->getParam());
         case EStepperCommandType::CMD_TYPE_TORQUE:
-            return writeTorqueEnable(cmd->getId(), cmd->getParam());
+            return writeTorqueEnable(cmd->getId(), static_cast<uint8_t>(cmd->getParam()));
         case EStepperCommandType::CMD_TYPE_LEARNING_MODE:
-            return writeTorqueEnable(cmd->getId(), !cmd->getParam());
+            return writeTorqueEnable(cmd->getId(), static_cast<uint8_t>(!cmd->getParam()));
         case EStepperCommandType::CMD_TYPE_CALIBRATION:
             return startHoming(cmd->getId());
         case EStepperCommandType::CMD_TYPE_CALIBRATION_SETUP:
@@ -75,7 +76,7 @@ int AbstractStepperDriver::writeSingleCmd(const std::unique_ptr<common::model::A
             std::vector<uint32_t> params = cmd->getParams();
             if (!params[0])
             {
-                return writeGoalVelocity(cmd->getId(), 0);
+                return writeVelocityGoal(cmd->getId(), 0);
             }
 
             // convert direction and speed into signed speed
@@ -84,7 +85,7 @@ int AbstractStepperDriver::writeSingleCmd(const std::unique_ptr<common::model::A
             // param received from user/app is in percentage. It have to be converted to speed (unit 0.01 rpm) accepted by ttl conveyor
             // TODO(Thuc) avoid hardcode 6000 here
             uint32_t speed = static_cast<uint32_t>(static_cast<int>(cmd->getParams().at(1)) * dir * 6000 / 100);
-            return writeGoalVelocity(cmd->getId(), speed);
+            return writeVelocityGoal(cmd->getId(), speed);
         }
         case EStepperCommandType::CMD_TYPE_VELOCITY_PROFILE:
             return writeVelocityProfile(cmd->getId(), cmd->getParams());
@@ -93,7 +94,7 @@ int AbstractStepperDriver::writeSingleCmd(const std::unique_ptr<common::model::A
         }
     }
 
-    std::cout << "Command not validated" << std::endl;
+    std::cout << "AbstractStepperDriver::writeSingleCmd: Command not validated : " << cmd->str() << std::endl;
     return -1;
 }
 
@@ -115,10 +116,18 @@ int AbstractStepperDriver::writeSyncCmd(int type, const std::vector<uint8_t>& id
     case EStepperCommandType::CMD_TYPE_VELOCITY:
         return syncWriteVelocityGoal(ids, params);
     case EStepperCommandType::CMD_TYPE_TORQUE:
-        return syncWriteTorqueEnable(ids, params);
+    {
+        std::vector<uint8_t> params_conv;
+        params_conv.reserve(params.size());
+        for (auto const& p : params)
+        {
+            params_conv.emplace_back(static_cast<uint8_t>(p));
+        }
+        return syncWriteTorqueEnable(ids, params_conv);
+    }
     case EStepperCommandType::CMD_TYPE_LEARNING_MODE:
     {
-        std::vector<uint32_t> params_inv;
+        std::vector<uint8_t> params_inv;
         params_inv.reserve(params.size());
         for (auto const& p : params)
         {
@@ -130,7 +139,7 @@ int AbstractStepperDriver::writeSyncCmd(int type, const std::vector<uint8_t>& id
         std::cout << "Command not implemented " << type << std::endl;
     }
 
-    std::cout << "Command not validated" << std::endl;
+    std::cout << "AbstractStepperDriver::writeSyncCmd : Command not validated : " << type << std::endl;
     return -1;
 }
 
@@ -155,8 +164,46 @@ std::string AbstractStepperDriver::interpretFirmwareVersion(uint32_t fw_version)
 }
 
 /**
- * @brief AbstractStepperDriver::interpretHomingStatus
- * @param fw_version
+ * @brief AbstractStepperDriver::interpretErrorState
+ * @param hw_state
+ * @return
+ */
+std::string AbstractStepperDriver::interpretErrorState(uint32_t hw_state) const
+{
+    std::string hardware_message;
+
+    if (hw_state & 1<<0)    // 0b00000001
+    {
+        hardware_message += "Input Voltage";
+    }
+    if (hw_state & 1<<2)    // 0b00000100
+    {
+        if (!hardware_message.empty())
+            hardware_message += ", ";
+        hardware_message += "OverHeating";
+    }
+    if (hw_state & 1<<3)    // 0b00001000
+    {
+        if (!hardware_message.empty())
+            hardware_message += ", ";
+        hardware_message += "Motor Encoder";
+    }
+    if (hw_state & 1<<7)    // 0b10000000 => added by us : disconnected error
+    {
+        if (!hardware_message.empty())
+            hardware_message += ", ";
+        hardware_message += "Disconnection";
+    }
+
+    if (!hardware_message.empty())
+        hardware_message += " Error";
+
+    return hardware_message;
+}
+
+/**
+ * @brief AbstractStepperDriver::interpretHomingData
+ * @param status
  * @return
  */
 common::model::EStepperCalibrationStatus
@@ -179,6 +226,7 @@ AbstractStepperDriver::interpretHomingData(uint8_t status) const
       homing_status = EStepperCalibrationStatus::FAIL;
       break;
     default:
+      homing_status = EStepperCalibrationStatus::FAIL;
       break;
     }
 
