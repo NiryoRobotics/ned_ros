@@ -1,10 +1,99 @@
 December release - Hardware Stack refinement
 ===========================================================
 
-Features
+Requirements
+-----------------------------------------------------------
+Ubuntu packages
+***********************************************************
+* sqlite3
+* ffmpeg
+* build-essential
+* catkin
+* python-catkin-pkg
+* python-pymodbus
+* python-rosdistro
+* python-rospkg
+* python-rosdep-modules
+* python-rosinstall python-rosinstall-generator
+* python-wstool
+* ros-melodic-moveit
+* ros-melodic-control
+* ros-melodic-controllers
+* ros-melodic-tf2-web-republisher
+* ros-melodic-rosbridge-server
+* ros-melodic-joint-state-publisher-gui
+
+Python libraries
+***********************************************************
+
+See src/requirements_ned2.txt file
+
+Packages
 -----------------------------------------------------------
 
-TODO
+New packages
+***********************************************************
+* niryo_robot_database
+* niryo_robot_led_ring
+* niryo_robot_metrics
+* niryo_robot_reports
+* niryo_robot_sound
+* niryo_robot_status
+* niryo_robot_hardware_stack/can_debug_tools
+* niryo_robot_hardware_stack/common
+* niryo_robot_hardware_stack/end_effector_interface
+* niryo_robot_hardware_stack/serial
+
+Renamed packages
+***********************************************************
+* niryo_ned_moveit_config_standalone becomes niryo_moveit_config_standalone
+* niryo_ned_moveit_config_w_gripper1 becomes niryo_moveit_config_w_gripper1
+* niryo_robot_hardware_stack/stepper_driver becomes niryo_robot_hardware_stack/can_driver
+* niryo_robot_hardware_stack/dynamixel_driver becomes niryo_robot_hardware_stack/ttl_driver
+* niryo_robot_hardware_stack/niryo_robot_debug becomes niryo_robot_hardware_stack/ttl_debug_tools
+
+Removed packages
+***********************************************************
+* niryo_robot_serial_number
+* niryo_robot_unit_tests
+* niryo_robot_hardware_stack/fake_interface
+
+Cleaning and Refactoring
+***********************************************************
+* roslint compliant
+* catkin lint compliant for most part
+* add xsd validation for launch files and package.xml files
+* updated packages format to version 3
+* updated c++ version to c++14
+* clang and clazy compliance improvement
+* rosdoc_lite set up in all packages
+* catkin_tools compliant
+* install space working
+* sphinx_doc restructuration
+* add hardware_version discrimination between ned, one and ned2
+* add ned2 configuration files in all packages
+
+Features (for Ned and One only)
+-----------------------------------------------------------
+* add VERSION file at root 
+* add CHANGELOG.rst in every package (using catkin_generate_changelog tool)
+* update PID values for Dynamixels
+* Replace fake interface by mock drivers for steppers and Dynamixels
+* Add compatibility for TTL conveyor belts (upcoming)
+* Add Ned2 features (upcoming)
+* niryo_robot_bringup refactoring
+* improve control loops for ttl_driver and joints interface
+* new trajectories (spiral, circular)
+* Save and replay waypointed trajectories
+
+Know issues (for Ned and One only)
+-----------------------------------------------------------
+No known issues detected
+
+Limitations
+-----------------------------------------------------------
+* Calibration deactivated on Simulated Ned and One
+* Not officially supporting Ned2 hardware version
 
 
 September release - New features batch
