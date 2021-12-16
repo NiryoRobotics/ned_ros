@@ -2,6 +2,15 @@ cmake_minimum_required(VERSION 3.0.2)
 project(dynamixel_sdk)
 message( STATUS "\n## Reading ${PROJECT_NAME}/CMakeLists.txt...")
 
+set(HARDWARE_VERSION "ned2" CACHE STRING "Robot model target")
+# for preprocessor directives
+if ("${HARDWARE_VERSION}" STREQUAL "one")
+    add_definitions(-DNIRYO_ONE)
+elseif ("${HARDWARE_VERSION}" STREQUAL "ned")
+    add_definitions(-DNIRYO_NED)
+elseif ("${HARDWARE_VERSION}" STREQUAL "ned2")
+    add_definitions(-DNIRYO_NED2)
+endif()
 
 #retrieve architecture
 execute_process( COMMAND
@@ -73,6 +82,30 @@ add_dependencies(${PROJECT_NAME}
 )
 
 ## Specify libraries to link executable targets against
+
+# wiringPi should be installed only on a Raspberry Pi board (for ned and one only)
+if ("${HARDWARE_VERSION}" STREQUAL "ned" OR "${HARDWARE_VERSION}" STREQUAL "one")
+    if(CMAKE_CROSSCOMPILING)
+        message(STATUS "Cross compiling : wiringPi library is required")
+        target_link_libraries(${PROJECT_NAME}
+            ${catkin_LIBRARIES}
+            -lwiringPi -lrt -lcrypt
+        )
+    else()
+        if ("${ARCHITECTURE}" MATCHES "^(arm.*|aarch64.*|arm64.*)$")
+            message(STATUS "wiringPi library is required - arm processor")
+            target_link_libraries(${PROJECT_NAME}
+                ${catkin_LIBRARIES}
+                -lwiringPi -lrt -lcrypt
+            )
+        else()
+            message(STATUS "wiringPi library not required")
+            target_link_libraries(${PROJECT_NAME}
+                ${catkin_LIBRARIES}
+            )
+        endif()
+    endif()
+endif()
 
 #############
 ##   Doc   ##

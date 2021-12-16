@@ -62,6 +62,21 @@
                             // or if you have another good idea that can be an alternatives,
                             // please give us advice via github issue https://github.com/ROBOTIS-GIT/DynamixelSDK/issues
 
+#define GPIO_HALF_DUPLEX_DIRECTION 17
+
+// CC : just for example
+#ifdef NIRYO_ONE
+  #pragma message "One compilation"
+#endif
+
+#ifdef NIRYO_NED
+  #pragma message "Ned compilation"
+#endif
+
+#ifdef NIRYO_NED2
+  #pragma message "Ned 2 compilation"
+#endif
+
 using namespace dynamixel;
 
 PortHandlerLinux::PortHandlerLinux(const char *port_name)
@@ -70,6 +85,20 @@ PortHandlerLinux::PortHandlerLinux(const char *port_name)
 {
   is_using_ = false;
   setPortName(port_name);
+}
+
+void PortHandlerLinux::gpioHigh()
+{
+#if !defined(NIRYO_NED2) && (defined(__arm__) || defined(__aarch64__))
+  digitalWrite(GPIO_HALF_DUPLEX_DIRECTION, HIGH);
+#endif
+}
+
+void PortHandlerLinux::gpioLow()
+{
+#if !defined(NIRYO_NED2) && (defined(__arm__) || defined(__aarch64__))
+  digitalWrite(GPIO_HALF_DUPLEX_DIRECTION, LOW);
+#endif
 }
 
 /**
@@ -81,6 +110,20 @@ PortHandlerLinux::PortHandlerLinux(const char *port_name)
  */
 bool PortHandlerLinux::openPort()
 {
+#if !defined(NIRYO_NED2) && (defined(__arm__) || defined(__aarch64__))
+  int res = wiringPiSetupGpio();
+
+  if (res != 0)
+  {
+      return false;
+  }
+
+  pinMode(GPIO_HALF_DUPLEX_DIRECTION, OUTPUT);
+  timespec wait_time = { 0, static_cast<long>(500000)};
+  pselect (0, NULL, NULL, NULL, &wait_time, NULL);
+  gpioLow();
+#endif
+
   serial_.open();
   return serial_.isOpen();
 }
@@ -133,8 +176,10 @@ int PortHandlerLinux::readPort(uint8_t *packet, int length)
 
 int PortHandlerLinux::writePort(uint8_t *packet, int length)
 {
+    gpioHigh();
     size_t written = serial_.write(packet, length);
     serial_.waitByteTimes(written);
+    gpioLow();
     return written;
 }
 
