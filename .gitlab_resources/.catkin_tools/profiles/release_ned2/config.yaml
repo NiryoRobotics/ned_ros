@@ -1,16 +1,19 @@
 blacklist: []
-build_space: build/release
+build_space: build/release/ned2
 catkin_make_args: []
 cmake_args:
+- -DHARDWARE_VERSION=ned2
+- -DCATKIN_ENABLE_TESTING=OFF
+- -DENABLE_COVERAGE_TESTING=OFF
 - -DCMAKE_BUILD_TYPE=Release
 devel_layout: linked
-devel_space: devel/release
-extend_path: null
+devel_space: devel/release/ned2
+extend_path:  /opt/ros/melodic
 install: true
-install_space: install/release
+install_space: install/release/ned2
 isolate_install: false
 jobs_args: []
-log_space: log/release
+log_space: log/release/ned2
 make_args: []
 source_space: src
 use_env_cache: false

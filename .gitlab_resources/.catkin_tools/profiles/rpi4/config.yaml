@@ -1,17 +1,17 @@
 blacklist: []
-build_space: build/debug
+build_space: build/rpi4
 catkin_make_args: []
 cmake_args:
-- -DCMAKE_BUILD_TYPE=Debug
-- -DHARWARE_VERSION=ned2
+- -DCMAKE_TOOLCHAIN_FILE=
+- -DCMAKE_CROSS_COMPILE_PREFIX=
 devel_layout: linked
-devel_space: devel/debug
-extend_path: null
+devel_space: devel/rpi4
+extend_path: 
 install: true
-install_space: install/debug
+install_space: install/rpi4
 isolate_install: false
 jobs_args: []
-log_space: log/debug
+log_space: logs/rpi4
 make_args: []
 source_space: src
 use_env_cache: false
