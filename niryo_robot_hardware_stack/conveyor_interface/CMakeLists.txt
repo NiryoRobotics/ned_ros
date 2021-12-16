@@ -39,6 +39,7 @@ find_package(catkin REQUIRED
       roscpp
       std_msgs
       ttl_driver
+      common
 )
 
 if(CATKIN_ENABLE_TESTING AND ENABLE_COVERAGE_TESTING)
@@ -89,6 +90,7 @@ catkin_package(
       roscpp
       std_msgs
       ttl_driver
+      common
 )
 
 ###########
