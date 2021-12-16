@@ -1,9 +1,9 @@
 Ubuntu 18 Installation
 =========================================
 
-
-To allow the simulation to run on your computer, you will need to install ROS and some
-packages.
+This guide will explain the steps needed to install the Niryo Robot Stack on an Ubuntu 18 OS.
+You can apply these steps to set up a working simulation environment on any development computer, or to set up a working robot stack
+on a raspberry pi.
 
 Installation index:
 
@@ -13,8 +13,44 @@ Installation index:
 
 Prerequisites
 -------------------------
+
+The Niryo ROS Stack runs on top of ROS Melodic or Kinetic (deprecated). This version of ROS is strongly dependent of Ubuntu 18.04 version,
+thus, this OS is currently the only official supported OS.
+
+Be sure to have an up to date system before continuing.
+
+Ubuntu packages
+*******************
+
+The Niryo ROS Stack needs the following packages in order to run correctly: 
+
+* build-essential
+* sqlite3
+* ffmpeg
+
+.. note::
+    These packages are mostly useful on a real robot, 
+    but as the code is identical between simulation and real functioning, a lack of these packages on a simulation can lead to unstabilities.
+
+
+Python environment
+*******************
+
+The python environment is installed using the requirements_ned2.txt file ::
+
+    pip install -r src/requirements_ned2.txt
+
+.. note::
+    ROS Melodic is still using python2 internally. We are aligning our python version 
+    to it so you need to install the requirements using python2 pip tool
+
+
+ROS set up
+*******************
+
 .. note::
     All terminal command listed are for Ubuntu users.
+
 
 Place yourself in the folder of your choice and create a folder
 **catkin_ws_niryo_ned** as well as a sub-folder **src**: ::
@@ -58,7 +94,6 @@ Method 2: Full installation
 
 ROS packages needed are:
 
-* build-essential
 * catkin
 * python-catkin-pkg
 * python-pymodbus
