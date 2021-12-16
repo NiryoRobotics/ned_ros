@@ -38,3 +38,5 @@ generated_pdfs/
 .gitlab_resources/.catkin_tools/profiles/*/build.yaml
 
 .style.yapf
+
+sphinx_doc/tr.log
