@@ -16,8 +16,8 @@ class SystemApiClientRosWrapper(object):
         self.__service_timeout = service_timeout
 
     # - Ethernet
-    def __manage_ethernet(self, *args):
-        result = self.__call_service('/niryo_robot/ethernet/manage', ManageEthernet, *args)
+    def __manage_ethernet(self, profile, ip, mask, gateway, dns):
+        result = self.__call_service('/niryo_robot/ethernet/manage', ManageEthernet, profile, ip, mask, gateway, dns)
         return self.__classic_return_w_check(result)
 
     def set_ethernet_static(self):
@@ -31,7 +31,7 @@ class SystemApiClientRosWrapper(object):
         :return: status, message
         :rtype: (int, str)
         """
-        return self.__manage_ethernet(ManageEthernetRequest.STATIC)
+        return self.__manage_ethernet(ManageEthernetRequest.STATIC, '', '', '', '')
 
     def set_ethernet_auto(self):
         """
@@ -44,7 +44,7 @@ class SystemApiClientRosWrapper(object):
         :return: status, message
         :rtype: (int, str)
         """
-        return self.__manage_ethernet(ManageEthernetRequest.AUTO)
+        return self.__manage_ethernet(ManageEthernetRequest.AUTO, '', '', '', '')
 
     def set_ethernet_custom(self, ip, mask, gateway, dns):
         """
