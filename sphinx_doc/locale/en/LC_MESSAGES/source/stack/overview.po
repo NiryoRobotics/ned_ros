@@ -1,0 +1,76 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2021, Niryo All rights reserved. No part of this document
+# may be reproduced or transmitted in any form or by any means without prior
+# written consent of Niryo SAS
+# This file is distributed under the same license as the Ned ROS
+# Documentation package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Ned ROS Documentation v3.2\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-10-22 17:37+0200\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.9.1\n"
+
+#: ../../source/stack/overview.rst:2
+msgid "Overview"
+msgstr ""
+
+#: ../../source/stack/overview.rst:5
+msgid ""
+"Ned is a robot based on Raspberry, Arduino & ROS. It uses ROS to make the"
+" interface between Hardware and high-level bindings."
+msgstr ""
+
+#: ../../source/stack/overview.rst:8
+msgid ""
+"On the following figure, you can see a global overview of the Niryo's "
+"robot software in order to understand where are placed each part of the "
+"software."
+msgstr ""
+
+#: ../../source/stack/overview.rst:17
+msgid "Niryo robot v3 software"
+msgstr ""
+
+#: ../../source/stack/overview.rst:25
+msgid "ROS Logo"
+msgstr ""
+
+#: ../../source/stack/overview.rst:27
+msgid ""
+"ROS (Robot Operating System) is an Open-Source Robotic Framework which "
+"allows to ease robot software development. The framework is used in "
+"almost each part of Ned's software."
+msgstr ""
+
+#: ../../source/stack/overview.rst:31
+msgid "The Stack is split into two parts:"
+msgstr ""
+
+#: ../../source/stack/overview.rst:33
+msgid ""
+"The :doc:`high_level` (motion planner, vision, ...), developed in Python "
+"to give good readability"
+msgstr ""
+
+#: ../../source/stack/overview.rst:34
+msgid ""
+"The :doc:`low_level` (drivers, hardware management, ...), developed in "
+"C++ to ensure real time capabilities."
+msgstr ""
+
+#: ../../source/stack/overview.rst:37
+msgid ""
+"To learn more about ROS, go on `Official ROS Wiki "
+"<http://wiki.ros.org/>`_."
+msgstr ""
+

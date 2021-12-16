@@ -1,10 +1,13 @@
-<launch>
-  <arg name="world_name" default="niryo_cube_world"/>
-  <arg name="debug" default="false"/>
+<?xml version="1.0" ?>
+<launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+    <!-- Arguments -->
+    <arg name="world_name" default="niryo_cube_world"/>
+    <arg name="debug" default="false"/>
 
-    <!-- Launch World -->
-  <include file="$(find gazebo_ros)/launch/empty_world.launch">
-    <arg name="world_name" value="$(find niryo_robot_gazebo)/worlds/$(arg world_name).world"/>
-    <arg name="debug" value="$(arg debug)"/>
-  </include>
+      <!-- Launch World -->
+    <include file="$(find gazebo_ros)/launch/empty_world.launch">
+        <arg name="world_name" value="$(find niryo_robot_gazebo)/worlds/$(arg world_name).world"/>
+        <arg name="debug" value="$(arg debug)"/>
+    </include>
 </launch>

@@ -1,0 +1,13 @@
+<?xml version="1.0" ?>
+<launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+
+    <!-- launch the end_effector_interface_node node using end_effector_interface_node executable from end_effector_interface package -->
+    <include file="$(find end_effector_interface)/launch/end_effector_interface.launch" >
+        <arg name="simulation_mode" value="true" />
+    </include>
+    
+    <test test-name="end_effector_interface_integration_tests" pkg="end_effector_interface"  type="end_effector_interface_integration_tests" />
+
+</launch>
+

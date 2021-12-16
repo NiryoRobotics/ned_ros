@@ -1,0 +1,77 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2021, Niryo All rights reserved. No part of this document
+# may be reproduced or transmitted in any form or by any means without prior
+# written consent of Niryo SAS
+# This file is distributed under the same license as the Ned ROS
+# Documentation package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Ned ROS Documentation 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-09-13 09:16+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.9.1\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Language: fr\n"
+"X-Source-Language: C\n"
+
+#: ../../source/ros/niryo_robot_gazebo.rst:2
+msgid "Niryo_robot_gazebo"
+msgstr "Niryo_robot_gazebo"
+
+#: ../../source/ros/niryo_robot_gazebo.rst:10
+msgid "Gazebo"
+msgstr "Gazebo"
+
+#: ../../source/ros/niryo_robot_gazebo.rst:13
+msgid "Usage"
+msgstr "Usage"
+
+#: ../../source/ros/niryo_robot_gazebo.rst:14
+msgid "This package contains models, materials & Gazebo worlds."
+msgstr "Ce package contient des modèles, des matériaux et des mondes Gazebo."
+
+#: ../../source/ros/niryo_robot_gazebo.rst:16
+msgid ""
+"When launching the Gazebo version of the ROS Stack, the file "
+"**niryo_robot_gazebo_world.launch.xml** will be called to generate the "
+"Gazebo world."
+msgstr ""
+"Lors du lancement de la version Gazebo de la stack ROS, le fichier  "
+"**niryo_robot_gazebo_world.launch.xml** sera appelé pour générer le monde "
+"Gazebo."
+
+#: ../../source/ros/niryo_robot_gazebo.rst:21
+msgid "Create your own world"
+msgstr "Créer son propre monde"
+
+#: ../../source/ros/niryo_robot_gazebo.rst:23
+msgid ""
+"Create your world's file and put it on the folder *worlds*. Once it is done, "
+"you have to change the parameter **world_name** in the file "
+"**niryo_robot_gazebo_world.launch.xml**."
+msgstr ""
+"Pour créer le fichier de votre monde et il faut le placer dans le dossier "
+"**mondes**. Ensuite, il va falloir changer le paramètre **world_name** dans "
+"le fichier **niryo_robot_gazebo_world.launch.xml**."
+
+#: ../../source/ros/niryo_robot_gazebo.rst:27
+msgid ""
+"You can take a look at the Gazebo world by launching it without robot by "
+"precising the world name in the arg *world_name*: ::"
+msgstr ""
+"Vous pouvez jeter un œil au monde Gazebo en le lançant sans robot en "
+"précisant le nom du monde dans l'arg *world_name* : ::"
+
+#~ msgid "Niryo Robot Gazebo Package"
+#~ msgstr "Le package Gazebo du robot Niryo"
+
+#~ msgid "Create your own World"
+#~ msgstr "Créer son propre monde"

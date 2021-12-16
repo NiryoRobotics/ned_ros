@@ -1,0 +1,64 @@
+# TODO(THUC) test limit for calibration in one and ned
+# #  Stepper caracteristics for Ned's hardware
+# #
+# steppers:
+#     stepper_1:
+#         id: 1
+#         gear_ratio: 6.0625
+#         offset_position: 0
+#         home_position: 0.0
+#         limit_position: 3.05433  # limit position is the position used for calibration of stepper can
+#         direction: -1
+#         max_effort: 90
+
+#     stepper_2:
+#         id: 2
+#         gear_ratio: 8.3125
+#         offset_position: 0
+#         home_position: 0.5
+#         limit_position: 0.640187  # limit position is the position used for calibration of stepper can 
+#         direction: -1
+#         max_effort: 130
+        
+#     stepper_3:
+#         id: 3
+#         gear_ratio: 7.875
+#         offset_position: 0
+#         home_position: -1.25
+#         limit_position: -1.397485  # limit position is the position used for calibration of stepper can
+#         direction: -1
+#         max_effort: 120
+
+#
+#  Stepper caracteristics for Ned's hardware
+#
+steppers:
+    stepper_1:
+        id: 1
+        gear_ratio: 6.0625
+        offset_position: 0
+        home_position: 0.0
+        limit_position_min: -2.96706  # joint limit min
+        limit_position_max: 2.96706   # joint limit max
+        direction: -1
+        max_effort: 90
+
+    stepper_2:
+        id: 2
+        gear_ratio: 8.3125
+        offset_position: 0
+        home_position: 0.5
+        limit_position_max: 0.610865
+        limit_position_min: -2.09
+        direction: -1
+        max_effort: 130
+        
+    stepper_3:
+        id: 3
+        gear_ratio: 7.875
+        offset_position: 0
+        home_position: -1.25
+        limit_position_min: -1.3439
+        limit_position_max: 1.57
+        direction: -1
+        max_effort: 120

@@ -40,7 +40,7 @@ add at the beginning of all of them: ::
 
 .. toggle::
 
-    .. image:: ../../images/ros/vision_example.*
+    .. image:: ../../../images/stack/high_level/vision_example.*
        :align: center
 
 Simple Vision pick

@@ -1,0 +1,4 @@
+bus_params:
+    spi_channel: 0
+    spi_baudrate: 1000000
+    gpio_can_interrupt: 25

@@ -1,0 +1,138 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2021, Niryo All rights reserved. No part of this document
+# may be reproduced or transmitted in any form or by any means without prior
+# written consent of Niryo SAS
+# This file is distributed under the same license as the Ned ROS
+# Documentation package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Ned ROS Documentation v3.2\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-12-15 12:28+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.9.1\n"
+
+#: ../../source/stack/low_level/can_driver.rst:2
+msgid "CAN Driver"
+msgstr ""
+
+#: ../../source/stack/low_level/can_driver.rst:4
+msgid ""
+"This package provides an interface between high level ROS packages and "
+"motors on CAN bus"
+msgstr ""
+
+#: ../../source/stack/low_level/can_driver.rst:7
+msgid "CAN Driver Node"
+msgstr ""
+
+#: ../../source/stack/low_level/can_driver.rst:10
+msgid "The ROS Node is made to:"
+msgstr ""
+
+#: ../../source/stack/low_level/can_driver.rst:9
+msgid "Send commands to stepper motors."
+msgstr ""
+
+#: ../../source/stack/low_level/can_driver.rst:10
+msgid "Receive stepper motors data."
+msgstr ""
+
+#: ../../source/stack/low_level/can_driver.rst:13
+msgid "Parameters"
+msgstr ""
+
+#: ../../source/stack/low_level/can_driver.rst:15
+msgid "Stepper Driver's Parameters"
+msgstr ""
+
+#: ../../source/stack/low_level/can_driver.rst:21
+msgid "Name"
+msgstr ""
+
+#: ../../source/stack/low_level/can_driver.rst:22
+msgid "Description"
+msgstr ""
+
+#: ../../source/stack/low_level/can_driver.rst:23
+msgid "``can_hardware_control_loop_frequency``"
+msgstr ""
+
+#: ../../source/stack/low_level/can_driver.rst
+msgid "Controls loop frequency."
+msgstr ""
+
+#: ../../source/stack/low_level/can_driver.rst
+msgid "Default: '100.0'"
+msgstr ""
+
+#: ../../source/stack/low_level/can_driver.rst:26
+msgid "``can_hw_write_frequency``"
+msgstr ""
+
+#: ../../source/stack/low_level/can_driver.rst
+msgid "Write frequency."
+msgstr ""
+
+#: ../../source/stack/low_level/can_driver.rst
+msgid "Default: '50.0'"
+msgstr ""
+
+#: ../../source/stack/low_level/can_driver.rst:29
+msgid "``can_hw_read_frequency``"
+msgstr ""
+
+#: ../../source/stack/low_level/can_driver.rst
+msgid "Read frequency."
+msgstr ""
+
+#: ../../source/stack/low_level/can_driver.rst:35
+msgid "Dependencies"
+msgstr ""
+
+#: ../../source/stack/low_level/can_driver.rst:37
+msgid ":doc:`../third_parties/mcp_can_rpi`"
+msgstr ""
+
+#: ../../source/stack/low_level/can_driver.rst:38
+msgid ":doc:`../../stack/high_level/niryo_robot_msgs`"
+msgstr ""
+
+#: ../../source/stack/low_level/can_driver.rst:39
+msgid ":doc:`common`"
+msgstr ""
+
+#: ../../source/stack/low_level/can_driver.rst:43
+msgid "Services, Topics and Messages"
+msgstr ""
+
+#: ../../source/stack/low_level/can_driver.rst:46
+msgid "StepperCmd (Service)"
+msgstr ""
+
+#: ../../source/stack/low_level/can_driver.rst:52
+msgid "StepperMotorHardwareStatus (Message)"
+msgstr ""
+
+#: ../../source/stack/low_level/can_driver.rst:58
+msgid "StepperMotorCommand (Message)"
+msgstr ""
+
+#: ../../source/stack/low_level/can_driver.rst:64
+msgid "StepperArrayMotorHardwareStatus (Message)"
+msgstr ""
+
+#~ msgid ":doc:`../high_level/niryo_robot_msgs`"
+#~ msgstr ""
+
+#~ msgid ":doc:`../../ros/niryo_robot_msgs`"
+#~ msgstr ""
+

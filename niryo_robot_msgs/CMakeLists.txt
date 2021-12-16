@@ -1,5 +1,6 @@
-cmake_minimum_required(VERSION 2.8.3)
+cmake_minimum_required(VERSION 3.0.2)
 project(niryo_robot_msgs)
+message( STATUS "\n## Reading ${PROJECT_NAME}/CMakeLists.txt...")
 
 find_package(catkin REQUIRED COMPONENTS
   geometry_msgs
@@ -27,7 +28,9 @@ add_service_files(
   GetInt.srv
   GetNameDescriptionList.srv
   GetStringList.srv
+  Ping.srv
   SetBool.srv
+  SetFloat.srv
   SetInt.srv
   SetString.srv
   Trigger.srv
@@ -49,3 +52,31 @@ catkin_package(
 include_directories(
   ${catkin_INCLUDE_DIRS}
 )
+
+#############
+##   Doc   ##
+#############
+
+#############
+## Testing ##
+#############
+
+#############
+## Install ##
+#############
+
+# no scripts to install
+
+##########################
+## Static code analysis ##
+##########################
+find_package(roslint QUIET)
+
+if(roslint_FOUND)
+    # no static code analysis on external libs
+    # create empty target (needed for catkin build --make-args roslint)
+    message(STATUS "no lint analysis for this packet. Create empty target for conveniency")
+    roslint_cpp(empty) # hack to create an empty roslint target
+else()
+    message(WARNING "roslint not found. Skipping roslint target building")
+endif()

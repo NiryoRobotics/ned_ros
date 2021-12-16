@@ -270,5 +270,5 @@ Dependencies - Modbus TCP Server
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 - `pymodbus library <https://pymodbus.readthedocs.io/en/latest/index.html>`_
-- :doc:`ros/niryo_robot_msgs`
+- :doc:`stack/high_level/niryo_robot_msgs`
 - :msgs_index:`std_msgs`

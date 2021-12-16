@@ -1,3 +1,4 @@
+<?xml version="1.0" ?>
 <!-- This launch file allows to run simulation on Gazebo
 Warning : Some errors are present in Gazebo
 -> It will log some errors because it cannot unload joint_controller (It's because ROS does it before Gazebo)
@@ -5,26 +6,26 @@ Warning : Some errors are present in Gazebo
 to change _TIMEOUT_SIGINT value in the file /opt/ros/melodic/lib/python2.7/dist-packages/roslaunch/nodeprocess.py
 This will reduce the amount of time spent waiting during program shutdown
 -->
-<launch>
+<launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+    <env name="ROSCONSOLE_CONFIG_FILE"
+        value="$(find niryo_robot_bringup)/config/desktop_gazebo_simulation_trace.conf" />
     <!-- Arguments definition -->
+    <arg name="log_level" default="INFO" />
+    <arg name="hardware_version" default="ned" />
+    <arg name="debug" default="false"/>
     <arg name="gripper_n_camera" default="true"/>
+    <arg name="simu_conveyor" default="true"/>
     <arg name="gui" default="true"/>
-    <arg name="hardware_version" value="ned"/>
-
-    <!-- Load URDF -->
-    <arg name="urdf_path" value="urdf/$(arg hardware_version)/niryo_$(arg hardware_version)_gripper1_n_camera.urdf.xacro" if="$(arg gripper_n_camera)"/>
-    <arg name="urdf_path" value="urdf/$(arg hardware_version)/niryo_$(arg hardware_version)_gazebo.urdf.xacro" unless="$(arg gripper_n_camera)"/>
-
-    <param name="robot_description"
-        command="$(find xacro)/xacro $(find niryo_robot_description)/$(arg urdf_path)"/>
-
-    <param name="robot_description_tf2"
-        command="$(find xacro)/xacro $(find niryo_robot_description)/$(arg urdf_path)"/>
+    <arg name="conf_location" default="version.txt"/>
 
     <!-- Define most of ROS parameters -->
-    <include file="$(find niryo_robot_bringup)/launch/niryo_robot_base_simulation.launch.xml">
+    <include file="$(find niryo_robot_bringup)/launch/niryo_$(arg hardware_version)_simulation.launch">
         <arg name="simu_gripper" value="$(arg gripper_n_camera)"/>
-        <arg name="gazebo" value="true"/>
+        <arg name="simu_conveyor" value="$(arg simu_conveyor)"/>
+        <arg name="log_level" value="$(arg log_level)" />
+        <arg name="debug" value="$(arg debug)"/>
+        <arg name="gazebo" value="true" />
     </include>
 
     <!-- Launching Gazebo World -->
@@ -32,10 +33,6 @@ This will reduce the amount of time spent waiting during program shutdown
         <arg name="gui" value="$(arg gui)"/>
     </include>
 
-    <!-- Launching vision if the user didn't swap camera arg to false -->
-    <include file="$(find niryo_robot_vision)/launch/vision_node.launch" if="$(arg gripper_n_camera)">
-        <arg name="simulation_mode" value="true"/>
-    </include>
-        <param name="/niryo_robot_vision/initialized" type="bool" value="true" unless="$(arg gripper_n_camera)"/>
+    <param name="/niryo_robot_vision/initialized" type="bool" value="true" unless="$(arg gripper_n_camera)"/>
 
 </launch>

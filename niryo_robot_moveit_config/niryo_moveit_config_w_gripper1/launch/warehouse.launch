@@ -1,0 +1,17 @@
+<?xml version="1.0" ?>
+<launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+
+  <!-- The path to the database must be specified -->
+  <arg name="moveit_warehouse_database_path" />
+
+  <!-- Load warehouse parameters -->
+  <include file="$(find niryo_moveit_config_w_gripper1)/launch/warehouse_settings.launch.xml" />
+
+  <!-- Run the DB server -->
+  <node name="$(anon mongo_wrapper_ros)" cwd="ROS_HOME" type="mongo_wrapper_ros.py" pkg="warehouse_ros_mongo">
+    <param name="overwrite" value="false"/>
+    <param name="database_path" value="$(arg moveit_warehouse_database_path)" />
+  </node>
+
+</launch>

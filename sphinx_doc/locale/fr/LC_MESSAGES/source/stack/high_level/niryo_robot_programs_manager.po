@@ -1,0 +1,413 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) 2021, Niryo All rights reserved. No part of this document
+# may be reproduced or transmitted in any form or by any means without prior
+# written consent of Niryo SAS
+# This file is distributed under the same license as the Ned ROS
+# Documentation package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2021.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Ned ROS Documentation 1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2021-12-15 12:28+0100\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.9.1\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+"X-Language: fr\n"
+"X-Source-Language: C\n"
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:2
+msgid "Niryo_robot_programs_manager"
+msgstr "Niryo_robot_programs_manager"
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:4
+msgid ""
+"This package is in charge of interpreting/running/saving programs. It is "
+"used by Niryo Studio."
+msgstr ""
+"Ce package est en charge de l'interprétation/exécution/sauvegarde des "
+"programmes. Il est utilisé par Niryo Studio."
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:9
+msgid "Programs manager node"
+msgstr "Noeud Programs manager"
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:11
+msgid ""
+"The ROS Node is made of several services to deal with the storage and "
+"running of programs."
+msgstr ""
+"Le nœud ROS est composé de plusieurs services pour gérer le stockage et "
+"l'exécution des programmes."
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:14
+msgid ""
+"Calls are not available from the Python ROS Wrapper, as it made to run its "
+"programs with the Python ROS Wrapper."
+msgstr ""
+"Les appels ne sont pas disponibles à partir du Python ROS Wrapper, car il a "
+"été conçu pour exécuter ses programmes avec le Python ROS Wrapper."
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:17
+msgid "The namespace used is: |namespace_emphasize|"
+msgstr "L'espace de nom utilisé est : |namespace_emphasize|"
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:20
+msgid "Parameters - Programs manager"
+msgstr "Paramètres - Programs manager"
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:21
+msgid "Programs Manager's Parameters"
+msgstr "Paramètres de Programs manager"
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:27
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:43
+msgid "Name"
+msgstr "Nom"
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:28
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:45
+msgid "Description"
+msgstr "Description"
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:29
+msgid "``autorun_file_name``"
+msgstr "``autorun_file_name``"
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:30
+msgid "Name of the file containing auto run infos"
+msgstr "Nom du fichier contenant les informations d'exécution automatique"
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:31
+msgid "``programs_dir``"
+msgstr "``programs_dir``"
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:32
+msgid "Path to the Program storage mother folder"
+msgstr "Chemin d'accès au dossier mère de stockage du programme"
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:35
+msgid "Services - Programs manager"
+msgstr "Services - Programs manager"
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:37
+msgid "Programs manager Services"
+msgstr "Services de Programs manager"
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:44
+msgid "Message Type"
+msgstr "Type de message"
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:46
+msgid "``execute_program``"
+msgstr "``execute_program``"
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:47
+msgid ""
+":ref:`ExecuteProgram<source/stack/high_level/niryo_robot_programs_manager:ExecuteProgram "
+"(Service)>`"
+msgstr ""
+":ref:`ExecuteProgram<source/stack/high_level/niryo_robot_programs_manager:ExecuteProgram "
+"(Service)>`"
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:48
+msgid "Executes a program"
+msgstr "Exécuter un programme"
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:49
+msgid "``execute_program_autorun``"
+msgstr "``execute_program_autorun``"
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:50
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:68
+msgid ":ref:`source/stack/high_level/niryo_robot_msgs:Trigger`"
+msgstr ":ref:`source/stack/high_level/niryo_robot_msgs:Trigger`"
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:51
+msgid "Executes autorun program"
+msgstr "Exécuter le programme d'exécution automatique"
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:52
+msgid "``get_program``"
+msgstr "``get_program``"
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:53
+msgid ""
+":ref:`GetProgram<source/stack/high_level/niryo_robot_programs_manager:GetProgram "
+"(Service)>`"
+msgstr ""
+":ref:`GetProgram<source/stack/high_level/niryo_robot_programs_manager:GetProgram "
+"(Service)>`"
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:54
+msgid "Retrieves saved program"
+msgstr "Récupérer le programme enregistré"
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:55
+msgid "``get_program_autorun_infos``"
+msgstr "``get_program_autorun_infos``"
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:56
+msgid ""
+":ref:`GetProgramAutorunInfos<source/stack/high_level/niryo_robot_programs_manager:GetProgramAutorunInfos "
+"(Service)>`"
+msgstr ""
+":ref:`GetProgramAutorunInfos<source/stack/high_level/niryo_robot_programs_manager:GetProgramAutorunInfos "
+"(Service)>`"
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:57
+msgid "Gets autorun settings"
+msgstr "Définir les paramètres d'exécution automatique"
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:58
+msgid "``get_program_list``"
+msgstr "``get_program_list``"
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:59
+msgid ""
+":ref:`GetProgramList<source/stack/high_level/niryo_robot_programs_manager:GetProgramList "
+"(Service)>`"
+msgstr ""
+":ref:`GetProgramList<source/stack/high_level/niryo_robot_programs_manager:GetProgramList "
+"(Service)>`"
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:60
+msgid "Gets saved programs' name"
+msgstr "Obtenir le nom des programmes enregistrés"
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:61
+msgid "``manage_program``"
+msgstr "``manage_program``"
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:62
+msgid ""
+":ref:`ManageProgram<source/stack/high_level/niryo_robot_programs_manager:ManageProgram "
+"(Service)>`"
+msgstr ""
+":ref:`ManageProgram<source/stack/high_level/niryo_robot_programs_manager:ManageProgram "
+"(Service)>`"
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:63
+msgid "Saves and Deletes programs"
+msgstr "Enregistrer et supprimer des programmes"
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:64
+msgid "``set_program_autorun``"
+msgstr "``set_program_autorun``"
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:65
+msgid ""
+":ref:`SetProgramAutorun<source/stack/high_level/niryo_robot_programs_manager:SetProgramAutorun "
+"(Service)>`"
+msgstr ""
+":ref:`SetProgramAutorun<source/stack/high_level/niryo_robot_programs_manager:SetProgramAutorun "
+"(Service)>`"
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:66
+msgid "Sets autorun settings"
+msgstr "Définir les paramètres d'exécution automatique"
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:67
+msgid "``stop_program``"
+msgstr "``stop_program``"
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:69
+msgid "Stops the current running program"
+msgstr "Arrêter le programme en cours d’exécution"
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:72
+msgid ""
+"All these services are available as soon as the node is started whereas on "
+"standalone mode or not."
+msgstr ""
+"Tous ces services sont disponibles dès le démarrage du nœud en mode autonome "
+"ou non."
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:76
+msgid "Dependencies - Programs manager"
+msgstr "Dépendances - Programs manager"
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:78
+msgid ":doc:`niryo_robot_msgs`"
+msgstr ":doc:`niryo_robot_msgs`"
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:79
+msgid "`python-yaml <https://pyyaml.org/wiki/PyYAMLDocumentation>`_"
+msgstr "`python-yaml <https://pyyaml.org/wiki/PyYAMLDocumentation>`_"
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:80
+msgid ":msgs_index:`std_msgs`"
+msgstr ":msgs_index:`std_msgs`"
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:84
+msgid "Services & messages files - Programs manager"
+msgstr "Fichiers services et messages -  Programs manager"
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:87
+msgid "ExecuteProgram (Service)"
+msgstr "ExecuteProgram (Service)"
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:94
+msgid "GetProgram (Service)"
+msgstr "GetProgram (Service)"
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:101
+msgid "GetProgramAutorunInfos (Service)"
+msgstr "GetProgramAutorunInfos (Service)"
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:108
+msgid "GetProgramList (Service)"
+msgstr "GetProgramList (Service)"
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:115
+msgid "ManageProgram (Service)"
+msgstr "ManageProgram (Service)"
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:122
+msgid "SetProgramAutorun (Service)"
+msgstr "SetProgramAutorun (Service)"
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:129
+msgid "ProgramLanguage (Message)"
+msgstr "ProgramLanguage (Message)"
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:136
+msgid "ProgramLanguageList (Message)"
+msgstr "ProgramLanguageList (Message)"
+
+#: ../../source/stack/high_level/niryo_robot_programs_manager.rst:143
+msgid "ProgramList (Message)"
+msgstr "ProgramList (Message)"
+
+#~ msgid "Niryo Robot Programs Manager Package"
+#~ msgstr "Package programs manager du robot Niryo"
+
+#~ msgid "Programs Manager Node"
+#~ msgstr "Noeud Programs manager"
+
+#~ msgid ""
+#~ "The ROS Node is made of several services to deal with the storage and "
+#~ "running of programs"
+#~ msgstr ""
+#~ "Le nœud ROS est composé de plusieurs services pour gérer le stockage et "
+#~ "l’exécution des programmes."
+
+#~ msgid ""
+#~ "Call are not available from the Python ROS Wrapper, as it made to run its "
+#~ "programs with the Python ROS Wrapper"
+#~ msgstr ""
+#~ "Les appels ne sont pas disponibles à partir du Python ROS Wrapper, car il "
+#~ "a été conçu pour exécuter ses programmes avec le Python ROS Wrapper"
+
+#~ msgid "Parameters - Programs Manager"
+#~ msgstr "Paramètres - Programs manager"
+
+#~ msgid "Services - Programs Manager"
+#~ msgstr "Services - Programs manager"
+
+#~ msgid ""
+#~ "All these services are available as soon as the node is started whereas "
+#~ "on standalone mode or not"
+#~ msgstr ""
+#~ "Tous ces services sont disponibles dès le démarrage du nœud en mode "
+#~ "autonome ou non."
+
+#~ msgid "Dependencies - Programs Manager"
+#~ msgstr "Dépendances - Programs manager"
+
+#~ msgid "Services & Messages files - Programs Manager"
+#~ msgstr "Fichiers services et messages - Programs manager"
+
+#~ msgid ":ref:`niryo_robot_arm_commander <Niryo Robot Commander Package>`"
+#~ msgstr ""
+
+#~ msgid "`python-yaml <https://pyyaml.org/wiki/PyYAMLDocumentation/>`_"
+#~ msgstr ""
+
+#~ msgid ":ref:`Trigger`"
+#~ msgstr ""
+
+#~ msgid ":ref:`GetProgram<GetProgram (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`GetProgramAutorunInfos<GetProgramAutorunInfos (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`GetProgramList<GetProgramList (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`ManageProgram<ManageProgram (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`SetProgramAutorun<SetProgramAutorun (Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`niryo_robot_commander <Niryo Robot Commander Package>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`niryo_robot_msgs <Niryo Robot Messages Package>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`niryo_robot_commander <source/ros/niryo_robot_commander:Niryo Robot "
+#~ "Commander Package>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`niryo_robot_msgs <source/ros/niryo_robot_msgs:Niryo Robot Messages "
+#~ "Package>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`niryo_robot_commander <niryo_robot_commander>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`niryo_robot_msgs <niryo_robot_msgs>`"
+#~ msgstr ""
+
+#~ msgid ":doc:`ros/niryo_robot_msgs`"
+#~ msgstr ""
+
+#~ msgid ":doc:`niryo_robot_commander`"
+#~ msgstr ""
+
+#~ msgid "Get autorun settings"
+#~ msgstr "Obtenir les paramètres d'exécution automatique"
+
+#~ msgid ""
+#~ ":ref:`ExecuteProgram<source/ros/niryo_robot_programs_manager:ExecuteProgram "
+#~ "(Service)>`"
+#~ msgstr ""
+
+#~ msgid ":ref:`source/ros/niryo_robot_msgs:Trigger`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`GetProgram<source/ros/niryo_robot_programs_manager:GetProgram "
+#~ "(Service)>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`GetProgramAutorunInfos<source/ros/niryo_robot_programs_manager:GetProgramAutorunInfos "
+#~ "(Service)>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`GetProgramList<source/ros/niryo_robot_programs_manager:GetProgramList "
+#~ "(Service)>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`ManageProgram<source/ros/niryo_robot_programs_manager:ManageProgram "
+#~ "(Service)>`"
+#~ msgstr ""
+
+#~ msgid ""
+#~ ":ref:`SetProgramAutorun<source/ros/niryo_robot_programs_manager:SetProgramAutorun "
+#~ "(Service)>`"
+#~ msgstr ""

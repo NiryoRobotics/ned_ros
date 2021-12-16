@@ -1,0 +1,35 @@
+joint_1:
+    name: "joint_1"
+    id: 1
+    type: "stepper"
+    bus: "can"
+
+joint_2:
+    name: "joint_2"
+    id: 2
+    type: "stepper"
+    bus: "can"
+
+joint_3:
+    name: "joint_3"
+    id: 3
+    type: "stepper"
+    bus: "can"
+
+joint_4:
+    name: "joint_4"
+    id: 2
+    type: "xl430"
+    bus: "ttl"
+
+joint_5:
+    name: "joint_5"
+    id: 3
+    type: "xl430"
+    bus: "ttl"
+
+joint_6:
+    name: "joint_6"
+    id: 6
+    type: "xl320"
+    bus: "ttl"

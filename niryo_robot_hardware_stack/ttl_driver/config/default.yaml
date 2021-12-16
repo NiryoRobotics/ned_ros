@@ -1,0 +1,8 @@
+# should be at least twice the biggest one below
+ttl_hardware_control_loop_frequency: 240.0
+# the ttl control loop should synchronize with the joints control loop,
+# thus we need those values 2 times higher than control loop frequency (shannon)
+ttl_hardware_write_frequency: 120.0
+ttl_hardware_read_data_frequency: 120.0
+ttl_hardware_read_end_effector_frequency: 13.0
+ttl_hardware_read_status_frequency: 0.7

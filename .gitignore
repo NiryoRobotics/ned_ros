@@ -3,6 +3,7 @@
 urdf.rviz
 node_modules/
 /CMakeLists.txt
+CMakeLists.txt.user
 tmp_blockly/
 tmp_code_to_execute/
 .vscode
@@ -14,9 +15,11 @@ docker/
 docs_build/
 docker_ros_folder_dependencies/
 
+_build/
 .pytest_cache/
 
 /dev/
+dist/
 
 # Mac Stuff
 .DS_Store
@@ -28,3 +31,10 @@ docs_build/
 docker/
 _singlehtml/
 generated_pdfs/
+
+# catkin tools
+.gitlab_resources/.catkin_tools/profiles/*/packages
+.gitlab_resources/.catkin_tools/profiles/*/devel_collisions.txt
+.gitlab_resources/.catkin_tools/profiles/*/build.yaml
+
+.style.yapf

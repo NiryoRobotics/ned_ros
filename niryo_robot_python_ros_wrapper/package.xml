@@ -1,12 +1,16 @@
-<package>
+<?xml version="1.0"?>
+<?xml-model
+  href="http://download.ros.org/schema/package_format3.xsd"
+  schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
   <name>niryo_robot_python_ros_wrapper</name>
-  <version>3.2.0</version>
-  <description>Python ROS Wrapper to get Niryo Robot ROS functionalities, without knowing ROS</description>
-  <author email="r.lux@niryo.com">Remi Lux</author>
+  <version>4.0.0</version>
+  <description>Provides a python ROS Wrapper to get Niryo Robot ROS functionalities, without knowing ROS</description>
   <maintainer email="r.lux@niryo.com">Remi Lux</maintainer>
   <maintainer email="c.ducatez@niryo.com">Corentin Ducatez</maintainer>
   <maintainer email="v.pitre@niryo.com">Valentin Pitre</maintainer>
   <license>GPLv3</license>
+  <author email="r.lux@niryo.com">Remi Lux</author>
   
   <buildtool_depend>catkin</buildtool_depend>
 
@@ -17,12 +21,22 @@
   <build_depend>niryo_robot_tools_commander</build_depend>
   <build_depend>rostest</build_depend>
 
-  <run_depend>actionlib_msgs</run_depend>
-  <run_depend>geometry_msgs</run_depend>
-  <run_depend>niryo_robot_arm_commander</run_depend>
-  <run_depend>niryo_robot_tools_commander</run_depend>
-  <run_depend>niryo_robot_msgs</run_depend>
-  <run_depend>sensor_msgs</run_depend>
-  <run_depend>std_msgs</run_depend>
+  <build_export_depend>actionlib_msgs</build_export_depend>
+  <build_export_depend>niryo_robot_msgs</build_export_depend>
+  <build_export_depend>geometry_msgs</build_export_depend>
+  <build_export_depend>niryo_robot_tools_commander</build_export_depend>
+  <build_export_depend>niryo_robot_arm_commander</build_export_depend>
+  
+  <exec_depend>actionlib_msgs</exec_depend>
+  <exec_depend>geometry_msgs</exec_depend>
+  <exec_depend>niryo_robot_arm_commander</exec_depend>
+  <exec_depend>niryo_robot_tools_commander</exec_depend>
+  <exec_depend>niryo_robot_msgs</exec_depend>
+  <exec_depend>sensor_msgs</exec_depend>
+  <exec_depend>std_msgs</exec_depend>
+
+  <test_depend>rostest</test_depend>
+  <test_depend>python-catkin-lint</test_depend>
+  <test_depend>roslint</test_depend>
 
 </package>

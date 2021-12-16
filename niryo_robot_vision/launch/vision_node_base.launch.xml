@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<launch xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://gist.githubusercontent.com/nalt/dfa2abc9d2e3ae4feb82ca5608090387/raw/roslaunch.xsd">
+    <!-- Arguments -->
+    <arg name="hardware_version" default="ned" />
+    <arg name="simulation_mode" default="false" />
+
+    <arg name="config_dir" value="$(arg hardware_version)" unless="$(arg simulation_mode)" />
+    <arg name="config_dir" value="$(arg hardware_version)/simulation" if="$(arg simulation_mode)" />
+  
+    <group ns="niryo_robot_vision" >
+        <!-- Settings will give more FPS if the user is using simulation-->
+        <rosparam file="$(find niryo_robot_vision)/config/$(arg hardware_version)/video_server_setup.yaml" />
+    </group>
+</launch>

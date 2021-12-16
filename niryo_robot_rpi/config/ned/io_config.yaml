@@ -1,0 +1,44 @@
+publish_io_state_frequency: 10
+
+button:
+  gpio: 4
+
+fans:
+  - pin: 27
+    temperature_on_threshold: 45
+    temperature_off_threshold: 40
+  - pin: 23
+    temperature_on_threshold: 50
+    temperature_off_threshold: 45
+
+led:
+  r_pin: 18
+  g_pin: 24
+  b_pin: 22
+
+wifi:
+  button_pin: 5
+
+digital_inputs:
+  - name: 1A
+    pin: 2
+  - name: 1B
+    pin: 3
+  - name: 1C
+    pin: 16
+  - name: 2A
+    pin: 26
+  - name: 2B
+    pin: 19
+  - name: 2C
+    pin: 6
+
+digital_outputs: []
+analog_outputs: []
+analog_inputs: []
+
+switches:
+  - name: SW1
+    pin: 12
+  - name: SW2
+    pin: 13

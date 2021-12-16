@@ -5,7 +5,6 @@ import rospy
 # Communication imports
 import select
 import socket
-from .const_communication import TCP_PORT
 from .communication_functions import create_socket_server, receive_dict, dict_to_packet
 
 from .command_interpreter import CommandInterpreter
@@ -16,30 +15,43 @@ import Queue
 
 
 class TcpServer:
-    def __init__(self):
+    def __init__(self, ip_address='', port=40001, on_client_connection_cb=None, on_client_disconnection_cb=None):
         # Server TCP
-        self.__port = TCP_PORT
-        self.__server = create_socket_server(ip_address='', port=self.__port)
-        self.__server.listen(1)
-        self.__client = None
-        self.__is_client_connected = False
-        # Thread
-        self.__loop_thread = Thread(target=self.__loop, name="TCP Server Loop thread")
-        self.__command_executor_thread = Thread(target=self.__command_executor_loop,
-                                                name="TCP Server Command Executor thread")
-        self.__is_running = True
-        self.__is_busy_lock = Lock()
-        # Interpreter
-        self.__interpreter = CommandInterpreter()
-        self.__queue = Queue.Queue(1)
+        self.__ip_address = ip_address
+        self.__port = port
+
+        try:
+            self.__server = create_socket_server(ip_address='', port=self.__port)
+            self.__server.listen(1)
+            self.__client = None
+            self.__is_client_connected = False
+            self.__on_client_connection_cb = on_client_connection_cb
+            self.__on_client_disconnection_cb = on_client_disconnection_cb
+
+            # Thread
+            self.__loop_thread = Thread(target=self.__loop, name="TCP Server Loop thread")
+            self.__command_executor_thread = Thread(target=self.__command_executor_loop,
+                                                    name="TCP Server Command Executor thread")
+            self.__is_running = True
+            self.__is_busy_lock = Lock()
+            # Interpreter
+            self.__interpreter = CommandInterpreter()
+            self.__queue = Queue.Queue(1)
+
+        except socket.error as err:
+            rospy.logerr("UserInterface.init : TCP server unable to start : %s", err)
+            self.__server = None
 
     def __del__(self):
         self.quit()
 
     def start(self):
-        self.__loop_thread.start()
-        self.__command_executor_thread.start()
-        return self
+        if self.__server is not None:
+            self.__loop_thread.start()
+            self.__command_executor_thread.start()
+            return self
+        else:
+            return None
 
     def quit(self):
         self.__is_running = False
@@ -49,7 +61,8 @@ class TcpServer:
             self.__command_executor_thread.join()
         if self.__client is not None:
             self.__shutdown_client()
-        self.__server.close()
+        if self.__server is not None:
+            self.__server.close()
 
     def __loop(self):
         rospy.loginfo("TCP Server - Started on port {}".format(self.__port))
@@ -69,6 +82,8 @@ class TcpServer:
         self.__client, address = self.__server.accept()
         self.__is_client_connected = True
         rospy.loginfo("TCP Server - Client connected from IP address: {}/{}".format(address[0], address[1]))
+        if self.__on_client_connection_cb is not None:
+            self.__on_client_connection_cb()
 
     def __client_socket_event(self, inputs):
         dict_command_received = self.__read_command()
@@ -80,6 +95,8 @@ class TcpServer:
             self.__is_client_connected = False
             self.__shutdown_client()
             inputs.remove(self.__client)
+            if self.__on_client_disconnection_cb is not None:
+                self.__on_client_disconnection_cb()
 
     def __shutdown_client(self):
         if self.__client is not None:

@@ -1,0 +1,17 @@
+# fake params using in fake driver
+fake_params:
+    position_spam: 30
+    steppers:
+        id: [1, 2, 3]
+        position: [0, -1090, 2447]
+        temperature: [50, 52, 54]
+        voltage: [12.1, 12.2, 12.3]
+        model_number: [1, 1, 1]
+        firmware: ["0.0.1", "0.0.1", "0.0.1"]
+    conveyors:
+        id: [6]
+        position: [0]
+        temperature: [50]
+        voltage: [12]
+        model_number: [2]
+        firmware: ["0.0.1"]

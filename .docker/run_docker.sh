@@ -1,6 +1,6 @@
 # Can be changed, choices are: amd64 or arm64
 ARCHITECTURE=amd64
-VERSION=v3.2.0
+VERSION=ned2
 
 DOCKER_IMAGE_NAME=registry.gitlab.com/niryo/niryo-one-s/ned_ros_stack/${VERSION}
 
@@ -14,8 +14,17 @@ HOME_FOLDER=home/niryo
 
 ROS_SRC_FOLDER=src
 
+current_architecture=`uname -m`
+if [[ $ARCHITECTURE == "amd64" && $current_architecture == 'x86_64' ]]; then
+    cross_build=false;
+elif [[ $ARCHITECTURE == "arm64" && $current_architecture == 'aarch64' ]]; then
+    cross_build=false;
+else
+    cross_build=true;
+fi
+
 # Multi platform builder is not enabled
-if ! ls /proc/sys/fs/binfmt_misc/ | egrep --quiet qemu-*; then
+if $cross_build && ! ls /proc/sys/fs/binfmt_misc/ | egrep --quiet qemu-*; then
     echo "Starting multi platform builder..."
     docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 fi
@@ -24,6 +33,7 @@ fi
 if [ -d ${PATH_TO_SOURCE_FOLDER}/niryo_robot_bringup ]; then
     docker run --rm --platform linux/${ARCHITECTURE} -it \
     -v ${PATH_TO_SOURCE_FOLDER}:/${HOME_FOLDER}/catkin_ws/src \
+    -v ${PATH_TO_SOURCE_FOLDER}/../${DOCKER_OUTPUT_HOST_FOLDER_NAME}/${ARCHITECTURE}/install:/${HOME_FOLDER}/catkin_ws/install \
     -v ${PATH_TO_SOURCE_FOLDER}/../${DOCKER_OUTPUT_HOST_FOLDER_NAME}/${ARCHITECTURE}/build:/${HOME_FOLDER}/catkin_ws/build \
     -v ${PATH_TO_SOURCE_FOLDER}/../${DOCKER_OUTPUT_HOST_FOLDER_NAME}/${ARCHITECTURE}/devel:/${HOME_FOLDER}/catkin_ws/devel \
     -p 9090:9090 \
@@ -33,6 +43,7 @@ if [ -d ${PATH_TO_SOURCE_FOLDER}/niryo_robot_bringup ]; then
 elif [ -d ${PATH_TO_SOURCE_FOLDER}/src ]; then
     docker run --rm --platform linux/${ARCHITECTURE} -it \
     -v ${PATH_TO_SOURCE_FOLDER}/src:/${HOME_FOLDER}/catkin_ws/src \
+    -v ${PATH_TO_SOURCE_FOLDER}/${DOCKER_OUTPUT_HOST_FOLDER_NAME}/${ARCHITECTURE}/install:/${HOME_FOLDER}/catkin_ws/install \
     -v ${PATH_TO_SOURCE_FOLDER}/${DOCKER_OUTPUT_HOST_FOLDER_NAME}/${ARCHITECTURE}/build:/${HOME_FOLDER}/catkin_ws/build \
     -v ${PATH_TO_SOURCE_FOLDER}/${DOCKER_OUTPUT_HOST_FOLDER_NAME}/${ARCHITECTURE}/devel:/${HOME_FOLDER}/catkin_ws/devel \
     -p 9090:9090 \

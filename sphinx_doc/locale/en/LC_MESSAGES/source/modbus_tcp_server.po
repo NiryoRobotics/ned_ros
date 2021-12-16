@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Ned ROS Documentation 1.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-09-20 08:22+0000\n"
+"POT-Creation-Date: 2021-12-15 14:33+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -790,7 +790,7 @@ msgid "`pymodbus library <https://pymodbus.readthedocs.io/en/latest/index.html>`
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:273
-msgid ":doc:`ros/niryo_robot_msgs`"
+msgid ":doc:`stack/high_level/niryo_robot_msgs`"
 msgstr ""
 
 #: ../../source/modbus_tcp_server.rst:274
@@ -986,5 +986,8 @@ msgstr ""
 #~ "Enables a Conveyor Belt newly connected"
 #~ " [on success: store it's ID at "
 #~ "152]"
+#~ msgstr ""
+
+#~ msgid ":doc:`ros/niryo_robot_msgs`"
 #~ msgstr ""
 

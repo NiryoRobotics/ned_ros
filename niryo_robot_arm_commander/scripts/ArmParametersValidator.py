@@ -13,6 +13,11 @@ from niryo_robot_msgs.msg import CommandStatus
 # Messages
 from geometry_msgs.msg import Point
 from niryo_robot_msgs.msg import RPY
+from niryo_robot_arm_commander.msg import JointLimits
+
+# Services
+from niryo_robot_arm_commander.srv import GetJointLimits, GetJointLimitsResponse
+from moveit_msgs.srv import GetStateValidity
 
 
 class ArmParametersValidator:
@@ -22,16 +27,36 @@ class ArmParametersValidator:
 
     def __init__(self, validation_consts):
         self.validation_consts = validation_consts
-        self.joints_limits = self.joints_limits_from_urdf()
+
+        self.joint_name_list = rospy.get_param('~joint_names')
+
+        self.joints_limits_dict = {}
+        self.joints_limits = []
+
+        self.joints_limits_from_urdf()
+
+        self.joint_limits_service = rospy.Service('~get_joints_limit', GetJointLimits, self.__callback_get_joint_limits)
+
+        # Check joint validity service (used for self collisions checking)
+        self.check_state_validity = rospy.ServiceProxy('check_state_validity', GetStateValidity)
+
+    def __callback_get_joint_limits(self, _req):
+        resp = GetJointLimitsResponse()
+        resp.joint_limits = []
+        for joint_name in self.joint_name_list:
+            limit = JointLimits(joint_name, self.joints_limits_dict[joint_name].lower,
+                                self.joints_limits_dict[joint_name].upper)
+            resp.joint_limits.append(limit)
+        return resp
 
     def joints_limits_from_urdf(self):
         robot_urdf = URDF.from_parameter_server()
-        joint_name_list = ["joint_1", "joint_2", "joint_3", "joint_4", "joint_5", "joint_6"]
 
         self.joints_limits = []
         for joint in robot_urdf.joints:
-            if joint.name in joint_name_list:
+            if joint.name in self.joint_name_list:
                 self.joints_limits.append(joint.limit)
+                self.joints_limits_dict[joint.name] = joint.limit
                 rospy.set_param("/niryo_robot/robot_command_validation/joint_limits/{}".format(joint.name),
                                 {"min": joint.limit.lower, "max": joint.limit.upper})
 
