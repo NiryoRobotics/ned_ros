@@ -33,7 +33,6 @@ vital_nodes_common:
  - "/niryo_robot_user_interface"
  - "/robot_state_publisher"
  - "/rosapi"
- - "/rosbridge_websocket"
  - "/rosout"
  - "/tf2_web_republisher"
 

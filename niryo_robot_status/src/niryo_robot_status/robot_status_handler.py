@@ -1,4 +1,3 @@
-
 import rospy
 
 from robot_status_enums import *
@@ -82,7 +81,8 @@ class RobotStatusHandler(object):
     def get_autonomous_status(self):
         return self.__robot_nodes_observer.check_user_node or \
                self.__robot_status_observer.program_is_running or \
-               self.__robot_status_observer.is_tcp_client_connected
+               self.__robot_status_observer.is_tcp_client_connected or \
+               self.__robot_status_observer.pyniryo2_ping
 
     def advertise_new_state(self):
         if self.__robot_status_pub is not None:
